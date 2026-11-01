@@ -1,18 +1,34 @@
-// Draft, differ 940 of 1300: FieldSequence_Run, this game's form of ☀️'s
-// FieldSequence_Run (games/tbs/src/field/field_sequence/run.c):
-// runs the current scene until the party leaves it and returns how (the
-// warp, or 999 after the party falls). It sets the scene up in the event
-// work (heap slot 108, 0xd50 bytes, cleared), the world map (scene map 1,
-// event mode 3) or a layout (mode 2), places objects and the camera, fades
-// in (with the ship's arrival wait when gMainRoutineWork's 0x2c2 is 1) and
-// gives what was left pending, then loops: the leader walks (Func_080cb2b8
-// each frame) until a request is made, and the requests are handled until none
-// is left: a raised event (the party fell, the world map, its zoom, the
-// four ship commands), a touch or exit, a push, a battle, examining, the
-// menu, talking, searching, Psynergy, an item or the pause menu.
-// The same calls, offsets and control flow; left: register and stack
-// allocation throughout (the native stack frame is 12 bytes against 16, with gMainRoutineWork at sp 8, the event work in r8 and the transition fields in
-// r9 to r11), which shifts most rows.
+// Draft, differ 183 of 1300, skeleton gap 41 (tla-en, 2026-11-01)
+// FieldSequence_Run, this game's form of ☀️'s FieldSequence_Run
+// (games/tbs/src/field/field_sequence/run.c): runs the current scene until the
+// party leaves it and returns how (the warp, or 999 after the party falls). It
+// sets the scene up in the event work (heap slot 108, 0xd50 bytes, cleared),
+// the world map (scene map 1, event mode 3) or a layout (mode 2), places
+// objects and the camera, fades in (with the ship's arrival wait when
+// gMainRoutineWork's 0x2c2 is 1) and gives what was left pending, then loops:
+// the leader walks (Func_080cb2b8 each frame) until a request is made, and the
+// requests are handled until none is left: a raised event (the party fell, the
+// world map, its zoom, the four ship commands), a touch or exit, a push, a
+// battle, examining, the menu, talking, searching, Psynergy, an item or the
+// pause menu.
+// Left, all that keeps the skeleton from 0:
+// - The native rereads memory with no store between: gInput.held for the 2 and
+//   4 keys of the menu's debug test (the draft folds them to & 6), and
+//   gDebugMode for the pause menu's second debug test. ☀️ has gKeysHeld
+//   volatile and tags this same gDebugMode reread; either needs a declaration
+//   or a volatile device. Both, measured with casts, give differ 101, gap 23.
+// - The native holds the 0 for ownerOverride in r10 from before
+//   Func_080e7804, and that block has no move2add on 0x2c0. Only loop.c hoists
+//   such a 0: a one-pass block around that call to the ownerOverride stores
+//   gives it. On top of the volatile reads, and with the compare spelt
+//   (s16)(s32), that gives differ 39, gap 21. Untagged it would be a device, so
+//   it is not here; the 0 may mean a real loop or macro still unfound.
+// - Five scheduling ties, each a pair of rows out of order.
+// Found: value is one variable in the native (scene attributes, the fade flag,
+// the fallen count, the toggle, the talk target), which sets the r5 allocation.
+// Data_0200xxxx are read through pointers set before the loop: unallocated,
+// they rematerialize as reloads, and that keeps reload registers in step with
+// the native; the shared tails cross-jump only while it does.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -20,6 +36,7 @@
 #include "actor.h"
 #include "iwram_call.h"
 #include "scene_ids.h"
+#include "macros.h"
 
 struct FieldWork {
   u8 unk000[16];
@@ -85,12 +102,15 @@ struct OverlayTable {
 
 extern struct OverlayTable gOverlayArea;
 extern u8 gDebugMode;
+extern char MsgFieldStrengthExhausted[];
+extern char MsgFieldPartyAnnihilated[];
+extern char MsgFieldPauseUnavailable[];
 extern u8 gMapCellBuffer[];
 extern u8 gData_02001000[];
 extern u8 gResourceBlockOwners[];
 extern u16 Data_0200044c;
 extern s32 Data_02000454;
-extern u16 Data_02000422;
+extern s16 Data_02000422;
 extern s32 Data_02000498;
 extern s8 Data_020004ac;
 
@@ -103,7 +123,7 @@ s32 GameFlag_Test(s32 flag);
 void Task_ResetAll(void);
 void Func_080d793c();
 void Func_08020110(void);
-void Func_08020108(void);
+void Func_08020108(s32 map);
 void Func_080c9e48(s32 mode);
 void Func_080e2718(void);
 void WindowSystem_InitFieldFar(void);
@@ -125,8 +145,7 @@ void FieldEffect_ResumeCloakCheck(void);
 s32 Field_GetSceneAttributes(s32 scene);
 s32 Party_GetLeaderActor(void);
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           s32 flags);
+void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 void Func_080cb05c(void);
 void wait(s32 frames);
 s32 BattleEffect_SumCounters(void);
@@ -155,7 +174,7 @@ void Func_080d5720(void);
 void Func_080d57e4(void);
 void Func_080d59dc(void);
 void Func_080d5aa0(void);
-void Scene_RunRaisedEvent(void);
+void Scene_RunRaisedEvent(s32 event);
 void Scene_RunTouchOrExit(s32 event);
 void Func_080cd680(s32 cell);
 void ObjectTable_Snapshot(void);
@@ -179,6 +198,45 @@ void Func_08038358(s32 mode);
 void Func_080200b0(void);
 void Func_080cb2b8(s32 terrain, s32 x, s32 y, s32 z);
 
+static __inline__ s32 Unit_ClampGauge(s32 ratio) {
+  s32 clamped;
+
+  if (ratio > 0x4000)
+    clamped = 0x4000;
+  else if (ratio < 0)
+    clamped = 0;
+  else
+    clamped = ratio;
+  return clamped;
+}
+
+#define Unit_UpdateGauges(unit)                                                \
+  do {                                                                         \
+    (unit)->hpGauge = Unit_ClampGauge(((unit)->hp << 14) / (unit)->maxHp);     \
+    if ((unit)->hpGauge == 0 && (unit)->hp != 0)                               \
+      (unit)->hpGauge = 1;                                                     \
+    (unit)->ppGauge = Unit_ClampGauge(((unit)->pp << 14) / (unit)->maxPp);     \
+    if ((unit)->ppGauge == 0 && (unit)->pp != 0)                               \
+      (unit)->ppGauge = 1;                                                     \
+  } while (0)
+
+struct ArrivalView {
+  u8 unk000[0x2be];
+  s16 scene;
+  s16 entrance;
+  s8 state;
+};
+
+struct HazardView {
+  u8 unk000[0x24c];
+  u16 limit;
+  u16 mode;
+  u16 damage;
+};
+
+#define HAZARD (*(struct HazardView *)&gMainRoutineWork)
+#define ARRIVAL (*(struct ArrivalView *)&gMainRoutineWork)
+
 #define OVERLAY_CALL(index) ((s32 (*)(void))gOverlayArea.words[index])()
 
 s32 FieldSequence_Run(void) {
@@ -187,20 +245,17 @@ s32 FieldSequence_Run(void) {
   struct Actor *leader;
   struct FieldUnit *unit;
   s32 result;
+  s32 arrivalState;
+  s32 *leaderId;
+  s32 *steps;
+  s16 *entrance;
+  u16 *turn;
+  s8 *pending;
+  s32 code;
   s32 mode;
-  u32 attributes;
-  s32 flags;
-  s32 target;
+  u32 value;
   s32 talk;
-  s32 i;
-  s32 gauge;
   s32 packed;
-  s32 freeBlocks;
-  s32 n;
-  u8 *owner;
-  u8 *objects;
-  s8 *arrival;
-  s16 zero;
 
   work = HeapSlot_AllocEwram(108, 0xd50);
   Iwram_ClearWords(work, 0xd50);
@@ -220,7 +275,7 @@ s32 FieldSequence_Run(void) {
     mode = 3;
     Func_080c9e48(0);
   } else {
-    Func_08020108();
+    Func_08020108(gMainRoutineWork.map);
     mode = 2;
     Func_080c9e48(1);
   }
@@ -255,74 +310,72 @@ s32 FieldSequence_Run(void) {
   BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
   work->transition = 0x100;
   work->transitionFrames = 16;
-  zero = 0;
-  work->transitionActive = zero;
+  work->transitionActive = 0;
   work->walkingScale = 409;
-  work->walkingDistance = zero;
+  work->walkingDistance = 0;
   if (gMainRoutineWork.sceneVariant == 2) {
-    work->walkingScale = zero;
+    work->walkingScale = 0;
     GameFlag_SetBit(324);
   }
   work->previousCell = gMapCellBuffer;
   if (!GameFlag_Test(265)) {
     Func_080ca2fc();
-    *(u16 *)gMainRoutineWork.unk24c = 16;
-    *(u16 *)&gMainRoutineWork.unk24c[2] = zero;
-    *(u16 *)&gMainRoutineWork.unk24c[4] = 1;
+    HAZARD.limit = 16;
+    HAZARD.mode = 0;
+    HAZARD.damage = 1;
     gMainRoutineWork.pausedObject = -1;
     gMainRoutineWork.cloaked = 0;
   }
   FieldEffect_ResumeCloakCheck();
-  attributes = Field_GetSceneAttributes(gMainRoutineWork.scene);
-  work->sceneAttributeHigh = (attributes >> 4) & 15;
-  work->sceneAttributeLow = attributes & 15;
-  arrival = (s8 *)&gMainRoutineWork.unk2c2;
-  if (*arrival == 2) {
-    Actor_GetById(Party_GetLeaderActor())->scaleX = zero;
-    Actor_SetSingleChildFlagsFar(
-        Actor_GetById(Party_GetLeaderActor()), 0);
+  value = Field_GetSceneAttributes(gMainRoutineWork.scene);
+  work->sceneAttributeHigh = (value >> 4) & 15;
+  work->sceneAttributeLow = value & 15;
+  
+  if (ARRIVAL.state == 2) {
+    Actor_GetById(Party_GetLeaderActor())->scaleX = 0;
+    Actor_SetSingleChildFlagsFar(Actor_GetById(Party_GetLeaderActor()), 0);
   }
   Func_080cb05c();
   wait(2);
   OVERLAY_CALL(1);
-  result = work->warp;
-  if (result != 0) {
-    work->warp = zero;
+  code = work->warp;
+  if (code != 0) {
+    result = code;
+    work->warp = 0;
     goto done;
   }
   GameFlag_ClearBit(265);
   if (BattleEffect_SumCounters() == 0) {
-    n = work->transitionActive;
-    if (n == 0) {
-      if (*arrival == 1) {
-        HeapSlot_Alloc(92, 0x1938);
+    value = work->transitionActive;
+    if (value == 0) {
+      if (ARRIVAL.state == 1) {
+        HeapSlot_Alloc(92, 0x19b8);
         wait(20);
         HeapSlot_Release(92);
       }
       ScreenTransition_Start(work->transition, work->transitionFrames);
       work->transitionActive = 1;
-      if (*arrival == 1) {
-        HeapSlot_Alloc(92, 0x1938);
+      if (ARRIVAL.state == 1) {
+        HeapSlot_Alloc(92, 0x19b8);
         wait(20);
         HeapSlot_Release(92);
       }
-      *(volatile u16 *)0x05000000 = n;
+      *(volatile u16 *)0x05000000 = value;
       if (!ObjectEffect_RunPendingFlagEvent())
         wait((work->transitionFrames + 1) / 2);
     }
-    n = *(s8 *)&gMainRoutineWork.unk2c2;
-    if (n == 1) {
-      gMainRoutineWork.unk2c2 = 2;
+    arrivalState = ARRIVAL.state;
+    if (arrivalState == 1) {
+      ARRIVAL.state = 2;
       Func_080e7804();
-      if (*(s16 *)gMainRoutineWork.unk2be != (s32)&SceneId_Ov64a ||
-          ((flags = Func_080c9e1c(*(s16 *)&gMainRoutineWork.unk2be[2])) & 16))
+      if (ARRIVAL.scene != (s32)&SceneId_Ov64a ||
+          ((value = Func_080c9e1c(ARRIVAL.entrance)) & 16))
         gMainRoutineWork.ownerOverride = 0;
-      else if (flags & 32)
+      else if (value & 32)
         gMainRoutineWork.ownerOverride = 1;
-      Event_SetDestination(*(s16 *)gMainRoutineWork.unk2be,
-                                  *(s16 *)&gMainRoutineWork.unk2be[2]);
-    } else if (n == 2) {
-      gMainRoutineWork.unk2c2 = 0;
+      Event_SetDestination(ARRIVAL.scene, ARRIVAL.entrance);
+    } else if (arrivalState == 2) {
+      ARRIVAL.state = 0;
       Func_080e7238();
     }
     if (GameFlag_Test(303)) {
@@ -343,6 +396,10 @@ s32 FieldSequence_Run(void) {
   }
 
   party = &gMainRoutineWork;
+  leaderId = &Data_02000454;
+  steps = &Data_02000498;
+  entrance = &Data_02000422;
+  turn = &Data_0200044c;
   for (;;) {
     GameFlag_SetBit(260);
     leader = Func_080cb8e8();
@@ -351,7 +408,7 @@ s32 FieldSequence_Run(void) {
     party->y = 0;
     party->z = leader->z;
     party->heading = leader->angle;
-    Data_0200044c = leader->terrainId;
+    *turn = leader->terrainId;
     while (BattleEffect_SumCounters() != 0) {
       if (work->warp != 0) {
         result = work->warp;
@@ -363,39 +420,30 @@ s32 FieldSequence_Run(void) {
         if (work->raisedEvent == -1) {
           Leader_StopMoving();
           Func_080cb82c();
-          for (i = 0; i < work->fallenCount; i++) {
+          for (value = 0; value < work->fallenCount; value++) {
             Actor_SetMode(leader, 22);
-            MessageArgument_PushFar(work->fallenOwners[i], 1);
-            FieldMessage_ShowFar(0xd92, 1);
+            MessageArgument_PushFar(work->fallenOwners[value], 1);
+            FieldMessage_ShowFar((s32)MsgFieldStrengthExhausted, 1);
           }
           if (work->survivorCount == 0) {
-            if (Data_02000454 == 4)
+            if (*leaderId == 4)
               Actor_SetMode(leader, 36);
             else
               Actor_SetMode(leader, 19);
             Sound_PlayFar(59);
-            FieldMessage_ShowFar(0xd93, 1);
-            unit = Unit_Get(Data_02000454);
+            FieldMessage_ShowFar((s32)MsgFieldPartyAnnihilated, 1);
+            unit = Unit_Get(*leaderId);
             unit->hp = 1;
-            gauge = (unit->hp << 14) / unit->maxHp;
-            if (gauge > 0x4000)
-              gauge = 0x4000;
-            else if (gauge < 0)
-              gauge = 0;
-            unit->hpGauge = gauge;
-            if ((s16)gauge == 0 && unit->hp != 0)
-              unit->hpGauge = 1;
-            gauge = (unit->pp << 14) / unit->maxPp;
-            if (gauge > 0x4000)
-              gauge = 0x4000;
-            else if (gauge < 0)
-              gauge = 0;
-            unit->ppGauge = gauge;
-            if ((s16)gauge == 0 && unit->pp != 0)
-              unit->ppGauge = 1;
-            party->scene = party->savedScene;
-            Data_02000422 = party->savedEntrance;
-            Func_080ca3f4(party->scene, Data_02000422);
+            Unit_UpdateGauges(unit);
+            {
+              s32 restartScene = party->savedScene;
+              s32 restartEntrance;
+
+              party->scene = restartScene;
+              restartEntrance = party->savedEntrance;
+              *entrance = restartEntrance;
+              Func_080ca3f4((s16)restartScene, (s16)restartEntrance);
+            }
             result = 999;
             Func_080cb8a4();
             goto done;
@@ -404,13 +452,13 @@ s32 FieldSequence_Run(void) {
         } else if (work->raisedEvent == -0x377) {
           Leader_StopMoving();
           Func_080ed2a4(1);
-          if (*(s16 *)gMainRoutineWork.unk2be != -1)
-            gMainRoutineWork.unk2c2 = 1;
+          if (ARRIVAL.scene != -1)
+            ARRIVAL.state = 1;
         } else if (work->raisedEvent == -0x378) {
           Leader_StopMoving();
-          n = 0;
-          while (Func_080ed2a4(n))
-            n ^= 1;
+          value = 0;
+          while (Func_080ed2a4(value))
+            value ^= 1;
         } else if (work->raisedEvent == -0x379) {
           Leader_StopMoving();
           BattleEffect_RunVisibilityTransition();
@@ -451,7 +499,7 @@ s32 FieldSequence_Run(void) {
             work->psynergy = 0;
           }
         } else {
-          Scene_RunRaisedEvent();
+          Scene_RunRaisedEvent(work->raisedEvent);
         }
         work->busy = 0;
         work->raisedEvent = 0;
@@ -468,24 +516,26 @@ s32 FieldSequence_Run(void) {
         ObjectTable_Snapshot();
         party->returnCue = -1;
         party->scene = 510;
-        Data_02000422 = work->battle;
+        *entrance = work->battle;
         work->warp = 999;
         Func_080d5c70(work->battle);
         work->unk194 = 0;
         work->battle = 0;
-        Data_02000498 = 0;
+        *steps = 0;
       } else if (work->examine != 0) {
         UiTimedNotice_CloseIfActiveFar();
         talk = 0;
-        target = Field_FindNearbyTalkTarget(
-            gMainRoutineWork.ownerOverride == 0 ? Data_02000454 : 8);
-        if (target != -1) {
+        if (gMainRoutineWork.ownerOverride == 0)
+          value = Field_FindNearbyTalkTarget(*leaderId);
+        else
+          value = Field_FindNearbyTalkTarget(8);
+        if (value != -1) {
           talk = 1;
-          if (target <= 63)
-            talk = Func_080cce94(target) != 0;
+          if ((s32)value <= 63)
+            talk = Func_080cce94(value) != 0;
         }
         if (talk) {
-          work->talk = target | 0x4000;
+          work->talk = value | 0x4000;
           work->menu = 0;
         } else if ((talk = Func_080cc54c()) != 0) {
           work->searchCell = talk;
@@ -500,7 +550,7 @@ s32 FieldSequence_Run(void) {
         Sound_PlayFar(111);
         Func_080cb82c();
         GameFlag_SetBit(262);
-        if (gDebugMode && (gInput.held & 2) && (gInput.held & 4)) {
+        if (gDebugMode && (gInput.held & 2) != 0 && ((gInput.held & 4) != 0)) {
           Menu_RunSelectionWithCursorObjectFar();
         } else if (GameFlag_Test(263)) {
           work->raisedEvent = 250;
@@ -556,10 +606,11 @@ s32 FieldSequence_Run(void) {
           UiTimedNotice_CloseIfActiveFar();
           party->returnCue = Sound_GetCurrentBgmFar();
           if (!GameFlag_Test(382)) {
-            objects = (u8 *)Ram_HeapSlots->objectSystem;
-            owner = gResourceBlockOwners;
-            freeBlocks = 0;
-            n = 512;
+            u8 *objects = (u8 *)Ram_HeapSlots->objectSystem;
+            u8 *owner = gResourceBlockOwners;
+            s32 freeBlocks = 0;
+            s32 n = 512;
+
             do {
               if (*owner++ == 0xff)
                 freeBlocks++;
@@ -571,7 +622,7 @@ s32 FieldSequence_Run(void) {
             Func_08038358(0);
             *(u16 *)(objects + 4) = 0;
           } else {
-            FieldMessage_ShowFar(0x1167, 1);
+            FieldMessage_ShowFar((s32)MsgFieldPauseUnavailable, 1);
           }
         }
         Func_080cb8a4();
@@ -582,11 +633,12 @@ s32 FieldSequence_Run(void) {
     GameFlag_ClearBit(260);
     if (Func_080cb8e8() != NULL)
       Func_080200b0();
+    pending = &Data_020004ac;
     do {
       wait(1);
       leader = Func_080cb8e8();
       if (gDebugMode == 0 || !GameFlag_Test(355)) {
-        if (Data_020004ac == 0 || (leader->action == 0 && leader->unk66 == 0))
+        if (*pending == 0 || (leader->action == 0 && *(s16 *)&leader->unk66 == 0))
           Func_080cb2b8(leader->terrainId, leader->x, leader->y, leader->z);
       }
     } while (BattleEffect_SumCounters() == 0);

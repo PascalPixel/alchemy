@@ -1,20 +1,23 @@
-// Draft: listing 1123 instructions, draft 1136, differ 855. ☀️ twin:
-// BattleEffect_RunDragonCloud (effect.c, structure 0.725): the puff arc,
-// the faded copies of the pillar sheet, the head flying the path and its trail,
-// the camera's turn and the embers are ☀️'s. ⚓️ moved the embers to start at the
+// Draft, differ 44 of 1123, skeleton gap 26 (tla-en, 2026-11-01)
+// ☀️ twin: BattleEffect_RunDragonCloud (dragon_cloud.c): the puff arc, the
+// faded copies of the pillar sheet, the head flying the path and its trail, the
+// camera's turn and the embers are ☀️'s. ⚓️ moved the embers to start at the
 // target, sends the head to the target before it dives, and added a second
-// variant with orange colours and three showers of sparks. The native stack frame
-// (248) holds the trail at sp+88, the target's screen position at 76, the
-// head's at 64, the blitter pair at 56, effect 52, canvas 48, frame 44, drift
-// 40, the path 36, x 32, y 28, graphics 24, the blitter pair's address 20, the
-// camera 16 and frame - 18 at 12; work stays in r11. Written from the listing
-// on the ☀️ body (2026-10-15, fx-n3). Every statement is in the native's order,
-// but work is spilled to sp+48 where the native keeps it in r11 all through,
-// and the reloads (13 more instructions) and the shifted slots account for most
-// rows. Tried, no gain: work declared first (855); canvas loaded first (853);
-// ☀️'s heapCache and cursor idiom (865). Next to try: what takes r11 and r10 in
-// this draft's greg dump (alchemy diff --rtl), and the trail loop's addressing
-// (the native walks j * 8 and j * 8 + 4 from sp+88).
+// variant with orange colours and three showers of sparks.
+// Same length, control flow, frame and slots as the listing; work stays in r11.
+// What is left: in the puff block the 0x4300 constant and the bias table swap
+// r8 and r10 (local-alloc ties on their equal lengths; the listing takes the
+// bias table first), and sched2 ties: the iwram entry's load, the ember loop's
+// shared 1, the path copy (adds r0, r7), and the draw[i & 1] sites' reload of
+// sp+20, which the listing places after the second stack argument.
+// Allocation here sits on loop.c's hoisting threshold (15 * savings * life
+// against the loop's real insns). offset and width in the first draw give the
+// widths and cells tables enough life to leave the frame loop, which keeps
+// local-alloc out of r9 and r11; the spark pointer brings the last spark loop to
+// 45 insns, so gData_08197410 is hoisted into r10. Extra locals or changes in
+// that block lose work's register and differ jumps past 500. Tried, no gain: a
+// bias temporary, a picture pointer, offset or width in the second draw, step
+// as a pointer walk in the other loops, *(draw + (i & 1)).
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -116,11 +119,11 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   s32 x;
   s32 y;
   u8 *graphics;
-  struct BattleCamera *camera;
   struct Actor *object;
   struct EffectStep *step;
   s32 i;
   s32 j;
+  s32 angle;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -169,12 +172,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     step->x = object->x;
     step->y = 0;
     step->z = object->z;
-    if (i < Data_08199d5c[effect->variant]) {
-      step->velocityX = ((Random16() & 63) - 32) << 14;
-      step->velocityY = (Random16() & 63) << 13;
-    } else {
+    if (i >= Data_08199d5c[effect->variant]) {
       step->velocityX = ((Random16() & 63) - 32) << 14;
       step->velocityY = (Random16() & 63) << 12;
+    } else {
+      step->velocityX = ((Random16() & 63) - 32) << 14;
+      step->velocityY = (Random16() & 63) << 13;
     }
     step->velocityZ = ((Random16() & 63) - 32) << 14;
     step->variant = 1;
@@ -196,19 +199,20 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   }
 
   // The eight puffs, on an arc over the user, each two frames after the last.
-  for (i = 0, j = -0x4000; i != 8; i++, j += 0x1000) {
+  for (i = 0, angle = -0x4000; i != 8; angle += 0x1000, i++) {
     step = &work->particles[i];
     if (effect->side == 1)
-      step->x = (Trig_Sin(j) * 24 >> 16) + 88;
+      step->x = (Trig_Sin(angle) * 24 >> 16) + 88;
     else
-      step->x = (-(Trig_Sin(j) * 24) >> 16) + 16;
-    step->y = (Trig_Cos(j) * 16 >> 16) + 40;
+      step->x = (-(Trig_Sin(angle) * 24) >> 16) + 16;
+    step->y = (Trig_Cos(angle) * 16 >> 16) + 40;
     step->variant = -(i * 2);
   }
   path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);
 
   for (frame = 0; frame != 150; frame++) {
-    camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+
     if (frame == 83) {
       if (effect->variant == 0)
         Func_081180e8(134);
@@ -233,15 +237,18 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     // Frames 0-17: the puff arc rises, one cell every three frames.
     if (frame <= 17) {
       s32 cell = frame / 3;
+      s32 width;
+      s32 offset;
 
-      draw[0](canvas,
-              &work->sheet[0x3c00] + gBattleEffect_PuffArcCells[cell],
-              56 - gBattleEffect_PuffArcCellWidths[cell] / 2,
+      offset = gBattleEffect_PuffArcCells[cell];
+      width = gBattleEffect_PuffArcCellWidths[cell];
+      draw[0](canvas, &work->sheet[offset + 0x3c00],
+              56 - width / 2,
               gBattleEffect_PuffArcCellBiasY[cell] + 60,
-              gBattleEffect_PuffArcCellWidths[cell],
+              width,
               gBattleEffect_PuffArcCellHeights[cell]);
       draw[1](canvas,
-              &work->sheet[0x3c00] + gBattleEffect_PuffArcCells[cell],
+              &work->sheet[gBattleEffect_PuffArcCells[cell] + 0x3c00],
               64 - gBattleEffect_PuffArcCellWidths[cell] / 2,
               gBattleEffect_PuffArcCellBiasY[cell] + 60,
               gBattleEffect_PuffArcCellWidths[cell],
@@ -352,8 +359,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       for (i = 0; i != 4; i++) {
         s32 angle;
         s32 force;
+        s32 index;
 
-        step = &SPARKS[((frame * 4 + i) & 127) + 256];
+        index = ((frame * 4 + i) & 127) + 256;
+        step = &SPARKS[index];
         step->x = position.x << 16;
         step->y = position.y << 16;
         angle = Random16();
@@ -403,12 +412,14 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       // Variant 1's 128 sparks at the target.
       if (effect->variant == 1) {
         for (i = 0; i != 128; i++) {
-          step = &SPARKS[i];
-          if (step->variant >= 0) {
-            s32 size;
+          s32 size;
 
+          step = &SPARKS[i];
+          size = step->variant;
+          if (size >= 0) {
             EffectPosition_ProjectPoint(&step->x, &position);
-            size = (step->variant >> 3) + 1;
+            size >>= 3;
+            size += 1;
             position.x >>= 1;
             draw[i & 1](canvas, graphics + gData_08197410[size - 1],
                         position.x - size / 2, position.y - size, size,
@@ -422,16 +433,17 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
 
     // Variant 1: the sparks the head shed.
     if (effect->variant == 1) {
-      for (i = 0; i != 128; i++) {
-        step = &SPARKS[256 + i];
-        if (step->variant >= 0) {
-          s32 size = (step->variant >> 4) + 1;
+      struct EffectStep *spark = &SPARKS[256];
+
+      for (i = 0; i != 128; i++, spark++) {
+        if (spark->variant >= 0) {
+          s32 size = (spark->variant >> 4) + 1;
 
           draw[i & 1](canvas, graphics + gData_08197410[size - 1],
-                      HI(step->x) - size / 2, HI(step->y) - size, size,
+                      HI(spark->x) - size / 2, HI(spark->y) - size, size,
                       size * 2);
-          BattleEffectKernels_IntegrateVector2(step, 60, -0x4000);
-          step->variant--;
+          BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);
+          spark->variant--;
         }
       }
     }
@@ -453,8 +465,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           s32 cell = step->variant / 2;
 
           draw[1](canvas,
-                  &work->sheet[0x3c00] +
-                      gBattleEffect_PuffArcCells[cell],
+                  &work->sheet[gBattleEffect_PuffArcCells[cell] + 0x3c00],
                   step->x - gBattleEffect_PuffArcCellWidths[cell] / 2,
                   step->y + gBattleEffect_PuffArcCellBiasY[cell],
                   gBattleEffect_PuffArcCellWidths[cell],

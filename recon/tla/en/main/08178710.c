@@ -1,17 +1,22 @@
-// Draft of BattleEffect_RunRisingDragon, decompiled from the listing: differ 695 of
-// 884 (draft 877), the same 65 calls and control flow; allocation differs.
-// 2026-10-19 (run 33), from 773: the blitter as a pair (tagged below): 723;
-// blit declared before sprites and camera, then frame right after it, so
-// the spill slots run effect, work, canvas, the pair, frame, camera as the
-// native's: 701; the aggregates declared arcs, the three positions, endX,
-// endY, texture (the native's 148, 112-147, 104, 96, 88): 695. Every spill
-// slot but the caller-save ones at sp+8 to sp+16 now has the native's place.
-// Left: the native clears endX and endY with a zero register pair (a
-// DImode store, as an initializer would) after the Task_Add call; a
-// block with the two arrays initialized there moves three other spills
-// (734). In the arc loops the native keeps &arcs[dragon * 2] in r11, j * 2
-// as an induction variable at sp+24, the height spilled at sp+40 and the
-// distance in r4 (caller-saved at sp+8); the allocation there differs.
+// Draft, differ 284 of 884, skeleton gap 64 (tla-en, 2026-11-01)
+// BattleEffect_RunRisingDragon. The same 65 calls and control flow. What is left:
+// - The native copies the multiplier's constant before muls ("adds r3, r0, #0");
+//   here the constant shares the product's register. A held "scale" local gives
+//   the copy but costs ten skeleton lines elsewhere.
+// - The native reads vertex into r1 once and keeps it across width's branches
+//   (adds r6, r1; later lsls r3, r1, #2); here it is reloaded twice. A copy local
+//   is folded by CSE, and j * 2 as a plain local is not strength-reduced.
+// - vertex and offset sit at sp+48 and sp+44 where the native has sp+24 and sp+16,
+//   below the hoisted pseudos, so every slot from sp+48 to sp+16 is displaced. The
+//   native's look loop-made, but j * 8 alone is not reduced here.
+// - The -1 for "variant + 1 != 0" comes from 6 in the native (subs r3, #7).
+// - The rest is sched2 order around spilled loads.
+// Allocation that now agrees: i is one counter for the init, strike, mote, vertex
+// and model loops, and j for the sparks and segments. radiusX, distance, radiusY
+// rank by live length, which is why the corner and i = 0 sit where they do;
+// radiusX takes r7, distance r4 and radiusY r2. The struct StripVertex stores are
+// what let reload drop a second save of distance. vertices held in a local is what
+// makes reload rematerialize it at each use. Field store orders were searched.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -123,9 +128,17 @@ extern const u8 Data_081991e0[];   // its corners
 
 #define DRAGON_SEGMENTS 33
 
+// A strip's vertex, as Render_TransformVertices reads it.
+struct StripVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+  s8 unk3;
+};
+
 // Abilities: Rising Dragon.
 //
-// One dragon (two at a higher level: effect->variant + 1) of smoke rises
+// One i (two at a higher level: effect->variant + 1) of smoke rises
 // from the caster and arcs onto the target, each a scrolling textured strip
 // of 33 segments with a clawed head; each strikes ten frames after the
 // last, scattering 32 sparks.
@@ -135,25 +148,25 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
    * as one two-word DImode pseudo its spill takes sp+68 and the unused sp+72
    * the native stack frame has. As a single DrawRectangle the stack frame is 160 bytes
-   * (773 of 884 instructions differ in tla-en, 723 with the pair). */
+   * (380 of 884 instructions differ in tla-en, 284 with the pair). */
   DrawRectangle blit[2];
   s32 frame;
-  u8 *sprites;
   s32 *camera;
+  u8 *sprites;
   void *caster;
   s32 arcs[4];
   struct EffectPosition source;
   struct EffectPosition target;
   struct EffectPosition hit;
-  s32 endX[2];
-  s32 endY[2];
   struct ModelTexture texture;
   struct RenderModel *model;
+  void *vertices;
   struct EffectStep *spark;
-  s32 dragon;
+  struct EffectStep *mote;
   s32 i;
   s32 j;
-  s32 k;
+  s32 vertex;
+  s32 offset;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -173,10 +186,9 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  endX[0] = 0;
-  endX[1] = 0;
-  endY[0] = 0;
-  endY[1] = 0;
+  {
+  s32 endX[2] = {0, 0};
+  s32 endY[2] = {0, 0};
   caster = *GetBattleObjectSlotFar(effect->actor);
   Actor_SetAnimationSpeedFar(caster, 48);
   Actor_SetMode(caster, 2);
@@ -206,22 +218,24 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
     }
 
     // Each dragon's strike.
-    for (dragon = 0; dragon != effect->variant + 1; dragon++) {
-      if (frame != dragon * 10 + 28) {
+    for (i = 0; i != effect->variant + 1; i++) {
+      s32 sparks = i * 32 * sizeof(struct EffectStep);
+
+      if (frame != i * 10 + 28) {
         continue;
       }
       EffectPosition_ProjectBattler(effect->actors[0], &hit);
-      for (i = 0, spark = &work->particles[dragon * 32]; i != 32;
-           i++, spark++) {
+      for (j = 0, spark = (struct EffectStep *)((u8 *)work->particles + sparks); j != 32;
+           j++, spark++) {
         s32 angle;
-        s32 speed;
+        s32 speed = 255;
 
         spark->x = (hit.x / 2) << 16;
         spark->y = (hit.y - 16) << 16;
         angle = Random16();
-        speed = Random16() & 255;
-        spark->velocityX = (Trig_Sin(angle) * (speed + 127)) >> 6;
-        spark->velocityY = (Trig_Cos(angle) * (speed + 127)) >> 6;
+        speed &= Random16();
+        spark->velocityX = (Trig_Sin(angle) * (speed += 127)) >> 6;
+        spark->velocityY = (Trig_Cos(angle) * speed) >> 6;
         spark->variant = (Random16() & 15) + 16;
       }
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
@@ -241,14 +255,14 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
       }
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
     }
-    for (i = 0, spark = work->particles; i != 64; i++, spark++) {
-      if (spark->variant >= 0) {
-        s32 size = (spark->variant >> 3) + 2;
+    for (i = 0, mote = work->particles; i != 64; i++, mote++) {
+      if (mote->variant >= 0) {
+        s32 size = (mote->variant >> 3) + 2;
 
         blit[0](canvas, sprites + gData_08197410[size - 1],
-             HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 60, 0x1000);
-        spark->variant--;
+             HI(mote->x) - size / 2, HI(mote->y) - size, size, size * 2);
+        BattleEffectKernels_IntegrateVector2(mote, 60, 0x1000);
+        mote->variant--;
       }
     }
 
@@ -278,48 +292,55 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
       }
 
       // The first dragon arcs over, the second under.
-      for (j = 0; j != DRAGON_SEGMENTS; j++) {
+      for (j = 0, vertex = 0; j != DRAGON_SEGMENTS; j++, vertex += 2) {
         s32 distance = source.x / 4 - target.x / 4;
         s32 angle = j * (arcs[0] - arcs[1]) + arcs[1] * 33;
         s32 height;
         s32 width;
         s32 radiusX;
         s32 radiusY;
-        s8 *corner;
+        s32 start;
+        struct StripVertex *corner;
 
         if (distance < 0) {
           distance = -distance;
         }
         height = distance / 3;
-        width = j * 2 + 16;
+        width = vertex + 16;
         if (width > 32) {
           width = 32;
         }
         width = width * 20768 / 0x10000;
-        radiusY = height - width / 2;
-        radiusX = distance - width / 2;
-        corner = (s8 *)gMapCellBuffer + j * 8;
-        for (k = 0; k != 2; k++) {
-          corner[0] = ((radiusX * Trig_Cos(angle)) >> 16) - distance;
-          corner[1] = -((radiusY * Trig_Sin(angle)) >> 16);
-          corner[2] = 0;
+        start = -(width / 2);
+        corner = (struct StripVertex *)(gMapCellBuffer + vertex * 4);
+        radiusY = height + start;
+        radiusX = distance + start;
+        for (i = 0; i != 2;) {
+          s32 sine;
+
+          corner->x = ((Trig_Cos(angle) * radiusX) >> 16) - distance;
+          sine = Trig_Sin(angle);
           radiusX += width;
+          i++;
+          corner->y = -((sine * radiusY) >> 16);
+          corner->z = 0;
           radiusY += width;
-          corner += 4;
+          corner++;
         }
         if (j == 32) {
-          endX[0] = ((distance * Trig_Cos(angle)) >> 16) - distance;
-          endY[0] = -((height * Trig_Sin(angle)) >> 16);
+          endX[0] = ((Trig_Cos(angle) * distance) >> 16) - distance;
+          endY[0] = -((Trig_Sin(angle) * height) >> 16);
         }
       }
-      for (j = 0; j != DRAGON_SEGMENTS; j++) {
+      for (j = 0, offset = 0; j != DRAGON_SEGMENTS; j++, offset += 8) {
         s32 distance = source.x / 4 - target.x / 4;
         s32 angle = j * (arcs[2] - arcs[3]) + arcs[3] * 33;
         s32 height;
         s32 width;
         s32 radiusX;
         s32 radiusY;
-        s8 *corner;
+        s32 start;
+        struct StripVertex *corner;
 
         if (distance < 0) {
           distance = -distance;
@@ -330,31 +351,40 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
           width = 24;
         }
         width = width * 20768 / 0x10000;
-        radiusY = height - width / 2;
-        radiusX = distance - width / 2;
-        corner = (s8 *)gMapCellBuffer + 0x108 + j * 8;
-        for (k = 0; k != 2; k++) {
-          corner[0] = ((radiusX * Trig_Cos(angle)) >> 16) - distance;
-          corner[1] = (radiusY * Trig_Sin(angle)) >> 16;
-          corner[2] = 0;
-          radiusY += width;
+        start = -(width / 2);
+        corner = (struct StripVertex *)(gMapCellBuffer + 0x108 + offset);
+        radiusY = height + start;
+        i = 0;
+        radiusX = distance + start;
+        for (; i != 2;) {
+          s32 sine;
+
+          corner->x = ((Trig_Cos(angle) * radiusX) >> 16) - distance;
+          sine = Trig_Sin(angle);
+          corner->y = (sine * radiusY) >> 16;
+          i++;
+          corner->z = 0;
           radiusX += width;
-          corner += 4;
+          radiusY += width;
+          corner++;
         }
         if (j == 32) {
-          endX[1] = ((distance * Trig_Cos(angle)) >> 16) - distance;
-          endY[1] = (height * Trig_Sin(angle)) >> 16;
+          endX[1] = ((Trig_Cos(angle) * distance) >> 16) - distance;
+          endY[1] = (Trig_Sin(angle) * height) >> 16;
         }
       }
 
       model = Render_AllocateModelList(1);
-      model->kind = 6;
+      vertices = Data_02011000;
       model->scrollV = 0;
+      model->kind = 6;
+      model->vertices = vertices;
       model->texture = &texture;
       model->shade = 0;
-      model->vertices = Data_02011000;
-      for (dragon = 0; dragon != effect->variant + 1; dragon++) {
-        if (arcs[dragon * 2 + 1] >= arcs[dragon * 2]) {
+      for (i = 0; i != effect->variant + 1; i++) {
+        const u8 *strip = gMapCellBuffer;
+
+        if (arcs[i * 2 + 1] >= arcs[i * 2]) {
           continue;
         }
         texture.logWidth = 6;
@@ -374,20 +404,20 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
         if (effect->side == 1) {
           SceneTransform_ApplyYaw(0x8000);
         }
-        Func_080150e4(dragon * 14192 - 0x1000);
+        Func_080150e4(i * 14192 - 0x1000);
         Func_0801521c(0x40000);
-        Render_TransformVertices(gMapCellBuffer + dragon * 264, Data_02011000, 66);
+        Render_TransformVertices(strip + i * 264, vertices, 66);
         Render_DrawModelList(model);
-        if (frame < dragon * 16 + 40) {
+        if (frame < i * 16 + 40) {
           texture.logWidth = 6;
-          model->scrollU = 0;
           texture.logHeight = 6;
+          model->scrollU = 0;
           model->mesh = gData_08199340;
           texture.pixels = work->sheet + 0x4000;
-          Func_08015160(endX[dragon] << 16, endY[dragon] << 16, 0);
-          Func_080150e4(0x3060 - (arcs[dragon * 2] << 5));
+          Func_08015160(endX[i] << 16, endY[i] << 16, 0);
+          Func_080150e4(0x3060 - (arcs[i * 2] << 5));
           Func_0801521c(20768);
-          Render_TransformVertices(Data_081991e0, Data_02011000, 4);
+          Render_TransformVertices(Data_081991e0, vertices, 4);
           Render_DrawModelList(model);
         }
       }
@@ -401,5 +431,6 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  }
   BattleEffect_EndCanvasLayer();
 }

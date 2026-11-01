@@ -1,5 +1,5 @@
-// Near miss, differ 496 of 548 (tla-en, 2026-10-31): same calls, fields,
-// control flow and block order; what is left is allocation and CSE (below).
+// Draft, differ 127 of 548, skeleton gap 23 (tla-en, 2026-11-01): same calls,
+// fields, control flow and block order; what is left is below.
 // Runs the world map screen (mode 0 to look, nonzero to choose a destination)
 // until A or B. In event mode 3 the field stays loaded: the map work's sixteen
 // animation flags are set aside and the screen is drawn over it (a nonzero
@@ -8,29 +8,32 @@
 // for the picture. Each frame runs Func_080ed0a0 and Func_080ec4d4; Start
 // glides the cursor to the leader's place until released, R and L step to the
 // next and previous shown place (Func_080ec2b8), Select toggles the whole-map
-// view, and the first time flag 284 or 286 is set message 0xe2a is shown.
+// view, and the first time flag 284 or 286 is set MsgNotOnMap is shown.
 // Choosing with A stores the place in gMainRoutineWork and calls
 // Func_080ca368; B stores -1. The field is then restored (mode 0 in event
 // mode 3) or flag 265 set and the event work's countdown set to 999.
-// Shape, as ☀️'s WorldPicture_Show: register writes through Io_Write16 (the
-// native builds 0x682, 0x1340, 0x8682 and 64 inline; a plain halfword store
-// loads them from the pool), the flags saved by an index loop (its ble), the
-// mode-3 setup before the full one, the closing test inverted (its else
-// first), the redraw an outer loop, and the declarations in the order of the
-// native's spill slots.
-// Left: the native hoists gInput (r10, copied to r5, which is reloaded after
-// the Start and release bodies), Data_0202a64c (r8), Data_0202a644 (r6) and
-// Data_0202a648 (r7) out of the frame loop, keeps gliding in r9 and the work
-// in r11, and spills mode (sp 28, ldrh for the halfword store); alchemy-gcc's
-// loop pass hoists only 644 and 648 (gInput's first load lives 3 insns, 64c's
-// 3, "not desirable" in a 185-insn loop), so mode and the event work keep
-// registers. The native also re-reads 644 and 648 after storing them (R, L),
-// the work's z after storing Data_0202a630 and 630 after storing 634 (then
-// clamps it in a register), where alchemy-gcc forwards the stored values;
-// tried symbols, ram_buffer.h's constant addresses and the work as a constant
-// address: unchanged. The six globals volatile give the reloads (496 to 453)
-// but read 644 three times in Select where the native reads it once, so that
-// is not the form.
+// Shape, as ☀️'s WorldPicture_Show: register writes through Io_Write16, the
+// flags saved by an index loop, the mode-3 setup before the full one, the
+// closing test inverted, the redraw an outer loop.
+// What the frame loop's form rests on, measured: the native reloads a value
+// straight after storing it (the cursor, the scroll pair, the work's z) because
+// CSE cannot tell its pointers apart, and only a pointer set twice has no known
+// base; hence the NULL defaults before the outer loop. keys and input are the
+// native's r10 and r5: input is set again in the Start and release bodies. The
+// clamp keeps zero and the limits in locals set before the scroll stores. The
+// entrance is read before Data_02000500 is stored, so it is a local. Three
+// sets of input, the two of wayZ and that local are plain C but unusually
+// shaped: an adoption should decide whether any of them is a device (S2).
+// Left: event->screenEffect = 0 reloads zoomed's slot (CSE knows it holds 0)
+// where the native builds the 0; tried the first test as a goto, as !(a && b)
+// and as an empty then-arm: unchanged. place->scene is loaded straight into r0
+// where the native loads r3 and copies, one instruction short; an s16 or s32
+// scene local changes nothing. The native's address of unk2be is a reload pair
+// (r6 and r1, then r2 and r4), the draft's routine a pseudo, which shifts the
+// reload registers of the closing tests; a local per arm folds the symbol and
+// offset into one literal and loses 150 of differ. The blend store schedules
+// two instructions late in the full setup. Declaration order is at a local
+// optimum (every single move tried).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -71,6 +74,11 @@ struct WorldMapPlace {
   s16 entrance;
 };
 
+struct WorldMapChoice {
+  u8 unk000[0x2be];
+  u16 unk2be;
+};
+
 extern struct WorldMapWork gWorldMapWork;
 extern s16 Data_0202a640;
 extern s32 Data_0202a644;
@@ -80,6 +88,7 @@ extern s32 Data_0202a650;
 extern s32 Data_0202a630;
 extern s32 Data_0202a634;
 extern s16 Data_02000500;
+extern char MsgNotOnMap;
 
 void ObjectTable_Snapshot(void);
 void WindowSystem_InitFieldFar(void);
@@ -99,10 +108,10 @@ void BattleEffect_CleanupResourcesAndWindow(void);
 void Func_08020270(void);
 
 s32 Func_080ed2a4(s32 mode) {
+  s32 savedDelay;
   u8 savedFlags[16];
   s32 screenX;
   s32 screenY;
-  s32 savedDelay;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct ObjectSystemWork *objects = Ram_HeapSlots->objectSystem;
@@ -113,11 +122,25 @@ s32 Func_080ed2a4(s32 mode) {
   struct WorldMapWork *world = &gWorldMapWork;
   struct MapAnimation *layer;
   struct WorldMapPlace *place;
+  s32 entrance;
   u32 *tiles;
   u32 tile;
   s32 row;
   s32 column;
   s32 i;
+  struct InputState *input;
+  struct InputState *keys;
+  s32 *wayX;
+  s32 *wayZ;
+  s32 *cursorX;
+  s32 *cursorZ;
+  s32 *scrollX;
+  s32 *scrollZ;
+  s32 zero;
+  s32 limitX;
+  s32 limitZ;
+  s32 value;
+  struct WorldMapChoice *routine;
 
   world->mode = mode;
   if (mode != 0 || event->controlMode != 3)
@@ -174,6 +197,12 @@ s32 Func_080ed2a4(s32 mode) {
     Io_Write16(0x682, &REG_BG1CNT);
     Io_Write16(0x1340, &REG_DISPCNT);
   }
+  // Default: no pointer yet.
+  wayX = NULL;
+  cursorX = NULL;
+  cursorZ = NULL;
+  scrollX = NULL;
+  scrollZ = NULL;
   Func_080ebf94();
   for (;;) {
     Data_0202a640 = zoomed;
@@ -182,73 +211,97 @@ s32 Func_080ed2a4(s32 mode) {
     Io_Write16(0x8682, &REG_BG1CNT);
     Io_Write16(0x1340, &REG_DISPCNT);
     if ((GameFlag_Test(284) || GameFlag_Test(286)) && !messageShown) {
-      FieldMessage_ShowFar(0xe2a, 1);
+      FieldMessage_ShowFar((s32)&MsgNotOnMap, 1);
       messageShown = 1;
     }
+    keys = &gInput;
+    wayX = &Data_0202a64c;
+    cursorX = &Data_0202a644;
+    cursorZ = &Data_0202a648;
     for (;;) {
       Func_080ed0a0();
       Func_080ec4d4();
+      input = keys;
       wait(1);
-      if ((gInput.repeat & 8) && gliding == 0) {
+      if ((input->repeat & 8) && gliding == 0) {
         Func_080ec1d0(&screenX, &screenY);
-        Data_0202a644 = screenX << 16;
-        Data_0202a648 = screenY << 16;
+        *cursorX = screenX << 16;
+        input = &gInput;
+        *cursorZ = screenY << 16;
         gliding = 1;
       }
-      if (!(gInput.held & 8) && gliding == 1) {
-        Data_0202a644 = Data_0202a64c;
-        Data_0202a648 = Data_0202a650;
+      if (!(keys->held & 8) && gliding == 1) {
+        *cursorX = *wayX;
+        input = &gInput;
+        *cursorZ = Data_0202a650;
         gliding = 0;
       }
-      if (gInput.repeat & 0x100) {
+      if (keys->repeat & 0x100) {
         Func_080ec2b8(&screenX, &screenY, 1);
-        Data_0202a644 = screenX << 16;
-        Data_0202a648 = screenY << 16;
-        Data_0202a64c = Data_0202a644;
-        Data_0202a650 = Data_0202a648;
+        *cursorX = screenX << 16;
+        wayZ = &Data_0202a650;
+        *cursorZ = screenY << 16;
+        *wayX = *cursorX;
+        *wayZ = *cursorZ;
       }
-      if (gInput.repeat & 0x200) {
+      if (input->repeat & 0x200) {
         Func_080ec2b8(&screenX, &screenY, -1);
-        Data_0202a644 = screenX << 16;
-        Data_0202a648 = screenY << 16;
-        Data_0202a64c = Data_0202a644;
-        Data_0202a650 = Data_0202a648;
+        *cursorX = screenX << 16;
+        wayZ = &Data_0202a650;
+        *cursorZ = screenY << 16;
+        *wayX = *cursorX;
+        *wayZ = *cursorZ;
       }
-      if (gInput.repeat & 4) {
+      if (input->repeat & 4) {
         world->shown = -1;
         WindowSprite_PrepareForRedrawFar(world->window);
         Io_Write16(64, &REG_DISPCNT);
         zoomed ^= 1;
-        if (Data_0202a644 != 0) {
-          world->x = Data_0202a644;
-          world->z = Data_0202a648;
-          Data_0202a630 = Data_0202a644 - 0x780000;
-          Data_0202a634 = world->z - 0x500000;
-          if (Data_0202a630 < 0)
-            Data_0202a630 = 0;
-          if (Data_0202a630 > 0x1100000)
-            Data_0202a630 = 0x1100000;
-          if (Data_0202a634 < 0)
-            Data_0202a634 = 0;
-          if (Data_0202a634 > 0xe00000)
-            Data_0202a634 = 0xe00000;
+        if (*cursorX != 0) {
+          world->x = *cursorX;
+          world->z = *cursorZ;
+          zero = 0;
+          limitX = 0x1100000;
+          limitZ = 0xe00000;
+          scrollX = &Data_0202a630;
+          *scrollX = world->x - 0x780000;
+          scrollZ = &Data_0202a634;
+          *scrollZ = world->z - 0x500000;
+          value = *scrollX;
+          if (value < 0) {
+            *scrollX = zero;
+            value = *scrollX;
+          }
+          if (value > limitX)
+            *scrollX = limitX;
+          value = *scrollZ;
+          if (value < 0) {
+            *scrollZ = zero;
+            value = *scrollZ;
+          }
+          if (value > limitZ)
+            *scrollZ = limitZ;
         }
         break;
       }
-      if (gInput.repeat & 1) {
+      if (input->repeat & 1) {
         if (mode == 0)
           goto done;
         if (world->shown == -1)
           continue;
-        place = &FlagEntries_GetTable()[world->shown];
-        *(u16 *)gMainRoutineWork.unk2be = (s32)&SceneId_Ov64a;
+        place = FlagEntries_GetTable();
+        routine = (struct WorldMapChoice *)&gMainRoutineWork;
+        place += world->shown;
+        routine->unk2be = (s32)&SceneId_Ov64a;
+        entrance = place->entrance;
         Data_02000500 = place->flag;
-        Func_080ca368(place->scene, place->entrance);
+        Func_080ca368(place->scene, entrance);
         goto done;
       }
-      if (gInput.repeat & 2) {
+      if (input->repeat & 2) {
         if (mode != 0) {
-          *(u16 *)gMainRoutineWork.unk2be = 0xffff;
+          routine = (struct WorldMapChoice *)&gMainRoutineWork;
+          routine->unk2be = 0xffff;
           Data_02000500 = -1;
         }
         goto done;

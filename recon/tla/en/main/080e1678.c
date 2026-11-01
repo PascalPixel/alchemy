@@ -1,5 +1,5 @@
-// Draft, differ 570 of 923: the bow game's frame callback, which Func_080e1f2c
-// installs: a state machine on the work's phase (0x424) and its frame timer
+// Draft, differ 18 of 923, skeleton gap 18 (tla-en, 2026-11-01)
+// The bow game's frame callback, which Func_080e1f2c installs: a state machine on the work's phase (0x424) and its frame timer
 // (0x426): the bow grows in (0), the flaming arrow is drawn back and loosed
 // (1), flies until it passes the target, hits an object of the event work's
 // list (its index becomes the result) or something solid (2), then the bow
@@ -7,26 +7,27 @@
 // shrinks (4), and the phase ends at 999 (5). Each frame it also grows or
 // shrinks the bow, steps the bow's drawing pose by the frame count at 0x42a,
 // draws both sprites, moves the arrow, sprays ten sparks from the bowstring
-// onto the canvas and places the canvas behind the arrow. Same calls,
-// offsets and control flow; left: register allocation (the native keeps the
-// object loop's index spilled at sp 4, its frame is 72 bytes against 68,
-// and the wobble tables sit at sp 28 and 12) and the order this cascades into.
+// onto the canvas and places the canvas behind the arrow. Allocation, frame
+// and control flow all match; what is left is six sched2 orderings, each a
+// few instructions: the hit block's result store against its phase address,
+// the first polar call's scene reload, the spark's delay reload after its
+// velocity, its source address against y, its delay increment, and the last
+// pos reload, which the native hoists over both calls. Tried without effect:
+// operand orders, a local for the delay, for y and for the source, the
+// spark's condition forms, and moving each motion set. Forms the match
+// depends on: one motion pointer serves the sparks too (the native's r7, and
+// why it loses r5 and r6), sprite is set before the first Camera_WorldToScreen
+// so that it crosses a call, the object index and the spark count are separate,
+// the wobble entry is read first into w, and the two "passed" tests keep their
+// own copies of the phase step for cross-jumping to merge.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
 #include "canvas_sprite.h"
 
-struct BowSpark {
-  s32 x;
-  s32 y;
-  s32 unk08;
-  s32 velocityX;
-  s32 velocityY;
-  s32 unk14;
-  s32 delay;
-};
-
+// One moving point: a spark on the canvas (x and y only, counting delay) or
+// a sprite's place in the world.
 struct BowMotion {
   s32 x;
   s32 y;
@@ -34,12 +35,12 @@ struct BowMotion {
   s32 velocityX;
   s32 velocityY;
   s32 velocityZ;
-  u8 unk18[4];
+  s32 delay;
 };
 
 struct BowWork {
   u8 *tiles;
-  struct BowSpark sparks[32];
+  struct BowMotion sparks[32];
   struct BowMotion arrowMotion;
   struct EffectSprite arrow;
   struct BowMotion bowMotion;
@@ -93,24 +94,25 @@ s32 Trig_Cos(s32 angle);
 
 void Func_080e1678(void) {
   struct BowScene *scene = Ram_HeapSlots->effectWork;
-  struct CanvasSpriteWork *canvas = Ram_HeapSlots->unkec[1];
   struct BowWork *work = (struct BowWork *)Ram_HeapSlots->battleFxWork[0];
+  struct CanvasSpriteWork *canvas = Ram_HeapSlots->unkec[1];
   struct BowEvent *event = Ram_HeapSlots->eventWork;
-  struct BowSpark *spark;
   struct Actor *object;
   struct BowMotion *motion;
   struct EffectSprite *sprite;
-  s32 wobble[8];
-  s32 fade[4];
   s32 pos[3];
+  s32 objectIndex;
   s32 i;
-  s32 speed;
-  s32 angle;
   s32 dx;
   s32 dz;
 
 again:
   switch (work->phase) {
+  hit:
+    work->done = 1;
+    work->result = objectIndex;
+    BOW_NEXT_PHASE(work);
+    goto again;
   case 0:
     if (work->timer == 0) {
       work->sparking = 0;
@@ -127,9 +129,9 @@ again:
     if (work->timer == 0) {
       sprite = &work->arrow;
       sprite->scaleX = sprite->scaleY = 0x10000;
+      motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
       Vector_AddPolarOffset(0x2666, scene->angle + 0x8000, pos);
-      motion = &work->arrowMotion;
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -138,9 +140,9 @@ again:
     if (work->timer == 20)
       work->sparking = 1;
     if (work->timer == 56) {
+      motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
       Vector_AddPolarOffset(0x50000, scene->angle, pos);
-      motion = &work->arrowMotion;
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -159,8 +161,10 @@ again:
     dz = motion->x - work->start[0];
     if (dz < 0)
       dz = work->start[0] - motion->x;
-    if (dx < dz)
-      goto passed;
+    if (dx < dz) {
+      BOW_NEXT_PHASE(work);
+      goto again;
+    }
     dx = work->target[2] - work->start[2];
     if (dx < 0)
       dx = work->start[2] - work->target[2];
@@ -168,7 +172,6 @@ again:
     if (dz < 0)
       dz = work->start[2] - motion->z;
     if (dx < dz) {
-    passed:
       BOW_NEXT_PHASE(work);
       goto again;
     }
@@ -182,16 +185,12 @@ again:
       work->timer = -1;
       goto again;
     }
-    for (i = 0; i < 80; i++) {
-      object = event->objects[i];
+    for (objectIndex = 0; objectIndex < 80; objectIndex++) {
+      object = event->objects[objectIndex];
       if (object != NULL && object->script != NULL &&
           (object->collisionFlags & 1) && object != scene->mainObject &&
-          Func_080dbe80(&motion->x, 2, &object->x, object->radius - 2) >= 0) {
-        work->done = 1;
-        work->result = i;
-        BOW_NEXT_PHASE(work);
-        goto again;
-      }
+          Func_080dbe80(&motion->x, 2, &object->x, object->radius - 2) >= 0)
+        goto hit;
     }
     break;
   case 3:
@@ -201,9 +200,9 @@ again:
       work->sparksRepeat = 0;
       work->bowShrinking = 1;
     }
+    motion = &work->arrowMotion;
     pos[0] = pos[1] = pos[2] = 0;
     Vector_AddPolarOffset(0x20000, scene->angle, pos);
-    motion = &work->arrowMotion;
     motion->velocityX = pos[0];
     motion->velocityY = pos[1];
     motion->velocityZ = pos[2];
@@ -213,10 +212,14 @@ again:
     sprite = &work->arrow;
     if (work->done != 0) {
       if (work->timer < 32) {
+        s32 wobble[8];
+        s32 fade[4];
+        s32 w;
+
         memcpy(wobble, Data_080f0f34, sizeof(wobble));
         memcpy(fade, Data_080f0f54, sizeof(fade));
-        sprite->angle = scene->angle + wobble[work->timer & 7] *
-                                           fade[work->timer / 8] / 0x10000;
+        w = wobble[work->timer & 7];
+        sprite->angle = scene->angle + w * fade[work->timer / 8] / 0x10000;
       }
       if (work->timer == 32)
         work->bowShrinking = 1;
@@ -300,8 +303,8 @@ again:
   pos[0] = motion->x;
   pos[1] = motion->y;
   pos[2] = motion->z;
-  Camera_WorldToScreen(pos);
   sprite = &work->bow;
+  Camera_WorldToScreen(pos);
   sprite->x = pos[0];
   sprite->y = pos[2];
   Func_080eb01c(sprite);
@@ -318,26 +321,30 @@ again:
     BattleEffect_IntegrateVector3(&motion->x, 64, 0);
 
   if (work->sparking != 0) {
-    spark = work->sparks;
+    motion = work->sparks;
     for (i = 9; i >= 0; i--) {
-      if (spark->delay == 0) {
+      if (motion->delay == 0) {
+        s32 speed;
+        s32 angle;
+
         speed = (Random16() & 255) + 256;
         angle = (Random16() & 0x1fff) + 0x7000;
-        spark->x = 0x3c0000;
-        spark->y = 0x1c0000;
-        spark->velocityX = speed * Trig_Cos(angle) >> 6;
-        spark->velocityY = speed * Trig_Sin(angle) >> 6;
+        motion->x = 0x3c0000;
+        motion->y = 0x1c0000;
+        motion->velocityX = Trig_Cos(angle) * speed >> 6;
+        motion->velocityY = Trig_Sin(angle) * speed >> 6;
       }
-      if (spark->delay > 0) {
-        BattleEffect_DrawCanvasBlock(Data_080eda0c + (spark->delay & 1) * 64,
-                                     (s16)(spark->x >> 16),
-                                     (s16)(spark->y >> 16), 8, 8);
-        BattleEffect_IntegrateVector2(&spark->x, 60, 0);
+      if (motion->delay > 0) {
+        s32 x = (s16)(motion->x >> 16);
+
+        BattleEffect_DrawCanvasBlock(Data_080eda0c + (motion->delay & 1) * 64,
+                                     x, (s16)(motion->y >> 16), 8, 8);
+        BattleEffect_IntegrateVector2(&motion->x, 60, 0);
       }
-      spark->delay++;
-      if (work->sparksRepeat == 1 && spark->delay == 10)
-        spark->delay = 0;
-      spark++;
+      motion->delay++;
+      if (work->sparksRepeat == 1 && motion->delay == 10)
+        motion->delay = 0;
+      motion++;
     }
   }
 

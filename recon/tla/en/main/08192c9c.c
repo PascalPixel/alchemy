@@ -1,5 +1,23 @@
-// Draft of BattleEffect_RunIris, decompiled from the listing: differ 4932 of 5364
-// (draft 5319), the same 257 calls and control flow; allocation differs.
+// Draft, differ 4552 of 5364, skeleton gap 576 + 560 (tla-en, 2026-11-01)
+// Measure with the four nested functions' listings as well:
+// diff ...08192c9c.c 0819284c,08192894,081929fc,08192a4c,08192c9c. Measured
+// against 08192c9c alone they all count as added (differ 5039, gap 563 + 1060).
+// BattleEffect_RunIris and its four nested functions, the same calls and
+// control flow as the listing. Left: mostly allocation and scheduling. The
+// native frame is 420 bytes, here 388; it keeps its i in r10 and j in r11,
+// so most of the gap is a counter in a low register (adds #1) against
+// movs #1 / add r10 / mov. Giving the drops' and the rings' loops the one
+// shared i and j as the native does moves i down to r7 and costs 90 lines, so
+// k stays separate there. Still open: the rise of the bright band keeps
+// (i - top) * 2 in the loop in the native, here strength-reduced to a giv;
+// the head of a streak loads Data_02012ef4 from the pool each pass, here
+// hoisted, and a Data_02012ef4[15][10] symbol was worse (606 + 584).
+// Measured: streak points index flat as [i * 10 + j] so the multiply by 200
+// synthesizes (723 -> 617 removed); s32 c with (u16)c >> n for the colour
+// channels (a u16 local loads ldrsh and extends); resource ids as symbols
+// load from the pool, which constants never do; each ring branch's blit copy
+// and one j per splash loop. ResourceId_Data076, 077, 09A and 0A5 are
+// placeholders for ids resource_directory.s does not name yet.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -93,7 +111,7 @@ void Transform_Pop(void);
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
+#define HALF(p, n) (((s16 *)(p))[n])
 
 #include "bg_scroll.h"
 #include "dma.h"
@@ -136,11 +154,29 @@ struct IrisPoint {
 
 // The opening's circle of light and its fifteen streaks, at 0x2ee0.
 struct IrisScene {
-  s32 x;
-  s32 y;
+  union {
+    s32 x;
+    struct {
+      u16 xFraction;
+      s16 xPixels;
+    };
+  };
+  union {
+    s32 y;
+    struct {
+      u16 yFraction;
+      s16 yPixels;
+    };
+  };
   s32 unk08;
   s32 unk0c;
-  s32 radius;
+  union {
+    s32 radius;
+    struct {
+      u16 radiusFraction;
+      s16 radiusPixels;
+    };
+  };
   struct IrisPoint streaks[15][10];
 };
 
@@ -171,11 +207,14 @@ struct Spans4 {
   struct WordPair p[4];
 };
 
+extern char ResourceId_Data134, ResourceId_Data076, ResourceId_Data077;
+extern char ResourceId_Data0A5, ResourceId_Data09A, ResourceId_VioletSkyBackdrop;
 extern struct ResourceTableEntry gResourceTableEntries[];
 extern u8 gMapCellBuffer[];
 extern u8 Data_02010578[];
 extern struct IrisSparks Data_02011f40;
 extern struct IrisScene Data_02012ee0;
+extern struct IrisPoint Data_02012ef4[];
 extern s32 gCameraSceneParameters[];
 extern const u16 gData_08197410[];
 extern const struct Scale Data_08196f48;
@@ -237,8 +276,10 @@ void Heap_Release(void *buffer);
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[((u8 *)(obj))[16]].tile)
 #define SCENE (&Data_02012ee0)
+#define PLTT 0x05000000
+#define STREAK(i, j) (Data_02012ef4[(i) * 10 + (j)])
 // The 128 background colours the scene fades (entries 96 to 223).
-#define FADE_PLTT ((u16 *)(BG_PLTT + 0xc0))
+#define FADE_PLTT ((u16 *)(PLTT + 0xc0))
 
 // A splash where a drop lands: rings spread from (x, y) for twice the
 // splash's duration, then a smaller pair of rings and a column of spray
@@ -252,7 +293,14 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   DrawRectangle drawAlt = Ram_HeapSlots->unkb8[1];
   s32 r;
   s32 cel;
-  s32 j;
+  s32 sheetOffset;
+  u8 *cells;
+  s32 j1;
+  s32 j2;
+  s32 j3;
+  s32 j4;
+  s32 j5;
+  s32 j6;
   s32 a;
   s32 px;
   s32 py;
@@ -261,51 +309,57 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   if (t < Data_08199f40[small] * 2) {
     r = Data_08199f40[small] * 2 - t;
     cel = r / 6;
-    for (j = 0; j != 64; j++) {
-      a = j << 10;
-      px = r * Trig_Sin(a) / 0x20000 + x;
+    sheetOffset = cel * 0x302;
+    cells = sprites + cel * 8;
+    for (j1 = 0; j1 != 64; j1++) {
+      a = j1 << 10;
+      px = (r * Trig_Sin(a) / 2 >> 16) + x;
       py = (r * Trig_Cos(a) >> 16) + y;
-      draw(canvas, sprites + 444 + cel * 8, px, py - 2, 2, 4);
+      draw(canvas, cells + 444, px, py - 2, 2, 4);
     }
     if (small == 0) {
       s32 offset = 0;
+      DrawRectangle blit;
 
       if (t <= 11)
         offset = 196;
       else if (t <= 23)
         offset = 98;
       ring = sprites + offset;
-      for (j = 0; j != 8; j++) {
-        a = (j << 13) + (t * 5 << 9);
+      blit = draw;
+      for (j2 = 0; j2 != 8; j2++) {
+        a = (j2 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
-        draw(canvas, ring, px - 3, py - 7, 7, 14);
+        blit(canvas, ring, px - 3, py - 7, 7, 14);
         a += a >> 1;
         px = (Iwram_MulQ16(0x28000, r * Trig_Sin(a) / 2) >> 16) + x;
         py = (Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2) >> 16) + y;
-        draw(canvas, ring, px - 3, py - 7, 7, 14);
+        blit(canvas, ring, px - 3, py - 7, 7, 14);
       }
-      draw(canvas, work->sheet + gData_08197410[8] + cel * 0x302, x - 4, y - 9,
+      draw(canvas, work->sheet + (gData_08197410[8] + sheetOffset), x - 4, y - 9,
            9, 18);
     } else {
       s32 offset = 294;
+      DrawRectangle blit;
 
       if (t <= 11)
         offset = 394;
       else if (t <= 23)
         offset = 344;
       ring = sprites + offset;
-      for (j = 0; j != 8; j++) {
-        a = (j << 13) + (t * 5 << 9);
+      blit = draw;
+      for (j3 = 0; j3 != 8; j3++) {
+        a = (j3 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
-        draw(canvas, ring, px - 2, py - 5, 5, 10);
+        blit(canvas, ring, px - 2, py - 5, 5, 10);
         a += a >> 1;
         px = (Iwram_MulQ16(0x28000, r * Trig_Sin(a) / 2) >> 16) + x;
         py = (Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2) >> 16) + y;
-        draw(canvas, ring, px - 2, py - 5, 5, 10);
+        blit(canvas, ring, px - 2, py - 5, 5, 10);
       }
-      draw(canvas, work->sheet + gData_08197410[6] + cel * 0x302, x - 3, y - 7,
+      draw(canvas, work->sheet + (gData_08197410[6] + sheetOffset), x - 3, y - 7,
            7, 14);
     }
   } else {
@@ -314,22 +368,22 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       cel = r / 3 * 8;
       if (cel == 64)
         cel = 56;
-      ring = sprites + cel + 444;
-      for (j = 0; j != 64; j++) {
-        a = j << 10;
+      ring = sprites + (cel + 444);
+      for (j4 = 0; j4 != 64; j4++) {
+        a = j4 << 10;
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         draw(canvas, ring, px - 1, py - 2, 2, 4);
       }
-      for (j = 0; j != 64; j++) {
-        a = j << 10;
+      for (j5 = 0; j5 != 64; j5++) {
+        a = j5 << 10;
         px = (r * Trig_Sin(a) * 2 >> 16) + x;
         py = (r * Trig_Cos(a) >> 16) + y + Data_08199f48[small] * 2;
         draw(canvas, ring, px - 1, py - 2, 2, 4);
       }
     }
-    for (j = 0, py = y; j < t - Data_08199f40[small] * 2 && py <= 112;
-         j++, py += 32)
+    for (j6 = 0, py = y; j6 < t - Data_08199f40[small] * 2 && py <= 112;
+         j6++, py += 32)
       draw(canvas, sprites + 508, x - 4, py, 8, 32);
     if (t < Data_08199f40[small] * 2 + 8) {
       s32 shake = (Data_08199f40[small] * 2 - t + 8) >> 1;
@@ -497,9 +551,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   u8 *sprites;
   s32 pos[4];
   u8 *battle;
-  u16 savedScroll;
+  s32 savedScroll;
   s16 *camera;
-  s16 savedZoom;
+  s32 savedZoom;
   struct Scale scale;
   struct Scale shrink;
   struct ModelTexture texture;
@@ -514,6 +568,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s32 off;
   s32 top;
   u8 *dst;
+  u8 *tiles;
+  u8 v;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -526,8 +582,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0x2000);
   Func_0813ba50();
-  *(u16 *)BG_PLTT = 0;
-  *(u16 *)(BG_PLTT + 2) = 0;
+  *(u16 *)PLTT = 0;
+  *(u16 *)(PLTT + 2) = 0;
   work->transferMode = 0;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -538,27 +594,32 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0x3f44;
   Func_08191958(0, 4, Func_0819253c);
   Iwram_FillWords(canvas, 0x4000, 0);
-  while (*(volatile u32 *)(0x040000d4 + 8) & 0x80000000) {
+  while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }
   work->transferPending = 1;
   wait(1);
   REG_BG2PA = 0x80;
-  *(volatile u32 *)0x04000028 = 0;
+  REG_BG2X = 0;
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f44;
   work->transferMode = 2;
   work->transferValue = 75;
   savedZoom = camera[27];
-  if (effect->side == 0)
-    camera[27] = 0x4000;
-  else
-    camera[27] = 0xc000;
+  if (effect->side == 0) {
+    s32 yaw = 0x4000;
+
+    camera[27] = yaw;
+  } else {
+    s32 yaw = 0xc000;
+
+    camera[27] = yaw;
+  }
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   BattleEffect_LoadBlitter(SLOT_ALT, 3);
   draw[0] = Ram_HeapSlots->unk64[1];
   draw[1] = Ram_HeapSlots->unkb8[1];
-  Resource_LoadAndDecompress(0x134, Data_02010578, 0, 0);
-  Resource_LoadAndDecompress(0x134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, Data_02010578, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   for (i = 0; i != 0x302; i++)
     sprites[i] >>= 1;
   Func_0815b434(work->sheet, 32, 0x10000);
@@ -635,8 +696,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s->angle = Data_08199ffc[i];
         s->speed = Data_0819a01a[i];
         s->unk10 = 0;
-        for (j = 1; j != 10; j++)
-          s[j].x = s[j].y = 0x960000;
+        for (j = 1; j != 10; j++) {
+          STREAK(i, j).x = 0x960000;
+          STREAK(i, j).y = 0x960000;
+        }
       }
       work->transferMode = 2;
       work->transferValue = 50;
@@ -645,25 +708,29 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       BattleEffect_LoadBlitter(SLOT_ALT, 3);
       draw[1] = Ram_HeapSlots->unkb8[1];
       for (i = 0; i != 15; i++) {
-        struct IrisPoint *s = SCENE->streaks[i];
-
         if (!(frame & 1)) {
           for (j = 9; j != 0; j--) {
-            s[j].x = s[j - 1].x;
-            s[j].y = s[j - 1].y;
+            STREAK(i, j).x = STREAK(i, j - 1).x;
+            STREAK(i, j).y = STREAK(i, j - 1).y;
           }
         }
-        if (frame >= i * 8 + 24 && HI(s->y) > 59) {
-          s32 size;
+        if (frame >= i * 8 + 24) {
+          struct IrisPoint *s = SCENE->streaks[i];
+          if (HALF(s, 3) > 59) {
+            s32 size;
 
-          s->x += Trig_Sin(s->angle) * 3 / 2;
-          s->y -= Trig_Cos(s->angle) * 3 / 2;
-          s->angle += s->speed * 2 / 3;
-          size = (i & 3) + 5;
-          for (j = 0; j != 10; j++)
-            draw[1](canvas, sprites + gData_08197410[size - 1],
-                    HI(s[j].x) - (size >> 1), HI(s[j].y) - size, size,
-                    size * 2);
+            s->x += Trig_Sin(s->angle) * 3 / 2;
+            s->y -= Trig_Cos(s->angle) * 3 / 2;
+            s->angle += s->speed * 2 / 3;
+            size = (i & 3) + 5;
+            for (j = 0; j != 10; j++) {
+              struct IrisPoint *p = &STREAK(i, j);
+
+              draw[1](canvas, sprites + gData_08197410[size - 1],
+                      HALF(p, 1) - (size >> 1), HALF(p, 3) - size, size,
+                      size * 2);
+            }
+          }
         }
       }
       if (frame <= 71) {
@@ -671,10 +738,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         SCENE->radius -= 0x1000;
         if (!(frame & 15)) {
           for (i = 0; i != 128; i++) {
-            u16 c = FADE_PLTT[i];
+            s32 c = FADE_PLTT[i];
             s32 r = c & 31;
-            s32 g = c >> 5 & 31;
-            s32 b = c >> 10 & 31;
+            s32 g = (u16)c >> 5 & 31;
+            s32 b = (u16)c >> 10 & 31;
 
             FADE_PLTT[i] = (b + 1) << 10 | (g + 1) << 5 | (r + 1);
           }
@@ -683,10 +750,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         SCENE->radius += 0x2000;
         if (!(frame & 7)) {
           for (i = 0; i != 128; i++) {
-            u16 c = FADE_PLTT[i];
+            s32 c = FADE_PLTT[i];
             s32 r = c & 31;
-            s32 g = c >> 5 & 31;
-            s32 b = c >> 10 & 31;
+            s32 g = (u16)c >> 5 & 31;
+            s32 b = (u16)c >> 10 & 31;
 
             if (r < 23)
               r++;
@@ -700,10 +767,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
       HeapSlot_Release(SLOT_ALT);
       {
-        s32 size = HI(SCENE->radius) * 2;
+        s32 size = SCENE->radiusPixels * 2;
 
         Func_0815b434(work->sheet, size, 0x10000);
-        Func_0818caa8(work->sheet, HI(SCENE->x), HI(SCENE->y), size);
+        Func_0818caa8(work->sheet, SCENE->xPixels, SCENE->yPixels, size);
       }
       if (frame == 175) {
         REG_BG2CNT = 0x785;
@@ -720,20 +787,21 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       work->transferPending = 1;
       wait(1);
       battle[0x867] = 1;
-      BattleBackground_LoadFar(1, 0x76, 0);
-      colors = Resource_GetTableEntry(0xa5);
-      Dma_Set(colors, (void *)(BG_PLTT + 0x200), 0x84000080, REG_DMA3);
+      BattleBackground_LoadFar(1, (s32)&ResourceId_Data076, 0);
+      colors = Resource_GetTableEntry((s32)&ResourceId_Data0A5);
+      Dma_Set(colors, (void *)(PLTT + 0x200), 0x84000080, REG_DMA3);
       Resource_DecodeType01((u8 *)colors + 0x200, Data_02010578);
+      tiles = Data_02010578;
       for (i = 0; i != 16; i++) {
         struct IrisSprite *obj = Func_0815b290(32, 32, 0x80002000, 0);
 
         work->objects[i] = obj;
         ((struct IrisSpriteFlags *)obj)->priority = 1;
-        Dma_Set(Data_02010578 + i * 0x400, (void *)OBJ_TILES(obj), 0x84000100,
-                REG_DMA3);
+        Dma_Set(tiles, (void *)OBJ_TILES(obj), 0x84000100, REG_DMA3);
+        tiles += 0x400;
       }
-      colors = Resource_GetTableEntry(0x9a);
-      Iwram_FillWords((void *)(BG_PLTT + 0x3e0), 32, -1);
+      colors = Resource_GetTableEntry((s32)&ResourceId_Data09A);
+      Iwram_FillWords((void *)(PLTT + 0x3e0), 32, -1);
       Resource_DecodeType01((u8 *)colors + 32, work->sheet);
       for (i = 0; i != 15; i++) {
         struct IrisSprite *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
@@ -765,7 +833,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         sparks->vx[i] = ((Random16() & 63) - 32) << 12;
         sparks->vy[i] = ((Random16() & 63) - 32) << 12;
       }
-      Resource_LoadAndDecompress(0x134, work->sheet, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->sheet, 0, 0);
       for (i = 0; i != 6; i++) {
         work->particles[i].x = (Random16() % 15 << 16) + 0x210000;
         work->particles[i].y = (Random16() % 15 << 16) + 0x390000;
@@ -785,7 +853,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       pos[1] = 0xff0000;
       lift = 0;
       if (frame > 350) {
-        u16 *pal = (u16 *)(BG_PLTT + 0x200);
+        u16 *pal = (u16 *)(PLTT + 0x200);
 
         for (i = 0; i != 255; i++) {
           s32 r = pal[i] & 31;
@@ -810,8 +878,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           lift = (Trig_Sin((frame << 6) - 0x2c00) << 6) - 0x147200;
         for (i = 0; i != 4; i++) {
           for (j = 0; j != 4; j++) {
-            pos[0] = 0x480000 + j * 0x20000;
-            pos[2] = lift + 0x380000 + i * 0x20000;
+            pos[0] = 0x480000 + j * 0x200000;
+            pos[2] = lift + 0x380000 + i * 0x200000;
             Render_ApplyProjectedPlacementFar(work->objects[i * 4 + j], pos,
                                               (s32 *)&scale, 0);
           }
@@ -884,14 +952,15 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     if (frame == 230) {
       REG_BLDALPHA = 0x1010;
       REG_BG2CNT = 0x784;
-      for (k = 1; k != 8; k++) {
+      for (i = 1; i != 8; i++) {
         for (j = 0; j != 10; j++) {
           u8 *src = work->sheet + gData_08197410[j];
-          u8 *out = work->sheet + gData_08197410[j] + k * 0x302;
-          s32 n = (j + 1) * 2 * (j + 1);
+          u8 *out = work->sheet + gData_08197410[j] + i * 0x302;
+          s32 w = j + 1;
+          s32 n = w * 2 * w;
 
           for (m = 0; m != n; m++) {
-            u8 v = src[m] - k * 8;
+            u8 v = src[m] - i * 8;
 
             if (v > 63)
               v = 0;
@@ -905,7 +974,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
       for (i = 0; i != 36; i++)
         sparks->life[i] = 0;
-      Resource_LoadAndDecompress(0x134, sprites, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
       for (i = 0; i != 32; i++)
         for (j = 0; j != 8; j++)
           sprites[508 + i * 8 + j] = Data_0819a038[j];
@@ -941,28 +1010,28 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
       Func_08164b2c(v, v, v);
     }
-    for (k = 0; k != 6; k++) {
-      if (frame > Data_0819a048[k]) {
-        if (frame < Data_0819a054[k]) {
-          Iris_DrawSplash(frame - Data_0819a048[k], Data_0819a060[k],
-                          Data_0819a066[k], Data_0819a06c[k]);
-          if (Data_0819a048[k] - Data_0819a06c[k] * 16 + 48 == frame) {
+    for (i = 0; i != 6; i++) {
+      if (frame > Data_0819a048[i]) {
+        if (frame < Data_0819a054[i]) {
+          Iris_DrawSplash(frame - Data_0819a048[i], Data_0819a060[i],
+                          Data_0819a066[i], Data_0819a06c[i]);
+          if (Data_0819a048[i] - Data_0819a06c[i] * 16 + 48 == frame) {
             for (j = 0; j != 6; j++) {
               s32 s = FindFreeSpark();
 
               sparks->life[s] = 0x7900;
-              sparks->x[s] = Data_0819a060[k] << 17;
-              sparks->y[s] = (Data_0819a066[k] << 16) + 0x200000;
+              sparks->x[s] = Data_0819a060[i] << 17;
+              sparks->y[s] = (Data_0819a066[i] << 16) + 0x200000;
               sparks->vx[s] = ((Random16() & 31) - 16) << 12;
               sparks->vy[s] = -(Random16() & 31) << 12;
             }
           }
-        } else if (frame < Data_0819a054[k] + Data_0819a078[k]) {
-          s32 t = frame - Data_0819a054[k];
+        } else if (frame < Data_0819a054[i] + Data_0819a078[i]) {
+          s32 t = frame - Data_0819a054[i];
 
-          Func_08192648(t / Data_0819a07e[k], Data_0819a060[k],
-                        Data_0819a066[k] - Data_0819a072[k] * t / 2,
-                        Data_0819a06c[k]);
+          Func_08192648(t / Data_0819a07e[i], Data_0819a060[i],
+                        Data_0819a066[i] - Data_0819a072[i] * t / 2,
+                        Data_0819a06c[i]);
         }
       }
     }
@@ -1035,14 +1104,17 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 423) <= 19) {
-      top = 120 - (frame - 422) * 8;
-      for (y = top; y != top + 40 && y <= 127; y++) {
-        u8 v = (y - top) * 2;
+      s32 step = frame - 422;
 
-        if (y >= 0) {
+      top = 120 - step * 8;
+      for (i = top; i != top + 40; i++) {
+        v = (i - top) * 2;
+        if (i > 127)
+          break;
+        if (i >= 0) {
           if (v > 63)
             v = 63;
-          off = ((y & 7) << 3) + ((y >> 3) << 10);
+          off = ((i & 7) << 3) + ((i >> 3) << 10);
           for (x = 0; x != 128; x += 8) {
             for (m = 0; m != 8; m++) {
               if (canvas[off] < v)
@@ -1055,12 +1127,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 401) <= 30 && (frame & 1)) {
-      Resource_GetTableEntry(0x45);
+      Resource_GetTableEntry((s32)&ResourceId_VioletSkyBackdrop);
       for (i = 0; i != 128; i++) {
-        u16 c = FADE_PLTT[i];
+        s32 c = FADE_PLTT[i];
         s32 r = c & 31;
-        s32 g = c >> 5 & 31;
-        s32 b = c >> 10 & 31;
+        s32 g = (u16)c >> 5 & 31;
+        s32 b = (u16)c >> 10 & 31;
 
         if (r > 3)
           r -= 2;
@@ -1076,19 +1148,20 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     if (frame == 446) {
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       Render_ResetTransformState();
-      BattleBackground_LoadFar(1, 0x77, 0);
+      BattleBackground_LoadFar(1, (s32)&ResourceId_Data077, 0);
+      off = 0x302;
       for (i = 0; i != 128; i++) {
-        u16 c = FADE_PLTT[i];
+        s32 c = FADE_PLTT[i];
         s32 r = c & 31;
-        s32 g = c >> 5 & 31;
-        s32 b = c >> 10 & 31;
+        s32 g = (u16)c >> 5 & 31;
+        s32 b = (u16)c >> 10 & 31;
 
         FADE_PLTT[i] = (b + 1) << 10 | (g + 1) << 5 | (r + 1);
       }
       Graphics_LoadGreyRamp();
-      for (i = 0, off = 0x302; i != 6; i += 2) {
+      for (i = 0; i != 6; i += 2) {
         Func_0815b434(work->sheet + off, i + 14, 0x10000);
-        off += (i + 14) * (i + 14) * 2;
+        off += (i + 14) * 2 * (i + 14);
       }
       Iwram_FillWords(work->sheet + 0x1810, 0x1000, 0);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2010, 16, 64, 0x10000);
@@ -1105,14 +1178,15 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         sparks->life[i] = 0;
       for (i = 0; i != 32; i++)
         work->particles[i].variant = 0;
-      for (k = 1; k != 8; k++) {
+      for (i = 1; i != 8; i++) {
         for (j = 0; j != 10; j++) {
           u8 *src = work->sheet + gData_08197410[j];
-          u8 *out = work->sheet + gData_08197410[j] + k * 0x302;
-          s32 n = (j + 1) * 2 * (j + 1);
+          u8 *out = work->sheet + gData_08197410[j] + i * 0x302;
+          s32 w = j + 1;
+          s32 n = w * 2 * w;
 
           for (m = 0; m != n; m++) {
-            u8 v = src[m] - k * 8;
+            u8 v = src[m] - i * 8;
 
             if (v > 63)
               v = 0;
@@ -1124,16 +1198,18 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       work->transferValue = 70;
     }
     if ((u32)(frame - 447) <= 15) {
-      top = 136 - (frame - 446) * 8;
-      for (y = top; y != 0; y--) {
-        u8 v = (top - y) * 2;
+      s32 step = frame - 446;
 
-        if (y <= 127) {
+      top = 136 - step * 8;
+      for (i = top; i != 0; i--) {
+        u8 v = (top - i) * 2;
+
+        if (i <= 127) {
           if (v > 63)
             v = 63;
-          if (y > top - 8)
+          if (top - 8 < i)
             v = 0;
-          off = ((y & 7) << 3) + ((y >> 3) << 10);
+          off = ((i & 7) << 3) + ((i >> 3) << 10);
           for (x = 0; x != 128; x += 8) {
             for (m = 0; m != 8; m++) {
               if (canvas[off] < v)
@@ -1161,7 +1237,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       if (frame <= 563) {
         scroll = 0x1000;
         if (frame > 500) {
-          scroll = (s16)(0x1000 - (frame - 500) * 64);
+          scroll = (s16)(scroll - (frame - 500) * 64);
           if (scroll < 0)
             scroll = 0;
         }
@@ -1189,7 +1265,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       if (frame <= 563) {
         scroll = 0x1000;
         if (frame > 470) {
-          scroll = (s16)(0x1000 - (frame - 470) * 64);
+          scroll = (s16)(scroll - (frame - 470) * 64);
           if (scroll < 0)
             scroll = 0;
         }
@@ -1283,7 +1359,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 cosT = Trig_Cos(0x7800);
 
       for (k = 0; k != 80; k += 8) {
-        if (frame > 638 + k && frame < 670 + k) {
+        if (638 + k < frame && frame < 670 + k) {
           s32 t = frame - k - 638;
           s32 ry = t >> 1;
           s32 tile = gData_08197410[0] + t / 4 * 0x302;
@@ -1317,16 +1393,16 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 32; i++)
         Dma_Set(work->sheet + 0x1bf0 - i * 32, work->sheet + 0x1c10 + i * 32,
                 0x84000010, REG_DMA3);
-      for (k = 1; k != 8; k++) {
+      for (i = 1; i != 8; i++) {
         u8 *src = work->sheet + 0x1810;
-        u8 *out = work->sheet + 0x1810 + k * 0x800;
-        u8 v = 64 - k * 8;
+        u8 *out = work->sheet + 0x1810 + i * 0x800;
+        u8 v = 64 - i * 8;
 
-        for (m = 0; m != 0x800; m++) {
-          if (v < src[m])
-            out[m] = v;
+        for (j = 0; j != 0x800; j++) {
+          if (v < src[j])
+            out[j] = v;
           else
-            out[m] = src[m];
+            out[j] = src[j];
         }
       }
     }
@@ -1337,8 +1413,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 tile = gData_08197410[5] + t / 4 * 0x302;
       s32 rx = t * 2;
 
-      for (j = 0; j != 96; j++) {
-        s32 a = j * 384;
+      for (i = 0; i != 96; i++) {
+        s32 a = i * 384;
         s32 sx = rx * Trig_Sin(a);
         s32 sy = t * Trig_Cos(a);
         s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
@@ -1356,8 +1432,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 rx = t >> 1;
       s32 ry = t * 2;
 
-      for (j = 0; j != 197; j++) {
-        s32 a = j * 384;
+      for (i = 0; i != 197; i++) {
+        s32 a = i * 384;
         s32 sx = rx * Trig_Sin(a);
         s32 sy = ry * Trig_Cos(a);
         s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
@@ -1400,7 +1476,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s = FindFreeSpark();
       if (s != -1) {
         sparks->life[s] = (Random16() & 15) << 15;
-        sparks->x[s] = 0x770000;
+        sparks->x[s] = 0xef0000;
         sparks->y[s] = (Random16() & 255) << 16;
         sparks->vx[s] = -(Random16() & 31) << 12;
         sparks->vy[s] = ((Random16() & 31) - 16) << 12;
@@ -1412,7 +1488,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           s32 spin = Random16() & 3;
 
           work->particles[n].x = 0x600000;
-          work->particles[n].y = ((Random16() & 7) << 16) + 0x480000;
+          work->particles[n].y = ((Random16() & 7) << 16) + 0x240000;
           work->particles[n].z = frame;
           work->particles[n].velocityX =
               Iwram_MulQ16((spin + 2) << 15, Trig_Sin(0x9800));
@@ -1440,10 +1516,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     if (frame > 816) {
       for (i = 0; i != 128; i++) {
-        u16 c = FADE_PLTT[i];
+        s32 c = FADE_PLTT[i];
         s32 r = c & 31;
-        s32 g = c >> 5 & 31;
-        s32 b = c >> 10 & 31;
+        s32 g = (u16)c >> 5 & 31;
+        s32 b = (u16)c >> 10 & 31;
 
         if (r <= 30)
           r++;
@@ -1463,12 +1539,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   HeapSlot_Release(SLOT_BLITTER);
   Func_08191cc4();
   Iwram_FillWords(canvas, 0x4000, 0);
-  while (*(volatile u32 *)(0x040000d4 + 8) & 0x80000000) {
+  while (((volatile struct DmaRegisters *)REG_DMA3)->control & 0x80000000) {
   }
   work->transferPending = 1;
   wait(1);
   REG_BG2PA = 0x80;
-  *(volatile u32 *)0x04000028 = 0;
+  REG_BG2X = 0;
   gBgScroll[1].x = savedScroll;
   for (i = 0; i != 36; i++)
     ResourceObject_ReleaseFar(objects[i]);

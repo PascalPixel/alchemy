@@ -1,9 +1,18 @@
-// Draft of BattleEffect_RunWyrdCurse, decompiled from the listing: differ 395
-// of 568 (draft 563), the same 47 calls and control flow. The glow's mirror
-// loop runs to size / 2 with its right-hand columns written from size, so
-// it keeps the native's six row pointers stepping by two; the last
-// particle is read in place.
-// Left: allocation, and a stack frame of 60 bytes for 68.
+// Draft, differ 458 of 568, skeleton gap 112 (tla-en, 2026-11-01)
+// Control flow and the 47 calls are in place, and the 68-byte frame agrees.
+// The glow loop's forms set its six stepping pointers: size set before the
+// clear and shared with the drops' size, so it stays in a register for the
+// multiplies; cell computed before the test, so its two stores share one
+// pointer; size - x - 1 kept apart, so y * size + size is added on that
+// register. The third and fourth rows spell (31 - y) * 32 differently because
+// any one spelling folds their sum and scores worse.
+// Left: the native derives all four mirrored pointers from one (32 - y) * 32
+// - 32; here they come from 31 - y and 32 - y separately, with their
+// constants split. No plain spelling found keeps that one temporary.
+// The splash scale: the native holds 25000 in a register and halves it with
+// asr, but any local holding it is propagated here and 12500 is loaded on its
+// own (tried >> 1, a shared local, a do-while loop).
+// The rest is allocation and spills.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -111,6 +120,9 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
   struct EffectStep *drop;
+  struct EffectStep *last;
+  u16 *palette;
+  s32 size;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -129,34 +141,35 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  palette = (u16 *)BG_PLTT + 1;
   caster = *GetBattleObjectSlotFar(effect->actor);
   Iwram_ClearWords((void *)BG_PLTT, 128);
   for (i = 0; i != 63; i++) {
-    ((u16 *)BG_PLTT)[i + 1] = i / 3 + 8;
+    *palette++ = i / 3 + 8;
   }
 
   // The glow: a 16-pixel disc mirrored into the four quarters of 32x32.
-  Iwram_ClearWords(work->sheet + 0x1000, 0x800);
-  Func_0815b434(work->sheet, 16, 0x10000);
   {
-    s32 size = 16;
-    u8 *glow = work->sheet + 0x1000;
     s32 y;
     s32 x;
 
+    size = 16;
+    Iwram_ClearWords(work->sheet + 0x1000, 0x800);
+    Func_0815b434(work->sheet, size, 0x10000);
     for (y = 0; y != size; y++) {
       for (x = 0; x != size / 2; x++) {
+        s32 cell = y * size + x;
         u8 v = work->sheet[y * size / 2 + x];
 
         if (v != 0) {
-          glow[y * 32 + x * 2] = v;
-          glow[y * 32 + x * 2 + 1] = v;
-          glow[(y + 1) * size * 2 - 2 - x * 2] = v;
-          glow[(y + 1) * size * 2 - 1 - x * 2] = v;
-          glow[(size * 2 - 1 - y) * 32 + x * 2] = v;
-          glow[(size * 2 - 1 - y) * 32 + x * 2 + 1] = v;
-          glow[(size * 2 - 1 - y) * 32 + size * 2 - 2 - x * 2] = v;
-          glow[(size * 2 - 1 - y) * 32 + size * 2 - 1 - x * 2] = v;
+          work->sheet[0x1000 + cell * 2] = v;
+          work->sheet[0x1000 + cell * 2 + 1] = v;
+          work->sheet[0x1000 + (y * size + (size - x - 1)) * 2] = v;
+          work->sheet[0x1000 + (y * size + (size - x - 1)) * 2 + 1] = v;
+          work->sheet[0x1000 + ((size * 2 - y - 1) << 5) + x * 2] = v;
+          work->sheet[0x1000 + ((size * 2 - y - 1) << 5) + x * 2 + 1] = v;
+          work->sheet[0x1000 + (32 - y - 1) * 32 + size * 2 - x * 2 - 2] = v;
+          work->sheet[0x1000 + (32 - y - 1) * 32 + size * 2 - x * 2 - 2 + 1] = v;
         }
       }
     }
@@ -181,16 +194,17 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         drop->velocityZ = 160 - i * 16;
         drop->variant = 0;
       }
-      work->particles[63].x = (screen.x / 2) << 16;
-      work->particles[63].y = 0x700000;
-      work->particles[63].variant = 0;
+      last = &work->particles[63];
+      last->x = (screen.x / 2) << 16;
+      last->y = 0x700000;
+      last->variant = 0;
     }
 
     // The falling drops, one more every eight frames.
     if (frame <= 63) {
       for (i = 0, drop = work->particles; i != 6; i++, drop++) {
         if (frame > i * 8 && drop->variant == 0) {
-          s32 size = drop->z;
+          size = drop->z;
 
           draw(canvas, sprites + gData_08197410[size - 1],
                HI(drop->x) - size / 2, HI(drop->y) - size, size, size * 2);
@@ -217,22 +231,23 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     model->shade = 0;
 
     // The glow gathers what the landed drops bring.
+    last = &work->particles[63];
     for (i = 0, drop = work->particles; i != 8; i++, drop++) {
       if (drop->variant > 0) {
-        work->particles[63].variant += drop->velocityZ;
+        last->variant += drop->velocityZ;
         drop->velocityZ /= 2;
       }
     }
-    level = work->particles[63].variant;
+    last = &work->particles[63];
+    level = last->variant;
     if (level > 0) {
       s32 scale = (level << 13) / 824;
 
       if (frame > 63) {
-        work->particles[63].variant = level - 24;
+        last->variant = level - 24;
       }
       Render_ResetTransformState();
-      Func_08015160(work->particles[63].x - 0x400000,
-                    work->particles[63].y - 0x400000, 0);
+      Func_08015160(last->x - 0x400000, last->y - 0x400000, 0);
       Func_080151e4(scale * 2, scale, scale * 2);
       SceneTransform_ApplyPitch(-0x2000);
       Render_TransformVertices(gData_08199210, vertices, 4);
@@ -250,7 +265,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         texture.pixels = work->sheet + 0x4000 + ((i % 2) << 10);
         Render_ResetTransformState();
         Func_08015160(drop->x - 0x400000, drop->y - 0x300000, 0);
-        Func_080151e4(25000 / 2, 25000, 25000 / 2);
+        Func_080151e4(12500, 25000, 12500);
         SceneTransform_ApplyPitch(-0x4000);
         Render_TransformVertices(gData_08199210, vertices, 4);
         Render_DrawModelList(model);

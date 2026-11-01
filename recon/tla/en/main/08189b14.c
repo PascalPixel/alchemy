@@ -1,22 +1,26 @@
-// Draft: listing 760 instructions, draft 760, differ 510. No close ☀️ twin (call
-// order BattleEffect_RunRamses 0.455): ⚓️'s own effect on ☀️'s
-// frame, with its rune and swords drawn as textured quads by ⚓️'s model
-// kernels, as in Triple Chomp (BattleEffect_RunTripleChomp).
-// The native stack frame (88) holds effect at sp+52, work 48, canvas 44, frame 40,
-// the blitter 32, graphics 28, the start's address 24, the vertices 20, the
-// texture's address 16, the sword's delay (16 * sword) at 12 and its sparks'
-// offset at 8; the texture is at sp+56, the target's screen position at 64
-// and the start at 76.
-// Written from the listing (2026-10-15, fx-n3): 560 at the first compile,
-// with the instruction count already the native's. The blitter as a pair
-// (its second word fills sp+36) and the aggregates declared start, target,
-// texture (the first declared takes the highest slot): 510.
-// Left, first: the native reloads the map cell buffer's address from the
-// pool for each of the prologue's three calls, where this draft keeps it in
-// r5 across them (as Ram_MapCellBuffer or as a linked gMapCellBuffer[]: 510
-// both), and every slot and register after that follows. The fan's texture
-// is written as two byte stores natively (5, then 6, the texture's address
-// stored again between them), not this draft's bitfield update.
+// Draft, differ 14 of 760, skeleton gap 14 (tla-en, 2026-11-01)
+// Left: six pairs that differ only in sched2's order, no register or slot:
+// the load of effect waits after the stores before it in the listing (after
+// frame = 0, and after the sword loop's two counters) and here goes first;
+// the sword's giv is set before the sparks' offset (mov r8 after str [sp, 8]
+// in the listing); model->kind is stored before model->mesh; the fan's second
+// texture byte and the frame's reload before the loop's compare. Reordering
+// the model stores, flipping the compares and moving step's assignment later
+// each gained nothing or lost allocation (step below the strike: 459).
+// No close ☀️ twin (call order BattleEffect_RunRamses 0.455): ⚓️'s own effect
+// on ☀️'s frame, with its rune and swords drawn as textured quads by ⚓️'s
+// model kernels, as in Triple Chomp (BattleEffect_RunTripleChomp).
+// What the shape rests on: cells, one address for the function's whole life,
+// is spilled and so rematerialized from the pool at each use; scale is one
+// variable across the rune, the flash and the fan (r5 in all three); model
+// and vertices sit in an inner block so that vertices' slot follows the
+// start's address; the fan's angles are (frame + i * n) << 9, which loop.c
+// reduces. The spark area stays Ram_MapCellBuffer + 0x4000 as a constant, so
+// the first loop's pool holds its address plus 24. The frame (88) holds effect
+// at sp+52, work 48, canvas 44, frame 40, the blitter 32, graphics 28, the
+// start's address 24, vertices 20, the texture's address 16, the sword's delay
+// 12 and its sparks' offset 8; the texture is at sp+56, the target at 64 and
+// the start at 76.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -84,8 +88,7 @@ void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
-void EffectPosition_ProjectBattler(
-    s32 id, struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
@@ -95,7 +98,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void *Heap_AllocEwram(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
@@ -132,10 +135,9 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   struct EffectPosition target;
   struct ModelTexture texture;
   struct EffectStep *step;
-  struct Model *model;
-  void *vertices;
   s32 i;
   s32 j;
+  u8 *cells = Ram_MapCellBuffer;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -147,23 +149,23 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   if (effect->side == 0)
-    BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
-                  BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
+    BattleEffect_LoadBlitter(
+        HEAP_SLOT_BLITTER,
+        BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
   else
     BattleEffect_LoadBlitter(
         HEAP_SLOT_BLITTER,
         BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                 BLIT_ADDITIVE));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet,
-                             Ram_MapCellBuffer, 1, 1);
-  Func_0816ae40(Ram_MapCellBuffer, work->sheet, 64, 64);
+  Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, cells, 1, 1);
+  Func_0816ae40(cells, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BladeSheet, work->sheet + 0x4000,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet + 0x5000, 0,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -259,101 +261,106 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
     }
 
     // This frame's models: one quad, retextured for each part.
-    vertices = Heap_AllocEwram(32);
-    model = Render_AllocateModelList(1);
-    texture.logWidth = 7;
-    texture.logHeight = 7;
-    texture.pixels = work->sheet;
-    model->mesh = gData_08199364;
-    model->kind = 7;
-    model->texture = &texture;
-    model->vertices = vertices;
+    {
+      struct Model *model;
+      void *vertices;
+      s32 scale;
 
-    // Frames 16-107: the rune rises behind the target, turning, then fades.
-    if (frame >= 16 && frame <= 107) {
-      s32 height = frame * 2 - 96;
-      s32 scale = (frame << 13) - 0x20000;
-      s32 alpha = 0;
+      vertices = Heap_AllocEwram(32);
+      model = Render_AllocateModelList(1);
+      texture.logWidth = 7;
+      texture.logHeight = 7;
+      texture.pixels = work->sheet;
+      model->mesh = gData_08199364;
+      model->kind = 7;
+      model->texture = &texture;
+      model->vertices = vertices;
 
-      if (height > -48)
-        height = -48;
-      if (frame >= effect->variant * 16 + 60)
-        alpha = -((frame - effect->variant * 16) * 4 - 240);
-      if (scale > 0x20000)
-        scale = 0x20000;
-      model->alpha = alpha;
-      Render_ResetTransformState();
-      Func_080151e4(0x8000, 0x10000, 0x8000);
-      Func_08015160((start.x - 128) << 16, height << 16, 0);
-      SceneTransform_ApplyPitch(0x5900);
-      if (effect->side == 0)
-        SceneTransform_ApplyYaw(0x1900);
-      else
-        SceneTransform_ApplyYaw(-0x1900);
-      Func_080150e4(frame << 9);
-      Func_0801521c(scale);
-      Func_080151e4(0x10000, 0x10000, 0x10000);
-      Render_TransformVertices(Data_081991e0, vertices, 4);
-      Render_DrawModelList(model);
-    }
+      // Frames 16-107: the rune rises behind the target, turning, then fades.
+      if (frame >= 16 && frame <= 107) {
+        s32 height = frame * 2 - 96;
+        s32 alpha = 0;
 
-    // Each sword's flash grows where it lands and fades over 16 frames.
-    texture.pixels = Ram_MapCellBuffer;
-    for (i = 0; i != effect->variant + 1; i++) {
-      if (frame >= i * 16 + 50) {
-        s32 age = frame - i * 16 - 50;
-        s32 alpha = 64 - age * 8;
+        scale = (frame << 13) - 0x20000;
+        if (height > -48)
+          height = -48;
+        if (frame >= effect->variant * 16 + 60)
+          // Spelled with + -240 so that the negation is not folded into 240 -
+          // x.
+          alpha = -((frame - effect->variant * 16) * 4 + -240);
+        if (scale > 0x20000)
+          scale = 0x20000;
+        model->alpha = alpha;
+        Render_ResetTransformState();
+        Func_080151e4(0x8000, 0x10000, 0x8000);
+        Func_08015160((start.x - 128) << 16, height << 16, 0);
+        SceneTransform_ApplyPitch(0x5900);
+        if (effect->side == 0)
+          SceneTransform_ApplyYaw(0x1900);
+        else
+          SceneTransform_ApplyYaw(-0x1900);
+        Func_080150e4(frame << 9);
+        Func_0801521c(scale);
+        Func_080151e4(0x10000, 0x10000, 0x10000);
+        Render_TransformVertices(Data_081991e0, vertices, 4);
+        Render_DrawModelList(model);
+      }
 
-        if (alpha > 0)
-          alpha = 0;
-        if (alpha > -64) {
-          s32 scale = age * 12384 + 0x8000;
+      // Each sword's flash grows where it lands and fades over 16 frames.
+      texture.pixels = cells;
+      for (i = 0; i != effect->variant + 1; i++) {
+        if (frame >= i * 16 + 50) {
+          s32 age = frame - i * 16 - 50;
+          s32 alpha = 64 - age * 8;
 
-          model->alpha = alpha;
+          if (alpha > 0)
+            alpha = 0;
+          if (alpha > -64) {
+            scale = age * 12384 + 0x8000;
+            model->alpha = alpha;
+            Render_ResetTransformState();
+            Func_080151e4(0x8000, 0x10000, 0x8000);
+            Func_08015160((start.x - 128) << 16, -48 << 16, 0);
+            SceneTransform_ApplyPitch(0x5900);
+            if (effect->side == 0)
+              SceneTransform_ApplyYaw(0x1900);
+            else
+              SceneTransform_ApplyYaw(-0x1900);
+            Func_080150e4(frame << 9);
+            Func_0801521c(scale);
+            Render_TransformVertices(Data_081991e0, vertices, 4);
+            Render_DrawModelList(model);
+          }
+        }
+      }
+
+      // Frames 0-49: the fan of eight blades opens, pulsing, and closes.
+      if (frame <= 49) {
+        texture.logWidth = 5;
+        texture.logHeight = 6;
+        texture.pixels = work->sheet + 0x5000;
+        model->mesh = Data_081992b0;
+        for (i = 0; i != 8; i++) {
+          model->alpha = 0;
           Render_ResetTransformState();
           Func_080151e4(0x8000, 0x10000, 0x8000);
-          Func_08015160((start.x - 128) << 16, -48 << 16, 0);
-          SceneTransform_ApplyPitch(0x5900);
-          if (effect->side == 0)
-            SceneTransform_ApplyYaw(0x1900);
-          else
-            SceneTransform_ApplyYaw(-0x1900);
-          Func_080150e4(frame << 9);
-          Func_0801521c(scale);
-          Render_TransformVertices(Data_081991e0, vertices, 4);
+          Func_08015160((start.x - 128) << 16, -80 << 16, 0);
+          SceneTransform_ApplyPitch(0x47d0);
+          Func_080150e4((frame + i * 16) << 9);
+          scale = (frame << 12) - 0x4000;
+          if (scale > 0x10000)
+            scale = 0x10000;
+          if (frame > 31)
+            scale = 0x30000 - (frame << 12);
+          Func_080151e4(0x8000, 0x10000,
+                        (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
+          Render_TransformVertices(Data_08199200, vertices, 4);
           Render_DrawModelList(model);
         }
       }
+      Heap_Release(model);
+      Heap_Release(vertices);
     }
-
-    // Frames 0-49: the fan of eight blades opens, pulsing, and closes.
-    if (frame <= 49) {
-      texture.logWidth = 5;
-      texture.logHeight = 6;
-      texture.pixels = work->sheet + 0x5000;
-      model->mesh = Data_081992b0;
-      for (i = 0; i != 8; i++) {
-        s32 length;
-
-        model->alpha = 0;
-        Render_ResetTransformState();
-        Func_080151e4(0x8000, 0x10000, 0x8000);
-        Func_08015160((start.x - 128) << 16, -80 << 16, 0);
-        SceneTransform_ApplyPitch(0x4750);
-        Func_080150e4((frame << 9) + i * 0x2000);
-        length = (frame << 12) - 0x4000;
-        if (length > 0x10000)
-          length = 0x10000;
-        if (frame > 31)
-          length = 0x30000 - (frame << 12);
-        Func_080151e4(0x8000, 0x10000,
-                      (Trig_Sin((frame << 9) + i * 0x1000) / 8 + length) * 2);
-        Render_TransformVertices(Data_08199200, vertices, 4);
-        Render_DrawModelList(model);
-      }
-    }
-    Heap_Release(model);
-    Heap_Release(vertices);
     Func_08158ce0(4, 4);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;

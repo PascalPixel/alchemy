@@ -1,4 +1,5 @@
-// Draft of BattleEffect_RunProjectileVolleyB, the body behind the 22 wrappers
+// Draft, differ 130 of 2239, skeleton gap 48 (tla-en, 2026-11-01)
+// BattleEffect_RunProjectileVolleyB, the body behind the 22 wrappers
 // of projectile_volley_b.c (23 effect kinds, modes 0-24).
 
 // New in The Lost Age. Its nearest relative is The Broken Seal's
@@ -24,11 +25,18 @@
 // BattleEffect_BlastSheet, 0x190 BattleEffect_BlueBeamSheet and 0xb9
 // BattleEffect_EffectPalette01.
 
-// Draft: differ 2442 of 2239 (draft 2215), a first transcription of the
-// listing block by block. The frame is 244 bytes where the native's is 252
-// (two fewer spill slots: the mode sits in r9 here, r11 there), so every
-// stack offset and most allocation differs; 24 instructions are missing,
-// spread over the mode tests.
+// What is left: the allocation now agrees (mode r11, i r9, target r10, the
+// frame 252); the skeleton gap is scheduling ties in the launch, the mode 9,
+// 19 and 20 draws and the BG_PLTT copies, plus the final clears, where 0x3c00
+// stays in a register that the native rematerializes (a local function
+// pointer does not change it). Most of the differ is spill slots: draw sits
+// at sp+52 where the native has sp+36, after the loop's hoisted pseudos, so
+// draw looks to have had a hard register before reload evicted it.
+// Forms that decided the allocation: i is one counter for every r9 loop;
+// user is a pointer spilled to sp+60; targets and aim are arrays; widths and
+// heights are set inside the glint loop, their NULL defaults keeping loop.c
+// from hoisting them; height 12 is hoisted only as a local; a launch with
+// x += dx << 12 sends the whole allocation away.
 
 #include "types.h"
 #include "battle_display.h"
@@ -59,8 +67,8 @@ void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_FetchRectangleBlitters(
     s32 side,
     DrawRectangle *pair);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
-void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
                    s32 mode); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
@@ -71,8 +79,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
 void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
-void EffectPosition_ProjectSprite(s32 id,
-                                             struct EffectPosition *position);
+void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
 void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *effect);
 void SummonEffect_RunCanvasMode3(struct BattleEffectArgument *effect);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -101,7 +108,7 @@ enum VolleyBSheet {
 };
 
 #define MOTES ((struct EffectStep *)Ram_MapCellBuffer)
-#define HI(v) (((s16 *)&(v))[1]) // the pixel half of a 16.16 value
+#define HI(v) (((s16 *)&(v))[1]) // the i half of a 16.16 value
 
 extern char ResourceId_Data134; // the particle sheet
 extern char ResourceId_TornadoSheet;
@@ -148,30 +155,27 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                                    u32 mode) {
   void *canvas;
   struct BattleEffectWork *work;
-  u8 *sheet;
   s32 frame;
+  u8 *sheet;
   s32 shots;
   s32 target;
   s32 i;
-  s32 column;
-  s32 smokeHole;
-  s32 color;
-  s32 pixel;
+  s32 j;
+  struct EffectPosition *user;
   s32 k;
-  s32 flashPicture;
+  u8 *widths;
+  u8 *heights;
+  s32 limit;
   s32 row;
-  s32 smokePicture;
-  s32 member;
-  s32 glowMember;
-  s32 flashMember;
+  s32 column;
   DrawRectangle *draw;
-  u8 *palette;
+    u8 *palette;
   s32 origin[3];
   s32 djinniTarget[3];
-  struct EffectPosition user;
-  struct EffectPosition targets[8];
-  struct EffectPosition aim;
-  struct EffectPosition screen;
+  struct EffectPosition userPosition;
+  s32 targets[8][3];
+  s32 aim[3];
+  s32 screen[3];
   DrawRectangle pair[2];
 
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -240,15 +244,17 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   } else if (mode == 9 || mode == 17) {
     // Remap the levels: 0 stays, 1-16 become 1, the rest drop by 16.
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
-    for (pixel = 0; pixel != 0xc00; pixel++) {
-      u8 level = work->sheet[pixel];
+    for (i = 0; i != 0xc00; i++) {
+      u8 *cell = work->sheet + i;
+      u32 value = *cell;
+      u8 level = value;
 
       if (level == 0)
-        work->sheet[pixel] = 0;
+        *cell = 0;
       else if (level <= 16)
-        work->sheet[pixel] = 1;
+        *cell = 1;
       else
-        work->sheet[pixel] = level - 16;
+        *cell = value - 16;
     }
     if (mode == 17)
       Iwram_CopyWords((void *)BG_PLTT,
@@ -268,8 +274,12 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                     128);
   } else if (mode == 21) {
     // A violet ramp from color 1, blended 16:4.
-    for (color = 1; color != 64; color++)
-      BG_PLTT[color] = ((31 - color / 2) << 10) | (15 - color / 4);
+    for (i = 1; i != 64; i++) {
+      s32 low = 15 - i / 4;
+      s32 value = ((31 - i / 2) << 10) | low;
+
+      BG_PLTT[i] = value;
+    }
     Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 0);
     REG_BLDALPHA = 0x410;
@@ -287,9 +297,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     // Six smoke pictures, each with more holes punched at random.
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 0);
-    for (smokePicture = 0; smokePicture != 6; smokePicture++) {
-      for (smokeHole = 0; smokeHole != smokePicture * 256 + 512; smokeHole++)
-        work->sheet[VOLLEY_B_PICTURE + smokePicture * 1152 +
+    for (i = 0; i != 6; i++) {
+      for (j = 0; j != i * 256 + 512; j++)
+        work->sheet[VOLLEY_B_PICTURE + i * 1152 +
                     Random16() % 1152] = 0;
     }
     Iwram_CopyWords((void *)BG_PLTT,
@@ -328,6 +338,30 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       REG_BLDCNT = 0;
     } else {
       switch (mode) {
+      case 13:
+      case 14:
+      case 15:
+        // Six flash pictures, each with more holes punched at random.
+        for (i = 0; i != 6; i++) {
+          for (j = 0; j != i * 512 + 1024; j++)
+            work->sheet[VOLLEY_B_PICTURE + (i << 11) +
+                        (Random16() & 0x7ff)] = 0;
+        }
+        if (mode == 15) {
+          REG_BLDCNT = 0;
+          for (i = 0; i != 64; i++) {
+            s32 level = i / 4;
+
+            BG_PLTT[i] = (level << 10) | (level << 5) | level;
+          }
+          palette = NULL;
+        } else if (mode == 13) {
+          REG_BLDCNT = 0;
+          palette = Resource_GetTableEntry((s32)&ResourceId_RockSpireSheet);
+        } else {
+          palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
+        }
+        break;
       case 0:
         palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
         break;
@@ -349,30 +383,6 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         break;
       case 11:
         palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-        break;
-      case 13:
-      case 14:
-      case 15:
-        // Six flash pictures, each with more holes punched at random.
-        for (flashPicture = 0; flashPicture != 6; flashPicture++) {
-          for (i = 0; i != flashPicture * 512 + 1024; i++)
-            work->sheet[VOLLEY_B_PICTURE + (flashPicture << 11) +
-                        (Random16() & 0x7ff)] = 0;
-        }
-        if (mode == 15) {
-          REG_BLDCNT = 0;
-          for (i = 0; i != 64; i++) {
-            s32 level = i / 4;
-
-            BG_PLTT[i] = (level << 10) | (level << 5) | level;
-          }
-          palette = NULL;
-        } else if (mode == 13) {
-          REG_BLDCNT = 0;
-          palette = Resource_GetTableEntry((s32)&ResourceId_RockSpireSheet);
-        } else {
-          palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
-        }
         break;
       default:
         palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
@@ -408,70 +418,70 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     shots = 56;
 
   // Where the shots leave from, and where the targets are.
-  EffectPosition_ProjectSprite(effect->actor, &user);
-  for (member = 0; member != effect->count; member++)
-    EffectPosition_ProjectScaledBattler(effect->actors[member],
-                                       &targets[member]);
+  EffectPosition_ProjectSprite(effect->actor, user = &userPosition);
+  for (i = 0; i != effect->count; i++)
+    EffectPosition_ProjectScaledBattler(
+        effect->actors[i], (struct EffectPosition *)targets[i]);
   if (mode == 12 || mode == 15) {
     if (effect->side == 0)
-      user.x -= 24;
+      user->x -= 24;
     else
-      user.x += 24;
+      user->x += 24;
   }
   if (mode == 20) {
     if (effect->side == 0)
-      user.x -= 48;
+      user->x -= 48;
     else
-      user.x += 48;
+      user->x += 48;
   }
   if (mode == 21) {
     if (effect->side == 0)
-      user.x -= 16;
+      user->x -= 16;
     else
-      user.x += 16;
-    user.y -= 40;
+      user->x += 16;
+    user->y -= 40;
   }
   if (mode == 16) {
     if (effect->side == 0)
-      user.x -= 32;
+      user->x -= 32;
     else
-      user.x += 32;
+      user->x += 32;
   }
   if (mode == 3)
-    user.y -= 16;
+    user->y -= 16;
   if (mode == 8)
-    user.y -= 40;
+    user->y -= 40;
   if (mode == 24)
-    user.y -= 48;
+    user->y -= 48;
   if (mode == 22)
-    user.y -= 40;
+    user->y -= 40;
   if (mode == 9)
-    user.y -= 40;
+    user->y -= 40;
   if (mode == 17)
-    user.y -= 16;
+    user->y -= 16;
   if (mode == 19)
-    user.y -= 16;
+    user->y -= 16;
   if (mode == 10) {
-    user.y -= 24;
-    for (member = 0; member != effect->count; member++)
-      targets[member].y += 80;
+    user->y -= 24;
+    for (i = 0; i != effect->count; i++)
+      targets[i][1] += 80;
   }
   if (mode == 4) {
     if (effect->side == 1)
-      user.x += 28;
+      user->x += 28;
     else
-      user.x -= 28;
+      user->x -= 28;
   }
   if (mode == 7) {
     if (effect->side == 1)
-      user.x += 16;
+      user->x += 16;
     else
-      user.x -= 16;
+      user->x -= 16;
   }
   if (mode == 5 || mode == 23) {
-    user.x /= 3;
+    user->x /= 3;
     if (mode == 23)
-      user.y -= 16;
+      user->y -= 16;
     REG_BG2PA = 0x55; // three times as wide
   }
 
@@ -538,34 +548,44 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       // One big picture at the user, three frames a cel.
       if (effect->side == 1)
         pair[0](canvas, work->sheet + VOLLEY_B_PICTURE + frame / 3 % 3 * 0x1200,
-                user.x - 2, user.y - 32, 72, 62);
+                user->x - 2, user->y - 32, 72, 62);
       else
         pair[0](canvas, work->sheet + VOLLEY_B_PICTURE + frame / 3 % 3 * 0x1200,
-                user.x - 70, user.y - 32, 72, 62);
+                user->x - 70, user->y - 32, 72, 62);
     } else {
       // Launch a shot at a point near this frame's target.
-      aim.x = targets[target].x + (Random16() & 31) - 16;
+          aim[0] = targets[target][0] + (Random16() & 31) - 16;
       if (mode == 9 || mode == 17 || mode == 19)
-        aim.y = targets[target].y + (Random16() & 127) - 32;
+        aim[1] = targets[target][1] + (Random16() & 127) - 32;
       else if (mode == 12 || mode == 15 || mode == 18 || mode == 20 ||
                mode == 21 || mode == 22 || mode == 16)
-        aim.y = targets[target].y + (Random16() & 127) - 64;
+        aim[1] = targets[target][1] + (Random16() & 127) - 64;
       else if (mode == 24)
-        aim.y = targets[target].y + Random16() % 96 - 32;
+        aim[1] = targets[target][1] + Random16() % 96 - 32;
       else if (mode == 11) {
-        aim.y = targets[target].y + (Random16() & 255) - 192;
-        aim.y = targets[target].y + ((Trig_Sin(frame << 12) << 8) >> 16) - 128;
+        aim[1] = targets[target][1] + (Random16() & 255) - 192;
+        aim[1] = targets[target][1] + ((Trig_Sin(frame << 12) << 8) >> 16) - 128;
       } else
-        aim.y = targets[target].y + (Random16() & 63) - 16;
-      if (frame < (mode == 10 ? 16 : 48)) {
+        aim[1] = targets[target][1] + (Random16() & 63) - 16;
+      limit = 16;
+      if (mode != 10)
+        limit = 48;
+      if (frame < limit) {
         struct EffectStep *shot = &work->particles[frame];
+        s32 x = user->x << 15;
+        s32 y;
+        s32 dx;
+        s32 dy;
 
-        shot->x = user.x << 15;
-        shot->y = user.y << 16;
-        shot->velocityX = (aim.x - user.x) << 11;
-        shot->velocityY = (aim.y - user.y) << 11;
-        shot->x += (aim.x - user.x) << 12;
-        shot->y += (aim.y - user.y) << 12;
+        shot->x = x;
+        y = user->y << 16;
+        shot->y = y;
+        dx = aim[0] - user->x;
+        shot->velocityX = dx << 11;
+        dy = aim[1] - user->y;
+        shot->velocityY = dy << 11;
+        shot->x = x + (dx << 12);
+        shot->y = y + (dy << 12);
         shot->variant = 0;
       }
     }
@@ -597,24 +617,28 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         s32 cel = i / 2 % 3;
 
         // Every other shot, wobbling up and down.
-        if (i & 1)
+        if (i & 1) {
+          s32 y = shot->y + (Trig_Sin((i * 2 + frame) << 11) << 5);
+
           draw[1](canvas, work->sheet + cel * 1024, HI(shot->x) - 16,
-                  ((shot->y + (Trig_Sin((i * 2 + frame) << 11) << 5)) >> 16) -
-                      16,
-                  32, 32);
+                  (y >> 16) - 16, 32, 32);
+        }
       } else if (mode == 20) {
         s32 cel = i % 5 * 3 + age % 3;
         u32 width = gData_0819749e[cel];
+        s32 x = HI(shot->x) - (width >> 1);
         u32 height = gData_081974ad[cel];
+        s32 y = HI(shot->y) - (height >> 1);
 
-        pair[0](canvas, work->sheet + gData_081974bc[cel] + VOLLEY_B_GLOW,
-                HI(shot->x) - (width >> 1), HI(shot->y) - (height >> 1), width,
-                height);
+        pair[0](canvas, work->sheet + gData_081974bc[cel] + VOLLEY_B_GLOW, x, y,
+                width, height);
       } else if (mode == 19) {
         s32 wobble = Trig_Sin((i * 2 + frame) << 11);
+        s32 cel = age >> 2;
+        s32 y = shot->y + (wobble << 5);
 
-        draw[1](canvas, work->sheet + (age >> 2) * 1152, HI(shot->x) - 12,
-                ((shot->y + (wobble << 5)) >> 16) - 24, 24, 48);
+        draw[1](canvas, work->sheet + cel * 1152, HI(shot->x) - 12, (y >> 16) - 24,
+                24, 48);
       } else if (mode == 18) {
         if (age > 1)
           pair[0](canvas, work->sheet, HI(shot->x) - 11, HI(shot->y) - 21, 22,
@@ -647,16 +671,29 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
 
     // Mode 24: three glints a frame around each target being hit.
     if (mode == 24) {
-      for (member = 0; member != effect->count; member++) {
-        if (frame >= member * 4 + 16 && frame < shots - 8) {
-          s32 cel = member & 3;
-
+      for (i = 0; i != effect->count; i++) {
+        if (frame >= i * 4 + 16 && frame < shots - 8) {
+          // Default: set for real below.
+          widths = NULL;
+          heights = NULL;
           for (k = 0; k != 3; k++) {
-            s32 angle = Random16() & 0xffff;
-            s32 x = ((Trig_Sin(angle) << 4) >> 16) + targets[member].x / 2 -
-                    (gData_08197492[cel] >> 1);
-            s32 y = ((Trig_Cos(angle) << 4) >> 16) + targets[member].y -
-                    (gData_08197498[cel] >> 1);
+            s32 cel = i & 3;
+            s32 angle;
+            s32 x;
+            s32 y;
+
+            // Default: set for real below.
+            widths = NULL;
+            heights = NULL;
+            angle = Random16() & 0xffff;
+            x = (Trig_Sin(angle) << 4) >> 16;
+            x += targets[i][0] / 2;
+            widths = gData_08197492;
+            x -= widths[cel] >> 1;
+            y = (Trig_Cos(angle) << 4) >> 16;
+            y += targets[i][1];
+            heights = gData_08197498;
+            y -= heights[cel] >> 1;
 
             HeapSlot_Release(188);
             HeapSlot_Release(104);
@@ -664,7 +701,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                           BLIT_ADDITIVE);
             ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                 canvas, work->sheet + gData_08197486[cel], x, y,
-                gData_08197492[cel], gData_08197498[cel]);
+                widths[cel], heights[cel]);
             HeapSlot_Release(188);
             BattleEffect_FetchRectangleBlitters(effect->side, draw);
           }
@@ -675,10 +712,10 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     // The hits.
     if (mode == 9 || mode == 17) {
     } else if (mode == 5 || mode == 23) {
-      for (flashMember = 0; flashMember != effect->count; flashMember++) {
-        if (frame >= flashMember * 4 + 2 && (frame & 7) == flashMember) {
+      for (i = 0; i != effect->count; i++) {
+        if (frame >= i * 4 + 2 && (frame & 7) == i) {
           work->shakeFrames = 8;
-          Func_0814cd48(effect->actors[flashMember], 7, 5, flashMember, 4);
+          Func_0814cd48(effect->actors[i], 7, 5, i, 4);
         }
       }
     } else if (mode == 10) {
@@ -692,20 +729,20 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         Func_0814cd48(effect->actor, 0, -1, -1, 0);
     } else if (mode == 8) {
       if (frame == 20) {
-        for (glowMember = 0; glowMember != effect->count; glowMember++)
-          Func_0814cd48(effect->actors[glowMember], 6, 5, glowMember, 60);
+        for (i = 0; i != effect->count; i++)
+          Func_0814cd48(effect->actors[i], 6, 5, i, 60);
       }
     } else {
-      for (member = 0; member != effect->count; member++) {
-        if (frame >= member * 4 + 16 && frame < shots - 8 &&
-            (frame & 3) == member) {
+      for (i = 0; i != effect->count; i++) {
+        if (frame >= i * 4 + 16 && frame < shots - 8 &&
+            (frame & 3) == i) {
           work->shakeFrames = 8;
           if (mode == 6)
-            Func_0814cd48(effect->actors[member], 14, 5, member, 3);
+            Func_0814cd48(effect->actors[i], 14, 5, i, 3);
           else
-            Func_0814cd48(effect->actors[member], 7, 5, member, 3);
+            Func_0814cd48(effect->actors[i], 7, 5, i, 3);
           if (mode != 11 && mode != 14)
-            BattleEffect_StartActorMotion(effect->actors[member], 1, 0x10000,
+            BattleEffect_StartActorMotion(effect->actors[i], 1, 0x10000,
                                       0x40000, 0x20000, frame + 100);
         }
       }
@@ -725,21 +762,27 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       Transform_SetLookAt(camera, camera + 3);
       for (i = 0; i != 24; i++) {
         struct EffectStep *mote = &MOTES[i];
+        s32 height = 12;
 
         if (mote->variant >= 0) {
-          s32 x;
-
-          EffectPosition_ProjectPoint((s32 *)mote, &screen);
-          screen.x >>= 1;
-          pair[0](canvas, sheet + gData_08197410[5], screen.x - 3, screen.y - 6,
-                  6, 12);
+          EffectPosition_ProjectPoint((s32 *)mote, (struct EffectPosition *)screen);
+          screen[0] >>= 1;
+          pair[0](canvas, sheet + gData_08197410[5], screen[0] - 3,
+                  screen[1] - height / 2, 6, height);
           BattleEffectKernels_IntegrateVector3(mote, 62, 0);
           if (frame > i + 16) {
-            x = mote->x;
-            mote->velocityX += (object->x - x) >> 7;
-            mote->velocityY += (object->y + half - mote->y) >> 8;
-            mote->velocityZ += (object->z - mote->z) >> 8;
-            if ((object->x < 0 ? -object->x : object->x) < (x < 0 ? -x : x))
+            s32 dx;
+            s32 dy;
+            s32 dz;
+
+            dy = object->y + half - mote->y;
+            dz = object->z - mote->z;
+            dx = object->x - mote->x;
+            mote->velocityX += dx >> 7;
+            mote->velocityY += dy >> 8;
+            mote->velocityZ += dz >> 8;
+            if ((object->x < 0 ? -object->x : object->x) <
+                (mote->x < 0 ? -mote->x : mote->x))
               mote->variant = -1;
           }
         }

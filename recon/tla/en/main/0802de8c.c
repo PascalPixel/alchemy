@@ -1,15 +1,23 @@
-// Draft, differ 392 of 665: the debug sprite viewer, The Broken Seal's
-// SpriteViewer_Run (games/tbs/src/field/field/sprite_viewer.c), which never
-// returns. This game's changes: a blue backdrop; L and R step the sprite
-// number by ten in one call with Start held; Select passes only the first
-// resource set (no B choice) to System_ReturnZero; a press of B
-// cycles the backdrop through eight colours (gData_0802f054); a press of
-// Start toggles the shadows of the ten copies, whose sprites sit 56 bytes
-// apart from heap slot 4. Left: the native reads the held keys afresh for
-// each test (a volatile read here aligns the ring moves but loses 58 rows
-// elsewhere), keeps a second copy of the layers' address in r9 for the
-// sprite and enable writes, and does not hoist the wrap mask 3 into a
-// register.
+// Draft, differ 18 of 665, skeleton gap 5 (tla-en, 2026-11-01)
+// The debug sprite viewer, The Broken Seal's SpriteViewer_Run
+// (games/tbs/src/field/field/sprite_viewer.c), which never returns. This
+// game's changes: a blue backdrop; L and R step the sprite number by ten in
+// one call with Start held; Select passes only the first resource set (no B
+// choice) to System_ReturnZero; a press of B cycles the backdrop through eight
+// colours (gData_0802f054); a press of Start toggles the shadows of the ten
+// copies, whose sprites sit 56 bytes apart from heap slot 4.
+// Left, all scheduling and the allocation that follows it: in the first layer
+// loop the native loads animationIndex before it moves i into r0; after both
+// Func_0802e444 calls it restores r4 after the store to spriteId, not before
+// (the store seems to conflict with the stack load; going through a pointer to
+// reach that loses r9's copy of layers, 270 rows or more); in the backdrop
+// step ldr then movs #7, and the palette address built after the ldrh. The
+// held key is read volatile only through HELD, as the twin's pointers do. A
+// local `const u16 *colors` puts the backdrop store before the table read:
+// gData_0802f054[backdrop] directly gives gap 6, differ 12. An s32 temporary
+// for the colour gives gap 4, differ 16, but it would be a forced temporary,
+// so it is left out. spriteId temporaries, a layer pointer in the first loop
+// and steps as s16 or u32 change nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -63,19 +71,24 @@ void Fade_FromBlack(s32 vblanks);
 void wait(s32 frames);
 s32 System_ReturnZero(s32 resource, void *table);
 
+extern char ResourceId_Data012;
+
+// The native reads the held keys afresh at each test.
+#define HELD (*(volatile u32 *)&gInput.held)
+
 void Func_0802de8c(void) {
-  s32 x;
-  s32 y;
-  s32 shadowsEnabled;
-  s32 backdrop;
-  void *ring;
   struct SpriteViewerLayer layers[4];
   volatile u32 zero;
-  struct SpriteViewerLayer *table;
+  s32 x;
+  s32 y;
   u32 editMode;
+  s32 shadowsEnabled;
+  u32 backdrop;
+  void *ring;
   u32 selectedLayer;
   u32 i;
   s32 spriteId;
+  s32 changed;
 
   x = 144;
   y = 96;
@@ -85,18 +98,15 @@ void Func_0802de8c(void) {
   backdrop = 0;
   ring = HeapSlot_AllocEwram(36, 160);
   gDecodeFillByte = 3;
-  zero = backdrop;
-  Dma_Set((const void *)&zero, ring, 0x85000000 | 1, REG_DMA3);
-  zero = backdrop;
-  Dma_Set((const void *)&zero, layers, 0x85000000 | (sizeof(layers) / 4),
-          REG_DMA3);
+  Dma_Fill32Cell(zero, 0, ring, 4);
+  Dma_Fill32Cell(zero, 0, layers, sizeof(layers));
   spriteId = Func_0802e444(-1, 1);
   for (i = 0; i < 4; i++) {
-    table[i].animationIndex = 1;
-    table[i].priority = 1;
-    table[i].spriteId = spriteId;
+    layers[i].animationIndex = 1;
+    layers[i].priority = 1;
+    layers[i].spriteId = spriteId;
   }
-  table[0].enabled = 1;
+  layers[0].enabled = 1;
   gDebugMode = 2;
   REG_BLDCNT = 0x3f42;
   *(volatile u16 *)0x05000000 = 0x7c00;
@@ -109,29 +119,29 @@ restart:
   ring = HeapSlot_AllocEwram(36, 160);
   VramCache_Reset();
   Func_080230e0(2);
-  ResourceSlot_Load(0, gMapCellBuffer, table[0].spriteId, 0);
-  if (Resource_GetMetadataRecordFar(table[0].spriteId)->drawKind == 20)
-    ResourceSlot_Load(1, Data_02018000, table[0].spriteId + 1, 0);
+  ResourceSlot_Load(0, gMapCellBuffer, layers[0].spriteId, 0);
+  if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20)
+    ResourceSlot_Load(1, Data_02018000, layers[0].spriteId + 1, 0);
   for (i = 0; i < 10; i++) {
     struct ViewerSprite *sprite;
     s32 part = 0;
 
-    if (Resource_GetMetadataRecordFar(table[0].spriteId)->drawKind == 20 &&
+    if (Resource_GetMetadataRecordFar(layers[0].spriteId)->drawKind == 20 &&
         (i & 1))
       part = 1;
-    sprite = ResourceObject_Create(table[0].spriteId + part + (part << 12));
-    ResourceMetadata_Register(sprite, table[1].spriteId);
-    ResourceMetadata_Register(sprite, table[2].spriteId);
-    ResourceMetadata_Register(sprite, table[3].spriteId);
+    sprite = ResourceObject_Create(layers[0].spriteId + part + (part << 12));
+    ResourceMetadata_Register(sprite, layers[1].spriteId);
+    ResourceMetadata_Register(sprite, layers[2].spriteId);
+    ResourceMetadata_Register(sprite, layers[3].spriteId);
     sprite->flags = shadowsEnabled;
   }
   for (i = 0; i < 4; i++) {
-    if (table[i].enabled != 0)
-      SpriteViewer_SetGridColumnPriority(i, table[i].priority);
+    if (layers[i].enabled != 0)
+      SpriteViewer_SetGridColumnPriority(i, layers[i].priority);
     else
       SpriteViewer_SetGridColumnPriority(i, 8);
-    SpriteViewer_SetGridColumnColorMode(i, table[i].colorMode);
-    SpriteViewer_StartStaggeredAnimations(i, table[i].animationIndex);
+    SpriteViewer_SetGridColumnColorMode(i, layers[i].colorMode);
+    SpriteViewer_StartStaggeredAnimations(i, layers[i].animationIndex);
   }
   Func_0802e4c8(x, y, ring);
   Task_Add(Battle_PlaceActorsByFormationKind, 0x480);
@@ -139,16 +149,14 @@ restart:
 next:
   wait(1);
   for (;;) {
-    s32 changed;
-
-    if (gInput.held & 8) {
-      if (gInput.held & 32)
+    if (HELD & 8) {
+      if (HELD & 32)
         x--;
-      if (gInput.held & 16)
+      if (HELD & 16)
         x++;
-      if (gInput.held & 64)
+      if (HELD & 64)
         y--;
-      if (gInput.held & 128)
+      if (HELD & 128)
         y++;
       Func_0802e4c8(x, y, ring);
     } else {
@@ -178,20 +186,20 @@ next:
       if (selectedLayer == 1)
         break;
       if (gInput.repeat & 0x200) {
-        table[selectedLayer].animationIndex--;
-        if (table[selectedLayer].animationIndex < 0)
-          table[selectedLayer].animationIndex = 0;
+        layers[selectedLayer].animationIndex--;
+        if (layers[selectedLayer].animationIndex < 0)
+          layers[selectedLayer].animationIndex = 0;
         if (selectedLayer == 0)
-          table[1].animationIndex = table[0].animationIndex;
+          layers[1].animationIndex = layers[0].animationIndex;
         goto next;
       }
       if (!(gInput.repeat & 0x100))
         break;
-      table[selectedLayer].animationIndex++;
-      if (table[selectedLayer].animationIndex > 99)
-        table[selectedLayer].animationIndex = 99;
+      layers[selectedLayer].animationIndex++;
+      if (layers[selectedLayer].animationIndex > 99)
+        layers[selectedLayer].animationIndex = 99;
       if (selectedLayer == 0)
-        table[1].animationIndex = table[0].animationIndex;
+        layers[1].animationIndex = layers[0].animationIndex;
       goto next;
 
     case 1: {
@@ -199,29 +207,31 @@ next:
 
       changed = 0;
       steps = 1;
-      if (gInput.held & 8)
+      if (HELD & 8)
         steps = 10;
       if (gInput.repeat & 0x200) {
-        table[selectedLayer].spriteId =
-            Func_0802e444(table[selectedLayer].spriteId, -steps);
+        layers[selectedLayer].spriteId =
+            Func_0802e444(layers[selectedLayer].spriteId, -steps);
         changed = 1;
       }
       if (gInput.repeat & 0x100) {
-        table[selectedLayer].spriteId =
-            Func_0802e444(table[selectedLayer].spriteId, steps);
+        layers[selectedLayer].spriteId =
+            Func_0802e444(layers[selectedLayer].spriteId, steps);
         changed = 1;
       }
       if (changed == 0)
         break;
       if (selectedLayer == 0)
         goto restart;
-      if (table[selectedLayer].enabled != 0) {
-        SpriteViewer_SetGridColumnNumber(selectedLayer, table[selectedLayer].spriteId);
-        SpriteViewer_SetGridColumnPriority(selectedLayer, table[selectedLayer].priority);
+      if (layers[selectedLayer].enabled != 0) {
+        SpriteViewer_SetGridColumnNumber(selectedLayer,
+                                         layers[selectedLayer].spriteId);
+        SpriteViewer_SetGridColumnPriority(selectedLayer,
+                                           layers[selectedLayer].priority);
         SpriteViewer_SetGridColumnColorMode(selectedLayer,
-                                  table[selectedLayer].colorMode);
-        SpriteViewer_StartStaggeredAnimations(selectedLayer,
-                                      table[selectedLayer].animationIndex);
+                                            layers[selectedLayer].colorMode);
+        SpriteViewer_StartStaggeredAnimations(
+            selectedLayer, layers[selectedLayer].animationIndex);
       }
       goto next;
     }
@@ -229,73 +239,78 @@ next:
     case 2:
       changed = 0;
       if (gInput.repeat & 0x200) {
-        table[selectedLayer].priority--;
-        if (table[selectedLayer].priority < 0)
-          table[selectedLayer].priority = 3;
+        layers[selectedLayer].priority--;
+        if (layers[selectedLayer].priority < 0)
+          layers[selectedLayer].priority = 3;
         changed = 1;
       }
       if (gInput.repeat & 0x100) {
-        table[selectedLayer].priority++;
-        if (table[selectedLayer].priority > 3)
-          table[selectedLayer].priority = 0;
+        layers[selectedLayer].priority++;
+        if (layers[selectedLayer].priority > 3)
+          layers[selectedLayer].priority = 0;
         changed = 1;
       }
       if (changed == 0)
         break;
-      if (table[selectedLayer].enabled != 0)
-        SpriteViewer_SetGridColumnPriority(selectedLayer, table[selectedLayer].priority);
+      if (layers[selectedLayer].enabled != 0)
+        SpriteViewer_SetGridColumnPriority(selectedLayer,
+                                           layers[selectedLayer].priority);
       goto next;
 
     case 3:
       changed = 0;
       if (gInput.repeat & 0x200) {
-        table[selectedLayer].colorMode--;
-        if (table[selectedLayer].colorMode < 0)
-          table[selectedLayer].colorMode = 15;
+        layers[selectedLayer].colorMode--;
+        if (layers[selectedLayer].colorMode < 0)
+          layers[selectedLayer].colorMode = 15;
         changed = 1;
       }
       if (gInput.repeat & 0x100) {
-        table[selectedLayer].colorMode++;
-        if (table[selectedLayer].colorMode > 15)
-          table[selectedLayer].colorMode = 0;
+        layers[selectedLayer].colorMode++;
+        if (layers[selectedLayer].colorMode > 15)
+          layers[selectedLayer].colorMode = 0;
         changed = 1;
       }
       if (changed == 0)
         break;
-      if (table[selectedLayer].enabled != 0)
+      if (layers[selectedLayer].enabled != 0)
         SpriteViewer_SetGridColumnColorMode(selectedLayer,
-                                  table[selectedLayer].colorMode);
+                                            layers[selectedLayer].colorMode);
       goto next;
     }
 
     if (gInput.repeat & 1) {
       if (editMode == 0) {
         if (selectedLayer != 1) {
-          if (table[selectedLayer].enabled != 0) {
-            SpriteViewer_StartStaggeredAnimations(selectedLayer,
-                                          table[selectedLayer].animationIndex);
+          if (layers[selectedLayer].enabled != 0) {
+            SpriteViewer_StartStaggeredAnimations(
+                selectedLayer, layers[selectedLayer].animationIndex);
             if (selectedLayer == 0)
-              SpriteViewer_StartStaggeredAnimations(1, table[1].animationIndex);
+              SpriteViewer_StartStaggeredAnimations(1,
+                                                    layers[1].animationIndex);
           }
           goto next;
         }
       } else if (selectedLayer != 0) {
-        table[selectedLayer].enabled ^= 1;
+        layers[selectedLayer].enabled ^= 1;
         SpriteViewer_SetGridColumnPriority(selectedLayer,
-                                 table[selectedLayer].enabled != 0
-                                     ? table[selectedLayer].priority
-                                     : 8);
+                                           layers[selectedLayer].enabled != 0
+                                               ? layers[selectedLayer].priority
+                                               : 8);
         goto next;
       }
     }
     if (gInput.repeat & 4) {
       Task_ResetAll();
-      System_ReturnZero(0x12, gResource_Data012);
+      System_ReturnZero((s32)&ResourceId_Data012, gResource_Data012);
       goto restart;
     }
     if (gInput.pressed & 2) {
-      backdrop = (backdrop + 1) & 7;
-      *(volatile u16 *)0x05000000 = gData_0802f054[backdrop];
+      const u16 *colors = gData_0802f054;
+
+      backdrop++;
+      backdrop &= 7;
+      *(volatile u16 *)0x05000000 = colors[backdrop];
     }
     wait(1);
   }

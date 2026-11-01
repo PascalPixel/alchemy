@@ -1,5 +1,18 @@
-// Draft of BattleEffect_RunFume, decompiled from the listing: differ 424 of 627
-// (draft 621), the same 44 calls and control flow; allocation differs.
+// Draft, differ 222 of 627, skeleton gap 46 (tla-en, 2026-11-01)
+// BattleEffect_RunFume. Calls and control flow agree. head and tail are one
+// two-word struct local: its doubleword pseudo keeps arc.head = 0 alive and stops
+// PRE lifting tail * 33 out of the segment loop, as the listing shows, and it
+// sits at sp+40. Data_08199484 is read by columns as u16[][6].
+// Left: (1) the frame is 112, the listing's 116: sp+68 is an unused hole just
+// below canvas, so every slot above sp+64 is 4 low and caster and target sit at
+// sp+100 and sp+88. Replacing blit with a two-word struct whose second word is
+// unused closes it (differ 160, gap 42) but that is a local added to
+// fit a frame, so it is not done here; the source of that word is unknown.
+// (2) Data_02011000 stays in a high register across the model block; the listing
+// reloads it from the pool, so that pseudo lost its register there.
+// (3) radiusY's wobble is added late in the listing, in the same register as
+// height + half; every initialiser order tried costs more elsewhere. Writing
+// corner first gives differ 186 but gap 50.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -32,7 +45,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -90,22 +103,24 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 
-// One row per Fume level (effect->variant): the plume's width, the frame
-// its tail starts, its arc's height, the sparks' spread, count and lift.
-struct FumeLevel {
-  u16 width;
-  u16 tailStart;
-  u16 height;
-  u16 spread;
-  u16 sparks;
-  u16 lift;
+// Columns of Data_08199484, one row per Fume level (effect->variant): the
+// plume's width, the frame its tail starts, its arc's height, the sparks'
+// spread, count and lift.
+enum {
+  FUME_WIDTH,
+  FUME_TAIL_START,
+  FUME_HEIGHT,
+  FUME_SPREAD,
+  FUME_SPARKS,
+  FUME_LIFT,
+  FUME_COLUMNS
 };
 
 extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_ClawSlashSheet;
 extern u8 gMapCellBuffer[];
-extern const struct FumeLevel Data_08199484[];
+extern const u16 Data_08199484[][FUME_COLUMNS];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern const u8 gData_08199340[]; // the head's mesh
@@ -133,16 +148,20 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle blit;
+  s32 j;
+  s32 frame;
+  s32 endX;
+  s32 endY;
+  struct {
+    s32 head;
+    s32 tail;
+  } arc;
   struct EffectPosition caster;
   struct EffectPosition target;
   struct ModelTexture texture;
   struct RenderModel *model;
   struct EffectStep *spark;
-  s32 frame;
-  s32 head;
-  s32 tail;
-  s32 endX;
-  s32 endY;
+  struct EffectStep *particle;
   s32 i;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -169,11 +188,9 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
 
   for (frame = 0; frame != FUME_FRAMES; frame++) {
-    const struct FumeLevel *level;
-
     if (frame == 0) {
-      head = 0;
-      tail = 0;
+      arc.head = 0;
+      arc.tail = 0;
       for (i = 0; i != 64; i++) {
         work->particles[i].variant = 24;
       }
@@ -185,28 +202,29 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000, 0x20000,
                                 120);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 20);
-      for (i = 0, spark = work->particles; i != 32; i++, spark++) {
-        u32 spread;
-
+      for (i = 0; i != 32; i++) {
+        spark = &work->particles[i];
         spark->variant = -i / 4 + 2;
         spark->x = (target.x / 2) << 16;
         spark->y = (target.y + (Random16() & 15) - 32) << 16;
-        spread = Data_08199484[effect->variant].spread;
-        spark->velocityX = ((Random16() % spread) - (spread >> 1)) << 12;
+        spark->velocityX =
+            ((Random16() % Data_08199484[effect->variant][FUME_SPREAD]) -
+             (Data_08199484[effect->variant][FUME_SPREAD] >> 1))
+            << 12;
         spark->velocityY = (192 - (Random16() & 255)) << 10;
       }
     }
-    for (i = 0, spark = work->particles;
-         i != Data_08199484[effect->variant].sparks; i++, spark++) {
-      if ((u32)spark->variant <= 23) {
-        if (spark->variant > 1) {
-          blit(canvas, work->sheet + 0x800 + ((spark->variant / 4) << 11),
-               HI(spark->x) - 16, HI(spark->y) - 32, 32, 64);
+    for (i = 0; i != Data_08199484[effect->variant][FUME_SPARKS]; i++) {
+      particle = &work->particles[i];
+      if ((u32)particle->variant <= 23) {
+        if (particle->variant > 1) {
+          blit(canvas, work->sheet + 0x800 + ((particle->variant / 4) << 11),
+               HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
         }
-        BattleEffectKernels_IntegrateVector2(spark, 60,
-                                         -Data_08199484[effect->variant].lift);
+        BattleEffectKernels_IntegrateVector2(particle, 60,
+                                         -Data_08199484[effect->variant][FUME_LIFT]);
       }
-      spark->variant++;
+      particle->variant++;
     }
 
     if (frame >= 0) {
@@ -214,51 +232,46 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       s32 step;
       s32 sweep;
       s32 vertex;
-      s32 j;
       s32 shade;
 
-      level = &Data_08199484[effect->variant];
-      width = level->width;
-      head = frame * 44;
-      if (head > 988) {
-        head = 988;
+      width = Data_08199484[effect->variant][FUME_WIDTH];
+      arc.head = frame * 44;
+      if (arc.head > 988) {
+        arc.head = 988;
       }
-      if (frame >= level->tailStart) {
-        tail = (frame - level->tailStart) * 44;
-        if (tail > 988) {
-          tail = 988;
+      if (frame >= Data_08199484[effect->variant][FUME_TAIL_START]) {
+        arc.tail = (frame - Data_08199484[effect->variant][FUME_TAIL_START]) * 44;
+        if (arc.tail > 988) {
+          arc.tail = 988;
         }
       }
-      step = head - tail;
 
       // The arc's vertices, two per segment, widening over the first six.
-      for (j = 0, sweep = 0, vertex = 0; j != FUME_SEGMENTS;
-           j++, sweep += step, vertex += 2) {
+      for (j = 0, step = arc.head - arc.tail, sweep = 0, vertex = 0;
+           j != FUME_SEGMENTS;
+           vertex += 2, sweep += step, j++) {
         s32 distance = caster.x / 8 - target.x / 8;
-        s32 angle = sweep + tail * 33;
-        s32 wobble = j * ((Trig_Sin((frame + j) << 12) << 2) >> 16) / 32;
+        s32 angle = sweep + arc.tail * 33;
+        s32 wobble = ((Trig_Sin((frame + j) << 12) << 2) >> 16) * j / 32;
         s32 height;
         s32 thickness;
         s32 radiusX;
         s32 radiusY;
         s8 *corner;
-        s32 k;
 
         if (distance < 0) {
           distance = -distance;
         }
-        height = Data_08199484[effect->variant].height;
+        height = Data_08199484[effect->variant][FUME_HEIGHT];
         thickness = j * 4;
         if (thickness > 24) {
           thickness = 24;
         }
-        thickness = width * thickness / 0x10000;
-        radiusY = height - thickness / 2 + wobble;
-        radiusX = distance - thickness / 2 + wobble;
-        corner = (s8 *)gMapCellBuffer + vertex * 4;
-        for (k = 0; k != 2; k++) {
-          corner[0] = ((radiusX * Trig_Cos(angle)) >> 16) - distance;
-          corner[1] = -((radiusY * Trig_Sin(angle)) >> 16);
+        thickness = thickness * width / 0x10000;
+        for (i = 0, radiusY = height + thickness / -2 + wobble, radiusX = distance + thickness / -2 + wobble, corner = (s8 *)gMapCellBuffer + vertex * 4;
+             i != 2; i++) {
+          corner[0] = ((Trig_Cos(angle) * radiusX) >> 16) - distance;
+          corner[1] = -((Trig_Sin(angle) * radiusY) >> 16);
           corner[2] = 0;
           radiusY += thickness;
           radiusX += thickness;
@@ -281,7 +294,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         model->shade = shade;
         model->scrollV = 0;
         model->vertices = Data_02011000;
-        if (head > tail) {
+        if (arc.head > arc.tail) {
           texture.logWidth = 6;
           texture.logHeight = 5;
           texture.pixels = work->sheet;
@@ -302,11 +315,11 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
           if (frame <= 22) {
             model->mesh = gData_08199340;
             texture.logWidth = 6;
-            texture.logHeight = 0;
+            texture.logHeight = 6;
             model->scrollU = 0;
             texture.pixels = work->sheet + 0x4000;
             Func_08015160(endX << 16, endY << 16, 0);
-            Func_080150e4(0x4000 - head * 32);
+            Func_080150e4(0x4000 - arc.head * 32);
             Func_0801521c(width * 28 / 32);
             Render_TransformVertices(Data_081991e0, Data_02011000, 4);
             Render_DrawModelList(model);

@@ -1,14 +1,23 @@
-// Draft of BattleEffect_RunGeode, decompiled from the listing: differ 785 of 1139
-// (draft 1136), the same 69 calls and control flow; allocation differs.
-// Left (2026-10-19): the native stack frame is 152 bytes, here 148: the native
-// spills one pseudo more (its 17 slots between sp 4 and sp 68 against 16
-// here; the dome block spills its curl at sp 44 and another value at sp
-// 48), so every stack offset from the arrays down is 4 off.
-// Tried (differ):
-// first draft                                                       960
-// the blitter as The Broken Seal's pair (FAKEMATCH below)           785
-// projected, vertices, mesh, pitch, battle and caster, and screenB
-// before screenA, declared in the native's stack order (785)
+// Draft, differ 24 of 1139, skeleton gap 18 (tla-en, 2026-11-01)
+// BattleEffect_RunGeode: frame, spill slots and allocation agree with the
+// listing, the draft is 2 instructions short and nothing else is left but order.
+// Left:
+// - bg2pa and bg2pd: the listing does a discarded ldrh before each strh, the 2
+//   missing instructions, as 0815b764 does. A volatile 16-bit bitfield does not
+//   produce it (gap 31) and any volatile form would be a device.
+// - The dome model's store order is a search result, not a reading. kind is
+//   stored late only so reload gives mesh and projected the listing's registers
+//   (r1 and r2 want kind's r1 free first); stored second, as the listing shows,
+//   the rotation of reload registers slips one and the gap rises to 136. All 720
+//   orders of its fields were tried.
+// - sched2 places frame = 0 and row = 0 a few instructions early. Making the
+//   position addresses user pointers closes the first (gap 16) but puts them in
+//   the wrong spill slots (differ 84); here loop.c hoists them, as in the listing.
+// Measured facts worth keeping: row and curl are declared before pitch, whose
+// slots show it; the counter i is shared by the picture copy, the fade and the
+// rings but not by the dome's columns; vertices[row * 16 + column] gives the
+// reduced index the listing spills last; lift and reach are separate variables
+// from y and radius; the fade level goes through battle + 0x66c and is reread.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -78,7 +87,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void *func, s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -129,6 +138,13 @@ extern const u8 Data_08198b56[]; // growth
 extern const s8 Data_08198b5a[]; // height
 extern const u8 Data_08199050[];
 
+struct ModelVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+  s8 unk03;
+};
+
 #define DOME_ROWS 16
 #define DOME_COLUMNS 16
 
@@ -147,8 +163,10 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   DrawRectangle blit[2];
   s32 *transition;
   u8 *projected;
-  u8 *vertices;
+  struct ModelVertex *vertices;
   u8 *mesh;
+  s32 row;
+  s32 curl;
   s32 pitch;
   u8 *battle;
   void *caster;
@@ -159,6 +177,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   struct ModelTexture texture;
   struct ModelTexture dust;
   struct RenderModel *model;
+  struct RenderModel *rings;
   s32 frame;
   s32 i;
 
@@ -189,7 +208,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc8f);
   Task_Add(Display_ApplyBg2Affine, 0xcff);
   projected = work->sheet;
-  vertices = work->sheet + 0x800;
+  vertices = (struct ModelVertex *)(work->sheet + 0x800);
   mesh = work->sheet + 0xc00;
   pitch = 0;
   battle = (u8 *)Ram_HeapSlots->battleWork;
@@ -197,14 +216,13 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
   gBgScroll[1].x = -56;
   {
     u8 *cell = gMapCellBuffer;
-    s32 y;
     s32 x;
 
     // Take the battlefield's picture off BG2's tiles, row by row.
-    for (y = 0; y <= 119; y++) {
+    for (i = 0; i <= 119; i++) {
       for (x = 0; x <= 2047; x += 64) {
         Iwram_CopyWords(
-            cell, (u8 *)0x06008000 + (((y / 8) << 8) + (y & 7)) * 8 + x, 8);
+            cell, (u8 *)0x06008000 + (((i / 8) << 8) + (i & 7)) * 8 + x, 8);
         cell += 8;
       }
     }
@@ -226,7 +244,7 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     // The backdrop's palette fades toward the battle's.
     if (frame <= 11) {
       u16 *from = (u16 *)(battle + 0x56c);
-      u16 *to = (u16 *)(BG_PLTT + 0xc0);
+      u16 *to = (u16 *)(BG_PLTT + 96);
 
       for (i = 0; i != 128; i++, from++, to++) {
         s32 red = *from & 31;
@@ -289,15 +307,13 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
     }
     if ((u32)(frame - 34) <= 5) {
-      s32 window;
-
       if (effect->side == 0) {
-        window = 0x20f0;
+        REG_WIN0H = 0x20f0;
+        REG_WIN1H = 0x20f0;
       } else {
-        window = 0xd0;
+        REG_WIN0H = 0xd0;
+        REG_WIN1H = 0xd0;
       }
-      REG_WIN0H = window;
-      REG_WIN1H = window;
     } else if (frame == 40) {
       REG_WIN0H = 0xf0;
       REG_WIN1H = 0xf0;
@@ -312,10 +328,10 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       if (t > 12) {
         t = 12;
       }
-      x = source.x + t * (target.x - source.x) / 12;
+      x = source.x + (target.x - source.x) * t / 12;
       y = (t << 6) / 12 + 16;
       gBgScroll[1].x = 64 - x;
-      gBgScroll[1].y = -(t * 46) / 12 + 78;
+      gBgScroll[1].y = t * -46 / 12 + 78;
       if (effect->side == 0) {
         x = x / 2 + 20;
       } else {
@@ -327,19 +343,19 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
 
     // The battlefield peels up into a dome.
     if ((u32)frame <= 34) {
-      s32 curl = frame;
       s32 size;
-      s32 centerX = 120;
-      s32 centerY = -16;
-      s32 row;
+      s32 centerX;
+      s32 centerY;
       s32 height;
       s32 angle;
-      u8 *vertex;
 
+      curl = frame;
       if (curl > 16) {
         curl = 16;
       }
       size = 64 - curl * 2;
+      centerX = 120;
+      centerY = -16;
       if (frame >= 0) {
         s32 f = frame;
 
@@ -353,18 +369,21 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       work->bg2y = centerY << 8;
       work->bg2pa = 0x2000 / size;
       work->bg2pd = 0x100;
-      for (row = 0, height = -64, angle = 0, vertex = vertices;
-           row != DOME_ROWS; row++, height += 8, angle += 2184) {
-        s32 y = ((-Trig_Cos(angle) * 48) >> 16) - height;
-        s32 radius = (Trig_Sin(angle) * 48) >> 16;
+      for (row = 0, height = -64, angle = 0; row != DOME_ROWS;
+           height += 8, angle += 2184, row++) {
+        s32 lift = -Trig_Cos(angle) * 3;
+        s32 reach = (Trig_Sin(angle) * 48) >> 16;
         s32 column;
+        s32 y;
+        s32 radius;
 
-        y = curl * y / 16 + height;
-        radius = (radius - 56) * curl / 16 + 56;
-        for (column = 0; column != DOME_COLUMNS; column++, vertex += 4) {
-          vertex[0] = (radius * Trig_Sin(column << 12)) >> 16;
-          vertex[1] = y;
-          vertex[2] = (radius * Trig_Cos(column << 12)) >> 16;
+        lift = (lift << 4) >> 16;
+        y = (lift - height) * curl / 16 + height;
+        radius = (reach - 56) * curl / 16 + 56;
+        for (column = 0; column != DOME_COLUMNS; column++) {
+          vertices[row * DOME_COLUMNS + column].x = (Trig_Sin(column << 12) * radius) >> 16;
+          vertices[row * DOME_COLUMNS + column].y = y;
+          vertices[row * DOME_COLUMNS + column].z = (Trig_Cos(column << 12) * radius) >> 16;
         }
       }
       model = Render_AllocateModelList(1);
@@ -372,12 +391,12 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       texture.logHeight = 7;
       texture.pixels = gMapCellBuffer;
       model->unk04 = 3;
-      model->kind = 8;
-      model->texture = &texture;
       model->mesh = mesh;
+      model->texture = &texture;
+      model->vertices = projected;
+      model->kind = 8;
       model->scrollU = 0;
       model->scrollV = 0;
-      model->vertices = projected;
       Render_ResetTransformState();
       if (frame > 7) {
         pitch += Trig_Sin(frame * 924 - 7392) >> 5;
@@ -399,27 +418,26 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
     // Rings of dust.
     if (frame > 47) {
       void *ring = Heap_AllocEwram(0x200);
-      s32 k;
 
-      model = Render_AllocateModelList(1);
+      rings = Render_AllocateModelList(1);
       dust.logWidth = 6;
       dust.logHeight = 6;
       dust.pixels = work->sheet + 0x4710;
-      model->kind = 7;
-      model->texture = &dust;
-      model->mesh = gData_081990d0;
-      model->vertices = ring;
-      model->scrollU = 0;
-      model->scrollV = 0;
-      for (k = 0; k != 4; k++) {
-        s32 start = Data_08198b52[k] + 48;
+      rings->kind = 7;
+      rings->texture = &dust;
+      rings->mesh = gData_081990d0;
+      rings->vertices = ring;
+      rings->scrollU = 0;
+      rings->scrollV = 0;
+      for (i = 0; i != 4; i++) {
+        s32 start = Data_08198b52[i] + 48;
         s32 scale;
         s32 shade;
 
         if (frame <= start) {
           continue;
         }
-        scale = (((frame - start) * Data_08198b56[k] * 125) << 4) + 0x8000;
+        scale = (((frame - start) * Data_08198b56[i] * 125) << 4) + 0x8000;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;
@@ -427,35 +445,33 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
         if (shade <= -64) {
           continue;
         }
-        model->shade = shade;
+        rings->shade = shade;
         Render_ResetTransformState();
-        Func_08015160((target.x / 2 - 64) << 16, Data_08198b5a[k] << 16, 0);
+        Func_08015160((target.x / 2 - 64) << 16, Data_08198b5a[i] << 16, 0);
         Func_080151e4(scale >> 1, scale << 2, scale >> 1);
         SceneTransform_ApplyPitch(1000);
-        if (k & 1) {
-          SceneTransform_ApplyYaw((k * 4 + frame) << 11);
+        if (i & 1) {
+          SceneTransform_ApplyYaw((i * 4 + frame) << 11);
         } else {
-          SceneTransform_ApplyYaw((k * 4 - frame) << 11);
+          SceneTransform_ApplyYaw((i * 4 - frame) << 11);
         }
         Render_TransformVertices(Data_08199050, ring, 32);
-        Render_DrawModelList(model);
+        Render_DrawModelList(rings);
       }
-      Heap_Release(model);
+      Heap_Release(rings);
       Heap_Release(ring);
     }
     if (frame == 61) {
       transition[4] = 0;
-      Iwram_FillWords((void *)(BG_PLTT + 0xc0), 256, 0);
+      Iwram_FillWords((void *)(BG_PLTT + 96), 256, 0);
     }
     if (frame == 62) {
       BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), -1);
     }
     if ((u32)(frame - 63) <= 4) {
-      s32 scale = (frame << 13) - 0x7c000;
-
-      *(s32 *)(battle + 0x66c) = scale;
-      ColorBuffer_ScaleFar(battle + 0x56c, (void *)(BG_PLTT + 0xc0), scale,
-                           128);
+      *(s32 *)(battle + 0x66c) = (frame << 13) - 0x7c000;
+      ColorBuffer_ScaleFar(battle + 0x56c, (void *)(BG_PLTT + 96),
+                           *(s32 *)(battle + 0x66c), 128);
     }
     if (frame == 48) {
       work->shakeFrames = 16;

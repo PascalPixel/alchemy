@@ -1,5 +1,22 @@
-// Draft of BattleEffect_RunZagan, decompiled from the listing: differ 700 of 1150
-// (draft 1134), the same 59 calls and control flow; allocation differs.
+// Draft of BattleEffect_RunZagan, differ 46 of 1150, skeleton gap 21 (tla-en, 2026-11-01)
+// Same calls, control flow, frame and spill slots. What is left is instruction
+// order and two reload registers:
+// - The three work->objects loops (start, frame 157, end): the listing places
+//   the movs/lsls/adds/add that builds the pointer after the block's stores,
+//   here it starts first (priority 4 in sched2). Writing the pointer as a user
+//   variable changes nothing. The same late `add r2, fp` shows at the top of
+//   the mote loop, around the `str r0, [sp, #8]` of the fade copy.
+// - The texture block: the listing loads gData_02014000 into r0, which forces
+//   `adds r6, r0, #0` early and lets `mov r1, fp` reuse r1; here it lands in
+//   r2. Reordering the field stores only made it worse.
+// - frame <= 59 and the else branch: `movs r3, #58` falls one place early.
+// What the shape rests on, each measured: position and velocity are 8-byte
+// structs held in registers, so each spills as a pair and every field reloads;
+// `j * 7` stays an expression so its hoisted copy takes the [sp, #8] slot; the
+// table stays non-const and indexed through a variable, which keeps its load
+// in the loop and the 6 in a register; cell starts as the offset and adds
+// sprites second; the shake's offsets are computed before the BG1 store.
+// `none` is a guess at the zero r5 holds across the first calls.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -15,6 +32,10 @@ struct ModelTexture {
   u32 logHeight : 8;
   u32 unk02 : 16;
   const void *pixels;
+};
+
+struct RequestPair {
+  s32 x, y;
 };
 
 struct RenderModel {
@@ -109,8 +130,8 @@ extern char ResourceId_OrangePaletteB;
 extern char ResourceId_Data0C1;
 extern u32 gCameraSceneParameters[];
 extern u8 gData_02014000[];
-extern const u16 gData_08197410[];
-extern const s32 Data_08196e0c[2];
+extern u16 gData_08197410[];
+extern const struct RequestPair Data_08196e0c;
 extern const u16 Data_08197a38[][2]; // the charging Zagan's parts
 extern const u16 Data_08197a64[][2]; // the galloping Zagan's
 extern const u8 Data_08197a94[];     // each ring's start
@@ -134,24 +155,27 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   u8 *sprites;
   s32 *transition;
-  u16 savedScroll;
+  s32 savedScroll;
+  DrawRectangle *blit;
+  struct RequestPair position;
+  struct RequestPair velocity;
+  s32 skip;
   DrawRectangle blitters[2];
-  s32 request[2];
+  struct RequestPair request;
   s32 placement[4];
   struct ModelTexture texture;
   struct RenderModel *model;
   void *vertices;
   struct EffectStep *p;
-  s32 skip;
-  s32 x;
-  s32 y;
-  s32 velocityX;
-  s32 velocityY;
+  s32 none;
+  s32 line;
+  s32 motes;
   s32 scroll;
   s32 frame;
   s32 i;
   s32 j;
 
+  none = 0;
   battle = (u8 *)Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -161,27 +185,32 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   Func_0813ba50();
   BattleEffect_StartCanvasLayer(0);
   Func_08179e6c();
-  work->transferMode = 0;
+  work->transferMode = none;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
 
   // The screen slides over to the field.
-  for (frame = 0, scroll = -80; frame != 28; frame++) {
+  for (scroll = -80, frame = 0; frame != 28; frame++) {
     if (frame == 27) {
       gCameraSceneParameters[4] = 240;
       BattleEffect_SelectLivingTargets(work->effect);
       work->scrollStepX = -8;
       transition[4] = 1;
-      Iwram_FillWords((void *)(BG_PLTT + 0xc0), 256, 0x7fff7fff);
+      Iwram_FillWords((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
       Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->sheet, 0, 0);
       // Ten ever-fainter copies of one mote.
-      for (i = 0; i != 10; i++) {
-        u8 *cell = sprites + i * 32;
+      motes = 3;
+      for (j = 0, line = 0; j != 10; line += 16, j++) {
+        u8 *cell;
 
-        for (j = 0; j != 32; j++) {
-          s32 value = work->sheet[gData_08197410[3] + j];
+        cell = (u8 *)(line * 2);
+        cell += (s32)sprites;
+
+        for (i = 0; i != 32; i++) {
+          s32 offset = gData_08197410[motes] + i + 0x700;
+          s32 value = ((u8 *)work)[offset];
 
           if (value != 0) {
-            value -= i * 7;
+            value -= j * 7;
             if (value <= 0) {
               value = 1;
             }
@@ -191,10 +220,10 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       }
       Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, work->sheet, 1,
                                  1);
-      for (j = 0; j != 32; j++) {
-        work->sheet[0x5dc0 + j] = j + 16;
-        work->sheet[0x5de0 + j] = j + 16;
-        work->sheet[0x5e00 + j] = j + 16;
+      for (i = 0; i != 32; i++) {
+        work->sheet[0x5dc0 + i] = i + 16;
+        work->sheet[0x5de0 + i] = i + 16;
+        work->sheet[0x5e00 + i] = i + 16;
       }
     }
     scroll += 4;
@@ -202,7 +231,8 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
+  blit = blitters;
+  BattleEffect_FetchRectangleBlitters(0, (void **)blit);
   work->transferMode = 2;
   work->transferValue = 50;
   skip = 0;
@@ -243,15 +273,15 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       transition[4] = 1;
-      x = 240 << 16;
-      y = 0x400000;
-      velocityX = -0x140000;
-      velocityY = 0;
+      position.x = 240 << 16;
+      position.y = 0x400000;
+      velocity.x = -0x140000;
+      velocity.y = 0;
       for (i = 0; i != ZAGAN_PARTS; i++) {
         Animation_ApplyChildArgumentFar(work->objects[i], i + 12);
       }
       REG_BLDALPHA = 0x1010;
-      Iwram_FillWords((void *)(BG_PLTT + 0xc0), 256, 0x7fff7fff);
+      Iwram_FillWords((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
       work->scrollStepX = -8;
       gCameraSceneParameters[3] = -968;
       gCameraSceneParameters[4] = 120;
@@ -270,7 +300,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     // The backdrop darkens toward the battle's palette.
     if (!(frame & 1) && (u32)(frame - 32) <= 111) {
       u16 *from = Resource_GetTableEntry(*(u16 *)(battle + 0x670));
-      u16 *to = (u16 *)(BG_PLTT + 0xc0);
+      u16 *to = (u16 *)(BG_PLTT + 96);
 
       for (i = 0; i != 128; i++, from++, to++) {
         s32 b = (*to >> 10) & 31;
@@ -302,18 +332,18 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 64) <= 35) {
-      velocityX += 0x8000;
-      velocityY += -0x1000;
+      velocity.x += 0x8000;
+      velocity.y += -0x1000;
     }
     if (frame > 177) {
-      velocityX += -0x20000;
-      velocityY += -0x10000;
+      velocity.x += -0x20000;
+      velocity.y += -0x10000;
     } else if (frame > 139) {
-      velocityX += -40000;
-      velocityY += 0x2000;
+      velocity.x += -40000;
+      velocity.y += 0x2000;
     } else if (frame > 99) {
-      velocityX += -0x2000;
-      velocityY += 0x800;
+      velocity.x += -0x2000;
+      velocity.y += 0x800;
     }
     if (frame == 156) {
       Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
@@ -331,8 +361,8 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 156) <= 7) {
       blitters[0](canvas, work->sheet, 12, 0, 58, 120);
     }
-    for (i = 0, j = 114; i != 8; i++, j += 6) {
-      if (frame == j) {
+    for (i = 0; i != 8; i++) {
+      if (frame == i * 6 + 114) {
         work->scrollStepX++;
       }
     }
@@ -348,9 +378,9 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
 
     // Petals on the wind.
     if (frame == 0) {
-      s32 row = 3;
+      s32 row;
 
-      for (i = 0, p = work->particles; i != 20; i++, p++, row += 6) {
+      for (i = 0, row = 3, p = work->particles; i != 20; i++, p++, row += 6) {
         p->x = (Random16() & 127) - 160;
         p->y = row;
         p->variant = Random16() & 1;
@@ -358,9 +388,9 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)frame <= 119) {
-      s32 odd = frame & 1;
+      s32 odd;
 
-      for (i = 0, p = work->particles; i != 20; i++, p++) {
+      for (i = 0, odd = frame & 1, p = work->particles; i != 20; i++, p++) {
         if (!odd || !skip) {
           blitters[0](canvas, work->sheet + 0x5dc0, p->x, p->y, 32,
                       p->variant + 1);
@@ -371,58 +401,57 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
         }
       }
     }
-    if (frame > 195) {
+    if ((u32)frame > 195) {
       goto shake;
     }
 
     // Zagan.
-    request[0] = Data_08196e0c[0];
-    request[1] = Data_08196e0c[1];
+    request = Data_08196e0c;
     placement[3] = 0;
     placement[1] = 0;
     if (!(frame & 1) || !skip) {
       if (frame > 156) {
         for (i = 0; i != ZAGAN_PARTS - 1; i++) {
-          placement[0] = (Data_08197a38[i][0] << 16) + x - 0x200000;
-          placement[2] = (Data_08197a38[i][1] << 16) + y + 0x100000;
+          placement[0] = (Data_08197a38[i][0] << 16) + position.x - 0x200000;
+          placement[2] = (Data_08197a38[i][1] << 16) + position.y + 0x100000;
           Render_ApplyProjectedPlacementFar(work->objects[i], placement,
-                                            request, 0);
+                                            (s32 *)&request, 0);
         }
       } else {
         for (i = 0; i != ZAGAN_PARTS; i++) {
-          placement[0] = (Data_08197a64[i][0] << 16) + x;
-          placement[2] = (Data_08197a64[i][1] << 16) + y - 0x100000;
+          placement[0] = (Data_08197a64[i][0] << 16) + position.x;
+          placement[2] = (Data_08197a64[i][1] << 16) + position.y - 0x100000;
           Render_ApplyProjectedPlacementFar(work->objects[i], placement,
-                                            request, 0);
+                                            (s32 *)&request, 0);
         }
       }
     }
     if (frame > 177) {
-      x += velocityX;
-      y += velocityY;
-      velocityX = velocityX * 63 / 64;
-      velocityY = velocityY * 63 / 64;
+      position.x += velocity.x;
+      position.y += velocity.y;
+      velocity.x = velocity.x * 63 / 64;
+      velocity.y = velocity.y * 63 / 64;
     } else if (frame > 149) {
-      if (y > 0x37ffff) {
-        velocityX = 0;
-        velocityY = 0;
+      if (position.y > 0x37ffff) {
+        velocity.x = 0;
+        velocity.y = 0;
       }
-      x += velocityX;
-      y += velocityY;
+      position.x += velocity.x;
+      position.y += velocity.y;
     } else if (frame <= 59) {
-      x += velocityX;
-      y += velocityY;
-      velocityX = velocityX * 58 / 64;
-      velocityY = velocityY * 62 / 64;
+      position.x += velocity.x;
+      position.y += velocity.y;
+      velocity.x = velocity.x * 58 / 64;
+      velocity.y = velocity.y * 62 / 64;
     } else {
-      y += velocityY;
-      x += velocityX;
-      velocityX = velocityX * 58 / 64;
-      velocityY = velocityY * 61 / 64;
+      position.x += velocity.x;
+      position.y += velocity.y;
+      velocity.x = velocity.x * 58 / 64;
+      velocity.y = velocity.y * 61 / 64;
     }
     if ((!(frame & 1) || !skip) && frame <= 119) {
-      blitters[1](canvas, work->sheet + ((frame / 3) & 3) * 6000,
-                  (x / 2 >> 16) - 12, (y >> 16) - 58, 60, 100);
+      blit[1](canvas, work->sheet + ((frame / 3) & 3) * 6000,
+                  (position.x / 2 >> 16) - 12, (position.y >> 16) - 58, 60, 100);
     }
     if (frame == 157) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, gData_02014000, 0,
@@ -471,7 +500,7 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
         Func_08015160(-0x100000, Data_08197a9c[k] << 16, 0);
         Func_080151e4(scale, scale * 4 / 3, scale);
         SceneTransform_ApplyPitch(3000);
-        model->scrollU = ((frame + k * 5) & 7) << 4;
+        model->scrollU = ((frame + k * 5) & 7) * 16;
         Render_TransformVertices(Data_08198cac, vertices, 32);
         Render_DrawModelList(model);
       }
@@ -481,12 +510,13 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   shake:
     if (frame > 156) {
       if (work->shakeFrames > 0) {
-        s32 dx = Random16() & 3;
-        s32 dy = Random16() & 15;
+        s32 offsetX = (Random16() & 3) - 8;
+        s32 randomY = Random16() & 15;
+        s32 offsetY = randomY - 8;
 
-        gBgScroll[1].y = dy + 24;
-        gCameraSceneParameters[3] = 120 - (dx - 8);
-        gCameraSceneParameters[4] = 120 - (dy - 8);
+        gBgScroll[1].y = randomY + 24;
+        gCameraSceneParameters[3] = 120 - offsetX;
+        gCameraSceneParameters[4] = 120 - offsetY;
         work->shakeFrames--;
       } else {
         gBgScroll[1].y = work->savedBg1Y;

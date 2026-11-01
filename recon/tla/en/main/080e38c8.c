@@ -1,4 +1,5 @@
-// Draft, differ 335 of 506: the frame callback of Func_080e3d04's spray: every
+// Draft, differ 99 of 506, skeleton gap 37 (tla-en, 2026-11-01)
+// The frame callback of Func_080e3d04's spray: every
 // fourth frame while it is emitting, a free one of sixteen drops starts at
 // the origin with the mode's speed (mode 3 faster, longer and lighter) along
 // the spray's angle; each live drop grows, cycles its four tiles, is drawn at
@@ -7,9 +8,18 @@
 // the frame) or on something solid; an odd drop that dies leaves one of
 // sixteen puffs of smoke that rise for 32 frames. The angle then turns toward
 // the scene's facing by at most 0x400 a frame.
-// Same calls, offsets and control flow; left: register allocation (the
-// native counts the drops in r11 and keeps the sprite pointer at sp 4 in the
-// second loop) and the order it cascades into.
+// The loops index their arrays: the native's sprite, motion and puff pointers
+// are strength-reduced from i (sprite in r0 with a copy in r5 at the call in
+// the first loop, at sp 4 with the copy in r5 in the second), and sprite and
+// particle are one local each across all three loops. The third loop's count
+// down is GCC reversing i. Left: the first loop keeps the particle copy in fp
+// across the depth call where the native computes &velocityX from r6 after
+// it (assigning particle later reduces &velocityX as its own giv and costs a
+// hoisted register), and only one reload of the scene; the third loop has
+// sprite and particle swapped in r5 and r6; a few scheduling pairs. The
+// native also keeps two separate zeros for velocityZ and velocityX. Tried
+// without gain: pointer advancing in loops 1 and 3, every index or pointer
+// spelling of the stores, and every order of them.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -87,10 +97,10 @@ void Func_080e38c8(void) {
   s32 turn;
 
   if (work->emitting != 0 && (gFrameCount & 3) == 0) {
-    sprite = work->drops;
-    particle = work->dropMotion;
     for (i = 0; i <= 15; i++) {
-      if (particle->timer == -1) {
+      if (work->dropMotion[i].timer == -1) {
+        particle = &work->dropMotion[i];
+        sprite = &work->drops[i];
         object = scene->otherObject;
         if (object == NULL)
           object = scene->mainObject;
@@ -104,28 +114,25 @@ void Func_080e38c8(void) {
           work->lifetime = 25;
           work->gravity = 0x2000;
         }
-        particle->x = work->origin[0];
-        particle->y = work->origin[1];
-        particle->velocityZ = 0;
-        particle->z = work->origin[2];
-        particle->velocityX = 0;
+        work->dropMotion[i].x = work->origin[0];
+        work->dropMotion[i].y = work->origin[1];
+        work->dropMotion[i].z = work->origin[2];
+        work->dropMotion[i].velocityZ = 0;
+        work->dropMotion[i].velocityX = 0;
         particle->velocityY = -0x13333;
         Vector_AddPolarOffset(work->speed, work->angle, &particle->velocityX);
-        particle->timer = 0;
+        work->dropMotion[i].timer = 0;
         break;
       }
-      sprite++;
-      particle++;
     }
   }
 
   work->hit = 0;
-  sprite = work->drops;
-  particle = work->dropMotion;
-  puff = work->puffMotion;
-  for (i = 0; i <= 15; i++, sprite++, particle++, puff++) {
+  for (i = 0; i <= 15; i++) {
+    particle = &work->dropMotion[i];
     if (particle->timer == -1)
       continue;
+    sprite = &work->drops[i];
     sprite->scaleY = sprite->scaleX = particle->timer * 0xa3d + 0x8000;
     sprite->oam.index =
         work->dropTile + (((particle->timer >> 1) + i) & 3) * 32;
@@ -137,11 +144,11 @@ void Func_080e38c8(void) {
     if (++particle->timer == work->lifetime)
       particle->timer = -1;
     for (j = 0; j < 80; j++) {
-      object = event->objects[j];
-      if (object != NULL && object->script != NULL &&
-          (object->collisionFlags & 1) && object != scene->mainObject &&
-          object != scene->otherObject &&
-          Func_080dbe80(&particle->x, 2, &object->x, object->radius - 2) >= 0) {
+      struct Actor *other = event->objects[j];
+      if (other != NULL && other->script != NULL &&
+          (other->collisionFlags & 1) && other != scene->mainObject &&
+          other != scene->otherObject &&
+          Func_080dbe80(&particle->x, 2, &other->x, other->radius - 2) >= 0) {
         work->hit = 1;
         work->hitObject = j;
         particle->timer = -1;
@@ -162,6 +169,7 @@ void Func_080e38c8(void) {
       pos[2] = particle->z;
       Vector_AddPolarOffset(0xa0000, work->angle + 0x8000, pos);
       Vector_AddPolarOffset(0xc0000, Random16(), pos);
+      puff = &work->puffMotion[i];
       puff->x = pos[0];
       puff->y = pos[1];
       puff->z = pos[2];
@@ -172,24 +180,22 @@ void Func_080e38c8(void) {
     BattleEffect_IntegrateVector3(&particle->x, 64, work->gravity);
   }
 
-  sprite = work->puffs;
-  puff = work->puffMotion;
-  for (i = 15; i >= 0; i--) {
-    if (puff->timer >= 0) {
-      sprite->oam.index = work->puffTile + ((puff->timer >> 2) & 7) * 8;
-      pos[0] = puff->x;
-      pos[1] = puff->y;
-      pos[2] = puff->z;
+  for (i = 0; i <= 15; i++) {
+    particle = &work->puffMotion[i];
+    if (particle->timer >= 0) {
+      sprite = &work->puffs[i];
+      sprite->oam.index = work->puffTile + ((particle->timer >> 2) & 7) * 8;
+      pos[0] = particle->x;
+      pos[1] = particle->y;
+      pos[2] = particle->z;
       Camera_WorldToScreen(pos);
       sprite->x = pos[0];
       sprite->y = pos[2];
       Func_080eb01c(sprite);
-      puff->y += 0xcccc;
-      if (++puff->timer == 32)
-        puff->timer = -1;
+      particle->y += 0xcccc;
+      if (++particle->timer == 32)
+        particle->timer = -1;
     }
-    sprite++;
-    puff++;
   }
 
   target = scene->angle - 0x4000;

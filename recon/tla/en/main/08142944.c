@@ -1,20 +1,26 @@
-// Draft, differ 485 of 734 (one instruction short).
+// Draft, differ 264 of 734, skeleton gap 72 (tla-en, 2026-11-01)
 
 // No twin: an effect new to ⚓️, reached from the scenes through the
 // far-call table (table_47.s) with a kind of 78, 79 or 80. Its frame is the
 // canvas skeleton of the scene effects (its own heap blocks, the work marked
 // active, the canvas transfer), and its pictures are textured models drawn
-// by the IWRAM renderer (Render_AllocateModelList, Render_TransformVertices, Render_DrawModelList), as
-// 0813d098's star is.
+// by the IWRAM renderer (Render_AllocateModelList, Render_TransformVertices,
+// Render_DrawModelList), as 0813d098's star is.
 
-// Left: allocation. The native keeps the centre's address in r11 and the
-// flashes' index as its own induction variable (frame * 2 - 96, in a stack
-// slot), with a stack frame of 80 bytes; here the centre's address is spilled and
-// the stack frame is 76 bytes, so every slot and most registers move. The control
-// flow follows the listing block for block.
+// Left: the control flow, loops and induction variables follow the listing
+// and the rest of the skeleton gap is allocation. The native keeps the
+// centre's address in r11 and spills the corners and both burst coordinates;
+// here global.c ranks the corners just ahead of the centre's address (42/174
+// against 108/469), so the corners take r11, the burst's y a register and the
+// centre's address a stack slot. That one swap moves most registers, the
+// slots and the scheduling around it. The ranking needs the corners' live
+// length above about 39% of the loop's (now 37%) or two more references to
+// the centre's address. The native frame is 80 bytes with sp+40 unused.
 
-// Tried:
-// written from the listing                                   485
+// Tried: named temporaries for the transforms' arguments (copy propagation
+// removes them, the live lengths do not move); a pointer to the centre in or
+// out of the loop; start = table; start += 48 drops differ to 247 but loses
+// the native's copy of the table byte.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -146,6 +152,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   DrawRectangle draw;
   s32 frames;
   s32 frame;
+  s32 index;
   s32 i;
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
@@ -170,6 +177,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   if (kind != KIND_FINALE)
     frames = 76;
   for (frame = 0; frame != frames; frame++) {
+    index = (frame - 48) * 2;
     // The effect's centre, beside or above the user.
     EffectPosition_ProjectBattler(effect->actor, &center);
     if (kind == KIND_RIGHT) {
@@ -219,8 +227,14 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     // flashes a frame from a point near the centre.
     if (frame >= 48) {
       if (frame == 48) {
-        for (i = 0; i != 64; i++)
-          gData_02014000[i].variant = -1;
+        {
+          s32 *variant = &gData_02014000[0].variant;
+
+          for (i = 0; i != 64; i++) {
+            *variant = -1;
+            variant += 7;
+          }
+        }
         work->shakeFrames = 8;
         Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
       }
@@ -228,9 +242,10 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
         s32 x = ((Random16() & 63) + center.x / 2 - 32) << 16;
         s32 y = ((Random16() & 31) + center.y) << 16;
         s32 k;
+        struct EffectStep *flash;
 
-        for (k = 0; k != 2; k++) {
-          struct EffectStep *flash = &gData_02014000[(frame - 48) * 2 + k];
+        flash = &gData_02014000[index];
+        for (k = 0; k != 2; k++, flash++) {
           s32 speed = Random16() & 31;
           s32 angle = Random16();
 
@@ -241,14 +256,16 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
           flash->variant = 0;
         }
       }
-      for (i = 0; i != 16; i++) {
-        struct EffectStep *flash = &gData_02014000[i];
+      {
+        struct EffectStep *flash = gData_02014000;
 
-        if (flash->variant >= 0 && flash->variant <= 17) {
-          draw(canvas, work->sheet + (flash->variant / 3 << 11),
-               HI(flash->x) - 16, HI(flash->y) - 48, 32, 64);
-          BattleEffectKernels_IntegrateVector2(flash, 62, -0x800);
-          flash->variant++;
+        for (i = 0; i != 16; i++, flash++) {
+          if (flash->variant >= 0 && flash->variant <= 17) {
+            draw(canvas, work->sheet + (flash->variant / 3 << 11),
+                 HI(flash->x) - 16, HI(flash->y) - 48, 32, 64);
+            BattleEffectKernels_IntegrateVector2(flash, 62, -0x800);
+            flash->variant++;
+          }
         }
       }
     }
@@ -262,9 +279,10 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       // The glow on the canvas map widens for 56 frames.
       if (frame <= 63) {
         s32 size = 128;
+        s32 width = frame + 8;
 
-        if (frame + 8 <= 64) {
-          size = (frame + 8) * 2;
+        if (width <= 64) {
+          size = width * 2;
           Func_0815b434(Ram_MapCellBuffer, size, 0x10000);
         }
         Func_0818caa8(Ram_MapCellBuffer, cx >> 16, cy >> 16, size);
@@ -303,8 +321,12 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
         ring->x += ring->y * 2;
         if (ring->variant >= 0 && ring->variant <= 47) {
           Render_ResetTransformState();
-          Func_08015160(cx + ((i & 3) << 17) + 0x20000 - 0x400000,
-                        cy - (((i & 3) + 2) << 16) - 0x400000, 0);
+          {
+            s32 column = i & 3;
+
+            Func_08015160(cx + ((column * 2 + 2) << 16) - 0x400000,
+                          cy - ((column + 2) << 16) - 0x400000, 0);
+          }
           Func_080151e4(0x8000, 0x10000, 0x10000);
           Func_080150e4(ring->x);
           Func_080151e4(Trig_Sin(ring->variant * 682) + 0x10000, 0x20000,

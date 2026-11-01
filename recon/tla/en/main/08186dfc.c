@@ -1,5 +1,11 @@
-// Draft of BattleEffect_RunHaures, decompiled from the listing: differ 2685 of 2667
-// (draft 2650), the same 178 calls and control flow; allocation differs.
+// Draft, differ 2269 of 2667, skeleton gap 371 (tla-en, 2026-11-01)
+// BattleEffect_RunHaures: the same calls and control flow; what is left is mostly
+// allocation and the scheduling it causes. Settled by measurement: model and verts
+// are per block; the outer counters share i; copy and spawn loops index from inside
+// the inner loop, so their start values are loop-made and stay in the outer body.
+// Open: 0x7780 sits in r7 before the first call while the draft puts -13 there; the
+// mesh loop keeps j in r12 and q in r7, the draft the reverse; the mesh loop's -16
+// is hoisted here and not in the listing; Data_08199bf9's q is a separate pointer.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -170,6 +176,7 @@ void Func_08196404(s32 slot, s32 width, s32 height, s32 mode, s32 flags);
 void BattleEffect_ProcessPendingStampTransfer(void); // copies the 0x6780 canvas to the stamp's tiles
 void Heap_Release(void *buffer);
 
+#define SPARKS ((struct EffectStep *)gData_02014000)
 #define SLOT_ALT 188 // unkb8[1]
 #define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 0x7b74))
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
@@ -195,13 +202,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   s32 dived;
   s32 i;
   s32 j;
-  s32 k;
   s32 m;
   s32 row;
   s32 cut;
   s32 scroll;
-  struct RenderModel *model;
-  void *verts;
   s32 place[4];
   s32 place2[4];
   struct WordPair req;
@@ -213,6 +217,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   struct ModelTexture texture4;
   struct EffectStep *p;
   struct FieldSprite *sprite;
+  const u8 *q2;
 
   battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -263,7 +268,11 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   sprite = Func_0815b290(64, 64, 0xc0002000, 0);
   work->objects[18] = sprite;
   sprite->blendMode = 1;
-  STAMP_TILES(work) = 0x06010000 + gResourceTableEntries[sprite->vramBlock].tile;
+  {
+    u32 tiles = gResourceTableEntries[sprite->vramBlock].tile + 0x06010000;
+
+    STAMP_TILES(work) = tiles;
+  }
   {
     u8 *c = work->sheet;
 
@@ -271,8 +280,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     Func_0816ae40(c, gData_02014000, 64, 64);
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, c, 1, 0);
     for (i = 0; i != 0x1781; i++, c++) {
-      if (*c != 0) {
-        *c = (*c >> 2) + 224;
+      u8 v = *c;
+
+      if (v != 0) {
+        *c = (v >> 2) + 224;
       }
     }
   }
@@ -287,14 +298,17 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   }
   {
     u8 *q = Data_02010ae8;
+    s32 b = 2;
+    s32 c2 = 3;
+    s32 a = 1;
 
-    for (i = 0; i != 31; i++, q += 8) {
+    for (i = 0; i != 31; i++, c2 += 2, b += 2, a += 2, q += 8) {
       q[0] = i * 2;
-      q[1] = i * 2 + 1;
-      q[2] = i * 2 + 2;
-      q[4] = i * 2 + 1;
-      q[5] = i * 2 + 3;
-      q[6] = i * 2 + 2;
+      q[1] = a;
+      q[2] = b;
+      q[4] = a;
+      q[5] = c2;
+      q[6] = b;
     }
   }
   Data_02010be0[0] = 0;
@@ -315,10 +329,13 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         if (i < 0) {
           r = 0;
         }
+        *dst = r;
       } else {
-        g = i - 32;
-        b = g * 4;
+        s32 t = i - 32;
+
+        b = t * 4;
         r = b;
+        g = t;
         if (r > 31) {
           r = 31;
         }
@@ -366,9 +383,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             q[1] = 1;
           }
         }
+        q2 = Data_08199a3e;
         p = work->particles;
-        for (i = 0; i != 4; i++, p++) {
-          p->x = Data_08199a3e[i] << 16;
+        for (i = 0; i != 4; i++, p++, q2++) {
+          p->x = *q2 << 16;
           p->y = 0x100000;
           p->velocityX = 0;
           p->velocityY = 0;
@@ -377,8 +395,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         p = &work->particles[4];
         for (i = 0; i != 8; i++, p++) {
           p->x = (Random16() & 15) + 24;
-          p->variant = i * 3;
           p->y = Random16() & 7;
+          p->variant = i * 3;
           p->velocityX = 0;
           p->velocityY = 0;
         }
@@ -459,6 +477,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           }
         }
         if (frame > 46) {
+          struct RenderModel *model;
+          void *verts;
           s32 t;
           s32 sh;
           s32 s;
@@ -508,30 +528,35 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             s32 a;
             s32 b;
             s32 n;
+            s32 next;
 
             if (frame == 74) {
               morph = 0;
               morphStep = 0;
             }
             a = morph % 13;
-            b = (morph + 1) % 13;
+            next = morph + 1;
+            b = next % 13;
             n = morphStep;
             morphStep = n + 1;
             if (morphStep == Data_08199bec[a]) {
               morphStep = 0;
-              morph = morph + 1;
+              morph = next;
             }
-            for (j = 0; j != 32; j++) {
-              s32 lo = Data_08199a4c[a * 32 + j];
+            for (i = 0; i != 32; i++) {
+              s8 *v = Data_020104f0 + i * 8;
 
-              Data_020104f0[j * 8 + 1] = -(
-                  lo + n * (Data_08199a4c[b * 32 + j] - lo) / Data_08199bec[a]);
+              v[1] = -(Data_08199a4c[a * 32 + i] +
+                       n *
+                           (Data_08199a4c[b * 32 + i] -
+                            Data_08199a4c[a * 32 + i]) /
+                           Data_08199bec[a]);
             }
             {
               s8 *v = Data_020104f0;
               s32 y = -64;
 
-              for (j = 0; j != 32; j++, v += 8, y += 4) {
+              for (i = 0; i != 32; i++, v += 8, y += 4) {
                 *v = y;
               }
             }
@@ -544,7 +569,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             u8 *q = Data_02010fa0;
             s32 v = frame - 235;
 
-            for (j = 0; j != 31; j++, q += 2) {
+            for (i = 0; i != 31; i++, q += 2) {
               q[0] = v;
               q[1] = v;
             }
@@ -589,9 +614,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             p = &work->particles[4];
             for (i = 0; i != 8; i++, p++) {
               s32 n = (p->variant / 4) % 6;
+              u8 *src = work->sheet + gData_0819747a[n];
               u32 w = gData_08197467[n];
 
-              stamp(STAMP_CANVAS(work), work->sheet + gData_0819747a[n],
+              stamp(STAMP_CANVAS(work), src,
                     p->x - (w >> 1), p->y + gData_08197473[n],
                     w, gData_0819746d[n]);
               if (++p->variant == 24) {
@@ -610,8 +636,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           if (req.b > 0x20000) {
             req.b = 0x20000;
           }
-          place2[1] = 0x780000 - py;
           place2[0] = px;
+          place2[1] = 0x780000 - py;
           place2[2] = 0x800000;
           Render_ApplyProjectedPlacementFar(work->objects[18], place2,
                                             (s32 *)&req, 0);
@@ -624,6 +650,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         Sound_PlayFar(144);
       }
       if ((u32)cut <= 9) {
+        struct RenderModel *model;
+        void *verts;
         s32 s;
 
         if (frame == 267) {
@@ -668,11 +696,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         if ((u32)cut <= 5) {
           Iwram_ClearWords(gMapCellBuffer, 0xd80);
           for (j = 0; j != 72; j++) {
-            u8 *src = work->sheet + row * 128 + j * 48;
-            u8 *dst = gMapCellBuffer + j * 64;
-
             for (m = 0; m != 48; m++) {
-              *dst++ = *src++;
+              gMapCellBuffer[j * 64 + m] = work->sheet[row * 128 + j * 48 + m];
             }
           }
           if ((u32)cut <= 5) {
@@ -691,6 +716,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         Heap_Release(verts);
       }
       if (frame > 276) {
+        struct RenderModel *model;
+        void *verts;
         u8 *cells;
         u8 *mesh;
 
@@ -717,8 +744,12 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
 
             p->x = x << 16;
             p->y = y << 16;
-            p->velocityX = (x - 120) << 12;
-            p->velocityY = (60 - y) << 10;
+            {
+              s32 velocityY = (60 - y) << 10;
+
+              p->velocityX = (x - 120) << 12;
+              p->velocityY = velocityY;
+            }
             p->z = 0;
             p->velocityX += ((Random16() & 31) - 16) << 13;
             p->velocityY += ((Random16() & 31) - 16) << 13;
@@ -755,16 +786,16 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           const u8 *q = Data_08199bf9;
           u8 *f = mesh;
 
-          for (i = 0; i != 31; i++, q += 10, f += 12) {
-            const u8 *src = Data_08199bf9 + i * 10 + 2;
-            s8 *dst = (s8 *)cells + i * 16;
+          for (j = 0; j != 31; q += 10, f += 12, j++) {
             s32 y0 = q[1];
             s32 x0 = q[0];
 
-            for (m = 0; m != 4; m++, src += 2, dst += 4) {
+            for (i = 0; i != 4; i++) {
+              s8 *dst = (s8 *)cells + j * 16 + i * 4;
+
               dst[2] = 0;
-              dst[0] = src[0] - x0;
-              dst[1] = src[1] - y0;
+              dst[0] = Data_08199bf9[j * 10 + i * 2 + 2] - x0;
+              dst[1] = Data_08199bf9[j * 10 + i * 2 + 3] - y0;
             }
             f[1] = 1;
             f[2] = 2;
@@ -857,13 +888,11 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 0);
   Iwram_ClearWords(gMapCellBuffer, 0x6c00);
-  for (k = 0; k != 6; k++) {
+  for (i = 0; i != 6; i++) {
     for (j = 0; j != 72; j++) {
-      u8 *src = work->sheet + k * 27 * 128 + j * 48;
-      u8 *dst = gMapCellBuffer + k * 9 * 512 + j * 64;
-
       for (m = 0; m != 48; m++) {
-        *dst++ = *src++;
+        gMapCellBuffer[(i * 9 * 512) + j * 64 + m] =
+            work->sheet[i * 27 * 128 + j * 48 + m];
       }
     }
   }
@@ -876,15 +905,20 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   blit = Ram_HeapSlots->unk64[1];
   scroll = 0;
   for (frame = 0; frame != 92; frame++, scroll += 8) {
-    struct EffectStep *sparks = (struct EffectStep *)gData_02014000;
+    struct RenderModel *model;
+    void *verts;
 
     if (frame == 0) {
       vx = -0xc0000;
       vy = 0x60000;
       px = 0x10e0000;
       py = -0x160000;
-      for (i = 0; i != 512; i++) {
-        sparks[i].variant = -1;
+      {
+        s32 *variant = &SPARKS->variant;
+
+        for (i = 0; i != 512; i++, variant += 7) {
+          *variant = -1;
+        }
       }
     }
     if (frame == 20) {
@@ -899,7 +933,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       vx = -0x80000;
       vy = 0;
     }
-    p = sparks;
+    p = SPARKS;
     for (i = 0; i != 512; i++, p++) {
       if (p->variant >= 0) {
         s32 n = (p->variant >> 3) + 1;
@@ -913,10 +947,11 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     if (frame <= 39) {
       s32 half = px / 2;
 
-      p = &sparks[frame * 12];
-      for (i = 0; i != 12; i++, p++) {
+      for (i = 0; i != 12; i++) {
         s32 angle;
         s32 speed;
+
+        p = &SPARKS[frame * 12 + i];
 
         p->x = (((Random16() & 63) - 16) << 16) + half;
         p->y = ((Random16() & 31) << 16) + py;
@@ -928,10 +963,11 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
     }
     if (frame <= 73) {
-      s32 t = frame - 20;
+      s32 t;
 
       req2 = Data_08196f10;
       place2[3] = 0;
+      t = frame - 20;
       if ((u32)t <= 19) {
         req2.a = -0x10001;
         for (i = 0; i != 11; i++) {
@@ -999,9 +1035,9 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     model = Render_AllocateModelList(1);
     model->shade = -8;
     model->kind = 7;
+    model->texture = &texture4;
     texture4.logWidth = 6;
     texture4.logHeight = 5;
-    model->texture = &texture4;
     model->mesh = Data_081992f8;
     model->vertices = verts;
     texture4.pixels = work->sheet;
@@ -1012,14 +1048,15 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       if (frame >= start && frame < start + 16) {
         s32 amp = Trig_Sin((frame - start) << 11) / 8;
         s32 x = -0x100000;
+        s32 y = -4;
 
         for (m = 0; m != 3; m++, x += 0x140000) {
           Render_ResetTransformState();
           if (i == 0) {
-            Func_08015160(x, -0x40000, 0);
+            Func_08015160(x, y << 16, 0);
             Func_080150e4(-0x2000);
           } else {
-            Func_08015160(x + -0x100000, -0x40000, 0);
+            Func_08015160(x + -0x100000, y << 16, 0);
             Func_080150e4(0x27d0);
           }
           Func_080151e4(0x30000, amp, 0x20000);
@@ -1035,6 +1072,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 56) <= 31) {
       s32 sh = 0;
       s32 v;
+      s32 left = 4;
+      s32 right = 123;
       s16 *corner = verts;
 
       if (frame > 79) {
@@ -1052,11 +1091,11 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       }
       corner[1] = 60 - v;
       corner[5] = 60 - v;
-      corner[0] = 4;
-      corner[4] = 123;
-      corner[8] = 4;
+      corner[0] = left;
+      corner[4] = right;
+      corner[8] = left;
       corner[9] = v + 60;
-      corner[12] = 123;
+      corner[12] = right;
       corner[13] = v + 60;
       Render_DrawModelList(model);
     }

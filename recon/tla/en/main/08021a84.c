@@ -1,10 +1,20 @@
-// Draft, differ 269 (289 before statements reordered 2026-10-26).
-// Draft, differ 297 of 578, structure in place, allocation not: the
-// constants and temporaries take other low registers throughout. The
-// locals are declared in the order of the native's spill slots (mirrored at
-// sp+24 down to decoderWasLoaded at sp+8; 305 the other way). Data_08021824Size
-// stands for the outline routine's size, a pool word in the native, which no
-// symbol names yet.
+// Draft, differ 4 of 578, skeleton gap 2 (tla-en, 2026-11-01)
+// Every instruction and register agrees; two sched2 ties remain, each one
+// instruction in the wrong place. In the first script read, lsls comes before
+// the strb of pos (the listing has strb first; the second read agrees). Before
+// the outline call, the listing loads width first, then system and height;
+// the draft loads width last, after fill. RTL order there is height, width,
+// system, edge, fill, and the argument forms tried (locals for width, height,
+// edge, fill or system, in either order; casts; parameter types; pointer
+// forms for the read) move the tie but do not settle it. Edge or fill as a
+// local adds an instruction.
+// Allocation hangs on three forms: every counter is the one function-level i,
+// which is why the sink and shade loops run in r8; the rows to sink are held
+// in picture, reused (rows as its own local gives differ 60), and
+// outlineHeight and vram are locals only for the scheduling. Loops written
+// up-counting with a limit local reverse in loop.c as the listing's do; the
+// last sink loop stays up-counting in both. Data_08021824Size stands for the
+// outline routine's size, a pool word in the native, which no symbol names yet.
 // ☀️'s Sprite_ComposePicture (games/tbs/src/field/field/sprite_draw.c) on
 // The Lost Age's sprite: command 252 plays a sound, 242 and 243 set the
 // sprite's offsets, a blank or a picture keeps reading commands, flag 0x20
@@ -88,11 +98,12 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
   s32 picture;
   u32 facing;
   s32 tile;
+  void *vram;
 
+  mirrored = 0;
   system = (struct ObjectSystemColours *)Ram_HeapSlots->objectSystem;
   decoderWasLoaded = 1;
   decodePicture = Ram_HeapSlots->unk4c[1];
-  mirrored = 0;
   if (decodePicture == NULL) {
     Dma_Set(
         Render_DecodePictureCode,
@@ -203,10 +214,11 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
     if (gData_0802eadc[(dir >> 13) & 7] & 0x80)
       mirrored = 1;
   } else if (obj->dirty != 0) {
-    drawCount = -1;
     size = obj->width * obj->height;
     pixels = Heap_Alloc(size);
     Iwram_ClearWords(pixels, size);
+
+    drawCount = -1;
 
     for (i = obj->count - 1; i >= 0; i--) {
       layer = obj->entries[i];
@@ -263,28 +275,39 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
       if (obj->flags & 2) {
         u32 codeSize = (u32)Data_08021824Size;
         OutlineFn outline = Heap_Alloc(codeSize);
+        u32 outlineHeight;
 
         Dma_Set(Data_08021824, outline, 0x84000000 | (codeSize >> 2), REG_DMA3);
-        outline(obj->width, obj->height, pixels, system->edge, system->fill);
+        outlineHeight = obj->height;
+        outline(obj->width, outlineHeight, pixels, system->edge, system->fill);
         Heap_Release(outline);
       }
       if (obj->flags & 8) {
-        s32 rows = obj->depth;
-        s32 height = obj->height;
-        s32 width = obj->width;
+        s32 height;
+        s32 width;
+        s32 amount;
+        s32 limit;
         u32 *dst;
         u32 *src;
-        s32 n;
 
-        if (rows > height)
-          rows = height;
-        dst = (u32 *)(pixels + height * width) - 1;
-        for (n = width; n != 0; n--)
+        // Rows to sink, held in picture: see the header.
+        picture = obj->depth;
+        height = obj->height;
+        width = obj->width;
+        if (picture > height)
+          picture = height;
+        dst = (u32 *)(pixels + width * height);
+        dst--;
+        limit = width;
+        for (i = 0; i < limit; i++)
           *dst-- = 0;
-        src = dst - rows * width / 4;
-        for (n = (height - rows - 4) * width / 4; n > 0; n--)
+        amount = width * picture;
+        src = dst - amount / 4;
+        limit = (height - picture - 4) * width / 4;
+        for (i = 0; i < limit; i++)
           *dst-- = *src--;
-        for (n = 0; n < rows * width / 4; n++)
+        limit = amount / 4;
+        for (i = 0; i < limit; i++)
           *dst-- = 0;
       } else if (obj->flags & 4) {
         u32 rows = obj->depth;
@@ -292,12 +315,13 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
         u32 width = obj->width;
         const u8 *shade = Data_080209a8;
         u8 *p;
-        u32 n;
+        s32 n;
 
         if (rows > height)
           rows = height;
+        n = width * rows;
         p = pixels + (height - rows) * width;
-        for (n = rows * width; n != 0; n--) {
+        for (i = 0; i < n; i++) {
           *p = shade[*p];
           p++;
         }
@@ -305,8 +329,8 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
     }
 
     tile = VramCache_Load(obj->slot, size, 0);
-    ((UploadFn)Ram_HeapSlots->unk4c[2])(pixels, obj->width, obj->height,
-                                        (void *)(0x06010000 + (tile << 5)));
+    vram = (void *)((tile << 5) + 0x06010000);
+    ((UploadFn)Ram_HeapSlots->unk4c[2])(pixels, obj->width, obj->height, vram);
     obj->tile = tile;
     obj->dirty = 0;
     system->used += size;

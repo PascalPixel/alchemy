@@ -1,4 +1,5 @@
-// Draft, differ 464 of 594: a field Psynergy that makes the map ripple
+// Draft, differ 8 of 594, skeleton gap 8 (tla-en, 2026-11-01)
+// A field Psynergy that makes the map ripple
 // (Func_080e89e4, Func_080e8b44 with a growing then shrinking amplitude)
 // and throws up water splashes (FieldEffect_WaterSplash, 64 sprites) round
 // the spot, 32 pixels before the caster when nothing is targeted (mode 2,
@@ -7,9 +8,16 @@
 // every third frame; mode 0, no splashes, otherwise). A target larger than
 // 0x800 pixels is left alone. The effect's stage-5 event callback runs each
 // frame of the middle phase; cue 390 and Func_080e8c9c end it.
-// Same calls, offsets and control flow; left: register and stack allocation
-// (the native hoists the four tile indices of the splash loop into r8, r4,
-// r2 and r7) and the order it cascades into.
+// Same instructions; left are two sched2 orders. (1) At the head the listing
+// computes radius and stores it before the zeros, yet loads the zero first;
+// every position of the radius assignment among the zeros, chained zero
+// assignments and all orders of the first locals fall short of that. (2) After
+// EffectSprite_DrawAtWorldPosition the listing restores r2 last, and after
+// Func_080ce31c it stores selector before reloading scene; here each load comes
+// first. The stack slots and the allocation otherwise agree: the declaration
+// order follows the listing's slots, high to low. The count-up loops are
+// reversed by the compiler, which is why they run down from 63 in the listing;
+// the empty then-branch keeps the far branch and the jump after it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -94,42 +102,51 @@ void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e92b4(void) {
   struct SplashWork *work = HeapSlot_Alloc(92, 0x1920);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
-  struct Actor *child = scene->child;
   struct Actor *caster = scene->mainObject;
-  struct SplashAnimation *animation;
-  struct PendingEvent *pending;
+  struct Actor *child = scene->child;
+  struct SplashAnimation *animation = child->animation;
   struct EffectSprite *sprite;
   struct SplashParticle *particle;
-  u8 *picture;
+  void *source;
   u8 *dst;
-  s32 radius = 0xe0000;
-  s32 shifts = 0;
-  s32 animating = 0;
-  s32 spraying = 0;
-  s32 next = 0;
-  s32 mode = 0;
-  s32 isWaterObject;
-  s32 selector;
-  s32 entry;
-  s32 tile;
-  s32 counter;
-  s32 amplitude;
-  s32 phase;
-  s32 timer;
   s32 angle;
   s32 i;
+  s32 entry;
+  s32 tile;
+  s32 phase;
+  s32 timer;
+  s32 shifts;
+  s32 animating;
+  s32 spraying;
+  s32 next;
+  s32 isWaterObject;
+  s32 mode;
+  s32 radius;
+  s32 selector;
+  struct PendingEvent *pending;
+  u8 *picture;
+  s32 counter;
+  s32 amplitude;
 
-  animation = child->animation;
+  shifts = 0;
+  radius = 0xe0000;
+  animating = 0;
+  spraying = 0;
+  next = 0;
+  mode = 0;
   selector = Func_080ce31c(scene->fieldKind);
   pending = Func_080ce458(0x50000005, scene->fieldKind, selector);
-  if (child == NULL) {
+  if (child != NULL) {
+    if (animation != NULL) {
+      if (animation->width * animation->height <= 0x800) {
+      } else
+        goto end;
+    }
+  } else {
     scene->x = caster->x;
     scene->z = caster->z + 0x80000;
     scene->y = caster->y;
     Vector_AddPolarOffset(0x200000, scene->facing, &scene->x);
-  } else if (animation != NULL &&
-             animation->width * animation->height > 0x800) {
-    goto end;
   }
   isWaterObject = 0;
   if (Func_08020330(child) == 424) {
@@ -144,21 +161,20 @@ void Func_080e92b4(void) {
     radius = 0x150000;
 
   BattleEffect_InitializeSharedScene();
+  source = Resource_GetTableEntry((s32)&ResourceId_WaterSplash);
   picture = work->picture;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WaterSplash),
-                        picture);
+  Resource_DecodeType01(source, picture);
   entry = Resource_FindFreeEntry();
   tile = VramCache_Load(entry, 0x400, picture);
   particle = work->particles;
-  sprite = work->sprites;
-  for (i = 63; i >= 0; i--) {
+  for (i = 0; i < 64; i++) {
+    sprite = &work->sprites[i];
     Func_080eaf98(sprite, 8, 8, 0x40000000, tile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;
     particle->timer = -1;
-    sprite++;
     particle++;
   }
   if (child != NULL && animation != NULL && isWaterObject == 1) {
@@ -182,7 +198,7 @@ void Func_080e92b4(void) {
         radius += -0x147a;
       }
     }
-    for (i = spraying; i != 0; i--) {
+    for (i = 0; i < spraying; i++) {
       angle = Random16();
       if (mode == 2)
         angle = ((Random16() * 10) >> 4) - 0x1000;
@@ -203,11 +219,12 @@ void Func_080e92b4(void) {
         Vector_AddPolarOffset(radius + Random16() * 5, angle, &particle->x);
       else
         Vector_AddPolarOffset(radius - (Random16() << 2), angle, &particle->x);
-      next = (next + 1) % 64;
+      next++;
+      next %= 64;
     }
     particle = work->particles;
-    sprite = work->sprites;
-    for (i = 63; i >= 0; i--) {
+    for (i = 0; i < 64; i++, particle++) {
+      sprite = &work->sprites[i];
       if ((u32)particle->timer <= 23) {
         if (particle->timer == 0)
           sprite->oam.index = tile;
@@ -220,14 +237,10 @@ void Func_080e92b4(void) {
         EffectSprite_DrawAtWorldPosition(sprite, particle);
         particle->timer++;
       }
-      sprite++;
-      particle++;
     }
     if (child != NULL && animation != NULL && animating) {
-      dst = (u8 *)0x06010000 +
-            VramCache_Load(animation->entry,
-                           animation->width * animation->height, NULL) *
-                32;
+      s32 size = animation->width * animation->height;
+      dst = (u8 *)0x06010000 + VramCache_Load(animation->entry, size, NULL) * 32;
       if (shifts % 3 == 0)
         BattleEffect_ShiftRowsDown(picture, animation->width,
                                    animation->height);

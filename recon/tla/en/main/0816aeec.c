@@ -1,12 +1,22 @@
-// Near miss, differ 879 of 902 (tla-en, 2026-10-31): the same 55 calls,
-// control flow and data accesses; allocation differs. The wave loop's column
-// takes r4 with caller-saves where the native gives it r8; pinned to r8
-// (measured only: 861), frame moves to the stack and model, phase and row
-// take r9, r10 and r11 as in the native. The grid loop still differs: the
-// native reduces 8 * column - 60 and forms column * 8 + 7 from it (+ 67),
-// keeps v + column + 16 as its own induction variable, spills v + column + 17
-// and the row's z, and has a 132-byte frame (sp+12 and sp+80 unused) against
-// the draft's 112. Decompiled from the listing.
+// Draft, differ 765 of 902, skeleton gap 131 (tla-en, 2026-11-01)
+// The same 55 calls and control flow. Most of what is left is the grid loop;
+// the rest is scheduling and spill reloads that follow from it. Column now
+// takes r8 and frame the stack, as in the native, because i (the shared
+// counter, in r4) holds the row's first cell. Found by measuring: x is its
+// own induction variable from -60, not 8 * column + 7, and column * 8 and
+// v + column are computed before the if. Left in the grid: the native keeps
+// i live in r4 through the column loop for quad[5], [17] and [19], but gcse's
+// copy propagation rewrites those uses to v here (spelling them i, v or
+// row * 16 gives the same code). v + column also merges with the vertex's
+// i + column, so it is reduced (sp+8) where the native leaves it an add, and
+// v + column + 16 is derived from + 17 where the native keeps both. An
+// inner cells pointer leaves it unreduced but reduces row * 64 instead (135).
+// The frame is 120 bytes against 132. In the bubble loop,
+// step = &work->particles[i] with the calls on &work->particles[i] matches
+// that loop exactly and gives differ 722, but gap 136 because the pool moves;
+// take it once the grid's size is right. No effect: the order of the index
+// stores, named z and w, and the other particle loops' forms.
+// Decompiled from the listing.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -179,33 +189,38 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   // The water's grid: 16 by 8 vertices, and a quad (two triangles) for
   // each cell but the last row and column.
   for (row = 0; row != WATER_ROWS; row++) {
-    for (column = 0; column != WATER_COLUMNS; column++) {
-      s8 *vertex = (s8 *)gMapCellBuffer + (row * 16 + column) * 4;
+    s32 v = row * 16;
+    s32 x = -60;
+
+    i = v;
+    for (column = 0; column != WATER_COLUMNS; column++, x += 8) {
+      s32 a = v + column;
+      s8 *vertex = (s8 *)gMapCellBuffer + (i + column) * 4;
       u8 *quad = gData_02014000 + (row * 15 + column) * 24;
-      s32 v = row * 16;
+      s32 u = column * 8;
 
       vertex[0] = column * 11 - 82;
       vertex[1] = 60;
       vertex[2] = row * 24 - 84;
       if (row <= 6 && column <= 14) {
-        quad[4] = column * 8 + 7;
-        quad[6] = column * 8 + 7;
-        quad[18] = column * 8 + 7;
-        quad[7] = v + 15;
-        quad[8] = column * 8;
-        quad[9] = v + 15;
-        quad[16] = column * 8;
-        quad[20] = column * 8;
-        quad[5] = v;
-        quad[17] = v;
-        quad[19] = v;
-        quad[21] = v + 15;
-        quad[0] = v + column + 1;
-        quad[1] = v + column + 17;
-        quad[2] = v + column + 16;
-        quad[12] = v + column;
-        quad[13] = v + column + 1;
-        quad[14] = v + column + 16;
+        quad[4] = x + 67;
+        quad[6] = x + 67;
+        quad[18] = x + 67;
+        quad[7] = row * 16 + 15;
+        quad[8] = u;
+        quad[9] = row * 16 + 15;
+        quad[16] = u;
+        quad[20] = u;
+        quad[5] = i;
+        quad[17] = i;
+        quad[19] = i;
+        quad[21] = row * 16 + 15;
+        quad[0] = i + column + 1;
+        quad[1] = i + column + 17;
+        quad[2] = i + column + 16;
+        quad[12] = a;
+        quad[13] = i + column + 1;
+        quad[14] = i + column + 16;
       }
     }
   }

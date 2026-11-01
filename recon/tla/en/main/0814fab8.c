@@ -1,4 +1,5 @@
-// Draft of Func_0814fab8, the body behind the twelve wrappers of
+// Draft, differ 172 of 1146, skeleton gap 50 (tla-en, 2026-11-01)
+// Func_0814fab8 is the body behind the twelve wrappers of
 // stat_boost.c (17 effect kinds).
 
 // Twin: The Broken Seal's BattleEffect_RunStatBoost (effect.c), grown from six
@@ -21,24 +22,35 @@
 // BattleEffect_PinkBurstSheet, 0xb9 BattleEffect_EffectPalette01 and the Djinn
 // sheets 0x150, 0x152, 0x154 and 0x156.
 
-// Draft: differ 341 of 1146 (draft 1145).
+// Func_08196404 returns s32: as void, the arguments schedule differently at
+// every site (gap 75 to 57).
 
-// Each blitter is built and fetched by one statement macro (LOAD_BLITTER),
-// because the native computes the flags afresh for every call: a one-pass
-// block ends CSE's block, where plain calls let agscc keep flags ^
-// COMPOSITE_FLIP_X in r5 across the first call (670, and every register
-// after it shifted).
+// Left, by size:
+// - the Djinni's two builds. The native reloads flags and recomputes flags ^
+// COMPOSITE_FLIP_X before each, with a fresh 4 in r4, and sinks y's -24 past
+// both calls. Plain calls let the compiler share the xor in r5 (differ 159,
+// gap 63, the best allocation seen); the one-pass block on the first build
+// stops that but keeps the 4 in r5 across the call, and it loses the reuse of
+// the prelude value in r8 as mode 1 (draft 1142). TBS's plain source shares
+// the xor, so something here separates them that is neither a label nor a
+// loop note: the native mixes the fetch with the next call's arguments, so no
+// scheduling barrier lies between them, and -24 sinks past both calls in one
+// block. A second test of a local prelude changed nothing.
+// - the lights' pair of builds and the burst keep the one-pass block only
+// for allocation: all sites plain gives differ 633, gap 161, with the same
+// spills but different scratch registers. Whatever raises the same pseudos'
+// weight in the native is still unknown; the PASS macros stand in for it and
+// should go. The sites written plain (mode pictures) match in order.
+// - the last picture site needs the whole load in the block (gap 2 better).
+// - order pairs: start and mode at mode 10, the literal load inside the split
+// 0x05000000 at two palette copies, the addresses set up before the member
+// loop, and the loop tail's reload of member.
 
-// Left: the member loop's setup (35 rows) and the Djinni's position (17)
-// differ in register choice; the rest is order residue in the draws.
-
-// Tried (2026-10-15):
-// - greedy declaration-order sweep, two passes: no gain.
-// - a separate counter for the frame loop's lights: 688.
-// - flags declared volatile: 916; the loader as a static inline returning
-// the slot's entry: 774; the macro reading the entry at slot bytes
-// into Ram_HeapSlots: 390; the macro with the field: 341.
-// - greedy loop-counter sweep (each loop its own counter): no gain.
+// Tried (2026-10-15 and 2026-11-01): declaration-order sweeps, a counter per
+// loop, flags volatile (916), a static inline loader (774), the entry read at
+// slot bytes (390), per-site sweeps of plain and both block forms with y's -24
+// early or late. y += 64 - frame * 2, (void *)0x05000000, a const palette and
+// swapping start with frame change nothing.
 
 #include "types.h"
 #include "battle_display.h"
@@ -65,8 +77,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void Func_08196404(s32 slot, s32 width, s32 height, s32 flags,
-                   s32 mode); // BattleEffect_BuildBlitter
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                  u32 mode); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void Func_081180e8(s32 phase);       // BattlePlayback_StartFar
@@ -82,17 +94,30 @@ s32 BattleUnit_GetEffectHeightFar(s32 actor);
 #define BLITTER_SLOT 104           // Ram_HeapSlots->unk64[1]
 #define BLITTER_SLOT_ALTERNATE 188 // Ram_HeapSlots->unkb8[1]
 
-// Build a blitter in its heap slot and fetch its entry, as one statement:
-// the flags are computed afresh for each blitter.
+// Build a blitter in its heap slot and fetch its entry.
 #define LOAD_BLITTER(out, flags, mode)                                         \
+  Func_08196404(BLITTER_SLOT, 7, 7, flags, mode);                              \
+  out = (DrawRectangle)Ram_HeapSlots->unk64[1]
+#define LOAD_BLITTER_ALTERNATE(out, flags, mode)                               \
+  Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags, mode);                    \
+  out = (DrawRectangle)Ram_HeapSlots->unkb8[1]
+
+// The same with the build alone, or the whole load, in a one-pass block; see
+// the header for why these sites still need them.
+#define LOAD_BLITTER_PASS(out, flags, mode)                                    \
+  do {                                                                         \
+    Func_08196404(BLITTER_SLOT, 7, 7, flags, mode);                            \
+  } while (0);                                                                 \
+  out = (DrawRectangle)Ram_HeapSlots->unk64[1]
+#define LOAD_BLITTER_ALTERNATE_PASS(out, flags, mode)                          \
+  do {                                                                         \
+    Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags, mode);                  \
+  } while (0);                                                                 \
+  out = (DrawRectangle)Ram_HeapSlots->unkb8[1]
+#define LOAD_BLITTER_WHOLE_PASS(out, flags, mode)                              \
   do {                                                                         \
     Func_08196404(BLITTER_SLOT, 7, 7, flags, mode);                            \
     out = (DrawRectangle)Ram_HeapSlots->unk64[1];                              \
-  } while (0)
-#define LOAD_BLITTER_ALTERNATE(out, flags, mode)                               \
-  do {                                                                         \
-    Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags, mode);                  \
-    out = (DrawRectangle)Ram_HeapSlots->unkb8[1];                              \
   } while (0)
 
 // The Lost Age's blitter modes: 3 minus The Broken Seal's
@@ -306,10 +331,11 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     // the first four frames it is drawn ADDITIVE as well.
     if (effect->prelude == 1) {
       s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
-      s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
+      s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1];
 
-      LOAD_BLITTER(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX);
+      LOAD_BLITTER_WHOLE_PASS(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX);
       LOAD_BLITTER_ALTERNATE(draw[1], flags ^ COMPOSITE_FLIP_X, BLIT_ADDITIVE);
+      y -= 24;
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);
@@ -343,8 +369,8 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
 
         // The lights turn and close in two pixels a frame.
         if (frame > member * 8) {
-          LOAD_BLITTER(draw[0], flags, BLIT_MAX);
-          LOAD_BLITTER_ALTERNATE(draw[1], flags, BLIT_ADDITIVE);
+          LOAD_BLITTER_PASS(draw[0], flags, BLIT_MAX);
+          LOAD_BLITTER_ALTERNATE_PASS(draw[1], flags, BLIT_ADDITIVE);
           if (mode == 0) {
             SceneTransform_ApplyPitch(-frame << 10);
           } else if (mode == 1) {
@@ -398,7 +424,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
         s32 cel = (frame - member * 8 - 52) / 4 % 6;
 
-        LOAD_BLITTER(draw[0], flags, BLIT_MAX);
+        LOAD_BLITTER_PASS(draw[0], flags, BLIT_MAX);
         draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
         HeapSlot_Release(BLITTER_SLOT);
@@ -444,7 +470,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-          LOAD_BLITTER(draw[0], flags, BLIT_ADDITIVE);
+          LOAD_BLITTER_WHOLE_PASS(draw[0], flags, BLIT_ADDITIVE);
           draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_PICTURE,
                   screen.x - 20, screen.y - 20, 40, 40);
           HeapSlot_Release(BLITTER_SLOT);

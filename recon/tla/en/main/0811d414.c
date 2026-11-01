@@ -1,20 +1,24 @@
-// Near miss (12 of 384 instructions differ, all load scheduling): the
-// Broken Seal link exchange with its two nested transfers, ported with
-// TLA names; four loads sit one slot from the native. 2026-10-12: the first
-// pair is in BattleLink_SendActions' prologue (the native stores the
-// static chain as sub sp; mov r3, sp; mov r2, r9; str; adds r7, r2). An
-// empty asm barrier as the function's first statement leaves one row there
-// (mov r2, r9 ahead of mov r3, sp: sched2 ranks the two equal and takes the
-// one with more dependents); a one-pass block changes nothing. The three
-// functions adopt together, so the prologue blocks all 852 bytes.
-// 2026-10-12, queue 7: sched2's dump of that block (alchemy diff --rtl,
-// 0811d414.c.23.sched2) gives the chain's copy (r7 = r2) priority 36 and its
-// store 35, because the copy leads to subs r3, r7, #4 and the load of state
-// (cost 2) while the store reaches that load directly; the native order needs
-// the two equal, which is the order flow2 already has them in. The other three
-// pairs (state's count load at the second transfer, two in the parent) were not
-// tried with barriers. BattleQueue_SortByPriority, their neighbour, is adopted
-// in games/tla/src/battle/turn.c, where these three belong.
+// Draft, differ 23 of 384, skeleton gap 7 (tla-en, 2026-11-01)
+// Measured as the three functions it holds, in listing order: alchemy-devtools
+// diff with 0811d24c,0811d2f8,0811d414 (BattleLink_SendActions and
+// BattleLink_ReceiveActions, nested in the parent, adopt with it). Against
+// 0811d414 alone the two nested functions count as extra: differ 230, gap 214.
+// Both nested functions match. All that is left is the parent's first block:
+// the native has add r2, sp, #8 ahead of mov r7, sp and str r0 ahead of str r1;
+// the draft takes mov r7, sp and str r1 first, which splits movs r2, #8 from
+// add r2, sp, so they stay two instructions and every later branch and pool
+// offset shifts by one (19 of the 23).
+// Cause, from the sched2 dump: the native order needs insn 4 (str r0) above
+// insn 6 (str r1), so insn 6 must rank 75. It ranks 76 because the store to
+// count costs its reload ldr r0, [r7] 2 cycles under -mthumb-slow-loads' rule
+// for a load from the address just stored (arm_adjust_cost), where any other
+// store before a load through r7 costs 1. This is a question about that
+// approximation (K2), not this source; plain C cannot give the store and the
+// load different addresses, as the native uses r7 for both.
+// Tried: a long result and state count, or a long count parameter, give the
+// native order (differ 8, gap 8) but CSE then forwards r1 and drops the load, so
+// those types are wrong; an integer actions parameter (alias set of count) only
+// moves str r1.
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

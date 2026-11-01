@@ -1,4 +1,6 @@
-// Near miss, differ 18 of 1827 (tla-en, 2026-10-31): sched2 order only.
+// Draft, differ 18 of 1827, skeleton gap 18 (tla-en, 2026-11-01): sched2 order
+// only; measure with both addresses, as below (0812381c alone counts the nested
+// function's 226 instructions as added).
 // Draft of Func_0812381c with its nested Func_08123648 (compare both:
 // alchemy-devtools diff 0812381c.c 08123648,0812381c): ☀️'s BattleActionRun_Build
 // and BattleActionRun_SetTargets (games/tbs/src/battle/battle/action.c), ported.
@@ -33,7 +35,12 @@
 // (the native's compare and negate around a byte load), the held keys through
 // a volatile view, the animation table const (its value is reused after the
 // store), one amount and chance for the two blow cases and one index for
-// their loops.
+// their loops. Measured without gain (differ 18 or worse): includeDowned, mode
+// and battle assigned apart from their declarations, the two count or two
+// frame declarations swapped, actor->enemyId or the result held in a local
+// around the attack's presentationFlags, aimedPlace local to its block, the
+// critical loop as a do-while (22), the blow loops stepping inside the store,
+// the request's target read through place (187).
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"

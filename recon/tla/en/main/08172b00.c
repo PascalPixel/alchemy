@@ -1,19 +1,20 @@
-// Draft of Func_08172b00, decompiled from the listing: differ 766 of 1216
-// (draft 1208), the same control flow and 71 calls but one; the Djinni's
-// start and step are read as work->particles[62] and [63] in place, so their
-// field addresses are hoisted as in the native.
-// Left: the compiler merges the tails of mode 0's two Djinni blits into one
-// call (the native loads the blitter early for the first, so its tails
-// differ); a separate sheet pointer or blitter copy does not change that.
-// The rest is allocation.
-// 2026-10-19: the native stack frame is 144 bytes, here 136. Its blitter slot
-// (sp 80) has an unused word above it, as The Broken Seal's blitter pair
-// would give (770 with the pair, not kept until the frame's other word
-// is found), and frame, declared after the blitter and before camera,
-// takes the native's slot (774 to 766). Camera, sprites and the centre
-// pointers follow; the native keeps the screen and focus pointers just
-// below sprites, as if the locals after them were declared in a block
-// after the first call (792 so, with the frame still short).
+// Draft, differ 75 of 1216, skeleton gap 29 (tla-en, 2026-11-01)
+// The frame (144) and every stack slot now agree. What fixed them: blit is an
+// 8-byte struct, a DImode pseudo whose spill slot leaves the unused word at sp
+// 84; target, savedYaw, caster and frames sit in a block opened after
+// Func_0815585c, so the screen and focus pointers take their slots first;
+// focus is declared before screen. The debris loop indexes work->particles[i]
+// (p would be set before the count test), and the sphere writes
+// vertex[row * 8 + k] through a struct, which keeps radius's spill store once.
+// Left, all scheduling or allocation:
+// - Core's model: shade takes r0 and the Data_02012000 pseudo r1; the native
+//   has shade in r1 and rematerializes the symbol (ternary, reused scale, store
+//   order and field reads changed nothing).
+// - The turn is written (80 - frame) * 32, which reloads frame into r4 as the
+//   native does; the native's 2560 is live before the shift, and no spelling
+//   tried (2560 - frame * 32, a separate -=, -32 * frame) gives that.
+// - The packed argument's shifts sit after the pointer stores; the picture
+//   blit loads screen.y's pointer into r2, not r0; a few one-pair swaps.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -136,34 +137,45 @@ extern const u16 gData_08197410[];
 // before a glowing orb (a sphere of 8 by 8 vertices, its mesh built on the
 // first frame) swells over the target and bursts; for Cannon it shoots
 // straight in and strikes once, behind a gust of petals.
+struct ModelVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+  s8 unk03;
+};
+
 void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
   void *canvas;
   struct BattleEffectWork *work;
-  DrawRectangle blit;
+  struct {
+    DrawRectangle draw;
+    DrawRectangle unk_04;
+  } blit;
   s32 frame;
   s16 *camera;
   u8 *sprites;
-  s32 *target;
-  s16 savedYaw;
-  void *caster;
-  struct EffectPosition screen;
   s32 focus[3];
+  struct EffectPosition screen;
   struct EffectPosition debris;
   struct ModelTexture texture;
   struct RenderModel *model;
   struct EffectStep *p;
-  s32 frames;
   s32 count;
   s32 i;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
   camera = (s16 *)Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   Func_0815585c(effect, (effect->side << 4) | (Data_08198c14[mode] << 5) | 2,
                 (s32 *)&screen, focus);
-  REG_BG2CNT = 0x785;
+  {
+  s32 *target;
+  s16 savedYaw;
+  void *caster;
+  s32 frames;
+ REG_BG2CNT = 0x785;
   if (effect->side == 0) {
     BattleEffect_LoadBlitter(
         SLOT_BLITTER,
@@ -174,7 +186,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
                                                     COMPOSITE_CLIP_Y |
                                                     COMPOSITE_FLIP_X));
   }
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit.draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
@@ -219,7 +231,11 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
       work->particles[63].y = 0;
       work->particles[63].z = 0;
       work->particles[63].velocityX = target[2] - focus[0];
-      work->particles[63].velocityY = target[3] - focus[1] + 0x1e0000;
+      if (mode == 0) {
+        work->particles[63].velocityY = target[3] - focus[1] + 0x1e0000;
+      } else {
+        work->particles[63].velocityY = target[3] - focus[1] + 0x1e0000;
+      }
       work->particles[63].velocityZ = target[4] - focus[2];
       for (i = 0; i != 62; i++) {
         work->particles[i].variant = -1;
@@ -236,7 +252,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         s32 turn = 256;
 
         if (frame > 71) {
-          turn = 2560 - frame * 32;
+          turn = (80 - frame) * 32;
         }
         if (effect->side == 0) {
           camera[27] -= turn;
@@ -316,10 +332,11 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         Func_081180e8(134);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
         Func_08118088(effect->actors[0], 0);
-        for (i = 0, p = work->particles; i != 63; i++, p++) {
+        for (i = 0; i != 63; i++) {
           s32 angle;
           s32 speed;
 
+          p = &work->particles[i];
           p->x = target[2];
           p->y = target[3] + 0xa0000;
           p->z = target[4];
@@ -329,8 +346,8 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
           } else {
             speed = (Random16() & 511) + 256;
           }
-          p->velocityX = (speed * Trig_Sin(angle)) >> 6;
-          p->velocityY = (speed * Trig_Cos(angle)) >> 6;
+          p->velocityX = (Trig_Sin(angle) * speed) >> 6;
+          p->velocityY = (Trig_Cos(angle) * speed) >> 6;
           p->velocityZ = 0;
           p->variant = (Random16() & 15) + 16;
         }
@@ -341,14 +358,14 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
     EffectPosition_ProjectPoint((struct EffectStep *)focus, &screen);
     if (mode == 0) {
       if (frame <= 73) {
-        blit(canvas, work->sheet + 0x1000, screen.x / 2 - 10, screen.y - 20, 20,
+        blit.draw(canvas, work->sheet + 0x1000, screen.x / 2 - 10, screen.y - 20, 20,
              40);
       } else if (frame <= 93) {
-        blit(canvas, work->sheet + 0x2000 + ((frame - 74) / 4) * 1600,
+        blit.draw(canvas, work->sheet + 0x2000 + ((frame - 74) / 4) * 1600,
              screen.x / 2 - 20, screen.y - 20, 40, 40);
       }
     } else if (frame <= 22) {
-      blit(canvas, work->sheet + 0x1000, screen.x / 2 - 10, screen.y - 20, 20,
+      blit.draw(canvas, work->sheet + 0x1000, screen.x / 2 - 10, screen.y - 20, 20,
            40);
       if (mode == 1 && frame > 1) {
         s32 picture = (frame / 4) & 3;
@@ -359,7 +376,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         } else {
           x = screen.x / 2 - 46;
         }
-        blit(canvas, gMapCellBuffer + picture * 6000, x, screen.y - 50, 60,
+        blit.draw(canvas, gMapCellBuffer + picture * 6000, x, screen.y - 50, 60,
              100);
       }
     }
@@ -369,32 +386,35 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
     if (mode != 0) {
       count = 54;
     }
-    for (i = 0, p = work->particles; i != count; i++, p++) {
-      s32 size = p->variant;
+    for (i = 0; i != count; i++) {
+      s32 size = work->particles[i].variant;
 
       if (size < 0) {
         continue;
       }
-      EffectPosition_ProjectPoint(p, &debris);
-      size = (size >> 3) + 2;
-      blit(canvas, sprites + gData_08197410[size - 1], debris.x / 2 - size / 2,
+      EffectPosition_ProjectPoint(&work->particles[i], &debris);
+      size >>= 3;
+      size += 2;
+      blit.draw(canvas, sprites + gData_08197410[size - 1], debris.x / 2 - size / 2,
            debris.y - size, size, size * 2);
-      BattleEffectKernels_IntegrateVector3(p, 62, Data_08198c18[i & 3]);
-      if (p->y < 0) {
-        p->velocityY = -p->velocityY / 2;
+      BattleEffectKernels_IntegrateVector3(&work->particles[i], 62, Data_08198c18[i & 3]);
+      if (work->particles[i].y < 0) {
+        work->particles[i].velocityY = -work->particles[i].velocityY / 2;
       }
-      p->variant--;
+      work->particles[i].variant--;
     }
     if (mode == 1) {
-      for (i = 0, p = &work->particles[54]; i != 8; i++, p++) {
+      for (i = 0; i != 8; i++) {
         s32 picture;
+
+        p = &work->particles[54 + i];
 
         if (p->variant < 0) {
           continue;
         }
         picture = 5 - p->variant / 6;
         EffectPosition_ProjectPoint(p, &debris);
-        blit(canvas, work->sheet + 0x2000 + (picture << 11), debris.x / 2 - 16,
+        blit.draw(canvas, work->sheet + 0x2000 + (picture << 11), debris.x / 2 - 16,
              debris.y - 32, 32, 64);
         BattleEffectKernels_IntegrateVector3(p, 62, -0x400);
         p->variant--;
@@ -418,16 +438,18 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         s32 angle;
 
         Func_0818de3c(gData_02014000, 8, 8, 8, 8);
-        for (row = 0, angle = 0; row != 8; row++, angle += 4681) {
+        for (row = 0, angle = 0; row != 8; angle += 4681, row++) {
           s32 y = (-Trig_Cos(angle) * 48) >> 16;
           s32 radius = (Trig_Sin(angle) * 48) >> 16;
-          s8 *vertex = (s8 *)gMapCellBuffer + row * 32;
+          struct ModelVertex *vertex = (struct ModelVertex *)gMapCellBuffer;
           s32 k;
 
-          for (k = 0; k != 8; k++, vertex += 4) {
-            vertex[0] = (radius * Trig_Sin(k << 13)) >> 16;
-            vertex[1] = y;
-            vertex[2] = (radius * Trig_Cos(k << 13)) >> 16;
+          for (k = 0; k != 8; k++) {
+            s32 x = (Trig_Sin(k << 13) * radius) >> 16;
+
+            vertex[row * 8 + k].y = y;
+            vertex[row * 8 + k].x = x;
+            vertex[row * 8 + k].z = (Trig_Cos(k << 13) * radius) >> 16;
           }
         }
       }
@@ -479,5 +501,6 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
   Actor_SetAnimationSpeedFar(caster, 16);
   HeapSlot_Release(104);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  }
   BattleEffect_EndCanvasLayer();
 }

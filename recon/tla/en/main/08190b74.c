@@ -1,18 +1,29 @@
-// Draft, differ 743 of 1075 (draft 1058 instructions, no device): effect
-// kind 125, written from the listing on The Broken Seal's canvas skeleton
-// (twins: BattleEffect_RunTitanBlade 0.44 by shape, BattleEffect_RunHealingMotes 0.38
-// by call order); its backdrop swap is the one BattleEffect_RunMegiddo (kind 124)
-// also makes. Every call, cue and table read is in the native's order.
-// The native stack frame is 136 bytes: to at sp+124, from sp+112, the spawn list
-// sp+84, the blitter pair sp+76, the texture sp+68, effect sp+60, work
-// sp+56, canvas sp+52, graphics sp+48, caster sp+44, transition sp+40, the
-// saved scroll sp+36, &from sp+32, &to sp+28, &texture sp+24, the flash
-// loop's 6k sp+20, the claw loop's frame * 10 - 240 - 160k sp+16, its
-// start sp+12 and 32k sp+8. Here the stack frame is 112 bytes: the claw and
-// flash loops keep those values in registers, so every stack offset and
-// most registers differ.
-// Not yet tried: the claw loop's three spilled values as the native's
-// locals (x from frame * 10 rather than age * 10).
+// Draft, differ 343 of 1075, skeleton gap 55 (tla-en, 2026-11-01)
+//
+// BattleEffect_RunOdyssey, effect kind 125: every call, cue, table read and
+// branch is in the native's order and the frame is the native's 136 bytes
+// (to sp+124, from sp+112, list sp+84, the blitter pair sp+76, the texture
+// sp+68, color sp+67, then spills). Most of the gap is scheduling ties.
+// What is left, with what would act on it:
+// - The sparks' start: the native spills 32k (sp+8, += 32) and multiplies it by
+//   28 before the spark loop; here the loop reduces the whole 896k. A running
+//   `first += 32` gives the right instructions but the wrong spill slot, so it
+//   is a user variable where the native has a giv; it scored two lines worse.
+// - The haze palette: the native's blue is lsls #16, lsrs #26, as adopted
+//   Func_0819253c's is where a second channel shares the shift. One channel
+//   folds to lsrs #10 here; a shared variable and (s16), (u32) casts did not help.
+// - &from, &to and &texture spill in the order texture, from, to (the native's
+//   from, to, texture), which moves those stack offsets. Named pointers fix
+//   that for the two positions (differ 337) but add two skeleton lines.
+// Forms that are evidence, not style: savedScrollX is s32 (its reload is ldrh
+// from the word), color is an array (allocated last, sp+67, and read back
+// through a fresh address), the sparks index by i * 32 + k, the claw's else
+// branch keeps both identical arms (it reloads effect->side for GCSE), and
+// fillMode, flatKind and center are locals so that their constants stay where
+// the native loads them.
+// Its twins are BattleEffect_RunTitanBlade (shape) and
+// BattleEffect_RunHealingMotes (call order); the backdrop swap is also
+// BattleEffect_RunMegiddo's (kind 124).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -120,9 +131,9 @@ void Sound_PlayFar(s32 cue);
 // flat shards scatter, tumbling; from frame 100 everything fades to white,
 // and at the end the battle backdrop returns.
 void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
-  struct EffectPosition from;
   struct EffectPosition to;
-  s16 list[3];
+  struct EffectPosition from;
+  s16 list[14];
   DrawRectangle draw[2];
   struct ModelTexture texture;
   struct BattleEffectWork *work;
@@ -130,14 +141,15 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   u8 *graphics;
   struct MotionObject *caster;
   struct BattlePresentationTransition *transition;
-  u16 savedScrollX;
+  s32 savedScrollX;
   struct RenderModel *model;
   void *projected;
   struct EffectStep *step;
-  u8 color;
   s32 frame;
   s32 i;
   s32 k;
+  s32 fillMode;
+  s32 flatKind;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -190,14 +202,17 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       BattleEffect_BuildRepeatingTilemap();
       palette = (u16 *)BG_PLTT + 96;
       for (i = 0; i != 128; i++) {
-        u32 red = *palette & 31;
-        u32 blue = (*palette >> 10) & 31;
+        s32 entry = *palette;
+        s32 red = 31;
+        s32 blue = ((u16)entry >> 10) & 31;
+
+        red &= entry;
 
         if (red > 31)
           red = 31;
         if (blue > 31)
           blue = 31;
-        *palette++ = red << 10 | (red >> 1) << 5 | blue;
+        *palette++ = red << 10 | ((u16)red >> 1) << 5 | blue;
       }
       transition->active = 1;
     }
@@ -233,16 +248,15 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       work->shakeFrames = 8;
       step = Data_02016000;
       for (i = 0; i != 128; i++) {
-        s32 speed = Random16() & 0x1ff;
+        s32 speed = (Random16() & 0x1ff) + 32;
         s32 angle = Random16() & 0x7fff;
 
-        speed += 32;
         if (effect->side == 1)
           angle += 0x8000;
         step->x = (to.x / 2) << 16;
         step->y = to.y << 16;
-        step->velocityX = (speed * Trig_Sin(angle)) >> 6;
-        step->velocityY = -(speed * Trig_Cos(angle)) >> 5;
+        step->velocityX = (Trig_Sin(angle) * speed) >> 6;
+        step->velocityY = -(Trig_Cos(angle) * speed) >> 5;
         step->z = Random16();
         step->velocityZ = (Random16() & 0x3ff) + 0x400;
         step->variant = (Random16() & 0x3fff) + 0x2000;
@@ -291,32 +305,30 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
     // Two claws, from frames 24 and 40: one sweeps down onto the target,
     // the other (flipped) up from below; sixteen sparks at each hit.
-    for (k = 0; k != 2; k++) {
-      s32 start = k * 16 + 24;
+    for (i = 0; i != 2; i++) {
+      s32 start = i * 16 + 24;
 
-      if (frame == k * 16 + 28)
+      if (frame == i * 16 + 28)
         Sound_PlayFar(212);
-      if (frame == k * 16 + 32) {
-        step = &work->particles[k * 32];
-        for (i = 0; i != 16; i++) {
-          s32 speed = Random16() & 255;
+      if (frame == i * 16 + 32) {
+        for (k = 0; k != 16; k++) {
+          s32 speed = (Random16() & 255) + 128;
           s32 angle = Random16() & 0x3fff;
 
-          speed += 128;
           if (effect->side == 0) {
-            if (k != 0)
+            if (i != 0)
               angle += 0x4000;
-          } else if (k == 0) {
+          } else if (i == 0) {
             angle -= 0x4000;
           } else {
             angle += 0x8000;
           }
+          step = &work->particles[i * 32 + k];
           step->x = (to.x / 2) << 16;
           step->y = to.y << 16;
-          step->velocityX = (speed * Trig_Sin(angle)) >> 6;
-          step->velocityY = -(speed * Trig_Cos(angle)) >> 5;
+          step->velocityX = (Trig_Sin(angle) * speed) >> 6;
+          step->velocityY = -(Trig_Cos(angle) * speed) >> 5;
           step->variant = (Random16() & 7) + 17;
-          step++;
         }
         Sound_PlayFar(133);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 64);
@@ -332,23 +344,26 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
             x = to.x / 2 - age * 10 + 80;
           else
             x = to.x / 2 + age * 10 - 80;
-          if (k == 0)
+          if (i == 0)
             y = age * 16 - 120;
           else
             y = 168 - age * 16;
         } else {
-          x = to.x / 2;
-          y = k == 0 ? 8 : 40;
+          if (effect->side == 0)
+            x = to.x / 2;
+          else
+            x = to.x / 2;
+          y = i == 0 ? 8 : 40;
         }
-        if (k == 1) {
+        if (i == 1) {
           if (effect->side == 0)
             BattleEffect_LoadBlitter(188, 1 << 4 | 11);
           else
             BattleEffect_LoadBlitter(188, 1 << 4 | 15);
           draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
         }
-        draw[k](canvas, work->sheet, x - 20, y, 40, 80);
-        if (k == 1)
+        draw[i](canvas, work->sheet, x - 20, y, 40, 80);
+        if (i == 1)
           HeapSlot_Release(188);
       }
     }
@@ -362,14 +377,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     model->kind = 7;
     model->texture = &texture;
     model->vertices = projected;
-    for (k = 0; k != 2; k++) {
+    for (i = 0; i != 2; i++) {
       s32 start;
 
       // Two flashes rise from the caster (frames 2 and 8).
-      start = k * 6 + 2;
+      start = i * 6 + 2;
       if (frame == start)
         Sound_PlayFar(212);
-      if (frame >= start && frame < k * 6 + 18) {
+      if (frame >= start && frame < i * 6 + 18) {
         s32 age = frame - start;
         s32 shade = 64 - age * 8;
 
@@ -382,36 +397,37 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           Render_ResetTransformState();
           Func_08015160((from.x / 2 - 64) << 16, 0, 0);
           Func_080151e4(scale, scale * 2, scale);
-          SceneTransform_ApplyPitch(Data_08199f2a[k]);
-          SceneTransform_ApplyYaw(Data_08199f2e[k]);
+          SceneTransform_ApplyPitch(Data_08199f2a[i]);
+          SceneTransform_ApplyYaw(Data_08199f2e[i]);
           Render_TransformVertices(Data_081991e0, projected, 4);
           Render_DrawModelList(model);
         }
       }
 
       // Frames 64-82: the caster gathers itself, flashing.
-      if (frame == k * 8 + 68)
+      start = i * 8 + 64;
+      if (frame == i * 8 + 68)
         Sound_PlayFar(212);
-      if (frame == k * 8 + 72)
+      if (frame == i * 8 + 72)
         Func_0814cd48(effect->actor, 7, -1, 0, 0);
-      else if (frame == k * 8 + 76)
+      else if (frame == i * 8 + 76)
         Func_0814cd48(effect->actor, 0, -1, 0, 0);
-      if (frame >= k * 8 + 64 && frame < k * 8 + 75) {
-        s32 scale = 0x30000 - ((frame - (k * 8 + 64)) << 14);
+      if (frame >= start && frame < start + 11) {
+        s32 scale = 0x30000 - ((frame - start) << 14);
 
         model->look.shade = 0;
         Render_ResetTransformState();
         Func_08015160((from.x / 2 - 64) << 16, 0, 0);
         Func_080151e4(scale, scale * 2, scale);
-        SceneTransform_ApplyPitch(Data_08199f2a[k]);
-        SceneTransform_ApplyYaw(Data_08199f2e[k]);
+        SceneTransform_ApplyPitch(Data_08199f2a[i]);
+        SceneTransform_ApplyYaw(Data_08199f2e[i]);
         Render_TransformVertices(Data_081991e0, projected, 4);
         Render_DrawModelList(model);
       }
 
       // A flash at the target with each claw's hit.
-      start = k * 16 + 32;
-      if (frame >= start && frame < k * 16 + 48) {
+      start = i * 16 + 32;
+      if (frame >= start && frame < i * 16 + 48) {
         s32 age = frame - start;
         s32 shade = 64 - age * 8;
 
@@ -425,8 +441,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           scale = (age << 14) + 0x4000;
           Func_08015160((to.x / 2 - 64) << 16, 0, 0);
           Func_080151e4(scale, scale * 2, scale);
-          SceneTransform_ApplyPitch(Data_08199f2a[k]);
-          SceneTransform_ApplyYaw(Data_08199f2e[k]);
+          SceneTransform_ApplyPitch(Data_08199f2a[i]);
+          SceneTransform_ApplyYaw(Data_08199f2e[i]);
           Render_TransformVertices(Data_081991e0, projected, 4);
           Render_DrawModelList(model);
         }
@@ -435,20 +451,30 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
     // From frame 90: the shards, flat triangles in eight colours; from 100
     // the screen fades to white.
+    fillMode = 1;
+    flatKind = 3;
     if (frame > 89) {
+      u8 color[1];
+      s32 center;
+      s32 x;
+      s32 y;
+
       model->mesh = Data_0819919c;
-      model->kind = 3;
+      model->kind = flatKind;
       if (frame > 99) {
-        work->transferMode = 1;
+        work->transferMode = fillMode;
         work->transferValue = 0x02020202;
         Func_08164a4c(2, 2, 2);
       }
       step = Data_02016000;
       for (i = 0; i != 128; i++) {
-        color = (i & 7) + 32;
-        model->look.color = &color;
+        color[0] = (i & 7) + 32;
+        model->look.color = color;
         Render_ResetTransformState();
-        Func_08015160(step->x - (64 << 16), step->y - (64 << 16), 0);
+        x = step->x;
+        y = step->y;
+        center = -(64 << 16);
+        Func_08015160(x + center, y + center, 0);
         Func_080151e4(step->variant * 3, step->variant * 6, step->variant);
         SceneTransform_ApplyPitch(step->z);
         SceneTransform_ApplyYaw(step->z);

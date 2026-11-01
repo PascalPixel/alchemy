@@ -1,7 +1,8 @@
-// Near miss, differ 24 of 1681 (tla-en, 2026-10-31): sched2 orders loads
-// later than the native, which counts their latency higher (the nested
-// helpers first, then the body; alchemy diff DRAFT
-// 08164c0c,08164c70,08164cc4):
+// Draft, differ 24 of 1681, skeleton gap 11 (tla-en, 2026-11-01): a near miss,
+// sched2 orders loads later than the native, which counts their latency higher.
+// Measure the nested helpers with the body (alchemy diff DRAFT
+// 08164c0c,08164c70,08164cc4); against 08164cc4 alone the helpers' 90
+// instructions show as added (differ 114, skeleton 11 removed, 101 added).
 // BattleEffect_RunParticleStreams, summon 11 and summon 0's default
 // (BattleEffect_RunSceneEffect's default case, through BattleEffect_RunMeteor and
 // BattleEffect_RunOuterSpace in particle_stream_modes.c), with its nested
@@ -37,7 +38,10 @@
 // the blitter build here instead of filling the transition load's slot;
 // one ldr r4, [sp, #40] and the movs r2, #0 / mov fp, r2 pair in act two.
 // The known store-then-load limit of -mthumb-slow-loads (the sched2 dump
-// shows each); the prologue now matches.
+// shows each); the prologue now matches. The skeleton gap is these same rows:
+// every instruction is present, only their order differs. The transfer mode's
+// insn sits before the blitter call in RTL and in r6 from global allocation;
+// sched2 itself carries it across the call, since the call does not clobber r6.
 
 // Tried (differ): the plain port without devices and with the unused fill
 // word ☀️ needs for its DMA (877 listed parent first, 709 helpers first);
@@ -46,7 +50,12 @@
 // the pins, 219 without the level pin); mode tested directly (189); on
 // 2026-10-31, from 24, each IWRAM call direct instead of through its
 // forwarder, in order: 26, 45, 26, 24, 26; the transfer mode variable also
-// passed as the blitter's flags (24, the call still takes movs r3, #3).
+// passed as the blitter's flags (24, the call still takes movs r3, #3);
+// on 2026-11-01, all 24 unless noted: the transfer mode set at four other
+// points; the blast loop as a do-while; the forwarders through a function
+// pointer local or returning void; the pale colours through a pointer local
+// (walking it, 28); work->frame++ before frame++ (56). Source order does not
+// reach these rows; what is left is -mthumb-slow-loads' latency model.
 
 #include "battle_display.h"
 #include "battle_effect.h"

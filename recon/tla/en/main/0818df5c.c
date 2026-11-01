@@ -1,5 +1,21 @@
-// Draft of BattleEffect_RunMeteorBlow, decompiled from the listing: differ 1767 of
-// 1556 (draft 1577), the same 113 calls and control flow; allocation differs.
+// Draft, differ 1170 of 1556, skeleton gap 282 (tla-en, 2026-11-01)
+// BattleEffect_RunMeteorBlow, the same 113 calls and control flow; what is left
+// is mostly allocation and the scheduling that follows it. The native keeps
+// r11 = gMapCellBuffer, r9 = the mesh offset (also REG_BLDCNT's 0) and r5 =
+// IwramCopyWords through the setup. Here the 0x4000 pseudo shared by the fill
+// and the copy takes r5 in local-alloc, so the copy pointer moves to r6, the
+// BG_PLTT pointer to r8 and offset onto the stack (the ldrh of REG_BLDCNT's 0).
+// The native rebuilds 0x4000 at each call; its frame is 208 with sp+92 never
+// referenced, here 204, so effect, canvas and work sit 4 lower. Forms the
+// listing proved: pitch and yaw as ((a << 16) + (256 << 16)) >> 16 and
+// (((u16)a - ...) << 16) >> 16; v reused for i - 16 in the sky ramp; a copy of
+// hx before each halving (else GCSE shares its sign); a separate kind pointer
+// in the star loop; texture2 written as bytes through tex, reloaded mid-frame;
+// req2 copied as an 8-byte struct. Scalars are declared in slot order. Still
+// open: r6's 0 before Func_0818de3c, which the native copies into frame and
+// angle0; p in r2 across the shard loop's calls here in a callee save; tex
+// takes texture2's address before req2, so those two slots are swapped.
+// Dropping offset's 0 from REG_BLDCNT reaches differ 1076 with gap 302.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -15,6 +31,19 @@ struct ModelTexture {
   u32 logHeight : 8;
   u32 unk02 : 16;
   const void *pixels;
+};
+
+// The same texture written as bytes.
+struct ModelTextureSize {
+  u8 logWidth;
+  u8 logHeight;
+  u16 unk02;
+  const void *pixels;
+};
+
+struct PointPair {
+  s32 x;
+  s32 y;
 };
 
 struct RenderModel {
@@ -107,10 +136,17 @@ struct MeteorStar {
   s32 kind;
 };
 
+extern char ResourceId_GlowOrbSetSheet;
+extern char ResourceId_DustBlobSheet;
+extern char ResourceId_OrangePaletteB;
+extern char ResourceId_Data134;
+extern char ResourceId_FlashBurstSheet;
+extern char ResourceId_Data0DA;
+extern char ResourceId_Data0C1;
 extern u8 gMapCellBuffer[];
 extern u8 Data_02010018[];         // the shards' variants, 28 bytes apart
 extern const u16 gData_08197410[]; // gBattleEffect_MoteCells
-extern const s32 Data_08196f20[2];
+extern const struct PointPair Data_08196f20;
 extern const u8 Data_08199e70[];
 extern const u8 Data_08199e77[];
 extern const u16 Data_08199e7e[];
@@ -146,62 +182,70 @@ void ResourceObject_ReleaseFar(void *object);
 void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
+  u8 *map;
+  DrawRectangle blit;
   u8 *sprites;
-  s32 *transition;
-  u8 *triangles;
   u8 *projected;
   u8 *meshA;
+  u8 *triangles;
+  s32 *transition;
   struct MeteorStar *stars;
-  DrawRectangle blit;
-  struct RenderModel *model;
-  struct ModelTexture texture;
-  struct ModelTexture texture2;
-  void *verts;
-  struct EffectStep *p;
-  s32 size;
   s32 pitch;
   s32 yaw;
   s32 x;
   s32 z;
+  s32 size;
   s32 scale;
   s32 hx;
   s32 hz;
+  void *verts;
+  s32 x0;
+  struct EffectStep *p;
+  s32 offset;
   s32 frame;
-  s32 i;
+  s32 angle0;
   s32 j;
-  s32 req[2];
-  s32 place[4];
-  s32 req2[2];
-  s32 place2[4];
-  s32 point[3];
-  s32 screen[3];
+  s32 star;
+  struct ModelTextureSize *tex;
+  s32 *starKind;
+  struct MeteorStar *stars2;
   s32 position[3];
+  s32 screen[3];
+  s32 point[3];
+  s32 place[4];
+  s32 place2[4];
+  struct ModelTextureSize texture2;
+  struct PointPair req2;
+  s32 req[2];
+  struct ModelTexture texture;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   sprites = Ram_HeapSlots->unk64[0];
+  map = gMapCellBuffer;
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
   Func_0813ba50();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
-  work->transferMode = 0;
+  offset = 0;
+  work->transferMode = offset;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   Func_08163c2c(0, 0);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Resource_LoadAndDecompress(0xaf, work->sheet, 1, 1);
-  Resource_LoadAndDecompress(0xcd, work->sheet + 0x2000, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSetSheet, work->sheet, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet + 0x2000, 1, 1);
   Iwram_CopyWords(sprites, work->sheet + 0x1c2, 30);
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x148), 128);
+  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   Graphics_LoadGreyRamp();
   gCameraSceneParameters[4] = 240;
   wait(1);
-  Iwram_FillWords(gMapCellBuffer, 0x8000, 0x01010101);
-  Iwram_CopyWords((void *)0x06008000, gMapCellBuffer, 0x7800);
+  Iwram_FillWords(map, 0x8000, 0x01010101);
+  Iwram_CopyWords((void *)0x06008000, map, 0x7800);
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(1, 0x28a, 1);
-  REG_BLDCNT = 0;
+  REG_BLDCNT = offset;
   REG_BG2PA = 0x100;
   REG_BG1CNT = 0x1f81;
   REG_BG2CNT = 0x2787;
@@ -222,11 +266,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   z = 0;
   size = 0;
   Func_0818de3c(triangles, 2, 16, 32, 2);
-  for (i = 0; i != 16; i++) {
-    s32 angle = i * 1092;
-    s32 y = (-Trig_Cos(angle) * 48) >> 16;
-    s32 r = (Trig_Sin(angle) * 48) >> 16;
-    u8 *v = meshA + i * 8;
+  for (frame = 0, angle0 = 0; frame != 16; frame++, angle0 += 1092, offset += 8) {
+    s32 y = (-Trig_Cos(angle0) * 48) >> 16;
+    s32 r = (Trig_Sin(angle0) * 48) >> 16;
+    u8 *v = meshA + offset;
 
     for (j = 0; j != 2; j++, v += 4) {
       v[0] = (r * Trig_Sin(j << 13)) >> 16;
@@ -243,27 +286,30 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, 0xcfe);
   gBgScroll[1].x = 0;
   transition[4] = 1;
-  for (i = 0; i != 256; i++) {
-    struct MeteorStar *s = &stars[i];
-    s32 a = (i & 255) << 7;
-    s32 r;
+  starKind = &stars->kind;
+  stars2 = stars;
+  for (star = 0; star != 256; star++, starKind += 4, stars2++) {
+    s32 a = (star & 255) << 7;
+    s32 r = 160;
     s32 b;
 
-    s->y = Trig_Sin(a) * 160;
-    r = (Trig_Cos(a) * 160) >> 16;
+    stars2->y = Trig_Sin(a) * r;
+    r = (Trig_Cos(a) * r) >> 16;
     b = Random16() & 0x7fff;
-    s->x = r * Trig_Sin(b);
-    s->z = r * Trig_Cos(b);
-    if ((i & 31) == 0) {
-      s->kind = (i / 32) % 7;
+    stars2->x = r * Trig_Sin(b);
+    stars2->z = r * Trig_Cos(b);
+    if ((star & 31) == 0) {
+      *starKind = (star / 32) % 7;
     } else {
-      s->kind = 7;
+      *starKind = 7;
     }
   }
 
   // The flight through the stars.
   for (frame = 0; frame != 160 && !(gInput.repeat & 1) && !(gInput.repeat & 2);
        frame++) {
+    s32 i;
+
     if (frame == 0) {
       x = 0x1100000;
       work->frame = 8;
@@ -289,17 +335,17 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       IO_WRITE_QUEUE_PUSH(0x0400000c, 0x784, 0x20000);
     }
     if (frame > 128) {
-      Func_0815f0a0(0x148);
+      Func_0815f0a0((s32)&ResourceId_OrangePaletteB);
     }
     if (frame == 117) {
       work->frame = 45;
-      p = work->particles;
-      for (i = 0; i != 64; i++, p++) {
-        p->variant = -1;
+      for (i = 0; i != 64; i++) {
+        work->particles[i].variant = -1;
       }
       scale = 0x10000;
     }
     if (frame <= 1599) {
+      s32 i;
       s32 base = work->frame / 2 + 16;
       u16 *dst = (u16 *)((u8 *)work + 0x7640);
 
@@ -313,9 +359,13 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         *dst++ = 0;
       }
       for (; i != 135; i++) {
-        s32 v = (i - 16) / 4 + base;
-        s32 b = v - 32;
-        s32 g = v - 80;
+        s32 v = i - 16;
+        s32 b;
+        s32 g;
+
+        v = v / 4 + base;
+        b = v - 32;
+        g = v - 80;
 
         if (b < 0)
           b = 0;
@@ -333,6 +383,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     }
 
     if (frame > 115) {
+      struct RenderModel *model;
       s32 shade;
       s32 scroll;
       s32 angle;
@@ -378,14 +429,14 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       Heap_Release(model);
     } else {
       if (frame <= 159) {
-        pitch = (s16)(pitch + 256);
+        pitch = ((pitch << 16) + (256 << 16)) >> 16;
       } else if (frame <= 191) {
-        pitch = (s16)((u16)pitch - frame * 8 + 1216);
+        pitch = (((u16)pitch - frame * 8 + 1216) << 16) >> 16;
       }
       if (frame <= 47) {
-        yaw = (s16)(yaw + 256);
+        yaw = ((yaw << 16) + (256 << 16)) >> 16;
       } else if (frame <= 111) {
-        yaw = (s16)((u16)yaw - frame * 4 + 448);
+        yaw = (((u16)yaw - frame * 4 + 448) << 16) >> 16;
       }
       position[0] = 120;
       position[1] = 64;
@@ -395,6 +446,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPitch((u16)pitch);
       SceneTransform_ApplyYaw((u16)yaw);
       if (frame <= 112) {
+        s32 i;
         struct MeteorStar *s = stars;
 
         for (i = 0; i != 256; i++, s++) {
@@ -431,13 +483,13 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       s32 speed = 0x800;
 
       if (frame > 23) {
-        a = 0x6000 - frame * 286 + 0x11e0;
+        a = a - frame * 286 + 0x11e0;
         if (a < 0) {
           a = 0;
         }
       }
       if (frame > 87) {
-        speed = 0x800 - (frame << 6) + 0x1600;
+        speed = speed - (frame << 6) + 0x1600;
         if (speed < 0) {
           speed = 0;
         }
@@ -487,12 +539,13 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
-  Resource_LoadAndDecompress(0x134, sprites, 0, 0);
-  Resource_LoadAndDecompress(0x13e, work->sheet, 1, 0);
-  Resource_LoadAndDecompress(0xda, work->sheet + 0x4000, 0, 0);
-  Resource_LoadAndDecompress(0xc1, work->sheet + 0x5000, 0, 0);
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x148), 128);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x5000, 0, 0);
+  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   {
+    s32 i;
     s32 *q = (s32 *)Data_02010018;
 
     for (i = 0; i != 256; i++, q += 7) {
@@ -500,19 +553,20 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     }
   }
   Func_08164abc(5, -4, -12);
+  tex = &texture2;
 
   // The impact: the meteor lands, rings of fire and shards fly.
   for (frame = 0; frame != 50; frame++) {
-    s32 x0;
+    struct RenderModel *model;
     s32 angle;
+    s32 back;
 
     if (frame == 0) {
       hx = 144;
       hz = 0;
     }
     if (frame <= 33) {
-      req2[0] = Data_08196f20[0];
-      req2[1] = Data_08196f20[1];
+      req2 = Data_08196f20;
       place2[3] = 0;
       place2[1] = 0xff0000;
       place2[0] = hx << 16;
@@ -523,14 +577,16 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       } else {
         hz += 2;
       }
-      Render_ApplyProjectedPlacementFar(work->objects[0], place2, req2, 0);
+      Render_ApplyProjectedPlacementFar(work->objects[0], place2, (s32 *)&req2, 0);
     }
     if (frame == 34) {
       Func_081180e8(134);
     }
     if (frame == 16) {
-      s32 half = (hx / 2) << 16;
+      s32 i;
+      s32 half = hx;
 
+      half = (half / 2) << 16;
       p = (struct EffectStep *)gMapCellBuffer;
       for (i = 0; i != 256; i++, p++) {
         s32 r = (Random16() & 511) + 256;
@@ -552,17 +608,22 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
 
     verts = Heap_AllocEwram(1024);
     model = Render_AllocateModelList(1);
-    model->texture = &texture2;
+    model->texture = (struct ModelTexture *)tex;
     model->vertices = verts;
     model->shade = 0;
     texture2.logWidth = 6;
-    texture2.logHeight = 6;
-    texture2.pixels = work->sheet + 0x4000;
+    tex->logHeight = 6;
+    tex->pixels = work->sheet + 0x4000;
     model->mesh = gData_081990d0;
     model->kind = 7;
-    x0 = hx / 2 - 60;
+    x0 = hx;
+    x0 = x0 / 2 - 60;
     angle = frame << 11;
-    for (i = 0; i != 4; i++, angle += 0x2000) {
+    back = -angle;
+    {
+      s32 i;
+
+    for (i = 0; i != 4; i++, back += 0x2000, angle += 0x2000) {
       s32 start = Data_08199e8c[i] + 16;
 
       if (frame > start) {
@@ -582,18 +643,24 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
           if (i & 1) {
             SceneTransform_ApplyYaw(angle);
           } else {
-            SceneTransform_ApplyYaw(-angle);
+            SceneTransform_ApplyYaw(back);
           }
           Render_TransformVertices(gData_08199090, verts, 32);
           Render_DrawModelList(model);
         }
       }
     }
+    }
     model->mesh = Data_08198ec4;
     texture2.pixels = work->sheet + 0x5000;
-    texture2.logWidth = 7;
+    tex = &texture2;
+    tex->logWidth = 7;
     texture2.logHeight = 7;
-    x0 = hx / 2 - 64;
+    x0 = hx;
+    x0 = x0 / 2 - 64;
+    {
+      s32 i;
+
     for (i = 0; i != 3; i++) {
       s32 start = Data_08199e98[i] + 8;
 
@@ -617,19 +684,24 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         }
       }
     }
+    }
     Heap_Release(model);
     Heap_Release(verts);
+
+    {
+      s32 i;
 
     p = (struct EffectStep *)gMapCellBuffer;
     for (i = 0; i != 256; i++, p++) {
       if (p->variant >= 0) {
-        s32 n = p->variant / 4 + 1;
+        s32 n = (p->variant >> 2) + 1;
 
         blit(canvas, sprites + gData_08197410[n - 1], HI(p->x) - n / 2,
              HI(p->y) - n, n, n * 2);
         p->variant--;
         BattleEffectKernels_IntegrateVector2(p, 56, 0x2000);
       }
+    }
     }
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();

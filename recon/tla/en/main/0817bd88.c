@@ -1,14 +1,22 @@
-// Draft of BattleEffect_RunFirePuppet, decompiled from the listing: differ 272 of
-// 543 (draft 537), the same 49 calls and control flow; allocation differs.
-// 2026-10-19 (run 33), from 364: the arm's sweep written as length << 5 at
-// each use, so the native's two copies of it (sp+36 and sp+32) appear and
-// the frame is its 92 bytes: 317; frame declared after canvas, its slot
-// above camera's: 289; the segment's angle and vertex offset written as
-// j * length and j * 8, which loop.c reduces after the hoisted camera + 3 as
-// in the native's slot order: 272. alchemy-devtools permute (6 minutes from 272):
-// nothing better. Left: inside the segment loop the native keeps radiusX in
-// r6 and radiusY in r7 and saves wobble, width and the angle around the
-// calls (sp+16, 12, 8); here the allocation differs there.
+// Draft, differ 87 of 543, skeleton gap 17 (tla-en, 2026-11-01)
+// BattleEffect_RunFirePuppet. Everything but two spots follows the listing, and
+// allocation matches through the arm: one counter i serves the strike loop and
+// the vertex loop (hence r10 in both), the radii are i * width givs, and cells
+// and projected are locals so their constants stay spilled and reload from the
+// pool. shade holds 0 from the allocation on (S2: one constant, no device).
+// Left:
+// - The listing reduces j * 8 to a loop.c giv, stepped between the angle's giv
+//   and j++, with the highest pseudo (slot sp+20). Here offset is a C variable:
+//   same += 8, but its slot is sp+36, which moves the angle and length << 5 down
+//   one slot each, and it steps after j++, which costs the reuse of r0 = 1 as
+//   Render_AllocateModelList's argument (the extra movs).
+//   cells[j][i] instead folds to (j * 2 + i) * 4 and steps j * 2 with a shift:
+//   differ 67, gap 19. j * 8 alone gets "not worth while" in loop.c (benefit 2);
+//   it needs a second j * 8 giv to combine with, not yet found.
+// - camera + 3 sits below both length << 5 copies here (sp+24), between them
+//   and the angle in the listing (sp+28): a later pseudo there.
+// - The stores to model after the texture: the 6 and the projected address load
+//   in another order. All 120 orders of those statements leave the gap at 17.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -119,7 +127,13 @@ extern char ResourceId_Data0D3;
 extern char ResourceId_Data134;
 extern char ResourceId_Data0F2;
 extern char ResourceId_MercuryDjinnSheet;
-extern u8 gMapCellBuffer[];
+struct ModelVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+  s8 pad;
+};
+extern struct ModelVertex gMapCellBuffer[][2];
 extern u8 Data_02011000[];
 extern u8 Data_02012000[];
 extern const u8 gData_08199340[]; // the hand's mesh
@@ -210,6 +224,10 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
     if (frame > 15) {
       s32 length;
       s32 j;
+      s32 offset;
+      struct ModelVertex (*cells)[2] = gMapCellBuffer;
+      u8 *projected = Data_02011000;
+      s32 shade;
 
       length = frame * 44 - 704;
       if (length > 1424) {
@@ -220,38 +238,38 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       }
 
       // The arm's vertices, thicker at its root.
-      for (j = 0; j != PUPPET_SEGMENTS; j++) {
+      for (j = 0, offset = 0; j != PUPPET_SEGMENTS; j++, offset += 8) {
         s32 width = 50 - ((Trig_Sin(j * 862 + 4310) * 44) >> 16);
-        s32 wobble = j * ((Trig_Sin((frame + j) << 11) << 4) >> 16) / 32;
-        s32 outer = width + wobble;
-        s32 radiusY = j + wobble + 32;
-        s32 radiusX = wobble + 16;
-        s8 *corner = (s8 *)gMapCellBuffer + j * 8;
-        s32 k;
+        s32 wobble = ((Trig_Sin((frame + j) << 11) << 4) >> 16) * j / 32;
+        s32 outer;
 
-        for (k = 0; k != 2; k++) {
-          corner[0] = ((radiusX * Trig_Cos(j * length)) >> 16) - outer / 2 - 16;
-          corner[1] = -((radiusY * Trig_Sin(j * length)) >> 16);
-          corner[2] = 0;
-          radiusY += width;
-          radiusX += width;
-          corner += 4;
-        }
+        i = 0;
+        outer = width + wobble;
+        do {
+          ((struct ModelVertex *)((s8 *)cells + offset))[i].x =
+              ((Trig_Cos(j * length) * (i * width + wobble + 16)) >> 16) -
+              outer / 2 - 16;
+          ((struct ModelVertex *)((s8 *)cells + offset))[i].y =
+              -((Trig_Sin(j * length) * (i * width + j + wobble + 32)) >> 16);
+          ((struct ModelVertex *)((s8 *)cells + offset))[i].z = 0;
+          i++;
+        } while (i != 2);
         if (j == 32) {
-          endX = (((width / 2 + wobble + 16) * Trig_Cos(length << 5)) >> 16) -
-                 outer / 2 - 16;
-          endY = -(((width / 2 + wobble + 64) * Trig_Sin(length << 5)) >> 16);
+          endX = ((Trig_Cos(length << 5) * (width / 2 + wobble + 16)) >> 16) -
+                 (width + wobble) / 2 - 16;
+          endY = -((Trig_Sin(length << 5) * (width / 2 + j + wobble + 32)) >> 16);
         }
       }
 
       model = Render_AllocateModelList(1);
+      shade = 0;
       texture.logWidth = 7;
       texture.logHeight = 5;
       texture.pixels = work->sheet;
+      model->shade = shade;
       model->mesh = Data_02012000;
-      model->vertices = Data_02011000;
-      model->shade = 0;
       model->kind = 6;
+      model->vertices = projected;
       model->texture = &texture;
       EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       model->scrollV = 0;
@@ -266,14 +284,14 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       if (frame > 73) {
         Func_0801521c((212 << 10) - (frame << 11));
       }
-      Render_TransformVertices(gMapCellBuffer, Data_02011000, 66);
+      Render_TransformVertices(cells, projected, 66);
       Render_DrawModelList(model);
 
       // The hand at the arm's end.
       model->mesh = gData_08199340;
       texture.logWidth = 6;
       texture.logHeight = 6;
-      model->vertices = Data_02011000;
+      model->vertices = projected;
       model->scrollU = 0;
       model->scrollV = 0;
       texture.pixels = work->sheet + 0x4000;
@@ -281,7 +299,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       Func_08015160(endX << 16, endY << 16, 0);
       Func_080150e4(22384 - (length << 5));
       Func_0801521c(length * 23 + 0x8000);
-      Render_TransformVertices(Data_081991e0, Data_02011000, 4);
+      Render_TransformVertices(Data_081991e0, projected, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
     }

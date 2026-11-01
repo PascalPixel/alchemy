@@ -1,16 +1,26 @@
-// Draft, differ 46 of 767 (alchemy-devtools diff ... 08046414,080464dc,
-// the nested function and its parent): the Djinn change preview, The Broken
+// Draft, differ 6 of 767, skeleton gap 6 (tla-en, 2026-11-01), measured with
+// its nested function: alchemy-devtools diff ... 08046414,080464dc. Alone,
+// 080464dc reads differ 86 and gap 3 removed, 83 added, because the 80 nested
+// instructions count as draft-only. The Djinn change preview, The Broken
 // Seal's BattleDjinnMenu_ShowChangePreview (games/tbs/src/window/screens/
-// djinn_preview.c) on this game's unit layout, messages and text colours,
-// with its nested arrow function Func_08046414 (drafted alone in
-// 08046414.c). The stat page's window is 20 tiles wide, and Attack keeps
-// the vitals' digit offset. Messages are
-// written as symbols (placeholders Msg_xxxx where en.po names none), which
-// load from the pool as the native does (as numbers, differ 325). The nested
-// function takes The Broken Seal's index cast, zero temporary and window device
-// (differ 104 without them). Left: the nested function stores the index
-// before the sentinel and position where the native stores it after, and a few
-// pairs the parent schedules one row apart.
+// battle_djinn_preview.c) on this game's unit layout, messages and text
+// colours, with its nested arrow function Func_08046414 (drafted alone in
+// 08046414.c, whose body this copies and which compiles exactly here). The
+// stat page's window is 20 tiles wide, and Attack keeps the vitals' digit
+// offset. Messages are written as symbols (placeholders Msg_xxxx where en.po
+// names none), which load from the pool as the native does (as numbers,
+// differ 325). Text_RenderWideStringInWindow and Window_DrawThreeTileColumn
+// have no prototype in scope, as in the twin's menu object: the implicit int
+// call sets r0, so the argument loads lose a successor in sched2's ready sort.
+// Left: three instructions in the loop preheader. The native sets the -4 of
+// visibleRow * 16 - 4 (movs, negs, str to its spill slot) level with the
+// i * 2 + list chain; here it follows that chain. Sched2 gives the -4 chain
+// priority 3 against 4, so the native's store has one more successor in that
+// block, or that chain is otherwise one longer; nothing found says what it
+// is. Tried without gain: spellings of the offset, for-init and while forms,
+// inner scopes for ability and rangePattern. Swapping the increments
+// (i++, visibleRow++) reorders the bivs but costs differ 180; an inner local
+// for the row or y costs 76 or more.
 #include "types.h"
 #include "window.h"
 #include "uiwindow.h"
@@ -69,17 +79,16 @@ s32 Func_08046284(u16 *oldList, u16 *newList, u16 *changed, s32 *gained,
                   s32 *lost);
 void Text_DrawCharacterAtOffset(s32 message, struct Window *window, s32 x,
                                   s32 y);
-void String_FormatNumberToHalfwords(s16 *out, s32 value);
-void Text_RenderWideStringInWindow(s16 *text, struct Window *window, s32 x,
-                                     s32 y);
+s32 String_FormatNumberToHalfwords(s16 *out, s32 value);
+// Text_RenderWideStringInWindow is called with no prototype in scope, as The
+// Broken Seal's window functions are from its menu object: an implicit int
+// call sets r0, which is what orders each call's arguments.
 void Window_DrawDividerLine(struct Window *window, s32 x, s32 y, s32 width,
                               s32 height);
 void Func_08041f70(s32 color);
 struct PreviewAbility *BattleAction_Get(s32 id);
 void Window_SetTilemapEntry(struct Window *window, s32 entry, s32 x, s32 y,
                               s32 flags);
-void Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
-                                  s32 pattern, s32 flags);
 void Text_DrawNumberInWindow(s32 value, s32 digits, struct Window *window,
                                s32 x, s32 y);
 s32 VramCache_AllocEntry(s32 size);
@@ -87,19 +96,23 @@ s32 VramCache_Reload(s32 entry, const void *tiles);
 
 // The sprite cell at WindowSprite.unk10: a link, then the OAM words.
 struct ArrowSprite {
-  struct ArrowSprite *next;
-  u32 attr01;
-  u32 attr2;
-};
-
-struct ArrowOam {
-  struct ArrowSprite *next;
-  u16 y : 8;
-  u16 attr0 : 8;
-  u16 x : 9;
-  u16 attr1 : 7;
-  u16 tile : 10;
-  u16 attr2 : 6;
+  u32 link;
+  union {
+    u32 word;
+    struct {
+      unsigned y : 8;
+      unsigned flags : 8;
+      unsigned x : 9;
+      unsigned high : 7;
+    } bits;
+  } attributes;
+  union {
+    u32 value;
+    struct {
+      unsigned index : 10;
+      unsigned high : 6;
+    } bits;
+  } tile;
 };
 
 struct Window *Func_080464dc(struct Window *window, s32 member,
@@ -129,32 +142,31 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
 
   void Func_08046414(s32 x, s32 y, s32 up) {
     struct WindowSprite *output = WindowSprite_AcquireFree();
-    struct ArrowOam *sprite;
-    u32 zero;
+    struct ArrowSprite *entry;
 
-    if (output == NULL)
-      return;
-    output->active = 1;
-    output->kind = 1;
-    *(s8 *)&output->index = VramCache_AllocEntry(128);
-    sprite = (struct ArrowOam *)output->unk10;
-    output->sentinel = 240;
-    output->x = 120;
-    output->y = 120;
-    ((struct ArrowSprite *)sprite)->attr01 = 0x40000400;
-    zero = 0;
-    ((struct ArrowSprite *)sprite)->attr2 = zero;
-    sprite->x = (s16)window->x * 8 + x;
-    sprite->y = (s16)window->y * 8 + y;
-    /* FAKEMATCH(dead): advancing and restoring the captured window keeps the
-     * static chain in r9, as The Broken Seal's DjinnMenu_DrawStatArrow; without
-     * the pair, 76 of 767 instructions differ in tla-en (with the parent). */
-    window++;
-    window--;
-    sprite->tile =
-        VramCache_Reload((u8)output->index, up ? gDjinnMenu_ArrowUpTiles
-                                               : gDjinnMenu_ArrowDownTiles);
-    WindowSprite_AppendToList(&window->output, output);
+    if (output) {
+      output->active = 1;
+      output->kind = 1;
+      // Stored through a cast, the index stays after the position stores.
+      *(s8 *)&output->index = VramCache_AllocEntry(128);
+      entry = (struct ArrowSprite *)output->unk10;
+      output->sentinel = 240;
+      output->x = 120;
+      output->y = 120;
+      entry->attributes.word = 0x40000400;
+      entry->tile.value = 0;
+      entry->attributes.bits.x = (s16)window->x * 8 + x;
+      entry->attributes.bits.y = (s16)window->y * 8 + y;
+      /* FAKEMATCH(dead): advancing and restoring the captured pointer keeps
+       * the window chain in r9; as no pair, 32 of 80 instructions differ in
+       * tla-en. */
+      window++;
+      window--;
+      entry->tile.bits.index = VramCache_Reload(
+          (u8)output->index,
+          up ? gDjinnMenu_ArrowUpTiles : gDjinnMenu_ArrowDownTiles);
+      WindowSprite_AppendToList(&window->output, output);
+    }
   }
 
   unit = Unit_Get(member);

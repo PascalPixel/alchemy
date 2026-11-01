@@ -1,21 +1,27 @@
-// Draft of BattleEffect_RunDiamondBerg, decompiled from the listing: differ 317 of
-// 658 (draft 659), the same 56 calls and control flow.
-// Left (2026-10-19): the three resource loads into the map cell buffer
-// (the native loads gMapCellBuffer and adds each offset; here the first
-// address stays in r5 and the others are taken from it); the blow's shard
-// loop keeps the shard in r7, the x in sl and the mask 127 in r5 where the
-// native has r5, r7 and sl; the ripple and flash loops' allocation; the
-// rest is scheduling.
-// Tried (differ):
-// first draft                                                       611
-// the blitter as The Broken Seal's pair (FAKEMATCH below; it pays only
-// with the next two rows)                                           645
-// a shard's width and height read once into locals (the native
-// loads each once and its table bases stop being hoisted)          347
-// the berg drawn from Data_02014e20, its own EWRAM name (347); the
-// resource offsets as &gMapCellBuffer[n] or through s32 (347)
-// vertices declared in the model block (its pseudo after the berg's
-// height, the native's stack order)                                317
+// Draft of BattleEffect_RunDiamondBerg, differ 24 of 658, skeleton gap 22 (tla-en, 2026-11-01)
+// Same instructions but for order, plus one zero loaded once where the native
+// loads it twice (11 removed, 11 added). Left:
+// - Stores before a loop start run late: top before the frame and particle
+//   loops, top += 8 before the shard loop, scrollU and scrollV before the flash
+//   loop. sched2 gives a last store priority 1, below the moves after it; the
+//   native acts as if each had one more dependant. do/while for the frame loop
+//   and reordering the frame = 0 assignment do not change it.
+// - The model's first setup: the native stores unk04 first with its own zero in
+//   r3 and a second zero in r0 for scrollU and scrollV. Here one zero (a pseudo
+//   hoisted out of the frame loop, then rematerialized) serves both. All 720
+//   orders of those six stores were measured: this one has the lowest differ;
+//   kind and unk04 last reach gap 20, differ 34, and contradict the native's
+//   store order. All orders of the flash's setup gain nothing.
+// - The shards' draw: str r6, [sp] one place early (a pair).
+// Facts that closed the rest:
+// - cells is one local for the whole function, spilled and rematerialized from
+//   its constant; that is why each load reloads gMapCellBuffer.
+// - each shard loop has its own shard pointer (r5, r5, r7).
+// - BattleEffect_LoadBlitter, Task_Add and Task_Remove return s32, as defined;
+//   the void prototype swaps the blitter call's argument moves.
+// - pixels is u32, as in project_vertices.c's struct Texture: it shares an alias
+//   set with the model's words, which keeps those stores in order.
+// - pixels, x, y and height are read in that order before the draw.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -30,7 +36,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  const void *pixels;
+  u32 pixels;
 };
 
 struct RenderModel {
@@ -49,7 +55,7 @@ void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(
     void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -85,8 +91,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
@@ -155,12 +161,12 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
   struct EffectPosition target;
   struct ModelTexture texture;
   struct RenderModel *model;
-  struct EffectStep *shard;
   s32 centerX;
   s32 top;
   s32 frame;
   s32 i;
   s32 k;
+  u8 *cells;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -173,11 +179,11 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
                        BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_CrystalBitmapSheet,
-                             gMapCellBuffer + 20000, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, gMapCellBuffer, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, gMapCellBuffer + 0x1000,
-                             0, 0);
+  cells = gMapCellBuffer;
+  Resource_LoadAndDecompress((s32)&ResourceId_CrystalBitmapSheet, cells + 20000,
+                             1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, cells, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, cells + 0x1000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x3080, 0,
                              0);
@@ -211,7 +217,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
         top += 16;
       } else if ((u32)(frame - 24) <= 64) {
         s32 t = frame - 24;
-        s32 beat = t % 8;
+        // t % 8, spelled so the quotient is its own register.
+        s32 beat = t - t / 8 * 8;
 
         if (beat == 4) {
           Sound_PlayFar(212);
@@ -230,12 +237,14 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
           Func_0814cd48(effect->actors[0], 7, 5, 0, 6);
           top += 8;
           for (k = 0; k != 8; k++) {
+            struct EffectStep *shard;
+
             shard = &work->particles[((t - 7) / 8 * 8 + k + 32) & 63];
             shard->y = 0x600000;
             shard->x = centerX << 16;
             shard->velocityX = ((Random16() & 127) - 64) << 11;
-            shard->z = 32;
             shard->velocityY = -((Random16() & 127) + 64) << 11;
+            shard->z = 32;
             shard->variant = 0;
           }
         }
@@ -248,22 +257,29 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 7) {
+      struct EffectStep *shard;
+
       work->shakeFrames = 8;
       Sound_PlayFar(145);
       for (k = 0, shard = work->particles; k != 32; k++, shard++) {
         shard->y = 0x600000;
         shard->x = centerX << 16;
         shard->velocityX = ((Random16() & 127) - 64) << 12;
-        shard->z = 32;
         shard->velocityY = -((Random16() & 127) + 64) << 12;
+        shard->z = 32;
         shard->variant = 0;
       }
     }
 
     // The shards tumble and bounce; z is their spin.
     if (frame > 6) {
+      struct EffectStep *shard;
+
       for (i = 0, shard = work->particles; i != 64; i++, shard++) {
         s32 cell;
+        u8 *pixels;
+        s32 x;
+        s32 y;
         u32 width;
         u32 height;
 
@@ -271,11 +287,13 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
           continue;
         }
         cell = i % 5 * 3 + shard->variant / 96 % 3;
+        pixels = work->sheet + 0x800 + gData_08197834[cell];
         width = gData_0819781a[cell];
+        x = HI(shard->x) - (width >> 1);
+        y = HI(shard->y);
         height = gData_08197826[cell];
-        blit[0](canvas, work->sheet + 0x800 + gData_08197834[cell],
-                HI(shard->x) - (width >> 1), HI(shard->y) - (height >> 1),
-                width, height);
+        y -= height >> 1;
+        blit[0](canvas, pixels, x, y, width, height);
         BattleEffectKernels_IntegrateVector2(shard, 64, 0x4000);
         if (HI(shard->y) > 104) {
           shard->velocityY = -shard->velocityY / 2;
@@ -294,10 +312,10 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
-      model->unk04 = 0;
-      texture.pixels = gMapCellBuffer;
-      model->kind = 7;
       model->texture = &texture;
+      model->unk04 = 0;
+      model->kind = 7;
+      texture.pixels = (u32)cells;
       model->mesh = Data_08198ec4;
       model->vertices = vertices;
       model->scrollU = 0;
@@ -333,7 +351,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
       // A flash at each blow, at the target.
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = work->sheet + 0x3080;
+      texture.pixels = (u32)(work->sheet + 0x3080);
       model->mesh = gData_08199364;
       model->scrollU = 0;
       model->scrollV = 0;

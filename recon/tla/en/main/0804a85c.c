@@ -1,19 +1,34 @@
-// Draft, differ 650 of 1647 (777 before; 2026-10-26: the selected position and
-// the candidate count declared earlier, the target count later, the eased
-// track x stored first): battle target selection, The Broken Seal's
-// BattleTarget_RunSelection (games/tbs/src/window/screens/battle_targets.c) on this
-// game's work and messages. The modes are numbered differently (2 the
-// party, 4 the acting unit alone, 1 the enemies, whose downed ones a link
-// battle skips); a new hint (8) starts on the unit the last command aimed at,
-// which the navigation work remembers (0x10c); the enemies "Mystery Man" and
-// "Mystery Woman" are enemy kinds 355 and 352. Structure and the arrays'
-// frame order follow the listing; left: the stack frame is 4 bytes smaller here, the
-// curing tests read their status bytes one at a time where the native tests
-// some as a word or halfword, and the allocation differs.
+// Draft, differ 36 of 1647, skeleton gap 36 (tla-en, 2026-11-01)
+// Battle target selection, The Broken Seal's BattleTarget_RunSelection
+// (games/tbs/src/window/screens/battle_targets.c) on this game's work and
+// messages. The modes are numbered differently (2 the party, 4 the acting unit
+// alone, 1 the enemies, whose downed ones a link battle skips); a new hint (8)
+// starts on the unit the last command aimed at, which the navigation work
+// remembers (0x10c); the enemies "Mystery Man" and "Mystery Woman" are enemy
+// kinds 355 and 352.
+//
+// Left: every instruction is present and the registers and frame agree; the 36
+// are 18 pairs swapped within their blocks by sched2, nearly all a stack slot
+// load or spill store on the wrong side of a neighbour. In the block after a
+// __modsi3 call the slot load outranks the store on load cost (prio 7 against
+// 5), so the tie the listing shows is not reachable from the source: that is
+// -mthumb-slow-loads' approximation (K2), not a shape question. Reordering the
+// sprite's two word stores gives gap 34 but differ 40; byte-offset forms of the
+// first candidateIds read go backwards.
+//
+// Two forms here are held by measurement. The spill slots of the addresses GCSE
+// hoists follow its hash table, whose size comes from the function's insn count:
+// the listing's order needs 719 buckets or fewer (or 733 or more) at this frame.
+// The pin's copies add seven insns, so TARGET_BOB spells the rounding out, which
+// drops one copy at each of its three uses (differ 130 to 36). If the pin goes,
+// TARGET_BOB can go back to `/ 32768`. The pin itself stays because the plain
+// `conditionWindow = NULL` is spilled; The Broken Seal gets r9 from a null with
+// no constant note instead, a tagged dead device this round does not add.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
+#include "battle/battle_unit.h"
 
 extern u8 Msg_0c5a[];
 extern u8 Msg_0d03[];
@@ -51,27 +66,6 @@ struct TargetBattle {
   u8 unk00[0x58];
   s16 partyUnits[7];
   s16 enemyIds[7];
-};
-
-struct TargetUnit {
-  u8 name[0x34];
-  s16 hpMax;
-  s16 ppMax;
-  s16 hp;
-  s16 pp;
-  u8 unk03c[0xf5];
-  s8 poison;
-  u8 unk132[6];
-  u8 delusion;
-  u8 unk139[2];
-  u8 stun;
-  u8 sleep;
-  u8 psySeal;
-  u8 unk13e[2];
-  u8 haunt;
-  u8 grimReaper;
-  u8 unk142[8];
-  u16 enemyKind;
 };
 
 struct TargetPoint {
@@ -117,7 +111,7 @@ extern const u8 gOwnerStatus_PpString[];
 
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
-struct TargetUnit *Unit_Get(s32 unit);
+struct BattleUnit *Unit_Get(s32 unit);
 s32 GameFlag_Test(s32 flag);
 void BattleMotion_ProjectConditionalPositionFar(s32 unit,
                                                 struct TargetPoint *point);
@@ -145,46 +139,72 @@ void wait(s32 frames);
 void Resource_ResetEntry(s32 slot);
 
 // The help window's column beside the aimed member, kept on screen.
-#define TARGET_HELP_COLUMN(x, back, width, last)                               \
-  ((x) / 8 + (width) > 29 ? (last) : (x) / 8 - (back))
+#define TARGET_HELP_COLUMN(back, width, last)                                  \
+  {                                                                            \
+    s32 anchor = selectedPosition.x / 8;                                       \
+    helpColumn = anchor - (back);                                              \
+    if (anchor + (width) > 29)                                                 \
+      helpColumn = (last);                                                     \
+  }
+
+// The cursors' bob, a sine turn every 16 frames scaled down to 2 pixels.
+#define TARGET_BOB(y)                                                          \
+  {                                                                            \
+    s32 bob = Trig_Sin(gFrameCount << 12);                                     \
+                                                                               \
+    if (bob < 0)                                                               \
+      bob += 32767;                                                            \
+    (y) += bob >> 15;                                                          \
+  }
 
 s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
-  struct TargetPoint selectedPosition;
   u16 candidateIds[8];
   struct TargetSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];
   struct TargetPoint actorPosition;
   u16 spreadActorIds[14];
   u8 spreadTrackIndices[8];
+  struct TargetPoint selectedPosition;
   u16 targetName[15];
   struct TargetPoint namePosition;
   struct TargetPoint markerPosition;
   struct TargetAffine effect;
+  struct BattleUnit *unit;
   struct TargetBattle *battle;
-  s32 redraw;
-  s32 targetCount;
-  s32 candidateCount;
-  s32 cursorSlot;
+  struct TargetWindow *window;
   /* FAKEMATCH(pin): the condition window in r9, where the native keeps it, as
    * The Broken Seal's; as an ordinary local it is spilled and 952 of 1647
    * instructions differ in tla-en (937 with the pin). */
+  /* FAKEMATCH(pin): the condition window in r9, where the native keeps it; as
+   * an ordinary local its NULL default's constant note halves its priority,
+   * it is spilled and 496 of 1647 instructions differ in tla-en (36 with the
+   * pin). */
   register struct TargetWindow *conditionWindow asm("r9");
   s32 targetIndex;
+  s32 targetCount;
+  s32 candidateCount;
+  s32 redraw;
+  s32 cursorSlot;
   s32 drawCursors;
   s32 matrix;
   s32 found;
+  s32 helpColumn;
+  s32 helpRow;
   s32 count;
   s32 i;
   s32 j;
   s32 n;
+  s32 cursorX;
+  s32 cursorY;
   s32 pressed;
+  s32 y;
+  s32 width;
   s32 repeated;
   s32 result;
-  struct TargetWindow *window;
-  struct TargetUnit *unit;
   struct TargetTrack *track;
   struct TargetSprite *marker;
   struct TargetSprite *firstSprite;
+  struct BattleUnit *target;
 
   battle = Ram_HeapSlots->battleWork;
   targetCount = 0;
@@ -220,7 +240,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
     if (spread != 255 && kind != 0) {
       found = 0;
       for (j = 0; j < targetCount; j++) {
-        struct TargetUnit *candidate;
+        struct BattleUnit *candidate;
 
         if (candidateIds[j] == 254)
           continue;
@@ -284,8 +304,6 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
   window = Window_Create(0, 12, 30, 4, 74);
 
   for (;;) {
-    s32 y;
-
     firstSprite = cursorSprites;
     drawCursors = 0;
     BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
@@ -294,23 +312,22 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
     ((u32 *)firstSprite)[2] = drawCursors;
     firstSprite->tile = VramCache_Reload(
         cursorSlot, ((gFrameCount >> 2) & 31) * 256 + gData_0805c9c4);
-    selectedPosition.y += Trig_Sin(gFrameCount << 12) / 32768;
+    TARGET_BOB(selectedPosition.y);
     y = selectedPosition.y;
     if (cursorTracks[0].flags & 1) {
-      s32 cursorX = (selectedPosition.x + cursorTracks[0].x) / 2;
-      s32 cursorY = (y + cursorTracks[0].y) / 2;
-
+      cursorX = (selectedPosition.x + cursorTracks[0].x) / 2;
+      cursorY = (y + cursorTracks[0].y) / 2;
       if ((selectedPosition.x - cursorX < 0
                ? -(selectedPosition.x - cursorX)
                : selectedPosition.x - cursorX) <= 7)
         drawCursors = 1;
-      cursorTracks[0].x = cursorX;
       selectedPosition.x = cursorX;
+      cursorTracks[0].x = cursorX;
       selectedPosition.y = cursorY;
       cursorTracks[0].y = cursorY;
     } else if (cursorTracks[0].flags <= 3) {
-      selectedPosition.y = y;
       cursorTracks[0].x = selectedPosition.x;
+      selectedPosition.y = y;
       cursorTracks[0].y = y;
       cursorTracks[0].flags = 1;
     } else {
@@ -375,49 +392,47 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             Window_Close(conditionWindow, 1);
           switch (kind) {
           case 7:
-            conditionWindow = Window_Create(
-                TARGET_HELP_COLUMN(selectedPosition.x, 4, 4, 22), 8, 9, 3, 6);
+            TARGET_HELP_COLUMN(4, 4, 22);
+            conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
             Func_08041f70(2);
             Text_DrawCharacterAtOffset((s32)Msg_0d0c, conditionWindow, 0, 0);
             Func_08041f70(15);
             break;
           case 1:
-            conditionWindow = Window_Create(
-                TARGET_HELP_COLUMN(selectedPosition.x, 7, 6, 17), 8, 13, 3, 6);
+            TARGET_HELP_COLUMN(7, 6, 17);
+            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
             Text_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow, 0,
                                       0);
             Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
             Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
                                       48, 0);
-            Text_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
+            Text_DrawNumberInWindow(unit->maxHp, 4, conditionWindow, 56, 0);
             break;
           case 2:
-            conditionWindow = Window_Create(
-                TARGET_HELP_COLUMN(selectedPosition.x, 7, 6, 17), 8, 13, 3, 6);
+            TARGET_HELP_COLUMN(7, 6, 17);
+            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
             Text_DrawStringAtOffset(gOwnerStatus_PpString, conditionWindow, 0,
                                       0);
             Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
             Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
                                       48, 0);
-            Text_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
+            Text_DrawNumberInWindow(unit->maxPp, 4, conditionWindow, 56, 0);
             break;
           case 5:
-            conditionWindow = Window_Create(
-                TARGET_HELP_COLUMN(selectedPosition.x, 7, 5, 18), 8, 12, 3, 6);
+            TARGET_HELP_COLUMN(7, 5, 18);
+            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
             if (unit->hp != 0)
               goto no_condition;
             Text_DrawCharacterAtOffset((s32)Msg_0d0b, conditionWindow, 0, 0);
             break;
           case 3:
-            conditionWindow = Window_Create(
-                TARGET_HELP_COLUMN(selectedPosition.x, 7, 5, 18), 8, 12, 3, 6);
+            TARGET_HELP_COLUMN(7, 5, 18);
+            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
             if (unit->poison == 0)
               goto no_condition;
             Text_DrawCharacterAtOffset((s32)Msg_0d04, conditionWindow, 0, 0);
             break;
           case 4: {
-            s32 helpRow;
-
             count = 0;
             if (unit->delusion != 0)
               count = 1;
@@ -434,8 +449,8 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpRow = 9 - count;
             if (helpRow <= 3)
               helpRow = 4;
-            conditionWindow = Window_Create(
-                TARGET_HELP_COLUMN(selectedPosition.x, 7, 9, 14), helpRow, 16,
+            TARGET_HELP_COLUMN(7, 9, 14);
+            conditionWindow = Window_Create(helpColumn, helpRow, 16,
                 count + 2, 6);
             count = 0;
             if (unit->delusion != 0) {
@@ -470,8 +485,6 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           default:
             break;
           case 6: {
-            s32 helpRow;
-
             count = 0;
             if (unit->poison != 0)
               count = 1;
@@ -492,8 +505,8 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpRow = 9 - count;
             if (helpRow <= 3)
               helpRow = 4;
-            conditionWindow = Window_Create(
-                TARGET_HELP_COLUMN(selectedPosition.x, 7, 9, 14), helpRow, 16,
+            TARGET_HELP_COLUMN(7, 9, 14);
+            conditionWindow = Window_Create(helpColumn, helpRow, 16,
                 count + 2, 6);
             count = 0;
             if (unit->poison != 0) {
@@ -542,15 +555,13 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
         }
       } else if (spread != 255) {
-        struct TargetUnit *target = Unit_Get(candidateIds[targetIndex]);
-        s32 width;
-
+        target = Unit_Get(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                    &namePosition);
-        namePosition.y += Trig_Sin(gFrameCount << 12) / 32768;
-        if (target->enemyKind == 355 || target->enemyKind == 352) {
+        TARGET_BOB(namePosition.y);
+        if (target->enemyId == 355 || target->enemyId == 352) {
           width = (s32)Msg_0c5a;
-          if (target->enemyKind == 355)
+          if (target->enemyId == 355)
             width++;
           Message_CopyExpanded(width, targetName, 14);
         } else {
@@ -580,7 +591,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
         track = &cursorTracks[spreadTrackIndices[i]];
         BattleMotion_ProjectConditionalPositionFar(spreadActorIds[i],
                                                    &markerPosition);
-        markerPosition.y += Trig_Sin(gFrameCount << 12) / 32768;
+        TARGET_BOB(markerPosition.y);
         *marker = *firstSprite;
         if (track->flags & 1) {
           s32 x = (markerPosition.x + track->x) / 2;

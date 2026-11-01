@@ -1,19 +1,28 @@
-// Near miss, differ 934 of 1044 (tla-en, 2026-10-31): register allocation.
-// The calls, control flow, fields and constants are the native's; the native
-// spills the marker pointer (its slot sp 52, reused for the cursor) and so
-// keeps the target's z in r6 and the place's mode in r5, a frame of 84 bytes
-// with the spill slots in this file's declaration order. Here global.c ranks
-// the marker (38 weighted refs over 894 insns) above the target's x and z
-// (5 over 49, 4 over 47), gives it r9, and spills the target's z and the mode
-// instead: 88 bytes, and every slot and register after that differs. Reusing
-// the marker for the cursor, as the native does, lengthens its life but
-// raises its refs to 48 and still keeps it in a register (1019); the flag
-// number in the mode's variable gives the 84-byte frame but not the spill
-// (979). Kept forms: the saved leader position as savedX >> 16 (combine
-// narrows it to the native's ldrsh at +2 off the field's address), the
-// cursor's start at its fixed address (the z word as x + 4), the 9-bit x
-// masked in C on the scrolled branch (the native's split 0x1ff), and a u16
-// angle (the native's 0xffff as the scroll mask >> 16).
+// Draft, differ 44 of 1044, skeleton gap 26 (tla-en, 2026-11-01): the frame,
+// every register and spill slot are the native's; what is left is order.
+// Left: five store-against-constant orders in sched2 (the native's str before
+// the lsls of a split constant, at the scroll words, the flag number, the
+// saved leader position, and ldrh/movs at the start; statement orders tried),
+// the Func_080ec484 block's str, and the four stores after Text_DrawMessageFar.
+// There local-alloc gives the width value r3 and its constant address r2, where
+// the native has them the other way round, so reload_cse_move2add cannot reach
+// 0x0202a638 by subs #6: the native's value is born before its address, which
+// expand does for a symbol (then no adds) but not for a constant address.
+// Forms this match rests on: the place loop is a do-while, not a goto loop, so
+// loop.c hoists 640 and reload rebuilds it at each use; targetX and targetZ are
+// the variables x and y, declared before dx and dz (y ties dz's rank), which
+// is what spills the marker; the flag number has its own variable; tile and
+// always are set before placeX; the cursor's y and x take their name offset
+// first, then the scroll; a marker's mode and the cursor's affine index are
+// OAM bit-fields (their masks are QImode -13 and -63); 0x0202a654 and 0x0202a656
+// are arrays because a plain halfword scalar stores a constant from the pool;
+// the three message numbers are symbols (pool loads, not split constants), and
+// tla's en.po has yet to name 03625 "Present location" and 03627 "Boat".
+// Kept forms: the saved leader position as savedX >> 16 (combine narrows it to
+// the native's ldrsh at +2 off the field's address), the cursor's start at its
+// fixed address (the z word as x + 4), the 9-bit x masked in C on the scrolled
+// branch (the native's split 0x1ff), and a u16 angle (the native's 0xffff as
+// the scroll mask >> 16).
 // The world map screen's frame callback, this game's form of ☀️'s
 // WorldPicture_UpdateMarkers (games/tbs/src/field/
 // event_commands/world_picture.c). The cursor glides to a target set at
@@ -38,13 +47,19 @@
 
 struct WorldMapMarker {
   u8 unk00[4];
-  u8 y;
-  u8 attr0;
+  u16 y : 8;
+  u16 affine : 2;
+  u16 objectMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
   u16 x : 9;
-  u16 attr1 : 7;
+  u16 affineIndex : 5;
+  u16 size : 2;
   u16 tile : 10;
-  u16 attr2 : 6;
-  u16 unk0a;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[2];
 };
 
 struct WorldMapWork {
@@ -85,16 +100,19 @@ extern struct ResourceTableEntry gResourceTableEntries[];
 extern u32 gFrameCount;
 extern const u8 Data_080f1100[];
 extern const u16 Data_080f1120[];
-extern s32 Data_0202a644;
-extern s32 Data_0202a648;
-extern s16 Data_0202a640;
-extern s16 gData_0202a642;
-extern s16 Data_0202a654;
-extern s16 Data_0202a656;
-extern s16 Data_0202a638;
-extern s16 Data_0202a63a;
-extern s16 Data_0202a63c;
-extern s16 Data_0202a63e;
+extern u8 MsgPresentLocation[];
+extern u8 MsgBoat[];
+extern u8 MsgDebugAreaName[];
+#define Data_0202a644 (*(s32 *)0x0202a644)
+#define Data_0202a648 (*(s32 *)0x0202a648)
+#define Data_0202a640 (*(s16 *)0x0202a640)
+#define gData_0202a642 (*(s16 *)0x0202a642)
+extern s16 Data_0202a654[];
+extern s16 Data_0202a656[];
+#define Data_0202a638 (*(s16 *)0x0202a638)
+#define Data_0202a63a (*(s16 *)0x0202a63a)
+#define Data_0202a63c (*(s16 *)0x0202a63c)
+#define Data_0202a63e (*(s16 *)0x0202a63e)
 extern struct WorldMapMarker Data_0202a620;
 
 s32 Party_GetLeaderActor(void);
@@ -118,7 +136,6 @@ void Func_080ec484(void *window, s32 dx, s32 dy);
 void Func_080ec4d4(void) {
   struct WorldMapWork *work;
   struct WorldMapMarker *marker;
-  struct WorldMapMarker *cursor;
   s32 tileBase;
   s32 blend;
   s32 nearest;
@@ -138,8 +155,8 @@ void Func_080ec4d4(void) {
   s32 placeX;
   s32 placeY;
   s32 pos[3];
-  s32 targetX;
-  s32 targetZ;
+  s32 x;
+  s32 y;
   s32 dx;
   s32 dz;
   s32 distance;
@@ -149,9 +166,8 @@ void Func_080ec4d4(void) {
   u16 angle;
   s32 tile;
   s32 always;
+  s32 flag;
   s32 i;
-  s32 x;
-  s32 y;
 
   Party_GetLeaderActor();
   work = WORK;
@@ -167,23 +183,23 @@ void Func_080ec4d4(void) {
   blend = Data_080f1100[(gFrameCount >> 1) & 31];
 
   if (Data_0202a644 != 0) {
-    targetX = Data_0202a644;
-    targetZ = Data_0202a648;
-    dx = (targetX - work->x) / 0x10000;
-    dz = (targetZ - work->z) / 0x10000;
+    x = Data_0202a644;
+    y = Data_0202a648;
+    dx = (x - work->x) / 0x10000;
+    dz = (y - work->z) / 0x10000;
     distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
-    dx = targetX - work->x;
-    dz = targetZ - work->z;
+    dx = x - work->x;
+    dz = y - work->z;
     if (distance < 0x400000)
       distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
     step = distance / 4;
     if (step > 0x80000)
       step = 0x80000;
     if (distance < 0x8000) {
-      work->x = targetX;
-      work->z = targetZ;
-      Data_0202a644 = nearestY;
-      Data_0202a648 = nearestY;
+      work->x = x;
+      work->z = y;
+      Data_0202a644 = 0;
+      Data_0202a648 = 0;
     } else {
       if (distance > step) {
         dx = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dx), step);
@@ -196,7 +212,7 @@ void Func_080ec4d4(void) {
     angle = Data_080f1120[(gInput.held >> 4) & 15];
     if (angle != 0xffff) {
       pos[0] = work->x;
-      pos[1] = nearestY;
+      pos[1] = 0;
       pos[2] = work->z;
       Vector_AddPolarOffset(work->speed, angle, pos);
       if (pos[0] < 0x100000)
@@ -204,7 +220,7 @@ void Func_080ec4d4(void) {
       if (pos[0] > 0x1ff0000)
         pos[0] = 0x1ff0000;
       if (pos[2] < 0)
-        pos[2] = nearestY;
+        pos[2] = 0;
       if (pos[2] > 0x16d0000)
         pos[2] = 0x16d0000;
       work->x = pos[0];
@@ -220,53 +236,52 @@ void Func_080ec4d4(void) {
   cursorY = WORLD_MAP_HIGH(work->z);
   place = places;
   i = 0;
-next_place:
-  {
+  do {
     if (place->flag == 0) {
       if (gData_0202a642 != 0)
-        goto places_done;
-      name = -1;
-      i = 128;
+        break;
       place = &places[128];
+      i = 128;
+      name = -1;
       tile = 0;
       always = 0;
       Func_080ec1d0(&placeX, &placeY);
     } else {
       name = place->name;
       entrance = place->nameEntrance;
-      x = place->flag + 0x180;
+      flag = place->flag + 0x180;
       tile = Func_080ec298(place);
       if (tile == 0)
-        goto skip_place;
+        continue;
       if (tile == 15) {
         if (!GameFlag_Test(0x8de))
-          goto skip_place;
+          continue;
         if (gMainRoutineWork.ownerOverride != 0)
-          goto skip_place;
+          continue;
         name = -2;
-        placeX = (gMainRoutineWork.savedX >> 16) * 853 / 16384 - 269;
         tile = 2;
         always = 0;
+        placeX = (gMainRoutineWork.savedX >> 16) * 853 / 16384 - 269;
         placeY = (gMainRoutineWork.savedZ >> 16) * 640 / 16384 - 112;
       } else {
-        if (!GameFlag_Test(x))
-          goto skip_place;
-        placeX = place->x * 853 / 16384 - 269;
+        if (!GameFlag_Test(flag))
+          continue;
         always = 1;
+        placeX = place->x * 853 / 16384 - 269;
         placeY = place->z * 640 / 16384 - 112;
       }
     }
-    marker->attr0 = (marker->attr0 & ~12) | (always << 2);
+    marker->objectMode = always;
     marker->tile = tileBase + tile;
     if (Data_0202a640 == 0) {
       x = placeX - (scrollX >> 16) - 1;
       y = placeY - (scrollY >> 16) - 1;
       if ((u32)(x + 4) > 247)
-        goto skip_place;
+        continue;
       if (y < -4)
-        goto skip_place;
+        continue;
       if (y > 163)
-        goto skip_place;
+        continue;
       marker->x = x & 0x1ff;
       marker->y = y;
     } else {
@@ -285,13 +300,7 @@ next_place:
     }
     if (always != 0 || (gFrameCount & 15) <= 7)
       Func_080140d8(marker++, 246);
-  }
-skip_place:
-  i++;
-  place++;
-  if (i < 128)
-    goto next_place;
-places_done:
+  } while (++i, place++, i < 128);
 
   if (gInput.held == 0) {
     if (nearest != -1) {
@@ -302,7 +311,7 @@ places_done:
       } else {
         angle = ArcTan2(nearestY - cursorY, nearestX - cursorX);
         pos[0] = work->x;
-        pos[1] = gInput.held;
+        pos[1] = 0;
         pos[2] = work->z;
         Vector_AddPolarOffset(work->speed, (u16)angle, pos);
         work->x = pos[0];
@@ -316,7 +325,7 @@ places_done:
   }
 
   if (nearest != -1 && (gFrameCount & 15) <= 7) {
-    marker->attr0 &= ~12;
+    marker->objectMode = 0;
     marker->tile = tileBase + 3;
     if (Data_0202a640 == 0) {
       marker->x = nearestX - (scrollX >> 16) - 2;
@@ -328,37 +337,40 @@ places_done:
     Func_080140d8(marker, 246);
   }
 
-  cursor = &Data_0202a620;
+  marker = &Data_0202a620;
   if (Data_0202a640 == 0) {
-    ((u8 *)cursor)[7] &= ~62;
-    cursor->x = cursorX - (scrollX >> 16) - 17;
-    cursor->y = cursorY - (scrollY >> 16) + 1;
+    marker->affineIndex = 0;
+    marker->x = cursorX - (scrollX >> 16) - 17;
+    marker->y = cursorY - (scrollY >> 16) + 1;
   } else {
-    cursor->x = WORLD_MAP_SCALE(cursorX) - 17;
-    cursor->y = WORLD_MAP_SCALE(cursorY) + 1;
+    marker->x = WORLD_MAP_SCALE(cursorX) - 17;
+    marker->y = WORLD_MAP_SCALE(cursorY) + 1;
   }
-  Func_080140d8(cursor, 246);
+  Func_080140d8(marker, 246);
 
   if (work->shown != nearest) {
-    if (Data_0202a654 == 0) {
+    if (Data_0202a654[0] == 0) {
       WindowSprite_PrepareForRedrawFar(work->window);
-      Data_0202a654 = 1;
-      Data_0202a656 = 6;
-    } else if (--Data_0202a656 <= 0) {
-      Data_0202a654 = 0;
+      Data_0202a654[0] = 1;
+      Data_0202a656[0] = 6;
+    } else if (--Data_0202a656[0] <= 0) {
+      Data_0202a654[0] = 0;
       work->shown = nearest;
       if (nearest != -1) {
         if (nearestName == -1)
-          nearestName = 0xe29;
+          nearestName = (s32)MsgPresentLocation;
         else if (nearestName == -2)
-          nearestName = 0xe2b;
+          nearestName = (s32)MsgBoat;
         else
           nearestName =
-              Scene_GetAreaNameIndex(nearestName, nearestEntrance) + 0xe58;
+              Scene_GetAreaNameIndex(nearestName, nearestEntrance) +
+              (s32)MsgDebugAreaName;
         Text_MeasureMessageFar(nearestName, &width, &height);
         if (Data_0202a640 == 0) {
-          cursorX = nearestX - 1 - (scrollX >> 16);
-          cursorY = nearestY - 11 - (scrollY >> 16);
+          cursorX = nearestX - 1;
+          cursorY = nearestY - 11;
+          cursorX -= scrollX >> 16;
+          cursorY -= scrollY >> 16;
         } else {
           cursorX = WORLD_MAP_SCALE(nearestX) - 1;
           cursorY = WORLD_MAP_SCALE(nearestY) - 11;
@@ -381,8 +393,10 @@ places_done:
     width = Data_0202a63c;
     height = Data_0202a63e;
     if (Data_0202a640 == 0) {
-      cursorX = nearestX - 1 - (scrollX >> 16);
-      cursorY = nearestY - 11 - (scrollY >> 16);
+      cursorX = nearestX - 1;
+      cursorY = nearestY - 11;
+      cursorX -= scrollX >> 16;
+      cursorY -= scrollY >> 16;
     } else {
       cursorX = WORLD_MAP_SCALE(nearestX) - 1;
       cursorY = WORLD_MAP_SCALE(nearestY) - 11;

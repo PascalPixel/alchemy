@@ -1,20 +1,28 @@
-// Draft, differ 3348 of 3555: the casino's four-dice game, built like
-// LuckyDice_Run (four dice in a round dome, Slots_DomePicture): A throws for
-// a bet of ten coins a level. A pair, two pairs, a triple or four of a kind
-// (Func_081b834c, banners Slots_OnePairBanner to Slots_PerfectBanner) pays
-// 1, 2, 3 or 8 times the bet; a win offers a double-up round (state 5,
-// Slots_DoubleUpBanner and Slots_CashOutBanner): guess whether the next
-// total is higher or lower than this one (state 1, Slots_HigherBanner and
-// Slots_LowerBanner) for twice the winnings, up to five rounds, the last
-// the final game; a miss loses everything. Winnings are counted into the
-// coins a coin a frame (state 4). The dice bounce off the dome's round
-// wall, settle to a face and are drawn back to front with their shadows;
-// palettes of the banners pulse with Func_081b810c.
-// The same calls, tables, sprite words and control flow as the listing;
-// left: the stack frame is 760 bytes against the native 756 (one more spill
-// slot), which moves every stack local by 4 and so shows in most rows, and
-// register choice. The message names stand for 0xd68 to 0xd6a and 0xd77 to
-// 0xd7e; the resources are directory entries 0x85 to 0x97.
+// Draft, differ 2778 of 3555, skeleton gap 524 (tla-en, 2026-11-01): the
+// casino's four-dice game, built like LuckyDice_Run (four dice in a round dome,
+// Slots_DomePicture): A throws for a bet of ten coins a level. A pair, two
+// pairs, a triple or four of a kind (Func_081b834c, banners Slots_OnePairBanner
+// to Slots_PerfectBanner) pays 1, 2, 3 or 8 times the bet; a win offers a
+// double-up round (state 5, Slots_DoubleUpBanner and Slots_CashOutBanner):
+// guess whether the next total is higher or lower than this one (state 1,
+// Slots_HigherBanner and Slots_LowerBanner) for twice the winnings, up to five
+// rounds, the last the final game; a miss loses everything. Winnings are
+// counted into the coins a coin a frame (state 4). The dice bounce off the
+// dome's round wall, settle to a face and are drawn back to front with their
+// shadows; palettes of the banners pulse with Func_081b810c. The same calls,
+// tables, sprite words and control flow as the listing. Left: the frame is 752
+// bytes against the native 756, so every stack local sits 4 low, and scheduling
+// and allocation in most rows. Open: the insertion sort reads a die's z as
+// [dice + (n * 28 + 8)] where this forms [(dice + n * 28)
+// + 8] (spelling it through casts, an s32 view or an array pointer did not
+// reach it); the affine loop hoists all four volatile addresses where the
+// listing hoists only the last; the throw loop's spinRate write stays indexed
+// only with startSpin, and its 300 is still moved out of the loop; argument
+// order before Graphics_ScaleRgb555BufferB decides whether the state 1 and 5
+// tails cross-jump to one call. cellBuffer is one pointer for the whole
+// function, which is why the listing reloads it at every use; zero is the row
+// the throw's coin redraw passes. The message names stand for 0xd68 to 0xd6a
+// and 0xd77 to 0xd7e; the resources are directory entries 0x85 to 0x97.
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -89,12 +97,12 @@ void Transform_SetLookAt(s32 *eye, s32 *target);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void WindowSystem_InitFieldFar(void);
 struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
-                                       s32 mode);
+                                     s32 mode);
 void Window_CloseFar(struct RenderInput *window, s32 mode);
 void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
-                                     s32 x, s32 y);
+                                   s32 x, s32 y);
 void Text_DrawNumberInWindowFar(s32 value, s32 width,
-                                  struct RenderInput *window, s32 x, s32 y);
+                                struct RenderInput *window, s32 x, s32 y);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
 void Sound_PlayFar(s32 cue);
@@ -103,19 +111,23 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void wait(s32 frames);
 
+#define ABS(value) ((value) < 0 ? -(value) : (value))
+
 #define DICE_GAME_THROW(dice, spinRate)                                        \
   {                                                                            \
     s32 x_ = -0x6c0000;                                                        \
     struct DiceParticle *die_ = (dice);                                        \
     for (index = 0; index != 4; index++) {                                     \
-      die_->z = 0;                                                             \
+      zero = 0;                                                                \
+      die_->z = zero;                                                          \
       die_->y = 0x600000;                                                      \
       die_->x = x_;                                                            \
       die_->velocityX = ((Random16() & 127) - 64) << 12;                       \
       die_->velocityY = ((Random16() & 15) + 48) << 13;                        \
       die_->velocityZ = ((Random16() & 127) + 64) << 13;                       \
       die_->variant = Random16() % 0x4800;                                     \
-      (spinRate)[index] = 300;                                                 \
+      startSpin = 300;                                                         \
+      (spinRate)[index] = startSpin;                                           \
       x_ += 0x480000;                                                          \
       die_++;                                                                  \
     }                                                                          \
@@ -134,6 +146,7 @@ void Func_081b83c4(void) {
   volatile u16 affineB;
   volatile u16 affineA;
   u16 *spritePalette;
+  u8 *cellBuffer;
   struct DiceParticle *dice;
   struct DiceSprites *sprites;
   struct DiceCamera *camera;
@@ -155,31 +168,12 @@ void Func_081b83c4(void) {
   s32 jingle;
   s32 spriteCount;
   s32 stoppedDice;
-  struct DiceParticle *die;
-  struct DiceParticle *other;
   struct RenderInput *window;
-  u16 *src;
-  u16 *dst;
+  s32 zero;
+  s32 startSpin;
   s32 index;
   s32 otherIndex;
-  s32 message;
-  s32 x;
-  s32 y;
-  s32 half;
-  s32 wobble;
   s32 digits;
-  s32 sortedDie;
-  s32 separationX;
-  s32 separationY;
-  s32 separationZ;
-  s32 separation;
-  s32 speed;
-  s32 angle;
-  s32 red;
-  s32 blue;
-  s32 tileX;
-  s32 tileY;
-  s16 affineScale;
 
   spritePalette = HeapSlot_Alloc(96, 0x200);
   dice = HeapSlot_AllocEwram(92, 0x7b7c);
@@ -189,12 +183,17 @@ void Func_081b83c4(void) {
   Camera_ResetSceneDefaultsB();
   Task_ResetAll();
   gRenderOamEnabled = 0;
+  cellBuffer = gMapCellBuffer;
 
-  index = 0;
-  for (tileY = 0; tileY != 20; tileY++) {
-    for (tileX = 0; tileX != 32; tileX++) {
-      *(volatile u16 *)(0x06003000 + index) = tileX + tileY * 30;
-      index += 2;
+  {
+    s32 tileX;
+    s32 tileY;
+    index = 0;
+    for (tileY = 0; tileY != 20; tileY++) {
+      for (tileX = 0; tileX != 32; tileX++) {
+        *(volatile u16 *)(0x06003000 + index) = tileX + tileY * 30;
+        index += 2;
+      }
     }
   }
 
@@ -204,67 +203,74 @@ void Func_081b83c4(void) {
   Dma_Set(resourceAddress, bgPalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
   resourceAddress += 0x1c0;
-  Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-  Dma_Set(gMapCellBuffer, (void *)0x06004000,
+  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Dma_Set(cellBuffer, (void *)0x06004000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_Data087);
   Dma_Set(resourceAddress, spritePalette, (DMA_ENABLE | DMA_32BIT) << 16 | 0x30,
           REG_DMA3);
   resourceAddress += 128;
-  Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-  Dma_Set(gMapCellBuffer, (void *)0x06010000,
+  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Dma_Set(cellBuffer, (void *)0x06010000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x4c0, REG_DMA3);
   resourceAddress =
       Resource_GetTableEntry((s32)&ResourceId_SlotsSmallDoubleUpBanner);
   Dma_Set(resourceAddress, spritePalette + 112,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   resourceAddress += 32;
-  Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-  Dma_Set(gMapCellBuffer, (void *)0x06011300,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
+  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Dma_Set(cellBuffer, (void *)0x06011300, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+          REG_DMA3);
   resourceAddress =
       Resource_GetTableEntry((s32)&ResourceId_SlotsFinalGameBanner);
   Dma_Set(resourceAddress, spritePalette + 96,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   resourceAddress += 32;
-  Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-  Dma_Set(gMapCellBuffer, (void *)0x06011500,
+  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Dma_Set(cellBuffer, (void *)0x06011500,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x100, REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsOrangeDigits);
   Dma_Set(resourceAddress, spritePalette + 128,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   resourceAddress += 32;
-  Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-  Dma_Set(gMapCellBuffer, (void *)0x06011900,
+  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Dma_Set(cellBuffer, (void *)0x06011900,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x280, REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsTimesSign);
   Dma_Set(resourceAddress, spritePalette + 144,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   resourceAddress += 32;
-  Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-  Dma_Set(gMapCellBuffer, (void *)0x06012300,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x60, REG_DMA3);
+  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Dma_Set(cellBuffer, (void *)0x06012300, (DMA_ENABLE | DMA_32BIT) << 16 | 0x60,
+          REG_DMA3);
   resourceAddress = Resource_GetTableEntry((s32)&ResourceId_SlotsPinkDigits);
   Dma_Set(resourceAddress, spritePalette + 160,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
-  src = (u16 *)resourceAddress;
-  dst = spritePalette + 176;
-  for (index = 0; index != 16; index++) {
-    blue = ((*src >> 10) & 31) + 4;
-    red = (*src & 31) + 4;
-    if (red > 31)
-      red = 31;
-    if (blue > 31)
-      blue = 31;
-    *dst = (red << 10) | (red << 5) | blue;
-    src++;
-    dst++;
+  {
+    u16 *src;
+    u16 *dst;
+    s32 red;
+    s32 blue;
+
+    dst = spritePalette + 176;
+    src = (u16 *)resourceAddress;
+    for (index = 0; index != 16; index++) {
+      blue = ((*src >> 10) & 31) + 4;
+      red = (*src & 31) + 4;
+      if (red > 31)
+        red = 31;
+      if (blue > 31)
+        blue = 31;
+      *dst = (red << 10) | (red << 5) | blue;
+      src++;
+      dst++;
+    }
   }
   Dma_Set(spritePalette + 176, (void *)0x05000360,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   resourceAddress += 32;
-  Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-  Dma_Set(gMapCellBuffer, (void *)0x06016600,
+  Resource_DecodeType01(resourceAddress, cellBuffer);
+  Dma_Set(cellBuffer, (void *)0x06016600,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x140, REG_DMA3);
   Graphics_ScaleRgb555BufferB(spritePalette, (u16 *)0x05000200, 0, 256);
   Graphics_ScaleRgb555BufferB(bgPalette, (u16 *)0x05000000, 0, 256);
@@ -299,21 +305,25 @@ void Func_081b83c4(void) {
   multiplier = 1;
   paletteRequest = -1;
   jingle = -1;
-  die = dice;
-  for (index = 0; index != 4; index++) {
-    die->y = 0;
-    die->x = ((Random16() & 127) - 64) << 16;
-    die->z = ((Random16() & 127) - 64) << 16;
-    die->y = 0;
-    die->x = Trig_Sin(index << 14) * 100;
-    die->z = Trig_Cos(index << 14) * 100;
-    die->velocityX = ((Random16() & 127) - 64) << 14;
-    die->velocityY = ((Random16() & 31) + 32) << 12;
-    die->velocityZ = ((Random16() & 127) - 64) << 14;
-    die->variant = (Random16() % 6) * 0xc00;
-    spinRate[index] = 300;
-    numbers[index] = 0;
-    die++;
+  {
+    struct DiceParticle *die;
+
+    die = dice;
+    for (index = 0; index != 4; index++) {
+      die->x = ((Random16() & 127) - 64) << 16;
+      die->y = 0;
+      die->z = ((Random16() & 127) - 64) << 16;
+      die->x = Trig_Sin(index << 14) * 100;
+      die->y = 0;
+      die->z = Trig_Cos(index << 14) * 100;
+      die->velocityX = ((Random16() & 127) - 64) << 14;
+      die->velocityY = ((Random16() & 31) + 32) << 12;
+      die->velocityZ = ((Random16() & 127) - 64) << 14;
+      die->variant = (Random16() % 6) * 0xc00;
+      spinRate[index] = 300;
+      numbers[index] = 0;
+      die++;
+    }
   }
 
   WindowSystem_InitFieldFar();
@@ -321,15 +331,15 @@ void Func_081b83c4(void) {
   sprites->coinsWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
   Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, sprites->coinsWindow, 0,
-                               0);
+                             0);
   window = Window_CreateFar(18, 3, 12, 3, 6);
   sprites->betWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins - 1, window, 0, 0);
   window = Window_CreateFar(22, 16, 8, 4, 6);
   sprites->helpWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
-  Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
-                                  sprites->helpWindow, 0, 8);
+  Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1, sprites->helpWindow,
+                                0, 8);
   bet = Party_GetAverageLevelFar() * 10;
   if ((u32)bet > (u32)gMainRoutineWork.coins)
     bet = gMainRoutineWork.coins;
@@ -350,7 +360,8 @@ void Func_081b83c4(void) {
 
     if (state == 0) {
       if (frame > 17) {
-        if ((u32)gMainRoutineWork.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
+        if ((u32)gMainRoutineWork.coins <
+            (u32)(Party_GetAverageLevelFar() * 10)) {
           Window_CloseFar(sprites->helpWindow, 1);
           break;
         }
@@ -370,7 +381,7 @@ void Func_081b83c4(void) {
           Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           Party_AdjustCoinsFar(-bet);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                       sprites->coinsWindow, 0, 0);
+                                     sprites->coinsWindow, 0, zero);
           state = 2;
           timer = 0;
           slide = 0;
@@ -396,7 +407,7 @@ void Func_081b83c4(void) {
           sprites->helpWindow = window;
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
-                                          sprites->helpWindow, 0, 8);
+                                        sprites->helpWindow, 0, 8);
           Sound_PlayFar(113);
           state = 0;
         }
@@ -411,10 +422,11 @@ void Func_081b83c4(void) {
           Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
           Party_AdjustCoinsFar(-bet);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                       sprites->coinsWindow, 0, round);
+                                     sprites->coinsWindow, 0, round);
         }
       } else {
-        message = -1;
+        s32 message = -1;
+
         if ((gInput.repeat & 0x40) && lower == 1) {
           if (target == 24)
             goto refuse;
@@ -440,7 +452,7 @@ void Func_081b83c4(void) {
         if (message != -1) {
           Text_DrawCharacterAtOffsetFar(message, sprites->helpWindow, 0, 0);
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameChoose,
-                                          sprites->helpWindow, 0, 8);
+                                        sprites->helpWindow, 0, 8);
         }
       }
       if (lower == 0) {
@@ -459,15 +471,22 @@ void Func_081b83c4(void) {
                                     0x8000, 16);
       }
     } else if (state == 2) {
+      struct DiceParticle *die;
+      struct DiceParticle *other;
+
       stoppedDice = 0;
       die = dice;
       for (index = 0; index != 4; index++, die++) {
+        s32 wallX, wallZ;
+
         die->x += die->velocityX;
         die->y += die->velocityY;
         die->z += die->velocityZ;
         other = dice;
         for (otherIndex = 0; otherIndex != 4; otherIndex++, other++) {
           if (index != otherIndex) {
+            s32 separationX, separationY, separationZ, separation;
+
             separationX = (die->x - other->x) >> 16;
             separationY = (die->y - other->y) >> 16;
             separationZ = (die->z - other->z) >> 16;
@@ -483,29 +502,29 @@ void Func_081b83c4(void) {
             }
           }
         }
-        if (Iwram_Sqrt((die->x >> 16) * (die->x >> 16) +
-                       (die->z >> 16) * (die->z >> 16)) > 199) {
-          if (die->x > 0) {
-            if (die->velocityX >= 0)
-              die->velocityX = -die->velocityX;
-          } else if (die->velocityX < 0) {
-            die->velocityX = -die->velocityX;
-          }
-          if (die->z > 0) {
-            if (die->velocityZ >= 0)
-              die->velocityZ = -die->velocityZ;
-          } else if (die->velocityZ < 0) {
-            die->velocityZ = -die->velocityZ;
-          }
+        wallX = die->x >> 16;
+        wallZ = die->z >> 16;
+        if (Iwram_Sqrt(wallX * wallX + wallZ * wallZ) > 199) {
+          if (die->x > 0)
+            die->velocityX = -ABS(die->velocityX);
+          else
+            die->velocityX = ABS(die->velocityX);
+          if (die->z > 0)
+            die->velocityZ = -ABS(die->velocityZ);
+          else
+            die->velocityZ = ABS(die->velocityZ);
         }
         die->velocityY += -0x8000;
         if (die->y <= 0) {
           die->y = 0;
           die->velocityY = -die->velocityY * 48 / 64;
           if ((Random16() & 3) == 0) {
-            speed = Iwram_Sqrt((die->velocityX >> 8) * (die->velocityX >> 8) +
-                               (die->velocityZ >> 8) * (die->velocityZ >> 8)) *
-                    56 / 64;
+            s32 speed;
+            s32 angle;
+            s32 speedX = die->velocityX >> 8;
+            s32 speedZ = die->velocityZ >> 8;
+
+            speed = Iwram_Sqrt(speedX * speedX + speedZ * speedZ) * 56 / 64;
             angle = Random16() & 0xffff;
             die->velocityX = Trig_Sin(angle) * speed >> 8;
             die->velocityZ = Trig_Cos(angle) * speed >> 8;
@@ -516,16 +535,19 @@ void Func_081b83c4(void) {
           if (spinRate[index] > 19)
             spinRate[index] -= 20;
           if (die->velocityY < 0x30000) {
+            s32 spin;
+            s32 facing;
+
             die->velocityX = 0;
             die->velocityY = 0;
             die->velocityZ = 0;
             spinRate[index] = 0;
-            angle = die->variant;
-            half = angle / 1024 % 3;
-            if (half == 1)
-              die->variant = angle + 0x800;
-            else if (half == 2)
-              die->variant = angle + 0x400;
+            spin = die->variant;
+            facing = spin / 1024 % 3;
+            if (facing == 1)
+              die->variant = spin + 0x800;
+            else if (facing == 2)
+              die->variant = spin + 0x400;
           }
         }
         die->velocityX = die->velocityX * 63 / 64;
@@ -569,6 +591,10 @@ void Func_081b83c4(void) {
         if (round == 0) {
           resultKind = Func_081b834c(numbers);
           switch (resultKind) {
+          case 5:
+            jingle = 93;
+            multiplier = 8;
+            break;
           case 2:
             jingle = 91;
             multiplier = 1;
@@ -580,10 +606,6 @@ void Func_081b83c4(void) {
           case 4:
             jingle = 91;
             multiplier = 2;
-            break;
-          case 5:
-            jingle = 93;
-            multiplier = 8;
             break;
           }
         } else if (lower == 0) {
@@ -620,8 +642,8 @@ void Func_081b83c4(void) {
             cashOut = 0;
             window = Window_CreateFar(4, 16, 20, 4, 6);
             sprites->helpWindow = window;
-            Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameDoubleUp, window,
-                                            0, 0);
+            Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameDoubleUp, window, 0,
+                                          0);
           }
           timer = 0;
           slide = 0;
@@ -637,7 +659,7 @@ void Func_081b83c4(void) {
           sprites->helpWindow = window;
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
-                                          sprites->helpWindow, 0, 8);
+                                        sprites->helpWindow, 0, 8);
           slide = 0;
           timer = 0;
           paletteRequest = 1;
@@ -658,13 +680,11 @@ void Func_081b83c4(void) {
         window =
             Window_CreateFar(9 - ((u32)digits >> 1), 16, digits + 12, 3, 6);
         sprites->helpWindow = window;
-        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0,
-                                        0);
+        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
         Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
-                                        sprites->helpWindow, digits * 8 + 48,
-                                        0);
+                                      sprites->helpWindow, digits * 8 + 48, 0);
         Text_DrawNumberInWindowFar(winnings, digits, sprites->helpWindow, 48,
-                                     0);
+                                   0);
       }
       if (timer > 19) {
         if (gInput.repeat & 1) {
@@ -676,7 +696,7 @@ void Func_081b83c4(void) {
           sprites->helpWindow = window;
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
-                                          sprites->helpWindow, 0, 8);
+                                        sprites->helpWindow, 0, 8);
           slide = 0;
           timer = 0;
           paletteRequest = 1;
@@ -686,14 +706,14 @@ void Func_081b83c4(void) {
             Sound_PlayFar(105);
             Party_AdjustCoinsFar(winnings);
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                         sprites->coinsWindow, 0, state);
+                                       sprites->coinsWindow, 0, state);
           }
         } else if (winnings > 0) {
           if (--winnings == 0)
             Sound_PlayFar(105);
           Party_AdjustCoinsFar(1);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                       sprites->coinsWindow, 0, 0);
+                                     sprites->coinsWindow, 0, 0);
           bet--;
           Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
         }
@@ -714,15 +734,15 @@ void Func_081b83c4(void) {
             sprites->helpWindow = window;
             if (total == 24) {
               lower = 1;
-              Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameLowerAgain,
-                                              window, 0, 0);
+              Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameLowerAgain, window,
+                                            0, 0);
             } else {
               lower = 0;
               Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameHigherAgain,
-                                              window, 0, 0);
+                                            window, 0, 0);
             }
             Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameChoose,
-                                            sprites->helpWindow, 0, 8);
+                                          sprites->helpWindow, 0, 8);
             slide = 0;
             paletteRequest = 1;
           } else {
@@ -764,8 +784,8 @@ void Func_081b83c4(void) {
         Dma_Set(resourceAddress, spritePalette + 192,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-        Dma_Set(gMapCellBuffer, (void *)0x06014000,
+        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Dma_Set(cellBuffer, (void *)0x06014000,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x180, REG_DMA3);
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsLowerBanner);
@@ -774,23 +794,30 @@ void Func_081b83c4(void) {
         Dma_Set(resourceAddress, spritePalette + 208,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-        Dma_Set(gMapCellBuffer, (void *)0x06014600,
+        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Dma_Set(cellBuffer, (void *)0x06014600,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x180, REG_DMA3);
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsPinkDigits);
-        src = (u16 *)resourceAddress;
-        dst = spritePalette + 224;
-        for (index = 0; index != 16; index++) {
-          blue = ((*src >> 10) & 31) + 4;
-          red = (*src & 31) + 4;
-          if (red > 31)
-            red = 31;
-          if (blue > 31)
-            blue = 31;
-          *dst = (blue << 10) | (red << 5) | blue;
-          src++;
-          dst++;
+        {
+          u16 *src;
+          u16 *dst;
+          s32 red;
+          s32 blue;
+
+          dst = spritePalette + 224;
+          src = (u16 *)resourceAddress;
+          for (index = 0; index != 16; index++) {
+            blue = ((*src >> 10) & 31) + 4;
+            red = (*src & 31) + 4;
+            if (red > 31)
+              red = 31;
+            if (blue > 31)
+              blue = 31;
+            *dst = (blue << 10) | (red << 5) | blue;
+            src++;
+            dst++;
+          }
         }
         Dma_Set(spritePalette + 224, (void *)0x050003c0,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
@@ -828,16 +855,16 @@ void Func_081b83c4(void) {
         Dma_Set(resourceAddress, (void *)0x050003a0,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-        Dma_Set(gMapCellBuffer, (void *)0x06014000,
+        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Dma_Set(cellBuffer, (void *)0x06014000,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x400, REG_DMA3);
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsGreenDigits);
         Dma_Set(resourceAddress, (void *)0x05000380,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-        Dma_Set(gMapCellBuffer, (void *)0x06015000,
+        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Dma_Set(cellBuffer, (void *)0x06015000,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x500, REG_DMA3);
       } else if (paletteRequest == 5) {
         resourceAddress =
@@ -847,8 +874,8 @@ void Func_081b83c4(void) {
         Dma_Set(resourceAddress, spritePalette + 224,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-        Dma_Set(gMapCellBuffer, (void *)0x06012480,
+        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Dma_Set(cellBuffer, (void *)0x06012480,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x280, REG_DMA3);
         resourceAddress =
             Resource_GetTableEntry((s32)&ResourceId_SlotsCashOutBanner);
@@ -857,8 +884,8 @@ void Func_081b83c4(void) {
         Dma_Set(resourceAddress, spritePalette + 240,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
         resourceAddress += 32;
-        Resource_DecodeType01(resourceAddress, gMapCellBuffer);
-        Dma_Set(gMapCellBuffer, (void *)0x06012e80,
+        Resource_DecodeType01(resourceAddress, cellBuffer);
+        Dma_Set(cellBuffer, (void *)0x06012e80,
                 (DMA_ENABLE | DMA_32BIT) << 16 | 0x280, REG_DMA3);
       }
       paletteRequest = -1;
@@ -917,27 +944,40 @@ void Func_081b83c4(void) {
 
     // The higher and lower choices, with the target to beat.
     if (state == 1) {
+      s32 x;
+      s32 wobble;
+
       x = (timer > 0 && lower == 1) ? timer * 12 + 64 : 64;
       wobble = lower == 0 ? Trig_Sin((frame << 10) & 0x7fff) >> 14 : 0;
+      x += slide * 15;
       if (target <= 23)
-        spriteCount = Func_081b8180(spriteCount, x + slide * 15 - 110,
-                                    wobble + 60, target + 1, 14, 2);
+        spriteCount =
+            Func_081b8180(spriteCount, x - 110, wobble + 60, target + 1, 14, 2);
       x = (timer > 0 && lower == 0) ? timer * 12 + 64 : 64;
       wobble = lower == 1 ? Trig_Sin((frame << 10) & 0x7fff) >> 14 : 0;
+      x += slide * 15;
       if (target > 4)
-        spriteCount = Func_081b8180(spriteCount, x + slide * 15 - 110,
-                                    94 - wobble, target - 1, 15, 2);
+        spriteCount =
+            Func_081b8180(spriteCount, x - 110, 94 - wobble, target - 1, 15, 2);
       for (index = 0; index != 3; index++) {
-        x = (timer > 0 && lower == 1) ? timer * 12 + 64 : 64;
+        s32 column;
+
+        column = 64;
+        if (timer > 0 && lower == 1)
+          column = timer * 12 + 64;
+        column += slide * 15;
+        column -= 120;
         sprites->oam[spriteCount].attr01 =
-            (((x + slide * 15 - 120 + index * 32 + 512) & 0x1ff) << 16) |
-            0x80000034;
+            (((column + index * 32 + 512) & 0x1ff) << 16) | 0x80000034;
         sprites->oam[spriteCount].attr2 = 0xc000 | (512 + index * 16);
         spriteCount++;
-        x = (timer > 0 && lower == 0) ? timer * 12 + 64 : 64;
+        column = 64;
+        if (timer > 0 && lower == 0)
+          column = timer * 12 + 64;
+        column += slide * 15;
+        column -= 120;
         sprites->oam[spriteCount].attr01 =
-            (((x + slide * 15 - 120 + index * 32 + 512) & 0x1ff) << 16) |
-            0x8000005c;
+            (((column + index * 32 + 512) & 0x1ff) << 16) | 0x8000005c;
         sprites->oam[spriteCount].attr2 = (560 + index * 16) | 0xd000;
         spriteCount++;
       }
@@ -945,17 +985,27 @@ void Func_081b83c4(void) {
 
     // Double up or cash out.
     if (state == 5) {
+      s32 x;
+
       for (index = 0; index != 5; index++) {
-        x = (timer > 0 && cashOut == 1) ? timer * 12 + 64 : 64;
+        s32 column;
+
+        column = 64;
+        if (timer > 0 && cashOut == 1)
+          column = timer * 12 + 64;
+        column += slide * 15;
+        column -= 120;
         sprites->oam[spriteCount].attr01 =
-            (((x + slide * 15 - 120 + index * 32 + 512) & 0x1ff) << 16) |
-            0x80000034;
+            (((column + index * 32 + 512) & 0x1ff) << 16) | 0x80000034;
         sprites->oam[spriteCount].attr2 = (292 + index * 16) | 0xe000;
         spriteCount++;
-        x = (timer > 0 && cashOut == 0) ? timer * 12 + 64 : 64;
+        column = 64;
+        if (timer > 0 && cashOut == 0)
+          column = timer * 12 + 64;
+        column += slide * 15;
+        column -= 120;
         sprites->oam[spriteCount].attr01 =
-            (((x + slide * 15 - 120 + index * 32 + 512) & 0x1ff) << 16) |
-            0x80000054;
+            (((column + index * 32 + 512) & 0x1ff) << 16) | 0x80000054;
         sprites->oam[spriteCount].attr2 = (372 + index * 16) | 0xf000;
         spriteCount++;
       }
@@ -963,6 +1013,10 @@ void Func_081b83c4(void) {
 
     // The total and the result's banner.
     if (state == 3 || (state == 5 && resultKind != 0)) {
+      s32 x;
+      s32 y;
+      s32 angle;
+
       x = (timer << 4) - 376;
       y = 48;
       if (x > 100)
@@ -1012,6 +1066,8 @@ void Func_081b83c4(void) {
     for (index = 0; index != 4; index++)
       drawOrder[index] = index;
     for (index = 1; index != 4; index++) {
+      s32 sortedDie;
+
       sortedDie = drawOrder[index];
       for (otherIndex = index - 1;
            otherIndex >= 0 && dice[drawOrder[otherIndex]].z > dice[sortedDie].z;
@@ -1020,6 +1076,11 @@ void Func_081b83c4(void) {
       drawOrder[otherIndex + 1] = sortedDie;
     }
     for (index = 0; index != 4; index++) {
+      struct DiceParticle *die;
+      s32 x;
+      s32 y;
+      s32 half;
+
       die = &dice[drawOrder[index]];
       Render_ProjectPoint(die, screen);
       if (screen[2] < 0x15e)
@@ -1040,27 +1101,35 @@ void Func_081b83c4(void) {
         spriteCount++;
       }
     }
-    die = dice;
-    for (index = 0; index != 4; index++, die++) {
-      groundPoint[0] = die->x;
-      groundPoint[1] = 0;
-      groundPoint[2] = die->z;
-      Render_ProjectPoint(groundPoint, screen);
-      if (screen[2] < 0x15e)
-        screen[2] = 0x15e;
-      if (screen[2] > 0x28a)
-        screen[2] = 0x28a;
-      spriteDepth[4 + index] = screen[2] - 0x15e;
-      spriteDepth[4 + index] += (s16)(die->y >> 16);
-      half = spriteDepth[4 + index] / 2 + 128;
-      x = screen[0] - 0x1800 / half;
-      y = screen[1] - 0xc00 / half;
-      if (y + 92 > -16) {
-        sprites->oam[spriteCount].attr01 =
-            (((index + 4) << 25) | (((x + 632) & 0x1ff) << 16)) |
-            ((y + 348) & 255) | 0x40002300;
-        sprites->oam[spriteCount].attr2 = 0x890;
-        spriteCount++;
+    {
+      struct DiceParticle *die;
+
+      die = dice;
+      for (index = 0; index != 4; index++, die++) {
+        s32 x;
+        s32 y;
+        s32 half;
+
+        groundPoint[0] = die->x;
+        groundPoint[1] = 0;
+        groundPoint[2] = die->z;
+        Render_ProjectPoint(groundPoint, screen);
+        if (screen[2] < 0x15e)
+          screen[2] = 0x15e;
+        if (screen[2] > 0x28a)
+          screen[2] = 0x28a;
+        spriteDepth[4 + index] = screen[2] - 0x15e;
+        spriteDepth[4 + index] += (s16)(die->y >> 16);
+        half = spriteDepth[4 + index] / 2 + 128;
+        x = screen[0] - 0x1800 / half;
+        y = screen[1] - 0xc00 / half;
+        if (y + 92 > -16) {
+          sprites->oam[spriteCount].attr01 =
+              (((index + 4) << 25) | (((x + 632) & 0x1ff) << 16)) |
+              ((y + 348) & 255) | 0x40002300;
+          sprites->oam[spriteCount].attr2 = 0x890;
+          spriteCount++;
+        }
       }
     }
     for (; spriteCount != 128; spriteCount++) {
@@ -1068,6 +1137,8 @@ void Func_081b83c4(void) {
       sprites->oam[spriteCount].attr2 = 0;
     }
     for (index = 0; index != 8; index++) {
+      s16 affineScale;
+
       affineScale = spriteDepth[index] / 4 + 128;
       affineA = affineScale;
       affineB = 0;

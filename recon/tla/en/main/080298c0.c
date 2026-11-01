@@ -1,18 +1,27 @@
-// Draft, differ 625 of 965: script command 0x1e, walking that turns into
-// climbing: on foot it moves by the direction pad as SC_PLAYER does without
-// pushing (a refused step with up held starts a climb onto ground more than
-// 8 pixels above when Func_080c8770 allows it there; with down held, a climb
-// down to ground below the next cell south); while climbing (unk66) the pad
-// moves the object up and down the face at half a pixel a frame (the probes
-// take the step's depth as height), it reaches the top or bottom when the
-// ground ahead or under it passes its height, and every 16th frame a
-// falling bit of rubble (object 0x11d) drops beside it. Walking leaves
-// object 0x164 every fifth step, as Func_0802a124's wake. Both modes end
-// with Func_08029838. Structure and frame follow the listing (the retry
-// list is 10 headings long, the locals declared in frame order); left: the
-// first literal pool lands after the first climbing branch here, far earlier
-// than the native's, so every pool load's offset differs, and register
-// choice and scheduling.
+// Draft, differ 122 of 965, skeleton gap 32 (tla-en, 2026-11-01)
+// Script command 0x1e, walking that turns into climbing: on foot it moves by
+// the direction pad as SC_PLAYER does without pushing (a refused step with up
+// held starts a climb onto ground more than 8 pixels above when Func_080c8770
+// allows it there; with down held, a climb down to ground below the next cell
+// south); while climbing (unk66) the pad moves the object up and down the face
+// at half a pixel a frame (the probes take the step's depth as height), it
+// reaches the top or bottom when the ground ahead or under it passes its
+// height, and every 16th frame a falling bit of rubble (object 0x11d) drops
+// beside it. Walking leaves object 0x164 every fifth step, as Func_0802a124's
+// wake. Both modes end with Func_08029838.
+// Left: the climbing branch's dead read of the held keys (6 instructions plus
+// its reloads) needs a volatile read, which this draft leaves out: with
+// *(volatile u32 *)&gInput.held there, as Actor_MoveByKeys has it, the draft
+// measures differ 90, skeleton gap 26. wait_advance.c and Actor_MoveByKeys also
+// reread held, so one `volatile u32 held` at its declaration may settle all
+// three (S2). The opening's load order (the native has y, z, the terrain
+// address, x, the mask; statement orders tried move the allocation or leave
+// this one); the first climb's `movs r1, #3; bl` cross-jumps into the second's
+// here because sched2 leaves the argument last; two reloads of collision in
+// the wake block. Allocation hangs on small things: action and unk66 are
+// written as fields (through a pointer a halfword constant comes from the
+// pool), count must be set at the top, and cellX and cellZ are reused for the
+// face, which gives the callee-saved registers the native uses.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -35,6 +44,13 @@ struct PlayerSprite {
   u8 unk0a[0x10];
   u8 flags;
 };
+
+// Actor reads its unk66 as signed here.
+struct ClimbingActor {
+  u8 unk00[0x66];
+  s16 climbing;
+};
+#define CLIMBING(object) (((struct ClimbingActor *)(object))->climbing)
 
 struct ClimbEventWork {
   u8 unk000[0xd4a];
@@ -75,33 +91,31 @@ s32 Func_080298c0(struct Actor *object) {
   s32 groundHere;
   s32 y;
   s32 groundAhead;
-  u8 *terrainId;
-  s16 *action;
-  s16 *climbing;
   s32 angle;
   s32 cellX;
   s32 cellZ;
   s32 angleIndex;
+  s32 count;
+  u8 *terrainId;
   u8 *wakeTimer;
   struct Actor *effect;
   struct PlayerSprite *sprite;
 
   heading = 0;
-  y = object->y;
-  terrainId = &object->terrainId;
+  count = 0;
   cellX = object->x & 0xfff00000;
   cellZ = object->z & 0xfff00000;
+  y = object->y;
+  terrainId = &object->terrainId;
   groundHere = Func_0802d45c(*terrainId, cellX, cellZ);
   groundAhead = Func_0802d45c(*terrainId, cellX, cellZ + 0xfff00000);
-  action = &object->action;
-  if (*action != 0) {
+  if (object->action != 0) {
     if (object->targetX != 0x80000000)
       goto done;
-    *action = heading;
+    object->action = heading;
     object->terrainHeight = groundHere;
   }
-  climbing = (s16 *)&object->unk66;
-  if (*climbing != 0) {
+  if (CLIMBING(object) != 0) {
     if (groundAhead < y) {
       s32 topZ = cellZ + 0xfff80000;
 
@@ -110,13 +124,13 @@ s32 Func_080298c0(struct Actor *object) {
         object->y -= 0x10000;
       } else {
         Actor_SetMoveTarget(object, object->x, groundAhead, topZ);
-        *action = 1;
-        *climbing = heading;
+        object->action = 1;
+        CLIMBING(object) = heading;
         goto done;
       }
     }
     if (groundHere > y) {
-      *climbing = 0;
+      CLIMBING(object) = 0;
       object->terrainHeight = groundHere;
       object->motionFlags = 3;
       goto done;
@@ -250,10 +264,9 @@ s32 Func_080298c0(struct Actor *object) {
   position.y = object->y;
   position.z = object->z;
   Vector_AddPolarOffset(0x80000, (u16)angle, &position);
-  if (gDebugMode != 0) {
+  if (gDebugMode != 0 && (gInput.held & 0x200)) {
     heading = (s16)angle;
-    if (gInput.held & 0x200)
-      goto counted;
+    goto counted;
   }
   if (!Func_0802d87c(object, &position)) {
     testPosition.x = object->x;
@@ -275,9 +288,10 @@ s32 Func_080298c0(struct Actor *object) {
           testPosition.y = object->y;
           testPosition.z = object->z;
           Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &testPosition);
-          heading = (s16)angle;
-          if (!Func_0802d87c(object, &testPosition))
+          if (!Func_0802d87c(object, &testPosition)) {
+            heading = (s16)angle;
             goto counted;
+          }
         }
       }
     }
@@ -285,14 +299,14 @@ s32 Func_080298c0(struct Actor *object) {
   {
     u16 direction = angle;
 
-    angleOffsets[0] = direction + 0x1000;
-    angleOffsets[1] = direction - 0x1000;
-    angleOffsets[2] = direction + 0x2000;
-    angleOffsets[3] = direction - 0x2000;
-    angleOffsets[4] = direction + 0x3000;
-    angleOffsets[5] = direction - 0x3000;
+    angleOffsets[count++] = direction + 0x1000;
+    angleOffsets[count++] = direction - 0x1000;
+    angleOffsets[count++] = direction + 0x2000;
+    angleOffsets[count++] = direction - 0x2000;
+    angleOffsets[count++] = direction + 0x3000;
+    angleOffsets[count++] = direction - 0x3000;
   }
-  for (angleIndex = 0; angleIndex < 6; angleIndex++) {
+  for (angleIndex = 0; angleIndex < count; angleIndex++) {
     heading = angleOffsets[angleIndex];
     position.x = object->x;
     position.y = object->y;
@@ -331,13 +345,13 @@ s32 Func_080298c0(struct Actor *object) {
   collision |= 1;
   // Up against a face more than 8 pixels high: start climbing it.
   if ((gInput.held & 0x40) && groundAhead > y + 0x80000) {
-    s32 faceX = (position.x & 0xfff00000) + 0x80000;
-    s32 faceZ = (position.z & 0xfff00000) + 0xfff80000;
+    cellX = (position.x & 0xfff00000) + 0x80000;
+    cellZ = (position.z & 0xfff00000) + 0xfff80000;
 
-    if (Func_080c8770(faceX, faceZ, 2)) {
+    if (Func_080c8770(cellX, cellZ, 2)) {
       object->motionFlags = 0;
       object->y += 0x10000;
-      *climbing = 1;
+      CLIMBING(object) = 1;
       object->velocityX = 0;
       object->velocityY = 0;
       object->velocityZ = 0;
@@ -347,15 +361,15 @@ s32 Func_080298c0(struct Actor *object) {
   }
   // Down at a drop: climb down the face south of the cell.
   if (gInput.held & 0x80) {
-    s32 faceX = (object->x & 0xfff00000) + 0x80000;
-    s32 faceZ = (object->z & 0xfff00000) + 0x180000;
+    cellX = (object->x & 0xfff00000) + 0x80000;
+    cellZ = (object->z & 0xfff00000) + 0x180000;
 
-    if (Func_0802d45c(*terrainId, faceX, faceZ) < y &&
-        Func_080c8770(faceX, faceZ, 2)) {
+    if (Func_0802d45c(*terrainId, cellX, cellZ) < y &&
+        Func_080c8770(cellX, cellZ, 2)) {
       object->motionFlags = 0;
-      Actor_SetMoveTarget(object, object->x, groundHere + 0xfffe0000, faceZ);
-      *action = 1;
-      *climbing = 1;
+      Actor_SetMoveTarget(object, object->x, groundHere + 0xfffe0000, cellZ);
+      object->action = 1;
+      CLIMBING(object) = 1;
       object->velocityX = 0;
       object->velocityY = 0;
       object->velocityZ = 0;
@@ -385,8 +399,9 @@ counted:
     object->velocityZ = 0;
     if (collision & 3) {
       s32 difference;
+      u16 turn = angle;
 
-      difference = (s16)((u16)angle - object->angle);
+      difference = (s16)(turn - object->angle);
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)

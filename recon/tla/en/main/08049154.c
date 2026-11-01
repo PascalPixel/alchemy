@@ -1,15 +1,21 @@
-// Draft, differ 812 of 984 (1049 before, 2026-10-26): the battle summon menu,
-// The Broken Seal's BattleSummonMenu_Run (games/tbs/src/window/screens/
-// summon_menu.c) on this game's work and messages. The list window stands at
-// column 13, 17 tiles wide; the standby counts above it are tiles (counts of
-// ten and more from tile 0xf196), and each summon's cost is drawn from column
-// 11. Written again from the twin's C: its MenuSprite and CursorSprite forms,
-// the cursor reached through cur and pushed through sprite, the cursor get,
-// set and tilemap row mark in once-only blocks as its macros are, one call
-// for a standby count with the tile chosen before it (as the listing has),
-// and the declaration order searched. Left: the stack frame is 12 bytes larger than
-// the native's (384 for 372), so the stack slots and allocation differ from
-// there.
+// Draft, differ 24 of 984, skeleton gap 20 (tla-en, 2026-11-01): the battle
+// summon menu, The Broken Seal's BattleSummonMenu_Run (games/tbs/src/window/
+// screens/battle_summon_menu.c) on this game's work and messages. The list
+// window stands at column 13, 17 tiles wide; the standby counts above it are
+// tiles (counts of ten and more from tile 0xf196), and each summon's cost is
+// drawn from column 11. Same instructions, frame (372), stack slots and
+// registers as the listing; what is left is instruction order inside six
+// blocks, all before the standby counts: the pool load and the index step in
+// the first sprite loop, the copy beside the store of the ordered list's
+// address, x + 1 in the first highlight, the drawnRow and mask stores, and
+// element = 0 before the standby load. Here the draft moves loads earlier than
+// the listing does, which looks like K2's -mthumb-slow-loads model, not source.
+// The twin's forms settle the rest: its declaration order fixes the stack, the
+// blink loop's own tile leaves r4 to index, and col = 0 belongs before the
+// affordability scan. Tried: mask before drawnRow (loses an instruction, CSE
+// reuses the zero), swapped operands and sprite stores, the sprite-loop forms.
+// The cursor pushed through sprite and the rows' goto are the twin's devices;
+// they need its tags on adoption.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -130,18 +136,18 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   struct SummonMenuSprite sprites[4];
   u8 learnedSummons[33];
   u8 orderedSummons[33];
+  u16 text[64];
   s32 iconSlots[4];
   u8 visibleSummons[4];
-  u16 text[64];
   s32 glyph;
+  s32 count;
+  struct SummonMenuWindow *window;
   struct SummonMenuWork *work;
   s32 drawnRow;
   s32 drawnFirstEntry;
   s32 selectedRow;
   s32 firstEntry;
   s32 cursorHandle;
-  s32 count;
-  struct SummonMenuWindow *window;
   struct SummonMenuWindow *description;
   struct SummonMenuWindow *counts;
   s32 mask;
@@ -211,8 +217,9 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
           break;
       }
       if (n == 4) {
-        orderedSummons[orderedCount++] = k;
+        orderedSummons[orderedCount] = k;
         learnedSummons[i] = SUMMON_END;
+        orderedCount++;
       }
     }
   } while (0);
@@ -245,8 +252,8 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
         Message_CopyExpanded(definition->abilityId + (s32)Msg_0885, text,
                                  52);
         Text_DrawWideStringAtOffset(text, description, 0, 4);
-        mask = 0;
         drawnRow = selectedRow;
+        mask = 0;
         for (element = 0; element <= 3; element++) {
           if (definition->djinnRequired[element] != 0)
             mask |= 1 << element;
@@ -277,6 +284,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
           if ((id = orderedSummons[firstEntry + index]) != SUMMON_END) {
           next:
             summon = SummonDefinition_Get(id);
+            col = 0;
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] > standby[element])
                 break;
@@ -291,7 +299,6 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
             Text_DrawCharacterAtOffset(SummonDefinition_Get(id)->abilityId +
                                              (s32)MsgAbilityNothing,
                                          window, 16, index * 16);
-            col = 0;
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
                 Window_SetTilemapEntry(window, element + 0x5001, col * 2 + 11,
@@ -334,8 +341,8 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
     }
 
     cursorPosition.x = window->x * 8 - 2;
-    ((u32 *)cur)[1] = 0x40000000;
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
+    ((u32 *)cur)[1] = 0x40000000;
     ((u32 *)cur)[2] = 0;
     cur->tile =
         VramCache_Reload((u16)cursorHandle, gResource_FixedBlockBTiles);
@@ -345,8 +352,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
     Oam_AddSpriteAtDepth(sprite, 242);
 
     {
-      s32 element;
-      s32 blink;
+      s32 element, tile, blink;
 
       blink = gFrameCount & 8;
       for (element = 0; element <= 3; element++) {

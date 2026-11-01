@@ -1,6 +1,7 @@
-// Draft, differ 921 of 1931 (alchemy-devtools diff ... 0804bbd0,0804bc08,
-// the waiting message's nested function and its parent): collecting the party's
-// battle commands, The Broken Seal's Battle_CollectPartyCommands
+// Draft, differ 354 of 1907, skeleton gap 124 (tla-en, 2026-11-01): 42 removed,
+// 82 added, of which about 43 added are the two nested functions, which are
+// compiled here but have their own listings. Collecting the party's battle
+// commands, The Broken Seal's Battle_CollectPartyCommands
 // (games/tbs/src/window/screens/battle_party_commands.c) on this game's work and
 // menus, with its two nested functions: the party panels' clear
 // (Battle_DrawPartyPanelsWithEmptyList, adopted alone in window/party_panel.c
@@ -10,9 +11,22 @@
 // count is added to the result; B on the party's row undoes a reserve swap;
 // command 49 swaps a reserve member in (Func_0804b8b8 after choosing the slot);
 // Status lists the reserve as well; Flee is command 99; the Djinn tutorial's
-// hint follows an unleash. Structure follows the listing; left: the stack frame is 4
-// bytes smaller here (one spill slot fewer), which shifts every stack slot, and
-// the allocation.
+// hint follows an unleash. The frame and every spill slot now agree with the
+// listing except sp+4 in one place.
+// Left, mostly scheduling and allocation: the listing takes a second zero for
+// commandsOut at the top (r3, with r6 kept across the calls); the battle pointer
+// in r12; swappedPlace's offset as swappedUnit's + 4 (adds r4, #4), where the
+// constant is built afresh here; the summon's first affordability test, whose
+// pointers are computed before the guard in the listing (adds r1, #4, then three
+// copies into the loop's registers), while a local pointer for it lets the guard
+// and the loop's test cross-jump into one (a branch into the loop); summon in r9
+// and ability in r10, swapped here; and the mode = 0 of the menu resets, which
+// schedules after the load of the work pointer.
+// Tried without gain: a while loop for the summon test (hoists the state load the
+// listing rereads each pass), required as a case-wide pointer, declaration
+// orders and function scope for summon and ok, the opening zeros in other orders.
+// The signature's letters come from the pool only when written through a local
+// pointer, a read of the global array gets movs: keep signature.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -95,11 +109,16 @@ struct PartyLinkBattle {
   u8 linkPaused;
 };
 
+struct PartyCommandPsynergy {
+  u16 encodedAction;
+  u16 unused;
+};
+
 struct PartyCommandUnit {
   u8 unk000[0x40];
   u16 agi;
   u8 unk042[0x16];
-  u32 psynergy[32];
+  struct PartyCommandPsynergy psynergy[32];
   u16 items[15];
   u8 unkf6[0x54];
   u16 portrait;
@@ -228,8 +247,8 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
   s32 largeIconSlot;
   s32 smallIconSlot;
   s32 commandIndex;
+  s32 summonIconSlot;
   s32 mode;
-  s32 k;
   struct PartyCommandWindow *commandWindow;
 
   void Battle_DrawPartyPanelsWithEmptyList(void) {
@@ -263,6 +282,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
   state->lastTarget = -1;
   {
     struct PartyCommandBattle *battle = Ram_HeapSlots->battleWork;
+    s32 k;
 
     for (k = 0; k < 8; k++)
       state->chosenDjinn[k] = 0x80000000;
@@ -279,17 +299,20 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
     if (battle->isLink != 0) {
       struct PartyLinkBattle *link = (struct PartyLinkBattle *)battle;
       s32 missedLinkFrames;
+      u16 *signature;
 
       state->linkTimer = 1;
-      gData_02003a74[4] = 'V';
-      gData_02003a74[5] = 'S';
-      gData_02003a74[6] = 'S';
-      gData_02003a74[7] = 'T';
+      signature = gData_02003a74;
+      signature[4] = 'V';
+      signature[5] = 'S';
+      signature[6] = 'S';
+      signature[7] = 'T';
       missedLinkFrames = 0;
       for (;;) {
         u16 *peerSignature = gLinkPeerSignatures[link->linkSide ^ 1];
+        s32 paused = link->linkPaused;
 
-        if (link->linkPaused != 0) {
+        if (paused != 0) {
           commandCount = -1;
           state->linkTimer = 0;
           break;
@@ -297,7 +320,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         if ((gLinkStatus & 3) != 3) {
           if (++missedLinkFrames > 24) {
             commandCount = -1;
-            state->linkTimer = link->linkPaused;
+            state->linkTimer = paused;
             break;
           }
         } else {
@@ -345,19 +368,20 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       s32 swapped = state->swappedUnit;
       struct PartyCommandBattle *battle;
       s32 old;
+      s32 shortSwapped;
+      s32 k;
 
       if (swapped == mode)
         continue;
       battle = Ram_HeapSlots->battleWork;
       old = battle->partyUnits[state->swappedPlace];
       battle->partyUnits[state->swappedPlace] = swapped;
-      for (k = 7; k >= 0; k--) {
-        u8 *owner = &gMainRoutineWork[0x218 + 7 - k];
-
-        if (*owner == (s16)swapped)
-          *owner = old;
-        else if (*owner == old)
-          *owner = swapped;
+      shortSwapped = (s16)swapped;
+      for (k = 0; k < 8; k++) {
+        if (gMainRoutineWork[0x218 + k] == shortSwapped)
+          gMainRoutineWork[0x218 + k] = old;
+        else if (gMainRoutineWork[0x218 + k] == old)
+          gMainRoutineWork[0x218 + k] = shortSwapped;
       }
       PartyStatus_Draw(((struct PartyCommandBattle *)Ram_HeapSlots->battleWork)
                            ->partyStatus);
@@ -370,17 +394,15 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
     // Command 49: choose a party place, then the reserve member for it.
     if (mode == 49) {
       Sound_PlayFar(112);
-      for (;;) {
-        mode = Func_0804a85c(0, 2, 1, 8);
-        if (mode == -1)
-          break;
-        mode = Func_0804b8b8(mode);
-        if (mode != -1) {
-          Func_08118158();
-          NAVIGATION->commandSelection[0] = 0;
-          break;
-        }
-      }
+    choose_place:
+      mode = Func_0804a85c(0, 2, 1, 8);
+      if (mode == -1)
+        continue;
+      mode = Func_0804b8b8(mode);
+      if (mode == -1)
+        goto choose_place;
+      Func_08118158();
+      NAVIGATION->commandSelection[0] = 0;
       continue;
     }
     // Status: the summary screens of the party and the reserve, or in the
@@ -408,10 +430,10 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
 
       if (refused != 0)
         continue;
-      command = commands;
       commandCount = 1;
-      forcedCount = refused;
+      command = commands;
       command->unitId = actors[0];
+      forcedCount = refused;
       command->priority = 0x7ffe;
       command->command = 99;
       command->parameter = refused;
@@ -429,6 +451,8 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       if (commandIndex == 0) {
         Func_08118130(0, state->standbyDjinn[0]);
       } else {
+        s32 k;
+
         for (k = 0; k < 4; k++)
           state->standbyDjinn[commandIndex][k] =
               state->standbyDjinn[commandIndex - 1][k];
@@ -438,10 +462,11 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       unit = Unit_Get(actorId);
       {
         struct PartyCommandState *navigation = NAVIGATION;
-        struct CommandIcon *iconSprite = &navigation->icons[2];
+        struct CommandIcon *iconSprite;
 
         navigation->commandActor = actorId;
         navigation->commandSelection[1] = 0;
+        iconSprite = &navigation->icons[2];
         ((struct CommandIconWords *)iconSprite)->attr01 = 0x80000400;
         ((struct CommandIconWords *)iconSprite)->attr23 = 0;
         iconSprite->tile = Func_08045528(unit->portrait, smallIconSlot);
@@ -453,8 +478,12 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
 
     mark_visible:
       Func_08041b68();
-      NAVIGATION->iconShown[0] = 0;
-      NAVIGATION->chosenDjinn[commandIndex] = 0x80000000;
+      {
+        struct PartyCommandState *navigation = NAVIGATION;
+
+        navigation->iconShown[0] = 0;
+        navigation->chosenDjinn[commandIndex] = 0x80000000;
+      }
       signatureHeader[0] = actorId;
       signatureHeader[1] = 255;
       BattleHighlight_SetModesFar(signatureHeader, 1);
@@ -513,6 +542,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         break;
 
       case 1: {
+        s32 k;
         struct CommandIcon *iconSprite;
         struct PartyCommandAbility *ability;
         struct PartyCommandWork *work;
@@ -529,12 +559,12 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         NAVIGATION->row = mode;
         NAVIGATION->preferredRow = mode;
       psynergy_menu:
-        COMMAND_ICON_X(state) = 48;
         list = state->listAbilities;
         pick = state->listSlots;
+        COMMAND_ICON_X(state) = 48;
         cnt = 0;
         k = 0;
-        entryValue = unit->psynergy[k] & 0x3fff;
+        entryValue = unit->psynergy[k].encodedAction & 0x3fff;
         if (entryValue != 0) {
           do {
             if (BattleAction_Get(entryValue)->flags & 0x80) {
@@ -545,7 +575,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
             k++;
             if (k == 32)
               break;
-            entryValue = unit->psynergy[k] & 0x3fff;
+            entryValue = unit->psynergy[k].encodedAction & 0x3fff;
           } while (entryValue != 0);
         }
         pick[cnt] = 0;
@@ -553,7 +583,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         mode = Func_0804a134(actorId, list, cnt);
         if (mode == -1)
           goto mark_visible;
-        parameter = unit->psynergy[pick[mode]] & 0x3fff;
+        parameter = unit->psynergy[pick[mode]].encodedAction & 0x3fff;
         ability = BattleAction_Get(parameter);
         cost = ability->range;
         iconSprite = &state->icons[1];
@@ -600,7 +630,6 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         const struct PartyCommandSummon *summon;
         struct PartyCommandAbility *ability;
         struct CommandIcon *iconSprite;
-        s32 handle;
         s32 ok;
         s32 j;
         s32 n;
@@ -622,12 +651,17 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         iconSprite = &state->icons[1];
         summon = SummonDefinition_Get(mode);
         ability = BattleAction_Get(summon->abilityId);
-        handle = VramCache_AllocEntry(128);
+        summonIconSlot = VramCache_AllocEntry(128);
         commandWindow = Window_Create(10, 17, 17, 3, commandKind);
         n = 0;
-        for (j = 0; j <= 3; j++) {
-          if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j])
-            break;
+        j = 0;
+        if (summon->djinnRequired[0] <= state->standbyDjinn[commandIndex][0]) {
+          do {
+            j++;
+            if (j > 3)
+              break;
+          } while (summon->djinnRequired[j] <=
+                   state->standbyDjinn[commandIndex][j]);
         }
         ok = j == 4;
         COMMAND_ICON_X(state) = 56;
@@ -636,7 +670,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         iconSprite->x = commandWindow->x * 8 + 8;
         iconSprite->y = commandWindow->y * 8 + 4;
         iconSprite->tile = Resource_LoadIndexedEntryToBuffer(
-            summon->abilityId & 0x3fff, handle);
+            summon->abilityId & 0x3fff, summonIconSlot);
         state->iconShown[1] = 1;
         if (ok == 0)
           Func_08041f70(2);
@@ -660,7 +694,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
                              Battle_ClassifyEntryKind(ability));
         command->range = ability->range;
         state->iconShown[1] = 0;
-        Resource_ResetEntry(handle);
+        Resource_ResetEntry(summonIconSlot);
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto summon_menu;
@@ -746,6 +780,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       }
 
       case 2: {
+        s32 k;
         struct CommandIcon *iconSprite;
         struct PartyCommandAbility *ability;
         u16 *list;
@@ -865,10 +900,12 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
   }
 
   if (state->linkTimer != 0) {
-    gData_02003a74[4] = 'E';
-    gData_02003a74[5] = 'D';
-    gData_02003a74[6] = 'V';
-    gData_02003a74[7] = 'S';
+    u16 *signature = gData_02003a74;
+
+    signature[4] = 'E';
+    signature[5] = 'D';
+    signature[6] = 'V';
+    signature[7] = 'S';
   }
   if (state->timerWindow != NULL)
     Window_Close(state->timerWindow, 1);

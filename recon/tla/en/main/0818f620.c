@@ -1,20 +1,22 @@
-// Draft, differ 803 of 1022 (draft 1015 instructions, no device): the body
-// of the canvas burst family (BattleEffect_RunCanvasMode0,
-// BattleEffect_RunCanvasModeByCount and BattleEffect_RunCanvasMode3WithAction in
-// canvas_modes.c), written from the listing on The Broken Seal's canvas
-// skeleton (twins: BattleEffect_RunRamses 0.44, by call
-// order BattleEffect_RunSparkGroups 0.44).
-// Every call, table and branch of the four modes is in the native's order;
-// the four quarter blits of a disc reload the second blitter for each flip
-// (flags 3, 7, 11, 15 with mode 1), as the native does.
-// Left: the frame. The native's is 88 bytes: effect sp+60, mode sp+56, work
-// sp+52, canvas sp+48, frame sp+44, from sp+76, to sp+64, draw sp+36,
-// graphics sp+32, the disc table sp+28, frames sp+24, &ball sp+20, &to
-// sp+16, &from sp+12, and j spilled at sp+8 across the rays' Trig_Sin;
-// here it is 84 (graphics at sp+40, the rest 4 lower), and the loops'
-// registers follow.
-// Next: j's spill (the native keeps the ray index in memory across the two
-// trig calls), the disc table and draw as the native's spills.
+// Draft, differ 322 of 1022, skeleton gap 40 (tla-en, 2026-11-01)
+// The body of the canvas burst family (BattleEffect_RunCanvasMode0,
+// BattleEffect_RunCanvasModeByCount and BattleEffect_RunCanvasMode3WithAction
+// in canvas_modes.c). Every call, table and branch is in the native's order and
+// nearly all of the allocation agrees; what is left is:
+// - The frame is 84 bytes, the native's 88: nothing in the listing touches
+//   sp+40, between frame (sp+44) and draw (sp+36), so every slot from there up
+//   is 4 lower here. The other slots are in the native's order.
+// - DrawDisc's stack arguments: the native stores half and size before it
+//   builds the blitter's address, here after (about half the gap). Spelling
+//   the load another way, half and the corners as locals, changes nothing or
+//   goes backwards.
+// - The rays hold 8 and 2 in registers with 4 rematerialized; here 4 and 8,
+//   with 2 rematerialized. size = 4 sits outside the ray loop because the
+//   native does not fold those values; half, height and literal arguments
+//   were all worse.
+// - The two 0x3c00 clears at the end: the native builds the constant twice
+//   and keeps the entry in a register; here the constant is shared.
+// - The disc loop's order around discs[i] and its argument registers.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -25,6 +27,8 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 
+// The ball is the last particle, never a local: the native rereads its address.
+#define ball (&work->particles[63])
 // The integer (pixel) half of a 16.16 value, read as the halfword it is.
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -38,7 +42,7 @@ extern const u8 Data_08199ec5[];
 
 void BattleEffect_StartCanvasLayer(s32 layer);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 value);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 value);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Palette_StepFadeTransfer(void);
 void Func_0815b434(u8 *map, s32 size, s32 scale);
@@ -47,15 +51,14 @@ void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 mode);
 void Func_08158ce0(s32 randomMask, u32 range);
@@ -63,32 +66,46 @@ void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
 void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *effect);
-void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background,
-                                                s32 value);
+void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 value);
 
 // Draws a disc of the given size from the disc sheet in the map cell buffer
 // as four quarter blits about (x, y), with the second blitter loaded for
 // each quarter's flip (flags 3, 7, 11 and 15 of the maximum mode).
-#define DRAW_DISC_QUARTER(flags, left, top)                                    \
-  do {                                                                         \
-    BattleEffect_LoadBlitter(188, 1 << 4 | (flags));                                      \
-    ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, gMapCellBuffer + *disc,   \
-                                             (left), (top), half, size);       \
-    HeapSlot_Release(188);                                             \
-  } while (0)
+static inline void DrawDisc(void *canvas, s16 *discs, s32 x, s32 y, s32 size) {
+  s32 index = (size - 2) >> 1;
+  BattleEffect_LoadBlitter(188, 1 << 4 | 3);
+  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+      canvas, gMapCellBuffer + discs[index], x - (size >> 1), y - size,
+      size >> 1, size);
+  HeapSlot_Release(188);
+  BattleEffect_LoadBlitter(188, 1 << 4 | 7);
+  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+      canvas, gMapCellBuffer + discs[index], x, y - size, size >> 1, size);
+  HeapSlot_Release(188);
+  BattleEffect_LoadBlitter(188, 1 << 4 | 11);
+  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas,
+                                           gMapCellBuffer + discs[index],
+                                           x - (size >> 1), y, size >> 1, size);
+  HeapSlot_Release(188);
+  BattleEffect_LoadBlitter(188, 1 << 4 | 15);
+  ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+      canvas, gMapCellBuffer + discs[index], x, y, size >> 1, size);
+  HeapSlot_Release(188);
+}
 
 // The canvas burst family (wrappers in canvas_modes.c). A glowing ball (or
 // in mode 0 a growing glow at the target, with sixteen rays that close on
 // it) hits the target; at the hit the targets flash and recoil, sixteen
 // flames rise and 47 sparks scatter. Modes:
 //   0  (BattleEffect_RunCanvasMode0): 78 frames, the glow at the target; the
-//      hit at frame 54, then the canvas is cleared and SummonEffect_RunCanvasMode1
-//      runs on;
+//      hit at frame 54, then the canvas is cleared and
+//      SummonEffect_RunCanvasMode1 runs on;
 //   1  (by count, kinds up to 199): 66 frames, a small ball (24 pixels),
 //      half-speed sparks, hit at 32, no flames;
 //   2  (by count, kinds 200 and up): 66 frames, a large ball (40), hit at
 //      32;
-//   3  (BattleEffect_RunCanvasMode3WithAction): 58 frames, the ball flies to the
+//   3  (BattleEffect_RunCanvasMode3WithAction): 58 frames, the ball flies to
+//   the
 //      midpoint of the targets, its own palette, hit at 24.
 // Modes 1 and 2 close by restoring the battle display themselves.
 void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
@@ -96,14 +113,12 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   struct EffectPosition to;
   struct BattleEffectWork *work;
   void *canvas;
-  u8 *graphics;
+  s32 frame;
   DrawRectangle draw;
+  u8 *graphics;
   s16 *discs;
-  struct EffectStep *ball;
-  struct EffectStep *step;
   s32 frames;
   s32 hitFrame;
-  s32 frame;
   s32 offset;
   s32 i;
   s32 j;
@@ -119,12 +134,12 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   BattleEffect_LoadBlitter(104, 1 << 4 | 3);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   discs = (s16 *)work->sheet;
-  frames = 78;
-  if (mode != 0) {
+  if (mode == 0)
+    frames = 78;
+  else if (mode == 3)
     frames = 58;
-    if (mode != 3)
-      frames = 66;
-  }
+  else
+    frames = 66;
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -151,7 +166,6 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x800, 1, 0);
 
-  ball = &work->particles[63];
   for (frame = 0; frame != frames; frame++) {
     EffectPosition_ProjectBattler(effect->actor, &from);
     if (mode == 3)
@@ -163,6 +177,8 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
 
     if (frame == 0) {
       if (mode == 0) {
+        struct EffectStep *step;
+
         // The rays: one every 1/16 turn, each starting after its own delay.
         for (i = 0; i != 16; i++) {
           step = &work->particles[i];
@@ -185,29 +201,20 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
       // Frames 18-54: the glow grows at the target, up to 64 pixels.
       if ((u32)(frame - 18) <= 36) {
         s32 size = frame * 2 - 32;
-        s32 half;
         s32 x;
         s32 y;
-        s16 *disc;
 
         if (size > 64)
           size = 64;
         x = to.x / 2;
         y = to.y - 32;
-        disc = &discs[(size - 2) / 2];
-        half = size >> 1;
-        DRAW_DISC_QUARTER(3, x - half, y - size);
-        DRAW_DISC_QUARTER(7, x, y - size);
-        DRAW_DISC_QUARTER(11, x - half, y);
-        DRAW_DISC_QUARTER(15, x, y);
+        DrawDisc(canvas, discs, x, y, size);
       }
     } else if ((u32)(frame - 2) <= 30) {
       // Frames 2-32: the ball flies, growing to 24 (mode 1) or 40 pixels.
       s32 size = frame / 4 * 2 + 16;
-      s32 half;
       s32 x;
       s32 y;
-      s16 *disc;
 
       if (mode == 1) {
         if (size > 24)
@@ -219,28 +226,26 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
       y = ball->y >> 16;
       ball->x += ball->velocityX;
       ball->y += ball->velocityY;
-      disc = &discs[(size - 2) / 2];
-      half = size >> 1;
-      DRAW_DISC_QUARTER(3, x - half, y - size);
-      DRAW_DISC_QUARTER(7, x, y - size);
-      DRAW_DISC_QUARTER(11, x - half, y);
-      DRAW_DISC_QUARTER(15, x, y);
+      DrawDisc(canvas, discs, x, y, size);
     }
 
     // Mode 0, frames 0-53: sixteen rays of motes close on the target.
     if (mode == 0 && frame <= 53) {
-      step = work->particles;
+      struct EffectStep *step = work->particles;
+
       for (i = 0; i != 16; i++) {
         if ((u32)(--step->variant + 32) <= 47) {
+          s32 size = 4;
+
           for (j = 0; j != 16; j++) {
             s32 radius = (step->variant * 2 + j) * 2;
 
             if (radius >= 0) {
-              s32 x = to.x / 2 + ((radius * Trig_Sin(step->z)) >> 16);
-              s32 y = to.y + ((radius * Trig_Cos(step->z)) >> 16);
+              s32 x = to.x / 2 + ((Trig_Sin(step->z) * radius) >> 16);
+              s32 y = to.y + ((Trig_Cos(step->z) * radius) >> 16);
 
-              draw(canvas, graphics + gData_08197410[8 - 1], x - 2, y - 36, 4,
-                   8);
+              draw(canvas, graphics + gData_08197410[size - 1], x - size / 2,
+                   y - 32 - size, size, size * 2);
             }
           }
         }
@@ -255,6 +260,11 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
     else
       hitFrame = 32;
     if (frame >= hitFrame) {
+      struct EffectStep *newFlame;
+      struct EffectStep *newSpark;
+      struct EffectStep *flame;
+      struct EffectStep *spark;
+
       if (frame == hitFrame) {
         // The hit: the targets recoil (mode 1 keeps them still) and flash.
         if (mode == 0 || mode == 2 || mode == 3) {
@@ -271,68 +281,71 @@ void Func_0818f620(struct BattleEffectArgument *effect, u32 mode) {
         work->shakeFrames = 8;
 
         // Sixteen flames, faster one by one.
-        step = work->particles;
+        newFlame = work->particles;
         for (i = 0; i != 16; i++) {
           s32 angle = Random16() & 0xffff;
           s32 speed = i * 4 + 4;
 
-          step->x = (to.x / 2) << 16;
-          step->y = (to.y - 32) << 16;
-          step->velocityX = (speed * Trig_Sin(angle)) >> 3;
-          step->velocityY = -(speed * Trig_Cos(angle)) >> 3;
-          step->variant = i / 3 + 17;
-          step++;
+          newFlame->x = (to.x / 2) << 16;
+          newFlame->y = (to.y - 32) << 16;
+          newFlame->velocityX = (speed * Trig_Sin(angle)) >> 3;
+          newFlame->velocityY = -(speed * Trig_Cos(angle)) >> 3;
+          newFlame->variant = i / 3 + 17;
+          newFlame++;
         }
 
         // 47 sparks, at half speed in mode 1.
-        step = &work->particles[16];
+        newSpark = &work->particles[16];
         for (i = 0; i != 47; i++) {
-          s32 speed = Random16() & 255;
+          s32 speed = (Random16() & 255) + 128;
           s32 angle = Random16() & 0xffff;
 
-          speed += 128;
-          step->x = (to.x / 2) << 16;
-          step->y = (to.y - 32) << 16;
-          step->velocityX = (speed * Trig_Sin(angle)) >> 6;
-          step->velocityY = -(speed * Trig_Cos(angle)) >> 5;
+          newSpark->x = (to.x / 2) << 16;
+          newSpark->y = (to.y - 32) << 16;
+          newSpark->velocityX = (Trig_Sin(angle) * speed) >> 6;
+          newSpark->velocityY = -(Trig_Cos(angle) * speed) >> 5;
           if (mode == 1) {
-            step->velocityX /= 2;
-            step->velocityY /= 2;
+            newSpark->velocityX /= 2;
+            newSpark->velocityY /= 2;
           }
-          step->variant = i / 3 + 17;
-          step++;
+          newSpark->variant = i / 3 + 17;
+          newSpark++;
         }
       }
 
       // The flames: six frames of the burst sheet, three frames each.
       if (mode == 0 || mode == 2 || mode == 3) {
-        step = work->particles;
+        flame = work->particles;
         for (i = 0; i != 16; i++) {
-          s32 x = HI(step->x);
-          s32 y = HI(step->y);
+          s32 x = HI(flame->x);
+          s32 y = HI(flame->y);
 
-          BattleEffectKernels_IntegrateVector2(step, 60, 0);
-          if ((u32)step->variant <= 17)
+          BattleEffectKernels_IntegrateVector2(flame, 60, 0);
+          if ((u32)flame->variant <= 17)
             draw(canvas,
-                 work->sheet + 0x800 + (Data_08199ec5[step->variant / 3] << 11),
+                 work->sheet + 0x800 +
+                     (Data_08199ec5[flame->variant / 3] << 11),
                  x - 16, y - 32, 32, 64);
-          step->variant = step->variant > 0 ? step->variant - 1 : -1;
-          step++;
+          if (flame->variant > 0)
+            flame->variant = flame->variant - 1;
+          else
+            flame->variant = -1;
+          flame++;
         }
       }
 
       // The sparks shrink as they fly.
-      step = &work->particles[16];
+      spark = &work->particles[16];
       for (i = 0; i != 47; i++) {
-        if (step->variant >= 0) {
-          s32 size = (step->variant >> 2) + 1;
+        if (spark->variant >= 0) {
+          s32 size = (spark->variant >> 2) + 1;
 
           draw(canvas, graphics + gData_08197410[size - 1],
-               HI(step->x) - size / 2, HI(step->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(step, 60, 0);
-          step->variant--;
+               HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
+          BattleEffectKernels_IntegrateVector2(spark, 60, 0);
+          spark->variant--;
         }
-        step++;
+        spark++;
       }
     }
 

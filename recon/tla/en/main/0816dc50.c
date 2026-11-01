@@ -1,14 +1,26 @@
-// Near miss, differ 798 of 1101 (tla-en, 2026-10-31): the same calls, control
-// flow, stack frame (160 bytes, every slot at the native's offset) and high
-// registers; what remains is low-register choice. The native rematerializes
-// the 0x3c00 of both Iwram_ClearWords calls, here it is kept in r5 across the
-// first; from there reload's round-robin spill registers run one step apart
-// (the native's ldr r6/r0/r1/r2/r3 of frame for the sound checks are
-// r0/r1/r2/r3/r5 here), which shifts most low registers below. The cone's
-// first vertex store is [r0, r5] here where the native forms the pointer
-// first, the ring loop keeps k in r7 and frame + 5k in r8 (the native the
-// other way round), and the dust's speed + 1024 is scheduled after the
-// angle's mask.
+// Draft, differ 781 of 1101, skeleton gap 173 (tla-en, 2026-11-01)
+// The same calls, control flow, stack frame (160 bytes, every slot at the
+// native's offset) and high registers; what is left is low-register choice and
+// the scheduling that follows from it.
+// The largest single cause: the native builds each 0x3c00 of the two
+// Iwram_ClearWords calls directly in r1, which only an inlined call does (the
+// constant then needs no pseudo; a direct call's argument gets one, CSE shares
+// it and it stays in r5). A static inline forwarding to Iwram_ClearWords, the
+// ClearWords_ of f143d80.c, gives the native's opening exactly and takes this
+// draft to differ 767, gap 165, but it is a new FAKEMATCH(wrapper) device, so
+// it is not here.
+// From there reload's round-robin spill registers run one step apart (the
+// native's ldr r6/r0/r1/r2/r3 of frame for the sound checks differ), and the
+// ring loop keeps k in r7 and frame + 5k in r8, the native the other way round;
+// an explicit variable for frame + 5k changes nothing. The native's reload of
+// 0xffff in r5 across the shard's Random16 calls needs -12768 out of r5.
+// Tried: a vertex pointer in place of the gMapCellBuffer array, whichever way
+// it is placed, gives the native's address form but moves frame out of its
+// spill slot (gap 200 or more); s8 [][4] for the buffer does nothing useful;
+// declaring angle apart from its mask moves nothing.
+// 2026-11-01: the shards take the ring after Trig_Sin, Sin * ring and
+// Cos * ring in that order; -32 goes through spireShade, as the native forms it
+// apart from the 7 (written directly CSE makes it 7 - 39).
 // 2026-10-31: frame is spilled and vertices kept in r11 as in the native once
 // column is not caller-saved: the cone's vertices are stored through
 // gMapCellBuffer as an array (height then lives 22 insns, not 24, and its
@@ -433,11 +445,11 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           for (i = 0; i != 64; i++) {
             struct EffectStep *p = &work->particles[i];
             s32 angle = (i & 7) << 13;
-            s32 ring = i / 8;
+            s32 ring;
 
-            p->x = target->x + ((ring * Trig_Sin(angle)) << 2);
+            p->x = target->x + ((Trig_Sin(angle) * (ring = i / 8)) << 2);
             p->y = ((Random16() & 0xffff) << 2) - ((ring * 5) << 17) + 0x400000;
-            p->z = target->z + ((ring * Trig_Cos(angle)) << 2);
+            p->z = target->z + ((Trig_Cos(angle) * ring) << 2);
             p->velocityX = ((Random16() & 0xffff) << 1) + 0x10000;
             p->velocityY = ((Random16() & 0xffff) - 12768) * 3;
             p->velocityZ = ((Random16() & 0xffff) - 0x8000) << 1;
@@ -481,7 +493,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           s32 k;
           s32 start;
           // A variable of its own: the native sets it before the branch
-          // below and stores it after.
+          // below and stores it after, and forms the second shade apart from
+          // the 7 beside it.
           s32 spireShade;
 
           // The spire, then the mist inside it.
@@ -507,9 +520,10 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           Func_080151e4(scale, scale, scale);
           Render_ProjectVertices((const u8 *)gMapCellBuffer, vertices, 64);
           Render_DrawModelList(model);
+          spireShade = -32;
           model->kind = 7;
           model->scrollU = 0;
-          model->shade = -32;
+          model->shade = spireShade;
           model->scrollV = (frame / 2) & 31;
           model->unk04 = 2;
           Render_DrawModelList(model);

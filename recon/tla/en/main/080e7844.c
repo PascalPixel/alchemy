@@ -1,4 +1,5 @@
-// Draft, differ 730 of 871: a field Psynergy cast 32 pixels before the caster:
+// Draft, differ 75 of 871, skeleton gap 31 (tla-en, 2026-11-01)
+// A field Psynergy cast 32 pixels before the caster:
 // a glowing disc (FieldEffect_GlowDisc, copied to the sprite VRAM the window
 // work's halfword at 0x1348 names) grows there while up to 64 white puffs
 // (FieldEffect_WhitePuff) rise and sway, and OBJ palette 15 shimmers in
@@ -9,9 +10,17 @@
 // disc; 1 grows it larger with puffs for 80 frames; 2 also fades the screen
 // to white over 100 frames. A marked object is set on its terrain again, the
 // event runs, and the palettes fade back.
-// Same calls, offsets and control flow; left: register and stack allocation
-// (the native stack frame is 100 bytes against 96, the caster in r7 and the work
-// pointer at sp 72) and the order it cascades into.
+// Frame, stack slots and most allocation now agree. Left: the listing has the
+// heap-slots pointer in r5, the byte offset in r6 and the caster in r7, where the
+// lreg dump ranks them caster, offset, slots (r5, r6, r7), so the offset's 20 is
+// scheduled after the first call and the terrain address has no copy; the first
+// sine's product stays in r0 against r3 in the listing; fade / 4 copies the
+// reloaded value against a fresh load; a few scheduling pairs (the 2 ORed into
+// byte 35, the screen pointer, the shrink's literal load).
+// The spawn count shares i with the other loops (i only takes caller-saved r4
+// that way), the slot is its own local, and the disc's tile goes through packed;
+// a block-scoped sprite, a separate counter and a shared wave local all measured
+// worse.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -55,11 +64,6 @@ struct FxScene {
   s8 enabled;
 };
 
-struct FxEvent {
-  u8 unk00[20];
-  struct Actor *objects[80];
-};
-
 struct ObjectAnimation {
   u8 unk00[24];
   u8 unk18;
@@ -90,7 +94,7 @@ void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Func_080db9a8(struct Actor *object, s32 facing);
-void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 mode);
+void BattleEffect_ApplyColorToTargetBuffer(s32 packed, s32 mode);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 void Func_080dbdd4(s32 x, s32 z, s32 layer, s32 value);
 void Actor_SetHorizontalPositionWithTerrain(s32 id, s32 a, s32 b);
@@ -100,50 +104,53 @@ void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_080e7844(void) {
   struct PuffWork *work = HeapSlot_Alloc(92, 0x2160);
-  struct FxScene *scene = Ram_HeapSlots->effectWork;
-  u8 *vramWork = Ram_HeapSlots->windowTiles;
-  struct Actor *caster = scene->mainObject;
+  struct HeapSlots *slots = Ram_HeapSlots;
+  struct FxScene *scene = slots->effectWork;
+  u8 *vramWork = slots->windowTiles;
+  s32 offset = 20; // byte offset of the event work's 80 object pointers
+  struct Actor *caster;
   struct Actor *object;
   struct ObjectAnimation *animation;
   struct EffectSprite *sprite;
+  struct EffectSprite *cursor;
+  struct EffectSprite *fresh;
   struct PuffParticle *particle;
-  void *pending;
-  s32 pos[3];
   s32 screen[3];
-  s32 *scale;
-  s32 found;
-  s32 fade;
-  s32 result;
+  s32 pos[3];
+  s32 phase;
+  s32 timer;
+  s32 frame;
   s32 entry;
   s32 tile;
   s32 next;
   s32 spawn;
-  s32 phase;
-  s32 timer;
-  s32 frame;
-  s32 x;
-  s32 y;
-  s32 scaleX;
+  s32 fade;
+  s32 result;
+  s32 found;
+  void *pending;
   s32 scaleY;
+  s32 scaleX;
+  s32 y;
+  s32 x;
   s32 red;
   s32 green;
   s32 blue;
   s32 add;
-  s32 half;
+  s32 packed;
   s32 i;
-  s32 n;
   u8 *dst;
 
   found = -1;
   fade = -1;
   pending = NULL;
+  caster = scene->mainObject;
   BattleEffect_InitializeSharedScene();
   pos[0] = caster->x;
   pos[1] = caster->y;
   pos[2] = caster->z;
   Vector_AddPolarOffset(0x200000, scene->facing, pos);
-  for (i = 0; i < 80; i++) {
-    object = ((struct FxEvent *)Ram_HeapSlots->eventWork)->objects[i];
+  for (i = 0; i < 80; i++, offset += 4) {
+    object = *(struct Actor **)((u8 *)slots->eventWork + offset);
     animation = object->animation;
     if (object->script != NULL && animation->definition[0] == 290 &&
         animation->unk18 == 1 &&
@@ -167,9 +174,11 @@ void Func_080e7844(void) {
     result = 0;
   }
 loaded:
-  dst = (u8 *)0x06011000 + *(u16 *)(vramWork + 0x1348) * 32;
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
-                        work);
+  {
+    void *source = Resource_GetTableEntry((s32)&ResourceId_GlowDisc);
+    dst = (u8 *)0x06011000 + *(u16 *)(vramWork + 0x1348) * 32;
+    Resource_DecodeType01(source, work);
+  }
   Dma_Set(work, dst, (DMA_ENABLE | DMA_32BIT) << 16 | 0x400, REG_DMA3);
   screen[0] = pos[0];
   screen[1] = pos[1];
@@ -184,32 +193,31 @@ loaded:
   entry = Resource_FindFreeEntry();
   tile = VramCache_Load(entry, 0x800, work);
   particle = work->particles;
-  sprite = work->sprites;
+  fresh = work->sprites;
   for (i = 63; i >= 0; i--) {
-    Func_080eaf98(sprite, 8, 15, 0x40000000, tile);
-    sprite->depth = 250;
-    sprite->oam.palette256 = 1;
-    sprite->oam.priority = 0;
-    sprite->oam.palette = 0;
+    Func_080eaf98(fresh, 8, 15, 0x40000000, tile);
+    fresh->depth = 250;
+    fresh->oam.priority = 0;
+    fresh->oam.palette256 = 1;
+    fresh->oam.palette = 0;
     particle->timer = -1;
-    sprite++;
+    fresh++;
     particle++;
   }
   Sound_PlayFar(130);
   wait(1);
-  scale = &work->discScaleX;
   next = 0;
   spawn = 0;
   phase = 0;
   timer = 0;
   frame = 0;
   do {
-    for (n = spawn; n != 0; n--) {
-      i = next & 63;
-      sprite = &work->sprites[i];
+    for (i = spawn; i != 0; i--) {
+      s32 slot = next & 63;
+      sprite = &work->sprites[slot];
       sprite->scaleX = 0x3333;
       sprite->scaleY = 0x3333;
-      particle = &work->particles[i];
+      particle = &work->particles[slot];
       particle->x = pos[0];
       particle->y = pos[1];
       particle->z = pos[2];
@@ -222,20 +230,24 @@ loaded:
       next = (next + 1) & 63;
     }
     particle = work->particles;
-    sprite = work->sprites;
+    cursor = work->sprites;
     for (i = 63; i >= 0; i--) {
       if (particle->timer >= 0) {
+        s32 grown;
+        sprite = cursor;
         sprite->oam.index = tile + ((particle->timer >> 2) & 7) * 8;
-        sprite->scaleX += 0x1999;
-        if (sprite->scaleX > 0x10000)
-          sprite->scaleX = 0x10000;
-        sprite->scaleY = sprite->scaleX;
+        grown = sprite->scaleX + 0x1999;
+        sprite->scaleX = grown;
+        if (grown > 0x10000)
+          grown = 0x10000;
+        sprite->scaleX = grown;
+        sprite->scaleY = grown;
         screen[0] = particle->x;
         screen[1] = particle->y;
         screen[2] = particle->z;
         Camera_WorldToScreen(screen);
         sprite->x =
-            screen[0] + (Trig_Sin(particle->swayRate * particle->sway) << 3);
+            screen[0] + (Trig_Sin(particle->sway * particle->swayRate) << 3);
         sprite->y = screen[2];
         Func_080eb01c(sprite);
         particle->sway++;
@@ -243,17 +255,17 @@ loaded:
         if (++particle->timer == 32)
           particle->timer = -1;
       }
-      sprite++;
+      cursor++;
       particle++;
     }
 
-    half = frame / 2;
     for (i = 0; i <= 31; i++) {
       add = 0;
       if (fade != -1)
         add = fade / 4;
-      green = (Trig_Sin((half + i) << 11) * 8 >> 16) + 23;
-      blue = (Trig_Sin(((frame / 4 + i) << 11) + 0x4800) * 10 >> 16) + 12;
+      green = (Trig_Sin((frame / 2 + i) << 11) * 8 >> 16) + 23;
+      blue = Trig_Sin(((frame / 4 + i) << 11) + 0x4800);
+      blue = (blue * 10 >> 16) + 12;
       red = add + 28;
       if (red > 31)
         red = 31;
@@ -263,7 +275,8 @@ loaded:
       blue += add;
       if (blue > 31)
         blue = 31;
-      ((volatile u16 *)0x05000200)[255 - i] = (blue << 10) | (green << 5) | red;
+      packed = (blue << 10) | (green << 5) | red;
+      ((u16 *)0x05000200)[255 - i] = packed;
     }
     if (fade != -1 && fade <= 126)
       fade++;
@@ -272,14 +285,14 @@ loaded:
     y = work->discY;
     scaleX = work->discScaleX;
     scaleY = work->discScaleY;
+    packed = *(u16 *)(vramWork + 0x1348) + 128;
     sprite = &work->disc;
-    Func_080eaf98(sprite, 31, 31, 0xc0000000,
-                  *(u16 *)(vramWork + 0x1348) + 128);
+    Func_080eaf98(sprite, 31, 31, 0xc0000000, packed);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = Func_080db9a8(scene->mainObject, scene->facing);
-    sprite->x = x;
     sprite->depth = 1;
+    sprite->x = x;
     sprite->y = y;
     sprite->scaleX = scaleX;
     sprite->scaleY = scaleY;
@@ -317,9 +330,9 @@ loaded:
       case 0:
         if (timer == 30)
           Sound_PlayFar(140);
-        *scale += 0x300;
-        work->discScaleY = *scale;
-        if (*scale > 0xbfff) {
+        work->discScaleX += 0x300;
+        work->discScaleY = work->discScaleX;
+        if (work->discScaleX > 0xbfff) {
           phase = 1;
           timer = -1;
         }
@@ -340,9 +353,9 @@ loaded:
         break;
       case 3:
         spawn = 0;
-        *scale += -0x400;
-        work->discScaleY = *scale;
-        if (*scale <= 0)
+        work->discScaleX += -0x400;
+        work->discScaleY = work->discScaleX;
+        if (work->discScaleX <= 0)
           phase = 999;
         break;
       }
@@ -352,9 +365,9 @@ loaded:
       case 0:
         if (timer == 40)
           Sound_PlayFar(140);
-        *scale += 0x300;
-        work->discScaleY = *scale;
-        if (*scale > 0xbfff) {
+        work->discScaleX += 0x300;
+        work->discScaleY = work->discScaleX;
+        if (work->discScaleX > 0xbfff) {
           phase = 1;
           timer = -1;
         }
@@ -384,8 +397,8 @@ loaded:
   } while (phase != 999);
 
   if (found != -1) {
-    object = Actor_GetById(found);
-    Func_080dbdd4(object->x, object->z, object->terrainId, 0);
+    struct Actor *marked = Actor_GetById(found);
+    Func_080dbdd4(marked->x, marked->z, marked->terrainId, 0);
     Actor_SetHorizontalPositionWithTerrain(found, 0, 0);
   }
   if (pending != NULL)

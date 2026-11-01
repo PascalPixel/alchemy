@@ -1,13 +1,23 @@
-// Draft, differ 737 of 976 (766 before; 2026-10-26, three plain reorders: the
-// second half's dst step after its count, the dark tint's halving before
-// green, a tint declaration) (2026-10-25): The Broken Seal's PaletteFade_Build,
-// which builds the battle effects' colour buffers from a palette (each colour
-// as B, G and R channels shifted up 10 bits). This game adds two tints after
-// the seven The Broken Seal has: 0x10008 darkens bright colours (a fifth off
-// each channel when their sum is over 60), and 0x10009, which the switch places
-// between the grey and sepia tints, a grey of a third of R + G + B, blue
-// three steps darker. Left: a 52-byte stack frame for the native's 48, which keeps
-// the colour count on the stack at 44, and the allocation that follows.
+// Draft, differ 20 of 976, skeleton gap 5 (tla-en, 2026-11-01): The Broken
+// Seal's PaletteFade_Build, which builds the battle effects' colour buffers from
+// a palette (each colour as B, G and R channels shifted up 10 bits). This game
+// adds two tints after the seven The Broken Seal has: 0x10008 darkens bright
+// colours (a fifth off each channel when their sum is over 60), and 0x10009,
+// which the switch places between the grey and sepia tints, a grey of a third of
+// R + G + B, blue three steps darker. 0x10004 differs too: it clamps to other
+// ranges and leaves the first colour of the palette unchanged.
+// Left, all order, no allocation: (1) the half-palette step, where count and src
+// swap r1 and r3 in the head (every order of the three steps tried); (2) the warm
+// tint's first two stores, which the listing schedules before dst's step and the
+// next table's load (*dst then dst++, pointer-form reads, const tables tried);
+// (3) the warm dark tint's last table read, whose address and index swap r2 and
+// r3. Only the *(table + red) spelling there brings its store ahead of the load;
+// red + table, casts and byte offsets give the same.
+// Allocation depends on three forms kept here: the dim grey tint's green = red,
+// which needs the blend loop's clamped results as their own variables (a single
+// set ties each to its doubling, and takes r5 from color); tintRed and tintBlue
+// set in two steps (their two stack stores); dst[i * 3 + n] in the grey, custom
+// and blend loops (dst copied to a reduced pointer).
 #include "types.h"
 #include "iwram_call.h"
 #include "system/dma.h"
@@ -60,9 +70,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   if (half == 1) {
     colorCount = COLOR_HALF;
   } else if (half == 2) {
-    src += COLOR_HALF;
-    colorCount = COLOR_HALF;
     dst += COLOR_HALF * 3;
+    colorCount = COLOR_HALF;
+    src += COLOR_HALF;
   }
 
   // One colour: write it once, then let DMA copy it over the rest. The copy
@@ -82,9 +92,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         green = ((color << 7) & 0x1f000);
         blue = (color & 0x7c00);
         color = Iwram_SignedDivide(red + green + blue, 7);
-        *dst++ = color;
-        *dst++ = color;
-        *dst++ = color;
+        dst[i * 3 + 0] = color;
+        dst[i * 3 + 1] = color;
+        dst[i * 3 + 2] = color;
       }
       break;
     case PALETTE_TINT_DIM_GRAY: // a third of R + G + B, B three steps darker
@@ -93,9 +103,12 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = color & 31;
         color = Iwram_SignedDivide(
             red + ((color >> 5) & 31) + ((color >> 10) & 31), 3);
-        red = PaletteFade_ClampComponent(color - 1);
-        green = PaletteFade_ClampComponent(color - 1);
-        blue = PaletteFade_ClampComponent(color - 3);
+        red = color - 1;
+        green = red;
+        red = PaletteFade_ClampComponent(red);
+        green = PaletteFade_ClampComponent(green);
+        blue = color - 3;
+        blue = PaletteFade_ClampComponent(blue);
         dst[0] = gColorBuffer_ChannelCurveLight[blue];
         dst[1] = gColorBuffer_ChannelCurveLight[green];
         dst[2] = gColorBuffer_ChannelCurveLight[red];
@@ -107,8 +120,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = color & 31;
-        color = Iwram_SignedDivide(
-            red + ((color >> 5) & 31) + ((color >> 10) & 31), 10);
+        green = (color >> 5) & 31;
+        blue = (color >> 10) & 31;
+        color = Iwram_SignedDivide(red + green + blue, 10);
         red = color * 4 + 5;
         blue = color * 3 + 5;
         green = blue;
@@ -151,29 +165,31 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         *dst++ = gColorBuffer_ChannelCurve[red];
       }
       break;
-    case PALETTE_TINT_MUTED: // narrow the range, G and B + 2
+    case PALETTE_TINT_MUTED: // narrow the range, G and B + 2, past the first
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = color & 31;
         green = (color >> 5) & 31;
         blue = (color >> 10) & 31;
-        if (red < 10)
-          red = 10;
-        if (green < 16)
-          green = 16;
-        if (blue < 16)
-          blue = 16;
-        if (red > 28)
-          red = 28;
-        if (green > 24)
-          green = 24;
-        if (blue > 26)
-          blue = 26;
-        green += 2;
-        blue += 2;
-        red = PaletteFade_ClampComponent(red);
-        green = PaletteFade_ClampComponent(green);
-        blue = PaletteFade_ClampComponent(blue);
+        if (i != 0) {
+          if (red < 8)
+            red = 8;
+          if (green < 14)
+            green = 14;
+          if (blue < 14)
+            blue = 14;
+          if (red > 29)
+            red = 29;
+          if (green > 25)
+            green = 25;
+          if (blue > 27)
+            blue = 27;
+          green += 2;
+          blue += 2;
+          red = PaletteFade_ClampComponent(red);
+          green = PaletteFade_ClampComponent(green);
+          blue = PaletteFade_ClampComponent(blue);
+        }
         *dst++ = gColorBuffer_ChannelCurve[blue];
         *dst++ = gColorBuffer_ChannelCurve[green];
         *dst++ = gColorBuffer_ChannelCurve[red];
@@ -233,7 +249,7 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         blue = PaletteFade_ClampComponent(blue);
         dst[0] = gColorBuffer_ChannelCurveContrast[blue];
         dst[1] = gColorBuffer_ChannelCurveLight[green];
-        dst[2] = gColorBuffer_ChannelCurve[red];
+        dst[2] = *(gColorBuffer_ChannelCurve + red);
         dst += 3;
       }
       break;
@@ -267,15 +283,17 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
     }
   } else if (mode & PALETTE_TINT_CUSTOM) {
     // The brightness (2R + 4G + B) times the colour in mode.
-    u32 tintGreen;
     u32 tintRed;
+    u32 tintGreen;
     u32 tintBlue;
     s32 red;
     s32 green;
 
-    tintRed = mode & 31;
+    tintRed = mode;
+    tintRed &= 31;
     tintGreen = (mode >> 5) & 31;
-    tintBlue = (mode >> 10) & 31;
+    tintBlue = mode >> 10;
+    tintBlue &= 31;
     for (i = 0; i < colorCount; i++) {
       color = *src++;
       red = ((color << 11) & 0xf800);
@@ -288,10 +306,9 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
       red = PaletteFade_ClampShiftedComponent(red);
       green = PaletteFade_ClampShiftedComponent(green);
       blue = PaletteFade_ClampShiftedComponent(blue);
-      dst[0] = blue;
-      dst[1] = green;
-      dst[2] = red;
-      dst += 3;
+      dst[i * 3 + 0] = blue;
+      dst[i * 3 + 1] = green;
+      dst[i * 3 + 2] = red;
     }
   } else if (mode & PALETTE_TINT_BLEND) {
     // The brightness R + G + B shared out in the proportions of mode's colour.
@@ -301,10 +318,15 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
     s32 blendedRed;
     s32 blendedGreen;
     s32 blendedBlue;
+    s32 clampedRed;
+    s32 clampedGreen;
+    s32 clampedBlue;
 
-    tintRed = mode & 31;
+    tintRed = mode;
+    tintRed &= 31;
     tintGreen = (mode >> 5) & 31;
-    tintBlue = (mode >> 10) & 31;
+    tintBlue = mode >> 10;
+    tintBlue &= 31;
     for (i = 0; i < colorCount; i++) {
       color = *src++;
       red = color & 31;
@@ -317,12 +339,12 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
                                   (s32)(tintGreen << 16) >> 4);
       blendedBlue = Iwram_MulQ16(((color * tintBlue) >> 4) << 16,
                                  (s32)(tintBlue << 16) >> 4);
-      blendedRed = PaletteFade_ClampComponent((u32)blendedRed >> 16);
-      blendedGreen = PaletteFade_ClampComponent((u32)blendedGreen >> 16);
-      blendedBlue = PaletteFade_ClampComponent((u32)blendedBlue >> 16);
-      *dst++ = gColorBuffer_ChannelCurve[blendedBlue];
-      *dst++ = gColorBuffer_ChannelCurve[blendedGreen];
-      *dst++ = gColorBuffer_ChannelCurve[blendedRed];
+      clampedRed = PaletteFade_ClampComponent((u32)blendedRed >> 16);
+      clampedGreen = PaletteFade_ClampComponent((u32)blendedGreen >> 16);
+      clampedBlue = PaletteFade_ClampComponent((u32)blendedBlue >> 16);
+      dst[i * 3 + 0] = gColorBuffer_ChannelCurve[clampedBlue];
+      dst[i * 3 + 1] = gColorBuffer_ChannelCurve[clampedGreen];
+      dst[i * 3 + 2] = gColorBuffer_ChannelCurve[clampedRed];
     }
   } else if (mode & PALETTE_TINT_SPLIT) {
     // The colours unchanged, as the default tint writes them.

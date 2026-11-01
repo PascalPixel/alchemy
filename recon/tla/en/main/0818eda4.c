@@ -1,18 +1,22 @@
-// Draft, differ 809 of 895 (draft 874 instructions, no device): effect kind
-// 123, written from the listing on The Broken Seal's canvas skeleton
-// (twins: BattleEffect_RunTitanBlade 0.46, by call order
-// BattleEffect_RunJupiter 0.50), with the ARM model renderer for its
-// flashes, shards, splashes and rings.
-// Every call, cue and table read is in the native's order; what is left is
-// the frame. The native stack frame is 92 bytes: from at sp+80, to at sp+68, the
-// blitter pair at sp+60, the texture at sp+52, effect sp+48, canvas sp+44,
-// work sp+40, frame sp+36, graphics sp+32, &draw sp+28, &from sp+24, &to
-// sp+20, the blend offset sp+16, projected sp+12, &texture sp+8. Here it is
-// 100: two more spills move every stack offset by 8, and the loops'
-// registers follow (frame, i and the step pointer).
-// Tried: the arrays declared from, to, draw, texture (no change). Next: the
-// spark loops' blend and size as the native's spills (blend * 4 at sp+16),
-// the step pointer of the burst loop walked rather than indexed.
+// Draft, differ 172 of 895, skeleton gap 32 (tla-en, 2026-11-01)
+// Effect kind 123, written from the listing on The Broken Seal's canvas
+// skeleton (twins: BattleEffect_RunTitanBlade 0.46, by call order
+// BattleEffect_RunJupiter 0.50), with the ARM model renderer for its flashes,
+// shards, splashes and rings.
+// Control flow, givs, frame (92 bytes) and stack slots agree with the native;
+// the gap is instruction order alone. Left: `i & 1` in the spark loops (native
+// copies i and loads the 1 at reload, here the constant's pseudo ties to the
+// result), the third texture block (native loads pixels and mesh before their
+// stores, here kind's store goes first and frame reloads twice), which also
+// rotates r0-r2 through the splash loop.
+// What fixed the shape, kept on purpose: one counter i for every outer loop, j
+// and step local to each loop, projected and model in a block after the
+// sparks, s32 size with (u32)size >> 1, blend as the scaled offset (its spill
+// slot comes before projected's), Trig_Sin(...) * speed, the shard step after
+// start and the splash step before age, age and back at loop level with shade
+// and scale inside the test, and the first picture load by its address.
+// Tried: statement orders of the three texture blocks, blend mutated in place,
+// blend as a pointer (worse). The permute tool refuses a draft outside recon/.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -52,7 +56,9 @@ extern char ResourceId_Data0C2;
 extern char ResourceId_Data134;
 extern char ResourceId_OrangePaletteB;
 extern u8 gData_02014000[];
-extern struct EffectStep gMapCellBuffer[];
+// The first load names the buffer by its address: as the symbol it would
+// combine with the second.
+#define EFFECT_PICTURES FIXED_ADDRESS((u8 *), 0x02014000, gData_02014000)
 extern u16 gData_08197410[];
 extern const u16 Data_081992b0[];
 extern const u16 Data_08199220[];
@@ -72,15 +78,14 @@ void Resource_LoadAndDecompress(s32 id, void *target, s32 unpack, s32 wait);
 void *Resource_GetTableEntry(s32 id);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -91,7 +96,7 @@ void Render_TransformVertices(const u8 *vertices, void *projected, s32 count);
 void Render_DrawModelList(struct RenderModel *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Func_08158ce0(s32 randomMask, u32 range);
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);
@@ -112,14 +117,9 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   struct ModelTexture texture;
   void *canvas;
   struct BattleEffectWork *work;
-  u8 *graphics;
-  struct RenderModel *model;
-  void *projected;
-  struct EffectStep *step;
   s32 frame;
+  u8 *graphics;
   s32 i;
-  s32 j;
-  s32 k;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -127,7 +127,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, gData_02014000,
+  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, EFFECT_PICTURES,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CB, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x1000, 0,
@@ -144,16 +144,16 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != KIND123_FRAMES; frame++) {
     if (frame == 0) {
+      struct EffectStep *shard;
+
       for (i = 0; i != 512; i++)
-        gMapCellBuffer[i].variant = -1;
+        ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = -1;
 
       // The shards start about the target, each with its own roll.
-      step = &work->particles[32];
-      for (i = 0; i != 16; i++) {
-        step->x = (to.x + (Random16() & 127) - 64) << 16;
-        step->y = to.y << 16;
-        step->z = (Random16() & 0x1fff) + 0x7000;
-        step++;
+      for (i = 0, shard = &work->particles[32]; i != 16; i++, shard++) {
+        shard->x = (to.x + (Random16() & 127) - 64) << 16;
+        shard->y = to.y << 16;
+        shard->z = (Random16() & 0x1fff) + 0x7000;
       }
     }
     if (frame == 0) {
@@ -176,13 +176,14 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
     if (frame > 15) {
       // The burst: sparks fly out of the caster, upward and forward.
       if (frame == 16) {
-        step = work->particles;
+        struct EffectStep *step = work->particles;
+
         for (i = 0; i != 32; i++) {
           u32 angle = Random16() % 0x5fff + 0x5000;
           s32 speed = (Random16() & 0x1ff) + 0x200;
 
-          step->velocityX = (speed * Trig_Sin(angle)) >> 8;
-          step->velocityY = (speed * Trig_Cos(angle)) >> 7;
+          step->velocityX = (Trig_Sin(angle) * speed) >> 8;
+          step->velocityY = (Trig_Cos(angle) * speed) >> 7;
           step->x = (from.x / 2) << 16;
           step->y = (from.y - (Random16() & 15) - 8) << 16;
           step->variant = 0;
@@ -191,172 +192,185 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       }
       // Two steps a frame, the n-th spark from frame n / 4.
       for (i = 0; i != 32; i++) {
-        step = &work->particles[i];
+        struct EffectStep *step = &work->particles[i];
+
         if (step->variant >= 0 && frame >= i / 4) {
-          s32 blend = i & 1;
-          u32 size = blend + 5;
+          s32 size = (i & 1) + 5;
+          s32 blend = (i & 1) * 4;
+          s32 j;
 
           for (j = 0; j != 2; j++) {
-            draw[blend](canvas, graphics + gData_08197410[size - 1],
-                        HI(step->x) - (size >> 1), HI(step->y) - size, size,
-                        size * 2);
+            (*(DrawRectangle *)((u8 *)draw + blend))(
+                canvas, graphics + gData_08197410[size - 1],
+                HI(step->x) - ((u32)size >> 1), HI(step->y) - size, size,
+                size * 2);
             BattleEffectKernels_IntegrateVector2(step, 64, 0);
           }
           step->variant++;
         }
       }
     } else {
+      struct EffectStep *step;
+
       // The gathering: sparks start 64 steps out and fall into the caster.
       if (frame == 0) {
-        step = work->particles;
+        struct EffectStep *step = work->particles;
+
         for (i = 0; i != 32; i++) {
           s32 angle = (Random16() & 0x7fff) - 0x4000;
           s32 speed = (Random16() & 0x1ff) + 0x200;
+          s32 y;
 
-          step->velocityX = (speed * Trig_Sin(angle)) >> 10;
-          step->velocityY = (speed * Trig_Cos(angle)) >> 9;
+          step->velocityX = (Trig_Sin(angle) * speed) >> 10;
+          step->velocityY = (Trig_Cos(angle) * speed) >> 9;
           step->x = (from.x / 2) << 16;
+          y = from.y - (Random16() & 15) - 8;
           step->x -= step->velocityX << 6;
-          step->y =
-              ((from.y - (Random16() & 15) - 8) << 16) - (step->velocityY << 6);
+          step->y = (y << 16) - (step->velocityY << 6);
           step->variant = 0;
           step++;
         }
       }
       // Four steps a frame.
-      step = work->particles;
-      for (i = 0; i != 32; i++) {
+      for (i = 0, step = work->particles; i != 32; i++, step++) {
         if (step->variant >= 0) {
-          s32 blend = i & 1;
-          u32 size = blend + 2;
+          s32 size = (i & 1) + 2;
+          s32 blend = (i & 1) * 4;
+          s32 j;
 
           for (j = 0; j != 4; j++) {
-            draw[blend](canvas, graphics + gData_08197410[size - 1],
-                        HI(step->x) - (size >> 1), HI(step->y) - size, size,
-                        size * 2);
+            (*(DrawRectangle *)((u8 *)draw + blend))(
+                canvas, graphics + gData_08197410[size - 1],
+                HI(step->x) - ((u32)size >> 1), HI(step->y) - size, size,
+                size * 2);
             BattleEffectKernels_IntegrateVector2(step, 64, 0);
           }
           step->variant++;
         }
-        step++;
       }
     }
 
-    projected = Heap_AllocEwram(32);
-    model = Render_AllocateModelList(1);
+    {
+      void *projected = Heap_AllocEwram(32);
+      struct RenderModel *model = Render_AllocateModelList(1);
 
-    // Eight flashes turn about the caster, each for 16 frames from its
-    // start, swinging wider and back with a sine.
-    model->kind = 6;
-    model->texture = &texture;
-    texture.logWidth = 6;
-    model->vertices = projected;
-    texture.logHeight = 6;
-    texture.pixels = work->sheet;
-    model->mesh = Data_081992b0;
-    for (k = 0; k != 8; k++) {
-      s32 start = Data_08199eb4[k];
+      // Eight flashes turn about the caster, each for 16 frames from its
+      // start, swinging wider and back with a sine.
+      model->kind = 6;
+      model->texture = &texture;
+      model->vertices = projected;
+      texture.logWidth = 6;
+      texture.logHeight = 6;
+      texture.pixels = work->sheet;
+      model->mesh = Data_081992b0;
+      for (i = 0; i != 8; i++) {
+        s32 start = Data_08199eb4[i];
 
-      if (frame >= start && frame < start + 16) {
-        s32 age;
+        if (frame >= start && frame < start + 16) {
+          s32 age;
 
-        model->shade = 0;
-        age = frame - start;
-        Render_ResetTransformState();
-        Func_080151e4(0x8000, 0x10000, 0x8000);
-        Func_08015160((from.x - 128) << 16, (from.y - 74) << 16, 0);
-        Func_080150e4((k << 12) - 0x3800);
-        Func_080151e4(0x5555, Data_08199ebc[k] * Trig_Sin(age << 11) / 64 * 2,
-                      0x8000);
-        Render_TransformVertices(Data_08199ea4, projected, 4);
-        Render_DrawModelList(model);
+          model->shade = 0;
+          age = frame - start;
+          Render_ResetTransformState();
+          Func_080151e4(0x8000, 0x10000, 0x8000);
+          Func_08015160((from.x - 128) << 16, (from.y - 74) << 16, 0);
+          Func_080150e4((i << 12) - 0x3800);
+          Func_080151e4(0x5555, Trig_Sin(age << 11) * Data_08199ebc[i] / 64 * 2,
+                        0x8000);
+          Render_TransformVertices(Data_08199ea4, projected, 4);
+          Render_DrawModelList(model);
+        }
       }
-    }
 
-    // The shards: each from frame 54 + 2k for 16 frames, shrinking.
-    texture.logWidth = 5;
-    texture.logHeight = 2;
-    texture.pixels = work->sheet + 0x1000;
-    model->mesh = Data_08199220;
-    model->kind = 7;
-    step = &work->particles[32];
-    for (k = 0; k != 16; k++) {
-      if (frame >= k * 2 + 54 && frame < k * 2 + 70) {
-        s32 scale;
+      // The shards: each from frame 54 + 2i for 16 frames, shrinking.
+      texture.logWidth = 5;
+      texture.logHeight = 2;
+      texture.pixels = work->sheet + 0x1000;
+      model->mesh = Data_08199220;
+      model->kind = 7;
+      for (i = 0; i != 16; i++) {
+        struct EffectStep *step = &work->particles[32 + i];
+        s32 start = i * 2 + 54;
 
-        model->shade = 0;
-        scale = 0x20000 - ((frame - 54 - k * 2) << 13);
-        Render_ResetTransformState();
-        Func_080151e4(0x8000, 0x10000, 0x8000);
-        Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
-        Func_080150e4(step->z);
-        Func_080151e4(scale, 0x10000, 0x8000);
-        Render_TransformVertices(Data_081991c0, projected, 4);
-        Render_DrawModelList(model);
+        if (frame >= start && frame < i * 2 + 70) {
+          s32 scale;
+
+          model->shade = 0;
+          scale = 0x20000 - ((frame - start) << 13);
+          Render_ResetTransformState();
+          Func_080151e4(0x8000, 0x10000, 0x8000);
+          Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
+          Func_080150e4(step->z);
+          Func_080151e4(scale, 0x10000, 0x8000);
+          Render_TransformVertices(Data_081991c0, projected, 4);
+          Render_DrawModelList(model);
+        }
       }
-      step++;
-    }
 
-    // Their splashes: growing and darkening, faster after eight frames.
-    texture.logWidth = 7;
-    texture.logHeight = 7;
-    texture.pixels = gData_02014000;
-    model->mesh = gData_08199364;
-    model->kind = 7;
-    step = &work->particles[32];
-    for (k = 0; k != 16; k++) {
-      if (frame >= k * 2 + 54 && frame < k * 2 + 70) {
-        s32 age = frame - 54 - k * 2;
-        s32 shade = -age * 4;
+      // Their splashes: growing and darkening, faster after eight frames.
+      texture.logWidth = 7;
+      texture.logHeight = 7;
+      texture.pixels = gData_02014000;
+      model->mesh = gData_08199364;
+      model->kind = 7;
+      for (i = 0; i != 16; i++) {
+        struct EffectStep *step = &work->particles[i + 32];
+        s32 age = frame - 54 - i * 2;
+        s32 back = -age;
 
-        if (age > 7)
-          shade = shade - age * 8 + 64;
-        model->shade = shade;
-        Render_ResetTransformState();
-        Func_080151e4(0x8000, 0x10000, 0x8000);
-        Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
-        SceneTransform_ApplyPitch(0x3c00);
-        Func_080151e4(age << 14, age << 14, age << 14);
-        Render_TransformVertices(Data_081991e0, projected, 4);
-        Render_DrawModelList(model);
+        if (frame >= i * 2 + 54 && frame < i * 2 + 70) {
+          s32 shade = back * 4;
+          s32 scale = age << 14;
+
+          if (age > 7)
+            shade = shade - age * 8 + 64;
+          model->shade = shade;
+          Render_ResetTransformState();
+          Func_080151e4(0x8000, 0x10000, 0x8000);
+          Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
+          SceneTransform_ApplyPitch(0x3c00);
+          Func_080151e4(scale, scale, scale);
+          Render_TransformVertices(Data_081991e0, projected, 4);
+          Render_DrawModelList(model);
+        }
       }
-      step++;
-    }
 
-    // Two rings at the caster, from frames 0 and 4 for 12 frames each.
-    for (k = 0; k != 2; k++) {
-      if (frame >= k * 4 && frame < k * 4 + 12) {
-        s32 shade = frame * 8 - k * 32 - 64;
-        s32 scale = 0x18000 - ((frame - k * 4) << 13);
+      // Two rings at the caster, from frames 0 and 4 for 12 frames each.
+      for (i = 0; i != 2; i++) {
+        if (frame >= i * 4 && frame < i * 4 + 12) {
+          s32 age = frame - i * 4;
+          s32 shade = age * 8 - 64;
+          s32 scale = 0x18000 - (age << 13);
 
-        if (shade > 0)
-          shade = 0;
-        model->shade = shade;
-        Render_ResetTransformState();
-        Func_080151e4(0x8000, 0x10000, 0x8000);
-        Func_08015160((from.x - 128) << 16, (from.y - 80) << 16, 0);
-        Func_080151e4(scale * 2, scale * 2, scale);
-        Func_080150e4(0x6000 - (k << 14));
-        SceneTransform_ApplyPitch(-0x1000);
-        Render_TransformVertices(gData_08199210, projected, 4);
-        Render_DrawModelList(model);
+          if (shade > 0)
+            shade = 0;
+          model->shade = shade;
+          Render_ResetTransformState();
+          Func_080151e4(0x8000, 0x10000, 0x8000);
+          Func_08015160((from.x - 128) << 16, (from.y - 80) << 16, 0);
+          Func_080151e4(scale * 2, scale * 2, scale);
+          Func_080150e4(0x6000 - (i << 14));
+          SceneTransform_ApplyPitch(-0x1000);
+          Render_TransformVertices(gData_08199210, projected, 4);
+          Render_DrawModelList(model);
+        }
       }
-    }
 
-    // A strike every four frames from 54; the last one ends the phase.
-    for (k = 0; k != 8; k++) {
-      if (frame == k * 4 + 54) {
-        if (k == 7)
-          Func_081180e8(144);
-        else
-          Sound_PlayFar(144);
-        BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
-        Func_0814cd48(effect->actors[0], 7, 5, 0, 5);
-        work->shakeFrames = 4;
+      // A strike every four frames from 54; the last one ends the phase.
+      for (i = 0; i != 8; i++) {
+        if (frame == i * 4 + 54) {
+          if (i == 7)
+            Func_081180e8(144);
+          else
+            Sound_PlayFar(144);
+          BattleEffect_StartActorMotion(effect->actors[0], 1, 0, 0, 0, 100);
+          Func_0814cd48(effect->actors[0], 7, 5, 0, 5);
+          work->shakeFrames = 4;
+        }
       }
+      Heap_Release(model);
+      Heap_Release(projected);
     }
-    Heap_Release(model);
-    Heap_Release(projected);
 
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();

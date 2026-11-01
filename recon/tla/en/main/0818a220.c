@@ -1,20 +1,23 @@
-// Draft: listing 1235 instructions, draft 1251, differ 882. No close ☀️ twin
-// (call order BattleEffect_RunTitanBlade 0.459): ⚓️'s own effect on ☀️'s frame,
-// its card and its pictures drawn as textured quads by ⚓️'s model kernels, as
-// in Triple Chomp (BattleEffect_RunTripleChomp) and Legend (BattleEffect_RunLegend). The native stack frame
-// (216) holds effect at sp+84, work 80, canvas 76, frame 72, the blitter 64,
-// graphics 60, the card's scale 56, the card's position's address 52, the hit's
-// speed 48, the texture's address 32, the member's actor offset 28, the
-// member's sparks' offset 20 and 100 + (frame - 68) * 3 less 100 at 24; the
-// texture is at sp+88, the aim at 96, the targets' positions at 108 and the
-// card at 204. The mode stays in r9. Written from the listing (2026-10-15,
-// fx-n3), in the native's statement order. Left: this frame is 208, two slots
-// short below the blitter pair (every spill sits 8 lower), the mode takes r11
-// for r9, and the aim's and the particle's addresses are kept in registers
-// where the native reloads them, which adds 18 instructions. Next to try: the
-// strike block's temporaries (the native spills the actor offset, the sparks'
-// offset and the hit's speed as separate induction variables) and the order of
-// the scalar declarations.
+// Draft, differ 24 of 1235, skeleton gap 12 (tla-en, 2026-11-01)
+// No close ☀️ twin (call order BattleEffect_RunTitanBlade 0.459): ⚓️'s own
+// effect on ☀️'s frame, its card and its pictures drawn as textured quads by
+// ⚓️'s model kernels, as in Triple Chomp (BattleEffect_RunTripleChomp) and
+// Legend (BattleEffect_RunLegend). Registers and the 216-byte frame now match
+// throughout. What is left is five places where the same instructions come out
+// in another order, all in the scheduler: the frame count's pool load at the
+// loop's entry and bottom (native after the stores to frame and 24), the strike
+// loop's setup (native sets 36 and 0 before the member's particle), burst's
+// store before the two reloads at the sparks' EffectPosition call, the actor
+// and spark offsets' update at the strike loop's end, and the copy into r7
+// after the two spills before the sparks' draw loop. In each the native keeps
+// a store ahead of a load or move the draft moves up. Tried without effect:
+// firstHit and lastHit as ternaries (changes mode's reload), scoped or
+// unsigned; speed as frame * 3 - 204; the particle spelled + 56 + i or [i + 56];
+// a const frame table; the comparison swapped; burst set after the call. Next:
+// a compiler question (the load cost -mthumb-slow-loads models), out of a
+// draft's reach. Allocation depends on one step pointer per loop, j per loop,
+// and speed declared in its block, which puts its spill slot below the card's
+// address.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -109,7 +112,7 @@ extern s32 Data_081991c0[];
 extern u16 gData_08197410[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_LoadBlitter(s32 slot, s32 packed);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
 void Sound_PlayFar(s32 cue);
@@ -162,11 +165,11 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition targets[8];
   struct EffectPosition aim;
   struct ModelTexture texture;
-  struct EffectStep *step;
   struct Model *model;
   void *vertices;
   s32 i;
-  s32 j;
+  s32 firstHit;
+  s32 lastHit;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -279,7 +282,8 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
         else if (mode == CARD_FLAME)
           aim.y = targets[member].y + (Random16() & 63) + 32;
         if (frame <= 95) {
-          step = &work->particles[frame % 56];
+          struct EffectStep *step = &work->particles[frame % 56];
+
           step->x = card.x << 15;
           step->y = card.y << 16;
           step->velocityX = (aim.x - card.x) << 11;
@@ -292,11 +296,12 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       if (mode == CARD_FROST) {
         // The shards tumble through their three cells, bounce and slow.
         for (i = 0; i != 56; i++) {
-          step = &work->particles[i];
-          if (step->variant >= 0 && step->variant <= 767) {
+          struct EffectStep *step = &work->particles[i];
+
+          if ((u32)step->variant <= 1023) {
             s32 cell = i % 5 * 3 + step->variant / 96 % 3;
 
-            draw[0](canvas, work->sheet + 0x1000 + gData_08197834[cell],
+            draw[0](canvas, work->sheet + gData_08197834[cell] + 0x1000,
                     HI(step->x) - gData_0819781a[cell] / 2,
                     HI(step->y) - gData_08197826[cell] / 2,
                     gData_0819781a[cell], gData_08197826[cell]);
@@ -311,7 +316,8 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       } else if (mode == CARD_FLAME) {
         // The smoke flies to the ground and plays its six cells.
         for (i = 0; i != 56; i++) {
-          step = &work->particles[i];
+          struct EffectStep *step = &work->particles[i];
+
           if (step->variant >= 0) {
             if (step->variant > 1)
               draw[0](canvas, work->sheet + 0x800 + step->variant / 4 * 0x480,
@@ -332,14 +338,25 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
 
     // The strikes: every five frames each target in turn reels, flashes and
     // throws up 16 sparks.
-    if (frame >= (mode == CARD_THUNDER   ? 52
-                  : mode == CARD_BRAMBLE ? 60
-                                         : 68) &&
-        frame < (mode == CARD_BRAMBLE ? 96 : 110)) {
+    if (mode == CARD_THUNDER)
+      firstHit = 52;
+    else if (mode == CARD_BRAMBLE)
+      firstHit = 60;
+    else
+      firstHit = 68;
+    if (mode == CARD_BRAMBLE)
+      lastHit = 96;
+    else
+      lastHit = 110;
+    if (frame >= firstHit && frame < lastHit) {
+      s32 speed = (frame - 68) * 3;
+
       for (i = 0; i != effect->count; i++) {
-        step = &work->particles[56 + i];
+        struct EffectStep *step = &work->particles[56 + i];
+
         if (--step->variant == 0) {
           s32 burst;
+          s32 j;
 
           step->variant = 5;
           work->shakeFrames = 4;
@@ -352,7 +369,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
           if (i == 0)
             Func_081180e8(134);
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x80000,
-                                    0x10000, 100 + (frame - 68) * 3);
+                                    0x10000, 100 + speed);
           Func_0814cd48(effect->actors[i], 7, -1, i, 8);
           burst = 0;
           EffectPosition_ProjectScaledBattler(effect->actors[i], &aim);
@@ -396,7 +413,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       // The card: it swings from side to side as it rises, tilted back.
       Render_ResetTransformState();
       Func_080151e4(0x8000, 0x10000, 0x8000);
-      Func_08015160((card.x - 128) << 16, (card.y - 64) << 16, 0);
+      Func_08015160((card.x << 16) - (128 << 16), (card.y << 16) - (64 << 16), 0);
       if (frame <= 47) {
         SceneTransform_ApplyPitch((48 - frame) << 10);
         if (effect->side == 0)
@@ -423,7 +440,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       s32 alpha = 0;
 
       if (mode == CARD_THUNDER && frame > 95)
-        alpha = -(frame * 4) + 384;
+        alpha = frame * -4 + 384;
       texture.logWidth = 5;
       texture.logHeight = 7;
       model->alpha = alpha;
@@ -437,14 +454,17 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
           s32 first = Random16();
 
           for (i = 0; i != 4; i++) {
-            work->particles[i].velocityY = i << 13;
-            work->particles[i].z = ((first + i) % 3 << 12) + 0x800;
+            struct EffectStep *step = &work->particles[i];
+
+            step->velocityY = i << 13;
+            step->z = ((first + i) % 3 << 12) + 0x800;
           }
         }
-        for (i = 0; i != 4; i++)
-          work->particles[i].velocityZ =
-              Trig_Sin(work->particles[i].velocityY + (frame << 10)) / 16 +
-              12192;
+        for (i = 0; i != 4; i++) {
+          struct EffectStep *step = &work->particles[i];
+
+          step->velocityZ = Trig_Sin(step->velocityY + (frame << 10)) / 16 + 12192;
+        }
       } else {
         // The bolts flicker every other frame.
         model->kind = 7;
@@ -452,8 +472,10 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
           s32 first = Random16();
 
           for (i = 0; i != 4; i++) {
-            work->particles[i].velocityZ = (Random16() & 0x1fff) + 8096;
-            work->particles[i].z = ((first + i) % 3 << 12) + 0x800;
+            struct EffectStep *step = &work->particles[i];
+
+            step->velocityZ = (Random16() & 0x1fff) + 8096;
+            step->z = ((first + i) % 3 << 12) + 0x800;
           }
         }
       }
@@ -462,7 +484,8 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
         work->particles[i].y = ((s16 *)vertices)[(i & 3) * 4 + 1];
       }
       for (i = 0; i != 4; i++) {
-        step = &work->particles[i];
+        struct EffectStep *step = &work->particles[i];
+
         texture.pixels = work->sheet + step->z;
         Render_ResetTransformState();
         Func_08015160((step->x - 60) << 16, (step->y - 64) << 16, 0);
@@ -490,9 +513,11 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
 
     // The sparks bounce once on the ground at y = 104.
     for (i = 0; i != SPARK_COUNT; i++) {
-      step = &SPARKS[i];
+      struct EffectStep *step = &SPARKS[i];
+
       if (step->variant >= 0) {
         s32 size = step->variant >> 3;
+        s32 j;
 
         if (mode == CARD_BRAMBLE || mode == CARD_THUNDER)
           size += 1;

@@ -1,20 +1,32 @@
-// Draft: listing 1246 instructions, draft 1252, differ 796. No close ☀️ twin
-// (call order BattleEffect_RunBoreas 0.468): ⚓️'s own effect on ☀️'s frame, a
-// sibling of the four cards of Func_0818a220. The card itself scrolls on a
-// tiled background; its picture is a textured quad by ⚓️'s model kernels.
-// The native stack frame (84) holds effect at sp+48, the mode 44, canvas 40, the
-// blitter pair 32, the card's scale 28, the background's scroll 24, the
-// card's overflow past the scroll's range 20, the length 16, the length less
-// 8 at 12 and frame - 48 at 8; the texture is at sp+52, the targets' middle
-// at 60 and the card at 72. work stays in r10 and the frame in r11.
-// Written from the listing (2026-10-15, fx-n3), in the native's statement
-// order: 836 at the first compile. Graphics read into a local at the top,
-// as the native loads it into r6 before the first call: the prologue then
-// matches but the rest scores 864, kept as the native's form. Left: this
-// frame is 88, one slot more than the native's, so every spill sits 4
-// higher, and work takes r9 for r10. The smoke's window grouped as (frame
-// >= 40 && frame <= 47), so that it folds into the native's one unsigned
-// compare: 864 to 796.
+// Draft, differ 213 of 1246, skeleton gap 27 (tla-en, 2026-11-01)
+// No close ☀️ twin (call order BattleEffect_RunBoreas 0.468): ⚓️'s own effect
+// on ☀️'s frame, a sibling of the four cards of Func_0818a220. The card itself
+// scrolls on a tiled background; its picture is a textured quad by ⚓️'s model
+// kernels. The native stack frame (84, as this draft's) holds effect at sp+48,
+// the mode 44, canvas 40, the blitter pair 32, the card's scale 28, the
+// background's scroll 24, the card's overflow past the scroll's range 20, the
+// length 16, the length less 8 at 12 and frame - 48 at 8; the texture is at
+// sp+52, the targets' middle at 60 and the card at 72. Native registers: work
+// r10, frame r11, i r8, the noise pointer and the sword's time r9.
+// Left: the sleep block's step is written work->particles + (frame - 48), which
+// gives the lowest gap but folds to frame * 28 less a pooled constant and puts
+// frame in r9 for r11. With s32 time = frame - 48 and &work->particles[time]
+// instead, frame takes r11 and differ is 111, gap 35; the native's shape is
+// that one. Either way step takes r6 and the 127 mask r5 where the native has
+// them the other way round, in the baffle and sleep spawns. The native's sleep
+// spawn also reloads sp+8 (ldr r0) and builds step in place (add r5, sl).
+// The flight keeps card.x in r2 and copies it to r5 just before __divsi3
+// (adds r5, r2, #0); here one pseudo takes r5. model->vertices stores three
+// instructions later than the native's, which falls inside the texture's
+// bitfield update; every order of the assignments was tried, and splitting the
+// bitfields forces a spill. The rest is scheduling ties at the top and in the
+// frame 0 block.
+// Tried without gain: step split per block or across two or three variables
+// (all partitions), a local for the mask, every order of the local
+// declarations, the load order at the top, and a local for 0x2001.
+// What closed the most: CARD from gMapCellBuffer, an array symbol rather than
+// the header's fixed number. A symbol plus an offset is not a constant gcse
+// propagates, so noise stays in a register as the native's does (582 to 137).
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -37,8 +49,10 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define HI(v) (((s16 *)&(v))[1])
 
 // The card's picture, unpacked into the map cell buffer, and the 256 random
-// steps that dissolve it after it.
-#define CARD (Ram_MapCellBuffer + 0x603e)
+// steps that dissolve it after it. Named as a symbol, not Ram_MapCellBuffer's
+// number: see the header.
+extern u8 gMapCellBuffer[];
+#define CARD (gMapCellBuffer + 0x603e)
 #define CARD_NOISE (CARD + 0x800)
 
 // The four cards, as the wrappers pass them.
@@ -160,6 +174,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
   void *vertices;
   s32 i;
   s32 j;
+  s32 limit;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -274,7 +289,12 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     // Frames 0-47: the card flies to the middle, rising and growing; the
     // background follows it as far as it can scroll.
     if (frame <= 47) {
-      s32 x = card.x - 64 + frame * (middle.x - card.x) / 48;
+      s32 left = card.x;
+      s32 q = frame * (middle.x - left) / 48;
+      s32 x;
+
+      left -= 64;
+      x = left + q;
 
       if (x < 0) {
         overflow = x;
@@ -301,6 +321,8 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       } else {
         // The background steps to the smoke's colours, then the picture's;
         // from frame 48 the card dissolves in 16 random steps.
+        u8 *noise = CARD_NOISE;
+
         if ((mode == CARD_DEATH || mode == CARD_SWORD) &&
             (frame >= 40 && frame <= 47))
           Func_0815f0a0((s32)&ResourceId_SmokeSheet);
@@ -311,16 +333,16 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
             Func_0815f0a0((s32)&ResourceId_DaggerSheet);
         }
         if (frame == 48) {
-          u8 *noise;
-
-          for (noise = CARD_NOISE; noise != CARD_NOISE + 256; noise++)
-            *noise = Random16() & 15;
+          for (i = 0; i != 256; i++)
+            noise[i] = Random16() & 15;
         }
         if (frame >= 48 && frame <= 63) {
+          u8 *card = CARD;
+
           for (i = 0; i != 64; i++) {
             for (j = 0; j != 32; j++) {
-              if (CARD_NOISE[(i & 7) * 32 + j] == frame - 48)
-                CARD[i * 32 + j] = 0;
+              if (noise[(i & 7) * 32 + j] == frame - 48)
+                card[i * 32 + j] = 0;
             }
           }
         }
@@ -328,7 +350,11 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // The card, until its picture takes over.
-    if (frame < (mode == CARD_SLEEP ? 120 : mode == CARD_SWORD ? 72 : 80)) {
+    if (mode == CARD_SLEEP)
+      limit = 120;
+    else
+      limit = mode == CARD_SWORD ? 72 : 80;
+    if (frame < limit) {
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       texture.logWidth = 5;
@@ -340,7 +366,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       model->mesh = Data_081992b0;
       Render_ResetTransformState();
       Func_080151e4(0x10000, 0x10000, 0x10000);
-      Func_08015160(overflow << 16, (card.y - 64) << 16, 0);
+      Func_08015160(overflow << 16, (card.y << 16) - (64 << 16), 0);
       if (frame <= 47) {
         if (effect->side == 0)
           Func_080150e4((frame << 10) - 0xd000);
@@ -373,8 +399,10 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         REG_BLDALPHA = 0x1010;
       }
       if (frame >= 48 && frame <= 79) {
-        for (i = 0; i != 2; i++) {
-          step = &work->particles[(frame - 48) * 2 + i];
+        s32 time = frame - 48;
+        s32 first = time * 2;
+
+        for (i = 0, step = &work->particles[first]; i != 2; i++, step++) {
           step->x = 64 << 16;
           step->y = 48 << 16;
           step->velocityX = ((Random16() & 127) - 64) << 11;
@@ -405,7 +433,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 64)
         Func_081180e8(-1);
       if (frame >= 48 && frame <= 79) {
-        step = &work->particles[frame - 48];
+        step = work->particles + (frame - 48);
         step->x = 64 << 16;
         step->y = 48 << 16;
         step->velocityX = ((Random16() & 127) - 64) << 11;
@@ -457,19 +485,21 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       // The shards tumble through three cells and darken.
       if (time >= 24 && time <= 60) {
         s32 fade = 0;
+        s32 shade;
 
         if (time > 28) {
           fade = (time - 24) / 4;
           if (fade > 7)
             fade = 7;
         }
+        shade = fade * 696;
         for (i = 0; i != 32; i++) {
           s32 cell;
 
           step = &work->particles[i];
           cell = i % 4 * 3 + (step->variant + time) / 8 % 3;
           draw[0](canvas,
-                  work->sheet + 0x2580 + fade * 696 + Data_081974dc[cell],
+                  work->sheet + 0x2580 + (shade + Data_081974dc[cell]),
                   overflow + HI(step->x) - Data_081974f4[cell] / 2,
                   HI(step->y) - Data_08197500[cell] / 2, Data_081974f4[cell],
                   Data_08197500[cell]);

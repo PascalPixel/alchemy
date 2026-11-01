@@ -1,17 +1,17 @@
-// Near miss, differ 12 of 231 (tla-en, 2026-10-31; diff 080d3940,080d3a10):
-// Func_080d3940 differ 4 of 99, Func_080d3a10 differ 8 of 132, each measured
-// on a copy that keeps one function. Every difference is a store the native
-// issues one slot earlier: in Func_080d3940 the store of object->z
+// Draft, differ 4 of 99, skeleton gap 2 (tla-en, 2026-11-01)
+// Two stores the native issues one slot earlier: the store of object->z
 // (str r2, [r5, #8]) before the ands, and the strb of the zero into
-// collisionFlags before mov r1, r8; in Func_080d3a10 the same two, plus the
-// store of object->x (str r1, [r5]) before lsls r3, r3, #6. The sched2 dump
-// ranks each store one priority below the insn the native puts after it
-// (z store 9 against the ands and mov r9, r3 at 10; zero strb 8 against
-// mov r1, r8 at 9): its memory dependence on the next load costs 1 here, and
-// a tie would go to the store, which has more dependents. Scheduler order the
-// C does not move; the permuter (4 minutes each) found nothing better.
-// Func_080d3b28, once a third function here, is adopted in
-// field/object/active.c.
+// collisionFlags before mov r1, r8. The sched2 dump ranks each store one
+// priority below the insn the native puts after it (z store 9 against the
+// ands and mov r9, r3 at 10; zero strb 8 against mov r1, r8 at 9): its memory
+// dependence on the next load costs 1 here, and a tie would go to the store,
+// which has more dependents. Scheduler order the C does not move: the
+// rounding moved around the x and z reads or split in two, a position pointer,
+// terrain and flag pointers, a shared zero, z through a local, position as a
+// struct and either order of the last two stores all measured the same or
+// worse; so did the early return and signed parameters. The permuter
+// (4 minutes) found nothing better.
+// Func_080d3a10 has its own draft, 080d3a10.c, with the same two stores.
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
@@ -82,48 +82,6 @@ void Func_080d3940(u32 id, u32 angle) {
       break;
     case 0x4000:
       sprite->offsetY += 5;
-      break;
-    }
-    object->collisionFlags = 0;
-    object->priorityFlags |= 2;
-    sprite->nextFrame = 0;
-    sprite->rotation = angle + 0x4000;
-  }
-}
-
-void Func_080d3a10(u32 id, u32 angle, s32 mode) {
-  s32 position[3];
-  struct Actor *object = Actor_GetById(id);
-  struct ObjectSprite *sprite = object->animation;
-
-  if (object != NULL && sprite != NULL) {
-    if (mode != -1)
-      Actor_SetMode(object, mode);
-    position[0] = object->x;
-    angle = (angle + 0x2000) & 0xc000;
-    position[2] = object->z;
-    SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
-    Vector_AddPolarOffset(0x100000, angle, position);
-    SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);
-    switch (angle) {
-    case 0:
-      object->x += 0x80000;
-      object->z += 0x10000;
-      sprite->offsetX -= 4;
-      sprite->offsetY += 15;
-      break;
-    case 0x8000:
-      object->x += -0x80000;
-      object->z += 0x10000;
-      sprite->offsetX += 3;
-      sprite->offsetY += 16;
-      break;
-    case 0xc000:
-      sprite->offsetY += 1;
-      break;
-    case 0x4000:
-      object->z += 0x80000;
-      sprite->offsetY += 13;
       break;
     }
     object->collisionFlags = 0;

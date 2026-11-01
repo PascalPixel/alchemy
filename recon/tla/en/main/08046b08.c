@@ -1,17 +1,30 @@
-// Draft, differ 2310 of 3111: the battle summary screen, The Broken Seal's
-// BattleSummaryScreen_Run (games/tbs/src/window/screens/battle_status.c) grown into
-// four pages that A cycles through: the stats (page 0, as The Broken Seal's),
-// the member's battle Psynergy (1, four rows a page, with PP cost, element and
-// range, coloured by what can be cast), its Djinn (2, three columns of three,
-// set, on standby or recovering with the turns left) and its items (3, four
-// rows, usable ones first). Each list page has its own cursor group (3 to 5),
-// and the help line follows the cursor. The battle figure is spawned for the
-// member shown and released on the way out; a reserve member (past the
-// fourth) is labelled. The structure follows the listing, and the locals are
-// declared in the native's stack frame order (the first declared takes the highest
-// slot; in code order, differ 3122); left: cursorX and cursorY, which the
-// native spills and the draft keeps in registers, shift the slots below them,
-// and the allocation differs from there.
+// Draft, differ 232 of 3111, skeleton gap 84 (tla-en, 2026-11-01): the battle
+// summary screen, The Broken Seal's BattleStatusScreen_Run
+// (games/tbs/src/window/screens/battle_status.c) grown into four pages that A
+// cycles through: the stats (page 0, as The Broken Seal's), the member's battle
+// Psynergy (1, four rows a page, with PP cost, element and range, coloured by
+// what can be cast), its Djinn (2, three columns of three, set, on standby or
+// recovering with the turns left) and its items (3, four rows, usable ones
+// first). Each list page has its own cursor group (3 to 5), and the help line
+// follows the cursor. The battle figure is spawned for the member shown and
+// released on the way out; a reserve member (past the fourth) is labelled.
+//
+// Control flow, loops and instruction count now agree with the listing; what is
+// left is scheduling pairs and one allocation. The largest is the unit snapshot
+// in the help text: the native keeps &unit->agi in r5, savedUnit in r6 and the
+// size in r8 and loads IwramCopyWords twice, the draft gives the address r2 with
+// a caller save and keeps the IwramCopyWords constant in r8 (local-alloc order;
+// the deltas' scope, a pointer local and a size local change nothing). Next is
+// next's stack slot: the native's is [sp, #20], below the hoisted addresses, so
+// loop.c may have made it, but djinnList[j] is not reduced and costs the frame
+// 4 bytes. cursor.group's store before reading groupPositions[0] stays in the
+// native's order only.
+//
+// Forms the match depends on: j is also the "not yet shown" -1 of pages 1 and 3
+// and the scroll marks' counter; statusKinds[i++] rather than a pointer, so the
+// stages are not reread after a store; the positions read directly from the
+// cursor after clamping, not through a local; a compound for condition keeps the
+// recovery search out of loop.c; the sprites' words and fields share a union.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -51,6 +64,11 @@ struct SummaryElement {
   s16 resist;
 };
 
+struct SummaryPsynergy {
+  u16 id;
+  u16 unk02;
+};
+
 /// A unit as the summary screen reads it.
 struct SummaryUnit {
   u8 name[15];
@@ -66,7 +84,7 @@ struct SummaryUnit {
   u8 luck;
   u8 unk43[5];
   struct SummaryElement element[4];
-  u32 psynergy[32];
+  struct SummaryPsynergy psynergy[32];
   u16 items[15];
   u8 unkf6[2];
   u32 djinnOwned[4];
@@ -99,23 +117,30 @@ struct SummaryUnit {
   u8 unk148[4];
 };
 
-struct SummarySprite {
-  u8 unk00[4];
-  u32 attr01;
-  u32 attr23;
-};
-
 struct SummaryOam {
   u8 unk00[4];
-  u8 y;
-  u8 attr0high;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u16 unk0a;
+  union {
+    struct {
+      u32 attr01;
+      u32 attr23;
+    } word;
+    struct {
+      u8 y;
+      u8 attr0high;
+      u16 x : 9;
+      u16 affineIndex : 5;
+      u16 size : 2;
+      u16 tile : 10;
+      u16 priority : 2;
+      u16 palette : 4;
+      u16 unk0a;
+    } f;
+  } oam;
+};
+
+struct SummaryPoint {
+  s32 x;
+  s32 y;
 };
 
 struct SummaryCursor {
@@ -186,10 +211,14 @@ struct SummaryRecoveryEntry {
   s8 turns;
 };
 
-struct SummaryRecovery {
-  u8 unk000[8];
+struct SummaryRecoveryList {
   struct SummaryRecoveryEntry entries[72];
   s32 count;
+};
+
+struct SummaryRecovery {
+  u8 unk000[8];
+  struct SummaryRecoveryList list;
 };
 
 struct SummaryResourceEntry {
@@ -271,15 +300,13 @@ void PartyStatus_Draw(s32 flags);
 // and items).
 #define SUMMARY_DRAW_PAGE_MARKS(window, count, rowBase)                        \
   {                                                                            \
-    s32 mark;                                                                  \
+    for (j = 0; j < ((count) + 3) / 4; j++) {                         \
+      s32 tile = 0xf301 + j;                                                \
                                                                                \
-    for (mark = 0; mark < ((count) + 3) / 4; mark++) {                         \
-      s32 tile = 0xf301 + mark;                                                \
-                                                                               \
-      if (mark == (rowBase) / 4)                                               \
-        tile = 0xf30b + mark;                                                  \
+      if (j == (rowBase) / 4)                                               \
+        tile = 0xf30b + j;                                                  \
       Window_SetTilemapEntry(                                                \
-          window, tile, (window)->width - ((count) + 3) / 4 + mark - 10, 7,    \
+          window, tile, (window)->width - ((count) + 3) / 4 + j - 10, 7,    \
           0);                                                                  \
     }                                                                          \
     Window_SetTilemapEntry(window, 0xf336,                                   \
@@ -307,15 +334,14 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   struct SummaryWindow *helpWindow;
   s32 memberIndex;
   s32 cursorSlot;
-  s32 cursorY;
-  s32 cursorX;
+  struct SummaryPoint cursorPosition;
   s32 portraitSlot;
   s32 statusCount;
   s32 hasDjinn;
   s32 shownMember;
   s32 page;
   s32 figureShown;
-  s32 *djinnList;
+  u32 *djinnList;
   s32 djinnCount;
   s32 psynergyCount;
   s32 itemCount;
@@ -324,10 +350,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   s32 i;
   s32 j;
   struct SummaryNavigation *navigation;
-  u16 *entries;
   s32 rowBase;
   s32 row;
   s32 groupPosition;
+  struct SummaryOam *sprite;
 
   work = (struct SummaryWindowWork *)Ram_HeapSlots->windowTiles;
   redraw = 1;
@@ -338,7 +364,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   figureShown = 0;
   djinnList = Heap_AllocEwram(84 * sizeof(*djinnList));
   itemCount = psynergyCount = djinnCount = 0;
-  figureList[0] = shownMember = list[0];
+  shownMember = figureList[0] = list[0];
   figureList[1] = 255;
   BattleActor_SpawnObjectsForListFar(figureList, 1);
   portraitSlot = VramCache_AllocEntry(0x200);
@@ -362,7 +388,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
   }
   for (i = 0; i <= 3; i++) {
     iconSlots[i] = VramCache_AllocEntry(0x80);
-    iconSprites[i].tile = VramCache_Reload(iconSlots[i], (const void *)-1);
+    iconSprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], (const void *)-1);
   }
   if (listCount != 0) {
     for (i = 0; i <= 5; i++) {
@@ -376,24 +402,25 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       }
     }
   }
-  cursorX = 0;
-  cursorY = 0;
+  cursorPosition.x = 0;
+  cursorPosition.y = 0;
   statusWindow = Window_Create(0, 0, 30, 20, 6);
   helpWindow = Window_Create(0, 14, 30, 6, 10);
   Func_08041b68();
 
   for (;;) {
     keys = gInput.repeat;
+    sprite = &nameSprite;
     Func_0804537c(0x060066c0);
     if (redraw != 0)
       Func_08045528(member, portraitSlot);
-    ((struct SummarySprite *)&nameSprite)->attr01 = 0x80000400;
-    ((struct SummarySprite *)&nameSprite)->attr23 = 0;
-    nameSprite.tile = gResourceTableEntries[portraitSlot].offset >> 5;
-    nameSprite.x = 8;
-    nameSprite.y = 24;
-    nameSprite.palette = 14;
-    Oam_AddSpriteAtDepth(&nameSprite, 240);
+    sprite->oam.word.attr01 = 0x80000400;
+    sprite->oam.word.attr23 = 0;
+    sprite->oam.f.tile = gResourceTableEntries[portraitSlot].offset >> 5;
+    sprite->oam.f.x = 8;
+    sprite->oam.f.y = 24;
+    sprite->oam.f.palette = 14;
+    Oam_AddSpriteAtDepth(sprite, 240);
 
     switch (cursor.helpEntry) {
     case 0 ... 9:
@@ -453,7 +480,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             groupPosition = 0;
             if (cursor.group == 1) {
               cursor.group = 2;
-              groupPosition = cursor.groupPositions[2];
+              groupPosition = cursor.groupPositions[cursor.group];
             }
           }
         } else if (keys & 0x40) {
@@ -464,7 +491,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             groupPosition = cursor.groupSize - 1;
             if (cursor.group == 1) {
               cursor.group = 2;
-              groupPosition = cursor.groupPositions[2];
+              groupPosition = cursor.groupPositions[cursor.group];
             }
           }
         } else if (keys & 0x30) {
@@ -549,41 +576,42 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         cursor.groupPositions[cursor.group] = groupPosition;
       } else if (cursor.group == 4) {
         // Three Djinn a column.
-        groupPosition = cursor.groupPositions[cursor.group];
+        s32 djinnPosition = cursor.groupPositions[cursor.group];
+
         if (keys & 0x80) {
           keys = 0;
           Sound_PlayFar(111);
           redraw |= 2;
-          groupPosition++;
-          if (groupPosition >= cursor.groupSize)
-            groupPosition = 0;
+          djinnPosition++;
+          if (djinnPosition >= cursor.groupSize)
+            djinnPosition = 0;
         } else if (keys & 0x40) {
           keys = 0;
           Sound_PlayFar(111);
           redraw |= 2;
-          groupPosition--;
-          if (groupPosition < 0)
-            groupPosition = cursor.groupSize - 1;
+          djinnPosition--;
+          if (djinnPosition < 0)
+            djinnPosition = cursor.groupSize - 1;
         } else if (keys & 0x10) {
           keys = 0;
           Sound_PlayFar(111);
           redraw |= 2;
-          groupPosition += 3;
-          if (groupPosition >= cursor.groupSize)
-            groupPosition = groupPosition % 3;
+          djinnPosition += 3;
+          if (djinnPosition >= cursor.groupSize)
+            djinnPosition = djinnPosition % 3;
         } else if (keys & 0x20) {
           keys = 0;
           Sound_PlayFar(111);
           redraw |= 2;
-          groupPosition -= 3;
-          if (groupPosition < 0)
-            groupPosition = cursor.groupSize / 3 * 3 + (groupPosition + 3) % 3;
+          djinnPosition -= 3;
+          if (djinnPosition < 0)
+            djinnPosition = cursor.groupSize / 3 * 3 + (djinnPosition + 3) % 3;
         }
-        if (groupPosition >= cursor.groupSize)
-          groupPosition = cursor.groupSize - 1;
-        if (groupPosition < 0)
-          groupPosition = 0;
-        cursor.groupPositions[cursor.group] = groupPosition;
+        if (djinnPosition >= cursor.groupSize)
+          djinnPosition = cursor.groupSize - 1;
+        if (djinnPosition < 0)
+          djinnPosition = 0;
+        cursor.groupPositions[cursor.group] = djinnPosition;
       }
     }
 
@@ -601,25 +629,31 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
                           statusWindow->y + stop->highlightRow + 1,
                           stop->highlightWidth, 1, 14);
     } else if (cursor.group == 1) {
-      const struct SummaryCursorStop *stop =
-          &gOwnerStatus_EquipmentCursors[cursor.groupPositions[cursor.group]];
-
-      cursor.helpEntry = stop->entry;
-      cursor.column = stop->column;
-      cursor.row = stop->row;
+      cursor.helpEntry =
+          gOwnerStatus_EquipmentCursors[cursor.groupPositions[cursor.group]]
+              .entry;
+      cursor.column =
+          gOwnerStatus_EquipmentCursors[cursor.groupPositions[cursor.group]]
+              .column;
+      cursor.row =
+          gOwnerStatus_EquipmentCursors[cursor.groupPositions[cursor.group]]
+              .row;
     } else if (cursor.group == 2) {
-      const struct SummaryCursorStop *stop =
-          &gOwnerStatus_ConditionCursors[cursor.groupPositions[cursor.group]];
-
-      cursor.helpEntry = stop->entry;
-      cursor.column = stop->column;
-      cursor.row = stop->row;
+      cursor.helpEntry =
+          gOwnerStatus_ConditionCursors[cursor.groupPositions[cursor.group]]
+              .entry;
+      cursor.column =
+          gOwnerStatus_ConditionCursors[cursor.groupPositions[cursor.group]]
+              .column;
+      cursor.row =
+          gOwnerStatus_ConditionCursors[cursor.groupPositions[cursor.group]]
+              .row;
       if (statusKinds[0] == 0)
         Window_HighlightRect(statusWindow->x + 15, statusWindow->y + 1, 10, 1,
                             14);
       else
-        Window_HighlightRect(statusWindow->x + stop->column + 1,
-                            statusWindow->y + stop->row + 1, 2, 2, 14);
+        Window_HighlightRect(statusWindow->x + cursor.column + 1,
+                            statusWindow->y + cursor.row + 1, 2, 2, 14);
     } else if (cursor.group == 3 || cursor.group == 5) {
       s8 position = cursor.groupPositions[cursor.group];
 
@@ -642,8 +676,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       cursor.drawnHelpEntry = cursor.helpEntry;
       redraw |= 2;
     }
-    cursorX = cursor.column * 8;
-    cursorY = cursor.row * 8;
+    cursorPosition.x = cursor.column * 8;
+    cursorPosition.y = cursor.row * 8;
 
     // The member's battle figure, respawned when L or R changes the member.
     if (shownMember != member) {
@@ -658,34 +692,34 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       struct SummaryOam *face =
           ((struct SummaryOam **)*GetBattleObjectSlotFar(member))[20];
 
-      ((struct SummarySprite *)&portraitSprite)->attr01 = 0xc0002400;
-      ((struct SummarySprite *)&portraitSprite)->attr23 = 0;
+      portraitSprite.oam.word.attr01 = 0xc0002400;
+      portraitSprite.oam.word.attr23 = 0;
       if (face != NULL) {
-        portraitSprite.tile = face->tile;
-        portraitSprite.x = 0xac;
-        portraitSprite.y = 56;
+        portraitSprite.oam.f.tile = face->oam.f.tile;
+        portraitSprite.oam.f.x = 0xac;
+        portraitSprite.oam.f.y = 56;
         if (figureShown != 0)
           Oam_AddSpriteAtDepth(&portraitSprite, 240);
         figureShown = 1;
       }
     }
 
-    ((struct SummarySprite *)&cursorSprite)->attr01 = 0x40000400;
-    ((struct SummarySprite *)&cursorSprite)->attr23 = 0;
-    cursorSprite.tile =
+    cursorSprite.oam.word.attr01 = 0x40000400;
+    cursorSprite.oam.word.attr23 = 0;
+    cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
-    if (page == 0)
-      cursorSprite.x =
-          statusWindow->x * 8 + cursorX + 16 - (s32)(gFrameCount & 4) / 4;
-    else
-      cursorSprite.x =
-          statusWindow->x * 8 + cursorX + 16 + (s32)(gFrameCount & 4) / 4;
-    cursorSprite.y =
-        cursorY + statusWindow->y * 8 - (s32)(gFrameCount & 4) / 4 + 16;
+    {
+      s32 bob = gFrameCount & 4;
+      s32 x = statusWindow->x * 8 + cursorPosition.x + 16;
+
+      cursorSprite.oam.f.x = page == 0 ? x - bob / 4 : x + bob / 4;
+    }
+    cursorSprite.oam.f.y =
+        cursorPosition.y + statusWindow->y * 8 - (s32)(gFrameCount & 4) / 4 + 16;
     if (page != 0)
-      cursorSprite.affineIndex = 0;
+      cursorSprite.oam.f.affineIndex = 0;
     else
-      cursorSprite.affineIndex = 8;
+      cursorSprite.oam.f.affineIndex = 8;
     Oam_AddSpriteAtDepth(&cursorSprite, 241);
 
     if (redraw == 0)
@@ -697,28 +731,30 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
 
     if (page == 3) {
       // Items: those the member can use in battle first.
-      s32 count = 0;
-      s32 position;
+      u16 *entries = NAVIGATION->list;
+      s32 count;
+      s32 index;
+      s32 item;
+      s32 row;
 
-      entries = NAVIGATION->list;
-      rowBase = -1;
-      for (i = 0; i < 15 && unit->items[i] != 0; i++) {
-        Item_Get(unit->items[i]);
-        if (Item_ClassifyUseAbility(member, unit->items[i]) == 0)
-          entries[count++] = unit->items[i];
+      j = -1;
+      for (index = 0, count = 0;
+           index != 15 && (item = unit->items[index]) != 0; index++) {
+        Item_Get(item);
+        if (Item_ClassifyUseAbility(member, item) == 0)
+          entries[count++] = item;
       }
-      for (i = 0; i < 15 && unit->items[i] != 0; i++) {
-        Item_Get(unit->items[i]);
-        if (Item_ClassifyUseAbility(member, unit->items[i]) != 0)
-          entries[count++] = unit->items[i];
+      for (index = 0; index != 15 && (item = unit->items[index]) != 0; index++) {
+        Item_Get(item);
+        if (Item_ClassifyUseAbility(member, item) != 0)
+          entries[count++] = item;
       }
       entries[count] = 0;
       itemCount = count;
-      position = cursor.groupPositions[5];
-      if (count <= position)
-        position = cursor.groupPositions[5] = count - 1;
-      rowBase = position / 4 * 4;
-      row = (s8)(position - rowBase);
+      if (count <= cursor.groupPositions[5])
+        cursor.groupPositions[5] = count - 1;
+      rowBase = cursor.groupPositions[5] / 4 * 4;
+      row = (s8)(cursor.groupPositions[5] % 4);
       if (count != 0) {
         u16 *entry = &entries[rowBase + row];
 
@@ -735,11 +771,9 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
                     helpWindow->height, 0);
       Vram_FillWindowBlockPattern();
       Text_DrawWideStringAtOffset(itemText, helpWindow, 0, 20);
-      if (rowBase != -1) {
+      if (rowBase != j) {
         Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
-        for (j = 0; j <= 3 && entries[rowBase + j] != 0; j++) {
-          s32 item = entries[rowBase + j];
-
+        for (j = 0; j <= 3 && (item = entries[rowBase + j]) != 0; j++) {
           Item_Get(item);
           Func_08041f70(15);
           if (Item_ClassifyUseAbility(member, item) != 0)
@@ -749,10 +783,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           Text_DrawCharacterAtOffset((item & 0x1ff) + (s32)MsgItemName,
                                        statusWindow, 32, 64 + j * 16);
           Func_08041f70(15);
-          iconSprites[j].tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
+          iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
         for (; j <= 3; j++)
-          iconSprites[j].tile =
+          iconSprites[j].oam.f.tile =
               VramCache_Reload(iconSlots[j], (const void *)-1);
       }
       if (count > 4)
@@ -760,28 +794,29 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     } else if (page == 1) {
       // Battle Psynergy: grey when it cannot be used in battle, red when the
       // PP are short, another colour while Psynergy is sealed.
-      s32 count = 0;
-      s32 position;
+      u16 *entries = NAVIGATION->list;
+      s32 count;
+      s32 shownRow;
+      s32 index;
+      s32 id;
 
-      entries = NAVIGATION->list;
-      rowBase = -1;
+      count = 0;
+      j = -1;
       WindowSprite_RedrawSavedRect(statusWindow);
-      for (i = 0; i < 32; i++) {
-        s32 id = unit->psynergy[i] & 0x3fff;
-
-        if (id == 0)
-          break;
+      shownRow = j;
+      for (index = 0;
+           index != 32 && (id = unit->psynergy[index].id & 0x3fff) != 0;
+           index++) {
         if (BattleAction_Get(id)->flags & 0x80)
           entries[count++] = id;
       }
       entries[count] = 0;
       psynergyCount = count;
-      position = cursor.groupPositions[3];
-      if (count <= position)
-        position = cursor.groupPositions[3] = count - 1;
-      rowBase = position / 4 * 4;
-      row = (s8)(position - rowBase);
-      if (rowBase != -1 || row != -1) {
+      if (count <= cursor.groupPositions[3])
+        cursor.groupPositions[3] = count - 1;
+      rowBase = cursor.groupPositions[3] / 4 * 4;
+      row = (s8)(cursor.groupPositions[3] % 4);
+      if (rowBase != j || row != shownRow) {
         work->holdTilemapUpload = 1;
         Vram_FillWindowBlockPattern();
         if (count != 0)
@@ -794,20 +829,16 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
                       helpWindow->height, 0);
         Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
-        if (rowBase != -1) {
-          s32 y = 64;
-          s32 tileRow = 8;
-
+        if (rowBase != j) {
           Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
-          for (j = 0; j <= 3 && entries[rowBase + j] != 0;
-               j++, y += 16, tileRow += 2) {
-            s32 id = entries[rowBase + j];
+          for (j = 0; j <= 3 && (id = entries[rowBase + j]) != 0; j++) {
             struct SummaryAbility *ability = BattleAction_Get(id);
             s32 range;
+            s32 tileFlags;
 
-            Window_SetTilemapEntry(statusWindow, 0xf01f, 11, tileRow, 0);
-            Window_SetTilemapEntry(statusWindow, 0xf01e, 12, tileRow, 0);
-            iconSprites[j].tile =
+            Window_SetTilemapEntry(statusWindow, 0xf01f, 11, j * 2 + 8, 0);
+            Window_SetTilemapEntry(statusWindow, 0xf01e, 12, j * 2 + 8, 0);
+            iconSprites[j].oam.f.tile =
                 Resource_LoadIndexedEntryToBuffer(id, iconSlots[j]);
             if (!(ability->flags & 0x80))
               Func_08041f70(4);
@@ -815,24 +846,26 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
               Func_08041f70(2);
             else if (unit->psySeal != 0)
               Func_08041f70(9);
+            tileFlags = 0;
             work->textColor = 5;
             Text_DrawCharacterAtOffset(id + (s32)MsgAbilityNothing,
-                                         statusWindow, 16, y);
-            Text_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104, y);
+                                         statusWindow, 16, 64 + j * 16);
+            Text_DrawNumberAtOffset(ability->ppCost, 2, statusWindow, 104,
+                                      64 + j * 16);
             Func_08041f70(15);
             work->textColor = 15;
             if (ability->element != 4)
               Window_SetTilemapEntry(statusWindow, 0x5001 + ability->element,
-                                       15, tileRow, 0);
+                                       15, j * 2 + 8, tileFlags);
             range = ability->range;
             if (range == 255)
               range = 11;
             else
               range--;
-            Window_DrawThreeTileColumn(statusWindow, 16, tileRow, range, 0);
+            Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
           for (; j <= 3; j++)
-            iconSprites[j].tile =
+            iconSprites[j].oam.f.tile =
                 VramCache_Reload(iconSlots[j], (const void *)-1);
         }
         if (count > 4)
@@ -843,8 +876,12 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     } else if (page == 2) {
       // Djinn: each element's set ones, then those on standby or recovering
       // (bit 16, the turns left above bit 17).
+      s32 rowBase = 0;
+      s32 shownBase = -1;
+      s32 released = 0;
       s32 element;
-      s32 entry;
+      s32 bit;
+      u32 entry;
 
       WindowSprite_RedrawSavedRect(statusWindow);
       Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
@@ -852,28 +889,29 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
       djinnCount = 0;
       for (element = 0; element <= 3; element++) {
-        s32 *out = &djinnList[djinnCount];
+        u32 *out = &djinnList[djinnCount];
 
-        for (j = 0; j <= 19; j++) {
-          if (unit->djinnSet[element] & (1 << j)) {
-            *out++ = (element << 8) | j;
+        for (bit = 0; bit <= 19; bit++) {
+          if (unit->djinnSet[element] & (1 << bit)) {
+            *out++ = (element << 8) | bit;
             djinnCount++;
-          } else if (unit->djinnOwned[element] & (1 << j)) {
-            struct SummaryRecovery *recovery =
-                Djinn_GetRecoveryTableFar((u32)member > 7);
+          } else if (unit->djinnOwned[element] & (1 << bit)) {
+            struct SummaryRecoveryList *recovery =
+                &Djinn_GetRecoveryTableFar((u32)member > 7)->list;
+            struct SummaryRecoveryEntry *entries = recovery->entries;
             s32 k;
             s32 value;
 
-            for (k = 0; k < recovery->count; k++) {
-              if (recovery->entries[k].owner == member &&
-                  recovery->entries[k].element == element &&
-                  recovery->entries[k].index == j)
-                break;
-            }
-            value = (element << 8) | j | 0x10000;
+            for (k = 0;
+                 k < recovery->count &&
+                 !(entries[k].owner == member &&
+                   entries[k].element == element && entries[k].index == bit);
+                 k++)
+              ;
+            value = (element << 8) | bit | 0x10000;
             *out = value;
-            if (recovery->entries[k].turns > 0)
-              *out = value | (recovery->entries[k].turns << 17);
+            if (entries[k].turns > 0)
+              *out = value | (entries[k].turns << 17);
             out++;
             djinnCount++;
           }
@@ -886,43 +924,47 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       work->holdTilemapUpload = 1;
       if (djinnCount != 0) {
         MessageArgument_ClearAll();
-        if ((entry & 0x10000) && !(entry & 0x3e0000)) {
-          Message_CopyExpanded((s32)Msg_0cf9, psynergyText, 32);
-        } else {
-          if (entry & 0x10000)
+        if (entry & 0x10000) {
+          if (entry & 0x3e0000) {
             MessageArgument_Push((entry & 0x3e0000) >> 17, 5);
-          Message_CopyExpanded(((entry & 0xf00) >> 8) * 20 +
-                                       (entry & 0xff) + (s32)Msg_09b1,
-                                   psynergyText, 32);
+            Message_CopyExpanded(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
+                                     (s32)Msg_09b1,
+                                 psynergyText, 32);
+          } else {
+            Message_CopyExpanded((s32)Msg_0cf9, psynergyText, 32);
+          }
+        } else {
+          Message_CopyExpanded(((entry & 0xf00) >> 8) * 20 + (entry & 0xff) +
+                                   (s32)Msg_09b1,
+                               psynergyText, 32);
         }
       } else {
         Message_CopyExpanded((s32)Msg_0d4e, psynergyText, 32);
       }
-      work->holdTilemapUpload = 0;
+      work->holdTilemapUpload = released;
       Vram_FillWindowBlockPattern();
       Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
-      {
-        s32 *next = djinnList;
+      if (rowBase != shownBase) {
+        u32 *next = djinnList;
+        u32 shown;
+        s32 column;
+        s32 tileRow;
 
-        for (j = 0; j <= 8; j++) {
-          s32 column = j / 3 * 7;
-          s32 tileRow = j % 3 * 2 + 9;
-
-          entry = *next++;
-          if (entry == (s32)0x80000000)
-            break;
+        for (j = 0; j <= 8 && (shown = *next++, column = j / 3 * 7,
+                              tileRow = j % 3 * 2 + 9, shown != 0x80000000);
+             j++) {
           Window_SetTilemapEntry(statusWindow,
-                                   ((entry & 0xf00) >> 8) + 0x5001, column,
+                                   ((shown & 0xf00) >> 8) + 0x5001, column,
                                    tileRow, 0);
-          if (entry & 0x3e0000)
+          if (shown & 0x3e0000)
             Func_08041f70(4);
-          else if (entry & 0x10000)
+          else if (shown & 0x10000)
             Func_08041f70(2);
           Text_DrawCharacterAtOffset(
-              ((entry & 0xf00) >> 8) * 20 + (entry & 0xff) + (s32)MsgDjinnName,
+              ((shown & 0xf00) >> 8) * 20 + (shown & 0xff) + (s32)MsgDjinnName,
               statusWindow, column * 8 + 8, tileRow * 8);
-          if (entry & 0x3e0000)
-            Text_DrawNumberAtOffset((entry & 0x3e0000) >> 17, 2, statusWindow,
+          if (shown & 0x3e0000)
+            Text_DrawNumberAtOffset((shown & 0x3e0000) >> 17, 2, statusWindow,
                                       column * 8 + 40, tileRow * 8);
           Func_08041f70(15);
         }
@@ -932,8 +974,6 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     }
 
     if (redraw != 0) {
-      s8 *kind;
-
       if (page == 0) {
         WindowSprite_RedrawSavedRect(statusWindow);
         Func_0803a2b0(helpWindow->x, helpWindow->y, helpWindow->width,
@@ -955,22 +995,22 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       Text_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
       Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 32);
       Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
-      Text_DrawCharacterAtOffset((s32)Msg_0d10, statusWindow, 136, 16);
+      Text_DrawCharacterAtOffset((s32)Msg_0d1a - 10, statusWindow, 136, 16);
       Text_DrawNumberInWindow(unit->atk, 3, statusWindow, 184, 16);
-      Text_DrawCharacterAtOffset((s32)Msg_0d11, statusWindow, 136, 24);
+      Text_DrawCharacterAtOffset((s32)Msg_0d1a - 9, statusWindow, 136, 24);
       Text_DrawNumberInWindow(unit->def, 3, statusWindow, 184, 24);
-      Text_DrawCharacterAtOffset((s32)Msg_0d12, statusWindow, 136, 32);
+      Text_DrawCharacterAtOffset((s32)Msg_0d1a - 8, statusWindow, 136, 32);
       Text_DrawNumberInWindow(unit->agi, 3, statusWindow, 184, 32);
-      Text_DrawCharacterAtOffset((s32)Msg_0d13, statusWindow, 136, 40);
+      Text_DrawCharacterAtOffset((s32)Msg_0d1a - 7, statusWindow, 136, 40);
       Text_DrawNumberInWindow(unit->luck, 3, statusWindow, 184, 40);
       Text_DrawCharacterAtOffset((s32)MsgClassName + unit->classId,
                                    statusWindow, 0, 48);
       if (page == 0) {
         if (hasDjinn != 0)
-          Text_DrawCharacterAtOffset((s32)Msg_0d19, statusWindow, 0, 72);
-        Text_DrawCharacterAtOffset((s32)Msg_0d15, statusWindow, 0, 80);
-        Text_DrawCharacterAtOffset((s32)Msg_0d16, statusWindow, 0, 88);
-        Text_DrawCharacterAtOffset((s32)Msg_0d17, statusWindow, 0, 96);
+          Text_DrawCharacterAtOffset((s32)Msg_0d1a - 1, statusWindow, 0, 72);
+        Text_DrawCharacterAtOffset((s32)Msg_0d1a - 5, statusWindow, 0, 80);
+        Text_DrawCharacterAtOffset((s32)Msg_0d1a - 4, statusWindow, 0, 88);
+        Text_DrawCharacterAtOffset((s32)Msg_0d1a - 3, statusWindow, 0, 96);
         for (j = 0; j <= 3; j++) {
           s32 pal = 1;
 
@@ -1001,105 +1041,87 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         statusKinds[0] = 16;
         i = 1;
       }
-      kind = &statusKinds[i];
       do {
         if (unit->curse != 0) {
-          *kind++ = 15;
-          i++;
+          statusKinds[i++] = 15;
         }
         if (i > 7)
           break;
         if (unit->grimReaper != 0) {
-          *kind++ = 8;
-          i++;
+          statusKinds[i++] = 8;
         }
         if (i > 7)
           break;
         if (unit->poison == 1) {
-          *kind++ = 1;
-          i++;
+          statusKinds[i++] = 1;
         }
         if (i > 7)
           break;
         if (unit->poison == 2) {
-          *kind++ = 2;
-          i++;
+          statusKinds[i++] = 2;
         }
         if (i > 7)
           break;
         if (unit->psySeal != 0) {
-          *kind++ = 4;
-          i++;
+          statusKinds[i++] = 4;
         }
         if (i > 7)
           break;
         if (unit->stun != 0) {
-          *kind++ = 3;
-          i++;
+          statusKinds[i++] = 3;
         }
         if (i > 7)
           break;
         if (unit->sleep != 0) {
-          *kind++ = 5;
-          i++;
+          statusKinds[i++] = 5;
         }
         if (i > 7)
           break;
         if (unit->haunt != 0) {
-          *kind++ = 7;
-          i++;
+          statusKinds[i++] = 7;
         }
         if (i > 7)
           break;
         if (unit->delusion != 0) {
-          *kind++ = 6;
-          i++;
+          statusKinds[i++] = 6;
         }
         if (i > 7)
           break;
         if (unit->attackTurns != 0) {
           if (unit->attackStage > 0) {
-            *kind++ = 9;
-            i++;
+            statusKinds[i++] = 9;
           }
           if (unit->attackStage < 0) {
-            *kind++ = 10;
-            i++;
+            statusKinds[i++] = 10;
           }
         }
         if (i > 7)
           break;
         if (unit->defenseTurns != 0) {
           if (unit->defenseStage > 0) {
-            *kind++ = 11;
-            i++;
+            statusKinds[i++] = 11;
           }
           if (unit->defenseStage < 0) {
-            *kind++ = 12;
-            i++;
+            statusKinds[i++] = 12;
           }
         }
         if (i > 7)
           break;
         if (unit->resistanceTurns != 0) {
           if (unit->resistanceStage > 0) {
-            *kind++ = 13;
-            i++;
+            statusKinds[i++] = 13;
           }
           if (unit->resistanceStage < 0) {
-            *kind++ = 14;
-            i++;
+            statusKinds[i++] = 14;
           }
         }
         if (i > 7)
           break;
         if (unit->agilityStage > 0) {
-          *kind++ = 17;
-          i++;
+          statusKinds[i++] = 17;
         }
         if (unit->agilityStage < 0) {
-          *kind++ = 18;
-          i++;
+          statusKinds[i++] = 18;
         }
       } while (0);
       for (j = 0; j < i; j++)
@@ -1195,26 +1217,42 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     work->dirty = 1;
 
   place_sprites:
-    for (i = 0; i <= 10; i++) {
-      ((struct SummarySprite *)&statusSprites[i])->attr01 = 0x40000400;
-      ((struct SummarySprite *)&statusSprites[i])->attr23 = 0;
-      statusSprites[i].tile = gResourceTableEntries[statusSlots[i]].offset >> 5;
-      statusSprites[i].x = 112 + i * 15;
-      statusSprites[i].y = statusWindow->y * 8 + 8;
-      if (statusKinds[i] > 0)
-        Oam_AddSpriteAtDepth(&statusSprites[i], 240);
-    }
-    if (page == 1 || page == 3) {
-      for (i = 0; i <= 3; i++) {
-        ((struct SummarySprite *)&iconSprites[i])->attr01 = 0x40000400;
-        ((struct SummarySprite *)&iconSprites[i])->attr23 = 0;
-        iconSprites[i].tile = gResourceTableEntries[iconSlots[i]].offset >> 5;
-        if (page == 3)
-          iconSprites[i].x = 24;
-        else
-          iconSprites[i].x = 8;
-        iconSprites[i].y = (i * 2 + statusWindow->y) * 8 + 68;
-        Oam_AddSpriteAtDepth(&iconSprites[i], 240);
+    {
+      struct SummaryResourceEntry *entry;
+      s32 *slot = statusSlots;
+      s32 iconX;
+
+      sprite = statusSprites;
+      for (i = 0, entry = gResourceTableEntries, iconX = 112; i <= 10; i++) {
+        sprite->oam.word.attr01 = 0x40000400;
+        sprite->oam.word.attr23 = 0;
+        sprite->oam.f.tile = entry[*slot++].offset >> 5;
+        sprite->oam.f.x = iconX;
+        sprite->oam.f.y = statusWindow->y * 8 + 8;
+        if (statusKinds[i] > 0)
+          Oam_AddSpriteAtDepth(sprite, 240);
+        iconX += 15;
+        sprite++;
+      }
+      if (page == 1 || page == 3) {
+        struct SummaryResourceEntry *iconEntry;
+        s32 iconRow;
+
+        sprite = iconSprites;
+        for (i = 0, iconEntry = gResourceTableEntries, iconRow = 0; i <= 3;
+             i++) {
+          sprite->oam.word.attr01 = 0x40000400;
+          sprite->oam.word.attr23 = 0;
+          sprite->oam.f.tile = iconEntry[iconSlots[i]].offset >> 5;
+          if (page == 3)
+            sprite->oam.f.x = 24;
+          else
+            sprite->oam.f.x = 8;
+          sprite->oam.f.y = (iconRow + statusWindow->y) * 8 + 68;
+          Oam_AddSpriteAtDepth(sprite, 240);
+          sprite++;
+          iconRow += 2;
+        }
       }
     }
     if (NAVIGATION->timer == 0 || (gInput.pressed & 2))
@@ -1239,10 +1277,15 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     wait(1);
   }
 
-  for (i = 3; i >= 0; i--)
-    Resource_ResetEntry(iconSlots[3 - i]);
-  for (i = 10; i >= 0; i--)
-    Resource_ResetEntry(statusSlots[10 - i]);
+  {
+    s32 *slot = iconSlots;
+
+    for (i = 3; i >= 0; i--)
+      Resource_ResetEntry(*slot++);
+    slot = statusSlots;
+    for (i = 10; i >= 0; i--)
+      Resource_ResetEntry(*slot++);
+  }
   Resource_ResetEntry(portraitSlot);
   Resource_ResetEntry(cursorSlot);
   wait(1);

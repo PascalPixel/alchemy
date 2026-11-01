@@ -1,15 +1,25 @@
-// Draft, differ 906 of 1119: the battle command row, The Broken Seal's
-// BattleCommandRow_Run (games/tbs/src/window/screens/battle_command_row.c) on this
-// game's work and command numbers. The party's row (mode 0) is Fight (14),
-// command 49 (when the battle allows it, no reserve member is chosen and
-// more than four are active), Flee (4, when flee is passed above 0 and the
-// battle rule is not 2) and Status (7); a member's row Attack (0),
-// Psynergy (1), Djinn (15) and Summon (16) as in The Broken Seal, Item (2)
-// and Defend (3). B cancels in both rows. The tutorial's actors are 4 to 6.
-// The strip loops carry The Broken Seal's devices. Left: the native keeps
-// the work block in r9 and reads the navigation work early into r5; the
-// draft takes sl and reads it late (reading it early, differ 1027), and
-// the allocation shifts from there.
+// Draft, differ 17 of 1119, skeleton gap 9 (tla-en, 2026-11-01)
+// The battle command row, The Broken Seal's BattleCommandRow_Run
+// (games/tbs/src/window/screens/battle_command_row.c) on this game's work and
+// command numbers. The party's row (mode 0) is Fight (14), command 49 (when
+// the battle allows it, no reserve member is chosen and more than four are
+// active), Flee (4, when flee is passed above 0 and the battle rule is not 2)
+// and Status (7); a member's row Attack (0), Psynergy (1), Djinn (15) and
+// Summon (16) as in The Broken Seal, Item (2) and Defend (3). B cancels in
+// both rows. The tutorial's actors are 4 to 6.
+// Left, all plain C with no device:
+// - The strip's closing loop: the native keeps the add of 0x452 apart from the
+//   store; here it folds into strh r6, [r3, r7]. The Broken Seal's tagged
+//   FAKEMATCH(volatile) on that store gives differ 8, gap 4 + 4 (the same
+//   device as its twin; left out of this draft for now). Eight respellings of
+//   the address gained nothing.
+// - Two scheduling pairs: str r5, [sp, #4] falls after mov ip, r6 in both icon
+//   loops, and the first entry's strh falls after movs r6, #228. Reordering the
+//   value and index expressions and naming the kind changed neither.
+// What moved it: battleMenu is its own variable (read early, in r5), the two
+// rows keep separate counters, message is declared where it is used (its
+// spill slot follows), the flag store is through a plain u8 pointer (a struct
+// field keeps the commandKinds reload from happening), and Task_Add returns s32.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -96,9 +106,9 @@ s32 Party_CountActiveOwnersFar(void);
 s32 *Djinn_GetRecoveryTableFar(s32 kind);
 void Func_08118130(s32 kind, u8 *counts);
 void Func_080456f8(struct CommandRowWork *work, s32 index, s32 kind);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
-void Irq_SetHandler(s32 irq, s32 line, void (*handler)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
+void Irq_SetHandler(u32 irq, s32 vcount, void (*handler)(void));
 void Graphics_SetBg1Priority3(void);
 void Func_08045780(void);
 void WindowSprite_PrepareForRedraw(void *window);
@@ -112,13 +122,14 @@ void Window_Close(void *window, s32 mode);
 void Sound_PlayFar(s32 cue);
 void QueueIoWriteDelay2(u32 address, u32 value);
 void wait(s32 frames);
-void Resource_ResetEntry(s32 resource);
+s32 Resource_ResetEntry(u32 entry);
 void Heap_Release(void *block);
 
 s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   u8 party[4];
   struct CommandRowWindowWork *work;
   struct CommandRowWork *selectionUi;
+  struct CommandRowNavigation *battleMenu;
   struct CommandRowNavigation *navigation;
   s32 stripDirty;
   s32 tradeCount;
@@ -130,12 +141,12 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   s32 iconSlot;
   s32 i;
   s32 kindCount;
-  void *message;
 
   work = WINDOW_WORK;
   iconSlot = VramCache_AllocEntry(0x400);
-  tradeCount = 0;
   stripDirty = 1;
+  tradeCount = 0;
+  battleMenu = NAVIGATION;
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   for (i = 255; i >= 0; i--)
     selectionUi->paletteSlots[i] = 255;
@@ -146,37 +157,34 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
     selectionUi->window = Window_Create(22, 17, 8, 3, 6);
   selectionUi->drawnIndex = -1;
   if (mode == 0) {
-    selectionUi->commandKinds[0] = 14;
-    kindCount = 1;
+    kindCount = 0;
+    selectionUi->commandKinds[kindCount++] = 14;
     if (((u8 *)Ram_HeapSlots->battleWork)[0x44] == 0 &&
-        NAVIGATION->reserveChoice == -1 && Party_CountActiveOwnersFar() > 4) {
-      selectionUi->commandKinds[1] = 49;
-      kindCount = 2;
-    }
+        battleMenu->reserveChoice == -1 && Party_CountActiveOwnersFar() > 4)
+      selectionUi->commandKinds[kindCount++] = 49;
     if (fleeAllowed > 0 && gMainRoutineWork[0x24b] != 2)
       selectionUi->commandKinds[kindCount++] = 4;
     selectionUi->commandKinds[kindCount++] = 7;
     selectionUi->commandKinds[kindCount] = -1;
     selectionUi->selectedIndex = NAVIGATION->commandSelection[0];
   } else {
+    s32 memberCount;
+
     selectionUi->selectedIndex = NAVIGATION->commandSelection[1];
-    selectionUi->commandKinds[0] = 0;
-    selectionUi->commandKinds[1] = 1;
-    kindCount = 2;
+    memberCount = 0;
+    selectionUi->commandKinds[memberCount++] = 0;
+    selectionUi->commandKinds[memberCount++] = 1;
     if (*Djinn_GetRecoveryTableFar(0) != 0) {
       Func_08118130(0, party);
       for (i = 0; i <= 3; i++)
         tradeCount += party[i];
-      selectionUi->commandKinds[2] = 15;
-      kindCount = 3;
-      if (tradeCount != 0) {
-        selectionUi->commandKinds[3] = 16;
-        kindCount = 4;
-      }
+      selectionUi->commandKinds[memberCount++] = 15;
+      if (tradeCount != 0)
+        selectionUi->commandKinds[memberCount++] = 16;
     }
-    selectionUi->commandKinds[kindCount++] = 2;
-    selectionUi->commandKinds[kindCount++] = 3;
-    selectionUi->commandKinds[kindCount] = -1;
+    selectionUi->commandKinds[memberCount++] = 2;
+    selectionUi->commandKinds[memberCount++] = 3;
+    selectionUi->commandKinds[memberCount] = -1;
   }
   for (entryIndex = 0; entryIndex <= 5; entryIndex++) {
     selectionUi->entries[entryIndex].resource = iconSlot;
@@ -189,13 +197,17 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
   selectionUi->affine.scaleX = 320;
   selectionUi->affine.scaleY = 304;
   selectionUi->affine.angle = 0;
-  for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
-    s32 x = (entryIndex - selectionUi->iconCount) * 24;
+  entryIndex = 0;
+  if (entryIndex < selectionUi->iconCount) {
+    do {
+      s32 x = (entryIndex - selectionUi->iconCount) * 24;
 
-    selectionUi->entries[entryIndex].positionX = x + 155;
-    if (mode != 0)
-      selectionUi->entries[entryIndex].positionX = x + 171;
-    selectionUi->entries[entryIndex].positionY = 136;
+      selectionUi->entries[entryIndex].positionX = x + 155;
+      if (mode != 0)
+        selectionUi->entries[entryIndex].positionX = x + 171;
+      selectionUi->entries[entryIndex].positionY = 136;
+      entryIndex++;
+    } while (entryIndex < selectionUi->iconCount);
   }
   Task_Add(Graphics_SetBg1Priority3, 0xc80);
   Irq_SetHandler(2, 136, Func_08045780);
@@ -211,72 +223,55 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
       work->holdTilemapUpload = 1;
       if (mode != 0) {
         s32 panel;
-        s32 count;
 
         for (panel = 0; panel < 6 - selectionUi->iconCount; panel++) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
 
             for (col = 0; col <= 2; col++)
-              work->tilemap[(entryIndex + 17) * 32 + panel * 3 + 4 +
-                            (col & 3)] = 0xf07f;
+              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 4 +
+                (col & 3)) = 0xf07f;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
-          count = selectionUi->iconCount;
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
 
             for (col = 0; col <= 2; col++) {
-              s32 tmp;
-              /* FAKEMATCH(temporary): vram, offset, mask and tmp as in The
-               * Broken Seal. */
               volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + 22;
-              s32 offset = 0x100;
-              s32 mask = 3;
 
-              vram[panel * 3 + entryIndex * 32 + (col & mask) - count * 3] =
-                  tmp = panel * 16 + entryIndex * 4 + col + offset;
-              tmp = col & mask;
-              work->tilemap[(entryIndex + 17) * 32 + panel * 3 + tmp -
-                            count * 3 + 22] = 0;
+              vram[panel * 3 + entryIndex * 32 + (col & 3) -
+                   selectionUi->iconCount * 3] =
+                  panel * 16 + entryIndex * 4 + col + 0x100;
+              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + (col & 3) -
+                selectionUi->iconCount * 3 + 22) = 0;
             }
           }
         }
       } else {
         s32 panel;
-        s32 count;
 
         for (panel = 0; panel < 6 - selectionUi->iconCount; panel++) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
 
             for (col = 0; col <= 2; col++)
-              work->tilemap[(entryIndex + 17) * 32 + panel * 3 + 2 +
-                            (col & 3)] = 0xf07f;
+              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 2 +
+                (col & 3)) = 0xf07f;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
-          /* FAKEMATCH(one-pass): as in The Broken Seal. */
-          do {
-          } while (0);
-          count = selectionUi->iconCount;
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
 
             for (col = 0; col <= 2; col++) {
-              s32 tmp;
-              /* FAKEMATCH(temporary): vram, offset, mask and tmp as in The
-               * Broken Seal. */
               volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + 20;
-              s32 offset = 0x100;
-              s32 mask = 3;
 
-              vram[panel * 3 + entryIndex * 32 + (col & mask) - count * 3] =
-                  tmp = panel * 16 + entryIndex * 4 + col + offset;
-              tmp = col & mask;
-              work->tilemap[(entryIndex + 17) * 32 + panel * 3 + tmp -
-                            count * 3 + 20] = 0;
+              vram[panel * 3 + entryIndex * 32 + (col & 3) -
+                   selectionUi->iconCount * 3] =
+                  panel * 16 + entryIndex * 4 + col + 0x100;
+              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + (col & 3) -
+                selectionUi->iconCount * 3 + 20) = 0;
             }
           }
         }
@@ -328,7 +323,9 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
 
           if (kind == 16 || (tradeCount == 0 && kind == 15)) {
             if (navigation->tutorialStep == 1) {
-              work->flags05 |= 4;
+              void *message;
+
+              ((u8 *)Ram_HeapSlots->windowTiles)[5] |= 4;
               if (selectionUi->commandKinds[selectionUi->selectedIndex] == 15)
                 message = Message_ShowAndWait(
                     Func_0804519c() + 10, 15, 8);
@@ -336,7 +333,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
                        16)
                 message = Message_ShowAndWait(Func_0804519c() + 9,
                                                             15, 8);
-              WINDOW_WORK->flags05 &= ~4;
+              ((u8 *)Ram_HeapSlots->windowTiles)[5] &= ~4;
               Func_08118128(102, 155);
               Window_Close(message, 1);
               navigation->tutorialStep++;
@@ -403,7 +400,7 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
         s32 col;
 
         for (col = 0; col <= 2; col++)
-          work->tilemap[(entryIndex + 17) * 32 + panel * 3 + 5 + (col & 3)] =
+          *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 5 + (col & 3)) =
               0xf07f;
       }
     }

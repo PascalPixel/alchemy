@@ -1,13 +1,19 @@
-// Draft, differ 499 of 567: the intro's scrolling backdrop: fills
-// the maps at 0x0600f800 and 0x0600f000 (the second with palette 1), sets
-// BG1, BG2 and blending, clears the scrolls, fades in, then runs one of three
-// scripted runs of Title_RunScrollStep steps chosen by mode (0, 1 or any
-// other), the last ending with a blend ramp; returns 0 when a key cuts it
-// short and 1 when it runs to the end. Same calls, stores and control flow;
-// left: the four map loops' registers and order (the native keeps the row in
-// r7, loads 0 for REG_DISPCNT and 0x1000 from the pool and starts each inner
-// count at 31 before the jump), which cascades into the step stores'
-// registers (r0/r4 against r2/r3).
+// Draft, differ 2 of 567, skeleton gap 2 (tla-en, 2026-11-01)
+// The intro's scrolling backdrop: fills the maps at 0x0600f800 and 0x0600f000
+// (the second with palette 1), sets BG1, BG2 and blending, clears the scrolls,
+// fades in, then runs one of three scripted runs of Title_RunScrollStep steps
+// chosen by mode (0, 1 or any other), the last ending with a blend ramp;
+// returns 0 when a key cuts it short and 1 when it runs to the end.
+// Left: one scheduling pair at the top of the blend ramp. The listing puts
+// `movs r0, #1` before the first `ldrh r3, [r6, #6]`, right after the store to
+// REG_BLDALPHA; the second half of the ramp has them the other way in both.
+// The sched2 dump shows the load ready one cycle after that store, and
+// -mthumb-slow-loads only delays a load from the address just stored, so the
+// listing's extra cycle has no source form found: the order of the sum, a
+// pointer to gBgScroll, a plain `=` and a non-volatile store all leave it.
+// What the match rests on: `u16 tile` with `tile++` (a u16 local stays
+// sign-extended in its register, so the increment is what stops loop.c from
+// strength-reducing it), and i and j each shared by several loops.
 #include "types.h"
 #include "io_reg.h"
 #include "bg_scroll.h"
@@ -33,41 +39,35 @@ void Fade_Wait(void);
 s32 Func_081a6154(s32 mode) {
   struct TitleScrollStep step;
   u16 *map;
-  s16 tile;
-  s32 row;
-  s32 column;
+  u16 tile;
   s32 i;
-  s32 speed;
+  s32 j;
 
   REG_DISPCNT = 0;
   map = (u16 *)0x0600f800;
   tile = 0;
-  for (row = 0; row < 16; row++) {
-    for (column = 0; column < 32; column++) {
-      *map++ = tile;
-      tile++;
+  for (j = 0; j < 16; j++) {
+    for (i = 0; i < 32; i++) {
+      *map++ = tile++;
     }
   }
   tile = 0;
-  for (; row < 32; row++) {
-    for (column = 0; column < 32; column++) {
-      *map++ = tile;
-      tile++;
+  for (; j < 32; j++) {
+    for (i = 0; i < 32; i++) {
+      *map++ = tile++;
     }
   }
   map = (u16 *)0x0600f000;
   tile = 0;
-  for (row = 0; row < 16; row++) {
-    for (column = 0; column < 32; column++) {
-      *map++ = (u16)tile | 0x1000;
-      tile++;
+  for (j = 0; j < 16; j++) {
+    for (i = 0; i < 32; i++) {
+      *map++ = tile++ | 0x1000;
     }
   }
   tile = 0;
-  for (; row < 32; row++) {
-    for (column = 0; column < 32; column++) {
-      *map++ = (u16)tile | 0x1000;
-      tile++;
+  for (; j < 32; j++) {
+    for (i = 0; i < 32; i++) {
+      *map++ = tile++ | 0x1000;
     }
   }
   REG_BG1CNT = 0x1f02;
@@ -137,17 +137,17 @@ s32 Func_081a6154(s32 mode) {
       return 0;
     if (!TITLE_STEP(16, 8, -8, 8, 8, 0, 0, 0, 0))
       return 0;
-    speed = 2;
+    j = 2;
     for (i = 11; i < 16; i++) {
       REG_BLDALPHA = (i << 8) | i;
-      gBgScroll[1].y += speed + 16;
-      gBgScroll[2].y += speed + 8;
-      speed++;
+      gBgScroll[1].y += j + 16;
+      gBgScroll[2].y += j + 8;
+      j++;
       if (Title_WaitOrPress(1))
         return 0;
-      gBgScroll[1].y += speed + 16;
-      gBgScroll[2].y += speed + 8;
-      speed++;
+      gBgScroll[1].y += j + 16;
+      gBgScroll[2].y += j + 8;
+      j++;
       if (Title_WaitOrPress(1))
         return 0;
     }

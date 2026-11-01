@@ -1,10 +1,19 @@
-// Draft, differ 456 of 817: the battle Psynergy menu, The Broken Seal's
-// BattlePsynergyMenu_Run (games/tbs/src/window/screens/battle_psynergy_menu.c) on
-// this game's work, messages and tiles; the frame tees are copied with
-// Func_08049a04 (The Broken Seal's Vram_CopyTile), and an ability not usable
-// in battle is refused without the dead store. Structure follows the
-// listing; left, as in Func_08049a30: the sprite setup loop's window reload,
-// the frame and the stack slots.
+// Draft, differ 12 of 817, skeleton gap 12 (tla-en, 2026-11-01)
+// The battle Psynergy menu, The Broken Seal's BattlePsynergyMenu_Run
+// (games/tbs/src/window/screens/battle_psynergy_menu.c) on this game's work,
+// messages and tiles; the frame tees are copied with Func_08049a04 (The Broken
+// Seal's Vram_CopyTile). Same shape as Func_08049a30, the item menu. Left, the
+// same instructions in another order in two blocks, the remainder Func_08049a30
+// also has: the native issues the 0xfffffe00 and 0xfffffc00 mask loads after
+// the sprite and icon-slot addresses are built and spilled, and in the first
+// loop the attr23 zero before the row offset. loop.c already leaves the sprite
+// address ahead of the mask, so the order is lost in sched2.
+// iconSprite = &cursor at the top of the outer loop gives the native spill
+// slots and pre-loop block; set before the loop or at its first use it is 24 or
+// 42. The cursor macros and the tilemap row mark are the twin's; written as
+// plain statements 18 to 76. Tried without gain: the row offset after the
+// initializer (86) or before it (46), the initializer through iconSprite (64),
+// a walking sprite pointer (165), 5 minutes of permute.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -56,22 +65,79 @@ struct PsynergyAbility {
 };
 
 struct PsynergyMenuSprite {
-  u8 unk00[4];
-  u32 attr01;
-  u32 attr23;
+  struct PsynergyMenuSprite *next;
+  union {
+    struct {
+      unsigned long attr01;
+      unsigned long attr23;
+    } word;
+    struct {
+      u16 y : 8;
+      u16 affine : 2;
+      u16 mode : 2;
+      u16 mosaic : 1;
+      u16 colors : 1;
+      u16 shape : 2;
+      u16 x : 9;
+      u16 affineIndex : 5;
+      u16 size : 2;
+      u16 tile : 10;
+      u16 priority : 2;
+      u16 palette : 4;
+      u16 unused;
+    } f;
+  } oam;
 };
 
 struct PsynergyMenuOam {
-  u8 unk00[4];
-  u8 y;
-  u8 attr0high;
+  struct PsynergyMenuOam *next;
+  u16 y : 8;
+  u16 affine : 2;
+  u16 mode : 2;
+  u16 mosaic : 1;
+  u16 colors : 1;
+  u16 shape : 2;
   u16 x : 9;
-  u16 attr1high : 7;
+  u16 affineIndex : 5;
+  u16 size : 2;
   u16 tile : 10;
-  u16 attr2high : 6;
+  u16 priority : 2;
+  u16 palette : 4;
+  u16 unused;
 };
 
 #define NAVIGATION ((struct PsynergyMenuNavigation *)Ram_HeapSlots->unke4[0])
+
+// Sets a menu sprite's attribute words, as The Broken Seal's
+// MenuSprite_Initialize.
+#define MENU_SPRITE_INITIALIZE(sprite, shape)                                  \
+  do {                                                                         \
+    (sprite).oam.word.attr01 = (shape);                                        \
+    (sprite).oam.word.attr23 = 0;                                              \
+  } while (0)
+
+// The menu's page, row and preferred row, as The Broken Seal's
+// BATTLE_MENU_GET_CURSOR and BATTLE_MENU_SET_CURSOR.
+#define MENU_GET_CURSOR(page_, row_, preferred)                                \
+  do {                                                                         \
+    (page_) = NAVIGATION->page;                                                \
+    (row_) = NAVIGATION->row;                                                  \
+    (preferred) = NAVIGATION->preferredRow;                                    \
+  } while (0)
+
+#define MENU_SET_CURSOR(page_, row_, preferred)                                \
+  do {                                                                         \
+    NAVIGATION->page = (page_);                                                \
+    NAVIGATION->row = (row_);                                                  \
+    NAVIGATION->preferredRow = (preferred);                                    \
+  } while (0)
+
+// Marks a window's tilemap row for upload, as The Broken Seal's
+// Window_MarkTilemapRow.
+#define WINDOW_MARK_TILEMAP_ROW(work, row)                                     \
+  do {                                                                         \
+    (work)->dirty |= 2 << ((u32)(row) >> 2);                                   \
+  } while (0)
 
 extern const u8 gResource_FixedBlockBTiles[];
 
@@ -117,20 +183,21 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
   struct PsynergyMenuWindow *messageWindow;
   s32 iconCount;
   s32 preferredRow;
-  s32 cursorX;
-  s32 cursorY;
+  struct { s32 x, y; } cursorPosition;
   struct PsynergyMenuNavigation *navigation;
   struct PsynergyMenuWindow *window;
   s32 selectedRow;
   s32 encodedAction;
   s32 iconTile;
+  s32 pageTile;
   s32 rangePattern;
   s32 result;
   s32 i;
-  struct PsynergyMenuOam cursor;
+  struct PsynergyMenuSprite cursor;
+  struct PsynergyMenuSprite *iconSprite;
   u16 messageText[64];
   s32 iconSlots[5];
-  struct PsynergyMenuOam sprites[5];
+  struct PsynergyMenuSprite sprites[5];
   s32 glyph;
 
   work = (struct PsynergyMenuWork *)Ram_HeapSlots->windowTiles;
@@ -140,24 +207,20 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
   unit = Unit_Get(unitId);
   messageWindow = Window_Create(0, 5, 30, 4, 42);
   iconCount = 5;
-  navigation = NAVIGATION;
-  firstEntry = navigation->page;
-  selectedRow = navigation->row;
-  preferredRow = navigation->preferredRow;
+  MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = Window_Create(9, 9, 21, 11, 6);
 
   for (i = 0; i < 5; i++) {
     s32 y = i * 2;
-    struct PsynergyMenuOam *iconSprite = &sprites[i];
 
-    ((struct PsynergyMenuSprite *)&sprites[i])->attr01 = 0x40000000;
-    ((struct PsynergyMenuSprite *)&sprites[i])->attr23 = 0;
-    iconSprite->x = window->x * 8 + 8;
-    iconSprite->y = (y + window->y) * 8 + 4;
+    iconSprite = &sprites[i];
+    MENU_SPRITE_INITIALIZE(sprites[i], 0x40000000);
+    iconSprite->oam.f.x = window->x * 8 + 8;
+    iconSprite->oam.f.y = (y + window->y) * 8 + 4;
   }
   for (i = 0; i < 5; i++) {
     iconSlots[i] = VramCache_AllocEntry(128);
-    sprites[i].tile = VramCache_Reload(iconSlots[i], (const void *)-1);
+    sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], (const void *)-1);
   }
   Func_08049a04(0xf018, 0x200);
   Func_08049a04(0xf018, 0x201);
@@ -165,6 +228,7 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
   Func_08049a04(0xf019, 0x211);
 
   for (;;) {
+    iconSprite = &cursor;
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
       Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
@@ -191,7 +255,7 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
           Window_SetTilemapEntry(window, 0xf01e, 12, i * 2, 0);
           Ability_LoadGlyph(encodedAction & 0x3fff, 0, &iconSlots[i], &glyph,
                             1);
-          sprites[i].tile = glyph;
+          sprites[i].oam.f.tile = glyph;
           if ((action->flags & 0x80) == 0)
             Func_08041f70(4);
           else if (action->ppCost > unit->pp)
@@ -242,34 +306,37 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
         Window_SetTilemapEntry(
             window, iconTile, window->width - (count + 4) / 5 + i - 2, -1, 0);
       }
+      pageTile = -1;
       Window_SetTilemapEntry(window, 0xf334,
-                               window->width - (count + 4) / 5 - 3, -1, 0);
-      Window_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
-      work->dirty |= 2 << ((u32)(window->y - 1) >> 2);
+                             window->width - (count + 4) / 5 - 3, pageTile, 0);
+      Window_SetTilemapEntry(window, 0xf335, window->width - 2, pageTile, 0);
+      WINDOW_MARK_TILEMAP_ROW(work, window->y - 1);
     }
 
     for (i = 0; i < iconCount; i++)
       Oam_AddSpriteAtDepth(&sprites[i], 240);
 
-    cursorX = window->x * 8 - 4;
-    cursorY = (selectedRow * 2 + window->y) * 8 + 20;
-    ((struct PsynergyMenuSprite *)&cursor)->attr01 = 0x40000000;
-    ((struct PsynergyMenuSprite *)&cursor)->attr23 = 0;
-    cursor.tile = VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
-    cursor.x = cursorX + ((gFrameCount & 4) >> 1) - 4;
-    cursor.y = cursorY - ((gFrameCount & 4) >> 2) - 8;
+    cursorPosition.x = window->x * 8 - 4;
+    cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
+    ((u32 *)iconSprite)[1] = 0x40000000;
+    ((u32 *)iconSprite)[2] = 0;
+    iconSprite->oam.f.tile =
+        VramCache_Reload(cursorHandle, gResource_FixedBlockBTiles);
+    iconSprite->oam.f.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    iconSprite->oam.f.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0)
-      Oam_AddSpriteAtDepth(&cursor, 242);
+      Oam_AddSpriteAtDepth(iconSprite, 242);
 
+    MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
     navigation = NAVIGATION;
-    navigation->page = firstEntry;
-    navigation->row = selectedRow;
-    navigation->preferredRow = preferredRow;
     if (gInput.pressed & 1) {
       if (count != 0) {
         result = firstEntry + selectedRow;
-        if (BattleAction_Get(actions[result])->flags & 0x80)
+        if ((BattleAction_Get(actions[result])->flags & 0x80) == 0) {
+          // Not usable in battle: the menu stays open.
+        } else {
           break;
+        }
       } else {
         result = -1;
         break;
@@ -318,8 +385,8 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
         Sound_PlayFar(111);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
-          selectedRow = preferredRow;
           firstEntry -= 5;
+          selectedRow = preferredRow;
         } else {
           firstEntry = (count - 1) / 5 * 5;
           selectedRow = preferredRow;

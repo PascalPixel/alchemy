@@ -1,7 +1,9 @@
-// Draft, differ 332 (378 before statements reordered 2026-10-26) of 345: logic in place (the region push decoded from
-// the listing), allocation far: the native spills the camera object to sp+4
-// and keeps x, y and z in r10, r11 and r9 with an 8-byte stack frame; here x and z
-// take r8 and r10 and the stack frame is 12 bytes.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Shapes that decide it: the camera comes through a copy of the parameter, as
+// in ☀️'s twin; dx and dz also hold the nearer edges in the region push, which
+// ranks them above x and z; the MulQ16 calls use the linked symbol, because the
+// fixed address makes reload write subs r5, #20; ratio and mulQ16 are locals so
+// the address loads after the first ratio call and before the argument move.
 // SC_CAMERA, ☀️'s Camera_FollowLeaderInBounds (games/tbs/src/field/
 // field.c) with The Lost Age's keep-out regions: after the map bounds, a
 // target inside one of the map's rectangles (a list of s16 x0, z0, x1, z1 in
@@ -16,7 +18,10 @@
 #define TARGET_UNSET ((s32)0x80000000)
 #define DISTANCE(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-s32 Func_08025160(struct Actor *cameraObject) {
+s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
+
+s32 Func_08025160(struct Actor *interpreter) {
+  struct Actor *cameraObject = interpreter;
   struct Actor *leader;
   struct MapWork *bounds;
   s32 minX;
@@ -32,8 +37,6 @@ s32 Func_08025160(struct Actor *cameraObject) {
   s32 distance;
   s32 moveStep;
   s16 *region;
-  s32 nearX;
-  s32 nearZ;
 
   bounds = Ram_HeapSlots->mapWork;
   leader = cameraObject->watchedObject;
@@ -44,11 +47,11 @@ s32 Func_08025160(struct Actor *cameraObject) {
   cameraObject->motionFlags = 0;
   if (leader != NULL && leader->script != NULL) {
     x = leader->x;
+    y = leader->y;
     z = leader->z;
     cameraObject->targetX = TARGET_UNSET;
     cameraObject->targetY = TARGET_UNSET;
     cameraObject->targetZ = TARGET_UNSET;
-    y = leader->y;
     if (x < minX)
       x = minX;
     if (z < minZ)
@@ -57,24 +60,24 @@ s32 Func_08025160(struct Actor *cameraObject) {
       x = maxX;
     if (z > maxZ)
       z = maxZ;
-    region = *(s16 **)bounds->unk0fc;
-    if (region != NULL) {
+    if (*(s16 **)bounds->unk0fc != NULL) {
+      region = *(s16 **)bounds->unk0fc;
       while (region[0] != -1) {
         minX = (region[0] << 16) - 0x780000;
         minZ = (region[1] << 16) + leader->y - 0x400000;
-        maxZ = (region[3] << 16) + leader->y + 0x600000;
         maxX = (region[2] << 16) + 0x780000;
+        maxZ = (region[3] << 16) + leader->y + 0x600000;
         if (x >= minX && z >= minZ && x <= maxX && z <= maxZ) {
-          nearX = minX;
+          dx = minX;
           if (DISTANCE(minX, x) > DISTANCE(maxX, x))
-            nearX = maxX;
-          nearZ = minZ;
+            dx = maxX;
+          dz = minZ;
           if (DISTANCE(minZ, z) > DISTANCE(maxZ, z))
-            nearZ = maxZ;
-          if (DISTANCE(nearX, x) <= DISTANCE(nearZ, z))
-            x = nearX;
+            dz = maxZ;
+          if (DISTANCE(dx, x) <= DISTANCE(dz, z))
+            x = dx;
           else
-            z = nearZ;
+            z = dz;
           break;
         }
         region += 4;
@@ -86,7 +89,8 @@ s32 Func_08025160(struct Actor *cameraObject) {
       cameraObject->z = z;
     } else {
       dx = (x - cameraObject->x) / 0x10000;
-      /* FAKEMATCH: dead code, as in ☀️'s twin. */
+      /* FAKEMATCH(dead): this dy, overwritten below, as in ☀️'s twin; as plain
+       * code, 129 of 345 instructions differ in tla-en. */
       dy = (y - cameraObject->y) / 0x10000;
       dz = (z - cameraObject->z) / 0x10000;
       distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
@@ -94,7 +98,7 @@ s32 Func_08025160(struct Actor *cameraObject) {
       dy = y - cameraObject->y;
       dz = z - cameraObject->z;
       if (distance < 0x400000)
-        distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+        distance = FixedSqrt(IwramMulQ16(dx, dx) + IwramMulQ16(dz, dz));
       if ((moveStep = distance / 8) > cameraObject->speedLimit)
         moveStep = cameraObject->speedLimit;
       if (distance < 0x4000) {
@@ -102,8 +106,10 @@ s32 Func_08025160(struct Actor *cameraObject) {
         cameraObject->z = z;
       } else {
         if (distance > moveStep) {
-          dx = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dx), moveStep);
-          dz = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dz), moveStep);
+          s32 ratio = Iwram_RatioMulQ14(distance, dx);
+          s32 (*mulQ16)(s32, s32) = IwramMulQ16;
+          dx = mulQ16(ratio, moveStep);
+          dz = mulQ16(Iwram_RatioMulQ14(distance, dz), moveStep);
         }
         cameraObject->x += dx;
         cameraObject->z += dz;

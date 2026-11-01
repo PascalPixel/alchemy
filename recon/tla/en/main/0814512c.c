@@ -1,29 +1,32 @@
-// Draft, differ 679 of 718 (the draft has 719).
+// Draft, differ 36 of 718, skeleton gap 24 (tla-en, 2026-11-01)
 
 // The body of ten effect kinds (the wrappers in series_d.c pass modes 0 to
-// 9). Twin: The Broken Seal's BattleEffect_RunSevenMode (shape 0.67), rebuilt
-// by The Lost Age: three more modes; a four-byte record per mode
-// (Data_08197880: shards or smoke, the shots' blitter, shots per target,
-// frames) where The Broken Seal has two bytes and fixed counts; up to four
-// shots per target, each with its own start; mode 7 prepares a canvas with
-// Func_0815585c and sets BG2CNT; the shots' height by mode; the pictures and
-// palettes unpacked by Resource_LoadAndDecompress; the pair from
-// BattleEffect_FetchRectangleBlitters; modes 4 and 7 clear the canvas each frame
-// with blending off; modes 3 and 5 clear both canvases and run a summon canvas
-// effect (SummonEffect_RunCanvasMode1 or 3) in place of the canvas teardown.
+// 9). Twin: The Broken Seal's BattleEffect_RunLobbedShells, rebuilt by The
+// Lost Age: three more modes; a four-byte record per mode (Data_08197880:
+// shards or smoke, the shots' blitter, shots per target, frames) where The
+// Broken Seal has two bytes and fixed counts; up to four shots per target,
+// each with its own start; mode 7 prepares a canvas with Func_0815585c and
+// sets BG2CNT; the shots' height by mode; the pictures and palettes unpacked
+// by Resource_LoadAndDecompress; the pair from
+// BattleEffect_FetchRectangleBlitters; modes 4 and 7 clear the canvas each
+// frame with blending off; modes 3 and 5 clear both canvases and run a summon
+// canvas effect (SummonEffect_RunCanvasMode1 or 3) in place of the canvas
+// teardown.
 
-// Left: the calls, their order, the loops and the tables are the native's;
-// the allocation is not. The native stack frame is 100 bytes, this one 108: the
-// native keeps mode * 4 in r11 for the whole effect and the shot's start
-// (k * 8 + i * 4) in r9, where agscc spills mode * 4 and one more value;
-// every stack frame offset after that differs. The palette chain keeps separate
-// branches for modes 2 and 8 in the native (one load each), where agscc
-// merges them.
+// Left, instruction order only: the frame, the registers and the control flow
+// are the native's. In five places the native stores a zero loop counter
+// straight after setting it and reloads k before the count at the bottom of
+// the first target loop; sched2 here runs the higher-priority loads first.
+// for, while and do-while all give the same order, so this looks like the
+// compiler's load timing (K2), not the source. The rest is the two clears at
+// the end: the native keeps the routine in r5 and sets 0x3c00 for each call,
+// this keeps 0x3c00 in a register. Forwarding through canvas.c's ClearWords_
+// wrapper (a tagged device, not used here) reaches differ 20, gap 18.
 
-// Tried (2026-10-15): the plain draft 697; the shot's aim in depth through
-// a local set straight after Random16, as the native orders it, 679; the
-// record offset (mode * 4) as a local, 688 declared last, 702 after the
-// camera.
+// Tried: gMapCellBuffer as a symbol instead of Ram_MapCellBuffer, gap 93 (the
+// native adds no offset, its addresses are whole constants); numeric resource
+// ids, which become movs and adds where the native has pool loads; the routine
+// in a local, no change; burst set before i, or outside the for, both worse.
 
 #include "battle.h"
 #include "graphics.h"
@@ -48,19 +51,20 @@
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);         // ..ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // ..ProcessPendingGraphicsTransfer
 void Palette_StepFadeTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void Func_081180e8(s32 phase);    // BattlePlayback_StartFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);                    // BattleEffect_TintBattler
+                   s32 frames); // BattleEffect_TintBattler
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0815585c(struct BattleEffectArgument *effect, s32 kindAndSide,
                    s32 *origin, s32 *size); // BattleEffect_RunDjinniEntrance
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void SummonEffect_RunCanvasMode1(void *action);
 void SummonEffect_RunCanvasMode3(void *action);
 void Sound_PlayFar(s32 cue);
@@ -103,12 +107,12 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
+  s32 i;
   s32 k;
   s32 total;
   struct MotionObject *source;
   s32 *camera;
-  s32 palette;
-  s32 i;
+  u8 *palette;
   s32 height;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -130,24 +134,24 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
                              work->sheet + SMOKE_SHEET, 1, 1);
   if (mode == 0)
-    palette = (s32)&ResourceId_BluePalette;
+    palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
   else if (mode == 1)
-    palette = (s32)&ResourceId_SpiderWebSheet;
+    palette = Resource_GetTableEntry((s32)&ResourceId_SpiderWebSheet);
   else if (mode == 2)
-    palette = (s32)&ResourceId_LimePalette;
+    palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
   else if (mode == 8)
-    palette = (s32)&ResourceId_LimePalette;
+    palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
   else if (mode == 3)
-    palette = (s32)&ResourceId_GreenPalette;
+    palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
   else if (mode == 4 || mode == 7)
-    palette = (s32)&ResourceId_GoldShellSheet;
+    palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
   else if (mode == 6)
-    palette = (s32)&ResourceId_MarsDjinnSheet;
+    palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
   else if (mode == 9)
-    palette = (s32)&ResourceId_PinkBurstSheet;
+    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   else
-    palette = (s32)&ResourceId_GreenPalette;
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
+    palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 
   // The shots leave the caster at the mode's height, each aimed at its
   // target with a little spread in depth.
@@ -198,6 +202,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
 
   for (frame = 0; frame != total; frame++) {
     struct EffectStep *burst;
+    struct EffectStep *piece;
 
     Render_ResetTransformState();
     Transform_SetLookAt(camera, camera + 3);
@@ -226,11 +231,11 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
             if (step > 4)
               draw[Data_08197880[mode * 4 + RECORD_SHOT_BLITTER]](
                   canvas, work->sheet + step * 768, position.x - 16,
-                  position.y - 20, 32, 24);
+                  position.y - 12, 32, 24);
             else
               draw[Data_08197880[mode * 4 + RECORD_SHOT_BLITTER]](
                   canvas, work->sheet + step * 768, position.x - 12,
-                  position.y - 24, 24, 32);
+                  position.y - 16, 24, 32);
             if (shot->variant == 0)
               BattleEffectKernels_IntegrateVector3(shot, 63, -0x8000);
             if (shot->y < 0) {
@@ -244,20 +249,20 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
               else
                 count = 16;
               for (n = 0; n != count; n++) {
-                burst = &BURSTS[(k * 4 + i) * 8 + n];
-                burst->x = shot->x;
-                burst->y = shot->y;
-                burst->z = shot->z;
+                piece = &BURSTS[(k * 4 + i) * 8 + n];
+                piece->x = shot->x;
+                piece->y = shot->y;
+                piece->z = shot->z;
                 if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0) {
-                  burst->velocityX = ((Random16() & 63) - 32) << 11;
-                  burst->velocityY = 0;
-                  burst->velocityZ = ((Random16() & 63) - 32) << 11;
+                  piece->velocityX = ((Random16() & 63) - 32) << 11;
+                  piece->velocityY = 0;
+                  piece->velocityZ = ((Random16() & 63) - 32) << 11;
                 } else {
-                  burst->velocityX = ((Random16() & 63) - 32) << 13;
-                  burst->velocityY = ((Random16() & 31) + 32) << 12;
-                  burst->velocityZ = ((Random16() & 63) - 32) << 13;
+                  piece->velocityX = ((Random16() & 63) - 32) << 13;
+                  piece->velocityY = ((Random16() & 31) + 32) << 12;
+                  piece->velocityZ = ((Random16() & 63) - 32) << 13;
                 }
-                burst->variant = 0;
+                piece->variant = 0;
               }
             }
           }
@@ -281,12 +286,11 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
           if (i & 1)
             picture += 9;
           flip = effect->side;
-          if (burst->velocityX > 0)
-            flip ^= 1;
-          draw[flip](canvas, work->sheet + Data_081978cc[picture] + SHARD_SHEET,
-                     position.x - Data_081978a8[picture] / 2,
-                     position.y - Data_081978ba[picture] / 2,
-                     Data_081978a8[picture], Data_081978ba[picture]);
+          draw[burst->velocityX > 0 ? flip ^ 1 : flip](
+              canvas, work->sheet + Data_081978cc[picture] + SHARD_SHEET,
+              position.x - Data_081978a8[picture] / 2,
+              position.y - Data_081978ba[picture] / 2, Data_081978a8[picture],
+              Data_081978ba[picture]);
         }
         if (Data_08197880[mode * 4 + RECORD_SHARDS] == 0)
           BattleEffectKernels_IntegrateVector3(burst, 62, 0x800);

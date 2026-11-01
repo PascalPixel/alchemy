@@ -1,5 +1,15 @@
-// Draft of Func_08173aac, decompiled from the listing: differ 3362 of 4138
-// (draft 4196), the same 356 calls and control flow; allocation differs.
+// Draft, differ 2248 of 4138, skeleton gap 332 (tla-en, 2026-11-01)
+// Control flow and instructions now agree except as below; most of the gap is
+// sched2 order and the registers behind it. Allocation depends on frame having
+// at least 256 refs (floor_log2 steps up and it beats work for r11): keep that.
+// i (r8) is the shared counter, model r10; a, x and y are multi-set across
+// modes because a single-set frame << 9 or frame * 56 becomes a giv of frame.
+// Left: the listing's spill slots keep an unused word at sp+40, between canvas
+// and draw, which no tried pseudo reproduces; here mode 5's &pos spills to sp+8
+// instead (the listing keeps it in r5), so slots below canvas are 4 bytes off.
+// Modes 11 and 14 hoist 0x8000 out of their loop, the listing does not. After
+// a split constant the listing's pool load for the Iwram entry comes first in
+// blocks ending in a jump; a void entry type did not change that.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -115,6 +125,26 @@ extern const u8 gData_08199268[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 
+extern char ResourceId_BlastSheet;
+extern char ResourceId_Data0B4;
+extern char ResourceId_Data0C1;
+extern char ResourceId_Data0C2;
+extern char ResourceId_Data0C9;
+extern char ResourceId_Data0D4;
+extern char ResourceId_Data0D6;
+extern char ResourceId_Data0D7;
+extern char ResourceId_Data0D8;
+extern char ResourceId_Data0F4;
+extern char ResourceId_Data149;
+extern char ResourceId_Data151;
+extern char ResourceId_Data153;
+extern char ResourceId_Data156;
+extern char ResourceId_Data157;
+extern char ResourceId_LightningBoltSheet;
+extern char ResourceId_MercuryDjinnSmallSheet;
+extern char ResourceId_OrangePaletteB;
+extern char ResourceId_ParticleSpritesA;
+extern char ResourceId_SmokeSheet;
 extern char ResourceId_Data150;
 extern char ResourceId_Data152;
 extern char ResourceId_Data154;
@@ -148,65 +178,73 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  DrawRectangle draw;
+  s32 frames;
   u8 *sprites = Ram_HeapSlots->unk64[0];
   s32 *camera = Ram_HeapSlots->cameraWork;
-  DrawRectangle draw;
   struct RenderModel *model;
   void *verts;
   struct ModelTexture texture;
   s32 screen[3];
   s32 other[3];
-  s32 frames;
   s32 frame;
   s32 i;
-  s32 j;
-  s32 k;
 
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   if (mode == 0) {
     Func_0815585c(effect, (effect->side ^ 1) << 4 | 35, screen, other);
-    Resource_LoadAndDecompress(0x153, FIGURE(work), 1, 1);
-    Resource_LoadAndDecompress(0xd8, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data153, FIGURE(work), 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0D8, work->sheet, 0, 0);
     REG_BG2CNT = 0x785;
     frames = 84;
   } else if (mode == 1) {
     Func_0815585c(effect, (effect->side ^ 1) << 4 | 33, screen, other);
-    Resource_LoadAndDecompress(0xd4, work->sheet, 1, 0);
-    Resource_LoadAndDecompress(0x155, FIGURE(work), 1, 1);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x148), 128);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0D4, work->sheet, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, FIGURE(work), 1, 1);
+    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     frames = 48;
   } else if (mode == 4) {
+    s32 j;
+    s32 k;
+
     Func_0815585c(effect, (effect->side ^ 1) << 4 | 0x120, screen, other);
-    Resource_LoadAndDecompress(0x157, FIGURE(work), 1, 0);
-    Resource_LoadAndDecompress(0x156, work->sheet + 0x1000, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data157, FIGURE(work), 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data156, work->sheet + 0x1000, 1, 0);
     Iwram_ClearWords(work->sheet, 0x1000);
-    for (i = 0; i != 40; i++)
+    for (k = 0; k != 40; k++)
       for (j = 0; j != 40; j++)
-        work->sheet[0x30c + i * 64 + j] = work->sheet[0x1000 + i * 40 + j];
+        work->sheet[0x30c + k * 64 + j] = work->sheet[0x1000 + k * 40 + j];
     frames = 42;
   } else if (mode == 6) {
     Func_0815585c(effect, (effect->side ^ 1) << 4 | 131, screen, other);
-    Resource_LoadAndDecompress(0x153, FIGURE(work), 1, 1);
-    Resource_LoadAndDecompress(0xd7, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data153, FIGURE(work), 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
     frames = 80;
     Sound_PlayFar(84);
   } else if (mode == 11) {
-    Resource_LoadAndDecompress(0xd7, work->sheet, 0, 0);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x151), 128);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
+    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_Data151), 128);
     frames = 64;
   } else if (mode == 14) {
-    Resource_LoadAndDecompress(0xd7, work->sheet, 0, 0);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x155), 128);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
+    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet), 128);
     work->fadeFrames = 24;
     work->fadeStep = 0;
     frames = 64;
   } else if (mode == 13) {
-    Resource_LoadAndDecompress(0xf4, work->sheet, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0F4, work->sheet, 1, 1);
     frames = 40;
-  } else if (mode == 12 || mode == 15) {
-    Resource_LoadAndDecompress(0xc2, gMapCellBuffer, 0, 0);
-    Resource_LoadAndDecompress(0xd6, work->sheet + 0x4000, 1, 1);
+  } else if (mode == 12) {
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapCellBuffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0D6, work->sheet + 0x4000, 1, 1);
+    Func_0816ae40(work->sheet + 0x4000, work->sheet, 64, 64);
+    work->fadeFrames = 24;
+    work->fadeStep = 0;
+    frames = 48;
+  } else if (mode == 15) {
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapCellBuffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0D6, work->sheet + 0x4000, 1, 1);
     Func_0816ae40(work->sheet + 0x4000, work->sheet, 64, 64);
     work->fadeFrames = 24;
     work->fadeStep = 0;
@@ -214,28 +252,31 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
   } else if (mode == 5) {
     Func_0815585c(effect, effect->side << 4 | 226, screen, other);
     REG_BG2CNT = 0x785;
-    Resource_LoadAndDecompress(0x151, FIGURE(work), 1, 0);
-    Resource_LoadAndDecompress(0xc1, work->sheet, 0, 0);
-    Resource_LoadAndDecompress(0xc9, work->sheet + 0x4000, 0, 0);
-    Resource_LoadAndDecompress(0xc2, gMapCellBuffer, 0, 0);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x148), 128);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data151, FIGURE(work), 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x4000, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapCellBuffer, 0, 0);
+    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     frames = 82;
   } else if (mode == 10) {
-    Resource_LoadAndDecompress(0x188, gMapCellBuffer, 1, 1);
+    s32 j;
+    s32 k;
+
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, gMapCellBuffer, 1, 1);
     Iwram_ClearWords(work->sheet, 0x4000);
-    for (k = 0; k != 4; k++)
-      for (i = 0; i != 120; i++)
+    for (i = 0; i != 4; i++)
+      for (k = 0; k != 120; k++)
         for (j = 0; j != 24; j++)
-          work->sheet[4 + k * 0x1000 + i * 32 + j] =
-              gMapCellBuffer[(k * 45 << 6) + i * 24 + j];
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x149), 128);
+          work->sheet[4 + i * 0x1000 + k * 32 + j] =
+              gMapCellBuffer[(i * 45 << 6) + k * 24 + j];
+    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_Data149), 128);
     frames = 60;
   } else if (mode == 7) {
-    Resource_LoadAndDecompress(0xb4, work->sheet, 0, 0);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x155), 128);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet, 0, 0);
+    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet), 128);
     frames = 76;
   } else if (mode == 8) {
-    Resource_LoadAndDecompress(0xd6, work->sheet + 0x4000, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0D6, work->sheet + 0x4000, 1, 1);
     Func_0816ae40(work->sheet + 0x4000, work->sheet, 64, 64);
     REG_BG2CNT = 0x785;
     frames = 16;
@@ -243,17 +284,17 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     u8 *p;
 
     REG_BG2CNT = 0x785;
-    Resource_LoadAndDecompress(0xc2, work->sheet + 0x3080, 0, 0);
-    Resource_LoadAndDecompress(0x161, work->sheet, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x3080, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 0);
     for (i = 0, p = work->sheet; i != 0x1b00; i++, p++) {
       *p <<= 1;
       if (*p > 63)
         *p = 63;
     }
     if (effect->variant == 2)
-      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x148), 128);
+      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
     else
-      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x184), 128);
+      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
     BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
     frames = 41;
   } else {
@@ -265,11 +306,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       work->fadeStep = 0;
       frames = 70;
     }
-    Resource_LoadAndDecompress(0xb4, work->sheet, 0, 0);
-    Resource_LoadAndDecompress(0x151, FIGURE(work), 1, 1);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x148), 128);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data151, FIGURE(work), 1, 1);
+    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   }
-  Resource_LoadAndDecompress(0x134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   work->transferMode = 2;
   work->transferValue = 50;
   if (mode == 0 || mode == 6)
@@ -294,6 +335,10 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
   draw = Ram_HeapSlots->unk64[1];
 
   for (frame = 0; frame != frames; frame++) {
+    s32 a;
+    s32 x;
+    s32 y;
+
     // The canvas layer.
     if (mode == 0) {
       s32 *lines = (s32 *)(work->sheet + 0x6980);
@@ -306,12 +351,12 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != 160; i++)
         *lines++ = (0x60000 - Trig_Sin((frame << 11) + i * 0x800) * 6) >> 10;
     } else if (mode == 1 && frame > 31) {
-      u16 *pal = (u16 *)(BG_PLTT + 2);
+      u16 *pal = (u16 *)(BG_PLTT + 1);
 
-      for (i = 0; i != 63; i++) {
-        s32 r = pal[i] & 31;
-        s32 g = pal[i] >> 5 & 31;
-        s32 b = pal[i] >> 10 & 31;
+      for (i = 0; i != 63; i++, pal++) {
+        s32 r = *pal & 31;
+        s32 g = *pal >> 5 & 31;
+        s32 b = *pal >> 10 & 31;
 
         if (frame > 40) {
           r += 4;
@@ -328,14 +373,14 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           g = 31;
         if (b > 31)
           b = 31;
-        pal[i] = b << 10 | g << 5 | r;
+        *pal = b << 10 | g << 5 | r;
       }
       Iwram_FillWords(canvas, 0x4000, 0x01010101);
     }
 
     if (mode == 3) {
-      struct EffectPosition from;
       struct EffectPosition to;
+      struct EffectPosition from;
 
       EffectPosition_ProjectScaledBattler(effect->actor, &from);
       EffectPosition_ProjectScaledBattler(effect->actors[0], &to);
@@ -362,7 +407,6 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         if (frame == 38) {
           for (i = 0; i != 63; i++) {
             struct EffectStep *p = &work->particles[i];
-            s32 a;
             s32 s;
 
             p->x = to.x << 16;
@@ -392,10 +436,10 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     } else if (mode == 6) {
-      s32 a = frame << 11;
-      s32 x = (Trig_Sin(a) * 20 >> 16) + screen[0] / 2;
-      s32 y = (Trig_Cos(a) * 4 >> 16) + screen[1];
+      s32 b = frame << 11;
 
+      x = (Trig_Sin(b) * 20 >> 16) + screen[0] / 2;
+      y = (Trig_Cos(b) * 4 >> 16) + screen[1];
       x -= 10;
       y -= 24;
       if (frame > 44)
@@ -404,11 +448,10 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       Func_081496c8(frame, 0xaaab, 0x5555, 0);
     } else if (mode == 2 || mode == 7) {
       if (mode == 2) {
-        s32 x = screen[0] / 2 - 10;
-        s32 y = screen[1] - 20;
         s32 r = frame;
-        s32 a;
 
+        x = screen[0] / 2 - 10;
+        y = screen[1] - 20;
         if (r > 12)
           r = 12;
         a = frame << 9;
@@ -440,7 +483,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
 
           if ((u32)p->variant <= 31) {
             s32 n = p->variant / 8 + 2;
-            s32 x = p->velocityZ * Trig_Sin(p->z) / 0x20000 + target.x / 2;
+            s32 x = (p->velocityZ * Trig_Sin(p->z) / 2 >> 16) + target.x / 2;
             s32 y = (p->velocityZ * Trig_Cos(p->z) >> 16) + target.y;
 
             p->z += 512;
@@ -489,15 +532,19 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       Render_ResetTransformState();
       Transform_SetLookAt(camera, camera + 3);
       EffectPosition_ProjectPoint(&ball->velocityX, &pos);
-      pos.x >>= 1;
-      ball->x = pos.x;
-      ball->y = pos.y;
-      draw(canvas, FIGURE(work), pos.x - 10, pos.y - 20, 20, 40);
+      x = pos.x >> 1;
+      pos.x = x;
+      ball->x = x;
+      y = pos.y;
+      ball->y = y;
+      draw(canvas, FIGURE(work), x - 10, y - 20, 20, 40);
       if (frame == 0)
         Sound_PlayFar(140);
       if (frame == 55) {
-        work->particles[61].x = pos.x;
-        work->particles[61].y = pos.y;
+        struct EffectStep *flash = &work->particles[61];
+
+        flash->x = pos.x;
+        flash->y = pos.y;
         Func_081180e8(145);
         Func_08118088(effect->actors[0], 4);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 24);
@@ -505,10 +552,10 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       }
       Func_08158ce0(8, 8);
     } else if (mode == 0) {
-      s32 a = frame << 11;
-      s32 x = (Trig_Sin(a) * 20 >> 16) + screen[0] / 2;
-      s32 y = (Trig_Cos(a) * 4 >> 16) + screen[1];
+      s32 b = frame << 11;
 
+      x = (Trig_Sin(b) * 20 >> 16) + screen[0] / 2;
+      y = (Trig_Cos(b) * 4 >> 16) + screen[1];
       x -= 10;
       y -= 24;
       if (frame > 48)
@@ -573,6 +620,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         p->variant++;
       }
     } else if (mode == 6) {
+      s32 k;
+
       texture.logWidth = 5;
       texture.logHeight = 5;
       model->kind = 6;
@@ -599,10 +648,10 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           Func_080150e4((frame << 8) + 0xc000);
           SceneTransform_ApplyPitch((frame << 6) - 0x4770);
           spin = frame * 356;
-          for (j = 0; j != 12; j++) {
-            texture.pixels = work->sheet + (j % 3 << 10);
+          for (i = 0; i != 12; i++) {
+            texture.pixels = work->sheet + (i % 3 << 10);
             Transform_Push();
-            Func_080150e4(spin + j * 5461);
+            Func_080150e4(spin + i * 5461);
             Func_08015160(0, 0x740000, 0);
             Func_080151e4(half, half, half);
             Render_TransformVertices(gData_08199210, verts, 4);
@@ -619,8 +668,6 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       model->kind = 6;
       texture.pixels = work->sheet;
       {
-        s32 yaw = frame << 9;
-        s32 scale = frame * 2596 >> 1;
         struct EffectPosition pos;
 
         for (i = 0; i != effect->count; i++) {
@@ -628,8 +675,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           Render_ResetTransformState();
           Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
           SceneTransform_ApplyPitch(0x4000);
-          SceneTransform_ApplyYaw(yaw - 0x1000);
-          Func_080151e4(scale, scale, scale);
+          SceneTransform_ApplyYaw((frame << 9) - 0x1000);
+          Func_080151e4(frame * 2596 >> 1, frame * 2596 >> 1, frame * 2596 >> 1);
           Render_TransformVertices(gData_08199210, verts, 4);
           Render_DrawModelList(model);
         }
@@ -638,7 +685,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       struct EffectPosition pos;
 
       if (frame <= 47) {
-        struct EffectStep *ball = &work->particles[63];
+        struct EffectStep *ball;
         s32 twist;
 
         model->shade = -16;
@@ -660,6 +707,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             p->variant = -i * 2;
           }
         }
+        ball = &work->particles[63];
         twist = frame * 2;
         for (i = 0; i != 8; i++) {
           struct EffectStep *p = &work->particles[i];
@@ -726,10 +774,10 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         model->kind = 7;
         texture.pixels = work->sheet;
         EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
-        scale = 0x10000 - t * 4592;
-        for (j = 0; j != 2; j++, scale += 0x4000) {
+        scale = t * -4592 + 0x10000;
+        for (i = 0; i != 2; i++, scale += 0x4000) {
           if (scale > 0) {
-            s32 shade = -(j << 4);
+            s32 shade = -(i << 4);
 
             if (shade > 0)
               shade = 0;
@@ -749,6 +797,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Func_0814cd48(effect->actors[0], 7, -1, 0, 12);
     } else if (mode == 9) {
       struct EffectPosition from;
+      struct EffectStep *p;
 
       EffectPosition_ProjectBattler(effect->actor, &from);
       if (frame == 0) {
@@ -781,9 +830,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame <= 9) {
-        struct EffectStep *p = &work->particles[frame * 2];
+        s32 n = frame * 2;
         s32 v;
 
+        p = &work->particles[n];
+        i = 0;
         p->x = from.x / 2 << 16;
         p->y = (from.y + 8) << 16;
         v = ((Random16() & 255) + 256) << 8;
@@ -791,10 +842,10 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         if (effect->side == 1)
           p->velocityX = -v;
         p->velocityY = -((Random16() & 255) + 256) << 4;
-        p->variant = 0;
+        p->variant = i;
       }
       for (i = 0; i != 32; i++) {
-        struct EffectStep *p = &work->particles[i];
+        p = &work->particles[i];
 
         if ((u32)p->variant <= 23) {
           draw(canvas, work->sheet + p->variant / 4 * 1152, HI(p->x) - 12,
@@ -994,6 +1045,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         }
         for (i = 0, q = gData_02014000; i != 64; i++, q++) {
           if (q->variant >= 0) {
+            s32 j;
+
             for (j = 0; j != 4; j++) {
               s32 n = q->variant / 8 + 1;
 
@@ -1022,7 +1075,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         Func_08015160((pos.x - 136) << 16, (pos.y - 48) << 16, 0);
       else
         Func_08015160((pos.x - 108) << 16, (pos.y - 56) << 16, 0);
-      for (j = 0; j != 4; j++) {
+      for (i = 0; i != 4; i++) {
         s32 scale;
 
         Transform_Push();
@@ -1030,7 +1083,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         texture.logWidth = 5;
         texture.logHeight = 7;
         if (frame > 23) {
-          s32 d = frame * 16 - j * 2 - 352;
+          s32 d = frame * 16 - i * 2 - 352;
           s32 angle;
 
           if (d < 0)
@@ -1042,15 +1095,15 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           else
             Func_08015160(-(d * 3 << 13), d * 7 << 11, 0);
           angle = d * 48152 / 80 + 0x6000;
-          if (effect->side != 0)
+          if (effect->side == 0)
             angle = -angle;
           Func_080150e4(angle);
         } else {
-          if (j != 0)
+          if (i != 0)
             continue;
           Func_080150e4(effect->side == 0 ? -0x6000 : 0x6000);
         }
-        model->shade = -j << 3;
+        model->shade = -i << 3;
         if (frame <= 23)
           scale = frame * 2730;
         else if (frame > 31)
@@ -1078,13 +1131,13 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       texture.pixels = work->sheet;
       EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       if (frame <= 15) {
-        for (j = 0; j != 2; j++) {
+        for (i = 0; i != 2; i++) {
           s32 scale = Trig_Sin(frame << 11) * 5;
 
           if (scale > 0) {
             model->shade = 0;
             Render_ResetTransformState();
-            Func_08015160((pos.x / 2 + j * 16 - 72) << 16, (pos.y - 64) << 16,
+            Func_08015160((pos.x / 2 + i * 16 - 72) << 16, (pos.y - 64) << 16,
                           0);
             Func_080151e4(scale / 2, scale, scale / 2);
             Func_080150e4(0x2000);
@@ -1104,8 +1157,6 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     } else if (mode == 13) {
       struct EffectPosition pos;
       s32 shade;
-      s32 spin;
-      s32 wobble;
 
       if (frame == 0)
         Sound_PlayFar(104);
@@ -1125,21 +1176,20 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         work->shakeFrames = 8;
         Func_081180e8(134);
       }
-      spin = frame << 9;
-      wobble = frame;
-      for (j = 0; j != 8; j++, spin += 0x2000, wobble += 5) {
+      for (i = 0; i != 8; i++) {
         s32 scale = 0x20000;
+        s32 start = i * 2 + 16;
 
-        if (frame >= j * 2 + 16)
-          scale = 0x20000 - ((frame - (j * 2 + 16)) << 13);
+        if (frame >= start)
+          scale = 0x20000 - ((frame - start) << 13);
         if (scale > 0x8000) {
-          model->scrollU = (wobble & 7) << 4;
+          model->scrollU = ((frame + i * 5) & 7) << 4;
           Render_ResetTransformState();
           Func_08015160((pos.x / 2 - 60) << 16, 0x80000, 0);
           Func_080151e4(scale >> 1, scale, 0x10000);
-          SceneTransform_ApplyPitch((j << 13) + 4000);
+          SceneTransform_ApplyPitch((i << 13) + 4000);
           SceneTransform_ApplyYaw(frame << 9);
-          Func_080150e4(spin);
+          Func_080150e4((frame + i * 16) << 9);
           Func_080151e4(0x10000, 0x8000, 0x10000);
           Render_TransformVertices(Data_08198cac, verts, 32);
           Render_DrawModelList(model);
@@ -1147,6 +1197,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       }
     } else if (mode == 12) {
       struct EffectPosition pos;
+      s32 j;
 
       texture.logWidth = 7;
       texture.logHeight = 7;
@@ -1184,7 +1235,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           p->velocityX = -p->x / 48;
           p->y = Random16();
         }
-        Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x184), 128);
+        Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
       }
       if (frame <= 15) {
         for (i = 0; i != 64; i++) {
@@ -1199,13 +1250,15 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           }
         }
       }
-      for (j = 0; j != 3; j++) {
-        if (frame > 7 && frame <= 15)
-          Func_0815f0a0((s32)&ResourceId_Data154);
-        else if (frame > 15 && frame <= 23)
-          Func_0815f0a0((s32)&ResourceId_Data150);
-        else if (frame > 23)
-          Func_0815f0a0((s32)&ResourceId_Data152);
+      for (i = 0; i != 3; i++) {
+        if (frame > 7) {
+          if (frame <= 15)
+            Func_0815f0a0((s32)&ResourceId_Data154);
+          else if (frame <= 23)
+            Func_0815f0a0((s32)&ResourceId_Data150);
+          else
+            Func_0815f0a0((s32)&ResourceId_Data152);
+        }
       }
       if (frame == 16) {
         Sound_PlayFar(212);
@@ -1222,8 +1275,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       texture.pixels = gMapCellBuffer;
       model->kind = 6;
       EffectPosition_ProjectScaledBattler(effect->actor, &pos);
-      for (j = 0; j != 2; j++) {
-        s32 t = frame - j * 8;
+      for (i = 0; i != 2; i++) {
+        s32 t = frame - i * 8;
 
         Render_ResetTransformState();
         Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
@@ -1235,7 +1288,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             shade = t * 8 - 64;
           model->shade = shade;
           Func_080151e4(scale / 2, scale, scale / 2);
-          Func_080150e4((j << 14) + 0x2000);
+          Func_080150e4((i << 14) + 0x2000);
           SceneTransform_ApplyPitch(-0x1000);
           Render_TransformVertices(gData_08199210, verts, 4);
           Render_DrawModelList(model);
@@ -1272,17 +1325,17 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       if (mode == 2 || mode == 7) {
         if (frame <= 31)
           scale = frame * 1500;
-        else if (frame <= 59)
-          scale = 48000;
+        else if (frame > 59)
+          scale = 228000 - frame * 3000;
         else
-          scale = 228000 - frame * 2999;
+          scale = 48000;
       } else {
         if (frame <= 31)
           scale = frame * 1500;
-        else if (frame <= 39)
-          scale = 48000;
+        else if (frame > 39)
+          scale = 168000 - frame * 3000;
         else
-          scale = 168000 - frame * 2999;
+          scale = 48000;
       }
       if (scale > 0) {
         struct EffectPosition pos;

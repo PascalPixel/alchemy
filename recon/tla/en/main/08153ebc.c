@@ -18,16 +18,27 @@
 // BattleEffect_LimePalette, 0x195 BattleEffect_StagedParticlePath and 0x178
 // BattleEffect_EmberStreakSheet.
 
-// Draft: differ 966 of 1115 (draft 1147).
+// Draft, differ 38 of 1115, skeleton gap 17 (tla-en, 2026-11-01)
 
-// Left: allocation from the prologue on. The native keeps work in r9 for
-// the whole function and spills the path pointer and the piece counter;
-// here work is spilled (sp+52) and the counters take the high registers,
-// which adds about 32 instructions of reloads. The giant's grid, the
-// flashes and both slash loops follow the listing's blocks in order.
+// Left: instruction order only. Every register and stack slot agrees (work
+// in r9, column in r4 saved around the call, frame 128); the 34 differing
+// lines are adjacent pairs in sched2 ties: sub sp before the movs of 0x3000000
+// in the prologue, the ldr of IwramCopyWords before the second half of 512,
+// the stores of a zero (i, frame, pathX, pathY, pathX * 65536) a slot or two
+// earlier than here, and the second ldr of the draw pair after its store.
+// Block 0 runs through the calls, so these priorities all come from one chain.
 
-// Tried (2026-10-15):
-// - greedy declaration-order sweep, two passes: 964.
+// What fixed the rest, keep these forms:
+// - x is `* 65536`, not `<< 16`, and the row 3 x is computed in full rather than
+// `+= 32 << 16`: otherwise loop.c makes it a giv, which costs a register and
+// spills work.
+// - the tiles are `tiles + i * 0x400`, so the step's constant is loop.c's own;
+// `tiles += 0x400` hoists it. tiles is set at the top: that keeps it off r5.
+// - scrollX stays s32: u16 reads it with ldrsh.
+
+// Tried without gain: the six statements of the prologue in every order (38 at
+// best), draw[1] before draw[0] or through a pointer, y as `* 65536` or
+// reordered, the giant's loop as a do-while.
 
 #include "types.h"
 #include "battle_display.h"
@@ -70,7 +81,13 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // S
 void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
 void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
-void Render_ApplyProjectedPlacementFar(void *object, s32 *position,
+
+struct SpritePlacement {
+  s32 x, height, y, groundHeight;
+};
+
+void Render_ApplyProjectedPlacementFar(void *object,
+                                       struct SpritePlacement *position,
                                        const s32 *scale, s32 mode);
 
 // A sprite object as Func_0815b290 returns it.
@@ -142,7 +159,7 @@ extern u8 gData_0819746d[];  // gBattleEffect_PuffArcCellHeights
 void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   s32 point[3];
   struct EffectPosition screen;
-  s32 position[4];
+  struct SpritePlacement position;
   struct EffectPosition target;
   DrawRectangle draw[2];
   struct BattlePresentationTransition *presentation;
@@ -159,13 +176,14 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   s32 row;
   s32 column;
   u8 *tiles;
+  u8 *picture;
 
   presentation = Ram_HeapSlots->transitionWork;
   tiles = Ram_MapCellBuffer;
-  scrollX = gBgScroll[1].x;
   canvas = Ram_HeapSlots->battleFxWork[1];
-  sheet = Ram_HeapSlots->unk64[0];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  sheet = Ram_HeapSlots->unk64[0];
+  scrollX = gBgScroll[1].x;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
   Func_0813ba50();
@@ -178,26 +196,25 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 
   // The giant: eleven sprite objects with their tiles.
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
-  {
-    u8 *picture = Resource_GetTableEntry((s32)&ResourceId_LeafWarriorTiles);
-
-    Iwram_CopyWords(OBJ_PLTT, picture, 512);
-    Resource_DecodeType01(picture + 512, tiles);
-  }
+  picture = Resource_GetTableEntry((s32)&ResourceId_LeafWarriorTiles);
+  Iwram_CopyWords(OBJ_PLTT, picture, 512);
+  // Two steps: one `+= 512` reuses the size's constant across the call.
+  picture += 256;
+  picture += 256;
+  Resource_DecodeType01(picture, tiles);
   for (i = 0; i != GIANT_PIECES; i++) {
     struct SpriteObject *piece = Func_0815b290(32, 32, 0x80002000, 0);
 
     piece->priority = 1;
     work->objects[i] = piece;
-    Iwram_CopyWords(OBJ_VRAM + gResourceTableEntries[piece->slot].offset, tiles,
-                    0x400);
-    tiles += 0x400;
+    Iwram_CopyWords(OBJ_VRAM + gResourceTableEntries[piece->slot].offset,
+                    tiles + i * 0x400, 0x400);
   }
 
   // The slashes, the sky and the giant's path.
   Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
-  Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
+  picture = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
+  Iwram_CopyWords((void *)BG_PLTT, picture, 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
@@ -255,17 +272,17 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
         pathY += path[1];
         path += 2;
       }
-      position[3] = 0;
-      position[1] = 0xff0000;
+      position.groundHeight = 0;
+      position.height = 0xff0000;
       for (row = 0; row != 4; row++) {
         for (column = 0; column != 3; column++) {
           if (row != 3 || column != 2) {
-            position[0] = (pathX + 80 + column * 32) << 16;
-            position[2] = (64 - pathY + row * 32) << 16;
+            position.x = (pathX + 80 + column * 32) * 65536;
+            position.y = (64 - pathY + row * 32) << 16;
             if (row == 3)
-              position[0] += 32 << 16;
+              position.x = (pathX + 80 + column * 32 + 32) * 65536;
             Render_ApplyProjectedPlacementFar(work->objects[row * 3 + column],
-                                              position, Data_081983cc, 0);
+                                              &position, Data_081983cc, 0);
           }
         }
       }

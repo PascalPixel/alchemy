@@ -1,6 +1,7 @@
-// First draft, differ 472 of 549: Func_0814b9e8, the body of three effect
-// kinds through BattleEffect_RunBalm (mode 0), BattleEffect_RunTinder (mode 1) and
-// BattleEffect_RunPhoenix (mode 2) in games/tla/src/battle_effect/render_mode_entry.c.
+// Draft, differ 183 of 549, skeleton gap 31 (tla-en, 2026-11-01)
+// Func_0814b9e8, the body of three effect kinds through BattleEffect_RunBalm
+// (mode 0), BattleEffect_RunTinder (mode 1) and BattleEffect_RunPhoenix
+// (mode 2) in games/tla/src/battle_effect/render_mode_entry.c.
 
 // New in The Lost Age: no ☀️ function has this body (shape twin
 // BattleEffect_RunPlanetDiver 0.471, structure twin
@@ -11,20 +12,26 @@
 // (Render_AllocateModelList, Render_TransformVertices, Render_DrawModelList), whose job and texture
 // layouts follow project_vertices.c.
 
-// The calls, constants and control flow follow the listing; the frame is
-// 4 bytes short (84 of 88: one spill slot fewer), which shifts every stack
-// offset, and the quads' starting heights are a giv the native
-// strength-reduces into a register (0xffe00000 stepped by 0xfffc0000)
-// where agscc shifts each time (555 of 549 instructions).
+// What is left: the frame is 80 of 88. The Djinn's sheet pointer lives in r7
+// here; the listing keeps it in r4, saved around the first draw at sp+8 (a
+// caller-save slot), and reloads draw into r7. Global allocation only does
+// that when r7 is taken at that point, and no pseudo in the listing explains
+// it yet; a real answer settles that 4 bytes and the spill rotation behind
+// most of the remaining sched2 order. The other 4 bytes are sp+24, a slot
+// the listing allocates between canvas (sp+28) and draw (sp+20) and never
+// reads, so a pseudo there lost all its references to reload. The rest of
+// the gap is load order in sched2, and the stack offsets.
 
-// Tried (differ):
-// first draft from the listing                                      486
-// the rising quads' start fixed to 32 << 16 (0x200000)              484
-// greedy declaration-order scan: canvas, work, draw after the
-// arrays                                                          472
-// the quads' heights written as -0x200000 - i * 0x40000 (481 before
-// the scan), -(i << 18) - 0x200000 (480), (-32 - i * 4) << 16
-// (483), or as a running y stepped by -0x40000 (504)
+// What moved it: lineX and lineY take their +64 and -16 at the assignment
+// (reload splits x = t + 64 into a copy and an add, and sched2 moves the add
+// across the call); the two blitter calls take flags 7 and 3; the quads'
+// height is a running variable, because the shifted forms never strength
+// reduce; fade is set in two steps; each use has its own x/y variable; delay
+// is a plain counter, declared last for its slot at sp+12.
+
+// Tried without gain: a local copy of draw for the two Djinn calls (CSE
+// removes it), a named sheet pointer, i = 0 after the loop's pointer, x and y
+// in the block, about 450 random declaration orders.
 
 #include "types.h"
 #include "system.h"
@@ -119,16 +126,19 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   s32 size[3];
   struct EffectPosition pos;
   struct Texture texture;
-  void *canvas;
-  struct BattleEffectWork *work;
-  DrawRectangle draw;
-  struct RenderJob *job;
-  void *vertices;
-  struct EffectStep *quad;
-  s32 frame;
-  s32 i;
-  s32 x;
   s32 y;
+  struct BattleEffectWork *work;
+  struct EffectStep *quad;
+  s32 x;
+  s32 frame;
+  struct RenderJob *job;
+  DrawRectangle draw;
+  void *vertices;
+  void *canvas;
+  s32 i;
+  s32 height;
+  s32 fade;
+  s32 delay;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -160,12 +170,11 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
-  // Centre the canvas on the anchor; a copy blitter, or an additive one for
-  // side 1.
+  // Centre the canvas on the anchor; the blitter mirrors for side 0.
   REG_BG2PA = 0x100;
   REG_BG2X = (64 - anchor[0]) << 8;
   if (effect->side == 0)
-    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_COPY << 4 | COMPOSITE_CLIP_X |
+    BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X |
                                     COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
   else
     BattleEffect_LoadBlitter(HEAP_BLITTER,
@@ -179,6 +188,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     // The quads start above the screen (or at the target for mode 2), each
     // with its own heading, spin and size.
     if (frame == 0) {
+      height = -0x200000;
       for (i = 0; i != 32; i++) {
         quad = &work->particles[i];
         quad->x = Random16() & 0xffff;
@@ -187,11 +197,12 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
         if (mode == QUADS_RISING)
           quad->y = 32 << 16;
         else
-          quad->y = (-8 - i) << 18;
+          quad->y = height;
         quad->velocityY = ((Random16() & 0xffff) << 1) + 0x10000;
         quad->velocityX = Random16() & 0xffff;
         quad->velocityZ = Random16() & 0xffff;
         quad->variant = (Random16() & 0x3fff) + 0x2000;
+        height += -0x40000;
       }
     }
 
@@ -216,13 +227,16 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
         draw(canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
       if (frame <= 79) {
         s32 angle;
+        s32 lineX;
+        s32 lineY;
 
         Iwram_FillWords(work->sheet, 128, 0x28282828 - frame / 2 * 0x01010101);
+        i = 0;
         angle = frame << 9;
-        for (i = 0; i != 16; i++) {
-          x = (Trig_Sin(angle) * frame) >> 16;
-          y = (Trig_Cos(angle) * frame) / 8 >> 16;
-          draw(canvas, work->sheet, x + 64, y - 16, 1, 128);
+        for (; i != 16; i++) {
+          lineX = ((Trig_Sin(angle) * frame) >> 16) + 64;
+          lineY = ((Trig_Cos(angle) * frame) / 8 >> 16) - 16;
+          draw(canvas, work->sheet, lineX, lineY, 1, 128);
           angle += 0x1000;
         }
       }
@@ -235,7 +249,10 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     if (frame <= 63) {
       vertices = Heap_AllocEwram(32);
       job = Render_AllocateModelList(1);
-      job->fade = frame > 55 ? (56 - frame) * 8 : 0;
+      fade = 0;
+      if (frame > 55)
+        fade = (56 - frame) * 8;
+      job->fade = fade;
       texture.logWidth = 6;
       texture.logHeight = 6;
       texture.pixels = work->sheet + SHEET_TEXTURE;
@@ -244,11 +261,12 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
       job->faces = gData_08199340;
       job->vertices = vertices;
 
+      delay = 0;
       quad = work->particles;
-      for (i = 0; i != QUAD_COUNT; i++, quad++) {
+      for (i = 0; i != QUAD_COUNT; i++) {
         s32 scale = quad->variant;
 
-        if (frame >= i * 3) {
+        if (frame >= delay) {
           s32 across;
           s32 deep;
 
@@ -274,6 +292,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(job);
         }
+        delay += 3;
+        quad++;
       }
       Heap_Release(job);
       Heap_Release(vertices);

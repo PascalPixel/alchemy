@@ -1,14 +1,23 @@
-// Draft of BattleEffect_RunThor, Thor (scene kind 12): differ 1410 of 1676
-// (draft 1670; 2026-10-26: the twin's fullWidth barrier and the s32 returns
-// of the blitter loaders and Task_Add, as defined, 1439 to 1410), the
-// same 125 calls in the same order. Left: the stack frame is 328 bytes for 324,
-// which shifts every stack offset, and the allocation differs from the
-// prologue on (the native keeps the dimmed-copy counter in r9 and the
-// effect at [sp, #120]). The native stack frame has an unused word at sp+96, as
-// the twin's blitter pair leaves; with the pair here the stack frame is 332, so
-// this draft spills two words the native keeps in registers (this draft's slots
-// 12 to 44 hold one more variable, and r4's caller-save slot at sp+8 is used
-// 22 times in the native, 8 here).
+// Draft, differ 370 of 1676, skeleton gap 128 (tla-en, 2026-11-01)
+// BattleEffect_RunThor, Thor (scene kind 12). The stack frame (324) and its
+// slots now match the listing. Left, most first:
+// - The light fan's two draws: the listing keeps the 32 and 96 and the y in
+//   r8, r6 and r5 and rebuilds work->sheet for the second call; here CSE keeps
+//   work->sheet too, which takes r8 and pushes the others along. The same
+//   happens to 0x1fe0000 around Iwram_RatioMulQ14. A local y, y from
+//   beamHeight - 56 and a local ratio made it worse or changed nothing.
+// - The smoke loop: loop.c hoists gData_08197492 and gData_08197498 here; the
+//   listing hoists only the 3, as if a label or jump sat before those loads
+//   in the loop (a label loop is worse, 152). A one-pass macro may be the
+//   source's form; not tried, as it would be a new device.
+// - The dusk loop's k is r10 here, r9 in the listing, and the rest is
+//   scheduling of constant loads at block heads.
+// Found: inset is j, the shared r4 with its caller-save slot at sp+8; dotCount
+// is also the spawned counter (r8); the scale is (frame * 2 + frame) << 11, so
+// that frame * 2 is one giv in sp+16; pillarX and pillarY are set inside the
+// strike; blit is the twin's pair (sp+96 unused). i and k are one word split so
+// that i ranks below size * 2 in global.c (r10) and takes r9; which loops
+// belong to k was found by search, other splits give the same or worse.
 
 // Twin: The Broken Seal's BattleEffect_RunThor (effect.c), ported. The Lost Age
 // loads the light fan once, copies palette 0x184 to BG palette RAM after the
@@ -137,14 +146,14 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   void *canvas;
   u8 *sprites;
   s32 frame;
-  DrawRectangle blit;
+  DrawRectangle blit[2]; // Unused: blit[1] gives the stack frame its 4 bytes.
   s32 size;
   s32 count;
   s32 i;
+  s32 k;
   s32 j;
   s32 dotCount;
   struct EffectStep *spark;
-  s32 rings = STORM_DIMMED_DOTS;
 
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -196,7 +205,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   Func_08163c2c(0, 1);
   REG_BG2PA = 0x80;
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
-  blit = BLITTER;
+  blit[0] = BLITTER;
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x100f;
@@ -234,7 +243,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     if (gInput.repeat & 3) {
       break;
     }
-    for (j = 0; j != 2; j++) {
+    for (k = 0; k != 2; k++) {
       if ((frame & 63) <= 15) {
         Func_0815f0a0((s32)&ResourceId_BlastSheet);
       } else if ((frame & 63) <= 31) {
@@ -270,7 +279,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPitch(0x8000);
       SceneTransform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
-        SET_VECTOR(scale, frame * 0x1800 - 0xd9400, scale[0], scale[0]);
+        SET_VECTOR(scale, ((frame * 2 + frame) << 11) - 0xd9400, scale[0], scale[0]);
         size = 5;
       } else {
         SET_VECTOR(scale, 0x10000 - sinkFrame * 3 * 0x400, scale[0], scale[0]);
@@ -286,12 +295,12 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
 
     // The three lines, drawn dot by dot between pairs of points.
     if (frame <= 149) {
-      for (i = 0; i != 6; i++) {
-        SET_VECTOR(point, (Data_08196e2c[i][0] - 96) << 16, 0,
-                   (Data_08196e2c[i][1] - 96) << 16);
-        EffectPosition_ProjectPoint(point, &screen[i]);
-        screen[i].x = (screen[i].x >> 17) + 64;
-        screen[i].y = (screen[i].y >> 16) + 60;
+      for (k = 0; k != 6; k++) {
+        SET_VECTOR(point, (Data_08196e2c[k][0] - 96) << 16, 0,
+                   (Data_08196e2c[k][1] - 96) << 16);
+        EffectPosition_ProjectPoint(point, &screen[k]);
+        screen[k].x = (screen[k].x >> 17) + 64;
+        screen[k].y = (screen[k].y >> 16) + 60;
       }
       for (i = 0; i != 3; i++) {
         dotCount = count * 2 - i * 48 - 256;
@@ -301,12 +310,12 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         if (dotCount >= 0) {
           for (j = 0; j != dotCount; j++) {
             s32 x = screen[i * 2].x +
-                    Iwram_MulQ16(j * (screen[i * 2 + 1].x - screen[i * 2].x),
+                    Iwram_MulQ16((screen[i * 2 + 1].x - screen[i * 2].x) * j,
                                  0x555);
             s32 y = screen[i * 2].y +
-                    Iwram_MulQ16(j * (screen[i * 2 + 1].y - screen[i * 2].y),
+                    Iwram_MulQ16((screen[i * 2 + 1].y - screen[i * 2].y) * j,
                                  0x555);
-            blit(canvas, sprites + gData_08197410[size - 1], x - size / 2,
+            blit[0](canvas, sprites + gData_08197410[size - 1], x - size / 2,
                  y - size, size, size * 2);
           }
         }
@@ -346,7 +355,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
             canvas,
             work->sheet +
                 (level * STORM_DIMMED_DOT_BYTES + gData_08197410[dotSize - 1]) +
-                rings,
+                STORM_DIMMED_DOTS,
             screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
             dotSize * 2);
       }
@@ -356,27 +365,28 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     // The beam: rows of the ramp narrowing at its top, and the light fan
     // falling down it.
     if ((u32)(frame - 151) <= 16) {
-      s32 inset = 0;
       s32 beamHeight = (frame - 151) * 20 + 44;
+
+      j = 0;
       if (frame > 151) {
-        inset = frame - 152;
+        j = frame - 152;
       }
-      if (inset > 15) {
-        inset = 15;
+      if (j > 15) {
+        j = 15;
       }
-      for (i = 1; i != 10; i++) {
-        if (inset + i <= 15) {
-          blit(canvas, &ramp[inset + i], inset + 48 + i, 16 - i,
-               32 - inset * 2 - i * 2, 1);
+      for (k = 1; k != 10; k++) {
+        if (j + k <= 15) {
+          blit[0](canvas, &ramp[j + k], j + 48 + k, 16 - k,
+                  32 - j * 2 - k * 2, 1);
         }
       }
       for (i = 0; i != beamHeight; i++) {
         s32 fullWidth = 32;
         /* FAKEMATCH(barrier): fullWidth's 32 kept in this loop, as in The
-         * Broken Seal's twin; as plain C, 1431 of 1676 instructions differ
-         * in tla-en (here 1410). */
+         * Broken Seal's twin; as plain C, 389 of 1676 instructions differ
+         * in tla-en (here 370). */
         asm("" : "+r"(fullWidth));
-        blit(canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2, 1);
+        blit[0](canvas, ramp + j, j + 48, i + 16, fullWidth - j * 2, 1);
       }
       BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
       BLITTER_ALTERNATE(canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32,
@@ -415,10 +425,10 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     s32 pillarX;
     s32 pillarY;
 
-    formationX = 0x500000;
-    formationY = 0x400000;
     formationSpeedX = 0;
     formationSpeedY = 0;
+    formationX = 0x500000;
+    formationY = 0x400000;
     for (i = 0; i != STORM_PARTICLE_COUNT; i++) {
       STORM_PARTICLES[i].variant = 0;
     }
@@ -430,8 +440,6 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     work->transferMode = 2;
     work->transferValue = 50;
     Sound_PlayFar(145);
-    pillarX = 60;
-    pillarY = 112;
 
     for (frame = 0; frame != STORM_LIGHTNING_FRAMES; frame++) {
       s32 stormFrame;
@@ -449,16 +457,18 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       for (j = 0; j != 1; j++) {
         s32 start = j * 128 + 8;
         if (frame >= start && frame < j * 128 + 17) {
+          pillarX = 60;
+          pillarY = 112;
           if (frame >= j * 128 + 9 && frame < j * 128 + 12) {
-            blit(canvas, work->sheet, 36, 0, 48, pillarY);
+            blit[0](canvas, work->sheet, 36, 0, 48, pillarY);
           }
           if (frame >= j * 128 + 12 && frame < start + 8) {
-            blit(canvas, work->sheet + 0x1500, 36, 0, 48, 112);
+            blit[0](canvas, work->sheet + 0x1500, 36, 0, 48, 112);
           }
           if (frame == start + 2) {
-            s32 spawned = 0;
-            for (i = 0, spark = STORM_PARTICLES; i != STORM_PARTICLE_COUNT;
-                 i++, spark++) {
+            dotCount = 0;
+            for (k = 0, spark = STORM_PARTICLES; k != STORM_PARTICLE_COUNT;
+                 k++, spark++) {
               if (spark->variant == 0) {
                 s32 speed = 0x3ff;
                 s32 angle;
@@ -470,7 +480,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                 spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
                 spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
                 spark->variant = (Random16() & 7) + 32;
-                if (++spawned == 512) {
+                if (++dotCount == 512) {
                   break;
                 }
               }
@@ -480,9 +490,9 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 10) {
-        for (i = 0; i != effect->count; i++) {
-          Func_0814cd48(effect->actors[i], 7, 5, i, 8);
-          Func_08118088(effect->actors[i], 4);
+        for (k = 0; k != effect->count; k++) {
+          Func_0814cd48(effect->actors[k], 7, 5, k, 8);
+          Func_08118088(effect->actors[k], 4);
         }
       }
       // Frames 80 to 143: the violet bolts, 2 frames apart, and the violet
@@ -506,7 +516,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
               HeapSlot_Release(188);
             }
             if (frame == i * 2 + 80) {
-              s32 spawned = 0;
+              dotCount = 0;
               for (j = 0, spark = STORM_PARTICLES; j != STORM_PARTICLE_COUNT;
                    j++, spark++) {
                 if (spark->variant == 0) {
@@ -520,7 +530,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                   spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
                   spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
                   spark->variant = (Random16() & 7) + 32;
-                  if (++spawned == 16) {
+                  if (++dotCount == 16) {
                     break;
                   }
                 }
@@ -543,7 +553,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           moteY = 32 - ((Trig_Cos(angle) * (radius + 8)) >> 16);
         }
         Func_0818caa8(work->sheet + STORM_MOTE_CELLS, mirrorX, moteY, 24);
-        j = 0;
+        dotCount = 0;
         for (i = 0, spark = STORM_PARTICLES; i != STORM_PARTICLE_COUNT;
              i++, spark++) {
           if (spark->variant == 0) {
@@ -557,7 +567,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
             spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
             spark->variant = (Random16() & 7) + 16;
-            if (++j == 4) {
+            if (++dotCount == 4) {
               break;
             }
           }
@@ -568,8 +578,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       {
         DrawRectangle draw = BLITTER_ALTERNATE;
         struct EffectStep *spark;
-        for (i = 0, spark = STORM_PARTICLES; i != STORM_PARTICLE_COUNT;
-             i++, spark++) {
+        for (k = 0, spark = STORM_PARTICLES; k != STORM_PARTICLE_COUNT;
+             k++, spark++) {
           if (spark->variant > 0) {
             spark->variant--;
             BattleEffectKernels_IntegrateVector2(spark, 60, 0);

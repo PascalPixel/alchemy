@@ -1,17 +1,23 @@
-// Draft, differ 758 of 827 (tla-en): Palette_Transform, the palette fade's
-// target builder, rewritten from The Broken Seal's matched
-// TitlePaletteFade_BuildColors (games/tbs/src/menu/title_intro.c) with
-// this game's tables (Data_081a877a, Data_081a87ba and Data_081a87fa for its
-// three channel curves) and clamps. The listing has every case in The Broken
-// Seal's form, including the warm tints' +6, +4 and -6 (the earlier draft's
-// black test is not in it), except the blend tint, which writes its three
-// channels with SET_VECTOR. Measured: the earlier draft 970; The Broken
-// Seal's C as it stands 1007; the blend tint through SET_VECTOR 766; The
-// Broken Seal's two XOR devices dropped 758. Left: register allocation. The
-// native keeps source in r9, the colour index in r11 and each tint loop's 31
-// in r10 across its calls, with a 48-byte stack frame; here source takes r10 and
-// the stack frame is 44. permute (25 minutes) found nothing below 602 but
-// meaningless rewrites.
+// Draft, differ 14 of 827, skeleton gap 6 (tla-en, 2026-11-01)
+// Palette_Transform, the palette fade's target builder, from The Broken
+// Seal's matched TitlePaletteFade_BuildColors (games/tbs/src/menu/title_intro.c)
+// with this game's tables and clamps, no device. Registers and stack frame
+// agree everywhere. Left, four scheduling pairs that decide nothing else:
+// the selected-objects branch, where the listing has colorCount's 256 ahead of
+// source's 512 but reload hands them r1 and r3 only in the order destination,
+// source, colorCount (other orders swap them or move the add); the `ldr` of the
+// next table after the first store, not before it, in cases 0x10003 and
+// 0x10007 and after the second in 0x10006; and the restore of red after `mov
+// r2, r8` in 0x10004.
+// Tried on those without gain: every order of the three statements, colorCount
+// halved or added to source, const or sized tables, const source, plain
+// statements for SET_VECTOR, split increments in 0x10004.
+// What the shape depends on: red after green in 0x10006 keeps colorWork out of
+// blue's register; green and blue named in the sepia and blend sums keep blue's
+// last use after green's, so CSE leaves blue holding the sum in sepia; green
+// clamped through `green < 8` keeps sepia's second compare; tintedRed is shared
+// by the tint and blend blocks so it takes r8; the blend's scaled values are
+// local and clamped into new locals, which shift the table indexes in place.
 #include "types.h"
 #include "dma.h"
 #include "iwram_call.h"
@@ -24,13 +30,14 @@ s32 BattleEffect_ClampRgb555Channel(s32 value);
 s32 BattleEffect_ClampRgb555Component(s32 value);
 
 void Palette_Transform(u32 mode, u16 *source, u16 *destination,
-                                  s32 selectedPalettes) {
+                       s32 selectedPalettes) {
   u32 colorIndex;
   u32 colorCount = 512;
   s32 red;
   s32 blue;
   u32 colorWork;
   s32 green;
+  s32 tintedRed;
 
   if (mode == 0x8000)
     mode = *source;
@@ -66,14 +73,15 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
         red = colorWork & 31;
-        colorWork = Iwram_SignedDivide(
-            red + ((colorWork >> 5) & 31) + ((colorWork >> 10) & 31), 10);
+        green = (colorWork >> 5) & 31;
+        blue = (colorWork >> 10) & 31;
+        colorWork = Iwram_SignedDivide(red + green + blue, 10);
         red = colorWork * 4 + 5;
         blue = colorWork * 3 + 5;
-        green = blue;
+        green = colorWork * 3 + 5;
         if (red < 8)
           red = 8;
-        if (blue < 8)
+        if (green < 8)
           green = 8;
         if (blue < 8)
           blue = 8;
@@ -160,8 +168,8 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
     case 0x10006:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
-        red = colorWork & 31;
         green = (colorWork >> 5) & 31;
+        red = colorWork & 31;
         blue = (colorWork >> 10) & 31;
         red += ((green >> 3) + (blue >> 3));
         red = BattleEffect_ClampRgb555Channel(red);
@@ -216,19 +224,25 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
       green = ((colorWork << 7) & 0x1f000);
       blue = (colorWork & 0x7c00);
       colorWork = Iwram_SignedDivide(red + green + blue, 96);
-      red = colorWork * tintRed;
+      tintedRed = colorWork * tintRed;
       green = colorWork * tintGreen;
       blue = colorWork * tintBlue;
-      red = BattleEffect_ClampRgb555Component(red);
+      tintedRed = BattleEffect_ClampRgb555Component(tintedRed);
       green = BattleEffect_ClampRgb555Component(green);
       blue = BattleEffect_ClampRgb555Component(blue);
-      SET_VECTOR(destination, blue, green, red);
-      destination += 3;
+      destination[colorIndex * 3 + 0] = blue;
+      destination[colorIndex * 3 + 1] = green;
+      destination[colorIndex * 3 + 2] = tintedRed;
     }
   } else if (mode & 0x400000) {
     u32 tintRed;
     u32 tintGreen;
     u32 tintBlue;
+    s32 scaledGreen;
+    s32 scaledBlue;
+    s32 clampedRed;
+    s32 clampedGreen;
+    s32 clampedBlue;
 
     tintRed = mode & 31;
     tintGreen = (mode >> 5) & 31;
@@ -236,21 +250,25 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
       colorWork = *source++;
       red = colorWork & 31;
-      colorWork = Iwram_SignedDivide(
-          (red + ((colorWork >> 5) & 31) + ((colorWork >> 10) & 31)) << 4,
-          tintRed + tintGreen + tintBlue);
-      red = Iwram_MulQ16(((colorWork * tintRed) >> 4) << 16,
-                         (s32)(tintRed << 16) >> 4);
-      green = Iwram_MulQ16(((colorWork * tintGreen) >> 4) << 16,
-                           (s32)(tintGreen << 16) >> 4);
-      blue = Iwram_MulQ16(((colorWork * tintBlue) >> 4) << 16,
-                          (s32)(tintBlue << 16) >> 4);
-      red = BattleEffect_ClampRgb555Channel((u32)red >> 16);
-      green = BattleEffect_ClampRgb555Channel((u32)green >> 16);
-      blue = BattleEffect_ClampRgb555Channel((u32)blue >> 16);
-      SET_VECTOR(destination, Data_081a877a[blue], Data_081a877a[green],
-                 Data_081a877a[red]);
-      destination += 3;
+      green = (colorWork >> 5) & 31;
+      blue = (colorWork >> 10) & 31;
+      colorWork = Iwram_SignedDivide((red + green + blue) << 4,
+                                     tintRed + tintGreen + tintBlue);
+      tintedRed = Iwram_MulQ16(((colorWork * tintRed) >> 4) << 16,
+                               (s32)(tintRed << 16) >> 4);
+      scaledGreen = Iwram_MulQ16(((colorWork * tintGreen) >> 4) << 16,
+                                 (s32)(tintGreen << 16) >> 4);
+      scaledBlue = Iwram_MulQ16(((colorWork * tintBlue) >> 4) << 16,
+                                (s32)(tintBlue << 16) >> 4);
+      tintedRed = (u32)tintedRed >> 16;
+      clampedRed = BattleEffect_ClampRgb555Channel(tintedRed);
+      scaledGreen = (u32)scaledGreen >> 16;
+      clampedGreen = BattleEffect_ClampRgb555Channel(scaledGreen);
+      scaledBlue = (u32)scaledBlue >> 16;
+      clampedBlue = BattleEffect_ClampRgb555Channel(scaledBlue);
+      destination[colorIndex * 3 + 0] = Data_081a877a[clampedBlue];
+      destination[colorIndex * 3 + 1] = Data_081a877a[clampedGreen];
+      destination[colorIndex * 3 + 2] = Data_081a877a[clampedRed];
     }
   } else if (mode & 0x800000) {
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {

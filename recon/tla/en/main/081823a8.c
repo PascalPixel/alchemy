@@ -1,21 +1,20 @@
-// Draft (tla-en): listing 535 instructions, draft 537, common 388, differ 296.
+// Draft, differ 18 of 535, skeleton gap 8 (tla-en, 2026-11-01)
 // The body of effect kinds 465 and 466 (summon_modes_2.c's BattleEffect_RunDjinnStun
 // and BattleEffect_RunMysticCall pass modes 0 and 1). The Lost Age's rework of ☀️'s
 // BattleEffect_RunSwirlingStars (structure 0.70): the same four rotations by
 // star and the same depth-sized cels, one swarm per target.
-// Written 2026-10-15 (lane N2) from the listing and the twin.
-// Left:
-// - the native stack frame is 84 bytes, here 80: the native keeps the effect
-// argument spilled at sp+68 and gives fp to the yaw angle walker of the
-// star loop (frame * 256, stepped by frame * 32), with -frame spilled at
-// sp+24 for the other walker; here the argument takes fp, and every
-// spill slot after it moves (member, frames, camera, sparkCels).
-// - the native walks the actor offset (sp+16), the point (sp+12) and the
-// star offset (sp+8, by 0x700) per target and rebuilds start = member *
-// 8 from member; here start is a walker too.
-// - the star count, frames and flash calls follow from those slots.
-// Measured: the first draft 338; the arrival test grouped as two range
-// pairs, so both fold to one unsigned compare each as in the native: 296.
+// Registers and stack slots all match; what is left is three sched2 orderings,
+// every instruction present:
+// - the `member = 0` block: the native stores member, then reloads effect;
+//   here the reload comes first.
+// - the star loop's preheader: the native negates frame before loading the
+//   star offset and the buffer; here after.
+// - the end of the member loop: the native keeps the walker updates, then
+//   its three stores, then the reloads of effect and member in order; here
+//   the reload of effect and the load of count come earlier.
+// In each the native holds a spill-slot load behind work the draft schedules
+// after it. Operand order of the multiplies, the loop test, declaration
+// order inside the member loop and the index spelling all leave them alone.
 // Resource 0x184 (BattleEffect_BlastSheet) and the Djinn sheets 0x154, 0x150
 // and 0x152 need names in gamepak/resource_directory.s when this is
 // adopted.
@@ -89,14 +88,15 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   void *canvas = Ram_HeapSlots->battleFxWork[1];
-  u8 *sparkCels = Ram_HeapSlots->unk64[0];
-  struct EffectPosition screen;
-  DrawRectangle draw;
-  s32 *camera;
-  s32 frames;
-  s32 frame;
+  // Only draw[0] is used; the array takes an 8-byte spill slot in the frame.
+  DrawRectangle draw[2];
   s32 member;
+  u8 *sparkCels = Ram_HeapSlots->unk64[0];
+  s32 frames;
+  s32 *camera;
+  s32 frame;
   s32 i;
+  struct EffectPosition screen;
 
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
@@ -104,7 +104,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
   work->fadeStep = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_ADDITIVE, 7));
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   if (mode == 0)
     frames = effect->count * 8 + 38;
   else
@@ -119,39 +119,36 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
     // The first frame sets each target's point on it, rising, and every
     // star at its point with a random push across the floor.
     if (frame == 0) {
-      struct EffectStep *point = work->particles;
-      struct EffectStep *star;
-
-      for (i = 0; i != effect->count; i++, point++) {
+      for (i = 0; i != effect->count; i++) {
         struct MotionObject *object =
             GetBattleObjectSlotFar(effect->actors[i])->object;
-        s32 rise;
 
-        point->y = 0;
-        point->x = object->x;
-        point->z = object->z;
+        work->particles[i].x = object->x;
+        work->particles[i].y = 0;
+        work->particles[i].z = object->z;
         if (mode == 1) {
-          rise = 0x8000;
-          point->velocityX = 0;
+          work->particles[i].velocityX = 0;
+          work->particles[i].velocityY = 0x8000;
         } else {
-          point->velocityX = -object->x / 40;
-          rise = 3 << 16;
+          work->particles[i].velocityX = -object->x / 40;
+          work->particles[i].velocityY = 3 << 16;
         }
-        point->velocityY = rise;
-        point->velocityZ = 0;
+        work->particles[i].velocityZ = 0;
       }
-      star = (struct EffectStep *)Ram_MapCellBuffer;
-      for (i = 0; i != STAR_TOTAL; i++, star++) {
+      for (i = 0; i != STAR_TOTAL; i++) {
+        struct EffectStep *star = &((struct EffectStep *)Ram_MapCellBuffer)[i];
         s32 angle = Random16() & 0xffff;
-        s32 speed = Random16() & 255;
+        s32 speed = 255; // the mask starts in speed's own register
+
+        speed &= Random16();
 
         star->x = 0;
-        star->z = 0;
         star->y = ((Random16() & 31) + 20) << 16;
+        star->z = 0;
         speed += 128;
-        star->velocityX = (speed * Trig_Sin(angle)) >> 5;
+        star->velocityX = (Trig_Sin(angle) * speed) >> 5;
         star->velocityY = 0;
-        star->velocityZ = (speed * Trig_Cos(angle)) >> 5;
+        star->velocityZ = (Trig_Cos(angle) * speed) >> 5;
         star->variant = 0;
       }
       Iwram_CopyWords((void *)BG_PLTT,
@@ -172,10 +169,11 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
 
     for (member = 0; member != effect->count; member++) {
       struct EffectStep *point = &work->particles[member];
-      struct EffectStep *star;
-      s32 start = member * 8;
+      s32 start = member;
       s32 starCount;
 
+      // Set in two steps: as one giv the loop pass would turn it into a walker.
+      start *= 8;
       starCount = 16;
       if (mode != 0)
         starCount = 48;
@@ -195,10 +193,12 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
         BattleEffectKernels_IntegrateVector3(point, 64, 0);
       SceneTransform_ApplyPosition(&point->x);
 
-      star =
-          &((struct EffectStep *)Ram_MapCellBuffer)[member * STARS_PER_TARGET];
-      for (i = 0; i != starCount; i++, star++) {
-        if (frame >= start + i / 8 && star->variant == 0) {
+      for (i = 0; i != starCount; i++) {
+        struct EffectStep *star =
+            &((struct EffectStep *)
+                  Ram_MapCellBuffer)[member * STARS_PER_TARGET + i];
+
+        if (frame >= i / 8 + start && star->variant == 0) {
           s32 size;
 
           Transform_Push();
@@ -225,7 +225,7 @@ void Func_081823a8(struct BattleEffectArgument *effect, s32 mode) {
           if (screen.depth > 0x27a)
             screen.depth = 0x27a;
           size = 9 - (screen.depth - 250) / 64;
-          draw(canvas, sparkCels + gData_08197410[size - 1],
+          draw[0](canvas, sparkCels + gData_08197410[size - 1],
                screen.x - size / 2, screen.y - size, size, size * 2);
           BattleEffectKernels_IntegrateVector3(star, 60, 0);
 

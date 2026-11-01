@@ -1,7 +1,7 @@
-// Draft, differ 1668 of 1864 (20 instructions short).
+// Draft, differ 50 of 1864, skeleton gap 50 (tla-en, 2026-11-01)
 
-// Twin: The Broken Seal's BattleEffect_RunTwelveMode, rebuilt by ⚓️ for 21 modes
-// (19 handler-table wrappers, kinds 117 and 386-458). The skeleton, the
+// Twin: The Broken Seal's BattleEffect_RunTargetStrike, rebuilt by ⚓️ for 21
+// modes (19 handler-table wrappers, kinds 117 and 386-458). The skeleton, the
 // record table and the strike, column, wisp, mote, spark and glint parts
 // are the twin's; ⚓️ adds:
 // - a seventh palette (OrangePaletteB) and two more effect sheets: a flash
@@ -14,16 +14,22 @@
 // where the twin has 512;
 // - the target is measured once for the wisps, not once for each wisp.
 
-// Left: allocation through the whole body. The native keeps the addresses
-// of targetPosition, ground, alternate and the blitter pair in spill slots
-// (sp+36, +32, +48, +40) and reads the structs through them, and keeps mode
-// * 8 in two slots (sp+28, +52) for the record index; here the structs are
-// read sp-relative, the stack frame is 176 bytes for 164, and every spill slot
-// moves. The control flow follows the native block for block; the 20
-// missing instructions are reloads the native's extra pseudos cost.
+// Left: registers, frame, pools, branches and every instruction agree; the 50
+// differing instructions are 25 order pairs, each beside a store (str to sp, or
+// a load or arithmetic scheduled across one). Reordering the declarations, the
+// table's spelling and the prototype's types moved none of them, so they look
+// like sched2's model (-mthumb-slow-loads is an approximation, K2), not source.
+
+// What settled the shape: BUILD_BLITTER's do-while. Its loop notes end CSE's
+// block, so the blocks after each build recompute mode * 8 and the addresses of
+// targetPosition and center, GCSE's reaching registers get second sets, copy
+// propagation stops, loop leaves mode * 7 in place and the structs are read
+// through spilled pointers. Without it the draft is 1658 of 1864.
+// Taking mode's address does not give this (mode then stays on the stack).
 
 // Tried:
 // the twin rebuilt from the listing                          1668
+// BUILD_BLITTER a do-while, the record's column tail shared  50
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -58,10 +64,10 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 // The pixel half of a 16.16 value.
 #define HI(value) (((s16 *)&(value))[1])
 
-// Seven bytes for each mode (The Broken Seal's gTargetStrike_Records, grown
+// Seven bytes for each mode (The Broken Seal's gTargetStrike_Styles, grown
 // from 12 modes to 21).
-extern u8 Data_0819754f[];
-#define RECORD(mode, field) Data_0819754f[(mode) * 7 + (field)]
+extern u8 Data_0819754f[][7];
+#define RECORD(mode, field) Data_0819754f[(mode)][(field)]
 #define RECORD_KIND 0    // 0: strikes across the target, 1: columns on it
 #define RECORD_COUNT 1   // strikes or columns
 #define RECORD_FLAGS 2   // the parts drawn (FLAG_*)
@@ -168,6 +174,11 @@ void Func_080151e4(s32 x, s32 y, s32 z);
 void SceneTransform_ApplyPitch(s32 pitch);
 void SceneTransform_ApplyYaw(s32 yaw);
 void wait(s32 frames);
+
+#define BUILD_BLITTER(slot, width, height, flags, mode)                         \
+  do {                                                                         \
+    Func_08196404(slot, width, height, flags, mode);                           \
+  } while (0)
 
 // The body of 21 strike and column effects.
 
@@ -286,8 +297,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // The sparks fly away from the hit: heavy hits throw them in a fan
-    // away from the user, column hits every way, strikes away from the
-    // middle.
+    // away from the user, the others towards the middle of the field.
     for (i = 0; i != 256; i++) {
       gSparks[i].x = target->x;
       gSparks[i].y = 0x140000;
@@ -310,9 +320,9 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
           gSparks[i].velocityX = (Random16() & 255) << 11;
           gSparks[i].velocityY = ((Random16() & 255) - 128) << 11;
           gSparks[i].velocityZ = ((Random16() & 255) - 128) << 11;
-          if (gSparks[i].x > 0)
-            gSparks[i].velocityX = -gSparks[i].velocityX;
         }
+        if (gSparks[i].x > 0)
+          gSparks[i].velocityX = -gSparks[i].velocityX;
       }
       gSparks[i].variant = -1;
     }
@@ -377,15 +387,15 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         if (frame % (RECORD(mode, RECORD_RATE) * 6) ==
             RECORD(mode, RECORD_RATE) * 4) {
           if (mode == 12) {
-            if (frame / RECORD(mode, RECORD_RATE) / 6 > 2)
-              Func_081180e8(133);
-            else
+            if (frame / RECORD(mode, RECORD_RATE) / 6 <= 2)
               Sound_PlayFar(133);
+            else
+              Func_081180e8(133);
           } else if (mode == 7) {
-            if (frame > 8)
-              Func_081180e8(133);
-            else
+            if (frame <= 8)
               Sound_PlayFar(133);
+            else
+              Func_081180e8(133);
           } else if (mode == 13) {
             if (frame / RECORD(mode, RECORD_RATE) / 6 > 6)
               Func_081180e8(134);
@@ -423,13 +433,21 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
             }
           }
           if (mode == 16) {
-            for (i = 0; i != 4; i++)
-              work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 + i]
-                  .variant = 0;
+            for (i = 0; i != 4; i++) {
+              struct EffectStep *step =
+                  &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 +
+                                   i];
+
+              step->variant = 0;
+            }
           } else {
-            for (i = 0; i != 8; i++)
-              work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 + i]
-                  .variant = 0;
+            for (i = 0; i != 8; i++) {
+              struct EffectStep *step =
+                  &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 +
+                                   i];
+
+              step->variant = 0;
+            }
           }
         }
       }
@@ -448,11 +466,11 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       } else {
         stage = 3;
       }
-      Func_08196404(SLOT_BLITTER, 7, 7, CLIP, RECORD(mode, RECORD_BLEND));
+      BUILD_BLITTER(SLOT_BLITTER, 7, 7, CLIP, RECORD(mode, RECORD_BLEND));
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80,
                targetPosition.x / 2 - 18, 56, 18, 48);
       HeapSlot_Release(SLOT_BLITTER);
-      Func_08196404(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
+      BUILD_BLITTER(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
                     RECORD(mode, RECORD_BLEND));
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80, targetPosition.x / 2,
                56, 18, 48);
@@ -490,9 +508,12 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
 
           step->variant = (Random16() & 15) + 7;
         }
-        for (i = 0; i != 8; i++)
-          work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 + i]
-              .variant = 0;
+        for (i = 0; i != 8; i++) {
+          struct EffectStep *step =
+              &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 + i];
+
+          step->variant = 0;
+        }
         for (i = 0; i != 16; i++)
           gMotes[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 + i].variant = 0;
       }
@@ -502,16 +523,15 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
 
     // Three glints a frame around the target's middle.
     if ((RECORD(mode, RECORD_FLAGS) & FLAG_GLINTS) && glint) {
-      s32 image;
-
       EffectPosition_ProjectScaledBattler(effect->actors[0], &center);
       EffectPosition_ProjectBattler(effect->actors[0],
                                                   &alternate);
       center.y += (alternate.y - center.y) / 2;
-      image = frame & 3;
       for (i = 0; i != 3; i++) {
+        s32 image = frame & 3;
         s32 angle = Random16() & 0xffff;
-        s32 radius = Random16() & 31;
+        s32 range = 31;
+        s32 radius = Random16() & range;
         s32 x;
         s32 y;
 
@@ -519,7 +539,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
             (gData_08197492[image] / 2);
         y = center.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gData_08197498[image] / 2);
-        Func_08196404(SLOT_BLITTER_ALTERNATE, 7, 7,
+        BUILD_BLITTER(SLOT_BLITTER_ALTERNATE, 7, 7,
                       Data_08197605[Random16() & 3] | CLIP, BLIT_ADDITIVE);
         gBlitterAlternate(canvas, work->sheet + gData_08197486[image], x, y,
                           gData_08197492[image], gData_08197498[image]);

@@ -1,4 +1,4 @@
-// Draft, differ 640 of 724: an event command run on an object (targetId): 48
+// Draft, differ 24 of 724, skeleton gap 24 (tla-en, 2026-11-01): an event command run on an object (targetId): 48
 // runes (FieldEffect_Runes) gather on it in a 16-by-3 grid while pebbles
 // (FieldEffect_Pebbles) fly up from it for 40 frames; the object takes mode
 // 2, its update becomes Func_080e9e8c and it plays Data_080f1040; it is then
@@ -7,9 +7,22 @@
 // circle (Func_080e9f68, as a frame callback, with the work's state and
 // origin set here), drift to the owner, close in, and the owner plays
 // gData_080f3614 for 60 frames. The owner is set back to full size.
-// Same calls, offsets and control flow; left: stack and register allocation
-// (the native stack frame is 64 bytes against 60, with the pebble count and
-// cursor at sp 8 and 4 and the work in r9), which shifts most rows.
+// Same instructions and registers everywhere; what is left is order in six
+// places, 12 rows each way: the pool load of gFrameCount sits before the zero
+// stores (the native has it after); add r7, r9 comes a call later and movs r6
+// a row later than the native; the sparkTile strh comes after the pebble
+// pointers (the native stores it first, before r5 is rebuilt); case 2 negates
+// the -1 before storing state; and the two origin stores order their movs one
+// row apart. Those stores are the one soft spot: without the startX and
+// startZ locals the rows order right, but pointer and value swap r2 and r3
+// (differ +16). Tried for the rest, no gain: every placement of the mote
+// pointer, every order of the second loop setup with up or down counting, the
+// zero stores as statements, a colour temporary, pointer locals for the origin
+// and moving fields, the outer loop as while or goto (same code).
+// What fixed the frame and allocation, to keep: declaration order is the
+// stack order, state to nextSpark; one shared i, whose life makes it r8; rune
+// scoped to the flash loop (r0) and delay to case 4 (r3), which leave r4 to
+// wave and keep i from it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -78,22 +91,23 @@ void Func_080ea14c(s32 targetId) {
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = ObjectTable_Get(ownerId);
   struct Actor *target = ObjectTable_Get(targetId);
-  struct EffectSprite *sprite;
-  struct Mote *mote;
-  s32 pos[3];
-  s32 sparks = 0;
-  s32 nextSpark = 0;
+  s32 state;
+  s32 moteEntry;
+  s32 sparkEntry;
   s32 ownerX;
   s32 ownerZ;
   s32 targetX;
   s32 targetZ;
-  s32 moteEntry;
-  s32 sparkEntry;
+  s32 sparks = 0;
+  s32 nextSpark = 0;
+  s32 pos[3];
+  struct EffectSprite *sprite;
+  struct Mote *mote;
   s32 moteTile;
   s32 sparkTile;
-  s32 state;
   s32 timer;
   s32 wave;
+  s32 delay;
   s32 angle;
   s32 i;
 
@@ -116,8 +130,9 @@ void Func_080ea14c(s32 targetId) {
   moteEntry = Resource_FindFreeEntry();
   moteTile = VramCache_Load(moteEntry, 0x800, work);
   mote = work->motes;
+  i = 0;
   sprite = work->moteSprites;
-  for (i = 0; i < 48; i++) {
+  for (; i < 48; i++) {
     Func_080eaf98(sprite, 4, 4, 0, moteTile + ((Random16() << 4) >> 16) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
@@ -181,22 +196,23 @@ void Func_080ea14c(s32 targetId) {
       }
       break;
     case 1:
-      sprite = work->moteSprites;
       for (i = 0; i < 48; i++) {
-        wave = timer - (i % 16 + i / 16);
+        struct EffectSprite *rune;
+        wave = i % 16 + i / 16;
+        wave = timer - wave;
+        rune = &work->moteSprites[i];
         if (wave == 0)
-          sprite->oam.index += 32;
+          rune->oam.index += 32;
         if (wave == 3)
-          sprite->oam.index += -32;
+          rune->oam.index += -32;
         if (wave == 8)
-          sprite->oam.index += 32;
+          rune->oam.index += 32;
         if (wave == 10)
-          sprite->oam.index += -32;
+          rune->oam.index += -32;
         if (wave == 16)
-          sprite->oam.index += 32;
+          rune->oam.index += 32;
         if (wave == 18)
-          sprite->oam.index += -32;
-        sprite++;
+          rune->oam.index += -32;
       }
       if (timer == 0)
         Sound_PlayFar(246);
@@ -230,16 +246,20 @@ void Func_080ea14c(s32 targetId) {
     case 4:
       if (timer == 0) {
         mote = work->motes;
-        wave = 0;
+        delay = 0;
         for (i = 47; i >= 0; i--) {
-          mote->timer = wave;
-          wave -= 3;
+          mote->timer = delay;
+          delay -= 3;
           mote++;
         }
         work->radius = 0x3c0000;
         work->angle = 0xc000;
-        work->originX = 0x820000;
-        work->originZ = 0x1e0000;
+        {
+          s32 startX = 0x820000;
+          s32 startZ = 0x1e0000;
+          work->originX = startX;
+          work->originZ = startZ;
+        }
         work->moving = 1;
         work->spacing = 0x40000;
         work->state = 2;
@@ -283,12 +303,12 @@ void Func_080ea14c(s32 targetId) {
         state = 999;
       break;
     }
-    for (i = sparks; i != 0; i--) {
+    for (i = 0; i < sparks; i++) {
       angle = Random16();
       mote = &work->sparks[nextSpark];
       mote->timer = 0;
       mote->x = target->x;
-      mote->z = target->y + 0x30000;
+      mote->z = target->y + 0xc0000;
       mote->unk08 = target->z;
       Vector_AddPolarOffset(Random16() * 4 + 0x20000, angle, &mote->x);
       mote->targetX = 0;

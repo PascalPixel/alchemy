@@ -1,22 +1,30 @@
-// Draft of Func_08196404, The Lost Age's BattleEffect_BuildBlitter: differ 241
-// of 597 (tla-en, 2026-10-15; first written in the effects trial of the
-// same day), on The Broken Seal's step list. Blocked under S1 as written:
-// its copy helpers are inline asm, there only to measure the rest, and stay
-// so until Pascal decides whether the four-register copies are a
-// CAMELOT_ASM helper (plan D3). The Lost Age's builder is one pass: a fixed
-// 436-byte block, short copies as ldmia/stmia pairs, longer ones by DMA, modes
-// numbered 0 additive, 1 max, 2 transparent, default copy, and the second
-// run copied from the first by its measured length. Three copies use four
-// registers (ldmia r0!, {r2, r3, r4, r5}), which agscc never emits
-// (thumb_expand_movstrqi has only movmem12b and movmem8b); and agscc's
-// movmem12b/8b expose the advanced pointers, so CSE reuses them for dst
-// (adds r6, r2, #0) where the native keeps adds r6, #12. Both copy forms
-// are fixed-register asm helpers here only to measure the rest: from
-// differ 627 (struct copies) to 252. Left: a store-flag return (native
-// eors/negs/orrs/lsrs, here a branch; three forms tried), the DMA
-// control 0x84000005 built as 5 | r5 from a kept 0x84000000, one spill
-// slot fewer (frame 148 against 152 with a 136-byte local), and
-// scheduling.
+// Draft, differ 576 of 597, skeleton gap 90 (tla-en, 2026-11-01)
+// Func_08196404 is The Lost Age's BattleEffect_BuildBlitter, The Broken Seal's
+// step list (games/tbs/src/battle_effect/battle_effect/blitter.c) walked once:
+// a fixed 436-byte block, short copies as ldmia/stmia pairs, longer ones by
+// DMA, modes 0 additive, 1 max, 2 transparent, default copy, and the second
+// run copied from the first by its measured length.
+// Left, nearly all of it the block copies, which plain C cannot spell:
+// - Four-word copies load four registers (ldmia r0!, {r2, r3, r4, r5}).
+//   thumb_expand_movstrqi has only movmem12b and movmem8b, so a 16-byte struct
+//   copy here is ldmia of three plus ldr/str.
+// - Eight-byte copies always go through r0 and r1. A struct that size is moved
+//   by pieces, and a packed one calls memcpy, so ldmia/stmia on r7 and r6 is
+//   the nearest; at the last copy and one mode it is ldr/ldr/str/str.
+// - After a 12-byte copy the native steps with adds r6, #12. Post-reload CSE
+//   sees the pattern's advanced r1 and writes a register copy instead.
+// The registers, the four-register list and the missing CSE look like a
+// handwritten macro, as Dma_Set is. Whether that is a CAMELOT_ASM helper is
+// Pascal's call. With r0/r1 inline asm helpers in COPY2 to COPY4 this
+// draft measures differ 139, skeleton gap 49; they stay out of it until then,
+// so this draft is plain C.
+// Settled: PUT, PATCH and the block copies are do-while macros, as in the
+// twin (PUT alone took 44 off the gap). control is a kept 0x84000000 so the
+// second DMA builds 5 | r5. The return is the store-flag spelled out.
+// Also left: the native holds 436 in dst's register first (adds r1, r6, #0;
+// dst = (u32 *)436 reaches it but is a reused variable, and a size local
+// folds, gap +5), one spill where the native keeps a high register, and a
+// default-mode tail cross-jumped two instructions further than the native's.
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -56,45 +64,30 @@ extern const u32 BattleEffect_ColorForward[];
 #define BRANCH_FIELD(site, target)                                             \
   ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
 
-#define PUT(word) *dst++ = (word)
-// Trial: a four-word block copy, ldmia and stmia of four registers, which
-// agscc never emits (thumb_expand_movstrqi has only 12- and 8-byte moves).
-// A CAMELOT_ASM candidate for Pascal, written here to measure the rest.
-static __inline__ void Copy4Words(const u32 *from, u32 *to) {
-  register const u32 *s __asm__("r0") = from;
-  register u32 *d __asm__("r1") = to;
-
-  __asm__ volatile("ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"
-                   : "+l"(s), "+l"(d)
-                   :
-                   : "r2", "r3", "r4", "r5", "memory");
-}
-static __inline__ void Copy3Words(const u32 *from, u32 *to) {
-  register const u32 *s __asm__("r0") = from;
-  register u32 *d __asm__("r1") = to;
-
-  __asm__ volatile("ldmia %0!, {r2, r3, r4}\n\tstmia %1!, {r2, r3, r4}"
-                   : "+l"(s), "+l"(d)
-                   :
-                   : "r2", "r3", "r4", "memory");
-}
-static __inline__ void Copy2Words(const u32 *from, u32 *to) {
-  register const u32 *s __asm__("r0") = from;
-  register u32 *d __asm__("r1") = to;
-
-  __asm__ volatile("ldmia %0!, {r2, r3}\n\tstmia %1!, {r2, r3}"
-                   : "+l"(s), "+l"(d)
-                   :
-                   : "r2", "r3", "memory");
-}
-#define COPY2(from) Copy2Words(from, dst)
-#define COPY3(from) Copy3Words(from, dst)
-#define COPY4(from) Copy4Words(from, dst)
+#define PUT(word)                                                              \
+  do {                                                                         \
+    *dst++ = (word);                                                           \
+  } while (0)
+#define COPY2(from)                                                            \
+  do {                                                                         \
+    *(struct Words2 *)dst = *(const struct Words2 *)(from);                    \
+  } while (0)
+#define COPY3(from)                                                            \
+  do {                                                                         \
+    *(struct Words3 *)dst = *(const struct Words3 *)(from);                    \
+  } while (0)
+#define COPY4(from)                                                            \
+  do {                                                                         \
+    *(struct Words4 *)dst = *(const struct Words4 *)(from);                    \
+  } while (0)
 #define COPY_DMA(from, n) Dma_Set(from, dst, DMA_COPY_WORDS(n), REG_DMA3)
 #define PUT_BRANCH(target)                                                     \
   *dst = *src++ + BRANCH_FIELD(dst, target);                                   \
   dst++
-#define PATCH(site) *(site) |= BRANCH_FIELD(site, dst)
+#define PATCH(site)                                                            \
+  do {                                                                         \
+    *(site) |= BRANCH_FIELD(site, dst);                                        \
+  } while (0)
 
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode) {
@@ -108,11 +101,12 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   u32 *cell;
   s32 runSize;
   u32 *runCopy;
+  u32 control;
   /* FAKEMATCH: trial, 136 unused bytes of the native stack frame */
   u32 frame[34];
 
-  dst = HeapSlot_Alloc(slot, 436);
   src = BattleEffect_PatchTemplateCode;
+  dst = HeapSlot_Alloc(slot, 436);
 
   COPY4(src);
   dst += 4;
@@ -195,7 +189,8 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   noColumns = dst;
   PUT(*src++);
 
-  COPY_DMA(src, 6);
+  control = 0x84000000;
+  Dma_Set(src, dst, control | 6, REG_DMA3);
   dst += 6;
   src += 6;
 
@@ -205,7 +200,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   }
   src += 1;
 
-  COPY_DMA(src, 5);
+  Dma_Set(src, dst, control | 5, REG_DMA3);
   dst += 5;
   src += 5;
 
@@ -375,5 +370,9 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   PATCH(noColumns);
 
   COPY2(src);
-  return 1 - (((u32)(src + 2) ^ (u32)Data_081973f0) != 0);
+  {
+    u32 mismatch = (u32)(src + 2) ^ (u32)Data_081973f0;
+
+    return 1 - ((-mismatch | mismatch) >> 31);
+  }
 }

@@ -1,5 +1,28 @@
-// Draft of BattleEffect_RunAzul, decompiled from the listing: differ 2020 of 2209
-// (draft 2179), the same 130 calls and control flow; allocation differs.
+// Draft, differ 569 of 2209, skeleton gap 133 (tla-en, 2026-11-01)
+// BattleEffect_RunAzul. Stack slots, frame size and the long-lived allocation
+// agree with the listing; slots follow declaration order, so the locals' order is
+// load-bearing. What is left is mostly reload's round-robin of spill registers,
+// one reload out of step shifts everything after it:
+// - In the else branch of the sprite placement the listing keeps
+//   Data_08198830 from the first loop in r10 for the second, a gcse copy, which
+//   gcse only makes for a load with no store after it in its block. A shared
+//   pointer variable did not reproduce it. The draft lacks that copy and the r4
+//   save around the second loop's call, and rotates from there.
+// - In the frame 78 rotation loops the listing keeps 0x3a08 and gData_02014000
+//   in the middle loop; the draft hoists both to the outer loop.
+// - Before the frame 78 grid call the listing holds 0 in r7 and copies it to
+// the
+//   outer counter afterwards; a j = 0 there is deleted as dead.
+// - p->z = 0 in the frame 10 loop is hoisted here and not in the listing.
+// - velX's decay has one more copy in the listing, velY's does not.
+// - Two-argument calls with constants sometimes order r0 and r1 the other way;
+//   LoadBlitter and Task_Add here, same RTL order, sched2's tie.
+// - u takes r9 and the hoisted 64 r10; the listing has them the other way.
+// Reload order follows statement order: i = 0 goes before the pointer it pairs
+// with, and baseX, baseY, velX, velY are assigned in that order. Tried without
+// gain: baseX = velX + baseX, posX = posX + d, posY -= 0x60000 for the
+// listing's dest register. ResourceId_Data* are placeholders in the style of
+// ResourceId_Data134, one per id, to give the pool loads the listing has.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -32,7 +55,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -49,13 +73,14 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -63,7 +88,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -79,7 +104,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -95,6 +120,20 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
 
+struct AzulVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+  s8 unk3;
+};
+
+struct AzulFace {
+  u8 corner[3];
+  u8 unk3;
+  u8 uv[3][2];
+  u8 unkA[2];
+};
+
 #include "bg_scroll.h"
 #include "input.h"
 #include "io_write_queue.h"
@@ -109,17 +148,22 @@ struct ResourceTableEntry {
 struct AzulObject {
   u8 unk0[8];
   u16 tile : 10;
-  u16 unk08 : 6;
+  u16 priority : 2;
+  u16 unk08 : 4;
   u8 unk0a[8];
   u16 shape;
 };
 
-#define OBJ_PRIORITY(obj) (((u8 *)(obj))[9])
-
 extern struct ResourceTableEntry gResourceTableEntries[];
+extern char ResourceId_Data134;
+extern char ResourceId_Data190;
+extern char ResourceId_Data16A;
+extern char ResourceId_Data0EC;
+extern char ResourceId_Data0C2;
+extern char ResourceId_Data0B4;
 extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
-extern const u8 Data_081986f2[];
+extern const u8 Data_081986f2[][2];
 extern const u8 Data_08198828[];
 extern const u8 Data_08198830[];
 extern const u8 Data_0819883c[];
@@ -162,24 +206,26 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
-  DrawRectangle blit;
   DrawRectangle blit2;
-  u8 *battle;
-  u8 *faces;
-  s8 *verts;
-  u8 *grid;
-  u8 *sphere;
+  DrawRectangle blit;
   s32 frame;
+  u8 *battle;
+  s32 baseY;
+  s32 baseX;
+  s32 posY;
+  s32 posX;
+  s32 velY;
+  s32 velX;
+  struct AzulVertex *verts;
+  struct AzulFace *faces;
+  u8 *sphere;
+  u8 *grid;
   s32 i;
   s32 j;
   s32 k;
+  s32 n;
   u32 t;
-  s32 baseX;
-  s32 baseY;
-  s32 velX;
-  s32 velY;
-  s32 posX;
-  s32 posY;
+  u32 u;
   s32 place[4];
   struct ModelTexture texture;
   struct ModelTexture texture2;
@@ -196,24 +242,24 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0x3f44;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
   blit = Ram_HeapSlots->unk64[1];
-  Resource_LoadAndDecompress(0x134, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   BattleEffect_SelectLivingTargets(work->effect);
   work->transferMode = 1;
   work->transferValue = 0;
   Task_Add(BattleEffect_ArmPaletteHBlankDma, 0xcfe);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   battle = (u8 *)Ram_HeapSlots->battleWork;
-  grid = work->sheet + 0xc00;
-  verts = (s8 *)work->sheet;
-  faces = work->sheet + 0x1f0;
+  verts = (struct AzulVertex *)work->sheet;
+  faces = (struct AzulFace *)(work->sheet + 0x1f0);
   sphere = work->sheet + 0x800;
+  grid = work->sheet + 0xc00;
   {
     u8 *cells = gMapCellBuffer;
 
     for (i = 0; i < 120; i++) {
-      for (j = 0; j < 0x800; j += 64) {
+      for (n = 0; n < 0x800; n += 64) {
         Iwram_CopyWords(
-            cells, (void *)(0x06008000 + ((i / 8 * 256 + (i & 7)) * 8 + j)), 8);
+            cells, (void *)(0x06008000 + ((i / 8 * 256 + (i & 7)) * 8 + n)), 8);
         cells += 8;
       }
     }
@@ -222,9 +268,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     u8 *cells = work->sheet + 0x2bb8;
     u8 *dst;
 
-    Resource_LoadAndDecompress(0x190, cells, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data190, cells, 1, 1);
+    i = 0;
     dst = work->sheet + 0x2df8;
-    for (i = 0; i != 288; i++) {
+    for (; i != 288; i++) {
       *dst++ = *cells;
       cells += 2;
     }
@@ -235,8 +282,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     obj = Func_0815b3b0(32, 32, 0x80002000, 0);
     work->objects[i + 12] = obj;
     Iwram_CopyWords(obj, work->objects[5 + (i & 3)], 24);
-    obj = work->objects[i];
-    OBJ_PRIORITY(obj) = (OBJ_PRIORITY(obj) & ~12) | 4;
+    ((struct AzulObject *)work->objects[i])->priority = 1;
   }
   for (frame = 0; frame != 228; frame++) {
     if ((gInput.repeat & 3) && frame > 15 && frame <= 185) {
@@ -250,8 +296,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       }
     }
     if (frame <= 8) {
-      ColorBuffer_ScaleFar(battle + 0x56c, (void *)(BG_PLTT + 0xc0),
-                           0x10000 - (24 - frame * 3) * 1092, 128);
+      s32 fade = 24 - frame * 3;
+
+      ColorBuffer_ScaleFar(battle + 0x56c, (void *)&BG_PLTT_COLOR(6, 0),
+                           0x10000 - fade * 1092, 128);
     }
     if (frame == 186) {
       baseX = 0x300000;
@@ -266,35 +314,37 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->objects[i])->shape = 0xc000;
       }
-      velX = 0;
-      baseY = -0x780000;
       baseX = 0x780000;
+      baseY = -0x780000;
+      velX = 0;
       velY = 0xc0000;
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
-      for (i = 0; i != 31; i++) {
-        const u8 *piece = Data_081986f2 + i * 10;
-        u8 *face = faces + i * 36;
-        s8 *v = verts + i * 16;
-
-        for (j = 0; j != 4; j++) {
-          v[j * 4 + 0] = piece[2 + j * 2] - piece[0];
-          v[j * 4 + 1] = piece[3 + j * 2] - piece[1];
-          v[j * 4 + 2] = 0;
+      for (n = 0; n != 31; n++) {
+        for (i = 0; i != 4; i++) {
+          verts[n * 4 + i].x =
+              Data_081986f2[n * 5 + i + 1][0] - Data_081986f2[n * 5][0];
+          verts[n * 4 + i].y =
+              Data_081986f2[n * 5 + i + 1][1] - Data_081986f2[n * 5][1];
+          verts[n * 4 + i].z = 0;
         }
-        face[1] = 1;
-        face[2] = 2;
-        face[0] = 0;
-        face[13] = 2;
-        face[14] = 3;
-        face[12] = 0;
-        face[24] = 0;
-        face[25] = 0;
-        face[26] = 0;
-        for (j = 0; j != 3; j++) {
-          face[4 + j * 2] = Data_081986f2[(i * 5 + face[j]) * 2 + 2];
-          face[5 + j * 2] = Data_081986f2[(i * 5 + face[j]) * 2 + 3];
-          face[16 + j * 2] = Data_081986f2[(i * 5 + face[12 + j]) * 2 + 2];
-          face[17 + j * 2] = Data_081986f2[(i * 5 + face[12 + j]) * 2 + 3];
+        faces[n * 3].corner[1] = 1;
+        faces[n * 3].corner[2] = 2;
+        faces[n * 3].corner[0] = 0;
+        faces[n * 3 + 1].corner[1] = 2;
+        faces[n * 3 + 1].corner[2] = 3;
+        faces[n * 3 + 1].corner[0] = 0;
+        faces[n * 3 + 2].corner[0] = 0;
+        faces[n * 3 + 2].corner[1] = 0;
+        faces[n * 3 + 2].corner[2] = 0;
+        for (i = 0; i != 3; i++) {
+          faces[n * 3].uv[i][0] =
+              Data_081986f2[n * 5 + faces[n * 3].corner[i] + 1][0];
+          faces[n * 3].uv[i][1] =
+              Data_081986f2[n * 5 + faces[n * 3].corner[i] + 1][1];
+          faces[n * 3 + 1].uv[i][0] =
+              Data_081986f2[n * 5 + faces[n * 3 + 1].corner[i] + 1][0];
+          faces[n * 3 + 1].uv[i][1] =
+              Data_081986f2[n * 5 + faces[n * 3 + 1].corner[i] + 1][1];
         }
       }
       for (i = 0; i != effect->count; i++) {
@@ -308,8 +358,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 16) <= 63) {
       if (frame == 16) {
+        i = 0;
         p = &work->particles[31];
-        for (i = 0; i != 27; i++, p++) {
+        for (; i != 27; i++, p++) {
           p->x = ((Random16() & 63) + 32) << 16;
           p->y = ((Random16() & 15) + 120) << 16;
           p->velocityX = ((Random16() & 31) - 16) << 13;
@@ -317,8 +368,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           p->variant = (Trig_Cos(i << 9) << 5 >> 16) - 32;
         }
       }
+      i = 0;
       p = &work->particles[31];
-      for (i = 0; i != 27; i++, p++) {
+      for (; i != 27; i++, p++) {
         if (p->variant >= 0) {
           s32 s = Trig_Sin((frame << 10) + i * 0x1a16);
 
@@ -375,14 +427,14 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       }
     }
     if (frame >= 0) {
-      baseX += velX;
-      baseY += velY;
+      baseX = velX + baseX;
+      baseY = velY + baseY;
     }
     if (frame == 168) {
-      velX = 0;
-      velY = -0x60000;
       baseX = 0x300000;
       baseY = 0xa80000;
+      velX = 0;
+      velY = -0x60000;
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->objects[i])->shape = 0x4000;
       }
@@ -400,7 +452,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       place[3] = 0;
       place[1] = 0xff0000;
       if (frame > 167) {
-        posY += -0x60000;
+        posY -= 0x60000;
       }
       if (frame <= 53) {
         for (i = 0; i != 12; i++) {
@@ -414,13 +466,14 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
                                             (s32 *)Data_08198828, 0);
         }
         for (i = 0; i != 16; i++) {
-          k = (i & 3) + 5;
-          place[0] = ((39 - Data_08198830[k]) << 16) + baseX;
-          place[2] = ((-(Data_0819883c[k] * 30 / 32) - i / 4 * 60) << 16) +
+          s32 m = i & 3;
+
+          place[0] = ((39 - Data_08198830[m + 5]) << 16) + baseX;
+          place[2] = ((-(Data_0819883c[m + 5] * 30 / 32) - i / 4 * 60) << 16) +
                      baseY + 0x420000;
           CLAMP_Y(place);
           obj = work->objects[i + 12];
-          obj->tile = ((struct AzulObject *)work->objects[k])->tile;
+          obj->tile = ((struct AzulObject *)work->objects[m + 5])->tile;
           Render_ApplyProjectedPlacementFar(obj, place, (s32 *)Data_08198828,
                                             0);
         }
@@ -436,12 +489,14 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
                                             (s32 *)Data_08198828, 0);
         }
         for (i = 0; i != 16; i++) {
-          k = (i & 3) + 5;
-          place[0] = (Data_08198830[k] << 16) + baseX + -0x10000;
-          place[2] = ((Data_0819883c[k] + i / 4 * 64) << 16) + baseY + 0x400000;
+          s32 m = i & 3;
+
+          place[0] = (Data_08198830[m + 5] << 16) + baseX + -0x10000;
+          place[2] =
+              ((Data_0819883c[m + 5] + i / 4 * 64) << 16) + baseY + 0x400000;
           CLAMP_Y(place);
           obj = work->objects[i + 12];
-          obj->tile = ((struct AzulObject *)work->objects[k])->tile;
+          obj->tile = ((struct AzulObject *)work->objects[m + 5])->tile;
           Render_ApplyProjectedPlacementFar(obj, place, (s32 *)Data_08198828,
                                             0);
         }
@@ -488,7 +543,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       if (frame > 151) {
         d = (frame << 13) + -0x150000;
       }
-      posX += d;
+      posX = posX + d;
     }
     if (frame == 78) {
       Sound_PlayFar(140);
@@ -503,11 +558,13 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       Sound_PlayFar(212);
     }
     if (frame == 10) {
-      const u8 *piece = Data_081986f2;
+      const u8 *piece;
 
       Sound_PlayFar(144);
+      i = 0;
       p = work->particles;
-      for (i = 0; i != 31; i++, piece += 10, p++) {
+      piece = Data_081986f2[0];
+      for (; i != 31; i++, piece += 10, p++) {
         s32 cx = piece[0] >> 1;
         s32 cy = piece[1];
 
@@ -538,8 +595,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           }
           Func_0814cd48(effect->actors[i], 9, 5, i, 8);
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0, 0,
-                                    (Random16() << 1) + 0x10000, 100);
-          actor[18] = 0;
+                                        (Random16() << 1) + 0x10000, 100);
+          // record is 0 here; the store reuses its register.
+          actor[18] = (s32)record;
         }
       }
       if (frame == 186) {
@@ -566,7 +624,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       model->scrollU = gBgScroll[1].x;
       p = work->particles;
       for (i = 0; i != 31; i++, p++) {
-        model->mesh = faces + i * 36;
+        model->mesh = &faces[i * 3];
         Render_ResetTransformState();
         Func_08015160(p->x + -0x400000, p->y + -0x400000, 0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
@@ -588,7 +646,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           SceneTransform_ApplyYaw(-p->z);
           break;
         }
-        Render_TransformVertices(verts + i * 16, vertices, 4);
+        Render_TransformVertices(&verts[i * 4], vertices, 4);
         BattleEffectKernels_IntegrateVector3(p, 62, 0);
         if (frame >= (8 - i) * 2 + 16) {
           p->velocityY += -0x8000;
@@ -603,50 +661,53 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       s32 offset = 0;
 
       Func_0818de3c(grid, 16, 16, 8, 8);
-      for (i = 0; i != 16; i++, angle += 0x888, offset += 64) {
+      for (k = 0; k != 16; k++, angle += 0x888, offset += 64) {
         s32 y = -Trig_Cos(angle) * 48 >> 16;
         s32 radius = Trig_Sin(angle) * 48 >> 16;
         s8 *v = (s8 *)sphere + offset;
 
         for (j = 0; j != 16; j++) {
-          v[0] = radius * Trig_Sin(j << 12) >> 16;
+          v[0] = Trig_Sin(j << 12) * radius >> 16;
           v[1] = y;
-          v[2] = radius * Trig_Cos(j << 12) >> 16;
+          v[2] = Trig_Cos(j << 12) * radius >> 16;
           v += 4;
         }
       }
-      Resource_LoadAndDecompress(0x16a, gData_02014000, 1, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data16A, gData_02014000, 1,
+                                 0);
       for (i = 0; i != 6; i++) {
-        for (j = 0; j != 16; j++) {
-          u8 *src = gData_02014000 + i * 2048 + j * 128;
-          u8 *dst = work->sheet + 0x3308 + i * 1024 + j;
-
-          for (k = 0; k != 64; k++) {
-            *dst = *src++;
-            dst -= 16;
+        for (k = 0; k != 16; k++) {
+          for (j = 0; j != 64; j++) {
+            work->sheet[0x2f18 + (i * 64 + 63 - j) * 16 + k] =
+                gData_02014000[i * 2048 + k * 128 + j];
           }
         }
       }
-      Resource_LoadAndDecompress(0xec, gData_02014000, 1, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0EC, gData_02014000, 1,
+                                 0);
       Func_0816ae40(gData_02014000, gMapCellBuffer, 64, 64);
-      Resource_LoadAndDecompress(0xc2, gData_02014000, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
+                                 0);
       work->transferMode = 2;
       work->transferValue = 50;
     }
     if (frame == 152) {
-      Resource_LoadAndDecompress(0xb4, gData_02014000, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, gData_02014000, 0,
+                                 0);
     }
-    t = frame - 80;
-    if (t <= 107) {
+    u = frame - 80;
+    if (u <= 107) {
       s32 scale;
+      s32 shade;
 
       REG_BG2CNT = 0x784;
       if ((u32)(frame - 168) <= 17) {
         s32 y;
-        s32 f = frame;
+        s32 f;
 
         BattleEffect_LoadBlitter(SLOT_ALT, 7);
         blit2 = Ram_HeapSlots->unkb8[1];
+        f = frame;
         y = (baseY >> 16) - 32;
         for (i = 0; i != 2; i++, f += 3) {
           u8 *cells = work->sheet + 0x2f18 + (f % 6 << 10);
@@ -660,7 +721,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
         goto spray;
       }
       model = Render_AllocateModelList(1);
-      scale = t * 3 << 8;
+      scale = u * 3 << 8;
+      shade = 0;
       if (scale > 0x10000) {
         scale = 0x10000;
       }
@@ -670,10 +732,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       model->kind = 7;
       model->texture = &texture2;
       model->mesh = grid;
-      model->shade = 0;
+      model->shade = shade;
       model->vertices = verts;
-      model->scrollU = 0;
-      model->scrollV = 0;
+      model->scrollU = shade;
+      model->scrollV = shade;
       Render_ResetTransformState();
       Func_08015160(posX / 2 + -0x440000, posY + -0x500000, 0);
       Func_080151e4(scale, scale * 2, scale);
@@ -683,8 +745,10 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       Render_TransformVertices(sphere, verts, 256);
       Render_DrawModelList(model);
       if (frame > 137) {
-        s32 shade = 0x6a4 - frame * 10;
-        s32 size = (frame << 13) + -0x110000;
+        s32 size;
+
+        shade = 0x6a4 - frame * 10;
+        size = (frame << 13) + -0x110000;
 
         if (shade > 0) {
           shade = 0;
@@ -725,17 +789,18 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
     if (frame > 185) {
     spray:
       if (frame == 186) {
-        p = (struct EffectStep *)gMapCellBuffer;
-        for (i = 0; i != 256; i++, p++) {
+        struct EffectStep *drop = (struct EffectStep *)gMapCellBuffer;
+
+        for (i = 0; i != 256; i++, drop++) {
           s32 r = Random16() & 127;
           s32 vy;
 
-          p->velocityX = r * Trig_Sin(i << 8) >> 5;
+          drop->velocityX = r * Trig_Sin(i << 8) >> 5;
           vy = r * Trig_Cos(i << 8) >> 4;
-          p->x = p->velocityX * 6 + 0x300000;
-          p->y = vy * 5;
-          p->velocityY = vy;
-          p->variant = (Random16() & 31) + 32;
+          drop->x = drop->velocityX * 6 + 0x300000;
+          drop->y = vy * 5;
+          drop->velocityY = vy;
+          drop->variant = (Random16() & 31) + 32;
         }
       }
       p = (struct EffectStep *)gMapCellBuffer;

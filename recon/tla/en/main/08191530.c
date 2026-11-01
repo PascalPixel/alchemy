@@ -1,17 +1,25 @@
-// Draft, differ 188 of 468 (no device): the cloud swirl that
-// Func_0813e7e0 runs after setting up the effect blocks, written from the
-// listing (twins: BattleEffect_StartCanvasLayer 0.45 by shape,
+// Draft, differ 108 of 468, skeleton gap 62 (tla-en, 2026-11-01)
+// The cloud swirl that Func_0813e7e0 runs after setting up the effect
+// blocks (twins: BattleEffect_StartCanvasLayer 0.45 by shape,
 // BattleEffect_RunOrbitingSkulls 0.60 by call order). The rotation goes
-// through six IO_WRITE_QUEUE_PUSH writes a frame, in the queue's order
-// (value, address, control), as the native's inline pushes are.
-// Left: allocation. The native holds canvas in r9 and work in r10, keeps
-// the blitter it loads first at sp+20 and IwramCopyWords' address in r6,
-// and forms &BG_PLTT[96] for each copy; here work takes r9, the blitter
-// stays in r10 and the palette address is formed once. The 16.16 rotation
-// pushes then differ in their temporaries.
-// Tried: savedScrollX as u16 (194: loaded signed) or s32 (188, the
-// native's ldrh into a word slot), canvas and work declared in either
-// order, draw before or after palette, draw declared first (194).
+// through six IO_WRITE_QUEUE_PUSH writes a frame. No device.
+// Settled: the first blitter sits in a BlitterPair (element_burst.c's
+// form), which gives the frame and sp+20; the second is its own local;
+// enabled is the native's r8; the opening loads run canvas, work, saved X,
+// transition.
+// Left: (1) the native loads &BG_PLTT[96] and gMapCellBuffer afresh for each
+// call, here CSE keeps each in a register, which also pushes the second
+// blitter to r8 and adds two instructions. Forwarding the two palette
+// copies through a static inline, as canvas_transfer.c's tagged wrapper
+// does, takes the gap to 46 and differ to 92; that is a wrapper device, so
+// it is not used here. The same wrapper passing the blitter did nothing for
+// gMapCellBuffer. (2) In pushes 1, 2, 4, 5 and 6 the native stores the value
+// before forming the address constant, and restores r4 after the control
+// word; the scheduler goes the other way here, about 24 of the gap.
+// Tried for (2), no gain or worse: q->count for count_, value stored before
+// the count, literal addresses, u32 sine and cosine, indexed entry[n],
+// count++ first, entry formed after the count store. Local declaration
+// order changes nothing; a size local for the 128s changes nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -22,6 +30,8 @@
 #include "battle_display.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+
+typedef DrawRectangle BlitterPair[2];
 
 // The swirl runs until A is pressed, at most this many frames.
 #define SWIRL_MAX_FRAMES 312000
@@ -56,6 +66,7 @@ s32 Trig_Cos(s32 angle);
 // steps toward the swirl's own colours every fourth frame and from frame
 // 120 dims. B starts it over and A ends it.
 void Func_08191530(struct BattleEffectArgument *effect) {
+  BlitterPair sheetDraw;
   s32 savedScrollX;
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -63,13 +74,14 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   DrawRectangle draw;
   const u8 *palette;
   s32 frame;
+  s32 enabled;
   s32 sine;
   s32 cosine;
   s32 i;
 
-  savedScrollX = gBgScroll[1].x;
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  savedScrollX = gBgScroll[1].x;
   transition = Ram_HeapSlots->transitionWork;
   BattleEffect_StartCanvasLayer(3);
   REG_DISPCNT = 0x7741;
@@ -84,16 +96,17 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   // The cloud sheet, recoloured to palette entries 96 on, drawn into the
   // canvas through the copy blitter.
   BattleEffect_LoadBlitter(104, 1 << 4 | 3);
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
   Iwram_CopyWords((void *)&BG_PLTT[96], palette, 128);
-  Resource_DecodeType01(palette + 128, work->sheet);
+  palette += 128;
+  Resource_DecodeType01(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
   Iwram_CopyWords((void *)&BG_PLTT[96], palette, 128);
   for (i = 0; i != 0x4000; i++)
     work->sheet[i] += 96;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  draw(canvas, work->sheet, 0, 0, 128, 128);
+  sheetDraw[0](canvas, work->sheet, 0, 0, 128, 128);
   work->transferPending = 1;
   wait(1);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
@@ -106,13 +119,14 @@ void Func_08191530(struct BattleEffectArgument *effect) {
     if (canvas[i] == 0)
       canvas[i] = 1;
   }
+  enabled = 1;
   Func_08196404(104, 8, 7, 3, 3);
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 0xc80);
-  transition->active = 1;
+  transition->active = enabled;
   draw(gMapCellBuffer, canvas, 0, 0, 128, 128);
   draw(gMapCellBuffer, canvas, 128, 0, 128, 128);
-  work->transferPending = 1;
+  work->transferPending = enabled;
   wait(1);
 
   for (frame = 0; frame != SWIRL_MAX_FRAMES; frame++) {

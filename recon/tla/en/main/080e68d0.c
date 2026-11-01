@@ -1,4 +1,5 @@
-// Draft, differ 416 of 938: a field Psynergy that grows something from the
+// Draft, differ 50 of 938, skeleton gap 24 (tla-en, 2026-11-01): a field
+// Psynergy that grows something from the
 // ground before the caster (on a 16-pixel grid, unless the event mode is 3):
 // object 353 rises, and a second object (354, or 355 when the scene's flag
 // at 0x41 is set) waits there. It fails, scattering sixteen particles with
@@ -12,9 +13,15 @@
 // calling Func_080e716c at frame 24 and the others running the effect's
 // stage-5 event each frame (stage 1 from frame 30, 2 from 50). The object
 // then bursts (Func_080dbf94).
-// Same calls, offsets and control flow; left: register allocation (the
-// native keeps the scene in r10, the work in r9 and the first object in r11)
-// and the order it cascades into.
+// Every register and stack slot agrees; left: sched2's order at about eleven
+// spots, all the same kind. The native issues its stores earlier than here
+// and its constant chains later (the spill stores before `movs r4, #197`, the
+// flag word's 0xd4c chain, `str failed` before the copies of the scan's
+// pointers, both phase strhs before the Func_080e6400 pool load). Loading event
+// before caster moves ldr r5 too far and gains nothing. The shape that set the
+// allocation: &work->sprites[i] in the first two loops (loop strength
+// reduction keeps the copy at the top of each pass), a stepped pointer in the
+// third, frame apart from i, and the locals declared in stack-slot order.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -120,16 +127,17 @@ void Func_080e68d0(void) {
   struct Actor *target;
   struct EffectSprite *sprite;
   struct RiseParticle *particle;
-  s8 *alternate;
-  u8 *animation;
   void *pending;
+  void *data;
   s32 particleEntry = 96;
-  s32 pictureEntry = 96;
   s32 particleTile;
+  s32 pictureEntry = 96;
   s32 pictureTile;
   s32 pos[3];
   s32 failed;
+  s8 *alternate;
   s32 stage;
+  s32 frame;
   s32 i;
 
   if (((s8 *)event)[394] != 3) {
@@ -146,12 +154,11 @@ void Func_080e68d0(void) {
   object->motionFlags = 0;
   if (*(u16 *)((u8 *)event + 0xd4c) & 2) {
     if ((object->animationKind & 15) == 1) {
-      animation = object->animation;
-      animation[9] = (animation[9] & ~12) | 4;
-      ((u8 *)object)[35] &= 254;
+      ((struct EffectSprite *)object->animation)->oam.priority = 1;
+      object->priorityFlags &= 254;
     }
   } else {
-    ((u8 *)object)[35] = 1;
+    object->priorityFlags = 1;
   }
   object->angle = caster->angle;
   Actor_SetMode(object, 0);
@@ -167,7 +174,7 @@ void Func_080e68d0(void) {
     goto end;
   other->z += 0x30000;
   other->motionFlags = 0;
-  ((u8 *)other)[35] = 1;
+  other->priorityFlags = 1;
   other->scaleX = 0;
   if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
     Func_080dba5c();
@@ -227,14 +234,14 @@ void Func_080e68d0(void) {
     particleTile = VramCache_Load(particleEntry, 0x800, work);
     work->particleTile = particleTile;
     particle = work->particles;
-    sprite = work->sprites;
     for (i = 0; i < 64; i++) {
+      sprite = &work->sprites[i];
       Func_080eaf98(sprite, 8, 8, 0x40000000, particleTile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
       sprite->depth = BattleEffect_GetObjectDepth(other) + 1;
-      sprite->scaleX = sprite->scaleY = 0x3333;
+      sprite->scaleY = sprite->scaleX = 0x3333;
       particle->x = scene->x;
       particle->y = scene->y;
       particle->z = scene->z;
@@ -244,22 +251,20 @@ void Func_080e68d0(void) {
       particle->velocityZ = 0;
       Vector_AddPolarOffset(0x13333, Random16(), &particle->velocityX);
       particle->timer = -i * 2;
-      sprite++;
       particle++;
     }
   } else if (work->mode == 2) {
     if (*alternate == 0)
-      Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
-                            work);
+      data = Resource_GetTableEntry((s32)&ResourceId_DustPuffA);
     else
-      Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffB),
-                            work);
+      data = Resource_GetTableEntry((s32)&ResourceId_DustPuffB);
+    Resource_DecodeType01(data, work);
     particleEntry = Resource_FindFreeEntry();
     particleTile = VramCache_Load(particleEntry, 0x800, work);
     work->particleTile = particleTile;
     particle = work->particles;
-    sprite = work->sprites;
     for (i = 0; i < 64; i++) {
+      sprite = &work->sprites[i];
       Func_080eaf98(sprite, 8, 8, 0x40000000, particleTile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
@@ -274,14 +279,13 @@ void Func_080e68d0(void) {
       particle->velocityZ = 0;
       Vector_AddPolarOffset(0x10000, Random16(), &particle->velocityX);
       particle->timer = -i;
-      sprite++;
       particle++;
     }
   } else if (work->mode == 3) {
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_WhiteSparkle),
                           work);
     particleEntry = Resource_FindFreeEntry();
-    particleTile = VramCache_Load(particleEntry, 0x100, work);
+    particleTile = VramCache_Load(particleEntry, 0x80, work);
     work->particleTile = particleTile;
     particle = work->particles;
     sprite = work->sprites;
@@ -319,11 +323,8 @@ void Func_080e68d0(void) {
     Camera_WorldToScreen(pos);
     sprite->x = pos[0];
     sprite->y = pos[2];
-    if (work->mode == 0)
-      goto grow;
   }
-  if (work->mode == 3) {
-  grow:
+  if (work->mode == 0 || work->mode == 3) {
     wait(6);
     work->other->scaleX = 0x10000;
     wait(4);
@@ -335,30 +336,30 @@ void Func_080e68d0(void) {
   work->timer = 0;
   Task_Add(Func_080e6400, 0x480);
   if (work->mode == 1) {
-    i = 0;
+    frame = 0;
     while (work->phase != 999) {
-      if (i == 24)
+      if (frame == 24)
         Func_080e716c();
       wait(1);
-      i++;
+      frame++;
     }
   } else {
     pending = Func_080ce458(0x50000005, scene->fieldKind,
                             Func_080ce31c(scene->fieldKind));
-    i = 0;
+    frame = 0;
     while (work->phase != 999) {
       stage = 0;
       wait(1);
-      if (i == 30)
+      if (frame == 30)
         stage = 1;
-      if (i == 50)
+      if (frame == 50)
         stage = 2;
       scene->stage = stage;
-      scene->frame = i;
-      Field_RunPsynergyEvent(pending, stage, i);
-      i++;
+      scene->frame = frame;
+      Field_RunPsynergyEvent(pending, stage, frame);
+      frame++;
     }
-    Field_RunPsynergyEvent(pending, 999, i);
+    Field_RunPsynergyEvent(pending, 999, frame);
   }
   Task_Remove(Func_080e6400);
   Sound_PlayFar(114);

@@ -1,26 +1,35 @@
-// Draft, differ 732 of 875 (758 before; the locals declared in the twin's
-// order, x, y, z and ground before the arrival flag, give the native's stack
-// slots for x, y and z). Written from The Broken Seal's Actor_UpdateAllThumb
-// (games/tbs/src/field/field/object_motion.c), which runs each object's hook
-// and script and moves it toward its target each frame (Func_080230e0 adds
-// it at 0x48b). This game's changes: a paused object records no motion and
-// is skipped; ground following lets an object (priorityFlags bit 6) stand on
-// another (bit 7) 16 pixels below in the cell it moves into, remembering it
-// at byte 0x7c and keeping its speed there; a fall lands at the ground
-// height less the rebound rather than on the ground; each object records
-// the distance it moved this frame at 0x70; the arrival axes are numbered
-// 16 to 18. Left: the native keeps a second copy of the motion flags'
-// address and the arrival flag in lower stack slots (x, y and z at 24, 20
-// and 16), and register allocation differs from the free flight on. Written
-// with the object's fields in place of the motion flags' pointer (loop.c makes
-// that pointer itself), it is differ 756 with one stack word more.
+// Draft, differ 8 of 875, skeleton gap 8 (tla-en, 2026-11-01)
+// Written from The Broken Seal's Actor_UpdateAllThumb
+// (games/tbs/src/field/field/actor_motion.c), which runs each object's hook
+// and script and moves it toward its target each frame (Func_080230e0 adds it
+// at 0x48b). This game's changes: a paused object records no motion and is
+// skipped; ground following lets an object (priorityFlags bit 6) stand on
+// another (bit 7) 16 pixels below in the cell it moves into, remembering it at
+// 0x7c and keeping its speed there; a fall lands at the ground height less the
+// rebound; each object records the distance it moved this frame at 0x70; the
+// arrival axes are numbered 16 to 18.
+// Left: every instruction and register agrees; three pairs swap, each a store
+// the native places ahead of a neighbouring load or its use: the store to
+// standingOn before the add of z and velocityZ; the store to velocityX before
+// the reload of Iwram_MulQ16 in the slope slowdown; the store of z before the
+// reload of the collision flags' address. All three lean the same way, so a
+// scheduling rule may be behind them rather than the source (K2 calls
+// -mthumb-slow-loads an approximation); that is untested. Tried without gain:
+// the order of the velocity sums and of standing and standingOn, operand order,
+// a != 0 test, pos's order, a velocityX temporary in the slowdown.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 
+/// The words of an object's script. As in The Broken Seal's ActorScriptWords,
+/// a flat word pointer changes one load's base and index order.
+struct MotionScript {
+  s32 word[1];
+};
+
 /// An object as the motion update reads it (struct Actor's layout).
 struct MotionObject {
-  s32 *script;
+  struct MotionScript *script;
   s16 step;
   u16 angle;
   s32 x;
@@ -74,6 +83,9 @@ s16 ArcTan2(s32 y, s32 x);
 
 #define TARGET_UNSET ((s32)0x80000000)
 
+/// A whole-pixel distance squared.
+static __inline__ s32 Object_Square(s32 value) { return value * value; }
+
 void Func_08023f9c(void) {
   struct MotionObject *object;
   s32 objectsRemaining;
@@ -82,22 +94,24 @@ void Func_08023f9c(void) {
   s32 z;
   s32 ground;
   s32 arrivedAtTarget;
-  u8 *motionFlags;
   s32 pos[3];
   s32 dx;
   s32 dy;
   s32 dz;
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
   s32 distance;
   s32 speed;
+  s32 reducedSpeed;
   s32 ratio;
-  s32 change;
+  s32 maximumChange;
   s32 standing;
 
   object = Ram_HeapSlots->scriptObjects;
-  for (objectsRemaining = 63, motionFlags = &object->motionFlags;
-       objectsRemaining >= 0;
-       objectsRemaining--, motionFlags += sizeof(*object), object++) {
-    s32 *script;
+  for (objectsRemaining = 63; objectsRemaining >= 0;
+       objectsRemaining--, object++) {
+    struct MotionScript *script;
 
     arrivedAtTarget = 0;
     script = object->script;
@@ -109,7 +123,7 @@ void Func_08023f9c(void) {
     }
     if (script == NULL)
       continue;
-    if (motionFlags[6] != 0) {
+    if (object->paused != 0) {
       object->moved[0] = arrivedAtTarget;
       object->moved[1] = arrivedAtTarget;
       object->moved[2] = arrivedAtTarget;
@@ -120,7 +134,7 @@ void Func_08023f9c(void) {
       object->wait--;
     } else {
       for (;;) {
-        u32 command = *(script + object->step);
+        u32 command = script->word[object->step];
 
         if (command <= 63) {
           if (gData_0802f204[command](object) == 0)
@@ -137,226 +151,215 @@ void Func_08023f9c(void) {
     x = object->x;
     y = object->y;
     z = object->z;
-    if (motionFlags[12] != 0)
-      goto move;
-
-    if (*motionFlags == 0) {
-      if (object->targetX != TARGET_UNSET) {
-        dx = (object->targetX - x) / 65536;
-        dy = (object->targetY - y) / 65536;
-        dz = (object->targetZ - z) / 65536;
-        distance = Iwram_Sqrt(dx * dx + dy * dy + dz * dz);
-        if (distance == 0) {
-          x = object->targetX;
-          y = object->targetY;
-          z = object->targetZ;
+    if (object->frozen == 0) {
+      if (object->motionFlags == 0) {
+        if (object->targetX != TARGET_UNSET) {
+          dx = (object->targetX - x) / 65536;
+          dy = (object->targetY - y) / 65536;
+          dz = (object->targetZ - z) / 65536;
+          distance = Iwram_Sqrt(Object_Square(dx) + Object_Square(dy) +
+                                Object_Square(dz));
+          if (distance == 0) {
+            x = object->targetX;
+            y = object->targetY;
+            z = object->targetZ;
+          } else {
+            ratio = Iwram_RatioMulQ14(distance << 16, object->acceleration);
+            object->velocityX += dx * ratio;
+            object->velocityY += dy * ratio;
+            object->velocityZ += dz * ratio;
+            velocityX = object->velocityX;
+            velocityY = object->velocityY;
+            velocityZ = object->velocityZ;
+            speed = FixedSqrt(Iwram_MulQ16(velocityX, velocityX) +
+                              Iwram_MulQ16(velocityY, velocityY) +
+                              Iwram_MulQ16(velocityZ, velocityZ));
+            if (speed > object->speedLimit) {
+              ratio = Iwram_RatioMulQ14(speed, object->speedLimit);
+              object->velocityX = Iwram_MulQ16(velocityX, ratio);
+              object->velocityY = Iwram_MulQ16(velocityY, ratio);
+              object->velocityZ = Iwram_MulQ16(velocityZ, ratio);
+            }
+          }
         } else {
-          s32 velocityX;
-          s32 velocityY;
-          s32 velocityZ;
-
-          ratio = Iwram_RatioMulQ14(distance << 16, object->acceleration);
-          velocityX = object->velocityX + dx * ratio;
-          velocityY = object->velocityY + dy * ratio;
-          velocityZ = object->velocityZ + dz * ratio;
-          object->velocityZ = velocityZ;
-          object->velocityY = velocityY;
-          object->velocityX = velocityX;
-          speed = FixedSqrt(Iwram_MulQ16(velocityX, velocityX) +
-                            Iwram_MulQ16(velocityY, velocityY) +
-                            Iwram_MulQ16(velocityZ, velocityZ));
-          if (speed > object->speedLimit) {
-            ratio = Iwram_RatioMulQ14(speed, object->speedLimit);
-            object->velocityX = Iwram_MulQ16(velocityX, ratio);
-            object->velocityY = Iwram_MulQ16(velocityY, ratio);
-            object->velocityZ = Iwram_MulQ16(velocityZ, ratio);
+          dx = object->velocityX;
+          dy = object->velocityY;
+          dz = object->velocityZ;
+          speed = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
+                            Iwram_MulQ16(dz, dz));
+          if (speed != 0) {
+            reducedSpeed = speed - object->acceleration;
+            if (reducedSpeed < 0)
+              reducedSpeed = 0;
+            ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
+            object->velocityX = Iwram_MulQ16(dx, ratio);
+            object->velocityY = Iwram_MulQ16(dy, ratio);
+            object->velocityZ = Iwram_MulQ16(dz, ratio);
+          } else {
+            object->velocityX = speed;
+            object->velocityY = speed;
+            object->velocityZ = speed;
           }
         }
       } else {
-        dx = object->velocityX;
-        dy = object->velocityY;
-        dz = object->velocityZ;
-        speed = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
-                          Iwram_MulQ16(dz, dz));
-        if (speed != 0) {
-          s32 reducedSpeed = speed - object->acceleration;
-
-          if (reducedSpeed < 0)
-            reducedSpeed = 0;
-          ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
-          object->velocityX = Iwram_MulQ16(dx, ratio);
-          object->velocityY = Iwram_MulQ16(dy, ratio);
-          object->velocityZ = Iwram_MulQ16(dz, ratio);
-        } else {
-          object->velocityX = speed;
-          object->velocityY = speed;
-          object->velocityZ = speed;
-        }
-      }
-      goto move;
-    }
-
-    // On the ground: steer in the XZ plane the same way.
-    if (object->targetX != TARGET_UNSET) {
-      dx = (object->targetX - x) / 65536;
-      dz = (object->targetZ - z) / 65536;
-      distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
-      if (distance <= 0x00ffffff) {
-        dx = object->targetX - x;
-        dz = object->targetZ - z;
-        distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-      }
-      if (distance == 0) {
-        x = object->targetX;
-        z = object->targetZ;
-      } else {
-        s32 velocityX;
-        s32 velocityZ;
-
-        ratio = Iwram_RatioMulQ14(distance, object->acceleration);
-        object->velocityX += Iwram_MulQ16(dx, ratio);
-        object->velocityZ += Iwram_MulQ16(dz, ratio);
-        velocityX = object->velocityX;
-        velocityZ = object->velocityZ;
-        speed = FixedSqrt(Iwram_MulQ16(velocityX, velocityX) +
-                          Iwram_MulQ16(velocityZ, velocityZ));
-        if (speed > object->speedLimit) {
-          ratio = Iwram_RatioMulQ14(speed, object->speedLimit);
-          object->velocityX = Iwram_MulQ16(velocityX, ratio);
-          object->velocityZ = Iwram_MulQ16(velocityZ, ratio);
-        }
-      }
-    } else {
-      dx = object->velocityX;
-      dz = object->velocityZ;
-      speed = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-      if (speed != 0) {
-        s32 reducedSpeed = speed - object->acceleration;
-
-        if (reducedSpeed < 0)
-          reducedSpeed = 0;
-        ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
-        object->velocityX = Iwram_MulQ16(dx, ratio);
-        object->velocityZ = Iwram_MulQ16(dz, ratio);
-      } else {
-        object->velocityX = speed;
-        object->velocityZ = speed;
-      }
-    }
-
-    // Follow the ground, or the top of an object 16 pixels below.
-    if (*motionFlags & 1) {
-      s32 nextX = x + object->velocityX;
-      s32 nextZ = z + object->velocityZ;
-
-      object->standingOn = NULL;
-      standing = 0;
-      if (object->priorityFlags & 0x40) {
-        struct MotionObject *other = Ram_HeapSlots->scriptObjects;
-        s32 i;
-
-        for (i = 0; i < 64; i++, other++) {
-          s32 dy;
-
-          if (other->script == NULL)
-            continue;
-          if (!(other->priorityFlags & 0x80))
-            continue;
-          if (other == object)
-            continue;
-          if (((nextX - other->x + 0x80000) >> 20) != 0)
-            continue;
-          if (((nextZ - other->z + 0x80000) >> 20) != 0)
-            continue;
-          dy = y - other->y;
-          if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) > 0x7ffff)
-            continue;
-          ground = other->y + 0x100000;
-          standing = 1;
-          object->standingOn = other;
-          break;
-        }
-      }
-      if (!standing)
-        ground = Func_0802d45c(object->terrainId, nextX, nextZ);
-      change = ground - object->groundHeight;
-      if (ground - y > -0x40000)
-        y += change;
-      if (change < 0)
-        change = -change;
-      if (change > object->acceleration / 2)
-        change = object->acceleration / 2;
-      change *= 3;
-      if (change != 0 && !(*motionFlags & 16) && !standing) {
-        s32 velocityX = object->velocityX;
-        s32 velocityY = object->velocityY;
-        s32 velocityZ = object->velocityZ;
-
-        speed = FixedSqrt(Iwram_MulQ16(velocityX, velocityX) +
-                          Iwram_MulQ16(velocityY, velocityY) +
-                          Iwram_MulQ16(velocityZ, velocityZ));
-        if (speed != 0) {
-          s32 reducedSpeed = speed - change;
-
-          if (reducedSpeed < 0)
-            reducedSpeed = 0;
-          ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
-          object->velocityX = Iwram_MulQ16(velocityX, ratio);
-          object->velocityY = Iwram_MulQ16(velocityY, ratio);
-          object->velocityZ = Iwram_MulQ16(velocityZ, ratio);
-        }
-      }
-      object->groundHeight = ground;
-    }
-
-    // Gravity, and a bounce that loses energy on landing.
-    if (*motionFlags & 2) {
-      ground = object->groundHeight;
-      if (y > ground)
-        object->velocityY -= object->gravity;
-      if (y + object->velocityY <= ground) {
-        if (object->velocityY < 0) {
-          s32 rebound = -Iwram_MulQ16(object->velocityY, object->bounce);
-
-          object->velocityY = rebound;
-          y = ground - rebound;
-          if ((rebound < 0 ? -rebound : rebound) <= object->gravity) {
-            y = ground;
-            object->velocityY = 0;
+        // On the ground: steer in the XZ plane the same way.
+        if (object->targetX != TARGET_UNSET) {
+          dx = (object->targetX - x) / 65536;
+          dz = (object->targetZ - z) / 65536;
+          distance = Iwram_Sqrt(Object_Square(dx) + Object_Square(dz)) << 16;
+          if (distance <= 0x00ffffff) {
+            dx = object->targetX - x;
+            dz = object->targetZ - z;
+            distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+          }
+          if (distance == 0) {
+            x = object->targetX;
+            z = object->targetZ;
+          } else {
+            ratio = Iwram_RatioMulQ14(distance, object->acceleration);
+            object->velocityX += Iwram_MulQ16(dx, ratio);
+            object->velocityZ += Iwram_MulQ16(dz, ratio);
+            velocityX = object->velocityX;
+            velocityZ = object->velocityZ;
+            speed = FixedSqrt(Iwram_MulQ16(velocityX, velocityX) +
+                              Iwram_MulQ16(velocityZ, velocityZ));
+            if (speed > object->speedLimit) {
+              ratio = Iwram_RatioMulQ14(speed, object->speedLimit);
+              object->velocityX = Iwram_MulQ16(velocityX, ratio);
+              object->velocityZ = Iwram_MulQ16(velocityZ, ratio);
+            }
           }
         } else {
-          y = ground;
+          dx = object->velocityX;
+          dz = object->velocityZ;
+          speed = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+          if (speed != 0) {
+            reducedSpeed = speed - object->acceleration;
+            if (reducedSpeed < 0)
+              reducedSpeed = 0;
+            ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
+            object->velocityX = Iwram_MulQ16(dx, ratio);
+            object->velocityZ = Iwram_MulQ16(dz, ratio);
+          } else {
+            object->velocityX = speed;
+            object->velocityZ = speed;
+          }
+        }
+
+        // Follow the ground, or the top of an object 16 pixels below.
+        if (object->motionFlags & 1) {
+          velocityX = x + object->velocityX;
+          velocityZ = z + object->velocityZ;
+          standing = 0;
+          object->standingOn = NULL;
+          if (object->priorityFlags & 0x40) {
+            struct MotionObject *other = Ram_HeapSlots->scriptObjects;
+            s32 i;
+
+            for (i = 0; i < 64; i++, other++) {
+              s32 dy;
+
+              if (other->script == NULL)
+                continue;
+              if (!(other->priorityFlags & 0x80))
+                continue;
+              if (other == object)
+                continue;
+              if (((velocityX - other->x + 0x80000) >> 20) != 0)
+                continue;
+              if (((velocityZ - other->z + 0x80000) >> 20) != 0)
+                continue;
+              dy = y - other->y;
+              if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) >
+                  0x7ffff)
+                continue;
+              standing = 1;
+              ground = other->y + 0x100000;
+              object->standingOn = other;
+              break;
+            }
+          }
+          if (!standing)
+            ground = Func_0802d45c(object->terrainId, velocityX, velocityZ);
+          velocityY = ground - object->groundHeight;
+          if (ground - y > -0x40000)
+            y += velocityY;
+          if (velocityY < 0)
+            velocityY = -velocityY;
+          maximumChange = object->acceleration / 2;
+          if (velocityY > maximumChange)
+            velocityY = maximumChange;
+          velocityY *= 3;
+          if (velocityY != 0 && !(object->motionFlags & 16) && !standing) {
+            dx = object->velocityX;
+            dy = object->velocityY;
+            dz = object->velocityZ;
+            speed = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
+                              Iwram_MulQ16(dz, dz));
+            if (speed != 0) {
+              reducedSpeed = speed - velocityY;
+              if (reducedSpeed < 0)
+                reducedSpeed = 0;
+              ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
+              object->velocityX = Iwram_MulQ16(dx, ratio);
+              object->velocityY = Iwram_MulQ16(dy, ratio);
+              object->velocityZ = Iwram_MulQ16(dz, ratio);
+            }
+          }
+          object->groundHeight = ground;
+        }
+
+        // Gravity, and a bounce that loses energy on landing.
+        if (object->motionFlags & 2) {
+          ground = object->groundHeight;
+          if (y > ground)
+            object->velocityY -= object->gravity;
+          if (y + object->velocityY <= ground) {
+            if (object->velocityY < 0) {
+              s32 rebound = -Iwram_MulQ16(object->velocityY, object->bounce);
+
+              object->velocityY = rebound;
+              y = ground - rebound;
+              if ((rebound < 0 ? -rebound : rebound) <= object->gravity) {
+                y = ground;
+                object->velocityY = 0;
+              }
+            } else {
+              y = ground;
+            }
+          }
+        }
+
+        // Float: bob up and down on a triangle wave.
+        if (object->motionFlags & 4) {
+          u32 phase = object->bounce & 63;
+
+          if (object->motionFlags & 8)
+            object->velocityY =
+                gData_0802ebc8[phase >> 1] * object->gravity / 16;
+          else
+            object->velocityY =
+                gData_0802ebc8[phase >> 1] * object->gravity / 64;
+          object->bounce++;
         }
       }
     }
 
-    // Float: bob up and down on a triangle wave.
-    if (*motionFlags & 4) {
-      u32 phase = object->bounce & 63;
-
-      if (*motionFlags & 8)
-        object->velocityY = gData_0802ebc8[phase >> 1] * object->gravity / 16;
-      else
-        object->velocityY = gData_0802ebc8[phase >> 1] * object->gravity / 64;
-      object->bounce++;
-    }
-
-  move:
     x += object->velocityX;
     y += object->velocityY;
     z += object->velocityZ;
-    if (motionFlags[4] & 0x80) {
+    if (object->collisionFlags & 0x80) {
       pos[0] = x;
       pos[1] = y;
       pos[2] = z;
       if (ScriptObject_CheckOverlap(object, pos) != 0) {
-        motionFlags[11]++;
+        object->refused++;
         continue;
       }
-      motionFlags[11] = 0;
+      object->refused = 0;
     }
 
-    switch (motionFlags[1]) {
+    switch (object->arrivalAxis) {
     case 16:
       if (x == object->targetX ||
           ((object->x - object->targetX) ^ (x - object->targetX)) < 0)
@@ -374,12 +377,12 @@ void Func_08023f9c(void) {
       break;
     }
     if (arrivedAtTarget != 0) {
-      if (motionFlags[3] != 0) {
+      if (object->snapToTarget != 0) {
         x = object->targetX;
         object->velocityX = 0;
         z = object->targetZ;
         object->velocityZ = 0;
-        if (*motionFlags == 0) {
+        if (object->motionFlags == 0) {
           y = object->targetY;
           object->velocityY = 0;
         }
@@ -387,7 +390,7 @@ void Func_08023f9c(void) {
       object->targetX = TARGET_UNSET;
       object->targetY = TARGET_UNSET;
       object->targetZ = TARGET_UNSET;
-      motionFlags[1] = 0;
+      object->arrivalAxis = 0;
     }
 
     object->moved[0] = x - object->x;
@@ -399,16 +402,21 @@ void Func_08023f9c(void) {
 
     // Turn to face the direction of travel, at most a sixteenth of a turn a
     // frame.
-    if (motionFlags[5] & 1) {
+    if (object->actionFlags & 1) {
       x = object->velocityX;
       z = object->velocityZ;
       if (x != 0 || z != 0) {
-        s32 facingStep = (s16)(ArcTan2(z, x) - object->angle);
+        s32 facingStep;
+        s32 maximumFacingStep;
 
-        if (facingStep > 0x1000)
-          facingStep = 0x1000;
-        if (facingStep < -0x1000)
-          facingStep = -0x1000;
+        facingStep = (s16)(ArcTan2(z, x) - object->angle);
+
+        maximumFacingStep = 0x1000;
+        if (facingStep > maximumFacingStep)
+          facingStep = maximumFacingStep;
+        maximumFacingStep = -0x1000;
+        if (facingStep < maximumFacingStep)
+          facingStep = maximumFacingStep;
         object->angle += facingStep;
       }
     }

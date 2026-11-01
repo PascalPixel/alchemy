@@ -1,5 +1,26 @@
-// Draft of BattleEffect_RunUlysses, decompiled from the listing: differ 1999 of
-// 1932 (draft 1945), the same 129 calls and control flow; allocation differs.
+// Draft, differ 1641 of 1932, skeleton gap 401 (tla-en, 2026-11-01)
+// BattleEffect_RunUlysses: the same calls and control flow as the listing.
+// Most of the gap is scheduling and allocation following from the frame: 160
+// here, 152 in the listing, whose spill slots from the top read effect, canvas,
+// transition, frame, sprites, dmaArmed, skip, blit, shipZ, shipX, loaded, draw,
+// frame - 108, verts, model, sparks, &texture, delay, block two's verts and j,
+// the anchor pointer, frame * 2 - 184, frame - 92, &req.
+// Left to find:
+// - battle is spilled here and sits in r10 in the listing. The constants 0x3c00
+//   and 0x06004000 take r8 and r10 here; the listing has no register for them,
+//   so reload rebuilds them at each use. That one change clears many hunks.
+// - frame - 92 stays unreduced: as a user variable it loses copy_cost and as a
+//   temporary its benefit is only add_cost, so loop.c rejects it (the listing
+//   keeps it and frame * 2 - 184 at sp+12 and sp+16). A second, uncombined copy
+//   of the expression would raise the benefit; CSE and GCSE merged all tried.
+// - delay and i * 448 are reduced here, not in the listing: particles[i + 8]
+//   shares i * 8 and i * 7 with them. A real anchor pointer stops the i * 7
+//   sharing and brings the frame to 156, but the gap rises to 424.
+// - bg2pa and bg2pd: the listing does a discarded ldrh before each strh, as a
+//   store to a volatile 16-bit field would; not tried, it would be a device.
+// - The first colour loop's v & 31 mask is hoisted in the listing; here its life
+//   of 1 fails loop.c's test. The last loop's *src read combines into ldrsh;
+//   a volatile src closes that hunk, also a device.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -99,6 +120,15 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #include "input.h"
 #include "io_write_queue.h"
 
+extern char ResourceId_Data0B1;
+extern char ResourceId_Data0B3;
+extern char ResourceId_Data0C7;
+extern char ResourceId_Data0C8;
+extern char ResourceId_Data137;
+extern char ResourceId_Data13A;
+extern char ResourceId_Data150;
+extern char ResourceId_Data15C;
+extern char ResourceId_Data178;
 extern u8 gMapCellBuffer[];
 extern u8 Data_02010200[];
 extern const u16 Data_08197424[];
@@ -133,47 +163,42 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   u8 *canvas;
   s32 *transition;
   struct BattleEffectWork *work;
+  s32 frame;
   u8 *sprites;
   s32 dmaArmed;
   s32 skip;
-  s32 draw;
-  s32 loaded;
-  s32 frame;
-  s32 i;
-  s32 j;
-  s32 shipX;
+  DrawRectangle *blit;
   s32 shipZ;
-  s32 zoomA;
-  s32 zoomB;
+  s32 shipX;
+  s32 loaded;
+  s32 draw;
+  s32 t;
+  s32 i;
   u8 *cells;
+  s32 place[4];
   DrawRectangle blits[2];
   struct EffectStep *p;
   struct EffectStep *q;
-  struct EffectStep *sparks;
-  s32 *anchor;
-  struct RenderModel *model;
-  void *verts;
   struct ModelTexture texture;
   struct ModelTexture texture2;
   s32 req[2];
-  s32 place[4];
   u8 *battle;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   transition = Ram_HeapSlots->transitionWork;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  dmaArmed = 0;
   sprites = Ram_HeapSlots->unk64[0];
+  dmaArmed = 0;
   skip = 0;
   BattleEffect_SelectLivingTargets(work->effect);
   for (frame = 0; frame != 32; frame++) {
-    volatile u16 *c = (volatile u16 *)(BG_PLTT + 0xc0);
+    volatile u16 *c = (volatile u16 *)(BG_PLTT + 96);
 
     for (i = 0; i != 128; i++, c++) {
-      u32 v = *c;
+      u16 v = *c;
       s32 r = v & 31;
-      s32 g = (v << 16) >> 21 & 31;
-      s32 b = (v << 16) >> 26 & 31;
+      s32 g = (u16)((v >> 5) & 31);
+      s32 b = (u16)((v >> 10) & 31);
 
       if (g == 0) {
         if (b > 0) {
@@ -193,18 +218,23 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x1141, 0x20000);
   wait(1);
-  Iwram_FillWords((void *)0x0600f800, 256, -1);
-  Iwram_FillWords((void *)0x0600f900, 128, 0x03ff03ff);
   {
-    u32 *map = (u32 *)0x0600f980;
-    u32 v = (u32)Data_02010200;
+    u32 *map = (u32 *)0x0600f800;
+    u32 v;
+    s32 y;
+    s32 x;
 
-    for (i = 0; i != 16; i++) {
-      for (j = 0; j != 8; j++) {
+    Iwram_FillWords(map, 256, -1);
+    map += 64;
+    Iwram_FillWords(map, 128, 0x03ff03ff);
+    v = (u32)Data_02010200;
+    map += 32;
+    for (y = 0; y != 16; y++) {
+      for (x = 0; x != 8; x++) {
         *map++ = v;
         v += 0x20002;
       }
-      for (j = 0; j != 8; j++) {
+      for (x = 0; x != 8; x++) {
         *map++ = 0x03ff03ff;
       }
     }
@@ -216,34 +246,34 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0x3f46;
   REG_BG1CNT = 0x1f83;
   wait(1);
-  BattleEffect_FetchRectangleBlitters(0, (void **)blits);
+  blit = blits;
+  BattleEffect_FetchRectangleBlitters(0, (void **)blit);
   work->transferMode = 1;
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   cells = work->sheet + 0x1781;
-  Resource_LoadAndDecompress(0xb1, cells, 0, 0);
-  for (i = 0; i != 0x2300; i++) {
-    if (cells[i]) {
-      cells[i] += 128;
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0B1, cells, 0, 0);
+  for (i = 0; i != 0x2300; i++, cells++) {
+    if (*cells) {
+      *cells += 128;
     }
   }
+  cells = work->sheet + 0x1781;
   blits[0](canvas, cells, 24, 8, 80, 112);
   work->transferPending = 1;
   wait(1);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  Resource_LoadAndDecompress(0x178, work->sheet, 1, 0);
-  Resource_LoadAndDecompress(0xb3, cells, 1, 1);
-  Resource_LoadAndDecompress(0x137, sprites, 0, 0);
-  loaded = 0;
+  Resource_LoadAndDecompress((s32)&ResourceId_Data178, work->sheet, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0B3, cells, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data137, sprites, 0, 0);
   transition[4] = 1;
+  loaded = 0;
   shipX = 0xc80000;
   shipZ = 0x540000;
   Iwram_ClearWords(canvas, 0x3c00);
   REG_DISPCNT = 0x7141;
   wait(1);
-  zoomA = -184;
-  zoomB = -92;
-  for (frame = 0; frame != 326; frame++, zoomA += 2, zoomB++) {
+  for (frame = 0; frame != 326; frame++) {
     draw = 1;
     if (gInput.repeat & 3) {
       skip = 1;
@@ -256,7 +286,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       if (!loaded) {
         Task_Add(BattleEffect_ProcessPendingBlock2Transfer, 0xc8f);
         Task_Add(Display_ApplyBg2Affine, 0xcff);
-        Resource_LoadAndDecompress(0xc7, work->sheet + 0x2781, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_Data0C7, work->sheet + 0x2781, 1, 0);
         loaded = 1;
       }
       gBgScroll[1].x = 0xff90;
@@ -266,7 +296,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_BG1CNT = 0x1f80;
       work->transferMode = 2;
       work->transferValue = 75;
-      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x150), 128);
+      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_Data150), 128);
       p = work->particles;
       for (i = 0; i != 9; i++, p++) {
         p->variant = -2 * i;
@@ -277,21 +307,21 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     if (frame <= 75) {
       s32 k = (frame / 4) % 18;
       s32 x = 60 - ((Trig_Sin(frame * 860) << 3) >> 16);
+      u8 w = Data_08198662[k];
+      u8 h = Data_08198674[k];
 
-      blits[1](canvas, work->sheet + 0x1781 + Data_08198686[k],
-               x - (Data_08198662[k] >> 1), frame - 8 - (Data_08198674[k] >> 1),
-               Data_08198662[k], Data_08198674[k]);
+      blit[1](canvas, work->sheet + 0x1781 + Data_08198686[k], x - (w >> 1),
+              frame - 8 - (h >> 1), w, h);
     }
     if ((u32)(frame - 76) <= 31) {
       p = work->particles;
       for (i = 0; i != 4; i++, p++) {
         if ((u32)p->variant <= 17) {
           s32 k = p->variant / 3;
+          u8 w = gData_08197467[k];
 
-          blits[i & 1](canvas, work->sheet + gData_0819747a[k],
-                       p->x - (gData_08197467[k] >> 1),
-                       p->y + gData_08197473[k] - 32, gData_08197467[k],
-                       gData_0819746d[k]);
+          blit[i & 1](canvas, work->sheet + gData_0819747a[k], p->x - (w >> 1),
+                      p->y + gData_08197473[k] - 32, w, gData_0819746d[k]);
         }
         p->variant++;
       }
@@ -300,12 +330,13 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 16;
     }
     if ((u32)(frame - 108) <= 8) {
-      REG_BLDALPHA = ((frame << 9) - 0xd800) | 16;
+      REG_BLDALPHA = ((frame - 108) * 512) | 16;
     }
-    if ((u32)zoomB <= 39) {
-      s32 z = Trig_Cos((((zoomA + zoomB) << 3) + zoomB) << 5) / 3 + 0x10000;
+    t = frame - 92;
+    if ((u32)t <= 39) {
+      s32 z = Trig_Cos(t * 800) / 3 + 0x10000;
       s32 q16;
-      s32 level;
+      s32 level = -1;
 
       if (z <= 0x107ff) {
         z = 0x10800;
@@ -315,18 +346,18 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       work->bg2pd = q16;
       work->bg2x = (64 - 0xb80000 / z) << 8;
       work->bg2y = (64 - 0x4c0000 / z) << 8;
-      level = -1;
-      if (zoomB <= 15) {
-        level = zoomB;
+      if (t <= 15) {
+        level = t;
       } else if ((u32)(frame - 116) <= 8) {
-        level = 64 - zoomA;
+        level = 64 - t * 2;
       }
       if (level != -1) {
-        volatile u16 *pal = (volatile u16 *)(BG_PLTT + 0x100);
-        s32 g = (level * 9 * 4) / 16;
+        volatile u16 *pal = (volatile u16 *)(BG_PLTT + 128);
 
         for (i = 0; i != 32; i++) {
-          *pal++ = ((i * level * 3) / 64) << 10 | (i * g) / 64;
+          s32 g = (i * ((level * 9 * 4) / 16)) / 64;
+
+          *pal++ = ((i * level * 3) / 64) << 10 | g;
         }
       }
       if (frame == 116) {
@@ -337,10 +368,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       volatile u16 *c = (volatile u16 *)BG_PLTT;
 
       for (i = 0; i != 64; i++, c++) {
-        u32 v = *c;
+        u16 v = *c;
         s32 r = (v & 31) - 3;
-        s32 g = ((v << 16) >> 21 & 31) - 3;
-        s32 b = ((v << 16) >> 26 & 31) - 3;
+        s32 g = ((u16)((v >> 5) & 31)) - 3;
+        s32 b = ((u16)((v >> 10) & 31)) - 3;
 
         if (r < 0)
           r = 0;
@@ -348,7 +379,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           g = 0;
         if (b < 0)
           b = 0;
-        *c = b << 10 | g << 5 | r;
+        *c = g << 5 | b << 10 | r;
       }
     }
     if (frame == 132) {
@@ -356,7 +387,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         Task_Remove(BattleEffect_ProcessPendingBlock2Transfer);
         Task_Remove(Display_ApplyBg2Affine);
         Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc8f);
-        Resource_LoadAndDecompress(0x15c, work->sheet + 0x1e97, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_Data15C, work->sheet + 0x1e97, 1, 0);
         loaded = 0;
       }
       REG_DISPCNT = 0x7141;
@@ -366,7 +397,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_BG2PD = 0x100;
       REG_BG2CNT = 0x784;
       REG_BLDALPHA = 0x1010;
-      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(0x13a), 128);
+      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_Data13A), 128);
     }
     if (frame == 133) {
       const s8 *src = Data_081986aa;
@@ -374,6 +405,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       Iwram_FillWords(canvas, 0x3c00, 0);
       Iwram_ClearWords((void *)0x06004000, 0x3c00);
       REG_DISPCNT = 0x7541;
+      q = (struct EffectStep *)(work->sheet + 0x4b98);
       p = work->particles;
       for (i = 0; i != 6; i++, p++, src += 5) {
         p->variant = -8 * i;
@@ -384,11 +416,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         p->velocityY = src[4] << 15;
         p->velocityZ = 0;
       }
-      q = (struct EffectStep *)(work->sheet + 0x4c18);
-      for (i = 0; i != 96; i++, q++) {
-        q->variant = -1;
+      for (i = 0; i != 96; i++) {
+        q[i].variant = -1;
       }
-      Resource_LoadAndDecompress(0xc8, gMapCellBuffer, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C8, gMapCellBuffer, 0, 0);
     }
     if (frame == 76) {
       Sound_PlayFar(138);
@@ -398,11 +429,16 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     }
 
     if ((u32)(frame - 133) <= 132) {
+      void *verts;
+      struct RenderModel *model;
+      struct EffectStep *sparks;
+      s32 j;
+
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
-      sparks = (struct EffectStep *)(work->sheet + 0x4c18);
+      sparks = (struct EffectStep *)(work->sheet + 0x4b98);
       if (frame > 196) {
-        Func_0815f0a0(0x150);
+        Func_0815f0a0((s32)&ResourceId_Data150);
       }
       texture.logWidth = 6;
       texture.logHeight = 6;
@@ -411,9 +447,9 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       model->texture = &texture;
       model->mesh = gData_08199340;
       model->vertices = verts;
-      anchor = (s32 *)&work->particles[8];
       p = work->particles;
-      for (i = 0; i != 6; i++, p++, anchor += 7) {
+      for (i = 0; i != 6; i++, p++) {
+        s32 delay = i * 8;
         s32 t = ++p->variant;
 
         if (t == 0) {
@@ -428,20 +464,19 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         t = p->variant;
         if ((u32)t <= 35) {
           s32 k = (t / 6) % 6;
+          u8 w = gData_08197467[k];
 
-          blits[0](canvas, work->sheet + gData_0819747a[k],
-                   HI(p->x) - (gData_08197467[k] >> 1),
-                   HI(p->y) + gData_08197473[k] - 36, gData_08197467[k],
-                   gData_0819746d[k]);
+          blits[0](canvas, work->sheet + gData_0819747a[k], HI(p->x) - (w >> 1),
+                   HI(p->y) + gData_08197473[k] - 36, w, gData_0819746d[k]);
           t = p->variant;
         }
         if ((u32)(t - 12) <= 31) {
           s32 k = ((t - 12) / 4) % 18;
+          u8 w = Data_08198662[k];
+          u8 h = Data_08198674[k];
 
-          blits[1](canvas, work->sheet + 0x1781 + Data_08198686[k],
-                   HI(p->x) - (Data_08198662[k] >> 1),
-                   HI(p->y) - (Data_08198674[k] >> 1), Data_08198662[k],
-                   Data_08198674[k]);
+          blit[1](canvas, work->sheet + 0x1781 + Data_08198686[k],
+                  HI(p->x) - (w >> 1), HI(p->y) - (h >> 1), w, h);
           t = p->variant;
         }
         if ((u32)(t - 44) <= 21) {
@@ -482,8 +517,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           t = p->variant;
         }
         if (t == 64) {
-          anchor[0] = HI(p->x);
-          anchor[1] = HI(p->y);
+          work->particles[i + 8].x = HI(p->x);
+          work->particles[i + 8].y = HI(p->y);
           q = sparks + i * 16;
           for (j = 0; j != 16; j++, q++) {
             s32 a = Random16() & 0xffff;
@@ -499,15 +534,16 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             s32 m = (Random16() << 2) + 0x10000;
 
             BattleEffect_StartActorMotion(effect->actors[j], 1, 0x20000, 0x80000, m,
-                                      i * 8 + (Random16() & 31) + 52);
+                                      delay + (Random16() & 31) + 52);
             Func_0814cd48(effect->actors[j], 7, -1, j, 4);
           }
         }
         if (draw && (u32)(p->variant - 64) <= 11) {
           s32 k = ((p->variant - 64) / 2) % 6;
 
-          blits[1](canvas, work->sheet + 0x1e97 + k * 0x780, anchor[0] - 20,
-                   anchor[1] - 24, 40, 48);
+          blit[1](canvas, work->sheet + 0x1e97 + k * 0x780,
+                  work->particles[i + 8].x - 20,
+                   work->particles[i + 8].y - 24, 40, 48);
         }
       }
       q = sparks;
@@ -516,7 +552,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           s32 n = q->variant / 4 + 2;
 
           if (draw) {
-            blits[1](canvas, sprites + Data_08197424[n - 1], HI(q->x) - n,
+            blit[1](canvas, sprites + Data_08197424[n - 1], HI(q->x) - n,
                      HI(q->y) - n, n * 2, n * 2);
           }
           BattleEffectKernels_IntegrateVector2(q, 60, 0x2000);
@@ -528,6 +564,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     }
 
     if (draw && frame <= 131) {
+      void *verts;
+      struct RenderModel *model;
+      s32 j;
+
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       model->shade = 0;
@@ -548,7 +588,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           Func_08015160(0x80000, 0, 0);
           SceneTransform_ApplyPitch(0x4000);
           if (j == 0) {
-            s32 sc = frame * 3 * 1024 - 0x39000 - 0x12000;
+            s32 sc = t * 3 * 1024 - 0x12000;
 
             if (t <= 39) {
               sc = t << 11;
@@ -557,15 +597,15 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
               }
             }
             Func_0801521c(sc);
-            SceneTransform_ApplyYaw(0x9800 - (frame << 9));
+            SceneTransform_ApplyYaw(-t * 512);
           } else {
             if (t > 23) {
-              Func_0801521c(0x1c000 - ((frame << 11) - 0x26000 - 0x8000));
+              Func_0801521c(0x1c000 - (t << 11));
             } else {
               SceneTransform_ApplyPitch(0x3ff0 - t * 682);
               Func_080150e4(t * 169 + 0xf028);
             }
-            SceneTransform_ApplyYaw((frame << 9) - 0x9800 - 0x2000);
+            SceneTransform_ApplyYaw(t << 9);
           }
           Render_TransformVertices(gData_08199210, verts, 4);
           Render_DrawModelList(model);
@@ -609,11 +649,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       for (i = 0; i != 32; i++, p++) {
         if ((u32)p->variant <= 23 && draw) {
           s32 k = (p->variant / 4) % 6;
+          u8 w = gData_08197467[k];
 
-          blits[0](canvas, work->sheet + gData_0819747a[k],
-                   p->x - (gData_08197467[k] >> 1),
-                   p->y + gData_08197473[k] - 48, gData_08197467[k],
-                   gData_0819746d[k]);
+          blits[0](canvas, work->sheet + gData_0819747a[k], p->x - (w >> 1),
+                   p->y + gData_08197473[k] - 48, w, gData_0819746d[k]);
         }
         p->variant++;
       }
@@ -654,7 +693,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = work->savedBg1Y;
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
-  Iwram_ClearWords((void *)(BG_PLTT + 0xc0), 256);
+  Iwram_ClearWords((void *)(BG_PLTT + 96), 256);
   wait(1);
   BattleBackground_LoadFar(2, *(u16 *)(battle + 0x670), -1);
   REG_BG2CNT = 0x787;
@@ -666,13 +705,13 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   wait(1);
   for (frame = 0; frame != 40; frame++) {
     u16 *src = (u16 *)(battle + 0x56c);
-    volatile u16 *dst = (volatile u16 *)(BG_PLTT + 0xc0);
+    volatile u16 *dst = (volatile u16 *)(BG_PLTT + 96);
 
     for (i = 0; i != 128; i++) {
-      u32 v = *src++;
+      u16 v = *src++;
       s32 r = v & 31;
-      s32 g = (v << 16) >> 21 & 31;
-      s32 b = (v << 16) >> 26 & 31;
+      s32 g = (u16)((v >> 5) & 31);
+      s32 b = (u16)((v >> 10) & 31);
       s32 nr = r + frame - 30;
       s32 ng = g + frame - 40;
       s32 nb = b + frame - 30;

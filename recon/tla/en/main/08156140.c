@@ -1,3 +1,5 @@
+// Draft, differ 196 of 2278, skeleton gap 104 (tla-en, 2026-11-01)
+
 // Draft of BattleEffect_RunProjectileVolley, the body of the volley family:
 // the user fires a volley of shots at each target, staggered by shot and
 // by target, and each shot that reaches its target flashes and throws
@@ -22,32 +24,41 @@
 // Twin: The Broken Seal's BattleEffect_RunProjectileVolley (effect.c), modes
 // 0-11. The Lost Age adds modes 12-18, the falling-streak particles, and
 // no longer opens the canvas differently for mode 10.
-// Listing 2278 instructions, draft 2282, differ 1002.
+// What remains: control flow, calls, frame and stack slots are the native's;
+// draft 2276, native 2278. Mode is in r9, steps in r10, as in the native.
+// - Most of the gap is order alone, no extra or missing work: stack stores and
+// loads of i and effect (the native stores i before loading, sp+136 before
+// sp+144 and sp+148), and pool loads against shifts. The registers often agree,
+// so these look like scheduling; K2 calls -mthumb-slow-loads an approximation,
+// and that may be the cause (not proved). A compiler question, not reshaped.
+// - The glint loop: the native keeps p in r11 and glint in r7, the draft the
+// reverse, probably the source of the two missing instructions. By the pass
+// dumps global.c ranks p over glint narrowly; nothing tried swapped them.
+// - i * delay + j * stagger adds as r2 + r3; the native adds r3 + r2. Written
+// j * stagger first, loop.c strength-reduces the product, which the native
+// does not, and the gap grows.
+// - The streak's n and its zero sit in r2 and r1, the native r1 and r2.
 
-// What remains: the control flow and the calls are the native's, block for
-// block, and the four positions sit at the native's stack frame slots (screen
-// 188, world 176, origin 164, position 152). The rows left are allocation
-// and order:
-// - mode lives in r10 here and in r9 in the native, which keeps steps in
-// r10; most branches on mode differ by that register alone.
-// - the shot and target loops (about 80 rows): the native keeps
-// i * shots, i * delay, the actor offset and the flash pointer as
-// spilled induction variables at sp+24..44 in its own order.
-// - the comet, crystal and glint draws (about 25 rows each): argument
-// order and the reuse of table bases.
-// - four instructions more than the native, in the comet halves.
-// - literal pools placed from these lengths, so most pool offsets after
-// the first differ by a few words.
+// How the allocation was found, for the next reader:
+// - The smoke counter and the spark shift are one local, as in the twin, with
+// spawned in the hit block.
+// - LOAD_GLINT_BLITTER and RELEASE_DRAW_BLITTER are do { } while (0) macros
+// (S2: no device while every use matches through them). The glint macro's
+// label keeps loop.c from hoisting the glint size tables, and with that mode
+// lands in r9; as a plain call the draft loses 94 instructions, since work
+// then wins a register. The release macro took the gap from 144 to 130.
+// - beam is assigned inside the call's argument; assigned before it, the
+// temporaries shift by one register from the mode 13 branch on (differ 324
+// against 198).
 
-// Tried (differ):
-// the twin's modes 0-11 extended with the Lost Age's 12-18     1266
-// the four positions declared in the native's slot order       1258
-// velocity cases 14 and 9 written apart, as the native tests   1474
-// ... with 10 and 18 apart as well                             1203
-// 10 and 18 apart alone                                        1245
-// index declared in the frame loop, as the twin (kept)         1169
-// shift reused as the smoke counter and spawned declared in
-// the hit block, as the twin                                   2224
+// Tried, gap (removed + added) unless marked:
+// j * stagger + i * delay                                      208 (the rest
+// of this list was measured from later states)
+// LoadBlitter(188) through a do { } while (0) macro            150 against 144
+// i * delay kept in a local before the shot loop               122 against 118
+// a flat Data_08198478[mode * 5 + n]: no change; [mode][n] kept, as the twin
+// k and shift swapped, hit at function scope, glint and angle unsigned, p
+// stepped by hand, frame - 1 in the test, delay read before stagger: no gain
 
 // Changes from the twin: the effect argument is read directly (the Lost
 // Age never stores work->effect), blitters load through BattleEffect_LoadBlitter and
@@ -102,7 +113,7 @@ extern char ResourceId_MercuryDjinnSmallSheet;
 
 // The Broken Seal's gVolley_* tables, in effect_table.s.
 extern u8 Data_08198475[];  // _CometHeights, by kind
-extern u8 Data_08198478[];  // _Modes: five bytes for each mode
+extern u8 Data_08198478[][5];  // _Modes: five bytes for each mode
 extern u8 Data_081984d7[];  // _FlashWidths
 extern u8 Data_081984de[];  // _FlashHeights
 extern u8 Data_081984e5[];  // _FlashSteps
@@ -165,6 +176,18 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 // The second blitter, loaded again for each draw that needs its own.
 #define DRAW_ALTERNATE ((DrawRectangle)Ram_HeapSlots->unkb8[1])
 
+// A glint's blitter, in a random palette.
+#define LOAD_GLINT_BLITTER()                                                   \
+  do {                                                                         \
+    Func_08196404(188, 7, 7, Data_0819850a[Random16() & 3] | CLIP, 0);         \
+  } while (0)
+
+// Frees the second blitter after a draw.
+#define RELEASE_DRAW_BLITTER()                                                 \
+  do {                                                                         \
+    HeapSlot_Release(188);                                                     \
+  } while (0)
+
 #define CUE_FIRE 136
 #define CUE_IMPACT 132
 #define PHASE_RESULTS 133 // Func_081180e8: the results phase begins
@@ -191,7 +214,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   s32 steps;
   struct MotionObject *user;
   s32 k;
-  s32 spawned;
+  // The smoke puffs placed, and later the sparks' speed shift, as the twin.
+  s32 shift;
   s32 x;
 
   // Set up: the work, canvas, camera and sprite sheet, the canvas layer and
@@ -301,9 +325,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
   } else if (mode == 13) {
     // The beam is unpacked once and then halved, every second byte, into
     // place at 0x1000.
-    u8 *beam = work->sheet;
+    u8 *beam;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, beam, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet, beam = work->sheet,
+                               1, 1);
     for (i = 0; i != 0x5b2; i++) {
       work->sheet[0x1000 + i] = *beam;
       beam += 2;
@@ -322,14 +347,14 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
 
   // Where each shot starts and how fast it flies.
   user = GetBattleObjectSlotFar(effect->actor)->object;
-  shots = Data_08198478[mode * 5 + VOLLEY_SHOTS];
-  steps = Data_08198478[mode * 5 + VOLLEY_STEPS];
+  shots = Data_08198478[mode][VOLLEY_SHOTS];
+  steps = Data_08198478[mode][VOLLEY_STEPS];
   {
-    s32 stagger = Data_08198478[mode * 5 + VOLLEY_STAGGER];
-    s32 delay = Data_08198478[mode * 5 + VOLLEY_DELAY];
+    s32 stagger = Data_08198478[mode][VOLLEY_STAGGER];
+    s32 delay = Data_08198478[mode][VOLLEY_DELAY];
     s32 height = BattleUnit_GetEffectHeightFar(effect->actor);
 
-    if (effect->count * shots > 63) // the shots must fit particles[64]
+    if (shots * effect->count > 63) // the shots must fit particles[64]
       effect->count = 1;
 
     for (i = 0; i != effect->count; i++) {
@@ -481,7 +506,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
         if (frame <= 3)
           draw[1](canvas, work->sheet + 0x65c0, djinnX, djinnY, 20, 40);
         draw[1](canvas, work->sheet + 0x65c0, djinnX, djinnY, 20, 40);
-        HeapSlot_Release(188);
+        RELEASE_DRAW_BLITTER();
       }
 
       // The shots.
@@ -496,7 +521,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
           struct EffectStep *shot;
           struct EffectPosition *pos;
 
-          if (j * stagger + i * delay >= frame)
+          if (i * delay + j * stagger >= frame)
             continue;
           shot = &work->particles[i * shots + j];
           if (mode >= 15 && mode <= 17 && shot->variant == 1)
@@ -511,7 +536,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
           shot->z += shot->velocityZ;
           if (mode == 6 || mode == 12) {
             // Two puffs of smoke behind the fireball.
-            spawned = 0;
+            shift = 0;
             for (k = PTCL_SMOKE; k != PTCL_STREAKS; k++) {
               struct EffectStep *p = &PARTICLES[k];
 
@@ -521,8 +546,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                 p->velocityX = ((Random16() & 255) - 128) << 11;
                 p->velocityY = ((Random16() & 255) - 128) << 11;
                 p->variant = (Random16() & 7) + 32;
-                spawned++;
-                if (spawned == 2)
+                shift++;
+                if (shift == 2)
                   break;
               }
             }
@@ -553,10 +578,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                 goto draw_shot;
             }
             if (ABS(x) >= ABS(target->x)) {
+              s32 spawned = 0;
               struct EffectStep *flash = &PARTICLES[index];
-              s32 shift;
 
-              spawned = 0;
               shot->variant = 1;
               if (mode == 5) {
                 Func_081180e8(PHASE_LATE_RESULTS);
@@ -591,8 +615,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               }
               if (mode == 16 || mode == 17) {
                 // The streak lets its particle loose.
-                for (k = 0; k != 1; k++)
-                  PARTICLES[PTCL_STREAKS + j + k].variant = 0;
+                s32 n;
+
+                for (n = 0; n != 1; n++)
+                  PARTICLES[PTCL_STREAKS + j + n].variant = 0;
               } else if (mode != 15) {
                 // Sparks.
                 shift = mode == 5 ? 12 : 11;
@@ -606,7 +632,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                     p->velocityY = ((Random16() & 255) - 128) << shift;
                     p->variant = (Random16() & 7) + 16;
                     spawned++;
-                    if (spawned == Data_08198478[mode * 5 + VOLLEY_SPARKS])
+                    if (spawned == Data_08198478[mode][VOLLEY_SPARKS])
                       break;
                   }
                 }
@@ -624,14 +650,14 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16,
                            pos->y - Data_08198475[kind], 32,
                            Data_08198475[kind]);
-            HeapSlot_Release(188);
+            RELEASE_DRAW_BLITTER();
             if (effect->side == 1)
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
             else
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP_Y);
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16, pos->y,
                            32, Data_08198475[kind]);
-            HeapSlot_Release(188);
+            RELEASE_DRAW_BLITTER();
           } else if (mode == 1) {
             if (ABS(shot->x) <= ABS(target->x))
               draw[0](canvas, work->sheet + frame % 6 * 768, pos->x - 16,
@@ -653,12 +679,17 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
           } else if (mode == 14) {
             // Five crystals, each turning through three cels.
             s32 cel = (i * shots + j) % 5 * 3 + frame / 4 % 3;
-            s32 width = gData_0819781a[cel];
-            s32 height = gData_08197826[cel];
+            u32 width;
+            u32 height;
+            u8 *picture = work->sheet + gData_08197834[cel] + 0x800;
+            s32 left;
+            s32 top;
 
-            draw[0](canvas, work->sheet + 0x800 + gData_08197834[cel],
-                    pos->x - (width >> 1), pos->y - (height >> 1), width,
-                    height);
+            width = gData_0819781a[cel];
+            left = pos->x - (width >> 1);
+            height = gData_08197826[cel];
+            top = pos->y - (height >> 1);
+            draw[0](canvas, picture, left, top, width, height);
           } else if (mode == 11) {
             draw[0](canvas, work->sheet + 330, pos->x - 15, pos->y - 12, 29,
                     23);
@@ -671,7 +702,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
       // The comets' flashes, 12 frames: half the picture, then the same
       // half flipped (odd flashes use the picture turned on its side).
       if (mode == 0 || mode == 5 || mode == 8) {
-        for (i = 0; i != shots * effect->count; i++) {
+        for (i = 0; i != effect->count * shots; i++) {
           struct EffectStep *flash = &PARTICLES[i];
 
           if (flash->variant == 1) {
@@ -683,26 +714,26 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->x - Data_081984d7[step],
                              flash->y - Data_081984ec[step],
                              Data_081984d7[step], Data_081984de[step]);
-              HeapSlot_Release(188);
+              RELEASE_DRAW_BLITTER();
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step], flash->x,
                   flash->y + Data_081984e5[step] - Data_081984ec[step],
                   Data_081984d7[step], Data_081984de[step]);
-              HeapSlot_Release(188);
+              RELEASE_DRAW_BLITTER();
             } else {
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP);
               DRAW_ALTERNATE(canvas, work->sheet + Data_081984f4[step] + 0x128a,
                              flash->x - Data_081984ec[step],
                              flash->y - Data_081984d7[step],
                              Data_081984de[step], Data_081984d7[step]);
-              HeapSlot_Release(188);
+              RELEASE_DRAW_BLITTER();
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step] + 0x128a,
                   flash->x + Data_081984e5[step] - Data_081984ec[step],
                   flash->y, Data_081984de[step], Data_081984d7[step]);
-              HeapSlot_Release(188);
+              RELEASE_DRAW_BLITTER();
             }
             flash->z++;
             if (flash->z == 12)
@@ -768,16 +799,16 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
           if ((u32)p->variant <= 7) {
             s32 angle = Random16() & 0xffff;
             s32 radius = (Random16() & 31) + 4;
-            s32 glintX = HI(p->x) + ((radius * Trig_Sin(angle)) >> 17) -
+            s32 glintX = HI(p->x) + ((Trig_Sin(angle) * radius) >> 17) -
                          (gData_08197492[glint] >> 1);
-            s32 glintY = HI(p->y) - ((radius * Trig_Cos(angle)) >> 17) -
+            s32 glintY = HI(p->y) - ((Trig_Cos(angle) * radius) >> 17) -
                          (gData_08197498[glint] >> 1);
 
-            Func_08196404(188, 7, 7, Data_0819850a[Random16() & 3] | CLIP, 0);
+            LOAD_GLINT_BLITTER();
             DRAW_ALTERNATE(canvas, work->sheet + 0x22 + gData_08197486[glint],
                            glintX, glintY, gData_08197492[glint],
                            gData_08197498[glint]);
-            HeapSlot_Release(188);
+            RELEASE_DRAW_BLITTER();
             p->variant++;
           }
         }

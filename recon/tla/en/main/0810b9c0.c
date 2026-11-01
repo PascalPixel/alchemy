@@ -1,3 +1,4 @@
+// Draft, differ 8 of 321, skeleton gap 4 (tla-en, 2026-11-01)
 // Draft: picks one of a unit's items in the five-column inventory grid for
 // the sell and drop lists, with the item's panel (Func_0810bca0) and plain
 // name drawn as the cursor moves. A refuses an item the shop's check
@@ -5,14 +6,18 @@
 // or 4675; SELECT held shows the item's details until it is released. As ☀️'s
 // Shop_SelectSell (games/tbs/src/shop/shop.c) inner loop. Returns the slot,
 // or -1 when cancelled.
-// Draft, differ 270 of 321 (2026-10-19): the shape follows the listing, but
-// here slot and redraw spill to the stack where the native keeps them in r7
-// and r10 (the count in r11); the native also keeps gInput's address across
-// the calls (saved at sp + 4) and the item window in a stack slot.
+// Allocation, frame and every instruction agree; three sched2 placements are
+// left. str r0 at sp + 28 (before movs #192) and at sp + 24 (before the lsls
+// of the cursor anchor's offset) each issue one place earlier in the listing,
+// and ldr r4, [sp, #4] after the SELECT details open issues after the strb to
+// detailsHidden. All three want a store followed by a missing load ranked one
+// cycle higher than arm_adjust_cost's 2 (insn 4 at 113 against the movs at
+// 114): the -mthumb-slow-loads approximation, no C reshaping reaches it. The
+// two windows stay separate pseudos so that the item window fits r3 with a
+// caller save, and the declaration order sets the stack slots.
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
-#include "text/msg_ids.h"
 
 struct ShopCursorAnchor {
   u8 unk00[5];
@@ -40,7 +45,7 @@ struct ShopUnit {
 };
 
 // Unnamed in the catalog yet: 4676 and 4675 take placeholders here.
-extern u8 Msg04676[], Msg04675[];
+extern u8 Msg04676[], Msg04675[], MsgItemPlainName[];
 
 struct ShopUnit *Unit_Get(s32 unitId);
 void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -60,17 +65,26 @@ void Window_CloseFar(void *window, s32 style);
 void WindowSprite_PrepareForRedrawFar(void *window);
 
 s32 Func_0810b9c0(s32 unitId) {
-  struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
-  struct ShopUnit *unit = Unit_Get(unitId);
-  s32 inventoryCount = 1;
-  s32 redraw = 1;
-  void *priceWindow = Window_CreateFar(14, 8, 16, 4, 2);
-  void *nameWindow = Window_CreateFar(0, 5, 30, 3, 2);
+  void *nameWindow;
+  struct ShopRuntime *shop;
+  void *priceWindow;
+  struct ShopUnit *unit;
   s32 slot;
+  s32 inventoryCount;
+  s32 redraw;
+  s32 result;
   s32 itemId;
   s32 flags;
-  s32 result;
   void *window;
+  s32 x;
+  s32 y;
+
+  shop = Ram_HeapSlots->menuRuntime;
+  unit = Unit_Get(unitId);
+  inventoryCount = 1;
+  redraw = 1;
+  priceWindow = Window_CreateFar(14, 8, 16, 4, 2);
+  nameWindow = Window_CreateFar(0, 5, 30, 3, 2);
 
   shop->cursorAnchor->active = 18;
   shop->mode = 12;
@@ -83,10 +97,12 @@ s32 Func_0810b9c0(s32 unitId) {
         slot = inventoryCount - 1;
       itemId = 0x1ff & unit->inventory[slot];
       window = shop->itemWindow;
-      Shop_PlaceCursor(window, slot % 5 * 16, slot / 5 * 16 + 8);
+      x = slot % 5;
+      y = slot / 5;
+      Shop_PlaceCursor(window, x * 16, y * 16 + 8);
       shop->mode = 3;
       Func_0810bca0(priceWindow, unitId, slot);
-      Shop_DrawMsg(nameWindow, itemId + MSGNO(MsgItemPlainName));
+      Shop_DrawMsg(nameWindow, itemId + (s32)MsgItemPlainName);
     }
     wait(1);
     if (gInput.pressed & 1) {
@@ -117,15 +133,16 @@ s32 Func_0810b9c0(s32 unitId) {
     }
     if (gInput.held & 4) {
       u32 item = unit->inventory[slot];
+      void *details;
 
       Sound_PlayFar(126);
-      window = Window_CreateFar(0, 9, 16, 10, 2);
-      ItemMenu_DrawItemDetailsFar(window, item);
+      details = Window_CreateFar(0, 9, 16, 10, 2);
+      ItemMenu_DrawItemDetailsFar(details, item);
       shop->detailsHidden = 0;
       while (gInput.held & 4)
         wait(1);
       shop->detailsHidden = 1;
-      Window_CloseFar(window, 2);
+      Window_CloseFar(details, 2);
       WindowSprite_PrepareForRedrawFar(shop->listWindow);
       wait(1);
       redraw = 1;

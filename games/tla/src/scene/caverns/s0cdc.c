@@ -7,8 +7,6 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
   s32 blocked = Func_020010b4(object, position);
 
   if (blocked == 0) {
-    s32 mask;
-
     Func_020010dc();
     Func_0200113c(0);
     Func_02001074(object, 6);
@@ -18,9 +16,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
     object->speed = 0x30000;
     object->acceleration = 0x20000;
     object->velocityY = 0x40000;
-    mask = 0x7e;
-    mask &= *flags;
-    *flags = mask;
+    *flags &= 0x7e;
     Actor_SetSingleChildFlags(object, 0);
     {
       struct MainRoutineWork *party = &gMainRoutineWork;

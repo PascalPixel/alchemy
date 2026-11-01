@@ -8,6 +8,15 @@ struct SpringPoint {
   s32 z;
 };
 
+struct SpringObstacle {
+  struct SpringPoint position;
+  s16 heading;
+  s16 pauseOrPhase;
+  s16 speedMode;
+  s16 reactionFrames;
+  s16 hitCooldownFrames;
+};
+
 struct SpringRide {
   u16 unk00;
   u16 hold;
@@ -18,7 +27,7 @@ struct SpringRide {
 
 extern struct SpringRide gData_02001760;
 extern s32 gData_020017b0;
-extern u8 gData_020017c0[];
+extern struct SpringObstacle gData_020017c0[];
 extern s32 gData_02001820;
 extern s32 gData_02001824;
 extern s32 gData_02001828;
@@ -41,30 +50,37 @@ void Func_020010f4(void) {
   s32 i = 0;
   u8 *xtbl;
   u16 *htbl;
-  u8 *rec;
+  struct SpringObstacle *rec;
   u8 *ztbl;
+  s32 zero;
 
   htbl = gData_02001754;
   ztbl = gData_02001750;
   xtbl = gData_0200174c;
   rec = gData_020017c0;
 
-  /* FAKEMATCH: a goto loop; as ☀️'s do/while its loop-end note keeps CSE from
-   * reusing the loop's zero for the ride's stores (differ 31). */
+  /* FAKEMATCH: a goto loop carries no loop notes, so loop.c leaves the zero in
+   * the loop and the ride's stores reuse it; as a do-while, 17 of 52
+   * instructions differ in tla-en. */
 next:
-  *(s32 *)(rec + 0) = *xtbl << 16;
-  *(s32 *)(rec + 8) = *ztbl << 16;
-  *(s32 *)(rec + 4) = 0;
-  *(u16 *)(rec + 12) = *htbl;
-  *(u16 *)(rec + 14) = 0;
-  *(u16 *)(rec + 16) = 0;
-  *(u16 *)(rec + 18) = 0;
-  *(u16 *)(rec + 20) = 0;
+  zero = 0;
+  rec->position.x = *xtbl << 16;
+  /* FAKEMATCH(barrier): the x store ends the first group, so the z table's read
+   * follows it at once; as plain stores of 0 with no barrier, 4 of 52
+   * instructions differ in tla-en. */
+  __asm__("");
+  rec->position.z = *ztbl << 16;
+  rec->position.y = zero;
+  rec->heading = *htbl;
+  rec->pauseOrPhase = zero;
+  rec->speedMode = zero;
+  rec->reactionFrames = zero;
+  rec->hitCooldownFrames = zero;
   i++;
   xtbl++;
   ztbl++;
   htbl++;
-  rec += 24;
+  rec++;
   if (i != 4)
     goto next;
 

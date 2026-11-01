@@ -41,7 +41,7 @@ struct KibomboObject {
   s16 field64;
   s16 field66;
   s32 field68;
-  void *update;
+  void (*update)(struct KibomboObject *object);
 };
 
 struct KibomboEventWork {

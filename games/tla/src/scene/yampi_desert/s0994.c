@@ -1,11 +1,9 @@
 #include "scene.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
 void Func_02000994(void) {
   s16 scene;
 
-  BYTE_AT(Actor_GetById(gMainRoutineWork.currentOwner), 34) = 2;
+  Actor_GetById(gMainRoutineWork.currentOwner)->terrainId = 2;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov661Room1)
     Func_02000918((u16 *)gData_02004768);

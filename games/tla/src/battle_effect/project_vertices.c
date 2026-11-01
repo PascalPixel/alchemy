@@ -29,17 +29,36 @@ void Render_TransformVertices(s32 arg0, s32 arg1, s32 arg2) {
   Heap_Release(routine);
 }
 
-/// Projects count packed s8 vertices (four bytes each) through
-/// Render_ProjectPoint into screen coordinates, four halfwords each.
-void Render_ProjectVertices(s8 *vertices, s16 *screen, s32 count) {
+/// One model vertex: signed byte coordinates, padded to a word.
+struct ModelVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+  s8 pad;
+};
+
+/// One projected vertex, as Render_ProjectPoint leaves it.
+struct ProjectedVertex {
+  s16 x;     ///< screen pixels
+  s16 y;     ///< screen pixels
+  s16 depth; ///< projected depth
+  s16 unk06;
+};
+
+/// Projects count model vertices through Render_ProjectPoint into screen
+/// coordinates.
+void Render_ProjectVertices(struct ModelVertex *vertices,
+                            struct ProjectedVertex *screen, s32 count) {
   s32 point[3];
 
   for (; count != 0; count--) {
-    SET_VECTOR(point, vertices[0] << 16, vertices[1] << 16, vertices[2] << 16);
+    SET_VECTOR(point, vertices->x << 16, vertices->y << 16, vertices->z << 16);
     Render_ProjectPoint(point, point);
-    SET_VECTOR(screen, point[0], point[1], point[2]);
-    vertices += 4;
-    screen += 4;
+    screen->x = point[0];
+    screen->y = point[1];
+    screen->depth = point[2];
+    vertices++;
+    screen++;
   }
 }
 

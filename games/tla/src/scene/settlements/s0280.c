@@ -1,4 +1,5 @@
 #include "local.h"
+#include "field_event.h"
 
 void Func_02000280(void) { Func_02002158(10, 1, 14); }
 
@@ -11,19 +12,18 @@ s32 Func_020002b0(struct Actor *object) {
   return 0;
 }
 
-s32 Func_020002bc(struct Actor *object) {
-  u8 *phase = (u8 *)object + 0x62;
-  s32 step = *phase & 63;
-  s16 *animation = object->animation;
+s32 Func_020002bc(struct FieldActor *object) {
+  s32 step = object->unk5a[8] & 63;
+  struct FieldSprite *sprite = object->sprite;
 
   object->motionFlags = 3;
   if (step == 0)
-    object->velocityY = 0x30000;
+    object->velocityY = PIXELS(3);
   if (step == 16)
-    object->velocityY = 0x20000;
+    object->velocityY = PIXELS(2);
   if (step == 24)
-    object->velocityY = 0x30000;
-  animation[9] = Math_Cosine(step << 12) / 64;
-  (*phase)++;
+    object->velocityY = PIXELS(3);
+  sprite->rotation = Math_Cosine(step << 12) / 64;
+  object->unk5a[8]++;
   return -1;
 }

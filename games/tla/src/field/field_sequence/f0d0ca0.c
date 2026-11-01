@@ -11,9 +11,6 @@ void BattlePalette_UpdateBlend(void) {
   struct BattleEffectBuffers *work = Ram_HeapSlots->block32;
   u16 *add = work->delta;
   s32 i;
-  u32 step;
-  s32 duration;
-  u16 *bank;
 
   if (GameFlag_Test(0x152) != 0) {
     return;
@@ -21,16 +18,7 @@ void BattlePalette_UpdateBlend(void) {
   if (work->duration == 0) {
     return;
   }
-  step = ++work->step << 24;
-  /* FAKEMATCH(one-pass): the duration's reload in a one-pass block, through
-   * a local, which keeps the step's first shift ahead of the load; as
-   * (s32)step >> 24 < work->duration, 2 of 175 instructions differ in
-   * tla-en (an empty asm in its place also matches, as in
-   * PaletteFade_Update). */
-  do {
-    duration = work->duration;
-  } while (0);
-  if ((s32)step >> 24 < duration) {
+  if (++work->step < work->duration) {
     u16 *sum = work->current;
     for (i = 0; i < 0x540; i++) {
       *sum++ += *add++;
@@ -60,18 +48,11 @@ void BattlePalette_UpdateBlend(void) {
   }
 
   work->page ^= 1;
-  bank = work->packed[work->page];
-  IO_WRITE_QUEUE_PUSH(({
-                        s32 address;
-                        /* FAKEMATCH(one-pass): the BG palette's address in a
-                         * one-pass block, as PaletteFade_Update writes it;
-                         * as IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, ...), 4 of
-                         * 175 instructions differ in tla-en. */
-                        do {
-                          address = (s32)BG_PLTT;
-                        } while (0);
-                        address;
-                      }),
-                      (u32)bank, DMA_COPY_WORDS(112));
-  IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(bank + 224), DMA_COPY_WORDS(112));
+  {
+    u16 *packed = work->packed[work->page];
+
+    IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)packed, DMA_COPY_WORDS(112));
+    IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(packed + 224),
+                        DMA_COPY_WORDS(112));
+  }
 }

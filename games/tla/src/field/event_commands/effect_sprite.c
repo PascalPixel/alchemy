@@ -22,24 +22,13 @@ void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   sprite->depth = 255;
   sprite->pivotX = pivotX;
   sprite->pivotY = pivotY;
-  shape = (attributes >> 30) | (attributes >> 12);
-  {
-    /* FAKEMATCH(register): the 15 mask pinned to r2, where the native builds
-     * it, so the size table's address loads between the shape's orrs and the
-     * mask; as shape = (...) & 15, 2 of 57 instructions differ in tla-en. */
-    register u32 mask asm("r2") = 15;
-
-    /* FAKEMATCH(barrier): the empty asm of the pin above, reading the table's
-     * address and the shape; as shape = (...) & 15, 2 of 57 instructions
-     * differ in tla-en. */
-    asm("" : "+l"(mask) : "l"(gData_080f3bc4), "l"(shape));
-    shape &= mask;
-  }
+  shape = ((attributes >> 30) | (attributes >> 12)) & 15;
   sprite->width = gData_080f3bc4[shape][0];
   sprite->height = gData_080f3bc4[shape][1];
   words = (u32 *)&sprite->oam;
   *words++ = attributes;
   *words = 0;
-  sprite->oam.palette256 = 1;
+  // Through the OAM's address: as sprite->oam.palette256, 2 of 57 differ.
+  (&sprite->oam)->palette256 = 1;
   sprite->oam.index = tile;
 }

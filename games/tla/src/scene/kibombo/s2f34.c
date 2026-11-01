@@ -2,7 +2,7 @@
 
 s32 Math_Cosine(s32 angle);
 void Func_02005a2c(struct KibomboObject *object, const void *script);
-void Effect_AdvanceMotion(void);
+void Effect_AdvanceMotion(struct KibomboObject *object);
 extern u32 gData_02005ca4[];
 
 void Func_02002f34(void) {

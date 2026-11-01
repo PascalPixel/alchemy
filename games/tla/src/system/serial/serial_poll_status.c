@@ -1,4 +1,5 @@
 #include "serial.h"
+#include "io_write.h"
 
 s32 Serial_PollAndTransfer(void *send, void *receive) {
   volatile u32 *siocnt;
@@ -10,44 +11,25 @@ s32 Serial_PollAndTransfer(void *send, void *receive) {
   control = *siocnt;
   switch (gSerialWork.phase) {
   case 0: {
-    u8 mask30 = control & 0x30;
+    u8 multiplayerId = control & 0x30;
     u8 mode;
 
-    if (mask30 == 0 && (mode = control & 0x88) == 8) {
+    if (multiplayerId == 0 && (mode = control & 0x88) == 8) {
       u8 serialError = control & 4;
-      s32 index;
 
-      if (serialError == 0) {
-        index = gSerialWork.sendIndex;
-        /* FAKEMATCH: keeps the send-index load ahead of the -1, as in
-         * Serial_PollStatus; without the barrier the -1 is started first
-         * (differ 2). */
-        asm("");
-        if (index == -1) {
-          u32 ie;
+      if (serialError == 0 && gSerialWork.sendIndex == -1) {
+        u32 ie;
 
-          /* FAKEMATCH: the do/while blocks and the separate enable
-           * variable are meaningless, as in Serial_PollStatus. */
-          do {
-            REG_IME = serialError;
-          } while (0);
-          ie = REG_IE;
-          do {
-            ie &= ~0x80;
-            ie |= 0x40;
-            REG_IE = ie;
-            {
-              u8 enable = 1;
-              REG_IME = enable;
-            }
-            *((volatile s8 *)siocnt + 1) &= ~0x40;
-            REG_IF = 0xc0;
-            REG_TM3CNT = 0xc963;
-          } while (0);
-          gSerialWork.mode = mode;
-        }
+        Io_Write16(0, &REG_IME);
+        ie = REG_IE;
+        Io_Write16((ie & ~0x80) | 0x40, &REG_IE);
+        Io_Write16(1, &REG_IME);
+        *((volatile s8 *)siocnt + 1) &= ~0x40;
+        REG_IF = 0xc0;
+        REG_TM3CNT = 0xc963;
+        gSerialWork.mode = mode;
       }
-    } else if (mask30 == 0) {
+    } else if (multiplayerId == 0) {
       break;
     }
     gSerialWork.phase = 1;
@@ -82,34 +64,17 @@ s32 Serial_PollStatus(void) {
     if (mode == 8) {
       u8 serialError = control & 4;
 
-      if (serialError == 0) {
-        s32 index = gSerialWork.sendIndex;
+      if (serialError == 0 && gSerialWork.sendIndex == -1) {
+        u32 ie;
 
-        /* FAKEMATCH: keeps the send-index load ahead of the -1. */
-        asm("");
-        if (index == -1) {
-          u32 ie;
-
-          /* FAKEMATCH: one-pass blocks preserve IE/IME load order; the enable
-           * local derives the mask from r3. */
-          do {
-            REG_IME = serialError;
-          } while (0);
-          ie = REG_IE;
-          do {
-            ie &= ~0x80;
-            ie |= 0x40;
-            REG_IE = ie;
-            {
-              u8 enable = 1;
-              REG_IME = enable;
-            }
-            *((volatile s8 *)siocnt + 1) &= ~0x40;
-            REG_IF = 0xc0;
-            REG_TM3CNT = 0xc963;
-          } while (0);
-          gSerialWork.mode = mode;
-        }
+        Io_Write16(0, &REG_IME);
+        ie = REG_IE;
+        Io_Write16((ie & ~0x80) | 0x40, &REG_IE);
+        Io_Write16(1, &REG_IME);
+        *((volatile s8 *)siocnt + 1) &= ~0x40;
+        REG_IF = 0xc0;
+        REG_TM3CNT = 0xc963;
+        gSerialWork.mode = mode;
       }
       gSerialWork.phase = 1;
     }

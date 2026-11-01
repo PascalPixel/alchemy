@@ -27,17 +27,12 @@ void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
 void Func_02000a80(void);
 
-static inline struct ContigoGlow *Contigo_Create(s32 type, s32 x, s32 y,
-                                                 s32 z) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer (direct,
-   * differ 2). */
-  return Func_02003fec(type, x, y, z);
-}
-
 /// The glow that grows over actor 17 and sinks away again, then the scene goes
 /// on.
 void Func_02000af4(void) {
   struct ContigoGlow *effect;
+  s32 x = PIXELS(706);
+  s32 z = PIXELS(116);
   u32 i;
 
   Func_0200406c();
@@ -52,7 +47,7 @@ void Func_02000af4(void) {
   Func_020041dc(16);
   Func_02004264();
   Func_0200427c(Actor_GetById(17), 2);
-  effect = Contigo_Create(280, 0x2c20000, 0, 0x740000);
+  effect = Func_02003fec(280, x, 0, z);
   if (effect != 0) {
     Actor_SetSingleChildFlags(effect, 0);
     Func_02003fdc(effect, 2);
@@ -61,12 +56,7 @@ void Func_02000af4(void) {
     effect->scaleY = 0x1999;
     i = 0;
   grow:
-    {
-      s32 x;
-
-      x = effect->scaleX;
-      effect->scaleX = x + 0x666;
-    }
+    effect->scaleX += 0x666;
     effect->scaleY += 0x666;
     wait(1);
     i++;
@@ -80,11 +70,8 @@ void Func_02000af4(void) {
     i = 0;
   shrink:
     effect->scaleX += 0xfffff99a;
-    /* FAKEMATCH: two volatile accesses, so the y load depends on the Y scale
-     * store and is issued before the 0x8000 step is built, as the native does;
-     * plain, the scheduler builds the step first (differ 2). */
-    *(volatile s32 *)&effect->scaleY += 0xfffff99a;
-    *(volatile s32 *)&effect->y += 0x8000;
+    effect->scaleY += 0xfffff99a;
+    effect->y += 0x8000;
     wait(1);
     i++;
     if (i < 28)

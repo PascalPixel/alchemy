@@ -15,7 +15,8 @@ struct FieldActor {
   s32 y;
   s32 z;
   s32 terrainHeight;
-  u8 unk18[0x0b];
+  u8 unk18[0x0a];
+  u8 terrainId; ///< the map layer its ground height is read from
   u8 priorityFlags;
   s32 velocityX;
   s32 velocityY;

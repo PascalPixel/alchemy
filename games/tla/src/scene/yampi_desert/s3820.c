@@ -14,7 +14,7 @@ loop:
 
     object->collisionFlags &= 0xfe;
     Actor_SetSingleChildFlags(object, 0);
-    Func_02003910(id, (u16)kind, (u16)flag, object->unk18[10]);
+    Func_02003910(id, (u16)kind, (u16)flag, object->terrainId);
     entry += 3;
   }
   if (entry[0] != 0xffff)

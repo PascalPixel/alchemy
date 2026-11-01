@@ -35,10 +35,12 @@ are in [The Lost Age: Game Pak](../gamepak/README.md).
   does; how each overlay is linked is in
   [The Lost Age: scene](../scene/README.md).
 - The task table holds 24 tasks (`TASK_COUNT`), not 20.
-- Every Thumb file is compiled with `-mthumb-split-constants`,
-  `-mthumb-call-via-lr`, `-mthumb-slow-loads` and `-mtune=arm9tdmi` added to
-  The Broken Seal's options, and without `-mthumb-interwork` (`CFLAGS_tla` in
-  the `Makefile`).
+- Every Thumb file is compiled with `-mtune=arm9tdmi` added to The Broken
+  Seal's options, and without `-mthumb-interwork` (`CFLAGS_tla` in the
+  `Makefile`). Those options are spelled as stock, but a reader must not assume
+  stock behaviour: `alchemy-gcc` gates three source rules found in no public
+  GCC on these two choices, split constants, one load and store line and calls
+  through `lr`, as its README describes.
 - This game's fixed addresses are its own, listed in
   `games/tla/include/system/ram_buffer.h`, `iwram_call.h` and
   `gamepak/rom_header.h`.

@@ -1,13 +1,7 @@
 #include "jupiter_lighthouse_aerie.h"
 
 s32 Func_02000538(void) {
-  s32 *route = (s32 *)((u8 *)Ram_HeapSlots->eventWork + 428);
-
-  /* FAKEMATCH(barrier): an empty asm between the route's address and its
-   * store, so gMainRoutineWork's address loads after the address is added; as
-   * one assignment, 2 of 87 instructions differ in tla-en. */
-  __asm__("");
-  *route = 513;
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 513;
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Func_02000858(0);

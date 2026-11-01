@@ -47,10 +47,7 @@ void Func_081b336c(void) {
   struct ReelWork *state;
   struct ReelEffectWork *work;
   struct EffectStep *letter;
-  const u8 *width;
   s32 left;
-  s32 step;
-  s32 y;
   s32 i;
   s32 angle;
   s32 window;
@@ -63,17 +60,14 @@ void Func_081b336c(void) {
     SPARKS[i].variant = 0;
 
   letter = work->particles;
-  y = -0x200000;
-  width = gLuckyWheels_TitleLetterWidths;
+  // The Broken Seal walks a pointer and steps a height; this game's bytes match
+  // only with the table read by name and the height worked out from the index.
   for (i = 0; i != REEL_TITLE_LETTERS; i++) {
     letter[i].x = (left + REEL_TITLE_LEFT) << 16;
-    step = *width;
-    width++;
-    left += step;
-    letter[i].y = y;
+    left += gLuckyWheels_TitleLetterWidths[i];
+    letter[i].y = (-32 - i * 8) << 16;
     letter[i].velocityY = 0;
     letter[i].variant = 0;
-    y += -0x80000;
   }
 
   for (i = 0; i != 160; i++)

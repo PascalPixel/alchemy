@@ -2,6 +2,12 @@
 #include "local.h"
 #include "call.h"
 
+struct MapBits {
+  u8 unk00[23];
+  u8 low : 2;
+  u8 mode : 2;
+};
+
 void Func_02002a58(s32 a);
 void Func_02001f60(s32 id);
 s32 GameFlag_GetByte(s32 flag);
@@ -24,14 +30,14 @@ void Func_0200153c(void);
 
 s32 Func_020017f4(void) {
   s32 scene = gMainRoutineWork.scene;
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapWork;
   s32 id, x, z;
   s16 *entrance;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
   gMainRoutineWork.retreatScene = (s32)&SceneId_Ov67bRoom1;
   gMainRoutineWork.retreatEntrance = 1;
-  ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 4;
+  map->mode = 1;
   Func_02002a58(170);
   if (scene == (s32)&SceneId_Ov67bRoom1) {
     Actor_SetPartAttribute(Actor_GetById(8), 4);
@@ -155,7 +161,8 @@ s32 Func_020017f4(void) {
     if (!GameFlag_Test(265)) {
       if (gMainRoutineWork.entrance == 1)
         Func_02001460();
-      if (*(entrance = &gMainRoutineWork.entrance) == 6)
+      entrance = &gMainRoutineWork.entrance;
+      if (*entrance == 6)
         Func_0200153c();
     }
   }

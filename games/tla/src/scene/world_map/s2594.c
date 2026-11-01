@@ -14,27 +14,22 @@ void Func_02004b20(struct Actor *object, const u8 *script);
 void Func_02002594(void) {
   struct Actor *obj;
   struct FieldSprite *sprite;
+  u8 *motionFlags;
   s32 x;
   s32 z;
-  s32 zero;
   s32 scale;
 
   x = ((Random16Far() * 40) >> 16) << 16;
   z = ((Random16Far() * 30) >> 16) << 16;
   obj = Func_02004b30(285, x + 0x7b80000, 0, z + 0x1c5c0000);
   if (obj != NULL) {
-    /* FAKEMATCH(one-pass): the sprite setup kept in a once-only block; as
-     * plain statements, 2 of 53 instructions differ in tla-en. */
-    do {
-      sprite = obj->animation;
-      scale = ((Random16Far() << 15) >> 16) + 0x13333;
-      /* FAKEMATCH(temporary): the zero both flag bytes take; as a constant 0
-       * in the nextFrame store, 10 of 53 instructions differ in tla-en. */
-      zero = 0;
-      sprite->priority = 2;
-      sprite->nextFrame = zero;
-      obj->motionFlags = 0;
-    } while (0);
+    sprite = obj->animation;
+    scale = ((Random16Far() << 15) >> 16) + 0x13333;
+    sprite->nextFrame = 0;
+    sprite->priority = 2;
+    // The flags byte's address in a local: stored directly, 2 of 53 differ.
+    motionFlags = &obj->motionFlags;
+    *motionFlags = 0;
     obj->scaleX = scale;
     obj->scaleY = scale;
     Func_02004b18(obj, 1);

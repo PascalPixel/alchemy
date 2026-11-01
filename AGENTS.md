@@ -51,7 +51,7 @@ Never: commit or publish a ROM or game files (L1); use another project's Golden 
 ## Workflow
 
 1. Work on a branch; `main` is the only long-lived branch. Work in the main checkout unless another session shares it, then in a worktree of your own (W2).
-2. Match what other unfinished code calls first, then the largest with nothing left to name (W4).
+2. Take the furthest function first, the one with the most left to match by a whole-function `alchemy-devtools diff` (W4).
 3. Draft in `recon/<game>/en/main/<address>.c`; a near miss stays a draft with its remaining difference in its header (S4).
 4. Adopt a match into the module of its linker neighbours, in every edition whose bytes agree, and commit (C1).
 5. Humanize one mechanism or scene at a time, all the way through, each step byte-identical (H2).
@@ -141,7 +141,7 @@ The set is frozen: three C generators built from the pinned `alchemy-gcc` submod
 - **W1** A plain Makefile whose every rule can be read; a build tool is a small tested C program; Rust only in `alchemy-devtools`; no TypeScript, JavaScript, Python or shell beyond a command line; tooling nothing needs is removed.
 - **W2** Work on a branch; `main` is the only long-lived branch; land with `make land`.
 - **W3** Follow pret where it settles a question, and never be stricter.
-- **W4** Match first what other unfinished code calls, with the structures it shares.
+- **W4** Far-off before near-match: work the function with the most left to match, with the structures it shares; among equals, what other unfinished code calls. Far-off work settles control flow, types and frames, which reach other functions and raise no compiler question. A near miss stopped by scheduling or allocation stays a draft (S4) and is not chased; it often falls to what the far-off work settles.
 - **W5** Before every commit, `make compare-editions` prints OK for all twelve editions; a tree that merges branches does so from a clean build.
 - **W6** A change to what counts, a rule, an option or routing lands as its own commit with DONE before and after.
 - **W7** Parallel work divides by owner; check a name is free (`git log --all -S`) before using it; commit only verified work.

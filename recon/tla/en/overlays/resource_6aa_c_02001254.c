@@ -1,7 +1,19 @@
-// Near misses of overlay 6aa: Func_02001254 differ 36 (the listing keeps one
-// counter address in r5 and loads the other twice), Func_020012e4 differ 22
-// (the listing reloads the counter sign-extended for the last test and builds
-// its zero in r4 before the first).
+// Draft, differ 31 of 38, skeleton gap 5 (tla-en, 2026-11-01): two functions,
+// measure each with --symbol.
+// Func_02001254, differ 31 of 38, gap 3 removed and 2 added: the native reloads
+// gData_020068a0's address after the two arms; this draft keeps it in r6 across
+// the calls, which saves r6 and moves every register after it. That is PRE:
+// gcse.c inserts the address in both arms and cse2 folds the copies. The state
+// local stands in for the native's hoisting of gData_02006868. This C compiled
+// with -Os in place of -O2 (analysis only) keeps the native's push, the reloaded
+// address and its registers; the state load is then hoisted too far. Same cause
+// as overlay 68e's Func_02000904 note. Tried: volatile (extra reads), a u16
+// declaration, an array declaration, the timer as a local at the top or at the
+// end, the value read into a local, the increment apart from the test.
+// Func_020012e4, differ 2 of 45, gap 1 and 1: one scheduling pair, the strh of
+// unk12 goes after the count address's add #100. The last test reads
+// object->action directly: through count, PRE keeps a ldrh across the block.
+// Tried: a parts pointer, a value local, declaration order, a u16 pointer.
 #include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
 
 extern char SceneId_Ov6a8Room2;
@@ -48,15 +60,17 @@ void Func_02004c88(s32 scene, s32 a1);
 void Func_02004d98(void);
 
 void Func_02001254(void) {
+  s16 *state = &gData_02006868;
+
   if (gData_020068a0 < 60) {
-    if (gData_02006868 == 0) {
+    if (*state == 0) {
       Func_0200246c(0, 3);
-      gData_02006868 = 1;
+      *state = 1;
     }
   } else {
-    if (gData_02006868 == 1) {
+    if (*state == 1) {
       Func_0200246c(0, 67);
-      gData_02006868 = 0;
+      *state = 0;
     }
   }
   if (++gData_020068a0 > 300)
@@ -64,10 +78,11 @@ void Func_02001254(void) {
 }
 
 void Func_020012e4(struct Actor *object) {
-  s16 *count = &object->action;
+  s16 *count;
   s32 zero;
 
   ((struct SpriteParts *)object->animation)->unk12 += 0x800;
+  count = &object->action;
   (*count)++;
   zero = 0;
   if (*count == 8)
@@ -77,7 +92,7 @@ void Func_020012e4(struct Actor *object) {
     object->scaleX += 0xfffff800;
     object->scaleY += 0xfffff800;
   }
-  if (*count == 32) {
+  if (object->action == 32) {
     object->x = zero;
     object->z = zero;
     object->update = (void (*)(void))zero;

@@ -1,3 +1,16 @@
+// Draft, differ 6 of 19, skeleton gap 3 (tla-en, 2026-11-01)
+// Measure with --symbol: Func_02001014, Func_02001094, Func_02001114 and
+// Func_020011cc are differ 0; the figures above are Func_0200119c.
+// Func_0200119c: the count's address loads before the timer store, and the
+// table load and the shift then follow it out of place. In sched2 the two ldr
+// loads have no dependence on the store, so only a scheduling barrier keeps
+// them after it. Plain forms all stay at gap 3 or worse: globals or pointers,
+// late or early, a cast store sharing the count's alias set. An increment read
+// first or a post-increment index merges the two reads (18 instructions).
+// With `asm volatile("")` or a `do { } while (0)` around the timer store it is
+// differ 0, as the matched lightcue.c twins in games/tla/src/scene are, each
+// with a tagged device. Adopting this needs that device: one-pass is the milder.
+
 #include "types.h"
 #include "iwram_call.h"
 #include "field_event.h"
@@ -78,9 +91,10 @@ void Func_0200119c(s32 id, s32 value) {
   struct FieldActor *object = Actor_GetById(id);
 
   if (object != NULL) {
-    s16 *count = &gData_0200275e;
+    s16 *count;
 
     object->timer = value;
+    count = &gData_0200275e;
     gData_02002760[*count] = object;
     (*count)++;
   }

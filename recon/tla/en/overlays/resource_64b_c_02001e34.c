@@ -1,9 +1,22 @@
-// Draft, differ 309 of 714: the Venus Djinni (actor 9) joins on the world
-// map and offers its tutorial, as The Broken Seal's EventScript_MeetFlint;
-// the second visit offers it again. owner is read only on the first path, as
-// the native reads r7 uninitialized on the second. Left: register allocation
-// (the native keeps the Djinni in r6, the owner in r7 and the two home
-// coordinates in r9 and r8) and the order of the coordinate setup.
+// Draft, differ 271 of 714, skeleton gap 125 (tla-en, 2026-11-01)
+// The Venus Djinni (actor 9) joins on the world map and offers its tutorial,
+// as The Broken Seal's WorldMap_MeetFlint; the second visit offers it again.
+// owner is set only on the first path: the native reads r7 uninitialized on
+// the second, so owner is live from entry and conflicts with everything.
+// The goto loops keep the 0x800 and 0x1000 steps in the loop; i = 15 beside the
+// message reaches the native's slot, sched1 moving it across calls.
+// Left, nearly all from one cause: the flag test's known 0. CSE follows the
+// fall-through and reuses a register for djinni->velocityY = 0, count here,
+// the flag's own pseudo without count = 0. The native loads 0 fresh, so r5
+// stays free: native r5 pointer then i, r6 djinni, r7 owner, r8 and r9 the
+// home coordinates, z in fp, a 4-byte frame. Here owner lands in r8 and z on
+// the stack, giving most of the adds/mov pairs, and the +1/+2 message tail does
+// not cross-jump. Tried without a cure: goto, switch, a direct GameFlag_Test
+// (shares 0x16e), an inline for the zero stores, a !flag inline (negs/orrs),
+// do/while(0) message macros, i = flag (keeps a copy). Next to try: what ends
+// CSE's path between the test and the store. Func_02004d08(owner, 0x100, 30)
+// shares its constant here; scene_call.h's forwarded inline would rebuild it,
+// a tagged device left for adoption. count = MsgTheVenusDjinni loses (153).
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
@@ -71,13 +84,19 @@ void Func_02004e30(s32 cue);
    (s32)(base))
 
 void Func_02001e34(void) {
-  struct Actor *djinni = Actor_GetById(9);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 x = (leader->x - 0x27880000) / 2 + 0x27880000;
-  s32 z = (leader->z - 0x20a40000) / 2 + 0x20a40000;
+  struct Actor *djinni;
+  struct Actor *leader;
+  s32 x;
+  s32 z;
   s32 owner;
+  s32 count;
   s32 i;
 
+  count = 0;
+  djinni = Actor_GetById(9);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  x = (leader->x - 0x27880000) / 2 + 0x27880000;
+  z = (leader->z - 0x20a40000) / 2 + 0x20a40000;
   if (Flag_IsSet(0x16e) == 0) {
     if (gInput & 64)
       Flag_Set(0x175);
@@ -111,6 +130,7 @@ void Func_02001e34(void) {
     Actor_SetAngleToward(9, owner, 0);
     wait(16);
     Func_02004cd8(TUTORIAL_MESSAGE(MsgHey2));
+    i = 15;
     Func_02004cf0(9, 0);
     Func_02004db0();
     Func_02004df8(0x13333, 6);
@@ -123,11 +143,13 @@ void Func_02001e34(void) {
     djinni->velocityY = 0;
     djinni->terrainHeight = 0;
     Func_02004b50(djinni, 0x27880000, 0, 0x20a40000);
-    for (i = 15; i >= 0; i--) {
-      djinni->scaleX += 0x800;
-      djinni->scaleY += 0x800;
-      wait(1);
-    }
+  grow:
+    djinni->scaleX += 0x800;
+    djinni->scaleY += 0x800;
+    i--;
+    wait(1);
+    if (i >= 0)
+      goto grow;
     Actor_SetAngleToward(9, owner, 0);
     Actor_SetAngleToward(owner, 9, 0);
     wait(16);
@@ -153,6 +175,7 @@ void Func_02001e34(void) {
     Actor_Jump(9, 2, 20);
     Actor_Jump(9, 2, 20);
     Func_02004cd8(TUTORIAL_MESSAGE(MsgEvenIKnow));
+    i = 15;
     Func_02004cf0(9, 0);
     Func_02004d08(owner, 0x102, 30);
     Func_02004cf0(9, 0);
@@ -164,19 +187,24 @@ void Func_02001e34(void) {
     Func_02004cf0(9, 0);
     djinni->motionFlags = 0;
     Func_02004b50(djinni, x, 0x100000, z);
-    for (i = 15; i >= 0; i--) {
-      djinni->angle += 0x1000;
-      wait(1);
-    }
+  spin:
+    djinni->angle += 0x1000;
+    i--;
+    wait(1);
+    if (i >= 0)
+      goto spin;
     Actor_SetModeById(owner, 1);
     Func_02004cf0(9, 0);
     djinni->motionFlags = 2;
     djinni->velocityY = 0;
     djinni->terrainHeight = 0;
-    for (i = 7; i >= 0; i--) {
-      djinni->angle += 0x1000;
-      wait(1);
-    }
+    i = 7;
+  spinDown:
+    djinni->angle += 0x1000;
+    i--;
+    wait(1);
+    if (i >= 0)
+      goto spinDown;
     Actor_SetModeById(owner, 22);
     Func_02004cf0(9, 0);
     Func_02004d08(9, 0x102, 30);
@@ -185,25 +213,25 @@ void Func_02001e34(void) {
     Func_02004cf0(9, 0);
     Actor_Jump(9, 2, 30);
     FieldMessage_ShowAtActor(9, 0);
-    i = 0;
+    count = 0;
   plead:
     {
-      s32 answer = Event_AskYesNoWithActorAnimation(owner, 0);
+      i = Event_AskYesNoWithActorAnimation(owner, 0);
 
-      if (i == 7) {
-        if (answer == 0) {
+      if (count == 7) {
+        if (i == 0) {
           Actor_Jump(9, 2, 20);
           Actor_Jump(9, 2, 20);
           Func_02004cd8(TUTORIAL_MESSAGE(MsgOhAllRight));
           Func_02004cf0(9, 0);
           goto joined;
         }
-      } else if (answer == 1) {
+      } else if (i == 1) {
         Actor_Jump(9, 2, 20);
         Actor_Jump(9, 2, 20);
-        Func_02004cd8(i + TUTORIAL_MESSAGE(MsgOhComeOn));
+        Func_02004cd8(count + TUTORIAL_MESSAGE(MsgOhComeOn));
         FieldMessage_ShowAtActor(9, 0);
-        i++;
+        count++;
         goto plead;
       }
     }

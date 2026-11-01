@@ -1,38 +1,59 @@
-// Near miss (721 of 1,163 instructions differ, nearly all one register
-// swap): the native keeps the actor id in r6 and the object in r5, the
-// draft the other way round, so every one of the 162 path steps differs
-// by its first argument's register. The case structure (each step moves
-// the actor and ends with its own increment and return, odd steps wait for
-// arrival) and the state switch match.
+// Draft, differ 567 of 1,163, skeleton gap 9 (tla-en, 2026-11-01)
+// Every path step goes through an inline wrapper, the event layer's habit:
+// a direct call puts the id's move after the constants in all 162 steps.
+// `s`, the state read once, lets the switch drop its test for 1.
+// Left in the skeleton: case 224 alone keeps its own increment, rebuilding
+// object + 100 after the call and then returning, and builds its z before the
+// id's move. Here PRE (gcse) folds that increment into the shared tail. Tried:
+// object->timer spellings, a cast, a local pointer inside or before the call,
+// an inline taking the object, a local z, a direct call, the timer pointer
+// from state + 2. `break` in place of the increments lets jump2 merge the
+// identical steps, losing 300 instructions.
+// Left in allocation, nearly all the differ: the native has the object in r5,
+// the id in r6 and the timer pointer in r7; the draft rotates them (id r5,
+// timer r6, object r7), since global.c ranks the id first by refs over live
+// length, then the timer pointer. Declaration order, dropping the state
+// pointer, a local timer value, a copied id and a u32 id change nothing.
 #include "types.h"
 
-struct YallamObject {
+// The layout Func_02001904 (yallam/s1904.c) reads: state and timer sit where
+// struct Actor has its callback and action.
+struct YallamActor {
   u8 unk00[8];
   s32 x;
   s32 y;
   s32 z;
-  u8 unk14[0x4e];
+  u8 unk14[78];
   u8 state;
-  u8 unk63;
+  u8 kind;
   s16 timer;
 };
 
-struct YallamObject *Actor_GetById(s32 id);
+struct YallamActor *Actor_GetById(s32 id);
 void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Func_02002448(struct YallamObject *object, s32 mode);
-void Func_02002450(struct YallamObject *object, s32 x, s32 y, s32 z);
-s32 Func_020006a4(struct YallamObject *object);
+void Func_02002448(struct YallamActor *object, s32 mode);
+void Func_02002450(struct YallamActor *object, s32 x, s32 y, s32 z);
+s32 Func_020006a4(struct YallamActor *object);
+
+static __inline__ void Actor_SetDestination(s32 actor, s32 x, s32 z) {
+  Actor_ResetAndSetPosition(actor, x, z);
+}
+
+static __inline__ void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration) {
+  Actor_SetSpeedParameters(actor, speed, acceleration);
+}
 
 void Func_020006bc(s32 actor) {
-  struct YallamObject *object = Actor_GetById(actor);
+  struct YallamActor *object = Actor_GetById(actor);
   u8 *state = &object->state;
+  u8 s = *state;
   s16 *timer;
 
-  if (*state == 1)
+  if (s == 1)
     return;
   timer = &object->timer;
-  switch (*state) {
+  switch (s) {
   case 0:
     Func_02002448(object, 2);
     break;
@@ -48,481 +69,481 @@ void Func_020006bc(s32 actor) {
   }
   switch (*timer) {
   case 0:
-    Actor_ResetAndSetPosition(actor, 344, 824);
+    Actor_SetDestination(actor, 344, 824);
     (*timer)++;
     return;
   case 2:
-    Actor_ResetAndSetPosition(actor, 324, 820);
+    Actor_SetDestination(actor, 324, 820);
     (*timer)++;
     return;
   case 4:
-    Actor_ResetAndSetPosition(actor, 320, 808);
+    Actor_SetDestination(actor, 320, 808);
     (*timer)++;
     return;
   case 6:
-    Actor_ResetAndSetPosition(actor, 324, 796);
+    Actor_SetDestination(actor, 324, 796);
     (*timer)++;
     return;
   case 8:
-    Actor_ResetAndSetPosition(actor, 344, 792);
+    Actor_SetDestination(actor, 344, 792);
     (*timer)++;
     return;
   case 10:
-    Actor_ResetAndSetPosition(actor, 364, 796);
+    Actor_SetDestination(actor, 364, 796);
     (*timer)++;
     return;
   case 12:
-    Actor_ResetAndSetPosition(actor, 368, 808);
+    Actor_SetDestination(actor, 368, 808);
     (*timer)++;
     return;
   case 14:
-    Actor_ResetAndSetPosition(actor, 364, 820);
+    Actor_SetDestination(actor, 364, 820);
     (*timer)++;
     return;
   case 16:
-    Actor_ResetAndSetPosition(actor, 344, 824);
+    Actor_SetDestination(actor, 344, 824);
     (*timer)++;
     return;
   case 18:
-    Actor_ResetAndSetPosition(actor, 324, 820);
+    Actor_SetDestination(actor, 324, 820);
     (*timer)++;
     return;
   case 20:
-    Actor_ResetAndSetPosition(actor, 320, 808);
+    Actor_SetDestination(actor, 320, 808);
     (*timer)++;
     return;
   case 22:
-    Actor_ResetAndSetPosition(actor, 324, 796);
+    Actor_SetDestination(actor, 324, 796);
     (*timer)++;
     return;
   case 24:
-    Actor_ResetAndSetPosition(actor, 344, 792);
+    Actor_SetDestination(actor, 344, 792);
     (*timer)++;
     return;
   case 26:
-    Actor_ResetAndSetPosition(actor, 364, 796);
+    Actor_SetDestination(actor, 364, 796);
     (*timer)++;
     return;
   case 28:
-    Actor_ResetAndSetPosition(actor, 368, 808);
+    Actor_SetDestination(actor, 368, 808);
     (*timer)++;
     return;
   case 30:
-    Actor_ResetAndSetPosition(actor, 364, 820);
+    Actor_SetDestination(actor, 364, 820);
     (*timer)++;
     return;
   case 32:
-    Actor_ResetAndSetPosition(actor, 344, 824);
+    Actor_SetDestination(actor, 344, 824);
     (*timer)++;
     return;
   case 34:
-    Actor_SetSpeedParameters(actor, 0x1cccc, 0x1cccc);
-    Actor_ResetAndSetPosition(actor, 364, 820);
+    Actor_SetSpeed(actor, 0x1cccc, 0x1cccc);
+    Actor_SetDestination(actor, 364, 820);
     (*timer)++;
     return;
   case 36:
-    Actor_ResetAndSetPosition(actor, 368, 808);
+    Actor_SetDestination(actor, 368, 808);
     (*timer)++;
     return;
   case 38:
-    Actor_ResetAndSetPosition(actor, 392, 808);
+    Actor_SetDestination(actor, 392, 808);
     (*timer)++;
     return;
   case 40:
-    Actor_ResetAndSetPosition(actor, 392, 744);
+    Actor_SetDestination(actor, 392, 744);
     (*timer)++;
     return;
   case 42:
-    Actor_SetSpeedParameters(actor, 0x13333, 0x13333);
-    Actor_ResetAndSetPosition(actor, 372, 740);
+    Actor_SetSpeed(actor, 0x13333, 0x13333);
+    Actor_SetDestination(actor, 372, 740);
     (*timer)++;
     return;
   case 44:
-    Actor_ResetAndSetPosition(actor, 368, 728);
+    Actor_SetDestination(actor, 368, 728);
     (*timer)++;
     return;
   case 46:
-    Actor_ResetAndSetPosition(actor, 372, 716);
+    Actor_SetDestination(actor, 372, 716);
     (*timer)++;
     return;
   case 48:
-    Actor_ResetAndSetPosition(actor, 392, 712);
+    Actor_SetDestination(actor, 392, 712);
     (*timer)++;
     return;
   case 50:
-    Actor_ResetAndSetPosition(actor, 412, 716);
+    Actor_SetDestination(actor, 412, 716);
     (*timer)++;
     return;
   case 52:
-    Actor_ResetAndSetPosition(actor, 416, 728);
+    Actor_SetDestination(actor, 416, 728);
     (*timer)++;
     return;
   case 54:
-    Actor_ResetAndSetPosition(actor, 412, 740);
+    Actor_SetDestination(actor, 412, 740);
     (*timer)++;
     return;
   case 56:
-    Actor_ResetAndSetPosition(actor, 392, 744);
+    Actor_SetDestination(actor, 392, 744);
     (*timer)++;
     return;
   case 58:
-    Actor_ResetAndSetPosition(actor, 372, 740);
+    Actor_SetDestination(actor, 372, 740);
     (*timer)++;
     return;
   case 60:
-    Actor_ResetAndSetPosition(actor, 368, 728);
+    Actor_SetDestination(actor, 368, 728);
     (*timer)++;
     return;
   case 62:
-    Actor_ResetAndSetPosition(actor, 372, 716);
+    Actor_SetDestination(actor, 372, 716);
     (*timer)++;
     return;
   case 64:
-    Actor_ResetAndSetPosition(actor, 392, 712);
+    Actor_SetDestination(actor, 392, 712);
     (*timer)++;
     return;
   case 66:
-    Actor_ResetAndSetPosition(actor, 412, 716);
+    Actor_SetDestination(actor, 412, 716);
     (*timer)++;
     return;
   case 68:
-    Actor_ResetAndSetPosition(actor, 416, 728);
+    Actor_SetDestination(actor, 416, 728);
     (*timer)++;
     return;
   case 70:
-    Actor_ResetAndSetPosition(actor, 412, 740);
+    Actor_SetDestination(actor, 412, 740);
     (*timer)++;
     return;
   case 72:
-    Actor_ResetAndSetPosition(actor, 392, 744);
+    Actor_SetDestination(actor, 392, 744);
     (*timer)++;
     return;
   case 74:
-    Actor_ResetAndSetPosition(actor, 372, 740);
+    Actor_SetDestination(actor, 372, 740);
     (*timer)++;
     return;
   case 76:
-    Actor_ResetAndSetPosition(actor, 368, 728);
+    Actor_SetDestination(actor, 368, 728);
     (*timer)++;
     return;
   case 78:
-    Actor_ResetAndSetPosition(actor, 372, 716);
+    Actor_SetDestination(actor, 372, 716);
     (*timer)++;
     return;
   case 80:
-    Actor_ResetAndSetPosition(actor, 392, 712);
+    Actor_SetDestination(actor, 392, 712);
     (*timer)++;
     return;
   case 82:
-    Actor_ResetAndSetPosition(actor, 412, 716);
+    Actor_SetDestination(actor, 412, 716);
     (*timer)++;
     return;
   case 84:
-    Actor_ResetAndSetPosition(actor, 416, 728);
+    Actor_SetDestination(actor, 416, 728);
     (*timer)++;
     return;
   case 86:
-    Actor_ResetAndSetPosition(actor, 412, 740);
+    Actor_SetDestination(actor, 412, 740);
     (*timer)++;
     return;
   case 88:
-    Actor_ResetAndSetPosition(actor, 392, 744);
+    Actor_SetDestination(actor, 392, 744);
     (*timer)++;
     return;
   case 90:
-    Actor_ResetAndSetPosition(actor, 372, 740);
+    Actor_SetDestination(actor, 372, 740);
     (*timer)++;
     return;
   case 92:
-    Actor_ResetAndSetPosition(actor, 368, 728);
+    Actor_SetDestination(actor, 368, 728);
     (*timer)++;
     return;
   case 94:
-    Actor_ResetAndSetPosition(actor, 372, 716);
+    Actor_SetDestination(actor, 372, 716);
     (*timer)++;
     return;
   case 96:
-    Actor_ResetAndSetPosition(actor, 392, 712);
+    Actor_SetDestination(actor, 392, 712);
     (*timer)++;
     return;
   case 98:
-    Actor_ResetAndSetPosition(actor, 392, 696);
+    Actor_SetDestination(actor, 392, 696);
     (*timer)++;
     return;
   case 100:
-    Actor_ResetAndSetPosition(actor, 412, 692);
+    Actor_SetDestination(actor, 412, 692);
     (*timer)++;
     return;
   case 102:
-    Actor_ResetAndSetPosition(actor, 416, 680);
+    Actor_SetDestination(actor, 416, 680);
     (*timer)++;
     return;
   case 104:
-    Actor_ResetAndSetPosition(actor, 412, 668);
+    Actor_SetDestination(actor, 412, 668);
     (*timer)++;
     return;
   case 106:
-    Actor_ResetAndSetPosition(actor, 392, 664);
+    Actor_SetDestination(actor, 392, 664);
     (*timer)++;
     return;
   case 108:
-    Actor_ResetAndSetPosition(actor, 372, 668);
+    Actor_SetDestination(actor, 372, 668);
     (*timer)++;
     return;
   case 110:
-    Actor_ResetAndSetPosition(actor, 368, 680);
+    Actor_SetDestination(actor, 368, 680);
     (*timer)++;
     return;
   case 112:
-    Actor_ResetAndSetPosition(actor, 320, 680);
+    Actor_SetDestination(actor, 320, 680);
     (*timer)++;
     return;
   case 114:
-    Actor_ResetAndSetPosition(actor, 316, 692);
+    Actor_SetDestination(actor, 316, 692);
     (*timer)++;
     return;
   case 116:
-    Actor_ResetAndSetPosition(actor, 296, 696);
+    Actor_SetDestination(actor, 296, 696);
     (*timer)++;
     return;
   case 118:
-    Actor_ResetAndSetPosition(actor, 276, 692);
+    Actor_SetDestination(actor, 276, 692);
     (*timer)++;
     return;
   case 120:
-    Actor_ResetAndSetPosition(actor, 272, 680);
+    Actor_SetDestination(actor, 272, 680);
     (*timer)++;
     return;
   case 122:
-    Actor_ResetAndSetPosition(actor, 276, 668);
+    Actor_SetDestination(actor, 276, 668);
     (*timer)++;
     return;
   case 124:
-    Actor_ResetAndSetPosition(actor, 296, 664);
+    Actor_SetDestination(actor, 296, 664);
     (*timer)++;
     return;
   case 126:
-    Actor_ResetAndSetPosition(actor, 316, 668);
+    Actor_SetDestination(actor, 316, 668);
     (*timer)++;
     return;
   case 128:
-    Actor_ResetAndSetPosition(actor, 320, 680);
+    Actor_SetDestination(actor, 320, 680);
     (*timer)++;
     return;
   case 130:
-    Actor_ResetAndSetPosition(actor, 316, 692);
+    Actor_SetDestination(actor, 316, 692);
     (*timer)++;
     return;
   case 132:
-    Actor_ResetAndSetPosition(actor, 296, 696);
+    Actor_SetDestination(actor, 296, 696);
     (*timer)++;
     return;
   case 134:
-    Actor_ResetAndSetPosition(actor, 276, 692);
+    Actor_SetDestination(actor, 276, 692);
     (*timer)++;
     return;
   case 136:
-    Actor_ResetAndSetPosition(actor, 272, 680);
+    Actor_SetDestination(actor, 272, 680);
     (*timer)++;
     return;
   case 138:
-    Actor_ResetAndSetPosition(actor, 276, 668);
+    Actor_SetDestination(actor, 276, 668);
     (*timer)++;
     return;
   case 140:
-    Actor_ResetAndSetPosition(actor, 296, 664);
+    Actor_SetDestination(actor, 296, 664);
     (*timer)++;
     return;
   case 142:
-    Actor_ResetAndSetPosition(actor, 316, 668);
+    Actor_SetDestination(actor, 316, 668);
     (*timer)++;
     return;
   case 144:
-    Actor_ResetAndSetPosition(actor, 320, 680);
+    Actor_SetDestination(actor, 320, 680);
     (*timer)++;
     return;
   case 146:
-    Actor_ResetAndSetPosition(actor, 316, 692);
+    Actor_SetDestination(actor, 316, 692);
     (*timer)++;
     return;
   case 148:
-    Actor_ResetAndSetPosition(actor, 296, 696);
+    Actor_SetDestination(actor, 296, 696);
     (*timer)++;
     return;
   case 150:
-    Actor_ResetAndSetPosition(actor, 296, 728);
+    Actor_SetDestination(actor, 296, 728);
     (*timer)++;
     return;
   case 152:
-    Actor_ResetAndSetPosition(actor, 272, 728);
+    Actor_SetDestination(actor, 272, 728);
     (*timer)++;
     return;
   case 154:
-    Actor_ResetAndSetPosition(actor, 268, 740);
+    Actor_SetDestination(actor, 268, 740);
     (*timer)++;
     return;
   case 156:
-    Actor_ResetAndSetPosition(actor, 248, 744);
+    Actor_SetDestination(actor, 248, 744);
     (*timer)++;
     return;
   case 158:
-    Actor_ResetAndSetPosition(actor, 228, 740);
+    Actor_SetDestination(actor, 228, 740);
     (*timer)++;
     return;
   case 160:
-    Actor_ResetAndSetPosition(actor, 224, 728);
+    Actor_SetDestination(actor, 224, 728);
     (*timer)++;
     return;
   case 162:
-    Actor_ResetAndSetPosition(actor, 228, 716);
+    Actor_SetDestination(actor, 228, 716);
     (*timer)++;
     return;
   case 164:
-    Actor_ResetAndSetPosition(actor, 248, 712);
+    Actor_SetDestination(actor, 248, 712);
     (*timer)++;
     return;
   case 166:
-    Actor_ResetAndSetPosition(actor, 268, 716);
+    Actor_SetDestination(actor, 268, 716);
     (*timer)++;
     return;
   case 168:
-    Actor_ResetAndSetPosition(actor, 272, 728);
+    Actor_SetDestination(actor, 272, 728);
     (*timer)++;
     return;
   case 170:
-    Actor_ResetAndSetPosition(actor, 268, 740);
+    Actor_SetDestination(actor, 268, 740);
     (*timer)++;
     return;
   case 172:
-    Actor_ResetAndSetPosition(actor, 248, 744);
+    Actor_SetDestination(actor, 248, 744);
     (*timer)++;
     return;
   case 174:
-    Actor_ResetAndSetPosition(actor, 228, 740);
+    Actor_SetDestination(actor, 228, 740);
     (*timer)++;
     return;
   case 176:
-    Actor_ResetAndSetPosition(actor, 224, 728);
+    Actor_SetDestination(actor, 224, 728);
     (*timer)++;
     return;
   case 178:
-    Actor_ResetAndSetPosition(actor, 228, 716);
+    Actor_SetDestination(actor, 228, 716);
     (*timer)++;
     return;
   case 180:
-    Actor_ResetAndSetPosition(actor, 248, 712);
+    Actor_SetDestination(actor, 248, 712);
     (*timer)++;
     return;
   case 182:
-    Actor_ResetAndSetPosition(actor, 268, 716);
+    Actor_SetDestination(actor, 268, 716);
     (*timer)++;
     return;
   case 184:
-    Actor_ResetAndSetPosition(actor, 272, 728);
+    Actor_SetDestination(actor, 272, 728);
     (*timer)++;
     return;
   case 186:
-    Actor_ResetAndSetPosition(actor, 268, 740);
+    Actor_SetDestination(actor, 268, 740);
     (*timer)++;
     return;
   case 188:
-    Actor_ResetAndSetPosition(actor, 248, 744);
+    Actor_SetDestination(actor, 248, 744);
     (*timer)++;
     return;
   case 190:
-    Actor_ResetAndSetPosition(actor, 228, 740);
+    Actor_SetDestination(actor, 228, 740);
     (*timer)++;
     return;
   case 192:
-    Actor_ResetAndSetPosition(actor, 224, 728);
+    Actor_SetDestination(actor, 224, 728);
     (*timer)++;
     return;
   case 194:
-    Actor_ResetAndSetPosition(actor, 228, 716);
+    Actor_SetDestination(actor, 228, 716);
     (*timer)++;
     return;
   case 196:
-    Actor_ResetAndSetPosition(actor, 248, 712);
+    Actor_SetDestination(actor, 248, 712);
     (*timer)++;
     return;
   case 198:
-    Actor_ResetAndSetPosition(actor, 268, 716);
+    Actor_SetDestination(actor, 268, 716);
     (*timer)++;
     return;
   case 200:
-    Actor_ResetAndSetPosition(actor, 272, 728);
+    Actor_SetDestination(actor, 272, 728);
     (*timer)++;
     return;
   case 202:
-    Actor_ResetAndSetPosition(actor, 268, 740);
+    Actor_SetDestination(actor, 268, 740);
     (*timer)++;
     return;
   case 204:
-    Actor_ResetAndSetPosition(actor, 248, 744);
+    Actor_SetDestination(actor, 248, 744);
     (*timer)++;
     return;
   case 206:
-    Actor_ResetAndSetPosition(actor, 248, 760);
+    Actor_SetDestination(actor, 248, 760);
     (*timer)++;
     return;
   case 208:
-    Actor_ResetAndSetPosition(actor, 228, 764);
+    Actor_SetDestination(actor, 228, 764);
     (*timer)++;
     return;
   case 210:
-    Actor_ResetAndSetPosition(actor, 224, 776);
+    Actor_SetDestination(actor, 224, 776);
     (*timer)++;
     return;
   case 212:
-    Actor_ResetAndSetPosition(actor, 228, 788);
+    Actor_SetDestination(actor, 228, 788);
     (*timer)++;
     return;
   case 214:
-    Actor_ResetAndSetPosition(actor, 248, 792);
+    Actor_SetDestination(actor, 248, 792);
     (*timer)++;
     return;
   case 216:
-    Actor_ResetAndSetPosition(actor, 248, 840);
+    Actor_SetDestination(actor, 248, 840);
     (*timer)++;
     return;
   case 218:
-    Actor_ResetAndSetPosition(actor, 228, 844);
+    Actor_SetDestination(actor, 228, 844);
     (*timer)++;
     return;
   case 220:
-    Actor_ResetAndSetPosition(actor, 224, 856);
+    Actor_SetDestination(actor, 224, 856);
     (*timer)++;
     return;
   case 222:
-    Actor_ResetAndSetPosition(actor, 228, 868);
+    Actor_SetDestination(actor, 228, 868);
     (*timer)++;
     return;
   case 226:
-    Actor_ResetAndSetPosition(actor, 268, 868);
+    Actor_SetDestination(actor, 268, 868);
     (*timer)++;
     return;
   case 228:
-    Actor_ResetAndSetPosition(actor, 272, 856);
+    Actor_SetDestination(actor, 272, 856);
     (*timer)++;
     return;
   case 230:
-    Actor_ResetAndSetPosition(actor, 268, 844);
+    Actor_SetDestination(actor, 268, 844);
     (*timer)++;
     return;
   case 232:
-    Actor_ResetAndSetPosition(actor, 248, 840);
+    Actor_SetDestination(actor, 248, 840);
     (*timer)++;
     return;
   case 234:
-    Actor_ResetAndSetPosition(actor, 228, 844);
+    Actor_SetDestination(actor, 228, 844);
     (*timer)++;
     return;
   case 236:
-    Actor_ResetAndSetPosition(actor, 224, 856);
+    Actor_SetDestination(actor, 224, 856);
     (*timer)++;
     return;
   case 238:
-    Actor_ResetAndSetPosition(actor, 228, 868);
+    Actor_SetDestination(actor, 228, 868);
     (*timer)++;
     return;
   case 223:
@@ -531,173 +552,173 @@ void Func_020006bc(s32 actor) {
       (*timer)++;
   case 224:
   case 240:
-    Actor_ResetAndSetPosition(actor, 248, 872);
+    Actor_SetDestination(actor, 248, 872);
     object->timer++;
     return;
   case 242:
-    Actor_ResetAndSetPosition(actor, 268, 868);
+    Actor_SetDestination(actor, 268, 868);
     (*timer)++;
     return;
   case 244:
-    Actor_ResetAndSetPosition(actor, 272, 856);
+    Actor_SetDestination(actor, 272, 856);
     (*timer)++;
     return;
   case 246:
-    Actor_ResetAndSetPosition(actor, 268, 844);
+    Actor_SetDestination(actor, 268, 844);
     (*timer)++;
     return;
   case 248:
-    Actor_ResetAndSetPosition(actor, 248, 840);
+    Actor_SetDestination(actor, 248, 840);
     (*timer)++;
     return;
   case 250:
-    Actor_ResetAndSetPosition(actor, 228, 844);
+    Actor_SetDestination(actor, 228, 844);
     (*timer)++;
     return;
   case 252:
-    Actor_ResetAndSetPosition(actor, 224, 856);
+    Actor_SetDestination(actor, 224, 856);
     (*timer)++;
     return;
   case 254:
-    Actor_SetSpeedParameters(actor, 0x1cccc, 0x1cccc);
-    Actor_ResetAndSetPosition(actor, 200, 856);
+    Actor_SetSpeed(actor, 0x1cccc, 0x1cccc);
+    Actor_SetDestination(actor, 200, 856);
     (*timer)++;
     return;
   case 256:
-    Actor_ResetAndSetPosition(actor, 200, 744);
+    Actor_SetDestination(actor, 200, 744);
     (*timer)++;
     return;
   case 258:
-    Actor_SetSpeedParameters(actor, 0x13333, 0x13333);
-    Actor_ResetAndSetPosition(actor, 180, 740);
+    Actor_SetSpeed(actor, 0x13333, 0x13333);
+    Actor_SetDestination(actor, 180, 740);
     (*timer)++;
     return;
   case 260:
-    Actor_ResetAndSetPosition(actor, 176, 728);
+    Actor_SetDestination(actor, 176, 728);
     (*timer)++;
     return;
   case 262:
-    Actor_ResetAndSetPosition(actor, 180, 716);
+    Actor_SetDestination(actor, 180, 716);
     (*timer)++;
     return;
   case 264:
-    Actor_ResetAndSetPosition(actor, 200, 712);
+    Actor_SetDestination(actor, 200, 712);
     (*timer)++;
     return;
   case 266:
-    Actor_ResetAndSetPosition(actor, 220, 716);
+    Actor_SetDestination(actor, 220, 716);
     (*timer)++;
     return;
   case 268:
-    Actor_ResetAndSetPosition(actor, 224, 728);
+    Actor_SetDestination(actor, 224, 728);
     (*timer)++;
     return;
   case 270:
-    Actor_ResetAndSetPosition(actor, 220, 740);
+    Actor_SetDestination(actor, 220, 740);
     (*timer)++;
     return;
   case 272:
-    Actor_ResetAndSetPosition(actor, 200, 744);
+    Actor_SetDestination(actor, 200, 744);
     (*timer)++;
     return;
   case 274:
-    Actor_ResetAndSetPosition(actor, 180, 740);
+    Actor_SetDestination(actor, 180, 740);
     (*timer)++;
     return;
   case 276:
-    Actor_ResetAndSetPosition(actor, 176, 728);
+    Actor_SetDestination(actor, 176, 728);
     (*timer)++;
     return;
   case 278:
-    Actor_ResetAndSetPosition(actor, 180, 716);
+    Actor_SetDestination(actor, 180, 716);
     (*timer)++;
     return;
   case 280:
-    Actor_ResetAndSetPosition(actor, 200, 712);
+    Actor_SetDestination(actor, 200, 712);
     (*timer)++;
     return;
   case 282:
-    Actor_ResetAndSetPosition(actor, 220, 716);
+    Actor_SetDestination(actor, 220, 716);
     (*timer)++;
     return;
   case 284:
-    Actor_ResetAndSetPosition(actor, 224, 728);
+    Actor_SetDestination(actor, 224, 728);
     (*timer)++;
     return;
   case 286:
-    Actor_ResetAndSetPosition(actor, 220, 740);
+    Actor_SetDestination(actor, 220, 740);
     (*timer)++;
     return;
   case 288:
-    Actor_ResetAndSetPosition(actor, 200, 744);
+    Actor_SetDestination(actor, 200, 744);
     (*timer)++;
     return;
   case 290:
-    Actor_ResetAndSetPosition(actor, 180, 740);
+    Actor_SetDestination(actor, 180, 740);
     (*timer)++;
     return;
   case 292:
-    Actor_ResetAndSetPosition(actor, 176, 728);
+    Actor_SetDestination(actor, 176, 728);
     (*timer)++;
     return;
   case 294:
-    Actor_ResetAndSetPosition(actor, 180, 716);
+    Actor_SetDestination(actor, 180, 716);
     (*timer)++;
     return;
   case 296:
-    Actor_ResetAndSetPosition(actor, 200, 712);
+    Actor_SetDestination(actor, 200, 712);
     (*timer)++;
     return;
   case 298:
-    Actor_ResetAndSetPosition(actor, 220, 716);
+    Actor_SetDestination(actor, 220, 716);
     (*timer)++;
     return;
   case 300:
-    Actor_ResetAndSetPosition(actor, 224, 728);
+    Actor_SetDestination(actor, 224, 728);
     (*timer)++;
     return;
   case 302:
-    Actor_ResetAndSetPosition(actor, 220, 740);
+    Actor_SetDestination(actor, 220, 740);
     (*timer)++;
     return;
   case 304:
-    Actor_ResetAndSetPosition(actor, 200, 744);
+    Actor_SetDestination(actor, 200, 744);
     (*timer)++;
     return;
   case 306:
-    Actor_ResetAndSetPosition(actor, 180, 740);
+    Actor_SetDestination(actor, 180, 740);
     (*timer)++;
     return;
   case 308:
-    Actor_ResetAndSetPosition(actor, 176, 728);
+    Actor_SetDestination(actor, 176, 728);
     (*timer)++;
     return;
   case 310:
-    Actor_ResetAndSetPosition(actor, 180, 716);
+    Actor_SetDestination(actor, 180, 716);
     (*timer)++;
     return;
   case 312:
-    Actor_ResetAndSetPosition(actor, 200, 712);
+    Actor_SetDestination(actor, 200, 712);
     (*timer)++;
     return;
   case 314:
-    Actor_ResetAndSetPosition(actor, 200, 680);
+    Actor_SetDestination(actor, 200, 680);
     (*timer)++;
     return;
   case 316:
-    Actor_ResetAndSetPosition(actor, 212, 676);
+    Actor_SetDestination(actor, 212, 676);
     (*timer)++;
     return;
   case 318:
-    Actor_ResetAndSetPosition(actor, 216, 664);
+    Actor_SetDestination(actor, 216, 664);
     (*timer)++;
     return;
   case 320:
-    Actor_ResetAndSetPosition(actor, 212, 652);
+    Actor_SetDestination(actor, 212, 652);
     (*timer)++;
     return;
   case 322:
-    Actor_ResetAndSetPosition(actor, 200, 648);
+    Actor_SetDestination(actor, 200, 648);
     (*timer)++;
     return;
   case 1:

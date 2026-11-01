@@ -1,14 +1,19 @@
-// Near miss, differ 860 of 918 (tla-en, 2026-10-31): the twin's plain C;
-// what remains is GCSE. The native hoists every expression all branches
-// compute (the trail addresses before the medal/coin test, the ring result's
-// address before the ring tests, the reaction and speed-mode halfwords as
-// ldrh before the index tests, sign-extended in each branch, and index + 1
-// to the loop body's top, spilled to sp+8) and runs no PRE (loads after a
-// conditional store are reloaded). alchemy-gcc's gcse.c does exactly that
-// only under -Os: this C compiled with -Os in place of -O2 (analysis only)
-// differs from the native in one store's place. At -O2, PRE and no hoisting
-// put the toss pointer in r9 instead of r7 and the whole allocation follows.
-// Draft: the twin of ☀️'s TolbiSpring_UpdateTossSimulation.
+// Draft, differ 609 of 918, skeleton gap 115 (tla-en, 2026-11-01)
+// The twin's plain C, with what the native hoists written as locals: the ride
+// reaction and speed-mode halfwords (s32, so they load with ldrh and extend in
+// each branch), index + 1, the obstacle's x, velocity.x, the trail addresses,
+// the distance-result address. The ride is named directly, not through a
+// pointer: a pointer's constant REG_EQUIV doubles its live length and it fell
+// to r9, a mov at every access; with the global it costs one pool load per
+// region (the skeleton's added ldr) and a caller save of r4 around the calls.
+// What remains points at -Os, not at the C: -O2 weights refs by loop depth
+// (deltaX and deltaZ outrank the ride pointer), avoids reusing a dying qty in
+// local-alloc (flow.c, local-alloc.c test optimize_size), and runs PRE, so
+// loads after a conditional store are not reloaded. The native behaves as
+// unweighted, reuses r5, hoists and never runs PRE; next spills to sp+8 there
+// and loop.c folds it into index here. Tried without gain: a goto loop (gap
+// 138), one pointer per region (176, 193), block-scoped limit constants.
+// The twin of ☀️'s TolbiSpring_UpdateTossSimulation.
 #include "iwram_call.h"
 #include "types.h"
 
@@ -52,7 +57,6 @@ s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 
 void Func_02000904(void) {
-  struct SpringRide *toss;
   struct SpringObstacle *obstacle;
   s32 index;
   s32 height;
@@ -64,28 +68,38 @@ void Func_02000904(void) {
   s32 maxX;
   s32 minZ;
   s32 maxZ;
+  s32 next;
+  s32 reaction;
+  s32 modeBits;
+  s32 *trail0;
+  s32 *trail1;
+  s32 *trail2;
+  s32 *trail3;
+  s32 *trail4;
+  s32 *result;
+  s32 x;
+  s32 z;
   // Unused: gives the stack frame its 12 bytes.
   struct SpringPoint spare;
 
-  toss = &gData_02001760;
   index = 3;
   do {
-    toss->trail[index].x = toss->trail[index - 1].x;
-    toss->trail[index].y = toss->trail[index - 1].y;
-    toss->trail[index].z = toss->trail[index - 1].z;
+    gData_02001760.trail[index].x = gData_02001760.trail[index - 1].x;
+    gData_02001760.trail[index].y = gData_02001760.trail[index - 1].y;
+    gData_02001760.trail[index].z = gData_02001760.trail[index - 1].z;
     index--;
   } while (index != 0);
 
-  if (toss->hold > 31) {
-    toss->trail[0].x += toss->velocity.x;
-    height = toss->trail[0].y + toss->velocity.y;
-    toss->trail[0].y = height;
-    toss->trail[0].z += toss->velocity.z;
+  if (gData_02001760.hold > 31) {
+    gData_02001760.trail[0].x += gData_02001760.velocity.x;
+    height = gData_02001760.trail[0].y + gData_02001760.velocity.y;
+    gData_02001760.trail[0].y = height;
+    gData_02001760.trail[0].z += gData_02001760.velocity.z;
 
     if (height <= 0) {
-      toss->trail[0].y = 0;
-      if (toss->velocity.y != 0) {
-        toss->velocity.y = 0;
+      gData_02001760.trail[0].y = 0;
+      if (gData_02001760.velocity.y != 0) {
+        gData_02001760.velocity.y = 0;
         if (gData_020017b0 == 1) {
           Func_020012e8(Actor_GetById(17), 1);
         } else {
@@ -93,29 +107,31 @@ void Func_02000904(void) {
         }
       }
 
-      if (toss->frames > 0) {
+      if (gData_02001760.frames > 0) {
         s32 deltaX;
         s32 deltaZ;
         s32 distance;
 
-        deltaX = (0x780000 - toss->trail[0].x) >> 8;
-        deltaZ = (0x470000 - toss->trail[0].z) >> 8;
+        deltaX = 0x780000 - gData_02001760.trail[0].x;
+        deltaZ = 0x470000 - gData_02001760.trail[0].z;
+        deltaX >>= 8;
+        deltaZ >>= 8;
         distance = Iwram_Sqrt(deltaX * deltaX + deltaZ * deltaZ);
-        toss->velocity.x += (0x1999 * deltaX) / distance;
-        toss->velocity.z += (0x1999 * deltaZ) / distance;
-        toss->velocity.x = toss->velocity.x * 253 / 256;
-        toss->velocity.z = toss->velocity.z * 253 / 256;
-        toss->frames = toss->frames - 1;
+        gData_02001760.velocity.x += (0x1999 * deltaX) / distance;
+        gData_02001760.velocity.z += (0x1999 * deltaZ) / distance;
+        gData_02001760.velocity.x = gData_02001760.velocity.x * 253 / 256;
+        gData_02001760.velocity.z = gData_02001760.velocity.z * 253 / 256;
+        gData_02001760.frames = gData_02001760.frames - 1;
       } else {
-        toss->velocity.x = toss->velocity.x * 220 / 256;
-        toss->velocity.z = toss->velocity.z * 220 / 256;
-        if (toss->velocity.x > -1024 && toss->velocity.x < 1024) {
-          toss->velocity.x = 0;
+        gData_02001760.velocity.x = gData_02001760.velocity.x * 220 / 256;
+        gData_02001760.velocity.z = gData_02001760.velocity.z * 220 / 256;
+        if (gData_02001760.velocity.x > -1024 && gData_02001760.velocity.x < 1024) {
+          gData_02001760.velocity.x = 0;
         }
-        if (toss->velocity.z > -1024 && toss->velocity.z < 1024) {
-          toss->velocity.z = 0;
+        if (gData_02001760.velocity.z > -1024 && gData_02001760.velocity.z < 1024) {
+          gData_02001760.velocity.z = 0;
         }
-        if (toss->velocity.x == 0 && toss->velocity.z == 0) {
+        if (gData_02001760.velocity.x == 0 && gData_02001760.velocity.z == 0) {
           if (gData_020017b0 == 1) {
             Func_020012e8(Actor_GetById(17), 2);
             Func_020008f0(15, 0);
@@ -128,32 +144,45 @@ void Func_02000904(void) {
             Func_020008f0(8, 0);
           }
           {
-            s32 deltaX = (0x780000 - toss->trail[0].x) >> 16;
-            s32 deltaZ = (0x470000 - toss->trail[0].z) >> 16;
+            s32 deltaX = (0x780000 - gData_02001760.trail[0].x) >> 16;
+            s32 deltaZ = (0x470000 - gData_02001760.trail[0].z) >> 16;
             s32 distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
 
             gData_02001824 = 1;
+            result = &gData_02001828;
             if (distanceSquared <= 224) {
-              gData_02001828 = 0;
+              *result = 0;
             } else if (distanceSquared <= 624) {
-              gData_02001828 = 1;
+              *result = 1;
             } else if (distanceSquared <= 1088) {
-              gData_02001828 = 2;
+              *result = 2;
             } else if (distanceSquared <= 1680) {
-              gData_02001828 = 3;
+              *result = 3;
             } else {
-              gData_02001828 = 4;
+              *result = 4;
             }
           }
         }
       }
 
+      z = gData_02001760.trail[0].z;
       minX = 0x300000;
       maxX = 0xc00000;
       minZ = 0x180000;
       maxZ = 0x780000;
-      if (toss->trail[0].z < 0x2a0000) {
-        edgeInset = (0x2a0000 - toss->trail[0].z) * 42 / 18;
+      if (z < 0x2a0000) {
+        edgeInset = (0x2a0000 - z) * 42 / 18;
+        minX += edgeInset;
+        if (minX > 0x5a0000) {
+          minX = 0x5a0000;
+        }
+        maxX -= edgeInset;
+        if (maxX < 0x960000) {
+          maxX = 0x960000;
+        }
+      }
+      if (z > 0x660000) {
+        edgeInset = (z * 42 - 0x660000 * 42) / 18;
         minX = 0x300000 + edgeInset;
         if (minX > 0x5a0000) {
           minX = 0x5a0000;
@@ -163,19 +192,9 @@ void Func_02000904(void) {
           maxX = 0x960000;
         }
       }
-      if (toss->trail[0].z > 0x660000) {
-        edgeInset = (toss->trail[0].z * 42 - 0x660000 * 42) / 18;
-        minX = 0x300000 + edgeInset;
-        if (minX > 0x5a0000) {
-          minX = 0x5a0000;
-        }
-        maxX = 0xc00000 - edgeInset;
-        if (maxX < 0x960000) {
-          maxX = 0x960000;
-        }
-      }
-      if (toss->trail[0].x < 0x5a0000) {
-        edgeInset = (0x5a0000 - toss->trail[0].x) * 18 / 42;
+      x = gData_02001760.trail[0].x;
+      if (x < 0x5a0000) {
+        edgeInset = (0x5a0000 - x) * 18 / 42;
         minZ = 0x180000 + edgeInset;
         if (minZ > 0x2a0000) {
           minZ = 0x2a0000;
@@ -185,8 +204,8 @@ void Func_02000904(void) {
           maxZ = 0x660000;
         }
       }
-      if (toss->trail[0].x > 0x960000) {
-        edgeInset = (toss->trail[0].x * 18 - 0x960000 * 18) / 42;
+      if (x > 0x960000) {
+        edgeInset = (x * 18 - 0x960000 * 18) / 42;
         minZ = 0x180000 + edgeInset;
         if (minZ > 0x2a0000) {
           minZ = 0x2a0000;
@@ -197,32 +216,32 @@ void Func_02000904(void) {
         }
       }
 
-      if (toss->trail[0].x < minX) {
-        toss->trail[0].x = minX;
-        if (toss->velocity.x < 0) {
-          toss->velocity.x = -toss->velocity.x / 2;
+      if (x < minX) {
+        gData_02001760.trail[0].x = minX;
+        if (gData_02001760.velocity.x < 0) {
+          gData_02001760.velocity.x = -gData_02001760.velocity.x / 2;
         }
       }
-      if (toss->trail[0].x > maxX) {
-        toss->trail[0].x = maxX;
-        if (toss->velocity.x > 0) {
-          toss->velocity.x = -toss->velocity.x / 2;
+      if (gData_02001760.trail[0].x > maxX) {
+        gData_02001760.trail[0].x = maxX;
+        if (gData_02001760.velocity.x > 0) {
+          gData_02001760.velocity.x = -gData_02001760.velocity.x / 2;
         }
       }
-      if (toss->trail[0].z < minZ) {
-        toss->trail[0].z = minZ;
-        if (toss->velocity.z < 0) {
-          toss->velocity.z = -toss->velocity.z / 2;
+      if (gData_02001760.trail[0].z < minZ) {
+        gData_02001760.trail[0].z = minZ;
+        if (gData_02001760.velocity.z < 0) {
+          gData_02001760.velocity.z = -gData_02001760.velocity.z / 2;
         }
       }
-      if (toss->trail[0].z > maxZ) {
-        toss->trail[0].z = maxZ;
-        if (toss->velocity.z > 0) {
-          toss->velocity.z = -toss->velocity.z / 2;
+      if (gData_02001760.trail[0].z > maxZ) {
+        gData_02001760.trail[0].z = maxZ;
+        if (gData_02001760.velocity.z > 0) {
+          gData_02001760.velocity.z = -gData_02001760.velocity.z / 2;
         }
       }
     } else {
-      toss->velocity.y -= 0x4000;
+      gData_02001760.velocity.y -= 0x4000;
     }
   }
 
@@ -237,8 +256,11 @@ void Func_02000904(void) {
       obstacle->hitCooldownFrames = obstacle->hitCooldownFrames - 1;
     }
 
+    next = index + 1;
+    reaction = (u16)obstacle->reactionFrames;
+    modeBits = (u16)obstacle->speedMode;
     if (index <= 1) {
-      speedMode = obstacle->speedMode;
+      speedMode = (s16)modeBits;
       motionStep = 0x10000;
       if (speedMode == 1) {
         motionStep = motionStep * 2;
@@ -246,7 +268,7 @@ void Func_02000904(void) {
       if (speedMode == 2) {
         motionStep = motionStep * 3;
       }
-      if (obstacle->reactionFrames > 0) {
+      if ((s16)reaction > 0) {
         if (index == 0) {
           Func_020012e8(Actor_GetById(18), 3);
         } else {
@@ -259,10 +281,13 @@ void Func_02000904(void) {
           Func_020012e8(Actor_GetById(19), 1);
         }
         if (obstacle->pauseOrPhase == 0) {
+          s32 pos;
+
+          pos = obstacle->position.x;
           if (obstacle->heading == 0) {
-            obstacle->position.x = obstacle->position.x + motionStep;
+            obstacle->position.x = pos + motionStep;
           } else {
-            obstacle->position.x = obstacle->position.x - motionStep;
+            obstacle->position.x = pos - motionStep;
           }
           if (obstacle->position.x <= 0x400000) {
             obstacle->heading = 0;
@@ -281,7 +306,7 @@ void Func_02000904(void) {
         }
       }
     } else if (index == 2) {
-      speedMode = obstacle->speedMode;
+      speedMode = (s16)modeBits;
       motionStep = -64;
       if (speedMode == 1) {
         motionStep = motionStep * 2;
@@ -289,7 +314,7 @@ void Func_02000904(void) {
       if (speedMode == 2) {
         motionStep = motionStep * 3;
       }
-      if (obstacle->reactionFrames > 0) {
+      if ((s16)reaction > 0) {
         Func_020012e8(Actor_GetById(20), 3);
       } else {
         Func_020012e8(Actor_GetById(20), 2);
@@ -301,7 +326,7 @@ void Func_02000904(void) {
       }
     } else {
       cycleFrame = obstacle->pauseOrPhase & 511;
-      speedMode = obstacle->speedMode;
+      speedMode = (s16)modeBits;
       motionStep = 64;
       if (speedMode == 1) {
         motionStep = motionStep * 2;
@@ -309,7 +334,7 @@ void Func_02000904(void) {
       if (speedMode == 2) {
         motionStep = motionStep * 3;
       }
-      if (obstacle->reactionFrames > 0) {
+      if ((s16)reaction > 0) {
         Func_020012e8(Actor_GetById(21), 3);
       } else if (cycleFrame <= 383) {
         obstacle->position.x = Math_Sine(obstacle->heading) * 52 + 0x700000;
@@ -322,38 +347,41 @@ void Func_02000904(void) {
       obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
     }
 
-    if (obstacle->hitCooldownFrames == 0 && toss->trail[0].y == 0) {
+    if (obstacle->hitCooldownFrames == 0 && gData_02001760.trail[0].y == 0) {
       s32 deltaX;
       s32 deltaZ;
       s32 distanceSquared;
 
-      deltaX = (obstacle->position.x - toss->trail[0].x) >> 16;
-      deltaZ = (obstacle->position.z - toss->trail[0].z) >> 16;
+      deltaX = (obstacle->position.x - gData_02001760.trail[0].x) >> 16;
+      deltaZ = (obstacle->position.z - gData_02001760.trail[0].z) >> 16;
       distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
-      if (distanceSquared <= 119 && toss->frames > 30) {
+      if (distanceSquared <= 119 && gData_02001760.frames > 30) {
         s32 speed;
         s32 nextMode;
 
         speed = 0x30000;
         if (index <= 1) {
+          s32 velocityX;
+
+          velocityX = gData_02001760.velocity.x;
           if (obstacle->heading == 0) {
-            if (toss->velocity.x < speed) {
-              toss->velocity.x = speed;
-              toss->frames = toss->frames - 100;
+            if (velocityX < speed) {
+              gData_02001760.velocity.x = speed;
+              gData_02001760.frames = gData_02001760.frames - 100;
             }
           } else {
-            if (toss->velocity.x > -speed) {
-              toss->velocity.x = -speed;
-              toss->frames = toss->frames - 100;
+            if (velocityX > -speed) {
+              gData_02001760.velocity.x = -speed;
+              gData_02001760.frames = gData_02001760.frames - 100;
             }
           }
         } else {
           s32 distance;
 
           distance = Iwram_Sqrt(distanceSquared);
-          toss->velocity.x = -deltaX * speed / distance;
-          toss->velocity.z = -deltaZ * speed / distance;
-          toss->frames = toss->frames - 100;
+          gData_02001760.velocity.x = -deltaX * speed / distance;
+          gData_02001760.velocity.z = -deltaZ * speed / distance;
+          gData_02001760.frames = gData_02001760.frames - 100;
         }
         Func_02001408(301);
         nextMode = (obstacle->speedMode + 1) % 3;
@@ -386,34 +414,39 @@ void Func_02000904(void) {
       break;
     }
 
-    index++;
+    index = next;
   } while (index != 4);
 
-  toss->trail[4].x = toss->trail[0].x;
-  toss->trail[4].y = 0;
-  toss->trail[4].z = toss->trail[0].z;
+  gData_02001760.trail[4].x = gData_02001760.trail[0].x;
+  gData_02001760.trail[4].y = 0;
+  gData_02001760.trail[4].z = gData_02001760.trail[0].z;
 
+  trail1 = &gData_02001760.trail[1].x;
+  trail2 = &gData_02001760.trail[2].x;
+  trail3 = &gData_02001760.trail[3].x;
+  trail4 = &gData_02001760.trail[4].x;
+  trail0 = &gData_02001760.trail[0].x;
   if (gData_020017b0 == 1) {
-    Func_02000884(17, &toss->trail[0].x, 0, 0, 16);
-    Func_02000884(16, &toss->trail[4].x, 0, 0, 16);
-    Func_02000884(15, &toss->trail[1].x, 0, 0, 16);
-    Func_02000884(14, &toss->trail[2].x, 0, 0, 16);
-    Func_02000884(13, &toss->trail[3].x, 0, 0, 16);
+    Func_02000884(17, trail0, 0, 0, 16);
+    Func_02000884(16, trail4, 0, 0, 16);
+    Func_02000884(15, trail1, 0, 0, 16);
+    Func_02000884(14, trail2, 0, 0, 16);
+    Func_02000884(13, trail3, 0, 0, 16);
     Func_020012e8(Actor_GetById(15), 4);
     Func_020012e8(Actor_GetById(14), 4);
     Func_020012e8(Actor_GetById(13), 4);
   } else {
-    Func_02000884(12, &toss->trail[0].x, 0, 0, 16);
-    Func_02000884(11, &toss->trail[4].x, 0, 0, 16);
-    Func_02000884(10, &toss->trail[1].x, 0, 0, 16);
-    Func_02000884(9, &toss->trail[2].x, 0, 0, 16);
-    Func_02000884(8, &toss->trail[3].x, 0, 0, 16);
+    Func_02000884(12, trail0, 0, 0, 16);
+    Func_02000884(11, trail4, 0, 0, 16);
+    Func_02000884(10, trail1, 0, 0, 16);
+    Func_02000884(9, trail2, 0, 0, 16);
+    Func_02000884(8, trail3, 0, 0, 16);
     Func_020012e8(Actor_GetById(10), 4);
     Func_020012e8(Actor_GetById(9), 4);
     Func_020012e8(Actor_GetById(8), 4);
   }
 
-  if (toss->hold != -1) {
-    toss->hold = toss->hold + 1;
+  if (gData_02001760.hold != -1) {
+    gData_02001760.hold = gData_02001760.hold + 1;
   }
 }

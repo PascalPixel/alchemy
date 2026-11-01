@@ -1,206 +1,159 @@
-// Draft of overlay 6a5's Func_02003a6c, translated from its listing: differ
-// 228 of 216. Left: its shape: 228 instructions against the listing's 216.
+// Draft, differ 149 of 216, skeleton gap 10 and 7 (tla-en, 2026-11-01)
+// All control flow is here; what is left is allocation. Two faults remain.
+// 1. j goes to r2 with caller-saves (13 refs against 3 calls, 4 * 3 < 13), so
+// the listing's r10, the eighth save and the r8 push are missing. No loop
+// shape changed the count: life counts loop depth from the CFG, so a goto loop
+// weighs the same. It needs 12 refs or a fourth call crossed.
+// 2. The first loop's load at its head is dropped: the test's *p is reused
+// through a copy, where the listing reloads with ldr r0, [r5].
+// struct s is a stand-in: as plain locals count and speed win hi registers
+// and list is spilled (gap 32 and 22). The listing's r2/r1 rotation looks like
+// reload's, so they were probably plain locals beaten for hi registers.
+// The goto loops stop loop.c: as for loops the pool load and 0 hoist out and i
+// is strength-reduced, which the listing does not do. The outer loop stays a
+// for: as a goto, CSE merges 0x17fff with 0x18000.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Camera_FollowActor();
-s32 Camera_MoveWithinMapBounds();
-s32 Func_02005884();
-s32 Func_020059f4();
-s32 Actor_SetSpritePriority();
-s32 Actor_GetById();
-s32 wait();
-extern u8 Data_02006a1c[];
-extern u8 gData_020059fc[];
-extern u8 gData_02005a0c[];
-extern u8 gData_02005a14[];
-extern u8 gData_02005a1c[];
-extern u8 gData_020069dc[];
+struct SceneActor {
+  u8 pad0[16];
+  s32 unk_10;
+  u8 pad14[35 - 20];
+  u8 unk_23;
+  u8 pad24[64 - 36];
+  s32 unk_40;
+  u8 pad44[85 - 68];
+  u8 unk_55;
+};
+struct SceneWork {
+  u8 pad0[12];
+  s32 unk_0c;
+};
+struct FieldWork {
+  u8 pad0[0x178];
+  struct SceneWork unk_178;
+};
+struct Iwram {
+  u8 pad0[32];
+  struct FieldWork *field;
+};
+void Camera_FollowActor(s32 id, s32 flag);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void Func_02005884(s32, s32, s32);
+void Func_020059f4(s32);
+void Actor_SetSpritePriority(u32, s32);
+struct SceneActor *Actor_GetById(s32);
+void wait(s32);
+extern s32 Data_02006a1c;
+extern s32 gData_020059fc[];
+extern s32 gData_02005a0c[];
+extern s32 gData_02005a14[];
+extern s32 gData_02005a1c[];
+extern s32 gData_020069dc[];
 
-void Func_02003a6c(s32 p0) {
-  s32 sp_[1];
-  s32 v_r11, v_r8, v_r0, v_r1, v_r2, v_r9, v_r7, v_r5, v_r10, v_r6;
-  s32 t0, t1, t2, t3, t4, t5, t7, t8, t9, t10;
-  s32 t11, t12, t15, t16, t17, t18, t19, t20, t21, t22;
-  s32 t23, t24, t25, t26, t27, t28, t29, t33, t34, t35;
-  s32 t36, t38, t39, t41, t42, t43;
+void Func_02003a6c(s32 mode) {
+  struct { u32 count; s32 speed; } s;
+  s32 *list;
+  s32 *p;
+  s32 *q;
+  u32 i;
+  u32 j;
+  struct SceneWork *work;
 
-  t0 = FIELD_AT(0x3000000, s32, 32);
-  FIELD_AT(sp_, s32, 4) = 0x1999;
-  *(s32 *)sp_ = 0;
-  t1 = FIELD_AT(t0, s32, 388);
-  *(s32 *)(s32)Data_02006a1c = t1;
-  v_r0 = p0;
-  v_r8 = p0;
-  v_r11 = (t0 + 0x178);
-  if (v_r0 == 1)
-    goto L_0200baba;
-  if (v_r0 > 1)
-    goto L_0200baac;
-  if (v_r0 == 0)
-    goto L_0200bab6;
-  goto L_0200bac6;
-L_0200baac:
-  v_r1 = v_r8;
-  if (v_r1 == 2)
-    goto L_0200bac0;
-  if (v_r1 != 3)
-    goto L_0200bac6;
-L_0200bab6:
-  v_r2 = (s32)gData_020059fc;
-  goto L_0200bac8;
-L_0200baba:
-  v_r9 = (s32)gData_02005a0c;
-  goto L_0200baca;
-L_0200bac0:
-  v_r9 = (s32)gData_02005a14;
-  goto L_0200baca;
-L_0200bac6:
-  v_r2 = (s32)gData_02005a1c;
-L_0200bac8:
-  v_r9 = v_r2;
-L_0200baca:
-  t2 = *(s32 *)v_r9;
-  v_r7 = 0;
-  if (t2 == 64)
-    goto L_0200bafc;
-  v_r5 = v_r9;
-L_0200bad6:
-  t3 = *(s32 *)v_r5;
-  t4 = Actor_GetById(t3);
-  FIELD_AT(t4, u8, 85) = 0;
-  t5 = *(s32 *)v_r5;
-  Actor_SetSpritePriority(t5, 1);
-  t7 = *(s32 *)sp_;
-  *(s32 *)sp_ = (t7 + 1);
-  v_r7 = (v_r7 + 1);
-  v_r5 = (v_r5 + 4);
-  if ((u32)v_r7 > (u32)4)
-    goto L_0200bafc;
-  t8 = *(s32 *)v_r5;
-  if (t8 != 64)
-    goto L_0200bad6;
-L_0200bafc:
-  v_r7 = 0;
-L_0200bafe:
-  v_r5 = (v_r7 << 2);
-  t9 = *(s32 *)((s32)gData_020069dc + v_r5);
-  t10 = Actor_GetById(t9);
-  t11 = FIELD_AT(t10, u8, 35);
-  FIELD_AT(t10, u8, 35) = (32 | t11);
-  t12 = *(s32 *)((s32)gData_020069dc + v_r5);
-  Actor_SetSpritePriority(t12, 0);
-  v_r7 = (v_r7 + 1);
-  if ((u32)v_r7 <= (u32)5)
-    goto L_0200bafe;
+  work = &((struct Iwram *)0x3000000)->field->unk_178;
+  s.speed = 0x1999;
+  s.count = 0;
+  Data_02006a1c = work->unk_0c;
+  switch (mode) {
+  case 0:
+  case 3:
+    list = gData_020059fc;
+    break;
+  case 1:
+    list = gData_02005a0c;
+    break;
+  case 2:
+    list = gData_02005a14;
+    break;
+  default:
+    list = gData_02005a1c;
+    break;
+  }
+
+  i = 0;
+  if (list[0] != 64) {
+    p = list;
+  L0:
+    Actor_GetById(*p)->unk_55 = 0;
+    Actor_SetSpritePriority(*p++, 1);
+    s.count++;
+    i++;
+    if (i > 4)
+      goto L7;
+    if (*p != 64)
+      goto L0;
+  L7:;
+  }
+
+  i = 0;
+L1:
+  Actor_GetById(gData_020069dc[i])->unk_23 |= 32;
+  Actor_SetSpritePriority(gData_020069dc[i], 0);
+  i++;
+  if (i <= 5)
+    goto L1;
+
   Func_020059f4(223);
-  v_r7 = 0;
-L_0200bb28:
-  t15 = FIELD_AT(v_r11, s32, 12);
-  t16 = FIELD_AT(sp_, s32, 4);
-  FIELD_AT(v_r11, s32, 12) = (t15 - t16);
-  t17 = *(s32 *)sp_;
-  v_r10 = 0;
-  if ((u32)v_r10 >= (u32)t17)
-    goto L_0200bb68;
-  v_r6 = v_r9;
-L_0200bb3e:
-  t18 = *(s32 *)v_r6;
-  t19 = Actor_GetById(t18);
-  t20 = FIELD_AT(t19, s32, 16);
-  t21 = FIELD_AT(sp_, s32, 4);
-  FIELD_AT(t19, s32, 16) = (t20 + t21);
-  t22 = *(s32 *)v_r6;
-  t23 = Actor_GetById(t22);
-  t24 = *(s32 *)v_r6;
-  t25 = Actor_GetById(t24);
-  t26 = FIELD_AT(t25, s32, 16);
-  FIELD_AT(t23, s32, 64) = t26;
-  t27 = *(s32 *)sp_;
-  v_r10 = (v_r10 + 1);
-  v_r6 = (v_r6 + 4);
-  if ((u32)v_r10 < (u32)t27)
-    goto L_0200bb3e;
-L_0200bb68:
-  if ((3 & v_r7) != 3)
-    goto L_0200bb7c;
-  t28 = FIELD_AT(sp_, s32, 4);
-  FIELD_AT(sp_, s32, 4) = (t28 + 0x1999);
-L_0200bb7c:
-  t29 = FIELD_AT(sp_, s32, 4);
-  if (t29 <= 0x17fff)
-    goto L_0200bb8a;
-  FIELD_AT(sp_, s32, 4) = 0x18000;
-L_0200bb8a:
-  wait(1);
-  if (v_r8 != 0)
-    goto L_0200bba2;
-  if (v_r7 != 40)
-    goto L_0200bbbe;
-  v_r2 = 152;
-  v_r1 = 208;
-  v_r0 = 128;
-  goto L_0200bbb2;
-L_0200bba2:
-  if (v_r8 != 1)
-    goto L_0200bbc4;
-  if (v_r7 != 40)
-    goto L_0200bbbe;
-  v_r2 = 176;
-  v_r1 = 208;
-  v_r0 = 128;
-L_0200bbb2:
-  Camera_MoveWithinMapBounds((v_r0 << 18), (v_r1 << 15), (v_r2 << 17), 1);
-L_0200bbbe:
-  if (v_r7 != 120)
-    goto L_0200bbda;
-  goto L_0200bbe0;
-L_0200bbc4:
-  if (v_r8 != 3)
-    goto L_0200bbda;
-  if (v_r7 != 40)
-    goto L_0200bbd6;
-  Camera_FollowActor(0, 1);
-L_0200bbd6:
-  if (v_r7 == 120)
-    goto L_0200bbe0;
-L_0200bbda:
-  v_r7 = (v_r7 + 1);
-  if ((u32)v_r7 <= (u32)227)
-    goto L_0200bb28;
-L_0200bbe0:
-  v_r7 = 0;
-L_0200bbe2:
-  v_r5 = (v_r7 << 2);
-  t33 = *(s32 *)((s32)gData_020069dc + v_r5);
-  t34 = Actor_GetById(t33);
-  t35 = FIELD_AT(t34, u8, 35);
-  FIELD_AT(t34, u8, 35) = (223 & t35);
-  t36 = *(s32 *)((s32)gData_020069dc + v_r5);
-  Actor_SetSpritePriority(t36, 1);
-  v_r7 = (v_r7 + 1);
-  if ((u32)v_r7 <= (u32)5)
-    goto L_0200bbe2;
-  t38 = *(s32 *)sp_;
-  v_r7 = 0;
-  if ((u32)v_r7 >= (u32)t38)
-    goto L_0200bc2c;
-  v_r5 = v_r9;
-L_0200bc0e:
-  t39 = *(s32 *)v_r5;
-  Func_02005884(t39, 0, 0);
-  t41 = *(s32 *)v_r5;
-  t42 = Actor_GetById(t41);
-  FIELD_AT(t42, u8, 85) = 0;
-  t43 = *(s32 *)sp_;
-  v_r7 = (v_r7 + 1);
-  v_r5 = (v_r5 + 4);
-  if ((u32)v_r7 < (u32)t43)
-    goto L_0200bc0e;
-L_0200bc2c:
-  return;
+
+  for (i = 0; i <= 227; i++) {
+    work->unk_0c -= s.speed;
+    j = 0;
+    if (j < s.count) {
+      q = list;
+    L4:
+      Actor_GetById(*q)->unk_10 += s.speed;
+      Actor_GetById(*q)->unk_40 = Actor_GetById(*q++)->unk_10;
+      j++;
+      if (j < s.count)
+        goto L4;
+    }
+    if ((i & 3) == 3)
+      s.speed += 0x1999;
+    if (s.speed > 0x17fff)
+      s.speed = 0x18000;
+    wait(1);
+    if (mode == 0) {
+      if (i == 40)
+        Camera_MoveWithinMapBounds(128 << 18, 208 << 15, 152 << 17, 1);
+      if (i == 120)
+        break;
+    } else if (mode == 1) {
+      if (i == 40)
+        Camera_MoveWithinMapBounds(128 << 18, 208 << 15, 176 << 17, 1);
+      if (i == 120)
+        break;
+    } else if (mode == 3) {
+      if (i == 40)
+        Camera_FollowActor(0, 1);
+      if (i == 120)
+        break;
+    }
+  }
+
+  i = 0;
+L2:
+  Actor_GetById(gData_020069dc[i])->unk_23 &= 223;
+  Actor_SetSpritePriority(gData_020069dc[i], 1);
+  i++;
+  if (i <= 5)
+    goto L2;
+
+  i = 0;
+  if (i < s.count) {
+    p = list;
+  L6:
+    Func_02005884(*p, 0, 0);
+    Actor_GetById(*p++)->unk_55 = 0;
+    i++;
+    if (i < s.count)
+      goto L6;
+  }
 }

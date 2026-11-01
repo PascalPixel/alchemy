@@ -1,7 +1,19 @@
-// Draft, differ 148 of 303: the rescue by boat (actor 10): it sails in,
-// the camera zooms, and the party lands on the far shore. Left: the native
-// keeps the map work in r7 (this draft uses r8 and saves another register)
-// and places its pool at the end; the -1 arguments go through Call4.
+// Draft, differ 99 of 303, skeleton gap 27 (tla-en, 2026-11-01)
+// The rescue by boat (actor 10): it sails in, the camera zooms, and the party
+// lands on the far shore. Everything left comes from one thing: loop.c hoists
+// the two addresses in the loop out of it, which takes the registers the
+// native gives the counter (r5) and the map work (r7), so the map work falls
+// to r8 and the loop's shape differs. Recomputing them each pass needs the
+// address pseudo set twice. This form, in place of the two map lines in the
+// loop, gives differ 0, but it reuses a local for two values, a `temporary`
+// under S2, so it needs a tag and is not adopted here:
+//   u16 *scroll = &map->unk11e;
+//   *scroll += 0xff80;
+//   scroll = &map->unk11c;
+//   *scroll += 128;
+// Two locals, an inline helper, volatile, s16 fields, do, while, for (;;) and
+// an upward for all leave the hoist in place; a label and goto stop it, but CSE
+// then carries the addresses past the loop, which the native does not do.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -43,17 +55,21 @@ void Func_02004db8(s32 value);
 void Func_02004df8(s32 a, s32 b);
 void Func_02004e30(s32 cue);
 
-#define MAP_HALF(map, offset) (*(u16 *)((map) + (offset)))
+struct RescueMap {
+  u8 unk000[0x11c];
+  u16 unk11c;
+  u16 unk11e;
+};
 
 void Func_02002ab0(void) {
   struct Actor *boat = Actor_GetById(10);
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  struct RescueMap *map = (struct RescueMap *)Ram_HeapSlots->mapWork;
   s32 i;
 
   Func_02004c20();
   Func_02004db8(0);
-  Func_02004b68(64, 176, 304, 240);
-  Func_02004b68(80, 176, 320, 240);
+  Call4((void (*)())Func_02004b68, 64, 176, 304, 240);
+  Call4((void (*)())Func_02004b68, 80, 176, 320, 240);
   boat->scaleX = 0x13333;
   boat->scaleY = 0x13333;
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
@@ -62,11 +78,12 @@ void Func_02002ab0(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Actor_SetSingleChildFlags(Actor_GetById(10), 0);
-  Actor_SetSpeedParameters(10, 0x6666, 0x3333);
+  Call3((void (*)())Actor_SetSpeedParameters, 10, 0x6666, 0x3333);
   boat->action = 0;
   boat->acceleration = 0x2000;
   boat->speedLimit = 0x2000;
-  Func_02004b50(boat, 0x27ff0000, boat->y, 0x1ecc0000);
+  Call4((void (*)())Func_02004b50, (s32)boat, 0x27ff0000, boat->y,
+        0x1ecc0000);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004da8();
@@ -86,11 +103,11 @@ void Func_02002ab0(void) {
   Func_02004cf0(8, 0);
   Func_02004e30(61);
   Func_02004db0();
-  Func_02004d20(0x40000, 0x8000);
+  Call2((void (*)())Func_02004d20, 0x40000, 0x8000);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x283f0000, -1, 0x1e8c0000, 1);
   for (i = 31; i >= 0; i--) {
-    MAP_HALF(map, 0x11e) += 0xff80;
-    MAP_HALF(map, 0x11c) += 128;
+    map->unk11e += 0xff80;
+    map->unk11c += 128;
     Actor_GetById(10)->scaleY += -0x300;
     wait(1);
   }
@@ -101,25 +118,25 @@ void Func_02002ab0(void) {
   Func_02004cf0(5, 0);
   Func_02004cf0(6, 0);
   Func_02004cf0(8, 0);
-  Func_02004b78(0x10000, 0x20000, 0x10000);
+  Call3((void (*)())Func_02004b78, 0x10000, 0x20000, 0x10000);
   Func_02004db0();
-  Func_02004df8(0x9999, 1);
-  MAP_HALF(map, 0x11e) = 0;
-  MAP_HALF(map, 0x11c) = 0xe000;
+  Call2((void (*)())Func_02004df8, 0x9999, 1);
+  map->unk11e = 0;
+  map->unk11c = 0xe000;
   wait(1);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x0e470000, -1, 0x1dd00000, 0);
   Func_02004b40();
-  Func_02004c88(8, 0x0e6a0000, 0x1dc00000);
-  Func_02004c88(9, 0x0e3e0000, 0x1dff0000);
-  Func_02004c88(4, 0x0e550000, 0x1df00000);
-  Func_02004c88(5, 0x0e490000, 0x1dc50000);
-  Func_02004c88(6, 0x0e770000, 0x1de30000);
+  Call3((void (*)())Func_02004c88, 8, 0x0e6a0000, 0x1dc00000);
+  Call3((void (*)())Func_02004c88, 9, 0x0e3e0000, 0x1dff0000);
+  Call3((void (*)())Func_02004c88, 4, 0x0e550000, 0x1df00000);
+  Call3((void (*)())Func_02004c88, 5, 0x0e490000, 0x1dc50000);
+  Call3((void (*)())Func_02004c88, 6, 0x0e770000, 0x1de30000);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      1);
   wait(1);
   Func_02004da8();
-  Func_02004d10(5, 0x102);
+  Call2((void (*)())Func_02004d10, 5, 0x102);
   FieldEvent_Wait(20);
   Func_02004cf0(5, 0);
   Motion_SetModeAndWaitAnimation(9, 4);
@@ -128,10 +145,10 @@ void Func_02002ab0(void) {
   Actor_Jump(6, 6, 23);
   Actor_SetAngleToward(6, 4, 0);
   Func_02004cf0(6, 0);
-  Func_02004d10(8, 0x101);
+  Call2((void (*)())Func_02004d10, 8, 0x101);
   Func_02004cf0(8, 0);
-  Actor_SetSpeedParameters(8, 0x10000, 0x8000);
-  Actor_ResetAndSetPositionInMode2(8, 0xe18, 0x1e0f);
+  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x10000, 0x8000);
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 8, 0xe18, 0x1e0f);
   Func_02004e30(163);
   Func_020042e0(0);
   Func_02004d40(65);

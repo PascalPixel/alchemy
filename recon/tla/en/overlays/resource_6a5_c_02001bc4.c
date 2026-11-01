@@ -1,14 +1,17 @@
-// Differ 183 of 1518 (was 215): as in Func_02001388's draft, the first
-// scene's speeds are locals (fast 0xa000, slow 0x2000, mid 0xc000) and its
-// Func_0200588c calls go through Call4, and Func_020058fc's calls go through an
-// inline of its own that calls it directly. Left: the native saves five
-// registers (r5, r6, r8 to sl) where this saves six; using v_r10, v_r8 and
-// v_r6 for the speeds (186) or calling Func_0200588c through Call4 everywhere
-// (207) is worse. Older notes:
-// Draft of overlay 6a5's Func_02001bc4, translated from its listing: differ
-// 215 of 1518. Left: its shape: 1527 instructions against the listing's 1518.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Func_02001b04 is nested here, which is what saves r9 and sets it to sp
+// before the last call; written plainly as here, all 89 of its instructions
+// match (--symbol Func_02001b04), so adopting this parent lets
+// jupiter_lighthouse_aerie_beacon/s1ac4.c drop its pins and barrier.
+// ACTOR_SET_MODE_AND_WAIT's do-while, used by every pose
+// followed by its wait, sets the order of the argument loads around it; the
+// same calls as an inline or written plainly differ in 102 instructions. The
+// call.h forwards still stand for what the matched scenes tag as wrappers.
 #include "types.h"
 #include "call.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "owner_state.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -23,7 +26,6 @@ s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
 s32 FieldEvent_Wait();
 s32 Func_02001ac4();
-s32 Func_02001b04();
 s32 Func_02003a6c();
 s32 Func_02003c58();
 s32 Func_02005814();
@@ -48,11 +50,9 @@ s32 Actor_ResetAndSetPositionInMode2();
 s32 Actor_SetPositionAndReset();
 s32 Actor_SetSpeedParameters();
 s32 Actor_StartRepeatedMotion();
-s32 Actor_GetById();
+struct Actor *Actor_GetById();
 s32 Actor_WatchAndSetScript();
 s32 Actor_TurnToFaceEachOther();
-s32 Actor_RefreshSelectorById();
-s32 Actor_SetModeById();
 extern u8 MsgWasnTThe[];
 extern u8 gData_02005ff0[];
 extern u8 gData_02005ff8[];
@@ -63,57 +63,58 @@ static __inline__ void W_Func_020058fc(s32 a0, s32 a1, s32 a2) {
   Func_020058fc(a0, a1, a2);
 }
 
+#define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
+  do {                                                                         \
+    Actor_SetModeById(id, mode);                                               \
+    FieldEvent_Wait(frames);                                                   \
+  } while (0)
+
 void Func_02001bc4(void) {
   s32 fast;
   s32 slow;
   s32 mid;
-  s32 sp_[1];
-  s32 v_r5, v_r2, v_r1, v_r3, v_r6, v_r10, v_r8, v_r0, t2, t3;
-  s32 t4, t5, t6, t7, t8, t9, t10, t11, t12, t13;
-  s32 t14, t15, t16, t17, t18, t19, t20, t21, t22, t23;
-  s32 t36, t37, t38, t39, t129, t130, t131, t132, t133, t134;
-  s32 t135, t150, t151, t152, t153, t154, t155, t234, t235, t241;
-  s32 t242, t302, t310, t311, t324, t325, t326, t329, t330, t331;
-  s32 t334, t335, t336, t363, t368, t369, t397, t398, t399, t402;
-  s32 t403, t404, t407, t408, t409, t412, t413, t414, t428, t429;
-  s32 t430, t438;
+  struct Actor *actor;
+  s32 two, v_r5, t302, t310, t311, t438;
+
+  void Func_02001b04(s32 clearStatus) {
+    s32 count;
+    s32 n;
+    struct BattleUnit *member;
+    s16 maxHp;
+
+    count = Party_CountActiveOwners();
+    for (n = 0; n < count; n++) {
+      struct MainRoutineWork *party = &gMainRoutineWork;
+
+      member = Unit_Get(party->activeOwners[n]);
+      maxHp = member->hp = member->maxHp;
+      member->hpGauge = Vitals_Clamp((maxHp << 14) / maxHp);
+      if (member->hpGauge == 0 && member->hp != 0)
+        member->hpGauge = 1;
+      member->ppGauge = Vitals_Clamp((member->pp << 14) / member->maxPp);
+      if (member->ppGauge == 0 && member->pp != 0)
+        member->ppGauge = 1;
+      if (clearStatus == 1) {
+        member->poison = 0;
+        member->haunt = 0;
+      }
+    }
+  }
 
   Func_02005814();
   Call1(Func_02005984, 0);
-  t2 = Value1(Actor_GetById, 0);
-  t3 = FIELD_AT(t2, u8, 35);
-  FIELD_AT(t2, u8, 35) = (t3 | 1);
-  t4 = Value1(Actor_GetById, 1);
-  t5 = FIELD_AT(t4, u8, 35);
-  FIELD_AT(t4, u8, 35) = (t5 | 1);
-  t6 = Value1(Actor_GetById, 2);
-  t7 = FIELD_AT(t6, u8, 35);
-  FIELD_AT(t6, u8, 35) = (t7 | 1);
-  t8 = Value1(Actor_GetById, 3);
-  t9 = FIELD_AT(t8, u8, 35);
-  FIELD_AT(t8, u8, 35) = (t9 | 1);
-  t10 = Value1(Actor_GetById, 4);
-  t11 = FIELD_AT(t10, u8, 35);
-  FIELD_AT(t10, u8, 35) = (t11 | 1);
-  t12 = Value1(Actor_GetById, 5);
-  t13 = FIELD_AT(t12, u8, 35);
-  FIELD_AT(t12, u8, 35) = (t13 | 1);
-  t14 = Value1(Actor_GetById, 7);
-  t15 = FIELD_AT(t14, u8, 35);
-  FIELD_AT(t14, u8, 35) = (t15 | 1);
-  t16 = Value1(Actor_GetById, 6);
-  t17 = FIELD_AT(t16, u8, 35);
-  FIELD_AT(t16, u8, 35) = (t17 | 1);
-  t18 = Value1(Actor_GetById, 30);
-  t19 = FIELD_AT(t18, u8, 35);
-  FIELD_AT(t18, u8, 35) = (t19 | 1);
-  t20 = Value1(Actor_GetById, 27);
-  t21 = FIELD_AT(t20, u8, 35);
-  FIELD_AT(t20, u8, 35) = (t21 | 1);
-  t22 = Value1(Actor_GetById, 28);
-  t23 = FIELD_AT(t22, u8, 35);
-  v_r5 = (1 | t23);
-  FIELD_AT(t22, u8, 35) = v_r5;
+  Actor_GetById(0)->priorityFlags |= 1;
+  Actor_GetById(1)->priorityFlags |= 1;
+  Actor_GetById(2)->priorityFlags |= 1;
+  Actor_GetById(3)->priorityFlags |= 1;
+  Actor_GetById(4)->priorityFlags |= 1;
+  Actor_GetById(5)->priorityFlags |= 1;
+  Actor_GetById(7)->priorityFlags |= 1;
+  Actor_GetById(6)->priorityFlags |= 1;
+  Actor_GetById(30)->priorityFlags |= 1;
+  Actor_GetById(27)->priorityFlags |= 1;
+  Actor_GetById(28)->priorityFlags |= 1;
+  mid = 0xc000;
   fast = 0xa000;
   Call4(Func_0200588c, 4, 0x1f80000, 0x1300000, fast);
   Call4(Func_0200588c, 7, 0x2100000, 0x1200000, fast);
@@ -121,7 +122,6 @@ void Func_02001bc4(void) {
   Call4(Func_0200588c, 27, 0x1e80000, 0x1280000, slow);
   Call4(Func_0200588c, 28, 0x1f80000, 0x1180000, slow);
   Call4(Func_0200588c, 5, 0x2100000, 0x1300000, fast);
-  mid = 0xc000;
   Call4(Func_0200588c, 6, 0x2280000, 0x1200000, mid);
   Call4(Func_0200588c, 29, 0x1e00000, 0x1680000, mid);
   Call4(Func_0200588c, 30, 0x2500000, 0x1880000, 0);
@@ -129,12 +129,10 @@ void Func_02001bc4(void) {
   Call2(Actor_SetModeById, 6, 19);
   Call2(Actor_SetModeById, 4, 19);
   Call2(Actor_SetModeById, 7, 13);
-  t36 = Value1(Actor_GetById, 4);
-  t37 = FIELD_AT(t36, s32, 24);
-  FIELD_AT(t36, s32, 24) = -t37;
-  t38 = Value1(Actor_GetById, 6);
-  t39 = FIELD_AT(t38, s32, 24);
-  FIELD_AT(t38, s32, 24) = -t39;
+  actor = Actor_GetById(4);
+  actor->scaleX = -actor->scaleX;
+  actor = Actor_GetById(6);
+  actor->scaleX = -actor->scaleX;
   Call4(Camera_MoveWithinMapBounds, 0x2080000, 0x680000, 0x1380000, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -156,8 +154,7 @@ void Func_02001bc4(void) {
   W_Func_020058fc(28, 0x102, 30);
   Call2(Motion_SetVarCbAndRefresh, 28, 2);
   Call3(Func_020058d4, 28, 0, 0);
-  Call2(Actor_SetModeById, 27, 4);
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_SET_MODE_AND_WAIT(27, 4, 33);
   Call3(Func_020058d4, 27, 0, 0);
   W_Func_020058fc(28, 0x107, 30);
   Call3(Func_020058d4, 28, 0, 0);
@@ -172,8 +169,7 @@ void Func_02001bc4(void) {
   Call1(Func_020059f4, 39);
   W_Func_020058fc(27, 0x107, 30);
   Call3(Func_020058d4, 27, 0, 0);
-  Call2(Actor_SetModeById, 29, 4);
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_SET_MODE_AND_WAIT(29, 4, 33);
   Call3(Func_020058d4, 29, 0, 0);
   W_Func_020058fc(28, 0x107, 30);
   Call3(Func_020058d4, 28, 0, 0);
@@ -183,8 +179,7 @@ void Func_02001bc4(void) {
   Call3(Actor_ArmCallback, 28, 0x6000, 0);
   Call2(Func_020058ec, 27, 0xe000);
   Call1(FieldEvent_Wait, 10);
-  Call2(Actor_SetModeById, 29, 4);
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_SET_MODE_AND_WAIT(29, 4, 33);
   Call3(Func_020058d4, 29, 0, 0);
   Call2(Func_020058ec, 29, 0);
   Call3(Func_020058d4, 29, 0, 0);
@@ -194,29 +189,24 @@ void Func_02001bc4(void) {
   Actor_ArmCallback(28, slow, 0);
   Call2(Func_020058ec, 27, slow);
   Call1(FieldEvent_Wait, 5);
-  Call2(Actor_SetModeById, 29, 4);
-  Call1(FieldEvent_Wait, 33);
-  Func_020058ec(29, mid);
+  ACTOR_SET_MODE_AND_WAIT(29, 4, 33);
+  Call2(Func_020058ec, 29, mid);
   Call3(Func_020058d4, 29, 0, 0);
   W_Func_020058fc(28, 0x102, 30);
   Call3(Actor_ArmCallback, 28, 0x4000, 0);
   Call3(Func_020058d4, 28, 0, 0);
-  Call2(Actor_SetModeById, 29, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(29, 3, 20);
   Call3(Func_020058d4, 29, 0, 0);
   Call2(Func_020058ec, 28, 0x6000);
   Call1(FieldEvent_Wait, 10);
   Call2(Func_020058ec, 27, 0xe000);
-  Call2(Actor_SetModeById, 27, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(27, 3, 20);
   Call3(Func_020058d4, 27, 0, 0);
-  Call2(Actor_SetModeById, 29, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(29, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_020058d4, 29, 0, 0);
   Call2(Actor_SetModeById, 27, 3);
-  Call2(Actor_SetModeById, 28, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(28, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call2(Camera_FollowActor, 27, 1);
   Call2(Actor_SetMovementTypeById, 27, (s32)gData_02005ff8);
@@ -224,18 +214,10 @@ void Func_02001bc4(void) {
   Call2(Actor_SetMovementTypeById, 29, (s32)gData_02005ff8);
   Call2(Actor_SetMovementTypeById, 28, (s32)gData_02005ff8);
   Call1(Actor_RefreshSelectorById, 29);
-  t129 = Value1(Actor_GetById, 29);
-  t130 = FIELD_AT(t129, u8, 35);
-  FIELD_AT(t129, u8, 35) = (t130 | 64);
-  t131 = Value1(Actor_GetById, 27);
-  t132 = FIELD_AT(t131, u8, 35);
-  FIELD_AT(t131, u8, 35) = (t132 | 64);
-  t133 = Value1(Actor_GetById, 28);
-  t134 = FIELD_AT(t133, u8, 35);
-  v_r5 = (64 | t134);
-  FIELD_AT(t133, u8, 35) = v_r5;
-  t135 = Value1(Actor_GetById, 29);
-  FIELD_AT(t135, u8, 85) = 2;
+  Actor_GetById(29)->priorityFlags |= 64;
+  Actor_GetById(27)->priorityFlags |= 64;
+  Actor_GetById(28)->priorityFlags |= 64;
+  Actor_GetById(29)->motionFlags = 2;
   Call2(Actor_SetMovementTypeById, 29, (s32)gData_02006088);
   Call1(Actor_RefreshSelectorById, 27);
   Call2(Actor_SetMovementTypeById, 27, (s32)gData_02006088);
@@ -250,35 +232,20 @@ void Func_02001bc4(void) {
   Call1(Actor_RefreshSelectorById, 28);
   Call3(Actor_SetPositionAndReset, 28, 0x122, 0x10a);
   Call3(Actor_ArmCallback, 28, 0x4000, 0);
-  t150 = Value1(Actor_GetById, 29);
-  t151 = FIELD_AT(t150, u8, 35);
-  FIELD_AT(t150, u8, 35) = (t151 | 32);
-  t152 = Value1(Actor_GetById, 27);
-  t153 = FIELD_AT(t152, u8, 35);
-  FIELD_AT(t152, u8, 35) = (t153 | 32);
-  t154 = Value1(Actor_GetById, 28);
-  t155 = FIELD_AT(t154, u8, 35);
-  v_r5 = (32 | t155);
-  FIELD_AT(t154, u8, 35) = v_r5;
+  Actor_GetById(29)->priorityFlags |= 32;
+  Actor_GetById(27)->priorityFlags |= 32;
+  Actor_GetById(28)->priorityFlags |= 32;
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Call1(Func_020059f4, 78);
   Call3(Func_020058d4, 30, 0, 0);
-  v_r8 = 0x2000;
-  v_r10 = 0xa000;
-  v_r6 = 0xc000;
-  v_r3 = 0xc000;
-  v_r1 = 0x2000000;
-  v_r2 = 164;
-  goto L_0200a15c;
-L_0200a15c:
-  Call4(Func_0200588c, 30, v_r1, (v_r2 << 17), v_r3);
+  Call4(Func_0200588c, 30, 0x2000000, 0x1480000, mid);
   Call1(Func_02003a6c, 0);
   Func_0200598c();
   Call1(FieldEvent_Wait, 10);
-  Func_0200588c(0, 0x2180000, 0x1700000, v_r6);
-  Call4(Func_0200588c, 1, 0x2180000, 0x1800000, v_r6);
-  Call4(Func_0200588c, 2, 0x2280000, 0x1700000, v_r6);
-  Call4(Func_0200588c, 3, 0x2280000, 0x1600000, v_r6);
+  Call4(Func_0200588c, 0, 0x2180000, 0x1700000, mid);
+  Call4(Func_0200588c, 1, 0x2180000, 0x1800000, mid);
+  Call4(Func_0200588c, 2, 0x2280000, 0x1700000, mid);
+  Call4(Func_0200588c, 3, 0x2280000, 0x1600000, mid);
   Call3(Func_020058d4, 0, 0, 0);
   Call2(Camera_FollowActor, 0, 1);
   Call3(Actor_ResetAndSetPositionInMode2, 0, 0x218, 0x150);
@@ -291,16 +258,14 @@ L_0200a15c:
   Call1(Actor_WaitForMoveById, 3);
   Call2(Func_020058ec, 30, 0x3000);
   Call1(FieldEvent_Wait, 10);
-  Call2(Actor_SetModeById, 30, 4);
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_SET_MODE_AND_WAIT(30, 4, 33);
   Call3(Func_020058d4, 30, 0, 0);
-  Call2(Actor_SetModeById, 2, 4);
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_SET_MODE_AND_WAIT(2, 4, 33);
   Call3(Func_020058d4, 2, 0, 0);
   Call2(Func_020058ec, 3, 0x4000);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_020058d4, 3, 0, 0);
-  Func_020058ec(0, v_r10);
+  Func_020058ec(0, fast);
   Call4(Camera_MoveWithinMapBounds, 0x1400000, 0x600000, 0x1680000, 1);
   Func_02005924();
   Call1(FieldEvent_Wait, 10);
@@ -308,10 +273,9 @@ L_0200a15c:
   Call4(Camera_MoveWithinMapBounds, 0x2000000, 0x600000, 0x1600000, 1);
   Func_02005924();
   Call1(Func_02003c58, 0);
-  Call2(Actor_SetModeById, 1, 4);
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_SET_MODE_AND_WAIT(1, 4, 33);
   Call3(Func_020058d4, 1, 0, 0);
-  Call2(Func_020058ec, 2, v_r10);
+  Call2(Func_020058ec, 2, fast);
   Call1(FieldEvent_Wait, 10);
   Call2(Motion_SetVarCbAndRefresh, 2, 2);
   Call1(FieldEvent_Wait, 5);
@@ -320,7 +284,7 @@ L_0200a15c:
   Call3(Func_020058d4, 3, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 4, 2);
   Call1(FieldEvent_Wait, 5);
-  Call2(Func_020058ec, 30, v_r6);
+  Func_020058ec(30, mid);
   Call2(Motion_SetVarCbAndRefresh, 30, 2);
   Call1(FieldEvent_Wait, 5);
   Call3(Func_020058d4, 30, 0, 0);
@@ -333,40 +297,37 @@ L_0200a15c:
   Call1(FieldEvent_Wait, 30);
   Call2(Func_020058ec, 0, 0xe000);
   Call3(Func_020058d4, 0, 0, 0);
-  Call2(Actor_SetModeById, 3, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(3, 3, 20);
   Call1(FieldEvent_Wait, 10);
-  Func_020058ec(1, v_r10);
+  Func_020058ec(1, fast);
   Call3(Func_020058d4, 1, 0, 0);
-  Call2(Func_020058ec, 30, v_r8);
+  Call2(Func_020058ec, 30, slow);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_020058d4, 30, 0, 0);
-  Call2(Func_020058ec, 30, v_r6);
+  Func_020058ec(30, mid);
   Call3(Actor_CommitPositionAndActivate, 3, -0x30, 0);
-  Call3(Actor_ArmCallback, 3, v_r6, 0);
+  Call3(Actor_ArmCallback, 3, mid, 0);
   Call2(Func_02001ac4, 3, 4);
-  Call3(Actor_ArmCallback, 4, v_r8, 0);
-  t234 = Value1(Actor_GetById, 4);
-  t235 = FIELD_AT(t234, s32, 24);
-  FIELD_AT(t234, s32, 24) = -t235;
+  Call3(Actor_ArmCallback, 4, slow, 0);
+  actor = Actor_GetById(4);
+  actor->scaleX = -actor->scaleX;
   Call3(Actor_CommitPositionAndActivate, 3, 40, 0);
   Call3(Actor_CommitPositionAndActivate, 3, 8, -16);
-  Call3(Actor_ArmCallback, 3, v_r6, 0);
+  Call3(Actor_ArmCallback, 3, mid, 0);
   Call2(Func_02001ac4, 3, 6);
   Call3(Actor_ArmCallback, 6, 0x4000, 0);
-  t241 = Value1(Actor_GetById, 6);
-  t242 = FIELD_AT(t241, s32, 24);
-  FIELD_AT(t241, s32, 24) = -t242;
-  Call3(Actor_ArmCallback, 3, v_r10, 0);
+  actor = Actor_GetById(6);
+  actor->scaleX = -actor->scaleX;
+  Call3(Actor_ArmCallback, 3, fast, 0);
   Call2(Func_02001ac4, 3, 7);
   Call3(Actor_ArmCallback, 7, 0x4000, 0);
   Call3(Actor_ArmCallback, 3, 0x8000, 0);
   Call2(Func_02001ac4, 3, 5);
   Call3(Actor_ArmCallback, 5, 0x4000, 0);
   Call2(Motion_SetVarCbAndRefresh, 0, 2);
-  Func_020058ec(0, v_r10);
+  Func_020058ec(0, fast);
   Call3(Func_020058d4, 0, 0, 0);
-  Call3(Actor_ArmCallback, 30, v_r8, 0);
+  Call3(Actor_ArmCallback, 30, slow, 0);
   W_Func_020058fc(30, 0x109, 30);
   Call3(Func_020058d4, 30, 0, 0);
   Func_020058fc(1, 0x107, 30);
@@ -374,9 +335,8 @@ L_0200a15c:
   Func_020058fc(2, 0x109, 30);
   Call3(Actor_ResetAndSetPositionInMode2, 2, 0x228, 0x140);
   Call2(Func_020058ec, 2, 0x8000);
-  Call3(Actor_ArmCallback, 1, v_r6, 0);
-  Call2(Actor_SetModeById, 2, 4);
-  Call1(FieldEvent_Wait, 33);
+  Call3(Actor_ArmCallback, 1, mid, 0);
+  ACTOR_SET_MODE_AND_WAIT(2, 4, 33);
   Call2(Motion_SetVarCbAndRefresh, 2, 2);
   Call3(Func_020058d4, 2, 0, 0);
   Call2(Func_020058ec, 0, 0xe000);
@@ -391,8 +351,7 @@ L_0200a15c:
   Call3(Actor_TurnToFaceEachOther, 7, 4, 0);
   Call1(FieldEvent_Wait, 10);
   Call2(Func_020058ec, 30, 0);
-  Call2(Actor_SetModeById, 30, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(30, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call2(Func_020058ec, 30, 0);
   Call3(Func_020058d4, 30, 0, 0);
@@ -403,31 +362,27 @@ L_0200a15c:
   Call3(Actor_ArmCallback, 3, 0x6000, 0);
   Call2(Func_020058ec, 0, 0x4000);
   Call1(FieldEvent_Wait, 50);
-  Call2(Actor_SetModeById, 1, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(1, 3, 20);
   Call1(FieldEvent_Wait, 10);
-  Call2(Func_020058ec, 0, v_r6);
+  Call2(Func_020058ec, 0, mid);
   Call1(FieldEvent_Wait, 50);
   Call2(Actor_SetModeById, 3, 3);
   Call2(Actor_SetModeById, 7, 3);
   Call2(Actor_SetModeById, 6, 3);
-  Call2(Actor_SetModeById, 5, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(5, 3, 20);
   Call1(FieldEvent_Wait, 10);
-  Call2(Func_020058ec, 0, v_r10);
-  Call2(Func_020058ec, 4, v_r8);
+  Call2(Func_020058ec, 0, fast);
+  Call2(Func_020058ec, 4, slow);
   t302 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t302 != 0)
     goto L_0200a678;
-  Call2(Actor_SetModeById, 0, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(0, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_020058d4, 0, 0, 0);
   goto L_0200a6fe;
 L_0200a678:
   W_Func_020058fc(0, 0x107, 30);
-  Call2(Actor_SetModeById, 5, 4);
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_SET_MODE_AND_WAIT(5, 4, 33);
   t310 = FIELD_AT(0x3000000, s32, 108);
   t311 = FIELD_AT(t310, u16, 452);
   FIELD_AT(t310, u16, 452) = (t311 + 2);
@@ -438,37 +393,27 @@ L_0200a678:
   Call2(Motion_SetVarCbAndRefresh, 5, 2);
   Call1(FieldEvent_Wait, 5);
   Call3(Func_020058d4, 5, 0, 0);
-  Call2(Actor_SetModeById, 0, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(0, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_020058d4, 0, 0, 0);
 L_0200a6fe:
   Call2(Actor_SetModeById, 2, 2);
-  t324 = Value1(Actor_GetById, 0);
-  v_r0 = t324;
-  if (v_r0 == 0)
+  actor = Actor_GetById(0);
+  if (actor == 0)
     goto L_0200a71e;
-  t325 = FIELD_AT(v_r0, s16, 10);
-  t326 = FIELD_AT(v_r0, s16, 18);
-  Call3(Actor_ResetAndSetPosition, 2, t325, t326);
+  Call3(Actor_ResetAndSetPosition, 2, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a71e:
   Call2(Actor_SetModeById, 3, 2);
-  t329 = Value1(Actor_GetById, 0);
-  v_r0 = t329;
-  if (v_r0 == 0)
+  actor = Actor_GetById(0);
+  if (actor == 0)
     goto L_0200a73e;
-  t330 = FIELD_AT(v_r0, s16, 10);
-  t331 = FIELD_AT(v_r0, s16, 18);
-  Call3(Actor_ResetAndSetPosition, 3, t330, t331);
+  Call3(Actor_ResetAndSetPosition, 3, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a73e:
   Call2(Actor_SetModeById, 1, 2);
-  t334 = Value1(Actor_GetById, 0);
-  v_r0 = t334;
-  if (v_r0 == 0)
+  actor = Actor_GetById(0);
+  if (actor == 0)
     goto L_0200a75e;
-  t335 = FIELD_AT(v_r0, s16, 10);
-  t336 = FIELD_AT(v_r0, s16, 18);
-  Call3(Actor_ResetAndSetPosition, 1, t335, t336);
+  Call3(Actor_ResetAndSetPosition, 1, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a75e:
   Call2(Actor_SetMovementTypeById, 2, (s32)gData_02005ff0);
   Actor_SetMovementTypeById(3, (s32)gData_02005ff0);
@@ -495,15 +440,12 @@ L_0200a75e:
   Call3(Actor_SetPositionAndReset, 0, 0x248, 252);
   Call3(Actor_SetPositionAndReset, 0, 0x268, 247);
   Call3(Actor_SetPositionAndReset, 0, 0x269, 0x138);
-  t363 = Value1(Actor_GetById, 0);
-  FIELD_AT(t363, u8, 85) = 2;
+  Actor_GetById(0)->motionFlags = 2;
   Call2(Actor_SetMovementTypeById, 0, (s32)gData_020061e0);
   Call1(Actor_RefreshSelectorById, 0);
   Call2(Func_020058ec, 0, 0x4000);
   Call1(FieldEvent_Wait, 30);
-  t368 = Value1(Actor_GetById, 0);
-  t369 = FIELD_AT(t368, u8, 35);
-  FIELD_AT(t368, u8, 35) = (32 | t369);
+  Actor_GetById(0)->priorityFlags |= 32;
   Call3(Actor_ArmCallback, 4, 0, 0);
   Call3(Actor_ArmCallback, 7, 0, 0);
   Call3(Actor_ArmCallback, 5, 0, 0);
@@ -523,50 +465,36 @@ L_0200a75e:
   Call1(FieldEvent_Wait, 60);
   Call2(Func_020058ec, 4, 0);
   Call1(FieldEvent_Wait, 60);
-  Call2(Actor_SetModeById, 5, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(5, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call2(Func_020058ec, 4, 0xe000);
   Call2(Actor_SetModeById, 7, 3);
-  Call2(Actor_SetModeById, 6, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_SET_MODE_AND_WAIT(6, 3, 20);
   Call2(Actor_SetModeById, 7, 2);
-  t397 = Value1(Actor_GetById, 4);
-  v_r0 = t397;
-  v_r6 = 2;
+  actor = Actor_GetById(4);
+  two = 2;
   v_r5 = (s32)gData_02005ff0;
-  if (v_r0 == 0)
+  if (actor == 0)
     goto L_0200a980;
-  t398 = FIELD_AT(v_r0, s16, 10);
-  t399 = FIELD_AT(v_r0, s16, 18);
-  Call3(Actor_ResetAndSetPosition, 7, t398, t399);
+  Call3(Actor_ResetAndSetPosition, 7, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a980:
   Call2(Actor_SetModeById, 6, 2);
-  t402 = Value1(Actor_GetById, 4);
-  v_r0 = t402;
-  if (v_r0 == 0)
+  actor = Actor_GetById(4);
+  if (actor == 0)
     goto L_0200a9a0;
-  t403 = FIELD_AT(v_r0, s16, 10);
-  t404 = FIELD_AT(v_r0, s16, 18);
-  Call3(Actor_ResetAndSetPosition, 6, t403, t404);
+  Call3(Actor_ResetAndSetPosition, 6, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a9a0:
   Call2(Actor_SetModeById, 5, 2);
-  t407 = Value1(Actor_GetById, 4);
-  v_r0 = t407;
-  if (v_r0 == 0)
+  actor = Actor_GetById(4);
+  if (actor == 0)
     goto L_0200a9c0;
-  t408 = FIELD_AT(v_r0, s16, 10);
-  t409 = FIELD_AT(v_r0, s16, 18);
-  Call3(Actor_ResetAndSetPosition, 5, t408, t409);
+  Call3(Actor_ResetAndSetPosition, 5, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a9c0:
   Call2(Actor_SetModeById, 30, 2);
-  t412 = Value1(Actor_GetById, 4);
-  v_r0 = t412;
-  if (v_r0 == 0)
+  actor = Actor_GetById(4);
+  if (actor == 0)
     goto L_0200a9e0;
-  t413 = FIELD_AT(v_r0, s16, 10);
-  t414 = FIELD_AT(v_r0, s16, 18);
-  Call3(Actor_ResetAndSetPosition, 30, t413, t414);
+  Call3(Actor_ResetAndSetPosition, 30, FIELD_AT(actor, s16, 10), FIELD_AT(actor, s16, 18));
 L_0200a9e0:
   Call2(Actor_SetMovementTypeById, 7, v_r5);
   Call2(Actor_SetMovementTypeById, 6, v_r5);
@@ -580,11 +508,8 @@ L_0200a9e0:
   Call3(Actor_CommitPositionAndActivate, 4, -16, 0);
   Call2(Actor_SetMovementTypeById, 4, (s32)gData_02005ff8);
   Call1(Actor_RefreshSelectorById, 4);
-  t428 = Value1(Actor_GetById, 4);
-  t429 = FIELD_AT(t428, u8, 35);
-  FIELD_AT(t428, u8, 35) = (t429 | 64);
-  t430 = Value1(Actor_GetById, 29);
-  FIELD_AT(t430, u8, 85) = v_r6;
+  Actor_GetById(4)->priorityFlags |= 64;
+  Actor_GetById(29)->motionFlags = two;
   Call2(Actor_SetMovementTypeById, 4, (s32)gData_02006088);
   Call1(Actor_RefreshSelectorById, 4);
   Call3(Actor_SetPositionAndReset, 4, 0x137, 0x100);
@@ -597,7 +522,7 @@ L_0200a9e0:
   FIELD_AT(t438, s32, 436) = 24;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Call1(Func_02001b04, 0);
+  Func_02001b04(0);
   Call1(Func_02005934, 1);
   Func_0200581c();
   return;

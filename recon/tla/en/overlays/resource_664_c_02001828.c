@@ -1,4 +1,5 @@
-// Draft, differ 913 of 1527: Whirlwind inside Air's Rock, overlay 664's larger
+// Draft, differ 612 of 1527, skeleton gap 174 (tla-en, 2026-11-01)
+// Whirlwind inside Air's Rock, overlay 664's larger
 // copy of overlay 663's Func_0200095c: a gust (object type 280) rises from
 // the target (the effect work's object at 0x14) and grows, shedding sparks
 // (object type 0x2a0, Func_02002bd0); it then travels from the target away
@@ -11,12 +12,22 @@
 // moved cells each fourth frame while it throws dust (cue 235, then 298),
 // shrinks and rises away, and for kinds 5 and 6 in Ov664Room4 and 6 shakes
 // the walls open or shut (cue 157, flags 769 and 770).
-// Left: a rough reading: the native keeps the gust in r7, the effect work in
-// r8, the leader in r10 and the carried object's cell in r9, the hit, the step
-// count, the cell and its direction on the stack (sp+16 to sp+36), the two
-// spawn options at sp+40 and sp+80 and the vectors at sp+120; most of the
-// difference is register choice and the order of the spawn and cell calls'
-// stores.
+// Left: allocation. Frame and instruction stream agree in shape. The cell and
+// the step are two-word structs: a two-word pseudo gets no register, which is
+// why their fields live at sp+24 and sp+32 and their dead stores stay. The
+// three loops that open with a branch to their test are label loops: as
+// while loops, loop.c hoists gFrameCount's address and the masks out of them.
+// The native's ranks differ still: the leader in r10 where the draft has r9,
+// gFrameCount's address in r11, 0x10000 in r10 in the dust loop where the
+// draft saves it in r2 around Math_Cosine (block-local, 6 weighted refs against
+// one call, so caller-save is profitable: the native looks unweighted), and
+// `started` on the stack with i, in the same slot, where the draft keeps it in
+// r11. Those shift the pick-up blocks and the dust loop. The growing loop's
+// first movs (#230) sits before its test's label in the native, a cross-jump
+// of a duplicated test: writing the entry test out gives r5 at the top, but
+// the bottom test stays in r0. Tried without gain: the declaration order of
+// the scalars, carried merged into steps, started merged into i, x and z as
+// function-scope scalars (frame 140).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -72,17 +83,27 @@ void Func_02005dcc(s32 a, s32 b, s32 c);
 void Func_02005eec(s32 actor, s32 a);
 void Func_02005ee4(void);
 
+/// A cell of the map, and a step from one cell to the next.
+struct Cell {
+  s32 x, z;
+};
+
 #define TARGET(effect) (*(struct Actor **)((effect) + 20))
 
 /// The gust picks up an object it passes over, to drop it at cell `at`
 /// (x in the high half, z in the low).
 #define PICK_UP(object, at)                                                    \
-  ((object)->watchedObject = gust, (object)->update = Func_020017f4,            \
-   (object)->motionFlags = 0, (object)->priorityFlags &= ~1,                   \
-   Actor_SetSingleChildFlags(object, 0),                              \
-   ((struct FieldSprite *)(object)->animation)->priority =                     \
-       ((struct FieldSprite *)gust->animation)->priority,                      \
-   gust->watchedObject = (object), carried = (at))
+  do {                                                                         \
+    (object)->watchedObject = gust;                                            \
+    (object)->update = Func_020017f4;                                          \
+    (object)->motionFlags = 0;                                                 \
+    (object)->priorityFlags &= ~1;                                             \
+    Actor_SetSingleChildFlags(object, 0);                                      \
+    ((struct FieldSprite *)(object)->animation)->priority =                    \
+        ((struct FieldSprite *)gust->animation)->priority;                     \
+    gust->watchedObject = (object);                                            \
+    carried = (at);                                                            \
+  } while (0)
 
 /// One shake of the walls (cue 157).
 #define SHAKE()                                                                \
@@ -93,9 +114,10 @@ void Func_02001828(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u8 *effect = (u8 *)Ram_HeapSlots->effectWork;
   struct Actor *gust, *spark, *object;
-  struct EffectOptions dust, leaves;
   struct Vector3 velocity;
-  s32 hit = 0, started, x, z, dx, dz, steps = 0, carried, i;
+  struct EffectOptions leaves, dust;
+  struct Cell dir, cell;
+  s32 hit = 0, steps = 0, started, i, carried;
 
   Func_02005e14();
   Func_02005f2c(0);
@@ -118,7 +140,8 @@ void Func_02001828(void) {
   }
   Func_02005d94(gust);
   gust->z = TARGET(effect)->z + 0xffff0000;
-  while (gust->scaleY <= 0x1cccb) {
+  goto grow;
+growing:
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(
           0x2a0, TARGET(effect)->x, TARGET(effect)->y, TARGET(effect)->z);
@@ -143,44 +166,51 @@ void Func_02001828(void) {
       Actor_SetPartAttribute(TARGET(effect), 4);
     }
     FieldEvent_Wait(1);
-  }
+grow:
+  if (gust->scaleY <= 0x1cccb)
+    goto growing;
   Actor_SetPartAttribute(TARGET(effect), 0);
   Func_02005f94(136);
-  x = TARGET(effect)->x >> 20;
-  z = TARGET(effect)->z >> 20;
-  if (leader->x >> 20 < x) {
-    dx = 1;
-    dz = 0;
-  } else if (leader->x >> 20 > x) {
-    dx = -1;
-    dz = 0;
-  } else if (leader->z >> 20 < z) {
-    dx = 0;
-    dz = 1;
+  cell.x = TARGET(effect)->x >> 20;
+  cell.z = TARGET(effect)->z >> 20;
+  if (leader->x >> 20 < cell.x) {
+    dir.x = 1;
+    dir.z = 0;
+  } else if (leader->x >> 20 > cell.x) {
+    dir.x = -1;
+    dir.z = 0;
+  } else if (leader->z >> 20 < cell.z) {
+    dir.x = 0;
+    dir.z = 1;
   } else {
-    dx = 0;
-    dz = -1;
+    dir.x = 0;
+    dir.z = -1;
   }
   do {
-    hit = Func_02000690(2, x, z) >> 8;
-    if (Map_GetTerrainHeight(2, x << 20, z << 20) != gust->terrainHeight)
+    hit = Func_02000690(2, cell.x, cell.z) >> 8;
+    if (Map_GetTerrainHeight(2, cell.x << 20, cell.z << 20) != gust->terrainHeight)
       hit = 0;
-    x += dx;
-    z += dz;
+    cell.x += dir.x;
+    cell.z += dir.z;
     steps += 2;
   } while (hit == 0);
-  Func_02000690(2, x, z);
+  Func_02000690(2, cell.x, cell.z);
   steps -= 2;
-  x = ((s16 *)&TARGET(effect)->x)[1] + ((steps * dx) << 3);
-  z = ((s16 *)&TARGET(effect)->z)[1] + ((steps * dz) << 3);
+  {
+  s32 x = ((s16 *)&TARGET(effect)->x)[1] + ((steps * dir.x) << 3);
+  s32 z = ((s16 *)&TARGET(effect)->z)[1] + ((steps * dir.z) << 3);
   ((struct FieldSprite *)gust->animation)->priority = 1;
   gust->speedLimit = 0x40000;
   gust->acceleration = 0x40000;
-  Func_02005d8c(gust, x << 16, gust->y, z << 16);
-  Func_02005ed4(0x50000, 0x50000);
+  cell.x = x;
+  cell.z = z;
+  Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
+  Call2(Func_02005ed4, 0x50000, 0x50000);
   Camera_MoveWithinMapBounds(x << 16, -1, z << 16, 1);
+  }
   carried = 0;
-  while (Func_02005dec(gust) == 0) {
+  goto travel;
+travelling:
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
       object = Actor_GetById(8);
       if (gust->x >> 19 == object->x >> 19 && carried == 0)
@@ -208,7 +238,9 @@ void Func_02001828(void) {
                     &leaves);
     }
     FieldEvent_Wait(1);
-  }
+travel:
+  if (Func_02005dec(gust) == 0)
+    goto travelling;
   if (carried != 0) {
     object = gust->watchedObject;
     object->x = (carried >> 16) << 19;
@@ -248,14 +280,15 @@ void Func_02001828(void) {
   if (hit == 255) {
     Func_02005f94(136);
   } else {
-    x = ((s16 *)&gust->x)[1] + dx * 48;
-    z = ((s16 *)&gust->z)[1] + dz * 48;
+    cell.x = ((s16 *)&gust->x)[1] + dir.x * 48;
+    cell.z = ((s16 *)&gust->z)[1] + dir.z * 48;
     gust->speedLimit = 0x8000;
     gust->acceleration = 0x8000;
-    Func_02005d8c(gust, x << 16, gust->y, z << 16);
+    Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
     hit -= 30;
     started = 0;
-    while (Func_02005dec(gust) == 0) {
+    goto blow;
+  blowing:
       if (hit > 4)
         goto shrink;
       if (started == 0) {
@@ -276,37 +309,39 @@ void Func_02001828(void) {
       if ((gFrameCount & 3) == 0) {
         if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
           GameFlag_SetBit(0x300);
-          x = (gust->x >> 20) + 64;
-          z = gust->z >> 20;
-          Call6(Func_02005d9c, 90, 25, x + 1, z, 1, 3);
+          cell.x = (gust->x >> 20) + 64;
+          cell.z = gust->z >> 20;
+          Call6(Func_02005d9c, 90, 25, cell.x + 1, cell.z, 1, 3);
           Call6(Func_02005d9c, 21, 88, 24, 89, 1, 2);
           Call6(Func_02005dac, 23, 92, 2, 1, 23, 89);
           Call6(Func_02005dac, 18, 33, 2, 1, 23, 25);
         } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
-          x = gust->x >> 20;
-          z = ((gust->z - gust->y) >> 20) + 64;
+          cell.x = gust->x >> 20;
+          cell.z = ((gust->z - gust->y) >> 20) + 64;
           if (hit == 0) {
             GameFlag_SetBit(772);
-            Call6(Func_02005d9c, 39, 82, x, z, 1, 1);
+            Call6(Func_02005d9c, 39, 82, cell.x, cell.z, 1, 1);
             Call6(Func_02005dac, 39, 82, 1, 1, 38, 82);
             Call6(Func_02005dac, 38, 19, 1, 1, 38, 18);
           } else {
             GameFlag_SetBit(773);
-            Call6(Func_02005d9c, 39, 82, x, z, 1, 1);
+            Call6(Func_02005d9c, 39, 82, cell.x, cell.z, 1, 1);
             Call6(Func_02005dac, 38, 98, 1, 1, 38, 99);
             Call6(Func_02005dac, 38, 35, 1, 1, 38, 37);
           }
         } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
           GameFlag_SetBit(774);
-          x = gust->x >> 20;
-          Call6(Func_02005d9c, 15, 80, x, 77, 1, 3);
+          cell.x = gust->x >> 20;
+          Call6(Func_02005d9c, 15, 80, cell.x, 77, 1, 3);
           Call6(Func_02005dac, 15, 80, 1, 1, 15, 79);
           Call6(Func_02005dac, 17, 15, 2, 1, 15, 15);
         }
         Func_02005d84();
       }
       FieldEvent_Wait(1);
-    }
+  blow:
+    if (Func_02005dec(gust) == 0)
+      goto blowing;
     Func_02005f94(298);
   }
 shrink:

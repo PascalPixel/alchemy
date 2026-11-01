@@ -1,9 +1,20 @@
-// Draft, differ 415 of 449: the Venus Lighthouse entrance glow's scheduled
-// update: steps through its eight stages (rise, wait, lift the object, hold,
-// fall, fade the effect, shake) by timer, spins the object and draws the
-// column of glow sprites, the top one bobbing on a sine. Left: the native
-// computes each case's timer address once and shares the stage tails through
-// it, and saves only r8 and r10; this draft's allocation differs throughout.
+// Draft, differ 108 of 449, skeleton gap 16 (tla-en, 2026-11-01)
+// The Venus Lighthouse entrance glow's scheduled update: steps through its
+// eight stages (rise, wait, lift the object, hold, fall, fade the effect,
+// shake) by timer, spins the object and draws the column of glow sprites, the
+// top one bobbing on a sine.
+// Left: work takes r7 and sprite r6, the listing's r6 and r7: sprite outranks
+// work in global.c (14 refs over 39 insns) unless it is set at the loop's head,
+// which puts its copy too early (differ 44, gap 26). The other gap is order:
+// the listing's s32 stores in stage 6 and the last sprite come before the next
+// constants; unions on the s16 fields and the positions did not move them.
+// Forms that matter: a timer reread mixes work->timer and *timer, or gcse's PRE
+// merges the reads (volatile gives ldrh and a shift instead of ldrsh); -1 goes
+// through work->timer, as *timer it comes from the pool; state and sprite stay
+// function scope so loop.c keeps their copies; frameStep and mask keep
+// tileTop's address short-lived, or loop.c hoists it into r9, and mask set
+// before the address breaks the reload order. Call3 and Value2 (call.h) keep
+// the constant arguments unshared, as the matched scenes do.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -48,6 +59,7 @@ struct GlowWork {
   s16 height;
   s8 follow;
 };
+#include "call.h"
 #include "iwram_call.h"
 
 s32 Math_Sine(s32 angle);
@@ -60,6 +72,11 @@ void Func_02001fd0(void) {
   struct Actor *object = work->object;
   struct Actor *effect = work->effect;
   s32 i, y;
+  s32 scale;
+  s32 frameStep;
+  s32 mask;
+  struct GlowState *state;
+  struct GlowSprite *sprite;
 
   switch (work->stage) {
   case 0:
@@ -94,16 +111,19 @@ void Func_02001fd0(void) {
       work->timer = -1;
     }
     break;
-  case 4:
+  case 4: {
+    s16 *timer = &work->timer;
+
     if (work->timer == 10) {
       object->z = 0;
       object->x = 0;
     }
-    if (work->timer == 30) {
+    if (*timer == 30) {
       work->stage++;
       work->timer = -1;
     }
     break;
+  }
   case 5:
     work->height -= 8;
     if (work->height <= 0) {
@@ -111,26 +131,34 @@ void Func_02001fd0(void) {
       work->timer = -1;
     }
     break;
-  case 6:
-    if (effect->scaleX > 0)
-      effect->scaleX = effect->scaleX - 0x51e;
+  case 6: {
+    s16 *timer;
+
+    scale = effect->scaleX;
+    if (scale > 0)
+      scale -= 0x51e;
     else
-      effect->scaleX = 0;
-    effect->scaleY = effect->scaleX;
+      scale = 0;
+    effect->scaleX = scale;
+    effect->scaleY = scale;
+    timer = &work->timer;
     if (work->timer == 10)
       Import_SoundPlay(310);
-    if (work->timer == 90) {
+    if (*timer == 90) {
       work->stage++;
       work->timer = -1;
     }
     break;
-  case 7:
+  }
+  case 7: {
+    s16 *timer = &work->timer;
+
     if (work->timer == 0) {
       Import_SoundPlay(144);
-      Func_02002894(0x30000, 0x30000, 0x10000);
+      Call3((void (*)())Func_02002894, 0x30000, 0x30000, 0x10000);
     }
-    if (work->timer == 30) {
-      Func_02002894(-1, -1, 0xe666);
+    if (*timer == 30) {
+      Call3((void (*)())Func_02002894, -1, -1, 0xe666);
       if (work->timer == 30) {
         work->stage = 999;
         work->timer = -1;
@@ -138,33 +166,30 @@ void Func_02001fd0(void) {
     }
     break;
   }
+  }
   object->angle += 0x1000;
   if (work->height > 0) {
-    i = 0;
-    for (y = 0; y < work->height - 8; y += 16) {
-      struct GlowState *state = &work->states[i];
-      struct GlowSprite *sprite = &work->sprites[i];
-
+    for (i = 0, y = 0; i < 16 && y < work->height - 8; i++, y += 16) {
+      state = &work->states[i];
       state->x = work->x;
       state->y = work->y + (y << 16) + 0x80000;
       state->z = work->z;
+      sprite = &work->sprites[i];
       state->frame++;
-      sprite->tile = work->tileTop + ((state->frame >> 2) & 3) * 8;
+      frameStep = state->frame >> 2;
+      mask = 3;
+      sprite->tile = work->tileTop + (frameStep & mask) * 8;
       Func_02002a14(sprite, state);
-      i++;
-      if (i > 15)
-        goto done;
     }
     if (i <= 15) {
-      struct GlowState *state = &work->states[i];
-      struct GlowSprite *sprite;
-
+      state = &work->states[i];
       state->x = work->x;
       state->y = work->y + (work->height << 16);
       state->z = work->z;
       state->frame++;
-      state->y +=
-          Iwram_MulQ16(0xfffe0000, Math_Sine(state->frame << 12)) + 0xfffe0000;
+      state->y += Value2((s32 (*)())Iwram_MulQ16, 0xfffe0000,
+                         Math_Sine(state->frame << 12)) +
+                  0xfffe0000;
       sprite = &work->sprites[i];
       sprite->tile = work->tile + ((state->frame >> 2) & 3) * 8;
       Func_02002a14(sprite, state);
@@ -172,6 +197,5 @@ void Func_02001fd0(void) {
         object->y = state->y;
     }
   }
-done:
   work->timer++;
 }

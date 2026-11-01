@@ -1,4 +1,4 @@
-// Draft, differ 333 of 402: a burst of power between two objects in Air's Rock
+// Draft, differ 206 of 402, skeleton gap 86 (tla-en, 2026-11-01): a burst of power between two objects in Air's Rock
 // (a = idA, b = idB): the camera centres on a (cues 78, 141) while the
 // screen zooms and fades; a starts its action script (gData_020060e0) and,
 // blended over the background, sixteen sparks (object type 0x2a0) fly out
@@ -7,10 +7,30 @@
 // fourth, and fifteen more rise in a column over b (gData_020060c0); the
 // screen fades back, both objects take their closing scripts and b runs
 // Func_020040b0 for 120 frames.
-// Left: a rough reading: the native keeps a in r7, idA in r9, idB in r11 and b in r10 with a 12-byte stack frame (the draft spills idA to the stack), keeps the blend register's address in r6 and orders the sparks' field stores otherwise.
+// The shape is settled: all three loops are goto loops (a for loop hoists the
+// blend address and constants), each loop has its own block-local spark (so
+// local-alloc gives it r5 and the angle r6), and motionFlags' pool zero in the
+// second loop is the mask of the unk66 halfword store, shared by CSE, so no zero
+// local is wanted. unk62 and unk63 need a struct access for the address chain.
+// Left: allocation, and nearly all of the gap is its consequence (mov against
+// adds for a high register). The native has a in r7, i in r8, b in r10, idA in
+// r9, idB in r11; here b r7, a r8, i r10, idB r9, idA r11. global.c ranks b over
+// a and i (25 refs, the native wants at most 22) and idB over idA (8 refs, the
+// native at most 6): exactly the weighted refs of the i == 3 block, as if that
+// block had loop depth 0. No shape tried gives that: a local copy of b there,
+// if/else or goto forms, reordered declarations, a separate counter per loop.
+// The native's sub sp, #12 has no stack reference at all; this draft has no
+// frame, and no local was added to fit it (three pseudos that held stack slots
+// and were reallocated by reload's retry would also fit, unproven).
 #include "types.h"
 #include "actor.h"
 #include "call.h"
+
+struct SparkBytes {
+  u8 unk00[0x62];
+  u8 unk62;
+  u8 unk63;
+};
 
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 #define REG_BLDALPHA (*(volatile u16 *)0x04000052)
@@ -45,8 +65,8 @@ void Func_02005f3c(void);
 void Func_02004138(s32 idA, s32 idB) {
   struct Actor *a = Actor_GetById(idA);
   struct Actor *b = Actor_GetById(idB);
-  struct Actor *spark;
   s32 i;
+  s16 *angle;
 
   Func_02005f94(78);
   FieldEvent_Wait(30);
@@ -67,8 +87,10 @@ void Func_02004138(s32 idA, s32 idB) {
   Func_02005e94(idA, 0x100);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
-  for (i = 0; i != 16; i++) {
-    spark = Import_ActorCreate(0x2a0, a->x, a->y, a->z);
+  i = 0;
+first:
+  {
+    struct Actor *spark = Import_ActorCreate(0x2a0, a->x, a->y, a->z);
     Func_02005f94(246);
     spark->x += ((Random16Far() & 31) - 16) << 16;
     spark->y += ((Random16Far() & 15) - 8) << 16;
@@ -90,23 +112,29 @@ void Func_02004138(s32 idA, s32 idB) {
     REG_BLDALPHA = 0x100a;
     wait(2);
   }
+  i++;
+  if (i != 16)
+    goto first;
   REG_BLDALPHA = 0x1008;
   wait(30);
-  for (i = 0; i != 16; i++) {
-    spark = Import_ActorCreate(0x2a0, b->x, b->y, b->z);
+  i = 0;
+second:
+  {
+    struct Actor *spark = Import_ActorCreate(0x2a0, b->x, b->y, b->z);
     Func_02005f94(195);
-    spark->action = (Random16Far() & 0x7fff) + 0x8000;
+    angle = &spark->action;
+    *angle = (Random16Far() & 0x7fff) + 0x8000;
     spark->unk66 = ((i & 1) * 2 - 1) << ((Random16Far() & 3) + 9);
     spark->motionFlags = 0;
     spark->unk4c = 0x7a0000;
     spark->watchedObject = b;
-    ((u8 *)spark)[98] = (16 - i) * 8 + 15;
+    ((struct SparkBytes *)spark)->unk62 = (16 - i) * 8 + 15;
     Actor_SetPartAttribute(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Func_02005d5c(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
     Animation_SetStateFlags(spark, 1);
-    Vector_AddPolarOffsetFar(spark->unk4c, spark->action, &spark->x);
+    Vector_AddPolarOffsetFar(spark->unk4c, *angle, &spark->x);
     Func_02005d6c(spark, gData_020060b0);
     if (i == 3) {
       Func_02005e94(idB, 0x100);
@@ -117,14 +145,19 @@ void Func_02004138(s32 idA, s32 idB) {
     }
     wait(8);
   }
+  i++;
+  if (i != 16)
+    goto second;
   Func_02005f94(220);
   wait(16);
-  for (i = 2; i != 32; i += 2) {
-    spark = Import_ActorCreate(0x2a0, b->x, (i << 16) + b->y - 0x80000, b->z);
+  i = 2;
+third:
+  {
+    struct Actor *spark = Import_ActorCreate(0x2a0, b->x, (i << 16) + b->y - 0x80000, b->z);
     spark->action = Random16Far();
     spark->unk66 = 0x800;
-    ((u8 *)spark)[98] = i;
-    ((u8 *)spark)[99] = 1;
+    ((struct SparkBytes *)spark)->unk62 = i;
+    ((struct SparkBytes *)spark)->unk63 = 1;
     spark->bounce = spark->x;
     spark->unk4c = 0;
     spark->gravity = spark->z;
@@ -137,6 +170,9 @@ void Func_02004138(s32 idA, s32 idB) {
     Animation_SetStateFlags(spark, 1);
     Func_02005d6c(spark, gData_020060c0);
   }
+  i += 2;
+  if (i != 32)
+    goto third;
   Func_02005f94(220);
   wait(50);
   Value2(Func_02005f04, 0x7fff, 0);

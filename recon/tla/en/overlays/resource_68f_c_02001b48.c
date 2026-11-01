@@ -1,13 +1,26 @@
-// Near miss, differ 264 of 347 (tla-en, 2026-10-31): the shape is the native's
-// (calls, branches, loops, fields); what remains is allocation. GCSE hoists the
-// retry loop's invariant addresses (position, &object->terrainId) above the
-// retry label and copy-propagates p and q into one callee-saved register (r8),
-// where the native recomputes them in the loop (p in r10, q in r6, add sp, #28
-// at each call); IwramMulQ16's address then goes to a stack slot instead of r8,
-// and the overlap loop's counter to r4 with caller saves instead of r10. The
-// native also tests gData_02003cd0 as ldrh, lsls #16, cmp #0, which only a
-// volatile s16 view gives here, at a cost of 2 more elsewhere (264 to 266);
-// the second wait loop hoists the flag's address, which the native reloads.
+// Draft, differ 269 of 347, skeleton gap 97 (tla-en, 2026-11-01)
+// Calls, branches, loops and fields are the native's. Left:
+// - GCSE's PRE (edge 0 to 1 in the gcse dump) hoists &position and
+//   &object->terrainId above the retry label and makes every later &position a
+//   copy of one register, where the native recomputes them (p in r10, q in r6,
+//   add sp, #28 at each call). No plain C here stops it: the address is
+//   transparent and anticipated at the label, and the same happens in
+//   Func_0200189c and Func_02001e68. This costs most of the gap.
+// - Natural-loop reference weights make the overlap counter's caller save
+//   profitable: it takes r4 with a save round the call, where the native has
+//   r10 and radius at sp+0. goto loops change nothing; the weights come from
+//   the cfg. gcse.c and flow.c take both behaviours, classic GCSE and unweighted
+//   refs, from optimize_size: an untested compiler lead, not this draft's to try.
+// - The native rereads gData_02003cd0 after each test (ldrh, lsls #16, cmp #0).
+//   Only `volatile s16` gives that (gap 88, differ 247), and it is read in this
+//   function alone, so it would be a tagged device (S2); plain s16 is worse (111).
+// - Summing the squares into radius (one local for two values, a tagged
+//   temporary) gives gap 74, differ 224: layer goes to sp+4 and the counter to a
+//   high register. With the volatile, gap 68, differ 220. A separate local gives
+//   no gain. A 0 default on radius, an earlier read of it, inner scopes, forty
+//   declaration orders and direct polar calls (at either site) gain nothing.
+// The refresh wait loop is written with labels: as a for, loop.c hoists the
+// flag's address (gap 100).
 // Japanese is an older layout: no first wait loop; Func_02002fb8 and the
 // update hook come before the walk.
 #include "types.h"
@@ -134,9 +147,14 @@ retry:
     object->speedLimit = 0x20000;
     object->acceleration = 0x1999;
     Func_02002fb0(object, q[0], q[1], q[2]);
-    for (i = 0; i <= 179 && Func_02003018(object) == 0 && gData_02003cd0 == 0;
-         i++)
-      wait(1);
+    i = 0;
+    goto test;
+  next:
+    wait(1);
+    i++;
+  test:
+    if (i <= 179 && Func_02003018(object) == 0 && gData_02003cd0 == 0)
+      goto next;
     if (gData_02003cd0 != 0)
       goto end;
     if (cell != startCell) {

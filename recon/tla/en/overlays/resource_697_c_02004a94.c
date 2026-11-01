@@ -1,6 +1,20 @@
-// Draft, differ 92 of 122: overlay 697's copy of the function drafted in
-// resource_692_c_020046e8.c (overlay 692's Func_020046e8, differ 92 there), whose
-// header says what it is, what still differs and what was tried.
+// Draft, differ 90 of 122, skeleton gap 30 (tla-en, 2026-11-01)
+// Overlay 697's copy of the debris burst drafted in resource_692_c_020046e8.c.
+// The statements are right; what is left is allocation. The listing has leader
+// in r7, spread in r8, i in r10, frame in r9; this draft has i in r7, leader in
+// r8, spread in r10. Everything else in the gap follows from that: the shared
+// str to velocity.z only cross-jumps when the else's reload lands in r0 (reload
+// regs rotate), and the scale store stays ahead of sprite's load only when the
+// constant and the ldrb share r3, an anti-dependency for sched2. A probe with
+// i ranked below leader closed both, so keep x = y = spread in the else: a z
+// local gets the shared store today (gap 29) but folds spread to movs #0.
+// global.c's rank is log2(refs) * refs / length: i 3*11/186 = .177 (5 refs in
+// the loop, length doubled by its constant start), leader 2*7/94, spread 2*7/100.
+// i needs at most 7 refs, or leader and spread 8: one more ref outside the loop.
+// Nothing found gives either in plain C. No effect from: for or ++i loop, i < 8,
+// i = frame = 0 and its orders, a second i = 0, declaration order, an angle,
+// scale or sprite local, an early goto for effect == 0. A local for the random
+// value computes x before y, which the listing does not.
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"
@@ -29,7 +43,7 @@ void Func_02004a94(s32 spread) {
 
   do {
     effect = (struct FieldEffect *)Func_020057d8(
-        285, leader->x + (i << 17) - 0x80000,
+        285, (i << 17) + leader->x - 0x80000,
         leader->y - (((Random16Far() * 14) >> 16) << 16) - 0x20000, leader->z);
     if (effect != 0) {
       frame = Func_020059f0(effect->sprite, frame);
@@ -38,7 +52,7 @@ void Func_02004a94(s32 spread) {
       Actor_SetSingleChildFlags(effect, 0);
       Func_020057c8(effect, 2);
       Func_020057d0(effect, gData_02006254);
-      effect->scaleX = effect->scaleY = 0xb333;
+      effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
         effect->velocity.x = Iwram_MulQ16(Math_Cosine(i << 13), 0x13333);

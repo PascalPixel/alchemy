@@ -1,15 +1,21 @@
-// Near miss, differ 549 of 497 (tla-en, 2026-10-31): what remains is GCSE.
-// The native computes every field address and value its branches all need
-// (the fade field before the first test; in each marker the pointer steps,
-// the tile, five field addresses and object->x before the side test) above
-// the branch, and keeps the row loop's field addresses inside the loop; this
-// compiler's PRE (-O2) hoists the row loop's addresses before the loop and
-// computes the rest in each arm, which moves the work pointer from r11 to the
-// stack and every allocation after it. Compiled locally with -Os (classic
-// GCSE plus code hoisting) the same draft hoists as the native does (a line
-// diff of the two disassemblies falls from 501 to 373; the rest allocation).
-// The native also sets Func_02002ce8's argument in each arm of a marker's
-// side test, as if the marker were written once per arm and cross-jumped.
+// Draft, differ 510 of 497, skeleton gap 190 (tla-en, 2026-11-01).
+// What is left is GCSE and the allocation it causes. The native computes every
+// field address and value its branches need above the branch (hand-hoisted
+// here into block-scoped pointers, which took the gap from 245) and keeps the
+// row and pair loops' invariants inside the loops. PRE at -O2 still hoists
+// work + 218 to 222 above the row loop and tile + 8 and x << 16 above the pair
+// loop, and no copy or local stops it (CSE folds them back). Those pseudos then
+// take the high registers, so work sits on the stack (native r11) and entry in
+// r9 (native sp 32); that is most of the remaining ldr/mov skeleton lines.
+// work wants about six more references to outrank entry (global.c priority).
+// base stays apart from work so the markers do not reuse the row loop's hoisted
+// addresses; scrollYMarker via base gains differ (499) but not gap (191).
+// The pair loop is a goto with an explicit pair pointer: a for loop lets loop.c
+// hoist 0 and 0xe400 as well (gap 203), and the native's two parallel pointers
+// are what loop.c leaves. which sets Func_02002ce8's argument in each arm so
+// that no call sits in an arm (sched2 sinks x past it); cprop still moves the
+// constant to the join, where the native keeps it in the arms. 576 is rebuilt
+// for VramCache_Load in the native; CSE here keeps it in a register.
 //
 // The Trial Road link display's scheduled callback (Func_020055c4 starts it):
 // its fade state falls during events or with flag 262 and otherwise rises to
@@ -53,11 +59,12 @@ void Func_02005790(void *entry, s32 priority);
 s32 Func_02002ce8(s32 side);
 
 void Func_020051a0(void) {
-  struct TrialRoadLinkWork *work = Ram_HeapSlots->unkec[0];
-  u32 *cursor = work->oam;
-  struct TrialRoadSprite *entry = (struct TrialRoadSprite *)work->oam;
-  s32 tile = gResourceTableEntries[work->vramEntry].offset >> 5;
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct TrialRoadLinkWork *base = Ram_HeapSlots->unkec[0];
+  u32 *cursor = base->oam;
+  struct TrialRoadSprite *entry = (struct TrialRoadSprite *)base->oam;
+  struct TrialRoadLinkWork *work = base;
+  s32 tile;
+  u8 *event;
   struct Actor *object;
   u32 flip;
   s32 x;
@@ -66,62 +73,103 @@ void Func_020051a0(void) {
   u32 row;
   u32 i;
   void *buffer;
+  s16 *scrollY;
+  s32 which;
 
-  if (work->unke0 != 0) {
-    work->fade = 2;
-  } else if (GameFlag_Test(262) || *(s16 *)(event + 358) != 0) {
-    if (work->fade > 0)
-      work->fade--;
-  } else if (work->fade <= 1) {
-    if (++work->fade == 1) {
-      Dma_Set(Data_020062b4, (void *)0x050003c0, 0x80000010, REG_DMA3);
-      buffer = Heap_AllocEwram(576);
-      Func_02005770(gData_020062d4, buffer);
-      VramCache_Load(work->vramEntry, 576, buffer);
-      Heap_Release(buffer);
+  {
+    s16 *vramEntry = &work->vramEntry;
+    s16 *fade;
+    tile = gResourceTableEntries[*vramEntry].offset >> 5;
+    fade = &work->fade;
+    event = Ram_HeapSlots->eventWork;
+    if (work->unke0 != 0) {
+      work->fade = 2;
+    } else if (GameFlag_Test(262) || *(s16 *)(event + 358) != 0) {
+      if (*fade > 0)
+        --*fade;
+    } else if (*fade <= 1) {
+      if (++*fade == 1) {
+        Dma_Set(Data_020062b4, (void *)0x050003c0, 0x80000010, REG_DMA3);
+        buffer = Heap_AllocEwram(576);
+        Func_02005770(gData_020062d4, buffer);
+        VramCache_Load(*vramEntry, 576, buffer);
+        Heap_Release(buffer);
+      }
     }
   }
-  if (work->fade == 0) {
-    VramCache_ReleaseVram(work->vramEntry);
+  if (((struct TrialRoadLinkWork *)cursor)->fade == 0) {
+    VramCache_ReleaseVram(((struct TrialRoadLinkWork *)cursor)->vramEntry);
     return;
   }
   for (row = 0; row < 2; row++) {
-    y = (work->scrollY + 8) & 255;
+    s16 *scrollX;
+    s16 *fade;
+    scrollY = &work->scrollY;
+    scrollX = &base->scrollX;
+    fade = &base->fade;
+    y = (*scrollY + 8) & 255;
     if (row == 0) {
-      x = (work->fade * 6 + work->scrollX - 12) & 511;
+      x = *fade * 6 + *scrollX - 12;
+      x &= 511;
       flip = 0;
     } else {
-      x = (236 - work->fade * 6 - work->scrollX) & 511;
+      x = 236 - *fade * 6 - *scrollX;
+      x &= 511;
       flip = 0x10000000;
     }
-    for (i = 0; i < 4 && y < 160; i++, y += 36) {
-      *cursor++ = 0;
-      *cursor++ = y | (x << 16) | flip | 0x80008000;
-      *cursor++ = tile | 0xe400;
-      Func_02005790(entry++, 255);
-      *cursor++ = 0;
-      *cursor++ = (y + 32) | (x << 16) | flip | 0x4000;
-      *cursor++ = (tile + 8) | 0xe400;
-      Func_02005790(entry++, 255);
+    i = 0;
+    if (y < 160) {
+      u32 *pair = cursor;
+    nextPair:
+      {
+        struct TrialRoadSprite *second;
+        pair[0] = 0;
+        pair[1] = y | (x << 16) | flip | 0x80008000;
+        pair[2] = tile | 0xe400;
+        second = entry + 1;
+        Func_02005790(entry, 255);
+        pair[3] = 0;
+        pair[4] = (y + 32) | (x << 16) | flip | 0x4000;
+        pair[5] = (tile + 8) | 0xe400;
+        pair += 6;
+        cursor += 6;
+        entry += 2;
+        Func_02005790(second, 255);
+      }
+      y += 36;
+      i++;
+      if (i < 4 && y < 160)
+        goto nextPair;
     }
   }
   if ((gFrameCount & 15) < 5)
     return;
   object = ObjectTable_Get(work->a);
   if (object != NULL) {
-    if (gMainRoutineWork.entrance & 1)
-      x = (object->x - work->originX) / PIXELS(16) + work->fade * 6 +
-          work->scrollX - 19;
-    else
-      x = (object->x - work->originX) / PIXELS(16) - work->fade * 6 -
-          work->scrollX + 232;
-    lift = Func_02002ce8(0);
-    y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 +
-        4;
-    *cursor++ = 0;
-    *cursor++ = (y & 255) | ((x & 511) << 16) | 0x40000000;
-    *cursor++ = (tile + 10) | 0xe400;
-    Func_02005790(entry++, 255);
+    u32 side = gMainRoutineWork.entrance & 1;
+    u32 *next = cursor + 1;
+    struct TrialRoadSprite *nextEntry = entry + 1;
+    s32 sprite = tile + 10;
+    s16 *fade = &work->fade;
+    s16 *scrollX = &work->scrollX;
+    s32 *originX = &work->originX;
+    s32 *originZ = &work->originZ;
+    s32 objectX = object->x;
+    if (side) {
+      x = (objectX - *originX) / PIXELS(16) + *fade * 6 + *scrollX - 19;
+      which = 0;
+    } else {
+      x = (objectX - *originX) / PIXELS(16) - *fade * 6 - *scrollX + 232;
+      which = 0;
+    }
+    lift = Func_02002ce8(which);
+    y = (object->z - *originZ) / PIXELS(16) + *scrollY - lift * 36 + 4;
+    *cursor = 0;
+    cursor = next;
+    *cursor++ = ((x & 511) << 16) | (y & 255) | 0x40000000;
+    *cursor++ = sprite | 0xe400;
+    Func_02005790(entry, 255);
+    entry = nextEntry;
   }
   object = ObjectTable_Get(work->b);
   if (object == NULL || object->x == 0)
@@ -129,16 +177,29 @@ void Func_020051a0(void) {
   // XXX: this side's offset adds scrollX where the first marker's subtracts
   // it; the native does so, and a render of the course's far side would show
   // whether it is a slip.
-  if (gMainRoutineWork.entrance & 1)
-    x = (object->x - work->originX) / PIXELS(16) + work->fade * 6 +
-        work->scrollX + 189;
-  else
-    x = (object->x - work->originX) / PIXELS(16) - work->fade * 6 +
-        work->scrollX + 23;
-  lift = Func_02002ce8(1);
-  y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;
-  *cursor++ = 0;
-  *cursor++ = (y & 255) | ((x & 511) << 16) | 0x40000000;
-  *cursor++ = (tile + 14) | 0xe400;
-  Func_02005790(entry, 255);
+  {
+    u32 side = gMainRoutineWork.entrance & 1;
+    u32 *next = cursor + 1;
+    s32 sprite = tile + 14;
+    s16 *scrollYMarker = &work->scrollY;
+    s16 *fade = &work->fade;
+    s16 *scrollX = &work->scrollX;
+    s32 *originX = &work->originX;
+    s32 *originZ = &work->originZ;
+    s32 objectX = object->x;
+    if (side) {
+      x = (objectX - *originX) / PIXELS(16) + *fade * 6 + *scrollX + 189;
+      which = 1;
+    } else {
+      x = (objectX - *originX) / PIXELS(16) - *fade * 6 + *scrollX + 23;
+      which = 1;
+    }
+    lift = Func_02002ce8(which);
+    y = (object->z - *originZ) / PIXELS(16) + *scrollYMarker - lift * 36 + 4;
+    *cursor = 0;
+    cursor = next;
+    *cursor++ = ((x & 511) << 16) | (y & 255) | 0x40000000;
+    *cursor = sprite | 0xe400;
+    Func_02005790(entry, 255);
+  }
 }

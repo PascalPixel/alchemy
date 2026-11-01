@@ -1,8 +1,19 @@
-// Draft, differ 195 of 529: the scene where person 8 tests the party: after
-// their talk it throws person 10 three times, each throw flashing five colours
-// of the object palette; then it raises the glow over the spot, the party is
-// pushed back, the glow flares and person 10 drops to the floor with a
-// shake.
+// Draft, differ 149 of 529, skeleton gap 57 (tla-en, 2026-11-01)
+// The scene where person 8 tests the party: after their talk it throws person
+// 10 three times, each throw flashing colours 2-6 of background palette 7
+// (between it and palette 6's); then it raises the glow over the spot, the
+// party is pushed back, the glow flares and person 10 drops to the floor with
+// a shake.
+// Left: the rest is allocation and argument order. PRE in gcse hoists the
+// animations and landing addresses out of the loop; the listing's frame (64,
+// not 60), r5 and r2 there suggest those two pseudos lost their registers and
+// reload rebuilt them in the loop, with dim in r6, i in r8, bright in r9 and
+// glow in fp. A for, do or while loop reaches the frame of 64 and differ 131
+// but spills glow (gap 71); the goto loop has the smaller gap. Func_02003544
+// and a few others load r0 last in the listing: direct calls move r2 and r0
+// closer (all five direct: differ 127, gap 69) but share 0x101 across two sites.
+// Tried without gain: inline wrappers, pointer locals for the colours and
+// glow, two palette pointers, outer declarations, an array initializer.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -68,27 +79,28 @@ void Func_02000038(void);
 
 s32 Func_02000a34(s32 value) {
   struct Actor *thrown = Actor_GetById(10);
-  s32 glow[3];
-  u16 dim[5];
   u16 bright[5];
-  struct ThrowAnimations animations;
-  s32 landing[3];
+  u16 dim[5];
+  s32 glow[3];
   s32 i;
   struct Actor *object;
+  u16 *palette;
 
   glow[0] = 0x2960000;
   glow[1] = 0;
   glow[2] = 0xee0000;
-  bright[0] = ((volatile u16 *)0x050001e4)[0];
-  bright[1] = ((volatile u16 *)0x050001e4)[1];
-  bright[2] = ((volatile u16 *)0x050001e4)[2];
-  bright[3] = ((volatile u16 *)0x050001e4)[3];
-  bright[4] = ((volatile u16 *)0x050001e4)[4];
-  dim[0] = ((volatile u16 *)0x050001c4)[0];
-  dim[1] = ((volatile u16 *)0x050001c4)[1];
-  dim[2] = ((volatile u16 *)0x050001c4)[2];
-  dim[3] = ((volatile u16 *)0x050001c4)[3];
-  dim[4] = ((volatile u16 *)0x050001c4)[4];
+  palette = (u16 *)0x050000e4;
+  bright[0] = *palette++;
+  bright[1] = *palette++;
+  bright[2] = *palette++;
+  bright[3] = *palette++;
+  bright[4] = *palette;
+  palette = (u16 *)0x050000c4;
+  dim[0] = *palette++;
+  dim[1] = *palette++;
+  dim[2] = *palette++;
+  dim[3] = *palette++;
+  dim[4] = *palette;
   Func_0200345c();
   Call1((void (*)())Func_020035b4, 0);
   Func_0200350c((s32)MsgWellDoneYou);
@@ -122,7 +134,11 @@ s32 Func_02000a34(s32 value) {
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_02003544, 8, 0x107, 40);
   Call3((void (*)())Func_0200351c, 0x2008, 0, 5);
-  for (i = 0; i <= 2; i++) {
+  i = 0;
+throw:;
+  {
+    struct ThrowAnimations animations;
+    s32 landing[3];
     animations = gData_02003634;
     Call2((void (*)())Actor_SetModeById, 8, 9);
     Call1((void (*)())FieldEvent_Wait, 3);
@@ -141,10 +157,13 @@ s32 Func_02000a34(s32 value) {
     Call3((void (*)())Func_020034d4, 10, 0, 0);
     Call1((void (*)())FieldEvent_Wait, 20);
     Call1((void (*)())Func_0200362c, 134);
-    Call3((void (*)())Func_02000734, bright, dim, 12);
-    Call3((void (*)())Func_02000734, dim, bright, 48);
+    Func_02000734(bright, dim, 12);
+    Func_02000734(dim, bright, 48);
     Call1((void (*)())FieldEvent_Wait, 10);
   }
+  i++;
+  if (i <= 2)
+    goto throw;
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   object->actionFlags &= ~1;
   Call3((void (*)())Actor_CommitPositionAndActivate,
@@ -162,12 +181,12 @@ s32 Func_02000a34(s32 value) {
   Call3((void (*)())Func_0200351c, 0x2008, 0, 5);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call1((void (*)())Func_0200362c, 220);
-  Call3((void (*)())Func_02000734, bright, dim, 48);
+  Func_02000734(bright, dim, 48);
   Call2((void (*)())Actor_StartRepeatedMotion, gMainRoutineWork.currentOwner,
         3);
   Call2((void (*)())Func_0200354c, gMainRoutineWork.currentOwner, 0x102);
   Call1((void (*)())FieldEvent_Wait, 50);
-  Call3((void (*)())Func_02003544, 8, 0x101, 60);
+  Func_02003544(8, 0x101, 60);
   Call2((void (*)())Func_0200360c, 16, 0x1090);
   Call3((void (*)())Func_02003434, 0x20000, 0x20000, 0x10000);
   Func_02003164(glow);

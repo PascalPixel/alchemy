@@ -1,8 +1,22 @@
-// Draft of overlay 668's falling rocks, copied from overlay 6a8's
-// Func_02004114, Func_02004198 and Func_02004254 (the same listings), whose
-// draft holds the notes: Func_02003ec4 (differ 44 of 57) and Func_02004004 (83 of
-// 83); the spawn between them, Func_02003f48, is adopted as
-// eastern_alhafra/s3f48.c; diff each with --symbol.
+// Draft, differ 49 of 83, skeleton gap 12 (tla-en, 2026-11-01): worst of two;
+// diff each with --symbol, as the overlay holds both names. Overlay 668's
+// falling rocks; the spawn between them, Func_02003f48, is adopted as
+// eastern_alhafra/s3f48.c.
+// Func_02004004 (differ 49 of 83, skeleton 12 removed, 9 added): one cause
+// remains. The native counts in r8 and keeps the tile in r10; here the count
+// takes r4 with a stack save around the call, because it is used 7 times and
+// crosses one call, so a caller save pays (Func_02003ec4's count crosses two).
+// The tile then falls to r8, the frame grows to 8 bytes, and the zero for
+// next stays in a register instead of being rebuilt after the loop. Order,
+// loop form, scope and a direct VramCache_Load did not move it. Bit 5 of
+// byte 5 is a bit-field so that no zero mask is left in a register there.
+// Func_02003ec4 (differ 6 of 57, skeleton 3): timer, offsets and allocation
+// match. The address, frame, mask and base locals put the pseudos in the
+// native's order; a u16 base is moved to its use, so base is an s32. Left:
+// the native loads -1024 before the sprite's halfword, and its result sits in
+// the halfword's register, and it loads -0x8000 after r0 and r1. A plain
+// 0x3ff mask store folds to 0xfc00, a union pads the sprite, and an inline
+// setter, a temporary or other parameter types did not help.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -14,7 +28,9 @@ struct Rock {
 
 struct RockSprite {
   u8 unk00[5];
-  u8 unk05;
+  u8 unk05low : 5;
+  u8 unk05_5 : 1;
+  u8 unk05high : 2;
   u8 unk06[2];
   u16 tile : 10;
   u16 priority : 2;
@@ -69,7 +85,12 @@ loop:
     s32 timer = rock->timer;
 
     if ((u32)timer <= 19) {
-      sprite->tile = work->tileBase + ((timer >> 2) & 7) * 8;
+      u16 *tileBase = &work->tileBase;
+      s32 frame = timer >> 2;
+      s32 frameMask = 7;
+      s32 base = *tileBase;
+
+      sprite->tile = base + (frame & frameMask) * 8;
       Func_02004c6c(sprite, rock);
       Func_02004c74(rock, 63, -0x8000);
       rock->timer++;
@@ -105,7 +126,7 @@ void Func_02004004(void) {
 loop:
   {
     Func_02004c64(sprite, 8, 8, 0x40000000, tile);
-    sprite->unk05 |= 0x20;
+    sprite->unk05_5 = 1;
     sprite->palette = 0;
     sprite->priority = 0;
     sprite->unk1e = 240;

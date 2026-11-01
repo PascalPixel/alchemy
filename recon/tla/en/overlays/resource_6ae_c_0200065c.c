@@ -1,12 +1,13 @@
-// Differ 425 (was 443).
-// Func_02005714's calls go through an inline of its own that calls it
-// directly, as Func_020058fc's do in overlay 6a5's scenes (through Call3 its
-// argument registers load in another order). Older notes:
-// Draft of overlay 6ae's Func_0200065c, translated from its listing: differ 443
-// of 2414 in tla-en (was 543). Read-modify-writes are compound assignments and
-// scene numbers their SceneId symbols, as the native's pool shows. Left:
-// register choice and order through the function. The leader is read through a
-// pointer to gMainRoutineWork, which keeps its address in r5 as the native does.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The listing's far branches are literal pool islands inside one long block, so
+// the source runs straight through. Calls go through call.h's wrappers: each
+// constant argument is rebuilt at its call, as the native does. Func_02005714
+// and Func_02005704 (where its first argument is the leader) are read through
+// Value3 and Value2: the value-returning form loads the argument registers in
+// the native's order. actor is one variable for the three actors it holds; work
+// is taken again after the two yes/no questions, as the native reloads it; the
+// callback at offset 108 is cleared as a pointer, which stops it aliasing the
+// leader's load. Offsets 85, 90 and 0x24b await their structs.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -89,25 +90,26 @@ extern u8 gData_02006c20[];
 #include "main_routine_work.h"
 extern char SceneId_Ov6aeRoom1;
 
-static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
-  Func_02005714(a0, a1, a2);
-}
 
 void Func_0200065c(void) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 v_r5, v_r2, v_r1, v_r8, v_r6, v_r0, v_r7, v_r10, v_r3, t0;
-  s32 t1, t4, t16, t18, t21, t23, t25, t27, t48, t50;
+  u8 *unk85;
+  u16 *dispcnt;
+  struct MainRoutineWork *work;
+  s32 t0;
+  u16 *palette;
+  s32 actor, t4, t16, t18, t21, t23, t25, t27, t48, t50;
   s32 t53, t55, t57, t59, t61, t88, t91, t94, t98, t99;
-  s32 t100, t102, t112, t114, t118, t120, t122, t123, t124, t125;
-  s32 t127, t129, t132, t134, t136, t137, t138, t141, t144, t166;
-  s32 t182, t191, t193, t194, t206, t278, t298, t334, t356, t406;
+  s32 t100, t102, t112, t114, t118, t120, t122, t123, t125;
+  s32 t127, t129, t132, t134, t136, t137, t141, t144, t166;
+  s32 t182, t191, t194, t206, t278, t298, t334, t356, t406;
   s32 t414, t415, t419, t420, t423, t424, t433, t451, t461, t462;
   s32 t463, t465, t466, t469, t471, t473, t482, t484, t490, t492;
-  s32 t494, t496, t497, t498, t499, t502, t503, t504, t523, t528;
-  s32 t531, t540, t545, t562, t572, t581, t626, t628, t670, t679;
+  s32 t494, t496, t497, t499, t502, t503, t523, t528;
+  s32 t531, t540, t545, t562, t628, t670, t679;
 
-  t0 = party->currentOwner;
-  t1 = Value1(Actor_GetById, t0);
+  t0 = gMainRoutineWork.currentOwner;
+  actor = Value1(Actor_GetById, t0);
+  palette = (u16 *)0x500021e;
   Func_0200560c();
   Call1(Func_02005784, 0);
   t4 = Value1(Actor_GetById, 18);
@@ -122,19 +124,19 @@ void Func_0200065c(void) {
   Call1(Func_020057dc, 0);
   Call1(Func_020056dc, (s32)MsgBetrayersYouHave);
   Call2(Func_020056f4, 18, 0);
-  t16 = party->currentOwner;
-  W_Func_02005714(t16, 0x100, 20);
+  t16 = gMainRoutineWork.currentOwner;
+  Value3(Func_02005714, t16, 0x100, 20);
   t18 = Value0(Func_0200573c);
   FIELD_AT(t18, u8, 85) = 0;
   Call2(Func_02005724, 0xcccc, 0x1999);
   Call4(Camera_MoveWithinMapBounds, 0x2000000, -1, 0x1300000, 1);
-  t21 = party->currentOwner;
+  t21 = gMainRoutineWork.currentOwner;
   Call3(Actor_SetSpeedParameters, t21, 0x19999, 0xcccc);
-  t23 = party->currentOwner;
+  t23 = gMainRoutineWork.currentOwner;
   Call3(Actor_SetPositionAndReset, t23, 0x1f8, 0x140);
-  t25 = party->currentOwner;
+  t25 = gMainRoutineWork.currentOwner;
   Call3(Actor_ArmCallback, t25, 0xc000, 0);
-  t27 = party->currentOwner;
+  t27 = gMainRoutineWork.currentOwner;
   Call2(Func_0200568c, 0, t27);
   Call1(wait, 1);
   Call3(Actor_SetSpeedParameters, 0, 0x19999, 0xcccc);
@@ -154,23 +156,23 @@ void Func_0200065c(void) {
   Call3(Actor_SetPositionAndReset, 3, 0x220, 0x148);
   Call2(Func_02005704, 3, 0xa000);
   Call2(Actor_SetModeById, 3, 4);
-  Func_020056f4(3, 0);
-  t48 = party->currentOwner;
+  Call2(Func_020056f4, 3, 0);
+  t48 = gMainRoutineWork.currentOwner;
   Call1(Actor_Stop, t48);
   t50 = Value0(Random16Far);
-  FIELD_AT(t1, u8, 98) = (((u32)(((t50 << 2) + t50) << 2) >> 16) + 20);
-  FIELD_AT(t1, s32, 108) = (s32)Func_02000038;
+  FIELD_AT(actor, u8, 98) = (((u32)(((t50 << 2) + t50) << 2) >> 16) + 20);
+  FIELD_AT(actor, s32, 108) = (s32)Func_02000038;
   Call1(Func_02000610, 1);
   Call1(Func_02000610, 3);
-  t53 = party->currentOwner;
+  t53 = gMainRoutineWork.currentOwner;
   Call2(Func_0200568c, 5, t53);
-  t55 = party->currentOwner;
+  t55 = gMainRoutineWork.currentOwner;
   Call2(Func_0200568c, 6, t55);
-  t57 = party->currentOwner;
+  t57 = gMainRoutineWork.currentOwner;
   Call2(Func_0200568c, 7, t57);
-  t59 = party->currentOwner;
+  t59 = gMainRoutineWork.currentOwner;
   Call2(Func_0200568c, 2, t59);
-  t61 = party->currentOwner;
+  t61 = gMainRoutineWork.currentOwner;
   Call2(Func_0200568c, 19, t61);
   Call1(wait, 1);
   Call3(Actor_SetSpeedParameters, 5, 0x19999, 0xcccc);
@@ -198,24 +200,24 @@ void Func_0200065c(void) {
   Call1(Func_02000610, 19);
   Call1(FieldEvent_Wait, 80);
   t88 = Value1(Actor_GetById, 6);
-  FIELD_AT(t88, s32, 108) = 0;
+  FIELD_AT(t88, void *, 108) = 0;
   Call2(Func_02005704, 6, 0);
   Call2(Func_020056f4, 6, 0);
   t91 = Value1(Actor_GetById, 5);
-  FIELD_AT(t91, s32, 108) = 0;
+  FIELD_AT(t91, void *, 108) = 0;
   Call2(Func_02005704, 5, 0x8000);
   Call2(Motion_SetModeAndWaitAnimation, 5, 3);
   t94 = Value1(Actor_GetById, 7);
-  FIELD_AT(t94, s32, 108) = 0;
+  FIELD_AT(t94, void *, 108) = 0;
   Call2(Func_02005704, 7, 0);
   Call3(Actor_Jump, 7, 4, 10);
   Call2(Func_020056f4, 7, 0);
-  t98 = party->currentOwner;
+  t98 = gMainRoutineWork.currentOwner;
   t99 = Value1(Actor_GetById, t98);
-  FIELD_AT(t99, s32, 108) = 0;
-  t100 = party->currentOwner;
-  Call2(Func_02005704, t100, 0x8000);
-  t102 = party->currentOwner;
+  FIELD_AT(t99, void *, 108) = 0;
+  t100 = gMainRoutineWork.currentOwner;
+  Value2(Func_02005704, t100, 0x8000);
+  t102 = gMainRoutineWork.currentOwner;
   Call2(Motion_SetModeAndWaitAnimation, t102, 3);
   Call1(Func_02000640, 0);
   Call1(Func_02000640, 1);
@@ -225,60 +227,50 @@ void Func_0200065c(void) {
   Call2(Func_02005764, 0x10000, 0);
   Call2(Func_0200575c, 0x10003, 1);
   Call1(Func_0200576c, 40);
-  t112 = party->currentOwner;
+  t112 = gMainRoutineWork.currentOwner;
   Call3(Actor_SetSpeedParameters, t112, 0xcccc, 0x6666);
-  t114 = party->currentOwner;
+  t114 = gMainRoutineWork.currentOwner;
   Call3(Actor_SetPositionAndReset, t114, 0x1f8, 0x124);
   Call1(Func_020057dc, 162);
   Call1(FieldEvent_Wait, 20);
-  t118 = party->currentOwner;
+  t118 = gMainRoutineWork.currentOwner;
   Call2(Motion_SetVarCbAndRefresh, t118, 2);
-  t120 = party->currentOwner;
+  t120 = gMainRoutineWork.currentOwner;
   Call2(Func_0200571c, t120, 0x102);
-  t122 = party->currentOwner;
+  t122 = gMainRoutineWork.currentOwner;
   t123 = Value1(Actor_GetById, t122);
-  FIELD_AT(t123, u8, 90) &= 254;
-  t125 = party->currentOwner;
+  { u8 *f = (u8 *)t123 + 90; *f &= 254; }
+  t125 = gMainRoutineWork.currentOwner;
   Call3(Actor_SetSpeedParameters, t125, 0x3333, 0x1999);
-  t127 = party->currentOwner;
+  t127 = gMainRoutineWork.currentOwner;
   Call3(Actor_SetPositionAndCommit, t127, 0x1f8, 0x134);
-  t129 = party->currentOwner;
+  t129 = gMainRoutineWork.currentOwner;
   Call2(Motion_SetVarCbAndRefresh, t129, 3);
   Call1(Func_020057dc, 0x186);
-  t132 = party->currentOwner;
+  t132 = gMainRoutineWork.currentOwner;
   Call2(Func_0200571c, t132, 0x102);
-  v_r6 = 0;
-  v_r8 = 0x500021e;
-  v_r1 = 0x1f8;
-  v_r2 = 160;
-  goto L_02008a88;
-L_02008a88:
-  t134 = party->currentOwner;
-  Call3(Actor_SetPositionAndCommit, t134, v_r1, (v_r2 << 1));
-  t136 = party->currentOwner;
+  t134 = gMainRoutineWork.currentOwner;
+  Call3(Actor_SetPositionAndCommit, t134, 0x1f8, 0x140);
+  t136 = gMainRoutineWork.currentOwner;
   t137 = Value1(Actor_GetById, t136);
   FIELD_AT(t137, u8, 90) |= 1;
-  *(u16 *)v_r8 = 0x7fff;
+  *palette = 0x7fff;
   Call1(wait, 1);
   Call2(Func_020056f4, 18, 0);
-  t141 = party->currentOwner;
+  t141 = gMainRoutineWork.currentOwner;
   Call3(Actor_ArmCallback, t141, 0, 0);
   Call3(Actor_ArmCallback, 0, 0x8000, 40);
-  t144 = party->currentOwner;
+  t144 = gMainRoutineWork.currentOwner;
   Call3(Actor_ArmCallback, t144, 0xc000, 0);
-  v_r1 = 0xc000;
-  v_r0 = 0;
-  goto L_02008ae4;
-L_02008ae4:
-  Call2(Func_02005704, v_r0, v_r1);
+  Call2(Func_02005704, 0, 0xc000);
   Call3(Actor_SetPositionAndReset, 0, 0x208, 0x134);
   Call3(Actor_ArmCallback, 0, 0xa000, 20);
   Call3(Actor_ArmCallback, 0, 0xe000, 20);
   Call3(Actor_ArmCallback, 0, 0xc000, 0);
   Call3(Func_020056ec, 0x8000, 0, 20);
   Call2(Func_020056f4, 18, 0);
-  W_Func_02005714(0, 0x101, 0);
-  W_Func_02005714(1, 0x101, 0);
+  Value3(Func_02005714, 0, 0x101, 0);
+  Value3(Func_02005714, 1, 0x101, 0);
   Call3(Actor_ArmCallback, 0, 0x2000, 0);
   Call3(Actor_ArmCallback, 1, 0xa000, 40);
   Call2(Func_020056f4, 2, 0);
@@ -290,7 +282,7 @@ L_02008ae4:
   Call2(Func_020056f4, 18, 0);
   Call3(Actor_ArmCallback, 0, 0xc000, 0);
   Call2(Func_02005704, 1, 0xc000);
-  t166 = party->currentOwner;
+  t166 = gMainRoutineWork.currentOwner;
   Call1(Func_02000610, t166);
   Call1(Func_02000610, 5);
   Call1(Func_02000610, 6);
@@ -302,11 +294,11 @@ L_02008ae4:
   Call1(Func_02000610, 19);
   Call1(FieldEvent_Wait, 40);
   Call1(Func_02000640, 19);
-  W_Func_02005714(19, 0x100, 20);
+  Value3(Func_02005714, 19, 0x100, 20);
   Call3(Actor_Jump, 19, 4, 10);
   Call3(Actor_Jump, 19, 6, 10);
   Call2(Func_020056f4, 19, 0);
-  t182 = party->currentOwner;
+  t182 = gMainRoutineWork.currentOwner;
   Call1(Func_02000640, t182);
   Call1(Func_02000640, 5);
   Call1(Func_02000640, 6);
@@ -317,8 +309,8 @@ L_02008ae4:
   Call1(Func_02000640, 2);
   t191 = Value1(Actor_GetById, 18);
   Call2(Actor_SetPartAttribute, t191, 0);
-  t193 = Value1(Actor_GetById, 18);
-  FIELD_AT(t193, u8, 85) = v_r6;
+  actor = Value1(Actor_GetById, 18);
+  FIELD_AT(actor, u8, 85) = 0;
   t194 = Value1(Actor_GetById, 18);
   Call4(Actor_SetPositionAndResetMotion, t194, 0x2000000, 0x780000, 0xd00000);
   Call1(FieldEvent_Wait, 20);
@@ -331,7 +323,7 @@ L_02008ae4:
   Func_02005734();
   Call1(FieldEvent_Wait, 20);
   Call2(Func_0200571c, 0, 0x102);
-  t206 = party->currentOwner;
+  t206 = gMainRoutineWork.currentOwner;
   Call2(Func_0200571c, t206, 0x102);
   Call2(Func_0200571c, 1, 0x102);
   Call2(Func_0200571c, 5, 0x102);
@@ -342,17 +334,17 @@ L_02008ae4:
   Call2(Motion_SetModeAndWaitAnimation, 0, 3);
   Call2(Func_02005704, 5, 0xe000);
   Call2(Func_020056f4, 5, 0);
-  Func_02005714(0, 0x109, 0);
+  Value3(Func_02005714, 0, 0x109, 0);
   Call2(Func_020056f4, 0x8000, 0);
-  W_Func_02005714(2, 0x101, 20);
+  Value3(Func_02005714, 2, 0x101, 20);
   Call2(Func_020056f4, 2, 0);
   Call2(Func_02005704, 1, 0x4000);
   Call2(Func_020056f4, 0x4001, 0);
   Call2(Func_02005704, 0, 0x4000);
   Call2(Func_020056f4, 0x5000, 0);
-  W_Func_02005714(3, 0x105, 0);
+  Value3(Func_02005714, 3, 0x105, 0);
   Call2(Func_020056f4, 3, 0);
-  W_Func_02005714(1, 0x103, 0);
+  Value3(Func_02005714, 1, 0x103, 0);
   Call2(Func_02005704, 1, 0x2000);
   Call2(Func_020056f4, 0x5001, 0);
   Call2(Func_02005704, 7, 0);
@@ -360,7 +352,7 @@ L_02008ae4:
   Call2(Func_02005724, 0x6666, 0xccc);
   Call4(Camera_MoveWithinMapBounds, 0x2000000, -1, 0x1280000, 1);
   Call3(Actor_SetSpeedParameters, 18, 0xcccc, 0x6666);
-  Call4(Func_02005594, t193, 0x2000000, 0x600000, 0x1140000);
+  Call4(Func_02005594, actor, 0x2000000, 0x600000, 0x1140000);
   Call1(Actor_WaitForMoveById, 18);
   Call1(FieldEvent_Wait, 10);
   Call2(Func_020056f4, 18, 0);
@@ -403,9 +395,9 @@ L_02008ae4:
   Call3(Actor_ArmCallback, 5, 0x8000, 0);
   Call3(Actor_ArmCallback, 6, 0, 0);
   Call3(Actor_ArmCallback, 7, 0, 0);
-  t278 = party->currentOwner;
+  t278 = gMainRoutineWork.currentOwner;
   Call3(Actor_ArmCallback, t278, 0x8000, 20);
-  Func_02005714(19, 0x100, 20);
+  Value3(Func_02005714, 19, 0x100, 20);
   Call2(Func_020056f4, 19, 0);
   Call2(Actor_SetModeById, 18, 10);
   Call1(FieldEvent_Wait, 20);
@@ -423,18 +415,15 @@ L_02008ae4:
   Call3(Actor_ArmCallback, 5, 0xc000, 0);
   Call3(Actor_ArmCallback, 6, 0xc000, 0);
   Call3(Actor_ArmCallback, 7, 0xc000, 0);
-  t298 = party->currentOwner;
+  t298 = gMainRoutineWork.currentOwner;
   Call3(Actor_ArmCallback, t298, 0xc000, 0);
-  Func_02005714(18, 0x105, 80);
+  Value3(Func_02005714, 18, 0x105, 80);
   Call2(Actor_SetModeById, 5, 4);
   Call2(Func_020056f4, 5, 0);
   Call2(Actor_SetModeById, 18, 9);
   Call1(FieldEvent_Wait, 20);
   Call2(Func_020056f4, 18, 0);
-  Func_02005714(19, 0x103, 20);
-  v_r7 = t193;
-  goto L_02009084;
-L_02009084:
+  Value3(Func_02005714, 19, 0x103, 20);
   Call2(Func_020056f4, 19, 0);
   Call2(Actor_SetModeById, 18, 10);
   Call1(FieldEvent_Wait, 20);
@@ -445,12 +434,12 @@ L_02009084:
   Call1(FieldEvent_Wait, 10);
   Call2(Actor_SetModeById, 18, 6);
   Call1(FieldEvent_Wait, 10);
-  Call2(Func_020053e4, v_r7, (s32)gData_02006c20);
+  Call2(Func_020053e4, actor, (s32)gData_02006c20);
   Call1(FieldEvent_Wait, 80);
   Call2(Actor_SetModeById, 18, 3);
   Call1(FieldEvent_Wait, 10);
   Call2(Func_020056f4, 18, 0);
-  W_Func_02005714(19, 0x101, 20);
+  Value3(Func_02005714, 19, 0x101, 20);
   Call2(Func_020056f4, 19, 0);
   Call2(Actor_SetModeById, 18, 3);
   Call1(FieldEvent_Wait, 20);
@@ -462,7 +451,7 @@ L_02009084:
   Call3(Actor_ArmCallback, 5, 0x8000, 0);
   Call3(Actor_ArmCallback, 6, 0, 0);
   Call3(Actor_ArmCallback, 7, 0, 0);
-  t334 = party->currentOwner;
+  t334 = gMainRoutineWork.currentOwner;
   Call3(Actor_ArmCallback, t334, 0x8000, 20);
   Call2(Actor_SetModeById, 18, 6);
   Call1(FieldEvent_Wait, 20);
@@ -484,13 +473,13 @@ L_02009084:
   Call3(Actor_ArmCallback, 5, 0xc000, 0);
   Call3(Actor_ArmCallback, 6, 0xc000, 0);
   Call3(Actor_ArmCallback, 7, 0xc000, 0);
-  t356 = party->currentOwner;
+  t356 = gMainRoutineWork.currentOwner;
   Call2(Func_02005704, t356, 0xc000);
   Call2(Func_020056f4, 5, 0);
   Call2(Actor_SetModeById, 18, 4);
   Call1(FieldEvent_Wait, 20);
   Call2(Func_020056f4, 18, 0);
-  Func_02005714(19, 0x101, 20);
+  Value3(Func_02005714, 19, 0x101, 20);
   Call2(Func_020056f4, 19, 0);
   Call1(FieldEvent_Wait, 20);
   Call2(Actor_SetModeById, 18, 13);
@@ -500,20 +489,20 @@ L_02009084:
   Call2(Actor_SetModeById, 18, 8);
   Call1(FieldEvent_Wait, 180);
   Call2(Func_020056f4, 18, 0);
-  W_Func_02005714(2, 0x107, 0);
+  Value3(Func_02005714, 2, 0x107, 0);
   Call2(Func_020056f4, 2, 0);
   Call3(Actor_ArmCallback, 19, 0, 0);
   Call2(Actor_SetModeById, 18, 1);
   Call1(FieldEvent_Wait, 5);
   Call2(Actor_SetModeById, 18, 9);
-  Func_02005714(18, 0x105, 40);
-  Func_02005714(19, 0x100, 20);
+  Value3(Func_02005714, 18, 0x105, 40);
+  Value3(Func_02005714, 19, 0x100, 20);
   Call2(Func_020056f4, 19, 0);
-  Call1(Func_020054e4, v_r7);
+  Call1(Func_020054e4, actor);
   Call2(Actor_SetModeById, 18, 1);
   Call1(FieldEvent_Wait, 20);
   Call2(Func_020056f4, 18, 0);
-  Func_02005714(7, 0x103, 0);
+  Value3(Func_02005714, 7, 0x103, 0);
   Call3(Actor_ArmCallback, 7, 0x2000, 0);
   Call3(Actor_Jump, 7, 4, 10);
   Call2(Func_020056f4, 0x4007, 0);
@@ -523,10 +512,10 @@ L_02009084:
   Call1(FieldEvent_Wait, 5);
   Call2(Actor_SetModeById, 18, 1);
   Call1(FieldEvent_Wait, 20);
-  Func_02005714(1, 0x107, 0);
+  Value3(Func_02005714, 1, 0x107, 0);
   Call2(Func_02005704, 1, 0x2000);
   Call2(Func_020056f4, 0x5001, 0);
-  Func_02005714(3, 0x109, 0);
+  Value3(Func_02005714, 3, 0x109, 0);
   Call2(Actor_SetModeById, 3, 4);
   Call2(Func_020056f4, 3, 0);
   Call2(Actor_SetModeById, 0, 4);
@@ -534,7 +523,7 @@ L_02009084:
   Call3(Actor_ArmCallback, 7, 0, 0);
   Call3(Actor_ArmCallback, 6, 0xe000, 0);
   Call3(Actor_ArmCallback, 5, 0xe000, 0);
-  t406 = party->currentOwner;
+  t406 = gMainRoutineWork.currentOwner;
   Call3(Actor_ArmCallback, t406, 0, 0);
   Call3(Actor_ArmCallback, 19, 0xd000, 0);
   Call3(Actor_ArmCallback, 3, 0xa000, 0);
@@ -542,7 +531,7 @@ L_02009084:
   Call2(Func_02005704, 0, 0x8000);
   Call2(Actor_SetModeById, 0, 4);
   FieldMessage_ShowAtActor(0x4000, 0);
-  t414 = party->currentOwner;
+  t414 = gMainRoutineWork.currentOwner;
   t415 = Value2(Event_AskYesNoWithActorAnimation, t414, 0);
   if (t415 != 0)
     goto L_02009464;
@@ -568,15 +557,15 @@ L_02009490:
   Call3(Actor_ArmCallback, 5, 0xc000, 0);
   Call3(Actor_ArmCallback, 6, 0xc000, 0);
   Call3(Actor_ArmCallback, 7, 0xc000, 0);
-  t433 = party->currentOwner;
+  t433 = gMainRoutineWork.currentOwner;
   Call3(Actor_ArmCallback, t433, 0xc000, 0);
   Call2(Actor_SetModeById, 18, 11);
   Call1(FieldEvent_Wait, 20);
   Call2(Func_020056f4, 18, 0);
   Call2(Func_02005704, 6, 0);
-  Func_02005714(6, 0x109, 20);
+  Value3(Func_02005714, 6, 0x109, 20);
   Call3(Actor_ArmCallback, 5, 0x8000, 40);
-  Func_02005714(5, 0x100, 20);
+  Value3(Func_02005714, 5, 0x100, 20);
   Call2(Func_02005704, 5, 0xc000);
   Call2(Func_020056f4, 5, 0);
   Call2(Actor_SetModeById, 18, 8);
@@ -586,21 +575,21 @@ L_02009490:
   Call3(Actor_ArmCallback, 1, 0x6000, 0);
   Call3(Actor_ArmCallback, 0, 0x6000, 0);
   Call3(Actor_ArmCallback, 7, 0x2000, 0);
-  t451 = party->currentOwner;
+  t451 = gMainRoutineWork.currentOwner;
   Call3(Actor_ArmCallback, t451, 0x4000, 0);
   Call1(Actor_WaitForAnimationChange, 18);
   Call2(Actor_SetModeById, 18, 1);
-  Func_02005714(2, 0x108, 20);
+  Value3(Func_02005714, 2, 0x108, 20);
   Call2(Func_020056f4, 0x4002, 0);
   Call2(Func_02005704, 1, 0x8000);
   Call2(Func_020056f4, 0x4001, 0);
   Call2(Func_02005704, 0, 0x8000);
   FieldMessage_ShowAtActor(0x4000, 0);
-  t461 = party->currentOwner;
+  t461 = gMainRoutineWork.currentOwner;
   t462 = Value2(Event_AskYesNoWithActorAnimation, t461, 0);
   if (t462 != 0)
     goto L_02009624;
-  t463 = party->currentOwner;
+  t463 = gMainRoutineWork.currentOwner;
   Call1(Actor_WaitForAnimationChange, t463);
   t465 = FIELD_AT(0x3000000, s32, 108);
   t466 = FIELD_AT(t465, u16, 452);
@@ -610,12 +599,13 @@ L_02009624:
   Call2(Actor_SetModeById, 1, 4);
   Call2(Func_020056f4, 0x4001, 0);
 L_02009638:
-  t469 = party->currentOwner;
-  Call2(Func_02005704, t469, 0);
-  t471 = party->currentOwner;
+  work = &gMainRoutineWork;
+  t469 = work->currentOwner;
+  Value2(Func_02005704, t469, 0);
+  t471 = work->currentOwner;
   Call2(Motion_SetModeAndWaitAnimation, t471, 3);
-  t473 = party->currentOwner;
-  Call2(Func_02005704, t473, 0xc000);
+  t473 = work->currentOwner;
+  Value2(Func_02005704, t473, 0xc000);
   Call3(Actor_ArmCallback, 7, 0xc000, 0);
   Call3(Actor_ArmCallback, 0, 0xc000, 0);
   Call3(Actor_ArmCallback, 1, 0xc000, 0);
@@ -623,27 +613,27 @@ L_02009638:
   Call3(Actor_ArmCallback, 19, 0xc000, 0);
   Call3(Actor_ArmCallback, 2, 0xc000, 0);
   Call3(Actor_ArmCallback, 3, 0xc000, 0);
-  t482 = party->currentOwner;
+  t482 = work->currentOwner;
   Call3(Actor_SetSpeedParameters, t482, 0x6666, 0x3333);
-  t484 = party->currentOwner;
+  t484 = work->currentOwner;
   Call3(Actor_SetPositionAndReset, t484, 0x1f8, 0x134);
   Call1(Func_020057dc, 201);
   Call2(Actor_SetModeById, 18, 14);
   Call1(FieldEvent_Wait, 10);
   Call2(Func_020056cc, 18, 0x100);
-  t490 = party->currentOwner;
+  t490 = work->currentOwner;
   Call2(Motion_SetVarCbAndRefresh, t490, 2);
-  t492 = party->currentOwner;
-  Actor_SetSpeedParameters(t492, 0x19999, 0xcccc);
-  t494 = party->currentOwner;
+  t492 = work->currentOwner;
+  Call3(Actor_SetSpeedParameters, t492, 0x19999, 0xcccc);
+  t494 = work->currentOwner;
   Call3(Actor_Jump, t494, 4, 0);
-  t496 = party->currentOwner;
+  t496 = work->currentOwner;
   t497 = Value1(Actor_GetById, t496);
-  FIELD_AT(t497, u8, 90) &= 254;
-  t499 = party->currentOwner;
+  { u8 *f = (u8 *)t497 + 90; *f &= 254; }
+  t499 = work->currentOwner;
   Call3(Actor_SetPositionAndReset, t499, 0x1f8, 0x140);
   Call1(FieldEvent_Wait, 1);
-  t502 = party->currentOwner;
+  t502 = work->currentOwner;
   t503 = Value1(Actor_GetById, t502);
   FIELD_AT(t503, u8, 90) |= 1;
   Call2(Func_0200571c, 7, 0x102);
@@ -664,7 +654,7 @@ L_02009638:
   Call3(Actor_ArmCallback, 5, 0x8000, 0);
   Call3(Actor_ArmCallback, 6, 0, 0);
   Call3(Actor_ArmCallback, 7, 0, 0);
-  t523 = party->currentOwner;
+  t523 = work->currentOwner;
   Call3(Actor_ArmCallback, t523, 0x8000, 40);
   Call2(Func_020056f4, 7, 0);
   Call1(Func_020057dc, 0x23c);
@@ -681,12 +671,12 @@ L_02009638:
   Call3(Actor_ArmCallback, 5, 0xc000, 0);
   Call3(Actor_ArmCallback, 6, 0xc000, 0);
   Call3(Actor_ArmCallback, 7, 0xc000, 0);
-  t540 = party->currentOwner;
+  t540 = work->currentOwner;
   Call3(Actor_ArmCallback, t540, 0xc000, 20);
   Call2(Func_020056f4, 18, 0);
   Call2(Func_020056f4, 19, 0);
   Call2(Actor_SetModeById, 7, 3);
-  t545 = party->currentOwner;
+  t545 = work->currentOwner;
   Call2(Actor_SetModeById, t545, 3);
   Call2(Actor_SetModeById, 0, 3);
   Call2(Actor_SetModeById, 1, 3);
@@ -695,7 +685,7 @@ L_02009638:
   Call2(Actor_SetModeById, 2, 3);
   Call2(Motion_SetModeAndWaitAnimation, 3, 3);
   Call1(Func_020057dc, 78);
-  FIELD_AT(v_r7, s32, 108) = (s32)Func_02000068;
+  FIELD_AT(actor, s32, 108) = (s32)Func_02000068;
   Call2(Actor_SetMovementTypeById, 18, (s32)gData_02005c70);
   Call2(Func_0200575c, 0x10001, 1);
   Call1(Func_0200576c, 20);
@@ -704,7 +694,7 @@ L_02009638:
   Call1(Func_0200576c, 40);
   Call1(wait, 40);
   Call3(Func_0200567c, 7, 0, 0);
-  t562 = party->currentOwner;
+  t562 = work->currentOwner;
   Call3(Func_0200567c, t562, 0, 0);
   Call3(Func_0200567c, 0, 0, 0);
   Call3(Func_0200567c, 1, 0, 0);
@@ -714,22 +704,22 @@ L_02009638:
   Call3(Func_0200567c, 2, 0, 0);
   Call3(Func_0200567c, 3, 0, 0);
   Call1(wait, 1);
-  t572 = Value1(Actor_GetById, 17);
-  FIELD_AT(t572, s32, 24) = 0x1000;
-  FIELD_AT(t572, s32, 28) = 0x1000;
+  actor = Value1(Actor_GetById, 17);
+  FIELD_AT(actor, s32, 24) = 0x1000;
+  FIELD_AT(actor, s32, 28) = 0x1000;
   Call3(Func_0200567c, 17, 0x2000000, 0x1180000);
   Call1(wait, 1);
-  FIELD_AT(t572, u8, 85) = 0;
-  Call4(Actor_SetPositionAndResetMotion, t572, 0x2000000, 0x300000, 0x1180000);
+  unk85 = (u8 *)actor + 85;
+  *unk85 = 0;
+  Call4(Actor_SetPositionAndResetMotion, actor, 0x2000000, 0x300000, 0x1180000);
   Call1(wait, 1);
-  v_r10 = (t572 + 85);
-  *(u8 *)v_r10 = 0;
+  *unk85 = 0;
   Call2(Func_0200575c, 0x10000, 2);
   Call1(Func_0200576c, 20);
+  dispcnt = (u16 *)0x4000000;
   Call1(Func_020057dc, 39);
   Call2(Actor_SetMovementTypeAndWaitById, 17, (s32)gData_02005cac);
-  t581 = *(u16 *)0x4000000;
-  *(u16 *)0x4000000 = (0xf9ff & t581);
+  *dispcnt = *dispcnt & 0xf9ff;
   Call2(Func_0200575c, 0x10003, 1);
   Call1(Func_0200576c, 40);
   Call3(Actor_SetSpeedParameters, 17, 0x33333, 0x3333);
@@ -737,15 +727,7 @@ L_02009638:
   Call2(Func_0200575c, 0x7fff, 0);
   Call1(Func_0200576c, 1);
   Call1(wait, 1);
-  v_r8 = (s32)&gMainRoutineWork;
-  v_r6 = 0x4000000;
-  v_r3 = 0x1180000;
-  v_r2 = 0x580000;
-  v_r1 = 136;
-  v_r7 = t572;
-  goto L_02009a4c;
-L_02009a4c:
-  Call4(Func_02005594, v_r7, (v_r1 << 18), v_r2, v_r3);
+  Call4(Func_02005594, actor, 0x2200000, 0x580000, 0x1180000);
   Call2(Func_0200575c, 0x10000, 2);
   Call2(Func_0200575c, 0x10003, 1);
   Call1(Func_0200576c, 10);
@@ -754,7 +736,7 @@ L_02009a4c:
   Call2(Func_0200575c, 0x7fff, 0);
   Call1(Func_0200576c, 1);
   Call1(wait, 1);
-  Call4(Func_02005594, v_r7, 0x1d00000, 0x580000, 0x1180000);
+  Call4(Func_02005594, actor, 0x1d00000, 0x580000, 0x1180000);
   Call2(Func_0200575c, 0x10000, 2);
   Call2(Func_0200575c, 0x10003, 1);
   Call1(Func_0200576c, 10);
@@ -763,7 +745,7 @@ L_02009a4c:
   Call2(Func_0200575c, 0x7fff, 0);
   Call1(Func_0200576c, 1);
   Call1(wait, 1);
-  Call4(Func_02005594, v_r7, 0x2400000, 0x580000, 0x1180000);
+  Call4(Func_02005594, actor, 0x2400000, 0x580000, 0x1180000);
   Call2(Func_0200575c, 0x10000, 2);
   Call2(Func_0200575c, 0x10003, 1);
   Call1(Func_0200576c, 10);
@@ -773,27 +755,21 @@ L_02009a4c:
   Call2(Func_0200575c, 0x7fff, 0);
   Call1(Func_0200576c, 1);
   Call1(wait, 1);
-  Call4(Func_02005594, v_r7, 0x1fc0000, 0xd00000, 0x1200000);
+  Call4(Func_02005594, actor, 0x1fc0000, 0xd00000, 0x1200000);
   Call2(Func_0200575c, 0x10000, 2);
   Call2(Func_0200575c, 0x10003, 1);
   Call1(Func_0200576c, 10);
   Call1(Actor_WaitForMoveById, 17);
   Call1(Func_020057dc, 138);
-  Func_0200575c(0x7fff, 0);
+  Call2(Func_0200575c, 0x7fff, 0);
   Call1(Func_0200576c, 1);
   Call1(wait, 1);
-  t626 = *(u16 *)v_r6;
-  *(u16 *)v_r6 = (t626 | 0x600);
+  *dispcnt |= 0x600;
   Call3(Func_0200567c, 7, 0x1e80000, 0x1400000);
-  t628 = party->currentOwner;
+  t628 = work->currentOwner;
   Call3(Func_0200567c, t628, 0x1f80000, 0x1400000);
-  Func_0200567c(0, 0x2080000, 0x1400000);
-  v_r2 = 0x1400000;
-  v_r1 = 0x2180000;
-  v_r0 = 1;
-  goto L_02009be0;
-L_02009be0:
-  Call3(Func_0200567c, v_r0, v_r1, v_r2);
+  Call3(Func_0200567c, 0, 0x2080000, 0x1400000);
+  Call3(Func_0200567c, 1, 0x2180000, 0x1400000);
   Call3(Func_0200567c, 6, 0x1e00000, 0x1480000);
   Call3(Func_0200567c, 5, 0x1f00000, 0x1480000);
   Call3(Func_0200567c, 19, 0x2000000, 0x1480000);
@@ -812,8 +788,8 @@ L_02009be0:
   Call2(Func_0200575c, 0x10000, 2);
   Call1(Func_0200576c, 40);
   Call1(wait, 40);
-  FIELD_AT(v_r7, s32, 72) = 0x4000;
-  *(u8 *)v_r10 = 3;
+  FIELD_AT(actor, s32, 72) = 0x4000;
+  *unk85 = 3;
   Call1(FieldEvent_Wait, 30);
   Call1(Func_020057dc, 208);
   Call3(Func_020055c4, 0x20000, 0x40000, 0x10000);
@@ -825,16 +801,16 @@ L_02009be0:
   Call1(Func_020057dc, 148);
   Call1(FieldEvent_Wait, 80);
   Call2(Func_020056f4, 6, 0);
-  W_Func_02005714(7, 0x103, 0);
+  Value3(Func_02005714, 7, 0x103, 0);
   Call2(Func_020056f4, 7, 0);
-  Func_02005714(1, 0x103, 0);
+  Value3(Func_02005714, 1, 0x103, 0);
   Call2(Func_020056f4, 1, 0);
   Call2(Actor_SetModeById, 3, 3);
   Call2(Func_020056f4, 3, 0);
-  Func_02005704(2, 0xa000);
+  Call2(Func_02005704, 2, 0xa000);
   Call2(Func_020056f4, 2, 0);
   Call3(Actor_SetSpeedParameters, 7, 0x19999, 0xcccc);
-  t670 = party->currentOwner;
+  t670 = work->currentOwner;
   Call3(Actor_SetSpeedParameters, t670, 0x19999, 0xcccc);
   Call3(Actor_SetSpeedParameters, 0, 0x19999, 0xcccc);
   Call3(Actor_SetSpeedParameters, 1, 0x19999, 0xcccc);
@@ -843,7 +819,7 @@ L_02009be0:
   Call3(Actor_SetSpeedParameters, 2, 0x19999, 0xcccc);
   Call3(Actor_SetSpeedParameters, 3, 0x19999, 0xcccc);
   Call2(Actor_SetMovementTypeById, 7, (s32)gData_02005df8);
-  t679 = party->currentOwner;
+  t679 = work->currentOwner;
   Call2(Actor_SetMovementTypeById, t679, (s32)gData_02005ce8);
   Call2(Actor_SetMovementTypeById, 0, (s32)gData_02005d2c);
   Call2(Actor_SetMovementTypeById, 6, (s32)gData_02005db4);
@@ -851,7 +827,7 @@ L_02009be0:
   Call2(Actor_SetMovementTypeById, 2, (s32)gData_02005e3c);
   Call2(Actor_SetMovementTypeById, 3, (s32)gData_02005e80);
   Call2(Actor_SetMovementTypeAndWaitById, 1, (s32)gData_02005ec4);
-  Func_02005714(19, 0x101, 40);
+  Value3(Func_02005714, 19, 0x101, 40);
   Call2(Func_020056f4, 19, 0);
   Call2(Func_0200571c, 19, 0x102);
   Call2(Func_02005704, 19, 0xa000);
@@ -862,8 +838,7 @@ L_02009be0:
   Call3(Actor_Jump, 19, 2, 10);
   Call3(Actor_Jump, 19, 4, 10);
   Call2(Func_020056f4, 0x2013, 0);
-  v_r8 = (v_r8 + 0x24b);
-  *(u8 *)v_r8 = 2;
+  FIELD_AT(work, u8, 0x24b) = 2;
   Call2(Party_SetFields1eeAnd1f0, (s32)&SceneId_Ov6aeRoom1, 2);
   Call2(Func_0200574c, 102, 1);
   return;

@@ -1,26 +1,42 @@
-// Near miss, differ 265 of 305 (tla-en, 2026-10-31): the native ends CSE's
-// reach between the leader's update hook and wait(4), and this compiler
-// does not: after that point the native recomputes
-// &gMainRoutineWork.currentOwner (r10, then r5), loads the box table's base
-// again (r5, then r10) and recomputes kind * 4 + 1 (r9), and it keeps the
-// leader's last offset index, 0, unfolded in r9 from the top; here all of
-// them are shared across the whole function and the index folds. No plain
-// form found gives that boundary (a one-pass block ends only the first CSE
-// pass; the same call in both arms of a test at wait(4) gives 193 but keeps
-// its branch). Wrapping only the first speed call gives 258, sharing 0x1999
-// between the last two, which the native does not.
-// Overlay 674's copy of overlay 668's Func_020044c4 (the same listing,
-// calling Func_02003790 where 668 calls Map_FillCellRectByte2), whose draft
-// holds its notes. Its one argument is islets.h's struct IsletsTarget, 24
-// bytes passed by value: the first 16 in r0 to r3, which the native stores
-// in the incoming argument area (the sub sp, #16), the object's number and
-// the optional callback on the stack.
+// Draft, differ 216 of 305, skeleton gap 92 (tla-en, 2026-11-01)
+// Left: the native ends CSE at two points, one between the leader update hook
+// and the second speed call, one between that call and the next
+// Actor_WaitForMoveById. After them it recomputes the owner address (r10, then
+// r5) and rebuilds 0x8000 and 0x1999, and past the first it keeps direction,
+// 0, in r9 and shifts it at run time; the table base is reloaded late and
+// row + 1 recomputed there, while row itself carries across (probably GCSE). Here the
+// index folds, so r9 is free, row spills and the table is reloaded per use in
+// the first half: most of the gap follows from that. With a volatile asm
+// taking an operand at both points (analysis only, not kept) the shape reaches
+// differ 185, gap 81, 318 instructions. cse_end_of_basic_block stops the
+// second pass only at a CODE_LABEL, so the source must hold a label that lives
+// past cse2 and is gone by the end: one-pass loops and for (i = 0; i < 1; i++)
+// add instructions (gap 105 on the older shape), and a dead arm or empty test
+// is deleted before cse2. GCSE appears to leave the 0 in r9 unfolded (not
+// checked in its dump), so it should need only that boundary.
+// Tried with no gain: a fill value local for 255 (gap 110), a box row pointer
+// or table local (119, 120, 113), struct or array reads of the spare pair
+// (no change; the native derives 0x14c from 0x148 with adds #4), a wrapper on
+// every call or on Func_02003790 (no change), and declaration orders.
+// Leader and object assigned after the declarations give differ 206 but gap
+// 94. Overlay 668 Func_020044c4 is the same listing (calling
+// Map_FillCellRectByte2 where this calls Func_02003790).
+// Its one argument is islets.h struct IsletsTarget, 24 bytes passed by value:
+// the first 16 in r0 to r3, which the native stores in the incoming argument
+// area (the sub sp, #16), the object number and the optional callback on the
+// stack. The map slot goes through struct HeapSlotWords so that the load keeps
+// the four argument stores ahead of it (its alias set is in the push state).
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "system/vector3.h"
 #include "call.h"
+
+struct HeapSlotWords {
+  s32 unk00[8];
+  s32 map;
+};
 
 struct PushState {
   s32 x;
@@ -52,15 +68,18 @@ void Func_02003fd4(void);
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
 void Func_02003a5c(struct PushState push) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->map;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *object = Actor_GetById(push.number);
-  s32 speed = leader->speedLimit;
-  s32 acceleration = leader->acceleration;
+  s32 speed, acceleration;
   struct Vector3 cell, start;
   s32 kind = push.kind;
+  s32 row;
+  s32 rowZ;
   s32 direction, width, height, spareX, spareZ;
 
+  speed = leader->speedLimit;
+  acceleration = leader->acceleration;
   start.x = object->x;
   start.z = object->z;
   direction = 0;
@@ -74,7 +93,7 @@ void Func_02003a5c(struct PushState push) {
            4;
   Func_02003790(0, cell.x, cell.z, width, height, 0);
   /* FAKEMATCH(wrapper): the three speed calls go through Call3, so no call
-   * shares a constant; as direct calls, 327 of 305 instructions differ in
+   * shares a constant; as direct calls, 292 of 305 instructions differ in
    * tla-en. */
   Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
         0x8000, 0x1999);
@@ -109,16 +128,18 @@ void Func_02003a5c(struct PushState push) {
   Func_02003ffc(213);
   Actor_SetPositionAndResetMotion(object, push.x, object->y, push.z);
   Func_02003de4(object, 1);
-  push.x = (push.x + (gData_0200407c[kind][0] << 16)) >> 20;
-  push.z = (push.z + (gData_0200407c[kind][1] << 16)) >> 20;
+  row = kind * 4;
+  rowZ = row + 1;
+  push.x = (push.x + (((s8 *)gData_0200407c)[row] << 16)) >> 20;
+  push.z = (push.z + (((s8 *)gData_0200407c)[rowZ] << 16)) >> 20;
   spareX = *(s32 *)(map + 0x148) >> 20;
   spareZ = *(s32 *)(map + 0x14c) >> 20;
   Func_02003e24(push.x, push.z, width, height, spareX + push.x,
                 spareZ + push.z);
   Func_02003790(0, push.x, push.z, width, height, 255);
   Func_02003790(2, push.x, push.z, width, height, 255);
-  cell.x = (start.x + (gData_0200407c[kind][0] << 16)) >> 20;
-  cell.z = (start.z + (gData_0200407c[kind][1] << 16)) >> 20;
+  cell.x = (start.x + (((s8 *)gData_0200407c)[row] << 16)) >> 20;
+  cell.z = (start.z + (((s8 *)gData_0200407c)[rowZ] << 16)) >> 20;
   Func_02003e24(spareX + cell.x, spareZ + cell.z, width, height, cell.x,
                 cell.z);
   Func_02003790(2, cell.x, cell.z, width, height, 0);

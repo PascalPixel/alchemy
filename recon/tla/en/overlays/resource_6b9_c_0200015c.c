@@ -1,10 +1,17 @@
-// Near misses of Func_0200015c (57 native instructions, 60 differ),
-// Func_020001e0 (88, 46) and Func_0200029c (83, 84): the same calls, constants
-// and stores. The draft hoists the address of tileBase and the tile mask out of
-// the 64-spark loops and counts in r7; the native builds them inside the loop,
-// keeps the work in r7 and counts in r8. Count-up and count-down loops measured
-// the same. Func_02000358 is adopted in
+// Draft, differ 80 of 83, skeleton gap 28 (tla-en, 2026-11-01): the worst of
+// Func_0200029c (83 instructions, differ 80, gap 13/15), Func_0200015c (57, 44,
+// 5/5) and Func_020001e0 (88, 4, 2/2). Func_02000358 is adopted in
 // games/tla/src/debug/psynergy_test_2/sparks.c.
+// The native builds its constants inside the loops, so the first two loops are
+// label and goto loops: a for or do loop hoists them (015c 14/16, 01e0 8/11).
+// Func_020001e0 has only its incoming-argument saves scheduled differently.
+// Func_0200015c has its pool loads scheduled apart; a local for the tile
+// expression gives gap 4/4, but that is a forced temporary (S2) and is left out.
+// Func_0200029c: the count takes r4 and is saved round the call, because its 7
+// weighted refs against one call pass CALLER_SAVE_PROFITABLE; the native has it
+// in r8 and the tile in r10, and rebuilds 0x500 where the draft keeps it in the
+// sparks pointer's register. Those lead the gap. The goto form stops the hoist
+// but measured 17/13 with a zero carried past the loop, so this one stays for.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -18,7 +25,9 @@ struct Spark {
 
 struct SparkSprite {
   u8 unk00[5];
-  u8 unk05;
+  u8 unk05_0 : 5;
+  u8 unk05_5 : 1;
+  u8 unk05_6 : 2;
   u8 unk06[2];
   u16 tile : 10;
   u16 unk08_10 : 2;
@@ -58,8 +67,10 @@ void Func_0200015c(void) {
   struct SparkSprite *sprite = work->sprites;
   s32 i;
 
-  for (i = 0; i < 64; i++) {
-    if (spark->timer >= 0 && spark->timer < 20) {
+  i = 63;
+loop:
+  {
+    if ((u32)spark->timer < 20) {
       sprite->tile = work->tileBase + ((spark->timer >> 2) & 7) * 8;
       Func_020005f8(sprite, spark);
       Func_02000600(spark, 63, 0xffff8000);
@@ -68,14 +79,20 @@ void Func_0200015c(void) {
     sprite++;
     spark++;
   }
+  i--;
+  if (i >= 0)
+    goto loop;
 }
 
 void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
   struct SparkWork *work = Ram_HeapSlots->menuRuntime;
   struct Spark *spark;
   s32 angle;
+  s32 i;
 
-  for (; count > 0; count--) {
+  if (count > 0) {
+    i = count;
+  loop:
     angle = Random16Far();
     spark = &work->sparks[work->next];
     spark->timer = 0;
@@ -89,7 +106,11 @@ void Func_020001e0(s32 x, s32 y, s32 z, s32 count) {
     spark->velocity[2] = 0;
     Vector_AddPolarOffsetFar((Random16Far() << 1) + 0x20000, angle,
                              spark->velocity);
-    work->next = (work->next + 1) & 63;
+    work->next++;
+    work->next &= 63;
+    i--;
+    if (i != 0)
+      goto loop;
   }
 }
 
@@ -109,9 +130,9 @@ void Func_0200029c(void) {
   work->resource = resource;
   spark = work->sparks;
   sprite = work->sprites;
-  for (i = 0; i < 64; i++) {
+  for (i = 63; i >= 0; i--) {
     Func_020005f0(sprite, 8, 8, 0x40000000, tile);
-    sprite->unk05 |= 0x20;
+    sprite->unk05_5 = 1;
     sprite->unk08_12 = 0;
     sprite->unk08_10 = 0;
     sprite->unk1e = 240;

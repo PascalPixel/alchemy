@@ -1,10 +1,24 @@
-// Draft, differ 277 of 405: a Magma Rock event: sound 107 with the screen shaken,
-// the camera to (776, 272), and for 128 steps of 3 frames effects rain over a
-// 32 by 32 area (sound 567 every 8th) while objects 13, 20, 14, 19, 15, 18,
-// 16 and 17 arrive one by one at their places from (776, 248), each falling in
-// on its update (Func_02001d04); object 12 comes last with the camera and the
-// shaking eased; then it settles, sound 288, flag 2552 is set and the camera
-// returns to the leader.
+// Draft, differ 107 of 405, skeleton gap 39 (tla-en, 2026-11-01)
+// A Magma Rock event: sound 107 with the screen shaken, the camera to (776,
+// 272), and for 128 steps of 3 frames effects rain over a 32 by 32 area (sound
+// 567 every 8th) while objects 13, 20, 14, 19, 15, 18, 16 and 17 arrive one by
+// one at their places from (776, 248), each falling in on its update
+// (Func_02001d04); object 12 comes last with the camera and the shaking eased;
+// then it settles, sound 288, flag 2552 is set and the camera returns to the
+// leader.
+// The loop is built from a label and goto: as a for loop, loop.c hoists its
+// constants and the skeleton gap is 115. What is left comes from constants the
+// native loads per argument: 0x30000 and -1 are shared here between arguments
+// of Func_02004d10 and Camera_MoveWithinMapBounds, and the shared -1 takes r5
+// from the loop's 0, which pushes the rest of the allocation along. Forwarding
+// those two calls through scene_call.h-style inlines (a tagged device, so not
+// taken here) measured differ 74, skeleton gap 22, 405 instructions, with the
+// native's constant loads. Allocation then stands: the native has r5 31 and
+// the 0, r6 &options, r7 i, r8 position; forwarded, i r6, position r7, options
+// r8, and &options is built by movs and add sp because r8 cannot take it.
+// Pointer locals for options or position, a struct position, u32 i and an
+// inner velocityZ gain nothing. The negs of the first camera call's -1 also
+// comes later in the native than here, unlike the second call's.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -38,15 +52,15 @@ void Func_02001d04(void);
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Func_02004da0(id, 194 << 18, 248 << 16);
   Actor_ResetAndSetPosition(id, x, z);
-  Actor_GetById(id)->velocityY = 0x60000;
+  Actor_GetById(id)->velocityY = 0xc0000;
   Actor_GetById(id)->gravity = 0x8000;
   Actor_GetById(id)->action = 0;
   Actor_GetById(id)->update = Func_02001d04;
 }
 
 void Func_02001d64(void) {
-  struct EffectOptions options;
   s32 position[3];
+  struct EffectOptions options;
   s32 i;
 
   Func_02004d40();
@@ -63,7 +77,8 @@ void Func_02001d64(void) {
   options.startScaleY = 0x18000;
   options.startScaleX = 0x18000;
   position[1] = 0;
-  for (i = 0; i != 128; i++) {
+  i = 0;
+  loop:
     position[0] = ((Random16Far() & 31) << 16) + (190 << 18);
     position[2] = ((Random16Far() & 31) << 16) + (128 << 17);
     Func_0200015c(position[0], position[1], position[2], 0, 0x10000, 0,
@@ -90,14 +105,15 @@ void Func_02001d64(void) {
       Func_02004da0(12, 194 << 18, 248 << 16);
       Actor_ResetAndSetPosition(12, 696, 232);
       Camera_MoveWithinMapBounds(174 << 18, -1, 232 << 16, 1);
-      Actor_GetById(12)->velocityY = 0x68000;
+      Actor_GetById(12)->velocityY = 0xd0000;
       Actor_GetById(12)->gravity = 0x8000;
       Actor_GetById(12)->action = 0;
       Actor_GetById(12)->update = Func_02001d04;
       Func_02004d10(-1, -1, 0xe666);
     }
     wait(3);
-  }
+    i++;
+  if (i != 128) goto loop;
   Actor_WaitForMoveById(12);
   Func_02004d18();
   Func_02004f30(288);

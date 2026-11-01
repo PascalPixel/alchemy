@@ -1,43 +1,58 @@
-// Draft, differ 101 of 89: overlay 692's copy of the function drafted in
-// resource_681_c_0200136c.c (overlay 681's Func_0200136c), whose
-// header says what it is, what still differs and what was tried.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// One forced form to judge at adoption: the local heading holds the angle for
+// the first call only. With the plain (s16)*angle argument, differ 2 of 89 and
+// skeleton gap 1: the radius load moves ahead of the movs and ldrsh of the
+// angle. Unchanged by a block s32 radius local, an s32 cast, an s16 field or
+// parameter, or heading = *angle inside the argument list; an unprototyped call
+// gives differ 4. It carries no FAKEMATCH tag because this round adds none, and
+// it may count as temporary under S2 when adopted.
+// position is set inside the first call's argument list: assigned before the
+// call, differ 15.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
-#include "call.h"
-s32 Vector_AddPolarOffsetFar();
-s32 Func_02002a14();
+struct Orbiter {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[0x38];
+  s32 radius;
+  u8 unk50[0x12];
+  u8 timer;
+  u8 unk63;
+  u16 angle;
+  u16 speed;
+  struct Orbiter *parent;
+};
 
-void Func_02002a6c(s32 a0) {
-  FIELD_AT((a0 + 0x64), u16, 0) =
-      (FIELD_AT((a0 + 0x64), u16, 0) +
-       ((FIELD_AT((0x66 + a0), u16, 0) << 16) >> 17));
-  FIELD_AT(a0, s32, 8) = FIELD_AT(FIELD_AT(a0, s32, 104), s32, 8);
-  FIELD_AT(a0, s32, 12) = (FIELD_AT(FIELD_AT(a0, s32, 104), s32, 12) + 0x80000);
-  FIELD_AT(a0, s32, 16) = FIELD_AT(FIELD_AT(a0, s32, 104), s32, 16);
-  Call2(Vector_AddPolarOffsetFar, FIELD_AT(a0, s32, 76),
-        FIELD_AT((a0 + 0x64), u16, 0));
-  FIELD_AT((a0 + 0x62), u8, 0) = (FIELD_AT((a0 + 0x62), u8, 0) + 0xff);
-  if (((FIELD_AT((a0 + 0x62), u8, 0) + 0xff) << 24) != 0) {
-    if (FIELD_AT(a0, s32, 76) != 0x20000) {
-      Call1(Func_02002a14, a0);
-      FIELD_AT(a0, s32, 76) = (FIELD_AT(a0, s32, 76) + -262144);
-      FIELD_AT((a0 + 0x64), u16, 0) =
-          (FIELD_AT((a0 + 0x64), u16, 0) +
-           ((FIELD_AT((0x66 + a0), u16, 0) << 16) >> 17));
-      FIELD_AT((8 + a0), s32, 0) = FIELD_AT(FIELD_AT(a0, s32, 104), s32, 8);
-      FIELD_AT(a0, s32, 12) =
-          (FIELD_AT(FIELD_AT(a0, s32, 104), s32, 12) + 0x80000);
-      FIELD_AT(a0, s32, 16) = FIELD_AT(FIELD_AT(a0, s32, 104), s32, 16);
-      Call3(Vector_AddPolarOffsetFar, FIELD_AT(a0, s32, 76),
-            FIELD_AT((a0 + 0x64), u16, 0), (8 + a0));
-      Call1(Func_02002a14, a0);
-      FIELD_AT(a0, s32, 76) = (FIELD_AT(a0, s32, 76) + -262144);
-    }
-  }
+void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
+void Func_02002a14(struct Orbiter *object);
+
+s32 Func_02002a6c(struct Orbiter *object) {
+  u16 *angle = &object->angle;
+  u16 *speed = &object->speed;
+  struct Orbiter *parent = object->parent;
+  s32 *position;
+  s16 heading;
+
+  object->angle += (s16)*speed >> 1;
+  object->x = parent->x;
+  object->y = parent->y + 0x80000;
+  object->z = parent->z;
+  heading = *angle;
+  Vector_AddPolarOffsetFar(object->radius, heading, position = &object->x);
+  if (--object->timer == 0)
+    return 0;
+  if (object->radius == 0x20000)
+    return 1;
+  Func_02002a14(object);
+  object->radius -= 0x40000;
+  object->angle += (s16)*speed >> 1;
+  *position = parent->x;
+  object->y = parent->y + 0x80000;
+  object->z = parent->z;
+  Vector_AddPolarOffsetFar(object->radius, (s16)*angle, position);
+  Func_02002a14(object);
+  object->radius -= 0x40000;
+  return 1;
 }

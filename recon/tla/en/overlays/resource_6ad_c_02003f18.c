@@ -1,6 +1,16 @@
-// First drafts of overlay 6ad (the same pair is in overlays 6aa and 69e):
-// Func_02003f18 and Func_02003fc8; the registers of the loop and of the two
-// flag bytes differ.
+// Draft, differ 32 of 76, skeleton gap 0 (tla-en, 2026-11-01): Func_02003f18;
+// Func_02003fc8 in the same file matches, differ 0 of 81. Overlays 6aa, 69e and
+// 6a4 hold the same pair and can take this loop.
+// Left in Func_02003f18: work and index swap r6 and r7, nothing else. The
+// priorities are 3 * refs / length: index has 11 refs (its bottom block counts
+// double) over 58, work 11 over 76, and the listing wants work first. Work needs
+// 15 refs or index 8. Declaration order, a cast for entries, reads through the
+// global and a reversed current test leave the swap or make it worse.
+// The loop is built from labels because a for or do-while lets loop.c hoist the
+// count's two shifts (threshold 15 * 2 * 2 >= 54 insns); the listing keeps them at
+// the bottom on the halfword gcse left in r2. A for with 61 or more insns would
+// also stop the hoist, but indexing the array to get them moves entry's setup
+// after the test, and two return 0s leave a movs before the compare.
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
 
 struct WarpEntry {
@@ -44,23 +54,30 @@ s32 Func_02003f18(void) {
   struct WarpEntry *entry = work->entries;
   s32 index;
 
-  for (index = 0; index < work->count; index++, entry++) {
-    if (entry->x == x && entry->z == z) {
-      if (!GameFlag_Test(entry->flag)) {
-        Func_02003b78(work, entry);
-        GameFlag_SetBit(entry->flag);
-        work->current = index;
-        break;
-      }
-      if (index == work->current)
-        break;
+  index = 0;
+  if (index >= work->count)
+    goto end;
+top:
+  if (entry->x == x && entry->z == z) {
+    if (!GameFlag_Test(entry->flag)) {
+      Func_02003b78(work, entry);
+      GameFlag_SetBit(entry->flag);
       work->current = index;
-      Func_02003be8(work, entry);
-      GameFlag_SetByte(work->positionFlag, x);
-      GameFlag_SetByte(work->positionFlag + 8, z);
-      return 1;
+      goto end;
     }
+    if (index == work->current)
+      goto end;
+    work->current = index;
+    Func_02003be8(work, entry);
+    GameFlag_SetByte(work->positionFlag, x);
+    GameFlag_SetByte(work->positionFlag + 8, z);
+    return 1;
   }
+  index++;
+  entry++;
+  if (index < work->count)
+    goto top;
+end:
   return 0;
 }
 
@@ -76,8 +93,8 @@ void Func_02003fc8(s32 dx, s32 dz, s32 value) {
 
     GameFlag_SetByte(work->positionFlag, 0);
     GameFlag_SetByte(work->positionFlag + 8, 0);
-    object->z = ((z + dz) << 20) + 0x80000;
     object->x = ((x + dx) << 20) + 0x80000;
+    object->z = ((z + dz) << 20) + 0x80000;
     other = *(struct Actor **)(event + 460);
     other->x = object->x;
     other->z = object->z;

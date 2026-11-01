@@ -1,20 +1,24 @@
-// Near miss, differ 586 of 479 (tla-en, 2026-10-31): packs the four units'
-// base stats, levels, Djinn, items and their counts into clear data, sized by
-// the password kind. The shape is the native's (base stats through one
-// pointer at baseHp, the u16 and u8 floors through an int, (u32)(-mode | mode)
-// >> 31 for the offset, unsigned coins shifts, goto loops where the native
-// keeps its constants inside); a register-blind comparison leaves 221 lines.
-// Left, all compiler-level: mode is spilled ([sp, #28], a 64-byte frame)
-// where the native keeps it in r11 and out in r8, which moves every hi
-// register; gcse load motion turns each clamp's reload after its store into
-// a copy (as -fno-gcse the clamps come out as the native's); gcse's PRE
-// hoists stat = stats out of the zero loop and unit->inventory and k * 2 out
-// of goto loops; loop.c steps stat as a pointer where the native indexes it
-// from its stack slot with an i * 8 + 4 (and i * 16 + 4) offset giv, and
-// hoists the j loops' 1 and the count loop's table entry and 0x1ff.
-// Tried, each worse: one variable for bit and shift (595), counters scoped
-// per loop (661), the j loops as goto loops (612, 635), the scalars and stats
-// in one local struct (757); stat as a one-element array changes nothing.
+// Draft, differ 596 of 479, skeleton gap 150 (tla-en, 2026-11-01)
+// Packs the four units' base stats, levels, Djinn, items and their counts into
+// clear data, sized by the password kind; FileScreen_PackPasswordData in
+// games/tbs/src/scene/file_screen.c is its twin. Goto loops keep constants
+// inside where the native does, offset is the native's i * 8 + 4 in the party
+// loop, one counter per loop lets each take a low register, and the used u16
+// quantity brings the count's halfword shifts close.
+// Left: mode is spilled (a 64-byte frame) because found outranks it in
+// global.c (18 refs, the update sits three loops deep); the native keeps mode
+// in r11 and out in r8, which moves every hi register. PRE turns the hp and pp
+// reloads after their stores into copies, hoists stats out of the zero loop
+// and leaves two extra s16 loads; loop.c hoists the count loop's table entry
+// and 0x1ff, and steps i * 8 and the row loop's stats. The quantity's lsls is
+// not hoisted above the sign test. These look compiler-level, not C.
+// Tried: the hp and pp reloads through a cast to a union, whose alias set
+// escapes PRE, with pos, bit and shift at function scope, reach gap 127, but
+// that steers the compiler untagged, so it stays out; value = unit->level
+// before the zero test gains 5 and is a forced temporary. Each of these
+// loses: the count loop's j as a goto with a local table pointer (5 to 13),
+// all loops as gotos (11), the row loop with offset (2), the party loop as a
+// goto (10), pos, bit and shift at function scope without the union (8).
 #include "types.h"
 #include "main_routine_work.h"
 #include "battle_unit.h"
@@ -42,8 +46,11 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   s32 size = 11;
   u32 levels, djinn, found, flags;
   u32 *stat;
+  s32 offset;
   u32 stats[8];
   s32 i, k, j;
+  s32 cleared, zeroed, flagIndex, packMember, countMember, row;
+  s32 heldIndex, slot, packSlot, stackItem, wantedIndex, jc;
 
   switch (mode) {
   case 0:
@@ -56,35 +63,36 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
     size = 9;
     break;
   }
-  i = 0;
+  cleared = 0;
   if (size != 0) {
     u8 *p = out;
 
   clear:
     *p = 0;
-    i++;
+    cleared++;
     p++;
-    if (i != size)
+    if (cleared != size)
       goto clear;
   }
   levels = 0;
   djinn = 0;
   found = 0;
   flags = 0;
-  i = 0;
+  zeroed = 0;
 zero:
   stat = stats;
-  stat[i] = 0;
-  i++;
-  if (i != 8)
+  stat[zeroed] = 0;
+  zeroed++;
+  if (zeroed != 8)
     goto zero;
-  i = 0;
+  flagIndex = 0;
 test:
-  if (GameFlag_Test(gData_02002700[i]))
-    flags = (u8)(flags | 1 << i);
-  i++;
-  if (i != 6)
+  if (GameFlag_Test(gData_02002700[flagIndex]))
+    flags = (u8)(flags | 1 << flagIndex);
+  flagIndex++;
+  if (flagIndex != 6)
     goto test;
+  offset = 4;
   for (i = 0; i != 4; i++) {
     struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
     struct UnitBaseStats *base = (struct UnitBaseStats *)&unit->baseHp;
@@ -126,7 +134,7 @@ test:
       value = 0;
     base->luck = value;
     stat[i * 2] = base->hp << 21 | base->pp << 10 | base->attack;
-    stat[i * 2 + 1] =
+    *(u32 *)((u8 *)stat + offset) =
         base->defense << 22 | base->agility << 12 | base->luck << 4;
     if (unit->level > 99)
       unit->level = 99;
@@ -134,36 +142,40 @@ test:
       unit->level = 1;
     levels |= unit->level << (i * 7);
     djinni = unit->djinnAvailable;
-    for (k = 0, shift = 0; k != 4; k++, shift += 7)
+    for (heldIndex = 0, shift = 0; heldIndex != 4; heldIndex++, shift += 7)
       djinn += *djinni++ << shift;
     items = unit->inventory;
-    k = 0;
+    slot = 0;
   item:
     {
       s32 item = *items & 0x1ff;
       u16 *wanted = gData_0200270c;
 
-      for (j = 0; j != 8; j++) {
-        if (item == *wanted++)
-          found = (u8)(found | 1 << j);
-      }
+      wantedIndex = 0;
+    want:
+      if (item == *wanted++)
+        found = (u8)(found | 1 << wantedIndex);
+      wantedIndex++;
+      if (wantedIndex != 8)
+        goto want;
     }
-    k++;
+    slot++;
     items++;
-    if (k != 15)
+    if (slot != 15)
       goto item;
+    offset += 8;
   }
   if (mode == 0) {
     s32 pos = 39;
     s32 bit = 0;
     s32 shift;
 
-    for (i = 0; i != 4; i++) {
-      struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
+    for (packMember = 0; packMember != 4; packMember++) {
+      struct BattleUnit *unit = Unit_Get(gData_020026f0[packMember]);
       u16 *items = unit->inventory;
       u8 *p = out + pos;
 
-      k = 0;
+      packSlot = 0;
     pack:
       {
         s32 item = *items++ & 0x1ff;
@@ -179,35 +191,37 @@ test:
           pos++;
         }
       }
-      k++;
-      if (k != 15)
+      packSlot++;
+      if (packSlot != 15)
         goto pack;
     }
     pos = 107;
     shift = -1;
-    for (i = 0; i != 4; i++) {
-      struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
+    for (countMember = 0; countMember != 4; countMember++) {
+      struct BattleUnit *unit = Unit_Get(gData_020026f0[countMember]);
       u8 *p = out + pos;
 
-      k = 0;
+      stackItem = 0;
     count:
       {
         u16 *items = unit->inventory;
-        u16 count = 0;
+        s32 count = 0;
+        u16 quantity;
 
         for (j = 0; j != 15; j++) {
           u32 value = *items++;
 
-          if ((value & 0x1ff) == gData_0200271c[k])
+          if ((value & 0x1ff) == gData_0200271c[stackItem])
             count = value >> 11;
         }
+        quantity = count;
         if (shift < 0) {
-          *p += count >> -shift;
+          *p += quantity >> -shift;
           shift += 8;
           pos++;
           p++;
         }
-        *p += count << shift;
+        *p += quantity << shift;
         shift -= 5;
         if (shift == -5) {
           pos++;
@@ -215,8 +229,8 @@ test:
           shift = 3;
         }
       }
-      k++;
-      if (k != 23)
+      stackItem++;
+      if (stackItem != 23)
         goto count;
     }
     out[165] = (u32)gMainRoutineWork.coins >> 16;
@@ -226,26 +240,26 @@ test:
   if (mode != 2) {
     u8 *p = out + (((u32)(-mode | mode) >> 31) + 8);
 
-    for (i = 0; i != 2; i++) {
-      u32 w0 = stat[i * 4];
+    for (row = 0; row != 2; row++) {
+      u32 w0 = stat[row * 4];
       u32 w1, w2, w3;
 
       p[0] = w0 >> 24;
       p[1] = w0 >> 16;
       p[2] = w0 >> 8;
       p[3] = w0;
-      w1 = stat[i * 4 + 1];
+      w1 = stat[row * 4 + 1];
       p[4] = w1 >> 24;
       p[5] = w1 >> 16;
       p[6] = w1 >> 8;
       p[7] = w1;
-      w2 = stat[i * 4 + 2];
+      w2 = stat[row * 4 + 2];
       p[7] = w1 | w2 >> 28;
       p[8] = w2 >> 20;
       p[9] = w2 >> 12;
       p[10] = w2 >> 4;
       p[11] = w2 << 4;
-      w3 = stat[i * 4 + 3];
+      w3 = stat[row * 4 + 3];
       p[11] = w2 << 4 | w3 >> 28;
       p[12] = w3 >> 20;
       p[13] = w3 >> 12;

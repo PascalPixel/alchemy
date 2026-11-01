@@ -1,102 +1,115 @@
-// Draft, differ 157 of 148: translated from its listing; names and structure
-// still to do.
+// Draft, differ 178 of 148, skeleton gap 44 (tla-en, 2026-11-01)
+// Control flow, switch, fields and arguments are the native's. What is left
+// follows from allocation and one store this form does not make.
+// The native loads map->origin[1] and stores it to sp[0], its whole 4-byte
+// frame, and nothing reads the slot. Plain C sprites it: an unread local and a
+// one-element array both vanish. The likely source is a local used only in a
+// comparison that goes away after reload; that, or a volatile or stack-forced
+// local, is a dead-code device, so it is left for a round that allows one. A
+// volatile local alone brings the skeleton only 1 closer.
+// Native registers: viewX r7, viewZ r6, sprite r5, z r4, map r8, work r10, i r9,
+// tile r11, x r1, y r0, level r2. Here work outranks viewX, viewZ and map and
+// takes r7, map goes to the stack, and with work low no reload evicts the jump
+// target to ip (the native's mov r12), level takes r1 and the constants split
+// across r2 and r3, so cross-jumping cannot merge the tails of cases 0 and 3
+// and 511 is built from 334. Reading the level before the switch under the
+// range test gives the native's load before the table jump. Measured without
+// gain: the address spelled Data_02004030 in any or all places (worse when the
+// loop or the tail reads it), block scope against function scope, tile as u32
+// or u16, view values or i as u32, i as s16, a goto into a shared tail of cases
+// 0 and 3 (removed 25, added 20), and the limit in a local.
 #include "types.h"
-#include "actor.h"
-#include "main_routine_work.h"
+#include "map.h"
 #include "ram_buffer.h"
-#include "text/msg_ids.h"
+#include "vram_tab.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+struct AnkohlRuinsFloatSprite {
+  s32 x;
+  s32 z;
+  s32 y;
+  u32 kind;
+  u32 oam[3];
+};
 
-extern u8 Data_02004030[];
-extern u8 gResourceTableEntries[];
+struct AnkohlRuinsFloatWork {
+  s16 unk00;
+  s16 tile;
+  s32 level;
+  s32 unk08;
+  s32 unk0c;
+  struct AnkohlRuinsFloatSprite sprites[8];
+};
+
+extern struct AnkohlRuinsFloatWork Data_02004030;
+
 s32 GameFlag_Test(s32 flag);
-s32 Func_02002dac();
+void Func_02002dac(u32 *oam, s32 b);
 
-s32 Func_020012c4(void) {
-  s32 r8, r7, r6, r10, r5, r11, v0, r9, r4, r0, r1, r3, r2;
-  s32 stack[1];
+void Func_020012c4(void) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 *view = &map->viewX;
+  s32 viewX = view[0] & 0xffff0000;
+  s32 viewZ = view[1] & 0xffff0000;
+  struct AnkohlRuinsFloatWork *work = &Data_02004030;
+  struct AnkohlRuinsFloatSprite *sprite = work->sprites;
+  s32 tile = gResourceTableEntries[work->tile].offset >> 5;
+  s32 i;
+  s32 *layer;
 
-  /* sub sp, #4 */
-  r8 = (s32)Ram_HeapSlots->mapWork;
-  r7 = FIELD_AT(r8, s32, 228);
-  r6 = FIELD_AT(r8, s32, 232);
-  r7 = r7 & -65536;
-  r6 = r6 & -65536;
-  stack[0] = FIELD_AT(FIELD_AT(r8, s32, 0), s32, 4);
-  r10 = (s32)Data_02004030;
-  r5 = r10;
-  r11 = (u32)(FIELD_AT(((*(s16 *)(((s32)Data_02004030) + 2)) << 2) +
-                           ((s32)gResourceTableEntries),
-                       u16, 2)) >>
-        5;
-  r5 = r5 + 16;
-  v0 = GameFlag_Test(0x205);
-  if (v0 != 0)
-    goto L_020093e8;
-  if ((FIELD_AT(r10, s32, 4)) >= 0x200000)
-    goto L_020093e8;
-  r9 = 0;
-L_02009328:
-  r4 = FIELD_AT(r5, s32, 4);
-  r0 = FIELD_AT(r5, s32, 8);
-  r1 = FIELD_AT(r5, s32, 0);
-  r3 = FIELD_AT(r5, s32, 12);
-  if ((u32)(FIELD_AT(r5, s32, 12)) > (u32)4)
-    goto L_02009388;
-  r2 = FIELD_AT(r10, s32, 4);
-L_02009358:
-  r1 = r1 - r2;
-  r3 = 0x100000;
-L_0200935e:
-  r0 = r0 + r2;
-  if (r2 <= r3)
-    goto L_02009388;
-  goto L_02009386;
-L_02009366:
-  r0 = r0 + r2;
-  r1 = r1 - r2;
-  goto L_02009388;
-L_0200936c:
-  r0 = r0 + r2;
-  r1 = r1 + r2;
-  goto L_02009388;
-L_02009372:
-  r1 = r1 + r2;
-  r3 = 0x100000;
-  goto L_0200935e;
-L_0200937a:
-  if (r2 >= 0x100000)
-    goto L_02009386;
-  r0 = r0 + r2;
-  goto L_02009388;
-L_02009386:
-  r1 = -0x100000;
-L_02009388:
-  r2 = (((r4 - r6) - r0) >> 16) - 8;
-  r1 = ((r1 - r7) >> 16) - 8;
-  if ((u32)(((r1 - r7) >> 16) + 7) > (u32)334)
-    goto L_020093dc;
-  if (r2 < -15)
-    goto L_020093dc;
-  if (r2 > 239)
-    goto L_020093dc;
-  FIELD_AT(r5, s32, 16) = 0;
-  FIELD_AT(r5, s32, 20) = ((r2 & 255) | ((r1 & 511) << 16)) | 1073743872;
-  FIELD_AT(r5, s32, 24) = 1024 | r11;
-  Func_02002dac(r5 + 16, 255);
-L_020093dc:
-  r9 = r9 + 1;
-  r5 = r5 + 28;
-  if (r9 <= 7)
-    goto L_02009328;
-L_020093e8:
-  FIELD_AT(r8, s32, 332) = (FIELD_AT(r10, s32, 12)) + (FIELD_AT(r10, s32, 4));
-  /* add sp, #4 */
-  return r10;
+  if (GameFlag_Test(0x205) == 0 && work->level < 0x200000) {
+    for (i = 0; i <= 7; i++) {
+      u32 kind = sprite->kind;
+      s32 x = sprite->x;
+      s32 y = sprite->y;
+      s32 z = sprite->z;
+      s32 sx, sy;
+      s32 level;
+
+      if ((u32)kind <= 4) {
+        level = work->level;
+        switch (kind) {
+        case 0:
+          x -= level;
+          y += level;
+          if (level > 0x100000)
+            x = -0x100000;
+          break;
+        case 1:
+          x -= level;
+          y += level;
+          break;
+        case 2:
+          x += level;
+          y += level;
+          break;
+        case 3:
+          x += level;
+          y += level;
+          if (level > 0x100000)
+            x = -0x100000;
+          break;
+        case 4:
+          if (level < 0x100000) {
+            y += level;
+            break;
+          }
+          x = -0x100000;
+          break;
+        }
+      }
+      sx = ((x - viewX) >> 16) - 8;
+      sy = ((z - viewZ - y) >> 16) - 8;
+      if (sx >= -15 && sx <= 319 && sy >= -15 && sy <= 239) {
+        sx &= 511;
+        sy &= 255;
+        sprite->oam[0] = 0;
+        sprite->oam[1] = sy | (sx << 16) | 0x40000800;
+        sprite->oam[2] = tile | 0x400;
+        Func_02002dac(sprite->oam, 255);
+      }
+      sprite++;
+    }
+  }
+  layer = (s32 *)&map->layers[1];
+  layer[3] = work->level + work->unk0c;
 }

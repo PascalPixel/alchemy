@@ -1,14 +1,26 @@
-// Draft, differ 140 of 132 (was 159): finds the pushable object in front of
-// the leader: records the leader's direction (its angle's high four bits),
-// then for objects 8 to 63 (the event work's object table) and the six kinds
-// of gData_02004ca4 tests the point one step ahead (gData_02004cc8, packed
-// offsets by direction) against the kind's box (gData_02004cb0); a hit not
-// already level with the leader on the kind's axis records the kind and the
-// object's number and is returned, else 0. The same listing as overlay 674's
-// Func_02003940 and 662's Func_0200033c, and written as the latter's draft
-// (two goto loops, a pointer stepping through the object table). Left: as
-// that draft, the box edges take the low registers the native gives the
-// leader, the object and the kind.
+// Draft, differ 138 of 132, skeleton gap 32 (tla-en, 2026-11-01)
+// Finds the pushable object in front of the leader: records the leader's
+// direction (its angle's high four bits), then for objects 8 to 63 (the event
+// work's object table) and the six kinds of gData_02004ca4 tests the point one
+// step ahead (gData_02004cc8, packed offsets by direction) against the kind's
+// box (gData_02004cb0); a hit not already level with the leader on the kind's
+// axis records the kind and the object's number and is returned, else 0. The
+// same listing as overlay 674's Func_02003940 and 662's Func_0200033c.
+// Left: the whole gap is allocation; the statements already follow the listing
+// row for row. The native gives r5, r6, r7 to k, object, leader, then ip, lr,
+// r8, r10, r9, r11 to top, entry, z, left, x, i. Here top, z, left take r5 to
+// r7 and every use of k, object and leader gains a mov. flow.c weights a ref
+// by loop depth + 1, and global.c ranks refs * log2(refs) / live length; with
+// the weights of a depth-2 body top, z, left, x rank 1.35 to 1.0 and k, object,
+// leader, entry 0.8 to 0.45. Counting every ref as 1 gives 0.21 k, 0.20 object,
+// 0.18 leader, 0.15 top, 0.13 entry, 0.125 z, 0.12 left, 0.11 x, i last:
+// exactly the native's order. So the native's flow saw no loop depth here,
+// although both loops are natural in this C; nothing plain in the source moves
+// these ranks. XXX: why the native's refs carry no loop weight; a matched
+// nested loop whose allocation depends on those weights would settle it.
+// Measured (gap): for loops 39 (k * 4 strength-reduced, tables hoisted), outer
+// for or do with inner goto 43, inner do with outer goto 43, right and bottom
+// not named 46; the edges in an inner block or declared first change nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

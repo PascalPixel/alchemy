@@ -1,14 +1,22 @@
-// Near miss, differ 366 of 879 (tla-en, 2026-10-31): the control flow, calls,
-// arguments and field accesses are the native's; what is left is allocation.
-// The native keeps map in r8, entrance in r10, a zero in r9 across both
-// layers and the calls after them, the columns 34 and 68 in r10 and r8, and
-// reloads Iwram_MulQ16's address for each call; this form puts entrance in
-// r8 and map in r10, keeps the routine's address in r9 across the four
-// calls, keeps the zero (in r8) only on entrance 55, holds 68 in r10 and
-// rematerializes 34, and the deal's sum and pattern take r7 where the native
-// has r6 (px r6 for r7). The stage-resume test's field16[0] is moved into
-// both predecessors by GCSE (ldrh, then lsls/asrs at the call) where the
-// native reloads it with ldrsh at the call.
+// Draft, differ 321 of 879, skeleton gap 99 (tla-en, 2026-11-01). Control flow,
+// calls, arguments and field accesses are the native's; what is left follows
+// from allocation, plus one schedule.
+// The native has map r8, entrance r10, 34 in r10 and 68 in r8 on entrance 55,
+// and one zero in r9 through both courses, with Iwram_MulQ16 and 152 << 16
+// rematerialized. This form has entrance r8, map r10, because local-alloc gives
+// entrance 55's zero r8 (4 refs over 166 insns outranks x1 and x2), which
+// conflicts with map. One zero variable across both branches does give map r8
+// and entrance r10, but that zero then gets no register and the routine's
+// address takes r9 at retry (gap 132, so not kept). On the plain course the
+// zero's pseudo finds no register although nothing listed conflicts with r9;
+// finding out why is the next step, since it decides about 40 lines of the gap.
+// The x and zero variables are per branch on purpose: shared, the 34 stays
+// unallocated on entrance 55 (gap 126). The course's value shares its variable
+// with the deal's sum: a variable of its own costs 16 to 96 lines of gap.
+// Schedule: the native's eors (and adds #6 on entrances 33 and 34) follows the
+// strh run, here it comes right after the first strh. The native's order fits
+// stores chained to each other, but no plain form tried gives that; volatile
+// stores break the rest (gap 173). Literal 34 on the plain course is worse.
 //
 // The Trial Road's map setup. In room 1, by entrance:
 // 31 and 32 (or 33 and 34, with a different start) deal the stage order once
@@ -60,7 +68,8 @@ struct TrialRoadDeal {
   s16 field1c;
 };
 
-#define ORDER(state) ((state)->order)
+// The dealt order through a plain pointer: as state->order, 8 more differ.
+#define ORDER(state) ((s16 *)(state))
 
 // Places `layer` `column` cells into the map: its offset (column << 20), its
 // cells and terrain from that column on, and its position from the view. The
@@ -77,7 +86,7 @@ struct TrialRoadDeal {
   x = (column);                                                                \
   words[2] = (column) << 20;                                                   \
   layer->cells = (struct MapCell *)Ram_MapCellBuffer + x;                      \
-  words[3] = 0;                                                                \
+  words[3] = zero;                                                             \
   layer->terrainIds = gMapShapeGrid + x;                                       \
   words[0] = Iwram_MulQ16(*viewX, words[4]) + words[2];                        \
   words[1] = Iwram_MulQ16(*viewZ, words[5]) + words[3]
@@ -156,10 +165,13 @@ s32 Func_0200242c(void) {
       s32 *viewZ = &map->viewZ;
       struct MapLayer *layer;
       s32 *words;
-      s32 x1;
-      s32 x2;
 
       if (entrance == 55) {
+        s32 x1;
+        s32 x2;
+        s32 zero;
+
+        zero = 0;
         layer = &map->layers[1];
         SET_LAYER(34, x1);
         layer = &map->layers[2];
@@ -191,6 +203,11 @@ s32 Func_0200242c(void) {
           goto hideUnused55;
         Func_020057e8();
       } else {
+        s32 x1;
+        s32 x2;
+        s32 zero;
+
+        zero = 0;
         layer = &map->layers[1];
         SET_LAYER(34, x1);
         layer = &map->layers[2];
@@ -250,8 +267,11 @@ s32 Func_0200242c(void) {
           // A pointer of its own keeps the state's address in r5 across the
           // calls; through gTrialRoadState each test reloads it (5 more).
           road = gTrialRoadState;
+          // The call's argument reads through the other struct: through the same
+          // one GCSE moves the load into both predecessors (11 more of gap).
           if (road->field16[0] < road->field1a || GameFlag_Test(642)) {
-            Func_02000218(road->mirrored, road->field16[0]);
+            Func_02000218(road->mirrored,
+                          ((struct TrialRoadDeal *)road)->field16[0]);
             GameFlag_SetBit(642);
             GameFlag_SetBit(644);
           }

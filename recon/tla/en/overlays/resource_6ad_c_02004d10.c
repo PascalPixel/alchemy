@@ -1,19 +1,30 @@
-// Near miss, differ 327 of 305 (tla-en, 2026-10-31): the shape is the
-// native's (one 24-byte PushMove by value, its first four words in r0-r3
-// spilled to the pretend-argument area and number and callback on the
+// Draft, differ 327 of 305, skeleton gap 129 (tla-en, 2026-11-01): the shape
+// is the native's (one 24-byte PushMove by value, its first four words in
+// r0-r3 spilled to the pretend-argument area and number and callback on the
 // stack, as overlay 668's caller passes it; the direction in a local whose
 // times-four lives in one register throughout; the tables not const, so
 // their bytes are reread after each call; start below cell in the frame).
-// Left: the native's CSE starts afresh between the leader's update hook and
-// Actor_WaitForMoveById, with no branch there: it reloads gMainRoutineWork
-// and gData_02005f64 into new registers (r5, r10) and keeps stepIndex, 0,
-// in r9 as a register index into gData_02005f7c; this compiler carries all
-// three through the whole function (stepIndex folds to a constant index),
-// which moves the allocation of every callee-saved register. A one-pass
-// block at wait(4) splits the first CSE pass (differ 316) but the second
-// joins the loads again; reading move.direction at each use instead of the
-// local measures 310, without the native's one register. The leader's last
-// offset is a guess at the native's shift pair.
+// Left: the native's CSE starts afresh after the leader's update hook, with
+// no branch there: it reloads gMainRoutineWork and gData_02005f64 into new
+// registers (r5, r10) and keeps stepIndex, 0, in r9 as a register index into
+// gData_02005f7c; here all three carry through the whole function and
+// stepIndex folds, which moves every callee-saved register. No plain form
+// gives that boundary: it needs a label alive through both CSE passes and
+// gone by the end. Measured, none kept, because each is a device: an unused
+// sum after the update hook, `spareX = ABS(move.x - start.x) +
+// ABS(move.z - start.z);` before wait(4), which only flow deletes, gives
+// draft 305, differ 218, skeleton gap 104, and looks like the native's
+// source if the next round may add a tagged `dead`; `if (object && leader)
+// spareX = 1;` 229 and 109 (a one-branch arm does not split: CSE skips it);
+// a real one-pass `for (; stepIndex < 1; stepIndex++)` from wait(4) to the
+// second mode call 279 and 113, unfolding stepIndex but keeping its counter
+// and test. With the sum, stepIndex still folds (global constant
+// propagation, 0 is available at the read), which is the next thing to
+// settle. A one-pass block at wait(4) splits only the first CSE pass (differ
+// 316). Reading move.direction at each use measures 310 without the
+// native's one register. Declaration order, unsigned speed locals and
+// stepIndex's placement change nothing. The leader's last offset is a guess
+// at the native's shift pair.
 //
 // Overlay 6ad's copy of resource_668_c_020044c4.c, with this overlay's
 // symbols: carries out a push measured as overlay 668's Func_02004240

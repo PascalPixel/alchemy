@@ -1,472 +1,322 @@
-// Draft, differ 294 of 931: Aqua Rock's map preparation: for each room and
-// entrance it sets the water level, places the statues and boulders the flags
-// have moved, opens or closes the cells around them, and in the rooms whose
-// water drains it shows the drained state once its flag is set. Translated from
-// its listing; names and structure still to do.
+// Draft, differ 59 of 931, skeleton gap 7/6 (tla-en, 2026-11-01)
+// Aqua Rock's map preparation: for each room and entrance it sets the water
+// level, places the statues and boulders the flags have moved, opens or closes
+// the cells around them, and in the rooms whose water drains it shows the
+// drained state once its flag is set.
+// Left: BG1_SET_PRIORITY_1's stacked value. The listing keeps a u16 at sp+10
+// (mov r1, sp; adds r1, #10; strh) that is stored and never reloaded. A scalar
+// only stays in memory with its address taken (*&control gives differ 36, gap
+// 7/7, with registers matched), and that is a device; u16 control[1] loses the
+// store; u16 control[2] keeps it as add r1, sp, #8; strh r3, [r1, #2].
+// Also left: the actor-clearing loops of rooms 4 and 6. As for loops loop.c
+// hoists their movs #0, and the room 9 loop as a for also brings adds r1, #2
+// into the prologue, so they are goto loops; a jump threads over their exit,
+// giving bgt in room 4 and one extra b in room 6. A zero local spills.
+// The Func_020036b8 loops are for loops counting up: loop.c reverses the i < N
+// ones and leaves room 5's i <= 4, as the listing has them. Each i is a
+// separate variable on purpose: one shared counter takes r6 and pushes object
+// into r5.
 #include "iwram_call.h"
 #include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "scene_ids.h"
+#include "scene_tables.h"
+#include "system/io_reg.h"
 #include "text/msg_ids.h"
 #include "types.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+struct MapBits {
+  u8 unk00[23];
+  u8 low : 2;
+  u8 mode : 2;
+};
 
-void Func_02003278();
-s32 Func_020032d4();
-s32 Actor_GetById();
-void Func_02003cc4();
-s32 GameFlag_Test();
-void Func_02003d24();
-s32 Func_02003d1c();
-void Func_0200349c();
-void Func_02003ddc();
+#define BG1_SET_PRIORITY_1()                                                   \
+  do {                                                                         \
+    u16 control[2];                                                            \
+    control[1] = REG_BG1CNT & 0xfffc;                                          \
+    REG_BG1CNT = control[1] | 1;                                               \
+  } while (0)
+
+void Func_02003278(void);
+void Func_020032d4(u32 first, s32 level, s32 baseLevel);
+struct Actor *Actor_GetById(s32 id);
+void Func_02003cc4(struct Actor *object, s32 mode);
+s32 GameFlag_Test(s32 flag);
+void Func_02003d24(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_02003d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_0200349c(u32 index, s32 height);
+void Func_02003ddc(s32 id, s32 x, s32 z);
 void Func_02003ea4();
 void Actor_SetSingleChildFlags();
-void Func_02003628();
-void Func_02003688();
-void Func_020036b8();
-void Func_020007a8();
-void Func_02003420();
-void Func_02000b84();
-s32 Func_02000b24();
-void GameFlag_SetBit();
-void Func_02000ad8();
+void Func_02003628(void);
+s32 Func_02003688(s32 x, s32 y, s32 z, s32 kind);
+s32 Func_020036b8(s32 a, s32 b);
+void Func_020007a8(void);
+void Func_02003420(s32 id, s32 kind, s32 height);
+void Func_02000b84(void);
+s32 Func_02000b24(s32 id, s32 value);
+void GameFlag_SetBit(s32 flag);
+void Func_02000ad8(void);
 void Func_02003edc();
 void Func_02003ee4();
 
-s32 Func_02002340(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 r6, r5, r7, r8, r3, v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, r0,
-      v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26,
-      v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38, v39, r1, r2;
-  s32 stack[3];
+s32 Func_02002340(void) {
+  s32 scene = gMainRoutineWork.scene;
+  s32 entrance = gMainRoutineWork.entrance;
+  s32 i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16,
+      i17;
+  struct Actor *object;
+  s32 a, b;
+  u8 *map;
 
-  r6 = (s32)&gMainRoutineWork;
-  r5 = FIELD_AT(r6, s16, 480);
-  r7 = FIELD_AT(r6, s16, 482);
-  r8 = 0x3000000;
-  FIELD_AT((s32)Ram_HeapSlots->mapWork, u8, 23) =
-      (-13 & (FIELD_AT((s32)Ram_HeapSlots->mapWork, u8, 23))) | 4;
-  /* sub (s32)stack, #12 */
+  ((struct MapBits *)Ram_HeapSlots->mapWork)->mode = 1;
   Func_02003278();
-  if (r5 == (160))
-    goto L_0200a380;
-  goto L_0200a52a;
-L_0200a380:
-  r3 = r7 - 3;
-  if ((u32)(r7 - 3) <= (u32)1)
-    goto L_0200a38e;
-  if (r7 == 6)
-    goto L_0200a38e;
-  if (r7 != 8)
-    goto L_0200a39c;
-L_0200a38e:
-  Func_020032d4(33, 0, -2);
-  goto L_0200a4c8;
-L_0200a39c:
-  if (r7 != 5) {
-    if (r7 != 7)
-      goto L_0200a462;
-  }
-  v0 = Actor_GetById(12);
-  r6 = v0;
-  r5 = 0;
-  FIELD_AT(r6, u8, 85) = r5;
-  FIELD_AT(r6, s32, 20) = r5;
-  FIELD_AT(r6, s32, 12) = r5;
-  Call2((void (*)())Func_02003cc4, v0, 0);
-  v1 = Actor_GetById(13);
-  r6 = v1;
-  FIELD_AT(r6, u8, 85) = r5;
-  FIELD_AT(r6, s32, 20) = r5;
-  FIELD_AT(r6, s32, 12) = r5;
-  v2 = GameFlag_Test(0x230);
-  r5 = v2;
-  if (r5 == 0) {
-    Call6((void (*)())Func_02003d24, 104, 80, 16, 10, 104, 40);
-    Call6((void (*)())Func_02003d24, 110, 116, 18, 12, 39, 105);
-    Call6((void (*)())Func_02003d1c, 64, 32, 64, 32, r5, 32);
-    Func_020032d4(33, 0, 0);
-  } else {
-    Call3((void (*)())Func_020032d4, 33, 4, 0);
-    v3 = Actor_GetById(12);
-    r6 = v3;
-    Call2((void (*)())Func_0200349c, ((FIELD_AT(r6, s32, 8)) >> 20) - 42, 0);
-  }
-  v4 = GameFlag_Test(0x250);
-  if (v4 == 0)
-    goto L_0200a4c8;
-  Call6((void (*)())Func_02003d1c, 41, 42, 1, 1, 43, 44);
-  goto L_0200a4c8;
-L_0200a462:
-  if ((u32)(r7 - 9) > (u32)1)
-    goto L_0200a4c8;
-  v5 = GameFlag_Test(0x231);
-  r6 = v5;
-  if (r6 != 0)
-    goto L_0200a4be;
-  stack[0] = 77;
-  r5 = 32;
-  Call6((void (*)())Func_02003d24, 77, 80, 23, 20, 77, r5);
-  Call6((void (*)())Func_02003d24, 112, 96, 16, 20, 12, 98);
-  Call6((void (*)())Func_02003d1c, 64, 32, 64, 32, r6, r5);
-  Func_020032d4(33, 0, 0);
-  goto L_0200a4c8;
-L_0200a4be:
-  Func_020032d4(33, 4, 0);
-L_0200a4c8:
-  v6 = GameFlag_Test(0x95a);
-  if (v6 != 0) {
-    Call3((void (*)())Func_02003ddc, 10, 0xb80000, 0xc80000);
-    r5 = 12;
-    Call6((void (*)())Func_02003d1c, 0, 12, 1, 1, 9, r5);
-    Call6((void (*)())Func_02003d1c, 0, 12, 1, 1, 13, r5);
-  }
-  v7 = GameFlag_Test(0x95b);
-  if (v7 != 0)
-    goto L_0200a51a;
-  goto L_0200abc4;
-L_0200a51a:
-  Call3((void (*)())Func_02003ddc, 11, 0x3380000, 0xd80000);
-  goto L_0200abc4;
-L_0200a52a:
-  if (r5 != (161))
-    goto L_0200a558;
-  r3 = r7 - 1;
-  if ((u32)(r7 - 1) <= (u32)1) {
+  if (scene == (s32)&SceneId_Ov67cRoom1) {
+    if ((u32)(entrance - 3) <= 1 || entrance == 6 || entrance == 8) {
+      Func_020032d4(33, 0, -2);
+    } else if (entrance == 5 || entrance == 7) {
+      object = Actor_GetById(12);
+      i1 = 0;
+      object->motionFlags = i1;
+      object->terrainHeight = i1;
+      object->y = i1;
+      Call2((void (*)())Func_02003cc4, (s32)object, 0);
+      object = Actor_GetById(13);
+      object->motionFlags = i1;
+      object->terrainHeight = i1;
+      object->y = i1;
+      i2 = GameFlag_Test(0x230);
+      if (i2 == 0) {
+        Call6((void (*)())Func_02003d24, 104, 80, 16, 10, 104, 40);
+        Call6((void (*)())Func_02003d24, 110, 116, 18, 12, 39, 105);
+        Call6((void (*)())Func_02003d1c, 64, 32, 64, 32, i2, 32);
+        Func_020032d4(33, 0, 0);
+      } else {
+        Call3((void (*)())Func_020032d4, 33, 4, 0);
+        object = Actor_GetById(12);
+        Call2((void (*)())Func_0200349c, (object->x >> 20) - 42, 0);
+      }
+      if (GameFlag_Test(0x250)) {
+        Call6((void (*)())Func_02003d1c, 41, 42, 1, 1, 43, 44);
+      }
+    } else if ((u32)(entrance - 9) <= 1) {
+      a = GameFlag_Test(0x231);
+      if (a == 0) {
+        i3 = 32;
+        Call6((void (*)())Func_02003d24, 77, 80, 23, 20, 77, i3);
+        Call6((void (*)())Func_02003d24, 112, 96, 16, 20, 12, 98);
+        Call6((void (*)())Func_02003d1c, 64, 32, 64, 32, a, i3);
+        Func_020032d4(33, 0, 0);
+      } else {
+        Func_020032d4(33, 4, 0);
+      }
+    }
+    if (GameFlag_Test(0x95a)) {
+      Call3((void (*)())Func_02003ddc, 10, PIXELS(184), PIXELS(200));
+      i4 = 12;
+      Call6((void (*)())Func_02003d1c, 0, 12, 1, 1, 9, i4);
+      Call6((void (*)())Func_02003d1c, 0, 12, 1, 1, 13, i4);
+    }
+    if (GameFlag_Test(0x95b)) {
+      Call3((void (*)())Func_02003ddc, 11, PIXELS(824), PIXELS(216));
+    }
+  } else if (scene == (s32)&SceneId_Ov67cRoom2) {
+    if ((u32)(entrance - 1) <= 1) {
+      Func_020032d4(33, 0, -2);
+    }
+    object = Actor_GetById(8);
+    object->motionFlags = 0;
+    object->terrainHeight = 0;
+    object->y = 0;
+  } else if (scene == (s32)&SceneId_Ov67cRoom3) {
+    Call1((void (*)())Func_02003ea4, 0);
+    Call2((void (*)())Actor_SetSingleChildFlags, (s32)Actor_GetById(9), 0);
+    Call2((void (*)())Actor_SetSingleChildFlags, (s32)Actor_GetById(10), 0);
+    Func_020032d4(33, 8, -2);
+    Call3((void (*)())Func_020032d4, 40, 8, 8);
+    if (GameFlag_Test(0xa66)) {
+      Func_02003628();
+      Value4((s32 (*)())Func_02003688, 16, 4, 16, 2);
+      Value4((s32 (*)())Func_02003688, 22, 4, 16, 0);
+      for (i5 = 0; i5 < 6; i5++)
+        Func_020036b8(33, 55);
+    }
+    if (GameFlag_Test(0x95d)) {
+      Call6((void (*)())Func_02003d24, 75, 96, 7, 13, 80, 27);
+      i6 = 16;
+      b = 31;
+      Call6((void (*)())Func_02003d24, 91, 96, 7, 10, i6, b);
+      Call6((void (*)())Func_02003d24, 99, 96, 7, 14, i6, 91);
+      Call6((void (*)())Func_02003d1c, 43, 0, 5, 9, 17, b);
+      Func_020007a8();
+    } else {
+      Call6((void (*)())Func_02003d1c, 17, 32, 5, 1, 17, 31);
+    }
+  } else if (scene == (s32)&SceneId_Ov67cRoom4) {
+    Call1((void (*)())Func_02003ea4, 0);
+    if ((u32)(entrance - 6) <= 1)
+      goto statues;
+    goto no_statues;
+  statues:
+    {
+      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+      Value3((s32 (*)())Func_02003420, 12, 5, 4);
+      Value3((s32 (*)())Func_02003420, 13, 3, 4);
+      Value3((s32 (*)())Func_02003420, 14, 4, 4);
+      Func_020032d4(40, 4, 4);
+      if (!GameFlag_Test(0x249) && !Value1((s32 (*)())GameFlag_Test, 0xa64)) {
+        map = (u8 *)Ram_HeapSlots->mapWork;
+        i7 = 39;
+        Call6((void (*)())Func_02003d24, 64, 64, 16, 13, 71, i7);
+        Call6((void (*)())Func_02003d1c, 71, 39, 16, 15, 7, i7);
+        Func_02000b84();
+        map[262] = 1;
+        BG1_SET_PRIORITY_1();
+      } else if (Value1((s32 (*)())GameFlag_Test, 0xa64) ||
+                 GameFlag_Test(0x248)) {
+        if (Value1((s32 (*)())GameFlag_Test, 0xa64)) {
+          Call3((void (*)())Func_02003ddc, 12, PIXELS(280), PIXELS(712));
+        }
+        Func_02000b24(12, 38);
+        Func_02003628();
+        Value4((s32 (*)())Func_02003688, 12, 2, 45, 1);
+        for (i8 = 0; i8 < 8; i8++)
+          Func_020036b8(33, 55);
+        Call1((void (*)())GameFlag_SetBit, 0x249);
+      }
+      i9 = 12;
+    clear_statues:
+      object = Actor_GetById(i9);
+      object->motionFlags = 0;
+      object->terrainHeight = 0;
+      object->y = 0;
+      i9++;
+      if (i9 <= 14)
+        goto clear_statues;
+      goto statues_cleared;
+    }
+  no_statues:
+    Func_020032d4(33, 0, -4);
+  statues_cleared:
+    if (GameFlag_Test(0xa6a)) {
+      Func_02000ad8();
+    }
+  } else if (scene == (s32)&SceneId_Ov67cRoom5) {
     Func_020032d4(33, 0, -2);
+    Call3((void (*)())Func_020032d4, 40, 0, 0);
+    Call1((void (*)())Func_02003ea4, 0);
+    if (((u32)(entrance - 1) <= 3 || entrance == 7) && GameFlag_Test(0xa67)) {
+      Func_02003628();
+      Value4((s32 (*)())Func_02003688, 44, 0, 34, 2);
+      for (i10 = 0; i10 <= 4; i10++)
+        Func_020036b8(33, 55);
+    }
+  } else if (scene == (s32)&SceneId_Ov67cRoom6) {
+    Call1((void (*)())Func_02003ea4, 0);
+    if (entrance == 1 || entrance == 13) {
+      Func_020032d4(33, 0, -2);
+    } else if (entrance == 9 || entrance == 11 || entrance == 12) {
+      Func_020032d4(33, 0, -2);
+    }
+    if (!GameFlag_Test(0x238)) {
+      i11 = 13;
+    clear_boulders:
+      object = Actor_GetById(i11);
+      object->motionFlags = 0;
+      object->x = 0;
+      object->z = 0;
+      i11++;
+      if (i11 <= 15)
+        goto clear_boulders;
+      goto done;
+    } else {
+      Call6((void (*)())Func_02003d24, 114, 39, 1, 2, 113, 39);
+      i12 = 41;
+      Call6((void (*)())Func_02003d1c, 105, 41, 12, 13, i12, i12);
+      Call6((void (*)())Func_02003d24, 105, 105, 12, 13, 105, i12);
+      for (i13 = 13; i13 <= 15; i13++) {
+        object = Actor_GetById(i13);
+        if (GameFlag_Test(i13 + 580)) {
+          Call6((void (*)())Func_02003d1c, 47, 45, 1, 1, object->x >> 20,
+                object->z >> 20);
+        }
+      }
+    }
+  } else if (scene == (s32)&SceneId_Ov67cRoom7) {
+    Func_020032d4(33, 0, -2);
+  } else if (scene == (s32)&SceneId_Ov67cRoom8) {
+    Call1((void (*)())Func_02003ea4, 0);
+    Func_020032d4(33, 0, -2);
+    Func_02003edc();
+    Call3((void (*)())Func_02003ee4, 0, 8, 9);
+  } else if (scene == (s32)&SceneId_Ov67cRoom9) {
+    if ((u32)(entrance - 3) <= 1) {
+      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+      Value3((s32 (*)())Func_02003420, 10, 6, 4);
+      Value3((s32 (*)())Func_02003420, 11, 3, 4);
+      Value3((s32 (*)())Func_02003420, 12, 5, 4);
+      Value3((s32 (*)())Func_02003420, 13, 6, 4);
+      Value3((s32 (*)())Func_02003420, 14, 5, 4);
+      Value3((s32 (*)())Func_02003420, 15, 4, 4);
+      Value3((s32 (*)())Func_02003420, 16, 4, 4);
+      Value3((s32 (*)())Func_02003420, 17, 3, 4);
+      Value3((s32 (*)())Func_02003420, 18, 6, 4);
+      Func_020032d4(40, 4, 4);
+      if (!GameFlag_Test(0x24b) && !Value1((s32 (*)())GameFlag_Test, 0xa65)) {
+        map = (u8 *)Ram_HeapSlots->mapWork;
+        i14 = 13;
+        Call6((void (*)())Func_02003d24, 64, 64, 19, 17, 100, i14);
+        Call6((void (*)())Func_02003d24, 35, 105, 23, 24, 35, 73);
+        Call6((void (*)())Func_02003d1c, 100, 13, 19, 19, 36, i14);
+        map[262] = 1;
+        BG1_SET_PRIORITY_1();
+      } else if (Value1((s32 (*)())GameFlag_Test, 0xa65) ||
+                 GameFlag_Test(0x24a)) {
+        if (Value1((s32 (*)())GameFlag_Test, 0xa65)) {
+          Call3((void (*)())Func_02003ddc, 12, PIXELS(808), PIXELS(296));
+          Call3((void (*)())Func_02003ddc, 13, PIXELS(680), PIXELS(360));
+          Call3((void (*)())Func_02003ddc, 15, PIXELS(744), PIXELS(424));
+        }
+        Call2((void (*)())Func_02000b24, 12, 38);
+        Call2((void (*)())Func_02000b24, 13, 39);
+        Func_02000b24(15, 37);
+        Func_02003628();
+        Value4((s32 (*)())Func_02003688, 38, 2, 19, 1);
+        for (i15 = 0; i15 < 8; i15++)
+          Func_020036b8(33, 55);
+        Call1((void (*)())GameFlag_SetBit, 0x24b);
+      }
+    }
+    i16 = 10;
+  clear_pillars:
+    object = Actor_GetById(i16);
+    object->motionFlags = 0;
+    object->terrainHeight = 0;
+    object->y = 0;
+    i16++;
+    if (i16 <= 20)
+      goto clear_pillars;
+    object = Actor_GetById(19);
+    Call6((void (*)())Func_02003d1c, 23, 39, 1, 1, object->x >> 20, 39);
+    if ((u32)(entrance - 1) <= 1) {
+      Call1((void (*)())Func_02003ea4, 0);
+    }
+  } else if (scene == (s32)&SceneId_Ov67cRoom10) {
+    Call1((void (*)())Func_02003ea4, 0);
+    Func_020032d4(33, 0, -2);
+    Call1((void (*)())GameFlag_SetBit, 0x144);
+    if (GameFlag_Test(0x349)) {
+      Call6((void (*)())Func_02003d1c, 38, 9, 7, 6, 13, 9);
+    } else {
+      i17 = 8;
+      Call6((void (*)())Func_02003d24, 77, 8, 7, 6, 50, i17);
+      Call6((void (*)())Func_02003d24, 70, 8, 7, 6, 77, i17);
+      Call6((void (*)())Func_02003d1c, 38, 17, 7, 6, 13, 9);
+    }
   }
-  v8 = Actor_GetById(8);
-  r6 = v8;
-  FIELD_AT(r6, u8, 85) = 0;
-  FIELD_AT(r6, s32, 20) = 0;
-  FIELD_AT(r6, s32, 12) = 0;
-  r3 = 0;
-  goto L_0200abc4;
-L_0200a558:
-  r3 = 162;
-  if (r5 != (162))
-    goto L_0200a654;
-  Call1((void (*)())Func_02003ea4, 0);
-  v9 = Actor_GetById(9);
-  Call2((void (*)())Actor_SetSingleChildFlags, v9, 0);
-  v10 = Actor_GetById(10);
-  Call2((void (*)())Actor_SetSingleChildFlags, v10, 0);
-  Func_020032d4(33, 8, -2);
-  Func_020032d4(40, 8, 8);
-  v11 = GameFlag_Test(0xa66);
-  r0 = v11;
-  if (v11 == 0)
-    goto L_0200a5cc;
-  Func_02003628(r0, r1, r2);
-  Value4((s32 (*)())Func_02003688, 16, 4, 16, 2);
-  Value4((s32 (*)())Func_02003688, 22, 4, 16, 0);
-  r5 = 5;
-L_0200a5be:
-  r5 = r5 - 1;
-  Call2((void (*)())Func_020036b8, 33, 55);
-  if (r5 >= 0)
-    goto L_0200a5be;
-L_0200a5cc:
-  v12 = GameFlag_Test(0x95d);
-  if (v12 == 0)
-    goto L_0200a62c;
-  Call6((void (*)())Func_02003d24, 75, 96, 7, 13, 80, 27);
-  r5 = 16;
-  r6 = 31;
-  Call6((void (*)())Func_02003d24, 91, 96, 7, 10, r5, r6);
-  Call6((void (*)())Func_02003d24, 99, 96, 7, 14, r5, 91);
-  v13 = Func_02003d1c(43, 0, 5, 9, 17, r6);
-  Func_020007a8();
-  goto L_0200abc4;
-L_0200a62c:
-  Call6((void (*)())Func_02003d1c, 17, 32, 5, 1, 17, 31);
-  goto L_0200abc4;
-L_0200a654:
-  r3 = 163;
-  if (r5 == (163))
-    goto L_0200a65c;
-  goto L_0200a7cc;
-L_0200a65c:
-  Call1((void (*)())Func_02003ea4, 0);
-  r3 = r7 - 6;
-  if ((u32)(r7 - 6) <= (u32)1)
-    goto L_0200a66a;
-  goto L_0200a7aa;
-L_0200a66a:
-  v14 = Actor_GetById(FIELD_AT(r6, s32, 532));
-  FIELD_AT(v14, u8, 35) = 32 | (FIELD_AT(v14, u8, 35));
-  Value3((s32 (*)())Func_02003420, 12, 5, 4);
-  Value3((s32 (*)())Func_02003420, 13, 3, 4);
-  Value3((s32 (*)())Func_02003420, 14, 4, 4);
-  Func_020032d4(40, 4, 4);
-  v15 = GameFlag_Test(0x249);
-  if (v15 != 0)
-    goto L_0200a724;
-  v16 = GameFlag_Test(0xa64);
-  if (v16 != 0)
-    goto L_0200a724;
-  r6 = FIELD_AT(r8, s32, 32);
-  stack[0] = 71;
-  r5 = 39;
-  Call6((void (*)())Func_02003d24, 64, 64, 16, 13, 71, r5);
-  v17 = Func_02003d1c(71, 39, 16, 15, 7, r5);
-  Func_02000b84();
-  FIELD_AT(r6, u8, 262) = 1;
-  FIELD_AT((s32)((u8 *)stack + 10), u16, 0) =
-      65532 & (FIELD_AT(67108874, u16, 0));
-  FIELD_AT(67108874, u16, 0) = (65532 & (FIELD_AT(67108874, u16, 0))) | (1);
-  goto L_0200a78c;
-L_0200a724:
-  v18 = GameFlag_Test(0xa64);
-  if (v18 == 0) {
-    v19 = GameFlag_Test(0x248);
-    if (v19 == 0)
-      goto L_0200a78c;
-  }
-  v20 = GameFlag_Test(0xa64);
-  if (v20 != 0) {
-    Call3((void (*)())Func_02003ddc, 12, 0x1180000, 0x2c80000);
-  }
-  v21 = Func_02000b24(12, 38);
-  Func_02003628();
-  Value4((s32 (*)())Func_02003688, 12, 2, 45, 1);
-  r5 = 7;
-L_0200a774:
-  r5 = r5 - 1;
-  Call2((void (*)())Func_020036b8, 33, 55);
-  if (r5 >= 0)
-    goto L_0200a774;
-  Call1((void (*)())GameFlag_SetBit, 0x249);
-L_0200a78c:
-  r5 = 12;
-L_0200a78e:
-  v22 = Actor_GetById(r5);
-  r6 = v22;
-  r5 = r5 + 1;
-  FIELD_AT(r6, u8, 85) = 0;
-  FIELD_AT(r6, s32, 20) = 0;
-  FIELD_AT(r6, s32, 12) = 0;
-  if (r5 <= 14)
-    goto L_0200a78e;
-  goto L_0200a7b6;
-L_0200a7aa:
-  Func_020032d4(33, 0, -4);
-L_0200a7b6:
-  v23 = GameFlag_Test(0xa6a);
-  r0 = v23;
-  if (v23 != 0)
-    goto L_0200a7c6;
-  goto L_0200abc4;
-L_0200a7c6:
-  Func_02000ad8(r0, r1, r2);
-  goto L_0200abc4;
-L_0200a7cc:
-  r3 = 164;
-  if (r5 != (164))
-    goto L_0200a82c;
-  Func_020032d4(33, 0, -2);
-  Call3((void (*)())Func_020032d4, 40, 0, 0);
-  Call1((void (*)())Func_02003ea4, 0);
-  r3 = r7 - 1;
-  if ((u32)(r7 - 1) <= (u32)3)
-    goto L_0200a7fa;
-  if (r7 == 7)
-    goto L_0200a7fa;
-  goto L_0200abc4;
-L_0200a7fa:
-  v24 = GameFlag_Test(0xa67);
-  r0 = v24;
-  if (v24 != 0)
-    goto L_0200a80a;
-  goto L_0200abc4;
-L_0200a80a:
-  Func_02003628(r0, r1, r2);
-  Value4((s32 (*)())Func_02003688, 44, 0, 34, 2);
-  r5 = 0;
-L_0200a81c:
-  r5 = r5 + 1;
-  Call2((void (*)())Func_020036b8, 33, 55);
-  if (r5 <= 4)
-    goto L_0200a81c;
-  goto L_0200abc4;
-L_0200a82c:
-  r3 = 165;
-  if (r5 != (165))
-    goto L_0200a900;
-  Call1((void (*)())Func_02003ea4, 0);
-  if (r7 != 1) {
-    if (r7 != 13)
-      goto L_0200a84e;
-  }
-  Func_020032d4(33, 0, -2);
-  goto L_0200a866;
-L_0200a84e:
-  if (r7 == 9)
-    goto L_0200a85a;
-  if (r7 == 11)
-    goto L_0200a85a;
-  if (r7 != 12)
-    goto L_0200a866;
-L_0200a85a:
-  Func_020032d4(33, 0, -2);
-L_0200a866:
-  v25 = GameFlag_Test(0x238);
-  if (v25 != 0)
-    goto L_0200a890;
-  r5 = 13;
-L_0200a874:
-  v26 = Actor_GetById(r5);
-  r6 = v26;
-  r5 = r5 + 1;
-  FIELD_AT(r6, u8, 85) = 0;
-  FIELD_AT(r6, s32, 8) = 0;
-  FIELD_AT(r6, s32, 16) = 0;
-  r3 = 0;
-  if (r5 <= 15)
-    goto L_0200a874;
-  goto L_0200abc4;
-L_0200a890:
-  Call6((void (*)())Func_02003d24, 114, 39, 1, 2, 113, 39);
-  r5 = 41;
-  Call6((void (*)())Func_02003d1c, 105, 41, 12, 13, r5, r5);
-  Call6((void (*)())Func_02003d24, 105, 105, 12, 13, 105, r5);
-  r5 = 13;
-L_0200a8ca:
-  v27 = Actor_GetById(r5);
-  r6 = v27;
-  v28 = GameFlag_Test(r5 + 580);
-  if (v28 != 0) {
-    Call6((void (*)())Func_02003d1c, 47, 45, 1, 1, (FIELD_AT(r6, s32, 8)) >> 20,
-          (FIELD_AT(r6, s32, 16)) >> 20);
-  }
-  r5 = r5 + 1;
-  if (r5 <= 15)
-    goto L_0200a8ca;
-  goto L_0200abc4;
-L_0200a900:
-  r3 = 166;
-  if (r5 != (166))
-    goto L_0200a914;
-  Func_020032d4(33, 0, -2);
-  goto L_0200abc4;
-L_0200a914:
-  r3 = 167;
-  if (r5 != (167))
-    goto L_0200a93c;
-  Call1((void (*)())Func_02003ea4, 0);
-  v29 = Func_020032d4(33, 0, -2);
-  Func_02003edc();
-  Call3((void (*)())Func_02003ee4, 0, 8, 9);
-  goto L_0200abc4;
-L_0200a93c:
-  if (r5 == (168))
-    goto L_0200a944;
-  goto L_0200ab46;
-L_0200a944:
-  if ((u32)(r7 - 3) <= (u32)1)
-    goto L_0200a94c;
-  goto L_0200aafe;
-L_0200a94c:
-  v30 = Actor_GetById(FIELD_AT((s32)(s32)&gMainRoutineWork, s32, 532));
-  FIELD_AT(v30, u8, 35) = 32 | (FIELD_AT(v30, u8, 35));
-  Value3((s32 (*)())Func_02003420, 10, 6, 4);
-  Value3((s32 (*)())Func_02003420, 11, 3, 4);
-  Value3((s32 (*)())Func_02003420, 12, 5, 4);
-  Value3((s32 (*)())Func_02003420, 13, 6, 4);
-  Value3((s32 (*)())Func_02003420, 14, 5, 4);
-  Value3((s32 (*)())Func_02003420, 15, 4, 4);
-  Value3((s32 (*)())Func_02003420, 16, 4, 4);
-  Value3((s32 (*)())Func_02003420, 17, 3, 4);
-  Value3((s32 (*)())Func_02003420, 18, 6, 4);
-  Func_020032d4(40, 4, 4);
-  v31 = GameFlag_Test(0x24b);
-  if (v31 != 0)
-    goto L_0200aa68;
-  v32 = GameFlag_Test(0xa65);
-  if (v32 != 0)
-    goto L_0200aa68;
-  r6 = (s32)Ram_HeapSlots->mapWork;
-  stack[0] = 100;
-  r5 = 13;
-  Call6((void (*)())Func_02003d24, 64, 64, 19, 17, 100, r5);
-  Call6((void (*)())Func_02003d24, 35, 105, 23, 24, 35, 73);
-  Call6((void (*)())Func_02003d1c, 100, 13, 19, 19, 36, r5);
-  FIELD_AT(r6, u8, 262) = 1;
-  FIELD_AT((s32)((u8 *)stack + 10), u16, 0) =
-      65532 & (FIELD_AT(67108874, u16, 0));
-  FIELD_AT(67108874, u16, 0) = (65532 & (FIELD_AT(67108874, u16, 0))) | (1);
-  goto L_0200aafe;
-L_0200aa68:
-  v33 = GameFlag_Test(0xa65);
-  if (v33 == 0) {
-    v34 = GameFlag_Test(0x24a);
-    if (v34 == 0)
-      goto L_0200aafe;
-  }
-  v35 = GameFlag_Test(0xa65);
-  if (v35 != 0) {
-    Call3((void (*)())Func_02003ddc, 12, 0x3280000, 0x1280000);
-    Call3((void (*)())Func_02003ddc, 13, 0x2a80000, 0x1680000);
-    Call3((void (*)())Func_02003ddc, 15, 0x2e80000, 0x1a80000);
-  }
-  Call2((void (*)())Func_02000b24, 12, 38);
-  Call2((void (*)())Func_02000b24, 13, 39);
-  v36 = Func_02000b24(15, 37);
-  Func_02003628();
-  Value4((s32 (*)())Func_02003688, 38, 2, 19, 1);
-  r5 = 7;
-L_0200aae6:
-  r5 = r5 - 1;
-  Call2((void (*)())Func_020036b8, 33, 55);
-  if (r5 >= 0)
-    goto L_0200aae6;
-  Call1((void (*)())GameFlag_SetBit, 0x24b);
-L_0200aafe:
-  r5 = 10;
-L_0200ab00:
-  v37 = Actor_GetById(r5);
-  r6 = v37;
-  r5 = r5 + 1;
-  FIELD_AT(r6, u8, 85) = 0;
-  FIELD_AT(r6, s32, 20) = 0;
-  FIELD_AT(r6, s32, 12) = 0;
-  if (r5 <= 20)
-    goto L_0200ab00;
-  v38 = Actor_GetById(19);
-  r6 = v38;
-  Call6((void (*)())Func_02003d1c, 23, 39, 1, 1, (FIELD_AT(r6, s32, 8)) >> 20,
-        39);
-  r3 = r7 - 1;
-  if ((u32)(r7 - 1) > (u32)1)
-    goto L_0200abc4;
-  Call1((void (*)())Func_02003ea4, 0);
-  goto L_0200abc4;
-L_0200ab46:
-  r3 = 169;
-  if (r5 != (169))
-    goto L_0200abc4;
-  Call1((void (*)())Func_02003ea4, 0);
-  Func_020032d4(33, 0, -2);
-  Call1((void (*)())GameFlag_SetBit, 0x144);
-  v39 = GameFlag_Test(0x349);
-  if (v39 == 0)
-    goto L_0200ab8a;
-  Call6((void (*)())Func_02003d1c, 38, 9, 7, 6, 13, 9);
-  goto L_0200abc4;
-L_0200ab8a:
-  stack[0] = 50;
-  r5 = 8;
-  Call6((void (*)())Func_02003d24, 77, 8, 7, 6, 50, r5);
-  Call6((void (*)())Func_02003d24, 70, 8, 7, 6, 77, r5);
-  Call6((void (*)())Func_02003d1c, 38, 17, 7, 6, 13, 9);
-L_0200abc4:
-  /* add (s32)stack, #12 */
+done:
   return 0;
 }

@@ -1,7 +1,20 @@
-// Draft of overlay 6b0's Func_02001e64, translated from its listing: differ
-// 263 of 913. Left: its shape: 926 instructions against the listing's 913.
+// Draft, differ 62 of 913, skeleton gap 10 (tla-en, 2026-11-01)
+// Overlay 6b0's Func_02001e64: the scene entry setup, one branch per room
+// (scenes 0x12f to 0x133, which the listing loads from the pool, so they are
+// SceneId symbols rather than plain constants).
+// Left, all structural pieces closed except:
+// - gcse's PRE deletes the reload of gMainRoutineWork at L_0200a05c (listing
+//   ldr r5), using the load before it across the Func_02001d68 test. PRE works
+//   on the pool load; the shape that stops it is not found (a block-scope
+//   pointer, the && form and the struct field all give the same result).
+// - cprop turns the third argument of Func_02003190 into the constant 0x204
+//   where the listing copies r7; a shared local set in both predecessors and
+//   a separate variable for the room's 2 change nothing.
+// - Scheduling at the head (ldr r6, movs r1 around the store) and at the
+//   first Func_02002a74 of the fourth room (str before lsls r2).
 #include "types.h"
 #include "call.h"
+#include "main_routine_work.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -30,7 +43,11 @@ extern u8 gData_0200384c[];
 extern u8 gData_0200385c[];
 extern u8 gData_02003888[];
 extern u8 gData_020038b4[];
-extern u8 gMainRoutineWork[];
+extern char SceneId_Ov6b0Room1;
+extern char SceneId_Ov6b0Room2;
+extern char SceneId_Ov6b0Room3;
+extern char SceneId_Ov6b0Room4;
+extern char SceneId_Ov6b0Room5;
 
 s32 Func_02001e64(void) {
   s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0, t0, t1, t3;
@@ -42,16 +59,14 @@ s32 Func_02001e64(void) {
   s32 t91, t92, t93, t94, t95, t96, t105, t106, t107, t109;
   s32 t111, t113, t115, t117, t119, t123, t126, t127, t128, t130;
   s32 t131, t132, t134, t135, t136, t138, t139, t141, t142, t144;
-  s32 t149, t154, t155;
+  s32 t149, t154, t155, v_two;
 
-  t0 = FIELD_AT(0x3000000, s32, 108);
-  FIELD_AT(t0, s32, 428) = 0x204;
-  t1 = FIELD_AT((s32)gMainRoutineWork, s16, 480);
   v_r2 = 0x3000000;
+  v_r6 = (s32)&gMainRoutineWork;
   v_r7 = 0x204;
-  v_r6 = (s32)gMainRoutineWork;
-  v_r1 = t1;
-  if (v_r1 != 0x12f)
+  FIELD_AT(FIELD_AT(v_r2, s32, 108), s32, 428) = v_r7;
+  v_r1 = gMainRoutineWork.scene;
+  if (v_r1 != (s32)&SceneId_Ov6b0Room1)
     goto L_02009f86;
   Call4((void (*)())Func_02000038, (s32)gData_0200384c, (s32)gData_0200385c,
         (s32)gData_02003888, (s32)gData_020038b4);
@@ -88,7 +103,7 @@ L_02009f60:
   Call4((void (*)())Func_02003380, 0x2180000, 0x880000, 0, 0);
   goto L_0200a6e6;
 L_02009f86:
-  if (v_r1 == 0x130)
+  if (v_r1 == (s32)&SceneId_Ov6b0Room2)
     goto L_02009f8e;
   goto L_0200a1b4;
 L_02009f8e:
@@ -107,13 +122,11 @@ L_02009fd4:
   Call1((void (*)())Func_02003490, (s32)gData_020036e4);
   t25 = FIELD_AT(v_r6, s32, 532);
   t26 = Value1((s32 (*)())Actor_GetById, t25);
-  t27 = FIELD_AT(t26, u8, 35);
-  FIELD_AT(t26, u8, 35) = (64 | t27);
+  FIELD_AT(t26, u8, 35) |= 64;
   t28 = Value1((s32 (*)())Actor_GetById, 9);
   FIELD_AT(t28, u8, 85) = 0;
   t29 = Value1((s32 (*)())Actor_GetById, 9);
-  t30 = FIELD_AT(t29, u8, 35);
-  FIELD_AT(t29, u8, 35) = (128 | t30);
+  FIELD_AT(t29, u8, 35) |= 128;
   t31 = FIELD_AT(v_r6, s16, 482);
   if (t31 != 17)
     goto L_0200a03c;
@@ -123,20 +136,12 @@ L_02009fd4:
   Call2((void (*)())Actor_SetModeById, 9, 2);
   Call3((void (*)())Func_020033e0, 9, 0x2d80000, 0x780000);
 L_0200a03c:
-  t35 = FIELD_AT((s32)gMainRoutineWork, s16, 482);
-  if (t35 != 18)
-    goto L_0200a05c;
-  t36 = Value1((s32 (*)())GameFlag_Test, 0x300);
-  if (t36 != 0)
-    goto L_0200a05c;
-  Func_02001d68();
-L_0200a05c:
-  t38 = FIELD_AT((s32)gMainRoutineWork, s16, 482);
-  v_r5 = (s32)gMainRoutineWork;
-  if (t38 == 10)
-    goto L_0200a06e;
-  goto L_0200a6e6;
-L_0200a06e:
+  if (gMainRoutineWork.entrance == 18 && GameFlag_Test(0x300) == 0)
+    Func_02001d68();
+  {
+  struct MainRoutineWork *work = &gMainRoutineWork;
+  if (work->entrance != 10)
+    goto L_0200a6e6;
   t39 = Value1((s32 (*)())GameFlag_Test, 0x300);
   if (t39 == 0)
     goto L_0200a084;
@@ -183,31 +188,29 @@ L_0200a15a:
     goto L_0200a17a;
   Call6((void (*)())Func_02003328, 54, 87, 46, 88, 1, 1);
 L_0200a17a:
-  t57 = FIELD_AT(v_r5, s32, 532);
+  t57 = work->currentOwner;
   t58 = Value1((s32 (*)())Actor_GetById, t57);
-  t59 = FIELD_AT(t58, u8, 35);
-  FIELD_AT(t58, u8, 35) = (32 | t59);
+  FIELD_AT(t58, u8, 35) |= 32;
+  }
   goto L_0200a6e6;
 L_0200a1b4:
-  if (v_r1 == 0x131)
+  if (v_r1 == (s32)&SceneId_Ov6b0Room3)
     goto L_0200a1bc;
   goto L_0200a2ce;
 L_0200a1bc:
   t60 = Value1((s32 (*)())Actor_GetById, 14);
-  FIELD_AT(t60, u8, 85) = 2;
+  v_two = 2;
+  v_r5 = 1;
+  FIELD_AT(t60, u8, 85) = v_two;
   FIELD_AT(t60, s32, 20) = 0xfff20000;
   FIELD_AT(t60, s32, 12) = 0xfff20000;
-  t61 = FIELD_AT(t60, u8, 35);
-  FIELD_AT(t60, u8, 35) = (128 | t61);
+  FIELD_AT(t60, u8, 35) |= 128;
   t62 = FIELD_AT(v_r6, s32, 532);
   t63 = Value1((s32 (*)())Actor_GetById, t62);
-  t64 = FIELD_AT(t63, u8, 35);
-  FIELD_AT(t63, u8, 35) = (64 | t64);
+  FIELD_AT(t63, u8, 35) |= 64;
   t65 = Value1((s32 (*)())Actor_GetById, 9);
-  FIELD_AT(t65, u8, 98) = 1;
+  FIELD_AT(t65, u8, 98) = v_r5;
   t66 = Value1((s32 (*)())GameFlag_Test, 0xa82);
-  v_r7 = 2;
-  v_r5 = 1;
   if (t66 == 0)
     goto L_0200a218;
   Call3((void (*)())Func_020033e0, 8, 0x380000, 0x1a80000);
@@ -216,7 +219,7 @@ L_0200a218:
   if (t68 == 0)
     goto L_0200a254;
   Call3((void (*)())Func_020033e0, 10, 0x2180000, 0x1680000);
-  Call6((void (*)())Func_02003328, 51, 20, 31, 20, v_r5, v_r7);
+  Call6((void (*)())Func_02003328, 51, 20, 31, 20, v_r5, v_two);
   Call4((void (*)())Func_02003380, 0x1f00000, 0x1500000, 0, 0);
 L_0200a254:
   t72 = Value1((s32 (*)())GameFlag_Test, 0xa84);
@@ -245,7 +248,7 @@ L_0200a2c6:
   Call1((void (*)())Func_02003490, (s32)gData_020036ea);
   goto L_0200a6e6;
 L_0200a2ce:
-  if (v_r1 == 0x132)
+  if (v_r1 == (s32)&SceneId_Ov6b0Room4)
     goto L_0200a2d6;
   goto L_0200a52c;
 L_0200a2d6:
@@ -270,13 +273,11 @@ L_0200a30a:
     goto L_0200a35e;
   t91 = FIELD_AT(v_r6, s32, 532);
   t92 = Value1((s32 (*)())Actor_GetById, t91);
-  t93 = FIELD_AT(t92, u8, 35);
-  FIELD_AT(t92, u8, 35) = (64 | t93);
+  FIELD_AT(t92, u8, 35) |= 64;
   t94 = Value1((s32 (*)())Actor_GetById, 8);
   FIELD_AT(t94, u8, 85) = v_r5;
   t95 = Value1((s32 (*)())Actor_GetById, 8);
-  t96 = FIELD_AT(t95, u8, 35);
-  FIELD_AT(t95, u8, 35) = (128 | t96);
+  FIELD_AT(t95, u8, 35) |= 128;
   goto L_0200a3a8;
 L_0200a35e:
   Call3((void (*)())Func_020033e0, 8, 0, 0);
@@ -335,8 +336,8 @@ L_0200a4a2:
   if (v_r2 != 11)
     goto L_0200a4c0;
   Func_02002a74(33, 0x280, 0x380, 18, 68);
-  v_r1 = 0;
   v_r0 = 22;
+  v_r1 = 0;
   goto L_0200a4ec;
 L_0200a4c0:
   if (v_r2 != 12)
@@ -350,7 +351,7 @@ L_0200a4e6:
   v_r1 = -0x24;
   v_r0 = 36;
 L_0200a4ec:
-  Call3((void (*)())Func_02003190, v_r0, v_r1, v_r7);
+  Func_02003190(v_r0, v_r1, v_r7);
   goto L_0200a6e6;
 L_0200a4f4:
   if ((u32)((v_r3 - 4) << 16) <= (u32)0x10000)
@@ -360,7 +361,7 @@ L_0200a502:
   Func_02002a74(35, 0x280, 0x380, 18, 68);
   goto L_0200a6e6;
 L_0200a52c:
-  if (v_r1 == 0x133)
+  if (v_r1 == (s32)&SceneId_Ov6b0Room5)
     goto L_0200a534;
   goto L_0200a6e6;
 L_0200a534:
@@ -404,19 +405,17 @@ L_0200a580:
     goto L_0200a596;
   Call3((void (*)())Func_020033e0, 11, 0, 0);
 L_0200a596:
-  t130 = FIELD_AT((s32)gMainRoutineWork, s32, 532);
+  t130 = gMainRoutineWork.currentOwner;
   t131 = Value1((s32 (*)())Actor_GetById, t130);
-  t132 = FIELD_AT(t131, u8, 35);
-  FIELD_AT(t131, u8, 35) = (64 | t132);
+  FIELD_AT(t131, u8, 35) |= 64;
   Call2((void (*)())Actor_SetModeById, 11, 2);
   t134 = Value1((s32 (*)())Actor_GetById, 11);
   FIELD_AT(t134, u8, 85) = 0;
   t135 = Value1((s32 (*)())Actor_GetById, 11);
-  t136 = FIELD_AT(t135, u8, 35);
-  FIELD_AT(t135, u8, 35) = (128 | t136);
+  FIELD_AT(t135, u8, 35) |= 128;
   Call2((void (*)())Actor_SetModeById, 11, 2);
   t138 = Value1((s32 (*)())GameFlag_Test, 0x304);
-  v_r6 = (s32)gMainRoutineWork;
+  v_r6 = (s32)&gMainRoutineWork;
   if (t138 != 0)
     goto L_0200a5fa;
   t139 = FIELD_AT(v_r6, s16, 482);
@@ -430,32 +429,29 @@ L_0200a5fa:
   goto L_0200a6e6;
 L_0200a606:
   t142 = Value1((s32 (*)())GameFlag_Test, 0x301);
-  if (t142 == 0)
-    goto L_0200a61e;
-  v_r1 = 0x780000;
-  v_r0 = 8;
-  v_r2 = 240;
-  goto L_0200a650;
-L_0200a61e:
+  if (t142 != 0) {
+    v_r2 = 240;
+    v_r0 = 8;
+    v_r1 = 0x780000;
+    goto L_0200a650;
+  }
   Call6((void (*)())Func_02003328, 18, 1, 11, 4, 1, 2);
-  v_r0 = 0xb80000;
   v_r1 = 176;
+  v_r0 = 0xb80000;
   goto L_0200a67a;
 L_0200a63a:
   t144 = Value1((s32 (*)())GameFlag_Test, 0x302);
   if (t144 == 0)
     goto L_0200a660;
-  v_r1 = 0x2280000;
-  v_r0 = 9;
-  v_r2 = 240;
+  v_r2 = 240;  v_r0 = 9;  v_r1 = 0x2280000;
 L_0200a650:
   Call3((void (*)())Func_020033e0, v_r0, v_r1, (v_r2 << 15));
   Call1((void (*)())GameFlag_SetBit, 0x200);
   goto L_0200a6e6;
 L_0200a660:
   Call6((void (*)())Func_02003328, 18, 1, 26, 4, 1, 2);
-  v_r0 = 0x1a80000;
   v_r1 = 176;
+  v_r0 = 0x1a80000;
 L_0200a67a:
   Call4((void (*)())Func_02003380, v_r0, (v_r1 << 15), 0, 2);
   goto L_0200a6e6;

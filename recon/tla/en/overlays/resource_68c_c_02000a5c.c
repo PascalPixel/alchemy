@@ -1,5 +1,17 @@
-// Draft, differ 273 of 883: translated from its listing; names and structure still
-// to do.
+// Draft, differ 218 of 883, skeleton gap 43 removed, 39 added (tla-en, 2026-11-01)
+// One cause holds nearly all of the gap: the allocator. The stack frame is three
+// s32[3] buffers (start at sp+36, target at sp+24, position at sp+12) with three
+// spilled pseudos below them: radius sp+8, angle sp+4, flags sp+0, which is why
+// they are declared in that order. The listing keeps the actor in r11; here
+// radius takes r11 and the actor spills, since global.c ranks radius (8 refs, 83
+// insns: 0.289) over the actor (35 refs, 671 insns: 0.261). One ref fewer or ten
+// more live insns on radius would turn it round; splitting radius per loop hands
+// it to local-alloc and is worse, temporaries change no live length, and memory
+// angle and radius go through a CSE'd pointer. The bl far branch at the head
+// should return with the instruction count, the jump sits just inside b range.
+// Second cause: the listing sets position inside the first loop and reuses it in
+// the second; PRE hoists that set to the preheader and copy-prop splits the
+// pseudo, so it is set before the loop here (a goto loop keeps the same hoist).
 #include "iwram_call.h"
 #include "call.h"
 #include "actor.h"
@@ -35,7 +47,6 @@ void Func_020028e4();
 void FieldMessage_ShowAtActor();
 s32 Event_AskYesNoWithActorAnimation();
 void Func_02002924();
-s32 __divsi3();
 s32 Math_Sine();
 void Vector_AddPolarOffsetFar();
 void wait();
@@ -43,22 +54,24 @@ void Func_02002874();
 s32 Func_02002834();
 
 s32 Func_02000a5c(s32 a0, s32 a1, s32 a2) {
-  s32 v0, r11, v1, r0, v2, v3, v4, r3, r10, r8, r7, v5, r6, v6, r9, r5, v7, v8,
-      v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, r2, v20, v21;
-  s32 stack[12];
+  struct Actor *actor;
+  s32 startBuf[3], targetBuf[3], posBuf[3];
+  s32 *start, *target, *pos;
+  s32 radius, angle;
+  u8 *flags;
+  s32 result, i, phase, base, delta, answer;
 
-  /* sub (s32)stack, #48 */
-  v0 = Actor_GetById(11);
-  r11 = v0;
-  v1 = GameFlag_Test(0x965);
-  r0 = v1;
-  if (v1 != 0)
+  actor = (struct Actor *)Actor_GetById(11);
+  result = GameFlag_Test(0x965);
+  if (result != 0)
     goto L_02008a86;
   goto L_0200927c;
 L_02008a86:
   Call1((void (*)())GameFlag_SetBit, 0x966);
-  v2 = Actor_GetById(10);
-  FIELD_AT(v2, u8, 35) = 1 | (FIELD_AT(v2, u8, 35));
+  {
+    struct Actor *other = (struct Actor *)Actor_GetById(10);
+    other->priorityFlags |= 1;
+  }
   Func_0200282c();
   Call1((void (*)())Func_020028fc, 0);
   Func_020028ac((s32)MsgLemuriaInteriors10);
@@ -100,8 +113,8 @@ L_02008a86:
   Call1((void (*)())FieldEvent_Wait, 10);
   Value3((s32 (*)())Func_020028dc, 10, 0x101, 30);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 10, 0);
-  v3 = Event_AskYesNoWithActorAnimation(4, 0);
-  if (v3 == 0) {
+  answer = Event_AskYesNoWithActorAnimation(4, 0);
+  if (answer == 0) {
     Call1((void (*)())FieldEvent_Wait, 30);
     Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
@@ -128,13 +141,12 @@ L_02008a86:
   Call1((void (*)())FieldEvent_Wait, 50);
   Value3((s32 (*)())Func_020028dc, 10, 0x101, 30);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 10, 0);
-  v4 = Event_AskYesNoWithActorAnimation(4, 0);
-  if (v4 == 0) {
+  answer = Event_AskYesNoWithActorAnimation(4, 0);
+  if (answer == 0) {
     Call1((void (*)())FieldEvent_Wait, 30);
     Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
         (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
-    r3 = (FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452)) + 1;
   } else {
     Call1((void (*)())FieldEvent_Wait, 40);
     FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 452) =
@@ -171,53 +183,49 @@ L_02008a86:
   Call2((void (*)())Func_020028e4, 11, 0x102);
   Call1((void (*)())FieldEvent_Wait, 50);
   Call2((void (*)())Actor_SetModeById, 11, 3);
-  stack[0] = r11 + 85;
-  FIELD_AT(r11, u8, 85) = 0;
-  r10 = 36 + (s32)stack;
-  FIELD_AT(r10, s32, 0) = FIELD_AT(r11, s32, 8);
-  FIELD_AT(r10, s32, 4) = FIELD_AT(r11, s32, 12);
-  FIELD_AT(r10, s32, 8) = FIELD_AT(r11, s32, 16);
-  r8 = (s32)((u8 *)stack + 24);
-  FIELD_AT(r8, s32, 0) = 0x740000;
-  FIELD_AT(r8, s32, 4) = 0;
-  FIELD_AT(r8, s32, 8) = 0x6e0000;
-  stack[1] = 0xb000;
-  r7 = 0;
-L_02008ede:
-  v5 = __divsi3(r7 << 15, 192);
-  r6 = v5;
-  v6 = Math_Sine(v5);
-  stack[2] = v6 << 5;
-  stack[1] = stack[1] + 512;
-  r9 = (s32)((u8 *)stack + 12);
-  r5 = FIELD_AT(r10, s32, 0);
-  v7 = __divsi3(r7 * ((FIELD_AT(r8, s32, 0)) - r5), 192);
-  r5 = r5 + v7;
-  FIELD_AT(r9, s32, 0) = r5;
-  v8 = Math_Sine(r6);
-  r5 = FIELD_AT(r10, s32, 4);
-  r6 = v8;
-  v9 = __divsi3(r7 * ((FIELD_AT(r8, s32, 4)) - r5), 192);
-  r5 = r5 + v9;
-  r5 = r5 + (((r6 << 3) - r6) << 3);
-  FIELD_AT(r9, s32, 4) = r5;
-  r5 = FIELD_AT(r10, s32, 8);
-  v10 = __divsi3(r7 * ((FIELD_AT(r8, s32, 8)) - r5), 192);
-  r5 = r5 + v10;
-  FIELD_AT(r9, s32, 8) = r5;
-  Vector_AddPolarOffsetFar(stack[2], stack[1], r9);
-  FIELD_AT(r11, s32, 8) = FIELD_AT(r9, s32, 0);
-  FIELD_AT(r11, s32, 12) = FIELD_AT(r9, s32, 4);
-  FIELD_AT(r11, s32, 16) = FIELD_AT(r9, s32, 8);
-  FIELD_AT(r11, u16, 6) = stack[1] + 16384;
-  if (r7 == 128) {
-    Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);
-  }
-  r7 = r7 + 1;
-  Call1((void (*)())wait, 1);
-  if (r7 <= 191)
-    goto L_02008ede;
-  FIELD_AT(r11, u16, 6) = 0x8000;
+  flags = &actor->motionFlags;
+  *flags = 0;
+  start = startBuf;
+  start[0] = actor->x;
+  start[1] = actor->y;
+  start[2] = actor->z;
+  target = targetBuf;
+  target[0] = 0x740000;
+  target[1] = 0;
+  target[2] = 0x6e0000;
+  angle = 0xb000;
+  pos = posBuf;
+  i = 0;
+  do {
+    phase = i * 32768 / 192;
+    radius = Math_Sine(phase) * 32;
+    angle += 512;
+    base = start[0];
+    delta = target[0] - base;
+    base += delta * i / 192;
+    pos[0] = base;
+    phase = Math_Sine(phase);
+    base = start[1];
+    delta = target[1] - base;
+    base += delta * i / 192;
+    base += phase * 56;
+    pos[1] = base;
+    base = start[2];
+    delta = target[2] - base;
+    base += delta * i / 192;
+    pos[2] = base;
+    Vector_AddPolarOffsetFar(radius, angle, pos);
+    actor->x = pos[0];
+    actor->y = pos[1];
+    actor->z = pos[2];
+    actor->angle = angle + 16384;
+    if (i == 128) {
+      Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);
+    }
+    i++;
+    Call1((void (*)())wait, 1);
+  } while (i <= 191);
+  actor->angle = 0x8000;
   Call1((void (*)())FieldEvent_Wait, 30);
   Call2((void (*)())Actor_SetModeById, 11, 1);
   Call1((void (*)())FieldEvent_Wait, 20);
@@ -232,12 +240,16 @@ L_02008ede:
   Call1((void (*)())FieldEvent_Wait, 40);
   Call2((void (*)())Actor_SetModeById, 11, 1);
   Call1((void (*)())FieldEvent_Wait, 20);
-  v11 = Actor_GetById(10);
-  FIELD_AT(v11, u8, 90) = 254 & (FIELD_AT(v11, u8, 90));
+  {
+    struct Actor *other = (struct Actor *)Actor_GetById(10);
+    other->actionFlags &= 254;
+  }
   Call3((void (*)())Actor_CommitPositionAndActivate, 10, -8, 0);
   Call1((void (*)())FieldEvent_Wait, 1);
-  v12 = Actor_GetById(10);
-  FIELD_AT(v12, u8, 90) = 1 | (FIELD_AT(v12, u8, 90));
+  {
+    struct Actor *other = (struct Actor *)Actor_GetById(10);
+    other->actionFlags |= 1;
+  }
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
@@ -247,83 +259,62 @@ L_02008ede:
   Value3((s32 (*)())Func_020028dc, 10, 0x108, 40);
   Call2((void (*)())Actor_SetModeById, 11, 3);
   Call1((void (*)())FieldEvent_Wait, 40);
-  r5 = 0;
-  FIELD_AT(stack[0], u8, 0) = r5;
-  r7 = 0;
-  FIELD_AT(r10, s32, 0) = FIELD_AT(r11, s32, 8);
-  FIELD_AT(r10, s32, 4) = FIELD_AT(r11, s32, 12);
-  FIELD_AT(r10, s32, 8) = FIELD_AT(r11, s32, 16);
-  FIELD_AT(r8, s32, 0) = 0x840000;
-  FIELD_AT(r8, s32, 4) = 0x200000;
-  FIELD_AT(r8, s32, 8) = 0x640000;
-  stack[1] = 0x4200;
-  goto L_020090e0;
-L_020090e0:
-  v13 = __divsi3(r7 << 14, 192);
-  v14 = Math_Sine(v13);
-  stack[2] = ((v14 << 2) + v14) << 3;
-  stack[1] = stack[1] + 768;
-  r5 = FIELD_AT(r10, s32, 0);
-  v15 = __divsi3(r7 * ((FIELD_AT(r8, s32, 0)) - r5), 192);
-  r5 = r5 + v15;
-  FIELD_AT(r9, s32, 0) = r5;
-  v16 = __divsi3(r7 << 15, 192);
-  v17 = Math_Sine(v16);
-  r5 = FIELD_AT(r10, s32, 4);
-  r6 = v17;
-  v18 = __divsi3(r7 * ((FIELD_AT(r8, s32, 4)) - r5), 192);
-  r6 = r6 << 5;
-  r5 = r5 + v18;
-  r5 = r5 + r6;
-  FIELD_AT(r9, s32, 4) = r5;
-  r5 = FIELD_AT(r10, s32, 8);
-  v19 = __divsi3(r7 * ((FIELD_AT(r8, s32, 8)) - r5), 192);
-  r5 = r5 + v19;
-  FIELD_AT(r9, s32, 8) = r5;
-  Vector_AddPolarOffsetFar(stack[2], stack[1], r9);
-  FIELD_AT(r11, s32, 8) = FIELD_AT(r9, s32, 0);
-  FIELD_AT(r11, s32, 12) = FIELD_AT(r9, s32, 4);
-  FIELD_AT(r11, s32, 16) = FIELD_AT(r9, s32, 8);
-  FIELD_AT(r11, u16, 6) = stack[1] + 16384;
-  if (r7 == 153) {
-    Call3((void (*)())Actor_ArmCallback, 10, 0x7000, 0);
-  }
-  r7 = r7 + 1;
-  Call1((void (*)())wait, 1);
-  if (r7 <= 191)
-    goto L_020090e0;
+  *flags = 0;
+  i = 0;
+  start[0] = actor->x;
+  start[1] = actor->y;
+  start[2] = actor->z;
+  target[0] = 0x840000;
+  target[1] = 0x200000;
+  target[2] = 0x640000;
+  angle = 0x4200;
+  do {
+    radius = Math_Sine(i * 16384 / 192) * 40;
+    angle += 768;
+    base = start[0];
+    delta = target[0] - base;
+    base += delta * i / 192;
+    pos[0] = base;
+    phase = Math_Sine(i * 32768 / 192);
+    base = start[1];
+    delta = target[1] - base;
+    base += delta * i / 192;
+    base += phase * 32;
+    pos[1] = base;
+    base = start[2];
+    delta = target[2] - base;
+    base += delta * i / 192;
+    pos[2] = base;
+    Vector_AddPolarOffsetFar(radius, angle, pos);
+    actor->x = pos[0];
+    actor->y = pos[1];
+    actor->z = pos[2];
+    actor->angle = angle + 16384;
+    if (i == 153) {
+      Call3((void (*)())Actor_ArmCallback, 10, 0x7000, 0);
+    }
+    i++;
+    Call1((void (*)())wait, 1);
+  } while (i <= 191);
   Call3((void (*)())Actor_ArmCallback, 10, 0xb000, 0);
-  FIELD_AT(r11, u16, 6) = 0xd000;
-  FIELD_AT(r10, s32, 0) = FIELD_AT(r11, s32, 8);
-  r7 = 0;
-  FIELD_AT(r10, s32, 4) = FIELD_AT(r11, s32, 12);
-  FIELD_AT(r10, s32, 8) = FIELD_AT(r11, s32, 16);
-  FIELD_AT(r8, s32, 0) = 0x5a0000;
-  FIELD_AT(r8, s32, 4) = 0x40000;
-  FIELD_AT(r8, s32, 8) = 0x400000;
-L_020091d8:
-  r2 = FIELD_AT(r10, s32, 0);
-  r3 = ((FIELD_AT(r8, s32, 0)) - (FIELD_AT(r10, s32, 0))) * r7;
-  if ((((FIELD_AT(r8, s32, 0)) - (FIELD_AT(r10, s32, 0))) * r7) < 0) {
-    r3 = r3 + 15;
-  }
-  FIELD_AT(r11, s32, 8) = r2 + (r3 >> 4);
-  r2 = FIELD_AT(r10, s32, 4);
-  r3 = ((FIELD_AT(r8, s32, 4)) - (FIELD_AT(r10, s32, 4))) * r7;
-  if ((((FIELD_AT(r8, s32, 4)) - (FIELD_AT(r10, s32, 4))) * r7) < 0) {
-    r3 = r3 + 15;
-  }
-  FIELD_AT(r11, s32, 12) = r2 + (r3 >> 4);
-  r2 = FIELD_AT(r10, s32, 8);
-  r3 = ((FIELD_AT(r8, s32, 8)) - (FIELD_AT(r10, s32, 8))) * r7;
-  if ((((FIELD_AT(r8, s32, 8)) - (FIELD_AT(r10, s32, 8))) * r7) < 0) {
-    r3 = r3 + 15;
-  }
-  FIELD_AT(r11, s32, 16) = r2 + (r3 >> 4);
-  r7 = r7 + 1;
-  Call1((void (*)())wait, 1);
-  if (r7 <= 15)
-    goto L_020091d8;
+  actor->angle = 0xd000;
+  start[0] = actor->x;
+  i = 0;
+  start[1] = actor->y;
+  start[2] = actor->z;
+  target[0] = 0x5a0000;
+  target[1] = 0x40000;
+  target[2] = 0x400000;
+  do {
+    base = start[0];
+    actor->x = base + (target[0] - base) * i / 16;
+    base = start[1];
+    actor->y = base + (target[1] - base) * i / 16;
+    base = start[2];
+    actor->z = base + (target[2] - base) * i / 16;
+    i++;
+    Call1((void (*)())wait, 1);
+  } while (i <= 15);
   Call3((void (*)())Func_02002874, 11, 0, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);
@@ -332,9 +323,7 @@ L_020091d8:
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_020028bc, 0x400a, 0, 10);
   Call2((void (*)())Actor_SetSpritePriority, 10, 2);
-  v21 = Func_02002834();
-  r0 = v21;
+  result = Func_02002834();
 L_0200927c:
-  /* add (s32)stack, #48 */
-  return r0;
+  return result;
 }

@@ -1,28 +1,32 @@
-// Draft, differ 251 of 342 (tla-en, 2026-10-31): the push itself: the leader
-// leans in, the object slides to its end, and its footprint moves between
-// the map layers. Takes the six-word block Func_020001d4 fills, as
-// yampi_desert_cave.h declares it: words 0 to 2 the push's end (16.16 x, y,
-// z), 3 the footprint kind, 4 the object's slot, 5 a callback or 0. The
-// calls, their arguments, the control flow, every field and width and the
-// frame (64 bytes, the block at sp+96, from and cell at sp+40 and sp+52)
-// now follow the native. Left: the native's CSE keeps nothing across the
-// target call in either pass (it rebuilds the owner address there, keeps
-// the zero step in r9 and shifts it, rebuilds kind * 4 + 1 at the end); the
-// one-pass block below breaks only the first CSE pass, and cse2 still
-// copies the owner address (mov r5, r8), folds the step, keeps kind * 4 + 1
-// from the start and turns the step into the later zeros. From that,
-// register choice (the native keeps kind * 4 in r11 and spills both sizes;
-// here kind * 4 is spilled and the height takes r11), the speed calls
-// sharing 0x8000 and 0x1999 in r5 and r6 where the native builds them for
-// each call, and the native storing all four argument words before the heap
-// slot load, which this compiler hoists between them. Measured: kind read
-// from the block each time, 305; the speed calls forwarded inline, 282 (the
-// first alone, 241); Func_02001848 direct, 287; the footprint table flat
-// with kind * 4 kept, 250; w and h declared after the speeds, 265; ABS as
-// if statements, 379 (with the forwarded speed calls); the block before the
-// 0x4ccc speed call, 255; before the leader's wait or around the call, the
-// same as here; the heap slot read as an s32 through a cast, 243, with the
-// four stores first as the native has them.
+// Draft, differ 126 of 342, skeleton gap 56 (tla-en, 2026-11-01)
+// The push itself: the leader leans in, the object slides to its end, and its
+// footprint moves between the map layers. Takes the six-word block
+// Func_020001d4 fills, as yampi_desert_cave.h declares it: words 0 to 2 the
+// push's end (16.16 x, y, z), 3 the footprint kind, 4 the object's slot, 5 a
+// callback or 0. The calls, arguments, fields, widths and frame (64 bytes, the
+// block at sp+96, from and cell at sp+40 and sp+52) follow the native. Imported
+// calls go through the scene layer's forwarded wrappers (scene_call.h): that
+// gives each speed call its own constants and each stack argument its own r3.
+// Left: the do/while below is a stand-in, not the source. The native has no
+// back branch, yet behaves as if a loop stood there through both CSE passes:
+// from the target call on it rebuilds the owner address into r5 and holds it to
+// the second mode call, keeps the zero index unfolded in r9 (set early, shifted
+// at its use), and rebuilds kind * 4 + 1 at the end. Only a real loop gives
+// that here; it leaves the cmp and beq, and its exit test is false for a
+// nonzero step only, so it is wrong behaviour if a step of 0 can occur. Its
+// other costs: i folds and its zero is set at the loop's top instead of early;
+// cse2 copies the owner address (mov r6, sl) instead of rebuilding it.
+// The rest is allocation: object is in r7 where the native has r6, and the
+// native stores all four argument words before the heap slot load.
+// Measured: no loop at all, 312 (gap 134); a loop on i with i < 1, 134 (gap
+// 62), which strength-reduces the table read to ldmia; a separate counter j
+// tested j < 1, 108 (gap 62) with i still folded; i = 0 just before the loop,
+// which unrolls it and cse2 then merges everything, 301 (gap 129); do/while(0),
+// for(;;) with break and an unused label, no loop to the optimizer, 319;
+// exit on the callback word, 194 (gap 70); footprint table flat with kind * 4
+// kept, with the loop, 163 (gap 103); map read as s32, no change; empty asm
+// does not flush CSE. Worth trying: a source shape whose back edge goes only
+// after cse2 (combine or the post-reload jump pass).
 #include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
 #include "map.h"
 #include "actor.h"
@@ -45,6 +49,44 @@ void Actor_OffsetPositionAndResetMotion(s32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(s32 id);
 void wait(s32 frames);
 
+static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed, s32 acceleration) {
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  Actor_SetSpeedParameters(id, speed, acceleration);
+}
+
+static __inline__ void Actor_SetModeById_(s32 id, s32 mode) {
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  Actor_SetModeById(id, mode);
+}
+
+static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
+                                                       s32 dz) {
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  Actor_OffsetPositionAndResetMotion(id, dx, dz);
+}
+
+static __inline__ void Actor_WaitForMoveById_(s32 id) {
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  Actor_WaitForMoveById(id);
+}
+
+static __inline__ void Actor_SetPositionAndResetMotion_(struct Actor *actor,
+                                                       s32 x, s32 y, s32 z) {
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  Actor_SetPositionAndResetMotion(actor, x, y, z);
+}
+
+static __inline__ void Map_FillCellRectByte2_(s32 layer, s32 x, s32 z, s32 w,
+                                             s32 h, s32 value) {
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  Map_FillCellRectByte2(layer, x, z, w, h, value);
+}
+
+static __inline__ void wait_(s32 frames) {
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  wait(frames);
+}
+
 void Func_02000458(struct YampiDesertCaveRect rect) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 w, h;
@@ -65,41 +107,41 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
   cell[2] = (object->z + (gData_02001974[kind][1] << 16)) >> 20;
   w = (ABS(gData_02001974[kind][0]) + ABS(gData_02001974[kind][2])) >> 4;
   h = (ABS(gData_02001974[kind][1]) + ABS(gData_02001974[kind][3])) >> 4;
-  Map_FillCellRectByte2(0, cell[0], cell[2], w, h, 0);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
-  wait(15);
-  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner,
+  Map_FillCellRectByte2_(0, cell[0], cell[2], w, h, 0);
+  Actor_SetSpeedParameters_(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
+  Actor_SetModeById_(gMainRoutineWork.currentOwner, 8);
+  wait_(15);
+  Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner,
                                      (rect.word[0] - from[0]) >> 17,
                                      (rect.word[2] - from[2]) >> 17);
   Actor_GetById(gMainRoutineWork.currentOwner)->update = Func_02000754;
-  wait(4);
+  wait_(4);
   Func_02001828(object, 2);
   Func_02001960(239);
-  Actor_SetSpeedParameters(rect.word[4], 0x8000, 0x1999);
+  Actor_SetSpeedParameters_(rect.word[4], 0x8000, 0x1999);
   Func_02001838(object, rect.word[0], rect.word[1], rect.word[2]);
-  /* FAKEMATCH(one-pass): a one-pass block after the target call, so CSE
-   * starts afresh there as the native's does; as the call alone, 319 of 342
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(one-pass): a stand-in loop after the target call, so the code
+   * after it starts afresh as the native's does; as plain statements, 312 of
+   * 342 instructions differ in tla-en. */
   do {
-  } while (0);
-  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
+  Actor_WaitForMoveById_(gMainRoutineWork.currentOwner);
+  Actor_SetModeById_(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeedParameters_(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
   offset = gData_0200198c[i] << 16;
-  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner,
+  Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner,
                                      offset >> 31, offset >> 17);
   if (rect.word[5] != 0)
     ((void (*)(void))rect.word[5])();
-  Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Actor_WaitForMoveById_(gMainRoutineWork.currentOwner);
+  Actor_SetModeById_(gMainRoutineWork.currentOwner, 1);
+  } while (offset == 0);
   leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   Func_02001840(object);
   Func_02001960(298);
   Func_02001960(213);
-  Actor_SetPositionAndResetMotion(object, rect.word[0], object->y,
+  Actor_SetPositionAndResetMotion_(object, rect.word[0], object->y,
                                   rect.word[2]);
   Func_02001828(object, 1);
   rect.word[0] = (rect.word[0] + (gData_02001974[kind][0] << 16)) >> 20;
@@ -112,8 +154,8 @@ void Func_02000458(struct YampiDesertCaveRect rect) {
                            ax + rect.word[0], az + rect.word[2]);
   YampiDesertCave_Call1848(rect.word[0] + bx, rect.word[2] + bz, w, h,
                            rect.word[0] + 64, rect.word[2] + 64);
-  Map_FillCellRectByte2(0, rect.word[0], rect.word[2], w, h, 255);
-  Map_FillCellRectByte2(2, rect.word[0], rect.word[2], w, h, 255);
+  Map_FillCellRectByte2_(0, rect.word[0], rect.word[2], w, h, 255);
+  Map_FillCellRectByte2_(2, rect.word[0], rect.word[2], w, h, 255);
   cell[0] = (from[0] + (gData_02001974[kind][0] << 16)) >> 20;
   cell[2] = (from[2] + (gData_02001974[kind][1] << 16)) >> 20;
   YampiDesertCave_Call1848(ax + cell[0], az + cell[2], w, h, cell[0], cell[2]);

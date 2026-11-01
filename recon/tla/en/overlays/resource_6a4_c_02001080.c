@@ -1,13 +1,22 @@
-// Near miss, differ 126 of 856 (tla-en, 2026-10-31): the control flow, calls,
-// field accesses, stack frame (44 bytes) and allocation now follow the native;
-// what is left is sched2 and GCSE. The native issues each store (the step's
-// strb, the trail-point str after each __divsi3, a[0], position[1]) as soon as
-// its operands are ready, where this compiler builds the next address's
-// constant first. The native reloads spark->age at each of its three tests and
-// the frame at step 5's second test; here GCSE's PRE reuses the first load and
-// inserts a reload on the paths that store (PRE/HOIST edges in the 07.gcse
-// dump), which also turns step 5's test into ldrh/lsl/cmp #0x100000. An
-// analysis-only -fno-gcse compile gives the native's loads in both places.
+// Draft, differ 126 of 856, skeleton gap 74 (tla-en, 2026-11-01): the control
+// flow, calls, field accesses, stack frame (44 bytes) and allocation follow the
+// native; about 60 of the gap is sched2 order and the rest GCSE, neither of
+// which plain C has moved.
+// Order: the native issues a store (the spill of t, the step's strb, a[0],
+// position[1], the trail-point str after each __divsi3) before the constant of
+// the next address, even before an extended load. -mthumb-slow-loads gives a
+// store before a load 2 cycles, whole loads only, and the constant's chain
+// outranks it; that is the option's approximation, not this source.
+// Loads: the native reloads spark->age at each of its three tests and the frame
+// at step 5's second test. Here GCSE's PRE reuses the first load and inserts a
+// reload on the paths that store, which also turns step 5's test into
+// ldrh/lsl/cmp #0x100000. An analysis-only -fno-gcse compile gives the native's
+// loads, and so does a read in another alias set (*(long *)&spark->age at the
+// second test: differ 107, gap 69), since gcse.c never merges across alias
+// sets; that cast would be a new device, so it is not kept.
+// Tried without gain: sparks[i] and sprites[i] indexing instead of the two
+// pointers (gap 145), volatile age or frame (gap 79, 184), step 5 as a goto, as
+// a break on != 16, or with its tests swapped.
 // Shaping that got here from 908: ternaries written zero-first, the products as
 // (to - from) * t, a pointer to the large sprite and one read of its scale, a
 // pointer to the position vector taken before the mirror test, position

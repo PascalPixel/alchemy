@@ -1,7 +1,23 @@
-// Draft, differ 200 of 247 (tla-en): receiving clear data over the link
-// cable: waits for a peer with a matching signature, then the transfer, and
-// copies the received flags and units in. Left: the native keeps the link
-// mask in r5 and orders the signature stores inside the wait loop.
+// Draft, differ 56 of 247, skeleton gap 5/7 (tla-en, 2026-11-01)
+// Receiving clear data over the link cable: waits for a peer with a matching
+// signature, then the transfer, and copies the received flags and units in.
+// Every loop is built from labels and goto: real loops let loop.c move the
+// signature and retry blocks out of line (their exit jumps), copy the first
+// test to the top, and hoist gInput's address. A real for also lets flow merge
+// the receive block into the wait loop. The signature stores go through a
+// pointer because the array store expands as a bit-field store and folds to
+// SImode constants (movs); the HImode constant is what loads from the pool, at
+// range 64, which places the mid-function pool. The masks are locals assigned
+// before each loop.
+// Left, the skeleton: the native reloads 0x02013040 from the pool for the third
+// copy; here the argument's pseudo is reused from the first, kept in r8. Only a
+// CSE block end between them would stop that, and a do { } while (0) macro
+// emits none. Also r2/r3 swapped at the zero stores, and one scheduling pair at
+// the counters' setup. Declaration order changes nothing; idle's place in the
+// setup gives the native's i, window and idle allocation.
+// Before adoption: linked names for the Ram_ addresses, and the two window
+// macros for French and Spanish; 0x55 in tla-en is listed as MsgFieldRepelEvil
+// only by coincidence of value.
 #include "types.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
@@ -10,12 +26,14 @@
 
 extern volatile u16 gLinkStatus;
 extern u16 gLinkPeerSignatures[][12];
-extern volatile u16 gSerialReceivedSize;
+extern u16 gSerialReceivedSize;
 extern s32 gSerialReceiveDest;
 extern u32 gInput[];
 extern u16 gData_02003a74[4];
 extern u8 gGameFlagBytes[];
-extern u8 Data_02012f94[];
+#define Ram_MapCellBackup FIXED_ADDRESS((u8 *), 0x02013000, gMapCellBackup)
+#define Ram_ReceivedFlags FIXED_ADDRESS((u8 *), 0x02013040, gReceivedFlags)
+#define Ram_ReceivedUnits FIXED_ADDRESS((u8 *), 0x02013240, gReceivedUnits)
 extern char MsgFieldPreparingToReceive[];
 extern char MsgFieldTransferringData[];
 extern char MsgFieldDataTransferWasInterrupted[];
@@ -32,6 +50,20 @@ void Func_02002228(void);
 void Func_02002310(s32 hue, s32 brightness);
 void Func_02002408(s32 cue);
 
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+#define REQUEST_EDITION 'C'
+#elif (LANGUAGE == LANGUAGE_GERMAN)
+#define REQUEST_EDITION 'E'
+#elif (LANGUAGE == LANGUAGE_SPANISH)
+#define REQUEST_EDITION 'S'
+#elif (LANGUAGE == LANGUAGE_FRENCH)
+#define REQUEST_EDITION 'F'
+#elif (LANGUAGE == LANGUAGE_ITALIAN)
+#define REQUEST_EDITION 'I'
+#else
+#define REQUEST_EDITION 'U'
+#endif
+
 #define MSGNO(name) ((s32)(name))
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
@@ -45,75 +77,92 @@ void Func_02002408(s32 cue);
 s32 Func_02000b24(void) {
   void *window;
   s32 i, idle, ok, shown;
-  s32 message = MSGNO(MsgFieldPreparingToReceive);
+  s32 mask, linkMask;
+  s32 message;
+  u8 *flags;
+  s32 (*copyWords)(void *destination, const void *source, s32 size);
 
   window = Window_Create(RECEIVE_WINDOW_X, 5, RECEIVE_WINDOW_WIDTH, 8, 2);
+  message = MSGNO(MsgFieldPreparingToReceive);
   Text_DrawMessage(message, window, 0, 4);
   Text_DrawMessage(message + 1, window, 0, 16);
   Text_DrawMessage(message + 3, window, 0, 36);
   Func_02002220();
   wait(10);
-wait:
-  while (!(gInput[1] & 2)) {
-    if ((gLinkStatus & 3) == 3) {
-      u16 *signature = gLinkPeerSignatures[((REG_SIOCNT << 26) >> 30) ^ 1];
+restart:
+  mask = 3;
+  goto poll;
+scan:
+  if ((gLinkStatus & mask) == mask) {
+    u16 *signature = gLinkPeerSignatures[((REG_SIOCNT << 26) >> 30) ^ 1];
 
-      if (signature[0] == 48 && signature[1] == 48 && signature[2] == 48 &&
-          signature[3] == 48) {
-        gData_02003a74[0] = 'S';
-        gData_02003a74[1] = 'V';
-        gData_02003a74[2] = 'T';
-        gData_02003a74[3] = 'S';
-        goto receive;
-      }
+    if (signature[0] == 48 && signature[1] == 48 && signature[2] == 48 &&
+        signature[3] == 48) {
+      u16 *request = gData_02003a74;
+
+      request[0] = REQUEST_EDITION;
+      request[1] = 'V';
+      request[2] = 'T';
+      request[3] = 'S';
+      goto receive;
     }
-    wait(1);
   }
+  wait(1);
+poll:
+  if (!(gInput[1] & 2))
+    goto scan;
   Func_02002408(113);
   goto close;
 receive:
   wait(10);
-  Serial_StartReceive(Data_02012f94 + 0x6c);
+  Serial_StartReceive(Ram_MapCellBackup);
   wait(10);
+  idle = 0;
+  linkMask = 3;
   ok = 1;
   shown = 0;
-  idle = 0;
-  for (i = 0; i <= 0x927bf; i++) {
-    if (!shown && gSerialReceivedSize != 0) {
-      shown = 1;
-      Window_Close(window, 2);
-      window = Window_Create(5, 10, 20, 4, 2);
-      Text_DrawMessage(MSGNO(MsgFieldTransferringData), window, 0, 4);
-    }
-    if (i == 9 && gSerialReceivedSize == 0) {
-      gData_02003a74[0] = 0;
-      gData_02003a74[1] = 0;
-      gData_02003a74[2] = 0;
-      gData_02003a74[3] = 0;
-      Func_02002228();
-      wait(10);
-      Func_02002220();
-      wait(10);
-      goto wait;
-    }
-    idle++;
-    if ((gLinkStatus & 3) == 3)
-      idle = 0;
-    if (idle == 10) {
-      ok = 0;
-      break;
-    }
-    if (gSerialReceiveDest == 0)
-      break;
-    wait(1);
+  i = 0;
+transfer:
+  if (!shown && gSerialReceivedSize != 0) {
+    shown = 1;
+    Window_Close(window, 2);
+    window = Window_Create(5, 10, 20, 4, 2);
+    Text_DrawMessage(MSGNO(MsgFieldTransferringData), window, 0, 4);
   }
+  if (i == 9 && gSerialReceivedSize == 0) {
+    u16 *request = gData_02003a74;
+
+    request[0] = 0;
+    request[1] = 0;
+    request[2] = 0;
+    request[3] = 0;
+    Func_02002228();
+    wait(10);
+    Func_02002220();
+    wait(10);
+    goto restart;
+  }
+  idle++;
+  if ((gLinkStatus & linkMask) == linkMask)
+    idle = 0;
+  if (idle == 10) {
+    ok = 0;
+    goto done;
+  }
+  if (gSerialReceiveDest != 0) {
+    wait(1);
+    i++;
+    if (i < 600000)
+      goto transfer;
+  }
+done:
   if (!ok) {
     WindowSprite_PrepareForRedraw(window);
-    Text_DrawMessage(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0,
-                        4);
-    do
-      wait(1);
-    while (!(gInput[1] & 1));
+    Text_DrawMessage(MSGNO(MsgFieldDataTransferWasInterrupted), window, 0, 4);
+  interrupted:
+    wait(1);
+    if (!(gInput[1] & 1))
+      goto interrupted;
   close:
     Window_Close(window, 2);
     return -1;
@@ -122,13 +171,15 @@ receive:
   Func_02002228();
   wait(10);
   Window_Close(window, 2);
-  Iwram_CopyWords(gGameFlagBytes, Data_02012f94 + 0xac, 0x214);
-  Iwram_CopyWords(gGameFlagBytes + 0x220, Data_02012f94 + 0x2ac, 0xd20);
+  flags = gGameFlagBytes;
+  copyWords = Iwram_CopyWords;
+  copyWords(flags, Ram_ReceivedFlags, 0x214);
+  copyWords(flags + 0x220, Ram_ReceivedUnits, 0xd20);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);
   Unit_Calculate(3);
-  Iwram_CopyWords(Data_02012f94 + 0xac, gGameFlagBytes, 0xf40);
+  copyWords(Ram_ReceivedFlags, flags, 0xf40);
   Func_02002310(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   return 1;
 }

@@ -1,23 +1,31 @@
-// Near miss, differ 1010 of 1077 (tla-en, 2026-10-31; ja and fr differ in
-// layout): the password entry screen: a 17 by 4 character grid, the entered
-// password in pages of 50 and its check before the clear data is loaded.
-// Reshaped from 1199: WindowSprite_Create takes five arguments and
-// OUTPUT_SIZE_16X16, the two cursors are 16-byte ShopCursor locals passed by
-// address, the grid cursor's priority is cleared through the OAM bitfield
-// (the native's -13 mask), gInput is the tree's volatile InputState, the
-// discarded cursor % 10 is a call (1022 without it), the code read from the
-// grid is s32 (signed compare), the CRC is narrowed to s16 after the check
-// window opens, and the first two clearing loops and the page and cell loops
-// are goto loops (the native keeps their constants and page * 50 inside
-// them; as C loops 1099). Left: allocation and the frame (sub sp 136, not
-// 124): the native recomputes add rN, sp, #imm at every use of the two
-// cursors and the glyph buffer, where here each address is one pseudo
-// (shared by CSE, then by GCSE across the sprite tests) spilled to its own
-// slot; column takes r11 here and is spilled there, so every slot shifts.
-// Also left: the key test (native tests bit 0 of the s16 keys as a halfword,
-// lsl 16 against 0x10000; every form tried ands with 1) and the CRC's sign
-// extension (native sign-extends the raw return; here it is zero-extended
-// first). The main loop as a goto loop measured 1023.
+// Draft, differ 961 of 1077, skeleton gap 193 (tla-en, 2026-11-01; ja and fr
+// differ in layout): the password entry screen: a 17 by 4 character grid, the
+// entered password in pages of 50 and its check before the clear data is
+// loaded. Settled: WindowSprite_Create takes five arguments and
+// OUTPUT_SIZE_16X16, the two cursors are 16-byte ShopCursor locals, gInput is
+// the tree's InputState, the discarded cursor % 10 is a call, the code read
+// from the grid is s32, the key test is (keys << 16) & 0x10000, the first
+// column step shares column + 1, the page position is -pages + 18, and the
+// clearing, page, cell and both wait loops are goto loops (their constants stay
+// inside). Left is nearly all allocation, in this order:
+// 1. column takes r11 here; the native spills it, so some 45 lines read mov
+// for ldr or str. There the cell loop fills r5 to r11, with x in r8; here x
+// crosses one call with 6 refs, so global.c gives it r2 with caller saves
+// (4 * calls < refs) and r11 stays free. Native x may not have been caller-save
+// profitable; fewer refs or a second crossed call would settle it. A goto cell
+// loop with shown and offset variables measured 217, a separate near pseudo
+// 221, and a goto main loop 210.
+// 2. page takes r10 here and fp there, after window in r9: native page is
+// lower priority, which floor_log2 gives under 8 refs; here it has 10.
+// 3. The native recomputes add rN, sp, #imm at every use of the two cursors,
+// and stores through r0, which is what reload does for a pseudo with REG_EQUIV.
+// Here the address is one pseudo spilled to a slot (frame 136, not 124): no
+// REG_EQUAL reaches it, since CSE notes only a second sighting in a block and
+// copy propagation folds a copied pointer. &local at each use measured 200, and
+// PRE then joins the first test's address to the main loop's.
+// 4. gInput's address is loaded once before the key selection in the native;
+// a pointer local measured 197 and a ternary 199. The final palette glow reads
+// through a pool constant because the base pseudo is not allocated.
 #include "types.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
@@ -103,12 +111,13 @@ void Func_02002408(s32 cue);
 /// Draws the password screen's title and key help into the main window.
 #define DRAW_TITLE(window)                                                     \
   {                                                                            \
-    s32 message = MSGNO(MsgFieldSpace);                                        \
+    s32 message;                                                               \
                                                                                \
     Text_DrawStringInWindow(gData_02002440, window, 0, 0);                     \
     Text_DrawStringInWindow(gData_02002454, window, 0, 8);                     \
     Text_DrawStringInWindow(gData_02002468, window, 0, 16);                    \
     Text_DrawStringInWindow(gData_0200247c, window, 0, 24);                    \
+    message = MSGNO(MsgFieldSpace);                                            \
     Window_DrawDividerLine(window, 20, 0, 20, 5);                              \
     Text_DrawCharacterAtOffset(message++, window, 160, 0);                     \
     Text_DrawCharacterAtOffset(message++, window, 160, 8);                     \
@@ -116,9 +125,11 @@ void Func_02002408(s32 cue);
   }
 
 s32 Func_02000e44(void) {
-  struct ShopCursor cursorSprite;
-  struct ShopCursor gridSprite;
+  struct ShopCursor cursorStore;
+  struct ShopCursor gridStore;
   u16 glyph[12];
+  struct ShopCursor *cursorSprite;
+  struct ShopCursor *gridSprite;
   s32 mode;
   s32 cursor;
   struct Window *grid;
@@ -141,11 +152,12 @@ s32 Func_02000e44(void) {
   s32 count;
   s32 i;
   s32 entry;
-  u16 *palette = (u16 *)0x050001c0;
+  u16 *palette;
 
   Func_02002208();
   Func_02002310(gMainRoutineWork.paletteGlow[0],
                 gMainRoutineWork.paletteGlow[1]);
+  palette = (u16 *)0x050001c0;
   Dma_Set((const void *)0x050001e0, palette, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
           (volatile u32 *)0x040000d4);
   palette[4] = 0x6318;
@@ -197,22 +209,24 @@ clear_unknown:
     work->shown[i] = 99;
     Iwram_ClearWords(work->cells[i], 128);
   }
+  cursorSprite = &cursorStore;
+  gridSprite = &gridStore;
   entry = Resource_FindFreeEntry();
   if (entry <= 95) {
     Func_02002300();
-    cursorSprite.anchor = WindowSprite_Create(
+    cursorSprite->anchor = WindowSprite_Create(
         entry, OUTPUT_SIZE_16X16, (struct RenderInput *)window, 0, 0);
-    Func_02002400(&cursorSprite, (s16)window->x * 8 - 2,
+    Func_02002400(cursorSprite, (s16)window->x * 8 - 2,
                   (s16)window->y * 8 + 12);
   }
   entry = Resource_FindFreeEntry();
   if (entry <= 95) {
     Func_02002308();
-    gridSprite.anchor = WindowSprite_Create(
+    gridSprite->anchor = WindowSprite_Create(
         entry, OUTPUT_SIZE_16X16, (struct RenderInput *)window, 0, 0);
-    gridSprite.anchor->sentinel = 255;
-    gridSprite.anchor->oam.priority = 0;
-    Func_02002400(&gridSprite, (s16)grid->x * 8 - 4, (s16)grid->y * 8 + 12);
+    gridSprite->anchor->sentinel = 255;
+    gridSprite->anchor->oam.priority = 0;
+    Func_02002400(gridSprite, (s16)grid->x * 8 - 4, (s16)grid->y * 8 + 12);
   }
   drawMode = 1;
   drawColumn = 0;
@@ -228,10 +242,14 @@ clear_unknown:
     if (state == 0) {
       if (gInput.repeat & 16) {
         Func_02002408(111);
-        if (row == 2)
-          column = (column + 1) % 16;
-        else
-          column = (column + 1) % 17;
+        {
+          s32 next = column + 1;
+
+          if (row == 2)
+            column = next % 16;
+          else
+            column = next % 17;
+        }
       }
       if (gInput.repeat & 32) {
         Func_02002408(111);
@@ -282,8 +300,8 @@ clear_unknown:
       cursorX += (x - cursorX) / 2;
       cursorY += (y - cursorY) / 2;
     }
-    Func_020023f8(&cursorSprite, cursorX, cursorY, 1);
-    Func_020023f0(&cursorSprite);
+    Func_020023f8(cursorSprite, cursorX, cursorY, 1);
+    Func_020023f0(cursorSprite);
     {
       s32 cell = cursor % 50;
       s32 y = (cell / 10 * 2 + (s16)grid->y) * 8 - 2;
@@ -293,9 +311,9 @@ clear_unknown:
 
       if (col > 4)
         x += 10;
-      Func_020023f8(&gridSprite, x + gData_02002438[frame],
+      Func_020023f8(gridSprite, x + gData_02002438[frame],
                     y + gData_02002438[(frame + 5) & 7], 1);
-      Func_020023f0(&gridSprite);
+      Func_020023f0(gridSprite);
     }
     if (advance > 0 && ++advance == 8) {
       advance = 0;
@@ -310,7 +328,7 @@ clear_unknown:
         keys = gInput.repeat;
       else
         keys = gInput.pressed;
-      if (keys & 1 && state == 0) {
+      if ((keys << 16) & 0x10000 && state == 0) {
         action = 0;
         if (column == 16) {
           if (row == 0)
@@ -341,7 +359,7 @@ clear_unknown:
       if (action != 0 || state == 1) {
         if (gInput.pressed & 8 || action == 3 || state == 1) {
           s32 size = Func_02002068(Data_0200274a, length, Data_0200288a);
-          s32 check = Func_0200217c(size - 2, Data_0200288a);
+          u16 check = Func_0200217c(size - 2, Data_0200288a);
           s16 crc;
 
           state = 0;
@@ -352,9 +370,10 @@ clear_unknown:
             Text_DrawCharacterAtOffset(MSGNO(MsgFieldPasswordAccepted), box,
                                        0, 0);
             Func_02002408(112);
-            do
-              wait(1);
-            while (!(gInput.pressed & 1));
+          wait_accepted:
+            wait(1);
+            if (!(gInput.pressed & 1))
+              goto wait_accepted;
             Func_02002408(112);
             Func_02002350();
             gMainRoutineWork.currentOwner = 0;
@@ -382,9 +401,10 @@ clear_unknown:
           Func_02002408(113);
           Text_DrawCharacterAtOffset(MSGNO(MsgFieldInvalidPassword), box, 0,
                                      0);
-          do
-            wait(1);
-          while (!(gInput.pressed & 1) && !(gInput.pressed & 2));
+        wait_rejected:
+          wait(1);
+          if (!(gInput.pressed & 1) && !(gInput.pressed & 2))
+            goto wait_rejected;
           Window_Close(box, 2);
           WindowSprite_RedrawSavedRect(window);
           DRAW_TITLE(window)
@@ -425,7 +445,8 @@ clear_unknown:
 
       i = 0;
       if (pages != 0) {
-        x = 18 - pages;
+        x = -pages;
+        x += 18;
       draw_page:
         {
           s32 tile = i + 0xf301;

@@ -1,9 +1,16 @@
-// Near miss of Func_02000054 (94 native instructions, 97 differ in alignment):
-// the same flow, calls and constants. The draft moves the input address and the
-// masks 3 and 1 out of the message loop into r6, r7 and r11 and keeps the
-// window on the stack; the native builds them at each test and keeps message,
-// count, index and window in r6, r8, r7 and r10. As for loops the two waits
-// measured worse (108 differ).
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The five functions here share their names with resource_6ba, so measure each
+// with --symbol; all five are differ 0. Func_02000054 needs each form below;
+// each was measured, the passes named are inferred, not read from RTL dumps:
+// - The outer loop and the two waits are built from labels: as for or while
+//   loops, loop.c moves the input address and the masks out of them.
+// - The message wait is a loop entered at its test from outside, which stops
+//   loop.c hoisting and leaves the listing's branch into the test.
+// - The hold test is written twice; cross-jumping merges the copies.
+// - frames++ follows wait(1); sched2 moves it ahead of the call.
+// INPUT_HELD and the volatile input pointer are the same volatile device, not
+// yet tagged in the S2 form; tag and measure it at adoption. Only tla-en was
+// measured: the other editions are not checked.
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -39,50 +46,61 @@ void Func_02000054(s32 message, s32 count) {
   s32 i;
   s32 frames;
   void *window;
+  s32 typed;
+  volatile struct InputState *input;
 
   window = Func_02000d00(206, 0, 0, 0);
-  for (i = 0; i < count; i++) {
-    Func_02000d08(1, 1);
-    Func_02000d08(5, 2);
-    Func_02000d08(0x1e240, 5);
-    Message_CloseFinishedWindows();
-    Message_OpenWindow(message, 5, 0, 0x22);
-    /* FAKEMATCH: as for loops, loop.c moves the input address and masks out of
-     * the waits; ⚓️ builds them at each test. */
-    frames = 0;
-    if (INPUT_HELD & 3)
-      goto shown;
-  wait:
-    frames++;
-    wait(1);
-    if (frames > 59)
-      goto shown;
-    if (!(INPUT_HELD & 3))
-      goto wait;
+  i = 0;
+  if (i >= count)
+    goto done;
+loop:
+  Func_02000d08(1, 1);
+  Func_02000d08(5, 2);
+  Func_02000d08(0x1e240, 5);
+  Message_CloseFinishedWindows();
+  Message_OpenWindow(message, 5, 0, 0x22);
+  frames = 0;
+  if (INPUT_HELD & 3)
     goto shown;
-  skip:
-    gInput.held = 1;
-    gInput.pressed = 1;
-    gInput.repeat = 1;
-    wait(1);
+wait:
+  wait(1);
+  frames++;
+  if (frames > 59)
+    goto shown;
+  if (!(INPUT_HELD & 3))
+    goto wait;
+  for (;;) {
   shown:
-    if (Message_AllTyped() == 0)
-      goto skip;
-    frames = 0;
-    goto check;
-  hold:
-    frames++;
+    typed = Message_AllTyped();
+    input = (volatile struct InputState *)&gInput;
+    if (typed != 0)
+      break;
+    input->held = 1;
+    input->pressed = 1;
+    input->repeat = 1;
     wait(1);
-    if (frames > 9)
-      goto next;
-  check:
-    if (INPUT_HELD & 2)
-      goto done;
-    if (!(INPUT_HELD & 1))
-      goto hold;
-  next:
-    message++;
   }
+  frames = 0;
+  if (input->held & 2)
+    goto done;
+  if (!(input->held & 1))
+    goto hold;
+  goto next;
+hold:
+  wait(1);
+  frames++;
+  if (frames > 9)
+    goto next;
+  input = (volatile struct InputState *)&gInput;
+  if (input->held & 2)
+    goto done;
+  if (!(input->held & 1))
+    goto hold;
+next:
+  message++;
+  i++;
+  if (i < count)
+    goto loop;
 done:
   Message_CloseFinishedWindows();
   Window_Close(window, 2);

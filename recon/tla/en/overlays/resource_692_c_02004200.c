@@ -1,7 +1,10 @@
-// Draft, differ 16 of 91: overlay 692's copy of the function drafted in
-// resource_697/0200c5ac.c (overlay 697's Func_020045ac), whose
-// header says what it is, what still differs and what was tried.
-#include "../../../../../games/tla/src/scene/trial_road/trial_road.h"
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Overlay 692's copy of overlay 697's Func_020045ac (resource_697/0200c5ac.c).
+// The loop is built from labels and goto: with loop notes, as while, for or
+// do-while, the end marker 0xffff is shared and hoisted (differ 12), where the
+// native builds it again for the test at the bottom. The call forwarded through
+// Func_02005838_ stays: called directly, differ 20.
+#include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 
 struct TrapEntry {
   u16 actor;
@@ -11,6 +14,8 @@ struct TrapEntry {
 void wait(s32 frames);
 void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
                                       s32 y, s32 z);
+void Func_02004c98(struct Actor *object, s32 a);
+void Func_02004f30(s32 cue);
 void Func_02004d40(void);
 void Func_02004d48(void);
 void Func_02004d10(s32 a, s32 b, s32 c);
@@ -29,35 +34,37 @@ void Func_02004200(const void *data, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 flag;
 
-  while (entry->actor != 0xffff) {
+  if (entry->actor != 0xffff) {
+  next:
     if (entry->actor != id) {
       entry++;
-      continue;
+      goto test;
     }
-    {
-      flag = entry->flag;
-      Func_02004d40();
-      if (!GameFlag_Test(flag + 1)) {
-        Func_02004f30(185);
-        Func_02005838_(0x10000, 0x40000, 0x10000);
-        Func_020046e8(0);
-        wait(8);
-        Func_02004c98(object, 2);
-        Func_02004934(-4, OBJECT_BYTE(object, 34), id);
-        Func_020046e8(1);
-        wait(16);
-        Func_02005838_(-1, -1, 0xe666);
-        wait(8);
-        Actor_SetPositionAndResetMotion(object, 0, 0, 0);
-        wait(2);
-        Func_02004f30(188);
-        Func_0200481c();
-        wait(20);
-        GameFlag_SetBit(flag);
-        GameFlag_SetBit(flag + 1);
-      }
-      Func_02004d48();
-      break;
+    flag = entry->flag;
+    Func_02004d40();
+    if (!GameFlag_Test(flag + 1)) {
+      Func_02004f30(185);
+      Func_02005838_(0x10000, 0x40000, 0x10000);
+      Func_020046e8(0);
+      wait(8);
+      Func_02004c98(object, 2);
+      Func_02004934(-4, OBJECT_BYTE(object, 34), id);
+      Func_020046e8(1);
+      wait(16);
+      Func_02005838_(-1, -1, 0xe666);
+      wait(8);
+      Actor_SetPositionAndResetMotion(object, 0, 0, 0);
+      wait(2);
+      Func_02004f30(188);
+      Func_0200481c();
+      wait(20);
+      GameFlag_SetBit(flag);
+      GameFlag_SetBit(flag + 1);
     }
+    Func_02004d48();
+    return;
+  test:
+    if (entry->actor != 0xffff)
+      goto next;
   }
 }

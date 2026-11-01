@@ -1,15 +1,28 @@
-// Near miss, differ 437 of 418 (tla-en, 2026-10-31): the shape is the native's;
-// what is left is allocation and three compiler habits. In the walk the native
-// keeps the grid, the next column and the step in r5-r7, tries in r9 and x in
-// r10, and saves the next row (r1) on the stack around Random16Far; here r5-r7
-// go to the grid and the next column and row, tries is the one saved around
-// the call (r4) and the step sits in r10. The native rebuilds 99 and 0xc40
-// inside the border loop and stores the bottom row through grid + (0xc40 + 4i)
-// from its own 4i counter; this compiler hoists both constants and walks that
-// row with a pointer. The native computes y << 3 once before the direction
-// dispatch for all four arms (the store after it computes it again); this
-// compiler computes it in each arm and on the default edges. The rest is
-// scheduling.
+// Draft, differ 431 of 418, skeleton gap 69 (tla-en, 2026-11-01): the shape is
+// the native's; the gap is allocation and three compiler habits.
+//
+// Allocation: the native gives r5-r7 to the grid, the next column and the step,
+// r8-r10 to y, tries and x, and saves the next row (r1) around Random16Far; here
+// the next row takes r7 and tries is the one saved. Native r6 is the next column
+// and the scans' moving column, so they look like one variable, and r7 the step
+// and the walk's counter, but sharing them alone costs 8 instructions (the walk
+// counter falls out of r7). Setting nx after the call, as the native does, makes
+// the skeleton worse until tries loses priority to the step and the next row;
+// tries' density (66 refs across 172 insns) is what has to fall. Native arm 3
+// steps the next row in place (subs r1, #1); ny-- compiles as y - 1 here, so the
+// next row dies early and its live length halves, which raises its priority.
+//
+// y << 3: the native computes it once before the dispatch for all four arms and
+// again at the join. An unused k = y * 8 before the switch reproduces the arms
+// (gap 61), but it is a dead store and gcse then deletes the join's; the
+// compiler here puts it in each arm and on the default edges.
+//
+// The border loop: the native reloads 99 and 0xc40 inside it and stores the
+// bottom row through grid + (0xc40 + 4i), from its own 4i counter; here both
+// constants leave the loop and that row is walked with a pointer. Flat forms
+// (a byte offset local, a size local, a do { } while (0) macro) keep the 4i + 0xc40
+// giv but not the constants. Both constants being rebuilt suggests pseudos that
+// lost their register and rematerialize, so this may close with allocation.
 //
 // Lays out the maze path once (flag 0x3f0, not after flag 0x109): seeded by
 // the given value, a random walk of fourteen steps from the middle of a 28 by
@@ -231,6 +244,7 @@ restart:
     x = cell->unk_1;
     y = cell->unk_2;
   }
+  path = (Unk_Path *)(gData_020023c4 + 0x288);
   steps[14].unk_5 = 251;
   steps[1].unk_2 = 250;
   path->unk_0 = 1;

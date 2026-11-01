@@ -1,26 +1,37 @@
-// Draft, differ 303 of 316: the Jupiter Lighthouse aerie's effect between objects a
-// and b: allocates its work in heap slot 220, loads its two pictures
-// (resources 0x1eb and 0x1f6) into VRAM, sets up 32 small sprites and one large
-// one, picks its start and end points by side, points the event's
-// object (event work word 460) at them (Func_02002a20, Func_02002a28), plays
-// sound 142, runs Func_02001080 as a scheduled callback until its step counter
-// reaches 999, then frees the VRAM entries and the work.
+// Draft, differ 97 of 316, skeleton gap 18 removed, 17 added (tla-en, 2026-11-01)
+//
+// The Jupiter Lighthouse aerie's effect between objects a and b: allocates its
+// work in heap slot 220, loads its two pictures (resources 0x1eb and 0x1f6)
+// into VRAM, sets up 32 small sprites and one large one, picks its start and
+// end points by side, points the event's object (event work word 460) at them
+// (Func_02002a20, Func_02002a28), plays sound 142, runs Func_02001080 as a
+// scheduled callback until its step counter reaches 999, then frees the VRAM
+// entries and the work.
+//
+// Left: the second CSE pass carries the loop body's constants past the loop
+// end, so the 32 reaches the large sprite through a call-saved register and the
+// loop counter spills to the stack (frame 20, listing 12). The listing rebuilds
+// 32 and 240 at the large sprite, so something ends its block at the loop;
+// nothing in the listing shows what. Everything else left follows from that:
+// the counter in r8, tile in r9, the 240 pool load in the loop, and the
+// reload-cse adds on -13 and 32. 512 in a call-saved register copied to r1
+// before VramCache_Load is also unexplained.
+//
+// Measured: a halfword store through a field goes through store_bit_field
+// (direct_store[HImode] is 0 on Thumb) and its constant ends up as SImode movs;
+// through a pointer it stays HImode and comes from the pool, which is how the
+// listing loads 240 at both sites. Cast at both, CSE shares it and the gap
+// rises to 45, so only the large sprite's store is cast. Bitfields at the large
+// sprite (priority, palette) share 15 and -13 with the loop: the byte form with
+// keepPriority keeps them apart, and gives the single load the listing has.
+// Both branches of the side test store all six words: their tails cross-jump
+// into the listing's shared to[1], to[2] with the constants in r0 and r1. The
+// wait is a goto loop because a loop with notes hoists 999 and the step's
+// address, which the listing rebuilds on each pass.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
-
-struct BeamSprite {
-  u8 unk00[5];
-  u8 attr5;
-  u8 unk06[3];
-  u8 attr9;
-  u8 unk0a[0x0a];
-  s32 unk14;
-  s32 unk18;
-  u8 unk1c[2];
-  u16 depth;
-  u8 unk20[8];
-};
+#include "effect_sprite.h"
 
 struct BeamSpark {
   u8 unk00[0x18];
@@ -29,9 +40,9 @@ struct BeamSpark {
 
 struct BeamWork {
   u8 tiles[0x200];
-  struct BeamSprite sprites[32];
+  struct EffectSprite sprites[32];
   struct BeamSpark sparks[32];
-  struct BeamSprite large;
+  struct EffectSprite large;
   u8 unkaa8[0x1c];
   s32 from[3];
   s32 to[3];
@@ -39,8 +50,8 @@ struct BeamWork {
   u8 unkae8[0x18];
   s16 step;
   s16 unkb02;
-  s16 largeEntry;
-  u16 tile;
+  u16 largeTile;
+  u16 smallTile;
   u8 unkb08;
   u8 unkb09;
   u8 unkb0a;
@@ -48,6 +59,9 @@ struct BeamWork {
   struct Actor *first;
   struct Actor *second;
 };
+
+extern char ResourceId_Data1EB;
+extern char ResourceId_Data1F6;
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
@@ -57,7 +71,7 @@ void Func_020029a0(void *resource, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
 void Resource_ResetEntry(s32 entry);
-void Func_02002b30(struct BeamSprite *sprite, s32 width, s32 height,
+void Func_02002b30(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
                    u32 attributes, s32 tile);
 void Func_02002a20(struct Actor *object);
 void Func_02002a28(struct Actor *object, s32 x, s32 y, s32 z);
@@ -70,63 +84,71 @@ void Task_RemoveFar(void (*func)(void));
 void Func_02001080(void);
 
 void Func_020017a8(s32 a, s32 b, s32 side) {
-  struct BeamWork *work =
-      HeapSlot_AllocFar(220, sizeof(struct BeamWork));
+  struct BeamWork *work = HeapSlot_AllocFar(220, sizeof(struct BeamWork));
   struct Actor *carrier =
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 460);
-  struct BeamSprite *sprite;
+  struct EffectSprite *sprite;
+  struct EffectSprite *large;
   struct BeamSpark *spark;
   s32 smallEntry;
   s32 largeEntry;
-  s32 tile;
+  s32 smallTile;
+  s32 largeTile;
   s32 i;
 
   work->first = Actor_GetById(a);
   work->second = Actor_GetById(b);
-  Func_020029a0(Resource_GetTableEntry(0x1eb), work);
+  Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_Data1EB), work);
   smallEntry = Resource_FindFreeEntry();
-  tile = VramCache_Load(smallEntry, 256, work);
-  work->tile = tile;
-  sprite = work->sprites;
+  smallTile = VramCache_Load(smallEntry, 256, work);
+  work->smallTile = smallTile;
   spark = work->sparks;
-  for (i = 31; i >= 0; i--) {
-    Func_02002b30(sprite, 4, 4, 0, tile);
-    sprite->attr5 |= 32;
-    sprite->attr9 = (sprite->attr9 & 15) & ~12;
+  sprite = work->sprites;
+  for (i = 0; i < 32; i++, sprite++, spark++) {
+    Func_02002b30(sprite, 4, 4, 0, smallTile);
+    sprite->oam.palette256 = 1;
+    sprite->oam.palette = 0;
+    sprite->oam.priority = 0;
     sprite->depth = 240;
-    spark->age = -1;
-    sprite++;
-    spark++;
+    spark->age = -2 * i;
   }
-  Func_020029a0(Resource_GetTableEntry(0x1f6), work);
+  Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_Data1F6), work);
   largeEntry = Resource_FindFreeEntry();
-  work->largeEntry = VramCache_Load(largeEntry, 512, work);
-  Func_02002b30(&work->large, 30, 7, 0x80004000, work->largeEntry);
-  work->large.depth = 240;
-  work->large.attr5 |= 32;
-  work->large.attr9 = ((work->large.attr9 & ~12) | 4) & 15;
-  work->large.unk14 = 0;
-  work->large.unk18 = 0;
+  largeTile = VramCache_Load(largeEntry, 512, work);
+  work->largeTile = largeTile;
+  large = &work->large;
+  Func_02002b30(large, 30, 7, 0x80004000, largeTile);
+  *(u16 *)&large->depth = 240;
+  {
+    s32 keepPriority = ~12;
+
+    ((u8 *)&large->oam)[1] |= 32;
+    ((u8 *)&large->oam)[5] = ((((u8 *)&large->oam)[5] & keepPriority) | 4) & 15;
+  }
+  large->scaleX = 0;
+  large->scaleY = 0;
   if (side == 0) {
     work->from[0] = 152 << 16;
     work->from[1] = 0x200000;
     work->from[2] = 164 << 16;
     work->to[0] = 235 << 17;
+    work->to[1] = 0x200000;
+    work->to[2] = 164 << 16;
   } else {
     work->from[0] = 218 << 18;
     work->from[1] = 0x200000;
     work->from[2] = 164 << 16;
     work->to[0] = 0x2260000;
+    work->to[1] = 0x200000;
+    work->to[2] = 164 << 16;
   }
-  work->to[1] = 0x200000;
-  work->to[2] = 164 << 16;
   work->start[0] = work->from[0];
   work->start[1] = work->from[1];
   work->start[2] = work->from[2];
   carrier->speedLimit = 0x8000;
   carrier->acceleration = 0x8000;
   Func_02002a20(carrier);
-  Func_02002a28(carrier, work->start[0], work->start[2], work->start[1]);
+  Func_02002a28(carrier, work->start[0], work->start[1], work->start[2]);
   Func_02002b68(142);
   Func_0200105c(work->first);
   FieldEvent_Wait(40);
@@ -136,8 +158,12 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   work->unkb09 = 1;
   work->unkb0a = 0;
   Task_Add(Func_02001080, 0x480);
-  while (work->step != 999)
+  if (work->step != 999) {
+  again:
     wait(1);
+    if (work->step != 999)
+      goto again;
+  }
   Task_RemoveFar(Func_02001080);
   Resource_ResetEntry(largeEntry);
   Resource_ResetEntry(smallEntry);

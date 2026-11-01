@@ -1,144 +1,118 @@
-// Draft of overlay 6a5's Func_020040f4, translated from its listing: differ
-// 162 of 216. Left: its shape: 212 instructions against the listing's 216.
+// Draft, differ 143 of 216, skeleton gap 10/13 (tla-en, 2026-11-01)
+// Overlay 6a5's copy of the function drafted in resource_698_c_020003cc.c: the
+// leader rides up with its watched object, spinning and flickering, until that
+// object clears its flag; then it is set down on the 8-pixel grid beside it,
+// falls to the ground and the camera follows it again. Real loops, not goto:
+// only they keep 0x3ffff a pool load (a goto loop's compare becomes 0x40000).
+// i++ follows wait(1); sched2 moves it above the call. The word local one gives
+// the halfword stores a movs (as constants they load from the pool); its value
+// also reaches the priority store, which is the pool's 1. facing is set then
+// shifted in two statements, which keeps asrs (one expression gives lsrs).
+// Left: gcse's PRE hoists actor + 35 out of the rise loop, where the native
+// rebuilds it each pass. That costs a fourth high register (the extra push),
+// the three instructions before the loop and the rebuild after it, and swaps
+// r5 and r6 from there on. The shadow's zero loads from the pool in the native
+// (ldr r5); here it is movs, or the low byte of 0x10000 when stored through a
+// pointer. The branches round the mid-function pools land elsewhere because of
+// the length. Tried: an alias of actor after the loop (stops PRE, loop.c then
+// hoists it, life 3 of 33 insns); the address through a local, inside and after
+// the loop; u8, s8, u16 and s16 zero locals; declaration orders.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Camera_FollowActor();
-s32 Camera_MoveWithinMapBounds();
-s32 Func_02005784();
-s32 Func_0200578c();
-s32 Func_02005814();
-s32 Func_0200581c();
-s32 Func_0200592c();
-s32 Func_02005984();
-s32 Func_020059f4();
-s32 Map_GetTerrainHeight();
-s32 Actor_SetSingleChildFlags();
-s32 Actor_GetById();
-s32 wait();
-extern u8 gFrameCount[];
-extern u8 gMainRoutineWork[];
+#include "ram_buffer.h"
+#include "actor.h"
+#include "main_routine_work.h"
+#include "frame.h"
+#include "call.h"
+
+struct Actor *Actor_GetById(s32 id);
+void Func_02005814(void);
+void Func_02005984(s32 value);
+void Actor_SetSingleChildFlags(struct Actor *object,
+                                        s32 flags);
+void wait(s32 frames);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+struct Actor *Func_0200592c(void);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+void Func_02005784(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_020059f4(s32 sound);
+void Func_0200578c(struct Actor *object);
+void Camera_FollowActor(s32 id, s32 flag);
+void Func_0200581c(void);
 
 void Func_020040f4(void) {
-  s32 v_r9, v_r10, v_r7, v_r6, v_r5, v_r8, v_r0, v_r1, v_r2, v_r3;
-  s32 t0, t1, t2, t3, t7, t8, t9, t10, t11, t12;
-  s32 t13, t15, t16, t17, t18, t21, t22, t23, t24, t25;
-  s32 t26, t28, t29, t31, t32, t34, t36, t38, t39, t40;
-  s32 t41;
+  u8 *work = Ram_HeapSlots->eventWork;
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *linked = actor->watchedObject;
+  struct Actor *shadow;
+  u8 *motion;
+  u8 *busy;
+  u8 *p;
+  s32 facing;
+  s32 one;
+  s32 i;
 
-  t0 = FIELD_AT(0x3000000, s32, 108);
-  t1 = *(s32 *)((s32)gMainRoutineWork + 0x214);
-  t2 = Actor_GetById(t1);
-  t3 = FIELD_AT(t2, s32, 104);
   Func_02005814();
   Func_02005984(0);
-  *(u16 *)(0xd46 + t0) = 0;
-  v_r9 = (85 + t2);
-  *(u8 *)v_r9 = 4;
-  Actor_SetSingleChildFlags(t2, 0);
-  t7 = *(u8 *)(99 + t3);
-  v_r8 = (99 + t3);
-  v_r5 = 0;
-  v_r6 = t2;
-  v_r7 = t3;
-  v_r10 = t0;
-  if (t7 == v_r5)
-    goto L_0200c194;
-L_0200c14e:
-  t8 = FIELD_AT(v_r7, s32, 8);
-  FIELD_AT(v_r6, s32, 8) = t8;
-  t9 = FIELD_AT(v_r7, s32, 12);
-  FIELD_AT(v_r6, s32, 12) = (t9 + v_r5);
-  t10 = FIELD_AT(v_r7, s32, 16);
-  FIELD_AT(v_r6, s32, 16) = t10;
-  if (v_r5 > 0x3ffff)
-    goto L_0200c16a;
-  v_r5 = (v_r5 + 0x1999);
-L_0200c16a:
-  t11 = *(s32 *)(s32)gFrameCount;
-  t12 = *(u8 *)(s32)gFrameCount;
-  FIELD_AT(v_r6, u16, 6) = (t12 << 12);
-  t13 = *(u8 *)(v_r6 + 35);
-  *(u8 *)(v_r6 + 35) = ((2 << (t11 & 1)) ^ t13);
-  wait(1);
-  t15 = *(u8 *)v_r8;
-  if (t15 != 0)
-    goto L_0200c14e;
-L_0200c194:
-  *(u16 *)(0xd44 + v_r10) = 1;
-  *(u16 *)(0xd46 + v_r10) = 1;
-  t16 = FIELD_AT(v_r7, s32, 8);
-  t17 = FIELD_AT(v_r7, u16, 6);
-  FIELD_AT(v_r6, s32, 8) = (((((t16 >> 19) & -2) + (t17 >> 13)) - 1) << 19);
-  t18 = FIELD_AT(v_r7, s32, 16);
-  FIELD_AT(v_r6, s32, 16) =
-      (((((t18 >> 19) & -2) - ((t17 >> 13) & 2)) + 1) << 19);
-  FIELD_AT(v_r6, s32, 40) = 0x60000;
-  *(u8 *)(v_r6 + 35) = 1;
-  *(u8 *)v_r9 = 3;
-  Actor_SetSingleChildFlags(v_r6, 1);
-  v_r3 = 0;
-  v_r2 = -1;
-  v_r1 = -1;
-  v_r0 = -1;
-  goto L_0200c20c;
-L_0200c20c:
-  Camera_MoveWithinMapBounds(v_r0, v_r1, v_r2, v_r3);
-  t21 = Func_0200592c();
-  FIELD_AT(t21, s32, 48) = 0x80000;
-  FIELD_AT(t21, s32, 52) = 0x10000;
-  *(u8 *)(t21 + 85) = 0;
-  t22 = FIELD_AT(v_r6, s32, 8);
-  t23 = FIELD_AT(v_r6, s32, 16);
-  t24 = Map_GetTerrainHeight(0, t22, t23);
-  t25 = FIELD_AT(v_r6, s32, 16);
-  t26 = FIELD_AT(v_r6, s32, 8);
-  Func_02005784(t21, t26, t24, t25);
-  t28 = FIELD_AT(v_r6, s32, 20);
-  t29 = FIELD_AT(v_r6, s32, 12);
-  v_r5 = 0;
-  v_r7 = t21;
-  if (t29 <= (t28 + 0x100000))
-    goto L_0200c272;
-  goto L_0200c258;
-L_0200c258:
-  wait(1);
-  v_r5 = (v_r5 + 1);
-  if (v_r5 > 59)
-    goto L_0200c272;
-  t31 = FIELD_AT(v_r6, s32, 20);
-  t32 = FIELD_AT(v_r6, s32, 12);
-  if (t32 > (t31 + 0x100000))
-    goto L_0200c258;
-L_0200c272:
+  i = 0;
+  *(u16 *)(work + 0xd46) = i;
+  motion = &actor->motionFlags;
+  *motion = 4;
+  Actor_SetSingleChildFlags(actor, 0);
+  busy = (u8 *)linked + 0x63;
+  while (*busy != 0) {
+    actor->x = linked->x;
+    actor->y = linked->y + i;
+    actor->z = linked->z;
+    if (i <= 0x3ffff)
+      i += 0x1999;
+    actor->angle = (u8)gFrameCount << 12;
+    p = &actor->priorityFlags;
+    *p ^= 2 << (gFrameCount & 1);
+    wait(1);
+  }
+  one = 1;
+  *(u16 *)(work + 0xd44) = one;
+  *(u16 *)(work + 0xd46) = one;
+  facing = linked->angle;
+  facing >>= 13;
+  actor->x = (((linked->x >> 19) & ~1) + facing - 1) << 19;
+  actor->z = (((linked->z >> 19) & ~1) - (facing & 2) + 1) << 19;
+  actor->velocityY = 0x60000;
+  p = &actor->priorityFlags;
+  *p = 1;
+  *motion = 3;
+  Actor_SetSingleChildFlags(actor, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  shadow = Func_0200592c();
+  shadow->speedLimit = 0x80000;
+  shadow->acceleration = 0x10000;
+  shadow->motionFlags = 0;
+  Func_02005784(shadow, actor->x, Map_GetTerrainHeight(0, actor->x, actor->z),
+                actor->z);
+  i = 0;
+  if (actor->y > actor->terrainHeight + 0x100000) {
+    do {
+      wait(1);
+      i++;
+      if (i > 59)
+        break;
+    } while (actor->y > actor->terrainHeight + 0x100000);
+  }
   Func_020059f4(127);
-  t34 = FIELD_AT(v_r6, s32, 40);
-  v_r5 = 0;
-  if (t34 == v_r5)
-    goto L_0200c292;
-L_0200c280:
-  wait(1);
-  v_r5 = (v_r5 + 1);
-  if (v_r5 > 59)
-    goto L_0200c292;
-  t36 = FIELD_AT(v_r6, s32, 40);
-  if (t36 != 0)
-    goto L_0200c280;
-L_0200c292:
-  Func_0200578c(v_r7, v_r1, v_r2);
-  v_r5 = ((s32)gMainRoutineWork + 0x214);
-  t38 = *(s32 *)v_r5;
-  t39 = Actor_GetById(t38);
-  t40 = *(u8 *)(t39 + 35);
-  *(u8 *)(t39 + 35) = (1 | t40);
-  t41 = *(s32 *)v_r5;
-  Camera_FollowActor(t41, 1);
-  *(u16 *)(0xd46 + v_r10) = 1;
-  *(u16 *)(0x154 + v_r10) = 0;
+  i = 0;
+  if (actor->velocityY != 0) {
+    do {
+      wait(1);
+      i++;
+      if (i > 59)
+        break;
+    } while (actor->velocityY != 0);
+  }
+  Func_0200578c(shadow);
+  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
+  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  one = 1;
+  *(u16 *)(work + 0xd46) = one;
+  *(u16 *)(work + 0x154) = 0;
   Func_0200581c();
-  return;
 }

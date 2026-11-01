@@ -1,9 +1,16 @@
-// Draft, differ 31 of 64: a goto loop keeps the constants inside the pass as
-// the native does (a for loop hoists 0x8000 and the zero: differ 74). Left: the
-// native builds 0x8000 and the sprite priority mask -13 in r0 and copies the
-// mask to r2, computes the next index (adds r0, r6, #1) before the parity
-// branch, and builds 212 and 116 with movs where this form loads halfwords from
-// the pool.
+// Draft, differ 18 of 64, skeleton gap 2 (tla-en, 2026-11-01)
+// Left: the native builds 0x8000 in r0 and -13 in r0, copying the mask to r2
+// (the listing's copy of the object to r0 and of the mask to r2 are the gap).
+// Those registers come from loop-depth weights: a real do loop gives them all
+// and differ 16, but loop.c then hoists the zero (reg life 41, moved) out of the
+// loop, where the native sets r7 in the body, and swaps r2 and r3 in the mask
+// step, for skeleton gap 4. So the open question is why the native's zero stays
+// in the loop: it is not movable there, or its life is short at the loop pass
+// and it joins the later zeros only at cse2. A variable set to 0 twice in the
+// body does not change that (differ 14, the zero still hoisted). Tried without
+// gain: statement orders of the setup (all 720), one-pass blocks, a chained
+// store, narrow zero locals, an index postincrement in the test, for and while
+// forms.
 #include "types.h"
 
 #include "ram_buffer.h"
@@ -40,6 +47,7 @@ void Map_DisableUpdateCallback(void);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void Func_0200015c(struct Actor *object);
+void Func_020001d8(struct Actor *object);
 void Func_020004dc(s32 mode);
 struct Actor *Func_02001c04(s32 type, s32 x, s32 y, s32 z);
 void Func_02001c34(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -51,37 +59,39 @@ void Func_02001d4c(s32 cue);
 
 void Func_02000298(void) {
   s32 i;
+  s32 next;
 
   struct Actor *object;
   s16 *action;
   s16 *timer;
 
   i = 0;
-  {
-  next:
-    object = Func_02001c04(0x2a0, 0, 0, 0);
+loop:
+  object = Func_02001c04(0x2a0, 0, 0, 0);
 
-    object->motionFlags = 0;
-    object->priorityFlags = 0;
-    object->speedLimit = (i << 12) + 0x8000;
-    object->acceleration = (i << 12) + 0x8000;
-    object->update = (void (*)(void))Func_020001d8;
-    OBJECT_BYTE(object, 99) = i << 3;
-    Actor_SetSingleChildFlags(object, 0);
-    Actor_SetPartAttribute(object, 2);
-    ((struct FieldSprite *)object->animation)->priority = 1;
-    Animation_SetStateFlags(object, 1);
-    action = &object->action;
-    timer = (s16 *)&object->unk66;
-    if (i & 1) {
-      *action = 212;
-      *timer = 0;
-    } else {
-      *action = 116;
-      *timer = 0;
-    }
-    i++;
-    if (i != 16)
-      goto next;
+  object->motionFlags = 0;
+  object->priorityFlags = 0;
+  object->speedLimit = (i << 12) + 0x8000;
+  object->acceleration = (i << 12) + 0x8000;
+  object->update = (void (*)(void))Func_020001d8;
+  OBJECT_BYTE(object, 99) = i << 3;
+  Actor_SetSingleChildFlags(object, 0);
+  Actor_SetPartAttribute(object, 2);
+  ((struct FieldSprite *)object->animation)->priority = 1;
+  Animation_SetStateFlags(object, 1);
+  action = &object->action;
+  timer = (s16 *)&object->unk66;
+  next = i + 1;
+  if (i & 1) {
+    s32 parameter = 212;
+    *action = parameter;
+    *timer = 0;
+  } else {
+    s32 parameter = 116;
+    *action = parameter;
+    *timer = 0;
   }
+  i = next;
+  if (i != 16)
+    goto loop;
 }

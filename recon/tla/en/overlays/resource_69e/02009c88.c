@@ -1,3 +1,4 @@
+// Matches: differ 0 (tla-en, 2026-11-01)
 #include "types.h"
 #include "field_effect.h"
 #include "field_sprite.h"
@@ -43,9 +44,9 @@ void Func_02001c88(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
-  effect->velocityX = velocityX;
-  effect->velocityY = velocityY;
-  effect->velocityZ = velocityZ;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
   Scene_SetActorSpritePriority(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;

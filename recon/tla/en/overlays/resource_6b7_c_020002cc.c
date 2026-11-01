@@ -1,15 +1,25 @@
-// Draft, differ 59 of 284: ☀️'s EV08_TALK (debug/level.c) for overlay 6B7, the
-// debug room's item giver, with ⚓️'s 512 item slots (the modulus a variable
-// as in ☀️, so it stays a __modsi3 call), message 607 as MsgItemName (pooled,
-// so a symbol, as 146 is MsgItemPlainName; not yet named in the catalogs) and
-// talk.c's Input_PressedFenced for the A test (without it the B test reuses
-// the A test's gInput address: differ 64). Left: global.c gives the window r8
-// and the KEY_L mask, which CSE reuses as the first modulus of the Left branch,
-// r7; the native swaps them (lreg: the mask 6 refs over 30 insns ranks above
-// the window's 19 over 214). Tried: the windows declared the other way, a
-// goto loop (144), one-pass blocks around the redraw block or its item
-// branch (84, 86), the window pinned to r7 (169), four minutes of alchemy
-// permute (its best moves calls between branches).
+// Draft, differ 55 of 284, skeleton gap 13 (tla-en, 2026-11-01)
+// ☀️'s EV08_TALK (debug/level.c) for overlay 6B7, the debug room's item giver,
+// with ⚓️'s 512 item slots (the modulus a variable as in ☀️, so it stays a
+// __modsi3 call), message 607 as MsgItemName (pooled, so a symbol, as 146 is
+// MsgItemPlainName; both declared by msg_ids.h) and talk.c's
+// Input_PressedFenced for the A test.
+// Left is one allocation pair, and the whole skeleton gap follows from it:
+// window and the KEY_L mask, which CSE reuses as the first modulus of the Left
+// branch, swap r7 and r8. The native gives window r7 and the mask r8 (the
+// mov r8, r2 after ands is reload filling a high register). lreg ranks the
+// mask 6 refs over 30 insns (0.40) above window's 19 over 214 (0.36); window
+// outranks it from about 217 against 36, three more insns between the KEY_L
+// test and the first modulus that survive combine and leave at allocation.
+// The fence is needed only because PRE (GCSE) otherwise drops the B test's
+// load of gInput's address, inserting it on the edge from the A block.
+// Tried: the windows declared the other way, a goto loop (140), one-pass
+// blocks around the redraw block or its item branch (84, 86), while (redraw)
+// (80), the window pinned to r7 (169), step as s32 or read through its 24-bit
+// shift (55, 55), a local for the sign-extended step (85), an index temporary
+// at the modulus (188), the Left body reordered (59), the fence without its
+// operand (63) or before the B test (55), plain or inline A tests (60), four
+// minutes of alchemy permute (its best moves calls between branches).
 #include "types.h"
 #include "input.h"
 #include "item.h"
@@ -22,7 +32,6 @@
 extern const u8 gData_02000748[];
 extern const u8 gData_02000754[];
 extern const u8 gData_0200076c[];
-extern char MsgItemName[];
 
 void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Text_DrawMessage(s32 msg, void *window, s32 x, s32 y);
@@ -43,6 +52,8 @@ void Func_0200073c(s32 cue);
 static inline u32 Input_PressedFenced(u32 mask) {
   u32 keys = gInput.pressed & mask;
 
+  /* FAKEMATCH(barrier): the memory clobber makes the next test load gInput's
+   * address again; as a plain test, 60 of 284 instructions differ in tla-en. */
   __asm__ volatile("" : "+r"(keys) : : "memory");
   return keys;
 }

@@ -1,15 +1,29 @@
-// Near miss, differ 478 of 629 (tla-en, 2026-10-31): the control flow, calls,
-// arguments and loads are the native's; what is left is allocation. The
-// native keeps gSceneState in r11, row and z in r7, col and x in r8, failed
-// and n in r9, mode and cell in r10, left and tries on the stack; here row
-// takes r4 saved around every call, gSceneState r10, tries r11 and n the
-// stack, because gcse's PRE hoists gSceneState + 152 (the first fixed cell)
-// out of the retry loop into r9, where the native recomputes it each time.
-// Tried: the grid walks as for loops (loop.c strength-reduces the cell
-// address, 607); the retry as for (;;) with state reloaded at its top (the
-// hoist goes, but loop.c hoists the argument constants 1, 3 and 2, 592);
-// gSceneState used directly (reloaded at every use, 649); x and z shared
-// with col and row (516 to 570); failed and n as one variable (536).
+// Draft, differ 475 of 629, skeleton gap 121 (tla-en, 2026-11-01): control
+// flow, calls, arguments and loads are the native's; what is left follows
+// from allocation. Native: gSceneState r11, row and z r7, col and x r8,
+// failed and n r9, mode and cell r10, left and tries on the stack. Here: col
+// and z r7, row r4 saved around every call (11 extra instructions), x r8,
+// gSceneState r9, failed r10, n r11. Row in r7 is the fix that matters: col
+// outranks it in global.c (refs over live length) and row then takes r4
+// because caller-save counts as profitable.
+// Forms that cut the gap: state copied from base at the top of the retry
+// (stops gcse's PRE hoisting gSceneState + 152, without the reload that
+// state = &gSceneState there costs); piece signed (the switch's bgt);
+// failed |= from the first call (a zero failed feeds the arguments, as the
+// native's r9 does); n, not failed, for the second group of channels.
+// failed = 0 sits before the draw grid so it conflicts with col and leaves
+// r7; the native sets it after the grid, so that form is known to be wrong.
+// The native sets row = 0 before Iwram_ClearWords; that form loses here
+// (gap 157). Tried: the grid walks as for loops (loop.c strength-reduces the
+// cell address); for (;;) for the retry (loop.c hoists the argument
+// constants); gSceneState used directly (649); x, z sharing col, row and
+// failed sharing n, in every combination (gap 183 and up).
+// Unsolved evidence: the native loads layout constant 4 into r8, crossing one
+// call with three refs, where a loop-weighted count finds caller-save r4
+// profitable, and orders its constants 2, 3, 4, 0. Both fit refs unweighted
+// by the retry's loop depth (6 here). recompute_reg_usage gives that only if
+// combine rebuilds the blocks by making an unconditional jump, and no compare
+// tried here triggered it.
 // The cells are read through struct PuzzleCell: the native loads the piece
 // as [state + index] and then adds state for the shape or mark, which a
 // u8 pointer expression does not give.
@@ -59,13 +73,15 @@ s32 Func_02003934(s32 col, s32 row);
 s32 Func_02004380(s32 col, s32 row, s32 turn);
 
 s32 Func_02003a64(s32 value) {
-  struct SceneState *state = &gSceneState;
+  struct SceneState *base = &gSceneState;
+  struct SceneState *state;
   s32 row, col, x, z, failed, straight, corner, cross, tries, left, n, mode;
-  u32 piece, shape;
+  s32 piece, shape;
   struct PuzzleCell *cell;
 
-  state->count = value - 1;
+  base->count = value - 1;
 retry:
+  state = base;
   gRandomState = ++state->count;
   Iwram_ClearWords(state, sizeof(state->cells));
   state->cells[3 * 11 + 5].piece = 10;
@@ -75,6 +91,7 @@ retry:
   state->cells[7 * 11 + 2].unk1 = 1;
   state->cells[7 * 11 + 8].unk1 = 1;
   state->cells[7 * 11 + 10].unk1 = 1;
+  failed = 0;
   row = 0;
 draw_row:
   col = 0;
@@ -85,15 +102,14 @@ draw_col:
     goto draw_col;
   if (++row <= 7)
     goto draw_row;
-  failed = 0;
   if (Random16Far() < 0x8000) {
-    failed = Func_02003fc0(2, 7, 5, 7, 4, 0, 3, 2);
+    failed |= Func_02003fc0(2, 7, 5, 7, 4, 0, 3, 2);
     failed |= Func_02003fc0(8, 7, 6, 6, 4, 2, 2, 3);
     Func_02004270(5, 6, 9, 12);
     failed |= Func_02003fc0(4, 6, 4, 3, 12, 2, 0, 2);
     failed |= Func_02003fc0(5, 5, 5, 2, 14, 3, 1, 3);
   } else {
-    failed = Func_02003fc0(2, 7, 4, 6, 4, 0, 0, 2);
+    failed |= Func_02003fc0(2, 7, 4, 6, 4, 0, 0, 2);
     failed |= Func_02003fc0(8, 7, 5, 7, 4, 2, 3, 3);
     Func_02004270(5, 6, 8, 12);
     failed |= Func_02003fc0(5, 5, 4, 3, 12, 3, 0, 2);
@@ -101,9 +117,9 @@ draw_col:
   }
   if (failed != 0)
     goto retry;
-  failed = Func_02003fc0(0, 7, 5, 4, 19, 2, 3, 0);
-  failed |= Func_02003fc0(10, 7, 6, 3, 17, 0, 2, 1);
-  if (failed != 0)
+  n = Func_02003fc0(0, 7, 5, 4, 19, 2, 3, 0);
+  n |= Func_02003fc0(10, 7, 6, 3, 17, 0, 2, 1);
+  if (n != 0)
     goto retry;
   straight = 0;
   corner = 0;
@@ -118,7 +134,7 @@ count_col:
     straight++;
   if (shape == 10)
     corner++;
-  if (shape == 12 && piece - 8 <= 1)
+  if (shape == 12 && (u32)(piece - 8) <= 1)
     cross++;
   if (++col <= 10)
     goto count_col;
@@ -138,7 +154,7 @@ start_try:
   z = ((Random16Far() * 3) >> 16) + 5;
   if (Func_02003934(x, z) == 0) {
     piece = state->cells[z * 11 + x].piece;
-    if (piece - 1 <= 1) {
+    if ((u32)(piece - 1) <= 1) {
       shape = state->cells[z * 11 + x].shape;
       if ((mode == 0 && (shape & 6) != 0) || (mode == 1 && (shape & 9) != 0)) {
         state->cells[z * 11 + x].piece = 10;
@@ -209,7 +225,7 @@ straight_done:
     z = (Random16Far() * 8) >> 16;
     if (Func_02003934(x, z) == 0) {
       piece = state->cells[z * 11 + x].piece;
-      if (piece - 1 <= 1) {
+      if ((u32)(piece - 1) <= 1) {
         state->cells[z * 11 + x].marked = 1;
         goto plain_done;
       }

@@ -1,10 +1,15 @@
-// Overlay 6B5, from ☀️ link_lobby/lobby.c. Func_020002d8 and Func_02000344 are
-// differ 0. Func_02000134 (LinkLobby_PollPeerReady) is a near miss, differ 73
-// of 180 (2026-10-12): the listing keeps the peer table address and the
-// IwramClearWords address inside the clear loop (ldr r0; ldr r3; adds r0, r6,
-// r0) and loads the wait counter address once before the flag test; this draft
-// hoists both loop addresses into r6 and r7, which moves work and result to r8
-// and r10.
+// Draft, differ 84 of 180, skeleton gap 24 (tla-en, 2026-11-01): Func_02000134,
+// measured with --symbol Func_02000134. Overlay 6B5, from ☀️ link_lobby/lobby.c.
+// Func_020002d8 and Func_02000344 are differ 0. What is left in Func_02000134 is
+// the peer clear loop and what it costs: every plain loop tried (for, do, while,
+// for (;;), by index, pointer or stepped offset) lets loop.c hoist the table and
+// IwramClearWords addresses into r6 and r7, where the listing loads both inside
+// the loop; work and result then move to r8 and sl, and most of the gap is that
+// allocation. A label-and-goto loop stepping an offset closes it (differ 8, gap
+// 2), and a local holding Flag_Test(0x303) so the counter's address loads after
+// the call reaches differ 0, but both are devices, tagged FAKEMATCH in the same
+// function in games/tla/src/scene/lobby/lobby.c; this draft stays plain. The
+// waitCounter local is a one-address local, no device.
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -62,16 +67,18 @@ s32 Func_02000134(void) {
   struct LobbyEventWork *work;
   s32 result;
   s32 i;
+  s32 *waitCounter;
 
   work = Ram_HeapSlots->eventWork;
   result = 1;
   if (((struct Actor *)Actor_GetById(4))->z > 0xe00000) {
-    GameFlag_ClearBit(0x304);
+    Flag_Clear(0x304);
   }
   if (work->raisedTrigger != 2) {
     Func_0200006c(0);
-    if (!GameFlag_Test(0x303)) {
-      if (++gData_020022b8 > 25) {
+    waitCounter = &gData_020022b8;
+    if (!Flag_Test(0x303)) {
+      if (++*waitCounter > 25) {
         for (i = 0; i < 4; i++) {
           Iwram_ClearWords(&gLinkPeerSignatures[i], 20);
         }
@@ -79,21 +86,21 @@ s32 Func_02000134(void) {
         LinkLobby_WriteSlotValue(4);
       }
     } else {
-      gData_020022b8 = 0;
+      *waitCounter = 0;
     }
     if (gData_020022b8 == 0) {
       if (Func_0200006c(0) && (Func_0200006c(1) || Func_0200006c(2))) {
-        GameFlag_SetBit(0x201);
-        if (GameFlag_Test(0x202)) {
+        Flag_Set(0x201);
+        if (Flag_Test(0x202)) {
           work->raisedTrigger = 1;
         }
         result = 1;
       } else {
-        GameFlag_ClearBit(0x201);
+        Flag_Clear(0x201);
         result = 0;
       }
     }
-    if (GameFlag_Test(0x201) && GameFlag_Test(0x202) && !GameFlag_Test(0x200)) {
+    if (Flag_Test(0x201) && Flag_Test(0x202) && !Flag_Test(0x200)) {
       work->raisedTrigger = 1;
     }
   }

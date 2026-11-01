@@ -1,5 +1,19 @@
-// Draft, differ 193 of 188: translated from its listing; names and structure still
-// to do.
+// Draft, differ 241 of 188, skeleton gap 67 (tla-en, 2026-11-01)
+// Control flow, types, the frame (108 bytes) and every access follow the listing.
+// Left is all GCSE: PRE puts a load of *delta after each store to it, cse2 turns
+// that into copies of the stored value, and it merges the reloaded addresses and
+// work + 340 into long-lived pseudos, where the listing rereads *delta at every
+// join and reloads gFrameCount, gData_020022be and gData_020022bc from the pool.
+// That pushes work to the sp+16 spill the listing gives index, and index takes
+// r11's place in a low register. An analysis-only compile with -fno-gcse gives the
+// listing's reloads, its work in r11 and index at sp+16, its pool hops, and the
+// tail; only the struct copy's register lists and the two Random16Far results
+// (r5/r6 swapped) differ there. Tried without gain: work as a struct, index as s32,
+// a pointer for work + 340, later declarations, dropping frame or stamp.
+// Rereading *delta through volatile would be a new device (no other function uses
+// these globals), so it is left out. wait and zero are locals because a plain
+// constant stored to a halfword comes from the pool, and the listing's tail uses
+// movs; the other zero, 1 and -1 are the listing's pool constants.
 #include "iwram_call.h"
 #include "call.h"
 #include "actor.h"
@@ -8,127 +22,100 @@
 #include "text/msg_ids.h"
 #include "types.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+struct Spot {
+  s32 x;
+  s32 z;
+};
 
-extern u8 gFrameCount[];
-extern u8 gData_020022c4[];
-extern u8 gData_020022be[];
-extern u8 gData_020022c0[];
-extern u8 gData_020022bc[];
-extern u8 gData_02002118[];
+struct Spots {
+  struct Spot spot[6];
+};
+
+struct Params {
+  s32 unk_00;
+  u8 pad[20];
+  u16 unk_18;
+  u8 pad2[14];
+};
+
+extern u32 gFrameCount;
+extern u32 gData_020022c4;
+extern u16 gData_020022be;
+extern s16 gData_020022c0;
+extern u16 gData_020022bc;
+extern struct Spots gData_02002118;
 extern u8 gData_02002110[];
-s32 Actor_GetById();
-s32 Func_0200034c();
-s32 Random16Far();
+s32 Func_0200034c(s32, s32, s32);
+u32 Random16Far(void);
 void Func_02002054();
-void Func_0200015c();
+void Func_0200015c(s32, s32, s32, s32, s32, s32, s32, struct Params *);
 
-s32 Func_02000a80(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 r11, v0, v1, r6, r7, r4, r2, r1, r5, r0, r10, r3, r9, v2, r8, v3;
-  s32 stack[27];
+void Func_02000a80(void) {
+  u8 *work = (u8 *)Ram_HeapSlots->eventWork;
+  struct Actor *actor = Actor_GetById(8);
+  s16 index = (Func_0200034c(0, actor->x >> 20, actor->z >> 20) >> 8) - 1;
+  s32 now;
+  s32 last;
+  s32 nowRaw;
+  u32 phase;
+  u32 *frame = &gFrameCount;
+  u32 *stamp = &gData_020022c4;
 
-  /* sub (s32)stack, #108 */
-  r11 = (s32)Ram_HeapSlots->eventWork;
-  v0 = Actor_GetById(8);
-  v1 = Func_0200034c(0, (FIELD_AT(v0, s32, 8)) >> 20,
-                     (FIELD_AT(v0, s32, 16)) >> 20);
-  stack[4] = (((v1 >> 8) - 1) << 16) >> 16;
-  r6 = (s32)gFrameCount;
-  r7 = (s32)gData_020022c4;
-  if ((u32)((FIELD_AT(r6, s32, 0)) - (FIELD_AT(r7, s32, 0))) > (u32)50) {
-    FIELD_AT((s32)gData_020022be, u16, 0) = 0;
-    FIELD_AT((s32)gData_020022c0, u16, 0) = 0;
+  if (*frame - *stamp > 50) {
+    gData_020022be = 0;
+    gData_020022c0 = 0;
   }
-  r4 = FIELD_AT(r11, s16, 340);
-  r2 = FIELD_AT((s32)gData_020022bc, u16, 0);
-  r1 = FIELD_AT(r11, u16, 340);
-  if ((FIELD_AT((s32)gData_020022bc, u16, 0)) == r4)
-    goto L_02008b5e;
-  r5 = 0;
-  r0 = (s32)gData_020022c0;
-  if ((*(s16 *)(((s32)gData_020022c0) + r5)) != 0)
-    goto L_02008b0c;
-  FIELD_AT(r0, u16, 0) = r2 - r1;
-  goto L_02008b0c;
-L_02008b0c:
-  if ((FIELD_AT(r0, s16, 0)) == 7) {
-    FIELD_AT(r0, u16, 0) = -1;
+  last = gData_020022bc;
+  now = *(s16 *)(work + 340);
+  nowRaw = *(u16 *)(work + 340);
+  if (last != now) {
+    s16 *delta = &gData_020022c0;
+    u16 *count;
+    s32 step;
+
+    if (*delta == 0) {
+      *delta = last - nowRaw;
+    }
+    if (*delta == 7) {
+      *delta = -1;
+    }
+    if (*delta == -7) {
+      *delta = 1;
+    }
+    step = *delta;
+    count = &gData_020022be;
+    if (last - now == step || now - last == step * 7) {
+      (*count)++;
+      *stamp = *frame;
+    } else {
+      *count = 0;
+      *delta = 0;
+    }
   }
-  r5 = 0;
-  if ((*(s16 *)(r0 + r5)) == -7) {
-    FIELD_AT(r0, u16, 0) = 1;
+  gData_020022bc = *(u16 *)(work + 340);
+  if (gData_020022be > 3) {
+    phase = gFrameCount & 3;
+    if (phase == 0) {
+      struct Spots spots = gData_02002118;
+      struct Params params;
+      u32 x, z;
+
+      params.unk_18 = 0x2a1;
+      params.unk_00 = 2;
+      x = Random16Far() & 31;
+      z = Random16Far() & 31;
+      Call1(Func_02002054, 246);
+      Func_0200015c(spots.spot[(u16)index].x + (x << 16), 0,
+                    spots.spot[(u16)index].z + (z << 16), 0, 0x13333, phase,
+                    0x120001, &params);
+    }
   }
-  r5 = 0;
-  r5 = (s32)gData_020022be;
-  r1 = *(s16 *)(r0 + r5);
-  if ((r2 - r4) == (*(s16 *)(r0 + r5)))
-    goto L_02008b4c;
-  if ((r4 - r2) != ((r1 << 3) - r1))
-    goto L_02008b58;
-  goto L_02008b4c;
-L_02008b4c:
-  FIELD_AT(r5, u16, 0) = (FIELD_AT(r5, u16, 0)) + 1;
-  FIELD_AT(r7, s32, 0) = FIELD_AT(r6, s32, 0);
-  goto L_02008b5e;
-L_02008b58:
-  FIELD_AT(r5, u16, 0) = 0;
-  FIELD_AT(r0, u16, 0) = 0;
-L_02008b5e:
-  FIELD_AT((s32)gData_020022bc, u16, 0) = FIELD_AT(r11, u16, 340);
-  if ((u32)(FIELD_AT((s32)gData_020022be, u16, 0)) <= (u32)3)
-    goto L_02008c0c;
-  r7 = FIELD_AT((s32)gFrameCount, s32, 0);
-  r7 = r7 & 3;
-  if (r7 != 0)
-    goto L_02008c0c;
-  r10 = (s32)((u8 *)stack + 60);
-  r2 = r10;
-  r3 = (s32)gData_02002118;
-  goto L_02008b9c;
-L_02008b9c:
-  /* ldmia r3!, {r1, r4, r5} */
-  /* stmia r2!, {r1, r4, r5} */
-  /* ldmia r3!, {r0, r1, r4} */
-  /* stmia r2!, {r0, r1, r4} */
-  /* ldmia r3!, {r0, r1, r5} */
-  /* stmia r2!, {r0, r1, r5} */
-  /* ldmia r3!, {r0, r4, r5} */
-  /* stmia r2!, {r0, r4, r5} */
-  r9 = 20 + (s32)stack;
-  FIELD_AT(r9, u16, 24) = 0x2a1;
-  FIELD_AT(r9, s32, 0) = 2;
-  v2 = Random16Far();
-  r6 = v2;
-  r8 = 31;
-  r6 = r6 & 31;
-  v3 = Random16Far();
-  r4 = r8;
-  r5 = v3;
-  r5 = r5 & r4;
-  Call1((void (*)())Func_02002054, 246);
-  r6 = r6 << 16;
-  stack[0] = 0x13333;
-  r5 = r5 << 16;
-  Func_0200015c((*(s32 *)(r10 + ((u32)(stack[4] << 16) >> 13))) + r6, 0,
-                (*(s32 *)(r10 + (((u32)(stack[4] << 16) >> 13) + 4))) + r5, 0,
-                0x13333, r7, 0x120001, r9);
-L_02008c0c:
-  r4 = stack[4];
-  r0 = (s32)gData_020022be;
-  r3 = *(u8 *)(((s32)gData_02002110) + ((u32)(r4 << 16) >> 16));
-  if ((FIELD_AT((s32)gData_020022be, u16, 0)) !=
-      (*(u8 *)(((s32)gData_02002110) + ((u32)(r4 << 16) >> 16))))
-    goto L_02008c30;
-  FIELD_AT(r11, u16, 362) = 200;
-  FIELD_AT(r0, u16, 0) = 0;
-  FIELD_AT((s32)gData_020022c0, u16, 0) = 0;
-  r3 = 0;
-L_02008c30:
-  /* add (s32)stack, #108 */
-  return r0;
+  if (gData_020022be == gData_02002110[(u16)index]) {
+    s32 wait = 200;
+    s32 zero = 0;
+
+    *(u16 *)(work + 362) = wait;
+    gData_020022be = zero;
+    gData_020022c0 = zero;
+  }
 }

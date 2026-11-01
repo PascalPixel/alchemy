@@ -1,155 +1,123 @@
-// Draft of overlay 6ad's Func_0200242c, translated from its listing: differ
-// 203 of 182. Left: its shape: 183 instructions against the listing's 182.
+// Draft, differ 75 of 182, skeleton gap 9/8 (tla-en, 2026-11-01)
+// Overlay 6ad's Func_0200242c, the task Func_02002624 adds. Left is order and
+// allocation: the event work load runs early and the target pointer's copy late
+// at the top, the loop counter's setup runs before the two strh, the object x
+// subtraction runs after the z one, and delta lands in the z register where the
+// listing has it in the object y load's. Statement order does not move the top.
+// Lead: an unread "delta = object->z - viewZ - object->y;" before the temp line
+// gives differ 28 and gap 8/8, the only remaining gap being that order, but it
+// is a dead store and is left out; a form with the same effect is still wanted.
+// A named copy, or delta split in two, stays at differ 96 or worse.
+// mask between the two view reads and y reused for the timer and the switch
+// value set the allocation, so reshape them last. saved takes the frame's
+// otherwise unread store of origin[1]: a u8 array, because an s32[1] is a pseudo
+// and the store dies. It needs a real reader or a dead tag before adoption.
 #include "types.h"
-#include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_02001fb4();
-s32 Func_020021a0();
-s32 Func_020021e8();
-s32 Func_02002230();
-s32 Func_020023ac();
-s32 GameFlag_Test();
+#include "actor.h"
+#include "map.h"
+#include "system/ram_buffer.h"
+
+/// One object the beam reaches, as Func_02002624 records it.
+struct MarsLighthouseBeamTarget {
+  s16 active;
+  s16 timer;
+  u16 flags;
+  s16 unk06;
+  struct Actor *object;
+  s32 height; ///< 16.16 pixels
+};
+
+struct MarsLighthouseBeam {
+  u8 unk00[6];
+  s16 unk06;
+  s16 unk08;
+  u16 unk0a;
+  u8 unk0c[2];
+  s16 unk0e;
+  void (*callback)(void);
+  struct MarsLighthouseBeamTarget targets[4];
+};
+
 extern u8 gData_020023c4[];
 
-void Func_0200242c(void) {
-  s32 sp_[1];
-  s32 v_r8, v_r7, v_r9, v_r10, v_r0, v_r3, v_r11, v_r5, v_r6, v_r4;
-  s32 v_r2, v_r1, t0, t1, t2, t3, t4, t5, t6, t7;
-  s32 t8, t10, t11, t12, t13, t14, t15, t16, t17, t18;
-  s32 t19, t20, t21, t22, t23, t24, t25, t26, t28, t29;
-  s32 t31, t32, t34, t35, t37, t38;
+s32 GameFlag_Test(s32 flag);
+void Func_02001fb4(s32 *position, s32 height, s32 a2);
+void Func_020021a0(s32 *position, s32 height, s32 a2);
+void Func_020021e8(s32 *position, s32 height, s32 a2);
+void Func_02002230(s32 *position, s32 height, s32 a2);
+void Func_020023ac(s32 *position, s32 height, s32 a2);
 
-  t0 = FIELD_AT(0x3000000, s32, 32);
-  v_r8 = ((s32)gData_020023c4 + 0x188);
-  t1 = FIELD_AT(t0, s32, 228);
-  t2 = FIELD_AT(t0, s32, 232);
-  t3 = *(s32 *)t0;
-  t4 = FIELD_AT(t3, s32, 4);
-  FIELD_AT(sp_, s32, 4) = t4;
-  t5 = FIELD_AT(0x3000000, s32, 108);
-  *(s32 *)sp_ = t5;
-  t6 = FIELD_AT(v_r8, s16, 6);
-  v_r0 = v_r8;
-  v_r10 = (t2 & 0xffff0000);
-  v_r9 = (t1 & 0xffff0000);
-  v_r7 = (v_r8 + 20);
-  if (t6 == 0)
-    goto L_0200a486;
-  t7 = FIELD_AT(v_r0, s16, 8);
-  if (t7 != 0)
-    goto L_0200a486;
-  t8 = FIELD_AT(v_r0, s32, 16);
-  v_r3 = t8;
-  if (v_r3 == 0)
-    goto L_0200a486;
-  ((s32 (*)())v_r3)();
-L_0200a486:
-  t10 = FIELD_AT(v_r8, u16, 6);
-  FIELD_AT(v_r8, u16, 8) = t10;
-  FIELD_AT(v_r8, u16, 6) = 0;
-  v_r11 = 3;
-L_0200a498:
-  t11 = *(s16 *)v_r7;
-  if (t11 == 0)
-    goto L_0200a588;
-  t12 = FIELD_AT(v_r7, s32, 8);
-  v_r5 = t12;
-  if (v_r5 == 0)
-    goto L_0200a588;
-  t13 = Value1((s32 (*)())GameFlag_Test, 0x106);
-  t14 = *(s32 *)sp_;
-  t15 = FIELD_AT(t14, s16, 358);
-  v_r0 = t13;
-  if (t15 == 0)
-    goto L_0200a4c2;
-  v_r0 = (v_r0 | 1);
-L_0200a4c2:
-  v_r6 = (v_r5 + 91);
-  *(u8 *)v_r6 = v_r0;
-  t16 = FIELD_AT(v_r8, s16, 14);
-  if (t16 == 0)
-    goto L_0200a4dc;
-  t17 = Value1((s32 (*)())GameFlag_Test, 0x106);
-  *(u8 *)v_r6 = t17;
-L_0200a4dc:
-  t18 = FIELD_AT(v_r5, s32, 8);
-  t19 = FIELD_AT(v_r5, s32, 16);
-  t20 = FIELD_AT(v_r5, s32, 12);
-  t21 = FIELD_AT(v_r7, s16, 6);
-  v_r1 = ((((t19 - v_r10) - t20) >> 16) - 8);
-  v_r2 = ((t18 - v_r9) >> 16);
-  v_r4 = t21;
-  if (v_r4 != 0)
-    goto L_0200a512;
-  if ((u32)(v_r2 + 7) > (u32)0x14e)
-    goto L_0200a588;
-  if (v_r1 <= -0x30)
-    goto L_0200a588;
-  if (v_r1 > 239)
-    goto L_0200a588;
-L_0200a512:
-  t22 = FIELD_AT(v_r7, s16, 2);
-  t23 = FIELD_AT(v_r7, u16, 2);
-  v_r1 = t23;
-  if (t22 > 0)
-    goto L_0200a584;
-  t24 = FIELD_AT(v_r7, u16, 4);
-  v_r1 = (240 & t24);
-  if (v_r1 == 32)
-    goto L_0200a558;
-  if (v_r1 > 32)
-    goto L_0200a534;
-  if (v_r1 == 0)
-    goto L_0200a574;
-  if (v_r1 == 16)
-    goto L_0200a566;
-  goto L_0200a580;
-L_0200a534:
-  if (v_r1 == 48)
-    goto L_0200a54a;
-  if (v_r1 != 128)
-    goto L_0200a580;
-  t25 = FIELD_AT(v_r7, s32, 8);
-  t26 = FIELD_AT(v_r7, s32, 12);
-  Call3((void (*)())Func_020023ac, (t25 + 8), t26, v_r4);
-  goto L_0200a580;
-L_0200a54a:
-  t28 = FIELD_AT(v_r7, s32, 8);
-  t29 = FIELD_AT(v_r7, s32, 12);
-  Call3((void (*)())Func_020021a0, (t28 + 8), t29, v_r4);
-  goto L_0200a580;
-L_0200a558:
-  t31 = FIELD_AT(v_r7, s32, 8);
-  t32 = FIELD_AT(v_r7, s32, 12);
-  Call3((void (*)())Func_02002230, (t31 + 8), t32, v_r4);
-  goto L_0200a580;
-L_0200a566:
-  t34 = FIELD_AT(v_r7, s32, 8);
-  t35 = FIELD_AT(v_r7, s32, 12);
-  Call3((void (*)())Func_020021e8, (t34 + 8), t35, v_r4);
-  goto L_0200a580;
-L_0200a574:
-  t37 = FIELD_AT(v_r7, s32, 8);
-  t38 = FIELD_AT(v_r7, s32, 12);
-  Call3((void (*)())Func_02001fb4, (t37 + 8), t38, v_r4);
-L_0200a580:
-  v_r3 = 8;
-  goto L_0200a586;
-L_0200a584:
-  v_r3 = (v_r1 - 1);
-L_0200a586:
-  FIELD_AT(v_r7, u16, 2) = v_r3;
-L_0200a588:
-  v_r11 = (v_r11 - 1);
-  v_r7 = (v_r7 + 16);
-  if (v_r11 < 0)
-    goto L_0200a598;
-  goto L_0200a498;
-L_0200a598:
-  return;
+void Func_0200242c(void) {
+  struct MarsLighthouseBeam *beam =
+      (struct MarsLighthouseBeam *)(gData_020023c4 + 0x188);
+  struct MarsLighthouseBeamTarget *target;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 *view = &map->viewX;
+  s32 viewX = view[0];
+  s32 mask = 0xffff0000;
+  s32 viewZ;
+  u8 saved[4];
+  u8 *event;
+  s32 y, x, arg, delta, temp, shifted;
+  s32 i;
+
+  viewX &= mask;
+  viewZ = view[1] & mask;
+  *(s32 *)saved = map->origin[1];
+  target = beam->targets;
+  event = Ram_HeapSlots->eventWork;
+
+  if (beam->unk06 != 0 && beam->unk08 == 0 && beam->callback != 0)
+    beam->callback();
+  beam->unk08 = *(u16 *)&beam->unk06;
+  beam->unk06 = 0;
+
+  for (i = 3; i >= 0; i--, target++) {
+    struct Actor *object;
+    if (target->active != 0 && (object = target->object) != 0) {
+      s32 flag = GameFlag_Test(0x106);
+      u8 *state;
+      if (*(s16 *)(event + 358) != 0)
+        flag |= 1;
+      state = &object->movementState;
+      *state = flag;
+      if (beam->unk0e != 0)
+        *state = GameFlag_Test(0x106);
+      temp = object->x - viewX;
+      delta = object->y;
+      delta = object->z - viewZ - delta;
+      arg = target->unk06;
+      x = temp >> 16;
+      shifted = delta >> 16;
+      y = shifted - 8;
+      if (arg != 0 || ((u32)(x + 7) <= 334 && y > -48 && y <= 239)) {
+        s32 next;
+        y = (u16)target->timer;
+        if (target->timer <= 0) {
+          y = target->flags & 240;
+          switch (y) {
+          case 128:
+            Func_020023ac(&target->object->x, target->height, arg);
+            break;
+          case 48:
+            Func_020021a0(&target->object->x, target->height, arg);
+            break;
+          case 32:
+            Func_02002230(&target->object->x, target->height, arg);
+            break;
+          case 16:
+            Func_020021e8(&target->object->x, target->height, arg);
+            break;
+          case 0:
+            Func_02001fb4(&target->object->x, target->height, arg);
+            break;
+          }
+          next = 8;
+        } else {
+          next = y - 1;
+        }
+        target->timer = next;
+      }
+    }
+  }
 }

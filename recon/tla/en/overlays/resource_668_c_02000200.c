@@ -1,14 +1,30 @@
-
-// Draft of resource_668 Func_02000200 and Func_02000514 (English 0x02008200 and
-// 0x02008514), listings between scene_tables.c, events2.c and events.c.
-
-// Func_02000200 differs by 4 instructions: native sets r8 = sp (the address of
-// sparks) inside the creation loop, after the create call; GCSE's PRE hoists it
-// to the loop's entry here (for and do-while loops are strength-reduced
-// instead). Func_02000514 differs by about 70: native computes &plan.value[4]
-// (sp + 24) into r8 once, before the facing test, and saves sl; here each call
-// site adds sp + 24 and only r8 is saved. Its wait loop needs the while form
-// below.
+// Draft, differ 58 of 198, skeleton gap 20 (tla-en, 2026-11-01), worst of two
+// functions: measure each with --symbol. Resource_668 Func_02000200 and
+// Func_02000514 (English 0x02008200 and 0x02008514), listings between
+// scene_tables.c, events2.c and events.c.
+//
+// Func_02000514 (differ 58, skeleton 12 removed, 8 added): native computes
+// &plan.value[4] (sp + 24) once into r8, right after the second GameFlag_Test
+// call and before its compare, and saves sl; here each by-value call adds
+// sp + 24 itself, only r8 is saved and block stays in r8 (sl in the native).
+// That one pseudo accounts for the save, the add and mov and both copies; the
+// argument orders still differing follow from allocation. Both call sites are
+// exclusive, so PRE has no redundancy to hoist, and an unused pointer set there
+// dies in CSE before GCSE can reuse it. Tried without gain: a pointer to the
+// whole plan, a flag local, plan and i in an inner scope, declaration orders,
+// u32 facing, splitting the mask; inverting the if and a for form lose ground.
+// Func_020044c4 keeps its by-value signature: spelling the call as four words
+// and a tail struct is a wrong signature and measures worse anyway.
+//
+// Func_02000200 (differ 4, skeleton 1 removed, 1 added): native sets r8 = sp
+// (the address of sparks) inside the creation loop, after the create call;
+// GCSE's PRE (edge into the loop, expression sfp - 16) hoists it to the loop's
+// entry here. For and do-while loops are strength-reduced instead, and a slot
+// pointer or *(sparks + i) gains nothing.
+//
+// In both functions the native's address sits immediately after a call, a
+// placement PRE here does not make; that may be the compiler rather than the
+// source, which is a question for K3, not this draft.
 
 #define OWN_Actor_SetSingleChildFlags
 #include "battle.h"
@@ -192,11 +208,11 @@ void Func_02000514(void) {
       door->gravity = 0xccc;
       door->motionFlags = 3;
       i = 0;
-      while (door->y > 0) {
-        i++;
-        wait(1);
-        if (i > 59)
-          break;
+      if (door->y > 0) {
+        do {
+          i++;
+          wait(1);
+        } while (i <= 59 && door->y > 0);
       }
       Func_02000fa4();
       Func_02004c9c(240);

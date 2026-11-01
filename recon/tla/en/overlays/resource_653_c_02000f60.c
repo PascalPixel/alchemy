@@ -1,8 +1,19 @@
-// Draft, differ 121 of 369: the Kandorean Temple statue (actor 9) and its
-// steps, run by gData_020062a0: they rise, bob on a sine and sink again,
-// carrying the leader while flag 0x208 is set; Func_020012c4 is its twin for
-// actor 10. Left: the native keeps 2999 in r8 for the timer reset and 999 in
-// r1 for the compare and the store, and some calls share their constants.
+// Draft, differ 21 of 369, skeleton gap 2 (tla-en, 2026-11-01)
+// The Kandorean Temple statue (actor 9) and its steps, run by gData_020062a0:
+// they rise, bob on a sine and sink again, carrying the leader while flag 0x208
+// is set; Func_020012c4 is its twin for actor 10. Each arm of flag 0x301 is
+// written out in full: cross-jumping merges their tails, and 999 and 2999 stay
+// in registers.
+// Left: one instruction, and the 20 differ lines are its branch and pool
+// distances. At timer 3000 the native builds 0xd80000 twice, in r1 and in r3;
+// CSE here builds it once and copies. Tried without change: locals for x and z,
+// tile << 16, PIXELS(216), an unsigned constant, a cast call, Call4 and an
+// inline wrapper, const parameters included. The native's pair looks like
+// direct moves into the argument registers, which would also settle the same
+// pair in Func_020012c4.
+// Note for adoption: flag is a forced temporary, so *timer loads after the call
+// and before the test; written as if (GameFlag_Test(0x301)) with a load in each
+// arm the gap is 3. It needs a temporary tag or a better form.
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "call.h"
 
@@ -24,8 +35,9 @@ void Func_02000f60(void) {
   struct Actor *leader;
   u16 *phase;
   s32 limit;
-  s32 id;
+  s32 timerEnd;
   s32 t;
+  s32 flag;
 
   if (*timer < 300) {
     if (Func_02000d18() != 0)
@@ -38,10 +50,12 @@ void Func_02000f60(void) {
     Func_02000d64();
     goto count;
   }
-  if (*timer <= 2999) {
+  timerEnd = 2999;
+  if (*timer <= timerEnd) {
     statue = Actor_GetById(9);
-    if (GameFlag_Test(0x301)) {
-      t = *timer;
+    flag = GameFlag_Test(0x301);
+    t = *timer;
+    if (flag) {
       if (t <= 316) {
         statue->y += 0x48000;
         limit = 0x1000;
@@ -50,17 +64,24 @@ void Func_02000f60(void) {
         Func_02000cd8(14, 0x10000, limit);
         Func_02000cd8(15, 0x8000, limit);
         Func_02000cd8(16, 0, limit);
-        goto carry;
-      }
-      if (t < 600) {
+      } else if (t < 600) {
         if (GameFlag_Test(0x208) && *timer == 400) {
           Call6((void (*)())Func_02005178, 22, 0, 1, 1, 13, 13);
           Task_RemoveFar(Func_02000f60);
         }
         phase = &gData_020062a8;
-        goto bob;
-      }
-      if (t > 999) {
+        statue->y += Math_Sine(*phase) >> 1;
+        *phase += 0x1000;
+      } else if (t <= 999) {
+        phase = &gData_020062a8;
+        if (*phase == 0) {
+          gData_02006298 = 0;
+          *timer = 999;
+          GameFlag_ClearBit(0x20c);
+        }
+        statue->y += Math_Sine(*phase) >> 1;
+        *phase += 0x1000;
+      } else {
         statue->y += -0x6c000;
         limit = 0x1800;
         Func_02000cf8(11, 0x30000, limit);
@@ -68,47 +89,39 @@ void Func_02000f60(void) {
         Func_02000cf8(14, 0x18000, limit);
         Func_02000cf8(15, 0xc000, limit);
         Func_02000cf8(16, 0, limit);
-        id = 16;
-        goto shrink;
+        if (Actor_GetById(16)->scaleY <= limit)
+          *timer = timerEnd;
       }
     } else {
-      t = *timer;
       if (t <= 316) {
         statue->y += 0x27999;
         limit = 0x1000;
         Func_02000cd8(11, 0x10000, limit);
         Func_02000cd8(13, 0x8000, limit);
         Func_02000cd8(14, 0, limit);
-        goto carry;
-      }
-      if (t < 600) {
+      } else if (t < 600) {
         phase = &gData_020062a8;
-        goto bob;
-      }
-      if (t > 999) {
+        statue->y += Math_Sine(*phase) >> 1;
+        *phase += 0x1000;
+      } else if (t <= 999) {
+        phase = &gData_020062a8;
+        if (*phase == 0) {
+          gData_02006298 = 0;
+          *timer = 999;
+          GameFlag_ClearBit(0x20c);
+        }
+        statue->y += Math_Sine(*phase) >> 1;
+        *phase += 0x1000;
+      } else {
         statue->y += -0x3b666;
         limit = 0x1800;
         Func_02000cf8(11, 0x18000, limit);
         Func_02000cf8(13, 0xc000, limit);
         Func_02000cf8(14, 0, limit);
-        id = 14;
-        goto shrink;
+        if (Actor_GetById(14)->scaleY <= limit)
+          *timer = timerEnd;
       }
     }
-    phase = &gData_020062a8;
-    if (*phase == 0) {
-      gData_02006298 = 0;
-      *timer = 999;
-      GameFlag_ClearBit(0x20c);
-    }
-  bob:
-    statue->y += Math_Sine(*phase) >> 1;
-    *phase += 0x1000;
-    goto carry;
-  shrink:
-    if (Actor_GetById(id)->scaleY <= limit)
-      *timer = 2999;
-  carry:
     if (GameFlag_Test(0x208) == 0)
       goto count;
     leader = Actor_GetById(gMainRoutineWork.currentOwner);

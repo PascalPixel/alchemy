@@ -1,18 +1,34 @@
-// Draft, differ 122 of 946 (was 142): the three scripts run on entrances 9, 74
-// and the rest after flag 0xa76 (actors 20 to 23 and 4). Calls go through
-// call.h where the native rebuilds their constants and 0x4000 and 0xc000 are
-// locals where it shares them. A greedy pass over every call, direct or through
-// call.h, kept four changes (142 to 122): two Func_02004d08 calls and one
-// Func_02004c90 call direct, one Actor_SetSpeedParameters call
-// wrapped. Left: argument order at about 25 calls, where sched2 issues the
-// first argument between the halves of a split constant and the native issues
-// it last, and a few constants shared or rebuilt the other way.
+// Draft, differ 20 of 946, skeleton gap 18 (tla-en, 2026-11-01)
+// The three scripts run on entrances 9, 74 and the rest after flag 0xa76 (actors
+// 20 to 23 and 4). Registers, frame and control flow all agree; only the order
+// of tied instructions is left, at seven calls. In the first script: the copy of
+// `west` issues after the zero in Func_02004dd8(23, 16, 0, west), and after the
+// first argument in five Actor_ArmCallback(4 or 23, west, 0) calls, where the
+// native issues the copy first. In the second: the two halves of 0xe000 for
+// actor 23 (the native's lsls comes earlier). The sched2 dump shows why: a tie
+// goes to the insn with more forward dependences, then the lower LUID, and these
+// sites have r0, r1, r2 in that order with equal counts, so the native had the
+// copy ahead of r0 in its RTL. Tried, no gain: every call direct, through Call
+// and through Value, singly and over four-line windows; `west` as a literal; a
+// local for 0xe000; a forced temporary would be a new device.
+// Func_02004d08 goes through Value3 because it returns a value (the wrong
+// argument order at every one of its calls came from Call3). 0x4000 is set after
+// GameFlag_ClearBit and 0xc000 after the first placement; sched2 raises them.
+// The saved scene and entrance are read as s16 through SavedDestination, as the
+// native rebuilds each offset from the base; main_routine_work.h types them u16.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
 #include "event_work.h"
 #include "call.h"
+
+/// gMainRoutineWork.savedScene and savedEntrance as this script reads them.
+struct SavedDestination {
+  u8 unk000[0x1e4];
+  s16 scene;
+  s16 entrance;
+};
 
 extern char MsgHeyWaitA[];
 extern char MsgItLooksLike[];
@@ -74,7 +90,7 @@ void Func_020012bc(s32 entrance) {
     Call3((void (*)())Func_02004ce8, 20, 0, 5);
     Func_02004db0();
     Func_02004df8(0x18ccc, 16);
-    Call3((void (*)())Func_02004d08, 4, 0x102, 30);
+    Value3((s32 (*)())Func_02004d08, 4, 0x102, 30);
     Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, 32);
     Call3((void (*)())Actor_ArmCallback, 4, west, 0);
     Func_02004e00();
@@ -94,7 +110,7 @@ void Func_020012bc(s32 entrance) {
     Call3((void (*)())Actor_ArmCallback, 20, 0x3000, 0);
     Call3((void (*)())Actor_ArmCallback, 21, 0x3000, 0);
     Call3((void (*)())Actor_ArmCallback, 22, 0x3000, 0);
-    Call3((void (*)())Func_02004d08, 23, 0x100, 30);
+    Value3((s32 (*)())Func_02004d08, 23, 0x100, 30);
     Actor_WaitForMoveById(20);
     Actor_WaitForMoveById(21);
     Actor_WaitForMoveById(22);
@@ -111,21 +127,21 @@ void Func_020012bc(s32 entrance) {
     Call3((void (*)())Actor_ArmCallback, 23, west, 0);
     FieldEvent_Wait(5);
     Call3((void (*)())Func_02004ce8, 21, 0, 5);
-    Call3((void (*)())Func_02004d08, 23, 0x109, 30);
+    Value3((s32 (*)())Func_02004d08, 23, 0x109, 30);
     Call3((void (*)())Func_02004ce8, 23, 0, 5);
-    Call3((void (*)())Func_02004d08, 22, 0x107, 30);
+    Value3((s32 (*)())Func_02004d08, 22, 0x107, 30);
     Call3((void (*)())Func_02004ce8, 22, 0, 5);
-    Call3((void (*)())Func_02004d08, 23, 0x101, 30);
+    Value3((s32 (*)())Func_02004d08, 23, 0x101, 30);
     Call3((void (*)())Func_02004ce8, 23, 0, 5);
-    Call3((void (*)())Func_02004d08, 20, 0x107, 30);
+    Value3((s32 (*)())Func_02004d08, 20, 0x107, 30);
     Call3((void (*)())Func_02004ce8, 20, 0, 5);
-    Call3((void (*)())Func_02004d08, 23, 0x102, 30);
+    Value3((s32 (*)())Func_02004d08, 23, 0x102, 30);
     Call3((void (*)())Func_02004ce8, 23, 0, 5);
     Call3((void (*)())Func_02004ce8, 21, 0, 5);
     Actor_TurnToFaceEachOther(4, 23, 0);
     FieldEvent_Wait(30);
     Call3((void (*)())Func_02004ce8, 23, 0, 5);
-    Call3((void (*)())Func_02004d08, 22, 0x107, 30);
+    Value3((s32 (*)())Func_02004d08, 22, 0x107, 30);
     Call3((void (*)())Actor_ArmCallback, 4, west, 0);
     Call3((void (*)())Actor_ArmCallback, 23, west, 0);
     Call3((void (*)())Func_02004ce8, 22, 0, 5);
@@ -135,19 +151,23 @@ void Func_020012bc(s32 entrance) {
     Actor_WaitForMoveById(23);
     Call3((void (*)())Actor_ArmCallback, 4, west, 0);
     Call3((void (*)())Actor_ArmCallback, 23, west, 0);
-    Func_02004d08(4, 0x102, 30);
+    Value3((s32 (*)())Func_02004d08, 4, 0x102, 30);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 20, 3);
     FieldEvent_Wait(10);
     Call3((void (*)())Func_02004ce8, 20, 0, 5);
     gMainRoutineWork.battleRule24b = 2;
-    Party_SetFields1eeAnd1f0((s32)&SceneId_WorldMap, 73);
-    Party_SetFields1f2And1f4((s32)&SceneId_WorldMap, 74);
+    {
+      s32 worldMap = (s32)&SceneId_WorldMap;
+
+      Value2((s32 (*)())Party_SetFields1eeAnd1f0, worldMap, 73);
+      Party_SetFields1f2And1f4(worldMap, 74);
+    }
     Func_02004db0();
     Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
     Func_02004d48(102, 3);
   } else if (entrance == 74) {
-    east74 = 0x4000;
     GameFlag_ClearBit(0xa76);
+    east74 = 0x4000;
     Call4((void (*)())Func_02004c90, 20, 0x27b80000, 0x25900000, east74);
     Call4((void (*)())Func_02004c90, 21, 0x27a80000, 0x25900000, east74);
     Call4((void (*)())Func_02004c90, 22, 0x27c80000, 0x25900000, east74);
@@ -163,7 +183,7 @@ void Func_020012bc(s32 entrance) {
     Func_02004cd8((s32)MsgItLooksLike);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 4, 2);
     FieldEvent_Wait(5);
-    Call3((void (*)())Func_02004d08, 20, 0x108, 30);
+    Value3((s32 (*)())Func_02004d08, 20, 0x108, 30);
     Call3((void (*)())Func_02004ce8, 20, 0, 5);
     Call2((void (*)())Func_02004d00, 21, east74);
     FieldEvent_Wait(10);
@@ -186,18 +206,19 @@ void Func_020012bc(s32 entrance) {
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 21, 3);
     FieldEvent_Wait(10);
     Call3((void (*)())Func_02004ce8, 21, 0, 5);
-    Call3((void (*)())Func_02004d08, 22, 0x108, 30);
+    Value3((s32 (*)())Func_02004d08, 22, 0x108, 30);
     Call3((void (*)())Func_02004ce8, 22, 0, 5);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 20, 3);
     FieldEvent_Wait(10);
     FieldEvent_Wait(40);
-    Func_02004d38(gMainRoutineWork.pair1ee[0], gMainRoutineWork.pair1ee[1]);
+    Func_02004d38(((struct SavedDestination *)&gMainRoutineWork)->scene,
+                 ((struct SavedDestination *)&gMainRoutineWork)->entrance);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   } else {
-    eastB = 0x4000;
-    westB = 0xc000;
     GameFlag_ClearBit(0xa76);
-    Func_02004c90(20, 0x27b80000, 0x25a00000, eastB);
+    eastB = 0x4000;
+    Call4((void (*)())Func_02004c90, 20, 0x27b80000, 0x25a00000, eastB);
+    westB = 0xc000;
     Call4((void (*)())Func_02004c90, 21, 0x27a80000, 0x25a00000, eastB);
     Call4((void (*)())Func_02004c90, 22, 0x27c80000, 0x25a00000, eastB);
     Call4((void (*)())Func_02004c90, 23, 0x27b00000, 0x25d00000, westB);
@@ -210,18 +231,18 @@ void Func_020012bc(s32 entrance) {
     Func_02004cd8((s32)MsgWeLostAgain);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 20, 2);
     FieldEvent_Wait(5);
-    Call3((void (*)())Func_02004d08, 20, 0x102, 30);
+    Value3((s32 (*)())Func_02004d08, 20, 0x102, 30);
     Call3((void (*)())Func_02004ce8, 20, 0, 5);
-    Call3((void (*)())Func_02004d08, 21, 0x102, 30);
+    Value3((s32 (*)())Func_02004d08, 21, 0x102, 30);
     Call3((void (*)())Func_02004ce8, 21, 0, 5);
-    Call3((void (*)())Func_02004d08, 22, 0x102, 30);
+    Value3((s32 (*)())Func_02004d08, 22, 0x102, 30);
     Call3((void (*)())Func_02004ce8, 22, 0, 5);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 20, 2);
     FieldEvent_Wait(5);
     Call3((void (*)())Func_02004ce8, 20, 0, 5);
     Call2((void (*)())Func_02004d00, 21, 0);
     FieldEvent_Wait(10);
-    Call3((void (*)())Func_02004d08, 21, 0x101, 30);
+    Value3((s32 (*)())Func_02004d08, 21, 0x101, 30);
     Call3((void (*)())Func_02004ce8, 21, 0, 5);
     Call2((void (*)())Func_02004d00, 20, 0x8000);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 20, 3);
@@ -229,9 +250,9 @@ void Func_020012bc(s32 entrance) {
     Call3((void (*)())Func_02004ce8, 20, 0, 5);
     Call2((void (*)())Func_02004d00, 22, 0x8000);
     FieldEvent_Wait(10);
-    Call3((void (*)())Func_02004d08, 22, 0x101, 30);
+    Value3((s32 (*)())Func_02004d08, 22, 0x101, 30);
     Call3((void (*)())Func_02004ce8, 22, 0, 5);
-    Call3((void (*)())Func_02004d08, 23, 0x101, 30);
+    Value3((s32 (*)())Func_02004d08, 23, 0x101, 30);
     Call3((void (*)())Actor_ArmCallback, 20, eastB, 0);
     Call3((void (*)())Actor_ArmCallback, 21, eastB, 0);
     Call3((void (*)())Actor_ArmCallback, 22, eastB, 0);
@@ -240,25 +261,25 @@ void Func_020012bc(s32 entrance) {
     Call2((void (*)())Actor_SetModeById, 21, 3);
     Call2((void (*)())Motion_SetModeAndWaitAnimation, 22, 3);
     FieldEvent_Wait(10);
-    Call3((void (*)())Func_02004d08, 23, 0x109, 30);
+    Value3((s32 (*)())Func_02004d08, 23, 0x109, 30);
     Call3((void (*)())Func_02004ce8, 23, 0, 5);
-    Call3((void (*)())Func_02004d08, 20, 0x100, 0);
-    Call3((void (*)())Func_02004d08, 21, 0x100, 0);
-    Call3((void (*)())Func_02004d08, 22, 0x100, 30);
+    Value3((s32 (*)())Func_02004d08, 20, 0x100, 0);
+    Value3((s32 (*)())Func_02004d08, 21, 0x100, 0);
+    Value3((s32 (*)())Func_02004d08, 22, 0x100, 30);
     FieldEvent_Wait(40);
     Actor_TurnToFaceEachOther(20, 21, 0);
     Call3((void (*)())Actor_ArmCallback, 22, 0x8000, 0);
-    Call3((void (*)())Func_02004d08, 22, 0x105, 30);
-    Func_02004d08(20, 0x102, 40);
+    Value3((s32 (*)())Func_02004d08, 22, 0x105, 30);
+    Value3((s32 (*)())Func_02004d08, 20, 0x102, 40);
     Call2((void (*)())Func_02004d00, 20, eastB);
     FieldEvent_Wait(20);
-    FieldMessage_ShowAtActor(20, 0);
+    Value2((s32 (*)())FieldMessage_ShowAtActor, 20, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-      Call3((void (*)())Func_02004d08, 20, 0x109, 30);
+      Value3((s32 (*)())Func_02004d08, 20, 0x109, 30);
       Call3((void (*)())Func_02004ce8, 20, 0, 5);
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     } else {
-      Call3((void (*)())Func_02004d08, 20, 0x109, 30);
+      Value3((s32 (*)())Func_02004d08, 20, 0x109, 30);
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       Call3((void (*)())Func_02004ce8, 20, 0, 5);
     }
@@ -266,7 +287,7 @@ void Func_020012bc(s32 entrance) {
     FieldEvent_Wait(40);
     Call3((void (*)())Actor_ArmCallback, 4, 0xc000, 0);
     Call3((void (*)())Actor_ArmCallback, 23, 0xc000, 0);
-    Call3((void (*)())Func_02004d08, 23, 0x109, 30);
+    Value3((s32 (*)())Func_02004d08, 23, 0x109, 30);
     Call3((void (*)())Func_02004ce8, 23, 0, 5);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 21, 2);
     Call3((void (*)())Actor_ArmCallback, 21, 0x3000, 0);
@@ -278,7 +299,7 @@ void Func_020012bc(s32 entrance) {
     Call2((void (*)())Motion_SetVarCbAndRefresh, 20, 2);
     Func_02000d4c();
     FieldEvent_Wait(5);
-    Call3((void (*)())Func_02004d08, 20, 0x109, 30);
+    Value3((s32 (*)())Func_02004d08, 20, 0x109, 30);
     Call3((void (*)())Func_02004ce8, 20, 0, 5);
     Actor_TurnToFaceEachOther(20, 21, 0);
     FieldEvent_Wait(40);

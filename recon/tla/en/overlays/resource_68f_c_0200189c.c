@@ -1,9 +1,24 @@
-// Near miss, differ 232 of 304 (tla-en, 2026-10-31): control flow, calls, fields
-// and spill slots follow the native. GCSE's PRE hoists the position array's
-// address (sp+28) and &object->terrainId above the retry label and copy-
-// propagates them, so p, q and layer lose their own registers: the hoisted
-// address holds r8 throughout and the rest shift. The native recomputes both
-// on every pass, as this draft does under -fno-gcse.
+// Draft, differ 232 of 304, skeleton gap 92 (tla-en, 2026-11-01)
+// Calls, branches, loops and fields follow the native. Left: GCSE PRE hoists
+// &position and &object->terrainId above the retry label and turns every later
+// &position into a copy of one register (07.gcse: edge 0 to 1, expressions 3
+// and 11). The native computes both on each pass and repeats add sp, #28 at
+// each call, in the same block as p and q, so its compiler did not treat that
+// fully redundant address as PRE does. The other differences are allocation
+// that follows from the hoisted register.
+// Not a source problem as far as measured: an analysis-only compile of this
+// text with -Os, whose classic GCSE and unweighted reference counts replace
+// PRE, leaves 32 of 302 lines differing, against 177 with -fno-gcse. That
+// is a compiler question (K3) for Pascal, and this draft keeps the build
+// options. What -Os still leaves: add sp, #28 at the calls where classic GCSE
+// reuses p and q, and the order around the two Iwram_MulQ16 calls.
+// p, q and layer are kept: at the real options they emit the same code as
+// plain position[n] and object->terrainId, but under -Os dropping them is worse
+// (88 lines without any of them).
+// Tried at the real options, no gain: a head-tested loop flag (stops the hoist
+// across the back edge, but bb 2 still takes the later copies; gap 117), for(;;)
+// (109), s32 angle (differ 219, gap 99), angle == -1 (96), reordered
+// declarations, targets taken from p[], and the loop split into for/break.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

@@ -1,25 +1,36 @@
-// Draft, differ 142 of 1485 (was 222): Garoh's long scene with actors 4 to 9
-// after MsgGaroh01, with two bird-path loops on Math_Sine. The paths step
-// through Garoh_PathStep, so the native's multiply-then-divide survives (a
-// plain expression folds it to one multiply); each Math_Sine result is taken
-// into a variable first, so the step is computed before the amplitude; the
-// second loop's targets are variables, as the native keeps 0x800000 and
-// 0xb80000 in r9 and sl. The message decrement goes through s16, which gives
-// the native's subs #1 (u16 builds 0xffff). Left: the position array's address
-// (and the second loop's target differences), which this compiler's PRE hoists
-// out of each loop and the native forms inside; register choice that follows
-// from it; and argument order at about 20 calls, where sched2 issues the last
-// argument first (a direct call and a CallN wrapper make no difference there).
+// Draft, differ 74 of 1485, skeleton gap 16 (tla-en, 2026-11-01)
+// Garoh's long scene with actors 4 to 9 after MsgGaroh01, with two bird-path
+// loops on Math_Sine. The paths step through Garoh_PathStep, so the native's
+// multiply-then-divide survives (a plain expression folds it to one multiply);
+// each Math_Sine result is taken into a variable first, so the step is computed
+// before the amplitude. The message decrement goes through s16, which gives the
+// native's subs #1 (u16 builds 0xffff). ACTOR_MODE_THEN_WAIT's do-while(0) is
+// what keeps the arguments in order: its loop notes are a scheduling barrier,
+// without which sched2 issues the last argument first at about 20 calls, as it
+// counts the calls after a set of r1 or r2.
+// Left, all inside the two loops: gcse's PRE hoists position's address (sfp-12,
+// edge into loop 1) and loop 2's toX - x and toZ - z, where the native forms
+// them inside and keeps only the targets in r9 and sl; r5 to r7 rotate from
+// that. PRE needs the operands untouched earlier in the block, so the native's
+// loop 2 likely sets one there. Tried without gain: for and do loops, constant
+// targets (loop.c then hoists the subtraction), a twice-set temporary in
+// Garoh_PathStep, s32 *p set in, or before, loop 1, and each callee's return
+// type switched between Call and Value.
 #include "../../../../games/tla/src/scene/garoh/garoh.h"
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "call.h"
 void Func_020013b0(s32 id);
+#define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                  \
+  do {                                                                         \
+    Call2((void (*)())Actor_SetModeById, id, mode);                            \
+    Call1((void (*)())FieldEvent_Wait, frames);                                \
+  } while (0)
 #define FOLLOW_LEADER(id)                                                      \
   {                                                                            \
     struct Actor *leader_;                                             \
                                                                                \
-    Actor_SetSpeedParameters(id, 0x13333, 0x9999);                      \
+    Call3((void (*)())Actor_SetSpeedParameters, id, 0x13333, 0x9999);   \
     Actor_SetModeById(id, 2);                                                 \
     leader_ = Actor_GetById(gMainRoutineWork.currentOwner);                        \
     if (leader_ != NULL)                                                       \
@@ -213,8 +224,7 @@ loop2:
   Value3((s32 (*)())Func_0200528c, 6, 0x102, 40);
   Call3((void (*)())Actor_Jump, 9, 6, 15);
   Call3((void (*)())Actor_Jump, 9, 6, 23);
-  Call2((void (*)())Actor_SetModeById, 9, 3);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200525c, 9, 0, 0);
   Call3((void (*)())Actor_ArmCallback, 5, 0xe000, 0);
@@ -242,8 +252,7 @@ loop2:
   Call2((void (*)())Motion_SetVarCbAndRefresh, 5, 2);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200525c, 5, 0, 0);
-  Call2((void (*)())Actor_SetModeById, 9, 3);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200525c, 9, 0, 0);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 6, 2);
@@ -252,8 +261,7 @@ loop2:
   Value3((s32 (*)())Func_0200528c, 9, 0x100, 30);
   Call3((void (*)())Func_0200525c, 9, 0, 0);
   Value3((s32 (*)())Func_0200528c, 6, 0x101, 50);
-  Call2((void (*)())Actor_SetModeById, 9, 3);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200525c, 9, 0, 0);
   Call2((void (*)())Motion_SetVarCbAndRefresh, 9, 2);
@@ -263,13 +271,11 @@ loop2:
   Call2((void (*)())Actor_SetModeById, 6, 3);
   if (GameFlag_Test(7))
     Call2((void (*)())Actor_SetModeById, 7, 3);
-  Call2((void (*)())Actor_SetModeById, 4, 3);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(4, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 30);
   Value3((s32 (*)())Func_0200528c, 9, 0x109, 30);
   Call3((void (*)())Func_0200525c, 9, 0, 0);
-  Call2((void (*)())Actor_SetModeById, 9, 4);
-  Call1((void (*)())FieldEvent_Wait, 33);
+  ACTOR_MODE_THEN_WAIT(9, 4, 33);
   Call3((void (*)())Func_0200525c, 9, 0, 0);
   Call3((void (*)())Actor_CommitPositionAndActivate, 9, -8, -8);
   Call3((void (*)())Actor_ArmCallback, 6, 0xc000, 0);
@@ -283,8 +289,7 @@ loop2:
   Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Actor_ArmCallback, 9, 0xc000, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
-  Call2((void (*)())Actor_SetModeById, 9, 3);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
   Call3((void (*)())Actor_ArmCallback, 5, 0xa000, 0);
@@ -324,14 +329,11 @@ loop2:
   Call3((void (*)())Func_0200525c, 5, 0, 0);
   Call3((void (*)())Actor_ArmCallback, 4, 0xe000, 0);
   Call1((void (*)())FieldEvent_Wait, 25);
-  Call2((void (*)())Actor_SetModeById, 9, 3);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 8);
-  Call2((void (*)())Actor_SetModeById, 9, 3);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 8);
-  Call2((void (*)())Actor_SetModeById, 9, 3);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 20);
   Value3((s32 (*)())Func_0200528c, 6, 0x101, 30);
   Call3((void (*)())Func_0200525c, 0x2006, 0, 0);
@@ -364,8 +366,7 @@ loop2:
   Call2((void (*)())Actor_SetModeById, 6, 3);
   if (GameFlag_Test(7))
     Call2((void (*)())Actor_SetModeById, 7, 3);
-  Call2((void (*)())Actor_SetModeById, 4, 3);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(4, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 35);
   if (GameFlag_Test(7))
     Call3((void (*)())Actor_ArmCallback, 7, 0xc000, 0);
@@ -398,11 +399,9 @@ loop2:
     Call3((void (*)())Actor_ArmCallback, 7, 0xa000, 0);
   Call1((void (*)())FieldEvent_Wait, 20);
   Value3((s32 (*)())Func_0200528c, 4, 0x102, 40);
-  Call2((void (*)())Actor_SetModeById, 9, 4);
-  Call1((void (*)())FieldEvent_Wait, 33);
+  ACTOR_MODE_THEN_WAIT(9, 4, 33);
   Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
-  Call2((void (*)())Actor_SetModeById, 9, 3);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call3((void (*)())Func_0200525c, 0x2009, 0, 0);
   Call3((void (*)())Actor_Jump, 9, 6, 15);
   Call3((void (*)())Actor_Jump, 9, 6, 23);
@@ -418,8 +417,7 @@ loop2:
   Call2((void (*)())Actor_SetModeById, 4, 3);
   if (GameFlag_Test(7))
     Call2((void (*)())Actor_SetModeById, 7, 3);
-  Call2((void (*)())Actor_SetModeById, 5, 3);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(5, 3, 20);
   Call1((void (*)())FieldEvent_Wait, 30);
   FOLLOW_LEADER(9);
   FOLLOW_LEADER(5);

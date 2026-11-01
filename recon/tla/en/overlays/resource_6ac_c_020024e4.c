@@ -1,180 +1,156 @@
-// Draft of overlay 6ac's Func_020024e4, translated from its listing: differ
-// 248 of 236. Left: its shape: 238 instructions against the listing's 236.
+// Draft, differ 136 of 236, skeleton gap 18/24 (tla-en, 2026-11-01)
+// Overlay 6ac's Func_020024e4. Control flow and block order are the listing's;
+// all three loops are goto loops, since real loops move the exit blocks to the
+// end of the function (loop.c). Func_02002368 and Func_02003200 stay
+// unprototyped: that gives -10's argument order. Left:
+// - gcse's PRE lifts work + 104, work + 106 and the frame address out of the
+//   frame loop; the listing rebuilds them each pass, with work spilled to
+//   sp+0. The base/actor and work/data copies at the top of the loop stop it
+//   for actor + 34 and move the rest, but cost a register, so i is spilled
+//   instead of work, and work is rematerialized from the pool (it has one set,
+//   so it is REG_EQUIV) where the listing stores it to the stack.
+// - The slide loop's test threads to bgt/b, one extra branch, and a do-while
+//   instead moves its exit block out of line.
+// Tried without gain: position through a pointer (several placements), no
+// base or no data (gap 19/31 and worse), a per-pass copy after the call.
 #include "types.h"
-#include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Animation_ApplyChildValues();
+#include "actor.h"
+#include "system/ram_buffer.h"
+#include "system/main_routine_work.h"
+
+struct SlideVector {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+struct SlideWork {
+  u8 unk00[4];
+  u16 unk04;
+  u8 unk06[0x62];
+  s16 stepX;
+  s16 stepZ;
+};
+
+void Animation_ApplyChildValues(struct Actor *actor, s32 value);
 s32 Func_02002368();
-s32 Func_02003118();
-s32 Func_02003168();
-s32 Func_02003180();
-s32 Func_020031b0();
-s32 Func_020031e0();
+void Func_02003118(struct Actor *actor, s32 value);
+s32 Func_02003168(s32 layer, s32 x, s32 z);
+s32 Func_02003180(struct Actor *actor, struct SlideVector *position);
+s32 Func_020031b0(s32 *a, s32 b, struct SlideVector *c, s32 d);
+void Func_020031e0(void);
 s32 Func_02003200();
-s32 Func_02003280();
-s32 Actor_GetById();
-s32 wait();
-extern u8 Func_020024bc[];
+void Func_02003280(s32 a);
+struct Actor *Actor_GetById(s32 id);
+void wait(s32 frames);
+void Func_020024bc(void);
 extern u8 gData_020023c4[];
-extern u8 gMainRoutineWork[];
 
-s32 Func_020024e4(void) {
-  s32 sp_[1];
-  s32 v_r5, v_r6, v_r10, v_r1, v_r9, v_r3, v_r0, v_r8, v_r7, v_r11;
-  s32 v_r2, v_r4, t0, t2, t3, t7, t8, t9, t10, t11;
-  s32 t12, t13, t14, t15, t16, t17, t18, t19, t20, t22;
-  s32 t23, t24, t25, t26, t27, t28, t30, t31, t32, t33;
-  s32 t34, t35, t37, t38, t39, t40, t41, t44;
+void Func_020024e4(void) {
+  struct SlideWork *work;
+  struct SlideWork *data;
+  struct Actor *actor;
+  struct Actor *other;
+  struct Actor *base;
+  struct SlideVector position;
+  s16 *stepX;
+  s16 *stepZ;
+  u8 *flags;
+  s32 result;
+  s32 i;
 
-  t0 = *(u8 *)((s32)gMainRoutineWork + 0x212);
-  v_r5 = (s32)gMainRoutineWork;
-  if (t0 == 0)
-    goto L_0200a506;
-  goto L_0200a6c4;
-L_0200a506:
-  Call2((void (*)())Func_02002368, -10, 0);
-  t2 = *(s32 *)(v_r5 + 0x214);
-  t3 = Value1((s32 (*)())Actor_GetById, t2);
-  FIELD_AT(sp_, s32, 0) = ((s32)gData_020023c4 + 0x188);
-  Func_020031e0();
-  Call1((void (*)())Func_02003280, 0);
-  FIELD_AT(t3, s32, 108) = (s32)Func_020024bc;
-  FIELD_AT(t3, u16, 6) = 0x4000;
-  Call2((void (*)())Func_02003118, t3, 49);
-  v_r6 = t3;
-L_0200a53e:
-  t7 = *(u8 *)(v_r6 + 34);
-  t8 = FIELD_AT(v_r6, s32, 8);
-  t9 = FIELD_AT(v_r6, s32, 16);
-  t10 = Value3((s32 (*)())Func_02003168, t7, t8, t9);
-  t11 = FIELD_AT(sp_, s32, 0);
-  t12 = FIELD_AT(sp_, s32, 0);
-  v_r3 = (t11 + 104);
-  v_r9 = (t12 + 106);
-  v_r1 = ((s32)sp_ + 4);
-  v_r10 = (t11 + 104);
-  if (t10 != 7)
-    goto L_0200a5ba;
-  t13 = *(s16 *)v_r3;
-  FIELD_AT(v_r6, s32, 36) = (t13 << 17);
-  t14 = *(s16 *)v_r9;
-  FIELD_AT(v_r6, s32, 44) = (t14 << 17);
-  FIELD_AT(v_r6, s32, 52) = 0x1000;
-  v_r5 = 0;
-L_0200a578:
-  t15 = *(s16 *)v_r10;
-  t16 = FIELD_AT(v_r6, s32, 8);
-  FIELD_AT(sp_, s32, 4) = (t16 + (t15 << 19));
-  t17 = FIELD_AT(v_r6, s32, 12);
-  FIELD_AT(sp_, s32, 8) = t17;
-  t18 = *(s16 *)v_r9;
-  t19 = FIELD_AT(v_r6, s32, 16);
-  FIELD_AT(sp_, s32, 12) = (t19 + (t18 << 19));
-  t20 = Value3((s32 (*)())Func_02003180, v_r6, ((s32)sp_ + 4), (t18 << 19));
-  if (t20 == 0)
-    goto L_0200a5ac;
-  FIELD_AT(v_r6, s32, 36) = 0;
-  FIELD_AT(v_r6, s32, 44) = 0;
-  goto L_0200a6b8;
-L_0200a5ac:
-  Call1((void (*)())wait, 1);
-  v_r5 = (v_r5 + 1);
-  if (v_r5 <= 9)
-    goto L_0200a578;
-  goto L_0200a6b8;
-L_0200a5ba:
-  t22 = *(s16 *)v_r10;
-  t23 = FIELD_AT(v_r6, s32, 8);
-  *(s32 *)v_r1 = (t23 + (t22 << 19));
-  t24 = FIELD_AT(v_r6, s32, 12);
-  FIELD_AT(v_r1, s32, 4) = t24;
-  t25 = *(s16 *)v_r9;
-  t26 = FIELD_AT(v_r6, s32, 16);
-  FIELD_AT(v_r1, s32, 8) = (t26 + (t25 << 19));
-  t27 = Value3((s32 (*)())Func_02003180, v_r6, v_r1, (t25 << 19));
-  v_r0 = t27;
-  if (v_r0 > 0)
-    goto L_0200a6b8;
-  if (v_r0 >= 0)
-    goto L_0200a604;
-  FIELD_AT(v_r6, u16, 6) = 0x4000;
-  t28 = *(s32 *)((s32)gMainRoutineWork + 0x214);
-  Call3((void (*)())Func_02003200, t28, 6, -1);
-  goto L_0200a6b8;
-L_0200a604:
-  t30 = FIELD_AT(v_r6, u16, 32);
-  t31 = FIELD_AT(0x3000000, s32, 20);
-  v_r11 = (t30 - 2);
-  v_r7 = (t31 + 89);
-  v_r8 = 0;
-  v_r5 = t31;
-L_0200a618:
-  t32 = *(s32 *)v_r5;
-  if (t32 == 0)
-    goto L_0200a648;
-  t33 = *(u8 *)v_r7;
-  if ((1 & t33) == 0)
-    goto L_0200a648;
-  if (v_r5 == v_r6)
-    goto L_0200a648;
-  t34 = FIELD_AT(v_r5, u16, 32);
-  t35 = Value4((s32 (*)())Func_020031b0, (v_r5 + 8), v_r11, ((s32)sp_ + 4),
-               (t34 - 2));
-  if (t35 < 0)
-    goto L_0200a648;
-  Call1((void (*)())wait, 1);
-  goto L_0200a6b8;
-L_0200a648:
-  v_r8 = (v_r8 + 1);
-  v_r7 = (v_r7 + 128);
-  v_r5 = (v_r5 + 128);
-  if (v_r8 <= 63)
-    goto L_0200a618;
-  t37 = *(s16 *)v_r10;
-  t38 = FIELD_AT(v_r6, s32, 8);
-  FIELD_AT(v_r6, s32, 8) = (t38 + (t37 << 17));
-  t39 = *(s16 *)v_r9;
-  t40 = FIELD_AT(v_r6, s32, 16);
-  v_r5 = (t40 + (t39 << 17));
-  FIELD_AT(v_r6, s32, 16) = v_r5;
-  v_r4 = 0x10000;
-  v_r7 = 0xfffff;
-  v_r1 = (t38 + (t37 << 17));
-  v_r2 = (((t38 + (t37 << 17)) & 0xfffff) + 0xfff80000);
-  if (v_r2 <= v_r4)
-    goto L_0200a686;
-  v_r2 = v_r4;
-L_0200a686:
-  v_r0 = 0xffff0000;
-  if (v_r2 >= v_r0)
-    goto L_0200a68e;
-  v_r2 = v_r0;
-L_0200a68e:
-  FIELD_AT(v_r6, s32, 8) = (v_r1 - v_r2);
-  v_r2 = ((v_r5 & v_r7) + 0xfff80000);
-  if (v_r2 <= v_r4)
-    goto L_0200a6a0;
-  v_r2 = v_r4;
-L_0200a6a0:
-  if (v_r2 >= v_r0)
-    goto L_0200a6a6;
-  v_r2 = v_r0;
-L_0200a6a6:
-  FIELD_AT(v_r6, s32, 16) = (v_r5 - v_r2);
-  t41 = FIELD_AT(sp_, s32, 0);
-  FIELD_AT(t41, u16, 4) = 0;
-  Call1((void (*)())wait, 1);
-  goto L_0200a53e;
-L_0200a6b8:
-  FIELD_AT(v_r6, s32, 108) = 0;
-  Call2((void (*)())Animation_ApplyChildValues, v_r6, 0);
-L_0200a6c4:
-  t44 = FIELD_AT(sp_, s32, 0);
-  FIELD_AT(t44, u16, 4) = 0;
-  return t44;
+  if (gMainRoutineWork.renderMode == 0) {
+    Func_02002368(-10, 0);
+    base = Actor_GetById(gMainRoutineWork.currentOwner);
+    work = (struct SlideWork *)(gData_020023c4 + 0x188);
+    Func_020031e0();
+    Func_02003280(0);
+    base->update = Func_020024bc;
+    base->angle = 0x4000;
+    Func_02003118(base, 49);
+  top:
+    actor = base;
+    result = Func_02003168(actor->terrainId, actor->x, actor->z);
+    data = work;
+    stepX = &data->stepX;
+    stepZ = &data->stepZ;
+    if (result == 7) {
+      actor->velocityX = *stepX << 17;
+      actor->velocityZ = *stepZ << 17;
+      actor->acceleration = 0x1000;
+      i = 0;
+    sliding:
+        position.x = actor->x + (*stepX << 19);
+        position.y = actor->y;
+        position.z = actor->z + (*stepZ << 19);
+        if (Func_02003180(actor, &position) != 0) {
+          actor->velocityX = 0;
+          actor->velocityZ = 0;
+          goto done;
+        }
+        i++;
+        wait(1);
+        if (i <= 9)
+          goto sliding;
+      goto done;
+    }
+    {
+      position.x = actor->x + (*stepX << 19);
+      position.y = actor->y;
+      position.z = actor->z + (*stepZ << 19);
+      result = Func_02003180(actor, &position);
+      if (result <= 0) {
+        if (result < 0) {
+          actor->angle = 0x4000;
+          Func_02003200(gMainRoutineWork.currentOwner, 6, -1);
+        } else {
+          s32 radius = actor->radius - 2;
+          s32 x;
+          s32 z;
+          s32 snap;
+
+          other = Ram_HeapSlots->scriptObjects;
+          flags = &other->collisionFlags;
+          i = 0;
+        scan:
+            if (other->script != NULL && (*flags & 1) != 0 &&
+                other != actor) {
+              if (Func_020031b0(&other->x, radius, &position,
+                                other->radius - 2) >= 0) {
+                wait(1);
+                goto done;
+              }
+            }
+          i++;
+          flags += sizeof(struct Actor);
+          other++;
+          if (i <= 63)
+            goto scan;
+          x = actor->x + (*stepX << 17);
+          actor->x = x;
+          z = actor->z + (*stepZ << 17);
+          actor->z = z;
+          snap = (x & 0xfffff) - 0x80000;
+          if (snap > 0x10000)
+            snap = 0x10000;
+          if (snap < -0x10000)
+            snap = -0x10000;
+          actor->x = x - snap;
+          snap = (z & 0xfffff) - 0x80000;
+          if (snap > 0x10000)
+            snap = 0x10000;
+          if (snap < -0x10000)
+            snap = -0x10000;
+          actor->z = z - snap;
+          data->unk04 = 0;
+          wait(1);
+          goto top;
+        }
+      }
+    }
+  done:
+    actor->update = NULL;
+    Animation_ApplyChildValues(actor, 0);
+  }
+  data->unk04 = 0;
 }

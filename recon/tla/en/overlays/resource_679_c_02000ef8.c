@@ -1,27 +1,45 @@
-// Near misses of overlay 679, one draft (alchemy diff --overlay resource_679
-// --symbol NAME): Func_02000ef8, differ 40: the native shares one tail store
-// between the two arms and keeps the offset and blend values in separate
-// registers; untried beyond the plain form. Func_02000f58, differ 4: two pool
-// loads sit one instruction earlier in the native (ldr r0 before movs r3, #181;
-// ldr r3 before movs r1, #2). Func_02001054, differ 2 with the tagged devices:
-// the native finishes the 0x200 argument (lsls r1) after the two small
-// constants (movs r2, #8; movs r3, #9); here it follows movs r1 at once. sched2
-// breaks that tie by RTL order, and the precomputed argument comes first in
-// ours. Func_020010d8, differ 8: the terrain store and the sprite load, and the
-// two priority byte loads, are in the other order. Func_020017bc, differ 2 with
-// the devices: adds r1, #4 comes before the ClearWords address load, where the
-// native loads the address first (equal priority and dependent count; RTL order
-// decides). Without the "+l" barrier that tie falls the native way but the size
-// is started before the entry is stored.
+// Draft, differ 9 of 35, skeleton gap 4 (tla-en, 2026-11-01)
+// Overlay 679 holds five functions here, so measure each with --symbol. The
+// first line gives the worst of each figure: differ from Func_02000ef8, gap
+// from Func_02001054.
+//
+// Func_02000ef8, differ 9 of 35, skeleton gap 3 (removed 1, added 2): the only
+// one of the five not adopted. Its one structural difference is a pool branch.
+// The 64-byte reach of the HImode pool load of 0x100c forces a pool ahead of
+// the shared tail store, with a b.n around it. The native loads 0x100c after
+// movs r2, #128; here it comes first, because it has two dependents (the store
+// and the next write of r3) against one and sched2 prefers more. That two bytes
+// is what keeps the pool out of the way. A one-pass block around the
+// REG_BG1HOFS store, or around the two blend stores together, gives differ 0
+// (around REG_BLDALPHA alone, differ 2): a tagged one-pass device would close
+// this, not tried here as a kept form. Plain forms, none better: value as u16,
+// s16 or s32 or in inner blocks; a separate local for the constants or the
+// value reused for them; a pointer to the blend registers; a shared REG_BLDCNT
+// store after the arms; early return, goto, inverted or reversed compare; a
+// VCOUNT local; casts on the constants. Overlay 690's Func_02000e30 is the twin
+// and fails the same way.
+//
+// Func_02000f58, differ 2 of 24, gap 2: adopted in events_f.c with a one-pass
+// block. The ldr of gData_02002a9c comes after the ldrsh instead of before it.
+// Func_02001054, differ 4 of 35, gap 4 with the tagged devices: adopted in
+// s1054.c. Both pairs are order only: ldr r0 before lsls r1 at Task_Add, and
+// lsls r1 before the small constants at Func_02001e04. s1054.c's one-pass form
+// measured here is differ 2, and needs its own prototypes, which conflict with
+// local.h's; Task_Add_ and Func_02001e04_ change nothing.
+// Func_020010d8 and Func_020017bc: differ 0, adopted in s10d8.c and s17bc.c.
 #include "../../../../games/tla/src/scene/apojii_islands/local.h"
 #include "map.h"
 
 void Func_02000ef8(void) {
+  u32 value;
+
   if (REG_VCOUNT < gData_02002a98) {
-    REG_BG1HOFS = gData_02002a9c;
+    value = gData_02002a9c;
+    REG_BG1HOFS = value;
     REG_BLDCNT = 0;
   } else {
-    REG_BG1HOFS = gData_02002a9e;
+    value = gData_02002a9e;
+    REG_BG1HOFS = value;
     REG_BLDALPHA = 0x100c;
     REG_BLDCNT = 0x3f42;
   }

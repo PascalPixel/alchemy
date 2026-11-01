@@ -1,11 +1,14 @@
-// Near miss: Func_020005f0 and Func_02000630, each differ 26 of 31 (registers
-// only, one row moved). The native zeroes the found slot in r4 and then copies
-// that register into the index (adds r0, r4, #0) after the first id load; every
-// form tried builds the index with its own movs #0 and numbers work, index and
-// offset r0, r1, r2 where the native has r2, r0, r1. Tried: found = NULL before
-// or in the declaration, the index initialised from found (CSE folds the copy
-// back to a constant), a do-while, the lookup inline or in the body. The
-// permuter (4 minutes, 9603 candidates) found nothing nearer.
+// Draft, differ 26 of 31, skeleton gap 0 (tla-en, 2026-11-01)
+// Func_020005f0 differs in 26 of 31 and Func_02000630 in 26 of 32, registers
+// only. The lookup is Func_080dae70 with its id fixed at 8; the index's default
+// gives the native's copy from found (adds r0, r4, #0). Left: the native keeps
+// work, offset and index in r2, r1, r0; global allocation here ranks the offset
+// (r2), then the index (r1), then work (r0), and work's 6 refs over 15 insns
+// cannot outrank them, so the native's order needs a preference nothing in the
+// source shows. Measured the same: work as an inline parameter, the lookup in
+// the body, found declared first, i <= 7, the slot type's own pointer. An entry
+// pointer in the loop is worse (differ 37). The permuter (3 minutes, one
+// function) found nothing nearer.
 #include "types.h"
 #include "worka0.h"
 
@@ -22,6 +25,9 @@ static inline struct A4SlotValues *FindSlot(s32 id) {
   struct WorkA4 *work = WORK_A4;
   struct A4SlotValues *found = NULL;
   s32 i;
+
+  // Default: as Func_080dae70, the index zero is copied from found.
+  i = 0;
 
   for (i = 0; i < 8; i++) {
     if (work->slots[i].id == id) {

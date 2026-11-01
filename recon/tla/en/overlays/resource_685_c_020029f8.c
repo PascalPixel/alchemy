@@ -1,58 +1,88 @@
-// Draft, differ 172 of 181: an object vanishes in a burst of light: it spins
-// for sixteen frames unless told not to, then hides while a sprite (resource
-// 0x1e8, palette 15) plays its eight-frame flash over it for seventy-two
-// frames, twice as large in mode 1; the object is then moved away and the
-// sprite freed.
+// Draft, differ 80 of 181, skeleton gap 18 (tla-en, 2026-11-01)
+// An object vanishes in a burst of light: it spins for sixteen frames unless
+// told not to, then hides while a sprite (palette 15) plays its eight-frame
+// flash over it for seventy-two frames, twice as large in mode 1; the object is
+// then moved away and the sprite freed. The resource is 0x1e8,
+// FieldEffect_Explosion in gamepak/resource_directory.s, which would need a
+// ResourceId_FieldEffectExplosion name there; as a plain number it is split
+// instead of the listing's pool load.
+// Left: every remaining skeleton line but two follows from the object sitting
+// in r8 and the tile in r7, where the listing has them the other way round.
+// global.c ranks the tile (16 refs across 120 insns) above the object (10 across
+// 65); the listing's str r0 for the fifth argument is reload reusing r0 once the
+// tile is in a high register, so it is no missing variable, and a copy of the
+// tile collapses in CPROP. The tile would need more than 138 insns of life, or
+// the object 12 refs. The other two lines: the listing builds 0x400 again after
+// VramCache_Load, but with the sprite assigned there CSE keeps the argument's
+// pseudo across the call and it takes r5, so the sprite is assigned before the
+// call, which puts its add before the bl. s32 angle keeps 0x2000 in the spin
+// loop; object->angle += 0x2000 hoists it to the pool. z is what lets the value
+// stay in a register across the scale stores.
 #include "types.h"
 #include "actor.h"
 #include "system/dma.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 extern const u16 Field_Palette685[];
+extern char ResourceId_FieldEffectExplosion;
 
-u8 *HeapSlot_AllocFar(s32 slot, s32 size);
+struct FlashSprite {
+  u8 unk00[4];
+  u16 y : 8;
+  u16 affine : 2;
+  u16 blendMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 attr1;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[2];
+  s32 x;
+  s32 z;
+  s32 scaleX;
+  s32 scaleY;
+  u8 unk1c[2];
+  u16 unk1e;
+};
+
+struct FlashWork {
+  u8 tiles[0x400];
+  struct FlashSprite sprite;
+};
+
+struct FlashWork *HeapSlot_AllocFar(s32 slot, s32 size);
 struct Actor *Actor_GetById(s32 id);
 void wait(s32 frames);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void *Resource_GetTableEntry(s32 resourceId);
-void Func_020033dc(void *entry, u8 *destination);
+void Func_020033dc(void *entry, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
-void Func_020035fc(u8 *sprite, s32 width, s32 height, s32 attributes, s32 tile);
+void Func_020035fc(struct FlashSprite *sprite, s32 width, s32 height,
+                   u32 attributes, s32 tile);
 void Func_020035c4(s32 *position);
 void Func_0200362c(s32 cue);
-void Func_02003604(u8 *sprite);
+void Func_02003604(struct FlashSprite *sprite);
 void Func_020034d4(s32 id, s32 x, s32 z);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
 
-struct FlashSprite {
-  u8 unk00[5];
-  u8 unk05;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 unk08_10 : 6;
-};
-
 void Func_020029f8(s32 id, s32 mode) {
-  u8 *work = HeapSlot_AllocFar(220, 0x428);
+  struct FlashWork *work = HeapSlot_AllocFar(220, 0x428);
   struct Actor *object = Actor_GetById(id);
   s32 slot;
   s32 tile;
-  u8 *sprite;
+  struct FlashSprite *sprite;
   s32 position[3];
   s32 i;
+  s32 z;
 
   if (mode == 0) {
     for (i = 15; i >= 0; i--) {
-      object->angle += 0x2000;
+      s32 angle = object->angle;
+      angle += 0x2000;
+      object->angle = angle;
       wait(1);
     }
   }
@@ -61,49 +91,51 @@ void Func_020029f8(s32 id, s32 mode) {
   Actor_SetSingleChildFlags(object, 0);
   Dma_Set(Field_Palette685, (void *)0x050003e0, 0x80000010,
           (volatile u32 *)0x040000d4);
-  Func_020033dc(Resource_GetTableEntry(0x1e8), work);
+  Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
+                work);
   slot = Resource_FindFreeEntry();
+  sprite = &work->sprite;
   tile = VramCache_Load(slot, 0x400, work);
-  sprite = work + 0x400;
   Func_020035fc(sprite, 8, 16, 0x40000000, tile);
-  FIELD_AT(sprite, u16, 30) = 240;
-  sprite[5] &= ~32;
-  sprite[9] = (sprite[9] & ~12) | 4 | 240;
+  sprite->unk1e = 240;
+  sprite->priority = 1;
+  sprite->fullColor = 0;
+  sprite->palette = 15;
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
   Func_020035c4(position);
-  FIELD_AT(sprite, s32, 12) = position[0];
-  FIELD_AT(sprite, s32, 16) = position[2];
+  sprite->x = position[0];
+  sprite->z = z = position[2];
   if (mode == 1) {
-    FIELD_AT(sprite, s32, 20) = 0x20000;
-    FIELD_AT(sprite, s32, 24) = 0x20000;
-    FIELD_AT(sprite, s32, 16) = position[2] + 0xa0000;
+    sprite->scaleX = 0x20000;
+    sprite->scaleY = 0x20000;
+    sprite->z = z + 0xa0000;
   }
   Func_0200362c(145);
   for (i = 0; i <= 71; i++) {
-    sprite = work + 0x400;
+    sprite = &work->sprite;
     switch (i) {
     case 6:
-      ((struct FlashSprite *)sprite)->tile = tile + 4;
+      sprite->tile = tile + 4;
       break;
     case 12:
-      ((struct FlashSprite *)sprite)->tile = tile + 8;
+      sprite->tile = tile + 8;
       break;
     case 22:
-      ((struct FlashSprite *)sprite)->tile = tile + 12;
+      sprite->tile = tile + 12;
       break;
     case 32:
-      ((struct FlashSprite *)sprite)->tile = tile + 16;
+      sprite->tile = tile + 16;
       break;
     case 42:
-      ((struct FlashSprite *)sprite)->tile = tile + 20;
+      sprite->tile = tile + 20;
       break;
     case 52:
-      ((struct FlashSprite *)sprite)->tile = tile + 24;
+      sprite->tile = tile + 24;
       break;
     case 62:
-      ((struct FlashSprite *)sprite)->tile = tile + 28;
+      sprite->tile = tile + 28;
       break;
     }
     Func_02003604(sprite);

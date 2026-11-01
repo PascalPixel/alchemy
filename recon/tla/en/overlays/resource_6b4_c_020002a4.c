@@ -1,10 +1,25 @@
 // Near misses of overlay 6B4, three palette loops over 5-bit channels read
-// straight from the colour halfword (a local copy sign-loads it). Func_020002a4
-// (65 instructions, 10 differ): the native counts in lr and keeps the count in
-// r8, the draft the reverse. Func_0200032c (48, 24): the native counts in r7
-// with the count in r12, loads the pool word 0x1f before the mask 31 and emits
-// its pool after the green clamp. Func_02000394 (64, 12): the same pool word
-// order and pool place.
+// straight from the colour halfword (a local copy sign-loads it).
+// Draft, differ 11 of 48, skeleton gap 5 (tla-en, 2026-11-01): Func_0200032c,
+// the worst of the three. Func_02000394 has differ 0. Func_020002a4 has differ
+// 10 of 65, skeleton gap 0.
+//
+// Both near misses need the native's guard, cmp and beq on count, with count
+// the lower priority of count and i. The guard written out gives count 4 refs
+// (set, guard, twice the loop test), and global.c then ranks it above i in both
+// functions: 8/36 over 14/70 here, 8/45 over 14/90 in Func_020002a4. So i and
+// count swap (i in ip, count in r7 here; count in lr, i in r8 there). With the
+// goto test entry count has 3 refs and allocates as the native does in both,
+// and only the guard differs, with the strh and adds r7 order and the pool
+// place that follows from it. Func_0200032c takes that entry because the gap
+// is smaller (5 against 8); Func_020002a4 keeps the guard for its gap of 0
+// (entry jump: differ 6, gap 6). A 3-ref guard is the open question.
+//
+// Tried with no gain: a test at the top (gap 7), i++ in other places, a copy
+// of count (cprop folds it), unsigned i or count, a second i = 0. A real for
+// or while duplicates the test as the native does but loop.c lifts the mask
+// out of the loop, which the native keeps inside (differ 69); count != i only
+// makes the compare look right over the swapped registers.
 #include "types.h"
 
 extern u32 gFrameCount;
@@ -48,8 +63,7 @@ next:
 void Func_0200032c(u16 *colors, s32 count, s32 delta) {
   s32 i = 0;
 
-  if (count == 0)
-    return;
+  goto test;
 next:
   {
     s32 r = (*colors & 31) + delta;
@@ -72,6 +86,7 @@ next:
     *colors = b << 10 | g << 5 | r;
   }
   colors++;
+test:
   if (i != count)
     goto next;
 }

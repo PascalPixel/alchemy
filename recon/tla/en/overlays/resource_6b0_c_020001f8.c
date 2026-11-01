@@ -1,6 +1,17 @@
-// Draft of overlay 6b0's Func_020001f8, the twin of overlay 6ae's
-// Func_020050b0: its draft (resource_6ae_c_020050b0.c) with this overlay's
-// symbols: differ 90 of 120. Left: what that draft's header records.
+// Draft, differ 85 of 120, skeleton gap 17 (tla-en, 2026-11-01)
+// Overlay 6b0's Func_020001f8, a palette cycle, the twin of overlay 6ae's
+// Func_020050b0. The palette store is volatile: strength_reduce leaves a biv's
+// increments alone in a loop with a volatile reference, which keeps the
+// colour pointer's three post-increments; the tail's *src++ gives the listing's
+// last load, its dead increment folded.
+// Left: the native builds 0x5000000 inside the loop. Here the first loop pass
+// refuses to move it (29 insns, threshold 18 after four moves) and the second
+// moves it (24 insns, threshold 30); the later register and scheduling
+// differences, r12 as a second copy of &gData_02004450 among them, follow from
+// that. The native behaves as if only one loop pass saw this loop. Tried with
+// no effect on it: an index local, u32 address arithmetic, a shared palette
+// local, while for for, inner-block locals, a u16 colour local or u16 r, g, b
+// (either keeps extensions at the volatile store), volatile counters.
 #include "types.h"
 
 extern u16 gData_02004434;
@@ -16,8 +27,9 @@ extern u16 gData_02004454;
 void Func_020001f8(void) {
   s32 step;
   u32 i;
+  u32 index;
   u16 *src;
-  u16 *dst;
+  volatile u16 *dst;
   s32 r, g, b;
 
   step = 0;
@@ -33,16 +45,21 @@ void Func_020001f8(void) {
     return;
   src = Data_0200444c;
   for (i = 0; i < gData_02004450; i++) {
-    dst = (u16 *)0x5000000 + Data_02004438[gData_02004454 * gData_02004450 + i];
+    dst = (volatile u16 *)0x5000000 +
+          Data_02004438[gData_02004454 * gData_02004450 + i];
     r = *src++;
     g = *src++;
     b = *src++;
     *dst = (b << 10) | (g << 5) | r;
   }
-  dst = (u16 *)0x5000000 + gData_02004444[gData_02004450];
+  index = gData_02004444[gData_02004450];
+  dst = (volatile u16 *)0x5000000 + index;
   src = (gData_02004434 != 0 ? Data_02004448 : Data_0200444c) +
         gData_02004450 * 3;
-  *dst = (src[2] << 10) | (src[1] << 5) | src[0];
+  r = *src++;
+  g = *src++;
+  b = *src++;
+  *dst = (b << 10) | (g << 5) | r;
   gData_02004434 ^= 1;
   if (++gData_02004454 == gData_02004450)
     gData_02004454 = 0;

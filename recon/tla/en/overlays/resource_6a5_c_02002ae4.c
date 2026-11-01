@@ -1,10 +1,16 @@
-// Differ 156 of 1539 (was 219): the first Func_0200588c call passes its
-// speed too (0xa000, kept in r8); as in Func_02001388's draft, the first
-// scene's speeds are locals (fast 0xa000, slow 0x2000, mid 0xc000) and its
-// Func_0200588c calls go through Call4, and Func_020058fc's calls go through
-// an inline of its own that calls it directly, as do four more sites found by
-// trying each call's form. Locals for the speeds through the whole function
-// are worse (185).
+// Draft, differ 2 of 1539, skeleton gap 2 (tla-en, 2026-11-01)
+// Left: the one sched2 tie in Func_0200588c(0x1e, ...), where r0's load falls
+// after the coordinates' shifts (native: before them). That call stays direct
+// so 0xc000 is shared in r5 as the native does; through Call4 it is 34, an
+// inline wrapper 36, and the speed in a local set before it 72. A one-pass
+// block around any run of statements there gains nothing.
+// The first scene's speeds are locals (fast 0xa000, slow 0x2000, mid 0xc000),
+// and gMainRoutineWork's pointer is held once for the last two stores.
+// SET_MODE_AND_WAIT is a do { } while (0) macro, no device under S2 while every
+// use matches through it: sched2's dependency counts show a loop note before
+// these calls (a call that does not set r1 adds an anti dependence on the r1
+// load, which orders r1 first; the listing has r0 first). Modes 3 and 4 only;
+// the SetMode of those modes followed by another SetMode stays a plain call.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -74,6 +80,15 @@ static __inline__ void W_Actor_EnableActionAndSetCallback(s32 a0,
   Actor_SetMovementTypeById(a0, a1);
 }
 
+// Every Actor_SetModeById of mode 3 or 4 that is followed by its wait goes
+// through this macro: its loop notes put the argument loads in the listing's
+// order, and all 20 uses match through it.
+#define SET_MODE_AND_WAIT(id, mode, frames)                                    \
+  do {                                                                         \
+    Call2(Actor_SetModeById, id, mode);                                        \
+    Call1(FieldEvent_Wait, frames);                                            \
+  } while (0)
+
 void Func_02002ae4(void) {
   s32 fast;
   s32 slow;
@@ -110,6 +125,7 @@ void Func_02002ae4(void) {
   s32 t367;
   s32 t381;
   s32 t382;
+  s32 work;
 
   Func_02005814();
   Call1(Func_02005984, 0);
@@ -155,11 +171,9 @@ void Func_02002ae4(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Call1(Func_020058c4, (s32)MsgWeDidItWe);
-  Call2(Actor_SetModeById, 7, 4);
-  Call1(FieldEvent_Wait, 0x21);
+  SET_MODE_AND_WAIT(7, 4, 0x21);
   Call3(Func_020058d4, 7, 0, 0);
-  Call2(Actor_SetModeById, 5, 3);
-  Call1(FieldEvent_Wait, 0x14);
+  SET_MODE_AND_WAIT(5, 3, 0x14);
   Call1(FieldEvent_Wait, 0xa);
   Call3(Func_020058d4, 5, 0, 0);
   Call2(Func_020058ec, 6, 0x6000);
@@ -177,8 +191,7 @@ void Func_02002ae4(void) {
   W_Actor_ArmCallback(4, fast, 0);
   Call2(Func_020058ec, 5, fast);
   Call1(FieldEvent_Wait, 0x14);
-  Call2(Actor_SetModeById, 5, 4);
-  Call1(FieldEvent_Wait, 0x21);
+  SET_MODE_AND_WAIT(5, 4, 0x21);
   Call3(Func_020058d4, 5, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 0x1b, 2);
   Call1(FieldEvent_Wait, 5);
@@ -213,8 +226,7 @@ void Func_02002ae4(void) {
   Call3(Func_020058d4, 5, 0, 0);
   Call4(Camera_MoveWithinMapBounds, 0x2080000, 0x680000, 0x1380000, 1);
   Call3(Actor_SetPositionAndReset, 0x1d, 0x1e0, 0x140);
-  Call2(Actor_SetModeById, 0x1d, 4);
-  Call1(FieldEvent_Wait, 0x21);
+  SET_MODE_AND_WAIT(0x1d, 4, 0x21);
   Call3(Func_020058d4, 0x1d, 0, 0);
   Call2(Func_020058ec, 0x1d, 0);
   Call3(Func_020058d4, 0x1d, 0, 0);
@@ -239,11 +251,9 @@ void Func_02002ae4(void) {
   Call1(FieldEvent_Wait, 5);
   W_Func_020058fc(5, 0x102, 0x1e);
   Call3(Func_020058d4, 5, 0, 0);
-  Call2(Actor_SetModeById, 0x1d, 4);
-  Call1(FieldEvent_Wait, 0x21);
+  SET_MODE_AND_WAIT(0x1d, 4, 0x21);
   Call3(Func_020058d4, 0x1d, 0, 0);
-  Call2(Actor_SetModeById, 7, 4);
-  Call1(FieldEvent_Wait, 0x21);
+  SET_MODE_AND_WAIT(7, 4, 0x21);
   Call3(Func_020058d4, 7, 0, 0);
   W_Func_020058fc(0x1d, 0x109, 0x1e);
   Call3(Func_020058d4, 0x1d, 0, 0);
@@ -264,8 +274,7 @@ void Func_02002ae4(void) {
   Call2(Func_020058ec, 0x1d, 0);
   Call3(Actor_ArmCallback, 0x1c, 0x4000, 0);
   Call1(FieldEvent_Wait, 0xa);
-  Call2(Actor_SetModeById, 0x1d, 3);
-  Call1(FieldEvent_Wait, 0x14);
+  SET_MODE_AND_WAIT(0x1d, 3, 0x14);
   Call1(FieldEvent_Wait, 0xa);
   Call3(Func_020058d4, 0x1d, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 6, 2);
@@ -276,21 +285,18 @@ void Func_02002ae4(void) {
   Call3(Actor_ArmCallback, 5, 0xe000, 0);
   Call2(Func_020058ec, 6, 0x6000);
   Call1(FieldEvent_Wait, 0xa);
-  Call2(Actor_SetModeById, 0x1d, 3);
-  Call1(FieldEvent_Wait, 0x14);
+  SET_MODE_AND_WAIT(0x1d, 3, 0x14);
   Call1(FieldEvent_Wait, 0xa);
   Call3(Func_020058d4, 0x1d, 0, 0);
   Call3(Actor_ArmCallback, 5, 0x8000, 0);
   Call2(Func_020058ec, 0x1d, mid);
-  Call2(Actor_SetModeById, 0x1d, 3);
-  Call1(FieldEvent_Wait, 0x14);
+  SET_MODE_AND_WAIT(0x1d, 3, 0x14);
   Call1(FieldEvent_Wait, 0xa);
   Call3(Actor_ArmCallback, 0x1c, 0x6000, 0);
   Call2(Func_020058ec, 0x1b, 0xe000);
   Call1(FieldEvent_Wait, 0x14);
   Call2(Actor_SetModeById, 0x1c, 3);
-  Call2(Actor_SetModeById, 0x1b, 3);
-  Call1(FieldEvent_Wait, 0x14);
+  SET_MODE_AND_WAIT(0x1b, 3, 0x14);
   Call1(FieldEvent_Wait, 0xa);
   Call2(Camera_FollowActor, 0x1b, 1);
   Call2(Actor_SetMovementTypeById, 0x1d, (s32)gData_02005ff8);
@@ -365,8 +371,7 @@ void Func_02002ae4(void) {
   Func_020058ec(2, 0xc000);
   Call2(Func_020058ec, 2, 0x6000);
   Call2(Func_020058ec, 2, 0x8000);
-  Call2(Actor_SetModeById, 2, 4);
-  Call1(FieldEvent_Wait, 0x21);
+  SET_MODE_AND_WAIT(2, 4, 0x21);
   Call2(Motion_SetVarCbAndRefresh, 2, 2);
   Call3(Func_020058d4, 2, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 0, 2);
@@ -383,8 +388,7 @@ void Func_02002ae4(void) {
   Call3(Actor_ArmCallback, 4, 0xe000, 0);
   Call1(FieldEvent_Wait, 0xa);
   Call2(Func_020058ec, 0x1e, 0);
-  Call2(Actor_SetModeById, 0x1e, 3);
-  Call1(FieldEvent_Wait, 0x14);
+  SET_MODE_AND_WAIT(0x1e, 3, 0x14);
   Call1(FieldEvent_Wait, 0xa);
   Call2(Func_020058ec, 0x1e, 0);
   Call3(Func_020058d4, 0x1e, 0, 0);
@@ -396,32 +400,27 @@ void Func_02002ae4(void) {
   Call1(FieldEvent_Wait, 0x3c);
   W_Func_020058ec(1, 0xc000);
   Call2(Actor_SetModeById, 3, 3);
-  Call2(Actor_SetModeById, 1, 3);
-  Call1(FieldEvent_Wait, 0x14);
+  SET_MODE_AND_WAIT(1, 3, 0x14);
   Call1(FieldEvent_Wait, 0xa);
   Call2(Func_020058ec, 0, 0xe000);
   Call1(FieldEvent_Wait, 0x3c);
   Call2(Actor_SetModeById, 6, 3);
   Call2(Actor_SetModeById, 7, 3);
-  Call2(Actor_SetModeById, 5, 3);
-  Call1(FieldEvent_Wait, 0x14);
+  SET_MODE_AND_WAIT(5, 3, 0x14);
   Call1(FieldEvent_Wait, 0xa);
   Call2(Func_020058ec, 0, 0xc000);
   Call1(FieldEvent_Wait, 0x1e);
   Call2(Func_020058ec, 4, 0x4000);
   t269 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
   if (t269 == 0) {
-    Call2(Actor_SetModeById, 0, 3);
-    Call1(FieldEvent_Wait, 0x14);
+    SET_MODE_AND_WAIT(0, 3, 0x14);
     Call1(FieldEvent_Wait, 0xa);
     Call3(Func_020058d4, 0, 0, 0);
-    Call2(Actor_SetModeById, 0, 3);
-    Call1(FieldEvent_Wait, 0x14);
+    SET_MODE_AND_WAIT(0, 3, 0x14);
     Call1(FieldEvent_Wait, 0xa);
   } else {
     W_Func_020058fc(0, 0x107, 0x1e);
-    Call2(Actor_SetModeById, 5, 4);
-    Call1(FieldEvent_Wait, 0x21);
+    SET_MODE_AND_WAIT(5, 4, 0x21);
     FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
         (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 2);
     Call2(Func_020058ec, 5, 0x8000);
@@ -431,8 +430,7 @@ void Func_02002ae4(void) {
     Call2(Motion_SetVarCbAndRefresh, 5, 2);
     Call1(FieldEvent_Wait, 5);
     Call3(Func_020058d4, 5, 0, 0);
-    Call2(Actor_SetModeById, 0, 3);
-    Call1(FieldEvent_Wait, 0x14);
+    SET_MODE_AND_WAIT(0, 3, 0x14);
     Call1(FieldEvent_Wait, 0xa);
     Call3(Func_020058d4, 0, 0, 0);
   }
@@ -506,13 +504,11 @@ void Func_02002ae4(void) {
   Call1(FieldEvent_Wait, 0x3c);
   Call2(Func_020058ec, 4, 0);
   Call1(FieldEvent_Wait, 0x3c);
-  Call2(Actor_SetModeById, 5, 3);
-  Call1(FieldEvent_Wait, 0x14);
+  SET_MODE_AND_WAIT(5, 3, 0x14);
   Call1(FieldEvent_Wait, 0xa);
   Call2(Func_020058ec, 4, 0xe000);
   Call2(Actor_SetModeById, 7, 3);
-  Call2(Actor_SetModeById, 6, 3);
-  Call1(FieldEvent_Wait, 0x14);
+  SET_MODE_AND_WAIT(6, 3, 0x14);
   Call2(Actor_SetModeById, 7, 2);
   t358 = Value1(Actor_GetById, 4);
   if (t358 != 0) {
@@ -560,8 +556,9 @@ void Func_02002ae4(void) {
   Call1(FieldEvent_Wait, 0xa);
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Call1(Func_02003a6c, 2);
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x200;
-  FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1b4), s32, 0) = 0x18;
+  work = FIELD_AT(0x3000000, s32, 108);
+  FIELD_AT((work + 0x1ac), s32, 0) = 0x200;
+  FIELD_AT((work + 0x1b4), s32, 0) = 0x18;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Call1(Func_02005934, 1);

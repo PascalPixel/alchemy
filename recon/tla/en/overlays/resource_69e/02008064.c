@@ -1,10 +1,21 @@
-// Func_02000148: differ 2, the native loads the step 0xfffff800 from the pool
-// before it reads the timer (same priority; the scheduler prefers the read,
-// which has one more dependent). The step through a "+l" asm operand or a
-// one-pass block, a pointer to the timer and every statement order were tried.
-// Func_020001a4: differ 20, the native shares one tail between the two
-// Random16Far branches (cross-jump from the lsrs on), each branch loading
-// center->y before its shift.
+// Draft, differ 2 of 94, skeleton gap 2 (tla-en, 2026-11-01)
+// Measure each function with --symbol; Func_02000054, Func_020000c8,
+// Func_02000120 and Func_02000294 match. Func_02000148 is differ 2 of 40,
+// skeleton gap 2; Func_020001a4 is differ 2 of 94, skeleton gap 2.
+// Both left are one load after a store, same priority and a scheduler tie.
+// Func_02000148: the native loads the step 0xfffff800 from the pool before it
+// reads the timer; the scheduler prefers the read, which has one more
+// dependent. The step through a "+l" asm operand or a one-pass block, a pointer
+// to the timer and every statement order were tried.
+// Func_020001a4: the native reads byte 9 of the sprite after moving zero into
+// r3 for byte 26; the read has three dependents to the move's two, and is
+// preferred. As a char access (s8 lvalue, mask still -13) the read comes after
+// the speed store, one place short, and differ stays 2; sprite->priority is
+// kept as the readable form. The same in the sprite's u8 bitfields changes
+// nothing. CreateAtOffset takes the random offset as a parameter, which gives
+// the one tail from the lsrs on and sets the constant 672 after the
+// coordinates; a block local plus locals for x and z do the same. On adoption
+// it may need a wrapper tag (S2).
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -123,6 +134,12 @@ static inline s32 FlagCheck(s32 flag) {
 
 #define Rand(range) ((Random16Far() * (range)) >> 16)
 
+static inline struct FieldActor *CreateAtOffset(struct FieldActor *center,
+                                                s32 offset) {
+  return Func_02002828(672, center->x,
+                       (offset << 16) + center->y - 0x1c0000, center->z);
+}
+
 void Func_020001a4(void) {
   struct FieldActor *center;
   struct FieldActor *spark;
@@ -133,15 +150,9 @@ void Func_020001a4(void) {
     return;
   center = Actor_GetById(23);
   if (FlagCheck(0x201))
-    spark = Func_02002828(672, center->x,
-                          (s32)((u32)(Random16Far() << 8) >> 16 << 16) +
-                              center->y - 0x1c0000,
-                          center->z);
+    spark = CreateAtOffset(center, Rand(256));
   else
-    spark = Func_02002828(672, center->x,
-                          (s32)((u32)(Random16Far() << 6) >> 16 << 16) +
-                              center->y - 0x1c0000,
-                          center->z);
+    spark = CreateAtOffset(center, Rand(64));
   if (spark == NULL)
     return;
   sprite = spark->sprite;

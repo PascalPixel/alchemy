@@ -1,15 +1,22 @@
-// Near miss, differ 321 of 268 (tla-en, 2026-10-31): register allocation.
-// Control flow, calls, fields and the stack layout follow the native. Left:
-// global.c ranks kind + 1 above the cell coordinates, so z takes r4 with
-// caller saves and the column counter keeps a register, where the native has
-// table r8, kind + 1 r10, entry r9, cell r11 and the counter on the stack; and
-// GCSE keeps the leader loop's count in a register, reloaded after the current
-// store, where the native reloads it at each test. Sharing one counter between
-// the two loops measures 284, but cannot be the native's form: its leader loop
-// counts in r2 while the column counter lives on the stack. Re-deriving entry
-// from the table gives the native's late entries temporary (its sp[8] slot).
-// Draft of overlay 6ad's Func_020038ac, the twin of overlay 698's
-// Func_020011a0 (resource_698_c_020011a0.c) with this overlay's symbols.
+// Draft, differ 304 of 268, skeleton gap 72 (tla-en, 2026-11-01)
+// Overlay 6ad's Func_020038ac, the twin of overlay 698's Func_020011a0. Fills
+// the cell table from the map's cells whose event byte is the given kind or
+// the next one, restores the copied cells of those already flagged, finds the
+// leader's entry and loads the sprite's tiles for Func_02003780.
+// Left: allocation drives most of the gap. The native keeps event, cellZ and
+// cellX in r5 to r7, the table, kind + 1, the entries and the cell in r8 to
+// r11, and i and j on the stack. Here kind + 1 takes r6 and cellZ takes r4 with
+// a save around each call, so i keeps a register and the two ands with 64 each
+// load their own constant. Global.c ranks kind + 1 (9 refs over 13 insns, 2.07)
+// above cellX and cellZ (15 refs over 29 and 30, about 1.5). It would need a
+// life of 20 or more insns, or one more ref each on cellX and cellZ; the
+// listing shows neither. Loop depth comes from the CFG, so a goto loop does
+// not change the weights. Pinning kind + 1 costs the table its register.
+// Also left: gcse's PRE turns the leader loop's table->count into a register
+// reloaded after the store to current, where the native rereads it.
+// Tried with no gain: event as u8 or s32, kind signed, kind + 1 as s32 or bare,
+// outer cellX and cellZ, the flag and test spellings, and a shared mask or
+// separate dstX and dstZ.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -82,10 +89,13 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellMapWork *map;
   struct CellMapLayer *layer;
   struct CellMapCell *rows;
-  struct CellMapCell *cell;
-  s32 minX, minZ, x0, z0, width, height, i, j;
+  s32 x0, z0, width, height;
+  s32 i, j;
+  struct CellTargetEntry *entries = entry;
+  struct CellMapCell *cells;
+  s32 minX, minZ;
+  s32 *bounds;
   u32 *buffer;
-  u32 last;
 
   Iwram_ClearWords(table, 4);
   table->kind = kind;
@@ -97,49 +107,61 @@ s32 Func_020038ac(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   table->count = 0;
   map = (struct CellMapWork *)Ram_HeapSlots->mapWork;
   layer = &map->layers[0];
-  minX = map->minX;
+  bounds = &map->minX;
+  minX = *bounds;
+  cells = layer->cells;
   x0 = (layer->originX + minX) >> 20;
-  minZ = map->minZ;
+  bounds++;
+  minZ = *bounds;
   z0 = (layer->originZ + minZ) >> 20;
   width = (map->maxX - minX) >> 20;
   height = (map->maxZ - minZ) >> 20;
-  rows = layer->cells + ((minZ >> 20) << 7) + (minX >> 20);
+  rows = cells + ((minZ >> 20) << 7) + (minX >> 20);
   for (j = 0; j < height; j++) {
-    cell = rows + (j << 7);
+    struct CellMapCell *cell = rows + (j << 7);
+
     for (i = 0; i < width; i++, cell++) {
       u32 event = cell->event;
 
-      if (event == 0 || event < kind)
-        continue;
-      last = kind + 1;
-      if (event > last)
-        continue;
-      entry->x = i + x0;
-      entry->z = j + z0;
-      entry->flag = flag;
-      flag++;
-      if (!GameFlag_Test(0x109)) {
-        if (event == last)
-          GameFlag_SetBit(entry->flag);
-      } else if (GameFlag_Test(entry->flag)) {
-        Func_020054e0(table->x, table->z + 1, 1, 1,
-                      (i + x0) | (s16)(table->x & 64),
-                      (j + z0) | (s16)(table->z & 64));
+      if (event != 0 && event >= kind) {
+        u32 last = kind + 1;
+
+        if (event <= last) {
+          s32 cellX = i + x0;
+          s32 cellZ = j + z0;
+
+          entry->x = cellX;
+          entry->z = cellZ;
+          entry->flag = flag;
+          flag++;
+          if (!GameFlag_Test(0x109)) {
+            if (event == last)
+              GameFlag_SetBit(entry->flag);
+          } else if (GameFlag_Test(entry->flag)) {
+            u16 x = table->x;
+            u16 z = table->z;
+            s16 xBit = x & 64;
+            s16 zBit = z & 64;
+
+            Func_020054e0(table->x, table->z + 1, 1, 1, cellX | xBit,
+                          cellZ | zBit);
+          }
+          table->count++;
+          entry++;
+        }
       }
-      table->count++;
-      entry++;
     }
   }
   if (GameFlag_Test(0x109)) {
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
     s32 leaderX = leader->x >> 20;
     s32 leaderZ = leader->z >> 20;
-    s32 k;
+    s32 n;
 
-    entry = table->entries;
-    for (k = 0; k < table->count; k++, entry++) {
+    entry = entries;
+    for (n = 0; n < table->count; n++, entry++) {
       if (entry->x == leaderX && entry->z == leaderZ)
-        table->current = k;
+        table->current = n;
     }
   }
   buffer = Heap_Alloc(0x100);

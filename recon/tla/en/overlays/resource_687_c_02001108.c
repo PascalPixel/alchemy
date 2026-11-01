@@ -1,16 +1,31 @@
-// Near miss, differ 269 of 350 (tla-en, 2026-10-31): the control flow, calls,
-// frame (the fill word at sp+98 above the two effect options at sp+56 and
-// sp+16) and data accesses now follow the listing; what is left is loop
-// motion and allocation. In the fade, the native keeps gData_020026c0 in r11
-// from the outer loop's body and rematerializes the shifted-field mask 31
-// from the pool inside the inner loop; here the mask is hoisted out of both
-// loops into r9 and the table address is reloaded inside instead. The native
-// also keeps each colour component sign-extended (lsls/asrs) at its stores,
-// where GCSE here moves the join's zero-extension into the branches and
-// combine drops the asrs. The spark and shower loops are goto loops because
-// the native moves nothing out of them; the shower's options address is
-// still hoisted here by GCSE. The rest is reload's choice of low registers
-// for the counter in r8. Destined for scene/sea_of_time.
+// Draft, differ 267 of 350, skeleton gap 73 (tla-en, 2026-11-01). Destined for
+// scene/sea_of_time. Control flow, calls, frame (the fill word at sp+98 above
+// the two effect options at sp+56 and sp+16) and data accesses follow the
+// listing; the gap is almost all the fade's channels, then scheduling in the
+// spark and shower blocks (x and z chains interleave with the stack arguments
+// there; reordering arguments or locals only moved the lines around).
+// The channels: the native zero-extends each channel afresh at both compares
+// and at the pack, keeps it sign-extended (lsls/asrs) at its stores, and steps
+// the zero-extended copy. Here GCSE's PRE treats `channel << 16` as partly
+// redundant, inserts it on the edge out of each step (gcse dump, PRE/HOIST
+// lines) and combine then drops the asrs. Tried: s16 channels, each first
+// compare on a copy of the channel and a shared `u32 c = (u16)channel` holding
+// the zero-extension gives green and blue the native's exact shape (differ 248
+// with the goto below), since that compare and the next no longer pair up.
+// Those are forced temporaries, and the pack `(u16)b << 10` then folds to a plain
+// shift (the native's lsls 16/lsrs 6 needs the third `<< 16`, which brings PRE
+// back on the step down); gap 92, so not kept. Copying into new stage variables
+// at each join stops PRE outright but the copies stay as moves. The missing
+// source form must make the three `<< 16` different expressions at GCSE.
+// Allocation: the native keeps gData_020026c0 in r11, set in the outer loop's
+// body, and loses the shifted-field mask 31 (reg:HI, reloaded from the pool
+// through its paradoxical subreg). Here the second loop pass moves the table
+// address out of the outer loop too and the mask wins its register. A goto
+// outer loop keeps the address in its body but loses the palette pointer's
+// strength reduction; while (1) with break compiles as the do loop. The spark
+// and shower loops are goto loops because the native moves nothing out of them;
+// the shower's options address is still hoisted here by GCSE. beq+b at the
+// outer branch comes back once the body has the native's length.
 #include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
 #include "main_routine_work.h"
 #include "io_reg.h"
@@ -97,7 +112,7 @@ void Func_02001108(void) {
         b--;
         changed = 1;
       }
-      BG_PLTT_COLOR(3, i) = r | (g << 5) | (b << 10);
+      BG_PLTT_COLOR(3, i) = (g << 5) | (b << 10) | r;
     }
   } while (changed);
   FieldEvent_Wait(30);

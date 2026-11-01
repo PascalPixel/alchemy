@@ -1,5 +1,5 @@
-// Draft, differ 131 of 376 (was 150): the Naribwe fortune teller's reading of
-// an item (object 10): the player picks an item to show (Func_020011a0, its
+// Draft, differ 90 of 376, skeleton gap 56 (tla-en, 2026-11-01)
+// The Naribwe fortune teller's reading of an item (object 10): the player picks an item to show (Func_020011a0, its
 // unit and slot; cancelling asks MsgShallIGive until refused); the item is set
 // on the table (object 18, Func_020010a0) and named (MsgPlacedOnThe); she
 // asks MsgAreYouPrepared, and a no takes the item back and asks whether to
@@ -10,10 +10,15 @@
 // kind (6 Func_020007b4, 1 Func_02000760, 2 to 5 Func_02000838, else
 // Func_02000878); the reading costs 20 coins. The Japanese edition is the same
 // with its own message numbers. The calls whose constants the native builds
-// afresh go through CallN. Left: the native saves only r5 to r7 (the unit's
-// data in r5, MsgAreYouPrepared in r6, &gMainRoutineWork.currentOwner in r7),
-// forms &unit and &slot at each call and reads the item as base plus offset,
-// where the draft keeps them in r8 to r11 and adds the slot to the base first.
+// afresh go through CallN. Left, two causes: (1) gcse's PRE hoists &unit and
+// &slot out of the ask loop into r7 and r6, where the native forms them at the
+// call, which pushes the MsgAreYouPrepared and currentOwner pseudos into
+// r8 and sl (the extra push, pop and mov pairs); a real for loop, an array, an
+// inline forward and Value2 all still hoist, and a real loop also moves the
+// owner address out. (2) Actor_ResetAndSetPositionInMode2 shares 664 and 680
+// across DANCE_TO; through Call3, as yallam_interiors does, the skeleton gap
+// falls to 38, kept out of this round as more device sites. Also left: the
+// native copies kind to r2 before cmp #6 and subtracts from r0.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -28,7 +33,7 @@ s32 Func_020011a0(s32 *unit, s32 *slot);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Func_02001188(void);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
-u8 *Unit_Get(s32 unit);
+struct UnitData *Unit_Get(s32 unit);
 const u8 *Func_020010b8(s32 item);
 struct Actor *Actor_GetById(u32 id);
 void Func_020010a0(struct Actor *object, s32 item);
@@ -51,20 +56,23 @@ void Func_02000838(void);
 void Func_02000878(void);
 void Party_AdjustCoins(s32 coins);
 
-#define ITEM(unitData, slot) (*(u16 *)&(unitData)[(slot) * 2 + 216])
+struct UnitData {
+  u8 filler[216];
+  u16 items[15];
+};
 
 /// Object 10 steps to (x, 96) without turning, then dances (mode 5).
 #define DANCE_TO(x)                                                            \
   (Actor_GetById(10)->actionFlags &= ~1,                                      \
-   Actor_ResetAndSetPositionInMode2(10, x, 96),                         \
+   Actor_ResetAndSetPositionInMode2(10, x, 96), \
    Actor_SetModeById(10, 5))
 
 void Func_02000390(void) {
   s32 slot, unit;
-  u8 *unitData;
-  const u8 *message, *info;
+  struct UnitData *unitData;
+  const u8 *message, *refuse, *info;
   u32 item;
-  s32 kind;
+  u8 kind;
 
   Func_02001138(MsgVeryWellShow);
   Func_02001148(10, 0);
@@ -72,19 +80,21 @@ void Func_02000390(void) {
 ask:
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   if (Func_020011a0(&unit, &slot) == -1) {
-    Func_02001138(MsgShallIGive);
+    refuse = MsgShallIGive;
+    Func_02001138(refuse);
     FieldMessage_ShowAtActor(10, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) != 1)
       goto ask;
-    message = MsgShallIGive + 1;
-    goto bye;
+    Func_02001138(refuse + 1);
+    Func_02001148(10, 0);
+    return;
   }
   unitData = Unit_Get(unit);
-  Func_020010b8(ITEM(unitData, slot));
-  Func_020010a0(Actor_GetById(18), ITEM(unitData, slot));
+  Func_020010b8(unitData->items[slot]);
+  Func_020010a0(Actor_GetById(18), unitData->items[slot]);
   Call3((void (*)())Func_02001108, 18, 0x2a00000, 0x680000);
   FieldEvent_Wait(60);
-  Func_020010b0(ITEM(unitData, slot), 2);
+  Func_020010b0(unitData->items[slot], 2);
   FieldMessage_Show(MsgPlacedOnThe, 1);
   message = MsgAreYouPrepared;
   Func_02001138(message);
@@ -92,15 +102,13 @@ ask:
   if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) != 1)
     goto read;
   Func_02001108(18, 0, 0);
-  Func_020010b0(ITEM(unitData, slot), 2);
+  Func_020010b0(unitData->items[slot], 2);
   FieldMessage_Show(message + 1, 1);
   Func_02001138(message + 2);
   FieldMessage_ShowAtActor(10, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) != 1)
     goto ask;
-  message += 3;
-bye:
-  Func_02001138(message);
+  Func_02001138(message + 3);
   Func_02001148(10, 0);
   return;
 read:
@@ -148,18 +156,20 @@ read:
   Func_02001160(10, 0x100, 60);
   Func_02001148(10, 0);
   unitData = Unit_Get(unit);
-  info = Func_020010b8(ITEM(unitData, slot));
-  item = ITEM(unitData, slot) & 0x1ff;
+  info = Func_020010b8(unitData->items[slot]);
+  item = unitData->items[slot] & 0x1ff;
   if ((u16)(item - 0x1b7) <= 2) {
     Func_02000920();
   } else if (item == 326) {
     Func_02001138(message + 29);
     Func_02001148(10, 0);
-    if (!GameFlag_Test(0x940))
+    if (!GameFlag_Test(0x940)) {
       Func_02001138(message + 30);
-    else
+      Func_02001148(10, 0);
+    } else {
       Func_02001138(message + 31);
-    Func_02001148(10, 0);
+      Func_02001148(10, 0);
+    }
   } else {
     kind = info[2];
     if (kind == 6)

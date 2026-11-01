@@ -1,15 +1,16 @@
-// Near miss, differ 303 of 268 (tla-en, 2026-10-31): the shape matches; what
-// differs is register allocation. The native keeps the table in r8, `last` in
-// r10, the entry in r9, the cell in r11, j + z0 in r6 and i + x0 in r7, and
-// leaves i on the stack; here global.c ranks `last` second (9 refs over 14
-// insns, one call crossed) and gives it r6, j + z0 is caller-saved in r4, and
-// the entry, cell, table and i rank in that order for r8, r10, r9 and r11.
-// The native's order needs `last` ranked below the table and too costly to
-// caller-save, as when it stays live across the else arm's calls. GCSE also
-// moves the leader search's count load into the arm that stores `current`
-// (ldrh and shifts), where the native reloads it with ldrsh at the loop's
-// end, and the fill pointer and counter take r2 and r1 for the native's r1
-// and r2.
+// Draft, differ 268 of 268, skeleton gap 32 (tla-en, 2026-11-01)
+// Left: register ranks, which cost the r4 spill around both GameFlag_Test calls
+// and put i in r11 where the native spills it. The native keeps event r5, cz r6,
+// cx r7, the table r8, last r10, the entry r9, the cell r11 and i at sp+16. Here
+// last ranks second (9 refs over 14 insns) and takes r6, so cz is caller-saved
+// in r4. Flow weights refs by natural-loop depth (3 in the inner loop), and that
+// happens for goto and for loops alike. The native order fits unweighted refs:
+// last has 3, ranks below the table and is too dear to caller-save. No C shape
+// tried gives that: no last variable, block locals, either order of cx and cz,
+// masks in locals. For loops also hoist the 64 (gap 38). One compiler question.
+// GCSE also moves the leader search's count load into the arm that stores
+// current (ldrh and shifts); the native reloads it with ldrsh at the loop's end.
+// A goto loop or a continue does not change that.
 // Overlay 6a5's copy of overlay 698's Func_020011a0, drafted in
 // resource_698_c_020011a0.c with this overlay's symbols.
 #include "types.h"
@@ -83,11 +84,13 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTargetEntry *entry = table->entries;
   struct CellMapWork *map;
   struct CellMapLayer *layer;
+  struct CellMapCell *cells;
   struct CellMapCell *rows;
   struct CellMapCell *cell;
   s32 x0, z0, width, height, i, j;
   u32 *buffer;
   u32 event, last;
+  s32 cz, cx;
 
   Iwram_ClearWords(table, 4);
   table->kind = kind;
@@ -99,11 +102,12 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   table->count = 0;
   map = (struct CellMapWork *)Ram_HeapSlots->mapWork;
   layer = &map->layers[0];
+  cells = layer->cells;
   x0 = (layer->originX + map->minX) >> 20;
   z0 = (layer->originZ + map->minZ) >> 20;
   width = (map->maxX - map->minX) >> 20;
   height = (map->maxZ - map->minZ) >> 20;
-  rows = layer->cells + ((map->minZ >> 20) << 7) + (map->minX >> 20);
+  rows = cells + ((map->minZ >> 20) << 7) + (map->minX >> 20);
   // Goto loops: as for loops (either one) loop.c moves the 64 of the cell
   // copy's masks out of them and 321 of 268 instructions differ.
   j = 0;
@@ -117,17 +121,18 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
       if (event != 0 && event >= kind) {
         last = kind + 1;
         if (event <= last) {
-          entry->x = i + x0;
-          entry->z = j + z0;
+          cz = j + z0;
+          cx = i + x0;
+          entry->x = cx;
+          entry->z = cz;
           entry->flag = flag;
           flag++;
           if (!GameFlag_Test(0x109)) {
             if (event == last)
               GameFlag_SetBit(entry->flag);
           } else if (GameFlag_Test(entry->flag)) {
-            Func_0200579c(table->x, table->z + 1, 1, 1,
-                          (i + x0) | (s16)(table->x & 64),
-                          (j + z0) | (s16)(table->z & 64));
+            Func_0200579c(table->x, table->z + 1, 1, 1, cx | (s16)(table->x & 64),
+                          cz | (s16)(table->z & 64));
           }
           table->count++;
           entry++;

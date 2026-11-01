@@ -1,14 +1,22 @@
-// Near miss, differ 225 of 315 (tla-en, 2026-10-31): control flow, calls, the
-// frame (88 bytes, same slots) and every memory access now follow the listing;
-// what is left is allocation. GCSE (PRE, then copy propagation) merges every
-// `add rN, sp, #76` for center into one pseudo live through the function (r7),
-// where the listing recomputes it after the switch (r5) and after the nudge
-// (r11) (an analysis compile with -fno-gcse gives the listing's three); that
-// pushes object from r9 to r11, sine from r7 to r9 and swaps the IwramMulQ16
-// address and x into r6/r8. px, py and pz are read before the flip test
-// because the listing loads them there. The listing also keeps the 0x8000
-// speed in r11 with -0x8000 from the pool; here cprop turns `speed` back into
-// movs/lsls at each use (or, written -speed, a negs).
+// Draft, differ 206 of 315, skeleton gap 54 (tla-en, 2026-11-01): control flow,
+// calls, the frame (88 bytes, same slots) and memory accesses follow the
+// listing; what is left comes from one thing. The listing materialises center
+// three times (`add r1, sp, #76` before the switch, `add r5, sp, #76` after it,
+// `add r3, sp, #76` / r11 after the nudge) and keeps 0x8000 in r11 across the
+// flip test. Here GCSE merges all of it: PRE makes the later addresses copies
+// and cprop folds them into one pseudo live through the function (r7), and
+// cprop puts the constant back at each use, even with explicit pointers to
+// center at each site (same output). -fno-gcse gives the three; no plain C form
+// was found that keeps (plus sfp 76) from PRE, and sfp is never killed. No
+// function with a repeated `add rN, sp, #K` has matched yet, so this may be a
+// compiler question (79 listing hits; K3, Pascal's call). The consequences: object r9, not
+// r11; sine r9, not r7; IwramMulQ16 and x swap r6/r8; the x nudge takes r5 for
+// 0x8000 where the listing, with r5 busy, has r1 in both arms and cross-jumps.
+// Tried: x nudge through a local or a ternary, which pulls x into a long pseudo
+// (gap 88+); `object->x` for *pos, differ 192 but gap 64, kept out as the gap is
+// the aim; z read once and stored once is the best z form; a `speed` local,
+// gap 4 worse (cprop undoes it). px, py and pz are read before the flip test
+// because the listing loads them there.
 // Shape follows Func_0200043c (s043c.c), including its forwarded SeaOfTime_Cos
 // and SeaOfTime_Sin; plain Math_Cosine/Math_Sine there gives 242.
 #include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
@@ -36,14 +44,13 @@ void Func_0200054c(void) {
   s32 phase;
   s32 c;
   s32 s;
-  s32 speed;
   s32 flip;
   s32 px;
   s32 py;
   s32 pz;
 
-  pos = &object->x;
   offset = center;
+  pos = &object->x;
   switch (work->unk154) {
   case 30:
     offset[0] = 0;
@@ -85,10 +92,12 @@ void Func_0200054c(void) {
       *pos += 0x8000;
     else
       *pos -= 0x8000;
-    if (object->z < center[2])
-      object->z += 0x8000;
+    z = object->z;
+    if (z < center[2])
+      z += 0x8000;
     else
-      object->z -= 0x8000;
+      z -= 0x8000;
+    object->z = z;
   }
   if (Func_0200034c(1, center[0] >> 20, center[2] >> 20) >> 8 == 40) {
     cosine = SeaOfTime_Cos(-0x200);
@@ -124,7 +133,6 @@ void Func_0200054c(void) {
     ends[1] += object->z;
     ends[2] += object->x;
     ends[3] += object->z;
-    speed = 0x8000;
     if (ends[1] != object->z) {
       ends[1] += -0xc0000;
       ends[3] += -0xc0000;
@@ -134,12 +142,12 @@ void Func_0200054c(void) {
     py = object->y;
     pz = ends[1];
     if (flip) {
-      Func_0200015c(px + 0x30000, py, pz, speed, 0, 0, 0xb0000, &spark);
+      Func_0200015c(px + 0x30000, py, pz, 0x8000, 0, 0, 0xb0000, &spark);
       Func_0200015c(ends[2] - 0x30000, object->y, ends[3], -0x8000, 0, 0,
                     0xb0000, &spark);
     } else {
       Func_0200015c(px - 0x30000, py, pz, -0x8000, 0, 0, 0xb0000, &spark);
-      Func_0200015c(ends[2] + 0x30000, object->y, ends[3], speed, 0, 0,
+      Func_0200015c(ends[2] + 0x30000, object->y, ends[3], 0x8000, 0, 0,
                     0xb0000, &spark);
     }
   }

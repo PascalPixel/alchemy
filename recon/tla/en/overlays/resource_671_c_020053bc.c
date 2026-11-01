@@ -1,6 +1,7 @@
-// Func_020053bc matches: differ 0 of 51 (tla-en, 2026-10-31). Func_02005428:
-// near miss, differ 23 of 61 (tla-en, 2026-10-31): object and id swap r6 and
-// r7, and the native builds the first byte of 0xffff before entering the loop.
+// Draft, differ 23 of 61, skeleton gap 3 (tla-en, 2026-11-01). Measure with
+// --symbol: Func_020053bc matches, differ 0 of 51; the figures are
+// Func_02005428's. Its skeleton lacks the entry's movs #255, and sl is copied
+// first; object and id swap r6 and r7.
 // Func_020053bc: the test on an int copy of the word (while ((value = *entry)
 // != 0xffff)) is an SImode compare, whose constant is one insn that loop.c
 // leaves inside the loop, as the native rebuilds 0xffff on every pass; compared
@@ -12,14 +13,23 @@
 // arguments (stepped with *entry++ for all three, 2 differ).
 // Func_02005428: the native's shape is a C loop whose copied exit test
 // (movs #255; ldrh; lsls; adds; cmp) jump2 cross-jumped into the bottom test,
-// leaving the entry's b and its movs r1, #255; the native also rereads the
-// word in the body and reads work->target on every pass. As a while loop the
-// value test's read is reused in the body (while ((value = *entry) != 0xffff),
-// differ 42), and while (*entry != 0xffff) keeps the reread but hoists 0xffff
-// and work->target above the loop (differ 38). The goto loop below rereads
-// both; key, read before the target, gives the native's load order (with id
-// == entry[0], differ 25). Not yet a C loop and key is a temporary: both stay
-// to be resolved before adoption.
+// leaving the entry's b and its movs r1, #255; jump2 runs after sched2 and
+// needs the two tests' last insns equal, so no insn may be scheduled into the
+// entry's test. while ((value = *entry) != 0xffff) with a u16 key = *entry in
+// the body gets the bottom test, the reread and both copies of the test right
+// (differ 36, gap 12), with two things in the way. gcse's PRE moves
+// work->target above the loop, because the copied test gives the loop top a
+// place to insert it and only the exit path holds calls and stores, so work
+// dies early and sits in r0 where the native keeps it in r2. Then 0xffff takes
+// r2, not r1, and mov r9, r1 lands inside the entry's test, which stops the
+// cross-jump. break, return, for and if/else do not change the hoist; loading
+// work inside the loop is worse (differ 62). The goto loop below has no copied
+// test, so PRE leaves the read in the loop. XXX: what kept the native's read
+// in the loop with a copied test; a kill or a condition before the read on the
+// way to the loop top would settle it. As if ((value = *entry) != 0xffff) in
+// the goto loop the gap is 2 of the same 61, but the reread is lost and differ
+// is 30, so that form is not kept. Not yet a C loop and key is a temporary:
+// both stay to be resolved before adoption.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

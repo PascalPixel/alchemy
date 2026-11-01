@@ -1,14 +1,24 @@
-// Near miss, differ 310 of 305 (tla-en, 2026-10-31): register allocation
-// throughout, from a CSE boundary the native has before the second
-// Actor_WaitForMoveById and no C form tried reproduces: the native
-// recomputes gMainRoutineWork's owner address there (r5; r10 before), keeps
-// the direction index (0) live in r9 and still shifts it, keeps kind * 4 in
-// r7 but recomputes kind * 4 + 1 and gData_02004cb0 afterwards, and with
-// those pseudos holding r5 to r11 it builds 0x8000 and 0x1999 again at every
-// call and spills width to the stack (frame 56). Here CSE merges all of it,
-// folds the index and gives the constants r5 and r6 (frame 52). Hiding the
-// second half's owner pointer from CSE with an empty asm (a test only, kind
-// as a local) measured differ 267 with the native's frame.
+// Draft, differ 302 of 305, skeleton gap 112 (tla-en, 2026-11-01)
+// Left: the native ends CSE's reach in the middle of the function, and no
+// plain C form found does. After that point it recomputes gMainRoutineWork's
+// owner address (r5; r10 before), rebuilds 0x8000 and 0x1999 at each call,
+// recomputes the box table's base and row + 1, and keeps the direction index
+// (0) live in r9 and still shifts it; here all of those are merged, the index
+// folds and the frame is 52 bytes (native 56). A volatile asm with an operand
+// flushes the table (analysis only, not kept): before wait(4) or
+// Func_02004c9c(239), gap 86, and before the mode 8 call, differ 252. A plain
+// asm(""), an output-only asm and a one-pass block do not reach CSE's second
+// pass. The two-part index (row, rowZ) gives the lowest gap but also an extra
+// `ldr pool; adds #1` in the first half, which the native lacks; a row pointer
+// `s8 (*box)[4] = &gData_02004cb0[push.kind]` read in the last half instead
+// gives differ 253, gap 117, 306 instructions, and is the better start once
+// the boundary is solved. Also tried: a struct for the box row (gap 136),
+// flat table, kind as a local (119), declaration orders (no change).
+// The load of the map slot goes through struct HeapSlotWords because the
+// native keeps the four argument stores ahead of it: the load is in an alias
+// set the push state contains, here s32. As a pointer load the scheduler
+// moves the stores past it (a struct MapWork * member in PushState has the
+// same effect).
 // Carries out a push measured by Func_02004240 (the push state arrives by
 // value: four words in r0 to r3, the object's number and the optional
 // callback on the stack): clears the cells under the object's box, walks
@@ -23,6 +33,11 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "system/vector3.h"
+
+struct HeapSlotWords {
+  s32 unk00[8];
+  s32 map;
+};
 
 struct PushState {
   s32 x;
@@ -54,12 +69,14 @@ void Func_02004c0c(void);
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
 void Func_020044c4(struct PushState push) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->map;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *object = Actor_GetById(push.number);
   s32 speed = leader->speedLimit;
   s32 acceleration = leader->acceleration;
   struct Vector3 cell, start;
+  s32 row = push.kind * 4;
+  s32 rowZ;
   s32 direction, width, height, spareX, spareZ;
 
   start.x = object->x;
@@ -105,16 +122,17 @@ void Func_020044c4(struct PushState push) {
   Func_02004c9c(213);
   Actor_SetPositionAndResetMotion(object, push.x, object->y, push.z);
   Func_02004a0c(object, 1);
-  push.x = (push.x + (gData_02004cb0[push.kind][0] << 16)) >> 20;
-  push.z = (push.z + (gData_02004cb0[push.kind][1] << 16)) >> 20;
+  rowZ = row + 1;
+  push.x = (push.x + (((s8 *)gData_02004cb0)[row + 0] << 16)) >> 20;
+  push.z = (push.z + (((s8 *)gData_02004cb0)[rowZ] << 16)) >> 20;
   spareX = *(s32 *)(map + 0x148) >> 20;
   spareZ = *(s32 *)(map + 0x14c) >> 20;
   Func_02004a54(push.x, push.z, width, height, spareX + push.x,
                 spareZ + push.z);
   Map_FillCellRectByte2(0, push.x, push.z, width, height, 255);
   Map_FillCellRectByte2(2, push.x, push.z, width, height, 255);
-  cell.x = (start.x + (gData_02004cb0[push.kind][0] << 16)) >> 20;
-  cell.z = (start.z + (gData_02004cb0[push.kind][1] << 16)) >> 20;
+  cell.x = (start.x + (((s8 *)gData_02004cb0)[row + 0] << 16)) >> 20;
+  cell.z = (start.z + (((s8 *)gData_02004cb0)[rowZ] << 16)) >> 20;
   Func_02004a54(spareX + cell.x, spareZ + cell.z, width, height, cell.x,
                 cell.z);
   Map_FillCellRectByte2(2, cell.x, cell.z, width, height, 0);

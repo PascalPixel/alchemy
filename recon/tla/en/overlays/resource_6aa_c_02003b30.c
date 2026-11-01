@@ -1,14 +1,10 @@
-// Draft, differ 12 of 207: overlay 6aa's effect spawner, ☀️'s EFFECT_SPAWN
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Overlay 6aa's effect spawner, ☀️'s EFFECT_SPAWN
 // (scene/shared/field_effect_spawn.h) with the leader from
 // gMainRoutineWork.currentOwner, Actor_SetSingleChildFlags for the sprite
 // flags, the leader's sprite priority through Actor_SetSpritePriorityB, and
-// the scale-to-target target and frame count read before the start-scale test
-// (the ☀️ form: 40). Left:
-// three pairs where the native schedules a load before a register copy and this
-// form the copy first: the gMainRoutineWork load before z's copy to sl in the
-// prologue, the sprite load before flags' copy (sched2 priority 60 against 61),
-// and the script table address before flags' copy. Tried: an asm operand on the
-// sprite (32); alchemy permute 6 minutes (no gain).
+// the scale-to-target target and frame count read before the start-scale test.
+// The velocity goes through struct FieldEffect's velocity vector.
 #include "types.h"
 #include "field_effect.h"
 #include "main_routine_work.h"
@@ -44,9 +40,9 @@ void Func_02003b30(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->motionFlags = 0;
   Actor_SetSingleChildFlags(effect, 0);
   effect->update = BattleEffect_UpdateObjectMotionScaleAndLinkedAngle;
-  effect->velocityX = velocityX;
-  effect->velocityY = velocityY;
-  effect->velocityZ = velocityZ;
+  effect->velocity.x = velocityX;
+  effect->velocity.y = velocityY;
+  effect->velocity.z = velocityZ;
   Actor_SetSpritePriorityB(effect, party->sprite->priority);
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;

@@ -1,15 +1,26 @@
-// Near miss, differ 272 of 246 (tla-en, 2026-10-31): calls, branches, loops
-// and fields are the native's; what remains is allocation. GCSE's PRE hoists
-// the position array's address (sp+20) and &object->terrainId above the retry
-// label onto the entry edge and replaces the native's recomputations (add r6,
-// sp, #20 in the retry block, add r7 and add r2, sp, #20 in the walk loop)
-// with copies of one register: the address holds r8 throughout, &terrainId
-// takes sp+4 instead of r11, targetZ sp+8 and targetX a register where the
-// native keeps them at sp+4 and sp+8, the overlap loop's counter goes to r4
-// with caller saves instead of r9, and radius to r9 instead of sp+0; angle and
+// Draft, differ 272 of 246, skeleton gap 86 (tla-en, 2026-11-01)
+// Calls, branches, loops and fields are the native's; the gap is allocation
+// that follows from GCSE. PRE hoists &position (sp+20) and &object->terrainId
+// onto the edge above the retry label (07.gcse: edge 0 to 1) and replaces the
+// native's recomputations (add r6, sp, #20 in the retry block, add r7 and
+// add r2, sp, #20 in the walk loop) with copies of one register. So the entry
+// gains six instructions, the address holds r8 throughout, &terrainId takes
+// sp+4 instead of r11, targetZ sp+8 and targetX a register where the native
+// keeps them at sp+4 and sp+8, the overlap loop's counter goes to r4 with
+// caller saves instead of r9, and radius to r9 instead of sp+0; angle and
 // startCell keep the native's sp+16 and sp+12. Compiled with -fno-gcse
 // (analysis only) it keeps the native's recomputations and slots, and object
 // and the position pointer swap r5 and r6.
+// No plain C form found stops this: gcse.c never counts a call as setting sfp,
+// so nothing kills sp+20, and the retry block evaluates both addresses on
+// every path from the label. The twin Func_0200189c has the same gap and its
+// header records the compiler question (K3) for Pascal.
+// Tried, no gain: p, q and layer dropped for position[n] and
+// object->terrainId (identical code); angle by ~0x3fff, -0x4000 or through u16
+// (identical), in two statements (gap 88); one pair of targets for x, z and
+// targetX, targetZ (93); block scope for the overlap loop (identical);
+// for (;;) or do while (1) in place of goto retry (gap 85, differ 297, 255
+// instructions, a larger frame); break in place of goto end (233).
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

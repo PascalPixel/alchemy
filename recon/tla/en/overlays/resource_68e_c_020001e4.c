@@ -1,29 +1,34 @@
-// Draft, differ 269 of 286: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "call.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
+// Draft, differ 144 of 286, skeleton gap 32 (tla-en, 2026-11-01)
+// The Lost Age's twin of The Broken Seal's TolbiSpring_RunSpringGame
+// (games/tbs/src/scene/tolbi_games.c): choose coin or medal, toss, award.
+// The prompt is a goto loop, as a real outer loop hoists its pool loads, and
+// the shared notice tail sits at a join so its -1 is reloaded. One local per
+// callee-saved register of the listing: choice also adds up the weights (r7),
+// result also holds the text ids (r5), window also the prize index (r6);
+// separate locals put choice in r9 and cost 15 of skeleton.
+// Left: 1. the -1 of each cancel compare stays in r5 and is reused by the
+// free-slots notice and Party_AdjustCoins, where the listing reloads it into
+// r2 after the calls; Call and Value do not stop that, nor did one mask
+// variable set before each compare (gap 49), a cancel local or a switch.
+// 2. gInput and the 1 are hoisted out of the key loop. A goto into the loop
+// stops the hoist but puts the confirm block after that goto; a goto loop
+// pulls the block inline. 3. The weight sum shares result * 3 only by
+// recomputing it: a count local gives gap 33, a do-while 42. 4. The first read
+// of weight 0 and the pick loop share state + 1, which the listing recomputes.
 #include "types.h"
+#include "call.h"
+#include "text/msg_ids.h"
+#include "main_routine_work.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
-extern u8 gInput[];
-extern u8 gData_0200173c[];
-extern u8 gData_02001700[];
+#include "input.h"
+extern u16 gData_0200173c[];
+extern s32 gData_02001700[];
 void Func_02001380();
 void Func_020013f8();
 s32 PartyInventory_CountItem();
 void Func_020013c8();
 void FieldMessage_ShowAtActor();
-s32 Window_Create();
+struct Window *Window_Create();
 void Text_DrawCharacterAtOffset();
 void Text_DrawNumberInWindow();
 s32 Menu_SelectCoinsOrMedals();
@@ -45,185 +50,147 @@ s32 Func_0200049c();
 s32 Random16Far();
 void Func_02001388();
 
-s32 Func_020001e4(s32 a0, s32 a1) {
-  s32 r7, r9, v0, r10, r8, v1, r5, r6, v2, v3, r2, r0, r3, r1, v4, v5, v6, v7,
-      v8, v9, v10, v11, v12, v13;
-  s32 stack[16];
+s32 Func_020001e4(void) {
+  s32 choice;
+  s32 message;
+  s32 coins;
+  s32 medals;
+  s32 window;
+  s32 result;
+  s32 prizeRoll;
+  s32 notice;
+  struct MainRoutineWork *state;
 
-  /* sub (s32)stack, #4 */
   Func_02001380();
-  r7 = 0;
+  choice = 0;
   Call1((void (*)())Func_020013f8, 0);
-L_020081fc:
-  r9 = FIELD_AT((s32)&gMainRoutineWork, s32, 16);
-  v0 = PartyInventory_CountItem(229);
-  r10 = v0;
-  r8 = (s32)MsgWhatWillYou;
-  Func_020013c8(r8);
-  Value2((s32 (*)())FieldMessage_ShowAtActor, -1, 0);
-  v1 = Window_Create(0, 0, 17, 4, 2);
-  r5 = (s32)MsgCoins2;
-  r6 = v1;
-  Call4((void (*)())Text_DrawCharacterAtOffset, r5, r6, 0, 0);
-  Text_DrawNumberInWindow(r9, 6, r6, 72, 0);
-  Call4((void (*)())Text_DrawCharacterAtOffset, r5 + 1, r6, 0, 8);
-  Text_DrawNumberInWindow(r10, 6, r6, 72, 8);
-  v2 = Menu_SelectCoinsOrMedals(r7);
-  r7 = v2;
-  Call2((void (*)())Window_Close, r6, 2);
+prompt:
+  coins = gMainRoutineWork.coins;
+  medals = PartyInventory_CountItem(229);
+  message = (s32)MsgWhatWillYou;
+  Func_020013c8(message);
+  Call2((void (*)())FieldMessage_ShowAtActor, -1, 0);
+  window = (s32)Window_Create(0, 0, 17, 4, 2);
+  result = (s32)MsgCoins2;
+  Call4((void (*)())Text_DrawCharacterAtOffset, result, window, 0, 0);
+  Text_DrawNumberInWindow(coins, 6, window, 72, 0);
+  Call4((void (*)())Text_DrawCharacterAtOffset, result + 1, window, 0, 8);
+  Text_DrawNumberInWindow(medals, 6, window, 72, 8);
+  choice = Menu_SelectCoinsOrMedals(choice);
+  Call2((void (*)())Window_Close, window, 2);
   Message_CloseFinishedWindows();
-  r2 = -1;
-  r0 = v3;
-  if (r7 != -1)
-    goto L_02008288;
-  goto L_02008468;
-L_02008288:
-  if (r7 == 0) {
-    r3 = r9;
-    if (r9 != 0)
-      goto L_020082ee;
-    r0 = r8 + 1;
+  if (choice == -1)
+    goto end;
+  if (choice == 0) {
+    if (coins != 0)
+      goto toss;
+    notice = message + 1;
   } else {
-    if (r7 != 1)
-      goto L_020082ee;
-    r1 = r10;
-    if (r10 != 0)
-      goto L_020082c6;
-    r0 = r8 + 2;
+    if (choice != 1)
+      goto toss;
+    if (medals != 0)
+      goto full;
+    notice = message + 2;
   }
-  Func_020013c8(r0);
+  Func_020013c8(notice);
   Call2((void (*)())Func_020013d8, -1, 0);
   Call1((void (*)())wait, 1);
-  goto L_020081fc;
-L_020082bc:
-  Value1((s32 (*)())Func_02001408, 112);
-  r5 = 0;
-  goto L_0200834e;
-L_020082c6:
-  v4 = PartyInventory_CountFreeSlots();
-  if (v4 != 0)
-    goto L_020082ee;
-  Func_020013c8(r8 + 4);
-  Value2((s32 (*)())FieldMessage_ShowAtActor, -1, 0);
-  v5 = Event_AskYesNoWithActorAnimation(0, 0);
-  r0 = v5;
-  if (v5 == 0)
-    goto L_020082ee;
-  goto L_02008468;
-L_020082ee:
-  v6 = Window_Create(20, 15, 9, 4, 2);
-  r5 = (s32)MsgToss2;
-  r6 = v6;
-  Call4((void (*)())Text_DrawCharacterAtOffset, r5, r6, 0, 0);
-  Call4((void (*)())Text_DrawCharacterAtOffset, r5 + 1, r6, 0, 8);
-  Call1((void (*)())wait, 5);
-  Value1((s32 (*)())Func_02001408, 116);
-  goto L_0200832e;
-L_02008328:
-  Call1((void (*)())wait, 1);
-L_0200832e:
-  r1 = (s32)gInput;
-  r2 = 1;
-  r3 = (FIELD_AT((s32)gInput, s32, 4)) & 1;
-  if (((FIELD_AT((s32)gInput, s32, 4)) & 1) != 0)
-    goto L_020082bc;
-  r2 = 2;
-  r3 = (FIELD_AT(r1, s32, 4)) & 2;
-  if (((FIELD_AT(r1, s32, 4)) & 2) == 0)
-    goto L_02008328;
-  Value1((s32 (*)())Func_02001408, 113);
-  r5 = 1;
-  r5 = -r5;
-L_0200834e:
-  Call2((void (*)())Window_Close, r6, 2);
-  r2 = -1;
-  r0 = v7;
-  if (r5 != -1)
-    goto L_02008360;
-  goto L_02008468;
-L_02008360:
-  if (r7 != 0)
-    goto L_0200836e;
-  Call1((void (*)())Party_AdjustCoins, -1);
-  goto L_02008378;
-L_0200836e:
-  if (r7 != 1)
-    goto L_02008378;
-  Call1((void (*)())PartyInventory_Remove, 229);
-L_02008378:
-  v8 = Func_02001184(r7);
-  r5 = v8;
-  if (r7 != 0)
-    goto L_020083c0;
-  if (r5 == 4)
-    goto L_020083b2;
-  r6 = (s32)gData_0200173c;
-  r5 = r5 << 1;
-  Call1((void (*)())Party_AdjustCoins, *(u16 *)(r6 + r5));
-  Value1((s32 (*)())Func_02001408, 91);
-  Call2((void (*)())Func_02001328, *(u16 *)(r6 + r5), 5);
-  Func_020013c8((s32)MsgYouWonCoin);
-  v9 = Func_020013d8(-1, 0);
-  r0 = v9;
-  goto L_02008468;
-L_020083b2:
-  Value1((s32 (*)())Func_02001408, 113);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  r0 = v10;
-  goto L_02008468;
-L_020083c0:
-  r7 = 0;
-  if (r5 != 0)
-    goto L_020083e8;
-  v11 = GameFlag_Test(0x90b);
-  if (v11 != 0)
-    goto L_020083e8;
-  Call1((void (*)())GameFlag_SetBit, 0x90b);
-  v12 = Func_0200049c(-1);
-  r0 = v12;
-  goto L_02008468;
-L_020083e8:
-  r6 = 0;
-  r0 = (r5 << 1) + r5;
-  if (r6 >= (((r5 << 1) + r5) + 3))
-    goto L_0200840a;
-  r1 = (s32)&gMainRoutineWork;
-L_020083f6:
-  r6 = r6 + 1;
-  r7 = r7 + (*(s8 *)((r1 + 1) + (r6 + 316)));
-  if (r6 < (r0 + 3))
-    goto L_020083f6;
-L_0200840a:
-  v13 = Random16Far();
-  r6 = 0;
-  r1 = ((u32)(r7 * v13) >> 16) - (*(s8 *)(((s32)(s32)&gMainRoutineWork + 1) + 316));
-  r0 = (s32)&gMainRoutineWork;
-  if ((((u32)(r7 * v13) >> 16) -
-       (*(s8 *)(((s32)(s32)&gMainRoutineWork + 1) + 316))) < 0)
-    goto L_0200843c;
-L_02008426:
-  r6 = r6 + 1;
-  if (r6 > 14)
-    goto L_0200843c;
-  r1 = r1 - (*(s8 *)((r0 + 1) + (r6 + 316)));
-  if ((r1 - (*(s8 *)((r0 + 1) + (r6 + 316)))) >= 0)
-    goto L_02008426;
-L_0200843c:
-  if (r6 == 15) {
-    r6 = 14;
+  goto prompt;
+full:
+  if (PartyInventory_CountFreeSlots() == 0) {
+    Func_020013c8(message + 4);
+    Call2((void (*)())FieldMessage_ShowAtActor, -1, 0);
+    if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
+      goto end;
   }
-  Func_0200049c(*(s32 *)(((s32)gData_02001700) + (r6 << 2)));
-  r3 = (s32)&gMainRoutineWork;
-  r0 = r3 + 1;
-  r1 = ((*(u8 *)(((s32)(s32)&gMainRoutineWork + 1) + (r6 + 316))) << 24) >> 24;
-  r2 = r6 + 316;
-  r3 = (*(u8 *)(((s32)(s32)&gMainRoutineWork + 1) + (r6 + 316))) << 24;
-  if ((((*(u8 *)(((s32)(s32)&gMainRoutineWork + 1) + (r6 + 316))) << 24) >> 24) <= 1)
-    goto L_02008468;
-  *(u8 *)(r0 + r2) = (r1 + ((u32)r3 >> 31)) >> 1;
-  r3 = (r1 + ((u32)r3 >> 31)) >> 1;
-L_02008468:
+toss:
+  window = (s32)Window_Create(20, 15, 9, 4, 2);
+  result = (s32)MsgToss2;
+  Call4((void (*)())Text_DrawCharacterAtOffset, result, window, 0, 0);
+  Call4((void (*)())Text_DrawCharacterAtOffset, result + 1, window, 0, 8);
+  Call1((void (*)())wait, 5);
+  Call1((void (*)())Func_02001408, 116);
+  for (;;) {
+    if (gInput.pressed & 1) {
+      Call1((void (*)())Func_02001408, 112);
+      result = 0;
+      break;
+    }
+    if (gInput.pressed & 2) {
+      Call1((void (*)())Func_02001408, 113);
+      result = -1;
+      break;
+    }
+    Call1((void (*)())wait, 1);
+  }
+  Call2((void (*)())Window_Close, window, 2);
+  if (result != -1) {
+    if (choice == 0) {
+      Call1((void (*)())Party_AdjustCoins, -1);
+    } else if (choice == 1) {
+      Call1((void (*)())PartyInventory_Remove, 229);
+    }
+    result = Func_02001184(choice);
+    if (choice == 0) {
+      if (result != 4) {
+        Party_AdjustCoins(gData_0200173c[result]);
+        Call1((void (*)())Func_02001408, 91);
+        Func_02001328(gData_0200173c[result], 5);
+        Func_020013c8((s32)MsgYouWonCoin);
+        Call2((void (*)())Func_020013d8, -1, 0);
+      } else {
+        Call1((void (*)())Func_02001408, 113);
+        Call1((void (*)())FieldEvent_Wait, 10);
+      }
+    } else {
+      choice = 0;
+      if (result == 0 && Value1((s32 (*)())GameFlag_Test, 0x90b) == 0) {
+        Call1((void (*)())GameFlag_SetBit, 0x90b);
+        Call1((void (*)())Func_0200049c, -1);
+      } else {
+        window = 0;
+        if (window < result * 3 + 3) {
+          state = &gMainRoutineWork;
+        sum:
+          choice += (s8)state->unk13d[window];
+          window++;
+          if (window < result * 3 + 3)
+            goto sum;
+        }
+        prizeRoll = (u32)(Random16Far() * choice) >> 16;
+        state = &gMainRoutineWork;
+        {
+          s32 slot = 316;
+          s8 *weights = (s8 *)state + 1;
+
+          prizeRoll -= weights[slot];
+        }
+        window = 0;
+        if (prizeRoll >= 0) {
+        pick:
+          window++;
+          if (window <= 14) {
+            prizeRoll -= (s8)state->unk13d[window];
+            if (prizeRoll >= 0)
+              goto pick;
+          }
+        }
+        if (window == 15)
+          window = 14;
+        Func_0200049c(gData_02001700[window]);
+        {
+          s32 slot = window + 316;
+          s8 *weights;
+
+          state = &gMainRoutineWork;
+          weights = (s8 *)state + 1;
+          if (weights[slot] > 1)
+            weights[slot] /= 2;
+        }
+      }
+    }
+  }
+end:
   Func_02001388();
-  /* add (s32)stack, #4 */
   return 0;
 }

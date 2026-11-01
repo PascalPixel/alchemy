@@ -1,14 +1,24 @@
-// Near miss, differ 343 of 496 (tla-en, 2026-10-31): the control flow, calls,
-// memory accesses, constants and stack frame are the native's; what is left is
-// register allocation. GCSE's PRE and the copy propagation after it fold every
-// later sp+80 (the position array) into the first one, which then holds a
-// callee-saved register from start to end, where the native recomputes
-// `add rX, sp, #80` in the spawn loop (every pass) and again at the end; PRE
-// also hoists i << 18 and baseX out of the spawn loop, which the native
-// computes inside it. With that register taken, srcX is spilled (the native
-// keeps it in r9) and baseX gets one (the native spills it), and the leader,
-// open, srcZ and the loop counters take other registers (native: leader r10,
-// open r11, srcX r9, srcZ then i r8, j and the fade counter r6).
+// Draft, differ 353 of 496, skeleton gap 131 (tla-en, 2026-11-01)
+// The control flow, calls, memory accesses and constants are the native's; what
+// is left in the skeleton is register allocation and the scheduling it moves.
+// GCSE's PRE and the copy propagation after it fold every later sp+80 (the
+// position array) into the first one, which then holds a callee-saved register
+// from start to end, where the native recomputes `add rX, sp, #80` in the spawn
+// loop (every pass) and again at the end; PRE also hoists i << 18 out of the
+// spawn loop, which the native computes inside it. Both are full or partial
+// redundancies of an expression over sfp or i, so no spelling reaches them: a
+// pointer local, a block-scoped pointer, a separate base variable, reordered
+// sums and a reordered declaration list all compile to the same thing.
+// With those two registers taken, srcX is spilled (the native keeps it in r9)
+// and baseX gets one (the native spills it): the allocator counts baseX's read
+// three times at loop depth 2, which ranks it above srcX and open; the native's
+// choice fits refs of 6 to 7 on baseX, dstX and dstZ instead. Native registers:
+// leader r10, open r11, srcX r9, srcZ then i r8, j and the fade counter r6.
+// A for loop for the rows beats goto on the skeleton (131 against 139), though
+// not on differ (353 against 343); the spawn and fade loops stay goto, and a
+// for loop for the fade costs more on both. Direct calls in place of Call3, Call6
+// and Value1 cost 12 to 30 of gap; Call1 makes no difference. Compiling this
+// draft with -fno-gcse did not bring its opcodes closer.
 //
 // A Magma Rock room's opening event: the leader is centred on its cell, sound
 // 584, the screen shakes (sound 107); by room (2, 3 or 5, the last by entrance)
@@ -155,11 +165,9 @@ void Func_02001828(void) {
     options.priority = 2;
     options.palette = 10;
     options.script = gData_0200502c;
-    // The spawn loops are written with goto: the native shows none of the
-    // loop pass's work in them (i << 18 is not strength-reduced, nothing is
-    // hoisted); as two for loops, 353 of 496 instructions differ.
-    i = 0;
-  row:
+    // The spawn loop is written with goto: the native shows none of the loop
+    // pass work in it (i << 18 is not strength-reduced, nothing is hoisted).
+    for (i = 0; i != 10; i++) {
     j = 0;
   spawn:
     position[0] = baseX + ((Random16Far() % 48) << 16);
@@ -170,9 +178,7 @@ void Func_02001828(void) {
       goto spawn;
     wait(3);
     Call6((void (*)())Func_02004cd8, 75, 64, dstX, dstZ, 3, (i >> 1) + 1);
-    i++;
-    if (i != 10)
-      goto row;
+    }
     // The fade loop is written with goto: the native builds both register
     // addresses and loads 16 and 0x3f44 from the literal pool on every pass,
     // where the loop pass hoists all four out of a for loop; as a for loop,

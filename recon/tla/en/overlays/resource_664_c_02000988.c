@@ -1,9 +1,26 @@
-// Draft, differ 334 of 386: overlay 664's copy of overlay 663's Func_02001560 (the
-// leader riding the object it stands on; see that draft): in Ov664Room1
-// with the leader at x 39 (in 8-pixel units) it ends with Func_02005efc(16)
-// instead of stepping off, dropping off in front leaves priority flags 33,
-// and only bit 0 is set again at the end, before the camera follows.
-// Left: as overlay 663's draft: registers from the start (the native keeps the leader in r7 and the ride in r6, the motion and priority pointers in r11 and r9, the offsets in r8 and r10 and the rider on the stack).
+// Draft, differ 86 of 386, skeleton gap 26 (tla-en, 2026-11-01)
+// Overlay 664's copy of overlay 663's Func_02001560 (the leader riding the
+// object it stands on; see that draft): in Ov664Room1 with the leader at x 39
+// (in 8-pixel units) it ends with Func_02005efc(16) instead of stepping off,
+// dropping off in front leaves priority flags 33, and only bit 0 is set again
+// at the end, before the camera follows.
+// Registers now follow the native from the waiting loop on; what keeps them
+// apart is the zero in noFlags (r6, it frees ride) and these three gaps:
+// - The rising loop: GCSE's PRE hoists leader + 35 before the loop, so the
+//   native's adds/adds #35 each pass becomes a pointer in r8 and riding moves
+//   to r10. while, do-while, for, a label loop, a temporary pointer and a
+//   static inline flicker helper all hoist it; nothing plain found.
+// - The waiting loop: PRE removes the reload of gInput.held on the path that
+//   skipped the keys before it; the native reloads at each test. Reading held
+//   through a volatile cast gives differ 72 but gap 28 here; that is a device,
+//   and rereads in this draft and overlay 663's may justify one on the field
+//   (S2).
+// - Camera_MoveWithinMapBounds(-1, -1, -1, 0) shares one -1; the native builds
+//   three. Call4 from call.h gives differ 66, gap 20; left out as a device.
+// The switch and the u16 facing keep ride->angle's compare as the native's and
+// its second load in the default case (a plain if narrows the compare; a
+// local read as s32 loses the reload). The waiting loop is a label loop
+// because do-while hoists gInput's address.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -39,7 +56,8 @@ void Func_02000988(void) {
   struct Actor *rider, *dust;
   u8 *riding, *motion, *priority;
   s32 rise, dx, dz, moved, i, height;
-  u32 angle;
+  u16 facing;
+  s32 angle, noFlags;
 
   Func_02005e14();
   Func_02005f2c(0);
@@ -67,7 +85,9 @@ void Func_02000988(void) {
     return;
   }
   priority = &leader->priorityFlags;
-  if (ride->angle == 0xc000) {
+  facing = ride->angle;
+  switch (facing) {
+  case 0xc000:
     rider = ride->watchedObject;
     dx = 0;
     dz = 0;
@@ -76,7 +96,7 @@ void Func_02000988(void) {
     i = 0;
     leader->y = (((ride->y >> 19) & ~1) + 3) << 19;
     leader->z = (((leader->z >> 19) & ~1) + 1) << 19;
-    do {
+  waiting:
       moved = 0;
       if (gInput.held & 0x40) {
         dx = 0;
@@ -85,8 +105,8 @@ void Func_02000988(void) {
         moved = 1;
       }
       if (gInput.held & 0x10) {
-        dz = 0;
         dx = 0x100000;
+        dz = 0;
         leader->angle = 0;
         moved = 1;
       }
@@ -101,19 +121,20 @@ void Func_02000988(void) {
                            8 !=
                        255)
         goto found;
-      i++;
       wait(1);
-    } while (i != 60);
+      i++;
+      if (i != 60)
+        goto waiting;
     dx = 0;
-    leader->angle = 0xc000;
     dz = 0xfff00000;
+    leader->angle = 0xc000;
     if ((u32)(Func_02000690(2, ride->x >> 20, (ride->z - ride->y + dz) >> 20)
               << 8) >>
             16 !=
         255)
       goto found;
-    dz = 0;
     dx = 0x100000;
+    dz = 0;
     leader->angle = 0;
     if ((u32)(Func_02000690(2, (ride->x + dx) >> 20, (ride->z - ride->y) >> 20)
               << 8) >>
@@ -142,10 +163,13 @@ void Func_02000988(void) {
     Func_02005d94(leader);
     Actor_SetSingleChildFlags(leader, 1);
     *motion = 3;
-  } else {
-    angle = ride->angle >> 13;
+    break;
+  default:
+    angle = ride->angle;
+    angle >>= 13;
     leader->x = (((ride->x >> 19) & ~1) + angle - 1) << 19;
     leader->z = (((ride->z >> 19) & ~1) - (angle & 2) + 1) << 19;
+    noFlags = 0;
     Actor_SetSingleChildFlags(leader, 1);
     leader->velocityY = 0x60000;
     *priority = 33;
@@ -154,11 +178,12 @@ void Func_02000988(void) {
     dust = Func_02005ef4();
     dust->speedLimit = 0x80000;
     dust->acceleration = 0x10000;
-    dust->motionFlags = 0;
+    dust->motionFlags = noFlags;
     Func_02005d8c(dust, leader->x,
                   Map_GetTerrainHeight(0, leader->x, leader->z), leader->z);
     OverlayObject_WaitUntilIdle(leader);
     Func_02005d94(dust);
+    break;
   }
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);

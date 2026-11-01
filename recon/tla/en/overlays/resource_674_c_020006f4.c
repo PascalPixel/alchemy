@@ -1,17 +1,25 @@
-// Draft, differ 202 of 687: the Islets' trade of item 453 with object 10: with
-// it in the party, if flag 513 is set (asked before) the camera moves and
-// object 10 asks again (MsgAreYouGiving), else it notices the item
-// (MsgOhThatRed), the leader steps up and shows it (object type 489, its
-// picture set to the item by Func_02003e3c) and object 10 asks; a yes
-// hands the item across step by step, takes item 453 and gives item 454
-// (object 10 hands it back over its head) and sets flag 0xaa3, counting
-// the answer in the event work's halfword 0x1c4 the first time; a no sets
-// flag 513. Without the item object 10 says MsgYupANice after the trade or
-// MsgIVeBeenFeeling before it.
-// Left: register choice through the body (the native keeps
-// &gMainRoutineWork.currentOwner in r7, -1 in r5, the messages' bases in r9 and r10
-// and the bit masks in r5 and r2), and the first answer's refusal sits after
-// its trade.
+// Draft, differ 25 of 687, skeleton gap 3 (tla-en, 2026-11-01)
+// The Islets' trade of item 453 with object 10: with it in the party, if flag
+// 513 is set (asked before) the camera moves and object 10 asks again
+// (MsgAreYouGiving), else it notices the item (MsgOhThatRed), the leader steps
+// up and shows it (object type 489, its picture set to the item by
+// Func_02003e3c) and object 10 asks; a yes hands the item across step by step,
+// takes item 453 and gives item 454 (object 10 hands it back over the leader's
+// head) and sets flag 0xaa3, counting the answer in the event work's halfword
+// 0x1c4 the first time; a no sets flag 513. Without the item object 10 says
+// MsgYupANice after the trade or MsgIVeBeenFeeling before it.
+// Left: one difference. The second trade's store of motionFlags takes its 0
+// from a pool word (ldr r3, then a branch over the pool, whose 32-byte range
+// places it there, as champa/s0c40.c's ldrh of a pool 0 does); this draft
+// builds it with movs r3, #0, so every other difference is that pool's
+// displacement. Allocation already matches everywhere. The word pool load was
+// not reached with zero as s32, u16 or u8, set before or after the first store,
+// nor with a second use of it.
+// zero is set only inside the first spawn check on purpose: set anywhere CSE
+// can see it, the store reuses the second answer, which then stays in r7. The
+// original presumably held 0 on both paths; a real fix should remove that.
+// HAND_BACK is a plain block: a do-while(0) ends CSE's block and loses the
+// owner address and message bases in the refusals.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -60,46 +68,54 @@ void FieldMessage_Show(const u8 *message, s32 a);
    FieldEvent_Wait(1), Actor_GetById(actor)->actionFlags |= 1)
 
 /// Object 10 walks round and hands item 454 back over the leader's head.
-#define HAND_BACK()                                                            \
-  do {                                                                         \
+#define HAND_BACK(leader, given, off)                                   \
+  {                                                                            \
     Call3(Actor_SetSpeedParameters, 10, 0xcccc, 0x6666);                \
     Call3(Actor_SetPositionAndReset, 10, 0x80, 164);                    \
     Func_02003f3c(10, 0x8000);                                                 \
     FieldEvent_Wait(20);                                                 \
     Call3(Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);               \
     STEP(10, 108, 168);                                                        \
-    trader = Actor_GetById(10);                                               \
-    item = (struct Actor *)Value4(Func_02003df4, 489, trader->x,       \
-                                          trader->y + 0x180000, trader->z);    \
-    if (item != 0) {                                                           \
+    given = (struct Actor *)Value4(Func_02003df4, 489, leader->x,       \
+                                          leader->y + 0x180000, leader->z);    \
+    if (given != 0) {                                                          \
       Actor_SetModeById(gMainRoutineWork.currentOwner, 28);                        \
-      item->motionFlags = 0;                                                   \
-      Func_02003e3c(item, 454);                                                \
+      given->motionFlags = off;                                                \
+      Func_02003e3c(given, 454);                                               \
       FieldEvent_Wait(20);                                               \
     }                                                                          \
     STEP(10, 116, 164);                                                        \
     Func_02003fc4();                                                           \
     PartyInventory_Remove(453);                                                \
     PartyInventory_GiveItem(454, 0);                                           \
-  } while (0)
+    if (given != 0) {                                                          \
+      Func_02003dfc(given);                                                    \
+      Actor_SetModeById(gMainRoutineWork.currentOwner, 1);                         \
+    }                                                                          \
+    Func_02003fbc();                                                           \
+    GameFlag_SetBit(0xaa3);                                                    \
+  }
 
 void Func_020006f4(void) {
-  struct Actor *item, *trader;
+  struct Actor *item, *leader, *given;
+  const u8 *asked, *noticed;
+  s32 zero;
 
   Func_02003e64();
   Func_02003fa4(0);
-  if (PartyInventory_FindOwner(453) != -1) {
-    if (GameFlag_Test(513)) {
+  if (Value1(PartyInventory_FindOwner, 453) != -1) {
+    if (Value1(GameFlag_Test, 513)) {
       Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-      Func_02003f64(0xcccc, 0x1999);
+      Call2(Func_02003f64, 0xcccc, 0x1999);
       Call4(Camera_MoveWithinMapBounds, 0x8c0000, -1, 0xbe0000, 1);
       Actor_SetAngleToward(10, gMainRoutineWork.currentOwner, 0);
-      Func_02003f24(MsgAreYouGiving);
+      asked = MsgAreYouGiving;
+      Func_02003f24(asked);
       Func_02003f2c(10, 0);
       Func_02003f74();
       Func_02003fc4();
       if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-        Actor_GetById(gMainRoutineWork.currentOwner);
+        leader = Actor_GetById(gMainRoutineWork.currentOwner);
         Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
         Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
               0x6666);
@@ -109,6 +125,8 @@ void Func_020006f4(void) {
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         item = (struct Actor *)Value4(Func_02003df4, 489, 0x680000,
                                               0x180000, 0xa00000);
+        // Default: the object handed back is set for real in HAND_BACK.
+        given = 0;
         if (item != 0) {
           Func_02003e3c(item, 453);
           Actor_SetSingleChildFlags(item, 0);
@@ -120,22 +138,23 @@ void Func_020006f4(void) {
         Actor_Stop(10);
         Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
         Func_02003f54(10, 264, 20);
-        Func_02003f24(MsgAreYouGiving + 1);
+        Func_02003f24(asked + 1);
         Func_02003f2c(0x800a, 0);
-        HAND_BACK();
-        goto given;
+        HAND_BACK(leader, given, 0)
+      } else {
+        Func_02003fbc();
+        Func_02003f54(10, 265, 20);
+        Func_02003f24(asked + 4);
+        Func_02003f2c(0x800a, 0);
       }
-      Func_02003fbc();
-      Func_02003f54(10, 265, 20);
-      Func_02003f24(MsgAreYouGiving + 4);
-      Func_02003f2c(0x800a, 0);
     } else {
-      Func_02003f24(MsgOhThatRed);
+      noticed = MsgOhThatRed;
+      Func_02003f24(noticed);
       Func_02003f2c(10, 0);
       Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-      Func_02003f64(0xcccc, 0x1999);
+      Call2(Func_02003f64, 0xcccc, 0x1999);
       Call4(Camera_MoveWithinMapBounds, 0x8c0000, -1, 0xbe0000, 1);
-      Actor_ArmCallback(10, 0x5000, 0);
+      Call3(Actor_ArmCallback, 10, 0x5000, 0);
       Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
             0x6666);
       Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 120,
@@ -148,6 +167,7 @@ void Func_020006f4(void) {
         Func_02003e3c(item, 453);
         Actor_SetSingleChildFlags(item, 0);
         item->motionFlags = 0;
+        zero = 0;
         item->unk5c[0] = 1;
       }
       STEP(gMainRoutineWork.currentOwner, 120, 190);
@@ -156,7 +176,7 @@ void Func_020006f4(void) {
       Func_02003f2c(10, 0);
       Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
       STEP(gMainRoutineWork.currentOwner, 132, 190);
-      Actor_SetPositionAndResetMotion(item, 0xc30000, 0, 0x730000);
+      Call4(Actor_SetPositionAndResetMotion, item, 0xc30000, 0, 0x730000);
       STEP(gMainRoutineWork.currentOwner, 120, 190);
       FieldEvent_Wait(20);
       Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 98,
@@ -165,41 +185,34 @@ void Func_020006f4(void) {
       Actor_SetPositionAndResetMotion(item, 0x680000, 0x180000, 0xa00000);
       FieldEvent_Wait(10);
       Func_02003fc4();
-      Func_02003f3c(gMainRoutineWork.currentOwner, 0x4000);
-      FieldMessage_Show(MsgOhThatRed + 2, 1);
+      Call2(Func_02003f3c, gMainRoutineWork.currentOwner, 0x4000);
+      FieldMessage_Show(noticed + 2, 1);
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       Func_02003fbc();
       Actor_Jump(10, 6, 10);
-      Func_02003f24(MsgOhThatRed + 3);
+      Func_02003f24(noticed + 3);
       Func_02003f2c(10, 0);
       Actor_Stop(10);
       Func_02003f3c(gMainRoutineWork.currentOwner, 0);
       Func_02003fc4();
-      if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-        Actor_GetById(gMainRoutineWork.currentOwner);
+      if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) == 0) {
+        item = Actor_GetById(gMainRoutineWork.currentOwner);
         Func_02003fbc();
         Func_02003f54(10, 264, 20);
-        Func_02003f24(MsgOhThatRed + 4);
+        Func_02003f24(noticed + 4);
         Func_02003f2c(0x800a, 0);
-        HAND_BACK();
-      given:
-        if (item != 0) {
-          Func_02003dfc(item);
-          Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
-        }
-        Func_02003fbc();
-        GameFlag_SetBit(0xaa3);
+        HAND_BACK(item, item, zero)
       } else {
         Func_02003fbc();
         Func_02003f54(10, 265, 20);
-        Func_02003f24(MsgOhThatRed + 7);
+        Func_02003f24(noticed + 7);
         Func_02003f2c(0x800a, 0);
         Func_02003f3c(gMainRoutineWork.currentOwner, 0xc000);
         Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
         if (item != 0)
           Func_02003dfc(item);
-        Func_02003f3c(gMainRoutineWork.currentOwner, 0x4000);
-        GameFlag_SetBit(513);
+        Call2(Func_02003f3c, gMainRoutineWork.currentOwner, 0x4000);
+        Call1(GameFlag_SetBit, 513);
       }
     }
   } else {

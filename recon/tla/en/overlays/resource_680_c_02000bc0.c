@@ -1,10 +1,18 @@
-// Draft, differ 163 of 218: a pillar the party pushed off a ledge drops onto
-// the floor below with sixteen dust puffs, a shake and the leader riding it
-// down (gravity lowered until it lands, at most 180 frames), then sets its
-// flag. Overlay 681's Func_02004af0 is a copy with small changes.
-// Measured against its copies: overlay 681's Func_02004af0 (differ 163 of 218).
+// Draft, differ 6 of 218, skeleton gap 3 (tla-en, 2026-11-01): a pillar the party
+// pushed off a ledge drops onto the floor below with sixteen dust puffs, a
+// shake and the leader riding it down (gravity lowered until it lands, at most
+// 180 frames), then sets its flag. Overlay 681's Func_02004af0 is a copy with
+// small changes.
+// Left: two sched2 orders. At entry the native has sub sp, ldr, str flag, movs
+// where this has ldr, sub sp, movs, str flag; after the fall it stores gravity
+// before the movs #133 where this stores it after. Tried: split declarations,
+// Value1 and Call2 forms, a local for &gMainRoutineWork, u32 flag and gravity,
+// three minutes of permute (only a reused temporary, no closer).
+// id doubling as the frame counter gives the native r6 and leader r5; a
+// separate counter takes r5 and differs by 149.
 #include "types.h"
 #include "actor.h"
+#include "call.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
 
@@ -41,7 +49,7 @@ void Func_02000bc0(s32 id, s32 flag) {
 
   Func_02000e74();
   Func_02000ef4(0);
-  Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   pillar = Actor_GetById(id);
   Func_02000b2c(id, leader->x, leader->y, leader->z);
   Func_02000e2c(pillar, gData_020016cc);
@@ -54,15 +62,16 @@ dust:
     if (dust != 0) {
       s32 angle;
       s32 speed;
+      u32 size;
       s32 scale;
 
       Func_02000e2c(dust, gData_02001688);
       angle = Random16Far();
       speed = Random16Far();
-      scale = (Random16Far() >> 1) + 0x2000;
-      speed <<= 3;
-      dust->velocityY = Iwram_MulQ16(speed, Math_Cosine(angle));
-      dust->velocityX = Iwram_MulQ16(speed, Math_Sine(angle));
+      size = Random16Far();
+      scale = (size >> 1) + 0x2000;
+      dust->velocityY = Iwram_MulQ16(speed * 8, Math_Cosine(angle));
+      dust->velocityX = Iwram_MulQ16(speed * 8, Math_Sine(angle));
       dust->acceleration = 0;
       dust->scaleX = scale;
       dust->scaleY = scale;
@@ -74,19 +83,19 @@ dust:
     goto dust;
   Func_02000f24(0x24e);
   Func_02000f24(217);
-  Func_02000e54(0x20000, 0x20000, 0xe666);
+  Call3((void (*)())Func_02000e54, 0x20000, 0x20000, 0xe666);
   Func_02000ebc(gMainRoutineWork.currentOwner, 0x101);
   Func_02000e24(leader, 40);
   FieldEvent_Wait(40);
   Func_02000f24(204);
   leader->motionFlags = 3;
+  id = 0;
   leader->gravity = 0x547a;
-  i = 0;
   goto fall;
 next:
-  i++;
+  id++;
 fall:
-  if (i <= 179) {
+  if (id <= 179) {
     wait(1);
     if (leader->y > leader->terrainHeight)
       goto next;
@@ -95,9 +104,9 @@ fall:
   leader->gravity = gravity;
   Func_02000ebc(gMainRoutineWork.currentOwner, 0);
   Func_02000e24(leader, 38);
-  Func_02000e54(0x10000, 0x40000, 0x10000);
+  Call3((void (*)())Func_02000e54, 0x10000, 0x40000, 0x10000);
   wait(10);
-  Func_02000e54(-1, -1, 0xe666);
+  Call3((void (*)())Func_02000e54, -1, -1, 0xe666);
   wait(20);
   Camera_MoveWithinMapBounds(leader->x, leader->y, leader->z, 1);
   Func_02000ecc();

@@ -1,132 +1,134 @@
-// Draft of overlay 6b8's Func_02000ad0, translated from its listing: differ
-// 200 of 174. Left: its shape: 186 instructions against the listing's 174.
+// Draft, differ 104 of 174, skeleton gap 26 (tla-en, 2026-11-01)
+// Each frame: on odd counts recolours the object, every 16 counts in mode 0
+// restarts one of the two columns, in mode 1 frees the VRAM entry and stops
+// once both columns pass 31; otherwise moves each live column's two sprites.
+// Left: allocation. The listing gives object r7, work r8, the loop pointer r6,
+// j r10, the second coordinate r9, i r11, and keeps the offset, the sine and
+// the first coordinate on the stack; here work and i are on the stack and the
+// sine and first coordinate in high registers (lreg: sine 8 refs over 46 insns
+// ranks above work, 11 over 115). The listing's reloads of the counter after
+// its & 1 test and of *slot after the range test show its pseudos lost their
+// registers and came back from their REG_EQUIV memory, so they should follow
+// the allocation; plain s16 and u8 locals did not change them.
+// A volatile counter and column read makes it worse (differ 119, gap 38).
+// The outer loop is a label and goto because a do or for loop hoists
+// p = &position out of the loop (differ 182); p must stay in r5 in the block.
+// slots and j = 0 before the position's y store are kept only because they
+// rank work and j closer: without slots, differ 136 and gap 28, though the
+// listing's strh matches that plain form.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Animation_ApplyChildValues();
-s32 Func_02000ec4();
-s32 Func_02000eec();
-s32 Func_02000efc();
-s32 Func_02000f3c();
-s32 Math_Sine();
-s32 Resource_ResetEntry();
-s32 __umodsi3();
 
-void Func_02000ad0(s32 p0) {
-  s32 sp_[1];
-  s32 v_r6, v_r7, v_r8, v_r2, v_r5, v_r11, v_r3, v_r9, v_r10, t0;
-  s32 t1, t2, t3, t5, t6, t8, t9, t10, t11, t13;
-  s32 t15, t16, t17, t18, t19, t20, t21, t22, t24, t25;
-  s32 t26, t27, t28, t29, t30, t31, t32, t34, t35;
+struct SparkleSprite {
+  u8 unk00[12];
+  s32 unk0c;
+  s32 unk10;
+  s32 unk14;
+  s32 unk18;
+  u16 unk1c;
+  u16 unk1e;
+  u8 unk20[8];
+};
 
-  t0 = FIELD_AT(p0, s32, 104);
-  v_r6 = (p0 + 99);
-  t1 = *(u8 *)v_r6;
-  v_r2 = t1;
-  v_r8 = t0;
-  v_r7 = p0;
-  if ((1 & t1) == 0)
-    goto L_02008b0a;
-  t2 = *(u8 *)v_r6;
-  t3 = __umodsi3(((u32)t2 >> 1), 6, v_r2);
-  Animation_ApplyChildValues(v_r7, ((u32)(t3 << 24) >> 24));
-L_02008b0a:
-  t5 = FIELD_AT(v_r7, u8, 98);
-  v_r5 = t5;
-  if (v_r5 != 0)
-    goto L_02008b48;
-  t6 = *(u8 *)v_r6;
-  if ((15 & t6) != 0)
-    goto L_02008b7e;
-  Func_02000f3c(0x256);
-  t8 = FIELD_AT(v_r8, s16, 166);
-  *(u16 *)(v_r8 + ((t8 << 1) + 160)) = v_r5;
-  t9 = FIELD_AT(v_r8, u16, 166);
-  FIELD_AT(v_r8, u16, 166) = (t9 ^ 1);
-  goto L_02008b7e;
-L_02008b48:
-  if (v_r5 != 1)
-    goto L_02008b7e;
-  t10 = FIELD_AT(v_r8, s16, 160);
-  if (t10 <= 31)
-    goto L_02008b7e;
-  t11 = FIELD_AT(v_r8, s16, 162);
-  if (t11 <= 31)
-    goto L_02008b7e;
-  Animation_ApplyChildValues(v_r7, 0);
-  t13 = FIELD_AT(v_r8, s16, 164);
-  Resource_ResetEntry(t13);
-  FIELD_AT(v_r7, s32, 108) = 0;
-  goto L_02008c38;
-L_02008b7e:
-  t15 = *(u8 *)v_r6;
-  *(u8 *)v_r6 = (t15 + 1);
-  *(s32 *)sp_ = 0;
-  v_r11 = 1;
-  v_r6 = (v_r8 + 160);
-L_02008b90:
-  t16 = *(s16 *)v_r6;
-  t17 = Math_Sine((t16 << 10));
-  FIELD_AT(sp_, s32, 4) = t17;
-  t18 = *(s16 *)v_r6;
-  v_r3 = t18;
-  if (v_r3 < 0)
-    goto L_02008c24;
-  if (v_r3 > 31)
-    goto L_02008c24;
-  t19 = FIELD_AT(v_r7, s32, 8);
-  FIELD_AT(sp_, s32, 12) = t19;
-  t20 = *(s16 *)v_r6;
-  t21 = FIELD_AT(v_r7, s32, 12);
-  FIELD_AT(sp_, s32, 16) = (t21 + (t20 << 16));
-  t22 = FIELD_AT(v_r7, s32, 16);
-  FIELD_AT(sp_, s32, 20) = t22;
-  Func_02000ec4(((s32)sp_ + 12));
-  t24 = FIELD_AT(sp_, s32, 12);
-  FIELD_AT(sp_, s32, 8) = t24;
-  t25 = FIELD_AT(sp_, s32, 20);
-  t26 = *(s32 *)sp_;
-  v_r10 = 0;
-  v_r5 = (t26 + v_r8);
-  v_r9 = t25;
-L_02008bd4:
-  t27 = FIELD_AT(sp_, s32, 8);
-  FIELD_AT(v_r5, s32, 16) = v_r9;
-  FIELD_AT(v_r5, s32, 12) = t27;
-  t28 = FIELD_AT(sp_, s32, 4);
-  FIELD_AT(v_r5, s32, 20) = t28;
-  FIELD_AT(v_r5, s32, 24) = t28;
-  if (v_r10 != 0)
-    goto L_02008bf4;
-  t29 = Func_02000efc(v_r7);
-  FIELD_AT(v_r5, u16, 30) = (t29 - 1);
-  goto L_02008c0c;
-L_02008bf4:
-  t30 = Func_02000efc(v_r7);
-  t31 = FIELD_AT(v_r5, s32, 16);
-  FIELD_AT(v_r5, s32, 16) = (t31 - 0x10000);
-  t32 = FIELD_AT(v_r5, s32, 24);
-  FIELD_AT(v_r5, u16, 30) = (t30 + 1);
-  FIELD_AT(v_r5, s32, 24) = -t32;
-L_02008c0c:
-  Func_02000eec(v_r5);
-  v_r10 = (v_r10 + 1);
-  v_r5 = (v_r5 + 40);
-  if (v_r10 <= 1)
-    goto L_02008bd4;
-  t34 = *(u16 *)v_r6;
-  *(u16 *)v_r6 = (t34 + 1);
-L_02008c24:
-  t35 = *(s32 *)sp_;
-  *(s32 *)sp_ = (t35 + 80);
-  v_r11 = (v_r11 - 1);
-  v_r6 = (v_r6 + 2);
-  if (v_r11 >= 0)
-    goto L_02008b90;
-L_02008c38:
-  return;
+struct SparkleWork {
+  struct SparkleSprite sprites[4];
+  s16 unkA0[2];
+  s16 vramEntry;
+  s16 unkA6;
+};
+
+struct SparkleObject {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[0x4e];
+  u8 unk62;
+  u8 unk63;
+  u8 unk64[4];
+  struct SparkleWork *work;
+  void *update;
+};
+
+struct Vec3 {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+void Animation_ApplyChildValues(struct SparkleObject *object, u32 value);
+s32 Math_Sine(s32 angle);
+s32 Resource_ResetEntry(u32 entry);
+void Func_02000ec4(struct Vec3 *position);
+void Func_02000eec(struct SparkleSprite *sprite);
+s32 Func_02000efc(struct SparkleObject *object);
+void Func_02000f3c(s32 sound);
+
+void Func_02000ad0(struct SparkleObject *object) {
+  struct SparkleWork *work = object->work;
+  struct Vec3 position;
+  struct Vec3 *p;
+  s32 sine, x, y;
+  s32 i, j, offset;
+  s16 *slot;
+  s16 *slots;
+  struct SparkleSprite *sprite;
+
+  if (object->unk63 & 1)
+    Animation_ApplyChildValues(object, (object->unk63 >> 1) % 6);
+  if (object->unk62 == 0) {
+    if ((object->unk63 & 15) == 0) {
+      Func_02000f3c(0x256);
+      slots = work->unkA0;
+      slots[work->unkA6] = 0;
+      work->unkA6 ^= 1;
+    }
+  } else if (object->unk62 == 1 && work->unkA0[0] > 31 &&
+             work->unkA0[1] > 31) {
+    Animation_ApplyChildValues(object, 0);
+    Resource_ResetEntry(work->vramEntry);
+    object->update = 0;
+    return;
+  }
+  object->unk63++;
+  offset = 0;
+  i = 1;
+  slot = work->unkA0;
+OUTER:
+  sine = Math_Sine(*slot << 10);
+  if (*slot >= 0) {
+    if (*slot <= 31) {
+      p = &position;
+      p->x = object->x;
+      j = 0;
+      p->y = object->y + (*slot << 16);
+      p->z = object->z;
+      Func_02000ec4(p);
+      x = p->x;
+      y = p->z;
+      sprite = (struct SparkleSprite *)((u8 *)work + offset);
+      do {
+        sprite->unk10 = y;
+        sprite->unk0c = x;
+        sprite->unk14 = sine;
+        sprite->unk18 = sine;
+        if (j == 0) {
+          sprite->unk1e = Func_02000efc(object) - 1;
+        } else {
+          s32 v = Func_02000efc(object);
+          sprite->unk10 -= 0x10000;
+          sprite->unk1e = v + 1;
+          sprite->unk18 = -sprite->unk18;
+        }
+        Func_02000eec(sprite);
+        j++;
+        sprite++;
+      } while (j <= 1);
+      (*slot)++;
+    }
+  }
+  offset += 80;
+  i--;
+  slot++;
+  if (i >= 0)
+    goto OUTER;
 }

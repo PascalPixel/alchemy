@@ -1,23 +1,26 @@
-// Near miss, differ 319 of 537 (tla-en, 2026-10-31): the calls, branches,
-// loops, fields and constants follow the native; what is left is GCSE and
-// register allocation. GCSE's PRE forms the coordinates' address once in each
-// room's branch and carries that one pseudo (r6) through the whole function,
-// where the native builds it before the room tests (r2), again in the burst
-// loop (r6, kept through the rise, the rows and the flag-set path), and afresh
-// in each pass of the spark and last loops; PRE also hoists the row's i << 18
-// out of the column loop into r8, which pushes the options address to r10 and
-// t to r8 (native: options r8, t r10, the row counter r5, the column r7).
-// The native spills baseX (sp + 20) and the layer pointer (sp + 16) and keeps
-// srcX in r11 and srcZ in r9; here baseX takes r9 and the layer r11 (17 refs
-// over 756 insns against srcX's 13 over 738), srcX and srcZ go to the stack,
-// so rooms 2 and 4 no longer share the GameFlag_Test tail. After the opening
-// the native rebuilds the options address (add r6, sp, #36); here r10 again.
-// Tried (2026-10-31): calls made directly instead of through the forwarding
-// wrappers (388), for loops (431), t apart from the flag result (340),
-// baseX declared before srcX and srcZ (325), srcZ before srcX or j before i
-// (319), the coordinates as a struct Vector3 (319), a pointer to them set
-// before the room tests for the rooms' stores (307, a temporary: PRE then
-// unifies it with every later use, not the native's two pseudos).
+// Draft, differ 307 of 537, skeleton gap 129 (tla-en, 2026-11-01)
+// Calls, branches, loops, fields and constants follow the native; the skeleton
+// left is almost all allocation. The key is srcX and srcZ: the native keeps
+// them in r11 and r9 and spills baseX (sp + 20) and the layer (sp + 16), but
+// here each pseudo's first set, 0 at entry, carries a constant REG_EQUAL note,
+// so update_equiv_regs doubles its live length (744 for 372) and it ranks below
+// baseX (17 refs) and the layer (10 refs over 388), which take r9 and r11. A
+// probe that set both from a load instead (no note, 13 refs over 367) gave
+// srcZ r9, srcX r11, baseX and the layer spilled, and removed 32 skeleton lines
+// less the probe's own: this ranking is the fix. The native's first sets show
+// as plain zeros, so what drops the note is still open; not s16/u8 types,
+// chained or copied zeros, a one-pass block between them, or a one-member
+// struct. u16 or s8 types add an extension at every use.
+// The rest: PRE hoists the row's i << 18 out of the column loop into a pseudo
+// that takes r8 ahead of the options address (native: options r8, t r10), and
+// no spelling of the sum stops it. The native rebuilds the coordinates' address
+// in each pass of the burst, spark and last loops (r6, r5) and &options before
+// the last loop (r6); here pos stays in r6 and PRE keeps &options in r10.
+// Tried (2026-10-31, 2026-11-01): direct calls instead of the forwarding
+// wrappers (differ 388); do-while loops throughout (gap 157), row and column
+// only (gap 138); t apart from the flag result (340); struct Vector3 (319);
+// the array itself instead of pos (gap 133, the rooms lose the address before
+// the room tests).
 // A Magma Rock room's event at cell 222 (reached from Func_02000ed0), by room
 // (2, 3 or 4) with its place and flag (768 to 770): sixteen effects burst with
 // sound 145 and shaking, eight rise (sound 148), the cells are copied open and
@@ -74,6 +77,7 @@ void Func_02001350(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
   struct EffectOptions options;
   s32 position[3];
+  s32 *pos = position;
   // 212 when the room's flag is set, then the frame count of the opening: the
   // native keeps both in r10 (as two variables: differ 340).
   u32 t = 0;
@@ -90,24 +94,24 @@ void Func_02001350(void) {
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov692Room2) {
     baseX = 164 << 17;
-    position[1] = 0x200000;
-    position[2] = 200 << 16;
+    pos[1] = 0x200000;
+    pos[2] = 200 << 16;
     srcX = 20;
     srcZ = 69;
     if (GameFlag_Test(768))
       t = 212;
   } else if (scene == (s32)&SceneId_Ov692Room3) {
     baseX = 232 << 16;
-    position[1] = 0x200000;
-    position[2] = 248 << 16;
+    pos[1] = 0x200000;
+    pos[2] = 248 << 16;
     srcX = 14;
     srcZ = 72;
     if (GameFlag_Test(769))
       t = 212;
   } else if (scene == (s32)&SceneId_Ov692Room4) {
     baseX = 196 << 17;
-    position[1] = 0x200000;
-    position[2] = 134 << 18;
+    pos[1] = 0x200000;
+    pos[2] = 134 << 18;
     srcX = 24;
     srcZ = 90;
     if (GameFlag_Test(770))
@@ -118,9 +122,9 @@ void Func_02001350(void) {
   // native; as for loops, 431 of 537 instructions differ in tla-en.
   i = 0;
 burst:
-  position[0] = baseX + ((Random16Far() & 31) << 16);
+  pos[0] = baseX + ((Random16Far() & 31) << 16);
   Func_02004f30(145);
-  Func_0200015c(position[0], position[1], position[2], 0,
+  Func_0200015c(pos[0], pos[1], pos[2], 0,
                 (Random16Far() & 31) << 12, 0, 0x3a0001, &options);
   Func_02004d10_(0x50000, 0x50000, 0x10000);
   Func_02004d10_(-1, -1, 0xe666);
@@ -138,8 +142,8 @@ burst:
   i = 0;
   x = baseX;
 rise:
-  position[0] = x;
-  Func_0200015c(position[0], position[1], position[2], 0, 0,
+  pos[0] = x;
+  Func_0200015c(pos[0], pos[1], pos[2], 0, 0,
                 (Random16Far() & 31) << 10, 0xe0001, &options);
   i++;
   x += 0x60000;
@@ -157,7 +161,7 @@ rise:
   if (t != 0) {
     Func_02004cd8_(68, 70, srcX, srcZ, 3, 6);
     FieldEvent_Wait(30);
-    position[2] -= 0x280000;
+    pos[2] -= 0x280000;
   } else {
     Func_02004d10_(0x20000, 0x10000, 0x10000);
     Func_02004f30(107);
@@ -165,9 +169,9 @@ rise:
   row:
     j = 0;
   column:
-    position[0] = baseX + ((Random16Far() % 48) << 16);
+    pos[0] = baseX + ((Random16Far() % 48) << 16);
     j++;
-    Func_0200015c(position[0], position[1], position[2] + (i << 18) + 0x80000,
+    Func_0200015c(pos[0], pos[1], pos[2] + (i << 18) + 0x80000,
                   0, 0x10000, 0, 0x330000, &options);
     if (j != 6)
       goto column;
@@ -182,9 +186,9 @@ rise:
     if ((t & 3) == 0) {
       j = 0;
     spark:
-      position[0] = baseX + ((Random16Far() % 48) << 16);
+      pos[0] = baseX + ((Random16Far() % 48) << 16);
       j++;
-      Func_0200015c(position[0], position[1], position[2] + 0x300000, 0,
+      Func_0200015c(pos[0], pos[1], pos[2] + 0x300000, 0,
                     0x10000, 0, 0x330000, &options);
       if (j != 4)
         goto spark;
@@ -200,7 +204,7 @@ rise:
       REG_BLDCNT = 0;
     } else if (t <= 127) {
       *(s32 *)&layer->unk08[4] += 0x8000;
-      position[2] -= 0x8000;
+      pos[2] -= 0x8000;
       Func_02004cd8_(71, 76, srcX, srcZ - ((t - 47) >> 5) + 8, 3, 1);
     } else if (t == 128) {
       Func_02004d10_(-1, -1, 0xe666);
@@ -217,9 +221,9 @@ rise:
   options.startScaleX = 0x1cccc;
   i = 0;
 last:
-  position[0] = baseX + ((Random16Far() % 48) << 16);
+  pos[0] = baseX + ((Random16Far() % 48) << 16);
   i++;
-  Func_0200015c(position[0], position[1], position[2] + 0x300000, 0, 0, 0,
+  Func_0200015c(pos[0], pos[1], pos[2] + 0x300000, 0, 0, 0,
                 0x3b0000, &options);
   if (i != 6)
     goto last;

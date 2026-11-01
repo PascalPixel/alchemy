@@ -1,14 +1,21 @@
-// Near miss, differ 297 of 410 (tla-en, 2026-10-31): the control flow, calls,
-// arguments and fields are the native's; what remains is loop.c and
-// allocation. The native re-loads gData_02003780's address inside the wait
-// loop, and inside the innermost cell loop recomputes 14 - i (from its stack
-// slot) and the row's address; this compiler hoists all three (loop.c moves
-// them), so the hoisted address takes r6 and the leader, the work and the
-// level shift up a register (native: leader r6, work r7, level r8,
-// &motionFlags r10, map r9). The work pointer's constant REG_EQUIV doubles its
-// live length and puts it below the level. Spelling z as
-// gData_02002ff0[row].z gives the native's separate row * 8 + 4 offset
-// register (r11) but measures 316.
+// Draft, differ 265 of 410, skeleton gap 67 (tla-en, 2026-11-01)
+// Control flow, calls, arguments and fields are the native's. The row loop
+// walks the table as bytes (row += 8, t[row + n]) through a pointer: that is
+// what took the gap from 101 to 67, but biv elimination then folds t + row into
+// one pointer, where the native keeps row * 8 (r7) and row * 8 + 4 (r11) as
+// offsets from a base it re-loads from the pool at each loop's tail. What is
+// left is loop.c: the native keeps gData_02003780's address inside the wait
+// loop (10 real insns, life 1: threshold * savings * lifetime passes, so this
+// compiler always moves it), and keeps 14 - i and the row's address inside the
+// cell loop; here they sit a level out and push the work pointer to a high
+// register, so its reads gain a mov each. Native: leader r6, work r7, level r8,
+// &motionFlags r10, map r9.
+// Measured without gain: the symbol as u8[] with no pointer (gap 114), the
+// pointer reset per row or per m pass (95, 111), a struct pointer (113), z or x
+// through the array (120, 106), the new level as its own variable (87), one-pass
+// blocks round the two cell calls (102; they do keep cse1 from merging 14 - i,
+// but the matched constants are still moved), and a goto wait loop written as
+// the native's strength-reduced counter (68, differ 242; not a form to keep).
 // Sixteen steps adding gData_02003788 to Data_02004030's level,
 // gData_02003780 frames apart, carrying the leader when it stands on cell 232,
 // then the cells for the new level from the gData_02002ff0 rows, as
@@ -49,6 +56,7 @@ void Func_020019a0(void) {
   s16 i;
   s16 j;
   s32 row;
+  u8 *t;
   s16 m;
   s16 n;
 
@@ -103,14 +111,15 @@ step:
   AnkohlRuins_Call2df4(18, 66, 3, 1, 7, 84);
   AnkohlRuins_Call2df4(18, 1, 3, 5, 7, 19);
   i = work->level >> 19;
-  for (row = 0; gData_02002ff0[row].level != 99; row++) {
-    if (i < gData_02002ff0[row].level)
+  t = (u8 *)gData_02002ff0;
+  for (row = 0; t[row] != 99; row += 8) {
+    if (i < t[row])
       continue;
-    for (m = 0; m < gData_02002ff0[row].height; m++) {
-      for (n = 0; n < gData_02002ff0[row].width; n++) {
-        struct AnkohlRuinsWaterRow *p = &gData_02002ff0[row];
-        AnkohlRuins_Call2dfc(21, 14 - i, 1, 1, p->x + n, p->z + m);
-        AnkohlRuins_Call2dfc(25, 14 - i, 1, 1, p->x + n, p->z + m + 64);
+    for (m = 0; m < t[row + 2]; m++) {
+      for (n = 0; n < t[row + 1]; n++) {
+        u8 *p = t + row;
+        AnkohlRuins_Call2dfc(21, 14 - i, 1, 1, p[3] + n, t[row + 4] + m);
+        AnkohlRuins_Call2dfc(25, 14 - i, 1, 1, p[3] + n, t[row + 4] + m + 64);
       }
     }
   }

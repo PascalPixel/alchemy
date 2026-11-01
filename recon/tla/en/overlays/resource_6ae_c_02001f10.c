@@ -1,12 +1,21 @@
-// Differ 232 (was 234).
-// Func_02005714's calls go through an inline of its own that calls it
-// directly, as Func_020058fc's do in overlay 6a5's scenes (through Call3 its
-// argument registers load in another order). Older notes:
-// Draft of overlay 6ae's Func_02001f10, translated from its listing: differ 234
-// of 1038 in tla-en (was 242). The object the native keeps at sp+4 is a plain
-// local here rather than a one-word array read past its end. Left: the native
-// spills that object to the stack where this keeps it in sl, and register
-// choice and order through the function.
+// Draft, differ 44 of 1038, skeleton gap 3 (tla-en, 2026-11-01)
+// Left, all allocation or scheduling ties, no structure:
+// - Both Camera_MoveWithinMapBounds calls with constant x, y and z: the native
+//   shifts r0 first; here r0 comes last. Direct calls, Call4, a wrapper and
+//   locals for each argument in several orders all leave the tie.
+// - The native gives 254 r8 and the later 0 r10; here the two swap, because the
+//   zero pseudo (4 refs over 388 insns) outranks mask (6 refs over 612). Mask
+//   needs a seventh ref or a shorter life. This also makes the first mask site
+//   load into r3 where the native loads r2 and masks a copy of 254.
+// - The last flag set ors into r3 where the native keeps the loaded byte there
+//   and ors into r2.
+// - The frame is 4 bytes here and 8 in the native, its one slot at sp+4; that
+//   offset is the rest of the differ. No local was added for it.
+// One actor local holds the 17, 21, 32, 30 and 31 actors in turn, and scratch
+// spans the loop: it must start before the loop and outlive actor, or CSE keeps
+// actor+98 as the loop's address and PRE hoists it out. Func_02005714's calls
+// go through an inline of its own, and Camera_MoveWithinMapBounds's last two
+// calls are direct.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -75,16 +84,16 @@ static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
 }
 
 void Func_02001f10(void) {
-  s32 spill;
-  s32 v_r10, v_r0, v_r1, v_r8, v_r7, v_r6, v_r2, v_r11, t0, t1;
-  s32 t2, t3, t7, t8, t16, t22, t24, t26, t34, t43;
+  s32 lastArg, spill, zero, scratch;
+  s32 owner, actor, mask, owner2, one, t1;
+  s32 t2, t3, t16, t22, t24, t26, t34, t43;
   s32 t44, t45, t46, t47, t64, t65, t66, t67, t68, t71;
   s32 t73, t75, t78, t80, t82, t85, t86, t87, t88, t89;
-  s32 t99, t108, t133, t134, t143, t145, t158, t159, t162, t163;
-  s32 t166, t167, t170, t171, t180, t187, t206, t211, t213, t224;
-  s32 t229, t244, t245, t248, t249, t254, t256;
+  s32 t99, t108, t133, t134, t158, t159, t162, t163;
+  s32 t166, t167, t170, t171, t180, t206, t224;
+  s32 t229, t244, t248, t254, t256;
 
-  t0 = Value1(Actor_GetById, 17);
+  actor = Value1(Actor_GetById, 17);
   t1 = Value1(Actor_GetById, 30);
   t2 = Value1(Actor_GetById, 31);
   t3 = Value1(Actor_GetById, 32);
@@ -92,11 +101,11 @@ void Func_02001f10(void) {
   Func_0200560c();
   Call1(Func_02005784, 0);
   Call2(Actor_SetModeById, 17, 2);
-  FIELD_AT(t0, u8, 85) = 0;
-  t7 = FIELD_AT(t0, s32, 8);
-  FIELD_AT(t0, s32, 8) = (t7 - 0x40000);
-  t8 = FIELD_AT(t0, s32, 16);
-  FIELD_AT(t0, s32, 16) = (t8 + 0x100000);
+  FIELD_AT(actor, u8, 85) = 0;
+  scratch = FIELD_AT(actor, s32, 8);
+  FIELD_AT(actor, s32, 8) = (scratch - 0x40000);
+  scratch = FIELD_AT(actor, s32, 16);
+  FIELD_AT(actor, s32, 16) = (scratch + 0x100000);
   Call2(Actor_SetModeById, 28, 2);
   Call2(Actor_SetModeById, 29, 3);
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
@@ -104,9 +113,11 @@ void Func_02001f10(void) {
   Call2(Actor_SetModeById, 30, 7);
   Call2(Actor_SetModeById, 31, 7);
   Call2(Actor_SetModeById, 32, 6);
-  v_r10 = ((s32)gMainRoutineWork + 0x214);
-  t16 = *(s32 *)v_r10;
-  Call4(Func_02005684, t16, 0x1f80000, 0x1400000, 0xc000);
+  owner = (s32)gMainRoutineWork;
+  owner = (owner + 0x214);
+  t16 = *(s32 *)owner;
+  lastArg = 0xc000;
+  Call4(Func_02005684, t16, 0x1f80000, 0x1400000, lastArg);
   Call1(wait, 1);
   Call2(Func_02005764, 0, 0);
   Call2(Func_0200575c, 0, 0);
@@ -214,7 +225,7 @@ void Func_02001f10(void) {
   Call2(Func_020056f4, 26, 0);
   Call2(Func_020056f4, 19, 0);
   Call3(Actor_ArmCallback, 22, 0x2000, 0);
-  t99 = *(s32 *)v_r10;
+  t99 = *(s32 *)owner;
   Call3(Actor_ArmCallback, t99, 0x2000, 0);
   Call3(Actor_ArmCallback, 23, 0x4000, 0);
   Call3(Actor_ArmCallback, 24, 0x4000, 0);
@@ -225,7 +236,7 @@ void Func_02001f10(void) {
   Call2(Func_02005724, 0x19999, 0x3333);
   t108 = Value0(Func_0200573c);
   FIELD_AT(t108, u8, 85) = 0;
-  Call4(Camera_MoveWithinMapBounds, 0x2000000, 0x500000, 0x1540000, 1);
+  Camera_MoveWithinMapBounds(0x2000000, 0x500000, 0x1540000, 1);
   Func_02005734();
   Func_02005714(19, 0x109, 20);
   Call2(Func_020056f4, 19, 0);
@@ -237,12 +248,7 @@ void Func_02001f10(void) {
   Call2(Motion_SetModeAndWaitAnimation, 19, 3);
   Call2(Func_020056f4, 19, 0);
   Call2(Func_0200571c, 26, 0x102);
-  v_r8 = 0;
-  v_r1 = 0;
-  v_r0 = 0x101a;
-  goto L_0200a380;
-L_0200a380:
-  Call2(Func_020056f4, v_r0, v_r1);
+  Call2(Func_020056f4, 0x101a, 0);
   Call2(Actor_SetModeById, 19, 4);
   Call2(Func_020056f4, 19, 0);
   Func_02005714(23, 0x103, 0);
@@ -255,9 +261,9 @@ L_0200a380:
   Func_02005714(19, 0x100, 20);
   Call2(Actor_SetSpritePriority, 21, 2);
   t133 = Value1(Actor_GetById, 20);
-  FIELD_AT(t133, u8, 98) = v_r8;
+  FIELD_AT(t133, u8, 98) = 0;
   t134 = Value1(Actor_GetById, 21);
-  FIELD_AT(t134, u8, 98) = v_r8;
+  FIELD_AT(t134, u8, 98) = 0;
   Call3(Actor_SetSpeedParameters, 21, 0xcccc, 0x6666);
   Call3(Actor_SetSpeedParameters, 20, 0xcccc, 0x6666);
   Call2(Actor_SetMovementTypeById, 21, (s32)gData_02005f08);
@@ -266,12 +272,13 @@ L_0200a380:
   Call3(Actor_SetPositionAndReset, 19, 0x21c, 0x154);
   Call3(Actor_Jump, 19, 4, 10);
   Call2(Func_020056f4, 19, 0);
-  t143 = Value1(Actor_GetById, 21);
-  v_r7 = t143;
+  actor = Value1(Actor_GetById, 21);
 L_0200a47a:
   Call1(wait, 1);
-  t145 = FIELD_AT(v_r7, u8, 98);
-  if (t145 == 0)
+  scratch = actor;
+  scratch = (scratch + 98);
+  scratch = FIELD_AT(scratch, u8, 0);
+  if (scratch == 0)
     goto L_0200a47a;
   Call3(Actor_ArmCallback, 20, 0x2000, 0);
   Call2(Func_02005704, 21, 0x2000);
@@ -287,43 +294,47 @@ L_0200a47a:
   Call3(Actor_SetSpeedParameters, 20, 0x3333, 0x1999);
   t158 = Value1(Actor_GetById, 20);
   t159 = FIELD_AT(t158, u8, 90);
-  FIELD_AT(t158, u8, 90) = (254 & t159);
+  mask = 254;
+  FIELD_AT(t158, u8, 90) = (mask & t159);
+  zero = 0;
   Call3(Actor_SetPositionAndReset, 20, 0x1e8, 0x12c);
   Call1(FieldEvent_Wait, 1);
   t162 = Value1(Actor_GetById, 20);
   t163 = FIELD_AT(t162, u8, 90);
-  FIELD_AT(t162, u8, 90) = (t163 | 1);
+  one = 1;
+  FIELD_AT(t162, u8, 90) = (t163 | one);
   Call1(FieldEvent_Wait, 20);
   Call2(Motion_SetVarCbAndRefresh, 20, 2);
   t166 = Value1(Actor_GetById, 20);
   t167 = FIELD_AT(t166, u8, 90);
-  FIELD_AT(t166, u8, 90) = (254 & t167);
+  FIELD_AT(t166, u8, 90) = (mask & t167);
   Call3(Actor_SetPositionAndReset, 20, 0x1e6, 0x134);
   Call1(FieldEvent_Wait, 1);
   t170 = Value1(Actor_GetById, 20);
   t171 = FIELD_AT(t170, u8, 90);
-  FIELD_AT(t170, u8, 90) = (t171 | 1);
+  FIELD_AT(t170, u8, 90) = (t171 | one);
   Call2(Func_02005724, 0xcccc, 0x1999);
-  Call4(Camera_MoveWithinMapBounds, 0x2000000, 0x600000, 0x1400000, 1);
+  Camera_MoveWithinMapBounds(0x2000000, 0x600000, 0x1400000, 1);
   Func_02005734();
   Call3(Actor_ArmCallback, 21, 0, 40);
   Call3(Actor_ArmCallback, 21, 0xe000, 20);
   Call2(Func_02005704, 21, 0);
   Call2(Func_020056f4, 0x8015, 0);
   Call3(Actor_ArmCallback, 22, 0xc000, 0);
-  v_r6 = ((s32)gMainRoutineWork + 0x214);
-  t180 = *(s32 *)v_r6;
+  owner2 = (s32)gMainRoutineWork;
+  owner2 = (owner2 + 0x214);
+  t180 = *(s32 *)owner2;
   Call3(Actor_ArmCallback, t180, 0xa000, 0);
   Call3(Actor_ArmCallback, 23, 0xa000, 0);
   Call3(Actor_ArmCallback, 24, 0xa000, 0);
   Call3(Actor_ArmCallback, 26, 0xa000, 0);
   Call3(Actor_ArmCallback, 25, 0xa000, 0);
   Call2(Func_020056f4, 0x8014, 0);
-  t187 = Value1(Actor_GetById, 32);
-  FIELD_AT(t187, s32, 108) = 0;
+  actor = Value1(Actor_GetById, 32);
+  FIELD_AT(actor, s32, 108) = zero;
   Call1(wait, 1);
-  FIELD_AT(t187, s32, 24) = 0x10000;
-  FIELD_AT(t187, s32, 28) = 0x10000;
+  FIELD_AT(actor, s32, 24) = 0x10000;
+  FIELD_AT(actor, s32, 28) = 0x10000;
   Call2(Motion_SetVarCbAndRefresh, 32, 2);
   Call2(Func_020056f4, 32, 0);
   Func_02005714(23, 0x100, 0);
@@ -341,43 +352,36 @@ L_0200a47a:
   Call2(Func_02005704, 21, 0x2000);
   Call2(Func_0200571c, 21, 0x102);
   Call2(Func_020056f4, 21, 0);
-  t206 = *(s32 *)v_r6;
+  t206 = *(s32 *)owner2;
   Call3(Actor_ArmCallback, t206, 0xc000, 0);
   Call3(Actor_ArmCallback, 24, 0xc000, 0);
   Call3(Actor_ArmCallback, 26, 0xc000, 0);
   Call3(Actor_ArmCallback, 25, 0xc000, 0);
-  t211 = Value1(Actor_GetById, 30);
-  FIELD_AT(t211, s32, 108) = 0;
+  actor = Value1(Actor_GetById, 30);
+  FIELD_AT(actor, s32, 108) = zero;
   Call1(wait, 1);
-  FIELD_AT(t211, s32, 24) = 0x10000;
-  FIELD_AT(t211, s32, 28) = 0x10000;
-  t213 = Value1(Actor_GetById, 31);
-  FIELD_AT(t213, s32, 108) = 0;
+  FIELD_AT(actor, s32, 24) = 0x10000;
+  FIELD_AT(actor, s32, 28) = 0x10000;
+  actor = Value1(Actor_GetById, 31);
+  FIELD_AT(actor, s32, 108) = zero;
   Call1(wait, 1);
-  FIELD_AT(t213, s32, 24) = 0x10000;
-  FIELD_AT(t213, s32, 28) = 0x10000;
+  FIELD_AT(actor, s32, 24) = 0x10000;
+  FIELD_AT(actor, s32, 28) = 0x10000;
   Call1(FieldEvent_Wait, 10);
   Call2(Motion_SetVarCbAndRefresh, 31, 1);
   Call2(Func_020056f4, 0x201f, 0);
   Call2(Motion_SetVarCbAndRefresh, 30, 2);
   Call2(Func_020056f4, 30, 0);
   Call3(Actor_Jump, 20, 2, 10);
-  v_r11 = 1;
-  v_r8 = 254;
-  v_r2 = 10;
-  v_r1 = 4;
-  v_r0 = 20;
-  goto L_0200a7b8;
-L_0200a7b8:
-  Call3(Actor_Jump, v_r0, v_r1, v_r2);
+  Call3(Actor_Jump, 20, 4, 10);
   Call2(Func_020056f4, 0x8014, 0);
   Call3(Actor_SetSpeedParameters, 20, 0x26666, 0x13333);
-  t224 = *(s32 *)v_r6;
+  t224 = *(s32 *)owner2;
   Call3(Actor_SetSpeedParameters, t224, 0x26666, 0x13333);
   Call3(Actor_SetSpeedParameters, 23, 0x26666, 0x13333);
   Call3(Actor_SetSpeedParameters, 24, 0x26666, 0x13333);
   Call2(Actor_SetMovementTypeById, 20, (s32)gData_02005f98);
-  t229 = *(s32 *)v_r6;
+  t229 = *(s32 *)owner2;
   Call2(Actor_SetMovementTypeById, t229, (s32)gData_02005fdc);
   Call2(Actor_SetMovementTypeById, 23, (s32)gData_02006004);
   Call2(Actor_SetMovementTypeAndWaitById, 24, (s32)gData_0200602c);
@@ -393,13 +397,14 @@ L_0200a7b8:
   Call2(Func_02005704, 22, 0xa000);
   Call3(Actor_SetSpeedParameters, 21, 0x26666, 0x13333);
   t244 = Value1(Actor_GetById, 21);
-  t245 = FIELD_AT(t244, u8, 90);
-  FIELD_AT(t244, u8, 90) = (v_r8 & t245);
+  scratch = FIELD_AT(t244, u8, 90);
+  mask = (mask & scratch);
+  FIELD_AT(t244, u8, 90) = mask;
   Call3(Actor_SetPositionAndReset, 21, 0x1da, 0x13c);
   Call1(FieldEvent_Wait, 1);
   t248 = Value1(Actor_GetById, 21);
-  t249 = FIELD_AT(t248, u8, 90);
-  FIELD_AT(t248, u8, 90) = (v_r11 | t249);
+  scratch = FIELD_AT(t248, u8, 90);
+  FIELD_AT(t248, u8, 90) = (one | scratch);
   Call3(Actor_ArmCallback, 21, 0xe000, 0);
   Call3(Actor_SetPositionAndReset, 22, 0x1ce, 0x118);
   Call2(Func_02005704, 22, 0);

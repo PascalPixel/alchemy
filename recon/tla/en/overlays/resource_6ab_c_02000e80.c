@@ -1,16 +1,27 @@
-// Draft of overlay 6ab's Func_02000e80, translated from its listing: differ
-// 273 of 563. Left: its shape: 552 instructions against the listing's 563.
+// Draft, differ 6 of 563, skeleton gap 6 (tla-en, 2026-11-01)
+// Overlay 6ab's Func_02000e80. Same instruction count as the listing; what is
+// left is scheduling inside the two spawn blocks. In the first, the unk5c[0]
+// store must come before the nextFrame store. In the second, it must come
+// before the copy that starts the priorityFlags address. The order of the
+// statements in those blocks steers both: every order of them was tried, with
+// the bitfield stores split, and an early buffer = 0, a read-then-store of
+// priorityFlags and a bitfield for its bit all measured worse. The order
+// that puts unk5c[0] first in the first block scores gap 5 but differ 25,
+// because object + 35 is then derived as subs #57 from object + 92 and the
+// zero and that address swap registers.
 #include "types.h"
+#include "actor.h"
+#include "field_sprite.h"
+#include "main_routine_work.h"
 #include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+#include "scene_ids.h"
+
+extern char SceneId_Ov6ACRoom3;
+extern char SceneId_Ov66c;
+
 s32 Camera_MoveWithinMapBounds();
-s32 FieldEvent_Wait();
-s32 Func_020041e4();
+void FieldEvent_Wait(s32 frames);
+struct Actor *Func_020041e4(s32 type, s32 x, s32 y, s32 z);
 s32 Func_020041ec();
 s32 Func_02004204();
 s32 Func_0200420c();
@@ -18,50 +29,47 @@ s32 Func_0200423c();
 s32 Func_02004244();
 s32 Func_02004264();
 s32 Func_02004294();
-s32 Func_020042ac();
-s32 Func_020042dc();
-s32 Func_020042e4();
+void Func_020042ac(s32 sprite);
+void Func_020042dc(void);
+void Func_020042e4(void);
 s32 Func_020043a4();
 s32 Func_020043b4();
 s32 Func_020043bc();
 s32 Func_020043c4();
-s32 Func_020043d4();
+void Func_020043d4(void);
 s32 Func_02004404();
 s32 Func_0200440c();
 s32 Func_02004414();
 s32 Func_0200444c();
-s32 Func_0200445c();
+void Func_0200445c(void);
 s32 Func_0200446c();
 s32 GameFlag_SetBit();
-s32 GameFlag_Test();
+s32 GameFlag_Test(s32 flag);
 s32 Actor_ArmCallback();
 s32 Actor_SetPositionAndReset();
 s32 Actor_SetSpeedParameters();
-s32 Actor_GetById();
-s32 HeapSlot_AllocFar();
-s32 HeapSlot_Release();
+struct Actor *Actor_GetById(s32 id);
+u8 *HeapSlot_AllocFar(s32 slot, s32 size);
+void HeapSlot_Release(s32 slot);
 s32 Task_Add();
 s32 Task_RemoveFar();
 s32 FieldMessage_Show();
-s32 VramCache_Load();
+s32 VramCache_Load(s32 block, s32 count, u8 *source);
 s32 wait();
-extern u8 Data_02004cec[];
+extern struct Actor *Data_02004cec;
 extern u8 Func_02001424[];
 extern u8 MsgMarsStar09[];
-extern u8 gMainRoutineWork[];
 
 void Func_02000e80(void) {
-  s32 v_r8, v_r7, v_r0, v_r5, v_r6, v_r11, v_r9, v_r10, t0, t7;
-  s32 t8, t9, t10, t11, t12, t14, t18, t20, t22, t24;
-  s32 t26, t28, t31, t33, t36, t38, t39, t40, t41, t44;
-  s32 t45, t46, t47, t49, t53, t60, t61, t62, t63, t64;
-  s32 t65, t67, t71, t73, t75, t81, t107, t115, t117, t120;
-  s32 t122, t125, t127, t128, t129, t130, t133, t134, t135, t136;
-  s32 t138;
+  s32 flag;
+  struct Actor **slot, **slot2;
+  struct Actor *object, *object2;
+  struct FieldSprite *sprite, *sprite2;
+  u8 *buffer, *buffer2;
+  u16 *screen;
 
-  t0 = GameFlag_Test(0xa9e);
-  v_r8 = t0;
-  if (v_r8 != 0)
+  flag = GameFlag_Test(0xa9e);
+  if (flag != 0)
     goto L_02008ea2;
   goto L_0200905c;
 L_02008ea2:
@@ -71,142 +79,114 @@ L_02008ea2:
   Call1((void (*)())Func_0200446c, 78);
   Call1((void (*)())wait, 1);
   Call1((void (*)())Func_0200446c, 182);
-  t7 = Value4((s32 (*)())Func_020041e4, 0x1e9, 0x2a80000, 0x80000, 0x930000);
-  *(s32 *)(s32)Data_02004cec = t7;
-  v_r0 = t7;
-  v_r7 = (s32)Data_02004cec;
-  if (v_r0 == 0)
-    goto L_02008f48;
-  t8 = FIELD_AT(v_r0, s32, 80);
-  t9 = FIELD_AT(t8, u8, 5);
-  t10 = FIELD_AT(t8, u8, 9);
-  FIELD_AT(t8, u8, 5) = (-0x21 & t9);
-  FIELD_AT(t8, u8, 9) = (((15 & t10) & -13) | 8);
-  FIELD_AT(v_r0, u8, 85) = 0;
-  FIELD_AT(v_r0, u8, 92) = 1;
-  FIELD_AT(t8, u8, 26) = 0;
-  FIELD_AT(t8, u8, 27) = 0;
-  t11 = FIELD_AT(v_r0, u8, 35);
-  FIELD_AT(v_r0, u8, 35) = (2 | t11);
-  t12 = Value2((s32 (*)())HeapSlot_AllocFar, 68, 0x608);
-  Call1((void (*)())Func_020042ac, 247);
-  t14 = FIELD_AT(t8, u8, 16);
-  v_r5 = (t12 + 0x400);
-  Call3((void (*)())VramCache_Load, t14, 128, v_r5);
-  Call1((void (*)())HeapSlot_Release, 68);
-L_02008f48:
-  Call1((void (*)())FieldEvent_Wait, 20);
-  v_r6 = ((s32)gMainRoutineWork + 0x214);
-  t18 = *(s32 *)v_r6;
-  Call3((void (*)())Actor_SetSpeedParameters, t18, 0xcccc, 0x6666);
-  t20 = *(s32 *)v_r6;
-  Call3((void (*)())Actor_SetPositionAndReset, t20, 0x2a8, 186);
-  t22 = *(s32 *)v_r6;
-  Call3((void (*)())Actor_ArmCallback, t22, 0xc000, 80);
-  t24 = *(s32 *)v_r6;
-  Call3((void (*)())Func_020043b4, t24, 0x101, 40);
-  t26 = *(s32 *)v_r7;
-  v_r0 = t26;
-  if (v_r0 == 0)
-    goto L_02008fe6;
-  FIELD_AT(v_r0, u8, 85) = 3;
-  FIELD_AT(v_r0, s32, 40) = 0x20000;
-  FIELD_AT(v_r0, s32, 48) = 0x20000;
-  FIELD_AT(v_r0, s32, 52) = 0x10000;
-  Call4((void (*)())Func_02004204, v_r0, 0x2a00000, 0, 0xa00000);
-  t28 = *(s32 *)v_r7;
-  Call1((void (*)())Func_0200420c, t28);
-  Call1((void (*)())Func_0200446c, 135);
-  t31 = *(s32 *)v_r7;
-  FIELD_AT(t31, s32, 52) = 0x8000;
-  FIELD_AT(t31, s32, 40) = 0x40000;
-  FIELD_AT(t31, s32, 48) = 0x10000;
-  Call4((void (*)())Func_02004204, t31, 0x2980000, 0, 0x9e0000);
-  t33 = *(s32 *)v_r7;
-  Call1((void (*)())Func_0200420c, t33);
-L_02008fe6:
-  Call1((void (*)())FieldEvent_Wait, 20);
-  t36 = *(s32 *)v_r6;
-  Call3((void (*)())Actor_SetSpeedParameters, t36, 0x19999, 0xcccc);
-  t38 = *(s32 *)v_r6;
-  t39 = Value1((s32 (*)())Actor_GetById, t38);
-  t40 = FIELD_AT(t39, u8, 90);
-  FIELD_AT(t39, u8, 90) = (254 & t40);
-  t41 = *(s32 *)v_r6;
-  Call3((void (*)())Actor_SetPositionAndReset, t41, 0x29e, 170);
-  Call1((void (*)())FieldEvent_Wait, 1);
-  t44 = *(s32 *)v_r6;
-  t45 = Value1((s32 (*)())Actor_GetById, t44);
-  t46 = FIELD_AT(t45, u8, 90);
-  FIELD_AT(t45, u8, 90) = (1 | t46);
-  t47 = *(s32 *)v_r7;
-  if (t47 == 0)
-    goto L_02009038;
-  Func_020041ec();
-L_02009038:
-  t49 = *(s32 *)v_r6;
-  Call2((void (*)())Func_020043a4, t49, 0x4000);
+  slot = &Data_02004cec;
+  object = (struct Actor *)Value4((s32 (*)())Func_020041e4, 0x1e9, 0x2a80000,
+                                  0x80000, 0x930000);
+  *slot = object;
+  if (object != 0) {
+    sprite = object->animation;
+    sprite->nextFrame = 0;
+    sprite->fullColor = 0;
+    sprite->palette = 0;
+    sprite->priority = 2;
+    object->motionFlags = 0;
+    object->unk5c[0] = 1;
+    sprite->unk1b[0] = 0;
+    object->priorityFlags |= 2;
+    buffer = HeapSlot_AllocFar(68, 0x608);
+    Func_020042ac(247);
+    VramCache_Load(sprite->vramBlock, 128, buffer + 0x400);
+    HeapSlot_Release(68);
+  }
+  FieldEvent_Wait(20);
+  Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
+        0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner,
+        0x2a8, 186);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000,
+        80);
+  Call3((void (*)())Func_020043b4, gMainRoutineWork.currentOwner, 0x101, 40);
+  object = *slot;
+  if (object != 0) {
+    object->motionFlags = 3;
+    object->velocityY = 0x20000;
+    object->speedLimit = 0x20000;
+    object->acceleration = 0x10000;
+    Call4((void (*)())Func_02004204, (s32)object, 0x2a00000, 0, 0xa00000);
+    Call1((void (*)())Func_0200420c, (s32)*slot);
+    Call1((void (*)())Func_0200446c, 135);
+    object = *slot;
+    object->acceleration = 0x8000;
+    object->velocityY = 0x40000;
+    object->speedLimit = 0x10000;
+    Call4((void (*)())Func_02004204, (s32)object, 0x2980000, 0, 0x9e0000);
+    Call1((void (*)())Func_0200420c, (s32)*slot);
+  }
+  FieldEvent_Wait(20);
+  Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
+        0x19999, 0xcccc);
+  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
+  Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner,
+        0x29e, 170);
+  FieldEvent_Wait(1);
+  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
+  object = *slot;
+  if (object != 0)
+    Func_020041ec(object);
+  Call2((void (*)())Func_020043a4, gMainRoutineWork.currentOwner, 0x4000);
   Func_0200445c();
   Func_020042e4();
   goto L_020093b0;
 L_0200905c:
-  t53 = *(s32 *)0x3000080;
+  screen = *(u16 **)0x3000080;
   Func_020042dc();
   Call1((void (*)())Func_0200444c, 0);
   Call2((void (*)())FieldMessage_Show, (s32)MsgMarsStar09, 1);
   Call1((void (*)())Func_0200446c, 78);
   Call1((void (*)())wait, 1);
   Call1((void (*)())Func_0200446c, 182);
-  t60 = Value4((s32 (*)())Func_020041e4, 0x1e9, 0x2a80000, 0x80000, 0x930000);
-  *(s32 *)(s32)Data_02004cec = t60;
-  v_r0 = t60;
-  v_r9 = (s32)Data_02004cec;
-  v_r11 = t53;
-  if (v_r0 == 0)
-    goto L_02009112;
-  t61 = FIELD_AT(v_r0, s32, 80);
-  t62 = FIELD_AT(t61, u8, 5);
-  FIELD_AT(t61, u8, 26) = v_r8;
-  FIELD_AT(t61, u8, 27) = v_r8;
-  t63 = FIELD_AT(t61, u8, 9);
-  FIELD_AT(t61, u8, 5) = (-0x21 & t62);
-  FIELD_AT(t61, u8, 9) = (((15 & t63) & -13) | 8);
-  FIELD_AT(v_r0, u8, 85) = v_r8;
-  FIELD_AT(v_r0, u8, 92) = 1;
-  t64 = FIELD_AT(v_r0, u8, 35);
-  FIELD_AT(v_r0, u8, 35) = (2 | t64);
-  t65 = Value2((s32 (*)())HeapSlot_AllocFar, 68, 0x608);
-  Call1((void (*)())Func_020042ac, 247);
-  t67 = FIELD_AT(t61, u8, 16);
-  v_r5 = (t65 + 0x400);
-  Call3((void (*)())VramCache_Load, t67, 128, v_r5);
-  Call1((void (*)())HeapSlot_Release, 68);
-L_02009112:
-  Call1((void (*)())FieldEvent_Wait, 20);
-  v_r7 = ((s32)gMainRoutineWork + 0x214);
-  t71 = *(s32 *)v_r7;
-  Actor_SetSpeedParameters(t71, 0xcccc, 0x6666);
-  t73 = *(s32 *)v_r7;
-  Call3((void (*)())Actor_SetPositionAndReset, t73, 0x2a8, 186);
-  t75 = *(s32 *)v_r7;
-  Call3((void (*)())Actor_ArmCallback, t75, 0xc000, 40);
+  slot2 = &Data_02004cec;
+  object2 = (struct Actor *)Value4((s32 (*)())Func_020041e4, 0x1e9, 0x2a80000,
+                                   0x80000, 0x930000);
+  *slot2 = object2;
+  if (object2 != 0) {
+    sprite2 = object2->animation;
+    sprite2->nextFrame = 0;
+    sprite2->unk1b[0] = 0;
+    sprite2->fullColor = 0;
+    sprite2->palette = 0;
+    sprite2->priority = 2;
+    object2->motionFlags = 0;
+    object2->unk5c[0] = 1;
+    object2->priorityFlags |= 2;
+    buffer2 = HeapSlot_AllocFar(68, 0x608);
+    Func_020042ac(247);
+    VramCache_Load(sprite2->vramBlock, 128, buffer2 + 0x400);
+    HeapSlot_Release(68);
+  }
+  FieldEvent_Wait(20);
+  Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
+        0xcccc, 0x6666);
+  Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner,
+        0x2a8, 186);
+  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000,
+        40);
   Call1((void (*)())Func_0200446c, 0);
   Call1((void (*)())Func_0200446c, 141);
   Call3((void (*)())Func_02004264, 0x20000, 0x20000, 0x10000);
-  Call1((void (*)())FieldEvent_Wait, 20);
-  t81 = *(s32 *)v_r7;
-  Call2((void (*)())Func_020043bc, t81, 0x102);
+  FieldEvent_Wait(20);
+  Call2((void (*)())Func_020043bc, gMainRoutineWork.currentOwner, 0x102);
   Call3((void (*)())Func_02004264, 0x10000, 0x10000, 0x10000);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  FieldEvent_Wait(20);
   Call2((void (*)())Func_0200440c, 0x10000, 0);
   Call2((void (*)())Func_02004404, 0x10006, 0);
   Call1((void (*)())Func_02004414, 80);
-  Call1((void (*)())FieldEvent_Wait, 80);
+  FieldEvent_Wait(80);
   Call2((void (*)())Task_Add, (s32)Func_02001424, 0x480);
   Call2((void (*)())Func_020043c4, 0x4cccc, 0x9999);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x2a80000, -1, 0x1e00000, 1);
   Func_020043d4();
-  Call1((void (*)())FieldEvent_Wait, 80);
+  FieldEvent_Wait(80);
   Call3((void (*)())Func_02004264, -1, -1, 0xe666);
   Call1((void (*)())Func_0200446c, 0x186);
   Call2((void (*)())Func_02004404, 0x7fff, 0);
@@ -215,66 +195,54 @@ L_02009112:
   Call1((void (*)())Task_RemoveFar, (s32)Func_02001424);
   Call1((void (*)())wait, 20);
   Call3((void (*)())Func_02004264, 0, 0, 0);
-  Call1((void (*)())FieldEvent_Wait, 20);
+  FieldEvent_Wait(20);
   Call6((void (*)())Func_0200423c, 65, 65, 9, 21, 38, 24);
   Call6((void (*)())Func_02004244, 65, 65, 9, 21, 38, 24);
   Call6((void (*)())Func_02004244, 76, 64, 9, 22, 38, 87);
   Call6((void (*)())Func_02004244, 76, 64, 9, 22, 102, 23);
-  t107 = FIELD_AT((s32)gMainRoutineWork, s16, 506);
-  Call2((void (*)())Func_02004294, (t107 + 19), v_r11);
-  *(u16 *)v_r11 = v_r8;
+  Call2((void (*)())Func_02004294,
+        gMainRoutineWork.map +
+            ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
+        (s32)screen);
+  *screen = 0;
   Call2((void (*)())Func_02004404, 0x10000, 0);
   Call1((void (*)())Func_02004414, 120);
   Call1((void (*)())wait, 160);
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x2a80000, -1, 0xba0000, 1);
   Func_020043d4();
-  Call1((void (*)())FieldEvent_Wait, 40);
-  t115 = *(s32 *)v_r9;
-  v_r0 = t115;
-  v_r10 = (s32)gMainRoutineWork;
-  if (v_r0 == 0)
-    goto L_0200932e;
-  FIELD_AT(v_r0, u8, 85) = 3;
-  FIELD_AT(v_r0, s32, 40) = 0x20000;
-  FIELD_AT(v_r0, s32, 48) = 0x20000;
-  FIELD_AT(v_r0, s32, 52) = 0x10000;
-  Call4((void (*)())Func_02004204, v_r0, 0x2a00000, 0, 0xa00000);
-  t117 = *(s32 *)v_r9;
-  Call1((void (*)())Func_0200420c, t117);
-  Call1((void (*)())Func_0200446c, 135);
-  t120 = *(s32 *)v_r9;
-  FIELD_AT(t120, s32, 52) = 0x8000;
-  FIELD_AT(t120, s32, 40) = 0x40000;
-  FIELD_AT(t120, s32, 48) = 0x10000;
-  Call4((void (*)())Func_02004204, t120, 0x2980000, 0, 0x9e0000);
-  t122 = *(s32 *)v_r9;
-  Call1((void (*)())Func_0200420c, t122);
-L_0200932e:
-  Call1((void (*)())FieldEvent_Wait, 20);
-  t125 = *(s32 *)v_r7;
-  Call3((void (*)())Actor_SetSpeedParameters, t125, 0x19999, 0xcccc);
-  t127 = *(s32 *)v_r7;
-  t128 = Value1((s32 (*)())Actor_GetById, t127);
-  t129 = FIELD_AT(t128, u8, 90);
-  FIELD_AT(t128, u8, 90) = (254 & t129);
-  t130 = *(s32 *)v_r7;
-  Call3((void (*)())Actor_SetPositionAndReset, t130, 0x29e, 170);
-  Call1((void (*)())FieldEvent_Wait, 1);
-  t133 = *(s32 *)v_r7;
-  t134 = Value1((s32 (*)())Actor_GetById, t133);
-  t135 = FIELD_AT(t134, u8, 90);
-  FIELD_AT(t134, u8, 90) = (1 | t135);
-  t136 = *(s32 *)v_r9;
-  if (t136 == 0)
-    goto L_02009382;
-  Func_020041ec();
-L_02009382:
-  t138 = *(s32 *)v_r7;
-  Call2((void (*)())Func_020043a4, t138, 0x4000);
+  FieldEvent_Wait(40);
+  object2 = *slot2;
+  if (object2 != 0) {
+    object2->motionFlags = 3;
+    object2->velocityY = 0x20000;
+    object2->speedLimit = 0x20000;
+    object2->acceleration = 0x10000;
+    Call4((void (*)())Func_02004204, (s32)object2, 0x2a00000, 0, 0xa00000);
+    Call1((void (*)())Func_0200420c, (s32)*slot2);
+    Call1((void (*)())Func_0200446c, 135);
+    object2 = *slot2;
+    object2->acceleration = 0x8000;
+    object2->velocityY = 0x40000;
+    object2->speedLimit = 0x10000;
+    Call4((void (*)())Func_02004204, (s32)object2, 0x2980000, 0, 0x9e0000);
+    Call1((void (*)())Func_0200420c, (s32)*slot2);
+  }
+  FieldEvent_Wait(20);
+  Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
+        0x19999, 0xcccc);
+  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
+  Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner,
+        0x29e, 170);
+  FieldEvent_Wait(1);
+  Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
+  object2 = *slot2;
+  if (object2 != 0)
+    Func_020041ec(object2);
+  Call2((void (*)())Func_020043a4, gMainRoutineWork.currentOwner, 0x4000);
   Func_0200445c();
   Call1((void (*)())GameFlag_SetBit, 0xa30);
   Call1((void (*)())GameFlag_SetBit, 0xa9e);
-  FIELD_AT(v_r10, u16, 502) = 105;
+  gMainRoutineWork.special = (s32)&SceneId_Ov66c;
   Func_020042e4();
 L_020093b0:
   return;

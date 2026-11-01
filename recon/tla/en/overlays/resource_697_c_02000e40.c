@@ -1,9 +1,20 @@
-// Draft, differ 185 of 240: pushes a Trial Road object by (dx, dz) cells when the
-// leader stands right behind it (else the event work's byte 388 is set to 13):
-// it slides up to six cells until a cell of its width (across axis) is blocked
-// (Func_02000df8), the leader pushing (mode 8, sound 239) and following;
-// stopping short of column 18 it settles (sounds 298, 213), past it it drops
-// off the edge to x 312, takes its flag (id + 579) and sounds 298 and 240.
+// Draft, differ 169 of 240, skeleton gap 55 (tla-en, 2026-11-01)
+// Pushes a Trial Road object by (dx, dz) cells when the leader stands right
+// behind it (else the event work's byte 388 is set to 13): it slides up to six
+// cells until a cell of its width (across axis) is blocked (Func_02000df8), the
+// leader pushing (mode 8, sound 239) and following; stopping short of column 18
+// it settles (sounds 298, 213), past it it drops off the edge to x 312, takes
+// its flag (id + 579) and sounds 298 and 240.
+// Control flow and every call now agree: separate breaks in the else arm give
+// the listing's rolled loop, and x and z also hold the leader's cell and the
+// target, which puts them in r5 and r6. What is left is allocation. The listing
+// ranks object (r7) > toZ (r8) > toX (r10) > dx (r9) > dz (r11) > n (spilled);
+// the lreg dump gives toZ .314 > object .276 > toX .223 > n .159 > dx = dz .112,
+// so toZ takes r7, object r8, n r9, dx r11 and dz spills. The fix needs fewer
+// loop-weighted refs on toZ and n, or more refs on object (16) and dx, dz (8).
+// A goto-built loop keeps the same weights, and comparing fromX, fromZ in the
+// first test folds to the same code. The listing's frame is 36 bytes, with
+// 24 to 35 never touched: a 12-byte local that nothing refers to, not added here.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 
 void Func_02005880(void);
@@ -22,17 +33,14 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 fromX = object->x >> 20;
   s32 fromZ = object->z >> 20;
-  s32 toX = fromX;
   s32 toZ = fromZ;
-  s32 mode = 2;
-  s32 leaderX = leader->x >> 20;
-  s32 leaderZ = leader->z >> 20;
-  s32 x;
-  s32 z;
-  s32 targetZ;
   s32 n;
+  s32 mode = 2;
+  s32 toX = fromX;
+  s32 x = leader->x >> 20;
+  s32 z = leader->z >> 20;
 
-  if ((dx != 0 && toX != leaderX + dx) || (dz != 0 && toZ != leaderZ + dz)) {
+  if ((dx != 0 && toX != x + dx) || (dz != 0 && toZ != z + dz)) {
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 388) = 13;
     return;
   }
@@ -40,12 +48,18 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     x = toX + dx;
     z = toZ + dz;
     if (axis == 0) {
-      if (Func_02000df8(x, z - 1) || Func_02000df8(x, z) ||
-          Func_02000df8(x, z + 1))
+      if (Func_02000df8(x, z - 1))
+        break;
+      if (Func_02000df8(x, z))
+        break;
+      if (Func_02000df8(x, z + 1))
         break;
     } else {
-      if (Func_02000df8(x - 1, z) || Func_02000df8(x, z) ||
-          Func_02000df8(x + 1, z))
+      if (Func_02000df8(x - 1, z))
+        break;
+      if (Func_02000df8(x, z))
+        break;
+      if (Func_02000df8(x + 1, z))
         break;
     }
     toX = x;
@@ -63,8 +77,8 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   if (dx < 0 || dz < 0)
     mode = 3;
   Func_020057c8(object, mode);
-  targetZ = (toZ << 20) + 0x80000;
-  Func_020057f8(object, (toX << 20) + 0x80000, 0, targetZ);
+  Func_020057f8(object, (toX << 20) + 0x80000, 0,
+                z = (toZ << 20) + 0x80000);
   FieldEvent_Wait(6);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x3333);
@@ -79,7 +93,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     Func_02005a68(213);
   } else {
     Func_020057c8(object, 3);
-    Func_020057f8(object, 312 << 16, 0, targetZ);
+    Func_020057f8(object, 312 << 16, 0, z);
     FieldEvent_Wait(30);
     Func_020057c8(object, 8);
     Func_02005800(object);

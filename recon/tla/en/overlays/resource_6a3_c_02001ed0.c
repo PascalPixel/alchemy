@@ -1,12 +1,26 @@
-// Draft, differ 437 of 1328: Jupiter Lighthouse room M's long scene, a mechanical
-// translation of both listings (the Japanese edition has its own form): each
-// call with the constants it is given, stores as pointer writes and the few
-// branches as gotos. The Japanese form measures differ 439 of 1327 in tla-ja.
+// Draft, differ 383 of 1328, skeleton gap 321 (tla-en, 2026-11-01): Jupiter
+// Lighthouse room M's long scene (the Japanese edition has its own form, differ
+// 385 of 1327 in tla-ja). Nearly all the gap is one thing: called directly,
+// nearby calls share each repeated constant (0x8000, 0x100, 0x107, 0x108, -16)
+// in a callee-saved register, seven of them where the native keeps only 0x4000,
+// 0x2000 and 0xa000 (r8, r6, r5). Forwarding every call except Func_0200484c and
+// Func_02004964 through one static inline, as scene_call.h's wrappers do, takes
+// the gap to 119 and differ to 143, but each wrapper is a tagged device, so the
+// draft holds none. With it the rest is argument order at single calls (some
+// Actor_SetModeById sites build the id first) and -16 built per call. Tried:
+// the three angles as constant locals (gap 333, it worsens), since the direct
+// calls still hoist the others.
+// Plain and settled: the item search is a real loop; its mask 0x1ff is one pool
+// load per pass in the native, here hoisted before the loop, and a goto form
+// builds it in three instructions instead.
 #include "types.h"
 #include "edition.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
+#include "event_work.h"
+
+#define EVENT_WORK ((struct EventWork *)Ram_HeapSlots->eventWork)
 
 extern const u8 MsgWeDidItAgatio[];
 extern u32 gData_02004a6c[];
@@ -66,20 +80,18 @@ void Func_020047dc(void);
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 void Func_02001ed0(void) {
-  s32 r5;
-  s32 r6;
-  s32 r8;
+  s32 index;
+  s32 offset;
   s32 v135;
   s32 v18;
   s32 v21;
   s32 v211;
-  s32 v304;
   s32 v49;
 
   Func_020047d4();
   Func_0200494c(0);
   Camera_MoveWithinMapBounds(0x2e10000, 0, 0xd10000, 0);
-  *(s32 *)((u8 *)((s32)&gMainRoutineWork + 0x214) + 0) = 4;
+  gMainRoutineWork.currentOwner = 4;
   Party_RemoveActiveOwner(0);
   Party_RemoveActiveOwner(2);
   Party_RemoveActiveOwner(5);
@@ -194,9 +206,6 @@ void Func_02001ed0(void) {
   Func_020048b4(0x1a, 0xc000);
   FieldEvent_Wait(0xa);
   Func_020048b4(0x1a, 0x8000);
-  r5 = 0xa000;
-  r6 = 0x2000;
-  r8 = 0x4000;
   Func_0200489c(0x1a, 0, 5);
   Actor_SetModeById(0x1b, 4);
   FieldEvent_Wait(0x21);
@@ -220,11 +229,11 @@ void Func_02001ed0(void) {
   if (v135 != 0) goto L_ja_0200a3ea;
   Func_020048cc(0x1b, 0x102, 0x1e);
   Func_0200489c(0x1b, 0, 5);
-  *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
+  EVENT_WORK->messageId++;
   goto L_ja_0200a412;
 L_ja_0200a3ea:
   Func_020048cc(0x1b, 0x102, 0x1e);
-  *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
+  EVENT_WORK->messageId++;
   Func_0200489c(0x1b, 0, 5);
 L_ja_0200a412:
   Actor_SetAngleToward(7, 0x1a, 0);
@@ -303,12 +312,12 @@ L_ja_0200a412:
   Actor_SetModeById(0x1a, 4);
   FieldEvent_Wait(0x21);
   Func_0200489c(0x1a, 0, 5);
-  *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
+  EVENT_WORK->messageId++;
   goto L_ja_0200a6e0;
 L_ja_0200a6b6:
   Actor_SetModeById(0x1a, 4);
   FieldEvent_Wait(0x21);
-  *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
+  EVENT_WORK->messageId++;
   Func_0200489c(0x1a, 0, 5);
 L_ja_0200a6e0:
   Actor_TurnToFaceEachOther(0x1c, 4, 0);
@@ -396,21 +405,17 @@ L_ja_0200a6e0:
   Motion_SetVarCbAndRefresh(4, 2);
   PartyInventory_Remove(0xdf);
   PartyInventory_Add(0xf5);
-  *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
-  FieldMessage_Show(((*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) << 16) >> 16), 5);
-  r5 = 0;
-  r6 = 0xd8;
-  goto L_ja_0200a9f4;
-L_ja_0200a9f0:
-  r5 = (r5 + 1);
-  r6 = (r6 + 2);
-L_ja_0200a9f4:
-  if (r5 > 14) goto L_ja_0200aa18;
-  v304 = Unit_Get(4);
-  if ((0x1ff & *(u16 *)((u8 *)v304 + r6)) != 245) goto L_ja_0200a9f0;
-  Func_020047a4(4, r5, *(u16 *)((u8 *)v304 + r6), (0x1ff & *(u16 *)((u8 *)v304 + r6)));
-  goto L_ja_0200aa18;
-L_ja_0200aa18:
+  FieldMessage_Show((s16)EVENT_WORK->messageId++, 5);
+  index = 0;
+  offset = 0xd8;
+  while (index <= 14) {
+    if ((*(u16 *)((u8 *)Unit_Get(4) + offset) & 0x1ff) == 245) {
+      Func_020047a4(4, index);
+      break;
+    }
+    offset += 2;
+    index++;
+  }
   Actor_SetModeById(0x1b, 3);
   FieldEvent_Wait(0x14);
   FieldEvent_Wait(0xa);
@@ -478,20 +483,18 @@ L_ja_0200aa18:
 }
 #else
 void Func_02001ed0(void) {
-  s32 r5;
-  s32 r6;
-  s32 r8;
+  s32 index;
+  s32 offset;
   s32 v135;
   s32 v18;
   s32 v21;
   s32 v211;
-  s32 v304;
   s32 v49;
 
   Func_020047d4();
   Func_0200494c(0);
   Camera_MoveWithinMapBounds(0x2e10000, 0, 0xd10000, 0);
-  *(s32 *)((u8 *)((s32)&gMainRoutineWork + 0x214) + 0) = 4;
+  gMainRoutineWork.currentOwner = 4;
   Party_RemoveActiveOwner(0);
   Party_RemoveActiveOwner(2);
   Party_RemoveActiveOwner(5);
@@ -606,9 +609,6 @@ void Func_02001ed0(void) {
   Func_020048b4(0x1a, 0xc000);
   FieldEvent_Wait(0xa);
   Func_020048b4(0x1a, 0x8000);
-  r5 = 0xa000;
-  r6 = 0x2000;
-  r8 = 0x4000;
   Func_0200489c(0x1a, 0, 5);
   Actor_SetModeById(0x1b, 4);
   FieldEvent_Wait(0x21);
@@ -632,11 +632,11 @@ void Func_02001ed0(void) {
   if (v135 != 0) goto L_0200a3ea;
   Func_020048cc(0x1b, 0x102, 0x1e);
   Func_0200489c(0x1b, 0, 5);
-  *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
+  EVENT_WORK->messageId++;
   goto L_0200a412;
 L_0200a3ea:
   Func_020048cc(0x1b, 0x102, 0x1e);
-  *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
+  EVENT_WORK->messageId++;
   Func_0200489c(0x1b, 0, 5);
 L_0200a412:
   Actor_SetAngleToward(7, 0x1a, 0);
@@ -715,12 +715,12 @@ L_0200a412:
   Actor_SetModeById(0x1a, 4);
   FieldEvent_Wait(0x21);
   Func_0200489c(0x1a, 0, 5);
-  *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
+  EVENT_WORK->messageId++;
   goto L_0200a6e0;
 L_0200a6b6:
   Actor_SetModeById(0x1a, 4);
   FieldEvent_Wait(0x21);
-  *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
+  EVENT_WORK->messageId++;
   Func_0200489c(0x1a, 0, 5);
 L_0200a6e0:
   Actor_TurnToFaceEachOther(0x1c, 4, 0);
@@ -808,21 +808,17 @@ L_0200a6e0:
   Motion_SetVarCbAndRefresh(4, 2);
   PartyInventory_Remove(0xdf);
   PartyInventory_Add(0xf5);
-  *(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) = (*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) + 1);
-  FieldMessage_Show(((*(u16 *)((u8 *)(*(s32 *)((u8 *)0x3000000 + 108) + 0x1c4) + 0) << 16) >> 16), 5);
-  r5 = 0;
-  r6 = 0xd8;
-  goto L_0200a9f4;
-L_0200a9f0:
-  r5 = (r5 + 1);
-  r6 = (r6 + 2);
-L_0200a9f4:
-  if (r5 > 14) goto L_0200aa18;
-  v304 = Unit_Get(4);
-  if ((0x1ff & *(u16 *)((u8 *)v304 + r6)) != 245) goto L_0200a9f0;
-  Func_020047a4(4, r5, *(u16 *)((u8 *)v304 + r6), (0x1ff & *(u16 *)((u8 *)v304 + r6)));
-  goto L_0200aa18;
-L_0200aa18:
+  FieldMessage_Show((s16)EVENT_WORK->messageId++, 5);
+  index = 0;
+  offset = 0xd8;
+  while (index <= 14) {
+    if ((*(u16 *)((u8 *)Unit_Get(4) + offset) & 0x1ff) == 245) {
+      Func_020047a4(4, index);
+      break;
+    }
+    offset += 2;
+    index++;
+  }
   Actor_SetModeById(0x1b, 3);
   FieldEvent_Wait(0x14);
   FieldEvent_Wait(0xa);

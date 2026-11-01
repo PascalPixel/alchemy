@@ -1,20 +1,34 @@
-// Near miss, differ 496 of 423 (tla-en, 2026-10-31; tla-ja 516 of 413):
-// unpacks clear data, in the layout The Broken Seal's
+// Draft, differ 415 of 423, skeleton gap 141 (tla-en, 2026-11-01): 67 removed,
+// 74 added.
+// Unpacks clear data, in the layout The Broken Seal's
 // FileScreen_PackPasswordData packs (and Func_02001c7c here), into the four
 // units' base stats, levels and Djinn, the story flags, the Psynergy items and
-// the inventories with their counts. The control flow, calls and memory
-// accesses are the native's; what is left is register allocation and where
-// invariants sit. The native rebuilds every table address and constant inside
-// its loops (gData_*, 0x1ff, the packedStats frame address, IwramClearWords),
-// yet strength-reduces their counters (the stats offsets, the level shift,
-// the inventory pointers); it keeps in in r10, i in r7 and the flag bits in
-// r6. At -O2, loop.c hoists those invariants out of any C loop and in gets no
-// register (sp + 4). The flag loop's head also computes the table address and
-// i + 1 once for both calls, which -O2 does in each arm. With every loop
-// written as a for loop this C differs 526; compiled by hand with -Os in place
-// of -O2 (the other options kept), a line diff against the listing falls from
-// 484 to 138 lines, all register allocation (the flag bits on the stack, a
-// 44-byte frame).
+// the inventories with their counts. Control flow, calls and memory accesses
+// are the native's.
+// The native keeps code in its loops that -O2 moves out: every table address,
+// 0x1ff, the packedStats address and m * 2 stay inside, the flag loop's head
+// computes table, index and i + 1 once for both calls, yet the counters are
+// strength-reduced. So the loops are written as gotos (no loop notes: loop.c
+// leaves them alone) with the reductions spelled out by hand (offset, next,
+// shift, bytes, slot). Only unpack and counts stay do loops, which raises their
+// pseudos' reference weights and closes more of the gap. table, index and next
+// are plain locals that exist for this; on adoption each needs a FAKEMATCH tag
+// or a better form.
+// What is left is mostly one thing: in stays on the stack (sp + 12, frame 48
+// against 40), where the native has it in r10, so every use costs a reload and
+// the count section's registers shift. Global ranks in behind j, n and table,
+// which take r5 to r7 and the high registers. The native's order is j (r1),
+// the slot offset (r0), the item (r4), then i r7, n r6, bitOffset r5; goto
+// loops lose the loop depth that would weight those refs. One counter for every
+// loop, as the native's r7 suggests, spills it to a high register (gap 200 and
+// up): i is shared by the first loops, the clear, inventory and count loops
+// have their own. Greedy goto or do choices per loop and counter merges found
+// nothing further.
+// Not expressible at -O2: GCSE's PRE moves m * 2 out of even a goto loop
+// (spilled to sp + 4, the native recomputes it), i + 1 before the flag branch
+// needs another temporary and is left out. By hand with -Os in place of -O2
+// the for-loop form fell to 138 lines of register allocation, which points at
+// the native's optimization level; that is a compiler question (K1 to K3).
 #include "types.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
@@ -39,10 +53,22 @@ void Func_020018e0(s32 mode, u8 *in) {
   u8 keyItemBits;
   u32 packedStats[8];
   s32 i;
+  s32 clearUnit;
+  s32 slotUnit;
+  s32 countUnit;
   s32 inputIndex;
   s32 bitOffset;
   s32 j;
   s32 n;
+  s32 m;
+  s32 shift;
+  u8 *bytes;
+  u8 *base;
+  s32 next;
+  struct BattleUnit *levelMember;
+  struct BattleUnit *clearMember;
+  struct BattleUnit *slotMember;
+  struct BattleUnit *countMember;
 
   levelBits = in[0] | in[1] << 8 | in[2] << 16 | (in[3] & 0xf0) << 20;
   djinnBits = (in[3] & 0x0f) | in[4] << 4 | in[5] << 12 | in[6] << 20;
@@ -52,24 +78,26 @@ void Func_020018e0(s32 mode, u8 *in) {
   if (mode != 2) {
     // As a value: in + 8 + (mode != 0) becomes a conditional add.
     s32 statsOffset = 8 + (mode != 0);
+    s32 offset = 4;
 
-    for (i = 0; i != 2; i++) {
-      packedStats[i * 4] = in[statsOffset] << 24 | in[statsOffset + 1] << 16 |
-                           in[statsOffset + 2] << 8 | in[statsOffset + 3];
-      packedStats[i * 4 + 1] = in[statsOffset + 4] << 24 |
-                               in[statsOffset + 5] << 16 |
-                               in[statsOffset + 6] << 8 | in[statsOffset + 7];
-      packedStats[i * 4 + 2] =
-          in[statsOffset + 7] << 28 | in[statsOffset + 8] << 20 |
-          in[statsOffset + 9] << 12 | in[statsOffset + 10] << 4 |
-          in[statsOffset + 11] >> 4;
-      packedStats[i * 4 + 3] =
-          in[statsOffset + 11] << 28 | in[statsOffset + 12] << 20 |
-          in[statsOffset + 13] << 12 | in[statsOffset + 14] << 4;
-      statsOffset += 15;
-    }
-    // A goto loop: as a for loop, loop.c moves the table's address and 0x1ff
-    // out of it and steps a pointer through packedStats (differ 514).
+    i = 0;
+    bytes = in + statsOffset;
+    do {
+      base = (u8 *)packedStats;
+      packedStats[i * 4] =
+          bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
+      i++;
+      *(u32 *)(base + offset) =
+          bytes[4] << 24 | bytes[5] << 16 | bytes[6] << 8 | bytes[7];
+      next = offset + 4;
+      *(u32 *)(base + next) = bytes[7] << 28 | bytes[8] << 20 | bytes[9] << 12 |
+                              bytes[10] << 4 | bytes[11] >> 4;
+      next = offset + 8;
+      *(u32 *)(base + next) =
+          bytes[11] << 28 | bytes[12] << 20 | bytes[13] << 12 | bytes[14] << 4;
+      offset += 16;
+      bytes += 15;
+    } while (i != 2);
     i = 0;
   stats:
     {
@@ -89,31 +117,49 @@ void Func_020018e0(s32 mode, u8 *in) {
       goto stats;
   }
 
-  for (i = 0; i != 6; i++) {
+  i = 0;
+flags:
+  {
+    u8 *table = (u8 *)gData_02002490;
+    s32 index = i * 2;
+
     if ((flagBits >> i) & 1)
-      GameFlag_SetBit(gData_02002490[i]);
+      GameFlag_SetBit(*(u16 *)(table + index));
     else
-      GameFlag_ClearBit(gData_02002490[i]);
+      GameFlag_ClearBit(*(u16 *)(table + index));
   }
+  i++;
+  if (i != 6)
+    goto flags;
 
-  for (i = 0; i != 4; i++) {
-    struct BattleUnit *member = Unit_Get(gData_020026a0[i]);
-
-    member->level = levelBits >> (i * 7) & 0x7f;
+  i = 0;
+  shift = 0;
+levels:
+  levelMember = Unit_Get(gData_020026a0[i]);
+  levelMember->level = levelBits >> shift & 0x7f;
 #if LANGUAGE != LANGUAGE_JAPANESE
-    member->experience = Unit_GetExperienceForLevel(i, member->level);
+  levelMember->experience = Unit_GetExperienceForLevel(i, levelMember->level);
 #endif
-  }
+  i++;
+  shift += 7;
+  if (i != 4)
+    goto levels;
 
   Djinn_GetRecoveryTable(0)->count = 0;
-  for (i = 0; i != 4; i++) {
-    struct BattleUnit *member = Unit_Get(gData_020026a0[i]);
-
-    // The native clears the same 40 bytes, djinnAvailable through
-    // djinnActiveCounts, four times.
-    for (n = 0; n != 4; n++)
-      Iwram_ClearWordsEntry(member->djinnAvailable, 40);
-  }
+  clearUnit = 0;
+clearDjinn:
+  clearMember = Unit_Get(gData_020026a0[clearUnit]);
+  // The native clears the same 40 bytes, djinnAvailable through
+  // djinnActiveCounts, four times.
+  n = 0;
+clearDjinnFour:
+  Iwram_ClearWordsEntry(clearMember->djinnAvailable, 40);
+  n++;
+  if (n != 4)
+    goto clearDjinnFour;
+  clearUnit++;
+  if (clearUnit != 4)
+    goto clearDjinn;
 
   for (i = 0; i != 28; i++)
     GameFlag_ClearBit(i / 7 * 20 + i % 7 + 48);
@@ -125,8 +171,6 @@ void Func_020018e0(s32 mode, u8 *in) {
 
   if (mode != 0) {
     Unit_Get(gData_020026a0[0]);
-    // A goto loop: as a for loop, loop.c steps a pointer through
-    // gData_020026b0 (differ 504).
     i = 0;
   keyItems:
     if ((keyItemBits >> i) & 1)
@@ -137,55 +181,81 @@ void Func_020018e0(s32 mode, u8 *in) {
   }
 
   if (mode == 0) {
+    u16 *slot;
+
     inputIndex = 39;
     bitOffset = 0;
-    for (i = 0; i != 4; i++) {
-      struct BattleUnit *member = Unit_Get(gData_020026a0[i]);
-
-      for (n = 0; n != 15; n++) {
-        member->inventory[n] = (in[inputIndex] << (bitOffset + 1) |
-                                in[inputIndex + 1] >> (7 - bitOffset)) &
-                               0x1ff;
-        bitOffset++;
-        inputIndex++;
-        if (bitOffset == 7) {
-          bitOffset = 0;
-          inputIndex++;
-        }
-      }
+    slotUnit = 0;
+  inventories:
+    slotMember = Unit_Get(gData_020026a0[slotUnit]);
+    slot = slotMember->inventory;
+    bytes = in + inputIndex;
+    n = 0;
+  inventorySlots:
+    *slot = (bytes[0] << (bitOffset + 1) | bytes[1] >> (7 - bitOffset)) & 0x1ff;
+    slot++;
+    bitOffset++;
+    bytes++;
+    inputIndex++;
+    if (bitOffset == 7) {
+      bitOffset = 0;
+      bytes++;
+      inputIndex++;
     }
+    n++;
+    if (n != 15)
+      goto inventorySlots;
+    slotUnit++;
+    if (slotUnit != 4)
+      goto inventories;
 
     inputIndex = 107;
     bitOffset = -1;
-    for (i = 0; i != 4; i++) {
-      struct BattleUnit *member = Unit_Get(gData_020026a0[i]);
-      s32 m;
-
-      for (m = 0; m != 23; m++) {
-        j = 0;
-        if (bitOffset < 0) {
-          j = in[inputIndex] << -bitOffset & 0x1f;
-          inputIndex++;
-          bitOffset += 8;
-        }
-        j += in[inputIndex] >> bitOffset & 0x1f;
-        bitOffset -= 5;
-        if (bitOffset == -5) {
-          inputIndex++;
-          bitOffset = 3;
-        }
-        j &= 0x1f;
-        for (n = 0; n != 15; n++) {
-          if ((member->inventory[n] & 0x1ff) == gData_020026c0[m])
-            member->inventory[n] = j << 11 | member->inventory[n];
-        }
+    countUnit = 0;
+    do {
+      countMember = Unit_Get(gData_020026a0[countUnit]);
+      m = 0;
+      bytes = in + inputIndex;
+    countItems:
+      j = 0;
+      if (bitOffset < 0) {
+        j = bytes[0] << -bitOffset & 0x1f;
+        bytes++;
+        inputIndex++;
+        bitOffset += 8;
       }
-    }
-    gMainRoutineWork.coins = in[165] << 16 | in[166] << 8 | in[167];
+      j += bytes[0] >> bitOffset & 0x1f;
+      bitOffset -= 5;
+      if (bitOffset == -5) {
+        bytes++;
+        inputIndex++;
+        bitOffset = 3;
+      }
+      j &= 0x1f;
+      {
+        u16 *table = gData_020026c0;
+
+        n = 0;
+      countSlots:
+        {
+          u16 item = countMember->inventory[n];
+
+          if ((item & 0x1ff) == table[m])
+            countMember->inventory[n] = j << 11 | item;
+        }
+        n++;
+        if (n != 15)
+          goto countSlots;
+      }
+      m++;
+      if (m != 23)
+        goto countItems;
+      countUnit++;
+    } while (countUnit != 4);
+    bytes = in + 165;
+    gMainRoutineWork.coins = bytes[0] << 16 | bytes[1] << 8 | in[167];
   }
 
-  // A goto loop: as a for loop, loop.c moves the table's address out of it
-  // and steps its index by 4 (differ 500).
   i = 0;
 calculate:
   Unit_UpdateClass(gData_020026a0[i]);

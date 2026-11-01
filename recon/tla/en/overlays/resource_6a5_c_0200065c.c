@@ -1,17 +1,29 @@
-// Draft of overlay 6a5's Func_0200065c, translated from its listing: differ
-// 336 of 684. Left: its shape: 694 instructions against the listing's 684.
+// Draft, differ 52 of 684, skeleton gap 12 (tla-en, 2026-11-01)
+// Left: the two motion resets. The listing loads 0x80000000 into r3 afresh in
+// each, a pseudo of its own that crosses no call; here CSE shares one pseudo
+// across the calls between them, reload rematerialises it into r2 and the zero
+// takes r3, so sched2 puts the zero stores first. The listing also needs its
+// reload order unchanged: the `ldr r6, =0` before the third wait comes from the
+// first reset's HImode zero, so a CSE boundary has to fall after that store
+// and before the second reset. A do-while(0) macro round both resets separates
+// the constants but loses that zero and moves effect to r6 (differ 211); one
+// round only the second, or round the call before it, leaves them merged (72,
+// 58: cse2 joins them again); a block-scoped local for the marker and an inline
+// helper change nothing. Also left: the camera call's lsls pair (Call4 and
+// Value4 the same). Each stored 4 is an s32 local on purpose: as a QImode
+// constant its store inherits r3 and every later reload swaps r2 and r3.
+// Actor 31 and 32 store scaleY before scaleX in source; the listing's second
+// block prints them the other way only because of reload order.
 #include "types.h"
 #include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+#include "actor.h"
+#include "field_sprite.h"
+#include "system/main_routine_work.h"
+#include "text/msg_ids.h"
 s32 Camera_MoveWithinMapBounds();
 s32 Event_AskYesNoWithActorAnimation();
 s32 FieldEvent_Wait();
-s32 Func_0200576c();
+struct Actor *Func_0200576c();
 s32 Func_02005784();
 s32 Func_0200578c();
 s32 Func_020057ac();
@@ -39,14 +51,12 @@ s32 Actor_CommitPositionAndActivate();
 s32 Actor_Stop();
 s32 Actor_SetMovementTypeById();
 s32 Actor_OffsetPositionAndReset();
-s32 Actor_SetSpritePriority();
 s32 Actor_SetPositionAndReset();
 s32 Actor_SetSpeedParameters();
-s32 Actor_GetById();
-s32 Actor_SetModeById();
+struct Actor *Actor_GetById();
 s32 Actor_SetPartAttribute();
 s32 PartyInventory_Remove();
-s32 HeapSlot_AllocFar();
+void *HeapSlot_AllocFar();
 s32 HeapSlot_Release();
 s32 Task_Add();
 s32 Task_RemoveFar();
@@ -54,281 +64,205 @@ s32 FieldMessage_Show();
 s32 VramCache_Load();
 s32 wait();
 extern u8 Func_020004c8[];
-extern u8 MsgThereSeemsTo[];
 extern u8 gData_02006338[];
-extern u8 gMainRoutineWork[];
 
 void Func_0200065c(void) {
-  s32 sp_[1];
-  s32 v_r8, v_r11, v_r5, v_r7, v_r6, v_r9, v_r10, v_r2, v_r3, t0;
-  s32 t4, t23, t24, t25, t26, t27, t28, t29, t30, t31;
-  s32 t32, t34, t35, t39, t40, t41, t46, t74, t76, t86;
-  s32 t87, t88, t89, t90, t91, t92, t93, t94, t95, t96;
-  s32 t97, t98, t99, t100, t101, t102, t103, t104, t105, t106;
-  s32 t107, t108, t109, t110, t111, t116, t120, t122, t124, t125;
-  s32 t126, t128, t130, t131;
+  s32 answer, state;
+  struct Actor *actor4, *created, *actor37, *actor31, *actor32;
+  struct FieldSprite *sprite;
+  u8 *buffer;
+  u8 *flags;
 
-  t0 = Value1((s32 (*)())GameFlag_Test, 0xa23);
-  if (t0 != 0)
-    goto L_0200867c;
-  goto L_02008cac;
-L_0200867c:
-  Func_02005814();
-  Call1((void (*)())Func_02005984, 0);
-  Call2((void (*)())FieldMessage_Show, (s32)MsgThereSeemsTo,
-        5);
-  t4 = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
-  v_r11 = t4;
-  v_r8 = (s32)MsgThereSeemsTo;
-  if (v_r11 == 0)
-    goto L_020086c4;
-  Call3((void (*)())Actor_SetSpeedParameters, 4, 0x10000, 0x8000);
-  Call3((void (*)())Actor_SetPositionAndReset, 4, 0x202, 0x135);
-  goto L_02008ca8;
-L_020086c4:
-  Call1((void (*)())GameFlag_SetBit, 0xa21);
-  Call1((void (*)())GameFlag_SetBit, 0x8df);
-  Call1((void (*)())GameFlag_ClearBit, 0xa25);
-  Call1((void (*)())GameFlag_ClearBit, 0x161);
-  Call1((void (*)())GameFlag_ClearBit, 0x144);
-  Call3((void (*)())Actor_ArmCallback, 27, 0xd000, 0);
-  Call3((void (*)())Actor_ArmCallback, 28, 0xd000, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 4, 0x10000, 0x8000);
-  Call3((void (*)())Actor_SetPositionAndReset, 4, 0x200, 0x126);
-  Call2((void (*)())Func_020058ec, 4, 0xc000);
-  Call1((void (*)())FieldEvent_Wait, 20);
-  Call2((void (*)())Func_0200595c, 0x10000, 0);
-  Call2((void (*)())Func_02005954, 0x10003, 1);
-  Call1((void (*)())Func_02005964, 20);
-  Call1((void (*)())wait, 20);
-  Call1((void (*)())PartyInventory_Remove, 245);
-  t23 = Value1((s32 (*)())Actor_GetById, 4);
-  t24 = FIELD_AT(t23, s32, 12);
-  t25 = FIELD_AT(t23, s32, 8);
-  t26 = FIELD_AT(t23, s32, 16);
-  t27 = Value4((s32 (*)())Func_0200576c, 0x1e9, t25, (t24 + 0x80000), t26);
-  v_r7 = t27;
-  v_r5 = t23;
-  if (v_r7 == 0)
-    goto L_020087f4;
-  t28 = FIELD_AT(v_r7, s32, 80);
-  FIELD_AT(t28, u8, 27) = v_r11;
-  t29 = FIELD_AT(t28, u8, 5);
-  t30 = FIELD_AT(t28, u8, 9);
-  FIELD_AT(t28, u8, 5) = (-0x21 & t29);
-  t31 = FIELD_AT(v_r7, u8, 35);
-  FIELD_AT(t28, u8, 9) = ((15 & t30) & -13);
-  FIELD_AT(v_r7, u8, 35) = (254 & t31);
-  FIELD_AT(v_r7, u8, 85) = v_r11;
-  FIELD_AT(v_r7, u8, 92) = 1;
-  FIELD_AT(v_r7, s32, 48) = 0x6666;
-  FIELD_AT(v_r7, s32, 52) = 0xccc;
-  t32 = Value2((s32 (*)())HeapSlot_AllocFar, 68, 0x608);
-  FIELD_AT(sp_, s32, 4) = t32;
-  Call1((void (*)())Func_020057d4, 246);
-  t34 = FIELD_AT(sp_, s32, 4);
-  t35 = FIELD_AT(t28, u8, 16);
-  *(s32 *)sp_ = (t34 + 0x400);
-  Call3((void (*)())VramCache_Load, t35, 128, (t34 + 0x400));
-  Call1((void (*)())HeapSlot_Release, 68);
-L_020087f4:
-  Call2((void (*)())Actor_SetSpritePriority, 37, 1);
-  t39 = Value1((s32 (*)())Actor_GetById, 37);
-  t40 = FIELD_AT(v_r5, s32, 8);
-  FIELD_AT(t39, s32, 8) = t40;
-  FIELD_AT(t39, s32, 12) = 0x600000;
-  t41 = FIELD_AT(v_r5, s32, 16);
-  FIELD_AT(t39, s32, 16) = t41;
-  FIELD_AT(t39, u8, 85) = 3;
-  FIELD_AT(t39, s32, 52) = 0xccc;
-  FIELD_AT(t39, s32, 48) = 0x6666;
-  FIELD_AT(t39, s32, 24) = 0x2000;
-  FIELD_AT(t39, s32, 28) = 0x2000;
-  Call1((void (*)())Func_020058c4, (v_r8 + 1));
-  Call1((void (*)())Func_020059f4, 36);
-  v_r9 = 0x6666;
-  v_r6 = t39;
-  if (v_r7 != 0)
-    goto L_02008848;
-  goto L_020089ca;
-L_02008848:
-  FIELD_AT(v_r7, u8, 85) = v_r11;
-  FIELD_AT(v_r7, s32, 72) = 0x9999;
-  FIELD_AT(v_r7, s32, 68) = 0xcccc;
-  FIELD_AT(v_r7, s32, 40) = 0x80000;
-  Call4((void (*)())Func_02005784, v_r7, 0x2000000, 0x800000, 0x1260000);
-  Call4((void (*)())Func_02005784, v_r6, 0x2000000, -1, 0x1260000);
-  t46 = FIELD_AT((s32)gMainRoutineWork, s32, 532);
-  Call2((void (*)())Func_02005894, 7, t46);
-  Call1((void (*)())wait, 1);
-  Call3((void (*)())Actor_SetSpeedParameters, 7, 0xcccc, v_r9);
-  Call3((void (*)())Actor_OffsetPositionAndReset, 7, 12, 0);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 4, -12, 0);
-  Call1((void (*)())Actor_WaitForMoveById, 7);
-  Call1((void (*)())Actor_Stop, 7);
-  Call1((void (*)())wait, 1);
-  Call2((void (*)())Actor_SetModeById, 7, 1);
-  Call1((void (*)())wait, 1);
-  Call3((void (*)())Actor_ArmCallback, 4, 0xc000, 0);
-  Call3((void (*)())Actor_ArmCallback, 7, 0xc000, 0);
-  Call1((void (*)())Func_0200578c, v_r7);
-  v_r10 = (v_r7 + 85);
-  *(u8 *)v_r10 = 4;
-  Call1((void (*)())FieldEvent_Wait, 90);
-  *(u8 *)v_r10 = v_r11;
-  Call4((void (*)())Func_02005784, v_r7, 0x2000000, 0x800000, 0x1080000);
-  Call4((void (*)())Func_02005784, v_r6, 0x2000000, -1, 0x1080000);
-  *(u8 *)v_r10 = 4;
-  Call1((void (*)())FieldEvent_Wait, 60);
-  *(u8 *)v_r10 = v_r11;
-  FIELD_AT(v_r6, s32, 56) = 0x80000000;
-  FIELD_AT(v_r6, s32, 60) = 0x80000000;
-  FIELD_AT(v_r6, s32, 64) = 0x80000000;
-  FIELD_AT(v_r6, s32, 8) = v_r11;
-  FIELD_AT(v_r6, s32, 12) = v_r11;
-  FIELD_AT(v_r6, s32, 16) = v_r11;
-  FIELD_AT(v_r6, s32, 36) = v_r11;
-  FIELD_AT(v_r6, s32, 40) = v_r11;
-  FIELD_AT(v_r6, s32, 44) = v_r11;
-  FIELD_AT(v_r6, u16, 100) = v_r11;
-  Call1((void (*)())Func_0200578c, v_r7);
-  *(u8 *)v_r10 = 4;
-  Call1((void (*)())FieldEvent_Wait, 90);
-  *(u8 *)v_r10 = 0;
-  Call4((void (*)())Func_02005784, v_r7, 0x2000000, 0x5c0000, 0x1080000);
-  Call1((void (*)())Func_0200578c, v_r7);
-  FIELD_AT(v_r7, s32, 56) = 0x80000000;
-  FIELD_AT(v_r7, s32, 60) = 0x80000000;
-  FIELD_AT(v_r7, s32, 64) = 0x80000000;
-  FIELD_AT(v_r7, s32, 8) = v_r11;
-  FIELD_AT(v_r7, s32, 12) = v_r11;
-  v_r3 = v_r7;
-  v_r2 = v_r11;
-  goto L_020089bc;
-L_020089bc:
-  FIELD_AT(v_r7, s32, 16) = v_r2;
-  FIELD_AT(v_r7, s32, 36) = v_r2;
-  FIELD_AT(v_r7, s32, 40) = v_r2;
-  FIELD_AT(v_r7, s32, 44) = v_r2;
-  FIELD_AT(v_r3, u16, 100) = v_r11;
-L_020089ca:
-  Call1((void (*)())FieldEvent_Wait, 40);
-  Call2((void (*)())Func_02005954, 0x10000, 0);
-  Call1((void (*)())Func_02005964, 20);
-  Call1((void (*)())wait, 20);
-  Call3((void (*)())Actor_OffsetPositionAndReset, 4, 0, -16);
-  Call3((void (*)())Actor_OffsetPositionAndReset, 7, 0, -16);
-  v_r6 = ((s32)gMainRoutineWork + 0x214);
-  t74 = *(s32 *)v_r6;
-  Call1((void (*)())Actor_WaitForMoveById, t74);
-  t76 = *(s32 *)v_r6;
-  Call2((void (*)())Actor_SetModeById, t76, 1);
-  Call2((void (*)())Actor_SetModeById, 7, 1);
-  Call1((void (*)())FieldEvent_Wait, 50);
-  Call1((void (*)())Func_020059f4, 141);
-  Call1((void (*)())FieldEvent_Wait, 30);
-  Call3((void (*)())Func_020057ac, 0x10000, 0x10000, 0x10000);
-  Call1((void (*)())FieldEvent_Wait, 30);
-  Call3((void (*)())Func_020057ac, 0x20000, 0x20000, 0x10000);
-  Call1((void (*)())FieldEvent_Wait, 30);
-  t86 = Value1((s32 (*)())Actor_GetById, 0);
-  t87 = FIELD_AT(t86, u8, 35);
-  FIELD_AT(t86, u8, 35) = (t87 | 1);
-  t88 = Value1((s32 (*)())Actor_GetById, 1);
-  t89 = FIELD_AT(t88, u8, 35);
-  FIELD_AT(t88, u8, 35) = (t89 | 1);
-  t90 = Value1((s32 (*)())Actor_GetById, 2);
-  t91 = FIELD_AT(t90, u8, 35);
-  FIELD_AT(t90, u8, 35) = (t91 | 1);
-  t92 = Value1((s32 (*)())Actor_GetById, 3);
-  t93 = FIELD_AT(t92, u8, 35);
-  FIELD_AT(t92, u8, 35) = (t93 | 1);
-  t94 = Value1((s32 (*)())Actor_GetById, 4);
-  t95 = FIELD_AT(t94, u8, 35);
-  FIELD_AT(t94, u8, 35) = (t95 | 1);
-  t96 = Value1((s32 (*)())Actor_GetById, 5);
-  t97 = FIELD_AT(t96, u8, 35);
-  FIELD_AT(t96, u8, 35) = (t97 | 1);
-  t98 = Value1((s32 (*)())Actor_GetById, 7);
-  t99 = FIELD_AT(t98, u8, 35);
-  FIELD_AT(t98, u8, 35) = (t99 | 1);
-  t100 = Value1((s32 (*)())Actor_GetById, 6);
-  t101 = FIELD_AT(t100, u8, 35);
-  FIELD_AT(t100, u8, 35) = (t101 | 1);
-  t102 = Value1((s32 (*)())Actor_GetById, 30);
-  t103 = FIELD_AT(t102, u8, 35);
-  FIELD_AT(t102, u8, 35) = (t103 | 1);
-  t104 = Value1((s32 (*)())Actor_GetById, 27);
-  t105 = FIELD_AT(t104, u8, 35);
-  FIELD_AT(t104, u8, 35) = (t105 | 1);
-  t106 = Value1((s32 (*)())Actor_GetById, 28);
-  t107 = FIELD_AT(t106, u8, 35);
-  FIELD_AT(t106, u8, 35) = (t107 | 1);
-  t108 = Value1((s32 (*)())Actor_GetById, 31);
-  t109 = FIELD_AT(t108, u8, 35);
-  FIELD_AT(t108, u8, 35) = (t109 | 1);
-  t110 = Value1((s32 (*)())Actor_GetById, 32);
-  t111 = FIELD_AT(t110, u8, 35);
-  FIELD_AT(t110, u8, 35) = (t111 | 1);
-  Camera_MoveWithinMapBounds(0x2000000, 0x600000, 0x1080000, 1);
-  Func_02005924();
-  Call2((void (*)())Actor_SetSpritePriority, 31, 1);
-  Call2((void (*)())Actor_SetSpritePriority, 32, 1);
-  t116 = *(s32 *)v_r6;
-  Call2((void (*)())Actor_SetSpritePriority, t116, 1);
-  Call2((void (*)())Actor_SetSpritePriority, 7, 1);
-  Call1((void (*)())FieldEvent_Wait, 20);
-  t120 = Value1((s32 (*)())Actor_GetById, 31);
-  Call2((void (*)())Actor_SetSingleChildFlags, t120, 0);
-  t122 = Value1((s32 (*)())Actor_GetById, 31);
-  Call2((void (*)())Actor_SetPartAttribute, t122, 7);
-  t124 = Value1((s32 (*)())Actor_GetById, 31);
-  FIELD_AT(t124, s32, 28) = 0xffff0000;
-  FIELD_AT(t124, s32, 24) = 0x1999;
-  FIELD_AT(t124, u8, 85) = v_r11;
-  FIELD_AT(t124, s32, 8) = 0x2000000;
-  FIELD_AT(t124, s32, 12) = 0x800000;
-  FIELD_AT(t124, s32, 16) = 0x1080000;
-  t125 = FIELD_AT(t124, u8, 35);
-  FIELD_AT(t124, u8, 35) = (t125 | 2);
-  t126 = Value1((s32 (*)())Actor_GetById, 32);
-  Call2((void (*)())Actor_SetSingleChildFlags, t126, 0);
-  t128 = Value1((s32 (*)())Actor_GetById, 32);
-  Call2((void (*)())Actor_SetPartAttribute, t128, 7);
-  t130 = Value1((s32 (*)())Actor_GetById, 32);
-  FIELD_AT(t130, s32, 24) = 0x1999;
-  FIELD_AT(t130, s32, 28) = 0xffff0000;
-  FIELD_AT(t130, u8, 85) = v_r11;
-  FIELD_AT(t130, s32, 8) = 0x2000000;
-  FIELD_AT(t130, s32, 12) = 0xa00000;
-  FIELD_AT(t130, s32, 16) = 0x1080000;
-  t131 = FIELD_AT(t130, u8, 35);
-  FIELD_AT(t130, u8, 35) = (t131 | 2);
-  Call2((void (*)())Actor_SetMovementTypeById, 31,
-        (s32)gData_02006338);
-  Call2((void (*)())Actor_SetMovementTypeById, 32,
-        (s32)gData_02006338);
-  Task_Add((s32)Func_020004c8, 0x480);
-  Call3((void (*)())Func_02005884, 9, 0, 0);
-  Call3((void (*)())Func_02005884, 10, 0, 0);
-  Call3((void (*)())Func_02005884, 23, 0, 0);
-  Call3((void (*)())Func_02005884, 24, 0, 0);
-  Call1((void (*)())Func_020059f4, 145);
-  Call3((void (*)())Func_020057ac, 0x60000, 0x60000, 0x10000);
-  Call2((void (*)())Func_02005954, 0x4063ff, 0);
-  Call1((void (*)())Func_02005964, 16);
-  Call1((void (*)())wait, 16);
-  Call1((void (*)())Func_020059f4, 63);
-  Call1((void (*)())wait, 180);
-  Call2((void (*)())Func_02005954, 0x7fff, 0);
-  Call1((void (*)())Func_02005964, 60);
-  Call1((void (*)())Func_020059f4, 141);
-  Call1((void (*)())wait, 60);
-  Call1((void (*)())Task_RemoveFar, (s32)Func_020004c8);
-  Call1((void (*)())GameFlag_SetBit, 0x11a);
-  Call1((void (*)())Func_02005934, 2);
-L_02008ca8:
-  Func_0200581c();
-L_02008cac:
-  return;
+  if (GameFlag_Test(0xa23) != 0) {
+    Func_02005814();
+    Call1((void (*)())Func_02005984, 0);
+    Call2((void (*)())FieldMessage_Show, (s32)MsgThereSeemsTo, 5);
+    answer = Event_AskYesNoWithActorAnimation(4, 0);
+    if (answer != 0) {
+      Call3((void (*)())Actor_SetSpeedParameters, 4, 0x10000, 0x8000);
+      Call3((void (*)())Actor_SetPositionAndReset, 4, 0x202, 0x135);
+    } else {
+      Call1((void (*)())GameFlag_SetBit, 0xa21);
+      Call1((void (*)())GameFlag_SetBit, 0x8df);
+      Call1((void (*)())GameFlag_ClearBit, 0xa25);
+      Call1((void (*)())GameFlag_ClearBit, 0x161);
+      Call1((void (*)())GameFlag_ClearBit, 0x144);
+      Call3((void (*)())Actor_ArmCallback, 27, 0xd000, 0);
+      Call3((void (*)())Actor_ArmCallback, 28, 0xd000, 0);
+      Call3((void (*)())Actor_SetSpeedParameters, 4, 0x10000, 0x8000);
+      Call3((void (*)())Actor_SetPositionAndReset, 4, 0x200, 0x126);
+      Call2((void (*)())Func_020058ec, 4, 0xc000);
+      Call1((void (*)())FieldEvent_Wait, 20);
+      Call2((void (*)())Func_0200595c, 0x10000, 0);
+      Call2((void (*)())Func_02005954, 0x10003, 1);
+      Call1((void (*)())Func_02005964, 20);
+      Call1((void (*)())wait, 20);
+      Call1((void (*)())PartyInventory_Remove, 245);
+      actor4 = Actor_GetById(4);
+      created = (struct Actor *)Value4((s32 (*)())Func_0200576c, 0x1e9, actor4->x, actor4->y + 0x80000, actor4->z);
+      if (created != 0) {
+        sprite = created->animation;
+        sprite->unk1b[0] = 0;
+        sprite->fullColor = 0;
+        sprite->palette = 0;
+        sprite->priority = 0;
+        created->priorityFlags &= 254;
+        created->motionFlags = 0;
+        created->unk5c[0] = 1;
+        created->speedLimit = 0x6666;
+        created->acceleration = 0xccc;
+        buffer = HeapSlot_AllocFar(68, 0x608);
+        Call1((void (*)())Func_020057d4, 246);
+        Call3((void (*)())VramCache_Load, sprite->vramBlock, 128, (s32)(buffer + 0x400));
+        Call1((void (*)())HeapSlot_Release, 68);
+      }
+      Call2((void (*)())Actor_SetSpritePriority, 37, 1);
+      actor37 = Actor_GetById(37);
+      actor37->x = actor4->x;
+      actor37->y = 0x600000;
+      actor37->z = actor4->z;
+      actor37->motionFlags = 3;
+      actor37->acceleration = 0xccc;
+      actor37->speedLimit = 0x6666;
+      actor37->scaleX = 0x2000;
+      actor37->scaleY = 0x2000;
+      Call1((void (*)())Func_020058c4, (s32)MsgThereSeemsTo + 1);
+      Call1((void (*)())Func_020059f4, 36);
+      if (created != 0) {
+        flags = &created->motionFlags;
+        *flags = 0;
+        created->gravity = 0x9999;
+        created->bounce = 0xcccc;
+        created->velocityY = 0x80000;
+        Call4((void (*)())Func_02005784, created, 0x2000000, 0x800000, 0x1260000);
+        Call4((void (*)())Func_02005784, actor37, 0x2000000, -1, 0x1260000);
+        Call2((void (*)())Func_02005894, 7, gMainRoutineWork.currentOwner);
+        Call1((void (*)())wait, 1);
+        Call3((void (*)())Actor_SetSpeedParameters, 7, 0xcccc, 0x6666);
+        Call3((void (*)())Actor_OffsetPositionAndReset, 7, 12, 0);
+        Call3((void (*)())Actor_CommitPositionAndActivate, 4, -12, 0);
+        Call1((void (*)())Actor_WaitForMoveById, 7);
+        Call1((void (*)())Actor_Stop, 7);
+        Call1((void (*)())wait, 1);
+        Call2((void (*)())Actor_SetModeById, 7, 1);
+        Call1((void (*)())wait, 1);
+        Call3((void (*)())Actor_ArmCallback, 4, 0xc000, 0);
+        Call3((void (*)())Actor_ArmCallback, 7, 0xc000, 0);
+        Call1((void (*)())Func_0200578c, created);
+        state = 4;
+        *flags = state;
+        Call1((void (*)())FieldEvent_Wait, 90);
+        *flags = 0;
+        Call4((void (*)())Func_02005784, created, 0x2000000, 0x800000, 0x1080000);
+        Call4((void (*)())Func_02005784, actor37, 0x2000000, -1, 0x1080000);
+        *flags = state;
+        Call1((void (*)())FieldEvent_Wait, 60);
+        *flags = 0;
+        actor37->targetX = 0x80000000;
+        actor37->targetY = 0x80000000;
+        actor37->targetZ = 0x80000000;
+        actor37->x = 0;
+        actor37->y = 0;
+        actor37->z = 0;
+        actor37->velocityX = 0;
+        actor37->velocityY = 0;
+        actor37->velocityZ = 0;
+        actor37->action = 0;
+        Call1((void (*)())Func_0200578c, created);
+        *flags = state;
+        Call1((void (*)())FieldEvent_Wait, 90);
+        *flags = 0;
+        Call4((void (*)())Func_02005784, created, 0x2000000, 0x5c0000, 0x1080000);
+        Call1((void (*)())Func_0200578c, created);
+        created->targetX = 0x80000000;
+        created->targetY = 0x80000000;
+        created->targetZ = 0x80000000;
+        created->x = 0;
+        created->y = 0;
+        created->z = 0;
+        created->velocityX = 0;
+        created->velocityY = 0;
+        created->velocityZ = 0;
+        created->action = 0;
+      }
+      Call1((void (*)())FieldEvent_Wait, 40);
+      Call2((void (*)())Func_02005954, 0x10000, 0);
+      Call1((void (*)())Func_02005964, 20);
+      Call1((void (*)())wait, 20);
+      Call3((void (*)())Actor_OffsetPositionAndReset, 4, 0, -16);
+      Call3((void (*)())Actor_OffsetPositionAndReset, 7, 0, -16);
+      Call1((void (*)())Actor_WaitForMoveById, gMainRoutineWork.currentOwner);
+      Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 1);
+      Call2((void (*)())Actor_SetModeById, 7, 1);
+      Call1((void (*)())FieldEvent_Wait, 50);
+      Call1((void (*)())Func_020059f4, 141);
+      Call1((void (*)())FieldEvent_Wait, 30);
+      Call3((void (*)())Func_020057ac, 0x10000, 0x10000, 0x10000);
+      Call1((void (*)())FieldEvent_Wait, 30);
+      Call3((void (*)())Func_020057ac, 0x20000, 0x20000, 0x10000);
+      Call1((void (*)())FieldEvent_Wait, 30);
+      Actor_GetById(0)->priorityFlags |= 1;
+      Actor_GetById(1)->priorityFlags |= 1;
+      Actor_GetById(2)->priorityFlags |= 1;
+      Actor_GetById(3)->priorityFlags |= 1;
+      Actor_GetById(4)->priorityFlags |= 1;
+      Actor_GetById(5)->priorityFlags |= 1;
+      Actor_GetById(7)->priorityFlags |= 1;
+      Actor_GetById(6)->priorityFlags |= 1;
+      Actor_GetById(30)->priorityFlags |= 1;
+      Actor_GetById(27)->priorityFlags |= 1;
+      Actor_GetById(28)->priorityFlags |= 1;
+      Actor_GetById(31)->priorityFlags |= 1;
+      Actor_GetById(32)->priorityFlags |= 1;
+      Call4((void (*)())Camera_MoveWithinMapBounds, 0x2000000, 0x600000, 0x1080000, 1);
+      Func_02005924();
+      Call2((void (*)())Actor_SetSpritePriority, 31, 1);
+      Call2((void (*)())Actor_SetSpritePriority, 32, 1);
+      Call2((void (*)())Actor_SetSpritePriority, gMainRoutineWork.currentOwner, 1);
+      Call2((void (*)())Actor_SetSpritePriority, 7, 1);
+      Call1((void (*)())FieldEvent_Wait, 20);
+      Actor_SetSingleChildFlags(Actor_GetById(31), 0);
+      Actor_SetPartAttribute(Actor_GetById(31), 7);
+      actor31 = Actor_GetById(31);
+      actor31->scaleY = 0xffff0000;
+      actor31->scaleX = 0x1999;
+      actor31->motionFlags = 0;
+      actor31->x = 0x2000000;
+      actor31->y = 0x800000;
+      actor31->z = 0x1080000;
+      actor31->priorityFlags |= 2;
+      Actor_SetSingleChildFlags(Actor_GetById(32), 0);
+      Actor_SetPartAttribute(Actor_GetById(32), 7);
+      actor32 = Actor_GetById(32);
+      actor32->scaleY = 0xffff0000;
+      actor32->scaleX = 0x1999;
+      actor32->motionFlags = 0;
+      actor32->x = 0x2000000;
+      actor32->y = 0xa00000;
+      actor32->z = 0x1080000;
+      actor32->priorityFlags |= 2;
+      Call2((void (*)())Actor_SetMovementTypeById, 31, (s32)gData_02006338);
+      Call2((void (*)())Actor_SetMovementTypeById, 32, (s32)gData_02006338);
+      Task_Add((s32)Func_020004c8, 0x480);
+      Call3((void (*)())Func_02005884, 9, 0, 0);
+      Call3((void (*)())Func_02005884, 10, 0, 0);
+      Call3((void (*)())Func_02005884, 23, 0, 0);
+      Call3((void (*)())Func_02005884, 24, 0, 0);
+      Call1((void (*)())Func_020059f4, 145);
+      Call3((void (*)())Func_020057ac, 0x60000, 0x60000, 0x10000);
+      Call2((void (*)())Func_02005954, 0x4063ff, 0);
+      Call1((void (*)())Func_02005964, 16);
+      Call1((void (*)())wait, 16);
+      Call1((void (*)())Func_020059f4, 63);
+      Call1((void (*)())wait, 180);
+      Call2((void (*)())Func_02005954, 0x7fff, 0);
+      Call1((void (*)())Func_02005964, 60);
+      Call1((void (*)())Func_020059f4, 141);
+      Call1((void (*)())wait, 60);
+      Call1((void (*)())Task_RemoveFar, (s32)Func_020004c8);
+      Call1((void (*)())GameFlag_SetBit, 0x11a);
+      Call1((void (*)())Func_02005934, 2);
+    }
+    Func_0200581c();
+  }
 }

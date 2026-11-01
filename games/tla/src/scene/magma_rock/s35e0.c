@@ -1,8 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Seventeen effects burst from the leader, one every 1/16 turn. A real for loop
-// is needed: a goto loop keeps zero inside but loses the -13 copy and the 285
-// order (differ 45). The default on zero before the loop is what keeps its set
-// inside: set twice, loop.c leaves it; flow then drops the default.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

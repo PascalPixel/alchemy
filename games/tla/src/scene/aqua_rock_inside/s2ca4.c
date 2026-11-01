@@ -1,11 +1,4 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The Lost Age's form of The Broken Seal's LamakanDesert_SlideDownDune (the
-// statements, order and declarations carry over; the spray moved into
-// Func_02002bd4, and scene SceneId_Ov67bRoom1 with a zero terrain height skips
-// the slide). Func_02003e3c goes through call.h's Call2: a direct call with
-// any prototype or return type, or a constant local, keeps movs, lsls, mov r0
-// where the native has movs, mov r0, lsls.
-#include "../../../../games/tla/src/scene/aqua_rock_inside/local.h"
+#include "local.h"
 #include "scene_ids.h"
 #include "call.h"
 #include "system/frame.h"
@@ -46,7 +39,8 @@ void Func_02002ca4(void) {
   if ((gFrameCount & 4) == 0)
     Func_02002bd4(actor);
   if (hit < 0) {
-    /* FAKEMATCH(wrapper): Call2 kept; as a direct call, 2 of 151 instructions differ in tla-en. */
+    /* FAKEMATCH(wrapper): Call2 kept; as a direct call, 2 of 151 instructions
+     * differ in tla-en. */
     Call2(Func_02003e3c, id, 258);
     Func_02003ce4(actor, actor->x, actor->y, actor->z + 0x80000);
     Func_02003cc4(actor, 49);

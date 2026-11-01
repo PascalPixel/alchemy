@@ -1,31 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The leader slides along the ice from the middle of its cell until something
-// stops it: twin of Imil_RunIceSlide in The Broken Seal (confirmed: the same
-// probe of the next cell, cell behaviour 255 as the wall, the height test of 8
-// pixels and the slide's speeds), reworked here. The heading comes from the
-// actor's own angle, snapped to a quarter turn, instead of the held keys, and
-// every step also tests the other solid objects; a blocked first step sets the
-// actor down in the cell's middle. Overlay 6aa's Func_02003884 is the same
-// function.
-// What closed it in plain C: goto for the outer and slide loops, entered at the
-// slide's test; a hand-stepped object pointer and flags pointer in the search;
-// (s16) on the heading (its mask is a HImode pool load, which is what places
-// the mid-function pool); the startX and startZ locals, which CSE prefers over
-// x and z; zero as one spilled constant, reloaded from the pool at the halfword
-// store.
-// What the devices are for. Without them PRE hoists sfp - 12 and actor + 34 out
-// of the loops, where the native rebuilds them, so the asm clobbers kill
-// availability at the bottom of each loop. Their operands and the shared i
-// rank the pseudos as the native does (actor r5, position and other r6, next r7,
-// flags r8, nextBehavior r10, i r9, layer r11, radius on the stack);
-// this compiler weights references by loop depth, the native's order comes out
-// nearer unweighted. The r4 clobbers keep i and the rest out of the caller-save
-// register, which the native never uses. The plain asm("") lines keep stores
-// ahead of a later load, as the "load after a store" group of the shared notes
-// says. A native spilled pseudo for &probe, rematerialized at each use, would
-// explain most of this, but no C shape reproduced it: the local takes a stack
-// slot once any sfp clobber is near. The device set is heavy, so review it under
-// S2 before adoption. Only tla-en was measured.
 #include "types.h"
 #include "actor.h"
 #include "fixed_math.h"
@@ -87,9 +59,11 @@ top:
   zero = 0;
   actor->velocityX = zero;
   actor->velocityZ = zero;
-  /* FAKEMATCH(temporary): cell holds the masked x; as one expression, 93 of 246 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): cell holds the masked x; as one expression, 93 of 246
+   * instructions differ in tla-en. */
   cell = actor->x & 0xfff00000;
-  /* FAKEMATCH(temporary): i holds half a cell here and the search's count later; as a separate PIXELS(8), 18 of 246 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): i holds half a cell here and the search's count
+   * later; as a separate PIXELS(8), 18 of 246 instructions differ in tla-en. */
   i = PIXELS(8);
   position = &probe;
   position->x = startX = cell + i;
@@ -97,8 +71,6 @@ top:
   position->z = startZ = (actor->z & 0xfff00000) + i;
   x = startX;
   z = startZ;
-  /* FAKEMATCH(barrier): the empty asm keeps the stores ahead of the layer's load; with no asm, 4 of 246 instructions differ in tla-en. */
-  asm("");
   startBehavior = Func_02004424(*(layer = &actor->terrainId), startX, startZ);
   Vector_AddPolarOffsetFar(PIXELS(16), heading, position);
   nextBehavior = Func_02004424(*layer, position->x, position->z);
@@ -119,7 +91,8 @@ top:
   Func_020043c4(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   actor->update = Func_0200385c;
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading layer and nextBehavior; with no asm, 70 of 246 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading layer and
+   * nextBehavior; as no asm, 72 of 246 instructions differ in tla-en. */
   asm("" : : "r"(layer), "r"(nextBehavior) : "sfp");
   goto test;
 body:
@@ -131,10 +104,13 @@ body:
   flags = &other->collisionFlags;
   for (i = 0; i < 64; i++, flags += 128, other++) {
     if (other->script != NULL && (*flags & 1) && other != actor) {
-      /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading next and actor; with no asm, 209 of 246 instructions differ in tla-en. */
-      asm("" : : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
-          "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor) : "sfp",
-          "r4");
+      /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading
+       * next and actor; as no asm, 209 of 246 instructions differ in tla-en. */
+      asm(""
+          :
+          : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
+            "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
+          : "sfp", "r4");
       if (Func_02004454(&other->x, radius, &probe, other->radius - 2) >= 0) {
         goto stop;
       }
@@ -146,17 +122,22 @@ body:
   actor->acceleration = 0x1999;
   Func_020043f4(actor, next->x, next->y, next->z);
   Func_020043fc(actor);
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp; with no asm, 149 of 246 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 151 of 246
+   * instructions differ in tla-en. */
   asm("" : : : "sfp");
   if (nextBehavior != startBehavior) {
     goto blocked;
   }
 test:
-  /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber so PRE leaves it, loads the angle ahead of the address; as heading in the call, 2 of 246 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber so PRE
+   * leaves it, loads the angle ahead of the address; as heading in the call, 2
+   * of 246 instructions differ in tla-en. */
   asm("" : "=r"(angle) : "0"(heading) : "r4");
   step = &probe;
   Vector_AddPolarOffsetFar(PIXELS(16), angle, step);
-  /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address, so next rebuilds it; as &probe in the call, 114 of 246 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address, so
+   * next rebuilds it; as &probe in the call, 116 of 246 instructions differ in
+   * tla-en. */
   step = NULL;
   next = &probe;
   nextBehavior = Func_02004424(*layer, next->x, next->z);
@@ -169,7 +150,9 @@ stop:
   Func_020043f4(actor, x, actor->y, z);
   Func_020043fc(actor);
   wait(2);
-  /* FAKEMATCH(barrier): the asm tied to actor and clobbering sfp kills both addresses on the back edge; with no asm, 190 of 246 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the asm tied to actor and clobbering sfp kills both
+   * addresses on the back edge; as no asm, 190 of 246 instructions differ in
+   * tla-en. */
   asm("" : "=r"(actor) : "0"(actor) : "sfp");
   goto top;
 
@@ -177,8 +160,6 @@ blocked:
   wait(10);
 done:
   actor->update = NULL;
-  /* FAKEMATCH(barrier): the empty asm keeps the store ahead of the flags' load; with no asm, 2 of 246 instructions differ in tla-en. */
-  asm("");
   actor->actionFlags |= 1;
   actor->acceleration = PIXELS(1) / 4;
   Func_020043c4(actor, 1);

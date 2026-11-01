@@ -1,19 +1,4 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Pushes a Trial Road object by (dx, dz) cells when the leader stands right
-// behind it (else the event work's byte 388 is set to 13): it slides up to six
-// cells until a cell of its width (across axis) is blocked (Func_02000df8), the
-// leader pushing (mode 8, sound 239) and following; stopping short of column 18
-// it settles (sounds 298, 213), past it it drops off the edge to x 312, takes
-// its flag (id + 579) and sounds 298 and 240.
-// Two barriers carry the match; both emit nothing. Plain source ranks toZ above
-// object and n above dx and dz, against the listing's object > toZ > toX > dx >
-// dz > n. All the refs the listing shows for dx, dz and object are already
-// there, so the source's extra refs are still unknown. Tried without success:
-// a goto-built loop, a second n = 0 (n's live length doubles again, but its
-// eighth ref outweighs that), and no copy of fromZ to toZ beside its set (toZ
-// falls to 8 refs but still outranks object). The frame's top 12 bytes are the
-// unused local.
-#include "../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "trial_road.h"
 #include "vector3.h"
 
 struct EventWork184 {
@@ -46,7 +31,6 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   // Unused: gives the stack frame its 12 bytes.
   struct Vector3 unused;
 
-
   if ((dx != 0 && toX != x + dx) || (dz != 0 && toZ != z + dz)) {
     ((struct EventWork184 *)Ram_HeapSlots->eventWork)->value = 13;
     return;
@@ -76,7 +60,9 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   if (fromX == toX && fromZ == toZ)
     return;
   Func_02005880();
-  /* FAKEMATCH(barrier): the empty asm reading dx, dz and object, which ranks them above n and toZ; as no asm, 162 of 240 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm reading dx, dz and object, which ranks
+   * them above n and toZ; as no asm, 162 of 240 instructions differ in tla-en.
+   */
   asm("" : : "g"(dx), "g"(dz), "g"(object));
   Func_020059e8(0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
@@ -87,13 +73,12 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   if (dx < 0 || dz < 0)
     mode = 3;
   Func_020057c8(object, mode);
-  Func_020057f8(object, (toX << 20) + 0x80000, 0,
-                z = (toZ << 20) + 0x80000);
+  Func_020057f8(object, (toX << 20) + 0x80000, 0, z = (toZ << 20) + 0x80000);
   FieldEvent_Wait(6);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x3333);
   Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, dx << 3,
-                                            dz << 3);
+                                     dz << 3);
   FieldEvent_Wait(24);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   Func_02005800(object);
@@ -111,7 +96,9 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
       u8 *flags = &object->priorityFlags;
       s32 value;
 
-      /* FAKEMATCH(barrier): the empty asm passing flags through, clobbering r0 and r2, which puts flags in r3 and the store after the sound id; as no asm, 8 of 240 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): the empty asm passing flags through, clobbering r0
+       * and r2, which puts flags in r3 and the store after the sound id; as no
+       * asm, 8 of 240 instructions differ in tla-en. */
       asm("" : "=r"(flags) : "0"(flags) : "r0", "r2");
       value = 2;
       *flags = value;

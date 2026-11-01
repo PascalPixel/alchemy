@@ -18,7 +18,7 @@ SECTIONS
         "*/games/tla/src/scene/gaia_rock/events_e.o"(.text)
         "*/resource_680_overlay.o"(.text.x02008ab4)
         "*/resource_680_overlay.o"(.text.x02008b2c)
-        "*/resource_680_overlay.o"(.text.x02008bc0)
+        "*/games/tla/src/scene/gaia_rock/s0bc0.o"(.text)
         "*/games/tla/src/scene/gaia_rock/events_f.o"(.text)
         "*/games/tla/src/scene/gaia_rock/import.o"(.text)
         "*/games/tla/src/scene/gaia_rock/data.o"(.data)

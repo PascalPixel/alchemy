@@ -60,7 +60,7 @@ SECTIONS
         "*/resource_6a8_overlay.o"(.text.x0200b91c)
         "*/resource_6a8_overlay.o"(.text.x0200bbc8)
         "*/games/tla/src/scene/prox/s3edc.o"(.text)
-        "*/resource_6a8_overlay.o"(.text.x0200bee8)
+        "*/games/tla/src/scene/prox/s3ee8.o"(.text)
         "*/resource_6a8_overlay.o"(.text.x0200c114)
         "*/games/tla/src/scene/prox/s4198.o"(.text)
         "*/resource_6a8_overlay.o"(.text.x0200c254)

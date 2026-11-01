@@ -38,7 +38,7 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_statue/s1c10.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s2074.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s20b0.o"(.text)
-        "*/resource_671_overlay.o"(.text.x0200a0f0)
+        "*/games/tla/src/scene/gabomba_statue/s20f0.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s22d0.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/resource_671_overlay.o"(.text.x0200a394)

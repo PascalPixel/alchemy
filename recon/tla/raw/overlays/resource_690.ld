@@ -7,7 +7,7 @@ SECTIONS
         "*/resource_690_overlay.o"(.text.x0200807e)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_690_overlay.o"(.text.x020080b6)
-        "*/resource_690_overlay.o"(.text.x020080b8)
+        "*/games/tla/src/scene/settlements/s00b8.o"(.text)
         "*/games/tla/src/scene/settlements/s0280.o"(.text)
         "*/games/tla/src/scene/settlements/scene_tables.o"(.text)
         "*/games/tla/src/scene/settlements/placements.o"(.text)

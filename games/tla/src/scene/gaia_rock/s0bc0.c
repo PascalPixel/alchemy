@@ -1,15 +1,3 @@
-// Draft, differ 6 of 218, skeleton gap 3 (tla-en, 2026-11-01): a pillar the party
-// pushed off a ledge drops onto the floor below with sixteen dust puffs, a
-// shake and the leader riding it down (gravity lowered until it lands, at most
-// 180 frames), then sets its flag. Overlay 681's Func_02004af0 is a copy with
-// small changes.
-// Left: two sched2 orders. At entry the native has sub sp, ldr, str flag, movs
-// where this has ldr, sub sp, movs, str flag; after the fall it stores gravity
-// before the movs #133 where this stores it after. Tried: split declarations,
-// Value1 and Call2 forms, a local for &gMainRoutineWork, u32 flag and gravity,
-// three minutes of permute (only a reused temporary, no closer).
-// id doubling as the frame counter gives the native r6 and leader r5; a
-// separate counter takes r5 and differs by 149.
 #include "types.h"
 #include "actor.h"
 #include "call.h"
@@ -36,8 +24,7 @@ void Func_02000e24(struct Actor *object, s32 mode);
 void FieldEvent_Wait(s32 frames);
 void wait(s32 frames);
 void Func_02000ecc(void);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_02000e7c(void);
 void GameFlag_SetBit(s32 flag);
 

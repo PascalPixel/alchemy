@@ -1,27 +1,4 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// What closed it: the 0 stored into each layer and the pieces' source row are
-// one variable across both courses (row, r9), and on the plain course the 1
-// tested against the entrance is value (r6); each was two pseudos, and a
-// set-once 0 loses r9 to Iwram_MulQ16's address. The macro stores row before it
-// sets x, which gives reload its rotation. One forwarded inline keeps 152 << 16
-// rematerialized. The one-pass blocks and the two temporaries place the eors
-// and adds among the strh run: a load's sign extension hides it from
-// -mthumb-slow-loads, so plain C leaves them 2 to 6 instructions out. If K2's
-// model comes to cover sign-extended loads after stores, try them all plain
-// first.
-//
-// The Trial Road's map setup. In room 1, by entrance:
-// 31 and 32 (or 33 and 34, with a different start) deal the stage order once
-// from the leader's stats (flag 896), reset the stage and load its pattern;
-// 50 deals and resets for the race; others set up the course: its two scrolled
-// layers and their cells, either the course's mirrored halves (odd entrance)
-// or the plain course with the chests placed, the stage's pieces from
-// gData_02005bac, the unused pieces put away, the leader set on the ground,
-// and with flag 2559 the stage resumed (Func_02000218 when field16[0] is
-// below field1a or flag 642 is set, flags 642 and 644, the link display, the
-// stage's music and its frame counter). In room 2, with flag 2559 and not 901,
-// it stamps the finish by mirroring. Returns 0.
-#include "../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "trial_road.h"
 #include "iwram_call.h"
 #include "map.h"
 #include "event_work.h"
@@ -77,8 +54,8 @@ struct TrialRoadDeal {
   words[1] = Iwram_MulQ16(*viewZ, words[5]) + words[3]
 
 static __inline__ void Func_020058e0_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline; as direct calls, 30 of 879
-   * instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Func_020058e0_ forwarded inline; as direct calls to
+   * Func_020058e0, 30 of 879 instructions differ in tla-en. */
   Func_020058e0(id, x, z);
 }
 
@@ -108,18 +85,14 @@ s32 Func_0200242c(void) {
       }
       state->mirrored = (entrance - 1) & 1;
       state->field16[0] = 0;
-      do {
-        /* FAKEMATCH(one-pass): the stores' block; as plain stores, 2 of 879
-         * instructions differ in tla-en. */
-        state->field16[1] = 0;
-        state->field1a = 0;
-        state->field1c = 0;
-      } while (0);
+      state->field16[1] = 0;
+      state->field1a = 0;
+      state->field1c = 0;
       value = state->order[state->mirrored ^ 1];
       Func_020056c4((s32)gData_02005b84[value & 7]);
       state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
       n = entrance % 10;
-      Event_SetDestination((s32)&SceneId_Ov697Room1, n);
+      Func_02005988((s32)&SceneId_Ov697Room1, n);
     } else if ((u32)(entrance - 33) <= 1) {
       if (!GameFlag_Test(896)) {
         unit = Unit_Get(gMainRoutineWork.currentOwner);
@@ -135,20 +108,12 @@ s32 Func_0200242c(void) {
          * state->mirrored, 2 of 879 instructions differ in tla-en. */
         s16 side = (entrance - 1) & 1;
 
-        do {
-          /* FAKEMATCH(one-pass): the first stores' block; as plain stores, 2 of
-           * 879 instructions differ in tla-en. */
-          state->mirrored = side;
-          state->field16[0] = 3;
-          state->field16[1] = 3;
-        } while (0);
-        do {
-          /* FAKEMATCH(one-pass): the last stores' block; as plain stores, 2 of
-           * 879 instructions differ in tla-en. */
-          state->field1a = 4;
-          state->field1c = 4;
-          side ^= 1;
-        } while (0);
+        state->mirrored = side;
+        state->field16[0] = 3;
+        state->field16[1] = 3;
+        state->field1a = 4;
+        state->field1c = 4;
+        side ^= 1;
         {
           /* FAKEMATCH(temporary): index; as state->order[side + 6], 2 of 879
            * instructions differ in tla-en. */
@@ -160,7 +125,7 @@ s32 Func_0200242c(void) {
       Func_020056c4((s32)gData_02005b84[value & 7]);
       state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
       n = entrance % 10;
-      Event_SetDestination((s32)&SceneId_Ov697Room1, n);
+      Func_02005988((s32)&SceneId_Ov697Room1, n);
     } else if (entrance == 50) {
       unit = Unit_Get(gMainRoutineWork.currentOwner);
       Iwram_ClearWords(state, 32);
@@ -174,7 +139,7 @@ s32 Func_0200242c(void) {
       state->field1a = 0;
       state->field1c = 0;
       state->pattern = state->order[0];
-      Event_SetDestination((s32)&SceneId_Ov697Room1, 55);
+      Func_02005988((s32)&SceneId_Ov697Room1, 55);
     } else {
       s32 *viewX = &map->viewX;
       s32 *viewZ = &map->viewZ;

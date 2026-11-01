@@ -1,25 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// A set piece in Gaia Rock's interior: the leader's gravity is saved and the
-// event starts, the actor numbered id is placed through Func_02004a5c and given
-// a script, then sixteen actors spawn 16 pixels above the leader with a random
-// heading, speed and scale. Sounds and a screen shake follow; the leader takes
-// mode 40 and gravity 0x547a, and for at most 180 frames waits to reach the
-// ground, then the gravity comes back, the shake settles, the camera returns,
-// and the event ends by setting flag.
-//
-// What closed it. The burst is a label loop (a for hoists MulQ16 and the
-// constants). value is one variable for id, the speed and the frame counter:
-// that keeps it global and below the leader in priority, so the leader takes
-// r5 and value r6, and split apart the leader falls to r9 (differ 151). The
-// third random spills without help, and the speed's shift is written at each
-// use: a shift statement rotates angle, scale and MulQ16 (differ 22).
-//
-// Plain C ends at differ 6 of 218, all order: the native issues the spill of
-// flag and the gravity store ahead of the 0x214 split constant, here the
-// chain's higher priority goes first (the known load-after-store gap; prio(str) is
-// one short, the load after it costing 2). The four tagged devices below pin
-// that order, one purely so the pool load comes before the barrier. Worth
-// revisiting if the load model changes: all of them may then come out.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -58,11 +36,14 @@ void Func_02004af0(s32 id, s32 flag) {
   s32 i;
   struct MainRoutineWork *work;
 
-  /* FAKEMATCH(barrier): the form kept; as plain gMainRoutineWork.currentOwner with no asm, 2 of 218 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the form kept; as plain gMainRoutineWork.currentOwner
+   * with no asm, 2 of 218 instructions differ in tla-en. */
   __asm__("" : "=r"(entryWork) : "0"(entryWork));
-  /* FAKEMATCH(barrier): the form kept; as plain code with no asm here, 4 of 218 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the form kept; as plain code with no asm here, 2 of 218
+   * instructions differ in tla-en. */
   __asm__("");
-  /* FAKEMATCH(temporary): the form kept; as id used directly from entry, 2 of 218 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the form kept; as id used directly from entry, 4 of
+   * 218 instructions differ in tla-en. */
   value = id;
   leader = Actor_GetById(entryWork->currentOwner);
   gravity = leader->gravity;
@@ -113,8 +94,6 @@ burst:
   Func_02005014(188);
   work = &gMainRoutineWork;
   leader->gravity = gravity;
-  /* FAKEMATCH(barrier): the form kept; as plain code with no asm here, 2 of 218 instructions differ in tla-en. */
-  __asm__("");
   Func_02004f34(work->currentOwner, 0);
   Func_02004d9c(leader, 38);
   Call3((void (*)())Func_02004e24, 0x10000, 0x40000, 0x10000);
@@ -132,4 +111,3 @@ burst:
   Func_02004e64();
   GameFlag_SetBit(flag);
 }
-

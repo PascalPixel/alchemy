@@ -1,11 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Overlay 6ab's Func_02001bf8, one tagged device (one-pass). What closed it, for the
-// copies in 6aa and 6ac (their data symbol is the one overlay-specific thing):
-// saved[2] is a DImode pseudo, spilled, so sp+4 keeps an unread store; the load
-// at +108 reads through a union (alias set 0), which keeps it after that store;
-// dx and dz stay block-local so r2 stops being unk6's preference and x takes r2;
-// the one-pass block's loop note keeps i = 3 after the two halfword stores. No
-// plain form of that last order was found: 4 of 182 differ without it.
 #include "types.h"
 
 typedef struct Actor {
@@ -36,7 +28,6 @@ typedef struct State {
   Entry entries[4];
 } State;
 
-
 s32 GameFlag_Test();
 void Func_02001780();
 void Func_0200196c();
@@ -44,7 +35,6 @@ void Func_020019b4();
 void Func_020019fc();
 void Func_02001b78();
 extern u8 gData_020023c4[];
-
 
 typedef struct Position {
   s32 x;
@@ -89,12 +79,9 @@ void Func_02001bf8(void) {
   saved[0] = IWRAM->unk_6c.word;
   if (state->unk_6 != 0 && state->unk_8 == 0 && state->callback != 0)
     state->callback();
-  do {
-    /* FAKEMATCH(one-pass): the form kept; as these statements with no block, 4 of 182 instructions differ in tla-en. */
-    v = (u16)state->unk_6;
-    state->unk_8 = v;
-    state->unk_6 = 0;
-  } while (0);
+  v = (u16)state->unk_6;
+  state->unk_8 = v;
+  state->unk_6 = 0;
   for (i = 3; i >= 0; i--, entry++) {
     Actor *actor;
     s32 flag, x, y, unk6, value, dx, dz;

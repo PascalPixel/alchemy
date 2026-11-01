@@ -1,27 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Overlay 6ad's copy of the function drafted in resource_698_c_020003cc.c,
-// shared by thirteen overlays (698 to 6a4): the leader rides up with its watched
-// object, spinning and flickering, until that object clears its flag; then it
-// is set down on the 8-pixel grid beside it, falls to the ground and the camera
-// follows it again.
-// How it closed from 117, and what the other twelve copies can take:
-// - The rise is a real loop, not a goto: only then does 0x3ffff stay a pooled
-//   compare (a goto gives 0x40000) and the if's 0x1999 stay in the body. The
-//   fall and settle loops stay goto, with wait(1) before i++.
-// - The work's halfwords are struct members (movs), the two byte stores of 1
-//   and 0 go through a cast pointer (the native's pooled 1 and 0).
-// - The motion flags and the watched object's flag are pointer locals (r9, r8).
-// - facing is set, then shifted on its own, which keeps asrs after the ldrh; as
-//   one expression the front end shifts it unsigned. x is computed before it.
-// - The camera call goes through Call4.
-// The barrier in the rise is what is left: PRE moves actor + 0x23 out of the
-// loop and into a fourth high register, and no plain spelling stops it. The
-// native shows no PRE there, which is the "native keeps things in the loop"
-// family, and that lead (classic GCSE) is a compiler question for Pascal, not
-// this draft's. Tried in its place, none reaching 0: a shared pointer local (56),
-// a copy inside a one-pass block (21 in a goto loop, which loses the pooled
-// 0x3ffff; 88 in a real loop), do-while under an if, an inline wrapper, a later
-// address, stepping the pointer.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -32,8 +8,7 @@
 struct Actor *Actor_GetById(s32 id);
 void Func_02005560(void);
 void Func_02005648(s32 value);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void wait(s32 frames);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 struct Actor *Func_020055e8(void);
@@ -80,7 +55,8 @@ void Func_0200167c(void) {
     actor->angle = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     /* FAKEMATCH(barrier): the actor set in the loop keeps PRE from moving its
-     * flags' address out; as no asm, 74 of 216 instructions differ in tla-en. */
+     * flags' address out; as no asm, 74 of 216 instructions differ in tla-en.
+     */
     asm("" : "+l"(actor));
     wait(1);
   }

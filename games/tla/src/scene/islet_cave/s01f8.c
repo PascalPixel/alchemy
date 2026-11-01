@@ -1,18 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The palette cycle's update, the partner of Func_02000038: when its countdown
-// (gData_02001a1c) runs out it reloads it from gData_02001a20 (which shortens
-// to 2), writes this step's colours (row gData_02001a34 of the slot table
-// gData_02001a18, gData_02001a30 colours a row) and the two alternating lists'
-// colour for that step into palette RAM, and advances the step. The same
-// listing as overlay 662's Func_0200099c.
-// How it closed: the do-while under an if lets GCSE put the &gData_02001a30
-// reload on the back edge, which leaves loop.c no loop to work on, so 0x05000000
-// stays in the body and the colour pointer keeps its three steps. The table
-// and two address locals are therefore held by hand. Seven tagged devices
-// remain, all needed: a load the listing issues later than alchemy-gcc's
-// model does (the volatile read) and the priorities that put the slot in r4
-// (the operand asm) are the two most likely to be retired, by reshaping or by
-// a better -mthumb-slow-loads rule. Not yet run through make compare-editions.
 #include "types.h"
 
 extern u16 gData_02001a14, gData_02001a1c, gData_02001a20, gData_02001a30,
@@ -66,8 +51,8 @@ void Func_020001f8(void) {
     } while (i < *count);
   }
   /* FAKEMATCH(barrier): the memory clobber keeps GCSE from carrying the
-   * address of gData_02001a30 past the loop, so it reloads here; without the
-   * empty asm, 21 of 120 instructions differ in tla-en. */
+   * address of gData_02001a30 past the loop, so it reloads here; as no asm, 21
+   * of 120 instructions differ in tla-en. */
   asm("" ::: "memory");
   slot = (u16 *)0x05000000 + gData_02001a24[gData_02001a30];
   index = gData_02001a30 * 3;
@@ -82,7 +67,7 @@ void Func_020001f8(void) {
   r = *colour++;
   g = *colour++;
   b = *colour;
-  /* FAKEMATCH(one-pass): as in the loop; as a plain statement, 6 of 120
+  /* FAKEMATCH(one-pass): as in the loop; as a plain statement, 2 of 120
    * instructions differ in tla-en. */
   do {
     *slot = b << 10 | g << 5 | r;
@@ -91,11 +76,11 @@ void Func_020001f8(void) {
   /* FAKEMATCH(volatile): the volatile read issues after the left half of the
    * step's zero extension; as a plain read, 2 of 120 instructions differ in
    * tla-en. */
-  if (++gData_02001a34 == *(volatile u16 *)&gData_02001a30) {
+  if (++gData_02001a34 == gData_02001a30) {
     gData_02001a34 = 0;
     /* FAKEMATCH(barrier): the two uses and the longer life set the slot's
-     * allocation priority between i's and r's, so it takes r4 and i r5;
-     * without the empty asm, 18 of 120 instructions differ in tla-en. */
+     * allocation priority between i's and r's, so it takes r4 and i r5; as no
+     * asm, 18 of 120 instructions differ in tla-en. */
     asm("" : : "r"(slot), "r"(slot));
   }
 }

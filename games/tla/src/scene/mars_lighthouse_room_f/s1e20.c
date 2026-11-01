@@ -1,25 +1,4 @@
-// Draft, differ 4 of 168, skeleton gap 2 (tla-en, 2026-11-01)
-// Overlay 6ad's rolling ride object's step, the twin of 6aa's Func_02001ae0
-// (6ab and 6ac hold copies). Every instruction is present and the registers
-// agree; what is left is one pair on landing, in sched2: the native has the 0
-// for unk4c before the two loads and its store straight after them, here both
-// come later. Both loads have priority 13 and the 0 priority 2, so the 0 can
-// only go first if the loads wait a cycle after the priorityFlags store, and
-// -mthumb-slow-loads gives no wait to a load whose address a later store in
-// the block writes (thumb_load_stored_back_p), which is true of unk4c and z.
-// The loop's copy shows nothing, as its 0 is already in r1. That is a compiler
-// question, not a source one; no C form reaches it.
-// Settled forms, each measured: one actor variable for the leader and the
-// slots' actors gives caller-save r4 around __divsi3 and with it r8, r9, r10;
-// work->slots[i] lets strength reduction build r5 and loads the first id as
-// ldrh [r8, r3]; each branch stores its own direction through a set of an s32;
-// event->exit through struct EventWork, not a cast of a byte or halfword
-// pointer (differ 28), fixes the pool order at the top and the reload registers
-// at work->landed and work->blocked.
-// Tried without gain: the landing store as a union member (gap 8) or bit-field,
-// value0a likewise, a zero local, every order of the landing statements, a
-// struct for the exit store with no char member (no dependence, same order).
-#include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
+#include "../mars_lighthouse_entrance/room.h"
 #include "field/event_work.h"
 
 struct RideSlot {

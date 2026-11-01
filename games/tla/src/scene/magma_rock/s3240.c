@@ -1,27 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01): the same function as overlay 68F's
-// Func_02002764 and 67F's Func_02000708. From the list of {actor id, flag}
-// pairs ended by 0xffff it finds the entry for the actor Func_02003c2c finds at
-// the leader's position. If the entry's flag is clear, actor 8 flashes and the
-// flag is set; if it is set and the next flag is clear, the leader's motion
-// flags are cleared and set to 3 around a longer sequence, and the next flag is
-// set. The names are this draft's guesses at most: nothing here is from the
-// game's text.
-// Everything turned on the native's allocation order, read from global.c: the
-// leader in r5, actor 8 in r7, the id in r8 and the target in r10 need the
-// leader and actor 8 to outrank the id and the target, which they do only if
-// the loop's references are not weighted. As a plain goto loop the blocks have
-// loop_depth 1, the id and the target get r5 and r7, and 65 of 191 instructions
-// differ. The native behaves as if its loop had depth 0. The dead entry below
-// gives the loop two entries while life analysis runs, so flow_loops_find sees
-// no natural loop; combine then folds the test away, since a u16 has no bit 16,
-// and no instruction of it survives. Reshaping tried first: the flags pointer
-// set at several places, the call's result compared through a second local, the
-// assignment inside the test, and u16 or block-scoped ids.
-// `flags` is one pseudo in r8: adds r5, #85 and mov r8, r5 are reload's, and the
-// terrain address stays a CSE pseudo in r5 only if no local holds it. A real
-// lead for Pascal, outside this draft: the depth-0 reading may be a difference
-// between alchemy-gcc's flow and Camelot's compiler, and other goto loops would
-// show the same order.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -63,7 +39,7 @@ void Func_02003240(u16 *list) {
     return;
   /* FAKEMATCH(dead): a test no u16 can pass enters the loop a second way, so it
    * is no natural loop and its references are not weighted; as if (target != 0)
-   * goto test; return;, 65 of 191 instructions differ in tla-en. */
+   * goto test; return;, 75 of 191 instructions differ in tla-en. */
   if (list[0] & 0x10000)
     goto body;
   goto test;
@@ -106,8 +82,8 @@ body:
         flags = &leader->motionFlags;
         *flags = 0;
         Func_02003c54(185);
-        /* FAKEMATCH(wrapper): forwarded through Call3, which builds each 0x10000
-         * apart; as Func_02003ac4(0x10000, 0x40000, 0x10000), 21 of 191
+        /* FAKEMATCH(wrapper): forwarded through Call3, which builds each
+         * 0x10000 apart; as Func_02003ac4(0x10000, 0x40000, 0x10000), 21 of 191
          * instructions differ in tla-en. */
         Call3((void (*)())Func_02003ac4, 0x10000, 0x40000, 0x10000);
         Func_020034ac(0);
@@ -119,8 +95,8 @@ body:
         Func_02003784(-2, target->terrainId);
         wait(4);
         /* FAKEMATCH(wrapper): forwarded through Call3, which builds each -1
-         * apart; as Func_02003ac4(-1, -1, 0xe666), 23 of 191 instructions differ
-         * in tla-en. */
+         * apart; as Func_02003ac4(-1, -1, 0xe666), 23 of 191 instructions
+         * differ in tla-en. */
         Call3((void (*)())Func_02003ac4, -1, -1, 0xe666);
         wait(8);
         *flags = 3;

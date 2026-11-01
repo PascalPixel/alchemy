@@ -1,14 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01): walks a 0xffff-ended list of (actor,
-// flag) pairs for the actor Func_02003c2c finds at the leader's position, and
-// plays that actor's stage for the flag and the next one. A relative of
-// Func_02004200 in magma_rock_inside/s4200.c, whose forms this follows.
-// The barrier: the plain C has every instruction shape but leader, id and target
-// in r8, r6, r7 where the native has r6, r7, r8. global.c ranks id above leader
-// and target above leader, and target then evicts the motion address from r6.
-// The asm takes leader from 5 refs to 11 (loop weight), which puts it first; it
-// sits in the step block so that no scheduling changes. No plain form was found:
-// split or shared pointers, p = target then p += 34 (cse folds it), comparing the
-// call's result before assigning, inner-scope locals and flag + 1 inline.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -53,7 +42,8 @@ body:
 
     if (Actor_GetById(id) != target) {
       list += 2;
-      /* FAKEMATCH(barrier): the form kept; as no asm at all, 64 of 158 instructions differ in tla-en. */
+      /* FAKEMATCH(barrier): the form kept; as no asm at all, 64 of 158
+       * instructions differ in tla-en. */
       asm("" : "=r"(leader) : "0"(leader));
       goto test;
     }

@@ -1,9 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Overlay 69d's copy of the effect spawner, games/tla/src/field/field_effect/spawn.c
-// with default type 285 and without EFFECT_SPRITE_PRIORITY: on adoption it can
-// be that file included with EFFECT_SPAWN Func_02001258, EFFECT_CREATE
-// Func_02001dc0, EFFECT_SET_MODE Func_02001da8, EFFECT_SET_SCRIPT Func_02001db8
-// and EFFECT_SCRIPTS gData_0200270c. Needs no device.
 #include "types.h"
 #include "main_routine_work.h"
 #include "field_sprite.h"

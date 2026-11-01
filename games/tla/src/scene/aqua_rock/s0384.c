@@ -1,17 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Picks a spot for a wandering object: up to three times, a point 4 to 12
-// pixels ahead within a quarter turn of its angle; the first within 16 pixels
-// of its home (the halfwords at 0x64 and 0x66) becomes its target
-// (Func_02002930); after three misses it turns round and sets its halfword at
-// 0x5e. Returns 0.
-// What closed it: a goto loop (a real loop hoists object + 100 and + 102), the
-// 12 unused bytes of frame, p set inside the loop, the rounding written as a
-// test and add on a local, and rereading p->x and p->z at the call, which PRE
-// turns into the copies in r1 and r4. Those copies stay loaded from the rounded
-// locals only if cse2 does not swap them, so each local's last use must come
-// after its copy's: coordinate is reused for y, and x for the return value.
-// The return value is the one device left; retiring it needs another reason
-// for x to outlive the read of p->z.
 #include "types.h"
 #include "actor.h"
 #include "iwram_call.h"
@@ -65,7 +51,8 @@ found:
   coordinate = p->y;
   Func_02002930(object, p->x, coordinate, p->z);
 end:
-  /* FAKEMATCH(temporary): the form kept; as return 0, 22 of 107 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the form kept; as return 0, 22 of 107 instructions
+   * differ in tla-en. */
   x = 0;
   return x;
 }

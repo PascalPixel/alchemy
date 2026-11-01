@@ -1,7 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The same function as Gaia Rock's adopted Func_0200142c, ported with its names
-// and plain C, no devices. IwramMulQ16 needs its linked name and long_call: that
-// is what holds the multiply's address in r6 across both calls.
 #include "types.h"
 #include "frame.h"
 

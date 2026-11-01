@@ -1,12 +1,3 @@
-// Near miss, differ 2 of 103 (tla-en, 2026-10-31): one pair in the scheduler's
-// order. The native stores position[1] between the two halves of the rebuilt
-// third field offset (movs r1, #128; str; lsls); sched2 ranks that lsls at
-// priority 7 and the store at 6, since the store's priority is two above the
-// third load's and the lsls's three above it whatever the C. An array, a
-// struct, moving state and time, or subtracting separately all measure 2.
-// Hides the glow: shrinks its second sprite, then its first, waits a frame,
-// stops its callback and the shake and frees its video slots and work.
-// Permute, 3 minutes: nothing better.
 #include "types.h"
 #include "ram_buffer.h"
 

@@ -27,7 +27,7 @@ SECTIONS
         "*/resource_66b_overlay.o"(.text.x02008be4)
         "*/resource_66b_overlay.o"(.text.x02008dac)
         "*/games/tla/src/scene/gondowan_cliffs/s0fcc.o"(.text)
-        "*/resource_66b_overlay.o"(.text.x02009068)
+        "*/games/tla/src/scene/gondowan_cliffs/s1068.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs/import.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs/data.o"(.data)
         "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)

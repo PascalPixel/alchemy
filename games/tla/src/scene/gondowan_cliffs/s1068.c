@@ -1,17 +1,3 @@
-// Near miss, differ 2 of 93 (tla-en, 2026-10-30; was 48): fills record
-// `index` of the table at gData_020023c4 + 0x188 (28 bytes, from byte 4) for
-// an actor that swings between two limits: unless flag 265 is set it records
-// the actor, its start,
-// the limits in order and the swing's constants (360, 60, 240) and makes the
-// actor solid; it always creates the actor's shadow (type 0x8000) and keeps
-// it in the record. Returns the record. The same listing as overlay 661's
-// Func_02003e3c and 697's Func_02004224; written as overlay 661's draft (the
-// rising platform entry). Left, as there: the native builds the priority
-// byte's address (adds r1, r6, #0) after the collision byte's store; an empty
-// asm after that store fixes it but lets the height and max stores rise
-// above it, and moving them after it changes the allocation (23). The cause
-// is -mthumb-slow-loads's read-modify-write exception; overlay 661's draft
-// header has the sched2 reading and the placements tried on 2026-10-30.
 #include "types.h"
 #include "actor.h"
 
@@ -42,8 +28,7 @@ extern u8 gData_020023c4[];
 
 s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(u32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
 struct RideEntry *Func_02001068(s32 slot, s32 id, s32 timer, s32 low,

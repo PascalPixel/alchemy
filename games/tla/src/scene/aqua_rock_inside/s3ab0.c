@@ -1,14 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Sets up a room's water outlets (up to sixteen spots from a zero-ended list,
-// each on the ground of layer 0) and up to four levels, stores the handler,
-// sets the blend for the water when none is set and starts the frame callback.
-// The listing is instruction for instruction overlay 678's Func_02002614, whose
-// draft matched first and calls the same table swinging platforms; neither name
-// is settled by evidence yet. This takes that draft's shape: one counter across
-// both lists, a plain while for the first and labels for the second, x stored
-// before z, the two blend values as one-constant locals. The one device raises
-// the second list's pointer in global.c's priority so it reaches r7 before the
-// counter takes r4; 678's notes record what was tried without it.
 #include "types.h"
 #include "iwram_call.h"
 #include "system/io_reg.h"
@@ -66,8 +55,11 @@ void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
       x = *spots++;
     }
     if (levels != 0) {
-      /* FAKEMATCH(barrier): the form kept; as no asm, 89 of 112 instructions differ in tla-en. */
-      asm("" : : "r"(levels), "r"(levels), "r"(levels), "r"(levels), "r"(levels));
+      /* FAKEMATCH(barrier): the form kept; as no asm, 89 of 112 instructions
+       * differ in tla-en. */
+      asm(""
+          :
+          : "r"(levels), "r"(levels), "r"(levels), "r"(levels), "r"(levels));
       x = *levels++;
       i = 0;
       if (x > 0) {

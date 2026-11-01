@@ -74,7 +74,7 @@ SECTIONS
         "*/resource_661_overlay.o"(.text.x0200b9b8)
         "*/resource_661_overlay.o"(.text.x0200bb80)
         "*/games/tla/src/scene/yampi_desert/s3da0.o"(.text)
-        "*/resource_661_overlay.o"(.text.x0200be3c)
+        "*/games/tla/src/scene/yampi_desert/s3e3c.o"(.text)
         "*/games/tla/src/scene/yampi_desert/import.o"(.text)
         "*/games/tla/src/scene/yampi_desert/data.o"(.data)
         "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)

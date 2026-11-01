@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/scene/aqua_rock/scene_tables.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s0344.o"(.text)
         "*/games/tla/src/scene/aqua_rock/exits.o"(.text)
-        "*/resource_67b_overlay.o"(.text.x02008384)
+        "*/games/tla/src/scene/aqua_rock/s0384.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s0468.o"(.text)
         "*/games/tla/src/scene/aqua_rock/events_a.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s052c.o"(.text)

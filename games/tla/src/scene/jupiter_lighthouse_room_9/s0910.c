@@ -1,16 +1,3 @@
-// Near miss, differ 4 of 92 (tla-en, 2026-10-31): the two rows sched2 orders
-// by a cost the C cannot move, as in overlay 698's Func_020007a4
-// (resource_698_c_020007a4.c, whose header traces them). After the x store
-// the native copies the position's address to r8 before reloading the angle
-// (here the ldrh outranks the copy, priority 212 to 211); after the motion
-// flags' store it finishes the store before copying the object to r1. Both
-// products go through the call layer (Value2), as the twin's do: through
-// inline helpers that call Iwram_MulQ16 directly, differ 10 (the pool zero
-// for unk62 and unk63 and the options address then fall out of order too);
-// with only the first through Value2, also 4. Tried: an explicit pointer to
-// the position (11, 13), s8 flag fields (4, 13), unsigned coordinates (4);
-// before, with the inline helpers, every order of the five stores, a chained
-// zero, one-pass blocks (16 to 18) and permute 10 minutes.
 #include "types.h"
 #include "call.h"
 #include "iwram_call.h"
@@ -55,8 +42,7 @@ struct GustObject *Func_02000910(struct GustObject *source) {
   Func_02001ca0(222);
   position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                   Math_Cosine(source->angle));
-  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Math_Sine(source->angle));
+  position.z = source->z + Iwram_MulQ16(0x80000, Math_Sine(source->angle));
   object = Func_02001b80(280, position.x, source->y, position.z);
   Func_02001b68(object, 2);
   Actor_SetSingleChildFlags(object, 0);

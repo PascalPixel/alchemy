@@ -1,10 +1,3 @@
-// Draft, differ 10 of 92 (was 69): overlay 6a3's copy of overlay 698's
-// Func_020007a4. The two polar offsets go through inline helpers, as the
-// native rebuilds the 0x80000 radius for each call. Left: scheduling; the
-// native loads the pool zero for unk62 and unk63 before the angle and
-// builds the options address between the angle's load and store. Tried:
-// every order of the five stores (10 is best), a chained zero, one-pass
-// blocks around them (16 to 18), permute 10 minutes.
 #include "types.h"
 #include "call.h"
 #include "iwram_call.h"
@@ -49,8 +42,7 @@ struct GustObject *Func_02003474(struct GustObject *source) {
   Func_020049c4(222);
   position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                   Math_Cosine(source->angle));
-  position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
-                                  Math_Sine(source->angle));
+  position.z = source->z + Iwram_MulQ16(0x80000, Math_Sine(source->angle));
   object = Func_0200470c(280, position.x, source->y, position.z);
   Func_020046f4(object, 2);
   Actor_SetSingleChildFlags(object, 0);

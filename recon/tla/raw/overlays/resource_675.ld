@@ -19,7 +19,7 @@ SECTIONS
         "*/games/tla/src/scene/islet_cave/prepare.o"(.text)
         "*/games/tla/src/scene/islet_cave/s07dc.o"(.text)
         "*/games/tla/src/scene/islet_cave/events.o"(.text)
-        "*/resource_675_overlay.o"(.text.x020089f8)
+        "*/games/tla/src/scene/islet_cave/s09f8.o"(.text)
         "*/games/tla/src/scene/islet_cave/events3.o"(.text)
         "*/games/tla/src/scene/islet_cave/s10ac.o"(.text)
         "*/games/tla/src/scene/islet_cave/s115c.o"(.text)

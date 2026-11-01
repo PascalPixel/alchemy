@@ -39,8 +39,7 @@ void Func_080ca3f4(s32 scene, s32 entrance) {
   /* FAKEMATCH(one-pass block): the empty block loads gMainRoutineWork's address
    * before ownerOverride's offset, as native; as plain statements, 2 of 73
    * instructions differ in tla-en. */
-  do {
-  } while (0);
+
   party->ownerOverride = 0;
   while (rule[0] != -1) {
     if (rule[2] == scene &&

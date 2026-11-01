@@ -14,10 +14,7 @@ void Func_020001a0(void) {
   {
     u8 *party = (u8 *)&gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-     * built (one reordered row). */
-    do {
-    } while (0);
+
     party[0x2c2] = 2;
   }
   Func_02005744(1);

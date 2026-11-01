@@ -57,20 +57,12 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   sprite->rotation += effect->spin;
 
   party = &gMainRoutineWork;
-  /* FAKEMATCH(one-pass): an empty one-pass block after gMainRoutineWork's
-   * address; without it, 2 of 59 instructions differ in tla-en. */
-  do {
-  } while (0);
+
   leader = Actor_GetById(party->currentOwner);
   to = (struct EffectSpriteAttributes *)effect->sprite;
   from = (struct EffectSpriteAttributes *)leader->effect.sprite;
   source = from->bits;
-  /* FAKEMATCH(one-pass): a one-pass block reads the effect sprite's bits after
-   * the leader's; as plain statements, 2 of 59 instructions differ in
-   * tla-en. */
-  do {
-    bits = to->bits;
-    bits.priority = source.priority;
-    to->bits = bits;
-  } while (0);
+  bits = to->bits;
+  bits.priority = source.priority;
+  to->bits = bits;
 }

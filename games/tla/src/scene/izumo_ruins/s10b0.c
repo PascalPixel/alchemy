@@ -17,11 +17,7 @@ void Func_020010f0(s32 aArg, s32 b) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   s16 scene;
 
-  /* FAKEMATCH: the loop note makes the scene offset's first instruction a
-   * barrier: ⚓️ loads gMainRoutineWork's address before it copies b (plain, the
-   * copy comes first: differ 2). */
-  do {
-  } while (0);
+
   scene = party->scene;
   {
     /* FAKEMATCH: the first argument pinned to r5 after the scene read stays

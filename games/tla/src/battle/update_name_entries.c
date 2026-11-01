@@ -152,8 +152,7 @@ s32 LinkBattle_SendParty(void) {
      * step, so the entry pointer advances before the count is reloaded as in
      * the reference (differ 2 without it). */
     j++;
-    do {
-    } while (0);
+    
   }
   if (Serial_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
     Serial_WaitForSend();

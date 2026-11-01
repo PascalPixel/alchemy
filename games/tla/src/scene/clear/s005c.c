@@ -53,8 +53,7 @@ void Func_0200005c(void) {
     register u16 control asm("r3");
 
     control = 0x681;
-    do {
-    } while (0);
+
     REG_BG2CNT = control;
   }
   gBgScroll[2].y = 0;
@@ -65,11 +64,7 @@ void Func_0200005c(void) {
   Decode_(res, Ram_MapCellBuffer);
   Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800,
           DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
-  /* FAKEMATCH: a one-pass block ends the scheduling block, so the tilemap
-   * address loads before the first tile number is built (one reordered row
-   * without it). */
-  do {
-  } while (0);
+
   map = (u16 *)0x06003000;
   tile = 0x1a0;
   // Written with goto: as for loops, the pinned column counter keeps its exit

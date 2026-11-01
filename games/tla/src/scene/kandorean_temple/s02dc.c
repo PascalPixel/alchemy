@@ -9,10 +9,7 @@ s32 Func_020002dc(struct Actor *object) {
     {
       s32 scale = object->scaleY;
 
-      /* FAKEMATCH: a one-pass block loads the scale before the step is built
-       * (one reordered row). */
-      do {
-      } while (0);
+
       object->scaleY = scale + 0x2000;
     }
     break;

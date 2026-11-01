@@ -54,16 +54,12 @@ void Func_02000ad8(void) {
   *scroll = first;
   dma = REG_DMA0;
 
-  /* FAKEMATCH: the one-pass block reads the control before its mask is started;
-   * without it the mask is started first (differ 10) */
-  do {
-    dma[5] &= 0xc5ff; // Clear the start timing and repeat
-    dma[5] &= 0x7fff; // Stop
-    lines++;
-    /* FAKEMATCH: keeps the cursor step before the last control read (differ 2
-     * without it) */
-    __asm__("" : : "r"(lines));
-  } while (0);
+  dma[5] &= 0xc5ff; // Clear the start timing and repeat
+  dma[5] &= 0x7fff; // Stop
+  lines++;
+  /* FAKEMATCH: keeps the cursor step before the last control read (differ 2
+   * without it) */
+  __asm__("" : : "r"(lines));
   (void)dma[5];
   Dma_Set(lines, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)dma);

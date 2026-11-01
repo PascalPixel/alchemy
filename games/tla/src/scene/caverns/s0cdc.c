@@ -28,12 +28,7 @@ s32 Func_02000c38(struct FieldActor *object, s16 *position) {
       s32 z = position[5];
       s32 owner = party->currentOwner;
 
-      /* FAKEMATCH: the one-pass block keeps gMainRoutineWork's address loaded
-       * before the position (plain call: differ 2; owner read without the party
-       * pointer: differ 12). */
-      do {
-        Actor_SetPositionAndCommit(owner, x, z);
-      } while (0);
+      Actor_SetPositionAndCommit(owner, x, z);
     }
     Func_02001074(object, 6);
     Actor_SetSingleChildFlags(object, 1);
@@ -49,11 +44,7 @@ void Func_02000cdc(void) {
   s32 position[3];
   s32 x;
 
-  /* FAKEMATCH: the one-pass block loads x before the offset is built (differ 2
-   * without it). */
-  do {
-    x = leader->x;
-  } while (0);
+  x = leader->x;
   x += 0x200000;
   SET_VECTOR(position, x, leader->y, leader->z);
   Func_02000c38(leader, (s16 *)position);

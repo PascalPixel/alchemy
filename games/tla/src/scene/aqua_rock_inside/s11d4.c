@@ -5,10 +5,7 @@ void Func_020011d4(s32 unused, s32 id) {
   s32 *layer;
   s32 i;
 
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads the
-   * map work before it copies the id (differ 2 without it). */
-  do {
-  } while (0);
+
   layer = (s32 *)(map + 0x140);
   Actor_SetPartAttribute(Actor_GetById(id), 5);
   Func_02001e78(id);

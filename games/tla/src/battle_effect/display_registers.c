@@ -99,7 +99,7 @@ void Display_ApplyBg2Reference(void) {
   /* FAKEMATCH(fixed register): r1 held until the first value is read, as the
    * register's address would hold it if started first, so that the offset
    * takes r0; without the hold, 8 of 20 instructions differ in tla-en. */
-  register u32 hold asm("r1");
+  u32 hold;
 
   /* FAKEMATCH(barrier): starts the hold on r1 after the work pointer's load;
    * it goes with the hold above. */

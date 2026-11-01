@@ -24,10 +24,7 @@ void Func_0200008c(struct Actor *object) {
   u8 *timer;
   s32 scale = object->scaleX;
 
-  /* FAKEMATCH: a one-pass block loads the scale before the bound is built (one
-   * reordered row). */
-  do {
-  } while (0);
+
   if (scale > 0x10000) {
     object->scaleX = scale - 0x800;
     object->scaleY -= 0x400;
@@ -43,9 +40,7 @@ void Func_0200008c(struct Actor *object) {
     u32 r4 = r << 2;
     u8 t;
 
-    do {
-      t = *timer;
-    } while (0);
+    t = *timer;
     *timer = t + (((r4 + r) * 16) >> 16) + 40;
     object->scaleX = 0x12000;
     object->scaleY = 0x11000;

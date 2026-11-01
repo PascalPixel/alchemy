@@ -18,11 +18,7 @@ s32 Func_020002e0(void) {
   if (GameFlag_Test(324) == 0)
     return 0;
   party = &gMainRoutineWork;
-  /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party
-   * state's address before it builds the field's offset (2 differ without it).
-   */
-  do {
-  } while (0);
+
   if (FIELD_AT(party, s16, 0x25e) == 2)
     return 0;
   mode = party->scene ^ (s32)&SceneId_WorldMap;

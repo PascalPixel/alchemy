@@ -38,7 +38,7 @@ void Func_020048a0(void) {
        * in r2 and z in r3, where plainly they trade places (differ 16; read in
        * either order, as locals or inline, 18 to 24). */
       register s32 x asm("r2") = layer->x >> 20;
-      register s32 z asm("r3") = layer->z >> 20;
+      s32 z = layer->z >> 20;
 
       Func_02004e0c(originX + x, originZ + z, 15, 10, x + 1, z + 1);
     }

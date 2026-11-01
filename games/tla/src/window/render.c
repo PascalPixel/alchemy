@@ -35,10 +35,7 @@ void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
 /// the matching string writer.
 void Text_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
   u8 data[16];
-  /* FAKEMATCH: the value is pinned to the r4 it takes, so the fifth argument
-   * loads from the stack before the first is copied; as the plain parameter,
-   * 2 instructions differ in tla-en. */
-  register s32 pinned asm("r4") = value;
+  s32 pinned = value;
 
   Text_DrawString(String_FormatNumber(data, pinned, width), output, x, y);
 }
@@ -46,8 +43,7 @@ void Text_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
 void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
                                s32 x, s32 y) {
   u8 data[16];
-  /* FAKEMATCH: pinned to r4 as in Text_DrawNumber (differ 2 without). */
-  register s32 pinned asm("r4") = value;
+  s32 pinned = value;
 
   Text_DrawStringAtOffset(String_FormatNumber(data, pinned, width), work, x,
                             y);
@@ -55,8 +51,7 @@ void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
 
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
   u8 data[16];
-  /* FAKEMATCH: pinned to r4 as in Text_DrawNumber (differ 2 without). */
-  register s32 pinned asm("r4") = value;
+  s32 pinned = value;
 
   Text_DrawStringInWindow(String_FormatNumber(data, pinned, width), output, x,
                             y);

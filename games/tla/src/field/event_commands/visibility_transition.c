@@ -18,10 +18,7 @@ void BattleEffect_RunVisibilityTransition(void) {
     while (gInput.held & 0x200)
       wait(1);
     party = &gMainRoutineWork;
-    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-     * built (one reordered row). */
-    do {
-    } while (0);
+
     if (party->ownerOverride != 0)
       Func_080d46a4(0x10000, 6);
     else

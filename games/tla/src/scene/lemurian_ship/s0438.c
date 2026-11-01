@@ -10,10 +10,7 @@ void Func_02000438(void) {
     s32 x;
     s32 cell;
 
-    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-     * built (one reordered row). */
-    do {
-    } while (0);
+    
     leader = Actor_GetById(party->currentOwner);
     Func_02002c68();
     Func_02002da8(0);

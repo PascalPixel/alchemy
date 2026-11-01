@@ -38,10 +38,7 @@ void Func_0200051c(void) {
   Task_Add(Func_02000258, 0x480);
   if ((u16)(gMainRoutineWork.entrance - 8) <= 1) {
     work = Ram_HeapSlots->eventWork;
-    /* FAKEMATCH: a one-pass block loads the event work before its offset is
-     * built (one reordered row). */
-    do {
-    } while (0);
+    
     work->valueD4c = 3;
   }
   Func_02001568();

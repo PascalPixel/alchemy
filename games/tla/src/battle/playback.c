@@ -17,11 +17,7 @@ u32 BattlePlayback_Reset(void) {
   struct BattleEventState *events;
   struct BattleWork *work;
 
-  /* FAKEMATCH: the one-pass block loads the battle work before the events
-   * offset is built (differ 2 without it). */
-  do {
-    work = Ram_HeapSlots->battleWork;
-  } while (0);
+  work = Ram_HeapSlots->battleWork;
   events = &work->events;
   events->phase = BATTLE_PLAYBACK_IDLE;
   events->queue.count = 0;

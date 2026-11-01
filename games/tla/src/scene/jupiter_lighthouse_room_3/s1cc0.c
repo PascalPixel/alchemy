@@ -10,10 +10,7 @@ void Func_02001cc0(void) {
   s32 z = object->z;
 
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x40000, 0x20000);
-  /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads x and z before
-   * it copies the object to r10 (one reordered row). */
-  do {
-  } while (0);
+
   x >>= 20;
   z >>= 20;
   Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, (x << 4) + 8,

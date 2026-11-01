@@ -59,10 +59,7 @@ void Func_080aff94(s32 bit) {
    * plain local, 10 instructions differ in tla-en. */
   register u32 flags __asm__("r3") = *state;
 
-  /* FAKEMATCH: the one-pass block's loop note holds the bit until the pinned
-   * word is loaded. */
-  do {
-  } while (0);
+
   flags |= 1 << bit;
   *state = flags;
 }

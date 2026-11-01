@@ -30,10 +30,7 @@ s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items, s32 mod
   s32 count;
   s32 i;
 
-  /* FAKEMATCH: the empty one-pass block before the clearing loop keeps the
-   * zero's literal pool before the second loop (differ 10 without it). */
-  do {
-  } while (0);
+  
   for (i = 0; i < 32; i++) {
     items[i] = 0;
   }

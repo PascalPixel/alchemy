@@ -19,11 +19,7 @@ void Func_02000454(void) {
   s32 angle;
   s32 y;
 
-  /* FAKEMATCH: the one-pass block loads the height before the 0x200000 limit is
-   * built, as the native does (one reordered row without it). */
-  do {
-    y = object->y;
-  } while (0);
+  y = object->y;
   if (y >= 0x200000) {
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
     Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
@@ -32,12 +28,7 @@ void Func_02000454(void) {
     object->motionFlags = 0;
     for (i = 109; i >= 0; i--) {
       object->y += PIXELS(3);
-      /* FAKEMATCH: the one-pass block loads the angle before its 0x1800 step is
-       * built (one reordered row without it; as one statement loop.c hoists the
-       * step out of the loop, differ 20). */
-      do {
-        angle = object->angle;
-      } while (0);
+      angle = object->angle;
       angle += 0x1800;
       object->angle = angle;
       wait(2);

@@ -23,11 +23,7 @@ void Func_02000810(s32 actor, s32 target) {
       struct FieldActor *object = Actor_GetById(target);
       u32 facing = object->facing;
 
-      /* FAKEMATCH: a forced temporary and the loop note after it read the
-       * facing before the step 0x1000 starts, as native; as facing += 0x1000,
-       * 2 instructions differ in tla-en. */
-      do {
-      } while (0);
+
       object->facing = facing + 0x1000;
     }
     Actor_SetPartAttribute(Actor_GetById(target), (i & 4) ? 7 : 0);

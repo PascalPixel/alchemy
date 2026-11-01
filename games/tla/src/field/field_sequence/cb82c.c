@@ -36,10 +36,7 @@ void Func_080cb82c(void) {
     s32 zero;
 
     work->busy = 1;
-    /* FAKEMATCH: a one-pass block keeps the busy store ahead of the next field
-     * offset; as plain statements the offset is advanced first (2 differ). */
-    do {
-    } while (0);
+
     work->sprite->visible = 1;
     zero = 0;
     fade = HeapSlot_AllocEwram(124, 0x540);

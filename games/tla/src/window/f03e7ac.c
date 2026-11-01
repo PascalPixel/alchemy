@@ -26,12 +26,7 @@ void Menu_SetNodeCoordinates(u32 first, u32 second) {
   struct SelectionScreen *state;
   struct SelectionNode *node;
 
-  /* FAKEMATCH: the one-pass block ends the scheduling block: the native loads
-   * the menu work before it builds the offset of the base coordinates (one
-   * reordered row, differ 2 without). */
-  do {
-    state = Ram_HeapSlots->menuWork;
-  } while (0);
+  state = Ram_HeapSlots->menuWork;
   state->baseX = first;
   state->baseY = second;
   node = state->head;

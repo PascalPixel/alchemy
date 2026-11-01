@@ -30,12 +30,7 @@ void Func_02000d1c(struct Actor *object) {
   if ((frame & 15) == 0)
     Func_02004f28(object, 136);
   dz = Random16Far() & 15;
-  /* FAKEMATCH(one-pass): the speed in a once-only block, which lets the
-   * object's z load ahead of the flags; as a plain statement, 2 of 60
-   * instructions differ in tla-en. */
-  do {
-    vz = ((Random16Far() & 31) - 16) << 12;
-  } while (0);
+  vz = ((Random16Far() & 31) - 16) << 12;
   /* FAKEMATCH(temporary): z read into its own local; as object->z in the
    * call, 4 of 60 instructions differ in tla-en. */
   z = object->z;

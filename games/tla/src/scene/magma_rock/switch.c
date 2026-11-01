@@ -43,10 +43,7 @@ void Func_02001af4(s32 mode, s32 cue) {
 void Func_02001b24(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-   * built (one reordered row). */
-  do {
-  } while (0);
+
   if (party->renderMode != 2)
     GameFlag_ClearBit(0x2f8);
 }
@@ -54,10 +51,7 @@ void Func_02001b24(void) {
 void Func_02001b44(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-   * built (one reordered row). */
-  do {
-  } while (0);
+
   if (party->renderMode != 2) {
     Func_02003aec();
     Func_02003bcc(0);

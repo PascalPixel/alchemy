@@ -24,11 +24,7 @@ void Func_02000720(struct Actor *object) {
                (height * 3 << 16) + 0x80000, 170 << 18);
   if ((s16)object->unk66 == 0)
     Func_020021b4(object, 7);
-  /* FAKEMATCH: the one-pass block loads the height before the limit is built,
-   * as the native does (one reordered row without it). */
-  do {
-    y = object->y;
-  } while (0);
+  y = object->y;
   if (y > 170 << 17)
     object->unk66 = 0xffff;
   sine = Math_Sine(angle);

@@ -51,10 +51,7 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
     marker->x.fixed = 0x27880000;
     y = MulQ16(Math_Sine(*angle << 3), 0x40000);
     z = 0x20a40000;
-    /* FAKEMATCH: the one-pass block loads the z constant before 0x100000 is
-     * built, as in the native (without it differ 2). */
-    do {
-    } while (0);
+
     rise = 0x100000;
     marker->y.fixed = y + rise;
     marker->z.fixed = z;

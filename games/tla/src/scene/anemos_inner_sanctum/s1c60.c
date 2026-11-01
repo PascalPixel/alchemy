@@ -20,10 +20,7 @@ void Func_02001c60(void) {
   {
     struct MainRoutineWork2c2 *party = (struct MainRoutineWork2c2 *)&gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-     * built (one reordered row). */
-    do {
-    } while (0);
+    
     party->value = 2;
   }
   Func_02003448((s32)&SceneId_Ov694Room1, 99);

@@ -60,9 +60,6 @@ void Func_02000098(struct DoorStep *step, s32 countdown, s32 unused) {
 void Func_0200010c(s32 index) {
   struct DoorStep *table = gData_0200277c;
 
-  /* FAKEMATCH: a one-pass block loads the table address before the index copy
-   * (two reordered rows). */
-  do {
-  } while (0);
+  
   Func_02000098(&table[index], index, 0);
 }

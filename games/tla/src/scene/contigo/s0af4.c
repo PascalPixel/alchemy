@@ -64,11 +64,7 @@ void Func_02000af4(void) {
     {
       s32 x;
 
-      /* FAKEMATCH: the one-pass block keeps the scale load ahead of the 0x666
-       * step, as the native has it (differ 2 without). */
-      do {
-        x = effect->scaleX;
-      } while (0);
+      x = effect->scaleX;
       effect->scaleX = x + 0x666;
     }
     effect->scaleY += 0x666;

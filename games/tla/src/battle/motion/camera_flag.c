@@ -56,10 +56,7 @@ s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
   Camera_ApplyTransformByFlag();
   {
     s32 *pos = position;
-    /* FAKEMATCH: projected is copied to r1 between the position's first store
-     * and second load, as the native does; plainly, 2 instructions differ in
-     * tla-en. */
-    register s32 *out __asm__("r1");
+    s32 *out;
 
     pos[0] = object->x;
     out = projected;

@@ -23,7 +23,7 @@ void Func_02002f20(s32 modeArg, s32 paramArg) {
    * r5 and r6 after both store addresses load, as the native does; as plain
    * parameters, 2 instructions differ in tla-en. */
   u16 *paramPtr = &gData_02006494;
-  register s32 mode asm("r5") = modeArg;
+  s32 mode = modeArg;
   register s32 param asm("r6") = paramArg;
   s32 handler;
 

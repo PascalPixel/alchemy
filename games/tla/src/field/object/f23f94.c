@@ -6,20 +6,12 @@ s32 Actor_IsTargetUnset(struct Actor *object) {
   s32 second;
 
   if (object->motionFlags == 0) {
-    /* FAKEMATCH: the one-pass block's end loads targetX before 0x80000000 is
-     * built, as native, here and in the other arm; without it, 4 instructions
-     * differ in tla-en. */
-    do {
-      second = object->targetX;
-    } while (0);
+    second = object->targetX;
     if (second != (s32)0x80000000)
       return 0;
     first = object->targetY;
   } else {
-    /* FAKEMATCH: as above. */
-    do {
-      first = object->targetX;
-    } while (0);
+    first = object->targetX;
     second = (s32)0x80000000;
   }
   if (first != second || object->targetZ != first)

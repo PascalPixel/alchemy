@@ -59,11 +59,7 @@ void Camera_ResetSceneDefaults(void) {
   local.x = 0;
   local.y = 0;
   result = (s32 *)state;
-  /* FAKEMATCH: a one-pass block keeps the distance load behind the pinned copy;
-   * without it the load is scheduled first (differ 2). */
-  do {
-    local.z = state->distance;
-  } while (0);
+  local.z = state->distance;
   Iwram_TransformVector(&local, result);
 
   param = 250;

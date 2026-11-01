@@ -21,11 +21,7 @@ void Func_02000ab4(struct Actor *object) {
   struct SpriteBits source = from->bits;
   struct SpriteBits bits;
 
-  /* FAKEMATCH: a one-pass block reads the sprite's bits after the owner's
-   * (alchemy permute). */
-  do {
-    bits = to->bits;
-    bits.priority = source.priority;
-    to->bits = bits;
-  } while (0);
+  bits = to->bits;
+  bits.priority = source.priority;
+  to->bits = bits;
 }

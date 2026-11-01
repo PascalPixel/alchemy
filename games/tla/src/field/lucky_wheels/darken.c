@@ -29,12 +29,7 @@ void BattleStaging_ProcessPendingTileTransfer(void) {
   struct BattleFxTransferWork *work;
   u8 *buf;
 
-  /* FAKEMATCH: the one-pass block loads the effect work before the pending
-   * offset is started; assigned directly the offset is started first (differ
-   * 2). */
-  do {
-    work = (struct BattleFxTransferWork *)Ram_HeapSlots->battleFxWork[0];
-  } while (0);
+  work = (struct BattleFxTransferWork *)Ram_HeapSlots->battleFxWork[0];
   if (work->transferPending == 1) {
     buf = Ram_HeapSlots->battleFxWork[1];
     switch (work->transferMode) {

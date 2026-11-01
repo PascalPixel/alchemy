@@ -30,19 +30,15 @@ void Func_02000d4c(void) {
 void Func_02000da4(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as
-   * plain statements the constant is built first (differ 2) */
-  do {
-    u16 facing = (leader->angle + 0x2000) & ~0x3fff;
+  u16 facing = (leader->angle + 0x2000) & ~0x3fff;
 
-    if (facing == 0xc000) {
-      Func_02001438(actor);
-    } else {
-      if (GameFlag_Test(0xa5f))
-        Func_02001380((s32)&MsgLoho53);
-      else
-        Func_02001380((s32)&MsgLoho19);
-      Func_02001390(actor, 0);
-    }
-  } while (0);
+  if (facing == 0xc000) {
+    Func_02001438(actor);
+  } else {
+    if (GameFlag_Test(0xa5f))
+      Func_02001380((s32)&MsgLoho53);
+    else
+      Func_02001380((s32)&MsgLoho19);
+    Func_02001390(actor, 0);
+  }
 }

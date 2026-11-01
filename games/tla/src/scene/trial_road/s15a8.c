@@ -63,12 +63,7 @@ void Func_020017e0(void) {
     Func_02002dec();
   else
     Func_0200322c();
-  /* FAKEMATCH: the one-pass block loads gMainRoutineWork's address before it
-   * builds the field offset, and the empty one after the store keeps the scene
-   * id load behind it (differ 6 without both). */
-  do {
-    party = &gMainRoutineWork;
-  } while (0);
+  party = &gMainRoutineWork;
   party->battleRule24b = 2;
   do {
   } while (0);

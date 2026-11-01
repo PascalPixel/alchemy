@@ -23,12 +23,8 @@ void FieldParticle_SetCallback(struct FieldParticle *effect,
                             EffectCallback callback) {
   effect->callback = callback;
   effect->callbackDelay = 0;
-  /* FAKEMATCH: a one-pass block loads the state's zero before the halfword zero
-   * is built; stored straight the two rows trade places (differ 2). */
-  do {
-    effect->age = 0;
+  effect->age = 0;
     effect->state = 0;
-  } while (0);
 }
 
 /// Starts slot effect as a particle of resource object kind at (x, z): clears

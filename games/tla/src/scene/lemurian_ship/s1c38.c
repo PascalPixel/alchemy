@@ -8,10 +8,7 @@ next:
   if (GameFlag_Test(i + 0x300)) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    /* FAKEMATCH: the loop note ends the scheduling block: the native loads gMainRoutineWork's address before it builds the field's offset (2 differ
-     * without it). */
-    do {
-    } while (0);
+    
     if (party->sequenceResult == 1) {
       GameFlag_SetBit(i + 0x930);
       GameFlag_SetBit(i + 0x220);

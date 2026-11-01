@@ -28,10 +28,7 @@ void Func_020051e0(void) {
   struct MarsLighthouseAerieEventWork *work = Ram_HeapSlots->eventWork;
   s32 saved;
 
-  /* FAKEMATCH: a one-pass block loads the event work before its offset is built
-   * (one reordered row). */
-  do {
-  } while (0);
+  
   saved = work->value1ac;
   Func_0200575c_(0x202108, 1);
   Func_0200575c_(0x10000, 2);
@@ -48,10 +45,7 @@ void Func_020051e0(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-     * built (one reordered row). */
-    do {
-    } while (0);
+    
     party->unk2c2 = 0;
   }
   work->value1ac = saved;

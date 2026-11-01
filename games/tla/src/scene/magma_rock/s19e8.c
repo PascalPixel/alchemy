@@ -15,11 +15,7 @@ void Func_020019e8(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH(one-pass): an empty one-pass block, so gMainRoutineWork's address
-   * loads before the scene offset is built; without it, 4 of 31 instructions
-   * differ in tla-en. */
-  do {
-  } while (0);
+
   {
     s32 scene = party->scene;
     /* FAKEMATCH(pin): the mode copied into r6 after the scene is read, as
@@ -42,10 +38,7 @@ void Func_02001a38(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH(one-pass): an empty one-pass block, as in Func_020019e8; without
-   * it, 4 of 32 instructions differ in tla-en. */
-  do {
-  } while (0);
+
   {
     s32 scene = party->scene;
     /* FAKEMATCH(pin): the mode copied into r6 after the scene is read, as in

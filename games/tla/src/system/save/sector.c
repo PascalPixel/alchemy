@@ -45,12 +45,7 @@ u32 Save_SelectWriteSector(s32 mode) {
   u8 value;
 
   slot = ((struct SaveWorkspace *)Ram_HeapSlots->serialWork)->occupied;
-  /* FAKEMATCH(one-pass): the count's clearing in a block of its own, so the
-   * workspace pointer loads before the prologue's sub sp; as count = 0, 2 of
-   * 39 instructions differ in tla-en. */
-  do {
-    count = 0;
-  } while (0);
+  count = 0;
   index = 0;
   do {
     value = *slot;

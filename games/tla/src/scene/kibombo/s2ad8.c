@@ -8,11 +8,7 @@ struct KibomboWork90 {
 void Func_02002ad8(void) {
   struct KibomboWork90 *work = Ram_HeapSlots->unk84[3];
 
-  /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party
-   * state's address before it builds the owner's offset (2 differ without it).
-   */
-  do {
-  } while (0);
+
   work->leader = Actor_GetById(gMainRoutineWork.currentOwner);
 }
 

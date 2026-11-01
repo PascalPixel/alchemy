@@ -36,10 +36,7 @@ void Func_02002de0(void) {
 void Func_02002e60(void) {
   struct KibomboObject *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the leader's
-   * height before it builds the limit (2 differ without it). */
-  do {
-  } while (0);
+
   if (leader->y > 0x100000) {
     Func_02005b0c(29, 0, 0);
     Actor_SetSpritePriority(30, 2);

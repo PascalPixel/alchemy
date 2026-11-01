@@ -51,10 +51,7 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
     s32 half = source[3];
     u16 *value;
 
-    /* FAKEMATCH: a one-pass block keeps the halfword read ahead of the field
-     * address; without it the address is begun before the read (2 differ). */
-    do {
-    } while (0);
+
     value = &targets->value4a;
     targets->side = own;
     *value = half;

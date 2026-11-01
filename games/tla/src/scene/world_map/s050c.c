@@ -20,9 +20,7 @@ void Func_0200050c(void) {
   /* FAKEMATCH(pin): the PP total in r6; as a plain local, 19 of 42
    * instructions differ in tla-en. */
   register s32 pp asm("r6");
-  /* FAKEMATCH(pin): the index in r5; as a plain local, 19 of 42
-   * instructions differ in tla-en. */
-  register s32 i asm("r5");
+  s32 i;
 
   {
     /* FAKEMATCH(temporary): gMainRoutineWork's address loaded before the field's

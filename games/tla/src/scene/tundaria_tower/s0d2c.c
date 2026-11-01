@@ -11,10 +11,7 @@ void Func_02000d2c(void) {
   u8 *event = Ram_HeapSlots->eventWork;
   struct Actor *object;
 
-  /* FAKEMATCH(one-pass): the block loads the event work before the 0xcbc offset
-   * is built; as plain statements, 2 of 76 instructions differ in tla-en. */
-  do {
-  } while (0);
+
   object = *(struct Actor **)(event + 0xcbc);
 
   Func_02003048();

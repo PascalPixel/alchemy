@@ -5,8 +5,6 @@ void Func_02000468(struct Actor *object) {
   s32 angle;
 
   angle = object->angle;
-  do {
-    sprite = object->animation;
-  } while (0);
+  sprite = object->animation;
   sprite->rotation = angle + 0x4000;
 }

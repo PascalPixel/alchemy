@@ -55,11 +55,7 @@ s32 Menu_SelectSaveSlotAction(void) {
   if (ret >= 0) {
     u32 twice = group * 2;
 
-    /* FAKEMATCH: the one-pass block issues the table's pool load between the
-       shift and the add; as ret + group * 6, 2 instructions differ in
-       tla-en. */
-    do {
-    } while (0);
+
     ret = gMenu_SaveSlotActionByPosition[ret + (twice + group) * 2];
   }
   if (gData_020036d8 == 0 && ret == 4)

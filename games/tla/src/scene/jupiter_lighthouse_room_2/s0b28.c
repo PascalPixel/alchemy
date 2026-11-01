@@ -13,16 +13,11 @@ void Func_02000b28(s32 id) {
   struct FieldActor *object;
   s32 height;
 
-  /* FAKEMATCH: the one-pass block loads the ground height before the word is
-   * cleared; as plain statements the ARM9TDMI schedule clears it first (differ
-   * 2). */
-  do {
-    object = Actor_GetById(id);
-    object->motionFlags = 4;
-    height = object->terrainHeight;
-    WORD_AT(object, 68) = 0;
-    object->y = height + 0x200000;
-  } while (0);
+  object = Actor_GetById(id);
+  object->motionFlags = 4;
+  height = object->terrainHeight;
+  WORD_AT(object, 68) = 0;
+  object->y = height + 0x200000;
   {
     u8 *flags = &object->priorityFlags;
     s32 bit =

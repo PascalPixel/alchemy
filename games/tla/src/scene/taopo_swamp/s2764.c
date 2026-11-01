@@ -8,8 +8,6 @@
 void Func_02002764(s32 index, s32 value) {
   struct VentWork *work;
 
-  do {
-    work = VENT_WORK;
-  } while (0);
+  work = VENT_WORK;
   VENT_AT(work, index)->entries[0].value = value;
 }

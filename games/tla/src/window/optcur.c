@@ -40,12 +40,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void) {
   s32 selection;
   struct OptionWork *work;
 
-  /* FAKEMATCH: the one-pass block loads the option work before the page and
-   * cursor offsets are started; assigned directly both offsets are started
-   * first (differ 2). */
-  do {
-    work = Ram_HeapSlots->unkd0[0];
-  } while (0);
+  work = Ram_HeapSlots->unkd0[0];
   selection = work->page;
   Func_08108030(&work->cursor);
   Func_08108038(&work->marker[0]);

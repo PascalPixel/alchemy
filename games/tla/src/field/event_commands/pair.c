@@ -41,11 +41,7 @@ void BattleEffect_SetupObjectPair(s32 userId, s32 targetId) {
   if (user != NULL) {
     u8 terrain;
 
-    /* FAKEMATCH: the one-pass block reads the terrain byte before the scene
-     * offset is started; stored directly, 2 instructions differ in tla-en. */
-    do {
-      terrain = user->priorityFlags;
-    } while (0);
+    terrain = user->priorityFlags;
 
     scene->savedTerrain = terrain;
     scene->savedPriority = (u32)(((u8 *)user->animation)[9] << 28) >> 30;

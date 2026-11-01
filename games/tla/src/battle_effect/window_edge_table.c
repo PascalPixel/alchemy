@@ -166,18 +166,10 @@ void BattleEffect_RunTableEffect(s32 *script) {
   HeapSlot_Alloc(100, 0x302);
   HeapSlot_Alloc(92, 0x7b7c);
   HeapSlot_Alloc(96, 0x4000);
-  /* FAKEMATCH: the one-pass block loads the work pointer before the 0x78f0
-   * offset is started (differ 2 without it). */
-  do {
-    work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
-  } while (0);
+  work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
   work->script = script;
   work->active = 1;
-  /* FAKEMATCH: the one-pass block loads the handler table before the script's
-   * first word and sets the argument after the index (differ 2 without it). */
-  do {
-    gData_08197aa0[*script - 1](script);
-  } while (0);
+  gData_08197aa0[*script - 1](script);
   HeapSlot_Release(96);
   HeapSlot_Release(92);
   HeapSlot_Release(100);
@@ -206,11 +198,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
     volatile u16 *channel = REG_DMA0;
     u16 control;
 
-    /* FAKEMATCH: the one-pass blocks read the control word before the mask is
-     * built and store it before the next mask (differ 4 without them). */
-    do {
-      control = channel[5];
-    } while (0);
+    control = channel[5];
     channel[5] = control & 0xc5ff;
     channel[5] &= 0x7fff;
     /* FAKEMATCH: the native stores the control word before it starts the window

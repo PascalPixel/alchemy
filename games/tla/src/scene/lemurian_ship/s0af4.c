@@ -98,10 +98,7 @@ void Func_02000d44(void) {
   FieldEvent_Wait(20);
   Func_02002de0(52);
   Actor_SetMovementTypeAndWaitById(8, gData_02002e9c);
-  /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party
-   * state address before it builds the field offset (2 differ without it). */
-  do {
-  } while (0);
+
   gMainRoutineWork.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov656Room2, 15);
   Func_02002d78(11, 1);

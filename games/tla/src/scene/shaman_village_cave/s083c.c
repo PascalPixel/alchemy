@@ -8,10 +8,7 @@ void Func_0200083c(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-     * built (one reordered row). */
-    do {
-    } while (0);
+
     party->battleRule24b = 2;
     /* FAKEMATCH: the loop note ends the scheduling block after the store;
      * without it the scene id is loaded before the store (two reordered rows).

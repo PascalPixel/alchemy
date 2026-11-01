@@ -13,12 +13,8 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
   volatile u16 *channel = REG_DMA0;
   u32 palette;
 
-  /* FAKEMATCH: the one-pass block reads the control word back before its mask
-   * is started (one reordered row, differ 2 without it). */
-  do {
-    channel[5] &= 0xc5ff;
+  channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
-  } while (0);
   palette = 0xa0;
   /* FAKEMATCH: the empty asm starts the palette address before the control
    * word is read and shifts it after; as a plain constant, 2 instructions

@@ -4,22 +4,17 @@
 void Func_020001b8(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
 
-  /* FAKEMATCH: the one-pass block keeps the quadrant offset after the facing
-   * load; as a plain if the ARM9TDMI schedule builds 0x2000 first (differ 2).
-   */
-  do {
-    if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-      Func_02001f00(actor);
-    } else {
-      if (FlagCheck(0x8ff))
-        Func_02001e18((s32)MsgMadraInteriors149);
-      else if (FlagCheck(0x8ab))
-        Func_02001e18((s32)MsgMadraInteriors81);
-      else
-        Func_02001e18((s32)MsgMadraInteriors33);
-      Func_02001e30(actor, 0);
-    }
-  } while (0);
+  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+    Func_02001f00(actor);
+  } else {
+    if (FlagCheck(0x8ff))
+      Func_02001e18((s32)MsgMadraInteriors149);
+    else if (FlagCheck(0x8ab))
+      Func_02001e18((s32)MsgMadraInteriors81);
+    else
+      Func_02001e18((s32)MsgMadraInteriors33);
+    Func_02001e30(actor, 0);
+  }
 }
 
 void Func_0200023c(void) {

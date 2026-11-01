@@ -35,11 +35,7 @@ void Func_0200290c(void) {
      * instructions differ in tla-en. */
     register u16 alpha __asm__("r3") = 0xc08;
 
-    /* FAKEMATCH: the one-pass block's loop note holds the address until the
-     * pinned value is loaded; the empty asm of overlay 696's s43f8.c with r2
-     * clobbered is differ 10 here. */
-    do {
-    } while (0);
+
     REG_BLDALPHA = alpha;
   }
   REG_BLDCNT = 0x3f10;

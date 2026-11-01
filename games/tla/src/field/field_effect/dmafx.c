@@ -52,11 +52,7 @@ void Func_080d64b8(void) {
 
     u16 control;
 
-    /* FAKEMATCH: the one-pass block reads the control word before its mask is
-     * built (one reordered pair, differ 2 without it). */
-    do {
-      control = dma[5];
-    } while (0);
+    control = dma[5];
     dma[5] = control & 0xc5ff; // Clear start timing and repeat.
     dma[5] &= 0x7fff;          // Stop.
     (void)dma[5];

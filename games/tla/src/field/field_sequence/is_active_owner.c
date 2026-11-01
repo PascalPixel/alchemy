@@ -93,8 +93,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
     /* FAKEMATCH(one-pass block): loads gMainRoutineWork's address before
      * ownerOverride's offset; as plain statements, 2 of 92 instructions differ
      * in tla-en. */
-    do {
-    } while (0);
+    
     if (party->ownerOverride != 0 && !GameFlag_Test(0x8df))
       music = 56;
     else if (Func_080ca5a0(4))
@@ -109,7 +108,6 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   party = &gMainRoutineWork;
   /* FAKEMATCH(one-pass block): loads gMainRoutineWork's address before sceneCue's
    * offset; as plain statements, 2 of 92 instructions differ in tla-en. */
-  do {
-  } while (0);
+  
   party->sceneCue = music;
 }

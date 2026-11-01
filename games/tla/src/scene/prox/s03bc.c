@@ -26,11 +26,7 @@ s32 Func_020003bc(struct Actor *actor) {
   struct Actor *target;
 
   {
-    /* FAKEMATCH(pin): gMainRoutineWork's address pinned to r3 loads from the
-     * pool before the leader's offset, as native; as
-     * Actor_GetById(gMainRoutineWork.currentOwner), 2 of 85 instructions differ in
-     * tla-en. */
-    register struct MainRoutineWork *party asm("r3") = &gMainRoutineWork;
+    struct MainRoutineWork *party = &gMainRoutineWork;
 
     /* FAKEMATCH(barrier): the barrier of the pin above: it holds r2 until the
      * address is loaded. */

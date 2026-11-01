@@ -14,9 +14,7 @@ void Func_020019dc(const u16 *list) {
   s16 flag;
   register s32 limit asm("r2");
   s32 first;
-  do {
-    limit = 0xff;
-  } while (0);
+  limit = 0xff;
   first = list[0];
   if (first == ((limit << 8) + 0xff)) {
     return;

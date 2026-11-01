@@ -69,10 +69,7 @@ void Func_02000158(void) {
     {
       struct MainRoutineWork *state = &gMainRoutineWork;
 
-      /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-       * built (one reordered row). */
-      do {
-      } while (0);
+
       state->ownerOverride = 1;
     }
     Func_0200050c(1);

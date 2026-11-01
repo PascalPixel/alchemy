@@ -8,10 +8,7 @@ struct KibomboEffectWork {
 void Func_020037e4(void) {
   struct KibomboEffectWork *work = Ram_HeapSlots->effectWork;
 
-  /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the work
-   * pointer before it builds the field's offset (2 differ without it). */
-  do {
-  } while (0);
+  
   if (work->field7c4 != 0) {
     if (GameFlag_Test(0x220))
       Func_02000624();
@@ -72,11 +69,7 @@ void Func_02003948(void) {
   s32 x;
   s32 px;
 
-  /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party
-   * state's address before it builds the owner's offset (2 differ without it).
-   */
-  do {
-  } while (0);
+  
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   Func_02005a9c();
   Func_02005c3c(0);

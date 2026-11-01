@@ -25,10 +25,7 @@ void Daila_TalkHip(void) {
 void Func_02000340(s32 keeper) {
   u16 facing = Import_ActorGet(gMainRoutineWork.currentOwner)->facing;
 
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads the
-   * facing before it builds the quadrant offset (2 differ without it). */
-  do {
-  } while (0);
+  
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Import_ShopOpen(3, keeper);
   } else {

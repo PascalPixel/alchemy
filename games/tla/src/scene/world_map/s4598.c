@@ -17,11 +17,7 @@ void Func_02004598(struct Actor *object) {
   scale = Math_Sine(step << 10);
   object->scaleX = scale;
   object->scaleY = scale;
-  /* FAKEMATCH: the loop note ends the scheduling block and the rise is a local:
-   * the native starts the rise before it copies x and shifts it after (4 differ
-   * without them). */
-  do {
-  } while (0);
+
   rise = 0x10000;
   object->x = parent->x;
   object->y += rise;
@@ -41,11 +37,7 @@ void Func_020045e4(struct Actor *object) {
   scale = Math_Sine(step << 10);
   object->scaleX = scale;
   object->scaleY = -scale;
-  /* FAKEMATCH: the loop note ends the scheduling block and the rise is a local:
-   * the native starts the rise before it copies x and shifts it after (4 differ
-   * without them). */
-  do {
-  } while (0);
+
   rise = 0x10000;
   object->x = parent->x;
   object->y += rise;

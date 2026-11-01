@@ -69,11 +69,7 @@ s32 Func_02002614(void) {
          * row is reordered in tla-en. */
         register u16 alpha __asm__("r3") = 0xc08;
 
-        /* FAKEMATCH: the one-pass block's loop note holds the address until the
-         * pinned value is loaded; the empty asm of s43f8.c would move the
-         * literal pool here (it counts four estimated bytes). */
-        do {
-        } while (0);
+
         REG_BLDALPHA = alpha;
       }
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;

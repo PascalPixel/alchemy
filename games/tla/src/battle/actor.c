@@ -83,12 +83,7 @@ void BattleMotion_ShowDowned(s32 id) {
   if (unit->side == BATTLE_UNIT_ENEMY) {
     n = 0;
     while ((rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0) {
-      /* FAKEMATCH: the native CSE block ends after the child lookup; a one-pass
-         block keeps its load before the index shift, which a straight
-         assignment reverses. */
-      do {
-        ent = rec->entries[0];
-      } while (0);
+      ent = rec->entries[0];
       recs[n] = rec;
       ent->param = 6;
       ent->picture = 0xff;

@@ -10,10 +10,7 @@ void Func_020011c0(void) {
   object->motionFlags = 0;
   object->actionFlags = 0;
   {
-    /* FAKEMATCH: the zero pinned to r1 and set just before the call comes
-     * before the owner's load and the 8, as native; as a plain argument, one
-     * row is reordered in tla-en. */
-    register s32 zero asm("r1");
+    s32 zero;
 
     zero = 0;
     Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, zero,

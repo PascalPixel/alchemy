@@ -41,11 +41,7 @@ void Actor_SetSquareSprite(u32 objectId) {
   sprite = object->animation;
   if (sprite == 0)
     return;
-  /* FAKEMATCH: the one-pass block reads the shape byte before the offset's 8 is
-   * built; written plainly the 8 is built first (differ 2). */
-  do {
-    sprite->yOffset = 8;
-    sprite->attr0High &= 0x3f;
-  } while (0);
+  sprite->yOffset = 8;
+  sprite->attr0High &= 0x3f;
   sprite->attr1High = (sprite->attr1High & 0x3f) | 0x40;
 }

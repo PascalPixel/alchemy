@@ -68,11 +68,7 @@ void Func_0810857c(s32 messageId) {
   struct ShopRuntime *state;
   struct WindowSprite **slot;
 
-  /* FAKEMATCH: the one-pass block loads the shop work before the anchor offset
-   * is built (differ 2 without it). */
-  do {
-    state = Ram_HeapSlots->menuRuntime;
-  } while (0);
+  state = Ram_HeapSlots->menuRuntime;
   slot = &state->anchor;
   saved = (*slot)->active;
   no = messageId;

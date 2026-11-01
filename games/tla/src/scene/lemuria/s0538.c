@@ -14,11 +14,7 @@ void Func_02000538(void) {
   Func_02001d74();
   Func_02001ccc((s32)&SceneId_Ov68b, 2);
   party = &gMainRoutineWork;
-  /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the party
-   * state's address before it builds the field's offset (2 differ without it).
-   */
-  do {
-  } while (0);
+
   party->unk2c2 = 2;
 }
 

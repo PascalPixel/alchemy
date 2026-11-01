@@ -126,12 +126,7 @@ done:
       if (result == 1)
         gMainRoutineWork.packedEvents[0] = 0;
       if (result == 2) {
-        /* FAKEMATCH: the one-pass block loads gMainRoutineWork's address before
-         * it starts the field's offset; without it the offset comes first
-         * (differ 2). */
-        do {
-          party = &gMainRoutineWork;
-        } while (0);
+        party = &gMainRoutineWork;
         party->packedEvents[1] = 0;
       }
     } else {
@@ -141,10 +136,7 @@ done:
       if (result == 1)
         gMainRoutineWork.packedEvents[0] = owner;
       if (result == 2) {
-        /* FAKEMATCH: as above (differ 2 without it). */
-        do {
-          party = &gMainRoutineWork;
-        } while (0);
+        party = &gMainRoutineWork;
         party->packedEvents[1] = owner;
       }
     }

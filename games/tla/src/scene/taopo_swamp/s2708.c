@@ -8,17 +8,13 @@
 s32 Func_02002708(s32 index) {
   struct VentWork *work;
 
-  do {
-    work = VENT_WORK;
-  } while (0);
+  work = VENT_WORK;
   return VENT_AT(work, index)->entries[0].active;
 }
 
 void Func_0200271c(s32 index, s32 active) {
   struct VentWork *work;
 
-  do {
-    work = VENT_WORK;
-  } while (0);
+  work = VENT_WORK;
   VENT_AT(work, index)->entries[0].active = active;
 }

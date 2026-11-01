@@ -60,20 +60,15 @@ void BattleObject_Reset(struct TlaBattleObj *actor, s32 keep) {
   actor->overlay = 0;
   actor->animation = 0;
   actor->effect = 0;
-  /* FAKEMATCH(one-pass): the clears and the facing in a one-pass block,
-   * which loads the byte zero before the palette's store; as plain
-   * statements, 4 of 63 instructions differ in tla-en. */
-  do {
-    actor->animationEntry = 0;
-    actor->activeConditions = 0;
-    actor->effectEntry = 0;
-    actor->active = 0;
-    actor->selectedCondition = 0;
-    actor->fading = 0;
-    facingAngle = ArcTan2(0, 0) + 0x8000;
-    object->angle = facingAngle;
-    object->unk59 = 3;
-  } while (0);
+  actor->animationEntry = 0;
+  actor->activeConditions = 0;
+  actor->effectEntry = 0;
+  actor->active = 0;
+  actor->selectedCondition = 0;
+  actor->fading = 0;
+  facingAngle = ArcTan2(0, 0) + 0x8000;
+  object->angle = facingAngle;
+  object->unk59 = 3;
   object->motionFlags = 2;
   actor->visible = 1;
   Actor_StartScriptFar((struct ActorView *)object, Data_0812cacc);

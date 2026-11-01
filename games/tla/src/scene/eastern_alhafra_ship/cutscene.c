@@ -292,10 +292,7 @@ void Func_020004f4(void) {
   Call3((void (*)())Actor_OffsetPositionAndReset, 9, 0, -16);
   Call1((void (*)())FieldEvent_Wait, 10);
   Call2((void (*)())Party_SetFields1eeAnd1f0, (s32)&SceneId_Ov669, 99);
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads gMainRoutineWork's address before it builds the field offset (differ 2 without
-   * it). */
-  do {
-  } while (0);
+  
   gMainRoutineWork.battleRule24b = 2;
   Call2((void (*)())Func_02003220, 10, 1);
   Func_02003138();

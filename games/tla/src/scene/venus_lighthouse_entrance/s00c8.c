@@ -16,10 +16,7 @@ void Func_020000c8(s32 actor) {
   object->update = VenusLighthouseEntrance_UpdateSparkTrail;
   object->priorityFlags = 0;
   {
-    /* FAKEMATCH(pin): the arguments pinned in order, so the -96 is built
-     * afresh and negated last; as Actor_CommitPositionAndActivate(actor,
-     * 96, -96), 23 of 35 instructions differ in tla-en. */
-    register s32 a asm("r0") = actor;
+    s32 a = actor;
     register s32 dx asm("r1") = 96;
     register s32 dz asm("r2") = -96;
 
@@ -30,7 +27,7 @@ void Func_020000c8(s32 actor) {
      * after the actor is copied; as Actor_CommitPositionAndActivate(
      * actor, -96, 96), 2 of 35 instructions differ in tla-en. */
     register s32 a asm("r0") = actor;
-    register s32 dx asm("r1") = -96;
+    s32 dx = -96;
 
     Actor_CommitPositionAndActivate(a, dx, 96);
   }

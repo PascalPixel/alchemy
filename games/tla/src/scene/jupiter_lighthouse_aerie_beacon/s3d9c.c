@@ -68,10 +68,7 @@ s32 Func_02003d9c(void) {
   Call2(Task_Add, (s32)Func_020005b8, 0x480);
   if (FIELD_AT(gMainRoutineWork, s16, 482) == 9) {
     Func_02000cd0();
-    /* FAKEMATCH: a one-pass block orders the message store after the call
-     * (found by alchemy permute). */
-    do {
-    } while (0);
+
     FIELD_AT(gMainRoutineWork, u16, 608) = (s32)MsgRobe;
     FIELD_AT(gMainRoutineWork, u16, 610) = 1;
   } else {

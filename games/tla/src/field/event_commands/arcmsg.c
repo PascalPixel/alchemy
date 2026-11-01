@@ -46,13 +46,8 @@ void BattleEffect_UpdatePairedArcSpawner(struct ArcEffectObject *caster) {
   struct MainRoutineWork *party;
 
   phase = caster->phase;
-  /* FAKEMATCH(one-pass): the step's advance and gMainRoutineWork's address in
-   * a one-pass block; as elapsedFrames = (s16)caster->step++ with
-   * gMainRoutineWork.map, 4 of 43 instructions differ in tla-en. */
-  do {
-    elapsedFrames = (s16)caster->step++;
-    party = &gMainRoutineWork;
-  } while (0);
+  elapsedFrames = (s16)caster->step++;
+  party = &gMainRoutineWork;
 
   if (party->map == (s32)&SceneId_Ov64a) {
     if (elapsedFrames % 7 == 0)
@@ -114,8 +109,7 @@ void BattleEffect_RunEffect16(void) {
    * counters take lives in r6 from here; the one-pass block keeps its set
    * before the object load (one reordered row without it). */
   zero = 0;
-  do {
-  } while (0);
+
   object = scene->mainObject;
   group = object->records;
   entry = group->entries[0];
@@ -130,8 +124,6 @@ void BattleEffect_RunEffect16(void) {
     const u8 *tiles;
     s32 id;
 
-    do {
-    } while (0);
     work->arcTileSlot = slot;
     id = slot << 16;
     tiles = gData_080ed90c;
@@ -187,8 +179,7 @@ void BattleEffect_RunEffect16(void) {
   do {
   } while (0);
   wait(1);
-  do {
-  } while (0);
+
   Resource_ResetEntry(scene->arcTileSlot);
   FieldMessage_ShowFar((s32)&MsgMonstersAttackLess, 1);
 }

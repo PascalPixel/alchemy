@@ -25,10 +25,7 @@ void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag) {
     Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
     {
-      /* FAKEMATCH: the first argument pinned to r0 and taken by an empty asm:
-       * ⚓️ moves it into place right after the flag store, before the position
-       * loads; plain it moves after them (differ 2). */
-      register s32 first asm("r0") = a;
+      s32 first = a;
 
       asm("" : : "l"(first));
       Func_02001234_(first, b, 3, 1, (object->x >> 20) - 1, object->z >> 20);
@@ -51,10 +48,7 @@ void Func_02000848(s32 id, s32 a, s32 bArg, s32 x, s32 z, s32 unused,
     object = Actor_GetById(id);
     object->priorityFlags |= 2;
     {
-      /* FAKEMATCH: the second argument pinned to r1 and taken by an empty asm:
-       * ⚓️ moves it into place right after the flag store, before the position
-       * loads; plain it moves after them (differ 2). */
-      register s32 second asm("r1") = b;
+      s32 second = b;
 
       asm("" : : "l"(second));
       Func_02001234_(a, second, 1, 3, object->x >> 20, (object->z >> 20) - 1);

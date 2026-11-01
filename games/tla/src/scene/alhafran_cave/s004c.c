@@ -57,10 +57,7 @@ void Func_02000168(void) {
 void Func_020001d4(void) {
   struct AlhafranCaveEventWork *work = Ram_HeapSlots->eventWork;
 
-  /* FAKEMATCH: a one-pass block loads the event work before its offset is built
-   * (one reordered row). */
-  do {
-  } while (0);
+  
   work->valueD4a = 2;
 }
 
@@ -77,10 +74,7 @@ u8 *Func_020001e8(void) {
 void Func_02000220(void) {
   s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
-  /* FAKEMATCH: a one-pass block loads the height before the threshold is built
-   * (one reordered row). */
-  do {
-  } while (0);
+  
   if (y < 0x80000)
     ((u8 *)&gMainRoutineWork)[0x2c3] = 0;
   else

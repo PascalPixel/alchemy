@@ -46,8 +46,7 @@ void Func_020028ac(void) {
                    as the native stores it (differ 16 as a plain store, 30
                    without the pins, 16 without the blocks). */
 
-    do {
-    } while (0); /* FAKEMATCH: with the pin above. */
+    /* FAKEMATCH: with the pin above. */
     REG_BLDALPHA = alpha;
   }
   REG_BLDCNT = 0x3f10;
@@ -78,8 +77,7 @@ void Func_020028ac(void) {
         0; /* FAKEMATCH: the zero pinned to r3 in a one-pass block (differ 4 as
               a plain store). */
 
-    do {
-    } while (0); /* FAKEMATCH: with the pin above. */
+    /* FAKEMATCH: with the pin above. */
     REG_BLDCNT = off;
   }
   Func_02000694(0, 7, 21, 128);

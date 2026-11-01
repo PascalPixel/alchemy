@@ -21,10 +21,7 @@ void Func_02000dac(void) {
   {
     u8 *party = (u8 *)&gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-     * built (one reordered row). */
-    do {
-    } while (0);
+
     party[0x2c2] = 2;
   }
   Func_020018d8((s32)&SceneId_Ov662Room1, 10);
@@ -38,10 +35,7 @@ void Func_02000de0(void) {
   {
     u8 *party = (u8 *)&gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-     * built (one reordered row). */
-    do {
-    } while (0);
+
     party[0x2c2] = 2;
   }
   Func_020018d8((s32)&SceneId_Ov662Room1, 9);

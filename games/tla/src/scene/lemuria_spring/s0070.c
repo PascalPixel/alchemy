@@ -18,10 +18,7 @@ void Func_02000070(void) {
   s32 *layer;
   s32 i;
 
-  /* FAKEMATCH: the loop note ends the scheduling block: the native loads the
-   * map work before it builds the cue (2 differ without it). */
-  do {
-  } while (0);
+
   Func_02001408(216);
   layer = (s32 *)(map + 0x178);
   i = 15;

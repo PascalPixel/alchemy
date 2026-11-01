@@ -26,7 +26,7 @@ s32 Func_02004904(void) {
    * trade places (differ 26; the node pinned alone, 11). */
   register struct GaiaRockInsideNode *node asm("r3") = &path->nodes[current];
   s32 next = current + 1;
-  register u32 link asm("r2");
+  u32 link;
 
   link = node->next[0];
   if (link == 251 || link == next)

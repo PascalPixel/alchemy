@@ -18,12 +18,7 @@ void BattleEffect_StartWindowHBlankDma(void) {
   s32 other;
   s32 dispHigh;
 
-  /* FAKEMATCH(one-pass): the transition work loaded before the page offset
-   * is started; as a plain assignment, 2 of 68 instructions differ in
-   * tla-en. */
-  do {
-    work = Ram_HeapSlots->screenTransition;
-  } while (0);
+  work = Ram_HeapSlots->screenTransition;
   src = work->pages[work->page];
   channel = REG_DMA0;
   // Stop the previous transfer before priming the first line's registers.
@@ -67,17 +62,13 @@ void BattleEffect_StartWindowHBlankDma(void) {
   /* FAKEMATCH(one-pass): the value loaded before the register address is
    * started; as a plain assignment, 2 of 68 instructions differ in
    * tla-en. */
-  do {
-    value = *src;
-  } while (0);
+  value = *src;
   REG_WIN0H = value;
   src++;
   /* FAKEMATCH(one-pass): the value loaded before the register address is
    * started; as a plain assignment, 2 of 68 instructions differ in
    * tla-en. */
-  do {
-    other = *src;
-  } while (0);
+  other = *src;
   REG_WIN1H = other;
   src++;
   /* FAKEMATCH(temporary): both vertical ranges (0 to 160) stored from the

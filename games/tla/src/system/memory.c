@@ -12,6 +12,7 @@
 #include "heap_release.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "io_write.h"
 #include "resource.h"
 
 extern char ResourceId_WindowTiles;
@@ -21,29 +22,9 @@ extern u16 *gData_030011c4;
 /// and points BG0 at the screen.
 // As ☀️'s DebugText_Clear.
 void Func_08014b70(void) {
-  volatile u32 fill;
-  u32 blank;
-
-  /* FAKEMATCH(one-pass): the fill word set in a block of its own, so it loads
-   * from the pool before the prologue's sub sp; as fill = 0xf000f000, 2 of 22
-   * instructions differ in tla-en. */
-  do {
-    blank = 0xf000f000;
-  } while (0);
-  fill = blank;
-  Dma_Set((const void *)&fill, (void *)0x06002000,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 320, REG_DMA3);
-  /* FAKEMATCH(one-pass): the cursor store in a block of its own, so BG0CNT's
-   * address is built after it; as a plain store, 4 of 22 instructions differ
-   * in tla-en. */
-  do {
-    gData_030011c4 = (u16 *)0x06002000;
-  } while (0);
-  {
-    s32 control = 0x400;
-
-    REG_BG0CNT = control;
-  }
+  Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 32 * 20 * 2);
+  gData_030011c4 = (u16 *)BG_SCREEN_BLOCK(4);
+  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
 }
 
 void Window_LoadGraphics(void) {
@@ -236,13 +217,8 @@ void *Heap_AllocEwram(s32 size) {
   u32 address;
   u32 words;
 
-  /* FAKEMATCH: the one-pass block keeps the heap-head load between the size's
-   * add and its shifts; as plain statements the ARM9TDMI schedule lifts both
-   * shifts above the load (differ 4). */
-  do {
-    words = (u32)size + 3;
-    address = state[0];
-  } while (0);
+  words = (u32)size + 3;
+  address = state[0];
   size = (s32)((words >> 2) << 2);
   next = address + (u32)size;
   if (next >= 0x02040000U) {

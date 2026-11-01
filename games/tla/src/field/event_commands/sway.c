@@ -63,11 +63,7 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
       asm volatile("" : "+l"(lift));
       pos.y = scene->y + (lift << 12);
       radius = life << 16;
-      /* FAKEMATCH: the loop note ends the scheduling block: the native starts
-       * the radius between the y store and the z load; without it the z load
-       * comes first (differ 2). */
-      do {
-      } while (0);
+      
       pos.z = scene->z;
       Vector_AddPolarOffset(radius, (s16)object->unk66 + (life << 11), &pos);
       SET_POSITION(object, pos.x, pos.y, pos.z);

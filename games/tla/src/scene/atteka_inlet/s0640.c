@@ -34,12 +34,7 @@ void Func_02000640(void) {
   struct Actor *object;
 
   Func_02001010();
-  /* FAKEMATCH: a one-pass block ends the call's scheduling block: without it
-   * gMainRoutineWork offset is built before its address is loaded (differ 2; an
-   * empty asm does the same, found by alchemy permute). */
-  do {
-    Func_02001108(0);
-  } while (0);
+  Func_02001108(0);
   Func_02001070(18, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);

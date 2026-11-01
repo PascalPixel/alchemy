@@ -85,11 +85,7 @@ void SceneTransform_ApplyRotation(s32 *ang) {
   s32 m[12];
 
   sx = Trig_Sin(ang[0]);
-  /* FAKEMATCH: a one-pass block ends the scheduling block after the first sine:
-   * ⚓️ saves it and loads the angle before it builds 0x4000 (plainly the
-   * constant is built first, one reordered row). */
-  do {
-  } while (0);
+
   cx = COS(ang[0]);
   sy = Trig_Sin(ang[1]);
   cy = COS(ang[1]);
@@ -257,11 +253,7 @@ void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
   s32 m[12];
 
   sx = Trig_Sin(ang[0]);
-  /* FAKEMATCH: a one-pass block ends the scheduling block after the first sine:
-   * ⚓️ saves it and loads the angle before it builds 0x4000 (plainly the
-   * constant is built first, one reordered row). */
-  do {
-  } while (0);
+
   cx = COS(ang[0]);
   sy = Trig_Sin(ang[1]);
   cy = COS(ang[1]);
@@ -291,11 +283,7 @@ void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
   {
     s32 quarter;
 
-    /* FAKEMATCH: a one-pass block and a forced temporary for 0x4000: ⚓️ starts
-     * the constant before it loads the angle (plainly the load comes first, one
-     * reordered row). */
-    do {
-    } while (0);
+
     quarter = 0x4000;
     cx = Trig_Sin(ang[0] + quarter);
   }

@@ -188,13 +188,9 @@ void Func_020029ac(void) {
   Call2((void (*)())Func_02005704, 0, FACING_NORTH);
   Call3((void (*)())Func_020056ec, 0x8000, 0, 0x14);
   {
-    /* FAKEMATCH: here the leader loads after both constants, pinned with the
-     * actor (one reordered row through the forwarder). */
-    register s32 third asm("r2") = 0x28;
-    /* FAKEMATCH: the second argument, pinned with the third. */
-    register s32 second asm("r1") = 0x105;
-    /* FAKEMATCH: the leader, pinned after both. */
-    register s32 actor asm("r0");
+    s32 third = 0x28;
+    s32 second = 0x105;
+    s32 actor;
 
     actor = gMainRoutineWork.currentOwner;
     Func_02005714(actor, second, third);

@@ -10,11 +10,7 @@ void DisplayScroll_BuildHblankWordTable(u32 *table) {
   u32 value;
   u32 step;
 
-  /* FAKEMATCH: a one-pass block keeps the fill word's pool load ahead of the
-   * step's split constant; as plain C, 2 instructions differ in tla-en. */
-  do {
-    value = 0x01ff01ff;
-  } while (0);
+  value = 0x01ff01ff;
   step = 0x10000;
   for (i = 0; i < 32; i++)
     *table++ = value;

@@ -23,11 +23,7 @@ void Func_02000a44(void) {
   volatile u16 *channel;
 
   REG_BG1VOFS = line[0];
-  /* FAKEMATCH: the one-pass block takes the channel address before the masks
-   * are built (alchemy permute). */
-  do {
-    channel = REG_DMA0;
-  } while (0);
+  channel = REG_DMA0;
   channel[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   channel[5] &= ~DMA_ENABLE;
   line++;

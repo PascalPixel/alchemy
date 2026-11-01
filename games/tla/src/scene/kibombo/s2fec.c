@@ -4,15 +4,9 @@ void Func_02002fec(struct KibomboObject *object) {
   s32 step;
 
   object->x += object->field64 << 8;
-  /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ stores x before it
-   * loads y (6 differ without the two blocks). */
-  do {
-  } while (0);
+
   object->y += 0x8000;
-  /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ stores y before it
-   * builds the scale step. */
-  do {
-  } while (0);
+
   /* FAKEMATCH: the temporary builds the scale step before scaleX is loaded (one
    * reordered row). */
   step = 0x51e;

@@ -39,12 +39,8 @@ const u8 *Func_02000cc0(void) {
 void Func_02000d00(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
-  /* FAKEMATCH: the one-pass block keeps the angle load before the constant; as
-   * plain statements the constant is built first (differ 2) */
-  do {
-    u16 facing = (leader->angle + 0x2000) & ~0x3fff;
+  u16 facing = (leader->angle + 0x2000) & ~0x3fff;
 
-    if (facing == 0xc000)
-      FieldMessage_Show((s32)&MsgLoho57, 1);
-  } while (0);
+  if (facing == 0xc000)
+    FieldMessage_Show((s32)&MsgLoho57, 1);
 }

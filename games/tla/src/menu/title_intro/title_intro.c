@@ -151,10 +151,7 @@ s32 Func_081a729c(s32 prompt) {
   data = Resource_GetTableEntry((s32)&ResourceId_TitleScreenPicture);
   Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   {
-    /* FAKEMATCH(pin): the native loads the cell buffer's address before it
-     * starts the source offset; as Ram_MapCellBuffer at both uses, 2 of 254
-     * instructions differ in tla-en. */
-    register u8 *cells asm("r5") = Ram_MapCellBuffer;
+    u8 *cells = Ram_MapCellBuffer;
 
     /* FAKEMATCH(barrier): holds the address's load ahead of the offset; as
      * the pin alone, 2 of 254 instructions differ in tla-en. */
@@ -163,10 +160,7 @@ s32 Func_081a729c(s32 prompt) {
     Dma_Set(cells, (void *)0x06006800, DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
   }
   {
-    /* FAKEMATCH(pin): the native loads the map's address before it starts
-     * the first tile; as tilemap = (u16 *)0x06003000, 2 of 254 instructions
-     * differ in tla-en. */
-    register u16 *start asm("r1") = (u16 *)0x06003000;
+    u16 *start = (u16 *)0x06003000;
 
     /* FAKEMATCH(barrier): holds r3 until the address is loaded; as the pin
      * alone, 2 of 254 instructions differ in tla-en. */

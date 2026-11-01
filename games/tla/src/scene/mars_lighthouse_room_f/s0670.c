@@ -122,11 +122,7 @@ step:
   wait(1);
   if (++frame <= 39)
     goto step;
-  /* FAKEMATCH: the one-pass block keeps the store ahead of the heap slots'
-   * address; plainly sched2 builds the address first (differ 2). */
-  do {
-    Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
-  } while (0);
+  Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
   SCENE_WORK->unk1ac = 521;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

@@ -16,12 +16,7 @@ void Actor_ShakeAngle(u32 objectId) {
     u32 b = Random16();
     u32 cur;
 
-    /* FAKEMATCH: the one-pass block reads the angle before either random value
-     * is shifted, the second first; added in place, 2 instructions differ in
-     * tla-en. */
-    do {
-      cur = object->angle;
-    } while (0);
+    cur = object->angle;
     b >>= 4;
     a >>= 4;
     object->angle = cur + (a - b);

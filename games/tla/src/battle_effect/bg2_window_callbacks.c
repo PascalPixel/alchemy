@@ -18,11 +18,7 @@ struct AffineStepWork {
 void BattleEffect_AdvanceBg2OnInterval(void) {
   struct AffineStepWork *work;
 
-  /* FAKEMATCH: the one-pass block loads the effect work before the counter
-   * offset is started (one reordered pair, differ 2 without it). */
-  do {
-    work = (struct AffineStepWork *)Ram_HeapSlots->battleFxWork[0];
-  } while (0);
+  work = (struct AffineStepWork *)Ram_HeapSlots->battleFxWork[0];
 
   if (++work->counter == work->period) {
     /* FAKEMATCH: x pinned to r3 loads before the affine reference register's
@@ -30,10 +26,7 @@ void BattleEffect_AdvanceBg2OnInterval(void) {
      * differ in tla-en. */
     register s32 x __asm__("r3") = work->x;
 
-    /* FAKEMATCH: the one-pass block's loop note holds the address until the
-     * pinned value is loaded. */
-    do {
-    } while (0);
+
     REG_BG2X = x;
     REG_BG2Y = work->y;
     work->x += work->stepX;

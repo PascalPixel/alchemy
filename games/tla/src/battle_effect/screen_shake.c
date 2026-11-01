@@ -11,11 +11,7 @@ void Camera_ApplyVerticalShake(s32 range) {
   u8 *fx = Ram_HeapSlots->battleFxWork[0];
   s32 *timer;
 
-  /* FAKEMATCH: keep the timer address in its own block; the ordinary
-   * assignment reorders two instruction pairs when range is unpinned. */
-  do {
-    timer = (s32 *)(fx + 0x77a8);
-  } while (0);
+  timer = (s32 *)(fx + 0x77a8);
   if (*timer > 0) {
     s32 shake = ((range - 1) & Random16()) - range / 2;
 

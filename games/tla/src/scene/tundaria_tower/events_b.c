@@ -4,10 +4,7 @@ void Func_02000bfc(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-   * built (one reordered row). */
-  do {
-  } while (0);
+
   if (party->scene == (s32)&SceneId_Ov68fRoom6) {
     struct Actor *object;
 

@@ -34,11 +34,7 @@ void Func_02000500(s32 unused, s32 id) {
 
   object->motionFlags = 3;
   Actor_GetById(id)->priorityFlags |= 1;
-  /* FAKEMATCH: the one-pass block loads gMainRoutineWork's address before the
-   * owner's offset is built (one reordered row without it). */
-  do {
-    party = &gMainRoutineWork;
-  } while (0);
+  party = &gMainRoutineWork;
   Actor_GetById(party->currentOwner)->priorityFlags |= 1;
   if (object->x >> 20 == 20 && object->z >> 20 == 39)
     Actor_SetSpritePriority(id, 3);

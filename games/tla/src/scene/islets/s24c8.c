@@ -23,9 +23,7 @@ void Func_020024f0(void) {
 void Func_0200253c(void) {
   struct Actor *object;
   u16 *state;
-  /* FAKEMATCH(pin): the state word in r3, held by the barrier below; as a
-   * plain u32 local, 2 of 41 instructions differ in tla-en. */
-  register u32 value asm("r3");
+  u32 value;
 
   if (gInput.held & 0x80) {
     state = gSceneState;

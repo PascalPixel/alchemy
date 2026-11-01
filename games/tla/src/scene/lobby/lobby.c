@@ -49,10 +49,7 @@ s32 Func_02000134(void) {
   work = Ram_HeapSlots->eventWork;
   result = 1;
   z = Actor_GetById(4)->z;
-  /* FAKEMATCH: the one-pass block loads z before the 0xe00000 bound is built;
-   * tested directly the bound comes first (differ 2). */
-  do {
-  } while (0);
+
   if (z > 0xe00000)
     Flag_Clear(0x304);
   if (work->raisedTrigger != 2) {

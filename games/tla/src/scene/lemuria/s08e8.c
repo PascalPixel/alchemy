@@ -39,10 +39,7 @@ void Func_02001d04();
 void Func_020008e8(void) {
   s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
-  /* FAKEMATCH: the loop note ends the scheduling block: ⚓️ loads the owner's y
-   * before it builds the limit (2 differ without it). */
-  do {
-  } while (0);
+
   if (y < 0x5a0000) {
     FieldMessage_Show((s32)MsgAndTheOthers, 1);
     Func_02001d7c(126);

@@ -52,12 +52,7 @@ void FieldMessage_Show(s32 no, s32 flags) {
   Text_GetMessageSize(no, (s32)&x, (s32)&y, (s32)&width, (s32)&height);
 
   margin = 30 - width;
-  /* FAKEMATCH: the one-pass block ends the scheduling block: the native reads
-   * the height before it halves the horizontal margin (one reordered row,
-   * differ 2 without). */
-  do {
-    rows = height;
-  } while (0);
+  rows = height;
   x = margin >> 1;
   y = (12 - rows) >> 1;
 

@@ -9,11 +9,7 @@ void Func_02000ba8(void) {
   Func_02001154(0, 0x200, 8, 9);
   object = Actor_GetById(10);
   object->motionFlags = 0;
-  /* FAKEMATCH: the empty one-pass block ends CSE's block after the store, so
-   * the last argument's 10 is built before object->x is loaded (differ 4
-   * without it, 8 without the shared arg). */
-  do {
-  } while (0);
+
   arg = 10;
   Func_020010ac(16, arg, 1, 1, object->x >> 20, arg);
 }

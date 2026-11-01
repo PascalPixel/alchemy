@@ -8,10 +8,7 @@ void Func_080d9ad0(s32 index, s32 flag, s32 a2, s32 a3) {
   struct Work9c *work = WORK_9C;
   struct Work9cSlot *slot;
 
-  /* FAKEMATCH: a one-pass block loads the work before the index is saved (one
-   * reordered row). */
-  do {
-  } while (0);
+
   slot = &work->slots[index];
   slot->flag = flag;
   if (!GameFlag_Test(flag))

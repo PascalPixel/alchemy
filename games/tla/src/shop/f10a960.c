@@ -10,12 +10,7 @@ s32 Shop_MsgByMode(s32 value) {
   s8 *shop;
   s8 mode;
 
-  /* FAKEMATCH: the one-pass block ends the scheduling block: the native loads
-   * the shop work before it builds the offset of the service kind (one
-   * reordered row, differ 2 without). */
-  do {
-    shop = Ram_HeapSlots->menuRuntime;
-  } while (0);
+  shop = Ram_HeapSlots->menuRuntime;
   mode = shop[0x507];
   if (mode == 1) {
     value += (u32)MsgCurePoisonService - (u32)MsgReviveService;

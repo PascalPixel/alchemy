@@ -63,8 +63,6 @@ void Func_02000860(void) {
   {
     register u16 alpha __asm__("r3") = 0xc08;
 
-    do {
-    } while (0);
     REG_BLDALPHA = alpha;
   }
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;

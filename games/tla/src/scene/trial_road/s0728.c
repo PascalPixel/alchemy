@@ -6,11 +6,7 @@ void Func_02000728(s32 a, s32 id) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   u8 mode;
 
-  /* FAKEMATCH: the loop note makes the offset's first instruction a barrier: ⚓️
-   * loads gMainRoutineWork's address before it builds the render mode's offset
-   * (plain, the offset starts first: differ 2). */
-  do {
-  } while (0);
+
   mode = party->renderMode;
   {
     /* FAKEMATCH: the id copy pinned to r0 after the mode read stays in the
@@ -28,11 +24,7 @@ void Func_02000748(s32 a, s32 id) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   u8 mode;
 
-  /* FAKEMATCH: the loop note makes the offset's first instruction a barrier: ⚓️
-   * loads gMainRoutineWork's address before it builds the render mode's offset
-   * (plain, the offset starts first: differ 2). */
-  do {
-  } while (0);
+
   mode = party->renderMode;
   {
     /* FAKEMATCH: the id copy pinned to r0 after the mode read stays in the

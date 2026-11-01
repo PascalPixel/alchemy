@@ -47,12 +47,7 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
   struct BattleFxWorkTail *work;
   struct BattleEffectArgument *effect;
 
-  /* FAKEMATCH: the one-pass block loads the effect work before the effect
-   * offset is started; assigned directly the offset is started first (differ
-   * 2). */
-  do {
-    work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
-  } while (0);
+  work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
   effect = work->effect;
 
   /* FAKEMATCH: the listing reads the held keys and drops them; InputState
@@ -74,12 +69,7 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   HeapSlot_AllocEwram(100, 0x60e);
   HeapSlot_Alloc(92, 0x7b7c);
   HeapSlot_Alloc(96, 0x4000);
-  /* FAKEMATCH: the one-pass block loads the effect work before the effect
-   * offset is started; assigned directly the offset is started first (differ
-   * 2). */
-  do {
-    work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
-  } while (0);
+  work = (struct BattleFxWorkTail *)Ram_HeapSlots->battleFxWork[0];
   work->effect = effect;
   work->active = 1;
   kind = effect->kind;

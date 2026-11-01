@@ -72,12 +72,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
     struct BattleWork *battle;
     u8 *mode;
 
-    /* FAKEMATCH(one-pass): the battle work is loaded before the mode's
-     * offset is built; as Actor_SetMode(object, battle->byte 0x869) after the
-     * object, 4 of 289 instructions differ in tla-en. */
-    do {
-      battle = Ram_HeapSlots->battleWork;
-    } while (0);
+    battle = Ram_HeapSlots->battleWork;
     mode = (u8 *)battle + 0x869;
     object = slot->object;
     Actor_SetMode(object, *mode);

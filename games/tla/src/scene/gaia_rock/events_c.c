@@ -78,10 +78,7 @@ void Func_02000314(void) {
   } else if (GameFlag_Test(0xf74) == 0) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
-    /* FAKEMATCH: a one-pass block keeps the work pointer load before the
-     * message arguments (one reordered row). */
-    do {
-    } while (0);
+
     FieldMessage_Show(MsgIMSensing, 1);
     work->unk15a = 1;
   } else {

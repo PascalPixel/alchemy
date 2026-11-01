@@ -35,10 +35,7 @@ void Func_0200093c(void) {
   {
     u8 *party = (u8 *)&gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-     * built (one reordered row). */
-    do {
-    } while (0);
+
     party[0x2c2] = 2;
   }
   Func_02004d30(14);
@@ -70,7 +67,7 @@ void Func_0200096c(s32 unused, s32 id) {
     y = object->y;
     {
       register struct Actor *self asm("r0") = object;
-      register s32 x asm("r1") = 0xc80000;
+      s32 x = 0xc80000;
       register s32 z asm("r3") = 0x3180000;
 
       Func_02004bf8(self, x, y, z);

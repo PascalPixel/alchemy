@@ -31,11 +31,7 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
   struct BattleWork *work;
   struct BattleEventState *ev;
 
-  /* FAKEMATCH: the one-pass block loads the battle work before the events
-   * offset is built (differ 2 without it), as in BattlePlayback_Reset. */
-  do {
-    work = Ram_HeapSlots->battleWork;
-  } while (0);
+  work = Ram_HeapSlots->battleWork;
   ev = &work->events;
   ev->queue.count = 0;
   ev->eventIndex = 0;

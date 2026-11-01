@@ -22,12 +22,7 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
   enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
     object->acceleration = 0x20000;
-    /* FAKEMATCH: the one-pass block's loop note holds the speed limit's store
-       ahead of the height test; plain, the test's 0xa0000 is started before
-       object->y is loaded (one reordered pair, differ 2). */
-    do {
-      object->speedLimit = 0x80000;
-    } while (0);
+    object->speedLimit = 0x80000;
     if (object->y < 0xa0000)
       object->velocityY += 0x28000;
     Actor_ResetMotion(object);

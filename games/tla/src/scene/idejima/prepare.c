@@ -37,11 +37,7 @@ s32 Func_02002ec8(void) {
   case 4: {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    /* FAKEMATCH: a one-pass block after the party address loads the scene id
-     * before the saved scene's offset; without it, 2 instructions differ in
-     * tla-en. */
-    do {
-    } while (0);
+
     party->savedScene = (s32)&SceneId_DailaInteriors2;
     party->savedEntrance = 1;
   }

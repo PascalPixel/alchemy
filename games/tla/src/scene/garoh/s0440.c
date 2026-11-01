@@ -93,13 +93,8 @@ loop:
   if ((u32)i <= 63)
     goto loop;
   index = *(s16 *)(work + 0x154);
-  /* FAKEMATCH: a one-pass block keeps the index's decrement after the sound
-   * call, where plainly sched2 ranks it above the call (differ 4 with the
-   * forwarding inlines). */
-  do {
-    Func_02005394(158);
-    index--;
-  } while (0);
+  Func_02005394(158);
+  index--;
   Func_0200517c_(gData_02005de0[index].data, gData_02005de0[index].a,
                  gData_02005de0[index].b);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);

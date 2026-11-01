@@ -60,11 +60,7 @@ void ScreenTransition_Update(void) {
   s8 *duration;
   u32 value;
 
-  /* FAKEMATCH: the one-pass block loads the transition state before the
-   * duration's offset is built (one reordered row, differ 2 without it). */
-  do {
-    state = Ram_HeapSlots->screenTransition;
-  } while (0);
+  state = Ram_HeapSlots->screenTransition;
   duration = &state->duration;
   window = (struct MapViewWork *)Ram_HeapSlots->mapWork;
   if (*duration != 0) {
@@ -81,12 +77,7 @@ void ScreenTransition_Update(void) {
       s32 offset;
 
       (*step)++;
-      /* FAKEMATCH: the one-pass block ends at the divide, so the start is read
-       * before the value's offset is built (one reordered row, differ 2 without
-       * it). */
-      do {
-        offset = Iwram_SignedDivide(delta * *step, *duration);
-      } while (0);
+      offset = Iwram_SignedDivide(delta * *step, *duration);
       state->value = state->start + offset;
     }
   }
@@ -109,11 +100,7 @@ void ScreenTransition_UpdateFromCentre(void) {
   s8 *duration;
   u16 value;
 
-  /* FAKEMATCH: the one-pass block loads the transition state before the
-   * duration's offset is built (one reordered row, differ 2 without it). */
-  do {
-    state = Ram_HeapSlots->screenTransition;
-  } while (0);
+  state = Ram_HeapSlots->screenTransition;
   duration = &state->duration;
   window = (struct MapViewWork *)Ram_HeapSlots->mapWork;
   if (*duration != 0) {
@@ -129,12 +116,7 @@ void ScreenTransition_UpdateFromCentre(void) {
       s32 offset;
 
       (*step)++;
-      /* FAKEMATCH: the one-pass block ends at the divide, so the start is read
-       * before the value's offset is built (one reordered row, differ 2 without
-       * it). */
-      do {
-        offset = Iwram_SignedDivide(delta * *step, *duration);
-      } while (0);
+      offset = Iwram_SignedDivide(delta * *step, *duration);
       state->value = state->start + offset;
     }
   }

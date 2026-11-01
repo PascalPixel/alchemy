@@ -89,10 +89,7 @@ void Func_02000a88(void) {
   struct Actor *object;
   s32 cell;
 
-  /* FAKEMATCH: a one-pass block loads gMainRoutineWork before its offset is
-   * built (one reordered row). */
-  do {
-  } while (0);
+
   object = Actor_GetById(party->currentOwner);
   Func_0200110c();
   Func_020011ac(0);

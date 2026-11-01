@@ -40,11 +40,7 @@ void Func_080e37e0(s32 actor) {
   ring->scaleY = 0xc000;
   for (i = 0; i < 32; i++) {
     ring->scaleX += 0x800;
-    /* FAKEMATCH: a one-pass block, so scaleY is loaded before the 0x200 step
-       is built (differ 2 without) */
-    do {
-      ring->scaleY += 0x200;
-    } while (0);
+    ring->scaleY += 0x200;
     wait(1);
   }
   ring->scaleX = 0x18000;

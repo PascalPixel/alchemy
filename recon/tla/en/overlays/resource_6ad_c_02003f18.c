@@ -1,3 +1,4 @@
+// Func_02003fc8 is adopted from this draft (2026-11-01).
 // Draft, differ 32 of 76, skeleton gap 0 (tla-en, 2026-11-01): Func_02003f18;
 // Func_02003fc8 in the same file matches, differ 0 of 81. Overlays 6aa, 69e and
 // 6a4 hold the same pair and can take this loop.
@@ -81,25 +82,4 @@ end:
   return 0;
 }
 
-void Func_02003fc8(s32 dx, s32 dz, s32 value) {
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *event = Ram_HeapSlots->eventWork;
-  struct WarpWork *work = &gData_020070a8;
-  s32 x = GameFlag_GetByte(work->positionFlag);
-  s32 z = GameFlag_GetByte(work->positionFlag + 8);
 
-  if (x != 0 || z != 0) {
-    struct Actor *other;
-
-    GameFlag_SetByte(work->positionFlag, 0);
-    GameFlag_SetByte(work->positionFlag + 8, 0);
-    object->x = ((x + dx) << 20) + 0x80000;
-    object->z = ((z + dz) << 20) + 0x80000;
-    other = *(struct Actor **)(event + 460);
-    other->x = object->x;
-    other->z = object->z;
-    Func_020054b0();
-    Func_02003d80();
-    WORD_AT(Ram_HeapSlots->eventWork, 428) = value;
-  }
-}

@@ -1,16 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The five functions here share their names with resource_6ba, so measure each
-// with --symbol; all five are differ 0. Func_02000054 needs each form below;
-// each was measured, the passes named are inferred, not read from RTL dumps:
-// - The outer loop and the two waits are built from labels: as for or while
-//   loops, loop.c moves the input address and the masks out of them.
-// - The message wait is a loop entered at its test from outside, which stops
-//   loop.c hoisting and leaves the listing's branch into the test.
-// - The hold test is written twice; cross-jumping merges the copies.
-// - frames++ follows wait(1); sched2 moves it ahead of the call.
-// INPUT_HELD and the volatile input pointer are the same volatile device, not
-// yet tagged in the S2 form; tag and measure it at adoption. Only tla-en was
-// measured: the other editions are not checked.
 #include "battle.h"
 #include "field.h"
 #include "game.h"
@@ -30,17 +17,7 @@ void Message_CloseFinishedWindows(void);
 void Message_OpenWindow(s32, s32, s32, s32);
 s32 Message_AllTyped(void);
 
-#define INPUT_HELD (*(volatile u32 *)&gInput.held)
-
-const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
-
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
-
-const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-const struct ActorPlacement *Scene_GetPlacements(void) {
-  return gActorPlacements;
-}
+#define INPUT_HELD (gInput.held)
 
 void Func_02000054(s32 message, s32 count) {
   s32 i;
@@ -49,6 +26,8 @@ void Func_02000054(s32 message, s32 count) {
   s32 typed;
   volatile struct InputState *input;
 
+  /* FAKEMATCH(volatile): the input read through a volatile pointer; as a plain
+   * pointer, 31 of 94 instructions differ in tla-en. */
   window = Func_02000d00(206, 0, 0, 0);
   i = 0;
   if (i >= count)

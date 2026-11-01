@@ -1,3 +1,4 @@
+// Func_020053bc is adopted from this draft (2026-11-01).
 // Draft, differ 23 of 61, skeleton gap 3 (tla-en, 2026-11-01). Measure with
 // --symbol: Func_020053bc matches, differ 0 of 51; the figures are
 // Func_02005428's. Its skeleton lacks the entry's movs #255, and sl is copied
@@ -46,21 +47,7 @@ struct EffectWork {
 };
 
 // Layer switch table: three words (id, mode, flag), terminated by 0xffff.
-void Func_020053bc(const u16 *entry) {
-  s32 value;
 
-  while ((value = *entry) != 0xffff) {
-    u16 id = *entry++;
-    struct Actor *object = Actor_GetById(id);
-    s16 mode = entry[0];
-    s16 flag = entry[1];
-
-    object->collisionFlags &= 0xfe;
-    Actor_SetSingleChildFlags(object, 0);
-    Func_020054ac(id, (u16)mode, (u16)flag, object->terrainId);
-    entry += 2;
-  }
-}
 
 void Func_02005428(const u16 *entry, s32 set, s32 step) {
   struct EffectWork *work = Ram_HeapSlots->effectWork;

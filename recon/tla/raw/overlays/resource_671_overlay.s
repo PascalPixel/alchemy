@@ -2551,64 +2551,6 @@ Func_02005090:
 	.4byte IwramCopyWords
 .L_0200d20c:
 	.4byte 0xffff0000
-	.section .text.x0200d3bc,"ax",%progbits
-	.balign 4
-	.global Func_020053bc
-	.thumb_func
-Func_020053bc:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	movs r2, #255
-	ldrh r3, [r0]
-	lsls r2, r2, #8
-	adds r2, #255
-	sub sp, #4
-	cmp r3, r2
-	beq .L_0200d420
-	adds r7, r0, #0
-.L_0200d3d2:
-	ldrh r3, [r7]
-	mov r8, r3
-	mov r0, r8
-	bl Actor_GetById
-	adds r5, r0, #0
-	adds r1, r5, #0
-	adds r1, #89
-	movs r2, #2
-	ldrsh r6, [r7, r2]
-	ldrb r2, [r1]
-	movs r3, #4
-	ldrsh r4, [r7, r3]
-	movs r3, #254
-	ands r3, r2
-	strb r3, [r1]
-	movs r1, #0
-	str r4, [sp, #0]
-	bl Actor_SetSingleChildFlags
-	ldr r4, [sp, #0]
-	lsls r6, r6, #16
-	lsls r4, r4, #16
-	lsrs r4, r4, #16
-	lsrs r6, r6, #16
-	adds r5, #34
-	ldrb r3, [r5]
-	adds r2, r4, #0
-	mov r0, r8
-	adds r1, r6, #0
-	adds r7, #6
-	bl Func_020054ac
-	movs r2, #255
-	ldrh r3, [r7]
-	lsls r2, r2, #8
-	adds r2, #255
-	cmp r3, r2
-	bne .L_0200d3d2
-.L_0200d420:
-	add sp, #4
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
 	.section .text.x0200d428,"ax",%progbits
 	.balign 4
 	.global Func_02005428

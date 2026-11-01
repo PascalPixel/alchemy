@@ -3,7 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/airs_rock_inside/entry.o"(.text)
-        "*/resource_664_overlay.o"(.text.x02008038)
+        "*/games/tla/src/scene/airs_rock_inside/s0038.o"(.text)
         "*/resource_664_overlay.o"(.text.x020080a4)
         "*/games/tla/src/scene/airs_rock_inside/s0128.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)

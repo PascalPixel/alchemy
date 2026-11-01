@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/debug/shop_test/entry.o"(.text)
         "*/games/tla/src/debug/shop_test/scene_tables.o"(.text)
-        "*/resource_6ba_overlay.o"(.text.x02008054)
+        "*/games/tla/src/debug/shop_test/s0054.o"(.text)
         "*/games/tla/src/debug/shop_test/menu_calls.o"(.text)
         "*/games/tla/src/debug/shop_test/s01d4.o"(.text)
         "*/games/tla/src/debug/shop_test/s02a8.o"(.text)

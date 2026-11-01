@@ -1,3 +1,4 @@
+// Func_02000038 is adopted from this draft (2026-11-01).
 // Draft, differ 8 of 58, skeleton gap 2 (tla-en, 2026-11-01): Func_02000908,
 // the worst of four; measure each with --symbol.
 // Matches: differ 0 for Func_02000038, Func_02000128 and Func_020004d4, all
@@ -17,27 +18,7 @@ s32 Func_02005f64(struct FieldActor *object);
 void Func_020006cc(struct FieldActor *object);
 void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer);
 
-void Func_02000038(s16 *list) {
-  s16 *entry;
 
-  if ((u16)list[0] == 0xffff)
-    return;
-  entry = list;
-next:
-  {
-    s32 id = (u16)entry[0];
-    struct FieldActor *object = Actor_GetById(id);
-    s32 kind = entry[1];
-    s32 flag = entry[2];
-
-    object->collisionFlags &= ~1;
-    Actor_SetSingleChildFlags(object, 0);
-    Func_02000128(id, (u16)kind, (u16)flag, BYTE_AT(object, 34));
-    entry += 3;
-  }
-  if ((u16)entry[0] != 0xffff)
-    goto next;
-}
 
 void Func_02000128(s32 id, u32 kind, s32 flag, s32 layer) {
   struct FieldActor *object = Actor_GetById(id);

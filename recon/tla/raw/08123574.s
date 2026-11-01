@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08123574
+	.global BattleParty_CountStandbyDjinn
 	.thumb_func
-Func_08123574:
+BattleParty_CountStandbyDjinn:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

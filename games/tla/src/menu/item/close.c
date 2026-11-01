@@ -116,7 +116,7 @@ s32 GameFlag_Test(s32 flag);
 void Func_080fa84c(s32 owner);
 void Func_080f8170(void *window, s32 owner, s32 slot, s32 style);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
-void Func_08104ef8(s32 first);
+void Menu_CreateOwnerEntryObjects(s32 first);
 void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
 void Func_080f8a44(s32 x, s32 y);
 void InventoryMenu_SortByListOrder(u16 *inventory, s32 order);
@@ -196,7 +196,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
         Func_080f8170(window, ownerIds[selection], 0, 0);
       }
       if (redraw == 2) {
-        Func_08104ef8(selection / 4 * 4);
+        Menu_CreateOwnerEntryObjects(selection / 4 * 4);
         wait(1);
       }
       Menu_HighlightPageEntry(menu->pageWindow, selection, count);

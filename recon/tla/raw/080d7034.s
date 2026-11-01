@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080d7034
+	.global FieldEffect_UpdateSparkles
 	.thumb_func
-Func_080d7034:
+FieldEffect_UpdateSparkles:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

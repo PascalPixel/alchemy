@@ -1183,7 +1183,7 @@ Func_0812381c:
 .L_08124232:
 	add r1, sp, #16
 	mov r8, r1
-	bl Func_08123574
+	bl BattleParty_CountStandbyDjinn
 	mov r2, r10
 	ldr r3, [r2]
 	movs r0, #0

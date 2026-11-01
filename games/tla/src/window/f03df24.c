@@ -1,0 +1,196 @@
+#include "types.h"
+#include "system.h"
+#include "ram_buffer.h"
+#include "select.h"
+
+struct EffectPosition {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+extern u32 gVBlankCount;
+extern s8 gMenu_CursorBobOffsets[];
+extern u8 gData_0805c9c4[];
+
+s32 BattleMotion_ProjectScaledPositionFar(s32 id,
+                                          struct EffectPosition *projected);
+s32 GameFlag_Test(s32 flag);
+void Oam_AddSpriteAtDepth(s32 *entry, s32 slot);
+struct SelectionNode *NodeChain_GetNodeAtCount(struct SelectionScreen *screen);
+s32 VramCache_Load(s32 slot, s32 size, void *source);
+void Func_0803e488(struct SelectionScreen *state, s32 index);
+
+void SelectionMenu_Draw(void) {
+  struct SelectionScreen *state = Ram_HeapSlots->menuWork;
+  struct SelectionSprite *cursorEntry = &state->records[14].sprite;
+  struct SelectionNode *cursor = &state->records[14];
+  struct SelectionNode *transfer = &state->records[15];
+  struct SelectionNode *node;
+  struct SelectionSprite *e;
+  struct SelectionSprite *te;
+  s32 cnt = 0;
+  s32 slot;
+  s32 tmp;
+  struct EffectPosition pos;
+
+  node = state->head;
+  while (node != 0) {
+    e = &node->sprite;
+    e->affine = 0;
+    e->param = 0;
+    e->x = node->x;
+    e->y = node->y;
+    slot = 240;
+    if (state->verticalScroll != 0) {
+      e->y += state->verticalScroll;
+    } else if (node->x != node->targetX) {
+      if (node->dx > 0) {
+        if (node->x + node->dx > node->targetX) {
+          node->x = node->targetX;
+        } else {
+          node->x = node->x + node->dx;
+        }
+      } else {
+        if (node->x + node->dx < node->targetX) {
+          node->x = node->targetX;
+        } else {
+          node->x = node->x + node->dx;
+        }
+      }
+      e->x = node->x;
+    } else if (cnt == state->cursorIndex) {
+      slot = 241;
+      if (cursor->kind != 0) {
+        if (BattleMotion_ProjectScaledPositionFar(node->base, &pos) != -1) {
+          cursor->targetX = pos.x;
+          cursor->targetY = pos.y;
+          if (cursor->scale == 0) {
+            cursor->x = pos.x;
+            cursor->y = pos.y;
+            cursor->scale = 1;
+          }
+        }
+      }
+    }
+    if (node->scale != 0) {
+      if (GameFlag_Test(0x103) != 0) {
+        if (state->records[14].kind == 1) {
+          e->mode = 1;
+        } else {
+          e->mode = 0;
+        }
+        if (node->kind == 1) {
+          e->mode = 1;
+        }
+      }
+      Oam_AddSpriteAtDepth((s32 *)e, slot);
+    }
+    node = node->next;
+    cnt++;
+  }
+  if (transfer->kind != 0) {
+    node = NodeChain_GetNodeAtCount(state);
+    te = &transfer->sprite;
+    te->mode = 0;
+    te->affine = 0;
+    te->param = 0;
+    te->mosaic = 0;
+    te->colors = 1;
+    te->size = 2;
+    te->shape = 0;
+    te->priority = 0;
+    te->tile = transfer->tile;
+    te->x = node->x - 4;
+    te->y =
+        node->y + (gMenu_CursorBobOffsets[(gVBlankCount >> 1) & 15] >> 1) - 4;
+    if (transfer->scale != transfer->scaleEnd) {
+      state->transform.scaleX = transfer->scale;
+      state->transform.scaleY = transfer->scale;
+      state->transform.angle = 0;
+      te->param = AffineMatrix_BuildForEffect(&state->transform);
+      te->affine = 3;
+      te->x = te->x + 0xfff0;
+      te->y = te->y + 0xf0;
+      transfer->scale = transfer->scale + transfer->scaleStep;
+    }
+    if (GameFlag_Test(0x103) != 0) {
+      te->mode = 1;
+    }
+    Oam_AddSpriteAtDepth((s32 *)te, 248);
+  }
+  Func_0803e488(state, 0);
+  Func_0803e488(state, 1);
+  node = state->path;
+  while (node != 0) {
+    e = &node->sprite;
+    if (node->x != node->targetX) {
+      node->x = node->x + node->dx;
+    }
+    if (node->y != node->targetY) {
+      node->y = node->y + node->dy;
+    }
+    e->x = node->x;
+    e->y = node->y;
+    if (node->scale != node->scaleEnd) {
+      node->scale = node->scale + node->scaleStep;
+      state->transform.scaleX = node->scale;
+      state->transform.scaleY = node->scale;
+      state->transform.angle = 0;
+      e->param = AffineMatrix_BuildForEffect(&state->transform);
+      e->affine = 3;
+      e->x = e->x + 0xfff8;
+      e->y = e->y + 0xf8;
+    } else {
+      e->affine = 0;
+      e->param = 0;
+    }
+    if (GameFlag_Test(0x103) != 0) {
+      if (state->records[14].kind == 1) {
+        e->mode = 1;
+      } else {
+        e->mode = 0;
+      }
+      if (node->kind == 1) {
+        e->mode = 1;
+      }
+    }
+    Oam_AddSpriteAtDepth((s32 *)e, 240);
+    node = node->next;
+  }
+  if (cursor->kind != 0) {
+    cnt = (s32)gData_0805c9c4;
+    {
+      void *src = (void *)(cnt + (((gVBlankCount >> 2) & 15) << 8));
+
+      cursorEntry->tile = VramCache_Load(cursor->slot, 0x100, src);
+    }
+    if (cursor->targetX != cursor->x) {
+      tmp = (cursor->targetX - cursor->x) >> 1;
+      if (tmp != 0) {
+        cursor->x = cursor->x + tmp;
+      } else {
+        cursor->x = cursor->targetX;
+      }
+    }
+    if (cursor->targetY != cursor->y) {
+      if ((tmp = (cursor->targetY - cursor->y) >> 1) != 0) {
+        cursor->y = cursor->y + tmp;
+      } else {
+        cursor->y = cursor->targetY;
+      }
+    }
+    cursorEntry->y =
+        cursor->y + gMenu_CursorBobOffsets[(gVBlankCount >> 2) & 15] - 32;
+    cursorEntry->x = cursor->x - 4;
+    if (GameFlag_Test(0x103) != 0) {
+      if (state->records[14].kind == 1) {
+        cursorEntry->mode = 1;
+      } else {
+        cursorEntry->mode = 0;
+      }
+    }
+    Oam_AddSpriteAtDepth((s32 *)cursorEntry, 248);
+  }
+  state->status += 1;
+}

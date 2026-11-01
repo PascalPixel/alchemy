@@ -292,7 +292,7 @@ RuntimeDispatch_ReservedNoOpEFar:
 	.global Serial_InitializeFar
 	.thumb_func
 Serial_InitializeFar:
-	overlay_veneer Func_08016180
+	overlay_veneer Serial_Initialize
 	.global Serial_PollAndTransferFar
 	.thumb_func
 Serial_PollAndTransferFar:
@@ -380,7 +380,7 @@ Serial_GetActiveTransfersFar:
 	.global Serial_StepBlockTransferFar
 	.thumb_func
 Serial_StepBlockTransferFar:
-	overlay_veneer Func_08016990
+	overlay_veneer Serial_StepBlockTransfer
 	.global Task_SetFlagsFar
 	.thumb_func
 Task_SetFlagsFar:

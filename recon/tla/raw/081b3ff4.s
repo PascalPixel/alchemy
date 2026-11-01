@@ -62,7 +62,7 @@ Func_081b3ff4:
 	lsls r1, r1, #2
 	ldr r2, [sp, #40]
 	movs r0, #0
-	bl Func_081b3ed8
+	bl LzPack_ConsumeSlotBytes
 	ldr r2, [r5]
 	movs r1, #208
 	ldr r3, [r2, r6]
@@ -1040,7 +1040,7 @@ Func_081b3ff4:
 	adds r0, r0, r1
 	ldr r2, [sp, #40]
 	ldr r1, [r3, r6]
-	bl Func_081b3ed8
+	bl LzPack_ConsumeSlotBytes
 	ldr r1, [r7]
 	adds r5, r1, r5
 	ldr r2, [r1, r6]
@@ -1060,7 +1060,7 @@ Func_081b3ff4:
 	cmp r5, #0
 	bne .L_081b480a
 	ldr r0, [sp, #36]
-	bl Func_081b3fb0
+	bl LzPack_CopyBufferedBytes
 	ldr r2, [r7]
 	movs r4, #208
 	lsls r4, r4, #6
@@ -1125,7 +1125,7 @@ Func_081b3ff4:
 	strb r5, [r4, r0]
 	str r3, [r1]
 	ldr r0, [sp, #36]
-	bl Func_081b3fb0
+	bl LzPack_CopyBufferedBytes
 	ldr r3, [r6]
 	movs r4, #136
 	lsls r4, r4, #7

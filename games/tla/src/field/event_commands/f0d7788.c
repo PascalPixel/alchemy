@@ -8,7 +8,7 @@ s32 Djinn_AddToLeastLoadedOwnerFar(s32 element, s32 djinni);
 void Event_Start(void);
 void Event_End(void);
 void Func_080d82e0(s32 actor);
-void Func_080d8740(s32 actor);
+void BattleEffect_RunMercuryDjinnCapture(s32 actor);
 void Djinn_RunMarsJoinEffect(s32 actor);
 void Djinn_RunJupiterJoinEffect(s32 actor);
 void Func_080cb82c(void);
@@ -51,7 +51,7 @@ void Func_080d7788(s32 actor, s32 element, s32 djinni) {
     if (element == 0)
       Func_080d82e0(actor);
     else if (element == 1)
-      Func_080d8740(actor);
+      BattleEffect_RunMercuryDjinnCapture(actor);
     else if (element == 2)
       Djinn_RunMarsJoinEffect(actor);
     else if (element == 3)

@@ -115,7 +115,7 @@ Func_080feb58:
 .L_080fec4c:
 	asrs r0, r0, #2
 	lsls r0, r0, #2
-	bl Func_08104ef8
+	bl Menu_CreateOwnerEntryObjects
 	movs r0, #1
 	bl wait
 .L_080fec5a:

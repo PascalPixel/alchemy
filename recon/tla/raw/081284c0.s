@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081284c0
+	.global Battle_AwardSpoils
 	.thumb_func
-Func_081284c0:
+Battle_AwardSpoils:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

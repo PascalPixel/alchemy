@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081b3fb0
+	.global LzPack_CopyBufferedBytes
 	.thumb_func
-Func_081b3fb0:
+LzPack_CopyBufferedBytes:
 	push {r5, r6, lr}
 	ldr r3, .L_081b3ff0
 	movs r1, #136

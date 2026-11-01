@@ -272,7 +272,7 @@ Func_08102008:
 	asrs r3, r3, #2
 	lsls r7, r3, #2
 	adds r0, r7, #0
-	bl Func_08104ef8
+	bl Menu_CreateOwnerEntryObjects
 	mov r0, r10
 	adds r1, r7, #0
 	bl DjinnMenu_DrawPage

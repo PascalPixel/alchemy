@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_081b3ed8
+	.global LzPack_ConsumeSlotBytes
 	.thumb_func
-Func_081b3ed8:
+LzPack_ConsumeSlotBytes:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

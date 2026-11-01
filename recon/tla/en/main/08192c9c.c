@@ -1,23 +1,38 @@
-// Draft, differ 4552 of 5364, skeleton gap 576 + 560 (tla-en, 2026-11-01)
+// Draft, differ 3472 of 5364, skeleton gap 475 + 479 (tla-en, 2026-11-01)
 // Measure with the four nested functions' listings as well:
 // diff ...08192c9c.c 0819284c,08192894,081929fc,08192a4c,08192c9c. Measured
-// against 08192c9c alone they all count as added (differ 5039, gap 563 + 1060).
+// against 08192c9c alone they all count as added.
 // BattleEffect_RunIris and its four nested functions, the same calls and
-// control flow as the listing. Left: mostly allocation and scheduling. The
-// native frame is 420 bytes, here 388; it keeps its i in r10 and j in r11,
-// so most of the gap is a counter in a low register (adds #1) against
-// movs #1 / add r10 / mov. Giving the drops' and the rings' loops the one
-// shared i and j as the native does moves i down to r7 and costs 90 lines, so
-// k stays separate there. Still open: the rise of the bright band keeps
-// (i - top) * 2 in the loop in the native, here strength-reduced to a giv;
-// the head of a streak loads Data_02012ef4 from the pool each pass, here
-// hoisted, and a Data_02012ef4[15][10] symbol was worse (606 + 584).
-// Measured: streak points index flat as [i * 10 + j] so the multiply by 200
-// synthesizes (723 -> 617 removed); s32 c with (u16)c >> n for the colour
-// channels (a u16 local loads ldrsh and extends); resource ids as symbols
-// load from the pool, which constants never do; each ring branch's blit copy
-// and one j per splash loop. ResourceId_Data076, 077, 09A and 0A5 are
-// placeholders for ids resource_directory.s does not name yet.
+// control flow as the listing. What is left is allocation and scheduling, and
+// its largest cause is known. The native's &work is one pseudo set twice: at
+// entry, and again by `add r4, sp; str r4, [sp, #64]` in the frame == 446
+// block, right after Iwram_FillWords(work->sheet + 0x1810, ...). That is a
+// second occurrence of the address in one basic block: CSE did not merge it,
+// gcse records only a block's first occurrence as deletable, so PRE's
+// reaching register gets two sets and cprop and loop.c leave every later copy
+// of &work in place (here loop.c hoists them, a second slot and 8 bytes of
+// spills lower). A do { } while (0) around that one Iwram_FillWords reproduces
+// it exactly: the slots from 64 up fall into the native's order, differ 3305,
+// gap 448 + 453, frame 420. Without differ 0 the device stays out. Plain forms
+// that did not split it: a static inline around the call, a label, a goto to
+// the next line, an empty if, if (0); an empty for or while (0) gives 3455.
+// Finding the C that really ends CSE there is the next step, then rerun the
+// counter search below, since every allocation moves with it.
+// Measured: inner-block aggregates share a slot, so spans and spans2 live in
+// the outer block (the frame was 32 short). The opening order sparks, objects,
+// canvas, battle, sprites, work gives the slots at 176 to 184 though the native
+// schedules canvas first. The loop counters are chosen per loop, by a search
+// over i, j, k and m against the listing (3808 to 3472), not read from it, so
+// a shared counter here is only as good as that fit. Streak points index flat
+// as [i * 10 + j] so the multiply by 200 synthesizes; s32 c with (u16)c >> n
+// for the colour channels; resource ids as symbols load from the pool, which
+// constants never do; each ring branch's blit copy. Tried and worse: u16
+// r, g, b in the last fade (differ falls, skeleton 13 instructions longer).
+// Still open: the rise of the bright band keeps (i - top) * 2 in the loop in
+// the native, here strength-reduced to a giv (<< 1 and a temporary change
+// nothing); the head of a streak loads Data_02012ef4 from the pool each pass.
+// ResourceId_Data076, 077, 09A and 0A5 are placeholders for ids
+// resource_directory.s does not name yet.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -285,11 +300,11 @@ void Heap_Release(void *buffer);
 // splash's duration, then a smaller pair of rings and a column of spray
 // rises while the screen shakes; the drop itself is drawn last.
 static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
+  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
-  u8 *sprites = Ram_HeapSlots->unk64[0];
   DrawRectangle draw = Ram_HeapSlots->unk64[1];
+  u8 *sprites = Ram_HeapSlots->unk64[0];
   DrawRectangle drawAlt = Ram_HeapSlots->unkb8[1];
   s32 r;
   s32 cel;
@@ -571,12 +586,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   u8 *tiles;
   u8 v;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  objects = (struct IrisSprite **)gMapCellBuffer;
-  sprites = Ram_HeapSlots->unk64[0];
   sparks = &Data_02011f40;
+  objects = (struct IrisSprite **)gMapCellBuffer;
+  canvas = Ram_HeapSlots->battleFxWork[1];
   battle = (u8 *)Ram_HeapSlots->battleWork;
+  sprites = Ram_HeapSlots->unk64[0];
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   savedScroll = gBgScroll[1].x;
   camera = Ram_HeapSlots->cameraWork;
   work->effect = effect;
@@ -696,9 +711,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s->angle = Data_08199ffc[i];
         s->speed = Data_0819a01a[i];
         s->unk10 = 0;
-        for (j = 1; j != 10; j++) {
-          STREAK(i, j).x = 0x960000;
-          STREAK(i, j).y = 0x960000;
+        for (m = 1; m != 10; m++) {
+          STREAK(i, m).x = 0x960000;
+          STREAK(i, m).y = 0x960000;
         }
       }
       work->transferMode = 2;
@@ -707,24 +722,24 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     if (frame <= 175) {
       BattleEffect_LoadBlitter(SLOT_ALT, 3);
       draw[1] = Ram_HeapSlots->unkb8[1];
-      for (i = 0; i != 15; i++) {
+      for (j = 0; j != 15; j++) {
         if (!(frame & 1)) {
-          for (j = 9; j != 0; j--) {
-            STREAK(i, j).x = STREAK(i, j - 1).x;
-            STREAK(i, j).y = STREAK(i, j - 1).y;
+          for (i = 9; i != 0; i--) {
+            STREAK(j, i).x = STREAK(j, i - 1).x;
+            STREAK(j, i).y = STREAK(j, i - 1).y;
           }
         }
-        if (frame >= i * 8 + 24) {
-          struct IrisPoint *s = SCENE->streaks[i];
+        if (frame >= j * 8 + 24) {
+          struct IrisPoint *s = SCENE->streaks[j];
           if (HALF(s, 3) > 59) {
             s32 size;
 
             s->x += Trig_Sin(s->angle) * 3 / 2;
             s->y -= Trig_Cos(s->angle) * 3 / 2;
             s->angle += s->speed * 2 / 3;
-            size = (i & 3) + 5;
-            for (j = 0; j != 10; j++) {
-              struct IrisPoint *p = &STREAK(i, j);
+            size = (j & 3) + 5;
+            for (m = 0; m != 10; m++) {
+              struct IrisPoint *p = &STREAK(j, m);
 
               draw[1](canvas, sprites + gData_08197410[size - 1],
                       HALF(p, 1) - (size >> 1), HALF(p, 3) - size, size,
@@ -737,13 +752,15 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         SCENE->y -= 0x10000;
         SCENE->radius -= 0x1000;
         if (!(frame & 15)) {
-          for (i = 0; i != 128; i++) {
-            s32 c = FADE_PLTT[i];
-            s32 r = c & 31;
+          for (k = 0; k != 128; k++) {
+            s32 c = FADE_PLTT[k];
+            s32 r = 31;
             s32 g = (u16)c >> 5 & 31;
             s32 b = (u16)c >> 10 & 31;
 
-            FADE_PLTT[i] = (b + 1) << 10 | (g + 1) << 5 | (r + 1);
+            r &= c;
+
+            FADE_PLTT[k] = (b + 1) << 10 | (g + 1) << 5 | (r + 1);
           }
         }
       } else {
@@ -876,11 +893,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           lift = ((366 - frame) * 5 << 17) + 0x400000;
         if (frame <= 229)
           lift = (Trig_Sin((frame << 6) - 0x2c00) << 6) - 0x147200;
-        for (i = 0; i != 4; i++) {
-          for (j = 0; j != 4; j++) {
-            pos[0] = 0x480000 + j * 0x200000;
-            pos[2] = lift + 0x380000 + i * 0x200000;
-            Render_ApplyProjectedPlacementFar(work->objects[i * 4 + j], pos,
+        for (j = 0; j != 4; j++) {
+          for (i = 0; i != 4; i++) {
+            pos[0] = 0x480000 + i * 0x200000;
+            pos[2] = lift + 0x380000 + j * 0x200000;
+            Render_ApplyProjectedPlacementFar(work->objects[j * 4 + i], pos,
                                               (s32 *)&scale, 0);
           }
         }
@@ -953,10 +970,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1010;
       REG_BG2CNT = 0x784;
       for (i = 1; i != 8; i++) {
-        for (j = 0; j != 10; j++) {
-          u8 *src = work->sheet + gData_08197410[j];
-          u8 *out = work->sheet + gData_08197410[j] + i * 0x302;
-          s32 w = j + 1;
+        for (k = 0; k != 10; k++) {
+          u8 *src = work->sheet + gData_08197410[k];
+          u8 *out = work->sheet + gData_08197410[k] + i * 0x302;
+          s32 w = k + 1;
           s32 n = w * 2 * w;
 
           for (m = 0; m != n; m++) {
@@ -975,15 +992,15 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 36; i++)
         sparks->life[i] = 0;
       Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-      for (i = 0; i != 32; i++)
-        for (j = 0; j != 8; j++)
-          sprites[508 + i * 8 + j] = Data_0819a038[j];
+      for (j = 0; j != 32; j++)
+        for (i = 0; i != 8; i++)
+          sprites[508 + j * 8 + i] = Data_0819a038[i];
       dst = sprites;
-      for (i = 0; i != 2; i++) {
+      for (k = 0; k != 2; k++) {
         for (j = 0; j != 3; j++) {
-          u8 *src = work->sheet + gData_08197410[Data_0819a040[i] - 1];
+          u8 *src = work->sheet + gData_08197410[Data_0819a040[k] - 1];
 
-          for (m = 0; m != Data_0819a040[i] * Data_0819a040[i] * 2; m++) {
+          for (m = 0; m != Data_0819a040[k] * Data_0819a040[k] * 2; m++) {
             s32 v = src[m] - j * 16;
 
             if (v < 0)
@@ -1129,10 +1146,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 401) <= 30 && (frame & 1)) {
       Resource_GetTableEntry((s32)&ResourceId_VioletSkyBackdrop);
       for (i = 0; i != 128; i++) {
-        s32 c = FADE_PLTT[i];
-        s32 r = c & 31;
-        s32 g = (u16)c >> 5 & 31;
-        s32 b = (u16)c >> 10 & 31;
+        s32 r = FADE_PLTT[i] & 31;
+        s32 g = FADE_PLTT[i] >> 5 & 31;
+        s32 b = FADE_PLTT[i] >> 10 & 31;
 
         if (r > 3)
           r -= 2;
@@ -1168,16 +1184,16 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2810, 16, 64, 0x10000);
       dst = work->sheet + 0x2010;
       for (i = 0; i != 64; i++) {
-        for (j = 0; j != 32; j++) {
+        for (k = 0; k != 32; k++) {
           if (*dst > i)
             *dst = i;
           dst++;
         }
       }
-      for (i = 0; i != 36; i++)
-        sparks->life[i] = 0;
-      for (i = 0; i != 32; i++)
-        work->particles[i].variant = 0;
+      for (k = 0; k != 36; k++)
+        sparks->life[k] = 0;
+      for (m = 0; m != 32; m++)
+        work->particles[m].variant = 0;
       for (i = 1; i != 8; i++) {
         for (j = 0; j != 10; j++) {
           u8 *src = work->sheet + gData_08197410[j];
@@ -1227,6 +1243,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       void *verts = Heap_AllocEwram(80);
       struct RenderModel *model = Render_AllocateModelList(1);
       s32 scroll;
+      struct Spans4 spans;
+      struct Spans4 spans2;
 
       texture.logWidth = 5;
       texture.logHeight = 6;
@@ -1243,8 +1261,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
         texture.pixels = work->sheet + 0x1810 + scroll;
         if (!(frame & 7)) {
-          struct Spans4 spans = Data_08196f9c;
-          s32 s = FindFreeSpark();
+          s32 s;
+
+          spans = Data_08196f9c;
+          s = FindFreeSpark();
 
           if (s != -1) {
             s32 r = Random16() & 127;
@@ -1271,15 +1291,17 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
         texture.pixels = work->sheet + 0x1810 + scroll;
         if (!(frame & 7) && frame <= 501) {
-          struct Spans4 spans = Data_08196fbc;
-          s32 s = FindFreeSpark();
+          s32 s;
+
+          spans2 = Data_08196fbc;
+          s = FindFreeSpark();
 
           if (s != -1) {
             s32 r = Random16() & 127;
 
             sparks->life[s] = -0x7c00;
             sparks->x[s] =
-                (spans.p[(r + 1) >> 5].a + Random16() % spans.p[(r + 1) >> 5].b)
+                (spans2.p[(r + 1) >> 5].a + Random16() % spans2.p[(r + 1) >> 5].b)
                 << 16;
             sparks->y[s] = (r << 16) + 0x100000;
             sparks->vx[s] = (Random16() & 15) * 3 << 11;
@@ -1358,16 +1380,16 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 sinT = Trig_Sin(0x7800);
       s32 cosT = Trig_Cos(0x7800);
 
-      for (k = 0; k != 80; k += 8) {
-        if (638 + k < frame && frame < 670 + k) {
-          s32 t = frame - k - 638;
+      for (j = 0; j != 80; j += 8) {
+        if (638 + j < frame && frame < 670 + j) {
+          s32 t = frame - j - 638;
           s32 ry = t >> 1;
           s32 tile = gData_08197410[0] + t / 4 * 0x302;
           s32 rx = t >> 2;
-          s32 shift = k >> 1;
+          s32 shift = j >> 1;
 
-          for (j = 0; j != 128; j++) {
-            s32 a = j << 9;
+          for (i = 0; i != 128; i++) {
+            s32 a = i << 9;
             s32 sx = rx * Trig_Sin(a);
             s32 sy = ry * Trig_Cos(a) * 2;
             s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
@@ -1393,16 +1415,16 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 32; i++)
         Dma_Set(work->sheet + 0x1bf0 - i * 32, work->sheet + 0x1c10 + i * 32,
                 0x84000010, REG_DMA3);
-      for (i = 1; i != 8; i++) {
+      for (k = 1; k != 8; k++) {
         u8 *src = work->sheet + 0x1810;
-        u8 *out = work->sheet + 0x1810 + i * 0x800;
-        u8 v = 64 - i * 8;
+        u8 *out = work->sheet + 0x1810 + k * 0x800;
+        u8 v = 64 - k * 8;
 
-        for (j = 0; j != 0x800; j++) {
-          if (v < src[j])
-            out[j] = v;
+        for (i = 0; i != 0x800; i++) {
+          if (v < src[i])
+            out[i] = v;
           else
-            out[j] = src[j];
+            out[i] = src[i];
         }
       }
     }

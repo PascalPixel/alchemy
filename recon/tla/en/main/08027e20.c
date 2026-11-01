@@ -1,12 +1,17 @@
-// Draft, differ 331 of 827: script command 0x1f, a sibling of SC_PLAYER
-// (Func_08027064) with longer reach: steps 19 pixels ahead (with the four
-// probes 22.5 and 45 degrees off and six retry headings), pushes from 15
-// pixels and tests 21 pixels past a pushed object; with flag 0x17f, B moves
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Script command 0x1f, a relative of Actor_UpdatePlayerControl (and of
+// SC_PLAYER, Func_08027064): the statements, declarations and headingCount
+// table are the twin's, minus running and footprints. It takes two tagged
+// one-pass devices; volatile, wrapper, temporary and eight plain reshapes did
+// not move those sites. The one at the table also keeps the block that clears
+// collision inside the first loop placed after the retry loop.
+// It has longer reach: steps 19 pixels ahead (with the four probes 22.5 and
+// 45 degrees off and six retry headings), pushes from 15 pixels and tests 21
+// pixels past a pushed object; with flag 0x17f, B moves
 // at 4 pixels a frame. The first shortcut key posts request 252 in the event
 // work; turns at most 0x400 a step, and an object with one sprite reads the
 // world map's ground under it afterwards. Structure and frame follow the
-// listing, the angle a u16 as in Func_08027064 (as s32, differ 472). Left:
-// scheduling and some register choice.
+// listing, the angle a u16 as in Func_08027064; as s32 a second copy spills.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -42,16 +47,20 @@ s32 Field_CheckConfiguredKeys(void);
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
 
-s32 Func_08027e20(struct Actor *object) {
+s32 Func_08027e20(struct Actor *interpreter) {
+  struct Actor *object = interpreter;
+
   struct FieldPosition position;
   struct FieldPosition testPosition;
   struct FieldPosition contact;
   s16 angleOffsets[22];
   s32 collision;
   s32 pushed;
-  u16 angle;
   s16 heading;
+  u16 angle;
+  u16 direction;
   s32 angleIndex;
+  s32 headingCount;
   s32 onObject;
   s32 difference;
   struct Actor *other;
@@ -59,6 +68,10 @@ s32 Func_08027e20(struct Actor *object) {
 
   collision = 0;
   pushed = 0;
+  /* FAKEMATCH(one-pass): the empty block keeps gDebugMode's address load after
+   * the two stores; as no block, 2 of 827 instructions differ in tla-en. */
+  do {
+  } while (0);
   // Debug: holding L spins through four empty loops, a short stall each
   // frame.
   if (gDebugMode != 0) {
@@ -124,18 +137,21 @@ s32 Func_08027e20(struct Actor *object) {
         continue;
       if (SAME_CELL(object->x, other->x) && SAME_CELL(object->z, other->z))
         onObject = 1;
-      if (SAME_CELL(position.x, other->x) && SAME_CELL(position.z, other->z))
-        goto clear;
+      if (SAME_CELL(position.x, other->x) && SAME_CELL(position.z, other->z)) {
+        collision = 0;
+        heading = angle;
+        goto counted;
+      }
     }
     if (onObject && !Func_0802d87c(object, &position)) {
-      heading = angle;
       collision = 0;
+      heading = angle;
       goto counted;
     }
   }
   if (gDebugMode != 0 && (gInput.held & 0x200)) {
-    heading = angle;
     collision = 0;
+    heading = angle;
     goto counted;
   }
   if (!Func_0802d87c(object, &position)) {
@@ -166,17 +182,20 @@ s32 Func_08027e20(struct Actor *object) {
       }
     }
   }
-  {
-    u16 direction = angle;
-
-    angleOffsets[0] = direction + 0x1000;
-    angleOffsets[1] = direction - 0x1000;
-    angleOffsets[2] = direction + 0x2000;
-    angleOffsets[3] = direction - 0x2000;
-    angleOffsets[4] = direction + 0x3000;
-    angleOffsets[5] = direction - 0x3000;
-  }
-  for (angleIndex = 0; angleIndex < 6; angleIndex++) {
+  direction = angle;
+  headingCount = 0;
+  angleOffsets[headingCount++] = direction + 0x1000;
+  angleOffsets[headingCount++] = direction - 0x1000;
+  angleOffsets[headingCount++] = direction + 0x2000;
+  angleOffsets[headingCount++] = direction - 0x2000;
+  angleOffsets[headingCount++] = direction + 0x3000;
+  angleOffsets[headingCount++] = direction - 0x3000;
+  /* FAKEMATCH(one-pass): the empty block keeps the last store before the counter
+   * and places the first loop's exit block after this loop; as no block, 243 of
+   * 827 instructions differ in tla-en. */
+  do {
+  } while (0);
+  for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
     heading = angleOffsets[angleIndex];
     position.x = object->x;
     position.y = object->y;
@@ -213,12 +232,6 @@ s32 Func_08027e20(struct Actor *object) {
   position.y = object->y;
   position.z = object->z;
   collision |= 1;
-  goto push_objects;
-
-clear:
-  heading = angle;
-  collision = 0;
-  goto counted;
 
 push_objects:
   contact.x = object->x;
@@ -240,8 +253,6 @@ push_objects:
                                    other->radius - 2) < 0)
       continue;
     if ((other->collisionFlags & 2) && other->movementState == 0) {
-      u16 direction;
-
       direction = ArcTan2(other->z - object->z, other->x - object->x);
       testPosition.x = other->x;
       testPosition.y = other->y;

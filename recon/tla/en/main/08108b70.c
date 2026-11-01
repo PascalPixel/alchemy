@@ -1,14 +1,33 @@
-// First draft of Func_08108b70: the shop's buy menu, the twin of ☀️'s
-// Shop_SelectBuy (games/tbs/src/shop/shop.c): pick an item from the stock
-// (Select shows how many the party holds), then who gets it, then how many;
-// artifacts are counted down after the sale. The messages take the twin's
-// names (00146, 04685 to 04688, 04695 and 04697 in the English
-// catalog, still unnamed there). Differ 404 of 540, register and stack slot
-// choice mostly: the native reloads gInput's address at each pass of both
-// loops where agscc keeps it in r11 (and spills it around the Select wait),
-// keeps the shop in r10 and the stock count in r8, and has one stack slot
-// fewer (sub sp, #40). Six permuter minutes reached 280 only by storing the
-// Select path's item in redraw.
+// Draft, differ 26 of 540, skeleton gap 4 (tla-en, 2026-11-01)
+// Func_08108b70: the shop's buy menu, confirmed twin of ☀️'s Shop_SelectBuy
+// (games/tbs/src/shop/shop/buy.c): pick an item from the stock (Select shows
+// how many the party holds), then who gets it, then how many; artifacts are
+// counted down after the sale. The messages take the twin's names (00146,
+// 04685 to 04688, 04695 and 04697 in the English catalog, unnamed there).
+// What closed 355 to 26: partyMemberIds sits at 0x4ca, as in the adopted shop
+// files; Select's item shares stockCount's variable (both r8), a separate
+// local outranks gInput's address for r7; heldDefinition is its own variable,
+// declared before selectedDefinition for the slots; redraw is set before
+// stockIds; the two loops' results are separate variables.
+// Left, three kinds of site:
+// 1. The zero stored to selectionIndex: cse2 knows selectionResult is 0 after
+//    the test, and its sets moved past the loops outlive unitId, so it stores
+//    selectionResult (r7) where the native has movs r6, #0 and selectionResult
+//    in r5. Labels, else arms, s16 and s8, and chained assignments change
+//    nothing. An unread `selectionResult = -1;` after `quantity = 1;`, with
+//    one result variable as the twin has, reaches differ 14, gap 3: it is a
+//    dead device, left out because it cannot reach differ 0 alone.
+// 2. Two schedules: `str r0, [sp, #28]` after the first movs of the 0x4dc
+//    chain, and both strs before `movs r2, #1` after messageWindow's call.
+//    The native issues a spill store ahead of a split-constant chain where
+//    agscc does not; no source form moved them, so this reads as the
+//    scheduling model (K2), which is out of reach here.
+// 3. The first A test: native movs r3, #1 with the load in r2, as in the
+//    second loop. A second back edge in the first loop (`wait(1); continue;`
+//    in the Select arm) fixes it, but takes shop's refs to 65, its
+//    floor_log2 to 6, and priority .9176 past stockCount's .9167, which swaps
+//    r8 and r10 (differ 72). It needs one more live insn for shop, or one
+//    fewer for stockCount; a set-once key local does not help.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -28,7 +47,7 @@ struct ShopRuntime {
   u8 unk010[0x24 - 0x10];
   void *itemWindow;
   u8 unk028[0x270 - 0x28];
-  s16 stockItemIds[0x12c];
+  s16 stockItemIds[0x12d];
   s16 partyMemberIds[8];
   u8 unk4da[2];
   struct ShopCursor cursor;
@@ -56,7 +75,7 @@ extern char MsgItemPlainName[], MsgWhoGetsThis[], MsgPackFull[],
     MsgCannotCarryItem[], MsgCannotEquipStillWant[], MsgBuyAnythingElse[],
     MsgBuyNotEnoughMoney[];
 
-void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
+s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
 void Window_CloseFar(void *window, s32 mode);
 void WindowSprite_RedrawSavedRectFar(void *window);
 void WindowSprite_PrepareForRedrawFar(void *window);
@@ -101,6 +120,8 @@ s32 Func_08108b70(void) {
   void *partyWindow;
   s32 selected = 0;
   s32 quantity;
+  s16 *stockIds;
+  struct ItemDefinition *heldDefinition;
   struct ItemDefinition *selectedDefinition;
   s32 repromptRecipient;
   void *itemWindow;
@@ -110,10 +131,10 @@ s32 Func_08108b70(void) {
   s32 itemId;
   struct ItemDefinition *stockDefinition;
   s32 selectionResult;
+  s32 purchaseResult;
   s32 unitId;
   s32 capacitySlot;
   s32 removedCount;
-  s16 *stockIds;
 
   shop->itemWindow = 0;
   shop->moneyWindow = Window_CreateFar(18, 7, 12, 4, 2);
@@ -126,8 +147,8 @@ next_page:
   shop->cursor.anchor->active = 18;
   shop->mode = 12;
   messageWindow = Window_CreateFar(0, 17, 30, 3, 2);
-  stockIds = shop->stockItemIds;
   redraw = 1;
+  stockIds = shop->stockItemIds;
 
   while (1) {
     stockCount = shop->stockCount;
@@ -157,19 +178,19 @@ next_page:
       s32 held;
       void *window;
 
-      itemId = stockIds[selectionIndex];
-      held = PartyInventory_CountItemFar(itemId);
-      stockDefinition = Item_Get(itemId);
+      stockCount = stockIds[selectionIndex];
+      held = PartyInventory_CountItemFar(stockCount);
+      heldDefinition = Item_Get(stockCount);
       Sound_PlayFar(126);
       window = Window_CreateFar(13, 3, 17, 10, 2);
-      Func_080f8040(window, itemId, held);
+      Func_080f8040(window, stockCount, held);
       while (gInput.held & 4)
         wait(1);
       Window_CloseFar(window, 2);
       Func_08109068(stockWindow, selectionIndex);
       Func_08109188();
       WindowSprite_RedrawSavedRectFar(priceWindow);
-      Func_081091cc(priceWindow, itemId, stockDefinition->price, 0);
+      Func_081091cc(priceWindow, stockCount, heldDefinition->price, 0);
     } else {
       redraw = Func_08108690(&selectionIndex, stockCount, 7);
     }
@@ -234,7 +255,7 @@ next_page:
       if (selectedDefinition->price > gMainRoutineWork.coins) {
         Sound_PlayFar(113);
         Func_0810857c((s32)MsgBuyNotEnoughMoney);
-        selectionResult = -1;
+        purchaseResult = -1;
         break;
       }
       if (Item_IsCompatibleWithOwnerFar(unitId, shop->selectedItem) == 0) {
@@ -253,12 +274,12 @@ next_page:
         continue;
       Shop_BuyDone(unitId, shop->selectedItem, quantity);
       Func_0810a490(partyWindow, itemWindow);
-      selectionResult = 0;
+      purchaseResult = 0;
       break;
     }
     if (gInput.pressed & 2) {
       Sound_PlayFar(113);
-      selectionResult = -1;
+      purchaseResult = -1;
       break;
     }
     redraw = Func_08108690(&selectionIndex, shop->partyMemberCount, 4);
@@ -270,7 +291,7 @@ next_page:
   Window_CloseFar(itemWindow, 2);
   Window_CloseFar(partyWindow, 2);
   wait(1);
-  if (selectionResult == 0 && shop->partyAction == 2) {
+  if (purchaseResult == 0 && shop->partyAction == 2) {
     for (removedCount = 0; removedCount < quantity; removedCount++)
       Item_AdjustCounterFar(shop->selectedItem, -1);
     if (Func_081080a8() == 0)

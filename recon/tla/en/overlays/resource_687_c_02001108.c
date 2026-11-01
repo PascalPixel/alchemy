@@ -1,31 +1,35 @@
-// Draft, differ 267 of 350, skeleton gap 73 (tla-en, 2026-11-01). Destined for
+// Draft, differ 219 of 350, skeleton gap 87 (tla-en, 2026-11-01). Destined for
 // scene/sea_of_time. Control flow, calls, frame (the fill word at sp+98 above
 // the two effect options at sp+56 and sp+16) and data accesses follow the
-// listing; the gap is almost all the fade's channels, then scheduling in the
-// spark and shower blocks (x and z chains interleave with the stack arguments
-// there; reordering arguments or locals only moved the lines around).
-// The channels: the native zero-extends each channel afresh at both compares
-// and at the pack, keeps it sign-extended (lsls/asrs) at its stores, and steps
-// the zero-extended copy. Here GCSE's PRE treats `channel << 16` as partly
-// redundant, inserts it on the edge out of each step (gcse dump, PRE/HOIST
-// lines) and combine then drops the asrs. Tried: s16 channels, each first
-// compare on a copy of the channel and a shared `u32 c = (u16)channel` holding
-// the zero-extension gives green and blue the native's exact shape (differ 248
-// with the goto below), since that compare and the next no longer pair up.
-// Those are forced temporaries, and the pack `(u16)b << 10` then folds to a plain
-// shift (the native's lsls 16/lsrs 6 needs the third `<< 16`, which brings PRE
-// back on the step down); gap 92, so not kept. Copying into new stage variables
-// at each join stops PRE outright but the copies stay as moves. The missing
-// source form must make the three `<< 16` different expressions at GCSE.
-// Allocation: the native keeps gData_020026c0 in r11, set in the outer loop's
-// body, and loses the shifted-field mask 31 (reg:HI, reloaded from the pool
-// through its paradoxical subreg). Here the second loop pass moves the table
-// address out of the outer loop too and the mask wins its register. A goto
-// outer loop keeps the address in its body but loses the palette pointer's
-// strength reduction; while (1) with break compiles as the do loop. The spark
-// and shower loops are goto loops because the native moves nothing out of them;
-// the shower's options address is still hoisted here by GCSE. beq+b at the
-// outer branch comes back once the body has the native's length.
+// listing. Nearly all of what is left comes from one cause: the listing shows
+// no GCSE PRE anywhere in this function, and here PRE runs.
+// The evidence: (1) the native zero-extends each channel afresh at both compares
+// and at the pack, keeps it sign-extended (lsls/asrs) at its stores; here PRE
+// treats `channel << 16` as partly redundant (gcse dump: 7 substs, edges out of
+// each step), combine drops the asrs, the draft is 19 instructions short and the
+// shorter loop lets loop.c hoist 0xffff, which the native rebuilds in the body.
+// Red's first compare and step lose their extensions in the native only because
+// CSE sees the single-set `color & 31` there; here that compare feeds PRE.
+// (2) The shower's options address is rebuilt in the native's body with no entry
+// jump; PRE hoists it here, so the shower enters at its bottom test (one `b` the
+// native lacks). An `options = &rain` local does not stop it; dropped.
+// This matches the -Os lead in the shared notes (classic GCSE, not PRE). Is that
+// a compiler question for Pascal (K3)? Out of scope here; not tried.
+// Tried against PRE in plain C, all worse: if/else stage variables r1, r2 in both
+// arms (differ 314, moves stay in the else arms), alternating variables copied
+// at each join (278, CSE rewrites the copy back), s16 channels and a shared
+// zero-extension (earlier round, gap 92). Empty asm or one-pass devices cannot
+// kill a register expression, so none were added.
+// Forms found: `mask` (one-constant local) gives the native's single #31 in
+// the spark and shower blocks, though it takes r1 where the native has r6; the
+// outer fade loop is goto, which keeps gData_020026c0 in its body as the native
+// does; the palette is a stepped `volatile u16 *` set in that body, since an
+// indexed BG_PLTT_COLOR there loses the strength reduction (222) and the do loop
+// costs 228. RGB(r, g, b) is the native's pack order. With the pack written
+// (g << 5) | (b << 10) | r the gap is 71 but differ 261, as PRE then folds less.
+// Registers: native i r8, palette r10, offset r9, table r11; here the table
+// takes r11's place late. The native's mask 31 is reg:HI, reloaded from the pool.
+// beq+b at the outer branch comes back once the body has the native's length.
 #include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
 #include "main_routine_work.h"
 #include "io_reg.h"
@@ -53,6 +57,7 @@ void Func_02001108(void) {
   struct SeaOfTimeSpark rain;
   struct SeaOfTimeObject *object;
   s32 changed;
+  volatile u16 *palette;
   u32 i;
 
   Func_02001fac();
@@ -73,13 +78,13 @@ void Func_02001108(void) {
           (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 14, REG_DMA3);
   Func_02001f74(49, 70, 19, 73, 6, 6);
   // Steps each colour's red, green and blue by one toward the saved palette
-  // every 10 frames until none changes. As a goto loop the palette pointer
-  // loses the strength reduction the native shows (differ 265).
-  do {
+  // every 10 frames until none changes.
+fade:
     wait(10);
     changed = 0;
-    for (i = 1; i != 15; i++) {
-      u16 color = BG_PLTT_COLOR(3, i);
+    palette = &BG_PLTT_COLOR(3, 1);
+    for (i = 1; i != 15; i++, palette++) {
+      u16 color = *palette;
       u16 target = gData_020026c0[i - 1];
       u16 r = color & 31;
       u16 g = (color >> 5) & 31;
@@ -112,9 +117,10 @@ void Func_02001108(void) {
         b--;
         changed = 1;
       }
-      BG_PLTT_COLOR(3, i) = (g << 5) | (b << 10) | r;
+      *palette = RGB(r, g, b);
     }
-  } while (changed);
+    if (changed)
+      goto fade;
   FieldEvent_Wait(30);
   // For 360 frames, spawns an effect every 16 frames, then every 8, then
   // every other frame, and plays sound 164 every 64 frames. As a C loop,
@@ -135,10 +141,11 @@ sparks:
   {
     s32 x = Random16Far();
     s32 z = Random16Far();
+    s32 mask = 31;
 
     burst.kind = 7;
-    Func_0200015c(((x & 31) << 16) + 0x1500000, 0, ((z & 31) << 16) + 0xb00000,
-                  0, 0, 0, 0x10000, &burst);
+    Func_0200015c(((x & mask) << 16) + 0x1500000, 0,
+                  ((z & mask) << 16) + 0xb00000, 0, 0, 0, 0x10000, &burst);
     wait(1);
   }
 next:
@@ -147,21 +154,25 @@ next:
     goto sparks;
   // Then 16 larger effects, one a frame. As a C loop, loop.c also moves the
   // mask and the options address out, which the native does not (differ 265).
+  // Entered at its test so that PRE leaves the address in the body.
   i = 0;
+  goto showerTest;
 shower:
   {
     s32 x = Random16Far();
     s32 z = Random16Far();
+    s32 mask = 31;
 
     rain.scaleX = 0x18000;
     rain.scaleY = 0x18000;
     rain.kind = 7;
     rain.mode = 1;
-    Func_0200015c(((x & 31) << 16) + 0x1500000, 0, ((z & 31) << 16) + 0xb00000,
-                  0, 0x10000, 0, 0xb0000, &rain);
+    Func_0200015c(((x & mask) << 16) + 0x1500000, 0,
+                  ((z & mask) << 16) + 0xb00000, 0, 0x10000, 0, 0xb0000, &rain);
     wait(1);
   }
   i++;
+showerTest:
   if (i != 16)
     goto shower;
   object = Import_ActorCreate(159, 0x15c0000, 0, 0xb80000);

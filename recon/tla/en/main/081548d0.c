@@ -1,12 +1,12 @@
-// Draft of Func_081548d0, the body of a two-kind family: vines (mode 0) or
+// Draft, differ 4 of 514, skeleton gap 2 (tla-en, 2026-11-01)
+// Func_081548d0, the body of a two-kind family: vines (mode 0) or
 // green pillars (mode 1) shoot up out of the ground, left and right in
 // turn four frames apart, each throwing up dust at its root. The number of
 // columns grows with the strength. Its wrappers BattleEffect_RunGrowth (mode 0) and
 // BattleEffect_RunPunji (mode 1) are C in fxmoded.c.
 
-// Twin: The Broken Seal's BattleEffect_RunGrowingColumns (effect.c), with the same
-// tables, frame counts and fade.
-// Listing 514 instructions, draft 515, differ 237.
+// Twin: The Broken Seal's BattleEffect_RunGrowingColumns (growth.c), confirmed:
+// the same tables, frame counts and fade.
 
 // Changes from the twin: the effect argument is read directly (the Lost
 // Age never stores work->effect), blitters load through BattleEffect_LoadBlitter with
@@ -14,31 +14,34 @@
 // 133 where the twin has 132. The puff scan walks a plain pointer: the
 // twin's tagged reuse of length as the pointer is not the Lost Age's form.
 
-// What remains:
-// - the column draws (22 rows each): the native keeps i % 3 in r0 from
-// __modsi3 and takes the width into it, with side = i & 1 in r4; here
-// shape is copied to r4 and side takes r0.
-// - the reaction loop: n and start + 4 trade r5 and r6.
-// - the puff draws (about 30 rows): the native builds the cel offset
-// 0x1e59 into r5 before the mode test and keeps the cel index in r7;
-// here the order and registers differ.
-// - one instruction more: the column loop's step reloads the count's
-// table once more than the native.
-// - order rows: the prologue's argument spills before the heap base,
-// pool loads before register addresses.
+// What remains: one swapped pair, at both column draws. The native stores
+// length first, str r5, [sp, #4], then ldr r0, [sp, #24]; here the load
+// comes first. Everything else is exact, registers included.
+// Read from sched2: at that tick both are ready, the reload of the draw
+// pointer ranks 5 and the store 4, and neither has a dependence on the
+// other. The load's rank is the load, 3, on the indexed load, and the store's
+// is 2 on the same load, so no reshaping of the C moves the difference; the
+// call's stack stores and its function load always fall in this order. That
+// reads as the -mthumb-slow-loads ranking (K2), the known "load after a store
+// issued too early" family. Compiler question, so out of scope for a draft.
+// An empty asm cannot sit between: arguments are computed before the stack
+// stores, and the function pointer is loaded after them.
 
 // Tried (differ):
 // a first port written freely from the twin                    436
 // the twin's body as is, with the Lost Age's names             289
-// declaration order, greedy scan                               283
-// fadeStart, fadeEnd, cueFrame declared after draw (the native
-// frame slots 20, 16, 12)                                      275
-// the frame marks written inline in the tests                  289
 // the puff scan through a plain pointer (kept)                 237
-// without the pair pointer device (rectangle[side])            255
-// the mirrored puff through draw[1]                            237
-// shape as s32, or declared apart from its set                 no change
-// declaration order, greedy scan of the kept form              no gain
+// width apart from shape, draw[1 & i] inline                   160
+// side shared by the arms, set in two steps (kept)              22
+//   the same shared with the reaction loop too                  54
+//   one side per arm                                           201
+//   side = 1 & i: regmove makes it a local temporary           195
+// cell = work->sheet + table[shape], before width (kept)         6
+// root from i in the setup loop, not stepped (kept)              4
+// rectangle[side] with no draw pointer                          22
+// an inline wrapper round the draw                     120 and 195
+// unprototyped call, s32 return, length cast, x and y locals   no gain
+// cell or width shared across the arms                  90 and 195
 
 #include "types.h"
 #include "battle_effect.h"
@@ -153,9 +156,8 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_LoadBlitter(188, BLITTER_TRANSPARENT | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                          COMPOSITE_FLIP_X);
   secondSlot = Ram_HeapSlots->unkb8[1];
-  /* FAKEMATCH: the columns draw through a second pointer to the pair,
-   * whose address the frame keeps in a stack slot, as the twin's tagged
-   * form: rectangle[side] at the columns differs 255 for 237. */
+  // Columns draw through a pointer to the pair, as the twin does; it holds
+  // that one address all its life.
   draw = rectangle;
   draw[1] = secondSlot;
 
@@ -169,8 +171,9 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
   // Each column's root, full length (random, capped by its shape) and the
   // frame it starts to grow.
   i = 0;
-  root = (struct DualColumn *)work->particles;
   do {
+    root = (struct DualColumn *)((u8 *)work->particles +
+                                 i * sizeof(struct DualColumn));
     rootX = (Data_081983ed[i] + (7 & Random16())) - 4;
     root->y = i / 2 + 108;
     root->x = rootX;
@@ -183,7 +186,6 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
     limit = i * COLUMN_INTERVAL + 8;
     root->start = limit;
     i++;
-    root++;
   } while (i != COLUMN_COUNT);
 
   work->transferMode = 1; // clear the canvas to 0 every frame
@@ -220,6 +222,7 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
 
             if (frame > start) {
               u32 shape = i % 3;
+              s32 side;
 
               length = (frame - start) * 8;
               reach = column->height;
@@ -228,12 +231,17 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
               }
               if (mode == 0) {
                 {
-                  s32 side = 1 & i;
-                  s32 cell = Data_081983da[shape];
-                  shape = Data_081983d4[shape];
+                  u8 *cell;
+                  u32 width;
+                  /* FAKEMATCH(temporary): side = 1; side &= i; as side = 1 & i,
+                   * 195 of 514 instructions differ in tla-en. */
+                  side = 1;
+                  side &= i;
+                  cell = work->sheet + Data_081983da[shape];
+                  width = Data_081983d4[shape];
                   ((DrawRectangle)draw[side])(
-                      canvas, work->sheet + cell, column->x - (shape >> 1),
-                      column->y - length, shape, length);
+                      canvas, cell, column->x - (width >> 1),
+                      column->y - length, width, length);
                 }
               } else {
                 pillarHeight = Data_081983fd[7 & i];
@@ -241,12 +249,17 @@ void Func_081548d0(struct BattleEffectArgument *effect, s32 mode) {
                   length = pillarHeight;
                 }
                 {
-                  s32 side = 1 & i;
-                  s32 cell = Data_081983e4[shape];
-                  shape = Data_081983e0[shape];
+                  u8 *cell;
+                  u32 width;
+                  /* FAKEMATCH(temporary): side = 1; side &= i; as side = 1 & i,
+                   * 195 of 514 instructions differ in tla-en. */
+                  side = 1;
+                  side &= i;
+                  cell = work->sheet + Data_081983e4[shape];
+                  width = Data_081983e0[shape];
                   ((DrawRectangle)draw[side])(
-                      canvas, work->sheet + cell, column->x - (shape >> 1),
-                      column->y - length, shape, length);
+                      canvas, cell, column->x - (width >> 1),
+                      column->y - length, width, length);
                 }
               }
             }

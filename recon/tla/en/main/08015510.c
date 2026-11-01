@@ -1,19 +1,33 @@
-// Draft, differ 143 (199 before statements reordered 2026-10-26) of 228: The Broken Seal's Transform_BuildLookAt
-// (games/tbs/src/system/system/transform.c) for The Lost Age: the
-// dot-product routine copied to the stack is eight words here
-// (Math_DotProductQ16Code, frame 68), the square roots are Iwram_Sqrt at its
-// fixed entry shifted left 8, and the native holds three routines in
-// registers for the whole function, the divide in r9, the
-// stack routine in r10 and the multiply in r11, loading only the square root
-// entry from the pool at each use; it keeps eye, out, the view vector and the
-// side axis on the stack. This form keeps out in r9 and spills the dot pointer,
-// so nearly every row after the prologue differs in registers. It has The
-// Broken Seal's zero and dividend locals, its one-pass block around the
-// normalization, and local pointers for the divide and the multiply set before
-// the copy. Measured beside it: the same pointers initialized at their
-// declarations with plain statements, with and without those locals and that
-// block, 202 to 208 (the form this draft replaces was 205). Not yet tried: the
-// locals' declaration order and volatile.
+// Draft, differ 133 of 228, skeleton gap 26 (tla-en, 2026-11-01)
+// The Broken Seal's Transform_BuildLookAt (games/tbs/src/system/system/
+// transform.c) for The Lost Age: the dot-product routine copied to the stack
+// is eight words here (Math_DotProductQ16Code), the square roots are Iwram_Sqrt
+// at its fixed entry shifted left 8.
+//
+// What is left is allocation, and nearly every row differs because of it. The
+// listing holds the stack routine in r10, the divide in r9 and the multiply in
+// r11 from the top of the function, and keeps eye, out, dx, dy, dz, ux and uz
+// on the stack (sp+32 down to sp+8, declaration order). This form cannot reach
+// that: those pointers are few references over long lives, so global.c ranks
+// them below out (13 refs over 167 insns) and dy, which take the high registers
+// first (lreg and greg dumps); the eviction path cannot change it, since every
+// pseudo in that group conflicts with everything in block 2.
+//
+// Measured, not kept: these three as register variables fixed to r10, r9 and
+// r11 give every spill slot of the listing at once, skeleton 0, differ 2 of 228
+// (the pin form, with this body, the pointers set dot, mul, divide; the last
+// difference is the load order of mul(dy, uz)'s arguments). Pins were out of
+// bounds for this round (S2), so that is a decision for Pascal; ask whether a
+// pin may stand here, or find what else gives r9 to r11 hard conflicts for the
+// pseudos above without giving them to the three pointers.
+//
+// Also measured: the Broken Seal's static inline layer around the fixed entries,
+// differ 266; plain long_call calls of IwramMulQ16 and IwramUnsignedDivide, 254
+// (no CSE of the address); eye, out, dx, dy, dz, ux and uz as volatile locals,
+// 335 (their addresses hoist); pointers set dot, mul, divide without pins, 146.
+// `w`, a separate local for 1 - dy * dy, and out[1], out[4], out[7] in that
+// order both carry over from the pin form and hold here too. The Broken Seal's
+// one-pass block around the normalization gains nothing here and came out.
 #include "types.h"
 #include "transform.h"
 #include "dma.h"
@@ -41,6 +55,7 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   s32 scale;
   s32 ez;
   s32 t;
+  s32 w;
   u32 num = 0x80000000; // Dividend 2^31 for calculating the reciprocal.
   u32 (*divide)(u32 dividend, u32 divisor);
   s32 (*mul)(s32 a, s32 b);
@@ -57,27 +72,19 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   dy = target[1] - eye[1];
   dz = target[2] - eye[2];
   t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
-  /* FAKEMATCH: the routine is called through a local pointer to its fixed
-   * entry; a plain call matches The Broken Seal through its IWRAM call layer
-   * but not The Lost Age, whose header calls the entry directly (all six of its
-   * editions differ). */
   scale = divide(num, t) >> 15;
   scale = -scale;
-  /* FAKEMATCH: the normalization keeps its CSE block; without it, the third
-   * product spills before the negated axis (four reordered instructions). */
-  do {
-    dx = mul(dx, scale);
-    uz = -dx;
-    dy = mul(dy, scale);
-    t = mul(dz, scale);
-    dz = t;
-  } while (0);
+  dx = mul(dx, scale);
+  uz = -dx;
+  dy = mul(dy, scale);
+  t = mul(dz, scale);
+  dz = t;
 
   // Normalize the horizontal axis u = (dz, 0, -dx).
-  t = mul(dy, dy);
+  w = 0x10000 - mul(dy, dy);
   scale = 0x10000;
-  if (scale - t > 0)
-    scale = divide(num, FixedSqrt(scale - t)) << 1;
+  if (w > 0)
+    scale = divide(num, FixedSqrt(w)) << 1;
   ux = mul(dz, scale);
   uz = mul(uz, scale);
 
@@ -95,15 +102,13 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   ex = eye[0];
   ey = eye[1];
   ez = eye[2];
-  {
-    out[0] = ux;
-    out[3] = zero;
-    out[6] = uz;
-    out[9] = -dot(ex, ux, ez, uz, zero, zero);
-  }
+  out[0] = ux;
+  out[3] = zero;
+  out[6] = uz;
+  out[9] = -dot(ex, ux, ez, uz, zero, zero);
+  out[1] = vx;
   out[4] = vy;
   out[7] = vz;
-  out[1] = vx;
   out[10] = -dot(ex, vx, ey, vy, ez, vz);
   out[2] = dx;
   out[5] = dy;

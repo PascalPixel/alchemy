@@ -1,25 +1,32 @@
-// Draft, differ 108 of 468, skeleton gap 62 (tla-en, 2026-11-01)
+// Matches: differ 0 (tla-en, 2026-11-01)
 // The cloud swirl that Func_0813e7e0 runs after setting up the effect
 // blocks (twins: BattleEffect_StartCanvasLayer 0.45 by shape,
 // BattleEffect_RunOrbitingSkulls 0.60 by call order). The rotation goes
-// through six IO_WRITE_QUEUE_PUSH writes a frame. No device.
-// Settled: the first blitter sits in a BlitterPair (element_burst.c's
-// form), which gives the frame and sp+20; the second is its own local;
-// enabled is the native's r8; the opening loads run canvas, work, saved X,
-// transition.
-// Left: (1) the native loads &BG_PLTT[96] and gMapCellBuffer afresh for each
-// call, here CSE keeps each in a register, which also pushes the second
-// blitter to r8 and adds two instructions. Forwarding the two palette
-// copies through a static inline, as canvas_transfer.c's tagged wrapper
-// does, takes the gap to 46 and differ to 92; that is a wrapper device, so
-// it is not used here. The same wrapper passing the blitter did nothing for
-// gMapCellBuffer. (2) In pushes 1, 2, 4, 5 and 6 the native stores the value
-// before forming the address constant, and restores r4 after the control
-// word; the scheduler goes the other way here, about 24 of the gap.
-// Tried for (2), no gain or worse: q->count for count_, value stored before
-// the count, literal addresses, u32 sine and cosine, indexed entry[n],
-// count++ first, entry formed after the count store. Local declaration
-// order changes nothing; a size local for the 128s changes nothing.
+// through six queue pushes a frame.
+// Settled: the first blitter sits in a BlitterPair (element_burst.c's form);
+// the second is its own local, enabled is the native's r8. The opening loads
+// run canvas, work, saved X, transition. The map buffer is the constant
+// Ram_MapCellBuffer passed through an inline at the first blit (the second
+// then needs none): an inlined constant argument stays out of a pseudo, and
+// the symbol's or a direct constant's pseudo otherwise takes r6 and rotates
+// draw, enabled, work and canvas through the high registers. The first
+// palette copy's inline keeps &BG_PLTT[96] rebuilt per call the same way.
+// mode is a one-constant local so its 3 is set before enabled's 1.
+// The pushes (S2 devices, each tagged at its use, none proven as the source):
+// the native keeps each value store ahead of the split address constant, and
+// the restore of r4 after the control word, where sched2's priorities put the
+// constant chain first. Pushes 1, 2 and 4 store the value inside a one-pass
+// block; pushes 5 and 6 store the count first, because the value's calls come
+// after it, and use an empty asm that only claims r3 after the value store, as
+// a flushing barrier (asm(""), a one-pass block) raises the forward dependence
+// count of the count store and of the sine and cosine moves and reorders the
+// argument set-up before the first Iwram_MulQ16. Push 3 is the plain macro.
+// union QueueWord in pushes 5 and 6 gives the entry stores alias set 0, so r4's
+// restore from the stack depends on them. Tried and worse for 5 and 6: one-pass
+// blocks anywhere (differ 18 to 42), asm("") (differ 18), a volatile entry
+// (no change). The unexplained pattern is that the native's store rows behave
+// as if the address constant were cheap; a real cause would retire these
+// devices across the sibling push drafts, but that is a compiler question.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -32,6 +39,61 @@
 #include "battle_effect_work.h"
 
 typedef DrawRectangle BlitterPair[2];
+
+// Spelling: a one-word union, so the entry stores are in alias set 0.
+union QueueWord {
+  u32 word;
+};
+
+// IO_WRITE_QUEUE_PUSH with the value stored in a one-pass block before the
+// count.
+#define SWIRL_PUSH_STORED_FIRST(address, value, control)                       \
+  {                                                                            \
+    struct IoWriteQueue *q = &gIoWriteQueue;                                   \
+    u32 saved;                                                                 \
+    s32 count;                                                                 \
+    u16 *count_ = &q->count;                                                   \
+                                                                               \
+    IRQ_LOCK(saved);                                                           \
+    count = *count_;                                                           \
+    if (count <= 31) {                                                         \
+      u32 *entry = q->entries[count];                                          \
+                                                                               \
+      do {                                                                     \
+        count++;                                                               \
+        *entry++ = (value);                                                    \
+        *count_ = count;                                                       \
+      } while (0);                                                             \
+      *entry++ = (address);                                                    \
+      *entry = (control);                                                      \
+    }                                                                          \
+    IRQ_UNLOCK(saved);                                                         \
+  }
+
+// IO_WRITE_QUEUE_PUSH through union QueueWord, with an empty asm that claims
+// r3 between the value and the address.
+#define SWIRL_PUSH_CLAIMING_R3(address, value, control)                        \
+  {                                                                            \
+    struct IoWriteQueue *q = &gIoWriteQueue;                                   \
+    u32 saved;                                                                 \
+    s32 count;                                                                 \
+    u16 *count_ = &q->count;                                                   \
+                                                                               \
+    IRQ_LOCK(saved);                                                           \
+    count = *count_;                                                           \
+    if (count <= 31) {                                                         \
+      union QueueWord *entry = (void *)q->entries[count];                      \
+                                                                               \
+      *count_ = count + 1;                                                     \
+      entry->word = (value);                                                   \
+      entry++;                                                                 \
+      asm("" : "=r"(entry) : "0"(entry) : "r3");                               \
+      entry->word = (address);                                                 \
+      entry++;                                                                 \
+      entry->word = (control);                                                 \
+    }                                                                          \
+    IRQ_UNLOCK(saved);                                                         \
+  }
 
 // The swirl runs until A is pressed, at most this many frames.
 #define SWIRL_MAX_FRAMES 312000
@@ -58,6 +120,15 @@ void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
+
+static inline s32 Swirl_CopyPalette(const void *source) {
+  return Iwram_CopyWords((void *)&BG_PLTT[96], source, 128);
+}
+
+static inline s32 Swirl_Draw(DrawRectangle draw, void *buffer,
+                             const void *canvas, s32 x, s32 size) {
+  return draw(buffer, canvas, x, 0, size, size);
+}
 
 // A turning cloud swirl on BG2, shown from Func_0813e7e0. The cloud sheet
 // is drawn once into the canvas (its colours moved to palette entries 96
@@ -98,7 +169,9 @@ void Func_08191530(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(104, 1 << 4 | 3);
   sheetDraw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   palette = Resource_GetTableEntry((s32)&ResourceId_CloudSwirlSheet);
-  Iwram_CopyWords((void *)&BG_PLTT[96], palette, 128);
+  /* FAKEMATCH(wrapper): the copy through Swirl_CopyPalette; as a direct
+   * Iwram_CopyWords, 22 of 468 instructions differ in tla-en. */
+  Swirl_CopyPalette(palette);
   palette += 128;
   Resource_DecodeType01(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
@@ -119,13 +192,19 @@ void Func_08191530(struct BattleEffectArgument *effect) {
     if (canvas[i] == 0)
       canvas[i] = 1;
   }
-  enabled = 1;
-  Func_08196404(104, 8, 7, 3, 3);
+  {
+    s32 mode = 3;
+
+    enabled = 1;
+    Func_08196404(104, 8, 7, mode, mode);
+  }
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 0xc80);
   transition->active = enabled;
-  draw(gMapCellBuffer, canvas, 0, 0, 128, 128);
-  draw(gMapCellBuffer, canvas, 128, 0, 128, 128);
+  /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer;
+   * as a direct draw, 58 of 468 instructions differ in tla-en. */
+  Swirl_Draw(draw, Ram_MapCellBuffer, canvas, 0, 128);
+  draw(Ram_MapCellBuffer, canvas, 128, 0, 128, 128);
   work->transferPending = enabled;
   wait(1);
 
@@ -147,20 +226,30 @@ void Func_08191530(struct BattleEffectArgument *effect) {
     // (about half size), about the screen's centre (120, 72).
     sine = Trig_Sin(frame << 6) / 532;
     cosine = Trig_Cos(frame << 6) / 532;
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, cosine, 0x20000);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PB, sine, 0x20000);
+    /* FAKEMATCH(one-pass): the value stored in a one-pass block before the
+     * count; as IO_WRITE_QUEUE_PUSH, 6 of 468 instructions differ in tla-en. */
+    SWIRL_PUSH_STORED_FIRST((u32)&REG_BG2PA, cosine, 0x20000);
+    /* FAKEMATCH(one-pass): the value stored in a one-pass block before the
+     * count; as IO_WRITE_QUEUE_PUSH, 8 of 468 instructions differ in tla-en. */
+    SWIRL_PUSH_STORED_FIRST((u32)&REG_BG2PB, sine, 0x20000);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, 0x20000);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, 0x20000);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
-                        (Iwram_MulQ16(-120 << 24, cosine) +
-                         Iwram_MulQ16(-72 << 24, sine) + 0x400000) >>
-                            8,
-                        0x30000);
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y,
-                        (Iwram_MulQ16(-120 << 24, -sine) +
-                         Iwram_MulQ16(-72 << 24, cosine) + 0x400000) >>
-                            8,
-                        0x30000);
+    /* FAKEMATCH(one-pass): the value stored in a one-pass block before the
+     * count; as IO_WRITE_QUEUE_PUSH, 8 of 468 instructions differ in tla-en. */
+    SWIRL_PUSH_STORED_FIRST((u32)&REG_BG2PD, cosine, 0x20000);
+    /* FAKEMATCH(barrier): an empty asm claiming r3 after the value store; as
+     * IO_WRITE_QUEUE_PUSH, 6 of 468 instructions differ in tla-en. */
+    SWIRL_PUSH_CLAIMING_R3((u32)&REG_BG2X,
+                           (Iwram_MulQ16(-120 << 24, cosine) +
+                            Iwram_MulQ16(-72 << 24, sine) + 0x400000) >>
+                               8,
+                           0x30000);
+    /* FAKEMATCH(barrier): an empty asm claiming r3 after the value store; as
+     * IO_WRITE_QUEUE_PUSH, 6 of 468 instructions differ in tla-en. */
+    SWIRL_PUSH_CLAIMING_R3((u32)&REG_BG2Y,
+                           (Iwram_MulQ16(-120 << 24, -sine) +
+                            Iwram_MulQ16(-72 << 24, cosine) + 0x400000) >>
+                               8,
+                           0x30000);
     wait(1);
   }
 

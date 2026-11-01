@@ -1,23 +1,25 @@
-// Near miss, differ 321 of 268 (tla-en, 2026-10-31): the shape is the
-// native's (same calls, branches, loads, stores and stack slots for rows, x0,
-// z0, width and height); what is left is register allocation. Overlay 6ab's
-// twin of overlay 698's Func_020011a0 (resource_698_c_020011a0.c).
-// The native gives the second loop its own counter (r2) while the first
-// loop's i lives at [sp, #16], and reads table->entries again for it, which
-// gcse turns into a copy at [sp, #8]: both written so here (288 when the
-// loops share i and an `entries` copy, 284 sharing i only). Left: in the
-// first loop the native keeps the table in r8, the entry in r9, kind + 1 in
-// r10, the cell in r11, event, z and x in r5, r6, r7 and i on the stack;
-// here (priorities from the lreg dump: table 36 refs over 334, doubled by
-// its constant REG_EQUIV; entry 32/250; cell 11/59; i 16/118; kind + 1
-// 9/13; x 15/27; z 15/31) kind + 1 takes r6, z goes to r4 saved around each
-// call at [sp, #8], and entry, i, cell and table take r8 to r11, so the
-// entries copy moves to [sp, #12]. The second loop's count is PRE'd (ldrh
-// kept, reloaded after the current store, extended by shifts) where the
-// native reloads it with ldrsh each pass; the native also addresses minZ as
-// minX's address + 4 and loads the cells early. Tried without effect: a
-// `last` variable, storing z before x, s32 event, one combined test, the
-// inner loop as goto (flow weights refs by CFG loop depth anyway).
+// Draft, differ 203 of 268, skeleton gap 18 (tla-en, 2026-11-01)
+// Overlay 6ab's twin of overlay 698's Func_020011a0, in the goto form of
+// resource_6a5_c_02004ec8.c (321 as for loops: loop.c hoists the 64).
+// Left: register ranks only. The native keeps event r5, cz r6, cx r7, the table
+// r8, last r10, the entry r9, the cell r11 and i at sp+16. Here last ranks second
+// (9 refs over 13 insns, weighted by CFG loop depth) and takes r6, so cz is
+// caller-saved in r4 at sp+8, entries moves to sp+12 and i takes r11. The native
+// order fits unweighted refs (last 3, too dear to caller-save): a compiler
+// question, out of scope here.
+// The second loop now matches: a read of count through another type stops
+// gcse's PRE (268 and gap 32 as table->count; goto, while, continue, a union
+// on current and volatile current do not help).
+// Tried with no gain: either order of cx and cz, of i and j, of event and last,
+// block locals, u8 event, a mask local (286), cx and cz ored first (299).
+// Devices tried and taken out, none reaches 0: `asm("" : : "r"(last))` before
+// table->count++ gives 134, gap 6, with cx set first 130: i spills and cx, cz, the
+// slots and the spill all come right, leaving r8 to r11 permuted (last, cell,
+// entry, table). The native needs the table above last and the entry, but it is
+// doubled by its constant REG_EQUIV (0.26). An empty asm writing table lifts the
+// doubling but costs the constant (222 late, 261 early) and still ranks below
+// the entry (0.56 against 0.64).
+// Draft, differ 268 of 268, skeleton gap 32 (tla-en, 2026-11-01)
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -89,10 +91,13 @@ s32 Func_02003930(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTargetEntry *entry = table->entries;
   struct CellMapWork *map;
   struct CellMapLayer *layer;
+  struct CellMapCell *cells;
   struct CellMapCell *rows;
   struct CellMapCell *cell;
-  s32 minX, minZ, x0, z0, width, height, i, j;
+  s32 x0, z0, width, height, i, j;
   u32 *buffer;
+  u32 event, last;
+  s32 cz, cx;
 
   Iwram_ClearWords(table, 4);
   table->kind = kind;
@@ -104,37 +109,50 @@ s32 Func_02003930(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   table->count = 0;
   map = (struct CellMapWork *)Ram_HeapSlots->mapWork;
   layer = &map->layers[0];
-  minX = map->minX;
-  x0 = (layer->originX + minX) >> 20;
-  minZ = map->minZ;
-  z0 = (layer->originZ + minZ) >> 20;
-  width = (map->maxX - minX) >> 20;
-  height = (map->maxZ - minZ) >> 20;
-  rows = layer->cells + ((minZ >> 20) << 7) + (minX >> 20);
-  for (j = 0; j < height; j++) {
+  cells = layer->cells;
+  x0 = (layer->originX + map->minX) >> 20;
+  z0 = (layer->originZ + map->minZ) >> 20;
+  width = (map->maxX - map->minX) >> 20;
+  height = (map->maxZ - map->minZ) >> 20;
+  rows = cells + ((map->minZ >> 20) << 7) + (map->minX >> 20);
+  // Goto loops: as for loops (either one) loop.c moves the 64 of the cell
+  // copy's masks out of them and 321 of 268 instructions differ.
+  j = 0;
+  if (j < height) {
+  row:
     cell = rows + (j << 7);
-    for (i = 0; i < width; i++, cell++) {
-      u32 event = cell->event;
-
-      if (event == 0 || event < kind)
-        continue;
-      if (event > kind + 1)
-        continue;
-      entry->x = i + x0;
-      entry->z = j + z0;
-      entry->flag = flag;
-      flag++;
-      if (!GameFlag_Test(0x109)) {
-        if (event == kind + 1)
-          GameFlag_SetBit(entry->flag);
-      } else if (GameFlag_Test(entry->flag)) {
-        Func_02004234(table->x, table->z + 1, 1, 1,
-                      (i + x0) | (s16)(table->x & 64),
-                      (j + z0) | (s16)(table->z & 64));
+    i = 0;
+    if (i < width) {
+    column:
+      event = cell->event;
+      if (event != 0 && event >= kind) {
+        last = kind + 1;
+        if (event <= last) {
+          cz = j + z0;
+          cx = i + x0;
+          entry->x = cx;
+          entry->z = cz;
+          entry->flag = flag;
+          flag++;
+          if (!GameFlag_Test(0x109)) {
+            if (event == last)
+              GameFlag_SetBit(entry->flag);
+          } else if (GameFlag_Test(entry->flag)) {
+            Func_02004234(table->x, table->z + 1, 1, 1, cx | (s16)(table->x & 64),
+                          cz | (s16)(table->z & 64));
+          }
+          table->count++;
+          entry++;
+        }
       }
-      table->count++;
-      entry++;
+      i++;
+      cell++;
+      if (i < width)
+        goto column;
     }
+    j++;
+    if (j < height)
+      goto row;
   }
   if (GameFlag_Test(0x109)) {
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -143,10 +161,13 @@ s32 Func_02003930(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     s32 k;
 
     entry = table->entries;
-    for (k = 0; k < table->count; k++, entry++) {
+    k = 0;
+    if (k < table->count) do {
       if (entry->x == leaderX && entry->z == leaderZ)
         table->current = k;
-    }
+      k++;
+      entry++;
+    } while (k < *(s16 *)&table->count); // A cast read: gcse keeps it in the loop.
   }
   buffer = Heap_Alloc(0x100);
   {

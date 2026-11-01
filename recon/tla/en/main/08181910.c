@@ -1,9 +1,21 @@
-// Draft of BattleEffect_RunLifeShear, decompiled from the listing: differ 318 of
-// 602 (draft 598), the same 55 calls and control flow; allocation differs.
-// 2026-10-19 (run 33): the blitter as a pair (tagged below), which gives
-// the native's 64-byte stack frame and its unused sp+36: 334 to 318. Left: a
-// six-use spill slot at sp+28 the native keeps in a register, and with it
-// the order of the slots below.
+// Draft, differ 6 of 602, skeleton gap 3 (tla-en, 2026-11-01)
+// Registers, stack slots and shapes all match. Left are three sched2 orders,
+// each a split constant or sp address scheduled ahead of a store or pool load:
+// 1. `mov r2, sp` goes before the zero stores to reaperX, reaperY and speed.
+// 2. In the strike, `movs r2, #238` goes before `ldr r3` of velocityY. Priority
+//    ties at 41 and the load loses on its anti-dependence with the store above.
+// 3. Before the blade loop, `lsls r5, #7` goes before `str r3, [r2, #4]`: the
+//    giv's chain has priority 2, the store 1, and nothing in the block can
+//    raise the store.
+// 1 and 2 close with one-pass blocks (differ 4; a stray `mov r1, sl` then moves
+// at 1), but those devices came back out: no form found closes 3, so they
+// cannot reach differ 0. Two permuter runs (about 66,000 candidates) did not
+// close 3. It looks like the split-constant ranking of -mthumb-slow-loads, a
+// compiler question, out of scope here.
+// What closed the rest: the angle as a giv of i (no hoisted step), scale shared
+// with the flash's size, one-constant locals for 7 (width, so it is
+// rematerialized), 0 (zero, still) and position, Task_Add's real s32, and
+// both arms of the frame-0 store written in full.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -72,7 +84,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -86,7 +98,8 @@ void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void Transform_Push(void);
 void Transform_Pop(void);
 
-// The scythe, in the work's first particle.
+// The scythe, in the work's first particle: swing is its velocityZ and timer
+// its variant.
 struct Scythe {
   s32 x;
   s32 y;
@@ -127,21 +140,19 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
-   * as one two-word DImode pseudo its spill takes sp+32 and the unused sp+36
-   * the native stack frame has. As a single DrawRectangle the stack frame is 60 bytes
-   * (334 of 602 instructions differ in tla-en, 318 with the pair). */
+  // Unused: blit[1] gives the stack frame its 8-byte spill at sp+32.
   DrawRectangle blit[2];
   struct EffectPosition target;
   struct ModelTexture texture;
-  struct RenderModel *model;
-  struct Scythe *scythe;
-  void *vertices;
   s32 reaperX;
   s32 reaperY;
   s32 speed;
+  struct EffectPosition *position;
   s32 shift;
   s32 frame;
+  void *vertices;
+  struct RenderModel *model;
+  struct Scythe *scythe;
   s32 i;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -169,32 +180,37 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
   reaperX = 0;
   reaperY = 0;
   speed = 0;
-  EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
+  EffectPosition_ProjectScaledBattler(effect->actors[0], position = &target);
 
   for (frame = 0; frame != LIFE_SHEAR_FRAMES; frame++) {
     s32 x;
     s32 phase;
     s32 scale;
+    s32 timer;
+    s32 zero;
+    s32 still;
+    s32 width;
 
     shift = 0;
-    scythe = (struct Scythe *)work->particles;
     if (frame == 0) {
       Sound_PlayFar(206);
       if (effect->side == 0) {
-        scythe->x = 0x200000;
+        work->particles[0].x = 0x200000;
+        work->particles[0].y = 0xffc00000;
+        work->particles[0].z = 0xffffe3d0;
       } else {
-        scythe->x = 0xffe00000;
+        work->particles[0].x = 0xffe00000;
+        work->particles[0].y = 0xffc00000;
+        work->particles[0].z = 0xffffe3d0;
       }
-      scythe->y = 0xffc00000;
-      scythe->z = 0xffffe3d0;
-      scythe->swing = 0;
-      scythe->timer = 0;
+      work->particles[0].velocityZ = 0;
+      work->particles[0].variant = 0;
       reaperY = 0x180000;
       if (effect->side == 0) {
-        reaperX = (target.x + 176) << 16;
+        reaperX = (position->x + 176) << 16;
         speed = 0xf0000;
       } else {
-        reaperX = (target.x - 304) << 16;
+        reaperX = (position->x - 304) << 16;
         speed = 0xfff10000;
       }
     }
@@ -218,33 +234,34 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
     }
     REG_BG2X = -x << 8;
     if ((u32)(frame - 24) <= 39) {
-      blit[0](canvas, Data_020112e8, (effect->side != 0 ? 5 : 64) + shift,
-           reaperY >> 16, 59, 89);
+      x = effect->side == 0 ? 64 : 5;
+      blit[0](canvas, Data_020112e8, x + shift, reaperY >> 16, 59, 89);
     } else {
-      s32 column;
-
       if (effect->side == 0) {
-        column = frame * 2 + 16;
-        if (column > 64) {
-          column = 64;
+        x = frame * 2 + 16;
+        if (x > 64) {
+          x = 64;
         }
       } else {
-        column = 57 - frame * 2;
-        if (column <= 8) {
-          column = 9;
+        x = 57 - frame * 2;
+        if (x <= 8) {
+          x = 9;
         }
       }
-      blit[0](canvas, gMapCellBuffer, column + shift, reaperY >> 16, 55, 88);
+      blit[0](canvas, gMapCellBuffer, x + shift, reaperY >> 16, 55, 88);
     }
 
     // The scythe's path: still, a backswing at 24, the strike at 33.
-    for (i = 0; i != 1; i++, scythe++) {
+    i = 0;
+    still = 0;
+    scythe = (struct Scythe *)work->particles;
+    for (; i != 1; i++, scythe++) {
       if (++scythe->timer <= 0) {
         continue;
       }
       if (scythe->timer == 1) {
-        scythe->velocityX = 0;
-        scythe->velocityY = 0;
+        scythe->velocityX = still;
+        scythe->velocityY = still;
       }
       if (scythe->timer == 24) {
         scythe->velocityX = -0x40000;
@@ -259,8 +276,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       }
       if (scythe->timer == 35) {
-        scythe->velocityX = 0;
-        scythe->velocityY = 0;
+        scythe->velocityX = still;
+        scythe->velocityY = still;
       }
       if (frame > 63) {
         s32 fall = (frame << 7) - 0x2000;
@@ -283,7 +300,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
 
     vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
-    scythe = (struct Scythe *)work->particles;
+    zero = 0;
     phase = frame - 50;
     if (phase == -4) {
       Sound_PlayFar(212);
@@ -295,40 +312,42 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       Func_08118088(effect->actors[0], 4);
     }
+    timer = work->particles[0].variant;
     if ((u32)(frame - 44) <= 13) {
-      scythe->swing++;
+      work->particles[0].velocityZ++;
     }
-    if (scythe->timer >= 0) {
+    if (timer >= 0) {
       scale = 0xb1e0;
       if (frame > 63) {
         scale = scale - (frame << 9) + 0x8000;
       }
+      width = 7;
       if (scale > 0) {
-        model->shade = 0;
+        model->shade = zero;
         model->kind = 9;
         model->vertices = vertices;
         model->texture = &texture;
         Render_ResetTransformState();
-        Func_08015160(scythe->x + (shift << 16), scythe->y, 0);
+        Func_08015160(work->particles[0].x + (shift << 16), work->particles[0].y, 0);
         if (effect->side == 1) {
           SceneTransform_ApplyYaw(0x8000);
         }
-        Func_080150e4(scythe->z);
+        Func_080150e4(work->particles[0].z);
         Func_0801521c(scale);
         texture.logHeight = 5;
         texture.pixels = Data_0201476b;
-        texture.logWidth = 7;
+        texture.logWidth = width;
         model->mesh = Data_0819962c;
         Transform_Push();
-        Func_080150e4((Trig_Sin(scythe->swing << 11) >> 3) - 0x2000);
+        Func_080150e4((Trig_Sin(work->particles[0].velocityZ << 11) >> 3) - 0x2000);
         Render_TransformVertices(Data_08199650, vertices, 4);
         Render_DrawModelList(model);
         Transform_Pop();
         model->mesh = Data_08199608;
-        texture.logWidth = 7;
+        texture.logWidth = width;
         texture.logHeight = 6;
         texture.pixels = Data_0201276b;
-        Func_080150e4(0x2000 - (Trig_Sin(scythe->swing << 11) >> 3));
+        Func_080150e4(0x2000 - (Trig_Sin(work->particles[0].velocityZ << 11) >> 3));
         Func_080151e4(0x10000, 0x15f90, 0x10000);
         Render_TransformVertices(Data_08199650, vertices, 4);
         Render_DrawModelList(model);
@@ -336,16 +355,14 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
 
       // The flash: four blades, shrinking over eight frames.
       if ((u32)phase <= 7) {
-        s32 size = 0x78e20 - (frame << 13);
-        s32 angle;
-
+        scale = 0x78e20 - (frame << 13);
         Render_ResetTransformState();
         if (effect->side == 0) {
           Func_08015160(0xfff00000, 0, 0);
         } else {
           Func_08015160(0x100000, 0, 0);
         }
-        Func_080151e4(size, size, size);
+        Func_080151e4(scale, scale, scale);
         if (effect->side == 1) {
           SceneTransform_ApplyYaw(0x8000);
         }
@@ -354,9 +371,9 @@ void BattleEffect_RunLifeShear(struct BattleEffectArgument *effect) {
         texture.logWidth = 5;
         texture.logHeight = 5;
         texture.pixels = Data_0201576b;
-        for (i = 0, angle = 0x5650; i != 4; i++, angle += 0x4000) {
+        for (i = 0; i != 4; i++) {
           Transform_Push();
-          Func_080150e4(angle);
+          Func_080150e4(i * 0x4000 + 0x5650);
           Func_080151e4(0x4000, ((i & 1) << 15) + 0xc000, 0x8000);
           Func_0801521c(0x10000);
           Render_TransformVertices(gData_081991f0, vertices, 4);

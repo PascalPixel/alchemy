@@ -1,17 +1,32 @@
-// First draft of Func_0811ea0c: ☀️'s BattleStaging_RunAttack
+// Draft, differ 6 of 398, skeleton gap 3 (tla-en, 2026-11-01)
+// Func_0811ea0c: The Broken Seal's BattleStaging_RunAttack
 // (games/tbs/src/battle/battle/staging.c), ported: the attacker's object is
-// put on its anchor and the camera turns to its bearing (one frame either
-// way, where ☀️ waits 5 or 10), the class's sprite of Func_0811e3ac may stand
-// in, effect kind 10 sets the attacker's mode 2 instead of the run up, mode 32
-// runs a second attacker (the plan's byte 2) up beside it, and a critical hit
-// whose kind is not 210 zooms on the pair; ObjMotRst returns the units.
-// Differ 156 of 398 (2026-10-24), register choice mostly: the native keeps
-// actorId in r5 and spills plan (here r6 and r11), so frames, the loop's
-// counter and its multiple of 30 take r11, r9 and r10 there. Seen while
-// searching: the same body with actorId compared as actorId + 1 > 8 (one
-// constant and an add differ) gives the native's allocation, differ 39, so
-// everything else is in place; no equivalent spelling found yet (block or
-// function-level actorId at any declaration position, its type).
+// put on its anchor and the camera turns to its bearing (one frame either way,
+// where The Broken Seal waits 5 or 10), the class's sprite of Func_0811e3ac may
+// stand in, effect kind 10 sets the attacker's mode 2 instead of the run up,
+// mode 32 runs a second attacker (the plan's byte 2) up beside it, and a
+// critical hit whose kind is not 210 zooms on the pair; ObjMotRst returns the
+// units.
+// Allocation is closed. The pseudo for the second attacker's BattleObj must be
+// `object` itself, hence the void pointer: as its own local it joins the local
+// allocations in r5, the i * 30 giv (7 refs over 40) outranks r5's locals (10
+// over 64), find_reg evicts them, and plan takes a register.
+// Left: three order swaps of one instruction each, all a store the native
+// issues one step sooner. `str r0, [sp, #16]` before the view address's
+// `movs r3, #192`: sched2 has that split chain at priority 87 and the store at
+// 86. `mov sl, r4` before the load of targetMultiplier[0]: the load is ready
+// one cycle after `str r3, [sp, #12]`, and outranks it. REG_WINOUT's `strh`
+// before REG_DISPCNT's `movs r1, #128`. One more cycle of store cost in sched2
+// would fit the first two (the third's priorities were not read); that is an
+// inference, and a compiler question (K2, K3) for Pascal, not a source one.
+// Tried: missed spelled as two statements (no change); actorId read before view
+// (differ 12); a one-pass block around the window registers, or around
+// REG_DISPCNT alone, closes the third swap (differ 4); a one-pass around
+// missed = 0 fixes the second but pushes `ldr r1, [sp, #16]` below the store,
+// and a temporary for plan is copy-propagated away even with a second set. A
+// barrier for the first swap would also move the mode copy `adds r7, r1` above
+// the view load, and that copy is set before any statement can sit. With no
+// way to differ 0 the devices came back out.
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -60,7 +75,7 @@ void ObjMotRst(s32 slot);
 
 s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
-  struct MotionObject *object;
+  void *object;
   struct AttackAnimation *animation;
   struct BattleUnit *unit;
   s16 criticalPair[3];
@@ -123,16 +138,16 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
                                 BattleClass_GetAttackHop(unit->enemyId) << 16);
   if ((mode & 32) && plan->actorId != plan->actorId2 &&
       plan->actorId2 != (work.actors[0] & 0x80)) {
-    struct BattleObj *partner = BattleObject_Get(plan->actorId2);
+    object = BattleObject_Get(plan->actorId2);
 
-    animation = GetMotionRecord(partner->object, 0);
+    animation = GetMotionRecord(((struct BattleObj *)object)->object, 0);
     frames = ResourceMetadata_SumCommandLengthsFar(
         animation->entries[0]->animationId, 2, 1);
     BattleMotion_ApproachTarget(
         plan->actorId2, work.actors[0], frames,
         BattleClass_GetAttackHop(Unit_Get(plan->actorId2)->enemyId) << 16);
     Actor_SetAnimationSpeedFar(
-        (struct ActorView *)partner->object, 16);
+        (struct ActorView *)((struct BattleObj *)object)->object, 16);
   }
   Actor_SetAnimationSpeedFar(
       (struct ActorView *)BattleObject_Get(work.actor)->object, 16);
@@ -169,7 +184,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
       work.kind += 200;
     if (work.kind != 210 && critical != 0) {
       zoomOnCritical = 1;
-      view->active = 1;
+      view->flag = 1;
       criticalPair[0] = work.actor;
       criticalPair[1] = work.firstTarget;
       criticalPair[2] = 255;
@@ -207,7 +222,7 @@ s32 Func_0811ea0c(struct BattlePlan *plan, s32 mode) {
     }
     BattlePlayback_WaitForReady();
     if (critical != 0) {
-      view->active = 0;
+      view->flag = 0;
       BattleParty_ListAllUnitsAndSubmit();
       BattleCamera_SetView(0, 0, 0, 100);
     }

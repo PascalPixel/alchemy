@@ -1,20 +1,43 @@
-// Draft, differ 370 of 1034, skeleton gap 60 (tla-en, 2026-11-01)
+// Draft, differ 142 of 1034, skeleton gap 34 (tla-en, 2026-11-01)
 //
-// BattleEffect_RunRisingDragonEnemy. Same instruction count, calls and control
-// flow; what is left is mostly a shifted frame and a few scheduling ties.
-// - The frame is 108 bytes against 116, which offsets every sp slot. The listing
-//   spills one more value in the body's corner loop, a copy of y at sp+12 made
-//   before the inner loop (mov r3, sl), and has an unreferenced slot at sp+68,
-//   between canvas and blit. y as a giv (j * 2 - 64) gets the slot order wrong:
-//   8j then derives from a shared 2j giv, so y stays a biv here.
-// - The colour loop has asrs where the listing has lsrs #26, and adds where it
-//   has orrs: | puts the result in the wrong register. It also takes r0, r4
-//   where the listing takes r4, r6.
-// - Kept because they measured: vertices is a local set once at the top, so the
-//   pool word is reloaded at each use; zero is set before the model is
-//   allocated; sway has two steps, which stops loop.c hoisting the corner's 0;
-//   the sparks are separate pointers, one per loop; first is a variable, so
-//   (x * 4) * 28 multiplies by 28 after the shift.
+// BattleEffect_RunRisingDragonEnemy. Same instruction count, calls, control
+// flow and frame (116); no device. What is left is one wrong shift and a run of
+// reload registers it starts.
+// - The colour loop has asrs #26 where the listing has lsrs #26, and takes its
+//   pointer in r0 where the listing takes r4 (constants r6, r5). The pointer's
+//   r0 moves reload's rotation by one (mov r1, r8 for mov r0, r8), which
+//   accounts for most register differences from there to frame 134. The
+//   listing's value is read once as HImode: ldrh, lsls 16, lsrs 26, and a
+//   pooled 31 (HImode AND). (u16)((s16)*color >> 10) & 31 gives all of that but
+//   a signed shift. Tried for lsrs, none keeps the lsls: u16 or s16 or s32 c,
+//   s16 *color, (u16)*color, (u32)(c << 16) >> 26, a multi-set s32 value,
+//   BG_PLTT[i + 96]; a three-minute permute of the loop found nothing. In
+//   allocation r0 is free for the pointer here, so the listing has some reason
+//   to skip it (a lower-priority pseudo preferring r0 is the lead); nothing
+//   found.
+// - The model block stores vertices before kind and shade; the listing after.
+//   Statement moves, a six local and a late tex change nothing.
+// - The opening's second reload of victim, and the burst's adds r7, r3, r2
+// (here
+//   r2, r3), are ties: every cast spelling of the sum compiles the same.
+// - The trail's zero and base come one reload early (r3, r4 for r4, r7);
+// setting
+//   trail before i, in one line or apart, gives it r7 and costs 34.
+// Settled this round, each measured:
+// - blit is draw[2], for the word at sp+68.
+// - cells is a set-once constant, so reload fetches it into r0; indexing
+// through
+//   (struct Corner *)(cells + j) keeps j * 8 apart from y's j * 2, so y is a
+//   giv the inner loop hoists: the mov r3, sl copy and its spill at sp+12,
+//   which closes the frame. strip is set-once too.
+// - The x expression stays one expression, which is what puts it in r0, frees
+// r3
+//   for y's copy and gives r1 and r4 to j * 8 and j * 2018; 370 to 193.
+// - BattleEffect_LoadBlitter returns s32. The model's stores are in listing
+// order.
+// - vertices is a local set once at the top; zero is set before the model is
+//   allocated; the sparks are separate pointers, one per loop; first is a
+//   variable, so (x * 4) * 28 multiplies by 28 after the shift.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -46,7 +69,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -63,13 +87,14 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -77,7 +102,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -93,7 +118,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -153,7 +178,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *vertices;
-  DrawRectangle blit;
+  u8 *strip;
+  struct CornerRow *cells;
+  DrawRectangle blit[2];
   u8 *sprites;
   s32 *victim;
   u16 *camera;
@@ -173,20 +200,21 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
   struct EffectStep *spawned;
   struct EffectStep *particle;
   struct EffectStep *scatter;
-  s32 y;
   s32 frame;
   s32 i;
   s32 j;
 
   vertices = Data_02011000;
+  strip = Data_02012000;
+  cells = (struct CornerRow *)Ram_MapCellBuffer;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   Func_0813ba50();
   BattleEffect_StartCanvasLayer(1);
-  BattleEffect_LoadBlitter(SLOT_BLITTER,
-                BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  BattleEffect_LoadBlitter(
+      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
@@ -208,7 +236,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
                              work->sheet + 0x4000, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   REG_BG2PA = 0x80;
-  Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
+  Render_BuildQuadStrip(strip, 4, 32, 32);
 
   for (frame = 0; frame != 186; frame++) {
     if (frame == 0) {
@@ -280,14 +308,14 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
       for (i = 0, color = (u16 *)(BG_PLTT + 96); i != 128; i++, color++) {
         s32 red = *color & 31;
-        s16 blue = ((s16)*color >> 10) & 31;
+        s32 blue = (u16)((s16)*color >> 10) & 31;
         if (red > 31) {
           red = 31;
         }
         if (blue > 31) {
           blue = 31;
         }
-        *color = ((red << 10) | (red << 5)) + blue;
+        *color = (red << 10) | (red << 5) | blue;
       }
       BattleEffect_BuildRepeatingTilemap();
       gBgScroll[1].y = 104;
@@ -359,29 +387,27 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     }
 
     // The dragon's body, swaying.
-    for (j = 0, y = -64; j != SEGMENTS; y += 2, j++) {
+    for (j = 0; j != SEGMENTS; j++) {
       for (i = 0; i != 2; i++) {
-        s32 sway = Trig_Sin(j * 2018 + (frame << 10));
-
-        sway = (sway * 2) >> 16;
-        gMapCellBuffer[j].corners[i].x = i * 20 + sway - 10;
-        gMapCellBuffer[j].corners[i].z = 0;
-        gMapCellBuffer[j].corners[i].y = y;
+        ((struct Corner *)(cells + j))[i].x =
+            i * 20 + ((Trig_Sin(j * 2018 + (frame << 10)) * 2) >> 16) - 10;
+        ((struct Corner *)(cells + j))[i].z = 0;
+        ((struct Corner *)(cells + j))[i].y = j * 2 - 64;
       }
     }
     zero = 0;
     model = Render_AllocateModelList(1);
     tex = &texture;
-    model->scrollV = zero;
-    model->shade = zero;
     model->kind = 6;
+    model->shade = zero;
+    model->scrollV = zero;
     model->vertices = vertices;
     tex->logWidth = 6;
     tex->logHeight = 5;
     model->texture = tex;
     tex->pixels = work->sheet;
     model->scrollU = 127 & ~(frame << 2);
-    model->mesh = Data_02012000;
+    model->mesh = strip;
     Render_ResetTransformState();
     Func_080151e4(0x8000, 0x10000, 0x8000);
     Transform_Push();
@@ -390,7 +416,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyYaw(0x8000);
     }
     Func_0801521c(0x21770);
-    Render_TransformVertices(gMapCellBuffer, vertices, 66);
+    Render_TransformVertices(cells, vertices, 66);
     Render_DrawModelList(model);
     Transform_Pop();
     if (frame <= 133 && (u32)(frame - 17) > 42) {
@@ -445,8 +471,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
 
       if ((u32)picture <= 23) {
         if (picture > 1) {
-          blit(canvas, work->sheet + 0x800 + ((picture / 4) << 11),
-               HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
+          blit[0](canvas, work->sheet + 0x800 + ((picture / 4) << 11),
+                  HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
         }
         BattleEffectKernels_IntegrateVector2(particle, 60, -0x1000);
         particle->variant++;
@@ -505,8 +531,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
         if (size <= 0) {
           size = 1;
         }
-        blit(canvas, sprites + gData_08197410[size - 1],
-             HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
+        blit[0](canvas, sprites + gData_08197410[size - 1],
+                HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
         BattleEffectKernels_IntegrateVector2(spark, 60, gravity);
         spark->variant--;
       }

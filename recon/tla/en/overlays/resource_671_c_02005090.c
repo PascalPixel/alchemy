@@ -5,18 +5,30 @@
 // matrices (full size, and Func_02005020's scale), then fills five OAM entries
 // 16 pixels apart, each using the scaled matrix where its digit changed or for
 // the middle one (Func_020055ec draws them).
-// Left: the second loop's shape and the allocation that follows from it. The
-// native computes i + 1, oam + 12, tile + 2 and reads byte 7 of the entry before
-// the branch on the digits, keeps them in r11, r9, r5 and r1, and copies them
-// back after the call: separate next-value locals reproduce that shape (gap
-// still 73, with the same allocation trouble) but are forced temporaries, so not used;
-// a form that gets it in plain C is what to look for. Two-armed stores do not
-// hoist. With that pressure missing, `value` loses its register (native r11)
-// and is reloaded from the pool, tile takes a register where the native keeps it
-// at sp+8, pixels (native r10) goes to the stack, and the copy routine's address
-// is hoisted out of the first loop. Settled: the effect is a 16-bit bitfield
-// struct, written z, x, y; block, old and now read through work reach the pool
-// entries; the entry's first three words go through a post-incremented pointer.
+// Left: the second loop. The native computes i + 1, oam + 12, tile + 2 and reads
+// byte 7 at the end of the block before the branch on the digits, and copies
+// them back after the call (r11, r9 and r5 to r6, r8 and sp+8); the end of that
+// block is where gcse inserts, but plain PRE does not move code from both arms,
+// and alchemy-gcc only hoists under optimize_size, so the source of this shape is
+// still open. No plain form tried gets it: stores in both arms, whole tails in
+// both arms, and old[i] and now[i] for the pointers all stay at a gap of 73 or
+// worse.
+// Measured with forced temporaries, best differ 130, gap 48, so left out (S2):
+// nextI, nextOam and nextTile set before the branch; `s32 b7 = byte 7` before it,
+// which keeps the pooled -63 (a u8 local folds it to 193, an s8 local gives
+// ldrb but then sign-extends); both arms in full (`a = scaled; a &= 31; y = -63 &
+// b7; a <<= 1; y |= a; byte 7 = y`), which stops IF-CASE-2 lifting the plain load
+// and lets cross-jumping leave the native's one-load arms. It also used: goto for
+// both loops, which keeps IwramCopyWords and the mask in the body; separate j
+// for the first loop; locals in the listing's order (digit, tile, pixels, tiles,
+// value, oam); i = 0 before the first matrix, which puts tile on the stack and
+// value in r11 with the native's add; old and now set before the second matrix
+// (old crossing one call goes to r4). What then remains: digit and nextOam want
+// r9, pixels and old r10 (digit outranks old, and r10 comes first), and the first
+// block's order.
+// Settled: the effect is a 16-bit bitfield struct, written z, x, y; block, old
+// and now read through work reach the pool entries; the entry's first three
+// words go through a post-incremented pointer.
 #include "types.h"
 #include "iwram_call.h"
 #include "graphics/vram_tab.h"

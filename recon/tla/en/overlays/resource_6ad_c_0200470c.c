@@ -1,15 +1,29 @@
 // Draft, differ 272 of 246, skeleton gap 38 (tla-en, 2026-11-01)
-// Control flow is the listing's: the outer loop is a label (for (;;) hoists
-// more and costs 8), and the inner while keeps its test at the bottom. Left:
-// the listing computes the terrain address and pos in place in the first
-// block and again inside the loop; here both move above the label, before
-// Func_0200410c, even when the inner loop is written with labels. That
-// lengthens the terrain pointer's life, so it spills, radius takes a high
-// register instead of sp+0, and the rest of the gap follows. In the listing
-// movs #34 and movs #89 then adds is reload's output for a pseudo in a high
-// register, so neither needs its own source form. Tried with no gain: p set
-// before the polar call or not at all, pos written directly in the first
-// block, indexing the table (36/46, worse overall).
+// Twin confirmed: Imil_RunIceSlide, without its key test, and with a collision
+// sweep over the script objects. Control flow is the listing's: the outer loop
+// is a label, the inner while keeps its test at the bottom. The listing's stack
+// is pos sp+20, angle 16, startCell 12, lastX 8, lastZ 4, radius 0.
+// What blocks the match is gcse PRE (the .07.gcse dump: redundant insn in bb 1,
+// bb 10, 12, 13, inserted on edge (0,1)). It hoists two expressions above the
+// label, the listing hoists neither:
+// - actor + 34. Solved but not kept: `owner = ObjectTable_Get(...)` above the
+//   label and `actor = owner;` as the loop's first line kills the operand. Then
+//   terrain sits in r11 in the first block and the stack slots above come out
+//   exactly, differ 257 to 262, gap 33. That is a temporary with no match, so
+//   it came back out; put it back once the second item is solved.
+// - sfp + K (pos). Unsolved. The listing has one pseudo for the first region
+//   (r6: add r6, sp, #20) and another for the inner loop (r7), so neither PRE
+//   nor the last cprop merged them, though sfp cannot be killed. The hoisted
+//   pseudo takes r8 and pushes x, z and actor down one register each. It is
+//   not an unallocated equivalence: that would give ldr r1, [sp, #20], which
+//   the listing never has.
+// Tried with no gain: struct { s32 x, y, z; } for pos (differ 303), for (;;)
+// outer loop (hoists more), pos declared in the loop body (295), no pointer
+// locals, one p or a separate one per region (same or worse), terrain read as
+// actor->terrainId with no local, declaration order fixed to the listing's
+// slots without the copy (276, gap 38), p set before the polar call or not at
+// all, indexing the table (36/46, worse overall). No device was tried for the
+// frame address: a clobber of sfp would stop its elimination.
 #include "types.h"
 #include "actor.h"
 #include "system/ram_buffer.h"

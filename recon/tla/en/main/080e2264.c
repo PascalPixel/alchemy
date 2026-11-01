@@ -1,6 +1,26 @@
-// Near miss, differ 141 (254 before statements reordered 2026-10-26) of 274: the native keeps the event work in r8 and
-// its frame is 8 bytes smaller (44); it builds 0xffff and -1 for the four
-// marks with split constants where this loads them from the pool.
+// Draft, differ 14 of 274, skeleton gap 7 (tla-en, 2026-11-01)
+// Control flow, types, allocation and the frame all match; only sched2's order
+// differs, at two kinds of site, and neither has moved under reshaping.
+// 1. The three later `(field & 0xfff0) + 8` reads: the listing issues the
+//    mask's first `movs` before `ldrh`. Here the load and the mask tie at
+//    priority 13 and the load wins: -mthumb-slow-loads exempts it from its wait
+//    after a store because the store back has the same address (arm.c,
+//    thumb_load_stored_back_p). The native waits a cycle there, so this is that
+//    measured exception, not source. Tried: an int temporary (extended load,
+//    hoists d3e to d42), operands swapped, s16 fields with (u16) casts, empty
+//    asm before each read, volatile fields; none moves it. A device cannot give
+//    `movs; ldrh; lsls; adds`, as the wait is the only thing that yields it.
+// 2. The end of the preheader: the listing puts the store of the owner's layer
+//    address before `movs r2, #32` and the load of point later still, though
+//    both outrank that store here (the spill-store under-costing seen in other
+//    drafts). Tried: point set in the for's init, at its declaration, i first;
+//    do-while; position through a pointer.
+// Closed: pool -1 comes from the s16 pointer, movs -1 and 0xffff from the
+// struct's fields; `point` is stepped after work's byte, and the second
+// coordinate goes through its own cursor set after the first store. A hand
+// index beside count breaks i's giv.
+// Whether the exception should change is a compiler question: out of scope.
+//
 // Looks at 21 map cells around the effect owner, at the tile offsets
 // of Data_080f0f64 (signed x, z byte pairs), on the owner's layer. Each cell
 // of kind 1, 2 or 3 that Func_080cda84 accepts for the effect's id is listed
@@ -12,6 +32,15 @@
 #include "actor.h"
 #include "ram_buffer.h"
 
+struct PointWork {
+  u8 unk_0[0xcc0];
+  s16 points[62];
+  u16 unk_d3c;
+  u16 unk_d3e;
+  u16 unk_d40;
+  u16 unk_d42;
+};
+
 extern const s8 Data_080f0f64[];
 
 s32 Func_080dbda8(s32 x, s32 z, s32 layer);
@@ -19,22 +48,23 @@ s32 Func_080cda84(s32 id, struct Actor *object, s32 *position);
 
 void Func_080e2264(void) {
   u8 *effect = Ram_HeapSlots->effectWork;
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct PointWork *event = Ram_HeapSlots->eventWork;
   u8 *work = Ram_HeapSlots->battleFxWork[0];
-  s16 *points = (s16 *)(event + 0xcc0);
+  s16 *points = event->points;
   struct Actor *owner = *(struct Actor **)(effect + 16);
-  s16 *point;
   s32 position[3];
   s32 x, z;
   s32 kind;
   u32 i;
   s32 count = 0;
+  s16 *point;
+  s16 *tile;
 
   work[0x1b34] = count;
-  *(u16 *)(event + 0xd3c) = 0xffff;
-  *(s16 *)(event + 0xd3e) = -1;
-  *(s16 *)(event + 0xd40) = -1;
-  *(s16 *)(event + 0xd42) = -1;
+  event->unk_d3c = 0xffff;
+  event->unk_d3e = -1;
+  event->unk_d40 = -1;
+  event->unk_d42 = -1;
   point = points;
   for (i = 0; i <= 20; i++) {
     x = owner->x + (Data_080f0f64[i * 2] << 20);
@@ -44,31 +74,37 @@ void Func_080e2264(void) {
     position[2] = z;
     if (kind == 1 &&
         Func_080cda84(*(s16 *)(effect + 30), owner, position) != -1) {
-      point[0] = x / 0x100000;
-      point[1] = z / 0x100000;
+      tile = point;
+      *tile = x / 0x100000;
+      tile++;
+      *tile = z / 0x100000;
       count++;
       work[0x1b34] = kind;
       point += 2;
     }
     if (kind == 2 &&
         Func_080cda84(*(s16 *)(effect + 30), owner, position) != -1) {
-      *(s16 *)(event + 0xd3c) = x >> 16;
-      *(s16 *)(event + 0xd3e) = z >> 16;
-      *(s16 *)(event + 0xd3c) = (*(s16 *)(event + 0xd3c) & 0xfff0) + 8;
-      point[0] = x / 0x100000;
-      *(s16 *)(event + 0xd3e) = (*(s16 *)(event + 0xd3e) & 0xfff0) + 8;
-      point[1] = z / 0x100000;
+      event->unk_d3c = x >> 16;
+      event->unk_d3e = z >> 16;
+      event->unk_d3c = (event->unk_d3c & 0xfff0) + 8;
+      event->unk_d3e = (event->unk_d3e & 0xfff0) + 8;
+      tile = point;
+      *tile = x / 0x100000;
+      tile++;
+      *tile = z / 0x100000;
       point += 2;
       count++;
     }
     if (kind == 3 &&
         Func_080cda84(*(s16 *)(effect + 30), owner, position) != -1) {
-      *(s16 *)(event + 0xd40) = x >> 16;
-      *(s16 *)(event + 0xd42) = z >> 16;
-      *(s16 *)(event + 0xd40) = (*(s16 *)(event + 0xd40) & 0xfff0) + 8;
-      *(s16 *)(event + 0xd42) = (*(s16 *)(event + 0xd42) & 0xfff0) + 8;
-      point[0] = x / 0x100000;
-      point[1] = z / 0x100000;
+      event->unk_d40 = x >> 16;
+      event->unk_d42 = z >> 16;
+      event->unk_d40 = (event->unk_d40 & 0xfff0) + 8;
+      event->unk_d42 = (event->unk_d42 & 0xfff0) + 8;
+      tile = point;
+      *tile = x / 0x100000;
+      tile++;
+      *tile = z / 0x100000;
       point += 2;
       count++;
     }

@@ -1,18 +1,35 @@
-// Draft, differ 234 of 304, skeleton gap 88 (tla-en, 2026-11-01)
+// Draft, differ 226 of 304, skeleton gap 88 (tla-en, 2026-11-01)
 // Control flow, types and calls follow the listing: every block, the restart
 // after a blocked step, the rotated walk and the 64-object scan are in place.
-// Left: GCSE's PRE hoists actor + 34 and the address of pos over the restart
-// label onto the entry edge, which the listing does not ("PRE/HOIST: edge
-// (0,1)" in the gcse dump). The listing recomputes both after the label and
-// builds each &pos argument afresh, so nothing shared it. The hoisted pseudos
-// take a high register, which pushes the listing's r6/r10 pointers, the
-// stack-held radius and the high-register scan counter into other homes; most
-// of the skeleton gap is that. Tried without gain: for (;;) and do/while for
-// the restart (55/58, worse), a loop test on a constant local (no change to
-// the hoist, and a device), terrainId through a pointer local, pos read without
-// a pointer, scan locals in an inner block, an explicit flags pointer, s32
-// direction. PRE only stops if the expressions are not anticipated at the
-// label or the back edge disappears; no plain form found for either.
+// The locals are in the order of the listing's slots: pos 28, startCell 24,
+// lastX 20, lastZ 16, centerX 12, centerZ 8, the terrain address 4, radius 0.
+// Left: the listing behaves as if the back edge to restart were absent from gcse
+// and flow, and as if PRE never touched pos. Two separate effects, both measured.
+// - PRE hoists actor + 34 and &pos over the label ("PRE/HOIST: edge (0,1)") and
+//   then deletes every later &pos as fully redundant. The listing builds &pos
+//   afresh at each call with r10 still live, and sets a second pointer in r6 at
+//   the bottom test; PRE would have removed both, so stopping the hoist alone
+//   is not enough.
+// - Weight: flow counts the restart loop at depth 1, which is what moves radius,
+//   the scan counter and the flags pointer out of the listing's homes.
+// Measured probes, none kept: `return` for `goto restart` gives 165, gap 57. A
+// never-false once test after the label (folded by gcse's last cprop) stops the
+// hoist, and a combine-folded jump from the entry into the loop (always-taken
+// form, so combine can fold it) makes it irreducible, depth 0; together they
+// also give 165 with the goto kept, but PRE still merges &pos, so they came out
+// (a separate step pointer and a terrain local: 187, gap 83). With gcse off as
+// well, by a dead setjmp call, separate step and terrain give 114, gap 46, and
+// what remains is register homes, so the listing's shape is the one this source
+// gets with no PRE and depth 0. That probe is a per-function switch on a pass,
+// which K1 forbids; it is not a route for this draft. Whether the compiler
+// differs here is a compiler question for Pascal (K3), and 020043ec and 0200470c
+// stop at the same retry loop.
+// Tried without gain: for (;;) and do/while for the restart (55/58, worse), a
+// loop test on a constant local alone, terrainId through a pointer local (92), a
+// separate step pointer (92), pos read without a pointer, scan locals in an inner
+// block, an explicit flags pointer, s32 direction, i != 64 (92), ArcTan2(dz, dx)
+// (92), lastX and lastZ swapped, and other declaration orders (no change), a
+// computed goto through a local (95).
 #include "types.h"
 #include "actor.h"
 #include "system/input.h"
@@ -43,9 +60,10 @@ void Func_02004140(void) {
   struct Position pos;
   struct Position *cursor;
   struct Actor *other;
+
+  s32 startCell, lastX, lastZ, centerX, centerZ;
   s32 radius;
-  s32 centerX, centerZ, lastX, lastZ;
-  s32 startCell, cell, i, dz;
+  s32 cell, i, dz;
   s16 direction;
 
   actor = ObjectTable_Get(gMainRoutineWork.currentOwner);

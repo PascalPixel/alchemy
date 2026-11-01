@@ -1,4 +1,4 @@
-// Draft, differ 612 of 1527, skeleton gap 174 (tla-en, 2026-11-01)
+// Draft, differ 394 of 1527, skeleton gap 116 (tla-en, 2026-11-01)
 // Whirlwind inside Air's Rock, overlay 664's larger
 // copy of overlay 663's Func_0200095c: a gust (object type 280) rises from
 // the target (the effect work's object at 0x14) and grows, shedding sparks
@@ -12,22 +12,47 @@
 // moved cells each fourth frame while it throws dust (cue 235, then 298),
 // shrinks and rises away, and for kinds 5 and 6 in Ov664Room4 and 6 shakes
 // the walls open or shut (cue 157, flags 769 and 770).
-// Left: allocation. Frame and instruction stream agree in shape. The cell and
-// the step are two-word structs: a two-word pseudo gets no register, which is
-// why their fields live at sp+24 and sp+32 and their dead stores stay. The
-// three loops that open with a branch to their test are label loops: as
-// while loops, loop.c hoists gFrameCount's address and the masks out of them.
-// The native's ranks differ still: the leader in r10 where the draft has r9,
-// gFrameCount's address in r11, 0x10000 in r10 in the dust loop where the
-// draft saves it in r2 around Math_Cosine (block-local, 6 weighted refs against
-// one call, so caller-save is profitable: the native looks unweighted), and
-// `started` on the stack with i, in the same slot, where the draft keeps it in
-// r11. Those shift the pick-up blocks and the dust loop. The growing loop's
-// first movs (#230) sits before its test's label in the native, a cross-jump
-// of a duplicated test: writing the entry test out gives r5 at the top, but
-// the bottom test stays in r0. Tried without gain: the declaration order of
-// the scalars, carried merged into steps, started merged into i, x and z as
-// function-scope scalars (frame 140).
+// Left: allocation and what follows from it. Skeleton gap 116 is nearly all
+// reordering. This draft closed: the shift as its own statement (hit = ...;
+// hit >>= 8 gives the native's reload copy through hit's stack slot), started
+// merged into i (one pseudo, which loses every register and lands at sp+20,
+// declared before hit at sp+16), the 16.16 one as a local (its pseudo then
+// crosses two calls, so caller-save stops and it takes r10, though the native
+// sets it after Random16Far, not before), gFrameCount as u32.
+// What is left, in order of size:
+// 1. GCSE's PRE merges the second gFrameCount read in the growing and dust
+//    loops (top test, then the join): the load goes to a global pseudo and
+//    `ands` commutes. The native reads again at each join, and has no PRE copy
+//    in the Ov664Room6 dust loops either. Marking only those two reads volatile
+//    measured differ 556 against 612 before the later gains, about 70 here: the
+//    device came out because it does not reach 0. Not stopped by: a one-pass
+//    block round the first test, an unused label in its body, reads through
+//    s32 or a struct.
+// 2. The native's order is steps r9, leader r10, gFrameCount's address r11; the
+//    draft's is address r10, leader r9, steps r11, and reload's rotation then
+//    moves every scratch register after it. That order needs the address below
+//    the leader (refs 6, live 116, against 6, 175). Merging carried into steps
+//    (31 refs, 704 live) falls one ref short of outranking the travel loop's
+//    address: with a probe's extra ref it takes r9, but the leader and address
+//    stay swapped.
+// 3. The growing loop's first movs (#230) before the label: `if (test) { label:
+//    body; if (test) goto label; }` gives the native's cross-jump exactly when
+//    the bottom constant lands in r5, and differ 439 against 402 until then;
+//    keep it in mind once 2 closes. A real while gives the same duplicated test
+//    but hoists the address.
+// 4. The pick-up arms: the native loads -13 into r4 and copies it to r2, with
+//    the drop cell in r5 after the object dies.
+// Compiler lead, out of scope here: PRE absent, hoisting absent, and refs that
+// fit unweighted (the address 3, the 16.16 one 3 so no caller-save, and steps
+// and carried as one variable giving steps > leader > address) would all follow
+// if this one function's native were compiled without gcse, loop.c hoisting or
+// loop-depth weights. Why it would be is unknown, and it is Pascal's question.
+// Kept: the cell and the step are two-word structs: a two-word pseudo gets no
+// register, which is why their fields live at sp+24 and sp+32 and their dead
+// stores stay. The three loops that open with a branch to their test are label
+// loops: as while loops, loop.c hoists gFrameCount's address and the masks.
+// Tried without gain: carried merged into steps (447 against 439), x and z as
+// function-scope scalars, the cell stores swapped or moved up.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -39,7 +64,7 @@
 
 extern char SceneId_Ov664Room4, SceneId_Ov664Room6, SceneId_Ov664Room7,
     SceneId_Ov664Room8, SceneId_Ov664Room9;
-extern s32 gFrameCount;
+extern u32 gFrameCount;
 extern const u8 gData_02005fd8[];
 struct Actor *Actor_GetById(u32 id);
 void Func_02005e14(void);
@@ -99,9 +124,9 @@ struct Cell {
     (object)->motionFlags = 0;                                                 \
     (object)->priorityFlags &= ~1;                                             \
     Actor_SetSingleChildFlags(object, 0);                                      \
+    gust->watchedObject = (object);                                            \
     ((struct FieldSprite *)(object)->animation)->priority =                    \
         ((struct FieldSprite *)gust->animation)->priority;                     \
-    gust->watchedObject = (object);                                            \
     carried = (at);                                                            \
   } while (0)
 
@@ -117,7 +142,7 @@ void Func_02001828(void) {
   struct Vector3 velocity;
   struct EffectOptions leaves, dust;
   struct Cell dir, cell;
-  s32 hit = 0, steps = 0, started, i, carried;
+  s32 i, hit = 0, steps = 0, carried, one;
 
   Func_02005e14();
   Func_02005f2c(0);
@@ -187,7 +212,8 @@ grow:
     dir.z = -1;
   }
   do {
-    hit = Func_02000690(2, cell.x, cell.z) >> 8;
+    hit = Func_02000690(2, cell.x, cell.z);
+    hit >>= 8;
     if (Map_GetTerrainHeight(2, cell.x << 20, cell.z << 20) != gust->terrainHeight)
       hit = 0;
     cell.x += dir.x;
@@ -206,7 +232,9 @@ grow:
   cell.z = z;
   Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
   Call2(Func_02005ed4, 0x50000, 0x50000);
-  Camera_MoveWithinMapBounds(x << 16, -1, z << 16, 1);
+  z <<= 16;
+  x <<= 16;
+  Camera_MoveWithinMapBounds(x, -1, z, 1);
   }
   carried = 0;
   goto travel;
@@ -286,21 +314,22 @@ travel:
     gust->acceleration = 0x8000;
     Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
     hit -= 30;
-    started = 0;
+    i = 0;
     goto blow;
   blowing:
       if (hit > 4)
         goto shrink;
-      if (started == 0) {
+      if (i == 0) {
         Func_02005f94(235);
-        started = 1;
+        i = 1;
       }
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
+        one = 0x10000; // 1.0 in 16.16
         dust.startScaleX = dust.startScaleY =
-            (Random16Far() & 0xffff) + 0x10000;
+            (Random16Far() & 0xffff) + one;
         velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
-        velocity.y = 0x10000;
+        velocity.y = one;
         velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
         Func_020002f4(gust->x, gust->y, gust->z, velocity.x, velocity.y,
                       velocity.z, EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,

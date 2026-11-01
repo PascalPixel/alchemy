@@ -1,13 +1,20 @@
-// Draft, differ 206 of 325: the intro's lighthouse scene: loads the
-// gull sprites (resource 0x1a) and the lighthouse picture (0x19) with its
-// palette, numbers the first 20 rows of BG1's map, fades in, then scrolls the
-// picture down in three slowing steps through Func_081a68b4, starts the logo
-// animation (Func_081a6b50 as a task, its state in heap slot
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The intro's lighthouse scene: loads the gull sprites and the lighthouse
+// picture with its palette, numbers the first 20 rows of BG1's map, fades in,
+// then scrolls the picture down in three slowing steps through Func_081a68b4,
+// starts the logo animation (Func_081a6b50 as a task, its state in heap slot
 // 43), scrolls back up, fades to white and waits two seconds. A key fades to
-// black and stops early. Clears OAM, removes the callback and frees the
-// state before it returns 1. Same calls and control flow; left: register
-// allocation (the native keeps the fill word's address in r11 and the
-// picture's address in r6) and the map loop's counters.
+// black and stops early. Clears OAM, removes the callback and frees the state
+// before it returns 1.
+// Measured in tla-en only. Two tagged temporaries remain to retire.
+// Measured: 0x10000 is one local shared by the tile step and the first fade,
+// live across calls, so it gets no register and is rebuilt in r0 at each use;
+// the 0x1ff store stays a literal so the real outer loop hoists its pool load;
+// i serves both loops and the last two scroll results; map's register holds
+// the third result; zeroes after those tests are CSE reusing the tested
+// register; logo->phase before logo->frame sets reload's rotation; Task_Add
+// must return s32 or its arguments swap; the palette DMA reads 0x05000000
+// into Ram_HeapSlots->block32.
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -18,7 +25,7 @@
 struct TitleScroll {
   s16 pos;
   s16 limit;
-  s16 step;
+  u16 step;
   u8 *src;
   u8 *dst;
   u16 *cursor;
@@ -30,9 +37,9 @@ struct TitleScroll {
 
 struct TitleLogoState {
   s16 phase;
-  s16 frame;
+  u16 frame;
   s16 timer;
-  s16 step;
+  u16 step;
   s16 delay;
   s16 white;
   s16 back;
@@ -52,7 +59,7 @@ void wait(s32 frames);
 s32 Title_WaitOrPress(u32 frames);
 s32 Func_081a68b4(struct TitleScroll *s);
 void Func_081a6b50(void);
-void Task_Add(void (*func)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void Task_Remove(void (*func)(void));
 
 s32 Func_081a6ea0(void) {
@@ -62,16 +69,20 @@ s32 Func_081a6ea0(void) {
   u8 *source;
   u16 *map;
   s16 tile;
+  s32 q16One;
+  s32 number;
   s32 row;
-  s32 column;
   s32 i;
+  u8 *buffer;
 
   logo = HeapSlot_Alloc(172, 112);
   REG_DISPCNT = 0;
   Dma_Fill32Cell(fill, 0, (void *)0x07000000, 0x400);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites);
-  Resource_DecodeByteLzInRam(source + 32, gMapCellBuffer);
-  Dma_Set(gMapCellBuffer, (void *)0x06010000,
+  buffer = gMapCellBuffer;
+  source += 32;
+  Resource_DecodeByteLzInRam(source, buffer);
+  Dma_Set(buffer, (void *)0x06010000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b00, REG_DMA3);
   wait(1);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroLighthousePicture);
@@ -80,17 +91,21 @@ s32 Func_081a6ea0(void) {
   *(volatile u16 *)0x05000000 = 0x7fff;
   wait(1);
   source += 0x200;
-  Resource_DecodeByteLzInRam(source, gMapCellBuffer);
-  Dma_Set(gMapCellBuffer, (void *)0x06000000,
+  Resource_DecodeByteLzInRam(source, buffer);
+  Dma_Set(buffer, (void *)0x06000000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   wait(1);
 
   map = (u16 *)0x0600f800;
   tile = 0;
+  q16One = 0x10000;
   for (row = 0; row < 20; row++) {
-    for (column = 0; column < 30; column++) {
-      *map++ = tile;
-      tile++;
+    for (i = 29; i >= 0; i--) {
+      /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on the high halfword; as *map = tile; tile++, 97 of 325 instructions differ in tla-en. */
+      number = tile;
+      tile = ((tile << 16) + q16One) >> 16;
+      *map = number;
+      map++;
     }
     *map++ = 0x1ff;
     *map++ = 0x1ff;
@@ -102,25 +117,25 @@ s32 Func_081a6ea0(void) {
     gBgScroll[i].y = 0;
     gBgScroll[i].x = 0;
   }
-  Dma_Set(Ram_HeapSlots->block32, (void *)0x05000000,
+  Dma_Set((void *)0x05000000, Ram_HeapSlots->block32,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   wait(1);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(q16One, 0);
   REG_DISPCNT = 0x1240;
   PaletteFade_Start(10);
 
+  scroll.pos = 0;
   scroll.limit = 176;
+  scroll.step = i;
   scroll.src = Data_02019600;
   scroll.dst = (u8 *)0x06009600;
-  scroll.pos = 0;
+  scroll.cursor = map;
   scroll.tile = tile;
   scroll.scroll = 0;
-  logo->white = 10;
   scroll.rows = row;
-  scroll.step = 4;
-  scroll.cursor = map;
-  logo->back = 25;
   scroll.frames = 1;
+  logo->white = 10;
+  logo->back = 25;
   if (Func_081a68b4(&scroll))
     goto stopped;
   scroll.limit = 200;
@@ -129,18 +144,21 @@ s32 Func_081a6ea0(void) {
     goto stopped;
   scroll.limit = 216;
   scroll.step = 2;
-  if (Func_081a68b4(&scroll))
+  /* FAKEMATCH(temporary): map reused for the result; as a separate s32 local, 52 of 325 instructions differ in tla-en. */
+  map = (u16 *)Func_081a68b4(&scroll);
+  if (map)
     goto stopped;
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites),
           (void *)0x05000200, (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
-  logo->frame = -5;
   logo->phase = 0;
+  logo->frame = -5;
   logo->timer = 0;
   logo->step = -3;
   logo->delay = 0;
   scroll.step = 1;
   scroll.limit = 224;
-  if (Func_081a68b4(&scroll))
+  i = Func_081a68b4(&scroll);
+  if (i)
     goto stopped;
   Task_Add(Func_081a6b50, 0x480);
   scroll.limit = 160;
@@ -152,7 +170,8 @@ s32 Func_081a6ea0(void) {
   scroll.tile = 450;
   scroll.rows = 11;
   scroll.frames = 8;
-  if (Func_081a68b4(&scroll))
+  i = Func_081a68b4(&scroll);
+  if (i)
     goto stopped;
   PaletteFade_SetTarget(0x7fff, 0);
   PaletteFade_Start(20);

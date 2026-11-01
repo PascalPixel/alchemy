@@ -1,32 +1,46 @@
-// Draft, differ 386 of 783: BattleEffect_RunSparkGroups, the body of the
-// spark-group effects through BattleEffect_RunNova (kind 0), BattleEffect_RunDynamite
-// (kind 1) and BattleEffect_RunThrash (kind 2).
+// Draft, differ 14 of 783, skeleton gap 7 (tla-en, 2026-11-01)
+// BattleEffect_RunSparkGroups, the body of the spark-group effects through
+// BattleEffect_RunNova (kind 0), BattleEffect_RunDynamite (kind 1) and
+// BattleEffect_RunThrash (kind 2).
 
-// ☀️ twin: BattleEffect_RunSparkGroups (games/tbs/src/effect/effect.c), shape
-// 0.803, structure 0.938. ⚓️'s changes: kind 1 also starts a palette fade
-// (work->fadeFrames 24, work->fadeStep 0); the blitter pair comes from
+// ☀️ twin: BattleEffect_RunSparkGroups
+// (games/tbs/src/battle_effect/battle_effect/plasma.c), confirmed statement by
+// statement. ⚓️'s changes: kind 1 also starts a palette fade (work->fadeFrames
+// 24, work->fadeStep 0); the blitter pair comes from
 // BattleEffect_FetchRectangleBlitters(0, draw) where ☀️ loads max and additive
-// blitters itself; the shapes table Data_081979de holds halfwords; the effect
-// runs count * 8 + 40 frames (☀️ + 56); kinds 1 and 2 play cue 145 with phase
-// 145 at frame 2; the variant 3 wipe goes through the IWRAM call layer
-// (☀️ calls the fixed entry, tagged); the transfer callback runs at 0xc80.
+// blitters itself; the effect runs count * 8 + 40 frames (☀️ + 56); kinds 1
+// and 2 play cue 145 with phase 145 at frame 2; the variant 3 wipe goes through
+// the IWRAM call layer; the transfer callback runs at 0xc80.
 
-// Same frame and instruction count. What is left is mostly allocation in
-// the two set-up loops and the spark loop: the native reloads the
-// effect's variant after each call and recomputes the shapes row
-// (variant * 10) at the top of each spark loop, keeping the table base in
-// r7, the speed in r8 and the spark in r5, where agscc keeps the row in
-// a register across the loop and shifts every register after it.
+// Left: instruction order only, no device, every register agrees. Two blocks:
+// - the end of the set-up group loop: the listing has ldr i, movs 224, ...,
+//   adds i, lsls row, str giv, str i, adds row; here the row runs ahead of the
+//   stores (10 instructions);
+// - the spark's draw call: the listing stores size to [sp, #0] before
+//   [sp, #4], here after the reload of &draw (4 instructions).
+// Both are sched2 only. --rtl shows the stores' priority too low by the same
+// amount: with a store then a load of memory costing a full load (3), as
+// loads in the same blocks do, the sched2 ranking gives the listing's order in
+// both blocks. That is the load-after-store model of -mthumb-slow-loads (K2),
+// a compiler question for Pascal, not something this source can change.
 
-// Tried (differ):
-// ☀️'s body with ⚓️'s names, tables and changes                     388
-// the spark index as i * count + j (☀️ writes &sparks[i * count] + j
-// through a local: 668)                                           386
-// the shapes table as a struct of five halfwords                    691
-// alchemy permute, 10 minutes, 2 jobs: 244 with the spark loop's
-// bound read through ((u16)(variant * 5)) + 0, a cast that only
-// breaks CSE of the shapes row (a device, not kept); 370 and 378
-// with other casts
+// What closed the rest (differ 386 to 14), each a plain form:
+// - `spark` and `point` are one variable per loop, not shared ones: the two
+//   loops of each hold them in different registers;
+// - `sparks`, set once from gMapCellBuffer, gets no register, so reload
+//   rematerializes it at each use and that moves the rotation of reload
+//   registers (the listing's pool load into r5 in the second spark loop);
+// - both flash loops index particles[i * FLASH_POINTS + j], the second one
+//   keeping i * 16 as a giv through the frame.
+
+// Tried, no gain (differ 14 unless noted):
+// asm("") at the end of the set-up group body; a one-pass block there;
+// asm("") before the spark draw (16); a height local for size * 2 (203);
+// s32 for the spark's x and y, either or both, in either order; a spelled-out
+// size++; &graphics[...]; speed in two statements (258); sparks set at the top
+// of the function; ☀️'s &sparks[...] + j spelling (same bytes as sparks + ...).
+// A barrier cannot give the listing's order: the row's first shift sits
+// between the increment and the two stores, on both sides of any barrier.
 
 #include "types.h"
 #include "system.h"
@@ -72,7 +86,7 @@ extern char ResourceId_LightningBoltSheet; // directory row 0x188
 
 // ☀️ gPlasma_Shapes, five halfwords for each variant: sparks in each
 // group, groups, and each group's x offset.
-extern u16 Data_081979de[];
+extern u16 Data_081979de[][5];
 extern u8 Data_08197a1a[];   // ☀️ gPlasma_FlashCells
 extern u16 gData_08197410[]; // ☀️ gBattleEffect_MoteCells
 
@@ -94,7 +108,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
                                       s32 gravity);
 void Sound_PlayFar(s32 cue);
 
-#define SHAPE(n) Data_081979de[effect->variant * 5 + (n)]
+#define SHAPE(n) Data_081979de[effect->variant][n]
 #define SPARK_COUNT SHAPE(0)
 #define GROUP_COUNT SHAPE(1)
 #define GROUP_X(i) SHAPE((i) + 2)
@@ -115,8 +129,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) 
   s32 originY;
   s32 j;
   s32 start;
-  struct EffectStep *point;
-  struct EffectStep *spark;
+  struct EffectStep *sparks;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -156,9 +169,12 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) 
                     128);
   }
 
+  sparks = gMapCellBuffer;
+
   for (i = 0; i != GROUP_COUNT; i++) {
     // The group's ring of flash points, wider and later further out.
     for (j = 0; j != FLASH_POINTS; j++) {
+      struct EffectStep *point;
       s32 radius;
       s32 angle;
 
@@ -172,10 +188,11 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) 
 
     // Its sparks, thrown in every direction from the group's centre.
     for (j = 0; j != SPARK_COUNT; j++) {
+      struct EffectStep *spark;
       s32 speed;
       s32 angle;
 
-      spark = &gMapCellBuffer[i * SPARK_COUNT + j];
+      spark = sparks + i * SPARK_COUNT + j;
       speed = (Random16() & 0x3ff) + 32;
       angle = Random16() & 0xffff;
       if (effect->side == 1)
@@ -236,10 +253,11 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) 
       // The ring of small flashes, each counting down through six cels.
       if (frame >= start) {
         for (j = 0; j != FLASH_DRAWN; j++) {
+          struct EffectStep *point;
           s32 x;
           s32 y;
 
-          point = &work->particles[i * FLASH_POINTS] + j;
+          point = &work->particles[i * FLASH_POINTS + j];
           y = HI(point->y) + originY;
           if (effect->side == 1)
             x = HI(point->x) + originX - GROUP_X(i) + 28;
@@ -266,15 +284,15 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) 
         else
           gravity = 0x1000;
         for (j = 0; j != SPARK_COUNT; j++) {
-          spark = &gMapCellBuffer[i * SPARK_COUNT + j];
+          struct EffectStep *spark = sparks + i * SPARK_COUNT + j;
           if (spark->variant > 0) {
             BattleEffectKernels_IntegrateVector2(spark, 60, gravity);
             spark->variant--;
             if (spark->y > GROUND_Y) {
               spark->velocityY = -spark->velocityY / 2;
             } else if (spark->x >= 0 && spark->x < 0x7f0000 && spark->y >= 0) {
-              s32 y = spark->y >> 16;
-              s32 x = spark->x >> 16;
+              s16 y = spark->y >> 16;
+              s16 x = spark->x >> 16;
               s32 size = spark->variant / 5 + 1;
 
               draw[j & 1](canvas, graphics + gData_08197410[size - 1],

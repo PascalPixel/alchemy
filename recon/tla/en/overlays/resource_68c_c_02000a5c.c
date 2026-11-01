@@ -1,17 +1,32 @@
-// Draft, differ 218 of 883, skeleton gap 43 removed, 39 added (tla-en, 2026-11-01)
-// One cause holds nearly all of the gap: the allocator. The stack frame is three
-// s32[3] buffers (start at sp+36, target at sp+24, position at sp+12) with three
-// spilled pseudos below them: radius sp+8, angle sp+4, flags sp+0, which is why
-// they are declared in that order. The listing keeps the actor in r11; here
-// radius takes r11 and the actor spills, since global.c ranks radius (8 refs, 83
-// insns: 0.289) over the actor (35 refs, 671 insns: 0.261). One ref fewer or ten
-// more live insns on radius would turn it round; splitting radius per loop hands
-// it to local-alloc and is worse, temporaries change no live length, and memory
-// angle and radius go through a CSE'd pointer. The bl far branch at the head
-// should return with the instruction count, the jump sits just inside b range.
-// Second cause: the listing sets position inside the first loop and reuses it in
-// the second; PRE hoists that set to the preheader and copy-prop splits the
-// pseudo, so it is set before the loop here (a goto loop keeps the same hoist).
+// Draft, differ 107 of 883, skeleton gap 37 removed, 38 added (tla-en, 2026-11-01)
+// Plain C leaves one cause: the listing's allocation. The listing has target r8,
+// start r10, pos r9, actor r11 and radius spilled to sp+8; here PRE hoists
+// pos's address, so the second loop's pos is posAddress in a stack slot, and
+// radius (8 refs, 84 insns) outranks the actor (35 refs, 672 insns) for r11.
+// floor_log2 makes both a step: pos set in the first loop and kept in the second
+// is one pseudo of 30 refs and about 242 insns, ahead of start and target (28)
+// until they reach 32 refs, and the actor needs 39 to pass radius.
+// Tested to differ 6 of 883, skeleton gap 3, with six devices, taken out since
+// they stop short of 0. Re-apply together, on this draft:
+// - first loop as a goto loop, no loop notes, so loop.c leaves the set alone:
+//   "i = 0; never = 0; top: ... wait(1); i++; if (i <= 191) goto top;"
+// - dead test ahead of the set, stops PRE, folded by the second cprop pass:
+//   "if (never == 0) pos = posBuf;", no posAddress
+// - twice at the top of the third loop, adds refs and emits nothing:
+//   asm("" : : "r"(start), "r"(target), "r"(actor));
+// - empty do { } while (0): before that dead test (keeps add rN, sp, #12 joined),
+//   after "flags = ...", between "angle = 0xb000" and "i = 0", and before
+//   "actor->angle = 0x8000" (ends CSE's path, keeps the pooled zero).
+// Three asms lift target over i and lose r7, so two is the count.
+// Those 6 are swapped pairs and look like the schedule model, not source:
+// - second setup: listing strb; mov r2, sl; ldr r3, [r1, #8]; movs r7, #0; str.
+//   thumb_load_stored_back_p exempts that load from the load-after-store wait
+//   because target[2]'s later str r3, [r1, #8] has the same text, a false
+//   read-modify-write. A question for Pascal (K2), not for this draft.
+// - first loop: listing adds r3, r3, r1 before lsls r0, r0, #5, then str r0 and
+//   str r3 in that order. A temporary, a barrier, a step local and << all fail.
+// Tried: 8-byte struct for angle and radius, plain arrays with no pointers, plain
+// position array, a pos per loop, operand asms in the second setup.
 #include "iwram_call.h"
 #include "call.h"
 #include "actor.h"
@@ -56,10 +71,10 @@ s32 Func_02002834();
 s32 Func_02000a5c(s32 a0, s32 a1, s32 a2) {
   struct Actor *actor;
   s32 startBuf[3], targetBuf[3], posBuf[3];
-  s32 *start, *target, *pos;
+  s32 *start, *target, *pos, *posAddress;
   s32 radius, angle;
   u8 *flags;
-  s32 result, i, phase, base, delta, answer;
+  s32 result, i, phase, sine, answer, zero;
 
   actor = (struct Actor *)Actor_GetById(11);
   result = GameFlag_Test(0x965);
@@ -182,38 +197,29 @@ L_02008a86:
   Call2((void (*)())Actor_StartRepeatedMotion, 11, 3);
   Call2((void (*)())Func_020028e4, 11, 0x102);
   Call1((void (*)())FieldEvent_Wait, 50);
-  Call2((void (*)())Actor_SetModeById, 11, 3);
+  Value2((s32 (*)())Actor_SetModeById, 11, 3);
   flags = &actor->motionFlags;
-  *flags = 0;
+  zero = 0;
+  *flags = zero;
   start = startBuf;
   start[0] = actor->x;
   start[1] = actor->y;
   start[2] = actor->z;
   target = targetBuf;
   target[0] = 0x740000;
-  target[1] = 0;
+  target[1] = zero;
   target[2] = 0x6e0000;
   angle = 0xb000;
-  pos = posBuf;
-  i = 0;
-  do {
+  posAddress = posBuf;
+  for (i = 0; i <= 191; i++) {
     phase = i * 32768 / 192;
     radius = Math_Sine(phase) * 32;
     angle += 512;
-    base = start[0];
-    delta = target[0] - base;
-    base += delta * i / 192;
-    pos[0] = base;
+    pos = posAddress;
+    pos[0] = start[0] + (target[0] - start[0]) * i / 192;
     phase = Math_Sine(phase);
-    base = start[1];
-    delta = target[1] - base;
-    base += delta * i / 192;
-    base += phase * 56;
-    pos[1] = base;
-    base = start[2];
-    delta = target[2] - base;
-    base += delta * i / 192;
-    pos[2] = base;
+    pos[1] = start[1] + (target[1] - start[1]) * i / 192 + phase * 56;
+    pos[2] = start[2] + (target[2] - start[2]) * i / 192;
     Vector_AddPolarOffsetFar(radius, angle, pos);
     actor->x = pos[0];
     actor->y = pos[1];
@@ -222,9 +228,8 @@ L_02008a86:
     if (i == 128) {
       Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);
     }
-    i++;
     Call1((void (*)())wait, 1);
-  } while (i <= 191);
+  }
   actor->angle = 0x8000;
   Call1((void (*)())FieldEvent_Wait, 30);
   Call2((void (*)())Actor_SetModeById, 11, 1);
@@ -260,7 +265,6 @@ L_02008a86:
   Call2((void (*)())Actor_SetModeById, 11, 3);
   Call1((void (*)())FieldEvent_Wait, 40);
   *flags = 0;
-  i = 0;
   start[0] = actor->x;
   start[1] = actor->y;
   start[2] = actor->z;
@@ -268,23 +272,13 @@ L_02008a86:
   target[1] = 0x200000;
   target[2] = 0x640000;
   angle = 0x4200;
-  do {
+  for (i = 0; i <= 191; i++) {
     radius = Math_Sine(i * 16384 / 192) * 40;
     angle += 768;
-    base = start[0];
-    delta = target[0] - base;
-    base += delta * i / 192;
-    pos[0] = base;
-    phase = Math_Sine(i * 32768 / 192);
-    base = start[1];
-    delta = target[1] - base;
-    base += delta * i / 192;
-    base += phase * 32;
-    pos[1] = base;
-    base = start[2];
-    delta = target[2] - base;
-    base += delta * i / 192;
-    pos[2] = base;
+    pos[0] = start[0] + (target[0] - start[0]) * i / 192;
+    sine = Math_Sine(i * 32768 / 192);
+    pos[1] = start[1] + (target[1] - start[1]) * i / 192 + sine * 32;
+    pos[2] = start[2] + (target[2] - start[2]) * i / 192;
     Vector_AddPolarOffsetFar(radius, angle, pos);
     actor->x = pos[0];
     actor->y = pos[1];
@@ -293,28 +287,22 @@ L_02008a86:
     if (i == 153) {
       Call3((void (*)())Actor_ArmCallback, 10, 0x7000, 0);
     }
-    i++;
     Call1((void (*)())wait, 1);
-  } while (i <= 191);
+  }
   Call3((void (*)())Actor_ArmCallback, 10, 0xb000, 0);
   actor->angle = 0xd000;
   start[0] = actor->x;
-  i = 0;
   start[1] = actor->y;
   start[2] = actor->z;
   target[0] = 0x5a0000;
   target[1] = 0x40000;
   target[2] = 0x400000;
-  do {
-    base = start[0];
-    actor->x = base + (target[0] - base) * i / 16;
-    base = start[1];
-    actor->y = base + (target[1] - base) * i / 16;
-    base = start[2];
-    actor->z = base + (target[2] - base) * i / 16;
-    i++;
+  for (i = 0; i <= 15; i++) {
+    actor->x = start[0] + (target[0] - start[0]) * i / 16;
+    actor->y = start[1] + (target[1] - start[1]) * i / 16;
+    actor->z = start[2] + (target[2] - start[2]) * i / 16;
     Call1((void (*)())wait, 1);
-  } while (i <= 15);
+  }
   Call3((void (*)())Func_02002874, 11, 0, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);

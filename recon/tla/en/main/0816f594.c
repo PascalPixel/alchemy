@@ -1,27 +1,52 @@
-// Draft of BattleEffect_RunRadiantFire, effect kind 110 (Radiant Fire), written from the
-// listing on The Broken Seal's canvas skeleton. No close twin (shape
+// Draft, differ 12 of 389, skeleton gap 6 (tla-en, 2026-11-01)
+// BattleEffect_RunRadiantFire, effect kind 110 (Radiant Fire), written from
+// the listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleEffect_RunUndeadSword 0.525, call order BattleEffect_RunBreak
 // 0.551); the textured square goes through the ARM polygon kernels as in
-// the summons (Render_AllocateModelList, Render_TransformVertices, Render_DrawModelList).
-
-// Listing 389 instructions, draft 392, differ 257.
-// Left: allocation. In the disc loop the native keeps the offset in r7,
-// the size in r6 and 2i in r5, reads the table base back from the stack
-// and multiplies by 2i + 3 (r5 + 3) for size + 1; here the table gets a
-// walking pointer and size + 1 is size's own. The flame loops take r6
-// where the native has r7 and the reverse, and the size test of the
-// disc draw is laid out differently (size * 2 - 2 against 61 in the
-// native).
-// Tried (differ):
-// first draft                                                       267
-// locals in the native's stack-slot order (canvas, frame, camera,
-// savedYaw, target, discs)                                         257
-// size derived from i ((i + 1) * 2, i * 2 + 2, 2 + i * 2): the
-// multiply then reads 2i + 3 as the native does, but the offset
-// spills                                                            292
-// offset += (i * 2 + 3) * size / 2                                    256
-// the table read through work->sheet with no discs local             264
-// alchemy permute 8 minutes, 2 jobs (from the 292 form): 266
+// the summons (Render_AllocateModelList, Render_TransformVertices,
+// Render_DrawModelList).
+//
+// Left: only sched2 order, two places; every register and stack slot matches.
+// 1. Eight of the twelve: the three loop inits. The native's order after
+//    Task_Add is str camera, movs r7 #0, ldrsh yaw, movs r6 #2, str yaw,
+//    movs r5 #0, ldrsh actor, bl: each ldrsh waits a cycle after the spill
+//    store and the idle constants fill the gaps. arm_adjust_cost's store rule
+//    skips extended loads (SET_SRC is SIGN_EXTEND, not MEM), so here both
+//    ldrsh issue at once and r6 and r5 fall after the bl. This is the known
+//    "load after a store issued too early" model gap; closing it is a
+//    compiler question, out of scope for a draft. A barrier cannot stand in:
+//    mov r2, fp and the giv init of r5 both sit after it in RTL order and
+//    must be scheduled before it.
+// 2. Four of the twelve: str r2, [r6, #16] (model->texture) must follow the
+//    vertices and mesh stores. Here it leads, because its anti-dependence
+//    chain into i's movs r2, #0 gives it priority 3 against their 1.
+//
+// What closed the distance (differ):
+// the start                                                           257
+// savedYaw s32 with (s16) on the read, locals in stack order with
+// screen and texture first; offset += (i * 2 + 3) * size / 2 with size
+// a biv, so 2i + 3 folds onto the table's giv                         242
+// the draw's own diameter and index, index the shared size - 2 of the
+// range test and a byte offset into discs (fold distributes
+// discs[x - 1], so the table is read through its byte offset)         237
+// a set-once cells local that gets no register: reload rematerializes
+// the buffer address, which frees r3 for diameter and r2 for index     68
+// cells as s32, for the operand order of both adds; flame, burst and
+// square as one pointer per loop                                       22
+// i = 0 before the pointer, brightness = 0 before roll, offset and size
+// set before the call                                                  12
+//
+// Tried, no gain:
+// discs[i] and index as one byte-offset biv: r5 = 0 before the call
+// looks right, but reload_cse then turns i = 0 into mov r8, r5, and the
+// native has movs r4, #0                                              177
+// one-pass block ending before i = 0, gives the texture store order but
+// its loop notes reorder add r2, sp and add r3, r9; opened at each of
+// the setup statements                                        10 to 14
+// volatile on mesh and texture closes item 2 and leaves item 1: 8.
+// Removed, because it cannot reach differ 0
+// the model stores in nine other orders                       12 to 22
+// offset, savedYaw and size in five orders                    12 or 77
 
 #include "types.h"
 #include "io_reg.h"
@@ -74,7 +99,7 @@ extern const u16 Data_081991e0[];  // its four corners
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
+s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
@@ -109,20 +134,23 @@ void Sound_PlayFar(s32 cue);
 // around the target and the user closes in; from frame 8 burst i lands at
 // frame 16 + 4i and burns for 24 frames.
 void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
+  struct EffectPosition screen;
+  struct Texture texture;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   struct BattleCamera *camera;
-  s16 savedYaw;
+  s32 savedYaw;
   struct MotionObject *target;
   s16 *discs;
-  struct EffectPosition screen;
-  struct Texture texture;
   struct EffectStep *flame;
+  struct EffectStep *burst;
+  struct EffectStep *square;
   struct RenderModel *model;
   void *vertices;
   s32 offset;
   s32 size;
+  s32 cells;
   s32 i;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -138,17 +166,18 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   camera = Ram_HeapSlots->cameraWork;
-  savedYaw = camera->yaw;
+  offset = 0;
+  savedYaw = (s16)camera->yaw;
+  size = 2;
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
 
   // The discs, smallest first, one after another in the map cell buffer.
+  cells = (s32)Ram_MapCellBuffer;
   discs = (s16 *)work->sheet;
-  offset = 0;
-  size = 2;
   for (i = 0; i != FLAMES; i++) {
-    Func_0815b434(Ram_MapCellBuffer + offset, size, 0x14e20);
+    Func_0815b434((void *)(offset + cells), size, 0x14e20);
     discs[i] = offset;
-    offset += size * (size + 1) / 2;
+    offset += (i * 2 + 3) * size / 2;
     size += 2;
   }
 
@@ -196,21 +225,26 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
     if (frame >= 8) {
       // Each burst strikes the target as it lands, then its disc swells
       // and shrinks with a sine over 32 frames.
-      flame = work->particles;
-      for (i = 0; i != 8; i++, flame++) {
-        flame->variant++;
-        if (flame->variant == 8) {
+      i = 0;
+      burst = work->particles;
+      for (; i != 8; i++, burst++) {
+        burst->variant++;
+        if (burst->variant == 8) {
           Sound_PlayFar(144);
           work->shakeFrames = 8;
           Func_08118088(effect->actors[0], 0);
           Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
         }
-        if (flame->variant >= 0 && flame->variant < 32) {
-          size =
-              ((Trig_Sin(flame->variant << 10) * flame->velocityX) >> 16) * 2;
-          if (size >= 2 && size <= 63)
-            Func_0818caa8(Ram_MapCellBuffer + discs[size / 2 - 1], flame->x,
-                          flame->y, size);
+        if (burst->variant >= 0 && burst->variant < 32) {
+          s32 diameter;
+          s32 index;
+
+          diameter =
+              ((Trig_Sin(burst->variant << 10) * burst->velocityX) >> 16) * 2;
+          index = diameter - 2;
+          if ((u32)index <= 61)
+            Func_0818caa8((void *)(*(s16 *)(index + (s32)discs) + cells),
+                          burst->x, burst->y, diameter);
         }
       }
 
@@ -225,19 +259,20 @@ void BattleEffect_RunRadiantFire(struct BattleEffectArgument *effect) {
       model->vertices = vertices;
       model->mesh = gData_08199364;
       model->texture = &texture;
-      flame = work->particles;
-      for (i = 0; i != 8; i++, flame++) {
-        if (flame->variant >= 0 && flame->variant < 24) {
-          s32 roll = flame->variant * 3 << 11;
+      i = 0;
+      square = work->particles;
+      for (; i != 8; i++, square++) {
+        if (square->variant >= 0 && square->variant < 24) {
           s32 brightness = 0;
+          s32 roll = square->variant * 3 << 11;
 
-          if (flame->variant > 15)
-            brightness = (16 - flame->variant) * 8;
+          if (square->variant > 15)
+            brightness = (16 - square->variant) * 8;
           model->brightness = brightness;
           Render_ResetTransformState();
-          Func_08015160((flame->x - 64) << 16, (flame->y - 64) << 16, 0);
-          Func_080150e4(flame->velocityZ);
-          SceneTransform_ApplyPitch(flame->velocityY);
+          Func_08015160((square->x - 64) << 16, (square->y - 64) << 16, 0);
+          Func_080150e4(square->velocityZ);
+          SceneTransform_ApplyPitch(square->velocityY);
           Func_0801521c(roll);
           Render_TransformVertices(Data_081991e0, vertices, 4);
           Render_DrawModelList(model);

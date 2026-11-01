@@ -1,4 +1,4 @@
-// Draft, differ 196 of 2278, skeleton gap 104 (tla-en, 2026-11-01)
+// Draft, differ 76 of 2278, skeleton gap 68 (tla-en, 2026-11-01)
 
 // Draft of BattleEffect_RunProjectileVolley, the body of the volley family:
 // the user fires a volley of shots at each target, staggered by shot and
@@ -24,20 +24,27 @@
 // Twin: The Broken Seal's BattleEffect_RunProjectileVolley (effect.c), modes
 // 0-11. The Lost Age adds modes 12-18, the falling-streak particles, and
 // no longer opens the canvas differently for mode 10.
-// What remains: control flow, calls, frame and stack slots are the native's;
-// draft 2276, native 2278. Mode is in r9, steps in r10, as in the native.
-// - Most of the gap is order alone, no extra or missing work: stack stores and
-// loads of i and effect (the native stores i before loading, sp+136 before
-// sp+144 and sp+148), and pool loads against shifts. The registers often agree,
-// so these look like scheduling; K2 calls -mthumb-slow-loads an approximation,
-// and that may be the cause (not proved). A compiler question, not reshaped.
-// - The glint loop: the native keeps p in r11 and glint in r7, the draft the
-// reverse, probably the source of the two missing instructions. By the pass
-// dumps global.c ranks p over glint narrowly; nothing tried swapped them.
-// - i * delay + j * stagger adds as r2 + r3; the native adds r3 + r2. Written
-// j * stagger first, loop.c strength-reduces the product, which the native
-// does not, and the gap grows.
-// - The streak's n and its zero sit in r2 and r1, the native r1 and r2.
+// What remains: instructions, registers, frame and stack slots are all the
+// native's (2278 each); the only register difference left is the streak's n
+// and zero. Every other differing line is order within a block, so this
+// is sched2, not shape. Each is a question for Pascal (K2), not for this draft:
+// - A stack store goes early. The native issues str [sp, #136] (i) before a
+// load the draft ranks ahead of it: i = 0 against the pool load or work load
+// after it, and i against the effect load at each loop end, also sp+92, sp+52.
+// In the first block the native's order is movs r0; ldr r1; movs r4; str r0;
+// lsls r4, the str inside the chain, so it fits a store ranked one or two
+// higher than -mthumb-slow-loads ranks it. No barrier can give that interleave,
+// so none was added: a barrier here could not reach differ 0.
+// - In the glint loop the native reads p->x and p->y before the multiply; the
+// draft's muls goes first. Eight spellings of the two sums made no gain.
+// - The streak's n and its zero sit in r2 and r1, the native r1 and r2. Types,
+// declaration order, a named zero and reusing k, shift or spawned did not swap
+// them; `held` keeps the constant, which gained 2.
+// - After RELEASE_DRAW_BLITTER at the two flipped flashes the native loads r1
+// before r0, the draft r0 first; a plain call there is differ 132.
+// - RELEASE_DRAW_BLITTER is plain at two sites (comet, first; glint), where it
+// lets the native's p reload cross the call. All eight through the macro is
+// differ 82. Mixed, the macro is a one-pass device until that is settled (S2).
 
 // How the allocation was found, for the next reader:
 // - The smoke counter and the spark shift are one local, as in the twin, with
@@ -51,11 +58,18 @@
 // temporaries shift by one register from the mode 13 branch on (differ 324
 // against 198).
 
+// Found this round, differ before and after:
+// glint set inside the spray loop, which loop.c hoists: p takes r11 and glint
+// r7, as the native, 192 to 86 (u8 glint gives 178, shared locals 306 up).
+// The palette copy through a local, as Func_0815c970: 196 to 192.
+// targetDelay local inside the shot loop, with j * stagger first: 78 to 76.
+
 // Tried, gap (removed + added) unless marked:
 // j * stagger + i * delay                                      208 (the rest
 // of this list was measured from later states)
 // LoadBlitter(188) through a do { } while (0) macro            150 against 144
 // i * delay kept in a local before the shot loop               122 against 118
+// (that was outside the j loop; inside it is the form kept)
 // a flat Data_08198478[mode * 5 + n]: no change; [mode][n] kept, as the twin
 // k and shift swapped, hit at function scope, glint and angle unsigned, p
 // stepped by hand, frame - 1 in the test, delay read before stagger: no gain
@@ -261,16 +275,20 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
     else
       Resource_LoadAndDecompress((s32)&ResourceId_CometSheetC,
                                  work->sheet + 0x1000, 1, 1);
-    if (mode == 5)
-      Iwram_CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
-                      128);
+    if (mode == 5) {
+      void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+
+      copy((void *)BG_PLTT, palette, 128);
+    }
     Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet,
                                work->sheet + 0x2000, 1, 0);
-    if (mode == 5)
-      Iwram_CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
-                      128);
+    if (mode == 5) {
+      void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
+      s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+
+      copy((void *)BG_PLTT, palette, 128);
+    }
     work->transferMode = 2;
     work->transferValue = 75;
   } else if (mode >= 15 && mode <= 17) {
@@ -520,8 +538,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
         for (j = 0; j != shots; j++, index++) {
           struct EffectStep *shot;
           struct EffectPosition *pos;
+          s32 targetDelay = i * delay;
 
-          if (i * delay + j * stagger >= frame)
+          if (j * stagger + targetDelay >= frame)
             continue;
           shot = &work->particles[i * shots + j];
           if (mode >= 15 && mode <= 17 && shot->variant == 1)
@@ -559,8 +578,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             x = shot->x;
             if (target->x < 0) {
               hit = x < 0;
-              /* FAKEMATCH: the twin's cancelling updates, which end CSE
-               * before the side test and emit nothing (effect.c). */
+              /* FAKEMATCH(dead): the twin's cancelling updates under a test
+               * that emits nothing; as no updates, 103 of 2278 instructions
+               * differ in tla-en. */
               if (target) {
                 hit ^= x;
                 hit ^= x;
@@ -569,7 +589,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                 goto draw_shot;
             } else {
               hit = x >= 0;
-              /* FAKEMATCH: the same, for the other side. */
+              /* FAKEMATCH(dead): the same for the other side; as no updates,
+               * 100 of 2278 instructions differ in tla-en. */
               if (target) {
                 hit ^= x;
                 hit ^= x;
@@ -616,9 +637,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
               if (mode == 16 || mode == 17) {
                 // The streak lets its particle loose.
                 s32 n;
+                s32 held = 0;
 
                 for (n = 0; n != 1; n++)
-                  PARTICLES[PTCL_STREAKS + j + n].variant = 0;
+                  PARTICLES[PTCL_STREAKS + j + n].variant = held;
               } else if (mode != 15) {
                 // Sparks.
                 shift = mode == 5 ? 12 : 11;
@@ -650,7 +672,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             DRAW_ALTERNATE(canvas, work->sheet + 0x1000, pos->x - 16,
                            pos->y - Data_08198475[kind], 32,
                            Data_08198475[kind]);
-            RELEASE_DRAW_BLITTER();
+            HeapSlot_Release(188);
             if (effect->side == 1)
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
             else
@@ -791,12 +813,12 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
       } else if (mode == 17) {
         // Glints of water spray scatter about each landed streak, each with
         // a random palette.
-        s32 glint = frame & 3;
-
         for (i = 0; i != 64; i++) {
           struct EffectStep *p = &PARTICLES[PTCL_STREAKS + i];
 
           if ((u32)p->variant <= 7) {
+            s32 glint = frame & 3;
+
             s32 angle = Random16() & 0xffff;
             s32 radius = (Random16() & 31) + 4;
             s32 glintX = HI(p->x) + ((Trig_Sin(angle) * radius) >> 17) -
@@ -808,7 +830,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
             DRAW_ALTERNATE(canvas, work->sheet + 0x22 + gData_08197486[glint],
                            glintX, glintY, gData_08197492[glint],
                            gData_08197498[glint]);
-            RELEASE_DRAW_BLITTER();
+            HeapSlot_Release(188);
             p->variant++;
           }
         }

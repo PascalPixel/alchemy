@@ -1,23 +1,23 @@
-// Draft, differ 269 of 209, skeleton gap 125 (tla-en, 2026-11-01)
-// The shape is now the listing's: two pointers stepped by a gate, one at the
-// gate (r10) and one at its second halfword (r8), with the slots reached
-// through a per-pass copy of the second (r8 to sp+12) and offsets reduced
-// from i. Struct Unk02003452 is that second view of the same 32 bytes, so
-// its unk1E is the next gate's first halfword and is never read.
-// What is left is one gap: the native loads unk00[0], unk00[1], unk00[4] and
-// unk00[5] with ldrh ahead of the odd-frame test and sign-extends each by
-// shifts inside both arms; at -O2 each arm loads its own ldrsh, and the
-// lighter register pressure then loses the high registers, the spills and
-// the 20-byte frame, which account for most of the skeleton's movs and strs.
-// A read of those four halfwords into unused locals just after the height
-// test (analysis only, not kept: that is a `dead` device) makes CSE share
-// one HImode register between the arms, and the ldrh and shifts appear:
-// skeleton 84 (44 removed, 40 added), differ 272. -Os hoists them too, but
-// also loads pool constants with ldrh, which the native never does, so the
-// options are not the answer. Tried without gain: the row, height and open
-// read through the outer pointer or a per-pass copy, closed computed in the
-// arm, the row reread instead of held, the odd test in a local, the locals
-// scoped to the slot loop, the steps in the for header.
+// Draft, differ 264 of 209, skeleton gap 76 (tla-en, 2026-11-01)
+// The native's ldrh ahead of the odd-frame test and the shifts in both arms
+// are s32 locals read through (u16) and used through (s16): tick (its ldrsh
+// and ldrh pair) and a, b, c, d, which took the skeleton from 125 to 76 and
+// the draft to 209 instructions. dbac is the best load order of the 48 tried.
+// What is left is one missing pseudo, and it sets the frame (16, native 20):
+// the native holds a copy of slots in sp+12, set each pass at the inner top
+// (mov r0, r8; str r0, [sp, #12]) and read only by the tick increment. Here
+// GCSE's copy propagation replaces that copy (insns 410, 415 in .07.gcse) with
+// slots, however it is spelled, so the reload rotation differs throughout, and
+// flag lands in r0 where the native has r4. gcse.c's hash_scan_set drops a copy
+// whose source or destination is set later in its block, which may be the way
+// to look. The slot pointer's spill order puts it after n and before the
+// loop's offset registers.
+// Tried without gain: `s` set at both tops (same code), slots = s in an arm or
+// before the increment (76 to 88), the slot step as a static
+// inline (identical), Data_02003450[n] indexing (141), only gate stepped with
+// outer and inner pointers, or a macro recomputing gate + 2 at each use (93 to
+// 106: loop.c reduces it, but folds the gate reads onto that pointer, where the
+// native keeps them on r10), flag shared with the slot's queued state (78).
 // Aqua Rock's five water gates (Data_02003450, 32 bytes each): each follows
 // its flag (the low 12 bits of unk00[9], inverted by bit 12); a change
 // queues the new state in one of its two animation slots, and each running
@@ -49,7 +49,7 @@ void Func_02002958(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 void Func_02000580(void) {
   struct Unk02003450 *gate;
   struct Unk02003452 *slots;
-  s32 n, i, flag, row, open, closed;
+  s32 n, i, flag;
 
   gate = Data_02003450;
   slots = (struct Unk02003452 *)&gate->unk00[1];
@@ -66,19 +66,22 @@ void Func_02000580(void) {
     }
     for (i = 0; i < 2; i++) {
       struct Unk02003452 *s = slots;
-      row = s->unk14[i];
+      s32 tick = (u16)s->unk14[i];
+      s32 row = (s16)tick;
       if (row < s->unk0E * 4) {
+        s32 d = (u16)gate->unk00[5], b = (u16)slots->unk00[0], a = (u16)gate->unk00[0], c = (u16)gate->unk00[4];
+        s32 open, closed;
         row /= 4;
         open = slots->unk18[i];
         closed = open ^ 1;
-        if (s->unk14[i] & 1) {
-          Func_02002968(open * 3 + gate->unk00[0], slots->unk00[0] + row, 3, 1,
-                        gate->unk00[4], gate->unk00[5] + row);
+        if (tick & 1) {
+          Func_02002968(open * 3 + (s16)a, (s16)b + row, 3, 1,
+                        (s16)c, (s16)d + row);
           Func_02002958(open * 3 + gate->unk00[2], gate->unk00[3] + row, 3, 1,
                         gate->unk00[6], gate->unk00[7] + row);
         } else {
-          Func_02002968(closed * 3 + gate->unk00[0], slots->unk00[0] + row, 3,
-                        1, gate->unk00[4], gate->unk00[5] + row);
+          Func_02002968(closed * 3 + (s16)a, (s16)b + row, 3,
+                        1, (s16)c, (s16)d + row);
           Func_02002958(closed * 3 + gate->unk00[2], gate->unk00[3] + row, 3,
                         1, gate->unk00[6], gate->unk00[7] + row);
         }

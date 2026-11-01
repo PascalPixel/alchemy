@@ -1,8 +1,35 @@
-// Draft, differ 219 of 171: how far a pushed object slides: from the object
-// Func_02000f34 finds, steps its footprint one step at a time in the push
-// direction until a cell of it is blocked (Func_02002338 returns 2), and
-// leaves the stopping point in move; returns 0 when it cannot move at all.
-// Shared with overlay 6a1 and others.
+// Draft, differ 213 of 171, skeleton gap 38 (tla-en, 2026-11-01)
+// How far a pushed object slides: from the object Func_02000f34 finds, steps
+// its footprint one step at a time in the push direction until a cell of it
+// is blocked (Func_02002338 returns 2), and leaves the stopping point in move;
+// returns 0 when it cannot move at all. Shared with overlay 6a1 and others.
+// Left: gcse's PRE. The expressions direction << 2 and sfp - 12 (the frame
+// address of position) reach back to the top of the function here, one long
+// pseudo each (the frame address has 25 refs and wins a callee-saved
+// register). The native computes direction * 4 once per pass at the top of the
+// step loop (sp+4, read from the stack copy at sp+20) and rebuilds the frame
+// address per row (r5), for the call (r1) and after the row (r2), with direct
+// [sp,#32] and [sp,#36] stores. Its registers: move r6, object r4 (saved around
+// the cell test), row r8, col r7, dx r9, dz r10, count r11; direction, width,
+// height, layer and the index spilled.
+// Compiler lead for Pascal, out of scope here (K1 to K3): an analysis-only
+// compile of this shape with -fno-gcse, frame 40, reproduces the native's
+// three frame-address forms and direct stores exactly, with only the row's
+// direction * 4 and dx, dz and count's spilling left. This is the family of
+// "frame address rebuilt inside a loop with calls". gcse.c cannot be stopped from
+// plain C: sfp is never killed, and LCM always lifts the expression out of a
+// loop that computes it on every entry.
+// The loops read move->direction, though the native reads its stack copy: that
+// measures best in plain C (direction: 219, skeleton 46; this form 213, 38).
+// cellX is real: it gives the per-row address and leaves the call's own.
+// Tried 1 November: real for loops (243 with for (;;), 235 inside a goto step);
+// a local reassigned to split the top's direction from the loops' (223, PRE
+// still lifts it); a volatile direction with a per-pass copy (219, skeleton
+// 41; keeps the shift in the loop); the same through a taken address (210,
+// skeleton 40) or a per-pass copy local (210, skeleton 44), both devices that
+// do not reach 0, so taken back out; direction and stepIndex in a frame struct
+// (219); static inline Abs, an offset local, const tables and declaration
+// order (no change).
 #include "types.h"
 #include "actor.h"
 
@@ -15,8 +42,8 @@ struct PushMove {
   s32 unk14;
 };
 
-extern const s8 gData_02002484[][4];
-extern const s32 gData_0200249c[];
+extern s8 gData_02002484[][4];
+extern s32 gData_0200249c[];
 
 struct Actor *Func_02000f34(s32 *step, s32 *a, s32 *direction);
 s32 Func_02002338(struct Actor *object, s32 *position);
@@ -36,6 +63,7 @@ s32 Func_02000dcc(struct PushMove *move) {
   s32 row;
   s32 col;
   u8 *layer;
+  s32 *cellX;
 
   object = Func_02000f34(&stepIndex, &move->unk10, &move->direction);
   if (object == 0)
@@ -55,17 +83,18 @@ s32 Func_02000dcc(struct PushMove *move) {
   move->z = object->z + dz;
   position[1] = object->y;
 step:
-  position[2] = move->z + (gData_02002484[direction][1] << 16);
+  position[2] = move->z + (gData_02002484[move->direction][1] << 16);
   row = 0;
   if (row < height) {
   nextRow:
-    position[0] = move->x + (gData_02002484[direction][0] << 16);
+    cellX = position;
+    *cellX = move->x + (gData_02002484[move->direction][0] << 16);
     col = 0;
     if (col < width) {
     nextCol:
       if (Func_02002338(object, position) == 2)
         goto blocked;
-      position[0] += 0x100000;
+      *cellX += 0x100000;
       col++;
       if (col < width)
         goto nextCol;

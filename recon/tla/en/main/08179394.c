@@ -1,13 +1,26 @@
-// Draft of BattleEffect_RunRagingHeat, decompiled from the listing: differ 374 of
-// 669 (draft 673), the same 54 calls and control flow; allocation differs.
-// 2026-10-19 (run 33), from 410: the plain and the flipped blitter as one
-// pair (draw[0] at sp+48, draw[1] at sp+52, as the native) with frame
-// declared before it and sprites after: 390; centerX and baseY declared
-// before the model, spark and vertex locals: 374. The slots from sp+64 down
-// to sp+36 are now the native's. Left: the native's hoisted
-// (centerX - ...) << 16 takes sp+32 above vertices (28) and shade (24),
-// as if those two had registers until reload spilled them; here the order
-// is reversed.
+// Draft, differ 8 of 669, skeleton gap 4 (tla-en, 2026-11-01)
+// Registers, stack slots and pool order all match the listing. What is left is
+// sched2's order at three sites, each a tie the listing breaks the other way:
+//  - ring preheader: the listing's str r3, [sp, #20] comes before mov sl, mov
+//    r9, mov r8. Here all four are ready with priority 1 and the lowest LUID
+//    wins, and the spill store cannot have the lower LUID (loop.c hoists it
+//    after them).
+//  - fading ring: the listing runs mov r4, r9; movs r1; str r3, [r4, #4]; lsls
+//    r1; adds r5, r5, r1. Here the 0x4000 chain outranks the store. The same
+//    statements in another order move the reload rotation (differ 20 to 68).
+//  - ember draw: ldrh r1 comes before ldr r6, [sp, #44]; here the reload is
+//    ready a cycle sooner.
+// These look like the K2 model's cheap spill and pool stores, not the source:
+// offset, x and cells locals, operand order, a late model copy and a ringY
+// local all failed. Whether the store cost is wrong is a compiler question for
+// Pascal (K2). No device was added: a barrier cannot interleave the fading
+// ring's movs, str and lsls, so it cannot reach differ 0.
+// What closed the gap from 364, for anyone reopening this: a one-constant
+// buffer local (rematerialized from the pool at each use), the Data_02011000
+// and gData_02015000 fixed addresses, s32 from BattleEffect_LoadBlitter and
+// Task_Add, one counter i for every loop, vertices and shade in a block after
+// the pillar (their slots sit below the hoisted x at sp+32), direct indexing in
+// the burst's ember loop, and each draw loop's pointer set inside a test.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -40,7 +53,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -76,7 +89,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -111,9 +124,8 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_PinkBurstSheet;
 extern char ResourceId_Data0C2;
 extern char ResourceId_OrangePaletteB;
-extern u8 gMapCellBuffer[];
-extern u8 Data_02011000[];
-extern struct EffectStep gData_02015000[]; // the embers
+#define Data_02011000 ((u8 *)0x02011000)
+#define gData_02015000 ((struct EffectStep *)0x02015000) // the embers
 extern const u16 gData_08197410[];         // gBattleEffect_MoteCells
 // Per level (effect->variant): the sparks, their spread, the rings' size
 // and the embers.
@@ -137,16 +149,15 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
   u8 *sprites;
   struct EffectPosition targets[8];
   struct ModelTexture texture;
+  u8 *buffer;
   s32 centerX;
   s32 baseY;
   struct RenderModel *model;
   struct EffectStep *spark;
-  struct EffectStep *ember;
-  void *vertices;
-  s32 shade;
+  struct EffectStep *particle;
   s32 i;
-  s32 j;
 
+  buffer = Ram_MapCellBuffer;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
@@ -164,13 +175,13 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
   }
   centerX = targets[0].x + (targets[effect->count - 1].x - targets[0].x) / 2;
   baseY = targets[0].y - 48;
-  Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneBSheet, gMapCellBuffer,
+  Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneBSheet, buffer,
                              1, 1);
-  Func_0816ae40(gMapCellBuffer, work->sheet, 64, 64);
+  Func_0816ae40(buffer, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x4000, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, gMapCellBuffer, 1,
+  Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, buffer, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Data_02011000, 0, 0);
   work->transferMode = 2;
@@ -200,27 +211,28 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
 
       if ((u32)(y - 52) <= 7) {
         for (i = 0, spark = work->particles; i != 32; i++, spark++) {
+          u32 random;
           u32 spread;
 
           spark->variant = -i / 4 + 2;
           spark->x = (centerX / 2) << 16;
           spark->y = ((Random16() & 15) + y + 16) << 16;
+          random = Random16();
           spread = Data_08199400[effect->variant][1];
-          spark->velocityX = ((Random16() % spread) - (spread >> 1)) << 12;
+          spark->velocityX = ((random % spread) - (spread >> 1)) << 12;
           spark->velocityY = (192 - (Random16() & 255)) << 10;
         }
-        for (i = 0, ember = gData_02015000;
-             i != Data_08199400[effect->variant][3]; i++, ember++) {
+        for (i = 0; i != Data_08199400[effect->variant][3]; i++) {
           s32 angle;
           s32 speed;
 
-          ember->x = (centerX / 2) << 16;
-          ember->y = ((Random16() & 15) + y + 24) << 16;
+          gData_02015000[i].x = (centerX / 2) << 16;
+          gData_02015000[i].y = ((Random16() & 15) + y + 24) << 16;
           angle = (Random16() & 0x7fff) + 0x4000;
           speed = (Random16() & 255) + 127;
-          ember->velocityX = (speed * Trig_Sin(angle)) >> 5;
-          ember->velocityY = (speed * Trig_Cos(angle)) >> 5;
-          ember->variant = (Random16() & 15) + 16;
+          gData_02015000[i].velocityX = (Trig_Sin(angle) * speed) >> 5;
+          gData_02015000[i].velocityY = (Trig_Cos(angle) * speed) >> 5;
+          gData_02015000[i].variant = (Random16() & 15) + 16;
         }
         Func_081180e8(145);
         for (i = 0; i != effect->count; i++) {
@@ -230,90 +242,105 @@ void BattleEffect_RunRagingHeat(struct BattleEffectArgument *effect) {
         work->shakeFrames = 16;
       }
       if (y <= 52) {
-        draw[0](canvas, gMapCellBuffer, centerX / 2 - 24, y, 24, 64);
-        draw[1](canvas, gMapCellBuffer, centerX / 2, y, 24, 64);
+        draw[0](canvas, buffer, centerX / 2 - 24, y, 24, 64);
+        draw[1](canvas, buffer, centerX / 2, y, 24, 64);
       }
-      for (i = 0, spark = work->particles;
-           i != Data_08199400[effect->variant][0]; i++, spark++) {
-        if ((u32)spark->variant <= 23) {
-          if (spark->variant > 1) {
-            draw[0](canvas, work->sheet + 0x4000 + ((spark->variant / 4) << 11),
-                 HI(spark->x) - 16, HI(spark->y) - 32, 32, 64);
+      i = 0;
+      if (i != Data_08199400[effect->variant][0]) {
+        for (particle = work->particles;
+             i != Data_08199400[effect->variant][0]; i++, particle++) {
+          if ((u32)particle->variant <= 23) {
+            if (particle->variant > 1) {
+              draw[0](canvas,
+                      work->sheet + 0x4000 + ((particle->variant / 4) << 11),
+                      HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
+            }
+            BattleEffectKernels_IntegrateVector2(particle, 60, -0x1000);
           }
-          BattleEffectKernels_IntegrateVector2(spark, 60, -0x1000);
+          particle->variant++;
         }
-        spark->variant++;
       }
-      for (i = 0, ember = gData_02015000;
-           i != Data_08199400[effect->variant][3]; i++, ember++) {
-        if (ember->variant >= 0) {
-          s32 size = (ember->variant >> 3) + 1;
+      i = 0;
+      if (i != Data_08199400[effect->variant][3]) {
+        particle = gData_02015000;
+        do {
+          if (particle->variant >= 0) {
+            s32 size = (particle->variant >> 3) + 1;
 
-          draw[0](canvas, sprites + gData_08197410[size - 1],
-               HI(ember->x) - size / 2, HI(ember->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(ember, 60, 0x1000);
-          ember->variant--;
-        }
+            draw[0](canvas, sprites + gData_08197410[size - 1],
+                    HI(particle->x) - size / 2, HI(particle->y) - size, size,
+                    size * 2);
+            BattleEffectKernels_IntegrateVector2(particle, 60, 0x1000);
+            particle->variant--;
+          }
+          i++;
+          particle++;
+        } while (i != Data_08199400[effect->variant][3]);
       }
     }
 
     // The rings: the spinning one, and from frame 56 the fading one.
-    vertices = Heap_AllocEwram(32);
-    model = Render_AllocateModelList(1);
-    shade = 0;
-    model->kind = 7;
-    model->texture = &texture;
-    model->mesh = gData_08199364;
-    model->vertices = vertices;
-    model->shade = shade;
-    texture.logWidth = 7;
-    texture.logHeight = 7;
-    for (j = 0; j != 2; j++) {
-      s32 size = Data_08199400[effect->variant][2];
-      s32 largest = size << 10;
-      s32 step = size << 5;
-      s32 scale;
+    {
+      void *vertices;
+      s32 shade;
 
-      Render_ResetTransformState();
-      Func_080151e4(0x8000, 0x10000, 0x8000);
-      if (j == 0) {
-        Func_08015160((centerX << 16) - 0x800000, (baseY << 16) - 0x400000, 0);
-      } else {
-        Func_08015160((centerX << 16) - 0x800000,
-                      ((baseY + 8) << 16) - 0x400000, 0);
-      }
-      SceneTransform_ApplyPitch(2000);
-      if (frame <= 47) {
-        SceneTransform_ApplyPitch((48 - frame) << 9);
-      }
-      if (j == 0) {
-        scale = step * (frame - 16);
-        if (scale > largest) {
-          scale = largest;
+      vertices = Heap_AllocEwram(32);
+      model = Render_AllocateModelList(1);
+      shade = 0;
+      model->kind = 7;
+      model->texture = &texture;
+      model->mesh = gData_08199364;
+      model->vertices = vertices;
+      model->shade = shade;
+      texture.logWidth = 7;
+      texture.logHeight = 7;
+      for (i = 0; i != 2; i++) {
+        s32 size = Data_08199400[effect->variant][2];
+        s32 largest = size << 10;
+        s32 step = size << 5;
+        s32 scale;
+
+        Render_ResetTransformState();
+        Func_080151e4(0x8000, 0x10000, 0x8000);
+        if (i == 0) {
+          Func_08015160((centerX << 16) - 0x800000, (baseY << 16) - 0x400000, 0);
+        } else {
+          Func_08015160((centerX << 16) - 0x800000,
+                        ((baseY + 8) << 16) - 0x400000, 0);
         }
-        if (frame > 60) {
-          scale = largest - step * (frame * 2 - 120);
+        SceneTransform_ApplyPitch(2000);
+        if (frame <= 47) {
+          SceneTransform_ApplyPitch((48 - frame) << 9);
         }
-        texture.pixels = work->sheet;
-        SceneTransform_ApplyYaw(-frame * 3 << 8);
-      } else {
-        scale = step * (frame * 4 - 224);
-        if (scale < 0) {
-          continue;
+        if (i == 0) {
+          scale = (frame - 16) * step;
+          if (scale > largest) {
+            scale = largest;
+          }
+          if (frame > 60) {
+            scale = largest - step * (frame * 2 - 120);
+          }
+          texture.pixels = work->sheet;
+          SceneTransform_ApplyYaw(-frame * 3 << 8);
+        } else {
+          scale = (frame * 4 - 224) * step;
+          if (scale < 0) {
+            continue;
+          }
+          scale += 0x4000;
+          shade = 512 - frame * 8;
+          model->shade = shade;
+          texture.pixels = Data_02011000;
         }
-        shade = 512 - frame * 8;
-        model->shade = shade;
-        texture.pixels = Data_02011000;
-        scale += 0x4000;
+        if (scale > 0 && shade > -64) {
+          Func_0801521c(scale);
+          Render_TransformVertices(gData_08199210, vertices, 4);
+          Render_DrawModelList(model);
+        }
       }
-      if (scale > 0 && shade > -64) {
-        Func_0801521c(scale);
-        Render_TransformVertices(gData_08199210, vertices, 4);
-        Render_DrawModelList(model);
-      }
+      Heap_Release(model);
+      Heap_Release(vertices);
     }
-    Heap_Release(model);
-    Heap_Release(vertices);
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;

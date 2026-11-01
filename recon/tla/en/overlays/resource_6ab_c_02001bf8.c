@@ -1,155 +1,158 @@
-// Draft of overlay 6ab's Func_02001bf8, translated from its listing: differ
-// 203 of 182. Left: its shape: 183 instructions against the listing's 182.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Overlay 6ab's Func_02001bf8, one tagged device (one-pass). What closed it, for the
+// copies in 6aa and 6ac (their data symbol is the one overlay-specific thing):
+// saved[2] is a DImode pseudo, spilled, so sp+4 keeps an unread store; the load
+// at +108 reads through a union (alias set 0), which keeps it after that store;
+// dx and dz stay block-local so r2 stops being unk6's preference and x takes r2;
+// the one-pass block's loop note keeps i = 3 after the two halfword stores. No
+// plain form of that last order was found: 4 of 182 differ without it.
 #include "types.h"
-#include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_02001780();
-s32 Func_0200196c();
-s32 Func_020019b4();
-s32 Func_020019fc();
-s32 Func_02001b78();
+
+typedef struct Actor {
+  u8 pad0[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 pad14[91 - 20];
+  u8 flag5b;
+} Actor;
+
+typedef struct Entry {
+  s16 active;
+  s16 timer;
+  u16 flags;
+  s16 unk_6;
+  Actor *actor;
+  s32 unk_c;
+} Entry;
+
+typedef struct State {
+  u8 pad0[6];
+  s16 unk_6;
+  s16 unk_8;
+  u8 pada[4];
+  s16 unk_e;
+  void (*callback)();
+  Entry entries[4];
+} State;
+
+
 s32 GameFlag_Test();
+void Func_02001780();
+void Func_0200196c();
+void Func_020019b4();
+void Func_020019fc();
+void Func_02001b78();
 extern u8 gData_020023c4[];
 
-void Func_02001bf8(void) {
-  s32 sp_[1];
-  s32 v_r8, v_r7, v_r9, v_r10, v_r0, v_r3, v_r11, v_r5, v_r6, v_r4;
-  s32 v_r2, v_r1, t0, t1, t2, t3, t4, t5, t6, t7;
-  s32 t8, t10, t11, t12, t13, t14, t15, t16, t17, t18;
-  s32 t19, t20, t21, t22, t23, t24, t25, t26, t28, t29;
-  s32 t31, t32, t34, t35, t37, t38;
 
-  t0 = FIELD_AT(0x3000000, s32, 32);
-  v_r8 = ((s32)gData_020023c4 + 0x188);
-  t1 = FIELD_AT(t0, s32, 228);
-  t2 = FIELD_AT(t0, s32, 232);
-  t3 = *(s32 *)t0;
-  t4 = FIELD_AT(t3, s32, 4);
-  FIELD_AT(sp_, s32, 4) = t4;
-  t5 = FIELD_AT(0x3000000, s32, 108);
-  *(s32 *)sp_ = t5;
-  t6 = FIELD_AT(v_r8, s16, 6);
-  v_r0 = v_r8;
-  v_r10 = (t2 & 0xffff0000);
-  v_r9 = (t1 & 0xffff0000);
-  v_r7 = (v_r8 + 20);
-  if (t6 == 0)
-    goto L_02009c52;
-  t7 = FIELD_AT(v_r0, s16, 8);
-  if (t7 != 0)
-    goto L_02009c52;
-  t8 = FIELD_AT(v_r0, s32, 16);
-  v_r3 = t8;
-  if (v_r3 == 0)
-    goto L_02009c52;
-  ((s32 (*)())v_r3)();
-L_02009c52:
-  t10 = FIELD_AT(v_r8, u16, 6);
-  FIELD_AT(v_r8, u16, 8) = t10;
-  FIELD_AT(v_r8, u16, 6) = 0;
-  v_r11 = 3;
-L_02009c64:
-  t11 = *(s16 *)v_r7;
-  if (t11 == 0)
-    goto L_02009d54;
-  t12 = FIELD_AT(v_r7, s32, 8);
-  v_r5 = t12;
-  if (v_r5 == 0)
-    goto L_02009d54;
-  t13 = Value1((s32 (*)())GameFlag_Test, 0x106);
-  t14 = *(s32 *)sp_;
-  t15 = FIELD_AT(t14, s16, 358);
-  v_r0 = t13;
-  if (t15 == 0)
-    goto L_02009c8e;
-  v_r0 = (v_r0 | 1);
-L_02009c8e:
-  v_r6 = (v_r5 + 91);
-  *(u8 *)v_r6 = v_r0;
-  t16 = FIELD_AT(v_r8, s16, 14);
-  if (t16 == 0)
-    goto L_02009ca8;
-  t17 = Value1((s32 (*)())GameFlag_Test, 0x106);
-  *(u8 *)v_r6 = t17;
-L_02009ca8:
-  t18 = FIELD_AT(v_r5, s32, 8);
-  t19 = FIELD_AT(v_r5, s32, 16);
-  t20 = FIELD_AT(v_r5, s32, 12);
-  t21 = FIELD_AT(v_r7, s16, 6);
-  v_r1 = ((((t19 - v_r10) - t20) >> 16) - 8);
-  v_r2 = ((t18 - v_r9) >> 16);
-  v_r4 = t21;
-  if (v_r4 != 0)
-    goto L_02009cde;
-  if ((u32)(v_r2 + 7) > (u32)0x14e)
-    goto L_02009d54;
-  if (v_r1 <= -0x30)
-    goto L_02009d54;
-  if (v_r1 > 239)
-    goto L_02009d54;
-L_02009cde:
-  t22 = FIELD_AT(v_r7, s16, 2);
-  t23 = FIELD_AT(v_r7, u16, 2);
-  v_r1 = t23;
-  if (t22 > 0)
-    goto L_02009d50;
-  t24 = FIELD_AT(v_r7, u16, 4);
-  v_r1 = (240 & t24);
-  if (v_r1 == 32)
-    goto L_02009d24;
-  if (v_r1 > 32)
-    goto L_02009d00;
-  if (v_r1 == 0)
-    goto L_02009d40;
-  if (v_r1 == 16)
-    goto L_02009d32;
-  goto L_02009d4c;
-L_02009d00:
-  if (v_r1 == 48)
-    goto L_02009d16;
-  if (v_r1 != 128)
-    goto L_02009d4c;
-  t25 = FIELD_AT(v_r7, s32, 8);
-  t26 = FIELD_AT(v_r7, s32, 12);
-  Call3((void (*)())Func_02001b78, (t25 + 8), t26, v_r4);
-  goto L_02009d4c;
-L_02009d16:
-  t28 = FIELD_AT(v_r7, s32, 8);
-  t29 = FIELD_AT(v_r7, s32, 12);
-  Call3((void (*)())Func_0200196c, (t28 + 8), t29, v_r4);
-  goto L_02009d4c;
-L_02009d24:
-  t31 = FIELD_AT(v_r7, s32, 8);
-  t32 = FIELD_AT(v_r7, s32, 12);
-  Call3((void (*)())Func_020019fc, (t31 + 8), t32, v_r4);
-  goto L_02009d4c;
-L_02009d32:
-  t34 = FIELD_AT(v_r7, s32, 8);
-  t35 = FIELD_AT(v_r7, s32, 12);
-  Call3((void (*)())Func_020019b4, (t34 + 8), t35, v_r4);
-  goto L_02009d4c;
-L_02009d40:
-  t37 = FIELD_AT(v_r7, s32, 8);
-  t38 = FIELD_AT(v_r7, s32, 12);
-  Call3((void (*)())Func_02001780, (t37 + 8), t38, v_r4);
-L_02009d4c:
-  v_r3 = 8;
-  goto L_02009d52;
-L_02009d50:
-  v_r3 = (v_r1 - 1);
-L_02009d52:
-  FIELD_AT(v_r7, u16, 2) = v_r3;
-L_02009d54:
-  v_r11 = (v_r11 - 1);
-  v_r7 = (v_r7 + 16);
-  if (v_r11 < 0)
-    goto L_02009d64;
-  goto L_02009c64;
-L_02009d64:
-  return;
+typedef struct Position {
+  s32 x;
+  s32 z;
+} Position;
+
+typedef struct Camera {
+  u8 pad0[228];
+  Position position;
+} Camera;
+
+typedef struct IwramGlobals {
+  u8 pad0[32];
+  Camera *camera;
+  u8 pad24[108 - 36];
+  union {
+    s32 word;
+    void *pointer;
+  } unk_6c;
+} IwramGlobals;
+
+#define IWRAM ((IwramGlobals *)0x03000000)
+
+void Func_02001bf8(void) {
+  s32 saved[2];
+  State *state;
+  Entry *entry;
+  Camera *camera;
+  Position *position;
+  s32 cameraX, cameraZ;
+  s32 v;
+  s32 i;
+
+  state = (State *)(gData_020023c4 + 0x188);
+  camera = IWRAM->camera;
+  entry = state->entries;
+  position = &camera->position;
+  cameraX = position->x;
+  cameraX &= 0xffff0000;
+  cameraZ = position->z & 0xffff0000;
+  saved[1] = (*(s32 **)camera)[1];
+  saved[0] = IWRAM->unk_6c.word;
+  if (state->unk_6 != 0 && state->unk_8 == 0 && state->callback != 0)
+    state->callback();
+  do {
+    /* FAKEMATCH(one-pass): the form kept; as these statements with no block, 4 of 182 instructions differ in tla-en. */
+    v = (u16)state->unk_6;
+    state->unk_8 = v;
+    state->unk_6 = 0;
+  } while (0);
+  for (i = 3; i >= 0; i--, entry++) {
+    Actor *actor;
+    s32 flag, x, y, unk6, value, dx, dz;
+    u8 *mark;
+
+    if (entry->active == 0)
+      continue;
+    actor = entry->actor;
+    if (actor == 0)
+      continue;
+    flag = GameFlag_Test(0x106);
+    if (*(s16 *)(saved[0] + 358) != 0)
+      flag |= 1;
+    mark = &actor->flag5b;
+    *mark = flag;
+    if (state->unk_e != 0)
+      *mark = GameFlag_Test(0x106);
+    dx = actor->x;
+    dz = actor->z;
+    dx -= cameraX;
+    y = actor->y;
+    dz -= cameraZ;
+    y = dz - y;
+    unk6 = entry->unk_6;
+    x = dx >> 16;
+    y = (y >> 16) - 8;
+    if (unk6 == 0) {
+      if ((u32)(x + 7) > 334)
+        continue;
+      if (y <= -48)
+        continue;
+      if (y > 239)
+        continue;
+    }
+    y = (u16)entry->timer;
+    if (entry->timer <= 0) {
+      y = entry->flags & 240;
+      switch (y) {
+      case 128:
+        Func_02001b78(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 48:
+        Func_0200196c(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 32:
+        Func_020019fc(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 16:
+        Func_020019b4(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      case 0:
+        Func_02001780(&entry->actor->x, entry->unk_c, unk6);
+        break;
+      }
+      value = 8;
+    } else {
+      value = y - 1;
+    }
+    entry->timer = value;
+  }
 }

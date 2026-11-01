@@ -1,10 +1,20 @@
-// Differ 158 of 1050 (was 178): Func_020013a8's calls go through an inline
-// of its own that calls it directly, as in overlay 6a5's scenes (through Call3
-// its argument registers load in another order). Older notes:
-// Draft of overlay 6a6's Func_02000198, translated from its listing: differ 178
-// of 1050 in tla-en (was 181). Read-modify-writes are compound assignments
-// where that loads as the native does. Left: register choice and order through
-// the function.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// One tagged device, FAKEMATCH(dead), on the branch after the palette copy. Its
+// test can never pass. combine folds it to an unconditional jump, so no code is
+// left, but until then the extra edge into the loop means the CFG finds no
+// natural loop, and refs in both loops lose their depth weight. That is what
+// gives entry r8 over tiles and lets the tile value beat the halfword read to
+// r3. Without it, 28 of 1050 differ; those two register choices are all that is
+// left. Before removing it, try the same allocation another way.
+// The native looks as if goto loops carry no depth weight at all, which would be
+// a compiler question for Pascal (K1 to K3), not a source one.
+// The read of unk_0c through long keeps PRE from merging it with the read after
+// the call; through s32 it merges and 2 instructions differ.
+// struct Unk16 is 16 bytes, an OAM entry at +4 as in AnimationSpritePart; +12
+// counts up to 31, and (+12 >> 2) * 4 picks the tile. The -0x200 and -0x400
+// masks are written out through halves[] because the pool holds them whole and
+// the bitfield form ties the mask to the result register. This draft is only
+// measured in tla-en; other editions are unchecked.
 #include "types.h"
 #include "dma.h"
 #include "call.h"
@@ -17,14 +27,14 @@
 s32 Camera_MoveWithinMapBounds();
 s32 Event_AskYesNoWithActorAnimation();
 s32 FieldEvent_Wait();
-s32 Func_020000ac();
+void Func_020000ac();
 s32 Func_02001248();
 s32 Func_02001268();
 s32 Func_02001278();
 s32 Func_02001280();
 s32 Func_020012c8();
 s32 Func_020012e0();
-s32 Func_020012e8();
+void Func_020012e8();
 s32 Func_02001348();
 s32 Func_02001350();
 s32 Func_02001380();
@@ -33,7 +43,7 @@ s32 Func_020013a0();
 s32 Func_020013a8();
 s32 Func_020013b0();
 s32 Func_020013b8();
-s32 Func_020013c8();
+void Func_020013c8();
 s32 Func_020013f8();
 s32 Func_02001428();
 s32 Func_02001448();
@@ -67,6 +77,7 @@ s32 Heap_AllocEwram();
 s32 FieldMessage_ShowAtActor();
 s32 VramCache_Load();
 s32 wait();
+extern char ResourceId_Data1E8;
 extern u8 Field_Palette685[];
 extern u8 MsgLoho28[];
 extern u8 gData_02001470[];
@@ -81,46 +92,65 @@ static __inline__ void W_Func_020013a8(s32 a0, s32 a1, s32 a2) {
   Func_020013a8(a0, a1, a2);
 }
 
+struct Unk16 {
+  u8 unk00[4];
+  union {
+    u32 words[2];
+    u16 halves[4];
+    u8 bytes[8];
+    struct {
+      u16 y : 8;
+      u16 attr0 : 8;
+      u16 x : 9;
+      u16 attr1 : 7;
+      u16 tile : 10;
+      u16 priority : 2;
+      u16 palette : 4;
+    } oam;
+  } sprite;
+  s32 unk_0c;
+};
+
 void Func_02000198(void) {
-  s32 v_r5, v_r1, v_r6, v_r2, v_r0, v_r7, v_r8, v_r10, v_r3, t0;
-  s32 t5, t6, t36, t37, t38, t40, t41, t43, t47, t48;
-  s32 t49, t50, t51, t52, t53, t55, t56, t147, t186, t189;
+  s32 v_r1, v_r2, v_r0, t0;
+  struct Unk16 *p;
+  struct Unk16 *table;
+  s32 tiles, entry, i, value, zero;
+  s32 t38, t47, t48, t49, t50, t51;
+  s32 t147, t186, t189;
   s32 t190, t193, t194, t226, t233, t234;
+  u8 unused[4]; // Unused: gives the stack frame its 4 bytes.
 
   t0 = Value1(Actor_GetById, 4);
   Func_020012e0();
   Call1(Func_020013f8, 0);
-  v_r5 = t0;
+  p = (struct Unk16 *)t0;
   goto L_020081ec;
 L_020081b6:
   if (v_r1 == 0)
     goto L_020081dc;
-  if (v_r6 == 0)
+  if (i == 0)
     goto L_020081ce;
   Call3(Actor_SetPositionAndReset, 4, 0x1d7, 0x15a);
   goto L_020081dc;
 L_020081ce:
   Call3(Actor_SetPositionAndReset, 4, 0x1fa, 0x15a);
 L_020081dc:
-  if (v_r6 == 0)
+  if (i == 0)
     goto L_020081e2;
   goto L_02008982;
 L_020081e2:
-  v_r1 = 0x1fa;
-  v_r0 = 4;
-  v_r2 = 118;
-  goto L_0200898a;
+  Call3(Actor_SetPositionAndReset, 4, 0x1fa, 0x175);
+  goto L_0200821e;
 L_020081ec:
-  t5 = FIELD_AT(v_r5, s32, 8);
-  v_r6 = 0;
+  i = 0;
   v_r1 = 0;
   v_r2 = 0;
-  if (t5 > 0x1e8ffff)
+  if (FIELD_AT(p, s32, 8) > 0x1e8ffff)
     goto L_020081fc;
-  v_r6 = 1;
+  i = 1;
 L_020081fc:
-  t6 = FIELD_AT(v_r5, s32, 16);
-  v_r0 = t6;
+  v_r0 = FIELD_AT(p, s32, 16);
   if (v_r0 > 0x15affff)
     goto L_02008210;
   v_r1 = 1;
@@ -162,83 +192,76 @@ L_0200821e:
   Call1(Actor_WaitForMoveById, 21);
   Call3(Func_02001348, 21, 0, 0);
   Call3(Func_020012c8, 0x70000, 0x70000, 0x10000);
-  t36 = Value1(Heap_AllocEwram, 0x600);
-  t37 = Value1(Heap_Alloc, 0x1000);
-  t38 = Value1(Resource_GetTableEntry, 0x1e8);
-  Call2(Func_02001248, t38, t37);
-  t40 = Value0(Resource_FindFreeEntry);
-  t41 = Value3(VramCache_Load, t40, 0x400, t37);
-  Call1(Heap_Release, t37);
-  v_r10 = t41;
-  v_r8 = t40;
-  v_r7 = t36;
-  v_r5 = (t36 + 12);
-  v_r6 = 95;
+  table = (struct Unk16 *)Value1(Heap_AllocEwram, 0x600);
+  p = (struct Unk16 *)Value1(Heap_Alloc, 0x1000);
+  t38 = Value1(Resource_GetTableEntry, (s32)&ResourceId_Data1E8);
+  Call2(Func_02001248, t38, p);
+  entry = Value0(Resource_FindFreeEntry);
+  tiles = Value3(VramCache_Load, entry, 0x400, p);
+  Call1(Heap_Release, p);
+  p = (struct Unk16 *)&table->unk_0c;
+  i = 95;
 L_0200838c:
-  t43 = Value0(Random16Far);
-  *(s32 *)v_r5 = -((u32)(t43 << 5) >> 16);
-  v_r6 = (v_r6 - 1);
-  v_r5 = (v_r5 + 16);
-  if (v_r6 >= 0)
+  *(s32 *)p = -((u32)(Value0(Random16Far) << 5) >> 16);
+  i = (i - 1);
+  p = (struct Unk16 *)((s32)p + 16);
+  if (i >= 0)
     goto L_0200838c;
   Dma_Set((const void *)(s32)Field_Palette685, (void *)0x50003e0, 0x80000010,
           (volatile u32 *)0x40000d4);
-  v_r6 = 0;
+  i = 0;
+  /* FAKEMATCH(dead): this test that never passes, with its edge into the loop, which combine folds away; as the loop entered only at its top, 28 of 1050 instructions differ in tla-en. */
+  if (((entry & 255) >> 8) == 0)
+    goto L_020083b6;
+  i = 1;
+  goto L_02008452;
 L_020083b6:
-  if ((31 & v_r6) != 0)
+  if ((31 & i) != 0)
     goto L_020083c4;
   Call1(Func_02001448, 145);
 L_020083c4:
-  if (v_r6 != 30)
+  if (i != 30)
     goto L_020083d4;
   Call1(Func_02001278, 90);
   Call1(Func_02001448, 141);
 L_020083d4:
-  v_r5 = v_r7;
+  p = table;
 L_020083d6:
-  t47 = FIELD_AT(v_r5, s32, 12);
-  v_r2 = t47;
-  if (v_r2 != 0)
+  if (p->unk_0c != 0)
     goto L_02008430;
-  FIELD_AT(v_r5, s32, 4) = 0x40000000;
-  FIELD_AT(v_r5, s32, 8) = v_r2;
-  t48 = Value0(Random16Far);
-  t49 = FIELD_AT(v_r5, u16, 6);
-  FIELD_AT(v_r5, u16, 6) =
-      ((t49 & -0x200) |
-       ((((u32)(((t48 << 1) + t48) << 5) >> 16) + 72) & 0x1ff));
-  t50 = Value0(Random16Far);
-  t51 = FIELD_AT(v_r5, u8, 9);
-  FIELD_AT(v_r5, u8, 4) = ((u32)t50 >> 10);
-  FIELD_AT(v_r5, u8, 9) = ((t51 | 240) & -13);
-  goto L_02008430;
+  p->sprite.words[0] = 0x40000000;
+  p->sprite.words[1] = 0;
+  t47 = (u16)((((u32)(Value0(Random16Far) * 96) >> 16) + 72) & 0x1ff);
+  t48 = p->sprite.halves[1];
+  p->sprite.halves[1] = (t48 & -0x200) | t47;
+  p->sprite.oam.y = (u32)Value0(Random16Far) >> 10;
+  t51 = p->sprite.bytes[5];
+  t51 |= 240;
+  p->sprite.bytes[5] = t51 & -13;
 L_02008430:
-  t52 = FIELD_AT(v_r5, s32, 12);
-  v_r3 = t52;
-  if (v_r3 < 0)
+  // Through long: read as s32, PRE merges this with the read after the call.
+  value = *(long *)&p->unk_0c;
+  if (value < 0)
     goto L_02008452;
-  t53 = FIELD_AT(v_r5, u16, 8);
-  FIELD_AT(v_r5, u16, 8) =
-      ((t53 & -0x400) | ((((v_r3 >> 2) << 2) + v_r10) & 0x3ff));
-  Call2(Func_02001268, v_r5, 100);
+  t49 = (u16)(((value >> 2) * 4 + tiles) & 0x3ff);
+  t50 = p->sprite.halves[2];
+  p->sprite.halves[2] = (t50 & -0x400) | t49;
+  Call2(Func_02001268, p, 100);
 L_02008452:
-  t55 = FIELD_AT(v_r5, s32, 12);
-  FIELD_AT(v_r5, s32, 12) = (t55 + 1);
-  if ((t55 + 1) <= 31)
+  p->unk_0c += 1;
+  if (p->unk_0c <= 31)
     goto L_02008474;
-  t56 = Value0(Random16Far);
-  FIELD_AT(v_r5, s32, 12) = -((u32)((t56 << 3) - t56) >> 16);
-  goto L_02008474;
+  p->unk_0c = -((u32)(Value0(Random16Far) * 7) >> 16);
 L_02008474:
-  v_r5 = (v_r5 + 16);
-  if (v_r5 <= (v_r7 + 0x5f0))
+  p++;
+  if ((s32)p <= (s32)&table[95])
     goto L_020083d6;
   Call1(wait, 1);
-  v_r6 = (v_r6 + 1);
-  if (v_r6 <= 119)
+  i = (i + 1);
+  if (i <= 119)
     goto L_020083b6;
-  Call1(Resource_ResetEntry, v_r8);
-  Call1(Heap_Release, v_r7);
+  Call1(Resource_ResetEntry, entry);
+  Call1(Heap_Release, table);
   Call4(Camera_MoveWithinMapBounds, 0x1e80000, -1, 0x1860000, 1);
   Call4(Func_02001350, 14, 0xf80000, 0x1e00000, 0);
   Func_020000ac();
@@ -326,8 +349,9 @@ L_02008474:
   Call1(FieldEvent_Wait, 30);
   Call2(Func_020013b8, 0x8000, 0x1000);
   Call4(Camera_MoveWithinMapBounds, 0x21e0000, -1, 0x1000000, 1);
+  zero = 0;
   t147 = Value1(Actor_GetById, 16);
-  FIELD_AT(t147, u8, 85) = 0;
+  FIELD_AT(t147, u8, 85) = zero;
   Actor_SetSpeedParameters(16, 0x18000, 0xc000);
   Call2(Actor_SetMovementTypeById, 16, (s32)gData_02001470);
   Call3(Actor_SetSpeedParameters, 18, 0x8000, 0x4000);
@@ -378,11 +402,7 @@ L_020088f0:
   FIELD_AT(t189, u16, 452) = (t190 + 1);
   goto L_020089c4;
 L_02008982:
-  v_r1 = 0x1d7;
-  v_r0 = 4;
-  v_r2 = 118;
-L_0200898a:
-  Call3(Actor_SetPositionAndReset, v_r0, v_r1, (v_r2 + 255));
+  Call3(Actor_SetPositionAndReset, 4, 0x1d7, 0x175);
   goto L_0200821e;
 L_02008992:
   Call2(Actor_SetModeById, 18, 4);

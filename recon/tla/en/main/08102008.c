@@ -1,6 +1,31 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 166 of 1832 in tla-en. The native spills its arguments to the stack before it
-// builds the heap slots' address; this builds the address first (row 8).
+// Draft, differ 32 of 1832, skeleton gap 15 (tla-en, 2026-11-01)
+// Every instruction is present in the right block; every register but the
+// reordered rows' agrees, and draft and listing are both 1832 long. What is
+// left is seven order sites, all loads and split constants issued against
+// stores: the prologue (the native spills r0 first and takes the stack reloads
+// and 180 << 1 later, four rows), savedRow's store, the reload of status after
+// selectedRow's store, the zero of repeat and pressed before the tutorial's
+// constants, the reload of pressed after redraw's store (R on a Djinni), and
+// the ldrsb of the row count, which the native issues after r0 in the Up and
+// Down cases. That is the twins' "same C, different schedule" under K2, and
+// -mthumb-slow-loads is the likely owner: a compiler question, out of scope.
+// Forms that closed the rest: the Broken Seal's order and `entry % 32`;
+// Djinn_ActivateFar and Djinn_DeactivateFar return s32 (argument order);
+// `result = 7` and `result = 10` before their sound; repeat, then pressed,
+// then the timer in steps 13 and 21; animation before frame in the state
+// switch; the Left/Right row count held in `result` (the listing's r5); steps
+// 27 and 24 share `pressB`, which the native cross-jumps one row earlier.
+// `entry = (u16)id` keeps a copy with a REG_EQUAL note, so regmove's remote
+// constant test ties the member mask's result to the mask, not to the dying
+// entry; with `entry` alone, r2 and r3 swap for 6 rows.
+// Tried: a one-pass block round the repeat and pressed zeros closes that site
+// (differ 30) but no device can reach the ldrsb order, so it stayed out. A
+// barrier does not order two arguments of one call. Without const on
+// Menu_GetModuloOfSum and with a local bound, 127 and the ldrsb order is
+// unchanged. Also no gain: the Broken Seal's cancelling updates of entry, entry
+// shared with the select-all loop or any outer variable, the member's mask as
+// a local, windows read after the declarations, savedRow after the empties
+// loop, DjinnMenu_DrawPage returning s32, and five minutes of the permuter.
 // First draft of Func_08102008, the Djinn list's chooser, the twin of The
 // Broken Seal's DjinnMenu_SelectDjinn (games/tbs/src/menu/menu/djinn.c).
 // Mode 0 chooses a Djinni in any member's column, mode 1 what to do with it.
@@ -10,15 +35,6 @@
 // (Func_08101a04: 0 on standby, 1 set, 2 recovering) from its packed entry.
 // Reached from Func_0810106c. The message names are The Broken Seal's; this
 // game's text has no symbols for them yet.
-// Differ 212 of 1832 (2026-10-25): the structure is the listing's; left are
-// instruction order (the native splits constants around other rows and
-// issues stack reloads earlier) and register choice in a few blocks (the
-// tutorial's Recovery tail, which the native cross-jumps with step 24, and
-// the stores of the chosen entry at the end). Menu_GetModuloOfSum is
-// declared const: the member loop's bound is read once although the loop
-// calls it (with a plain prototype and the bound in a local, 248 differ).
-// Tried: an empty asm keeping the entry live at the end, as The Broken Seal
-// does (236).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -121,8 +137,8 @@ s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 style);
 s32 Message_AllTypedFar(void);
 void Window_CloseFar(s32 window, s32 style);
 void DjinnRecovery_CountDownFar(void);
-void Djinn_ActivateFar(s32 owner, s32 element, s32 index);
-void Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
+s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
+s32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
 s32 DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 index);
 s32 DjinnRecovery_RemoveFar(s32 owner, s32 element, s32 index);
 void Unit_CalculateFar(s32 owner);
@@ -154,7 +170,6 @@ s32 Func_08102008(s32 mode) {
   u32 redraw = 4;
   s32 i;
   s32 j;
-  s32 count;
   s32 selectedRow;
   s32 memberColumn = (u16)(menu->selection[mode] % 10);
   s32 djinnRow = (u16)(menu->selection[mode] / 10);
@@ -271,16 +286,16 @@ s32 Func_08102008(s32 mode) {
 
         switch (state) {
         case 0:
-          frame = 0x4000;
           animation = 1;
+          frame = 0x4000;
           break;
         case 1:
-          frame = 0x4000;
           animation = 2;
+          frame = 0x4000;
           break;
         default:
-          frame = 0x8000;
           animation = 1;
+          frame = 0x8000;
           break;
         }
         MenuIcon_SetPosition(mode, memberColumn % 4 * 56 + 48,
@@ -394,7 +409,7 @@ s32 Func_08102008(s32 mode) {
           DjinnRecovery_AddStandbyFar(4, 0, 7);
           Unit_CalculateFar(4);
           repeat = 2;
-          pressed = 2;
+          goto pressB;
         }
         break;
       case 1:
@@ -438,9 +453,9 @@ s32 Func_08102008(s32 mode) {
         break;
       case 13:
         if (backdrop->tutorialTimer == 40) {
-          backdrop->tutorialTimer = 0;
           repeat = 2;
           pressed = 2;
+          backdrop->tutorialTimer = 0;
           backdrop->tutorialStep++;
         }
         break;
@@ -504,9 +519,9 @@ s32 Func_08102008(s32 mode) {
         break;
       case 21:
         if (backdrop->tutorialTimer == 90) {
-          backdrop->tutorialTimer = 0;
           repeat = 32;
           pressed = 32;
+          backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 22;
         }
         break;
@@ -515,6 +530,7 @@ s32 Func_08102008(s32 mode) {
           backdrop->tutorialTimer = 0;
           backdrop->tutorialStep = 25;
           repeat = 2;
+        pressB:
           pressed = 2;
         }
         break;
@@ -549,8 +565,8 @@ s32 Func_08102008(s32 mode) {
       redraw = 1;
     }
     if (mode == 0 && (pressed & 0x200)) {
-      Sound_PlayFar(112);
       result = 7;
+      Sound_PlayFar(112);
       break;
     }
     if ((pressed & 1) || (mode == 1 && (pressed & 0x100))) {
@@ -628,8 +644,8 @@ s32 Func_08102008(s32 mode) {
         redraw = 1;
       } else {
         UiPanel_HighlightGridCell(listWindow, memberColumn, djinnRow, 0);
-        Sound_PlayFar(112);
         result = 10;
+        Sound_PlayFar(112);
         break;
       }
     }
@@ -703,10 +719,10 @@ s32 Func_08102008(s32 mode) {
         }
       }
       djinnRow = savedRow;
-      count = backdrop->counts[memberColumn];
-      if (count == 0)
-        count = 1;
-      djinnRow = Menu_GetModuloOfSum(djinnRow, count);
+      result = backdrop->counts[memberColumn];
+      if (result == 0)
+        result = 1;
+      djinnRow = Menu_GetModuloOfSum(djinnRow, result);
       redraw = 2;
       if (oldColumn / 4 * 4 != memberColumn / 4 * 4)
         redraw = 6;
@@ -714,10 +730,12 @@ s32 Func_08102008(s32 mode) {
   }
   menu->selectedColumn[mode] = memberColumn;
   if (selectedRow != -1) {
+    u32 id;
     u32 entry;
 
-    menu->pairEntries[mode] = entry = backdrop->ids[memberColumn][selectedRow];
-    menu->pairIndex[mode] = DJINN_NUMBER(entry);
+    menu->pairEntries[mode] = id = backdrop->ids[memberColumn][selectedRow];
+    entry = (u16)id;
+    menu->pairIndex[mode] = entry % 32;
     menu->pairElement[mode] = DJINN_ELEMENT(entry);
     menu->pairMember[mode] = DJINN_OWNER(entry);
   }

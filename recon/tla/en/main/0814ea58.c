@@ -1,4 +1,5 @@
-// Draft of Func_0814ea58, the body behind BattleEffect_RunDrain (mode 0, or 1 when
+// Draft, differ 12 of 479, skeleton gap 6 (tla-en, 2026-11-01)
+// Func_0814ea58, the body behind BattleEffect_RunDrain (mode 0, or 1 when
 // the variant is not 0) and BattleEffect_RunTrueCollide (mode 2).
 
 // Twin: The Broken Seal's BattleEffect_RunDrain (effect.c), rebuilt
@@ -12,28 +13,38 @@
 // 0x165 of directory.s (assets BattleEffect_BlastSheet and
 // BattleEffect_VioletPaletteC), not yet named there.
 
-// Draft: differ 246 of 479 (draft 481).
+// Left: every register, stack slot and instruction agrees; four places are
+// in a different order, and all four are sched2 ranking a spill store or
+// reload differently from the ROM, with the RTL already in the ROM's order:
+// - before the setup member loop, str [sp, #8] comes first in the ROM, ahead
+//   of movs #36 (priority 2 to the store's 1 here);
+// - the second Func_0814cd48 call: the ROM stores [sp] before negs and sets
+//   r1 last, though it orders the first call as this draft does; the only
+//   difference between the two blocks is the reload after the second call;
+// - the frame member loop: str [sp, #12] before mov r9 in its preheader, and
+//   movs r4, #20 after the three spill stores in its tail. The reload
+//   registers (r3, r4, r0, r1, r2) prove the ROM's RTL has the 20 step between
+//   the two offset steps, as here, so it is ranking and not source; moving the
+//   step (start and offset locals at the top of the loop) fixes the preheader
+//   and breaks the rotation (22);
+// - the frame loop's end test: the ROM reloads frame straight after storing
+//   it, where -mthumb-slow-loads makes that load wait, so count loads first.
+// These are the compiler model's open questions (spill stores under-costed,
+// a same-address reload too strict), out of this draft's scope. No device
+// reaches them: the 20 step cannot be split from its reload by a barrier, and
+// a device short of differ 0 stays out.
 
-// Left: register allocation in the member loops. The native keeps the
-// mote counter in r8 and spills the member's buffer offset (sp+8), with
-// the effect in r10 and half the height in r9; here the counter and the
-// offset still trade places in the setup loop, so the frame differs by
-// spills and the rest follows.
-
-// Tried (2026-10-15):
-// - the palette chosen by nested ?: (440); by an if-else chain into a
-// local resource id: 440 with the native's branch order;
-// - each member's motes through an offset and a walking pointer, as
-// IceShardBursts: same code (440);
-// - greedy declaration-order sweep: canvas before work, the camera
-// before the sheet: 426;
-// - the violet ramp: (i + 1) / 3 into its own temporary, so it is
-// divided first as the native does: 407; a do-while with i + 1 as the
-// next counter: 424;
-// - a separate counter (j) for the frame loop's motes: 282 (the setup
-// loop's counter alone: 413; both: 415).
-// - greedy declaration-order sweep from there, two passes: 246 (the
-// declarations as they stand).
+// Tried (2026-11-01):
+// - The Broken Seal's form closed 234 to 16: one shared i in r8, every mote
+//   `&MOTES[member * 128 + i]` inside its loop, declarations in spill-slot
+//   order (work, canvas, frame, draw, member, sheet, camera), a u8 size so
+//   gData_08197410[size - 1] shares size * 2;
+// - the ramp's pointer set before i, stepped by hand: 16 to 12 (the build of
+//   BG_PLTT + 1 comes first in the RTL);
+// - offset and base locals, start = member * 20, the offset local inside the
+//   if: no gain or worse (12, 12, 28, 45);
+// - Func_0814cd48 returning s32, while and hand-stepped frame loops: 12;
+//   swapped compares: 14; else if before the second tint: 70.
 
 #include "types.h"
 #include "battle_display.h"
@@ -96,15 +107,14 @@ extern u16 gData_08197410[]; // gBattleEffect_MoteCells
 void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
-  struct BattleCamera *camera;
-  struct EffectPosition screen;
-  s32 palette;
+  s32 frame;
   DrawRectangle draw;
   s32 member;
   u8 *sheet;
-  s32 frame;
+  struct BattleCamera *camera;
+  struct EffectPosition screen;
+  s32 palette;
   s32 i;
-  s32 j;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -129,15 +139,12 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
 
   for (member = 0; member != effect->count; member++) {
     struct MotionObject *object;
-    s32 offset;
     s32 half;
-    struct EffectStep *mote;
 
-    offset = member * MOTES_PER_MEMBER * sizeof(struct EffectStep);
     object = GetBattleObjectSlotFar(effect->actors[member])->object;
     half = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
-    for (i = 0, mote = (struct EffectStep *)(Ram_MapCellBuffer + offset);
-         i != MOTES_PER_MEMBER; i++, mote++) {
+    for (i = 0; i != MOTES_PER_MEMBER; i++) {
+      struct EffectStep *mote = &MOTES[member * MOTES_PER_MEMBER + i];
       s32 speed;
 
       mote->x = object->x;
@@ -159,10 +166,12 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   if (mode == 2) {
     // A violet ramp from color 1, blended 16:6, with a trail.
+    u16 *color = BG_PLTT + 1;
+
     for (i = 1; i != 64; i++) {
       s32 blue = 21 - (i + 1) / 3;
 
-      BG_PLTT[i] = ((21 - i / 3) << 10) | blue;
+      *color++ = ((21 - i / 3) << 10) | blue;
     }
     REG_BLDALPHA = 0x610;
     work->transferMode = 2;
@@ -190,19 +199,14 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == effect->count * 20 + 52)
       Func_0814cd48(effect->actor, 0, -1, -1, 0);
     for (member = 0; member != effect->count; member++) {
-      s32 offset;
-
-      offset = member * MOTES_PER_MEMBER * sizeof(struct EffectStep);
       if (frame == member * 20)
         Func_0814cd48(effect->actors[member], 7, 5, member, 42);
       if (frame > member * 20) {
-        struct EffectStep *mote;
-
-        for (j = 0, mote = (struct EffectStep *)(Ram_MapCellBuffer + offset);
-             j != 32; j++, mote++) {
+        for (i = 0; i != 32; i++) {
+          struct EffectStep *mote = &MOTES[member * MOTES_PER_MEMBER + i];
 
           if (mote->variant >= 0) {
-            u32 size = Data_081982f4[mode];
+            u8 size = Data_081982f4[mode];
 
             // The canvas shows at twice the width: halve x.
             EffectPosition_ProjectPoint((s32 *)mote, &screen);
@@ -218,7 +222,7 @@ void Func_0814ea58(struct BattleEffectArgument *effect, s32 mode) {
             }
 
             // Home in on the user once ten frames out.
-            if (frame > member * 20 + j + 10) {
+            if (frame > member * 20 + i + 10) {
               s32 dx;
               s32 dy;
               s32 dz;

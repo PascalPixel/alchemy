@@ -1,21 +1,35 @@
-// Draft, differ 765 of 902, skeleton gap 131 (tla-en, 2026-11-01)
-// The same 55 calls and control flow. Most of what is left is the grid loop;
-// the rest is scheduling and spill reloads that follow from it. Column now
-// takes r8 and frame the stack, as in the native, because i (the shared
-// counter, in r4) holds the row's first cell. Found by measuring: x is its
-// own induction variable from -60, not 8 * column + 7, and column * 8 and
-// v + column are computed before the if. Left in the grid: the native keeps
-// i live in r4 through the column loop for quad[5], [17] and [19], but gcse's
-// copy propagation rewrites those uses to v here (spelling them i, v or
-// row * 16 gives the same code). v + column also merges with the vertex's
-// i + column, so it is reduced (sp+8) where the native leaves it an add, and
-// v + column + 16 is derived from + 17 where the native keeps both. An
-// inner cells pointer leaves it unreduced but reduces row * 64 instead (135).
-// The frame is 120 bytes against 132. In the bubble loop,
-// step = &work->particles[i] with the calls on &work->particles[i] matches
-// that loop exactly and gives differ 722, but gap 136 because the pool moves;
-// take it once the grid's size is right. No effect: the order of the index
-// stores, named z and w, and the other particle loops' forms.
+// Draft, differ 695 of 902, skeleton gap 141 (tla-en, 2026-11-01)
+// The same 55 calls and control flow, and the frame is now the native's 132
+// bytes with every spill slot where it belongs. What is left is one register
+// rotation: the native keeps r4 out of the reloads (spill set r0, r1, r2, r3,
+// r5, r7), here r4 is a reload register. In the grid the base copy Q (quad[5],
+// [17], [19]) lands in r0 and u in r4, where the native has r4 and r0, and quad
+// and vertex swap r1 and r2; the scratch rotation then runs through the whole
+// function. Next: find what holds r0 when Q is allocated. The lreg and greg
+// dumps say Q ranks just before column; u, quad and vertex fill r3 to r1, so
+// the native has one more low-register pseudo live there. The column * 11
+// temporary (spilled to sp+12 in both) is the suspect: the native deletes that
+// store, this build keeps it.
+// Found by reading the loop, gcse and cse2 dumps, each step measured:
+// - The native's r9 is one row base reduced by the outer loop; its copy in r4
+//   is a pseudo hoisted out of the column loop, so row << 4 is written again in
+//   the if block. A local there is replaced outright and leaves no copy.
+// - row * 15 must sit in the if block, or its row << 4 reaches the first block,
+//   gcse's copy propagation rewrites the later uses, and the row base goes.
+//   That needs mesh in the row body so the pool load still leaves the loop.
+// - A plain shift has no REG_EQUAL note. row * 16 leaves one on the combined
+//   giv and cse2 folds base << 2 to row << 6, so row << 4 must come first.
+// - b, d, c in that order keep +1, +16 and +17 in their own registers (+16
+//   after +17 is derived from it) and give r5, r6 and sp+8.
+// - i = v frees r4 from column, which then takes r8 as in the native, and x, the
+//   base and row fall into r10, r9 and r11.
+// - blit[2] gives the 8-byte slot at sp+76; Task_Add and
+//   BattleEffect_LoadBlitter return s32.
+// - In the bubble loop, step = &work->particles[i] with the calls on
+//   &work->particles[i] gives r7 and its copy in r8, as in the native.
+// No effect: a local for column * 11, 11 * column, declaration swaps at function
+// level, s32 returns on the other prototypes. Putting the index stores out of
+// order gains 15 and has no meaning, so it was not kept.
 // Decompiled from the listing.
 
 #include "types.h"
@@ -49,7 +63,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -85,7 +99,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -132,7 +146,7 @@ extern const u8 gData_08199210[]; // its corners
 void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   s32 frame;
-  DrawRectangle blit;
+  DrawRectangle blit[2];
   void *canvas;
   s16 *camera;
   s16 savedYaw;
@@ -162,7 +176,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   BattleEffect_LoadBlitter(SLOT_BLITTER,
                 BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   camera = (s16 *)Ram_HeapSlots->cameraWork;
   savedYaw = camera[27];
   Resource_LoadAndDecompress((s32)&ResourceId_CrackedTextureSheet, work->sheet,
@@ -189,38 +203,44 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   // The water's grid: 16 by 8 vertices, and a quad (two triangles) for
   // each cell but the last row and column.
   for (row = 0; row != WATER_ROWS; row++) {
-    s32 v = row * 16;
+    s32 v = row << 4;
     s32 x = -60;
+    u8 *mesh = gData_02014000;
 
     i = v;
+
     for (column = 0; column != WATER_COLUMNS; column++, x += 8) {
-      s32 a = v + column;
       s8 *vertex = (s8 *)gMapCellBuffer + (i + column) * 4;
-      u8 *quad = gData_02014000 + (row * 15 + column) * 24;
       s32 u = column * 8;
+      s32 a = v + column;
 
       vertex[0] = column * 11 - 82;
       vertex[1] = 60;
       vertex[2] = row * 24 - 84;
       if (row <= 6 && column <= 14) {
+        s32 b = (row << 4) + column + 1;
+        s32 d = (row << 4) + column + 17;
+        s32 c = (row << 4) + column + 16;
+        u8 *quad = mesh + (row * 15 + column) * 24;
+
         quad[4] = x + 67;
         quad[6] = x + 67;
         quad[18] = x + 67;
-        quad[7] = row * 16 + 15;
+        quad[7] = (row << 4) + 15;
         quad[8] = u;
-        quad[9] = row * 16 + 15;
+        quad[9] = (row << 4) + 15;
         quad[16] = u;
         quad[20] = u;
-        quad[5] = i;
-        quad[17] = i;
-        quad[19] = i;
-        quad[21] = row * 16 + 15;
-        quad[0] = i + column + 1;
-        quad[1] = i + column + 17;
-        quad[2] = i + column + 16;
+        quad[5] = row << 4;
+        quad[17] = row << 4;
+        quad[19] = row << 4;
+        quad[21] = (row << 4) + 15;
+        quad[0] = b;
+        quad[1] = d;
+        quad[2] = c;
         quad[12] = a;
-        quad[13] = i + column + 1;
-        quad[14] = i + column + 16;
+        quad[13] = b;
+        quad[14] = c;
       }
     }
   }
@@ -387,14 +407,15 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     if (mode == 1) {
-      for (i = 0, bubble = work->particles; i != 20; i++, bubble++) {
-        s32 picture = bubble->variant;
+      for (i = 0; i != 20; i++) {
+        struct EffectStep *step = &work->particles[i];
+        s32 picture = step->variant;
         struct EffectPosition *position = &screen;
 
         if (picture < 0) {
           continue;
         }
-        if (EffectPosition_ProjectPoint(bubble, position) == 0 &&
+        if (EffectPosition_ProjectPoint(&work->particles[i], position) == 0 &&
             HI(position->depth) > 10) {
           s32 x = HI(position->x);
           s32 y;
@@ -402,12 +423,13 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
           position->x = x + 64;
           y = HI(position->y);
           position->y = y + 64;
-          blit(canvas, work->sheet + 0x3000 + picture * 0x480, x + 52, y + 40,
-               24, 48);
-          BattleEffectKernels_IntegrateVector3(bubble, 62, -0x2000);
+          blit[0](canvas, work->sheet + 0x3000 + picture * 0x480, x + 52,
+                  y + 40, 24, 48);
+          BattleEffectKernels_IntegrateVector3(&work->particles[i], 62,
+                                               -0x2000);
         }
-        if (++bubble->variant == 6) {
-          bubble->variant = 0;
+        if (++step->variant == 6) {
+          step->variant = 0;
         }
       }
     } else {

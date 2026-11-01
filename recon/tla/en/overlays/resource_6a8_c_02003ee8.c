@@ -1,178 +1,185 @@
-// Draft of overlay 6a8's Func_02003ee8, translated from its listing: differ
-// 321 of 246. Left: its shape: 263 instructions against the listing's 246.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The leader slides along the ice from the middle of its cell until something
+// stops it: twin of Imil_RunIceSlide in The Broken Seal (confirmed: the same
+// probe of the next cell, cell behaviour 255 as the wall, the height test of 8
+// pixels and the slide's speeds), reworked here. The heading comes from the
+// actor's own angle, snapped to a quarter turn, instead of the held keys, and
+// every step also tests the other solid objects; a blocked first step sets the
+// actor down in the cell's middle. Overlay 6aa's Func_02003884 is the same
+// function.
+// What closed it in plain C: goto for the outer and slide loops, entered at the
+// slide's test; a hand-stepped object pointer and flags pointer in the search;
+// (s16) on the heading (its mask is a HImode pool load, which is what places
+// the mid-function pool); the startX and startZ locals, which CSE prefers over
+// x and z; zero as one spilled constant, reloaded from the pool at the halfword
+// store.
+// What the devices are for. Without them PRE hoists sfp - 12 and actor + 34 out
+// of the loops, where the native rebuilds them, so the asm clobbers kill
+// availability at the bottom of each loop. Their operands and the shared i
+// rank the pseudos as the native does (actor r5, position and other r6, next r7,
+// flags r8, nextBehavior r10, i r9, layer r11, radius on the stack);
+// this compiler weights references by loop depth, the native's order comes out
+// nearer unweighted. The r4 clobbers keep i and the rest out of the caller-save
+// register, which the native never uses. The plain asm("") lines keep stores
+// ahead of a later load, as the "load after a store" group of the shared notes
+// says. A native spilled pseudo for &probe, rematerialized at each use, would
+// explain most of this, but no C shape reproduced it: the local takes a stack
+// slot once any sfp clobber is near. The device set is heavy, so review it under
+// S2 before adoption. Only tla-en was measured.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_020038e8();
-s32 Func_020043c4();
-s32 Func_020043f4();
-s32 Func_020043fc();
-s32 Func_02004424();
-s32 Func_02004454();
-s32 Map_GetTerrainHeight();
-s32 Actor_SetAnimationSpeed();
-s32 ObjectTable_Get();
-s32 Vector_AddPolarOffsetFar();
-s32 wait();
-extern u8 Func_0200385c[];
-extern u8 gMainRoutineWork[];
+#include "actor.h"
+#include "fixed_math.h"
+#include "ram_buffer.h"
+#include "scene_tables.h"
+#include "system/main_routine_work.h"
+
+/// A point on the map: 16.16 fixed-point pixels.
+struct Position {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+void Func_020038e8(void);
+void Func_020043c4(struct Actor *actor, s32 mode);
+void Func_020043f4(struct Actor *actor, s32 x, s32 y, s32 z);
+void Func_020043fc(struct Actor *actor);
+s32 Func_02004424(u8 layer, s32 x, s32 z);
+s32 Func_02004454(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
+s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
+void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
+void Vector_AddPolarOffsetFar(s32 length, s32 angle, struct Position *position);
+void wait(s32 frames);
+void Func_0200385c(void);
 
 void Func_02003ee8(void) {
-  s32 sp_[1];
-  s32 v_r5, v_r6, v_r2, v_r1, v_r8, v_r9, v_r7, v_r11, v_r10, t0;
-  s32 t1, t2, t4, t5, t6, t7, t8, t9, t11, t12;
-  s32 t13, t14, t15, t16, t17, t18, t19, t20, t21, t24;
-  s32 t25, t26, t27, t28, t29, t30, t31, t32, t33, t34;
-  s32 t35, t36, t37, t38, t39, t40, t41, t44, t45, t47;
-  s32 t48, t49, t50, t51, t52, t53, t58;
+  struct Position probe;
+  s32 heading;
+  s32 startBehavior;
+  s32 x;
+  s32 z;
+  s32 radius;
+  struct Actor *actor;
+  struct Position *next;
+  s32 nextBehavior;
+  u8 *layer;
+  struct Actor *other;
+  struct Position *position;
+  u8 *flags;
+  s32 i;
+  s32 cell;
+  s32 angle;
+  s32 zero;
+  struct Position *step;
+  s32 startX;
+  s32 startZ;
 
-  t0 = *(s32 *)((s32)gMainRoutineWork + 0x214);
-  t1 = ObjectTable_Get(t0);
-  t2 = FIELD_AT(t1, u16, 6);
-  FIELD_AT(sp_, s32, 16) = ((((t2 + 0x2000) & -0x4000) << 16) >> 16);
-  v_r5 = t1;
-L_0200bf1a:
+  actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  heading = (s16)((actor->angle + 0x2000) & -0x4000);
+
+top:
   Func_020038e8();
-  FIELD_AT(v_r5, s32, 48) = 0x10000;
-  FIELD_AT(v_r5, s32, 52) = 0x8000;
-  FIELD_AT(v_r5, s32, 56) = 0x80000000;
-  FIELD_AT(v_r5, s32, 64) = 0x80000000;
-  FIELD_AT(v_r5, s32, 36) = 0;
-  FIELD_AT(v_r5, s32, 44) = 0;
-  t4 = FIELD_AT(v_r5, s32, 8);
-  FIELD_AT(sp_, s32, 20) = ((t4 & 0xfff00000) + 0x80000);
-  v_r9 = 0x80000;
-  v_r8 = ((t4 & 0xfff00000) + 0x80000);
-  v_r1 = 0x80000;
-  v_r2 = 0xfff00000;
-  v_r6 = ((s32)sp_ + 20);
-  goto L_0200bf5c;
-L_0200bf5c:
-  t5 = FIELD_AT(v_r5, s32, 12);
-  FIELD_AT(v_r6, s32, 4) = t5;
-  t6 = FIELD_AT(v_r5, s32, 16);
-  v_r7 = ((t6 & v_r2) + v_r1);
-  FIELD_AT(v_r6, s32, 8) = v_r7;
-  FIELD_AT(sp_, s32, 8) = v_r8;
-  FIELD_AT(sp_, s32, 4) = v_r7;
-  t7 = *(u8 *)(34 + v_r5);
-  t8 = Func_02004424(t7, v_r8, v_r7);
-  FIELD_AT(sp_, s32, 12) = t8;
-  t9 = FIELD_AT(sp_, s32, 16);
-  Vector_AddPolarOffsetFar(0x100000, t9, v_r6);
-  v_r11 = (34 + v_r5);
-  t11 = *(u8 *)v_r11;
-  t12 = FIELD_AT(v_r6, s32, 8);
-  t13 = *(s32 *)v_r6;
-  t14 = Func_02004424(t11, t13, t12);
-  if (t14 == 255)
-    goto L_0200bff0;
-  t15 = *(u8 *)v_r11;
-  t16 = *(s32 *)v_r6;
-  t17 = FIELD_AT(v_r6, s32, 8);
-  t18 = Map_GetTerrainHeight(t15, t16, t17);
-  t19 = FIELD_AT(v_r5, s32, 12);
-  if ((t18 - t19) > v_r9)
-    goto L_0200bff0;
-  t20 = FIELD_AT(sp_, s32, 8);
-  *(s32 *)v_r6 = t20;
-  t21 = FIELD_AT(sp_, s32, 4);
-  FIELD_AT(v_r6, s32, 8) = t21;
-  FIELD_AT(v_r5, s32, 48) = 0x20000;
-  FIELD_AT(v_r5, s32, 52) = 0x1999;
-  *(u16 *)(v_r5 + 100) = 0;
-  Func_020043c4(v_r5, 2);
-  Actor_SetAnimationSpeed(v_r5, 48);
-  FIELD_AT(v_r5, s32, 108) = (s32)Func_0200385c;
-  goto L_0200c09a;
-L_0200bff0:
-  t24 = FIELD_AT(sp_, u16, 16);
-  FIELD_AT(v_r5, u16, 6) = t24;
-  FIELD_AT(v_r5, s32, 36) = 0;
-  FIELD_AT(v_r5, s32, 44) = 0;
-  FIELD_AT(v_r5, s32, 8) = v_r8;
-  FIELD_AT(v_r5, s32, 16) = v_r7;
-  goto L_0200c0e6;
-L_0200c004:
-  t25 = *(u8 *)v_r11;
-  t26 = *(s32 *)v_r7;
-  t27 = FIELD_AT(v_r7, s32, 8);
-  t28 = Map_GetTerrainHeight(t25, t26, t27);
-  t29 = FIELD_AT(v_r5, s32, 12);
-  if ((t28 - t29) > 0x80000)
-    goto L_0200c0ba;
-  t30 = FIELD_AT(v_r5, u16, 32);
-  FIELD_AT(sp_, s32, 0) = (t30 - 2);
-  t31 = FIELD_AT(0x3000000, s32, 20);
-  v_r8 = (89 + t31);
-  v_r9 = 0;
-  v_r6 = t31;
-L_0200c032:
-  t32 = *(s32 *)v_r6;
-  if (t32 == 0)
-    goto L_0200c05c;
-  t33 = *(u8 *)v_r8;
-  if ((1 & t33) == 0)
-    goto L_0200c05c;
-  if (v_r6 == v_r5)
-    goto L_0200c05c;
-  t34 = FIELD_AT(v_r6, u16, 32);
-  t35 = FIELD_AT(sp_, s32, 0);
-  t36 = Func_02004454((v_r6 + 8), t35, ((s32)sp_ + 20), (t34 - 2));
-  if (t36 >= 0)
-    goto L_0200c0ba;
-L_0200c05c:
-  v_r9 = (v_r9 + 1);
-  v_r8 = (v_r8 + 128);
-  v_r6 = (v_r6 + 128);
-  if (v_r9 <= 63)
-    goto L_0200c032;
-  t37 = *(s32 *)v_r7;
-  FIELD_AT(sp_, s32, 8) = t37;
-  t38 = FIELD_AT(v_r7, s32, 8);
-  FIELD_AT(sp_, s32, 4) = t38;
-  FIELD_AT(v_r5, s32, 48) = 0x20000;
-  FIELD_AT(v_r5, s32, 52) = 0x1999;
-  t39 = *(s32 *)v_r7;
-  t40 = FIELD_AT(v_r7, s32, 4);
-  t41 = FIELD_AT(v_r7, s32, 8);
-  Func_020043f4(v_r5, t39, t40, t41);
-  Func_020043fc(v_r5);
-  t44 = FIELD_AT(sp_, s32, 12);
-  if (v_r10 != t44)
-    goto L_0200c0e0;
-L_0200c09a:
-  t45 = FIELD_AT(sp_, s32, 16);
-  Vector_AddPolarOffsetFar(0x100000, t45, ((s32)sp_ + 20));
-  t47 = *(u8 *)v_r11;
-  t48 = FIELD_AT(sp_, s32, 20);
-  t49 = FIELD_AT(sp_, s32, 28);
-  t50 = Func_02004424(t47, t48, t49);
-  v_r10 = t50;
-  v_r7 = ((s32)sp_ + 20);
-  if (v_r10 != 255)
-    goto L_0200c004;
-L_0200c0ba:
-  FIELD_AT(v_r5, s32, 48) = 0x20000;
-  FIELD_AT(v_r5, s32, 52) = 0x10000;
-  t51 = FIELD_AT(v_r5, s32, 12);
-  t52 = FIELD_AT(sp_, s32, 8);
-  t53 = FIELD_AT(sp_, s32, 4);
-  Func_020043f4(v_r5, t52, t51, t53);
-  Func_020043fc(v_r5);
+  actor->speedLimit = PIXELS(1);
+  actor->acceleration = PIXELS(1) / 2;
+  actor->targetX = 0x80000000;
+  actor->targetZ = 0x80000000;
+  // Default: one zero, spilled and reloaded at each use.
+  zero = 0;
+  actor->velocityX = zero;
+  actor->velocityZ = zero;
+  /* FAKEMATCH(temporary): cell holds the masked x; as one expression, 93 of 246 instructions differ in tla-en. */
+  cell = actor->x & 0xfff00000;
+  /* FAKEMATCH(temporary): i holds half a cell here and the search's count later; as a separate PIXELS(8), 18 of 246 instructions differ in tla-en. */
+  i = PIXELS(8);
+  position = &probe;
+  position->x = startX = cell + i;
+  position->y = actor->y;
+  position->z = startZ = (actor->z & 0xfff00000) + i;
+  x = startX;
+  z = startZ;
+  /* FAKEMATCH(barrier): the empty asm keeps the stores ahead of the layer's load; with no asm, 4 of 246 instructions differ in tla-en. */
+  asm("");
+  startBehavior = Func_02004424(*(layer = &actor->terrainId), startX, startZ);
+  Vector_AddPolarOffsetFar(PIXELS(16), heading, position);
+  nextBehavior = Func_02004424(*layer, position->x, position->z);
+  if (nextBehavior == 255 ||
+      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
+    actor->angle = heading;
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
+    actor->x = startX;
+    actor->z = startZ;
+    goto done;
+  }
+  position->x = x;
+  position->z = z;
+  actor->speedLimit = PIXELS(2);
+  actor->acceleration = 0x1999;
+  actor->action = zero;
+  Func_020043c4(actor, 2);
+  Actor_SetAnimationSpeed(actor, 48);
+  actor->update = Func_0200385c;
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading layer and nextBehavior; with no asm, 70 of 246 instructions differ in tla-en. */
+  asm("" : : "r"(layer), "r"(nextBehavior) : "sfp");
+  goto test;
+body:
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
+    goto stop;
+  }
+  radius = actor->radius - 2;
+  other = Ram_HeapSlots->scriptObjects;
+  flags = &other->collisionFlags;
+  for (i = 0; i < 64; i++, flags += 128, other++) {
+    if (other->script != NULL && (*flags & 1) && other != actor) {
+      /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading next and actor; with no asm, 209 of 246 instructions differ in tla-en. */
+      asm("" : : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
+          "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor) : "sfp",
+          "r4");
+      if (Func_02004454(&other->x, radius, &probe, other->radius - 2) >= 0) {
+        goto stop;
+      }
+    }
+  }
+  x = next->x;
+  z = next->z;
+  actor->speedLimit = PIXELS(2);
+  actor->acceleration = 0x1999;
+  Func_020043f4(actor, next->x, next->y, next->z);
+  Func_020043fc(actor);
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp; with no asm, 149 of 246 instructions differ in tla-en. */
+  asm("" : : : "sfp");
+  if (nextBehavior != startBehavior) {
+    goto blocked;
+  }
+test:
+  /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber so PRE leaves it, loads the angle ahead of the address; as heading in the call, 2 of 246 instructions differ in tla-en. */
+  asm("" : "=r"(angle) : "0"(heading) : "r4");
+  step = &probe;
+  Vector_AddPolarOffsetFar(PIXELS(16), angle, step);
+  /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address, so next rebuilds it; as &probe in the call, 114 of 246 instructions differ in tla-en. */
+  step = NULL;
+  next = &probe;
+  nextBehavior = Func_02004424(*layer, next->x, next->z);
+  if (nextBehavior != 255) {
+    goto body;
+  }
+stop:
+  actor->speedLimit = PIXELS(2);
+  actor->acceleration = PIXELS(1);
+  Func_020043f4(actor, x, actor->y, z);
+  Func_020043fc(actor);
   wait(2);
-  goto L_0200bf1a;
-L_0200c0e0:
+  /* FAKEMATCH(barrier): the asm tied to actor and clobbering sfp kills both addresses on the back edge; with no asm, 190 of 246 instructions differ in tla-en. */
+  asm("" : "=r"(actor) : "0"(actor) : "sfp");
+  goto top;
+
+blocked:
   wait(10);
-L_0200c0e6:
-  FIELD_AT(v_r5, s32, 108) = 0;
-  t58 = *(u8 *)(v_r5 + 90);
-  *(u8 *)(v_r5 + 90) = (1 | t58);
-  FIELD_AT(v_r5, s32, 52) = 0x4000;
-  Func_020043c4(v_r5, 1);
-  return;
+done:
+  actor->update = NULL;
+  /* FAKEMATCH(barrier): the empty asm keeps the store ahead of the flags' load; with no asm, 2 of 246 instructions differ in tla-en. */
+  asm("");
+  actor->actionFlags |= 1;
+  actor->acceleration = PIXELS(1) / 4;
+  Func_020043c4(actor, 1);
 }

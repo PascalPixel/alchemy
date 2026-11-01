@@ -1,39 +1,54 @@
-// Draft, differ 4486 of 4580, skeleton gap 924 (tla-en, 2026-11-01)
+// Draft, differ 4150 of 4580, skeleton gap 894 (tla-en, 2026-11-01)
 // BattleEffect_RunCatastrophe; the same calls and control flow as the listing.
 // The function runs on through listing 081848ec, whose Func_081848ec and
 // Func_08185b9c are labels inside it (the second the first loop's test), so
-// measure both: alchemy-devtools diff 081843fc.c 081843fc,081848ec.
-// What is left is nearly all allocation and scheduling; the instruction
-// multisets differ by a few dozen entries, mostly copies and spills.
-// - The listing keeps the first blit load (str r5, [sp, #156]) although nothing
-//   reads it before the second; flow deletes it here. Only a volatile read
-//   would keep it, which this round does not add.
-// - Draft phases two and three are just over the 2 KB branch reach, so two
-//   back branches here are far jumps (bl) where the listing's are plain b.
-// - The frame is 280 here, 272 in the listing: more spills, so 12 more stack
-//   reloads. The address-taken locals are declared in the listing's stack
-//   order.
-// - sched2 moves constant loads into callee-saved registers across calls in a
-//   different order (BG2PA's address and the 0 at the top of the function).
-// - (0x80000 - drift) / 2: the draft shares asrs #31 between the two uses;
-//   recomputing them separately loses more than it gains.
+// measure both: alchemy-devtools diff 081843fc.c 081843fc,081848ec. A single
+// address gives a false figure.
+// What this round proved, from the listing's stack and registers:
+// - blit is DrawRectangle blit[2]: a DImode pseudo, so the first load's store
+//   stays (sp+156, with sp+160 unused) and Ram_HeapSlots stays in r5 across the
+//   opening calls.
+// - list is s16 list[14], as in the family: the 24 bytes above it at sp+248.
+// - The spill slots read in the order the code first sets them: effect, canvas,
+//   work, blit, savedScroll, transition, sprites, battle, camZ, swapped, drift,
+//   sway, cueTimer, cueIndex, verts, shade, phase one's inner locals, then
+//   phase two's rise, top, verts2, sh and phase three's slide, slideStep. So
+//   phases two and three are blocks of their own.
+// - verts and model are per phase (verts at sp+112, verts2 at sp+76; model in
+//   r8), and the counters and particle pointers are split per loop where the
+//   listing's registers change (r9 is i, r10 j, r11 frame).
+// - The tile map's row base is i * 32, reduced by loop.c, not a stepped local.
+// What is left:
+// - The frame is 316 here, 272 in the listing: 44 bytes more spills, so every
+//   stack offset from the first spill up differs, which is most of the differ.
+//   Slots sp+56, 60, 76 and 80 are unused here (pseudos that reload
+//   gave a slot and then deleted) and the hoisted texture and place addresses
+//   take slots of their own; shrinking the frame is the next step. Slot pairs
+//   were read with a normalised alignment; none of it was a device.
+// - Draft r8 and r10 hold what the listing keeps in r10 and r8 in the later
+//   phases: model's priority loses to j here.
+// - Draft phases two and three are just over the 2 KB branch reach, so two back
+//   branches here are far jumps (bl) where the listing's are plain b.
+// - (0x80000 - drift) / 2: the listing folds its first use to asrs #17 and
+//   computes it after the p->x test; inlining bx at every use lowers differ by
+//   8 but raises the gap by 22, so bx stays.
+// - Searches over declaration order, sharing or splitting p, q, obj, shade, i,
+//   j, k and hoisting inner locals have converged at this state.
 // Measured here: a resource id passed as (s32)&ResourceId_X loads from the pool
 // as in the listing; ids without a name in resource_directory.s are declared
 // below and need one there before adoption. COPY_WORDS's one-pass block stops
 // CSE and loop.c sharing a size or step across the copy, as the listing shows
 // at each copy. A u16 local is sign-extended (PROMOTE_MODE), so savedScroll is
-// s32. A search over adjacent statements, declaration order and loop-counter
-// scope has converged at this state; per-call one-pass wrappers on other
-// callees gain at most 4 and were not kept.
+// s32.
 
-#include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
+#include "heap_release.h"
 #include "io_reg.h"
 #include "iwram_call.h"
-#include "heap_release.h"
 #include "ram_buffer.h"
+#include "types.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -258,43 +273,53 @@ void Heap_Release(void *buffer);
 // Catastrophe: a black moon rises over a burning city, its towers crack and
 // fall in fire, the sky tears open, and a meteor of shadow crushes the foes.
 void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
-  s32 swapped;
-  s32 phase;
+  u8 *canvas;
+  struct BattleEffectWork *work;
+  DrawRectangle blit[2];
   s32 savedScroll;
-  s32 spinB;
-  s32 rise;
+  s32 *transition;
+  u8 *sprites;
   u8 *battle;
+  s32 camZ;
+  s32 swapped;
+  s32 drift;
+  s32 sway;
+  s32 cueTimer;
   s32 cueIndex;
+  void *verts;
+  s32 shade;
+  s32 spinA;
+  s32 spinB;
+  s32 phase;
+  struct RenderModel *model;
+  struct RenderModel *model2;
+  struct RenderModel *model3;
   s32 frame;
   s32 i;
   s32 j;
   s32 k;
-  void *verts;
-  u8 *canvas;
-  struct ModelTexture texture2;
-  struct BattleEffectWork *work;
-  s32 slideStep;
-  DrawRectangle blit;
-  s32 shade;
-  s32 *transition;
-  u8 *sprites;
-  s32 spinA;
-  s32 camZ;
-  s32 slide;
   struct EffectStep *p;
-  s16 list[2];
+  struct EffectStep *q;
+  struct SpriteObject *obj;
+  struct ModelTexture texture2;
+  s16 list[14];
   s32 place[4];
   struct EffectPosition pos;
   s32 apply[2];
   struct WordPair req;
   struct ModelTexture texture;
-  s32 drift;
   struct ModelTexture texture3;
-  struct RenderModel *model;
-  s32 sway;
-  s32 cueTimer;
-  struct EffectStep *q;
-  struct SpriteObject *obj;
+  struct EffectStep *p2;
+  struct EffectStep *p3;
+  struct EffectStep *p4;
+  struct EffectStep *q2;
+  s32 i2;
+  s32 sh2;
+  s32 j2;
+  s32 j3;
+  s32 j4;
+  s32 i3;
+  u16 *src2;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -310,7 +335,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   *(volatile u16 *)BG_PLTT = 0;
   *(volatile u16 *)(BG_PLTT + 1) = 0;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
-  blit = Ram_HeapSlots->unk64[1];
+  blit[0] = Ram_HeapSlots->unk64[1];
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   Func_08163c2c(0, 0);
@@ -327,18 +352,17 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0x3f44;
   {
     u16 *map = (u16 *)0x0600f800;
-    s32 base = 0;
 
     {
       s32 i;
 
-      for (i = 0; i != 30; i++, base += 32) {
+      for (i = 0; i != 30; i++) {
         if (i > 14) {
           {
             s32 j;
 
             for (j = 0; j != 32; j++) {
-              *map++ = base + (j & 15) + 48;
+              *map++ = i * 32 + (j & 15) + 48;
             }
           }
         } else {
@@ -346,7 +370,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             s32 j;
 
             for (j = 0; j != 32; j++) {
-              *map++ = base + (j & 15) + 0x200;
+              *map++ = i * 32 + (j & 15) + 0x200;
             }
           }
         }
@@ -447,7 +471,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   cueIndex = 0;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
-  blit = Ram_HeapSlots->unk64[1];
+  blit[0] = Ram_HeapSlots->unk64[1];
   spinA = 0xff9021c0;
   frame = 0;
   spinB = 0;
@@ -550,11 +574,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         }
       }
       if (level >= 0) {
-        u16 *src = (u16 *)(battle + 0x56c);
         u16 *dst = (u16 *)(BG_PLTT + 0x60);
+        src2 = (u16 *)(battle + 0x56c);
 
         for (i = 0; i != 128; i++) {
-          u32 c = *src++;
+          u32 c = *src2++;
           s32 r = c & 31;
           s32 g = (c << 16) >> 21 & 31;
           s32 b = ((c << 16) >> 26 & 31) + level;
@@ -696,8 +720,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       u8 *cells = Data_02011000;
 
       swapped = 0;
-      for (i = 0; i != 4; i++, cells += 1024) {
-        COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells, 1024);
+      for (i3 = 0; i3 != 4; i3++, cells += 1024) {
+        COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i3]), cells, 1024);
       }
     }
     if (frame <= 593) {
@@ -705,7 +729,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       place[3] = 0;
       place[1] = 0xff0000;
       {
-        s32 i;
+        s32 i3;
 
         for (i = 0; i != 28; i++) {
           place[0] = (Data_081997b0[i] << 16) + 0x80000;
@@ -787,15 +811,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       if (p->variant >= 0) {
         s32 n = (p->variant >> 3) + 1;
 
-        blit(canvas, sprites + gData_08197410[n - 1], HALF_HI(p->x) - n / 2,
-             HALF_HI(p->y) - n, n, n * 2);
+        blit[0](canvas, sprites + gData_08197410[n - 1], HALF_HI(p->x) - n / 2,
+                HALF_HI(p->y) - n, n, n * 2);
         BattleEffectKernels_IntegrateVector2(p, 63, 0);
         p->variant--;
       }
     }
     {
-      s32 i;
-
       for (i = 0; i != 17; i++) {
         s32 t = Data_0819983a[i];
 
@@ -858,9 +880,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             continue;
           }
           bx = 0x80000 - drift;
-          blit(canvas, sprites + gData_08197410[9],
-               p->x / 8 - 5 + ((bx / 2) >> 16),
-               p->y / 8 - 10 + ((camZ + sway) >> 16), 10, 20);
+          blit[0](canvas, sprites + gData_08197410[9],
+                  p->x / 8 - 5 + ((bx / 2) >> 16),
+                  p->y / 8 - 10 + ((camZ + sway) >> 16), 10, 20);
           switch (i) {
             s32 cue;
 
@@ -960,16 +982,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       model->kind = 6;
       model->shade = shade;
-      p = work->particles;
-      for (j = 0; j != n; j++, p++) {
-        p->x = (Random16() % spread - 4) << 16;
-        p->y = camZ + 0xc80000;
-        p->z = ((base + j) % 3 << 12) + 0x2000;
-        texture.pixels = work->sheet + p->z;
+      p4 = work->particles;
+      for (j = 0; j != n; j++, p4++) {
+        p4->x = (Random16() % spread - 4) << 16;
+        p4->y = camZ + 0xc80000;
+        p4->z = ((base + j) % 3 << 12) + 0x2000;
+        texture.pixels = work->sheet + p4->z;
         Render_ResetTransformState();
-        Func_08015160(0x10000, p->y, 0);
+        Func_08015160(0x10000, p4->y, 0);
         Func_080151e4(sx, 0x10000, 0x8000);
-        Func_08015160(p->x, 0, 0);
+        Func_08015160(p4->x, 0, 0);
         Func_080151e4(0x8000, 0x20000, 0x10000);
         Func_080150e4(0x8000);
         Render_TransformVertices(Data_081991d0, verts, 4);
@@ -1144,8 +1166,6 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   Iwram_ClearWords(work->sheet + 0x1456, 0x4000);
   for (k = 0; k != 4; k++) {
     {
-      s32 j;
-
       for (j = 0; j != 120; j++) {
         u8 *dst = work->sheet + 0x145a + (k << 12) + j * 32;
         u8 *src = gMapCellBuffer + k * 45 * 64 + j * 24;
@@ -1160,563 +1180,567 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0EE, gMapCellBuffer, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0EF, Data_02011000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Data_02012000, 0, 0);
-  rise = 0;
-  work->transferMode = 2;
-  work->transferValue = 50;
-  frame = 0;
-  if (!(gInput.repeat & 3)) {
-    phase = 0;
-    do {
-      s32 r;
-      s32 top;
-      s32 sh;
+  {
+    s32 rise;
+    s32 top;
+    void *verts2;
+    s32 r;
 
-      if (frame == 0) {
-        Iwram_FillWords(canvas, 0x4000, 0);
-        rise = -0x400000;
-        Func_08164b2c(0, -16, -16);
-        work->transferMode = 2;
-        work->transferValue = 50;
-        COPY_WORDS((void *)BG_PLTT,
-                   Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
-                   512);
-      }
-      if (rise <= 0xfffff) {
-        rise += 0x10000;
-      }
-      if ((u32)(frame - 96) <= 23) {
-        Func_08164b2c(-(frame - 96), -16, frame - 112);
-        work->shakeFrames = 8;
-      }
-      if (frame > 139) {
-        work->transferMode = 1;
-        if (frame > 153) {
-          work->transferValue = 0x3f3f3f3f;
+    rise = 0;
+    work->transferMode = 2;
+    work->transferValue = 50;
+    frame = 0;
+    if (!(gInput.repeat & 3)) {
+      phase = 0;
+      do {
+        if (frame == 0) {
+          Iwram_FillWords(canvas, 0x4000, 0);
+          rise = -0x400000;
+          Func_08164b2c(0, -16, -16);
+          work->transferMode = 2;
+          work->transferValue = 50;
+          COPY_WORDS((void *)BG_PLTT,
+                     Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
+                     512);
+        }
+        if (rise <= 0xfffff) {
+          rise += 0x10000;
+        }
+        if ((u32)(frame - 96) <= 23) {
+          Func_08164b2c(-(frame - 96), -16, frame - 112);
+          work->shakeFrames = 8;
+        }
+        if (frame > 139) {
+          work->transferMode = 1;
+          if (frame > 153) {
+            work->transferValue = 0x3f3f3f3f;
+          } else {
+            work->transferValue = 0x10101010;
+          }
+          Func_08164a4c(1, 1, 1);
+        }
+        if (frame == 80 || frame == 83) {
+          u16 *c = (u16 *)(BG_PLTT + 0x60);
+
+          for (i = 0; i != 128; i++, c++) {
+            *c ^= 0x7fff;
+          }
+        }
+        if (frame == 82) {
+          work->shakeFrames = 8;
+          Sound_PlayFar(208);
+          Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        }
+        if (frame == 96) {
+          Sound_PlayFar(104);
+        }
+        if (frame == 128) {
+          u16 *c = (u16 *)(BG_PLTT + 0x60);
+
+          work->shakeFrames = 16;
+          for (i = 0; i != 128; i++, c++) {
+            *c ^= 0x7fff;
+          }
+        }
+        if (frame > 128) {
+          s32 d = (frame - 128) * 2;
+
+          Func_08164b2c(d - 11, frame - 136, 3 - d);
+        }
+        r = 16;
+        if (frame > 92) {
+          r = frame - 75;
+        }
+        if (frame <= 79) {
+          r += Trig_Sin(frame << 11) * 2 >> 16;
+        }
+        if (r <= 64) {
+          Func_0815b434(work->sheet, r, 96000);
         } else {
-          work->transferValue = 0x10101010;
+          r = 64;
         }
-        Func_08164a4c(1, 1, 1);
-      }
-      if (frame == 80 || frame == 83) {
-        u16 *c = (u16 *)(BG_PLTT + 0x60);
+        top = (rise >> 16) - r / 2 + 60;
+        Func_0818caa8(work->sheet, 60, top, r);
+        if (frame > 95) {
+          {
+            for (i = 0; i != 4; i++) {
+              s32 n = i & 3;
+              s32 angle = Random16();
+              s32 x =
+                  (r * Trig_Sin(angle) >> 17) + 60 - (gData_08197492[n] >> 1);
+              s32 y =
+                  top + (r * Trig_Cos(angle) >> 17) - (gData_08197498[n] >> 1);
 
-        for (i = 0; i != 128; i++, c++) {
-          *c ^= 0x7fff;
-        }
-      }
-      if (frame == 82) {
-        work->shakeFrames = 8;
-        Sound_PlayFar(208);
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
-      }
-      if (frame == 96) {
-        Sound_PlayFar(104);
-      }
-      if (frame == 128) {
-        u16 *c = (u16 *)(BG_PLTT + 0x60);
-
-        work->shakeFrames = 16;
-        for (i = 0; i != 128; i++, c++) {
-          *c ^= 0x7fff;
-        }
-      }
-      if (frame > 128) {
-        s32 d = (frame - 128) * 2;
-
-        Func_08164b2c(d - 11, frame - 136, 3 - d);
-      }
-      r = 16;
-      if (frame > 92) {
-        r = frame - 75;
-      }
-      if (frame <= 79) {
-        r += Trig_Sin(frame << 11) * 2 >> 16;
-      }
-      if (r <= 64) {
-        Func_0815b434(work->sheet, r, 96000);
-      } else {
-        r = 64;
-      }
-      top = (rise >> 16) - r / 2 + 60;
-      Func_0818caa8(work->sheet, 60, top, r);
-      if (frame > 95) {
-        {
-          s32 i;
-
-          for (i = 0; i != 4; i++) {
-            s32 n = i & 3;
-            s32 angle = Random16();
-            s32 x = (r * Trig_Sin(angle) >> 17) + 60 - (gData_08197492[n] >> 1);
-            s32 y =
-                top + (r * Trig_Cos(angle) >> 17) - (gData_08197498[n] >> 1);
-
-            LOAD_ALT_BLITTER(SLOT_ALT, Data_081999ee[Random16() & 3] | 3);
-            ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
-                canvas, work->sheet + 0x800 + gData_08197486[n], x, y,
-                gData_08197492[n], gData_08197498[n]);
-            HeapSlot_Release(SLOT_ALT);
-          }
-        }
-      }
-      verts = Heap_AllocEwram(512);
-      model = Render_AllocateModelList(1);
-      if (frame <= 127) {
-        s32 s = 85536;
-        s32 a;
-        s32 b;
-
-        if (frame > 71) {
-          s = (frame << 11) + -0xf1e0;
-        }
-        sh = -16;
-        if (frame > 119) {
-          sh = 944 - frame * 8;
-        }
-        if (s > 0x22538) {
-          s = 0x22538;
-        }
-        texture2.logWidth = 6;
-        texture2.logHeight = 6;
-        model->shade = sh;
-        model->kind = 6;
-        model->texture = &texture2;
-        model->mesh = gData_08199340;
-        model->vertices = verts;
-        texture2.pixels = Data_02011000;
-        Render_ResetTransformState();
-        Func_08015160(-0x20000, rise, 0);
-        Func_080151e4(0x8000, 0x10000, 0x8000);
-        SceneTransform_ApplyPitch(18768);
-        a = frame << 9;
-        Func_080150e4(a);
-        Func_0801521c(s);
-        Func_08015160(0, -0xf0000, 0);
-        Render_TransformVertices(Data_081991e0, verts, 4);
-        Func_08015160(0, 0xf0000, 0);
-        Render_DrawModelList(model);
-        b = 10922;
-        texture2.pixels = gMapCellBuffer;
-        a += 10922;
-        for (j = 0; j != 3; j++, a += 21845, b += 21845) {
-          s32 v = sh + (Trig_Cos(a) << 3 >> 16) - 16;
-
-          Transform_Push();
-          Func_080150e4(b);
-          model->shade = v;
-          Func_08015160(0, -0x100000, 0);
-          v = 19712;
-          if (frame > 63) {
-            v = 19712 - (frame << 10) + 0x10000;
-          }
-          if (v < 0) {
-            v = 0;
-          }
-          SceneTransform_ApplyPitch(-v);
-          Render_TransformVertices(gData_081991f0, verts, 4);
-          Render_DrawModelList(model);
-          Transform_Pop();
-        }
-      }
-      {
-        s32 s1 = phase * 127 * 32 + -0xee200;
-        s32 s2 = phase * 127 * 16 + -0x77100;
-        s32 start = 80;
-        s32 fade = 640 - frame * 8;
-
-        {
-          s32 j;
-
-          for (j = 0; j != 2;
-               j++, start += 8, s2 += -0xbe80, fade += 64, s1 += -0x17d00) {
-            s32 s;
-
-            if (frame < start) {
-              continue;
+              LOAD_ALT_BLITTER(SLOT_ALT, Data_081999ee[Random16() & 3] | 3);
+              ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+                  canvas, work->sheet + 0x800 + gData_08197486[n], x, y,
+                  gData_08197492[n], gData_08197498[n]);
+              HeapSlot_Release(SLOT_ALT);
             }
-            sh = 0;
-            if (j == 0) {
-              s = s1 + 0x2000;
-              if (frame >= j * 8 + 96) {
-                sh = fade + 128;
+          }
+        }
+        verts2 = Heap_AllocEwram(512);
+        model2 = Render_AllocateModelList(1);
+        if (frame <= 127) {
+          s32 s = 85536;
+          s32 a;
+          s32 b;
+
+          if (frame > 71) {
+            s = (frame << 11) + -0xf1e0;
+          }
+          sh2 = -16;
+          if (frame > 119) {
+            sh2 = 944 - frame * 8;
+          }
+          if (s > 0x22538) {
+            s = 0x22538;
+          }
+          texture2.logWidth = 6;
+          texture2.logHeight = 6;
+          model2->shade = sh2;
+          model2->kind = 6;
+          model2->texture = &texture2;
+          model2->mesh = gData_08199340;
+          model2->vertices = verts2;
+          texture2.pixels = Data_02011000;
+          Render_ResetTransformState();
+          Func_08015160(-0x20000, rise, 0);
+          Func_080151e4(0x8000, 0x10000, 0x8000);
+          SceneTransform_ApplyPitch(18768);
+          a = frame << 9;
+          Func_080150e4(a);
+          Func_0801521c(s);
+          Func_08015160(0, -0xf0000, 0);
+          Render_TransformVertices(Data_081991e0, verts2, 4);
+          Func_08015160(0, 0xf0000, 0);
+          Render_DrawModelList(model2);
+          b = 10922;
+          texture2.pixels = gMapCellBuffer;
+          a += 10922;
+          for (j = 0; j != 3; j++, a += 21845, b += 21845) {
+            s32 v = sh2 + (Trig_Cos(a) << 3 >> 16) - 16;
+
+            Transform_Push();
+            Func_080150e4(b);
+            model2->shade = v;
+            Func_08015160(0, -0x100000, 0);
+            v = 19712;
+            if (frame > 63) {
+              v = 19712 - (frame << 10) + 0x10000;
+            }
+            if (v < 0) {
+              v = 0;
+            }
+            SceneTransform_ApplyPitch(-v);
+            Render_TransformVertices(gData_081991f0, verts2, 4);
+            Render_DrawModelList(model2);
+            Transform_Pop();
+          }
+        }
+        {
+          s32 s1 = phase * 127 * 32 + -0xee200;
+          s32 s2 = phase * 127 * 16 + -0x77100;
+          s32 start = 80;
+          s32 fade = 640 - frame * 8;
+
+          {
+            for (j = 0; j != 2;
+                 j++, start += 8, s2 += -0xbe80, fade += 64, s1 += -0x17d00) {
+              s32 s;
+
+              if (frame < start) {
+                continue;
               }
-            } else {
-              s = s2 + 0x2000;
-              if (frame >= j * 8 + 112) {
-                sh = fade + 256;
+              sh2 = 0;
+              if (j == 0) {
+                s = s1 + 0x2000;
+                if (frame >= j * 8 + 96) {
+                  sh2 = fade + 128;
+                }
+              } else {
+                s = s2 + 0x2000;
+                if (frame >= j * 8 + 112) {
+                  sh2 = fade + 256;
+                }
+              }
+              if (sh2 > -64) {
+                model2->shade = sh2;
+                model2->mesh = gData_08199364;
+                model2->kind = 6;
+                texture2.pixels = Data_02012000;
+                texture2.logHeight = 7;
+                texture2.logWidth = 7;
+                Render_ResetTransformState();
+                Func_08015160(0, 0x100000, 0);
+                Func_080151e4(0x10000, 32000, 0x10000);
+                Func_080150e4(frame << 10);
+                Func_0801521c(s);
+                Render_TransformVertices(Data_081991e0, verts2, 4);
+                Render_DrawModelList(model2);
               }
             }
-            if (sh > -64) {
-              model->shade = sh;
-              model->mesh = gData_08199364;
-              model->kind = 6;
-              texture2.pixels = Data_02012000;
-              texture2.logHeight = 7;
-              texture2.logWidth = 7;
-              Render_ResetTransformState();
-              Func_08015160(0, 0x100000, 0);
-              Func_080151e4(0x10000, 32000, 0x10000);
-              Func_080150e4(frame << 10);
-              Func_0801521c(s);
-              Render_TransformVertices(Data_081991e0, verts, 4);
-              Render_DrawModelList(model);
-            }
           }
         }
-      }
-      texture2.logWidth = 5;
-      texture2.logHeight = 7;
-      model->kind = 6;
-      model->mesh = gData_08199268;
-      model->shade = 0;
-      if (frame == 0) {
+        texture2.logWidth = 5;
+        texture2.logHeight = 7;
+        model2->kind = 6;
+        model2->mesh = gData_08199268;
+        model2->shade = 0;
+        if (frame == 0) {
+          p = work->particles;
+          for (i = 0; i != 16; i++, p++) {
+            p->z = Data_081999f2[i];
+            p->velocityZ = (Random16() & 255) + 128;
+            if (Random16() & 1) {
+              p->velocityZ = -p->velocityZ;
+            }
+            p->variant = Random16() & 3;
+          }
+        }
+        for (i = 0; i != 8; i++) {
+          if (frame == 128 + i * 4) {
+            Sound_PlayFar(144);
+          }
+        }
         p = work->particles;
         for (i = 0; i != 16; i++, p++) {
-          p->z = Data_081999f2[i];
-          p->velocityZ = (Random16() & 255) + 128;
-          if (Random16() & 1) {
-            p->velocityZ = -p->velocityZ;
-          }
-          p->variant = Random16() & 3;
-        }
-      }
-      for (i = 0; i != 8; i++) {
-        if (frame == 128 + i * 4) {
-          Sound_PlayFar(144);
-        }
-      }
-      p = work->particles;
-      for (i = 0; i != 16; i++, p++) {
-        if (frame >= i + 128 && frame < i + 144) {
-          s32 s = (frame - (i + 128)) << 13;
+          if (frame >= i + 128 && frame < i + 144) {
+            s32 s = (frame - (i + 128)) << 13;
 
-          if (s > 0x10000) {
-            s = 0x10000;
-          }
-          texture2.pixels = work->sheet + 0x1456 + (p->variant << 12);
-          Render_ResetTransformState();
-          Func_080150e4(p->z);
-          p->z += p->velocityZ;
-          Func_080151e4(s << 2, s, 0x10000);
-          Render_TransformVertices(gData_081991b0, verts, 4);
-          Render_DrawModelList(model);
-        }
-      }
-      Heap_Release(model);
-      Heap_Release(verts);
-      if (frame > 133) {
-        if (frame == 134) {
-          p = &work->particles[16];
-          for (i = 0; i != 48; i++, p++) {
-            s32 a = Random16();
-            s32 angle = i * 1365;
-            s32 rr = (a & 31) + 32;
-
-            p->x = (rr * Trig_Sin(angle) >> 16) + 60;
-            p->y = (rr * Trig_Cos(angle) >> 16) + 60;
-            p->z = (Random16() & 3) + 5;
-            p->variant = -(Random16() & 15);
+            if (s > 0x10000) {
+              s = 0x10000;
+            }
+            texture2.pixels = work->sheet + 0x1456 + (p->variant << 12);
+            Render_ResetTransformState();
+            Func_080150e4(p->z);
+            p->z += p->velocityZ;
+            Func_080151e4(s << 2, s, 0x10000);
+            Render_TransformVertices(gData_081991b0, verts2, 4);
+            Render_DrawModelList(model2);
           }
         }
-        p = &work->particles[16];
-        for (i = 0; i != 48; i++, p++) {
-          if ((u32)p->variant <= 7) {
-            s32 n = (Trig_Sin(p->variant << 12) * p->z >> 16) + 1;
+        Heap_Release(model2);
+        Heap_Release(verts2);
+        if (frame > 133) {
+          if (frame == 134) {
+            p = &work->particles[16];
+            for (i = 0; i != 48; i++, p++) {
+              s32 a = Random16();
+              s32 angle = i * 1365;
+              s32 rr = (a & 31) + 32;
 
-            blit(canvas, sprites + gData_08197410[n - 1], p->x - n / 2,
-                 p->y - n, n, n * 2);
+              p->x = (rr * Trig_Sin(angle) >> 16) + 60;
+              p->y = (rr * Trig_Cos(angle) >> 16) + 60;
+              p->z = (Random16() & 3) + 5;
+              p->variant = -(Random16() & 15);
+            }
           }
-          p->variant++;
-        }
-      }
-      if (work->shakeFrames > 0) {
-        s32 a = Random16();
-        s32 b = Random16();
+          p3 = &work->particles[16];
+          for (i = 0; i != 48; i++, p3++) {
+            if ((u32)p3->variant <= 7) {
+              s32 n = (Trig_Sin(p3->variant << 12) * p3->z >> 16) + 1;
 
-        gBgScroll[1].x = (a & 7) - 4;
-        gBgScroll[1].y = (b & 7) + 28;
-        work->shakeFrames--;
-      } else {
-        gBgScroll[1].x = 0;
-        gBgScroll[1].y = work->savedBg1Y;
-      }
-      work->transferPending = 1;
-      wait(1);
-      phase += 3;
-      frame++;
-    } while (frame != 160 && !(gInput.repeat & 3));
+              blit[0](canvas, sprites + gData_08197410[n - 1], p3->x - n / 2,
+                      p3->y - n, n, n * 2);
+            }
+            p3->variant++;
+          }
+        }
+        if (work->shakeFrames > 0) {
+          s32 a = Random16();
+          s32 b = Random16();
+
+          gBgScroll[1].x = (a & 7) - 4;
+          gBgScroll[1].y = (b & 7) + 28;
+          work->shakeFrames--;
+        } else {
+          gBgScroll[1].x = 0;
+          gBgScroll[1].y = work->savedBg1Y;
+        }
+        work->transferPending = 1;
+        wait(1);
+        phase += 3;
+        frame++;
+      } while (frame != 160 && !(gInput.repeat & 3));
+    }
   }
-  slide = 0;
-  slideStep = 0;
-  Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
-  work->transferPending = 1;
-  wait(1);
-  gBgScroll[1].x = savedScroll;
-  BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
-  Func_08164b2c(-16, -16, -4);
-  Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
-                             1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
-                             work->sheet + 0x800, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x1800, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             gData_02014000, 1, 0);
-  Render_BuildQuadStrip(Data_02012000, 4, 32, 11);
-  REG_BG2CNT = 0x784;
-  frame = 0;
-  do {
-    if ((gInput.repeat & 3) && frame > 2 && frame <= 87) {
-      frame = 88;
-    }
-    if (frame == 88) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
-      work->transferMode = 3;
-      work->transferValue = 0x02020202;
-      gBgScroll[1].x = savedScroll;
-      gCameraSceneParameters[3] = 120;
-      work->scrollStepX = 0;
-      Func_081180e8(134);
-    }
-    if (frame == 0) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
-      work->scrollStepX = -16;
-      gCameraSceneParameters[3] = -968;
-      gCameraSceneParameters[4] = 120;
-      gBgScroll[1].x = savedScroll + 1088;
-      Graphics_LoadGreyRamp();
-      work->transferMode = 3;
-      work->transferValue = 0x02020202;
-      for (i = 0; i != 164; i++) {
-        Data_02016d00[i].variant = -1;
-      }
-      slide = 0x800000;
-      slideStep = 0;
-    }
-    if (frame == 16) {
-      work->transferMode = 2;
-      work->transferValue = 75;
-    }
-    if ((u32)(frame - 16) <= 47) {
-      Func_0815f0a0((s32)&ResourceId_EffectPalette02);
-    }
-    if (frame == 66) {
-      s32 base = 0;
+  {
+    s32 slide;
+    s32 slideStep;
 
-      for (i = 0; i != effect->count; i++, base += 16) {
-        BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
-                                      0x40000, 150);
-        Func_0814cd48(effect->actors[i], 7, 5, i, 16);
-        EffectPosition_ProjectBattler(effect->actors[i], &pos);
-        q = &Data_02016d00[64 + base];
-        for (j = 0; j != 16; j++, q++) {
+    slide = 0;
+    slideStep = 0;
+    Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+    work->transferPending = 1;
+    wait(1);
+    gBgScroll[1].x = savedScroll;
+    BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
+    Func_08164b2c(-16, -16, -4);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
+                               1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
+                               work->sheet + 0x800, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+                               work->sheet + 0x1800, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
+                               gData_02014000, 1, 0);
+    Render_BuildQuadStrip(Data_02012000, 4, 32, 11);
+    REG_BG2CNT = 0x784;
+    frame = 0;
+    do {
+      if ((gInput.repeat & 3) && frame > 2 && frame <= 87) {
+        frame = 88;
+      }
+      if (frame == 88) {
+        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        work->transferMode = 3;
+        work->transferValue = 0x02020202;
+        gBgScroll[1].x = savedScroll;
+        gCameraSceneParameters[3] = 120;
+        work->scrollStepX = 0;
+        Func_081180e8(134);
+      }
+      if (frame == 0) {
+        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        work->scrollStepX = -16;
+        gCameraSceneParameters[3] = -968;
+        gCameraSceneParameters[4] = 120;
+        gBgScroll[1].x = savedScroll + 1088;
+        Graphics_LoadGreyRamp();
+        work->transferMode = 3;
+        work->transferValue = 0x02020202;
+        for (i = 0; i != 164; i++) {
+          Data_02016d00[i].variant = -1;
+        }
+        slide = 0x800000;
+        slideStep = 0;
+      }
+      if (frame == 16) {
+        work->transferMode = 2;
+        work->transferValue = 75;
+      }
+      if ((u32)(frame - 16) <= 47) {
+        Func_0815f0a0((s32)&ResourceId_EffectPalette02);
+      }
+      if (frame == 66) {
+        s32 base = 0;
+
+        for (i = 0; i != effect->count; i++, base += 16) {
+          BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
+                                        0x40000, 150);
+          Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+          EffectPosition_ProjectBattler(effect->actors[i], &pos);
+          q = &Data_02016d00[64 + base];
+          for (j = 0; j != 16; j++, q++) {
+            s32 angle;
+            s32 speed;
+
+            q->x = (pos.x / 2) << 16;
+            q->y = 0x500000;
+            angle = (Random16() & 0x7fff) + 0x4000;
+            speed = (Random16() & 127) + 128;
+            q->velocityX = speed * Trig_Sin(angle) >> 5;
+            q->velocityY = speed * Trig_Cos(angle) >> 4;
+            q->variant = 16;
+          }
+        }
+        work->shakeFrames = 16;
+        Sound_PlayFar(145);
+      }
+      if ((u32)(frame - 72) <= 15) {
+        work->transferMode = 4;
+        work->transferValue = 0x01010101;
+        Func_08164a4c(1, 1, 1);
+      }
+      if (frame >= 0) {
+        s32 x = 0;
+
+        if (frame > 71) {
+          x = -frame * 8 + 576;
+        }
+        x += 116;
+        q = &Data_02016d00[(frame & 31) * 2];
+        for (j = 0; j != 2; j++, q++) {
           s32 angle;
           s32 speed;
 
-          q->x = (pos.x / 2) << 16;
-          q->y = 0x500000;
-          angle = (Random16() & 0x7fff) + 0x4000;
+          q->x = x << 16;
+          q->y = (Random16() % 112 + 4) << 16;
+          angle = (Random16() & 0x7fff) + 0x8000;
           speed = (Random16() & 127) + 128;
-          q->velocityX = speed * Trig_Sin(angle) >> 5;
-          q->velocityY = speed * Trig_Cos(angle) >> 4;
-          q->variant = 16;
+          q->velocityX = speed * Trig_Sin(angle) >> 6;
+          q->velocityY = speed * Trig_Cos(angle) >> 6;
+          q->variant = 0;
+        }
+        q2 = Data_02016d00;
+        for (j = 0; j != 64; j++, q2++) {
+          if ((u32)q2->variant <= 11) {
+            blit[0](canvas, work->sheet + 0x1800 + (q2->variant / 2 << 11),
+                    HALF_HI(q2->x) - 16, HALF_HI(q2->y) - 32, 32, 64);
+            BattleEffectKernels_IntegrateVector2(q2, 63, 0);
+            q2->variant++;
+          }
         }
       }
-      work->shakeFrames = 16;
-      Sound_PlayFar(145);
-    }
-    if ((u32)(frame - 72) <= 15) {
-      work->transferMode = 4;
-      work->transferValue = 0x01010101;
-      Func_08164a4c(1, 1, 1);
-    }
-    if (frame >= 0) {
-      s32 x = 0;
-
-      if (frame > 71) {
-        x = -frame * 8 + 576;
-      }
-      x += 116;
-      q = &Data_02016d00[(frame & 31) * 2];
-      for (j = 0; j != 2; j++, q++) {
-        s32 angle;
-        s32 speed;
-
-        q->x = x << 16;
-        q->y = (Random16() % 112 + 4) << 16;
-        angle = (Random16() & 0x7fff) + 0x8000;
-        speed = (Random16() & 127) + 128;
-        q->velocityX = speed * Trig_Sin(angle) >> 6;
-        q->velocityY = speed * Trig_Cos(angle) >> 6;
-        q->variant = 0;
-      }
-      q = Data_02016d00;
-      for (j = 0; j != 64; j++, q++) {
-        if ((u32)q->variant <= 11) {
-          blit(canvas, work->sheet + 0x1800 + (q->variant / 2 << 11),
-               HALF_HI(q->x) - 16, HALF_HI(q->y) - 32, 32, 64);
-          BattleEffectKernels_IntegrateVector2(q, 63, 0);
-          q->variant++;
-        }
-      }
-    }
-    if (frame <= 87) {
-      s32 jitter = 0;
-      s32 y = 0;
-      s32 wave = frame;
-      s32 off = 0;
-      s32 a;
-      s32 b;
-      s32 c;
-
-      for (k = 0; k != 12; k++, wave += 2, off += 8) {
-        s8 *v = (s8 *)gMapCellBuffer + off;
-        s32 x = 0;
-
-        for (j = 0; j != 2; j++, x += 10, v += 4) {
-          v[0] = x + (Trig_Sin(wave << 10) * 2 >> 16) + jitter - 5;
-          v[2] = 0;
-          v[1] = y;
-        }
-        jitter = jitter + (Random16() & 7) - 4;
-        y -= 6;
-      }
-      model = Render_AllocateModelList(1);
-      model->kind = 6;
-      model->texture = &texture3;
-      model->shade = 0;
-      model->scrollV = 0;
-      model->vertices = Data_02011000;
-      if (frame == 16) {
-        slideStep = -0x80000;
-      }
-      if ((u32)(frame - 48) <= 5) {
-        slideStep = 0x80000;
-      }
-      if (frame > 59) {
-        slideStep = -0x100000;
-      }
-      if (frame > 31) {
-        slideStep = slideStep * 48 / 64;
-      }
-      slide += slideStep;
-      texture3.logWidth = 6;
-      texture3.logHeight = 5;
-      texture3.pixels = work->sheet;
-      model->scrollU = (frame << 3) & 127;
-      model->mesh = Data_02012000;
-      Render_ResetTransformState();
-      Func_080151e4(0x8000, 0x10000, 0x8000);
-      a = frame * 3 * 127 * 16;
-      b = frame << 13;
-      c = Trig_Sin(a);
-      Func_08015160(slide, (c << 5) + Trig_Cos(b) * 24, 0);
-      Func_0801521c(55536);
-      Transform_Push();
-      Func_080150e4(0x4000);
-      Func_0801521c(0x42ee0);
-      Render_TransformVertices(gMapCellBuffer, Data_02011000, 24);
-      Render_DrawModelList(model);
-      Transform_Pop();
-      model->mesh = gData_08199340;
-      texture3.logWidth = 6;
-      texture3.logHeight = 6;
-      model->scrollU = 0;
-      texture3.pixels = work->sheet + 0x800;
-      Func_08015160(-0x20000, (Trig_Sin(frame << 10) << 2) + -0x60000, 0);
-      Func_080150e4(-0x800);
-      {
-        s32 s0 = Trig_Sin(a);
-        s32 y0 = (s0 << 5) + Trig_Cos(b) * 24;
-        s32 s1;
-        s32 y1;
-
-        a += 6096;
-        s1 = Trig_Sin(a);
-        b += 0x2000;
-        y1 = (s1 << 5) + Trig_Cos(b) * 24;
-        Func_080150e4((y0 - y1) / 512 + -0x400);
-      }
-      Func_080151e4(0x21170, 105536, 0x10000);
-      Render_TransformVertices(Data_081991e0, Data_02011000, 4);
-      Render_DrawModelList(model);
-      Heap_Release(model);
       if (frame <= 87) {
-        s32 lim = 16;
+        s32 jitter = 0;
+        s32 y = 0;
+        s32 wave = frame;
+        s32 off = 0;
+        s32 a;
+        s32 b;
+        s32 c;
 
-        p = work->particles;
+        for (k = 0; k != 12; k++, wave += 2, off += 8) {
+          s8 *v = (s8 *)gMapCellBuffer + off;
+          s32 x = 0;
+
+          for (j4 = 0; j4 != 2; j4++, x += 10, v += 4) {
+            v[0] = x + (Trig_Sin(wave << 10) * 2 >> 16) + jitter - 5;
+            v[2] = 0;
+            v[1] = y;
+          }
+          jitter = jitter + (Random16() & 7) - 4;
+          y -= 6;
+        }
+        model3 = Render_AllocateModelList(1);
+        model3->kind = 6;
+        model3->texture = &texture3;
+        model3->shade = 0;
+        model3->scrollV = 0;
+        model3->vertices = Data_02011000;
+        if (frame == 16) {
+          slideStep = -0x80000;
+        }
+        if ((u32)(frame - 48) <= 5) {
+          slideStep = 0x80000;
+        }
+        if (frame > 59) {
+          slideStep = -0x100000;
+        }
+        if (frame > 31) {
+          slideStep = slideStep * 48 / 64;
+        }
+        slide += slideStep;
+        texture3.logWidth = 6;
+        texture3.logHeight = 5;
+        texture3.pixels = work->sheet;
+        model3->scrollU = (frame << 3) & 127;
+        model3->mesh = Data_02012000;
+        Render_ResetTransformState();
+        Func_080151e4(0x8000, 0x10000, 0x8000);
+        a = frame * 3 * 127 * 16;
+        b = frame << 13;
+        c = Trig_Sin(a);
+        Func_08015160(slide, (c << 5) + Trig_Cos(b) * 24, 0);
+        Func_0801521c(55536);
+        Transform_Push();
+        Func_080150e4(0x4000);
+        Func_0801521c(0x42ee0);
+        Render_TransformVertices(gMapCellBuffer, Data_02011000, 24);
+        Render_DrawModelList(model3);
+        Transform_Pop();
+        model3->mesh = gData_08199340;
+        texture3.logWidth = 6;
+        texture3.logHeight = 6;
+        model3->scrollU = 0;
+        texture3.pixels = work->sheet + 0x800;
+        Func_08015160(-0x20000, (Trig_Sin(frame << 10) << 2) + -0x60000, 0);
+        Func_080150e4(-0x800);
         {
-          s32 i;
+          s32 s0 = Trig_Sin(a);
+          s32 y0 = (s0 << 5) + Trig_Cos(b) * 24;
+          s32 s1;
+          s32 y1;
 
-          for (i = 0; i != 6; i++, lim += 8, p++) {
-            if (frame == lim) {
-              p->x = (Random16() & 31) + 64;
-              p->variant = Random16();
-              work->shakeFrames = 4;
-              switch (i & 3) {
-              case 0:
-                Sound_PlayFar(227);
-                break;
-              case 1:
-                Sound_PlayFar(171);
-                break;
-              case 2:
-                Sound_PlayFar(208);
-                break;
-              case 3:
-                Sound_PlayFar(172);
-                break;
+          a += 6096;
+          s1 = Trig_Sin(a);
+          b += 0x2000;
+          y1 = (s1 << 5) + Trig_Cos(b) * 24;
+          Func_080150e4((y0 - y1) / 512 + -0x400);
+        }
+        Func_080151e4(0x21170, 105536, 0x10000);
+        Render_TransformVertices(Data_081991e0, Data_02011000, 4);
+        Render_DrawModelList(model3);
+        Heap_Release(model3);
+        if (frame <= 87) {
+          s32 lim = 16;
+
+          p2 = work->particles;
+          {
+
+            for (i2 = 0; i2 != 6; i2++, lim += 8, p2++) {
+              if (frame == lim) {
+                p2->x = (Random16() & 31) + 64;
+                p2->variant = Random16();
+                work->shakeFrames = 4;
+                switch (i2 & 3) {
+                case 0:
+                  Sound_PlayFar(227);
+                  break;
+                case 1:
+                  Sound_PlayFar(171);
+                  break;
+                case 2:
+                  Sound_PlayFar(208);
+                  break;
+                case 3:
+                  Sound_PlayFar(172);
+                  break;
+                }
+                q = &Data_02016d00[64 + (i2 & 7) * 12];
+                for (j3 = 0; j3 != 12; j3++, q++) {
+                  s32 angle;
+                  s32 speed;
+
+                  q->x = p2->x << 16;
+                  q->y = 0x680000;
+                  angle = (Random16() & 0x7fff) + 0x4000;
+                  speed = (Random16() & 127) + 128;
+                  q->velocityX = speed * Trig_Sin(angle) >> 5;
+                  q->velocityY = speed * Trig_Cos(angle) >> 4;
+                  q->variant = 16;
+                }
               }
-              q = &Data_02016d00[64 + (i & 7) * 12];
-              for (j = 0; j != 12; j++, q++) {
-                s32 angle;
-                s32 speed;
-
-                q->x = p->x << 16;
-                q->y = 0x680000;
-                angle = (Random16() & 0x7fff) + 0x4000;
-                speed = (Random16() & 127) + 128;
-                q->velocityX = speed * Trig_Sin(angle) >> 5;
-                q->velocityY = speed * Trig_Cos(angle) >> 4;
-                q->variant = 16;
+              if (frame >= lim && frame < lim + 8) {
+                blit[0](canvas, gData_02014000 + ((p2->variant / 2) & 3) * 2880,
+                        p2->x - 12, 0, 24, 120);
+                p2->variant++;
               }
             }
-            if (frame >= lim && frame < lim + 8) {
-              blit(canvas, gData_02014000 + ((p->variant / 2) & 3) * 2880,
-                   p->x - 12, 0, 24, 120);
-              p->variant++;
+          }
+          q = &Data_02016d00[64];
+          for (j2 = 0; j2 != 100; j2++, q++) {
+            if (q->variant >= 0) {
+              s32 n = (q->variant >> 2) + 2;
+
+              blit[0](canvas, sprites + gData_08197410[n - 1],
+                      HALF_HI(q->x) - n / 2, HALF_HI(q->y) - n, n, n * 2);
+              BattleEffectKernels_IntegrateVector2(q, 56, 0x2000);
+              q->velocityX -= work->scrollStepX << 12;
+              q->variant--;
             }
           }
         }
-        q = &Data_02016d00[64];
-        for (j = 0; j != 100; j++, q++) {
-          if (q->variant >= 0) {
-            s32 n = (q->variant >> 2) + 2;
-
-            blit(canvas, sprites + gData_08197410[n - 1], HALF_HI(q->x) - n / 2,
-                 HALF_HI(q->y) - n, n, n * 2);
-            BattleEffectKernels_IntegrateVector2(q, 56, 0x2000);
-            q->velocityX -= work->scrollStepX << 12;
-            q->variant--;
-          }
+      }
+      gCameraSceneParameters[3] -= work->scrollStepX;
+      gBgScroll[1].x += work->scrollStepX;
+      for (i = 0; i != 16; i++) {
+        if (frame == i + 62) {
+          work->scrollStepX++;
         }
       }
-    }
-    gCameraSceneParameters[3] -= work->scrollStepX;
-    gBgScroll[1].x += work->scrollStepX;
-    for (i = 0; i != 16; i++) {
-      if (frame == i + 62) {
-        work->scrollStepX++;
-      }
-    }
-    Camera_ApplyVerticalShake(8);
-    BattleEffect_CountDownBattlerTints();
-    frame++;
-    work->transferPending = 1;
-    wait(1);
-  } while (frame != 104);
-  transition[4] = 0;
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(SLOT_BLITTER);
-  BattleEffect_EndCanvasLayer();
+      Camera_ApplyVerticalShake(8);
+      BattleEffect_CountDownBattlerTints();
+      frame++;
+      work->transferPending = 1;
+      wait(1);
+    } while (frame != 104);
+    transition[4] = 0;
+    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+    HeapSlot_Release(SLOT_BLITTER);
+    BattleEffect_EndCanvasLayer();
+  }
 }

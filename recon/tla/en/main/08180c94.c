@@ -1,23 +1,34 @@
-// Draft of BattleEffect_RunDaedalusAlt, decompiled from the listing: differ 188
-// of 575 (draft 569), the same 51 calls and control flow.
-// 2026-10-19 (run 33), from 328: the frame now matches (68 bytes: effect
-// sp+32, canvas 28, the blitter pair 20 and 24, centerX 16, centerY 12, burst
-// 8, texture 36, source 44, request 52). Measured: the sparks' lives cleared
-// through Data_02014018, as the listing's pool names it: 325; the blitter as
-// a pair (the native's unused sp+24): 299; source copied whole from its
-// table as one two-word struct (ldr, ldr, str, str): 265; a pointer of its
-// own for the drawing loop (r5; the burst loop keeps r7): 249; the ring's
-// variant stepped before its angle: 231; 0x10000 written out where "one"
-// was, so loop.c keeps it in r8 as the native does: 213; centerX and centerY
-// declared with the function's locals, before burst, so their slots come
-// above burst's: 203; the rings placed relative to x: 188. Tried: burst as
-// (frame - 80) * 8 at the burst loop (294, 353), object->unk16 stored before
-// unk12 (the native's zero register is not CSE's low byte of 0x8800: no
-// gain), y as a variable like x.
-// Left: the native shifts x and 0x500000 at run time for Func_0818caa8 and
-// adds a pooled -0x400000 to the rings' places, as if neither value were a
-// known constant there; here both fold. The rest is register choice in
-// reloads and the burst loop's preheader order.
+// Draft, differ 34 of 575, skeleton gap 8 (tla-en, 2026-11-01)
+// Of BattleEffect_RunDaedalusAlt, decompiled from the listing. Same 51 calls
+// and control flow; every difference left is scheduling or one register.
+// What closed it, from 172: the disc's and rings' constants set once in the
+// frame-0 arm (discX, discY, ringX, ringOffset). Not available on every path,
+// so cprop leaves them, yet each is REG_EQUIV and reloads at each use: this
+// is the unfolded x >> 16, the separate 0x420000 and the pooled -0x400000.
+// The r6 of the disc's x is `i = discX`, the counters' own variable: a fresh
+// local is replaced by discX in CSE and rematerialized (differ 38 with the
+// reload rotation right, but no r6). The frame loop is label and goto: it
+// keeps gMapCellBuffer's load ahead of the shifts (loop.c's single-use
+// replacement otherwise moves it into the r0 copy), so r0 is busy and discY
+// reloads into r3; that rotation sets every later reload.
+// Others: request through a pointer (r4); place[3] = 0 before unk12 and unk16
+// before 0x8800, or CSE takes the zero from 0x8800's low byte; speed = 31 then
+// &= (r5); j, mask, then spark in two steps, the order the reload rotation
+// gives; burst += 8 before frame++; the return types of LoadBlitter, Task_Add.
+// Left: the native's pool register in the burst preheader is r0 (here r7: the
+// two-step spark; &gData[burst] gives r2, a separate local reaches 166). Near
+// lines of sched2 order where the native looks as if loop.c ran: the frame-0
+// copy's `lsls r0`, shakeFrames = 8 (register pair swapped) and its fill's
+// pools, `add r2, sp, #44`, the 0x10000 argument, the delay's movs r7, and the
+// model's stores. These suggest the native is a real loop whose replacement
+// skipped only gMapCellBuffer's load; why is the open question. Tried: for,
+// do-while, for (;;) and while (each 66; the for loop now 64); an inline or
+// one-pass around the disc call; a block-local buffer pointer; x as a local;
+// model store orders; burst as (frame - 80) * 8 at the loop (184 to 298).
+// `i = discX` reuses a local for two values: S2's `temporary`, to tag if it
+// stays at adoption. No new device is in, and the old `frame` note on draw
+// stands.
+
 
 #include "types.h"
 #include "battle_effect.h"
@@ -50,7 +61,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -86,7 +97,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -148,6 +159,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   DrawRectangle draw[2];
   struct ModelTexture texture;
   s32 request[4];
+  s32 *place;
   struct PlacementSource source;
   s32 frame;
   s32 i;
@@ -156,6 +168,11 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   s32 centerY;
   s32 burst;
   struct EffectStep *spark;
+  s32 mask;
+  s32 discX;
+  s32 ringOffset;
+  s32 ringX;
+  s32 discY;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -176,9 +193,14 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
-  for (frame = 0, burst = -80 * 8; frame != DAEDALUS_FRAMES;
-       frame++, burst += 8) {
+  frame = 0;
+  burst = -80 * 8;
+next_frame:
     if (frame == 0) {
+      discX = 0x400000;
+      ringOffset = -0x400000;
+      ringX = 0x420000;
+      discY = 0x500000;
       work->transferMode = 2;
       work->transferValue = 50;
       Iwram_CopyWords((void *)BG_PLTT,
@@ -216,12 +238,19 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
         centerX = ((Random16() & 63) + 28) << 16;
         centerY = ((Random16() & 31) + 80) << 16;
 
-        for (j = 0, spark = &gData_02014000[burst]; j != 8; j++, spark++) {
-          s32 speed = Random16() & 31;
-          s32 angle = Random16();
+        j = 0;
+        mask = 15;
+        spark = gData_02014000;
+        spark += burst;
+        for (; j != 8; j++, spark++) {
+          s32 speed;
+          s32 angle;
+          speed = 31;
+          speed &= Random16();
+          angle = Random16();
 
-          spark->x = centerX + (((Random16() & 15) - 8) << 16);
-          spark->y = centerY + (((Random16() & 15) - 8) << 16);
+          spark->x = centerX + (((Random16() & mask) - 8) << 16);
+          spark->y = centerY + (((Random16() & mask) - 8) << 16);
           speed += 32;
           spark->velocityX = (Trig_Sin(angle) * speed) >> 3;
           spark->velocityY = (Trig_Cos(angle) * speed) >> 3;
@@ -248,41 +277,43 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
 
       source = Data_08196ee8;
       object = work->objects[0];
+      place = request;
       object->unk17 = 32;
-      object->unk12 = 0x8800;
       object->unk16 = 0;
-      request[3] = 0;
-      request[1] = 0xff0000;
+      place[3] = 0;
+      object->unk12 = 0x8800;
+      place[1] = 0xff0000;
       if (frame <= 63) {
-        request[0] = (152 - frame / 4) << 16;
-        request[2] = (frame << 17) - 0x400000;
+        place[0] = (152 - frame / 4) << 16;
+        place[2] = (frame << 17) - 0x400000;
       } else if ((u32)(frame - 64) <= 63) {
         s32 t = frame - 64;
 
-        request[0] = (136 - t / 16) << 16;
-        request[2] = ((t / 2) << 16) + 0x400000;
+        place[0] = (136 - t / 16) << 16;
+        place[2] = ((t / 2) << 16) + 0x400000;
       } else {
-        request[0] = 136 << 16;
-        request[2] = 0x400000;
+        place[0] = 136 << 16;
+        place[2] = 0x400000;
       }
-      Render_ApplyProjectedPlacementFar(work->objects[0], request, &source.x, 0);
+      Render_ApplyProjectedPlacementFar(work->objects[0], place, &source.x, 0);
     }
 
     // Frames 56 to 91: the disc and the rings.
     if ((u32)(frame - 56) <= 35) {
-      s32 x = 0x400000;
-      s32 size = 128;
+      s32 size;
       s32 grow = frame * 2 - 104;
       struct RenderModel *model;
       void *vertices;
       struct EffectStep *ring;
 
-
+      // The disc's place shares the counters' variable, as the listing's r6 does.
+      i = discX;
+      size = 128;
       if (grow <= 64) {
         size = grow * 2;
         Func_0815b434(gMapCellBuffer, size, 0x10000);
       }
-      Func_0818caa8(gMapCellBuffer, x >> 16, 0x500000 >> 16, size);
+      Func_0818caa8(gMapCellBuffer, i >> 16, discY >> 16, size);
       if (frame == 56) {
         s32 delay = 0;
 
@@ -309,7 +340,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       model->texture = &texture;
       model->mesh = Data_08199220;
 
-      for (i = 0, ring = work->particles; i != 6; i++, ring++) {
+      ring = work->particles;
+      for (i = 0; i != 6; i++, ring++) {
         ring->variant += 2;
         ring->x += ring->y * 2;
         if ((u32)ring->variant <= 47) {
@@ -317,8 +349,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
 
           Render_ResetTransformState();
           k = i & 3;
-          Func_08015160((k << 17) + 0x420000 - x,
-                        0x500000 - ((k + 2) << 16) - x, 0);
+          Func_08015160((k << 17) + ringX + ringOffset,
+                        discY - ((k + 2) << 16) + ringOffset, 0);
           Func_080151e4(0x8000, 0x10000, 0x10000);
           Func_080150e4(ring->x);
           Func_080151e4(Trig_Sin(ring->variant * 682) + 0x10000, 0x20000, 0x10000);
@@ -333,7 +365,11 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);
-  }
+    burst += 8;
+    frame++;
+    if (frame != DAEDALUS_FRAMES) {
+      goto next_frame;
+    }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
   ResourceObject_ReleaseFar(work->objects[0]);

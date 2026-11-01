@@ -1,23 +1,36 @@
-// Draft, differ 169 of 1707 (tla-en): the slot machine's VBlank task, The
-// Broken Seal's LuckyWheels_Update (games/tbs/src/field/lucky_wheels.c)
-// in its patched form (the hint windows and phases), on this game's work: the
+// Draft, differ 178 of 1707, skeleton gap 37/25 (tla-en, 2026-11-01)
+// The slot machine's VBlank task, The Broken Seal's LuckyWheels_Update
+// (games/tbs/src/field/lucky_wheels.c), confirmed statement by statement, in
+// its patched form (the hint windows and phases), on this game's work: the
 // sprite count lives in the work (0xa8) for Func_081b3294, which restarts the
-// scanline DMA and copies the sprites; the sprite words are volatile, as The
-// Broken Seal's OAM shadow; the held keys are read twice through a volatile
-// word, as the native's two loads show (514 against 551 plainly). Measured
-// in order from 494 under K2's -mthumb-slow-loads: the messages by their
-// linker names (MsgSlotsStopReels to MsgSlotsCannotPull), which the native
-// loads from the pool where a number is built in three instructions: 417; the
-// wheel symbols' first word computed before its store's index, through v:
-// 233 (the frame then matches, 40 bytes); its x, y and attribute bits ORed in
-// at the store, v holding only the column's x: 189; the state test after the
-// debug block through k (k = work->state == 5): 169. That k is a forced
-// temporary: it needs a FAKEMATCH(temporary) tag if this is adopted (as a
-// plain if, 189). Left: register rotations in the wheel symbols' loop, two
-// reload blocks the native keeps apart where this shares one (after the
-// spinning state's timer and the choosing state's A test), which moves the
-// literal pools, and scheduling rows. permute (30 minutes from 169) found
-// only devices (a volatile local, 164).
+// scanline DMA and copies the sprites. Two volatile forms stay: the sprite
+// words, as The Broken Seal's OAM words; and the held keys read twice through
+// a volatile cast, as the native's two loads show (the cast needs a tag or a
+// volatile declaration before adoption: 514 against 551 when last measured).
+//
+// What is left is scheduling, not shape; 106 of the 178 rows are branch
+// distances and pool offsets moved by one cause. The edge blocks that load
+// &work->bet, &work->spins and &work->state before the join after the state
+// chain: the native keeps two more than this (the state 2 and state 11 exits).
+// In the native the two blocks that fall through (the else of
+// stoppedReels == 5, and state 10) run store first (r0 chain, then r1 starts,
+// then str) while its jump-ended blocks interleave them. --rtl shows why:
+// a jump's links cost 0, so a store before a jump ranks 1, but the same store
+// as a block's last leaf must rank 2 for the native's order. Here it ranks 1
+// (insn_cost of a store; PRIORITY_COST adds only for loads), so the
+// fall-through block comes out equal to the jump blocks and cross-jumping
+// merges them, where the native shares only the last mov. That is the
+// compiler's cost model, so it is out of scope for this draft. The other rows
+// are the known K2 schedule: a load issued too early after a store, a spill
+// store placed too soon.
+//
+// Tried. k = work->state == 5 before the if: 166, but a forced temporary that
+// cannot reach 0, and it widens the skeleton; removed. In the reel symbols'
+// loop, an inner s32 w for the first word puts it in r3 as the native does:
+// skeleton 36/24, differ 200, the index then taking r2 where the native has
+// r1 (a pseudo seems to hold r2 across it, so mov r2, r9 may be a real copy,
+// but an inner or outer local for the shifted x gives 244 and 376); v += 4
+// on its own line: 182; writing the word without v, as the twin: 408.
 #include "types.h"
 #include "io_reg.h"
 #include "input.h"
@@ -440,8 +453,7 @@ void Func_081b243c(void) {
     }
   }
 
-  k = work->state == 5;
-  if (k) {
+  if (work->state == 5) {
     x = work->cursor * 36 + 36;
     y = 128;
     v = 0;

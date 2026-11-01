@@ -1,13 +1,15 @@
-// Draft, differ 256 of 358 (2026-10-19, written from the listing; ☀️ has no
-// twin): the controlled actor spins, shrinks and vanishes in a column of 100
-// rising and falling sparks (resource 0x1ef, FieldEffect_ColouredOrbs: adoption
-// names it ColouredOrbs in gamepak/resource_directory.s). Most of what
-// remains is allocation: agscc hoists the spawn loop's stored 0 into r11,
-// where the ROM keeps the next spark's index there and rematerializes the 0
-// at each store, so the index spills and the stack frame grows by a slot; and the
-// ROM builds the ~12 mask inside the first loop where agscc hoists it. The
-// spin loop counts down in the frame counter's register (separate counters
-// 297), and the first loop walks sprite and spark pointers (256).
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The controlled actor spins, shrinks and vanishes in a column of 100 rising
+// and falling sparks (resource 0x1ef, FieldEffect_ColouredOrbs: adoption names
+// it ColouredOrbs in gamepak/resource_directory.s). No FAKEMATCH device.
+// What closed it: zero is one constant local that gets no register, so reload
+// rebuilds its 0 at each use and rotates the spill registers (the else arm's
+// literal 0 stays, cse uses the test's own zero there); next++ and next %= 100
+// are two statements, which gives next its register; the setup loop steps
+// particle and indexes sprite, or the -13 mask hoists; the draw loop sets i
+// first and steps both pointers; age is reread in both arms, which is what
+// cross-jumping merges down to the one shared bl. spin keeps its initializer
+// first (the other order differs by 2).
 #include "types.h"
 #include "heap_release.h"
 #include "resource.h"
@@ -58,15 +60,17 @@ void Func_080e74d8(void) {
       ObjectTable_Get(Party_GetLeaderActor());
   struct SparkParticle *particle;
   struct EffectSprite *sprite;
+  s32 state;
   s32 entry;
+  s32 count;
   s32 tiles;
   s32 i;
   s32 spin;
   s32 angle;
-  s32 count;
-  s32 state;
   s32 next;
   s32 frame;
+  s32 zero = 0;
+  s32 age;
 
   wait(20);
   BattleEffect_InitializeSharedScene();
@@ -74,9 +78,8 @@ void Func_080e74d8(void) {
                         work);
   entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, work);
-  particle = work->particles;
-  sprite = work->sprites;
-  for (i = 0; i < SPARK_COUNT; i++, sprite++, particle++) {
+  for (i = 0, particle = work->particles; i < SPARK_COUNT; i++, particle++) {
+    sprite = &work->sprites[i];
     Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
@@ -93,7 +96,7 @@ void Func_080e74d8(void) {
   wait(30);
   Sound_PlayFar(220);
   Actor_SetMode(object, 3);
-  for (frame = 49, spin = 0; frame >= 0; frame--, spin += 60) {
+  for (spin = 0, frame = 49; frame >= 0; frame--, spin += 60) {
     object->angle += spin + 0x1000;
     wait(1);
   }
@@ -103,41 +106,48 @@ void Func_080e74d8(void) {
   next = 0;
   frame = 0;
   do {
-    for (i = count; i != 0; i--) {
+    for (i = 0; i < count; i++) {
       angle = Random16();
       particle = &work->particles[next];
-      particle->age = 0;
+      particle->age = zero;
       particle->x = object->x;
       particle->y = object->y + Random16() * 20;
       particle->z = object->z;
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
       if (next & 1) {
-        particle->velocityX = 0;
+        particle->velocityX = zero;
         particle->velocityY = -0x40000;
-        particle->velocityZ = 0;
+        particle->velocityZ = zero;
         Vector_AddPolarOffset((Random16() << 2) + 0x40000, angle,
-                              &particle->velocityX);
+                              &work->particles[next].velocityX);
       } else {
         particle->velocityX = 0;
         particle->velocityY = 0x50000;
         particle->velocityZ = 0;
         Vector_AddPolarOffset((Random16() << 2) + 0x40000, angle,
-                              &particle->velocityX);
+                              &work->particles[next].velocityX);
       }
-      next = (next + 1) % SPARK_COUNT;
+      next++;
+      next %= SPARK_COUNT;
     }
 
-    for (i = 0; i < SPARK_COUNT; i++) {
-      particle = &work->particles[i];
-      if (particle->age >= 0) {
-        if ((u32)particle->age < 20) {
-          EffectSprite_DrawAtWorldPosition(&work->sprites[i], particle);
-          if (i & 1)
+    for (i = 0, particle = work->particles, sprite = work->sprites;
+         i < SPARK_COUNT; i++, sprite++, particle++) {
+      age = particle->age;
+      if (age >= 0) {
+        if ((u32)age < 20) {
+          EffectSprite_DrawAtWorldPosition(sprite, particle);
+          // Reread in each arm: the two calls share one bl only this way.
+          if (i & 1) {
             BattleEffect_IntegrateVector3(&particle->x, 63, 0x8000);
-          else
+            age = particle->age;
+          } else {
             BattleEffect_IntegrateVector3(&particle->x, 63, -0xa000);
+            age = particle->age;
+          }
         }
-        if (++particle->age == 20)
+        particle->age = ++age;
+        if (age == 20)
           particle->age = -1;
       }
     }

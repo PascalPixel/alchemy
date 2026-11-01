@@ -1,22 +1,35 @@
-// Draft, differ 271 of 714, skeleton gap 125 (tla-en, 2026-11-01)
+// Draft, differ 57 of 714, skeleton gap 10 (tla-en, 2026-11-01)
 // The Venus Djinni (actor 9) joins on the world map and offers its tutorial,
 // as The Broken Seal's WorldMap_MeetFlint; the second visit offers it again.
 // owner is set only on the first path: the native reads r7 uninitialized on
 // the second, so owner is live from entry and conflicts with everything.
-// The goto loops keep the 0x800 and 0x1000 steps in the loop; i = 15 beside the
-// message reaches the native's slot, sched1 moving it across calls.
-// Left, nearly all from one cause: the flag test's known 0. CSE follows the
-// fall-through and reuses a register for djinni->velocityY = 0, count here,
-// the flag's own pseudo without count = 0. The native loads 0 fresh, so r5
-// stays free: native r5 pointer then i, r6 djinni, r7 owner, r8 and r9 the
-// home coordinates, z in fp, a 4-byte frame. Here owner lands in r8 and z on
-// the stack, giving most of the adds/mov pairs, and the +1/+2 message tail does
-// not cross-jump. Tried without a cure: goto, switch, a direct GameFlag_Test
-// (shares 0x16e), an inline for the zero stores, a !flag inline (negs/orrs),
-// do/while(0) message macros, i = flag (keeps a copy). Next to try: what ends
-// CSE's path between the test and the store. Func_02004d08(owner, 0x100, 30)
-// shares its constant here; scene_call.h's forwarded inline would rebuild it,
-// a tagged device left for adoption. count = MsgTheVenusDjinni loses (153).
+// Plain shape, all measured here: no count = 0 at entry; u16 stores go through
+// a pointer cast (a member store's bit-field path leaves a zero pseudo that
+// CSE reuses across calls); the first motionFlags store takes an s32 local
+// before its address, the later two stay member stores (their zero is the
+// native's r2); wait(1) comes before i--; ShowEmote and SetMoveTarget are The
+// Broken Seal's forwarding inlines (Actor_ShowEmote, FieldActor_SetMoveTarget);
+// the +1 and +2 arms each end with Func_02004cf0, so both jumps cross-jump;
+// Djinn_AddToOwner, DjinnRecovery_AddStandby and FieldMessage_ShowAtActor
+// return values. Func_02004d08's s32 return is what ordering asks for, its
+// main-image type unchecked. The long store is an alias spelling: the native
+// has no store dependence between the motionFlags strb and velocityY.
+// Left, one cause: the inline's return pseudo is known 0 after the flag test,
+// and cse2 reuses it for velocityY = 0, costing r5 and the frame. Plain tries
+// failed: goto, switch, u32 compares, a one-pass block (cse2 ignores its loop
+// end), a zero local, an inline for the zero stores. Two devices were taken
+// back out because neither reaches differ 0; with them this draft is differ 10:
+// `flag = 0x16e; flag = GameFlag_Test(flag); if (flag == 0) {` with
+// `flag = Flag_IsSet(0x175);` before the MsgHey2 message: 20, temporary.
+// `flags = &motionFlags; *flags = two;`, an unread `flags = (u8 *)djinni;`
+// beside the zero stores, `flags = &djinni->motionFlags;` after them and
+// `*flags = 0;` at the third store: 10, dead; this puts native's late mov sl.
+// The last 10 of that form: strb [r2, r6] where native keeps adds r2 and mov sl,
+// r2 (reload_combine fires; a second use of r2 would stop it), and at
+// MsgSoWeGo and MsgHmmmmDoYou the pool load before muls: sched2 ranks muls 45
+// over the load 44 (4 + 41 against 2 + 1 + 41). An asm or one-pass fixes these
+// but flips `adds r1, r7` at Func_02004c98. That ranking is K2's
+// -mthumb-slow-loads model, a compiler question for Pascal, out of scope here.
 #include "types.h"
 #include "main_routine_work.h"
 #include "actor.h"
@@ -45,19 +58,22 @@ void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Party_RemoveActiveOwner(s32 owner);
 void Party_AddActiveOwner(s32 owner);
-void Djinn_AddToOwner(s32 owner, s32 element, s32 djinni);
-void DjinnRecovery_AddStandby(s32 owner, s32 element, s32 djinni);
+s32 Djinn_AddToOwner(s32 owner, s32 element, s32 djinni);
+u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinni);
 void Actor_SetAngleToward(s32 id, s32 target, s32 mode);
 void Actor_Jump(s32 id, s32 height, s32 frames);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
 void Motion_SetVarCbAndRefresh(s32 id, s32 value);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void FieldMessage_ShowAtActor(s32 id, s32 mode);
+s32 FieldMessage_ShowAtActor(s32 id, s32 mode);
 void FieldMessage_Show(s32 message, s32 mode);
 s32 Event_AskYesNoWithActorAnimation(s32 id, s32 mode);
 void Menu_AnimateSelectionToEntry(s32 a, s32 b);
 void Func_020011fc(void);
 void Func_02004b50(struct Actor *object, s32 x, s32 y, s32 z);
+static inline void SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
+  Func_02004b50(object, x, y, z);
+}
 void Func_02004ba8(s32 a, s32 b);
 void Func_02004bf8(s32 value);
 void Func_02004c20(void);
@@ -65,7 +81,11 @@ void Func_02004c28(void);
 void Func_02004c98(s32 id, s32 target);
 void Func_02004cd8(s32 message);
 void Func_02004cf0(s32 id, s32 mode);
-void Func_02004d08(s32 id, s32 animation, s32 frames);
+s32 Func_02004d08(s32 id, s32 animation, s32 frames);
+
+static inline void ShowEmote(s32 id, s32 animation, s32 frames) {
+  Func_02004d08(id, animation, frames);
+}
 void Func_02004da8(void);
 void Func_02004db0(void);
 void Func_02004db8(s32 value);
@@ -92,7 +112,6 @@ void Func_02001e34(void) {
   s32 count;
   s32 i;
 
-  count = 0;
   djinni = Actor_GetById(9);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   x = (leader->x - 0x27880000) / 2 + 0x27880000;
@@ -125,8 +144,11 @@ void Func_02001e34(void) {
     Func_02004da8();
     Actor_SetAngleToward(owner, 9, 0);
     FieldEvent_Wait(10);
-    Func_02004d08(owner, 0x101, 60);
-    djinni->unk66 = 1;
+    ShowEmote(owner, 0x101, 60);
+    {
+      s32 one = 1;
+      *(u16 *)&djinni->unk66 = one;
+    }
     Actor_SetAngleToward(9, owner, 0);
     wait(16);
     Func_02004cd8(TUTORIAL_MESSAGE(MsgHey2));
@@ -136,18 +158,24 @@ void Func_02001e34(void) {
     Func_02004df8(0x13333, 6);
     Func_02004e00();
     Func_02004da8();
-    djinni->motionFlags = 2;
+    {
+      s32 two = 2;
+      *(u8 *)&djinni->motionFlags = two;
+    }
     djinni->gravity = 0x4000;
     djinni->speedLimit = 0x10000;
     djinni->acceleration = 0x10000;
-    djinni->velocityY = 0;
-    djinni->terrainHeight = 0;
-    Func_02004b50(djinni, 0x27880000, 0, 0x20a40000);
+    {
+      s32 zero = 0;
+      djinni->velocityY = zero;
+      djinni->terrainHeight = zero;
+    }
+    SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
   grow:
     djinni->scaleX += 0x800;
     djinni->scaleY += 0x800;
-    i--;
     wait(1);
+    i--;
     if (i >= 0)
       goto grow;
     Actor_SetAngleToward(9, owner, 0);
@@ -162,47 +190,49 @@ void Func_02001e34(void) {
       Actor_Jump(9, 2, 20);
       Func_02004cd8(TUTORIAL_MESSAGE(MsgWellYouWeren));
       FieldMessage_ShowAtActor(9, 0);
-      if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
+      if (Event_AskYesNoWithActorAnimation(owner, 0) == 1) {
         Func_02004cd8(TUTORIAL_MESSAGE(MsgWellYouWeren + 1));
-      else
+        Func_02004cf0(9, 0);
+      } else {
         Func_02004cd8(TUTORIAL_MESSAGE(MsgWellYouWeren + 2));
-      Func_02004cf0(9, 0);
+        Func_02004cf0(9, 0);
+      }
     } else {
       Func_02004cd8(TUTORIAL_MESSAGE(MsgSeeYouKnow));
       Func_02004cf0(9, 0);
     }
-    Func_02004d08(owner, 0x100, 30);
+    ShowEmote(owner, 0x100, 30);
     Actor_Jump(9, 2, 20);
     Actor_Jump(9, 2, 20);
     Func_02004cd8(TUTORIAL_MESSAGE(MsgEvenIKnow));
     i = 15;
     Func_02004cf0(9, 0);
-    Func_02004d08(owner, 0x102, 30);
+    ShowEmote(owner, 0x102, 30);
     Func_02004cf0(9, 0);
-    Func_02004d08(owner, 0x100, 30);
+    ShowEmote(owner, 0x100, 30);
     Func_02004cf0(9, 0);
     Motion_SetVarCbAndRefresh(owner, 2);
     Func_02004cf0(9, 0);
     Actor_Jump(9, 2, 30);
     Func_02004cf0(9, 0);
     djinni->motionFlags = 0;
-    Func_02004b50(djinni, x, 0x100000, z);
+    SetMoveTarget(djinni, x, 0x100000, z);
   spin:
-    djinni->angle += 0x1000;
-    i--;
+    *(u16 *)&djinni->angle += 0x1000;
     wait(1);
+    i--;
     if (i >= 0)
       goto spin;
     Actor_SetModeById(owner, 1);
     Func_02004cf0(9, 0);
     djinni->motionFlags = 2;
-    djinni->velocityY = 0;
+    *(long *)&djinni->velocityY = 0;
     djinni->terrainHeight = 0;
     i = 7;
   spinDown:
-    djinni->angle += 0x1000;
-    i--;
+    *(u16 *)&djinni->angle += 0x1000;
     wait(1);
+    i--;
     if (i >= 0)
       goto spinDown;
     Actor_SetModeById(owner, 22);
@@ -261,7 +291,7 @@ void Func_02001e34(void) {
   Event_WaitTransitionFrames();
   Func_02004c98(9, owner);
   djinni->velocityY = 0xa0000;
-  Func_02004b50(djinni, x, 0, z);
+  SetMoveTarget(djinni, x, 0, z);
   FieldEvent_Wait(30);
   Func_02004da8();
   Actor_SetAngleToward(9, owner, 0);
@@ -279,7 +309,7 @@ void Func_02001e34(void) {
   Flag_Clear(0x171);
   Func_02004e28();
   Func_02004cd8(TUTORIAL_MESSAGE(MsgSoWeGo));
-  Func_02004b50(djinni, 0x27880000, 0, 0x20a40000);
+  SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
   FieldEvent_Wait(30);
   Func_02004cf0(9, 0);
   Actor_SetAngleToward(9, owner, 0);

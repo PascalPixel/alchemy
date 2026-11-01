@@ -1,30 +1,42 @@
-// Draft, differ 327 of 305, skeleton gap 129 (tla-en, 2026-11-01): the shape
+// Draft, differ 327 of 305, skeleton gap 121 (tla-en, 2026-11-01): the shape
 // is the native's (one 24-byte PushMove by value, its first four words in
 // r0-r3 spilled to the pretend-argument area and number and callback on the
 // stack, as overlay 668's caller passes it; the direction in a local whose
-// times-four lives in one register throughout; the tables not const, so
-// their bytes are reread after each call; start below cell in the frame).
-// Left: the native's CSE starts afresh after the leader's update hook, with
-// no branch there: it reloads gMainRoutineWork and gData_02005f64 into new
-// registers (r5, r10) and keeps stepIndex, 0, in r9 as a register index into
-// gData_02005f7c; here all three carry through the whole function and
-// stepIndex folds, which moves every callee-saved register. No plain form
-// gives that boundary: it needs a label alive through both CSE passes and
-// gone by the end. Measured, none kept, because each is a device: an unused
-// sum after the update hook, `spareX = ABS(move.x - start.x) +
-// ABS(move.z - start.z);` before wait(4), which only flow deletes, gives
-// draft 305, differ 218, skeleton gap 104, and looks like the native's
-// source if the next round may add a tagged `dead`; `if (object && leader)
-// spareX = 1;` 229 and 109 (a one-branch arm does not split: CSE skips it);
-// a real one-pass `for (; stepIndex < 1; stepIndex++)` from wait(4) to the
-// second mode call 279 and 113, unfolding stepIndex but keeping its counter
-// and test. With the sum, stepIndex still folds (global constant
-// propagation, 0 is available at the read), which is the next thing to
-// settle. A one-pass block at wait(4) splits only the first CSE pass (differ
-// 316). Reading move.direction at each use measures 310 without the
-// native's one register. Declaration order, unsigned speed locals and
-// stepIndex's placement change nothing. The leader's last offset is a guess
-// at the native's shift pair.
+// times-four lives in one register throughout; the tables not const; start
+// below cell in the frame; the map slot through struct HeapSlotWords, which
+// keeps the four argument stores ahead of it). Left: the native's middle.
+// With devices the same text reaches differ 88, gap 48, 305 instructions, the
+// right register for every long-lived value; they are out because that is not
+// differ 0, and this is the recipe, all of it measured:
+// - stepIndex is a variable the native never folds because it sits in a
+//   one-iteration loop: `for (step = 0; step < 1; step++) { ... stepIndex++; }`
+//   from just after Func_020054b8 to just after the mode 1 call, `step` a
+//   separate counter so that stepIndex keeps two definitions through GCSE.
+//   loop.c deletes the back branch only at n_iterations 1 and at most 50 real
+//   insns (unroll.c, "Loop too big": 42 here, a loop from wait(4) has 62, stays).
+//   stepIndex++ then dies in flow and r9 stays. Set `stepIndex = 0` before the
+//   first ABS: nearer the top gives speed r9 (differ 154), and it is set in
+//   native's first block, so the last open point is how it gets there.
+// - `spareX = ABS(move.x - leader->x) + ABS(move.z - leader->z);` before wait(4)
+//   and `spareZ = ABS(stepIndex) + ABS(stepIndex + 1);` first in the loop give
+//   the two CSE boundaries: the conditional also keeps the address from being
+//   hoisted whole into one pool word (loop.c, maybe_never). Reads of start here
+//   put &start in r7 or r11; on leader they do not. Two ABS are needed, one
+//   changes nothing, which looks like CSE's path length running out.
+// - A static inline forwarder on Actor_SetSpeedParameters alone rebuilds
+//   0x8000 and 0x1999 at each call; on all four Actor calls it costs 41 more.
+// - Declaration order map, width, speed, acceleration gives the native's slots.
+// What differ 88 still lacks: Func_02004a44's last 0 is `mov r3, r9`, not
+// `movs r3, #0` (CSE1 follows the ABS branches and swaps in stepIndex; that ref
+// is also what lifts stepIndex over speed, with its live length doubled by the
+// constant), and that moves the first block's reloads and the call 2 arguments.
+// A native ordering with no i-in-store needs stepIndex above speed some other
+// way. No gain from: index types (s16, u8, long same; others far worse), a
+// `clear` local, a forwarder on Func_02004a44, inline Abs in four body forms, a
+// dead read of stepIndex after the loop to keep its increment (179 to 240), more
+// dead sums to stretch speed's live range, and two more ABS before the fill call
+// (249: stepIndex's first set is deleted). Sibling drafts 668 Func_020044c4 and
+// 674 Func_02003a5c are the same listing, so this recipe should carry over.
 //
 // Overlay 6ad's copy of resource_668_c_020044c4.c, with this overlay's
 // symbols: carries out a push measured as overlay 668's Func_02004240
@@ -50,6 +62,11 @@ struct PushMove {
   void (*unk14)(void);
 };
 
+struct HeapSlotWords {
+  s32 unk00[8];
+  s32 map;
+};
+
 extern s8 gData_02005f64[][4];
 extern s32 gData_02005f7c[];
 struct Actor *Actor_GetById(u32 id);
@@ -71,20 +88,20 @@ void Func_02005668(void);
 
 void Func_02004d10(struct PushMove move) {
   u8 *map;
-  struct Actor *leader;
-  struct Actor *object;
+  s32 width;
   s32 speed;
   s32 acceleration;
-  struct Vector3 cell;
-  struct Vector3 start;
+  struct Actor *leader;
+  struct Actor *object;
+  s32 height;
   s32 direction;
   s32 stepIndex;
-  s32 width;
-  s32 height;
+  struct Vector3 cell;
+  struct Vector3 start;
   s32 spareX;
   s32 spareZ;
 
-  map = (u8 *)Ram_HeapSlots->mapWork;
+  map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->map;
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   object = Actor_GetById(move.unk10);
   speed = leader->speedLimit;

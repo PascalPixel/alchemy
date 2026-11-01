@@ -1,15 +1,30 @@
-// Draft, differ 573 of 1152, skeleton gap 117 (tla-en, 2026-11-01)
-// BattleEffect_RunMegaera. Control flow, calls and the 124-byte frame agree; what
-// is left is allocation and scheduling, mostly the whirl and the clouds of the
-// bolts. In the whirl the listing keeps draw in r6, sway in r7, cells in r5 with
-// the picture caller-saved; here draw lands in a high register. i should be r9
-// and j r11. In the cloud loop the listing reloads the width and height tables
-// inside the loop, where loop.c hoists them here: wrapping the Func_08196404
-// call in a one-pass block stops that and lowers the gap to about 100, but that
-// is a device, so it was left out; plain C that ends CSE's block there would do.
-// The placement pointer must stay in the loop, its lifetime under 14 insns
-// (hence fall <<= 16 before the stores). start + 10 stays an expression: a named
-// variable is not strength reduced.
+// Draft, differ 232 of 1152, skeleton gap 62 (tla-en, 2026-11-01)
+// BattleEffect_RunMegaera. Control flow, calls and the 124-byte frame agree.
+// Proven here: position and velocity are 8-byte structs in DImode pseudos (the
+// spill pairs and the t + x add of position.x / 2); rects is a set-once local
+// (slot 68); sway is one variable across the whirl's two layers, cells is not;
+// velocityY's pick reads blitters, not rects. Bolt givs take their slots in
+// reverse insn order, hence offset first and column - 12 for the left edge.
+// What is left starts in the cloud loop. The listing gives r8 and r10 to the
+// width and height table pointers, block-local, which is what pushes i to r9
+// and j to r11. Here CSE merges the two reads of each table across
+// Func_08196404 and loop.c hoists the result, so i takes r8 and every i loop
+// differs. A do { } while (0) around that call keeps the reads apart until cse2
+// and gives differ 56 of 1152, gap 44, all i to r9; that is a one-pass device
+// and it does not reach 0, so it is out. Plain C tried for the same split:
+// goto loop with a three local (differ 301: tables stay in the loop but are
+// rematerialized, so read why they miss local-alloc), do-while (233), an inline
+// wrapper (238), named mode and flags (254), a redundant ternary (232).
+// With that device on, the 56 are: placement[2] = fall << 16 hoists the
+// placement pointer (life 14 at threshold 15 needs over 210 real insns in the
+// bolt loop, there are 206; hence fall <<= 16 first, plain C for the extra 5 not
+// found); ldr r0, [sp, #68] issued before the argument stores in the smoke and
+// spark draws, the known too-early load after a store, which looks like the
+// load model, not source, and is Pascal's to judge; the spark preheader wants
+// column << 16 reloaded before offset (a named variable loses the giv, 430);
+// i = 0 after the giv stores at the bolt loop's head; ties in the whirl and the
+// sparkle draw. start + 10 stays an expression: a named variable is not
+// strength reduced.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -42,7 +57,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -78,7 +93,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -108,7 +123,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #include "input.h"
 
 void Func_0815f0a0(s32 palette);
-void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                    s32 mode);
 void Func_0816442c(s32 formation, s32 x, s32 y); // ..PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y); // ..RunImpactBurst
@@ -150,17 +165,16 @@ extern const u8 Data_08198bf8[];
 void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
+  s32 frame;
   u8 *sprites;
+  DrawRectangle *rects;
+  struct Point position;
+  struct Point velocity;
   DrawRectangle blitters[2];
   struct Point request;
   s32 placement[4];
   struct EffectStep *p;
   u8 *pictures;
-  s32 x;
-  s32 y;
-  s32 velocityX;
-  s32 velocityY;
-  s32 frame;
   s32 i;
   s32 j;
 
@@ -171,7 +185,8 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   Func_0813ba50();
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
-  BattleEffect_FetchRectangleBlitters(0, (void **)blitters);
+  rects = blitters;
+  BattleEffect_FetchRectangleBlitters(0, (void **)rects);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              work->sheet + 0x3800, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet, 1,
@@ -223,10 +238,10 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       Func_081180e8(134);
     }
     if (frame == 0) {
-      x = 0x200000;
-      y = 0x480000;
-      velocityX = 0x90000;
-      velocityY = -0x20000;
+      position.x = 0x200000;
+      position.y = 0x480000;
+      velocity.x = 0x90000;
+      velocity.y = -0x20000;
       BattleEffect_SpawnObjects(2, 657, 2);
     }
     if (frame == 108) {
@@ -237,11 +252,11 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
 
     // Megaera swoops, trailing sparkles.
     if (frame > 107) {
-      x += velocityX;
-      y += velocityY;
-      velocityX = velocityX * 59 / 64;
-      velocityY = velocityY * 59 / 64;
-      Func_0816442c(4, x, y);
+      position.x += velocity.x;
+      position.y += velocity.y;
+      velocity.x = velocity.x * 59 / 64;
+      velocity.y = velocity.y * 59 / 64;
+      Func_0816442c(4, position.x, position.y);
       if (frame == 108) {
         for (i = 0; i != 512; i++) {
           gMapCellBuffer[i].variant = -1;
@@ -253,9 +268,9 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
         s32 count = 10 - t / 2;
 
         if (count > 0) {
-          s32 half = x / 2;
+          s32 half;
 
-          for (i = 0; i != count / 5; i++) {
+          for (i = 0, half = position.x / 2; i != count / 5; i++) {
             struct EffectStep *cell;
             s32 angle;
             s32 radius;
@@ -264,7 +279,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
             angle = Random16();
             radius = (Random16() & 31) + 16;
             cell->x = Trig_Sin(angle) * radius + half + 0x100000;
-            cell->y = Trig_Cos(angle) * radius + y - 0x80000;
+            cell->y = Trig_Cos(angle) * radius + position.y - 0x80000;
             cell->velocityX = 0;
             cell->velocityY = 0;
             cell->variant = Random16() & 15;
@@ -298,18 +313,21 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
         (*draw)(canvas, cells, sway, 64, 96, 52);
         {
           s32 picture2 = (frame / 2) % 3;
-          s32 sway2 = (Trig_Sin((frame << 12) + 0x8000) << 3) >> 16;
-          u8 *cells2 = work->sheet + picture2 * 3 * 0x800;
+          u8 *cells2;
 
-          (*draw)(canvas, cells2, sway2, 0, 96, 64);
-          (*draw)(canvas, cells2, sway2, 64, 96, 52);
+          sway = (Trig_Sin((frame << 12) + 0x8000) << 3) >> 16;
+          cells2 = work->sheet + picture2 * 3 * 0x800;
+          (*draw)(canvas, cells2, sway, 0, 96, 64);
+          (*draw)(canvas, cells2, sway, 64, 96, 52);
         }
       }
       for (i = 0, p = work->particles; i != 24; i++, p++) {
         if ((u32)p->variant <= 15) {
-          u8 *smoke = work->sheet + 0x4800 + ((p->variant / 4) << 11);
+          s32 row = p->variant / 4;
+          s32 which = i & 1;
+          u8 *smoke = work->sheet + 0x4800 + (row << 11);
 
-          blitters[i & 1](canvas, smoke, HI(p->x) - 16, HI(p->y) - 32, 32, 64);
+          rects[which](canvas, smoke, HI(p->x) - 16, HI(p->y) - 32, 32, 64);
           BattleEffectKernels_IntegrateVector2(p, 62, -0x4000);
         }
         p->variant++;
@@ -361,9 +379,13 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
         }
         k = (p->variant / 2) % 9;
         cell = Data_0819744c[k];
+        {
+        s32 half;
         size = Data_0819745e[k];
-        blitters[0](canvas, Data_02016e16 + cell, HI(p->x) - size / 2,
-                    HI(p->y) - size / 2, size, size);
+        half = size / 2;
+        blitters[0](canvas, Data_02016e16 + cell, HI(p->x) - half,
+                    HI(p->y) - half, size, size);
+        }
         BattleEffectKernels_IntegrateVector2(p, 58, 0);
         if (i & 1) {
           p->velocityX += -0x800;
@@ -381,7 +403,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       HeapSlot_Release(188);
       for (i = 0; i != 2; i++) {
         s32 start = i * 16;
-        s32 left = i * 32 + 12;
+        s32 offset = i * 256 * sizeof(struct EffectStep);
         s32 column = i * 32 + 24;
 
         if (frame == start + 5) {
@@ -416,7 +438,9 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           if (frame == start + 10) {
             struct EffectStep *spark;
 
-            for (j = 0, spark = gMapCellBuffer + i * 256; j != 256; j++, spark++) {
+            for (j = 0,
+                spark = (struct EffectStep *)((u8 *)gMapCellBuffer + offset);
+                 j != 256; j++, spark++) {
               s32 angle = Random16() & 0x7fff;
               s32 speed = Random16() & 255;
 
@@ -429,7 +453,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           }
           if (frame >= start + 10 && frame < start + 18) {
             blitters[0](canvas,
-                        Data_02014c56 + (((frame + i) / 4) & 3) * 2880, left,
+                        Data_02014c56 + (((frame + i) / 4) & 3) * 2880, column - 12,
                         0, 24, 112);
           }
           if (frame >= start + 10) {
@@ -450,7 +474,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
         }
       }
       BattleEffect_LoadBlitter(188, 3);
-      blitters[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+      rects[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       if (frame <= 69) {
         for (i = 0, p = gMapCellBuffer; i != 512; i++, p++) {
           s32 size;
@@ -478,7 +502,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(188);
   HeapSlot_Release(104);
-  Func_0816467c(4, x, y);
+  Func_0816467c(4, position.x, position.y);
   for (i = 0; i != 11; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }

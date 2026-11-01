@@ -1,29 +1,45 @@
-// Draft, differ 2917 of 2781, skeleton gap 271/276 (tla-en, 2026-11-01)
-// BattleEffect_RunCoatlicue: same calls and control flow, draft 2786 of 2781
-// instructions. What is left is register allocation and the scheduling it
-// causes. The native has i and j in r8, k in r10, the model in r10 and frame
-// in r11, with verts on the stack; this has i in r10, frame in r9, k in the
-// caller-saved r4 and verts in a register. The root is one local: the IWRAM
-// copy's address goes to r8 here (r6 in the native), and that hard conflict
-// pushes i off r8. An if around Resource_DecodeType01 (a block boundary, not
-// a solution) puts i back in r8 and adds 28 common instructions, so a real
-// form that splits gMapCellBuffer's load from the cells loop's would move most
-// of the function; the native reloads that address from the pool at every use.
-// Frame is 124 against 164: the native has 24 unreferenced bytes above list
-// (140 to 163), left alone. &texture is hoisted to a stack slot here and
-// computed in the loop in the native. The native's particle loop keeps k * 7
-// on the stack and does not strength-reduce it; row and a separate += 7 both
-// reduce here.
-// Measured: Data_ tables are not const, the native rereads them after calls
-// (const for all, 290/274 but 16 instructions short); colours as bitfields
-// extract with two shifts where the native shifts and masks, so COLOR_* cast
-// to u16 for the halfword mask the native pools; s, sh and ty are one variable
-// each across the model blocks (s / 2 keeps its sign fix only then), d shared
-// the same way is worse (278/286). CopyWords is inline so its constant size
-// stays out of CSE, which matches 512 and 1024 being built twice.
-// ResourceId_BellMaidenTiles (0xa7), ResourceId_BlueFlameSheet (0x130),
-// Data0FB and Data0FC are not yet named in resource_directory.s; adoption
-// names them there. They are symbols because the native loads ids from the pool.
+// Draft, differ 1216 of 2781, skeleton gap 107/105 (tla-en, 2026-11-01)
+// BattleEffect_RunCoatlicue: same calls and control flow, draft 2779 of 2781
+// instructions, frame 164 as in the native. Registers now agree for frame
+// (r11), i (r8), k (r10), model and the last loop's locals. No FAKEMATCH device
+// is used. What is left, by cause:
+// - Slots. The draft's stack slots hold the same values in another order: from
+//   sp+48 down it has row, spin, tr, tg, top, verts, t, the hoisted &texture2,
+//   rise; the native has tr, tg, top, verts, t, &texture2, row, rise, spin. Row
+//   and spin sit below a hoisted pseudo there, so they are later than any
+//   declared variable: reduced givs or evicted pseudos, not user variables.
+//   rise is written as (frame - 539) << 20 at its uses and is reduced that way.
+//   spin = frame << 9 at the top of the loop is not reduced (the add of 512
+//   costs more than the shift saves) and merges with the frame << 9 in the i
+//   loops; two steps through a temporary lose 300. row = k * 7 in a real for
+//   reduces to a stepped k * 196 instead (differ 11 worse), so the particle
+//   loop stays goto.
+// - Reload rotation. Spill registers are r0 to r4 and r7, and insns that take a
+//   different reload register shift every later choice. Keep r5 out of that
+//   set: one insn taking it costs 900. The sheet local before the texture
+//   stores does this, and r7 comes in from the palette's mask reload.
+// - The cells loop has the object slots in r7 and cells in r5, the native the
+//   reverse, and tried: stepped pointer, indexed, a local, shifted index.
+// - The palette ease: the native keeps sr's mask apart from s (ands r3, r1;
+//   adds r1, r3, r2), which evicts sg to sp+8; orders of the c and s
+//   declarations lose 400 to 500.
+// - After the coil loop's texture stores the native has add r7, sp, #92 with
+//   adds r2, r7, #0; the sheet local gives one add.
+// Measured: Data_ tables are not const, the native rereads them after calls;
+// colours as bitfields extract with two shifts where the native shifts and
+// masks, so COLOR_* cast to u16 for the halfword mask the native pools; s, sh
+// and ty are one variable each across the model blocks, the last loop has its
+// own; i is also the particle loops' inner counter; k doubles as the palette's
+// blue target, which blocks r4; cellBuffer is a set-once local that no register
+// holds, so it reloads from the pool at each use. blit[2] and grid are 8-byte
+// locals, which gives the unused word at sp+68 and the pair at sp+56.
+// BLIT_CELL's order (cell offset, width, height) sets the live length of the
+// height table's address, and that decides frame's register. CopyWords is
+// inline so its constant size stays out of CSE; contradiction with S2's wrapper
+// kind is open, it carries no tag. ResourceId_BellMaidenTiles (0xa7),
+// ResourceId_BlueFlameSheet (0x130), Data0FB and Data0FC are not yet named in
+// resource_directory.s; adoption names them there. They are symbols because the
+// native loads ids from the pool.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -56,7 +72,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -73,13 +90,14 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -87,12 +105,12 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -103,7 +121,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -197,7 +215,8 @@ void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
 void Func_08164b2c(s32 r, s32 g, s32 b);
 void Heap_Release(void *buffer);
 
-#define OBJ_TILES(obj) (0x06010000 + gResourceTableEntries[(obj)->vramEntry].tile)
+#define OBJ_TILES(obj)                                                         \
+  (0x06010000 + gResourceTableEntries[(obj)->vramEntry].tile)
 #define COLOR_RED(c) ((c) & 31)
 #define COLOR_GREEN(c) (((u16)(c) >> 5) & 31)
 #define COLOR_BLUE(c) (((u16)(c) >> 10) & 31)
@@ -205,7 +224,7 @@ void Heap_Release(void *buffer);
 
 // Fills the scanline gradient behind the serpent: dark rows above and below,
 // a ramp shaded by level in between.
-#define FILL_GRADIENT(table, i, level)                                         \
+#define FILL_GRADIENT(table, i, level, c)                                      \
   do {                                                                         \
     for (; i != 135; i++) {                                                    \
       s32 t_ = i - 15;                                                         \
@@ -225,11 +244,23 @@ void Heap_Release(void *buffer);
         r_ = 0;                                                                \
       if (r_ > 31)                                                             \
         r_ = 31;                                                               \
-      *table++ = b_ << 10 | g_ << 5 | r_;                                      \
+      c = b_ << 10 | g_ << 5 | r_;                                             \
+      *table++ = c;                                                            \
     }                                                                          \
     for (; i != 160; i++) {                                                    \
       *table++ = 0;                                                            \
     }                                                                          \
+  } while (0)
+
+// Draws cell n of the stone sheet at offset base, centred on (x, y).
+#define BLIT_CELL(base, n, x, y)                                               \
+  do {                                                                         \
+    u8 *src_ = work->sheet + (base) + Data_081996ca[n];                        \
+    u8 w_ = Data_081996ac[n];                                                  \
+    s32 x_ = (x) - (w_ >> 1);                                                  \
+    u8 h_ = Data_081996bb[n];                                                  \
+                                                                               \
+    blit[0](canvas, src_, x_, (y) - (h_ >> 1), w_, h_);                        \
   } while (0)
 
 // Draws one spark of the falling stone sheet and drops it when it leaves the
@@ -238,11 +269,8 @@ void Heap_Release(void *buffer);
   do {                                                                         \
     s32 n_ = (p)->z;                                                           \
                                                                                \
-    blit(canvas, work->sheet + 0x4800 + Data_081996ca[n_],                     \
-         HALF_HI((p)->x) - (Data_081996ac[n_] >> 1),                           \
-         HALF_HI((p)->y) - (Data_081996bb[n_] >> 1), Data_081996ac[n_],        \
-         Data_081996bb[n_]);                                                   \
-    BattleEffectKernels_IntegrateVector2(p, 63, -0x4000);                          \
+    BLIT_CELL(0x4800, n_, HALF_HI((p)->x), HALF_HI((p)->y));                   \
+    BattleEffectKernels_IntegrateVector2(p, 63, -0x4000);                      \
     if ((p)->y < -(Data_081996bb[n_] << 16)) {                                 \
       (p)->variant = -1;                                                       \
     }                                                                          \
@@ -258,43 +286,41 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
-  DrawRectangle blit;
+  u8 *cellBuffer = gMapCellBuffer;
+  // Only blit[0] is used; the array takes an 8-byte slot in the frame.
+  DrawRectangle blit[2];
+  struct WordPair grid;
+  s32 skip;
   u16 *table;
   s32 frame;
   s32 i;
-  s32 j;
   s32 k;
   s32 y;
   s32 level;
-  s32 skip;
-  s32 rise;
-  s32 spin;
-  s32 gridX;
-  s32 gridY;
-  s32 t;
+  s32 color;
   s32 s;
   s32 sh;
   s32 ty;
-  s16 list[2];
+  s32 row;
+  s32 spin;
+  s16 list[14];
   s32 place[4];
   struct WordPair req;
   struct EffectPosition pos;
   struct ModelTexture texture;
   struct ModelTexture texture2;
-  struct RenderModel *model;
-  void *verts;
-  struct EffectStep *p;
   struct SpriteView *obj;
+  struct EffectStep *p;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  y = -80;
   sprites = Ram_HeapSlots->unk64[0];
   Func_0813ba50();
   BattleEffect_StartCanvasLayer(0);
   Func_08179e6c();
   work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  y = -80;
   for (frame = 0; frame != 27; frame++) {
     y += 4;
     REG_BG2X = y << 8;
@@ -302,16 +328,17 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     wait(1);
   }
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
-  blit = Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   work->transferMode = 2;
   work->transferValue = 75;
-  level = -8;
   table = (u16 *)(work->unk7300 + 0x340);
+  level = -8;
+  color = 0;
   for (i = 0; i != 15; i++) {
-    *table++ = 0;
+    *table++ = color;
   }
-  FILL_GRADIENT(table, i, level);
+  FILL_GRADIENT(table, i, level, color);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, 3326);
   skip = 0;
   Func_081885f0(Data_02014400, Data_02014800, 32);
@@ -319,52 +346,49 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
     u8 *e = Resource_GetTableEntry((s32)&ResourceId_BellMaidenTiles);
-    u8 *cells;
 
     CopyWords((void *)OBJ_PLTT, e, 512);
-    Resource_DecodeType01(e + 512, gMapCellBuffer);
-    cells = gMapCellBuffer;
-    for (i = 0; i != 12; i++, cells += 1024) {
+    Resource_DecodeType01(e + 512, cellBuffer);
+    for (i = 0; i != 12; i++) {
       obj = Func_0815b290(32, 32, 0x80002000, 0);
       obj->priority = 2;
       work->objects[i] = obj;
-      CopyWords((void *)OBJ_TILES(obj), cells, 1024);
+      CopyWords((void *)OBJ_TILES(obj), cellBuffer + i * 1024, 1024);
     }
   }
   Graphics_LoadGreyRamp();
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, gMapCellBuffer, 0, 0);
-  Func_0816ae40(gMapCellBuffer, work->sheet, 64, 64);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0FC, work->sheet + 0x4000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, cellBuffer, 0, 0);
+  Func_0816ae40(cellBuffer, work->sheet, 64, 64);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0FC, work->sheet + 0x4000, 0,
+                             0);
   {
     u8 *src = work->sheet + 0x4800;
-    u8 *dst;
 
     Resource_LoadAndDecompress((s32)&ResourceId_Data0FD, src, 0, 0);
-    dst = work->sheet + 0x53b8;
     for (i = 0; i != 3000; i++) {
-      *dst++ = *src++ >> 1;
+      work->sheet[0x53b8 + i] = src[i] >> 1;
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cellBuffer, 0, 0);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7541, 0x20000);
   gCameraSceneParameters[4] = 240;
   REG_BG2PA = 0x80;
   REG_BG2X = 0;
   REG_BLDCNT = 0x3f44;
   REG_BLDALPHA = 0x1010;
-  rise = 0xde500000;
   spin = 0;
-  for (frame = 0; frame != 602; frame++, rise += 0x100000, spin += 512) {
+  for (frame = 0; frame != 602; frame++, spin += 512) {
     if ((gInput.repeat & 3) && frame <= 581 && skip == 0) {
       skip = 1;
     }
     if (skip > 0) {
+      s32 *value = &work->transferValue;
       s32 v = skip * 0x101;
 
       v = (v + (v << 16)) << 2;
-      work->transferValue = v;
+      *value = v;
       if (v > 0x3f3f3f3f) {
-        work->transferValue = 0x3f3f3f3f;
+        *value = 0x3f3f3f3f;
       }
       work->transferMode = 1;
       if (++skip == 19) {
@@ -378,8 +402,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       for (i = 0; i != 64; i++) {
         work->particles[i].variant = -1;
       }
-      gridX = 0x580000;
-      gridY = 0x240000;
+      grid.a = 0x580000;
+      grid.b = 0x240000;
       work->transferMode = 2;
       work->transferValue = 50;
     }
@@ -425,8 +449,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       if (shade > 8) {
         shade = 8;
       }
+      color = 0;
       for (i = 0; i != 15; i++) {
-        *row++ = 0;
+        *row++ = color;
       }
       if (frame > 539) {
         shade = (frame - 540) / 2 + 8;
@@ -442,7 +467,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
       i = 15;
-      FILL_GRADIENT(row, i, shade);
+      FILL_GRADIENT(row, i, shade, color);
     }
     if ((u32)(frame - 282) <= 17) {
       s32 g = (frame - 282) / 2 + 14;
@@ -466,17 +491,18 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       u16 *dst = (u16 *)OBJ_PLTT;
       s32 tr = 31;
       s32 tg = 31;
-      s32 tb = 15;
+
+      k = 15;
 
       if (frame > 315) {
         tr = 4;
         tg = 12;
-        tb = 16;
+        k = 16;
       }
       if (frame > 337) {
         tr = 0;
         tg = 0;
-        tb = 0;
+        k = 0;
       }
       for (i = 0; i != 256; i++, e++, dst++) {
         s32 c = *dst;
@@ -484,7 +510,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 cb = COLOR_BLUE(c);
         s32 cg = COLOR_GREEN(c);
         s32 cr = COLOR_RED(c);
-        s32 sb = COLOR_BLUE(s) + tb;
+        s32 sb = COLOR_BLUE(s) + k;
         s32 sg = COLOR_GREEN(s) + tg;
         s32 sr = COLOR_RED(s) + tr;
 
@@ -549,29 +575,27 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 292) <= 253) {
-      s32 *where = place;
-
       req = Data_08196ef0;
-      where[1] = 0xff0000;
-      where[3] = 0;
+      place[1] = 0xff0000;
+      place[3] = 0;
       if (frame == 360) {
-        gridY = 0x240000;
+        grid.b = 0x240000;
       }
       if ((u32)(frame - 396) <= 111) {
-        gridY += 0x4000;
+        grid.b += 0x4000;
       }
       if (frame > 539) {
-        gridY += 0x100000;
+        grid.b += 0x100000;
       }
       for (i = 0; i != 12; i++) {
-        where[0] = ((i % 3) << 21) + gridX;
-        where[2] = ((i / 3) << 21) + gridY;
-        Render_ApplyProjectedPlacementFar(work->objects[i], where, (s32 *)&req,
+        place[0] = ((i % 3) << 21) + grid.a;
+        place[2] = ((i / 3) << 21) + grid.b;
+        Render_ApplyProjectedPlacementFar(work->objects[i], place, (s32 *)&req,
                                           0);
       }
     }
     if ((u32)(frame - 274) <= 23) {
-      p = &gData_02015000[80 + frame - 274];
+      p = &gData_02015000[frame - 274 + 80];
       {
         s32 x = ((Random16() & 15) + 52) << 16;
 
@@ -585,6 +609,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     if (frame == 310) {
       p = gData_02015000;
+
       for (i = 0; i != 80; i++, p++) {
         p->x = ((Random16() & 63) + 28) << 16;
         p->y = (Random16() % 80 + 56) << 16;
@@ -596,10 +621,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     for (k = 0; k != 9; k++) {
       if (frame == Data_081996e8[k]) {
-        for (j = 0; j != 7; j++) {
-          p = &work->particles[(k % 9) * 7 + j];
+        for (i = 0; i != 7; i++) {
+          struct EffectStep *p = &work->particles[(k % 9) * 7 + i];
+
           p->x = (Random16() % Data_0819970c[k] + Data_081996fa[k]) << 16;
-          p->y = ((Random16() & 3) + j * Data_08199715[k] + Data_08199703[k])
+          p->y = ((Random16() & 3) + i * Data_08199715[k] + Data_08199703[k])
                  << 16;
           p->velocityX = Data_0819971e[k] << 12;
           p->velocityY = Data_08199727[k] << 12;
@@ -611,6 +637,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     if (frame <= 359) {
       p = gData_02015000;
+
       for (i = 0; i != 384; i++, p++) {
         if (p->variant >= 0) {
           DRAW_SPARK(p);
@@ -641,11 +668,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       Func_080151e4(55536, 45536, 27768);
       if (frame == 360) {
+        struct EffectStep *p = gData_02015000;
+
         if (skip == 0) {
           work->transferMode = 2;
           work->transferValue = 75;
         }
-        p = gData_02015000;
         for (i = 0; i != 384; i++, p++) {
           p->variant = Random16() & 3;
           p->x = (Random16() % 160 - 80) << 16;
@@ -659,342 +687,357 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       if (frame == 540) {
         p = gData_02015000;
+
         for (i = 0; i != 384; i++, p++) {
           p->y = 0;
           p->velocityY = -((Random16() & 63) + 32) << 15;
         }
       }
-      p = gData_02015000;
-      for (i = 0; i != 80; i++, p++) {
-        s32 n;
-        struct EffectPosition *q;
+      {
+        p = gData_02015000;
 
-        if (p->variant < 0) {
-          continue;
-        }
-        q = &pos;
-        EffectPosition_ProjectPoint(p, q);
-        q->depth = HALF_HI(q->depth) - 228;
-        n = q->depth * 6 / 50 + Data_08199742[p->variant];
-        if (n < 0) {
-          n = 0;
-        }
-        if (n > 14) {
-          n = 14;
-        }
-        q->y = HALF_HI(q->y);
-        q->x = HALF_HI(q->x) + 60;
-        if (frame > 539) {
-          q->y = q->y + (frame << 4) - 8608;
-        } else if (frame > 517) {
-          q->y = q->y + 16;
-        } else if (frame <= 453) {
-          q->y = q->y + 80;
-        } else {
-          q->y = q->y - frame + 534;
-        }
-        if (p->variant <= 1) {
-          blit(canvas, work->sheet + 0x4800 + Data_081996ca[n],
-               q->x - (Data_081996ac[n] >> 1), q->y - (Data_081996bb[n] >> 1),
-               Data_081996ac[n], Data_081996bb[n]);
-        } else {
-          blit(canvas, work->sheet + 0x53b8 + Data_081996ca[n],
-               q->x - (Data_081996ac[n] >> 1), q->y - (Data_081996bb[n] >> 1),
-               Data_081996ac[n], Data_081996bb[n]);
-        }
-        if (frame <= 453 || frame >= i / 16 + 540) {
-          p->y += p->velocityY;
+        for (i = 0; i != 80; i++, p++) {
+          s32 n;
+          struct EffectPosition *q;
+
+          if (p->variant < 0) {
+            continue;
+          }
+          q = &pos;
+          EffectPosition_ProjectPoint(p, q);
+          q->depth = HALF_HI(q->depth) - 228;
+          n = q->depth * 6 / 50 + Data_08199742[p->variant];
+          if (n < 0) {
+            n = 0;
+          }
+          if (n > 14) {
+            n = 14;
+          }
+          q->y = HALF_HI(q->y);
+          q->x = HALF_HI(q->x) + 60;
+          if (frame > 539) {
+            q->y = q->y + (frame << 4) - 8608;
+          } else if (frame > 517) {
+            q->y = q->y + 16;
+          } else if (frame <= 453) {
+            q->y = q->y + 80;
+          } else {
+            q->y = q->y - frame + 534;
+          }
+          if (p->variant <= 1) {
+            BLIT_CELL(0x4800, n, q->x, q->y);
+          } else {
+            BLIT_CELL(0x53b8, n, q->x, q->y);
+          }
+          if (frame <= 453 || frame >= i / 16 + 540) {
+            p->y += p->velocityY;
+          }
         }
       }
     }
-    for (k = 0; k != 9; k++) {
+    row = 0;
+    k = 0;
+  particles:
+    {
       s32 top = 0;
-      s32 row = k * 7;
+      struct EffectStep *step = &work->particles[row];
 
-      p = &work->particles[row];
-      for (j = 0; j != 7; j++, p++) {
+      for (i = 0; i != 7; i++, step++) {
         if (work->particles[k * 7 + 6].variant >= 0) {
-          s32 n = 14 - HALF_HI(p->z);
-          s32 x = (p->x + (Trig_Sin((frame - (j % 7) * 8) << 10) << 2)) >> 16;
+          s32 n = 14 - HALF_HI(step->z);
+          s32 x =
+              (step->x + (Trig_Sin((frame - (i % 7) * 8) << 10) << 2)) >> 16;
 
-          if (j == 0) {
-            top = p->y;
+          if (i == 0) {
+            top = step->y;
           }
           if (n < 0) {
             n = 0;
           }
-          blit(canvas, work->sheet + 0x53b8 + Data_081996ca[n],
-               x - (Data_081996ac[n] >> 1),
-               (top >> 16) - (Data_081996bb[n] >> 1), Data_081996ac[n],
-               Data_081996bb[n]);
-          BattleEffectKernels_IntegrateVector3(p, 64, 0);
-          if (p->z < 0) {
-            p->z = 0;
+          BLIT_CELL(0x53b8, n, x, top >> 16);
+          BattleEffectKernels_IntegrateVector3(step, 64, 0);
+          if (step->z < 0) {
+            step->z = 0;
           }
-          if (j == 6 && p->y < -(Data_081996bb[n] << 16)) {
-            p->variant = -1;
+          if (i == 6 && step->y < -(Data_081996bb[n] << 16)) {
+            step->variant = -1;
           }
-          top = top + p->z + 0x80000;
+          top = top + step->z + 0x80000;
         }
+      }
+      row += 7;
+      k++;
+      if (k != 9) {
+        goto particles;
       }
     }
-    verts = Heap_AllocEwram(512);
-    model = Render_AllocateModelList(1);
-    texture.logWidth = 7;
-    model->texture = &texture;
-    texture.logHeight = 7;
-    model->mesh = gData_08199364;
-    model->vertices = verts;
-    t = frame - 210;
-    if ((u32)t <= 107) {
-      s32 pitch = 4000;
+    {
+      void *verts;
+      s32 t;
+      struct RenderModel *model;
 
-      ty = (frame * 3 << 13) - 0x4ec000;
-      if (ty > 0x180000) {
-        ty = 0x180000;
-      }
-      s = frame * 611 - 111926;
-      if (s > 55536) {
-        s = 55536;
-      }
-      if (frame > 273) {
-        ty = (frame << 15) - 0x710000;
-        if (ty > 0x200000) {
-          ty = 0x200000;
+      verts = Heap_AllocEwram(512);
+      model = Render_AllocateModelList(1);
+      model->texture = &texture;
+      texture.logWidth = 7;
+      texture.logHeight = 7;
+      model->mesh = gData_08199364;
+      model->vertices = verts;
+      t = frame - 210;
+      if ((u32)t <= 107) {
+        s32 pitch = 4000;
+
+        ty = (frame * 3 << 13) - 0x4ec000;
+        if (ty > 0x180000) {
+          ty = 0x180000;
         }
-        pitch = 21536 - (frame << 6);
-        if (pitch <= 2999) {
-          pitch = 3000;
+        s = frame * 611 - 111926;
+        if (s > 55536) {
+          s = 55536;
         }
-        s = s + frame * 1875 - 513750;
-        if (s > 85536) {
-          s = 85536;
+        if (frame > 273) {
+          ty = (frame << 15) - 0x710000;
+          if (ty > 0x200000) {
+            ty = 0x200000;
+          }
+          pitch = 21536 - (frame << 6);
+          if (pitch <= 2999) {
+            pitch = 3000;
+          }
+          s = s + frame * 1875 - 513750;
+          if (s > 85536) {
+            s = 85536;
+          }
         }
+        model->kind = 6;
+        texture.pixels = work->sheet;
+        sh = (frame << 3) - 1744;
+        if (sh > 0) {
+          sh = 0;
+        }
+        if (frame > 309) {
+          sh = (310 - frame) << 3;
+        }
+        model->shade = sh;
+        Render_ResetTransformState();
+        Func_08015160(0, ty, 0);
+        Func_080151e4(0x8000, 0x10000, 0x8000);
+        Func_0801521c(s);
+        if (frame <= 273) {
+          Func_080150e4(spin - 0x12400);
+        }
+        SceneTransform_ApplyPitch(pitch);
+        SceneTransform_ApplyYaw(spin);
+        Render_TransformVertices(gData_08199210, verts, 64);
+        Render_DrawModelList(model);
       }
-      model->kind = 6;
-      texture.pixels = work->sheet;
-      sh = (frame << 3) - 1744;
-      if (sh > 0) {
+      if ((u32)(frame - 273) <= 7 && skip == 0) {
+        s32 d = frame - 273;
+        s32 v;
+
+        work->transferMode = 1;
+        v = d * 0x101;
+        v = v + (v << 16);
+        work->transferValue = 0x3f3f3f3f - (v << 2);
+      }
+      if (frame == 281 && skip == 0) {
+        work->transferMode = 2;
+        work->transferValue = 50;
+      }
+      if ((u32)(frame - 274) <= 27) {
+        s = (frame << 11) - 0x85000;
+        texture.pixels = cellBuffer;
+        model->kind = 7;
         sh = 0;
+        if (frame > 293) {
+          sh = (294 - frame) << 3;
+        }
+        model->shade = sh;
+        Render_ResetTransformState();
+        Func_08015160(0, 0x1c0000, 0);
+        Func_0801521c(s);
+        SceneTransform_ApplyPitch(4000);
+        SceneTransform_ApplyYaw(spin);
+        Render_TransformVertices(gData_08199210, verts, 64);
+        Render_DrawModelList(model);
       }
-      if (frame > 309) {
-        sh = (310 - frame) << 3;
-      }
-      model->shade = sh;
-      Render_ResetTransformState();
-      Func_08015160(0, ty, 0);
-      Func_080151e4(0x8000, 0x10000, 0x8000);
-      Func_0801521c(s);
-      if (frame <= 273) {
-        Func_080150e4(spin - 0x12400);
-      }
-      SceneTransform_ApplyPitch(pitch);
-      SceneTransform_ApplyYaw(spin);
-      Render_TransformVertices(gData_08199210, verts, 64);
-      Render_DrawModelList(model);
-    }
-    if ((u32)(frame - 273) <= 7 && skip == 0) {
-      s32 d = frame - 273;
-      s32 v;
+      if (frame > 80) {
+        for (i = 0; i != 4; i++) {
+          s32 st = Data_08199746[i];
 
-      work->transferMode = 1;
-      v = d * 0x101;
-      v = v + (v << 16);
-      work->transferValue = 0x3f3f3f3f - (v << 2);
-    }
-    if (frame == 281 && skip == 0) {
-      work->transferMode = 2;
-      work->transferValue = 50;
-    }
-    if ((u32)(frame - 274) <= 27) {
-      s = (frame << 11) - 0x85000;
-      texture.pixels = gMapCellBuffer;
-      model->kind = 7;
-      sh = 0;
-      if (frame > 293) {
-        sh = (294 - frame) << 3;
+          if (frame > st && frame < st + 10) {
+            s32 d;
+
+            sh = -16;
+            texture.pixels = cellBuffer;
+            model->kind = 6;
+            model->shade = sh;
+            d = frame - st;
+            Render_ResetTransformState();
+            s = d << 13;
+            if (i > 1) {
+              ty = -0x2c0000;
+              if (frame > 539) {
+                ty += (frame - 539) << 20;
+              }
+              Func_08015160(-0x40000, ty, 0);
+              Func_080151e4(s, s, s);
+            } else {
+              Func_080151e4(s, d << 14, s);
+            }
+            SceneTransform_ApplyPitch(0x4000);
+            SceneTransform_ApplyYaw(frame << 9);
+            Render_TransformVertices(gData_08199210, verts, 64);
+            Render_DrawModelList(model);
+          }
+        }
       }
-      model->shade = sh;
-      Render_ResetTransformState();
-      Func_08015160(0, 0x1c0000, 0);
-      Func_0801521c(s);
-      SceneTransform_ApplyPitch(4000);
-      SceneTransform_ApplyYaw(spin);
-      Render_TransformVertices(gData_08199210, verts, 64);
-      Render_DrawModelList(model);
-    }
-    if (frame > 80) {
-      for (i = 0; i != 4; i++) {
-        s32 st = Data_08199746[i];
+      if (frame > 80) {
+        for (i = 0; i != 3; i++) {
+          if (frame == Data_0819974e[i]) {
+            Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
+          }
+          if (frame > Data_0819974e[i] && frame < Data_0819974e[i] + 10) {
+            s32 d = frame - Data_0819974e[i];
+            sh = d * 16 - 56;
+            s = 0x14000 - (d << 13);
+            texture.pixels = cellBuffer;
+            model->kind = 7;
+            if (sh > 0) {
+              sh = 0;
+            }
+            model->shade = sh;
+            Render_ResetTransformState();
+            Func_08015160(-0x40000, -0x2c0000, 0);
+            Func_080151e4(s, s << 1, s);
+            Func_080150e4((i << 14) + 0x2000);
+            SceneTransform_ApplyPitch(-0x1000);
+            SceneTransform_ApplyYaw(frame << 9);
+            Render_TransformVertices(gData_08199210, verts, 64);
+            Render_DrawModelList(model);
+          }
+        }
+      }
+      if (frame > 80) {
+        for (i = 0; i != 3; i++) {
+          s32 st = Data_08199754[i];
 
-        if (frame > st && frame < st + 10) {
-          s32 d;
-
-          sh = -16;
-          texture.pixels = gMapCellBuffer;
-          model->kind = 6;
-          model->shade = sh;
-          d = frame - st;
-          Render_ResetTransformState();
-          s = d << 13;
-          if (i > 1) {
+          if (frame > st && frame < st + 100) {
             ty = -0x2c0000;
+            sh = -16;
+            s = (frame - st) * 2978;
+            if (s > 65535) {
+              s = 0x10000;
+            }
+            texture.pixels = work->sheet;
+            model->kind = 6;
+            model->shade = sh;
+            Render_ResetTransformState();
             if (frame > 539) {
-              ty += rise;
+              ty = ((frame - 539) << 20) + -0x2c0000;
             }
             Func_08015160(-0x40000, ty, 0);
-            Func_080151e4(s, s, s);
-          } else {
-            Func_080151e4(s, d << 14, s);
+            Func_080151e4(s, s / 2, s);
+            SceneTransform_ApplyPitch(0x4000);
+            SceneTransform_ApplyYaw(frame << 11);
+            Render_TransformVertices(gData_08199210, verts, 64);
+            Render_DrawModelList(model);
           }
-          SceneTransform_ApplyPitch(0x4000);
-          SceneTransform_ApplyYaw(frame << 9);
-          Render_TransformVertices(gData_08199210, verts, 64);
-          Render_DrawModelList(model);
         }
       }
-    }
-    if (frame > 80) {
-      for (i = 0; i != 3; i++) {
-        if (frame == Data_0819974e[i]) {
-          Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
-        }
-        if (frame > Data_0819974e[i] && frame < Data_0819974e[i] + 10) {
-          s32 d = frame - Data_0819974e[i];
-          sh = d * 16 - 56;
-          s = 0x14000 - (d << 13);
-          texture.pixels = gMapCellBuffer;
-          model->kind = 7;
-          if (sh > 0) {
-            sh = 0;
-          }
-          model->shade = sh;
-          Render_ResetTransformState();
-          Func_08015160(-0x40000, -0x2c0000, 0);
-          Func_080151e4(s, s << 1, s);
-          Func_080150e4((i << 14) + 0x2000);
-          SceneTransform_ApplyPitch(-0x1000);
-          SceneTransform_ApplyYaw(frame << 9);
-          Render_TransformVertices(gData_08199210, verts, 64);
-          Render_DrawModelList(model);
-        }
-      }
-    }
-    if (frame > 80) {
-      for (i = 0; i != 3; i++) {
-        s32 st = Data_08199754[i];
+      {
+        u8 *sheet = work->sheet + 0x4000;
 
-        if (frame > st && frame < st + 100) {
-          ty = -0x2c0000;
-          sh = -16;
-          s = (frame - st) * 2978;
-          if (s > 65535) {
-            s = 0x10000;
-          }
-          texture.pixels = work->sheet;
-          model->kind = 6;
-          model->shade = sh;
-          Render_ResetTransformState();
-          if (frame > 539) {
-            ty = rise + -0x2c0000;
-          }
-          Func_08015160(-0x40000, ty, 0);
-          Func_080151e4(s, s / 2, s);
-          SceneTransform_ApplyPitch(0x4000);
-          SceneTransform_ApplyYaw(frame << 11);
-          Render_TransformVertices(gData_08199210, verts, 64);
-          Render_DrawModelList(model);
-        }
+        texture.logWidth = 7;
+        texture.logHeight = 4;
+        texture.pixels = sheet;
       }
-    }
-    texture.logWidth = 7;
-    texture.logHeight = 4;
-    texture.pixels = work->sheet + 0x4000;
-    model->kind = 7;
-    model->mesh = Data_02014800;
-    model->vertices = verts;
-    model->scrollU = 0;
-    model->scrollV = 0;
-    for (i = 0; i != 2; i++) {
-      if (frame < Data_08199756[i]) {
-        continue;
-      }
-      if (frame <= 293) {
-        s = Data_08199758[i] + Data_08199760[i] * (frame - Data_08199756[i]);
-        if (s > Data_08199764[i]) {
-          s = Data_08199764[i];
+      model->kind = 7;
+      model->mesh = Data_02014800;
+      model->vertices = verts;
+      model->scrollU = 0;
+      model->scrollV = 0;
+      for (i = 0; i != 2; i++) {
+        if (frame < Data_08199756[i]) {
+          continue;
         }
-        if (frame > 209) {
-          s -= Data_08199760[i] * t;
-        }
-        Render_ResetTransformState();
-        Func_080151e4(0x8000, 0x10000, 0x8000);
-        if (frame > 273) {
-          s = s + (frame << 13) + -0x224000;
-        }
-        Func_0801521c(s);
-        if (i == 0) {
+        if (frame <= 293) {
+          s = Data_08199758[i] + Data_08199760[i] * (frame - Data_08199756[i]);
+          if (s > Data_08199764[i]) {
+            s = Data_08199764[i];
+          }
           if (frame > 209) {
-            s32 v = t;
+            s -= Data_08199760[i] * t;
+          }
+          Render_ResetTransformState();
+          Func_080151e4(0x8000, 0x10000, 0x8000);
+          if (frame > 273) {
+            s = s + (frame << 13) + -0x224000;
+          }
+          Func_0801521c(s);
+          if (i == 0) {
+            if (frame > 209) {
+              s32 v = t;
 
-            if (v > 48) {
-              v = 48;
+              if (v > 48) {
+                v = 48;
+              }
+              Func_08015160(0, v << 16, 0);
             }
-            Func_08015160(0, v << 16, 0);
-          }
-          Func_080150e4(Data_0819975c[i] - (frame << 8));
-          sh = -16;
-        } else {
-          s32 x = -48;
+            Func_080150e4(Data_0819975c[i] - (frame << 8));
+            sh = -16;
+          } else {
+            s32 x = -48;
 
-          if (frame > 127) {
-            x = frame - 176;
+            if (frame > 127) {
+              x = frame - 176;
+            }
+            if (x > -16) {
+              x = -16;
+            }
+            Func_08015160(x << 16, 0, 0);
+            Func_080150e4(Data_0819975c[i] + (frame << 8));
+            if (frame > 209) {
+              Func_080150e4((frame << 8) + -0xd200);
+            }
+            sh = ((frame - Data_08199756[i]) << 2) - 64;
+            if (sh > -16) {
+              sh = -16;
+            }
           }
-          if (x > -16) {
-            x = -16;
+          if (frame > 273) {
+            sh = 1080 - (frame << 2);
+            if (i == 0) {
+              Func_080150e4((274 - frame) << 10);
+            } else {
+              Func_080150e4(spin + -0x22400);
+            }
           }
-          Func_08015160(x << 16, 0, 0);
-          Func_080150e4(Data_0819975c[i] + (frame << 8));
-          if (frame > 209) {
-            Func_080150e4((frame << 8) + -0xd200);
-          }
-          sh = ((frame - Data_08199756[i]) << 2) - 64;
+        } else {
+          sh = (frame << 2) - (i << 3) - 1240;
           if (sh > -16) {
             sh = -16;
           }
-        }
-        if (frame > 273) {
-          sh = 1080 - (frame << 2);
-          if (i == 0) {
-            Func_080150e4((274 - frame) << 10);
-          } else {
-            Func_080150e4(spin + -0x22400);
+          s = i * 26384 - (frame << 12) + 0x138710;
+          if (s <= 16383) {
+            continue;
           }
+          Render_ResetTransformState();
+          Func_080151e4(0x8000, 0x10000, 0x8000);
+          Func_08015160(0, 0x200000, 0);
+          Func_0801521c(s);
         }
-      } else {
-        sh = (frame << 2) - (i << 3) - 1240;
-        if (sh > -16) {
-          sh = -16;
+        if (sh > -64) {
+          model->shade = sh;
+          SceneTransform_ApplyPitch((frame - i * 82) * 22 - 3000);
+          SceneTransform_ApplyYaw(-frame << 10);
+          Render_TransformVertices(Data_02014400, verts, 64);
+          Render_DrawModelList(model);
         }
-        s = i * 26384 - (frame << 12) + 0x138710;
-        if (s <= 16383) {
-          continue;
-        }
-        Render_ResetTransformState();
-        Func_080151e4(0x8000, 0x10000, 0x8000);
-        Func_08015160(0, 0x200000, 0);
-        Func_0801521c(s);
       }
-      if (sh > -64) {
-        model->shade = sh;
-        SceneTransform_ApplyPitch((frame - i * 82) * 22 - 3000);
-        SceneTransform_ApplyYaw(-frame << 10);
-        Render_TransformVertices(Data_02014400, verts, 64);
-        Render_DrawModelList(model);
-      }
+      Heap_Release(model);
+      Heap_Release(verts);
     }
-    Heap_Release(model);
-    Heap_Release(verts);
     while (*(volatile u32 *)&work->vblanksSinceTransfer <= 1) {
     }
     work->transferPending = 1;
@@ -1006,20 +1049,23 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
   Palette_LoadBasicObjColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 0xa0), 0x80000010,
+  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 80), 0x80000010,
           (volatile u32 *)0x040000d4);
-  *(volatile u16 *)(BG_PLTT + 0xbc) = *(volatile u16 *)(BG_PLTT + 0x1e8);
+  BG_PLTT[94] = BG_PLTT[244];
   BattleEffect_SelectLivingTargets(work->effect);
   wait(1);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);
   gCameraSceneParameters[4] = 120;
   wait(1);
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 512);
+  Iwram_CopyWords((void *)BG_PLTT,
+                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 512);
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
   Func_08164b2c(0, 0, 11);
   for (frame = 0; frame != 60; frame++) {
     s32 s;
     s32 lift;
+    struct RenderModel *model2;
+    void *verts2;
     s32 d;
 
     if (frame == 16) {
@@ -1036,20 +1082,26 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       work->transferMode = 3;
       work->transferValue = 0x04040404;
-      p = gData_02015000;
-      for (i = 0; i != 256; i++, p++) {
-        p->x = (Random16() & 127) << 16;
-        p->y = ((Random16() & 255) + 120) << 16;
-        p->velocityX = ((Random16() & 31) - 16) << 13;
-        p->velocityY = (8 - (Random16() & 31)) << 12;
-        p->z = (Random16() & 7) + 5;
-        p->variant = 32;
+      {
+        struct EffectStep *p = gData_02015000;
+
+        for (i = 0; i != 256; i++, p++) {
+          p->x = (Random16() & 127) << 16;
+          p->y = ((Random16() & 255) + 120) << 16;
+          p->velocityX = ((Random16() & 31) - 16) << 13;
+          p->velocityY = (8 - (Random16() & 31)) << 12;
+          p->z = (Random16() & 7) + 5;
+          p->variant = 32;
+        }
       }
     }
-    p = gData_02015000;
-    for (i = 0; i != 256; i++, p++) {
-      if (p->variant >= 0) {
-        DRAW_SPARK(p);
+    {
+      p = gData_02015000;
+
+      for (i = 0; i != 256; i++, p++) {
+        if (p->variant >= 0) {
+          DRAW_SPARK(p);
+        }
       }
     }
     for (i = 0; i != effect->count; i++) {
@@ -1064,26 +1116,27 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
     }
-    verts = Heap_AllocEwram(512);
-    model = Render_AllocateModelList(1);
-    model->texture = &texture2;
+    verts2 = Heap_AllocEwram(512);
+    model2 = Render_AllocateModelList(1);
+    model2->texture = &texture2;
     texture2.logWidth = 7;
     texture2.logHeight = 7;
-    model->mesh = gData_08199364;
-    model->vertices = verts;
-    model->kind = 6;
+    model2->mesh = gData_08199364;
+    model2->vertices = verts2;
+    model2->kind = 6;
     texture2.pixels = work->sheet;
     lift = frame * 8 - 128;
     s = (frame << 13) + -0x20000;
     d = frame - 16;
     for (i = 0; i != 3; i++, lift -= 64, s += -0x10000, d -= 8) {
       if (d >= 0) {
-        sh = 0;
+        s32 sh2 = 0;
+
         if (d > 15) {
-          sh = (16 - d) << 3;
+          sh2 = (16 - d) << 3;
         }
-        model->shade = sh;
-        if (sh > -64) {
+        model2->shade = sh2;
+        if (sh2 > -64) {
           Render_ResetTransformState();
           Func_08015160(0, (112 - lift) << 16, 0);
           Func_080151e4(0x8000, 0x10000, 0x8000);
@@ -1091,13 +1144,13 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           Func_080150e4((i << 14) + 0x2000);
           SceneTransform_ApplyPitch(-0x1000);
           SceneTransform_ApplyYaw(frame << 10);
-          Render_TransformVertices(gData_08199210, verts, 4);
-          Render_DrawModelList(model);
+          Render_TransformVertices(gData_08199210, verts2, 4);
+          Render_DrawModelList(model2);
         }
       }
     }
-    Heap_Release(model);
-    Heap_Release(verts);
+    Heap_Release(model2);
+    Heap_Release(verts2);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

@@ -1,4 +1,4 @@
-// Draft, differ 232 of 3111, skeleton gap 84 (tla-en, 2026-11-01): the battle
+// Draft, differ 124 of 3111, skeleton gap 27 (tla-en, 2026-11-01): the battle
 // summary screen, The Broken Seal's BattleStatusScreen_Run
 // (games/tbs/src/window/screens/battle_status.c) grown into four pages that A
 // cycles through: the stats (page 0, as The Broken Seal's), the member's battle
@@ -9,22 +9,47 @@
 // follows the cursor. The battle figure is spawned for the member shown and
 // released on the way out; a reserve member (past the fourth) is labelled.
 //
-// Control flow, loops and instruction count now agree with the listing; what is
-// left is scheduling pairs and one allocation. The largest is the unit snapshot
-// in the help text: the native keeps &unit->agi in r5, savedUnit in r6 and the
-// size in r8 and loads IwramCopyWords twice, the draft gives the address r2 with
-// a caller save and keeps the IwramCopyWords constant in r8 (local-alloc order;
-// the deltas' scope, a pointer local and a size local change nothing). Next is
-// next's stack slot: the native's is [sp, #20], below the hoisted addresses, so
-// loop.c may have made it, but djinnList[j] is not reduced and costs the frame
-// 4 bytes. cursor.group's store before reading groupPositions[0] stays in the
-// native's order only.
+// Control flow, loops and instruction count agree with the listing. No device
+// is in use. Three things are left, none closed by reshaping:
 //
-// Forms the match depends on: j is also the "not yet shown" -1 of pages 1 and 3
-// and the scroll marks' counter; statusKinds[i++] rather than a pointer, so the
-// stages are not reread after a store; the positions read directly from the
-// cursor after clamping, not through a local; a compound for condition keeps the
-// recovery search out of loop.c; the sprites' words and fields share a union.
+// 1. Two stack slots, about 20 instructions. next is [sp, #20] in the native and
+// [sp, #52] here, which moves helpText and statusKind by 4; statusSprites'
+// hoisted address is [sp, #44] in the native and [sp, #20] here. Slots follow
+// pseudo number, so the native's pointer is one loop.c made: djinnList[j],
+// reduced as an address giv with the increment beside the load (ldmia). Here
+// that giv is refused: "68 vs 76", benefit 4 times threshold 17 against 76 real
+// insns (the mask constants' sets are most of them). It reduces, and the slot
+// drops below the hoists, once one-constant locals bring the loop to 68 insns,
+// but those locals break the masks' allocation and CSE across the calls. A
+// benefit of 5 or a threshold of 19 would do it without them; a threshold is a
+// compiler question, out of scope here. Tried: a pointer set in the loop, one
+// shared with the list build, one set before the test (reduces, no auto-inc), a
+// struct's array (benefit 3), a two-step index. S2 has no device for this, so
+// the scheduling devices below cannot reach differ 0 and none was added.
+//
+// 2. Sprite words: after ldr of 0x80000400 and friends the draft fills the load's
+// stall with an argument set-up (adds r0, r5 and ldr r1 at the name, cursor and
+// list icon sprites), the native stores straight away. That reorders the pool,
+// so those sites differ by a word in every pc offset. No source form moves it;
+// a store's use of a load looks costed differently (K2's scheduling model).
+//
+// 3. Scheduling pairs: cursor.group's store before reading groupPositions[0]
+// (three sites, the array read through [cursor.group] changes nothing), j = -1
+// before the items' first load, add r1 around the count's store, the help
+// window's four loads on page 2, and movs r7, #0 (helpValue set after
+// agilityDelta costs 90: see below). The two list loops' exit also threads past
+// the fill loop's test here (bgt +114, not +26); break changes nothing.
+//
+// Forms the match depends on: helpValue is set before agilityDelta's read, which
+// shortens &unit->agi's life by one insn so it outranks the size and takes r5, and
+// IwramCopyWords falls out of its register and is reloaded at each call. The
+// Djinn list is built through djinnList[djinnCount], a giv of the count, not a
+// pointer: that gives the t + base start and both increments. The recovery list
+// is read through recovery->entries[k] (base + t). j is also the "not yet shown"
+// -1 of pages 1 and 3 and the scroll marks' counter; statusKinds[i++] rather than
+// a pointer, so the stages are not reread after a store; the positions read
+// directly from the cursor after clamping, not through a local; the sprites'
+// words and fields share a union.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -498,8 +523,9 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           keys = 0;
           Sound_PlayFar(111);
           cursor.group ^= 2;
-          groupPosition = statusCount - 1;
-          if (!(gInput.repeat & 0x20))
+          if (gInput.repeat & 0x20)
+            groupPosition = statusCount - 1;
+          else
             groupPosition = 0;
         }
         cursor.groupPositions[cursor.group] = groupPosition;
@@ -889,30 +915,27 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       Window_DrawDividerLine(statusWindow, 0, 16, 29, 16);
       djinnCount = 0;
       for (element = 0; element <= 3; element++) {
-        u32 *out = &djinnList[djinnCount];
-
         for (bit = 0; bit <= 19; bit++) {
           if (unit->djinnSet[element] & (1 << bit)) {
-            *out++ = (element << 8) | bit;
+            djinnList[djinnCount] = (element << 8) | bit;
             djinnCount++;
           } else if (unit->djinnOwned[element] & (1 << bit)) {
             struct SummaryRecoveryList *recovery =
                 &Djinn_GetRecoveryTableFar((u32)member > 7)->list;
-            struct SummaryRecoveryEntry *entries = recovery->entries;
             s32 k;
             s32 value;
 
             for (k = 0;
                  k < recovery->count &&
-                 !(entries[k].owner == member &&
-                   entries[k].element == element && entries[k].index == bit);
+                 !(recovery->entries[k].owner == member &&
+                   recovery->entries[k].element == element &&
+                   recovery->entries[k].index == bit);
                  k++)
               ;
             value = (element << 8) | bit | 0x10000;
-            *out = value;
-            if (entries[k].turns > 0)
-              *out = value | (entries[k].turns << 17);
-            out++;
+            djinnList[djinnCount] = value;
+            if (recovery->entries[k].turns > 0)
+              djinnList[djinnCount] = value | (recovery->entries[k].turns << 17);
             djinnCount++;
           }
         }
@@ -950,9 +973,12 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         s32 column;
         s32 tileRow;
 
-        for (j = 0; j <= 8 && (shown = *next++, column = j / 3 * 7,
-                              tileRow = j % 3 * 2 + 9, shown != 0x80000000);
-             j++) {
+        for (j = 0; j <= 8; j++) {
+          shown = *next++;
+          column = j / 3 * 7;
+          tileRow = j % 3 * 2 + 9;
+          if (shown == 0x80000000)
+            break;
           Window_SetTilemapEntry(statusWindow,
                                    ((shown & 0xf00) >> 8) + 0x5001, column,
                                    tileRow, 0);
@@ -1158,8 +1184,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         Iwram_CopyWords(savedUnit, unit, sizeof(*savedUnit));
         attackDelta = unit->atk;
         defenseDelta = unit->def;
-        agilityDelta = unit->agi;
         helpValue = 0;
+        agilityDelta = unit->agi;
         unit->attackStage = 0;
         unit->defenseStage = 0;
         unit->agilityStage = 0;

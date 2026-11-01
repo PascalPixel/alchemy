@@ -1,26 +1,39 @@
-// Draft, differ 216 of 305, skeleton gap 92 (tla-en, 2026-11-01)
-// Left: the native ends CSE at two points, one between the leader update hook
-// and the second speed call, one between that call and the next
-// Actor_WaitForMoveById. After them it recomputes the owner address (r10, then
-// r5) and rebuilds 0x8000 and 0x1999, and past the first it keeps direction,
-// 0, in r9 and shifts it at run time; the table base is reloaded late and
-// row + 1 recomputed there, while row itself carries across (probably GCSE). Here the
-// index folds, so r9 is free, row spills and the table is reloaded per use in
-// the first half: most of the gap follows from that. With a volatile asm
-// taking an operand at both points (analysis only, not kept) the shape reaches
-// differ 185, gap 81, 318 instructions. cse_end_of_basic_block stops the
-// second pass only at a CODE_LABEL, so the source must hold a label that lives
-// past cse2 and is gone by the end: one-pass loops and for (i = 0; i < 1; i++)
-// add instructions (gap 105 on the older shape), and a dead arm or empty test
-// is deleted before cse2. GCSE appears to leave the 0 in r9 unfolded (not
-// checked in its dump), so it should need only that boundary.
-// Tried with no gain: a fill value local for 255 (gap 110), a box row pointer
-// or table local (119, 120, 113), struct or array reads of the spare pair
-// (no change; the native derives 0x14c from 0x148 with adds #4), a wrapper on
-// every call or on Func_02003790 (no change), and declaration orders.
+// Draft, differ 210 of 305, skeleton gap 86 (tla-en, 2026-11-01)
+// Left: the native ends CSE at two points, after Func_02003ffc(239) and after
+// Func_02003e0c. After them it recomputes the owner address (r10, then r5) and
+// rebuilds 0x8000 and 0x1999, and it keeps direction, 0, in r9 and shifts it at
+// run time. Only row (r7) carries across. Here direction folds and the table
+// is reloaded per use in the first half: most of the gap follows from that.
+// Three empty asms reach differ 10, gap 5 + 5, on overlay 668's source (its
+// Func_020044c4 header has them; that source ported here as it stands, names
+// mapped). They came back out because they do not reach differ 0.
+// What is left under them is five moved instructions, and the priorities say
+// why no source order closes them, reading sched2's dump:
+// - Block 0: the native has str r3, [r0, #8], ldr r5, str r1, [sp, #8], lsls
+//   r7. The table load ranks 19 (load cost 2 + 1 for -mthumb-slow-loads, on
+//   the ldrsb at 16), so it must sit at 17 or lower to fall behind the store.
+// - Tail: the native has the push.x and push.z stores before mov r9, r2 and
+//   movs r2, #164. The stores rank by the map load they may alias (+2), the
+//   movs by the same load (+3), so with these insns the movs always leads.
+//   Same RTL and registers give the same ranks, so this is K2's load model
+//   (a compiler question, out of scope), the Broken Seal twins' class.
+// Tried past differ 10, none gained, all removed: an asm after the stores
+// carrying row + 1 with "m" inputs fixes the stores (gap 3 + 3, differ 16) but
+// row + 1's short temporary then takes r10 in local-alloc, pushing the table
+// to r9, and ldr r4 falls behind the stores; adding "l"(map) to it (differ 40);
+// a volatile asm copying map (89), or a plain one with "m" inputs (73);
+// direction's asm volatile, as a barrier, with a copied cell pointer (98).
+// Plain flushes also failed: direction read through an inline's &direction
+// stays in memory (frame 60, differ 312), and a one-pass block plus an if on
+// direction leaves cse2 sharing the constants (301). 668's source with the
+// asms out and Call3 is differ 246, gap 108, against 210 here.
+// Tried with no gain before: a fill value local for 255 (gap 110), a box row
+// pointer or table local (119, 120, 113), struct or array reads of the spare
+// pair (no change; the native derives 0x14c from 0x148 with adds #4), a wrapper
+// on every call or on Func_02003790 (no change), and declaration orders.
 // Leader and object assigned after the declarations give differ 206 but gap
-// 94. Overlay 668 Func_020044c4 is the same listing (calling
-// Map_FillCellRectByte2 where this calls Func_02003790).
+// 94. Here toX and toZ locals gained 6; dx and dz locals, a late direction and
+// the s32 return of Func_02003de4 change nothing (the return is 668's type).
 // Its one argument is islets.h struct IsletsTarget, 24 bytes passed by value:
 // the first 16 in r0 to r3, which the native stores in the incoming argument
 // area (the sub sp, #16), the object number and the optional callback on the
@@ -58,7 +71,7 @@ void wait(s32 frames);
 void Actor_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(u32 id);
 void Func_02003d0c(void);
-void Func_02003de4(struct Actor *object, s32 mode);
+s32 Func_02003de4(struct Actor *object, s32 mode);
 void Func_02003ffc(s32 cue);
 void Func_02003e0c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02003e14(struct Actor *object);
@@ -93,7 +106,7 @@ void Func_02003a5c(struct PushState push) {
            4;
   Func_02003790(0, cell.x, cell.z, width, height, 0);
   /* FAKEMATCH(wrapper): the three speed calls go through Call3, so no call
-   * shares a constant; as direct calls, 292 of 305 instructions differ in
+   * shares a constant; as direct calls, 286 of 305 instructions differ in
    * tla-en. */
   Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
         0x8000, 0x1999);
@@ -134,8 +147,11 @@ void Func_02003a5c(struct PushState push) {
   push.z = (push.z + (((s8 *)gData_0200407c)[rowZ] << 16)) >> 20;
   spareX = *(s32 *)(map + 0x148) >> 20;
   spareZ = *(s32 *)(map + 0x14c) >> 20;
-  Func_02003e24(push.x, push.z, width, height, spareX + push.x,
-                spareZ + push.z);
+  {
+    s32 toX = spareX + push.x;
+    s32 toZ = spareZ + push.z;
+    Func_02003e24(push.x, push.z, width, height, toX, toZ);
+  }
   Func_02003790(0, push.x, push.z, width, height, 255);
   Func_02003790(2, push.x, push.z, width, height, 255);
   cell.x = (start.x + (((s8 *)gData_0200407c)[row] << 16)) >> 20;

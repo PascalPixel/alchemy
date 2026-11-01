@@ -1,10 +1,12 @@
-// Draft, differ 103 (245 before statements reordered 2026-10-26).
-// Draft, differ 247 of 306 (2026-10-19, written from the listing; ☀️ has no
-// twin): the controlled actor grows out of a whirl of 100 sparks that
-// spiral in to it (resource 0x1ef, FieldEffect_ColouredOrbs, as Func_080e74d8
-// uses). What remains is allocation: the ROM keeps the sprite in r5 and 15
-// in r7, builds the ~12 mask inside the first loop and keeps the next index
-// in r11 with no hoisted 0, and the stack slots follow from that.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The controlled actor grows out of a whirl of 100 sparks that spiral in to
+// it (resource 0x1ef, FieldEffect_ColouredOrbs, as Func_080e74d8 uses); The
+// Broken Seal has no twin. Forms the match depends on, no devices: the first
+// loop steps spark by hand and rebuilds sprite from i, which keeps the -13
+// mask in the loop; the spawn loop is if plus do/while with radius set before
+// i, so the constant stays above i's copy; the update loop counts up and
+// loop.c reverses it; the block locals in that loop load the call's arguments
+// ahead of the position copy; next++ and next %= stay separate statements.
 #include "types.h"
 #include "heap_release.h"
 #include "resource.h"
@@ -38,36 +40,34 @@ void wait(s32 frames);
 s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           u32 flags);
+void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
 void Sound_PlayFar(s32 cue);
 void Func_080dc954(void);
 
 void Func_080e7238(void) {
+  s32 position[3];
   struct WhirlWork *work = HeapSlot_Alloc(92, sizeof(*work));
-  struct Actor *object =
-      ObjectTable_Get(Party_GetLeaderActor());
+  struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
-  s32 position[3];
   s32 next;
+  s32 state;
   s32 entry;
+  s32 count;
   s32 tiles;
   s32 i;
   s32 angle;
-  s32 count;
-  s32 state;
   s32 frame;
+  s32 radius;
 
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs),
                         work);
-  spark = work->sparks;
   entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x400, work);
-  sprite = work->sprites;
-  for (i = 0; i < WHIRL_COUNT; i++, sprite++, spark++) {
+  for (i = 0, spark = work->sparks; i < WHIRL_COUNT; i++, spark++) {
+    sprite = &work->sprites[i];
     Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
@@ -82,32 +82,40 @@ void Func_080e7238(void) {
   Actor_SetSingleChildFlagsFar(object, 0);
 
   count = 2;
-  next = 0;
   state = 0;
+  next = 0;
   frame = 0;
   do {
-    for (i = count; i != 0; i--) {
-      angle = Random16();
-      spark = &work->sparks[next];
-      spark->age = 0;
-      spark->x = object->x;
-      spark->y = object->y + Random16() * 20;
-      next = (next + 1) % WHIRL_COUNT;
-      spark->z = object->z;
-      Vector_AddPolarOffset(Random16() << 3, angle, &spark->x);
-      spark->angle = angle;
-      spark->radius = 0x500000;
+    if (count != 0) {
+      radius = 0x500000;
+      i = count;
+      do {
+        angle = Random16();
+        spark = &work->sparks[next];
+        spark->age = 0;
+        spark->x = object->x;
+        spark->y = object->y + Random16() * 20;
+        spark->z = object->z;
+        Vector_AddPolarOffset(Random16() << 3, angle, &spark->x);
+        next++;
+        spark->angle = angle;
+        spark->radius = radius;
+        next %= WHIRL_COUNT;
+        i--;
+      } while (i != 0);
     }
 
     spark = work->sparks;
     sprite = work->sprites;
-    for (i = WHIRL_COUNT - 1; i >= 0; i--, sprite++, spark++) {
+    for (i = 0; i < WHIRL_COUNT; i++, sprite++, spark++) {
       if (spark->age >= 0) {
         if ((u32)spark->age < 20) {
+          s32 sparkAngle = spark->angle;
+          s32 sparkRadius = spark->radius;
           position[0] = spark->x;
           position[1] = spark->y;
           position[2] = spark->z;
-          Vector_AddPolarOffset(spark->radius, spark->angle, position);
+          Vector_AddPolarOffset(sparkRadius, sparkAngle, position);
           Camera_WorldToScreen(position);
           sprite->x = position[0];
           sprite->y = position[2];

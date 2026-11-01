@@ -1,26 +1,34 @@
-// Draft, differ 478 of 747, skeleton gap 100 (tla-en, 2026-11-01)
-// Control flow and calls follow the listing; the two ball arms merge by
-// cross-jumping as there. What fixed the shape, so keep it: explicit __divsi3
-// (the listing rereads ball->y after it, a call clobbers memory), each arm with
-// its own divides, Ram_MapCellBuffer as a constant (the listing reloads it from
-// the pool at each use), one shared counter i and separate k, j, n and step
-// (step lands in r4 with caller saves only because every callee save is taken),
-// radius set in both arms of the mode test.
-// Left:
-// - frames: the listing keeps both arms of if (mode == 0); here IF-CASE-1 in ifcvt
-//   moves frames = 24 above the test. Ternary, switch and narrower types did not
-//   stop it; XXX what makes THEN's set unmovable there.
-// - The copy nest: the listing hoists 0x1b5a (r12) out of both loops and keeps
-//   i << 12 in the loop; the constant form leaves 0x1b5a in the row loop, the
-//   symbol form hoists it but also hoists gMapCellBuffer.
-// - Flash loop: the listing loads widths (r10) and heights (r6) inside the loop;
-//   here loop.c hoists both, widths gets no register and is rematerialised.
-//   Making one pointer serve widths and the bounce's cells gives the listing's
-//   flash loop but hoists cells + size - 1 in the bounce (gap 123).
-// - The rest is sched2 order after allocation: Iwram entry pool loads after a
-//   split constant, and r7 as the reload register that survives calls.
-// - Frame 92 against 96: sp+44 in the listing is an unused slot no pseudo here
-//   reproduces.
+// Draft, differ 32 of 747, skeleton gap 32 (tla-en, 2026-11-01)
+// Every register and branch now agrees; what is left is five sched2 orders, no
+// shape and no allocation. All five are the K2 load model's: a load or a pooled
+// chain issued ahead of a store or spill the listing does first.
+// - After the ball's ball->y store, frames' stack load goes before the store.
+// - ball->y's high halfword loads before the variant store; the listing does the
+//   x store and the mode reload first.
+// - The flash draw: the table load, heights and the canvas reload.
+// - The bounce's preheader: the spill of size * 2 and its shift.
+// - The bolts' preheader: i, bolt and the texture address before the three model
+//   stores.
+// Tried: an empty do-while or asm("") before y gives 28, and one before the bolt
+// loop gives 26 (with a picture local set after it, every instruction but with r1
+// and r2 swapped, differ 52); the one in the arm leaves ldr r0 and ldr r1 swapped.
+// Five or more devices would not reach 0, so none is kept. Also no gain: locals
+// for size * 2 and size / 2, a union view of the halfword, s32 model fields.
+// What fixed the shape, so keep it:
+// - flight: x and frames are one 8-byte local. Its partial sets keep frames live
+//   into the else arm, which stops IF-CASE-1 and keeps both arms of if (mode == 0);
+//   the frame then has its slots (frames at sp 28, x at sp 24). As a pair
+//   {frames, radius} it loses the hoisted radius >> 31 and the frame is 92.
+// - draw[2]: the unused word is sp 44.
+// - buffer is set once at the top and lives across calls, so no register survives
+//   for it and it is rematerialized at each use; 0x1b5a then takes ip.
+// - BUILD_BLITTER's do-while ends CSE's block, so the width and height tables stay
+//   in the flash loop, each in its own short-lived pseudo until cse2 merges them.
+// - The bounce has its own pointer dot, apart from the arrival's spark: r6 and r7.
+// - The two arms join after velocityX with a plain /, so the second divide reloads
+//   work where cross-jumping shares only the bl and its store.
+// - radius * radius / 2 stays in the loop test; variant is stepped by hand so the
+//   pool holds the +24 address; Task_Add, Task_Remove and Func_08196404 as declared.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -89,15 +97,14 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-s32 __divsi3(s32, s32);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
@@ -118,7 +125,13 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define HI(v) (((s16 *)&(v))[1])
 
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                   s32 mode);
+                  u32 mode);
+
+// Builds the second blitter for one draw.
+#define BUILD_BLITTER(slot, width, height, flags, mode)                         \
+  do {                                                                         \
+    Func_08196404(slot, width, height, flags, mode);                           \
+  } while (0)
 
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_Data134;
@@ -142,26 +155,31 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  DrawRectangle blit;
+  DrawRectangle draw[2];
   u8 *sprites;
   s32 radius;
-  s32 frames;
-  s32 x;
+  struct {
+    s32 x;
+    s32 frames;
+  } flight;
   s32 y;
-  struct EffectPosition source;
   struct EffectPosition target;
+  struct EffectPosition source;
   struct ModelTexture texture;
   struct RenderModel *model;
   struct EffectStep *ball;
   struct EffectStep *bolt;
   struct EffectStep *spark;
+  struct EffectStep *dot;
   void *vertices;
   s32 i;
   s32 k;
+  u8 *buffer;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
+  buffer = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(1);
   if (mode == 0) {
     REG_BLDALPHA = 0x1010;
@@ -170,13 +188,13 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   }
   BattleEffect_LoadBlitter(SLOT_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   radius = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x800,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             Ram_MapCellBuffer, 1, 1);
+                             buffer, 1, 1);
   if (mode == 1) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC),
@@ -191,7 +209,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
 
       for (j = 0; j != 24; j++) {
         work->sheet[0x145a + i * 0x1000 + k * 32 + j] =
-            Ram_MapCellBuffer[(i * 45 << 6) + k * 24 + j];
+            buffer[(i * 45 << 6) + k * 24 + j];
       }
     }
   }
@@ -204,9 +222,9 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   if (mode == 0) {
-    frames = 24;
+    flight.frames = 24;
   } else {
-    frames = 40;
+    flight.frames = 40;
   }
 
   for (frame = 0; frame != 50; frame++) {
@@ -217,8 +235,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
       if (mode == 0) {
         ball->x = source.x << 16;
         ball->y = (source.y - 32) << 16;
-        ball->velocityX = __divsi3((target.x << 16) - ball->x, frames);
-        ball->velocityY = __divsi3(((target.y - 32) << 16) - ball->y, frames);
+        ball->velocityX = ((target.x << 16) - ball->x) / flight.frames;
       } else {
         if (effect->side == 0) {
           ball->x = (source.x - 32) << 16;
@@ -226,9 +243,9 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
           ball->x = (source.x + 32) << 16;
         }
         ball->y = (source.y - 80) << 16;
-        ball->velocityX = __divsi3(((target.x - 32) << 16) - ball->x, frames);
-        ball->velocityY = __divsi3(((target.y - 32) << 16) - ball->y, frames);
+        ball->velocityX = (((target.x - 32) << 16) - ball->x) / flight.frames;
       }
+      ball->velocityY = (((target.y - 32) << 16) - ball->y) / flight.frames;
       Sound_PlayFar(221);
       for (i = 0, bolt = &work->particles[1]; i != 63; i++, bolt++) {
         bolt->z = Random16();
@@ -239,14 +256,17 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
         bolt->variant = Random16() & 3;
       }
       {
-        for (i = 0, spark = gData_02014000; i != 512; i++, spark++) {
-          spark->variant = -1;
+        s32 *variant = &gData_02014000[0].variant;
+
+        for (i = 0; i != 512; i++) {
+          *variant = -1;
+          variant += 7;
         }
       }
     }
 
     // Arrival.
-    if (frame == frames) {
+    if (frame == flight.frames) {
       s32 n;
 
       for (n = 0, spark = gData_02014000; n != 128; n++, spark++) {
@@ -274,11 +294,11 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // The ball, growing to 48 (64), with four flashes about it.
-    if (frame <= frames) {
+    if (frame <= flight.frames) {
       s32 largest;
 
       ball->variant++;
-      x = ball->x >> 17;
+      flight.x = ball->x >> 17;
       y = HI(ball->y);
       if (mode == 0) {
         radius = frame * 2 + 16;
@@ -290,28 +310,26 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
       if (radius > largest) {
         radius = largest;
       } else {
-        Func_0815b434(Ram_MapCellBuffer, radius, 85536);
+        Func_0815b434(buffer, radius, 85536);
         if (mode == 1) {
-          s32 count = radius * radius / 2;
-
-          for (i = 0; i != count; i++) {
-            if (Ram_MapCellBuffer[i] != 0) {
-              Ram_MapCellBuffer[i] = 64 - Ram_MapCellBuffer[i];
+          for (i = 0; i != radius * radius / 2; i++) {
+            if (buffer[i] != 0) {
+              buffer[i] = 64 - buffer[i];
             }
           }
         }
       }
-      Func_0818caa8(Ram_MapCellBuffer, x, y, radius);
+      Func_0818caa8(buffer, flight.x, y, radius);
       for (i = 0; i != 4; i++) {
         s32 cell = i & 3;
         s32 half = radius / 2;
         s32 angle = Random16();
         s32 flashX =
-            x + ((Trig_Sin(angle) * half) >> 16) - (gData_08197492[cell] >> 1);
+            flight.x + ((Trig_Sin(angle) * half) >> 16) - (gData_08197492[cell] >> 1);
         s32 flashY =
             y + ((Trig_Cos(angle) * half) >> 16) - (gData_08197498[cell] >> 1);
 
-        Func_08196404(188, 7, 7, 3 | Data_08198bee[Random16() & 3], 1);
+        BUILD_BLITTER(188, 7, 7, 3 | Data_08198bee[Random16() & 3], 1);
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, work->sheet + 0x800 + gData_08197486[cell], flashX, flashY,
             gData_08197492[cell], gData_08197498[cell]);
@@ -321,27 +339,27 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // Thunder Mine's sparks bounce.
-    if (mode == 0 && frame >= frames) {
-      for (i = 0, spark = gData_02014000; i != 512; i++, spark++) {
-        if (spark->variant >= 0) {
-          s32 size = (spark->variant >> 3) + 2;
+    if (mode == 0 && frame >= flight.frames) {
+      for (i = 0, dot = gData_02014000; i != 512; i++, dot++) {
+        if (dot->variant >= 0) {
+          s32 size = (dot->variant >> 3) + 2;
           s32 step;
 
           for (step = 0; step != 8; step++) {
-            blit(canvas, sprites + gData_08197410[size - 1],
-                 HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector2(spark, 62, 0x200);
+            draw[0](canvas, sprites + gData_08197410[size - 1],
+                 HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
+            BattleEffectKernels_IntegrateVector2(dot, 62, 0x200);
           }
-          if (HI(spark->y) > 111) {
-            spark->velocityY = -spark->velocityY * 48 / 64;
+          if (HI(dot->y) > 111) {
+            dot->velocityY = -dot->velocityY * 48 / 64;
           }
-          spark->variant--;
+          dot->variant--;
         }
       }
     }
 
     // The trailing bolts, each eight frames long.
-    if (frame <= frames) {
+    if (frame <= flight.frames) {
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       texture.logWidth = 5;

@@ -1,26 +1,27 @@
-// Draft, differ 307 of 537, skeleton gap 129 (tla-en, 2026-11-01)
-// Calls, branches, loops, fields and constants follow the native; the skeleton
-// left is almost all allocation. The key is srcX and srcZ: the native keeps
-// them in r11 and r9 and spills baseX (sp + 20) and the layer (sp + 16), but
-// here each pseudo's first set, 0 at entry, carries a constant REG_EQUAL note,
-// so update_equiv_regs doubles its live length (744 for 372) and it ranks below
-// baseX (17 refs) and the layer (10 refs over 388), which take r9 and r11. A
-// probe that set both from a load instead (no note, 13 refs over 367) gave
-// srcZ r9, srcX r11, baseX and the layer spilled, and removed 32 skeleton lines
-// less the probe's own: this ranking is the fix. The native's first sets show
-// as plain zeros, so what drops the note is still open; not s16/u8 types,
-// chained or copied zeros, a one-pass block between them, or a one-member
-// struct. u16 or s8 types add an extension at every use.
-// The rest: PRE hoists the row's i << 18 out of the column loop into a pseudo
-// that takes r8 ahead of the options address (native: options r8, t r10), and
-// no spelling of the sum stops it. The native rebuilds the coordinates' address
-// in each pass of the burst, spark and last loops (r6, r5) and &options before
-// the last loop (r6); here pos stays in r6 and PRE keeps &options in r10.
-// Tried (2026-10-31, 2026-11-01): direct calls instead of the forwarding
-// wrappers (differ 388); do-while loops throughout (gap 157), row and column
-// only (gap 138); t apart from the flag result (340); struct Vector3 (319);
-// the array itself instead of pos (gap 133, the rooms lose the address before
-// the room tests).
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Every instruction agrees in tla-en; it carries tagged devices, so review them
+// under S2 before adoption. What each one does:
+// - dead: srcX and srcZ start from a zero only combine can see. A plain 0 gets a
+//   constant REG_EQUAL note from cse, update_equiv_regs doubles the live length
+//   (744 for 372), and baseX and the layer take r9 and r11 from them. The native's
+//   first sets are plain zeros, so the note's absence there is still unexplained;
+//   siblings 692_1828 and 69c_1050 show the same kind of zero. Two different
+//   masks, because two equal ones are shared by cse.
+// - barrier with the sfp clobber (burst, spark, frame, last): gcse records sfp as
+//   set, so PRE no longer joins the position's address across the loop and the
+//   native's add rN, sp, #24 stays in each pass, as in 686_0418. The same kill
+//   would rebuild &options in the loop, so that address lives in effectOptions.
+// - barrier on row: keeps row << 18 out of PRE, so row can take r5 and leave r8
+//   to effectOptions.
+// - temporary on the random values: puts the barrier between the two calls.
+// - barrier and one-pass at the end: place the layer's store. The native loads
+//   the spilled layer, then the pool, then stores; sched2 here takes the pool
+//   load first (class 2 against 1 after the call) and the store last.
+// Plain forms that are the native's: one counter i in r7 for every loop but the
+// row, i++ after the call in the column and spark loops (sched2 raises it),
+// roomPosition set again in the frame loop, which ranks it over scene (r2, r1),
+// closing apart from scene, mask for the 31 kept in r5, and lastOptions in r6.
+// Forwarding is scene_call.h's layer, written out here.
 // A Magma Rock room's event at cell 222 (reached from Func_02000ed0), by room
 // (2, 3 or 4) with its place and flag (768 to 770): sixteen effects burst with
 // sound 145 and shaking, eight rise (sound 148), the cells are copied open and
@@ -60,58 +61,71 @@ void Func_020034f0(void);
 void Func_02003548(void);
 
 static __inline__ void Func_02004d10_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline; as the direct call, 110 of 537 instructions differ in tla-en. */
   Func_02004d10(a, b, c);
 }
 
 static __inline__ void Func_02004cd8_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  /* FAKEMATCH(wrapper): the call forwarded through an inline; as the direct call, 20 of 537 instructions differ in tla-en. */
   Func_02004cd8(a, b, c, d, e, f);
 }
 
 void Func_02001350(void) {
-  s32 srcX = 0;
-  s32 srcZ = 0;
+  s32 srcX;
+  s32 srcZ;
   s32 baseX = 0;
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[1];
   struct EffectOptions options;
+  struct EffectOptions *effectOptions;
+  struct EffectOptions *lastOptions;
   s32 position[3];
-  s32 *pos = position;
-  // 212 when the room's flag is set, then the frame count of the opening: the
-  // native keeps both in r10 (as two variables: differ 340).
-  u32 t = 0;
+  s32 *burstPosition;
+  s32 *sparkPosition;
+  s32 *roomPosition;
+  u32 t;
   s32 scene;
-  s32 x;
+  s32 closing;
+  typeof(gMainRoutineWork) *work;
+  s32 riseX;
+  u32 burstRandom, sparkRandom;
+  u32 mask;
   u32 i;
-  u32 j;
+  u32 row;
 
-  options.type = 403;
-  options.priority = 1;
-  options.script = gData_02005050;
-  options.startScaleX = 0x1cccc;
-  options.startScaleY = 0x1cccc;
+  /* FAKEMATCH(dead): srcX and srcZ start from a zero only combine sees; as srcX = 0 and srcZ = 0, 140 of 537 instructions differ in tla-en. */
+  srcX = ((u32)layer & 3) >> 2;
+  srcZ = ((u32)layer & 7) >> 3;
+  /* FAKEMATCH(temporary): t holds 212 for a set flag, then the frame count, in r10; as two variables, 197 of 537 instructions differ in tla-en. */
+  t = 0;
+  effectOptions = &options;
+  effectOptions->type = 403;
+  effectOptions->priority = 1;
+  effectOptions->script = gData_02005050;
+  effectOptions->startScaleX = 0x1cccc;
+  effectOptions->startScaleY = 0x1cccc;
   scene = gMainRoutineWork.scene;
+  roomPosition = position;
   if (scene == (s32)&SceneId_Ov692Room2) {
     baseX = 164 << 17;
-    pos[1] = 0x200000;
-    pos[2] = 200 << 16;
+    roomPosition[1] = 0x200000;
+    roomPosition[2] = 200 << 16;
     srcX = 20;
     srcZ = 69;
     if (GameFlag_Test(768))
       t = 212;
   } else if (scene == (s32)&SceneId_Ov692Room3) {
     baseX = 232 << 16;
-    pos[1] = 0x200000;
-    pos[2] = 248 << 16;
+    roomPosition[1] = 0x200000;
+    roomPosition[2] = 248 << 16;
     srcX = 14;
     srcZ = 72;
     if (GameFlag_Test(769))
       t = 212;
   } else if (scene == (s32)&SceneId_Ov692Room4) {
     baseX = 196 << 17;
-    pos[1] = 0x200000;
-    pos[2] = 134 << 18;
+    roomPosition[1] = 0x200000;
+    roomPosition[2] = 134 << 18;
     srcX = 24;
     srcZ = 90;
     if (GameFlag_Test(770))
@@ -122,10 +136,16 @@ void Func_02001350(void) {
   // native; as for loops, 431 of 537 instructions differ in tla-en.
   i = 0;
 burst:
-  pos[0] = baseX + ((Random16Far() & 31) << 16);
+  /* FAKEMATCH(temporary): burstRandom holding the first call's value; as the call inside the sum, 4 of 537 instructions differ in tla-en. */
+  burstRandom = Random16Far();
+  mask = 31;
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 230 of 537 instructions differ in tla-en. */
+  asm("" : : : "sfp");
+  burstPosition = position;
+  burstPosition[0] = baseX + ((burstRandom & mask) << 16);
   Func_02004f30(145);
-  Func_0200015c(pos[0], pos[1], pos[2], 0,
-                (Random16Far() & 31) << 12, 0, 0x3a0001, &options);
+  Func_0200015c(burstPosition[0], burstPosition[1], burstPosition[2], 0,
+                (Random16Far() & mask) << 12, 0, 0x3a0001, effectOptions);
   Func_02004d10_(0x50000, 0x50000, 0x10000);
   Func_02004d10_(-1, -1, 0xe666);
   i++;
@@ -133,20 +153,20 @@ burst:
   if (i != 16)
     goto burst;
   Func_02004f30(148);
-  options.priority = 1;
-  options.startScaleX = 0x20000;
-  options.startScaleY = 0x20000;
-  options.targetScaleX = 0x8000;
-  options.targetScaleY = 0x8000;
+  effectOptions->priority = 1;
+  effectOptions->startScaleX = 0x20000;
+  effectOptions->startScaleY = 0x20000;
+  effectOptions->targetScaleX = 0x8000;
+  effectOptions->targetScaleY = 0x8000;
   baseX -= 0x80000;
   i = 0;
-  x = baseX;
+  riseX = baseX;
 rise:
-  pos[0] = x;
-  Func_0200015c(pos[0], pos[1], pos[2], 0, 0,
-                (Random16Far() & 31) << 10, 0xe0001, &options);
+  burstPosition[0] = riseX;
+  Func_0200015c(burstPosition[0], burstPosition[1], burstPosition[2], 0, 0,
+                (Random16Far() & 31) << 10, 0xe0001, effectOptions);
   i++;
-  x += 0x60000;
+  riseX += 0x60000;
   if (i != 8)
     goto rise;
   Func_02004cd8_(68, 70, srcX, srcZ, 3, 6);
@@ -154,43 +174,50 @@ rise:
   Func_02004d10_(-1, -1, 0xe666);
   FieldEvent_Wait(30);
   Func_02004cd8_(71, 70, srcX, srcZ, 3, 6);
-  options.type = 403;
-  options.priority = 1;
-  options.palette = 10;
-  options.script = gData_0200502c;
+  effectOptions->type = 403;
+  effectOptions->priority = 1;
+  effectOptions->palette = 10;
+  effectOptions->script = gData_0200502c;
   if (t != 0) {
     Func_02004cd8_(68, 70, srcX, srcZ, 3, 6);
     FieldEvent_Wait(30);
-    pos[2] -= 0x280000;
+    burstPosition[2] -= 0x280000;
   } else {
     Func_02004d10_(0x20000, 0x10000, 0x10000);
     Func_02004f30(107);
-    i = 0;
+    row = 0;
   row:
-    j = 0;
+    i = 0;
   column:
-    pos[0] = baseX + ((Random16Far() % 48) << 16);
-    j++;
-    Func_0200015c(pos[0], pos[1], pos[2] + (i << 18) + 0x80000,
-                  0, 0x10000, 0, 0x330000, &options);
-    if (j != 6)
+    /* FAKEMATCH(barrier): the empty asm rewriting row; as no asm, 111 of 537 instructions differ in tla-en. */
+    asm("" : "+r"(row));
+    burstPosition[0] = baseX + ((Random16Far() % 48) << 16);
+    Func_0200015c(burstPosition[0], burstPosition[1], burstPosition[2] + (row << 18) + 0x80000,
+                  0, 0x10000, 0, 0x330000, effectOptions);
+    i++;
+    if (i != 6)
       goto column;
     wait(3);
-    Func_02004cd8_(74, 70, srcX, srcZ, 3, (i >> 2) + 6);
-    i++;
-    if (i != 12)
+    Func_02004cd8_(74, 70, srcX, srcZ, 3, (row >> 2) + 6);
+    row++;
+    if (row != 12)
       goto row;
     Func_02004cd8_(74, 70, srcX, srcZ, 3, 8);
     t = 0;
   frame:
     if ((t & 3) == 0) {
-      j = 0;
+      i = 0;
     spark:
-      pos[0] = baseX + ((Random16Far() % 48) << 16);
-      j++;
-      Func_0200015c(pos[0], pos[1], pos[2] + 0x300000, 0,
-                    0x10000, 0, 0x330000, &options);
-      if (j != 4)
+      /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call inside the sum, 2 of 537 instructions differ in tla-en. */
+      sparkRandom = Random16Far();
+      /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 379 of 537 instructions differ in tla-en. */
+      asm("" : : : "sfp");
+      sparkPosition = position;
+      sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
+      Func_0200015c(sparkPosition[0], sparkPosition[1], sparkPosition[2] + 0x300000, 0,
+                    0x10000, 0, 0x330000, effectOptions);
+      i++;
+      if (i != 4)
         goto spark;
     }
     if (t == 0) {
@@ -204,7 +231,10 @@ rise:
       REG_BLDCNT = 0;
     } else if (t <= 127) {
       *(s32 *)&layer->unk08[4] += 0x8000;
-      pos[2] -= 0x8000;
+      /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 347 of 537 instructions differ in tla-en. */
+      asm("" : : : "sfp");
+      roomPosition = position;
+      roomPosition[2] -= 0x8000;
       Func_02004cd8_(71, 76, srcX, srcZ - ((t - 47) >> 5) + 8, 3, 1);
     } else if (t == 128) {
       Func_02004d10_(-1, -1, 0xe666);
@@ -217,14 +247,20 @@ rise:
   }
   Func_02004f30(288);
   Func_02004f30(136);
-  options.startScaleY = 0x1cccc;
-  options.startScaleX = 0x1cccc;
+  lastOptions = &options;
+  lastOptions->startScaleY = 0x1cccc;
+  lastOptions->startScaleX = 0x1cccc;
   i = 0;
 last:
-  pos[0] = baseX + ((Random16Far() % 48) << 16);
+  /* FAKEMATCH(temporary): sparkRandom holding the call's value; as the call inside the sum, 2 of 537 instructions differ in tla-en. */
+  sparkRandom = Random16Far();
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 404 of 537 instructions differ in tla-en. */
+  asm("" : : : "sfp");
+  sparkPosition = position;
+  sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
   i++;
-  Func_0200015c(pos[0], pos[1], pos[2] + 0x300000, 0, 0, 0,
-                0x3b0000, &options);
+  Func_0200015c(sparkPosition[0], sparkPosition[1], sparkPosition[2] + 0x300000, 0, 0, 0,
+                0x3b0000, lastOptions);
   if (i != 6)
     goto last;
   Func_02004d10_(0x50000, 0x70000, 0x10000);
@@ -232,12 +268,18 @@ last:
   Func_02004cd8_(68, 64, srcX, srcZ, 3, 6);
   Func_02004d18();
   FieldEvent_Wait(30);
+  /* FAKEMATCH(barrier): the empty asm after the call; as no asm, 4 of 537 instructions differ in tla-en. */
+  asm("");
+  work = &gMainRoutineWork;
   *(s32 *)&layer->unk08[4] = 0;
-  scene = gMainRoutineWork.scene;
-  if (scene == (s32)&SceneId_Ov692Room2)
+  /* FAKEMATCH(one-pass): the empty block after the store; as no block, 2 of 537 instructions differ in tla-en. */
+  do {
+  } while (0);
+  closing = work->scene;
+  if (closing == (s32)&SceneId_Ov692Room2)
     Func_020034bc();
-  else if (scene == (s32)&SceneId_Ov692Room3)
+  else if (closing == (s32)&SceneId_Ov692Room3)
     Func_020034f0();
-  else if (scene == (s32)&SceneId_Ov692Room4)
+  else if (closing == (s32)&SceneId_Ov692Room4)
     Func_02003548();
 }

@@ -12,20 +12,38 @@
 //
 // Left: the loops are goto loops as in that twin: the native hoists nothing
 // and CSE carries REG_BLDALPHA's address and 16 past them.
-// - About 30 of the gap is direct-call constant sharing (0x10000 and -1 reused
-//   across arguments, one held across calls). The twins use call.h's Call2,
-//   Call3 and Call6 here; those are wrapper devices, kept out of this round.
-//   With them on every Func_02004844, Func_02004864, Func_020049e4 and
-//   Func_0200484c call the gap measured 43.
-// - sp+60's address spills to sp+16, adding 4 to the frame (72) and moving
-//   fill_ from sp+70: allocation gives the 127 mask r6, where the native has
-//   the velocity pointer r6, 127 r8, the options r10 and j r9. Tried: pointer
-//   and struct forms of velocity, x, z and the options through locals, the
-//   mask as a local (worse).
-// - BG0CNT's value builds after its address; the twin's one-pass block fixes
-//   that, a device, not used here.
+// - The blocker is the effect spawn's allocation, and it looks like the
+//   compiler's reference weight, not source. The native has the velocity
+//   pointer r6, 127 r8, the options pointer r10 and j r9, with r4 free and a
+//   72-byte frame. Here the frame loop sits at flow depth 2, so refs weigh 3:
+//   127 has 9 refs across 1 call, the options pointer 12 across 2, and
+//   CALLER_SAVE_PROFITABLE (4 * calls < refs) sends a pseudo to r4 before
+//   r8. That spills sp+60's address to sp+16 and makes the frame 76. Only
+//   weight 1 explains the native, and it also orders the velocity pointer
+//   above 127. Proof: a real branch entering the stage and frame loops past
+//   their headers makes both irreducible (depth 0), and the spawn then
+//   allocates as the native, frame 72, reload rotation right from the top.
+//   With the three devices below, only one order line differed before those
+//   branches. No loop form reaches that without the extra edge: a condition
+//   that folds away after flow but before local-alloc was tried ((i << 1) & 1,
+//   j & 3 & 4, a u8 shift: CSE folds them first; a test on a pseudo set in an
+//   earlier block stays as code and takes r11). This is a compiler question
+//   (K1, K3), out of scope here: Pascal's lead is whether the native's flow
+//   weighs refs by loop notes, which goto loops lack, where alchemy-gcc weighs
+//   CFG natural loops.
+// - Three devices are kept out because they cannot reach differ 0 until that
+//   is settled. Measured alone from this draft: Call2 and Call3 on
+//   Func_020049e4 and Func_02004864 (wrapper), differ 177, gap 45; cell =
+//   spark->animation as the twin does, SpriteAttr2High read through cell
+//   (temporary), differ 167, gap 65, which also fixes the reload rotation
+//   before the spawn; do { } while (0) round BG0CNT's control (one-pass),
+//   differ 211, gap 69. All three: differ 125, gap 33.
 // - The zero before byte 99 is shared with update and BLDCNT in the native; a
-//   local for it moved the 45-frame loop's r8 to r6 and lost 8.
+//   local for it, at any scope or type, makes the frame 80 (the first
+//   Actor_GetById copy loses r6) and lost 41 on top of the devices.
+// - Tried without gain: an options pointer (the pointer form is the native's,
+//   but it lands in r8 here and adds 11), velocity set later, a separate z,
+//   six forms of the tile mask, a set-once count local (cprop folds it).
 // ResourceId_WhirlwindTiles and ResourceId_WhirlwindMap (ids 0x1be, 0x1bf,
 // Field_WhirlwindTiles and Field_WhirlwindMap) need names in
 // resource_directory.s on adoption: the ids load from the pool, as symbols.

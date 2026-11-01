@@ -1,7 +1,9 @@
-// Draft, differ 354 of 1907, skeleton gap 124 (tla-en, 2026-11-01): 42 removed,
-// 82 added, of which about 43 added are the two nested functions, which are
-// compiled here but have their own listings. Collecting the party's battle
-// commands, The Broken Seal's Battle_CollectPartyCommands
+// Draft, differ 220 of 1907, skeleton gap 96 (tla-en, 2026-11-01): 27 removed,
+// 69 added. The two nested functions are compiled here but have their own
+// listings, so measure all three with alchemy-devtools diff DRAFT.c
+// 0804bba8,0804bbd0,0804bc08: differ 178 of 1949, skeleton gap 54, and both
+// nested functions match. Collecting the party's battle commands, The Broken
+// Seal's Battle_CollectPartyCommands
 // (games/tbs/src/window/screens/battle_party_commands.c) on this game's work and
 // menus, with its two nested functions: the party panels' clear
 // (Battle_DrawPartyPanelsWithEmptyList, adopted alone in window/party_panel.c
@@ -11,20 +13,44 @@
 // count is added to the result; B on the party's row undoes a reserve swap;
 // command 49 swaps a reserve member in (Func_0804b8b8 after choosing the slot);
 // Status lists the reserve as well; Flee is command 99; the Djinn tutorial's
-// hint follows an unleash. The frame and every spill slot now agree with the
-// listing except sp+4 in one place.
-// Left, mostly scheduling and allocation: the listing takes a second zero for
-// commandsOut at the top (r3, with r6 kept across the calls); the battle pointer
-// in r12; swappedPlace's offset as swappedUnit's + 4 (adds r4, #4), where the
-// constant is built afresh here; the summon's first affordability test, whose
-// pointers are computed before the guard in the listing (adds r1, #4, then three
-// copies into the loop's registers), while a local pointer for it lets the guard
-// and the loop's test cross-jump into one (a branch into the loop); summon in r9
-// and ability in r10, swapped here; and the mode = 0 of the menu resets, which
-// schedules after the load of the work pointer.
-// Tried without gain: a while loop for the summon test (hoists the state load the
-// listing rereads each pass), required as a case-wide pointer, declaration
-// orders and function scope for summon and ok, the opening zeros in other orders.
+// hint follows an unleash.
+// Next step: the three FAKEMATCH(barrier) sites The Broken Seal carries are
+// needed here too, for the same pools. An empty asm before iconSprite->tile in
+// the Psynergy and Item windows and before iconSprite->x in the summon window
+// takes differ from 178 to 136 of 1949 and the gap from 54 to 46. They are out
+// only because they do not reach differ 0; put them back, tagged, once the rest
+// closes.
+// Left, 136 with the barriers, of which about 80 lines are one cause: the spend
+// loop (the second duplicated test, after the summon's target) allocates the
+// state value, offset and required byte as r5, r4, r1 where the listing has r1,
+// r5, r4. Global allocation order there is priority: required 72/7, offset 8,
+// state 6.86; the listing needs state first, then required, then offset. That
+// one change rotates reload's registers through the Djinn case (r2 for
+// commandKind 5, a second load of parameter, the zero and -1 of the range).
+// Tried for it: a u8 or s32 local for the required byte (the u8 puts it last, but
+// the offset then comes first), a local state pointer, a pointer to the element,
+// and an offset local through u8 * and through a byte-array view (all add or
+// move instructions, or cost a spill slot).
+// Smaller: the -1 of timer issues late (negs after the isLink load), and the
+// listing's r3 then r2 for the zero and state of linkTimer = 0 are swapped here;
+// the remaining order pairs (actors[0] in Flee, sp+20 reload, lsls after a str)
+// look like K2 scheduling.
+// Measured causes, for the next reader:
+// - mode = 0 at the top is what puts r6 across the opening calls: it is the
+//   long-lived zero the other locals copy.
+// - state is assigned from a void * local: a call under a pointer conversion
+//   computes the frame address first, a bare call computes it after.
+// - The summon's first test is a guard and a do-while, not jump.c's duplicate:
+//   loop.c's preheader copies land after the test only in that form, and cse2
+//   turns them into the listing's three copies. The required pointer gives the
+//   guard a register for them; without it they cross-jump into one test.
+// - offset is set before required so its live length is 8: that makes priority
+//   give required r1, the walking pointer r0 and offset r4.
+// - hidden and cleared are one-constant locals (S2): the value is set before the
+//   state load, as the listing's reload registers show. They fixed reload's
+//   rotation from there to the summon case (186 to 142 with the barriers in).
+// - SET_CURSOR is the twin's BATTLE_MENU_SET_CURSOR: its one-pass block keeps
+//   mode = 0 ahead of the work pointer's load.
 // The signature's letters come from the pool only when written through a local
 // pointer, a read of the global array gets movs: keep signature.
 #include "types.h"
@@ -224,11 +250,18 @@ s32 Item_ClassifyUseAbility(s32 member, s32 item);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 u32 Random16(void);
 void Vram_FillWindowBlockPattern(void);
-void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 void Text_DrawWideStringAtOffset(u16 *text,
                                      struct PartyCommandWindow *window, s32 x,
                                      s32 y);
 void Camera_ConfigureSceneFar(s32 mode);
+
+#define SET_CURSOR(page_, row_, preferred_)                                    \
+  do {                                                                         \
+    NAVIGATION->page = (page_);                                                \
+    NAVIGATION->row = (row_);                                                  \
+    NAVIGATION->preferredRow = (preferred_);                                   \
+  } while (0)
 
 #define COMMAND_ICON_X(state) ((state)->icons[0].x)
 
@@ -236,6 +269,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
                   s32 commandCount) {
   u16 signatureHeader[2];
   struct PartyCommandState *state;
+  void *menuBlock;
   struct PartyCommandRecord *commandsOut;
   s32 forcedCount;
   struct PartyCommandRecord *command;
@@ -268,11 +302,13 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
 
   target = 256;
   commandsOut = NULL;
+  mode = 0;
   commandKind = 0;
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(1024);
   smallIconSlot = VramCache_AllocEntry(512);
-  state = HeapSlot_AllocEwram(228, 272);
+  menuBlock = HeapSlot_AllocEwram(228, 272);
+  state = menuBlock;
   forcedCount = 0;
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
@@ -283,19 +319,23 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
   {
     struct PartyCommandBattle *battle = Ram_HeapSlots->battleWork;
     s32 k;
+    s32 hidden;
+    s32 cleared;
 
     for (k = 0; k < 8; k++)
       state->chosenDjinn[k] = 0x80000000;
+    hidden = 0;
     for (k = 0; k < 3; k++)
-      state->iconShown[k] = 0;
-    state->targetViewOffset = 0;
-    state->viewOffset = 0;
-    state->commandSelection[0] = 0;
-    state->commandSelection[1] = 0;
-    state->linkTimer = 0;
-    state->timerHidden = 0;
+      state->iconShown[k] = hidden;
+    cleared = 0;
+    state->targetViewOffset = cleared;
+    state->viewOffset = cleared;
+    state->commandSelection[0] = cleared;
+    state->commandSelection[1] = cleared;
+    state->linkTimer = cleared;
+    state->timerHidden = cleared;
     state->timer = -1;
-    state->timerWindow = NULL;
+    state->timerWindow = (void *)cleared;
     if (battle->isLink != 0) {
       struct PartyLinkBattle *link = (struct PartyLinkBattle *)battle;
       s32 missedLinkFrames;
@@ -555,9 +595,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
 
         Sound_PlayFar(112);
         mode = 0;
-        NAVIGATION->page = mode;
-        NAVIGATION->row = mode;
-        NAVIGATION->preferredRow = mode;
+        SET_CURSOR(mode, mode, mode);
       psynergy_menu:
         list = state->listAbilities;
         pick = state->listSlots;
@@ -635,9 +673,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         s32 n;
 
         Sound_PlayFar(112);
-        NAVIGATION->page = 0;
-        NAVIGATION->row = 0;
-        NAVIGATION->preferredRow = 0;
+        SET_CURSOR(0, 0, 0);
       summon_menu:
         COMMAND_ICON_X(state) = 80;
         BattleLayout_HighlightPartyPanels(signatureHeader);
@@ -655,13 +691,17 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         commandWindow = Window_Create(10, 17, 17, 3, commandKind);
         n = 0;
         j = 0;
-        if (summon->djinnRequired[0] <= state->standbyDjinn[commandIndex][0]) {
-          do {
-            j++;
-            if (j > 3)
-              break;
-          } while (summon->djinnRequired[j] <=
-                   state->standbyDjinn[commandIndex][j]);
+        {
+          s32 offset = commandIndex * 4 + 84;
+          const u8 *required = summon->djinnRequired;
+
+          if (*required <= ((u8 *)state)[offset]) {
+            do {
+              j++;
+              if (j > 3)
+                break;
+            } while (summon->djinnRequired[j] <= state->standbyDjinn[commandIndex][j]);
+          }
         }
         ok = j == 4;
         COMMAND_ICON_X(state) = 56;
@@ -716,9 +756,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         s32 index;
 
         Sound_PlayFar(112);
-        NAVIGATION->page = 0;
-        NAVIGATION->row = 0;
-        NAVIGATION->preferredRow = 0;
+        SET_CURSOR(0, 0, 0);
       djinn_menu:
         COMMAND_ICON_X(state) = 140;
         NAVIGATION->chosenDjinn[commandIndex] = 0x80000000;
@@ -793,9 +831,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
 
         Sound_PlayFar(112);
         mode = 0;
-        NAVIGATION->page = mode;
-        NAVIGATION->row = mode;
-        NAVIGATION->preferredRow = mode;
+        SET_CURSOR(mode, mode, mode);
       item_menu:
         COMMAND_ICON_X(state) = 96;
         pick = state->listSlots;

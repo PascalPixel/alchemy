@@ -1,226 +1,218 @@
-// Draft, differ 214 of 402, skeleton gap 56 (tla-en, 2026-11-01): the Psynergy
-// Stone's power passing between two objects: the first rises glowing while
-// sixteen sparks burst from it with the screen flashing, sixteen sparks then
-// spiral down onto the second as it rises, sixteen orbiting sparks circle it,
-// the screen whitens and both settle back while the second keeps sparkling for
-// two seconds. Overlay 681's Func_020015d0 is a near copy.
-// Left: nearly all allocation. The native has first r7, second r10, i r8,
-// firstId r9, secondId r11; here first r8, second r7, i r10, firstId r11,
-// secondId r9, so the high-register movs differ and the code is shorter, which
-// also moves the literal pools and turns the native's beq plus b at the second
-// loop's end into bne. global.c ranks first .291, i .285, second .313 and
-// secondId above firstId; the native's order fits only if the two refs of
-// secondId and the three of second inside `if (i == 3)` are not doubled by loop
-// depth, and no form tried did that (an inline helper is undone by CSE; the
-// loop forms below). The native's sub sp, #12 is unexplained: no stack slot is
-// ever read, and no local was added for it.
-// Also left: the zeros stored in the second and third loops come from the pool
-// in the native, inside the loop; a label loop keeps them there but the loop
-// notes of for (;;) and do-while (better skeleton) hoist them. The first loop
-// must stay a label loop or its constants and the register pointer hoist.
-// Store plain constants: a halfword constant becomes a pool load only when no
-// local holds it. One spark per loop is what gives r5 to the spark.
-#include "iwram_call.h"
-#include "call.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
+// Matches: differ 0 (tla-en, 2026-11-01): the Psynergy Stone's power passing
+// between two objects: the first rises glowing while sixteen sparks burst from it
+// with the screen flashing, sixteen sparks then spiral down onto the second as it
+// rises, fifteen more stand in a column over it, the screen whitens and both
+// settle back while the second keeps sparkling for two seconds.
+// The listing equals overlay 681's Func_020015d0 and 692's Func_02002cd0 but for
+// addresses; 664's Func_02004138 is the same shape. This is 692's form, which has
+// no asm, where 681 needs three barriers.
+// What closed it: all three loops are goto loops. The native's allocation (first
+// r7, second r10, i r8, firstId r9, secondId r11) needs the spiral's refs at
+// weight 1, so a jump into its middle has to exist at flow and be gone after: the
+// tagged dead test, which only combine can fold. The same weight gives script its
+// two refs, so its pool load moves to the use; that needs the load in an earlier
+// block. Bytes 0x62 and 0x63 read through a union with struct Actor so the store
+// order holds; noMotion and (u16)0 are the pooled zeros; unused[3] is the frame.
+// Tried for the one-pass block, none better than 2: i = 0 above the blend stores,
+// the stores swapped, a zero local, a block after the label, a static inline for
+// the stores or the zero, a forced temporary for the values.
 #include "types.h"
+#include "actor.h"
+#include "call.h"
 #include "system/io_reg.h"
 
-
-/// The field object fields these sparks use, with the two spark bytes at 0x62.
-struct Spark {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x23 - 0x14];
-  u8 priorityFlags;
-  u8 unk24[0x30 - 0x24];
-  s32 speedLimit;
-  s32 acceleration;
-  u8 unk38[0x44 - 0x38];
-  s32 bounce;
-  s32 gravity;
-  s32 unk4c;
-  u8 unk50[0x55 - 0x50];
-  u8 motionFlags;
-  u8 unk56[0x62 - 0x56];
-  u8 unk62;
-  u8 unk63;
-  s16 action;
-  u16 unk66;
-  struct Spark *watchedObject;
-  void (*update)(void);
+union ActorView {
+  struct Actor actor;
+  struct {
+    u8 unk00[0x62];
+    u8 unk62;
+    u8 unk63;
+  } bytes;
 };
-
-extern u8 gData_02004034[];
-extern u8 gData_02003fe8[];
-extern u8 gData_02004004[];
-extern u8 gData_02004058[];
-extern u8 gData_02004014[];
-extern u8 gData_0200407c[];
-extern u8 gData_020040ac[];
+extern const u8 gData_02004034[], gData_02003fe8[], gData_02004004[],
+    gData_02004058[], gData_02004014[], gData_0200407c[], gData_020040ac[];
+struct Actor *Actor_GetById(u32 id);
+void Func_02003ef4(s32 cue);
+void FieldEvent_Wait(s32 frames);
+void Func_02003e44(s32 a, s32 b);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void Func_02003d44(s32 a, s32 b, s32 c);
+void Func_02003e7c(s32 a, s32 b);
+s32 Func_02003e74(s32 a, s32 b);
+s32 Func_02003e84(s32 frames);
+void Actor_SetMovementTypeById(s32 actor, const void *callback);
+void Func_02003e04(s32 actor, s32 a);
+void *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
+u32 Random16Far(void);
+void Actor_SetPartAttribute(void *object, s32 value);
+void Scene_SetActorSpritePriority(void *object, s32 priority);
+void Func_02003cc4(void *object, s32 mode);
+void Actor_SetSingleChildFlags(void *object, u32 value);
+void Animation_SetStateFlags(void *object, s32 flags);
+void Func_02003ccc(void *object, const u8 *script);
+void Vector_AddPolarOffsetFar(s32 distance, s32 angle, s32 *position);
+void wait(s32 frames);
 void Func_02001598(void);
-struct Spark *Actor_GetById(s32 id);
-void Func_02003ef4();
-void FieldEvent_Wait();
-void Func_02003e44();
-void Camera_MoveWithinMapBounds();
-void Func_02003d44();
-void Func_02003e7c();
-void Func_02003e74();
-void Func_02003e84();
-void Actor_SetMovementTypeById();
-void Func_02003e04();
-struct Spark *Import_ActorCreate(s32 kind, s32 x, s32 y, s32 z);
-s32 Random16Far(void);
-void Actor_SetPartAttribute();
-void Scene_SetActorSpritePriority();
-void Func_02003cc4();
-void Actor_SetSingleChildFlags();
-void Animation_SetStateFlags();
-void Func_02003ccc();
-void wait();
-void Vector_AddPolarOffsetFar();
 void Func_02003ebc(void);
 
 void Func_02001620(s32 firstId, s32 secondId) {
-  struct Spark *first = Actor_GetById(firstId);
-  struct Spark *second = Actor_GetById(secondId);
-  struct Spark *spark;
-  struct Spark *orbit;
-  struct Spark *ring;
-  volatile u16 *alpha;
-  s16 *angle;
+  struct Actor *first = Actor_GetById(firstId);
+  struct Actor *second = Actor_GetById(secondId);
+  struct Actor *object;
+  struct Actor *spark;
+  struct Actor *riser;
   s32 i;
-  s32 zero32;
+  u16 noMotion;
+  s32 probe;
+  const u8 *script;
+  // Unused: gives the stack frame its 12 bytes.
+  s32 unused[3];
 
-  Call1((void (*)())Func_02003ef4, 78);
-  Call1((void (*)())FieldEvent_Wait, 30);
-  Call2((void (*)())Func_02003e44, 0x8000, 0x1000);
-  Call4((void (*)())Camera_MoveWithinMapBounds, *(s16 *)((u8 *)first + 10) << 16,
-        *(s16 *)((u8 *)first + 14) << 16, *(s16 *)((u8 *)first + 18) << 16, 1);
-  Call1((void (*)())Func_02003ef4, 141);
+  script = gData_02004058;
+  Func_02003ef4(78);
+  FieldEvent_Wait(30);
+  Func_02003e44(0x8000, 0x1000);
+  Camera_MoveWithinMapBounds((first->x >> 16) << 16,
+                             (first->y >> 16) << 16,
+                             (first->z >> 16) << 16, 1);
+  Func_02003ef4(141);
+  /* FAKEMATCH(wrapper): forwarded, so each argument builds its own 0x20000; as a
+   * direct call, 17 of 402 instructions differ in tla-en. */
   Call3((void (*)())Func_02003d44, 0x20000, 0x20000, 0x10000);
-  Call2((void (*)())Func_02003e7c, 0x10000, 0);
-  Call2((void (*)())Func_02003e74, 0x10003, 1);
-  Call1((void (*)())Func_02003e84, 60);
+  Func_02003e7c(0x10000, 0);
+  Func_02003e74(0x10003, 1);
+  Func_02003e84(60);
   first->motionFlags = 0;
   first->acceleration = 0x3333;
   first->speedLimit = 0x3333;
-  Call2((void (*)())Actor_SetMovementTypeById, firstId, (s32)gData_02004034);
-  Call1((void (*)())Func_02003ef4, 194);
-  Call1((void (*)())FieldEvent_Wait, 45);
-  Call2((void (*)())Func_02003e04, firstId, 0x100);
+  Actor_SetMovementTypeById(firstId, gData_02004034);
+  Func_02003ef4(194);
+  FieldEvent_Wait(45);
+  /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2 of
+   * 402 instructions differ in tla-en. */
+  Call2((void (*)())Func_02003e04, firstId, 256);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
-
-  i = 0;
-loop1:
-    spark = Import_ActorCreate(0x2a0, first->x, first->y, first->z);
-    Call1((void (*)())Func_02003ef4, 246);
-    spark->x += ((Random16Far() & 31) - 16) << 16;
-    spark->y += ((Random16Far() & 15) - 8) << 16;
-    spark->speedLimit = 0x80000;
-    spark->acceleration = 0x3333;
-    spark->motionFlags = 0;
-    Call2((void (*)())Actor_SetPartAttribute, (s32)spark, 2);
-    Call2((void (*)())Scene_SetActorSpritePriority, (s32)spark, 1);
-    Call2((void (*)())Func_02003cc4, (s32)spark, 7);
-    Call2((void (*)())Actor_SetSingleChildFlags, (s32)spark, 0);
-    Call2((void (*)())Animation_SetStateFlags, (s32)spark, 1);
-    Call2((void (*)())Func_02003ccc, (s32)spark, (s32)gData_02003fe8);
-    alpha = &REG_BLDALPHA;
-    *alpha = 0x1004;
-    Call1((void (*)())wait, 2);
-    *alpha = 0x100a;
-    Call1((void (*)())wait, 2);
-    *alpha = 0x1010;
-    Call1((void (*)())wait, 2);
-    *alpha = 0x100a;
-    Call1((void (*)())wait, 2);
-    i++;
-  if (i != 16)
-    goto loop1;
-  *alpha = 0x1008;
-  Call1((void (*)())wait, 30);
-
-  i = 0;
-  for (;;) {
-    orbit = Import_ActorCreate(0x2a0, second->x, second->y, second->z);
-    Call1((void (*)())Func_02003ef4, 195);
-    angle = &orbit->action;
-    *angle = (u16)(Random16Far() & 0x7fff) + 0x8000;
-    orbit->unk66 = ((i & 1) * 2 - 1) << ((Random16Far() & 3) + 9);
-    orbit->motionFlags = 0;
-    orbit->unk4c = 0x7a0000;
-    orbit->watchedObject = second;
-    orbit->unk62 = (16 - i) * 8 + 15;
-    Call2((void (*)())Actor_SetPartAttribute, (s32)orbit, 2);
-    Call2((void (*)())Scene_SetActorSpritePriority, (s32)orbit, 1);
-    Call2((void (*)())Func_02003cc4, (s32)orbit, 7);
-    Call2((void (*)())Actor_SetSingleChildFlags, (s32)orbit, 0);
-    Call2((void (*)())Animation_SetStateFlags, (s32)orbit, 1);
-    Call3((void (*)())Vector_AddPolarOffsetFar, orbit->unk4c, *angle, (s32)&orbit->x);
-    Call2((void (*)())Func_02003ccc, (s32)orbit, (s32)gData_02004004);
-    if (i == 3) {
-      Call2((void (*)())Func_02003e04, secondId, 0x100);
-      second->motionFlags = 0;
-      second->acceleration = 0x3333;
-      second->speedLimit = 0x3333;
-      Call2((void (*)())Actor_SetMovementTypeById, secondId, (s32)gData_02004058);
-    }
-    Call1((void (*)())wait, 8);
-    i++;
-    if (i == 16)
-      break;
-  }
-
-  Call1((void (*)())Func_02003ef4, 220);
-  Call1((void (*)())wait, 16);
-
-  i = 2;
+  /* FAKEMATCH(one-pass): the empty block keeps i's zero after the blend store; as
+   * i = 0 with no block, 2 of 402 instructions differ in tla-en. */
   do {
-    ring = Import_ActorCreate(0x2a0, second->x, (i << 16) + second->y - 0x80000,
-                               second->z);
-    ring->action = Random16Far();
-    ring->unk66 = 0x800;
-    ring->unk62 = i;
-    ring->unk63 = 1;
-    zero32 = 0;
-    ring->bounce = ring->x;
-    ring->unk4c = zero32;
-    ring->gravity = ring->z;
-    ring->watchedObject = second;
-    ring->motionFlags = 0;
-    ring->priorityFlags = 1;
-    Call2((void (*)())Actor_SetPartAttribute, (s32)ring, 2);
-    Call2((void (*)())Func_02003cc4, (s32)ring, 7);
-    Call2((void (*)())Actor_SetSingleChildFlags, (s32)ring, 0);
-    Call2((void (*)())Animation_SetStateFlags, (s32)ring, 1);
-    Call2((void (*)())Func_02003ccc, (s32)ring, (s32)gData_02004014);
-    i += 2;
-  } while (i != 32);
-
-  Call1((void (*)())Func_02003ef4, 220);
-  Call1((void (*)())wait, 50);
-  Call2((void (*)())Func_02003e74, 0x7fff, 0);
-  Call1((void (*)())Func_02003e84, 8);
-  Call1((void (*)())wait, 16);
-  Call3((void (*)())Func_02003d44, 0, 0, 0);
-  Call2((void (*)())Func_02003e04, firstId, 0);
-  Call2((void (*)())Func_02003e04, secondId, 0);
-  Call1((void (*)())Func_02003ef4, 0x23e);
-  Call2((void (*)())Func_02003e74, 0x10000, 0);
-  Call1((void (*)())Func_02003e84, 80);
-  Call2((void (*)())Actor_SetMovementTypeById, firstId, (s32)gData_0200407c);
-  Call2((void (*)())Actor_SetMovementTypeById, secondId, (s32)gData_020040ac);
+  } while (0);
+  i = 0;
+burst:
+  object = Import_ActorCreate(672, first->x, first->y, first->z);
+  Func_02003ef4(246);
+  object->x += ((Random16Far() & 31) - 16) << 16;
+  object->y += ((Random16Far() & 15) - 8) << 16;
+  object->speedLimit = 0x80000;
+  object->acceleration = 0x3333;
+  object->motionFlags = 0;
+  Actor_SetPartAttribute(object, 2);
+  Scene_SetActorSpritePriority(object, 1);
+  Func_02003cc4(object, 7);
+  Actor_SetSingleChildFlags(object, 0);
+  Animation_SetStateFlags(object, 1);
+  Func_02003ccc(object, gData_02003fe8);
+  REG_BLDALPHA = 0x1004;
+  wait(2);
+  REG_BLDALPHA = 0x100a;
+  wait(2);
+  REG_BLDALPHA = 0x1010;
+  wait(2);
+  REG_BLDALPHA = 0x100a;
+  wait(2);
+  i++;
+  if (i != 16)
+    goto burst;
+  REG_BLDALPHA = 0x1008;
+  wait(30);
+  i = 0;
+  /* FAKEMATCH(dead): the never-taken jump into the spiral keeps its refs at
+   * weight 1; as the spiral alone, 174 of 402 instructions differ in tla-en. */
+  probe = second->unk57;
+  if (probe & 0x100) {
+    wait(1);
+    goto tail;
+  }
+spiral:
+  /* FAKEMATCH(wrapper): forwarded, so second->z takes r0 for its reload; as a
+   * direct call, 105 of 402 instructions differ in tla-en. */
+  spark = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 672, second->x,
+                                 second->y, second->z);
+  Func_02003ef4(195);
+  spark->action = (Random16Far() & 0x7fff) + 0x8000;
+  spark->unk66 = (((i & 1) << 1) - 1) << ((Random16Far() & 3) + 9);
+  noMotion = 0;
+  spark->motionFlags = noMotion;
+  spark->unk4c = 0x7a0000;
+  spark->watchedObject = second;
+  ((union ActorView *)spark)->bytes.unk62 = ((16 - i) << 3) + 15;
+  Actor_SetPartAttribute(spark, 2);
+  Scene_SetActorSpritePriority(spark, 1);
+  Func_02003cc4(spark, 7);
+  Actor_SetSingleChildFlags(spark, 0);
+  Animation_SetStateFlags(spark, 1);
+  /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2 of
+   * 402 instructions differ in tla-en. */
+  Call3((void (*)())Vector_AddPolarOffsetFar, spark->unk4c, spark->action,
+        (s32)&spark->x);
+  Func_02003ccc(spark, gData_02004004);
+  if (i == 3) {
+    /* FAKEMATCH(wrapper): forwarded for its argument order; as a direct call, 2 of
+     * 402 instructions differ in tla-en. */
+    Call2((void (*)())Func_02003e04, secondId, 256);
+    second->motionFlags = noMotion;
+    second->acceleration = 0x3333;
+    second->speedLimit = 0x3333;
+    Actor_SetMovementTypeById(secondId, script);
+  }
+tail:
+  wait(8);
+  i++;
+  if (i != 16)
+    goto spiral;
+  Func_02003ef4(220);
+  wait(16);
+  i = 2;
+column:
+  /* FAKEMATCH(wrapper): forwarded, so second->z takes r0 for its reload; as a
+   * direct call, 116 of 402 instructions differ in tla-en. */
+  riser = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 672, second->x,
+                                 second->y + i * 0x10000 - 0x80000, second->z);
+  riser->action = Random16Far();
+  riser->unk66 = 0x800;
+  ((union ActorView *)riser)->bytes.unk62 = i;
+  ((union ActorView *)riser)->bytes.unk63 = 1;
+  riser->bounce = riser->x;
+  riser->unk4c = 0;
+  riser->gravity = riser->z;
+  riser->watchedObject = second;
+  riser->motionFlags = (u16)0;
+  riser->priorityFlags = 1;
+  Actor_SetPartAttribute(riser, 2);
+  Func_02003cc4(riser, 7);
+  Actor_SetSingleChildFlags(riser, 0);
+  Animation_SetStateFlags(riser, 1);
+  Func_02003ccc(riser, gData_02004014);
+  i += 2;
+  if (i != 32)
+    goto column;
+  Func_02003ef4(220);
+  wait(50);
+  Func_02003e74(0x7fff, 0);
+  Func_02003e84(8);
+  wait(16);
+  Func_02003d44(0, 0, 0);
+  Func_02003e04(firstId, 0);
+  Func_02003e04(secondId, 0);
+  Func_02003ef4(574);
+  Func_02003e74(0x10000, 0);
+  Func_02003e84(80);
+  Actor_SetMovementTypeById(firstId, gData_0200407c);
+  Actor_SetMovementTypeById(secondId, gData_020040ac);
   second->update = Func_02001598;
-  Call1((void (*)())wait, 120);
-  second->update = (void (*)(void))zero32;
-  Call1((void (*)())Func_02003ef4, 0x186);
+  wait(120);
+  second->update = 0;
+  Func_02003ef4(390);
   Func_02003ebc();
-  Call1((void (*)())wait, 1);
+  wait(1);
 }

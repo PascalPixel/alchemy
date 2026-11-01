@@ -1,12 +1,33 @@
-// Draft, differ 258 of 347, skeleton gap 94 (tla-en, 2026-11-01)
-// Control flow, types and frame (40 bytes) agree with the listing. What is left
-// starts at the outer retry loop: gcse hoists actor + 34 and pos's address onto
-// the edge into `start` (07.gcse: PRE/HOIST edge (0,1)), where the listing
-// computes them inside the loop and rematerialises `add rN, sp, #28`. That takes
-// r8 from the multiply's address, spills it, and moves the literal pools; the
-// other differences follow from it. Tried: for(;;) against goto loops, a kept
-// terrain pointer, separate p and q (worse), merged counters (worse), declaration
-// orders. gData_020074c8 is volatile s16: it gives the ldrh, lsls, cmp reads.
+// Draft, differ 250 of 347, skeleton gap 94 (tla-en, 2026-11-01)
+// Control flow, types and the 40-byte frame agree with the listing; the slots
+// are in the listing's order (startCell, x, z, cellX, cellZ, then the terrain
+// address, then radius). What is left comes from the outer retry loop, in two
+// ways, and both are measured:
+// - PRE: gcse hoists actor + 34 and pos's address onto the entry edge (07.gcse:
+//   PRE/HOIST edge (0,1)). The listing computes actor + 34 after the label, and
+//   builds pos at each call with p still live, so nothing unified those.
+// - Weight: flow counts the block at depth 1 (12.life), so the multiply address
+//   has 6 refs across 1 call and CALLER_SAVE_PROFITABLE puts it in r3 with a
+//   save at sp+4. The listing has it in r8 with no save, which fits 3 refs,
+//   depth 0: the listing's allocation looks as if the back edge were not there.
+// Evidence, none of it kept: `goto start` replaced by `return` gives differ 155,
+// with the frame, the slots, r8 and cellZ on the stack all right, so the weight
+// is the larger part. A dead test at the top of the loop (once = 1 before the
+// label, `if (once == 0) goto done;` after it, folded by gcse's last cprop) stops
+// the hoist but leaves depth 1: 244. A never-taken jump from the entry to a label
+// before wait(2) makes the loop irreducible, depth 0 (205), but PRE then hoists
+// on both entry edges, and `(u8)(s32)actor >> 8` folds only to a cmp the listing
+// lacks. An empty asm rewriting actor stops actor + 34 only: 257. None reaches
+// differ 0, so all came out. No plain form was found that drops the back edge
+// from gcse and flow and still ends in `b` to the label; the sibling drafts
+// 02004140 and 0200470c stop at the same retry loop and 02003d80 at the same
+// hoist. No PRE plus depth-0 refs is what optimize_size gives (gcse.c, flow.c):
+// that is a compiler question, for Pascal (K3), and is untested here.
+// Tried without gain: separate p and q (256, cse merges them or PRE keeps them
+// apart), pos with no pointer (256), a terrain local (no change), for (;;) (290),
+// radius or dx, dz, dist in other scopes and orders (no change), j != 64 (no
+// differ change, gap 98), inline x and z (252), returns-twice on Func_0200410c
+// (353). gData_020074c8 is volatile s16: it gives the ldrh, lsls, cmp reads.
 #include "types.h"
 #include "actor.h"
 #include "call.h"
@@ -39,7 +60,7 @@ void Func_020043ec(void) {
   struct Actor *actor;
   s32 pos[3];
   s32 *p;
-  s32 cellX, cellZ, x, z, startCell, cell, i, j, dx, dz, dist, radius;
+  s32 startCell, x, z, cellX, cellZ, cell, i, j, dx, dz, dist, radius;
   s32 angle;
   struct Actor *other;
 

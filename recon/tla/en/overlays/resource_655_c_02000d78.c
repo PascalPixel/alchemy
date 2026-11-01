@@ -1,6 +1,24 @@
-// Draft, differ 146 of 131: lowers the cells under the held actor (or the
-// one the leader carries) and keeps it at 0xcbc of the event work. Left:
-// register allocation and the order of the cell updates.
+// Draft, differ 85 of 131, skeleton gap 11/8 (tla-en, 2026-11-01)
+// Lowers the cells under the held actor (or the one the leader carries) and
+// keeps it at 0xcbc of the event work.
+// Settled: goto loop (a while hoists held + 34 out of the loop and cross-jumps
+// nothing); list spills to sp+4 and work to sp+0 once the seven callee-saved
+// registers go to held, layer, cells, shapes, shape, level, index; level takes
+// two statements, or it dies twice and leaves local-alloc.
+// Left: the native keeps one cells pointer in r10 through `cells += index`,
+// the first update, `cells += 128` and the second update, with index tied to
+// r6 and level in r5. Written that way (cells += index, or a cell local, an
+// under local, a static inline or a one-pass macro) the tied quantity has 20
+// refs across 4 calls, so CALLER_SAVE_PROFITABLE puts it in r4 once r5 and r6
+// are taken: differ 101, list back in a register. The native has no r4 and no
+// save slot, so its quantity has at most 16 refs and ranks under shapes, and no
+// form tried gets there. Combine's refs come from the life pass, and regmove
+// does not recount; thumb add never reaches regmove (LO_REGS is likely
+// spilled), so only a real copy could leave a stale count, and CSE removes
+// every copy tried. cells[index] below avoids r4 but ties the sum to index,
+// which swaps r5 and r6 and ends in a three-operand add.
+// `shape = Func_02003dd0(...); shapes[index] = shape;` gives differ 78 but gap
+// 16/16 (held in r9). Bit-field views of attributeB change nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -79,26 +97,28 @@ void Func_02000d78(u16 *list) {
       held = Actor_GetById(id);
   }
   HELD_OBJECT(work) = NULL;
-  while (*list != 0xffff) {
+  if (*list != 0xffff) {
+  loop:
     if (held == Actor_GetById(*list)) {
       u8 *layer = &held->terrainId;
-      u8 *cells = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
-      u8 *shapes = gMapShapeGrid + (((struct MapCell *)cells) -
-                                    (struct MapCell *)Ram_MapCellBuffer);
+      struct MapCell *cells =
+          Ram_HeapSlots->mapWork->layers[*layer].cells;
+      u8 *shapes =
+          gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
       s32 shape = Func_02003c10(*layer, held->x, held->z);
       s32 level = Map_GetTerrainHeight(*layer, held->x, held->z);
       s32 index = Func_02003db0(held);
 
-      level = (level >> 19) - 4;
-      shape = Func_02003dd0(*layer, shape, level);
+      level >>= 19;
+      level -= 4;
       shapes += index;
-      cells += index * 4;
-      *shapes = shape;
-      cells[3] &= 63;
-      cells += 0x200;
-      cells[3] &= 191;
+      *shapes = Func_02003dd0(*layer, shape, level);
+      cells[index].attributeB &= 63;
+      cells[index + 128].attributeB &= 191;
       HELD_OBJECT(work) = held;
     }
     list++;
+    if (*list != 0xffff)
+      goto loop;
   }
 }

@@ -1,26 +1,37 @@
-// Draft, differ 343 of 1075, skeleton gap 55 (tla-en, 2026-11-01)
+// Draft, differ 20 of 1075, skeleton gap 18 (tla-en, 2026-11-01)
 //
-// BattleEffect_RunOdyssey, effect kind 125: every call, cue, table read and
-// branch is in the native's order and the frame is the native's 136 bytes
-// (to sp+124, from sp+112, list sp+84, the blitter pair sp+76, the texture
-// sp+68, color sp+67, then spills). Most of the gap is scheduling ties.
-// What is left, with what would act on it:
-// - The sparks' start: the native spills 32k (sp+8, += 32) and multiplies it by
-//   28 before the spark loop; here the loop reduces the whole 896k. A running
-//   `first += 32` gives the right instructions but the wrong spill slot, so it
-//   is a user variable where the native has a giv; it scored two lines worse.
-// - The haze palette: the native's blue is lsls #16, lsrs #26, as adopted
-//   Func_0819253c's is where a second channel shares the shift. One channel
-//   folds to lsrs #10 here; a shared variable and (s16), (u32) casts did not help.
-// - &from, &to and &texture spill in the order texture, from, to (the native's
-//   from, to, texture), which moves those stack offsets. Named pointers fix
-//   that for the two positions (differ 337) but add two skeleton lines.
-// Forms that are evidence, not style: savedScrollX is s32 (its reload is ldrh
-// from the word), color is an array (allocated last, sp+67, and read back
-// through a fresh address), the sparks index by i * 32 + k, the claw's else
-// branch keeps both identical arms (it reloads effect->side for GCSE), and
-// fillMode, flatKind and center are locals so that their constants stay where
-// the native loads them.
+// BattleEffect_RunOdyssey, effect kind 125. Every instruction, register and
+// stack slot now agrees; the 20 lines left are ten instructions in the wrong
+// order, in five places, and they look like the scheduler, not the source:
+// - The high-register moves go after the spill stores in the native and before
+//   them here: mov fp, r6 (loop head), mov r8, r2 (claw loop), and mov r8 / mov
+//   sl after str r6, [sp, #20] (flash loop). sched2 ties all of these and breaks
+//   the tie by LUID, and i = 0 is always ahead of loop.c's giv inits, so C cannot
+//   reverse it: statement order, do { } while (0) around the loops and named
+//   address locals all failed (those locals get registers, differ 481).
+// - ldr r7, [sp, #56] before the second slash's stack arguments; str r3, [r7, #8]
+//   for the mesh; movs r5, #0 and its store at the very end. Every order of the
+//   model set-up and of the closing statements stays at 20 or worse.
+// All of it fits the "spill store under-costed" family: the native ranks a store
+// above a move. That is a question about the K2 scheduling model for Pascal, out
+// of reach here, so no barrier was added; one could not reach differ 0.
+// Forms that are evidence, not style:
+// - The expression hash table must have 463 buckets, or PRE names &texture before
+//   &from and &to and their spill slots swap. That needs 924 to 927 insns at GCSE;
+//   u16 green and its ?: bring it to 926. Adding or removing insns anywhere can
+//   flip this, so watch sp+24 to sp+32 after any change.
+// - green keeps the lsls #16 of blue alive through combine.
+// - spark must stay block-local: a shared step needs a final value after the k
+//   loop, which keeps i * 896 worth reducing, where the native reduces i * 32.
+// - shard is a separate hand-stepped pointer: its own register, and a pool-loaded
+//   start; &Data_02016000[i] reloads the symbol in the loop.
+// - pixels is loaded before the bitfields so that it takes r0.
+// - none: a separate pseudo for the stack argument, giving movs r1, #0.
+// - savedScrollX is s32 (its reload is ldrh from the word), color is an array
+//   (allocated last, sp+67, and read back through a fresh address), the claw's
+//   else branch keeps both identical arms (it reloads effect->side for GCSE), and
+//   fillMode, flatKind and center are locals so that their constants stay where
+//   the native loads them.
 // Its twins are BattleEffect_RunTitanBlade (shape) and
 // BattleEffect_RunHealingMotes (call order); the backdrop swap is also
 // BattleEffect_RunMegiddo's (kind 124).
@@ -150,6 +161,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   s32 k;
   s32 fillMode;
   s32 flatKind;
+  u8 *pixels;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -204,14 +216,19 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       for (i = 0; i != 128; i++) {
         s32 entry = *palette;
         s32 red = 31;
-        s32 blue = ((u16)entry >> 10) & 31;
+        u16 green;
+        s32 blue;
 
         red &= entry;
+        /* FAKEMATCH(dead): green is taken and clamped, then never used; as no green at all, 79 of 1075 instructions differ in tla-en. */
+        green = ((u16)entry >> 5) & 31;
+        blue = ((u16)entry >> 10) & 31;
 
         if (red > 31)
           red = 31;
         if (blue > 31)
           blue = 31;
+        green = green > 31 ? 31 : green;
         *palette++ = red << 10 | ((u16)red >> 1) << 5 | blue;
       }
       transition->active = 1;
@@ -242,25 +259,27 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
     // Frame 90: the hit, and 128 shards scatter away from the caster.
     if (frame == 90) {
+      struct EffectStep *shard;
+
       Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
       Sound_PlayFar(144);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 16);
       work->shakeFrames = 8;
-      step = Data_02016000;
+      shard = Data_02016000;
       for (i = 0; i != 128; i++) {
         s32 speed = (Random16() & 0x1ff) + 32;
         s32 angle = Random16() & 0x7fff;
 
         if (effect->side == 1)
           angle += 0x8000;
-        step->x = (to.x / 2) << 16;
-        step->y = to.y << 16;
-        step->velocityX = (Trig_Sin(angle) * speed) >> 6;
-        step->velocityY = -(Trig_Cos(angle) * speed) >> 5;
-        step->z = Random16();
-        step->velocityZ = (Random16() & 0x3ff) + 0x400;
-        step->variant = (Random16() & 0x3fff) + 0x2000;
-        step++;
+        shard->x = (to.x / 2) << 16;
+        shard->y = to.y << 16;
+        shard->velocityX = (Trig_Sin(angle) * speed) >> 6;
+        shard->velocityY = -(Trig_Cos(angle) * speed) >> 5;
+        shard->z = Random16();
+        shard->velocityZ = (Random16() & 0x3ff) + 0x400;
+        shard->variant = (Random16() & 0x3fff) + 0x2000;
+        shard++;
       }
     }
 
@@ -289,8 +308,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
     // Until frame 89: the sparks of the claws' hits, shrinking.
     if (frame <= 89) {
-      step = work->particles;
-      for (i = 0; i != 64; i++) {
+      for (i = 0, step = work->particles; i != 64; i++) {
         if (step->variant >= 0) {
           s32 size = (step->variant >> 2) + 1;
 
@@ -312,6 +330,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         Sound_PlayFar(212);
       if (frame == i * 16 + 32) {
         for (k = 0; k != 16; k++) {
+          struct EffectStep *spark;
           s32 speed = (Random16() & 255) + 128;
           s32 angle = Random16() & 0x3fff;
 
@@ -323,12 +342,12 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           } else {
             angle += 0x8000;
           }
-          step = &work->particles[i * 32 + k];
-          step->x = (to.x / 2) << 16;
-          step->y = to.y << 16;
-          step->velocityX = (Trig_Sin(angle) * speed) >> 6;
-          step->velocityY = -(Trig_Cos(angle) * speed) >> 5;
-          step->variant = (Random16() & 7) + 17;
+          spark = &work->particles[i * 32 + k];
+          spark->x = (to.x / 2) << 16;
+          spark->y = to.y << 16;
+          spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
+          spark->velocityY = -(Trig_Cos(angle) * speed) >> 5;
+          spark->variant = (Random16() & 7) + 17;
         }
         Sound_PlayFar(133);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 64);
@@ -370,10 +389,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
     projected = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
+    pixels = gMapCellBuffer;
     texture.logWidth = 7;
     texture.logHeight = 7;
     model->mesh = gData_08199364;
-    texture.pixels = gMapCellBuffer;
+    texture.pixels = pixels;
     model->kind = 7;
     model->texture = &texture;
     model->vertices = projected;
@@ -408,9 +428,11 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       start = i * 8 + 64;
       if (frame == i * 8 + 68)
         Sound_PlayFar(212);
-      if (frame == i * 8 + 72)
-        Func_0814cd48(effect->actor, 7, -1, 0, 0);
-      else if (frame == i * 8 + 76)
+      if (frame == i * 8 + 72) {
+        s32 none = 0;
+
+        Func_0814cd48(effect->actor, 7, -1, 0, none);
+      } else if (frame == i * 8 + 76)
         Func_0814cd48(effect->actor, 0, -1, 0, 0);
       if (frame >= start && frame < start + 11) {
         s32 scale = 0x30000 - ((frame - start) << 14);
@@ -434,11 +456,10 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         if (shade > 0)
           shade = 0;
         if (shade > -64) {
-          s32 scale;
+          s32 scale = (age << 14) + 0x4000;
 
           model->look.shade = shade;
           Render_ResetTransformState();
-          scale = (age << 14) + 0x4000;
           Func_08015160((to.x / 2 - 64) << 16, 0, 0);
           Func_080151e4(scale, scale * 2, scale);
           SceneTransform_ApplyPitch(Data_08199f2a[i]);
@@ -466,8 +487,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         work->transferValue = 0x02020202;
         Func_08164a4c(2, 2, 2);
       }
-      step = Data_02016000;
-      for (i = 0; i != 128; i++) {
+      for (i = 0, step = Data_02016000; i != 128; i++) {
         color[0] = (i & 7) + 32;
         model->look.color = color;
         Render_ResetTransformState();
@@ -495,8 +515,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
   // The battle's own scene again.
   BattleActor_CommitPlacementFar();
-  gBgScroll[1].x = savedScrollX;
   transition->active = 0;
+  gBgScroll[1].x = savedScrollX;
   BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);

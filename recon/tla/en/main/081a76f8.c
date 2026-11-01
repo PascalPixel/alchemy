@@ -28,7 +28,7 @@ extern char ResourceId_CamelotLogo;
 void Fade_ToBlack(s32 vblanks);
 void Fade_FromWhite(s32 vblanks);
 void Fade_Wait(void);
-void DebugText_Clear(void);
+void Func_08014b70(void);
 void Window_LoadGraphics(void);
 
 s32 Title_ShowAnimatedSplash(void) {
@@ -42,7 +42,7 @@ s32 Title_ShowAnimatedSplash(void) {
   resource = (s32)&ResourceId_CamelotLogo;
   Task_ResetAll();
   Fade_ToBlack(1);
-  DebugText_Clear();
+  Func_08014b70();
   wait(1);
   REG_BG2CNT = 0x685;
   REG_DISPCNT = 0x1440;
@@ -65,7 +65,7 @@ s32 Title_ShowAnimatedSplash(void) {
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
   Window_LoadGraphics();
-  DebugText_Clear();
+  Func_08014b70();
   Fade_FromWhite(1);
   Fade_Wait();
   REG_DISPCNT = 0x1540;
@@ -79,3 +79,6 @@ s32 Title_ShowAnimatedSplash(void) {
   }
   return result;
 }
+
+/// Unused: an empty routine in the far-call table.
+void Data_081a786c(void) {}

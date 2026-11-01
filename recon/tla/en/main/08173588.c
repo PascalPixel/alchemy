@@ -1,26 +1,50 @@
-// Draft of Func_08173588, the body of effect kinds 240 (Rime, mode 0) and
-// 238 (Haze, mode 1) through BattleEffect_RunRime and BattleEffect_RunHaze, written from
+// Draft, differ 6 of 485, skeleton gap 3 (tla-en, 2026-11-01)
+// Func_08173588, the body of effect kinds 240 (Rime, mode 0) and 238 (Haze,
+// mode 1) through BattleEffect_RunRime and BattleEffect_RunHaze, written from
 // the listing on The Broken Seal's canvas skeleton. No close twin (shape
 // BattleEffect_RunUndeadSword 0.470, call order
 // BattleEffect_RunDragonCloud 0.456). Func_0815585c, the canvas
 // preparer (The Broken Seal's BattleEffect_RunDjinniEntrance, reworked),
 // fills the centre and base points; its prototype here is read from the
 // calls.
-
-// Listing 485 instructions, draft 483, differ 258.
-// Left: allocation. The native keeps work in r11, the frame in r9 and
-// the model in r10; here work takes r9, which renames every use of it,
-// and the mirror copy's first load and store come one row apart.
+//
+// Left: three swaps of neighbouring instructions; every register and stack
+// slot agrees. All three look like the scheduler's model (K2), not source:
+// 1. Haze's Func_0815585c call: the native reloads center's address straight
+//    after spilling it (str r3, [sp, #8]; ldr r2, [sp, #8]) and then builds
+//    r3. -mthumb-slow-loads makes a same-address reload wait a cycle, so
+//    add r3, sp, #48 fills the gap here.
+// 2. Before the frame loop: the native spills &texture (str r3, [sp, #12])
+//    ahead of mov r9, r2. Both have priority 1 and no dependents, and
+//    frame = 0 has the lower LUID. Setting a pointer before the loop gives
+//    r2 and r3 the other way round, so the native's order of insns is this
+//    one and the spill store outranks the move.
+// 3. Before Haze's star loop: the native stores texture.pixels ahead of
+//    movs r2, #0, though i = 0 has the higher priority here.
+// Site 3 alone closes with do { } while (0) around the star loop (a loop note
+// is a scheduling barrier; differ 4, found by permute), left out because
+// sites 1 and 2 stay. An empty asm cannot reach either: the note or asm would
+// have to fall between insns reload and PRE place side by side.
+//
 // Tried (differ):
 // first draft (the mirror copy through walking pointers)              461
-// the mirror copy indexed (the native reloads the source byte after
-// the first store, as both do), centre and base declared first      296
-// the blitter as The Broken Seal's pair, only the first used (the
-// native stack frame's unused word; FAKEMATCH below)                     258
-// alchemy permute 8 minutes, 2 jobs, from the 296 form: 202 only with
-// a forced pointer
-// temporary for Haze's star->variant, 221 with star->y through a
-// temporary; neither kept
+// the mirror copy indexed, centre and base declared first             296
+// the blitter as The Broken Seal's pair                               258
+// one i for every loop but the mirror, star split per loop            253
+// Haze's size in two locals (swell, a single-block pseudo, takes r6
+// from local-alloc and pushes the star to r7 and i to r8), computed
+// after Func_08015160                                                  14
+// size /= 2 after the yaw, so its add and shift straddle that call     12
+// star set after i (the star loop's preheader order)                   10
+// the setup loop's star as &work->particles[i], a reduced giv           8
+// u8 *pixels: void * shares an alias set with the model's fields, and
+// the texture word's store loses the dependents that ranked it first    6
+// no gain: the model field stores in all 120 orders; size set after the
+// pitch or the yaw; the star loop's star as a giv; a texture pointer set
+// before the frame loop, also with the word masked by hand (the bitfields
+// take strb once the address is taken); an inline wrapper around the call
+// (27); do-while and goto frame loops; a do { } while (0) around the frame
+// loop (no gain); permute 6 minutes, 3 jobs: 4 only by the one-pass above.
 
 #include "types.h"
 #include "io_reg.h"
@@ -53,7 +77,7 @@ struct Texture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  void *pixels;
+  u8 *pixels;
 };
 
 // One model job for Render_DrawModelList, the polygon kernel runner.
@@ -114,15 +138,11 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
   s32 base[3];
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH: the blitter is declared as The Broken Seal's pair though only
-   * the first is used: its second word is the unused word at sp 24 that
-   * makes the native stack frame 84 bytes. As one DrawRectangle the stack frame is 80
-   * and every stack offset after it moves (differ 296). */
+  // Unused: blit[1] gives the stack frame its 4 bytes at sp 24.
   DrawRectangle blit[2];
   void *vertices;
   struct Texture texture;
   struct RenderModel *model;
-  struct EffectStep *star;
   s32 frame;
   s32 i;
 
@@ -177,8 +197,9 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
     // Frame 0: Haze's stars take random places about the centre, one more
     // every two frames.
     if (frame == 0) {
-      star = work->particles;
-      for (i = 0; i != 32; i++, star++) {
+      for (i = 0; i != 32; i++) {
+        struct EffectStep *star = &work->particles[i];
+
         star->x = ((Random16() & 31) - 16) << 16;
         star->y = ((Random16() & 63) - 16) << 16;
         star->z = (Random16() & 127) + 128;
@@ -224,7 +245,6 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
       // two mirrored copies that come together at frame 32, shrinking
       // from twice its size.
       s32 brightness = frame * 8 - 64;
-      s32 copy;
 
       if (brightness > 0)
         brightness = 0;
@@ -232,17 +252,17 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
         brightness = (56 - frame) * 8;
       model->brightness = brightness;
       texture.pixels = work->sheet + CRYSTAL_OFFSET;
-      for (copy = 0; copy != 2; copy++) {
+      for (i = 0; i != 2; i++) {
         s32 scale = 0x20000 - frame * 0x800;
 
-        if (frame > 31 && copy == 1)
+        if (frame > 31 && i == 1)
           continue;
         if (scale < 0x10000)
           scale = 0x10000;
         Render_ResetTransformState();
         SceneTransform_ApplyPitch(-0x4000);
         if (frame <= 31) {
-          if (copy == 0)
+          if (i == 0)
             SceneTransform_ApplyYaw((32 - frame) << 9);
           else
             SceneTransform_ApplyYaw((frame << 9) - 0x4000);
@@ -254,20 +274,23 @@ void Func_08173588(struct BattleEffectArgument *effect, s32 mode) {
     } else {
       // Each of Haze's stars swells and shrinks over 16 frames, and every
       // fourth one chimes as it opens.
+      struct EffectStep *star;
+
       model->brightness = 0;
       texture.pixels = work->sheet;
-      star = work->particles;
-      for (i = 0; i != 16; i++, star++) {
+      for (i = 0, star = work->particles; i != 16; i++, star++) {
         if (star->variant == 4 && (i & 3) == 0)
           Sound_PlayFar(130);
         if (star->variant >= 0 && star->variant < 16) {
-          s32 size = Trig_Sin(star->variant << 11) * star->z;
+          s32 swell = Trig_Sin(star->variant << 11) * star->z;
+          s32 size;
 
           Render_ResetTransformState();
           Func_08015160(star->x, star->y, 0);
+          size = swell >> 8;
           SceneTransform_ApplyPitch(0x4000);
           SceneTransform_ApplyYaw(frame << 9);
-          size = (size >> 8) / 2;
+          size /= 2;
           Func_080151e4(size, size, size);
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(model);

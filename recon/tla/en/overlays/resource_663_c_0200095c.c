@@ -1,4 +1,4 @@
-// Draft, differ 532 of 632, skeleton gap 144 (tla-en, 2026-11-01)
+// Draft, differ 491 of 632, skeleton gap 109 (tla-en, 2026-11-01)
 // Whirlwind in Air's Rock: a gust (object type 280)
 // rises from the target (the effect work's object at 0x14) and grows,
 // shedding sparks (object type 0x2a0, Func_02000840) every fourth frame
@@ -10,21 +10,31 @@
 // source and offset), copying its cells and attributes along each fourth
 // frame while it throws dust, sets that thing's flag (0x850 + hit - 1)
 // with cue 298; then the gust shrinks and rises away over 8 frames.
-// Left: allocation. The native keeps the gust in r7, the effect work in r8,
-// the leader in r10, steps in r9 and the hit in r11, with flag, x, z, dx and dz
-// on the stack (sp+16 to sp+32, so they are declared dz first), velocity at
-// sp+116, leaves at sp+76, dust at sp+36; here x and z of the search take r6
-// and r8. In the blow loop the native holds the cell in r10 and r9 as well as
-// on the stack (sp+20, sp+24, read again at hit == 2 and in the even arm);
-// here cellX and cellZ collapse into lastX and lastZ (cse and cse2 keep only
-// the pair read after the loop), the constant 1 keeps a register where the
-// native rematerialises it, and that pressure gives a frame of 136, not 128.
-// The native also computes the [hit][1] offset before the branch on hit & 1
-// (r8); a dead read there would do it, which is a device, so it is left.
+// Left: allocation, and it needs lighter refs than alchemy-gcc gives. The
+// native's frame is 128 and it saves nothing around a call in the blow loop:
+// the cell copies sit in r10 and r9, 0x10000 in r10 across Math_Cosine, 3 in r4.
+// Those refs are 6, 5 and 3 unweighted, none above 4 * calls crossed, so r4 and
+// r2 are not profitable; at flow's weight of 2 for a loop they are, which gives
+// cellX r4 with a save at sp+16, 0x10000 r2 with a save at sp+20, a frame of 136
+// and a rotated reload set for the whole function. A second entry into the loop
+// (so it is no natural loop) gives the frame of 128 at once: `if ((hit & 3) >= 0)
+// goto blowTest;`, always true, folded by combine to the listing's plain `b`.
+// With the same on travel it reached differ 389, skeleton gap 47; it is dead code
+// on every loop, not source, and left out. The native looks as if goto loops had
+// no weight: that is a compiler question (K3), not settled here.
+// Also left: the native computes the [hit][1] offset (r8) before the branch on
+// hit & 1. An unread `sourceY = (u16)gData_02004674[hit][1];` beside sourceX
+// gives it and differ 422, skeleton gap 57, but is a dead device short of 0.
+// Found: x and z (sp+20), dx and dz (sp+28) are 8-byte structs. A DImode pseudo
+// written by the word keeps the native's otherwise dead store before the travel
+// loop, and the copies in the blow loop survive CSE. The target is read at each
+// use, never a variable. A folded jump does not reset loop depth: find_basic_blocks
+// reuses the bb notes. Named struct table fields made the skeleton worse (67).
 // Kept: the travel and blow loops are built from labels, because as while
 // loops loop.c hoists the addresses of dust and velocity out of them. The table
 // is not const: every call makes the native read it again. A local holding the
 // column zero-extended gives the native's ldrh with the shifts in each arm.
+// Call2 and Call6 stop constants being shared between arguments.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -64,14 +74,23 @@ void Func_02003b48(struct Actor *object);
 void Func_02003c38(s32 actor, s32 a);
 void Func_02003c30(void);
 
+struct EffectWork {
+  u8 unknown[20];
+  struct Actor *target;
+};
+
+struct Cell {
+  s32 x, z;
+};
+
 void Func_0200095c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *effect = (u8 *)Ram_HeapSlots->effectWork;
-  struct Actor *gust, *spark, *target;
+  struct EffectWork *effect = (struct EffectWork *)Ram_HeapSlots->effectWork;
+  struct Actor *gust, *spark;
   struct Vector3 velocity;
   struct EffectOptions leaves, dust;
-  s32 cellZ, cellX, lastZ, lastX, dz, dx, z, x, flag = 0, steps = 0, hit, angle,
-                                                i;
+  struct Cell delta, cell;
+  s32 cellZ, cellX, newZ, newX, flag = 0, steps = 0, hit, angle, i;
 
   Func_02003bc8();
   Func_02003c88(0);
@@ -83,21 +102,20 @@ void Func_0200095c(void) {
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
   gust->motionFlags = (u8)flag;
-  target = *(struct Actor **)(effect + 20);
   ((struct FieldSprite *)gust->animation)->priority =
-      ((struct FieldSprite *)target->animation)->priority;
-  Func_02003b58(gust, target->x, target->y, target->z + 0xffff0000);
+      ((struct FieldSprite *)effect->target->animation)->priority;
+  Func_02003b58(gust, effect->target->x, effect->target->y,
+                effect->target->z + 0xffff0000);
   while (gust->scaleY <= 0x14ccb) {
     gust->scaleY += 0x1999;
     FieldEvent_Wait(1);
   }
   Func_02003b60(gust);
-  gust->z = (*(struct Actor **)(effect + 20))->z + 0xffff0000;
+  gust->z = effect->target->z + 0xffff0000;
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
-      target = *(struct Actor **)(effect + 20);
-      spark =
-          (struct Actor *)Import_ActorCreate(0x2a0, target->x, 0, target->z);
+      spark = (struct Actor *)Import_ActorCreate(0x2a0, effect->target->x, 0,
+                                                 effect->target->z);
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
@@ -113,38 +131,38 @@ void Func_0200095c(void) {
     if (gFrameCount & 1) {
       gust->scaleX += 455;
       gust->scaleY += 455;
-      Actor_SetPartAttribute(*(struct Actor **)(effect + 20), 15);
+      Actor_SetPartAttribute(effect->target, 15);
     } else {
-      Actor_SetPartAttribute(*(struct Actor **)(effect + 20), 4);
+      Actor_SetPartAttribute(effect->target, 4);
     }
     FieldEvent_Wait(1);
   }
-  Actor_SetPartAttribute(*(struct Actor **)(effect + 20), 0);
+  Actor_SetPartAttribute(effect->target, 0);
   Func_02003cd8(136);
-  target = *(struct Actor **)(effect + 20);
-  x = target->x >> 20;
-  z = target->z >> 20;
+  cell.x = effect->target->x >> 20;
+  cell.z = effect->target->z >> 20;
   angle = (leader->angle + 0x2000) & 0xc000;
-  dx = Math_Cosine(angle) >> 16;
-  dz = Math_Sine(angle) >> 16;
+  delta.x = Math_Cosine(angle) >> 16;
+  delta.z = Math_Sine(angle) >> 16;
   do {
-    hit = Func_02000348(2, x, z);
+    hit = Func_02000348(2, cell.x, cell.z);
+    cell.x += delta.x;
+    cell.z += delta.z;
     hit >>= 8;
-    x += dx;
-    z += dz;
     steps += 2;
   } while (hit == 0);
-  flag = (Func_02000348(2, x, z) >> 8) - 1;
+  flag = (Func_02000348(2, cell.x, cell.z) >> 8) - 1;
   steps -= 2;
-  target = *(struct Actor **)(effect + 20);
-  x = ((s16 *)&target->x)[1] + ((steps * dx) << 3);
-  z = ((s16 *)&target->z)[1] + ((steps * dz) << 3);
+  newX = ((s16 *)&effect->target->x)[1] + ((steps * delta.x) << 3);
+  newZ = ((s16 *)&effect->target->z)[1] + ((steps * delta.z) << 3);
   ((struct FieldSprite *)gust->animation)->priority = 1;
   gust->speedLimit = 0x40000;
   gust->acceleration = 0x40000;
-  Func_02003b58(gust, x << 16, gust->y, z << 16);
-  Func_02003c20(0x50000, 0x50000);
-  Camera_MoveWithinMapBounds(x << 16, -1, z << 16, 1);
+  cell.x = newX;
+  cell.z = newZ;
+  Func_02003b58(gust, cell.x << 16, gust->y, cell.z << 16);
+  Call2(Func_02003c20, 0x50000, 0x50000);
+  Camera_MoveWithinMapBounds(newX << 16, -1, newZ << 16, 1);
   goto travelTest;
 travel:
   if ((gFrameCount & 1) == 0) {
@@ -165,11 +183,11 @@ travelTest:
   if (hit == 255) {
     Func_02003cd8(136);
   } else {
-    x = ((s16 *)&gust->x)[1] + dx * 48;
-    z = ((s16 *)&gust->z)[1] + dz * 48;
+    cell.x = ((s16 *)&gust->x)[1] + delta.x * 48;
+    cell.z = ((s16 *)&gust->z)[1] + delta.z * 48;
     gust->speedLimit = 0x8000;
     gust->acceleration = 0x8000;
-    Func_02003b58(gust, x << 16, gust->y, z << 16);
+    Func_02003b58(gust, cell.x << 16, gust->y, cell.z << 16);
     Func_02003cd8(235);
     hit -= 30;
     goto blowTest;
@@ -186,10 +204,10 @@ travelTest:
     }
     if ((gFrameCount & 3) == 0) {
       s32 sourceX;
-      lastX = gData_02004674[hit][2] + (gust->x >> 20);
-      lastZ = gData_02004674[hit][3] + (gust->z >> 20);
-      cellX = lastX;
-      cellZ = lastZ;
+      cell.x = gData_02004674[hit][2] + (gust->x >> 20);
+      cell.z = gData_02004674[hit][3] + (gust->z >> 20);
+      cellX = cell.x;
+      cellZ = cell.z;
       sourceX = (u16)gData_02004674[hit][0];
       if (hit & 1) {
         Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
@@ -200,7 +218,7 @@ travelTest:
               2, gust->x >> 20, gust->z >> 20);
       } else {
         Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
-              lastZ - (hit >> 1), 1, 1);
+              cell.z - (hit >> 1), 1, 1);
         Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,
               1, cellX, cellZ);
         Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,
@@ -213,8 +231,8 @@ travelTest:
     if (Func_02003ba8(gust) == 0)
       goto blow;
     if (hit == 2) {
-      Call6(Func_02003b68, gData_02004674[2][0], gData_02004674[2][1], lastX,
-            lastZ, 1, 1);
+      Call6(Func_02003b68, gData_02004674[2][0], gData_02004674[2][1], cell.x,
+            cell.z, 1, 1);
       Func_02003b50();
     }
     Func_02003cd8(298);

@@ -1,16 +1,25 @@
-// Draft, differ 321 of 362, skeleton gap 93 (tla-en, 2026-11-01)
-// The whole body is translated through struct Actor, struct MapWork and struct
-// MapCell. Left: compiled with -fno-gcse as a diagnostic, this C gives the
-// listing's 56-byte frame and nearly its skeleton from plain bottom-test goto
-// loops, so the original's loops reach gcse with something that stops PRE
-// hoisting dz << 7, col + lowerX, col + upperX and col - 1. Entering each loop
-// through its test (the two gotos below) stops the hoisting and gives the
-// frame, but leaves two extra branches and moves the row setup behind the row
-// test. for, while and do forms bring loop.c's strength reduction and reversal,
-// which the listing does not have; bounds held in locals are folded by cse.
-// Also left: the listing keeps &ahead in r7 and spills offset, the draft the
-// reverse, and that sets the reload forms at the head (the r8 for
-// &actor->action) and around the Vec. gData_020023c4 + 0x188 is this overlay's
+// Draft, differ 223 of 362, skeleton gap 47 (tla-en, 2026-11-01)
+// Left, two causes. (1) gcse PRE hoists dz << 7, col + lowerX, col + upperX and
+// col - 1; the listing rebuilds them in the loops. The two gotos into the loop
+// tests stop that but leave two extra branches and move the row setup behind
+// the row test. Dropping both gotos and adding `zero = 0` before the loops,
+// `dz += zero` at the top of the inner body and `col += zero` at the top of the
+// outer body (cprop folds them, cse2 deletes them, PRE sees the operands killed)
+// gives no hoisting, the 56-byte frame and differ 185, skeleton gap 27. That is
+// a dead device short of a match, so it came back out; reapply it to test (2).
+// (2) With (1) applied every register but one matches: the listing keeps &ahead
+// in r7 and spills offset to sp+12, the draft the reverse. Priorities are
+// x 0.96, offset 0.73, z 0.72, &ahead 0.17, and z in r8 means r7 was taken
+// before z, so &ahead would have to outrank z; refs and live length cannot give
+// that. Unsolved; the whole rest of the diff follows from it (reload rotation,
+// the r4 constant in Func_02002e8c's arguments).
+// Measured dead ends: real for loops strength-reduce x << 20 and offset, which
+// the listing leaves alone, even with x, z and the columns set at the top of
+// each body. A memory struct for col, dx, dz stops PRE but addresses through a
+// base register, not sp. An 8-byte pair { col, dx } stops PRE on col, but its
+// doubled priority takes r5:r6. Slots give the declaration order dz, dx, col,
+// upper, lower, upperX, lowerX, offset, lowerRow. x must stay ahead of upperCol:
+// x last loses actor's r5 (differ 311). gData_020023c4 + 0x188 is this overlay's
 // address.
 #include "types.h"
 #include "ram_buffer.h"
@@ -51,12 +60,12 @@ void Func_02002f80(struct Actor *actor) {
 
   if (actor->action == 0) {
     struct Vec ahead;
-    struct Vec *p;
     struct MapWork *map;
-    s32 flag, col, row;
+    s32 flag, row, upperZ;
+    s32 dz, dx, col;
     u8 *upper, *lower;
-    s32 upperX, lowerX, upperRow, lowerRow;
-    s32 dz, dx, offset, x, z, upperCol, lowerCol;
+    s32 upperX, lowerX;
+    s32 offset, lowerRow, upperRow, x, z, upperCol, lowerCol;
     struct Actor *leader;
     struct Local *local;
 
@@ -64,12 +73,11 @@ void Func_02002f80(struct Actor *actor) {
     if (*(s16 *)(work + 0x166) != 0)
       flag |= 1;
     actor->movementState = flag;
-    p = &ahead;
-    p->x = actor->x;
-    p->y = actor->y;
-    p->z = actor->z;
-    Vector_AddPolarOffsetFar(0x80000, actor->angle, p);
-    if (Func_020054d8(0, p->x, p->z) == 7) {
+    ahead.x = actor->x;
+    ahead.y = actor->y;
+    ahead.z = actor->z;
+    Vector_AddPolarOffsetFar(0x80000, actor->angle, &ahead);
+    if (Func_020054d8(0, ahead.x, ahead.z) == 7) {
       actor->targetX = actor->targetY = actor->targetZ = 0x80000000;
       actor->acceleration = 0x4000;
       actor->action = 1;
@@ -86,18 +94,18 @@ void Func_02002f80(struct Actor *actor) {
     upper = (u8 *)(map->layers[1].cells + (col + (row << 7)));
     lower = (u8 *)(map->layers[2].cells + (col + (row << 7)));
     upperX = *(s32 *)&map->layers[1].unk08[0] >> 20;
-    upperRow = *(s32 *)&map->layers[1].unk08[4];
+    upperZ = *(s32 *)&map->layers[1].unk08[4];
     lowerX = *(s32 *)&map->layers[2].unk08[0] >> 20;
     lowerRow = row + (*(s32 *)&map->layers[2].unk08[4] >> 20) - 2;
     dz = -1;
     z = row - 1;
-    upperRow = row + (upperRow >> 20) - 1;
+    upperRow = row + (upperZ >> 20) - 1;
     goto rowTest;
   nextRow:
     lowerCol = col + lowerX - 1;
     dx = -1;
-    upperCol = col + upperX - 1;
     x = col - 1;
+    upperCol = col + upperX - 1;
     goto colTest;
   nextCol:
     offset = ((dz << 7) + dx) << 2;
@@ -135,7 +143,7 @@ void Func_02002f80(struct Actor *actor) {
       actor->scaleX += 0x1000;
       actor->scaleY += 0x1000;
     }
-    Func_020054b8(actor, p->x, p->y, p->z);
+    Func_020054b8(actor, ahead.x, ahead.y, ahead.z);
     work = (u8 *)Ram_HeapSlots->eventWork;
     local = (struct Local *)(gData_020023c4 + 0x188);
     leader = Actor_GetById(gMainRoutineWork.currentOwner);

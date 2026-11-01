@@ -1,21 +1,28 @@
-// Draft, differ 7530 of 7666, skeleton gap 1560 (tla-en, 2026-11-01)
-// Control flow and calls follow the listing; most of the gap is ordering that
-// follows from allocation (bag differences are about 250 instructions). The
-// frame is 248 against 264: the seven vectors, draw table and five textures lay
-// out as the listing, 16 lower, so the missing 16 bytes are spill slots.
-// EWRAM_BUF stays a constant: the listing reloads it from the pool at each use
-// as an unallocated pseudo would, and the draft keeps it in a callee save; the
-// symbol form is worse (gap +85) because it adds copies and offsets.
-// Left to explain: target[0] is read directly from the frame at kinds 41, 85,
-// 38 and 61 but through a spilled pointer later; kind 85's two equal arms lose
-// their test there but stay separate here, leaving the dead side load only
-// there; y + 24 then y - 32 stays unfolded at the three step sites; kinds 79
-// and 80 compute i * 24 as (2i + i) << 3 unreduced; kind 41's first two draws
-// and the frame 4 and 8 tail do not cross-jump.
-// Tried: kind 83 before the loop with explicit t, angle and i, as the listing
-// sets them ahead of the test, gives the right shape but gap 1566; the test
-// inside the loop with a break, 1599; a hoisted 0x8000 local, no change or
-// worse; the constants r8 and r10 hoist at kind 42 only by loop.c's choice.
+// Draft, differ 4810 of 7666, skeleton gap 898 (tla-en, 2026-11-01)
+// Most of the differ is two offsets: the frame is 256 against 264, so every
+// spill slot sits 8 low (action 120 against 128), and i takes r10 where the
+// listing has r11. Fix those first; what is left of the gap is mostly sched2
+// order that follows from allocation.
+// Proved here: the buffer is one set-once local at the top, unallocated, so its
+// pool load returns at each use. Most gain came from block locals: n, m, x, y,
+// p and the like belong to their kind's arm, not to one shared set (differ 7530
+// to 4881). i * 24 at kind 80 is (i * 2 + i) * 8; the second particle halving
+// is p->vx, not work->particle[i].vx; center is written through a local pointer.
+// Left to explain: the two missing slots. Slots follow the listing to scrollB,
+// then the listing has base's address (88), drawFuncs' (84), the five saves, and
+// origin's (16) and target's (12) last, while here target's comes before base's
+// (80) and origin's at 44. Those two are PRE reaching registers that reload
+// evicted in the listing and that global never gave a register here.
+// target[0] is read directly from the frame at kinds 41, 85, 38 and 61 (sp+240)
+// but through slot 12 later; a struct target changes nothing, and here PRE
+// replaces all 40 sites. i in r11 needs r8, r10 and r9 taken first, so its
+// priority must be below about 0.44 where it is 1.35 here: it may be live far
+// longer in the listing, perhaps uninitialised on some path. r4 is also live at
+// the first compare, since reload picks r5 there; that points the same way.
+// Tried: kind 85's two equal arms, y + 24 then y - 32 and the frame 4 and 8 tail
+// are still as before. Kind 83 before the loop gave 1566 and inside it with a
+// break 1599 on the old draft. Automatic rounds over block locals, adjacent
+// declaration swaps and dropped locals have stopped gaining.
 #include "heap_release.h"
 #include "types.h"
 
@@ -279,7 +286,6 @@ void Sound_PlayFar(s32);
 #define PLTT ((void *)0x05000000)
 #define PLTT_U16 ((volatile u16 *)0x05000000)
 #define BG_VRAM ((void *)0x06004000)
-#define EWRAM_BUF ((u8 *)0x02010000)
 #define SPARKS ((struct Particle *)0x02016000)
 #define RINGS ((struct Particle *)0x02016e00)
 #define IWRAM_SLOT_68 (IWRAM->slot68)
@@ -287,6 +293,7 @@ void Sound_PlayFar(s32);
 #define CLEAR(dst, size) ((void (*)(void *, s32))0x03000258)(dst, size)
 
 void Func_0815f16c(struct SummonAction *action, s32 kind) {
+  u8 *buffer;
   struct SummonWork *work;
   void *screen;
   s32 frame;
@@ -311,12 +318,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   struct Texture *tex;
   s32 step;
   s32 i;
-  s32 j;
-  s32 k;
   u8 *src;
   u8 *dst;
   s32 v;
 
+  buffer = (u8 *)0x02010000;
   work = IWRAM->summon;
   screen = IWRAM->screen;
   bg = IWRAM->bg;
@@ -333,17 +339,21 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&Value_00000134, tiles, 0, 0);
   Resource_LoadAndDecompress((s32)&Value_00000159, work->frames, 1, 0);
-  Resource_LoadAndDecompress((s32)&Value_0000015c, EWRAM_BUF, 1, 0);
-  Graphics_PackTileRows(EWRAM_BUF, work->frames + 0x5100, 40, 0x120);
+  Resource_LoadAndDecompress((s32)&Value_0000015c, buffer, 1, 0);
+  Graphics_PackTileRows(buffer, work->frames + 0x5100, 40, 0x120);
 
   if (kind == 5 || kind == 53 || kind == 78) {
-    Resource_LoadAndDecompress((s32)&Value_0000013e, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000013e, buffer, 1, 0);
   } else if (kind == 42 || kind == 15) {
-    Resource_LoadAndDecompress((s32)&Value_0000016d, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000016d, buffer, 1, 0);
   } else if (kind == 16) {
-    Resource_LoadAndDecompress((s32)&Value_000000d9, EWRAM_BUF, 1, 0);
+    s32 i;
+    s32 j;
+    s32 v;
+
+    Resource_LoadAndDecompress((s32)&Value_000000d9, buffer, 1, 0);
     for (i = 1; i != 8; i++) {
-      src = EWRAM_BUF;
+      src = buffer;
       for (j = 0; j != 0x400; j++) {
         v = *src++;
         if (v != 0) {
@@ -351,85 +361,94 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           if (v <= 0)
             v = 1;
         }
-        EWRAM_BUF[i * 0x400 + j] = v;
+        buffer[i * 0x400 + j] = v;
       }
     }
   } else if (kind == 10) {
-    Resource_LoadAndDecompress((s32)&Value_00000105, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000105, buffer, 1, 0);
   } else if (kind == 6 || kind == 57 || kind == 14 || kind == 17) {
-    Resource_LoadAndDecompress((s32)&Value_00000192, EWRAM_BUF, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000188, EWRAM_BUF + 0xc56, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000192, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000188, buffer + 0xc56, 1, 0);
   } else if (kind == 68) {
-    Resource_LoadAndDecompress((s32)&Value_00000192, EWRAM_BUF, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000161, EWRAM_BUF + 0x1809, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000192, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000161, buffer + 0x1809, 1, 0);
   } else if (kind == 61) {
-    Resource_LoadAndDecompress((s32)&Value_0000013a, EWRAM_BUF, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000013a, buffer, 1, 1);
   } else if (kind == 38) {
-    Resource_LoadAndDecompress((s32)&Value_00000187, EWRAM_BUF, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000187, buffer, 1, 1);
   } else if (kind == 44) {
-    Resource_LoadAndDecompress((s32)&Value_00000130, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000130, buffer, 1, 0);
   } else if (kind == 60) {
-    Resource_LoadAndDecompress((s32)&Value_00000192, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000192, buffer, 1, 0);
   } else if (kind == 46) {
-    Resource_LoadAndDecompress((s32)&Value_0000017c, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000017c, buffer, 1, 0);
   } else if (kind == 50) {
-    Resource_LoadAndDecompress((s32)&Value_00000178, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000178, buffer, 1, 0);
   } else if (kind == 90) {
-    Resource_LoadAndDecompress((s32)&Value_000000da, EWRAM_BUF, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000da, buffer, 0, 0);
   } else if (kind == 91) {
-    Resource_LoadAndDecompress((s32)&Value_000000c1, EWRAM_BUF + 0x4000, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000c1, buffer + 0x4000, 0, 0);
   } else if (kind == 84) {
-    Resource_LoadAndDecompress((s32)&Value_00000192, EWRAM_BUF, 1, 0);
+    s32 j;
+    s32 k;
+
+    Resource_LoadAndDecompress((s32)&Value_00000192, buffer, 1, 0);
     Resource_LoadAndDecompress((s32)&Value_00000188, work->frames, 1, 1);
-    ((void (*)(void *, s32))0x03000258)(EWRAM_BUF + 0xc56, 0x4000);
+    ((void (*)(void *, s32))0x03000258)(buffer + 0xc56, 0x4000);
     for (i = 0; i != 4; i++) {
       for (j = 0; j != 120; j++) {
         for (k = 0; k != 24; k++)
-          EWRAM_BUF[0xc5a + i * 0x1000 + j * 32 + k] =
+          buffer[0xc5a + i * 0x1000 + j * 32 + k] =
               work->frames[i * 2880 + j * 24 + k];
       }
     }
     Resource_LoadAndDecompress((s32)&Value_00000159, work->frames, 1, 0);
   } else if (kind == 63 || kind == 64) {
-    Resource_LoadAndDecompress((s32)&Value_00000115, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000115, buffer, 1, 0);
   } else if (kind == 71 || kind == 82) {
-    Resource_LoadAndDecompress((s32)&Value_000000b4, EWRAM_BUF, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000b4, buffer, 0, 0);
   } else if (kind == 96 || kind == 97 || kind == 98) {
-    Resource_LoadAndDecompress((s32)&Value_0000018a, EWRAM_BUF, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_0000013e, EWRAM_BUF + 0xd80, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000018a, buffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_0000013e, buffer + 0xd80, 1, 0);
   } else if (kind == 80) {
-    Resource_LoadAndDecompress((s32)&Value_0000013a, EWRAM_BUF + 0x1000, 1, 0);
-    ((void (*)(void *, s32))0x03000258)(EWRAM_BUF, 0x1000);
+    u8 *dst;
+    s32 k;
+
+    Resource_LoadAndDecompress((s32)&Value_0000013a, buffer + 0x1000, 1, 0);
+    ((void (*)(void *, s32))0x03000258)(buffer, 0x1000);
     for (i = 0; i != 48; i++) {
-      u8 *mirror = EWRAM_BUF + i * 64 + 0x237;
-      dst = EWRAM_BUF + 0x208 + i * 64;
-      src = EWRAM_BUF + i * 24 + 0x1000;
+      u8 *mirror = buffer + i * 64 + 0x237;
+      dst = buffer + 0x208 + i * 64;
+      src = buffer + (i * 2 + i) * 8 + 0x1000;
       for (k = 0; k != 24; k++) {
         *dst++ = *src;
         *mirror-- = *src++;
       }
     }
   } else if (kind == 79) {
-    Func_0815b434(EWRAM_BUF, 48, 0x10000);
+    s32 i;
+    s32 k;
+
+    Func_0815b434(buffer, 48, 0x10000);
     for (i = 0; i != 48; i++) {
       for (k = 0; k != 24; k++) {
-        EWRAM_BUF[0x800 + i * 48 + k] = EWRAM_BUF[i * 24 + k];
-        EWRAM_BUF[0x800 + i * 48 + 47 - k] = EWRAM_BUF[i * 24 + k];
-        EWRAM_BUF[0x800 + (95 - i) * 48 + k] = EWRAM_BUF[i * 24 + k];
-        EWRAM_BUF[0x800 + (95 - i) * 48 + 47 - k] = EWRAM_BUF[i * 24 + k];
+        buffer[0x800 + i * 48 + k] = buffer[i * 24 + k];
+        buffer[0x800 + i * 48 + 47 - k] = buffer[i * 24 + k];
+        buffer[0x800 + (95 - i) * 48 + k] = buffer[i * 24 + k];
+        buffer[0x800 + (95 - i) * 48 + 47 - k] = buffer[i * 24 + k];
       }
     }
   } else if (kind == 94) {
-    Resource_LoadAndDecompress((s32)&Value_0000014d, EWRAM_BUF, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_000000e6, EWRAM_BUF + 0x2000, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000014d, buffer, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_000000e6, buffer + 0x2000, 1, 1);
   } else if (kind == 73) {
     REG_BLDALPHA = 0xc10;
   } else if (kind == 70) {
-    Resource_LoadAndDecompress((s32)&Value_00000193, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000193, buffer, 1, 0);
   } else if (kind == 66) {
-    Resource_LoadAndDecompress((s32)&Value_00000129, EWRAM_BUF, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000129, buffer, 1, 1);
   } else if (kind != 41 && kind != 62) {
-    Resource_LoadAndDecompress((s32)&Value_00000161, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000161, buffer, 1, 0);
   }
 
   switch (kind) {
@@ -455,7 +474,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Dma_Set(Resource_GetTableEntry((s32)&Value_00000184), PLTT, 0x84000020,
             DMA3);
     if (action->unk1c == 1)
-      Resource_LoadAndDecompress((s32)&Value_00000157, EWRAM_BUF + 0x3c56, 1,
+      Resource_LoadAndDecompress((s32)&Value_00000157, buffer + 0x3c56, 1,
                                  0);
     break;
   case 2:
@@ -477,7 +496,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   case 82:
   case 99:
     if (action->unk1c == 1)
-      Resource_LoadAndDecompress((s32)&Value_00000155, EWRAM_BUF + 0x3c56, 1,
+      Resource_LoadAndDecompress((s32)&Value_00000155, buffer + 0x3c56, 1,
                                  1);
     else
       Dma_Set(Resource_GetTableEntry((s32)&Value_00000155), PLTT, 0x84000020,
@@ -503,7 +522,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   case 90:
   case 91:
     if (action->unk1c == 1)
-      Resource_LoadAndDecompress((s32)&Value_00000151, EWRAM_BUF + 0x3c56, 1,
+      Resource_LoadAndDecompress((s32)&Value_00000151, buffer + 0x3c56, 1,
                                  1);
     else
       Dma_Set(Resource_GetTableEntry((s32)&Value_00000151), PLTT, 0x84000020,
@@ -530,7 +549,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   case 89:
   case 92:
     if (action->unk1c == 1)
-      Resource_LoadAndDecompress((s32)&Value_00000153, EWRAM_BUF + 0x3c56, 1,
+      Resource_LoadAndDecompress((s32)&Value_00000153, buffer + 0x3c56, 1,
                                  1);
     else
       Dma_Set(Resource_GetTableEntry((s32)&Value_00000153), PLTT, 0x84000020,
@@ -543,12 +562,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             DMA3);
     break;
   case 100:
-    Resource_LoadAndDecompress((s32)&Value_00000155, EWRAM_BUF + 0x3c56, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_00000155, buffer + 0x3c56, 1, 1);
     break;
   }
 
   if (kind == 81 || kind == 83 || kind == 91 || kind == 92 || kind == 93)
-    Resource_LoadAndDecompress((s32)&Value_000000c2, EWRAM_BUF, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_000000c2, buffer, 0, 0);
   work->unk7780 = 2;
   if (kind == 42)
     work->unk7784 = 75;
@@ -589,6 +608,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   void *matrix;
   struct Model *model;
   const u8 *table;
+  s32 k;
   struct Particle *p;
 
   work->unk77b4 = 24;
@@ -621,6 +641,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   Sound_PlayFar(212);
 
   for (frame = 0; frame != 32; frame++) {
+    struct Particle *p;
+    s32 n;
     count = 0;
     p = work->particle;
     for (i = 0; i != 64; i++, p++) {
@@ -656,7 +678,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Transform_SetLookAt(bg, (u8 *)bg + 12);
       EffectPosition_ProjectPoint(origin, pos);
       pos[0] = pos[0] / 2;
-      drawFuncs.draw[0](screen, EWRAM_BUF + 0x3c56, pos[0] - 10, pos[1] - 4, 20,
+      drawFuncs.draw[0](screen, buffer + 0x3c56, pos[0] - 10, pos[1] - 4, 20,
                         40);
     }
     work->unk78e8 = 1;
@@ -756,12 +778,17 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     }
   }
   object2 = *GetBattleObjectSlotFar(action->actor);
-  center[0] = __divsi3(object2->x - origin[0], 6);
-  center[1] = __divsi3(object2->y - origin[1] + 0x1e0000, 6);
-  center[2] = __divsi3(object2->z - origin[2], 6);
+  {
+    s32 *c = center;
+
+    c[0] = __divsi3(object2->x - origin[0], 6);
+    c[1] = __divsi3(object2->y - origin[1] + 0x1e0000, 6);
+    c[2] = __divsi3(object2->z - origin[2], 6);
+  }
   for (i = 0; i != 64; i++)
     work->particle[i].life = 0;
   if (kind != 44) {
+    s32 i;
     half = BattleUnit_GetEffectHeightFar(action->actor) / 2;
     p = work->particle;
     for (i = 0; i != 32; i++, p++) {
@@ -776,32 +803,32 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         p->vy = ((Random16() & 255) - 64) << 12;
       }
       p->vz = ((Random16() & 255) - 127) << 12;
-      work->particle[i].vx = work->particle[i].vx / 2;
-      work->particle[i].vy = work->particle[i].vy / 2;
-      work->particle[i].vz = work->particle[i].vz / 2;
+      p->vx = p->vx / 2;
+      p->vy = p->vy / 2;
+      p->vz = p->vz / 2;
       p->life = i / 2 + 32;
     }
   }
   if (kind == 41) {
     Resource_LoadAndDecompress((s32)&Value_0000016f, work->frames, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000170, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000170, buffer, 1, 0);
     REG_BLDALPHA = 0xe10;
   }
   if (kind == 86) {
-    Resource_LoadAndDecompress((s32)&Value_000000f1, EWRAM_BUF, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_000000f1, buffer, 1, 1);
     REG_BLDALPHA = 0x810;
   }
   if (kind == 88) {
-    Resource_LoadAndDecompress((s32)&Value_000000dd, EWRAM_BUF, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_000000dd, buffer, 1, 1);
     REG_BLDALPHA = 0x810;
   }
   if (kind == 62) {
     Resource_LoadAndDecompress((s32)&Value_00000171, work->frames, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000172, EWRAM_BUF, 1, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000172, buffer, 1, 0);
     REG_BLDALPHA = 0xe10;
   }
   if (kind == 85) {
-    Resource_LoadAndDecompress((s32)&Value_000000f0, EWRAM_BUF, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_000000f0, buffer, 1, 1);
     REG_BLDALPHA = 0xe10;
   }
 
@@ -823,6 +850,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       p->life = 0;
     }
   } else {
+    struct Particle *p;
     height = 0x140000;
     if (kind == 42 || kind == 15)
       height = 0;
@@ -891,6 +919,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     duration = 80;
 
   for (frame = 0; frame != duration; frame++) {
+    struct Particle *p;
     if (kind != 41 && kind != 62 && kind != 83 && kind != 85 && kind != 86 &&
         kind != 88) {
       for (i = 0; i != 160; i++)
@@ -1000,6 +1029,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Render_ResetTransformState();
       Transform_SetLookAt(bg, (u8 *)bg + 12);
       if (frame > 3) {
+        s32 i;
         if (kind == 79) {
           p = work->particle;
           for (i = 0; i != 64; i++, p++) {
@@ -1053,6 +1083,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 79)
         Func_0814cd48(action->target, 0, -1, -1, 0);
       if (frame == start) {
+        struct Particle *p;
         p = SPARKS;
         for (i = 0; i != 64; i++, p++) {
           p->x = object2->x;
@@ -1101,12 +1132,13 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     if (kind == 7 || kind == 43 || kind == 48 || kind == 73 || kind == 77 ||
         kind == 49 || kind == 12) {
     } else if (kind == 66) {
+      struct Particle *p;
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
         if (frame >= i + 4 && p->life <= 23) {
           EffectPosition_ProjectPoint(p, point);
           point[0] = point[0] / 2;
-          drawFuncs.draw[0](screen, EWRAM_BUF, point[0] - 20, point[1] - 32, 40,
+          drawFuncs.draw[0](screen, buffer, point[0] - 20, point[1] - 32, 40,
                             64);
           BattleEffectKernels_IntegrateVector3(p, 64, 0);
           p->life++;
@@ -1115,6 +1147,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     } else if (kind == 51 || kind == 67 || kind == 9 || kind == 95 ||
                kind == 99) {
     } else if (kind == 6 || kind == 57 || kind == 14 || kind == 17) {
+      s32 y;
       if (kind == 17) {
         if (frame == 4)
           work->unk77a8 = 12;
@@ -1125,20 +1158,23 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (frame >= 6 && frame < 20) {
           for (i = 0; i != 2; i++)
             drawFuncs.draw[0](
-                screen, EWRAM_BUF + 0xc56 + (((frame + i * 3) / 2) & 3) * 2880,
+                screen, buffer + 0xc56 + (((frame + i * 3) / 2) & 3) * 2880,
                 target[0] / 2 - 8, 0, 24, 104);
         }
       } else if (kind == 17 && (frame >= 6 && frame < 20)) {
+        s32 x;
         for (i = 0; i != 4; i++) {
+          s32 m;
           angle = frame * 1848 + i * 0x4000;
           m = ((frame + i * 3) / 2) & 3;
           x = target[0] / 2 + ((Trig_Sin(angle) << 5) >> 16);
           Trig_Cos(angle);
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0xc56 + m * 2880, x - 8, 0, 24,
+          drawFuncs.draw[0](screen, buffer + 0xc56 + m * 2880, x - 8, 0, 24,
                             104);
         }
       }
       if (frame >= 8 && frame < 24) {
+        s32 angle;
         s32 off;
         s32 amp;
 
@@ -1158,14 +1194,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           HeapSlot_Release(188);
           HeapSlot_Release(104);
           Func_08196404(188, 7, 7, gData_0819887e[Random16() & 3] | 3, 0);
-          IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 56,
+          IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 56,
                         gData_08197492[m], gData_08197498[m]);
           HeapSlot_Release(188);
           BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
     } else if (kind == 68) {
+      s32 angle;
       if (frame >= 8 && frame < 24) {
+        s32 y;
         for (i = 0; i != 3; i++) {
           angle = Random16() & 0xffff;
           m = i & 3;
@@ -1175,7 +1213,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           HeapSlot_Release(188);
           HeapSlot_Release(104);
           Func_08196404(188, 7, 7, gData_08198882[Random16() & 3] | 3, 1);
-          IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80,
+          IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
           HeapSlot_Release(188);
           BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
@@ -1188,7 +1226,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           if (life <= 23) {
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
-            drawFuncs.draw[1](screen, EWRAM_BUF + 0x1809 + (life / 4) * 0x480,
+            drawFuncs.draw[1](screen, buffer + 0x1809 + (life / 4) * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
             BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
             p->life++;
@@ -1198,9 +1236,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 6)
         Sound_PlayFar(221);
     } else if (kind == 44) {
+      s32 count;
       HeapSlot_Release(188);
       HeapSlot_Release(104);
       if (frame >= 0 && frame < 24) {
+        s32 x;
         x = target[0] / 2;
         top = frame * 32 - 232;
         scroll = frame * 16 - 48;
@@ -1209,9 +1249,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         while (scroll > 104)
           scroll -= 104;
         BattleEffect_LoadBlitter(188, 19);
-        IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 8, top + scroll - 104, 17, 104);
-        IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 8, top + scroll, 17, 104 - scroll);
-        IWRAM_SLOT_BC(screen, EWRAM_BUF + 0x6e8, x - 17, top + 47, 34, 65);
+        IWRAM_SLOT_BC(screen, buffer, x - 8, top + scroll - 104, 17, 104);
+        IWRAM_SLOT_BC(screen, buffer, x - 8, top + scroll, 17, 104 - scroll);
+        IWRAM_SLOT_BC(screen, buffer + 0x6e8, x - 17, top + 47, 34, 65);
         HeapSlot_Release(188);
         if (frame == 8)
           work->unk77a8 = 8;
@@ -1236,32 +1276,36 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       }
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 61) {
+      s32 x;
       HeapSlot_Release(188);
       HeapSlot_Release(104);
       if (frame >= 4 && frame < 24) {
         x = target[0] / 2;
         BattleEffect_LoadBlitter(188, 19);
-        IWRAM_SLOT_BC(screen, EWRAM_BUF, x - 24, 48, 24, 48);
+        IWRAM_SLOT_BC(screen, buffer, x - 24, 48, 24, 48);
         HeapSlot_Release(188);
         BattleEffect_LoadBlitter(188, 23);
-        IWRAM_SLOT_BC(screen, EWRAM_BUF, x, 48, 24, 48);
+        IWRAM_SLOT_BC(screen, buffer, x, 48, 24, 48);
         HeapSlot_Release(188);
       }
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 60) {
+      s32 m;
       if (frame > 15)
         REG_BLDALPHA = (32 - frame) | 0x1000;
       if (frame > 5) {
+        s32 x;
         x = target[0] / 2;
         m = __modsi3(frame / 2, 3);
-        drawFuncs.draw[0](screen, EWRAM_BUF + 0xc56 + m * 0xa00, x - 20, 16, 40,
+        drawFuncs.draw[0](screen, buffer + 0xc56 + m * 0xa00, x - 20, 16, 40,
                           32);
-        drawFuncs.draw[0](screen, EWRAM_BUF + 0x2a56 + m * 0x500, x - 20, 48,
+        drawFuncs.draw[0](screen, buffer + 0x2a56 + m * 0x500, x - 20, 48,
                           40, 32);
-        drawFuncs.draw[0](screen, EWRAM_BUF + 0x1156 + m * 0xa00, x - 20, 80,
+        drawFuncs.draw[0](screen, buffer + 0x1156 + m * 0xa00, x - 20, 80,
                           40, 32);
       }
     } else if (kind == 5 || kind == 53 || kind == 78) {
+      s32 i;
       if (frame < 24) {
         p = SPARKS;
         for (i = 0; i != 16; i++, p++) {
@@ -1270,7 +1314,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             if (life <= 11) {
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
-              drawFuncs.draw[0](screen, EWRAM_BUF + (life / 2) * 0x800,
+              drawFuncs.draw[0](screen, buffer + (life / 2) * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
               BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
               p->life++;
@@ -1301,23 +1345,24 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
                             gData_0819750c[action->side * 7 + 2],
                             y + gData_0819751a[2], 128, 91);
         if (frame >= 8 && frame < 10)
-          drawFuncs.draw[0](screen, EWRAM_BUF,
+          drawFuncs.draw[0](screen, buffer,
                             gData_0819750c[action->side * 7 + 3],
                             y + gData_0819751a[3], 128, 91);
         if (frame >= 10 && frame < 12)
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x2d80,
+          drawFuncs.draw[0](screen, buffer + 0x2d80,
                             gData_0819750c[action->side * 7 + 4],
                             y + gData_0819751a[4], 128, 59);
         if (frame >= 12 && frame < 14)
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x4b00,
+          drawFuncs.draw[0](screen, buffer + 0x4b00,
                             gData_0819750c[action->side * 7 + 5],
                             y + gData_0819751a[5], 122, 29);
         if (frame >= 14 && frame < 16)
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x58d2,
+          drawFuncs.draw[0](screen, buffer + 0x58d2,
                             gData_0819750c[action->side * 7 + 6],
                             y + gData_0819751a[6], 76, 25);
       }
     } else if (kind == 85) {
+      s32 h;
       REG_BLDCNT = 0;
       work->unk7780 = 1;
       work->unk7784 = 0;
@@ -1334,11 +1379,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         y = 16;
       h = 96;
       if (frame > 7) {
+        s32 i;
         row = 112 - frame * 2;
         for (i = 0; i != 34; i++, row++) {
           if (row >= 0 && row < 96) {
             src = work->frames + (row & 15) * 69;
-            dst = EWRAM_BUF + row * 69;
+            dst = buffer + row * 69;
             for (k = 0; k != 69; k++) {
               if (*src++ < i)
                 *dst = 0;
@@ -1347,29 +1393,29 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           }
         }
       }
-      drawFuncs.draw[0](screen, EWRAM_BUF, 29, y, 69, h);
+      drawFuncs.draw[0](screen, buffer, 29, y, 69, h);
       if (frame > 5) {
         switch ((frame - 6) / 4) {
         case 0:
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x19e0, 32, 92, 59, 24);
+          drawFuncs.draw[0](screen, buffer + 0x19e0, 32, 92, 59, 24);
           break;
         case 1:
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x1f68, 30, 87, 70, 27);
+          drawFuncs.draw[0](screen, buffer + 0x1f68, 30, 87, 70, 27);
           break;
         case 2:
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x26ca, 23, 57, 84, 55);
+          drawFuncs.draw[0](screen, buffer + 0x26ca, 23, 57, 84, 55);
           break;
         case 3:
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x38d6, 27, 55, 75, 57);
+          drawFuncs.draw[0](screen, buffer + 0x38d6, 27, 55, 75, 57);
           break;
         case 4:
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x4989, 28, 19, 67, 86);
+          drawFuncs.draw[0](screen, buffer + 0x4989, 28, 19, 67, 86);
           break;
         case 5:
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x600b, 33, 22, 50, 65);
+          drawFuncs.draw[0](screen, buffer + 0x600b, 33, 22, 50, 65);
           break;
         case 6:
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x6cbd, 41, 21, 48, 29);
+          drawFuncs.draw[0](screen, buffer + 0x6cbd, 41, 21, 48, 29);
           break;
         }
       }
@@ -1384,11 +1430,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         HeapSlot_Release(188);
         HeapSlot_Release(104);
         BattleEffect_LoadBlitter(104, 3);
-        IWRAM_SLOT_68(screen, EWRAM_BUF + m * 0x360, target[0] / 2 - 18, 56, 18,
+        IWRAM_SLOT_68(screen, buffer + m * 0x360, target[0] / 2 - 18, 56, 18,
                       48);
         HeapSlot_Release(104);
         BattleEffect_LoadBlitter(104, 7);
-        IWRAM_SLOT_68(screen, EWRAM_BUF + m * 0x360, target[0] / 2, 56, 18, 48);
+        IWRAM_SLOT_68(screen, buffer + m * 0x360, target[0] / 2, 56, 18, 48);
         HeapSlot_Release(104);
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
       }
@@ -1404,7 +1450,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             if (life <= 9) {
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
-              drawFuncs.draw[0](screen, EWRAM_BUF + 0xd80 + (life / 2) * 0x800,
+              drawFuncs.draw[0](screen, buffer + 0xd80 + (life / 2) * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
               BattleEffectKernels_IntegrateVector3(p, 64, 0x1000);
               p->life++;
@@ -1413,6 +1459,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
     } else if (kind == 86) {
+      s32 m;
       work->unk7780 = 1;
       work->unk7784 = 0;
       HeapSlot_Release(188);
@@ -1433,18 +1480,18 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x01010101);
       if (frame > 3) {
         if (action->side == 0)
-          drawFuncs.draw[0](screen, EWRAM_BUF, 32, 21, 96, 88);
+          drawFuncs.draw[0](screen, buffer, 32, 21, 96, 88);
         else
-          drawFuncs.draw[0](screen, EWRAM_BUF, 0, 21, 96, 88);
+          drawFuncs.draw[0](screen, buffer, 0, 21, 96, 88);
       }
       m = frame / 2;
       if (m < 10) {
         if (action->side == 0)
-          drawFuncs.draw[0](screen, EWRAM_BUF + gData_0819888a[m],
+          drawFuncs.draw[0](screen, buffer + gData_0819888a[m],
                             gData_081988c6[m], gData_081988da[m],
                             gData_0819889e[m], gData_081988b2[m]);
         else
-          drawFuncs.draw[0](screen, EWRAM_BUF + gData_0819888a[m],
+          drawFuncs.draw[0](screen, buffer + gData_0819888a[m],
                             128 - gData_081988c6[m] - gData_0819889e[m],
                             gData_081988da[m], gData_0819889e[m],
                             gData_081988b2[m]);
@@ -1452,6 +1499,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       HeapSlot_Release(104);
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 88) {
+      s32 m;
       work->unk7780 = 1;
       work->unk7784 = 0;
       if (frame == 7) {
@@ -1479,31 +1527,32 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (t >= 0 && t < 16)
         REG_BLDALPHA = ((t / 2 + 8) << 8) | (16 - t);
       if (frame > 4)
-        drawFuncs.draw[0](screen, EWRAM_BUF, 35, 17, 60, 95);
+        drawFuncs.draw[0](screen, buffer, 35, 17, 60, 95);
       if (frame == 5)
         ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x3f3f3f3f);
       if (frame >= 0 && (m = __divsi3(frame, 3)) < 7) {
         if (action->side == 0)
-          drawFuncs.draw[0](screen, EWRAM_BUF + gData_081988ee[m],
+          drawFuncs.draw[0](screen, buffer + gData_081988ee[m],
                             gData_08198918[m], gData_08198926[m] - 16,
                             gData_081988fc[m], gData_0819890a[m]);
         else
-          drawFuncs.draw[0](screen, EWRAM_BUF + gData_081988ee[m],
+          drawFuncs.draw[0](screen, buffer + gData_081988ee[m],
                             128 - gData_08198918[m] - gData_081988fc[m],
                             gData_08198926[m] - 16, gData_081988fc[m],
                             gData_0819890a[m]);
       }
       for (i = 0; i != 3; i++) {
+        s32 m;
         t = frame - 8 - i * 2;
         if (t >= 0 && t <= 8) {
           m = __divsi3(t, 3);
           if (action->side == 0)
-            drawFuncs.draw[0](screen, EWRAM_BUF + gData_08198934[m],
+            drawFuncs.draw[0](screen, buffer + gData_08198934[m],
                               gData_08198940[i][0] - gData_0819893a[m] / 2,
                               gData_08198940[i][1] - gData_0819893d[m] / 2 - 16,
                               gData_0819893a[m], gData_0819893d[m]);
           else
-            drawFuncs.draw[0](screen, EWRAM_BUF + gData_08198934[m],
+            drawFuncs.draw[0](screen, buffer + gData_08198934[m],
                               128 - gData_08198940[i][0] -
                                   gData_0819893a[m] / 2,
                               gData_08198940[i][1] - gData_0819893d[m] / 2 - 16,
@@ -1513,6 +1562,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       HeapSlot_Release(104);
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 62) {
+      s32 t;
       scrollA += scrollB;
       if (frame > 6)
         scrollB = scrollB * 48 / 64;
@@ -1543,17 +1593,19 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (frame >= 6 && frame < 8)
           drawFuncs.draw[0](screen, work->frames + 0x3e80, 0, 16, 128, 91);
         if (frame >= 8 && frame < 10)
-          drawFuncs.draw[0](screen, EWRAM_BUF, 0, 16, 128, 91);
+          drawFuncs.draw[0](screen, buffer, 0, 16, 128, 91);
         if (frame >= 10 && frame < 12)
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x2d80, 0, 16, 128, 59);
+          drawFuncs.draw[0](screen, buffer + 0x2d80, 0, 16, 128, 59);
         if (frame >= 12 && frame < 14)
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x4b00, 0, 16, 128, 29);
+          drawFuncs.draw[0](screen, buffer + 0x4b00, 0, 16, 128, 29);
         if (frame >= 14 && frame < 16)
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x5980, 0, 16, 128, 26);
+          drawFuncs.draw[0](screen, buffer + 0x5980, 0, 16, 128, 26);
       }
     } else if (kind == 50) {
+      s32 m;
       for (i = 0; i != 12; i++) {
         if (frame >= i + 6 && frame < i + 18) {
+          s32 x;
           m = (frame - i - 6) / 2;
           x = target[0] / 2 - gData_08197467[m] / 2;
           if (i & 1)
@@ -1561,12 +1613,13 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           else
             x -= (i + 1) / 2 * 3;
           drawFuncs.draw[i == 0 || ((i - 1) & 3) > 1](
-              screen, EWRAM_BUF + gData_0819747a[m], x, gData_08197473[m] + 48,
+              screen, buffer + gData_0819747a[m], x, gData_08197473[m] + 48,
               gData_08197467[m], gData_0819746d[m]);
         }
       }
     } else if (kind == 46) {
       if (frame == 0) {
+        struct Particle *p;
         p = SPARKS;
         for (i = 0; i != 64; i++, p++) {
           p->x = (Random16() & 127) + 32;
@@ -1588,7 +1641,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           EffectPosition_ProjectPoint(p, point);
           point[0] = point[0] / 2 + target[0] / 2;
           point[1] = point[1] + target[1] + 32;
-          drawFuncs.draw[1](screen, EWRAM_BUF + gData_08198946[m], point[0] - 4,
+          drawFuncs.draw[1](screen, buffer + gData_08198946[m], point[0] - 4,
                             point[1] - 4, 8, 8);
           p->x -= 6;
           if (p->x < 0 && ((i & 7) == 0 || i == 63)) {
@@ -1605,9 +1658,10 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           h = frame * 16 - 64;
         if (h > 96)
           h = 96;
-        drawFuncs.draw[0](screen, EWRAM_BUF, 48, 104 - h, 32, h);
+        drawFuncs.draw[0](screen, buffer, 48, 104 - h, 32, h);
       }
     } else if (kind == 79) {
+      struct Particle *p;
       p = SPARKS;
       if (frame == 0) {
         p->x = (target[0] / 2) << 16;
@@ -1630,7 +1684,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         REG_BLDCNT = 0x3f44;
       }
       if (frame < 32) {
-        drawFuncs.draw[1](screen, EWRAM_BUF + 0x800, (p->x >> 16) - 24,
+        drawFuncs.draw[1](screen, buffer + 0x800, (p->x >> 16) - 24,
                           (p->y >> 16) - 96, 48, 96);
         if (frame < 12)
           BattleEffectKernels_IntegrateVector2(SPARKS, 64, 0);
@@ -1644,6 +1698,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         work->unk77a8 = 16;
       }
     } else if (kind == 63 || kind == 64) {
+      s32 x;
       if (frame < 6) {
         if (action->side == 0) {
           step = (6 - frame) * 3;
@@ -1653,14 +1708,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           x = target[0] / 2 - step * 2;
         }
         y = target[1] - step * 4 + 24;
-        drawFuncs.draw[1](screen, EWRAM_BUF, x - 16, y - 32, 32, 64);
+        drawFuncs.draw[1](screen, buffer, x - 16, y - 32, 32, 64);
       }
     } else if (kind == 70) {
+      s32 x;
       if (frame > 31)
         REG_BLDALPHA = (48 - frame) | 0x1000;
       p = SPARKS;
       i = 0;
       if (frame < 14) {
+        struct Particle *p;
         if (action->side == 0) {
           step = (14 - frame) * 3;
           x = target[0] / 2 + step * 2;
@@ -1669,7 +1726,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           x = target[0] / 2 - step * 2;
         }
         y = target[1] - step * 4 + 24;
-        drawFuncs.draw[1](screen, EWRAM_BUF, x - 16, y - 32, 32, 64);
+        drawFuncs.draw[1](screen, buffer, x - 16, y - 32, 32, 64);
         if (frame == 13) {
           Sound_PlayFar(134);
           work->unk77a8 = 8;
@@ -1689,7 +1746,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       } else {
         for (; i != 16; i++, p++) {
           m = __modsi3(i, 5) * 3 + __modsi3(__divsi3(p->life, 96), 3);
-          drawFuncs.draw[i <= 2](screen, EWRAM_BUF + 0x800 + gData_08197834[m],
+          drawFuncs.draw[i <= 2](screen, buffer + 0x800 + gData_08197834[m],
                                  (p->x >> 16) - gData_0819781a[m] / 2,
                                  (p->y >> 16) - gData_08197826[m] / 2,
                                  gData_0819781a[m], gData_08197826[m]);
@@ -1700,8 +1757,10 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
     } else if (kind == 94) {
+      s32 x;
       if (frame == 0) {
-        Resource_LoadAndDecompress((s32)&Value_000000e6, EWRAM_BUF + 0x2000, 1,
+        struct Particle *p;
+        Resource_LoadAndDecompress((s32)&Value_000000e6, buffer + 0x2000, 1,
                                    1);
         REG_BLDALPHA = 0x410;
         work->unk7780 = 1;
@@ -1735,12 +1794,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           x = target[0] - step * 2;
         }
         y = target[1] - step * 4 + 24;
-        drawFuncs.draw[0](screen, EWRAM_BUF + 0x2000, 32, y - 32, 64, 64);
+        drawFuncs.draw[0](screen, buffer + 0x2000, 32, y - 32, 64, 64);
         REG_BG2X = (64 - x) << 8;
       } else {
         for (; i != 32; i++, p++) {
           m = __modsi3(i, 5) * 3 + __modsi3(__divsi3(p->z, 96), 3);
-          drawFuncs.draw[0](screen, EWRAM_BUF + 0x83c + gData_081974bc[m],
+          drawFuncs.draw[0](screen, buffer + 0x83c + gData_081974bc[m],
                             (p->x >> 16) - gData_0819749e[m] / 2,
                             (p->y >> 16) - gData_081974ad[m] / 2,
                             gData_0819749e[m], gData_081974ad[m]);
@@ -1751,7 +1810,11 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
     } else if (kind == 84) {
+      s32 fade;
+      s32 angle;
       if (frame == 0) {
+        s32 i;
+        struct Particle *p;
         p = RINGS;
         for (i = 0; i != 32; i++, p++) {
           p->z = Random16();
@@ -1777,13 +1840,15 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           HeapSlot_Release(188);
           HeapSlot_Release(104);
           Func_08196404(188, 7, 7, gData_0819894e[Random16() & 3] | 3, 1);
-          IWRAM_SLOT_BC(screen, EWRAM_BUF + gData_08197486[m], x, y + 80,
+          IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
           HeapSlot_Release(188);
           BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
         }
       }
       if (frame > 3) {
+        struct Particle *p;
+        struct Model *model;
         matrix = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
         texture164.width = 5;
@@ -1801,7 +1866,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             else if (frame >= i + 4)
               fade = -((frame - i) * 16 - 64);
             model->fade = fade;
-            texture164.pixels = EWRAM_BUF + 0xc56 + (p->life << 12);
+            texture164.pixels = buffer + 0xc56 + (p->life << 12);
             p->life = (p->life + 1) & 3;
             Render_ResetTransformState();
             Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16,
@@ -1817,6 +1882,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         Heap_Release(matrix);
       }
     } else if (kind == 71 || kind == 80 || kind == 82) {
+      void *matrix;
+      s32 fade;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       fade = 0;
@@ -1826,7 +1893,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         work->unk77a8 = 1;
       texture156.width = 6;
       texture156.height = 6;
-      texture156.pixels = EWRAM_BUF;
+      texture156.pixels = buffer;
       model->kind = 7;
       model->texture = &texture156;
       model->mesh = gData_08199340;
@@ -1872,16 +1939,18 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
     } else if (kind == 81 || kind == 83 || kind == 92 || kind == 93) {
+      s32 t;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       texture148.width = 7;
       texture148.height = 7;
-      texture148.pixels = EWRAM_BUF;
+      texture148.pixels = buffer;
       model->texture = &texture148;
       model->kind = 7;
       model->mesh = gData_08199364;
       model->matrix = matrix;
       if (kind == 92 || kind == 93) {
+        s32 fade;
         for (i = 0; i != 3; i++) {
           t = frame - i * 2;
           if (t >= 0) {
@@ -1904,6 +1973,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           }
         }
       } else if (kind == 83) {
+        s32 fade;
+        s32 angle;
         t = frame - 4;
         if (t >= 0) {
           angle = t << 13;
@@ -1947,7 +2018,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       Heap_Release(model);
       Heap_Release(matrix);
       if (kind != 92 && kind != 93) {
+        s32 x;
         if (frame == 4) {
+          struct Particle *p;
           p = SPARKS;
           for (i = 0; i != 64; i++, p++) {
             p->x = Random16();
@@ -1974,11 +2047,13 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
     } else if (kind == 91) {
+      void *matrix;
+      s32 t;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       texture140.width = 7;
       texture140.height = 7;
-      texture140.pixels = EWRAM_BUF;
+      texture140.pixels = buffer;
       model->kind = 7;
       model->texture = &texture140;
       model->mesh = gData_08199364;
@@ -2003,9 +2078,10 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       tex = &texture140;
       tex->width = 7;
       tex->height = 4;
-      tex->pixels = EWRAM_BUF + 0x4000;
+      tex->pixels = buffer + 0x4000;
       model->mesh = gData_08198d2c;
       for (i = 0; i != 2; i++) {
+        s32 start;
         start = gData_08198952[i] + 4;
         if (frame > start) {
           fade = (start - frame) * 8;
@@ -2033,12 +2109,13 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 4)
         work->unk77a8 = 8;
     } else if (kind == 90) {
+      s32 scale;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       tex = &texture132;
       tex->width = 6;
       tex->height = 6;
-      tex->pixels = EWRAM_BUF;
+      tex->pixels = buffer;
       model->kind = 7;
       model->texture = tex;
       model->matrix = matrix;
@@ -2073,7 +2150,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 4)
         work->unk77a8 = 20;
     } else if (kind == 15) {
+      s32 i;
       if (frame == 0) {
+        struct Particle *p;
         p = SPARKS;
         for (i = 0; i != 16; i++, p++) {
           p->life = -i * 2;
@@ -2083,8 +2162,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
       for (i = 0; i != 0x400; i++) {
-        if (EWRAM_BUF[0x400 + i] >> 1 == frame / 2)
-          EWRAM_BUF[0x800 + i] = EWRAM_BUF[i];
+        if (buffer[0x400 + i] >> 1 == frame / 2)
+          buffer[0x800 + i] = buffer[i];
       }
       EffectPosition_ProjectScaledBattler(action->actor, point2);
       point2[0] = point2[0] / 2;
@@ -2097,9 +2176,9 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           p->z -= 4;
           p->x += p->vx;
           if (kind == 16)
-            drawFuncs.draw[0](screen, EWRAM_BUF, x - 16, y - 16, 32, 32);
+            drawFuncs.draw[0](screen, buffer, x - 16, y - 16, 32, 32);
           else
-            drawFuncs.draw[0](screen, EWRAM_BUF + m * 0x240, x - 12, y - 12, 24,
+            drawFuncs.draw[0](screen, buffer + m * 0x240, x - 12, y - 12, 24,
                               24);
         }
         p->life++;
@@ -2113,7 +2192,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             m = (p->life - 12) / 2;
           EffectPosition_ProjectPoint(p, point);
           point[0] = point[0] / 2;
-          drawFuncs.draw[1](screen, EWRAM_BUF + m * 0x400, point[0] - 16,
+          drawFuncs.draw[1](screen, buffer + m * 0x400, point[0] - 16,
                             point[1] - 16, 32, 32);
           BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
           BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
@@ -2138,7 +2217,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             m = __divsi3(p->life - 12, 3);
           EffectPosition_ProjectPoint(p, point);
           point[0] = point[0] / 2;
-          drawFuncs.draw[0](screen, EWRAM_BUF + m * 0x800, point[0] - 16,
+          drawFuncs.draw[0](screen, buffer + m * 0x800, point[0] - 16,
                             point[1] - 32, 32, 64);
           BattleEffectKernels_IntegrateVector3(p, 58, 0x1000);
           p->life++;
@@ -2149,6 +2228,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (frame == 8)
         Sound_PlayFar(103);
     } else if (kind == 42) {
+      s32 m;
       if (frame > 47)
         REG_BLDALPHA = (64 - frame) | 0x1000;
       p = SPARKS;
@@ -2156,7 +2236,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         m = __modsi3(i, 3);
         EffectPosition_ProjectPoint(p, point);
         point[0] = point[0] / 2;
-        drawFuncs.draw[i & 1](screen, EWRAM_BUF + m * 0x240, point[0] - 12,
+        drawFuncs.draw[i & 1](screen, buffer + m * 0x240, point[0] - 12,
                               point[1] - 12, 24, 24);
         BattleEffectKernels_IntegrateVector3(p, 60, 1 << ((i & 3) + 11));
         p->life++;
@@ -2180,7 +2260,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
           if (life <= 23) {
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
-            drawFuncs.draw[1](screen, EWRAM_BUF + (life / 4) * 0x480,
+            drawFuncs.draw[1](screen, buffer + (life / 4) * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
             BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
             BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
@@ -2189,19 +2269,21 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       }
     } else if (kind != 100) {
+      s32 m;
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
         if (frame >= i + 4) {
+          s32 life;
           life = p->life;
           if (life <= 23) {
             m = life / 4;
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
             if (kind == 69 || kind == 74)
-              drawFuncs.draw[1](screen, EWRAM_BUF + m * 0x480,
+              drawFuncs.draw[1](screen, buffer + m * 0x480,
                                 point[0] - 12, point[1] - 24, 24, 48);
             else
-              drawFuncs.draw[i & 1](screen, EWRAM_BUF + m * 0x480,
+              drawFuncs.draw[i & 1](screen, buffer + m * 0x480,
                                     point[0] - 12, point[1] - 24, 24, 48);
             if (kind == 55)
               BattleEffectKernels_IntegrateVector3(p, 60, 0x400);
@@ -2214,15 +2296,17 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     }
 
     if (kind == 8 && frame < 44) {
+      s32 half;
       EffectPosition_ProjectPoint(origin, point);
       point[0] = point[0] / 2;
-      drawFuncs.draw[1](screen, EWRAM_BUF + 0x3c56, point[0] - 10, point[1] - 4,
+      drawFuncs.draw[1](screen, buffer + 0x3c56, point[0] - 10, point[1] - 4,
                         20, 40);
       if (frame == 23)
         (*GetBattleObjectSlotFar(action->target))->unk28 = 0x30000;
       if (frame > 19)
         origin[1] += 0x40000;
       if (frame == 23) {
+        struct Particle *p;
         half = BattleUnit_GetEffectHeightFar(action->actor) / 2 + 0x1e0000;
         p = work->particle;
         for (i = 0; i != 64; i++, p++) {
@@ -2258,7 +2342,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     if (kind <= 37 && frame <= 5) {
       EffectPosition_ProjectPoint(origin, point);
       point[0] = point[0] / 2;
-      drawFuncs.draw[1](screen, EWRAM_BUF + 0x3c56, point[0] - 10, point[1] - 4,
+      drawFuncs.draw[1](screen, buffer + 0x3c56, point[0] - 10, point[1] - 4,
                         20, 40);
       origin[0] += center[0];
       origin[1] += center[1];

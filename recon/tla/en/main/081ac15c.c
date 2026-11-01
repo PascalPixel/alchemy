@@ -1,15 +1,29 @@
-// Near miss, differ 74 of 2055 (tla-en, 2026-10-31): scheduling rows (the
-// setup's VRAM base load, stack reloads and stores one row early or late, the
-// affine loop's two zero loads after rather than before its adds), the shadow
-// loop's two OAM offsets in swapped registers (the native keeps attr2's +200
-// in sl and attr01's +196 in r8, as the die loop does), and the affine loop's
-// literal pool split one store later, which shifts six pc-relative offsets.
-// Measured this pass (from 88): the sort loop runs while index != 2 (84);
-// held is read as volatile after the two discarded repeat reads (74); the
-// affine halfwords take The Broken Seal's taken-address form instead of
-// volatile locals (same code). Putting state = 0 before resetDice = 1 after
-// a loss: 78; index = 0 before gRenderOamEnabled = 0: 78; a 4-minute
-// permuter run found nothing better.
+// Draft, differ 66 of 2055, skeleton gap 25 (tla-en, 2026-11-01)
+// Left: scheduling rows only, no shape. A stack or pool load one row early
+// (the first tile loop's VRAM base over gRenderOamEnabled's store, diceWork
+// over the setup's stores, sprites and spriteCount's stores in the OAM loops,
+// the two zero loads in the affine loop). The sched2 dump shows the affine
+// one: adds #128 ranks 55 and the zero loads 54, because strh to affineA gets
+// the slow-load rule's cost 2 from the ldrh that rereads it. That one row also
+// moves the literal pool, which is the HImode zero's 60-byte reach: the pool
+// splits one store late and six pc-relative offsets and two branches follow.
+// Barriers cannot close it: an empty asm counts 4 bytes for that same pool,
+// and sites such as movs r4 / ldr r5 / str r4 need a load between a constant
+// and its store. Closing the rest looks like the -mthumb-slow-loads model,
+// which is out of scope here. Signed affine locals give ldrsh (178).
+// Measured this pass (from 74): the shadow loop's sl and r8 swap was the loop
+// pass's threshold, not allocation. Its attr2 offset giv was "not worth while,
+// 68 vs 73", so it was reduced in the second loop pass, after attr01's; at 68
+// real insns or fewer both reduce in the first pass, as in the die loop. The
+// local depth for the clamp (73 to 69) and the rollingDie pointer (69 to 68)
+// bring it there. A halfword read of y through a pointer drops the first
+// depth store (s16 alias set; 178), and through a union moves the frame (613).
+// That loses four insns before gcse, so its expression table fell from 823 to
+// 821 buckets, which reorders PRE's pseudos and so the spill slots at sp+40 to
+// sp+52 (94). The spriteCount default is dead, flow deletes it, and it puts
+// the table back at 823 (66). Keep n_insns / 2 | 1 at 823 in any later edit.
+// Also measured: state = 0 before resetDice = 1 after a loss (70), and state =
+// 0 after Window_CloseFar (68), index = 0 before gRenderOamEnabled = 0 (98).
 // 2026-10-26 (round 5): differ 104 of 2055 (draft 2055); resetDice set before
 // the state after a loss (a statement-move search): 108 to 104. Both decodes go
 // through Call2 with Ram_MapCellBuffer as an integer, as The Broken Seal's
@@ -170,7 +184,7 @@ void LuckyDice_Run(void) {
 
   /* FAKEMATCH(dead): the four affine halfwords' addresses taken, so each is
    * stored to sp+166..160 and reloaded with ldrh, as The Broken Seal's
-   * LuckyDice_Run keeps them; as plain u16 locals, 902 of 2055 instructions
+   * LuckyDice_Run keeps them; as plain u16 locals, 894 of 2055 instructions
    * differ in tla-en. */
   (void)&affineA;
   (void)&affineB;
@@ -247,6 +261,8 @@ void LuckyDice_Run(void) {
   REG_WIN1H = 240;
   REG_WIN1V = 160;
 
+  // Default: set for real at the top of every frame.
+  spriteCount = 0;
   state = 0;
   resultTimer = 0;
   resultKind = -1;
@@ -410,8 +426,7 @@ void LuckyDice_Run(void) {
       (void)gInput.repeat;
       /* FAKEMATCH(volatile): held read afresh after the two discarded repeat
        * reads, as The Broken Seal's gKeysHeld is declared; as plain
-       * gInput.held, 84 rather than 74 of 2055 instructions differ in
-       * tla-en. */
+       * gInput.held, 76 of 2055 instructions differ in tla-en. */
       if (*(volatile u32 *)&gInput.held & 0x40) {
         diceWork->particles[0].y += 0x40000;
         diceWork->particles[1].y += 0x40000;
@@ -540,19 +555,23 @@ void LuckyDice_Run(void) {
     for (index = 0; index != 2; index++) {
       s32 shadowX;
       s32 shadowY;
+      s32 depth;
 
-      groundPoint[0] = diceWork->particles[index].x;
+      rollingDie = &diceWork->particles[index];
+      groundPoint[0] = rollingDie->x;
       groundPoint[1] = 0;
-      groundPoint[2] = diceWork->particles[index].z;
+      groundPoint[2] = rollingDie->z;
       Render_ProjectPoint(groundPoint, screen);
-      if (screen[2] < 0x15e) {
-        screen[2] = 0x15e;
+      depth = screen[2];
+      if (depth < 0x15e) {
+        screen[2] = depth = 0x15e;
       }
-      if (screen[2] > 0x28a) {
+      if (depth > 0x28a) {
         screen[2] = 0x28a;
+        depth = screen[2];
       }
-      spriteDepth[2 + index] = screen[2] - 0x15e;
-      spriteDepth[2 + index] += (s16)(diceWork->particles[index].y >> 16);
+      spriteDepth[2 + index] = depth - 0x15e;
+      spriteDepth[2 + index] += (s16)(rollingDie->y >> 16);
       shadowX = screen[0];
       shadowY = screen[1];
       if (shadowY + 88 > -16) {

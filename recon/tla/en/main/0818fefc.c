@@ -1,26 +1,33 @@
-// Draft, differ 538 of 1361, skeleton gap 47/43 (tla-en, 2026-11-01)
-// BattleEffect_RunMegiddo. Control flow, calls, constants and pools agree; what
-// is left is mostly instruction order (sched2 ties and reload's register
-// choices), four missing reloads of frame, and -24 made by subs from a 3 in the
-// same register instead of movs and negs.
-// The frame is 216 bytes, the listing's 220: every slot sits 4 lower. The
-// listing's slot 76, between k and blit in declaration order, is never read or
-// written, so some variable there was spilled and all its uses replaced. It is
-// not zero, ring or transformed; adding a local just to fill it was not tried.
-// Found by measuring, keep these: the slots above sp 96 give the declaration
-// order of pos, list, list2, place, screen and req; spill slots give that of
-// work to scale. i, j, k and m are separate pseudos (the loops use different
-// registers). zero, half, size, ring and transformed are constants the listing
-// reloads at each use, so they are locals set once outside their loops. The
-// first texture is a byte array because a DImode struct's address is rewritten
-// and hoisted out of the frame loop (add r6, sp, #108 stays in the listing).
-// The cosine is multiplied by 3 before the sine's call and shifted after it.
-// texture2's first two fields are set before its address is taken, which gives
-// the listing's word-sized read-modify-write. The ResourceId_Data names are
-// placeholders for ids with no symbol yet.
-// Tried without gain: declaration order of the register locals (1,600 random
-// orders, no change), a one-pass block around the placement (no change),
-// reordering the model field stores, s32 words for the texture.
+// Draft, differ 62 of 1361, skeleton gap 20/20 (tla-en, 2026-11-01)
+// BattleEffect_RunMegiddo. Frame (220), control flow, calls, pools and nearly
+// every register agree. What is left is two causes.
+// 1. Eighteen lines are one swap: the listing keeps &texture2 in [sp, #24] and
+// &pos in [sp, #20], the draft the reverse. Both are PRE's reaching registers,
+// numbered in gcse's hash table order, and that table's size follows the
+// function's insn count, so this draft is a few insns short before gcse. A dead
+// if (zero) block of four stores at the end of the function flips it (differ
+// 44, swap gone), but it is a device short of 0, so it came out. Natural
+// rewrites tried without a flip: seven reshaped temporaries and zero spellings.
+// 2. The other 44 are scheduling pairs, mostly a load the draft issues earlier
+// than the listing (effect at the top and before the caster's slot, frame
+// before k's loop, effect before list2), the known load-after-store gap, which
+// is a model question for K2 and out of scope here. Also: frame * 2 - 144 takes
+// its temporary in r3, the listing r2; the m loop's r2 restore lands after the
+// strb; the first req word is stored through r2, not sp; the 0xffb40000 load.
+// Forced locals, untagged, must be tagged or replaced before adoption: f (a copy
+// of frame, so thread_jumps cannot join the two frame > 1 tests before cse2 and
+// the label ends cse2's path: without it differ 195) and twice (without it 153).
+// tilt and i = 0 before the loop put frame * 3 after i's reload. Plain finds:
+// side's if/else order sets x before the test; v[2] and place use zero (spilled,
+// reloaded) but the first model's shade and scrollV are literal; strip and
+// sheet2 are one-constant locals the listing reloads; tint overlaps the 3 so -24
+// lands in r2. RESET_AND_SCALE_HALF's do-while ends cse1's block, so the 5s are
+// not shared with % 5 (without it 126).
+// blit is two words: slot 76 is its unused half. req is a byte array so its slot
+// comes before the first texture's: both must be BLKmode, as a DImode texture's
+// address hoists out of the loop and a DImode req is placed after it.
+// Permute, about five minutes on the dead-block state: inlining y's value, kept.
+// The ResourceId_Data names are placeholders for ids with no symbol yet.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -161,16 +168,25 @@ s32 Render_ProjectPoint(const void *point, s32 *screen);
 void ResourceObject_ReleaseFar(void *object);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 
+#define RESET_AND_SCALE_HALF()                                                 \
+  do {                                                                         \
+    s32 half = 0x8000;                                                         \
+                                                                               \
+    Render_ResetTransformState();                                              \
+    Func_080151e4(half, 0x10000, half);                                        \
+  } while (0)
+
 // Megiddo: the caster rises in a column of light, a winged figure gathers
 // above and dives in a storm of feathers and rings onto the target.
 void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   u8 *canvas;
   s32 frame;
+  s32 f;
   s32 k;
   s32 zero;
   u8 *ring;
-  DrawRectangle blit;
+  DrawRectangle blit[2];
   u8 *sprites;
   s32 *transition;
   s16 *camera;
@@ -183,6 +199,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   s32 z;
   s32 scale;
   u8 *transformed;
+  u8 *strip;
+  u8 *sheet2;
   s32 i;
   s32 j;
   s32 m;
@@ -194,7 +212,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   s16 list2[14];
   s32 place[4];
   s32 screen[3];
-  s32 req[2];
+  u8 req[8];
   struct ModelTexture texture2;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -206,6 +224,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   zero = 0;
   ring = gMapCellBuffer;
   transformed = Data_02011000;
+  strip = Data_02012000;
+  sheet2 = gData_02014000;
   BattleMotion_ApproachTargetFar(effect->actor, effect->actor, 150, 0x50000);
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
@@ -214,27 +234,26 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   meshA = work->sheet + 0x5f40;
   meshB = work->sheet + 0x6340;
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   caster = *GetBattleObjectSlotFar(effect->actor);
   x = 0;
   z = 0;
   scale = 0x10000;
-  Render_BuildQuadStrip(Data_02012000, 8, 16, 32);
+  Render_BuildQuadStrip(strip, 8, 16, 32);
   Render_BuildQuadStrip(meshB, 2, 32, 15);
   for (j = 0; j != 16; j++) {
     s32 c = -Trig_Cos(j * 1092) * 3;
     s32 s = Trig_Sin(j * 1092);
-    s32 y = ((c * 16) >> 16) + 24;
     s32 r = (s * 48) >> 16;
 
     for (m = 0; m != 2; m++) {
       u8 *v = meshA + j * 8 + m * 4;
 
-      v[0] = (r * Trig_Sin(m << 13)) >> 16;
-      v[1] = y;
-      v[2] = (r * Trig_Cos(m << 13)) >> 16;
+      v[0] = (Trig_Sin(m << 13) * r) >> 16;
+      v[1] = ((c * 16) >> 16) + 24;
+      v[2] = (Trig_Cos(m << 13) * r) >> 16;
     }
   }
   casterValue = caster[18];
@@ -273,16 +292,32 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0CD, work->sheet + 0x2400, 1, 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = 0x1010;
-      if (effect->side) {
-        x = 0x500000;
-      } else {
+      if (!effect->side) {
         x = 0xa00000;
+      } else {
+        x = 0x500000;
       }
       z = -0x600000;
       {
-        volatile u16 *ime = &REG_IME;
+        volatile u16 *ime;
+        struct IoWriteQueue *q;
+        u32 saved;
+        s32 count;
 
-        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2CNT, 0x784, IO_WRITE_16);
+        q = &gIoWriteQueue;
+        ime = &REG_IME;
+        IME_SAVE(ime, saved);
+        IME_DISABLE(ime);
+        count = *&q->count;
+        if (count <= 31) {
+          u32 *entry = q->entries[count];
+
+          *&q->count = count + 1;
+          *entry++ = 0x784;
+          *entry++ = (u32)&REG_BG2CNT;
+          *entry = IO_WRITE_16;
+        }
+        IME_RESTORE(ime, saved);
       }
     }
     if (frame == 1) {
@@ -315,9 +350,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         if (i != 1) {
           r = ((Trig_Sin((frame + k * 4) << 12) * 2) >> 16) + 120;
         }
-        v[0] = (r * Trig_Sin(k << 11)) >> 16;
-        v[1] = (r * Trig_Cos(k << 11)) >> 16;
-        v[2] = 0;
+        v[0] = (Trig_Sin(k << 11) * r) >> 16;
+        v[1] = (Trig_Cos(k << 11) * r) >> 16;
+        v[2] = zero;
       }
     }
 
@@ -395,9 +430,25 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     }
     if (frame == 84) {
       {
-        volatile u16 *ime = &REG_IME;
+        volatile u16 *ime;
+        struct IoWriteQueue *q;
+        u32 saved;
+        s32 count;
 
-        IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2CNT, 0x785, IO_WRITE_16);
+        q = &gIoWriteQueue;
+        ime = &REG_IME;
+        IME_SAVE(ime, saved);
+        IME_DISABLE(ime);
+        count = *&q->count;
+        if (count <= 31) {
+          u32 *entry = q->entries[count];
+
+          *&q->count = count + 1;
+          *entry++ = 0x785;
+          *entry++ = (u32)&REG_BG2CNT;
+          *entry = IO_WRITE_16;
+        }
+        IME_RESTORE(ime, saved);
       }
       Actor_SetAnimationSpeedFar(caster, 128);
       Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
@@ -413,12 +464,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       work->transferMode = 1;
       work->transferValue = 0x10101010;
     }
+    f = frame;
     if (frame > 174) {
       Func_08164a4c(2, 2, 2);
     }
 
     if (frame > 1) {
       u8 *obj;
+      s32 *pair;
+      s32 v;
 
       if (frame > 142) {
         s32 n = frame - 143;
@@ -428,7 +482,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           scale = 0xc000;
         }
       }
-      req[1] = req[0] = scale * 2;
+      pair = (s32 *)req;
+      v = scale * 2;
+      pair[1] = v;
+      *(s32 *)req = v;
       place[3] = zero;
       place[1] = 0xff0000;
       place[0] = x;
@@ -437,12 +494,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       obj[23] = 32;
       obj[22] = zero;
       if ((u32)(place[2] + 0x340000) <= 0xfbffff) {
-        Render_ApplyProjectedPlacementFar(obj, place, req, 0);
+        Render_ApplyProjectedPlacementFar(obj, place, (s32 *)req, 0);
       }
     }
-    if (frame > 1) {
+    if (f > 1) {
       u8 textureBytes[8];
       struct ModelTexture *t;
+      s32 tint;
 
       model = Render_AllocateModelList(1);
       t = (struct ModelTexture *)textureBytes;
@@ -451,16 +509,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       t->logWidth = 6;
       t->logHeight = 4;
       model->texture = t;
-      model->shade = zero;
-      model->scrollV = zero;
+      model->shade = 0;
+      model->scrollV = 0;
       t->pixels = work->sheet + 0x1000 + ((frame / 2) % 5) * 0x400;
-      model->mesh = Data_02012000;
-      {
-        s32 half = 0x8000;
-
-        Render_ResetTransformState();
-        Func_080151e4(half, 0x10000, half);
-      }
+      model->mesh = strip;
+      RESET_AND_SCALE_HALF();
       Func_08015160(x - 0x7e0000, z - 0x4c0000, 0);
       Func_0801521c(46536);
       Func_0801521c(scale);
@@ -472,20 +525,26 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       t->pixels = work->sheet + 0x2400;
       model->kind = 7;
       model->mesh = meshB;
+      tint = -24;
       model->unk04 = 3;
-      model->shade = -24;
+      model->shade = tint;
       model->scrollV = zero;
       if (frame > 142) {
         s32 n = frame - 143;
         s32 scroll;
         s32 angle;
+        s32 tilt;
+        s32 twice;
 
         if (n > 32) {
           n = 32;
         }
-        scroll = frame * 3;
+        i = 0;
+        twice = frame * 2;
         angle = -0x4000;
-        for (i = 0; i != 10; i++) {
+        tilt = n * 384;
+        scroll = twice + frame;
+        for (; i != 10; i++) {
           model->scrollU = ~scroll & 127;
           Render_ResetTransformState();
           Func_08015160(-0x20000, -0x200000, 0);
@@ -493,7 +552,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           Func_0801521c(scale);
           Func_080150e4(0x8000);
           scroll += 20;
-          SceneTransform_ApplyPitch(n * 384 - 0x3000);
+          SceneTransform_ApplyPitch(tilt - 0x3000);
           SceneTransform_ApplyYaw(angle);
           Render_TransformVertices(meshA, transformed, 32);
           Render_DrawModelList(model);
@@ -527,7 +586,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
           if (y < 0) {
             y += 128;
           }
-          blit(canvas, sprites + gData_08197410[size - 1], mx, y, size, 2);
+          blit[0](canvas, sprites + gData_08197410[size - 1], mx, y, size, 2);
         }
       }
     }
@@ -552,7 +611,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
         s32 size = 1;
 
         Render_ProjectPoint(p, screen);
-        blit(canvas, sprites + gData_08197410[size - 1], screen[0], screen[1],
+        blit[0](canvas, sprites + gData_08197410[size - 1], screen[0], screen[1],
              size, 4);
         p->y -= 2;
       }
@@ -562,7 +621,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
     model = Render_AllocateModelList(1);
     texture2.logWidth = 7;
     texture2.logHeight = 7;
-    texture2.pixels = gData_02014000;
+    texture2.pixels = sheet2;
     model->kind = 7;
     model->mesh = gData_08199364;
     model->texture = &texture2;

@@ -1,22 +1,36 @@
-// Draft, differ 2617 of 2583, skeleton gap 497 (tla-en, 2026-11-01)
-// BattleEffect_RunFlora: same 138 calls and control flow, draft 2568
-// instructions. Most of the gap is scheduling and allocation. The listing's
-// high registers are a rotation of the draft's (its r8, r9, r10, r11 are the
-// draft's sl, r8, r9, fp), which the skeleton ignores.
-// Left to settle:
-// - The ring colour v is spilled in the listing (sp 100) and takes sl here, so
-//   pos2 loses its high register. That drives the largest hunks, in both ring
-//   loops. Giving v a longer life did not help.
-// - Frame is 280 against 292, which is allocation.
-// - Phases: the listing stores and rereads through one register. One form
-//   forwards the store (lsls 24, lsrs 23); the Data_0201401e and Data_02014002
-//   pair here keeps the reload but in two registers.
-// - The tile sheet loops reduce row * 32 and b * 8 as givs; the listing
-//   recomputes ((row * 2 + a) << 4) + b for each b, from a row * 2 giv.
-// - scrollInterval and transition[4]'s constant 1 is hoisted into fp in the
-//   first loop; the listing rebuilds it each time.
-// - The first petal's x += 0x30000 merges with the second's by cross-jumping
-//   (registers again), and -80's negs lands after the calls here.
+// Draft, differ 878 of 2583, skeleton gap 224 (tla-en, 2026-11-01)
+// BattleEffect_RunFlora: same calls and control flow, frame 292 as the listing,
+// high registers as the listing (r8, r9 petals, r10 i, r11).
+// What closed most of the gap, to keep:
+// - draw[2] is one DImode pseudo at sp 164 and 168, and the rings hoist draw[0].
+// - petals is a number: as a pointer it prefers STACK_REG, keeps no REG_EQUIV,
+//   misses the live-length doubling and takes r8 from the second ring's x1.
+// - source is set once at the top: it conflicts with every high register,
+//   stays spilled and is rebuilt from the pool at each use.
+// - c copies the ring colour v, so v loses refs and spills to sp 100.
+// - The second ring has its own x1b to y2b; out and pos come before dot.
+// Left to settle, top down. Reload's rotation means each one shifts scratch
+// registers below it:
+// - -80's negs lands after Task_Add; the listing has it before the calls.
+// - First setup loop: cells r5, tiles r6, objects r7 here run objects, cells,
+//   tiles. Stepped pointers gave the listing's order for t but cost 100.
+// - Phases: the listing stores and rereads one register. A stepped t, a struct
+//   store, byte sums and a do { } while (0) macro all lost; most forward the
+//   store or take r8 for the index.
+// - The first 0x4000 is rebuilt in the listing. ClearWords_ (the static inline
+//   in f16467c.c, a wrapper device) on the first call gains 16; taken out
+//   because it does not reach differ 0.
+// - Petal 0's frame == 0 branch: the listing keeps the x constant in r3 past
+//   the y store, so its reloads run r5, r0 where these run r5, r3, then 96 and
+//   224 stay in separate registers and the arms do not cross-jump. This is the
+//   largest hunk. Literal indexes (w->x[0]) cost 1100.
+// - Tile sheet: a and b are label loops so row * 2 + a is not reduced. The
+//   listing's row * 2 is a stepped value at sp 44 (a giv or a spilled hand
+//   step) copied to r8 per row, tiles at r9, 15 at r11, and one 15 rebuilt in
+//   the body. A hand step gives those slots but PRE hoists y + a; label loops
+//   at k and j rebuild the constants but spill c to sp 8 and frame 288.
+//   While sp 44 is missing, the hoisted place addresses sit at 44 to 52, not 48
+//   to 56, and y sits at sp 56.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -195,6 +209,7 @@ void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
+#define w ((struct FloraWork *)petals)
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
 
@@ -204,8 +219,7 @@ void Heap_Release(void *buffer);
 void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
-  DrawRectangle blit2;
-  DrawRectangle blit;
+  DrawRectangle draw[2];
   s32 frame;
   s32 savedScroll;
   s32 *transition;
@@ -217,7 +231,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   s32 spin;
   s32 spread;
   s32 grow;
-  struct FloraWork *w;
+  s32 petals; // the block's address as a number, see the header
   s32 i;
   s32 j;
   s32 size;
@@ -231,19 +245,21 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   void *verts;
   struct EffectStep *p;
   u8 *cells;
-  struct EffectPosition pos;
+  u8 *source;
   struct EffectPosition out;
-  struct EffectPosition pos2;
-  struct EffectPosition out2;
-  struct EffectPosition pos3;
-  struct EffectPosition out3;
+  struct EffectPosition pos;
   u8 dot[2];
+  struct EffectPosition out2;
+  struct EffectPosition pos2;
+  struct EffectPosition out3;
+  struct EffectPosition pos3;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   savedScroll = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->transitionWork;
-  w = &gData_02014000;
+  petals = (s32)&gData_02014000;
+  source = gMapCellBuffer;
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
@@ -266,8 +282,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       transition[4] = 1;
       e = Resource_GetTableEntry((s32)&ResourceId_Data09A);
       Iwram_CopyWords((void *)0x050003e0, e, 32);
-      Resource_DecodeType01(e + 32, gMapCellBuffer);
-      cells = gMapCellBuffer;
+      e += 32;
+      Resource_DecodeType01(e, source);
+      cells = source;
       for (i = 0; i != 15; i++) {
         struct FloraObject *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
@@ -286,8 +303,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
             w->tiles[Data_02014002[14 + i] >> 8];
       }
       e = Resource_GetTableEntry((s32)&ResourceId_Data098);
-      Resource_DecodeType01(e + 480, gMapCellBuffer);
-      cells = gMapCellBuffer;
+      e += 480;
+      Resource_DecodeType01(e, source);
+      cells = source;
       for (i = 0; i != 12; i++) {
         struct FloraObject *obj = Func_0815b290(32, 32, 0x80002000, 0);
         obj->flags = 2;
@@ -301,14 +319,14 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, gMapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, source, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   size = 3;
   for (i = 0; i != 10; i++) {
     u8 *dst = sprites + (i * 8 + i) * 2;
 
     for (j = 0; j != 18; j++) {
-      s32 v = gMapCellBuffer[gData_08197410[size - 1] + j];
+      s32 v = *(source + gData_08197410[size - 1] + j);
 
       if (v > 0) {
         v = 63 - i * 7;
@@ -337,7 +355,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
-  blit = Ram_HeapSlots->unk64[1];
+  draw[0] = Ram_HeapSlots->unk64[1];
   for (frame = 0; frame != 300 && (!(gInput.repeat & 3) || frame <= 16);
        frame++) {
     if (frame == 0) {
@@ -361,29 +379,29 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     if (frame == 108) {
       REG_BG2PA = 0x80;
       REG_BG2X = 0;
-      Func_0815b434(gMapCellBuffer, 8, 0x10000);
+      Func_0815b434(source, 8, 0x10000);
       Func_0815b434(Data_02010020, 16, 0xc000);
       Func_0815b434(Data_020100a0, 32, 0xc000);
       Func_0815b434(Data_020102a0, 48, 0xc000);
     }
     if ((u32)(frame - 223) <= 29) {
       s32 k = Random16() & 3;
+      s32 n = Data_08199421[k] * 2;
 
-      Func_0818caa8(gMapCellBuffer + Data_08199426[k], 44, 78,
-                    Data_08199421[k] * 2);
+      Func_0818caa8(Data_08199426[k] + source, 44, 78, n);
     }
     u = frame - 112;
     if (u <= 31) {
       u16 *e = Resource_GetTableEntry((s32)&ResourceId_Data098);
 
       for (i = 0; i != 240; i++, e++) {
-        u32 c = w->palette[i];
-        u32 t = *e;
-        s32 b = (c << 16) >> 26 & 31;
-        s32 g = (c << 16) >> 21 & 31;
+        s32 c = w->palette[i];
+        s32 b = (u16)c >> 10 & 31;
+        s32 g = (u16)c >> 5 & 31;
         s32 r = c & 31;
-        s32 tb = (t << 16) >> 26 & 31;
-        s32 tg = (t << 16) >> 21 & 31;
+        s32 t = *e;
+        s32 tb = (u16)t >> 10 & 31;
+        s32 tg = (u16)t >> 5 & 31;
         s32 tr = t & 31;
 
         if (b > tb) {
@@ -403,10 +421,10 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f - u * 0x01010101 * 8);
     }
     req = Data_08196ec8;
+    dy = 0;
     dx = 0;
     place[3] = 0;
     place[1] = 0xff0000;
-    dy = 0;
     if (frame <= 119) {
       posX = Trig_Sin(0xcd00) * 24 + 0x980000;
       posY = Trig_Cos(0xcd00) * 20 + 0x2c0000;
@@ -420,6 +438,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       posY += 0x8000;
     } else if (frame <= 251) {
       s32 m = frame % 6;
+      s32 m4;
 
       if (m == 1) {
         dx = 1;
@@ -446,14 +465,14 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       if ((frame & 3) == 0) {
         gBgScroll[1].y = 30;
       }
-      m = frame % 4;
-      if (m == 1) {
+      m4 = frame - frame / 4 * 4;
+      if (m4 == 1) {
         gBgScroll[1].y = 30;
       }
-      if (m == 2) {
+      if (m4 == 2) {
         gBgScroll[1].y = 34;
       }
-      if (m == 3) {
+      if (m4 == 3) {
         gBgScroll[1].y = 34;
       }
     } else {
@@ -707,7 +726,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       spin += 16;
       angle += spin;
       BattleEffect_LoadBlitter(SLOT_ALT, 3);
-      blit2 = Ram_HeapSlots->unkb8[1];
+      draw[1] = Ram_HeapSlots->unkb8[1];
       for (i = 0; i != 32; i++) {
         s32 q = i / 4;
         s32 m = i % 4;
@@ -735,7 +754,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         pos.depth = 0;
         EffectPosition_ProjectPoint(&pos, &out);
         out.x >>= 1;
-        blit2(canvas, sprites + gData_08197410[size - 1], out.x + 48 - size / 2,
+        draw[1](canvas, sprites + gData_08197410[size - 1], out.x + 48 - size / 2,
               out.y + 92 - size, size, size * 2);
       }
       HeapSlot_Release(SLOT_ALT);
@@ -743,6 +762,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 186) <= 79) {
       s32 v = frame - 186;
       s32 inner;
+      s32 c;
       s32 ox;
       s32 oy1;
       s32 oy2;
@@ -759,10 +779,11 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         v = 36;
       }
       inner = 64 - v;
-      dot[0] = v;
-      dot[1] = v;
-      sx = 18 - v / 2;
-      sy = 36 - v;
+      c = v;
+      dot[0] = c;
+      dot[1] = c;
+      sx = 18 - c / 2;
+      sy = 36 - c;
       Func_080150e4(frame << 10);
       if (frame <= 221) {
         SceneTransform_ApplyPitch(sy << 10);
@@ -786,16 +807,20 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         y1 = out2.y + oy1;
         x2 = out2.x * 3 / 4 + ox;
         y2 = out2.y * 3 / 4 + oy2;
-        blit(canvas, dot, x1 - 1, y1 - 1, 1, 2);
-        blit(canvas, dot, x2 - 1, y2 - 1, 1, 2);
+        draw[0](canvas, dot, x1 - 1, y1 - 1, 1, 2);
+        draw[0](canvas, dot, x2 - 1, y2 - 1, 1, 2);
         if ((i & 31) == 0) {
           Func_08143eb4(x1, y1, x2, y2, v);
           Func_08143eb4(x1, y1 + 1, x2, y2 + 1, v);
         }
       }
       if ((u32)(frame - 228) <= 24) {
-        s32 c = 256 - frame;
+        s32 x1b;
+        s32 y1b;
+        s32 x2b;
+        s32 y2b;
 
+        c = 256 - frame;
         inner = frame - 204;
         dot[0] = c;
         dot[1] = c;
@@ -805,15 +830,15 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           pos3.depth = 0;
           EffectPosition_ProjectPoint(&pos3, &out3);
           out3.x >>= 1;
-          x1 = ox + out3.x;
-          y1 = out3.y + oy1;
-          x2 = out3.x * 3 / 4 + ox;
-          y2 = out3.y * 3 / 4 + oy2;
-          blit(canvas, dot, x1 - 1, y1 - 1, 1, 2);
-          blit(canvas, dot, x2 - 1, y2 - 1, 1, 2);
+          x1b = ox + out3.x;
+          y1b = out3.y + oy1;
+          x2b = out3.x * 3 / 4 + ox;
+          y2b = out3.y * 3 / 4 + oy2;
+          draw[0](canvas, dot, x1b - 1, y1b - 1, 1, 2);
+          draw[0](canvas, dot, x2b - 1, y2b - 1, 1, 2);
           if ((i & 31) == 0) {
-            Func_08143eb4(x1, y1, x2, y2, c);
-            Func_08143eb4(x1, y1 + 1, x2, y2 + 1, c);
+            Func_08143eb4(x1b, y1b, x2b, y2b, c);
+            Func_08143eb4(x1b, y1b + 1, x2b, y2b + 1, c);
           }
         }
       }
@@ -852,28 +877,36 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     Iwram_CopyWords((void *)BG_PLTT, e, 32);
     Resource_DecodeType01(e + 32, work->sheet);
     for (row = 0; row != 15; row++) {
-      for (a = 0; a != 2; a++) {
-        for (b = 0; b != 2; b++) {
-          s32 offset = ((row * 2 + a) * 16 + b) * 8;
+      s32 y = row * 2;
 
-          for (k = 0; k != 8; k++, offset += 16) {
-            for (j = 0; j != 4; j++) {
-              u32 c = work->sheet[n];
+      a = 0;
+    nextA:
+      b = 0;
+    nextB: {
+      s32 offset = ((y + a) << 4) + b << 3;
 
-              u8 *d = work->sheet + 0x1000 + offset + j * 2;
+      for (k = 0; k != 8; k++, offset += 16) {
+        for (j = 0; j != 4; j++) {
+          u32 c = work->sheet[n];
+          u8 *d = work->sheet + 0x1000 + offset + j * 2;
 
-              d[0] = c & 15;
-              d[1] = c >> 4 & 15;
-              n++;
-            }
-          }
+          d[0] = c & 15;
+          d[1] = c >> 4 & 15;
+          n++;
         }
+      }
+    }
+      if (++b != 2) {
+        goto nextB;
+      }
+      if (++a != 2) {
+        goto nextA;
       }
     }
   }
   for (frame = 0; frame != 128; frame++) {
     if (frame == 0) {
-      p = (struct EffectStep *)gMapCellBuffer;
+      p = (struct EffectStep *)source;
       for (i = 0; i != 128; i++, p++) {
         p->x = ((Random16() & 63) + 96) << 16;
         p->y = -(Random16() & 63) << 16;
@@ -885,10 +918,10 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         work->particles[i].variant = (Random16() & 15) + 1;
       }
     }
-    p = (struct EffectStep *)gMapCellBuffer;
+    p = (struct EffectStep *)source;
     for (i = 0; i != 64; i++, p++) {
       if (frame > i) {
-        blit(canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
+        draw[0](canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
              HI(p->x) - 4, HI(p->y), 16, 16);
         BattleEffectKernels_IntegrateVector2(p, 64, 0);
         p->velocityX += -0x1000;

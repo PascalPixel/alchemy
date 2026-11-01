@@ -1,21 +1,40 @@
-// Near miss, differ 253 of 260 (tla-en, 2026-10-31): register allocation.
-// The control flow, calls, field widths and constants follow the native; the
-// native ranks leader (r10) and work (r9) above slot (r11) and spills i, where
-// this compiler gives slot r10, i r9 and leader r11 and spills work, which
-// moves nearly every register. The native also loads the first placement's
-// kind before the view bounds' if and copies it at the loop's first test.
+// Draft, differ 251 of 260, skeleton gap 27 (tla-en, 2026-11-01)
 // Shows the world map's placed objects that come within the view and whose
 // flags allow them, hides those that leave it, and starts a placement's
 // event when the leader touches it. Overlay 64c has the same code (its
-// Func_02000d64). Measured: zoom read as MapWork.zoom; the leader's reach as
-// scale * radius (radius * scale 257); the flag in an s32 local (as the
-// field read four times 287); gMainRoutineWork through a local pointer, so
-// its fields take the native's base plus built offset; gData_02006c08 in a
-// local before the if copied into slot at the loop start, as the native's
-// pool load before the if and copy after it (slot set before the if also
-// 253); indexing placements[i] and gData_02006c08[i] 262; a kind local read
-// before the if and reused by the first test 257; slot initialized at its
-// declaration (281, before this round), a local party pointer (289).
+// Func_02000d64), so what closes one closes the other.
+// Left: allocation. The native is placement r8, leader r10, work r9, slot r11,
+// i spilled at sp+16; here slot and i outrank leader and work, so work spills
+// and nearly every register moves. From the lreg dump, priority is leader 7
+// refs over 146, work 6 over 140, slot 11 over 118, i 9 over 228 (doubled by
+// its REG_EQUIV zero). The native's order needs leader 9, work 8, a slot
+// doubled once (236), and i as it is. Those are exactly the counts if the
+// four leader and work uses after routine->ownerOverride sit one loop level
+// deeper at flow (12.life), and the listing has no such back edge, so
+// something folds it after flow. No plain source for that was found.
+// Measured with devices, not kept because none reached differ 0:
+// - `check:` before the ownerOverride test, with `again = placement->unk01;
+//   if (again & 256) goto check;` after it (s32 again; combine folds it, while
+//   again >= 256 and object & 1 stay as code): gives leader 9, work 8, i 10
+//   over 240, and the native's four registers at last, without touching i.
+// - slot needs its REG_EQUIV: `slot = gData_02006c08` at the loop start, with
+//   the pool load kept before the if by a dead `u8 read = placement->kind; u8
+//   kind = read + (s32)objects;`, which gcse turns into the native's r2 and r4
+//   loads and `mov r11, r4`. Together, as a goto loop: differ 168, gap 13.
+// - Still missing then: the `adds r3, r2` of kind before the first test
+//   (combine folds the copy into the compare, or global ties the registers;
+//   a forward jump over the copy and an extra use of kind both failed) and a
+//   reload rotation of one in the spill registers. i = 0 and slot set in both
+//   arms give the right ranks too (length times 4) but reload's r3, r5, r1
+//   order through the arms shows i = 0 follows the second arm, once.
+// Plain forms: object doubling as the view center gives the native's r6
+// there (a separate center takes r3). Head order: x, z, objects, zoom 251,
+// gap 27; x, z, zoom, objects 259, gap 21; zoom first 279. With the older
+// notes: radius * scale 257; the flag read four times 287; indexing
+// placements[i] and gData_02006c08[i] 262; slot initialized at its declaration
+// 281; a local party pointer 289; a real for loop gives the first test's load,
+// not the copy, and `next = i + 1` tested at the bottom (a temporary) drops i
+// to 7 refs and spills it but leaves leader, work and slot rotated (203).
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -58,17 +77,18 @@ void Func_020036a8(void) {
   struct Actor *leader = Actor_GetById(Func_02004e10());
   s32 leaderReach =
       ((struct WorldMapSprite *)leader->animation)->scale * leader->radius;
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *center = work->viewCenter;
-  s32 x = center->x;
-  s32 z = center->z;
-  s32 left, right, top, bottom;
   u32 i;
+  s32 left, right, top, bottom;
   struct Actor **slot;
+  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct Actor *object = work->viewCenter;
+  s32 x = object->x;
+  s32 z = object->z;
   struct Actor **objects = gData_02006c08;
+  s32 zoom = Ram_HeapSlots->mapWork->zoom;
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
-  if (Ram_HeapSlots->mapWork->zoom <= 0x10000) {
+  if (zoom <= 0x10000) {
     left = x - 0xa00000;
     right = x + 0xa00000;
     top = z - 0x12c0000;
@@ -81,7 +101,6 @@ void Func_020036a8(void) {
   }
   for (i = 0, slot = objects; i < 128 && placement->kind != 0;
        i++, slot++, placement++) {
-    struct Actor *object;
     s32 px, pz;
 
     if (placement->unk01 == 15)

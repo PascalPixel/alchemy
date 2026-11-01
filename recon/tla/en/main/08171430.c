@@ -1,26 +1,45 @@
-// Draft, differ 411 of 828, skeleton gap 97 (tla-en, 2026-11-01)
-// BattleEffect_RunLightSurge: same 67 calls and control flow, draft 825
-// instructions; what is left is almost all allocation and scheduling.
-// The frame is 112 bytes where the listing has 116, which moves every stack
-// offset by 4 and accounts for much of differ: the listing spills shade to
-// sp+24 (set after Render_AllocateModelList, read for model->shade) and the
-// draft keeps it in r1. Its live range crosses no call, so a reload spill
-// probably pushes it out; moving shade = 0 earlier or to the top of the frame
-// loop was worse (gap 104 and 110), and declaration order changes nothing.
-// Once shade spills, y should return to sp+32, the reload registers should
-// fall into place, and -1 should come from subs on the 0 in r2.
-// Forms that closed structure: BattleEffect_LoadBlitter returns s32 (its
-// constants load r1 first); sprites is a local read before
-// BattleEffect_StartCanvasLayer; a size local to the ring loop leaves the
-// circle loop's size in r6; the frame-0 loop has its own pointer, fall, and
-// its radius is (Random16() & 63) + 32 from the start; circles is s16 and
-// each draw rereads *entry, with half and entry set after the blitter load.
-// pos = &screen before the frame loop gives the one hoisted sp+28, and the
-// bolts' out is set from pos in one branch and &screen in the other: with
-// the same copy in both, the last cprop deletes out and r7 goes. That mix is
-// odd as C, and the real form may be simpler. The listing's movs r5, #0 and
-// movs r6, #2 sit before GetBattleObjectSlotFar only because sched2 lifts them
-// over the call; the loop keeps the twin's i * 2 + 3 (0818cb74).
+// Draft, differ 400 of 828, skeleton gap 80 (tla-en, 2026-11-01)
+// BattleEffect_RunLightSurge: same calls and control flow, draft 824
+// instructions. Nearly all of what is left comes from one cause: the listing
+// keeps shade at sp+24 and the draft keeps it in r1, so its frame is 112 bytes
+// where the listing's is 116 and every stack offset is off by 4.
+//
+// The spill is proven, its source is not. Slots run in pseudo order, so
+// shade fails global-alloc, and only a call crossed would do that, since all
+// of r5 to r11 are taken and reload has no pressure in its live range. Its two
+// reads each follow a set, so it crosses nothing in the final code: flow must
+// see a later read that combine then folds away. Replacing Func_08158ce0(4, 4)
+// with Func_08158ce0(4, 4 + ((shade & 255) >> 8)) does exactly that and leaves
+// no code: 116 bytes, 827 instructions, differ 169, skeleton gap 55. The read
+// has to be in a later block; after Render_ResetTransformState, in shade's own
+// block, it does nothing. That form is a device that did not reach differ 0,
+// so it is out; the source's real form would be worth finding. Tried without
+// gain: a ternary, a dead shade = 0 after the pillars.
+//
+// With that read in place, what stayed at differ 169:
+// - After cmp r0, #71 the listing rereads frame (ldr r1, [sp, #56]) for
+//   0xa00 - (frame << 5) where the draft inherits r0. One reload short rotates
+//   the reload registers through the rings. Forms tried: (80 - frame) * 32, a
+//   ternary, if/else, a split shift, a copy of frame, frame >= 72.
+// - The preheader sets camera + 3, &texture, pos; the draft sets pos first. As
+//   a set in the loop pos is hoisted by PRE and gets the wrong slot; in the
+//   ring loop or the frame-0 block loop.c leaves it where it is.
+// - sp+8 and sp+12 are swapped (camera + 3, frame << 8): PRE's pseudo order.
+// - sched2: movs r6, #2 and movs r5, #0 sit above GetBattleObjectSlotFar in the
+//   listing; moving the statements does not move them.
+//
+// Forms that closed structure: BattleEffect_LoadBlitter and Task_Add return
+// s32; sprites is read before BattleEffect_StartCanvasLayer; x and y are
+// function locals, x first, so x wins r11 and y spills to sp+32; cells is one
+// s32 constant, reloaded at each use, with offset + cells and *entry + cells in
+// that order; index is shifted in place, added to circles, then reused for
+// y - size, which gives lsls r5 / adds r5 / mov sl, r5 and frees r5; a size
+// local to the ring loop leaves the circle loop's size in r6; fall is indexed
+// from i inside the loop, which puts its pointer after the hoisted -0x80000;
+// circles is s16 and each draw rereads *entry. The bolts' out comes from pos in
+// one branch and &screen in the other: with the same copy in both, the last
+// cprop deletes out and r7 goes. That mix is odd as C, and the real form may be
+// simpler. The loop keeps the twin's i * 2 + 3 (0818cb74).
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -90,7 +109,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -156,6 +175,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   s16 savedYaw;
   struct SurgeTarget *target;
   s16 *circles;
+  s32 x;
+  s32 y;
   struct EffectPosition screen;
   struct EffectPosition *pos;
   s32 head[3];
@@ -172,6 +193,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   s32 size;
   s32 shade;
   u8 *sprites;
+  s32 cells;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -196,18 +218,18 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   target = *GetBattleObjectSlotFar(effect->actors[0]);
 
   // Shaded circles of 2 to 64 pixels, packed in the map buffer.
+  cells = (s32)gMapCellBuffer;
   circles = (s16 *)work->sheet;
   offset = 0;
   size = 2;
   for (i = 0; i != 32; i++) {
-    Func_0815b434(gMapCellBuffer + offset, size, 0x10000);
+    Func_0815b434((u8 *)(offset + cells), size, 0x10000);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
   }
 
-  pos = &screen;
-  for (frame = 0; frame != LIGHT_SURGE_FRAMES; frame++) {
+  for (frame = 0, pos = &screen; frame != LIGHT_SURGE_FRAMES; frame++) {
     if (frame == 64) {
       Func_081180e8(134);
     }
@@ -219,10 +241,14 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       for (i = 0; i != 32; i++) {
         work->particles[i].variant = -1;
       }
-      for (i = 0, fall = &work->particles[32]; i != 32; i++, fall++) {
-        s32 radius = (Random16() & 63) + 32;
-        s32 angle = Random16() & 0xffff;
+      for (i = 0; i != 32; i++) {
+        s32 radius;
+        s32 angle;
         s32 z;
+
+        fall = &work->particles[32 + i];
+        radius = (Random16() & 63) + 32;
+        angle = Random16() & 0xffff;
 
         fall->x = Trig_Sin(angle) * radius;
         fall->z = Trig_Cos(angle) * radius;
@@ -255,8 +281,6 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
 
     // The rings: four quarter circles each, upper halves for the first 16.
     for (i = 0, ring = work->particles; i != 28; i++, ring++) {
-      s32 x;
-      s32 y;
       s32 half;
       s32 index;
       s16 *entry;
@@ -277,30 +301,32 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       y = pos->y;
       BattleEffect_LoadBlitter(
           188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      index <<= 1;
+      entry = (s16 *)(index + (s32)circles);
       half = size >> 1;
-      entry = circles + index;
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, gMapCellBuffer + *entry,
-                                               x - half, y - size, half, size);
+      index = y - size;
+      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (void *)(*entry + cells),
+                                               x - half, index, half, size);
       HeapSlot_Release(188);
       BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
                                                       COMPOSITE_CLIP_Y |
                                                       COMPOSITE_FLIP_X));
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, gMapCellBuffer + *entry,
-                                               x, y - size, half, size);
+      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (void *)(*entry + cells),
+                                               x, index, half, size);
       HeapSlot_Release(188);
       if (i > 15) {
         BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
                                                         COMPOSITE_CLIP_Y |
                                                         COMPOSITE_FLIP_Y));
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas,
-                                                 gMapCellBuffer + *entry,
+                                                 (void *)(*entry + cells),
                                                  x - half, y, half, size);
         HeapSlot_Release(188);
         BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
                                                         COMPOSITE_CLIP_Y |
                                                         COMPOSITE_FLIP));
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas,
-                                                 gMapCellBuffer + *entry, x, y,
+                                                 (void *)(*entry + cells), x, y,
                                                  half, size);
         HeapSlot_Release(188);
       }

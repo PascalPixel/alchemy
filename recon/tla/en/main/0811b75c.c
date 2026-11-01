@@ -1,33 +1,35 @@
-// Near miss, differ 2 of 290 (tla-en, 2026-10-30): after the metadata call
-// the native copies the table pointer (mov r2, sl) straight after the ldrb,
-// before the shift; here it follows mov r1, r8. Both copies tie in sched2
-// (priority 4, same class) and the tie goes to insn order, which puts the
-// height's copy first; storing the record before the height swaps the
-// reload registers (8). Scheduler order, out of reach of the source.
-// 30 October: boxY read into a local and the height and first record stored
-// in a one-pass block (6 to 2, tagged below). Also measured: records =
-// records + 1, &records[1], boxY / 2 (6 each); records++ then records[-1]
-// (91); a one-pass block around the store alone, records++ alone, or with
-// an empty one around the boxY read (4); four minutes of permute (best 4).
-// The Broken Seal's twin in tbs-en schedules these rows a third way
-// (mov r1, r8 before the shift, mov r2, sl after it).
-// Under -mthumb-slow-loads (26 October 2026): differ 6 of 290 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, each local pinned to each register,
-// each call argument copied into its argument register (pinned) at the call
-// or up to three statements before it, five minutes of permute; none reaches
-// 0.
+// Draft, differ 2 of 290, skeleton gap 1 (tla-en, 2026-11-01)
+// Left: after the metadata call the native reads ldrb; mov r2, sl; lsrs;
+// mov r1, r8; strh; str; here mov r2, sl comes after mov r1, r8, and the
+// skeleton gap is that one row. Only those two copies differ.
+// What sched2 shows (--rtl dumps, rank_for_schedule): reload's rotation r1,
+// r2, r3 proves the native's RTL order is height store, record store, then
+// the next pointer, so the copy of sl is later in the RTL than the copy of r8
+// and has to win on rank. Plain, the record store loses to the split chain
+// (movs #12; add; mov sl), which outranks it through the anti dependence on
+// r3 (6, tagged below). With a boundary after the record store the two copies
+// tie in priority and dependents and LUID picks r8's first (4). The block
+// below makes lsrs the boundary, so the copy of sl cannot fill the load's
+// stall. Its record store is ahead of the chain, which is what is kept.
+// This looks like the shared-fact family "a split-constant chain outranks
+// stores": a model question under K2, out of reach of this draft.
+// Tried 1 November, one edit at a time: the plain statements (6); an asm or a
+// one-pass block on records++ after the record store (4); the block from the
+// metadata call on, with or without boxY (6); a copy of records into a local
+// before the block, any placement or with its own block (2 or 4, cprop folds
+// it); an empty asm holding that copy in a low register (36 to 101: regmove
+// merges it, or the pointer loses or swaps r8 and sl).
+// Not to retry: storing the record first swaps the reload registers (8).
+// Earlier: records = records + 1, &records[1], boxY / 2 (6 each); records++
+// then records[-1] (91); a one-pass block around the store alone (4); four
+// minutes of permute (best 4). The Broken Seal's twin in tbs-en schedules
+// these rows a third way (mov r1, r8 before the shift, mov r2, sl after it).
+// The one-pass device below dates from 30 October and does not reach 0.
 // From The Broken Seal's BattleObject_SpawnObjectsForList
 // (games/tbs/src/battle/battle/objects.c): this game releases the unlisted
 // places only when asked (the third argument), skips a fading actor, has
 // seven two-part sprites, sets the body's palette before its priority and
-// has a sprite record with its scale at 12. Before 30 October: after the
-// first part's metadata call the native copies the table pointer (mov r2,
-// sl) before the height's shift and stores the record right after the
-// height; here the copy and the store came after the next pointer is built.
-// Tried: *records++ (6), a byte-step pointer (6), the record stored before
-// the height (10), a one-pass block on either (6, 8), a barrier-held slot
-// pointer (36), five minutes of permute (no gain).
+// has a sprite record with its scale at 12.
 #include "types.h"
 #include "motobj.h"
 #include "sprite.h"
@@ -86,7 +88,6 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
   s32 spriteId;
   s32 releasedUnitId;
   u8 boxY;
-  struct TlaSpriteRecord **slot;
 
   if (releaseOthers) {
     for (unitIndex = 0; unitIndex < 14; unitIndex++) {
@@ -131,7 +132,6 @@ void Func_0811b75c(s16 *unitIds, s32 refreshPoses, s32 releaseOthers) {
       Iwram_ClearWords(records, 16);
       record = ResourceObject_CreateFar(spriteId);
       if (record != 0) {
-PERM_RANDOMIZE(
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         boxY = Resource_GetMetadataRecordFarFar(spriteId)->boxY;
         /* FAKEMATCH(one-pass): the height and the first record stored in a
@@ -142,7 +142,6 @@ PERM_RANDOMIZE(
           *records = record;
         } while (0);
         records++;
-)
       }
       record->flags = 0;
       record = ResourceObject_CreateFar(spriteId + 0x2001);

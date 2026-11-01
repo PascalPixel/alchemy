@@ -1,18 +1,48 @@
-// First draft of Func_08125d74, from the listing (no ☀️ twin found): a battle
-// screen change with a timer block in heap slot 168. For kinds 78 to 80 the
-// party's active and reserve members are listed (every one not of enemy 357,
-// 369, 373 or 376 drawn at scale 0xb333), the display switches through the
-// I/O write queue, the party is spawned, Func_08138028 plays and the field
+// Draft, differ 18 of 490, skeleton gap 9 (tla-en, 2026-11-01), with no device.
+// A battle screen change with a timer block in heap slot 168. For kinds 78 to
+// 80 the party's active and reserve members are listed (every one not of enemy
+// 357, 369, 373 or 376 drawn at scale 0xb333), the display switches through
+// the I/O write queue, the party is spawned, Func_08138028 plays and the field
 // fades back in; for any other kind seven tile rows are copied from
 // Data_0812cd74 by DMA, BG1 shows a two-colour band, and
 // BattleTransition_AdvanceTimer and BattleTransition_DrawRows run
 // (with Func_08125d68 at VCount 32) for 60 frames (kinds 74 to 76 and 638) or
 // until Func_08118bcc returns. Both restore BG1 and the display at the end.
-// Reached from Func_081197f0.
-// Differ 231 of 490 (2026-10-24): the order of the two paths and their calls
-// is the native's; left are register choice (the tile loop's counters, the
-// owners pointer, the zero kept in r8), a constant the native builds a second
-// time (0xf088) where alchemy-gcc adds 8 to 0xf080, and instruction order.
+// Reached from Func_081197f0. No twin in The Broken Seal was found.
+//
+// Every register now agrees; what is left is instruction order. Closed in
+// plain C: i is one u32 shared by both paths, each path has its own zero,
+// counts split, owners[i] as a giv, if/else for the tile (one set falling
+// through lets reload_cse_move2add turn 0xf088 into adds #8), the view's
+// statements in path two's order, and y = 32 set before the x store.
+// The 100 in the pool is read as a resource id, as other pool-loaded small ids
+// are: ResourceId_Data100 is a placeholder, not yet checked against the id
+// table, and it reaches battle->unk670 (the battle background) through a local
+// set before the address, with slot, so the value's register is live across
+// the address reload. That puts r0 in reload's spill set (it held only r1 to
+// r3 before), which fixes every scratch register in the function.
+//
+// Left, as a reordered instruction each:
+// - The prologue: the listing has sub sp before movs r5, #192 and the argument
+//   store before lsls. sched2 ranks the movs chain 37 and sub sp 36, because
+//   the spilled arg's store costs 2 before the miss load of transitionWork.
+//   The listing needs that cost to be 3; no source form has another path, as
+//   the block holds only these instructions. This is the load-after-spill-store
+//   model of -mthumb-slow-loads, so differ 0 needs a compiler decision, out of
+//   scope here. The prologue accounts for 4 of the 18.
+// - REG_DISPCNT = 1 is issued before the two view stores: its strh has one
+//   more dependent than they do. The first fill's ldr r2 and ldr r0, the
+//   second fill's ldr r0, the BG1 stores against the following address chains
+//   and the tail's adds r6, #10 are the rest.
+//
+// Devices were measured and taken out, since they cannot reach 0 past the
+// prologue. Together they give differ 4, the prologue alone: do { } while (0)
+// around REG_BG1CNT = 0xc04, around the second tail REG_BG1CNT = 0x1f83 (with
+// a volatile u16 *bg1cnt local set before the tail's Irq_SetHandler) and around
+// the second Iwram_FillWords, plus the first fill through a static inline
+// (tile, value) calling Iwram_FillWords(tile, 32, value). If the model changes,
+// try this draft bare first, then those. Tried without gain: one or size or
+// pattern locals, a fill pointer local, REG_DISPCNT and BG0CNT pointer locals.
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -42,20 +72,26 @@ void BattleTransition_AdvanceTimer(void);
 void BattleTransition_DrawRows(void);
 void Func_08125d68(void);
 
+extern char ResourceId_Data100;
+
 void Func_08125d74(s32 arg, s32 kind) {
   struct BattlePresentationWork work;
   u16 owners[14];
   u16 shown[14];
   s32 *timer;
   struct BattleWork *battle;
-  struct BattlePresentationTransition *view;
+  struct BattleBackgroundView *view;
+  struct HeapSlots *heap;
+  s32 ownerCount;
   s32 count;
-  s32 i;
+  u32 i;
 
-  view = Ram_HeapSlots->transitionWork;
+  heap = Ram_HeapSlots;
+  view = (struct BattleBackgroundView *)heap->transitionWork;
   timer = HeapSlot_Alloc(168, 4);
   if ((u32)(kind - 78) > 2) {
-    u32 row;
+    s32 y;
+    s32 zero;
 
     Dma_Set(Data_0812cd74, (void *)0x06005020, 0x84000008, DMA3);
     Dma_Set(Data_0812cd74 + 32, (void *)0x06005040, 0x84000008, DMA3);
@@ -64,31 +100,35 @@ void Func_08125d74(s32 arg, s32 kind) {
     Dma_Set(Data_0812cd74 + 128, (void *)0x060050a0, 0x84000008, DMA3);
     Dma_Set(Data_0812cd74 + 160, (void *)0x060050c0, 0x84000008, DMA3);
     Dma_Set(Data_0812cd74 + 192, (void *)0x060050e0, 0x84000008, DMA3);
-    view->active = 0;
-    ((s32 *)view)[3] = 1;
-    ((s32 *)view)[2] = 1;
+    view->secondMode = 1;
+    view->busy = 0;
+    view->mode = 1;
     REG_DISPCNT = 1;
     Iwram_FillWords((void *)0x06005000, 32, 0x33333333);
     Iwram_FillWords((void *)0x06005100, 32, 0);
     REG_BG1CNT = 0xc04;
     REG_BG0CNT |= 2;
-    ((s32 *)view)[2] = 2;
+    view->mode = 2;
     {
       u16 *map = (u16 *)0x06006000;
 
-      for (row = 0; row < 32; row++) {
-        u32 tile = 0xf080;
+      for (i = 0; i < 32; i++) {
+        u32 tile;
         u32 column;
 
-        if (row > 20)
+        if (i <= 20)
+          tile = 0xf080;
+        else
           tile = 0xf088;
         for (column = 0; column < 32; column++)
           *map++ = tile;
       }
     }
+    y = 32;
     gBgScroll[1].x = 8;
-    gBgScroll[0].y = 32;
-    gBgScroll[1].y = 32;
+    gBgScroll[0].y = y;
+    gBgScroll[1].y = y;
+    zero = 0;
     wait(1);
     REG_WIN0H = 0xf0;
     REG_WIN0V = 0x88;
@@ -98,11 +138,11 @@ void Func_08125d74(s32 arg, s32 kind) {
     REG_WINOUT = 0x3f21;
     QueueIoWriteDelay2(0x04000000, 0x7741);
     BattleCamera_SetView(0, 0, 0, 180);
-    *timer = 0;
+    *timer = zero;
     Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_VBLANK);
     Task_Add(BattleTransition_DrawRows, TASK_PASS_FRAME);
     Irq_SetHandler(2, 32, Func_08125d68);
-    gBgScroll[0].y = 32;
+    gBgScroll[0].y = y;
     wait(1);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
     wait(20);
@@ -117,15 +157,15 @@ void Func_08125d74(s32 arg, s32 kind) {
     gBgScroll[0].y = 0;
     Irq_SetHandler(2, 0, 0);
   } else {
-    u16 *owner;
+    s32 zero;
 
-    battle = Ram_HeapSlots->battleWork;
-    ((s32 *)view)[3] = 1;
-    view->active = 0;
-    count = BattleParty_PrepareActiveOwners(owners);
-    count += BattleParty_PrepareReserveOwners(owners + count);
-    for (i = 0, owner = owners; i != count; i++) {
-      u16 id = *owner++;
+    battle = heap->battleWork;
+    view->secondMode = 1;
+    view->busy = 0;
+    ownerCount = BattleParty_PrepareActiveOwners(owners);
+    ownerCount += BattleParty_PrepareReserveOwners(owners + ownerCount);
+    for (i = 0; i != ownerCount; i++) {
+      s32 id = owners[i];
       struct BattleObj *battleObject = BattleObject_Get(id);
       u16 enemyId = Unit_Get(id)->enemyId;
 
@@ -134,13 +174,19 @@ void Func_08125d74(s32 arg, s32 kind) {
     }
     IO_WRITE_QUEUE_PUSH(0x04000000, 0x6041, 0x20000);
     wait(1);
-    *(u16 *)((u8 *)battle + 0x670) = 100;
+    {
+      s32 background = (s32)&ResourceId_Data100;
+      u16 *slot = (u16 *)battle->unk670;
+
+      zero = 0;
+      *slot = background;
+    }
     work.count = BattleParty_ListActorIds(2, (u16 *)work.actors);
     work.actors[work.count] = 255;
     BattleActor_SpawnObjectsForList(work.actors, 0);
     Func_08138028(&work);
     BattleCamera_SetView(0, 0, 0, 100);
-    *timer = 0;
+    *timer = zero;
     Irq_SetHandler(2, 32, Func_08125d68);
     wait(1);
     wait(20);

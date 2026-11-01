@@ -1,21 +1,35 @@
-// Draft, differ 510 of 497, skeleton gap 190 (tla-en, 2026-11-01).
-// What is left is GCSE and the allocation it causes. The native computes every
-// field address and value its branches need above the branch (hand-hoisted
-// here into block-scoped pointers, which took the gap from 245) and keeps the
-// row and pair loops' invariants inside the loops. PRE at -O2 still hoists
-// work + 218 to 222 above the row loop and tile + 8 and x << 16 above the pair
-// loop, and no copy or local stops it (CSE folds them back). Those pseudos then
-// take the high registers, so work sits on the stack (native r11) and entry in
-// r9 (native sp 32); that is most of the remaining ldr/mov skeleton lines.
-// work wants about six more references to outrank entry (global.c priority).
-// base stays apart from work so the markers do not reuse the row loop's hoisted
-// addresses; scrollYMarker via base gains differ (499) but not gap (191).
-// The pair loop is a goto with an explicit pair pointer: a for loop lets loop.c
-// hoist 0 and 0xe400 as well (gap 203), and the native's two parallel pointers
-// are what loop.c leaves. which sets Func_02002ce8's argument in each arm so
-// that no call sits in an arm (sched2 sinks x past it); cprop still moves the
-// constant to the join, where the native keeps it in the arms. 576 is rebuilt
-// for VramCache_Load in the native; CSE here keeps it in a register.
+// Draft, differ 501 of 497, skeleton gap 165 (tla-en, 2026-11-01)
+// Left: one extra entry branch on each of the two loops, then allocation. The
+// native falls into both loops, but keeps every row and pair invariant inside
+// them. gcse's PRE hoists those (work + 218 to 222, tile + 8, x << 16) from any
+// loop it can enter on an edge, guarded or not, so both loops here are gotos
+// entered at their tests (gap 190 to 165 with the calls in the arms). The two
+// `b` lines are the price; whatever let the original fall in without PRE
+// hoisting is unknown, and it is the same gap as the landing-burst family. An
+// asm output on work at the row top also stops PRE (a for loop then stays), but
+// it is a barrier that did not reach differ 0, so it came out. A row count held
+// in a local defeats cse's fold of the entry test, but the test then stays.
+// Allocation, by global.c priority (floor_log2(refs) * refs / live):
+// - The native has work r11, x r9, y r7, pair r4, zero r8, second r10, shifted
+//   r6 and attributes r5, with i, flip, row, tile, entry and cursor on the stack.
+//   Here pair (26 refs over 40) takes r7 ahead of y (about 1.3), so y is r6, the
+//   x << 16 and zero temporaries lose local-alloc and take r4 and r9, x is r10
+//   and i is r11. That is most of the remaining mov/ldr skeleton lines; in r7
+//   pair += 6 also sinks past the call, as a callee-saved set may.
+// - work wants about 25 refs over its 240 to pass i and flip (it has 18 to 20).
+//   Starting i at the row top only hands r11 to flip; reading fade and scrollX
+//   directly in the arms adds refs but i keeps r11 (gap 190). Setting pair at
+//   the row top does not move it off r7. Declaration order changes nothing.
+// - base stays apart from work: dropping it (cursor, entry and work as copies
+//   of one load, which is the native's first block, and which explains why the
+//   code before the row loop reads [sp, 36]) gives gap 174, differ 540 until the
+//   allocation above is fixed. cprop folds work to cursor there, not in the loop.
+// Tried without gain: a for pair loop (loop.c hoists 0, 0xe400 and x << 16),
+// zero, attributes and shifted locals (folded, same output; zero's and
+// attributes' pseudos rematerialize unless they win a register). 576 is rebuilt
+// for VramCache_Load in the native; here it stays in a register.
+// Calls in both marker arms are right: cross-jumping makes the native's shared
+// `mov r9, r2; bl`, with the argument set in each arm.
 //
 // The Trial Road link display's scheduled callback (Func_020055c4 starts it):
 // its fade state falls during events or with flag 262 and otherwise rises to
@@ -74,7 +88,6 @@ void Func_020051a0(void) {
   u32 i;
   void *buffer;
   s16 *scrollY;
-  s32 which;
 
   {
     s16 *vramEntry = &work->vramEntry;
@@ -101,7 +114,9 @@ void Func_020051a0(void) {
     VramCache_ReleaseVram(((struct TrialRoadLinkWork *)cursor)->vramEntry);
     return;
   }
-  for (row = 0; row < 2; row++) {
+  row = 0;
+  goto rowTest;
+nextRow: {
     s16 *scrollX;
     s16 *fade;
     scrollY = &work->scrollY;
@@ -118,10 +133,10 @@ void Func_020051a0(void) {
       flip = 0x10000000;
     }
     i = 0;
-    if (y < 160) {
+    {
       u32 *pair = cursor;
-    nextPair:
-      {
+      goto pairTest;
+    nextPair: {
         struct TrialRoadSprite *second;
         pair[0] = 0;
         pair[1] = y | (x << 16) | flip | 0x80008000;
@@ -138,10 +153,18 @@ void Func_020051a0(void) {
       }
       y += 36;
       i++;
-      if (i < 4 && y < 160)
+      if (i >= 4)
+        goto pairsDone;
+    pairTest:
+      if (y < 160)
         goto nextPair;
+    pairsDone:;
     }
   }
+  row++;
+rowTest:
+  if (row < 2)
+    goto nextRow;
   if ((gFrameCount & 15) < 5)
     return;
   object = ObjectTable_Get(work->a);
@@ -157,12 +180,11 @@ void Func_020051a0(void) {
     s32 objectX = object->x;
     if (side) {
       x = (objectX - *originX) / PIXELS(16) + *fade * 6 + *scrollX - 19;
-      which = 0;
+      lift = Func_02002ce8(0);
     } else {
       x = (objectX - *originX) / PIXELS(16) - *fade * 6 - *scrollX + 232;
-      which = 0;
+      lift = Func_02002ce8(0);
     }
-    lift = Func_02002ce8(which);
     y = (object->z - *originZ) / PIXELS(16) + *scrollY - lift * 36 + 4;
     *cursor = 0;
     cursor = next;
@@ -189,12 +211,11 @@ void Func_020051a0(void) {
     s32 objectX = object->x;
     if (side) {
       x = (objectX - *originX) / PIXELS(16) + *fade * 6 + *scrollX + 189;
-      which = 1;
+      lift = Func_02002ce8(1);
     } else {
       x = (objectX - *originX) / PIXELS(16) - *fade * 6 + *scrollX + 23;
-      which = 1;
+      lift = Func_02002ce8(1);
     }
-    lift = Func_02002ce8(which);
     y = (object->z - *originZ) / PIXELS(16) + *scrollYMarker - lift * 36 + 4;
     *cursor = 0;
     cursor = next;

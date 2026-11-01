@@ -1,25 +1,51 @@
-// Near miss, differ 378 of 1102 (two instructions short).
+// Draft, differ 14 of 1102, skeleton gap 6 (tla-en, 2026-11-01), plain C:
+// sched2 rows only. Control flow, allocation, frame and pool all match.
 
 // Twin: The Broken Seal's BattleEffect_RunShatteringOpening, reached
 // from the scenes through the far-call table (table_47.s). It sets up its
 // own heap blocks (only the work and the canvas: the sheet block it releases
 // at the end is never taken), stores work->effect, marks the work active,
 // and reads the target from the argument. The twin's 12 unused frame bytes
-// are gone, and the IWRAM clears keep their own sizes (the twin's size
-// local is gone with them).
+// are gone, and the IWRAM clears keep their own sizes.
 
-// Left: allocation through the whole body: the tile map's loop keeps its
-// counters on the stack and a constant in lr, the circle reloads cx and cy
-// from stack slots at each use, and the palette loop holds its masks in
-// high registers. Control flow and calls follow the listing.
+// The Lost Age's real difference: the circle's first corners read j and k,
+// left at 8 and 16 by the tile map's loops, where the twin reads centreX and
+// centreY. No store reaches sp+20 or sp+24 after those loops, and j and k
+// stay live across the calls because of it: that is why the native keeps
+// them on the stack. cx and cy survive as one-constant locals for the later
+// corners, and piece setup indexes its tables with i, as the twin does not.
+
+// Left, three spill stores the native issues earlier than alchemy-gcc:
+// - str r0, [sp, #44] (canvas) before movs r3, #192: tied at priority 86;
+//   the last-scheduled-insn class test prefers the movs.
+// - movs r6, #0 and str r6, [sp, #20] (k) before ldr r2, the tile map's
+//   hoisted constants: fitting the native's order needs the store two
+//   priority levels higher than the model gives it (1 against 3).
+// - movs r7, #0 and str r7, [sp, #24] (j) before mov r1, lr, the same.
+// This reads as the compiler model's under-costed spill store, a question
+// for K2 and outside a draft; the store has no successor a source form can
+// give it, since nothing after it in the block reads memory.
+
+// Measured with one-pass blocks, none kept (they do not reach 0):
+// after the canvas allocation 12, also j = 0 and one before the inner for 8,
+// also one before i = 0 (or around the whole tile map) 4. Those last 4 are
+// k's str row and the camera call's movs r0, #0: the block's note gives r0's
+// set a dependent, so it ties r1 and leads on LUID. Only a non-void
+// BattleCamera_SetViewFar clears that row (2), and the function is void.
 
 // Tried:
 // the twin as ported                                         378
-// alchemy permute, 15 minutes: left and cy combined into one
-// two-word array, so both live in memory as the native's
-// reloads suggest (not kept: an array no reader would write) 307
-// the same run's other bests: a temporary (341), an
-// inequality turned round (326)
+// plain: j and k in the first corners, stack order from the
+// listing                                                    100
+// y2 before y1 in the first corners (the native reloads k)    92
+// cx and cy as one-constant locals before the radius loop     20
+// the background id through a union with an s32 member        18
+//   (the read then conflicts with view->secondMode's store
+//   and not the scroll's, and the tie falls to source order)
+// the piece tables and particles indexed by i                 14
+// array-of-two j and k in one struct: memory, no givs        295
+// alchemy permute: 5 minutes plain (nothing under 14),
+// 7 minutes on the one-pass form (2, only by the signature)
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -57,8 +83,14 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 // The pixel half of a 16.16 value.
 #define HI(value) (((s16 *)&(value))[1])
 
-// The battle background's id.
-#define BACKGROUND(battle) (*(u16 *)(battle)->unk670)
+// The battle background's id, read through a union whose s32 member gives
+// the read view->secondMode's alias set and not the scroll's, so those two
+// stores stay in source order.
+union BattleBackgroundId {
+  u16 id;
+  s32 word;
+};
+#define BACKGROUND(battle) (((union BattleBackgroundId *)(battle)->unk670)->id)
 
 // Puts colour 2 at (x, y) in the 256x120 8bpp tile sheet (32 tiles wide) in
 // the map cell buffer.
@@ -127,15 +159,15 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   s32 frame;
   BlitterPair draw;
   struct BattleWork *battle;
-  struct BattleBackgroundView *view;
-  s32 rmax;
-  struct EffectStep *piece;
-  s32 r;
-  s32 i;
-  s32 px;
   s32 j;
   s32 k;
+  s32 rmax;
+  s32 r;
   s32 d;
+  struct BattleBackgroundView *view;
+  struct EffectStep *piece;
+  s32 i;
+  s32 px;
   s32 py;
   s32 x1;
   s32 left;
@@ -143,8 +175,6 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
   s32 y1;
   s32 x2;
   s32 y2;
-  u8 *startY;
-  u8 *startX;
   s32 cx;
   s32 cy;
 
@@ -203,22 +233,19 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
 
   // The pieces fly out from (32, 60) at a quarter of their distance a
   // frame.
-  startY = Data_081976b1;
-  startX = Data_08197690;
   r = 0;
-  piece = work->particles;
   for (i = 0; i != 33; i++) {
     s32 x, y, vx, vy;
 
-    x = *startX++ << 16;
-    y = *startY++ << 16;
+    piece = &work->particles[i];
+    x = Data_08197690[i] << 16;
+    y = Data_081976b1[i] << 16;
     piece->x = x;
     piece->y = y;
     vx = (x - 0x200000) >> 2;
     vy = (y - 0x3c0000) >> 2;
     piece->velocityX = vx;
     piece->velocityY = vy;
-    piece++;
   }
 
   // Copy the picture at 0x06008000 aside, fill it with colour 1, and make
@@ -299,11 +326,12 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
         py = 0;
         d = r;
         while (px >= py) {
-          x2 = px + cx;
-          x1 = cx - px;
-          left = x1;
-          y1 = cy - py;
-          y2 = py + cy;
+          // BUG: j and k are the tile map's finished counters, 8 and 16, not
+          // the circle's centre.
+          x2 = px + j;
+          x1 = j - px;
+          y2 = py + k;
+          y1 = k - py;
           if (y1 < 0)
             y1 = 0;
           if (y2 > 119)
@@ -316,6 +344,7 @@ void Func_0813eb70(struct BattleEffectArgument *effect) {
           PLOT(x2, y1);
           PLOT(x1, y2);
           PLOT(x1, y1);
+          left = cx - px;
           x1 = left + 1;
           x2 = px + 97;
           if (x1 < 0)

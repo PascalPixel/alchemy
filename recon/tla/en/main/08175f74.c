@@ -1,22 +1,33 @@
-// Draft, differ 2974 of 4354, skeleton gap 690 (tla-en, 2026-11-01)
-// The whole of BattleEffect_RunCharon, same control flow and calls. What is
-// left is nearly all scheduling and spills: the native keeps the outer j
-// counters on the stack (sp 84) where this allocates them a register, and its
-// frame is 324 bytes against 320 here (the blitter pair sits at sp 176, here
-// 172).
-// Settled: gData_08197410 is not const, it is reread in each loop; the glyph
-// shading loop's 32 and 6 are a cell size variable (cell * cell * 2 bytes,
-// table[cell - 1]), which alone closed 180; copies and fills go through
-// inlines so each call keeps its own constants, as the battle effect layer
-// does; the VBlank count is read twice per test (volatile, as other effects);
-// the OAM pass needs the timer as the constant 0x02014218, not base plus 24.
-// Open: the reveal loop at frames 244 to 259 (32 instructions): the native
-// loads 0x02014000 inside the loop, derives 0x02014001 from it and adds it
-// by hand before each ldrb; reading through volatile gave its ldrb form but no
-// smaller gap and would be a device. The 10 in the fades at frames below 120 is
-// held in a register in the native, 20 is not; a local of 10 folds away.
-// frame * 1524 - 52576 is a negative pool word added in the native; plain
-// spellings of it all give the positive constant subtracted.
+// Draft, differ 1947 of 4354, skeleton gap 429 (tla-en, 2026-11-01)
+// The whole of BattleEffect_RunCharon, same control flow and calls, frame 324
+// as the native, every stack slot in place. No devices.
+// Biggest remainder: the loop counter i is r10 here and r9 in the native, about
+// 170 lines. slots then falls to r9 where the native has r10. Global allocation
+// takes r8, r10, r9, r11, so something conflicting with i holds or prefers r10
+// in the native; hoisted constants rank below i, so they are not it. Splitting
+// i at the second phase got worse (2001). Next: find which pseudo does that.
+// Other open items: j * 16 is a giv stepped by 16 and shifted in the native,
+// here row * 2 steps by 32; order[0x1001] is rebuilt in the reveal loop in the
+// native, hoisted here; the 10 in the fades below frame 120 stays in a register
+// in the native. A do { dim = 10; } while (0) in that loop body reproduces it
+// exactly (CSE's block ends, gcse leaves same-block sets alone, loop.c hoists)
+// but gains only 56 here, so as a device it stayed out. Most of the rest is
+// sched2 ordering around stores and spills.
+// Settled, each measured: no zero, width or bgScroll locals, CSE keeps 0, 240
+// and the scroll address across calls in r8, r5 and r10, and unit88->unk10 = 1
+// comes before the scroll store so 1 overlaps it. sprites is live only for
+// sprites[0] in the setup, other sprite references are the literal address.
+// order is set unconditionally at the top of the frame loop: that makes it a
+// replaceable giv and gives the native's second spilled giv at sp 16. Inside
+// the reveal loop low and high are one-constant locals so cprop folds them into
+// the adds, reload then rebuilds them in r7 with adds 1 and subs 1. texture,
+// model, t, depth and scale are per region; each region's texture landing in a
+// different register is what showed it. depth is reused for the third model.
+// base and rise rematerialize from the pool. routine[0] is written directly,
+// only blit[1] goes through blit. Heap_Release of model and texture sits inside
+// the last member loop. gData_08197410 and gData_08198c67 are not const; the
+// glyph shading loop's 32 and 6 come from a cell size variable; copies and
+// fills go through inlines; the VBlank count is read twice per test.
 
 #include "resource.h"
 #include "heap_release.h"
@@ -191,9 +202,11 @@ typedef void (*DrawRectangleFn)(void *canvas, const void *source, s32 x, s32 y,
 #define DISPLAY_1120 ((struct Display1120 *)0x03001120)
 #define DISPLAY_11E0 ((struct Display11e0 *)0x030011e0)
 #define REGISTER_QUEUE ((struct RegisterQueue *)0x020038e0)
-#define TILE_SLOTS ((struct TileSlot *)0x020036e0)
+extern u8 gResourceTableEntries[];
+#define TILE_SLOTS ((struct TileSlot *)gResourceTableEntries)
+extern u8 gMapCellBuffer[];
 #define SPRITES ((struct SpriteObject **)0x02010000)
-#define SPRITE_BUFFER ((u8 *)0x02010000)
+#define SPRITE_BUFFER gMapCellBuffer
 extern u8 gData_02014000[];
 #define OAM_BUFFER ((u32 *)gData_02014000)
 #define REVEAL_BUFFER ((u8 *)0x02014000)
@@ -234,7 +247,7 @@ extern u8 Value_0000013e;
 extern u8 Value_000000ff;
 
 extern u16 gData_08197410[];
-extern const u8 gData_08198c67[];
+extern u8 gData_08198c67[];
 extern const u8 gData_08199210[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
@@ -332,18 +345,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   s32 fade;
   u16 *palette;
   u8 *source;
-  struct SpriteObject *object;
-  struct Particle *p;
-  struct Model *model;
-  void *texture;
   s32 t;
-  s32 scale;
-  s32 depth;
   struct SpriteObject **sprites;
-  struct Display1120 *bgScroll;
-  s32 zero;
-  s32 one;
-  s32 width240;
+  struct TileSlot *slots;
   s32 cell;
   s32 phase;
   s32 halfCell;
@@ -352,11 +356,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   canvas = SYSTEM_WORK->canvas;
   work = SYSTEM_WORK->summon;
   unit88 = SYSTEM_WORK->unit88;
-  sprites = SPRITES;
-  bgScroll = DISPLAY_1120;
-  one = 1;
-  width240 = 240;
-  savedWidth = bgScroll->unk4;
+  sprites = (struct SpriteObject **)gMapCellBuffer;
+  savedWidth = DISPLAY_1120->unk4;
   glyphs = SYSTEM_WORK->glyphs;
   scene = SYSTEM_WORK->scene;
   BattleEffect_StartCanvasLayer(0);
@@ -364,27 +365,26 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   REG_BG2CNT = 0x784;
   PLTT[0] = (u32)&Value_00000000;
   PLTT[1] = (u32)&Value_00000000;
-  zero = 0;
-  work->transferMode = zero;
+  work->transferMode = 0;
   Task_Add(gData_08143001, 0xc80);
   Func_08163c2c(1, 0);
-  DISPLAY_11E0->width = width240;
-  bgScroll->unk4 = zero;
-  unit88->unk10 = one;
+  DISPLAY_11E0->width = 240;
+  unit88->unk10 = 1;
+  DISPLAY_1120->unk4 = 0;
   local264.value = 255;
   BattleActor_SpawnObjectsForListFar(&local264, 0);
   REG_WININ = 0x2737;
-  REG_WIN0H = width240;
+  REG_WIN0H = 240;
   wait(1);
   Palette_LoadBasicObjColors();
-  scene->unk867 = one;
+  scene->unk867 = 1;
   BattleBackground_LoadFar(1, (s32)&Value_00000075, 0);
   Func_08164b2c(0, -20, -20);
   Func_08163c2c(1, 1);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f44;
   REG_BG2PA = (u32)&Value_00000080;
-  REG_BG2X = zero;
+  REG_BG2X = 0;
   blit = routine;
   BattleEffect_FetchRectangleBlitters(0, blit);
 
@@ -397,27 +397,32 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       work->buffer[i] += 32;
     }
   }
-  object = Func_0815b290(64, 64, 0xc0002000, 0);
-  object->priority = 3;
-  work->objects[0] = object;
-  CpuCopy(OBJ_VRAM + TILE_SLOTS[object->slot].offset, work->buffer, 0x1000);
+  {
+    struct SpriteObject *object = Func_0815b290(64, 64, 0xc0002000, 0);
+
+    object->priority = 3;
+    work->objects[0] = object;
+    slots = TILE_SLOTS;
+    CpuCopy(OBJ_VRAM + slots[object->slot].offset, work->buffer, 0x1000);
+  }
   work->objects[0]->oamPriority = 0;
   work->objects[0]->unk17 = 32;
 
   source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009e);
   CpuCopy(PLTT + 0x1f0, source, 32);
-  Resource_DecodeType01(source + 32, work->buffer);
+  source += 32;
+  Resource_DecodeType01(source, work->buffer);
   for (i = 0; i != 16; i++) {
-    object = Func_0815b290(16, 16, 0, 0xf000);
+    struct SpriteObject *object = Func_0815b290(16, 16, 0, 0xf000);
     object->priority = 1;
-    sprites[i] = object;
-    CpuCopy(OBJ_VRAM + TILE_SLOTS[object->slot].offset, work->buffer + i * 32,
+    SPRITES[i] = object;
+    CpuCopy(OBJ_VRAM + slots[object->slot].offset, work->buffer + i * 32,
             32);
-    tiles[i] = sprites[i]->tile;
+    tiles[i] = SPRITES[i]->tile;
   }
   for (i = 0; i != 32; i++) {
-    object = Func_0815b3b0(8, 8, 0, 0xf000);
-    sprites[16 + i] = object;
+    struct SpriteObject *object = Func_0815b3b0(8, 8, 0, 0xf000);
+    SPRITES[16 + i] = object;
     CpuCopy(object, sprites[0], 24);
   }
   Resource_LoadAndDecompress((s32)&Value_00000134, glyphs, 0, 0);
@@ -425,6 +430,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   cell = 4;
   cellBytes = cell * cell * 2;
   for (j = 0; j != 10; j++) {
+    s32 row = j * 16;
+
     for (i = 0; i != cellBytes; i++) {
       s32 value = work->buffer[gData_08197410[cell - 1] + i];
 
@@ -434,7 +441,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           value = 1;
         }
       }
-      glyphs[j * cellBytes + i] = value;
+      glyphs[row * 2 + i] = value;
     }
   }
   Resource_LoadAndDecompress((s32)&Value_000000b4, work->buffer, 0, 0);
@@ -447,6 +454,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   posZ = 0;
 
   for (frame = 0; frame != 394 && !(INPUT->pressed & 3); frame++) {
+    u8 *order = (u8 *)0x02014000 + (frame - 244) * 2;
+
     t = frame - 32;
     if (t >= 0 && t < 22) {
       Func_08164b2c(-t, -20, frame - 52);
@@ -492,8 +501,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       work->transferValue = 75;
       REG_BLDALPHA = 0x1010;
       for (i = 0; i != 64; i++) {
-        OAM_BUFFER[i * 2] = (240 << 16) + 160;
-        OAM_BUFFER[i * 2 + 1] = tiles[*(s32 *)(0x02014218 + i * 28) / 16] | 0xf000;
+        ((u32 *)0x02014000)[i * 2] = (240 << 16) + 160;
+        ((u32 *)0x02014004)[i * 2] = tiles[*(s32 *)(0x02014218 + i * 28) / 16] | 0xf000;
       }
     }
     if (frame >= 132 && frame < 240) {
@@ -519,8 +528,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         pos248[1] = 0xff0000;
         pos248[0] = PARTICLES[64 + i].x;
         pos248[2] = PARTICLES[64 + i].y + 0x200000;
-        Render_ApplyProjectedPlacementFar(sprites[i], pos248, scale168, 0);
-        sprites[i]->tile = tiles[PARTICLES[64 + i].timer / 16];
+        Render_ApplyProjectedPlacementFar(SPRITES[i], pos248, scale168, 0);
+        SPRITES[i]->tile = tiles[PARTICLES[64 + i].timer / 16];
       }
       for (i = 0; i != 128; i++) {
         if (PARTICLES[i].y > -0x100000 && PARTICLES[i].x > -0x100000 &&
@@ -706,27 +715,36 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         CpuFill(PLTT + 0x100, 0x180, 0x7fff7fff);
         source += 0x180;
         Resource_DecodeType01(source, work->buffer + 0x2400);
+        slots = TILE_SLOTS;
         for (i = 0; i != 12; i++) {
-          object = Func_0815b290(32, 32, 0x80002000, 0);
+          struct SpriteObject *object = Func_0815b290(32, 32, 0x80002000, 0);
+
           object->priority = 3;
           work->objects[i] = object;
-          CpuCopy(OBJ_VRAM + TILE_SLOTS[object->slot].offset,
+          CpuCopy(OBJ_VRAM + slots[object->slot].offset,
                   work->buffer + 0x2400 + i * 0x400, 0x400);
         }
         source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009f);
         CpuCopy(PLTT + 0x1e0, source, 32);
         CpuFill(PLTT + 0x1e0, 32, 0x7fff7fff);
-        Resource_DecodeType01(source + 32, work->buffer + 0x2400);
-        object = Func_0815b290(64, 64, 0xc0000000, 0xe000);
-        work->objects[12] = object;
-        object->priority = 3;
-        CpuCopy(OBJ_VRAM + TILE_SLOTS[object->slot].offset,
-                work->buffer + 0x2400, 0x800);
-        object = Func_0815b290(64, 64, 0xc0002000, 0);
-        work->objects[13] = object;
-        object->priority = 2;
-        object->unk17 = 32;
-        CpuFill(OBJ_VRAM + TILE_SLOTS[object->slot].offset, 0x1000, 0);
+        source += 32;
+        Resource_DecodeType01(source, work->buffer + 0x2400);
+        {
+          struct SpriteObject *object = Func_0815b290(64, 64, 0xc0000000, 0xe000);
+
+          work->objects[12] = object;
+          object->priority = 3;
+          CpuCopy(OBJ_VRAM + TILE_SLOTS[object->slot].offset,
+                  work->buffer + 0x2400, 0x800);
+        }
+        {
+          struct SpriteObject *object = Func_0815b290(64, 64, 0xc0002000, 0);
+
+          work->objects[13] = object;
+          object->priority = 2;
+          object->unk17 = 32;
+          CpuFill(OBJ_VRAM + TILE_SLOTS[object->slot].offset, 0x1000, 0);
+        }
         source = (u8 *)Resource_GetTableEntry((s32)&Value_000000b8);
         CpuCopy(PLTT, source, 128);
         Resource_LoadAndDecompress((s32)&Value_00000137, work->buffer + 0x2400,
@@ -793,11 +811,17 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         CpuCopy(PLTT, source, 128);
       }
       if (frame >= 200 && frame < 302) {
-        texture = Heap_AllocEwram(32);
-        model = Render_AllocateModelList(1);
-        t = frame - 200;
+        void *texture = Heap_AllocEwram(32);
+        struct Model *model = Render_AllocateModelList(1);
+        s32 base = 100000;
+        s32 kind = 7;
+        s32 t = frame - 200;
+        s32 depth;
+        s32 scale;
+
+
         depth = t * 4 - 64;
-        scale = 100000 - t * 1524;
+        scale = base - t * 1524;
         if (frame > 253) {
           depth = (254 - frame) * 8;
         }
@@ -813,7 +837,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         desc144.a = 7;
         desc144.b = 7;
         desc144.tiles = work->buffer + 0x1000;
-        model->kind = 7;
+        model->kind = kind;
         model->desc = &desc144;
         model->mesh = gData_08199364;
         model->texture = texture;
@@ -830,7 +854,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         if (frame > 231) {
           t = frame - 232;
           depth = t * 2 - 64;
-          scale = 100000 - t * 1200;
+          scale = base - t * 1200;
           if (depth < -64) {
             depth = -64;
           }
@@ -843,7 +867,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           desc144.tiles = work->buffer;
           model->desc = &desc144;
           model->mesh = gData_08199340;
-          model->kind = 7;
+          model->kind = kind;
           model->texture = texture;
           Render_ResetTransformState();
           Func_08015160(-0x80000, -0x80000, 0);
@@ -860,18 +884,25 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         s32 scale136[2] = {0x10000, 0x10000};
 
         if (frame < 260) {
-          object = work->objects[13];
+          struct SpriteObject *object = work->objects[13];
+          u8 *low = (u8 *)0x02014000;
+          u8 *high = (u8 *)0x02014001;
+
           for (i = 0; i != 64; i++) {
-            s32 column = *(REVEAL_BUFFER + (frame - 244) * 2 + 0x1000) * 2;
+            s32 column = order[0x1000] * 2;
             s32 row = i * 64;
             s32 pixel = row + column;
+            u8 *lowByte = low + pixel;
+            u8 *highByte = high + pixel;
+            s32 texel = *lowByte | (*highByte << 8);
 
-            *(u16 *)(0x06010000 + (row + TILE_SLOTS[object->slot].offset) + column) =
-                ((u8 *)0x02014000)[pixel] | (((u8 *)0x02014001)[pixel] << 8);
-            column = *(REVEAL_BUFFER + (frame - 244) * 2 + 0x1000 + 1) * 2;
+            *(u16 *)(OBJ_VRAM + (row + TILE_SLOTS[object->slot].offset) + column) = texel;
+            column = order[0x1001] * 2;
             pixel = row + column;
-            *(u16 *)(0x06010000 + (row + TILE_SLOTS[object->slot].offset) + column) =
-                ((u8 *)0x02014000)[pixel] | (((u8 *)0x02014001)[pixel] << 8);
+            lowByte = low + pixel;
+            highByte = high + pixel;
+            texel = *lowByte | (*highByte << 8);
+            *(u16 *)(OBJ_VRAM + (row + TILE_SLOTS[object->slot].offset) + column) = texel;
           }
         }
         scale136[1] = scale136[0] = (155 << 12) - (frame << 11);
@@ -960,9 +991,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           s32 x;
           s32 depth2;
           s32 size;
+          void *texture = Heap_AllocEwram(32);
+          struct Model *model = Render_AllocateModelList(1);
 
-          texture = Heap_AllocEwram(32);
-          model = Render_AllocateModelList(1);
           desc128.a = 7;
           desc128.b = 7;
           desc128.tiles = work->buffer + 0x1000;
@@ -1040,8 +1071,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
       if (frame > 346) {
         s32 height = 54;
+        s32 t = frame * 4 - 1380;
 
-        t = frame * 4 - 1380;
         if (frame > 349) {
           height = ((-(Trig_Sin((frame << 10) - 0x57800) * 54)) >> 16) + 54;
         }
@@ -1059,7 +1090,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         blit[1] = SYSTEM_WORK->blitBc;
       }
       for (j = 0; j != 2; j++) {
-        t = frame - 357 - j * 19;
+        s32 t = frame - 357 - j * 19;
+
         if (t == 0) {
           CpuFill(PLTT + 0x60, 0x100, 0x7fff7fff);
         }
@@ -1123,7 +1155,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       for (i = 0; i != 256; i++) {
         x = ((Trig_Sin(i << 8) * radius * 2) >> 16) + 66;
         y = ((Trig_Cos(i << 8) * radius) >> 16) + 68;
-        blit[0](canvas, glyphs + row * 32, x - w / 2, y, w, h);
+        routine[0](canvas, glyphs + row * 32, x - w / 2, y, w, h);
       }
     }
     if (frame >= 108 && frame < 132) {
@@ -1214,15 +1246,18 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
     if (frame < 132) {
       s32 scale112;
+      s32 depth;
+      s32 base = 100000;
+      s32 rise = -52576;
+      void *texture = Heap_AllocEwram(32);
+      struct Model *model = Render_AllocateModelList(1);
 
-      texture = Heap_AllocEwram(32);
-      model = Render_AllocateModelList(1);
       work->transferMode = 2;
       work->transferValue = 50;
       depth = frame * 2 - 64;
-      scale112 = 100000 - frame * 1524;
+      scale112 = base - frame * 1524;
       if (frame > 55) {
-        scale112 = frame * 1524 + -52576;
+        scale112 = frame * 1524 + rise;
       }
       if (depth >= -8) {
         depth = -8;
@@ -1266,13 +1301,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Render_DrawModelList(model);
       }
       if (frame > 55) {
-        s32 d = frame * 2 - 208;
-
+        depth = frame * 2 - 208;
         desc112.tiles = work->buffer + 0x1000;
-        if (d >= -32) {
-          d = -32;
+        if (depth >= -32) {
+          depth = -32;
         }
-        model->depth = d;
+        model->depth = depth;
         Render_ResetTransformState();
         Func_08015160(0x20000, -0x200000, 0);
         Func_0801521c(0x58f0);
@@ -1308,7 +1342,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
   }
   for (i = 0; i != 48; i++) {
-    ResourceObject_ReleaseFar((struct ResourceObjectWork *)sprites[i]);
+    ResourceObject_ReleaseFar((struct ResourceObjectWork *)SPRITES[i]);
   }
   HeapSlot_Release(188);
   HeapSlot_Release(104);
@@ -1471,24 +1505,26 @@ empty:
         work->unk77a8 = 3;
       }
       BattleEffect_LoadBlitter(104, 31);
-      blit[0] = SYSTEM_WORK->blit;
+      routine[0] = SYSTEM_WORK->blit;
       for (i = 0; i != 16; i++) {
-        p = &PARTICLES[96 + i];
+        struct Particle *p = &PARTICLES[96 + i];
+
         if (p->timer >= 0 && p->timer < 24) {
-          blit[0](canvas, SPRITE_BUFFER + (p->timer / 4) * 2048,
+          routine[0](canvas, SPRITE_BUFFER + (p->timer / 4) * 2048,
                   (p->x >> 16) - 16, (p->y >> 16) - 32, 32, 64);
           BattleEffectKernels_IntegrateVector2(p, 60, -0x2000);
         }
         p->timer++;
       }
       for (i = 0; i != 128; i++) {
-        p = &PARTICLES[128 + i];
+        struct Particle *p = &PARTICLES[128 + i];
+
         if (p->timer >= 0) {
           s32 size = (p->timer >> 3) + 2;
           s32 k;
 
           for (k = 0; k != 4; k++) {
-            blit[0](canvas, glyphs + gData_08197410[size - 1],
+            routine[0](canvas, glyphs + gData_08197410[size - 1],
                     (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
                     size * 2);
             BattleEffectKernels_IntegrateVector2(p, 63, 0);
@@ -1508,14 +1544,15 @@ empty:
         }
         if (frame >= gData_08198c67[i] + 1 && frame < gData_08198c67[i] + 16) {
           u16 *target = SYSTEM_WORK->scene->palette;
+          u16 *color = PLTT + 0x60;
 
           for (j = 0; j != 128; j++) {
             s32 tr = (target[j] & 31) - 10;
             s32 tg = ((target[j] >> 5) & 31) - 20;
             s32 tb = ((target[j] >> 10) & 31) - 10;
-            s32 r = PLTT[0x60 + j] & 31;
-            s32 g = (PLTT[0x60 + j] >> 5) & 31;
-            s32 b = (PLTT[0x60 + j] >> 10) & 31;
+            s32 r = color[j] & 31;
+            s32 g = (color[j] >> 5) & 31;
+            s32 b = (color[j] >> 10) & 31;
 
             if (tr < 0) {
               tr = 0;
@@ -1535,14 +1572,14 @@ empty:
             if (tb < b - 1) {
               b -= 2;
             }
-            PLTT[0x60 + j] = (b << 10) | (g << 5) | r;
+            color[j] = (b << 10) | (g << 5) | r;
           }
         }
       }
     }
     if (frame > 120) {
       if (frame == 121) {
-        bgScroll->unk4 = savedWidth;
+        DISPLAY_1120->unk4 = savedWidth;
         unit88->unk10 = 0;
         unit30->unk36 = savedUnit30;
       }
@@ -1567,7 +1604,8 @@ empty:
         }
       }
       for (i = 0; i != arg->count; i++) {
-        struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[i]);
+        s16 *id = &arg->actors[i];
+        struct ActorPos *actor = *GetBattleObjectSlotFar(*id);
         struct Particle *member = &work->members[i];
         s32 landed = 0;
 
@@ -1582,13 +1620,13 @@ empty:
           }
           if (landed == 1) {
             member->timer = 0;
-            EffectPosition_ProjectScaledBattler(arg->actors[i], member);
+            EffectPosition_ProjectScaledBattler(*id, member);
             Sound_PlayFar(103);
             for (j = 0; j != 16; j++) {
               s32 angle = Random16() & 0x7fff;
               s32 speed = Random16() & 255;
+              struct Particle *p = &PARTICLES[i * 16 + j];
 
-              p = &PARTICLES[i * 16 + j];
               p->x = member->x << 15;
               p->y = member->y << 16;
               speed += 256;
@@ -1599,10 +1637,10 @@ empty:
           }
         }
         if (member->timer == 2 || member->timer == 7) {
-          Func_0814cd48(arg->actors[i], 7, 5, i, 32);
+          Func_0814cd48(*id, 7, 5, i, 32);
         }
         if (member->timer == 6) {
-          Func_0814cd48(arg->actors[i], 15, -1, i, 32);
+          Func_0814cd48(*id, 15, -1, i, 32);
         }
         if (member->timer == 8) {
           actor->x = 0;
@@ -1611,7 +1649,7 @@ empty:
         }
       }
       if (frame >= 0) {
-        bgScroll->unk4 += 0xfff4;
+        DISPLAY_1120->unk4 += 0xfff4;
         BattleEffect_LoadBlitter(104, 27);
         halfCell = 28;
         phase = frame << 10;
@@ -1653,24 +1691,25 @@ empty:
           }
         }
         BattleEffect_LoadBlitter(104, 31);
-        blit[0] = SYSTEM_WORK->blit;
+        routine[0] = SYSTEM_WORK->blit;
         for (i = 0; i != 4; i++) {
           s32 width = 120 - work->columns[i].x;
 
           if (width > 0) {
-            blit[0](canvas, work->buffer + 0x2000, work->columns[i].x, i * 30,
+            routine[0](canvas, work->buffer + 0x2000, work->columns[i].x, i * 30,
                     width, 30);
           }
         }
         HeapSlot_Release(104);
         BattleEffect_LoadBlitter(104, 47);
-        blit[0] = SYSTEM_WORK->blit;
+        routine[0] = SYSTEM_WORK->blit;
         for (i = 0; i != 96; i++) {
-          p = &PARTICLES[i];
+          struct Particle *p = &PARTICLES[i];
+
           if (p->timer >= 0) {
             s32 size = (p->timer >> 3) + 2;
 
-            blit[0](canvas, glyphs + gData_08197410[size - 1],
+            routine[0](canvas, glyphs + gData_08197410[size - 1],
                     (p->x >> 16) - size / 2, (p->y >> 16) - size, size,
                     size * 2);
             BattleEffectKernels_IntegrateVector2(p, 60, 0);
@@ -1679,8 +1718,10 @@ empty:
         }
         HeapSlot_Release(104);
       }
-      texture = Heap_AllocEwram(32);
-      model = Render_AllocateModelList(1);
+      {
+      void *texture = Heap_AllocEwram(32);
+      struct Model *model = Render_AllocateModelList(1);
+
       desc104.a = 6;
       desc104.b = 6;
       desc104.tiles = work->buffer + 0x3000;
@@ -1690,12 +1731,14 @@ empty:
       model->texture = texture;
       for (i = 0; i != arg->count; i++) {
         struct Particle *member = &work->members[i];
+        s32 timer = member->timer;
 
-        if (member->timer >= 0 && member->timer < 18) {
-          s32 size = member->timer * 3 * 1016 + 0x800;
+        if (timer >= 0 && timer < 18) {
+          s32 step = timer * 3;
+          s32 size = step * 1016 + 0x800;
 
-          model->depth = member->timer * 3 - 64;
-          member->timer++;
+          model->depth = step - 64;
+          member->timer = timer + 1;
           Render_ResetTransformState();
           Func_08015160((member->x / 2 - 56) << 16, (member->y - 56) << 16, 0);
           Func_080151e4(size / 3, size, size);
@@ -1703,9 +1746,10 @@ empty:
           Render_TransformVertices(gData_08199210, texture, 4);
           Render_DrawModelList(model);
         }
+        Heap_Release(model);
+        Heap_Release(texture);
       }
-      Heap_Release(model);
-      Heap_Release(texture);
+      }
     }
     Camera_ApplyVerticalShake(8);
     BattleEffect_CountDownBattlerTints();

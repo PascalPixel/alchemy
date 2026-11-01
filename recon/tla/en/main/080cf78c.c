@@ -1,20 +1,29 @@
-// Draft, differ 176 of 977 (198 before; 2026-10-26): the instruction count
-// is now the listing's. Case 8 clamps the row distance to -120..120 before
-// squaring it, as the listing does, and cases 7, 9 and 77 read the view's x
-// and z through one pointer (the native loads them as [r2, #0] and [r2, #4]);
-// the view is the map work's viewX and viewZ. Left: case 8 reads both view
-// words first and the value after the two header stores in the native (in
-// that order here, 230: allocation elsewhere moves), and instruction order.
-// Earlier: differ 198 of 977 (441 before; 2026-10-26: in the circle case the
-// value is read before the camera's y, which gives the map work r6 as the
-// native has it): the window transition's frame callback, ported from
-// ☀️'s ScreenTransition_UpdateScanlineTable (games/tbs/src/field/
-// field_sequence/screen_transition.c) with this game's state (heap slot 0x7c, s8
-// steps), its map work's view at 0xe4, the controlled owner in place of the
-// leader, the task table, and one addition: a transition that ends with no
-// next mode also opens WINOUT's layers when the object window is on.
-// Left: the draft is six instructions shorter, the DISPCNT masks load
-// REG_DISPCNT before the end test, and instruction order.
+// Draft, differ 30 of 977, skeleton gap 15 (tla-en, 2026-11-01)
+// The window transition's frame callback, ported from ☀️'s
+// ScreenTransition_UpdateScanlineTable (games/tbs/src/field/field_sequence/
+// screen_transition.c; confirmed twin) with this game's state (heap slot 0x7c,
+// s8 steps), its map work's view at 0xe4, the task table, and one addition: a
+// transition that ends with no next mode also opens WINOUT's layers when the
+// object window is on.
+// Left: only sched2 order, no register or shape difference. The native issues
+// a store ahead of a split-constant chain at five sites, the spill of state in
+// the prologue (ldr, sub sp, movs r0, str, lsls) and the first header store
+// plus the second one's `adds r4, #2` in cases 7, 8, 9 and 77 (ldrh, movs r0,
+// strh, lsls); here the chain's lsls wins, so the store lands two places late.
+// In each the store's only long path runs through a later aliased load, one
+// short of the chain, so a store-to-load cost one or two higher in the native
+// would explain all five. That is the scheduling model (K2): out of scope.
+// Tried on case 7's header, no gain: split `*p = x; p++` (same), `p[0], p[1];
+// p += 2` (103), increment first (76), a local for the value (177), a u16 *
+// to the field (same); `asm("")` after the store only moves the miss, because
+// movs falls before the store and lsls after it, so no barrier can separate
+// them. A five-minute permute (28,000 candidates) found nothing below 30.
+// What closed the rest, from 159: the twin's four view pointers, its camera
+// locals and block `ax` (107); the clamped row is its own variable, `delta`,
+// squared in place (the copy pair around muls); `k & 31` as a statement of
+// its own, which shortens the table pointer's life from 3 to 2, so loop.c
+// keeps it in the loop (threshold 15 * life against 45 real insns) and r5
+// stays free for reloads (120 to 30).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -54,8 +63,12 @@ void Func_080cf78c(void) {
   struct ScreenTransitionState *state = Ram_HeapSlots->screenTransition;
   struct TransitionSpan *span;
   struct TransitionShape *shape;
-  struct Actor *object;
   u16 *scanlineData;
+  s32 *viewInverse;
+  s32 *viewRipple;
+  s32 *viewLeader;
+  s32 *viewLeaderLow;
+  struct Actor *object;
   u32 i;
   s32 k;
   s32 lineCount;
@@ -67,11 +80,11 @@ void Func_080cf78c(void) {
   s32 right;
   s32 centerX;
   s32 centerY;
-  s32 cameraX;
   s32 cameraY;
+  s32 cameraX;
+  s32 cameraY8;
   u32 leftEdge;
   s32 oppositeEdges;
-  s32 *view;
 
   if (state->duration != 0) {
     if (state->step >= state->duration) {
@@ -227,12 +240,14 @@ void Func_080cf78c(void) {
     }
     break;
 
-  case 7:
-    view = &map->viewX;
-    cameraX = view[0] & 0xffff0000;
-    cameraY = view[1] & 0xffff0000;
+  case 7: {
+    s32 ax;
+
+    viewInverse = &map->viewX;
+    ax = viewInverse[0] & 0xffff0000;
+    cameraY = viewInverse[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - cameraX) / 0x10000;
+    centerX = (object->x - ax) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     *scanlineData++ = state->active;
     *scanlineData++ = state->mask;
@@ -263,16 +278,18 @@ void Func_080cf78c(void) {
       scanlineData += 2;
     }
     break;
+  }
 
   case 8:
-    cameraX = map->viewX & 0xffff0000;
+    viewRipple = &map->viewX;
+    cameraX = viewRipple[0] & 0xffff0000;
+    cameraY8 = viewRipple[1] & 0xffff0000;
     centerX = (state->centreX - cameraX) / 0x10000;
-    value = state->value;
-    cameraY = map->viewZ & 0xffff0000;
-    centerY = (state->centreY - cameraY) / 0x10000 - 16;
+    centerY = (state->centreY - cameraY8) / 0x10000 - 16;
     k = -centerY * 2 + gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
+    value = state->value;
     if (value & 32)
       value = 32 - (value & 31);
     else
@@ -280,17 +297,19 @@ void Func_080cf78c(void) {
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
     for (i = 0; i < 160; i++) {
-      value = i - centerY;
-      if (value < -120)
-        value = -120;
-      if (value > 120)
-        value = 120;
+      delta = i - centerY;
+      if (delta < -120)
+        delta = -120;
+      if (delta > 120)
+        delta = 120;
+      delta *= delta;
       horizontalExtent =
-          Iwram_Sqrt(radiusSquaredQ16 - ((value * value * 3) << 15)) >> 8;
+          Iwram_Sqrt(radiusSquaredQ16 - ((delta * 3) << 15)) >> 8;
       left = centerX - horizontalExtent;
       right = centerX + horizontalExtent;
       if (left < right) {
-        delta = Data_080f01e6[k & 31];
+        value = k & 31;
+        delta = Data_080f01e6[value];
         left -= delta;
         right += delta;
         if (left >= right) {
@@ -312,12 +331,14 @@ void Func_080cf78c(void) {
     }
     break;
 
-  case 9:
-    view = &map->viewX;
-    cameraX = view[0] & 0xffff0000;
-    cameraY = view[1] & 0xffff0000;
+  case 9: {
+    s32 ax;
+
+    viewLeader = &map->viewX;
+    ax = viewLeader[0] & 0xffff0000;
+    cameraY = viewLeader[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - cameraX) / 0x10000;
+    centerX = (object->x - ax) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -346,13 +367,16 @@ void Func_080cf78c(void) {
       scanlineData += 2;
     }
     break;
+  }
 
-  case 77:
-    view = &map->viewX;
-    cameraX = view[0] & 0xffff0000;
-    cameraY = view[1] & 0xffff0000;
+  case 77: {
+    s32 ax;
+
+    viewLeaderLow = &map->viewX;
+    ax = viewLeaderLow[0] & 0xffff0000;
+    cameraY = viewLeaderLow[1] & 0xffff0000;
     object = ObjectTable_Get(Party_GetLeaderActor());
-    centerX = (object->x - cameraX) / 0x10000;
+    centerX = (object->x - ax) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 8;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -381,6 +405,7 @@ void Func_080cf78c(void) {
       scanlineData += 2;
     }
     break;
+  }
   }
 
   state->page ^= 1;

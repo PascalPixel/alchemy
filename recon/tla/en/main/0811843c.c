@@ -1,16 +1,35 @@
-// Draft, differ 123 of 183 (240 before): snapshots five fixed units (Felix,
-// Piers, Jenna and two at 0x80 and 0x81, Data_0812a16c) into EWRAM: whether
-// each is in the battle party, the first three's four bytes at unit+300,
-// each one's 25 bytes at unit+304, and the last two's HP (at least 1) and
-// unit+58. No ☀️ twin found. The snapshot, the copies and the id table read
-// through local pointers keep them in r8, r6 and r9 as natively; HP goes
-// through the snapshot and PP through Data_0200ffec, as the native's pool
-// shows. Left: the 25 copies' offsets cycle through three registers stepping
-// by 3 natively (move2add's reuse of 304, 305 and 306), two stepping by 2
-// here, which shifts most of the copy rows, and three prologue rows. Tried
-// before: one 168-byte struct (196), a 25-byte struct copy (ldmia/stmia:
-// agscc rounds structs to words; 194), the table as const, if/else on i
-// (244).
+// Draft, differ 121 of 183, skeleton gap 28 (tla-en, 2026-11-01): snapshots
+// five fixed units (Felix, Piers, Jenna and two at 0x80 and 0x81,
+// Data_0812a16c) into EWRAM: whether each is in the battle party, the first
+// three's four bytes at unit+300, each one's 25 bytes at unit+304, and the
+// last two's HP (at least 1) and unit+58. No ☀️ twin found. The snapshot, the
+// copies and the id table read through local pointers keep them in r8, r6 and
+// r9 as natively; HP goes through the snapshot and PP through Data_0200ffec.
+//
+// Left: one cause, reload's spill set. The statements, loops and pseudos line
+// up; every remaining row is a reload register. The native's rotation runs
+// over r0, r1, r2, r3, ours over r0, r2, r3 (greg "Using reg" never says 1),
+// which is why the 25 offsets cycle through three registers stepping by 3
+// natively and two stepping by 2 here, and why the prologue, r9 and r8 reloads
+// differ. r1 can only join the set at an insn needing a reload with r3 and r2
+// busy and r1 free. The one such place is `adds r3, r4, r0` for PP: r3 its
+// output, r2 the unit+58 value. So the native's `ldr r0` of Data_0200ffec is a
+// reload of a constant, not a pseudo: that symbol has no hard register there.
+// Here it is pseudo 57, allocated to r3.
+//
+// Tried for that: a set-once local at the top or at the top of the loop body
+// (takes r11, push list grows; 144); in the `if (i > 2)` block or just before
+// it (136: live across the ldrsh with all four low registers busy, reload must
+// evict one for the scratch, and that is the mechanism wanted, but pseudo costs
+// tie at 4 and the tie takes r3, so the raw HP goes to ip); set after the
+// ternary (121, no change). What would close it: the local at cost below 4, or
+// the raw HP above 4. s16 vitals.hp makes expand's "(A op 0) ? A : B" path load
+// HP first into one pseudo, cost 6, but loses `mov r1, sl` before the branch and
+// gives `cmp #1; bge` and a threaded second `i` test (149). Reversed or `< 1`
+// ternary, if/else (170), a local s16 or u16 HP (140), (s16) cast on a u16 field
+// (136), Data_0200ff58.vitals[i].unk2 (135) and no snapshot local (138) all lost.
+// Earlier: one 168-byte struct (196), a 25-byte struct copy (ldmia/stmia: agscc
+// rounds structs to words; 194), the table as const, if/else on i (244).
 #include "types.h"
 
 struct SnapshotVitals {

@@ -1,22 +1,31 @@
 // Draft, differ 206 of 315, skeleton gap 54 (tla-en, 2026-11-01): control flow,
 // calls, the frame (88 bytes, same slots) and memory accesses follow the
-// listing; what is left comes from one thing. The listing materialises center
-// three times (`add r1, sp, #76` before the switch, `add r5, sp, #76` after it,
-// `add r3, sp, #76` / r11 after the nudge) and keeps 0x8000 in r11 across the
-// flip test. Here GCSE merges all of it: PRE makes the later addresses copies
-// and cprop folds them into one pseudo live through the function (r7), and
-// cprop puts the constant back at each use, even with explicit pointers to
-// center at each site (same output). -fno-gcse gives the three; no plain C form
-// was found that keeps (plus sfp 76) from PRE, and sfp is never killed. No
-// function with a repeated `add rN, sp, #K` has matched yet, so this may be a
-// compiler question (79 listing hits; K3, Pascal's call). The consequences: object r9, not
-// r11; sine r9, not r7; IwramMulQ16 and x swap r6/r8; the x nudge takes r5 for
-// 0x8000 where the listing, with r5 busy, has r1 in both arms and cross-jumps.
-// Tried: x nudge through a local or a ternary, which pulls x into a long pseudo
-// (gap 88+); `object->x` for *pos, differ 192 but gap 64, kept out as the gap is
-// the aim; z read once and stored once is the best z form; a `speed` local,
-// gap 4 worse (cprop undoes it). px, py and pz are read before the flip test
-// because the listing loads them there.
+// listing; what is left comes from two things, both GCSE's. The listing
+// materialises center three times (`add r1, sp, #76` before the switch, `add
+// r5, sp, #76` after it, `add r3, sp, #76` / r11 before Func_0200034c, each used
+// to its own last read) and keeps 0x8000 in r11 across the flip test. Here PRE
+// makes the later addresses copies and cprop folds them into one pseudo live
+// through the function (r7), and cprop puts the constant back at each use.
+// Measured with the build's options: explicit pointers p = center and q = center
+// at those sites leave the output unchanged (differ 206), and a `speed` local
+// gives differ 204 but gap 60. The same pointers and local with -fno-gcse, as a
+// diagnostic only, do give the three addresses, r5 and r11; about 100 lines
+// still differ there (pos r7, not r6; IwramMulQ16 r6, not r8), so that option is
+// not shown to close it. sfp is never killed, so no plain C form keeps (plus sfp
+// 76) from PRE, and no device can: a tagged local is undone the same way. This
+// is a compiler question (79 listing hits of a repeated `add rN, sp, #K`, none
+// matched; K3, Pascal's call). The landing bursts' frame address rebuilt in a
+// loop may be the same thing. The consequences: object r9, not r11; sine r9, not
+// r7; IwramMulQ16 and x swap r6/r8; the x nudge takes r5 for 0x8000 where the
+// listing, with r5 busy, has r1 in both arms and cross-jumps.
+// Tried, none better on gap: x nudge through a local or a ternary, which pulls x
+// into a long pseudo (88+); `object->x` for *pos, differ 192 but gap 62, kept
+// out as the gap is the aim; z through the field, gap 59 (z read once and stored
+// once is the best form); rotation stores written inline (76) or summed in one
+// expression (58); z terms swapped (57); pos set before offset (56); pos and
+// offset declared the other way (no change); the switch writing center directly
+// (73). px, py and pz are read before the flip test because the listing loads
+// them there.
 // Shape follows Func_0200043c (s043c.c), including its forwarded SeaOfTime_Cos
 // and SeaOfTime_Sin; plain Math_Cosine/Math_Sine there gives 242.
 #include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"

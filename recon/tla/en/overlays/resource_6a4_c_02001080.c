@@ -16,7 +16,13 @@
 // sets; that cast would be a new device, so it is not kept.
 // Tried without gain: sparks[i] and sprites[i] indexing instead of the two
 // pointers (gap 145), volatile age or frame (gap 79, 184), step 5 as a goto, as
-// a break on != 16, or with its tests swapped.
+// a break on != 16, or with its tests swapped; age through a local at the
+// second test (differ 130) or the third (600); step 5 with else-if (248), through
+// t (253), through a pointer to the frame (298) or with a block local (no change);
+// s32 returns on the local callees (no change). age is u32 now, for the cast (no
+// change). The loads need no store before them in their blocks, so nothing in the
+// C explains why the native skips PRE; devices cannot reach differ 0 past the
+// order above, so none is kept.
 // Shaping that got here from 908: ternaries written zero-first, the products as
 // (to - from) * t, a pointer to the large sprite and one read of its scale, a
 // pointer to the position vector taken before the mirror test, position
@@ -55,7 +61,7 @@ struct BeamSpark {
   s32 unk0c;
   s32 drift;
   s32 unk14;
-  s32 age;
+  u32 age;
 };
 
 struct BeamWork {
@@ -242,7 +248,7 @@ void Func_02001080(void) {
         spark->drift = (Random16Far() - 0x8000) << 1;
       }
     }
-    if ((u32)spark->age <= 15) {
+    if (spark->age <= 15) {
       sprite->tile = work->tile + (spark->age & 3) * 2;
       Func_02002b40(sprite, spark);
       spark->position[1] -= spark->drift;

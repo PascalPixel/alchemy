@@ -1,27 +1,34 @@
-// Draft, differ 724 of 961, skeleton gap 140 (tla-en, 2026-11-01): one stage of
+// Draft, differ 680 of 961, skeleton gap 136 (tla-en, 2026-11-01): one stage of
 // the staff credits, from the camera pan through the tilemap and palette pushes
-// to the fade out; stage 4 grows actor 8 and swaps its pictures instead. What
-// is left is register allocation, scheduling and GCSE. Stage is in r11 as in
-// the native, the buffer in r9 (native r10), the frame in r10 (native r7):
-// frame cannot take r7 because y and bx outrank it there, which leaves about
-// twenty extra moves around it. GCSE's PRE hoists y << 4 and y << 5 out of the
-// tile loops and inserts the gData_02003d84 address on the pan loop's back
-// edge, where the native recomputes y << 4 and y << 5 and loads the address
-// once inside the first test; two of the extra hoisted values take the low
-// registers y and bx would have left free. No plain form tried stops those (480
-// - y * 32 in the tile loop: 167; if and do with a lengths pointer in the pan
-// loop: 187). Three forms here steer allocation, not behaviour. grid is one
-// function-scope variable also set for stage 4 and read by its frame swap,
-// which keeps it live round the credits loop so it loses its register to stage
-// and the buffer; the native rebuilds buffer + 0x2000 there and never stores
-// grid in that branch (separate variables: gap 282). The last camera call reads
+// to the fade out; stage 4 grows actor 8 and swaps its pictures instead.
+// Left: register allocation, sched2 order and PRE. i in r7 (pan) and y in r6
+// (tile loops) now match the native.
+// frame stays in r10 (native r7), the buffer in r9 (native r10), which is about
+// thirty extra moves, a large part of the gap. Priorities from --rtl: frame 0.47
+// against pair loop row 1.7, bx 1.7 and i 1.5; those take the low registers
+// because refs are weighted by loop depth, while the native's row is in ip,
+// which fits unweighted refs. Sharing row with y, or giving frame the pan and
+// fade loops, does not close it (0.55 at most; frame then takes r10 anyway).
+// Tried, all worse from this state: late or step in x or y, fill y in i, row in
+// y, pixel and blank counters of their own, a tail copy of stage; a default-0
+// scale local changes nothing. Sharing that gained: the pan loop in i with the pixel row offset
+// and the fade loop in y (724 to 680).
+// GCSE's PRE hoists y << 4 and y << 5 out of the tile loops, and base + i out of
+// the pair loop unless written (x * 2 + base + i); the native recomputes all
+// of them and also reloads the pan table address, so it shows no PRE at all.
+// Three forms steer allocation, not behaviour. grid is one function-scope
+// variable also set for stage 4 and read by its frame swap, keeping it live
+// round the credits loop so it loses its register; the native rebuilds buffer +
+// 0x2000 there and never stores grid in that branch. Split, grid outranks stage,
+// which goes to the stack (differ 675, gap 165). The last camera call reads
 // palette, equal to stage on that path, so PRE does not carry stage * 4 across
-// the function, which the native recomputes there. (x * 2 + base + line) stops
-// PRE hoisting base + line out of the pair loop. The blank loop shares bx and
-// the pair loop shares x, as the native shares their registers.
-// XXX: the native order (frame, then buffer, stage and by over grid) fits
-// priorities with no loop weighting, and its code shows no PRE and few loop
-// moves in a function this size; that cannot be reached from C here.
+// the function; the cost is that CSE makes palette the head of the pair and
+// the stage == 4 test reads the stack (with stage, about 90 worse). The blank loop shares
+// bx and the tile and pair loops share x, as the native shares those registers.
+// XXX: no PRE, unweighted refs and the constants rebuilt in loops are what
+// gcse.c, flow.c and loop.c do under optimize_size, which is a compiler and
+// option question (K3) for Pascal; not tested here. No plain C route to those
+// three has been found.
 #include "types.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
@@ -90,10 +97,8 @@ void Func_0200020c(s32 stage) {
   u8 *grid;
   s32 x;
   s32 y;
-  s32 line;
-  s32 panFrame;
+  s32 i;
   s32 frame;
-  s32 fadeFrame;
 
   Func_02002034(8, 0, 0);
   gData_02003dbe = 0;
@@ -112,10 +117,8 @@ void Func_0200020c(s32 stage) {
   Func_02001fdc();
   Func_0200208c(gData_02003d5c[stage], 1);
   {
-    /* FAKEMATCH(temporary): the two halfwords go through s32 locals, so they
-     * are built with movs and lsls as the native builds them; as plain
-     * stores of 0x1000 and 0xd000, the u16 constants come from the literal
-     * pool and 806 of 961 instructions differ in tla-en. */
+    // Each local holds one constant, so it is built with movs and lsls; as
+    // plain stores the u16 constants come from the literal pool.
     s32 scroll = 0x1000;
     s32 start = 0xd000;
 
@@ -129,15 +132,15 @@ void Func_0200020c(s32 stage) {
   Event_StartScreenTransition();
   Camera_MoveWithinMapBounds_(gData_02003d34[stage][0] << 16,
                               gData_02003d34[stage][1] << 16, 1);
-  for (panFrame = 0; panFrame != gData_02003d84[stage]; panFrame++) {
+  for (i = 0; i != gData_02003d84[stage]; i++) {
     {
       s32 length = gData_02003d84[stage];
 
-      MAP_WORD(map, 0x11e) = (length - panFrame) << 5;
-      if (panFrame == length - 59)
+      MAP_WORD(map, 0x11e) = (length - i) << 5;
+      if (i == length - 59)
         Func_0200208c(gData_02003d70[stage], 60);
     }
-    if (panFrame >= gData_02003d84[stage] - 64)
+    if (i >= gData_02003d84[stage] - 64)
       // Pointer arithmetic folds gData_02003d88 + 1 into one literal, as the
       // native does; indexed as [stage + 1] the 1 is added at run time.
       MAP_WORD(map, 0x11c) += *(gData_02003d88 + stage + 1);
@@ -281,7 +284,7 @@ credits:
 
       Func_02000138(grid, frame + 8, 0x10000);
       // goto loops: the native jumps to the block-row and block tests and
-      // recomputes grid + x * 2 + base + line in every pass; as for loops,
+      // recomputes grid + x * 2 + base + i in every pass; as for loops,
       // loop.c strength-reduces the pair pointer and drops bx (a shape the
       // native does not have; gap 288 when last measured).
       by = 0;
@@ -302,13 +305,13 @@ credits:
       goto blockTest;
     block:
       row = 0;
-      line = 0;
+      i = 0;
     pixelRow:
       out = buffer + offset;
       x = 0;
     pixelPair:
       {
-        u8 *pair = grid + (x * 2 + base + line);
+        u8 *pair = grid + (x * 2 + base + i);
 
         x++;
         *out = pair[1] << 4;
@@ -319,7 +322,7 @@ credits:
       if (x != 4)
         goto pixelPair;
       row++;
-      line += 64;
+      i += 64;
       if (row != 8)
         goto pixelRow;
       base += 8;
@@ -361,16 +364,16 @@ credits:
                                 gData_02003d48[palette][1] << 16, 1);
     Func_0200208c(0xb333, 60);
     // A goto loop: as a for loop, 810 of 961 differ.
-    fadeFrame = 0;
+    y = 0;
   fadeOut:
     MAP_WORD(map, 0x11e) += 0xffe0;
-    if (fadeFrame == 60) {
+    if (y == 60) {
       ((struct EventWork *)Ram_HeapSlots->eventWork)->delay = 64;
       Event_FinishScreenTransition();
     }
-    fadeFrame++;
+    y++;
     wait(1);
-    if (fadeFrame != 124)
+    if (y != 124)
       goto fadeOut;
     Event_WaitTransitionFrames();
   } else {

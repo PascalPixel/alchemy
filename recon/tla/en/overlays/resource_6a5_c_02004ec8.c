@@ -1,16 +1,15 @@
-// Draft, differ 268 of 268, skeleton gap 32 (tla-en, 2026-11-01)
-// Left: register ranks, which cost the r4 spill around both GameFlag_Test calls
-// and put i in r11 where the native spills it. The native keeps event r5, cz r6,
-// cx r7, the table r8, last r10, the entry r9, the cell r11 and i at sp+16. Here
-// last ranks second (9 refs over 14 insns) and takes r6, so cz is caller-saved
-// in r4. Flow weights refs by natural-loop depth (3 in the inner loop), and that
-// happens for goto and for loops alike. The native order fits unweighted refs:
-// last has 3, ranks below the table and is too dear to caller-save. No C shape
-// tried gives that: no last variable, block locals, either order of cx and cz,
-// masks in locals. For loops also hoist the 64 (gap 38). One compiler question.
-// GCSE also moves the leader search's count load into the arm that stores
-// current (ldrh and shifts); the native reloads it with ldrsh at the loop's end.
-// A goto loop or a continue does not change that.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Held by three tagged barrier sites. They stand in for a missing cause: the
+// native's register order (event r5, cz r6, cx r7, table r8, last r10, entry r9,
+// cell r11, i on the stack) fits refs counted without loop depth, which is how
+// the compiler ranks pseudos under optimize_size (flow.c's REG_N_REFS). As
+// compiled, loop-depth weights rank last second, and cz and cx below it. The
+// asm operands only add refs and live length to restore that order. Whether The
+// Lost Age's weighting differs is a compiler question for Pascal (K3); an answer
+// would retire all three. Plain shapes that closed the rest: no count reload
+// merge in the leader search (the guard reads through s16), cells rebuilt in
+// place and copied to rows after j = 0, entry++ before table->count++ (the
+// reload order gives r5 to the 8 first), and k shared with the fill loop.
 // Overlay 6a5's copy of overlay 698's Func_020011a0, drafted in
 // resource_698_c_020011a0.c with this overlay's symbols.
 #include "types.h"
@@ -90,7 +89,8 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   s32 x0, z0, width, height, i, j;
   u32 *buffer;
   u32 event, last;
-  s32 cz, cx;
+  s32 cz, cx, mark;
+  s32 k;
 
   Iwram_ClearWords(table, 4);
   table->kind = kind;
@@ -107,10 +107,11 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   z0 = (layer->originZ + map->minZ) >> 20;
   width = (map->maxX - map->minX) >> 20;
   height = (map->maxZ - map->minZ) >> 20;
-  rows = cells + ((map->minZ >> 20) << 7) + (map->minX >> 20);
+  cells += ((map->minZ >> 20) << 7) + (map->minX >> 20);
   // Goto loops: as for loops (either one) loop.c moves the 64 of the cell
   // copy's masks out of them and 321 of 268 instructions differ.
   j = 0;
+  rows = cells;
   if (j < height) {
   row:
     cell = rows + (j << 7);
@@ -121,9 +122,9 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
       if (event != 0 && event >= kind) {
         last = kind + 1;
         if (event <= last) {
-          cz = j + z0;
           cx = i + x0;
           entry->x = cx;
+          cz = j + z0;
           entry->z = cz;
           entry->flag = flag;
           flag++;
@@ -131,11 +132,19 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
             if (event == last)
               GameFlag_SetBit(entry->flag);
           } else if (GameFlag_Test(entry->flag)) {
+            /* FAKEMATCH(barrier): the empty asm reading cz, which ranks cz above cx; as no asm, 16 of 268 instructions differ in tla-en. */
+            asm("" : : "r"(cz));
             Func_0200579c(table->x, table->z + 1, 1, 1, cx | (s16)(table->x & 64),
                           cz | (s16)(table->z & 64));
           }
-          table->count++;
           entry++;
+          table->count++;
+          /* FAKEMATCH(barrier): the memory asm pair, which keeps the store above the 8; as no pair, 6 of 268 instructions differ in tla-en. */
+          asm("" : "=r"(mark) : : "memory");
+          asm("" : "=r"(mark) : "0"(mark) : "memory");
+          /* FAKEMATCH(barrier): the empty asm reading last and table, which ranks table above last and last above entry; as reading mark alone, 175 of 268 instructions differ in tla-en. */
+          asm("" : : "r"(mark), "r"(last), "r"(table), "r"(table), "r"(table),
+              "r"(table), "r"(table));
         }
       }
       i++;
@@ -151,22 +160,29 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
     s32 leaderX = leader->x >> 20;
     s32 leaderZ = leader->z >> 20;
-    s32 k;
 
     entry = table->entries;
-    for (k = 0; k < table->count; k++, entry++) {
+    k = 0;
+    // Read through s16: as table->count GCSE moves the loop end's reload into the
+    // arm that stores current.
+    if (k < *(s16 *)&table->count) {
+    search:
       if (entry->x == leaderX && entry->z == leaderZ)
         table->current = k;
+      entry++;
+      k++;
+      if (k < table->count)
+        goto search;
     }
   }
   buffer = Heap_Alloc(0x100);
   {
     u32 *word = buffer;
-    s32 count = 63;
 
+    k = 63;
   fill:
     *word++ = 0x11111111;
-    if (--count >= 0)
+    if (--k >= 0)
       goto fill;
   }
   table->tile = Resource_FindFreeEntry();

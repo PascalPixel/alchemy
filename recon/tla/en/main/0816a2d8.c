@@ -1,11 +1,12 @@
-// Draft, differ 342 of 469 (441 here): Func_0816a2d8, the body of five effect
-// kinds (variant_a.c's wrappers pass variants 1-5), The Broken Seal's
-// BattleEffect_RunFlashingStrike rebuilt.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Func_0816a2d8, the body of five effect kinds (variant_a.c's wrappers pass
+// variants 1-5), The Broken Seal's BattleEffect_RunFlashingStrike rebuilt.
 
-// Twin: ☀️ BattleEffect_RunFlashingStrike (games/tbs/src/effect/effect.c), a body of
-// two kinds there; The Lost Age keeps its shape (the 120 x 120 picture in four
-// pictures of four frames each, the canvas flooded with colour 0x3f for four
-// frames, the hit at frame 20) and adds:
+// Twin: ☀️ BattleEffect_RunFlashingStrike
+// (games/tbs/src/battle_effect/battle_effect/thrash.c), a body of two kinds
+// there; The Lost Age keeps its shape (the 120 x 120 picture in four pictures
+// of four frames each, the canvas flooded with colour 0x3f for four frames,
+// the hit at frame 20) and adds:
 // - six picture sets, with variant 4's colours rotated in the BG palette;
 // - variant 5, a 120 x 60 picture drawn twice, its lower half mirrored
 // through the second blitter;
@@ -14,20 +15,17 @@
 // - a blend of 16/16 (BLDCNT cleared but for variants 3 to 5);
 // - two blitters, flipped by side, where ☀️ builds one copy blitter.
 
-// Left: 28 instructions short, all in the frame loop. The native keeps 120 in
-// r8, 60 in r11, the frame in r10 and the canvas in r9, with both blitters in
-// r6 and r7; here 120 takes r6 and the blitters r7 and r11, and the frames
-// 8 to 11 and 12 to 15 of the reflected variant share one tail through r5,
-// where the native loads each address from the pool twice and only the last
-// case holds its address in r5. In variant 4's palette loop the native
-// holds the two masks in ip and lr, here r6 and r7.
+// What closed it: DrawRectangle draw[2], the twin's own declaration, is one
+// 8-byte pseudo in r6 and r7 (339 to 16, the whole frame loop); the palette
+// indexed through the cast BG_PLTT with no pointer local, so the step is
+// loop.c's giv (the preheader's last 2 of 16); ClearWords_, canvas.c's
+// wrapper, for the two clears (see its tag). A routine local for those
+// clears changes nothing, as 0814512c also found; that draft's same tail
+// should take the same wrapper.
 
-// Tried (differ): the approach target as s16, which loads variant 3's user
-// twice (391, then 369 as s32); the palette channels written as one
-// expression of a u16 (394), red first as Func_08166b10 has them (368), blue
-// first (342), red in the store expression (346); alchemy permute 8 minutes,
-// 2 jobs: 320 with a temporary holding 120 for the sizes (not kept, a
-// device of no known source form).
+// Tried, not kept: the approach target as s16, which loads variant 3's user
+// twice; the palette written with a stepped u16 * or as color[i] (2 and 4
+// differ), or volatile BG_PLTT[i], which reads three times (32).
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -93,6 +91,10 @@ s32 Actor_SetAnimationSpeedFar(struct MotionObject *object,
 void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
                                     s32 jumpVelocity);
 
+static __inline__ s32 ClearWords_(void *destination, s32 size) {
+  return Iwram_ClearWords(destination, size);
+}
+
 // A picture flashes up over the target (four pictures, four frames each), the
 // canvas floods with one colour, and the target is struck.
 //
@@ -104,8 +106,7 @@ void BattleMotion_ApproachTargetFar(s32 actor, s32 target, s32 frames,
 void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   struct BattleEffectWork *work;
   void *canvas;
-  DrawRectangle draw;
-  DrawRectangle mirror;
+  DrawRectangle draw[2];
   s32 frame;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -126,20 +127,18 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, Ram_MapCellBuffer,
                                1, 1);
   } else if (variant == 4) {
-    u16 *color;
     s32 i;
 
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, Ram_MapCellBuffer,
                                1, 1);
     // Turn the first 64 BG colours: red to blue, blue to green, green to red.
-    color = (u16 *)BG_PLTT;
     for (i = 0; i != 64; i++) {
-      s32 blue = (*color >> 10) & 0x1f;
-      s32 green = (*color >> 5) & 0x1f;
-      s32 red = *color & 0x1f;
+      s32 blue = (((u16 *)BG_PLTT)[i] >> 10) & 0x1f;
+      s32 green = (((u16 *)BG_PLTT)[i] >> 5) & 0x1f;
+      s32 red = ((u16 *)BG_PLTT)[i] & 0x1f;
 
-      *color++ = (red << 10) | (blue << 5) | green;
+      ((u16 *)BG_PLTT)[i] = (red << 10) | (blue << 5) | green;
     }
   } else if (variant == 3) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->sheet, 1, 0);
@@ -185,7 +184,7 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   else
     BattleEffect_LoadBlitter(HEAP_BLITTER,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   if (effect->side == 1)
     BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
@@ -194,42 +193,42 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
     BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                              COMPOSITE_FLIP_Y));
-  mirror = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   Sound_PlayFar(SE_REVEAL);
   for (frame = 0; frame != REVEAL_FRAMES; frame++) {
     if (variant == 5) {
       // Half the picture, then its reflection below it.
       if (frame <= 3) {
-        draw(canvas, Ram_MapCellBuffer, 0, 0, PICTURE_SIZE, PICTURE_SIZE / 2);
-        mirror(canvas, Ram_MapCellBuffer, 0, PICTURE_SIZE / 2, PICTURE_SIZE,
+        draw[0](canvas, Ram_MapCellBuffer, 0, 0, PICTURE_SIZE, PICTURE_SIZE / 2);
+        draw[1](canvas, Ram_MapCellBuffer, 0, PICTURE_SIZE / 2, PICTURE_SIZE,
                PICTURE_SIZE / 2);
       } else if (frame <= 7) {
-        draw(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES, 0, 0, PICTURE_SIZE,
+        draw[0](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES, 0, 0, PICTURE_SIZE,
              PICTURE_SIZE / 2);
-        mirror(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES, 0,
+        draw[1](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES, 0,
                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
       } else if (frame <= 11) {
-        draw(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 2, 0, 0,
+        draw[0](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 2, 0, 0,
              PICTURE_SIZE, PICTURE_SIZE / 2);
-        mirror(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 2, 0,
+        draw[1](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 2, 0,
                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
       } else if (frame <= 15) {
-        draw(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 3, 0, 0,
+        draw[0](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 3, 0, 0,
              PICTURE_SIZE, PICTURE_SIZE / 2);
-        mirror(canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 3, 0,
+        draw[1](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 3, 0,
                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
       }
     } else {
       if (frame <= 3)
-        draw(canvas, work->sheet, 0, 0, PICTURE_SIZE, PICTURE_SIZE);
+        draw[0](canvas, work->sheet, 0, 0, PICTURE_SIZE, PICTURE_SIZE);
       else if (frame <= 7)
-        draw(canvas, work->sheet + PICTURE_BYTES, 0, 0, PICTURE_SIZE,
+        draw[0](canvas, work->sheet + PICTURE_BYTES, 0, 0, PICTURE_SIZE,
              PICTURE_SIZE);
       else if (frame <= 11)
-        draw(canvas, Ram_MapCellBuffer, 0, 0, PICTURE_SIZE, PICTURE_SIZE);
+        draw[0](canvas, Ram_MapCellBuffer, 0, 0, PICTURE_SIZE, PICTURE_SIZE);
       else if (frame <= 15)
-        draw(canvas, Ram_MapCellBuffer + PICTURE_BYTES, 0, 0, PICTURE_SIZE,
+        draw[0](canvas, Ram_MapCellBuffer + PICTURE_BYTES, 0, 0, PICTURE_SIZE,
              PICTURE_SIZE);
     }
 
@@ -253,8 +252,11 @@ void Func_0816a2d8(struct BattleEffectArgument *effect, s32 variant) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (variant == 3) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
-    Iwram_ClearWords((void *)0x06004000, 0x3c00);
-    Iwram_ClearWords(canvas, 0x3c00);
+    /* FAKEMATCH(wrapper): both clears forwarded through ClearWords_, which sets
+     * the size for each call and holds the routine; as Iwram_ClearWords called
+     * directly, 14 of 469 instructions differ in tla-en. */
+    ClearWords_((void *)0x06004000, 0x3c00);
+    ClearWords_(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     SummonEffect_RunCanvasMode2(effect);
   } else {

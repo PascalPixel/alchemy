@@ -1,21 +1,40 @@
 // Draft, differ 265 of 410, skeleton gap 67 (tla-en, 2026-11-01)
-// Control flow, calls, arguments and fields are the native's. The row loop
-// walks the table as bytes (row += 8, t[row + n]) through a pointer: that is
-// what took the gap from 101 to 67, but biv elimination then folds t + row into
-// one pointer, where the native keeps row * 8 (r7) and row * 8 + 4 (r11) as
-// offsets from a base it re-loads from the pool at each loop's tail. What is
-// left is loop.c: the native keeps gData_02003780's address inside the wait
-// loop (10 real insns, life 1: threshold * savings * lifetime passes, so this
-// compiler always moves it), and keeps 14 - i and the row's address inside the
-// cell loop; here they sit a level out and push the work pointer to a high
-// register, so its reads gain a mov each. Native: leader r6, work r7, level r8,
-// &motionFlags r10, map r9.
+// Control flow, calls, arguments and fields are the native's. The body kept here
+// is the best device-free form; the row loop walks the table as bytes through a
+// pointer, and biv elimination folds t + row where the native keeps row * 8 (r7)
+// and row * 8 + 4 (r11). Native: leader r6, work r7, level r8, &motionFlags r10,
+// map r9, row r7, m r8, n r4, row pointer r6, 14 - i r5, table r9, n << 16 r10.
+// Why the native keeps things in its loops, found with the loop dump:
+// - Wait loop: the address load is moved at 10 real insns and stays at 18, with
+//   two unused s16 counters stepped in the for (one is not enough). The whole
+//   loop then matches. Plain C for the extra insns is not found.
+// - Cell loop: 14 - i and the row pointer stay when each is a local set twice in
+//   the loop, s32 a = 0 then a = 14 - i, and likewise p: the set count stops
+//   scan_loop and flow drops the dead default. This gives the native's
+//   movs r5, #14 / subs r5, r5, r2. S2's Default note covers it, but alone it
+//   measures worse (differ 291, gap 93).
+// - Pass loop: the guard's table + row is forced out with the table load. A copy
+//   b = row set twice non-consecutively stops it, b = 0; n = 0; b = row inside a
+//   one-pass block so cse1 keeps b; the loads at both tails then appear.
+// - The m counter and level are one s16: the native's r8 for both, and this puts
+//   work in r7. With the devices above m and level shared took differ 245 to 240.
+// - z = row + 4 declared before the continue: differ 240 to 193, gap 74 to 47.
+// - A row-level z is not reduced to r11 (benefit 2); gData_02002ff0[b + 4] twice
+//   in the body is, and so is the n << 16 counter, but then the table is a fresh
+//   ldr at the cell guard, not mov r9, r1.
+// Best with those devices: differ 168 (gap 64) or 193 (gap 47), so they came back
+// out, as differ 0 was not reached. Left in that form: the table + row sum is
+// merged by PRE with the guard's (the native's guard uses r1, its body r9, and
+// cprop here makes them one), the copy spilled to sp+12 is propagated away at
+// the pass tail, and row and n fall a register down.
+// Natural rows[row].field with the same defaults: 288, gap 84; with b, 255, 93.
 // Measured without gain: the symbol as u8[] with no pointer (gap 114), the
 // pointer reset per row or per m pass (95, 111), a struct pointer (113), z or x
 // through the array (120, 106), the new level as its own variable (87), one-pass
-// blocks round the two cell calls (102; they do keep cse1 from merging 14 - i,
-// but the matched constants are still moved), and a goto wait loop written as
-// the native's strength-reduced counter (68, differ 242; not a form to keep).
+// blocks round the two cell calls (102 and 86, the latter with shared a and p), a
+// goto wait loop written as the native's strength-reduced counter (68, differ
+// 242; not a form to keep), m and level shared in this body (277), table set in
+// the for tests through t1, t2, t3 (differ 278, gap 116).
 // Sixteen steps adding gData_02003788 to Data_02004030's level,
 // gData_02003780 frames apart, carrying the leader when it stands on cell 232,
 // then the cells for the new level from the gData_02002ff0 rows, as

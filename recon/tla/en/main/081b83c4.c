@@ -1,4 +1,4 @@
-// Draft, differ 2778 of 3555, skeleton gap 524 (tla-en, 2026-11-01): the
+// Draft, differ 358 of 3555, skeleton gap 80 (tla-en, 2026-11-01): the
 // casino's four-dice game, built like LuckyDice_Run (four dice in a round dome,
 // Slots_DomePicture): A throws for a bet of ten coins a level. A pair, two
 // pairs, a triple or four of a kind (Func_081b834c, banners Slots_OnePairBanner
@@ -9,20 +9,27 @@
 // rounds, the last the final game; a miss loses everything. Winnings are
 // counted into the coins a coin a frame (state 4). The dice bounce off the
 // dome's round wall, settle to a face and are drawn back to front with their
-// shadows; palettes of the banners pulse with Func_081b810c. The same calls,
-// tables, sprite words and control flow as the listing. Left: the frame is 752
-// bytes against the native 756, so every stack local sits 4 low, and scheduling
-// and allocation in most rows. Open: the insertion sort reads a die's z as
-// [dice + (n * 28 + 8)] where this forms [(dice + n * 28)
-// + 8] (spelling it through casts, an s32 view or an array pointer did not
-// reach it); the affine loop hoists all four volatile addresses where the
-// listing hoists only the last; the throw loop's spinRate write stays indexed
-// only with startSpin, and its 300 is still moved out of the loop; argument
-// order before Graphics_ScaleRgb555BufferB decides whether the state 1 and 5
-// tails cross-jump to one call. cellBuffer is one pointer for the whole
-// function, which is why the listing reloads it at every use; zero is the row
-// the throw's coin redraw passes. The message names stand for 0xd68 to 0xd6a
-// and 0xd77 to 0xd7e; the resources are directory entries 0x85 to 0x97.
+// shadows; palettes of the banners pulse with Func_081b810c. The stack frame,
+// every spill slot and the register allocation now agree with the listing, and
+// the draft is 10 instructions long. What closed it: the dice sit in a struct
+// (DiceWork), so a read is [dice + (n * 28 + 8)]; the throw indexes
+// particles[index] and x is (index * 24 - 108) << 16, so its pointers are
+// reduced givs and the loop is long enough to leave 0 and 300 in it; the
+// dice's scale is written out at both divides with no local. Left, biggest
+// first: (1) the affine loop hoists all four frame addresses; the listing
+// hoists only sp+132. The dump gives life 15, 18, 20, 23 at savings 2, and the
+// thresholds cannot refuse the first three at 51 insns; one-pass blocks and an
+// array do not reach it. All the 40-odd pool offset rows after about 2100
+// follow from this size. (2) The banner's second bannerY = 64 is deleted by
+// CSE skipping the if above it; the listing keeps it. Spelled so CSE cannot
+// see it the draft falls to differ 315, which is a device, not the source.
+// (3) The first throw's zero is hoisted; the listing sets it in the loop and
+// still reads it after. (4) A store then a load in one block: the listing
+// keeps the store first (gRenderOamEnabled, the opening stores, bet, the sort
+// and draw loop preheaders). A one-pass block moves the first, so the rest
+// look like the load model (K2), which is out of scope here. No device is kept:
+// none reaches differ 0. The message names stand for 0xd68 to 0xd6a and 0xd77
+// to 0xd7e; the resources are directory entries 0x85 to 0x97.
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -39,6 +46,10 @@ struct DiceParticle {
   s32 velocityY;
   s32 velocityZ;
   s32 variant;
+};
+
+struct DiceWork {
+  struct DiceParticle particles[4];
 };
 
 struct DiceOam {
@@ -113,23 +124,17 @@ void wait(s32 frames);
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
 
-#define DICE_GAME_THROW(dice, spinRate)                                        \
+#define DICE_GAME_THROW(dice, spinRate, ZERO)                                  \
   {                                                                            \
-    s32 x_ = -0x6c0000;                                                        \
-    struct DiceParticle *die_ = (dice);                                        \
     for (index = 0; index != 4; index++) {                                     \
-      zero = 0;                                                                \
-      die_->z = zero;                                                          \
-      die_->y = 0x600000;                                                      \
-      die_->x = x_;                                                            \
-      die_->velocityX = ((Random16() & 127) - 64) << 12;                       \
-      die_->velocityY = ((Random16() & 15) + 48) << 13;                        \
-      die_->velocityZ = ((Random16() & 127) + 64) << 13;                       \
-      die_->variant = Random16() % 0x4800;                                     \
-      startSpin = 300;                                                         \
-      (spinRate)[index] = startSpin;                                           \
-      x_ += 0x480000;                                                          \
-      die_++;                                                                  \
+      (dice)->particles[index].z = ZERO;                                       \
+      (dice)->particles[index].y = 0x600000;                                   \
+      (dice)->particles[index].x = (index * 24 - 108) << 16;                   \
+      (dice)->particles[index].velocityX = ((Random16() & 127) - 64) << 12;    \
+      (dice)->particles[index].velocityY = ((Random16() & 15) + 48) << 13;     \
+      (dice)->particles[index].velocityZ = ((Random16() & 127) + 64) << 13;    \
+      (dice)->particles[index].variant = Random16() % 0x4800;                  \
+      (spinRate)[index] = 300;                                                 \
     }                                                                          \
   }
 
@@ -141,13 +146,13 @@ void Func_081b83c4(void) {
   s32 groundPoint[3];
   s32 screen[3];
   s32 drawOrder[4];
-  volatile u16 affineD;
-  volatile u16 affineC;
-  volatile u16 affineB;
   volatile u16 affineA;
+  volatile u16 affineB;
+  volatile u16 affineC;
+  volatile u16 affineD;
   u16 *spritePalette;
   u8 *cellBuffer;
-  struct DiceParticle *dice;
+  struct DiceWork *dice;
   struct DiceSprites *sprites;
   struct DiceCamera *camera;
   u8 *resourceAddress;
@@ -170,7 +175,6 @@ void Func_081b83c4(void) {
   s32 stoppedDice;
   struct RenderInput *window;
   s32 zero;
-  s32 startSpin;
   s32 index;
   s32 otherIndex;
   s32 digits;
@@ -292,9 +296,9 @@ void Func_081b83c4(void) {
   REG_WIN1H = 240;
   REG_WIN1V = 160;
 
-  state = 0;
-  resultKind = 0;
   total = 0;
+  resultKind = 0;
+  state = 0;
   round = 0;
   timer = 0;
   slide = 0;
@@ -308,20 +312,21 @@ void Func_081b83c4(void) {
   {
     struct DiceParticle *die;
 
-    die = dice;
+    die = dice->particles;
     for (index = 0; index != 4; index++) {
       die->x = ((Random16() & 127) - 64) << 16;
-      die->y = 0;
+      zero = 0;
+      die->y = zero;
       die->z = ((Random16() & 127) - 64) << 16;
       die->x = Trig_Sin(index << 14) * 100;
-      die->y = 0;
+      die->y = zero;
       die->z = Trig_Cos(index << 14) * 100;
       die->velocityX = ((Random16() & 127) - 64) << 14;
       die->velocityY = ((Random16() & 31) + 32) << 12;
       die->velocityZ = ((Random16() & 127) - 64) << 14;
       die->variant = (Random16() % 6) * 0xc00;
       spinRate[index] = 300;
-      numbers[index] = 0;
+      numbers[index] = zero;
       die++;
     }
   }
@@ -374,7 +379,7 @@ void Func_081b83c4(void) {
           Sound_PlayFar(302);
           Window_CloseFar(sprites->helpWindow, 1);
           Sound_PlayFar(302);
-          DICE_GAME_THROW(dice, spinRate);
+          DICE_GAME_THROW(dice, spinRate, zero = 0);
           bet = Party_GetAverageLevelFar() * 10;
           if ((u32)bet > (u32)gMainRoutineWork.coins)
             bet = gMainRoutineWork.coins;
@@ -395,7 +400,7 @@ void Func_081b83c4(void) {
       } else if (timer > 0) {
         if (++timer == 16) {
           Sound_PlayFar(302);
-          DICE_GAME_THROW(dice, spinRate);
+          DICE_GAME_THROW(dice, spinRate, 0);
           state = 2;
         }
       } else if (gInput.repeat & 2) {
@@ -475,15 +480,16 @@ void Func_081b83c4(void) {
       struct DiceParticle *other;
 
       stoppedDice = 0;
-      die = dice;
+      die = dice->particles;
       for (index = 0; index != 4; index++, die++) {
         s32 wallX, wallZ;
 
         die->x += die->velocityX;
         die->y += die->velocityY;
         die->z += die->velocityZ;
-        other = dice;
-        for (otherIndex = 0; otherIndex != 4; otherIndex++, other++) {
+        otherIndex = 0;
+        other = dice->particles;
+        for (; otherIndex != 4; otherIndex++, other++) {
           if (index != otherIndex) {
             s32 separationX, separationY, separationZ, separation;
 
@@ -727,9 +733,9 @@ void Func_081b83c4(void) {
         if (++timer == 16) {
           Window_CloseFar(sprites->helpWindow, 1);
           if (cashOut == 0) {
+            target = total;
             round++;
             state = 1;
-            target = total;
             window = Window_CreateFar(4, 16, 21, 4, 6);
             sprites->helpWindow = window;
             if (total == 24) {
@@ -894,6 +900,8 @@ void Func_081b83c4(void) {
     // The double-up rounds won, the final-game or round lamps, and the
     // multiplier.
     if (round > 0) {
+      s32 multiplierDigits;
+
       for (index = 0; index != 4; index++) {
         sprites->oam[spriteCount].attr01 =
             (((0x200 + index * 16) & 0x1ff) << 16) | 0x40000002;
@@ -925,17 +933,17 @@ void Func_081b83c4(void) {
         spriteCount++;
       }
       if (multiplier <= 9)
-        digits = 1;
+        multiplierDigits = 1;
       else if (multiplier <= 99)
-        digits = 2;
+        multiplierDigits = 2;
       else if (multiplier < 1000)
-        digits = 3;
+        multiplierDigits = 3;
       else if (multiplier <= 9999)
-        digits = 4;
+        multiplierDigits = 4;
       else
-        digits = 5;
+        multiplierDigits = 5;
       sprites->oam[spriteCount].attr01 =
-          (((560 - digits * 10) & 0x1ff) << 16) | 0x40000018;
+          (((560 - multiplierDigits * 10) & 0x1ff) << 16) | 0x40000018;
       sprites->oam[spriteCount].attr2 = 0x9118;
       spriteCount++;
       spriteCount = Func_081b8180(spriteCount, 48, 20, multiplier, 10, 5);
@@ -946,19 +954,20 @@ void Func_081b83c4(void) {
     if (state == 1) {
       s32 x;
       s32 wobble;
+      s32 left;
 
       x = (timer > 0 && lower == 1) ? timer * 12 + 64 : 64;
       wobble = lower == 0 ? Trig_Sin((frame << 10) & 0x7fff) >> 14 : 0;
-      x += slide * 15;
+      left = x + slide * 15;
       if (target <= 23)
-        spriteCount =
-            Func_081b8180(spriteCount, x - 110, wobble + 60, target + 1, 14, 2);
+        spriteCount = Func_081b8180(spriteCount, left - 110, wobble + 60,
+                                    target + 1, 14, 2);
       x = (timer > 0 && lower == 0) ? timer * 12 + 64 : 64;
       wobble = lower == 1 ? Trig_Sin((frame << 10) & 0x7fff) >> 14 : 0;
-      x += slide * 15;
+      left = x + slide * 15;
       if (target > 4)
-        spriteCount =
-            Func_081b8180(spriteCount, x - 110, 94 - wobble, target - 1, 15, 2);
+        spriteCount = Func_081b8180(spriteCount, left - 110, 94 - wobble,
+                                    target - 1, 15, 2);
       for (index = 0; index != 3; index++) {
         s32 column;
 
@@ -985,8 +994,6 @@ void Func_081b83c4(void) {
 
     // Double up or cash out.
     if (state == 5) {
-      s32 x;
-
       for (index = 0; index != 5; index++) {
         s32 column;
 
@@ -1016,51 +1023,68 @@ void Func_081b83c4(void) {
       s32 x;
       s32 y;
       s32 angle;
+      s32 doubled;
+      s32 wave;
 
       x = (timer << 4) - 376;
       y = 48;
       if (x > 100)
         x = 100;
       if (state == 5) {
-        angle = (slide << 12) + 0x1000;
-        x = (Trig_Cos(angle) * 40 >> 16) - (timer << 4);
-        x += 56;
+        angle = slide << 12;
+        angle += 0x1000;
+        x = (Trig_Cos(angle) * 40 >> 16) - (timer << 4) + 56;
         y = 48 - (Trig_Sin(angle) * 48 >> 16);
       } else if (resultKind != 0) {
         if (timer > 67) {
-          angle = (timer - 68) * 1489;
+          s32 elapsed = timer - 68;
+
+          angle = elapsed * 1489;
           x = (Trig_Cos(angle) * 48 >> 16) + 52;
           y = 48 - (Trig_Sin(angle) * 48 >> 16);
         }
       } else if (timer > 67) {
-        x = ((timer * 2 - 128) * Trig_Sin((timer << 12) - 0x40000) >> 16) + 100;
-        y = (timer * 2 + timer) * 2 - 360;
+        doubled = timer * 2;
+        wave = doubled - 128;
+        x = (Trig_Sin((timer << 12) - 0x40000) * wave >> 16) + 100;
+        doubled += timer;
+        doubled *= 2;
+        y = doubled - 360;
       }
       if (x >= -31)
         spriteCount = Func_081b8274(spriteCount, x, y, total, 12, 2);
       if (timer > 30 || (state == 5 && resultKind != 0)) {
-        x = (timer << 4) - 620;
-        y = 64;
+        s32 bannerX;
+        s32 bannerY;
+
+        bannerX = (timer << 4) - 620;
+        bannerY = 64;
         if (timer > 37)
-          x = 60;
+          bannerX = 60;
         if (state == 5) {
-          y = 64;
-          x = slide * 24 + 60;
+          bannerY = 64;
+          bannerX = slide * 24 + 60;
         } else if (timer > 67) {
-          x = ((timer * 2 - 136) * Trig_Sin((timer << 12) - 0x44000) >> 16) +
-              60;
-          y = (timer * 2 + timer) * 2 - 344;
+          doubled = timer * 2;
+          wave = doubled - 136;
+          bannerX = (Trig_Sin((timer << 12) - 0x44000) * wave >> 16) + 60;
+          doubled += timer;
+          doubled *= 2;
+          bannerY = doubled - 344;
         }
         sprites->oam[spriteCount].attr01 =
-            (((x + 512) & 0x1ff) << 16) | ((y + 256) & 255) | 0xc0000000;
+            (((bannerX + 512) & 0x1ff) << 16) | ((bannerY + 256) & 255) |
+            0xc0000000;
         sprites->oam[spriteCount].attr2 = 0xd200;
         spriteCount++;
         sprites->oam[spriteCount].attr01 =
-            (((x + 576) & 0x1ff) << 16) | ((y + 256) & 255) | 0xc0000000;
+            (((bannerX + 576) & 0x1ff) << 16) | ((bannerY + 256) & 255) |
+            0xc0000000;
         sprites->oam[spriteCount].attr2 = 0xd240;
         spriteCount++;
       }
     }
+
 
     // The dice, back to front.
     for (index = 0; index != 4; index++)
@@ -1070,7 +1094,8 @@ void Func_081b83c4(void) {
 
       sortedDie = drawOrder[index];
       for (otherIndex = index - 1;
-           otherIndex >= 0 && dice[drawOrder[otherIndex]].z > dice[sortedDie].z;
+           otherIndex >= 0 &&
+           dice->particles[drawOrder[otherIndex]].z > dice->particles[sortedDie].z;
            otherIndex--)
         drawOrder[otherIndex + 1] = drawOrder[otherIndex];
       drawOrder[otherIndex + 1] = sortedDie;
@@ -1079,18 +1104,16 @@ void Func_081b83c4(void) {
       struct DiceParticle *die;
       s32 x;
       s32 y;
-      s32 half;
 
-      die = &dice[drawOrder[index]];
+      die = &dice->particles[drawOrder[index]];
       Render_ProjectPoint(die, screen);
       if (screen[2] < 0x15e)
         screen[2] = 0x15e;
       if (screen[2] > 0x28a)
         screen[2] = 0x28a;
       spriteDepth[drawOrder[index]] = screen[2] - 0x15e;
-      half = spriteDepth[drawOrder[index]] / 4 + 64;
-      x = screen[0] - 0xc00 / half;
-      y = screen[1] - 0x800 / half;
+      x = screen[0] - 0xc00 / (spriteDepth[drawOrder[index]] / 4 + 64);
+      y = screen[1] - 0x800 / (spriteDepth[drawOrder[index]] / 4 + 64);
       if (y + 92 > -16) {
         sprites->oam[spriteCount].attr01 =
             ((drawOrder[index] << 25) | (((x + 632) & 0x1ff) << 16) |
@@ -1104,7 +1127,7 @@ void Func_081b83c4(void) {
     {
       struct DiceParticle *die;
 
-      die = dice;
+      die = dice->particles;
       for (index = 0; index != 4; index++, die++) {
         s32 x;
         s32 y;

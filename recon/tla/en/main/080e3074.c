@@ -1,6 +1,23 @@
-// Draft, differ 449 of 713: the native keeps the work in r9, the owner in r10
-// and the canvas in r8 (here sl, r8 and others) and builds the palette ramp's
-// three terms before its loop; the rest follows from that allocation.
+// Draft, differ 16 of 713, skeleton gap 8 (tla-en, 2026-11-01)
+// Allocation and every shape match: what is left is order, at five sites.
+// Measured causes follow. Together the fixes below reach differ 2, but they are
+// devices that do not reach 0, so they stay out of this source:
+// - Palette loop (6): scheduled exactly in RTL order. Stepping green by hand
+//   (green = 16 << 5; for (...; j++, green += 32)) with the store in a one-pass
+//   block closes it; the block's loop notes are the barrier.
+// - canvas->x, canvas->y (4): the native issues the ldrsh after the adds r2, #4
+//   and movs r5 then lands in its load delay. A one-pass block from
+//   'canvas = ...' to the canvas->x store closes it, its end note being the
+//   barrier; it needs ring->scaleY = zero, with zero = 0 set inside the block.
+// - The two 999 loops (2 each): the native moves 999 out of the loop in the
+//   first loop pass and the state address in the second. The hoist threshold
+//   here is 15 real insns and the loop has 15; one more in the first pass
+//   does it, shown by a dead 'i = frame;' after frame++. The plain source of
+//   that insn is not found (compare spellings, locals and casts do nothing).
+// - Last spin loop (2): the native has strh, movs r2, ldr r3, lsls r2, the
+//   load held back one cycle after the store (K2 load model; ordering this
+//   needs Pascal). Not closed: a local for 0x400 is combined back into the add,
+//   and an asm use to keep it loses the 0x1000 hoist.
 // A field Psynergy that whirls the effect owner up in a
 // canvas-drawn whirlwind and carries it to the place Func_080e2264 found.
 // The heap slot 0x5c work (0x1b38 bytes) is shared with Func_080e2ec0,
@@ -80,6 +97,8 @@ void Func_080e3074(void) {
   s32 mode;
   s32 frame;
   s32 i, j;
+  s32 blue, c;
+  s32 point;
 
   BattleEffect_InitializeSharedScene();
   Func_080e2264();
@@ -87,8 +106,11 @@ void Func_080e3074(void) {
   owner->update = BattleEffect_SpinObject;
   owner->action = owner->angle;
   palette = (u16 *)0x050003c0;
-  for (i = 0; i < 16; i++)
-    *palette++ = ((i + 16) << 5) | (31 << 10) | (i + 16);
+  blue = 31 << 10;
+  for (j = 0; j < 16; j++) {
+    c = j + 16;
+    *palette++ = (c << 5) | blue | c;
+  }
   Func_080eb824();
   canvas = Ram_HeapSlots->unkec[1];
   pos[0] = (*(struct Actor **)(effect + 16))->x;
@@ -145,8 +167,10 @@ void Func_080e3074(void) {
     mode = 3;
   else if (*(s16 *)(event + 0xd3c) != -1)
     mode = 2;
-  else
-    mode = points[0] != -1;
+  else {
+    point = points[0];
+    mode = point != -1;
+  }
 
   if (mode == 3) {
     if (work->kind)
@@ -159,9 +183,9 @@ void Func_080e3074(void) {
     Camera_MoveWithinMapBounds(-1, -1, -1, 0);
     Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y, owner->z);
     Actor_SetSingleChildFlagsFar(owner, 0);
-    frame = 0;
     Actor_SetSpritePriority(*(s16 *)(effect + 24), 1);
     owner->motionFlags = 0;
+    frame = 0;
     wait(1);
     work->to[0] = *(s16 *)(event + 0xd40) << 16;
     work->to[1] = owner->y + 0x200000;

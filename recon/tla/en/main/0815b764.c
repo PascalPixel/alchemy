@@ -1,26 +1,39 @@
-// Draft, differ 1641 of 1932, skeleton gap 401 (tla-en, 2026-11-01)
-// BattleEffect_RunUlysses: the same calls and control flow as the listing.
-// Most of the gap is scheduling and allocation following from the frame: 160
-// here, 152 in the listing, whose spill slots from the top read effect, canvas,
-// transition, frame, sprites, dmaArmed, skip, blit, shipZ, shipX, loaded, draw,
-// frame - 108, verts, model, sparks, &texture, delay, block two's verts and j,
-// the anchor pointer, frame * 2 - 184, frame - 92, &req.
-// Left to find:
-// - battle is spilled here and sits in r10 in the listing. The constants 0x3c00
-//   and 0x06004000 take r8 and r10 here; the listing has no register for them,
-//   so reload rebuilds them at each use. That one change clears many hunks.
-// - frame - 92 stays unreduced: as a user variable it loses copy_cost and as a
-//   temporary its benefit is only add_cost, so loop.c rejects it (the listing
-//   keeps it and frame * 2 - 184 at sp+12 and sp+16). A second, uncombined copy
-//   of the expression would raise the benefit; CSE and GCSE merged all tried.
-// - delay and i * 448 are reduced here, not in the listing: particles[i + 8]
-//   shares i * 8 and i * 7 with them. A real anchor pointer stops the i * 7
-//   sharing and brings the frame to 156, but the gap rises to 424.
-// - bg2pa and bg2pd: the listing does a discarded ldrh before each strh, as a
-//   store to a volatile 16-bit field would; not tried, it would be a device.
-// - The first colour loop's v & 31 mask is hoisted in the listing; here its life
-//   of 1 fails loop.c's test. The last loop's *src read combines into ldrsh;
-//   a volatile src closes that hunk, also a device.
+// Draft, differ 1025 of 1932, skeleton gap 303 (tla-en, 2026-11-01)
+// BattleEffect_RunUlysses: same calls and control flow as the listing.
+// The largest step left is a device, so it is not in this draft: forward every
+// Iwram_FillWords and Iwram_ClearWords through local inlines, as f143d80.c does
+// (CopyWords needs none). That alone gives differ 625, gap 217, instruction
+// count 1929 and the listing's frame of 152: each call keeps its own constants,
+// battle takes r10, and 0x3c00 and 0x06004000 stop taking r8 and r10 (they were
+// single-block pseudos, so local-alloc placed them first). Here the frame is 156.
+// Plain forms tried for that sharing, none works: set-once locals per call, a
+// one-pass block around the fills, around one fill, or around the wait. GCSE
+// merges the constants across a one-pass block. Tag it if adopted (S2).
+// Left, all measured with the forwards in place:
+// - p is r7 here and r6 in the listing, and every r6 and r7 below follows from
+//   it. p has 127 refs over 298 insns, just under floor_log2's step to 7; a
+//   (20 refs over 28, set twice) wins r6. (u16)Random16() sets a once and gives
+//   p r6 (differ 599) but loses the listing's 0xffff ands. Masks tried: u32, raw
+//   local, % 0x10000, cast, swapped operands; all stay set twice.
+// - The first colour loop: 31 is hoisted to r6 in the listing, here life 1 fails
+//   loop.c's test, and movs stays in the loop. Hoisting needs the set after g and
+//   b, which then moves the ands after the shift. r = 31; r &= v has the right
+//   shape. The pool 0x1f also rises into the prologue here.
+// - bg2pa and bg2pd: the discarded ldrh before each strh (2 missing instructions,
+//   as in 0816c6f8). A volatile form would be a device.
+// - Unsettled: alpha's registers (value and address swapped), and the order of
+//   x and w in block one's blits. Loading x and y before the sizes gave 631,
+//   against 625, though the listing's load order suggests it once p is in r6.
+// Settled, keep these: t = frame - 92 is declared after its own range test, so
+// GCSE leaves two givs that combine and reduce (sp+12, sp+16); anchor = p + 8
+// and the spark row as a variable keep i * 8 and i * 448 unreduced; req is copied
+// as one 8-byte struct; the sheet pointer after the loop is its own variable; each
+// particle loop has its own p, with i set before it; pal is indexed; x, vx and t
+// stay in locals, t reloaded inside each sound test.
+// Spill slots from the top: effect, canvas, transition, frame, sprites, dmaArmed,
+// skip, blit, shipZ, shipX, loaded, draw, frame - 108, verts, model, sparks,
+// &texture, delay, block two's verts and j, anchor, frame * 2 - 184, frame - 92,
+// and &req as a caller save.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -142,7 +155,12 @@ extern const u8 Data_08198674[];
 extern const s8 Data_081986aa[];
 extern const u8 Data_08198654[];
 extern const u8 Data_0819865b[];
-extern const s32 Data_08196e54[2];
+struct PlacementSource {
+  s32 unk00;
+  s32 unk04;
+};
+
+extern const struct PlacementSource Data_08196e54;
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
 extern const u8 gData_08199210[];
@@ -172,16 +190,14 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   s32 shipX;
   s32 loaded;
   s32 draw;
-  s32 t;
   s32 i;
   u8 *cells;
+  u8 *picture;
   s32 place[4];
   DrawRectangle blits[2];
-  struct EffectStep *p;
-  struct EffectStep *q;
   struct ModelTexture texture;
   struct ModelTexture texture2;
-  s32 req[2];
+  struct PlacementSource req;
   u8 *battle;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -195,11 +211,14 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     volatile u16 *c = (volatile u16 *)(BG_PLTT + 96);
 
     for (i = 0; i != 128; i++, c++) {
-      u16 v = *c;
-      s32 r = v & 31;
-      s32 g = (u16)((v >> 5) & 31);
-      s32 b = (u16)((v >> 10) & 31);
+      s32 v = *c;
+      s32 r = 31;
+      s32 g;
+      s32 b;
 
+      r &= v;
+      g = (u16)(((u16)v >> 5) & 31);
+      b = (u16)(((u16)v >> 10) & 31);
       if (g == 0) {
         if (b > 0) {
           b--;
@@ -258,18 +277,18 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       *cells += 128;
     }
   }
-  cells = work->sheet + 0x1781;
-  blits[0](canvas, cells, 24, 8, 80, 112);
+  picture = work->sheet + 0x1781;
+  blits[0](canvas, picture, 24, 8, 80, 112);
   work->transferPending = 1;
   wait(1);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress((s32)&ResourceId_Data178, work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0B3, cells, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0B3, picture, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data137, sprites, 0, 0);
-  transition[4] = 1;
   loaded = 0;
   shipX = 0xc80000;
   shipZ = 0x540000;
+  transition[4] = 1;
   Iwram_ClearWords(canvas, 0x3c00);
   REG_DISPCNT = 0x7141;
   wait(1);
@@ -283,6 +302,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       draw = 0;
     }
     if (frame == 0) {
+      struct EffectStep *p;
+
       if (!loaded) {
         Task_Add(BattleEffect_ProcessPendingBlock2Transfer, 0xc8f);
         Task_Add(Display_ApplyBg2Affine, 0xcff);
@@ -297,8 +318,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       work->transferMode = 2;
       work->transferValue = 75;
       Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_Data150), 128);
-      p = work->particles;
-      for (i = 0; i != 9; i++, p++) {
+      for (i = 0, p = work->particles; i != 9; i++, p++) {
         p->variant = -2 * i;
         p->x = (Random16() & 15) + 60;
         p->y = (Random16() & 15) + 44;
@@ -307,21 +327,25 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     if (frame <= 75) {
       s32 k = (frame / 4) % 18;
       s32 x = 60 - ((Trig_Sin(frame * 860) << 3) >> 16);
+      u8 *source = work->sheet + 0x1781 + Data_08198686[k];
       u8 w = Data_08198662[k];
+      s32 y = frame - 8;
       u8 h = Data_08198674[k];
 
-      blit[1](canvas, work->sheet + 0x1781 + Data_08198686[k], x - (w >> 1),
-              frame - 8 - (h >> 1), w, h);
+      blit[1](canvas, source, x - (w >> 1), y - (h >> 1), w, h);
     }
     if ((u32)(frame - 76) <= 31) {
-      p = work->particles;
-      for (i = 0; i != 4; i++, p++) {
+      struct EffectStep *p;
+
+      for (i = 0, p = work->particles; i != 4; i++, p++) {
         if ((u32)p->variant <= 17) {
           s32 k = p->variant / 3;
+          s32 side = i & 1;
+          u8 *source = work->sheet + gData_0819747a[k];
           u8 w = gData_08197467[k];
 
-          blit[i & 1](canvas, work->sheet + gData_0819747a[k], p->x - (w >> 1),
-                      p->y + gData_08197473[k] - 32, w, gData_0819746d[k]);
+          blit[side](canvas, source, p->x - (w >> 1),
+                     p->y + gData_08197473[k] - 32, w, gData_0819746d[k]);
         }
         p->variant++;
       }
@@ -330,10 +354,12 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 16;
     }
     if ((u32)(frame - 108) <= 8) {
-      REG_BLDALPHA = ((frame - 108) * 512) | 16;
+      s32 alpha = (frame - 108) * 512;
+
+      REG_BLDALPHA = alpha | 16;
     }
-    t = frame - 92;
-    if ((u32)t <= 39) {
+    if ((u32)(frame - 92) <= 39) {
+      s32 t = frame - 92;
       s32 z = Trig_Cos(t * 800) / 3 + 0x10000;
       s32 q16;
       s32 level = -1;
@@ -357,7 +383,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         for (i = 0; i != 32; i++) {
           s32 g = (i * ((level * 9 * 4) / 16)) / 64;
 
-          *pal++ = ((i * level * 3) / 64) << 10 | g;
+          pal[i] = ((i * level * 3) / 64) << 10 | g;
         }
       }
       if (frame == 116) {
@@ -368,10 +394,16 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       volatile u16 *c = (volatile u16 *)BG_PLTT;
 
       for (i = 0; i != 64; i++, c++) {
-        u16 v = *c;
-        s32 r = (v & 31) - 3;
-        s32 g = ((u16)((v >> 5) & 31)) - 3;
-        s32 b = ((u16)((v >> 10) & 31)) - 3;
+        s32 v = *c;
+        s32 low = 31;
+        s32 r;
+        s32 g;
+        s32 b;
+
+        low &= v;
+        r = low - 3;
+        g = ((u16)(((u16)v >> 5) & 31)) - 3;
+        b = ((u16)(((u16)v >> 10) & 31)) - 3;
 
         if (r < 0)
           r = 0;
@@ -379,7 +411,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           g = 0;
         if (b < 0)
           b = 0;
-        *c = g << 5 | b << 10 | r;
+        *c = b << 10 | g << 5 | r;
       }
     }
     if (frame == 132) {
@@ -400,14 +432,16 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_Data13A), 128);
     }
     if (frame == 133) {
-      const s8 *src = Data_081986aa;
+      const s8 *src;
+      struct EffectStep *p;
+      struct EffectStep *q;
 
       Iwram_FillWords(canvas, 0x3c00, 0);
       Iwram_ClearWords((void *)0x06004000, 0x3c00);
       REG_DISPCNT = 0x7541;
+      src = Data_081986aa;
       q = (struct EffectStep *)(work->sheet + 0x4b98);
-      p = work->particles;
-      for (i = 0; i != 6; i++, p++, src += 5) {
+      for (i = 0, p = work->particles; i != 6; i++, p++, src += 5) {
         p->variant = -8 * i;
         p->x = src[0] << 16;
         p->y = src[1] << 16;
@@ -432,66 +466,78 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       void *verts;
       struct RenderModel *model;
       struct EffectStep *sparks;
+      struct EffectStep *p;
+      struct EffectStep *q;
+      s32 shade;
       s32 j;
 
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       sparks = (struct EffectStep *)(work->sheet + 0x4b98);
+      shade = 0;
       if (frame > 196) {
         Func_0815f0a0((s32)&ResourceId_Data150);
       }
       texture.logWidth = 6;
       texture.logHeight = 6;
       model->kind = 7;
-      model->shade = 0;
+      model->shade = shade;
       model->texture = &texture;
       model->mesh = gData_08199340;
       model->vertices = verts;
-      p = work->particles;
-      for (i = 0; i != 6; i++, p++) {
+      for (i = 0, p = work->particles; i != 6; i++, p++) {
         s32 delay = i * 8;
-        s32 t = ++p->variant;
+        struct EffectStep *anchor = p + 8;
+        s32 t;
 
-        if (t == 0) {
+        if (++p->variant == 0) {
           Sound_PlayFar(138);
         }
-        if (p->variant == 60) {
-          Sound_PlayFar(212);
-        }
-        if (p->variant == 64) {
-          Sound_PlayFar(134);
-        }
         t = p->variant;
+        if (t == 60) {
+          Sound_PlayFar(212);
+          t = p->variant;
+        }
+        if (t == 64) {
+          Sound_PlayFar(134);
+          t = p->variant;
+        }
         if ((u32)t <= 35) {
           s32 k = (t / 6) % 6;
+          u8 *source = work->sheet + gData_0819747a[k];
           u8 w = gData_08197467[k];
 
-          blits[0](canvas, work->sheet + gData_0819747a[k], HI(p->x) - (w >> 1),
+          blits[0](canvas, source, HI(p->x) - (w >> 1),
                    HI(p->y) + gData_08197473[k] - 36, w, gData_0819746d[k]);
           t = p->variant;
         }
         if ((u32)(t - 12) <= 31) {
           s32 k = ((t - 12) / 4) % 18;
+          u8 *source = work->sheet + 0x1781 + Data_08198686[k];
           u8 w = Data_08198662[k];
           u8 h = Data_08198674[k];
 
-          blit[1](canvas, work->sheet + 0x1781 + Data_08198686[k],
+          blit[1](canvas, source,
                   HI(p->x) - (w >> 1), HI(p->y) - (h >> 1), w, h);
           t = p->variant;
         }
         if ((u32)(t - 44) <= 21) {
           s32 s = (Trig_Sin((t - 44) << 10) * 48) / 64;
-          s32 mx = p->x - 0x400000;
+          s32 vx;
+          s32 x = p->x;
+          s32 mx = x - 0x400000;
           s32 my = p->y - 0x400000;
           s32 u = t - 59;
 
           if (u < 0) {
             u = 0;
           }
+          vx = p->velocityX;
           p->y += p->velocityY;
-          p->x += p->velocityX;
-          if (p->x <= 0x3fffff) {
-            p->velocityX += 0x8000;
+          x += vx;
+          p->x = x;
+          if (x <= 0x3fffff) {
+            p->velocityX = vx + 0x8000;
           }
           if (p->y <= 0x3bffff) {
             p->velocityY += 0x8000;
@@ -517,9 +563,13 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           t = p->variant;
         }
         if (t == 64) {
-          work->particles[i + 8].x = HI(p->x);
-          work->particles[i + 8].y = HI(p->y);
-          q = sparks + i * 16;
+          anchor->x = HI(p->x);
+          anchor->y = HI(p->y);
+          {
+            s32 first = i * 16;
+
+            q = sparks + first;
+          }
           for (j = 0; j != 16; j++, q++) {
             s32 a = Random16() & 0xffff;
             s32 sp = (Random16() & 15) + 8;
@@ -527,8 +577,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             q->variant = (Random16() & 7) + 8;
             q->x = p->x;
             q->y = p->y;
-            q->velocityX = (sp * Trig_Sin(a)) / 4;
-            q->velocityY = (sp * Trig_Cos(a)) / 4;
+            q->velocityX = (Trig_Sin(a) * sp) / 4;
+            q->velocityY = (Trig_Cos(a) * sp) / 4;
           }
           for (j = 0; j != effect->count; j++) {
             s32 m = (Random16() << 2) + 0x10000;
@@ -542,8 +592,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           s32 k = ((p->variant - 64) / 2) % 6;
 
           blit[1](canvas, work->sheet + 0x1e97 + k * 0x780,
-                  work->particles[i + 8].x - 20,
-                   work->particles[i + 8].y - 24, 40, 48);
+                  anchor->x - 20, anchor->y - 24, 40, 48);
         }
       }
       q = sparks;
@@ -616,8 +665,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     }
 
     if ((u32)(frame - 108) <= 179) {
-      req[0] = Data_08196e54[0];
-      req[1] = Data_08196e54[1];
+      req = Data_08196e54;
       if (frame > 131) {
         s32 u = frame - 132;
 
@@ -629,29 +677,30 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         for (i = 0; i != 7; i++) {
           place[0] = (Data_08198654[i] << 16) + shipX - 0x200000;
           place[2] = (Data_0819865b[i] << 16) + shipZ - 0x200000;
-          Render_ApplyProjectedPlacementFar(work->objects[i], place, req, 0);
+          Render_ApplyProjectedPlacementFar(work->objects[i], place, (s32 *)&req, 0);
         }
       }
     }
     if (frame > 265) {
+      struct EffectStep *p;
+
       if (frame == 266) {
         REG_BG2X = -0x7000;
         REG_BG2PA = 0x100;
         REG_BG2PD = 0x100;
-        p = work->particles;
-        for (i = 0; i != 32; i++, p++) {
+        for (i = 0, p = work->particles; i != 32; i++, p++) {
           p->x = Random16() % 48 + 40;
           p->y = Random16() % 96 + 16;
           p->variant = -i / 2;
         }
       }
-      p = work->particles;
-      for (i = 0; i != 32; i++, p++) {
+      for (i = 0, p = work->particles; i != 32; i++, p++) {
         if ((u32)p->variant <= 23 && draw) {
           s32 k = (p->variant / 4) % 6;
+          u8 *source = work->sheet + gData_0819747a[k];
           u8 w = gData_08197467[k];
 
-          blits[0](canvas, work->sheet + gData_0819747a[k], p->x - (w >> 1),
+          blits[0](canvas, source, p->x - (w >> 1),
                    p->y + gData_08197473[k] - 48, w, gData_0819746d[k]);
         }
         p->variant++;
@@ -708,14 +757,20 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     volatile u16 *dst = (volatile u16 *)(BG_PLTT + 96);
 
     for (i = 0; i != 128; i++) {
-      u16 v = *src++;
-      s32 r = v & 31;
-      s32 g = (u16)((v >> 5) & 31);
-      s32 b = (u16)((v >> 10) & 31);
-      s32 nr = r + frame - 30;
-      s32 ng = g + frame - 40;
-      s32 nb = b + frame - 30;
+      s32 v = *src++;
+      s32 r = 31;
+      s32 g;
+      s32 b;
+      s32 nr;
+      s32 ng;
+      s32 nb;
 
+      r &= v;
+      g = (u16)(((u16)v >> 5) & 31);
+      b = (u16)(((u16)v >> 10) & 31);
+      nr = r + frame - 30;
+      ng = g + frame - 40;
+      nb = b + frame - 30;
       if (nr < 0) {
         nr = 0;
       } else if (nr > r) {

@@ -1,4 +1,4 @@
-// Draft, differ 197 of 563, skeleton gap 83 (tla-en, 2026-11-01)
+// Draft, differ 42 of 563, skeleton gap 38 (tla-en, 2026-11-01)
 // Starts the ring of Func_080e807c round the caster. Unless the ring is
 // already up (the event work's byte at 0xcac), it clears BG0's map and a
 // 0x2000-byte picture on BG0 (heap slot 96), and for 64 frames sparkles
@@ -9,23 +9,37 @@
 // 0x1ed, OBJ palette 15) start orbiting 64 pixels out from the caster, one
 // frame apart. Either way the ring is marked up for 600 frames (0xcae) and
 // Func_080e807c runs as a frame callback.
-// Left: the instruction count is 3 short and almost all of the gap is
-// reordered pairs in sched2. IwramFillWords and 0x2000 are issued early, ahead
-// of calls, because the draft's address is a constant where the listing's
-// pool holds a symbol (the same as 0817e698). The one real difference: the
-// native copies the position pointer from its spill (sp 4) to r8 for the
-// motes' loop; a copy (s32 *place = pos, or = position) is removed by gcse's
-// copy propagation, so the loop reloads sp 4 (about 6 rows of the gap). A
-// mismatch that remains in allocation: the native keeps the timer in r8 and
-// the shared counter i in r10, here the other way round; a counter of its own
-// for the rings' loop is worse (57 more differ). Evidence that shaped this:
-// the frame's spill order is the declaration order (pos last); a halfword
-// zero is what the pool's 0 is, and it crosses Task_Add and wait, so `off`;
-// BG0CNT's value is set before its address so r3 keeps the DMA channel and
-// reload turns the address into subs r3, #204 (`control`, two statements);
-// the 999 store is a struct field, whose constant is split, where a cast
-// pointer loads it from the pool; the setup loop's sprite is an index, its
-// mote a pointer stepped after i, or -13 is hoisted out of the loop.
+// Left: only sched2 order; every register and the instruction count agree.
+// 1. Five orders need a store ranked one cycle higher than the compiler ranks
+// it, which no source change here gives: the spill of work before the lsls of
+// the heap base (16 feeds the load at 25, cost 2, prio 23 against 24); the
+// four zero/one spills before the lsls of 0xcac; tile's spill at sp 24 before
+// the two lsls; and strb r6 before movs r2, #0, which with `off` a leaf store
+// also puts ldr r6 above movs r1, #144 (prio 4 where 5 ties it). A store
+// ranked +1 in arm_priority_cost would fit all of them; untested, a compiler
+// question for Pascal (K2). `ldr r4, [sp, #40]` before ldr r0 is the
+// same-address reload that the load rule makes wait.
+// 2. Three orders need a scheduling barrier: IwramFillWords' ldr r6 stays below
+// the gBgScroll stores, 0x2000 below the first fill (with mov r9, r0 and the
+// pool branch after them), and lsls r2 before subs r3, #204, a tie on forward
+// dependents that a barrier after the BG0CNT store would settle. A once-only
+// block round each fill measures 28 and is the form Func_080e7fec's tagged
+// device has for the same map clear, but no device reaches 0 while part 1
+// stands, so none is kept; the FillWords_ forwarder changes nothing.
+// Evidence that shaped this: registers came from the reload order of the
+// preheaders. i = 0 comes before every loop's pointers (197 to 169). `place` is
+// set from `position` inside the motes' loop, so loop.c hoists a copy of gcse's
+// reaching register into r8, the native's copy of sp 4: set outside the loop,
+// loop.c deletes it (169 to 105), and pos reused for it costs 100 to 250. The
+// mote sprite is an index, a giv set after those hoisted constants, and its
+// byte 5 store falls between byte 9's two (66 to 42). The setup loop's sprite
+// is an index, its mote a pointer stepped after i, or -13 is hoisted. The
+// frame's spill order is the declaration order (pos last); a halfword zero is
+// what the pool's 0 is, and it crosses Task_Add and wait, so `off`; Task_Add is
+// s32; case 0 and 1 both set phase before timer; BG0CNT's value is a local so
+// r3 keeps the DMA channel and reload makes subs r3, #204 (`control`); the 999
+// store is a struct field, whose constant is split, where a cast pointer loads
+// it from the pool.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -89,7 +103,7 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 slot, s32 size, const void *data);
 void Resource_ResetEntry(s32 slot);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Func_080e807c(void);
 void Func_080e7f94(u8 *canvas, s32 radius, s32 angle, s32 color);
 void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
@@ -145,9 +159,11 @@ void Func_080e82cc(void) {
       gBgScroll[0].y = 64 - y;
     }
     Iwram_FillWords((void *)0x06002000, 0x800, 0);
+
     HeapSlot_Release(96);
     picture = HeapSlot_AllocEwram(96, 0x2000);
     Iwram_FillWords(picture, 0x2000, 0);
+
     wait(1);
     Dma_Set(picture, (void *)0x06000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x800,
             REG_DMA3);
@@ -161,8 +177,7 @@ void Func_080e82cc(void) {
         Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
     entry = Resource_FindFreeEntry();
     tile = VramCache_Load(entry, 0x100, work);
-    mote = work->sparks;
-    for (i = 0; i < 64; i++, mote++) {
+    for (i = 0, mote = work->sparks; i < 64; i++, mote++) {
       sprite = &work->sparkSprites[i];
       Func_080eaf98(sprite, 4, 4, 0, tile);
       sprite->oam.palette256 = 1;
@@ -187,7 +202,7 @@ void Func_080e82cc(void) {
     do {
       if (drawing) {
         radius = spin;
-        for (i = 7; i >= 0; i--) {
+        for (i = 0; i < 8; i++) {
           Func_080e7f94(picture, 0x340000, radius, 243);
           Func_080e7f94(picture, 0x350000, radius, 247);
           Func_080e7f94(picture, 0x360000, radius, 251);
@@ -196,8 +211,7 @@ void Func_080e82cc(void) {
         }
         canvas->command = CANVAS_UPLOAD_TO_BG;
       }
-      mote = work->sparks;
-      for (i = 0; i < 64; i++, mote++) {
+      for (i = 0, mote = work->sparks; i < 64; i++, mote++) {
         sprite = &work->sparkSprites[i];
         if (mote->timer == 0) {
           s32 heading = angle + ((i & 1) << 15);
@@ -234,8 +248,8 @@ void Func_080e82cc(void) {
           angle = turn;
         }
         if (timer == 32) {
-          timer = -1;
           phase = 2;
+          timer = -1;
         }
         break;
       case 2:
@@ -258,29 +272,29 @@ void Func_080e82cc(void) {
       s32 heading;
       s32 moteEntry = Resource_FindFreeEntry();
       s32 moteTile = VramCache_Load(moteEntry, 0x200, work);
+      s32 *place;
 
       work->entry = moteEntry;
       work->tile = moteTile;
       work->sparkling = 1;
       work->orbiting = 1;
-      mote = work->motes;
-      sprite = work->sprites;
-      for (i = 0; i < 32; i++) {
+      for (i = 0, mote = work->motes; i < 32; i++) {
         heading = Random16();
+        sprite = &work->sprites[i];
         Func_080eaf98(sprite, 8, 8, 0x40000000, moteTile);
         sprite->depth = 240;
         sprite->oam.priority = 0;
-        sprite->oam.palette = 15;
         sprite->oam.palette256 = 0;
+        sprite->oam.palette = 15;
         sprite->angle = heading + 0x4000;
-        pos[0] = scene->mainObject->x;
-        pos[1] = scene->mainObject->y + 0x100000;
-        pos[2] = scene->mainObject->z;
-        sprite++;
-        Camera_WorldToScreen(pos);
-        Vector_AddPolarOffset(0x400000, heading, pos);
-        mote->x = pos[0];
-        mote->y = pos[2];
+        place = position;
+        place[0] = scene->mainObject->x;
+        place[1] = scene->mainObject->y + 0x100000;
+        place[2] = scene->mainObject->z;
+        Camera_WorldToScreen(place);
+        Vector_AddPolarOffset(0x400000, heading, place);
+        mote->x = place[0];
+        mote->y = place[2];
         mote->timer = -i;
         mote++;
       }

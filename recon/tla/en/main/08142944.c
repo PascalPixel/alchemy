@@ -1,4 +1,4 @@
-// Draft, differ 264 of 734, skeleton gap 72 (tla-en, 2026-11-01)
+// Draft, differ 234 of 734, skeleton gap 58 (tla-en, 2026-11-01)
 
 // No twin: an effect new to ⚓️, reached from the scenes through the
 // far-call table (table_47.s) with a kind of 78, 79 or 80. Its frame is the
@@ -7,20 +7,44 @@
 // by the IWRAM renderer (Render_AllocateModelList, Render_TransformVertices,
 // Render_DrawModelList), as 0813d098's star is.
 
-// Left: the control flow, loops and induction variables follow the listing
-// and the rest of the skeleton gap is allocation. The native keeps the
-// centre's address in r11 and spills the corners and both burst coordinates;
-// here global.c ranks the corners just ahead of the centre's address (42/174
-// against 108/469), so the corners take r11, the burst's y a register and the
-// centre's address a stack slot. That one swap moves most registers, the
-// slots and the scheduling around it. The ranking needs the corners' live
-// length above about 39% of the loop's (now 37%) or two more references to
-// the centre's address. The native frame is 80 bytes with sp+40 unused.
-
-// Tried: named temporaries for the transforms' arguments (copy propagation
-// removes them, the live lengths do not move); a pointer to the centre in or
-// out of the loop; start = table; start += 48 drops differ to 247 but loses
-// the native's copy of the table byte.
+// Left: one allocation swap. The native keeps the centre's address in r11 and
+// spills the corners and the burst's y; here global.c ranks the corners
+// (14 refs over 173 insns, priority .243) just ahead of the centre's address
+// (27 over 462, .234), so the corners take r11, y a register and the address a
+// stack slot, and the frame is 76 instead of 80. The refs can be read off the
+// listing, so the native's differ must be in live lengths or in one more
+// reference: 28 refs at 462 is enough, or 27 with the loop at 447 or less, or
+// the corners at 184 or more. Proof the swap is the cause: reading the ring
+// loop's corners through model->corners (one wrong instruction) gives frame 80,
+// differ 95, skeleton 31.
+//
+// Left after that swap, measured under that trial:
+// - The preheader: the native sets index (-96) before the centre's address.
+// - The flash preheader's scratch registers start one rotation away (index in
+//   r4, pool r0, zero r1, 15 r2 in the native).
+// - model->depthBias = 0: the native's zero is in r0 and its base reloaded in
+//   r1, between the two texture masks. No statement position of the eight tried
+//   gives it; zero seems to be set while r2 and r3 are busy.
+// - The second model block's order, which the trial itself disturbs.
+// - The crystal table byte: `start += 48` gives start r1 and bias r0 as the
+//   native has them (15 refs beat bias's 15 over a shorter life) but loses
+//   `ldrb r3; adds r1, r3, #0`; `Data[i] + 48` keeps the copy and swaps r0, r1.
+//
+// Found this round: draw[2] for the unused word at sp+40. The flash pointer is
+// a giv of a base outside the loop, `flashes = &gData_02014000[index]` and
+// `flash = &flashes[k]`, set after the hoisted constants as the native's is.
+// `speed = 31; speed &= Random16()` gives `movs r5, #31; ands r5, r0`; the
+// constant set moves below the call.
+//
+// Tried for the swap: center as s32[3] (no change); a pointer to the centre in
+// or out of the loop; named temporaries for the transforms' arguments (copy
+// propagation removes them); an empty asm reading &center after the call
+// (PRE loses the hoist, the address becomes a doubled spilled pseudo), in the crystal
+// before the read (43 refs, the address outranks frame and takes r10) or after
+// it (26 refs): none kept. The two hoisted copies at the flash and at cx match
+// as one movable, so only one preheader ref reaches the address; unmatching them would
+// be the 28th ref, but both sources are the same register. The crystal's read is
+// single-use and so substituted, which is why only it goes through r11.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -149,7 +173,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   struct ModelTexture texture;
   struct BattleEffectWork *work;
   void *canvas;
-  DrawRectangle draw;
+  DrawRectangle draw[2];
   s32 frames;
   s32 frame;
   s32 index;
@@ -161,7 +185,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = 0x1010;
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_ADDITIVE, CLIP));
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x3000, 0,
@@ -242,12 +266,15 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
         s32 x = ((Random16() & 63) + center.x / 2 - 32) << 16;
         s32 y = ((Random16() & 31) + center.y) << 16;
         s32 k;
-        struct EffectStep *flash;
+        struct EffectStep *flashes = &gData_02014000[index];
 
-        flash = &gData_02014000[index];
-        for (k = 0; k != 2; k++, flash++) {
-          s32 speed = Random16() & 31;
-          s32 angle = Random16();
+        for (k = 0; k != 2; k++) {
+          struct EffectStep *flash = &flashes[k];
+          s32 speed = 31; // Set first: the mask is the tied operand.
+          s32 angle;
+
+          speed &= Random16();
+          angle = Random16();
 
           flash->x = x + (((Random16() & 15) - 8) << 16);
           flash->y = y + (((Random16() & 15) - 8) << 16);
@@ -261,7 +288,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
 
         for (i = 0; i != 16; i++, flash++) {
           if (flash->variant >= 0 && flash->variant <= 17) {
-            draw(canvas, work->sheet + (flash->variant / 3 << 11),
+            draw[0](canvas, work->sheet + (flash->variant / 3 << 11),
                  HI(flash->x) - 16, HI(flash->y) - 48, 32, 64);
             BattleEffectKernels_IntegrateVector2(flash, 62, -0x800);
             flash->variant++;
@@ -304,8 +331,8 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
 
       corners = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
-      model->depthBias = 0;
       texture.logWidth = 5;
+      model->depthBias = 0;
       texture.logHeight = 2;
       texture.pixels = work->sheet + 0x3000;
       model->kind = 7;
@@ -345,9 +372,10 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       texture.logHeight = 6;
       model->model = gData_081990d0;
       for (i = 0; i != 4; i++) {
-        s32 start = Data_081977ec[i] + 48;
+        s32 start = Data_081977ec[i];
 
         model->shade = (frame * 8 + i * 32) & 127;
+        start += 48;
         if (frame > start) {
           s32 bias = (start - frame) * 8 + 56;
 

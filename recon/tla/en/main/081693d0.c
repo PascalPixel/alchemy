@@ -1,23 +1,13 @@
-// 2026-10-26 (round 5): differ 109 of 1632 (1631 here). A statement-move search
-// set tiles after Func_0813ba50 and REG_BLDCNT among the serpent's start
-// values: 129 to 109. Before that, the sprite tiles are copied through their
-// own pointer, tile, set from tiles after the decode, so tiles stays in a
-// register from the prologue as the native's r8: 141 to 129 (tiles + i * 0x400
-// instead: 281). Moving or widening the palette copy's one-pass block changes
-// nothing (141 or 129); without either block 250. Left: the palette copy's
-// 0x200 is shared with the sheet's step here (the native builds it twice), the
-// tiles in sl rather than r8, one spill slot (sp+24 against the native's sp+28)
-// and scheduling rows. Draft, differ 141 of 1632 (1629 here; 2026-10-26: two
-// tagged one-pass blocks from a device sweep, before the serpent's palette copy
-// and after each tile copy, 270 to 153, and BattleEffect_LoadBlitter returning
-// s32, as nibble_pair.c defines it, to 141; 270 was this draft's count before,
-// the 360 below an older one): BattleEffect_RunNeptune, summon 6
-// (BattleEffect_RunSceneEffect's case 6, actflags 0x8006), The Broken Seal's
-// BattleEffect_RunNeptune as The Lost Age reworked it.
+// Draft, differ 42 of 1632, skeleton gap 20 (tla-en, 2026-11-01)
+// BattleEffect_RunNeptune, summon 6 (BattleEffect_RunSceneEffect's case 6,
+// actflags 0x8006), The Broken Seal's BattleEffect_RunNeptune as The Lost Age
+// reworked it; the twin is confirmed by its statements, order and declarations.
+// No FAKEMATCH device is left: the two one-pass blocks came out.
 
-// Twin: ☀️ BattleEffect_RunNeptune (games/tbs/src/effect/effect.c), with The
-// Lost Age's changes: no BattleEffect_SpawnObjects; instead its own object
-// build (the palette by Iwram_CopyWords to OBJ palette 0x200, the tiles by
+// Twin: ☀️ BattleEffect_RunNeptune
+// (games/tbs/src/battle_effect/battle_effect/neptune.c), with The Lost Age's
+// changes: no BattleEffect_SpawnObjects; instead its own object build (the
+// palette by Iwram_CopyWords to OBJ palette 0x200, the tiles by
 // Resource_DecodeType01 into the map cell buffer, eight
 // Func_0815b290(32, 32, 0x80002000, 0) with priority 1 and a 1 KB tile copy
 // each to 0x06010000 + gResourceTableEntries[slot].offset, as summons 4 and 24
@@ -26,18 +16,35 @@
 // words after the first act; blitter modes 3 and 19 for The Broken Seal's 3
 // and 2.
 
-// Left: allocation (spill slots, and the tile pointer the native holds in r8
-// from the start) and order.
+// Left: order only. The instructions, registers, spill slots and frame all
+// agree; every remaining row is sched2 placing a store after what the native
+// issues it before. Sites: REG_BLDCNT against the serpent's stack stores
+// (a search of all 720 orders of those six statements finds nothing better);
+// the outgoing arguments of the two z-capped-at-4 glow draws, the frame 214
+// draw, the sea's draw, the first two pillar draws and the spark draw, each
+// against the stack or constant work before `draw`'s load; the strh before
+// frame = 0 in act two; and the pillar loop's i = 0 against its two hoisted
+// slot stores. The stores all feed a load after them (the blitter's pointer
+// through sp+20, gBgScroll), so the native ranks a store before a load higher
+// than alchemy-gcc does. That is a question about the scheduling model, K2's
+// -mthumb-slow-loads, and out of a draft's hands. No device can close the glow
+// draws: the native's stores fall inside the split of 0x5520, so a barrier
+// cannot sit between them.
 
-// Tried (differ), in effects trial 2 (2026-10-15): the first port (449); the
-// tile pointer in a local set first (446); work declared right after the
-// canvas, found by a greedy scan of declaration positions (360); alchemy
-// permute 6 minutes: 349 with a reused variable, not kept. Renaming the locals
-// for this draft left 360. alchemy permute 10 minutes, 2 jobs, on this draft
-// (2026-10-15): 278 to 298, each only through an invented temporary (the
-// 0x03000000 base held in the frame variable, the canvas in a two-word array,
-// a spare u16 pointer), not kept; they say the native holds the heap base in
-// a register the frame later takes.
+// What carried it from 113 to 42, all plain C: every copy goes through The
+// Broken Seal's typed Iwram_CopyWords inline (iwram_call.h's layer there): the
+// inline keeps the size out of CSE, so 0x200 is built twice and the copy's
+// address gets its own pseudo, r6 then r9; tiles + i * 0x400 rather than a
+// stepped pointer, so loop.c's reduced giv rebuilds 0x400 in the loop and the
+// base stays in r8; tiles = gMapCellBuffer, set after the three heap slots
+// (first, it takes r0 and rotates them); pillarX in its inner block, so it
+// takes sp+24 below the hoisted sheet at sp+28.
+
+// Tried, no gain: a local for z * 2 (none; glintSize worse, 58); a local for
+// the cell address; locals for 104 and 17 at the pillars; a local for the sea's
+// 32 (145); frame = 0 above the display writes (44); one-pass round them (44);
+// REG_BLDCNT at each other position; a stepped pillar pointer (342); one-constant
+// locals or a do-while in place of the inline (253 at best).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -101,6 +108,15 @@ struct SpriteObject {
 
 struct ScaledSprite;
 
+// The Broken Seal's typed inline from iwram_call.h, the layer every call goes
+// through there.
+#undef Iwram_CopyWords
+static inline s32 Iwram_CopyWords(volatile void *destination,
+                                  const volatile void *source, s32 size) {
+  return Iwram_CopyWordsEntry((void *)destination, (const void *)source, size);
+}
+
+extern u8 gMapCellBuffer[];
 extern char ResourceId_SeaSerpentTiles;
 extern char ResourceId_DuskCloudsBackdrop;
 extern char ResourceId_Data134; // ☀️ ParticleSpritesA
@@ -175,7 +191,6 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   s32 *transition;
   s32 j;
   s32 splashes;
-  s32 pillarX;
   s32 frame;
   s32 beamFrame;
   s32 i;
@@ -189,17 +204,16 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   struct Scale scale;
   s32 ground = 112;
   u8 *tiles;
-  u8 *tile;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   cells = Ram_HeapSlots->unk64[0];
+  tiles = gMapCellBuffer;
 
   // Open the canvas over a dark backdrop; BG2 is drawn at half scale
   // below the line the IRQ handler picks.
   BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
-  tiles = Ram_MapCellBuffer;
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0;
   Task_Add(Graphics_ResetBg2Pa, TASK_PASS_FRAME);
@@ -215,15 +229,9 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
   {
     u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_SeaSerpentTiles);
-    /* FAKEMATCH(one-pass): an empty one-pass block before the palette copy;
-     * as plain C, 157 of 1632 instructions differ in tla-en (here 141). */
-    do {
-    } while (0);
-
     Iwram_CopyWords((void *)0x05000200, sheet, 0x200);
     sheet += 0x200;
     Resource_DecodeType01(sheet, tiles);
-    tile = tiles;
     for (i = 0; i != 8; i++) {
       struct SpriteObject *object = Func_0815b290(32, 32, 0x80002000, 0);
 
@@ -231,12 +239,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
       work->objects[i] = object;
       Iwram_CopyWords(
           (void *)(0x06010000 + gResourceTableEntries[object->slot].offset),
-          tile, 0x400);
-      /* FAKEMATCH(one-pass): an empty one-pass block after each tile copy;
-       * as plain C, 274 of 1632 instructions differ in tla-en (here 141). */
-      do {
-      } while (0);
-      tile += 0x400;
+          tiles + i * 0x400, 0x400);
     }
   }
   gCameraSceneParameters[4] = 240;
@@ -603,6 +606,8 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
         else
           pillar->variant++;
         if (pillar->y > 111) {
+          s32 pillarX;
+
           splashes = 0;
           pillarX = pillar->x;
           if (pillar->variant <= 7)

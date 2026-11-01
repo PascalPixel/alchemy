@@ -1,14 +1,26 @@
-// Draft, differ 330 of 615, skeleton gap 76 (tla-en, 2026-11-01)
-// BattleEffect_RunStarMine: same length, calls, control flow and frame. What is
-// left is reload's register choice, which sched2 then orders differently: the
-// constants at the end of the mirror loops, the 0 kept in r5 across the first
-// calls (here sched2 hoists the sheet's 0x700 into r5 instead), the homing
-// arithmetic, where velocityX takes r2 instead of r3, and the drop burst's k
-// spill. The stack slots of i * 8 and firstDrop are also swapped. Declaring the
-// mirror counters inside their loops, sharing i with the half loop, the throw
-// loop's own pointer and spark set inside its loop each closed a real gap.
-// Tried with no gain: declaration orders of dx, dy, dz, a, b and k, shifts in
-// the differences, a separate counter for half * 8, loop initialiser orders.
+// Draft, differ 20 of 615, skeleton gap 6 (tla-en, 2026-11-01)
+// BattleEffect_RunStarMine: same length, calls, control flow, frame, slots and
+// registers. Plain C, no devices. Two things are left.
+// - sched2 issues a stack reload too early in three places: `ldr r3, [sp, #24]`
+//   at the top of the mirror loop, `ldr r0, [sp, #44]` before the star loop and
+//   `ldr r7, [sp, #52]` after the member's modulo. The sched2 dump ranks the
+//   first at priority 6 against the 4 of `movs r0, #200`, which the listing
+//   issues first. That is -mthumb-slow-loads' ranking, a compiler question, and
+//   no spelling of the source tried moved it; a barrier cannot make the
+//   listing's interleaving, so no device went in.
+// - velocityZ is written `(dz >> 10) + velocity` to give dz r1 and dx r0, as
+//   the listing has them; the price is `adds r1, r1, r3; str r1` for the listing's
+//   `adds r3, r3, r1; str r3`. Written `+=`, local-alloc ranks dx above dz, the
+//   two swap and differ is 38. Tried with no gain: every order of dx, dy, dz
+//   and a, target->x loaded into b first, two-statement dy and dz,
+//   shifts in place, dz computed between the velocity updates.
+// What closed the rest: i = 0 set in the first loop (sched2 lifts it over the
+// calls); half and firstDrop as counters beside member and memberOffset, whose
+// order gives slots 32, 28, 24, 20; memberOffset set again at the third actor
+// read, so GCSE keeps offset + 36 local; sparks and drops indexed by k, and the
+// last loop's pointer by i, so loop.c builds them after what it hoists; one
+// pointer for the spark loops and the last drop loop; increments in listing
+// order.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -110,6 +122,7 @@ extern u8 gData_02014000[];        // the spray sheet
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 #define BLIT_CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
+#define ACTOR (*(s16 *)((u8 *)effect + actorOffset))
 #define HI(v) (((s16 *)&(v))[1])
 #define STAR_MINE_FRAMES 144
 #define STARS 6
@@ -131,12 +144,15 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
   DrawRectangle blitters[2];
   struct EffectPosition pos;
   struct EffectStep *star;
-  struct EffectStep *spark;
+  struct EffectStep *particle;
   struct EffectStep *drop;
   s32 *camera;
   s32 delay;
+  s32 member;
+  s32 memberOffset;
+  s32 half;
   s32 firstDrop;
-  s32 i = 0;
+  s32 i;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -148,8 +164,8 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
                              1);
 
   // The star: each half of the sheet's 24-wide picture mirrored left to
-  // right and top to bottom.
-  for (; i != 2; i++) {
+  // right and top to bottom. half is i * 8: (half + i) * 64 is i * 576.
+  for (i = 0, half = 0; i != 2; half += 8, i++) {
     u8 *picture = work->sheet + 0x1200 + i * 0x480;
     s32 y;
 
@@ -157,10 +173,14 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       s32 x;
 
       for (x = 0; x != 12; x++) {
-        picture[y * 24 + x] = work->sheet[i * 576 + y * 24 + x * 2 + 1];
-        picture[y * 24 + 23 - x] = work->sheet[i * 576 + y * 24 + x * 2];
-        picture[(47 - y) * 24 + x] = work->sheet[i * 576 + y * 24 + x * 2 + 1];
-        picture[(47 - y) * 24 + 23 - x] = work->sheet[i * 576 + y * 24 + x * 2];
+        picture[y * 24 + x] =
+            work->sheet[(half + i) * 64 + y * 24 + x * 2 + 1];
+        picture[y * 24 + 23 - x] =
+            work->sheet[(half + i) * 64 + y * 24 + x * 2];
+        picture[(47 - y) * 24 + x] =
+            work->sheet[(half + i) * 64 + y * 24 + x * 2 + 1];
+        picture[(47 - y) * 24 + 23 - x] =
+            work->sheet[(half + i) * 64 + y * 24 + x * 2];
       }
     }
   }
@@ -207,12 +227,11 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
     Transform_SetLookAt(camera, camera + 3);
 
     for (i = 0, star = work->particles, delay = 0, firstDrop = 0; i != STARS;
-         i++, star++, delay += 8, firstDrop += 32) {
-      s32 member = i % effect->count;
+         star++, delay += 8, firstDrop += 32, i++) {
       s32 k;
-      struct StarTarget *target =
-          *GetBattleObjectSlotFar(effect->actors[member]);
-      s32 height = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
+      s32 actorOffset;
+      struct StarTarget *target;
+      s32 height;
       s32 picture;
       s32 dx;
       s32 dy;
@@ -220,6 +239,11 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       s32 a;
       s32 b;
 
+      member = i % effect->count;
+      memberOffset = member * 2;
+      actorOffset = memberOffset + 36;
+      target = *GetBattleObjectSlotFar(ACTOR);
+      height = BattleUnit_GetEffectHeightFar(ACTOR) / 2;
       if (star->variant < 0) {
         continue;
       }
@@ -232,13 +256,13 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       if (frame <= delay + 10) {
         continue;
       }
-      a = star->x;
+      dx = target->x - star->x;
       dy = target->y + height - star->y;
       dz = target->z - star->z;
-      dx = target->x - a;
       star->velocityX += dx >> 10;
       star->velocityY += dy >> 10;
-      star->velocityZ += dz >> 10;
+      star->velocityZ = (dz >> 10) + star->velocityZ;
+      a = star->x;
       if (a < 0) {
         a = -a;
       }
@@ -251,18 +275,19 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       }
 
       // Passed its target: the burst.
-      for (k = 0, spark = &work->particles[STARS + delay]; k != 4;
-           k++, spark++) {
-        spark->x = pos.x << 16;
-        spark->y = pos.y << 16;
-        spark->velocityX = ((Random16() & 127) - 64) << 12;
-        spark->velocityY = (192 - (Random16() & 255)) << 10;
-        spark->variant = 0;
+      for (k = 0; k != 4; k++) {
+        particle = &work->particles[STARS + delay + k];
+        particle->x = pos.x << 16;
+        particle->y = pos.y << 16;
+        particle->velocityX = ((Random16() & 127) - 64) << 12;
+        particle->velocityY = (192 - (Random16() & 255)) << 10;
+        particle->variant = 0;
       }
-      for (k = 0, drop = &DROPS[firstDrop]; k != 32; k++, drop++) {
+      for (k = 0; k != 32; k++) {
         s32 angle;
         s32 speed;
 
+        drop = &DROPS[firstDrop + k];
         drop->x = pos.x << 16;
         drop->y = pos.y << 16;
         angle = (Random16() & 0x7fff) + 0x4000;
@@ -273,33 +298,37 @@ void BattleEffect_RunStarMine(struct BattleEffectArgument *effect) {
       }
       Func_081180e8(134);
       Sound_PlayFar(145);
-      BattleEffect_StartActorMotion(effect->actors[member], 1, 0x20000, 0x80000,
+      memberOffset = member * 2;
+      actorOffset = memberOffset + 36;
+      BattleEffect_StartActorMotion(ACTOR, 1, 0x20000, 0x80000,
                                 0x20000, i * 5 + 110);
-      Func_0814cd48(effect->actors[member], 7, 5, member, 16);
+      Func_0814cd48(ACTOR, 7, 5, member, 16);
       work->shakeFrames = 4;
       star->variant = -1;
     }
 
     for (i = 0; i != STAR_SPARKS; i++) {
-      spark = &work->particles[STARS + i];
-      if ((u32)spark->variant <= 23) {
-        if (spark->variant > 1) {
+      particle = &work->particles[STARS + i];
+      if ((u32)particle->variant <= 23) {
+        if (particle->variant > 1) {
           blitters[0](canvas,
-                      work->sheet + 0x4000 + ((spark->variant / 4) << 11),
-                      HI(spark->x) - 16, HI(spark->y) - 32, 32, 64);
+                      work->sheet + 0x4000 + ((particle->variant / 4) << 11),
+                      HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
         }
-        BattleEffectKernels_IntegrateVector2(spark, 60, -0x1000);
-        spark->variant++;
+        BattleEffectKernels_IntegrateVector2(particle, 60, -0x1000);
+        particle->variant++;
       }
     }
-    for (i = 0, drop = DROPS; i != STAR_DROPS; i++, drop++) {
-      if (drop->variant >= 0) {
-        s32 size = (drop->variant >> 3) + 1;
+    for (i = 0; i != STAR_DROPS; i++) {
+      particle = &DROPS[i];
+      if (particle->variant >= 0) {
+        s32 size = (particle->variant >> 3) + 1;
 
         blitters[0](canvas, sprites + gData_08197410[size - 1],
-                    HI(drop->x) - size / 2, HI(drop->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(drop, 60, 0x1000);
-        drop->variant--;
+                    HI(particle->x) - size / 2, HI(particle->y) - size, size,
+                    size * 2);
+        BattleEffectKernels_IntegrateVector2(particle, 60, 0x1000);
+        particle->variant--;
       }
     }
     Func_08158ce0(8, 8);

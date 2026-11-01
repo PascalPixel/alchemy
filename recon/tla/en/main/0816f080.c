@@ -1,18 +1,30 @@
-// Draft, differ 458 of 568, skeleton gap 112 (tla-en, 2026-11-01)
-// Control flow and the 47 calls are in place, and the 68-byte frame agrees.
-// The glow loop's forms set its six stepping pointers: size set before the
-// clear and shared with the drops' size, so it stays in a register for the
-// multiplies; cell computed before the test, so its two stores share one
-// pointer; size - x - 1 kept apart, so y * size + size is added on that
-// register. The third and fourth rows spell (31 - y) * 32 differently because
-// any one spelling folds their sum and scores worse.
-// Left: the native derives all four mirrored pointers from one (32 - y) * 32
-// - 32; here they come from 31 - y and 32 - y separately, with their
-// constants split. No plain spelling found keeps that one temporary.
-// The splash scale: the native holds 25000 in a register and halves it with
-// asr, but any local holding it is propagated here and 12500 is loaded on its
-// own (tried >> 1, a shared local, a do-while loop).
-// The rest is allocation and spills.
+// Draft, differ 276 of 568, skeleton gap 104 (tla-en, 2026-11-01)
+// Control flow, the 47 calls, the 68-byte frame and every stack slot agree.
+// Stack slots gave the declaration order; one glow pointer per use and the
+// gather loop's own stepping pointer put i, the drops and the zero in the
+// listing's registers. Past the glow what is left is mostly reload rotation
+// and the splash scale, so the glow is the first thing to fix.
+//
+// The glow, as the loop dumps show it: the third and fourth pairs are reduced
+// in loop.c's second pass, where their 0x1700-style offsets are already
+// registers and so stay apart (six stepping pointers). The native then has
+// (T + K) + work + size * 2, with T = (32 - y) * 32 - 32 in one register. A
+// constant -32 left in the add value is moved last by fold, so T must be
+// opaque: a local built in consecutive sets, set inside the if, with a short
+// enough life that the first pass finds it not desirable.
+// Left here: the fourth pair still merges, because mirrorRow2 shares the
+// constant 32 with mirrorRow and is forced out in the first pass.
+// Tried: building both from "mirrorRow = 32; mirrorRow -= y" (the third pair
+// merges, differ 306); that for mirrorRow2 only gives the listing's six
+// pointers (skeleton gap 89) but differ 335, as size, single-set, is
+// rematerialised where the native holds it in r11, and reusing size for the
+// vertices spills it instead (and is a temporary device). One mirrorRow per
+// store, a width = 32 local (reduced by the y loop) and a copy mirrorRow2 =
+// mirrorRow were all worse.
+//
+// The splash scale: the native holds 25000 in r9 and halves it with asr. Any
+// local holding it is const-propagated by gcse, which folds the asr through a
+// REG_EQUAL note and hoists 12500 instead; a second set does not stop that.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -45,7 +57,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot,
+                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -62,14 +75,13 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void Actor_SetAnimationSpeedFar(void *object, s32 value);
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -110,22 +122,22 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 // and fades from frame 64. From frame 64 six splashes, four frames apart,
 // rise from the drops, and from frame 80 the target is struck six times.
 void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
-  struct BattleEffectWork *work;
-  void *canvas;
-  u8 *sprites;
-  DrawRectangle draw;
-  void *caster;
   struct ModelTexture texture;
   struct EffectPosition screen;
+  void *canvas;
+  DrawRectangle draw[2];
   s32 frame;
+  u8 *sprites;
+  void *caster;
+  struct BattleEffectWork *work;
   s32 i;
   struct EffectStep *drop;
   struct EffectStep *last;
   u16 *palette;
   s32 size;
 
-  canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
@@ -133,9 +145,10 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   if (effect->side == 0) {
     BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
   } else {
-    BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP_X));
+    BattleEffect_LoadBlitter(104,
+                             BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP_X));
   }
-  draw = BLITTER;
+  draw[0] = BLITTER;
   work->transferMode = 2;
   work->transferValue = 50;
   work->transferMode = 1;
@@ -162,14 +175,23 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         u8 v = work->sheet[y * size / 2 + x];
 
         if (v != 0) {
+          s32 mirrorRow;
+          s32 mirrorRow2;
+
           work->sheet[0x1000 + cell * 2] = v;
           work->sheet[0x1000 + cell * 2 + 1] = v;
           work->sheet[0x1000 + (y * size + (size - x - 1)) * 2] = v;
           work->sheet[0x1000 + (y * size + (size - x - 1)) * 2 + 1] = v;
-          work->sheet[0x1000 + ((size * 2 - y - 1) << 5) + x * 2] = v;
-          work->sheet[0x1000 + ((size * 2 - y - 1) << 5) + x * 2 + 1] = v;
-          work->sheet[0x1000 + (32 - y - 1) * 32 + size * 2 - x * 2 - 2] = v;
-          work->sheet[0x1000 + (32 - y - 1) * 32 + size * 2 - x * 2 - 2 + 1] = v;
+          mirrorRow = 32 - y;
+          mirrorRow <<= 5;
+          mirrorRow -= 32;
+          work->sheet[0x1000 + mirrorRow + x * 2] = v;
+          work->sheet[0x1000 + mirrorRow + x * 2 + 1] = v;
+          mirrorRow2 = 32 - y;
+          mirrorRow2 <<= 5;
+          mirrorRow2 -= 32;
+          work->sheet[0x1000 + mirrorRow2 + (size - x - 1) * 2] = v;
+          work->sheet[0x1000 + mirrorRow2 + (size - x - 1) * 2 + 1] = v;
         }
       }
     }
@@ -181,6 +203,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != WYRD_FRAMES; frame++) {
     struct RenderModel *model;
     void *vertices;
+
     s32 level;
 
     if (frame == 0) {
@@ -194,20 +217,24 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         drop->velocityZ = 160 - i * 16;
         drop->variant = 0;
       }
-      last = &work->particles[63];
-      last->x = (screen.x / 2) << 16;
-      last->y = 0x700000;
-      last->variant = 0;
+      {
+        struct EffectStep *glow = &work->particles[63];
+
+        glow->x = (screen.x / 2) << 16;
+        glow->y = 0x700000;
+        glow->variant = 0;
+      }
     }
 
     // The falling drops, one more every eight frames.
     if (frame <= 63) {
       for (i = 0, drop = work->particles; i != 6; i++, drop++) {
         if (frame > i * 8 && drop->variant == 0) {
-          size = drop->z;
+          s32 dropSize = drop->z;
 
-          draw(canvas, sprites + gData_08197410[size - 1],
-               HI(drop->x) - size / 2, HI(drop->y) - size, size, size * 2);
+          draw[0](canvas, sprites + gData_08197410[dropSize - 1],
+                  HI(drop->x) - dropSize / 2, HI(drop->y) - dropSize, dropSize,
+                  dropSize * 2);
           BattleEffectKernels_IntegrateVector2(drop, 64, 0x8000);
           if (HI(drop->y) > 111) {
             drop->variant = 1;
@@ -231,11 +258,15 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     model->shade = 0;
 
     // The glow gathers what the landed drops bring.
-    last = &work->particles[63];
-    for (i = 0, drop = work->particles; i != 8; i++, drop++) {
-      if (drop->variant > 0) {
-        last->variant += drop->velocityZ;
-        drop->velocityZ /= 2;
+    {
+      struct EffectStep *glow = &work->particles[63];
+      struct EffectStep *landed = work->particles;
+
+      for (i = 0; i != 8; i++, landed++) {
+        if (landed->variant > 0) {
+          glow->variant += landed->velocityZ;
+          landed->velocityZ /= 2;
+        }
       }
     }
     last = &work->particles[63];

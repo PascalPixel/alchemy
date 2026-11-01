@@ -12,15 +12,31 @@
 // differ 325). Text_RenderWideStringInWindow and Window_DrawThreeTileColumn
 // have no prototype in scope, as in the twin's menu object: the implicit int
 // call sets r0, so the argument loads lose a successor in sched2's ready sort.
-// Left: three instructions in the loop preheader. The native sets the -4 of
-// visibleRow * 16 - 4 (movs, negs, str to its spill slot) level with the
-// i * 2 + list chain; here it follows that chain. Sched2 gives the -4 chain
-// priority 3 against 4, so the native's store has one more successor in that
-// block, or that chain is otherwise one longer; nothing found says what it
-// is. Tried without gain: spellings of the offset, for-init and while forms,
-// inner scopes for ability and rangePattern. Swapping the increments
-// (i++, visibleRow++) reorders the bivs but costs differ 180; an inner local
-// for the row or y costs 76 or more.
+// Left: three instructions in the loop preheader, no source difference found.
+// The native sets the -4 of visibleRow * 16 - 4 (movs, negs, str to its spill
+// slot) level with the i * 2 + list chain; here it follows that chain. In
+// sched2's table the block reads ldr 5, mov r1 4, lsls 3, adds 2 (adds waits on
+// the movs r3, #0 it anti-depends on, itself 2), and movs 3, negs 2, str 1.
+// Walking rank_for_schedule by hand, the native's order follows exactly if that
+// str is 3 (movs 5, negs 4), and from no lower value: negs must beat lsls
+// outright, because lsls has more dependents, and str must beat adds. Nothing in
+// the block can depend on the str, and the listing leaves no zero-length insn to
+// supply one. So this looks like the spill store the load model under-costs (a
+// store with nothing after it ranks 3 in the native, 1 here), which is inferred,
+// not tested: a compiler question, out of scope for a draft. A hand-walked
+// barrier reading (-4 first, a loop note before movs r3, #0) also fits the
+// order, but reload's rotation gives -4 r4 only after r1, r2, r3, so -4 stays
+// last in the stream as here.
+// Tried without gain, each measured with the nested function. Stay at 6: a
+// one-constant local for the -4 in the body or around the loop, y as the body's
+// first statement, a 0 local for the row, asm("") at the body's top. Worse:
+// one-pass around the loop 10, around the body 12, asm("") before the loop 8
+// (these never reach this block: loop.c inserts the inits after them), a hand
+// guard and do-while 122, a hand-stepped y 279, guarded 363 with or without
+// asm(""), a mask local 197, a volatile row 356. Earlier: spellings of the
+// offset, for-init and while forms, inner scopes for ability and rangePattern;
+// swapping the increments (i++, visibleRow++) reorders the bivs but costs 180.
+// No device reaches these three, so none is kept.
 #include "types.h"
 #include "window.h"
 #include "uiwindow.h"

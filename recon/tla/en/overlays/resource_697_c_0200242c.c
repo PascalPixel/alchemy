@@ -1,22 +1,14 @@
-// Draft, differ 321 of 879, skeleton gap 99 (tla-en, 2026-11-01). Control flow,
-// calls, arguments and field accesses are the native's; what is left follows
-// from allocation, plus one schedule.
-// The native has map r8, entrance r10, 34 in r10 and 68 in r8 on entrance 55,
-// and one zero in r9 through both courses, with Iwram_MulQ16 and 152 << 16
-// rematerialized. This form has entrance r8, map r10, because local-alloc gives
-// entrance 55's zero r8 (4 refs over 166 insns outranks x1 and x2), which
-// conflicts with map. One zero variable across both branches does give map r8
-// and entrance r10, but that zero then gets no register and the routine's
-// address takes r9 at retry (gap 132, so not kept). On the plain course the
-// zero's pseudo finds no register although nothing listed conflicts with r9;
-// finding out why is the next step, since it decides about 40 lines of the gap.
-// The x and zero variables are per branch on purpose: shared, the 34 stays
-// unallocated on entrance 55 (gap 126). The course's value shares its variable
-// with the deal's sum: a variable of its own costs 16 to 96 lines of gap.
-// Schedule: the native's eors (and adds #6 on entrances 33 and 34) follows the
-// strh run, here it comes right after the first strh. The native's order fits
-// stores chained to each other, but no plain form tried gives that; volatile
-// stores break the rest (gap 173). Literal 34 on the plain course is worse.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// What closed it: the 0 stored into each layer and the pieces' source row are
+// one variable across both courses (row, r9), and on the plain course the 1
+// tested against the entrance is value (r6); each was two pseudos, and a
+// set-once 0 loses r9 to Iwram_MulQ16's address. The macro stores row before it
+// sets x, which gives reload its rotation. One forwarded inline keeps 152 << 16
+// rematerialized. The one-pass blocks and the two temporaries place the eors
+// and adds among the strh run: a load's sign extension hides it from
+// -mthumb-slow-loads, so plain C leaves them 2 to 6 instructions out. If K2's
+// model comes to cover sign-extended loads after stores, try them all plain
+// first.
 //
 // The Trial Road's map setup. In room 1, by entrance:
 // 31 and 32 (or 33 and 34, with a different start) deal the stage order once
@@ -68,28 +60,27 @@ struct TrialRoadDeal {
   s16 field1c;
 };
 
-// The dealt order through a plain pointer: as state->order, 8 more differ.
-#define ORDER(state) ((s16 *)(state))
-
 // Places `layer` `column` cells into the map: its offset (column << 20), its
 // cells and terrain from that column on, and its position from the view. The
 // offset takes the literal, the cells and terrain the column's variable:
-// with the variable in the offset too, CSE keeps a shift of the register
-// (lsls rN, #20) where the native stores the folded constant (33 more
-// differ); with the literal in the cells, the buffer and offset fold into
-// one literal where the native adds 136 to the buffer's address (20 more);
-// through gMapCellBuffer's name rather than Ram_MapCellBuffer, the address
-// stays in a register across the calls where the native reloads it (86
-// more).
+// with the variable in the offset too, CSE keeps a shift of the register;
+// with the literal in the cells, the buffer and offset fold into one literal;
+// through gMapCellBuffer's name, the address stays in a register across calls.
 #define SET_LAYER(column, x)                                                   \
   words = (s32 *)layer;                                                        \
-  x = (column);                                                                \
   words[2] = (column) << 20;                                                   \
+  words[3] = row;                                                              \
+  x = (column);                                                                \
   layer->cells = (struct MapCell *)Ram_MapCellBuffer + x;                      \
-  words[3] = zero;                                                             \
   layer->terrainIds = gMapShapeGrid + x;                                       \
   words[0] = Iwram_MulQ16(*viewX, words[4]) + words[2];                        \
   words[1] = Iwram_MulQ16(*viewZ, words[5]) + words[3]
+
+static __inline__ void Func_020058e0_(s32 id, s32 x, s32 z) {
+  /* FAKEMATCH(wrapper): forwarded inline; as direct calls, 30 of 879
+   * instructions differ in tla-en. */
+  Func_020058e0(id, x, z);
+}
 
 s32 Func_0200242c(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -103,7 +94,6 @@ s32 Func_0200242c(void) {
     s32 value;
     s32 n;
     s32 px;
-    s32 pz;
     u32 i;
 
     if ((u32)(entrance - 31) <= 1) {
@@ -118,12 +108,16 @@ s32 Func_0200242c(void) {
       }
       state->mirrored = (entrance - 1) & 1;
       state->field16[0] = 0;
-      state->field16[1] = 0;
-      state->field1a = 0;
-      state->field1c = 0;
-      value = ORDER(state)[state->field16[0] * 2 + (state->mirrored ^ 1)];
+      do {
+        /* FAKEMATCH(one-pass): the stores' block; as plain stores, 2 of 879
+         * instructions differ in tla-en. */
+        state->field16[1] = 0;
+        state->field1a = 0;
+        state->field1c = 0;
+      } while (0);
+      value = state->order[state->mirrored ^ 1];
       Func_020056c4((s32)gData_02005b84[value & 7]);
-      state->pattern = ORDER(state)[state->field16[0] * 2 + state->mirrored];
+      state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
       n = entrance % 10;
       Event_SetDestination((s32)&SceneId_Ov697Room1, n);
     } else if ((u32)(entrance - 33) <= 1) {
@@ -136,14 +130,35 @@ s32 Func_0200242c(void) {
         Func_02002c30(value);
         GameFlag_SetBit(896);
       }
-      state->mirrored = (entrance - 1) & 1;
-      state->field16[0] = 3;
-      state->field16[1] = 3;
-      state->field1a = 4;
-      state->field1c = 4;
-      value = ORDER(state)[state->field16[0] * 2 + (state->mirrored ^ 1)];
+      {
+        /* FAKEMATCH(temporary): side, for both the store and its flip; as
+         * state->mirrored, 2 of 879 instructions differ in tla-en. */
+        s16 side = (entrance - 1) & 1;
+
+        do {
+          /* FAKEMATCH(one-pass): the first stores' block; as plain stores, 2 of
+           * 879 instructions differ in tla-en. */
+          state->mirrored = side;
+          state->field16[0] = 3;
+          state->field16[1] = 3;
+        } while (0);
+        do {
+          /* FAKEMATCH(one-pass): the last stores' block; as plain stores, 2 of
+           * 879 instructions differ in tla-en. */
+          state->field1a = 4;
+          state->field1c = 4;
+          side ^= 1;
+        } while (0);
+        {
+          /* FAKEMATCH(temporary): index; as state->order[side + 6], 2 of 879
+           * instructions differ in tla-en. */
+          s32 index = side + 6;
+
+          value = state->order[index];
+        }
+      }
       Func_020056c4((s32)gData_02005b84[value & 7]);
-      state->pattern = ORDER(state)[state->field16[0] * 2 + state->mirrored];
+      state->pattern = state->order[state->field16[0] * 2 + state->mirrored];
       n = entrance % 10;
       Event_SetDestination((s32)&SceneId_Ov697Room1, n);
     } else if (entrance == 50) {
@@ -158,20 +173,20 @@ s32 Func_0200242c(void) {
       state->field16[1] = 0;
       state->field1a = 0;
       state->field1c = 0;
-      state->pattern = ORDER(state)[0];
+      state->pattern = state->order[0];
       Event_SetDestination((s32)&SceneId_Ov697Room1, 55);
     } else {
       s32 *viewX = &map->viewX;
       s32 *viewZ = &map->viewZ;
       struct MapLayer *layer;
       s32 *words;
+      s32 row;
 
       if (entrance == 55) {
         s32 x1;
         s32 x2;
-        s32 zero;
 
-        zero = 0;
+        row = 0;
         layer = &map->layers[1];
         SET_LAYER(34, x1);
         layer = &map->layers[2];
@@ -188,10 +203,10 @@ s32 Func_0200242c(void) {
         Func_02005828(x2, 13, 33, 21, x2 + 1, 13);
         value = state->pattern;
         px = gData_02005bac[value][0];
-        pz = gData_02005bac[value][1];
-        Func_02005828(px, pz, 13, 21, 1, 13);
-        Func_02005828(px + 42, pz, 13, 21, x1 + 1, 13);
-        Func_02005828(px + 84, pz, 13, 21, x2 + 1, 13);
+        row = gData_02005bac[value][1];
+        Func_02005828(px, row, 13, 21, 1, 13);
+        Func_02005828(px + 42, row, 13, 21, x1 + 1, 13);
+        Func_02005828(px + 84, row, 13, 21, x2 + 1, 13);
         // The native neither hoists the table's address nor strength-reduces
         // the index; as a for loop, 10 more instructions differ (376).
         i = 0;
@@ -205,14 +220,15 @@ s32 Func_0200242c(void) {
       } else {
         s32 x1;
         s32 x2;
-        s32 zero;
+        s32 destinationY;
 
-        zero = 0;
+        row = 0;
         layer = &map->layers[1];
         SET_LAYER(34, x1);
         layer = &map->layers[2];
         SET_LAYER(68, x2);
-        if (entrance & 1) {
+        value = 1;
+        if (entrance & value) {
           Func_0200217c(0, 0, 102, 13, 9, 0);
           Func_02005828(0, 0, 10, 1, 1, 0);
           Func_02005828(0, 0, 10, 12, 0, 1);
@@ -232,21 +248,22 @@ s32 Func_0200242c(void) {
           Func_02005828(24, 33, 10, 10, 24, 34);
           Func_02005828(58, 33, 10, 10, 58, 34);
           Func_02005828(92, 33, 10, 10, 92, 34);
-          Func_020058e0(9, 160 << 14, 152 << 16);
-          Func_020058e0(10, 192 << 13, 152 << 16);
-          Func_020058e0(11, 184 << 16, 152 << 16);
-          Func_020058e0(12, 200 << 16, 152 << 16);
+          Func_020058e0_(9, 160 << 14, 152 << 16);
+          Func_020058e0_(10, 192 << 13, 152 << 16);
+          Func_020058e0_(11, 184 << 16, 152 << 16);
+          Func_020058e0_(12, 200 << 16, 152 << 16);
         }
         Actor_SetPartAttribute(Actor_GetById(9), 3);
         Actor_SetPartAttribute(Actor_GetById(10), 3);
         Actor_SetPartAttribute(Actor_GetById(11), 3);
         Actor_SetPartAttribute(Actor_GetById(12), 3);
+        destinationY = 13;
         value = state->pattern;
         px = gData_02005bac[value][0];
-        pz = gData_02005bac[value][1];
-        Func_02005828(px, pz, 13, 21, 10, 13);
-        Func_02005828(px + 42, pz, 13, 21, 44, 13);
-        Func_02005828(px + 84, pz, 13, 21, 78, 13);
+        row = gData_02005bac[value][1];
+        Func_02005828(px, row, 13, 21, 10, destinationY);
+        Func_02005828(px + 42, row, 13, 21, 44, destinationY);
+        Func_02005828(px + 84, row, 13, 21, 78, destinationY);
         // A goto loop for the same reason as the one above.
         i = 0;
       hideUnused:
@@ -267,8 +284,9 @@ s32 Func_0200242c(void) {
           // A pointer of its own keeps the state's address in r5 across the
           // calls; through gTrialRoadState each test reloads it (5 more).
           road = gTrialRoadState;
-          // The call's argument reads through the other struct: through the same
-          // one GCSE moves the load into both predecessors (11 more of gap).
+          // The call's argument reads through the other struct: through the
+          // same one GCSE moves the load into both predecessors (11 more of
+          // gap).
           if (road->field16[0] < road->field1a || GameFlag_Test(642)) {
             Func_02000218(road->mirrored,
                           ((struct TrialRoadDeal *)road)->field16[0]);

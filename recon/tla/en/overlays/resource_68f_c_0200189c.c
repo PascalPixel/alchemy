@@ -1,4 +1,4 @@
-// Draft, differ 232 of 304, skeleton gap 92 (tla-en, 2026-11-01)
+// Draft, differ 221 of 304, skeleton gap 89 (tla-en, 2026-11-01)
 // Calls, branches, loops and fields follow the native. Left: GCSE PRE hoists
 // &position and &object->terrainId above the retry label and turns every later
 // &position into a copy of one register (07.gcse: edge 0 to 1, expressions 3
@@ -6,6 +6,12 @@
 // each call, in the same block as p and q, so its compiler did not treat that
 // fully redundant address as PRE does. The other differences are allocation
 // that follows from the hoisted register.
+// Ruled out as an allocation effect: PRE's reaching register has no REG_EQUIV
+// note (17.lreg, the set on edge 0 to 1), so losing its hard register would give
+// a stack slot, never the native's rematerialized add sp, #28. All five sites
+// reach gcse as sets of a pseudo (precompute_register_parameters puts a call's
+// frame address in one) and hash to one expression, so no plain spelling
+// separates them.
 // Not a source problem as far as measured: an analysis-only compile of this
 // text with -Os, whose classic GCSE and unweighted reference counts replace
 // PRE, leaves 32 of 302 lines differing, against 177 with -fno-gcse. That
@@ -15,10 +21,16 @@
 // p, q and layer are kept: at the real options they emit the same code as
 // plain position[n] and object->terrainId, but under -Os dropping them is worse
 // (88 lines without any of them).
+// Velocity comes before angle in the blocked arm: differ 232 to 221.
+// Probe, not kept: holding the sum of squares in j, reused as the overlap
+// counter, gives differ 165, gap 69, and in radius differ 167, gap 69. Either
+// is a tagged temporary (S2) that does not reach differ 0, so it stays out; a
+// separate local, at any of eight declaration positions, changes nothing.
 // Tried at the real options, no gain: a head-tested loop flag (stops the hoist
 // across the back edge, but bb 2 still takes the later copies; gap 117), for(;;)
 // (109), s32 angle (differ 219, gap 99), angle == -1 (96), reordered
-// declarations, targets taken from p[], and the loop split into for/break.
+// declarations, targets taken from p[], the loop split into for/break, the
+// flags read through entry, x and z assigned apart from p[].
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -101,9 +113,9 @@ retry:
     Func_02002fb8(object);
     object->update = Func_020017dc;
   } else {
-    object->angle = angle;
     object->velocityX = 0;
     object->velocityZ = 0;
+    object->angle = angle;
     object->x = x;
     object->z = z;
     goto end;

@@ -1,31 +1,42 @@
-// Draft, differ 781 of 1101, skeleton gap 173 (tla-en, 2026-11-01)
-// The same calls, control flow, stack frame (160 bytes, every slot at the
-// native's offset) and high registers; what is left is low-register choice and
-// the scheduling that follows from it.
-// The largest single cause: the native builds each 0x3c00 of the two
-// Iwram_ClearWords calls directly in r1, which only an inlined call does (the
-// constant then needs no pseudo; a direct call's argument gets one, CSE shares
-// it and it stays in r5). A static inline forwarding to Iwram_ClearWords, the
-// ClearWords_ of f143d80.c, gives the native's opening exactly and takes this
-// draft to differ 767, gap 165, but it is a new FAKEMATCH(wrapper) device, so
-// it is not here.
-// From there reload's round-robin spill registers run one step apart (the
-// native's ldr r6/r0/r1/r2/r3 of frame for the sound checks differ), and the
-// ring loop keeps k in r7 and frame + 5k in r8, the native the other way round;
-// an explicit variable for frame + 5k changes nothing. The native's reload of
-// 0xffff in r5 across the shard's Random16 calls needs -12768 out of r5.
-// Tried: a vertex pointer in place of the gMapCellBuffer array, whichever way
-// it is placed, gives the native's address form but moves frame out of its
-// spill slot (gap 200 or more); s8 [][4] for the buffer does nothing useful;
-// declaring angle apart from its mask moves nothing.
-// 2026-11-01: the shards take the ring after Trig_Sin, Sin * ring and
-// Cos * ring in that order; -32 goes through spireShade, as the native forms it
-// apart from the 7 (written directly CSE makes it 7 - 39).
+// Draft, differ 18 of 1101, skeleton gap 12 (tla-en, 2026-11-01)
+// Two places are left, nothing else differs.
+// 1. The opening's two Iwram_ClearWords calls (14 of the 18). The native builds
+// 0x3c00 in r1 before each; a direct call's constant gets one pseudo, CSE
+// shares it and it stays in r5. Sending the first call alone through
+// ClearWords_ (static inline, as canvas.c) closes this and takes the draft to
+// differ 4, gap 4. That is a FAKEMATCH(wrapper) device and it does not reach
+// differ 0 on its own, so it is not here. Plain forms tried: block locals for
+// the size and the address, a do/while round each call (worse, 50).
+// 2. The falling Djinni's blitter (the last 4). After Render_ProjectPoint the
+// native issues movs r1, #40 first and ldr r5, [sp, #48] after both stack
+// stores; ours loads the two screen words first and that reload before the
+// stores. sched2: all of these rank at priority 7 but the stores at 6, and
+// the loads win on forward dependents (5 to 4). The native's order needs the
+// stores at or above the reload, which no source change moved: this is the
+// load-after-store issued too early that K2's -mthumb-slow-loads approximates,
+// so it may be a question about the option and not about this C. Tried:
+// locals for x, y and size, the blitter through a local, pointer or wrapper,
+// a void cast of the call, byte and element forms of the sheet address, a
+// pointer to dropScreen, dropScreen as an array or volatile, a do/while round
+// the call or the projection, an empty asm after the projection.
+// spireShade holds 0 and then -32, so it is a temporary device with no tag yet:
+// without it CSE forms -32 as 7 - 39 (differ goes from 18 to 74); one-constant
+// locals for -32, wherever set, are also worse. Tag it at adoption with N
+// measured then. Ram_MeshBuffer belongs in ram_buffer.h at adoption.
+// 2026-11-01, what closed the gap from 781: every reload rotates through a
+// spill set, and r4 joins that set only where r0 to r3 are all busy, which is
+// the first quad's stores with quad2 formed after them, left and right formed
+// before. The rest followed: quad[4..9] and quad2's store order; the buffers at
+// constant addresses (the mesh's second base is then +12 of the first, by
+// reload_cse_move2add); speed and angle each one expression, so the add moves
+// over the call only in sched2; mistSheet one constant across the function, so
+// it gets no register and is rematerialized; mesh a local set first; x and y
+// before the first blitter's sheet address; the mist's loop on the shared i;
+// the turn an if/else; the shard angle a giv of (frame + i) << 10; the mist's
+// size its own variable; Task_Add's real return type; pointer fields for shade
+// and pixels with different alias sets, which orders their stores.
 // 2026-10-31: frame is spilled and vertices kept in r11 as in the native once
-// column is not caller-saved: the cone's vertices are stored through
-// gMapCellBuffer as an array (height then lives 22 insns, not 24, and its
-// priority, 1.636, passes column's 1.635, so height takes r1 first and
-// column falls to r8), and camera, savedYaw and target live in a block after
+// column is not caller-saved; camera, savedYaw and target live in a block after
 // the blitter fetch, as the native's spill-slot order shows. The yaw is the
 // tree's u16 (its -14000 clamp stores 0xc950), each particle loop takes its own
 // &work->particles[i], and the spire is a second if under frame < 64, as the
@@ -49,7 +60,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  const void *pixels;
+  const u8 *pixels;
 };
 
 struct RenderModel {
@@ -58,7 +69,7 @@ struct RenderModel {
   const void *mesh;
   void *vertices;
   struct ModelTexture *texture;
-  s32 shade;
+  const void *shade;
   u8 scrollU;
   u8 scrollV;
 };
@@ -104,7 +115,7 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -158,12 +169,12 @@ struct ModelVertex {
   s8 pad;
 };
 
-// The cone's 64 vertices, written as an array: the native forms each
-// vertex's address after the product it stores (an array element's address
-// is legitimized at the store), where a pointer variable puts it first.
+// The cone's 64 vertices, stored at the buffer's constant address.
 extern struct ModelVertex gMapCellBuffer[];
+#define VERTICES ((struct ModelVertex *)Ram_MapCellBuffer)
 extern u8 gData_02014000[];
 extern u8 Data_02012000[];
+#define Ram_MeshBuffer FIXED_ADDRESS((u8 *), 0x02012000, Data_02012000)
 extern u8 Data_02012540[];       // the mesh's end, after 112 faces
 extern const s8 Data_08198b7a[]; // the cone's ring heights
 extern const s8 Data_08198b82[]; // and radii
@@ -189,6 +200,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   DrawRectangle blitters[2];
   s32 screenB[3];
   s32 screenA[3];
+  u8 *mistSheet;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -207,7 +219,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, gData_02014000, 0, 0);
+  mistSheet = gData_02014000;
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, mistSheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CF, work->sheet + 0x400, 0,
                              0);
@@ -215,9 +228,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
                              work->sheet + 0x4000, 1, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
-  // The rest is a block of its own: the native gives camera, savedYaw and
-  // target their stack slots after the blitter pair's address, so their
-  // pseudos come after that call's.
+  // A block of its own: camera, savedYaw and target take their stack slots
+  // after the blitter pair's address.
   {
     struct BattleCamera *camera;
     s16 savedYaw;
@@ -246,8 +258,6 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       if (frame == 0) {
         camera->yaw = savedYaw;
         for (row = 0; row != 8; row++) {
-          s32 bottom = row * 8 + 7;
-
           for (column = 0; column != 8; column++) {
             s32 height;
             s32 radius;
@@ -261,28 +271,30 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
               radius = Data_08198b82[row] + (Random16() & 3);
             }
             angle = (column << 13) + 0x1000;
-            gMapCellBuffer[row * 8 + column].x =
-                (Trig_Sin(angle) * radius) >> 16;
-            gMapCellBuffer[row * 8 + column].y = -height;
-            gMapCellBuffer[row * 8 + column].z =
-                (Trig_Cos(angle) * radius) >> 16;
+            VERTICES[row * 8 + column].x = (Trig_Sin(angle) * radius) >> 16;
+            VERTICES[row * 8 + column].y = -height;
+            VERTICES[row * 8 + column].z = (Trig_Cos(angle) * radius) >> 16;
             if (row <= 6) {
-              u8 *quad = Data_02012000 + (row * 8 + column) * 24;
-              u8 *quad2 = Data_02012000 + 12 + (row * 8 + column) * 24;
+              u8 *quad = Ram_MeshBuffer + (row * 8 + column) * 24;
+              u8 *quad2;
+              s32 bottom = row * 8 + 7;
+              s32 left = column * 16;
+              s32 right = left + 15;
               s32 next;
               s32 here;
 
+              quad[4] = right;
+              quad[5] = row * 8;
+              quad[6] = right;
               quad[9] = bottom;
               quad[7] = bottom;
-              quad[8] = column * 16;
-              quad[4] = column * 16 + 15;
-              quad[5] = row * 8;
-              quad[6] = column * 16 + 15;
-              quad2[4] = column * 16;
-              quad2[8] = column * 16;
+              quad[8] = left;
+              quad2 = Ram_MeshBuffer + 12 + (row * 8 + column) * 24;
+              quad2[4] = left;
+              quad2[8] = left;
               quad2[5] = row * 8;
               quad2[9] = bottom;
-              quad2[6] = column * 16 + 15;
+              quad2[6] = right;
               quad2[7] = row * 8;
               next = (column + 1) % 8 + row * 8;
               quad[0] = next;
@@ -302,9 +314,11 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
 
       // The camera circles the spire.
       if ((u32)(frame - 4) <= 79) {
-        s32 turn = 320;
+        s32 turn;
 
-        if (frame > 63) {
+        if (frame <= 63) {
+          turn = 320;
+        } else {
           turn = 1600 - frame * 20;
         }
         if (effect->side == 0) {
@@ -328,8 +342,8 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       gCameraSceneParameters[4] = savedScrollY - 16;
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
-      world[1] = 0;
       world[0] = target->x;
+      world[1] = 0;
       world[2] = target->z;
       Render_ProjectPoint(world, &screen);
       if (screen.x <= 63) {
@@ -346,22 +360,23 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
         if (frame == 0) {
           for (i = 0; i != 32; i++) {
             struct EffectStep *p = &work->particles[i];
-            s32 speed = Random16() & 1023;
+            s32 speed = (Random16() & 1023) + 1024;
             s32 angle = Random16() & 0xffff;
 
-            speed += 1024;
-            p->y = 0;
             p->x = target->x;
+            p->y = 0;
             p->z = target->z;
-            p->velocityX = (speed * Trig_Sin(angle)) >> 9;
+            p->velocityX = (Trig_Sin(angle) * speed) >> 9;
             p->velocityY = 0;
-            p->velocityZ = (speed * Trig_Cos(angle)) >> 9;
+            p->velocityZ = (Trig_Cos(angle) * speed) >> 9;
             p->variant = -i;
           }
         }
         for (i = 0; i != 32; i++) {
           struct EffectStep *p = &work->particles[i];
           s32 picture;
+          s32 x;
+          s32 y;
 
           if ((u32)++p->variant > 23) {
             continue;
@@ -369,8 +384,10 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           picture = p->variant / 6;
           Render_ProjectPoint(p, &point);
           BattleEffectKernels_IntegrateVector3(p, 60, 0x2000);
-          blitters[0](canvas, work->sheet + 0x400 + (picture << 10),
-                      point.x - 16, point.y - 16, 32, 32);
+          x = point.x - 16;
+          y = point.y - 16;
+          blitters[0](canvas, work->sheet + 0x400 + (picture << 10), x, y, 32,
+                      32);
         }
       }
       // The Djinni falls.
@@ -459,21 +476,20 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
             p->variant = (Random16() & 31) + 32;
           }
         } else {
-          s32 angle;
-
           model->kind = 2;
           model->unk04 = 0;
           model->mesh = Data_0819919c;
           model->vertices = vertices;
-          for (i = 0, angle = frame << 10; i != 64; i++, angle += 0x400) {
+          for (i = 0; i != 64; i++) {
             struct EffectStep *p = &work->particles[i];
+            s32 angle = (frame + i) << 10;
 
             if (p->variant < 0) {
               continue;
             }
             color[0] = p->variant;
             p->variant -= 2;
-            model->shade = (s32)color;
+            model->shade = color;
             BattleEffectKernels_IntegrateVector3(p, 62, 0x400);
             Transform_Push();
             Func_08015160(p->x, p->y, p->z);
@@ -490,23 +506,22 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
       if (frame < 64) {
         if (frame > 25) {
           s32 scale;
-          s32 k;
           s32 start;
-          // A variable of its own: the native sets it before the branch
-          // below and stores it after, and forms the second shade apart from
-          // the 7 beside it.
+          // Set before the branch below and stored after it; the second value
+          // stays apart from the 7 beside it.
           s32 spireShade;
+          const void *mesh = Data_02012000;
 
           // The spire, then the mist inside it.
           texture.logWidth = 5;
           texture.logHeight = 5;
-          texture.pixels = work->sheet;
+          texture.pixels = (const u8 *)work->sheet;
           model->kind = 6;
           model->unk04 = 3;
           model->vertices = vertices;
           model->scrollU = 0;
           model->texture = &texture;
-          model->mesh = Data_02012000;
+          model->mesh = mesh;
           model->scrollV = -((frame / 2) & 31);
           Transform_Push();
           spireShade = 0;
@@ -515,15 +530,15 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           } else {
             scale = 60000;
           }
-          model->shade = spireShade;
+          model->shade = (const void *)spireShade;
           Func_08015160(target->x, -0x40000, target->z);
           Func_080151e4(scale, scale, scale);
           Render_ProjectVertices((const u8 *)gMapCellBuffer, vertices, 64);
           Render_DrawModelList(model);
           spireShade = -32;
+          model->shade = (const void *)spireShade;
           model->kind = 7;
           model->scrollU = 0;
-          model->shade = spireShade;
           model->scrollV = (frame / 2) & 31;
           model->unk04 = 2;
           Render_DrawModelList(model);
@@ -532,22 +547,23 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
           // Four rings of mist spread from its foot.
           texture.logWidth = 7;
           texture.logHeight = 7;
-          texture.pixels = gData_02014000;
+          texture.pixels = mistSheet;
+          model->kind = 7;
           model->texture = &texture;
           model->mesh = Data_08198ec4;
-          model->kind = 7;
           model->unk04 = 0;
           model->vertices = vertices;
           model->scrollU = 0;
           model->scrollV = 0;
-          for (k = 0; k != 4; k++) {
+          for (i = 0; i != 4; i++) {
+            s32 size;
             s32 shade;
 
-            start = Data_08198b8a[k] + 22;
+            start = Data_08198b8a[i] + 22;
             if (frame <= start) {
               continue;
             }
-            scale = (frame - start) * Data_08198b8e[k] * 1500 + 0x4180;
+            size = (frame - start) * Data_08198b8e[i] * 1500 + 0x4180;
             shade = (start - frame) * 8 + 56;
             if (shade > 0) {
               shade = 0;
@@ -556,10 +572,10 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
               continue;
             }
             Transform_Push();
-            model->shade = shade;
-            Func_08015160(target->x, Data_08198b92[k] << 16, target->z);
-            Func_080151e4(scale, scale, scale);
-            model->scrollU = ((frame + k * 5) & 7) << 4;
+            model->shade = (const void *)shade;
+            Func_08015160(target->x, Data_08198b92[i] << 16, target->z);
+            Func_080151e4(size, size, size);
+            model->scrollU = ((frame + i * 5) & 7) << 4;
             Render_ProjectVertices(Data_08198cac, vertices, 32);
             Render_DrawModelList(model);
             Transform_Pop();

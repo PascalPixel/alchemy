@@ -1,26 +1,32 @@
-// Draft, differ 177 of 556, skeleton gap 87 (tla-en, 2026-11-01)
+// Draft, differ 169 of 556, skeleton gap 75 (tla-en, 2026-11-01)
 // The portrait mode task, ☀️'s Colosso_UpdateLettering
 // (scene/shared/colosso_task.h) with overlay 696's variables and the French
-// four-graphic case. Left: allocation. The native puts sprite and scale on the
-// stack (frame 24, here 20) and gives the third duration address fp, packed r9
-// and tile sl. Here sprite takes r9 and scale fp first: global.c ranks sprite 4
-// * 18 / 678 and scale 2 * 7 / 169, over the duration addresses (3 / 44) and
-// packed (2 / 31), and the third duration address falls out and is rebuilt. No
-// sprite or declaration-order form tried changes that rank. Then the case 1 and
-// 3 bounds are 304 with bcs where the native has 303 with bhi. Forms this rests
-// on: the target pointers, t and packed stand for what the native loads before
-// each duration test; plain reads there do not hoist them (gcse has no hoist at
-// -O2, and a one-pass block is phony to loop.c and moves the then arm). work is
-// two words because bitfields read through t became strh; the native's
-// read-modify-write needs word set over and over, or combine folds it.
-// ({ ... }) around the last script read of each case makes the pointer store
-// come first, kept in HImode: a local promotes and loads ldrsh, an inline
-// reader is worse (gap 102). The case 1 and 3 loops are goto loops so y and
-// flags stay in the body: as for, while or do-while loop.c hoists them (gap 135
-// with the 303 bound). The native has loop.c's hoisted-and-refolded 303, so its
-// loops do have notes and something keeps these user variables from moving
-// (maybe_never); a test that resists duplication until cse (i < 4 && always)
-// did not reproduce that.
+// four-graphic case. Left: almost all of it is allocation. The native spills
+// sprite and scale (frame 24, here 20) and gives packed r9 and the third
+// duration address fp, so both must rank below packed. global.c ranks here
+// sprite 4 * 18 / 682 = .106 and scale 2 * 7 / 171 = .082 against the duration
+// address 3 / 44 = .068 and packed 2 / 31 = .065. Sprite's 682 is already
+// doubled by its constant note. No plain form gets them under: their refs are
+// flow's loop-weighted counts (depth + 1). Unweighted they are 12 and 5, which
+// gives .053 and .058, below both, as the native shows. That weighting is
+// off only with optimize_size, and hoist_code, which would also explain the
+// target, t and packed loads ahead of each duration test, runs only then: a
+// compiler question for Pascal (K3), out of a draft's reach.
+// When the ranks are right, declare blend before scale: the native's slots are
+// scale 0, blend 4, sprite 8, write 12, in pseudo order downward.
+// Forms this rests on: the target pointers, t and packed stand for what the
+// native loads before each duration test; plain reads there do not hoist them.
+// work is two words because bitfields read through t became strh. ({ ... })
+// around the last script read of each case makes the pointer store come first,
+// kept in HImode: a local promotes and loads ldrsh, an inline reader is worse
+// (gap 102). The case 1 and 3 loops are goto loops so y and flags stay in the
+// body: as a real loop loop.c moves them (nothing sets maybe_never before them,
+// and a second set in the if is gone by cse). limit is a one-constant local:
+// cse puts its 303 straight into the compare, so combine never rewrites it to
+// 304 with bcs. A real loop gets the same 303 from reg_single_usage, not from a
+// hoist (gap 126 with y and flags outside). Set per case instead of at the top,
+// limit is worse (gap 117). volatile cannot stand in for the spills: a volatile
+// local sits above the spill slots, and write must sit above scale.
 #include "../../../../games/tla/src/scene/shaman_village/shaman_village.h"
 #include "affine.h"
 #include "vram_tab.h"
@@ -64,6 +70,7 @@ void Func_02002a20(void) {
   s32 scale, blend, pos;
   s32 matrix, i, x, y, left;
   u32 work[2];
+  u32 limit = 303;
 
 commands:
   if (gData_020064bc == 0) {
@@ -172,7 +179,7 @@ commands:
       flags = 0x80004000;
       x = pos + scale * (i * 32 - 48) / 256;
       left = x + 88;
-      if ((u32)(x + 152) < 304) {
+      if ((u32)(x + 152) <= limit) {
         x = left & 511;
         *write++ = 0;
         *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
@@ -194,7 +201,7 @@ commands:
       flags = 0x80004000;
       x = pos + scale * (i * 32 - 16) / 256;
       left = x + 88;
-      if ((u32)(x + 152) < 304) {
+      if ((u32)(x + 152) <= limit) {
         x = left & 511;
         *write++ = 0;
         *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
@@ -217,7 +224,7 @@ commands:
       flags = 0x80004000;
       x = pos + scale * (i * 32 - 16) / 256;
       left = x + 88;
-      if ((u32)(x + 152) < 304) {
+      if ((u32)(x + 152) <= limit) {
         x = left & 511;
         *write++ = 0;
         *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;

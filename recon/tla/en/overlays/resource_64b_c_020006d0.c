@@ -1,24 +1,43 @@
-// Draft, differ 168 of 251, skeleton gap 68 (tla-en, 2026-11-01): leaves the
+// Draft, differ 128 of 251, skeleton gap 32 (tla-en, 2026-11-01): leaves the
 // ship (actor 8): checks the cell ahead of its bow and the cells around it,
 // then the leader jumps ashore.
-// The stores are the native's plain form, nearly all that is left is one
-// cause. gcse's PRE hoists position's address (sfp - 12) into one pseudo that
-// lives to Func_02004b50, so it holds r7 through the jump. The native rebuilds
-// it there (add r3, sp, #4) and gives r7 to the motion flags' address. That
-// one register shifts the rest: native leader r10, blocked r9, shore r11, here
-// r9, r11, r10. CSE already shares ownerOverride's HImode zero with
-// motionFlags (reg 143 in the cse dump), the native keeps that zero in r11, and
-// a constant into a high register comes from the pool. Here all seven high
-// registers are taken, it loses its register and is rebuilt with movs. That
-// pool's pool_range of 32 is what splits the native's two pools and adds the
-// far branch; "movs r3, #1" sharing "mov r9, r3" with the last |= is cross-jump
-// on reload's rotating scratch. No shape here has to change for those.
-// Tried, no gain: a pointer for position (PRE then takes the bb11 load too), a
-// struct position, a forwarding inline for the jump, early return, flags in an
-// inner block. A pointer reused for position and motion leaves the rebuild but
-// spills shore (frame 20) and is a temporary device. Native's bb11 sharing fits
-// CSE following the jump with no PRE of the address: possibly a compiler
-// question, not a C one (compare resource_680_c_02000528.c).
+// This is the plain form. The same draft with two devices reaches differ 9
+// (skeleton gap 7), and those differ only at two sites. The devices are out
+// because they do not reach 0. To put them back, change only this:
+//   s32 *p = position;              at the top, used nowhere else there
+//   p = (s32 *)&leader->motionFlags; flags = *(u8 *)p;   before leader->x
+//   *(u8 *)p = 0;  *(u8 *)p = flags;   for the two motionFlags stores
+//   p = 0;                          last statement of the if
+// Why it works: gcse's PRE copies position's address (sfp - 12) into a new
+// pseudo R for its use at Func_02004b50. In the plain form R stays the one
+// long-lived pointer, so it holds r7 through the jump. Reusing p (temporary)
+// stops CPROP folding R back into p. The dead store (dead) puts p's last
+// reference after R's, so cse.c's make_regs_eqv keeps p canonical. R then gets
+// no register, its REG_EQUAL becomes REG_EQUIV and reload rematerializes it.
+// That gives the native's allocation: leader r10, blocked r9, shore r11, r7
+// free for the motion flags, the pooled zero in r11, frame 16, two pools. The
+// array spellings matter: p[n] in the first region lets PRE take the bb11 load.
+// Left at differ 9:
+// 1. The native has add r3, sp, #4; ldr r1, [r3]; ldr r3, [r3, #8]; the draft
+//    has ldr r1, [sp, #4]; ldr r3, [sp, #12]. That needs a real Z = sfp - 12.
+//    A local defaulted to NULL and set just here keeps Z (first use outside
+//    the block makes it canonical, cse.c) but comes out add r0, sp, #4; adds
+//    r3, r0, #0, and that reload shifts the last three scratch registers
+//    (differ 19). The native's scratch order shows it has no reload there, so
+//    Z is set directly. local-alloc only does that when R has two refs and its
+//    set's source is the plus (reg_equiv_replace); here R's source is p.
+//    gcse hashes every plus into a pseudo, so a second literal plus is
+//    redundant. No C form found that gets past this; the likely lever is a
+//    first-region occurrence hash_scan_set does not record.
+// 2. ldrh r3, [r6, #6] goes one insn early, before movs r1, #160. Casts, a
+//    local, a pointer to unk280 and a value temporary did not move it. It
+//    looks like the load-after-store scheduling seen elsewhere, unproven.
+// Plain-form findings: blocks, a one-constant local, puts gMapBlocks in its
+// own pseudo (165 to 128 here, 128 to 42 with the devices). flags read first
+// beats reading it after leader->x (136 here).
+// Tried, no gain: a static inline for the jump, struct position, early return,
+// flags in an inner block, s32/u32/s8 flags or a copy of it, p reset in the
+// check block, gMapBlocks as u32 or struct array.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -56,6 +75,7 @@ void Func_020006d0(void) {
   s32 shore = 0;
   s32 blocked;
   u8 *block;
+  u8 *blocks = gMapBlocks;
   u8 flags;
 
   position[0] = ship->x;
@@ -63,9 +83,9 @@ void Func_020006d0(void) {
   position[2] = ship->z;
   Vector_AddPolarOffsetFar(0x180000, ship->angle, position);
   blocked = 0;
-  block = &gMapBlocks[(((position[0] / 0x200000) & 31) +
-                       ((position[2] / 0x200000) & 31) * 32) *
-                      4];
+  block = blocks + ((((position[0] / 0x200000) & 31) +
+                     ((position[2] / 0x200000) & 31) * 32) *
+                    4);
   if (cell > 12) {
     blocked = 1;
   } else {
@@ -98,8 +118,8 @@ void Func_020006d0(void) {
     gMainRoutineWork.savedX = ship->x;
     gMainRoutineWork.savedZ = ship->z;
     gMainRoutineWork.unk280 = ship->angle;
-    leader->x = ship->x;
     flags = leader->motionFlags;
+    leader->x = ship->x;
     leader->y = 0x40000;
     leader->z = ship->z;
     leader->motionFlags = 0;

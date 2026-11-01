@@ -1,18 +1,29 @@
-// Draft, differ 383 of 1328, skeleton gap 321 (tla-en, 2026-11-01): Jupiter
+// Draft, differ 295 of 1328, skeleton gap 123 (tla-en, 2026-11-01): Jupiter
 // Lighthouse room M's long scene (the Japanese edition has its own form, differ
-// 385 of 1327 in tla-ja). Nearly all the gap is one thing: called directly,
-// nearby calls share each repeated constant (0x8000, 0x100, 0x107, 0x108, -16)
-// in a callee-saved register, seven of them where the native keeps only 0x4000,
-// 0x2000 and 0xa000 (r8, r6, r5). Forwarding every call except Func_0200484c and
-// Func_02004964 through one static inline, as scene_call.h's wrappers do, takes
-// the gap to 119 and differ to 143, but each wrapper is a tagged device, so the
-// draft holds none. With it the rest is argument order at single calls (some
-// Actor_SetModeById sites build the id first) and -16 built per call. Tried:
-// the three angles as constant locals (gap 333, it worsens), since the direct
-// calls still hoist the others.
-// Plain and settled: the item search is a real loop; its mask 0x1ff is one pool
-// load per pass in the native, here hoisted before the loop, and a goto form
-// builds it in three instructions instead.
+// 297 of 1327 in tla-ja). This draft holds no device. Plain and settled: each
+// mode 3 or 4 followed by its wait is one statement macro, and the item search
+// is a goto loop with the listing's shape.
+// Left: called directly, nearby calls share each repeated constant in a
+// callee-saved register, where the native keeps only 0x4000, 0x2000 and 0xa000
+// (r8, r6, r5). A measured route takes this to differ 9, skeleton gap 2 (tla-en):
+// - set s32 locals to 0x4000, 0x2000 and 0xa000 after the first
+//   Actor_SetSpeedParameters and pass them as the angle of every Func_0200484c
+//   and Func_02004964 call;
+// - forward exactly ten callees through one static inline each:
+//   Camera_MoveWithinMapBounds, Actor_SetSpeedParameters, Func_020048b4,
+//   Func_020048cc, Actor_ArmCallback, Actor_ResetAndSetPositionInMode2,
+//   Actor_SetPositionAndReset, Actor_OffsetPositionAndResetMotion,
+//   Func_0200484c, Func_02004964. Every other wrapper changes nothing.
+// A one-pass block does not replace any of the ten (differ 13 to 156).
+// Those wrappers are devices that do not reach differ 0, so they stayed out.
+// The last 9 are the item search's mask 0x1ff: one pool load per pass in the
+// native, three split instructions here. The pool form is a HImode constant.
+// Combine folds it into the SImode copy in the same block, and neither a u16
+// or s32 local, a struct-held HImode local, a one-pass block nor an empty asm
+// stops that. A real loop keeps the pool form but hoists it into r7, which the
+// native never saves; the native looks like that hoisted pseudo left without a
+// register and reloaded per pass. Nothing in reach of the source explains why
+// it gets none here, so that is a compiler question.
 #include "types.h"
 #include "edition.h"
 #include "ram_buffer.h"
@@ -78,6 +89,12 @@ s32 Func_02004844();
 s32 Event_ClearInvalidPackedValues();
 void Func_020047dc(void);
 
+#define ACTOR_SET_MODE_AND_WAIT(id, mode, frames)                              \
+  do {                                                                         \
+    Actor_SetModeById(id, mode);                                               \
+    FieldEvent_Wait(frames);                                                   \
+  } while (0)
+
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 void Func_02001ed0(void) {
   s32 index;
@@ -135,8 +152,7 @@ void Func_02001ed0(void) {
   FieldEvent_Wait(0x1e);
   Func_020048b4(0x1a, 0x5000);
   FieldEvent_Wait(0x14);
-  Actor_SetModeById(0x1a, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 3, 0x14);
   FieldEvent_Wait(0xa);
   v49 = Func_020048fc();
   *(u8 *)((u8 *)(v49 + 85) + 0) = 0;
@@ -156,8 +172,7 @@ void Func_02001ed0(void) {
   Actor_ArmCallback(4, 0x8000, 0);
   Func_0200489c(0x1c, 0, 0x23);
   Actor_SetModeById(4, 3);
-  Actor_SetModeById(0x1c, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0xa);
   Actor_ResetAndSetPositionInMode2(4, 0x2ab, 0xba);
   Actor_ResetAndSetPositionInMode2(0x1c, 0x29b, 0xca);
@@ -167,11 +182,9 @@ void Func_02001ed0(void) {
   Actor_ArmCallback(0x1b, 0x8000, 0);
   Func_020048cc(6, 0x102, 0x1e);
   Func_0200489c(6, 0, 5);
-  Actor_SetModeById(5, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(5, 4, 0x21);
   Func_0200489c(5, 0, 5);
-  Actor_SetModeById(7, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(7, 3, 0x14);
   FieldEvent_Wait(0xa);
   Actor_SetAngleToward(5, 7, 0);
   Actor_SetAngleToward(6, 7, 0);
@@ -179,8 +192,7 @@ void Func_02001ed0(void) {
   Func_0200489c(7, 0, 5);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(5, 3);
-  Actor_SetModeById(7, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(7, 3, 0x14);
   FieldEvent_Wait(0x14);
   Actor_OffsetPositionAndReset(7, 0, 0x28);
   Actor_OffsetPositionAndReset(6, 0, 0x28);
@@ -207,16 +219,14 @@ void Func_02001ed0(void) {
   FieldEvent_Wait(0xa);
   Func_020048b4(0x1a, 0x8000);
   Func_0200489c(0x1a, 0, 5);
-  Actor_SetModeById(0x1b, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 4, 0x21);
   Func_0200489c(0x1b, 0, 5);
   Motion_SetVarCbAndRefresh(0x1c, 2);
   FieldEvent_Wait(5);
   Func_0200489c(0x1c, 0, 5);
   Func_020048cc(0x1a, 0x103, 0x1e);
   Func_0200489c(0x1a, 0, 5);
-  Actor_SetModeById(6, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(6, 4, 0x21);
   Func_0200489c(6, 0, 5);
   Func_020048cc(0x1b, 0x107, 0x1e);
   FieldMessage_ShowAtActor(0x1b, 0);
@@ -239,15 +249,12 @@ L_ja_0200a412:
   Actor_SetAngleToward(7, 0x1a, 0);
   Func_020048cc(7, 0x107, 0x1e);
   Func_0200489c(7, 0, 5);
-  Actor_SetModeById(0x1a, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 4, 0x21);
   Func_0200489c(0x1a, 0, 5);
-  Actor_SetModeById(0x1b, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1b, 0, 5);
-  Actor_SetModeById(5, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(5, 4, 0x21);
   Func_0200489c(5, 0, 5);
   Actor_TurnToFaceEachOther(0x1a, 0x1b, 0);
   Actor_RefreshSelectorById(0x1a);
@@ -255,21 +262,18 @@ L_ja_0200a412:
   Func_020048cc(0x1a, 0x105, 0);
   Func_020048cc(0x1b, 0x105, 0x1e);
   Actor_SetAngleToward(0x1c, 0x1b, 0);
-  Actor_SetModeById(0x1c, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1c, 4, 0x21);
   Actor_SetAngleToward(0x1a, 0x1c, 0);
   Actor_SetAngleToward(0x1b, 0x1c, 0);
   Func_0200489c(0x1c, 0, 5);
   FieldEvent_Wait(0x3c);
-  Actor_SetModeById(0x1b, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1b, 0, 5);
   Motion_SetVarCbAndRefresh(0x1a, 2);
   FieldEvent_Wait(5);
   Func_0200489c(0x1a, 0, 5);
-  Actor_SetModeById(0x1b, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 4, 0x21);
   Func_0200489c(0x1b, 0, 5);
   Func_020048cc(0x1a, 0x108, 0x1e);
   Func_0200489c(0x1a, 0, 5);
@@ -281,8 +285,7 @@ L_ja_0200a412:
   Func_0200489c(0x1a, 0, 5);
   Func_020048b4(0x1a, 0x8000);
   FieldEvent_Wait(0xa);
-  Actor_SetModeById(0x1a, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1a, 0, 5);
   Func_020048b4(0x1b, 0xa000);
@@ -303,39 +306,33 @@ L_ja_0200a412:
   Actor_SetAngleToward(6, 0x1a, 0);
   Actor_SetAngleToward(7, 0x1a, 0);
   Actor_SetAngleToward(0x1c, 0x1a, 0);
-  Actor_SetModeById(0x1a, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 3, 0x14);
   FieldEvent_Wait(0xa);
   FieldMessage_ShowAtActor(0x1a, 0);
   v211 = Event_AskYesNoWithActorAnimation(4, 0);
   if (v211 != 0) goto L_ja_0200a6b6;
-  Actor_SetModeById(0x1a, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 4, 0x21);
   Func_0200489c(0x1a, 0, 5);
   EVENT_WORK->messageId++;
   goto L_ja_0200a6e0;
 L_ja_0200a6b6:
-  Actor_SetModeById(0x1a, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 4, 0x21);
   EVENT_WORK->messageId++;
   Func_0200489c(0x1a, 0, 5);
 L_ja_0200a6e0:
   Actor_TurnToFaceEachOther(0x1c, 4, 0);
   Actor_RefreshSelectorById(0x1c);
   FieldEvent_Wait(0xa);
-  Actor_SetModeById(0x1c, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1c, 0, 5);
   Actor_TurnToFaceEachOther(4, 0x1c, 0);
   Actor_RefreshSelectorById(4);
   FieldEvent_Wait(0xa);
   Func_020048cc(4, 0x102, 0x1e);
-  Actor_SetModeById(0x1c, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0x28);
-  Actor_SetModeById(4, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
   FieldEvent_Wait(0x1e);
   Actor_TurnToFaceEachOther(0x1a, 0x1b, 0);
   Actor_RefreshSelectorById(0x1a);
@@ -345,8 +342,7 @@ L_ja_0200a6e0:
   Actor_SetAngleToward(0x1a, 4, 0);
   Actor_SetAngleToward(4, 0x1b, 0);
   Actor_SetPositionAndReset(0x1b, 0x2bb, 0xca);
-  Actor_SetModeById(0x1b, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1b, 0, 5);
   Func_020048cc(0, 0x100, 0);
@@ -392,8 +388,7 @@ L_ja_0200a6e0:
   FieldEvent_Wait(0x28);
   Func_020048b4(4, 0x2000);
   FieldEvent_Wait(0x14);
-  Actor_SetModeById(4, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
   FieldEvent_Wait(0xa);
   Actor_WatchAndSetScript(0x1a, 4);
   Actor_WatchAndSetScript(0x1b, 4);
@@ -408,22 +403,23 @@ L_ja_0200a6e0:
   FieldMessage_Show((s16)EVENT_WORK->messageId++, 5);
   index = 0;
   offset = 0xd8;
-  while (index <= 14) {
-    if ((*(u16 *)((u8 *)Unit_Get(4) + offset) & 0x1ff) == 245) {
-      Func_020047a4(4, index);
-      break;
-    }
-    offset += 2;
-    index++;
-  }
-  Actor_SetModeById(0x1b, 3);
-  FieldEvent_Wait(0x14);
+  goto test;
+next:
+  offset += 2;
+  index++;
+test:
+  if (index > 14)
+    goto end;
+  if ((*(u16 *)((u8 *)Unit_Get(4) + offset) & 0x1ff) != 245)
+    goto next;
+  Func_020047a4(4, index);
+end:
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1b, 0, 5);
   Actor_SetAngleToward(4, 0x1b, 0);
   FieldEvent_Wait(0x14);
-  Actor_SetModeById(4, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
   FieldEvent_Wait(0x14);
   Actor_SetSpeedParameters(7, 0x20000, 0x10000);
   Actor_SetSpeedParameters(0x1a, 0x8000, 0x4000);
@@ -457,19 +453,16 @@ L_ja_0200a6e0:
   Func_0200489c(6, 0, 5);
   Func_020048b4(4, 0x4000);
   FieldEvent_Wait(0xa);
-  Actor_SetModeById(5, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(5, 3, 0x14);
   FieldEvent_Wait(0xa);
   Actor_ArmCallback(5, 0xc000, 0);
   Func_0200489c(5, 0, 5);
   Func_020048b4(4, 0x4000);
   FieldEvent_Wait(0xa);
-  Actor_SetModeById(0x1c, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1c, 0, 5);
-  Actor_SetModeById(4, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
   FieldEvent_Wait(0xa);
   Actor_SetSpeedParameters(7, 0x10000, 0x8000);
   Actor_SetMovementTypeById(7, (s32)gData_020059a4);
@@ -538,8 +531,7 @@ void Func_02001ed0(void) {
   FieldEvent_Wait(0x1e);
   Func_020048b4(0x1a, 0x5000);
   FieldEvent_Wait(0x14);
-  Actor_SetModeById(0x1a, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 3, 0x14);
   FieldEvent_Wait(0xa);
   v49 = Func_020048fc();
   *(u8 *)((u8 *)(v49 + 85) + 0) = 0;
@@ -559,8 +551,7 @@ void Func_02001ed0(void) {
   Actor_ArmCallback(4, 0x8000, 0);
   Func_0200489c(0x1c, 0, 0x23);
   Actor_SetModeById(4, 3);
-  Actor_SetModeById(0x1c, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0xa);
   Actor_ResetAndSetPositionInMode2(4, 0x2ab, 0xba);
   Actor_ResetAndSetPositionInMode2(0x1c, 0x29b, 0xca);
@@ -570,11 +561,9 @@ void Func_02001ed0(void) {
   Actor_ArmCallback(0x1b, 0x8000, 0);
   Func_020048cc(6, 0x102, 0x1e);
   Func_0200489c(6, 0, 5);
-  Actor_SetModeById(5, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(5, 4, 0x21);
   Func_0200489c(5, 0, 5);
-  Actor_SetModeById(7, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(7, 3, 0x14);
   FieldEvent_Wait(0xa);
   Actor_SetAngleToward(5, 7, 0);
   Actor_SetAngleToward(6, 7, 0);
@@ -582,8 +571,7 @@ void Func_02001ed0(void) {
   Func_0200489c(7, 0, 5);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(5, 3);
-  Actor_SetModeById(7, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(7, 3, 0x14);
   FieldEvent_Wait(0x14);
   Actor_OffsetPositionAndReset(7, 0, 0x28);
   Actor_OffsetPositionAndReset(6, 0, 0x28);
@@ -610,16 +598,14 @@ void Func_02001ed0(void) {
   FieldEvent_Wait(0xa);
   Func_020048b4(0x1a, 0x8000);
   Func_0200489c(0x1a, 0, 5);
-  Actor_SetModeById(0x1b, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 4, 0x21);
   Func_0200489c(0x1b, 0, 5);
   Motion_SetVarCbAndRefresh(0x1c, 2);
   FieldEvent_Wait(5);
   Func_0200489c(0x1c, 0, 5);
   Func_020048cc(0x1a, 0x103, 0x1e);
   Func_0200489c(0x1a, 0, 5);
-  Actor_SetModeById(6, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(6, 4, 0x21);
   Func_0200489c(6, 0, 5);
   Func_020048cc(0x1b, 0x107, 0x1e);
   FieldMessage_ShowAtActor(0x1b, 0);
@@ -642,15 +628,12 @@ L_0200a412:
   Actor_SetAngleToward(7, 0x1a, 0);
   Func_020048cc(7, 0x107, 0x1e);
   Func_0200489c(7, 0, 5);
-  Actor_SetModeById(0x1a, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 4, 0x21);
   Func_0200489c(0x1a, 0, 5);
-  Actor_SetModeById(0x1b, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1b, 0, 5);
-  Actor_SetModeById(5, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(5, 4, 0x21);
   Func_0200489c(5, 0, 5);
   Actor_TurnToFaceEachOther(0x1a, 0x1b, 0);
   Actor_RefreshSelectorById(0x1a);
@@ -658,21 +641,18 @@ L_0200a412:
   Func_020048cc(0x1a, 0x105, 0);
   Func_020048cc(0x1b, 0x105, 0x1e);
   Actor_SetAngleToward(0x1c, 0x1b, 0);
-  Actor_SetModeById(0x1c, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1c, 4, 0x21);
   Actor_SetAngleToward(0x1a, 0x1c, 0);
   Actor_SetAngleToward(0x1b, 0x1c, 0);
   Func_0200489c(0x1c, 0, 5);
   FieldEvent_Wait(0x3c);
-  Actor_SetModeById(0x1b, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1b, 0, 5);
   Motion_SetVarCbAndRefresh(0x1a, 2);
   FieldEvent_Wait(5);
   Func_0200489c(0x1a, 0, 5);
-  Actor_SetModeById(0x1b, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 4, 0x21);
   Func_0200489c(0x1b, 0, 5);
   Func_020048cc(0x1a, 0x108, 0x1e);
   Func_0200489c(0x1a, 0, 5);
@@ -684,8 +664,7 @@ L_0200a412:
   Func_0200489c(0x1a, 0, 5);
   Func_020048b4(0x1a, 0x8000);
   FieldEvent_Wait(0xa);
-  Actor_SetModeById(0x1a, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1a, 0, 5);
   Func_020048b4(0x1b, 0xa000);
@@ -706,39 +685,33 @@ L_0200a412:
   Actor_SetAngleToward(6, 0x1a, 0);
   Actor_SetAngleToward(7, 0x1a, 0);
   Actor_SetAngleToward(0x1c, 0x1a, 0);
-  Actor_SetModeById(0x1a, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 3, 0x14);
   FieldEvent_Wait(0xa);
   FieldMessage_ShowAtActor(0x1a, 0);
   v211 = Event_AskYesNoWithActorAnimation(4, 0);
   if (v211 != 0) goto L_0200a6b6;
-  Actor_SetModeById(0x1a, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 4, 0x21);
   Func_0200489c(0x1a, 0, 5);
   EVENT_WORK->messageId++;
   goto L_0200a6e0;
 L_0200a6b6:
-  Actor_SetModeById(0x1a, 4);
-  FieldEvent_Wait(0x21);
+  ACTOR_SET_MODE_AND_WAIT(0x1a, 4, 0x21);
   EVENT_WORK->messageId++;
   Func_0200489c(0x1a, 0, 5);
 L_0200a6e0:
   Actor_TurnToFaceEachOther(0x1c, 4, 0);
   Actor_RefreshSelectorById(0x1c);
   FieldEvent_Wait(0xa);
-  Actor_SetModeById(0x1c, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1c, 0, 5);
   Actor_TurnToFaceEachOther(4, 0x1c, 0);
   Actor_RefreshSelectorById(4);
   FieldEvent_Wait(0xa);
   Func_020048cc(4, 0x102, 0x1e);
-  Actor_SetModeById(0x1c, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0x28);
-  Actor_SetModeById(4, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
   FieldEvent_Wait(0x1e);
   Actor_TurnToFaceEachOther(0x1a, 0x1b, 0);
   Actor_RefreshSelectorById(0x1a);
@@ -748,8 +721,7 @@ L_0200a6e0:
   Actor_SetAngleToward(0x1a, 4, 0);
   Actor_SetAngleToward(4, 0x1b, 0);
   Actor_SetPositionAndReset(0x1b, 0x2bb, 0xca);
-  Actor_SetModeById(0x1b, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1b, 0, 5);
   Func_020048cc(0, 0x100, 0);
@@ -795,8 +767,7 @@ L_0200a6e0:
   FieldEvent_Wait(0x28);
   Func_020048b4(4, 0x2000);
   FieldEvent_Wait(0x14);
-  Actor_SetModeById(4, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
   FieldEvent_Wait(0xa);
   Actor_WatchAndSetScript(0x1a, 4);
   Actor_WatchAndSetScript(0x1b, 4);
@@ -811,22 +782,23 @@ L_0200a6e0:
   FieldMessage_Show((s16)EVENT_WORK->messageId++, 5);
   index = 0;
   offset = 0xd8;
-  while (index <= 14) {
-    if ((*(u16 *)((u8 *)Unit_Get(4) + offset) & 0x1ff) == 245) {
-      Func_020047a4(4, index);
-      break;
-    }
-    offset += 2;
-    index++;
-  }
-  Actor_SetModeById(0x1b, 3);
-  FieldEvent_Wait(0x14);
+  goto test;
+next:
+  offset += 2;
+  index++;
+test:
+  if (index > 14)
+    goto end;
+  if ((*(u16 *)((u8 *)Unit_Get(4) + offset) & 0x1ff) != 245)
+    goto next;
+  Func_020047a4(4, index);
+end:
+  ACTOR_SET_MODE_AND_WAIT(0x1b, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1b, 0, 5);
   Actor_SetAngleToward(4, 0x1b, 0);
   FieldEvent_Wait(0x14);
-  Actor_SetModeById(4, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
   FieldEvent_Wait(0x14);
   Actor_SetSpeedParameters(7, 0x20000, 0x10000);
   Actor_SetSpeedParameters(0x1a, 0x8000, 0x4000);
@@ -860,19 +832,16 @@ L_0200a6e0:
   Func_0200489c(6, 0, 5);
   Func_020048b4(4, 0x4000);
   FieldEvent_Wait(0xa);
-  Actor_SetModeById(5, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(5, 3, 0x14);
   FieldEvent_Wait(0xa);
   Actor_ArmCallback(5, 0xc000, 0);
   Func_0200489c(5, 0, 5);
   Func_020048b4(4, 0x4000);
   FieldEvent_Wait(0xa);
-  Actor_SetModeById(0x1c, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1c, 0, 5);
-  Actor_SetModeById(4, 3);
-  FieldEvent_Wait(0x14);
+  ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
   FieldEvent_Wait(0xa);
   Actor_SetSpeedParameters(7, 0x10000, 0x8000);
   Actor_SetMovementTypeById(7, (s32)gData_020059a4);

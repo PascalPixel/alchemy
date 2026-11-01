@@ -1,21 +1,35 @@
-// Draft (tla-en): listing 552 instructions, draft 556, common 396, differ 316.
-// Effect kind 78, written from the listing on ☀️'s skeleton; its nearest ☀️
-// shapes are BattleEffect_RunPlasma (0.49) and
-// BattleEffect_RunHelmSplitter (0.67 by calls), neither a twin.
-// Written 2026-10-15 (lane N2).
-// Left:
-// - the native stack frame is 120 bytes, here 124: one more spill slot, so
-// every spilled value (canvas sp+60, frame sp+56, the spark cels sp+52,
-// the pair's address sp+48, lift sp+44 in the native) sits one word
-// off, and work takes sl where the native has r8.
-// - the flame loop rebuilds variant * 7 for each table read; the native
-// keeps frame / 2's sign word and frame * 4 spilled (sp+28, sp+32).
-// - the hit loop's walkers (the target place sp+24, the actor offset
-// sp+20, the spark offset sp+12 by 0xe00) and the kept table base.
-// Measured: the first draft 426; a block-scoped pointer for each spark
-// loop and the speed's +127 folded into its first assignment: 316;
-// work->particles in place of the ring pointer, frame declared first:
-// 320 (frame stays 124).
+// Draft, differ 8 of 552, skeleton gap 4 (tla-en, 2026-11-01)
+// Effect kind 78. Same instruction count and frame as the native, every
+// register and stack slot agrees; only three sched2 orders are left, each a
+// store placed later than the native places it:
+// - after Task_Add: `movs r7, #0; str r7, [sp, #44]` go before the pool load of
+//   Data_02010018 in the native; here that load comes first and the store
+//   falls after the constants.
+// - the flame loop's preheader: the native stores frame's sign word and
+//   frame * 4 (sp+28, sp+32) before `lsls r2, #16` of lift; here the shift
+//   outranks them (priority 2 to 1).
+// - the spark draw: the native has `str r5, [sp, #4]` before the reload of
+//   blitters; here the load outranks the store (priority 10 to 9).
+// All three look like the "spill store under-costed" family: the sched2 dumps
+// show the store losing on priority, not on a tie, so no reshaping reaches
+// them. Whether the store's cost should change is a compiler question (K1 to
+// K3), left to Pascal. Devices were not added: a barrier could close the first
+// site, but nothing found reaches the other two, so it could not reach differ 0.
+// What closed the rest: one i shared by every loop, with j only for the sparks
+// (the listing's r9 and sp+40); frame * 256 as a giv, not a counter of its own
+// (sp+16 is loop.c's); declaration order work, canvas, frame, sparkCels,
+// blitters, lift, j; set-once locals blitters, place and copy; spark indexed
+// from i and j; Trig first in the products; Task_Add and the transform
+// returning s32; Data_0819940c not const (its ldrb then ties ahead of lift).
+// TransformVector: this game's iwram_call.h declares the entry void, The Broken
+// Seal's s32. The s32 form is what the listing's call shows (r1 before r0 and
+// the stores first); decide which header is right on adoption, since a wrongly
+// typed return would be a `signature` device and those are not allowed.
+// `copy`: games/tla/src/battle_effect/element_burst.c tags the same local
+// `temporary`, f15c970.c leaves it untagged; here it is a one-address local.
+// Measured: 316 as found; 66 with the shared counters, the blitters local and
+// frame * 256; 54 with work first; 16 with copy; 12 with place set at its use;
+// 8 with the s32 transform and the non-const table.
 // Resources 0xeb (BattleEffect_SmallFlameSheet) and 0x148
 // (BattleEffect_OrangePaletteB) need names in gamepak/resource_directory.s
 // when this is adopted.
@@ -48,6 +62,9 @@ enum {
   RING_BLITTER    // which of the pair draws the flames
 };
 
+// The transform entry as The Broken Seal types it.
+#define TransformVector ((s32 (*)(const void *, s32 *))Iwram_TransformVector)
+
 // The pixel half of a 16.16 value.
 #define HI(v) (((s16 *)&(v))[1])
 
@@ -58,7 +75,7 @@ extern char ResourceId_OrangePaletteB;
 // The life of each spark in the map cell buffer: gMapCellBuffer's
 // EffectSteps from their variant field on.
 extern s32 Data_02010018[];
-extern const u8 Data_0819940c[][7];
+extern u8 Data_0819940c[][7];
 
 // The offsets of the spark cels: cel n is n pixels wide and 2n tall.
 extern const u16 gData_08197410[];
@@ -66,7 +83,7 @@ extern const u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
-void Task_Add(s32 func, s32 priority);
+s32 Task_Add(s32 func, s32 priority);
 s32 Task_Remove(s32 func);
 void Sound_PlayFar(s32 cue);
 void EffectPosition_ProjectBattler(
@@ -107,27 +124,30 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
   s32 vector[3];
   struct EffectPosition target;
   DrawRectangle draw[2];
-  void *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  void *canvas = Ram_HeapSlots->battleFxWork[1];
+  s32 frame;
   u8 *sparkCels = Ram_HeapSlots->unk64[0];
   struct EffectStep *ring = work->particles;
-  s32 frame;
-  s32 spin;
+  DrawRectangle *blitters;
   s32 lift;
+  s32 j;
   s32 i;
-  s32 member;
 
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_SmallFlameSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
-  if (effect->variant == 2)
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  if (effect->variant == 2) {
+    void *source = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
+
+    copy((void *)BG_PLTT, source, 128);
+  }
+  blitters = draw;
+  BattleEffect_FetchRectangleBlitters(0, blitters);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
@@ -141,7 +161,6 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
     }
   }
 
-  spin = 0;
   for (frame = 0; frame != RING_FRAMES; frame++) {
     if (frame == RING_CUE_FRAME)
       Sound_PlayFar(104);
@@ -181,42 +200,41 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
     // second eight on a ring tipped on its side.
     for (i = 0; i != Data_0819940c[effect->variant][RING_FLAMES]; i++) {
       s32 cel = (frame / 2 + i * 4) & 3;
+      s32 *place;
       s32 x;
       s32 y;
 
       Render_ResetTransformState();
       Func_08015160(ring->x - (128 << 16), ring->y - (64 << 16), 0);
-      Func_080150e4(spin);
-      SceneTransform_ApplyPitch(spin + 500);
+      Func_080150e4(frame * 256);
+      SceneTransform_ApplyPitch(frame * 256 + 500);
       if (i > 7)
         SceneTransform_ApplyPitch(0x4000);
       SceneTransform_ApplyYaw(
           (frame * 4 + i * Data_0819940c[effect->variant][RING_SPACING]) << 8);
-      vector[0] = 0;
-      vector[1] = 0;
-      vector[2] = lift << 16;
-      Iwram_TransformVector(vector, vector);
-      x = vector[0] >> 17;
-      vector[0] = x + 64;
-      y = HI(vector[1]);
-      vector[1] = y + 64;
-      draw[Data_0819940c[effect->variant][RING_BLITTER]](
+      place = vector;
+      place[0] = 0;
+      place[1] = 0;
+      place[2] = lift << 16;
+      TransformVector(place, place);
+      x = place[0] >> 17;
+      place[0] = x + 64;
+      y = ((s16 *)place)[3];
+      place[1] = y + 64;
+      blitters[Data_0819940c[effect->variant][RING_BLITTER]](
           canvas, work->sheet + cel * 1024, x + 56, y + 16, 16, 64);
     }
 
     // The strike: sparks burst from every target.
     if (frame == RING_HIT_FRAME) {
       Func_081180e8(134);
-      for (member = 0; member != effect->count; member++) {
-        struct EffectStep *spark;
-
-        EffectPosition_ProjectSprite(effect->actors[member],
-                                                &target);
-        Func_08118088(effect->actors[member], 4);
-        Func_0814cd48(effect->actors[member], 7, 5, member, 16);
-        spark = &((struct EffectStep *)Ram_MapCellBuffer)[member * 128];
-        for (i = 0; i != Data_0819940c[effect->variant][RING_SPARKS];
-             i++, spark++) {
+      for (i = 0; i != effect->count; i++) {
+        EffectPosition_ProjectSprite(effect->actors[i], &target);
+        Func_08118088(effect->actors[i], 4);
+        Func_0814cd48(effect->actors[i], 7, 5, i, 16);
+        for (j = 0; j != Data_0819940c[effect->variant][RING_SPARKS]; j++) {
+          struct EffectStep *spark =
+              &((struct EffectStep *)Ram_MapCellBuffer)[i * 128 + j];
           s32 angle;
           s32 speed;
 
@@ -224,8 +242,8 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
           spark->y = target.y << 16;
           angle = Random16();
           speed = (Random16() & 255) + 127;
-          spark->velocityX = (speed * Trig_Sin(angle)) >> 6;
-          spark->velocityY = (speed * Trig_Cos(angle)) >> 6;
+          spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
+          spark->velocityY = (Trig_Cos(angle) * speed) >> 6;
           spark->variant = (Random16() & 15) + 24;
         }
       }
@@ -233,19 +251,17 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
     }
 
     // The sparks fly and burn down, drawn by turns with the two blitters.
-    {
-      struct EffectStep *spark = (struct EffectStep *)Ram_MapCellBuffer;
+    for (i = 0; i != SPARK_COUNT; i++) {
+      struct EffectStep *spark = &((struct EffectStep *)Ram_MapCellBuffer)[i];
 
-      for (i = 0; i != SPARK_COUNT; i++, spark++) {
-        if (spark->variant >= 0) {
-          s32 size = (spark->variant >> 3) + 1;
+      if (spark->variant >= 0) {
+        s32 size = (spark->variant >> 3) + 1;
 
-          draw[i & 1](canvas, sparkCels + gData_08197410[size - 1],
-                      HI(spark->x) - size / 2, HI(spark->y) - size, size,
-                      size * 2);
-          BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);
-          spark->variant--;
-        }
+        blitters[i & 1](canvas, sparkCels + gData_08197410[size - 1],
+                    HI(spark->x) - size / 2, HI(spark->y) - size, size,
+                    size * 2);
+        BattleEffectKernels_IntegrateVector2(spark, 60, -0x4000);
+        spark->variant--;
       }
     }
 
@@ -253,7 +269,6 @@ void BattleEffect_RunJuggle(struct BattleEffectArgument *effect) {
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);
-    spin += 256;
   }
 
   HeapSlot_Release(HEAP_SLOT_BLITTER_ALTERNATE);

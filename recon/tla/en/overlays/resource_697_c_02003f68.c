@@ -1,23 +1,25 @@
-// Draft, differ 319 of 252, skeleton gap 61 (tla-en, 2026-11-01): 31 listing
-// instructions missing, 30 extra; what is left is allocation. x and height
-// have each other's registers (x r8, height r7; the native has x r7, height
-// r8), which costs the x-8 form (movs #8, negs, adds), and lift and entry are
-// swapped (r9, r11), z and sy too (r6, r5). The frame is 32 bytes to 36.
-// x's priority (refs over live length) sits just under height's; the orders of
-// the x, height, z, sy and depth statements were searched in both sprites and
-// this is the best skeleton (a lower differ, 281, gives gap 67).
-// Found by this draft, each measured: movers[i] rather than a pointer stops
-// GCSE's PRE keeping offset in a register and loop.c turns i into the native's
-// pointer and down-count (the count falls to 15..0 only while nothing hoists
-// i * 28 out of the inner loop); sx is x itself, and x and sy are masked in
-// place. Three locals steer loop.c and allocation, untagged, and need judging
-// against S2 before this adopts: attr is set twice so loop.c cannot hoist
-// tile + frame; word, a constant, is the first thing hoisted, which lowers
-// loop.c's threshold so i * 28 stays; rise is shared so it is rematerialized
-// at both uses instead of holding r5 across Iwram_MulQ16.
-// The native computes movers + 4 first and stores it at once; here the loop's
-// pointer is set just before the loop. Also open: a real pointer variable
-// would explain that store, but PRE then returns.
+// Draft, differ 209 of 252, skeleton gap 51 (tla-en, 2026-11-01): 27 listing
+// instructions missing, 24 extra. What is left is a PRE load and allocation.
+// Found this round, each measured (319 to 209): the mover pointer is a real
+// variable, declared first with i, tile, frame, count, viewX, viewZ, viewY in
+// that order (the sp offsets 32 down to 4); the cap's y is one expression;
+// word is gone. The header's old array form cannot give the pointer sp+32.
+// With a real pointer GCSE's PRE reads offset once and carries it round the
+// inner loop (the ldrh before the loop and at its end). The native rereads it
+// at the latch test and after the loop, as in the source. The ((s16 *)mover)[2]
+// read of the cap's height stops PRE after the loop. An empty asm with a memory
+// clobber at the top of the inner body and just after the loop stops it in
+// both places and gives skeleton gap 35 (differ 207), but reached no match, so
+// it came back out; nothing plain has been found for the latch read yet.
+// Allocation with that barrier: x r7 is right, but sy r5, z r6, height r4 by
+// caller-save (sp+0 is its slot, so the frame is 36 as in the native), object
+// r8, lift r10, viewY r11; the native has z r5, sy r6, height r8, object r10,
+// entry r9, lift r11, viewY on the stack. In the cap the native holds x >> 16
+// in r10. Tried and worse: cap height, z or y as their own variables (the
+// loop's then go low), a separate sx or dy, masks inside the expression, x
+// >>= 16 in place, a named x >> 16, other orders of the cap's statements. attr
+// is set twice to keep tile + frame from hoisting (without it 199, gap 59) and
+// needs judging against S2 before this adopts.
 // Draws the Trial Road movers' columns: for each raised mover (of 16) it
 // queues one 16 by 16 sprite per 16 pixels of its offset and a bobbing cap on
 // top, animated over 4 frames every 3, projected from the map's view and kept
@@ -57,35 +59,45 @@ void Func_02005790(void *entry, s32 priority);
 void Func_02003f68(void) {
   struct TrialRoadMovers *base =
       (struct TrialRoadMovers *)(gData_020023c4 + 0x188);
-  struct TrialRoadMover *movers = base->movers;
-  s32 tile = gResourceTableEntries[base->vramEntry].offset >> 5;
-  u32 *entry = base->entries;
-  s32 count = 0;
-  s32 rise = -0x20000;
-  struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 *view = &map->viewX;
-  s32 viewX = view[0] & 0xffff0000;
-  s32 viewZ = view[1] & 0xffff0000;
-  s32 viewY = map->origin[1];
-  struct Actor *object;
-  u32 *cursor;
+  struct TrialRoadMover *mover = base->movers;
+  s32 i;
+  s32 tile;
   s32 frame;
+  s32 count;
+  s32 viewX;
+  s32 viewZ;
+  s32 viewY;
+  s32 rise;
+  struct MapWork *map;
+  s32 *view;
+  struct Actor *object;
+  u32 *entry;
+  u32 *cursor;
   s32 lift;
-  s32 word;
   s32 attr;
   s32 x;
   s32 height;
   s32 z;
   s32 sy;
   s32 depth;
-  s32 i;
+  s32 bob;
 
-  for (i = 0; i < 16; i++) {
-    if (movers[i].id == 0 || movers[i].offset == 0)
+  tile = gResourceTableEntries[base->vramEntry].offset >> 5;
+  entry = base->entries;
+  count = 0;
+  rise = -0x20000;
+  map = Ram_HeapSlots->mapWork;
+  view = &map->viewX;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  viewY = map->origin[1];
+
+  for (i = 0; i < 16; i++, mover++) {
+    if (mover->id == 0 || mover->offset == 0)
       continue;
-    object = Actor_GetById(movers[i].id);
+    object = Actor_GetById(mover->id);
     frame = ((gFrameCount % 12) / 3) * 8 + 32;
-    for (lift = 0; lift < movers[i].offset; lift += 16) {
+    for (lift = 0; lift < mover->offset; lift += 16) {
       if (count > 79)
         continue;
       x = object->x - viewX;
@@ -97,12 +109,11 @@ void Func_02003f68(void) {
       depth = ((height + z) >> 16) + 58;
       if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
         continue;
-      word = 0x40002000;
       x &= 0x1ff;
       sy &= 0xff;
       cursor = entry;
       *cursor++ = 0;
-      *cursor++ = sy | (x << 16) | word;
+      *cursor++ = sy | (x << 16) | 0x40002000;
       attr = tile + frame;
       attr |= 0x800;
       *cursor = attr;
@@ -113,13 +124,14 @@ void Func_02003f68(void) {
     if (count > 79)
       continue;
     x = object->x - viewX;
-    height = object->y + (movers[i].offset << 16) - viewY;
+    // Through s16 so the read is not merged with the loop test.
+    height = object->y + (((s16 *)mover)[2] << 16) - viewY;
     z = object->z - viewZ - viewY;
     sy = z - height;
-    sy += Iwram_MulQ16(rise, Math_Sine(movers[i].bob));
-    depth = ((height + z) >> 16) + 58;
+    bob = Iwram_MulQ16(rise, Math_Sine(mover->bob));
     x = (x >> 16) - 8;
-    sy = ((sy + rise) >> 16) - 4;
+    sy = ((sy + bob + rise) >> 16) - 4;
+    depth = ((height + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
       continue;
     x &= 0x1ff;

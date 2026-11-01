@@ -1,8 +1,14 @@
-// Draft, differ 108 of 112: sets up a room's water outlets (up to sixteen spots
-// from a zero-ended list, each on the ground of layer 0) and up to four
-// levels, stores the handler, sets the blend for the water when none is set
-// and starts the frame callback. Overlay 678's Func_02002614 is a copy.
-// Measured against its copies: overlay 678's Func_02002614 (differ 108 of 112).
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Sets up a room's water outlets (up to sixteen spots from a zero-ended list,
+// each on the ground of layer 0) and up to four levels, stores the handler,
+// sets the blend for the water when none is set and starts the frame callback.
+// The listing is instruction for instruction overlay 678's Func_02002614, whose
+// draft matched first and calls the same table swinging platforms; neither name
+// is settled by evidence yet. This takes that draft's shape: one counter across
+// both lists, a plain while for the first and labels for the second, x stored
+// before z, the two blend values as one-constant locals. The one device raises
+// the second list's pointer in global.c's priority so it reaches r7 before the
+// counter takes r4; 678's notes record what was tried without it.
 #include "types.h"
 #include "iwram_call.h"
 #include "system/io_reg.h"
@@ -41,15 +47,15 @@ void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
     s32 i;
 
     Iwram_ClearWords(work, 0x150);
-    i = 0;
     x = *spots++;
+    i = 0;
     while (x > 0) {
       s32 z = spots[0];
       s32 level = spots[1];
 
       outlet->state = 0;
-      outlet->z = z << 16;
       outlet->x = x << 16;
+      outlet->z = z << 16;
       outlet->y = Map_GetTerrainHeight(0, x << 16, (z << 16) + 0x100000);
       outlet->level = level << 16;
       outlet->index = i++;
@@ -60,20 +66,32 @@ void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
       x = *spots++;
     }
     if (levels != 0) {
-      i = 0;
+      /* FAKEMATCH(barrier): the form kept; as no asm, 89 of 112 instructions differ in tla-en. */
+      asm("" : : "r"(levels), "r"(levels), "r"(levels), "r"(levels), "r"(levels));
       x = *levels++;
-      while (x > 0) {
+      i = 0;
+      if (x > 0) {
+      loop2:
         work->levels[i++] = x;
         if (i > 3)
-          break;
+          goto done2;
         x = *levels++;
+        if (x > 0)
+          goto loop2;
       }
     }
+  done2:;
   }
   work->handler = handler;
   if (REG_BLDCNT == 0) {
-    REG_BLDALPHA = 0xc08;
-    REG_BLDCNT = 0x3f10;
+    {
+      s32 alpha = 0xc08;
+      REG_BLDALPHA = alpha;
+    }
+    {
+      s32 cnt = 0x3f10;
+      REG_BLDCNT = cnt;
+    }
   }
   Task_Add(Func_02003a70, 0x480);
 }

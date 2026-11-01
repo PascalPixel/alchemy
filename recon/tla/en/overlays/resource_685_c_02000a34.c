@@ -1,19 +1,19 @@
-// Draft, differ 149 of 529, skeleton gap 57 (tla-en, 2026-11-01)
+// Matches: differ 0 (tla-en, 2026-11-01). Only tla-en was measured.
 // The scene where person 8 tests the party: after their talk it throws person
 // 10 three times, each throw flashing colours 2-6 of background palette 7
 // (between it and palette 6's); then it raises the glow over the spot, the
 // party is pushed back, the glow flares and person 10 drops to the floor with
 // a shake.
-// Left: the rest is allocation and argument order. PRE in gcse hoists the
-// animations and landing addresses out of the loop; the listing's frame (64,
-// not 60), r5 and r2 there suggest those two pseudos lost their registers and
-// reload rebuilt them in the loop, with dim in r6, i in r8, bright in r9 and
-// glow in fp. A for, do or while loop reaches the frame of 64 and differ 131
-// but spills glow (gap 71); the goto loop has the smaller gap. Func_02003544
-// and a few others load r0 last in the listing: direct calls move r2 and r0
-// closer (all five direct: differ 127, gap 69) but share 0x101 across two sites.
-// Tried without gain: inline wrappers, pointer locals for the colours and
-// glow, two palette pointers, outer declarations, an array initializer.
+// What closed it: a never-true jump into the goto loop's end, as in overlay 664's
+// Func_02004138 (differ 149 to 12). It stops PRE keeping the animations' and
+// landing's addresses across the loop, and the loop stops counting as natural, so
+// i's refs count once and it falls below dim and thrown: i r8, dim r6, bright r9,
+// glow fp. The native's unweighted ranking and rebuilt addresses are the K3
+// question 68f_1b48's header raises, out of scope here; if it is settled this
+// device can go. combine folds the test away; the frame's 4 bytes at sp come with
+// it, so no local fills them. The sites that load r0 last go through Value3 or
+// Value2 (12 to 2), and the one-pass block fixes the last pair: temporaries for
+// either argument, direct waits and Value0 on the tail did not.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -78,6 +78,7 @@ s32 Func_02003464(void);
 void Func_02000038(void);
 
 s32 Func_02000a34(s32 value) {
+  /* FAKEMATCH(wrapper): calls forwarded through call.h's CallN and ValueN; as direct calls, 180 of 529 instructions differ in tla-en. */
   struct Actor *thrown = Actor_GetById(10);
   u16 bright[5];
   u16 dim[5];
@@ -85,6 +86,7 @@ s32 Func_02000a34(s32 value) {
   s32 i;
   struct Actor *object;
   u16 *palette;
+  s32 never;
 
   glow[0] = 0x2960000;
   glow[1] = 0;
@@ -105,9 +107,9 @@ s32 Func_02000a34(s32 value) {
   Call1((void (*)())Func_020035b4, 0);
   Func_0200350c((s32)MsgWellDoneYou);
   Func_020005e8(value);
-  Call3((void (*)())Func_02003544, 8, 0x100, 30);
+  Value3((s32 (*)())Func_02003544, 8, 0x100, 30);
   Call3((void (*)())Func_0200351c, 8, 0, 5);
-  Call3((void (*)())Func_02003544, 8, 0x108, 30);
+  Value3((s32 (*)())Func_02003544, 8, 0x108, 30);
   Call3((void (*)())Func_0200351c, 8, 0, 5);
   Call1((void (*)())Func_0200067c, 1);
   Call3((void (*)())Actor_SetPositionAndReset, 8, 0x298, 200);
@@ -115,7 +117,7 @@ s32 Func_02000a34(s32 value) {
   Call1((void (*)())FieldEvent_Wait, 10);
   Call2((void (*)())Func_02003534, 8, 0x8000);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())FieldMessage_ShowAtActor, 8, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, 8, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Call1((void (*)())FieldEvent_Wait, 20);
     Call3((void (*)())Func_0200351c, 8, 0, 5);
@@ -132,9 +134,15 @@ s32 Func_02000a34(s32 value) {
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x2980000, -1, 0xe80000, 1);
   Func_02003564();
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Func_02003544, 8, 0x107, 40);
+  Value3((s32 (*)())Func_02003544, 8, 0x107, 40);
   Call3((void (*)())Func_0200351c, 0x2008, 0, 5);
+  /* FAKEMATCH(dead): the never-true jump to the loop's end; as no test at all, 137 of 529 instructions differ in tla-en. */
+  never = (s32)thrown << 1;
   i = 0;
+  if (never & 1) {
+    i = 1;
+    goto tail;
+  }
 throw:;
   {
     struct ThrowAnimations animations;
@@ -162,6 +170,7 @@ throw:;
     Call1((void (*)())FieldEvent_Wait, 10);
   }
   i++;
+tail:
   if (i <= 2)
     goto throw;
   object = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -177,7 +186,7 @@ throw:;
   Call2((void (*)())Actor_SetModeById, 8, 7);
   Call1((void (*)())FieldEvent_Wait, 60);
   Call1((void (*)())Func_0200362c, 78);
-  Call3((void (*)())Func_02003544, 8, 0x101, 60);
+  Value3((s32 (*)())Func_02003544, 8, 0x101, 60);
   Call3((void (*)())Func_0200351c, 0x2008, 0, 5);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call1((void (*)())Func_0200362c, 220);
@@ -239,6 +248,9 @@ throw:;
   Call3((void (*)())Func_0200351c, 0x2008, 0, 5);
   Call2((void (*)())Func_02003534, 8, 0x5000);
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Actor_SetSpritePriority, 10, 2);
+  /* FAKEMATCH(one-pass): the once-only block orders the two arguments; as a bare Call2, 2 of 529 instructions differ in tla-en. */
+  do {
+    Call2((void (*)())Actor_SetSpritePriority, 10, 2);
+  } while (0);
   return Func_02003464();
 }

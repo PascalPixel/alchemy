@@ -1,34 +1,46 @@
-// Draft, differ 415 of 423, skeleton gap 141 (tla-en, 2026-11-01): 67 removed,
-// 74 added.
+// Draft, differ 248 of 423, skeleton gap 82 (tla-en, 2026-11-01): 40 removed,
+// 42 added.
 // Unpacks clear data, in the layout The Broken Seal's
 // FileScreen_PackPasswordData packs (and Func_02001c7c here), into the four
 // units' base stats, levels and Djinn, the story flags, the Psynergy items and
 // the inventories with their counts. Control flow, calls and memory accesses
-// are the native's.
-// The native keeps code in its loops that -O2 moves out: every table address,
-// 0x1ff, the packedStats address and m * 2 stay inside, the flag loop's head
-// computes table, index and i + 1 once for both calls, yet the counters are
-// strength-reduced. So the loops are written as gotos (no loop notes: loop.c
-// leaves them alone) with the reductions spelled out by hand (offset, next,
-// shift, bytes, slot). Only unpack and counts stay do loops, which raises their
-// pseudos' reference weights and closes more of the gap. table, index and next
-// are plain locals that exist for this; on adoption each needs a FAKEMATCH tag
-// or a better form.
-// What is left is mostly one thing: in stays on the stack (sp + 12, frame 48
-// against 40), where the native has it in r10, so every use costs a reload and
-// the count section's registers shift. Global ranks in behind j, n and table,
-// which take r5 to r7 and the high registers. The native's order is j (r1),
-// the slot offset (r0), the item (r4), then i r7, n r6, bitOffset r5; goto
-// loops lose the loop depth that would weight those refs. One counter for every
-// loop, as the native's r7 suggests, spills it to a high register (gap 200 and
-// up): i is shared by the first loops, the clear, inventory and count loops
-// have their own. Greedy goto or do choices per loop and counter merges found
-// nothing further.
-// Not expressible at -O2: GCSE's PRE moves m * 2 out of even a goto loop
-// (spilled to sp + 4, the native recomputes it), i + 1 before the flag branch
-// needs another temporary and is left out. By hand with -Os in place of -O2
-// the for-loop form fell to 138 lines of register allocation, which points at
-// the native's optimization level; that is a compiler question (K1 to K3).
+// are the native's, except as listed below.
+// Loops: unpack, stats, flags and the slot loops are gotos, so
+// that loop.c leaves constants in them, with the native's strength reductions
+// spelled out (offset, second, third, bytes, cursor, slot, slotOffset).
+// Allocation hangs on what crosses calls. in reaches a register only when
+// nothing hoisted lives beside it, which is why the draft has:
+// - cursor split from bytes, and stream from both;
+// - second and third as temporaries in place of one shared next;
+// - itemOffset stepping by 2 to 46 where the native has m stepping by 1 to 23
+//   and rebuilds m * 2 in the slot loop. PRE hoists m * 2 out of even a goto
+//   loop, and that pseudo takes the register in needs. A copy of m at the top
+//   of the loop is folded by cprop. This costs the two instructions of m * 2;
+// - level stored through a u8 pointer, whose field store otherwise leaves a
+//   zero that gcse carries across two calls in place of the count = 0 store's;
+// - s32 item, because u16 gives a HImode 0x1ff that PRE carries across a call.
+// Left, in order of size:
+// - The count and inventory sections' labels. The draft has bitOffset r7, j r5,
+//   slotUnit r9, m lr, table r10, in r11, mode r9, djinnBits r10; the native
+//   has bitOffset r5, j r1, the unit r7, m r9, table lr, in r10, mode r11,
+//   djinnBits r9. item is spilled here where the native spills item & 0x1ff
+//   only: reload runs one low register short. The rest of those sections' lines
+//   follow from these.
+// - The frame address is hoisted out of the stats loop (the native rebuilds it
+//   there, 4 more bytes of frame here), and that moves i++ and the second and
+//   third temporaries by a few places.
+// - clearMember->djinnAvailable is hoisted out of the clear loop by PRE.
+// Tried with no gain: one counter for all loops or for the last three (differ
+// 269 to 454), bitOffset, inputIndex and the unit split per section (equal or
+// worse), do loops for stats and the clear (worse), a real unpack do loop (its
+// reductions fold the frame into a pointer).
+// What blocks a match is a compiler question (K1 to K3), so it stops here.
+// alchemy-gcc's -Os does exactly what the native shows and -O2 cannot: loop.c
+// skips move_movables but still reduces givs (constants stay in real loops),
+// gcse.c runs classic GCSE and code hoisting in place of PRE (the flag loop's
+// shared head, no hoisting of m * 2), and toplev.c leaves refs unweighted by
+// loop depth (the allocation order above). An earlier hand trial of -Os reached
+// 138 lines of register allocation. Only Pascal can weigh that.
 #include "types.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
@@ -55,16 +67,16 @@ void Func_020018e0(s32 mode, u8 *in) {
   s32 i;
   s32 clearUnit;
   s32 slotUnit;
-  s32 countUnit;
   s32 inputIndex;
   s32 bitOffset;
   s32 j;
   s32 n;
-  s32 m;
+  s32 itemOffset;
   s32 shift;
+  s32 following;
+  u8 *stream;
   u8 *bytes;
-  u8 *base;
-  s32 next;
+  u8 *cursor;
   struct BattleUnit *levelMember;
   struct BattleUnit *clearMember;
   struct BattleUnit *slotMember;
@@ -78,26 +90,31 @@ void Func_020018e0(s32 mode, u8 *in) {
   if (mode != 2) {
     // As a value: in + 8 + (mode != 0) becomes a conditional add.
     s32 statsOffset = 8 + (mode != 0);
-    s32 offset = 4;
+    s32 offset;
+    s32 second;
+    s32 third;
 
     i = 0;
-    bytes = in + statsOffset;
-    do {
-      base = (u8 *)packedStats;
-      packedStats[i * 4] =
-          bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
+    offset = 4;
+    stream = statsOffset + in;
+  unpack:
+    packedStats[i * 4] =
+          stream[0] << 24 | stream[1] << 16 | stream[2] << 8 | stream[3];
       i++;
-      *(u32 *)(base + offset) =
-          bytes[4] << 24 | bytes[5] << 16 | bytes[6] << 8 | bytes[7];
-      next = offset + 4;
-      *(u32 *)(base + next) = bytes[7] << 28 | bytes[8] << 20 | bytes[9] << 12 |
-                              bytes[10] << 4 | bytes[11] >> 4;
-      next = offset + 8;
-      *(u32 *)(base + next) =
-          bytes[11] << 28 | bytes[12] << 20 | bytes[13] << 12 | bytes[14] << 4;
+      *(u32 *)((u8 *)packedStats + offset) =
+          stream[4] << 24 | stream[5] << 16 | stream[6] << 8 | stream[7];
+      second = offset + 4;
+      *(u32 *)((u8 *)packedStats + second) =
+          stream[7] << 28 | stream[8] << 20 | stream[9] << 12 |
+          stream[10] << 4 | stream[11] >> 4;
+      third = offset + 8;
+      *(u32 *)((u8 *)packedStats + third) =
+          stream[11] << 28 | stream[12] << 20 | stream[13] << 12 |
+          stream[14] << 4;
       offset += 16;
-      bytes += 15;
-    } while (i != 2);
+      stream += 15;
+    if (i != 2)
+      goto unpack;
     i = 0;
   stats:
     {
@@ -106,8 +123,8 @@ void Func_020018e0(s32 mode, u8 *in) {
       s16 *stats = &((struct BattleUnit *)Unit_Get(gData_020026a0[i]))->baseHp;
 
       stats[0] = packedStats[i * 2] >> 21;
-      stats[4] = packedStats[i * 2] & 0x1ff;
       stats[1] = packedStats[i * 2] << 11 >> 21;
+      stats[4] = packedStats[i * 2] & 0x1ff;
       stats[5] = packedStats[i * 2 + 1] >> 22 & 0x1ff;
       stats[6] = packedStats[i * 2 + 1] >> 12 & 0x1ff;
       ((u8 *)stats)[14] = packedStats[i * 2 + 1] >> 4 & 0x7f;
@@ -120,15 +137,19 @@ void Func_020018e0(s32 mode, u8 *in) {
   i = 0;
 flags:
   {
-    u8 *table = (u8 *)gData_02002490;
-    s32 index = i * 2;
+    s32 bit = (flagBits >> i) & 1;
+    u8 *table;
+    s32 index;
 
-    if ((flagBits >> i) & 1)
+    following = i + 1;
+    table = (u8 *)gData_02002490;
+    index = i * 2;
+    if (bit)
       GameFlag_SetBit(*(u16 *)(table + index));
     else
       GameFlag_ClearBit(*(u16 *)(table + index));
   }
-  i++;
+  i = following;
   if (i != 6)
     goto flags;
 
@@ -136,7 +157,7 @@ flags:
   shift = 0;
 levels:
   levelMember = Unit_Get(gData_020026a0[i]);
-  levelMember->level = levelBits >> shift & 0x7f;
+  *(u8 *)&levelMember->level = levelBits >> shift & 0x7f;
 #if LANGUAGE != LANGUAGE_JAPANESE
   levelMember->experience = Unit_GetExperienceForLevel(i, levelMember->level);
 #endif
@@ -161,8 +182,12 @@ clearDjinnFour:
   if (clearUnit != 4)
     goto clearDjinn;
 
-  for (i = 0; i != 28; i++)
-    GameFlag_ClearBit(i / 7 * 20 + i % 7 + 48);
+  for (i = 0; i != 28; i++) {
+    s32 element = i / 7;
+    s32 number = i % 7;
+
+    GameFlag_ClearBit(element * 20 + number + 48);
+  }
 
   for (i = 0; i != 28; i++) {
     if ((djinnBits >> i) & 1)
@@ -211,47 +236,49 @@ clearDjinnFour:
 
     inputIndex = 107;
     bitOffset = -1;
-    countUnit = 0;
+    slotUnit = 0;
     do {
-      countMember = Unit_Get(gData_020026a0[countUnit]);
-      m = 0;
-      bytes = in + inputIndex;
+      countMember = Unit_Get(gData_020026a0[slotUnit]);
+      itemOffset = 0;
+      cursor = in + inputIndex;
     countItems:
       j = 0;
       if (bitOffset < 0) {
-        j = bytes[0] << -bitOffset & 0x1f;
-        bytes++;
+        j = cursor[0] << -bitOffset & 0x1f;
+        cursor++;
         inputIndex++;
         bitOffset += 8;
       }
-      j += bytes[0] >> bitOffset & 0x1f;
+      j += cursor[0] >> bitOffset & 0x1f;
       bitOffset -= 5;
       if (bitOffset == -5) {
-        bytes++;
+        cursor++;
         inputIndex++;
         bitOffset = 3;
       }
       j &= 0x1f;
       {
         u16 *table = gData_020026c0;
+        s32 slotOffset = 216;
 
         n = 0;
       countSlots:
         {
-          u16 item = countMember->inventory[n];
+          s32 item = *(u16 *)((u8 *)countMember + slotOffset);
 
-          if ((item & 0x1ff) == table[m])
-            countMember->inventory[n] = j << 11 | item;
+          if ((item & 0x1ff) == *(u16 *)((u8 *)table + itemOffset))
+            *(u16 *)((u8 *)countMember + slotOffset) = j << 11 | item;
         }
         n++;
+        slotOffset += 2;
         if (n != 15)
           goto countSlots;
       }
-      m++;
-      if (m != 23)
+      itemOffset += 2;
+      if (itemOffset != 46)
         goto countItems;
-      countUnit++;
-    } while (countUnit != 4);
+      slotUnit++;
+    } while (slotUnit != 4);
     bytes = in + 165;
     gMainRoutineWork.coins = bytes[0] << 16 | bytes[1] << 8 | in[167];
   }

@@ -1,22 +1,33 @@
-// Draft, differ 238 of 264, skeleton gap 90 (tla-en, 2026-11-01)
+// Draft, differ 216 of 264, skeleton gap 82 (tla-en, 2026-11-01)
 // Overlay 6b5's Func_02000578, the lobby's sending of the party records and the
-// Djinn recovery table, after ☀️'s BattleArena_SendPartyRecords. The record loop
-// and clear loop stay goto loops: as real loops loop.c strength-reduces them,
-// which the listing does not. tries is three variables (r10, r5, r8 in the
-// listing), and the shifted word is read as u32 so the store aliases count and
-// the k loop rereads it. Nearly all of the gap is register class: the listing
-// has heap in r7, timeout and the record loop's tries high, the result in fp
-// and spills the member count; this ranks timeout above heap (global.c's
-// weighted refs over live length) and spills the result, so every heap use
-// reads mov for adds. Lowering timeout's refs moves heap low, so that is the
-// lever, but no behaviour-preserving form found does it; a copy of timeout for
-// the padding loop adds an instruction the listing lacks.
-// Also left: the listing keeps slotMap's address set inside the clear loop;
-// here gcse's PRE lifts it, and the entry-jump form that stops PRE leaves a
-// branch the listing lacks and loses the spill slot. With PRE lifting it, the j
-// loop reads peerSlots through slotMap's slot where the listing adds sp afresh.
-// The k loop and its first test read count through a lifted address where the
-// listing has [list, 0x120 in a register]; do-while and goto k loops are worse.
+// Djinn recovery table, after ☀️'s BattleArena_SendPartyRecords. Confirmed twin
+// by statements, but not by allocation: the twin has heap r8, i r7, timeout r6.
+// The record and clear loops stay goto loops: real loops strength-reduce them
+// (twin's for loops measure differ 290), which the listing does not. tries is
+// three variables (r10, r5, r8 in the listing); the shifted word is read as u32
+// so the store aliases count and the k loop rereads it.
+// This round: tries = 0 after the copy and timeout before tries in the last
+// block took differ from 238. The listing shows tries = 0 above Unit_Get, but
+// that is a callee-saved set sched2 may move; written there it measures 238.
+// Left, register class. Listing order is i, heap, memberIds' address, tries,
+// timeout, result, then memberCount and the slot address spilled (sp+4, sp+0).
+// Here (--rtl): timeout 25 refs p.61, tries p.446, heap p.431, address p.226,
+// memberCount p.157, slot address p.111, result p.07, so result is spilled and
+// memberCount takes fp. timeout's refs come from each wait loop's two back edges
+// to test, each adding a depth (flow.c). Measured: one latch per wait loop drops
+// timeout to 19 refs p.452 and the last block's timeout below its tries, as the
+// listing has, but heap still ranks third; that needed an empty asm at each
+// join, a barrier that gained only 2, so it came back out. Weights that count
+// each loop once fit the listing better than this compiler's do.
+// Left, hoisting. The listing keeps sp+8 in the clear loop and the j loop, and
+// reads [list, 0x120 in a register] in the k loop; here gcse's PRE lifts both,
+// (plus sfp 8) and (plus list 0x120), and loop.c moves the rest. A goto k loop
+// loses (differ 227, 232); the guarded do-while gains 2 of differ and loses 5
+// of skeleton (k < list->count - 1 under if, differ 214, gap 51/41). No source
+// form found stops PRE without a branch the listing lacks. Same family as the
+// frame-address notes in other drafts; a compiler question, out of scope here.
+// result above memberCount needs result undoubled (local-alloc doubles L for
+// its constant first set) or a longer memberCount; neither has a plain form.
 #include "types.h"
 #include "iwram_call.h"
 #include "heap_release.h"
@@ -73,8 +84,8 @@ clear:
   send: {
     s32 tries;
 
-    tries = 0;
     Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
+    tries = 0;
     heap[0x12a] = 2;
     slotMap[memberIds[i]] = i - 128;
     if ((transferResult = Func_0200192c(heap, size)) == -1) {
@@ -130,8 +141,8 @@ next:
     s32 tries;
 
     list = &((struct OfferTable *)heap)->list;
-    tries = 0;
     timeout = 600;
+    tries = 0;
     for (j = 0; j < list->count; j++) {
       list->offers[j].owner = *(peerSlots + list->offers[j].owner);
       if (list->offers[j].owner == 0) {

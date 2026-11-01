@@ -1,135 +1,171 @@
-// Draft, differ 276 of 246, skeleton gap 46 (tla-en, 2026-11-01)
-// The same room's code as games/tla/src/scene/mars_lighthouse_star_room
-// (Func_02002d04 and Func_02002d90 are matched there): takes the current
-// owner's object, snaps it to the middle of its 16-pixel cell and walks it one
-// cell at a time along its angle (snapped to a quarter turn), stopping at the
-// value 255 from Func_02004224, a rise over 8 pixels, or a solid object.
-// Control flow, calls, loads and widths are the listing's: the do with an
-// entry jump gives its loop layout (a plain while lets jump.c rotate the height
-// test to the bottom, gap 56). Left: the listing builds &position and
-// &object->terrainId inside the retry cycle, at first use after the label; PRE
-// hoists both over the entry edge to the retry label, 6 extra instructions
-// before it, and that shifts the literal pool's branch and takes r8 and a stack
-// slot from the allocation (the native keeps object r5, terrainId r11, i r9,
-// flags r8, other r6, and re-adds sp+20 in the loop). The movs/adds form of the
-// native's +34 and +89 comes from reload when the set's destination is a high
-// register, so it follows allocation and is no source difference.
-// Tried, code unchanged: pointer locals for position, a named 0x80000, a local
-// for &terrainId in one or two steps, inner scopes, flags set in the for, do
-// loop for i, x and z as chained assignments, nested ifs. Worse: u32 i (gap 47),
-// u8 values (54), lastX and lastZ declared first (differ 282).
-// Nothing plain in C stops the hoist; this is the compiler question recorded
-// in other drafts (their notes on PRE), so stop here.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The same function as overlay 6a8's Func_02003ee8, which closed first, and
+// overlay 6aa's Func_02003884: only the callee addresses differ, so this is
+// that draft's source with these names. The owner slides from the middle of
+// its cell along its angle, snapped to a quarter turn, stopping at cell value
+// 255, a rise over 8 pixels or a solid object. Twin of Imil_RunIceSlide in The
+// Broken Seal, reworked: heading from the actor's own angle and not the keys,
+// plus the search over the other objects.
+// What the devices do is written up in 6a8's header: plain C leaves differ 276
+// and skeleton gap 46, because PRE hoists sfp - 12 and actor + 34 above the
+// retry label, and the sfp clobbers kill availability so the native's rebuilds
+// stay. The device set is heavy; review it under S2 with 6a8's before adoption.
+// Each tag's N was measured here by undoing that one device. Only tla-en was
+// measured.
 #include "types.h"
-#include "ram_buffer.h"
 #include "actor.h"
-#include "main_routine_work.h"
+#include "fixed_math.h"
+#include "ram_buffer.h"
+#include "scene_tables.h"
+#include "system/main_routine_work.h"
 
-void wait(s32 frames);
-void Func_020041cc(struct Actor *object, s32 mode);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
+/// A point on the map: 16.16 fixed-point pixels.
+struct Position {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
 void Func_02002d90(void);
-void Func_02002d04();
-s32 Func_02004224(s32 layer, s32 x, s32 z);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
-s32 Func_0200428c(s32 *position, s32 radius, s32 *other, s32 otherRadius);
-void Func_02004204(struct Actor *object, s32 x, s32 y, s32 z);
-void Func_0200420c(struct Actor *object);
+void Func_020041cc(struct Actor *actor, s32 mode);
+void Func_02004204(struct Actor *actor, s32 x, s32 y, s32 z);
+void Func_0200420c(struct Actor *actor);
+s32 Func_02004224(u8 layer, s32 x, s32 z);
+s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
+s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
+void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
+void Vector_AddPolarOffsetFar(s32 length, s32 angle, struct Position *position);
+void wait(s32 frames);
+void Func_02002d04(void);
 
 void Func_02003390(void) {
-  struct Actor *object;
-  s32 position[3];
-  s32 angle;
+  struct Position probe;
+  s32 heading;
+  s32 startBehavior;
   s32 x;
   s32 z;
-  s32 lastX;
-  s32 lastZ;
-  s32 value;
-  s32 startValue;
   s32 radius;
-  s32 i;
+  struct Actor *actor;
+  struct Position *next;
+  s32 nextBehavior;
+  u8 *layer;
   struct Actor *other;
+  struct Position *position;
   u8 *flags;
+  s32 i;
+  s32 cell;
+  s32 angle;
+  s32 zero;
+  struct Position *step;
+  s32 startX;
+  s32 startZ;
 
-  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
-  angle = (s16)((object->angle + 0x2000) & 0xc000);
-retry:
+  actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  heading = (s16)((actor->angle + 0x2000) & -0x4000);
+
+top:
   Func_02002d90();
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x8000;
-  object->targetX = 0x80000000;
-  object->targetZ = 0x80000000;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  x = (object->x & 0xfff00000) + 0x80000;
-  position[0] = x;
-  position[1] = object->y;
-  z = (object->z & 0xfff00000) + 0x80000;
-  position[2] = z;
-  lastX = x;
-  lastZ = z;
-  startValue = Func_02004224(object->terrainId, x, z);
-  Vector_AddPolarOffsetFar(0x100000, angle, position);
-  value = Func_02004224(object->terrainId, position[0], position[2]);
-  if (value != 255 &&
-      Map_GetTerrainHeight(object->terrainId, position[0], position[2]) -
-              object->y <=
-          0x80000) {
-    position[0] = lastX;
-    position[2] = lastZ;
-    object->speedLimit = 0x20000;
-    object->acceleration = 0x1999;
-    object->action = 0;
-    Func_020041cc(object, 2);
-    Actor_SetAnimationSpeed(object, 48);
-    object->update = (void (*)(void))Func_02002d04;
-  } else {
-    object->angle = angle;
-    object->velocityX = 0;
-    object->velocityZ = 0;
-    object->x = x;
-    object->z = z;
-    goto end;
+  actor->speedLimit = PIXELS(1);
+  actor->acceleration = PIXELS(1) / 2;
+  actor->targetX = 0x80000000;
+  actor->targetZ = 0x80000000;
+  // Default: one zero, spilled and reloaded at each use.
+  zero = 0;
+  actor->velocityX = zero;
+  actor->velocityZ = zero;
+  /* FAKEMATCH(temporary): cell holds the masked x; as one expression, 93 of 246 instructions differ in tla-en. */
+  cell = actor->x & 0xfff00000;
+  /* FAKEMATCH(temporary): i holds half a cell here and the search's count later; as a separate PIXELS(8), 18 of 246 instructions differ in tla-en. */
+  i = PIXELS(8);
+  position = &probe;
+  position->x = startX = cell + i;
+  position->y = actor->y;
+  position->z = startZ = (actor->z & 0xfff00000) + i;
+  x = startX;
+  z = startZ;
+  /* FAKEMATCH(barrier): the empty asm keeps the stores ahead of the layer's load; with no asm, 4 of 246 instructions differ in tla-en. */
+  asm("");
+  startBehavior = Func_02004224(*(layer = &actor->terrainId), startX, startZ);
+  Vector_AddPolarOffsetFar(PIXELS(16), heading, position);
+  nextBehavior = Func_02004224(*layer, position->x, position->z);
+  if (nextBehavior == 255 ||
+      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
+    actor->angle = heading;
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
+    actor->x = startX;
+    actor->z = startZ;
+    goto done;
   }
-  goto next;
-  do {
-    if (Map_GetTerrainHeight(object->terrainId, position[0], position[2]) - object->y > 0x80000)
-      goto blocked;
-    radius = object->radius - 2;
-    other = Ram_HeapSlots->scriptObjects;
-    flags = &other->collisionFlags;
-    for (i = 0; i <= 63; i++) {
-      if (other->script != NULL && (*flags & 1) && other != object &&
-          Func_0200428c(&other->x, radius, position, other->radius - 2) >= 0)
-        goto blocked;
-      flags += sizeof(struct Actor);
-      other++;
+  position->x = x;
+  position->z = z;
+  actor->speedLimit = PIXELS(2);
+  actor->acceleration = 0x1999;
+  actor->action = zero;
+  Func_020041cc(actor, 2);
+  Actor_SetAnimationSpeed(actor, 48);
+  actor->update = Func_02002d04;
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading layer and nextBehavior; with no asm, 70 of 246 instructions differ in tla-en. */
+  asm("" : : "r"(layer), "r"(nextBehavior) : "sfp");
+  goto test;
+body:
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
+    goto stop;
+  }
+  radius = actor->radius - 2;
+  other = Ram_HeapSlots->scriptObjects;
+  flags = &other->collisionFlags;
+  for (i = 0; i < 64; i++, flags += 128, other++) {
+    if (other->script != NULL && (*flags & 1) && other != actor) {
+      /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading next and actor; with no asm, 209 of 246 instructions differ in tla-en. */
+      asm("" : : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
+          "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor) : "sfp",
+          "r4");
+      if (Func_0200428c(&other->x, radius, &probe, other->radius - 2) >= 0) {
+        goto stop;
+      }
     }
-    lastX = position[0];
-    lastZ = position[2];
-    object->speedLimit = 0x20000;
-    object->acceleration = 0x1999;
-    Func_02004204(object, position[0], position[1], position[2]);
-    Func_0200420c(object);
-    if (value != startValue) {
-      wait(10);
-      goto end;
-    }
-  next:
-    Vector_AddPolarOffsetFar(0x100000, angle, position);
-    value = Func_02004224(object->terrainId, position[0], position[2]);
-  } while (value != 255);
-blocked:
-  object->speedLimit = 0x20000;
-  object->acceleration = 0x10000;
-  Func_02004204(object, lastX, object->y, lastZ);
-  Func_0200420c(object);
+  }
+  x = next->x;
+  z = next->z;
+  actor->speedLimit = PIXELS(2);
+  actor->acceleration = 0x1999;
+  Func_02004204(actor, next->x, next->y, next->z);
+  Func_0200420c(actor);
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp; with no asm, 149 of 246 instructions differ in tla-en. */
+  asm("" : : : "sfp");
+  if (nextBehavior != startBehavior) {
+    goto blocked;
+  }
+test:
+  /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber so PRE leaves it, loads the angle ahead of the address; as heading in the call, 2 of 246 instructions differ in tla-en. */
+  asm("" : "=r"(angle) : "0"(heading) : "r4");
+  step = &probe;
+  Vector_AddPolarOffsetFar(PIXELS(16), angle, step);
+  /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address, so next rebuilds it; as &probe in the call, 114 of 246 instructions differ in tla-en. */
+  step = NULL;
+  next = &probe;
+  nextBehavior = Func_02004224(*layer, next->x, next->z);
+  if (nextBehavior != 255) {
+    goto body;
+  }
+stop:
+  actor->speedLimit = PIXELS(2);
+  actor->acceleration = PIXELS(1);
+  Func_02004204(actor, x, actor->y, z);
+  Func_0200420c(actor);
   wait(2);
-  goto retry;
-end:
-  object->update = NULL;
-  object->actionFlags |= 1;
-  object->acceleration = 0x4000;
-  Func_020041cc(object, 1);
+  /* FAKEMATCH(barrier): the asm tied to actor and clobbering sfp kills both addresses on the back edge; with no asm, 190 of 246 instructions differ in tla-en. */
+  asm("" : "=r"(actor) : "0"(actor) : "sfp");
+  goto top;
+
+blocked:
+  wait(10);
+done:
+  actor->update = NULL;
+  /* FAKEMATCH(barrier): the empty asm keeps the store ahead of the flags' load; with no asm, 2 of 246 instructions differ in tla-en. */
+  asm("");
+  actor->actionFlags |= 1;
+  actor->acceleration = PIXELS(1) / 4;
+  Func_020041cc(actor, 1);
 }

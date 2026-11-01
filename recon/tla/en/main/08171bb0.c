@@ -1,25 +1,46 @@
-// Draft, differ 371 of 1748, skeleton gap 83 (tla-en, 2026-11-01)
-// The frame (176 bytes) and every stack slot match; what is left is
-// allocation and the scheduling it causes. Left: mode 3's w and the running
-// h swap r7 and r2; mode 4's y << 10 is hoisted out of the inner loop by
-// gcse where the native shifts a copy of y inside it; mode 2's mirror loop
-// holds the sheet in r5 across the two calls where the native reloads it
-// and gives the 0x1000 r5 (row is r7, not r6).
+// Draft, differ 36 of 1748, skeleton gap 13 (tla-en, 2026-11-01)
+// Same instruction count as the listing; the frame (176 bytes), every stack
+// slot and all the loops' registers match. What is left, about 18 pairs:
+// - Scheduling only, same instructions (K2's load and split-constant model, a
+//   compiler question): ldr effect before frames = 38's store; the three
+//   BG_PLTT copies (the listing's ldr of IwramCopyWords comes before
+//   lsls #19); the third particles[63] copy of each of the three blocks (its
+//   three-insn constant outranks the store here, lsls r2 comes after it in the
+//   listing); mov r2, fp in mode 2; str [sp, #28] in mode 3; mode 3's
+//   mov r7, sl; model->shade's store against the two scroll stores.
+// - Mode 4's tail: x (sp 32) and the row (sp 24) update in the other order,
+//   so r3 and r5 swap, and x's zero comes from r4 instead of r1. x as
+//   j * step in the loop is the nearest form.
 // What the listing showed (each moved differ by tens or hundreds):
 // - resource ids load from the pool, so they are ResourceId_ symbols;
+// - buffers are Ram_MapCellBuffer plus a constant, never symbols: as symbols
+//   load_mems hoists the mirror's 0x02014208 into lr, which the listing rebuilds
+//   in the outer loop, and the rows as a cast of the constant give j * 8 its
+//   own running value;
+// - vertices, mesh and sheet are one-constant locals of the whole function:
+//   they get no register, so they rematerialize at each use (the pool order
+//   and the reload registers of the model stores follow);
+// - a vertex is s8[4]: a struct's field stores hoist a zero that lengthens
+//   r and w and swaps them; mode 2 needs that zero back as its own local;
+// - s32 *out in mode <= 1 keeps point's address out of r5, so k gets it;
 // - the wave loops' outer counter is its own variable, the inner one is the
 //   i of every other loop (r8), and p is a separate variable per loop;
-// - j * step with step a variable, here x and mode 4's j * two, are givs
-//   worth reducing, which gives the native's stack slots and its copies;
-//   -4 * j is not (loop.c: not worth while), and the frame stays 172;
+// - j * step with step a variable, here x and mode 4's x, are givs worth
+//   reducing, which gives the native's stack slots and its copies; -4 * j is
+//   not (loop.c: not worth while), and -j * 3 written in the loop is mode 3's;
 // - h is i * w * 2, a giv: as a running sum gcse hoists w * 2;
 // - (frame + i * 4) << 11 is reduced where (i << 13) - (frame << 11) is not;
-//   mode 3's wave and scroll are running values;
+//   mode 3's wave and scroll are running values, i = 0 set before them;
+// - mode 4's angle is (frame + j * 2) << 10 and r and w plain j * 2 (a running
+//   y lets gcse hoist the shift, two as a variable merges the givs);
 // - frame * 630 written inline, not phase * 2, keeps its last shift inside
-//   the bar loop, and the shade of the two rings reuses shade (r10).
-// Tried without gain: step in mode 3, two in mode 3 (frame 180), y as a
-// local j * two + frame (differ 613), an address or pointer for the rows
-// instead of [j][i] (same code), - w + (i * w << 1), (i * 2 - 1) * w.
+//   the bar loop, and the shade of the two rings reuses shade (r10);
+// - Trig_Cos(a) * r, not r * Trig_Cos(a), and the model's stores in the order
+//   texture, mesh, vertices, shade.
+// Tried without gain: step in mode 3, two in mode 3 (frame 180), an address or
+// pointer for the rows instead of [j][i], x in other places in mode 4, every
+// order of the second model block's stores, of wave, scroll and i, and of
+// q->variant, a local for the packed side, a local for the palette.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -29,13 +50,6 @@
 #include "heap_release.h"
 #include "ram_buffer.h"
 #include "types.h"
-
-struct ModelVertex {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 pad;
-};
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -122,18 +136,16 @@ void Transform_Pop(void);
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
+// The ring's rows of vertices, two (x, y, z, pad) each. The buffers in this
+// function are constants built from the fixed buffer, not their own symbols.
+#define MAP_CELLS ((s8 (*)[2][4])Ram_MapCellBuffer)
 
 extern char ResourceId_RuneSheet, ResourceId_BlueFlameSheet, ResourceId_Data0B4;
 extern char ResourceId_FlashBurstSheet, ResourceId_Data0D2, ResourceId_Data0D3;
 extern char ResourceId_Data134, ResourceId_JupiterDjinnSmallSheet;
 extern char ResourceId_MarsDjinnSheet, ResourceId_WaterSpraySheet;
 
-extern struct ModelVertex gMapCellBuffer[][2];
-extern u8 gData_02014000[];
-extern u8 Data_02014208[];
-extern u8 gData_02015000[];
-extern u8 Data_02011000[];
-extern u8 Data_02012000[];
+extern u8 gMapCellBuffer[];
 extern const u16 gData_08197410[]; // gBattleEffect_MoteCells
 extern const u8 gData_08199340[];
 extern const u8 gData_08199210[];
@@ -166,6 +178,9 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   s32 shade;
   s32 i;
   s32 j;
+  void *vertices = Ram_MapCellBuffer + 0x1000;
+  u8 *sheet = Ram_MapCellBuffer + 0x4000;
+  void *mesh = Ram_MapCellBuffer + 0x2000;
   s32 point[3];
   s32 screen[3];
   s32 pos[3];
@@ -191,24 +206,27 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
       s32 k;
       s32 size = 0x1000;
 
-      Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, gData_02014000 + size, 1, 0);
-      Iwram_ClearWords(gData_02014000, size);
-      for (row = 0; row != 48; row++) {
-        u8 *base = gData_02014000;
+      Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, sheet + size, 1, 0);
+      Iwram_ClearWords(sheet, size);
+      {
+        u8 *base;
 
+      for (row = 0; row != 48; row++) {
+        base = Ram_MapCellBuffer + 0x4000;
         for (k = 0; k != 24; k++) {
-          Data_02014208[row * 64 + k] = base[(row * 2 + row) * 8 + 0x1000 + k];
+          (Ram_MapCellBuffer + 0x4208)[row * 64 + k] = base[(row * 2 + row) * 8 + 0x1000 + k];
           base[row * 64 + 0x237 - k] = base[(row * 2 + row) * 8 + 0x1000 + k];
         }
       }
+      }
       Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
     } else {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, gData_02014000, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, sheet, 0, 0);
     }
     pos[0] = caster[2];
     pos[1] = caster[3];
     pos[2] = caster[4];
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, gData_02015000, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, Ram_MapCellBuffer + 0x5000, 1, 0);
     frames = 52;
   } else {
     REG_BG2CNT = 0x785;
@@ -244,7 +262,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
     Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet), 128);
   }
   columns = (mode == 2 || mode == 4) ? 8 : 4;
-  Render_BuildQuadStrip(Data_02012000, columns, 32, 32);
+  Render_BuildQuadStrip(mesh, columns, 32, 32);
 
   frame = 0;
   if (frames != 0) {
@@ -303,14 +321,18 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
         if (frame > 39) {
           k = frame - 36;
         }
-        pos[1] = point[1] + (k << 16) - k * Trig_Cos(frame * 3304);
+        pos[1] = point[1] + (k << 16) - Trig_Cos(frame * 3304) * k;
         if (frame > 27) {
           pos[1] = pos[1] + (frame << 18) - 0x700000;
         }
-        pos[2] = point[2];
-        EffectPosition_ProjectPoint(pos, (struct EffectPosition *)screen);
-        blit[0](canvas, work->sheet + 0x2000, screen[0] / 2 - 10,
-                screen[1] - 20, 20, 40);
+        {
+          s32 *out = screen;
+
+          pos[2] = point[2];
+          EffectPosition_ProjectPoint(pos, (struct EffectPosition *)out);
+          blit[0](canvas, work->sheet + 0x2000, out[0] / 2 - 10,
+                out[1] - 20, 20, 40);
+        }
       }
       if (frame > 7) {
         if (mode <= 1 && frame <= 47) {
@@ -394,36 +416,33 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           }
           x = j * step + 64;
           for (i = 0; i != 2; i++) {
-            gMapCellBuffer[j][i].x = x;
-            gMapCellBuffer[j][i].y = ((r * Trig_Cos((j << 10) - (frame << 11))) >> 16) + i * 48 - 24;
-            gMapCellBuffer[j][i].z = 0;
+            s32 zero = 0;
+
+            MAP_CELLS[j][i][0] = x;
+            MAP_CELLS[j][i][1] = ((Trig_Cos((j << 10) - (frame << 11)) * r) >> 16) + i * 48 - 24;
+            MAP_CELLS[j][i][2] = zero;
           }
         }
       } else if (mode == 3) {
         for (j = 0; j != 33; j++) {
           s32 r = j * 4;
           s32 w = j * 2 + 4;
-          s32 x;
 
           if (r > 64) {
             r = 64;
           }
-          x = -3 * j;
           for (i = 0; i != 2; i++) {
-            gMapCellBuffer[j][i].x = x;
-            gMapCellBuffer[j][i].y = ((r * Trig_Cos((j << 10) - (frame << 11))) >> 16) + (i * w << 1) - w;
-            gMapCellBuffer[j][i].z = 0;
+            MAP_CELLS[j][i][0] = -j * 3;
+            MAP_CELLS[j][i][1] = ((Trig_Cos((j << 10) - (frame << 11)) * r) >> 16) + (i * w << 1) - w;
+            MAP_CELLS[j][i][2] = 0;
           }
         }
       } else {
         s32 step = -4;
-        s32 x;
-        s32 two = 2;
-        s32 y = frame;
 
         for (j = 0; j != 33; j++) {
-          s32 r = j * two + j;
-          s32 w = j * two;
+          s32 r = j * 2 + j;
+          s32 w = j * 2;
 
           if (r > 96) {
             r = 96;
@@ -431,13 +450,11 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           if (w > 40) {
             w = 40;
           }
-          x = j * step;
           for (i = 0; i != 2; i++) {
-            gMapCellBuffer[j][i].x = x;
-            gMapCellBuffer[j][i].y = ((r * Trig_Cos(y << 10)) >> 16) + (i * w << 1) - w;
-            gMapCellBuffer[j][i].z = 0;
+            MAP_CELLS[j][i][0] = j * step;
+            MAP_CELLS[j][i][1] = ((Trig_Cos((frame + j * 2) << 10) * r) >> 16) + (i * w << 1) - w;
+            MAP_CELLS[j][i][2] = 0;
           }
-          y += 2;
         }
       }
 
@@ -473,8 +490,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
       texture.pixels = work->sheet;
       model->kind = 7;
       model->texture = &texture;
-      model->mesh = Data_02012000;
-      model->vertices = Data_02011000;
+      model->mesh = mesh;
+      model->vertices = vertices;
       model->shade = shade;
       if (mode == 2 || mode == 4) {
         EffectPosition_ProjectBattler(effect->actors[0], &apos);
@@ -492,11 +509,11 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
               s32 r = (Random16() & 255) + 256;
               s32 a = (Random16() & 0x7fff) + 0x4000;
 
-              q->velocityX = (r * Trig_Sin(a)) >> 7;
-              q->velocityY = (r * Trig_Cos(a)) >> 7;
+              q->velocityX = (Trig_Sin(a) * r) >> 7;
+              q->velocityY = (Trig_Cos(a) * r) >> 7;
               q->x = (apos.x / 2) << 16;
-              q->variant = 0;
               q->y = (apos.y - 8) << 16;
+              q->variant = 0;
             }
           }
         }
@@ -506,7 +523,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
 
             for (i = 0; i != 8; i++, q++) {
               if (q->variant <= 23) {
-                blit[0](canvas, gData_02015000 + ((q->variant / 4) << 11),
+                blit[0](canvas, (Ram_MapCellBuffer + 0x5000) + ((q->variant / 4) << 11),
                         HI(q->x) - 16, HI(q->y) - 32, 32, 64);
                 BattleEffectKernels_IntegrateVector2(q, 60, -0x2000);
                 q->variant++;
@@ -527,18 +544,18 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           Func_080150e4((i << 10) + 256);
           SceneTransform_ApplyPitch((i << 13) - (frame << 11));
           Func_080151e4(0x21770, 0x10000, 0x10000);
-          Render_TransformVertices(gMapCellBuffer, Data_02011000, 66);
+          Render_TransformVertices(gMapCellBuffer, vertices, 66);
           Render_DrawModelList(model);
           Transform_Pop();
         }
         texture.logWidth = 6;
         texture.logHeight = 6;
         model->mesh = gData_08199340;
-        model->vertices = Data_02011000;
+        model->vertices = vertices;
         model->shade = shade;
         model->scrollU = 0;
         model->scrollV = 0;
-        texture.pixels = gData_02014000;
+        texture.pixels = sheet;
         for (i = 0; i != 2; i++) {
           s32 t = frame - i * 4 - 16;
 
@@ -558,7 +575,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
               SceneTransform_ApplyPitch(-0x1000);
               SceneTransform_ApplyYaw(frame << 12);
               Func_0801521c(s);
-              Render_TransformVertices(gData_08199210, Data_02011000, 4);
+              Render_TransformVertices(gData_08199210, vertices, 4);
               Render_DrawModelList(model);
             }
           }
@@ -582,9 +599,10 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           }
         }
         model->scrollV = 0;
+        i = 0;
         wave = frame << 11;
         scroll = frame << 3;
-        for (i = 0; i != 1; i++) {
+        for (; i != 1; i++) {
           model->scrollU = ~scroll & 127;
           Render_ResetTransformState();
           Func_08015160((spos.x / 2 - 64) << 16, (spos.y << 16) - 0x340000, 0);
@@ -594,7 +612,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           SceneTransform_ApplyPitch(i << 15);
           Func_080150e4((Trig_Sin(wave) << 11) >> 16);
           Func_080151e4(0x14e20, 0x8000, 0x10000);
-          Render_TransformVertices(gMapCellBuffer, Data_02011000, 66);
+          Render_TransformVertices(gMapCellBuffer, vertices, 66);
           Render_DrawModelList(model);
           wave += 0x4000;
           scroll += 48;
@@ -632,7 +650,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
               SceneTransform_ApplyPitch((i << 13) - (frame << 11));
             }
             Func_080151e4(0x40000, 0x10000, 0x10000);
-            Render_ProjectVertices(gMapCellBuffer, Data_02011000, 66);
+            Render_ProjectVertices(gMapCellBuffer, vertices, 66);
             Render_DrawModelList(model);
             Transform_Pop();
           }

@@ -1,4 +1,4 @@
-// Draft, differ 206 of 402, skeleton gap 86 (tla-en, 2026-11-01): a burst of power between two objects in Air's Rock
+// Matches: differ 0 (tla-en, 2026-11-01): a burst of power between two objects in Air's Rock
 // (a = idA, b = idB): the camera centres on a (cues 78, 141) while the
 // screen zooms and fades; a starts its action script (gData_020060e0) and,
 // blended over the background, sixteen sparks (object type 0x2a0) fly out
@@ -7,21 +7,20 @@
 // fourth, and fifteen more rise in a column over b (gData_020060c0); the
 // screen fades back, both objects take their closing scripts and b runs
 // Func_020040b0 for 120 frames.
-// The shape is settled: all three loops are goto loops (a for loop hoists the
-// blend address and constants), each loop has its own block-local spark (so
-// local-alloc gives it r5 and the angle r6), and motionFlags' pool zero in the
-// second loop is the mask of the unk66 halfword store, shared by CSE, so no zero
-// local is wanted. unk62 and unk63 need a struct access for the address chain.
-// Left: allocation, and nearly all of the gap is its consequence (mov against
-// adds for a high register). The native has a in r7, i in r8, b in r10, idA in
-// r9, idB in r11; here b r7, a r8, i r10, idB r9, idA r11. global.c ranks b over
-// a and i (25 refs, the native wants at most 22) and idB over idA (8 refs, the
-// native at most 6): exactly the weighted refs of the i == 3 block, as if that
-// block had loop depth 0. No shape tried gives that: a local copy of b there,
-// if/else or goto forms, reordered declarations, a separate counter per loop.
-// The native's sub sp, #12 has no stack reference at all; this draft has no
-// frame, and no local was added to fit it (three pseudos that held stack slots
-// and were reallocated by reload's retry would also fit, unproven).
+// All three loops are goto loops (a for loop hoists the blend address and
+// constants), each with its own block-local spark. The pooled zero in the second
+// loop is the mask of the unk66 halfword store, shared by CSE.
+// What closed it: global.c must rank a over i over b over idA over idB, and that
+// holds only when the second loop's refs count once. flow_loops_find sees no
+// natural loop there if an edge enters the loop's middle before combine, so the
+// tagged never-true test does that and combine folds it to nothing. It is the
+// one found way to the native's ranking, not a claim about the source; another
+// form that lowers those refs would retire it. The rest is plain: sub sp, #12 is
+// an unused array; Value4 sets r0 last so r0 is free as a reload register for
+// b->z; unk62 and unk63 go through a union with struct Actor so that the load of
+// spark->x depends on those stores; call.h forwarding orders the arguments.
+// The one-pass block and the empty asm each fix one scheduling pair; no plain
+// form tried did (Call2, Value2, a script local, a one-pass block for the second).
 #include "types.h"
 #include "actor.h"
 #include "call.h"
@@ -30,6 +29,11 @@ struct SparkBytes {
   u8 unk00[0x62];
   u8 unk62;
   u8 unk63;
+};
+
+union SparkView {
+  struct Actor actor;
+  struct SparkBytes bytes;
 };
 
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
@@ -67,12 +71,15 @@ void Func_02004138(s32 idA, s32 idB) {
   struct Actor *b = Actor_GetById(idB);
   s32 i;
   s16 *angle;
+  s32 never;
+  // Unused: gives the stack frame its 12 bytes.
+  s32 unused[3];
 
   Func_02005f94(78);
   FieldEvent_Wait(30);
   Call2(Func_02005ed4, 0x8000, 0x1000);
-  Camera_MoveWithinMapBounds(((s16 *)&a->x)[1] << 16, ((s16 *)&a->y)[1] << 16,
-                             ((s16 *)&a->z)[1] << 16, 1);
+  Call4(Camera_MoveWithinMapBounds, ((s16 *)&a->x)[1] << 16,
+        ((s16 *)&a->y)[1] << 16, ((s16 *)&a->z)[1] << 16, 1);
   Func_02005f94(141);
   Call3(Func_02005dcc, 0x20000, 0x20000, 0x10000);
   Call2(Func_02005f0c, 0x10000, 0);
@@ -84,10 +91,13 @@ void Func_02004138(s32 idA, s32 idB) {
   Actor_SetMovementTypeById(idA, gData_020060e0);
   Func_02005f94(194);
   FieldEvent_Wait(45);
-  Func_02005e94(idA, 0x100);
+  Call2(Func_02005e94, idA, 0x100);
   REG_BLDALPHA = 0x1008;
   REG_BLDCNT = 0x3f10;
-  i = 0;
+  /* FAKEMATCH(one-pass): the block round i = 0; as a plain i = 0, 2 of 402 instructions differ in tla-en. */
+  do {
+    i = 0;
+  } while (0);
 first:
   {
     struct Actor *spark = Import_ActorCreate(0x2a0, a->x, a->y, a->z);
@@ -117,10 +127,17 @@ first:
     goto first;
   REG_BLDALPHA = 0x1008;
   wait(30);
+  /* FAKEMATCH(dead): the never-true jump into the loop; as no test at all, 200 of 402 instructions differ in tla-en. */
+  never = idB << 1;
   i = 0;
+  if (never & 1) {
+    i = 1;
+    goto tail;
+  }
 second:
   {
-    struct Actor *spark = Import_ActorCreate(0x2a0, b->x, b->y, b->z);
+    struct Actor *spark = (struct Actor *)Value4(
+        (s32 (*)())Import_ActorCreate, 0x2a0, b->x, b->y, b->z);
     Func_02005f94(195);
     angle = &spark->action;
     *angle = (Random16Far() & 0x7fff) + 0x8000;
@@ -128,21 +145,24 @@ second:
     spark->motionFlags = 0;
     spark->unk4c = 0x7a0000;
     spark->watchedObject = b;
-    ((struct SparkBytes *)spark)->unk62 = (16 - i) * 8 + 15;
+    ((union SparkView *)spark)->bytes.unk62 = (16 - i) * 8 + 15;
     Actor_SetPartAttribute(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Func_02005d5c(spark, 7);
     Actor_SetSingleChildFlags(spark, 0);
     Animation_SetStateFlags(spark, 1);
-    Vector_AddPolarOffsetFar(spark->unk4c, *angle, &spark->x);
+    Call3(Vector_AddPolarOffsetFar, spark->unk4c, *angle, (s32)&spark->x);
     Func_02005d6c(spark, gData_020060b0);
     if (i == 3) {
-      Func_02005e94(idB, 0x100);
+      Call2(Func_02005e94, idB, 0x100);
       b->motionFlags = 0;
       b->acceleration = 0x3333;
       b->speedLimit = 0x3333;
+      /* FAKEMATCH(barrier): the empty asm before the call; as no asm, 2 of 402 instructions differ in tla-en. */
+      asm("");
       Actor_SetMovementTypeById(idB, gData_02006104);
     }
+  tail:
     wait(8);
   }
   i++;
@@ -153,11 +173,13 @@ second:
   i = 2;
 third:
   {
-    struct Actor *spark = Import_ActorCreate(0x2a0, b->x, (i << 16) + b->y - 0x80000, b->z);
+    struct Actor *spark = (struct Actor *)Value4(
+        (s32 (*)())Import_ActorCreate, 0x2a0, b->x, b->y + i * 65536 - 0x80000,
+        b->z);
     spark->action = Random16Far();
     spark->unk66 = 0x800;
-    ((struct SparkBytes *)spark)->unk62 = i;
-    ((struct SparkBytes *)spark)->unk63 = 1;
+    ((union SparkView *)spark)->bytes.unk62 = i;
+    ((union SparkView *)spark)->bytes.unk63 = 1;
     spark->bounce = spark->x;
     spark->unk4c = 0;
     spark->gravity = spark->z;

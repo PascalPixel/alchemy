@@ -1,6 +1,7 @@
 .syntax unified
 	.thumb
 	.section .text.x02008390,"ax",%progbits
+	.ifdef TLA_EDITION_JA
 	.balign 4
 	.global Func_02000390
 	.thumb_func
@@ -813,6 +814,7 @@ Func_02000390:
 	add sp, #8
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
+	.endif
 	.endif
 	.section .text.x02008ba0,"ax",%progbits
 	.balign 4

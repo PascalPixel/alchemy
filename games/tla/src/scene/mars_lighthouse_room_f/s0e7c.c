@@ -1,14 +1,9 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Overlay 6ad's Func_02000e7c, the scene setup of its four rooms; only tla-en
-// measured. Func_02002624 is declared s32 here: as void, its argument loads
-// reorder at three sites (differ 10). Its body ends in Task_Add with r0 kept, so
-// `return Task_Add(...)` fits; its own draft still says void and must agree on
-// adoption. Func_020055f0 is Event_SetExitRequestFar, called through a cast
-// because room.h declares it void and this listing returns its value. The 516
-// is stored as a literal and then set in value (one constant, kept in r8):
-// initialised directly, differ 12. Direct calls instead of room.h's forwarded
-// ones, differ 58.
-#include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
+#include "edition.h"
+
+// The Japanese form differs and is still on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
+#include "room.h"
 
 extern char SceneId_Ov6adRoom1;
 extern char SceneId_Ov6adRoom2;
@@ -68,7 +63,8 @@ s32 Func_02000e7c(void) {
   s32 bits;
   s32 other;
 
-  /* FAKEMATCH(temporary): the first flag update through other; as *flags |= bits, 49 of 559 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): the first flag update through other; as *flags |=
+   * bits, 49 of 559 instructions differ in tla-en. */
 
   ((struct SceneWork *)heap->eventWork)->unk1ac = 516;
   value = 516;
@@ -220,3 +216,5 @@ s32 Func_02000e7c(void) {
   }
   return 0;
 }
+
+#endif

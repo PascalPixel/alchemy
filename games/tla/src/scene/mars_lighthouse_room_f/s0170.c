@@ -1,10 +1,9 @@
-// Matches: differ 0 of 55 (tla-en, 2026-10-31); also differ 0 in tla-de,
-// tla-es, tla-fr and tla-it. tla-ja's listing is a different 3-instruction
-// body (it only calls Func_02005688). Both polar steps go through room.h's
-// forwarded Vector_AddPolar; called as Vector_AddPolarOffsetFar directly,
-// 18 of 55 instructions differ. (Func_02000280, Func_020002b8 and
-// Func_020002ec are C in s01f4.c.)
-#include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
+#include "edition.h"
+
+// The Japanese form differs and is still on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
+#include "room.h"
 
 extern char SceneId_Ov6adRoom1;
 extern char SceneId_Ov6adRoom2;
@@ -37,3 +36,5 @@ void Func_02000170(void) {
   }
   Func_02005688();
 }
+
+#endif

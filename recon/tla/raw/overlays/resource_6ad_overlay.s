@@ -2,6 +2,7 @@
 	.thumb
 	.section .text.x02008170,"ax",%progbits
 	.ifdef TLA_EDITION_JA
+	.ifdef TLA_EDITION_JA
 	.balign 4
 	.global Func_02000170
 	.thumb_func
@@ -76,6 +77,7 @@ Func_02000170:
 	.4byte gMainRoutineWork
 .L_020081f0:
 	.4byte 0xfff80000
+	.endif
 	.endif
 	.section .text.x0200855c,"ax",%progbits
 	.balign 4
@@ -209,6 +211,7 @@ Func_0200055c:
 .L_0200866c:
 	.4byte IwramMulQ16
 	.section .text.x02008e7c,"ax",%progbits
+	.ifdef TLA_EDITION_JA
 	.ifdef TLA_EDITION_JA
 	.balign 4
 	.global Func_02000e7c
@@ -1514,6 +1517,7 @@ Func_02000e7c:
 	.4byte gData_02005c60
 .L_02009408:
 	.4byte gData_02005c6e
+	.endif
 	.endif
 	.section .text.x020094e8,"ax",%progbits
 	.balign 4

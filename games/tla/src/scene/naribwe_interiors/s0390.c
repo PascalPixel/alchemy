@@ -1,29 +1,8 @@
-// Matches: differ 0 (tla-en, 2026-11-01); also differ 0 in tla-de, tla-es,
-// tla-fr and tla-it
-// The Naribwe fortune teller's reading of an item (object 10): the player picks an item to show (Func_020011a0, its
-// unit and slot; cancelling asks MsgShallIGive until refused); the item is set
-// on the table (object 18, Func_020010a0) and named (MsgPlacedOnThe); she
-// asks MsgAreYouPrepared, and a no takes the item back and asks whether to
-// show another (MsgAreYouPrepared + 2); on a yes the screen darkens, she dances
-// to her table and back three times while objects 20 and 19 flash, and reads
-// the item: items 0x1b7 to 0x1b9 by Func_02000920, item 326 with its own lines
-// (MsgAreYouPrepared + 29, then + 30 or + 31 by flag 0x940), others by their
-// kind (6 Func_020007b4, 1 Func_02000760, 2 to 5 Func_02000838, else
-// Func_02000878); the reading costs 20 coins. The Japanese edition is the same
-// with its own message numbers: tla-ja does not compile here, as these message
-// names do not exist in it, and adopting needs its spellings.
-// The devices are tagged in the function. The barrier clobbers sfp at the top of
-// the ask loop, which emits nothing: gcse's PRE would otherwise hoist &unit and
-// &slot to the loop's entry edge into r7 and r6, pushing the currentOwner address
-// and message into high registers. The clobber kills (plus sfp N) in that block
-// so the expressions are not anticipatable there. Other ways to stop the hoist
-// fail: a real for loop, an array and a forwarding inline all still hoist, as
-// integrate.c only substitutes a frame address for a local already in memory. A
-// local put in memory (volatile, or a struct with a volatile member) does stop it
-// but gives every read a frame-address pseudo that PRE then shares. PRE may be
-// absent in the native altogether, which is a compiler question for K3.
-// rawKind then kind are plain C: the u8 conversion hides the copy from cse, so
-// the compares stay on the copy in r2 and the range test on the original in r0.
+#include "edition.h"
+
+// The Japanese form differs and is still on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -84,7 +63,8 @@ void Func_02000390(void) {
   Func_02001148(10, 0);
   FieldEvent_Wait(30);
 ask:
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 63 of 376 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 63 of 376
+   * instructions differ in tla-en. */
   asm("" : : : "sfp");
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   if (Func_020011a0(&unit, &slot) == -1) {
@@ -100,7 +80,8 @@ ask:
   unitData = Unit_Get(unit);
   Func_020010b8(unitData->items[slot]);
   Func_020010a0(Actor_GetById(18), unitData->items[slot]);
-  /* FAKEMATCH(wrapper): Func_02001108 called through Call3; as a direct call, 70 of 376 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Func_02001108 called through Call3; as a direct call,
+   * 70 of 376 instructions differ in tla-en. */
   Call3((void (*)())Func_02001108, 18, 0x2a00000, 0x680000);
   FieldEvent_Wait(60);
   Func_020010b0(unitData->items[slot], 2);
@@ -123,7 +104,8 @@ ask:
 read:
   Func_02001138(message + 4);
   Func_02001148(10, 0);
-  /* FAKEMATCH(wrapper): Func_02001170 called through Call2; as a direct call, 59 of 376 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Func_02001170 called through Call2; as a direct call,
+   * 59 of 376 instructions differ in tla-en. */
   Call2((void (*)())Func_02001170, 0x10000, 0);
   FieldEvent_Wait(30);
   Func_02001168(0x40250d, 1);
@@ -132,7 +114,8 @@ read:
   Func_020011a8(11);
   Actor_SetModeById(10, 5);
   Actor_WaitForAnimationChange(10);
-  /* FAKEMATCH(wrapper): DANCE_TO calls through Call3 at its five sites; as a direct call, 67 of 376 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): DANCE_TO calls through Call3 at its five sites; as a
+   * direct call, 67 of 376 instructions differ in tla-en. */
   DANCE_TO(664);
   FieldEvent_Wait(30);
   DANCE_TO(680);
@@ -149,14 +132,16 @@ read:
   Func_020011a8(11);
   Func_02001168(0x10000, 1);
   Func_02001178(30);
-  /* FAKEMATCH(wrapper): Func_02001108 called through Call3; as a direct call, 62 of 376 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Func_02001108 called through Call3; as a direct call,
+   * 62 of 376 instructions differ in tla-en. */
   Call3((void (*)())Func_02001108, 20, 0x2a00000, 0x680000);
   Func_020011a8(0x90);
   Actor_SetModeById(20, 2);
   Actor_WaitForAnimationChange(20);
   Func_02001108(20, 0, 0);
   FieldEvent_Wait(4);
-  /* FAKEMATCH(wrapper): Func_02001108 called through Call3; as a direct call, 2 of 376 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Func_02001108 called through Call3; as a direct call, 2
+   * of 376 instructions differ in tla-en. */
   Call3((void (*)())Func_02001108, 19, 0x2a00000, 0x680000);
   Actor_SetModeById(19, 4);
   Actor_WaitForAnimationChange(19);
@@ -198,3 +183,5 @@ read:
   Func_02001108(18, 0, 0);
   Party_AdjustCoins(-20);
 }
+
+#endif

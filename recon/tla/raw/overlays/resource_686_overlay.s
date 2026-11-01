@@ -260,6 +260,7 @@ Func_0200015c:
 	.endif
 	.section .text.x02008418,"ax",%progbits
 	.ifdef TLA_EDITION_JA
+	.ifdef TLA_EDITION_JA
 	.else
 	.global Func_02000418
 	.thumb_func
@@ -452,6 +453,7 @@ Func_02000418:
 	.4byte 0xffffd000
 .L_020085bc:
 	.4byte 0x01090001
+	.endif
 	.endif
 	.section .text.x02008b78,"ax",%progbits
 	.global Func_02000b78

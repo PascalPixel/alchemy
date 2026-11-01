@@ -3,6 +3,7 @@
 	.section .text.x0200815a,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02008588,"ax",%progbits
+	.ifdef TLA_EDITION_JA
 	.balign 4
 	.global Func_02000588
 	.thumb_func
@@ -353,6 +354,7 @@ Func_02000588:
 .L_0200870c:
 	.4byte Func_020004b4
 	.4byte 0x00004770
+	.endif
 	.endif
 	.section .text.x02008858,"ax",%progbits
 	.balign 4

@@ -131,14 +131,14 @@ Resource_DirectoryTable:
 	resource , Battle_SunsetBackdrop
 	resource , Battle_StarfieldFlareBackdrop
 	resource , Battle_EarthHorizonBackdrop
-	resource , Ending_CliffDayPicture
-	resource , Ending_CliffSunsetPicture
-	resource , Ending_VillagersPictureA
+	resource EndingCliffDayPicture, Ending_CliffDayPicture
+	resource EndingCliffSunsetPicture, Ending_CliffSunsetPicture
+	resource EndingVillagersPictureA, Ending_VillagersPictureA
 	resource , Ending_VillagersPictureB
-	resource , Ending_EmbracePicture
-	resource , Ending_ReunionPicture
-	resource , Ending_SunsetPlainPicture
-	resource , Ending_TheEndPicture
+	resource EndingEmbracePicture, Ending_EmbracePicture
+	resource EndingReunionPicture, Ending_ReunionPicture
+	resource EndingSunsetPlainPicture, Ending_SunsetPlainPicture
+	resource EndingTheEndPicture, Ending_TheEndPicture
 	resource SlotsMachinePicture, Slots_MachinePicture
 	resource SlotsIcons, Slots_Icons
 	resource SlotsJackpotBanner, Slots_JackpotBanner

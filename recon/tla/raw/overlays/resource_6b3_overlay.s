@@ -211,6 +211,14 @@ Func_02000244:
 .L_02008314:
 	.4byte gData_02000a28
 	.section .text.x02008318,"ax",%progbits
+	.set LISTING_0318, 0
+	.ifdef TLA_EDITION_JA
+	.set LISTING_0318, 1
+	.endif
+	.ifdef TLA_EDITION_DE
+	.set LISTING_0318, 1
+	.endif
+	.if LISTING_0318
 	.ifdef TLA_EDITION_DE
 	.global Func_02000318
 	.thumb_func
@@ -1179,6 +1187,7 @@ Func_02000318:
 	.4byte gRenderOamEnabled
 .L_02008784:
 	.4byte 0x00000001
+	.endif
 	.endif
 	.section .bss,"aw",%nobits
 	.balign 16

@@ -1,10 +1,27 @@
-#include "scene_tables.h"
 #include "contigo.h"
+#include "scene_tables.h"
 #include "call.h"
 #include "edition.h"
 
-// The Spanish edition's form differs; it is still on the listing.
-#if (LANGUAGE != LANGUAGE_SPANISH)
+// The lines the prize counter speaks: the Spanish text numbers them
+// differently.
+#if (LANGUAGE == LANGUAGE_SPANISH)
+#define MSG_COINS_WON ((s32)MsgContigo03 + 1)
+#define MSG_COINS_LOST ((s32)MsgContigo03 + 2)
+#define MSG_READ_SIGN ((s32)MsgContigo04)
+#define MSG_CONGRATULATIONS ((s32)MsgContigo05)
+#define MSG_FIRST_PRIZE ((s32)MsgContigo11)
+#define MSG_NEXT_PRIZE ((s32)MsgContigo14)
+#define MSG_COME_AGAIN ((s32)MsgContigo17)
+#else
+#define MSG_COINS_WON ((s32)MsgContigo04)
+#define MSG_COINS_LOST ((s32)MsgContigo05)
+#define MSG_READ_SIGN ((s32)MsgContigo11)
+#define MSG_CONGRATULATIONS ((s32)MsgContigo14)
+#define MSG_FIRST_PRIZE ((s32)MsgContigo15)
+#define MSG_NEXT_PRIZE ((s32)MsgContigo16)
+#define MSG_COME_AGAIN ((s32)MsgContigo17)
+#endif
 
 struct ContigoPrizes {
   u8 unk000[0x14c];
@@ -53,12 +70,12 @@ void Func_02003a8c(void) {
       else
         Func_020042b4(91);
       FieldEvent_Wait(20);
-      Func_0200412c((s32)MsgContigo04);
+      Func_0200412c(MSG_COINS_WON);
       Func_0200403c(diff, 5);
       Func_02004144(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
-      Func_0200412c((s32)MsgContigo05);
+      Func_0200412c(MSG_COINS_LOST);
       Func_0200403c(-diff, 5);
       Func_02004144(14, 0);
     }
@@ -77,12 +94,12 @@ void Func_02003a8c(void) {
       else
         Func_020042b4(91);
       FieldEvent_Wait(20);
-      Func_0200412c((s32)MsgContigo04);
+      Func_0200412c(MSG_COINS_WON);
       Func_0200403c(diff, 5);
       Func_02004144(14, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
-      Func_0200412c((s32)MsgContigo05);
+      Func_0200412c(MSG_COINS_LOST);
       Func_0200403c(-diff, 5);
       Func_02004144(14, 0);
     }
@@ -97,18 +114,18 @@ void Func_02003a8c(void) {
     if (list[0] == -1) {
       Func_02001938(1);
     } else if (list[0] == -2) {
-      Func_0200412c((s32)MsgContigo11);
+      Func_0200412c(MSG_READ_SIGN);
       Func_02004144(18, 0);
     } else {
-      Func_0200412c((s32)MsgContigo14);
+      Func_0200412c(MSG_CONGRATULATIONS);
       Func_02004144(18, 0);
       if (list[0] != -1) {
         prize = list;
       next:
         if (prize == list)
-          Func_0200412c((s32)MsgContigo15);
+          Func_0200412c(MSG_FIRST_PRIZE);
         else
-          Func_0200412c((s32)MsgContigo16);
+          Func_0200412c(MSG_NEXT_PRIZE);
         item = Func_02001a60(*prize);
         Func_0200403c(item, 2);
         Func_02004144(18, 0);
@@ -120,10 +137,9 @@ void Func_02003a8c(void) {
           goto next;
       }
       ((struct ContigoPrizes *)&gMainRoutineWork)->list[0] = -2;
-      Func_0200412c((s32)MsgContigo17);
+      Func_0200412c(MSG_COME_AGAIN);
       Func_02004144(18, 0);
     }
     Func_02004074();
   }
 }
-#endif

@@ -689,6 +689,7 @@ Func_02000bd8:
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
 	.section .text.x02008e80,"ax",%progbits
+	.ifdef TLA_EDITION_JA
 	.balign 4
 	.global Func_02000e80
 	.thumb_func
@@ -1697,6 +1698,7 @@ Func_02000e80:
 	.4byte 0x00019999
 .L_020093e0:
 	.4byte 0x00000069
+	.endif
 	.endif
 	.section .text.x02009424,"ax",%progbits
 	.balign 4

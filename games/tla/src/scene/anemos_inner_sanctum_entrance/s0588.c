@@ -1,23 +1,9 @@
-// Near miss, differ 2 of 157 (tla-en, 2026-10-30): after the raised object's
-// motionFlags strb, sched2 has y's load (priority 50: its latency plus the
-// -mthumb-slow-loads cycle) and movs r2, #128 (49) ready at once; the native
-// issues the movs first. That order follows only if the load waits two cycles
-// after the strb, which -mthumb-slow-loads gives a load after a store unless a
-// later store in the block writes back to the address it read, and y's store
-// does. Even at equal priority, the load would win: it is data dependent on the
-// strb at latency 1 and the movs only anti dependent. Measured on 30 October: y
-// read before the motionFlags store (16).
-// Draft, differ 2 of 157: rewritten from the listing with the loops as goto
-// loops (as for loops loop.c hoists the masks and the zero: 79). Under flag
-// 0x200, when the leader stands on a cell of kind 77, it centres the leader
-// there, turns it, raises the seven objects of gData_02000eec one after
-// another, then moves objects 9 to 14 by the leader's side's shift and lands
-// them. The first Func_02000c74 call goes through a forwarding inline (direct,
-// its mask takes r4: 10). Left: the known store-then-load order: after the
-// raised object's motionFlags store the native builds the first half of 0x8000
-// before loading y; a temporary, the sum reversed and empty asms holding y, the
-// object or the flags change nothing or add differences.
-#include "../../../../games/tla/src/scene/anemos_inner_sanctum_entrance/anemos_inner_sanctum_entrance.h"
+#include "edition.h"
+
+// The Japanese form differs and is still on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
+#include "anemos_inner_sanctum_entrance.h"
 
 extern const s8 gData_02000eec[];
 
@@ -31,7 +17,8 @@ void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 u32 Random16Far(void);
 
 static __inline__ void MoveTo(struct Actor *object, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h). */
+  /* FAKEMATCH(wrapper): MoveTo forwarded inline; as direct calls to
+   * Func_02000c74, 6 of 157 instructions differ in tla-en. */
   Func_02000c74(object, x, y, z);
 }
 
@@ -49,7 +36,7 @@ void Func_02000588(void) {
     return;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   MoveTo(object, (object->x & 0xfff00000) + 0x80000, object->y,
-                (object->z & 0xfff00000) + 0x80000);
+         (object->z & 0xfff00000) + 0x80000);
   {
     s32 id = gMainRoutineWork.currentOwner;
 
@@ -108,3 +95,7 @@ land:
   if (!GameFlag_Test(0xa9f) && shift > 0)
     Func_02000388();
 }
+
+void Func_02000710(void) {}
+
+#endif

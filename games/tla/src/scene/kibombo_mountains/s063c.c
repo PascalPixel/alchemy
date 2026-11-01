@@ -20,16 +20,19 @@ void Func_0200117c(s32 a, s32 b, s32 c, s32 d);
 s32 Func_02001184(void);
 void Func_0200118c(s32 actor, s32 value);
 
-// The JA edition has its own form of this function; it stays on its listing in
-// recon/tla/raw/overlays (S4).
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define EVENT_WORK_VALUE 0x201
+#else
+#define EVENT_WORK_VALUE 0x204
+#endif
+
 s32 Func_0200063c(void) {
   struct Actor *object;
   s16 scene;
   s32 flag;
   s32 height;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x204;
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = EVENT_WORK_VALUE;
   Actor_GetById(Func_02001184())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov66fRoom1) {
@@ -40,8 +43,8 @@ s32 Func_0200063c(void) {
     Actor_GetById(19)->priorityFlags |= 2;
     Actor_GetById(12)->collisionFlags = 0;
     if (GameFlag_Test(0x222)) {
-      Call6((void (*)())Func_0200106c, 30, 35, 1, 1, 28, 34);
-      Call6((void (*)())Func_0200106c, 30, 34, 1, 1, 28, 33);
+      Func_0200106c(30, 35, 1, 1, 28, 34);
+      Func_0200106c(30, 34, 1, 1, 28, 33);
     }
     if (GameFlag_Test(0x221))
       Call6((void (*)())Func_0200106c, 24, 32, 1, 1, 22, 32);
@@ -107,4 +110,3 @@ s32 Func_0200063c(void) {
   }
   return 0;
 }
-#endif

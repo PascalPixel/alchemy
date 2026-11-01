@@ -34,8 +34,7 @@ void Func_02001618(void);
 void Actor_SetWideSprite(s32 id, s32 wide);
 void Func_02002960(s32 a);
 void Func_02002614(const u8 *holes, const u8 *more, void (*update)(void));
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        u32 value);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Func_020027f8(struct Actor *object, s32 mode);
 void Func_02002980(void);
 void Func_02002988(s32 a, s32 flag, s32 b, s32 c);
@@ -43,9 +42,195 @@ void Func_02002084(s32 a);
 void Func_02002114(s32 a);
 void Func_02002828(void);
 
-// The JA edition has its own form of this function; it stays on its listing in
-// recon/tla/raw/overlays (S4).
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+s32 Func_02001774(void) {
+  s32 scene = gMainRoutineWork.scene;
+  u8 *map = (u8 *)Ram_HeapSlots->mapWork;
+  struct Actor *object, *dummy, *piece;
+  s32 id, entrance;
+
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
+  if (scene == (s32)&SceneId_Ov678Room2) {
+    gMainRoutineWork.retreatScene = (s32)&SceneId_Ov678Room1;
+    gMainRoutineWork.retreatEntrance = 1;
+    Func_02002120();
+    for (id = 8; id <= 12; id++) {
+      if (GameFlag_Test(id + 0x8d8))
+        Func_020028d0(id, 0, 0);
+      else
+        Actor_GetById(id)->scaleY = 0x14000;
+    }
+    Actor_SetSpritePriority(13, 3);
+    Actor_GetById(13)->collisionFlags = 0;
+    if (GameFlag_Test(0x220))
+      Call6(Func_02002840, 50, 16, 1, 2, 47, 16);
+    dummy = Actor_GetById(14);
+    if (dummy != 0) {
+      dummy->scaleX = 0xc000;
+      dummy->scaleY = 0xc000;
+      dummy->motionFlags = 0;
+    }
+    Task_Add(Func_02001288, 0x480);
+    ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
+    gDecodeFillByte = 93;
+  } else if (scene == (s32)&SceneId_Ov678Room3) {
+    if (!GameFlag_Test(0x300))
+      Actor_SetWideSprite(0x40, 1);
+    if (!GameFlag_Test(769))
+      Actor_SetWideSprite(65, 1);
+  } else if (scene == (s32)&SceneId_Ov678Room4) {
+    Func_02002960(0);
+    if (!GameFlag_Test(0x310))
+      Func_020028d0(8, 0, 0);
+  } else if (scene == (s32)&SceneId_Ov678Room5) {
+    Func_02002960(0);
+    if (GameFlag_Test(0x310))
+      Func_020028d0(8, 0, 0);
+    if (GameFlag_Test(0xa6d))
+      Call3(Func_020028d0, 9, PIXELS(280), PIXELS(232));
+    if (GameFlag_Test(0xa6e))
+      Call3(Func_020028d0, 10, PIXELS(472), PIXELS(248));
+    Func_02002614(gData_02002a78, gData_02002ab6, Func_02001304);
+  } else if (scene == (s32)&SceneId_Ov678Room7) {
+    Func_02002960(0);
+    Task_Add(Func_02001684, 0x480);
+    if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5)
+      Func_02002614(gData_02002abc, 0, Func_02001424);
+    piece = Actor_GetById(8);
+    piece->motionFlags = 0;
+    Actor_SetSingleChildFlags(piece, 0);
+    if (GameFlag_Test(545)) {
+      Call6(Func_02002840, 28, 8, 1, 1, 26, 8);
+      Func_020027f8(piece, 0);
+    } else {
+      Call6(Func_02002840, 22, 8, 1, 1, 26, 8);
+      Actor_SetSpritePriority(8, 3);
+      piece->priorityFlags |= 2;
+      if (!GameFlag_Test(0x220))
+        Func_020027f8(piece, 7);
+    }
+    piece = Actor_GetById(9);
+    piece->motionFlags = 0;
+    if (GameFlag_Test(0xa6f)) {
+      Call3(Func_020028d0, 9, PIXELS(264), PIXELS(424));
+      piece->terrainHeight = 0;
+      piece->y = 0;
+      Call6(Func_02002840, 15, 26, 1, 1, 16, 26);
+    }
+  } else if (scene == (s32)&SceneId_Ov678Room8) {
+    if (gMainRoutineWork.entrance != 2 && gMainRoutineWork.entrance != 4 &&
+        gMainRoutineWork.entrance != 9) {
+      Func_02002980();
+      Call4(Func_02002988, 0, 776, 8, 9);
+    } else {
+      Value3((s32 (*)())Func_02002614, (s32)gData_02002aca, 0,
+             (s32)Func_020014a0);
+      Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
+      Call2(Task_Add, Func_020016fc, 0x480);
+      Call2(Task_Add, Func_02001618, 0x480);
+      object = Actor_GetById(10);
+      object->motionFlags = 0;
+      Actor_SetSingleChildFlags(object, 0);
+      if (GameFlag_Test(545)) {
+        Func_020027f8(object, 0);
+      } else {
+        Actor_SetSpritePriority(10, 3);
+        object->priorityFlags |= 2;
+        if (!GameFlag_Test(0x220))
+          Func_020027f8(object, 7);
+      }
+      Call6(Func_02002838, 50, 36, 13, 13, 60, 5);
+    }
+  } else if (scene == (s32)&SceneId_Ov678Room9) {
+    Func_02002614(gData_02002ad8, 0, Func_0200151c);
+    if (!GameFlag_Test(824)) {
+      GameFlag_SetBit(825);
+    } else if (GameFlag_Test(826)) {
+      Actor_SetModeById(8, 3);
+      Call3(Func_020028d0, 8, PIXELS(184), PIXELS(344));
+      Actor_GetById(8)->collisionFlags = 0;
+      Actor_GetById(8)->priorityFlags |= 2;
+      Actor_SetSpritePriority(8, 3);
+      Call6(Func_02002840, 11, 19, 1, 1, 11, 21);
+    }
+    if (!GameFlag_Test(827)) {
+      GameFlag_SetBit(828);
+    } else if (GameFlag_Test(829)) {
+      Actor_SetModeById(9, 3);
+      Call3(Func_020028d0, 9, PIXELS(504), PIXELS(184));
+      Actor_GetById(9)->collisionFlags = 0;
+      Actor_GetById(9)->priorityFlags |= 2;
+      Call6(Func_02002840, 30, 13, 1, 1, 31, 11);
+    }
+  } else if (scene == (s32)&SceneId_Ov678Room10) {
+    piece = Actor_GetById(19);
+    if (GameFlag_Test(0x330)) {
+      Call3(Func_020028d0, 19, PIXELS(480), PIXELS(248));
+      if (!GameFlag_Test(265))
+        Call3(Func_020028d0, 10, PIXELS(440), PIXELS(232));
+      Call6(Func_02002838, 47, 50, 2, 14, 29, 1);
+      Call6(Func_02002838, 50, 59, 13, 5, 18, 15);
+    } else {
+      piece->motionFlags = 0;
+      piece->y = 0x200000;
+    }
+    if (!GameFlag_Test(817)) {
+      GameFlag_SetBit(818);
+    } else if (GameFlag_Test(819)) {
+      Actor_SetModeById(9, 3);
+      Call3(Func_020028d0, 9, PIXELS(120), PIXELS(248));
+      Actor_GetById(9)->collisionFlags = 0;
+      Actor_GetById(9)->priorityFlags |= 2;
+      Call6(Func_02002840, 7, 17, 1, 1, 7, 15);
+    } else {
+      Actor_SetModeById(9, 0);
+    }
+    if (!GameFlag_Test(820)) {
+      GameFlag_SetBit(821);
+    } else {
+      Call6(Func_02002840, 27, 14, 1, 1, 27, 13);
+      if (GameFlag_Test(822)) {
+        Actor_SetModeById(10, 3);
+        Call3(Func_020028d0, 10, PIXELS(408), PIXELS(264));
+        Actor_GetById(10)->collisionFlags = 0;
+        Actor_GetById(10)->priorityFlags |= 2;
+        Call6(Func_02002840, 25, 18, 1, 1, 25, 16);
+      } else {
+        Actor_SetModeById(10, 0);
+      }
+    }
+  } else if (scene == (s32)&SceneId_Ov678Room11) {
+    if (!GameFlag_Test(0x340)) {
+      GameFlag_SetBit(833);
+    } else {
+      Actor_SetModeById(8, 0);
+      Call6(Func_02002840, 7, 39, 1, 1, 7, 38);
+    }
+    if (!GameFlag_Test(834))
+      GameFlag_SetBit(835);
+    else
+      Actor_SetModeById(9, 0);
+    if (!GameFlag_Test(840))
+      Actor_SetWideSprite(0x40, 0);
+    entrance = gMainRoutineWork.entrance;
+    if ((u32)(entrance - 2) <= 1) {
+      if (GameFlag_Test(0x340))
+        Func_02002084(0);
+      else
+        Func_02002114(0);
+    }
+    if (entrance == 6) {
+      if (GameFlag_Test(834))
+        Func_02002084(0);
+      else
+        Func_02002114(0);
+    }
+    if ((u32)(entrance - 4) <= 1)
+      Func_02002828();
+  }
+  return 0;
+}
+#else
 s32 Func_02001774(void) {
   s32 scene = gMainRoutineWork.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
@@ -134,7 +319,8 @@ s32 Func_02001774(void) {
       Func_02002980();
       Call4(Func_02002988, 0, 776, 8, 9);
     } else {
-      Value3((s32 (*)())Func_02002614, (s32)gData_02002aca, 0, (s32)Func_020014a0);
+      Value3((s32 (*)())Func_02002614, (s32)gData_02002aca, 0,
+             (s32)Func_020014a0);
       Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
       Call2(Task_Add, Func_020016fc, 0x480);
       Call2(Task_Add, Func_02001618, 0x480);

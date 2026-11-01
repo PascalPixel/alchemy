@@ -1,7 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The search is a goto loop entered by a test of its own: as for or while, loop.c
-// hoists 0xffff into ip (differ 12). Call3 keeps the constants of each
-// Func_02003ac4 call apart; it is the one device, tagged in the function.
 #include "types.h"
 #include "actor.h"
 #include "call.h"
@@ -30,7 +26,8 @@ void Func_02002fc4(struct Func_02002fc4_Entry *entry, s32 id) {
   s32 flag;
   s32 nextFlag;
 
-  /* FAKEMATCH(wrapper): Call3 kept; as direct Func_02003ac4 calls, 20 of 91 instructions differ in tla-en. */
+  /* FAKEMATCH(wrapper): Call3 kept; as direct Func_02003ac4 calls, 20 of 91
+   * instructions differ in tla-en. */
   target = Actor_GetById(id);
   if (entry->id == 0xffff)
     return;

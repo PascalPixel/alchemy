@@ -1,20 +1,3 @@
-// Near miss, differ 2 of 106 (tla-en, 2026-10-30), with no device: starts the
-// next of the 96 sparks at a point around (x, y, z), in a random direction and
-// speed. The counter's step and wrap are two statements (as one, 49). The
-// speed needs no temporary any more: stored straight to velocityY before
-// velocityZ is cleared it differs 2 as before. Left: the parameter spills:
-// the native stores y (r2) before z (r3), here z first and y after the heap
-// slot's address is formed (movs r3, #192). In sched2, z's spill takes its
-// priority from the anti dependence on movs r3, #192, three steps above the
-// heap slot load, and y's only from that load, which it may alias
-// (-mthumb-slow-loads's store rule, cost 2), so y's spill ranks one lower; the
-// native's order needs them tied, as the parameter order then breaks the tie.
-// Overlay 675's Func_020009f8 (resource_675_c_020009f8.c) stops on the same
-// pair of spills. Tried 2026-10-30: a one-pass block before the body ties the
-// spills but holds source's and x's copies (mov sl, r0; adds r7, r1, #0)
-// above it and hoists the state base's constant (6), also with source and x
-// copied to locals after it (6). Before: no barrier or statement move reaches
-// it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_statue/s02dc.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/exits.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/orbit.o"(.text)
-        "*/resource_671_overlay.o"(.text.x0200847c)
+        "*/games/tla/src/scene/gabomba_statue/s047c.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s04b8.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/find_near.o"(.text)
         "*/resource_671_overlay.o"(.text.x02008624)

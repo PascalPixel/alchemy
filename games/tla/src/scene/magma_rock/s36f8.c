@@ -1,13 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Writes a shape id into gMapShapeGrid at the actor's cell (16-pixel cells, 128
-// to a row). A layer's cell pointer gives its offset in the buffer, in cells,
-// which is the same offset in the shape grid. The two calls use the layer the
-// actor stands on, not the parameter; Func_02003adc and Func_02003c24 stay
-// unnamed. Plain C, no devices. Two forms decide it: z read into a local before
-// the grid is added, so z's pseudo holds r2 and the grid takes r1 (with z read
-// at the call the grid takes r2 and 6 instructions differ); and height >> 19
-// and the offset as two statements, for `asrs; add r2, sl`. The same shape as
-// Func_02000bc0 in resource_67f: only the two helpers' names should differ.
 #include "types.h"
 #include "actor.h"
 #include "map.h"

@@ -1,40 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200847c,"ax",%progbits
-	.balign 4
-	.global Func_0200047c
-	.thumb_func
-Func_0200047c:
-	push {r5, lr}
-	ldr r2, [r0, #104]
-	cmp r2, #0
-	beq .L_020084b4
-	ldr r3, [r2, #8]
-	movs r1, #128
-	str r3, [r0, #8]
-	lsls r1, r1, #13
-	ldr r3, [r2, #12]
-	adds r5, r0, #0
-	adds r3, r3, r1
-	str r3, [r0, #12]
-	adds r5, #98
-	ldr r3, [r2, #16]
-	adds r2, r0, #0
-	str r3, [r0, #16]
-	adds r2, #8
-	ldrb r3, [r5]
-	lsls r3, r3, #8
-	strh r3, [r0, #6]
-	movs r0, #192
-	adds r1, r3, #0
-	lsls r0, r0, #11
-	bl Vector_AddPolarOffsetFar
-	ldrb r3, [r5]
-	adds r3, #16
-	strb r3, [r5]
-.L_020084b4:
-	movs r0, #1
-	pop {r5, pc}
 	.section .text.x02008624,"ax",%progbits
 	.balign 4
 	.global Func_02000624

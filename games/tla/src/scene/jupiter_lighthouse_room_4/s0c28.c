@@ -22,7 +22,7 @@ s32 Func_02000c28(struct FieldActor *object) {
     options.palette = 14;
     x = object->x + ((((Random16Far() * 9) >> 16) - 4) << 16);
     y = object->y + ((32 - ((Random16Far() * 20) >> 16)) << 16);
-    velocityY = ((((Random16Far() * 5) >> 16) << 16) + 0x50000) / 10;
+    velocityY = (s32)(((((Random16Far() * 5) >> 16) << 16) + 0x50000)) / 10;
     Func_02001258(x, y, object->z, 0, velocityY, 0,
                   EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                       EFFECT_USE_START_SCALE,

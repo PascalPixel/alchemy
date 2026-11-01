@@ -1,8 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Same C as Func_02001598 in games/tla/src/scene/aqua_rock_inside/s1598.c, this
-// overlay's copy of that drifting spark. Nothing is left but adoption; differ
-// compares instructions only, so the twelve-edition compare still has to
-// confirm the pool.
 #include "types.h"
 #include "actor.h"
 #include "system/field_effect.h"

@@ -21,7 +21,7 @@ SECTIONS
         "*/games/tla/src/scene/anemos_inner_sanctum/s0660.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s06a4.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s06f8.o"(.text)
-        "*/resource_6b0_overlay.o"(.text.x02008794)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s0794.o"(.text)
         "*/games/tla/src/field/object/wait_until_idle.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/scene_tables.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s0818.o"(.text)

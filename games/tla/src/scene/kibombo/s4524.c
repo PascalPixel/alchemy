@@ -1,16 +1,4 @@
-// Near miss, differ 4 of 65 (tla-en, 2026-10-31): sched2 order after
-// Func_02005bbc. The native issues movs r3, adds r0, ldr r5, strb, movs r1;
-// alchemy-gcc issues ldr r5 first and movs r1 before the strb. Its sched2
-// priorities (pool load 18; zero, offset and movs r1 17; strb 16) give the
-// native order only if the strb costs 3 rather than 2 before the owner load
-// (its priority 17, the tie then broken by dependents): a cost the C cannot
-// move. A local for the returned object (4) and a pointer local for
-// currentOwner (7) do not move it.
-// Earlier (26 October 2026, then measured as differ 6 or 8): alchemy permute
-// (5 to 6 minutes) did not move it; tried an empty asm after the store (it
-// swaps the camera call's negs), a one-pass block, a u8 zero; the task add
-// goes through KIBOMBO_TASK_ADD.
-#include "../../../../games/tla/src/scene/kibombo/kibombo.h"
+#include "kibombo.h"
 
 extern const u8 gData_0200613c[];
 extern const u8 gData_0200614c[];
@@ -45,8 +33,7 @@ void Func_02004524(void) {
   Kibombo_CamMove(-1, -1, -1, 0);
   Func_02005bbc()->motionFlags = 0;
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   KIBOMBO_TASK_ADD(Func_02002ccc, 0x480);
   Func_02003640(1, 1);
   if (gData_02007950 != 0) {

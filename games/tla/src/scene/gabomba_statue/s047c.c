@@ -1,11 +1,3 @@
-// Draft, differ 10 of 29: through the scene layer's inline the object stays in
-// r0 and the owner in r2, as the native has them, and the angle argument
-// repeats the stored expression, so CSE passes the stored value (adds r1, r3)
-// as the native does. Left: the native builds the phase byte's address (adds
-// r5, r0) and the position (adds r2, r0) one load earlier, filling each load's
-// delay. Tried: an s32 or u16 angle variable (19), the phase pointer declared
-// later (12), the lift through an asm-pinned temporary with an empty asm after
-// the phase pointer (18), permuter 4 minutes (10).
 #include "types.h"
 
 #include "ram_buffer.h"
@@ -77,27 +69,9 @@ void Func_0200583c(s32 index, s32 flag, s32 a, s32 b);
 s32 Func_0200584c(void);
 void Func_02005854(s32 sound);
 
-static __inline__ void Map_Copy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
-  Func_0200567c(a, b, c, d, e, f);
-}
-
-static __inline__ void *Mem_Alloc(s32 size) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
-  return Heap_Alloc(size);
-}
-
-static __inline__ void Vram_Load(s32 handle, s32 size, void *source) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
-  VramCache_Load(handle, size, source);
-}
-
 static __inline__ void Vector_AddPolar(s32 radius, s32 angle, s32 *position) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): Vector_AddPolar forwarded inline; as direct calls to
+   * Vector_AddPolarOffsetFar, 36 of 29 instructions differ in tla-en. */
   Vector_AddPolarOffsetFar(radius, angle, position);
 }
 

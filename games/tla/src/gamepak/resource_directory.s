@@ -43,7 +43,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data01E
 	resource , Resource_Data01F
 	resource NintendoLogo, Title_NintendoLogo
-	resource , Title_CamelotLogo
+	resource CamelotLogo, Title_CamelotLogo
 	resource LogoOnBlack, Title_LogoOnBlackPicture
 	resource Data023, Resource_Data023
 	resource Data024, Resource_Data024
@@ -316,8 +316,8 @@ Resource_DirectoryTable:
 	resource , BattleEffect_WaterSpraySheet
 	resource , BattleEffect_BlueFlameSheet
 	resource , BattleEffect_ExplosionSheet
-	resource , BattleEffect_MagentaSwirlSheet
-	resource , BattleEffect_MagentaTailSheet
+	resource MagentaSwirlSheet, BattleEffect_MagentaSwirlSheet
+	resource MagentaTailSheet, BattleEffect_MagentaTailSheet
 	resource Data134, Resource_Data134
 	resource , Resource_Data135
 	resource , BattleEffect_ParticleSpritesC

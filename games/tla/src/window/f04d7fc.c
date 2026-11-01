@@ -1,5 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-10-31); held back from adoption: it uses message
-// names the catalogues do not have yet (MsgPasswordEntryX, MsgTransferMethodX).
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -19,8 +17,8 @@
 s32 Menu_CenterResourceEntries(s32, s32, s32);
 void Menu_DrawModeLabel(void);
 void Menu_DrawModeIndicator(void);
-extern char MsgTransferMethodX[];
-extern char MsgPasswordEntryX[];
+extern char MsgTransferMethod[];
+extern char MsgPasswordEntry[];
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
 void Text_DrawMessage(s32 message, void *window, s32 x, s32 y);
 void WindowSprite_PrepareForRedraw(void *window);
@@ -48,7 +46,7 @@ s32 Func_0804d7fc(s32 mode) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
     window = Window_Create(8, 0, 14, 4, 2);
-    msg = (s32)MsgPasswordEntryX;
+    msg = (s32)MsgPasswordEntry;
     upper = &work->upperWindow;
     *upper = window;
     Text_DrawMessage(msg, window, 0, 4);
@@ -63,7 +61,7 @@ s32 Func_0804d7fc(s32 mode) {
     window = Window_Create(6, 0, 18, 4, 2);
     upper = &work->upperWindow;
     *upper = window;
-    Text_DrawMessage((s32)MsgTransferMethodX, window, 12, 4);
+    Text_DrawMessage((s32)MsgTransferMethod, window, 12, 4);
     work->lowerWindow = Window_Create(5, 5, 21, 7, 2);
   }
   result = Menu_RunResourceSelectionLoop(0);

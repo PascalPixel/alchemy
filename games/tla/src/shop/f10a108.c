@@ -1,5 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-10-31); held back from adoption: it uses message
-// names the catalogues do not have yet (Msg04700 to Msg04711).
 #include "battle_system.h"
 #include "battle_unit.h"
 #include "item.h"
@@ -11,17 +9,17 @@ struct ShopRuntime {
   s32 itemWindow;
 };
 
-extern u8 Msg04700[]; // MsgCannotSellEquipped
-extern u8 Msg04701[]; // MsgWeDoNotBuy
-extern u8 Msg04703[]; // MsgSellOffer
-extern u8 Msg04704[]; // MsgRareSellOffer
-extern u8 Msg04705[]; // MsgSellTotal
-extern u8 Msg04706[]; // MsgDamagedSellOffer
-extern u8 Msg04707[]; // MsgOldItemSellOffer
-extern u8 Msg04708[]; // MsgDeal
-extern u8 Msg04709[]; // MsgChangedMind
-extern u8 Msg04710[]; // MsgSold
-extern u8 Msg04711[]; // MsgKeepIt
+extern u8 MsgCannotSellEquipped[];
+extern u8 MsgWeDoNotBuy[];
+extern u8 MsgSellOffer[];
+extern u8 MsgRareSellOffer[];
+extern u8 MsgSellTotal[];
+extern u8 MsgDamagedSellOffer[];
+extern u8 MsgOldItemSellOffer[];
+extern u8 MsgDeal[];
+extern u8 MsgChangedMind[];
+extern u8 MsgSold[];
+extern u8 MsgKeepIt[];
 
 struct BattleUnit *Unit_Get(s32 unitId);
 s32 Shop_GetSellPrice(s32 item);
@@ -75,32 +73,32 @@ void Func_0810a108(s32 unitIdArg, s32 slot, s32 countArg) {
     total = Shop_GetSellPrice(unit->inventory[slot]) * count;
     if (total == 0) {
       MessageArgument_PushFar(itemId, 2);
-      Func_0810857c((s32)Msg04701);
+      Func_0810857c((s32)MsgWeDoNotBuy);
       return;
     }
     if ((unit->inventory[slot] & 0x200) && (item->flags & 2)) {
       MessageArgument_PushFar(itemId, 2);
-      Func_0810857c((s32)Msg04700);
+      Func_0810857c((s32)MsgCannotSellEquipped);
       return;
     }
     if (all)
-      message = (s32)Msg04707;
+      message = (s32)MsgOldItemSellOffer;
     else if (unit->inventory[slot] & 0x400)
-      message = (s32)Msg04706;
+      message = (s32)MsgDamagedSellOffer;
     else if (count > 1)
-      message = (s32)Msg04705;
+      message = (s32)MsgSellTotal;
     else if (rare)
-      message = (s32)Msg04704;
+      message = (s32)MsgRareSellOffer;
     else
-      message = (s32)Msg04703;
+      message = (s32)MsgSellOffer;
     MessageArgument_PushFar(itemId, 2);
     MessageArgument_PushFar(total, 5);
     Func_0810857c(message);
     if (Func_08108630(0) != 0) {
       if (rare || all)
-        message = (s32)Msg04711;
+        message = (s32)MsgKeepIt;
       else
-        message = (s32)Msg04709;
+        message = (s32)MsgChangedMind;
       Func_0810857c(message);
       return;
     }
@@ -113,9 +111,9 @@ void Func_0810a108(s32 unitIdArg, s32 slot, s32 countArg) {
     Func_08109188();
     Shop_DrawItemCount(shop->itemWindow, unitId);
     if (rare || all)
-      message = (s32)Msg04710;
+      message = (s32)MsgSold;
     else
-      message = (s32)Msg04708;
+      message = (s32)MsgDeal;
     Func_0810857c(message);
   }
 }

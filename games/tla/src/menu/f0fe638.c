@@ -1,18 +1,3 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 8 of 260 in tla-en. First difference: the native issues `movs r6, #1` earlier
-// (row 22) than this does (row 70). An empty asm after `redraw = 1;` measured
-// 2. No single empty asm or one-pass block reaches 0.
-// First draft of Func_080fe638: the Djinn menu's list of every Djinn found,
-// two pages of nine rows for each element: each Djinn whose flag (48 + its
-// number) is set shows its element tile and name. Left and Right turn the
-// page, A, B or Select closes it. No ☀️ twin. Msg01046 ("Return") and
-// Msg01047 ("Current Djinn") are placeholders for messages 4166 and 4167 in
-// English; they need names in the six catalogs before this links.
-// Differ 20 of 260 (2026-10-19): the native sets redraw (movs r6, #1) right
-// after the first cue, where agscc sets it only before the first loop wherever
-// the statement stands; the stack frame's sub sp and two offsets' moves are one
-// slot off. pages is a local so that the page wrap calls __modsi3 as the
-// native does (a constant 2 compiles inline).
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -45,7 +30,7 @@ struct DjinnMenuWork {
   u16 rowY[4];
 };
 
-extern u8 Msg01046[], Msg01047[], MsgDjinnName[];
+extern u8 MsgButtonReturn[], MsgCurrentDjinn[], MsgDjinnName[];
 
 void Sound_PlayFar(s32 cue);
 void WindowSprite_RedrawSavedRectFar(s32 window);
@@ -79,8 +64,8 @@ void Func_080fe638(void) {
   Sound_PlayFar(112);
   redraw = 1;
   WindowSprite_RedrawSavedRectFar(menu->messageWindow);
-  Text_DrawCharacterAtOffsetFar(Msg01046, menu->messageWindow, 0, 16);
-  Text_DrawMessageFar(Msg01047, menu->messageWindow, -96, 132);
+  Text_DrawCharacterAtOffsetFar(MsgButtonReturn, menu->messageWindow, 0, 16);
+  Text_DrawMessageFar(MsgCurrentDjinn, menu->messageWindow, -96, 132);
   menu->arrows[0]->active = 13;
   menu->arrows[1]->active = 13;
   MenuIcon_SetActive(0);

@@ -1,5 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-10-31); held back from adoption: it uses message
-// names the catalogues do not have yet (MsgAllDjinnDrained, MsgDjinnDrained, MsgDjinnOnStandby).
 #include "types.h"
 #include "battle.h"
 #include "battle_side.h"

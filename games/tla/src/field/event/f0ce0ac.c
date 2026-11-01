@@ -1,5 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-10-31); held back from adoption: it uses message
-// names the catalogues do not have yet (MsgActorUsesItem, MsgUseItemQuestion).
 #include "types.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

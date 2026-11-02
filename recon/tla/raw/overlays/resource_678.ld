@@ -13,7 +13,7 @@ SECTIONS
         "*/games/tla/src/scene/taopo_swamp/events_d.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/s0ca0.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/events_e.o"(.text)
-        "*/resource_678_overlay.o"(.text.x02008d2c)
+        "*/games/tla/src/scene/taopo_swamp/s0d2c.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/events_f.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/events_g.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/s1288.o"(.text)

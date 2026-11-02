@@ -1,0 +1,139 @@
+#include "types.h"
+#include "ram_buffer.h"
+#include "main_routine_work.h"
+#include "actor.h"
+#include "call.h"
+
+extern char MsgWeReSaved[];
+
+void GameFlag_SetBit(s32 flag);
+void wait(s32 frames);
+void FieldEvent_Wait(s32 frames);
+struct Actor *Actor_GetById(s32 id);
+void Actor_SetPartAttribute(struct Actor *object, s32 value);
+void Actor_SetSingleChildFlags(struct Actor *object,
+                                        s32 flags);
+void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_ResetAndSetPositionInMode2(s32 id, s32 x, s32 z);
+void Actor_Jump(s32 id, s32 height, s32 frames);
+void Actor_SetAngleToward(s32 id, s32 target, s32 mode);
+void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
+void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void Event_StartScreenTransition(void);
+void Event_WaitTransitionFrames(void);
+void Func_020042e0(s32 mode);
+void Func_02004b40(void);
+void Func_02004b50(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02004b68(s32 a, s32 b, s32 c, s32 d);
+void Func_02004b78(s32 a, s32 b, s32 c);
+void Func_02004c20(void);
+void Func_02004c88(s32 id, s32 x, s32 z);
+void Func_02004cd8(s32 message);
+void Func_02004cf0(s32 id, s32 mode);
+void Func_02004d10(s32 id, s32 animation);
+void Func_02004d20(s32 a, s32 b);
+void Func_02004d40(s32 entrance);
+void Func_02004da8(void);
+void Func_02004db0(void);
+void Func_02004db8(s32 value);
+void Func_02004df8(s32 a, s32 b);
+void Func_02004e30(s32 cue);
+
+struct RescueMap {
+  u8 unk000[0x11c];
+  u16 unk11c;
+  u16 unk11e;
+};
+
+void Func_02002ab0(void) {
+  struct Actor *boat = Actor_GetById(10);
+  struct RescueMap *map = (struct RescueMap *)Ram_HeapSlots->mapWork;
+  s32 i;
+
+  Func_02004c20();
+  Func_02004db8(0);
+  Call4((void (*)())Func_02004b68, 64, 176, 304, 240);
+  Call4((void (*)())Func_02004b68, 80, 176, 320, 240);
+  boat->scaleX = 0x13333;
+  boat->scaleY = 0x13333;
+  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  wait(1);
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                     0);
+  Actor_SetSingleChildFlags(Actor_GetById(10), 0);
+  Call3((void (*)())Actor_SetSpeedParameters, 10, 0x6666, 0x3333);
+  boat->action = 0;
+  boat->acceleration = 0x2000;
+  boat->speedLimit = 0x2000;
+  Call4((void (*)())Func_02004b50, (s32)boat, 0x27ff0000, boat->y,
+        0x1ecc0000);
+  Event_StartScreenTransition();
+  Event_WaitTransitionFrames();
+  Func_02004da8();
+  Func_02004cd8((s32)MsgWeReSaved);
+  Func_02004cf0(5, 0);
+  Func_02004cf0(8, 0);
+  Func_02004b50(boat, 0x280f0000, boat->y, 0x1ebc0000);
+  Func_02004cf0(6, 0);
+  Func_02004cf0(5, 0);
+  Func_02004cf0(6, 0);
+  Func_02004cf0(8, 0);
+  Func_02004cf0(6, 0);
+  Func_02004cf0(5, 0);
+  Func_02004e30(78);
+  Func_02004e30(162);
+  Func_02004cf0(gMainRoutineWork.currentOwner, 0);
+  Func_02004cf0(8, 0);
+  Func_02004e30(61);
+  Func_02004db0();
+  Call2((void (*)())Func_02004d20, 0x40000, 0x8000);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0x283f0000, -1, 0x1e8c0000, 1);
+  for (i = 31; i >= 0; i--) {
+    map->unk11e += 0xff80;
+    map->unk11c += 128;
+    Actor_GetById(10)->scaleY += -0x300;
+    wait(1);
+  }
+  Func_02004da8();
+  GameFlag_SetBit(0x200);
+  Func_02004cf0(5, 0);
+  Func_02004cf0(6, 0);
+  Func_02004cf0(5, 0);
+  Func_02004cf0(6, 0);
+  Func_02004cf0(8, 0);
+  Call3((void (*)())Func_02004b78, 0x10000, 0x20000, 0x10000);
+  Func_02004db0();
+  Call2((void (*)())Func_02004df8, 0x9999, 1);
+  map->unk11e = 0;
+  map->unk11c = 0xe000;
+  wait(1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0x0e470000, -1, 0x1dd00000, 0);
+  Func_02004b40();
+  Call3((void (*)())Func_02004c88, 8, 0x0e6a0000, 0x1dc00000);
+  Call3((void (*)())Func_02004c88, 9, 0x0e3e0000, 0x1dff0000);
+  Call3((void (*)())Func_02004c88, 4, 0x0e550000, 0x1df00000);
+  Call3((void (*)())Func_02004c88, 5, 0x0e490000, 0x1dc50000);
+  Call3((void (*)())Func_02004c88, 6, 0x0e770000, 0x1de30000);
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                     1);
+  wait(1);
+  Func_02004da8();
+  Call2((void (*)())Func_02004d10, 5, 0x102);
+  FieldEvent_Wait(20);
+  Func_02004cf0(5, 0);
+  Motion_SetModeAndWaitAnimation(9, 4);
+  Func_02004cf0(9, 0);
+  Actor_Jump(6, 6, 15);
+  Actor_Jump(6, 6, 23);
+  Actor_SetAngleToward(6, 4, 0);
+  Func_02004cf0(6, 0);
+  Call2((void (*)())Func_02004d10, 8, 0x101);
+  Func_02004cf0(8, 0);
+  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x10000, 0x8000);
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 8, 0xe18, 0x1e0f);
+  Func_02004e30(163);
+  Func_020042e0(0);
+  Func_02004d40(65);
+}

@@ -20,7 +20,7 @@ SECTIONS
         "*/games/tla/src/scene/shrine_of_the_sea_god/event1.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/event2.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/resource_654_overlay.o"(.text.x02009340)
+        "*/games/tla/src/scene/shrine_of_the_sea_god/s1340.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/event3.o"(.text)
         "*/resource_654_overlay.o"(.text.x02009474)
         "*/games/tla/src/scene/shrine_of_the_sea_god/event4.o"(.text)

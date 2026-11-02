@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/scene/izumo_interiors/s051c.o"(.text)
         "*/games/tla/src/scene/izumo_interiors/s1d84.o"(.text)
         "*/games/tla/src/scene/izumo_interiors/s1dd0.o"(.text)
-        "*/resource_67d_overlay.o"(.text.x0200a00c)
+        "*/games/tla/src/scene/izumo_interiors/s200c.o"(.text)
         "*/games/tla/src/scene/izumo_interiors/prepare.o"(.text)
         "*/games/tla/src/scene/izumo_interiors/import.o"(.text)
         "*/games/tla/src/scene/izumo_interiors/data.o"(.data)

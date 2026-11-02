@@ -46,7 +46,7 @@ SECTIONS
         "*/games/tla/src/scene/aqua_rock/events_i.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s2550.o"(.text)
         "*/games/tla/src/scene/aqua_rock/events_k.o"(.text)
-        "*/resource_67b_overlay.o"(.text.x0200a5d4)
+        "*/games/tla/src/scene/aqua_rock/s25d4.o"(.text)
         "*/games/tla/src/scene/aqua_rock/s276c.o"(.text)
         "*/games/tla/src/scene/aqua_rock/events_j.o"(.text)
         "*/games/tla/src/scene/aqua_rock/import.o"(.text)

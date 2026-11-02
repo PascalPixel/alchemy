@@ -545,59 +545,6 @@ Func_02000b78:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
-	.section .text.x02009264,"ax",%progbits
-	.balign 4
-	.global Func_02001264
-	.thumb_func
-Func_02001264:
-	push {r5, r6, lr}
-	ldr r3, .L_020092b4
-	movs r2, #240
-	lsls r2, r2, #1
-	adds r6, r3, r2
-	movs r3, #0
-	ldrsh r2, [r6, r3]
-	ldr r3, .L_020092b8
-	adds r5, r1, #0
-	cmp r2, r3
-	bne .L_02009286
-	movs r2, #136
-	lsls r2, r2, #4
-	adds r2, #255
-	adds r0, r5, r2
-	bl GameFlag_SetBit
-.L_02009286:
-	movs r3, #0
-	ldrsh r2, [r6, r3]
-	ldr r3, .L_020092bc
-	cmp r2, r3
-	bne .L_0200929c
-	movs r2, #144
-	lsls r2, r2, #4
-	adds r2, #149
-	adds r0, r5, r2
-	bl GameFlag_SetBit
-.L_0200929c:
-	movs r3, #0
-	ldrsh r2, [r6, r3]
-	ldr r3, .L_020092c0
-	cmp r2, r3
-	bne .L_020092b2
-	movs r2, #144
-	lsls r2, r2, #4
-	adds r2, #150
-	adds r0, r5, r2
-	bl GameFlag_SetBit
-.L_020092b2:
-	pop {r5, r6, pc}
-.L_020092b4:
-	.4byte gMainRoutineWork
-.L_020092b8:
-	.4byte 0x000000bd
-.L_020092bc:
-	.4byte 0x000000be
-.L_020092c0:
-	.4byte 0x000000c0
 	.section .text.x020092c4,"ax",%progbits
 	.global Func_020012c4
 	.thumb_func

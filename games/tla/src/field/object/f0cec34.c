@@ -1,17 +1,7 @@
-// Matches: differ 0 (tla-en, 2026-11-01). From the listing: spawns the current
-// scene's item objects (chests, jars, buried items) from the rows
-// Func_080ceba8 finds, at most 16. The loop is an if and a do-while with the
-// row tests at its foot, as the sibling Func_080cf554 has it; s16 type makes
-// the foot's 0x4000 a pool load, which keeps it apart from the entry's test.
-// motionFlags is written through a local holding its address for its whole
-// life (S2: no device): as the field store, the mask's zero stays in a register
-// and cell->collisionCode = 0 reuses it (8 of 241 differ). Not yet checked
-// in the other editions.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"
-
 
 struct SceneItemWork {
   u8 unk000[0x114];
@@ -26,8 +16,7 @@ s32 Func_080cec24(s32 value, s32 *out);
 struct Actor *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 GameFlag_Test(s32 flag);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           u32 flags);
+void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Func_080d3b28(s32 id, s32 item);
 
 void Func_080cec34(void) {

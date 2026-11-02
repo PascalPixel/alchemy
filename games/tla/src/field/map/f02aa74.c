@@ -1,13 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The Broken Seal's Map_CenterOnFollowedPoint, with this game's list of camera
-// rectangles (s16 pixels, ended by -1, the pointer at map work 0xfc) that push
-// the followed point out to the nearest edge. No device: the old draft's
-// stack-slot difference was allocation. Plain ABS(nearX - x) on every test is
-// what gives the rebuilt difference in r6 and r4, through PRE, and the zeros
-// set before the pointer read give the reload order. rectList is the list's
-// head and rect its cursor: the one copy the listing shows (adds r2, r3); with
-// a single variable, rect loads into r2 and -1 becomes subs r1, #1. Edition
-// bytes other than tla-en not measured.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

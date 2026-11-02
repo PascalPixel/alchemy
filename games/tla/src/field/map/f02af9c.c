@@ -1,9 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The Broken Seal's MapGrid_SetCameraCenter for this game's layers: no phase
-// masks, and the layer window (masks and origins at layer +40 to +46) of the
-// renderers 0802abbc and 0802ac90; it draws 11 block rows. The enable bytes
-// sit at work +0x104, read as a struct field because a cast adds an adds; the
-// twin calls them enabled. No devices.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

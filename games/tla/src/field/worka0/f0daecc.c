@@ -1,23 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Turns an object into a chain of links hanging from its cell: starts the
-// chain work (Func_080da9a8) if none is running, takes a chain slot for the
-// object (none if it already has one, or none is free), clears the collision
-// codes of the five cells above, sinks the object a cell down and 64 pixels
-// forward, then hangs seven links (kinds 1, 2, 3/4 alternating, 5 for the
-// last) 14 pixels apart from 15 pixels above the cell. When grow is set the
-// links unroll over 28 frames.
-// Forms that the match depends on, for review before adoption:
-// - `cell = cells; cell += ...` in two statements: as one statement the store
-//   becomes an address giv and is reduced (differ 44). This is a shaping
-//   choice with no plain one-statement equivalent found; it carries no tag
-//   because it is none of S2's kinds, so the reviewer should judge it.
-// - The grow loop is an `if` around a `do`, so drop is set after the entry
-//   tests (a `for` with drop set before gives differ 124 on its own, and
-//   `offset` counted from 0 is left unreduced because its giv has no benefit).
-// - link->y is computed from i each pass, not stepped: loop.c's reduced giv
-//   gives the native's order and allocation (differ 12 against 116).
-// - The cell column and row reuse x and z, and last is a one-constant local
-//   (the native keeps it in r4, spilled around each call).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

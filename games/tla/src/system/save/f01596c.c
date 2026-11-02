@@ -1,9 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Allocates the save workspace, identifies the flash chip and scans the sectors
-// three at a time: ☀️'s Save_InitializeWork (games/tbs/src/system/system/save.c)
-// over 15 sectors, in its statement order. The part id local is u16: its
-// conversions bring the outer loop to 69 insns on loop.c's second pass, which
-// leaves the partId giv unreduced as (index + 12) + (work + 3) as the ROM has it.
 #include "types.h"
 #include "heap_release.h"
 #include "dma.h"

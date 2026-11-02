@@ -1,14 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The Broken Seal twin is LineScroll_BuildPage, for the heap slot 0x88
-// workspace: fills the hidden page with each scanline's BG1, BG2 and BG3
-// offsets, the scroll plus a sine wave on each axis with a step (in mode 1
-// only BG3 waves), then shows that page. Nothing while the event work's byte
-// 0xca4 is set. No device. What closed it after the compiler change: the
-// scroll locals declared x1, y1, x2, y2, x3, y3; one u16 waveX3 and one u16
-// waveY3 for the whole function, each set in both modes, so gcse shares each
-// axis's shifted value (a single u16 for both axes, or one per section, lets
-// the pseudo outbid the work pointer or lose r10); and the first section's
-// locals set in the order a, waveX3, b, which gives b its slot at sp+8.
 #include "types.h"
 #include "bg_scroll.h"
 #include "iwram_call.h"
@@ -68,8 +57,8 @@ void Func_080d607c(void) {
       waveX3 = x3;
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {
-        wave = Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) /
-               256;
+        wave =
+            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
         row[0] = a + wave;
         row[2] = b + wave;
         row[4] = waveX3 + wave;
@@ -92,8 +81,8 @@ void Func_080d607c(void) {
       waveY3 = y3;
       amplitude = work->ampY;
       for (scanline = 0; scanline != 160; scanline++) {
-        wave = Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) /
-               256;
+        wave =
+            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
         *row = a + wave;
         row += 2;
         *row = b + wave;
@@ -117,8 +106,8 @@ void Func_080d607c(void) {
       waveX3 = x3;
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {
-        wave = Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) /
-               256;
+        wave =
+            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
         row[0] = x1;
         row[2] = x2;
         row[4] = waveX3 + wave;
@@ -139,8 +128,8 @@ void Func_080d607c(void) {
       waveY3 = y3;
       amplitude = work->ampY;
       for (scanline = 0; scanline != 160; scanline++) {
-        wave = Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) /
-               256;
+        wave =
+            Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) / 256;
         row[0] = y1;
         row[2] = y2;
         row[4] = waveY3 + wave;

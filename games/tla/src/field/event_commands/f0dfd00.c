@@ -1,16 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01). The Broken Seal's
-// FieldEffect_RunWhirlwind (shape 0.64, structure 0.73). ⚓️ keeps ☀️'s carried orb and
-// its orbiting motes, and adds two kinds of target, told apart by the target's
-// first animation (372 and 373): for both the orb shrinks away at once, for 372
-// with motes that wander off round it, and the target is then handed to
-// Func_080db0b0.
-// What closed it: the kinds are an if chain with each arm written in full, since a
-// switch tests 1 first and cross-jumping makes the shared ending; the carry loop's
-// compare (cmp #11, blt) needs a do-while over a variable, as the front end folds a
-// literal to <= 10, and frames is a one-constant local (S2); the wander pause is a
-// linear form of i, which loop.c reduces and sets after its hoisted constants, where
-// 20 - i * 2 is not reduced; the motes count in their own i; caster loads before target.
-// No devices. Other editions not measured here.
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -157,7 +144,7 @@ void FieldEffect_RunWhirlwind(void) {
       distance = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(distance, Random16(), &position);
       mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
-                                                position.y, position.z);
+                                               position.y, position.z);
       if (mote != 0) {
         mote->update = BattleEffect_CircleAnchor;
         mote->anchor = orb;
@@ -189,7 +176,7 @@ void FieldEffect_RunWhirlwind(void) {
         distance += 3 << 16;
         Vector_AddPolarOffset(distance, Random16(), &position);
         mote = (struct OrbitEffect *)Actor_Spawn(MOTE_OBJECT, position.x,
-                                                  position.y, position.z);
+                                                 position.y, position.z);
         if (mote != 0) {
           mote->update = BattleEffect_WanderAroundAnchor;
           mote->timer = 20 + i * -2;

@@ -1,44 +1,49 @@
-// Draft, differ 400 of 828, skeleton gap 80 (tla-en, 2026-11-01)
+// Draft, differ 352 of 828, skeleton gap 50 (tla-en, 2026-11-01)
 // BattleEffect_RunLightSurge: same calls and control flow, draft 824
 // instructions. Nearly all of what is left comes from one cause: the listing
 // keeps shade at sp+24 and the draft keeps it in r1, so its frame is 112 bytes
 // where the listing's is 116 and every stack offset is off by 4.
 //
-// The spill is proven, its source is not. Slots run in pseudo order, so
-// shade fails global-alloc, and only a call crossed would do that, since all
-// of r5 to r11 are taken and reload has no pressure in its live range. Its two
-// reads each follow a set, so it crosses nothing in the final code: flow must
-// see a later read that combine then folds away. Replacing Func_08158ce0(4, 4)
-// with Func_08158ce0(4, 4 + ((shade & 255) >> 8)) does exactly that and leaves
-// no code: 116 bytes, 827 instructions, differ 169, skeleton gap 55. The read
-// has to be in a later block; after Render_ResetTransformState, in shade's own
-// block, it does nothing. That form is a device that did not reach differ 0,
-// so it is out; the source's real form would be worth finding. Tried without
-// gain: a ternary, a dead shade = 0 after the pillars.
+// The spill is proven, its source is not. Slots run in pseudo order, so shade
+// fails global-alloc, which takes a call crossed, and its two reads each follow
+// a set in the final code. So at the life pass flow must see one of two things.
+// - A read in a later block that combine folds away (stale flow data):
+//   Func_08158ce0(4, 4 + ((shade & 255) >> 8)) leaves no code, 116 bytes, differ
+//   121, skeleton gap 25. That form is a device, so it is out.
+// - A path through the pillar loop with no set: else if (frame <= 63) on the
+//   third arm spills shade too, differ 147, gap 33, but keeps its compare (831
+//   instructions). The test is always true there, so it is not the source
+//   either. else if (frame > 23) is threaded away before life and does nothing.
+// The real form would remove a read or a path after life and before global.
+// Tried without gain: a ternary, a dead shade = 0 after the pillars.
 //
-// With that read in place, what stayed at differ 169:
-// - After cmp r0, #71 the listing rereads frame (ldr r1, [sp, #56]) for
-//   0xa00 - (frame << 5) where the draft inherits r0. One reload short rotates
-//   the reload registers through the rings. Forms tried: (80 - frame) * 32, a
-//   ternary, if/else, a split shift, a copy of frame, frame >= 72.
-// - The preheader sets camera + 3, &texture, pos; the draft sets pos first. As
-//   a set in the loop pos is hoisted by PRE and gets the wrong slot; in the
-//   ring loop or the frame-0 block loop.c leaves it where it is.
-// - sp+8 and sp+12 are swapped (camera + 3, frame << 8): PRE's pseudo order.
+// Measured on top of the device, so read these with it in place (differ 121):
+// - The preheader sets camera + 3, &texture, pos; the draft sets pos first.
+//   pos = &screen in the frame loop or before the ring loop lets PRE hoist it
+//   (differ 167 to 175): pos is then a PRE temporary, below shade's slot, where
+//   the listing has it above. In the bolts' preheader nothing hoists it (488).
+// - sp+8 and sp+12 are swapped (camera + 3, frame << 8). (frame + 16) << 8 is
+//   worse, 0x1000 + (frame << 8) and a phase local change nothing.
+// - The ring's entry: the listing has lsls r5 / adds r5 in place and reads the
+//   first *entry through r5 before mov sl, r5, then top goes in r5. Here the
+//   shift goes to a temporary, entry is built in r2. index <<= 1 in place adds
+//   a reload (differ 159), reading through index too (205). (index >> 1) * 2
+//   folds both shifts away, so the shift stays its own statement.
 // - sched2: movs r6, #2 and movs r5, #0 sit above GetBattleObjectSlotFar in the
 //   listing; moving the statements does not move them.
 //
-// Forms that closed structure: BattleEffect_LoadBlitter and Task_Add return
-// s32; sprites is read before BattleEffect_StartCanvasLayer; x and y are
-// function locals, x first, so x wins r11 and y spills to sp+32; cells is one
-// s32 constant, reloaded at each use, with offset + cells and *entry + cells in
-// that order; index is shifted in place, added to circles, then reused for
-// y - size, which gives lsls r5 / adds r5 / mov sl, r5 and frees r5; a size
-// local to the ring loop leaves the circle loop's size in r6; fall is indexed
-// from i inside the loop, which puts its pointer after the hoisted -0x80000;
-// circles is s16 and each draw rereads *entry. The bolts' out comes from pos in
-// one branch and &screen in the other: with the same copy in both, the last
-// cprop deletes out and r7 goes. That mix is odd as C, and the real form may be
+// Forms that closed structure: turn is if/else with the 0x100 arm first (the
+// label there is what makes the listing reread frame; with the arms swapped it
+// is lost); BattleEffect_LoadBlitter and Task_Add return s32; sprites is read
+// before BattleEffect_StartCanvasLayer; x and y are function locals, x first,
+// so x wins r11 and y spills to sp+32; cells is one s32 constant, reloaded at
+// each use, with offset + cells and *entry + cells in that order; entry is
+// &circles[index], top a local of its own; a size local to the ring loop leaves
+// the circle loop's size in r6; fall is indexed from i inside the loop, which
+// puts its pointer after the hoisted -0x80000; circles is s16 and each draw
+// rereads *entry. The bolts' out comes from pos in one branch and &screen in
+// the other: with the same copy in both, the last cprop deletes out and r7 goes
+// (differ 436 on the device). That mix is odd as C, and the real form may be
 // simpler. The loop keeps the twin's i * 2 + 3 (0818cb74).
 
 #include "battle_effect.h"
@@ -265,9 +270,11 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 20) <= 59) {
-      s32 turn = 0x100;
+      s32 turn;
 
-      if (frame > 71) {
+      if (frame <= 71) {
+        turn = 0x100;
+      } else {
         turn = 0xa00 - (frame << 5);
       }
       if (effect->side == 0) {
@@ -284,6 +291,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       s32 half;
       s32 index;
       s16 *entry;
+      s32 top;
       s32 size;
 
       if ((u32)ring->variant > 15) {
@@ -301,18 +309,17 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       y = pos->y;
       BattleEffect_LoadBlitter(
           188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-      index <<= 1;
-      entry = (s16 *)(index + (s32)circles);
+      entry = &circles[index];
       half = size >> 1;
-      index = y - size;
+      top = y - size;
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (void *)(*entry + cells),
-                                               x - half, index, half, size);
+                                               x - half, top, half, size);
       HeapSlot_Release(188);
       BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
                                                       COMPOSITE_CLIP_Y |
                                                       COMPOSITE_FLIP_X));
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (void *)(*entry + cells),
-                                               x, index, half, size);
+                                               x, top, half, size);
       HeapSlot_Release(188);
       if (i > 15) {
         BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |

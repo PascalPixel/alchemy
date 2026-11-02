@@ -1,35 +1,22 @@
-// Draft, differ 138 of 884, skeleton gap 32 (tla-en, 2026-11-01)
-// BattleEffect_RunRisingDragon. Stack frame, every spill slot and the first segment
-// loop now agree; nearly everything left follows from one giv in the second loop.
-// What closed the old gap: gMapCellBuffer is really [2][66] vertices, so the
-// loops index strip[j * 2 + i]. Writing i into the index lets gcse's reaching reg
-// for j * 2 span both segment loops, which is what gets it reduced (benefit 3) in
-// the first loop; the old hand-stepped vertex and offset locals took the wrong
-// slots. The strip bases and 20768 are set-once locals that get no register, so
-// reload rematerializes them at each use: the copy before muls and the pool load
-// after lsls in the listing.
-// What is left:
-// - sp+16: the listing steps j * 8 with no shift; here j * 2 steps with lsls #2.
-//   In loop.c's second pass giv "T << 2" scores benefit 5, lifetime 1: 51 vs 89,
-//   not worth while, and it needs lifetime 2. Likely cause: in the first pass the
-//   inner loop reduces only (j * 2 + i) * 4, and the second pass moves the strip
-//   base and reduces the sum, leaving the base's load between the shift and its
-//   use. Moving the base needs threshold 17 * lifetime >= the inner loop's count
-//   (22 to 28 here), so a lifetime that fails only in the first pass needs a first-pass
-//   count of 35 or more. Untested. j * 8 written plainly (strip1[j], pair + i)
-//   loses the first loop's reduction, because the reaching reg then has one set
-//   and cprop removes it; a body-level j * 2 is not partially redundant and CSE
-//   folds a shift in the same block to j << 3.
-// - That step shifts reload's rotation, so the registers from the end of the second
-//   loop through the model stores differ. The -1 for "variant + 1 != 0" should come
-//   from 6 (subs r3, #7) once the rotation agrees. Recheck the store orders then:
-//   the two model orders here are a search's best against the rotated registers.
-// - height + start comes out as start + height in both loops' setup (adds r2, r3, r0);
-//   operand order in the source does not change it.
-// - Five sp-load or sp-store pairs sit one place apart: ldr effect around the zeroing
-//   of endX and of frame, add r7 and mov r8 before the sparks, ldr r5 and ldr r6
-//   before the motes, str j and the reduced 0 before each segment loop. No source form
-//   tried moves them; they look like sched2 ties.
+// Draft, differ 2 of 884, skeleton gap 1 (tla-en, 2026-11-02)
+// BattleEffect_RunRisingDragon. One scheduling pair is left: the model's texture and
+// shade stores. The listing has str [r6, #16] then str [r6, #20]; here they swap.
+// sched2 ranks the two by forward dependents: shade (s32) conflicts with the load of
+// effect->variant just after it, texture (a pointer) does not, so shade goes first
+// whatever the source order (all 120 orders tried). Declaring shade as void * gives
+// the listing's order and differ 0, but 0814153c and 0816e65c store computed numbers
+// there, so that is a false type and it stays out. What would settle it is evidence
+// of what offset 20 or effect->variant really is: anything outside int's alias set.
+// What closed the rest, for the next function of this kind:
+// - strip1 is the constant Ram_MapCellBuffer, not gMapCellBuffer. The constant passes
+//   through the moved load into the giv's add, so reducing the second loop's giv
+//   emits the shift, the pool load, then the sum. That gives T << 2 lifetime 2, which
+//   is what reduces j * 8 in pass 2 (slot sp+16, below the first loop's sp+24).
+// - Reduced givs replaced the hand-stepped pointers: mote and spark are indexed inside
+//   their loops, which puts their setup after the loop's hoisted copies.
+// - stripMesh is a set-once local, rematerialized at its one use, so its pool load
+//   rotates reload into r0 after the pixels sum. The store orders are the listing's.
+// - distance + start + i * width, with no inset local, gives adds r2, r0, r3.
 // Allocation that agrees: i is one counter for the init, strike, mote, vertex and
 // model loops, and j for the sparks and segments; radiusX takes r7, distance r4
 // and the reduced height term r2.
@@ -230,16 +217,15 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
 
     // Each dragon's strike.
     for (i = 0; i != effect->variant + 1; i++) {
-      s32 sparks = i * 32 * sizeof(struct EffectStep);
-
       if (frame != i * 10 + 28) {
         continue;
       }
       EffectPosition_ProjectBattler(effect->actors[0], &hit);
-      for (j = 0, spark = (struct EffectStep *)((u8 *)work->particles + sparks); j != 32;
-           j++, spark++) {
+      for (j = 0; j != 32; j++) {
         s32 angle;
         s32 speed = 255;
+
+        spark = &work->particles[i * 32 + j];
 
         spark->x = (hit.x / 2) << 16;
         spark->y = (hit.y - 16) << 16;
@@ -266,7 +252,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
       }
       Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
     }
-    for (i = 0, mote = work->particles; i != 64; i++, mote++) {
+    for (i = 0; i != 64; i++) {
+      mote = &work->particles[i];
       if (mote->variant >= 0) {
         s32 size = (mote->variant >> 3) + 2;
 
@@ -280,6 +267,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
     if (frame > 15) {
       struct StripVertex *strip0 = gMapCellBuffer[0];
       s32 scale = 20768;
+      const u8 *stripMesh = Data_02012000;
 
       // The arcs' heads and tails, 44 units a frame.
       arcs[0] = frame * 44 - 704;
@@ -325,10 +313,9 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
         start = -(width / 2);
         for (i = 0; i != 2; i++) {
           struct StripVertex *corner = strip0 + (j * 2 + i);
-          s32 inset = start + i * width;
 
-          corner->x = ((Trig_Cos(angle) * (distance + inset)) >> 16) - distance;
-          corner->y = -((Trig_Sin(angle) * (height + inset)) >> 16);
+          corner->x = ((Trig_Cos(angle) * (distance + start + i * width)) >> 16) - distance;
+          corner->y = -((Trig_Sin(angle) * (height + start + i * width)) >> 16);
           corner->z = 0;
         }
         if (j == 32) {
@@ -354,12 +341,11 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
         width = width * scale / 0x10000;
         start = -(width / 2);
         for (i = 0; i != 2; i++) {
-          struct StripVertex *strip1 = gMapCellBuffer[1];
+          struct StripVertex *strip1 = (struct StripVertex *)Ram_MapCellBuffer + 66;
           struct StripVertex *corner = strip1 + (j * 2 + i);
-          s32 inset = start + i * width;
 
-          corner->x = ((Trig_Cos(angle) * (distance + inset)) >> 16) - distance;
-          corner->y = (Trig_Sin(angle) * (height + inset)) >> 16;
+          corner->x = ((Trig_Cos(angle) * (distance + start + i * width)) >> 16) - distance;
+          corner->y = (Trig_Sin(angle) * (height + start + i * width)) >> 16;
           corner->z = 0;
         }
         if (j == 32) {
@@ -370,20 +356,20 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
 
       model = Render_AllocateModelList(1);
       vertices = Data_02011000;
+      model->scrollV = 0;
+      model->kind = 6;
+      model->texture = &texture;
       model->shade = 0;
       model->vertices = vertices;
-      model->kind = 6;
-      model->scrollV = 0;
-      model->texture = &texture;
       for (i = 0; i != effect->variant + 1; i++) {
-                if (arcs[i * 2 + 1] >= arcs[i * 2]) {
+        if (arcs[i * 2 + 1] >= arcs[i * 2]) {
           continue;
         }
-        model->scrollU = 127 & ~(frame << 3);
         texture.logWidth = 6;
         texture.logHeight = 5;
         texture.pixels = work->sheet;
-        model->mesh = Data_02012000;
+        model->mesh = stripMesh;
+        model->scrollU = 127 & ~(frame << 3);
         Render_ResetTransformState();
         if (effect->side == 0) {
           Func_08015160((source.x / 2 - 68) << 16, (source.y << 16) - 0x600000,

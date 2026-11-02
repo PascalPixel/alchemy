@@ -1,18 +1,26 @@
-// Draft, differ 149 of 236, skeleton gap 43 (tla-en, 2026-11-01)
-// Control flow, types and every load agree with the listing; 243 instructions
-// against 236. Left: gcse's PRE moves &actor->terrainId, the two pointers into
-// the work struct and &position from the loop head onto its entry edge (see
-// the .07.gcse dump), which costs a spill and the registers after it. The
-// bytes keep all four inside the loop. Neither a goto loop nor a for (;;)
-// stops it, and pointers, plain member reads and a jump from the entry test
-// into the loop change nothing. PRE only skips them if the back edge lacks
-// them, so a path that reaches the back edge past the loop head would do it;
-// none is visible in the listing. The renderMode test reaches the last store
-// with `work` never set, in JA too: the skip path reads an unset local.
-// `if (i < 10) goto step` inverts round a far branch (one b.n too many); a
-// do-while fixes that but loop.c then moves the velocity-clearing block out.
-// Func_02001fcc's -10 stays negated before its 0: the listing has them the
-// other way round; the Call3 forwarding fixed the same order at Func_0200436c.
+// Draft, differ 146 of 236, skeleton gap 40 (tla-en, 2026-11-01)
+// Control flow, types and every load agree with the listing; 242 instructions
+// against 236, frame 24 against 16. Left, one cause: gcse's PRE (.07.gcse,
+// "PRE/HOIST: edge (1,2)") moves &actor->terrainId, work + 104, work + 106 and
+// &position from the loop onto its entry edge. The bytes build all four inside
+// the loop, after the terrain call. The four new pseudos are live across the
+// loop: &position takes r8 (the listing's scan counter), &actor->terrainId
+// spills to sp + 4, and the counter falls to r4 with a caller save at sp + 0
+// (11 weighted refs beat 4 * 1 call). Every other register difference follows.
+// Nothing in plain C kills these expressions: actor and work are set once and
+// the frame address never changes, and the sibling drafts 64b_020006d0,
+// 652_02000878 and 661_02003b80 reach the same end. Spelling the fields through
+// pointers or a pos local, separate clamp locals, a for (;;) head and hoisting
+// the pointers by hand change nothing or lose. A real for or do-while for the
+// steps loses (153): loop.c moves the velocity-clearing block out; a for for
+// the scan loses too (153). Sharing i between the two loops loses (158).
+// Call3 stays: a direct Func_0200436c gives 148 or 157.
+// Func_02001fcc's -10 stays negated before its 0, listing the other way round;
+// a prototype or a one-constant local does not move it.
+// `goto done` has to be the test: `if (i < 10) goto step` threads into a far
+// branch and costs one b.n.
+// The renderMode test reaches the last store with `work` never set, in JA too:
+// the skip path reads an unset local.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -61,25 +69,20 @@ void Func_02002148(void) {
   loop:
     {
       s32 result;
-      s16 *value68, *value6a;
-      struct Vector3 *pos;
 
       result = Func_0200422c(actor->terrainId, actor->x, actor->z);
-      value68 = &work->unk68;
-      value6a = &work->unk6a;
-      pos = &position;
 
       if (result == 7) {
         s32 i;
 
-        actor->velocityX = *value68 << 17;
-        actor->velocityZ = *value6a << 17;
+        actor->velocityX = work->unk68 << 17;
+        actor->velocityZ = work->unk6a << 17;
         actor->acceleration = 0x1000;
         i = 0;
       step:
-        position.x = actor->x + (*value68 << 19);
+        position.x = actor->x + (work->unk68 << 19);
         position.y = actor->y;
-        position.z = actor->z + (*value6a << 19);
+        position.z = actor->z + (work->unk6a << 19);
         if (Func_0200424c(actor) != 0) {
           actor->velocityX = 0;
           actor->velocityZ = 0;
@@ -87,14 +90,15 @@ void Func_02002148(void) {
         }
         wait(1);
         i++;
-        if (i < 10)
-          goto step;
+        if (i >= 10)
+          goto done;
+        goto step;
       } else {
         s32 result2;
 
-        pos->x = actor->x + (*value68 << 19);
-        pos->y = actor->y;
-        pos->z = actor->z + (*value6a << 19);
+        position.x = actor->x + (work->unk68 << 19);
+        position.y = actor->y;
+        position.z = actor->z + (work->unk6a << 19);
         result2 = Func_0200424c(actor);
         if (result2 > 0)
           goto done;
@@ -125,8 +129,8 @@ void Func_02002148(void) {
           other++;
           if (i < 64)
             goto scan;
-          x = actor->x += *value68 << 17;
-          z = actor->z + (*value6a << 17);
+          x = actor->x += work->unk68 << 17;
+          z = actor->z + (work->unk6a << 17);
           actor->z = z;
           off = (x & 0xfffff) + 0xfff80000;
           if (off > 0x10000)

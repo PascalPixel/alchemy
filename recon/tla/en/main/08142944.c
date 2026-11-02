@@ -1,4 +1,4 @@
-// Draft, differ 234 of 734, skeleton gap 58 (tla-en, 2026-11-01)
+// Draft, differ 22 of 734, skeleton gap 5 (tla-en, 2026-11-01)
 
 // No twin: an effect new to ⚓️, reached from the scenes through the
 // far-call table (table_47.s) with a kind of 78, 79 or 80. Its frame is the
@@ -7,44 +7,53 @@
 // by the IWRAM renderer (Render_AllocateModelList, Render_TransformVertices,
 // Render_DrawModelList), as 0813d098's star is.
 
-// Left: one allocation swap. The native keeps the centre's address in r11 and
-// spills the corners and the burst's y; here global.c ranks the corners
-// (14 refs over 173 insns, priority .243) just ahead of the centre's address
-// (27 over 462, .234), so the corners take r11, y a register and the address a
-// stack slot, and the frame is 76 instead of 80. The refs can be read off the
-// listing, so the native's differ must be in live lengths or in one more
-// reference: 28 refs at 462 is enough, or 27 with the loop at 447 or less, or
-// the corners at 184 or more. Proof the swap is the cause: reading the ring
-// loop's corners through model->corners (one wrong instruction) gives frame 80,
-// differ 95, skeleton 31.
+// Left: one allocation swap, and the one wrong read that stands in for it. The
+// ring loop's `model->corners` is wrong: the listing has `ldr r1, [sp, #12]`,
+// plain `corners`. With plain `corners` global.c ranks the corners (14 refs over
+// 173 insns, priority .2428) just ahead of the centre's address (27 over 462,
+// .2338), so the corners take r11, the address a stack slot, the frame is 76 and
+// differ 189. The wrong read drops the corners to 11 refs and gives the native's
+// allocation. Everything else matches: the 22 are that read and the scratch
+// registers it rotates in the second model block. The read at the crystals
+// instead (ring plain, crystal `model->corners`) puts the ring and that whole
+// block right, skeleton 2/3, but rotates the tail, differ 73. So the true read
+// is very likely differ 0 once the address outranks the corners.
 //
-// Left after that swap, measured under that trial:
-// - The preheader: the native sets index (-96) before the centre's address.
-// - The flash preheader's scratch registers start one rotation away (index in
-//   r4, pool r0, zero r1, 15 r2 in the native).
-// - model->depthBias = 0: the native's zero is in r0 and its base reloaded in
-//   r1, between the two texture masks. No statement position of the eight tried
-//   gives it; zero seems to be set while r2 and r3 are busy.
-// - The second model block's order, which the trial itself disturbs.
-// - The crystal table byte: `start += 48` gives start r1 and bias r0 as the
-//   native has them (15 refs beat bias's 15 over a shorter life) but loses
-//   `ldrb r3; adds r1, r3, #0`; `Data[i] + 48` keeps the copy and swaps r0, r1.
+// What the swap needs, from the counts: the address at 29 refs, or 28 with one
+// insn less or one more among the corners; or, at 27, 42M + 66N >= 720 for M
+// insns fewer outside the corners' life and N more inside it. Its 27 are the
+// preheader set and the copy to the reads (1 each), ProjectBattler's argument, 4
+// reads and writes in each of the two side kinds and 2 in the third (2 each), and
+// the crystal's read (3). Proof of the mechanism: writing y before x in the burst
+// shortens the reads' copy to life 15, loop.c leaves it in place (threshold
+// between 15 and 20 at savings 2 over 528 insns), cse2 sends all four reads
+// through the address, 34 refs, floor_log2 5: frame 80 and r11 right, but those
+// four reads come out `mov rN, r11` and not `[sp, #68]`, differ 164.
 //
-// Found this round: draw[2] for the unused word at sp+40. The flash pointer is
-// a giv of a base outside the loop, `flashes = &gData_02014000[index]` and
-// `flash = &flashes[k]`, set after the hoisted constants as the native's is.
-// `speed = 31; speed &= Random16()` gives `movs r5, #31; ands r5, r0`; the
-// constant set moves below the call.
+// Tried for the swap, no change: a pointer to the centre at the burst, at cx or
+// around the crystal's read; a named half for that read; before this round, center
+// as s32[3], a pointer in or out of the loop, named temporaries for the transforms'
+// arguments. The burst's and cx's copies match as one movable (insn 835 "matches
+// 548"), both from the same register; unmatching them would be the 28th ref, and
+// nothing found does it. MEM costs too much for the corners to be "LO_REGS or
+// none". Untested: a second back edge cross-jumped away at jump2 would raise the
+// head of the loop a level and the ring and crystals not, and it might explain the
+// odd `frame >= 0`; a second copy of the tail with frame++ also breaks index's giv.
 //
-// Tried for the swap: center as s32[3] (no change); a pointer to the centre in
-// or out of the loop; named temporaries for the transforms' arguments (copy
-// propagation removes them); an empty asm reading &center after the call
-// (PRE loses the hoist, the address becomes a doubled spilled pseudo), in the crystal
-// before the read (43 refs, the address outranks frame and takes r10) or after
-// it (26 refs): none kept. The two hoisted copies at the flash and at cx match
-// as one movable, so only one preheader ref reaches the address; unmatching them would
-// be the 28th ref, but both sources are the same register. The crystal's read is
-// single-use and so substituted, which is why only it goes through r11.
+// Found this round, all from which register a value lands in:
+// - `bias` is one variable for both depthBias stores: r0 at the zero is its global
+//   register, which is also why the base reloads in r1. For review: both values
+//   are the model's depth bias, so it is one meaning and not a reuse (S2).
+// - `flashes` is a one-constant local across the burst and the flash loop, set
+//   after the frame-48 block (before it, CSE builds the variant pointer from it).
+//   It gets no register, so it reloads in r0 after index in r4.
+// - `k = 0` and `spread = 15` are set before the burst's pointer, so zero and 15
+//   take r1 and r2 ahead of index.
+// - `Data_081977ec[i] + 48` keeps `ldrb r3; adds r1, r3, #0`, now that bias's
+//   register is settled.
+// `draw[2]` is the unused word at sp+40. The flash pointer is a giv of a base
+// outside the loop. `speed = 31; speed &= Random16()` gives `movs r5, #31; ands r5,
+// r0`; the constant set moves below the call.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -250,6 +259,8 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
     // From frame 48: shake, clear the canvas, and for 8 frames burst two
     // flashes a frame from a point near the centre.
     if (frame >= 48) {
+      struct EffectStep *flashes;
+
       if (frame == 48) {
         {
           s32 *variant = &gData_02014000[0].variant;
@@ -262,29 +273,31 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
         work->shakeFrames = 8;
         Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
       }
+      flashes = gData_02014000;
       if (frame >= 48 && frame <= 55) {
         s32 x = ((Random16() & 63) + center.x / 2 - 32) << 16;
         s32 y = ((Random16() & 31) + center.y) << 16;
-        s32 k;
-        struct EffectStep *flashes = &gData_02014000[index];
+        s32 k = 0;
+        s32 spread = 15;
+        struct EffectStep *burst = &flashes[index];
 
-        for (k = 0; k != 2; k++) {
-          struct EffectStep *flash = &flashes[k];
+        for (; k != 2; k++) {
+          struct EffectStep *flash = &burst[k];
           s32 speed = 31; // Set first: the mask is the tied operand.
           s32 angle;
 
           speed &= Random16();
           angle = Random16();
 
-          flash->x = x + (((Random16() & 15) - 8) << 16);
-          flash->y = y + (((Random16() & 15) - 8) << 16);
+          flash->x = x + (((Random16() & spread) - 8) << 16);
+          flash->y = y + (((Random16() & spread) - 8) << 16);
           flash->velocityX = Trig_Sin(angle) * (speed + 32) >> 3;
           flash->velocityY = Trig_Cos(angle) * (speed + 32) >> 3;
           flash->variant = 0;
         }
       }
       {
-        struct EffectStep *flash = gData_02014000;
+        struct EffectStep *flash = flashes;
 
         for (i = 0; i != 16; i++, flash++) {
           if (flash->variant >= 0 && flash->variant <= 17) {
@@ -302,6 +315,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       s32 cy = center.y << 16;
       struct ModelDraw *model;
       void *corners;
+      s32 bias;
 
       // The glow on the canvas map widens for 56 frames.
       if (frame <= 63) {
@@ -332,7 +346,8 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       corners = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       texture.logWidth = 5;
-      model->depthBias = 0;
+      bias = 0;
+      model->depthBias = bias;
       texture.logHeight = 2;
       texture.pixels = work->sheet + 0x3000;
       model->kind = 7;
@@ -358,7 +373,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
           Func_080150e4(ring->x);
           Func_080151e4(Trig_Sin(ring->variant * 682) + 0x10000, 0x20000,
                         0x10000);
-          Render_TransformVertices(gData_081991b0, corners, 4);
+          Render_TransformVertices(gData_081991b0, model->corners, 4);
           Render_DrawModelList(model);
         }
       }
@@ -372,13 +387,11 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       texture.logHeight = 6;
       model->model = gData_081990d0;
       for (i = 0; i != 4; i++) {
-        s32 start = Data_081977ec[i];
+        s32 start = Data_081977ec[i] + 48;
 
         model->shade = (frame * 8 + i * 32) & 127;
-        start += 48;
         if (frame > start) {
-          s32 bias = (start - frame) * 8 + 56;
-
+          bias = (start - frame) * 8 + 56;
           if (bias > -16)
             bias = -16;
           if (bias > -64) {

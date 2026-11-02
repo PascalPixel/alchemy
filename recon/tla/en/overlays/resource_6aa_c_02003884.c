@@ -1,178 +1,152 @@
-// Draft of overlay 6aa's Func_02003884, translated from its listing: differ
-// 321 of 246. Left: its shape: 263 instructions against the listing's 246.
+// Draft, differ 278 of 246, skeleton gap 38/42 (tla-en, 2026-11-01)
+// The Lost Age's copy of the ice slide. Imil_RunIceSlide in The Broken Seal is
+// its twin: the same probe a cell ahead, the 255 wall test, the height test and
+// the 0x1999 acceleration. This copy takes its heading from the actor's angle
+// rather than the keys, and adds a scan of the script objects. Its nearest
+// relative is Func_02003ee8, games/tla/src/scene/prox/s3ee8.c, which this draft
+// follows statement for statement, so block layout is the listing's: wall arm
+// before the loop body, loop test at the bottom.
+// Left: in the listing actor + 34 and probe's frame address are rebuilt inside
+// the outer label loop; here they sit before it, which reads as GCSE's PRE
+// (PRE hoists out of goto loops). Likely but unproven: the extra spill, low
+// registers for i and flags (native r9, r8) and the argument order follow.
+// s3ee8.c's full form gives differ 0 here. It uses sfp barriers, tied asms, a
+// dead store of step and a reused i, all devices barred this round, so none is
+// kept, and they were removed together, not one at a time.
+// Measured without devices: goto outer loop 272, 278 or 290, for outer loop 288, 294 or 300. Layer as a set, inline or
+// direct local, a zero or mask local, block scopes, the wall as two ifs and
+// taking x and z from probe compile the same; a PIXELS(8) local moves it (281,
+// 290). One position local through both halves (kept) has the smallest gap.
+// Plain for loops with break reach differ 194, gap 59/55, and a while with a
+// comma test 256, gap 44/54, both without the listing's layout.
+// Next: a plain form that keeps both addresses in the loop. If none exists this
+// joins the landing-burst hoisting question, a compiler matter for Pascal.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_02003284();
-s32 Func_02004bc0();
-s32 Func_02004bf8();
-s32 Func_02004c00();
-s32 Func_02004c10();
-s32 Func_02004c78();
-s32 Map_GetTerrainHeight();
-s32 Actor_SetAnimationSpeed();
-s32 ObjectTable_Get();
-s32 Vector_AddPolarOffsetFar();
-s32 wait();
-extern u8 Func_020031f8[];
-extern u8 gMainRoutineWork[];
+#include "actor.h"
+#include "fixed_math.h"
+#include "ram_buffer.h"
+#include "scene_tables.h"
+#include "system/main_routine_work.h"
+
+struct Position {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+void Func_02003284(void);
+void Func_02004bc0(struct Actor *actor, s32 mode);
+void Func_02004bf8(struct Actor *actor, s32 x, s32 y, s32 z);
+void Func_02004c00(struct Actor *actor);
+s32 Func_02004c10(u8 layer, s32 x, s32 z);
+s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
+s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
+void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
+void Vector_AddPolarOffsetFar(s32 length, s32 angle, struct Position *position);
+void wait(s32 frames);
+void Func_020031f8(void);
 
 void Func_02003884(void) {
-  s32 sp_[1];
-  s32 v_r5, v_r6, v_r2, v_r1, v_r8, v_r9, v_r7, v_r11, v_r10, t0;
-  s32 t1, t2, t4, t5, t6, t7, t8, t9, t11, t12;
-  s32 t13, t14, t15, t16, t17, t18, t19, t20, t21, t24;
-  s32 t25, t26, t27, t28, t29, t30, t31, t32, t33, t34;
-  s32 t35, t36, t37, t38, t39, t40, t41, t44, t45, t47;
-  s32 t48, t49, t50, t51, t52, t53, t58;
+  struct Position probe;
+  s32 heading;
+  s32 startBehavior;
+  s32 x;
+  s32 z;
+  s32 radius;
+  struct Actor *actor;
+  s32 nextBehavior;
+  u8 *layer;
+  struct Actor *other;
+  struct Position *position;
+  u8 *flags;
+  s32 i;
+  s32 startX;
+  s32 startZ;
 
-  t0 = *(s32 *)((s32)gMainRoutineWork + 0x214);
-  t1 = ObjectTable_Get(t0);
-  t2 = FIELD_AT(t1, u16, 6);
-  FIELD_AT(sp_, s32, 16) = ((((t2 + 0x2000) & -0x4000) << 16) >> 16);
-  v_r5 = t1;
-L_0200b8b6:
+  actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  heading = (s16)((actor->angle + 0x2000) & -0x4000);
+
+top:
   Func_02003284();
-  FIELD_AT(v_r5, s32, 48) = 0x10000;
-  FIELD_AT(v_r5, s32, 52) = 0x8000;
-  FIELD_AT(v_r5, s32, 56) = 0x80000000;
-  FIELD_AT(v_r5, s32, 64) = 0x80000000;
-  FIELD_AT(v_r5, s32, 36) = 0;
-  FIELD_AT(v_r5, s32, 44) = 0;
-  t4 = FIELD_AT(v_r5, s32, 8);
-  FIELD_AT(sp_, s32, 20) = ((t4 & 0xfff00000) + 0x80000);
-  v_r9 = 0x80000;
-  v_r8 = ((t4 & 0xfff00000) + 0x80000);
-  v_r1 = 0x80000;
-  v_r2 = 0xfff00000;
-  v_r6 = ((s32)sp_ + 20);
-  goto L_0200b8f8;
-L_0200b8f8:
-  t5 = FIELD_AT(v_r5, s32, 12);
-  FIELD_AT(v_r6, s32, 4) = t5;
-  t6 = FIELD_AT(v_r5, s32, 16);
-  v_r7 = ((t6 & v_r2) + v_r1);
-  FIELD_AT(v_r6, s32, 8) = v_r7;
-  FIELD_AT(sp_, s32, 8) = v_r8;
-  FIELD_AT(sp_, s32, 4) = v_r7;
-  t7 = *(u8 *)(34 + v_r5);
-  t8 = Func_02004c10(t7, v_r8, v_r7);
-  FIELD_AT(sp_, s32, 12) = t8;
-  t9 = FIELD_AT(sp_, s32, 16);
-  Vector_AddPolarOffsetFar(0x100000, t9, v_r6);
-  v_r11 = (34 + v_r5);
-  t11 = *(u8 *)v_r11;
-  t12 = FIELD_AT(v_r6, s32, 8);
-  t13 = *(s32 *)v_r6;
-  t14 = Func_02004c10(t11, t13, t12);
-  if (t14 == 255)
-    goto L_0200b98c;
-  t15 = *(u8 *)v_r11;
-  t16 = *(s32 *)v_r6;
-  t17 = FIELD_AT(v_r6, s32, 8);
-  t18 = Map_GetTerrainHeight(t15, t16, t17);
-  t19 = FIELD_AT(v_r5, s32, 12);
-  if ((t18 - t19) > v_r9)
-    goto L_0200b98c;
-  t20 = FIELD_AT(sp_, s32, 8);
-  *(s32 *)v_r6 = t20;
-  t21 = FIELD_AT(sp_, s32, 4);
-  FIELD_AT(v_r6, s32, 8) = t21;
-  FIELD_AT(v_r5, s32, 48) = 0x20000;
-  FIELD_AT(v_r5, s32, 52) = 0x1999;
-  *(u16 *)(v_r5 + 100) = 0;
-  Func_02004bc0(v_r5, 2);
-  Actor_SetAnimationSpeed(v_r5, 48);
-  FIELD_AT(v_r5, s32, 108) = (s32)Func_020031f8;
-  goto L_0200ba36;
-L_0200b98c:
-  t24 = FIELD_AT(sp_, u16, 16);
-  FIELD_AT(v_r5, u16, 6) = t24;
-  FIELD_AT(v_r5, s32, 36) = 0;
-  FIELD_AT(v_r5, s32, 44) = 0;
-  FIELD_AT(v_r5, s32, 8) = v_r8;
-  FIELD_AT(v_r5, s32, 16) = v_r7;
-  goto L_0200ba82;
-L_0200b9a0:
-  t25 = *(u8 *)v_r11;
-  t26 = *(s32 *)v_r7;
-  t27 = FIELD_AT(v_r7, s32, 8);
-  t28 = Map_GetTerrainHeight(t25, t26, t27);
-  t29 = FIELD_AT(v_r5, s32, 12);
-  if ((t28 - t29) > 0x80000)
-    goto L_0200ba56;
-  t30 = FIELD_AT(v_r5, u16, 32);
-  FIELD_AT(sp_, s32, 0) = (t30 - 2);
-  t31 = FIELD_AT(0x3000000, s32, 20);
-  v_r8 = (89 + t31);
-  v_r9 = 0;
-  v_r6 = t31;
-L_0200b9ce:
-  t32 = *(s32 *)v_r6;
-  if (t32 == 0)
-    goto L_0200b9f8;
-  t33 = *(u8 *)v_r8;
-  if ((1 & t33) == 0)
-    goto L_0200b9f8;
-  if (v_r6 == v_r5)
-    goto L_0200b9f8;
-  t34 = FIELD_AT(v_r6, u16, 32);
-  t35 = FIELD_AT(sp_, s32, 0);
-  t36 = Func_02004c78((v_r6 + 8), t35, ((s32)sp_ + 20), (t34 - 2));
-  if (t36 >= 0)
-    goto L_0200ba56;
-L_0200b9f8:
-  v_r9 = (v_r9 + 1);
-  v_r8 = (v_r8 + 128);
-  v_r6 = (v_r6 + 128);
-  if (v_r9 <= 63)
-    goto L_0200b9ce;
-  t37 = *(s32 *)v_r7;
-  FIELD_AT(sp_, s32, 8) = t37;
-  t38 = FIELD_AT(v_r7, s32, 8);
-  FIELD_AT(sp_, s32, 4) = t38;
-  FIELD_AT(v_r5, s32, 48) = 0x20000;
-  FIELD_AT(v_r5, s32, 52) = 0x1999;
-  t39 = *(s32 *)v_r7;
-  t40 = FIELD_AT(v_r7, s32, 4);
-  t41 = FIELD_AT(v_r7, s32, 8);
-  Func_02004bf8(v_r5, t39, t40, t41);
-  Func_02004c00(v_r5);
-  t44 = FIELD_AT(sp_, s32, 12);
-  if (v_r10 != t44)
-    goto L_0200ba7c;
-L_0200ba36:
-  t45 = FIELD_AT(sp_, s32, 16);
-  Vector_AddPolarOffsetFar(0x100000, t45, ((s32)sp_ + 20));
-  t47 = *(u8 *)v_r11;
-  t48 = FIELD_AT(sp_, s32, 20);
-  t49 = FIELD_AT(sp_, s32, 28);
-  t50 = Func_02004c10(t47, t48, t49);
-  v_r10 = t50;
-  v_r7 = ((s32)sp_ + 20);
-  if (v_r10 != 255)
-    goto L_0200b9a0;
-L_0200ba56:
-  FIELD_AT(v_r5, s32, 48) = 0x20000;
-  FIELD_AT(v_r5, s32, 52) = 0x10000;
-  t51 = FIELD_AT(v_r5, s32, 12);
-  t52 = FIELD_AT(sp_, s32, 8);
-  t53 = FIELD_AT(sp_, s32, 4);
-  Func_02004bf8(v_r5, t52, t51, t53);
-  Func_02004c00(v_r5);
+  actor->speedLimit = PIXELS(1);
+  actor->acceleration = PIXELS(1) / 2;
+  actor->targetX = 0x80000000;
+  actor->targetZ = 0x80000000;
+
+  actor->velocityX = 0;
+  actor->velocityZ = 0;
+
+  position = &probe;
+  position->x = startX = (actor->x & 0xfff00000) + PIXELS(8);
+  position->y = actor->y;
+  position->z = startZ = (actor->z & 0xfff00000) + PIXELS(8);
+  x = startX;
+  z = startZ;
+  layer = &actor->terrainId;
+  startBehavior = Func_02004c10(*layer, startX, startZ);
+  Vector_AddPolarOffsetFar(PIXELS(16), heading, position);
+  nextBehavior = Func_02004c10(*layer, position->x, position->z);
+  if (nextBehavior == 255 ||
+      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > PIXELS(8)) {
+    actor->angle = heading;
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
+    actor->x = startX;
+    actor->z = startZ;
+    goto done;
+  }
+  position->x = x;
+  position->z = z;
+  actor->speedLimit = PIXELS(2);
+  actor->acceleration = 0x1999;
+  actor->action = 0;
+  Func_02004bc0(actor, 2);
+  Actor_SetAnimationSpeed(actor, 48);
+  actor->update = Func_020031f8;
+  goto test;
+body:
+  if (Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > PIXELS(8)) {
+    goto stop;
+  }
+  radius = actor->radius - 2;
+  other = Ram_HeapSlots->scriptObjects;
+  flags = &other->collisionFlags;
+  for (i = 0; i < 64; i++, flags += 128, other++) {
+    if (other->script != NULL && (*flags & 1) && other != actor) {
+      if (Func_02004c78(&other->x, radius, &probe, other->radius - 2) >= 0) {
+        goto stop;
+      }
+    }
+  }
+  x = position->x;
+  z = position->z;
+  actor->speedLimit = PIXELS(2);
+  actor->acceleration = 0x1999;
+  Func_02004bf8(actor, position->x, position->y, position->z);
+  Func_02004c00(actor);
+  if (nextBehavior != startBehavior) {
+    goto blocked;
+  }
+test:
+  Vector_AddPolarOffsetFar(PIXELS(16), heading, &probe);
+  position = &probe;
+  nextBehavior = Func_02004c10(*layer, position->x, position->z);
+  if (nextBehavior != 255) {
+    goto body;
+  }
+stop:
+  actor->speedLimit = PIXELS(2);
+  actor->acceleration = PIXELS(1);
+  Func_02004bf8(actor, x, actor->y, z);
+  Func_02004c00(actor);
   wait(2);
-  goto L_0200b8b6;
-L_0200ba7c:
+  goto top;
+
+blocked:
   wait(10);
-L_0200ba82:
-  FIELD_AT(v_r5, s32, 108) = 0;
-  t58 = *(u8 *)(v_r5 + 90);
-  *(u8 *)(v_r5 + 90) = (1 | t58);
-  FIELD_AT(v_r5, s32, 52) = 0x4000;
-  Func_02004bc0(v_r5, 1);
-  return;
+done:
+  actor->update = NULL;
+  actor->actionFlags |= 1;
+  actor->acceleration = PIXELS(1) / 4;
+  Func_02004bc0(actor, 1);
 }

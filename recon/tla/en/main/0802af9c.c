@@ -1,9 +1,9 @@
-// Near miss, differ 133 (170 before statements reordered 2026-10-26) of 238 (2026-10-18), first pass: The Broken Seal's
-// Map_SetCameraCenter for this game's layers: no phase masks, and the layer
-// window (masks and origins at layer +40 to +46) of the renderers 0802abbc
-// and 0802ac90; it draws 11 block rows. Left: the frame slots (the work at
-// sp+24 and the view pointers at sp+16 and sp+12 in the native) and the
-// register choice that follows.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The Broken Seal's MapGrid_SetCameraCenter for this game's layers: no phase
+// masks, and the layer window (masks and origins at layer +40 to +46) of the
+// renderers 0802abbc and 0802ac90; it draws 11 block rows. The enable bytes
+// sit at work +0x104, read as a struct field because a cast adds an adds; the
+// twin calls them enabled. No devices.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -21,10 +21,29 @@ struct MapLayerWindow {
   u8 *terrainIds;
 };
 
+static __inline__ void CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
+                                               u32 screenRowOffset,
+                                               u32 screenColumnOffset) {
+  u32 *cellPictureRows;
+  u8 *screenTile;
+  u32 index = (*cell << 21) >> 20;
+
+  cellPictureRows = (u32 *)Ram_MapBlocks;
+  cellPictureRows += index;
+  screenTile = screenMap + screenRowOffset * 2 + screenColumnOffset * 2;
+  *(u32 *)screenTile = *cellPictureRows;
+  cellPictureRows = (u32 *)(Ram_MapBlocks + 4);
+  cellPictureRows += index;
+  *(u32 *)(screenTile + 64) = *cellPictureRows;
+}
+
 void Func_0802af9c(s32 x, s32 y) {
   u32 layerIndex;
+  u8 *screenMap;
+  u32 *cells;
   struct MapWork *work = Ram_HeapSlots->mapWork;
   struct MapLayerWindow *layer = (struct MapLayerWindow *)work->layers;
+  u32 originX;
 
   x -= 0x780000;
   y -= 0x600000;
@@ -39,17 +58,10 @@ void Func_0802af9c(s32 x, s32 y) {
   work->viewX = x;
   work->viewZ = y;
   for (layerIndex = 0; layerIndex <= 2; layerIndex++) {
-    if (((u8 *)work)[0x104 + layerIndex] != 0) {
-      u8 *screenMap;
-      u32 *cells;
-      u32 maskX;
-      u32 maskY;
-      u32 originX;
-      u32 originY;
-      u32 sourceRow;
-      u32 screenRowOffset;
-      s32 halfX;
-      u32 row;
+    if (work->unk0fc[layerIndex + 8] != 0) {
+      u32 maskX, maskY, originY;
+      u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
+          cellPictureRow, cellPictureColumn;
 
       x = Iwram_MulQ16(work->viewX, layer->scaleX);
       y = Iwram_MulQ16(work->viewZ, layer->scaleY);
@@ -65,12 +77,12 @@ void Func_0802af9c(s32 x, s32 y) {
       y += layer->offsetY;
       x /= 0x80000;
       y /= 0x80000;
+      screenMap = (u8 *)0x06002800 + (layerIndex << 11);
       maskY = layer->maskY;
       maskX = layer->maskX;
-      originX = layer->originX;
       originY = layer->originY;
+      originX = layer->originX;
       cells = (u32 *)Ram_MapCellBuffer;
-      screenMap = (u8 *)0x06002800 + (layerIndex << 11);
       if (maskX != 0x7f)
         cells = (u32 *)Ram_MapCellBuffer + originX;
       if (maskY != 0x3f80)
@@ -79,26 +91,17 @@ void Func_0802af9c(s32 x, s32 y) {
       screenRowOffset = (y & 30) << 5;
       if (maskY != 0x3f80)
         sourceRow = (sourceRow - originY) & maskY;
-      halfX = x / 2;
-      for (row = 0; row <= 10; row++) {
-        u32 sourceColumn = halfX & 0x7f;
-        u32 screenColumnOffset = x & 30;
-        u32 column;
-
+      for (cellPictureRow = 0; cellPictureRow <= 10; cellPictureRow++) {
+        sourceColumn = (x / 2) & 0x7f;
+        screenColumnOffset = x & 30;
         if (maskX != 0x7f)
           sourceColumn = (sourceColumn - originX) & maskX;
-        for (column = 0; column <= 15; column++) {
-          u32 cellPictureOffset = (cells[sourceRow + sourceColumn] << 21) >> 18;
-          u8 *screenTile =
-              screenMap + (screenRowOffset + screenColumnOffset) * 2;
-
-          *(u32 *)screenTile = *(u32 *)((u8 *)0x02020000 + cellPictureOffset);
-          sourceColumn++;
-          sourceColumn &= maskX;
-          *(u32 *)(screenTile + 64) =
-              *(u32 *)((u8 *)0x02020004 + cellPictureOffset);
-          screenColumnOffset += 2;
-          screenColumnOffset &= 30;
+        for (cellPictureColumn = 0; cellPictureColumn <= 15;
+             cellPictureColumn++) {
+          CopyCellPictureToScreen(cells + sourceRow + sourceColumn, screenMap,
+                                  screenRowOffset, screenColumnOffset);
+          sourceColumn = (sourceColumn + 1) & maskX;
+          screenColumnOffset = (screenColumnOffset + 2) & 30;
         }
         sourceRow = (sourceRow + 128) & maskY;
         screenRowOffset = (screenRowOffset + 64) & 0x3c0;

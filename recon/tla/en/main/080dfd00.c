@@ -1,15 +1,16 @@
-// Draft, differ 120 (125 before statements reordered 2026-10-26) of 334 (2026-10-15), The Broken Seal's
+// Matches: differ 0 (tla-en, 2026-11-01). The Broken Seal's
 // FieldEffect_RunWhirlwind (shape 0.64, structure 0.73). ⚓️ keeps ☀️'s carried orb and
 // its orbiting motes, and adds two kinds of target, told apart by the target's
 // first animation (372 and 373): for both the orb shrinks away at once, for 372
 // with motes that wander off round it, and the target is then handed to
-// Func_080db0b0. The kinds are a switch: the listing tests 0, then 1, then 2-3
-// as one range (subs r3, #2; cmp r3, #1; bhi), and kind 1 falls into kind 0's
-// ending. Left: the prologue's vector copies come in another order and register
-// (the native keeps from in r9 and to in r8 through the carry loop), and
-// the wander loop's 3 << 16 stays in r11 in the native.
-// Tried: the three vectors in each declaration order, 125-131 (this order
-// is best).
+// Func_080db0b0.
+// What closed it: the kinds are an if chain with each arm written in full, since a
+// switch tests 1 first and cross-jumping makes the shared ending; the carry loop's
+// compare (cmp #11, blt) needs a do-while over a variable, as the front end folds a
+// literal to <= 10, and frames is a one-constant local (S2); the wander pause is a
+// linear form of i, which loop.c reduces and sets after its hoisted constants, where
+// 20 - i * 2 is not reduced; the motes count in their own i; caster loads before target.
+// No devices. Other editions not measured here.
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -80,16 +81,18 @@ enum OrbKind {
 // ten frames, growing it from a quarter size, then play out the kind.
 void FieldEffect_RunWhirlwind(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
-  struct Actor *target = scene->child;
   struct Actor *caster = scene->mainObject;
+  struct Actor *target = scene->child;
   struct OrbTargetSprite *sprite = target->animation;
   struct EffectVector position;
-  struct EffectVector to;
   struct EffectVector from;
+  struct EffectVector to;
   struct Actor *orb;
   struct OrbitEffect *mote;
   s32 kind = ORB_PLAIN;
   s32 step;
+  s32 i;
+  s32 frames = 11;
 
   if (scene->childOption != 0)
     return;
@@ -106,9 +109,9 @@ void FieldEffect_RunWhirlwind(void) {
 
   from.x = caster->x;
   from.y = caster->y;
+  from.z = caster->z;
   to.x = scene->x;
   to.y = scene->y - (4 << 16);
-  from.z = caster->z;
   to.z = scene->z;
   orb = Actor_Spawn(ORB_OBJECT, 0, 0, 0);
   if (orb == 0)
@@ -116,33 +119,40 @@ void FieldEffect_RunWhirlwind(void) {
 
   BattleEffect_InitializeSharedScene();
   Actor_SetMode(orb, 2);
-  for (step = 0; step < 11; step++) {
+  step = 0;
+  do {
     s32 scale;
 
-    orb->x = from.x + step * (to.x - from.x) / 10;
-    orb->y = from.y + step * (to.y - from.y) / 10;
-    orb->z = from.z + step * (to.z - from.z) / 10;
+    orb->x = from.x + (to.x - from.x) * step / 10;
+    orb->y = from.y + (to.y - from.y) * step / 10;
+    orb->z = from.z + (to.z - from.z) * step / 10;
     scale = step * 0x10ccc / 10 + 0x4000; // from 0.25 to 1.3
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
-  }
+    step++;
+  } while (step < frames);
   orb->scaleX = 0x1b333; // 1.7 wide
   orb->scaleY = 0x14ccc; // 1.3 high
   Sound_PlayFar(SE_ORB_ARRIVES);
 
-  switch (kind) {
-  case ORB_ORBITING:
+  if (kind == ORB_PLAIN) {
+    Actor_SetMode(orb, 1);
+    wait(30);
+    Sound_PlayFar(SE_ORB_FADES);
+    Func_08020340(orb);
+    Actor_Destroy(orb);
+  } else if (kind == ORB_ORBITING) {
     // Sixteen motes, one every six frames, 4 pixels above the orb and 0.8
     // higher each, 3 to 8 pixels out, circle it while the target shrinks.
     wait(20);
     if (target != 0)
       target->update = (void (*)(void))BattleEffect_ShrinkObjectScaleUntilHalf;
-    for (step = 0; step <= 15; step++) {
+    for (i = 0; i <= 15; i++) {
       s32 distance;
 
       position.x = orb->x;
-      position.y = orb->y + step * 0xcccc + (4 << 16);
+      position.y = orb->y + i * 0xcccc + (4 << 16);
       position.z = orb->z;
       distance = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(distance, Random16(), &position);
@@ -159,28 +169,21 @@ void FieldEffect_RunWhirlwind(void) {
     }
     wait(20);
     wait(120);
-    // fall through
-  case ORB_PLAIN:
     Actor_SetMode(orb, 1);
     wait(30);
     Sound_PlayFar(SE_ORB_FADES);
     Func_08020340(orb);
     Actor_Destroy(orb);
-    break;
-
-  case ORB_WANDER:
-  case ORB_HANDOFF:
+  } else if (kind == ORB_WANDER || kind == ORB_HANDOFF) {
     wait(5);
     Actor_SetMode(orb, 1);
     if (kind == ORB_WANDER) {
       // Sixteen motes that wander about the orb, the first pausing longest.
-      s32 pause = 20;
-
-      for (step = 0; step <= 15; step++) {
+      for (i = 0; i <= 15; i++) {
         s32 distance;
 
         position.x = orb->x;
-        position.y = orb->y + step * 0xcccc + (4 << 16);
+        position.y = orb->y + i * 0xcccc + (4 << 16);
         position.z = orb->z;
         distance = Random16() * 5;
         distance += 3 << 16;
@@ -189,13 +192,12 @@ void FieldEffect_RunWhirlwind(void) {
                                                   position.y, position.z);
         if (mote != 0) {
           mote->update = BattleEffect_WanderAroundAnchor;
-          mote->timer = pause;
+          mote->timer = 20 + i * -2;
           mote->pause = 0;
           mote->speed = 0x1999;
           mote->scale = 3 << 16;
           mote->angle = Random16();
         }
-        pause -= 2;
       }
     }
     BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
@@ -205,7 +207,6 @@ void FieldEffect_RunWhirlwind(void) {
     Func_080db0b0(scene->secondObjectId);
     Func_08020340(orb);
     Actor_Destroy(orb);
-    break;
   }
   BattleEffect_PrepareBufferInterpolation();
 }

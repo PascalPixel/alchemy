@@ -1,23 +1,30 @@
-// Draft, differ 279 of 260, skeleton gap 43 (tla-en, 2026-11-01)
+// Draft, differ 155 of 260, skeleton gap 9 (tla-en, 2026-11-01)
 // Overlay 64b's Func_020036a8 (the world map's placed objects, shown and
 // hidden as the view moves) under this overlay's names: shows the objects
 // that come within the view and whose flags allow them, hides those that
-// leave it, and starts a placement's event when the leader touches it.
-// Left: the whole gap is the spill. The native spills i and keeps work in r9,
-// with leader r10, slot r11; here global.c ranks i (refs 9, length 228) above
-// leader and work (6 refs, length 134), so work spills. Reading the dumps,
-// the native's i must have 7 refs: its bottom test compares a value that is
-// not i. Measured, not kept, because each is a device this round forbids:
-// goto loop with `u32 next = i + 1; i = next;` tested at the bottom (a
-// `temporary`) flips the spill, differ 211, gap 23; the first-entry copy of
-// kind comes from a pre-if `u8 kind = placement->kind;` overwritten by
-// `(kind = placement->kind) != 0` in the for test (a `dead` store), which
-// makes the native's load and copy (gcse), gap 48 alone. Together they are
-// the likely way to skeleton 0. No plain form of i was found: signed i with a
-// cast, i <= 127, objects[i] (not reduced at every site, gap 71), and a
-// one-pass block (no change in refs) all fail; one-pass and objects[i] worse.
-// The head's order (zoom in a local after center, objects after z) took the
-// gap from 59 to 43; zoom after z 47, zoom before center 47.
+// leave it, and starts a placement's event when the leader touches it. Its
+// draft's head order, goto loop and arms are carried over; only the bottom's
+// order is new here (i++ first: gap 11 to 9, differ 147 to 155; the 64b order
+// slot++, placement++, i++ is the lowest differ, 147 at gap 11).
+// Now right: placement r8, leader r10, work r9, slot r11, i spilled at sp+16.
+// Left, all from one place, the rest being reload rotation that follows it
+// (argument order at Func_02001fcc, muls/ldr, the pool load by lsls):
+// - `i = 0` and `slot = objects` are set in both arms only because each
+//   constant set doubles a live length: at 4x, i (10 refs) and slot (12) fall
+//   below leader and work. The native has one set of each, in the join, after
+//   its label: forward sched2 would lift `movs r3, #0` up the arm otherwise,
+//   so cross-jumping is not the source of that tail. Set once there, i at 2x
+//   outranks work (differ 212, gap 20; slot too 227, gap 15).
+// - The native's i has 7 refs: its bottom compare reads a value that is not i,
+//   as `next = i + 1` does, a `temporary`. slot still outranks work at 1x, so
+//   that alone cannot be the whole story: leader and work need 8 refs, or i
+//   and slot a cause of doubling not found yet.
+// - `adds r3, r2` before the first test: reproduced only by a dead pre-if
+//   store of kind (a device). The twin copy `mov r11, r4` looks like the same
+//   thing, but objects[i] in a real for is not reduced (differ 272, gap 30).
+// Tried: all 25 places of i = 0 across the arms (a tail placed last in both is
+// cross-jumped, gap 8, differ 189, but it merges the wrong stores); all 6
+// orders at the bottom; reach's operand orders and a sprite local (no change).
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -60,15 +67,16 @@ void Func_02000d64(void) {
   struct Actor *leader = Actor_GetById(Func_0200209c());
   s32 leaderReach =
       ((struct WorldMapSprite *)leader->animation)->scale * leader->radius;
-  struct EventWork *work = Ram_HeapSlots->eventWork;
-  struct Actor *center = work->viewCenter;
-  s32 zoom = Ram_HeapSlots->mapWork->zoom;
-  s32 x = center->x;
-  s32 z = center->z;
-  struct Actor **objects = gData_02003dc0;
-  s32 left, right, top, bottom;
   u32 i;
+  s32 left, right, top, bottom;
   struct Actor **slot;
+  struct EventWork *work = Ram_HeapSlots->eventWork;
+  struct Actor *object = work->viewCenter;
+  s32 zoom = Ram_HeapSlots->mapWork->zoom;
+  s32 x = object->x;
+  u8 kind = placement->kind;
+  s32 z = object->z;
+  struct Actor **objects = gData_02003dc0;
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
   if (zoom <= 0x10000) {
@@ -76,19 +84,23 @@ void Func_02000d64(void) {
     right = x + 0xa00000;
     top = z - 0x12c0000;
     bottom = z + 0xc80000;
+    i = 0;
+    slot = objects;
   } else {
+    i = 0;
     left = x - 0xf00000;
     right = x + 0xf00000;
     top = z - 0x1c20000;
     bottom = z + 0x12c0000;
+    slot = objects;
   }
-  for (i = 0, slot = objects; i < 128 && placement->kind != 0;
-       i++, slot++, placement++) {
-    struct Actor *object;
+  if (kind == 0)
+    return;
+top : {
     s32 px, pz;
 
     if (placement->unk01 == 15)
-      continue;
+      goto next;
     object = *slot;
     px = placement->x << 16;
     pz = placement->z << 16;
@@ -108,7 +120,7 @@ void Func_02000d64(void) {
 
           object = Func_02001fcc(placement->sprite, px, 0, pz);
           if (object == NULL)
-            continue;
+            goto next;
           Func_02001fc4(object, gData_02003da8);
           object->motionFlags = 0;
           object->collisionFlags = 1;
@@ -137,12 +149,18 @@ void Func_02000d64(void) {
             }
           }
         }
-        continue;
+        goto next;
       }
     }
     if (object != NULL) {
       Func_02001fd4(object);
       *slot = NULL;
     }
-  }
+  next:
+    i++;
+    slot++;
+    placement++;
+    if (i < 128 && placement->kind != 0)
+      goto top;
+}
 }

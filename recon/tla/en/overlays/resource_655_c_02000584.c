@@ -1,6 +1,34 @@
-// Draft, differ 92 of 150: Func_020001d0 with actors 8 to 10 placed at
-// the leader first and attributes copied for set flags. Left: register
-// choice (the native keeps the list in r11; this draft spills it).
+// Draft, differ 62 of 150, skeleton gap 12 (tla-en, 2026-11-01)
+// Func_020001d0 with actors 8 to 10 placed at the leader first and attributes
+// copied for set flags. Ported from 67F's Func_02000584, the same function; the
+// old Call forwarding is gone (no devices here). Control flow and data access
+// are right; what is left is one allocation.
+// Mechanism, read from global.c and the lreg and greg dumps: the listing's frame
+// 16 is map 12, flag 8, cell 4, and index * 4 at 0 with its store deleted. Cell
+// and index * 4 are tied in r6 by local-alloc, then kicked out (find_reg's
+// local_reg_n_refs test) by cells, which is what puts cells in r6 and spills
+// both; sp+0 is index * 4's slot, not a missing local. 020001d0 does the same.
+// For that, three counts must hold (here, or in the listing's order):
+// - terrain ranks above cells, so it takes r7: 10 refs over T insns against 6
+//   over C. `next` before `terrain` gives T 45, C 18, a tie that the lower pseudo
+//   number wins, so terrain is declared first.
+// - cells kicks r6 only if 6 / C > 8 / L, L being the two tied live lengths. T 45,
+//   C 18, L 24 is exactly equal, and the test is strict: this is the miss.
+// - id ranks above list, or they swap r9 and r11: one `list += 2` (refs 12), not
+//   one per arm (16). With one per arm the swap shows at differ 58, gap 16, with
+//   index reused as the shape pointer; that reuse is a second value, so not kept.
+// Computing height before cell->attributeB = 128 gives L 26 but T 47, so cells
+// goes first (differ 90). Only a load moved before the cell add also gives C 19:
+// `x = object->x` as a local does it, and cells, terrain and frame all land (gap
+// 5/7 with one per arm), but x is a forced temporary and the native rereads it
+// for the second call. So the lead is a form with C 19 or L 25 that adds no
+// instruction: every insn the listing has is already here, so it is an order.
+// Open: with that local and one `list += 2`, cell takes r11 and list loses it,
+// though list ranks higher; not understood (no spill of r11 shows in the dump).
+// Tried, no gain: goto loop (66), goto with one per arm (87), cell set before
+// slot (89), height reusing ground (102), a split
+// offset local (folds, 90), one-constant locals for 0, 1 or 9 in r6 (cprop folds
+// them, 58 unchanged), the 691 draft's two-word pair (a forced store).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -66,49 +94,49 @@ struct EffectView {
 void Func_02000584(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
-  Call2((void (*)())Func_02003c78, 8, gMainRoutineWork.currentOwner);
-  Call2((void (*)())Func_02003c78, 9, gMainRoutineWork.currentOwner);
-  Call2((void (*)())Func_02003c78, 10, gMainRoutineWork.currentOwner);
-  Call1((void (*)())wait, 1);
-  Call1((void (*)())Func_0200056c, 8);
-  Call1((void (*)())Func_0200056c, 9);
-  Call1((void (*)())Func_0200056c, 10);
-  Call2((void (*)())Actor_SetModeById, 9, 0);
-  Call1((void (*)())wait, 1);
-  Call3((void (*)())Func_02003c68, 8, 0, 0);
-  Call3((void (*)())Func_02003c68, 9, 0, 0);
-  Call3((void (*)())Func_02003c68, 10, 0, 0);
-  Call1((void (*)())wait, 1);
-  goto test;
-next:
-  {
-    s32 id = list[0];
+  Func_02003c78(8, gMainRoutineWork.currentOwner);
+  Func_02003c78(9, gMainRoutineWork.currentOwner);
+  Func_02003c78(10, gMainRoutineWork.currentOwner);
+  wait(1);
+  Func_0200056c(8);
+  Func_0200056c(9);
+  Func_0200056c(10);
+  Actor_SetModeById(9, 0);
+  wait(1);
+  Func_02003c68(8, 0, 0);
+  Func_02003c68(9, 0, 0);
+  Func_02003c68(10, 0, 0);
+  wait(1);
+  while (list[0] != 0xffff) {
+    u32 id = list[0];
     struct Actor *object = Actor_GetById(id);
     s32 flag = list[1];
-    u8 *layer = &object->terrainId;
-    struct MapCell *cells = map->layers[*layer].cells;
+    s32 next = flag + 1;
+    u8 *terrain = &object->terrainId;
+    struct MapCell *cells = map->layers[*terrain].cells;
     u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
     object->unk5c[0] = 3;
-    if (GameFlag_Test(flag + 1)) {
+    if (GameFlag_Test(next)) {
       Func_02003c68(id, 0, 0);
     } else {
       s32 index = Func_02003db0(object);
-      u8 *cell = (u8 *)(cells + index);
-      u8 *slot = shapes + index;
-      s32 shape = Func_02003c10(*layer, object->x, object->z);
-      s32 height = Map_GetTerrainHeight(*layer, object->x, object->z);
+      struct MapCell *cell;
+      u8 *slot;
+      s32 shape, ground;
+
+      slot = shapes + index;
+      cell = cells + index;
+      shape = Func_02003c10(*terrain, object->x, object->z);
+      ground = Map_GetTerrainHeight(*terrain, object->x, object->z);
 
       Func_02003cc0(id);
-      cell[3] = 128;
-      *slot = Func_02003dd0(*layer, shape, (height >> 19) + 4);
+      cell->attributeB = 128;
+      *slot = Func_02003dd0(*terrain, shape, (ground >> 19) + 4);
       if (GameFlag_Test(flag))
         ObjectVisual_CopyAttributes(id, 9);
     }
     list += 2;
   }
-test:
-  if (*list != 0xffff)
-    goto next;
-  Call1((void (*)())wait, 10);
+  wait(10);
 }

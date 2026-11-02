@@ -1,7 +1,21 @@
-// Draft, differ 88 of 128: Yampi Desert, for its rooms 3 to 5, raises each
-// listed pillar whose flag is clear: marks its cell, clears its collision
-// and raises the shape grid under it; then sets flag 0x20b. Left: register
-// choice (the native keeps the list in r11).
+// Draft, differ 68 of 128, skeleton gap 22 (tla-en, 2026-11-01)
+// Yampi Desert, for its rooms 3 to 5, raises each listed pillar whose flag is
+// clear: marks its cell, clears its collision and raises the shape grid under
+// it; then sets flag 0x20b.
+// Left: one allocation swap, and the gap is its reloads. The native has list in
+// r11, the flag result in r9 and shape spilled to sp+0; here list is spilled,
+// the result is in r11 and shape in r9. The native follows if list is allocated
+// before the result: the result then finds no register and takes r9 from shape
+// (ratio 8/36 against 4/22). In the lreg dump list ranks below it: priority
+// .49 against .67, because the NULL first set doubles list's live length to 164.
+// Tried without gain: a literal 0 for the result (same pseudo; kept, it reads
+// better), a chained zero store, list stepping in both arms (24 refs, .56, the
+// tails do not merge while list is spilled), continue (bad rotation), list++
+// twice (folded), a separate table pointer (loses the NULL in r11), and a goto
+// loop with two back edges (30 refs, then caller-save takes r4, so the native
+// has at most 24 refs). Rejected as a forced temporary: copying the result into
+// a second local for the stores, which would shorten its life. The shape of
+// the rest, `cells += index; shapes += index`, closed 16 of the difference.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -38,23 +52,22 @@ void Func_020006ac(void) {
     return;
   while (*list != 0xffff) {
     struct Actor *object = Actor_GetById(*list);
-    s32 set;
 
     list += 2;
-    set = GameFlag_Test(*list);
-    if (!set) {
+    if (!GameFlag_Test(*list)) {
       s32 layer = object->terrainId;
       struct MapCell *cells = map->layers[layer].cells;
       u8 *shapes = gMapShapeGrid + (((s32)cells - 0x02010000) >> 2);
       s32 index = Func_020041e0(object);
       s32 shape = Func_02004020(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
-      struct MapCell *cell = cells + index;
 
-      object->motionFlags = set;
-      cell->collisionCode = set;
-      cell->attributeB |= 128;
-      shapes[index] = Func_020041e8(layer, shape, (height >> 19) + 4);
+      cells += index;
+      shapes += index;
+      object->motionFlags = 0;
+      cells->collisionCode = 0;
+      cells->attributeB |= 128;
+      *shapes = Func_020041e8(layer, shape, (height >> 19) + 4);
     }
     list++;
   }

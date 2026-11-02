@@ -1,134 +1,115 @@
-// Draft, differ 104 of 174, skeleton gap 26 (tla-en, 2026-11-01)
-// Each frame: on odd counts recolours the object, every 16 counts in mode 0
-// restarts one of the two columns, in mode 1 frees the VRAM entry and stops
-// once both columns pass 31; otherwise moves each live column's two sprites.
-// Left: allocation. The listing gives object r7, work r8, the loop pointer r6,
-// j r10, the second coordinate r9, i r11, and keeps the offset, the sine and
-// the first coordinate on the stack; here work and i are on the stack and the
-// sine and first coordinate in high registers (lreg: sine 8 refs over 46 insns
-// ranks above work, 11 over 115). The listing's reloads of the counter after
-// its & 1 test and of *slot after the range test show its pseudos lost their
-// registers and came back from their REG_EQUIV memory, so they should follow
-// the allocation; plain s16 and u8 locals did not change them.
-// A volatile counter and column read makes it worse (differ 119, gap 38).
-// The outer loop is a label and goto because a do or for loop hoists
-// p = &position out of the loop (differ 182); p must stay in r5 in the block.
-// slots and j = 0 before the position's y store are kept only because they
-// rank work and j closer: without slots, differ 136 and gap 28, though the
-// listing's strh matches that plain form.
+// Draft, differ 62 of 174, skeleton gap 21 (tla-en, 2026-11-01)
+// Same function as overlay 694's Func_02003cd8, and that form closed most of
+// the distance here. Each frame the object's count (byte 0x63) cycles its
+// animation on odd counts; in state 0 (byte 0x62) every 16th count restarts
+// one of the two sparkles with sound 598, alternating; in state 1, once both
+// have run out, the object frees its VRAM entry and stops. Each running
+// sparkle rises 32 pixels above the object, its two sprites pulsing with the
+// sine of its age, the second a pixel lower, mirrored and one depth step
+// behind. Settled shape: `*count / 2` is shortened to byte width, so its read
+// stays apart from the `& 1` test's (`% 16` also beats `& 15`); `for (i = 0;
+// i < 2; i++)` is reversed by loop.c into the listing's 1, 0 with its slot
+// and offset givs; reading work->timers[i] through the struct is what rereads
+// it after the s32 store (a plain s16 * does not conflict, an s16 pointer and
+// goto stay at gap 24); p's default before the loop gives it two sets, so
+// loop.c keeps p = position in the block; j = 0 this early is what gives j
+// r10 (moved after the camera call it takes r7 and object falls to r8: differ
+// 137). Left is allocation, and the `% 16` load and mask swapping r2 and r3.
+// The listing has work r8, j r10, y r9 and i r11, with x, sine and offset on
+// the stack; here sine r8, x r11 and work, i, offset on the stack. Ranks from
+// lreg: sine 8 refs over 47 (.51), x 5 over 30 (.33), work 9 over 113 (.24),
+// i 7 over 122 (.115). The listing needs sine and x as if they lived the
+// whole loop, and work above j, which refs alone do not give (j 14 over 88,
+// .48). Not found: what lengthens them; each is set on every pass, so flow
+// kills them at the top. Tried without gain: `& 15`, s32 state, defaults for
+// x, y, sine, j and sprite, sine and x as a two-word struct or array (a
+// DImode pair takes r6 and r7, differ 163), position[] with no pointer (158).
+// Overlay 694's own form shares one pointer for position and sprite, which
+// also reaches differ 62: a local reused for a second value, not needed here.
 #include "types.h"
-
-struct SparkleSprite {
-  u8 unk00[12];
-  s32 unk0c;
-  s32 unk10;
-  s32 unk14;
-  s32 unk18;
-  u16 unk1c;
-  u16 unk1e;
-  u8 unk20[8];
-};
+#include "actor.h"
+#include "effect_sprite.h"
 
 struct SparkleWork {
-  struct SparkleSprite sprites[4];
-  s16 unkA0[2];
+  struct EffectSprite sprites[4];
+  s16 timers[2];
   s16 vramEntry;
-  s16 unkA6;
+  u16 next;
+  struct Actor *object;
 };
 
-struct SparkleObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x4e];
-  u8 unk62;
-  u8 unk63;
-  u8 unk64[4];
-  struct SparkleWork *work;
-  void *update;
-};
-
-struct Vec3 {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-void Animation_ApplyChildValues(struct SparkleObject *object, u32 value);
-s32 Math_Sine(s32 angle);
-s32 Resource_ResetEntry(u32 entry);
-void Func_02000ec4(struct Vec3 *position);
-void Func_02000eec(struct SparkleSprite *sprite);
-s32 Func_02000efc(struct SparkleObject *object);
+void Animation_ApplyChildValues(struct Actor *object, u32 frame);
 void Func_02000f3c(s32 sound);
+void Resource_ResetEntry(s32 entry);
+s32 Math_Sine(s32 angle);
+void Func_02000ec4(s32 *position);
+s32 Func_02000efc(struct Actor *object);
+void Func_02000eec(struct EffectSprite *sprite);
 
-void Func_02000ad0(struct SparkleObject *object) {
-  struct SparkleWork *work = object->work;
-  struct Vec3 position;
-  struct Vec3 *p;
-  s32 sine, x, y;
-  s32 i, j, offset;
-  s16 *slot;
-  s16 *slots;
-  struct SparkleSprite *sprite;
+void Func_02000ad0(struct Actor *object) {
+  struct SparkleWork *work = (struct SparkleWork *)object->watchedObject;
+  u8 *count = (u8 *)object + 0x63;
+  u8 state;
+  struct EffectSprite *sprite;
 
-  if (object->unk63 & 1)
-    Animation_ApplyChildValues(object, (object->unk63 >> 1) % 6);
-  if (object->unk62 == 0) {
-    if ((object->unk63 & 15) == 0) {
-      Func_02000f3c(0x256);
-      slots = work->unkA0;
-      slots[work->unkA6] = 0;
-      work->unkA6 ^= 1;
+  s32 position[3];
+  s32 *p;
+
+  s32 sine;
+  s32 x;
+  s32 y;
+  s32 i;
+  s32 j;
+
+  if (*count & 1)
+    Animation_ApplyChildValues(object, *count / 2 % 6);
+  state = ((u8 *)object)[0x62];
+  if (state == 0) {
+    if (*count % 16 == 0) {
+      Func_02000f3c(598);
+      work->timers[(s16)work->next] = 0;
+      work->next ^= 1;
     }
-  } else if (object->unk62 == 1 && work->unkA0[0] > 31 &&
-             work->unkA0[1] > 31) {
-    Animation_ApplyChildValues(object, 0);
-    Resource_ResetEntry(work->vramEntry);
-    object->update = 0;
-    return;
-  }
-  object->unk63++;
-  offset = 0;
-  i = 1;
-  slot = work->unkA0;
-OUTER:
-  sine = Math_Sine(*slot << 10);
-  if (*slot >= 0) {
-    if (*slot <= 31) {
-      p = &position;
-      p->x = object->x;
-      j = 0;
-      p->y = object->y + (*slot << 16);
-      p->z = object->z;
-      Func_02000ec4(p);
-      x = p->x;
-      y = p->z;
-      sprite = (struct SparkleSprite *)((u8 *)work + offset);
-      do {
-        sprite->unk10 = y;
-        sprite->unk0c = x;
-        sprite->unk14 = sine;
-        sprite->unk18 = sine;
-        if (j == 0) {
-          sprite->unk1e = Func_02000efc(object) - 1;
-        } else {
-          s32 v = Func_02000efc(object);
-          sprite->unk10 -= 0x10000;
-          sprite->unk1e = v + 1;
-          sprite->unk18 = -sprite->unk18;
-        }
-        Func_02000eec(sprite);
-        j++;
-        sprite++;
-      } while (j <= 1);
-      (*slot)++;
+  } else if (state == 1) {
+    if (work->timers[0] > 31 && work->timers[1] > 31) {
+      Animation_ApplyChildValues(object, 0);
+      Resource_ResetEntry(work->vramEntry);
+      object->update = 0;
+      return;
     }
   }
-  offset += 80;
-  i--;
-  slot++;
-  if (i >= 0)
-    goto OUTER;
+  (*count)++;
+  // Default: a second set keeps loop.c from hoisting p = position.
+  p = 0;
+  for (i = 0; i < 2; i++) {
+    sine = Math_Sine(work->timers[i] << 10);
+    if (work->timers[i] < 0)
+      continue;
+    if (work->timers[i] > 31)
+      continue;
+    j = 0;
+    p = position;
+    p[0] = object->x;
+    p[1] = object->y + (work->timers[i] << 16);
+    p[2] = object->z;
+    Func_02000ec4(p);
+    x = p[0];
+    y = p[2];
+    sprite = &work->sprites[i * 2];
+    for (; j <= 1; j++, sprite++) {
+      sprite->y = y;
+      sprite->x = x;
+      sprite->scaleX = sine;
+      sprite->scaleY = sine;
+      if (j == 0) {
+        sprite->depth = Func_02000efc(object) - 1;
+      } else {
+        sprite->depth = Func_02000efc(object) + 1;
+        sprite->y -= 0x10000;
+        sprite->scaleY = -sprite->scaleY;
+      }
+      Func_02000eec(sprite);
+    }
+    work->timers[i]++;
+  }
 }

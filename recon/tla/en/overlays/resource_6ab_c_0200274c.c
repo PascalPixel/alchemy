@@ -18,10 +18,23 @@
 //   to survive to the second thread_jumps (cse2 folds it first); {dx, dz} as a
 //   DImode pair (kills dz << 7's hoist but takes r6:r7 and PRE keeps tileX + w);
 //   {tileX, dx, dz} in memory (loses the reloads; gap 52/61).
-// Allocation: the listing spills dx and the offset yet keeps position in r7 and
-// zA in r11; here dx (r10) and the offset (r7) outrank them, which sends
-// &position to the stack, action to r7 instead of r8, and moves the frame slots.
-// A compiler lead only (K3, out of scope here): PRE not running would explain it.
+// - A real for over dx and dz with every argument written tileX + widthA + dx
+//   gives the listing's x, xA, xB, z, zA, zB as loop.c's own givs, and PRE then
+//   hoists only dz << 7, but that makes the offset a giv too and reduces
+//   (x << 20) + 0x80000 and the 0x80000 (differ 294). A one-constant bound
+//   (dz <= radius) leaves the entry tests in and PRE still hoists onto edge
+//   (7,8), past the test (differ 308). Top-entered both loops: differ 339;
+//   column only top-entered: differ 231, gap 40/45; row only: differ 368.
+// Allocation, the rest of the differ, cannot be reached in plain C here: the
+// listing spills dx and the offset yet keeps position in r7 and zA in r11.
+// .18.greg priorities are offset 0.73, dx 0.49, zA 0.25, position 0.17, so
+// the offset (r7) and dx (r10) go first. Those two sit under position only if
+// their refs are not weighted by loop depth (offset 3 refs, dx 5). A named
+// offset local changes nothing. A compiler question, out of scope here (K3),
+// as is whether PRE ran on the native at all.
+// Call3 at the -1, -1 call is the old draft's device: without it the two -1
+// share a register (differ 320). Call3 at the 0x50000 call too gives r0 before
+// r1 as the listing has (differ 215), but that is a new device, so not kept.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -64,8 +77,7 @@ extern u8 gData_020023c4[];
 void Func_0200274c(struct Actor *actor) {
   struct Vector3 position;
   struct WorkEvent *work = Ram_HeapSlots->eventWork;
-  s16 *action = &actor->action;
-  s32 state = *action;
+  s32 state = actor->action;
 
   if (state == 0) {
     s32 dz, dx, tileX;
@@ -86,7 +98,7 @@ void Func_0200274c(struct Actor *actor) {
     if (work->unk166 != 0)
       flag |= 1;
     actor->movementState = flag;
-    
+
     position.x = actor->x;
     position.y = actor->y;
     position.z = actor->z;
@@ -96,8 +108,7 @@ void Func_0200274c(struct Actor *actor) {
       actor->targetY = 0x80000000;
       actor->targetX = 0x80000000;
       actor->acceleration = 0x4000;
-      state = 1;
-      *action = state;
+      actor->action = 1;
       Func_0200446c(145);
       Func_02004264(0x50000, 0x50000, 0x10000);
       Call3((void (*)())Func_02004264, -1, -1, 0xe666);

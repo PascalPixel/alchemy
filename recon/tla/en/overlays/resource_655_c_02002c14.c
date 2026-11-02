@@ -1,6 +1,12 @@
-// Draft, differ 121 of 185 (was 133): the leader drops in with actor 9 and
-// gData_02004420, ending with flag 0x871. The calls whose constants the
-// native builds afresh go through CallN. Left: register allocation.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The leader drops in with actor 9 and gData_02004420, ending with flag 0x871.
+// Review: the match rests on ten sites through call.h's CallN, six of them new
+// in this round (Actor_SetPositionAndResetMotion, both
+// Actor_SetSpeedParameters, all three Func_02003bd0). Direct, those six give
+// differ 119 and share 0xcccc and 0x780000 in callee-saved registers; other
+// prototypes and return types do not change that. Each of the ten direct alone
+// gives differ 2 to 96. The 0x8000 in r9 and the 0 in r10 need no local.
+// Func_02003cc8 returns s32: as void, its arguments schedule apart (differ 2).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -85,7 +91,7 @@ void Func_02003be0(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
                    s32 height);
 void Func_02003bf0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003c70(s32 id, s32 x, s32 z, s32 angle);
-void Func_02003cc8(s32 id, s32 emote, s32 frames);
+s32 Func_02003cc8(s32 id, s32 emote, s32 frames);
 void Func_02003d00(s32 exit);
 void Func_02003d78(s32 skip);
 
@@ -111,20 +117,22 @@ void Func_02002c14(void) {
   Func_02003df8(176);
   Func_020021b4();
   if (gData_02004420 != NULL) {
-    Actor_SetPositionAndResetMotion(gData_02004420, 0xf80000, 0, 0x780000);
+    Call4((void (*)())Actor_SetPositionAndResetMotion, gData_02004420,
+          0xf80000, 0, 0x780000);
     wait(1);
     gData_02004420->speedLimit = 0x19999;
     gData_02004420->acceleration = 0x19999;
     gData_02004420->velocityY = 0x80000;
   }
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-  Actor_SetSpeedParameters(9, 0x19999, 0xcccc);
+  Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
+        0x19999, 0xcccc);
+  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, 0xcccc);
   leader->velocityY = 0x60000;
   helper->velocityY = 0x60000;
-  Func_02003bd0(leader, 0xd80000, 0, 0x780000);
-  Func_02003bd0(helper, 0x1180000, 0, 0x780000);
+  Call4((void (*)())Func_02003bd0, leader, 0xd80000, 0, 0x780000);
+  Call4((void (*)())Func_02003bd0, helper, 0x1180000, 0, 0x780000);
   if (gData_02004420 != NULL)
-    Func_02003bd0(gData_02004420, 0xf80000, 0, 0x580000);
+    Call4((void (*)())Func_02003bd0, gData_02004420, 0xf80000, 0, 0x580000);
   Func_02003bd8(leader);
   FieldEvent_Wait(20);
   Func_02003cc8(9, 0x103, 0);

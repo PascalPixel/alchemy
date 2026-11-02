@@ -1,24 +1,31 @@
 // Draft, differ 223 of 362, skeleton gap 47 (tla-en, 2026-11-01)
-// Left, two causes. (1) gcse PRE hoists dz << 7, col + lowerX, col + upperX and
-// col - 1; the listing rebuilds them in the loops. The two gotos into the loop
-// tests stop that but leave two extra branches and move the row setup behind
-// the row test. Dropping both gotos and adding `zero = 0` before the loops,
-// `dz += zero` at the top of the inner body and `col += zero` at the top of the
-// outer body (cprop folds them, cse2 deletes them, PRE sees the operands killed)
-// gives no hoisting, the 56-byte frame and differ 185, skeleton gap 27. That is
-// a dead device short of a match, so it came back out; reapply it to test (2).
+// Left, two causes; the compiler change closed neither. (1) gcse PRE hoists
+// dz << 7, col + lowerX, col + upperX and col - 1; the listing rebuilds them in
+// the loops. The two gotos into the loop tests stop that but leave two extra
+// branches and move the row setup behind the row test. Bottom-test loops with no
+// entry goto hoist everything (differ 365, gap 51); only the outer goto gives
+// 233, gap 46; only the inner goto 381, gap 53. Temporarily adding `zero = 0`
+// before the loops, `dz += zero` first in the inner body and `col += zero` first
+// in the outer body (hash_scan_set: an operand set earlier in the block is not
+// anticipatable) now gives differ 177, gap 21 and the 56-byte frame; that is a
+// dead device, so it stays out, but it is the bench for testing (2).
 // (2) With (1) applied every register but one matches: the listing keeps &ahead
-// in r7 and spills offset to sp+12, the draft the reverse. Priorities are
-// x 0.96, offset 0.73, z 0.72, &ahead 0.17, and z in r8 means r7 was taken
-// before z, so &ahead would have to outrank z; refs and live length cannot give
-// that. Unsolved; the whole rest of the diff follows from it (reload rotation,
-// the r4 constant in Func_02002e8c's arguments).
-// Measured dead ends: real for loops strength-reduce x << 20 and offset, which
-// the listing leaves alone, even with x, z and the columns set at the top of
-// each body. A memory struct for col, dx, dz stops PRE but addresses through a
-// base register, not sp. An 8-byte pair { col, dx } stops PRE on col, but its
-// doubled priority takes r5:r6. Slots give the declaration order dz, dx, col,
-// upper, lower, upperX, lowerX, offset, lowerRow. x must stay ahead of upperCol:
+// in r7 and spills the shared cell offset to sp+12, the draft the reverse. Refs
+// over live: x 20/82, offset 9/37, z 17/94, upperRow 8/91, lowerRow 8/96, &ahead
+// 10/177. r7 going unused by z means &ahead would have to outrank z; refs and
+// live length cannot give that. The offset needs no local: `upper[(dz << 7) + dx]`
+// compiles the same, and the sp+12 slot after lowerX fits a compiler pseudo.
+// Measured dead ends: real for loops with col + dx in the call arguments make dx
+// a biv, so offset is reduced and col + upperX + dx is not, the reverse of the
+// listing (differ 332); hand-stepped x and the columns strength-reduce x << 20
+// and offset in the same way. dz << 7 staying in the inner loop says dx and dz
+// are not bivs there. A memory struct for col, dx, dz stops PRE but addresses
+// through a base register, as &ahead does, not sp (differ 279). An 8-byte pair
+// { dx, dz } stops PRE on dz << 7 and matches the high-word-first loads but its
+// doubled priority takes r6:r7 (400); { col, dx } takes r5:r6 (329). A user
+// `struct Vec *p = &ahead` declared first gives differ 205 only by moving the
+// slots, gap 50, and declared last changes nothing. Slots give the declaration
+// order dz, dx, col, upper, lower, upperX, lowerX. x must stay ahead of upperCol:
 // x last loses actor's r5 (differ 311). gData_020023c4 + 0x188 is this overlay's
 // address.
 #include "types.h"
@@ -63,9 +70,9 @@ void Func_02002f80(struct Actor *actor) {
     struct MapWork *map;
     s32 flag, row, upperZ;
     s32 dz, dx, col;
-    u8 *upper, *lower;
+    struct MapCell *upper, *lower;
     s32 upperX, lowerX;
-    s32 offset, lowerRow, upperRow, x, z, upperCol, lowerCol;
+    s32 lowerRow, upperRow, x, z, upperCol, lowerCol;
     struct Actor *leader;
     struct Local *local;
 
@@ -91,8 +98,8 @@ void Func_02002f80(struct Actor *actor) {
     map = Ram_HeapSlots->mapWork;
     col = actor->x >> 20;
     row = actor->z >> 20;
-    upper = (u8 *)(map->layers[1].cells + (col + (row << 7)));
-    lower = (u8 *)(map->layers[2].cells + (col + (row << 7)));
+    upper = map->layers[1].cells + (col + (row << 7));
+    lower = map->layers[2].cells + (col + (row << 7));
     upperX = *(s32 *)&map->layers[1].unk08[0] >> 20;
     upperZ = *(s32 *)&map->layers[1].unk08[4];
     lowerX = *(s32 *)&map->layers[2].unk08[0] >> 20;
@@ -108,17 +115,16 @@ void Func_02002f80(struct Actor *actor) {
     upperCol = col + upperX - 1;
     goto colTest;
   nextCol:
-    offset = ((dz << 7) + dx) << 2;
-    if (((struct MapCell *)(upper + offset))->collisionCode == 77) {
-      ((struct MapCell *)(upper + offset))->collisionCode = 0;
+    if (upper[(dz << 7) + dx].collisionCode == 77) {
+      upper[(dz << 7) + dx].collisionCode = 0;
       Func_020054f0(64, 64, 1, 1, upperCol, upperRow);
       Func_020054e8(64, 64, 1, 1, x, z);
       Func_020056c0(573);
       Func_02002e8c((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
                     actor->angle);
     }
-    if (((struct MapCell *)(lower + offset))->collisionCode == 77) {
-      ((struct MapCell *)(lower + offset))->collisionCode = 0;
+    if (lower[(dz << 7) + dx].collisionCode == 77) {
+      lower[(dz << 7) + dx].collisionCode = 0;
       Func_020054f0(64, 64, 1, 2, lowerCol, lowerRow);
       Func_020054e8(64, 64, 1, 1, x, z);
       Func_020056c0(572);

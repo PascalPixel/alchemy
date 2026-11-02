@@ -18,16 +18,29 @@
 // loop may be the same thing. The consequences: object r9, not r11; sine r9, not
 // r7; IwramMulQ16 and x swap r6/r8; the x nudge takes r5 for 0x8000 where the
 // listing, with r5 busy, has r1 in both arms and cross-jumps.
+// Re-measured with the 1 November compiler: same 206 and gap 54, so none of this
+// was slow-loads. How it folds, from the gcse and cse2 dumps of three explicit
+// pointers: PRE turns the later `plus sfp -12` sets into copies of a reaching reg,
+// the last cprop rewrites their uses in later blocks to it, and cse2 merges the
+// rest into the first pointer. The same last cprop folds a `speed` local's 0x8000,
+// which is why r11's constant cannot appear either. No gate in gcse_main applies.
+// Tried this round, no gain: speed in the outer scope, first declared, set at the
+// block's top or declared in the block (all differ 204, gap 60); cosine as
+// `s32 turn[1]` as Func_0200043c has it (no change; speed with it 204, gap 60);
+// the z nudge in its own local, x and z declared before dx and dz, dx and dz in a
+// block, cosine and sine declared last, offset for center throughout (all no
+// change); *pos in the rotation (265); offset set again at each stretch, one
+// pointer with three sets, as a diagnostic (250).
 // Tried, none better on gap: x nudge through a local or a ternary, which pulls x
 // into a long pseudo (88+); `object->x` for *pos, differ 192 but gap 62, kept
 // out as the gap is the aim; z through the field, gap 59 (z read once and stored
 // once is the best form); rotation stores written inline (76) or summed in one
 // expression (58); z terms swapped (57); pos set before offset (56); pos and
 // offset declared the other way (no change); the switch writing center directly
-// (73). px, py and pz are read before the flip test because the listing loads
+// (73; 233 and gap 73 re-measured). px, py and pz are read before the flip test because the listing loads
 // them there.
 // Shape follows Func_0200043c (s043c.c), including its forwarded SeaOfTime_Cos
-// and SeaOfTime_Sin; plain Math_Cosine/Math_Sine there gives 242.
+// and SeaOfTime_Sin; plain Math_Cosine/Math_Sine there gave 242, 223 and gap 61 now.
 #include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
 
 struct SeaOfTimeEventWork0154 {

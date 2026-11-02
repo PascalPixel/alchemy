@@ -1,39 +1,42 @@
-// Draft, differ 197 of 171, skeleton gap 51 (tla-en, 2026-11-01)
+// Draft, differ 197 of 171, skeleton gap 27 (tla-en, 2026-11-01)
 // How far a pushed object slides: from the object Func_02004bf4 finds, steps
 // its footprint one step at a time in the push direction until a cell of it is
 // blocked (Func_020054f8 returns 2), and leaves the stopping point in move;
 // returns 0 when it cannot move at all. Shared with overlay 6a1 and others.
-// The frame now agrees slot for slot: position 28, step 24, direction 20, width
-// 16, height 12, layer 8, table offset 4, the saved object 0. Three 8-byte
-// locals carry that. size and cursor are DImode pseudos, which cannot take a
-// high register, so they lose to dx, dz and count as the listing has it (as
-// plain s32s, width and height outrank those three); the listing's str-then-ldr of
-// layer may be that subreg reload, not reproduced yet. info is memory because &info.step escapes, which
-// is why the step head reloads direction * 4 unshared with the width sums. A
-// plain direction local lets PRE share it (gap 63). The row loop is goto (a
-// for hoists the table address, gap 78 to 93); the column loop may be either, and a
-// row-local pointer changes nothing, so there is none.
+// The frame agrees slot for slot: position 28, step 24, direction 20, width 16,
+// height 12, layer 8, table offset 4, the saved object 0. Three 8-byte locals
+// carry that, and they are the first thing to doubt: they look like steering,
+// not source. size and cursor are DImode pseudos, which cannot take a high
+// register; info is memory because &info.step escapes. The row loop is goto (a
+// for hoists the table address); the column loop may be either.
 // Left, in order:
-// 1. PRE. The listing has no shared frame address: y and z are direct sp stores
-// (combine folds a single-use address), the call argument is a fresh add r1,
-// the row end a fresh add r2. alchemy-gcc's PRE merges every (plus sfp -12) into
-// one pseudo that takes r6. A diagnostic -fno-gcse compile (scratch only) did
-// not reach the listing by itself, so this is a lead, not a proof. It looks like
-// the frame-address-in-a-call-loop family; that side is a compiler question for
-// Pascal (K3), not a source one. Stopping it from source failed: no spelling
-// gives the base address a second expression.
-// 2. &info.step stays in r6 across the call and serves the read, where the
-// listing has add r0 and ldr r3, [sp, #24]; scalar step fixes that but loses
-// direction's memory. (s32 *)&info + 1, step[1] and an array read change nothing.
-// 3. Registers. Listing: object r4, p r5, move r6, col r7, row r8, dx r9, dz
-// r10, count r11. Here: move r7, col r5, row r4, object r8, dz r9, count r10,
-// dx r11. Hi registers go r8, r10, r9, r11, so the listing allocates row, dz,
-// dx, count; here count (u8, l142) beats dz (u5, l73) and dx (u7, l138), and row
-// (u13, l54) beats object (u13, l105) to r4.
-// Tried, untagged and taken back out as they do not reach differ 0: writing
-// direction as *(s32 *)(char *)&info with a plain int (differ 185, gap 45, but
-// wrong slots: ADDRESSOF renumbers it after size), (void)&info, dx and dz as an
-// 8-byte local (spills both), direction inside a 3-word size struct (gap 75+).
+// 1. The frame address, which drives everything else. Each array or struct
+// access expands to its own pseudo = sfp - 12 (a struct spells it the same;
+// differ unchanged). gcse then ties them to one register: PRE's deletions plus
+// its COPY-PROP pass (.07.gcse: insns z store, row x store, call argument, x +=)
+// all become the y store's pseudo, which takes r6. The listing has none of that:
+// y and z are direct sp stores, the argument a fresh add r1, the row x store and
+// x += share r5, the z += has its own add r2. With -fno-gcse (scratch only)
+// plain scalars for everything except position, with the goto row loop, come
+// nearest in shape and spill direction and the others unforced, and a scalar
+// step with the size and cursor structs scores best of all (149 changed lines
+// against 183 with gcse on, whole-line diff by hand). One reading that fits most
+// of it: that pseudo got no register and is rematerialized from its REG_EQUIV,
+// but that leaves r5 and r2 unexplained. Why gcse does not act here is the open
+// question; gcse_main has no early exit that applies (no setjmp, few blocks).
+// This is the frame-address-in-a-call-loop family. If no source form stops it,
+// it is a compiler question for Pascal (K3), out of scope for a draft.
+// 2. Registers. Listing: object r4, x pointer r5, move r6, col r7, row r8, dx r9,
+// dz r10, count r11. Here move r7, col r5, row r4, object r8, dz r9, count r10,
+// dx r11, with the shared frame address in r6. Expect this to move once 1 does.
+// Tried without gain, all from this draft: s32 *p or *q set in the row (copy-prop
+// removes them, differ unchanged); position as a struct; x += in the for
+// increment; continue form; a named result for the call; column loop as goto;
+// y store inside the step head (204); step as for (;;) (223), with a for or
+// do-while row (229); swapping the pair members (201 to 207); declaring row, dz,
+// dx first (no change). A scalar step without info gives differ 193, and 189
+// with size's members swapped, but gap 33: direction takes a register and loses
+// its slot, so it is not kept. All-plain scalars give 213, gap 41.
 #include "types.h"
 #include "actor.h"
 

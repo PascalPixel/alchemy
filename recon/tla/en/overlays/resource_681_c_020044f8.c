@@ -1,38 +1,40 @@
-// Draft, differ 388 of 418, skeleton gap 54 (tla-en, 2026-11-01): the border
-// loop's shape now matches apart from r6 and r7; what is left is allocation and
-// where y << 3 is computed. The Heap_AllocEwram wrapper is the one device kept,
-// from the earlier draft: it does not reach differ 0, but without it the draft
-// falls to 448.
+// Draft, differ 350 of 418, skeleton gap 54 (tla-en, 2026-11-01): x, y, nx, the
+// border's registers and the walk's n, next and cell now agree with the native.
+// What is left is two things, step and tries, and where y << 3 is computed. The
+// Heap_AllocEwram wrapper is the one device kept: without it the draft falls to
+// 422.
 //
-// Allocation: the native's order must be grid (r5), nx (r6), step (r7), y (r8),
-// x (r10), tries (r9), steps (r11), with ny taking r1 by caller-save. Here nx,
-// ny and tries (density 2.4, 2.4, 2.3 by the lreg dump) all outrank y (1.5) and
-// step (1.25), so ny takes r7 and tries takes r4. tries in r9 is the odd part:
-// r4 is free through the retry loop, so a low-class pseudo with 66 refs should
-// take it by caller-save. Sharing variables by the listing's registers lost each
-// time: ny with c (464), nx with k on top (478), step with n (478), the border
-// counter with step (406), its offset with nx (441). Separate value locals per
-// side lost (398); tries as an explicit n * 8 offset lost (413). Declaration
-// order, and label loops for the step and walk loops, change nothing. Reload's
-// spill rotation follows from this: the prologue and end orders look like its
-// symptoms (moving saved or path gains nothing), so fix allocation first.
+// Allocation: the native's order is grid (r5), nx (r6), step (r7), y (r8), x
+// (r10), tries (r9), steps (r11), with ny last in r1 by caller-save. Giving the
+// walk its own column (wx) fixed x (388 to 360), because the step phase's x then
+// has its own live length; splitting the row too lost (382), and step sharing with
+// n, the border counter, or next is a local reused for a second value and also
+// lost or was rejected for that (390, 401; next gains 365 only by accident).
+// Setting i before o in the border gave the offset r6 (360 to 350). Still wrong:
+// ny (33 refs over 68 insns, density 2.4) and tries (66 over 172, 2.3) outrank
+// step (55 over 220, 1.25), so step takes r9, ny r7 and tries r4. tries in r9
+// means the native found caller-save unprofitable: 4 * calls >= refs, so tries had
+// at most 4 refs, its raw count with no loop weight, where this compiler weights
+// it to 66 by the retry label's many back edges. Spellings that do not change
+// this: ny++ for ny = y + 1, nx after the call (417, frame shrinks), ny before nx,
+// dir block-local, declaration orders, the prologue's order. A label step loop
+// lost (379).
 //
 // y << 3: the native computes it once after the dir check, shared by all four
 // arms, and again at the join; the walk shares one across the first three sides
-// and computes a second for the fourth side and its scan (lr, then r0). Here
-// PRE shares one reaching register across both phases: on the default edges and
-// in each arm, deleting the join's, and in r6 through the walk. LCM cannot leave
-// both a dispatch copy and the join's, so this is no PRE placement. An unread
-// k = y * 8 before the switch only costs skeleton now (427 from 421), and it is
-// a dead store whose join copy gcse still deletes. Something must make the join
-// and fourth-side occurrences a different expression or kill it on the way;
-// no source form tried does. If none exists this is a compiler question, which
-// is out of scope for a draft.
+// and the third scan, and computes a second for the fourth side and its scan.
+// Here PRE shares one reaching register: on the default edges and in each arm,
+// deleting the join's, and in r6 through the walk. This is most of the skeleton
+// gap; the rest is high-register reloads for step and tries, and prologue order.
+// LCM cannot leave both a dispatch copy and the join's, so this is no PRE
+// placement: the pattern reads as hoisting from the dominated blocks whose paths
+// meet no other computation, which leaves the last occurrence alone. An unread
+// k = y * 8 before the switch is a dead store and no answer. If no source form
+// exists, both this and tries are compiler questions, out of scope for a draft.
 //
 // Border: a label loop, as 99 and 0xc40 are rebuilt in its body, with the
 // pointers and offset stepped by hand and the sum in its own local (a for loop
 // hoists both constants, and folding the sum into the address adds a register).
-// The offset wants r6 and the counter r7; they come out swapped.
 //
 // The arms: ny = y - 1 needs no special form: in the last arm the native's
 // reload scratch for y happens to be r1, ny's register, so the copy goes. A real
@@ -91,7 +93,7 @@ u32 Random16Far(void);
 
 static __inline__ void *Heap_AllocEwram_(s32 size) {
   /* FAKEMATCH(wrapper): forwarded inline, as scene_call.h describes; as a
-   * direct call, 448 of 418 instructions differ in tla-en. */
+   * direct call, 422 of 418 instructions differ in tla-en. */
   return Heap_AllocEwram(size);
 }
 
@@ -103,7 +105,7 @@ void Func_020044f8(s32 seed) {
   Unk_Step *steps;
   Unk_Cell *cell;
   Unk_Cell *p;
-  s32 x, y, nx, ny, step, n, tries, dir, i, v, next, k, c;
+  s32 x, y, wx, nx, ny, step, n, tries, dir, i, v, next, k, c;
   u32 saved;
 
   saved = gRandomState;
@@ -125,8 +127,8 @@ restart:
     Unk_Cell *a, *b, *e;
     s32 o, t;
     b = &AT(GRID_WIDTH, 0);
-    o = 0;
     i = GRID_WIDTH;
+    o = 0;
     a = grid->cells;
     e = grid->cells;
   border:
@@ -187,13 +189,13 @@ restart:
     y = ny;
   }
 
-  x = GRID_WIDTH / 2;
+  wx = GRID_WIDTH / 2;
   y = GRID_WIDTH / 2;
   for (n = 1; n <= 14; n = next) {
-    cell = &AT(x, y);
+    cell = &AT(wx, y);
     next = n + 1;
 
-    c = AT(x, y + 1).unk_0;
+    c = AT(wx, y + 1).unk_0;
     v = n;
     if (c == next)
       v = next;
@@ -213,14 +215,14 @@ restart:
       v = 1;
     steps[n].unk_2 = v;
 
-    c = AT(x, y - 1).unk_0;
+    c = AT(wx, y - 1).unk_0;
     v = n;
     if (c == next)
       v = next;
     else if (c == n - 1)
       v = c;
     else {
-      p = &AT(x, y);
+      p = &AT(wx, y);
     scanDown:
       p += GRID_WIDTH;
       c = p->unk_0;
@@ -233,14 +235,14 @@ restart:
       v = 1;
     steps[n].unk_5 = v;
 
-    c = AT(x - 1, y).unk_0;
+    c = AT(wx - 1, y).unk_0;
     v = n;
     if (c == next)
       v = next;
     else if (c == n - 1)
       v = c;
     else {
-      k = x;
+      k = wx;
     scanRight:
       k++;
       c = AT(k, y).unk_0;
@@ -253,14 +255,14 @@ restart:
       v = 1;
     steps[n].unk_3 = v;
 
-    c = AT(x + 1, y).unk_0;
+    c = AT(wx + 1, y).unk_0;
     v = n;
     if (c == next)
       v = next;
     else if (c == n - 1)
       v = c;
     else {
-      k = x;
+      k = wx;
     scanLeft:
       k--;
       c = AT(k, y).unk_0;
@@ -273,7 +275,7 @@ restart:
       v = 1;
     steps[n].unk_4 = v;
     steps[n].unk_0 = n;
-    x = cell->unk_1;
+    wx = cell->unk_1;
     y = cell->unk_2;
   }
   path = (Unk_Path *)(gData_020023c4 + 0x288);

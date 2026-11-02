@@ -1,42 +1,51 @@
-// Draft, differ 101 of 89: overlay 664's copy of overlay 681's Func_0200136c
-// (the same listing), whose draft holds its notes.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Overlay 664's copy of the orbiter step in overlays 681 and 67C
+// (gaia_rock_inside/s136c.c, aqua_rock_inside/s13bc.c), without their
+// FAKEMATCH(temporary) angle pointer, which this compiler no longer needs. The
+// first push stays on Call3: called directly it does not match.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
+#include "actor.h"
 #include "call.h"
-s32 Vector_AddPolarOffsetFar();
-s32 Func_02003e7c();
 
-void Func_02003ed4(s32 a0) {
-  FIELD_AT((a0 + 0x64), u16, 0) =
-      (FIELD_AT((a0 + 0x64), u16, 0) +
-       ((FIELD_AT((0x66 + a0), u16, 0) << 16) >> 17));
-  FIELD_AT(a0, s32, 8) = FIELD_AT(FIELD_AT(a0, s32, 104), s32, 8);
-  FIELD_AT(a0, s32, 12) = (FIELD_AT(FIELD_AT(a0, s32, 104), s32, 12) + 0x80000);
-  FIELD_AT(a0, s32, 16) = FIELD_AT(FIELD_AT(a0, s32, 104), s32, 16);
-  Call2(Vector_AddPolarOffsetFar, FIELD_AT(a0, s32, 76),
-        FIELD_AT((a0 + 0x64), u16, 0));
-  FIELD_AT((a0 + 0x62), u8, 0) = (FIELD_AT((a0 + 0x62), u8, 0) + 0xff);
-  if (((FIELD_AT((a0 + 0x62), u8, 0) + 0xff) << 24) != 0) {
-    if (FIELD_AT(a0, s32, 76) != 0x20000) {
-      Call1(Func_02003e7c, a0);
-      FIELD_AT(a0, s32, 76) = (FIELD_AT(a0, s32, 76) + -262144);
-      FIELD_AT((a0 + 0x64), u16, 0) =
-          (FIELD_AT((a0 + 0x64), u16, 0) +
-           ((FIELD_AT((0x66 + a0), u16, 0) << 16) >> 17));
-      FIELD_AT((8 + a0), s32, 0) = FIELD_AT(FIELD_AT(a0, s32, 104), s32, 8);
-      FIELD_AT(a0, s32, 12) =
-          (FIELD_AT(FIELD_AT(a0, s32, 104), s32, 12) + 0x80000);
-      FIELD_AT(a0, s32, 16) = FIELD_AT(FIELD_AT(a0, s32, 104), s32, 16);
-      Call3(Vector_AddPolarOffsetFar, FIELD_AT(a0, s32, 76),
-            FIELD_AT((a0 + 0x64), u16, 0), (8 + a0));
-      Call1(Func_02003e7c, a0);
-      FIELD_AT(a0, s32, 76) = (FIELD_AT(a0, s32, 76) + -262144);
-    }
-  }
+struct Orbiter {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[0x38];
+  s32 radius;
+  u8 unk50[0x12];
+  u8 countdown;
+  u8 unk63;
+  s16 angle;
+  u16 speed;
+  struct Actor *anchor;
+};
+
+void Vector_AddPolarOffsetFar(s32 length, s32 angle, s32 *position);
+void Func_02003e7c(struct Orbiter *orbiter);
+
+s32 Func_02003ed4(struct Orbiter *orbiter) {
+  struct Actor *anchor = orbiter->anchor;
+
+  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->x = anchor->x;
+  orbiter->y = anchor->y + 0x80000;
+  orbiter->z = anchor->z;
+  Call3((void (*)())Vector_AddPolarOffsetFar, orbiter->radius, orbiter->angle,
+        (s32)&orbiter->x);
+  if (--orbiter->countdown == 0)
+    return 0;
+  if (orbiter->radius == 0x20000)
+    return 1;
+  Func_02003e7c(orbiter);
+  orbiter->radius -= 0x40000;
+  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->x = anchor->x;
+  orbiter->y = anchor->y + 0x80000;
+  orbiter->z = anchor->z;
+  Vector_AddPolarOffsetFar(orbiter->radius, orbiter->angle, &orbiter->x);
+  Func_02003e7c(orbiter);
+  orbiter->radius -= 0x40000;
+  return 1;
 }

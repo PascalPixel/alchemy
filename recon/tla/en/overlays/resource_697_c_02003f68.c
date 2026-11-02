@@ -1,25 +1,29 @@
-// Draft, differ 209 of 252, skeleton gap 51 (tla-en, 2026-11-01): 27 listing
-// instructions missing, 24 extra. What is left is a PRE load and allocation.
-// Found this round, each measured (319 to 209): the mover pointer is a real
-// variable, declared first with i, tile, frame, count, viewX, viewZ, viewY in
-// that order (the sp offsets 32 down to 4); the cap's y is one expression;
-// word is gone. The header's old array form cannot give the pointer sp+32.
-// With a real pointer GCSE's PRE reads offset once and carries it round the
-// inner loop (the ldrh before the loop and at its end). The native rereads it
-// at the latch test and after the loop, as in the source. The ((s16 *)mover)[2]
-// read of the cap's height stops PRE after the loop. An empty asm with a memory
-// clobber at the top of the inner body and just after the loop stops it in
-// both places and gives skeleton gap 35 (differ 207), but reached no match, so
-// it came back out; nothing plain has been found for the latch read yet.
-// Allocation with that barrier: x r7 is right, but sy r5, z r6, height r4 by
-// caller-save (sp+0 is its slot, so the frame is 36 as in the native), object
-// r8, lift r10, viewY r11; the native has z r5, sy r6, height r8, object r10,
-// entry r9, lift r11, viewY on the stack. In the cap the native holds x >> 16
-// in r10. Tried and worse: cap height, z or y as their own variables (the
-// loop's then go low), a separate sx or dy, masks inside the expression, x
-// >>= 16 in place, a named x >> 16, other orders of the cap's statements. attr
-// is set twice to keep tile + frame from hoisting (without it 199, gap 59) and
-// needs judging against S2 before this adopts.
+// Draft, differ 187 of 252, skeleton gap 29 (tla-en, 2026-11-01): 17 listing
+// instructions missing, 12 extra, no device left. Removed this round: attr set
+// twice (the inner loop is now labels and goto, which keeps tile + frame in the
+// body by itself) and the s16 cast read of the cap's height. Found, each
+// measured (gap 51 to 29): in the cap x shifts straight after its subtraction,
+// and depth comes before sy.
+// Left, two causes, neither reached in plain C.
+// 1. PRE (gcse.c, the .07.gcse dump): mover->offset's (mem:HI) at the latch is
+// redundant with itself round the back edge on every path that skips the call,
+// so PRE moves it after the call and into the preheader and the cap's read
+// goes too. That is the ldrh before the loop and at its end, where the native
+// rereads with ldrsh at the latch and after the loop, with no store or set of
+// mover on those paths. Any plain read has this: only a kill stops it (an asm
+// memory clobber does, volatile does not fit). The native keeping it may be a
+// question about the pass, not this source; the same listing is in 66b's
+// Func_02000dac and 661's Func_02003b80, and that is a matter for Pascal (K3).
+// 2. Allocation: height takes r4 by caller-save (15 refs, 2 calls crossed), so
+// object r8, lift r10, viewY r11, x r5, z r7. The native has z r5, sy r6, x r7,
+// height r8, object r10, entry r9, lift r11, viewY on the stack. Its frame is
+// 36 with sp+0 never used, as if a caller-save slot was set up for r4 and the
+// pseudo left it during reload; unproved. With height pinned to r8 and barriers
+// as a probe (not kept) gap is 25 and the frame 32, with y separate from sy.
+// Tried, no better: height, z and y as inner-block variables per region (they
+// go low, so the native's are shared; gap 97); y as its own variable in the loop
+// (same gap), the cap or both; for instead of goto (gap 56); x as one
+// expression; x shifted later in the cap; z before height; entry[n] for cursor.
 // Draws the Trial Road movers' columns: for each raised mover (of 16) it
 // queues one 16 by 16 sprite per 16 pixels of its offset and a bobbing cap on
 // top, animated over 4 frames every 3, projected from the map's view and kept
@@ -74,7 +78,6 @@ void Func_02003f68(void) {
   u32 *entry;
   u32 *cursor;
   s32 lift;
-  s32 attr;
   s32 x;
   s32 height;
   s32 z;
@@ -97,9 +100,11 @@ void Func_02003f68(void) {
       continue;
     object = Actor_GetById(mover->id);
     frame = ((gFrameCount % 12) / 3) * 8 + 32;
-    for (lift = 0; lift < mover->offset; lift += 16) {
+    lift = 0;
+    if (lift < mover->offset) {
+    next:
       if (count > 79)
-        continue;
+        goto skip;
       x = object->x - viewX;
       height = object->y + (lift << 16) - viewY;
       z = object->z - viewZ - viewY;
@@ -108,30 +113,31 @@ void Func_02003f68(void) {
       sy = (sy >> 16) - 16;
       depth = ((height + z) >> 16) + 58;
       if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
-        continue;
+        goto skip;
       x &= 0x1ff;
       sy &= 0xff;
       cursor = entry;
       *cursor++ = 0;
       *cursor++ = sy | (x << 16) | 0x40002000;
-      attr = tile + frame;
-      attr |= 0x800;
-      *cursor = attr;
+      *cursor = (tile + frame) | 0x800;
       Func_02005790(entry, depth);
       count++;
       entry += 3;
+    skip:
+      lift += 16;
+      if (lift < mover->offset)
+        goto next;
     }
     if (count > 79)
       continue;
     x = object->x - viewX;
-    // Through s16 so the read is not merged with the loop test.
-    height = object->y + (((s16 *)mover)[2] << 16) - viewY;
+    x = (x >> 16) - 8;
+    height = object->y + (mover->offset << 16) - viewY;
     z = object->z - viewZ - viewY;
     sy = z - height;
     bob = Iwram_MulQ16(rise, Math_Sine(mover->bob));
-    x = (x >> 16) - 8;
-    sy = ((sy + bob + rise) >> 16) - 4;
     depth = ((height + z) >> 16) + 58;
+    sy = ((sy + bob + rise) >> 16) - 4;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
       continue;
     x &= 0x1ff;

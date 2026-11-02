@@ -1,29 +1,38 @@
 // Draft, differ 295 of 1328, skeleton gap 123 (tla-en, 2026-11-01): Jupiter
 // Lighthouse room M's long scene (the Japanese edition has its own form, differ
 // 297 of 1327 in tla-ja). This draft holds no device. Plain and settled: each
-// mode 3 or 4 followed by its wait is one statement macro, and the item search
-// is a goto loop with the listing's shape.
-// Left: called directly, nearby calls share each repeated constant in a
-// callee-saved register, where the native keeps only 0x4000, 0x2000 and 0xa000
-// (r8, r6, r5). A measured route takes this to differ 9, skeleton gap 2 (tla-en):
-// - set s32 locals to 0x4000, 0x2000 and 0xa000 after the first
-//   Actor_SetSpeedParameters and pass them as the angle of every Func_0200484c
-//   and Func_02004964 call;
-// - forward exactly ten callees through one static inline each:
-//   Camera_MoveWithinMapBounds, Actor_SetSpeedParameters, Func_020048b4,
-//   Func_020048cc, Actor_ArmCallback, Actor_ResetAndSetPositionInMode2,
-//   Actor_SetPositionAndReset, Actor_OffsetPositionAndResetMotion,
-//   Func_0200484c, Func_02004964. Every other wrapper changes nothing.
-// A one-pass block does not replace any of the ten (differ 13 to 156).
-// Those wrappers are devices that do not reach differ 0, so they stayed out.
-// The last 9 are the item search's mask 0x1ff: one pool load per pass in the
-// native, three split instructions here. The pool form is a HImode constant.
-// Combine folds it into the SImode copy in the same block, and neither a u16
-// or s32 local, a struct-held HImode local, a one-pass block nor an empty asm
-// stops that. A real loop keeps the pool form but hoists it into r7, which the
-// native never saves; the native looks like that hoisted pseudo left without a
-// register and reloaded per pass. Nothing in reach of the source explains why
-// it gets none here, so that is a compiler question.
+// mode 3 or 4 followed by its wait is one statement macro (written out, differ
+// 379), and the item search is a goto loop with the listing's shape.
+// Left, nearly all of it one cause: the statements, order and control flow are
+// right, and the gap is constants held in registers. calls.c
+// (precompute_register_parameters) copies every argument costing more than 2,
+// so any constant from 0x100 up, into a pseudo on Thumb, and CSE shares that
+// pseudo across calls in r5 to r10. The native saves only r5, r6 and r8, for
+// 0x2000 and 0xa000 (Func_0200484c and Func_02004964 angles) and 0x4000 (those
+// angles, and two more in r1). Every other repeat is rebuilt in the argument
+// register, so those constants never reached a pseudo there. 0x8000 shows it:
+// its first use, Actor_SetSpeedParameters' third argument, is built directly.
+// Every shared first use is a fourth argument, which is a lead only. No plain C
+// reaches this: the argument stays a constant whatever its spelling, and
+// whether calls.c should copy it is a compiler question (K3), outside a draft.
+// Tried with no gain, 1 November, under the current compiler:
+// - s32 locals for the three angles: differ 303; as initializers or for 0x4000
+//   alone, no better;
+// - the ten callees below unprototyped: 295; returning s32: 321;
+// - Func_020048cc, Func_02004844 and Event_ClearInvalidPackedValues void: 363.
+// The old route no longer reproduces: those locals plus one static inline each
+// (devices anyway) for Camera_MoveWithinMapBounds, Actor_SetSpeedParameters,
+// Func_020048b4, Func_020048cc, Actor_ArmCallback,
+// Actor_ResetAndSetPositionInMode2, Actor_SetPositionAndReset,
+// Actor_OffsetPositionAndResetMotion, Func_0200484c and Func_02004964 measured
+// differ 9 before the compiler change and 329 in this rebuild of it; the
+// constants stay shared. A one-pass block for one of the ten had measured 13 to
+// 156 on that route.
+// The item search's mask 0x1ff is the other piece: one pool load per pass in
+// the native, three split instructions here, and the native's b over that pool
+// goes with it. A bitfield read, u16 and s16 casts, a u16 local, 511u and a u32
+// cast change nothing here. Earlier: a real loop keeps the pool form but hoists
+// it into r7, which the native never saves.
 #include "types.h"
 #include "edition.h"
 #include "ram_buffer.h"

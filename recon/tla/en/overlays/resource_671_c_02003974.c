@@ -1,9 +1,34 @@
-// Draft, differ 144 of 115, written from the listing (the cell grid of
-// s48a4.c). As goto loops the body has the native's shape, but col is kept in
-// r4 and saved around the flag test, where the native gives row and col r10 and
-// r8; as for loops loop.c hoists row * 11 and strength-reduces the cell address
-// (differ 170), with (void)&row and (void)&col too (161). The native rebuilds
-// row * 11 + col in every branch and shares one call between the first two.
+// Draft, differ 144 of 115, skeleton gap 24 (tla-en, 2026-11-01)
+// The cell grid of s48a4.c, written from the listing. Two things are left, and
+// the statements are otherwise the native's: a scratch compile of this source
+// with both changes below, by cc1 -fno-caller-saves, equals the listing line
+// for line with branch and pool operands blanked. That option is a diagnostic
+// only and is not proposed here; the plain source under it still differs by 93
+// lines, and the real compile with change 1 alone gives differ 100.
+// 1. Argument order. The native loads kind, then originX, then originZ into
+// registers and stores both stack arguments together (read, read, add, add,
+// str, str), so all the arguments are evaluated before the call. This source
+// stores each as it goes. These both give the native's order:
+//   static inline void Draw(s32 t, s32 k, s32 x, s32 z) {
+//     Func_0200566c(t, k, 1, 1, x, z);
+//   }
+//   #define DRAW(t, k, a, b) do { s32 k_ = (k); s32 x_ = (a); s32 z_ = (b);
+//     Func_0200566c(t, k_, 1, 1, x_, z_); } while (0)
+// Either is left out because it is a wrapper or a one-pass block with forced
+// temporaries (S2), and this round adds no device. Whether the macro counts as
+// S2's matching do-while macro is Pascal's call. Locals x and z in each arm
+// keep kind last, 132.
+// 2. Allocation. The native has col r8 and row r10 and never touches r4. Here
+// col takes r4, saved around calls, and row r8. col has 29 refs and row 25
+// across 4 calls, so 4 * 4 < refs and find_reg tries r4 before the high
+// registers. At depth 2 each ref weighs 3, so no form gets under 16: only depth
+// 0 would (about 11 flat refs). The r4 saves also rotate reloads and stop the
+// first two arms sharing their call only with each other. Whether the native's
+// compiler weighted goto loops at all is a compiler question and out of scope;
+// 02004288 shows the same with row. Pinning the two as a diagnostic gives 101.
+// No effect, 144: `register` on both, swapped declarations, `col + originX`,
+// `col + row * 11`, u8 occupied, an s32 return for Func_0200566c. Worse: for
+// and do-while loops 167 (loop.c hoists row * 11), cell->kind in the arms 146.
 #include "types.h"
 
 struct PuzzleCell {

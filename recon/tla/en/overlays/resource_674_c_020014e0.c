@@ -1,18 +1,18 @@
-// Draft, differ 205 of 569: the Islets' trade of item 455 with object 9: with
-// it in the party, the leader steps up; if flag 513 is set (asked before)
-// object 9 asks again (MsgOhYouRe), else it tells its story
-// (MsgIMSoVery), the leader steps back and forth while the item (object
-// type 14, gData_020044f0) appears, object 9 hops and asks; a yes runs
-// Func_0200129c with the item, a no sets flag 513 and puts the item away.
-// Without the item, after flag 0xaa5 object 9 offers to take the party
-// along (MsgWantToGo): a yes counts in the event work's halfword 0x1c4,
-// sets the boat block's byte 661 to 99, puts the leader aboard
-// (Func_02001278) and sails off with objects 9 and 10 (Func_02003f7c(3));
-// before it, it says MsgIMSoVeryVery.
-// Left: the native keeps &gMainRoutineWork.currentOwner in r6 and the leader in r8,
-// a 0 in r10 for the hooks and the glow's flags and the 0xfe mask in r11 (the
-// draft swaps r6 and r7 and keeps other constants), and lays the first answer's
-// refusal after the trade.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The Islets trade of item 455 with object 9: with it in the party, the leader
+// steps up; if flag 513 is set (asked before) object 9 asks again (MsgOhYouRe),
+// else it tells its story (MsgIMSoVery), the leader steps back and forth while
+// the gift (object type 163) and object type 14 (script gData_020044f0) appear,
+// object 9 hops and asks; a yes runs Func_0200129c with the gift, a no sets flag
+// 513 and puts the gift away.
+// Without the item, after flag 0xaa5 object 9 offers to take the party along
+// (MsgWantToGo): a yes counts in the event work halfword 0x1c4, sets the boat
+// block byte 661 to 99, puts the leader aboard (Func_02001278) and sails off
+// with objects 9 and 10 (Func_02003f7c(3)); before it, it says MsgIMSoVeryVery.
+// Closed by: both arms written in full (cross-jumping makes the shared
+// Func_0200129c and refusal tails); the gift is the first object made (the
+// listing passes r7, not the second object); one gift per branch for allocation;
+// the block byte stored through the struct s1bf4.c uses; Call forms as siblings.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -66,15 +66,15 @@ void Func_02003f7c(s32 a);
    Call3(Actor_SetPositionAndReset, actor, x, z),                       \
    FieldEvent_Wait(1), Actor_GetById(actor)->actionFlags |= 1)
 
-#define SHOW_ITEM()                                                            \
-  (glow = (struct Actor *)Value4(Func_02003df4, 163, 0x1280000, 0,     \
+#define SHOW_ITEM(gift)                                                        \
+  (gift = (struct Actor *)Value4(Func_02003df4, 163, 0x1280000, 0,     \
                                          0x1a80000),                           \
    item = (struct Actor *)Value4(Func_02003df4, 14, 0x1280000, 0,      \
                                          0x1a80000))
 
 void Func_020014e0(void) {
-  struct Actor *leader, *object;
-  struct Actor *glow, *item;
+  struct Actor *leader, *object, *leader2;
+  struct Actor *giftAgain, *gift, *item;
   s32 answer;
 
   Func_02003e64();
@@ -100,10 +100,10 @@ void Func_020014e0(void) {
               0x19999, 0xcccc);
         leader->update = Func_02000df8;
         STEP(gMainRoutineWork.currentOwner, 302, 424);
-        SHOW_ITEM();
-        if (glow != 0) {
-          glow->motionFlags = answer;
-          Actor_SetSingleChildFlags(glow, 0);
+        SHOW_ITEM(giftAgain);
+        if (giftAgain != 0) {
+          giftAgain->motionFlags = 0;
+          Actor_SetSingleChildFlags(giftAgain, 0);
         }
         if (item != 0) {
           item->scaleY = 0x20000;
@@ -112,14 +112,18 @@ void Func_020014e0(void) {
           Func_02003dec(item, gData_020044f0);
         }
         STEP(gMainRoutineWork.currentOwner, 318, 424);
-        leader->update = (void *)answer;
+        leader->update = 0;
         Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x6000, 0);
+        Func_0200129c(giftAgain);
       } else {
         Func_02003fbc();
         Func_02003f24(MsgOhYouRe - 1);
-        goto refuse;
+        Func_02003f2c(9, 0);
+        Call2(Func_02003f3c, 9, 0x5000);
       }
     } else {
+      // Default: the 0 the first hook store reads.
+      gift = 0;
       Func_02003f24(MsgIMSoVery);
       Func_02003f2c(9, 0);
       Func_02003f54(gMainRoutineWork.currentOwner, 262, 20);
@@ -134,10 +138,10 @@ void Func_020014e0(void) {
             0xcccc);
       leader->update = Func_02000df8;
       STEP(gMainRoutineWork.currentOwner, 302, 424);
-      SHOW_ITEM();
-      if (glow != 0) {
-        glow->motionFlags = 0;
-        Actor_SetSingleChildFlags(glow, 0);
+      SHOW_ITEM(gift);
+      if (gift != 0) {
+        gift->motionFlags = 0;
+        Actor_SetSingleChildFlags(gift, 0);
       }
       if (item != 0) {
         item->scaleY = 0x20000;
@@ -155,44 +159,48 @@ void Func_020014e0(void) {
       Actor_Jump(9, 4, 20);
       object->update = 0;
       Func_02003f2c(9, 0);
-      Func_02003f3c(9, 0xd000);
+      Call2(Func_02003f3c, 9, 0xd000);
       Func_02003f2c(9, 0);
       Func_02003fc4();
-      if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) != 0) {
+      if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+        Func_0200129c(gift);
+      } else {
         Func_02003fbc();
         Func_02003f54(9, 265, 0);
         Func_02003f2c(9, 0);
-        Actor_ArmCallback(9, 0x5000, 0);
+        Call3(Actor_ArmCallback, 9, 0x5000, 0);
         Func_02003f3c(gMainRoutineWork.currentOwner, 0x8000);
         leader->update = Func_02000df8;
         Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 302,
               424);
         leader->update = 0;
-        if (item != 0)
-          Func_02003dfc(item);
+        if (gift != 0)
+          Func_02003dfc(gift);
         GameFlag_SetBit(513);
-        goto done;
       }
     }
-    Func_0200129c(item);
   } else if (GameFlag_Test(0xaa5)) {
     Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);
     Func_02003f24(MsgWantToGo);
     Func_02003f2c(9, 0);
     Func_02003fc4();
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
-      leader = Actor_GetById(gMainRoutineWork.currentOwner);
+      leader2 = Actor_GetById(gMainRoutineWork.currentOwner);
       Func_02003fbc();
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       Func_02003f2c(9, 0);
-      HeapSlot_AllocEwram(88, 664)[661] = 99;
-      Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
-      Func_02003f3c(9, 0x5000);
+      ((struct {
+         u8 unk000[0x295];
+         u8 unk295;
+       } *)HeapSlot_AllocEwram(88, 664))
+          ->unk295 = 99;
+      Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
+      Call2(Func_02003f3c, 9, 0x5000);
       Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x19999,
             0xcccc);
       Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
       Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 296, 452);
-      leader->update = Func_02001278;
+      leader2->update = Func_02001278;
       Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
       Actor_SetModeById(9, 3);
       FieldEvent_Wait(20);
@@ -201,12 +209,12 @@ void Func_020014e0(void) {
       Call3(Actor_SetSpeedParameters, 9, 0xcccc, 0x6666);
       Call3(Actor_SetSpeedParameters, 10, 0xcccc, 0x6666);
       Actor_GetById(9)->update = Func_02000df8;
-      Actor_ResetAndSetPosition(9, 0x120, 538);
+      Call3(Actor_ResetAndSetPosition, 9, 0x120, 538);
       FieldEvent_Wait(40);
       Func_02003fc4();
       Func_020034ec();
       Actor_GetById(10)->update = Func_02000df8;
-      Actor_ResetAndSetPositionInMode2(10, 0x120, 538);
+      Call3(Actor_ResetAndSetPositionInMode2, 10, 0x120, 538);
       FieldEvent_Wait(20);
       *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
       Event_FinishScreenTransition();
@@ -215,14 +223,12 @@ void Func_020014e0(void) {
       Func_02003f7c(3);
     } else {
       Func_02003fbc();
-    refuse:
       Func_02003f2c(9, 0);
-      Func_02003f3c(9, 0x5000);
+      Call2(Func_02003f3c, 9, 0x5000);
     }
   } else {
     Func_02003f24(MsgIMSoVeryVery);
     Func_02003f2c(9, 0);
   }
-done:
   Func_02003e6c();
 }

@@ -1,4 +1,4 @@
-// Draft, differ 215 of 720, skeleton gap 73 (tla-en, 2026-11-01)
+// Draft, differ 161 of 720, skeleton gap 57 (tla-en, 2026-11-01)
 // A Shaman Village scene around object 14, in the idiom of Air's Rock's
 // Func_02001f7c (games/tla/src/scene/airs_rock/s1f7c.c): loads the whirlwind's pictures into background
 // 1, sets the leader and object 14 on their action variants, sound 246 while
@@ -11,39 +11,45 @@
 // brightness) and flag 2380 set.
 //
 // Left: the loops are goto loops as in that twin: the native hoists nothing
-// and CSE carries REG_BLDALPHA's address and 16 past them.
+// and CSE carries REG_BLDALPHA's address and 16 past them. The -mthumb-slow-loads
+// removal closed nothing here; the differences below are all allocation or
+// constants. Everything from the top to the spawn now matches but for these.
 // - The blocker is the effect spawn's allocation, and it looks like the
-//   compiler's reference weight, not source. The native has the velocity
-//   pointer r6, 127 r8, the options pointer r10 and j r9, with r4 free and a
-//   72-byte frame. Here the frame loop sits at flow depth 2, so refs weigh 3:
-//   127 has 9 refs across 1 call, the options pointer 12 across 2, and
-//   CALLER_SAVE_PROFITABLE (4 * calls < refs) sends a pseudo to r4 before
-//   r8. That spills sp+60's address to sp+16 and makes the frame 76. Only
-//   weight 1 explains the native, and it also orders the velocity pointer
-//   above 127. Proof: a real branch entering the stage and frame loops past
-//   their headers makes both irreducible (depth 0), and the spawn then
-//   allocates as the native, frame 72, reload rotation right from the top.
-//   With the three devices below, only one order line differed before those
-//   branches. No loop form reaches that without the extra edge: a condition
-//   that folds away after flow but before local-alloc was tried ((i << 1) & 1,
-//   j & 3 & 4, a u8 shift: CSE folds them first; a test on a pseudo set in an
-//   earlier block stays as code and takes r11). This is a compiler question
-//   (K1, K3), out of scope here: Pascal's lead is whether the native's flow
-//   weighs refs by loop notes, which goto loops lack, where alchemy-gcc weighs
-//   CFG natural loops.
-// - Three devices are kept out because they cannot reach differ 0 until that
-//   is settled. Measured alone from this draft: Call2 and Call3 on
-//   Func_020049e4 and Func_02004864 (wrapper), differ 177, gap 45; cell =
-//   spark->animation as the twin does, SpriteAttr2High read through cell
-//   (temporary), differ 167, gap 65, which also fixes the reload rotation
-//   before the spawn; do { } while (0) round BG0CNT's control (one-pass),
-//   differ 211, gap 69. All three: differ 125, gap 33.
-// - The zero before byte 99 is shared with update and BLDCNT in the native; a
-//   local for it, at any scope or type, makes the frame 80 (the first
-//   Actor_GetById copy loses r6) and lost 41 on top of the devices.
-// - Tried without gain: an options pointer (the pointer form is the native's,
-//   but it lands in r8 here and adds 11), velocity set later, a separate z,
-//   six forms of the tile mask, a set-once count local (cprop folds it).
+//   compiler's reference weight, not source (K1, K3: out of scope, so this
+//   stops here). The native has the velocity pointer r6, 127 r8, the options
+//   pointer r10 and j r9, with r4 free and a 72-byte frame. Here 127 is r6, the
+//   velocity pointer r4, options r8, j r10, frame 76. The frame loop sits at
+//   flow depth 2, so refs weigh 3: 127 has 9 refs across 1 call, options 12
+//   across 2, and CALLER_SAVE_PROFITABLE (4 * calls < refs) sends a pseudo to r4
+//   before r8; r4 then saves round the Random16Far call at sp+16. Only weight 1
+//   explains the native (127 at weight 2 still takes r4), and it also orders the
+//   velocity pointer above 127. A real branch entering the stage and frame loops
+//   past their headers makes both irreducible (depth 0) and the spawn then
+//   allocates as the native. No plain loop form gets there. Pascal's lead:
+//   whether the native's flow weighs refs by loop notes, which goto loops lack,
+//   where alchemy-gcc weighs CFG natural loops.
+// - Constants: the shake and camera calls want each argument built alone, as
+//   an inline's parameter does (The Broken Seal's event.h has MapGrid_SetShake
+//   and FieldCamera_SetSpeed here). Func_02004864 and Func_020049e4 are those
+//   calls. Set-once locals do nothing, cprop folds them. Through Call2 and Call3
+//   this is differ 123, gap 29; S2 tags those as wrapper, so they stay out until
+//   Pascal says whether that layer counts as source.
+// - BG0CNT's control wants a block of its own: do { } while (0) (one-pass, kept
+//   out) gives differ 157; a u16 or u32 local or a shared one does not.
+//   All kept-out devices together: differ 119, gap 25.
+// - The zero before byte 99 is shared with update and BLDCNT in the native. A
+//   bit-field store or an s32 local gets the sharing, but moves the frame count
+//   into r6 and the first Actor_GetById copy to the stack: frame 80, differ 184.
+//   The tail's pointer and 1 are then swapped (r5 and r6): a work pointer set
+//   earlier does not change that.
+// - Stage call: 13 and 11 as width and height locals, as the call before the
+//   loop has them, take r4 and r5 and lose 2.
+// - Tried without gain: Vector3 by value (ldmia, frame 80, differ 293), velocity
+//   as a Vector3 (neutral), velocity set later, a separate z, row and column
+//   locals, a set-once count local, six forms of the tile mask.
+// - Closed: the sprite's priority written in one expression with no block
+//   locals fixed the reload rotation before the spawn, so the twin's cell =
+//   spark->animation (temporary) is not needed.
 // ResourceId_WhirlwindTiles and ResourceId_WhirlwindMap (ids 0x1be, 0x1bf,
 // Field_WhirlwindTiles and Field_WhirlwindMap) need names in
 // resource_directory.s on adoption: the ids load from the pool, as symbols.
@@ -63,11 +69,6 @@ struct SpriteAttr2High {
   u8 unk00[9];
   u8 tileHigh : 2;
   u8 priority : 2;
-};
-/// An object's priority flags read as a whole-byte bit-field.
-struct ObjectPriorityByte {
-  u8 unk00[35];
-  u8 priorityFlags : 8;
 };
 
 extern s32 gFrameCount;
@@ -166,13 +167,9 @@ row:
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(0x2a0, Actor_GetById(14)->x,
                                  Actor_GetById(14)->y, Actor_GetById(14)->z);
-      {
-        s32 priority = ((s8 *)Actor_GetById(14)->animation)[9] & 12;
-        struct SpriteAttr2High *sprite = spark->animation;
-
-        sprite->priority = priority >> 2;
-      }
-      ((struct ObjectPriorityByte *)spark)->priorityFlags |= 1;
+      ((struct SpriteAttr2High *)spark->animation)->priority =
+          (((s8 *)Actor_GetById(14)->animation)[9] & 12) >> 2;
+      spark->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x;
       spark->gravity = 0x18000;

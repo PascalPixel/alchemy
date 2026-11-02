@@ -1,11 +1,26 @@
-// Near miss, differ 196 of 252 (tla-en, 2026-10-31): draws the rising
-// platforms' columns as sprites, one 16-pixel piece per step of height and a
-// bobbing top, up to 80. The shape is the native's (declaration order gives
-// its stack slots; the masks come before the stores). Left: GCSE keeps
-// entry->height in a register through the inner loop and reloads it only
-// after the call (the native reloads it with ldrsh at every test), and the
-// register allocation follows from that: originY takes r11 instead of a stack
-// slot, h r10 and the actor r8 (native: h r11, actor r10, y r8, x r7, z r5).
+// Draft, differ 196 of 252, skeleton gap 44 (tla-en, 2026-11-01): 24 removed,
+// 20 added. Draws the rising platforms' columns as sprites, one 16-pixel piece
+// per step of height and a bobbing top, up to 80. No device in the draft.
+// Left, first: PRE (gcse.c) removes the entry->height loads at the inner loop's
+// bottom test and in the top piece, inserting one after the sprite call, which
+// gives the ldrh and shifts; the native keeps all four ldrsh loads, and the
+// top's load is fully redundant, so no ordinary reading of the field survives.
+// That PRE is the only one in the function. A diagnostic compile with -fno-gcse
+// gives the native's skeleton there (differ about 151), so what stops PRE is
+// the open question; a flag is out of scope here (K1).
+// Ruled out at the same bytes or worse: volatile height (221, ldrh and shifts,
+// so the native is not volatile); a for loop (272); entering at the bottom test
+// (244); indexing work->entries[i] (303, entry is a hand-stepped pointer); a
+// copy of entry read at the bottom test (196, cprop runs before PRE).
+// Left, second: allocation. Native sy r6, x r7, z r5, y r8, actor r10, h r11,
+// oam r9, originY on the stack. Here x r5, z r7, y r4, actor r8, h r10,
+// originY r11. y takes r4 because 15 refs beat 4 * 2 calls (caller-save), which
+// shifts every high register; the native's y must fail that test, and oam must
+// outrank h (refs over live, h 16/100 against oam 21/143). Splitting x, y, z,
+// sy, depth or p between the two pieces is worse in all 64 combinations (best
+// 245 with p split); y and z split go block-local in low registers. All 720
+// orders of the s32 declarations stay at 196. A -0x20000 local (270) and a
+// split sum (268) are worse; the native loads that constant twice.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

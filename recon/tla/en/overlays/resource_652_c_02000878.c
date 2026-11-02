@@ -3,25 +3,32 @@
 // one can carry it, prompt for an item to drop and retry. Same flow, same
 // message order and the same cap of 30; this game also refreshes the member's
 // Psynergy and stats after the discard, and has no drop counter call.
-// Left: allocation and frame. The native keeps the event work in sl, the
-// message field's address in r8 and the saved message in r9 (r8 to r10 saved,
-// frame 8), and the owner in r7; this draft keeps the work in fp, the field
-// address in r7 and the owner in r8, spills the saved message to sp (r8 to fp
-// saved, frame 12), which moves member and slot from sp+4 and sp to sp+8 and
-// sp+4. The native holds the drop prompt's address in r8 and recomputes the
-// field address from sl (226 * 2) at the retry path's two returns, and it does
-// not cross-jump the first return into the second as this draft does.
-// The cause is one step: the gcse pass hoists &member and &slot over the entry
-// edge to the retry label, and with three back edges the label sits at loop
-// depth 3, so those two pseudos outrank the saved message, which is spilled.
-// The twin's matched bytes do exactly this (fp used, saved on the stack, both
-// addresses set before the label), so this draft already has the twin's shape
-// and the native differs from it here: it computes both addresses in the loop.
-// Tried without gain: for (;;) and do with continue (184 instructions, gap 34
-// and 29; the addresses still hoist), member and slot in an inner scope or
-// swapped, an array or a struct for them (195 instructions), saved as s16 or
-// u16, a pointer to the message field, an unprototyped picker. One exit for
-// all paths, dropping the inner returns, gives differ 133 but gap 26 and 25.
+// Left: one cause, then a register swap. The statements below are right.
+// 1. gcse's PRE hoists &member and &slot over the entry edge to the retry
+// label (.07.gcse: "PRE/HOIST: edge (1,2)"). The two new pseudos are live
+// across the loop, take r9 and sl, push the event work to fp and spill the
+// saved message: frame 12, r8 to fp saved, and the second and first returns
+// cross-jump. The native has no such pseudos, since it computes both addresses
+// in the loop (add r0, sp, #4; mov r1, sp), keeps the saved message in r9 and
+// the work in sl, and leaves r11 free. That also rules out the hoisted pseudos
+// losing allocation and being rebuilt from their equivalence.
+// Probe, not kept (S1, S2): an empty asm clobbering sfp at the label stops the
+// hoist and gives differ 83, skeleton 18/11, frame 8, r8 to r10 saved, and both
+// inner returns as the native has them. So the inner returns are the source's:
+// one exit gives differ 133 here, but 82 and 23/11 under the same probe, and
+// the first return merges. Nothing in plain C kills the expression; the entry
+// edge and the back edges leave LCM no other choice.
+// 2. Under the probe all that remains is r7 and r8 swapped: the native has the
+// owner in r7 and the prompt in r8, this draft the reverse. The prompt has 15
+// refs over 118 insns at this loop depth and outranks the owner's 8 over 144;
+// the native's order needs the prompt's refs nearer 6. A local msg set at the
+// label (the native's load is inside the loop) changes neither number.
+// Tried without gain: for (;;) and do with continue, one back edge (for with
+// break rotates the loop: differ 215), a struct or an array for member and slot
+// (194 instructions, one hoisted base), member and slot in an inner scope or
+// swapped, saved as s16 or u16, a pointer to the message field, an unprototyped
+// picker, a shared exit label, each return kept alone (differ 133 and 142).
+// Rejected, differ 132: msg += 4 and += 7 into one tail, a local reused.
 #include "types.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

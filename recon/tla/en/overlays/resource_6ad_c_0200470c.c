@@ -1,29 +1,35 @@
-// Draft, differ 272 of 246, skeleton gap 38 (tla-en, 2026-11-01)
+// Draft, differ 274 of 246, skeleton gap 35 (tla-en, 2026-11-01)
 // Twin confirmed: Imil_RunIceSlide, without its key test, and with a collision
 // sweep over the script objects. Control flow is the listing's: the outer loop
 // is a label, the inner while keeps its test at the bottom. The listing's stack
 // is pos sp+20, angle 16, startCell 12, lastX 8, lastZ 4, radius 0.
-// What blocks the match is gcse PRE (the .07.gcse dump: redundant insn in bb 1,
-// bb 10, 12, 13, inserted on edge (0,1)). It hoists two expressions above the
-// label, the listing hoists neither:
-// - actor + 34. Solved but not kept: `owner = ObjectTable_Get(...)` above the
-//   label and `actor = owner;` as the loop's first line kills the operand. Then
-//   terrain sits in r11 in the first block and the stack slots above come out
-//   exactly, differ 257 to 262, gap 33. That is a temporary with no match, so
-//   it came back out; put it back once the second item is solved.
-// - sfp + K (pos). Unsolved. The listing has one pseudo for the first region
-//   (r6: add r6, sp, #20) and another for the inner loop (r7), so neither PRE
-//   nor the last cprop merged them, though sfp cannot be killed. The hoisted
-//   pseudo takes r8 and pushes x, z and actor down one register each. It is
-//   not an unallocated equivalence: that would give ldr r1, [sp, #20], which
-//   the listing never has.
-// Tried with no gain: struct { s32 x, y, z; } for pos (differ 303), for (;;)
-// outer loop (hoists more), pos declared in the loop body (295), no pointer
-// locals, one p or a separate one per region (same or worse), terrain read as
-// actor->terrainId with no local, declaration order fixed to the listing's
-// slots without the copy (276, gap 38), p set before the polar call or not at
-// all, indexing the table (36/46, worse overall). No device was tried for the
-// frame address: a clobber of sfp would stop its elimination.
+// What blocks the match is gcse PRE (the .07.gcse dump: redundant insns in bb 1,
+// 10 and 13, inserted on edge (0,1)). It hoists sfp + K (pos) and, when written
+// in the loop as the listing has it, actor + 34, above the label; the listing
+// hoists neither, and gcse in the listing shows no commoning of them at all:
+// - terrain is set above the label here only because that is where PRE puts it
+//   anyway: the same code with a shorter skeleton (38 to 35). The listing sets
+//   it in the loop (movs r3, #34; adds r3, r3, r5; mov r11, r3), so it moves
+//   back once the hoist is solved. `owner = ObjectTable_Get(...)` above the
+//   label and `actor = owner;` as the loop's first line kills the operand and
+//   gives terrain r11, but that is a temporary with no match, so it stays out.
+// - sfp + K is unsolved. The listing has r6 for the first region, r7 for the
+//   inner loop and add r2, sp, #20 at the call arguments. The hoisted pseudo
+//   has no REG_EQUIV note, takes r8, and pushes x, z and actor down one
+//   register each; i then falls to r4 with a caller-save slot, so the frame is
+//   36 against 32, and radius takes r9 where the listing spills it. Every
+//   register and most of the skeleton gap follow from this one pseudo.
+// Tried with no gain, this round too: p above the label (278, gap 40), no p at
+// all or pos[] in the first region (278), p only after the polar call (gap
+// 36), p before the polar call in the while (280), inline radius (277), lastX
+// and lastZ read from pos, or z saved first, or restored through x and z (no
+// change), the twin's for (;;) inner loop (294 to 305), the angle written with
+// a separate sign extension, 0xc000 or u16 (no better), other declaration
+// orders (no change). Earlier: struct { s32 x, y, z; } for pos (303), for (;;)
+// outer loop (hoists more), pos declared in the loop body (295), indexing the
+// table (worse). Nothing plain keeps either expression in the loop, so this is
+// the family of the landing bursts: what remains is whether the original's
+// compiler ran PRE here, which is a compiler question for Pascal, not source.
 #include "types.h"
 #include "actor.h"
 #include "system/ram_buffer.h"
@@ -51,6 +57,7 @@ void Func_0200470c(void) {
 
   actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
   angle = (s16)((actor->angle + 0x2000) & -0x4000);
+  terrain = &actor->terrainId;
 top:
     Func_0200410c();
     actor->speedLimit = 0x10000;
@@ -60,14 +67,13 @@ top:
     actor->velocityX = 0;
     actor->velocityZ = 0;
     x = (actor->x & 0xfff00000) + 0x80000;
+    pos[0] = x;
     p = pos;
-    p[0] = x;
     p[1] = actor->y;
     z = (actor->z & 0xfff00000) + 0x80000;
     p[2] = z;
     lastX = x;
     lastZ = z;
-    terrain = &actor->terrainId;
     startCell = Func_020054d0(*terrain, x, z);
     Vector_AddPolarOffsetFar(0x100000, angle, p);
     cell = Func_020054d0(*terrain, p[0], p[2]);

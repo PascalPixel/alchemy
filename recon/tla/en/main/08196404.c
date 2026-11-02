@@ -1,46 +1,57 @@
-// Draft, differ 400 of 597, skeleton gap 68 (tla-en, 2026-11-01)
+// Draft, differ 399 of 597, skeleton gap 55 (tla-en, 2026-11-01)
 // Func_08196404 is The Lost Age's BattleEffect_BuildBlitter, The Broken Seal's
 // step list (games/tbs/src/battle_effect/battle_effect/blitter.c) walked once:
 // a fixed 436-byte block, short copies as ldmia/stmia pairs, longer ones by
 // DMA, modes 0 additive, 1 max, 2 transparent, default copy, and the second
 // run copied from the first by its measured length.
-// Left, nearly all of it the block copies, which plain C cannot spell:
-// - The native copies always go r0 to r1 with scratch from r2 up. A struct copy
-//   reaches movmem12b/movmem8b, but local-alloc gives in and out r3 and r2, the
-//   scratch becomes r0, r4, r5, and flags & 12 and the 0x00ffffff mask then stay
-//   in low registers where the native needs ip and a second pool load. Most of
-//   differ 400 is this register swap.
-// - Four-word copies load four registers (ldmia r0!, {r2, r3, r4, r5}), here and
-//   in 0801399c only. thumb_expand_movstrqi has only movmem12b and movmem8b, so
-//   a 16-byte struct copy is ldmia of three plus ldr/str (gap about 6).
+// Left, nearly all of it the short block copies, which plain C cannot spell:
+// - The native copies always go r0 to r1 with scratch from r2 up, as Dma_Set's
+//   fixed registers do, and load four registers for 16 bytes
+//   (ldmia r0!, {r2, r3, r4, r5}), here and in 0801399c only. No compiler
+//   pattern does either: thumb_expand_movstrqi has movmem12b and movmem8b, the
+//   pattern's in and out land in r3 and r2, and a 16-byte struct copy is ldmia
+//   of three plus ldr/str. So flags & 12 and the 0x00ffffff mask stay in low
+//   registers where the native needs ip and a second pool load: most of differ
+//   399.
 // - After a copy the native steps with adds r6, #12 and adds r7, #12.
-//   Post-reload CSE (cselib) sees the pattern's advanced r0 and r1 and writes
-//   register copies (gap about 30). Advancing dst before the copy is worse
-//   (gap 98), and do-while blocks do not stop it: only a label or volatile asm
-//   clears cselib.
-// All three would follow from a handwritten macro, as Dma_Set is, or a block
-// move with fixed registers. That is Pascal's call (S1, K3); earlier r0/r1
-// inline asm helpers measured differ 139, gap 49 and stay out of this draft.
+//   Post-reload CSE (cselib) sees the pattern's advanced registers and writes
+//   register copies; do-while blocks do not stop it. Advancing dst before the
+//   copy is worse (gap 98).
+// Measured in scratch only, never to go here without Pascal: this same file
+// with COPY_FROM as an inline asm helper in the shape of Dma_Set (r0 and r1
+// pinned, ldmia/stmia of 4, 3 or 2 words, clobbers r2 up) is differ 39, gap 7.
+// All that differs then is the two sites below, so everything else here is
+// the source's shape, and the question is whether such a helper is proven
+// (CAMELOT_ASM, S1) as Dma_Set is. That is Pascal's call.
+// The two sites, both open with or without the helper:
+// - 436 sits in a register first (movs r6, #218; lsls r6, r6, #1;
+//   adds r1, r6, #0). A size local folds, in a block or a do-while. One size variable set here
+//   and again at COPY_BYTES keeps it (helper differ 14, gap 2; here differ 398,
+//   gap 50) but is a reused variable, S2's temporary, and gives r5 where the
+//   native has r6, so it is not the whole story and stays out.
+// - COPY_BYTES: the native shifts into r2, copies to r5 and divides r2 in place;
+//   here r5 first, with adds r2, r5, #3. u32, s32, two locals and a chained
+//   assignment all compile the same.
 // Settled: an 8-byte struct must be BLKmode to reach movmem8b (MOVE_RATIO is 2),
-// which struct Words2's odd arrays give; u32 w[2] is DImode and ldmias on r7
-// and r6. COPY_FROM, COPY_DMA and COPY_TWICE are the twin's plain statements,
-// with COPY_TWICE in each arm: its longer RTL moves live lengths so that runCopy
-// outranks runSize (differ 580 to 400). The partial run's modes default, 2 and 1
-// choose a part first, because arms that each copy get different scratch and do
-// not cross-jump. run and cell are one variable (lr). PUT and PATCH are do-while
-// macros, as in the twin. control is a kept 0x84000000 so the second DMA builds
-// 5 | r5. The return is the store-flag spelled out.
-// Also left: the native holds 436 in dst's register first (adds r1, r6, #0;
-// dst = (u32 *)436 reaches it but is a reused variable, and a size local folds),
-// the size block's register pair, and sched2 order at the second DMA.
+// which struct Words2's byte array gives; u32 w[2] is DImode and ldmias on r7
+// and r6 (differ 381, gap 65). The twin's stepping do-while COPY, COPY_LONG and
+// COPY_BYTES and its return through a local replaced the plain statements and
+// the spelled-out store-flag: helper differ 71 to 39, here gap 68 to 55 with
+// differ 400 to 399. The frame's 136
+// bytes are unexplained; without frame, differ 405. COPY_TWICE stays in each
+// arm: its longer RTL moves live lengths so that runCopy outranks runSize. The
+// partial run's modes default, 2 and 1 choose a part first, because arms that
+// each copy get different scratch and do not cross-jump. run and cell are one
+// variable (lr). control is a kept 0x84000000 so the second DMA builds 5 | r5;
+// spelled DMA_COPY_WORDS at both it measured differ 408, gap 76, before the
+// macros above.
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "heap_release.h"
 
 struct Words2 {
-  u8 head[3];
-  u8 rest[5];
+  u8 bytes[8];
 };
 struct Words3 {
   u32 w[3];
@@ -79,6 +90,24 @@ extern const u32 BattleEffect_ColorForward[];
 #define COPY_FROM(from, n)                                                     \
   *(struct Words##n *)dst = *(const struct Words##n *)(from);                  \
   dst += (n)
+#define COPY(n)                                                                \
+  do {                                                                         \
+    COPY_FROM(src, n);                                                         \
+    src += (n);                                                                \
+  } while (0)
+#define COPY_LONG(n)                                                           \
+  do {                                                                         \
+    Dma_Set(src, dst, control | (n), REG_DMA3);                                \
+    dst += (n);                                                                \
+    src += (n);                                                                \
+  } while (0)
+#define COPY_BYTES(from, bytes)                                                \
+  do {                                                                         \
+    s32 size = (bytes);                                                        \
+                                                                               \
+    Dma_Set(from, dst, DMA_COPY_WORDS(size / 4), REG_DMA3);                    \
+    dst = (u32 *)((u8 *)dst + size);                                           \
+  } while (0)
 #define COPY_DMA(from, n)                                                      \
   Dma_Set(from, dst, DMA_COPY_WORDS(n), REG_DMA3);                             \
   dst += (n)
@@ -117,8 +146,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   src = BattleEffect_PatchTemplateCode;
   dst = HeapSlot_Alloc(slot, 436);
 
-  COPY_FROM(src, 4);
-  src += 4;
+  COPY(4);
   if (mode == 0) {
     COPY_FROM(BattleEffect_Mask, 3);
   }
@@ -141,16 +169,14 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   src += 1;
 
   if ((flags & 2) != 0) {
-    COPY_FROM(src, 2);
-    src += 2;
+    COPY(2);
     if ((flags & 8) != 0) {
       PUT(src[0]);
     } else {
       PUT(src[1]);
     }
     src += 2;
-    COPY_FROM(src, 2);
-    src += 2;
+    COPY(2);
     PUT(src[0] + (1 << heightShift));
     PUT(src[1] + (1 << heightShift));
     src -= 6;
@@ -194,9 +220,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   PUT(*src++);
 
   control = 0x84000000;
-  Dma_Set(src, dst, control | 6, REG_DMA3);
-  dst += 6;
-  src += 6;
+  COPY_LONG(6);
 
   PUT(*src++);
   if ((flags & 1) == 0) {
@@ -204,9 +228,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   }
   src += 1;
 
-  Dma_Set(src, dst, control | 5, REG_DMA3);
-  dst += 5;
-  src += 5;
+  COPY_LONG(5);
 
   row = dst;
   PUT(src[0]);
@@ -221,8 +243,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   src += 1;
 
   skip = dst + 1;
-  COPY_FROM(src, 2);
-  src += 2;
+  COPY(2);
   if ((flags & 4) != 0) {
     PUT(src[0]);
   } else {
@@ -287,8 +308,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   PATCH(skip);
 
   skip = dst + 1;
-  COPY_FROM(src, 2);
-  src += 2;
+  COPY(2);
 
   run = dst;
   switch (mode) {
@@ -343,25 +363,19 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   }
   src += 2;
 
-  {
-    u32 size = (u32)runSize / 4 * 4;
-
-    Dma_Set(runCopy, dst, DMA_COPY_WORDS((s32)size / 4), REG_DMA3);
-    dst = (u32 *)((u8 *)dst + size);
-  }
+  COPY_BYTES(runCopy, (u32)runSize / 4 * 4);
   PATCH(skip);
 
-  COPY_FROM(src, 3);
-  src += 3;
+  COPY(3);
 
   PUT_BRANCH(row);
   PATCH(noRows);
   PATCH(noColumns);
 
-  COPY_FROM(src, 2);
+  COPY(2);
   {
-    u32 mismatch = (u32)(src + 2) ^ (u32)Data_081973f0;
+    const u32 *end = (const u32 *)Data_081973f0;
 
-    return 1 - ((-mismatch | mismatch) >> 31);
+    return src == end;
   }
 }

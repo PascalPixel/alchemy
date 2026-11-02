@@ -1,28 +1,39 @@
-// Draft, differ 4810 of 7666, skeleton gap 898 (tla-en, 2026-11-01)
+// Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every
-// spill slot sits 8 low (action 120 against 128), and i takes r10 where the
-// listing has r11. Fix those first; what is left of the gap is mostly sched2
-// order that follows from allocation.
+// slot above the low spills sits 8 low (action 120 against 128), and i takes r10
+// where the listing has r11. Fix those first; most of the gap is sched2 order
+// that follows from allocation.
 // Proved here: the buffer is one set-once local at the top, unallocated, so its
-// pool load returns at each use. Most gain came from block locals: n, m, x, y,
-// p and the like belong to their kind's arm, not to one shared set (differ 7530
-// to 4881). i * 24 at kind 80 is (i * 2 + i) * 8; the second particle halving
-// is p->vx, not work->particle[i].vx; center is written through a local pointer.
-// Left to explain: the two missing slots. Slots follow the listing to scrollB,
-// then the listing has base's address (88), drawFuncs' (84), the five saves, and
-// origin's (16) and target's (12) last, while here target's comes before base's
-// (80) and origin's at 44. Those two are PRE reaching registers that reload
-// evicted in the listing and that global never gave a register here.
-// target[0] is read directly from the frame at kinds 41, 85, 38 and 61 (sp+240)
-// but through slot 12 later; a struct target changes nothing, and here PRE
-// replaces all 40 sites. i in r11 needs r8, r10 and r9 taken first, so its
-// priority must be below about 0.44 where it is 1.35 here: it may be live far
-// longer in the listing, perhaps uninitialised on some path. r4 is also live at
-// the first compare, since reload picks r5 there; that points the same way.
-// Tried: kind 85's two equal arms, y + 24 then y - 32 and the frame 4 and 8 tail
-// are still as before. Kind 83 before the loop gave 1566 and inside it with a
-// break 1599 on the old draft. Automatic rounds over block locals, adjacent
-// declaration swaps and dropped locals have stopped gaining.
+// pool load returns at each use. n, m, x, y, p and the like belong to their
+// kind's arm, not to one shared set. i * 24 at kind 80 is (i * 2 + i) * 8; the
+// second particle halving is p->vx; center is written through a local pointer.
+// Kinds 63, 70 and 85 set y in both arms: the tail is cross-jumped, and that is
+// what keeps y + 24 and y - 32 apart. vz is in both arms at the first particles;
+// life / 4 comes before the projection at the first spark arm; the frame index
+// is m = ...; m += ...; in two statements.
+// Target's slot: PRE's reaching register survives copy propagation only with a
+// second set, which comes from the second target read at kinds 96 to 98 staying
+// in its block. RELOAD_BLITTER's do { } while (0) ends CSE's block there and
+// gives slot 12 with 37 uses and the six direct reads at sp+240. It stands for
+// every adjacent release and load, so S2's macro exemption applies only once
+// every use matches through it. It may instead be CSE's flush after 1,000 insns
+// in the listing; nothing here tells the two apart.
+// Left to explain:
+// - Two missing slots, 28 and 24, at kind 60: m * 0xa00 and the third source
+//   have no register in the listing, with r9 and r11 free there, while r9 takes
+//   them here. Named locals for both change nothing. This is the 8 bytes.
+// - Origin's slot 16 has one store and one direct use at the first projection,
+//   so the two-set reason above does not fit it; a local pointer does not help.
+// - i in r11 needs r8, r10 and r9 used by pseudos that outrank it and conflict
+//   with it. Here i (1.38) outranks count and n in the first frame loop, and the
+//   listing's i has about the same live length. Splitting i at the main loop
+//   gave 5277, one shared i 4882.
+// Tried: an inlined scroll helper gives no direct reads (and is a wrapper).
+// Kind 83 before the loop gave 1566 and inside it with a break 1599 on the old
+// draft. target[0] / 2 before step lost 25. The 34-row loop is i in r11, a
+// separate threshold in lr, and 15 and 0x700 unhoisted; that form lost 19 here,
+// since k stays in r8 and the constants hoist. A greedy pass over block locals
+// has stopped gaining.
 #include "heap_release.h"
 #include "types.h"
 
@@ -291,6 +302,7 @@ void Sound_PlayFar(s32);
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
 #define CLEAR(dst, size) ((void (*)(void *, s32))0x03000258)(dst, size)
+#define RELOAD_BLITTER(slot, n) do { HeapSlot_Release(slot); BattleEffect_LoadBlitter(slot, n); } while (0)
 
 void Func_0815f16c(struct SummonAction *action, s32 kind) {
   u8 *buffer;
@@ -788,7 +800,6 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   for (i = 0; i != 64; i++)
     work->particle[i].life = 0;
   if (kind != 44) {
-    s32 i;
     half = BattleUnit_GetEffectHeightFar(action->actor) / 2;
     p = work->particle;
     for (i = 0; i != 32; i++, p++) {
@@ -798,11 +809,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       if (kind == 61) {
         p->vx = ((Random16() & 255) - 127) << 12;
         p->vy = ((Random16() & 255) - 64) << 10;
+        p->vz = ((Random16() & 255) - 127) << 12;
       } else {
         p->vx = ((Random16() & 255) - 127) << 12;
         p->vy = ((Random16() & 255) - 64) << 12;
+        p->vz = ((Random16() & 255) - 127) << 12;
       }
-      p->vz = ((Random16() & 255) - 127) << 12;
       p->vx = p->vx / 2;
       p->vy = p->vy / 2;
       p->vz = p->vz / 2;
@@ -1283,8 +1295,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         x = target[0] / 2;
         BattleEffect_LoadBlitter(188, 19);
         IWRAM_SLOT_BC(screen, buffer, x - 24, 48, 24, 48);
-        HeapSlot_Release(188);
-        BattleEffect_LoadBlitter(188, 23);
+        RELOAD_BLITTER(188, 23);
         IWRAM_SLOT_BC(screen, buffer, x, 48, 24, 48);
         HeapSlot_Release(188);
       }
@@ -1367,8 +1378,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
       work->unk7780 = 1;
       work->unk7784 = 0;
       HeapSlot_Release(188);
-      HeapSlot_Release(104);
-      BattleEffect_LoadBlitter(104, 35);
+      RELOAD_BLITTER(104, 35);
       drawFuncs.draw[0] = IWRAM_SLOT_68;
       if (frame == 0) {
         for (i = 0; i != 1104; i++)
@@ -1428,12 +1438,10 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         else
           m = 3;
         HeapSlot_Release(188);
-        HeapSlot_Release(104);
-        BattleEffect_LoadBlitter(104, 3);
+        RELOAD_BLITTER(104, 3);
         IWRAM_SLOT_68(screen, buffer + m * 0x360, target[0] / 2 - 18, 56, 18,
                       48);
-        HeapSlot_Release(104);
-        BattleEffect_LoadBlitter(104, 7);
+        RELOAD_BLITTER(104, 7);
         IWRAM_SLOT_68(screen, buffer + m * 0x360, target[0] / 2, 56, 18, 48);
         HeapSlot_Release(104);
         BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
@@ -1703,11 +1711,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (action->side == 0) {
           step = (6 - frame) * 3;
           x = target[0] / 2 + step * 2;
+          y = target[1] - step * 4 + 24;
         } else {
           step = (6 - frame) * 3;
           x = target[0] / 2 - step * 2;
+          y = target[1] - step * 4 + 24;
         }
-        y = target[1] - step * 4 + 24;
         drawFuncs.draw[1](screen, buffer, x - 16, y - 32, 32, 64);
       }
     } else if (kind == 70) {
@@ -1721,11 +1730,12 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (action->side == 0) {
           step = (14 - frame) * 3;
           x = target[0] / 2 + step * 2;
+          y = target[1] - step * 4 + 24;
         } else {
           step = (14 - frame) * 3;
           x = target[0] / 2 - step * 2;
+          y = target[1] - step * 4 + 24;
         }
-        y = target[1] - step * 4 + 24;
         drawFuncs.draw[1](screen, buffer, x - 16, y - 32, 32, 64);
         if (frame == 13) {
           Sound_PlayFar(134);
@@ -1745,7 +1755,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         }
       } else {
         for (; i != 16; i++, p++) {
-          m = __modsi3(i, 5) * 3 + __modsi3(__divsi3(p->life, 96), 3);
+          m = __modsi3(i, 5) * 3;
+          m += __modsi3(__divsi3(p->life, 96), 3);
           drawFuncs.draw[i <= 2](screen, buffer + 0x800 + gData_08197834[m],
                                  (p->x >> 16) - gData_0819781a[m] / 2,
                                  (p->y >> 16) - gData_08197826[m] / 2,
@@ -1789,16 +1800,18 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (action->side == 0) {
           step = (14 - frame) * 3;
           x = target[0] + step * 2;
+          y = target[1] - step * 4 + 24;
         } else {
           step = (14 - frame) * 3;
           x = target[0] - step * 2;
+          y = target[1] - step * 4 + 24;
         }
-        y = target[1] - step * 4 + 24;
         drawFuncs.draw[0](screen, buffer + 0x2000, 32, y - 32, 64, 64);
         REG_BG2X = (64 - x) << 8;
       } else {
         for (; i != 32; i++, p++) {
-          m = __modsi3(i, 5) * 3 + __modsi3(__divsi3(p->z, 96), 3);
+          m = __modsi3(i, 5) * 3;
+          m += __modsi3(__divsi3(p->z, 96), 3);
           drawFuncs.draw[0](screen, buffer + 0x83c + gData_081974bc[m],
                             (p->x >> 16) - gData_0819749e[m] / 2,
                             (p->y >> 16) - gData_081974ad[m] / 2,
@@ -2258,9 +2271,10 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         if (frame >= i / 2 + 4) {
           life = p->life;
           if (life <= 23) {
+            m = life / 4;
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
-            drawFuncs.draw[1](screen, buffer + (life / 4) * 0x480,
+            drawFuncs.draw[1](screen, buffer + m * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
             BattleEffectKernels_IntegrateVector3(p, 62, 0x800);
             BattleEffectKernels_IntegrateVector3(p, 62, 0x800);

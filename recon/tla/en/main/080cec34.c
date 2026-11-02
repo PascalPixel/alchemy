@@ -1,20 +1,17 @@
-// Draft, differ 142 (150 before statements reordered 2026-10-26) of 241 (167 before, 2026-10-25), from the listing: spawns
-// the current scene's item objects (chests, jars, buried items) from the rows
-// Func_080ceba8 finds, at most 16. The loop is a for whose condition reads
-// the next row's type, as the native's test at its foot shows (its i > 15
-// test folded away on entry), with the row's three halfwords read by index.
-// Left: the loop's entry. alchemy-gcc's jump pass copies the exit test in
-// front of the loop as the native has it, but jump2 cross-jumps the copy
-// into the test at the foot (the entry becomes a branch to it), which the
-// native never does; the registers after it follow from that. The kind
-// chain matches as an else-if chain.
+// Matches: differ 0 (tla-en, 2026-11-01). From the listing: spawns the current
+// scene's item objects (chests, jars, buried items) from the rows
+// Func_080ceba8 finds, at most 16. The loop is an if and a do-while with the
+// row tests at its foot, as the sibling Func_080cf554 has it; s16 type makes
+// the foot's 0x4000 a pool load, which keeps it apart from the entry's test.
+// motionFlags is written through a local holding its address for its whole
+// life (S2: no device): as the field store, the mask's zero stays in a register
+// and cell->collisionCode = 0 reuses it (8 of 241 differ). Not yet checked
+// in the other editions.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
 struct SceneItemWork {
   u8 unk000[0x114];
@@ -37,7 +34,7 @@ void Func_080cec34(void) {
   s16 *rows = Func_080ceba8();
   struct SceneItemWork *work = Ram_HeapSlots->eventWork;
   s32 i;
-  s32 type;
+  s16 type;
   s32 id;
   s32 flag;
   s32 item;
@@ -48,9 +45,13 @@ void Func_080cec34(void) {
 
   if (rows == NULL)
     return;
-  for (i = 0; i < 16 && (type = *rows++) != 0 && !(type & 0x4000); i++) {
-    flag = rows[1];
+  i = 0;
+  type = *rows++;
+  if (type == 0 || (type & 0x4000))
+    return;
+  do {
     id = rows[0];
+    flag = rows[1];
     item = rows[2];
     rows += 3;
     if ((type == 128 || flag == -1 || !GameFlag_Test(flag)) &&
@@ -79,24 +80,24 @@ void Func_080cec34(void) {
               Map_GetTerrainHeightFar(0, object->x, object->z);
           object->y += object->terrainHeight;
           if (buried) {
+            u8 *motionFlags = &object->motionFlags;
             struct MapWork *map;
             struct MapCell *cells;
-            struct MapCell *cell;
             s32 x;
             s32 z;
 
-            object->motionFlags = 2;
+            *motionFlags = 2;
             object->terrainHeight += 0xfff00000;
             object->y = object->terrainHeight;
             map = Ram_HeapSlots->mapWork;
-            cells = (struct MapCell *)gMapCellBuffer;
-            z = object->z >> 20;
             x = object->x >> 20;
+            z = object->z >> 20;
+            cells = (struct MapCell *)gMapCellBuffer;
             if (map != NULL)
               cells = map->layers[0].cells;
-            cell = &cells[x + (z << 7)];
-            if ((u32)(cell->collisionCode - 242) <= 5)
-              cell->collisionCode = 0;
+            cells += x + (z << 7);
+            if ((u32)(cells->collisionCode - 242) <= 5)
+              cells->collisionCode = 0;
           }
         }
         Actor_SetMode(object, 1);
@@ -104,16 +105,22 @@ void Func_080cec34(void) {
         if (GameFlag_Test(flag))
           Actor_SetMode(object, 2);
         Actor_ResetMotion(object);
-        S16_AT(object, 100) = object->x / 0x10000;
-        S16_AT(object, 102) = object->z / 0x10000;
-        BYTE_AT(object, 35) = 1;
-        BYTE_AT(object, 89) = 1;
+        object->action = object->x / 0x10000;
+        object->unk66 = object->z / 0x10000;
+        object->priorityFlags = 1;
+        object->collisionFlags = 1;
         work->objects[i] = object;
         if (type == 131)
           Func_080d3b28(i + 64, item);
         if (type == 133)
-          BYTE_AT(object, 89) = 0;
+          object->collisionFlags = 0;
       }
     }
-  }
+    i++;
+    if (i > 15)
+      break;
+    type = *rows++;
+    if (type == 0)
+      break;
+  } while (!(type & 0x4000));
 }

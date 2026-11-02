@@ -1,42 +1,28 @@
-// Draft, differ 327 of 305, skeleton gap 121 (tla-en, 2026-11-01): the shape
-// is the native's (one 24-byte PushMove by value, its first four words in
-// r0-r3 spilled to the pretend-argument area and number and callback on the
-// stack, as overlay 668's caller passes it; the direction in a local whose
-// times-four lives in one register throughout; the tables not const; start
-// below cell in the frame; the map slot through struct HeapSlotWords, which
-// keeps the four argument stores ahead of it). Left: the native's middle.
-// With devices the same text reaches differ 88, gap 48, 305 instructions, the
-// right register for every long-lived value; they are out because that is not
-// differ 0, and this is the recipe, all of it measured:
-// - stepIndex is a variable the native never folds because it sits in a
-//   one-iteration loop: `for (step = 0; step < 1; step++) { ... stepIndex++; }`
-//   from just after Func_020054b8 to just after the mode 1 call, `step` a
-//   separate counter so that stepIndex keeps two definitions through GCSE.
-//   loop.c deletes the back branch only at n_iterations 1 and at most 50 real
-//   insns (unroll.c, "Loop too big": 42 here, a loop from wait(4) has 62, stays).
-//   stepIndex++ then dies in flow and r9 stays. Set `stepIndex = 0` before the
-//   first ABS: nearer the top gives speed r9 (differ 154), and it is set in
-//   native's first block, so the last open point is how it gets there.
-// - `spareX = ABS(move.x - leader->x) + ABS(move.z - leader->z);` before wait(4)
-//   and `spareZ = ABS(stepIndex) + ABS(stepIndex + 1);` first in the loop give
-//   the two CSE boundaries: the conditional also keeps the address from being
-//   hoisted whole into one pool word (loop.c, maybe_never). Reads of start here
-//   put &start in r7 or r11; on leader they do not. Two ABS are needed, one
-//   changes nothing, which looks like CSE's path length running out.
-// - A static inline forwarder on Actor_SetSpeedParameters alone rebuilds
-//   0x8000 and 0x1999 at each call; on all four Actor calls it costs 41 more.
-// - Declaration order map, width, speed, acceleration gives the native's slots.
-// What differ 88 still lacks: Func_02004a44's last 0 is `mov r3, r9`, not
-// `movs r3, #0` (CSE1 follows the ABS branches and swaps in stepIndex; that ref
-// is also what lifts stepIndex over speed, with its live length doubled by the
-// constant), and that moves the first block's reloads and the call 2 arguments.
-// A native ordering with no i-in-store needs stepIndex above speed some other
-// way. No gain from: index types (s16, u8, long same; others far worse), a
-// `clear` local, a forwarder on Func_02004a44, inline Abs in four body forms, a
-// dead read of stepIndex after the loop to keep its increment (179 to 240), more
-// dead sums to stretch speed's live range, and two more ABS before the fill call
-// (249: stepIndex's first set is deleted). Sibling drafts 668 Func_020044c4 and
-// 674 Func_02003a5c are the same listing, so this recipe should carry over.
+// Draft, differ 225 of 305, skeleton gap 77 (tla-en, 2026-11-01)
+// One line from differ 0. This is the listing of jupiter_lighthouse_room_8's
+// matched Func_02000ec8 (games/tla/src/scene/jupiter_lighthouse_room_8/s0ec8.c),
+// whose compiled output is this function instruction for instruction, and the
+// text below is that source. Left: the second Actor_SetSpeedParameters, which
+// the twin writes as
+//   Call3((void (*)())Actor_SetSpeedParameters, move.id, 0x8000, 0x1999);
+// With that one line and #include "call.h" the draft measures differ 0, gap 0.
+// It stays out because this round adds no device and S2 lists `wrapper`; call.h
+// is untagged at about 14,400 sites in games/tla/src, so whether it counts as a
+// device at all is Pascal's call (S2, C2). Measured: without it the third call
+// reuses the second's 0x1999 (no rebuild there) and the frame slots sit 4 bytes
+// off. A reading, not measured: a direct call splits the constants into pseudos
+// at expansion, and through the inline they arrive only at integration, too late
+// to be shared. That one shared value would explain nearly all of the 225.
+// This replaces the old stepIndex recipe; the one-pass loop and the ABS sums are
+// gone. r9's zero is direction: angle is a u16, so `>> 16` is always 0. The test
+// on it folds away, and without it the owner address and the second call's
+// constants are not rebuilt (differ 309 with the rest in place). The test is the
+// twin's text, untagged there, and mode 3 appears nowhere in this overlay's
+// listing: a reviewer should judge it against S2's `dead`.
+// toX and toZ are plain locals; they replace the twin's Call6 and give gap 0.
+// No gain over 225 from: no prototype on the callee, a cast call, an id local,
+// pushSpeed/pushAcceleration block locals at each of the three calls.
+// Overlay 668's Func_020044c4 and 674's Func_02003a5c are the same listing.
 //
 // Overlay 6ad's copy of resource_668_c_020044c4.c, with this overlay's
 // symbols: carries out a push measured as overlay 668's Func_02004240
@@ -51,15 +37,14 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
-#include "system/vector3.h"
 
 struct PushMove {
   s32 x; ///< 16.16 fixed-point pixels
   s32 y;
   s32 z;
-  s32 direction;
-  s32 unk10;
-  void (*unk14)(void);
+  s32 footprint; ///< index into gData_02005f64, four bytes each
+  s32 id;
+  void (*callback)(void);
 };
 
 struct HeapSlotWords {
@@ -67,7 +52,7 @@ struct HeapSlotWords {
   s32 map;
 };
 
-extern s8 gData_02005f64[][4];
+extern s8 gData_02005f64[];
 extern s32 gData_02005f7c[];
 struct Actor *Actor_GetById(u32 id);
 void Func_02004a44(s32 layer, s32 x, s32 z, s32 width, s32 height, s32 value);
@@ -87,59 +72,63 @@ void Func_02005668(void);
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 void Func_02004d10(struct PushMove move) {
-  u8 *map;
+  u8 *map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->map;
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *object = Actor_GetById(move.id);
+  s32 cell[3];
+  s32 from[3];
+  s32 footprint;
   s32 width;
+  s32 height;
+  s32 originX;
+  s32 originZ;
+  s32 direction;
   s32 speed;
   s32 acceleration;
-  struct Actor *leader;
-  struct Actor *object;
-  s32 height;
-  s32 direction;
-  s32 stepIndex;
-  struct Vector3 cell;
-  struct Vector3 start;
-  s32 spareX;
-  s32 spareZ;
 
-  map = (u8 *)((struct HeapSlotWords *)Ram_HeapSlots)->map;
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  object = Actor_GetById(move.unk10);
+  // BUG: angle is 16 bits, so direction is always 0.
+  direction = leader->angle >> 16;
+  footprint = move.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
-  start.x = object->x;
-  start.z = object->z;
-  direction = move.direction;
-  stepIndex = 0;
-  cell.x = (object->x + (gData_02005f64[direction][0] << 16)) >> 20;
-  cell.z = (object->z + (gData_02005f64[direction][1] << 16)) >> 20;
-  width = (ABS(gData_02005f64[direction][0]) +
-           ABS(gData_02005f64[direction][2])) >>
+  from[0] = object->x;
+  from[2] = object->z;
+  cell[0] = (object->x + (gData_02005f64[footprint * 4] << 16)) >> 20;
+  cell[2] = (object->z + (gData_02005f64[footprint * 4 + 1] << 16)) >> 20;
+  width = (ABS(gData_02005f64[footprint * 4]) +
+           ABS(gData_02005f64[footprint * 4 + 2])) >>
           4;
-  height = (ABS(gData_02005f64[direction][1]) +
-            ABS(gData_02005f64[direction][3])) >>
+  height = (ABS(gData_02005f64[footprint * 4 + 1]) +
+            ABS(gData_02005f64[footprint * 4 + 3])) >>
            4;
-  Func_02004a44(0, cell.x, cell.z, width, height, 0);
+  Func_02004a44(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
   wait(15);
-  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner,
-                                     (move.x - start.x) >> 17,
-                                     (move.z - start.z) >> 17);
+  {
+    s32 deltaX = (move.x - from[0]) >> 17;
+    s32 deltaZ = (move.z - from[2]) >> 17;
+
+    Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, deltaX,
+                                       deltaZ);
+  }
   Actor_GetById(gMainRoutineWork.currentOwner)->update = Func_02004fc0;
   wait(4);
-  Func_02005480(object, 2);
+  if ((u32)(direction - 6) <= 7)
+    Func_02005480(object, 3);
+  else
+    Func_02005480(object, 2);
   Func_020056c0(239);
-  Actor_SetSpeedParameters(move.unk10, 0x8000, 0x1999);
+  Actor_SetSpeedParameters(move.id, 0x8000, 0x1999);
   Func_020054b8(object, move.x, move.y, move.z);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);
-  Actor_OffsetPositionAndResetMotion(
-      gMainRoutineWork.currentOwner,
-      (s32)(gData_02005f7c[stepIndex] << 16) >> 31,
-      (s32)(gData_02005f7c[stepIndex] << 16) >> 17);
-  if (move.unk14 != 0)
-    move.unk14();
+  Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner,
+                                     (gData_02005f7c[direction] << 16) >> 31,
+                                     (gData_02005f7c[direction] << 16) >> 17);
+  if (move.callback != 0)
+    move.callback();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   leader->update = 0;
@@ -150,18 +139,25 @@ void Func_02004d10(struct PushMove move) {
   Func_020056c0(213);
   Actor_SetPositionAndResetMotion(object, move.x, object->y, move.z);
   Func_02005480(object, 1);
-  move.x = (move.x + (gData_02005f64[direction][0] << 16)) >> 20;
-  move.z = (move.z + (gData_02005f64[direction][1] << 16)) >> 20;
-  spareX = *(s32 *)(map + 0x148) >> 20;
-  spareZ = *(s32 *)(map + 0x14c) >> 20;
-  Func_020054e8(move.x, move.z, width, height, spareX + move.x,
-                spareZ + move.z);
+  move.x = move.x + (gData_02005f64[footprint * 4] << 16);
+  move.z = move.z + (gData_02005f64[footprint * 4 + 1] << 16);
+  move.x >>= 20;
+  move.z >>= 20;
+  originX = *(s32 *)(map + 328) >> 20;
+  originZ = *(s32 *)(map + 332) >> 20;
+  {
+    s32 toX = originX + move.x;
+    s32 toZ = originZ + move.z;
+
+    Func_020054e8(move.x, move.z, width, height, toX, toZ);
+  }
   Func_02004a44(0, move.x, move.z, width, height, 255);
   Func_02004a44(2, move.x, move.z, width, height, 255);
-  cell.x = (start.x + (gData_02005f64[direction][0] << 16)) >> 20;
-  cell.z = (start.z + (gData_02005f64[direction][1] << 16)) >> 20;
-  Func_020054e8(spareX + cell.x, spareZ + cell.z, width, height, cell.x,
-                cell.z);
-  Func_02004a44(2, cell.x, cell.z, width, height, 0);
+  cell[0] = (from[0] + (gData_02005f64[footprint * 4] << 16)) >> 20;
+  cell[2] = (from[2] + (gData_02005f64[footprint * 4 + 1] << 16)) >> 20;
+  originX += cell[0];
+  originZ += cell[2];
+  Func_020054e8(originX, originZ, width, height, cell[0], cell[2]);
+  Func_02004a44(2, cell[0], cell[2], width, height, 0);
   Func_02005668();
 }

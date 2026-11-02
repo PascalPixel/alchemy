@@ -1,17 +1,23 @@
-// Draft, differ 138 (144 before statements reordered 2026-10-26) of 228 (252 before, 2026-10-26). Turns an object into a
-// chain of links hanging from its cell: starts the chain work
-// (Func_080da9a8) if none is running, takes a chain slot for the object
-// (none if it already has one, or none is free), clears the tile flags of
-// the five cells above, sinks the object a cell down and 64 pixels forward,
-// then hangs seven links (kinds 1, 2, 3/4 alternating, 5 for the last) 14
-// pixels apart from 15 pixels above the cell. When grow is set the links
-// unroll over 28 frames.
-// The drop grows by frame << 16 a link, the cell column and row reuse x
-// and z, and the last link index is a variable (the native keeps it in r4,
-// spilled around each call). Left: register choice (the native keeps the
-// object in r7, i in r6 and y in r5; here r6, r5 and r7), the cell loop
-// adds the cells base each pass where this strength-reduces it, and the
-// native forms the first drop after the inner loop's entry tests.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Turns an object into a chain of links hanging from its cell: starts the
+// chain work (Func_080da9a8) if none is running, takes a chain slot for the
+// object (none if it already has one, or none is free), clears the collision
+// codes of the five cells above, sinks the object a cell down and 64 pixels
+// forward, then hangs seven links (kinds 1, 2, 3/4 alternating, 5 for the
+// last) 14 pixels apart from 15 pixels above the cell. When grow is set the
+// links unroll over 28 frames.
+// Forms that the match depends on, for review before adoption:
+// - `cell = cells; cell += ...` in two statements: as one statement the store
+//   becomes an address giv and is reduced (differ 44). This is a shaping
+//   choice with no plain one-statement equivalent found; it carries no tag
+//   because it is none of S2's kinds, so the reviewer should judge it.
+// - The grow loop is an `if` around a `do`, so drop is set after the entry
+//   tests (a `for` with drop set before gives differ 124 on its own, and
+//   `offset` counted from 0 is left unreduced because its giv has no benefit).
+// - link->y is computed from i each pass, not stepped: loop.c's reduced giv
+//   gives the native's order and allocation (differ 12 against 116).
+// - The cell column and row reuse x and z, and last is a one-constant local
+//   (the native keeps it in r4, spilled around each call).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -69,8 +75,8 @@ void Func_080daecc(s32 objectId, s32 grow) {
   struct ChainSlot *slot;
   struct ChainLink *link;
   struct ChainLink **tail;
-  u8 *cells;
-  s32 index;
+  struct MapCell *cells;
+  struct MapCell *cell;
   s32 i;
   s32 x;
   s32 top;
@@ -78,11 +84,14 @@ void Func_080daecc(s32 objectId, s32 grow) {
   s32 y;
   s32 frame;
   s32 last;
+  s32 kind;
+  s32 running;
 
   object = Actor_GetById(objectId);
+  running = Ram_HeapSlots->unk84[8];
+  kind = 372;
   map = Ram_HeapSlots->mapWork;
-  if (Ram_HeapSlots->unk84[8] == 0) {
-    s32 kind = 372;
+  if (running == 0) {
     if (object->sprite != 0 && object->sprite->entries[0] != 0)
       kind = *object->sprite->entries[0];
     Func_080da9a8(kind);
@@ -93,22 +102,23 @@ void Func_080daecc(s32 objectId, s32 grow) {
   if (slot == 0)
     return;
 
-  // Clear the tile flags of the five cells above the object.
+  // Clear the collision codes of the five cells above the object.
   x = object->x >> 20;
   z = (object->z - object->y) >> 20;
-  cells = (u8 *)map->layers[2].cells;
-  index = (z << 9) + (x << 2);
-  for (i = 4; i >= 0; i--) {
-    index += 0x200;
-    cells[index + 2] = 0;
+  cells = map->layers[2].cells;
+  for (i = 0; i < 5; i++) {
+    z++;
+    cell = cells;
+    cell += x + z * 128;
+    cell->collisionCode = 0;
   }
 
   x = (object->x & CELL_MASK) + (8 << 16);
   y = object->y & CELL_MASK;
+  top = y + (8 << 16);
   z = (object->z & CELL_MASK) + (16 << 16);
   Actor_SetMode((struct Actor *)object, 0);
   object->motionFlags = 0;
-  top = y + (8 << 16);
   object->collisionFlags = 0;
   object->z += 16 << 16;
   object->y -= 64 << 16;
@@ -117,10 +127,9 @@ void Func_080daecc(s32 objectId, s32 grow) {
   // Hang the links.
   last = 6;
   tail = &slot->root;
-  y += 15 << 16;
   for (i = 0; i <= last && (link = Func_080daea8()) != 0; i++) {
     link->x = x;
-    link->y = y;
+    link->y = y + (15 << 16) - i * (14 << 16);
     link->z = z;
     if (i == 0)
       link->kind = 1;
@@ -131,7 +140,6 @@ void Func_080daecc(s32 objectId, s32 grow) {
     else
       link->kind = i % 2 + 3;
     *tail = link;
-    y -= 14 << 16;
     tail = &link->next;
   }
 
@@ -140,14 +148,19 @@ void Func_080daecc(s32 objectId, s32 grow) {
       link = link->next;
   } else {
     for (frame = 1; frame <= 28; frame++) {
-      s32 drop = -(frame << 15);
+      i = 0;
+      link = slot->root;
+      if (i <= last && link != 0) {
+        s32 drop = -(frame << 15);
 
-      for (i = 0, link = slot->root; i <= last && link != 0; i++) {
-        link->x = x;
-        link->y = top - drop / 2;
-        link->z = z;
-        drop += frame << 16;
-        link = link->next;
+        do {
+          link->x = x;
+          link->y = top - drop / 2;
+          link->z = z;
+          drop += frame << 16;
+          i++;
+          link = link->next;
+        } while (i <= last && link != 0);
       }
       wait(1);
     }

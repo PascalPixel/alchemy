@@ -1,4 +1,24 @@
 // Draft, differ 265 of 410, skeleton gap 67 (tla-en, 2026-11-01)
+// Likely the true row loop, measured 1 November after the compiler change:
+// for (row = 0; rows[row].level != 99; row++) { if (i >= rows[row].level) ... }
+// with no table local and rows[row].field everywhere. It alone gives the native's
+// row * 8 and row * 8 + 4 counters and the z load through table + counter, because
+// PRE leaves the table in a many-set pseudo that keeps table + row out of the givs.
+// It measures worse only because loop.c hoists out of the cell loop: 311 (gap 101)
+// with m and level shared, 320 (106) apart, 273 (85) with a row pointer p in the
+// cell body for x and z, 297 (101) with p for x only, unchanged for row as s16 or
+// 14 - i as a body local, 339 (99) for row as u8, 315 (115) for i split from the
+// new level. Start here if the hoisting is ever settled.
+// What stands in the way: the native's cell loop moves nothing out, only the
+// n << 16 counter is built before it. 14 - i, table + row and the sp+16 reload stay
+// in it, the m loop keeps table + row and reloads the table at its tail, on both
+// paths, where PRE here inserts on the loop's exit edge; the wait loop keeps its
+// address load. Its lifetimes are long enough that move_movables' threshold cannot
+// explain the cell loop, and no plain C found stops it; the set-twice forms below
+// are disguises. Any further step is a compiler or option question, so out of scope.
+// Also measured here: the step loop as for (i = 0; i <= 15; i++), 293 (99), or
+// i != 16, 295 (103), so the goto stays; direct calls instead of the wrapper,
+// 307 (109), Call6 alone direct 273 (71), so the wrapper stays.
 // Control flow, calls, arguments and fields are the native's. The body kept here
 // is the best device-free form; the row loop walks the table as bytes through a
 // pointer, and biv elimination folds t + row where the native keeps row * 8 (r7)
@@ -88,7 +108,7 @@ void Func_020019a0(void) {
   AnkohlRuins_Call2df4(22, 66, 3, 1, 7, 84);
   AnkohlRuins_Call2df4(22, 1, 3, 5, 7, 19);
   /* FAKEMATCH(wrapper): the scene's forwarding inlines and Call6 kept; as direct
-   * calls, 341 of 410 instructions differ in tla-en. */
+   * calls, 307 of 410 instructions differ in tla-en. */
   i = 0;
 step:
   {

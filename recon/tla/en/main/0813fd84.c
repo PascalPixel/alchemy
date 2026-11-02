@@ -1,21 +1,30 @@
-// Draft, differ 925 of 2579, skeleton gap 269 (tla-en, 2026-11-01)
-// BattleEffect_RunCruelRuin. The frame is now the listing's 196 bytes and
-// stack aggregates sit where it has them: pos, place, texture, texture2, req,
-// texture3. Most of what is left is reload's register rotation, so one reload
-// more or less shifts every later scratch register; compare with stack offsets
-// normalised before trusting a change (about 735 lines differ that way).
+// Draft, differ 876 of 2579, skeleton gap 248 (tla-en, 2026-11-01)
+// BattleEffect_RunCruelRuin. The frame is the listing's 196 bytes and the stack
+// aggregates sit where it has them: pos, place, texture, texture2, req, texture3.
+// Most of what is left is register rotation and two slots: the listing's slots
+// are this draft's plus 8 from 52 down to 28 (draft 44, 40, 36, 32, 28 are its 52,
+// 48, 44, 40, 36), which alone accounts for much of the 800 to 1800 stretch, and
+// the object loop (listing lines 1900 to 2100) is a third of the whole differ.
 // Left, in order of reach:
-// - Object loop. The listing keeps the else arm's objects[row + i] whole and
-//   walks only the placement read with ldmia. Setting a row local in the else
-//   arm alone and using it for the particles read reproduces that exactly
-//   (the local is multi-block after a branch, so loop.c does not move it and
-//   the arm is no giv), but it costs 340 lines: the frame grows to 200 or 204,
-//   T takes r7 where the listing spills it, and j * 9 is rebuilt instead of
-//   read from the row register. The T slot being the lowest suggests it is
-//   reduced in loop's second pass, once row exists; not reproduced.
-// - level is a user local at slot 52 where the listing has slot 24, after the
-//   reduced colour values. It looks like a reduced frame * 2, but one giv of
-//   that form has benefit 0 and is never reduced, and gcse merges its uses.
+// - Object loop, the first cause of the slots. The listing has j r7, row r4,
+//   last r6, phase + 64 + i r5, i sl, place r8, j << 21 r9, and the Apply read
+//   stepped with ldmia from slot 20; the else arm's objects[row + i] stays whole.
+//   Here the first loop pass hoists the else arm's j * 9 (it matches the i == 8
+//   arm's chain, savings 3), so the else arm is the reduced giv and Apply is not:
+//   the join's j * 9 is never a movable, so Apply is no giv of i at all. A row
+//   local set before the if and a separate index local for Apply gives the
+//   listing's ldmia, but the else arm combines with it (giv at else combined
+//   with Apply) and row stays a copy in r9. row set in both arms keeps the else
+//   arm whole and reduces Apply, but each arm recomputes j * 8 + j. An outer
+//   s32 row = j * 9 lets PRE merge row + i (frame 204, or work loses fp). A
+//   second assignment row = j * 9 + i before Apply comes closest (gap 249, but
+//   differ 969) and is a local reused for a second value, so it is not kept.
+//   Also tried: objs pointer stepped or indexed, hand-stepped row, plain
+//   objects[j * 9 + 8] in the i == 8 arm, statements swapped in the arms.
+// - level has slot 52 where the listing has 24, below every hoisted address, so
+//   there it is a pseudo made by loop or evicted by reload. One giv of frame * 2
+//   has benefit 0 (shift cost less add cost) and is never reduced; gcse merges
+//   its uses, so two givs do not combine.
 // - grey: the listing also steps frame - 80 in r9; here it stays unreduced and
 //   green takes r9. A hand-stepped grey puts r9 right and loses both reductions.
 // - Colour loop: the listing's first mask is movs 31 and the other two share a
@@ -24,9 +33,18 @@
 // - The strip arm's z: the listing keeps mov r2, sl in the i == 0 arm, here
 //   CSE folds it to 0. Storing i directly costs 30 lines.
 // - The strip address: Data_02012000 stays in r5 across the build call here,
-//   the listing reloads it and keeps the 6 instead. A constant address is
-//   worse. The size-argument constant 0x4000 is likewise shared here.
-// Found this round: size in its own local keeps the two ten-loop givs apart,
+//   the listing reloads it and keeps the 6 instead. A constant address is worse.
+// - Iwram_FillWords' 0x4000 is shared across calls here and rebuilt per call in
+//   the listing. Forwarding through the FillWords_ inline that f143354.c and
+//   f14cca8.c use reaches differ 852, gap 236, but it is a wrapper device, so it
+//   is not added here; a decision on that layer would settle these sites.
+// - The first setup's zero and pixels load early into r5 and r4 and the zero is
+//   shared with i; sl and r9 swap between the 1 and the size giv in the first loop.
+// Found this round: sh = -32 after the clamp; sc >> 1 written in the calls, not
+// a half local, so sc / 3 comes first; the model setup orders here came from
+// trying every order of those stores, and are measured, not evidence; the
+// decoder's real s32 return. s32 wait() gains 2 more, but wait is void.
+// Found earlier: size in its own local keeps the two ten-loop givs apart,
 // cells as a local leaves (k * 32 + k + c) * 8 unreduced, last as a pointer
 // gives the stepped read of objects[j * 9 + 8], count sits in a block of its
 // own after the first loop, fr, fg, fb step in that order, t <<= 9 reuses t.
@@ -190,7 +208,7 @@ void ResourceObject_ReleaseFar(void *object);
 void Func_0813ba50(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
-void Resource_DecodeType01(const void *source, void *destination);
+s32 Resource_DecodeType01(const void *source, void *destination);
 void Palette_LoadBasicObjColors(void);
 void Graphics_LoadGreyRamp(void);
 void Func_0815b510(void *cells, s32 size, s32 scale);
@@ -465,19 +483,20 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     }
     verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
-    model->shade = 0;
     texture.logWidth = 7;
     texture.logHeight = 7;
     model->kind = 6;
-    model->texture = &texture;
-    model->mesh = gData_08199364;
+    model->shade = 0;
     model->vertices = verts;
+    model->mesh = gData_08199364;
+    model->texture = &texture;
     texture.pixels = gMapCellBuffer;
+    i = 0;
     {
       s32 s;
       s32 t;
 
-      for (i = 0, s = (frame << 15) + -0x200000, t = frame - 64; i != 4;
+      for (s = (frame << 15) + -0x200000, t = frame - 64; i != 4;
            i++, s += -0x50000, t -= 10) {
         if ((u32)t <= 15) {
           s32 sc = 0x80000 - s;
@@ -512,12 +531,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
 
       if ((u32)t <= 99) {
         s32 sc = 0x30000 - (t << 11);
-        s32 sh = -32;
-        s32 half;
+        s32 sh;
 
         if (sc <= 0xffff) {
           sc = 0x10000;
         }
+        sh = -32;
         if (t <= 7) {
           sh = t * 4 - 64;
         }
@@ -529,8 +548,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         t <<= 9;
         Render_ResetTransformState();
         Func_08015160(-0x40000, -0x2c0000, 0);
-        half = sc >> 1;
-        Func_080151e4(sc, sc / 3, half);
+        Func_080151e4(sc, sc / 3, sc >> 1);
         Func_080150e4(t);
         if (sh > -64) {
           Render_TransformVertices(Data_081991e0, verts, 4);
@@ -548,7 +566,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           model->shade = sh;
           Render_ResetTransformState();
           Func_08015160(-0x40000, -0x2c0000, 0);
-          Func_080151e4(sc, half, half);
+          Func_080151e4(sc, sc >> 1, sc >> 1);
           Func_080150e4(t);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
@@ -760,9 +778,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     texture2.pixels = work->sheet + 0x3648;
     model->shade = 0;
     model->mesh = Data_08199220;
+    model->kind = 6;
     model->texture = &texture2;
     model->vertices = verts;
-    model->kind = 6;
     for (i = 0; i != 6; i++) {
       s32 d = frame - Data_08197704[i];
 
@@ -1046,10 +1064,10 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         model = Render_AllocateModelList(1);
         texture3.logWidth = 5;
         texture3.logHeight = 2;
-        texture3.pixels = work->sheet + 0x3840;
         model->shade = 0;
-        model->mesh = Data_08199220;
         model->texture = &texture3;
+        texture3.pixels = work->sheet + 0x3840;
+        model->mesh = Data_08199220;
         model->vertices = verts;
         model->kind = 6;
         if (frame > 31) {

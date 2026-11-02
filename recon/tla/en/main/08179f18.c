@@ -1,6 +1,6 @@
-// Draft, differ 878 of 2583, skeleton gap 224 (tla-en, 2026-11-01)
-// BattleEffect_RunFlora: same calls and control flow, frame 292 as the listing,
-// high registers as the listing (r8, r9 petals, r10 i, r11).
+// Draft, differ 581 of 2583, skeleton gap 59 (tla-en, 2026-11-01)
+// BattleEffect_RunFlora: same calls and control flow, no devices, frame 292 as
+// the listing, high registers as the listing (r8, r9 petals, r10 i, r11).
 // What closed most of the gap, to keep:
 // - draw[2] is one DImode pseudo at sp 164 and 168, and the rings hoist draw[0].
 // - petals is a number: as a pointer it prefers STACK_REG, keeps no REG_EQUIV,
@@ -9,28 +9,37 @@
 //   stays spilled and is rebuilt from the pool at each use.
 // - c copies the ring colour v, so v loses refs and spills to sp 100.
 // - The second ring has its own x1b to y2b; out and pos come before dot.
+// - struct FloraObject's bits are u16, as the game's other sprites: as u32 the
+//   tile store hoists the wrong mask.
+// - The phase loop steps a pointer and reads it back with / 256: >> 8 narrows
+//   to a HImode shift that CSE forwards from the store.
+// - The ring's x and y are computed before the draw call: inline, fold moves
+//   48 and 92 last and every scratch register below shifts. Function results
+//   multiply first (Trig_Sin(a) * s), m first in m * grow, angle is zeroed
+//   before spin is set (reload's rotation reads that order).
 // Left to settle, top down. Reload's rotation means each one shifts scratch
 // registers below it:
-// - -80's negs lands after Task_Add; the listing has it before the calls.
-// - First setup loop: cells r5, tiles r6, objects r7 here run objects, cells,
-//   tiles. Stepped pointers gave the listing's order for t but cost 100.
-// - Phases: the listing stores and rereads one register. A stepped t, a struct
-//   store, byte sums and a do { } while (0) macro all lost; most forward the
-//   store or take r8 for the index.
-// - The first 0x4000 is rebuilt in the listing. ClearWords_ (the static inline
-//   in f16467c.c, a wrapper device) on the first call gains 16; taken out
-//   because it does not reach differ 0.
-// - Petal 0's frame == 0 branch: the listing keeps the x constant in r3 past
-//   the y store, so its reloads run r5, r0 where these run r5, r3, then 96 and
-//   224 stay in separate registers and the arms do not cross-jump. This is the
-//   largest hunk. Literal indexes (w->x[0]) cost 1100.
-// - Tile sheet: a and b are label loops so row * 2 + a is not reduced. The
-//   listing's row * 2 is a stepped value at sp 44 (a giv or a spilled hand
-//   step) copied to r8 per row, tiles at r9, 15 at r11, and one 15 rebuilt in
-//   the body. A hand step gives those slots but PRE hoists y + a; label loops
-//   at k and j rebuild the constants but spill c to sp 8 and frame 288.
-//   While sp 44 is missing, the hoisted place addresses sit at 44 to 52, not 48
-//   to 56, and y sits at sp 56.
+// - First and fourth setup loops: cells and the object slot take each other's
+//   low registers (r7 and r5, r5 and r6). Stepping cells fixes the first loop's
+//   count only; stepping it in the fourth loop costs 90.
+// - The first 0x4000 is rebuilt in the listing. ClearWords_ (a wrapper device)
+//   on the first call gained 16 before; not used.
+// - Petals 0 and 1, the largest hunk (about 280 lines): the listing's 224 in
+//   petal 0 is an unallocated pseudo that reload rebuilds, so loop.c moved it.
+//   Here "Insn 2081: life 9, savings 3 not desirable": threshold 16 needs
+//   savings * life >= 30 for 474 real insns, and moving it also needs 599 to
+//   stay movable at threshold 13 (under 468 insns). One more insn of life, or
+//   about six fewer in the loop, should close it. y before x, inline start and
+//   literal indexes do not reach it.
+// - Tile sheet: the listing keeps row * 2 at sp 44 (never a register), copies it
+//   to r8 per row, tiles at r9, 15 at r11, one 15 rebuilt in the body, and
+//   computes y + a inside the b loop. Tried: tiles and mask = 15 as set-once
+//   locals with k a label loop and y += 2 (gap 57, differ 643: PRE hoists y + a,
+//   y takes r9 and c spills to sp 8, so it is left out); row * 2 inline stops
+//   the hoist, but the giv is "not worth while" (lifetime 1, 34 vs 42) and the
+//   frame falls to 288; y = row; y *= 2 and a copy local both fold away. While
+//   sp 44 is missing, the hoisted place addresses sit at 44 to 52, not 48 to 56,
+//   and y sits at sp 56.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -63,7 +72,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -99,8 +108,8 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
@@ -137,9 +146,10 @@ struct ResourceTableEntry {
 
 struct FloraObject {
   u8 unk0[8];
-  u32 tile : 10;
-  u32 flags : 2;
-  u32 unk08 : 20;
+  u16 tile : 10;
+  u16 flags : 2;
+  u16 unk08 : 4;
+  u16 unk0a;
   u8 unk0c[4];
   u8 resource;
 };
@@ -201,7 +211,7 @@ void Func_08179e6c(void);
 void Func_0813baec(void);
 void Func_0814cca8(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
-void Resource_DecodeType01(const void *source, void *destination);
+s32 Resource_DecodeType01(const void *source, void *destination);
 void Palette_LoadBasicObjColors(void);
 void Graphics_LoadGreyRamp(void);
 void Func_0815f0a0(s32 palette);
@@ -245,6 +255,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   void *verts;
   struct EffectStep *p;
   u8 *cells;
+  u16 *phase;
   u8 *source;
   struct EffectPosition out;
   struct EffectPosition pos;
@@ -285,11 +296,11 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       e += 32;
       Resource_DecodeType01(e, source);
       cells = source;
-      for (i = 0; i != 15; i++) {
+      for (i = 0; i != 15; i++, cells += 128) {
         struct FloraObject *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
         obj->flags = 2;
-        Iwram_CopyWords((void *)OBJ_TILES(obj), cells + i * 128, 128);
+        Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 128);
         w->tiles[i] = ((struct FloraObject *)work->objects[12 + i])->tile;
       }
       for (i = 0; i != 17; i++) {
@@ -297,10 +308,12 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         work->objects[27 + i] = obj;
         Iwram_CopyWords(obj, work->objects[12], 24);
       }
-      for (i = 0; i != 32; i++) {
-        Data_0201401e[i] = (Random16() % 15) << 8;
+      i = 0;
+      phase = Data_0201401e;
+      for (; i != 32; i++, phase++) {
+        *phase = (Random16() % 15) << 8;
         ((struct FloraObject *)work->objects[12 + i])->tile =
-            w->tiles[Data_02014002[14 + i] >> 8];
+            w->tiles[*phase / 256];
       }
       e = Resource_GetTableEntry((s32)&ResourceId_Data098);
       e += 480;
@@ -326,7 +339,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     u8 *dst = sprites + (i * 8 + i) * 2;
 
     for (j = 0; j != 18; j++) {
-      s32 v = *(source + gData_08197410[size - 1] + j);
+      s32 v = source[gData_08197410[size - 1] + j];
 
       if (v > 0) {
         v = 63 - i * 7;
@@ -344,10 +357,10 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   REG_BG2X = 0;
   posX = 128;
   posY = 44;
-  spin = 512;
   angle = 0;
-  grow = 0;
+  spin = 512;
   spread = 0;
+  grow = 0;
   for (i = 0; i != 32; i++) {
     w->x[i] = (i % 8 << 5) + 256;
     w->y[i] = i / 8 * 22 + 128;
@@ -388,7 +401,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       s32 k = Random16() & 3;
       s32 n = Data_08199421[k] * 2;
 
-      Func_0818caa8(Data_08199426[k] + source, 44, 78, n);
+      Func_0818caa8(source + Data_08199426[k], 44, 78, n);
     }
     u = frame - 112;
     if (u <= 31) {
@@ -447,20 +460,20 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         dx = 1;
       }
       if (m == 3) {
-        dy = -1;
         dx = 2;
+        dy = -1;
       }
       if (m == 4) {
-        dy = -1;
         dx = 2;
+        dy = -1;
       }
       if (m == 5) {
-        dy = -1;
         dx = 2;
+        dy = -1;
       }
       if (m == 0) {
-        dy = 0;
         dx = 0;
+        dy = 0;
       }
       if ((frame & 3) == 0) {
         gBgScroll[1].y = 30;
@@ -621,16 +634,16 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
 
           w->x[i] = ((Random16() & 7) << 16) + 0xa80000;
           w->y[i] = ((Random16() & 7) << 16) + 0x5c0000;
-          w->vx[i] = s * Trig_Sin(a) / 256;
-          w->vy[i] = s * Trig_Cos(a) / 256;
+          w->vx[i] = Trig_Sin(a) * s / 256;
+          w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame == 252) {
           u32 a = Random16() & 0xffff;
           s32 s = ((Random16() & 255) << 1) + 256;
 
           w->x[i] = ((Random16() & 7) << 16) + 0x5c0000;
           w->y[i] = ((Random16() & 7) << 16) + 0x680000;
-          w->vx[i] = s * Trig_Sin(a) / 256;
-          w->vy[i] = s * Trig_Cos(a) / 256;
+          w->vx[i] = Trig_Sin(a) * s / 256;
+          w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame > 111) {
           w->x[i] += w->vx[i];
           w->y[i] += w->vy[i];
@@ -664,8 +677,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     model = Render_AllocateModelList(1);
     texture.logWidth = 7;
     texture.logHeight = 7;
-    model->kind = 7;
     texture.pixels = work->sheet;
+    model->kind = 7;
     model->texture = &texture;
     model->mesh = gData_08199364;
     model->vertices = verts;
@@ -728,11 +741,12 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       BattleEffect_LoadBlitter(SLOT_ALT, 3);
       draw[1] = Ram_HeapSlots->unkb8[1];
       for (i = 0; i != 32; i++) {
-        s32 q = i / 4;
+        s32 a = (i / 4) << 13;
         s32 m = i % 4;
-        s32 a = q << 13;
-        s32 b = grow * m;
-        s32 rr = r + spread * m / 30;
+        s32 b = m * grow;
+        s32 rr = r + m * spread / 30;
+        s32 x;
+        s32 y;
 
         size = 7;
         for (j = 0; j != 4; j++) {
@@ -749,13 +763,15 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
             }
           }
         }
-        pos.x = rr * Trig_Sin(a + b) >> 16;
-        pos.y = rr * Trig_Cos(a + b) >> 16;
+        pos.x = Trig_Sin(a + b) * rr >> 16;
+        pos.y = Trig_Cos(a + b) * rr >> 16;
         pos.depth = 0;
         EffectPosition_ProjectPoint(&pos, &out);
         out.x >>= 1;
-        draw[1](canvas, sprites + gData_08197410[size - 1], out.x + 48 - size / 2,
-              out.y + 92 - size, size, size * 2);
+        x = out.x + 48;
+        y = out.y + 92;
+        draw[1](canvas, sprites + gData_08197410[size - 1], x - size / 2,
+              y - size, size, size * 2);
       }
       HeapSlot_Release(SLOT_ALT);
     }
@@ -798,8 +814,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       oy1 = 92 - sy;
       oy2 = 88 - sy;
       for (i = 0; i != 128; i++) {
-        pos2.x = inner * Trig_Sin(i << 9) >> 16;
-        pos2.y = inner * Trig_Cos(i << 9) >> 16;
+        pos2.x = Trig_Sin(i << 9) * inner >> 16;
+        pos2.y = Trig_Cos(i << 9) * inner >> 16;
         pos2.depth = 0;
         EffectPosition_ProjectPoint(&pos2, &out2);
         out2.x >>= 1;
@@ -825,8 +841,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         dot[0] = c;
         dot[1] = c;
         for (i = 0; i != 128; i++) {
-          pos3.x = inner * Trig_Sin(i << 9) >> 16;
-          pos3.y = inner * Trig_Cos(i << 9) >> 16;
+          pos3.x = Trig_Sin(i << 9) * inner >> 16;
+          pos3.y = Trig_Cos(i << 9) * inner >> 16;
           pos3.depth = 0;
           EffectPosition_ProjectPoint(&pos3, &out3);
           out3.x >>= 1;

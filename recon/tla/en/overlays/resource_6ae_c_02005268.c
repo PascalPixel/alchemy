@@ -1,29 +1,39 @@
-// Draft, differ 76 of 174, skeleton gap 27 (tla-en, 2026-11-01)
+// Draft, differ 66 of 174, skeleton gap 24 (tla-en, 2026-11-01)
 // The update hook Func_020053e4 installs: animates the object every other
 // frame, starts one of two rising sprite pairs every 16 frames (sound 0x256),
 // and in mode 1 frees itself once both have passed 31.
 // Left: allocation only, and everything follows from it. The listing has
 // object r7, the unka0 cursor r6, sprite r5, work r8, j r10, z r9, i r11, with
 // x, sine and the i * 80 giv on the stack (sp+8, sp+4, sp+0). This draft has
-// work and i on the stack instead, sine in r8 and x in r11; the priorities are
-// sine .51, x .33, work .23, i .12. Already right: frame size 24, the
-// reversed loop, the reduced givs, and r5, r6, r7, r9, r10.
-// What the listing needs: x and sine must lose to work and i. z and x read
-// alike yet z keeps a register, so x and sine are not plain equals of z.
-// Tried: x and sine as struct { s32, s32 } (a DImode pseudo; right slots, but
-// 17 refs take r6:r7 ahead of the cursor; refs under 16 would flip it, and a
-// single sine read or a copied store did not lower them); s32 values[2]
-// (promoted to DImode too); s32 values[3] holding the giv, with for and goto
-// inner loops (104 at best, hoists a frame base); an aggregate holding sine, x
-// and position (185); volatile x and sine (152); height as a pointer biv and
-// a goto outer loop (PRE of +160 into the arms); declaration orders and inner
-// scopes (no change); j = 0 at the top of the outer loop (78).
-// Forms that earned their keep: bit view of the counter keeps its second ldrb
-// (CSE otherwise merges it); j = 0 above the pointer set lowers j below object
-// (135 to 76), though the listing sets j after the call, so this may stand in
-// for the real cause of the same mismatch; one pointer for position and sprite
-// stops loop.c hoisting add rN, sp (158 without it). That shared variable is
-// `temporary` under S2 and needs its tag if this form is adopted.
+// sine r8, j r10, z r9, x r11, and work and i on the stack.
+// Priorities here (.lreg, floor_log2(refs) * refs / live): sine .51, j .48,
+// z .35, x .33, work .23, i .12. No plain scalar order gives the listing, which
+// needs work above j and z and i above x and sine. So two separate questions:
+// 1. Why x and sine lose. Best lead: struct { s32 sine; s32 x; } v, a DImode
+// pseudo. Partial sets keep it live for 118 insns, and Thumb allows DImode
+// only below r7 (HARD_REGNO_MODE_OK), so it goes to the stack once the cursor
+// holds r6. That needs it after the cursor (.737), so refs 14 or fewer; it has
+// 17 (each partial set 4, three reads 3 each), and takes r6:r7 (differ 171).
+// Dropping one sine read, as a diagnostic with unk18 stored 0, gives every
+// slot, r5 to r7, i r11 and a skeleton gap of 8. No C form found drops that
+// read: first-pass CSE puts the subreg back through a temporary or
+// sprite->unk18 = sprite->unk14. The pair's meaning is also unexplained.
+// 2. Why work beats j and z. Even with the pair out, the order is j r8, z r10,
+// work r9. work is 9 refs over about 118 insns, and every ref is in the final
+// code; j cannot fall below .48 (see next note). This one has no lead.
+// Forms that earned their keep: j = 0 before the Func_0200579c call. j has 14
+// refs, so crossing only 3 calls makes it caller-save profitable and it takes
+// r4 (differ 133); crossing 4 it does not, and sched2 moves the set below the
+// bl. z stored before x (72 to 66). Bit view of the counter keeps its second
+// ldrb (85 without). One pointer for position and sprite stops loop.c hoisting
+// add rN, sp (158 without it); that shared variable is `temporary` under S2 and
+// needs its tag if this form is adopted.
+// Tried: a 12-byte memory struct for the giv, sine and x (153; hoists a frame
+// base, as s32 values[3] did at 104); work->sprites[i * 2 + j] as the inner
+// pointer (161) or spelled at each use (207); volatile x and sine (152); height
+// as a pointer biv with a goto outer loop; declaration orders and inner scopes;
+// do-while outer loop; j = 0 at the top of the outer loop (78) or after the
+// position stores (137).
 #include "types.h"
 #include "actor.h"
 #include "system/vector3.h"
@@ -100,8 +110,8 @@ void Func_02005268(struct Actor *object) {
         z = ((struct Vector3 *)sprite)->z;
         sprite = &work->sprites[i * 2];
         for (; j < 2; j++) {
-          sprite->unk0c = x;
           sprite->unk10 = z;
+          sprite->unk0c = x;
           sprite->unk14 = sprite->unk18 = sine;
           if (j == 0) {
             sprite->unk1e = Func_020057bc(object) - 1;

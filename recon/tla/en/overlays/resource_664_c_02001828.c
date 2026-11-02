@@ -1,4 +1,4 @@
-// Draft, differ 394 of 1527, skeleton gap 116 (tla-en, 2026-11-01)
+// Draft, differ 309 of 1527, skeleton gap 37/34 (tla-en, 2026-11-01)
 // Whirlwind inside Air's Rock, overlay 664's larger
 // copy of overlay 663's Func_0200095c: a gust (object type 280) rises from
 // the target (the effect work's object at 0x14) and grows, shedding sparks
@@ -12,47 +12,49 @@
 // moved cells each fourth frame while it throws dust (cue 235, then 298),
 // shrinks and rises away, and for kinds 5 and 6 in Ov664Room4 and 6 shakes
 // the walls open or shut (cue 157, flags 769 and 770).
-// Left: allocation and what follows from it. Skeleton gap 116 is nearly all
-// reordering. This draft closed: the shift as its own statement (hit = ...;
-// hit >>= 8 gives the native's reload copy through hit's stack slot), started
-// merged into i (one pseudo, which loses every register and lands at sp+20,
-// declared before hit at sp+16), the 16.16 one as a local (its pseudo then
-// crosses two calls, so caller-save stops and it takes r10, though the native
-// sets it after Random16Far, not before), gFrameCount as u32.
-// What is left, in order of size:
-// 1. GCSE's PRE merges the second gFrameCount read in the growing and dust
-//    loops (top test, then the join): the load goes to a global pseudo and
-//    `ands` commutes. The native reads again at each join, and has no PRE copy
-//    in the Ov664Room6 dust loops either. Marking only those two reads volatile
-//    measured differ 556 against 612 before the later gains, about 70 here: the
-//    device came out because it does not reach 0. Not stopped by: a one-pass
-//    block round the first test, an unused label in its body, reads through
-//    s32 or a struct.
-// 2. The native's order is steps r9, leader r10, gFrameCount's address r11; the
-//    draft's is address r10, leader r9, steps r11, and reload's rotation then
-//    moves every scratch register after it. That order needs the address below
-//    the leader (refs 6, live 116, against 6, 175). Merging carried into steps
-//    (31 refs, 704 live) falls one ref short of outranking the travel loop's
-//    address: with a probe's extra ref it takes r9, but the leader and address
-//    stay swapped.
-// 3. The growing loop's first movs (#230) before the label: `if (test) { label:
-//    body; if (test) goto label; }` gives the native's cross-jump exactly when
-//    the bottom constant lands in r5, and differ 439 against 402 until then;
-//    keep it in mind once 2 closes. A real while gives the same duplicated test
-//    but hoists the address.
-// 4. The pick-up arms: the native loads -13 into r4 and copies it to r2, with
-//    the drop cell in r5 after the object dies.
-// Compiler lead, out of scope here: PRE absent, hoisting absent, and refs that
-// fit unweighted (the address 3, the 16.16 one 3 so no caller-save, and steps
-// and carried as one variable giving steps > leader > address) would all follow
-// if this one function's native were compiled without gcse, loop.c hoisting or
-// loop-depth weights. Why it would be is unknown, and it is Pascal's question.
+// This round: re-measured under the new options (394 to 374 at once), then fixed
+// a wrong statement (the hit == 6 dust takes its random off z, y stays plain),
+// read the Room 6 dust loops through `at`, a local holding &velocity (no copy
+// into a second pseudo), and dropped Call2 at Func_02005ed4.
+// Left, in order of size:
+// 1. Allocation, nearly all of differ. The native's high registers are effect r8,
+//    leader r10, steps r9, gFrameCount's address r11; here the address takes r10,
+//    leader r9, steps r11, and reload's rotation then moves every scratch register
+//    after it (the pick-up arms' zero, r0 kept or not, the shared `mov r9, r5`
+//    tail, the extra `adds r4, r5, #0` before the z argument). find_reg walks r8,
+//    r10, r9, r11, so the native needs leader > steps > address, and here the
+//    address is 2 * 6 / 116 = 0.103 against leader 2 * 6 / 175 and steps
+//    3 * 9 / 440. Its 116 is already doubled for the REG_EQUIV. Weighted refs cannot
+//    do it; unweighted (address 3) they fit. Overlay 663's Func_0200095c has the
+//    same finding and needs a dead second entry to get it. Whether loop depth
+//    weighs in these loops is a compiler question, out of scope. Merging carried
+//    into steps ranks steps high enough but is one local for two values.
+// 2. Room 6 dust loops: velocity's address is r6 and dust's r7, the native the
+//    other way round; refs 10 / 51 against 5 / 32. Same cause as 1.
+// 3. PRE on the second gFrameCount read in the growing and dust loops: the native
+//    reads again at the join. Cause found: CSE1's skip-blocks path merges the
+//    address, so GCSE sees one mem expression. A label still alive at CSE1 in the
+//    skipped block stops it: `{ s32 k = 0; if (k) wait(1); }` in the spark block
+//    gave the native's `bne.n +118` and load, but it is dead code and differ 365;
+//    no plain form found, and an inline around Random16Far changes nothing.
+//    gFrameCount volatile (The Broken Seal's declaration) fixes these and breaks
+//    the travel loop, where the native reuses the test's read in Math_Cosine's
+//    argument: 367 against 374. Ram_FrameCount at any site is the same or worse.
+// 4. The growing loop's first movs (#230) before the branch: the `if (test) {
+//    label: body; if (test) goto label; }` form gave 361 against 312, because the
+//    bottom constant lands in r0, not r5. A real while hoists the address (408).
+// 5. The native's -13 in r4 copied to r2 in all three pick-up arms; the draft has
+//    no such copy, which is the 3 instructions it is short of the listing.
 // Kept: the cell and the step are two-word structs: a two-word pseudo gets no
 // register, which is why their fields live at sp+24 and sp+32 and their dead
-// stores stay. The three loops that open with a branch to their test are label
-// loops: as while loops, loop.c hoists gFrameCount's address and the masks.
-// Tried without gain: carried merged into steps (447 against 439), x and z as
-// function-scope scalars, the cell stores swapped or moved up.
+// stores stay. hit, shifted as its own statement, gives the native's reload copy
+// through its stack slot; started merged into i is one pseudo at sp+20. The three
+// loops that open with a branch to their test are label loops. The other Call
+// forwards are needed: direct calls at Func_02005dcc 625, Func_02005d9c 443,
+// Func_02005dac 370, all of them 698.
+// Tried without gain: the pick-up statements in other orders (311 to 351), x and z
+// shifted in the other order, the z argument from the locals, `- 0x10000` for the
+// pooled constants, `at` set before the first store (318) or the second (333).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -139,7 +141,7 @@ void Func_02001828(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u8 *effect = (u8 *)Ram_HeapSlots->effectWork;
   struct Actor *gust, *spark, *object;
-  struct Vector3 velocity;
+  struct Vector3 velocity, *at;
   struct EffectOptions leaves, dust;
   struct Cell dir, cell;
   s32 i, hit = 0, steps = 0, carried, one;
@@ -153,7 +155,7 @@ void Func_02001828(void) {
   Actor_SetSingleChildFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
-  gust->motionFlags = (u8)hit;
+  gust->motionFlags = hit;
   ((struct FieldSprite *)gust->animation)->priority =
       ((struct FieldSprite *)TARGET(effect)->animation)->priority;
   Func_02005d8c(gust, TARGET(effect)->x, TARGET(effect)->y,
@@ -231,7 +233,7 @@ grow:
   cell.x = x;
   cell.z = z;
   Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
-  Call2(Func_02005ed4, 0x50000, 0x50000);
+  Func_02005ed4(0x50000, 0x50000);
   z <<= 16;
   x <<= 16;
   Camera_MoveWithinMapBounds(x, -1, z, 1);
@@ -417,10 +419,11 @@ shrink:
         velocity.y = Actor_GetById(8)->y;
         velocity.z = Actor_GetById(8)->z + 0x80000;
         Actor_SetSpritePriority(8, 2);
+        at = &velocity;
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          Func_020002f4(velocity.x + ((Random16Far() & 15) << 16),
-                        velocity.y + ((Random16Far() & 31) << 16), velocity.z,
+          Func_020002f4(at->x + ((Random16Far() & 15) << 16),
+                        at->y + ((Random16Far() & 31) << 16), at->z,
                         0, 0, -0x8000, EFFECT_USE_PRIORITY, &dust);
         }
         wait(30);
@@ -442,10 +445,11 @@ shrink:
         velocity.x = Actor_GetById(8)->x + 0xfff80000;
         velocity.y = Actor_GetById(8)->y;
         velocity.z = Actor_GetById(8)->z;
+        at = &velocity;
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          Func_020002f4(velocity.x + ((Random16Far() & 15) << 16),
-                        velocity.y + ((Random16Far() & 31) << 16), velocity.z,
+          Func_020002f4(at->x + ((Random16Far() & 15) << 16),
+                        at->y, at->z - ((Random16Far() & 31) << 16),
                         0, 0, -0x8000, EFFECT_USE_PRIORITY, &dust);
         }
         wait(20);

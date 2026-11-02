@@ -7,7 +7,7 @@ SECTIONS
         "*/resource_68f_overlay.o"(.text.x0200807e)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_68f_overlay.o"(.text.x020080b6)
-        "*/resource_68f_overlay.o"(.text.x020080b8)
+        "*/games/tla/src/scene/tundaria_tower/s00b8.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/script0.o"(.text)
         "*/games/tla/src/field/object/wait_until_idle.o"(.text)
         "*/games/tla/src/field/map/cell_get.o"(.text)

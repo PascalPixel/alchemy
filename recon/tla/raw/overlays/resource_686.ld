@@ -8,7 +8,7 @@ SECTIONS
         "*/games/tla/src/scene/ankohl_ruins/spawn.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_686_overlay.o"(.text.x0200815a)
-        "*/resource_686_overlay.o"(.text.x0200815c)
+        "*/games/tla/src/scene/ankohl_ruins/s015c.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/scene_tables.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/placements.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/exits.o"(.text)

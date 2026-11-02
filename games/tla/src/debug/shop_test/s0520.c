@@ -1,7 +1,3 @@
-// Near miss, differ 32 of 92: the same instructions; in both inventory loops
-// the native keeps the slot index in r5 and the strength-reduced slot offset in
-// r6, this form the other way round. Reusing the index for the stored 1, or a
-// slot pointer, measured worse (58, 54).
 #include "types.h"
 #include "owner_state.h"
 

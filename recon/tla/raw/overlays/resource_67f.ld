@@ -22,7 +22,7 @@ SECTIONS
         "*/resource_67f_overlay.o"(.text.x02008caa)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_67f_overlay.o"(.text.x02008ce2)
-        "*/resource_67f_overlay.o"(.text.x02008ce4)
+        "*/games/tla/src/scene/izumo_ruins/s0ce4.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s0eac.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s0f30.o"(.text)
         "*/resource_67f_overlay.o"(.text.x0200900c)

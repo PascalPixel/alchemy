@@ -1,5 +1,5 @@
 // Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
-#include "trial_road.h"
+#include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 #include "vector3.h"
 
 struct EventWork184 {

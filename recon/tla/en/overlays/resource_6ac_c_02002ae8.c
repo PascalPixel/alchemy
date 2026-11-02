@@ -1,13 +1,99 @@
-// Draft of overlay 6ac's Func_02002ae8, translated from its listing: differ
-// 359 of 362. Left: its shape: 381 instructions against the listing's 362.
+// Draft, differ 373 of 362, skeleton gap 46/51 (tla-en, 2026-11-01)
+// Rewritten from the translated form into structs and plain control flow. What
+// closed: position read directly (the frame address is the pseudo the listing
+// keeps in r7, no pointer local), the state halfword through a member struct
+// (gives movs and its address in r8), the abs-range tests with the >= 0 arm
+// first, FIELD_AT on gMainRoutineWork (keeps its base and offset apart).
+// Left: gcse PRE. The listing rebuilds cellX + widthB - 1, cellX + widthA - 1,
+// cellX - 1 at the outer head and i << 7 at the inner head; here PRE hoists all
+// four (.07.gcse, edges 6-7 and 7-8). That costs a 60-byte frame against 56,
+// and the hoisted pseudos push the frame address out of r7 onto the stack, and
+// the column above effect, so most of the differ is register names.
+// Tried: real for loops (the slots, step order and sp+8 giv look like loop.c,
+// but it reduces x << 20, z << 20 and the cell index, skeleton 56/88 with
+// heads set in the loops, 77/102 inline); either loop alone real (55/65,
+// 65/86); entering at the bottom test (stops PRE, adds a b, 61/61); x set
+// first, x = cellX - 1 with xB = x + widthB (58/57); i * 128; step orders.
+// A copy at the top, x = cellX then x - 1 (skeleton 32/32, differ 326), stops
+// the outer hoist but is a forced temporary, so it is not kept; i << 7 stays
+// hoisted even with it. Call3 at the -1, -1 call is the old draft's device:
+// without it the two -1 share a register. The goto loops are the old draft's.
+// Whether PRE ran at all on the native is a compiler question, out of scope.
 #include "types.h"
 #include "call.h"
+
+struct Vec3 {
+  s32 x, y, z;
+};
+
+struct Unk64 {
+  s16 value;
+  u8 unk02[2];
+};
+
+struct Effect {
+  u8 unk00[6];
+  u16 heading;
+  s32 x, y, z;
+  u8 unk14[4];
+  s32 scaleX;
+  s32 scaleY;
+  u8 unk20[4];
+  s32 unk24[3];
+  u8 unk30[4];
+  s32 unk34;
+  s32 unk38[3];
+  u8 unk44[0x17];
+  u8 unk5b;
+  u8 unk5c[8];
+  struct Unk64 unk64;
+  void (*unk68)();
+  s32 unk6c;
+};
+
+struct Cell {
+  u8 unk00[2];
+  u8 unk02;
+  u8 unk03;
+};
+
+struct Work20 {
+  u8 unk00[328];
+  s32 unk148;
+  s32 unk14c;
+  u8 unk150[32];
+  struct Cell *unk170;
+  u8 unk174[12];
+  s32 unk180;
+  s32 unk184;
+  u8 unk188[32];
+  struct Cell *unk1a8;
+};
+
+struct Heap {
+  u8 unk00[32];
+  struct Work20 *field;
+  u8 unk24[72];
+  u8 *unk6c;
+};
+
+struct Data20 {
+  u8 unk00[4];
+  u16 unk04;
+  u8 unk06[4];
+  u16 unk0a;
+  u8 unk0c[96];
+  struct Effect *effect;
+};
+
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
+#define HEAP ((struct Heap *)0x3000000)
+
 s32 Func_02002870();
 s32 Func_020029f4();
 s32 Func_02003140();
@@ -17,215 +103,134 @@ s32 Func_02003178();
 s32 Func_02003198();
 s32 Func_020032b8();
 s32 GameFlag_Test();
-s32 Actor_GetById();
+struct Effect *Actor_GetById();
 s32 Vector_AddPolarOffsetFar();
 extern u8 gData_020023c4[];
 extern u8 gMainRoutineWork[];
 
-void Func_02002ae8(s32 p0, s32 p1, s32 p2, s32 p3, s32 p4, s32 p5, s32 p6) {
-  s32 sp_[1];
-  s32 spo_[2];
-  s32 v_r6, v_r5, v_r8, v_r3, v_r0, v_r7, v_r11, v_r9, v_r10, v_r2;
-  s32 v_r4, v_r1, t0, t1, t2, t3, t4, t5, t6, t7;
-  s32 t9, t10, t11, t15, t17, t18, t19, t20, t21, t22;
-  s32 t23, t24, t25, t26, t27, t28, t29, t33, t34, t36;
-  s32 t37, t38, t39, t43, t44, t46, t47, t48, t49, t50;
-  s32 t51, t53, t54, t55, t56, t57, t58, t59, t60, t61;
-  s32 t62, t63, t64;
+void Func_02002ae8(struct Effect *effect) {
+  struct Vec3 position;
+  s32 i, j, cellX;
+  struct Cell *cellsA, *cellsB;
+  s32 widthA, widthB;
+  s32 zB;
+  struct Work20 *field;
+  struct Effect *actor;
+  struct Data20 *hold;
+  u8 *work;
+  s32 mode;
+  struct Unk64 *state;
+  s32 flag;
+  s32 x, z, xA, xB, zA;
+  s32 cellZ, depthA;
 
-  t0 = FIELD_AT(0x3000000, s32, 108);
-  t1 = FIELD_AT(p0, s16, 100);
-  v_r3 = t1;
-  v_r8 = (p0 + 100);
-  v_r5 = p0;
-  v_r6 = t0;
-  if (v_r3 == 0)
-    goto L_0200ab10;
-  goto L_0200ad9c;
-L_0200ab10:
-  t2 = Value1((s32 (*)())GameFlag_Test, 0x106);
-  t3 = FIELD_AT(v_r6, s16, 358);
-  v_r0 = t2;
-  if (t3 == 0)
-    goto L_0200ab2a;
-  v_r0 = (v_r0 | 1);
-L_0200ab2a:
-  FIELD_AT(v_r5, u8, 91) = v_r0;
-  t4 = FIELD_AT(v_r5, s32, 8);
-  FIELD_AT(sp_, s32, 36) = t4;
-  t5 = FIELD_AT(v_r5, s32, 12);
-  FIELD_AT(sp_, s32, 40) = t5;
-  t6 = FIELD_AT(v_r5, s32, 16);
-  FIELD_AT(sp_, s32, 44) = t6;
-  t7 = FIELD_AT(v_r5, u16, 6);
-  Call3((void (*)())Vector_AddPolarOffsetFar, 0x80000, t7, ((s32)sp_ + 36));
-  t9 = FIELD_AT(sp_, s32, 36);
-  t10 = FIELD_AT(sp_, s32, 44);
-  t11 = Value3((s32 (*)())Func_02003168, 0, t9, t10);
-  v_r7 = ((s32)sp_ + 36);
-  if (t11 != 7)
-    goto L_0200aba0;
-  FIELD_AT(v_r5, s32, 64) = 0x80000000;
-  FIELD_AT(v_r5, s32, 60) = 0x80000000;
-  FIELD_AT(v_r5, s32, 56) = 0x80000000;
-  FIELD_AT(v_r5, s32, 52) = 0x4000;
-  *(u16 *)v_r8 = 1;
-  Call1((void (*)())Func_020032b8, 145);
-  Call3((void (*)())Func_02003198, 0x50000, 0x50000, 0x10000);
-  Call3((void (*)())Func_02003198, -1, -1, 0xe666);
-  t15 = FIELD_AT(v_r5, s32, 104);
-  v_r3 = t15;
-  if (v_r3 == 0)
-    goto L_0200aba0;
-  ((s32 (*)())v_r3)(v_r5);
-L_0200aba0:
-  t17 = FIELD_AT(0x3000000, s32, 32);
-  t18 = FIELD_AT(v_r5, s32, 8);
-  t19 = FIELD_AT(v_r5, s32, 16);
-  p4 = (t18 >> 20);
-  t20 = FIELD_AT(t17, s32, 368);
-  FIELD_AT(sp_, s32, 20) = (t20 + ((p4 + ((t19 >> 20) << 7)) << 2));
-  t21 = FIELD_AT(t17, s32, 424);
-  FIELD_AT(sp_, s32, 16) = (t21 + ((p4 + ((t19 >> 20) << 7)) << 2));
-  t22 = FIELD_AT(t17, s32, 328);
-  FIELD_AT(sp_, s32, 12) = (t22 >> 20);
-  t23 = FIELD_AT(t17, s32, 332);
-  t24 = FIELD_AT(t17, s32, 384);
-  FIELD_AT(sp_, s32, 8) = (t24 >> 20);
-  t25 = FIELD_AT(t17, s32, 388);
-  *(s32 *)sp_ = (((t19 >> 20) + (t25 >> 20)) - 2);
-  p6 = -1;
-  v_r11 = (((t19 >> 20) + (t23 >> 20)) - 1);
-  v_r8 = ((t19 >> 20) - 1);
-L_0200ac0c:
-  t26 = FIELD_AT(sp_, s32, 8);
-  t27 = FIELD_AT(sp_, s32, 12);
-  p5 = -1;
-  v_r10 = ((p4 + t27) - 1);
-  v_r6 = (p4 - 1);
-  v_r9 = ((p4 + t26) - 1);
-L_0200ac28:
-  t28 = FIELD_AT(sp_, s32, 20);
-  FIELD_AT(sp_, s32, 4) = (((p6 << 7) + p5) << 2);
-  t29 = FIELD_AT(((((p6 << 7) + p5) << 2) + t28), u8, 2);
-  v_r2 = ((((p6 << 7) + p5) << 2) + t28);
-  if (t29 != 77)
-    goto L_0200ac88;
-  FIELD_AT(v_r2, u8, 2) = 0;
-  Call6((void (*)())Func_02003178, 64, 64, 1, 1, v_r10, v_r11);
-  Call6((void (*)())Func_02003170, 64, 64, 1, 1, v_r6, v_r8);
-  Call1((void (*)())Func_020032b8, 0x23d);
-  t33 = FIELD_AT(v_r5, s32, 12);
-  t34 = FIELD_AT(v_r5, u16, 6);
-  Call4((void (*)())Func_020029f4, ((v_r6 << 20) + 0x80000), t33,
-        ((v_r8 << 20) + 0x80000), t34);
-L_0200ac88:
-  t36 = FIELD_AT(sp_, s32, 4);
-  t37 = FIELD_AT(sp_, s32, 16);
-  t38 = FIELD_AT((t36 + t37), u8, 2);
-  v_r2 = (t36 + t37);
-  if (t38 != 77)
-    goto L_0200acdc;
-  FIELD_AT(v_r2, u8, 2) = 0;
-  t39 = *(s32 *)sp_;
-  Call6((void (*)())Func_02003178, 64, 64, 1, 2, v_r9, t39);
-  Call6((void (*)())Func_02003170, 64, 64, 1, 1, v_r6, v_r8);
-  Call1((void (*)())Func_020032b8, 0x23c);
-  t43 = FIELD_AT(v_r5, s32, 12);
-  t44 = FIELD_AT(v_r5, u16, 6);
-  Func_020029f4(((v_r6 << 20) + 0x80000), t43, ((v_r8 << 20) + 0x80000), t44);
-L_0200acdc:
-  p5 = (p5 + 1);
-  v_r4 = 1;
-  v_r10 = (v_r10 + 1);
-  v_r6 = (v_r6 + 1);
-  v_r9 = (v_r9 + 1);
-  if ((p5 + 1) <= v_r4)
-    goto L_0200ac28;
-  t46 = *(s32 *)sp_;
-  *(s32 *)sp_ = (t46 + 1);
-  p6 = (p6 + 1);
-  v_r11 = (v_r11 + v_r4);
-  v_r8 = (v_r8 + v_r4);
-  if ((p6 + 1) <= 1)
-    goto L_0200ac0c;
-  t47 = FIELD_AT(v_r5, s32, 24);
-  v_r3 = t47;
-  if (v_r3 >= 0x10000)
-    goto L_0200ad1a;
-  FIELD_AT(v_r5, s32, 24) = (v_r3 + 0x1000);
-  t48 = FIELD_AT(v_r5, s32, 28);
-  FIELD_AT(v_r5, s32, 28) = (t48 + 0x1000);
-L_0200ad1a:
-  t49 = *(s32 *)v_r7;
-  t50 = FIELD_AT(v_r7, s32, 4);
-  t51 = FIELD_AT(v_r7, s32, 8);
-  Call4((void (*)())Func_02003140, v_r5, t49, t50, t51);
-  t53 = FIELD_AT(0x3000000, s32, 108);
-  t54 = FIELD_AT((s32)gMainRoutineWork, s32, 532);
-  t55 = Value1((s32 (*)())Actor_GetById, t54);
-  t56 = FIELD_AT(v_r5, s32, 8);
-  t57 = FIELD_AT(t55, s32, 8);
-  v_r2 = (t56 - t57);
-  v_r7 = t53;
-  v_r6 = ((s32)gData_020023c4 + 0x188);
-  v_r0 = t55;
-  v_r1 = t56;
-  v_r3 = t57;
-  if (v_r2 < 0)
-    goto L_0200ad50;
-  if (v_r2 < 0x140000)
-    goto L_0200ad5a;
-  goto L_0200add0;
-L_0200ad50:
-  if ((v_r3 - v_r1) >= 0x140000)
-    goto L_0200add0;
-L_0200ad5a:
-  t58 = FIELD_AT(v_r5, s32, 12);
-  t59 = FIELD_AT(v_r0, s32, 12);
-  if ((u32)((t58 - t59) + 0x7ffff) > (u32)0x1ffffe)
-    goto L_0200add0;
-  t60 = FIELD_AT(v_r5, s32, 16);
-  t61 = FIELD_AT(v_r0, s32, 16);
-  v_r2 = (t60 - t61);
-  v_r3 = t60;
-  v_r0 = t61;
-  if (v_r2 < 0)
-    goto L_0200ad7e;
-  if (v_r2 < 0x140000)
-    goto L_0200ad88;
-  goto L_0200add0;
-L_0200ad7e:
-  if ((v_r0 - v_r3) >= 0x140000)
-    goto L_0200add0;
-L_0200ad88:
-  FIELD_AT(v_r6, u16, 4) = 2;
-  t62 = FIELD_AT(v_r6, u16, 10);
-  FIELD_AT(v_r6, s32, 108) = v_r5;
-  FIELD_AT(v_r7, u16, 340) = (t62 + 2);
-  goto L_0200add0;
-L_0200ad9c:
-  if (v_r3 != 1)
-    goto L_0200add0;
-  FIELD_AT(v_r5, u8, 91) = 0;
-  t63 = FIELD_AT(v_r5, s32, 24);
-  v_r3 = t63;
-  v_r2 = 0;
-  if (v_r3 <= v_r2)
-    goto L_0200adc2;
-  FIELD_AT(v_r5, s32, 24) = (v_r3 - 0x1000);
-  t64 = FIELD_AT(v_r5, s32, 28);
-  FIELD_AT(v_r5, s32, 28) = (t64 - 0x1000);
-  Call1((void (*)())Func_02002870, v_r5);
-  goto L_0200add0;
-L_0200adc2:
-  FIELD_AT(v_r5, s32, 16) = v_r2;
-  FIELD_AT(v_r5, s32, 12) = v_r2;
-  FIELD_AT(v_r5, s32, 8) = v_r2;
-  FIELD_AT(v_r5, s32, 44) = v_r2;
-  FIELD_AT(v_r5, s32, 40) = v_r2;
-  FIELD_AT(v_r5, s32, 36) = v_r2;
-  FIELD_AT(v_r5, s32, 108) = v_r2;
-L_0200add0:
-  return;
+  work = HEAP->unk6c;
+  state = &effect->unk64;
+  mode = state->value;
+  if (mode == 0) {
+    flag = GameFlag_Test(0x106);
+    if (*(s16 *)(work + 358) != 0)
+      flag |= 1;
+    effect->unk5b = flag;
+    position.x = effect->x;
+    position.y = effect->y;
+    position.z = effect->z;
+    Vector_AddPolarOffsetFar(0x80000, effect->heading, &position);
+    if (Func_02003168(0, position.x, position.z) == 7) {
+      effect->unk38[2] = 0x80000000;
+      effect->unk38[1] = 0x80000000;
+      effect->unk38[0] = 0x80000000;
+      effect->unk34 = 0x4000;
+      state->value = 1;
+      Func_020032b8(145);
+      Func_02003198(0x50000, 0x50000, 0x10000);
+      Call3((void (*)())Func_02003198, -1, -1, 0xe666);
+      if (effect->unk68 != 0)
+        effect->unk68(effect);
+    }
+    field = HEAP->field;
+    cellX = effect->x >> 20;
+    cellZ = effect->z >> 20;
+    cellsA = field->unk170 + cellX + (cellZ << 7);
+    cellsB = field->unk1a8 + cellX + (cellZ << 7);
+    widthA = field->unk148 >> 20;
+    depthA = field->unk14c;
+    widthB = field->unk180 >> 20;
+    zB = cellZ + (field->unk184 >> 20) - 2;
+    i = -1;
+    z = cellZ - 1;
+    zA = cellZ + (depthA >> 20) - 1;
+  outer:
+    xB = cellX + widthB - 1;
+    j = -1;
+    xA = cellX + widthA - 1;
+    x = cellX - 1;
+  inner:
+    if (cellsA[(i << 7) + j].unk02 == 77) {
+      cellsA[(i << 7) + j].unk02 = 0;
+      Func_02003178(64, 64, 1, 1, xA, zA);
+      Func_02003170(64, 64, 1, 1, x, z);
+      Func_020032b8(0x23d);
+      Func_020029f4((x << 20) + 0x80000, effect->y, (z << 20) + 0x80000,
+                    effect->heading);
+    }
+    if (cellsB[(i << 7) + j].unk02 == 77) {
+      cellsB[(i << 7) + j].unk02 = 0;
+      Func_02003178(64, 64, 1, 2, xB, zB);
+      Func_02003170(64, 64, 1, 1, x, z);
+      Func_020032b8(0x23c);
+      Func_020029f4((x << 20) + 0x80000, effect->y, (z << 20) + 0x80000,
+                    effect->heading);
+    }
+    j++;
+    xB++;
+    x++;
+    xA++;
+    if (j <= 1)
+      goto inner;
+    zB++;
+    i++;
+    z++;
+    zA++;
+    if (i <= 1)
+      goto outer;
+    if (effect->scaleX < 0x10000) {
+      effect->scaleX += 0x1000;
+      effect->scaleY += 0x1000;
+    }
+    Func_02003140(effect, position.x, position.y, position.z);
+    work = HEAP->unk6c;
+    hold = (struct Data20 *)(gData_020023c4 + 0x188);
+    actor = Actor_GetById(FIELD_AT(gMainRoutineWork, s32, 532));
+    if (effect->x - actor->x >= 0) {
+      if (effect->x - actor->x >= 0x140000)
+        return;
+    } else if (actor->x - effect->x >= 0x140000)
+      return;
+    if ((u32)(effect->y - actor->y + 0x7ffff) > 0x1ffffe)
+      return;
+    if (effect->z - actor->z >= 0) {
+      if (effect->z - actor->z >= 0x140000)
+        return;
+    } else if (actor->z - effect->z >= 0x140000)
+      return;
+    hold->unk04 = 2;
+    hold->effect = effect;
+    *(u16 *)(work + 340) = hold->unk0a + 2;
+  } else if (mode == 1) {
+    effect->unk5b = 0;
+    if (effect->scaleX > 0) {
+      effect->scaleX += -0x1000;
+      effect->scaleY += -0x1000;
+      Func_02002870(effect);
+    } else {
+      effect->z = 0;
+      effect->y = 0;
+      effect->x = 0;
+      effect->unk24[2] = 0;
+      effect->unk24[1] = 0;
+      effect->unk24[0] = 0;
+      effect->unk6c = 0;
+    }
+  }
 }

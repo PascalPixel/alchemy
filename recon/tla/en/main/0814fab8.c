@@ -1,4 +1,4 @@
-// Draft, differ 172 of 1146, skeleton gap 50 (tla-en, 2026-11-01)
+// Draft, differ 120 of 1146, skeleton gap 28 (tla-en, 2026-11-01)
 // Func_0814fab8 is the body behind the twelve wrappers of
 // stat_boost.c (17 effect kinds).
 
@@ -26,31 +26,38 @@
 // every site (gap 75 to 57).
 
 // Left, by size:
-// - the Djinni's two builds. The native reloads flags and recomputes flags ^
-// COMPOSITE_FLIP_X before each, with a fresh 4 in r4, and sinks y's -24 past
-// both calls. Plain calls let the compiler share the xor in r5 (differ 159,
-// gap 63, the best allocation seen); the one-pass block on the first build
-// stops that but keeps the 4 in r5 across the call, and it loses the reuse of
-// the prelude value in r8 as mode 1 (draft 1142). TBS's plain source shares
-// the xor, so something here separates them that is neither a label nor a
-// loop note: the native mixes the fetch with the next call's arguments, so no
-// scheduling barrier lies between them, and -24 sinks past both calls in one
-// block. A second test of a local prelude changed nothing.
-// - the lights' pair of builds and the burst keep the one-pass block only
-// for allocation: all sites plain gives differ 633, gap 161, with the same
-// spills but different scratch registers. Whatever raises the same pseudos'
-// weight in the native is still unknown; the PASS macros stand in for it and
-// should go. The sites written plain (mode pictures) match in order.
-// - the last picture site needs the whole load in the block (gap 2 better).
-// - order pairs: start and mode at mode 10, the literal load inside the split
-// 0x05000000 at two palette copies, the addresses set up before the member
-// loop, and the loop tail's reload of member.
+// - the Djinni's two builds, most of the difference. The native recomputes
+// flags ^ COMPOSITE_FLIP_X before each build, with the 4 from reload (r4) both
+// times, prelude in r8, y in r7, and y's -24 sinking past both calls. The -24
+// sinking means it belongs in y's initializer, as The Broken Seal writes it,
+// and that gives prelude r8 and y r7 at once; but with plain builds the xor is
+// then shared in r5 (differ 141, gap 26, no block here), and the one-pass
+// block that separates the xors is a scheduling barrier, so -24 cannot sink
+// (differ 183). The native has two xors and no barrier: CSE's block ends
+// between them with no loop note left at sched2. That cut is not found. An
+// empty one-pass between the builds, a CSE-folded repeat of the prelude test
+// and static inline loaders (differ 233, gap 21) do not give it. y -= 24 and
+// the block on the first build stay as the best measured state.
+// - one one-pass around screen.x's scaling at the center. Without a cut there
+// the burst reads screen through the pseudo of &screen, whose lifetime grows
+// until loop.c hoists it (Insn 1911, life 37, savings 5), which moves every
+// spill in the function (differ 629). This one block replaces the blocks the
+// lights, the burst and the last picture needed; only there does it work: a
+// macro at both projections gives 873, and a static inline gives 628.
+// - start > 0 is ble where the native has beq. As start != 0, the zero known
+// in the else arm replaces BLIT_ADDITIVE's 0 (ldr of start for movs #0; differ
+// 144, gap 27). A one-pass around the frame + 53 tint gives 126 with beq, so
+// the true form stops that path; goto forms and braces change nothing.
+// - order pairs left: the literal load inside the split 0x05000000 at two
+// palette copies; reload rotation at center's zeroes and at the mode 4 site's
+// second fetch.
 
-// Tried (2026-10-15 and 2026-11-01): declaration-order sweeps, a counter per
-// loop, flags volatile (916), a static inline loader (774), the entry read at
-// slot bytes (390), per-site sweeps of plain and both block forms with y's -24
-// early or late. y += 64 - frame * 2, (void *)0x05000000, a const palette and
-// swapping start with frame change nothing.
+// Tried (2026-10-15 to 2026-11-02): a one-pass per site over all ten builds
+// (best is the Djinni's first alone), declaration-order sweeps, a counter per
+// loop, flags volatile (916), the entry read at slot bytes (390), mode = 0
+// after start (128) or the fade last (153), center's zeroes chained.
+// y += 64 - frame * 2, (void *)0x05000000, a const palette and swapping start
+// with frame change nothing.
 
 #include "types.h"
 #include "battle_display.h"
@@ -102,18 +109,7 @@ s32 BattleUnit_GetEffectHeightFar(s32 actor);
   Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags, mode);                    \
   out = (DrawRectangle)Ram_HeapSlots->unkb8[1]
 
-// The same with the build alone, or the whole load, in a one-pass block; see
-// the header for why these sites still need them.
-#define LOAD_BLITTER_PASS(out, flags, mode)                                    \
-  do {                                                                         \
-    Func_08196404(BLITTER_SLOT, 7, 7, flags, mode);                            \
-  } while (0);                                                                 \
-  out = (DrawRectangle)Ram_HeapSlots->unk64[1]
-#define LOAD_BLITTER_ALTERNATE_PASS(out, flags, mode)                          \
-  do {                                                                         \
-    Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags, mode);                  \
-  } while (0);                                                                 \
-  out = (DrawRectangle)Ram_HeapSlots->unkb8[1]
+// The whole load in a one-pass block; see the header for why the Djinni needs it.
 #define LOAD_BLITTER_WHOLE_PASS(out, flags, mode)                              \
   do {                                                                         \
     Func_08196404(BLITTER_SLOT, 7, 7, flags, mode);                            \
@@ -214,8 +210,8 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
   // Mode 10 is mode 0 joined at frame 53, with a fade.
   if (mode == 10) {
     work->fadeFrames = 24;
-    start = 53;
     mode = 0;
+    start = 53;
   }
   REG_BG2PA = 0xcc; // 1.25 times as wide
 
@@ -360,17 +356,17 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       point[1] = height;
       point[2] = object->z;
       SceneTransform_ApplyPosition(point);
-      if (start != 0) {
-        if (frame == member * 8 + 53)
+      if (start > 0) {
+ if (frame == member * 8 + 53)
           Func_0814cd48(effect->actors[member], 7, -1, member, 16);
-      } else {
+ } else {
         if (frame == member * 8 + 48)
           Func_0814cd48(effect->actors[member], 7, -1, member, 16);
 
         // The lights turn and close in two pixels a frame.
         if (frame > member * 8) {
-          LOAD_BLITTER_PASS(draw[0], flags, BLIT_MAX);
-          LOAD_BLITTER_ALTERNATE_PASS(draw[1], flags, BLIT_ADDITIVE);
+          LOAD_BLITTER(draw[0], flags, BLIT_MAX);
+          LOAD_BLITTER_ALTERNATE(draw[1], flags, BLIT_ADDITIVE);
           if (mode == 0) {
             SceneTransform_ApplyPitch(-frame << 10);
           } else if (mode == 1) {
@@ -418,13 +414,15 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       center[1] = 0;
       center[2] = 0;
       EffectPosition_ProjectPoint(center, &screen);
-      screen.x = screen.x * 4 / 5 + shift;
+      do {
+        screen.x = screen.x * 4 / 5 + shift;
+      } while (0);
 
       // The burst: from frame 52, six pictures four frames apart.
       if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
         s32 cel = (frame - member * 8 - 52) / 4 % 6;
 
-        LOAD_BLITTER_PASS(draw[0], flags, BLIT_MAX);
+        LOAD_BLITTER(draw[0], flags, BLIT_MAX);
         draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
         HeapSlot_Release(BLITTER_SLOT);
@@ -470,7 +468,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
-          LOAD_BLITTER_WHOLE_PASS(draw[0], flags, BLIT_ADDITIVE);
+          LOAD_BLITTER(draw[0], flags, BLIT_ADDITIVE);
           draw[0](canvas, work->sheet + cel * 1600 + SERIES_B_PICTURE,
                   screen.x - 20, screen.y - 20, 40, 40);
           HeapSlot_Release(BLITTER_SLOT);

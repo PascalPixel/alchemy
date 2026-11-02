@@ -4,7 +4,7 @@
 	.global Func_080f8058
 	.thumb_func
 Func_080f8058:
-	overlay_veneer Func_08104ef8
+	overlay_veneer Menu_CreateOwnerEntryObjects
 	.global Func_080f8060
 	.thumb_func
 Func_080f8060:

@@ -1,83 +1,49 @@
-// Draft, differ 124 of 104: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "call.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Rewritten plain from its listing: every device of the old translation is gone.
+// velocityX is a local set before the spawn call: as an inline argument the
+// spawn left 47 lines differing, because the registers around the call rotate.
+// Not yet checked against the other editions. arg0, arg1 and the halfword at
+// effectWork[13] have no evidence for a name; the Actor_GetById argument, the
+// spawn flags and the shrink step (7936) are read as numbers from the native.
 #include "types.h"
+#include "ram_buffer.h"
+#include "actor.h"
+#include "field_effect.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+struct Actor *Actor_GetById(s32 id);
+u32 Random16Far(void);
+void GameFlag_SetBit(s32 flag);
+void Func_02000338(struct Actor *object);
+void Func_02002fc0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags, struct EffectOptions *options);
 
-s32 Actor_GetById();
-s32 Random16Far();
-s32 Func_020000b8();
-void GameFlag_SetBit();
-void Func_02000338();
-s32 Func_02002fc0();
+void Func_02000a48(s32 arg0, s32 arg1) {
+  struct EffectOptions options;
+  s16 *effectWork = Ram_HeapSlots->effectWork;
+  struct Actor *object = Actor_GetById(effectWork[13]);
+  s32 velocityX;
 
-s32 Func_02000a48(s32 a0, s32 a1, s32 a2, s32 a3) {
-  s32 r6, r10, r9, v0, r7, r0, r5, r8, v1, v2, r4, v3, r3, v4, v5;
-  s32 stack[14];
-
-  r6 = a1;
-  r10 = a0;
-  /* sub (s32)stack, #56 */
-  r9 = FIELD_AT(50331872, s32, 0);
-  v0 = Actor_GetById(*(s16 *)((FIELD_AT(50331872, s32, 0)) + 26));
-  r7 = v0;
-  r0 = v0;
-  if (r6 > 7)
-    goto L_02008adc;
-  r5 = (s32)((u8 *)stack + 16);
-  FIELD_AT(r5, u16, 24) = 0x117;
-  FIELD_AT(r5, s32, 12) = 0x10000;
-  FIELD_AT(r5, s32, 8) = 0x10000;
-  r8 = 0;
-  FIELD_AT(r5, s32, 0) = 0;
-  FIELD_AT(r5, s32, 20) = 0x8000;
-  FIELD_AT(r5, s32, 16) = 0x8000;
-  v1 = Random16Far();
-  FIELD_AT(r5, u16, 32) = (v1 & (15)) << 12;
-  v2 = Random16Far();
-  r4 = 128;
-  r4 = r4 << 13;
-  r4 = r8;
-  stack[0] = r4;
-  stack[1] = r4;
-  r4 = 180;
-  r4 = r4 << 15;
-  v3 = Func_020000b8(FIELD_AT(r7, s32, 8),
-                     ((FIELD_AT(r7, s32, 12)) - (((r6 << 1) + r6) << 16)) + r4,
-                     FIELD_AT(r7, s32, 16), ((15 & v2) - 8) << 13, r4, r4, r4,
-                     r5);
-  r0 = v3;
-  goto L_02008ad4;
-L_02008ad4:
-  FIELD_AT(r7, s32, 28) = (FIELD_AT(r7, s32, 28)) - 7936;
-  r3 = (FIELD_AT(r7, s32, 28)) - 7936;
-L_02008adc:
-  if (r10 == 1) {
-    FIELD_AT(r7, s32, 28) = 0x10000;
-    r4 = 0;
-    GameFlag_SetBit(*(s16 *)((r7 + 100) + r4));
-    v4 = Actor_GetById(*(s16 *)(r9 + 26));
-    Func_02000338();
-    r4 = r10;
-    v5 = Func_02002fc0(67, 23, ((FIELD_AT(r7, s32, 8)) >> 20) + 64,
-                       (FIELD_AT(r7, s32, 16)) >> 20, r4, r4);
-    FIELD_AT(r7, s32, 16) = 0;
-    FIELD_AT(r7, s32, 12) = 0;
-    FIELD_AT(r7, s32, 8) = 0;
-    r0 = v5;
-    r3 = 0;
+  if (arg1 < 8) {
+    options.type = 279;
+    options.startScaleY = 0x10000;
+    options.startScaleX = 0x10000;
+    options.priority = 0;
+    options.targetScaleY = 0x8000;
+    options.targetScaleX = 0x8000;
+    options.rotation = (Random16Far() & 15) << 12;
+    velocityX = ((Random16Far() & 15) - 8) << 13;
+    Func_020000b8(object->x, object->y - ((arg1 * 3) << 16) + 0x100000,
+                  object->z, velocityX, 0, 0, 0x5a0000, &options);
+    object->scaleY -= 7936;
   }
-  /* add (s32)stack, #56 */
-  return r0;
+  if (arg0 == 1) {
+    object->scaleY = 0x10000;
+    GameFlag_SetBit(object->action);
+    Func_02000338(Actor_GetById(effectWork[13]));
+    Func_02002fc0(67, 23, (object->x >> 20) + 64, object->z >> 20, 1, 1);
+    object->z = 0;
+    object->y = 0;
+    object->x = 0;
+  }
 }

@@ -1,4 +1,4 @@
-// Draft, differ 66 of 174, skeleton gap 46 (tla-en, 2026-11-01)
+// Draft, differ 62 of 174, skeleton gap 21 (tla-en, 2026-11-01)
 // The update Func_02003e54 hooks: the object's frame count (byte 0x63) cycles
 // its animation on odd frames; in state 0 (byte 0x62) every 16th frame starts
 // one of the two sparkles with sound 598, alternating; in state 1, once both
@@ -6,18 +6,33 @@
 // rises a pixel a frame for 32 frames above the object, its two sprites pulsing
 // with the sine of its age, the second one a pixel lower and mirrored, drawn
 // just in front of and behind the object.
-// Left is allocation alone: the listing keeps work in r8 and the count of the
-// loop in r11, with x and sine in stack slots; here sine and x hold r8 and r11
-// and work and i spill (pseudo ranks: sine .51, x .33, work .24, i .115).
-// The rest of the shape is settled: `i` counting up is reversed by loop.c into
-// the listing's 1, 0 with its two givs, which is what reloads timers[i] for
-// position[1]; `/ 2` and `% 16` keep the count's reloads; one pointer for the
-// position and the sprite stops loop.c hoisting sp + 12; `j = 0` set this early
-// is what gives j r10. Tried without gain: sine and x as an array, scaleY read
-// from scaleX, reading position[0] in the inner loop, goto-built loops. A
-// do { } while (0) around the block lowers differ to 51 by leaving x, z and j
-// uninitialized on a path, which changes behaviour: rejected, but it says the
-// listing's x, sine and j are ranked as if they lived longer than they do here.
+// Left is allocation alone, and every skeleton line follows from it: the listing
+// keeps work in r8 and the loop's count in r11, with x and sine at sp+8 and
+// sp+4; here sine and x hold r8 and r11 and work and the count spill. Slots go
+// by pseudo number, so x is declared before sine. Ranks here (refs, live):
+// sprite 6.4, timers .75, object .64, sine .51 (8, 47), j .48 (14, 88),
+// z .34, x .33 (5, 30), work .24 (9, 113), count .115 (7, 122), giv .113. The
+// listing needs work, j, z and the count all to beat x and sine, which no
+// ordinary rank of x and sine does: sine would need to live past 200 insns.
+// Compiler changed, so all of this was remeasured on 2026-11-01:
+// - Memory x and sine (s32[2], s32[3], position[5], a five-word struct) hoist the
+//   frame address, frame 32 and differ 160.
+// - struct { s32 sine, x; } is DImode, low registers only, so it would explain
+//   the stack slots with the count in r11, and it does live the whole loop. But
+//   it has 17 refs (partial sets count twice), ranks 1.2 above timers, takes
+//   r6/r7 and pushes object to sl: differ 163. It needs under about 14 refs to
+//   fall behind timers; copying sine to a scale local, scaleY read from scaleX
+//   and chained stores all leave 17. Best lead if a way to fewer refs turns up.
+// - `j = 0` at the `for`, or between x and z where the listing shows it: j
+//   overtakes object (.72), differ 137. Set this early it stays below object.
+// - The one pointer for position and sprite is a reused local (S2 `temporary`):
+//   a separate pointer or plain position[] both hoist sp + 12, differ 158. It
+//   stays until something else keeps that address in the loop.
+// - if-block for the range test 73; `& 15` for `% 16` 66; y term order 70;
+//   sine as a loop-scope initializer, all locals in the loop, any declaration
+//   order: unchanged, 62.
+// A do { } while (0) around the block gave 51 before the compiler change by
+// leaving x, z and j uninitialized on a path, which changes behaviour: rejected.
 #include "types.h"
 #include "actor.h"
 
@@ -56,8 +71,8 @@ void Func_02003cd8(struct Actor *object) {
 
   s32 position[3];
 
-  s32 sine;
   s32 x;
+  s32 sine;
   s32 z;
   s32 i;
   s32 j;

@@ -45,7 +45,7 @@ struct DustWork {
 };
 
 extern const u8 gData_080f38b2[];
-void Func_080d7034(void);
+void FieldEffect_UpdateSparkles(void);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
 void FieldEffect_InitializeSparkles(void) {
@@ -109,7 +109,7 @@ loop:
   p++;
   if (i < 64)
     goto loop;
-  Task_Add(Func_080d7034, TASK_PASS_VBLANK);
+  Task_Add(FieldEffect_UpdateSparkles, TASK_PASS_VBLANK);
 }
 
 void BattleEffect_StartTwelveFrameBlend(void) {

@@ -5,31 +5,36 @@
 // no GCSE PRE anywhere in this function, and here PRE runs.
 // The evidence: (1) the native zero-extends each channel afresh at both compares
 // and at the pack, keeps it sign-extended (lsls/asrs) at its stores; here PRE
-// treats `channel << 16` as partly redundant (gcse dump: 7 substs, edges out of
-// each step), combine drops the asrs, the draft is 19 instructions short and the
-// shorter loop lets loop.c hoist 0xffff, which the native rebuilds in the body.
-// Red's first compare and step lose their extensions in the native only because
-// CSE sees the single-set `color & 31` there; here that compare feeds PRE.
-// (2) The shower's options address is rebuilt in the native's body with no entry
-// jump; PRE hoists it here, so the shower enters at its bottom test (one `b` the
-// native lacks). An `options = &rain` local does not stop it; dropped.
-// This matches the -Os lead in the shared notes (classic GCSE, not PRE). Is that
-// a compiler question for Pascal (K3)? Out of scope here; not tried.
-// Tried against PRE in plain C, all worse: if/else stage variables r1, r2 in both
-// arms (differ 314, moves stay in the else arms), alternating variables copied
-// at each join (278, CSE rewrites the copy back), s16 channels and a shared
-// zero-extension (earlier round, gap 92). Empty asm or one-pass devices cannot
-// kill a register expression, so none were added.
+// treats `channel << 16` as partly redundant, combine drops the asrs, the draft
+// is 19 instructions short and the shorter loop lets loop.c hoist 0xffff, which
+// the native rebuilds in the body. (2) The shower's options address is rebuilt
+// in the native's body with no entry jump; PRE hoists it here, so the shower
+// enters at its bottom test (one `b` the native lacks).
+// Measured 1 November 2026, as a scratch diagnostic only, with the plain line
+// diff of the objects (not the differ count above): this exact C has 205 lines
+// of difference from the listing at the build's options, 187 with -fno-gcse and
+// 47 with -Os, where the fade loop matches but for one add order and what is
+// left is the entry block's registers, `mask` in r1 or r0 for the native's r6,
+// and the shower's entry `b`. So the C is about right and its distance is the
+// options. That is a question for Pascal (K3), out of scope here; no option was
+// changed and none is proposed by this draft.
+// Tried at the build's options, none better. Removing devices: non-volatile
+// fill (228), plain u16 palette pointer (292), direct calls without Call3 (229).
+// Loop forms: top-entered shower (228), for shower (228), for sparks (252), do
+// fade loop (228). Locals: no `mask` (269), one `mask` for the function (261),
+// x and z shared (253), s32 i (223), s32 color (264); red as else-if, which the
+// native's jump over the second compare suggests (225). Pack written
+// r | g << 5 | b << 10: gap 73, differ 263. A `mask` set in each block but
+// shared gives differ 219, gap 79, and is a temporary device (S2), so not kept.
+// Function-scope channels, mask declared first and other pack orders change
+// nothing. Earlier: if/else stage variables (314), s16 channels (gap 92).
 // Forms found: `mask` (one-constant local) gives the native's single #31 in
 // the spark and shower blocks, though it takes r1 where the native has r6; the
 // outer fade loop is goto, which keeps gData_020026c0 in its body as the native
 // does; the palette is a stepped `volatile u16 *` set in that body, since an
-// indexed BG_PLTT_COLOR there loses the strength reduction (222) and the do loop
-// costs 228. RGB(r, g, b) is the native's pack order. With the pack written
-// (g << 5) | (b << 10) | r the gap is 71 but differ 261, as PRE then folds less.
-// Registers: native i r8, palette r10, offset r9, table r11; here the table
-// takes r11's place late. The native's mask 31 is reg:HI, reloaded from the pool.
-// beq+b at the outer branch comes back once the body has the native's length.
+// indexed BG_PLTT_COLOR there loses the strength reduction. RGB(r, g, b) is the
+// native's pack order. Registers: native i r8, palette r10, offset r9, table
+// r11. The native's mask 31 is reg:HI, reloaded from the pool.
 #include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
 #include "main_routine_work.h"
 #include "io_reg.h"
@@ -125,7 +130,7 @@ fade:
   // For 360 frames, spawns an effect every 16 frames, then every 8, then
   // every other frame, and plays sound 164 every 64 frames. As a C loop,
   // loop.c moves the mask, the palette and the options address out of it,
-  // which the native does not (differ 310).
+  // which the native does not (differ 252).
   i = 0;
 sparks:
   if ((i & 63) == 0)
@@ -153,7 +158,7 @@ next:
   if (i != 360)
     goto sparks;
   // Then 16 larger effects, one a frame. As a C loop, loop.c also moves the
-  // mask and the options address out, which the native does not (differ 265).
+  // mask and the options address out, which the native does not (differ 228).
   // Entered at its test so that PRE leaves the address in the body.
   i = 0;
   goto showerTest;

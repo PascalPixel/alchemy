@@ -1,12 +1,23 @@
-// Draft, differ 105 of 87: the backward twin of Func_0802b590 (field/map/
-// edit.c): copies a width by height block of map cells and their shape-grid
-// bytes from (srcX, srcY) to (dstX, dstY), last row and column first so that a
-// block overlapping its destination copies whole. Written in the forward
-// twin's shape, with the column loop as a goto loop (133 with both for loops,
-// where loop.c hoists the column start and the -0x10000 steps into a stack
-// slot and r11). Left: the native's column loop is a real loop whose counter
-// is strength-reduced (col << 16 stepped by 0xffff0000, read from the pool on
-// every pass) while nothing is hoisted out of either loop.
+// Draft, differ 105 of 87, skeleton gap 43 (tla-en, 2026-11-01)
+// The backward twin of Func_0802b590 (field/map/edit.c): copies a width by
+// height block of map cells and their shape-grid bytes from (srcX, srcY) to
+// (dstX, dstY), last row and column first so that a block overlapping its
+// destination copies whole. Written in the forward twin's shape, with the
+// column loop as a goto loop.
+// Left: the native's two for loops are strength-reduced (col << 16 and
+// row << 16 stepped by 0xffff0000) yet nothing is hoisted: width - 1 is rebuilt
+// on every row and 0xffff0000, -512 and -128 are loaded at each use. Plain for
+// loops give that reduction but differ 125, gap 45: the first loop pass moves
+// width - 1 into a stack slot (threshold 28 * savings 2 * lifetime 2 against 38
+// insns), and the second moves the reduced steps into r9 and r11 (28 * 1 * 1
+// against 15 insns in the column loop). Those counts are fixed by the loop's
+// size, so no source form with these insns stays under the threshold.
+// Tried, on the for form: gMapCellBuffer by symbol, col scoped to the row,
+// col set apart, while (--col >= 0) (124), row the same way (124), both (127),
+// a while with col-- in the body, (s16) casts on s32 counters (125), s32
+// counters without them (differ 103, gap 43, but no shifts at all), split
+// pointer sums, &array[] (all 125 unless noted), shapes before cells (143),
+// goto outer loop (133), both goto (111).
 #include "types.h"
 #include "ram_buffer.h"
 

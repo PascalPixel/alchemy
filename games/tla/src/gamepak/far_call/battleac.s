@@ -16,7 +16,7 @@ Func_08118128:
 	.global Func_08118130
 	.thumb_func
 Func_08118130:
-	overlay_veneer Func_08123574
+	overlay_veneer BattleParty_CountStandbyDjinn
 	.global BattleParty_PrepareReserveOwnersFar
 	.thumb_func
 BattleParty_PrepareReserveOwnersFar:

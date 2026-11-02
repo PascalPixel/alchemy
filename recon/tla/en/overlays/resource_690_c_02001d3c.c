@@ -1,4 +1,4 @@
-// Draft, differ 257 of 246, skeleton gap 45 (tla-en, 2026-11-01)
+// Draft, differ 253 of 246, skeleton gap 45 (tla-en, 2026-11-01)
 // Twin of Imil_RunIceSlide, confirmed from the listing: the same ice slide,
 // with heading taken once from the angle rounded to a quarter turn rather than
 // from the keys, the cell behavior 255 test, and a new walk over the 64 script
@@ -6,23 +6,27 @@
 // Closed: the rolled loop. The first exit is a break, so expand_end_loop moves
 // the step and its test to the bottom and entry jumps there; the height test
 // must be a goto, because a second break within 30 insns rolls it down too.
-// Left: the native sets &probe in the outer head (r6) and again after the step
-// (r7), as separate pseudos, with &subject->terrainId set in the head (r11).
-// Here gcse PRE merges every plus sfp -12 into one pseudo set before the loop
-// (see "PRE: redundant insn" in the .07.gcse dump) and hoists the layer too.
-// That long pseudo takes a register, which moves subject to r6, spills the rest
-// and accounts for most of the gap, so register work before this is wasted. The
-// native looks as if PRE did not run on this function, the same shape as the
-// landing-burst family. That is a compiler question (K1 to K3), not pursued.
-// Tried, no gain: for and goto outer loops, p set before the loop (best, kept),
-// at the loop head, after the first call, or only in the slide loop after the
-// step; a pointer copy for a REG_EQUAL note (CSE drops it, and r7 stays live
-// over the object loop, so it is a real pseudo and not reload rematerializing
-// an equivalence); a copy of subject at the head; s32 probe[3]; declaration
-// orders by the spill slots (heading, start, lastX, lastZ, radius from the
-// top); a shared half or zero; no flags local; i <= 63; the if and else split
-// out. No device added: none could reach differ 0 while PRE decides the
-// allocation.
+// Left: the native has &probe in r6 in the outer head and again in r7 after the
+// step, with &subject->terrainId set in the head (r11). Here PRE (see "PRE:
+// redundant insn" in the .07.gcse dump) inserts every plus sfp -12 and the
+// terrain address on edge (0,1), before the outer loop, as one long pseudo. It
+// takes a register, moves subject to r6, spills the rest and accounts for most
+// of the gap, so register work before this is wasted. Removing the old compiler
+// option changed none of this. No C reaches it: the head dominates the loop, so
+// the address is anticipated there and available on the back edge, and nothing
+// breaks that without a branch or set the native lacks.
+// The native's shape is what classic GCSE leaves: the head and step occurrences
+// each have two reaching computations and stay, the one after the object loop
+// has one and becomes r7 carried across it. gcse_main runs classic GCSE only
+// when optimize_size. That is a compiler reading (K1 to K3), not pursued or
+// measured here.
+// Tried, no gain: the devices were already gone; layer and flags locals (same
+// output, removed); probe.x directly instead of p (272); radius inline (265);
+// the twin's x and z from probe (257); assignment in the if; the blocked arm
+// first; action before acceleration (261); 3061 random declaration orders
+// (lastZ before lastX is the only gain, 257 to 253). For and goto outer loops, p
+// at the loop head or only after the step, a copy of subject at the head and
+// s32 probe[3] were tried earlier. No device added.
 #include "../../../../games/tla/src/scene/settlements/local.h"
 
 struct SettlementsProbe {
@@ -49,14 +53,12 @@ void Func_02001d3c(void) {
   s32 heading;
   s32 startBehavior;
   s32 nextBehavior;
-  s32 lastX;
   s32 lastZ;
+  s32 lastX;
   s32 x;
   s32 z;
   s32 radius;
   s32 i;
-  u8 *layer;
-  u8 *flags;
 
   p = &probe;
   subject = ObjectTable_Get(gMainRoutineWork.currentOwner);
@@ -78,13 +80,12 @@ again:
   p->z = z;
   lastX = x;
   lastZ = z;
-  layer = &subject->terrainId;
-  startBehavior = Func_02002028(*layer, x, z);
+  startBehavior = Func_02002028(subject->terrainId, x, z);
   Vector_AddPolarOffsetFar(PIXELS(16), heading, p);
 
-  nextBehavior = Func_02002028(*layer, p->x, p->z);
+  nextBehavior = Func_02002028(subject->terrainId, p->x, p->z);
   if (nextBehavior != 255 &&
-      Map_GetTerrainHeight(*layer, p->x, p->z) - subject->y <= PIXELS(8)) {
+      Map_GetTerrainHeight(subject->terrainId, p->x, p->z) - subject->y <= PIXELS(8)) {
     p->x = lastX;
     p->z = lastZ;
     subject->speedLimit = PIXELS(2);
@@ -104,18 +105,17 @@ again:
 
   for (;;) {
     Vector_AddPolarOffsetFar(PIXELS(16), heading, p);
-    nextBehavior = Func_02002028(*layer, p->x, p->z);
+    nextBehavior = Func_02002028(subject->terrainId, p->x, p->z);
     if (nextBehavior == 255) {
       break;
     }
-    if (Map_GetTerrainHeight(*layer, p->x, p->z) - subject->y > PIXELS(8)) {
+    if (Map_GetTerrainHeight(subject->terrainId, p->x, p->z) - subject->y > PIXELS(8)) {
       goto stopped;
     }
     radius = subject->radius - 2;
     other = Ram_HeapSlots->scriptObjects;
-    flags = &other->collisionFlags;
-    for (i = 0; i < 64; i++, other++, flags += sizeof(*other)) {
-      if (other->script != NULL && (1 & *flags) && other != subject) {
+    for (i = 0; i < 64; i++, other++) {
+      if (other->script != NULL && (1 & other->collisionFlags) && other != subject) {
         if (Func_02002050(&other->x, radius, p, other->radius - 2) >= 0) {
           goto stopped;
         }

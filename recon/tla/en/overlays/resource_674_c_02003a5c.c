@@ -1,39 +1,36 @@
-// Draft, differ 210 of 305, skeleton gap 86 (tla-en, 2026-11-01)
-// Left: the native ends CSE at two points, after Func_02003ffc(239) and after
-// Func_02003e0c. After them it recomputes the owner address (r10, then r5) and
-// rebuilds 0x8000 and 0x1999, and it keeps direction, 0, in r9 and shifts it at
-// run time. Only row (r7) carries across. Here direction folds and the table
-// is reloaded per use in the first half: most of the gap follows from that.
-// Three empty asms reach differ 10, gap 5 + 5, on overlay 668's source (its
-// Func_020044c4 header has them; that source ported here as it stands, names
-// mapped). They came back out because they do not reach differ 0.
-// What is left under them is five moved instructions, and the priorities say
-// why no source order closes them, reading sched2's dump:
-// - Block 0: the native has str r3, [r0, #8], ldr r5, str r1, [sp, #8], lsls
-//   r7. The table load ranks 19 (load cost 2 + 1 for -mthumb-slow-loads, on
-//   the ldrsb at 16), so it must sit at 17 or lower to fall behind the store.
-// - Tail: the native has the push.x and push.z stores before mov r9, r2 and
-//   movs r2, #164. The stores rank by the map load they may alias (+2), the
-//   movs by the same load (+3), so with these insns the movs always leads.
-//   Same RTL and registers give the same ranks, so this is K2's load model
-//   (a compiler question, out of scope), the Broken Seal twins' class.
-// Tried past differ 10, none gained, all removed: an asm after the stores
-// carrying row + 1 with "m" inputs fixes the stores (gap 3 + 3, differ 16) but
-// row + 1's short temporary then takes r10 in local-alloc, pushing the table
-// to r9, and ldr r4 falls behind the stores; adding "l"(map) to it (differ 40);
-// a volatile asm copying map (89), or a plain one with "m" inputs (73);
-// direction's asm volatile, as a barrier, with a copied cell pointer (98).
-// Plain flushes also failed: direction read through an inline's &direction
-// stays in memory (frame 60, differ 312), and a one-pass block plus an if on
-// direction leaves cse2 sharing the constants (301). 668's source with the
-// asms out and Call3 is differ 246, gap 108, against 210 here.
-// Tried with no gain before: a fill value local for 255 (gap 110), a box row
-// pointer or table local (119, 120, 113), struct or array reads of the spare
-// pair (no change; the native derives 0x14c from 0x148 with adds #4), a wrapper
-// on every call or on Func_02003790 (no change), and declaration orders.
-// Leader and object assigned after the declarations give differ 206 but gap
-// 94. Here toX and toZ locals gained 6; dx and dz locals, a late direction and
-// the s32 return of Func_02003de4 change nothing (the return is 668's type).
+// Draft, differ 210 of 305, skeleton gap 88 (tla-en, 2026-11-01)
+// Re-measured after the compiler change; -mthumb-slow-loads is gone, so the old
+// sched2 notes here went with it. The source is unchanged: nothing plain beat it.
+// Left: the native has a CSE block end at two points, after Func_02003ffc(239)
+// and after Func_02003e0c. After them it recomputes the owner address (r10, then
+// r5) and rebuilds 0x8000 and 0x1999, and it keeps direction, 0, in r9 and shifts
+// it at run time. Only row (r7) carries across, which gcse can do since kind is
+// one pseudo. Here direction folds and the table is reloaded per use in the first
+// half. direction has too few refs for r9 unless more reads of it, or a loop's
+// weight, exist at allocation and go away after it.
+// The block end must exist in cse2 as well as cse1, so it is a label that lives
+// past cse2 and leaves no code. Measured in scratch, on overlay 668's source
+// (row set once, boxes; 221 and no device), none of it kept, because each is
+// dead code (S2) and this round adds no device:
+// - Both arms of an if on row, identical, around Func_02003ffc(239) and around
+//   Func_02003e0c: join labels at the two points give the rebuilt constants
+//   (differ 201). Around Actor_SetSpeedParameters(push.number) plus
+//   Func_02003e0c, one if: the table takes r5 and r7, r11 and the frame agree
+//   (differ 128), though gcse then shares the constants, so the join form is
+//   the one to pursue. Lead: jump2 runs after sched2 and has cross-jumping, yet it did
+//   not merge these arms, whose RTL is the same, leaving cmp, beq and b.n. Why
+//   it did not (find_cross_jump) is the open question: merged arms would be gone.
+// - An if on direction folds in cse1 and direction in two arms folds too. A for
+//   on direction from after Func_02003e0c to before leader->update, with the
+//   joins, gives 166 and keeps its back branch.
+// - Three empty asms on the same source now give 183, not the old 10.
+// Without Call3 this draft is 288, gap 102; row set once in this draft 320 (251
+// without rowZ); 668's source with Call3 287. Call3 on only the first call 272.
+// Older, not re-measured: a fill value local for 255, a table local, struct reads
+// of the spare pair (the native derives 0x14c from 0x148 with adds #4), a wrapper
+// on Func_02003790, leader and object assigned after the declarations (206, but
+// a wider gap). toX and toZ locals are kept; dx, dz and a late direction change
+// nothing.
 // Its one argument is islets.h struct IsletsTarget, 24 bytes passed by value:
 // the first 16 in r0 to r3, which the native stores in the incoming argument
 // area (the sub sp, #16), the object number and the optional callback on the
@@ -106,7 +103,7 @@ void Func_02003a5c(struct PushState push) {
            4;
   Func_02003790(0, cell.x, cell.z, width, height, 0);
   /* FAKEMATCH(wrapper): the three speed calls go through Call3, so no call
-   * shares a constant; as direct calls, 286 of 305 instructions differ in
+   * shares a constant; as direct calls, 288 of 305 instructions differ in
    * tla-en. */
   Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
         0x8000, 0x1999);

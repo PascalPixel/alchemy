@@ -1,42 +1,25 @@
-// Draft, differ 6 of 767, skeleton gap 6 (tla-en, 2026-11-01), measured with
-// its nested function: alchemy-devtools diff ... 08046414,080464dc. Alone,
-// 080464dc reads differ 86 and gap 3 removed, 83 added, because the 80 nested
+// Matches: differ 0 (tla-en, 2026-11-01), measured with its nested function:
+// alchemy-devtools diff ... 08046414,080464dc, 767 of 767 instructions. Alone,
+// 080464dc reads differ 80, skeleton 0 removed, 80 added, because the 80 nested
 // instructions count as draft-only. The Djinn change preview, The Broken
 // Seal's BattleDjinnMenu_ShowChangePreview (games/tbs/src/window/screens/
-// battle_djinn_preview.c) on this game's unit layout, messages and text
-// colours, with its nested arrow function Func_08046414 (drafted alone in
-// 08046414.c, whose body this copies and which compiles exactly here). The
-// stat page's window is 20 tiles wide, and Attack keeps the vitals' digit
-// offset. Messages are written as symbols (placeholders Msg_xxxx where en.po
-// names none), which load from the pool as the native does (as numbers,
-// differ 325). Text_RenderWideStringInWindow and Window_DrawThreeTileColumn
-// have no prototype in scope, as in the twin's menu object: the implicit int
-// call sets r0, so the argument loads lose a successor in sched2's ready sort.
-// Left: three instructions in the loop preheader, no source difference found.
-// The native sets the -4 of visibleRow * 16 - 4 (movs, negs, str to its spill
-// slot) level with the i * 2 + list chain; here it follows that chain. In
-// sched2's table the block reads ldr 5, mov r1 4, lsls 3, adds 2 (adds waits on
-// the movs r3, #0 it anti-depends on, itself 2), and movs 3, negs 2, str 1.
-// Walking rank_for_schedule by hand, the native's order follows exactly if that
-// str is 3 (movs 5, negs 4), and from no lower value: negs must beat lsls
-// outright, because lsls has more dependents, and str must beat adds. Nothing in
-// the block can depend on the str, and the listing leaves no zero-length insn to
-// supply one. So this looks like the spill store the load model under-costs (a
-// store with nothing after it ranks 3 in the native, 1 here), which is inferred,
-// not tested: a compiler question, out of scope for a draft. A hand-walked
-// barrier reading (-4 first, a loop note before movs r3, #0) also fits the
-// order, but reload's rotation gives -4 r4 only after r1, r2, r3, so -4 stays
-// last in the stream as here.
-// Tried without gain, each measured with the nested function. Stay at 6: a
-// one-constant local for the -4 in the body or around the loop, y as the body's
-// first statement, a 0 local for the row, asm("") at the body's top. Worse:
-// one-pass around the loop 10, around the body 12, asm("") before the loop 8
-// (these never reach this block: loop.c inserts the inits after them), a hand
-// guard and do-while 122, a hand-stepped y 279, guarded 363 with or without
-// asm(""), a mask local 197, a volatile row 356. Earlier: spellings of the
-// offset, for-init and while forms, inner scopes for ability and rangePattern;
-// swapping the increments (i++, visibleRow++) reorders the bivs but costs 180.
-// No device reaches these three, so none is kept.
+// battle_djinn_preview.c, confirmed) on this game's unit layout, messages and
+// text colours, with its nested arrow function Func_08046414. The stat page's
+// window is 20 tiles wide, and Attack keeps the vitals' digit offset. Messages
+// are written as symbols (placeholders Msg_xxxx where en.po names none), which
+// load from the pool as the native does.
+// The three preheader instructions left by the old model closed by themselves
+// with the compiler change; the index cast in the nested function went too.
+// One device stays, FAKEMATCH(dead), the twin's own: without the pair, x takes
+// r9, the chain copy r5 and the zero r8. Other forms all stay at 32 or worse:
+// a set-once &window local at the top 21 (chain leaves r9 anyway), set before
+// the first use 32, earlier 56, inside the if 56; a window local at the append
+// 32; a window value local before the stores 32. Dropping (s16) on x and y 34.
+// To settle at adoption: Text_RenderWideStringInWindow and
+// Window_DrawThreeTileColumn have no prototype in scope, as in the twin's menu
+// object, because the call must return int: void prototypes read differ 12 and
+// 2, int prototypes for both read 0. Modern GCC refuses the implicit form, so
+// adoption needs the twin's UBFIX pair of prototypes.
 #include "types.h"
 #include "window.h"
 #include "uiwindow.h"
@@ -163,8 +146,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
     if (output) {
       output->active = 1;
       output->kind = 1;
-      // Stored through a cast, the index stays after the position stores.
-      *(s8 *)&output->index = VramCache_AllocEntry(128);
+      output->index = VramCache_AllocEntry(128);
       entry = (struct ArrowSprite *)output->unk10;
       output->sentinel = 240;
       output->x = 120;

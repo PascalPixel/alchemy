@@ -1,33 +1,33 @@
-// Draft, differ 254 of 347, skeleton gap 104 (tla-en, 2026-11-01)
+// Draft, differ 252 of 347, skeleton gap 50/52 (tla-en, 2026-11-01)
 // Func_02003390's relative: walks the current owner one 16-pixel cell at a time
 // along its input angle (or the quarter turn toward its cell's middle), stopping
 // at the value 255 from Func_02004224, a rise over 8 pixels, a solid object or a
 // set gData_02004cf0. Control flow, calls, loads and widths are the listing's:
 // the else ending in goto puts the first wait loop after it, and the do with an
 // entry jump gives the walk's rotated test.
-// Left, in order of size:
-// - The listing builds &position and &object->terrainId after the retry label,
-//   and re-adds sp+28 at each use (r10, then r6, then r2 per argument). Here
-//   gcse's PRE hoists both onto the entry edge; the pseudo takes r8 and moves
-//   the whole allocation (listing: object r7, angle r9, value r11, flags r8,
-//   p and j r10, q r6, radius spilled). No plain C stops it (see Func_02003390).
-// - IwramMulQ16 is in r8 in the listing. Here its pseudo counts 6 refs (3 at
-//   loop depth 1), so 4 * 1 call < refs makes caller-save profitable: r3 and a
-//   stack slot. Only refs without the depth weight would give r8.
-// Both are the compiler question in the PRE notes of other drafts (-O2 here
-// looks unlike the listing: no hoist, no depth weight); K1 is Pascal's, not
-// tried. Measured to scope it, none kept, since none reaches differ 0:
-// - volatile s16 gData_02004cf0, read through a set-once pointer: differ 237,
-//   gap 91. It gives the listing's ldrh, lsls and the reread at the loop's end,
-//   and the set-once pointer rebuilds the address. Only this function reads it,
-//   so under S2 it is a tagged device; here `<< 16` keeps the shift instead.
-// - An empty asm clobbering "sfp" before each &position use, and one marking
-//   object rewritten at the retry label, stop the hoist outright: with the
-//   volatile, differ 199, gap 67. angle and value stay swapped and r8 stays
-//   wrong, so they went back out.
-// Tried without gain: set-once &position (251), one position pointer (248),
-// no pointers (237 with the volatile, identical code), inner scan scope, one
-// counter for both loops (289), other[j] (264), x and z declared first (249).
+// Left, one cause and one form. Compiler question, K3's and not this draft's:
+// - PRE moves &position and &object->terrainId onto the retry loop's entry edge
+//   (both expressions are computed in the loop's first block, so they are
+//   available on the back edge whatever the C says). The listing keeps both
+//   after the retry label and rebuilds sp+28 at all four other sites (r2 per
+//   call argument, r6 in the walk). The hoisted pseudo takes r8; everything
+//   else rotates: listing object r7, angle r9, value r11, flags r8, p and j
+//   r10, q r6, radius spilled, IwramMulQ16 in r8. Nearly all of the gap and
+//   differ follow from this. Func_02002dc4 is the same case, and its note
+//   holds what was tried there: entry at the bottom test needs a device.
+// - ldrh, lsls #16, cmp: only a volatile s16 keeps the shift (combine merges
+//   anything else; s16 gives movs and ldrsh, `<< 16` folds now). Only this
+//   function reads the flag, so under S2 that is a device: not kept. Measured
+//   to scope it: differ 254, gap 46/52.
+// Measured without gain, 1 November 2026, compiler K2 as it stands:
+// - The second wait loop as labels and goto keeps its pool load in the body,
+//   as the listing does: gap 50/51, but differ 261. Take it once the address
+//   is solved.
+// - Same code: no p, no q, q = p, one pointer, no terrain, inner radius scope,
+//   angle or value declared elsewhere.
+// - Worse: p set before the loop (267), set-once multiply pointer (262), a
+//   signed 16-bit bit-field for the flag (252, gap 56/60), s16 (gap 56/60).
+// - q also set at the walk's top: 259, gap 49/50, redundant, so not kept.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -49,8 +49,6 @@ void wait(s32);
 void Func_02002d04();
 extern s16 gData_0200483c[];
 extern u16 gData_02004cf0;
-// Spelled with the shift: this keeps the listing's lsls.
-#define FLAG_02004CF0_SET ((gData_02004cf0 << 16) != 0)
 
 void Func_02003070(void) {
   s32 position[3];
@@ -64,7 +62,6 @@ void Func_02003070(void) {
   s32 dx, dz, distance, i, value, j;
   s32 angle;
   struct Actor *other;
-  u8 *flags;
 
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   gData_02004cf0 = 0;
@@ -120,7 +117,7 @@ retry:
     goto end;
   }
   while (i <= 179 && Func_02004284(object) == 0) {
-    if (FLAG_02004CF0_SET)
+    if (gData_02004cf0)
       goto end;
     wait(1);
     i++;
@@ -130,16 +127,14 @@ retry:
   do {
     if (Map_GetTerrainHeight(*terrain, q[0], q[2]) - object->y > 0x80000)
       goto blocked;
-    if (FLAG_02004CF0_SET)
+    if (gData_02004cf0)
       goto end;
     radius = object->radius - 2;
     other = Ram_HeapSlots->scriptObjects;
-    flags = &other->collisionFlags;
     for (j = 0; j <= 63; j++) {
-      if (other->script != NULL && (*flags & 1) && other != object &&
+      if (other->script != NULL && (other->collisionFlags & 1) && other != object &&
           Func_0200428c(&other->x, radius, position, other->radius - 2) >= 0)
         goto blocked;
-      flags += sizeof(struct Actor);
       other++;
     }
     lastX = q[0];
@@ -148,11 +143,11 @@ retry:
     object->acceleration = 0x1999;
     i = 0;
     Func_02004204(object, q[0], q[1], q[2]);
-    while (i <= 179 && Func_02004284(object) == 0 && !FLAG_02004CF0_SET) {
+    while (i <= 179 && Func_02004284(object) == 0 && gData_02004cf0 == 0) {
       wait(1);
       i++;
     }
-    if (FLAG_02004CF0_SET)
+    if (gData_02004cf0)
       goto end;
     if (value != startValue)
       goto stop;

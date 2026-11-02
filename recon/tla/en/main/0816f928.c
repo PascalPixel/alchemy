@@ -1,25 +1,44 @@
-// Draft of BattleEffect_RunHurricane, effect kind 105 (Hurricane), written from the
-// listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleEffect_RunJupiter 0.513, call order
-// BattleEffect_RunPlasma 0.600). It ends without closing the canvas
-// layer: it clears the canvas and hands it to SummonEffect_RunCanvasEffect
-// mode 3.
+// Draft, differ 12 of 376, skeleton gap 3 (tla-en, 2026-11-01)
 
-// Listing 376 instructions, draft 374, differ 218.
-// Left: allocation. The native's streak loop keeps i * 28 in r10 and
-// adds the map cell buffer's address to it at each splash, where here
-// the splash gets a second walking pointer; with that register gone the
-// native spills the canvas (sp 16) and keeps the frame in r11, and its
-// frame is 32 bytes with an unused word at sp 12 (here 24). It also keeps
-// the streak's new x in r1 for the splash, where this draft reloads it.
-// Tried (differ):
-// first draft                                                       218
-// the streak loop as nested ifs instead of continue                 218
-// splash as PARTICLES + i, and the splash fields written
-// PARTICLES[i].field with no pointer                                218
-// the streak loop, and the splash loop, indexed (&work->particles[i])
-// rather than stepped                                               218
-// HI through an inline helper (BattleEffect_RunStoneJustice's device)               212
+// BattleEffect_RunHurricane, effect kind 105 (Hurricane), written from the
+// listing on The Broken Seal's canvas skeleton. No close twin (shape
+// BattleEffect_RunJupiter 0.513, call order BattleEffect_RunPlasma 0.600). It
+// ends without closing the canvas layer: it clears the canvas and hands it to
+// SummonEffect_RunCanvasEffect mode 3.
+
+// Left, two sites; everything else is identical.
+// 1. The BG2X store (10 of the 12). The native computes 64 - position.x before
+// it builds the register's address, so the address reuses r2. An assignment
+// expands its target's address first, so in one statement the address takes r1.
+// s32 x = 64 - position.x; REG_BG2X = x << 8; closes it exactly (differ 2), but
+// that is a one-use forced temporary, so it is left out as a new device.
+// 2. The clear routine's load (2 of the 12). sched2 lifts ldr r5 above the
+// first Task_Remove, because a callee-saved set crosses calls; the native keeps
+// it after HeapSlot_Release, between the size's movs and lsls. No change from a
+// clear or transfer local, a local for the VRAM address, or the size declared
+// first or last. A void clear pointer is worse (14), and a real s32 return
+// from Palette_StepFadeTransfer changes nothing.
+//
+// To review: landing, in the streak loop, is set twice: to the buffer, then
+// advanced by i. That keeps it out of loop.c's givs, so i * 28 alone is reduced
+// (r10) and the buffer's address is reloaded at each splash, as the native does.
+// In one step (&PARTICLES[i], with or without a pointer, a byte offset, a
+// hand-stepped offset, or a one-constant local for the buffer) the whole
+// address is reduced instead: differ 195 where this form gave 30, measured before
+// the size local. S2 may count the second set as temporary; no plain spelling has
+// reproduced it yet.
+//
+// What closed the rest, from differ 218, skeleton 26/24:
+// - BattleEffect_LoadBlitter returning s32, and x kept across the splash's
+//   stores: the second set above came with these (200 -> 98).
+// - DrawRectangle blit[2], the 8-byte pseudo: frame 32, unused word at sp 12
+//   (98 -> 84). The canvas's spill and the position then land at their slots.
+// - streak = &work->particles[i] set inside both loops, so the walker is
+//   loop.c's giv and its preheader copy follows i = 0. The frame 0 loop and the
+//   streak loop share streak; the splash loop's stepped splash stays in r5
+//   only with landing a separate local (84 -> 30).
+// - size, a one-constant local set at the top: it gets no register and is
+//   rematerialized at each clear, as the native's movs/lsls pairs are (30 -> 12).
 
 #include "types.h"
 #include "io_reg.h"
@@ -57,7 +76,7 @@ extern char ResourceId_SmokeSheet;
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Palette_StepFadeTransfer(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
+s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);            // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
@@ -88,20 +107,22 @@ void Sound_PlayFar(s32 cue);
 void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  DrawRectangle blit;
+  DrawRectangle blit[2];
   struct EffectPosition position;
   struct EffectStep *streak;
   struct EffectStep *splash;
+  s32 size;
   s32 frame;
   s32 i;
 
+  size = 0x3c00;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   BattleEffect_LoadBlitter(104,
                 BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_CyanPalette), 128);
   work->transferMode = 2;
@@ -129,8 +150,8 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
       Sound_PlayFar(170);
       for (i = 0; i != 256; i++)
         PARTICLES[i].variant = -1;
-      streak = work->particles;
-      for (i = 0; i != STREAKS; i++, streak++) {
+      for (i = 0; i != STREAKS; i++) {
+        streak = &work->particles[i];
         streak->y = ((Random16() & 31) - 64) << 16;
         if (effect->side == 0) {
           streak->x = ((Random16() & 63) + 40) << 16;
@@ -156,7 +177,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
     splash = PARTICLES;
     for (i = 0; i != 256; i++, splash++) {
       if (splash->variant >= 0 && splash->variant < 24) {
-        blit(canvas,
+        blit[0](canvas,
              work->sheet + SPLASH_OFFSET + splash->variant / 4 * SPLASH_SIZE,
              HI(splash->x) - 12, HI(splash->y) - 32, 24, 48);
         BattleEffectKernels_IntegrateVector2(splash, 56, -0x4000);
@@ -174,11 +195,12 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
 
     // Streak i falls from frame i, shortened as it reaches the ground at
     // line 112; below line 48 it starts splash i.
-    streak = work->particles;
-    for (i = 0; i != 32; i++, streak++) {
+    for (i = 0; i != 32; i++) {
       s32 y;
       s32 height;
+      s32 x;
 
+      streak = &work->particles[i];
       if (frame < i)
         continue;
       y = HI(streak->y);
@@ -187,17 +209,20 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
       height = 64;
       if (y > 48)
         height = 112 - y;
-      blit(canvas, work->sheet, HI(streak->x), y, 4, height);
-      streak->x += streak->velocityX;
+      blit[0](canvas, work->sheet, HI(streak->x), y, 4, height);
+      x = streak->x + streak->velocityX;
+      streak->x = x;
       streak->y += streak->velocityY;
       if (streak->y >> 16 > 48) {
-        splash = &PARTICLES[i];
-        if (splash->variant == -1) {
-          splash->y = 112 << 16;
-          splash->variant = 0;
-          splash->x = streak->x;
-          splash->velocityX = (Random16() % 12 - 6) << 15;
-          splash->velocityY = (-Random16() & 7) << 10;
+        struct EffectStep *landing = PARTICLES;
+
+        landing += i;
+        if (landing->variant == -1) {
+          landing->y = 112 << 16;
+          landing->variant = 0;
+          landing->x = x;
+          landing->velocityX = (Random16() % 12 - 6) << 15;
+          landing->velocityY = (-Random16() & 7) << 10;
         }
       }
     }
@@ -211,8 +236,8 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   // Clear the canvas and its characters and hand the layer over.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
-  Iwram_ClearWords((void *)0x06004000, 0x3c00);
-  Iwram_ClearWords(canvas, 0x3c00);
+  Iwram_ClearWords((void *)0x06004000, size);
+  Iwram_ClearWords(canvas, size);
   Task_Remove(Palette_StepFadeTransfer);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   SummonEffect_RunCanvasMode3(effect);

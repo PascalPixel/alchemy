@@ -1,30 +1,38 @@
-// Draft, differ 276 of 568, skeleton gap 104 (tla-en, 2026-11-01)
-// Control flow, the 47 calls, the 68-byte frame and every stack slot agree.
-// Stack slots gave the declaration order; one glow pointer per use and the
-// gather loop's own stepping pointer put i, the drops and the zero in the
-// listing's registers. Past the glow what is left is mostly reload rotation
-// and the splash scale, so the glow is the first thing to fix.
+// Draft, differ 146 of 568, skeleton gap 23 (tla-en, 2026-11-01)
+// Everything but a 25000 and one register swap agrees; the frame, the 47 calls
+// and every stack slot match. What each glow form below is for:
+// - y's loop is label and goto: the native rebuilds the 0x1700-style constants
+//   per row, y * 32 and the mirror row from y, and steps offset by hand with
+//   add lr, r11. Any real loop hoists or reduces all of those.
+// - width is set before the palette loop so size and half are chains only
+//   cse2 folds. A constant size or half is const-propagated by gcse, which
+//   folds the x loop's top test and turns offset += size into add #16.
+// - row is built in two sets inside the if: as "row = y * 32" it is too short
+//   lived to be moved by the first loop pass, the first pair then stays two
+//   pointers, and at the top of the body PRE hoists it instead.
+// - mirrorRow is two sets so that -32 stays in it, ahead of the 0x1700 offsets.
+//   As one expression fold moves the -32 last.
+// Whether row's two sets are honest is open: they fit no S2 kind and were found
+// by measuring, so a reviewer may call them a temporary. The plain y * 32 costs
+// about 200 differ.
 //
-// The glow, as the loop dumps show it: the third and fourth pairs are reduced
-// in loop.c's second pass, where their 0x1700-style offsets are already
-// registers and so stay apart (six stepping pointers). The native then has
-// (T + K) + work + size * 2, with T = (32 - y) * 32 - 32 in one register. A
-// constant -32 left in the add value is moved last by fold, so T must be
-// opaque: a local built in consecutive sets, set inside the if, with a short
-// enough life that the first pass finds it not desirable.
-// Left here: the fourth pair still merges, because mirrorRow2 shares the
-// constant 32 with mirrorRow and is forced out in the first pass.
-// Tried: building both from "mirrorRow = 32; mirrorRow -= y" (the third pair
-// merges, differ 306); that for mirrorRow2 only gives the listing's six
-// pointers (skeleton gap 89) but differ 335, as size, single-set, is
-// rematerialised where the native holds it in r11, and reusing size for the
-// vertices spills it instead (and is a temporary device). One mirrorRow per
-// store, a width = 32 local (reduced by the y loop) and a copy mirrorRow2 =
-// mirrorRow were all worse.
-//
-// The splash scale: the native holds 25000 in r9 and halves it with asr. Any
-// local holding it is const-propagated by gcse, which folds the asr through a
-// REG_EQUAL note and hoists 12500 instead; a second set does not stop that.
+// Left, 1: the native gives the third pair's second pointer r6 and the second
+// pair's r7; here it is the other way, and the spill registers then use r7
+// where the native uses r6, which is most of the 146. The second pair's
+// priority is 42 / 39 against 33 / 31, so it needs a live length of 40. The
+// listing's order says how: size * 2 is computed after the first pair's start,
+// so it sits inside that range, while here giv 409, (size - x - 1) * 2, is
+// reduced in the first pass and its start comes first. Raising the loop to 49
+// insns did not stop that reduction. Tried: mirror, column, back, source and
+// rows locals; other spellings of the second and fourth pairs (all no change
+// or worse); glow declaration orders (no effect).
+// Left, 2: the splash scale. The native holds 25000 in r9 and halves it with
+// asr in the loop. Here 12500 is hoisted and 25000 rebuilt. Any local holding
+// it is const-propagated. A chain from an earlier-block constant (splashFull =
+// 50000, as width does for size) stops that, but the halving is then hoisted
+// too and combine folds it (differ 171), and 50000 has no evidence.
+// Left, 3: scheduling at glow->variant = 0 and model->shade = 0, where the
+// native loads the zero into r4 earlier. model->shade = 0 first gained 4.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -135,6 +143,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   struct EffectStep *last;
   u16 *palette;
   s32 size;
+  s32 width;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -154,6 +163,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   work->transferMode = 1;
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  width = 32;
   palette = (u16 *)BG_PLTT + 1;
   caster = *GetBattleObjectSlotFar(effect->actor);
   Iwram_ClearWords((void *)BG_PLTT, 128);
@@ -165,35 +175,41 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
   {
     s32 y;
     s32 x;
+    s32 half;
+    s32 offset;
 
-    size = 16;
+    size = width / 2;
+    half = size / 2;
     Iwram_ClearWords(work->sheet + 0x1000, 0x800);
     Func_0815b434(work->sheet, size, 0x10000);
-    for (y = 0; y != size; y++) {
-      for (x = 0; x != size / 2; x++) {
-        s32 cell = y * size + x;
-        u8 v = work->sheet[y * size / 2 + x];
+    y = 0;
+    offset = 0;
+  nextRow:
+    for (x = 0; x != half; x++) {
+      u8 v = work->sheet[offset / 2 + x];
 
-        if (v != 0) {
-          s32 mirrorRow;
-          s32 mirrorRow2;
+      if (v != 0) {
+        s32 mirrorRow;
+        s32 row;
 
-          work->sheet[0x1000 + cell * 2] = v;
-          work->sheet[0x1000 + cell * 2 + 1] = v;
-          work->sheet[0x1000 + (y * size + (size - x - 1)) * 2] = v;
-          work->sheet[0x1000 + (y * size + (size - x - 1)) * 2 + 1] = v;
-          mirrorRow = 32 - y;
-          mirrorRow <<= 5;
-          mirrorRow -= 32;
-          work->sheet[0x1000 + mirrorRow + x * 2] = v;
-          work->sheet[0x1000 + mirrorRow + x * 2 + 1] = v;
-          mirrorRow2 = 32 - y;
-          mirrorRow2 <<= 5;
-          mirrorRow2 -= 32;
-          work->sheet[0x1000 + mirrorRow2 + (size - x - 1) * 2] = v;
-          work->sheet[0x1000 + mirrorRow2 + (size - x - 1) * 2 + 1] = v;
-        }
+        row = y;
+        row <<= 5;
+        work->sheet[0x1000 + row + x * 2] = v;
+        work->sheet[0x1000 + row + x * 2 + 1] = v;
+        work->sheet[0x1000 + (offset + (size - x - 1)) * 2] = v;
+        work->sheet[0x1000 + (offset + (size - x - 1)) * 2 + 1] = v;
+        mirrorRow = (32 - y) * 32;
+        mirrorRow -= 32;
+        work->sheet[0x1000 + mirrorRow + x * 2] = v;
+        work->sheet[0x1000 + mirrorRow + x * 2 + 1] = v;
+        work->sheet[0x1000 + mirrorRow + (size - x - 1) * 2] = v;
+        work->sheet[0x1000 + mirrorRow + (size - x - 1) * 2 + 1] = v;
       }
+    }
+    y++;
+    offset += size;
+    if (y != size) {
+      goto nextRow;
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
@@ -251,11 +267,11 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     texture.logWidth = 5;
     texture.logHeight = 5;
     texture.pixels = work->sheet + 0x1000;
+    model->shade = 0;
     model->kind = 6;
     model->mesh = Data_08199244;
     model->texture = &texture;
     model->vertices = vertices;
-    model->shade = 0;
 
     // The glow gathers what the landed drops bring.
     {

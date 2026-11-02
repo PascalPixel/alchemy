@@ -28,6 +28,24 @@
 // gives `cmp #1; bge` and a threaded second `i` test (149). Reversed or `< 1`
 // ternary, if/else (170), a local s16 or u16 HP (140), (s16) cast on a u16 field
 // (136), Data_0200ff58.vitals[i].unk2 (135) and no snapshot local (138) all lost.
+// Second round, same day, re-read against reload1.c and local-alloc.c: the
+// native needs all four of r0 to r3 in reload's spill set, and find_reg takes a
+// new one only where every earlier register is busy. r0 comes from the ldrsh
+// (r3, r2 and the offset in r1 busy); r1 needs a second site with r3 and r2
+// busy and r1 free. Evicting the local at the ldrsh cannot work: spill cost is
+// REG_N_REFS, the local, raw HP and the offset all cost 4, ties go r3, r2, r1,
+// so raw HP goes first; below 4 needs a set outside the loop, which takes r11.
+// Other sites measured: s32 hp = unit->hp first frees r1 at the ldrsh, so r1
+// joins but r0 drops out (135, spill set 1 2 3); with the local before it the
+// local really lands in r0, the native's `ldr r0` and strh order, but r0 is
+// then no spill register (141). Source live at the tag loop's first add would
+// also do, needing the source set first and in r2: hand-stepped pointers set it
+// first but put source in r1 and destination in r2, whatever the declaration
+// order (139); `*src++` with an indexed destination the same (139); u8 *src
+// read by index is propagated away (121); a tag pointer in the loop body the
+// same (121), set before the loop 152. Also lost: u16 value (155), a pointer to
+// the vitals entry (138), ((u16 *)Data_0200ffec)[i * 2 + 1] (130). No device
+// was in the draft to remove, and none was added.
 // Earlier: one 168-byte struct (196), a 25-byte struct copy (ldmia/stmia: agscc
 // rounds structs to words; 194), the table as const, if/else on i (244).
 #include "types.h"

@@ -1,5 +1,23 @@
-// Draft, differ 77 of 191: Func_020002f8 with actor 8 helping. Left:
-// register choice.
+// Draft, differ 65 of 191, skeleton gap 19 (tla-en, 2026-11-01)
+// Func_020002f8 with actor 8 helping. The walk is a goto loop inside the test
+// that the leader faces an actor, which gives the native's branches. Left:
+// allocation only, and it is proved to turn on one thing: the native allocates
+// as if the walk were not a loop. flow.c gives blocks 3, 4 and 10 loop_depth 1,
+// so the list, the faced actor and the id get weighted refs (10, 8, 5) and the
+// order is list, id, result, target, leader, helper. Removing the mismatch
+// path's goto (permuter, wrong behaviour) leaves depth 0 and refs 6, 7, 3,
+// and then every pseudo lands on the native's register (list r6, leader r5,
+// helper r7, id r8, target r10, done r9) at differ 13, skeleton gap 1, which
+// is only that missing branch. The other differences follow: the address of
+// motionFlags is one pseudo in r8, and with the leader in r5 reload forms it
+// by adds r5, #85, reuses r5 for the first store and sched2 drops the copy to
+// r8 lower down, so no second pointer exists in the source. Tried: while and
+// for (differ 118), function-scope locals, u16 id, u16 flag, const list, flag
+// read before the compare, the body as the then-arm, a block break around
+// either store, an extra entry at next (irreducible, but adds code), direct
+// calls for Call3 (differ 85), four permuter minutes. No plain form keeps the
+// back edge and loses the depth; an unweighted ref count is what -Os gives
+// flow.c, a compiler question for Pascal (K3), not settled here.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -76,8 +94,7 @@ void Func_02000708(u16 *list) {
   position[1] = leader->y;
   position[2] = leader->z;
   target = Func_02003dd8(position, 0);
-  if (target == NULL)
-    return;
+  if (target != NULL) {
   goto test;
 next:
   {
@@ -145,4 +162,5 @@ next:
 test:
   if (*list != 0xffff)
     goto next;
+  }
 }

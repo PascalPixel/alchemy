@@ -617,7 +617,7 @@ Func_080fdad4:
 	asrs r0, r0, #2
 	lsls r0, r0, #2
 	str r4, [sp, #8]
-	bl Func_08104ef8
+	bl Menu_CreateOwnerEntryObjects
 	ldr r0, [r7, #16]
 	adds r1, r6, #0
 	mov r2, r11

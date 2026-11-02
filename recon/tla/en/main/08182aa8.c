@@ -1,45 +1,50 @@
-// Draft, differ 1216 of 2781, skeleton gap 107/105 (tla-en, 2026-11-01)
-// BattleEffect_RunCoatlicue: same calls and control flow, draft 2779 of 2781
-// instructions, frame 164 as in the native. Registers now agree for frame
-// (r11), i (r8), k (r10), model and the last loop's locals. No FAKEMATCH device
-// is used. What is left, by cause:
-// - Slots. The draft's stack slots hold the same values in another order: from
-//   sp+48 down it has row, spin, tr, tg, top, verts, t, the hoisted &texture2,
-//   rise; the native has tr, tg, top, verts, t, &texture2, row, rise, spin. Row
-//   and spin sit below a hoisted pseudo there, so they are later than any
-//   declared variable: reduced givs or evicted pseudos, not user variables.
-//   rise is written as (frame - 539) << 20 at its uses and is reduced that way.
-//   spin = frame << 9 at the top of the loop is not reduced (the add of 512
-//   costs more than the shift saves) and merges with the frame << 9 in the i
-//   loops; two steps through a temporary lose 300. row = k * 7 in a real for
-//   reduces to a stepped k * 196 instead (differ 11 worse), so the particle
-//   loop stays goto.
-// - Reload rotation. Spill registers are r0 to r4 and r7, and insns that take a
-//   different reload register shift every later choice. Keep r5 out of that
-//   set: one insn taking it costs 900. The sheet local before the texture
-//   stores does this, and r7 comes in from the palette's mask reload.
+// Draft, differ 1075 of 2781, skeleton gap 107/106 (tla-en, 2026-11-01)
+// BattleEffect_RunCoatlicue: same calls and control flow, draft 2780 of 2781
+// instructions, frame 164 and every stack slot as in the native. Registers
+// agree for frame (r11), i (r8), k (r10), model and the last loop's locals.
+// What is left, by cause; the first is worth most of the differ:
+// - Palette ease, sr. Reload hands out spill registers in turn, so everything
+//   from this loop on is one rotation off. The native computes the red mask
+//   into a fresh register (mov r3, r9; ands r3, r1; adds r1, r3, r2), which
+//   takes r2 for tr and evicts sg to sp+8, three reloads the draft lacks.
+//   regmove's fixup_match_1 merges that temporary into s because s dies at the
+//   and and the temporary dies at the add. Native needs a form where it does
+//   not: the and's first operand the mask, or the temporary set twice. Tried,
+//   none closes it: s as the outer s or as an entry variable shared by both
+//   palette loops, sr += tr (the mask loses r9 and rematerializes, frame 160),
+//   sg likewise, tr + red, (u8) and (u16) red, u16 v then s, a red local, every
+//   order of sb, sg, sr. Fix this first, then re-read everything below.
+// - The second palette's red: the native has movs r2, #31; ands r2, r3 ahead of
+//   the shared shift, keeping the green and blue pool mask apart. Red first
+//   makes CSE take the halfword mask as the low part of red's register. Only
+//   r = 31; r &= s does it, a forced temporary, so blue, green, red stays; its
+//   b.n is a literal pool jump that follows when the length is right.
+// - spin is set at the top of the frame loop so loop.c reduces it: a giv with
+//   add cost 2 needs a replaceable long-lived use plus one more site, which is
+//   why Yaw(frame << 9) stays spelled out once. GCSE then folds the two i-loop
+//   Yaw sites into the reduced slot, where the native keeps mov, lsls. A spin
+//   set only at the model block is not replaceable and is not reduced.
 // - The cells loop has the object slots in r7 and cells in r5, the native the
-//   reverse, and tried: stepped pointer, indexed, a local, shifted index.
-// - The palette ease: the native keeps sr's mask apart from s (ands r3, r1;
-//   adds r1, r3, r2), which evicts sg to sp+8; orders of the c and s
-//   declarations lose 400 to 500.
-// - After the coil loop's texture stores the native has add r7, sp, #92 with
-//   adds r2, r7, #0; the sheet local gives one add.
-// Measured: Data_ tables are not const, the native rereads them after calls;
+//   reverse, with i's zero set earlier. Tried: stepped pointer, slot pointer,
+//   indexed, shifted index, operand order, inner obj, moved i.
+// Measured: gData_02015000 is a constant address, the native pools its +24 and
+// a symbol leaves an add; gMapCellBuffer is the set-once local for its first
+// five uses and the symbol for the three texture.pixels, chosen per site. Row
+// is no variable: particles[k * 7 + i] in a real for gives the native's stepped
+// k * 7. Data_ tables are not const, the native rereads them after calls;
 // colours as bitfields extract with two shifts where the native shifts and
-// masks, so COLOR_* cast to u16 for the halfword mask the native pools; s, sh
-// and ty are one variable each across the model blocks, the last loop has its
-// own; i is also the particle loops' inner counter; k doubles as the palette's
-// blue target, which blocks r4; cellBuffer is a set-once local that no register
-// holds, so it reloads from the pool at each use. blit[2] and grid are 8-byte
-// locals, which gives the unused word at sp+68 and the pair at sp+56.
+// masks, so COLOR_* cast to u16 for the halfword mask the native pools; the
+// model s and the second palette's s are one variable, sh and ty one each
+// across the model blocks; i is also the particle loops' inner counter; k
+// doubles as the palette's blue target, which blocks r4. blit[2] and grid are
+// 8-byte locals, which gives the unused word at sp+68 and the pair at sp+56.
 // BLIT_CELL's order (cell offset, width, height) sets the live length of the
 // height table's address, and that decides frame's register. CopyWords is
-// inline so its constant size stays out of CSE; contradiction with S2's wrapper
-// kind is open, it carries no tag. ResourceId_BellMaidenTiles (0xa7),
-// ResourceId_BlueFlameSheet (0x130), Data0FB and Data0FC are not yet named in
-// resource_directory.s; adoption names them there. They are symbols because the
-// native loads ids from the pool.
+// inline so its constant size stays out of CSE (without it, differ 1366); it
+// carries no tag, the question against S2's wrapper kind is open.
+// ResourceId_BellMaidenTiles (0xa7), ResourceId_BlueFlameSheet (0x130), Data0FB
+// and Data0FC are not yet named in resource_directory.s; adoption names them
+// there. They are symbols because the native loads ids from the pool.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -166,6 +171,7 @@ struct WordPair {
 extern struct ResourceTableEntry gResourceTableEntries[];
 extern u8 gMapCellBuffer[];
 extern struct EffectStep gData_02015000[];
+#define Ram_EffectSteps FIXED_ADDRESS((struct EffectStep *), 0x02015000, gData_02015000)
 extern u8 Data_02014400[];
 extern u8 Data_02014800[];
 extern u32 gCameraSceneParameters[];
@@ -301,7 +307,6 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   s32 s;
   s32 sh;
   s32 ty;
-  s32 row;
   s32 spin;
   s16 list[14];
   s32 place[4];
@@ -376,8 +381,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   REG_BG2X = 0;
   REG_BLDCNT = 0x3f44;
   REG_BLDALPHA = 0x1010;
-  spin = 0;
-  for (frame = 0; frame != 602; frame++, spin += 512) {
+  for (frame = 0; frame != 602; frame++) {
+    spin = frame << 9;
     if ((gInput.repeat & 3) && frame <= 581 && skip == 0) {
       skip = 1;
     }
@@ -397,7 +402,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       for (i = 0; i != 384; i++) {
-        gData_02015000[i].variant = -1;
+        Ram_EffectSteps[i].variant = -1;
       }
       for (i = 0; i != 64; i++) {
         work->particles[i].variant = -1;
@@ -557,10 +562,15 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       s32 half = d / 2;
 
       for (i = 0; i != 256; i++, e++, dst++) {
-        s32 s = *e;
-        s32 r = COLOR_RED(s) + d;
-        s32 g = COLOR_GREEN(s) + half;
-        s32 b = COLOR_BLUE(s) + d / 4;
+        s32 b;
+        s32 g;
+        s32 r;
+
+        s = *e;
+        b = COLOR_BLUE(s);
+        g = COLOR_GREEN(s) + half;
+        r = COLOR_RED(s) + d;
+        b += d / 4;
 
         if (r > 31) {
           r = 31;
@@ -595,7 +605,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
     }
     if ((u32)(frame - 274) <= 23) {
-      p = &gData_02015000[frame - 274 + 80];
+      p = &Ram_EffectSteps[frame - 274 + 80];
       {
         s32 x = ((Random16() & 15) + 52) << 16;
 
@@ -608,7 +618,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       p->variant = 32;
     }
     if (frame == 310) {
-      p = gData_02015000;
+      p = Ram_EffectSteps;
 
       for (i = 0; i != 80; i++, p++) {
         p->x = ((Random16() & 63) + 28) << 16;
@@ -636,7 +646,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
     }
     if (frame <= 359) {
-      p = gData_02015000;
+      p = Ram_EffectSteps;
 
       for (i = 0; i != 384; i++, p++) {
         if (p->variant >= 0) {
@@ -668,7 +678,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       Func_080151e4(55536, 45536, 27768);
       if (frame == 360) {
-        struct EffectStep *p = gData_02015000;
+        struct EffectStep *p = Ram_EffectSteps;
 
         if (skip == 0) {
           work->transferMode = 2;
@@ -686,7 +696,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 540) {
-        p = gData_02015000;
+        p = Ram_EffectSteps;
 
         for (i = 0; i != 384; i++, p++) {
           p->y = 0;
@@ -694,7 +704,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
       {
-        p = gData_02015000;
+        p = Ram_EffectSteps;
 
         for (i = 0; i != 80; i++, p++) {
           s32 n;
@@ -735,14 +745,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
     }
-    row = 0;
-    k = 0;
-  particles:
-    {
+    for (k = 0; k != 9; k++) {
       s32 top = 0;
-      struct EffectStep *step = &work->particles[row];
 
-      for (i = 0; i != 7; i++, step++) {
+      for (i = 0; i != 7; i++) {
+        struct EffectStep *step = &work->particles[k * 7 + i];
+
         if (work->particles[k * 7 + 6].variant >= 0) {
           s32 n = 14 - HALF_HI(step->z);
           s32 x =
@@ -764,11 +772,6 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           }
           top = top + step->z + 0x80000;
         }
-      }
-      row += 7;
-      k++;
-      if (k != 9) {
-        goto particles;
       }
     }
     {
@@ -846,7 +849,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       if ((u32)(frame - 274) <= 27) {
         s = (frame << 11) - 0x85000;
-        texture.pixels = cellBuffer;
+        texture.pixels = gMapCellBuffer;
         model->kind = 7;
         sh = 0;
         if (frame > 293) {
@@ -857,7 +860,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         Func_08015160(0, 0x1c0000, 0);
         Func_0801521c(s);
         SceneTransform_ApplyPitch(4000);
-        SceneTransform_ApplyYaw(spin);
+        SceneTransform_ApplyYaw(frame << 9);
         Render_TransformVertices(gData_08199210, verts, 64);
         Render_DrawModelList(model);
       }
@@ -869,7 +872,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             s32 d;
 
             sh = -16;
-            texture.pixels = cellBuffer;
+            texture.pixels = gMapCellBuffer;
             model->kind = 6;
             model->shade = sh;
             d = frame - st;
@@ -901,7 +904,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             s32 d = frame - Data_0819974e[i];
             sh = d * 16 - 56;
             s = 0x14000 - (d << 13);
-            texture.pixels = cellBuffer;
+            texture.pixels = gMapCellBuffer;
             model->kind = 7;
             if (sh > 0) {
               sh = 0;
@@ -1010,7 +1013,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             if (i == 0) {
               Func_080150e4((274 - frame) << 10);
             } else {
-              Func_080150e4(spin + -0x22400);
+              Func_080150e4((frame << 9) + -0x22400);
             }
           }
         } else {
@@ -1083,7 +1086,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       work->transferMode = 3;
       work->transferValue = 0x04040404;
       {
-        struct EffectStep *p = gData_02015000;
+        struct EffectStep *p = Ram_EffectSteps;
 
         for (i = 0; i != 256; i++, p++) {
           p->x = (Random16() & 127) << 16;
@@ -1096,7 +1099,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
     }
     {
-      p = gData_02015000;
+      p = Ram_EffectSteps;
 
       for (i = 0; i != 256; i++, p++) {
         if (p->variant >= 0) {

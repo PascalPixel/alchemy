@@ -1,24 +1,39 @@
-// Draft, differ 190 of 252, skeleton gap 26 (tla-en, 2026-11-01)
+// Draft, differ 190 of 252, skeleton gap 42 (tla-en, 2026-11-01): 23 listing
+// instructions missing, 19 extra, no device.
 // Draws the swinging actors' ropes and heads (the 16 records of
 // gData_020023c4 + 0x188 kept by Func_02001068): for each raised actor, a rope
 // segment every 16 pixels of its height and the bobbing head on top, each an
 // OAM entry at the table's OAM cursor (four frames of animation over a
 // 12-frame cycle), at most 80 sprites, queued by Func_0200119c. The same
 // listing as overlay 661's Func_02003b80 and 697's Func_02003f68.
-// Left: GCSE merges the reads of swing->height across the inner loop: the load
-// after the sprite's call becomes a zero-extended ldrh, and the loop test and
-// the head's read use that register, where the native rereads with ldrsh at
-// all of them. Every other block is close; the rest of the gap follows from
-// that register: lift stays in r11 and the constant -0x20000 gets a stack slot
-// (the native keeps lift on the stack, and loads the constant from the pool
-// twice), the actor r8, h r10 (native: h r11, actor r10, y r8, x r7, z r5).
-// Tried: volatile height does not help (it splits the load, gap 33): the
-// native's reads are plain loads. A bitfield, for, while and do loops, the
-// constant in a local, x in a second variable, inline masks and other
-// statement orders in the sprite are all no better. Any full redundancy
-// between the loop's tests and the head's read has no store or call on its
-// path, so only a change in the address or in the pass can leave them apart;
-// neither reached in plain C.
+// Left, cause proved: PRE (.07.gcse: "redundant insn" for the latch's and the
+// head's read of swing->height) merges them with the read before the loop, so
+// the native's ldrsh at each becomes one ldrh and the allocation follows. The
+// native keeps them apart because each read's address is a different pseudo.
+// Probe, not kept: `(void)&swing;` after the declarations. A taken address
+// makes swing an ADDRESSOF, which cse1 leaves as a MEM and purge_addressof
+// turns into a copy per site, too late for CSE; PRE then has nothing to merge.
+// Every height read matches, and the prologue with it: gap 31 (17 and 14).
+// S2 counts a taken address as `dead`, so it stays out in a no-new-device
+// round; whether it is the source's form is for Pascal to decide, and it
+// reaches 661 and 697. No real statement that takes swing's address is known.
+// With the probe, moving `x = (x >> 16) - 8;` straight after the head's
+// `x = actor->x - scrollX;` and giving the head's first `z - y` its own
+// variable (delta) reaches gap 20 (10 and 10). The native's r10 there is
+// x >> 16 crossing the two calls, which sched2 then slides below them, so that
+// move is probably real source; alone it gives gap 41 but differ 271, so it is
+// not applied here. Still open under the probe: y takes r4 by caller-save
+// (15 refs, 2 calls crossed), where the native has y r8, actor r10, h r11 and
+// lift on the stack; and -0x20000 is held across the call by caller-save where
+// the native reloads it from the pool (sp+0 may be that unused save slot).
+// sp+32 above k says swing is a declared variable, not a loop-made giv.
+// Tried, no better: indexing work->actors[k], or a local actors[k], everywhere:
+// all reads are ldrsh, but the giv is a late pseudo, set after the preheader,
+// and y still goes to r4 (gap 78); `swing = &work->actors[k]` in the body
+// (gap 72, PRE still merges); y split by region (loop y goes low, gap 91 on
+// the indexed form); y, z and delta all split in the head (gap 70); a real
+// for loop (gap 64). Declaration order of actor, h, x, y, z and screenY changes
+// the pseudos but not the code, in all 24 orders of each of two groups tried.
 #include "types.h"
 #include "actor.h"
 #include "map.h"
@@ -80,7 +95,7 @@ void Func_02000dac(void) {
     actor = Actor_GetById(swing->id);
     frame = (gFrameCount % 12) / 3 * 8 + 32;
     // A goto loop: the native moves nothing out of it; as a for loop, loop.c
-    // hoists the sprite's third word (skeleton gap 36).
+    // hoists the sprite's third word (skeleton gap 64).
     h = 0;
     if (h >= swing->height)
       goto top;

@@ -1,19 +1,28 @@
 // Draft, differ 31 of 38, skeleton gap 5 (tla-en, 2026-11-01): two functions,
 // measure each with --symbol.
-// Func_02001254, differ 31 of 38, gap 3 removed and 2 added: the native reloads
-// gData_020068a0's address after the two arms; this draft keeps it in r6 across
-// the calls, which saves r6 and moves every register after it. That is PRE:
-// gcse.c inserts the address in both arms and cse2 folds the copies. The state
-// local stands in for the native's hoisting of gData_02006868. This C compiled
-// with -Os in place of -O2 (analysis only) keeps the native's push, the reloaded
-// address and its registers; the state load is then hoisted too far. Same cause
-// as overlay 68e's Func_02000904 note. Tried: volatile (extra reads), a u16
-// declaration, an array declaration, the timer as a local at the top or at the
-// end, the value read into a local, the increment apart from the test.
+// Func_02001254, differ 31 of 38, gap 3 removed and 2 added: the C is settled
+// and only gcse.c's PRE stands between it and the native. This exact source
+// compiled by hand with -fno-gcse added (analysis only, not a build option)
+// gives the listing's instructions and registers, push {r5, lr} included. The
+// address of gData_020068a0 is a pool load, a MEM that the calls and stores in
+// the two arms kill, so PRE sees it available on the two bne edges and not on
+// the two call edges, inserts it after each call and deletes the join's load;
+// cse2 then folds the copies and the address stays in r6 across both calls.
+// To stop that in C the join's load must not be anticipatable or the entry's
+// not available, which takes a store or call the native does not have, or a
+// second pool constant for one address. The state local is the source's: PRE
+// never hoists, so nothing else puts the load above the first test. Tried,
+// none better: both as pointer locals, the timer local in an inner block, a
+// value local, the test inverted, else if, the increment apart from the test,
+// goto to the join, a shared store of the arms, state set in each arm, the
+// tests joined with &&. Older: volatile (extra reads), u16, an array. Whether
+// other natives share this (68e's Func_02000904, the landing bursts) is
+// Pascal's question under K3, not a thing for this draft.
 // Func_020012e4, differ 2 of 45, gap 1 and 1: one scheduling pair, the strh of
-// unk12 goes after the count address's add #100. The last test reads
-// object->action directly: through count, PRE keeps a ldrh across the block.
-// Tried: a parts pointer, a value local, declaration order, a u16 pointer.
+// unk12 goes after the count address's add #100; -fno-gcse does not move it.
+// The last test reads object->action directly: through count, PRE keeps a ldrh
+// across the block. Tried: a parts pointer, a value local, declaration order,
+// a u16 pointer.
 #include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
 
 extern char SceneId_Ov6a8Room2;

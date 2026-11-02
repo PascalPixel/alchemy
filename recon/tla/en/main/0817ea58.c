@@ -1,22 +1,35 @@
-// Draft, differ 2389 of 3921, skeleton gap 595 (tla-en, 2026-11-01)
+// Draft, differ 1208 of 3921, skeleton gap 126/126 (tla-en, 2026-11-01)
 // The second phase's frame loop is a label-and-goto loop: as a for loop, loop.c
-// hoists the frame-address copies, they take REG_EQUIV and work loses r11 (the
-// jump from about 3900 to 2900 differ). The first and third phases stay for
-// loops; goto there costs (first) or changes nothing (third). &pos2, &scale2,
-// &scale and &pos3 are gcse PRE's pseudos (the low slots 40 to 28), not locals.
-// Locals are now scoped per block as the listing's registers show: i in r8, j in
-// r10, work in r11, the frame size and most slots agree. Instruction multisets
-// differ by about 150; most of the 595 is order that follows reload rotation.
-// Left, as shape: the wave loops. The listing has j * 9 and &sprites[j * 9 + 8]
-// as outer givs, the else arm indexed and the call's sprite an ldmia walk; a row
-// pointer local (row = &work->sprites[j * 9], row[i], row[8]) reaches ldmia and
-// gives skeleton 309/282 but differ 2621, and with work->sprites[j * 9 + 8] in
-// the arm the draft grows by 40. Also: the map loop's row is a counter of 16
-// shifted left there, j * 32 here (row = j << 4 loses to outer reduction); 0x700
-// sits in r0 there as a rematerialized constant; p->ay after p->ay = 0 is reread
-// there and folded here (reading work->particles[i].ay keeps the load but costs
-// 25); the listing loads -0x1d0000 into r7 before the first call, reload's
-// choice; posp and z take registers here and slots 92 and 88 there.
+// hoists the frame-address copies, they take REG_EQUIV and work loses r11. The
+// first and third phases stay for loops. &pos2, &scale2, &scale and &pos3 are
+// gcse PRE's pseudos, not locals. Slots 188 down to 96 now equal the listing's.
+// Left, largest first:
+// 1. Slots 92 and 88: the listing keeps the wave pointer and z there, and all of
+//    84 to 24 sit 8 too high here. wave and posp survive gcse's second cprop only
+//    when assigned inside the loop body (loop.c then hoists the copy, the listing's
+//    mov r9, r4); that alone costs 22 and more, because row and row * 4 then spill.
+//    z = 0 before the frame loop makes z non-replaceable and gives it slot 88, but
+//    its giv is then "not worth while" (benefit -2) and [sp, #12] never appears; a
+//    struct { s32 z; Vec3 *pos; } and a separate reduced temporary gives the copy
+//    form and frame +12. The slot 28 shim here is &PARTICLES[256] + i * 16 + m,
+//    whose i * 448 giv takes one low slot; the listing has (i << 4) + m unreduced.
+// 2. Wave loops: the listing has row in a low register, &sprites[row + 8] as an
+//    outer giv, the else arm indexed unreduced and the call's sprite ldmia. Here
+//    row is r9 and (&work->sprites[row])[i] keeps the else arm unreduced through
+//    row * 4. work->sprites[row + i] in the arm is reduced by the second loop pass
+//    (--rtl .08.loop, benefit 7); it also folds to row + 8 under i == 8. A sweep of
+//    the spellings, each wave loop alone, gains nothing.
+// 3. 0x1c0 and DECODE_BUFFER after the copy calls are rebuilt in the listing and
+//    shared here, which puts src in r7 rather than r5 and shifts the sprite
+//    setup. A do { } while (0) copy macro does not fix it (and is a device).
+// 4. p->ay is reread after p->ay = 0 in the listing; only a different alias set
+//    keeps the load, and that spelling is a disguise. Left folded.
+// 5. The map loop's row is a counter of 16 shifted left there, j * 32 here; both
+//    row forms lose 900 to outer reduction. 0x700 therefore sits in r0 here.
+// 6. Scheduling pairs and reload rotation, about 40 small hunks.
+// Tried and gaining: scoped q per block, p set after the third hull part, blit
+// arguments with a call computed first in a local, radius read before n, Trig
+// result first in multiplies, pos3.z reread instead of p->y.
 #include "resource.h"
 #include "heap_release.h"
 #include "system/iwram_call.h"
@@ -249,6 +262,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   s32 bobX;
   s32 bobY;
   s32 *ringX;
+  s32 row;
   struct SummonWork *work;
   s32 i;
   s32 j;
@@ -277,7 +291,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       u16 *col;
       s32 n;
       s32 w;
-      s32 row;
+      u8 *mp;
       s32 r, g, b;
       s32 v;
       const u8 *src;
@@ -289,9 +303,12 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       BattleActor_SpawnObjectsForListFar(targets, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
       for (i = 0, col = (u16 *)0x050000c0; i != 128; i++, col++) {
+        s32 mid;
+
         r = *col & 0x1f;
-        g = ((*col >> 5) & 0x1f) - 4;
+        mid = (*col >> 5) & 0x1f;
         b = ((*col >> 10) & 0x1f) - 4;
+        g = mid - 4;
         r -= 4;
         if (g < 0)
           g = 0;
@@ -317,7 +334,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       n = 3;
       w = 32;
       for (j = 0; j != 10; j++) {
-        row = j * 32;
+        mp = map + j * 32;
         for (i = 0; i != w; i++) {
           v = work->frames[gData_08197410[n] + i];
           if (v != 0) {
@@ -325,7 +342,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             if (v <= 0)
               v = 1;
           }
-          map[row + i] = v;
+          *mp++ = v;
         }
       }
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_ForestCanopyTiles);
@@ -393,6 +410,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       posp = &pos;
       for (j = 0; j != 2; j++) {
         z = (j << 21) + 0x670000;
+        row = j * 9;
         for (i = 0; i != 9; i++) {
           Sprite *obj;
           s32 v;
@@ -400,17 +418,16 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           posp->x = (i << 21) + waveX;
           posp->z = z;
           if (i == 8) {
-            obj = (&work->sprites[j * 9])[8];
+            obj = work->sprites[row + 8];
             v = (wavePhase + 71) % 8;
           } else {
-            obj = work->sprites[j * 9 + i];
+            obj = (&work->sprites[row])[i];
             v = (wavePhase + 64 + i) % 8;
           }
           obj->tile = work->particles[j * 9 + v].timer & 0x3ff;
           if (pos.x > 0xffffff)
             pos.x -= 0x1200000;
-          Render_ApplyProjectedPlacementFar((&work->sprites[j * 9])[i], &pos,
-                                            &scale, 0);
+          Render_ApplyProjectedPlacementFar(work->sprites[row + i], &pos, &scale, 0);
         }
       }
     }
@@ -656,8 +673,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         q = &PARTICLES[i * 32 + (p->timer & 31)];
         q->timer = 0;
         q->x = p->x / 2;
-        q->vx = 0;
         q->y = p->y - 0x140000;
+        q->vx = 0;
         q->vy = 0;
       }
       if (work->particles[20].timer == (i & 7) * 6 + 10) {
@@ -717,6 +734,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Render_ApplyProjectedPlacementFar(work->sprites[38], &pos2, &scale2, 0);
     }
     {
+    Particle *p;
     s32 v;
 
     v = camera + bobX;
@@ -730,11 +748,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     pos2.x = v;
     pos2.z = ((104 - Data_081994f0[work->shake]) << 16) + swayY + bobY;
     Render_ApplyProjectedPlacementFar(work->sprites[20], &pos2, &scale2, 0);
-    }
-    {
-    Particle *p;
-    Particle *q;
-
     p = &work->particles[22];
     if (frame > 602)
       Func_0815f0a0((s32)&ResourceId_OrangePaletteB);
@@ -745,6 +758,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       p->vx = -0x40000;
       p->vy = -0x5000;
       for (i = 0; i != 16; i++) {
+        Particle *q;
+
         q = &PARTICLES[312 + i];
         q->x = ((Random16() & 15) + 56) << 16;
         q->y = ((Random16() & 31) + 64) << 16;
@@ -759,6 +774,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     }
     if (p->timer != 0) {
       if (p->timer > 9) {
+        Particle *q;
+
         q = &PARTICLES[400 + (p->timer & 31)];
         q->timer = 0;
         q->vx = -(Trig_Sin(work->sprites[39]->rotation) * 2);
@@ -770,6 +787,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       if (((p->timer >= 50 && p->timer < 60) ||
            (p->timer >= 113 && p->timer < 200)) &&
           (p->timer & 3) == 0) {
+        Particle *q;
+
         q = &PARTICLES[432 + (p->timer & 31)];
         q->timer = 0;
         q->vx = ((Random16() & 31) + 16) << 12;
@@ -822,6 +841,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       if (p->timer > 159)
         p->vy -= 0x2000;
       for (i = 0; i != 32; i++) {
+        Particle *q;
+
         q = &PARTICLES[400 + i];
         if ((u32)q->timer <= 5) {
           ((BlitFunc)blits[1])(dest, &work->frames[q->timer * 288],
@@ -831,6 +852,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         }
       }
       for (i = 0; i != 32; i++) {
+        Particle *q;
+
         q = &PARTICLES[432 + i];
         if ((u32)q->timer <= 23) {
           ((BlitFunc)blits[1])(dest, &work->frames[(q->timer / 4 << 11) + 0x6c0],
@@ -899,18 +922,18 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         s32 radius;
         s32 n;
 
-        n = (frame - Data_0819958c[j]) / 2;
         radius = *ringX >> 16;
+        n = (frame - Data_0819958c[j]) / 2;
         *ringX += work->particles[30].vx;
         work->particles[30].vx = work->particles[30].vx * 48 / 64;
         if (n <= 5) {
           for (i = 0; i != 32; i++) {
             s32 v;
 
-            v = (radius * Trig_Sin(i << 11) / 2 >> 16) +
+            v = (Trig_Sin(i << 11) * radius / 2 >> 16) +
                 Data_08199590[j];
             ((BlitFunc)blit[0])(dest, &work->frames[n * 288], v - 6,
-                                (radius * Trig_Cos(i << 11) * 2 >> 16) + 60, 12,
+                                (Trig_Cos(i << 11) * radius * 2 >> 16) + 60, 12,
                                 24);
           }
         }
@@ -1008,6 +1031,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
     wave = &pos2;
     for (j = 0; j != 2; j++) {
+      row = j * 9;
       for (i = 0; i != 9; i++) {
         Sprite *obj;
         s32 v;
@@ -1016,29 +1040,28 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         wave->z = (((j << 5) - Data_081994f0[work->shake]) << 16) + shipY +
                   0x840000;
         if (i == 8) {
-          obj = (&work->sprites[j * 9])[8];
+          obj = work->sprites[row + 8];
           v = (wavePhase + 71) % 8;
         } else {
-          obj = work->sprites[j * 9 + i];
+          obj = (&work->sprites[row])[i];
           v = (wavePhase + 64 + i) % 8;
         }
         obj->tile = work->particles[j * 9 + v].timer & 0x3ff;
         if (pos2.x > 0xffffff)
           pos2.x -= 0x1200000;
-        Render_ApplyProjectedPlacementFar((&work->sprites[j * 9])[i], &pos2,
-                                          &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[row + i], &pos2, &scale2, 0);
       }
     }
     }
     for (j = 0; j != 4; j++) {
       for (i = 0; i != 6; i++) {
         if (frame >= i * 2 + 490 && frame < i * 2 + 502) {
+          s32 v;
+
+          v = Data_0819959c[j][i][1] + (swayY >> 16) - Data_081994f0[work->shake];
           ((BlitFunc)blit[0])(dest,
                               &work->frames[(frame - (i * 2 + 490)) / 2 * 288],
-                              Data_0819959c[j][i][0] - 6,
-                              Data_0819959c[j][i][1] + (swayY >> 16) -
-                                  Data_081994f0[work->shake] - 12,
-                              12, 24);
+                              Data_0819959c[j][i][0] - 6, v - 12, 12, 24);
         }
       }
     }
@@ -1143,7 +1166,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       if (frame >= Data_081995cc[i] && p->timer == 0) {
         pos3.x = p->x;
         pos3.z = p->y;
-        if (p->y > 0 && p->y < 0x800000)
+        if (pos3.z > 0 && pos3.z < 0x800000)
           Render_ApplyProjectedPlacementFar(work->sprites[i], &pos3, &scale3,
                                             0);
         if (p->y > 0x6fffff) {
@@ -1154,13 +1177,12 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             Particle *q;
 
             q = &PARTICLES[i * 8 + j];
-            speed = Random16() & 31;
+            speed = (Random16() & 31) + 32;
             angle = (Random16() & 0x7fff) + 0x4000;
             q->x = p->x / 2;
             q->y = p->y;
-            speed += 32;
-            q->vx = speed * Trig_Sin(angle) >> 4;
-            q->vy = speed * Trig_Cos(angle) >> 4;
+            q->vx = Trig_Sin(angle) * speed >> 4;
+            q->vy = Trig_Cos(angle) * speed >> 4;
             q->timer = 0;
           }
           Sound_PlayFar(144);
@@ -1172,7 +1194,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         } else {
           Particle *q;
 
-          q = &PARTICLES[256 + i * 16 + (frame - Data_081995cc[i]) % 16];
+          q = &PARTICLES[256] + i * 16 + (frame - Data_081995cc[i]) % 16;
           q->x = p->x / 2;
           q->y = p->y - 0x100000;
           q->vx = 0;
@@ -1205,7 +1227,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
       q = &PARTICLES[i];
       if ((u32)q->timer <= 17) {
-        ((BlitFunc)blits[i & 1])(dest, &work->frames[q->timer / 3 << 11],
+        s32 v;
+
+        v = q->timer / 3;
+        ((BlitFunc)blits[i & 1])(dest, &work->frames[v << 11],
                                 (q->x >> 16) - 16, (q->y >> 16) - 48, 32, 64);
         BattleEffectKernels_IntegrateVector2(q, 56, -0x2000);
         q->timer++;

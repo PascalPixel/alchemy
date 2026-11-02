@@ -422,7 +422,7 @@ Func_0804bc08:
 .L_0804bf46:
 	cmp r6, #4
 	bne .L_0804bf84
-	bl Func_0804b7c0
+	bl Message_ShowLocalizedAndWait
 	cmp r0, #0
 	beq .L_0804bf54
 	b .L_0804bdc2

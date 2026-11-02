@@ -1,10 +1,9 @@
-// Draft, differ 111 (118 before statements reordered 2026-10-26) of 164: allocates the save workspace, identifies the
-// flash chip and scans the sectors three at a time, as ☀️'s
-// Save_InitializeWork (games/tbs/src/system/system.c) over 15
-// sectors. Same instructions in the same shape; what is left is register
-// choice: the native keeps the workspace in fp (here a stack slot), the
-// occupied pointer in r7 and the part id byte addressed as a stack offset
-// plus base, where this draft makes each its own induction register.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Allocates the save workspace, identifies the flash chip and scans the sectors
+// three at a time: ☀️'s Save_InitializeWork (games/tbs/src/system/system/save.c)
+// over 15 sectors, in its statement order. The part id local is u16: its
+// conversions bring the outer loop to 69 insns on loop.c's second pass, which
+// leaves the partId giv unreduced as (index + 12) + (work + 3) as the ROM has it.
 #include "types.h"
 #include "heap_release.h"
 #include "dma.h"
@@ -14,14 +13,18 @@
 #include "savedata.h"
 #include "save.h"
 
+#define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
+#define DMA3_BUSY (DMA_ENABLE << 16)
+
 #define START_DMA(source_, destination_, control_)                             \
-  Dma_Set((const void *)(source_), (void *)(destination_), (control_),         \
-          (volatile u32 *)0x040000d4)
+  Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
-  while ((channel->control & 0x80000000) != 0) {
+  while ((channel->control & DMA3_BUSY) != 0) {
   }
 }
+
+#define WAIT_DMA() WaitDma(DMA3)
 
 s32 Save_CompareBytes(u8 *left, u8 *right, s32 count);
 s32 Save_ReadSector(s32 index);
@@ -46,22 +49,22 @@ s32 Func_0801596c(void) {
 
   for (index = 0; index < 15; index += 3) {
     u32 status;
-    u32 partId;
+    u16 partId;
     u8 id;
 
     work->occupied[index] = 0;
     work->partId[index] = 16;
     work->counter[index] = 0;
     status = Save_ReadSector(index);
-    START_DMA(work->slot, &header, 0x84000004);
-    WaitDma((volatile struct DmaRegisters *)0x040000d4);
+    START_DMA(work->slot, &header, DMA_COPY_WORDS(4));
+    WAIT_DMA();
     slot = &header;
 
     if (Save_CompareBytes(slot->signature, (u8 *)gSave_Signature, 7) != 0)
       continue;
+    work->counter[index] = slot->counter;
     partId = slot->partId;
     id = partId;
-    work->counter[index] = slot->counter;
     if (id >= 16)
       continue;
     if (status != 0)

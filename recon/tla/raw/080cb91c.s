@@ -142,7 +142,7 @@ FieldSequence_Run:
 	bl GameFlag_Test
 	cmp r0, #0
 	beq .L_080cba4e
-	bl Func_080cae5c
+	bl ObjectTable_Restore
 .L_080cba4e:
 	ldr r5, .L_080cba98
 	movs r2, #149
@@ -1324,7 +1324,7 @@ FieldSequence_Run:
 	ands r3, r2
 	cmp r3, #0
 	beq .L_080cc3d8
-	bl Func_080cc9fc
+	bl Debug_RunPaletteEditor
 	b .L_080cc468
 .L_080cc3d8:
 	movs r0, #8

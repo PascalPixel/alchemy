@@ -1,9 +1,20 @@
-// Near miss (128 native instructions, 83 differ in alignment, same calls and
-// constants): the draft keeps the entrance in a halfword register across the
-// first test and compares it shifted at the second (ldrh, lsls, cmp), where the
-// native reloads it with ldrsh before each test; the first screenEffect store
-// builds 0x209 as its own constant, where the native adds 93 to the field
-// offset. Chained assignments and one work pointer measured the same.
+// Draft, differ 2 of 128, skeleton gap 1 (tla-en, 2026-11-01)
+// Left: one sched2 tie at the second camera call. The native sets the mode
+// (movs r3, #1) before lsls r0; the draft sets it last, after lsls r2. All the
+// candidates tie, so the order comes from insn position: the native has the set
+// of r3 ahead of x's load, the draft has r0 to r3 in order. The first call, with
+// mode 0, already matches. world_map's Func_02002e00 has the same pair and pins
+// r3 for it; that is a device and is not used here.
+// Tried for the pair, no gain: mode as a local at the top, first, in an inner
+// block or `register`; x as a local; the camera unprototyped; other loop forms
+// (a plain goto loop ties, a for loop is worse); s32 returns on the camera or
+// Func_02001578 are worse (differ 4).
+// What closed the rest, for the next reader: cameraY and cameraZ set once at the
+// top go unallocated and rematerialize at each call, as written inline they
+// shared r5 and r6. The entrance pointer keeps the second test a load of its
+// own, as aqua_rock's s17f4.c does; read directly, gcse merges the two tests
+// into a halfword load compared shifted. The loop is entered at its test, as in
+// world_map, or the test is copied ahead and gInput hoisted.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -11,7 +22,6 @@
 #include "event_work.h"
 #include "input.h"
 #include "scene_ids.h"
-#include "call.h"
 #include "text/msg_ids.h"
 
 s32 GameFlag_Test(s32 flag);
@@ -32,9 +42,11 @@ void Func_02001578(s32 speed, s32 acceleration);
 void Func_02001588(s32 scene, s32 entrance);
 
 s32 Func_02000514(void) {
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  s32 cameraY = -1;
+  s32 cameraZ = 160 << 17;
+  s16 *entrance;
 
-  work->screenEffect = 0x209;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Actor_GetById(15)->update = Func_02001488;
   if (gMainRoutineWork.entrance == 80) {
     gMainRoutineWork.entrance = gMainRoutineWork.secondary = 14;
@@ -46,7 +58,8 @@ s32 Func_02000514(void) {
     Func_02001550(14, 0);
     GameFlag_ClearBit(0x12f);
   }
-  if (gMainRoutineWork.entrance == 81) {
+  entrance = &gMainRoutineWork.entrance;
+  if (*entrance == 81) {
     gMainRoutineWork.entrance = gMainRoutineWork.secondary = 8;
     Func_02000658();
   }
@@ -55,15 +68,18 @@ s32 Func_02000514(void) {
     Func_02001500(19, 0, 0);
   }
   if (gMainRoutineWork.entrance == 99) {
-    Camera_MoveWithinMapBounds(152 << 17, -1, 160 << 17, 0);
+    Camera_MoveWithinMapBounds(152 << 17, cameraY, cameraZ, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 256;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     FieldEvent_Wait(10);
     Func_02001578(0x20000, 0x4000);
-    Camera_MoveWithinMapBounds(144 << 16, -1, 160 << 17, 1);
-    while (gInput.held == 0)
+    Camera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, 1);
+    goto check;
+    do {
       wait(1);
+    check:;
+    } while (gInput.held == 0);
     Func_02001588((s32)&SceneId_Ov667, 80);
   }
   return 0;

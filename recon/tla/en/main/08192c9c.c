@@ -1,36 +1,54 @@
-// Draft, differ 3472 of 5364, skeleton gap 475 + 479 (tla-en, 2026-11-01)
+// Draft, differ 3287 of 5364, skeleton gap 373 + 380 (tla-en, 2026-11-01)
 // Measure with the four nested functions' listings as well:
 // diff ...08192c9c.c 0819284c,08192894,081929fc,08192a4c,08192c9c. Measured
-// against 08192c9c alone they all count as added.
-// BattleEffect_RunIris and its four nested functions, the same calls and
-// control flow as the listing. What is left is allocation and scheduling, and
-// its largest cause is known. The native's &work is one pseudo set twice: at
-// entry, and again by `add r4, sp; str r4, [sp, #64]` in the frame == 446
-// block, right after Iwram_FillWords(work->sheet + 0x1810, ...). That is a
-// second occurrence of the address in one basic block: CSE did not merge it,
-// gcse records only a block's first occurrence as deletable, so PRE's
-// reaching register gets two sets and cprop and loop.c leave every later copy
-// of &work in place (here loop.c hoists them, a second slot and 8 bytes of
-// spills lower). A do { } while (0) around that one Iwram_FillWords reproduces
-// it exactly: the slots from 64 up fall into the native's order, differ 3305,
-// gap 448 + 453, frame 420. Without differ 0 the device stays out. Plain forms
-// that did not split it: a static inline around the call, a label, a goto to
-// the next line, an empty if, if (0); an empty for or while (0) gives 3455.
-// Finding the C that really ends CSE there is the next step, then rerun the
-// counter search below, since every allocation moves with it.
-// Measured: inner-block aggregates share a slot, so spans and spans2 live in
-// the outer block (the frame was 32 short). The opening order sparks, objects,
-// canvas, battle, sprites, work gives the slots at 176 to 184 though the native
-// schedules canvas first. The loop counters are chosen per loop, by a search
-// over i, j, k and m against the listing (3808 to 3472), not read from it, so
-// a shared counter here is only as good as that fit. Streak points index flat
-// as [i * 10 + j] so the multiply by 200 synthesizes; s32 c with (u16)c >> n
-// for the colour channels; resource ids as symbols load from the pool, which
-// constants never do; each ring branch's blit copy. Tried and worse: u16
-// r, g, b in the last fade (differ falls, skeleton 13 instructions longer).
-// Still open: the rise of the bright band keeps (i - top) * 2 in the loop in
-// the native, here strength-reduced to a giv (<< 1 and a temporary change
-// nothing); the head of a streak loads Data_02012ef4 from the pool each pass.
+// against 08192c9c alone they all count as added. All four nested functions
+// are at differ 0; what is left is
+// BattleEffect_RunIris itself.
+// Same calls and control flow as the listing, and the prologue's shape now
+// matches. What is left is allocation, in this order of cause:
+// 1. The native's &work is one pseudo set twice: at entry, and again by
+//    `add r4, sp; str r4, [sp, #64]` in the frame == 446 block, right after
+//    Iwram_FillWords(work->sheet + 0x1810, ...). That is a second occurrence
+//    of the address in one basic block, so PRE's reaching register gets two
+//    sets. A do { } while (0) around that one Iwram_FillWords reproduces it:
+//    differ 3150, frame 420 as in the native, every slot's use count within a
+//    few of the listing's except the swaps in 2. It is a one-pass block, so it
+//    stays out. A static inline, a label, a goto to the next line, an empty if,
+//    if (0), an empty for and while (0) do not split it. Next step: the C that
+//    really ends CSE there; S2's macro exception would need the same form at
+//    every zero fill, which is Pascal's call.
+// 2. With that block, slots 176 and 184 are swapped (&canvas and &sparks) and
+//    &work sits at 40, not 64. The slots follow pseudo numbers from PRE, whose
+//    order comes from its hash table, sized by the function's insn count: 20
+//    extra insns move &work, so this may snap only as the count closes.
+// 3. Counters. The listing's registers read plainly: r10 is the outer counter
+//    nearly everywhere, r11 the inner one (the splash loop's outer is r11 with
+//    r10 inside, the crystal grid is r11 over r8). Writing exactly that gives
+//    4587: i wins r7 and every high-register mov goes. i must fall below the
+//    locals that fill r4 to r8 in the dense loops, so it is the right sharing
+//    with its priority still wrong (refs over live length). The names here are
+//    the older search's, and a per-loop rename search finds nothing better.
+// Measured: the opening runs canvas, work, objects, sprites, sparks, battle,
+// savedScroll, camera; Iris_DrawSplash's locals likewise (work and sprites
+// before draw). gData_08197410, Data_08199f40 and Data_0819a040 are not const:
+// the native rereads them in loops, which also supplies the register pressure
+// of the streak loop. Data_02012ef4 is the fixed address, not a symbol: CSE
+// then cannot rewrite the streak base as an earlier base + 20, and the pool
+// keeps its own entries as in the listing. The head of a streak is the 2-D
+// [i] (multiplied), its points flat [i * 10 + j] (synthesized). The drop
+// copies walk src with their own counter: `src[m]` lets loop.c drop m for an
+// end pointer. The bright band's test is compound, entry copy included, so v
+// is set in it. The second fade's red is 31 masked afterwards; the same form
+// at the 446 and 816 fades measures worse, though the listing's hoisted 31
+// suggests it there too.
+// Still open: the head of a streak hoists its base where the native reloads it
+// each pass (spelling does not move it, so look at loop.c's threshold); the
+// bright band reduces (i - top) * 2 to a giv where the native keeps it, likely
+// the same threshold.
+// Do not trust a small search gain here. Allocation flips on any change:
+// moving y into the else arm at frame 509, which is wrong against the listing,
+// gained 182 with the counters' registers unchanged. Swaps gaining 8 to 22 in the
+// palette, opening and spans2 orders also contradicted the listing and are out.
 // ResourceId_Data076, 077, 09A and 0A5 are placeholders for ids
 // resource_directory.s does not name yet.
 
@@ -65,7 +83,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -101,7 +119,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -229,16 +247,16 @@ extern u8 gMapCellBuffer[];
 extern u8 Data_02010578[];
 extern struct IrisSparks Data_02011f40;
 extern struct IrisScene Data_02012ee0;
-extern struct IrisPoint Data_02012ef4[];
+#define Data_02012ef4 ((struct IrisPoint (*)[10])(Ram_MapCellBuffer + 0x2ef4))
 extern s32 gCameraSceneParameters[];
-extern const u16 gData_08197410[];
+extern u16 gData_08197410[];
 extern const struct Scale Data_08196f48;
 extern const struct Widths5 Data_08196f50;
 extern const struct Widths7 Data_08196f64;
 extern const struct Widths7 Data_08196f80;
 extern const struct Spans4 Data_08196f9c;
 extern const struct Spans4 Data_08196fbc;
-extern const s32 Data_08199f40[];
+extern s32 Data_08199f40[];
 extern const u8 Data_08199f48[];
 extern const u8 Data_08199f88[];
 extern const u8 Data_08199f98[];
@@ -250,7 +268,7 @@ extern const u8 Data_08199fed[];
 extern const u16 Data_08199ffc[];
 extern const s16 Data_0819a01a[];
 extern const u8 Data_0819a038[];
-extern const s32 Data_0819a040[];
+extern s32 Data_0819a040[];
 extern const u16 Data_0819a048[];
 extern const u16 Data_0819a054[];
 extern const u8 Data_0819a060[];
@@ -292,7 +310,7 @@ void Heap_Release(void *buffer);
   (0x06010000 + gResourceTableEntries[((u8 *)(obj))[16]].tile)
 #define SCENE (&Data_02012ee0)
 #define PLTT 0x05000000
-#define STREAK(i, j) (Data_02012ef4[(i) * 10 + (j)])
+#define STREAK(i, j) (((struct IrisPoint *)Data_02012ef4)[(i) * 10 + (j)])
 // The 128 background colours the scene fades (entries 96 to 223).
 #define FADE_PLTT ((u16 *)(PLTT + 0xc0))
 
@@ -303,8 +321,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  DrawRectangle draw = Ram_HeapSlots->unk64[1];
   u8 *sprites = Ram_HeapSlots->unk64[0];
+  DrawRectangle draw = Ram_HeapSlots->unk64[1];
   DrawRectangle drawAlt = Ram_HeapSlots->unkb8[1];
   s32 r;
   s32 cel;
@@ -544,8 +562,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           Func_080151ac(place);
           work->particles[i].velocityZ += 0x2000;
           model->kind = 4;
-          model->mesh = Data_08199f98;
           model->texture = &texture;
+          model->mesh = Data_08199f98;
           model->vertices = verts;
           Render_TransformVertices(Data_08199f88, verts, 4);
           Render_DrawModelList(model);
@@ -586,12 +604,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   u8 *tiles;
   u8 v;
 
-  sparks = &Data_02011f40;
-  objects = (struct IrisSprite **)gMapCellBuffer;
   canvas = Ram_HeapSlots->battleFxWork[1];
-  battle = (u8 *)Ram_HeapSlots->battleWork;
-  sprites = Ram_HeapSlots->unk64[0];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  objects = (struct IrisSprite **)gMapCellBuffer;
+  sprites = Ram_HeapSlots->unk64[0];
+  sparks = &Data_02011f40;
+  battle = (u8 *)Ram_HeapSlots->battleWork;
   savedScroll = gBgScroll[1].x;
   camera = Ram_HeapSlots->cameraWork;
   work->effect = effect;
@@ -704,7 +722,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       SCENE->y = 0x800000;
       SCENE->radius = 0xc0000;
       for (i = 0; i != 15; i++) {
-        struct IrisPoint *s = SCENE->streaks[i];
+        struct IrisPoint *s = Data_02012ef4[i];
 
         s->x = Data_08199fde[i] << 16;
         s->y = Data_08199fed[i] << 16;
@@ -730,7 +748,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           }
         }
         if (frame >= j * 8 + 24) {
-          struct IrisPoint *s = SCENE->streaks[j];
+          struct IrisPoint *s = Data_02012ef4[j];
           if (HALF(s, 3) > 59) {
             s32 size;
 
@@ -768,9 +786,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (!(frame & 7)) {
           for (i = 0; i != 128; i++) {
             s32 c = FADE_PLTT[i];
-            s32 r = c & 31;
+            s32 r = 31;
             s32 g = (u16)c >> 5 & 31;
             s32 b = (u16)c >> 10 & 31;
+            r &= c;
 
             if (r < 23)
               r++;
@@ -1001,7 +1020,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           u8 *src = work->sheet + gData_08197410[Data_0819a040[k] - 1];
 
           for (m = 0; m != Data_0819a040[k] * Data_0819a040[k] * 2; m++) {
-            s32 v = src[m] - j * 16;
+            s32 v = *src++ - j * 16;
 
             if (v < 0)
               v = 0;
@@ -1013,7 +1032,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         u8 *src = work->sheet + gData_08197410[1];
 
         for (m = 0; m != 8; m++) {
-          s32 v = src[m] - j * 8;
+          s32 v = *src++ - j * 8;
 
           if (v < 0)
             v = 0;
@@ -1124,10 +1143,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 step = frame - 422;
 
       top = 120 - step * 8;
-      for (i = top; i != top + 40; i++) {
-        v = (i - top) * 2;
-        if (i > 127)
-          break;
+      for (i = top; i != top + 40 && (v = (i - top) * 2, i <= 127); i++) {
         if (i >= 0) {
           if (v > 63)
             v = 63;

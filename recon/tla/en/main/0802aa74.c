@@ -1,13 +1,13 @@
-// Draft, differ 179 (183 before statements reordered 2026-10-26).
-// Near miss, differ 185 of 157 (2026-10-18), first pass: The Broken Seal's
-// Map_CenterOnFollowedPoint, with this game's list of camera rectangles
-// (s16 pixels, ended by -1, the pointer at map work 0xfc) that push the
-// followed point out to the nearest edge. Left: the native keeps the
-// followed pointer in a stack slot (sub sp, #4, stored after each read) and
-// hoists -1 into r10; this keeps the pointer in a register. Its distance
-// tests subtract the other way round where a difference is negative
-// (subs r2, r1, r5), as ABS of an expression folds; written as ABS(left - x)
-// throughout, the allocation drifts further (differ 220).
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The Broken Seal's Map_CenterOnFollowedPoint, with this game's list of camera
+// rectangles (s16 pixels, ended by -1, the pointer at map work 0xfc) that push
+// the followed point out to the nearest edge. No device: the old draft's
+// stack-slot difference was allocation. Plain ABS(nearX - x) on every test is
+// what gives the rebuilt difference in r6 and r4, through PRE, and the zeros
+// set before the pointer read give the reload order. rectList is the list's
+// head and rect its cursor: the one copy the listing shows (adds r2, r3); with
+// a single variable, rect loads into r2 and -1 becomes subs r1, #1. Edition
+// bytes other than tla-en not measured.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -19,20 +19,21 @@ void Func_0802ad84(void);
 
 void Func_0802aa74(void) {
   struct MapWork *work = Ram_HeapSlots->mapWork;
-  s32 *followedPosition = work->origin;
   s32 x = 0;
   s32 height = 0;
   s32 z = 0;
+  s32 *followedPosition = work->origin;
 
   if (followedPosition != NULL) {
+    s16 *rectList;
     s16 *rect;
 
     x = *followedPosition++;
     height = *followedPosition++;
-    rect = *(s16 **)((u8 *)work + 0xfc);
     z = *followedPosition++;
-    if (rect != NULL) {
-      while (rect[0] != -1) {
+    rectList = *(s16 **)((u8 *)work + 0xfc);
+    if (rectList != NULL) {
+      for (rect = rectList; rect[0] != -1; rect += 4) {
         s32 left = (rect[0] << 16) - 0x780000;
         s32 top = (rect[1] << 16) + height - 0x400000;
         s32 right = (rect[2] << 16) + 0x780000;
@@ -40,27 +41,19 @@ void Func_0802aa74(void) {
 
         if (x >= left && z >= top && x <= right && z <= bottom) {
           s32 nearX = left;
-          s32 dx = left - x;
           s32 nearZ;
-          s32 dz;
 
-          if (ABS(dx) > ABS(right - x)) {
+          if (ABS(nearX - x) > ABS(right - x))
             nearX = right;
-            dx = right - x;
-          }
           nearZ = top;
-          dz = top - z;
-          if (ABS(dz) > ABS(bottom - z)) {
+          if (ABS(nearZ - z) > ABS(bottom - z))
             nearZ = bottom;
-            dz = bottom - z;
-          }
-          if (ABS(dx) <= ABS(dz))
+          if (ABS(nearX - x) <= ABS(nearZ - z))
             x = nearX;
           else
             z = nearZ;
           break;
         }
-        rect += 4;
       }
       followedPosition[-3] = x;
       followedPosition[-1] = z;

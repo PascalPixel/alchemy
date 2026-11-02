@@ -1,36 +1,30 @@
-// Draft, differ 221 of 304, skeleton gap 89 (tla-en, 2026-11-01)
-// Calls, branches, loops and fields follow the native. Left: GCSE PRE hoists
-// &position and &object->terrainId above the retry label and turns every later
-// &position into a copy of one register (07.gcse: edge 0 to 1, expressions 3
-// and 11). The native computes both on each pass and repeats add sp, #28 at
-// each call, in the same block as p and q, so its compiler did not treat that
-// fully redundant address as PRE does. The other differences are allocation
-// that follows from the hoisted register.
+// Draft, differ 211 of 304, skeleton gap 43 (tla-en, 2026-11-01)
+// Calls, branches, loops and fields follow the native and the adopted relative
+// Func_02001b48 (tundaria_tower/s1b48.c), whose plain statement order and goto
+// loops this text now takes. Left: GCSE PRE hoists &position and
+// &object->terrainId above the retry label and turns every later &position into
+// a copy of one register (07.gcse: edge 0 to 1, expressions 3 and 11). The
+// native recomputes add sp, #28 after every call and computes &terrainId on each
+// pass. The rest of the gap is allocation that follows from the hoisted register.
+// Func_02001b48 reaches the native only with tagged devices this draft may not
+// add: an empty asm clobbering sfp at each loop stops the hoist, and j holds the
+// position's address and then the overlap counter (the native's r10 in both).
 // Ruled out as an allocation effect: PRE's reaching register has no REG_EQUIV
 // note (17.lreg, the set on edge 0 to 1), so losing its hard register would give
 // a stack slot, never the native's rematerialized add sp, #28. All five sites
-// reach gcse as sets of a pseudo (precompute_register_parameters puts a call's
-// frame address in one) and hash to one expression, so no plain spelling
+// reach gcse as sets of a pseudo and hash to one expression, so no plain spelling
 // separates them.
-// Not a source problem as far as measured: an analysis-only compile of this
-// text with -Os, whose classic GCSE and unweighted reference counts replace
-// PRE, leaves 32 of 302 lines differing, against 177 with -fno-gcse. That
-// is a compiler question (K3) for Pascal, and this draft keeps the build
-// options. What -Os still leaves: add sp, #28 at the calls where classic GCSE
-// reuses p and q, and the order around the two Iwram_MulQ16 calls.
-// p, q and layer are kept: at the real options they emit the same code as
-// plain position[n] and object->terrainId, but under -Os dropping them is worse
-// (88 lines without any of them).
-// Velocity comes before angle in the blocked arm: differ 232 to 221.
-// Probe, not kept: holding the sum of squares in j, reused as the overlap
-// counter, gives differ 165, gap 69, and in radius differ 167, gap 69. Either
-// is a tagged temporary (S2) that does not reach differ 0, so it stays out; a
-// separate local, at any of eight declaration positions, changes nothing.
-// Tried at the real options, no gain: a head-tested loop flag (stops the hoist
-// across the back edge, but bb 2 still takes the later copies; gap 117), for(;;)
-// (109), s32 angle (differ 219, gap 99), angle == -1 (96), reordered
-// declarations, targets taken from p[], the loop split into for/break, the
-// flags read through entry, x and z assigned apart from p[].
+// Compiler question for Pascal (K3), not pursued here: gcse.c does not count a
+// call as setting sfp, and every native add sp, #28 follows a call since the
+// last one, as if the native's did. That would not explain &terrainId. An
+// analysis-only compile with -Os left 32 of 302 lines differing, before this
+// round's reordering, against 177 with -fno-gcse.
+// Tried on this text, no gain: declaration order of j, flags, q, p, entry,
+// layer and cell (identical); a set-once local for Iwram_MulQ16 (identical);
+// s32 angle (differ 209, gap 47); (s16) casts on it (identical); p for q,
+// position for p or q, q as the overlap argument (identical or worse); one pair
+// of targets (218); dx before dz (worse); for (;;) in place of goto retry (245).
+// Earlier: a head-tested loop flag (gap 117), angle == -1, targets from p[].
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -88,8 +82,8 @@ retry:
   targetX = x;
   layer = &object->terrainId;
   startCell = Func_02002fe0(*layer, targetX, targetZ);
-  dx = targetX - object->x;
   dz = targetZ - object->z;
+  dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
     angle = gData_020032b2[(gInput.held >> 4) & 15];
     if ((u16)angle == 0xffff)
@@ -100,19 +94,8 @@ retry:
   }
   Vector_AddPolarOffsetFar(0x100000, angle, position);
   cell = Func_02002fe0(*layer, p[0], p[2]);
-  if (cell != 255 &&
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y <= 0x80000) {
-    p[0] = x;
-    p[2] = z;
-    object->speedLimit = 0x20000;
-    object->acceleration = 0x1999;
-    object->action = 0;
-    Func_02002fb0(object, x, object->y, z);
-    Func_02002f80(object, 2);
-    Actor_SetAnimationSpeed(object, 48);
-    Func_02002fb8(object);
-    object->update = Func_020017dc;
-  } else {
+  if (cell == 255 ||
+      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->velocityX = 0;
     object->velocityZ = 0;
     object->angle = angle;
@@ -120,30 +103,48 @@ retry:
     object->z = z;
     goto end;
   }
-  while (Vector_AddPolarOffsetFar(0x100000, angle, position), q = position,
-         (cell = Func_02002fe0(*layer, q[0], q[2])) != 255) {
-    if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
+  p[0] = x;
+  p[2] = z;
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x1999;
+  object->action = 0;
+  Func_02002fb0(object, x, object->y, z);
+  Func_02002f80(object, 2);
+  Actor_SetAnimationSpeed(object, 48);
+  Func_02002fb8(object);
+  object->update = Func_020017dc;
+  goto walk;
+walkNext:
+  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
+    goto blocked;
+  radius = object->radius - 2;
+  entry = Ram_HeapSlots->scriptObjects;
+  j = 0;
+  flags = &entry->collisionFlags;
+overlap:
+  if (entry->script != NULL && (1 & *flags) && entry != object) {
+    if (Func_02003028(&entry->x, radius, position, entry->radius - 2) >= 0)
       goto blocked;
-    radius = object->radius - 2;
-    entry = Ram_HeapSlots->scriptObjects;
-    flags = &entry->collisionFlags;
-    for (j = 0; j <= 63; j++) {
-      if (entry->script != NULL && (1 & *flags) && entry != object) {
-        if (Func_02003028(&entry->x, radius, position, entry->radius - 2) >= 0)
-          goto blocked;
-      }
-      flags += sizeof(*entry);
-      entry++;
-    }
-    targetX = q[0];
-    targetZ = q[2];
-    object->speedLimit = 0x20000;
-    object->acceleration = 0x1999;
-    Func_02002fb0(object, q[0], q[1], q[2]);
-    Func_02002fb8(object);
-    if (cell != startCell)
-      goto moved;
   }
+  j++;
+  flags += sizeof(*entry);
+  entry++;
+  if (j <= 63)
+    goto overlap;
+  targetX = q[0];
+  targetZ = q[2];
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x1999;
+  Func_02002fb0(object, q[0], q[1], q[2]);
+  Func_02002fb8(object);
+  if (cell != startCell)
+    goto moved;
+walk:
+  Vector_AddPolarOffsetFar(0x100000, angle, position);
+  q = position;
+  cell = Func_02002fe0(*layer, q[0], q[2]);
+  if (cell != 255)
+    goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;

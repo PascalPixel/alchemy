@@ -1,33 +1,48 @@
-// Draft, differ 216 of 264, skeleton gap 82 (tla-en, 2026-11-01)
+// Draft, differ 216 of 264, skeleton gap 84 (tla-en, 2026-11-01)
 // Overlay 6b5's Func_02000578, the lobby's sending of the party records and the
 // Djinn recovery table, after ☀️'s BattleArena_SendPartyRecords. Confirmed twin
 // by statements, but not by allocation: the twin has heap r8, i r7, timeout r6.
 // The record and clear loops stay goto loops: real loops strength-reduce them
-// (twin's for loops measure differ 290), which the listing does not. tries is
-// three variables (r10, r5, r8 in the listing); the shifted word is read as u32
-// so the store aliases count and the k loop rereads it.
-// This round: tries = 0 after the copy and timeout before tries in the last
-// block took differ from 238. The listing shows tries = 0 above Unit_Get, but
-// that is a callee-saved set sched2 may move; written there it measures 238.
-// Left, register class. Listing order is i, heap, memberIds' address, tries,
-// timeout, result, then memberCount and the slot address spilled (sp+4, sp+0).
-// Here (--rtl): timeout 25 refs p.61, tries p.446, heap p.431, address p.226,
-// memberCount p.157, slot address p.111, result p.07, so result is spilled and
-// memberCount takes fp. timeout's refs come from each wait loop's two back edges
-// to test, each adding a depth (flow.c). Measured: one latch per wait loop drops
-// timeout to 19 refs p.452 and the last block's timeout below its tries, as the
-// listing has, but heap still ranks third; that needed an empty asm at each
-// join, a barrier that gained only 2, so it came back out. Weights that count
-// each loop once fit the listing better than this compiler's do.
+// (twin's for loops measure differ 290), which the listing does not. The j and
+// k loops are real: the listing steps r0 and stmia r2! there. tries is three
+// variables (r10, r5, r8 in the listing).
+// Left, nearly all of it allocation. Most of the skeleton gap follows from heap
+// in a high register and result on the stack: adds against mov, add r2, sl,
+// adds r1, #42 (move2add needs heap low), and the shared tails that a stacked
+// result or a registered memberCount lets cross-jumping make.
+// Listing's order is tries2 (r5), i (r6), heap (r7), memberIds' address (r8),
+// tries (r10), timeout (r9), result (r11), then memberCount and the slot address
+// spilled (sp+4, sp+0). Here (--rtl, global.c's floor_log2(refs) * refs / live):
+// i .69, tries .61, timeout .61, heap .43, address .226, memberCount .16 (4/50),
+// result .07. So the listing wants tries and timeout below .226, about half
+// their weight here. timeout's 25 refs come from each wait loop's two back edges
+// to the test, each adding a depth in flow.c; those edges are in the listing
+// too, so no source form lowers them. One latch per wait loop gives 19 refs, .45,
+// still above heap, and needs an empty asm. Weights that count each loop once
+// fit the listing better than this compiler's do: a compiler question, out of
+// scope here.
+// result above memberCount: update_equiv_regs doubles result's live length for
+// its constant first set (344), and memberCount needs 3 refs for log 1, with
+// set, guard and the loop's test weighing 4. Neither has a plain form.
 // Left, hoisting. The listing keeps sp+8 in the clear loop and the j loop, and
-// reads [list, 0x120 in a register] in the k loop; here gcse's PRE lifts both,
-// (plus sfp 8) and (plus list 0x120), and loop.c moves the rest. A goto k loop
+// reads [list, 0x120 in a register] in the k loop; here gcse's PRE lifts (plus
+// sfp 8) onto edge (0,1) and (plus list 0x120) out of the k guard. Entering the
+// clear loop at its bottom test does stop PRE there, and keeps the address in
+// the loop, but leaves a b the listing lacks, and cse2 gives slotMap a REG_EQUIV
+// from its copy, so it rematerializes instead of taking sp+0 (differ 231,
+// gap 83). In the j loop, sp+8 rebuilt beside sp+0 read in the record loop means
+// two pseudos; peerSlots[] there measures 222, slotMap[] 216. A goto k loop
 // loses (differ 227, 232); the guarded do-while gains 2 of differ and loses 5
-// of skeleton (k < list->count - 1 under if, differ 214, gap 51/41). No source
-// form found stops PRE without a branch the listing lacks. Same family as the
-// frame-address notes in other drafts; a compiler question, out of scope here.
-// result above memberCount needs result undoubled (local-alloc doubles L for
-// its constant first set) or a longer memberCount; neither has a plain form.
+// of skeleton (k < list->count - 1 under if, differ 214, gap 51/41).
+// To retire: the u32 cast in the k loop is a cast to a type the object is not.
+// It keeps the store aliasing count, so the loop rereads count as the listing
+// does and counts up; list->offers[k] = list->offers[k + 1] hoists count and
+// counts down (differ 237, gap 58/43), and a u32 count loses 2 and its compares
+// are unsigned. No plain form found; devices in disguise may not be added, so
+// this one stays only while this is a draft, and needs an answer before adoption.
+// Also measured, no gain: wait loops as real while (224 to 237), one tries for
+// the first two loops (234), a for record loop (254), a struct-wrapped peerSlots
+// (216, unchanged), result after timeout (222), memberIds after peerSlots (220).
 #include "types.h"
 #include "iwram_call.h"
 #include "heap_release.h"
@@ -144,7 +159,7 @@ next:
     timeout = 600;
     tries = 0;
     for (j = 0; j < list->count; j++) {
-      list->offers[j].owner = *(peerSlots + list->offers[j].owner);
+      list->offers[j].owner = slotMap[list->offers[j].owner];
       if (list->offers[j].owner == 0) {
         for (k = j; k < list->count - 1; k++)
           ((u32 *)list->offers)[k] = ((u32 *)list->offers)[k + 1];

@@ -1,13 +1,14 @@
-// Draft, differ 140 (318 before statements reordered 2026-10-26).
-// Draft, differ 322 of 447: The Broken Seal twin
-// (DisplayScroll_BuildAndSwapHBlankPage) for the heap slot 0x88 workspace:
-// fills the hidden page with each scanline's BG1, BG2 and BG3 offsets, the
-// scroll plus a sine wave on each axis with a step (in mode 1 only BG3
-// waves), then shows that page. Nothing while the event work's byte 0xca4 is
-// set. The blocks and loops follow the native one for
-// one (443 instructions); what differs is allocation: the native keeps BG1's
-// x and y and BG2 and BG3's y on the stack and BG2's x in r11, this draft
-// BG1's x in r11 and BG2's in r9, and every later choice follows.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// The Broken Seal twin is LineScroll_BuildPage, for the heap slot 0x88
+// workspace: fills the hidden page with each scanline's BG1, BG2 and BG3
+// offsets, the scroll plus a sine wave on each axis with a step (in mode 1
+// only BG3 waves), then shows that page. Nothing while the event work's byte
+// 0xca4 is set. No device. What closed it after the compiler change: the
+// scroll locals declared x1, y1, x2, y2, x3, y3; one u16 waveX3 and one u16
+// waveY3 for the whole function, each set in both modes, so gcse shares each
+// axis's shifted value (a single u16 for both axes, or one per section, lets
+// the pseudo outbid the work pointer or lose r10); and the first section's
+// locals set in the order a, waveX3, b, which gives b its slot at sp+8.
 #include "types.h"
 #include "bg_scroll.h"
 #include "iwram_call.h"
@@ -32,12 +33,12 @@ extern const s16 Data_080f08b0[];
 void Func_080d607c(void) {
   struct DisplayScrollWork *work = Ram_HeapSlots->unk84[1];
   u8 mode = work->mode;
-  s32 y3 = (s16)gBgScroll[3].y;
   s32 x1 = (s16)gBgScroll[1].x;
-  s32 x2 = (s16)gBgScroll[2].x;
   s32 y1 = (s16)gBgScroll[1].y;
-  s32 x3 = (s16)gBgScroll[3].x;
+  s32 x2 = (s16)gBgScroll[2].x;
   s32 y2 = (s16)gBgScroll[2].y;
+  s32 x3 = (s16)gBgScroll[3].x;
+  s32 y3 = (s16)gBgScroll[3].y;
   u8 *event = Ram_HeapSlots->eventWork;
   u16 *row;
   s32 step;
@@ -45,6 +46,8 @@ void Func_080d607c(void) {
   s32 amplitude;
   s32 scanline;
   u16 wave;
+  u16 waveX3;
+  u16 waveY3;
 
   if (event != NULL && *(s8 *)(event + 0xca4) != 0)
     return;
@@ -60,16 +63,16 @@ void Func_080d607c(void) {
       }
     } else {
       u16 a = x1;
-      u16 c = x3;
       u16 b = x2;
 
+      waveX3 = x3;
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {
         wave = Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) /
                256;
         row[0] = a + wave;
         row[2] = b + wave;
-        row[4] = c + wave;
+        row[4] = waveX3 + wave;
         row += 6;
         phase += step;
       }
@@ -86,8 +89,7 @@ void Func_080d607c(void) {
     } else {
       u16 a = y1;
       u16 b = y2;
-      u16 c = y3;
-
+      waveY3 = y3;
       amplitude = work->ampY;
       for (scanline = 0; scanline != 160; scanline++) {
         wave = Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) /
@@ -96,7 +98,7 @@ void Func_080d607c(void) {
         row += 2;
         *row = b + wave;
         row += 2;
-        *row = c + wave;
+        *row = waveY3 + wave;
         row += 2;
         phase += step;
       }
@@ -112,15 +114,14 @@ void Func_080d607c(void) {
         row[scanline * 6 + 4] = x3;
       }
     } else {
-      u16 c = x3;
-
+      waveX3 = x3;
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {
         wave = Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) /
                256;
         row[0] = x1;
         row[2] = x2;
-        row[4] = c + wave;
+        row[4] = waveX3 + wave;
         row += 6;
         phase += step;
       }
@@ -135,15 +136,14 @@ void Func_080d607c(void) {
         row[scanline * 6 + 4] = y3;
       }
     } else {
-      u16 c = y3;
-
+      waveY3 = y3;
       amplitude = work->ampY;
       for (scanline = 0; scanline != 160; scanline++) {
         wave = Iwram_MulQ16(Data_080f08b0[(phase >> 16) & 255], amplitude) /
                256;
         row[0] = y1;
         row[2] = y2;
-        row[4] = c + wave;
+        row[4] = waveY3 + wave;
         row += 6;
         phase += step;
       }

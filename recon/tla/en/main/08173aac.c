@@ -1,23 +1,38 @@
-// Draft, differ 1485 of 4138, skeleton gap 251 (tla-en, 2026-11-01)
-// The frame now matches the listing (272 bytes, every struct slot in place).
-// What is left is mostly sched2 order and the registers behind it.
+// Draft, differ 34 of 4138, skeleton gap 0 (tla-en, 2026-11-01)
+// Every instruction is in place; what is left is registers at two sites.
+// 1. Mode 6 (32 of the 34): the listing has scale in r6, half in r5 and the
+//    hoisted frame * 356 in r6; the draft has them the other way round, which
+//    also moves the reload of -64. global.c ranks scale (12 refs over 13 insns,
+//    2.77) above half (18 over 46, 1.56). half must go first, so scale's life
+//    has to reach about 24 insns or half has to reach 32 refs. Tried: their
+//    declaration order, half set after the reset, half and scale at frame scope,
+//    scale shared with other modes (worse in every mode), spin as a local,
+//    spin in scale's variable. None moved it.
+// 2. Mode 9's p: the listing adds offset + work, the draft work + offset (one
+//    instruction). Every spelling of the index gives the same RTL.
+// What closed the rest, for the next reader: reload's registers rotate upward
+// through the spill set in pre-scheduling order, so a wrong store order shows
+// as a block of wrong registers from there on, and the listing's reload
+// registers give the source order of a set-up block.
+// cells and mask are one-constant locals: cells gets no register, so it is
+// rematerialized by reload at each use. twice is one variable because a pseudo
+// set in three modes takes the only register free at all three (r0); it holds
+// frame * 2 every time. mesh and vertices are typed pointers, not void: a void
+// pointer's store depends on the byte stores to the texture before it.
+// gData_08197410 is not const: its loads must order against the stack stores.
+// The second particle table is a number: all four sites share one pool word,
+// and mode 9's q is a reduced giv, set after the entry test. PLACE_PARTICLE's
+// one-pass block keeps CSE from sharing 0x8000 past the roll; shared, its life
+// passes loop.c's threshold and it is hoisted. Mode 5's and mode 10's scale
+// calls are outside it because there 0x10000 is hoisted or shared. Palettes and
+// clears call through a local, the form adopted in f15c970.c.
 // Slots: draw is DrawRectangle[2], whose unused word is sp+40. Block slots are
 // freed at block end unless a call or assignment at the slot's own level
 // follows its address being taken (preserve_temp_slots moves it out one level).
 // That is why target and mode 5's first pos sit at arm level, mode 5's second
-// pos has its own block, mode 4's calls are braced, and mode 1 steps with
-// i += 1 (s32 pos[3] gives the same slots through a different alias set).
-// Allocation is touchy: x and y are per mode in 5, 6 and 0, and x - 10 sits
-// inside the expression in 6 and 0; splitting or moving them flips it.
-// Palette and clear calls: after the pool load the listing puts the split
-// constant later, which means r0's constant is set after the entry's pseudo.
-// Forwarding through a static inline (destination, source, size) does that and
-// reaches differ 1467, gap 233, but a wrapper device stays out short of differ
-// 0. A do-while macro with a one-constant local is worse (1654).
-// Modes 11 and 14 hoist 0x8000 out of their loop, the listing does not; a block
-// local changed nothing and goto loops were worse (1574). Mode 5's model layer
-// stores mesh early and takes other reloads; mode 9's frame 0 runs 4 bytes long
-// so its branch needs a far form.
+// pos has its own block, and mode 4's calls are braced. mode 1's i += 1 is
+// stale and gone. Before adoption: name ModelFace and ProjectedVertex's use
+// here from project_vertices.c; the mesh tables still convert with a warning.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -38,8 +53,8 @@ struct ModelTexture {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
-  void *vertices;
+  const struct ModelFace *mesh;
+  struct ProjectedVertex *vertices;
   struct ModelTexture *texture;
   s32 shade;
   u8 scrollU;
@@ -115,9 +130,10 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 #include "input.h"
 
-extern struct EffectStep gData_02014000[];
+// A second, larger particle table, always reached at its fixed address.
+#define EXTRA_PARTICLES ((struct EffectStep *)0x02014000)
 extern s32 gCameraSceneParameters[];
-extern const u16 gData_08197410[];
+extern u16 gData_08197410[];
 extern const s8 Data_08198c28[];
 extern const u8 Data_08198c34[];
 extern const u8 Data_08198c64[];
@@ -170,6 +186,23 @@ void Heap_Release(void *buffer);
 
 // The user's figure: a 20 x 40 cell drawn over the canvas.
 #define FIGURE(work) ((work)->sheet + 0x65c0)
+// Loads a sheet's colours into the background palette.
+#define LOAD_BG_PALETTE(resource)                                              \
+  {                                                                            \
+    void *palette = Resource_GetTableEntry((s32)&(resource));                  \
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;                  \
+                                                                               \
+    copy((void *)BG_PLTT, palette, 128);                                       \
+  }
+// Sets the transform for one of modes 11 and 14's spinning particles: at its
+// position, half as wide (the canvas holds every other column), turned by z.
+#define PLACE_PARTICLE(p)                                                      \
+  do {                                                                         \
+    Render_ResetTransformState();                                              \
+    Func_08015160((p)->x - 0x400000, (p)->y - 0x400000, 0);                    \
+    Func_080151e4(0x8000, 0x10000, 0x10000);                                   \
+    Func_080150e4((p)->z);                                                     \
+  } while (0)
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                        \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
@@ -189,6 +222,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
   s32 frames;
   u8 *sprites = Ram_HeapSlots->unk64[0];
   s32 *camera = Ram_HeapSlots->cameraWork;
+  u8 *cells = Ram_MapCellBuffer;
   struct RenderModel *model;
   void *verts;
   struct ModelTexture texture;
@@ -209,7 +243,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Func_0815585c(effect, (effect->side ^ 1) << 4 | 33, screen, other);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D4, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, FIGURE(work), 1, 1);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+    LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
     frames = 48;
   } else if (mode == 4) {
     s32 j;
@@ -218,7 +252,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Func_0815585c(effect, (effect->side ^ 1) << 4 | 0x120, screen, other);
     Resource_LoadAndDecompress((s32)&ResourceId_Data157, FIGURE(work), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data156, work->sheet + 0x1000, 1, 0);
-    Iwram_ClearWords(work->sheet, 0x1000);
+    {
+      s32 (*clear)(void *, s32) = Iwram_ClearWords;
+
+      clear(work->sheet, 0x1000);
+    }
     for (k = 0; k != 40; k++)
       for (j = 0; j != 40; j++)
         work->sheet[0x30c + k * 64 + j] = work->sheet[0x1000 + k * 40 + j];
@@ -231,11 +269,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Sound_PlayFar(84);
   } else if (mode == 11) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_Data151), 128);
+    LOAD_BG_PALETTE(ResourceId_Data151);
     frames = 64;
   } else if (mode == 14) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D7, work->sheet, 0, 0);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet), 128);
+    LOAD_BG_PALETTE(ResourceId_MercuryDjinnSmallSheet);
     work->fadeFrames = 24;
     work->fadeStep = 0;
     frames = 64;
@@ -243,14 +281,14 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0F4, work->sheet, 1, 1);
     frames = 40;
   } else if (mode == 12) {
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D6, work->sheet + 0x4000, 1, 1);
     Func_0816ae40(work->sheet + 0x4000, work->sheet, 64, 64);
     work->fadeFrames = 24;
     work->fadeStep = 0;
     frames = 48;
   } else if (mode == 15) {
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D6, work->sheet + 0x4000, 1, 1);
     Func_0816ae40(work->sheet + 0x4000, work->sheet, 64, 64);
     work->fadeFrames = 24;
@@ -262,13 +300,12 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data151, FIGURE(work), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x4000, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
+    LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
     frames = 82;
   } else if (mode == 10) {
     s32 j;
     s32 k;
-    u8 *cells = Ram_MapCellBuffer;
 
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, cells, 1, 1);
     Iwram_ClearWords(work->sheet, 0x4000);
@@ -277,11 +314,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         for (j = 0; j != 24; j++)
           work->sheet[4 + i * 0x1000 + k * 32 + j] =
               cells[(i * 45 << 6) + k * 24 + j];
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_Data149), 128);
+    LOAD_BG_PALETTE(ResourceId_Data149);
     frames = 60;
   } else if (mode == 7) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet, 0, 0);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet), 128);
+    LOAD_BG_PALETTE(ResourceId_MercuryDjinnSmallSheet);
     frames = 76;
   } else if (mode == 8) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D6, work->sheet + 0x4000, 1, 1);
@@ -299,10 +336,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       if (*p > 63)
         *p = 63;
     }
-    if (effect->variant == 2)
-      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
-    else
-      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
+    if (effect->variant == 2) {
+      LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
+    } else {
+      LOAD_BG_PALETTE(ResourceId_BlastSheet);
+    }
     BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
     frames = 41;
   } else {
@@ -316,7 +354,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
     }
     Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data151, FIGURE(work), 1, 1);
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+    LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   work->transferMode = 2;
@@ -344,6 +382,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
 
   for (frame = 0; frame != frames; frame++) {
     s32 a;
+    s32 twice;
     s32 x;
     s32 y;
 
@@ -450,7 +489,10 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       x = (Trig_Sin(b) * 20 >> 16) + screen[0] / 2 - 10;
       y = (Trig_Cos(b) * 4 >> 16) + screen[1] - 24;
       if (frame > 44)
-        y = y - frame * 2 + 88;
+        {
+          twice = frame * 2;
+          y = y - twice + 88;
+        }
       draw[0](canvas, FIGURE(work), x, y, 20, 40);
       Func_081496c8(frame, 0xaaab, 0x5555, 0);
     } else if (mode == 2 || mode == 7) {
@@ -530,8 +572,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           fall->velocityZ = (target[4] - ball->velocityZ) / 32;
         }
         ball->velocityX += fall->x;
-        ball->velocityY = fall->y + ball->velocityY;
-        ball->velocityZ = fall->z + ball->velocityZ;
+        ball->velocityY += fall->y;
+        ball->velocityZ += fall->z;
         fall->x += fall->velocityX;
         fall->y += fall->velocityY;
         fall->z += fall->velocityZ;
@@ -566,7 +608,10 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       x = (Trig_Sin(b) * 20 >> 16) + screen[0] / 2 - 10;
       y = (Trig_Cos(b) * 4 >> 16) + screen[1] - 24;
       if (frame > 48)
-        y = y - frame * 2 + 96;
+        {
+          twice = frame * 2;
+          y = y - twice + 96;
+        }
       if (y > -40)
         draw[0](canvas, FIGURE(work), x, y, 20, 40);
     }
@@ -641,7 +686,6 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           s32 scale = (t << 10) + 0x1000;
           s32 shade = 0;
           s32 half;
-          s32 spin;
 
           if (t > 63) {
             shade = (64 - t) * 4;
@@ -654,10 +698,10 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           Func_080151e4(half, scale, scale);
           Func_080150e4((frame << 8) + 0xc000);
           SceneTransform_ApplyPitch((frame << 6) - 0x4770);
-          for (i = 0, spin = frame * 356; i != 12; i++) {
+          for (i = 0; i != 12; i++) {
             texture.pixels = work->sheet + (i % 3 << 10);
             Transform_Push();
-            Func_080150e4(spin + i * 5461);
+            Func_080150e4(frame * 356 + i * 5461);
             Func_08015160(0, 0x740000, 0);
             Func_080151e4(half, half, half);
             Render_TransformVertices(gData_08199210, verts, 4);
@@ -673,8 +717,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       model->mesh = gData_08199340;
       model->kind = 6;
       texture.pixels = work->sheet;
-      // i += 1, not i++: the assignment keeps pos's slot past this arm.
-      for (i = 0; i != effect->count; i += 1) {
+      for (i = 0; i != effect->count; i++) {
         struct EffectPosition pos;
 
         EffectPosition_ProjectScaledBattler(effect->actors[i], &pos);
@@ -735,18 +778,18 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         EffectPosition_ProjectBattler(effect->actors[0], &pos);
         texture.logWidth = 7;
         texture.logHeight = 7;
+        texture.pixels = cells;
         model->kind = 7;
         model->texture = &texture;
         model->mesh = gData_08199364;
-        texture.pixels = Ram_MapCellBuffer;
         model->vertices = verts;
         for (i = 0; i != 3; i++) {
           s32 t = frame - i * 4 - 55;
-  
+
           if (t >= 0) {
             s32 scale = (t * 3 << 12) + 0x4000;
             s32 shade = 0;
-  
+
             if (t > 7)
               shade = (8 - t) * 8;
             model->shade = shade;
@@ -779,8 +822,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         model->kind = 7;
         texture.pixels = work->sheet;
         EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
-        scale = t * -4592 + 0x10000;
-        for (i = 0; i != 2; i++, scale += 0x4000) {
+        for (i = 0, scale = t * -4592 + 0x10000; i != 2; scale += 0x4000, i++) {
           if (scale > 0) {
             s32 shade = -(i << 4);
 
@@ -817,7 +859,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         ball->y = to.y;
         for (i = 0; i != 32; i++)
           work->particles[i].variant = -1;
-        for (i = 0, q = gData_02014000; i != 256; i++, q++) {
+        for (i = 0, q = EXTRA_PARTICLES; i != 256; i++, q++) {
           s32 s = 511;
           s32 a;
 
@@ -839,18 +881,19 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame <= 9) {
-        s32 n = frame * 2;
         s32 v;
+        s32 mask = 255;
 
-        p = &work->particles[n];
         i = 0;
+        twice = frame * 2;
+        p = &work->particles[twice];
         p->x = from.x / 2 << 16;
         p->y = (from.y + 8) << 16;
-        v = ((Random16() & 255) + 256) << 8;
+        v = ((Random16() & mask) + 256) << 8;
         p->velocityX = v;
         if (effect->side == 1)
           p->velocityX = -v;
-        p->velocityY = -((Random16() & 255) + 256) << 4;
+        p->velocityY = -((Random16() & mask) + 256) << 4;
         p->variant = i;
       }
       for (i = 0; i != 32; i++) {
@@ -864,9 +907,9 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
       if (frame > 9) {
-        struct EffectStep *q = gData_02014000;
+        for (i = 0; i != Data_08198c64[effect->variant]; i++) {
+          struct EffectStep *q = &EXTRA_PARTICLES[i];
 
-        for (i = 0; i != Data_08198c64[effect->variant]; i++, q++) {
           if (q->variant >= 0) {
             s32 n = q->variant / 4 + 3;
 
@@ -953,10 +996,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           }
           model->shade = shade;
           texture.pixels = work->sheet + (i % 3 << 10);
-          Render_ResetTransformState();
-          Func_08015160(p->x - 0x400000, p->y - 0x400000, 0);
-          Func_080151e4(0x8000, 0x10000, 0x10000);
-          Func_080150e4(p->z);
+          PLACE_PARTICLE(p);
           Func_0801521c(0x8000);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
@@ -1006,10 +1046,7 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           }
           model->shade = shade;
           texture.pixels = work->sheet + (i % 3 << 10);
-          Render_ResetTransformState();
-          Func_08015160(p->x - 0x400000, p->y - 0x400000, 0);
-          Func_080151e4(0x8000, 0x10000, 0x10000);
-          Func_080150e4(p->z);
+          PLACE_PARTICLE(p);
           Func_0801521c(0x8000);
           Render_TransformVertices(Data_081991e0, verts, 4);
           Render_DrawModelList(model);
@@ -1041,10 +1078,11 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (frame > 27) {
         struct EffectStep *q;
+        struct EffectStep *p;
 
         if (frame == 28) {
           EffectPosition_ProjectScaledBattler(effect->actors[0], &pos);
-          for (i = 0, q = gData_02014000; i != 128; i++, q++) {
+          for (q = EXTRA_PARTICLES, i = 0; i != 128; i++, q++) {
             s32 s = 511;
             s32 a;
 
@@ -1058,31 +1096,31 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
             q->variant = (Random16() & 15) + 16;
           }
         }
-        for (i = 0, q = gData_02014000; i != 64; i++, q++) {
-          if (q->variant >= 0) {
+        for (p = EXTRA_PARTICLES, i = 0; i != 64; i++, p++) {
+          if (p->variant >= 0) {
             s32 j;
 
             for (j = 0; j != 4; j++) {
-              s32 n = q->variant / 8 + 1;
+              s32 n = p->variant / 8 + 1;
 
-              draw[0](canvas, sprites + gData_08197410[n - 1], HI(q->x) - n / 2,
-                   HI(q->y) - n, n, n * 2);
-              BattleEffectKernels_IntegrateVector2(q, 63, 0x800);
-              if (q->y > 0x680000) {
-                q->y = 0x680000;
-                q->velocityY = -q->velocityY / 2;
+              draw[0](canvas, sprites + gData_08197410[n - 1], HI(p->x) - n / 2,
+                   HI(p->y) - n, n, n * 2);
+              BattleEffectKernels_IntegrateVector2(p, 63, 0x800);
+              if (p->y > 0x680000) {
+                p->y = 0x680000;
+                p->velocityY = -p->velocityY / 2;
               }
             }
-            q->variant--;
+            p->variant--;
           }
         }
       }
       EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       texture.logWidth = 5;
-      model->texture = &texture;
-      model->mesh = gData_08199268;
       texture.logHeight = 7;
       model->kind = 7;
+      model->texture = &texture;
+      model->mesh = gData_08199268;
       model->vertices = verts;
       Render_ResetTransformState();
       Func_080151e4(0x8000, 0x10000, 0x10000);
@@ -1181,8 +1219,8 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
         shade = -16;
       model->shade = shade;
       model->texture = &texture;
-      model->kind = 6;
       model->vertices = verts;
+      model->kind = 6;
       model->mesh = Data_08198ec4;
       texture.pixels = work->sheet;
       texture.logWidth = 7;
@@ -1216,9 +1254,9 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
 
       texture.logWidth = 7;
       texture.logHeight = 7;
+      texture.pixels = cells;
       model->mesh = gData_08199364;
       model->kind = 6;
-      texture.pixels = Ram_MapCellBuffer;
       EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       Render_ResetTransformState();
       Func_08015160((pos.x / 2 - 64) << 16, (pos.y - 48) << 16, 0);
@@ -1250,17 +1288,19 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
           p->velocityX = -p->x / 48;
           p->y = Random16();
         }
-        Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
+        LOAD_BG_PALETTE(ResourceId_BlastSheet);
       }
       if (frame <= 15) {
         for (i = 0; i != 64; i++) {
           struct EffectStep *p = &work->particles[i];
 
           for (j = 0; j != 3; j++) {
-            s32 x = (p->x * Trig_Sin(p->y) >> 21) + pos.x / 2;
-            s32 y = p->x * Trig_Cos(p->y) >> 20;
+            s32 x = (Trig_Sin(p->y) * p->x >> 21) + pos.x / 2;
+            s32 y = (p->x * Trig_Cos(p->y) >> 20) + 60;
+            s32 n = 4;
 
-            draw[0](canvas, sprites + gData_08197410[3], x - 2, y + 56, 4, 8);
+            draw[0](canvas, sprites + gData_08197410[n - 1], x - n / 2, y - n, n,
+                    n * 2);
             p->x += p->velocityX;
           }
         }
@@ -1285,9 +1325,9 @@ void Func_08173aac(struct BattleEffectArgument *effect, s32 mode) {
       struct EffectPosition pos;
 
       texture.logWidth = 7;
-      model->mesh = gData_08199364;
       texture.logHeight = 7;
-      texture.pixels = Ram_MapCellBuffer;
+      texture.pixels = cells;
+      model->mesh = gData_08199364;
       model->kind = 6;
       EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       for (i = 0; i != 2; i++) {

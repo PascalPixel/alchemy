@@ -1,39 +1,54 @@
-// Draft, differ 1025 of 1932, skeleton gap 303 (tla-en, 2026-11-01)
+// Draft, differ 780 of 1932, skeleton gap 102 (tla-en, 2026-11-01)
 // BattleEffect_RunUlysses: same calls and control flow as the listing.
-// The largest step left is a device, so it is not in this draft: forward every
-// Iwram_FillWords and Iwram_ClearWords through local inlines, as f143d80.c does
-// (CopyWords needs none). That alone gives differ 625, gap 217, instruction
-// count 1929 and the listing's frame of 152: each call keeps its own constants,
-// battle takes r10, and 0x3c00 and 0x06004000 stop taking r8 and r10 (they were
-// single-block pseudos, so local-alloc placed them first). Here the frame is 156.
-// Plain forms tried for that sharing, none works: set-once locals per call, a
-// one-pass block around the fills, around one fill, or around the wait. GCSE
-// merges the constants across a one-pass block. Tag it if adopted (S2).
-// Left, all measured with the forwards in place:
-// - p is r7 here and r6 in the listing, and every r6 and r7 below follows from
-//   it. p has 127 refs over 298 insns, just under floor_log2's step to 7; a
-//   (20 refs over 28, set twice) wins r6. (u16)Random16() sets a once and gives
-//   p r6 (differ 599) but loses the listing's 0xffff ands. Masks tried: u32, raw
-//   local, % 0x10000, cast, swapped operands; all stay set twice.
-// - The first colour loop: 31 is hoisted to r6 in the listing, here life 1 fails
-//   loop.c's test, and movs stays in the loop. Hoisting needs the set after g and
-//   b, which then moves the ands after the shift. r = 31; r &= v has the right
-//   shape. The pool 0x1f also rises into the prologue here.
+// The largest step left is a counting question for Pascal, so it is not in this
+// draft: forward every Iwram_FillWords and Iwram_ClearWords through
+// static __inline__ s32 FillWords_(...) and ClearWords_(...), as f143d80.c does
+// untagged and The Broken Seal's iwram_call.h does for every call; CopyWords
+// needs none. Measured on a scratch copy of this file, that alone gives differ
+// 354, gap 54 and the listing's frame of 152. Without it 0x3c00 and 0x06004000
+// are one pseudo across each block (calls.c forces a costly constant argument
+// into a pseudo; an inlined parameter stays a constant), local-alloc gives them
+// r8 and r10, battle loses r10 to a stack slot at sp+56, the frame is 156 and
+// every slot from sp+56 up reads 4 too high. S2 lists wrapper as a device, so
+// it stays out until that is decided; if adopted it needs its tag or a ruling.
+// Left, measured with the forwards in place:
+// - The ship-burst model block (draw && frame <= 131): the listing reloads verts
+//   in r1 and frame in r7, here verts in r7 and frame in r1, and t starts from a
+//   second ldr of frame, not a copy. The reload order after that block stays one
+//   register behind down to the frame loop's end. Not closed by t as the stepped
+//   variable (loses the givs and 22 instructions), a start local (one more
+//   spill), or moving the terms of t. Find what uses a reload before verts.
+// - alpha: value in r3 and address in r1, the listing has value r2, address r3,
+//   16 in r1. Tried 16 | alpha, (u16)alpha, u16 alpha, no local, the | in the
+//   local, a set-once 16: same or worse.
 // - bg2pa and bg2pd: the discarded ldrh before each strh (2 missing instructions,
 //   as in 0816c6f8). A volatile form would be a device.
-// - Unsettled: alpha's registers (value and address swapped), and the order of
-//   x and w in block one's blits. Loading x and y before the sizes gave 631,
-//   against 625, though the listing's load order suggests it once p is in r6.
-// Settled, keep these: t = frame - 92 is declared after its own range test, so
-// GCSE leaves two givs that combine and reduce (sp+12, sp+16); anchor = p + 8
-// and the spark row as a variable keep i * 8 and i * 448 unreduced; req is copied
-// as one 8-byte struct; the sheet pointer after the loop is its own variable; each
-// particle loop has its own p, with i set before it; pal is indexed; x, vx and t
-// stay in locals, t reloaded inside each sound test.
-// Spill slots from the top: effect, canvas, transition, frame, sprites, dmaArmed,
-// skip, blit, shipZ, shipX, loaded, draw, frame - 108, verts, model, sparks,
-// &texture, delay, block two's verts and j, anchor, frame * 2 - 184, frame - 92,
-// and &req as a caller save.
+// - q = sparks + first and pixels: the listing adds offset first (adds r5, r3,
+//   r4). An s32 cell buffer gives that for pixels but is a cast to a type the
+//   object is not, so pixels stays one pair off.
+// - loaded = 0 and transition[4] = 1: the listing stores transition before
+//   shipX with base r4. That store first gives base r2 and rotates the reloads.
+// - A few scheduling pairs in frame 133's particle loop, the first model's blit
+//   and the frame == 266 loop's p->y.
+// Settled, keep these: work is read before transition, so the store of
+// transition no longer blocks work's load; mask is set after frame, once, outside
+// both loops (S2's one-constant local), so it hoists to r6 and stays apart from
+// the pooled halfword 31. step is one
+// pointer shared by the particle loop and the last loop over the particles, which
+// is what gives it r6 over a (floor_log2 priority), and the frame == 266 loop keeps
+// its own p in r5; the loop steps step before i; cellBuffer is a block-level
+// constant local with no register, reloaded from the pool, which sets the reload
+// order for the next two blocks; j = 0 comes before q is set; x, y and left are
+// locals so left is taken before y is read; >> 16 replaces a cast to s16, retired.
+// t = frame - 92 is declared after its own range test, so GCSE leaves two givs
+// that combine and reduce (sp+12, sp+16); anchor = step + 8 and the spark row as a
+// variable keep i * 8 and i * 448 unreduced; req is copied as one 8-byte struct;
+// the sheet pointer after the loop is its own variable; pal is indexed; t reloads
+// inside each sound test.
+// Spill slots from the top, with the forwards: effect, canvas, transition,
+// frame, sprites, dmaArmed, skip, blit, shipZ, shipX, loaded, draw, frame - 108,
+// verts, model, sparks, &texture, delay, block two's verts and j, anchor,
+// frame * 2 - 184, frame - 92, and &req as a caller save.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -127,7 +142,7 @@ void Transform_Pop(void);
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
+#define HI(v) ((v) >> 16)
 
 #include "bg_scroll.h"
 #include "input.h"
@@ -199,24 +214,24 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   struct ModelTexture texture2;
   struct PlacementSource req;
   u8 *battle;
+  s32 mask;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
-  transition = Ram_HeapSlots->transitionWork;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  transition = Ram_HeapSlots->transitionWork;
   sprites = Ram_HeapSlots->unk64[0];
   dmaArmed = 0;
   skip = 0;
   BattleEffect_SelectLivingTargets(work->effect);
-  for (frame = 0; frame != 32; frame++) {
+  for (frame = 0, mask = 31; frame != 32; frame++) {
     volatile u16 *c = (volatile u16 *)(BG_PLTT + 96);
 
     for (i = 0; i != 128; i++, c++) {
       s32 v = *c;
-      s32 r = 31;
+      s32 r = mask & v;
       s32 g;
       s32 b;
 
-      r &= v;
       g = (u16)(((u16)v >> 5) & 31);
       b = (u16)(((u16)v >> 10) & 31);
       if (g == 0) {
@@ -293,6 +308,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   REG_DISPCNT = 0x7141;
   wait(1);
   for (frame = 0; frame != 326; frame++) {
+    struct EffectStep *step;
     draw = 1;
     if (gInput.repeat & 3) {
       skip = 1;
@@ -327,12 +343,13 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     if (frame <= 75) {
       s32 k = (frame / 4) % 18;
       s32 x = 60 - ((Trig_Sin(frame * 860) << 3) >> 16);
+      s32 y = frame - 8;
       u8 *source = work->sheet + 0x1781 + Data_08198686[k];
       u8 w = Data_08198662[k];
-      s32 y = frame - 8;
+      s32 left = x - (w >> 1);
       u8 h = Data_08198674[k];
 
-      blit[1](canvas, source, x - (w >> 1), y - (h >> 1), w, h);
+      blit[1](canvas, source, left, y - (h >> 1), w, h);
     }
     if ((u32)(frame - 76) <= 31) {
       struct EffectStep *p;
@@ -442,8 +459,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       src = Data_081986aa;
       q = (struct EffectStep *)(work->sheet + 0x4b98);
       for (i = 0, p = work->particles; i != 6; i++, p++, src += 5) {
-        p->variant = -8 * i;
         p->x = src[0] << 16;
+        p->variant = -8 * i;
         p->y = src[1] << 16;
         p->z = src[2] << 6;
         p->velocityX = src[3] << 15;
@@ -466,15 +483,15 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       void *verts;
       struct RenderModel *model;
       struct EffectStep *sparks;
-      struct EffectStep *p;
+      u8 *portraits = gMapCellBuffer;
       struct EffectStep *q;
       s32 shade;
       s32 j;
 
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
-      sparks = (struct EffectStep *)(work->sheet + 0x4b98);
       shade = 0;
+      sparks = (struct EffectStep *)(work->sheet + 0x4b98);
       if (frame > 196) {
         Func_0815f0a0((s32)&ResourceId_Data150);
       }
@@ -485,98 +502,101 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       model->texture = &texture;
       model->mesh = gData_08199340;
       model->vertices = verts;
-      for (i = 0, p = work->particles; i != 6; i++, p++) {
+      for (i = 0, step = work->particles; i != 6; step++, i++) {
         s32 delay = i * 8;
-        struct EffectStep *anchor = p + 8;
+        struct EffectStep *anchor = step + 8;
         s32 t;
 
-        if (++p->variant == 0) {
+        if (++step->variant == 0) {
           Sound_PlayFar(138);
         }
-        t = p->variant;
+        t = step->variant;
         if (t == 60) {
           Sound_PlayFar(212);
-          t = p->variant;
+          t = step->variant;
         }
         if (t == 64) {
           Sound_PlayFar(134);
-          t = p->variant;
+          t = step->variant;
         }
         if ((u32)t <= 35) {
           s32 k = (t / 6) % 6;
           u8 *source = work->sheet + gData_0819747a[k];
           u8 w = gData_08197467[k];
 
-          blits[0](canvas, source, HI(p->x) - (w >> 1),
-                   HI(p->y) + gData_08197473[k] - 36, w, gData_0819746d[k]);
-          t = p->variant;
+          blits[0](canvas, source, HI(step->x) - (w >> 1),
+                   HI(step->y) + gData_08197473[k] - 36, w, gData_0819746d[k]);
+          t = step->variant;
         }
         if ((u32)(t - 12) <= 31) {
           s32 k = ((t - 12) / 4) % 18;
           u8 *source = work->sheet + 0x1781 + Data_08198686[k];
+          s32 x = HI(step->x);
           u8 w = Data_08198662[k];
+          s32 left = x - (w >> 1);
+          s32 y = HI(step->y);
           u8 h = Data_08198674[k];
 
-          blit[1](canvas, source,
-                  HI(p->x) - (w >> 1), HI(p->y) - (h >> 1), w, h);
-          t = p->variant;
+          blit[1](canvas, source, left, y - (h >> 1), w, h);
+          t = step->variant;
         }
         if ((u32)(t - 44) <= 21) {
           s32 s = (Trig_Sin((t - 44) << 10) * 48) / 64;
           s32 vx;
-          s32 x = p->x;
+          s32 x = step->x;
           s32 mx = x - 0x400000;
-          s32 my = p->y - 0x400000;
+          s32 my = step->y - 0x400000;
           s32 u = t - 59;
 
           if (u < 0) {
             u = 0;
           }
-          vx = p->velocityX;
-          p->y += p->velocityY;
+          vx = step->velocityX;
+          step->y += step->velocityY;
           x += vx;
-          p->x = x;
+          step->x = x;
           if (x <= 0x3fffff) {
-            p->velocityX = vx + 0x8000;
+            step->velocityX = vx + 0x8000;
           }
-          if (p->y <= 0x3bffff) {
-            p->velocityY += 0x8000;
+          if (step->y <= 0x3bffff) {
+            step->velocityY += 0x8000;
           } else {
-            p->velocityY -= 0x8000;
+            step->velocityY -= 0x8000;
           }
-          if (p->z >= 0) {
-            p->z += (Trig_Sin(p->velocityZ) * 3 << 8) >> 16;
+          if (step->z >= 0) {
+            step->z += (Trig_Sin(step->velocityZ) * 3 << 8) >> 16;
           } else {
-            p->z -= (Trig_Sin(p->velocityZ) * 3 << 8) >> 16;
+            step->z -= (Trig_Sin(step->velocityZ) * 3 << 8) >> 16;
           }
-          p->velocityZ += 1024;
+          step->velocityZ += 1024;
           if (draw) {
-            texture.pixels = gMapCellBuffer + (u << 12);
+            texture.pixels = (u << 12) + portraits;
             Render_ResetTransformState();
             Func_08015160(mx, my, 0);
             SceneTransform_ApplyPitch(0xc000);
-            SceneTransform_ApplyYaw(p->z);
+            SceneTransform_ApplyYaw(step->z);
             Func_0801521c(s);
             Render_TransformVertices(gData_08199210, verts, 4);
             Render_DrawModelList(model);
           }
-          t = p->variant;
+          t = step->variant;
         }
         if (t == 64) {
-          anchor->x = HI(p->x);
-          anchor->y = HI(p->y);
+          anchor->x = HI(step->x);
+          anchor->y = HI(step->y);
+          j = 0;
           {
             s32 first = i * 16;
 
             q = sparks + first;
           }
-          for (j = 0; j != 16; j++, q++) {
+          for (; j != 16; j++, q++) {
             s32 a = Random16() & 0xffff;
             s32 sp = (Random16() & 15) + 8;
 
             q->variant = (Random16() & 7) + 8;
-            q->x = p->x;
-            q->y = p->y;
+            q->x = step->x;
+            q->y = step->y;
             q->velocityX = (Trig_Sin(a) * sp) / 4;
             q->velocityY = (Trig_Cos(a) * sp) / 4;
           }
@@ -588,8 +608,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
             Func_0814cd48(effect->actors[j], 7, -1, j, 4);
           }
         }
-        if (draw && (u32)(p->variant - 64) <= 11) {
-          s32 k = ((p->variant - 64) / 2) % 6;
+        if (draw && (u32)(step->variant - 64) <= 11) {
+          s32 k = ((step->variant - 64) / 2) % 6;
 
           blit[1](canvas, work->sheet + 0x1e97 + k * 0x780,
                   anchor->x - 20, anchor->y - 24, 40, 48);
@@ -624,8 +644,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       work->transferValue = 50;
       texture2.logWidth = 7;
       texture2.logHeight = 7;
-      texture2.pixels = work->sheet + 0x2781;
       model->texture = &texture2;
+      texture2.pixels = work->sheet + 0x2781;
       model->mesh = gData_08199364;
       model->kind = 7;
       model->vertices = verts;
@@ -682,9 +702,9 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       }
     }
     if (frame > 265) {
-      struct EffectStep *p;
-
       if (frame == 266) {
+        struct EffectStep *p;
+
         REG_BG2X = -0x7000;
         REG_BG2PA = 0x100;
         REG_BG2PD = 0x100;
@@ -694,16 +714,16 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           p->variant = -i / 2;
         }
       }
-      for (i = 0, p = work->particles; i != 32; i++, p++) {
-        if ((u32)p->variant <= 23 && draw) {
-          s32 k = (p->variant / 4) % 6;
+      for (i = 0, step = work->particles; i != 32; i++, step++) {
+        if ((u32)step->variant <= 23 && draw) {
+          s32 k = (step->variant / 4) % 6;
           u8 *source = work->sheet + gData_0819747a[k];
           u8 w = gData_08197467[k];
 
-          blits[0](canvas, source, p->x - (w >> 1),
-                   p->y + gData_08197473[k] - 48, w, gData_0819746d[k]);
+          blits[0](canvas, source, step->x - (w >> 1),
+                   step->y + gData_08197473[k] - 48, w, gData_0819746d[k]);
         }
-        p->variant++;
+        step->variant++;
       }
     }
     if (frame == 288) {

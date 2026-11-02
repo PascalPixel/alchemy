@@ -1,146 +1,134 @@
-// Draft of overlay 6a5's Func_0200430c, translated from its listing: differ
-// 150 of 197. Left: its shape: 193 instructions against the listing's 197.
+// Matches: differ 0 (tla-en, 2026-11-01)
+// Overlay 6a5's per-frame update for a moving object, close kin of Airs Rock's
+// Func_02000550: it idles while four event words are set, otherwise it plays a
+// sound every 32 frames, copies the leader's sprite priority, and moves along
+// its angle. Off the walkable cells or outside -32 to 272 pixels on screen it
+// shuts itself down. Within 12 of the leader and 12 pixels of its height, with
+// flag 0x104 clear, the leader starts watching it.
+// What the match rests on: the sprite byte is s8, because a char store conflicts
+// with the x and z loads after it, which puts the 2 first; a bitfield or u8 field
+// view does not. The named priority sets orrs' operands, as Airs Rock's matched
+// copies (s1f7c, s2cf0, s3654) write it. The flags pointer gives the store alias
+// set 0, which puts it ahead of the work address; the member store does not. Both
+// byte stores of 1 are member stores, so reload shares the 1. renderMode's zero
+// is its field store's pooled zero. No device of any kind remains.
+// Names are placeholders where the code alone suggests them (H3).
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_020042e0();
-s32 Func_02005764();
-s32 Func_02005994();
+#include "ram_buffer.h"
+#include "actor.h"
+#include "main_routine_work.h"
+
+/// The object this update drives: an Actor with its own bytes over the callback
+/// word.
+struct Object6a5 {
+  u8 unk00[6];
+  u16 angle;
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[0x1c];
+  s32 speed;
+  u8 unk34[0x1c];
+  s8 *sprite;
+  u8 unk54[0x0e];
+  u8 unk62;
+  u8 unk63;
+  u16 unk64;
+  u8 unk66[6];
+  void (*update)(void);
+};
+
+/// The scene's event work, as far as this update reads it.
+struct EventWork6a5 {
+  u8 unk000[346];
+  s16 unk15a;
+  u8 unk15c[2];
+  s16 unk15e;
+  u8 unk160[6];
+  s16 unk166;
+  s16 unk168;
+  s16 unk16a;
+};
+
+struct Vector3 {
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+s32 Func_020042e0(s32 *a, s32 *b);
+void Func_02005764(struct Object6a5 *object, const void *script);
+void Func_02005994(struct Vector3 *position);
 s32 Func_020059e4();
-s32 Func_020059f4();
-s32 GameFlag_Test();
-s32 Math_Cosine();
-s32 Math_Sine();
-s32 Actor_SetAnimationSpeed();
-s32 Actor_GetById();
-extern u8 Data_02006a28[];
-extern u8 IwramMulQ16[];
+void Func_020059f4(s32 sound);
+s32 GameFlag_Test(s32 flag);
+s32 Math_Cosine(s32 angle);
+s32 Math_Sine(s32 angle);
+void Actor_SetAnimationSpeed(struct Object6a5 *object, s32 value);
+struct Actor *Actor_GetById(s32 id);
+s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 extern u8 gData_020069fc[];
-extern u8 gMainRoutineWork[];
+extern s32 Data_02006a28;
 
-void Func_0200430c(s32 p0) {
-  s32 sp_[1];
-  s32 v_r6, v_r10, v_r7, v_r5, v_r9, v_r3, v_r2, v_r8, v_r0, t0;
-  s32 t1, t2, t3, t4, t5, t6, t9, t11, t12, t13;
-  s32 t14, t15, t16, t17, t18, t19, t20, t22, t23, t24;
-  s32 t25, t26, t27, t28, t29, t30, t31, t32, t33, t34;
-  s32 t35, t36, t37, t38, t39;
+void Func_0200430c(struct Object6a5 *object) {
+  struct EventWork6a5 *work = Ram_HeapSlots->eventWork;
+  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Vector3 position;
+  s32 distance;
+  s32 near;
+  s32 timer;
+  u8 *flags;
 
-  t0 = FIELD_AT(0x3000000, s32, 108);
-  t1 = FIELD_AT((s32)gMainRoutineWork, s32, 532);
-  t2 = Actor_GetById(t1);
-  t3 = FIELD_AT(t0, s16, 358);
-  v_r7 = t2;
-  v_r10 = t0;
-  v_r6 = p0;
-  if (t3 != 0)
-    goto L_0200c36a;
-  t4 = FIELD_AT(v_r10, s16, 346);
-  if (t4 != 0)
-    goto L_0200c36a;
-  t5 = FIELD_AT(v_r10, s16, 350);
-  if (t5 != 0)
-    goto L_0200c36a;
-  t6 = FIELD_AT(v_r10, s16, 360);
-  if (t6 == 0)
-    goto L_0200c378;
-L_0200c36a:
-  Actor_SetAnimationSpeed(v_r6, 0);
-  goto L_0200c4b6;
-L_0200c378:
-  Actor_SetAnimationSpeed(v_r6, 16);
-  t9 = FIELD_AT(v_r6, u16, 100);
-  FIELD_AT(v_r6, u16, 100) = (t9 + 1);
-  if ((31 & (t9 + 1)) != 31)
-    goto L_0200c398;
-  Func_020059f4(231);
-L_0200c398:
-  t11 = FIELD_AT(v_r7, s32, 80);
-  t12 = FIELD_AT(v_r6, s32, 80);
-  t13 = FIELD_AT(t11, u8, 9);
-  t14 = FIELD_AT(t12, u8, 9);
-  FIELD_AT(t12, u8, 9) = ((-13 & t14) | (12 & t13));
-  t15 = FIELD_AT(v_r6, s32, 8);
-  t16 = FIELD_AT(v_r6, s32, 16);
-  t17 = Func_020059e4(t15, t16, 2);
-  if (t17 == 255)
-    goto L_0200c49a;
-  t18 = FIELD_AT(v_r6, s32, 8);
-  *(s32 *)sp_ = t18;
-  t19 = FIELD_AT(v_r6, s32, 12);
-  FIELD_AT(sp_, s32, 4) = t19;
-  t20 = FIELD_AT(v_r6, s32, 16);
-  FIELD_AT(sp_, s32, 8) = t20;
-  Func_02005994((s32)sp_);
-  t22 = *(s32 *)sp_;
-  v_r5 = t22;
-  if (v_r5 > 0x1100000)
-    goto L_0200c49a;
-  if (v_r5 < 0xffe00000)
-    goto L_0200c49a;
-  t23 = FIELD_AT(v_r6, u8, 98);
-  v_r9 = (v_r6 + 98);
-  if (t23 != 0)
-    goto L_0200c460;
-  t24 = FIELD_AT(v_r7, s32, 12);
-  t25 = FIELD_AT(v_r6, s32, 12);
-  v_r5 = (t24 - t25);
-  v_r2 = t24;
-  v_r3 = t25;
-  if (v_r5 >= 0)
-    goto L_0200c3f8;
-  v_r5 = (v_r3 - v_r2);
-L_0200c3f8:
-  t26 = Func_020042e0((v_r7 + 8), (v_r6 + 8));
-  v_r8 = 0;
-  if (t26 > 12)
-    goto L_0200c418;
-  if (v_r5 >= 0xc0000)
-    goto L_0200c418;
-  v_r8 = 1;
-L_0200c418:
-  if (v_r8 == 0)
-    goto L_0200c460;
-  t27 = GameFlag_Test(0x104);
-  if (t27 != 0)
-    goto L_0200c460;
-  t28 = FIELD_AT(v_r6, u16, 6);
-  FIELD_AT(v_r7, s32, 104) = v_r6;
-  FIELD_AT(v_r7, u16, 6) = t28;
-  t29 = FIELD_AT(v_r7, u8, 35);
-  FIELD_AT(v_r7, u8, 35) = (254 & t29);
-  FIELD_AT(v_r10, u16, 362) = 200;
-  FIELD_AT((s32)gMainRoutineWork, u8, 530) = 0;
-  *(u8 *)v_r9 = 1;
-  FIELD_AT(v_r6, u8, 99) = 1;
-L_0200c460:
-  t30 = FIELD_AT(v_r6, u16, 6);
-  t31 = Math_Cosine(t30);
-  t32 = FIELD_AT(v_r6, s32, 48);
-  t33 = ((s32 (*)())(s32)IwramMulQ16)(t31, t32);
-  t34 = FIELD_AT(v_r6, s32, 8);
-  t35 = FIELD_AT(v_r6, u16, 6);
-  FIELD_AT(v_r6, s32, 8) = (t34 + t33);
-  t36 = Math_Sine(t35);
-  t37 = FIELD_AT(v_r6, s32, 48);
-  t38 = ((s32 (*)())(s32)IwramMulQ16)(t36, t37);
-  t39 = FIELD_AT(v_r6, s32, 16);
-  v_r0 = t38;
-  v_r3 = t39;
-  goto L_0200c494;
-L_0200c494:
-  FIELD_AT(v_r6, s32, 16) = (v_r3 + v_r0);
-  goto L_0200c4b6;
-L_0200c49a:
-  FIELD_AT(v_r6, u8, 99) = 0;
-  FIELD_AT(v_r6, s32, 108) = 0;
-  Func_02005764(v_r6, (s32)gData_020069fc);
+  if (work->unk166 != 0 || work->unk15a != 0 || work->unk15e != 0 ||
+      work->unk168 != 0) {
+    Actor_SetAnimationSpeed(object, 0);
+    return;
+  }
+  Actor_SetAnimationSpeed(object, 16);
+  timer = object->unk64 + 1;
+  object->unk64 = timer;
+  if ((timer & 31) == 31)
+    Func_020059f4(231);
+  {
+    s8 *from = leader->animation;
+    s8 *to = object->sprite;
+    s32 priority = from[9] & 12;
+    to[9] = (to[9] & ~12) | priority;
+  }
+  if (Func_020059e4(object->x, object->z, 2) != 255) {
+    position.x = object->x;
+    position.y = object->y;
+    position.z = object->z;
+    Func_02005994(&position);
+    if (position.x <= 0x1100000) {
+      if (position.x >= -0x200000) {
+      if (object->unk62 == 0) {
+        distance = leader->y - object->y;
+        if (distance < 0)
+          distance = object->y - leader->y;
+        near = 0;
+        if (Func_020042e0(&leader->x, &object->x) <= 12 && distance < 0xc0000)
+          near = 1;
+        if (near != 0 && GameFlag_Test(0x104) == 0) {
+          leader->watchedObject = (struct Actor *)object;
+          leader->angle = object->angle;
+          flags = &leader->priorityFlags;
+          *flags &= ~1;
+          work->unk16a = 200;
+          gMainRoutineWork.renderMode = 0;
+          object->unk62 = 1;
+          object->unk63 = 1;
+        }
+      }
+      object->x += IwramMulQ16(Math_Cosine(object->angle), object->speed);
+      object->z += IwramMulQ16(Math_Sine(object->angle), object->speed);
+      return;
+      }
+    }
+  }
+  object->unk63 = 0;
+  object->update = 0;
+  Func_02005764(object, gData_020069fc);
   Func_020059f4(228);
-  *(s32 *)(s32)Data_02006a28 = 0;
-L_0200c4b6:
-  return;
+  Data_02006a28 = 0;
 }

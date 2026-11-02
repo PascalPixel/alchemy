@@ -28,7 +28,7 @@ Func_080400e8:
 	movs r0, #1
 	bl Window_Create
 	str r0, [sp, #16]
-	bl Func_0803fd28
+	bl Menu_OpenWorkspaceOptions
 	movs r3, #48
 	mov r8, r0
 	negs r3, r3

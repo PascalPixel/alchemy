@@ -1,23 +1,28 @@
-// Draft, differ 182 of 171, skeleton gap 40 (tla-en, 2026-11-01)
+// Draft, differ 173 of 171, skeleton gap 34 (tla-en, 2026-11-01)
 // Finds how far a pushed object can slide in the leader's direction, probing
 // its footprint cell by cell until Func_02001850 reports a wall.
-// Size is 171 and the first section matches to its last ABS. Left: allocation.
-// Proven: offset is set in two steps at the top of the outer loop, so its
-// shift's operand changes in the loop and PRE neither merges it with the first
-// section nor hoists it (native sp+4). The row loop must be goto or the size
-// grows by 14; the cell loop may be either form.
-// Reading of the listing: w, h, offset and the frame address pseudo reach
-// global allocation in low registers by caller-save and are kicked out by
-// reload, which is why [sp,#32], [sp,#36] and each add rN, sp, #28 are
-// rematerialized, with object in r4. Ours keeps sfp-12 (reg 100) in r6 with 25
-// refs, because cprop pass 2 replaces the row's copy in the cell block. The
-// native r5 (set in the row, used by the row store and the cell step) is that
-// copy surviving; it would take the cell refs off the frame pseudo.
-// Tried, no gain: *(probe + n), a struct probe, a pointer set in the row, the
-// same pointer shared with &position[3] (r5 fits, cprop still replaces it), a
-// pointer reset in the cell, a one-pass block around the step, a kind = 0
-// default, builtin abs, kind read after the first section. Next: anything that
-// makes the row's copy unavailable to cprop in the cell block.
+// Draft is 172 instructions. Control flow matches: the failed search is an else
+// at the end (the far b to the shared movs r0, #0), and count is set before
+// position[5] takes it. The compiler change did not close this one. Left:
+// allocation, and the one extra instruction goes with it.
+// Proven: offset is set in two steps at the top of the outer loop, so PRE
+// neither merges it with the first section nor hoists it (native sp+4). The row
+// loop must be goto or the size grows by 14. The cell loop's form changes
+// nothing: for, while, do and goto all compile alike, and so do a struct probe
+// and a pointer in the row.
+// Reading of the dumps: PRE and cprop put every sfp-12 on reg 100 (25 refs,
+// taken in r6). The native reg 100 is unallocated, and its reg_equiv explains
+// [sp,#32], [sp,#36], add r1, sp, #28 and, through a two-use copy that combine
+// leaves, add r2, sp, #28. Only r5 stays apart: the row store and the cell step
+// share a pseudo that the call's argument does not. Ours has the step reuse the
+// argument's reg 121, which cprop 2 turns into reg 100. A copy of the address
+// in the step folds in cse1. Next: anything that leaves the step outside the
+// argument's extended block with no extra code, so loop.c can hoist it (the
+// label would have to survive jump 1). Native also has r7 for i after r5 and
+// r6, which priorities alone do not explain: i outranks position.
+// Tried, no gain: declaration orders, a scoped pointer in the step, a union
+// with direct y and z, y set inside the loop, kind read after the first
+// section, result in a local (same code as the returns).
 #include "types.h"
 #include "actor.h"
 
@@ -38,49 +43,54 @@ s32 Func_020001d4(s32 *position) {
   s32 offset;
 
   object = Func_0200033c(&direction, &position[4], &position[3]);
-  if (object == NULL)
+  if (object != NULL) {
+    kind = position[3];
+    w = (ABS(gData_02001974[kind * 4]) + ABS(gData_02001974[kind * 4 + 2])) >>
+        4;
+    h = (ABS(gData_02001974[kind * 4 + 1]) +
+         ABS(gData_02001974[kind * 4 + 3])) >>
+        4;
+    dx = gData_0200198c[direction] & 0xffff0000;
+    dz = gData_0200198c[direction] << 16;
+    count = 0;
+    position[5] = count;
+    state = &object->terrainId;
+    *state = 2;
+    position[0] = object->x + dx;
+    position[2] = object->z + dz;
+    probe[1] = object->y;
+  next:
+    offset = kind;
+    offset *= 4;
+    probe[2] = position[2] + (gData_02001974[offset + 1] << 16);
+    j = 0;
+    if (j >= h)
+      goto advance;
+  row:
+    probe[0] = position[0] + (gData_02001974[offset] << 16);
+    for (i = 0; i < w; i++) {
+      if (Func_02001850(object, probe) == 2)
+        goto hit;
+      probe[0] += 0x100000;
+    }
+    probe[2] += 0x100000;
+    j++;
+    if (j < h)
+      goto row;
+  advance:
+    position[0] += dx;
+    count++;
+    position[2] += dz;
+    goto next;
+  hit:
+    *state = 0;
+    if (count == 0)
+      return 0;
+    position[0] = object->x + dx * count;
+    position[1] = object->y;
+    position[2] = object->z + dz * count;
+    return 1;
+  } else {
     return 0;
-  kind = position[3];
-  w = (ABS(gData_02001974[kind * 4]) + ABS(gData_02001974[kind * 4 + 2])) >> 4;
-  h = (ABS(gData_02001974[kind * 4 + 1]) + ABS(gData_02001974[kind * 4 + 3])) >> 4;
-  dx = gData_0200198c[direction] & 0xffff0000;
-  dz = gData_0200198c[direction] << 16;
-  position[5] = 0;
-  count = 0;
-  state = &object->terrainId;
-  *state = 2;
-  position[0] = object->x + dx;
-  position[2] = object->z + dz;
-  probe[1] = object->y;
-next:
-  offset = kind;
-  offset *= 4;
-  probe[2] = position[2] + (gData_02001974[offset + 1] << 16);
-  j = 0;
-  if (j >= h)
-    goto advance;
-row:
-  probe[0] = position[0] + (gData_02001974[offset] << 16);
-  for (i = 0; i < w; i++) {
-    if (Func_02001850(object, probe) == 2)
-      goto hit;
-    probe[0] += 0x100000;
   }
-  probe[2] += 0x100000;
-  j++;
-  if (j < h)
-    goto row;
-advance:
-  position[0] += dx;
-  count++;
-  position[2] += dz;
-  goto next;
-hit:
-  *state = 0;
-  if (count == 0)
-    return 0;
-  position[0] = object->x + dx * count;
-  position[1] = object->y;
-  position[2] = object->z + dz * count;
-  return 1;
 }

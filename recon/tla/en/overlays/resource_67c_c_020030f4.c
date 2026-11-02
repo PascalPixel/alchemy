@@ -1,24 +1,31 @@
-// Draft, differ 204 of 184, skeleton gap 50 (tla-en, 2026-11-01)
+// Draft, differ 203 of 184, skeleton gap 49 (tla-en, 2026-11-01)
 // Draws Aqua Rock's thirty-two water spouts: for each active one a top sprite
 // and, when it stands above its base, a column sprite as tall as its height,
 // placed from the camera and queued by depth.
-// What is left: the listing reads entry->height once before the branch on
-// position and again after the join (ldr, cmp ip), and this source cannot get
-// that second load: gcse removes it, whether height is a local or read in each
-// branch, because the reads are the same memory. Only a volatile height keeps
-// it, which is a device and is not used. Reading in each branch, as here, gives
-// the lowest differ; a local read beside base and position has the listing's
-// load but the same gap and keeps height live across the branches.
-// With no reload, base lands in lr and state in ip, where the listing has ip and
-// r0; screenY then takes r1, not r4, so y takes r4 with a caller save around
-// the first call, not r8, attributes r8, not r9, and depth r9, not its stack
-// slot. Getting screenY into r4 should settle the rest: a caller save of y stops
-// being an option once r4 is taken. Tried: rise split in two, rise as u32, the
-// declaration order, attributes as an initial value (gap rises to 33), a loop
-// from labels (flow still weights it, same result).
-// The per-branch temporary keeps z - y from being merged across the join, so it
-// is recomputed after the call as in the listing; a copy made before the
-// subtraction, or no temporary, lets gcse merge it.
+// What is left comes from two values the listing computes again after the join
+// and this compiler will not. entry->height is loaded above the position branch
+// and again before the compare with base (ldr, cmp ip), and z - y is computed in
+// each arm and again after the first call. Under -O2 gcse.c runs PRE, which
+// deletes both. Lead for Pascal only (K3), compiler questions being out of scope
+// here: the listing is what -Os's path in gcse.c would leave. handle_avail_expr
+// keeps a redundancy that two computations reach, and hoist_code would lift the
+// arms' height reads above the branch, while state, reached by one computation,
+// is still removed with the two copies seen here. Not tested, and only one
+// function's evidence.
+// state is read twice with no local: gcse's copy into a scratch register before
+// each test is the listing's adds r3, r0 and is kept.
+// relative is a forced temporary inherited from an earlier round, and it costs
+// the allocation. It stops gcse merging z - y but adds a pseudo the listing does
+// not have: y is r8 itself, its r2 and r1 being reload registers. So base lands
+// in lr, state in ip, screenY in r1, y in r4 with a caller save, depth in r9 where
+// the listing has ip, r0, r4, r8 and sp+8. Without relative y and screenY do land
+// right, but the second z - y goes and differ rises to 219 (gap 61).
+// Tried without gain: u16 state (ldrsh); a height local with no reread (217); the
+// locals at function scope or in the listing's slot order, no change; loop with
+// entries[i] (extra givs, 254); z - y once after the join (225); base read at the
+// compare (202 but gap 52); relative shared across the arms (219); column through
+// entry; the state test as an early continue; offset read before the masks.
+// A volatile height gives the reread and 200, gap 48; it is a device, not kept.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -61,9 +68,8 @@ void Func_020030f4(void) {
   originY = Ram_HeapSlots->mapWork->origin[1];
   tile = gResourceTableEntries[work->vramEntry].offset >> 5;
 
-  for (i = 31; i >= 0; i--) {
-    s32 state = entry->state;
-    if (state != 0) {
+  for (i = 0; i < 32; i++) {
+    if (entry->state != 0) {
       s32 base = entry->base;
       s32 *position = entry->position;
       s32 x;
@@ -88,7 +94,7 @@ void Func_020030f4(void) {
         screenY = z - relative;
         y = relative;
       }
-      if (entry->height != base || state == 2)
+      if (entry->height != base || entry->state == 2)
         attributes = 0x800;
       else
         attributes = 0xc00;

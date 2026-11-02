@@ -1,6 +1,6 @@
 #include "types.h"
 #include "iwram_call.h"
-#include <affine.h> // not the stale copy beside this draft
+#include <affine.h>
 #include "fixed_math.h"
 #include "effect_sprite.h"
 

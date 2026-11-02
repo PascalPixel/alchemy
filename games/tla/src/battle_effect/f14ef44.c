@@ -19,10 +19,10 @@
 
 static __inline__ s32 CopyWords_(void *destination, const void *source,
                                  s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 18 of 1243 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
-
-static __inline__ s32 Sqrt_(s32 value) { return Iwram_Sqrt(value); }
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
@@ -399,7 +399,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
             s32 xx = (spark->x >> 8) * (spark->x >> 8);
             s32 yy = (spark->y >> 8) * (spark->y >> 8);
             s32 zz = (spark->z >> 8) * (spark->z >> 8);
-            s32 distance = Sqrt_(xx + yy + zz) >> 9;
+            s32 distance = Iwram_Sqrt(xx + yy + zz) >> 9;
 
             distance = distance * 48 / 64;
             if (distance != 0) {

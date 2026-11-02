@@ -5,7 +5,7 @@
 #include "task.h"
 #include "effect_sprite.h"
 
-// Kind 24's work (battle_fx_work[0]), as Func_080e9af4's draft has it.
+// Kind 24's work (battle_fx_work[0]).
 struct GlowWork {
   u8 unk0000[0x1000];
   struct EffectSprite sprite;

@@ -55,17 +55,21 @@ void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 
-// The IWRAM routines are called through one inline each, as The Broken
-// Seal's iwram_call.h layer calls them.
 static inline s32 ClearWords(void *destination, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_ClearWords, 14 of 376 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
 static inline s32 FillWords(void *destination, s32 size, u32 value) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_FillWords, 2 of 376 instructions differ in tla-en. */
   return Iwram_FillWords(destination, size, value);
 }
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 27 of 376 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

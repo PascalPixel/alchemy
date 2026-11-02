@@ -1,4 +1,5 @@
 #include "types.h"
+#include "edition.h"
 #include "input.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -7,7 +8,7 @@
 unsigned char Vram_FillWindowBlockPattern(void);
 void Text_DrawWideStringAtOffset(s16 *, s32, s32, s32);
 
-#if defined(TBS_EDITION_JA)
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define TEXT_COUNT 32
 #else
 #define TEXT_COUNT 52
@@ -16,7 +17,7 @@ void Text_DrawWideStringAtOffset(s16 *, s32, s32, s32);
 s32 Window_Create(s32, s32, s32, s32, s32);
 void Window_Close(struct Work *work, s32 release);
 
-#if defined(TBS_EDITION_JA)
+#if LANGUAGE == LANGUAGE_JAPANESE
 void Message_CopyExpanded(s32, s16 *, s32);
 #else
 s32 Message_CopyExpanded(s32, s16 *, s32);

@@ -53,7 +53,6 @@ s32 Func_0810b5c4(s32 objectId) {
 
   Func_08108148();
   shop = Ram_HeapSlots->menuRuntime;
-  asm("" : "+l"(shop) : : "r1");
   shop->open = 1;
   shop->partyAction = 4;
   shop->portrait = *Actor_GetByIdFar(objectId)->sprite->portrait;

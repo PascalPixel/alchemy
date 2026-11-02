@@ -29,7 +29,7 @@ struct Texture {
   void *pixels;
 };
 
-// One model job for Render_DrawModelList, the polygon kernel runner.
+// One model for Render_DrawModelList, the polygon kernel runner.
 struct RenderModel {
   s32 kind;
   s32 unk04;

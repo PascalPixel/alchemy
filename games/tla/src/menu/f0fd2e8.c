@@ -2,9 +2,6 @@
 #include "input.h"
 #include "ram_buffer.h"
 
-// The pressed keys, read again at each test.
-#define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
-
 struct SpriteAttr {
   u16 y : 8;
   u16 affine : 2;
@@ -120,12 +117,12 @@ s32 Func_080fd2e8(s32 browseOnly) {
     }
     Func_080f8a44((selection % 4) * 24 - 10, 16);
     wait(1);
-    if (KEYS_PRESSED & 1) {
+    if (gInput.pressed & 1) {
       Sound_PlayFar(112);
       result = menu->ownerIds[selection];
       break;
     }
-    if (KEYS_PRESSED & 2) {
+    if (gInput.pressed & 2) {
       Sound_PlayFar(113);
       result = -1;
       break;

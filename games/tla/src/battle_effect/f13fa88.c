@@ -42,9 +42,9 @@ void BattleStaging_ConfigurePaletteFadeFar(s32 mode, s32 background, s32 value);
 void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
 void wait(s32 frames);
 
-// The IWRAM routines are called through one inline each, as The Broken
-// Seal's iwram_call.h layer calls them.
 static inline s32 ClearWords(void *destination, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_ClearWords, 14 of 280 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 

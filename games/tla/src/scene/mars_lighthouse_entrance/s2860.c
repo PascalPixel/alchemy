@@ -39,17 +39,14 @@ struct RideState {
   s32 counter;
   s16 active;
   u8 unk06[0x66];
-  s32 car;
+  struct RideCar *car;
 };
-
-static __inline__ u8 *Ride_CarSteps(u8 *slot) {
-  return ((struct Actor *)*(s32 *)slot)->unk70;
-}
 
 int Func_02002860(void) {
   struct RideEvent *event = Ram_HeapSlots->eventWork;
   struct RideState *ride;
   struct Actor *leader;
+  // Unused: gives the stack frame its 12 bytes.
   s32 frame[3];
 
   /* FAKEMATCH(signature): typed as returning int, though it returns nothing;
@@ -80,32 +77,19 @@ int Func_02002860(void) {
   leader->update = Func_02002614;
   leader->angle = 0x4000;
   Func_02004bc0(leader, 49);
-  if (((struct RideCar *)ride->car)->stopped != 0)
-    goto done;
-step:
-  {
-    s32 kind = Func_02004c18(0, leader->x, leader->z);
-    struct RideCar *car = (struct RideCar *)ride->car;
-
-    if (kind != 7) {
-      leader->x += car->stepX;
-      leader->z += car->stepZ;
+  while (ride->car->stopped == 0) {
+    if (Func_02004c18(0, leader->x, leader->z) != 7) {
+      leader->x += ride->car->stepX;
+      leader->z += ride->car->stepZ;
     } else {
-      if (car->stepX != 0)
+      if (ride->car->stepX != 0)
         leader->x = (leader->x & 0xfff00000) + 0x80000;
-      /* FAKEMATCH(wrapper): the car's z step read through Ride_CarSteps, which
-       * reloads the car into r3 for this test; as
-       * ((struct RideCar *)ride->car)->stepZ, 6 of 138 instructions differ in
-       * tla-en. */
-      if (((s32 *)Ride_CarSteps((u8 *)ride + 0x6c))[2] != 0)
+      if (ride->car->stepZ != 0)
         leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
     wait(1);
   }
-  if (((struct RideCar *)ride->car)->stopped == 0)
-    goto step;
-done:
   FieldEvent_Wait(30);
   leader->update = 0;
   Animation_ApplyChildValues(leader, 0);

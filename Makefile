@@ -165,7 +165,8 @@ ROM_END_tla := 0x09000000
 INCLUDES := -Igames/$(GAME)/include \
             $(addprefix -Igames/$(GAME)/include/,battle field game gamepak graphics menu shop sound system window)
 
-# Game C (K1, K2): alchemy-gcc's GCC of July 2000, one option set per game.
+# Game C (K1, K2): alchemy-gcc's GCC of July 2000, one option set per game;
+# ⚓️'s overlays swap -O2 for -Os below, by file and place in the build.
 CFLAGS_tbs := -O2 -mthumb -mthumb-interwork -nostdinc -fcall-used-r4
 CFLAGS_tla := -O2 -mthumb -nostdinc -fcall-used-r4 -mtune=arm9tdmi
 CFLAGS := $(CFLAGS_$(GAME)) $(INCLUDES) -D$(DEFINE)=1 -I$(BUILD)
@@ -211,6 +212,8 @@ include $(BUILD)/objects.mk
 source = $(firstword $(wildcard $(1).c $(1).s $(1).S $(1).mid))
 OVERLAY_OBJS := $(foreach id,$(OVERLAYS),$(OVERLAY_OBJS_$(id)))
 OBJS := $(sort $(MAIN_OBJS) $(OVERLAY_OBJS))
+# ⚓️'s overlays are built for size: C linked only into overlays takes -Os.
+$(filter out/tla-%,$(filter-out $(MAIN_OBJS),$(OVERLAY_OBJS))): CFLAGS := $(subst -O2,-Os,$(CFLAGS))
 SRCS := $(foreach object,$(OBJS:$(BUILD)/obj/%.o=%),$(call source,$(object)))
 
 # The overlays' packed streams go into the main image through one source,

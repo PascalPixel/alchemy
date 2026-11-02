@@ -52,11 +52,6 @@ void Func_02002614(u16 *points, u16 *values, s32 arg) {
       x = *points++;
     }
     if (values != 0) {
-      /* FAKEMATCH(barrier): the form kept; as no asm, 89 of 112 instructions
-       * differ in tla-en. */
-      asm(""
-          :
-          : "r"(values), "r"(values), "r"(values), "r"(values), "r"(values));
       x = *values++;
       i = 0;
       if (x > 0) {

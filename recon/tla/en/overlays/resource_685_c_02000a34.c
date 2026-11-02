@@ -1,3 +1,4 @@
+// Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -76,7 +77,6 @@ s32 Func_02000a34(s32 value) {
   s32 i;
   struct Actor *object;
   u16 *palette;
-  s32 never;
 
   glow[0] = 0x2960000;
   glow[1] = 0;
@@ -126,16 +126,7 @@ s32 Func_02000a34(s32 value) {
   FieldEvent_Wait(10);
   Value3((s32 (*)())Func_02003544, 8, 0x107, 40);
   Func_0200351c(0x2008, 0, 5);
-  /* FAKEMATCH(dead): the never-true jump to the loop's end; as no test at all,
-   * 137 of 529 instructions differ in tla-en. */
-  never = (s32)thrown << 1;
-  i = 0;
-  if (never & 1) {
-    i = 1;
-    goto tail;
-  }
-throw:;
-  {
+  for (i = 0; i <= 2; i++) {
     struct ThrowAnimations animations;
     s32 landing[3];
     animations = gData_02003634;
@@ -160,10 +151,6 @@ throw:;
     Func_02000734(dim, bright, 48);
     FieldEvent_Wait(10);
   }
-  i++;
-tail:
-  if (i <= 2)
-    goto throw;
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   object->actionFlags &= ~1;
   Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 12, 12);
@@ -237,10 +224,6 @@ tail:
   Func_0200351c(0x2008, 0, 5);
   Func_02003534(8, 0x5000);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(one-pass): the once-only block orders the two arguments; as a
-   * bare Call2, 2 of 529 instructions differ in tla-en. */
-  do {
-    Actor_SetSpritePriority(10, 2);
-  } while (0);
+  Actor_SetSpritePriority(10, 2);
   return Func_02003464();
 }

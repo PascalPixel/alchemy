@@ -1,3 +1,4 @@
+// Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -75,7 +76,7 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   s32 x0, z0, width, height, i, j;
   u32 *buffer;
   u32 event, last;
-  s32 cz, cx, mark;
+  s32 cx, cz;
   s32 k;
 
   Iwram_ClearWords(table, 4);
@@ -118,25 +119,11 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
             if (event == last)
               GameFlag_SetBit(entry->flag);
           } else if (GameFlag_Test(entry->flag)) {
-            /* FAKEMATCH(barrier): the empty asm reading cz, which ranks cz
-             * above cx; as no asm, 16 of 268 instructions differ in tla-en. */
-            asm("" : : "r"(cz));
             Func_0200579c(table->x, table->z + 1, 1, 1,
                           cx | (s16)(table->x & 64), cz | (s16)(table->z & 64));
           }
           entry++;
           table->count++;
-          /* FAKEMATCH(barrier): the memory asm pair, which keeps the store
-           * above the 8; as no pair, 6 of 268 instructions differ in tla-en. */
-          asm("" : "=r"(mark) : : "memory");
-          asm("" : "=r"(mark) : "0"(mark) : "memory");
-          /* FAKEMATCH(barrier): the empty asm reading last and table, which
-           * ranks table above last and last above entry; as reading mark alone,
-           * 175 of 268 instructions differ in tla-en. */
-          asm(""
-              :
-              : "r"(mark), "r"(last), "r"(table), "r"(table), "r"(table),
-                "r"(table), "r"(table));
         }
       }
       i++;
@@ -155,9 +142,7 @@ s32 Func_02004ec8(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
 
     entry = table->entries;
     k = 0;
-    // Read through s16: as table->count GCSE moves the loop end's reload into
-    // the arm that stores current.
-    if (k < *(s16 *)&table->count) {
+    if (k < table->count) {
     search:
       if (entry->x == leaderX && entry->z == leaderZ)
         table->current = k;

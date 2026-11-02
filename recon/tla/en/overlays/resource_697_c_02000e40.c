@@ -1,3 +1,4 @@
+// Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "trial_road.h"
 #include "vector3.h"
 
@@ -60,10 +61,6 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   if (fromX == toX && fromZ == toZ)
     return;
   Func_02005880();
-  /* FAKEMATCH(barrier): the empty asm reading dx, dz and object, which ranks
-   * them above n and toZ; as no asm, 162 of 240 instructions differ in tla-en.
-   */
-  asm("" : : "g"(dx), "g"(dz), "g"(object));
   Func_020059e8(0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
   FieldEvent_Wait(6);
@@ -93,15 +90,9 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     Func_020057c8(object, 8);
     Func_02005800(object);
     {
-      u8 *flags = &object->priorityFlags;
-      s32 value;
+      s32 value = 2;
 
-      /* FAKEMATCH(barrier): the empty asm passing flags through, clobbering r0
-       * and r2, which puts flags in r3 and the store after the sound id; as no
-       * asm, 8 of 240 instructions differ in tla-en. */
-      asm("" : "=r"(flags) : "0"(flags) : "r0", "r2");
-      value = 2;
-      *flags = value;
+      object->priorityFlags = value;
     }
     Func_02005a68(298);
     Func_02005a68(240);

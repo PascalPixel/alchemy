@@ -1,3 +1,4 @@
+// Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "types.h"
 
 extern u16 gData_02001a14, gData_02001a1c, gData_02001a20, gData_02001a30,

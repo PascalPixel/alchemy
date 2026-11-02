@@ -1,3 +1,4 @@
+// Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "types.h"
 #include "actor.h"
 #include "fixed_math.h"
@@ -12,19 +13,19 @@ struct Position {
   s32 z;
 };
 
-void Func_020038e8(void);
-void Func_020043c4(struct Actor *actor, s32 mode);
-void Func_020043f4(struct Actor *actor, s32 x, s32 y, s32 z);
-void Func_020043fc(struct Actor *actor);
-s32 Func_02004424(u8 layer, s32 x, s32 z);
-s32 Func_02004454(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
+void Func_02002d90(void);
+void Func_020041cc(struct Actor *actor, s32 mode);
+void Func_02004204(struct Actor *actor, s32 x, s32 y, s32 z);
+void Func_0200420c(struct Actor *actor);
+s32 Func_02004224(u8 layer, s32 x, s32 z);
+s32 Func_0200428c(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
 s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
 void Vector_AddPolarOffsetFar(s32 length, s32 angle, struct Position *position);
 void wait(s32 frames);
-void Func_0200385c(void);
+void Func_02002d04(void);
 
-void Func_02003ee8(void) {
+void Func_02003390(void) {
   struct Position probe;
   s32 heading;
   s32 startBehavior;
@@ -50,7 +51,7 @@ void Func_02003ee8(void) {
   heading = (s16)((actor->angle + 0x2000) & -0x4000);
 
 top:
-  Func_020038e8();
+  Func_02002d90();
   actor->speedLimit = PIXELS(1);
   actor->acceleration = PIXELS(1) / 2;
   actor->targetX = 0x80000000;
@@ -71,9 +72,9 @@ top:
   position->z = startZ = (actor->z & 0xfff00000) + i;
   x = startX;
   z = startZ;
-  startBehavior = Func_02004424(*(layer = &actor->terrainId), startX, startZ);
+  startBehavior = Func_02004224(*(layer = &actor->terrainId), startX, startZ);
   Vector_AddPolarOffsetFar(PIXELS(16), heading, position);
-  nextBehavior = Func_02004424(*layer, position->x, position->z);
+  nextBehavior = Func_02004224(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > i) {
     actor->angle = heading;
@@ -88,9 +89,9 @@ top:
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
   actor->action = zero;
-  Func_020043c4(actor, 2);
+  Func_020041cc(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
-  actor->update = Func_0200385c;
+  actor->update = Func_02002d04;
   /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading layer and
    * nextBehavior; as no asm, 72 of 246 instructions differ in tla-en. */
   asm("" : : "r"(layer), "r"(nextBehavior) : "sfp");
@@ -111,7 +112,7 @@ body:
           : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
             "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
           : "sfp", "r4");
-      if (Func_02004454(&other->x, radius, &probe, other->radius - 2) >= 0) {
+      if (Func_0200428c(&other->x, radius, &probe, other->radius - 2) >= 0) {
         goto stop;
       }
     }
@@ -120,8 +121,8 @@ body:
   z = next->z;
   actor->speedLimit = PIXELS(2);
   actor->acceleration = 0x1999;
-  Func_020043f4(actor, next->x, next->y, next->z);
-  Func_020043fc(actor);
+  Func_02004204(actor, next->x, next->y, next->z);
+  Func_0200420c(actor);
   /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 151 of 246
    * instructions differ in tla-en. */
   asm("" : : : "sfp");
@@ -140,15 +141,15 @@ test:
    * tla-en. */
   step = NULL;
   next = &probe;
-  nextBehavior = Func_02004424(*layer, next->x, next->z);
+  nextBehavior = Func_02004224(*layer, next->x, next->z);
   if (nextBehavior != 255) {
     goto body;
   }
 stop:
   actor->speedLimit = PIXELS(2);
   actor->acceleration = PIXELS(1);
-  Func_020043f4(actor, x, actor->y, z);
-  Func_020043fc(actor);
+  Func_02004204(actor, x, actor->y, z);
+  Func_0200420c(actor);
   wait(2);
   /* FAKEMATCH(barrier): the asm tied to actor and clobbering sfp kills both
    * addresses on the back edge; as no asm, 190 of 246 instructions differ in
@@ -162,5 +163,5 @@ done:
   actor->update = NULL;
   actor->actionFlags |= 1;
   actor->acceleration = PIXELS(1) / 4;
-  Func_020043c4(actor, 1);
+  Func_020041cc(actor, 1);
 }

@@ -183,35 +183,28 @@ void Func_02001088(void) {
       Actor_GetById(gMainRoutineWork.currentOwner);
   u32 id;
 
-  for (id = 9; id <= 13;) {
-    u8 *flags = &Actor_GetById(id)->priorityFlags;
-    u32 next = id + 1;
+  for (id = 9; id <= 13; id++) {
+    struct ShrineOfTheSeaGodObject *object = Actor_GetById(id);
 
     if (leader->y > 0x100000) {
       Actor_SetSpritePriority(id, 2);
-      /* FAKEMATCH: the native ties the flag or to the constant's register. */
-      *flags = *flags + 2 - (*flags & 2);
+      object->priorityFlags |= 2;
     } else {
       Actor_SetSpritePriority(id, 1);
-      *flags &= ~2;
+      object->priorityFlags &= ~2;
     }
-    id = next;
   }
 }
 
 void Func_020010e8(void) {
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 y;
 
   Func_02003b28();
-  y = leader->y;
-  /* FAKEMATCH: loads the leader height before it builds the threshold. */
-  __asm__("");
-  if (y < 0x100000)
-    ((u8 *)&gMainRoutineWork)[0x2c3] = 0;
+  if (leader->y < 0x100000)
+    gMainRoutineWork.unk2c3 = 0;
   else
-    ((u8 *)&gMainRoutineWork)[0x2c3] = 1;
+    gMainRoutineWork.unk2c3 = 1;
 }
 
 void Func_02001128(void) {

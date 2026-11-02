@@ -98,12 +98,11 @@ s32 Func_0200145c(void) {
     name[7] = 'K';
   }
   for (i = 0; i < 8; i++) {
-    /* FAKEMATCH(temporary): wins, reused, holds the flag number; as a separate
-     * value, 16 of 438 instructions differ in tla-en. */
-    wins = 0x2f0 + i;
-    Flag_Clear(wins);
+    s32 flag = 0x2f0 + i;
+
+    Flag_Clear(flag);
     if (Func_02000f6c(i))
-      Flag_Set(wins);
+      Flag_Set(flag);
   }
   if (gMainRoutineWork.entrance == 8) {
     s32 msg;

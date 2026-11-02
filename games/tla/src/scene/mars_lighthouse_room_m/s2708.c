@@ -71,38 +71,21 @@ s32 Func_02002708(void) {
   leader->update = (void (*)(void))Func_020024bc;
   leader->angle = 0x4000;
   Func_02003118(leader, 49);
-  // A goto loop: as a while, do-while or for loop, loop.c hoists the
-  // 0xfff00000 mask out of the loop into r5; 17 of 138 instructions differ in
-  // tla-en.
-  if (ride->car->stopped != 0)
-    goto done;
-step:
-  {
+  while (ride->car->stopped == 0) {
     s32 kind = Func_02003168(0, leader->x, leader->z);
-    struct RideCar *car = ride->car;
 
     if (kind != 7) {
-      leader->x += car->stepX;
-      leader->z += car->stepZ;
+      leader->x += ride->car->stepX;
+      leader->z += ride->car->stepZ;
     } else {
-      if (car->stepX != 0)
+      if (ride->car->stepX != 0)
         leader->x = (leader->x & 0xfff00000) + 0x80000;
-      {
-        /* FAKEMATCH(temporary): the car reread through a pointer to its slot,
-         * in a block of its own, into r3 for this test as in the native; as
-         * ride->car->stepZ, 9 of 138 instructions differ in tla-en. */
-        struct RideCar **slot = &ride->car;
-
-        if ((*slot)->stepZ != 0)
-          leader->z = (leader->z & 0xfff00000) + 0x80000;
-      }
+      if (ride->car->stepZ != 0)
+        leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
     wait(1);
   }
-  if (ride->car->stopped == 0)
-    goto step;
-done:
   FieldEvent_Wait(30);
   leader->update = 0;
   Animation_ApplyChildValues(leader, 0);

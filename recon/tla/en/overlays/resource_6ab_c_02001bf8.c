@@ -1,3 +1,4 @@
+// Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "types.h"
 
 typedef struct Actor {
@@ -84,7 +85,7 @@ void Func_02001bf8(void) {
   state->unk_6 = 0;
   for (i = 3; i >= 0; i--, entry++) {
     Actor *actor;
-    s32 flag, x, y, unk6, value, dx, dz;
+    s32 flag, x, y, unk6, value, dz;
     u8 *mark;
 
     if (entry->active == 0)
@@ -99,14 +100,14 @@ void Func_02001bf8(void) {
     *mark = flag;
     if (state->unk_e != 0)
       *mark = GameFlag_Test(0x106);
-    dx = actor->x;
+    x = actor->x;
     dz = actor->z;
-    dx -= cameraX;
+    x -= cameraX;
     y = actor->y;
     dz -= cameraZ;
     y = dz - y;
     unk6 = entry->unk_6;
-    x = dx >> 16;
+    x >>= 16;
     y = (y >> 16) - 8;
     if (unk6 == 0) {
       if ((u32)(x + 7) > 334)

@@ -16,8 +16,6 @@ void Func_02001da8(struct Actor *object, s32 mode);
 void Func_02000244(struct Actor *object) {
   s16 angle = object->action;
   s16 height = object->unk66;
-  struct FieldSprite *sprite;
-  s32 sine;
 
   SET_POSITION(object,
                Iwram_MulQ16(Math_Cosine(angle), object->speedLimit) +
@@ -25,21 +23,14 @@ void Func_02000244(struct Actor *object) {
                (height * 3 << 16) - (120 << 16), 130 << 18);
   if ((s16)object->unk66 == 1)
     Func_02001da8(object, 7);
-  /* FAKEMATCH(one-pass): an empty one-pass block, after which the phase is
-   * read again for the second test; as plain statements, 21 of 85
-   * instructions differ in tla-en. */
-  do {
-  } while (0);
   if ((s16)object->unk66 == 38)
     Func_02001da8(object, 2);
   if (object->y > 0)
     object->unk66 = 0xffff;
-  sine = Math_Sine(angle);
-  sprite = object->animation;
-  if (sine < 0)
-    sprite->priority = 1;
+  if (Math_Sine(angle) < 0)
+    ((struct FieldSprite *)object->animation)->priority = 1;
   else
-    sprite->priority = 3;
+    ((struct FieldSprite *)object->animation)->priority = 3;
   object->action += object->acceleration;
   object->unk66++;
 }

@@ -59,30 +59,26 @@ void Func_020010f4(void) {
   xtbl = gData_0200174c;
   rec = gData_020017c0;
 
-  /* FAKEMATCH: a goto loop carries no loop notes, so loop.c leaves the zero in
-   * the loop and the ride's stores reuse it; as a do-while, 17 of 52
-   * instructions differ in tla-en. */
-next:
-  zero = 0;
-  rec->position.x = *xtbl << 16;
-  /* FAKEMATCH(barrier): the x store ends the first group, so the z table's read
-   * follows it at once; as plain stores of 0 with no barrier, 4 of 52
-   * instructions differ in tla-en. */
-  __asm__("");
-  rec->position.z = *ztbl << 16;
-  rec->position.y = zero;
-  rec->heading = *htbl;
-  rec->pauseOrPhase = zero;
-  rec->speedMode = zero;
-  rec->reactionFrames = zero;
-  rec->hitCooldownFrames = zero;
-  i++;
-  xtbl++;
-  ztbl++;
-  htbl++;
-  rec++;
-  if (i != 4)
-    goto next;
+  do {
+    zero = 0;
+    rec->position.x = *xtbl << 16;
+    /* FAKEMATCH(barrier): the x store ends the first group, so the z table's
+     * read follows it at once; as plain stores of 0 with no barrier, 2 of 52
+     * instructions differ in tla-en. */
+    __asm__("");
+    rec->position.z = *ztbl << 16;
+    rec->position.y = zero;
+    rec->heading = *htbl;
+    rec->pauseOrPhase = zero;
+    rec->speedMode = zero;
+    rec->reactionFrames = zero;
+    rec->hitCooldownFrames = zero;
+    i++;
+    xtbl++;
+    ztbl++;
+    htbl++;
+    rec++;
+  } while (i != 4);
 
   ride->trail[0].x = 0xffe20000;
   ride->trail[0].y = 0;
@@ -110,18 +106,12 @@ s32 Func_02001184(s32 side) {
   gData_020017b0 = side;
   gData_02001824 = 0;
   ride->hold = 0xffff;
-  gData_02001820 = 0;
-  /* FAKEMATCH: a goto loop; as ☀️'s for loop, loop.c keeps the frame counter's
-   * and the party's addresses in registers (differ 64). */
-  goto start;
-next:
-  gData_02001820++;
-start:
+  for (gData_02001820 = 0;; gData_02001820++) {
   if (gData_02001820 == 50)
     Func_02001408(300);
   /* FAKEMATCH: the volatile read keeps the frame's reload where both paths
    * meet; plain, PRE copies it onto the cue's path (differ 2). */
-  if (*(volatile s32 *)&gData_02001820 == 16) {
+  if (gData_02001820 == 16) {
     Actor_SetModeById(gMainRoutineWork.currentOwner, 39);
     ride->hold = 0;
     ride->velocity.x = 0x14ccc;
@@ -146,7 +136,8 @@ start:
     }
   }
   wait(1);
-  if (gData_02001824 != 1)
-    goto next;
+  if (gData_02001824 == 1)
+    break;
+  }
   return gData_02001828;
 }

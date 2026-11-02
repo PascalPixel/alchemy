@@ -7,21 +7,13 @@ extern u16 gData_02003fc0;
 
 /// Sets the layer blend, switching its alpha every two frames.
 void Func_0200130c(void) {
-  u16 *blend;
-  u16 blink;
-  u16 value;
-  u32 reg;
+  u32 alphaRegister = (u32)&REG_BLDALPHA;
 
   QueueIoWriteDelay2((u32)&REG_BLDCNT,
                      BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
-  reg = (u32)&REG_BLDALPHA;
-  blink = gFrameCount & 2;
-  blend = &gData_02003fc0;
-  if (blink) {
-    value = *blend | 12;
-    QueueIoWriteDelay2(reg, value);
+  if (gFrameCount & 2) {
+    QueueIoWriteDelay2(alphaRegister, gData_02003fc0 | 12);
   } else {
-    value = *blend | 16;
-    QueueIoWriteDelay2(reg, value);
+    QueueIoWriteDelay2(alphaRegister, gData_02003fc0 | 16);
   }
 }

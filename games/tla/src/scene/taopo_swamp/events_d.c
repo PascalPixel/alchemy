@@ -3,10 +3,7 @@
 void Func_0200065c(void) {
   struct Actor *object = Actor_GetById(8);
   s32 speed;
-  /* FAKEMATCH: the counter pinned to r6; unpinned, the object outranks it in
-   * global allocation and takes r6, pushing the counter to r7 (differ 16, 13
-   * with the object pinned to r7 instead). */
-  register s32 i asm("r6");
+  s32 i;
 
   Func_02002898();
   Func_02002968(0);
@@ -34,8 +31,8 @@ void Func_0200065c(void) {
 }
 
 void Func_02000710(s32 id) {
-  struct Actor *object = Actor_GetById(id);
   s32 n = 60;
+  struct Actor *object = Actor_GetById(id);
 
   object->motionFlags = 3;
   while (n != 0) {

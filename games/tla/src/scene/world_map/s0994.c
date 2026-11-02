@@ -41,40 +41,32 @@ static __inline__ void Actor_JoinLeader(s32 actor) {
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(actor, ((s16 *)&leader->x)[1],
-                                     ((s16 *)&leader->z)[1]);
+                              ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(actor);
   Func_02004c88(actor, 0, 0);
-}
-
-static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle,
-                                                 s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ArmCallback(actor, angle, frames);
 }
 
 void Func_02000994(void) {
   struct Actor *object;
   s32 x;
   s32 z;
-  s32 seen;
+  s32 southwest = FACING_SOUTHWEST;
+  s32 west = FACING_WEST;
 
   if (Flag_IsSet(0xa21) && !Flag_IsSet(0x9d0)) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     x = object->x;
     z = object->z;
-    Func_02004c20();
-    Func_02004db8(0);
-    seen = Flag_IsSet(0x9b3);
     x >>= 20;
     z >>= 20;
-    x <<= 4;
-    z <<= 4;
-    if (seen) {
+    Func_02004c20();
+    Func_02004db8(0);
+    if (Flag_IsSet(0x9b3)) {
       Func_02004df8(0x16666, 6);
       Func_02004c98(5, gMainRoutineWork.currentOwner);
       wait(1);
-      Actor_SetPositionAndReset(5, x + 24, z - 12);
-      Actor_ArmCallback_(5, FACING_SOUTHWEST, 0);
+      Actor_SetPositionAndReset(5, (x << 4) + 24, (z << 4) - 12);
+      Actor_ArmCallback(5, southwest, 0);
       Func_02004d00(gMainRoutineWork.currentOwner, FACING_NORTHEAST);
       Func_02004da8();
       Func_02004cd8((s32)MsgWeShouldnT);
@@ -85,20 +77,23 @@ void Func_02000994(void) {
       Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 7312, 8192);
       Func_02004df8(0x10000, 6);
     } else {
+      s32 besideZ;
+
       Func_02004df8(0x16666, 6);
       Func_02004c98(5, gMainRoutineWork.currentOwner);
       wait(1);
-      z -= 12;
-      Actor_SetPositionAndReset(5, x + 24, z);
-      Actor_ArmCallback_(5, FACING_SOUTHWEST, 0);
+      x <<= 4;
+      besideZ = (z << 4) - 12;
+      Actor_SetPositionAndReset(5, x + 24, besideZ);
+      Actor_ArmCallback(5, southwest, 0);
       Func_02004d00(gMainRoutineWork.currentOwner, FACING_NORTHEAST);
       Func_02004da8();
       Func_02004cd8((s32)MsgYouReNot);
       Func_02004cf0(5, 0);
       Func_02004db0();
-      Actor_ArmCallback_(5, FACING_WEST, 0);
+      Actor_ArmCallback(5, west, 0);
       Func_02004d10(gMainRoutineWork.currentOwner, 258);
-      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, x + 12, z);
+      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, x + 12, besideZ);
       Func_02004d00(gMainRoutineWork.currentOwner, 0);
       Actor_SetModeById(5, 4);
       Func_02004da8();

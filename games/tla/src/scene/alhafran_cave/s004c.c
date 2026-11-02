@@ -74,11 +74,10 @@ u8 *Func_020001e8(void) {
 void Func_02000220(void) {
   s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
 
-  
   if (y < 0x80000)
-    ((u8 *)&gMainRoutineWork)[0x2c3] = 0;
+    gMainRoutineWork.unk2c3 = 0;
   else
-    ((u8 *)&gMainRoutineWork)[0x2c3] = 1;
+    gMainRoutineWork.unk2c3 = 1;
 }
 
 s32 Func_02000258(void) {

@@ -1605,7 +1605,6 @@ Func_0200189c:
 .L_02009b44:
 	.4byte Func_020017dc
 	.section .text.x02009b48,"ax",%progbits
-	.ifdef TLA_EDITION_JA
 	.global Func_02001b48
 	.thumb_func
 Func_02001b48:
@@ -2371,7 +2370,6 @@ Func_02001b48:
 	.4byte gData_02003cd0
 .L_02009e58:
 	.4byte Func_020017dc
-	.endif
 	.endif
 	.section .text.x02009e68,"ax",%progbits
 	.balign 4

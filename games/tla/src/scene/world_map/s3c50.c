@@ -15,15 +15,11 @@ static inline void QueueBlend(u32 address, u32 value) {
 /// Every other two frames the world map's blend alternates between two
 /// strengths.
 void Func_02003c50(void) {
-  s32 odd;
-  u16 *alpha;
 
   QueueIoWriteDelay2((u32)&REG_BLDCNT,
                      BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
-  odd = gFrameCount & 2;
-  alpha = &gData_02006e08;
-  if (odd)
-    QueueBlend((u32)&REG_BLDALPHA, *alpha | 12);
+  if (gFrameCount & 2)
+    QueueBlend((u32)&REG_BLDALPHA, gData_02006e08 | 12);
   else
-    QueueBlend((u32)&REG_BLDALPHA, *alpha | 16);
+    QueueBlend((u32)&REG_BLDALPHA, gData_02006e08 | 16);
 }

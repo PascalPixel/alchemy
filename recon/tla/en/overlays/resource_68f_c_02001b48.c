@@ -1,4 +1,9 @@
-// Draft (tla-ja)
+// Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
+#include "edition.h"
+
+// The Japanese form differs and is still on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -25,7 +30,6 @@ void wait(s32 frames);
 
 void Func_02001b48(void) {
   struct Actor *object;
-  volatile s16 *dataAddress;
   s32 startCell;
   s32 targetX;
   s32 targetZ;
@@ -42,8 +46,11 @@ void Func_02001b48(void) {
   struct Actor *entry;
   u8 *flags;
   s32 *q;
-  volatile s16 *dataCopy;
+  s32 *p;
 
+  /* FAKEMATCH(volatile): gData_02003cd0 read as a volatile s16, reread after
+   * each test and for lsls #16; as a plain u16, 52 of 347 instructions differ
+   * in tla-en. */
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   gData_02003cd0 = 0;
 retry:
@@ -54,30 +61,31 @@ retry:
   object->targetZ = 0x80000000;
   object->velocityX = 0;
   object->velocityZ = 0;
-  j = (s32)position;
-  ((s32 *)j)[0] = x = (object->x & 0xfff00000) + 0x80000;
-  ((s32 *)j)[1] = object->y;
-  ((s32 *)j)[2] = z = (object->z & 0xfff00000) + 0x80000;
+  p = position;
+  p[0] = x = (object->x & 0xfff00000) + 0x80000;
+  p[1] = object->y;
+  p[2] = z = (object->z & 0xfff00000) + 0x80000;
   targetZ = z;
   targetX = x;
   layer = &object->terrainId;
   startCell = Func_02002fe0(*layer, targetX, targetZ);
   dz = targetZ - object->z;
   dx = targetX - object->x;
-  flags = (u8 *)Iwram_MulQ16;
-  if (((s32 (*)(s32, s32))flags)(dx, dx) + ((s32 (*)(s32, s32))flags)(dz, dz) <
-      0x40000) {
+  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
     angle = gData_020032b2[(gInput.held >> 4) & 15];
+    // -1 for no direction, tested as its halfword.
     if ((u16)angle == 0xffff)
-      return;
+      goto end;
   } else {
     angle = ArcTan2(targetZ - object->z, targetX - object->x);
     angle = (angle + 0x2000) & 0xc000;
   }
+  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 30
+   * of 347 instructions differ in tla-en. */
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
-  cell = Func_02002fe0(*layer, ((s32 *)j)[0], ((s32 *)j)[2]);
+  cell = Func_02002fe0(*layer, p[0], p[2]);
   if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, ((s32 *)j)[0], ((s32 *)j)[2]) - object->y >
+      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y >
           0x80000) {
     object->angle = angle;
     object->velocityX = 0;
@@ -86,33 +94,36 @@ retry:
     object->z = z;
     goto end;
   }
-  ((s32 *)j)[0] = x;
-  ((s32 *)j)[2] = z;
+  p[0] = x;
+  p[2] = z;
   object->speedLimit = 0x20000;
   object->acceleration = 0x1999;
   object->action = 0;
   Func_02002fb0(object, x, object->y, z);
   Func_02002f80(object, 2);
   Actor_SetAnimationSpeed(object, 48);
-  Func_02002fb8(object);
+  for (i = 0; i <= 179 && Func_02003018(object) == 0; i++) {
+    if (gData_02003cd0 != 0)
+      goto end;
+    wait(1);
+  }
   object->update = (void (*)(void))Func_020017dc;
-  asm("" : "+r"(object) : "g"(radius) : "sfp");
-  dataAddress = &gData_02003cd0;
   goto walk;
 walkNext:
-  asm("" : : "r"(angle), "r"(j) : "sfp");
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
     goto blocked;
-  dataCopy = &gData_02003cd0;
-  if (*dataCopy != 0)
-    goto blocked;
+  if (gData_02003cd0 != 0)
+    goto end;
   radius = object->radius - 2;
   entry = Ram_HeapSlots->scriptObjects;
   j = 0;
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Func_02003028, (s32)&entry->x, radius, (s32)position, entry->radius - 2) >= 0)
+    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
+     * call, 2 of 347 instructions differ in tla-en. */
+    if (Value4((s32 (*)())Func_02003028, (s32)&entry->x, radius, (s32)position,
+               entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -133,12 +144,13 @@ next:
 test:
   if (i <= 179 && Func_02003018(object) == 0 && gData_02003cd0 == 0)
     goto next;
-  dataCopy = dataAddress;
-  if (*dataCopy != 0)
+  if (gData_02003cd0 != 0)
     goto end;
   if (cell != startCell)
     goto changed;
 walk:
+  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
+   * of 347 instructions differ in tla-en. */
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   q = position;
   cell = Func_02002fe0(*layer, q[0], q[2]);
@@ -147,10 +159,13 @@ walk:
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
-  do { Func_02002fb0(object, targetX, object->y, targetZ); } while (0);
+  /* FAKEMATCH(one-pass): the once-only block round the call; as no block, 2 of
+   * 347 instructions differ in tla-en. */
+  do {
+    Func_02002fb0(object, targetX, object->y, targetZ);
+  } while (0);
   Func_02002fb8(object);
   wait(2);
-  asm("" : : : "sfp");
   goto retry;
 changed:
   wait(10);
@@ -160,3 +175,5 @@ end:
   object->acceleration = 0x4000;
   Func_02002f80(object, 1);
 }
+
+#endif

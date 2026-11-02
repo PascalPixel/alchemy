@@ -1,36 +1,58 @@
-// Draft, differ 64 of 1676, skeleton gap 32 (tla-en, 2026-11-01)
-// BattleEffect_RunThor, Thor (scene kind 12). Instructions, registers and frame
-// now agree; what is left is the order of instructions inside blocks, at about
-// a dozen sites, and they read as the K2 scheduling model:
-// - The prologue: sub sp comes before movs r3 in the listing. sched2 ranks the
-//   movs 128 and the sub 127 here, because a store followed by the load through
-//   r2 costs 2. No source form reaches that link, so a higher cost is the only
-//   way; that is -mthumb-slow-loads, a compiler question for Pascal (K2).
-// - The ramp's preheader, ldrb after subs r4 in the ramp loop, the second fan
-//   draw's stack arguments, the formation's constants, the bolt's movs r0 and
-//   the smoke's copies: in each the listing issues a load's user or a split
-//   constant one slot off from here, as if a load's result came later than the
-//   model says. That reading is inferred from their shape, not proven; about
-//   twenty reshapes of these sites gained nothing.
-// Found, each measured:
-// - All of the function's counters are one i, as in the twin, except the inner
-//   j. i has 208 refs, and outranks size * 2 in global.c, yet r9 is right:
-//   local-alloc puts the smoke's two table addresses in r10 and r8 (single-block
-//   registers crossing calls) and i spans them. So the old i and k split was
-//   fitting a symptom; with the tables in the body it is gone.
-// - PLACE_SMOKE's block is what keeps those tables in the body (268 to 80, all
-//   counters merged). Around the whole loop body or the draw it does nothing.
-// - DRAW_ALTERNATE at the two beam draws stops CSE keeping work->sheet (r8) (352
-//   to 183). At the bolt it costs 8, so that site stays spelled out.
-// - RatioMulQ14 and CopyWords through static inlines rebuild 0x1fe0000 after the
-//   call, as the twin's layer does. FillWords that way changes nothing.
-// - The twin's barrier and fullWidth came out: the asm's counted 4 bytes pushed
-//   the beam's bhi out of range. The twin's order for the formation's four
-//   values gains 12, and j = 0 before beamHeight 2; other orders lose. frame * 2 is one giv in sp+16; pillarX
-//   and pillarY are set inside the strike; blit is the twin's pair (sp+96
-//   unused); inset is j, the shared r4 with its caller-save slot at sp+8; dotCount
-//   is also the spawned counter (r8).
-
+// Draft, differ 14 of 1676 (all six editions, 2026-11-01)
+// BattleEffect_RunThor, Thor (scene kind 12). Instructions, registers, frame and
+// allocation agree; 7 instructions sit in the wrong place, at four sites:
+// - The beam's second LoadBlitter: movs r0, #188 before movs r1, #23.
+// - The smoke's add r6, fp after adds r0, r5, and adds r5, r5, r0 after
+//   ldr r4, [sp, #8].
+// - The smoke's mov r8, r0 after subs r5, r5, r3.
+// - The smoke's draw: its arguments, ldrh r1 to str r3, [sp, #0].
+// One cause, read from the cse, loop and sched2 dumps. The listing needs a stop
+// for the first CSE between the smoke's x and y and its draw, and between the
+// beam's two draws, and no stop the scheduler can see:
+// - Without a stop CSE keeps the two size tables in one pseudo each (life 45 and
+//   33, against 2 with the stop), loop.c hoists them out of the smoke loop, and
+//   work->sheet stays in a register across the beam's first draw.
+//   That is 210 and 261 differ, and the allocation goes with it.
+// - DRAW_ALTERNATE and PLACE_SMOKE's blocks are that stop: CSE breaks at
+//   NOTE_INSN_LOOP_END, and cse2 merges the copies back after loop.c. But
+//   haifa-sched makes the insn after a loop note a barrier that depends on every
+//   earlier register use. That barrier is all 14: it gives add r6, fp a third
+//   dependent, wins the tie against adds r0, r5, and puts movs r0 first.
+// - The listing's order is The Broken Seal's plain order, which has no barrier
+//   (rank_for_schedule's ties all fall the way the twin's do).
+// Measured and not kept, because each adds or moves a one-pass block:
+// - One empty do { } while (0) after each blitter load, no macros: 10.
+// - PLACE_SMOKE's block widened to end after its Func_08196404: 12. With one
+//   block from the first load to the second: 10. Every other placement of blocks
+//   over those statements (610 smoke, 233 beam) is worse.
+// - A jump only CSE folds, in place of the blocks: 6, the draw's arguments alone.
+//   Dead code with a goto, so only a proof that the stop must not be a note.
+// Not reached by plain C: named table pointers in the body, non-const tables,
+// the loop as do, while, for (;;) or labels, a mode local, inline forwarders for
+// the loads, inline helpers for the sizes and the draws. No plain form tried
+// stops CSE there; a compiler reason is possible and is Pascal's (K2).
+// Devices kept, each with what taking it out costs here:
+// - DRAW_ALTERNATE's block, 261; at the bolt it costs 8, so that site is spelled
+//   out, so it is not a macro every use matches through. PLACE_SMOKE's, 210.
+// - for (j = 0; j != 1; j++) around the strike, a one-pass loop kept from the
+//   twin, 1196. Unexplained: it is more than this block's own insns.
+// - RatioMulQ14's inline, 24; CopyWords' at the first palette, 16. The argument
+//   is built in r0 and dies at the call, so the constant is not carried.
+// - blit[2], whose array also keeps blit[0] on the stack, 218; a plain local
+//   does not.
+// - One drawAlt = BLITTER_ALTERNATE in each arm of the circle's if, 165.
+// - The { DrawRectangle draw; ... } block's inner spark, 42.
+// - speed = 0x3ff; speed &= Random16(), 73 (63 at the mote, 41; radius, 39).
+// - pillarX and pillarY, 393: constants held for life, no device.
+// - (frame * 2 + frame) << 11, 608; the formationScreenX in the for's init, 24;
+//   (work->sheet + STORM_DIMMED_DOTS)[offset + j], 30. Spellings.
+// Taken out at no cost: j as the beam's inset, dotCount as the spawned counter,
+// the palette cast, the formation's separate declarations and the second
+// CopyWords.
+// Found earlier and still true: all the function's counters are one i, except
+// the inner j; i has 208 refs and outranks size * 2, yet r9 is right, because
+// local-alloc puts the tables in r10 and r8 and i spans them. frame * 2 is one
+// giv in sp+16.
 
 // Twin: The Broken Seal's BattleEffect_RunThor (effect.c), ported. The Lost Age
 // loads the light fan once, copies palette 0x184 to BG palette RAM after the
@@ -118,7 +140,8 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLITTER_ALTERNATE ((DrawRectangle)Ram_HeapSlots->unkb8[1])
 
 // Builds the alternate blitter, draws one rectangle and frees it. Its end stops
-// CSE, so the beam's second draw rebuilds work->sheet as the listing does.
+// CSE, so the second draw rebuilds work->sheet as the listing does; the note is
+// also a scheduling barrier, which the listing does not have.
 #define DRAW_ALTERNATE(flags, canvas, source, x, y, width, height)             \
   do {                                                                         \
     BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, flags));                 \
@@ -126,9 +149,11 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
     HeapSlot_Release(188);                                                     \
   } while (0)
 
-// One puff of smoke's cell and random place. Its block keeps the two size
-// tables' addresses in the loop body, where they are single-block registers
-// and take r10 and r8 from local-alloc; that pushes i, which spans them, to r9.
+// One puff of smoke's cell and random place. Its end stops CSE, so each size
+// table is loaded twice with a short life and loop.c leaves it in the body, and
+// cse2 then merges the loads; there it takes r10 or r8 from local-alloc and
+// pushes i, which spans them, to r9. The note is also a scheduling barrier,
+// which the listing does not have.
 #define PLACE_SMOKE(cell, angle, x, y, index, originX)                         \
   do {                                                                         \
     cell = (index) & 3;                                                        \
@@ -196,6 +221,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   s32 i;
   s32 j;
   s32 dotCount;
+  s32 spawned;
   struct EffectStep *spark;
 
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
@@ -232,7 +258,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
 
   Func_0813ba50();
   PLTT_BACKDROP = 0;
-  *(u16 *)&BG_PLTT[1] = 0;
+  BG_PLTT[1] = 0;
   REG_BG2CNT = 0x2784;
   work->scrollTimer = 0;
   work->scrollInterval = 2;
@@ -409,22 +435,22 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     // falling down it.
     if ((u32)(frame - 151) <= 16) {
       s32 beamHeight;
-      j = 0;
+      s32 inset = 0;
       beamHeight = (frame - 151) * 20 + 44;
       if (frame > 151) {
-        j = frame - 152;
+        inset = frame - 152;
       }
-      if (j > 15) {
-        j = 15;
+      if (inset > 15) {
+        inset = 15;
       }
       for (i = 1; i != 10; i++) {
-        if (j + i <= 15) {
-          blit[0](canvas, &ramp[j + i], j + 48 + i, 16 - i,
-                  32 - j * 2 - i * 2, 1);
+        if (inset + i <= 15) {
+          blit[0](canvas, &ramp[inset + i], inset + 48 + i, 16 - i,
+                  32 - inset * 2 - i * 2, 1);
         }
       }
       for (i = 0; i != beamHeight; i++) {
-                blit[0](canvas, ramp + j, j + 48, i + 16, 32 - j * 2, 1);
+        blit[0](canvas, ramp + inset, inset + 48, i + 16, 32 - inset * 2, 1);
       }
       DRAW_ALTERNATE(BLIT_CLIP, canvas, work->sheet, 32,
                      (frame - 151) * 20 - 12, 32, 96);
@@ -447,22 +473,18 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_VioletMoteSheet,
                              work->sheet + STORM_MOTE_CELLS, 1, 0);
-  CopyWords((void *)BG_PLTT,
-            Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
+  Iwram_CopyWords((void *)BG_PLTT,
+                  Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data135, sprites, 0, 0);
   REG_BLDALPHA = 0x1010;
   {
-    s32 formationX;
-    s32 formationY;
-    s32 formationSpeedX;
-    s32 formationSpeedY;
+    s32 formationX = 0x500000;
+    s32 formationY = 0x400000;
+    s32 formationSpeedX = 0;
+    s32 formationSpeedY = 0;
     s32 pillarX;
     s32 pillarY;
 
-    formationX = 0x500000;
-    formationY = 0x400000;
-    formationSpeedX = 0;
-    formationSpeedY = 0;
     for (i = 0; i != STORM_PARTICLE_COUNT; i++) {
       STORM_PARTICLES[i].variant = 0;
     }
@@ -500,7 +522,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
             blit[0](canvas, work->sheet + 0x1500, 36, 0, 48, 112);
           }
           if (frame == start + 2) {
-            dotCount = 0;
+            spawned = 0;
             for (i = 0, spark = STORM_PARTICLES; i != STORM_PARTICLE_COUNT;
                  i++, spark++) {
               if (spark->variant == 0) {
@@ -514,7 +536,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                 spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
                 spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
                 spark->variant = (Random16() & 7) + 32;
-                if (++dotCount == 512) {
+                if (++spawned == 512) {
                   break;
                 }
               }
@@ -545,12 +567,12 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
               s32 boltX = (Random16() & 3) - 3;
               s32 boltY = (Random16() & 3) + 32;
               BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
- BLITTER_ALTERNATE(canvas, work->sheet + i % 3 * 0x1440, boltX,
-                   boltY, 72, 72);
- HeapSlot_Release(188);
+              BLITTER_ALTERNATE(canvas, work->sheet + i % 3 * 0x1440, boltX,
+                                boltY, 72, 72);
+              HeapSlot_Release(188);
             }
             if (frame == i * 2 + 80) {
-              dotCount = 0;
+              spawned = 0;
               for (j = 0, spark = STORM_PARTICLES; j != STORM_PARTICLE_COUNT;
                    j++, spark++) {
                 if (spark->variant == 0) {
@@ -564,7 +586,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                   spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
                   spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
                   spark->variant = (Random16() & 7) + 32;
-                  if (++dotCount == 16) {
+                  if (++spawned == 16) {
                     break;
                   }
                 }
@@ -587,7 +609,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           moteY = 32 - ((Trig_Cos(angle) * (radius + 8)) >> 16);
         }
         Func_0818caa8(work->sheet + STORM_MOTE_CELLS, mirrorX, moteY, 24);
-        dotCount = 0;
+        spawned = 0;
         for (i = 0, spark = STORM_PARTICLES; i != STORM_PARTICLE_COUNT;
              i++, spark++) {
           if (spark->variant == 0) {
@@ -601,7 +623,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
             spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
             spark->variant = (Random16() & 7) + 16;
-            if (++dotCount == 4) {
+            if (++spawned == 4) {
               break;
             }
           }

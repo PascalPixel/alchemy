@@ -347,13 +347,16 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       }
       for (i = 0; i != beamHeight; i++) {
         s32 fullWidth = 32;
-        // loop.c matches this 32 with the smoke calls' 32 and hoists it out of
-        // the frame loop, where it loses its register and later reloads rotate:
-        // after an earlier move its threshold is 12, and savings 2 x life 19 x
-        // 12 = 456 reaches the loop's 448 insns.
+        // loop.c matches this 32 with the light-fan calls' 32 and hoists it out
+        // of the frame loop, where it loses its register and later reloads
+        // rotate: after an earlier move its threshold is 12, and savings 2 x
+        // life 19 x 12 = 456 reaches the loop's 448 insns. The asm also takes
+        // i's life from 1288 to 1292 insns, so global.c ranks i (7 x 195 /
+        // 1292) just behind dotCount (4 x 28 / 106), which then takes sl before
+        // i takes r9; at 1288 they swap.
         /* FAKEMATCH(barrier): fullWidth's 32 kept in this loop's preheader, and
-         * i's life lengthened so dotCount takes r9; without the asm, 330 of
-         * 1640 instructions differ in tbs-en. */
+         * i's life lengthened so dotCount sits in sl and i in r9; without the
+         * asm, 330 of 1640 instructions differ in tbs-en. */
         __asm__("" : "+r"(fullWidth));
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);

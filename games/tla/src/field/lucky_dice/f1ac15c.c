@@ -1,47 +1,3 @@
-// Draft, differ 66 of 2055, skeleton gap 25 (tla-en, 2026-11-01)
-// Left: scheduling rows only, no shape. A stack or pool load one row early
-// (the first tile loop's VRAM base over gRenderOamEnabled's store, diceWork
-// over the setup's stores, sprites and spriteCount's stores in the OAM loops,
-// the two zero loads in the affine loop). The sched2 dump shows the affine
-// one: adds #128 ranks 55 and the zero loads 54, because strh to affineA gets
-// the slow-load rule's cost 2 from the ldrh that rereads it. That one row also
-// moves the literal pool, which is the HImode zero's 60-byte reach: the pool
-// splits one store late and six pc-relative offsets and two branches follow.
-// Barriers cannot close it: an empty asm counts 4 bytes for that same pool,
-// and sites such as movs r4 / ldr r5 / str r4 need a load between a constant
-// and its store. Closing the rest looks like the -mthumb-slow-loads model,
-// which is out of scope here. Signed affine locals give ldrsh (178).
-// Measured this pass (from 74): the shadow loop's sl and r8 swap was the loop
-// pass's threshold, not allocation. Its attr2 offset giv was "not worth while,
-// 68 vs 73", so it was reduced in the second loop pass, after attr01's; at 68
-// real insns or fewer both reduce in the first pass, as in the die loop. The
-// local depth for the clamp (73 to 69) and the rollingDie pointer (69 to 68)
-// bring it there. A halfword read of y through a pointer drops the first
-// depth store (s16 alias set; 178), and through a union moves the frame (613).
-// That loses four insns before gcse, so its expression table fell from 823 to
-// 821 buckets, which reorders PRE's pseudos and so the spill slots at sp+40 to
-// sp+52 (94). The spriteCount default is dead, flow deletes it, and it puts
-// the table back at 823 (66). Keep n_insns / 2 | 1 at 823 in any later edit.
-// Also measured: state = 0 before resetDice = 1 after a loss (70), and state =
-// 0 after Window_CloseFar (68), index = 0 before gRenderOamEnabled = 0 (98).
-// 2026-10-26 (round 5): differ 104 of 2055 (draft 2055); resetDice set before
-// the state after a loss (a statement-move search): 108 to 104. Both decodes go
-// through Call2 with Ram_MapCellBuffer as an integer, as The Broken Seal's
-// LuckyDice_Run calls its decoder: the native then reloads the cell buffer's
-// address from the pool for each transfer instead of keeping it in a register:
-// 137 to 108. Left: scheduling rows only (pool loads one row early or late,
-// argument stores).
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 137
-// of 2055 (draft 2056); not worked this pass.
-// Draft, differ 231 of 2055: LuckyDice_Run, the Lucky Dice minigame, ported
-// from ☀️'s LuckyDice_Run (games/tbs/src/field/lucky_dice.c) with this
-// game's names: its heap blocks, the sprite block's windows at 0x4c4..0x4cc,
-// the result lettering at 0x278, the winnings window 13 tiles plus the digits
-// wide, no help window reopened after a loss, gInput for the keys, and the
-// shadow's depth read from the die's height as a halfword. Left: scheduling
-// and pool order in the setup (the native reloads gMapCellBuffer and the DMA
-// constants from the pool at each use) and in the key tests; the resource
-// and message names are not in directory.s and en.po yet.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -107,12 +63,12 @@ void Transform_SetLookAt(s32 *eye, s32 *target);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void WindowSystem_InitFieldFar(void);
 struct RenderInput *Window_CreateFar(s32 x, s32 y, s32 width, s32 height,
-                                       s32 mode);
+                                     s32 mode);
 void Window_CloseFar(struct RenderInput *window, s32 mode);
 void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
-                                     s32 x, s32 y);
+                                   s32 x, s32 y);
 void Text_DrawNumberInWindowFar(s32 value, s32 width,
-                                  struct RenderInput *window, s32 x, s32 y);
+                                struct RenderInput *window, s32 x, s32 y);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
 void Sound_PlayFar(s32 cue);
@@ -129,6 +85,10 @@ extern char ResourceId_LuckyDiceBoard;
 extern char ResourceId_LuckyDiceSprites;
 
 void LuckyDice_Run(void) {
+  /* FAKEMATCH(volatile): the sprite words volatile members, as the ROM rereads
+   * them; as plain u32 members, 1595 of 2055 instructions differ in tla-en. */
+  /* FAKEMATCH(volatile): the map writes through a volatile cast, as the ROM
+   * orders them; as a plain cast, 186 of 2055 instructions differ in tla-en. */
   u16 bgPalette[256];
   s32 spriteDepth[4];
   s32 numbers[4];
@@ -296,12 +256,12 @@ void LuckyDice_Run(void) {
   sprites->coinsWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
   Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, sprites->coinsWindow, 0,
-                               0);
+                             0);
   window = Window_CreateFar(22, 16, 8, 4, 6);
   sprites->helpWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins + 11,
-                                  sprites->helpWindow, 0, 8);
+                                sprites->helpWindow, 0, 8);
 
   frame = 0;
   for (;;) {
@@ -381,13 +341,12 @@ void LuckyDice_Run(void) {
         }
         window = Window_CreateFar(8 - digits / 2, 16, digits + 13, 3, 6);
         sprites->winningsWindow = window;
-        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0,
-                                        0);
+        Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
         Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
-                                        sprites->winningsWindow,
-                                        digits * 8 + 56, 0);
+                                      sprites->winningsWindow, digits * 8 + 56,
+                                      0);
         Text_DrawNumberInWindowFar(winnings, digits, sprites->winningsWindow,
-                                     56, 0);
+                                   56, 0);
       }
       if (payoutTimer > 0) {
         payoutTimer--;
@@ -407,8 +366,8 @@ void LuckyDice_Run(void) {
       if (payoutTimer == 0) {
         winnings = 0;
         Text_DrawNumberInWindowFar(0, digits, sprites->winningsWindow, 56, 0);
-        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, sprites->coinsWindow,
-                                     0, 0);
+        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
+                                   sprites->coinsWindow, 0, 0);
       }
       if (payoutTimer == 15) {
         state = 0;
@@ -417,7 +376,7 @@ void LuckyDice_Run(void) {
         sprites->helpWindow = window;
         Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow, window, 0, 0);
         Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceThrow + 1,
-                                        sprites->helpWindow, 0, 8);
+                                      sprites->helpWindow, 0, 8);
         resetDice = 1;
       }
       payoutTimer++;
@@ -447,7 +406,8 @@ void LuckyDice_Run(void) {
       if (diceWork->particles[1].y > 0xa00000) {
         diceWork->particles[1].y = 0xa00000;
       }
-      if ((u32)gMainRoutineWork.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
+      if ((u32)gMainRoutineWork.coins <
+          (u32)(Party_GetAverageLevelFar() * 10)) {
         Window_CloseFar(sprites->helpWindow, 1);
         break;
       }
@@ -465,8 +425,8 @@ void LuckyDice_Run(void) {
           bet = gMainRoutineWork.coins;
         }
         Party_AdjustCoinsFar(-bet);
-        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, sprites->coinsWindow,
-                                     0, 0);
+        Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
+                                   sprites->coinsWindow, 0, 0);
         for (index = 0; index != 2; index++) {
           rollingDie = &diceWork->particles[index];
           if (index > 1) {
@@ -710,7 +670,7 @@ void LuckyDice_Run(void) {
             winnings = bet * 5;
           }
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                       sprites->coinsWindow, 0, 0);
+                                     sprites->coinsWindow, 0, 0);
           Sound_PlayFar(93);
         } else {
           pairCount = 0;
@@ -725,13 +685,13 @@ void LuckyDice_Run(void) {
           if (pairCount == 1) {
             winnings = bet;
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                         sprites->coinsWindow, 0, 0);
+                                       sprites->coinsWindow, 0, 0);
             resultKind = 3;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                         sprites->coinsWindow, 0, 0);
+                                       sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
             Sound_PlayFar(91);
@@ -739,7 +699,7 @@ void LuckyDice_Run(void) {
           if (pairCount == 3) {
             winnings = bet * 3;
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
-                                         sprites->coinsWindow, 0, 0);
+                                       sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
             Sound_PlayFar(92);

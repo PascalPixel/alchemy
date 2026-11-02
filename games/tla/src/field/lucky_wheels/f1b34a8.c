@@ -1,32 +1,3 @@
-// Near miss, differ 6 of 1016 (tla-en, 2026-10-30), no device: the two
-// swaps described below, both sched2 ranking. After Task_ResetAll the
-// gRenderOamEnabled store (priority 1) waits behind the loop constants'
-// literal loads (priority 3, a load ranked a cycle slower) and count's zero
-// (2), where the native stores it as soon as its address is loaded; in the
-// sparks' draw call the spilled draw-table address reload (priority 7)
-// issues before the first stack argument's store (6), where the native
-// stores first. Tried (2026-10-30): gRenderOamEnabled = 0 after count = 0
-// or j = 0 (6), k = 0 apart from its loop (6), j = 0 before count = 0 (17);
-// five more minutes of permute, 4,106 candidates, none below 6.
-// Draft, differ 8 of 1016 (tla-en): Lucky Wheels, The Broken Seal's matched
-// LuckyWheels_Run (games/tbs/src/field/lucky_wheels.c) on this game's
-// heap slots (sheet 100, canvas 96, effect work 92, wheel work 180), with a
-// third callback, Func_081b3294, and BattleStaging_ProcessPendingTileTransfer
-// as the canvas transfer. Reshaped toward The Broken Seal's C, measured in
-// order from 436: resources and messages by their linker names, as the
-// native loads each from the pool (ResourceId_FarCall00C, the Slots_ and
-// Djinn sheets, MsgSlotsChangeBet and MsgSlotsControls): 403; the
-// background shade's address kept in its own local beside the sprites':
-// 184; the tile buffer as tiles = Ram_MapCellBuffer, a constant, as The
-// Broken Seal writes it: 51; the blitters read through Ram_HeapSlots'
-// fields, so the heap base stays in r5 across the second build: 28; the
-// Task_Add, Resource_FarCall00C and Graphics_ScaleRgb555 returning s32:
-// 8. Left, both scheduling: the store of gRenderOamEnabled comes before the
-// loop constants load in the native (an empty asm after it gives 6), and
-// in the sparks' draw call the native stores both stack arguments before it
-// reloads the blitter pair's address; here after. Variants of the call (the
-// pointer through a local, (*draw[j & 1]), size << 1, d = size * 2) change
-// nothing or worsen it; permute (15 minutes) found nothing below 8.
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -44,8 +15,8 @@ struct Reel {
 };
 
 struct ReelSprite {
-  volatile u32 attr01;
-  volatile u32 attr2;
+  u32 attr01;
+  u32 attr2;
 };
 
 struct ReelWork {
@@ -112,8 +83,7 @@ void Palette_DarkenSceneStep(void);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
-s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 level,
-                          s32 count);
+s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 level, s32 count);
 s32 PartyInventory_CountItemFar(s32 item);
 s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
@@ -135,6 +105,8 @@ extern char MsgSlotsControls[];
 #define SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
 void LuckyWheels_Run(void) {
+  /* FAKEMATCH(volatile): the map writes through a volatile cast, as the ROM
+   * orders them; as a plain cast, 210 of 1016 instructions differ in tla-en. */
   s32 picks[8];
   s32 litLines[7];
   DrawRectangle draw[2];
@@ -178,7 +150,8 @@ void LuckyWheels_Run(void) {
       }
     }
   }
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), sheet);
+  Resource_DecodeType01(
+      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), sheet);
   entry = Resource_GetTableEntry((s32)&ResourceId_SlotsMachinePicture);
   Dma_Set(entry, (void *)0x05000140, 0x84000008, REG_DMA3);
   entry += 32;
@@ -187,8 +160,8 @@ void LuckyWheels_Run(void) {
   for (k = 0; k != 20; k++) {
     for (i = 0; i != 30; i++) {
       if (!(i >= 5 && i <= 24 && k > 2 && k <= 13)) {
-        Dma_Set(tiles + (k * 30 + i) * 32, (void *)(0x0600b500 + j),
-                0x84000008, REG_DMA3);
+        Dma_Set(tiles + (k * 30 + i) * 32, (void *)(0x0600b500 + j), 0x84000008,
+                REG_DMA3);
         j += 32;
       }
     }
@@ -236,8 +209,8 @@ void LuckyWheels_Run(void) {
     state->spins = 0;
     work->frame = 0;
     state->timer = 0;
-    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet), (void *)0x05000000, 0x84000020,
-            REG_DMA3);
+    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet),
+            (void *)0x05000000, 0x84000020, REG_DMA3);
     *(u16 *)0x05000080 = 0x2f8b;
     *(u16 *)0x05000082 = 0x5bf6;
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
@@ -311,14 +284,12 @@ void LuckyWheels_Run(void) {
     work->transferPending = 0;
     Task_Add(Func_081b243c, 0x480);
     Task_Add(Func_081b3294, 0xc80);
-    Task_Add(BattleStaging_ProcessPendingTileTransfer,
-                                  0xc80);
+    Task_Add(BattleStaging_ProcessPendingTileTransfer, 0xc80);
 
     for (frame = 0; state->state != 10; frame++) {
       if (frame <= 16) {
         Graphics_ScaleRgb555(shade, (u16 *)0x05000200, frame << 12, 0x100);
-        Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, frame << 12,
-                             0x100);
+        Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, frame << 12, 0x100);
       }
       if (state->state == 3) {
         s32 phase = frame % 80;
@@ -433,8 +404,8 @@ void LuckyWheels_Run(void) {
     for (j = 0; j != 17; j++) {
       Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0x10000 - (j << 12),
                            0x100);
-      Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000,
-                           0x10000 - (j << 12), 0x100);
+      Graphics_ScaleRgb555(bgShade, (u16 *)0x05000000, 0x10000 - (j << 12),
+                           0x100);
       wait(1);
     }
     HeapSlot_Release(188);

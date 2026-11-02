@@ -1,32 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The cloud swirl that Func_0813e7e0 runs after setting up the effect
-// blocks (twins: BattleEffect_StartCanvasLayer 0.45 by shape,
-// BattleEffect_RunOrbitingSkulls 0.60 by call order). The rotation goes
-// through six queue pushes a frame.
-// Settled: the first blitter sits in a BlitterPair (element_burst.c's form);
-// the second is its own local, enabled is the native's r8. The opening loads
-// run canvas, work, saved X, transition. The map buffer is the constant
-// Ram_MapCellBuffer passed through an inline at the first blit (the second
-// then needs none): an inlined constant argument stays out of a pseudo, and
-// the symbol's or a direct constant's pseudo otherwise takes r6 and rotates
-// draw, enabled, work and canvas through the high registers. The first
-// palette copy's inline keeps &BG_PLTT[96] rebuilt per call the same way.
-// mode is a one-constant local so its 3 is set before enabled's 1.
-// The pushes (S2 devices, each tagged at its use, none proven as the source):
-// the native keeps each value store ahead of the split address constant, and
-// the restore of r4 after the control word, where sched2's priorities put the
-// constant chain first. Pushes 1, 2 and 4 store the value inside a one-pass
-// block; pushes 5 and 6 store the count first, because the value's calls come
-// after it, and use an empty asm that only claims r3 after the value store, as
-// a flushing barrier (asm(""), a one-pass block) raises the forward dependence
-// count of the count store and of the sine and cosine moves and reorders the
-// argument set-up before the first Iwram_MulQ16. Push 3 is the plain macro.
-// union QueueWord in pushes 5 and 6 gives the entry stores alias set 0, so r4's
-// restore from the stack depends on them. Tried and worse for 5 and 6: one-pass
-// blocks anywhere (differ 18 to 42), asm("") (differ 18), a volatile entry
-// (no change). The unexplained pattern is that the native's store rows behave
-// as if the address constant were cheap; a real cause would retire these
-// devices across the sibling push drafts, but that is a compiler question.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

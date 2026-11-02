@@ -1,23 +1,3 @@
-// Draft, differ 14 of 827, skeleton gap 6 (tla-en, 2026-11-01)
-// Palette_Transform, the palette fade's target builder, from The Broken
-// Seal's matched TitlePaletteFade_BuildColors (games/tbs/src/menu/title_intro.c)
-// with this game's tables and clamps, no device. Registers and stack frame
-// agree everywhere. Left, four scheduling pairs that decide nothing else:
-// the selected-objects branch, where the listing has colorCount's 256 ahead of
-// source's 512 but reload hands them r1 and r3 only in the order destination,
-// source, colorCount (other orders swap them or move the add); the `ldr` of the
-// next table after the first store, not before it, in cases 0x10003 and
-// 0x10007 and after the second in 0x10006; and the restore of red after `mov
-// r2, r8` in 0x10004.
-// Tried on those without gain: every order of the three statements, colorCount
-// halved or added to source, const or sized tables, const source, plain
-// statements for SET_VECTOR, split increments in 0x10004.
-// What the shape depends on: red after green in 0x10006 keeps colorWork out of
-// blue's register; green and blue named in the sepia and blend sums keep blue's
-// last use after green's, so CSE leaves blue holding the sum in sepia; green
-// clamped through `green < 8` keeps sepia's second compare; tintedRed is shared
-// by the tint and blend blocks so it takes r8; the blend's scaled values are
-// local and clamped into new locals, which shift the table indexes in place.
 #include "types.h"
 #include "dma.h"
 #include "iwram_call.h"
@@ -110,8 +90,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red = BattleEffect_ClampRgb555Channel(red);
         green = BattleEffect_ClampRgb555Channel(green);
         blue = BattleEffect_ClampRgb555Channel(blue);
-        SET_VECTOR(destination, Data_081a87fa[blue],
-                   Data_081a87ba[green],
+        SET_VECTOR(destination, Data_081a87fa[blue], Data_081a87ba[green],
                    Data_081a877a[red]);
         destination += 3;
       }
@@ -159,8 +138,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red = BattleEffect_ClampRgb555Channel(red);
         green = BattleEffect_ClampRgb555Channel(green);
         blue = BattleEffect_ClampRgb555Channel(blue);
-        SET_VECTOR(destination, Data_081a87fa[blue],
-                   Data_081a87fa[green],
+        SET_VECTOR(destination, Data_081a87fa[blue], Data_081a87fa[green],
                    Data_081a87fa[red]);
         destination += 3;
       }
@@ -175,8 +153,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red = BattleEffect_ClampRgb555Channel(red);
         green -= green / 3;
         blue -= blue / 3;
-        SET_VECTOR(destination, Data_081a877a[blue],
-                   Data_081a877a[green],
+        SET_VECTOR(destination, Data_081a877a[blue], Data_081a877a[green],
                    Data_081a87ba[red]);
         destination += 3;
       }
@@ -195,8 +172,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red = BattleEffect_ClampRgb555Channel(red);
         green = BattleEffect_ClampRgb555Channel(green);
         blue = BattleEffect_ClampRgb555Channel(blue);
-        SET_VECTOR(destination, Data_081a87fa[blue],
-                   Data_081a87ba[green],
+        SET_VECTOR(destination, Data_081a87fa[blue], Data_081a87ba[green],
                    Data_081a877a[red]);
         destination += 3;
       }

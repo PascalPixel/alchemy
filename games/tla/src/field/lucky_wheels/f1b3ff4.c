@@ -1,13 +1,3 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 50 of
-// 1072; not worked this pass.
-// Draft, differ 118 of 1072: The Broken Seal's LzPack_PackStream
-// (games/tbs/src/object/colorfx.c), the small LZ packer, as ☀️ writes it;
-// the same 1072 instructions with every register the listing's. Left:
-// instruction order only, all of it the native issuing a load earlier: the
-// first pool load before sub sp, pool and stack loads between the halves of
-// split constants (movs #136; lsls #7 for the work offsets, movs #192; lsls
-// #2 for 0x3ff), and stack spills a slot earlier. No empty asm or one-pass
-// block can put a load between a split constant's halves.
 #include "lucky_wheels_lzpack.h"
 #include "ram_buffer.h"
 
@@ -99,12 +89,11 @@ s32 Func_081b3ff4(const u8 *input, u8 *dst, s32 size) {
       if (gFlash_Handler3->matchLen > 1) {
         saveOffset = gFlash_Handler3->matchOffset;
         saveLen = len;
-        LzPack_FindWindowMatch((gFlash_Handler3->pos + 1) &
-                                   PACK_WINDOW_MASK);
+        LzPack_FindWindowMatch((gFlash_Handler3->pos + 1) & PACK_WINDOW_MASK);
         if (gFlash_Handler3->matchLen > 2) {
           reach[0] = gFlash_Handler3->matchLen + 1;
           LzPack_FindWindowMatch((gFlash_Handler3->pos + len) &
-                                     PACK_WINDOW_MASK);
+                                 PACK_WINDOW_MASK);
           reach[1] = gFlash_Handler3->matchLen + len;
           if (reach[0] >= reach[1]) {
             saveLen = 1;
@@ -140,7 +129,7 @@ s32 Func_081b3ff4(const u8 *input, u8 *dst, s32 size) {
     }
 
     LzPack_ConsumeSlotBytes(gFlash_Handler3->pos + PACK_LOOKAHEAD,
-                                gFlash_Handler3->matchLen, input);
+                            gFlash_Handler3->matchLen, input);
     gFlash_Handler3->pos =
         (gFlash_Handler3->pos + gFlash_Handler3->matchLen) & PACK_WINDOW_MASK;
     gFlash_Handler3->flagMask >>= 1;

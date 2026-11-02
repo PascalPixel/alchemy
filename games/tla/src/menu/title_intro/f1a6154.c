@@ -1,19 +1,3 @@
-// Draft, differ 2 of 567, skeleton gap 2 (tla-en, 2026-11-01)
-// The intro's scrolling backdrop: fills the maps at 0x0600f800 and 0x0600f000
-// (the second with palette 1), sets BG1, BG2 and blending, clears the scrolls,
-// fades in, then runs one of three scripted runs of Title_RunScrollStep steps
-// chosen by mode (0, 1 or any other), the last ending with a blend ramp;
-// returns 0 when a key cuts it short and 1 when it runs to the end.
-// Left: one scheduling pair at the top of the blend ramp. The listing puts
-// `movs r0, #1` before the first `ldrh r3, [r6, #6]`, right after the store to
-// REG_BLDALPHA; the second half of the ramp has them the other way in both.
-// The sched2 dump shows the load ready one cycle after that store, and
-// -mthumb-slow-loads only delays a load from the address just stored, so the
-// listing's extra cycle has no source form found: the order of the sum, a
-// pointer to gBgScroll, a plain `=` and a non-volatile store all leave it.
-// What the match rests on: `u16 tile` with `tile++` (a u16 local stays
-// sign-extended in its register, so the increment is what stops loop.c from
-// strength-reducing it), and i and j each shared by several loops.
 #include "types.h"
 #include "io_reg.h"
 #include "bg_scroll.h"

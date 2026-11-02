@@ -1,23 +1,3 @@
-// Draft, differ 24 of 1235, skeleton gap 12 (tla-en, 2026-11-01)
-// No close ☀️ twin (call order BattleEffect_RunTitanBlade 0.459): ⚓️'s own
-// effect on ☀️'s frame, its card and its pictures drawn as textured quads by
-// ⚓️'s model kernels, as in Triple Chomp (BattleEffect_RunTripleChomp) and
-// Legend (BattleEffect_RunLegend). Registers and the 216-byte frame now match
-// throughout. What is left is five places where the same instructions come out
-// in another order, all in the scheduler: the frame count's pool load at the
-// loop's entry and bottom (native after the stores to frame and 24), the strike
-// loop's setup (native sets 36 and 0 before the member's particle), burst's
-// store before the two reloads at the sparks' EffectPosition call, the actor
-// and spark offsets' update at the strike loop's end, and the copy into r7
-// after the two spills before the sparks' draw loop. In each the native keeps
-// a store ahead of a load or move the draft moves up. Tried without effect:
-// firstHit and lastHit as ternaries (changes mode's reload), scoped or
-// unsigned; speed as frame * 3 - 204; the particle spelled + 56 + i or [i + 56];
-// a const frame table; the comparison swapped; burst set after the call. Next:
-// a compiler question (the load cost -mthumb-slow-loads models), out of a
-// draft's reach. Allocation depends on one step pointer per loop, j per loop,
-// and speed declared in its block, which puts its spill slot below the card's
-// address.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -116,8 +96,7 @@ s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
 void Sound_PlayFar(s32 cue);
-void EffectPosition_ProjectSprite(s32 id,
-                                             struct EffectPosition *position);
+void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
 void Func_0815f0a0(s32 resource);
 void Func_081180e8(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
@@ -127,7 +106,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void *Heap_AllocEwram(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
@@ -179,8 +158,9 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
   // card's picture and its extras.
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
-                BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
+  BattleEffect_LoadBlitter(
+      HEAP_SLOT_BLITTER,
+      BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_ADDITIVE));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   scale = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
@@ -369,7 +349,7 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
           if (i == 0)
             Func_081180e8(134);
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x80000,
-                                    0x10000, 100 + speed);
+                                        0x10000, 100 + speed);
           Func_0814cd48(effect->actors[i], 7, -1, i, 8);
           burst = 0;
           EffectPosition_ProjectScaledBattler(effect->actors[i], &aim);
@@ -413,7 +393,8 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
       // The card: it swings from side to side as it rises, tilted back.
       Render_ResetTransformState();
       Func_080151e4(0x8000, 0x10000, 0x8000);
-      Func_08015160((card.x << 16) - (128 << 16), (card.y << 16) - (64 << 16), 0);
+      Func_08015160((card.x << 16) - (128 << 16), (card.y << 16) - (64 << 16),
+                    0);
       if (frame <= 47) {
         SceneTransform_ApplyPitch((48 - frame) << 10);
         if (effect->side == 0)
@@ -463,7 +444,8 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
         for (i = 0; i != 4; i++) {
           struct EffectStep *step = &work->particles[i];
 
-          step->velocityZ = Trig_Sin(step->velocityY + (frame << 10)) / 16 + 12192;
+          step->velocityZ =
+              Trig_Sin(step->velocityY + (frame << 10)) / 16 + 12192;
         }
       } else {
         // The bolts flicker every other frame.
@@ -530,8 +512,8 @@ void Func_0818a220(struct BattleEffectArgument *effect, s32 mode) {
             step->y = 104 << 16;
             step->velocityY = -step->velocityY / 2;
           }
-          BattleEffectKernels_IntegrateVector2(step, Data_08199d64[mode].damping,
-                                           Data_08199d64[mode].gravity);
+          BattleEffectKernels_IntegrateVector2(
+              step, Data_08199d64[mode].damping, Data_08199d64[mode].gravity);
         }
         step->variant--;
       }

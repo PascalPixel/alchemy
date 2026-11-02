@@ -1,37 +1,3 @@
-// Draft, differ 16 of 927, skeleton gap 7 (tla-en, 2026-11-01)
-// The body of the leaping strike family (BattleEffect_RunPlanetDiver mode 0 and
-// BattleEffect_RunPlanetary mode 1 in summon_modes_7.c), on The Broken Seal's
-// Planet Diver (its chips, flash ring and landing) with the ARM model renderer
-// for mode 1's claw, rings and pillars. Registers, frame and spill slots all
-// match; only instruction order is left, at four sites:
-//   1. Before the frame loop: the listing stores the hoisted &pos (sp+16) and
-//      then sets frame; here frame comes first.
-//   2. stepX and stepY: the listing stores stepX before reloading target
-//      (sp+40); here the reload goes first.
-//   3. The landing, before the spark loop: the listing runs in source order,
-//      storing landed and caster->y before the pool load of the sparks and
-//      the &pos address finish; here those two go first.
-//   4. Before the ring loop: model->mesh is stored before i and the hoisted
-//      frame * 8 are set; here it is stored after them.
-// Sites 1, 3 and 4 are loop preheaders; all four look like sched2 ranking
-// loads or chains above stores (the K2 slow-loads residue), since in each the
-// insns match and only their ready order differs. At site 4 the store would
-// need a dependent to rank with the two chains, and no insn in the block gives
-// it one.
-// Tried without gain: a local for the mesh and for the kind 7, i or frame set
-// apart from their for, do/while at all three loops, a hand-stepped frame * 8
-// (registers worse), gMapCellBuffer as a symbol (worse at all sites, no change
-// at the landing), &pos in a local (differ 329), reordering landed, homeX and
-// caster->y, slide at function level. Devices came back out because none
-// reaches 0: an empty asm after stepX closes site 2 (differ 12) and a local
-// for caster->y half closes it (14), but an asm before the ring loop pushes
-// the hoisted frame * 8 past the store (18), and site 3 needs the hoisted
-// sp+80 either side of the store, so a barrier cannot place it.
-// What closed the rest: draw[2] after canvas, one counter i for every loop,
-// model and projected in the inner block (projected's slot then falls after
-// &pos's), start reused for frame - start (it decides r2, then shade r1),
-// the 6 in a set-once local (no register, so reload gives it r4), the pillars'
-// mask assigned first, and the sparks as Ram_MapCellBuffer + 0x6000.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -96,8 +62,7 @@ void *Resource_GetTableEntry(s32 id);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
 void Actor_SetMode(struct MotionObject *object, s32 mode);
 void Actor_ResetMotion(struct MotionObject *object);
 void HeapSlot_Release(s32 slot);
@@ -106,7 +71,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -120,19 +85,19 @@ void Render_DrawModelList(struct RenderModel *model);
 void Func_0814cd48(s32 actor, s32 palette, s32 mode, s32 timer, s32 frames);
 void Func_08118088(s32 actor, s32 mode);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Func_08158ce0(s32 randomMask, u32 range);
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
 
-// The leaping strike family (BattleEffect_RunPlanetDiver is mode 0, BattleEffect_RunPlanetary mode
-// 1; effect kinds 60 and 128). The caster flashes and sixteen flames ring
-// it (frames 2-15), leaps up at frame 4 and comes down on the target at
-// frame 16, sliding to it over the frames after; on landing 256 sparks
-// burst from it. In mode 0 the caster then shows a fireball and one target
-// is struck; in mode 1 a claw slashes in 3D, three rings and two pillars
-// spread, every target is struck and at frame 50 all are thrown back.
+// The leaping strike family (BattleEffect_RunPlanetDiver is mode 0,
+// BattleEffect_RunPlanetary mode 1; effect kinds 60 and 128). The caster
+// flashes and sixteen flames ring it (frames 2-15), leaps up at frame 4 and
+// comes down on the target at frame 16, sliding to it over the frames after; on
+// landing 256 sparks burst from it. In mode 0 the caster then shows a fireball
+// and one target is struck; in mode 1 a claw slashes in 3D, three rings and two
+// pillars spread, every target is struck and at frame 50 all are thrown back.
 void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition pos;
   struct ModelTexture texture;
@@ -426,7 +391,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
       Func_081180e8(134);
       for (i = 0; i != effect->count; i++)
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x100000,
-                                  0x10000, 250);
+                                      0x10000, 250);
     }
 
     // The sparks fall, bounce off the ground at 112 and shrink.
@@ -441,8 +406,8 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
           s32 size = spark->variant / 8 + 1;
 
           draw[0](canvas, graphics + gData_08197410[size - 1],
-               (spark->x >> 16) - size / 2, (spark->y >> 16) - size, size,
-               size * 2);
+                  (spark->x >> 16) - size / 2, (spark->y >> 16) - size, size,
+                  size * 2);
         }
       }
       spark++;

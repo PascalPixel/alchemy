@@ -1,24 +1,3 @@
-// Draft, differ 6 of 203, skeleton gap 3 (tla-en, 2026-11-01)
-// An unused wireframe renderer, written from the listing (no caller in the
-// image; no Broken Seal twin, twins12 0.43). No device.
-// Left: one scheduling difference in the face loop's preheader. The native
-// issues y2's three instructions (adds r4, r6, #0; adds r4, #28; str r4,
-// [sp, #4]) earlier, among x1's and x2's; here they keep their own place.
-// Registers, slots and every other instruction agree. Replaying sched2 by
-// hand, the native's whole order follows if that spill store costs 3 where
-// the model gives it 1: its chain then ties x1's at priority 5, and a store
-// with no dependents loses the tie to movs #16. That is the under-costed
-// spill store other drafts report, a compiler question for Pascal (K2).
-// No source form reaches it: a barrier cannot part the reload pairs (movs
-// #24; adds r3 and movs #16; adds r2 come from one statement each), and
-// nothing after the store may depend on it, since the block ends in register
-// moves.
-// What closed the rest: faces[i] (not face++) makes r8 a reduced giv set in
-// the preheader, whose short life outranks x2 and sends y2 to the stack; the
-// corner pointers are declared inside the loop for loop.c to hoist, in the
-// order x1, x2, y2, y0, y1 (all 120 orders measured: next best 8); i and
-// vertexCount are shared between the loops; x0 is spelled with the cast for
-// the operand order of adds r6, r3, r4.
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"

@@ -1,22 +1,3 @@
-// Draft, differ 6 of 893, skeleton gap 6 (tla-en, 2026-11-01)
-// Summon 16, Moloch, on The Broken Seal's summon skeleton (nereid.c).
-// Left: one block at the head of the motes' loop. The native sets up
-// frame - 91 and frame - 217 (sp+12, sp+16) before mote and i; here they are
-// hoisted after those two (LCM's edge into the loop), so ldr, movs and the
-// mov to r10 sit before the subs and every pool offset in that stretch is 8
-// bytes on. Everything else is identical, registers and frame included.
-// Tried, no gain: motes set inside the loop, i set first, a comma init, a
-// pointer stepped in the for, and frame - 217 and frame - 91 as locals at the
-// top of the then arm, which keep the same order or add a stack slot (and,
-// assigned in an else too, wreck allocation).
-// Measured, and what holds the match: the first-stage loops take their cell
-// as &base[i], reduced by loop.c (mote++ hoists the 255); the base of the map
-// cell buffer is a local, or the giv starts from 0 + symbol. size << 14 is
-// written twice with no local, so PRE forms it after the draw. focus is a
-// struct in a pseudo, and its spill slot follows &draw only when it is
-// declared in the inner block. frame++ precedes transferPending so that the
-// add reloads its own 1, which keeps reload's rotation of r0-r4. The glow's
-// two frame tests are nested ifs, or fold merges them into frame - 201.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

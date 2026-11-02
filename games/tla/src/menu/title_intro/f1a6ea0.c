@@ -1,20 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The intro's lighthouse scene: loads the gull sprites and the lighthouse
-// picture with its palette, numbers the first 20 rows of BG1's map, fades in,
-// then scrolls the picture down in three slowing steps through Func_081a68b4,
-// starts the logo animation (Func_081a6b50 as a task, its state in heap slot
-// 43), scrolls back up, fades to white and waits two seconds. A key fades to
-// black and stops early. Clears OAM, removes the callback and frees the state
-// before it returns 1.
-// Measured in tla-en only. Two tagged temporaries remain to retire.
-// Measured: 0x10000 is one local shared by the tile step and the first fade,
-// live across calls, so it gets no register and is rebuilt in r0 at each use;
-// the 0x1ff store stays a literal so the real outer loop hoists its pool load;
-// i serves both loops and the last two scroll results; map's register holds
-// the third result; zeroes after those tests are CSE reusing the tested
-// register; logo->phase before logo->frame sets reload's rotation; Task_Add
-// must return s32 or its arguments swap; the palette DMA reads 0x05000000
-// into Ram_HeapSlots->block32.
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -82,18 +65,18 @@ s32 Func_081a6ea0(void) {
   buffer = gMapCellBuffer;
   source += 32;
   Resource_DecodeByteLzInRam(source, buffer);
-  Dma_Set(buffer, (void *)0x06010000,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b00, REG_DMA3);
+  Dma_Set(buffer, (void *)0x06010000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b00,
+          REG_DMA3);
   wait(1);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroLighthousePicture);
   Dma_Set(source, (void *)0x05000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
           REG_DMA3);
-  *(volatile u16 *)0x05000000 = 0x7fff;
+  *(u16 *)0x05000000 = 0x7fff;
   wait(1);
   source += 0x200;
   Resource_DecodeByteLzInRam(source, buffer);
-  Dma_Set(buffer, (void *)0x06000000,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
+  Dma_Set(buffer, (void *)0x06000000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580,
+          REG_DMA3);
   wait(1);
 
   map = (u16 *)0x0600f800;
@@ -101,7 +84,9 @@ s32 Func_081a6ea0(void) {
   q16One = 0x10000;
   for (row = 0; row < 20; row++) {
     for (i = 29; i >= 0; i--) {
-      /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on the high halfword; as *map = tile; tile++, 97 of 325 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on
+       * the high halfword; as *map = tile; tile++, 97 of 325 instructions
+       * differ in tla-en. */
       number = tile;
       tile = ((tile << 16) + q16One) >> 16;
       *map = number;
@@ -144,7 +129,8 @@ s32 Func_081a6ea0(void) {
     goto stopped;
   scroll.limit = 216;
   scroll.step = 2;
-  /* FAKEMATCH(temporary): map reused for the result; as a separate s32 local, 52 of 325 instructions differ in tla-en. */
+  /* FAKEMATCH(temporary): map reused for the result; as a separate s32 local,
+   * 52 of 325 instructions differ in tla-en. */
   map = (u16 *)Func_081a68b4(&scroll);
   if (map)
     goto stopped;

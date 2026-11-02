@@ -1,8 +1,5 @@
 #include "edition.h"
 
-// The Japanese and German form differs and is still on its listing.
-#if (LANGUAGE != LANGUAGE_JAPANESE && LANGUAGE != LANGUAGE_GERMAN)
-
 #include "types.h"
 #include "call.h"
 #include "bg_scroll.h"
@@ -35,6 +32,12 @@ extern char ResourceId_EndingCliffDayPicture,
     ResourceId_EndingSunsetPlainPicture, ResourceId_EndingTheEndPicture;
 extern char SceneId_Ov64a;
 
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define TILES_FLAG_OFFSET 0x118c
+#else
+#define TILES_FLAG_OFFSET 0x138c
+#endif
+
 #define Ram_Input FIXED_ADDRESS((struct InputState *), 0x03001150, gInput)
 
 s32 Func_02000318(void) {
@@ -60,7 +63,7 @@ s32 Func_02000318(void) {
   WindowSystem_InitField();
   tiles = Ram_HeapSlots->windowTiles;
   tiles[6] = one;
-  tiles[0x138c] = one;
+  tiles[TILES_FLAG_OFFSET] = one;
   gData_02000a28 = (s32)MsgFinallyWeVe;
   Func_02000098();
   FieldEvent_Wait(30);
@@ -68,6 +71,9 @@ s32 Func_02000318(void) {
   Call3((void (*)())Func_02000244, 1, 1, 40);
   Call3((void (*)())Func_02000244, 6, 0, 40);
   Call3((void (*)())Func_02000244, 2, 1, 40);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 2, 1, 40);
+#endif
   Call3((void (*)())Func_02000244, 3, 0, 30);
   Call3((void (*)())Func_02000244, 7, 1, 30);
   Call3((void (*)())Func_02000244, 56, 0, 40);
@@ -92,6 +98,9 @@ s32 Func_02000318(void) {
   Call3((void (*)())Func_02000244, 0, 2, 30);
   Call3((void (*)())Func_02000244, 62, 2, 30);
   Call3((void (*)())Func_02000244, 1, 2, 40);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 5, 2, 40);
+#endif
   Func_02000244(5, 2, 40);
   Func_02000854(120);
   wait(1);
@@ -108,13 +117,22 @@ s32 Func_02000318(void) {
   Call3((void (*)())Func_02000244, 4, 2, 40);
   Call3((void (*)())Func_02000244, 4, 2, 40);
   Call3((void (*)())Func_02000244, 4, 2, 30);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 4, 2, 30);
+#endif
   Call3((void (*)())Func_02000244, 0, 2, 30);
   Call3((void (*)())Func_02000244, 62, 2, 30);
   Call3((void (*)())Func_02000244, 1, 2, 40);
   Call3((void (*)())Func_02000244, 1, 2, 40);
   Call3((void (*)())Func_02000244, 6, 2, 30);
   Call3((void (*)())Func_02000244, 5, 2, 30);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 5, 2, 30);
+#endif
   Call3((void (*)())Func_02000244, 3, 2, 40);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 1, 2, 30);
+#endif
   Func_02000244(1, 2, 30);
   Func_0200086c(78);
   Call3((void (*)())Func_02000244, 0x8040, 2, 30);
@@ -129,6 +147,9 @@ s32 Func_02000318(void) {
   Func_0200086c(73);
   FieldEvent_Wait(30);
   Call3((void (*)())Func_02000244, 64, 2, 30);
+#if LANGUAGE == LANGUAGE_GERMAN
+  Call3((void (*)())Func_02000244, 64, 2, 30);
+#endif
   Call3((void (*)())Func_02000244, 65, 2, 30);
   Call3((void (*)())Func_02000244, 67, 2, 30);
   Call3((void (*)())Func_02000244, 62, 2, 30);
@@ -209,5 +230,3 @@ L_0200871e:
   Call2((void (*)())Func_02000824, (s32)&SceneId_Ov64a, 2);
   return 0;
 }
-
-#endif

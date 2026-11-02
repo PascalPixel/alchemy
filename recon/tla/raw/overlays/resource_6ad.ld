@@ -14,7 +14,6 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_room_f/s09ec.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s0cf4.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s0e7c.o"(.text)
-        "*/resource_6ad_overlay.o"(.text.x02008e7c)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s140c.o"(.text)
         "*/games/tla/src/scene/shared/scene_set_arrival_flags.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s14dc.o"(.text)

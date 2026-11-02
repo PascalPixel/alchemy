@@ -50,11 +50,6 @@ void Actor_SetSingleChildFlags(struct SparkActor *object, s32 flags);
 u32 Random16Far(void);
 void Func_020029a8(s32 a0);
 
-static inline void Func_02002978_(s32 a0, s32 a1) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002978(a0, a1);
-}
-
 static inline void Func_02002980_(s32 a0, s32 a1) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002980(a0, a1);
@@ -66,13 +61,13 @@ void Func_020006ac(void) {
     Func_020028b0();
     Func_020029a8(0);
     Func_02002980_(0x10000, 0);
-    Func_02002978_(0x10003, 1);
+    Func_02002978(0x10003, 1);
     Func_02002988(30);
     Event_WaitTransitionFrames();
     Actor_SetModeById(0, 1);
     FieldEvent_Wait(30);
     Func_02002898((s32)MsgFieldShowAnemosPower, 0, -2);
-    Func_02002978_(0x10000, 0);
+    Func_02002978(0x10000, 0);
     Func_02002988(30);
     Func_020028b8();
   }
@@ -91,7 +86,6 @@ void Func_02000734(void) {
   u32 i;
   s32 x;
   s32 y;
-  s32 offset;
   u32 random;
   u32 random2;
   u32 scaled;
@@ -105,10 +99,6 @@ void Func_02000734(void) {
   p->tile = 0x2a0;
   p->spread = 0x6666;
   p->rise = 0x30000;
-  /* FAKEMATCH: the loop note keeps the counter's zero after the last parameter
-   * store (differ 2 without it). */
-  do {
-  } while (0);
   for (i = 0; i <= 31; i++) {
     FieldEvent_Wait(1);
     if (!(i & 1)) {
@@ -121,8 +111,7 @@ void Func_02000734(void) {
       scaled += random;
       x = actor->x;
       asm("");
-      offset = ((scaled << 3) >> 16) << 16;
-      x += offset;
+      x += (((scaled << 3) >> 16) << 16);
       x += -0xc0000;
       random2 = Random16Far();
       y = actor->y;

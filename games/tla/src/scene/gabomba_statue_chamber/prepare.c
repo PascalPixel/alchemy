@@ -14,18 +14,12 @@ void Func_02001c44(void);
 
 s32 Func_02001aa4(void) {
   struct GabombaStatueChamberEventWork *work;
-  struct MainRoutineWork *party;
   s16 scene;
 
   work = Ram_HeapSlots->eventWork;
   work->screenEffect = 521;
   Actor_GetById(Func_02001f00())->priorityFlags |= 0x20;
-  party = &gMainRoutineWork;
-  /* FAKEMATCH: ⚓️ loads gMainRoutineWork's address before it builds the scene's
-   * offset; read as a plain field the offset's first half is scheduled ahead of
-   * the load (differ 2). */
-  asm volatile("" : "+l"(party));
-  scene = party->scene;
+  scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov672Room1)
     Func_02001b14();
   else if (scene == (s32)&SceneId_Ov672Room2)

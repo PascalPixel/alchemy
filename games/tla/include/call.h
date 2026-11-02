@@ -79,18 +79,4 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3) {
   return f(a0, a1, a2, a3);
 }
 
-static __inline__ s32 Value6(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
-                             s32 a5) {
-  /* FAKEMATCH: forwarding through the pointer prevents GCC 2.96 from sharing
-   * direct-call constants and keeps the result argument in r0. */
-  return f(a0, a1, a2, a3, a4, a5);
-}
-
-static __inline__ s32 Value7(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
-                             s32 a5, s32 a6) {
-  /* FAKEMATCH: forwarding through the pointer prevents GCC 2.96 from sharing
-   * direct-call constants and keeps the result argument in r0. */
-  return f(a0, a1, a2, a3, a4, a5, a6);
-}
-
 #endif

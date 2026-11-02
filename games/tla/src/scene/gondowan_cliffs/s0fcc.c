@@ -35,11 +35,11 @@ void Func_02000fcc(s32 unused, s32 value) {
   buffer = (void *)Value1((s32 (*)())Heap_AllocEwram, 0x800);
   Func_02001184(gField_Tiles64D, buffer);
   work->entry = Resource_FindFreeEntry();
-  Call3((void (*)())VramCache_Load, work->entry, 0x800, (s32)buffer);
+  VramCache_Load(work->entry, 0x800, buffer);
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(0x3c0);
   work->value = value;
-  Value2((s32 (*)())Task_Add, (s32)Func_02000be4, 0x48d);
-  Value2((s32 (*)())Task_Add, (s32)Func_02000dac, 0x480);
+  Task_Add((s32)Func_02000be4, 0x48d);
+  Task_Add((s32)Func_02000dac, 0x480);
   Actor_GetById(Func_02001314())->priorityFlags |= 0x40;
 }

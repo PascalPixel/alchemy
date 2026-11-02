@@ -42,12 +42,12 @@ void Func_02000f10(s32 unused, s32 id) {
     if (row == 13) {
       object->motionFlags = 0;
       GameFlag_SetBit(0x303);
-      YampiDesertCave_Call1848(32, 13, 1, 1, 34, row);
+      Func_02001848(32, 13, 1, 1, 34, row);
       YampiDesertCave_Call1848(95, 3, 3, 3, 97, 12);
     } else {
       row = 12;
-      YampiDesertCave_Call1848(92, 3, 3, 3, 97, row);
-      YampiDesertCave_Call1848(32, 13, 1, 1, 34, row);
+      Func_02001848(92, 3, 3, 3, 97, row);
+      Func_02001848(32, 13, 1, 1, 34, row);
     }
   }
   /* FAKEMATCH: the native reads the scene again here; without the barrier the
@@ -61,7 +61,7 @@ void Func_02000f10(s32 unused, s32 id) {
       column = object->x >> 20;
       if (column == 38) {
         GameFlag_SetBit(0x305);
-        YampiDesertCave_Call1848(38, 15, 1, 1, column, 16);
+        Func_02001848(38, 15, 1, 1, column, 16);
       } else {
         YampiDesertCave_Call1848(38, 15, 1, 1, 39, 16);
       }

@@ -139,11 +139,6 @@ static inline s32 Kibombo_FlagCheck(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static inline void Kibombo_FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
 static inline void Kibombo_ObjArm(s32 actor, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(actor, angle, frames);
@@ -212,11 +207,6 @@ static inline void Kibombo_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   Func_02005a64(a, b, c, d, e, f);
 }
 
-static inline void Kibombo_Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
 static inline void Kibombo_SePlay(s32 cue) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005c9c(cue);
@@ -227,11 +217,6 @@ void Func_02005bd4(s32 a, s32 b);
 static inline void Kibombo_FadeTo(s32 a, s32 b) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005bd4(a, b);
-}
-
-static inline void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
 }
 
 #define KIBOMBO_TASK_ADD(func, priority)                                   \

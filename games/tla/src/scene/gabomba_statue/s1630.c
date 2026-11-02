@@ -24,21 +24,6 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_020057c4(s32 exit);
 
-static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
-static __inline__ void Actor_Walk(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndReset(id, x, z);
-}
-
-static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ArmCallback(id, angle, frames);
-}
-
 static __inline__ void Actor_Place(struct Actor *object, s32 x, s32 y, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200565c(object, x, y, z);
@@ -61,9 +46,9 @@ void Func_02001630(void) {
   Func_020056b4(leader);
   Func_0200580c(0);
   leader->motionFlags = 0;
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
-  Actor_Walk(gMainRoutineWork.currentOwner, 472, 144);
-  Actor_Turn(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x10000, 0x8000);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 472, 144);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Actor_RefreshSelectorById(gMainRoutineWork.currentOwner);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);

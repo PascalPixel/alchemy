@@ -21,9 +21,6 @@ void Func_02000ce8(void) {
   u32 i;
   s32 frames;
 
-  /* FAKEMATCH(barrier): the layer's address waits for gMainRoutineWork's; without
-   * it, 2 of 142 instructions differ in tla-en. */
-  asm("" : "+l"(map) : "l"(&gMainRoutineWork));
   layer = &map->layers[1];
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
@@ -31,7 +28,7 @@ void Func_02000ce8(void) {
   Func_02003b08(0);
   Func_02003b48(244);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
-  ShrineOfTheSeaGod_CamMove(172 << 17, -1, 248 << 16, 0);
+  Camera_MoveWithinMapBounds(172 << 17, -1, 248 << 16, 0);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
   wait(1);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
@@ -65,7 +62,7 @@ loop:
     goto loop;
   Func_02003b48(288);
   Func_02003b48(390);
-  Call3((void (*)())Func_020039b8, 0, 0, 0);
+  Func_020039b8(0, 0, 0);
   ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
       ->screenEffect = 521;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
@@ -83,21 +80,15 @@ void Func_02000e38(void) {
   struct ShrineOfTheSeaGodObject *object;
   u32 i;
 
-  /* FAKEMATCH(barrier): the map pointer is ready before the layer offset; with
-   * only the next barrier, 4 of 95 instructions differ in tla-en. */
-  asm("" : "+l"(map));
-  /* FAKEMATCH(barrier): the layer's address waits for gMainRoutineWork's; with only
-   * the barrier above, 4 of 95 differ, and with neither 2, in tla-en. */
-  asm("" : "+l"(map) : "l"(&gMainRoutineWork));
   layer = &map->layers[1];
   object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_020039d8();
   Func_02003b08(0);
   ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
-  ShrineOfTheSeaGod_CamMove(344 << 16, -1, 248 << 16, 1);
+  Camera_MoveWithinMapBounds(344 << 16, -1, 248 << 16, 1);
   ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 20);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   object->motionFlags = 0;
   Func_02003b48(245);
@@ -180,7 +171,7 @@ void Func_02001038(void) {
     Func_020039d8();
     Func_02003b08(0);
     Func_02001010(object);
-    ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 15, z);
+    Func_020039a8(0, 0, 1, 1, 15, z);
     Actor_SetSpritePriority(8, 3);
     Func_020039e0();
     GameFlag_SetBit(0x301);

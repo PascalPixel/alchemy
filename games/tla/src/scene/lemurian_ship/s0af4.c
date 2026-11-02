@@ -7,22 +7,22 @@ void Func_02000af4(void) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     Func_02002c68();
     Func_02002da8(0);
-    LemurianShip_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     LemurianShip_ObjWalk(gMainRoutineWork.currentOwner, 812, 72);
     Func_02002de0(243);
-    LemurianShip_ObjEmoteWait(gMainRoutineWork.currentOwner, 0x102);
+    Func_02002d48(gMainRoutineWork.currentOwner, 0x102);
     Func_02002c48(0, 0x20000, 0x10000);
     FieldEvent_Wait(20);
     Func_02002c48(0, 0, 0);
-    LemurianShip_MapCopy(68, 68, 50, 64, 3, 3);
+    Func_02002c30(68, 68, 50, 64, 3, 3);
     leader->field22 = 2;
     FieldEvent_Wait(20);
     Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
-    LemurianShip_ObjSpeed(gMainRoutineWork.currentOwner, 0x33333, 0x19999);
-    LemurianShip_ObjCommit(gMainRoutineWork.currentOwner, 812, 88);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x33333, 0x19999);
+    Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 812, 88);
     FieldEvent_Wait(20);
     Func_02002de0(232);
-    LemurianShip_MapCopy(72, 68, 50, 64, 3, 3);
+    Func_02002c30(72, 68, 50, 64, 3, 3);
     FieldEvent_Wait(20);
     leader->field22 = 1;
   }
@@ -67,7 +67,7 @@ void Func_02000cb0(s32 id) {
 void Func_02000d10(s32 id) {
   struct LemurianShipObject *object = Actor_GetById(id);
 
-  LemurianShip_ObjSpeed(id, 0x33333, 0x19999);
+  Actor_SetSpeedParameters(id, 0x33333, 0x19999);
   object->field48 = 0x8000;
   object->velocityY = 0x80000;
   Actor_ResetAndSetPosition(id, 120, 120);

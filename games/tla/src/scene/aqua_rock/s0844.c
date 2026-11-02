@@ -91,10 +91,6 @@ void Func_02000844(void) {
     opened->unk00[11] = 9999;
     opened->unk00[10] = 1;
   }
-  /* FAKEMATCH(wrapper): both tasks added through Value2, whose arguments are
-   * pseudos of their own; as Task_Add(Func_02000740, TASK_PASS_VBLANK) and
-   * Task_Add(Func_02000580, TASK_PASS_VBLANK), 10 of 307 instructions differ
-   * in tla-en. */
   Value2((s32 (*)())Task_Add, (s32)Func_02000740, TASK_PASS_VBLANK);
-  Value2((s32 (*)())Task_Add, (s32)Func_02000580, TASK_PASS_VBLANK);
+  Task_Add(Func_02000580, TASK_PASS_VBLANK);
 }

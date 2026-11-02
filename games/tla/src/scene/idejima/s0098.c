@@ -64,52 +64,52 @@ void Func_020000f0(void) {
 
   Import_EventStart();
   Func_02003310(0);
-  Call2(Motion_SetVarCbAndRefresh, 8, 1);
+  Motion_SetVarCbAndRefresh(8, 1);
   message = (s32)MsgIdejimaGroan;
   Import_EventSetMessageId(message);
-  Call2(Import_EventShowMessageAndWait, 8, 0);
-  Call2(Motion_SetVarCbAndRefresh, 8, 2);
-  Call2(Import_EventShowMessageAndWait, 8, 0);
+  Import_EventShowMessageAndWait(8, 0);
+  Motion_SetVarCbAndRefresh(8, 2);
+  Import_EventShowMessageAndWait(8, 0);
   Call6(Func_02003190, 38, 31, 2, 1, 25, 42);
   actor = Actor_GetById(8);
-  Call2((void (*)())Import_ActorSetAnimation, 8, 1);
+  Import_ActorSetAnimation(8, 1);
   Actor_SetSingleChildFlags(Actor_GetById(8), 1);
   Task_Wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(8), 1);
   actor->velocityY = PIXELS(4);
   actor->motionFlags = 3;
   Task_Wait(40);
-  Call2(Import_EventShowMessageAndWait, 8, 0);
+  Import_EventShowMessageAndWait(8, 0);
   Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
   Call2(Import_ActorSetAttachedEffect, 8, 0x102);
-  Call1(FieldEvent_Wait, 20);
-  Call3(Func_02003298, 8, 0, 20);
+  FieldEvent_Wait(20);
+  Func_02003298(8, 0, 20);
   Import_ActorShowEmote(8, 0x101, 20);
-  Call2(Import_EventShowMessageAndWait, 8, 0);
+  Import_EventShowMessageAndWait(8, 0);
   Call3(Actor_ArmCallback, 8, FACING_SOUTH + FACING_STEP, 40);
   Call3(Actor_ArmCallback, 8, FACING_NORTHWEST + FACING_STEP, 40);
   Call3(Actor_ArmCallback, 8, FACING_WEST, 40);
   Import_ActorShowEmote(8, 0x100, 20);
   Call3(Actor_SetSpeedParameters, 8, 0xcccc, 0x6666);
   Call3(Actor_SetPositionAndReset, 8, 416, 680);
-  Call2(Import_EventShowMessageAndWait, 8, 0);
-  Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_WEST, 20);
-  Call2(Import_ActorSetAttachedEffect, gMainRoutineWork.currentOwner, 0x102);
-  Call1(FieldEvent_Wait, 20);
-  Call2(Import_EventShowMessageAndWait, 8, 0);
+  Import_EventShowMessageAndWait(8, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 20);
+  Import_ActorSetAttachedEffect(gMainRoutineWork.currentOwner, 0x102);
+  FieldEvent_Wait(20);
+  Import_EventShowMessageAndWait(8, 0);
   Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
-  Call1(FieldEvent_Wait, 20);
+  FieldEvent_Wait(20);
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
-  Call2(Import_EventShowMessageAndWait, 8, 0);
-  Call2((void (*)())Import_ActorSetAnimation, 8, 2);
+  Import_EventShowMessageAndWait(8, 0);
+  Import_ActorSetAnimation(8, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(8, ((s16 *)&leader->x)[1],
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(8);
-  Call3(Func_02003228, 8, 0, 0);
+  Func_02003228(8, 0, 0);
   FieldMessage_Show(message + 8, 1);
-  Call1(GameFlag_SetBit, 0x863);
+  GameFlag_SetBit(0x863);
   Import_EventEnd();
 }
 
@@ -151,8 +151,8 @@ void Func_020002b4(void) {
   Import_EventShowMessageAndWait(5, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   FieldEvent_Wait(40);
-  Value3(Import_ActorShowEmote, 5, 0x101, 0);
-  Value2(FieldMessage_ShowAtActor, 5, 0);
+  Import_ActorShowEmote(5, 0x101, 0);
+  FieldMessage_ShowAtActor(5, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Import_ActorSetAnimation(5, 3);
     Import_EventShowMessageAndWait(5, 0);

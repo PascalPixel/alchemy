@@ -32,76 +32,76 @@ extern u8 MsgIfYouWant[];
 void Func_02001d14(void) {
   s32 t1, t33, v5, v6, v7;
 
-  t1 = Value1(Actor_GetById, 8);
+  t1 = Actor_GetById(8);
   v7 = t1;
   Call3(Actor_ArmCallback, 8, FACING_WEST, 0);
   Call3(Actor_ArmCallback, 10, FACING_WEST, 0);
   Call3(Actor_ArmCallback, 9, 0xb000, 0);
   Call3(Actor_ArmCallback, 11, 0xb000, 0);
-  Call2(Func_02002548, gMainRoutineWork.currentOwner, 0);
-  Call1(Func_02002520, (s32)&MsgIfYouWant);
+  Func_02002548(gMainRoutineWork.currentOwner, 0);
+  Func_02002520((s32)&MsgIfYouWant);
   v5 = v7;
-  Call2(Func_02002538, 8, 0);
+  Func_02002538(8, 0);
   v5 = (v5 + 102);
   Func_0200182c();
   FIELD_AT(v5, s16, 0) = 1;
 L_02009d78:
-  Call1(wait, 1);
+  wait(1);
   v6 = v7;
   v6 = (v6 + 100);
   if (FIELD_AT(v6, s16, 0) != 114)
     goto L_02009d78;
   FIELD_AT(v5, s16, 0) = 2;
-  Call1(wait, 1);
-  Call2(Func_02002538, 8, 0);
+  wait(1);
+  Func_02002538(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
 L_02009da0:
-  Call1(wait, 1);
+  wait(1);
   if (FIELD_AT(v6, s16, 0) != 150)
     goto L_02009da0;
   FIELD_AT(v5, s16, 0) = 2;
-  Call1(wait, 1);
-  Call2(Func_02002538, 8, 0);
+  wait(1);
+  Func_02002538(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
 L_02009dc4:
-  Call1(wait, 1);
+  wait(1);
   if (FIELD_AT(v6, s16, 0) != 154)
     goto L_02009dc4;
   FIELD_AT(v5, s16, 0) = 2;
-  Call1(wait, 1);
-  Call2(Func_02002538, 8, 0);
+  wait(1);
+  Func_02002538(8, 0);
   FIELD_AT(v5, s16, 0) = 1;
 L_02009de8:
-  Call1(wait, 1);
+  wait(1);
   if (FIELD_AT(v6, s16, 0) != 216)
     goto L_02009de8;
   FIELD_AT(v5, s16, 0) = 3;
-  Call1(wait, 1);
-  Call2(Func_02002538, 8, 0);
+  wait(1);
+  Func_02002538(8, 0);
   Func_02001730();
-  Call3(Actor_Jump, 8, 4, 0);
-  Call3(Actor_Jump, 10, 4, 0);
-  Call3(Actor_Jump, 9, 4, 0);
-  Call3(Actor_Jump, 11, 4, 40);
+  Actor_Jump(8, 4, 0);
+  Actor_Jump(10, 4, 0);
+  Actor_Jump(9, 4, 0);
+  Actor_Jump(11, 4, 40);
   v5 = (s32)&gMainRoutineWork;
   v5 = (v5 + 0x214);
-  Call3(Actor_ArmCallback, FIELD_AT(v5, s32, 0), FACING_SOUTH, 0);
+  Actor_ArmCallback(FIELD_AT(v5, s32, 0), FACING_SOUTH, 0);
   Call3(Actor_ArmCallback, 8, 0xd000, 0);
   Call3(Actor_ArmCallback, 10, 0xd000, 0);
   Call3(Actor_ArmCallback, 9, 0xd000, 0);
   Call2(Func_02002548, 11, 0xd000);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 8, 0);
-  t33 = Value2(Event_AskYesNoWithActorAnimation, FIELD_AT(v5, s32, 0), 0);
+  t33 = Event_AskYesNoWithActorAnimation(FIELD_AT(v5, s32, 0), 0);
   if (t33 != 0)
     goto L_02009e90;
   Func_02001ec0();
   goto L_02009eb4;
 L_02009e90:
-  Call3(Func_02002530, 8, 0, 20);
+  Func_02002530(8, 0, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Call1(Func_020025a0, 123);
-  Call1(FieldEvent_Wait, 40);
-  Call1(Func_02002578, 15);
+  Func_020025a0(123);
+  FieldEvent_Wait(40);
+  Func_02002578(15);
 L_02009eb4:
 }

@@ -24,12 +24,7 @@ void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag) {
       Func_0200129c(id, x << 16, z << 16);
     Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
-    {
-      s32 first = a;
-
-      asm("" : : "l"(first));
-      Func_02001234_(first, b, 3, 1, (object->x >> 20) - 1, object->z >> 20);
-    }
+    Func_02001234_(a, b, 3, 1, (object->x >> 20) - 1, object->z >> 20);
   }
 }
 
@@ -37,9 +32,6 @@ void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag) {
 void Func_02000848(s32 id, s32 a, s32 bArg, s32 x, s32 z, s32 unused,
                    s32 flag) {
   struct Actor *object;
-  /* FAKEMATCH: b pinned to r8, where ⚓️ keeps it; without the pin the copy
-   * below takes a's register (differ 5). */
-  register s32 b asm("r8") = bArg;
 
   if (Actor_GetById(id) != 0) {
     Actor_SetSpritePriority(id, 3);
@@ -47,11 +39,6 @@ void Func_02000848(s32 id, s32 a, s32 bArg, s32 x, s32 z, s32 unused,
       Func_0200129c(id, x << 16, z << 16);
     object = Actor_GetById(id);
     object->priorityFlags |= 2;
-    {
-      s32 second = b;
-
-      asm("" : : "l"(second));
-      Func_02001234_(a, second, 1, 3, object->x >> 20, (object->z >> 20) - 1);
-    }
+    Func_02001234_(a, bArg, 1, 3, object->x >> 20, (object->z >> 20) - 1);
   }
 }

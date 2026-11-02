@@ -55,9 +55,6 @@ void Func_02000dc4(void) {
     Func_02001060(65, 0, 0);
   map->mode = 1;
   party = &gMainRoutineWork;
-  /* FAKEMATCH: the native loads gMainRoutineWork's address before it starts the
-   * field offset; unforced the offset starts first (differ 2). */
-  asm volatile("" : "+l"(party));
   Actor_GetById(party->currentOwner)->priorityFlags |= 32;
   Task_Add_(Func_02000c14, 0x480);
   Task_Add_(Func_02000bb8, 0x480);

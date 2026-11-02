@@ -130,69 +130,10 @@ extern u8 MsgWowYouLook;
 extern u8 MsgYouGuysAren;
 extern u8 MsgItDBe;
 
-static __inline__ s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void GameFlag_SetBit_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void GameFlag_ClearBit_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
-static __inline__ void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void FieldEvent_Wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static __inline__ struct Actor *Actor_GetById_(s32 id) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Actor_GetById(id);
-}
-
-static __inline__ void Actor_SetModeById_(u32 id, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetModeById(id, mode);
-}
-
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x,
                                                              s32 y, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Import_ActorCreate(kind, x, y, z);
-}
-
-static __inline__ void Actor_SetPartAttribute_(struct Actor *object,
-                                                s32 attribute) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPartAttribute(object, attribute);
-}
-
-static __inline__ void
-Actor_SetSingleChildFlags_(struct Actor *object, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSingleChildFlags(object, flags);
-}
-
-static __inline__ void Animation_ApplyChildArgument_(void *animation,
-                                                     s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Animation_ApplyChildArgument(animation, value);
-}
-
-static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
-                                                        s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
@@ -201,52 +142,9 @@ static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
   Actor_CenterOnColumn(id, column, offset);
 }
 
-static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 x,
-                                                                  s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_OffsetPositionAndResetMotion(id, x, z);
-}
-
-static __inline__ void Actor_WaitForMoveById_(s32 id) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_WaitForMoveById(id);
-}
-
-static __inline__ void Actor_CommitPositionAndActivate_(s32 id, s32 x,
-                                                               s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_CommitPositionAndActivate(id, x, z);
-}
-
-static __inline__ void Actor_SetSpritePriority_(u32 id, s32 variant) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpritePriority(id, variant);
-}
-
-static __inline__ void Actor_SetAngleToward_(s32 id, s32 target,
-                                                    s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetAngleToward(id, target, flags);
-}
-
 static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(id, angle, flags);
-}
-
-static __inline__ void Actor_Jump_(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_Jump(id, a, b);
-}
-
-static __inline__ void Motion_SetModeAndWaitAnimation_(s32 id, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Motion_SetModeAndWaitAnimation(id, mode);
-}
-
-static __inline__ void Motion_SetVarCbAndRefresh_(s32 id, s32 variant) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Motion_SetVarCbAndRefresh(id, variant);
 }
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
@@ -254,98 +152,15 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
   Camera_MoveWithinMapBounds(x, a, z, b);
 }
 
-static __inline__ void FieldMessage_ShowAtActor_(s32 id, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldMessage_ShowAtActor(id, flags);
-}
-
-static __inline__ s32 Event_AskYesNoWithActorAnimation_(s32 id, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Event_AskYesNoWithActorAnimation(id, flags);
-}
-
-static __inline__ void Event_StartScreenTransition_(void) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Event_StartScreenTransition();
-}
-
-static __inline__ void Event_FinishScreenTransition_(void) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Event_FinishScreenTransition();
-}
-
-static __inline__ void Event_WaitTransitionFrames_(void) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Event_WaitTransitionFrames();
-}
-
-static __inline__ s32 Random16Far_(void) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Random16Far();
-}
-
-static __inline__ s32 Map_GetTerrainHeight_(s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Map_GetTerrainHeight(x, z);
-}
-
-static __inline__ void Func_02001c6c_(struct Actor *object, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001c6c(object, mode);
-}
-
-static __inline__ void Func_02001c84_(struct Actor *object, s32 x,
-                                      s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001c84(object, x, y, z);
-}
-
 static __inline__ void Func_02001d04_(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001d04(id, x, z);
-}
-
-static __inline__ void Func_02001d44_(s32 message) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001d44(message);
-}
-
-static __inline__ void Func_02001d54_(s32 id, s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001d54(id, a);
-}
-
-static __inline__ void Func_02001d7c_(s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001d7c(a, b);
 }
 
 static __inline__ void Func_02001e0c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001e0c(a, b, c, d, e, f, g);
-}
-
-static __inline__ s32 VramBlock_LoadCached_(s32 entry, s32 size, void *data) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return VramCache_Load(entry, size, data);
-}
-
-static __inline__ void Task_Add_(void *func,
-                                                      s32 priority) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Task_Add(func, priority);
-}
-
-static __inline__ void Func_02001e04_(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001e04(a, b, c, d);
-}
-
-static __inline__ void Func_02001c74_(struct Actor *object,
-                                      const void *data) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001c74(object, data);
 }
 
 #endif

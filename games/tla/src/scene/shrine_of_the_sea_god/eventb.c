@@ -6,7 +6,7 @@ void Func_02002384(void) {
   Func_020039d8();
   Func_02003b08(0);
   Func_02003ad0()->motionFlags = off;
-  ShrineOfTheSeaGod_CamMove(480 << 16, 32 << 16, 340 << 16, 1);
+  Camera_MoveWithinMapBounds(480 << 16, 32 << 16, 340 << 16, 1);
   Func_02003ac8();
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
   Func_02003aa8(15, 0x100, 40);
@@ -16,7 +16,7 @@ void Func_02002384(void) {
   ShrineOfTheSeaGod_ObjWalk(15, 500, 344);
   ShrineOfTheSeaGod_ObjWalk(15, 580, 344);
   Actor_WatchAndSetScript(15, gMainRoutineWork.currentOwner);
-  ShrineOfTheSeaGod_Wait(20);
+  FieldEvent_Wait(20);
   GameFlag_SetBit(0x874);
   Func_020039e0();
 }
@@ -28,7 +28,7 @@ void Func_02002430(void) {
   Func_02003b08(0);
   Actor_Stop(15);
   Func_02003ad0()->motionFlags = off;
-  ShrineOfTheSeaGod_CamMove(564 << 16, 32 << 16, 344 << 16, 1);
+  Camera_MoveWithinMapBounds(564 << 16, 32 << 16, 344 << 16, 1);
   Func_02003ac8();
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
   Func_02003aa8(15, 0x100, 40);
@@ -37,8 +37,8 @@ void Func_02002430(void) {
   ShrineOfTheSeaGod_ObjSpeed(15, 0x19999, 0xcccc);
   ShrineOfTheSeaGod_ObjWalk(15, 616, 376);
   ShrineOfTheSeaGod_ObjWalk(15, 616, 460);
-  ShrineOfTheSeaGod_ObjPlace(15, 0, 0);
-  ShrineOfTheSeaGod_Wait(20);
+  Func_02003a30(15, 0, 0);
+  FieldEvent_Wait(20);
   GameFlag_SetBit(0x875);
   Func_020039e0();
 }

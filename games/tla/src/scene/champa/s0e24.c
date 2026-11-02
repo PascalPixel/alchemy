@@ -9,4 +9,4 @@
 #include "call.h"
 s32 GameFlag_SetBit();
 
-void Func_02000e24(void) { Call1(GameFlag_SetBit, 0x970); }
+void Func_02000e24(void) { GameFlag_SetBit(0x970); }

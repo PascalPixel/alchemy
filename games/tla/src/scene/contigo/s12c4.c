@@ -14,11 +14,6 @@ void Func_0200417c(s32 id, s32 a);
 void Func_02004204(s32 a);
 void Func_0200423c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
-static __inline__ s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
 static __inline__ void
 Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -28,16 +23,6 @@ Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
 static __inline__ void Func_020040d4_(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020040d4(id, x, z);
-}
-
-static __inline__ void Func_0200417c_(s32 id, s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200417c(id, a);
-}
-
-static __inline__ void Func_02004204_(s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004204(a);
 }
 
 static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
@@ -50,12 +35,12 @@ void Func_020012c4(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Func_0200423c_(16, 37, 1, 1, 17, 37, 0);
-  if (GameFlag_Test_(0xfc7) == 0) {
+  if (GameFlag_Test(0xfc7) == 0) {
     Func_020040d4_(66, PIXELS(280), PIXELS(664));
     if (leader->x >> 20 == 17 && leader->z >> 20 == 41) {
       Func_0200406c();
-      Func_02004204_(0);
-      Func_0200417c_(gMainRoutineWork.currentOwner, 0x102);
+      Func_02004204(0);
+      Func_0200417c(gMainRoutineWork.currentOwner, 0x102);
       Actor_OffsetPositionAndResetMotion_(gMainRoutineWork.currentOwner, 0,
                                                  -16);
       leader->velocityY = 0x60000;

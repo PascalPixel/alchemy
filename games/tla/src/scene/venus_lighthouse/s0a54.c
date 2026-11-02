@@ -29,22 +29,10 @@ struct AerieEventWork {
 // The Japanese edition has no form of this function here.
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 s32 VenusLighthouse_Start(void) {
-  /* FAKEMATCH(temporary): the mode's address held in a local, built before
-   * the one-pass block; as a store through Ram_HeapSlots->eventWork after it,
-   * 6 of 76 instructions differ in tla-en. */
-  s32 *mode = &((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode;
-  /* FAKEMATCH(temporary): 0x204 held in a local, built before the one-pass
-   * block; as a plain 0x204 store, 4 of 76 instructions differ in tla-en. */
-  s32 value = 0x204;
   struct MainRoutineWork *routine;
 
-  /* FAKEMATCH(one-pass): gMainRoutineWork's address loaded in a one-pass
-   * block, between the mode's address and value and their store; as a plain
-   * assignment, 2 of 76 instructions differ in tla-en. */
-  do {
-    routine = &gMainRoutineWork;
-  } while (0);
-  *mode = value;
+  routine = &gMainRoutineWork;
+  ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
   if (routine->entrance == ENTRANCE_OPENING) {
     // The international editions also save this scene and entrance 22.
     routine->savedScene = (s32)&SceneId_VenusLighthouse;

@@ -10,11 +10,11 @@ void Func_02000e78(void) {
   Func_02004118(0x26666, 0x4ccc);
   Scene_CamBounds(PIXELS(232), -1, PIXELS(328), 1);
   Scene_SetPositionAndCommit(21, 232, 328);
-  Scene_CamBounds(PIXELS(232), -1, PIXELS(200), 1);
+  Camera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(200), 1);
   Scene_SetPositionAndCommit(21, 232, 280);
-  Scene_SetPositionAndCommit(21, 232, 168);
+  Actor_SetPositionAndCommit(21, 232, 168);
   Task_RemoveFar(Func_02002180);
-  Scene_ArmCallback(21, FACING_SOUTH, 0);
+  Actor_ArmCallback(21, FACING_SOUTH, 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
   FieldEvent_Wait(20);
   GameFlag_SetBit(0x88b);
@@ -37,12 +37,7 @@ void Func_02000f24(void) {
   for (pass = 0; pass <= 1; pass++) {
     u16 *cell;
 
-    /* FAKEMATCH: the one-pass block keeps the table address loaded before the
-     * outer loop's counter is zeroed; as no block, 2 instructions differ in
-     * tla-en. */
-    do {
-      cell = (u16 *)gData_020042b4;
-    } while (0);
+    cell = (u16 *)gData_020042b4;
     for (i = 0; i <= 14; i++) {
       s32 x = *cell++ + ((Random16Far() << 2) >> 16);
       s32 z = *cell++ + ((Random16Far() << 2) >> 16);

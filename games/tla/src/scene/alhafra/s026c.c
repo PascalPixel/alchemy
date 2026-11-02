@@ -14,7 +14,7 @@ extern u8 gData_02001d54[];
 void Func_0200026c(s32 a0, s32 a1) {
   s32 t1;
 
-  Call1(Func_02001d2c, (s32)gData_02001d54);
-  t1 = Value1(Actor_GetById, a1);
+  Func_02001d2c((s32)gData_02001d54);
+  t1 = Actor_GetById(a1);
   FIELD_AT((t1 + 0x23), u8, 0) = 0;
 }

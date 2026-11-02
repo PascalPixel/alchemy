@@ -33,7 +33,7 @@ void Func_02000208(void) {
   Actor_GetById(8)->motionFlags = 0;
   Func_020034d4_(8, 184 << 16, 204 << 17);
   Actor_SetSpeedParameters_(8, 0x1cccc, 0xe666);
-  Actor_CommitPositionAndActivate_(8, 0, 16);
+  Actor_CommitPositionAndActivate(8, 0, 16);
   Func_02003534(8, FACING_WEST);
   msg = (s32)MsgHasMyGrandson;
   Func_0200350c(msg);
@@ -48,7 +48,7 @@ void Func_02000208(void) {
   Func_02003524(8, 0);
   Actor_SetSpeedParameters_(8, 0xcccc, 0x6666);
   Actor_CommitPositionAndActivate_(8, 0, -14);
-  Func_020034d4_(8, 0, 0);
+  Func_020034d4(8, 0, 0);
   warp = &gData_02003d18;
   Func_02003414(warp->scene, warp->x, warp->z);
   Func_0200362c(158);

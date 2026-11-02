@@ -10,7 +10,6 @@ void Func_02000918(u16 *list) {
   /* FAKEMATCH(pin): the limit in r2, so the next id takes r3; as a plain
    * local, 10 of 31 instructions differ in tla-en. */
   register s32 limit asm("r2");
-  s32 id;
 
   goto next;
   do {
@@ -25,11 +24,7 @@ void Func_02000918(u16 *list) {
     list += 3;
   next:
     limit = 0xff;
-    id = list[0];
-    /* FAKEMATCH(barrier): the limit's shift waits for the id's load; as
-     * while (list[0] != 0xffff), 2 of 31 instructions differ in tla-en. */
-    asm("" : "+l"(limit) : "l"(id));
-  } while (id != (limit << 8) + 0xff);
+  } while (list[0] != (limit << 8) + 0xff);
 }
 
 /// For each six-byte record up to an actor of 0xffff, the cell under the actor

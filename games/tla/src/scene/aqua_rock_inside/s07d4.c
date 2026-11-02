@@ -18,13 +18,9 @@ void Func_020007d4(void) {
   s32 i;
   s32 j;
 
-  /* FAKEMATCH: the native builds the task priority before loading the
-   * task function; naming the priority here, before it is set, gives that order, as
-   * in Func_0200071c. */
-  __asm__ volatile("" : "+r"(priority));
   Func_02003d7c();
   Func_02003eac(0);
-  Actor_ArmCallback_(gMainRoutineWork.currentOwner, 0xc000, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 0);
   Func_020007a8();
   Func_02003ef4(78);
   FieldEvent_Wait(60);
@@ -37,8 +33,8 @@ void Func_020007d4(void) {
   FieldEvent_Wait(40);
   priority = 0x480;
   Task_Add(Func_020006d0, priority);
-  Func_02003e44_(0x28000, 0x4000);
-  Camera_MoveWithinMapBounds_(0x1380000, -1, 0x1f80000, 1);
+  Func_02003e44(0x28000, 0x4000);
+  Camera_MoveWithinMapBounds(0x1380000, -1, 0x1f80000, 1);
   Func_02003ef4(164);
   Func_02003d24_(75, 96, 7, 13, 80, 27);
   Func_02003d24(91, 96, 7, 10, 16, 31);

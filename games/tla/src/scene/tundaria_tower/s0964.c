@@ -17,13 +17,13 @@ void Func_02000964(void) {
   Func_02003048();
   Func_02003148(0);
   TundariaTower_FadeFrom(0x10000, 0);
-  TundariaTower_FadeTo(0x7fff, 0);
+  Func_02003108(0x7fff, 0);
   Func_02003118(2);
   Func_020031a8(132);
   TundariaTower_SetWork(0x50000, 0x70000, 0x10000);
   TundariaTower_SetWork(-1, -1, 0xe666);
   FieldEvent_Wait(2);
-  TundariaTower_FadeTo(0x10000, 0);
+  Func_02003108(0x10000, 0);
   Func_02003118(2);
   object->actionFlags = 0;
   object->update = 0;

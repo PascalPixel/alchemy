@@ -16,7 +16,7 @@ void Func_02000048(void) {
   Func_02000e08(132);
   if (x == 20 && z == 9) {
     if (Flag_IsSet(0x301)) {
-      Call6((void (*)())Func_02000ce0, 36, 12, 22, 8, 3, 3);
+      Func_02000ce0(36, 12, 22, 8, 3, 3);
       Call6((void (*)())Func_02000ce8, 36, 12, 3, 3, 22, 8);
     }
     if (!Flag_IsSet(0x924)) {
@@ -44,7 +44,7 @@ void Func_02000048(void) {
   } else if (x == 19 && z == 9) {
     Flag_Clear(0x250);
     if (Flag_IsSet(0x301)) {
-      Call6((void (*)())Func_02000ce0, 36, 8, 22, 8, 3, 3);
+      Func_02000ce0(36, 8, 22, 8, 3, 3);
       Call6((void (*)())Func_02000ce8, 36, 8, 3, 3, 22, 8);
     }
   }

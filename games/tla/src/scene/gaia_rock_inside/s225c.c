@@ -245,7 +245,7 @@ void Func_02002718(void) {
     }
     Call3(Actor_SetSpeedParameters, 8, 0x4000, 0xccc);
     Call3(Actor_OffsetPositionAndResetMotion, 8, -16, 0);
-    Call6(Func_02004dfc, 27, 15, 2, 1, 23, 23);
+    Func_02004dfc(27, 15, 2, 1, 23, 23);
     Func_02004dfc(25, 25, 1, 1, 25, 23);
     i = 0;
     if (object->unk56 != 0) {

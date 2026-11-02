@@ -68,21 +68,6 @@ void Func_02000a28(void);
 void Func_02000c94(void);
 void Func_02000cf4(void);
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
 static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020010cc(a, b, c, d, e, f);
@@ -99,21 +84,6 @@ static __inline__ void Actor_Place(s32 id, s32 x, s32 z) {
   Func_02001134(id, x, z);
 }
 
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void Cue(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001214(cue);
-}
-
-static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(a, b, c, d);
-}
-
 void Actor_SetSpritePriority(u32 id, s32 variant);
 void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
 
@@ -125,7 +95,7 @@ void Func_02000dcc(void) {
   s32 z;
   struct Actor *object;
 
-  Flag_Clear(0x203);
+  GameFlag_ClearBit(0x203);
   Actor_SetSpritePriority(64, 3);
   Func_020011b4();
   b = 0x102;
@@ -135,7 +105,7 @@ void Func_02000dcc(void) {
   __asm__("" : "+r"(a), "+r"(b));
   Func_020011bc(a, b + 255, 9, 10);
   Func_0200115c(11);
-  if (Flag_Test(0x8c8) != 0) {
+  if (GameFlag_Test(0x8c8) != 0) {
     Map_CopyAttributes(41, 13, 2, 1, 39, 13);
     object = Actor_GetById(11);
     x = 162;
@@ -147,54 +117,54 @@ void Func_02000dcc(void) {
     __asm__("" : "+r"(x), "+r"(y), "+r"(z));
     Actor_SetPositionAndResetMotion(object, x, y, z << 16);
   }
-  if (Flag_Test(0x8ca) != 0)
+  if (GameFlag_Test(0x8ca) != 0)
     Actor_Place(12, PIXELS(712), PIXELS(424));
   Func_020011dc(gData_020013c0);
-  if (Flag_Test(0x9ef) != 0)
+  if (GameFlag_Test(0x9ef) != 0)
     Actor_Place(8, PIXELS(568), PIXELS(280));
   Actor_GetById(8)->priorityFlags &= 0xfe;
   Func_02000038(gData_020013ca);
   Func_020011c4(gData_020013c4);
-  if (Flag_Test(0x8cb) != 0) {
-    Map_CopyCells(75, 66, 97, 39, 2, 2);
+  if (GameFlag_Test(0x8cb) != 0) {
+    Func_020010cc(75, 66, 97, 39, 2, 2);
     Map_CopyAttributes(33, 37, 2, 2, 33, 39);
-    Wait(1);
+    wait(1);
   }
-  if (Flag_Test(0x8ab) != 0) {
+  if (GameFlag_Test(0x8ab) != 0) {
     Map_CopyCells(82, 74, 116, 16, 5, 3);
     Map_CopyAttributes(52, 11, 5, 1, 52, 18);
     if (gMainRoutineWork.entrance == 3)
       Func_02000c94();
     else
-      Wait(10);
+      wait(10);
   }
 }
 
 void Func_02000f2c(void) {
   Func_020011b4();
   Func_020011bc(0, 0x200, 8, 9);
-  if (Flag_Test(0x8ab) != 0) {
-    Actor_Place(10, 0, 0);
+  if (GameFlag_Test(0x8ab) != 0) {
+    Func_02001134(10, 0, 0);
     Map_CopyCells(68, 70, 113, 11, 5, 3);
     Map_CopyCells(50, 74, 50, 75, 2, 1);
     Map_CopyAttributes(49, 9, 5, 1, 49, 13);
     if (gMainRoutineWork.entrance == 8)
       Func_02000cf4();
     else
-      Wait(1);
+      wait(1);
   }
 }
 
 void Func_02000fbc(void) {
-  if (Flag_Test(0x8cc) == 0)
-    Actor_Place(65, 0, 0);
+  if (GameFlag_Test(0x8cc) == 0)
+    Func_02001134(65, 0, 0);
 }
 
 void Func_02000fd8(void) {
   struct Actor *object;
 
-  if (Flag_Test(0x8cc) != 0) {
-    Actor_Place(64, 0, 0);
+  if (GameFlag_Test(0x8cc) != 0) {
+    Func_02001134(64, 0, 0);
   } else {
     object = Actor_GetById(64);
     object->collisionFlags = 8;

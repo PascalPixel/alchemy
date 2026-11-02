@@ -51,10 +51,10 @@ void Func_02001cf0(void) {
   s32 angle3000;
 
   Func_02004464();
-  Call1(Func_020045ec, 0);
+  Func_020045ec(0);
   Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Call1(Actor_Stop, 0x14);
-  Call1(wait, 1);
+  Actor_Stop(0x14);
+  wait(1);
   Call3(Func_020044cc, gMainRoutineWork.currentOwner, PIXELS(184), PIXELS(484));
   /* FAKEMATCH: the three facings are locals set before their first placement;
    * as constants each placement rebuilds them and the later turns cannot share
@@ -67,15 +67,15 @@ void Func_02001cf0(void) {
   Call4(Func_020044d4, 17, PIXELS(138), PIXELS(412), angle3000);
   Call4(Func_020044d4, 20, PIXELS(220), PIXELS(600), angleB000);
   Call3(Func_020044cc, 5, PIXELS(184), PIXELS(684));
-  Call1(wait, 1);
+  wait(1);
   EVENT_WORK->screenEffect = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Call2(Func_0200456c, 0xcccc, 0x1999);
-  Call4(Camera_MoveWithinMapBounds, PIXELS(184), -1, PIXELS(448), 1);
+  Camera_MoveWithinMapBounds(PIXELS(184), -1, PIXELS(448), 1);
   Func_0200457c();
-  Call1(FieldEvent_Wait, 20);
-  Call1(Func_0200451c, (s32)MsgProx80);
+  FieldEvent_Wait(20);
+  Func_0200451c((s32)MsgProx80);
   Call2(Func_02004534, 26, 0);
   Call2(Actor_SetModeById, 0, 3);
   Call2(Actor_SetModeById, 27, 3);
@@ -91,7 +91,7 @@ void Func_02001cf0(void) {
   Call2(Func_0200454c, gMainRoutineWork.currentOwner, FACING_NORTH);
   Call2(Func_02004534, 0, 0);
   Call2(Func_02004564, 0x19, 0x102);
-  Call1(FieldEvent_Wait, 20);
+  FieldEvent_Wait(20);
   Call2(Func_02004534, 25, 0);
   Call2(Actor_SetModeById, 27, 4);
   Call2(Func_02004534, 27, 0);
@@ -111,44 +111,44 @@ void Func_02001cf0(void) {
   Call2(Func_02004534, 26, 0);
   Call2(Func_02004534, 0, 0);
   Call2(Func_02004564, 0x13, 0x102);
-  Call1(FieldEvent_Wait, 20);
+  FieldEvent_Wait(20);
   Call2(Func_02004534, 0x4013, 0);
   Call2(Func_0200454c, 0, FACING_NORTHEAST);
   Call2(Motion_SetModeAndWaitAnimation, 0, 3);
   Call2(Func_02004534, 0, 0);
   Call3(Actor_ArmCallback, 26, 0x5000, 0);
-  Call2(Func_02004564, 0x1a, 0x102);
-  Call1(FieldEvent_Wait, 20);
+  Func_02004564(0x1a, 0x102);
+  FieldEvent_Wait(20);
   Call2(Func_02004534, 26, 0);
-  Prox_Jump(27, 0x109, 20);
+  Func_0200455c(27, 0x109, 20);
   Call2(Func_02004534, 27, 0);
   Call3(Actor_ArmCallback, 25, 0x3000, 0);
-  Prox_Jump(25, 0x103, 20);
+  Func_0200455c(25, 0x103, 20);
   Call2(Func_02004534, 25, 0);
-  Prox_Jump(27, 0x100, 20);
+  Func_0200455c(27, 0x100, 20);
   Call2(Func_02004534, 27, 0);
   Call3(Actor_ArmCallback, 26, 0x3000, 0);
   Call2(Func_02004534, 26, 0);
   Call3(Actor_ArmCallback, 0, FACING_NORTH, 0);
   Call2(Func_02004534, 0, 0);
   Call3(Actor_ArmCallback, 25, 0x5000, 0);
-  Prox_Jump(25, 0x105, 20);
+  Func_0200455c(25, 0x105, 20);
   Call2(Func_02004534, 25, 0);
   Call2(Actor_SetModeById, 26, 4);
   Call3(Func_0200452c, 0x1a, 0, 0x14);
   Call2(Func_0200454c, 0, 0);
-  Prox_Jump(0, 0x108, 0);
-  Prox_MessageOpen(0x4000, 0);
+  Func_0200455c(0, 0x108, 0);
+  FieldMessage_ShowAtActor(0x4000, 0);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  t83 = Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0);
+  t83 = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (t83 == 0) {
     Call2(Motion_SetModeAndWaitAnimation, 26, 3);
-    Call2(Func_02004534, 26, 0);
+    Func_02004534(26, 0);
     EVENT_WORK->messageId++;
   } else {
     EVENT_WORK->messageId++;
     Call2(Motion_SetModeAndWaitAnimation, 26, 4);
-    Call2(Func_02004534, 26, 0);
+    Func_02004534(26, 0);
   }
   Call2(Func_0200454c, 27, FACING_WEST);
   Call2(Actor_SetModeById, 27, 4);
@@ -166,7 +166,7 @@ void Func_02001cf0(void) {
   Call2(Motion_SetModeAndWaitAnimation, 0, 3);
   Call2(Func_02004534, 0x4000, 0);
   Call2(Func_02004564, 0x1a, 0x102);
-  Call1(FieldEvent_Wait, 20);
+  FieldEvent_Wait(20);
   Call2(Func_02004534, 26, 0);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Call3(Actor_ArmCallback, 0, FACING_NORTH, 0);
@@ -185,7 +185,7 @@ void Func_02001cf0(void) {
   Prox_Jump(gMainRoutineWork.currentOwner, 0x101, 0);
   Prox_Jump(0, 0x101, 0);
   Prox_Jump(26, 0x101, 0);
-  Prox_Jump(25, 0x101, 40);
+  Func_0200455c(25, 0x101, 40);
   Call2(Motion_SetModeAndWaitAnimation, 27, 3);
   Call2(Func_02004534, 27, 0);
   Call2(Actor_SetModeById, 0, 3);
@@ -193,9 +193,9 @@ void Func_02001cf0(void) {
   Call2(Actor_SetModeById, 26, 3);
   Call2(Actor_SetModeById, 25, 3);
   Call3(Actor_ArmCallback, 27, FACING_WEST, 0);
-  Prox_Jump(27, 0x108, 20);
+  Func_0200455c(27, 0x108, 20);
   Call2(Func_02004534, 27, 0);
-  Prox_Jump(26, 0x109, 20);
+  Func_0200455c(26, 0x109, 20);
   Call3(Func_0200452c, 0x1a, 0, 0x14);
   Call2(Func_02004534, 5, 0);
   Call2(Func_02004564, 0x1b, 0x102);
@@ -206,7 +206,7 @@ void Func_02001cf0(void) {
   Call2(Func_0200454c, 0, 0);
   Prox_MessageOpen(0x4000, 0);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_WEST, 0);
-  t144 = Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0);
+  t144 = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   if (t144 == 0) {
     Call2(Func_0200456c, 0x26666, 0x4ccc);
     Call4(Camera_MoveWithinMapBounds, PIXELS(184), -1, PIXELS(512), 1);
@@ -214,7 +214,7 @@ void Func_02001cf0(void) {
     Call3(Actor_SetSpeedParameters, 0, 0x19999, 0xcccc);
     Call3(Actor_SetPositionAndReset, 0, 168, 520);
     Call2(Func_02004534, 0x4000, 0);
-    Call2(Func_02004534, 0x2005, 0);
+    Func_02004534(0x2005, 0);
     EVENT_WORK->messageId += 2;
   } else {
     EVENT_WORK->messageId += 2;
@@ -224,7 +224,7 @@ void Func_02001cf0(void) {
     Call3(Actor_SetSpeedParameters, 0, 0x19999, 0xcccc);
     Call3(Actor_SetPositionAndReset, 0, 168, 520);
     Call2(Func_02004534, 0x4000, 0);
-    Call2(Func_02004534, 0x2005, 0);
+    Func_02004534(0x2005, 0);
   }
   t159 = Func_02004584();
   FIELD_AT((t159 + 0x55), u8, 0) = 0;
@@ -242,12 +242,12 @@ void Func_02001cf0(void) {
   Call3(Actor_SetPositionAndReset, 17, 150, 540);
   Call3(Actor_SetPositionAndReset, 17, 160, 560);
   Call3(Actor_SetPositionAndReset, 17, 190, 640);
-  Call1(Actor_Stop, 0);
-  Call1(Actor_Stop, gMainRoutineWork.currentOwner);
-  Call1(Actor_Stop, 0x1b);
-  Call1(wait, 1);
-  Call3(Func_020044cc, 17, 0, 0);
-  Call1(FieldEvent_Wait, 10);
+  Actor_Stop(0);
+  Actor_Stop(gMainRoutineWork.currentOwner);
+  Actor_Stop(0x1b);
+  wait(1);
+  Func_020044cc(17, 0, 0);
+  FieldEvent_Wait(10);
   Call2(Func_0200456c, 0x26666, 0x4ccc);
   Call4(Camera_MoveWithinMapBounds, PIXELS(184), -1, PIXELS(448), 1);
   Call3(Actor_SetPositionAndReset, 0, 168, 484);
@@ -269,21 +269,21 @@ void Func_02001cf0(void) {
   Call2(Motion_SetModeAndWaitAnimation, 27, 3);
   Call3(Actor_SetSpeedParameters, 0, 0x19999, 0xcccc);
   Call3(Actor_SetSpeedParameters, 27, 0x19999, 0xcccc);
-  Call2(Actor_SetModeById, 0, 2);
-  t202 = Value1(Actor_GetById, gMainRoutineWork.currentOwner);
+  Actor_SetModeById(0, 2);
+  t202 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (t202 != 0) {
-    Call3(Actor_ResetAndSetPosition, 0, FIELD_AT(t202, s16, 10),
-          FIELD_AT(t202, s16, 18));
+    Actor_ResetAndSetPosition(0, FIELD_AT(t202, s16, 10),
+                              FIELD_AT(t202, s16, 18));
   }
-  Call1(Actor_WaitForMoveById, 0);
+  Actor_WaitForMoveById(0);
   Call3(Func_020044cc, 0, 0, 0);
-  Call2(Actor_SetModeById, 27, 2);
-  t207 = Value1(Actor_GetById, gMainRoutineWork.currentOwner);
+  Actor_SetModeById(27, 2);
+  t207 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (t207 != 0) {
-    Call3(Actor_ResetAndSetPosition, 27, FIELD_AT(t207, s16, 10),
-          FIELD_AT(t207, s16, 18));
+    Actor_ResetAndSetPosition(27, FIELD_AT(t207, s16, 10),
+                              FIELD_AT(t207, s16, 18));
   }
-  Call1(Actor_WaitForMoveById, 27);
+  Actor_WaitForMoveById(27);
   Call3(Func_020044cc, 27, 0, 0);
   {
     struct EventWork *work = EVENT_WORK;
@@ -291,7 +291,7 @@ void Func_02001cf0(void) {
     work->screenEffect = 0x209;
     work->delay = 0x10;
   }
-  Call1(GameFlag_ClearBit, 0x12f);
-  Call1(GameFlag_SetBit, 0x9c5);
+  GameFlag_ClearBit(0x12f);
+  GameFlag_SetBit(0x9c5);
   Func_0200446c();
 }

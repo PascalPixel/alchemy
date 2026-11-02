@@ -11,8 +11,8 @@ void Func_020007dc(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 void Func_02000848(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 void Func_020008b4(s32 arg0) {
-  Call2((void (*)())Actor_SetModeById, arg0, 1);
-  Call2((void (*)())Actor_SetModeById, arg0, 2);
+  Actor_SetModeById(arg0, 1);
+  Actor_SetModeById(arg0, 2);
   return;
 }
 
@@ -28,36 +28,36 @@ void Func_020008c8(void) {
 }
 
 void Func_020009a4(void) {
-  Call1((void (*)())Func_020008b4, 8);
+  Func_020008b4(8);
   return;
 }
 
 void Func_020009b0(void) {
-  Call1((void (*)())Func_020008b4, 9);
+  Func_020008b4(9);
   return;
 }
 
 void Func_020009bc(void) {
-  Call1((void (*)())Func_020008b4, 10);
+  Func_020008b4(10);
   return;
 }
 
 void Func_020009c8(void) {
-  Call1((void (*)())Func_020008b4, 11);
+  Func_020008b4(11);
   return;
 }
 
 void Func_020009d4(void) {
-  Call1((void (*)())Func_020008b4, 12);
+  Func_020008b4(12);
   return;
 }
 
 void Func_020009e0(void) {
-  Call1((void (*)())Func_020008b4, 13);
+  Func_020008b4(13);
   return;
 }
 
 void Func_020009ec(void) {
-  Call1((void (*)())Func_020008b4, 14);
+  Func_020008b4(14);
   return;
 }

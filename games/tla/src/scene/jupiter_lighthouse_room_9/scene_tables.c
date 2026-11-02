@@ -32,17 +32,11 @@ s32 Func_02001c90();
 struct Actor *Func_02000910();
 
 void Func_02000054(void) {
-  struct MainRoutineWork *party;
-
-  party = &gMainRoutineWork;
-  /* FAKEMATCH: ⚓️ loads the party's address before it builds the field offset.
-   */
-  __asm__ volatile("" : "+l"(party));
-  if (party->renderMode == 10)
-    Value4(Func_02001c90, 0x2200000, 0x1100000, 0, 255);
+  if (gMainRoutineWork.renderMode == 10)
+    Func_02001c90(0x2200000, 0x1100000, 0, 255);
 }
 
-void Func_0200007c(void) { Value4(Func_02001c90, 0x2200000, 0x1100000, 0, 6); }
+void Func_0200007c(void) { Func_02001c90(0x2200000, 0x1100000, 0, 6); }
 
 void Func_02000090(s32 id) {
   struct Actor *object;

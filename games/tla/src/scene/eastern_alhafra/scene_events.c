@@ -105,28 +105,28 @@ void Func_02000730(void) {
       } else {
         FieldEvent_Wait(20);
         ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
-        Call3((void (*)())Func_02004b4c, 22, 0, 0);
+        Func_02004b4c(22, 0, 0);
       }
     }
   }
-  Call3(Actor_ArmCallback, 22, FACING_EAST, 0);
+  Actor_ArmCallback(22, FACING_EAST, 0);
   Func_02004a9c();
 }
 
 void Func_02000838(void) {
-  if (Value1(GameFlag_Test, 0x8a7)) {
+  if (GameFlag_Test(0x8a7)) {
     if (Value1(GameFlag_Test, 0x904) == 0) {
-      Call1(GameFlag_SetBit, 0x904);
+      GameFlag_SetBit(0x904);
       Func_02001cb0();
     }
-  } else if (Value1(GameFlag_Test, 0x8ab)) {
-    if (Value1(GameFlag_Test, 0x8a0) && Func_02004a84(151) == -1 &&
+  } else if (GameFlag_Test(0x8ab)) {
+    if (GameFlag_Test(0x8a0) && Func_02004a84(151) == -1 &&
         Value1(GameFlag_Test, 0x8ad) == 0) {
-      Call1(GameFlag_SetBit, 0x8ad);
+      GameFlag_SetBit(0x8ad);
       Func_020017ec();
     }
   } else if (Value1(GameFlag_Test, 0x8a9) == 0) {
-    Call1(GameFlag_SetBit, 0x8a9);
+    GameFlag_SetBit(0x8a9);
     Func_0200112c();
   }
 }

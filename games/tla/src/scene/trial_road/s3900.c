@@ -123,7 +123,7 @@ void Func_02003900(void) {
   FieldEvent_Wait(10);
   Actor_SetSpeedParameters_(13, 0x4000, 0x2000);
   OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
-  Actor_CommitPositionAndActivate_(13, 0, 8);
+  Actor_CommitPositionAndActivate(13, 0, 8);
   FieldEvent_Wait(1);
   /* FAKEMATCH: the bit is set through the 8-bit field, as in overlay 685: read
    * as a plain byte the store takes the order of a store that aliases what
@@ -139,11 +139,11 @@ void Func_02003900(void) {
   Actor_GetById(13)->velocityY = 0x40000;
   Func_02005838_(-1, -1, 0xe666);
   OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
-  Actor_CommitPositionAndActivate_(13, 0, 16);
+  Actor_CommitPositionAndActivate(13, 0, 16);
   FieldEvent_Wait(1);
   ((struct ActorSolid *)Actor_GetById(13))->solid |= 1;
   FieldEvent_Wait(60);
-  Actor_ArmCallback_(13, FACING_SOUTH, 0);
+  Actor_ArmCallback(13, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(13, 4);
   Func_02005940(8, 0);
@@ -157,15 +157,15 @@ void Func_02003900(void) {
   Actor_SetModeById(9, 6);
   FieldEvent_Wait(30);
   Func_02005940(8, 0);
-  Actor_SetPositionAndReset_(13, 200, 168);
+  Actor_SetPositionAndReset(13, 200, 168);
   Actor_ArmCallback_(13, FACING_NORTH, 0);
   FieldEvent_Wait(40);
   Func_02005a68(125);
   Actor_SetModeById(9, 5);
   FieldEvent_Wait(20);
   Func_02005a68(138);
-  Map_Stamp(127, 3, 1, 2, 48, 3);
-  Map_CopyCells(0, 127, 1, 1, 14, 8);
+  Func_02005820(127, 3, 1, 2, 48, 3);
+  Func_02005818(0, 127, 1, 1, 14, 8);
   FieldEvent_Wait(20);
   Actor_SetMovementTypeById(13, gData_02005dc8);
   Actor_RefreshSelectorById(13);
@@ -181,7 +181,7 @@ void Func_02003900(void) {
   FieldEvent_Wait(10);
   Actor_SetSpeedParameters_(14, 0x10000, 0x8000);
   Actor_CommitPositionAndActivate_(14, 16, -16);
-  Actor_ArmCallback_(14, 0, 0);
+  Actor_ArmCallback(14, 0, 0);
   Func_02005a68(124);
   Actor_SetModeById(11, 6);
   Actor_SetModeById(12, 6);
@@ -193,20 +193,20 @@ void Func_02003900(void) {
   Actor_SetModeById(11, 5);
   FieldEvent_Wait(40);
   Actor_SetPositionAndReset_(14, 364, 168);
-  Actor_ArmCallback_(14, FACING_NORTH, 0);
+  Actor_ArmCallback(14, FACING_NORTH, 0);
   FieldEvent_Wait(40);
   Func_02005a68(125);
   Actor_SetModeById(12, 5);
   FieldEvent_Wait(20);
   Func_02005a68(138);
-  Map_Stamp(127, 3, 1, 2, 53, 3);
-  Map_CopyCells(0, 127, 1, 1, 19, 8);
+  Func_02005820(127, 3, 1, 2, 53, 3);
+  Func_02005818(0, 127, 1, 1, 19, 8);
   FieldEvent_Wait(30);
-  Actor_ArmCallback_(14, FACING_NORTHWEST, 0);
+  Actor_ArmCallback(14, FACING_NORTHWEST, 0);
   FieldEvent_Wait(10);
   Motion_SetModeAndWaitAnimation(14, 3);
   Func_02005940(8, 0);
-  Camera_MoveWithinMapBounds_(408 << 16, -1, 120 << 16, 1);
+  Camera_MoveWithinMapBounds(408 << 16, -1, 120 << 16, 1);
   Func_02005980();
   Func_02005940(8, 0);
   Actor_SetMovementTypeById(14, gData_02005ed4);

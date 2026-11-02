@@ -20,9 +20,6 @@ void Func_02000080(void) {
   if (gData_02005a3c == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    /* FAKEMATCH: ⚓️ loads gMainRoutineWork's address before it builds the field
-     * offset; plain field tests and a local pointer build the offset first */
-    asm volatile("" : "+l"(party));
     if (party->renderMode == 10) {
       struct FieldActor *object = Actor_GetById(party->currentOwner);
 

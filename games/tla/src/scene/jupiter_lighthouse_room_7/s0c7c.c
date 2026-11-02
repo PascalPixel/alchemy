@@ -6,7 +6,7 @@ void Func_02000c7c(void) {
 
   if (Value1((s32 (*)())GameFlag_Test, 0xa1a))
     Func_020009f8(20, 8, 12, 16, 0);
-  Call1((void (*)())GameFlag_ClearBit, 0xa1a);
+  GameFlag_ClearBit(0xa1a);
   Func_020005e8(1);
   wait(2);
   object = Actor_GetById(20);

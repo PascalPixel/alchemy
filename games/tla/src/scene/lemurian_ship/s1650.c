@@ -15,7 +15,7 @@ void Func_02001650(void) {
   Func_02002c68();
   Func_02002da8(0);
   Func_02002d18((s32)MsgLemurianShip01);
-  LemurianShip_SePlay(78);
+  Func_02002de0(78);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   LemurianShip_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
@@ -26,7 +26,7 @@ void Func_02001650(void) {
   Func_02002cd8(6, gMainRoutineWork.currentOwner);
   Func_02002cd8(5, gMainRoutineWork.currentOwner);
   Func_02002cd8(8, gMainRoutineWork.currentOwner);
-  wait_(1);
+  wait(1);
   LemurianShip_ObjSpeed(7, 0xcccc, 0x6666);
   LemurianShip_ObjSpeed(6, 0xcccc, 0x6666);
   LemurianShip_ObjSpeed(5, 0xcccc, 0x6666);
@@ -35,23 +35,23 @@ void Func_02001650(void) {
   Actor_SetMovementTypeById(5, gData_02002f88);
   Actor_SetMovementTypeById(8, gData_02002fcc);
   Actor_SetMovementTypeAndWaitById(7, gData_02002f1c);
-  LemurianShip_Wait(20);
-  LemurianShip_MessagePut(7, 0);
+  FieldEvent_Wait(20);
+  Func_02002d20(7, 0);
   LemurianShip_ObjTurn(7, FACING_SOUTH);
-  LemurianShip_MessagePut(7, 0);
+  Func_02002d20(7, 0);
   Actor_SetModeById(7, 3);
-  LemurianShip_MessagePut(7, 0);
+  Func_02002d20(7, 0);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   LemurianShip_ObjWalk(7, 808, 148);
   Motion_SetVarCbAndRefresh(7, 2);
   Actor_SetSpritePriority(7, 1);
-  LemurianShip_SePlay(220);
+  Func_02002de0(220);
   Task_Add(Func_020015c8, 0x480);
-  LemurianShip_Wait(60);
-  LemurianShip_SePlay(390);
-  LemurianShip_Wait(20);
+  FieldEvent_Wait(60);
+  Func_02002de0(390);
+  FieldEvent_Wait(20);
   Task_RemoveFar(Func_020015c8);
-  LemurianShip_SePlay(251);
+  Func_02002de0(251);
   LemurianShip_CamSet(0x2b00000, 0, 0x3a00000, 0x2200000);
   LemurianShip_CamMove(PIXELS(808), -1, PIXELS(448), 0);
   LemurianShip_ObjPlace(gMainRoutineWork.currentOwner, PIXELS(808),
@@ -59,11 +59,11 @@ void Func_02001650(void) {
   LemurianShip_ObjPlace(7, PIXELS(808), PIXELS(420));
   LemurianShip_ObjPlace(6, PIXELS(784), PIXELS(468));
   LemurianShip_ObjPlace(5, PIXELS(832), PIXELS(468));
-  LemurianShip_ObjPlace(8, PIXELS(792), PIXELS(488));
+  Func_02002cd0(8, PIXELS(792), PIXELS(488));
   Func_02002c10();
-  LemurianShip_Wait(20);
-  LemurianShip_SePlay(246);
-  LemurianShip_Wait(80);
+  FieldEvent_Wait(20);
+  Func_02002de0(246);
+  FieldEvent_Wait(80);
   ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       513;
   Event_FinishScreenTransition();

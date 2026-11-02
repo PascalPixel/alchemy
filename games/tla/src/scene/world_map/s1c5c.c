@@ -41,11 +41,6 @@ static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle,
   Actor_ArmCallback(actor, angle, frames);
 }
 
-static __inline__ void Func_02004df8_(s32 value, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004df8(value, mode);
-}
-
 static __inline__ void Func_02004c90_(s32 actor, s32 x, s32 z, s32 angle) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004c90(actor, x, z, angle);
@@ -74,7 +69,7 @@ void Func_02001c5c(void) {
   Actor_OffsetPositionAndReset(17, 10, 0);
   Actor_OffsetPositionAndReset(18, 10, 0);
   Event_WaitTransitionFrames();
-  Func_02004df8_(0x13333, 6);
+  Func_02004df8(0x13333, 6);
   Func_02004e00();
   Func_02004da8();
   Actor_WaitForMoveById(16);
@@ -103,6 +98,6 @@ void Func_02001c5c(void) {
   Actor_RefreshSelectorById(18);
   Func_02004db0();
   FieldEvent_Wait(30);
-  Func_02004df8_(0x10000, 6);
+  Func_02004df8(0x10000, 6);
   Func_02004c28();
 }

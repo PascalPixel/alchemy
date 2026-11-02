@@ -9,4 +9,4 @@
 #include "call.h"
 s32 GameFlag_ClearBit();
 
-void Func_02001090(void) { Call1(GameFlag_ClearBit, 0x200); }
+void Func_02001090(void) { GameFlag_ClearBit(0x200); }

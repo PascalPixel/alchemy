@@ -35,6 +35,6 @@ void Func_02002d90(void) {
     Call1((void (*)())GameFlag_SetBit, 0x106);
     Func_020043f4();
     Func_02004444();
-    Call1((void (*)())GameFlag_ClearBit, 0x106);
+    GameFlag_ClearBit(0x106);
   }
 }

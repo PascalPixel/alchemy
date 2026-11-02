@@ -22,9 +22,6 @@ void Func_0200153c(void) {
   for (i = 23; i >= 0; i--) {
     object->y += 0x20000;
     angle = object->angle;
-    /* FAKEMATCH: keeps the angle load before its step is built (differ 2
-     * without) */
-    __asm__("" : : "r"(angle));
     angle += 0x2000;
     object->angle = angle;
     wait(1);

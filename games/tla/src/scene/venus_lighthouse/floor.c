@@ -48,8 +48,8 @@ void Import_SoundPlay(s32 cue);
 void Import_GameFlagSet(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Import_MapCopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
-                           s32 height);
+void Import_MapCopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
+                                          s32 destY, s32 width, s32 height);
 void wait(s32 frames);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
 void Actor_RefreshSelectorById(s32 actor);
@@ -68,11 +68,6 @@ s32 Func_020005a8(struct VenusActor *object);
 static inline s32 Venus_FlagCheck(s32 flag) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
-}
-
-static inline void Venus_FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Import_GameFlagSet(flag);
 }
 
 static inline void Venus_CopyCells(s32 sx, s32 sy, s32 dx, s32 dy, s32 w,
@@ -117,27 +112,22 @@ void Func_020006ac(void) {
   Motion_SetModeAndWaitAnimation(leader, 4);
   Actor_SetPartAttribute(Import_ActorGet(leader), 0);
   Motion_SetModeAndWaitAnimation(leader, 4);
-  {
-    void *none;
 
-    /* FAKEMATCH: the one-pass block builds the null callback after the wait;
-     * as a plain initializer, 46 of 85 instructions differ in tla-en. */
-    do {
-      none = 0;
-    } while (0);
+  /* FAKEMATCH: the empty one-pass block builds the null callback after the
+   * wait; without it, 46 of 85 instructions differ in tla-en. */
+  do {
+  } while (0);
 
-    actor->update = none;
-  }
+  actor->update = 0;
   Import_EventEnd();
 }
 
 void Func_0200078c(void) {
   struct VenusActor *leader = Import_ActorGet(Import_PartyGetLeaderActor());
-  s32 x = leader->xPixel;
   s32 z = leader->zPixel;
 
-  if ((u32)(x - 676) > 7 || z < 788 || z >= 796) {
-    Venus_CopyCells(53, 50, 42, 49, 1, 1);
+  if ((u32)(leader->xPixel - 676) > 7 || z < 788 || z >= 796) {
+    Import_MapCopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
     Venus_CopyCells(55, 117, 41, 117, 3, 5);
     GameFlag_ClearBit(0x201);
     leader->motionFlags |= 1;
@@ -147,9 +137,9 @@ void Func_0200078c(void) {
     Import_EventStart();
     Import_EventResolvePendingActions(0);
     Import_EventWait(5);
-    Venus_CopyCells(52, 50, 42, 49, 1, 1);
+    Import_MapCopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
     Venus_CopyCells(52, 117, 41, 117, 3, 5);
-    Venus_FlagSet(0x201);
+    Import_GameFlagSet(0x201);
     Import_SoundPlay(161);
     leader->motionFlags &= ~1;
     leader->terrainHeight = -0x20000;

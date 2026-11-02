@@ -16,15 +16,7 @@ next:
   if (id < 64)
     goto next;
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  {
-    s32 mode = 2;
-
-    /* FAKEMATCH: the barrier holds r0 until the mode is set, so the leader is
-     * loaded after it as the native has; plain, or with the mode pinned to r1,
-     * the leader is loaded first (one reordered row). */
-    __asm__("" : "+l"(mode) : : "r0");
-    Actor_SetModeById(gMainRoutineWork.currentOwner, mode);
-  }
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_CenterOnColumn(gMainRoutineWork.currentOwner, 2, -8);
   FieldEvent_Wait(5);
   Func_02001210(123);

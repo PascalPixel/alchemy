@@ -7,8 +7,8 @@ void FieldMessage_Show(s32 message, s32 position);
 void Party_RemoveActiveOwner(s32 owner);
 
 static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
-  /* FAKEMATCH: a direct call keeps the repeated item in r5 for the next call;
-   * ⚓️ builds it again before each. */
+  /* FAKEMATCH: used where the next call adds the same item: a direct call keeps
+   * that item in r5, and ⚓️ builds it again. */
   Inventory_AddItem(owner, item);
 }
 
@@ -40,11 +40,11 @@ void Func_020003b8(void) {
   Inventory_AddItem(6, 252);
   Inventory_AddItemAgain(6, 429);
   Inventory_AddItemAgain(6, 429);
-  Inventory_AddItemAgain(6, 429);
+  Inventory_AddItem(6, 429);
   Inventory_AddItem(6, 433);
   Inventory_AddItem(6, 435);
   Inventory_AddItemAgain(6, 417);
-  Inventory_AddItemAgain(6, 417);
+  Inventory_AddItem(6, 417);
   Inventory_AddItem(6, 418);
   Inventory_AddItem(6, 419);
   Inventory_AddItem(7, 189);

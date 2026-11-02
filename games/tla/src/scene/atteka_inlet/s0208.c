@@ -31,8 +31,8 @@ void Func_02001108(s32 value);
 void Func_02000208(void) {
   if (GameFlag_Test(0x9d0) && !GameFlag_Test(0x9b2)) {
     Func_02001010();
-    Call1(Func_02001108, 0);
-    Call4(Camera_MoveWithinMapBounds, 96 << 16, -1, 308 << 16, 1);
+    Func_02001108(0);
+    Camera_MoveWithinMapBounds(96 << 16, -1, 308 << 16, 1);
     {
       /* FAKEMATCH: the angle is shifted from a local so that it is built first,
        * as the native builds it; as a constant it is built last (differ 2). */
@@ -40,45 +40,45 @@ void Func_02000208(void) {
 
       Call4(Func_02001068, 9, 60 << 16, 362 << 16, angle << 8);
     }
-    Call1(wait, 1);
+    wait(1);
     Call3(Actor_SetSpeedParameters, 9, 0x20000, 0x10000);
-    Call3(Actor_Jump, 9, 6, 0);
+    Actor_Jump(9, 6, 0);
     Call3(Actor_SetPositionAndCommit, 9, 64, 336);
     Call3(Actor_SetPositionAndReset, 9, 70, 308);
-    Call3(Actor_ArmCallback, 9, FACING_EAST, 0);
+    Actor_ArmCallback(9, FACING_EAST, 0);
     {
       /* FAKEMATCH: as above (differ 2). */
       s32 angle = 160;
 
       Call4(Func_02001068, 10, 94 << 16, 272 << 16, angle << 7);
     }
-    Call1(wait, 1);
+    wait(1);
     Call3(Actor_SetSpeedParameters, 10, 0x20000, 0x10000);
-    Call3(Actor_Jump, 10, 6, 0);
+    Actor_Jump(10, 6, 0);
     Call3(Actor_SetPositionAndCommit, 10, 90, 288);
-    Call3(Actor_SetPositionAndReset, 10, 80, 316);
-    Call2(Func_020010b8, 10, FACING_EAST);
+    Actor_SetPositionAndReset(10, 80, 316);
+    Func_020010b8(10, FACING_EAST);
     Actor_GetById(9)->velocityY = 0x40000;
-    Call1(FieldEvent_Wait, 10);
-    Call1(Func_02001098, (s32)MsgWhereDoYouThink);
+    FieldEvent_Wait(10);
+    Func_02001098((s32)MsgWhereDoYouThink);
     Call2(Func_020010a8, 0x4009, 0);
-    Value3(Func_020010c8, 10, 265, 0);
-    Call2(Func_020010a8, 10, 0);
+    Func_020010c8(10, 265, 0);
+    Func_020010a8(10, 0);
     Call3(Actor_ArmCallback, 9, 0x3000, 0);
     Call2(Func_020010a8, 0x4009, 0);
     Call2(Func_020010b8, 10, 0xb000);
-    Call2(Actor_SetModeById, 10, 3);
-    Call2(Func_020010a8, 10, 0);
-    Call3(Actor_ArmCallback, 10, FACING_EAST, 0);
-    Value3(Func_020010c8, 9, 264, 0);
-    Call3(Actor_ArmCallback, 9, FACING_EAST, 20);
-    Call2(Func_020010a8, 0x4009, 0);
-    Call2(Func_020010a8, 10, 0);
+    Actor_SetModeById(10, 3);
+    Func_020010a8(10, 0);
+    Actor_ArmCallback(10, FACING_EAST, 0);
+    Func_020010c8(9, 264, 0);
+    Actor_ArmCallback(9, FACING_EAST, 20);
+    Func_020010a8(0x4009, 0);
+    Func_020010a8(10, 0);
     Func_02000ff8(1, 16, 1, 1, 3, 19);
     Func_02000ff8(1, 16, 1, 1, 4, 19);
     Func_02000ff8(1, 16, 1, 1, 4, 20);
     Func_02000ff8(1, 16, 1, 1, 4, 21);
-    Call1(GameFlag_SetBit, 0x9b0);
+    GameFlag_SetBit(0x9b0);
     Func_02001018();
   }
 }

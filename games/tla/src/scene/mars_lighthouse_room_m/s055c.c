@@ -35,7 +35,7 @@ void Func_0200055c(void) {
      * tla-en). */
     asm("" : : : "memory");
     if (gData_02003a80 == 1)
-      Call6((void (*)())Func_02003170, 30, 8, 3, 3, 8, 8);
+      Func_02003170(30, 8, 3, 3, 8, 8);
     /* FAKEMATCH(barrier): as above. */
     asm("" : : : "memory");
     if (gData_02003a80 == 2)
@@ -43,7 +43,7 @@ void Func_0200055c(void) {
     /* FAKEMATCH(barrier): as above. */
     asm("" : : : "memory");
     if (gData_02003a80 == 3)
-      Call6((void (*)())Func_02003170, 30, 8, 3, 3, 8, 8);
+      Func_02003170(30, 8, 3, 3, 8, 8);
   }
   /* FAKEMATCH(barrier): as above, so the blend is loaded again with its
    * address; without it, 13 of 164 instructions differ in tla-en. */
@@ -54,7 +54,7 @@ void Func_0200055c(void) {
     /* FAKEMATCH(barrier): as above. */
     asm("" : : : "memory");
     if (gData_02003a80 == 1)
-      Call6((void (*)())Func_02003170, 30, 4, 3, 3, 8, 8);
+      Func_02003170(30, 4, 3, 3, 8, 8);
     /* FAKEMATCH(barrier): as above. */
     asm("" : : : "memory");
     if (gData_02003a80 == 2)
@@ -62,6 +62,6 @@ void Func_0200055c(void) {
     /* FAKEMATCH(barrier): as above. */
     asm("" : : : "memory");
     if (gData_02003a80 == 3)
-      Call6((void (*)())Func_02003170, 30, 0, 3, 3, 8, 8);
+      Func_02003170(30, 0, 3, 3, 8, 8);
   }
 }

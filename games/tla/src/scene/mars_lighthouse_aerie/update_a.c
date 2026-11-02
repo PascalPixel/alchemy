@@ -34,14 +34,8 @@ void Func_0200008c(struct Actor *object) {
     (*timer)--;
   } else {
     u32 r = Random16Far();
-    /* FAKEMATCH: the random number times 4 apart from times 80, and the timer
-     * read in a one-pass block, read the timer between the multiply's two
-     * halves; as one expression it is read after (differ 2). */
-    u32 r4 = r << 2;
-    u8 t;
 
-    t = *timer;
-    *timer = t + (((r4 + r) * 16) >> 16) + 40;
+    *timer = *timer + ((((r << 2) + r) * 16) >> 16) + 40;
     object->scaleX = 0x12000;
     object->scaleY = 0x11000;
   }

@@ -17,18 +17,13 @@ void Func_0200094c(s32 x, s32 y) {
   struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
   struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
   u8 i;
-  s32 frames;
 
   ShrineOfTheSeaGod_CopyRect(x, y, 6, 56, 18, 6);
   i = 0;
 loop:
   layer0->y += 0x2000;
-  frames = 1;
-  /* FAKEMATCH(barrier): wait()'s argument is set before layer 1 is read;
-   * as wait(1), 2 of 34 instructions differ in tla-en. */
-  asm volatile("" : "+l"(frames));
   layer1->y += 0x2000;
-  wait(frames);
+  wait(1);
   i++;
   if (i <= 15)
     goto loop;

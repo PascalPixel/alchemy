@@ -108,11 +108,6 @@ static __inline__ void SetPosCommit(s32 id, s32 x, s32 z) {
   Actor_SetPositionAndCommit(id, x, z);
 }
 
-static __inline__ void Mark(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002178(a, b, c);
-}
-
 static __inline__ s32 Flag_Test(s32 flag) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
@@ -121,11 +116,6 @@ static __inline__ s32 Flag_Test(s32 flag) {
 static __inline__ void Flag_Set(s32 flag) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
 }
 
 #endif

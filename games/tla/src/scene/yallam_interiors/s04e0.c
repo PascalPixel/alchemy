@@ -60,13 +60,13 @@ void Func_02000524(void) {
     YallamInteriors_MessageOpen(14, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02000a58(), 0) == 0) {
       Func_02000a18(message + 1);
-      YallamInteriors_MessagePut(14, 0);
-      Call2((void (*)())Func_02000a60, 14, 0xc000);
+      Func_02000a28(14, 0);
+      Func_02000a60(14, 0xc000);
       Actor_SetSingleChildFlags(Actor_GetById(14), 1);
       Call3((void (*)())Actor_ResetAndSetPosition,
             gMainRoutineWork.currentOwner, 488, 408);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-      YallamInteriors_ObjArm(gMainRoutineWork.currentOwner, 0, 0);
+      Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
       Call3((void (*)())Actor_ResetAndSetPosition, 14, 504, 408);
       Actor_WaitForMoveById(14);
       Actor_SetAngleToward(14, gMainRoutineWork.currentOwner, 0);
@@ -83,11 +83,10 @@ void Func_02000524(void) {
               346);
         YallamInteriors_ObjArm(16, FACING_SOUTH, 0);
         Actor_SetModeById(16, 0);
-        Call3((void (*)())Actor_ResetAndSetPositionInMode2, 14, 600,
-              360);
+        Actor_ResetAndSetPositionInMode2(14, 600, 360);
         Actor_WaitForMoveById(14);
         Actor_SetModeById(14, 0);
-        YallamInteriors_ObjArm(14, FACING_SOUTH, 0);
+        Actor_ArmCallback(14, FACING_SOUTH, 0);
         Actor_GetById(14)->collisionFlags = 129;
         Actor_GetById(14)->priorityFlags = 1;
         Actor_SetSpritePriority(14, 1);
@@ -95,17 +94,17 @@ void Func_02000524(void) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
         Func_020009f8(17, 0, 0);
 #endif
-        YallamInteriors_FlagSet(0x301);
+        GameFlag_SetBit(0x301);
       } else {
-        Call3((void (*)())Actor_ResetAndSetPosition, 14, 491, 398);
+        Actor_ResetAndSetPosition(14, 491, 398);
         Actor_WaitForMoveById(14);
-        YallamInteriors_ObjArm(14, FACING_SOUTH, 0);
+        Actor_ArmCallback(14, FACING_SOUTH, 0);
         Actor_SetSingleChildFlags(Actor_GetById(14), 0);
-        Call2((void (*)())Func_02000a60, 14, 0);
+        Func_02000a60(14, 0);
       }
     } else {
       Func_02000a18(message + 2);
-      YallamInteriors_MessagePut(14, 0);
+      Func_02000a28(14, 0);
     }
   }
 }

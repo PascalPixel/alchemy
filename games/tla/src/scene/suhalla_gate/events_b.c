@@ -17,7 +17,7 @@ void Func_02000168(void) {
   if (GameFlag_Test(0x895)) {
     Func_020009d0_(13, PIXELS(590), PIXELS(920));
     Func_020009d0_(14, PIXELS(624), PIXELS(939));
-    Func_020009d0_(15, PIXELS(632), PIXELS(920));
+    Func_020009d0(15, PIXELS(632), PIXELS(920));
     Actor_GetById(13)->angle = 0x4000;
     Func_02000a90(13, 0x6000);
     Actor_GetById(14)->angle = 0;

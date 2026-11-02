@@ -144,7 +144,7 @@ void Func_02002f70(void) {
   Func_02005764(5, 0);
   Actor_Turn(24, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_Walk(5, 440, 296);
-  Func_02005774_(5, FACING_EAST);
+  Func_02005774(5, FACING_EAST);
   Func_02005764(5, 0);
   Actor_Turn(5, FACING_NORTHWEST, 0);
   Camera_SetBounds(PIXELS(414), -1, PIXELS(272), 1);
@@ -178,11 +178,11 @@ void Func_02002f70(void) {
   Actor_Slide(gMainRoutineWork.currentOwner, PIXELS(472), PIXELS(204), fast);
   Actor_Slide(7, PIXELS(440), PIXELS(204), fast);
   Actor_Slide(23, PIXELS(456), PIXELS(204), slow);
-  Actor_Slide(6, PIXELS(488), PIXELS(204), fast);
+  Func_0200571c(6, PIXELS(488), PIXELS(204), fast);
   wait(1);
   Func_02005764(23, 0);
   Actor_Turn(24, FACING_NORTH + FACING_STEP, 0);
-  Camera_SetBounds(PIXELS(440), -1, PIXELS(264), 1);
+  Camera_MoveWithinMapBounds(PIXELS(440), -1, PIXELS(264), 1);
   Func_020057b4();
   Actor_Jump(24, 4, 10);
   Func_02005764(0x4018, 0);

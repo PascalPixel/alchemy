@@ -19,8 +19,8 @@ void Func_02000a78(s32 a0, s32 a1, s16 a2) {
   t0 = Value4(Import_ActorCreate, 0x2a0, (a0 << 16), ((a1 + 3) << 16),
               0x980000);
   FIELD_AT((t0 + 0x55), u8, 0) = 4;
-  Call2(Actor_SetPartAttribute, t0, (u16)a2);
-  Call2(Scene_SetActorSpritePriority, t0, 2);
-  Call2(Func_020032e0, t0, 7);
-  Call2(Actor_SetSingleChildFlags, t0, 0);
+  Actor_SetPartAttribute(t0, (u16)a2);
+  Scene_SetActorSpritePriority(t0, 2);
+  Func_020032e0(t0, 7);
+  Actor_SetSingleChildFlags(t0, 0);
 }

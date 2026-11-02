@@ -13,10 +13,10 @@ void Func_02003fa4();
 struct Actor *Actor_GetById();
 
 void Func_0200208c(void) {
-  ((void (*)())Func_02003e64)();
-  Call1((void (*)())Func_02003fa4, 0);
-  Call3((void (*)())Func_02003f0c, gMainRoutineWork.currentOwner, 6, 1);
-  ((void (*)())Func_02003e6c)();
+  Func_02003e64();
+  Func_02003fa4(0);
+  Func_02003f0c(gMainRoutineWork.currentOwner, 6, 1);
+  Func_02003e6c();
   return;
 }
 

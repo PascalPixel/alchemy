@@ -46,11 +46,6 @@ static inline s32 FlagCheck(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static inline void FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
 void Func_020000c8(void) {
   if (FlagCheck(0x200) == 0) {
     Func_020002b8();
@@ -68,10 +63,10 @@ void Func_020000c8(void) {
     Actor_GetById(8)->actionFlags |= 1;
     Actor_GetById(9)->actionFlags |= 1;
     ObjArm(8, FACING_SOUTH, 0);
-    ObjArm(9, FACING_SOUTH, 0);
+    Actor_ArmCallback(9, FACING_SOUTH, 0);
     Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    FlagSet(0x200);
+    GameFlag_SetBit(0x200);
     Func_02000338();
     MapCopyAttr(11, 9, 4, 1, 8, 14);
     if (FlagCheck(0x301) == 0) {
@@ -81,7 +76,7 @@ void Func_020000c8(void) {
       Func_02000310(8, 0, 5);
       Motion_SetModeAndWaitAnimation(9, 3);
       Func_02000318(9, 0);
-      FlagSet(0x301);
+      GameFlag_SetBit(0x301);
       Func_020002c0();
     }
   }

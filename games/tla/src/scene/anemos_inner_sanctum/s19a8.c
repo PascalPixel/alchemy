@@ -55,12 +55,8 @@ void Func_020019a8(void) {
   asm("");
   sprite = effect->animation;
   ((struct SpriteView *)sprite)->mode = 2;
-  /* FAKEMATCH(one-pass): REG_WINOUT is stored before REG_DISPCNT's address is
-   * built; as a plain store, 2 of 98 instructions differ in tla-en. */
-  do {
-    REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
-                 WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;
-  } while (0);
+  REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
+               WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
   Func_020034b8(204);
   object->motionFlags = 3;

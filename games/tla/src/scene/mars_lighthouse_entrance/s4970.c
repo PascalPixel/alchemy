@@ -20,21 +20,16 @@ void Func_02004970(const u16 *list) {
     return;
   }
   spec = list;
-next:
-  asm("" : : : "memory");
-
-  id = spec[0];
-  object = Actor_GetById(id);
-  mode = spec[1];
-  flag = spec[2];
-  object->collisionFlags &= 0xfe;
-  Actor_SetSingleChildFlags(object, 0);
-  Func_02004a60(id, (u16)mode, (u16)flag, object->terrainId);
-  limit = 0xff;
-  spec += 3;
-  first = spec[0];
-  asm volatile("" : "+l"(limit));
-  if (first != ((limit << 8) + 0xff)) {
-    goto next;
-  }
+  do {
+    id = spec[0];
+    object = Actor_GetById(id);
+    mode = spec[1];
+    flag = spec[2];
+    object->collisionFlags &= 0xfe;
+    Actor_SetSingleChildFlags(object, 0);
+    Func_02004a60(id, (u16)mode, (u16)flag, object->terrainId);
+    limit = 0xff;
+    spec += 3;
+    first = spec[0];
+  } while (first != ((limit << 8) + 0xff));
 }

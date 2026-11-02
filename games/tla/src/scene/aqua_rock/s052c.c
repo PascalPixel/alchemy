@@ -5,17 +5,9 @@ void Func_0200052c(struct Actor *object) {
     struct Actor *child;
     s32 spread = Random16Far();
     s32 x = object->x;
-    s32 bias;
 
-    /* FAKEMATCH: keeps the x load before the spread is scaled (differ 4
-     * without) */
-    __asm__("" : : "r"(x));
     x += spread * 48;
-    bias = -0x180000;
-    /* FAKEMATCH: keeps the bias load before the kind is built (differ 4
-     * without) */
-    __asm__("" : : "r"(bias));
-    child = Import_ActorCreate(0x2a2, x + bias, object->y, object->z);
+    child = Import_ActorCreate(0x2a2, x - 0x180000, object->y, object->z);
     if (child != 0) {
       Actor_SetSingleChildFlags(child, 0);
       child->update = (void (*)(void))Func_020004e4;

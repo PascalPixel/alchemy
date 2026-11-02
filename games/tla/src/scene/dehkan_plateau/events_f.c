@@ -50,46 +50,26 @@ struct CellRecord {
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
 static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
                                           s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02003bf0(a, b, c, d, e, f);
 }
 
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
 void Func_02002140(void) {
-  s32 set = Flag_Test(0x207);
+  s32 set = GameFlag_Test(0x207);
 
   if (set == 0) {
     Actor_GetById(8)->motionFlags = set;
     Map_CopyAttributes(51, 12, 1, 1, 47, 12);
-    Flag_Set(0x202);
+    GameFlag_SetBit(0x202);
   }
 }
 
 void Func_02002180(void) {
-  if (Flag_Test(0x207) == 0) {
+  if (GameFlag_Test(0x207) == 0) {
     Map_CopyAttributes(48, 11, 1, 1, 47, 12);
-    Flag_Clear(0x202);
+    GameFlag_ClearBit(0x202);
   }
 }
 

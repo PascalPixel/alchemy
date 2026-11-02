@@ -80,11 +80,6 @@ static __inline__ void Actor_Walk(s32 id, s32 x, s32 z) {
   Actor_SetPositionAndReset(id, x, z);
 }
 
-static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ArmCallback(id, angle, frames);
-}
-
 static __inline__ void Camera_SetSpeed(s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020057a4(speed, acceleration);
@@ -101,7 +96,7 @@ void Func_02000cf0(struct Actor *object) {
   Camera_SetSpeed(0x10000, 0x2000);
   Func_02005714(39, 164 << 17, 148 << 17);
   FieldEvent_Wait(30);
-  Actor_Turn(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(15);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 39);
   Func_0200578c(gMainRoutineWork.currentOwner, 257, 30);
@@ -112,7 +107,7 @@ void Func_02000cf0(struct Actor *object) {
   Actor_Walk(39, 320, 240);
   Actor_Walk(39, 304, 216);
   Actor_Walk(39, 280, 216);
-  Actor_Walk(39, 280, 184);
+  Actor_SetPositionAndReset(39, 280, 184);
   FieldEvent_Wait(20);
   Actor_SetAngleToward(39, gMainRoutineWork.currentOwner, 0);
   FieldEvent_Wait(10);
@@ -127,9 +122,9 @@ void Func_02000cf0(struct Actor *object) {
     Func_0200578c(39, a, b);
   }
   Actor_Walk(39, 344, 184);
-  Actor_Walk(39, 344, 200);
+  Actor_SetPositionAndReset(39, 344, 200);
   FieldEvent_Wait(2);
-  Actor_Turn(39, FACING_WEST, 0);
+  Actor_ArmCallback(39, FACING_WEST, 0);
   FieldEvent_Wait(15);
   Func_02005854(152);
   Actor_GetById(39)->velocityY = PIXELS(4);
@@ -155,7 +150,7 @@ void Func_02000cf0(struct Actor *object) {
   Actor_SetSpeed(39, 0x20000, 0x10000);
   Actor_Walk(39, 376, 184);
   Actor_Walk(39, 392, 200);
-  Actor_Walk(39, 408, 184);
+  Actor_SetPositionAndReset(39, 408, 184);
   FieldEvent_Wait(15);
   Func_02005854(152);
   Actor_GetById(39)->velocityY = PIXELS(6);

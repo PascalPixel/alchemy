@@ -39,8 +39,7 @@ void Func_02000a68(void) {
       Func_02001cc4();
       Func_02001dcc(0);
       Func_02001d74(gMainRoutineWork.currentOwner, 0x102);
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,
-                                                0);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02001ccc();
@@ -58,8 +57,7 @@ void Func_02000af8(void) {
       Func_02001cc4();
       Func_02001dcc(0);
       Func_02001d74(gMainRoutineWork.currentOwner, 0x102);
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,
-                                                0);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02001ccc();
@@ -79,8 +77,7 @@ void Func_02000ba8(void) {
       Func_02001cc4();
       Func_02001dcc(0);
       Func_02001d74(gMainRoutineWork.currentOwner, 0x102);
-      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16,
-                                                0);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02001ccc();
@@ -107,12 +104,11 @@ void Func_02000c38(void) {
 }
 
 s32 Func_02000cb4(void) {
-  s32 angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
   u16 facing;
 
-  /* FAKEMATCH: the native loads the angle before building the quarter turn. */
-  __asm__ volatile("" : "+r"(angle));
-  facing = (s16)((angle + 0x2000) & 0xc000);
+  facing =
+      (s16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+            0xc000);
   Func_02001cc4();
   Func_02001dcc(0);
   if (facing) {
@@ -126,12 +122,11 @@ s32 Func_02000cb4(void) {
 }
 
 s32 Func_02000d20(void) {
-  s32 angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
   u16 facing;
 
-  /* FAKEMATCH: the native loads the angle before building the quarter turn. */
-  __asm__ volatile("" : "+r"(angle));
-  facing = (s16)((angle + 0x2000) & 0xc000);
+  facing =
+      (s16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+            0xc000);
   Func_02001cc4();
   Func_02001dcc(0);
   if (facing) {

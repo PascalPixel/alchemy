@@ -16,11 +16,11 @@ s32 Func_02003bd0();
 void Func_020006d4(void) {
   s32 t0;
 
-  t0 = Value1(Actor_GetById, 13);
+  t0 = Actor_GetById(13);
   Func_02003bc8();
-  Call1(Func_02003c88, 0);
+  Func_02003c88(0);
   if ((FIELD_AT(t0, s32, 8) >> 19) == 0x17) {
-    Call1(GameFlag_SetBit, 0x879);
+    GameFlag_SetBit(0x879);
   }
   Func_02003bd0();
 }

@@ -63,8 +63,7 @@ void Func_02000640(void) {
                                        *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Func_02001060(18, 0, 0);
-    Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
-          0x6666);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 528, 276);
     Func_02001018();
   }

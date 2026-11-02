@@ -28,23 +28,23 @@ void Func_020010ac(void) {
   s32 t12, cue;
 
   Func_02001254();
-  Call1(Func_02001324, 0);
-  Call2(Actor_StartRepeatedMotion, 8, 2);
-  Call1(FieldEvent_Wait, 20);
+  Func_02001324(0);
+  Actor_StartRepeatedMotion(8, 2);
+  FieldEvent_Wait(20);
   Call2(Func_020012f4, 0x10000, 0);
-  Call2(Func_020012ec, 0x10003, 1);
-  Call1(Func_020012fc, 0x3c);
-  Call1(FieldEvent_Wait, 60);
+  Func_020012ec(0x10003, 1);
+  Func_020012fc(0x3c);
+  FieldEvent_Wait(60);
   Call3(Func_02001244, (s32)MsgSummonGuardianOfWind, 0, 2);
-  Call2(Func_020012ec, 0x10000, 0);
-  Call1(Func_020012fc, 0x3c);
-  Call1(FieldEvent_Wait, 60);
-  t12 = Value1(Actor_GetById, FIELD_AT(gMainRoutineWork, s32, 532));
+  Func_020012ec(0x10000, 0);
+  Func_020012fc(0x3c);
+  FieldEvent_Wait(60);
+  t12 = Actor_GetById(FIELD_AT(gMainRoutineWork, s32, 532));
   if (t12 != 0) {
-    Call3(Actor_ResetAndSetPosition, 8, FIELD_AT(t12, s16, 10),
-          FIELD_AT(t12, s16, 18));
+    Actor_ResetAndSetPosition(8, FIELD_AT(t12, s16, 10),
+                              FIELD_AT(t12, s16, 18));
   }
-  Call1(FieldEvent_Wait, 20);
+  FieldEvent_Wait(20);
   Call2(Party_SetFields1eeAnd1f0, (s32)&SceneId_Ov675Room3, 2);
   FIELD_AT(gMainRoutineWork, u8, 587) = 2;
   cue = 0x67;

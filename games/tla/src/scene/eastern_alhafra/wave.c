@@ -27,9 +27,6 @@ void Func_02000a44(void) {
   channel[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   channel[5] &= ~DMA_ENABLE;
   line++;
-  /* FAKEMATCH: steps the cursor before the stop's dummy read; without the
-   * barrier it comes after (differ 2). */
-  __asm__ volatile("" : "+r"(line));
   (void)channel[5];
   Dma_Set(line, (void *)&REG_BG1VOFS, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);

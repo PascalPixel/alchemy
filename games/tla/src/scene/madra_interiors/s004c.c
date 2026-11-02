@@ -6,7 +6,7 @@ const u8 *Func_0200004c(void) {
     return gData_02002828;
   if (gMainRoutineWork.entrance == 20)
     return gData_02002750;
-  if (FlagCheck(0x8ff))
+  if (GameFlag_Test(0x8ff))
     return gData_02002480;
   return gData_02002240;
 }
@@ -38,15 +38,15 @@ void Func_020000fc(void) {
   } else {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     // The Japanese edition has no choice prompt.
-    if (FlagCheck(0x8ff))
+    if (GameFlag_Test(0x8ff))
       Func_02001e18((s32)MsgMadraInteriors155);
-    else if (FlagCheck(0x8ab))
+    else if (GameFlag_Test(0x8ab))
       Func_02001e18((s32)MsgMadraInteriors87);
     else
       Func_02001e18((s32)MsgMadraInteriors39);
     Func_02001e30(22, 0);
 #else
-    if (FlagCheck(0x8ff)) {
+    if (GameFlag_Test(0x8ff)) {
       s32 msg = (s32)MsgMadraInteriors155;
 
       Func_02001e18(msg);
@@ -60,7 +60,7 @@ void Func_020000fc(void) {
       }
       Func_02001e30(22, 0);
     } else {
-      if (FlagCheck(0x8ab))
+      if (GameFlag_Test(0x8ab))
         Func_02001e18((s32)MsgMadraInteriors87);
       else
         Func_02001e18((s32)MsgMadraInteriors39);

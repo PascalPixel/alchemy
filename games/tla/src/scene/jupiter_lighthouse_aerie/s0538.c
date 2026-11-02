@@ -50,9 +50,6 @@ s32 Func_02000604(void) {
   {
     s32 last = 6;
 
-    /* FAKEMATCH: ⚓️ builds the last argument before it loads x and z; plain, it
-     * comes between the loads (differ 2 at each call). */
-    asm volatile("" : "+l"(last));
     Func_02002a78(object->x, object->z, 0, last);
   }
   if (GameFlag_Test(0xa0b)) {
@@ -70,8 +67,6 @@ s32 Func_02000604(void) {
   {
     s32 last = 6;
 
-    /* FAKEMATCH: as above. */
-    asm volatile("" : "+l"(last));
     Func_02002a78(object->x, object->z, 0, last);
   }
   BYTE_AT(Actor_GetById(11), 0x62) = 1;

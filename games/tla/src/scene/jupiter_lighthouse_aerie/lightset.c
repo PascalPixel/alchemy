@@ -48,8 +48,6 @@ void Func_020008dc(s32 id) {
   object = Actor_GetById(id);
   object->motionFlags = 4;
   height = object->terrainHeight;
-  /* FAKEMATCH: ⚓️ loads the ground height before it clears the word */
-  asm volatile("" : "+l"(height));
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
   {

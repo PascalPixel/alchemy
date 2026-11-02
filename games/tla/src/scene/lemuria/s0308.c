@@ -26,9 +26,6 @@ void Func_02000308(void) {
   struct Actor *object = Actor_GetById(18);
   s16 angle = object->angle;
 
-  /* FAKEMATCH: the action's address is built after the angle is loaded (differ
-   * 4 without it). */
-  __asm__("" : "+l"(object));
   object->action = 1;
   Func_02001bcc();
   Func_02001d04(0);
@@ -52,9 +49,6 @@ void Func_02000398(void) {
   struct Actor *object = Actor_GetById(19);
   s16 angle = object->angle;
 
-  /* FAKEMATCH: the action's address is built after the angle is loaded, as in
-   * Func_02000308. */
-  __asm__("" : "+l"(object));
   object->action = 1;
   Func_02001bcc();
   Func_02001d04(0);

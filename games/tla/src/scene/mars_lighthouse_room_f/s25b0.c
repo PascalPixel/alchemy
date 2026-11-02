@@ -27,8 +27,7 @@ void Func_020025b0(void) {
 
   if (!GameFlag_Test(0x109))
     Iwram_ClearWords(work, 116);
-  object =
-      (struct Actor *)Value4((s32 (*)())Func_02005498, 365, 1, 0, 0);
+  object = (struct Actor *)Func_02005498(365, 1, 0, 0);
   object->unk5c[0] = 2;
   Func_02005480(object, 1);
   animation = object->animation;

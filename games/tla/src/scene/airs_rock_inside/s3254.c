@@ -33,7 +33,7 @@ void Func_02003254(void) {
     Func_02005f74(gData_02006064);
   } else if (scene == (s32)&SceneId_Ov664Room7) {
     ClearLayer2Shape(0x2600000, 0x1500000);
-    ClearLayer2Shape(0x2700000, 0x1500000);
+    Func_02005df4(0x2700000, 0x1500000, 2, 0);
     Func_02005f74(gData_02006068);
   } else if (scene == (s32)&SceneId_Ov664Room8) {
     Func_02005f74(gData_02006072);

@@ -17,7 +17,7 @@ void Func_0200006c(void) {
     } else {
       struct Actor *leader;
 
-      Actor_CommitPositionAndActivate_(4, 0, 16);
+      Actor_CommitPositionAndActivate(4, 0, 16);
       Actor_SetSpeedParameters_(8, 0x20000, 0x10000);
       Actor_SetPositionAndReset_(8, 440, 440);
       Actor_SetSpeedParameters_(8, 0x13333, 0x9999);
@@ -53,25 +53,17 @@ void Func_02000158(void) {
     FieldEvent_Wait(5);
     party = &gMainRoutineWork;
     z = Actor_GetById(party->currentOwner)->z;
-    /* FAKEMATCH: ⚓️ loads the leader's z before it builds the limit */
-    asm volatile("" : "+l"(z));
     limit = 0x1880000;
     id = party->currentOwner;
     if (z < limit)
-      Actor_SetPositionAndReset_(id, 472, 376);
+      Actor_SetPositionAndReset(id, 472, 376);
     else
-      Actor_SetPositionAndReset_(id, 472, 408);
+      Actor_SetPositionAndReset(id, 472, 408);
     id = 4;
-    /* FAKEMATCH: ⚓️ builds the id before the zero */
-    asm volatile("" : "+l"(id));
     Func_020004f4(id, FACING_EAST);
     FieldEvent_Wait(10);
-    {
-      struct MainRoutineWork *state = &gMainRoutineWork;
 
-
-      state->ownerOverride = 1;
-    }
+    gMainRoutineWork.ownerOverride = 1;
     Func_0200050c(1);
   } else {
     FieldEvent_Wait(20);

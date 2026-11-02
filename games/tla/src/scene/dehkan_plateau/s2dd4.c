@@ -25,44 +25,38 @@ void Actor_WatchAndSetScript();
 void Func_02002dd4(void) {
   struct Actor *actor;
 
-  actor = (struct Actor *)Value1((s32 (*)())Actor_GetById, 16);
+  actor = Actor_GetById(16);
   Func_02003c28();
-  Call1(Func_02003d78, 0);
-  Call2(Actor_WatchAndSetScript, gMainRoutineWork.currentOwner, 16);
-  ((struct Actor *)Value0((s32 (*)())Func_02003cf8))->motionFlags = 0;
-  Call4(Camera_MoveWithinMapBounds, PIXELS(760), PIXELS(32), PIXELS(204), 1);
+  Func_02003d78(0);
+  Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 16);
+  Func_02003cf8()->motionFlags = 0;
+  Camera_MoveWithinMapBounds(PIXELS(760), PIXELS(32), PIXELS(204), 1);
   Func_02003cf0();
-  Call3(Actor_SetAngleToward, 16, gMainRoutineWork.currentOwner, 0);
+  Actor_SetAngleToward(16, gMainRoutineWork.currentOwner, 0);
   // Called for its value, which is unused: as Call3 the actor id is loaded
   // before the 0x100's shift.
   Value3((s32 (*)())Func_02003cc8, 16, 0x100, 40);
-  Call3(Actor_SetSpeedParameters, 16, 0x20000, 0x10000);
-  Call1(Func_02003df8, 153);
+  Actor_SetSpeedParameters(16, 0x20000, 0x10000);
+  Func_02003df8(153);
   actor->velocityY = 0x80000;
-  Call2(Actor_SetSingleChildFlags,
-        Value1((s32 (*)())Actor_GetById, 16), 0);
-  Call3(Actor_SetPositionAndReset, 16, 760, 200);
-  Call2(Actor_SetSingleChildFlags,
-        Value1((s32 (*)())Actor_GetById, 16), 1);
-  Call1(FieldEvent_Wait, 20);
-  Call1(Func_02003df8, 153);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
+  Actor_SetPositionAndReset(16, 760, 200);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 1);
+  FieldEvent_Wait(20);
+  Func_02003df8(153);
   actor->velocityY = 0x80000;
-  Call2(Actor_SetSingleChildFlags,
-        Value1((s32 (*)())Actor_GetById, 16), 0);
-  Call3(Actor_SetPositionAndReset, 16, 792, 200);
-  Call2(Actor_SetSingleChildFlags,
-        Value1((s32 (*)())Actor_GetById, 16), 1);
-  Call3(Func_02002698, 9, 16, 0x210);
-  Call1(Func_02003df8, 153);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
+  Actor_SetPositionAndReset(16, 792, 200);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 1);
+  Func_02002698(9, 16, 0x210);
+  Func_02003df8(153);
   actor->velocityY = 0x80000;
-  Call2(Actor_SetSingleChildFlags,
-        Value1((s32 (*)())Actor_GetById, 16), 0);
-  Call3(Actor_SetPositionAndReset, 16, 824, 200);
-  Call2(Actor_SetSingleChildFlags,
-        Value1((s32 (*)())Actor_GetById, 16), 1);
-  Call1(FieldEvent_Wait, 20);
-  Call2(Actor_WatchAndSetScript, 16, gMainRoutineWork.currentOwner);
-  Call1(Actor_Stop, gMainRoutineWork.currentOwner);
-  Call1(FieldEvent_Wait, 20);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
+  Actor_SetPositionAndReset(16, 824, 200);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 1);
+  FieldEvent_Wait(20);
+  Actor_WatchAndSetScript(16, gMainRoutineWork.currentOwner);
+  Actor_Stop(gMainRoutineWork.currentOwner);
+  FieldEvent_Wait(20);
   Func_02003c30();
 }

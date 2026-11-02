@@ -42,7 +42,7 @@ void Func_02000da8(s32 id) {
   Actor_SetAngleToward(id, owner, 20);
   Func_02001104(MsgGuardsAnIntruder);
   Func_0200110c(id, 0);
-  Call2((void (*)())Func_02001124, owner, 0x101);
+  Func_02001124(owner, 0x101);
   Actor_SetModeById(id, 4);
   FieldEvent_Wait(30);
   Func_0200110c(id, 0);
@@ -61,7 +61,7 @@ void Func_02000e28(s32 id) {
   Actor_SetAngleToward(id, owner, 20);
   Func_02001104(MsgGrrrrrRrrruffRrufff);
   Func_0200110c(id, 0);
-  Call2((void (*)())Func_02001124, owner, 0x101);
+  Func_02001124(owner, 0x101);
   Actor_SetModeById(id, 4);
   FieldEvent_Wait(30);
   Func_0200110c(8, 0);

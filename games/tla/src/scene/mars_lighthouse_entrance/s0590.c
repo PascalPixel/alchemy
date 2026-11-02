@@ -38,7 +38,7 @@ void Func_02000590(void) {
     WORD_AT(Actor_GetById(gMainRoutineWork.currentOwner), 108) = 0;
     Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
     Func_02004cd8_(gMainRoutineWork.currentOwner, PIXELS(688), PIXELS(360));
-    Camera_SetBounds(PIXELS(688), -1, PIXELS(360), 1);
+    Camera_MoveWithinMapBounds(PIXELS(688), -1, PIXELS(360), 1);
     Func_02004d20();
     Func_02004dc8();
     FieldEvent_Wait(40);

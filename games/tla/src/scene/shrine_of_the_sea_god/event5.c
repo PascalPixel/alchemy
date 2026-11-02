@@ -17,8 +17,8 @@ void Func_020018bc(void) {
   Func_02003b08(0);
   ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.currentOwner, 408, 360);
   Func_02001340(leader, pillar);
-  ShrineOfTheSeaGod_BlendStart(0, 0, 3, 1, 24, 22);
-  ShrineOfTheSeaGod_BlendStart(40, 0, 2, 1, 24, 24);
+  Func_020039a8(0, 0, 3, 1, 24, 22);
+  Func_020039a8(40, 0, 2, 1, 24, 24);
   wait(1);
   leader->motionFlags = 3;
   Actor_SetSpritePriority(16, 3);
@@ -27,9 +27,9 @@ void Func_020018bc(void) {
   Func_02001658(leader, 2);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      1);
-  ShrineOfTheSeaGod_ObjSpeed(gMainRoutineWork.currentOwner, 0x9999, 0x1999);
-  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 406, 360);
-  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.currentOwner, 400, 392);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x9999, 0x1999);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 406, 360);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 400, 392);
   Func_02003b48(161);
   Func_02003a30(23, 0, 0);
   Func_02003a30(24, 0, 0);

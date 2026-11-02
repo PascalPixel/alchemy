@@ -56,10 +56,6 @@ void Func_020002b8(s32 unused, s32 id) {
   s32 kind;
 
   table = gData_02005b5c;
-  /* FAKEMATCH: the barrier and the byte offset load the table's address first
-   * and x between the offset's shift and subtraction; plainly, 6 instructions
-   * differ in tla-en. */
-  asm volatile("" : "+l"(table));
   x = object->x;
   offset = (id - 18) * 2;
   kind = *(s16 *)((u8 *)table + offset);

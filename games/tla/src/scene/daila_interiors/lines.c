@@ -9,23 +9,23 @@
 
 void Func_020000ac(s32 unused, s32 actor) {
   Daila_Jump(actor, 0x100, 50);
-  Daila_ObjLaunch(actor, 6, 15);
-  Daila_ObjLaunch(actor, 6, 15);
-  Daila_Wait(10);
+  Actor_Jump(actor, 6, 15);
+  Actor_Jump(actor, 6, 15);
+  FieldEvent_Wait(10);
   if (!Daila_FlagCheck(0x200)) {
-    Daila_MessageSet((s32)MsgDailaInteriorsGah);
-    Daila_MessagePut(actor, 0);
+    Import_EventSetMessageId((s32)MsgDailaInteriorsGah);
+    Import_EventShowMessageAndWait(actor, 0);
     Daila_ObjWalk(actor, 360, 72);
-    Daila_ObjTurn(actor, FACING_SOUTH, 0);
-    Daila_FlagSet(0x200);
+    Actor_ArmCallback(actor, FACING_SOUTH, 0);
+    GameFlag_SetBit(0x200);
   } else {
-    Daila_MessageSet((s32)MsgDailaInteriorsYarg);
-    Daila_MessagePut(actor, 0);
+    Import_EventSetMessageId((s32)MsgDailaInteriorsYarg);
+    Import_EventShowMessageAndWait(actor, 0);
     Daila_ObjWalk(actor, 392, 104);
-    Daila_ObjTurn(actor, FACING_WEST, 0);
-    Daila_FlagClr(0x200);
+    Actor_ArmCallback(actor, FACING_WEST, 0);
+    GameFlag_ClearBit(0x200);
   }
-  Daila_Wait(20);
+  FieldEvent_Wait(20);
 }
 
 void Func_02000150(s32 unused, s32 actor) {

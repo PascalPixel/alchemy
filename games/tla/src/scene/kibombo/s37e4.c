@@ -75,7 +75,7 @@ void Func_02003948(void) {
   Func_02005c3c(0);
   Kibombo_CamMove(-1, -1, -1, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Kibombo_ObjSpeed(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   x = leader->x;
   px = x >> 16;
   Func_02005a54(leader, ((8 - px % 16) << 16) + x, leader->y, leader->z);

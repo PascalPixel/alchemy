@@ -3,13 +3,7 @@
 
 void Func_020017f4(struct FieldActor *object) {
   struct FieldActor *target = (struct FieldActor *)WORD_AT(object, 104);
-  s32 lift;
 
   object->priorityFlags ^= 2 << (gFrameCount & 1);
-  lift = 128;
-  /* FAKEMATCH: the listing starts the lift constant before it loads the target
-   * x and shifts it before the store; as a plain constant it starts after the
-   * load and is shifted after the y load (differ 4) */
-  asm volatile("" : "+l"(lift));
-  SET_POSITION(object, target->x, target->y + (lift << 12), target->z);
+  SET_POSITION(object, target->x, target->y + (128 << 12), target->z);
 }

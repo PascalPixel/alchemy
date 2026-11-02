@@ -26,7 +26,7 @@ void Func_02000070(void) {
     Func_02001050(block);
   if (object->x >> 20 == 16 && object->z >> 20 == 12 &&
       GameFlag_Test_(0x200) == 0) {
-    GameFlag_SetBit_(0x200);
+    GameFlag_SetBit(0x200);
     Actor_SetSpritePriority(10, 3);
     object->motionFlags = 3;
     wait(5);
@@ -34,9 +34,9 @@ void Func_02000070(void) {
     object->motionFlags = 2;
     for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
       Lift_(0x1000000, x, 0, 0);
-      Func_02002458_(0x1000000, x, 0, 0);
+      Func_02002458(0x1000000, x, 0, 0);
       if (i <= 1)
-        Func_02002460_(0x1000000, x, 0, 128);
+        Func_02002460(0x1000000, x, 0, 128);
     }
   }
   object->update = 0;

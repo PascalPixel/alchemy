@@ -24,11 +24,6 @@ static __inline__ void Actor_SetPositionAndCommit_(s32 actor, s32 x,
   Actor_SetPositionAndCommit(actor, x, z);
 }
 
-static __inline__ void Func_02004df8_(s32 value, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004df8(value, mode);
-}
-
 void Func_02003490(void) {
   Func_02004c20();
   Func_02004db8(0);
@@ -39,20 +34,20 @@ void Func_02003490(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->acceleration = 0x2000;
   Actor_GetById(gMainRoutineWork.currentOwner)->speedLimit = 0x20000;
   wait(5);
-  Func_02004df8_(0xc000, 60);
+  Func_02004df8(0xc000, 60);
   Event_StartScreenTransition();
-  Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14537, 8577);
-  Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14465, 8662);
-  Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14452, 8766);
-  Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14387, 8828);
-  Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14331, 8888);
-  Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14284, 8904);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14537, 8577);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14465, 8662);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14452, 8766);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14387, 8828);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14331, 8888);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14284, 8904);
   Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14255, 8870);
   Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14255, 8831);
-  Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14255, 8772);
-  Func_02004df8_(0x14000, 120);
-  Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14275, 8736);
-  Actor_SetPositionAndCommit_(gMainRoutineWork.currentOwner, 14257, 8720);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14255, 8772);
+  Func_02004df8(0x14000, 120);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14275, 8736);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 14257, 8720);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004c28();

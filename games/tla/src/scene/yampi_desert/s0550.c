@@ -10,6 +10,6 @@ void Func_02000550(void) {
   Actor_SetAngleToward(12, gMainRoutineWork.currentOwner, 0);
   Func_020040c8((s32)MsgAsYouCan);
   Func_020040d0(12, 0);
-  Scene_FlagSet(0x88f);
+  GameFlag_SetBit(0x88f);
   Func_02004048();
 }

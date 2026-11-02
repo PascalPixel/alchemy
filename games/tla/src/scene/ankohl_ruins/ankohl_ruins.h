@@ -59,16 +59,6 @@ static inline s32 AnkohlRuins_FlagCheck(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static inline void AnkohlRuins_FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static inline void AnkohlRuins_FlagClear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
 static inline void AnkohlRuins_Call2e24(s32 a, s32 b, s32 c) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002e24(a, b, c);
@@ -89,16 +79,6 @@ static inline void AnkohlRuins_Call2dfc(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002dfc(a, b, c, d, e, f);
-}
-
-static inline void AnkohlRuins_Call2e94(s32 actor, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002e94(actor, a, b);
-}
-
-static inline void AnkohlRuins_ObjOffset(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_OffsetPositionAndResetMotion(actor, x, z);
 }
 
 void Actor_SetSingleChildFlags(struct Actor *object,

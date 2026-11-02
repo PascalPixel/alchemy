@@ -14,11 +14,6 @@ void Func_020015a0(s32 id, s32 value) {
     {
       s16 *count;
 
-      /* FAKEMATCH: the loop note ends the scheduling block after the timer
-       * store; without it the count is addressed before the store (one
-       * reordered row). */
-      do {
-      } while (0);
       count = &gData_02002bda;
       gData_02002bdc[*count] = object;
       (*count)++;

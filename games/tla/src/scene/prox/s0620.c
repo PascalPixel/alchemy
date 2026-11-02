@@ -20,9 +20,9 @@ extern u8 MsgProx33[];
 
 void Func_02000620(void) {
   Func_02004464();
-  Call1(Func_020045ec, 0);
-  Call1(Func_0200451c, (s32)MsgProx33);
-  Call2(Func_0200453c, 0xf, 0);
+  Func_020045ec(0);
+  Func_0200451c((s32)MsgProx33);
+  Func_0200453c(0xf, 0);
   Func_0200446c();
 }
 

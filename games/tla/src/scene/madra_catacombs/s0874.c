@@ -78,21 +78,6 @@ static __inline__ void Flag_Set(s32 flag) {
   GameFlag_SetBit(flag);
 }
 
-static __inline__ void Actor_Place(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001134(id, x, z);
-}
-
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void Cue(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001214(cue);
-}
-
 void Func_02000874(void) {
   struct Actor *object;
   s32 x;
@@ -100,15 +85,13 @@ void Func_02000874(void) {
   if (Flag_Test(0x8cc) == 0) {
     object = Actor_GetById(64);
     x = object->x;
-    /* FAKEMATCH: ⚓️ loads x before it builds the limit */
-    asm volatile("" : "+l"(x));
     if (x < (186 << 16)) {
       Func_0200110c();
       Func_020011ac(0);
-      Cue(204);
+      Func_02001214(204);
       object->motionFlags = 3;
-      Wait(10);
-      Actor_Place(64, 0, 0);
+      wait(10);
+      Func_02001134(64, 0, 0);
       Flag_Set(0x8cc);
       Func_02001114();
     }

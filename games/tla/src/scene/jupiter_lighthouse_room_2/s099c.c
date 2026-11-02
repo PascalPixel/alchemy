@@ -69,7 +69,7 @@ s32 Func_02000854(void) {
 }
 
 s32 Func_0200099c(void) {
-  Call1(Scene_SetArrivalFlags, 0);
-  Call1(Func_02000aa4, 0);
+  Scene_SetArrivalFlags(0);
+  Func_02000aa4(0);
   return 0;
 }

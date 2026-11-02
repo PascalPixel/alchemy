@@ -30,15 +30,15 @@ void Func_0200030c(void) {
   s32 t9;
   s32 t16;
 
-  Call1(GameFlag_SetBit, 0x891);
-  t1 = Value1(Actor_GetById, 10);
+  GameFlag_SetBit(0x891);
+  t1 = Actor_GetById(10);
   FIELD_AT((t1 + 0x55), u8, 0) = 0;
   FIELD_AT(t1, s32, 72) = 0x28f;
   FIELD_AT(t1, s32, 48) = 0x18000;
   FIELD_AT(t1, s32, 52) = 0x8000;
   Call4(Actor_SetPositionAndResetMotion, t1, PIXELS(216), PIXELS(96),
         PIXELS(176));
-  t3 = Value1(Actor_GetById, 11);
+  t3 = Actor_GetById(11);
   FIELD_AT((t3 + 0x55), u8, 0) = 0;
   FIELD_AT(t3, s32, 72) = 0x7ae;
   FIELD_AT(t3, s32, 48) = 0x18000;
@@ -49,20 +49,20 @@ void Func_0200030c(void) {
   Call4(Camera_MoveWithinMapBounds, PIXELS(376), -1, PIXELS(248), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  t9 = Value1(Actor_GetById, 10);
-  Call2(Actor_SetModeById, 10, 4);
-  Call1(Import_SoundPlay, 165);
+  t9 = Actor_GetById(10);
+  Actor_SetModeById(10, 4);
+  Import_SoundPlay(165);
   Call4(Func_02002884, t9, PIXELS(352), PIXELS(8), PIXELS(176));
-  Call2(Func_02002864, t9, (s32)gData_0200b000);
-  Call1(FieldEvent_Wait, 25);
-  Call4(Camera_MoveWithinMapBounds, PIXELS(376), -1, PIXELS(104), 1);
-  t16 = Value1(Actor_GetById, 11);
-  Call2(Actor_SetModeById, 11, 4);
+  Func_02002864(t9, (s32)gData_0200b000);
+  FieldEvent_Wait(25);
+  Camera_MoveWithinMapBounds(PIXELS(376), -1, PIXELS(104), 1);
+  t16 = Actor_GetById(11);
+  Actor_SetModeById(11, 4);
   Call4(Func_02002884, t16, PIXELS(416), PIXELS(8), PIXELS(152));
-  Call2(Func_02002864, t16, (s32)gData_0200b000);
-  Call1(FieldEvent_Wait, 60);
-  Call1(Import_SoundPlay, 165);
-  Call1(Actor_WaitForMoveById, 10);
-  Call1(Actor_WaitForMoveById, 11);
+  Func_02002864(t16, (s32)gData_0200b000);
+  FieldEvent_Wait(60);
+  Import_SoundPlay(165);
+  Actor_WaitForMoveById(10);
+  Actor_WaitForMoveById(11);
   Func_0200298c();
 }

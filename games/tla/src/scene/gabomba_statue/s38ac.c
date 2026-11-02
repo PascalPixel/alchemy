@@ -19,11 +19,6 @@ static __inline__ void *Mem_Alloc(s32 size) {
   return Heap_Alloc(size);
 }
 
-static __inline__ void Vram_Load(s32 handle, s32 size, void *source) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  VramCache_Load(handle, size, source);
-}
-
 void Func_020038ac(void) {
   struct SceneState *state = &gSceneState;
   void *buffer = Mem_Alloc(0xc00);
@@ -31,7 +26,7 @@ void Func_020038ac(void) {
 
   Func_020055cc(gField_CachedTilesA, buffer);
   handle = Resource_FindFreeEntry();
-  Vram_Load(handle, 0xc00, buffer);
+  VramCache_Load(handle, 0xc00, buffer);
   state->tileEntry = handle;
   Heap_Release(buffer);
 }

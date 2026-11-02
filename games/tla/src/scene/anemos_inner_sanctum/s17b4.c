@@ -78,10 +78,6 @@ void Func_020017b4(struct Actor *self) {
 
     self->x = x;
     self->z = next[1];
-    /* FAKEMATCH(barrier): an empty asm holding x and the z just stored, so x
-     * is copied for the call before terrainId is read; as a call on next[0]
-     * and next[1], 2 of 171 instructions differ in tla-en. */
-    asm("" : "+l"(x), "+m"(self->z));
     kind = Func_02003348(self->terrainId, x, next[1]);
   }
   if (kind == 52) {

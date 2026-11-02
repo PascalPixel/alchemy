@@ -52,16 +52,16 @@ void Func_020022a8(void) {
     TLA_EDITION_JA) /* The Japanese edition does not touch flag 0x205. */
   GameFlag_SetBit(0x205);
 #endif
-  Map_CopyCells(35, 34, 3, 5, 25, 34);
-  Map_CopyCells(35, 98, 3, 3, 25, 98);
+  Func_02002df4(35, 34, 3, 5, 25, 34);
+  Func_02002df4(35, 98, 3, 3, 25, 98);
 }
 
 void Func_020022e0(void) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   GameFlag_ClearBit(0x205);
 #endif
-  Map_CopyCells(40, 34, 3, 5, 25, 34);
-  Map_CopyCells(40, 98, 3, 3, 25, 98);
+  Func_02002df4(40, 34, 3, 5, 25, 34);
+  Func_02002df4(40, 98, 3, 3, 25, 98);
 }
 
 void Func_02002318(void) { GameFlag_SetBit(0x205); }

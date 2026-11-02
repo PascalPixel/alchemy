@@ -19,12 +19,12 @@ void Func_02000f24();
 s32 Scene_PrepareMap(void) { return 0; }
 
 void Func_0200091c(void) {
-  ((void (*)())Func_02000e0c)();
+  Func_02000e0c();
   return;
 }
 
 void Func_02000924(void) {
-  ((void (*)())Func_02000f24)();
+  Func_02000f24();
   return;
 }
 
@@ -44,13 +44,9 @@ void Func_02000950(s32 mode, s32 id, s32 x, s32 z) {
     object->scaleY = 0;
   }
   if (mode == 2) {
-    /* FAKEMATCH: ⚓️ loads the scale before it builds the bound. */
-    __asm__ volatile("" : "+l"(object));
     while (object->scaleX < Q16_ONE) {
       wait(1);
       scale = object->scaleX;
-      /* FAKEMATCH: and loads it again before it builds the step. */
-      __asm__ volatile("" : "+l"(scale));
       scale += 0x51e;
       object->scaleX = scale;
       object->scaleY = scale;
@@ -66,11 +62,11 @@ void Func_020009c0(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
   object0 = Actor_GetById(arg1);
   if (arg0 != 2)
     goto L_02008a06;
-  Call3((void (*)())Func_02000e74, arg1, (arg2 << 16), (arg3 << 16));
+  Func_02000e74(arg1, (arg2 << 16), (arg3 << 16));
   object0->y = 0x200000;
   object0->motionFlags = 3;
   object0->gravity = 0x170a;
-  Call1((void (*)())wait, 50);
+  wait(50);
 L_02008a06:
   return;
 }

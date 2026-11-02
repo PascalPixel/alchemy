@@ -111,13 +111,6 @@ static inline void YallamInteriors_ObjArm(s32 actor, s32 angle, s32 frames) {
   Actor_ArmCallback(actor, angle, frames);
 }
 
-static inline void
-YallamInteriors_ObjSetPos(struct YallamInteriorsObject *object, s32 x, s32 y,
-                          s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndResetMotion(object, x, y, z);
-}
-
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
@@ -131,44 +124,15 @@ void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
-static inline void YallamInteriors_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
-
 static inline void YallamInteriors_ObjSpeed(s32 actor, s32 speed,
                                             s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
-static inline void YallamInteriors_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndReset(actor, x, z);
-}
-
 static inline void YallamInteriors_Wait(s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   FieldEvent_Wait(frames);
-}
-
-static inline void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-#define YALLAM_INTERIORS_TASK_ADD(func, priority)                          \
-  {                                                                            \
-    /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
-     * task function load. */                                                       \
-    s32 priority_ = (priority);                                                \
-    Task_Add((func), priority_);                      \
-  }
-
-static inline void YallamInteriors_TaskAdd(void (*func)(void),
-                                           s32 priority) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Task_Add(func, priority);
 }
 
 static inline void YallamInteriors_MessagePut(s32 speaker, s32 flags) {

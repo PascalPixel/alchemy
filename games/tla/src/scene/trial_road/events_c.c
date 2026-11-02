@@ -83,11 +83,6 @@ void Func_020006b4(s32 id) {
       Actor_SetSingleChildFlags(object, 0);
       Func_020057d0(object, gData_02005a7c);
       object->watchedObject = owner;
-      /* FAKEMATCH: stores the owner link before it copies the object for the
-       * priority flags (differ 2 without it; an explicit flag pointer is differ
-       * 27). */
-      do {
-      } while (0);
       object->priorityFlags |= 0x80;
       object->motionFlags = 0;
       object->collisionFlags = 0;

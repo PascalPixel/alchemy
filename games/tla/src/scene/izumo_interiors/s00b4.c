@@ -48,19 +48,9 @@ static inline s32 FlagCheck(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static inline void FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
 static inline void ActorTurn(s32 actor, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(actor, angle, frames);
-}
-
-static inline void ActorAnimate(s32 actor, s32 animation, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200226c(actor, animation, frames);
 }
 
 static inline void LeaderAnimate(s32 animation, s32 frames) {
@@ -72,7 +62,7 @@ static inline void LeaderAnimate(s32 animation, s32 frames) {
 }
 
 const u8 *Func_020000b4(void) {
-  if (FlagCheck(0x927))
+  if (GameFlag_Test(0x927))
     return gData_02002d80;
   if (gMainRoutineWork.entrance == 7)
     return gData_02002cf0;
@@ -80,7 +70,7 @@ const u8 *Func_020000b4(void) {
 }
 
 const u8 *Func_020000f0(void) {
-  if (FlagCheck(0x927))
+  if (GameFlag_Test(0x927))
     return gData_0200323c;
   if (gMainRoutineWork.entrance == 7)
     return gData_02003164;
@@ -95,7 +85,7 @@ void Func_0200012c(s32 actor) {
   } else {
     Func_020021c4();
     Func_020022bc(0);
-    if (FlagCheck(0x927)) {
+    if (GameFlag_Test(0x927)) {
       Func_02002244((s32)MsgNowThatPeace);
       Func_02002254(12, 0);
     } else {
@@ -114,7 +104,7 @@ void Func_020001a8(s32 actor) {
   } else {
     Func_020021c4();
     Func_020022bc(0);
-    if (FlagCheck(0x927))
+    if (GameFlag_Test(0x927))
       Func_02002244((s32)MsgBriggsFromChampa);
     else
       Func_02002244((s32)MsgOfCourseI);
@@ -131,7 +121,7 @@ void Func_02000220(s32 actor) {
   } else {
     Func_020021c4();
     Func_020022bc(0);
-    if (FlagCheck(0x927))
+    if (GameFlag_Test(0x927))
       Func_02002244((s32)MsgYouMustSee);
     else
       Func_02002244((s32)MsgIzumoSLeaders);
@@ -147,11 +137,11 @@ void Func_02000298(void) {
     Func_02002244((s32)MsgSusaSNot);
     Func_02002254(8, 0);
     FieldEvent_Wait(30);
-    ActorAnimate(8, 265, 0);
+    Func_0200226c(8, 265, 0);
     FieldEvent_Wait(60);
     Func_02002254(8, 0);
     FieldEvent_Wait(30);
-    ActorAnimate(8, 261, 0);
+    Func_0200226c(8, 261, 0);
     FieldEvent_Wait(60);
     Func_02002254(8, 0);
     FieldEvent_Wait(30);
@@ -159,7 +149,7 @@ void Func_02000298(void) {
     FieldEvent_Wait(60);
     Func_02002254(8, 0);
     FieldEvent_Wait(30);
-    FlagSet(0x922);
+    GameFlag_SetBit(0x922);
   }
   Actor_SetModeById(8, 4);
   FieldEvent_Wait(60);
@@ -169,7 +159,7 @@ void Func_02000298(void) {
 }
 
 void Func_02000358(void) {
-  FlagSet(0x923);
+  GameFlag_SetBit(0x923);
   Func_02002244((s32)MsgIPrayThat);
   Func_02002254(8, 0);
 }
@@ -180,7 +170,7 @@ void Func_02000378(void) {
   Func_020021c4();
   Func_020022bc(0);
   Actor_SetAngleToward(15, gMainRoutineWork.currentOwner, 0);
-  if (FlagCheck(0x92c)) {
+  if (GameFlag_Test(0x92c)) {
     Func_02002244((s32)MsgWithThisDancing);
     Func_02002254(15, 0);
   } else {
@@ -222,7 +212,7 @@ void Func_02000458(void) {
   } else {
     Func_02002244((s32)MsgAndWhatWere);
     Func_02002254(15, 0);
-    if (FlagCheck(0x923)) {
+    if (GameFlag_Test(0x923)) {
       LeaderAnimate(256, 30);
       Func_0200226c(15, 259, 30);
       Func_02002254(15, 0);
@@ -231,7 +221,7 @@ void Func_02000458(void) {
       FieldEvent_Wait(30);
       Func_02002254(15, 0);
     }
-    FlagSet(0x92b);
+    GameFlag_SetBit(0x92b);
   }
   ActorTurn(15, FACING_SOUTH, 0);
   Func_020021cc();

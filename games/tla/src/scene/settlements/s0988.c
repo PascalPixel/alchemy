@@ -55,7 +55,7 @@ s32 Func_02000988(void) {
       Actor_SetModeById(9, 4);
     }
     if (GameFlag_Test(0x109) && Flag_Test(0x220)) {
-      Flag_Clear(0x220);
+      GameFlag_ClearBit(0x220);
       Func_0200125c();
     }
     Func_02002188(gData_02002272);

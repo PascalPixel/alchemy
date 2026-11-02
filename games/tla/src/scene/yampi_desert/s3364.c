@@ -53,7 +53,7 @@ void Func_02003404(void) {
     Scene_Call4090(17, 344 << 16, 312 << 16);
     Scene_Call4090(18, 312 << 16, 360 << 16);
     Scene_Call4090(19, 280 << 16, 376 << 16);
-    Scene_Call4090(20, 328 << 16, 392 << 16);
+    Func_02004090(20, 328 << 16, 392 << 16);
     if (GameFlag_Test(0x88c)) {
       if (GameFlag_Test(0x8ed)) {
         Func_02003ff0(68, 77, 13, 9, 3, 3);

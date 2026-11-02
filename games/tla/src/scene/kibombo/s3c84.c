@@ -34,13 +34,13 @@ void Func_02003c84(void) {
   wait(1);
 
   Func_02005c9c(212);
-  Kibombo_FadeTo(0x7fff, 0);
+  Func_02005bd4(0x7fff, 0);
   Func_02005be4(1);
   wait(1);
-  Kibombo_CamMove(PIXELS(248), -1, 134 << 18, 0);
+  Camera_MoveWithinMapBounds(PIXELS(248), -1, 134 << 18, 0);
   Func_02005a4c();
   wait(1);
-  Kibombo_FadeTo(0x10000, 0);
+  Func_02005bd4(0x10000, 0);
   Func_02005be4(1);
   wait(1);
   Kibombo_TaskAdd(Func_02002d64, 0x480);
@@ -51,6 +51,6 @@ void Func_02003c84(void) {
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->field1b4 = 1;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Kibombo_Wait(10);
+  FieldEvent_Wait(10);
   Func_02005bc4(10);
 }

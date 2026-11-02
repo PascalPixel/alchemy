@@ -12,7 +12,7 @@ void Func_020017bc(void) {
   gData_02002aa0[0] = Resource_FindFreeEntry();
   /* FAKEMATCH: the empty asm keeps the entry's store ahead of the size, as in
    * the native (plain: differ 2; a block pointer, a struct with the entry
-   * first, a size temporary or the VramBlock_LoadCached_ inline: no closer). */
+   * first, a size temporary or a forwarding inline: no closer). */
   asm("");
   VramCache_Load(gData_02002aa0[0], 0x200, 0);
   /* FAKEMATCH: held in a local, the priority is built before the task function's

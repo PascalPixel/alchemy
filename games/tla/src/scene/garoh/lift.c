@@ -14,13 +14,7 @@ void Func_02000e78(s32 id, struct Actor *object) {
   s32 saved;
 
   object->motionFlags = 0;
-  {
-    /* FAKEMATCH: the id read through r0 into a second variable is copied after
-     * the motion flag store; as a plain copy, 2 instructions differ in
-     * tla-en. */
-    register s32 arg asm("r0") = id;
-    saved = arg;
-  }
+  saved = id;
   for (i = 16; i > 0; i--) {
     object->y -= PIXELS(2);
     FieldEvent_Wait(1);
@@ -136,8 +130,8 @@ void Func_02000fec(void) {
 }
 
 void Func_0200101c(void) {
-  CopyRect(44, 5, 19, 5, 3, 3);
-  CopyRect(108, 5, 83, 5, 3, 2);
+  Func_02005184(44, 5, 19, 5, 3, 3);
+  Func_02005184(108, 5, 83, 5, 3, 2);
   BlendRect(44, 5, 3, 3, 19, 5);
 }
 
@@ -164,8 +158,8 @@ void Func_020010d4(void) {
 }
 
 void Func_02001104(void) {
-  CopyRect(39, 5, 19, 5, 3, 3);
-  CopyRect(103, 5, 83, 5, 3, 2);
+  Func_02005184(39, 5, 19, 5, 3, 3);
+  Func_02005184(103, 5, 83, 5, 3, 2);
   BlendRect(39, 5, 3, 3, 19, 5);
 }
 
@@ -184,10 +178,6 @@ void Func_02001144(void) {
       Flag_Clear(0x318);
     }
     work = Ram_HeapSlots->eventWork;
-    /* FAKEMATCH: the native loads the event work before it starts the field
-     * offset 0xca4; without the barrier the offset is started first (one
-     * reordered pair, differ 2). */
-    __asm__ volatile("" : "+r"(work));
     if (work->fadeLock == 0)
       Func_020052d4(120);
   }
@@ -208,10 +198,6 @@ void Func_020011c8(void) {
       Flag_Clear(0x318);
     }
     work = Ram_HeapSlots->eventWork;
-    /* FAKEMATCH: the native loads the event work before it starts the field
-     * offset 0xca4; without the barrier the offset is started first (one
-     * reordered pair, differ 2). */
-    __asm__ volatile("" : "+r"(work));
     if (work->fadeLock == 0)
       Func_020052d4(120);
   }

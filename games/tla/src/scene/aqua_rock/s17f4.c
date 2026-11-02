@@ -152,10 +152,10 @@ s32 Func_020017f4(void) {
         Actor_GetById(15)->collisionFlags = 0;
         Actor_GetById(15)->priorityFlags |= 2;
         Actor_GetById(15)->update = Func_02001d98;
-        Call6(Func_02002960, 15, 48, 1, 1, 16, 48);
-        Call6(Func_02002960, 17, 50, 1, 1, 16, 50);
-        Call6(Func_02002968, 0x40, 68, 5, 13, 14, 94);
-        Call6(Func_02002960, 64, 68, 5, 8, 14, 34);
+        Func_02002960(15, 48, 1, 1, 16, 48);
+        Func_02002960(17, 50, 1, 1, 16, 50);
+        Func_02002968(0x40, 68, 5, 13, 14, 94);
+        Func_02002960(64, 68, 5, 8, 14, 34);
       }
     }
     if (!GameFlag_Test(265)) {

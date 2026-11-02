@@ -20,12 +20,12 @@ s32 Actor_SetModeById();
 
 void Func_02001ac4(s32 a0, s32 a1) {
   Func_020059c4();
-  Call2(Func_020059dc, Value1(Actor_GetById, a0), 2);
-  Call1(Func_020059f4, 0xc9);
-  Call1(FieldEvent_Wait, 60);
-  Call2(Func_020059dc, Value1(Actor_GetById, a0), 0);
+  Func_020059dc(Actor_GetById(a0), 2);
+  Func_020059f4(0xc9);
+  FieldEvent_Wait(60);
+  Func_020059dc(Actor_GetById(a0), 0);
   Func_020059d4();
   Func_020059cc();
-  Call2(Actor_SetModeById, a1, 1);
+  Actor_SetModeById(a1, 1);
 }
 

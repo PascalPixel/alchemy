@@ -23,7 +23,7 @@ s32 Func_020001e8(void) {
   struct JupiterLighthouseRoom6EventWork *work = Ram_HeapSlots->eventWork;
 
   work->screenEffect = 0x204;
-  if (JupiterLighthouseRoom6_FlagCheck(0xa19)) {
+  if (GameFlag_Test(0xa19)) {
     Func_02001b6c(12, PIXELS(72), PIXELS(600));
     Func_020000b4(0);
   }

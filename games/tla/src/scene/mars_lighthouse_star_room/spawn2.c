@@ -29,14 +29,8 @@ void Func_02001928(struct Actor *object, s32 part) {
 
   object->motionFlags = zero;
   object->collisionFlags = zero;
-  {
-    s32 three = 3;
 
-    /* FAKEMATCH(barrier): an asm holding a 3 builds the part mask before the
-     * sprite loads; without it, 4 of 30 instructions differ in tla-en. */
-    asm volatile("" : : "r"(three));
-    ((struct SpriteParts *)object->animation)->part = part;
-  }
+  ((struct SpriteParts *)object->animation)->part = part;
   Actor_SetSingleChildFlags(object, 0);
   Func_020041dc(object, gData_02004744);
   object->action = zero;

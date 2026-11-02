@@ -20,14 +20,14 @@ s32 Func_0200010c(void) {
   s32 t2;
 
   Func_020009b0();
-  Call1(Func_02000a50, 0);
-  t2 = Value1(GameFlag_Test, 0x301);
+  Func_02000a50(0);
+  t2 = GameFlag_Test(0x301);
   if (t2 != 0) {
-    Call1(Func_02000a18, (s32)MsgYallamInteriors39);
+    Func_02000a18((s32)MsgYallamInteriors39);
   } else {
-    Call1(Func_02000a18, (s32)MsgYallamInteriors35);
+    Func_02000a18((s32)MsgYallamInteriors35);
   }
-  Call2(Func_02000a28, 16, 0);
+  Func_02000a28(16, 0);
   Func_020009b8();
   return 0;
 }

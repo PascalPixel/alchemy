@@ -19,19 +19,9 @@ void Func_02001360(s32 x, s32 y, s32 z, s32 value, s32 timer);
 
 void Func_020013b0(s32 id) {
   struct Actor *object = Actor_GetById(id);
-  s32 x = object->x;
-  s32 dx;
-  s32 y;
 
-  /* FAKEMATCH: the native loads x, builds the x offset, loads y and then adds
-   * the offset; without these three barriers y is loaded after the add (one
-   * reordered pair, differ 2). */
-  __asm__ volatile("" : "+r"(x));
-  dx = 0x80000;
-  y = object->y;
-  /* FAKEMATCH: third barrier of the three above. */
-  __asm__ volatile("" : "+r"(dx));
-  Func_02001360(x + dx, y + 0x1c0000, object->z, 0x1000, 20);
+  Func_02001360(object->x + 0x80000, object->y + 0x1c0000, object->z, 0x1000,
+                20);
   Func_02005394(151);
   FieldEvent_Wait(20);
   Func_02001360(object->x - 0x80000, object->y + 0x1c0000, object->z, 0xf000,

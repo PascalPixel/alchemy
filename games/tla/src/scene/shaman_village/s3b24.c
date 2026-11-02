@@ -21,10 +21,10 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Func_020048c4();
   Func_02004a24(0);
   if (mode == 2)
-    ShamanVillage_SePlay(188);
+    Import_SoundPlay(188);
   else
-    ShamanVillage_SePlay(158);
-  ShamanVillage_MapCopy(a, b, c, d, mode, f);
+    Import_SoundPlay(158);
+  Func_02004844(a, b, c, d, mode, f);
   FieldEvent_Wait(20);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
@@ -37,8 +37,8 @@ void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   }
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                                           gData_02004c08);
-  wait_(12);
-  ShamanVillage_SePlay(123);
+  wait(12);
+  Import_SoundPlay(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004a04(work->exit);

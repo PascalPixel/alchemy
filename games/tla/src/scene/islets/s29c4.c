@@ -7,7 +7,7 @@
 #include "scene_tables.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
-#define OBJECT(id) ((struct Actor *)Value1(Actor_GetById, (id)))
+#define OBJECT(id) ((struct Actor *)Actor_GetById((id)))
 
 extern const u8 gData_02004508[];
 extern const u8 gData_02004554[];
@@ -45,15 +45,14 @@ void Func_020029c4(void) {
   struct Actor *guide = OBJECT(9);
   u8 *done;
 
-  Call2(Func_02003eec, 9, gMainRoutineWork.currentOwner);
-  Call3(Func_02003edc, 10, PIXELS(240), PIXELS(540));
-  Call1(wait, 1);
+  Func_02003eec(9, gMainRoutineWork.currentOwner);
+  Func_02003edc(10, PIXELS(240), PIXELS(540));
+  wait(1);
   guide->angle = FACING_SOUTH;
   leader->update = Func_02001278;
-  Call2(Actor_SetPartAttribute,
-        Value1(Actor_GetById, gMainRoutineWork.currentOwner), 15);
-  Call2(Actor_SetModeById, 9, 3);
-  Call1(wait, 1);
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
+  Actor_SetModeById(9, 3);
+  wait(1);
 #if (LANGUAGE !=                                                               \
      LANGUAGE_JAPANESE) /* The Japanese edition leaves the transition word. */
   *(s32 *)(EVENT_WORK + 0x1ac) = 513;
@@ -61,32 +60,30 @@ void Func_020029c4(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Call3(Actor_SetSpeedParameters, 9, 0xcccc, 0x6666);
-  Call3(Actor_SetSpeedParameters, 10, 0xcccc, 0x6666);
+  Actor_SetSpeedParameters(10, 0xcccc, 0x6666);
   OBJECT(10)->update = Func_02000df8;
   guide->update = Func_02000df8;
   done = (u8 *)guide + 0x63;
   *done = 0;
-  Call2(Func_02003dec, (s32)guide, gData_02004508);
-  Call2(Actor_SetMovementTypeById, 10, gData_02004554);
+  Func_02003dec((s32)guide, gData_02004508);
+  Actor_SetMovementTypeById(10, gData_02004554);
   do
-    Call1(wait, 1);
+    wait(1);
   while (*done == 0);
   leader->update = 0;
   guide->update = 0;
   OBJECT(10)->update = 0;
-  Call2(Func_02003f3c, 9, FACING_NORTH);
-  Call2(Func_02003fac, gMainRoutineWork.currentOwner, 9);
-  Call1(Func_02003f24, MsgWellHereWe);
-  Call2(Func_02003f2c, 9, 0);
-  Call2(Actor_SetModeById, 9, 1);
-  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x19999,
-        0xcccc);
-  Call2(Actor_SetPartAttribute,
-        Value1(Actor_GetById, gMainRoutineWork.currentOwner), 0);
-  Call3(Actor_Jump, gMainRoutineWork.currentOwner, 6, 0);
-  Call3(Actor_SetPositionAndCommit, gMainRoutineWork.currentOwner, 152, 742);
+  Func_02003f3c(9, FACING_NORTH);
+  Func_02003fac(gMainRoutineWork.currentOwner, 9);
+  Func_02003f24(MsgWellHereWe);
+  Func_02003f2c(9, 0);
+  Actor_SetModeById(9, 1);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+  Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 0);
+  Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 152, 742);
   Call2(Func_02003f3c, gMainRoutineWork.currentOwner, FACING_SOUTH);
-  Call2(Func_02003f2c, 9, 0);
+  Func_02003f2c(9, 0);
   Func_02003fb4();
   Call2(Func_02003f3c, 9, FACING_SOUTH);
   Func_020034d8();

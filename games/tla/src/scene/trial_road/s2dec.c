@@ -49,12 +49,6 @@ static __inline__ void Actor_ResetAndSetPositionInMode2_(s32 actor,
   Actor_ResetAndSetPositionInMode2(actor, x, z);
 }
 
-static __inline__ void Func_02005960_(s32 actor, s32 value, s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
-  Func_02005960(actor, value, frames);
-}
-
 void Func_020057f8(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02005800(struct Actor *object);
 void Func_02002d78(s32 actor, s32 x, s32 z, s32 angle);
@@ -80,9 +74,9 @@ void Func_02002dec(void) {
   Actor_SetSpeedParameters_(5, 0x10000, 0x8000);
   Actor_SetSpeedParameters_(6, 0x10000, 0x8000);
   Actor_SetSpeedParameters_(7, 0x10000, 0x8000);
-  Actor_ResetAndSetPositionInMode2_(4, Func_02002d20(28), 272);
+  Actor_ResetAndSetPositionInMode2(4, Func_02002d20(28), 272);
   Actor_ResetAndSetPositionInMode2_(7, Func_02002d20(28), 256);
-  Actor_ResetAndSetPositionInMode2_(5, Func_02002d20(27), 248);
+  Actor_ResetAndSetPositionInMode2(5, Func_02002d20(27), 248);
   Actor_ResetAndSetPositionInMode2_(6, Func_02002d20(27), 280);
   Actor_WaitForMoveById(4);
   Actor_ArmCallback(4, Func_02002d50(0), 0);
@@ -101,7 +95,7 @@ void Func_02002dec(void) {
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->motionFlags = 0;
-  Func_020057f8_(object, object->x, object->y + 0x580000, object->z);
+  Func_020057f8(object, object->x, object->y + 0x580000, object->z);
   Func_020057c8(object, 2);
   Func_02005800(object);
   Func_020057c8(object, 1);
@@ -110,7 +104,7 @@ void Func_02002dec(void) {
   object->velocityY = 0x40000;
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
-  Func_020057f8_(object, object->x, object->y, object->z - 0x100000);
+  Func_020057f8(object, object->x, object->y, object->z - 0x100000);
   Func_02005800(object);
   Task_Wait(12);
   object->speedLimit = 0x10000;
@@ -122,17 +116,17 @@ void Func_02002dec(void) {
   object->velocityY = 0x60000;
   object->speedLimit = 0x30000;
   object->acceleration = 0x20000;
-  Func_020057f8_(object, Func_02002d20(37) << 16, object->y, 264 << 16);
+  Func_020057f8(object, Func_02002d20(37) << 16, object->y, 264 << 16);
   Func_02005800(object);
   Task_Wait(6);
   Func_020058f0(13, 8);
   Func_020058f0(14, 8);
-  Actor_SetSpeedParameters_(8, 0x10000, 0x8000);
-  Actor_SetSpeedParameters_(13, 0x10000, 0x8000);
-  Actor_SetSpeedParameters_(14, 0x10000, 0x8000);
-  Actor_ResetAndSetPositionInMode2_(8, Func_02002d20(36), 264);
-  Actor_ResetAndSetPositionInMode2_(13, Func_02002d20(37), 248);
-  Actor_ResetAndSetPositionInMode2_(14, Func_02002d20(37), 280);
+  Actor_SetSpeedParameters(8, 0x10000, 0x8000);
+  Actor_SetSpeedParameters(13, 0x10000, 0x8000);
+  Actor_SetSpeedParameters(14, 0x10000, 0x8000);
+  Actor_ResetAndSetPositionInMode2(8, Func_02002d20(36), 264);
+  Actor_ResetAndSetPositionInMode2(13, Func_02002d20(37), 248);
+  Actor_ResetAndSetPositionInMode2(14, Func_02002d20(37), 280);
   Actor_WaitForMoveById(8);
   Actor_ArmCallback(8, Func_02002d50(0x8000), 0);
   Actor_WaitForMoveById(13);
@@ -140,7 +134,7 @@ void Func_02002dec(void) {
   Actor_WaitForMoveById(14);
   Actor_ArmCallback(14, Func_02002d50(0x8000), 0);
   Func_02005938((s32)MsgTrialRoadSwiftChallenge);
-  Func_02005960_(8, 256, 10);
+  Func_02005960(8, 256, 10);
   Func_02005940(8, 0);
   Motion_SetModeAndWaitAnimation(8, 3);
   Func_02005940(8, 0);
@@ -151,13 +145,13 @@ void Func_02002dec(void) {
   Actor_SetModeById(6, 3);
   Actor_SetModeById(7, 3);
   FieldEvent_Wait(15);
-  Actor_SetSpeedParameters_(4, 0x20000, 0x10000);
+  Actor_SetSpeedParameters(4, 0x20000, 0x10000);
   Actor_SetSpeedParameters_(5, 0x1e666, 0xf333);
   Actor_SetSpeedParameters_(6, 0x1b333, 0xd999);
   Actor_SetSpeedParameters_(7, 0x1cccc, 0xe666);
-  Actor_SetSpeedParameters_(8, 0x20000, 0x10000);
+  Actor_SetSpeedParameters(8, 0x20000, 0x10000);
   Actor_SetSpeedParameters_(13, 0x1e666, 0xf333);
-  Actor_SetSpeedParameters_(14, 0x1b333, 0xd999);
+  Actor_SetSpeedParameters(14, 0x1b333, 0xd999);
   Actor_OffsetPositionAndReset(4, Func_02002d38(3), 0);
   Actor_OffsetPositionAndReset(8, Func_02002d38(-3), 0);
   Task_Wait(1);

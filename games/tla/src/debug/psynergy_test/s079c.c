@@ -43,7 +43,7 @@ s32 Func_0200079c(void) {
   Actor_SetModeById(16, 2);
   Call3((void (*)())Func_02000edc, 9, 0x8000, 0);
   Call2((void (*)())Func_02000ed4, 10, 0x8000);
-  Call2((void (*)())Func_02000ed4, 12, 0);
+  Func_02000ed4(12, 0);
   if (GameFlag_Test(0x300))
     Func_02000dac(36, 28, 1, 1, 10, 10);
   if (GameFlag_Test(0x301))

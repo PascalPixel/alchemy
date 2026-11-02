@@ -20,12 +20,7 @@ s32 Func_02002b64(void) {
 }
 
 void Func_02002bd8(void) {
-  s32 y = Actor_GetById(gMainRoutineWork.currentOwner)->y;
-
-  asm volatile(
-      ""
-      : "+l"(y)); /* FAKEMATCH: the listing loads y before it builds 0x80000 */
-  if (y > 0x80000) {
+  if (Actor_GetById(gMainRoutineWork.currentOwner)->y > 0x80000) {
     Actor_GetById(9)->collisionFlags &= ~8;
     Actor_GetById(10)->collisionFlags &= ~8;
   } else {

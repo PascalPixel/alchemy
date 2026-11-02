@@ -45,12 +45,8 @@ void WAVE_SCROLL(void) {
   scroll = (volatile u16 *)0x04000010;
   *scroll = *line;
   dma = REG_DMA0;
-  /* FAKEMATCH: the one-pass block reads the control before its mask is built,
-   * as in overlay 674's Func_02001cac (differ 4 without it) */
-  do {
-    dma[5] &= 0xc5ff; // stop the start timing and the repeat
-    dma[5] &= 0x7fff; // stop the channel
-  } while (0);
+  dma[5] &= 0xc5ff; // stop the start timing and the repeat
+  dma[5] &= 0x7fff; // stop the channel
   source = line + 1;
   (void)dma[5];
   /* FAKEMATCH: line, reused for the destination, keeps the source step before

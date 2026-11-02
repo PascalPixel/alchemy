@@ -28,37 +28,24 @@ void Func_02003584(void) {
   Func_020051c0();
   Func_02005370(0);
   object->motionFlags = 0;
-  Actor_SetActionVariantValue(gMainRoutineWork.currentOwner, 1);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   object->angle = 0;
-  {
-    s32 *owner = &gMainRoutineWork.currentOwner;
-    /* FAKEMATCH: the mode pinned to r1 and read by an asm is set before the
-     * owner is loaded; as a plain constant, the owner's load comes first (one
-     * reordered row in tla-en). */
-    register s32 mode asm("r1") = 16;
-
-    __asm__("" : "+l"(owner) : "l"(mode));
-    Actor_SetModeById(*owner, mode);
-  }
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 16);
   for (i = 0; i <= 7; i++) {
     Actor_SetPositionAndResetMotion(object, object->x, object->y,
                                     object->z + PIXELS(3));
-    wait_(1);
+    wait(1);
   }
-  FieldEvent_Wait_(20);
+  FieldEvent_Wait(20);
   party = &gMainRoutineWork;
   object->angle = FACING_SOUTH;
-  /* FAKEMATCH: the barrier loads gMainRoutineWork's address among the angle's
-   * stores and builds the owner's offset after them; as plain C, 4
-   * instructions differ in tla-en. */
-  asm volatile("" : "+l"(party));
   Func_020052d0(party->currentOwner, 258);
-  Actor_SetModeById_(party->currentOwner, 27);
-  FieldEvent_Wait_(30);
-  Actor_SetModeById_(party->currentOwner, 28);
-  FieldEvent_Wait_(10);
-  Actor_SetSpritePriority_(party->currentOwner, 3);
+  Actor_SetModeById(party->currentOwner, 27);
+  FieldEvent_Wait(30);
+  Actor_SetModeById(party->currentOwner, 28);
+  FieldEvent_Wait(10);
+  Actor_SetSpritePriority(party->currentOwner, 3);
   for (i = 0; i <= 39; i++) {
     {
       s32 scale = object->scaleX;
@@ -72,7 +59,7 @@ void Func_02003584(void) {
     object->scaleY += delta;
     delta = -0x20000;
     object->y += delta;
-    wait_(1);
+    wait(1);
     if (i == 10)
       Func_020053d8(204);
     if (i == 20) {

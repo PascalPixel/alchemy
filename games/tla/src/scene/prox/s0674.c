@@ -24,15 +24,15 @@ void Func_02000674(void) {
 
   t0 = Func_02000644();
   if (t0 != 0) {
-    Call2(Func_02004634, 0xe, 0x16);
+    Func_02004634(0xe, 0x16);
   } else {
     Func_02004464();
-    Call1(Func_020045ec, 0);
-    t4 = Value1(GameFlag_Test, 0xa3d);
+    Func_020045ec(0);
+    t4 = GameFlag_Test(0xa3d);
     if (t4 != 0) {
-      Call1(Func_0200451c, (s32)MsgProx135);
+      Func_0200451c((s32)MsgProx135);
     } else {
-      Call1(Func_0200451c, (s32)MsgProx56);
+      Func_0200451c((s32)MsgProx56);
     }
     Call2(Func_02004534, 22, 0);
     Func_0200446c();

@@ -55,25 +55,10 @@ static __inline__ s32 Flag_Test(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
 static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
                                           s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02003bf0(a, b, c, d, e, f);
-}
-
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
 }
 
 extern s32 gData_0200567c;
@@ -86,7 +71,7 @@ void Func_02001ee8(void) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (gData_0200567c != (object->x >> 20) ||
         gData_02005678 != (object->z >> 20))
-      Flag_Clear(0x201);
+      GameFlag_ClearBit(0x201);
   }
 }
 
@@ -100,11 +85,11 @@ void Func_02001f38(s32 id) {
 }
 
 void Func_02001f68(void) {
-  if (Flag_Test(0x109) != 0) {
-    if (Flag_Test(0x200) == 0)
+  if (GameFlag_Test(0x109) != 0) {
+    if (GameFlag_Test(0x200) == 0)
       Func_02001500();
   } else {
-    Flag_Set(0x200);
+    GameFlag_SetBit(0x200);
   }
 }
 
@@ -165,10 +150,10 @@ void Func_0200200c(struct Actor *object) {
   if (x == 12) {
     Func_02003c28();
     Func_02003d78(0);
-    Map_CopyAttributes(0, 32, 1, 1, x, 11);
-    Wait(1);
+    Func_02003bf0(0, 32, 1, 1, x, 11);
+    wait(1);
     Func_020015b8(object);
-    Map_CopyAttributes(1, 32, 1, 1, x, 11);
+    Func_02003bf0(1, 32, 1, 1, x, 11);
     Func_02003c30();
   } else if (x == 18) {
     cell = ((struct MapCells *)Ram_HeapSlots->mapWork)->cells;
@@ -181,7 +166,7 @@ void Func_0200200c(struct Actor *object) {
     cell[2] = 11;
   } else if (x == 55) {
     Map_CopyAttributes(53, 20, 1, 1, 54, 20);
-    Map_CopyAttributes(57, 20, 1, 1, 56, 20);
+    Func_02003bf0(57, 20, 1, 1, 56, 20);
   }
 }
 

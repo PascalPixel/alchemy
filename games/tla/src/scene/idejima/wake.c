@@ -63,7 +63,7 @@ void Func_02002c64(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Task_Wait(1);
   Call3(Func_02003228, gMainRoutineWork.currentOwner, PIXELS(384), PIXELS(728));
-  Call3(Func_02003228, 11, PIXELS(384), PIXELS(702));
+  Func_02003228(11, PIXELS(384), PIXELS(702));
   Task_Wait(1);
   Func_02003180();
   Task_Wait(1);
@@ -88,7 +88,7 @@ void Func_02002c64(void) {
   Task_Wait(1);
   Actor_Jump(gMainRoutineWork.currentOwner, 4, 20);
   Import_EventSetMessageId((s32)MsgIdejimaCheckForInjuries);
-  Value2(FieldMessage_ShowAtActor, 11, 0);
+  FieldMessage_ShowAtActor(11, 0);
   Task_Wait(1);
   answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   leader = gMainRoutineWork.currentOwner;

@@ -40,10 +40,6 @@ void Func_02000d40(struct Actor *object) {
     dz = ((Random16Far() & 15) - 8) << 15;
     velocityZ = ((Random16Far() & 31) - 16) << 12;
     z = object->z;
-    /* FAKEMATCH(barrier): the object's z loads between the velocity's shift
-     * and its store, as native; as object->z + dz in the call, 2 of 55
-     * instructions differ in tla-en. */
-    asm("" : "+r"(z) : "r"(velocityZ));
     Func_0200015c(object->x, object->y, z + dz, 0, 0, velocityZ, 0x320001,
                   &config);
   }

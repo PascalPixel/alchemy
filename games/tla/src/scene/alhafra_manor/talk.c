@@ -132,7 +132,7 @@ void Func_02000238(void) {
   FieldEvent_Wait(10);
   Call3((void (*)())Func_02001548, 0x4008, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 4);
-  Call3((void (*)())Func_02001548, 0x4008, 0, 10);
+  Func_02001548(0x4008, 0, 10);
   Func_020014c0();
 }
 

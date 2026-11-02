@@ -2,7 +2,6 @@
 
 void Func_02001464(s32 entrance) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 mode;
   s32 *owner = &gMainRoutineWork.currentOwner;
 
   Func_02001cc4();
@@ -11,11 +10,7 @@ void Func_02001464(s32 entrance) {
   leader->update = (void (*)(void))Func_020013d8;
   leader->motionFlags = 0;
   leader->speedLimit = 0x3333;
-  mode = 2;
-  /* FAKEMATCH: the native sets the mode before it loads the owner (differ 2
-   * without the barrier). */
-  __asm__("" : "+r"(mode), "+r"(owner));
-  Actor_SetModeById(*owner, mode);
+  Actor_SetModeById(*owner, 2);
   Actor_OffsetPositionAndResetMotion(*owner, 0, -8);
   Actor_WaitForMoveById(*owner);
   Actor_SetPartAttribute(Actor_GetById(*owner), 9);

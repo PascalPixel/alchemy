@@ -93,13 +93,10 @@ static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
 }
 
 void Func_02000298(void) {
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s16 facing;
 
-  u16 angle;
-
-  angle = leader->angle;
-  facing = (angle + 0x2000) & ~0x3fff;
+  facing = ((Actor_GetById(gMainRoutineWork.currentOwner)->angle) + 0x2000) &
+           ~0x3fff;
   Actor_SetAngleToward(8, gMainRoutineWork.currentOwner, 0);
   if ((u16)facing == 0xc000) {
     Func_020008a4(8);

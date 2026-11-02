@@ -55,13 +55,13 @@ void Func_020008a4(void) {
   Func_02002938(22, 0, 5);
   Call3((void (*)())Actor_SetPositionAndReset, 4, 68, 280);
   Actor_SetPositionAndReset(4, 68, 272);
-  Call2((void (*)())Func_02002940, 4, FACING_WEST);
+  Func_02002940(4, FACING_WEST);
   FieldEvent_Wait(20);
   Call2((void (*)())Func_02002940, 4, FACING_NORTH);
   FieldEvent_Wait(20);
-  Call2((void (*)())Func_02002940, 4, FACING_EAST);
+  Func_02002940(4, FACING_EAST);
   FieldEvent_Wait(20);
-  Call2((void (*)())Func_02002940, 4, FACING_NORTH);
+  Func_02002940(4, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_SetSingleChildFlags(Actor_GetById(22), 0);
   Actor_SetPartAttribute(Actor_GetById(22), 15);
@@ -70,7 +70,7 @@ void Func_020008a4(void) {
   Func_02000734();
   FieldEvent_Wait(40);
   Camera_MoveWithinMapBounds(PIXELS(68), -1, PIXELS(240), 1);
-  Value2((s32 (*)())FieldMessage_ShowAtActor, 22, 0);
+  FieldMessage_ShowAtActor(22, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Motion_SetModeAndWaitAnimation(22, 4);
     Func_02002938(22, 0, 5);
@@ -84,7 +84,7 @@ void Func_020008a4(void) {
   Motion_SetModeAndWaitAnimation(22, 3);
   FieldEvent_Wait(10);
   Func_02002938(22, 0, 5);
-  Value3((s32 (*)())Func_02002950, 22, 265, 30);
+  Func_02002950(22, 265, 30);
   Func_02002938(22, 0, 5);
   Motion_SetModeAndWaitAnimation(22, 4);
   Func_02002938(22, 0, 5);

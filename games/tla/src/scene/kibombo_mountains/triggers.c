@@ -17,11 +17,7 @@ void Func_02000f40(void) { Func_02000da8(11); }
 void Func_02000f4c(void) { Func_02000da8(11); }
 
 void Func_02000f58(void) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
-
-  /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it builds the offset */
-  asm volatile("" : "+l"(party));
-  if (party->renderMode != 3)
+  if (gMainRoutineWork.renderMode != 3)
     Func_02000da8(12);
 }
 

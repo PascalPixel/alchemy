@@ -59,11 +59,6 @@ static __inline__ void Actor_SetPositionAndReset_(s32 actor, s32 x,
   Actor_SetPositionAndReset(actor, x, z);
 }
 
-static __inline__ void Func_02000ca8_(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02000ca8(actor, x, z);
-}
-
 void Func_020003a0(void) {
   s32 msg;
 
@@ -77,19 +72,19 @@ void Func_020003a0(void) {
   Import_EventResolvePendingActions(0);
   msg = (s32)MsgDailaFelixCall;
   Import_EventSetMessageId(msg);
-  Func_02000ca8_(27, 472 << 16, 264 << 16);
+  Func_02000ca8(27, 472 << 16, 264 << 16);
   Import_EventWait(30);
-  Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 504, 296);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 504, 296);
   Actor_ArmCallback_(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Actor_SetPositionAndCommit_(27, 472, 280);
   Actor_ArmCallback_(27, FACING_SOUTHEAST, 0);
   Import_EventWait(30);
-  Func_02000d08_(27, 256, 0);
+  Func_02000d08(27, 256, 0);
   Import_EventWait(60);
   Import_EventShowMessageAndWait(27, 0);
   Func_02000d48_(5, 8, 16, 0xa000);
   Func_02000d48_(6, 16, 0, 0xa000);
-  Func_02000d48_(28, 32, -8, 0x8000);
+  Func_02000d48(28, 32, -8, 0x8000);
   Import_EventWait(60);
   Import_EventShowMessageAndWait(27, 0);
   Import_EventWait(30);
@@ -97,13 +92,13 @@ void Func_020003a0(void) {
   Import_EventWait(60);
   Import_EventShowMessageAndWait(5, 0);
   Import_EventWait(30);
-  Actor_ArmCallback_(27, FACING_EAST, 0);
+  Actor_ArmCallback(27, FACING_EAST, 0);
   Import_EventWait(30);
   Actor_ArmCallback_(27, FACING_SOUTHEAST, 0);
   Import_EventWait(30);
-  Actor_ArmCallback_(27, FACING_SOUTH, 0);
+  Actor_ArmCallback(27, FACING_SOUTH, 0);
   Import_EventWait(30);
-  Actor_ArmCallback_(27, FACING_SOUTHEAST, 0);
+  Actor_ArmCallback(27, FACING_SOUTHEAST, 0);
   Import_EventWait(30);
   Import_EventShowMessageAndWait(27, 0);
   Import_EventWait(30);
@@ -125,7 +120,7 @@ void Func_020003a0(void) {
   Import_EventWait(60);
   Import_EventShowMessageAndWait(27, 0);
   Import_EventWait(30);
-  Actor_ArmCallback_(27, FACING_NORTH, 0);
+  Actor_ArmCallback(27, FACING_NORTH, 0);
   Import_EventWait(60);
   Import_EventShowMessageAndWait(27, 0);
   Actor_SetAngleToward(27, gMainRoutineWork.currentOwner, 0);
@@ -145,7 +140,7 @@ void Func_020003a0(void) {
     Import_EventSetMessageId(msg + 11);
     Import_EventShowMessageAndWait(27, 0);
     Import_EventWait(60);
-    Func_02000d08_(5, 259, 0);
+    Func_02000d08(5, 259, 0);
     Import_EventWait(60);
     Actor_SetAngleToward(5, 27, 0);
     Import_EventShowMessageAndWait(5, 0);
@@ -170,7 +165,7 @@ void Func_020003a0(void) {
   Import_EventWait(60);
   Import_EventShowMessageAndWait(27, 0);
   Import_EventWait(60);
-  Func_02000d08_(28, 258, 0);
+  Func_02000d08(28, 258, 0);
   Import_EventWait(60);
   Import_EventShowMessageAndWait(28, 0);
   Import_EventWait(60);
@@ -193,12 +188,12 @@ void Func_020003a0(void) {
   Actor_SetAngleToward(6, 27, 0);
   Actor_SetAngleToward(28, 27, 0);
   Import_EventWait(60);
-  Func_02000ca8_(27, 0, 0);
+  Func_02000ca8(27, 0, 0);
   Import_EventWait(120);
   Actor_Jump(5, 4, 20);
   Actor_Jump(5, 4, 20);
   Import_EventWait(30);
-  Func_02000d08_(5, 259, 0);
+  Func_02000d08(5, 259, 0);
   Import_EventWait(60);
   Import_EventShowMessageAndWait(5, 0);
   Import_EventWait(60);
@@ -208,7 +203,7 @@ void Func_020003a0(void) {
   Import_EventWait(60);
   Actor_SetAngleToward(28, gMainRoutineWork.currentOwner, 0);
   Import_EventWait(60);
-  Actor_ArmCallback_(28, FACING_SOUTH, 0);
+  Actor_ArmCallback(28, FACING_SOUTH, 0);
   Import_EventWait(30);
   Import_EventShowMessageAndWait(28, 0);
   Import_EventWait(60);

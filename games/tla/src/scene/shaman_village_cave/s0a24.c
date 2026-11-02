@@ -67,25 +67,25 @@ void Func_02000a24(void) {
   s16 *target;
   s32 angle = 0xe000;
 
-  Call1(GameFlag_ClearBit, 0xa71);
-  Call1(GameFlag_SetBit, 0xa72);
+  GameFlag_ClearBit(0xa71);
+  GameFlag_SetBit(0xa72);
   Func_02001080();
-  Call1(Func_020011e0, 0);
-  Call4(Camera_MoveWithinMapBounds, PIXELS(199), -1, PIXELS(273), 0);
-  Call1(Func_02001138, (s32)MsgTheseGuysWere);
+  Func_020011e0(0);
+  Camera_MoveWithinMapBounds(PIXELS(199), -1, PIXELS(273), 0);
+  Func_02001138((s32)MsgTheseGuysWere);
   Call4(Func_020010f0, 4, PIXELS(184), PIXELS(229), angle);
   Call4(Func_020010f0, 0, PIXELS(200), PIXELS(221), angle);
   Call4(Func_020010f0, 18, PIXELS(208), PIXELS(237), angle);
-  Call2(Actor_SetModeById, 20, 8);
-  Call2(Actor_SetModeById, 19, 8);
-  Call2(Actor_SetModeById, 21, 8);
+  Actor_SetModeById(20, 8);
+  Actor_SetModeById(19, 8);
+  Actor_SetModeById(21, 8);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call2(Motion_SetVarCbAndRefresh, 20, 2);
-  Call1(FieldEvent_Wait, 5);
-  Call3(Func_02001148, 21, 0, 5);
-  Call3(Func_02001148, 19, 0, 5);
-  Call3(Func_02001148, 20, 0, 5);
+  Motion_SetVarCbAndRefresh(20, 2);
+  FieldEvent_Wait(5);
+  Func_02001148(21, 0, 5);
+  Func_02001148(19, 0, 5);
+  Func_02001148(20, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(19, 258, 0)
@@ -95,10 +95,10 @@ void Func_02000a24(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(0, 263, 30)
-  Call3(Func_02001148, 0, 0, 5);
-  Call2(Motion_SetModeAndWaitAnimation, 21, 3);
-  Call1(FieldEvent_Wait, 10);
-  Call3(Func_02001148, 21, 0, 5);
+  Func_02001148(0, 0, 5);
+  Motion_SetModeAndWaitAnimation(21, 3);
+  FieldEvent_Wait(10);
+  Func_02001148(21, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(19, 265, 30) {
@@ -117,70 +117,70 @@ void Func_02000a24(void) {
     EVENT_MESSAGE--;
   }
   EVENT_MESSAGE++;
-  Call3(Func_02001148, 20, 0, 5);
-  Call2(Actor_SetModeById, 20, 1);
-  Call2(Actor_SetModeById, 19, 1);
-  Call2(Actor_SetModeById, 21, 1);
-  Call1(FieldEvent_Wait, 30);
-  Call2(Motion_SetModeAndWaitAnimation, 21, 3);
-  Call1(FieldEvent_Wait, 10);
-  Call3(Func_02001148, 21, 0, 5);
+  Func_02001148(20, 0, 5);
+  Actor_SetModeById(20, 1);
+  Actor_SetModeById(19, 1);
+  Actor_SetModeById(21, 1);
+  FieldEvent_Wait(30);
+  Motion_SetModeAndWaitAnimation(21, 3);
+  FieldEvent_Wait(10);
+  Func_02001148(21, 0, 5);
   Func_02000404();
-  Call1(FieldEvent_Wait, 60);
+  FieldEvent_Wait(60);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(0, 257, 30)
-  Call2(Motion_SetModeAndWaitAnimation, 19, 3);
-  Call1(FieldEvent_Wait, 10);
-  Call3(Func_02001148, 19, 0, 5);
-  Call2(Func_02001158, 0, FACING_SOUTH);
-  Call1(FieldEvent_Wait, 10);
+  Motion_SetModeAndWaitAnimation(19, 3);
+  FieldEvent_Wait(10);
+  Func_02001148(19, 0, 5);
+  Func_02001158(0, FACING_SOUTH);
+  FieldEvent_Wait(10);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(20, 264, 30)
   Call3(Actor_ArmCallback, 0, FACING_NORTHEAST, 0);
-  Call3(Func_02001148, 20, 0, 5);
+  Func_02001148(20, 0, 5);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_CAVE_EMOTE. */
   SHAMAN_VILLAGE_CAVE_EMOTE(21, 265, 30)
-  Call3(Func_02001148, 21, 0, 5);
-  Call2(Motion_SetModeAndWaitAnimation, 19, 3);
-  Call1(FieldEvent_Wait, 10);
-  Call3(Func_02001148, 19, 0, 5);
-  Call2(Motion_SetModeAndWaitAnimation, 20, 3);
-  Call1(FieldEvent_Wait, 10);
-  Call3(Func_02001148, 20, 0, 5);
-  Call2(Actor_SetModeById, 0, 3);
-  Call2(Actor_SetModeById, 4, 3);
-  Call2(Motion_SetModeAndWaitAnimation, 18, 3);
-  Call1(FieldEvent_Wait, 10);
+  Func_02001148(21, 0, 5);
+  Motion_SetModeAndWaitAnimation(19, 3);
+  FieldEvent_Wait(10);
+  Func_02001148(19, 0, 5);
+  Motion_SetModeAndWaitAnimation(20, 3);
+  FieldEvent_Wait(10);
+  Func_02001148(20, 0, 5);
+  Actor_SetModeById(0, 3);
+  Actor_SetModeById(4, 3);
+  Motion_SetModeAndWaitAnimation(18, 3);
+  FieldEvent_Wait(10);
   Call3(Actor_SetSpeedParameters, 19, 0x10000, 0x8000);
   Call3(Actor_SetSpeedParameters, 20, 0x10000, 0x8000);
   Call3(Actor_SetSpeedParameters, 21, 0x10000, 0x8000);
-  Call2(Actor_SetMovementTypeById, 19, gData_020015e0);
-  Call1(FieldEvent_Wait, 20);
-  Call2(Actor_SetMovementTypeById, 20, gData_0200161c);
-  Call1(FieldEvent_Wait, 20);
-  Call2(Actor_SetMovementTypeById, 21, gData_0200161c);
-  Call1(FieldEvent_Wait, 100);
-  Call3(Actor_TurnToFaceEachOther, 0, 4, 0);
-  Call3(Actor_SetAngleToward, 18, 4, 0);
-  Call1(FieldEvent_Wait, 40);
-  Call2(Actor_SetModeById, 0, 3);
-  Call2(Actor_SetModeById, 4, 3);
-  Call2(Motion_SetModeAndWaitAnimation, 18, 3);
-  Call1(FieldEvent_Wait, 10);
-  Call2(Actor_SetModeById, 0, 2);
+  Actor_SetMovementTypeById(19, gData_020015e0);
+  FieldEvent_Wait(20);
+  Actor_SetMovementTypeById(20, gData_0200161c);
+  FieldEvent_Wait(20);
+  Actor_SetMovementTypeById(21, gData_0200161c);
+  FieldEvent_Wait(100);
+  Actor_TurnToFaceEachOther(0, 4, 0);
+  Actor_SetAngleToward(18, 4, 0);
+  FieldEvent_Wait(40);
+  Actor_SetModeById(0, 3);
+  Actor_SetModeById(4, 3);
+  Motion_SetModeAndWaitAnimation(18, 3);
+  FieldEvent_Wait(10);
+  Actor_SetModeById(0, 2);
   target = (s16 *)Value1((s32 (*)())Actor_GetById, 4);
   if (target != 0)
-    Call3(Actor_ResetAndSetPosition, 0, target[5], target[9]);
-  Call1(Actor_WaitForMoveById, 0);
-  Call3(Func_020010e8, 0, 0, 0);
-  Call2(Actor_SetModeById, 18, 2);
+    Actor_ResetAndSetPosition(0, target[5], target[9]);
+  Actor_WaitForMoveById(0);
+  Func_020010e8(0, 0, 0);
+  Actor_SetModeById(18, 2);
   target = (s16 *)Value1((s32 (*)())Actor_GetById, 4);
   if (target != 0)
-    Call3(Actor_ResetAndSetPosition, 18, target[5], target[9]);
-  Call1(Actor_WaitForMoveById, 18);
-  Call3(Func_020010e8, 18, 0, 0);
+    Actor_ResetAndSetPosition(18, target[5], target[9]);
+  Actor_WaitForMoveById(18);
+  Func_020010e8(18, 0, 0);
   Func_02001088();
 }

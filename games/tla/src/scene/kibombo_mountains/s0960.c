@@ -51,11 +51,11 @@ void Func_02000960(void) {
   Func_0200110c(27, 0);
   Value3((s32 (*)())Func_0200111c, 11, 258, 30);
   Func_0200110c(11, 0);
-  Value3((s32 (*)())Func_0200111c, 27, 256, 30);
+  Func_0200111c(27, 256, 30);
   Func_0200110c(27, 0);
   Motion_SetModeAndWaitAnimation(11, 3);
   Func_0200110c(11, 0);
-  Value3((s32 (*)())Func_0200111c, 27, 258, 30);
+  Func_0200111c(27, 258, 30);
   Func_0200110c(27, 0);
   Call3((void (*)())Actor_SetPositionAndReset, 27, 264, 312);
   Call3((void (*)())Actor_ResetAndSetPositionInMode2, 27, 360, 312);
@@ -66,7 +66,7 @@ void Func_02000960(void) {
   Func_0200110c(11, 0);
   Motion_SetVarCbAndRefresh(11, 2);
   FieldEvent_Wait(60);
-  Call3((void (*)())Func_020010d4, 27, 0, 0);
+  Func_020010d4(27, 0, 0);
   Actor_SetMovementTypeById(11, gData_020017f8);
   Func_0200108c();
   GameFlag_SetBit(0x880);

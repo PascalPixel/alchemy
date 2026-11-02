@@ -36,13 +36,13 @@ s32 Func_020006ac(void) {
     }
     ((struct FieldSprite *)Actor_GetById(26)->animation)->unk19 = 1;
     if (Flag_IsSet(0x8ff) == 0 && Flag_IsSet(0x8ab) != 0) {
-      Call3((void (*)())Func_02002b88, 27, 0, 0);
-      Call3((void (*)())Func_02002b88, 28, 0, 0);
+      Func_02002b88(27, 0, 0);
+      Func_02002b88(28, 0, 0);
       if (Flag_IsSet(0x280) == 0)
-        Call3((void (*)())Func_02002b88, 26, 0, 0);
+        Func_02002b88(26, 0, 0);
     } else if (Flag_IsSet(0x8ff) != 0 || Flag_IsSet(0x910) != 0 ||
                Flag_IsSet(0x280) == 0) {
-      Call3((void (*)())Func_02002b88, 26, 0, 0);
+      Func_02002b88(26, 0, 0);
     }
   }
   if (gMainRoutineWork.entrance == 9 && Flag_IsSet(0x913) == 0)
@@ -53,9 +53,9 @@ s32 Func_020006ac(void) {
       Flag_Set(0x98e);
     }
     if (Flag_IsSet(0x98e))
-      Call3((void (*)())Func_02002b88, 33, 0, 0);
+      Func_02002b88(33, 0, 0);
   } else {
-    Call3((void (*)())Func_02002b88, 66, 0, 0);
+    Func_02002b88(66, 0, 0);
   }
   return 0;
 }

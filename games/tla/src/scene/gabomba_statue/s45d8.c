@@ -65,13 +65,8 @@ void Func_02004620(void) {
          * Func_02004530; as state->statueOffset with the barrier, 30 of 74
          * instructions differ in tla-en. */
         register s32 *offset asm("r2") = &state->statueOffset;
-        s32 value = *offset;
 
-        /* FAKEMATCH(barrier): clobbering r1 loads the offset before 0x333 is
-         * built in r1; as *offset += 0x333, 2 of 74 instructions differ in
-         * tla-en. */
-        __asm__("" : "+l"(value) : : "r1");
-        *offset = value + 0x333;
+        *offset += 0x333;
         wait(1);
         i--;
       } while (i >= 0);

@@ -28,16 +28,8 @@ void Func_02003030(void) {
       object->field5c = 2;
       object->motionFlags = 0;
       object->field64 = 0;
-      /* FAKEMATCH: the loop note ends the scheduling block: the native stores
-       * the counter before it takes the flags' address (one reordered pair). */
-      do {
-      } while (0);
       object->priorityFlags &= ~1;
       mask = 13;
-      /* FAKEMATCH: ⚓️ builds the priority mask before loading the sprite, as in
-       * Actor_SpawnGroup; the bit-field store loads the sprite first (differ
-       * 4). */
-      asm volatile("" : "+l"(mask) : : "memory");
       part = (u8 *)object->sprite;
       part[9] = (part[9] & -mask) | 8;
       Actor_SetSingleChildFlags(object, 0);

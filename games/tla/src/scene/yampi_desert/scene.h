@@ -119,16 +119,6 @@ static inline s32 Scene_FlagTest(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static inline void Scene_FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static inline void Scene_FlagClear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
 static inline void Scene_ArmCallback(s32 id, s32 angle, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(id, angle, flags);

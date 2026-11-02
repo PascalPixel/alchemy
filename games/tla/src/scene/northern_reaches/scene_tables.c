@@ -49,8 +49,8 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000064(void) {
-  Call6((void (*)())Func_02000a40, 47, 9, 9, 4, 25, 9);
-  Call6((void (*)())Func_02000a40, 47, 69, 9, 10, 25, 69);
+  Func_02000a40(47, 9, 9, 4, 25, 9);
+  Func_02000a40(47, 69, 9, 10, 25, 69);
   Call6((void (*)())Func_02000a38, 111, 8, 9, 5, 89, 8);
   return;
 }
@@ -62,17 +62,17 @@ void Func_020000a8(void) {
   result0 = Value1((s32 (*)())GameFlag_Test, 0x200);
   if (result0 != 0)
     goto L_02008100;
-  Call1((void (*)())GameFlag_SetBit, 0x200);
-  ((void (*)())Func_02000a68)();
-  Call1((void (*)())Func_02000b30, 0);
-  Call1((void (*)())Func_02000ac0, (s32)MsgShipIceWallFirstApproach);
+  GameFlag_SetBit(0x200);
+  Func_02000a68();
+  Func_02000b30(0);
+  Func_02000ac0((s32)MsgShipIceWallFirstApproach);
   object1 = Actor_GetById(8);
-  Call1((void (*)())Func_02000a30, (s32)object1);
-  Call2((void (*)())Func_02000ad8, 8, FACING_NORTH);
-  Call1((void (*)())FieldEvent_Wait, 5);
-  Call3((void (*)())Func_02000ad0, 5, 0, 5);
-  Call3((void (*)())Func_02000ad0, 11, 0, 5);
-  ((void (*)())Func_02000a70)();
+  Func_02000a30((s32)object1);
+  Func_02000ad8(8, FACING_NORTH);
+  FieldEvent_Wait(5);
+  Func_02000ad0(5, 0, 5);
+  Func_02000ad0(11, 0, 5);
+  Func_02000a70();
 L_02008100:
   return;
 }
@@ -84,28 +84,27 @@ void Func_02000108(void) {
   result0 = Value1((s32 (*)())GameFlag_Test, 0x90c);
   if (result0 != 0)
     goto L_020081d2;
-  Call1((void (*)())GameFlag_SetBit, 0x90c);
-  ((void (*)())Func_02000a68)();
-  Call1((void (*)())Func_02000b30, 0);
-  Call1((void (*)())Func_02000ac0, (s32)MsgShipIceWallCrewReposition);
+  GameFlag_SetBit(0x90c);
+  Func_02000a68();
+  Func_02000b30(0);
+  Func_02000ac0((s32)MsgShipIceWallCrewReposition);
   object1 = Actor_GetById(8);
-  Call1((void (*)())Func_02000a30, (s32)object1);
-  Call1((void (*)())FieldEvent_Wait, 5);
-  Call3((void (*)())Func_02000ad0, 5, 0, 5);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(464), -1, PIXELS(176),
-        1);
-  ((void (*)())Func_02000af0)();
-  Call1((void (*)())FieldEvent_Wait, 5);
+  Func_02000a30((s32)object1);
+  FieldEvent_Wait(5);
+  Func_02000ad0(5, 0, 5);
+  Camera_MoveWithinMapBounds(PIXELS(464), -1, PIXELS(176), 1);
+  Func_02000af0();
+  FieldEvent_Wait(5);
   Call3((void (*)())Func_02000ab0, 11, PIXELS(408), PIXELS(288));
   Call3((void (*)())Func_02000ab0, 5, PIXELS(408), PIXELS(288));
   Call3((void (*)())Func_02000ab0, 6, PIXELS(408), PIXELS(288));
-  Call3((void (*)())Func_02000ad0, 11, 0, 5);
-  Call3((void (*)())Func_02000ad0, 6, 0, 5);
-  Call3((void (*)())Func_02000ad0, 11, 0, 5);
-  Call3((void (*)())Func_02000ab0, 11, 0, 0);
-  Call3((void (*)())Func_02000ab0, 5, 0, 0);
-  Call3((void (*)())Func_02000ab0, 6, 0, 0);
-  ((void (*)())Func_02000a70)();
+  Func_02000ad0(11, 0, 5);
+  Func_02000ad0(6, 0, 5);
+  Func_02000ad0(11, 0, 5);
+  Func_02000ab0(11, 0, 0);
+  Func_02000ab0(5, 0, 0);
+  Func_02000ab0(6, 0, 0);
+  Func_02000a70();
 L_020081d2:
   return;
 }

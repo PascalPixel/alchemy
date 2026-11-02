@@ -71,8 +71,6 @@ void Func_02000abc(void) {
   {
     u8 *party = (u8 *)&gMainRoutineWork;
 
-    /* FAKEMATCH: ⚓️ loads gMainRoutineWork before it builds the offset */
-    asm volatile("" : "+l"(party));
     party[706] = 2;
   }
   Func_02003238(1);

@@ -9,4 +9,4 @@
 #include "call.h"
 s32 Func_02001d44();
 
-void Func_02000130(s32 a0) { Call2(Func_02001d44, 8, a0); }
+void Func_02000130(s32 a0) { Func_02001d44(8, a0); }

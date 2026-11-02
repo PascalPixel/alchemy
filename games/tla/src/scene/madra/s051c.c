@@ -16,18 +16,13 @@ void Func_02002c30(s32 a);
 void Func_02002c58(s32 a);
 void Func_02002c90(s32 a);
 
-static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002b90(id, x, z, angle);
-}
-
 /* FAKEMATCH: the angle passes through a block temporary, as overlay 6a3's PLACE
  * does: the native builds it first and shifts it before the positions (direct:
  * differ 4 and 30 with shared constants). */
 #define PLACE(id, x, z, angle)                                                 \
   {                                                                            \
     s32 angle_ = (angle);                                                      \
-    ObjPlace(id, x, z, angle_);                                                \
+    Func_02002b90(id, x, z, angle_);                                           \
   }
 
 static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {

@@ -19,9 +19,9 @@ void Func_02001f7c(void) {
     Func_02001f3c();
   }
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters_(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 3);
-  Actor_ResetAndSetPositionInMode2_(gMainRoutineWork.currentOwner, 400, 640);
+  Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 400, 640);
   Func_020053d8(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -38,7 +38,7 @@ void Func_02002014(void) {
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   leader->motionFlags = 0;
-  Actor_SetActionVariantValue(gMainRoutineWork.currentOwner, 1);
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   for (i = 0; i < 8; i++) {
     leader->z += PIXELS(1);

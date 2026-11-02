@@ -28,7 +28,7 @@ void Func_02000328(void) {
 
 
   saved = work->value1ac;
-  Func_020041cc_(0x202108, 1);
+  Func_020041cc(0x202108, 1);
   Func_020041cc_(0x10000, 2);
   ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
@@ -37,7 +37,7 @@ void Func_02000328(void) {
   Func_02004284();
   wait(40);
   Func_02000158();
-  Func_020041cc_(0x10000, 1);
+  Func_020041cc(0x10000, 1);
   Func_020041dc(16);
   wait(16);
   {

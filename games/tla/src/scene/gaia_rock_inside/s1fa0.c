@@ -25,13 +25,13 @@ s32 PartyInventory_FindOwner(s32 item);
 void Func_02001fa0(void) {
   s32 t0;
 
-  t0 = Value1(Actor_GetById, 66);
+  t0 = Actor_GetById(66);
   FIELD_AT(t0, s32, 8) = 0x2280000;
   FIELD_AT(t0, s32, 16) = 0x1280000;
   FIELD_AT(t0, s32, 12) = -1966080;
   FIELD_AT(t0, s32, 20) = -2097152;
-  Call1(GameFlag_ClearBit, 0x142);
-  Call1(Func_02004f8c, 0x1042);
+  GameFlag_ClearBit(0x142);
+  Func_02004f8c(0x1042);
 }
 
 /// Examines the altar.

@@ -17,23 +17,21 @@ void Func_02000404(u16 *table) {
     return;
   row = table;
 loop:
-  {
-    object = Actor_GetById(row[0]);
-    animation = row[1];
-    flag = row[2];
+  object = Actor_GetById(row[0]);
+  animation = row[1];
+  flag = row[2];
 
-    Actor_SetSingleChildFlags(object, 0);
-    Func_02002f80(object, (u16)animation + GameFlag_Test((u16)flag));
-    object->motionFlags = 0;
-    /* FAKEMATCH(barrier): the collision byte's address is built after the
-     * motion store, as in the native; as plain statements, 2 of 56
-     * instructions differ in tla-en. */
-    asm("");
-    object->collisionFlags &= 0xfe;
-    object->timer = flag;
-    Func_02000338(object);
-    row += 3;
-  }
+  Actor_SetSingleChildFlags(object, 0);
+  Func_02002f80(object, (u16)animation + GameFlag_Test((u16)flag));
+  object->motionFlags = 0;
+  /* FAKEMATCH(barrier): the collision byte's address is built after the
+   * motion store, as in the native; as plain statements, 2 of 56
+   * instructions differ in tla-en. */
+  asm("");
+  object->collisionFlags &= 0xfe;
+  object->timer = flag;
+  Func_02000338(object);
+  row += 3;
   if (row[0] != 0xffff)
     goto loop;
 }

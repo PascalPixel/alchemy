@@ -92,11 +92,11 @@ void Func_02000810(s32 id) {
   object = Actor_GetById(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Func_02002910_(gMainRoutineWork.currentOwner, 0x102);
-    Actor_CommitPositionAndActivate_(gMainRoutineWork.currentOwner, 0, 16);
-    FieldEvent_Wait_(2);
-    Actor_ArmCallback_(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    FieldEvent_Wait_(10);
+    Func_02002910(gMainRoutineWork.currentOwner, 0x102);
+    Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 0, 16);
+    FieldEvent_Wait(2);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    FieldEvent_Wait(10);
   }
   Func_02002840_(22, 8, 1, 1, 26, 8);
 }
@@ -147,11 +147,11 @@ void Func_020009c0(s32 id) {
   object = Actor_GetById(id);
   if (object->x >> 20 == leader->x >> 20 &&
       object->z >> 20 == leader->z >> 20) {
-    Func_02002910_(gMainRoutineWork.currentOwner, 0x102);
-    Actor_CommitPositionAndActivate_(gMainRoutineWork.currentOwner, 0, 16);
-    FieldEvent_Wait_(2);
-    Actor_ArmCallback_(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    FieldEvent_Wait_(10);
+    Func_02002910(gMainRoutineWork.currentOwner, 0x102);
+    Actor_CommitPositionAndActivate(gMainRoutineWork.currentOwner, 0, 16);
+    FieldEvent_Wait(2);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
+    FieldEvent_Wait(10);
   }
   Func_02002840_(1, 1, 1, 1, 25, 27);
 }

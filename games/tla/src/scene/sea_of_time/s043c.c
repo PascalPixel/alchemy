@@ -25,10 +25,10 @@ void Func_0200043c(void) {
       object->z -= 0x3333;
     if (Func_0200034c(1, center[0] >> 20, center[2] >> 20) >> 8 == 40) {
       turn[0] = SeaOfTime_Cos(-0x200);
-      sine = SeaOfTime_Sin(-0x200);
+      sine = Math_Sine(-0x200);
     } else {
       turn[0] = SeaOfTime_Cos(0x200);
-      sine = SeaOfTime_Sin(0x200);
+      sine = Math_Sine(0x200);
     }
     dx = object->x - center[0];
     dz = object->z - center[2];

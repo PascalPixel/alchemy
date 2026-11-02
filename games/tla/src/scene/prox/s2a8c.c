@@ -53,34 +53,34 @@ void Func_02002a8c(void) {
 
   if (Value1(GameFlag_Test, 0x9c5) != 0) {
     Func_02004464();
-    Call1(Func_020045ec, 0);
-    Call1(Func_0200463c, 78);
+    Func_020045ec(0);
+    Func_0200463c(78);
     Call3(Actor_Jump, 5, 2, 10);
-    Call3(Actor_Jump, 5, 4, 10);
-    Call1(Func_0200451c, (s32)MsgProx153);
+    Actor_Jump(5, 4, 10);
+    Func_0200451c((s32)MsgProx153);
     Call2(Func_02004534, 5, 0);
     Call2(Func_0200456c, 0x33333, 0x6666);
     Call4(Camera_MoveWithinMapBounds, PIXELS(144), -1, PIXELS(228), 1);
     Func_0200457c();
     Prox_Jump(10, 0x108, 0);
-    Call2(Func_02004534, 0x200a, 0);
-    Call1(Func_0200463c, 37);
+    Func_02004534(0x200a, 0);
+    Func_0200463c(37);
     Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
           0x6666);
     Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 136,
           196);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-    Call2(Func_020044dc, 0, gMainRoutineWork.currentOwner);
-    Call2(Func_020044dc, 0xb, gMainRoutineWork.currentOwner);
-    Call1(wait, 1);
+    Func_020044dc(0, gMainRoutineWork.currentOwner);
+    Func_020044dc(0xb, gMainRoutineWork.currentOwner);
+    wait(1);
     Call3(Actor_SetSpeedParameters, 0, 0xcccc, 0x6666);
     Call3(Actor_SetSpeedParameters, 11, 0xcccc, 0x6666);
-    Call2(Actor_SetMovementTypeById, 0, (s32)gData_02005ee8);
-    Call2(Actor_SetMovementTypeAndWaitById, 11, (s32)gData_02005f2c);
+    Actor_SetMovementTypeById(0, (s32)gData_02005ee8);
+    Actor_SetMovementTypeAndWaitById(11, (s32)gData_02005f2c);
     Call2(Motion_SetModeAndWaitAnimation, 9, 3);
     Call2(Func_02004534, 9, 0);
     Call2(Func_0200454c, 5, FACING_SOUTHWEST);
-    Prox_Jump(5, 0x103, 20);
+    Func_0200455c(5, 0x103, 20);
     Call2(Func_02004534, 5, 0);
     Call3(Actor_ArmCallback, 6, FACING_NORTHEAST, 0);
     Prox_Jump(6, 0x108, 20);
@@ -89,11 +89,11 @@ void Func_02002a8c(void) {
     Call2(Motion_SetModeAndWaitAnimation, 7, 3);
     Call2(Func_0200454c, 7, FACING_NORTHEAST);
     Call2(Func_02004534, 7, 0);
-    Prox_Jump(5, 0x107, 20);
+    Func_0200455c(5, 0x107, 20);
     Call2(Func_02004534, 5, 0);
     Call2(Actor_SetModeById, 3, 4);
     Call2(Func_02004534, 3, 0);
-    Prox_Jump(10, 0x108, 0);
+    Func_0200455c(10, 0x108, 0);
     Call2(Func_0200454c, 10, 0xd000);
     Call2(Func_02004534, 10, 0);
     Call2(Func_0200454c, 5, FACING_SOUTH);
@@ -102,25 +102,25 @@ void Func_02002a8c(void) {
     Prox_Jump(1, 0x109, 0);
     Call2(Func_0200454c, 1, FACING_NORTHWEST);
     Call2(Func_02004534, 1, 0);
-    Prox_Jump(2, 0x105, 40);
+    Func_0200455c(2, 0x105, 40);
     Call2(Func_0200454c, 2, FACING_NORTHWEST);
     Call2(Func_02004534, 2, 0);
-    Prox_Jump(0, 0x109, 40);
+    Func_0200455c(0, 0x109, 40);
     Call2(Func_0200454c, 0, 0);
     Call3(Func_0200452c, 0x8000, 0, 0xa);
     Call3(Actor_ArmCallback, 8, 0x3000, 20);
-    Call3(Func_0200452c, 0x4008, 0, 0x14);
-    if (Value1(GameFlag_Test, 0x824) != 0) {
+    Func_0200452c(0x4008, 0, 0x14);
+    if (GameFlag_Test(0x824) != 0) {
       Call2(Func_0200454c, 0, FACING_SOUTH);
       Call2(Actor_SetModeById, 0, 4);
       Call2(Func_02004534, 0, 0);
       Call2(Func_0200454c, 8, 0xd000);
-      Call2(Func_02004534, 8, 0);
+      Func_02004534(8, 0);
       EVENT_WORK->messageId++;
     } else {
       EVENT_WORK->messageId += 2;
       Call2(Func_0200454c, 8, 0xd000);
-      Call2(Func_02004534, 8, 0);
+      Func_02004534(8, 0);
     }
     Call2(Func_0200454c, 0, FACING_SOUTH);
     Call2(Motion_SetModeAndWaitAnimation, 0, 3);
@@ -143,22 +143,22 @@ void Func_02002a8c(void) {
     Call2(Actor_SetModeById, 0, 3);
     Prox_MessageOpen(0x8000, 0);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_WEST, 0);
-    if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Call2(Motion_SetModeAndWaitAnimation, 0, 3);
-      Call2(Func_02004534, 0x8000, 0);
+      Func_02004534(0x8000, 0);
       EVENT_WORK->messageId++;
     } else {
       EVENT_WORK->messageId++;
       Call2(Motion_SetModeAndWaitAnimation, 0, 4);
-      Call2(Func_02004534, 0x8000, 0);
+      Func_02004534(0x8000, 0);
     }
     Call2(Func_0200454c, 5, FACING_NORTHWEST);
     Call3(Actor_Jump, 5, 2, 10);
     Call3(Actor_Jump, 5, 4, 10);
     Call2(Func_02004534, 0x8005, 0);
     Call2(Actor_SetModeById, 0, 3);
-    Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
     Call2(Actor_SetModeById, 11, 3);
     Call2(Actor_SetModeById, 5, 3);
     Call2(Actor_SetModeById, 6, 3);
@@ -183,7 +183,7 @@ void Func_02002a8c(void) {
     Call3(Actor_SetSpeedParameters, 2, 0xcccc, 0x6666);
     Call3(Actor_SetSpeedParameters, 1, 0xcccc, 0x6666);
     Call2(Actor_SetSpritePriority, 0, 2);
-    Call2(Actor_SetSpritePriority, gMainRoutineWork.currentOwner, 2);
+    Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
     Call2(Actor_SetSpritePriority, 11, 2);
     Call2(Actor_SetSpritePriority, 5, 2);
     Call2(Actor_SetSpritePriority, 6, 2);
@@ -196,44 +196,44 @@ void Func_02002a8c(void) {
     Call2(Actor_SetSpritePriority, 1, 2);
     Call2(Func_0200456c, 0x6666, 0xccc);
     Call4(Camera_MoveWithinMapBounds, PIXELS(144), -1, PIXELS(246), 1);
-    Call2(Actor_SetMovementTypeById, 9, (s32)gData_02005f70);
-    Call2(Actor_SetMovementTypeById, 10, (s32)gData_02005fac);
-    Call1(FieldEvent_Wait, 10);
-    Call2(Actor_SetMovementTypeById, 8, (s32)gData_02005fe8);
-    Call2(Actor_SetMovementTypeById, 3, (s32)gData_02006038);
-    Call1(FieldEvent_Wait, 10);
+    Actor_SetMovementTypeById(9, (s32)gData_02005f70);
+    Actor_SetMovementTypeById(10, (s32)gData_02005fac);
+    FieldEvent_Wait(10);
+    Actor_SetMovementTypeById(8, (s32)gData_02005fe8);
+    Actor_SetMovementTypeById(3, (s32)gData_02006038);
+    FieldEvent_Wait(10);
     Call2(Actor_SetMovementTypeById, 6, (s32)gData_02005fe8);
-    Call2(Actor_SetMovementTypeById, 7, (s32)gData_02005fe8);
-    Call1(FieldEvent_Wait, 10);
+    Actor_SetMovementTypeById(7, (s32)gData_02005fe8);
+    FieldEvent_Wait(10);
     Call2(Actor_SetMovementTypeById, 2, (s32)gData_02006038);
-    Call2(Actor_SetMovementTypeById, 1, (s32)gData_02006088);
-    Call1(FieldEvent_Wait, 30);
-    Call2(Actor_SetMovementTypeById, 5, (s32)gData_020060cc);
-    Call1(FieldEvent_Wait, 20);
-    Call2(Actor_SetMovementTypeById, 0, (s32)gData_020060fc);
-    Call2(Actor_SetMovementTypeById, gMainRoutineWork.currentOwner,
-          (s32)gData_0200617c);
-    Call1(FieldEvent_Wait, 10);
-    Call2(Actor_SetMovementTypeAndWaitById, 11, (s32)gData_020061fc);
-    Prox_Jump(11, 0x101, 20);
-    Call3(Actor_ArmCallback, 11, 0xb000, 0);
-    Call1(Actor_RefreshSelectorById, 5);
+    Actor_SetMovementTypeById(1, (s32)gData_02006088);
+    FieldEvent_Wait(30);
+    Actor_SetMovementTypeById(5, (s32)gData_020060cc);
+    FieldEvent_Wait(20);
+    Actor_SetMovementTypeById(0, (s32)gData_020060fc);
+    Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
+                              (s32)gData_0200617c);
+    FieldEvent_Wait(10);
+    Actor_SetMovementTypeAndWaitById(11, (s32)gData_020061fc);
+    Func_0200455c(11, 0x101, 20);
+    Actor_ArmCallback(11, 0xb000, 0);
+    Actor_RefreshSelectorById(5);
     Call3(Actor_ArmCallback, 5, FACING_WEST, 0);
     Call3(Actor_ArmCallback, 1, 0, 40);
     Call3(Actor_ArmCallback, 5, FACING_NORTHWEST, 0);
     Call3(Actor_ArmCallback, 1, FACING_NORTH, 0);
-    Prox_Jump(11, 0x108, 40);
+    Func_0200455c(11, 0x108, 40);
     Prox_MessageOpen(0xa00b, 0);
     Call3(Actor_ArmCallback, 0, 0, 0);
-    if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Call2(Motion_SetModeAndWaitAnimation, 11, 3);
-      Call2(Func_02004534, 0xa00b, 0);
+      Func_02004534(0xa00b, 0);
       EVENT_WORK->messageId++;
     } else {
       EVENT_WORK->messageId++;
       Call2(Motion_SetModeAndWaitAnimation, 11, 4);
-      Call2(Func_02004534, 0xa00b, 0);
+      Func_02004534(0xa00b, 0);
     }
     Call3(Actor_ArmCallback, 0, FACING_NORTH, 20);
     Call2(Func_02004534, 0, 0);
@@ -243,7 +243,7 @@ void Func_02002a8c(void) {
     Call2(Func_02004534, 1, 0);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
     Call3(Actor_ArmCallback, 0, FACING_SOUTHEAST, 0);
-    Prox_Jump(11, 0x100, 0);
+    Func_0200455c(11, 0x100, 0);
     Call3(Actor_ArmCallback, 11, 0x3000, 20);
     Call2(Func_02004534, 11, 0);
     Call2(Motion_SetModeAndWaitAnimation, 5, 3);
@@ -260,23 +260,23 @@ void Func_02002a8c(void) {
     Call2(Func_0200454c, 0, FACING_SOUTHEAST);
     Call2(Func_02004534, 0, 0);
     Call2(Func_0200454c, 11, 0xb000);
-    Prox_Jump(11, 0x103, 0);
+    Func_0200455c(11, 0x103, 0);
     Prox_MessageOpen(0xa00b, 0);
-    if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Call2(Motion_SetModeAndWaitAnimation, 11, 4);
-      Call2(Func_02004534, 0xa00b, 0);
+      Func_02004534(0xa00b, 0);
       EVENT_WORK->messageId++;
     } else {
       EVENT_WORK->messageId++;
       Call2(Motion_SetModeAndWaitAnimation, 11, 3);
-      Call2(Func_02004534, 0xa00b, 0);
+      Func_02004534(0xa00b, 0);
     }
     Prox_Jump(1, 0x101, 20);
     Call2(Func_02004534, 1, 0);
     Call2(Func_0200454c, 11, 0x3000);
     Call2(Func_02004534, 11, 0);
-    Prox_Jump(5, 0x101, 0);
+    Func_0200455c(5, 0x101, 0);
     Call2(Func_02004534, 5, 0);
     Call2(Motion_SetModeAndWaitAnimation, 11, 3);
     Call2(Func_02004534, 0, 0);
@@ -286,10 +286,10 @@ void Func_02002a8c(void) {
     Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
     Call2(Actor_SetModeById, 0, 3);
     Call2(Actor_SetModeById, 1, 3);
-    Call2(Motion_SetModeAndWaitAnimation, 5, 3);
-    Call1(FieldEvent_Wait, 20);
+    Motion_SetModeAndWaitAnimation(5, 3);
+    FieldEvent_Wait(20);
     Call2(Func_02004534, 1, 0);
-    Prox_Jump(11, 0x103, 0);
+    Func_0200455c(11, 0x103, 0);
     Call2(Func_0200454c, 11, 0x3000);
     Call2(Func_02004534, 11, 0);
     Call2(Func_02004564, 1, 0x102);
@@ -308,43 +308,43 @@ void Func_02002a8c(void) {
     Call2(Func_02004534, 5, 0);
     Call2(Func_0200454c, 1, 0);
     Call2(Actor_SetModeById, 5, 3);
-    Call2(Motion_SetModeAndWaitAnimation, 1, 3);
-    Call1(FieldEvent_Wait, 10);
+    Motion_SetModeAndWaitAnimation(1, 3);
+    FieldEvent_Wait(10);
     Call3(Actor_SetSpeedParameters, 5, 0x19999, 0xcccc);
     Call3(Actor_SetSpeedParameters, 1, 0x19999, 0xcccc);
-    Call2(Actor_SetMovementTypeById, 5, (s32)gData_0200622c);
-    Call2(Actor_SetMovementTypeAndWaitById, 1, (s32)gData_02006268);
-    Call1(FieldEvent_Wait, 20);
+    Actor_SetMovementTypeById(5, (s32)gData_0200622c);
+    Actor_SetMovementTypeAndWaitById(1, (s32)gData_02006268);
+    FieldEvent_Wait(20);
     Call2(Func_0200454c, 11, 0xb000);
     Call2(Actor_SetModeById, 11, 3);
     Call2(Func_02004534, 0xa00b, 0);
     Call3(Actor_SetPositionAndReset, 11, 156, 256);
-    Prox_Jump(11, 0x100, 0);
+    Func_0200455c(11, 0x100, 0);
     Call2(Func_02004534, 0, 0);
     Call2(Actor_SetModeById, 0, 4);
     Call2(Func_02004534, 0, 0);
     Call2(Func_0200454c, 11, 0xb000);
     Call2(Func_02004534, 0, 0);
-    Prox_Jump(11, 0x109, 40);
+    Func_0200455c(11, 0x109, 40);
     Prox_MessageOpen(0xa00b, 0);
     Call3(Actor_ArmCallback, 0, 0, 0);
-    if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
         0) {
       Call2(Motion_SetModeAndWaitAnimation, 11, 3);
-      Call2(Func_02004534, 0xa00b, 0);
+      Func_02004534(0xa00b, 0);
       EVENT_WORK->messageId++;
     } else {
       EVENT_WORK->messageId++;
       Call2(Motion_SetModeAndWaitAnimation, 11, 4);
-      Call2(Func_02004534, 0xa00b, 0);
+      Func_02004534(0xa00b, 0);
     }
     Call2(Func_0200454c, 0, FACING_SOUTHEAST);
     Call2(Actor_SetModeById, 11, 4);
     Call3(Func_0200452c, 0xa00b, 0, 0x14);
-    Call2(Func_02004534, 0, 0);
-    Call1(FieldEvent_Wait, 20);
-    Call2(Motion_SetModeAndWaitAnimation, 11, 3);
-    Call1(FieldEvent_Wait, 20);
+    Func_02004534(0, 0);
+    FieldEvent_Wait(20);
+    Motion_SetModeAndWaitAnimation(11, 3);
+    FieldEvent_Wait(20);
     Call2(Func_02004534, 0xa00b, 0);
     Call3(Actor_ArmCallback, 0, 0, 0);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_WEST, 40);
@@ -354,16 +354,16 @@ void Func_02002a8c(void) {
     Call2(Actor_SetModeById, 11, 4);
     Call2(Func_02004534, 0xa00b, 0);
     Prox_Jump(0, 0x101, 0);
-    Prox_Jump(gMainRoutineWork.currentOwner, 0x101, 40);
+    Func_0200455c(gMainRoutineWork.currentOwner, 0x101, 40);
     Call2(Func_02004534, 0xa00b, 0);
     Call2(Actor_SetModeById, 0, 3);
-    Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
+    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
     Call2(Actor_SetModeById, 11, 3);
     Call2(Func_02004534, 0xa00b, 0);
     Call2(Actor_SetModeById, 0, 3);
     Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
-    Call1(FieldEvent_Wait, 20);
-    Prox_Jump(11, 0x100, 0);
+    FieldEvent_Wait(20);
+    Func_0200455c(11, 0x100, 0);
     Call3(Actor_ArmCallback, 11, 0x3000, 20);
     Call3(Actor_Jump, 11, 4, 10);
     Call2(Func_02004534, 0xa00b, 0);
@@ -374,29 +374,29 @@ void Func_02002a8c(void) {
     Call3(Actor_Jump, 11, 4, 10);
     Call2(Func_02004534, 0xa00b, 0);
     Call3(Actor_ArmCallback, 0, 0, 0);
-    Call2(Func_0200454c, gMainRoutineWork.currentOwner, FACING_WEST);
+    Func_0200454c(gMainRoutineWork.currentOwner, FACING_WEST);
     Call2(Func_0200454c, 11, 0xb000);
     Call2(Func_02004534, 0xa00b, 0);
     Call3(Actor_ArmCallback, 0, FACING_SOUTHEAST, 0);
-    Call2(Func_0200454c, gMainRoutineWork.currentOwner, FACING_SOUTH);
+    Func_0200454c(gMainRoutineWork.currentOwner, FACING_SOUTH);
     Call2(Actor_SetModeById, 0, 3);
-    Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
-    Prox_Jump(11, 0x108, 0);
+    Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+    Func_0200455c(11, 0x108, 0);
     Call2(Func_0200454c, 11, 0x3000);
     Call2(Func_02004534, 0xa00b, 0);
     Call2(Actor_SetModeById, 11, 9);
-    Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 0x21);
-    Call2(Actor_SetModeById, 0, 0x28);
-    Call1(Func_02004414, 2);
-    Call1(Func_02004414, 3);
-    Call1(Func_02004414, 4);
-    Call1(Func_02004414, 5);
-    Call1(Func_02004414, 6);
-    Call1(Func_0200463c, 78);
-    Call1(FieldEvent_Wait, 40);
-    Call2(Func_0200459c, 0x10009, 0);
-    Call1(Func_020045a4, 0x78);
-    Call1(wait, 120);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 0x21);
+    Actor_SetModeById(0, 0x28);
+    Func_02004414(2);
+    Func_02004414(3);
+    Func_02004414(4);
+    Func_02004414(5);
+    Func_02004414(6);
+    Func_0200463c(78);
+    FieldEvent_Wait(40);
+    Func_0200459c(0x10009, 0);
+    Func_020045a4(0x78);
+    wait(120);
     // Waits up to 120 frames, or until a key is held.
     i = 0;
     goto test_wait;
@@ -404,14 +404,14 @@ void Func_02002a8c(void) {
     i++;
   test_wait:
     if (i < 120) {
-      Call1(wait, 1);
+      wait(1);
       if (gInput.held == 0)
         goto next_wait;
     }
-    Call2(Func_0200459c, 0, 0);
-    Call1(Func_020045a4, 0x10);
-    Call1(wait, 16);
-    Call1(GameFlag_SetBit, 0x9cc);
-    Call1(Func_0200458c, 3);
+    Func_0200459c(0, 0);
+    Func_020045a4(0x10);
+    wait(16);
+    GameFlag_SetBit(0x9cc);
+    Func_0200458c(3);
   }
 }

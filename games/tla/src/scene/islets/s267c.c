@@ -7,30 +7,20 @@ void Func_0200267c(void) {
   struct Actor *object;
   s16 *exit;
   s32 index;
-  s32 cell;
 
-  /* FAKEMATCH: the listing loads gMainRoutineWork's address before it builds
-   * the owner offset */
-  asm volatile("" : "+l"(party));
   object = Actor_GetById(party->currentOwner);
   Func_02003e64();
   Func_02003fa4(0);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
   Actor_SetModeById(party->currentOwner, 2);
-  Call3((void (*)())Actor_SetSpeedParameters, party->currentOwner, 0x8000,
-        0x4000);
-  cell = object->x >> 16;
-  Func_02003e0c(object, ((8 - cell % 16) << 16) + object->x, object->y,
-                object->z);
+  Actor_SetSpeedParameters(party->currentOwner, 0x8000, 0x4000);
+  Func_02003e0c(object, ((8 - (object->x >> 16) % 16) << 16) + object->x,
+                object->y, object->z);
   Func_02003e14(object);
   object->angle = FACING_NORTH;
   exit = &work->exit;
   index = *exit;
-  /* FAKEMATCH: the listing loads the exit before it builds the cue number */
-  asm volatile("" : "+l"(index));
-  Call1((void (*)())Func_02003ffc, 158);
-  /* FAKEMATCH: the listing subtracts one after the call, not before it */
-  asm volatile("" : "+l"(index));
+  Func_02003ffc(158);
   index--;
   Call3((void (*)())Func_02003e1c, gData_020046bc[index].value,
         gData_020046bc[index].pair.first, gData_020046bc[index].pair.second);

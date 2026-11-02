@@ -48,8 +48,8 @@ void Func_02001bdc(void) { Func_020042f0(gData_02007734); }
 /// their collision flags; then runs Func_02000d70, and Func_020006b4 and
 /// Func_0200062c for object 15.
 void Func_02001bec(void) {
-  Map_CopyCells(11, 22, 11, 8, 11, 64);
-  Map_CopyCells(79, 22, 11, 8, 79, 64);
+  Func_02005818(11, 22, 11, 8, 11, 64);
+  Func_02005818(79, 22, 11, 8, 79, 64);
   OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   OBJECT_BYTE(Actor_GetById(17), 98) = 1;
   OBJECT_BYTE(Actor_GetById(18), 98) = 1;

@@ -44,8 +44,8 @@ void Func_02001880(void) {
   ShamanVillage_ObjTurn(15, FACING_NORTHWEST);
   Func_020049a4(15, 0);
   ShamanVillage_CamMove(-1, -1, -1, 0);
-  ShamanVillage_CamSpeed(0x19999, 0x3333);
-  ShamanVillage_CamMove(PIXELS(224), -1, PIXELS(200), 1);
+  Func_020049e4(0x19999, 0x3333);
+  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(200), 1);
   owner->unk63 = 0;
   shaman->unk63 = 0;
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
@@ -59,7 +59,7 @@ void Func_02001880(void) {
   __asm__("" : : "m"(shaman->unk63));
   Func_02003040();
   ShamanVillage_CamSpeed(0xcccc, 0x1999);
-  ShamanVillage_CamMove(PIXELS(224), -1, PIXELS(168), 1);
+  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(168), 1);
   ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   ShamanVillage_ObjSpeed(15, 0x19999, 0xcccc);
   Actor_ResetAndSetPositionInMode2(gMainRoutineWork.currentOwner, 184, 128);
@@ -114,8 +114,8 @@ void Func_02001aa4(void) {
   ShamanVillage_ObjTurn(15, FACING_NORTHEAST);
   Func_020049a4(15, 0);
   ShamanVillage_CamMove(-1, -1, -1, 0);
-  ShamanVillage_CamSpeed(0x19999, 0x3333);
-  ShamanVillage_CamMove(PIXELS(224), -1, PIXELS(200), 1);
+  Func_020049e4(0x19999, 0x3333);
+  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(200), 1);
   owner->unk63 = 0;
   shaman->unk63 = 0;
   Actor_SetMovementTypeById(15, gData_02004c5c);
@@ -129,11 +129,11 @@ void Func_02001aa4(void) {
   __asm__("" : : "m"(shaman->unk63));
   Func_02003040();
   ShamanVillage_CamSpeed(0xcccc, 0x1999);
-  ShamanVillage_CamMove(PIXELS(224), -1, PIXELS(168), 1);
+  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(168), 1);
   ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
   ShamanVillage_ObjSpeed(15, 0x19999, 0xcccc);
   Actor_ResetAndSetPositionInMode2(15, 184, 128);
-  ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 264, 128);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 264, 128);
   Actor_SetModeById(15, 1);
   wait(1);
   Func_02004934(15, 0, 0);

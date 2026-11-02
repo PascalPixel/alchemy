@@ -51,26 +51,6 @@ void Func_020005cc(s32 skip);
 void Func_020005dc(s32 cue);
 void Func_02000310(s32 kind, s32 frames);
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
-static __inline__ void Show(s32 kind, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02000310(kind, frames);
-}
-
 void Func_02000060(s32 arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   /* FAKEMATCH: pinned to r6 and assigned after the barrier, the countdown's
@@ -111,6 +91,6 @@ void Func_020000b0(s32 arg) {
 }
 
 void Func_02000100(void) {
-  Flag_Set(0x909);
+  GameFlag_SetBit(0x909);
   Func_0200058c(19, 0, 0);
 }

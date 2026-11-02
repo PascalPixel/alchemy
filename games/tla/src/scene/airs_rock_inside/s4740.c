@@ -30,7 +30,11 @@ s32 Actor_WaitForMoveById();
 s32 Actor_ResetAndSetPosition();
 void Actor_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 
-static inline void Call0(void (*f)()) { f(); }
+static inline void Call0(void (*f)()) {
+  /* FAKEMATCH: the call layer without arguments; called directly, the two -1s
+   * before it are negated in the other order (differ 2). */
+  f();
+}
 
 /// Checking the tablet shows its message; the first time (flag 0x8d4 clear)
 /// the scene with actor 6 follows, as Func_020030cc of Magma Rock does with
@@ -39,42 +43,41 @@ void Func_02004534(void) {
   struct FieldActor *object;
 
   Func_02005e14();
-  Call1(Func_02005f2c, 0);
+  Func_02005f2c(0);
   FieldMessage_Show(MsgCheckedTheTablet, 1);
   if (Value1(GameFlag_Test, 0x8d4) != 0) {
     Func_02005e1c();
   } else {
-    Call1(Func_02005ea4, (s32)MsgCheckedTheTablet);
+    Func_02005ea4((s32)MsgCheckedTheTablet);
     EVENT_WORK->messageId++;
     Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xb333,
           0x5999);
     Call3(Actor_SetSpeedParameters, 6, 0xb333, 0x5999);
-    Call2(Func_02005e74, 6, gMainRoutineWork.currentOwner);
-    Call1(FieldEvent_Wait, 1);
+    Func_02005e74(6, gMainRoutineWork.currentOwner);
+    FieldEvent_Wait(1);
     Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner, 256,
           136);
-    Call3(Actor_ResetAndSetPositionInMode2, 6, 272, 136);
-    Call1(Actor_WaitForMoveById,
-          gMainRoutineWork.currentOwner);
-    Call1(Actor_WaitForMoveById, 6);
-    Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_EAST, 0);
-    Call3(Actor_ArmCallback, 6, FACING_WEST, 0);
-    Call1(FieldEvent_Wait, 10);
+    Actor_ResetAndSetPositionInMode2(6, 272, 136);
+    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+    Actor_WaitForMoveById(6);
+    Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
+    Actor_ArmCallback(6, FACING_WEST, 0);
+    FieldEvent_Wait(10);
     Call2(Func_02005eac, 6, 0);
-    Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
-    Call1(FieldEvent_Wait, 30);
-    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 256, 152);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+    FieldEvent_Wait(30);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 256, 152);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    Call1(FieldEvent_Wait, 20);
-    Call3(Actor_ArmCallback, 6, FACING_SOUTH, 0);
-    Call1(FieldEvent_Wait, 20);
-    Call2(Actor_SetModeById, 6, 3);
-    Call1(FieldEvent_Wait, 30);
+    FieldEvent_Wait(20);
+    Actor_ArmCallback(6, FACING_SOUTH, 0);
+    FieldEvent_Wait(20);
+    Actor_SetModeById(6, 3);
+    FieldEvent_Wait(30);
     Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
-    Call1(FieldEvent_Wait, 20);
+    FieldEvent_Wait(20);
     Call3(Actor_SetPositionAndReset, 6, 264, 137);
-    Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
-    Call1(FieldEvent_Wait, 20);
+    Actor_ArmCallback(6, FACING_NORTH, 0);
+    FieldEvent_Wait(20);
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
     Call3(Func_02005dcc, 0x50000, 0x70000, 0x10000);
     Call3(Func_02005dcc, -1, -1, 0xe666);
@@ -83,21 +86,21 @@ void Func_02004534(void) {
      * instructions differ in tla-en. */
     Call0(Func_02005dd4);
     Call2(Func_02004138, 8, 6);
-    Call2(Party_LearnAbility, 6, 0x90);
-    Call1(GameFlag_SetBit, 0x8d4);
-    Call3(Actor_TurnToFaceEachOther, gMainRoutineWork.currentOwner, 6, 0);
-    Call1(FieldEvent_Wait, 10);
-    Call2(Actor_SetModeById, 6, 3);
-    Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
-    Call1(FieldEvent_Wait, 20);
+    Party_LearnAbility(6, 0x90);
+    GameFlag_SetBit(0x8d4);
+    Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 6, 0);
+    FieldEvent_Wait(10);
+    Actor_SetModeById(6, 3);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+    FieldEvent_Wait(20);
     Call3(Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
-    Call2(Actor_SetModeById, 6, 2);
+    Actor_SetModeById(6, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != 0)
-      Call3(Actor_ResetAndSetPosition, 6, FIELD_AT(object, s16, 10),
-            FIELD_AT(object, s16, 18));
-    Call1(Actor_WaitForMoveById, 6);
-    Call3(Func_02005e6c, 6, 0, 0);
+      Actor_ResetAndSetPosition(6, FIELD_AT(object, s16, 10),
+                                FIELD_AT(object, s16, 18));
+    Actor_WaitForMoveById(6);
+    Func_02005e6c(6, 0, 0);
     Actor_SetActionCallback((struct Actor *)Actor_GetById(8), 9);
     Func_02005e1c();
   }

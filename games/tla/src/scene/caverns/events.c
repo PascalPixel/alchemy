@@ -26,32 +26,32 @@ void GameFlag_Test();
 
 void Func_02000e20(void) {
   Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -14);
-  Call3((void (*)())Actor_CommitPositionAndActivate, 4, 16, 0);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  ((void (*)())Func_02000d68)();
+  Actor_CommitPositionAndActivate(4, 16, 0);
+  FieldEvent_Wait(10);
+  Func_02000d68();
   return;
 }
 
 void Func_02000e44(void) {
   Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -14);
-  Value3((s32 (*)())Actor_CommitPositionAndActivate, 4, -16, 0);
-  Value1((s32 (*)())FieldEvent_Wait, 10);
-  Value0((s32 (*)())Func_02000d68);
+  Actor_CommitPositionAndActivate(4, -16, 0);
+  FieldEvent_Wait(10);
+  Func_02000d68();
   return;
 }
 
 void Func_02000e6c(void) {
-  Call3((void (*)())Actor_ArmCallback, 4, FACING_NORTH, 0);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  ((void (*)())Func_02000d68)();
+  Actor_ArmCallback(4, FACING_NORTH, 0);
+  FieldEvent_Wait(10);
+  Func_02000d68();
   return;
 }
 
 void Func_02000e88(s32 arg0) {
   if (arg0 != 1)
     goto L_02008e9c;
-  Value0((s32 (*)())Func_02000d28);
-  Value1((s32 (*)())GameFlag_SetBit, 0x9af);
+  Func_02000d28();
+  GameFlag_SetBit(0x9af);
 L_02008e9c:
   return;
 }
@@ -70,12 +70,12 @@ L_02008eee:
 }
 
 void Func_02000ef4(void) {
-  ((void (*)())Func_020010dc)();
-  Call1((void (*)())Func_0200113c, 0);
+  Func_020010dc();
+  Func_0200113c(0);
   Call6((void (*)())Func_020010ac, 31, 43, 9, 11, 48, 47);
   Call6((void (*)())Func_02001094, 30, 110, 48, 110, 9, 13);
   Call6((void (*)())Func_020010ac, 52, 110, 1, 1, 52, 111);
-  Call1((void (*)())GameFlag_SetBit, 0x917);
-  ((void (*)())Func_020010e4)();
+  GameFlag_SetBit(0x917);
+  Func_020010e4();
   return;
 }

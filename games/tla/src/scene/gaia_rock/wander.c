@@ -43,11 +43,6 @@ void Func_02000474(struct OrbitEffect *effect) {
   effect->x += dx;
   effect->z += dz;
   effect->angle += 0xfff0;
-  /* FAKEMATCH: the empty one-pass block forms the pause address after the angle
-   * store (differ 2 without it), as the battle twin
-   * BattleEffect_WanderAroundAnchor. */
-  do {
-  } while (0);
   if (effect->pause != 0) {
     effect->pause--;
     effect->angle += 0x800;

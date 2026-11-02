@@ -30,13 +30,13 @@ void Func_02000d68(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(15, 3);
     ShamanVillage_CamSpeed(0x19999, 0x3333);
-    ShamanVillage_CamMove(PIXELS(224), -1, PIXELS(280), 1);
-    ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 1);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 246, 292);
     ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 204, 292);
-    ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 182, 280);
-    ShamanVillage_ObjTurn(gMainRoutineWork.currentOwner, 0);
-    ShamanVillage_MessagePut(0x200f, 0);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 182, 280);
+    Func_020049bc(gMainRoutineWork.currentOwner, 0);
+    Func_020049a4(0x200f, 0);
     GameFlag_SetBit(0x200);
     Func_02001380();
   } else {
@@ -54,11 +54,11 @@ void Func_02000e3c(void) {
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(15, 3);
     ShamanVillage_CamSpeed(0x19999, 0x3333);
-    ShamanVillage_CamMove(PIXELS(224), -1, PIXELS(280), 1);
-    ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
-    ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 182, 280);
-    ShamanVillage_ObjTurn(gMainRoutineWork.currentOwner, 0);
-    ShamanVillage_MessagePut(0x200f, 0);
+    Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 1);
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 182, 280);
+    Func_020049bc(gMainRoutineWork.currentOwner, 0);
+    Func_020049a4(0x200f, 0);
     GameFlag_SetBit(0x200);
     Func_02001380();
   } else {

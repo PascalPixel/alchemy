@@ -50,30 +50,10 @@ struct CellRecord {
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
 static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
                                           s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02003bf0(a, b, c, d, e, f);
-}
-
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
 }
 
 void Func_02003c70(s32 id, s32 x, s32 z, s32 angle);
@@ -114,79 +94,14 @@ void Field_DispatchTypeHandler(s32 type);
 void Actor_SetSingleChildFlags(struct Actor *object,
                                         s32 flags);
 
-static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(a, b, c, d);
-}
-
-static __inline__ void Actor_FaceToward(s32 id, s32 target, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetAngleToward(id, target, mode);
-}
-
-static __inline__ void Actor_SetTurn(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003cc8(id, a, b);
-}
-
-static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
-static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndReset(id, x, z);
-}
-
-static __inline__ void Actor_Launch(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_Jump(id, a, b);
-}
-
-static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003c70(id, x, z, angle);
-}
-
-static __inline__ void Actor_PlaceOnTerrain(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003c68(id, x, z);
-}
-
-static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003be0(a, b, c, d, e, f);
-}
-
-static __inline__ void Cue(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003df8(cue);
-}
-
-static __inline__ void Pause(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static __inline__ void Actor_SetVariant(s32 id, s32 variant) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpritePriority(id, variant);
-}
-
-static __inline__ struct Actor *Actor_Get(s32 id) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Actor_GetById(id);
-}
-
 void Func_02002dd4(void);
 
 void Func_02002f74(void) {
-  if (Flag_Test(0x207) != 0)
+  if (GameFlag_Test(0x207) != 0)
     Func_02002f08();
   else
     Func_02002dd4();
-  Flag_Set(0x209);
+  GameFlag_SetBit(0x209);
 }
 
 extern struct Actor *gData_02004420;
@@ -200,6 +115,6 @@ void Func_02002f9c(void) {
   if (gData_02004420 != 0)
     Func_02003bb8(gData_02004420);
   Map_CopyAttributes(1, 0, 1, 1, 15, 5);
-  Flag_Set(0x878);
+  GameFlag_SetBit(0x878);
   Func_02003c30();
 }

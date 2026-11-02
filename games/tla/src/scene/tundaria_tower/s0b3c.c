@@ -26,16 +26,8 @@ void Func_02000b3c(void) {
   Func_020030c8(gMainRoutineWork.currentOwner, 0x102);
   Motion_SetVarCbAndRefresh(gMainRoutineWork.currentOwner, 2);
   FieldEvent_Wait(20);
-  {
-    s32 mode = 5;
-
-    leader->angle = 0xc000;
-    /* FAKEMATCH(barrier): the barrier builds the mode after the angle store and
-     * before the owner's load; as Actor_SetModeById(owner, 5), 2 of 75
-     * instructions differ in tla-en. */
-    asm("" : "+r"(mode) : : "memory");
-    Actor_SetModeById(gMainRoutineWork.currentOwner, mode);
-  }
+  leader->angle = 0xc000;
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 5);
   Actor_SetActionById(gMainRoutineWork.currentOwner, 24);
   FieldEvent_Wait(40);
   Func_02003030(0x1300000, 0x3900000, 0, -12);

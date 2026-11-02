@@ -31,25 +31,25 @@ void Func_0200200c(void) {
   }
   Func_02005868();
   Func_020034b4();
-  Call1(Func_02005990, 4);
+  Func_02005990(4);
   goto L_0200a07c;
 L_0200a02e:
   if (p3 != 5)
     goto L_0200a042;
   Func_02005868();
   Func_020037c8();
-  Call1(Func_02005990, 5);
+  Func_02005990(5);
   goto L_0200a07c;
 L_0200a042:
-  t7 = Value1(GameFlag_Test, 0x9ff);
+  t7 = GameFlag_Test(0x9ff);
   if (t7 == 0)
     goto L_0200a07c;
-  t8 = Value1(GameFlag_Test, 0x283);
+  t8 = GameFlag_Test(0x283);
   if (t8 == 0)
     goto L_0200a064;
-  Call1(Func_02001754, 0);
+  Func_02001754(0);
 L_0200a064:
-  t10 = Value1(GameFlag_Test, 0x385);
+  t10 = GameFlag_Test(0x385);
   if (t10 == 0)
     goto L_0200a078;
   Func_02002db0();
@@ -57,11 +57,11 @@ L_0200a064:
 L_0200a078:
   Func_02002db4();
 L_0200a07c:
-  t13 = Value1(Actor_GetById, gMainRoutineWork.currentOwner);
+  t13 = Actor_GetById(gMainRoutineWork.currentOwner);
   FIELD_AT(t13, u8, 35) = (64 | FIELD_AT(t13, u8, 35));
-  Call1(Func_02001fc4, 1);
-  Call1(Func_020006b4, 10);
-  t16 = Value1(GameFlag_Test, 0x9fc);
+  Func_02001fc4(1);
+  Func_020006b4(10);
+  t16 = GameFlag_Test(0x9fc);
   if (t16 == 0)
     goto L_0200a0bc;
   Call3(Func_020058e0, 10, PIXELS(136), PIXELS(328));

@@ -67,64 +67,9 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static __inline__ void GameFlag_SetBit_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void GameFlag_ClearBit_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
-static __inline__ void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void FieldEvent_Wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static __inline__ struct Actor *Actor_GetById_(s32 id) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Actor_GetById(id);
-}
-
-static __inline__ void Actor_SetModeById_(u32 id, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetModeById(id, mode);
-}
-
-static __inline__ void Actor_SetSpritePriority_(u32 id, s32 variant) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpritePriority(id, variant);
-}
-
-static __inline__ s32 Map_GetTerrainHeight_(s32 layer, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Map_GetTerrainHeight(layer, x, z);
-}
-
 static __inline__ void Func_020023b0_(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020023b0(id, x, z);
-}
-
-static __inline__ void Func_02002400_(void) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002400();
-}
-
-static __inline__ void Func_02002458_(s32 x, s32 z, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002458(x, z, a, b);
-}
-
-static __inline__ void Func_02002460_(s32 x, s32 z, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002460(x, z, a, b);
 }
 
 #endif

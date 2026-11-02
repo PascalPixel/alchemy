@@ -10,6 +10,6 @@
 s32 Actor_SetSingleChildFlags();
 
 s32 Func_02000050(s32 a0) {
-  Call2(Actor_SetSingleChildFlags, a0, 1);
+  Actor_SetSingleChildFlags(a0, 1);
   return 0;
 }

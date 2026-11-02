@@ -13,15 +13,7 @@ void Func_02001e1c(struct Actor *object, s32 part) {
 
   object->motionFlags = zero;
   object->collisionFlags = zero;
-  {
-    s32 three = 3;
-
-    /* FAKEMATCH: an empty asm holding a 3 builds the part mask before the
-     * sprite loads, and the zero stays a variable; as plain C, 4 instructions
-     * differ in tla-en. */
-    asm volatile("" : : "r"(three));
-    ((struct SpriteParts *)object->animation)->part = part;
-  }
+  ((struct SpriteParts *)object->animation)->part = part;
   Actor_SetSingleChildFlags(object, 0);
   Func_02004bd0(object, gData_020056a0);
   object->action = zero;

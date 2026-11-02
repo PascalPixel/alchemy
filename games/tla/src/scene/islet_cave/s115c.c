@@ -15,7 +15,6 @@ void Func_0200115c(void) {
   if (!Flag_IsSet(0x230)) {
     struct Actor *object = Actor_GetById(9);
     struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
-    s32 other;
 
     Flag_Set(0x230);
     Call3((void (*)())Func_0200129c, 9, PIXELS(296), PIXELS(160));
@@ -25,10 +24,6 @@ void Func_0200115c(void) {
           ((owner->z >> 19) << 3) + 24);
     Actor_Stop(8);
     object->speedLimit = 0x10000;
-    other = 9;
-    /* FAKEMATCH: the native loads the second argument before the owner; a
-     * direct call and a forwarding inline load the owner first. */
-    __asm__ volatile("" : "+r"(other));
-    Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, other, 0);
+    Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 9, 0);
   }
 }

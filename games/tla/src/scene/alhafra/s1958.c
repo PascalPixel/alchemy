@@ -32,7 +32,6 @@ extern u8 gMainRoutineWork[];
 void Func_02001958(s32 a0) {
   s32 t22;
   s32 t25;
-  s32 t30;
   s32 t37;
   s32 t40;
 
@@ -63,68 +62,67 @@ void Func_02001958(s32 a0) {
   Call3(Func_02001c84, 0x19, 0, 0xa);
   if (a0 != 1) {
   } else {
-    Call3(Actor_CommitPositionAndActivate, 25, -8, 0);
-    Call1(FieldEvent_Wait, 15);
-    Call2(Actor_StartRepeatedMotion, 25, 3);
-    Call2(Func_02001cac, 0x19, 0x102);
-    Call1(FieldEvent_Wait, 40);
-    t22 = Value1(Actor_GetById, 25);
+    Actor_CommitPositionAndActivate(25, -8, 0);
+    FieldEvent_Wait(15);
+    Actor_StartRepeatedMotion(25, 3);
+    Func_02001cac(0x19, 0x102);
+    FieldEvent_Wait(40);
+    t22 = Actor_GetById(25);
     FIELD_AT((t22 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t22 + 0x5a), u8, 0));
-    Call3(Actor_SetPositionAndReset, 25, 192, 736);
-    Call1(FieldEvent_Wait, 1);
-    t25 = Value1(Actor_GetById, 25);
+    Actor_SetPositionAndReset(25, 192, 736);
+    FieldEvent_Wait(1);
+    t25 = Actor_GetById(25);
     FIELD_AT((t25 + 0x5a), u8, 0) = (1 | FIELD_AT((t25 + 0x5a), u8, 0));
-    Call1(FieldEvent_Wait, 10);
-    Call3(Func_02001c84, 0x19, 0, 0xa);
+    FieldEvent_Wait(10);
+    Func_02001c84(0x19, 0, 0xa);
     {
       s32 b = 0x107, c = 0x1e;
       /* FAKEMATCH: the native schedule sets the first argument last. */
       __asm__ volatile("" : "+l"(b), "+l"(c));
-      Call3(Func_02001ca4, 0x19, b, c);
+      Func_02001ca4(0x19, b, c);
     }
     Value2((s32 (*)())FieldMessage_ShowAtActor, 0x19, 0);
-    t30 = Value2(Event_AskYesNoWithActorAnimation, 4, 0);
-    if (t30 == 0) {
-      Call1(FieldEvent_Wait, 30);
-      Call2(Motion_SetVarCbAndRefresh, 25, 2);
-      Call1(FieldEvent_Wait, 20);
-      Call3(Func_02001c84, 0x19, 0, 0xa);
+    if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+      FieldEvent_Wait(30);
+      Motion_SetVarCbAndRefresh(25, 2);
+      FieldEvent_Wait(20);
+      Func_02001c84(0x19, 0, 0xa);
       FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
           (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
     } else {
-      Call1(FieldEvent_Wait, 30);
+      FieldEvent_Wait(30);
       FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) =
           (FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1c4), u16, 0) + 1);
-      Call3(Func_02001c84, 0x19, 0, 0xa);
+      Func_02001c84(0x19, 0, 0xa);
     }
-    t37 = Value1(Actor_GetById, 4);
+    t37 = Actor_GetById(4);
     FIELD_AT((t37 + 0x5a), u8, 0) = (0xfe & FIELD_AT((t37 + 0x5a), u8, 0));
     Call3(Actor_SetPositionAndReset, 4, 152, 752);
-    Call1(FieldEvent_Wait, 1);
-    t40 = Value1(Actor_GetById, 4);
+    FieldEvent_Wait(1);
+    t40 = Actor_GetById(4);
     FIELD_AT((t40 + 0x5a), u8, 0) = (1 | FIELD_AT((t40 + 0x5a), u8, 0));
     Call3(Actor_ArmCallback, 4, 0xe000, 0);
-    Call1(FieldEvent_Wait, 20);
-    Call2(Motion_SetModeAndWaitAnimation, 25, 3);
-    Call1(FieldEvent_Wait, 10);
-    Call3(Actor_ArmCallback, 25, 0xe000, 0);
-    Call1(FieldEvent_Wait, 70);
+    FieldEvent_Wait(20);
+    Motion_SetModeAndWaitAnimation(25, 3);
+    FieldEvent_Wait(10);
+    Actor_ArmCallback(25, 0xe000, 0);
+    FieldEvent_Wait(70);
     {
       s32 b = 0x100, c = 0x32;
       /* FAKEMATCH: the native schedule sets the first argument last. */
       __asm__ volatile("" : "+l"(b), "+l"(c));
-      Call3(Func_02001ca4, 0x19, b, c);
+      Func_02001ca4(0x19, b, c);
     }
-    Call3(Func_02001c84, 0x19, 0, 0xa);
+    Func_02001c84(0x19, 0, 0xa);
   }
   Call3(Actor_SetPositionAndReset, 25, 184, 728);
   Call3(Actor_CommitPositionAndActivate, 25, 0, -110);
   if (a0 == 0) {
-    Call1(FieldEvent_Wait, 50);
+    FieldEvent_Wait(50);
     Call3(Func_02001c3c, 25, 0x1080000, 0x2880000);
-    Call3(Actor_CommitPositionAndActivate, 25, 0, 32);
-    Call3(Actor_CommitPositionAndActivate, 25, 150, 0);
+    Actor_CommitPositionAndActivate(25, 0, 32);
+    Actor_CommitPositionAndActivate(25, 150, 0);
   }
-  Call3(Func_02001c3c, 25, 0, 0);
+  Func_02001c3c(25, 0, 0);
   Func_02001bec();
 }

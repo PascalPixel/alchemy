@@ -84,11 +84,6 @@ void Func_02003108(s32 color, s32 b);
 void Func_02003110(s32 color, s32 b);
 void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 
-static inline void TundariaTower_FadeTo(s32 color, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003108(color, b);
-}
-
 static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02003110(color, b);

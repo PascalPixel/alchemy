@@ -26,35 +26,33 @@ void Func_0200008c(void) {
   s32 v6;
   struct Actor *object1;
 
-  Call1((void (*)())GameFlag_SetBit, 0x901);
+  GameFlag_SetBit(0x901);
   v5 = &gMainRoutineWork;
   v5 = (v5 + 0x214);
   object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));
   v6 = 192;
   v6 = (v6 << 11);
   *(s32 *)((u8 *)object0 + 40) = v6;
-  Call3((void (*)())Actor_SetSpeedParameters, *(s32 *)((u8 *)v5 + 0),
-        0x20000, 0x10000);
+  Actor_SetSpeedParameters(*(s32 *)((u8 *)v5 + 0), 0x20000, 0x10000);
   Call3((void (*)())Actor_ResetAndSetPositionInMode2, *(s32 *)((u8 *)v5 + 0),
         136, 488);
-  Call1((void (*)())FieldEvent_Wait, 10);
+  FieldEvent_Wait(10);
   Call3((void (*)())Actor_ResetAndSetPosition, 15, 120, 472);
-  Call3((void (*)())Actor_SetPositionAndCommit, 14, 136, 475);
+  Actor_SetPositionAndCommit(14, 136, 475);
   object1 = Actor_GetById(15);
   *(s32 *)((u8 *)object1 + 40) = v6;
-  Call1((void (*)())Func_020032a8, 0x237);
-  Call1((void (*)())Actor_WaitForMoveById,
-        *(s32 *)((u8 *)v5 + 0));
-  Call2((void (*)())Actor_SetModeById, *(s32 *)((u8 *)v5 + 0), 1);
-  Call3((void (*)())Actor_ArmCallback, *(s32 *)((u8 *)v5 + 0), FACING_NORTH, 0);
-  Call1((void (*)())FieldEvent_Wait, 20);
-  Call1((void (*)())Actor_WaitForMoveById, 15);
-  Call1((void (*)())Func_020032a8, 159);
+  Func_020032a8(0x237);
+  Actor_WaitForMoveById(*(s32 *)((u8 *)v5 + 0));
+  Actor_SetModeById(*(s32 *)((u8 *)v5 + 0), 1);
+  Actor_ArmCallback(*(s32 *)((u8 *)v5 + 0), FACING_NORTH, 0);
+  FieldEvent_Wait(20);
+  Actor_WaitForMoveById(15);
+  Func_020032a8(159);
   return;
 }
 
 void Func_02000128(s32 arg0) {
-  Call3((void (*)())Func_02003148, arg0, 0x1c9, 0x902);
+  Func_02003148(arg0, 0x1c9, 0x902);
   return;
 }
 
@@ -84,42 +82,37 @@ void Func_0200013c(s32 id) {
   s32 i;
 
   Func_02003130();
-  Call1((void (*)())Func_02003240, 0);
-  Call1((void (*)())Func_020031c8, (s32)MsgGooGooGa);
-  Call2((void (*)())Func_020031e0, 11, 0);
-  Call2((void (*)())Func_02003268, 8, 0x1210);
+  Func_02003240(0);
+  Func_020031c8((s32)MsgGooGooGa);
+  Func_020031e0(11, 0);
+  Func_02003268(8, 0x1210);
   Func_02003278();
-  Call2((void (*)())Func_02003290, (s32)Actor_GetById(id), 2);
-  Call1((void (*)())Func_020032a8, 201);
-  Call1((void (*)())FieldEvent_Wait, 30);
+  Func_02003290((s32)Actor_GetById(id), 2);
+  Func_020032a8(201);
+  FieldEvent_Wait(30);
   flags = &object->motionFlags;
   *flags = 4;
   for (i = 39; i >= 0; i--) {
-    s32 y = object->y;
-
-    /* FAKEMATCH: the native loads y before it builds the step (differ 2 without
-     * the barrier). */
-    __asm__ volatile("" : "+r"(y));
-    object->y = y + 0x3333;
-    Call1((void (*)())FieldEvent_Wait, 1);
+    object->y += 0x3333;
+    FieldEvent_Wait(1);
   }
-  Call1((void (*)())FieldEvent_Wait, 70);
-  Call2((void (*)())Func_02003290, (s32)Actor_GetById(id), 0);
+  FieldEvent_Wait(70);
+  Func_02003290((s32)Actor_GetById(id), 0);
   Func_02003288();
   Func_02003280();
-  Call1((void (*)())Field_StartPaletteTransition, 8);
+  Field_StartPaletteTransition(8);
   *flags = 3;
   object->gravity = 0x8000;
-  Call1((void (*)())FieldEvent_Wait, 5);
-  Call1((void (*)())Func_020032a8, 132);
+  FieldEvent_Wait(5);
+  Func_020032a8(132);
   if (Value1((s32 (*)())GameFlag_Test, 0x8ae) == 0) {
-    Call1((void (*)())GameFlag_SetBit, 0x8ae);
-    Call1((void (*)())FieldEvent_Wait, 30);
-    Call3((void (*)())Actor_ArmCallback, 10, 0x3000, 0);
-    Call1((void (*)())FieldEvent_Wait, 30);
-    Call2((void (*)())Motion_SetVarCbAndRefresh, 10, 2);
-    Call1((void (*)())FieldEvent_Wait, 10);
-    Call3((void (*)())Func_020031d8, 10, 0, 10);
+    GameFlag_SetBit(0x8ae);
+    FieldEvent_Wait(30);
+    Actor_ArmCallback(10, 0x3000, 0);
+    FieldEvent_Wait(30);
+    Motion_SetVarCbAndRefresh(10, 2);
+    FieldEvent_Wait(10);
+    Func_020031d8(10, 0, 10);
     Call3((void (*)())Actor_ArmCallback, 10, 0xafff, 0);
   }
   Func_02003138();

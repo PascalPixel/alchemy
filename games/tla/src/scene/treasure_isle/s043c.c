@@ -63,16 +63,8 @@ void Func_0200043c(struct TreasureIsleCell *cells, s16 index) {
   Func_0200015c((cell->x << 20) + 0x80000, 0, (cell->z << 20) + 0x140000, 0, 0,
                 0, 0x3a0000, &options);
   options.startScaleX = 0x9999;
-  {
-    s32 left = -0x20000;
-
-    /* FAKEMATCH(barrier): an empty asm holding the offset and the scale just
-     * stored, so the offset's pool load comes before the cell's x is read; as
-     * (cell->x << 20) - 0x20000, 2 of 163 instructions differ in tla-en. */
-    asm("" : "+l"(left), "+m"(options.startScaleX));
-    Func_0200015c((cell->x << 20) + left, 0, (cell->z << 20) + 0x80000, 0, 0, 0,
-                  0x3a0000, &options);
-  }
+  Func_0200015c((cell->x << 20) - 0x20000, 0, (cell->z << 20) + 0x80000, 0, 0,
+                0, 0x3a0000, &options);
   Func_0200015c((cell->x << 20) + 0x120000, 0, (cell->z << 20) + 0x80000, 0, 0,
                 0, 0x3a0000, &options);
   FieldEvent_Wait(10);

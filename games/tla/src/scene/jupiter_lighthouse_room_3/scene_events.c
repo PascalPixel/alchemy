@@ -12,17 +12,17 @@ void Func_02000134(s32 unused, s32 id) {
   register s32 mode asm("r2");
 
   if (object->x >> 20 == 20 && object->z >> 20 == 36) {
-    GameFlag_SetBit_(0xa04);
+    GameFlag_SetBit(0xa04);
     placed = 1;
   }
   /* FAKEMATCH: the volatile x read stops PRE keeping x in r2 across the first
    * test and reloading it after the call (plain: differ 22). */
   if (*(volatile s32 *)&object->x >> 20 == 32 && object->z >> 20 == 36) {
-    GameFlag_SetBit_(0xa05);
+    GameFlag_SetBit(0xa05);
     placed = 1;
   }
   if (placed) {
-    wait_(10);
+    wait(10);
     Func_02002470(134);
     for (i = 0; i < 30; i++) {
       if (object->y <= object->terrainHeight && object->velocityY == 0)
@@ -93,9 +93,9 @@ s32 Func_02000250(void) {
   if (GameFlag_Test(0x200)) {
     for (i = 0, x = 0xb00000; i <= 3; i++, x += 0x100000) {
       Lift_(0x1000000, x, 0, 0);
-      Func_02002458_(0x1000000, x, 0, 0);
+      Func_02002458(0x1000000, x, 0, 0);
       if (i <= 1)
-        Func_02002460_(0x1000000, x, 0, 128);
+        Func_02002460(0x1000000, x, 0, 128);
     }
   }
   return 0;

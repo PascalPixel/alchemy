@@ -43,12 +43,12 @@ s32 Func_020005b8(void) {
       Call3(Func_02000aec, 31, PIXELS(376), PIXELS(316));
       Call3(Func_02000aec, 32, PIXELS(392), PIXELS(344));
     } else {
-      Call3(Func_02000aec, 31, 0, 0);
-      Call3(Func_02000aec, 32, 0, 0);
+      Func_02000aec(31, 0, 0);
+      Func_02000aec(32, 0, 0);
     }
   } else if (GameFlag_Test(0x8ab)) {
     if (GameFlag_Test(0x971))
-      Call3(Func_02000aec, 31, 0, 0);
+      Func_02000aec(31, 0, 0);
   } else {
     Actor_SetSpritePriority(24, 2);
     Actor_SetSpritePriority(19, 3);

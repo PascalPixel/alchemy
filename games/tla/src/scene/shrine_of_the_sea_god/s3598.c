@@ -14,19 +14,19 @@ void Func_02003598(void) {
   struct ShrineOfTheSeaGodObject *lastObject;
 
   ((struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork)->mode17 = 1;
-  Call1((void (*)())Func_02002f88, 8);
-  Call1((void (*)())Func_02002f88, 9);
-  Call1((void (*)())Func_02002f88, 10);
-  Call1((void (*)())Func_02002f88, 11);
-  Call1((void (*)())Func_02002f88, 12);
-  Call1((void (*)())Func_02002f88, 13);
-  Call1((void (*)())Func_02002f88, 14);
-  Call1((void (*)())Func_02002f88, 15);
-  Call1((void (*)())Func_02002f88, 16);
-  Call2((void (*)())Actor_SetModeById, 13, 0);
-  Call2((void (*)())Actor_SetModeById, 14, 0);
-  Call2((void (*)())Actor_SetModeById, 15, 2);
-  Call2((void (*)())Actor_SetModeById, 16, 2);
+  Func_02002f88(8);
+  Func_02002f88(9);
+  Func_02002f88(10);
+  Func_02002f88(11);
+  Func_02002f88(12);
+  Func_02002f88(13);
+  Func_02002f88(14);
+  Func_02002f88(15);
+  Func_02002f88(16);
+  Actor_SetModeById(13, 0);
+  Actor_SetModeById(14, 0);
+  Actor_SetModeById(15, 2);
+  Actor_SetModeById(16, 2);
   if (GameFlag_Test(0x231)) {
     Func_020039a8(0, 0, 3, 1, 19, 13);
     Func_020039a8(40, 0, 2, 1, 19, 33);
@@ -43,20 +43,20 @@ void Func_02003598(void) {
   }
   Func_02003b18();
   Call4((void (*)())Func_02003b20, 0, 0x203, 17, 18);
-  Call4((void (*)())Func_02003b20, 1, 0x204, 19, 20);
-  Call1((void (*)())Func_02003aa0, 21);
+  Func_02003b20(1, 0x204, 19, 20);
+  Func_02003aa0(21);
   Actor_GetById(21)->motionFlags = 0;
   object = Actor_GetById(22);
-  Call1((void (*)())Func_02003aa0, 22);
+  Func_02003aa0(22);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
-  Call1((void (*)())Func_02003aa0, 23);
+  Func_02003aa0(23);
   Actor_GetById(23)->motionFlags = 0;
   /* FAKEMATCH(temporary): actor 24 fetched into its own variable; as
    * object = Actor_GetById(24), 51 of 171 instructions differ in tla-en. */
   lastObject = Actor_GetById(24);
   object = lastObject;
-  Call1((void (*)())Func_02003aa0, 24);
+  Func_02003aa0(24);
   object->priorityFlags |= 2;
   object->motionFlags = 0;
 }

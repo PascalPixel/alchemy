@@ -49,15 +49,13 @@ void Func_020040a0(s32 id) {
   height = object->terrainHeight;
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
-  /* FAKEMATCH: the one-pass block keeps the ground height load before the word
-   * clear; as a bare block the clear comes first (differ 2) */
-  do {
+  {
     u8 *flags = &object->priorityFlags;
     s32 bit =
         128; /* FAKEMATCH: ⚓️ builds the bit in the register it ORs into */
 
     *flags = bit | *flags;
-  } while (0);
+  }
   height = Map_GetTerrainHeight(BYTE_AT(object, 34), object->x, object->z);
   Func_020057c4(object->x, object->z, 0, (height >> 19) + 6);
   Func_020059ec(object->x, object->z, 0, 128);

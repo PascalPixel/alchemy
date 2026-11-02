@@ -76,7 +76,7 @@ void Func_02000e60(s32 unused, s32 id) {
 
   if (id != 8 || column != 12 || row != 5)
     return;
-  AnkohlRuins_FlagSet(0x9dc);
+  GameFlag_SetBit(0x9dc);
   Func_02000b30(8, 181);
   Func_02002e44();
   Func_02002edc(0);
@@ -87,24 +87,24 @@ void Func_02000e60(s32 unused, s32 id) {
   AnkohlRuins_Call2e24(0x20000, 0x20000, 0x10000);
   FieldEvent_Wait(60);
   Func_02002eec(0x23f);
-  AnkohlRuins_Call2df4(35, 6, 7, 2, 10, 7);
-  AnkohlRuins_Call2df4(35, 70, 7, 2, 10, 71);
+  Func_02002df4(35, 6, 7, 2, 10, 7);
+  Func_02002df4(35, 70, 7, 2, 10, 71);
   Func_02000b78(6, 10, 200, -40, 124, 3);
-  AnkohlRuins_Call2df4(35, 6, 7, 3, 10, 7);
-  AnkohlRuins_Call2df4(35, 70, 7, 3, 10, 71);
-  Call6((void (*)())Func_02000b78, 3, 10, 184, -40, 140, 5);
-  AnkohlRuins_Call2df4(35, 6, 7, 4, 10, 7);
-  AnkohlRuins_Call2df4(35, 70, 7, 4, 10, 71);
-  Call6((void (*)())Func_02000b78, 3, 10, 184, -40, 156, 5);
-  AnkohlRuins_Call2df4(35, 6, 7, 5, 10, 7);
-  AnkohlRuins_Call2df4(35, 70, 7, 5, 10, 71);
-  Call6((void (*)())Func_02000b78, 3, 10, 184, -40, 172, 5);
+  Func_02002df4(35, 6, 7, 3, 10, 7);
+  Func_02002df4(35, 70, 7, 3, 10, 71);
+  Func_02000b78(3, 10, 184, -40, 140, 5);
+  Func_02002df4(35, 6, 7, 4, 10, 7);
+  Func_02002df4(35, 70, 7, 4, 10, 71);
+  Func_02000b78(3, 10, 184, -40, 156, 5);
+  Func_02002df4(35, 6, 7, 5, 10, 7);
+  Func_02002df4(35, 70, 7, 5, 10, 71);
+  Func_02000b78(3, 10, 184, -40, 172, 5);
   AnkohlRuins_Call2e24(-1, -1, 0xe666);
-  AnkohlRuins_Call2df4(35, 6, 7, 6, 10, 7);
-  AnkohlRuins_Call2df4(35, 70, 7, 6, 10, 71);
+  Func_02002df4(35, 6, 7, 6, 10, 7);
+  Func_02002df4(35, 70, 7, 6, 10, 71);
   FieldEvent_Wait(15);
-  AnkohlRuins_Call2df4(35, 6, 7, 16, 10, 7);
-  AnkohlRuins_Call2df4(35, 70, 7, 16, 10, 71);
+  Func_02002df4(35, 6, 7, 16, 10, 7);
+  Func_02002df4(35, 70, 7, 16, 10, 71);
   Func_02002e4c();
 }
 

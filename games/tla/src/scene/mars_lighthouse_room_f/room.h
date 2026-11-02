@@ -106,11 +106,6 @@ static inline void Func_020054f0_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
   Func_020054f0(a0, a1, a2, a3, a4, a5);
 }
 
-static inline void Func_020027ac_(s32 index, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020027ac(index, value);
-}
-
 static inline void Func_02005598_(s32 id, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005598(id, x, z);

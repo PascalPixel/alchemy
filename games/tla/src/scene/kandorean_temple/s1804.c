@@ -20,8 +20,8 @@ void Func_02001804(void) {
     Func_02005388(162);
     Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)Actor_GetById(14),
           PIXELS(600), PIXELS(-20), PIXELS(236));
-    Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)Actor_GetById(16),
-          PIXELS(600), PIXELS(-20), PIXELS(232));
+    Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(600),
+                                    PIXELS(-20), PIXELS(232));
     Actor_SetSpritePriority(14, 3);
     Actor_SetSpritePriority(16, 3);
     base->priorityFlags |= 2;
@@ -61,9 +61,10 @@ void Func_02001804(void) {
     if (*(long *)&lift->y < -0x50000)
       Actor_SetSpritePriority(14, 3);
     if (lift->y <= -0x140000) {
+
       /* FAKEMATCH(temporary): the timer pointer's own address taken, which
        * orders the stack arguments of the 2280 call as the native does; as
-       * *timer = 0, 6 of 194 instructions differ in tla-en. */
+       * *timer = 0, 6 of 193 instructions differ in tla-en. */
       s32 **timerRef = &timer;
 
       Func_02005388(245);

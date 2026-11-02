@@ -45,7 +45,7 @@ scatter:
   Actor_ResetAndSetPosition_(18, 424, 824);
   Actor_ResetAndSetPosition_(19, 456, 824);
   Actor_ResetAndSetPosition_(20, 488, 824);
-  Actor_ResetAndSetPosition_(21, 520, 824);
+  Actor_ResetAndSetPosition(21, 520, 824);
   FieldEvent_Wait(240);
   Func_02002958(64, 66, 11, 7, 87, 50);
   i = 17;

@@ -24,18 +24,13 @@ static inline void *BumpAlloc(s32 size) {
   return Heap_Alloc(size);
 }
 
-static inline void VramLoad(s32 entry, s32 size, void *source) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  VramCache_Load(entry, size, source);
-}
-
 void Func_02000a98(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
   Iwram_ClearWords(gData_02001ce0, 64);
   Func_02000c24(gField_CachedTilesA, buffer);
   gData_02001cdc = Resource_FindFreeEntry();
-  VramLoad(gData_02001cdc, 0xc00, buffer);
+  VramCache_Load(gData_02001cdc, 0xc00, buffer);
   Heap_Release(buffer);
   Task_Add(Func_02000858, TASK_PASS_VBLANK);
   gData_02001cde = 0;
@@ -49,7 +44,7 @@ void Func_02000b18(void) {
   Iwram_ClearWords(gData_02001ce0, 64);
   Func_02000c24(gField_CachedTilesD, buffer);
   gData_02001cdc = Resource_FindFreeEntry();
-  VramLoad(gData_02001cdc, 0x1800, buffer);
+  VramCache_Load(gData_02001cdc, 0x1800, buffer);
   Heap_Release(buffer);
   Task_Add(Func_02000858, TASK_PASS_VBLANK);
   gData_02001cde = 0;

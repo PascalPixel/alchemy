@@ -31,51 +31,45 @@ extern u8 gMainRoutineWork[];
 
 void Func_02001a2c(void) {
   Func_020028b4();
-  Call1(Func_020029cc, 0);
-  Call1(Func_0200293c, (s32)MsgWhyDoI);
+  Func_020029cc(0);
+  Func_0200293c((s32)MsgWhyDoI);
   Call3(Actor_SetPositionAndReset, 5, 72, 266);
   Call3(Actor_ArmCallback, 5, 0x8000, 0);
-  Call1(FieldEvent_Wait, 10);
+  FieldEvent_Wait(10);
   Call3(Func_0200294c, 22, 0, 0xa);
-  Call2(Actor_SetModeById, 22, 1);
-  Call1(FieldEvent_Wait, 10);
-  Call3(Func_02002964, 22, 0x101, 50);
-  Call1(FieldEvent_Wait, 10);
-  Call3(Actor_ArmCallback, 22, 0, 0);
-  Call1(FieldEvent_Wait, 20);
+  Actor_SetModeById(22, 1);
+  FieldEvent_Wait(10);
+  Func_02002964(22, 0x101, 50);
+  FieldEvent_Wait(10);
+  Actor_ArmCallback(22, 0, 0);
+  FieldEvent_Wait(20);
   Call3(Actor_Jump, 22, 6, 15);
   Call3(Actor_Jump, 22, 6, 35);
-  Call3(Actor_ArmCallback, 22, 0xb000, 0);
-  Call1(FieldEvent_Wait, 20);
+  Actor_ArmCallback(22, 0xb000, 0);
+  FieldEvent_Wait(20);
   Call2(Actor_SetModeById, 22, 0xc);
   Call3(Func_0200294c, 22, 0, 0);
   Call2(Actor_SetModeById, 22, 1);
   Func_02002964(22, 0x100, 50);
-  Call3(Actor_ArmCallback, 22, 0, 0);
-  Call1(FieldEvent_Wait, 20);
+  Actor_ArmCallback(22, 0, 0);
+  FieldEvent_Wait(20);
   Call3(Func_0200294c, 22, 0, 0xa);
-  Call2(Motion_SetModeAndWaitAnimation, 22, 3);
-  Call1(FieldEvent_Wait, 20);
+  Motion_SetModeAndWaitAnimation(22, 3);
+  FieldEvent_Wait(20);
   Call3(Actor_SetSpeedParameters, 22, 0x10000, 0x8000);
-  Call3(Actor_CommitPositionAndActivate, 22, 0x10, 0);
-  Call1(FieldEvent_Wait, 10);
+  Actor_CommitPositionAndActivate(22, 0x10, 0);
+  FieldEvent_Wait(10);
   Call3(Func_0200294c, 22, 0, 0xa);
   Call3(Actor_SetSpeedParameters, 22, 0x20000, 0x10000);
   Call3(Actor_Jump, 22, 6, 15);
   Call3(Actor_Jump, 22, 6, 25);
   Call3(Actor_Jump, 22, 6, 0);
-  Call3(Actor_OffsetPositionAndReset, 22, 0x1a, 0);
-  Call1(FieldEvent_Wait, 8);
+  Actor_OffsetPositionAndReset(22, 0x1a, 0);
+  FieldEvent_Wait(8);
   Call2(Actor_SetModeById, 22, 1);
-  Call2(Party_SetFields1eeAnd1f0, (s32)&SceneId_VenusLighthouseEntrance, 0x63);
-  Call2(Party_SetFields1f2And1f4, (s32)&SceneId_VenusLighthouseEntrance, 0x62);
-  {
-    u8 *party = (u8 *)gMainRoutineWork;
-    /* FAKEMATCH: the native schedule loads gMainRoutineWork's address before it
-     * builds the field offset. */
-    __asm__ volatile("" : "+l"(party));
-    FIELD_AT(party, u8, 587) = 2;
-  }
+  Party_SetFields1eeAnd1f0((s32)&SceneId_VenusLighthouseEntrance, 0x63);
+  Party_SetFields1f2And1f4((s32)&SceneId_VenusLighthouseEntrance, 0x62);
+  FIELD_AT((u8 *)gMainRoutineWork, u8, 587) = 2;
   Call2(Func_020029a4, 9, 0);
   Func_020028bc();
 }

@@ -10,9 +10,9 @@ void Func_020004e0(void) {
   Scene_ArmCallback(13, FACING_WEST, 20);
   Actor_SetModeById(13, 4);
   Func_020040d0(13, 0);
-  Scene_ArmCallback(13, 0, 20);
+  Actor_ArmCallback(13, 0, 20);
   Scene_ArmCallback(13, 0x3000, 20);
-  Scene_ArmCallback(13, 0, 20);
+  Actor_ArmCallback(13, 0, 20);
   Scene_ArmCallback(13, 0x3000, 0);
   Func_020040d0(13, 0);
 }

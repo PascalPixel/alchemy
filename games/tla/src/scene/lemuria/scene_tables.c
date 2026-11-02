@@ -64,51 +64,9 @@ extern u8 MsgEveryoneSpoilsMe;
 extern u8 MsgWeAreThe;
 extern u8 MsgAreThereOther;
 
-static __inline__ s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void GameFlag_SetBit_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void FieldEvent_Wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static __inline__ s32 ArcTan2_(s32 a0, s32 a1) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return ArcTan2(a0, a1);
-}
-
-static __inline__ struct Actor *Actor_GetById_(s32 id) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Actor_GetById(id);
-}
-
-static __inline__ void
-Animation_SetIndexAndInitializeObjects_(struct Actor *object, s32 index) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Animation_SetIndexAndInitializeObjects(object, index);
-}
-
 static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(id, angle, flags);
-}
-
-static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
-                                                 s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column, s32 offset) {
@@ -122,122 +80,6 @@ static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 dx,
   Actor_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
-static __inline__ void Actor_WaitForMoveById_(s32 id) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_WaitForMoveById(id);
-}
-
-static __inline__ void Actor_TurnToFaceEachOther_(s32 id, s32 other, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_TurnToFaceEachOther(id, other, mode);
-}
-
-static __inline__ void Actor_SetModeById_(u32 id, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetModeById(id, mode);
-}
-
-static __inline__ void Event_FinishScreenTransition_(void) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Event_FinishScreenTransition();
-}
-
-static __inline__ void Event_WaitTransitionFrames_(void) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Event_WaitTransitionFrames();
-}
-
-static __inline__ void Func_02001b7c_(struct Actor *object, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001b7c(object, mode);
-}
-
-static __inline__ void Func_02001b84_(s32 scene, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001b84(scene, x, z);
-}
-
-static __inline__ void Func_02001ba4_(struct Actor *object, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001ba4(object, value);
-}
-
-static __inline__ void Func_02001bcc_(void) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001bcc();
-}
-
-static __inline__ void Func_02001bd4_(void) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001bd4();
-}
-
-static __inline__ void Func_02001c2c_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001c2c(id, x, z);
-}
-
-static __inline__ void Func_02001c6c_(s32 message) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001c6c(message);
-}
-
-static __inline__ void Func_02001c7c_(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001c7c(id, a, b);
-}
-
-static __inline__ void Func_02001c84_(s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001c84(a, b);
-}
-
-static __inline__ void Func_02001cac_(s32 id, s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001cac(id, a);
-}
-
-static __inline__ void Func_02001cd4_(s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001cd4(a);
-}
-
-static __inline__ void Func_02001cf4_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001cf4(a, b, c);
-}
-
-static __inline__ void Func_02001d04_(s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001d04(a);
-}
-
-static __inline__ void Func_02001d44_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                      s32 g) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001d44(a, b, c, d, e, f, g);
-}
-
-static __inline__ s32 Func_02001d54_(struct Actor *object) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Func_02001d54(object);
-}
-
-static __inline__ s32 Func_02001d5c_(s32 x, s32 z, s32 layer) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Func_02001d5c(x, z, layer);
-}
-
-static __inline__ void Func_02001d64_(s32 x, s32 z, s32 layer, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001d64(x, z, layer, value);
-}
-
-static __inline__ void Func_02001d7c_(s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001d7c(a);
-}
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
@@ -249,9 +91,9 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_020001bc(void) {
-  Func_02001c2c_(12, PIXELS(488), PIXELS(1256));
+  Func_02001c2c(12, PIXELS(488), PIXELS(1256));
   Animation_SetIndexAndInitializeObjects(Actor_GetById(12), 157);
-  Actor_SetModeById_(12, 3);
+  Actor_SetModeById(12, 3);
   Actor_ArmCallback_(12, FACING_WEST, 0);
 }
 
@@ -259,18 +101,18 @@ void Func_020001f0(const struct WarpTarget *warp, s32 door, s32 mode) {
   s32 id;
 
   Func_02001bcc();
-  Func_02001d04_(0);
-  Func_02001d7c_(158);
+  Func_02001d04(0);
+  Func_02001d7c(158);
   Func_02001b84(warp->scene, warp->x, warp->z);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 2;
-  Actor_SetSpeedParameters_(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
-  Actor_SetModeById_(gMainRoutineWork.currentOwner, 2);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   id = gMainRoutineWork.currentOwner;
   if (mode == 0)
     Actor_CenterOnColumn_(id, 2, -8);
   else
     Actor_OffsetPositionAndResetMotion_(id, 0, -8);
-  FieldEvent_Wait_(10);
+  FieldEvent_Wait(10);
   Func_02001cd4(door);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

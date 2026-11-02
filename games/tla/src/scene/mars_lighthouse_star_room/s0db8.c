@@ -31,7 +31,7 @@ void Func_02000db8(s32 id) {
   if (id == 13) {
     Func_0200432c_(13, 175 << 18, PIXELS(224));
     Actor_SetModeById(13, 10);
-    Func_0200423c_(39, 22, 2, 1, 43, id);
+    Func_0200423c(39, 22, 2, 1, 43, id);
   } else {
     Func_0200432c_(14, 165 << 18, PIXELS(216));
     Actor_SetModeById(14, 9);

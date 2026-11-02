@@ -82,44 +82,44 @@ s32 Func_02000b18(void) {
     Call3(Func_02004b04, 31, PIXELS(136), PIXELS(600));
     Call3(Func_02004b04, 28, PIXELS(160), PIXELS(584));
     Call2(Func_02004c54, 30, 0x4000);
-    Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 30), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(30), 0);
     Call2(Func_02004c54, 31, 0xc000);
-    Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 31), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(31), 0);
     Call2(Func_02004c54, 28, 0x4000);
-    Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 28), 0);
-    Call2(Actor_SetSpritePriority, 27, 2);
-    Call2(Actor_SetSpritePriority, 25, 2);
-    Call2(Actor_SetSpritePriority, 29, 2);
+    Actor_SetSingleChildFlags(Actor_GetById(28), 0);
+    Actor_SetSpritePriority(27, 2);
+    Actor_SetSpritePriority(25, 2);
+    Actor_SetSpritePriority(29, 2);
     Call3(Func_02004b04, 25, PIXELS(160), PIXELS(392));
     Call3(Func_02004b04, 27, PIXELS(176), PIXELS(408));
     Call3(Func_02004b04, 29, PIXELS(152), PIXELS(376));
-    Call2(Func_02004c54, 27, 0xc000);
-    Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 27), 0);
+    Func_02004c54(27, 0xc000);
+    Actor_SetSingleChildFlags(Actor_GetById(27), 0);
     Call2(Func_02004c54, 29, 0x4000);
-    Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 29), 0);
+    Actor_SetSingleChildFlags(Actor_GetById(29), 0);
     Call3(Actor_ArmCallback, 25, 0xd000, 0);
     Call3(Actor_ArmCallback, 29, FACING_SOUTH, 0);
-    Call2(Actor_SetModeById, 27, 13);
-    Call2(Actor_SetModeById, 29, 13);
-    Call2(Actor_SetModeById, 30, 13);
-    Call2(Actor_SetModeById, 31, 13);
-    Call2(Actor_SetModeById, 28, 13);
+    Actor_SetModeById(27, 13);
+    Actor_SetModeById(29, 13);
+    Actor_SetModeById(30, 13);
+    Actor_SetModeById(31, 13);
+    Actor_SetModeById(28, 13);
     Func_02003274();
   }
   Func_02000fa4();
-  if (Value1(GameFlag_Test, 0x8a6) == 0)
-    Call1(Func_020040ec, 15);
+  if (GameFlag_Test(0x8a6) == 0)
+    Func_020040ec(15);
   Func_02004c14();
-  Call4(Func_02004c2c, 0, 0x8a3, 8, 9);
+  Func_02004c2c(0, 0x8a3, 8, 9);
   OBJECT(8)->priorityFlags |= 32;
   OBJECT(9)->priorityFlags |= 32;
   Func_02004c1c();
-  Call3(Func_02004c24, 0, 12, 13);
-  Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 12), 0);
-  Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 13), 0);
-  Call1(Func_020047fc, gData_02004d0c);
-  Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 14), 0);
-  flag = Value1(GameFlag_Test, 0x8a2);
+  Func_02004c24(0, 12, 13);
+  Actor_SetSingleChildFlags(Actor_GetById(12), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(13), 0);
+  Func_020047fc(gData_02004d0c);
+  Actor_SetSingleChildFlags(Actor_GetById(14), 0);
+  flag = GameFlag_Test(0x8a2);
   if (flag == 0) {
     object = OBJECT(18);
     /* FAKEMATCH(one-pass): the solid bit set in a once-only block, which lays
@@ -131,24 +131,24 @@ s32 Func_02000b18(void) {
     object = OBJECT(19);
     object->motionFlags = flag;
     object->y = 0x100000;
-    Call3(Func_02004c24, 1, 18, 19);
-    Call1(Func_02004c94, 1);
+    Func_02004c24(1, 18, 19);
+    Func_02004c94(1);
     object = OBJECT(20);
     object->collisionFlags |= 8;
     object = OBJECT(21);
     object->motionFlags = flag;
     object->y = 0x100000;
-    Call3(Func_02004c24, 2, 20, 21);
+    Func_02004c24(2, 20, 21);
   }
-  Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 16), 0);
-  Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 17), 0);
-  Call2(Actor_SetSpritePriority, 10, 2);
+  Actor_SetSingleChildFlags(Actor_GetById(16), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(17), 0);
+  Actor_SetSpritePriority(10, 2);
   ((u8 *)OBJECT(23))[0x62] = 1;
-  if (Value1(GameFlag_Test, 0x8ab) != 0 && Value1(GameFlag_Test, 0x8a7) == 0) {
-    Call3(Func_02004b04, 22, 0, 0);
-    Call3(Func_02004b04, 23, 0, 0);
-    Call3(Func_02004b04, 24, 0, 0);
-    Call3(Func_02004b04, 25, 0, 0);
+  if (GameFlag_Test(0x8ab) != 0 && GameFlag_Test(0x8a7) == 0) {
+    Func_02004b04(22, 0, 0);
+    Func_02004b04(23, 0, 0);
+    Func_02004b04(24, 0, 0);
+    Func_02004b04(25, 0, 0);
   }
   return 0;
 }

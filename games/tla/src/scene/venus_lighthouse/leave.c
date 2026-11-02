@@ -48,21 +48,6 @@ void Event_StartScreenTransition(void);
 void VenusLighthouse_RunSetupStep(void);
 void SceneState_RunActor13AtColumn42Setup(void);
 
-static inline void Venus_MessageSet(s32 message) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001c1c(message);
-}
-
-static inline void Venus_ObjAttach(s32 actor, s32 target) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_FollowActor(actor, target);
-}
-
-static inline void Venus_Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Import_EventWait(frames);
-}
-
 static inline void Venus_ObjWalk(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetPositionAndReset(actor, x, z);
@@ -73,19 +58,9 @@ static inline void Venus_ObjTurn(s32 actor, s32 angle, s32 frames) {
   Actor_ArmCallback(actor, angle, frames);
 }
 
-static inline void Venus_ObjModeWait(s32 actor, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Motion_SetModeAndWaitAnimation(actor, mode);
-}
-
 static inline void Venus_ObjWalk2(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ResetAndSetPositionInMode2(actor, x, z);
-}
-
-static inline void Venus_ObjCommitHere(s32 actor) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_WaitForMoveById(actor);
 }
 
 static inline void Venus_Jump(s32 actor, s32 height, s32 frames) {
@@ -102,19 +77,9 @@ static inline void Venus_CamMove(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
-static inline void Venus_ObjVar(s32 actor, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Motion_SetVarCbAndRefresh(actor, value);
-}
-
 static inline void Venus_MessagePut(s32 actor, s32 value) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001c24(actor, value);
-}
-
-static inline void Venus_Se(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Import_SoundPlay(cue);
 }
 
 static inline void Venus_ObjSetPos(s32 actor, s32 x, s32 z) {
@@ -122,29 +87,9 @@ static inline void Venus_ObjSetPos(s32 actor, s32 x, s32 z) {
   Func_02001be4(actor, x, z);
 }
 
-static inline void Venus_ObjEffect(s32 actor) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001cd4(actor);
-}
-
-static inline void Venus_ObjVariant(s32 actor, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_StartRepeatedMotion(actor, value);
-}
-
-static inline void Venus_ObjLink(s32 first, s32 second, s32 distance) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_TurnToFaceEachOther(first, second, distance);
-}
-
 static inline void Venus_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static inline void Venus_ObjFollow(s32 actor, s32 target) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_WatchAndSetScript(actor, target);
 }
 
 static inline void Venus_ObjCommit(s32 actor, s32 x, s32 z) {
@@ -152,40 +97,9 @@ static inline void Venus_ObjCommit(s32 actor, s32 x, s32 z) {
   Actor_CommitPositionAndActivate(actor, x, z);
 }
 
-static inline void Venus_ObjAnim(s32 actor, s32 animation) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Import_ActorSetAnimation(actor, animation);
-}
-
-static inline void Venus_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ResetAndSetPosition(actor, x, z);
-}
-
 static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001ccc(actor, value);
-}
-
-static inline void Venus_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
-                                   s32 width, s32 height) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Import_MapCopyCellPictureIndicesRect(srcX, srcY, destX, destY, width, height);
-}
-
-static inline void Venus_FlagClr(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
-static inline void Venus_PartyRemove(s32 owner) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Party_RemoveActiveOwner(owner);
-}
-
-static inline void Venus_Countdown(s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001c54(value);
 }
 
 void Func_02000b2c(void) {
@@ -207,461 +121,461 @@ void Func_02000b2c(void) {
   work->delay = 60;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Venus_Wait(20);
-  Venus_ObjModeWait(4, 3);
-  Venus_Wait(20);
-  Venus_ObjAnim(5, 3);
-  Venus_ObjModeWait(8, 3);
-  Venus_Wait(10);
+  Import_EventWait(20);
+  Motion_SetModeAndWaitAnimation(4, 3);
+  Import_EventWait(20);
+  Import_ActorSetAnimation(5, 3);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  Import_EventWait(10);
   Venus_ObjWalk(4, 664, 824);
   Venus_ObjTurn(4, FACING_NORTH, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
   Venus_ObjWalk(8, 712, 824);
-  Venus_ObjTurn(5, FACING_NORTHWEST, 0);
-  Venus_Wait(20);
+  Actor_ArmCallback(5, FACING_NORTHWEST, 0);
+  Import_EventWait(20);
   VenusLighthouse_RunSetupStep();
   SceneState_RunActor13AtColumn42Setup();
-  Venus_Wait(20);
+  Import_EventWait(20);
   Venus_ObjWalk(8, 728, 840);
   Venus_ObjTurn(8, FACING_NORTH, 0);
   Venus_ObjTurn(5, FACING_NORTH, 0);
   Venus_ObjWalk(4, 712, 816);
-  Venus_ObjTurn(4, FACING_SOUTH, 0);
-  Venus_Wait(30);
-  Venus_ObjModeWait(4, 3);
-  Venus_Wait(20);
-  Venus_ObjAnim(5, 3);
-  Venus_ObjModeWait(8, 3);
-  Venus_Wait(10);
-  Venus_ObjFollow(5, 4);
-  Venus_ObjFollow(8, 4);
+  Actor_ArmCallback(4, FACING_SOUTH, 0);
+  Import_EventWait(30);
+  Motion_SetModeAndWaitAnimation(4, 3);
+  Import_EventWait(20);
+  Import_ActorSetAnimation(5, 3);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  Import_EventWait(10);
+  Actor_WatchAndSetScript(5, 4);
+  Actor_WatchAndSetScript(8, 4);
   Venus_ObjWalk(4, 744, 816);
-  Venus_ObjWalk(4, 744, 780);
-  Venus_Se(129);
-  Venus_ObjEffectSet(4, -1);
-  Venus_Wait(50);
+  Actor_SetPositionAndReset(4, 744, 780);
+  Import_SoundPlay(129);
+  Func_02001ccc(4, -1);
+  Import_EventWait(50);
   Venus_ObjTurn(5, FACING_NORTH, 0);
   Venus_ObjTurn(8, FACING_NORTH, 0);
-  Venus_ObjSetPos(4, 0, 0);
+  Func_02001be4(4, 0, 0);
 }
 
 void Func_02000d30(void) {
   struct VenusActor *actor;
   struct EventWork *work;
 
-  Venus_MessageSet((s32)MsgVenusLighthouseAreYouSureWeShouldBeLeaving);
-  Venus_ObjAttach(8, 1);
+  Func_02001c1c((s32)MsgVenusLighthouseAreYouSureWeShouldBeLeaving);
+  Camera_FollowActor(8, 1);
   Func_02001c4c();
-  Venus_Wait(30);
+  Import_EventWait(30);
   Venus_ObjWalk(5, 664, 840);
-  Venus_ObjTurn(5, 0, 0);
+  Actor_ArmCallback(5, 0, 0);
   Venus_ObjWalk(8, 696, 840);
-  Venus_Wait(20);
-  Venus_ObjModeWait(8, 3);
-  Venus_Wait(10);
-  Venus_ObjModeWait(5, 3);
-  Venus_Wait(10);
+  Import_EventWait(20);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(5, 3);
+  Import_EventWait(10);
   Venus_ObjWalk2(8, 696, 920);
-  Venus_Wait(10);
+  Import_EventWait(10);
   Venus_ObjWalk(5, 664, 888);
-  Venus_ObjCommitHere(8);
+  Actor_WaitForMoveById(8);
   Venus_Jump(8, 256, 30);
   Venus_ObjTurn(8, FACING_NORTHWEST, 0);
-  Venus_Wait(20);
+  Import_EventWait(20);
   Venus_ObjWalk(8, 696, 888);
-  Venus_ObjTurn(5, 0, 0);
+  Actor_ArmCallback(5, 0, 0);
   Venus_ObjTurn(8, FACING_WEST, 0);
-  Venus_Wait(20);
+  Import_EventWait(20);
   Venus_CamMove(PIXELS(696), -1, PIXELS(920), 1);
   Func_02001c4c();
-  Venus_Wait(20);
-  Venus_ObjVar(5, 2);
-  Venus_Wait(10);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Import_EventWait(20);
+  Motion_SetVarCbAndRefresh(5, 2);
+  Import_EventWait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_Jump(8, 257, 50);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(8, 3);
-  Venus_Wait(20);
-  Venus_ObjVar(5, 2);
-  Venus_Wait(10);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  Import_EventWait(20);
+  Motion_SetVarCbAndRefresh(5, 2);
+  Import_EventWait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_Jump(8, 257, 30);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
   Venus_ObjTurn(5, FACING_NORTHEAST, 0);
-  Venus_Wait(30);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Import_EventWait(30);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_Jump(8, 258, 40);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(5, 3);
-  Venus_Wait(10);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(30);
-  Venus_Se(198);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(5, 3);
+  Import_EventWait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(30);
+  Import_SoundPlay(198);
   Venus_ObjSetPos(9, PIXELS(680), PIXELS(920));
   Venus_ObjTurn(9, 0xb000, 0);
-  Venus_ObjEffect(9);
+  Func_02001cd4(9);
   Venus_ObjTurn(9, 0xb000, 0);
-  Venus_Wait(20);
+  Import_EventWait(20);
   Venus_ObjTurn(5, FACING_SOUTH, 0);
   Venus_ObjTurn(8, FACING_SOUTH, 0);
-  Venus_Wait(10);
-  Venus_Wait(20);
-  Venus_ObjModeWait(9, 4);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjVariant(5, 2);
-  Venus_ObjVar(8, 2);
-  Venus_Wait(20);
-  Venus_ObjLink(5, 8, 40);
+  Import_EventWait(10);
+  Import_EventWait(20);
+  Motion_SetModeAndWaitAnimation(9, 4);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Actor_StartRepeatedMotion(5, 2);
+  Motion_SetVarCbAndRefresh(8, 2);
+  Import_EventWait(20);
+  Actor_TurnToFaceEachOther(5, 8, 40);
   Venus_Jump(9, 256, 30);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
   Venus_ObjTurn(5, FACING_SOUTH, 0);
   Venus_ObjTurn(8, FACING_SOUTH, 0);
-  Venus_Wait(20);
+  Import_EventWait(20);
   Venus_Jump(8, 258, 40);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
   Venus_Jump(9, 257, 30);
-  Venus_Wait(10);
-  Venus_ObjTurn(9, 0, 0);
-  Venus_Wait(30);
+  Import_EventWait(10);
+  Actor_ArmCallback(9, 0, 0);
+  Import_EventWait(30);
   Venus_ObjTurn(9, FACING_WEST, 0);
-  Venus_Wait(30);
-  Venus_ObjTurn(9, FACING_NORTH, 0);
-  Venus_Wait(30);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjVar(5, 2);
-  Venus_Wait(20);
+  Import_EventWait(30);
+  Actor_ArmCallback(9, FACING_NORTH, 0);
+  Import_EventWait(30);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetVarCbAndRefresh(5, 2);
+  Import_EventWait(20);
   Venus_ObjSpeed(5, 0x8000, 0x4000);
-  Venus_ObjFollow(8, 5);
-  Venus_ObjCommit(5, 0, -32);
-  Venus_Wait(10);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Actor_WatchAndSetScript(8, 5);
+  Actor_CommitPositionAndActivate(5, 0, -32);
+  Import_EventWait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_Jump(9, 261, 30);
   Venus_ObjCommit(9, -8, -8);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjVar(8, 2);
-  Venus_Wait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetVarCbAndRefresh(8, 2);
+  Import_EventWait(10);
   Venus_ObjTurn(8, 0x5000, 0);
-  Venus_Wait(20);
+  Import_EventWait(20);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
   Venus_Jump(9, 256, 30);
   Venus_ObjTurn(9, FACING_NORTHEAST, 0);
-  Venus_Wait(30);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
+  Import_EventWait(30);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
   Venus_Jump(9, 257, 30);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
   Venus_Jump(8, 258, 0);
   Venus_Jump(5, 258, 40);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
   Venus_Jump(9, 264, 30);
   Venus_ObjTurn(9, 0xf000, 0);
-  Venus_Wait(30);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(20);
+  Import_EventWait(30);
+  Func_02001c24(9, 0);
+  Import_EventWait(20);
   Venus_Jump(5, 262, 40);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_ObjTurn(9, 0xb000, 0);
-  Venus_Wait(20);
+  Import_EventWait(20);
   Venus_ObjTurn(5, 0x3000, 0);
-  Venus_Wait(30);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Import_EventWait(30);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_Jump(9, 265, 30);
-  Venus_Wait(20);
-  Venus_ObjVar(9, 2);
-  Venus_Wait(10);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(9, 4);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(5, 4);
-  Venus_Wait(10);
+  Import_EventWait(20);
+  Motion_SetVarCbAndRefresh(9, 2);
+  Import_EventWait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(9, 4);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(5, 4);
+  Import_EventWait(10);
   Venus_ObjSpeed(5, 0x10000, 0x8000);
-  Venus_ObjCommit(5, 0, 16);
+  Actor_CommitPositionAndActivate(5, 0, 16);
   Venus_ObjTurn(5, 0x3000, 0);
-  Venus_Wait(10);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_Jump(5, 263, 30);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
-  Venus_ObjVar(9, 2);
-  Venus_Wait(10);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(9, 7);
-  Venus_Wait(30);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
+  Motion_SetVarCbAndRefresh(9, 2);
+  Import_EventWait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(9, 7);
+  Import_EventWait(30);
   Venus_ObjTurn(8, 0x9000, 0);
-  Venus_Wait(20);
+  Import_EventWait(20);
   Venus_Jump(8, 258, 40);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
   Venus_ObjTurn(5, 0x1000, 0);
-  Venus_Wait(20);
-  Venus_ObjModeWait(5, 4);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Import_EventWait(20);
+  Motion_SetModeAndWaitAnimation(5, 4);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_ObjTurn(5, FACING_SOUTH, 0);
-  Venus_Wait(20);
-  Venus_ObjCommit(5, 0, 16);
+  Import_EventWait(20);
+  Actor_CommitPositionAndActivate(5, 0, 16);
   Venus_ObjTurn(5, 0x3000, 0);
-  Venus_Wait(10);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(9, 4);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(9, 4);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
   Venus_Jump(5, 261, 50);
-  Venus_ObjVar(9, 2);
-  Venus_Wait(10);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(5, 3);
-  Venus_Wait(10);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
-  Venus_ObjVar(8, 2);
-  Venus_Wait(10);
+  Motion_SetVarCbAndRefresh(9, 2);
+  Import_EventWait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(5, 3);
+  Import_EventWait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
+  Motion_SetVarCbAndRefresh(8, 2);
+  Import_EventWait(10);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
-  Venus_ObjTurn(5, 0, 0);
-  Venus_Wait(20);
-  Venus_ObjModeWait(5, 3);
-  Venus_Wait(20);
-  Venus_ObjVar(9, 2);
-  Venus_Wait(10);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
+  Actor_ArmCallback(5, 0, 0);
+  Import_EventWait(20);
+  Motion_SetModeAndWaitAnimation(5, 3);
+  Import_EventWait(20);
+  Motion_SetVarCbAndRefresh(9, 2);
+  Import_EventWait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
   Venus_ObjTurn(5, 0x3000, 0);
-  Venus_Wait(20);
-  Venus_ObjModeWait(5, 3);
-  Venus_Wait(30);
+  Import_EventWait(20);
+  Motion_SetModeAndWaitAnimation(5, 3);
+  Import_EventWait(30);
   Venus_Jump(8, 258, 40);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
-  Venus_ObjTurn(5, 0, 0);
-  Venus_Wait(20);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
+  Actor_ArmCallback(5, 0, 0);
+  Import_EventWait(20);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_Jump(8, 265, 30);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
-  Venus_ObjVar(5, 2);
-  Venus_Wait(10);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
+  Motion_SetVarCbAndRefresh(5, 2);
+  Import_EventWait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_Jump(5, 258, 40);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(9, 4);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(9, 4);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
   Venus_Jump(8, 261, 30);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
   Venus_Jump(5, 263, 30);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_ObjTurn(8, FACING_NORTHEAST, 0);
-  Venus_Wait(30);
-  Venus_ObjModeWait(8, 3);
-  Venus_Wait(10);
+  Import_EventWait(30);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  Import_EventWait(10);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
-  Venus_ObjVar(5, 2);
-  Venus_Wait(10);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
-  Venus_ObjTurn(8, FACING_WEST, 0);
-  Venus_Wait(30);
+  Import_EventWait(10);
+  Motion_SetVarCbAndRefresh(5, 2);
+  Import_EventWait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
+  Actor_ArmCallback(8, FACING_WEST, 0);
+  Import_EventWait(30);
   Venus_ObjCommit(5, 0, -16);
-  Venus_Wait(10);
+  Import_EventWait(10);
   Venus_ObjTurn(5, FACING_NORTHEAST, 0);
-  Venus_Wait(30);
-  Venus_ObjModeWait(5, 3);
-  Venus_Wait(20);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Import_EventWait(30);
+  Motion_SetModeAndWaitAnimation(5, 3);
+  Import_EventWait(20);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_ObjTurn(9, FACING_NORTHEAST, 0);
   Venus_ObjTurn(8, 0x5000, 0);
-  Venus_Wait(50);
+  Import_EventWait(50);
   Venus_ObjTurn(8, 0x9000, 0);
-  Venus_ObjTurn(9, 0xd000, 0);
-  Venus_Wait(20);
-  Venus_ObjTurn(5, 0x1000, 0);
-  Venus_Wait(30);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Actor_ArmCallback(9, 0xd000, 0);
+  Import_EventWait(20);
+  Actor_ArmCallback(5, 0x1000, 0);
+  Import_EventWait(30);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_ObjTurn(9, 0xb000, 0);
-  Venus_Wait(20);
-  Venus_ObjModeWait(9, 4);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
+  Import_EventWait(20);
+  Motion_SetModeAndWaitAnimation(9, 4);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
   Venus_Jump(5, 256, 30);
-  Venus_ObjTurn(5, 0x3000, 0);
-  Venus_Wait(20);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(9, 4);
-  Venus_MessagePut(9, 0);
-  Venus_ObjVar(5, 2);
-  Venus_Wait(20);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Actor_ArmCallback(5, 0x3000, 0);
+  Import_EventWait(20);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(9, 4);
+  Func_02001c24(9, 0);
+  Motion_SetVarCbAndRefresh(5, 2);
+  Import_EventWait(20);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_ObjTurn(9, 0xf000, 0);
-  Venus_Wait(25);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
+  Import_EventWait(25);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
   Venus_ObjTurn(8, FACING_SOUTH, 0);
-  Venus_Wait(20);
-  Venus_ObjModeWait(8, 3);
-  Venus_Wait(10);
+  Import_EventWait(20);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  Import_EventWait(10);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
-  Venus_ObjVar(9, 2);
-  Venus_Wait(10);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
+  Motion_SetVarCbAndRefresh(9, 2);
+  Import_EventWait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
   Venus_Jump(5, 258, 40);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
-  Venus_ObjTurn(9, FACING_NORTHWEST, 0);
-  Venus_Wait(20);
-  Venus_ObjModeWait(9, 3);
-  Venus_Wait(10);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjLink(5, 8, 50);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
+  Actor_ArmCallback(9, FACING_NORTHWEST, 0);
+  Import_EventWait(20);
+  Motion_SetModeAndWaitAnimation(9, 3);
+  Import_EventWait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Actor_TurnToFaceEachOther(5, 8, 50);
   Venus_ObjTurn(9, FACING_SOUTH, 0);
-  Venus_Wait(30);
+  Import_EventWait(30);
   Venus_Jump(9, 264, 30);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(9, 6);
-  Venus_Wait(30);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(9, 6);
+  Import_EventWait(30);
   Venus_Jump(8, 257, 30);
-  Venus_Wait(10);
-  Venus_ObjTurn(8, 0x5000, 0);
-  Venus_Wait(20);
+  Import_EventWait(10);
+  Actor_ArmCallback(8, 0x5000, 0);
+  Import_EventWait(20);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
+  Import_EventWait(10);
   Venus_Jump(9, 256, 30);
   Venus_ObjTurn(9, 0xf000, 0);
-  Venus_Wait(20);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
+  Import_EventWait(20);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
   Venus_Jump(5, 257, 30);
-  Venus_ObjTurn(5, FACING_SOUTH, 0);
-  Venus_Wait(20);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
+  Actor_ArmCallback(5, FACING_SOUTH, 0);
+  Import_EventWait(20);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
   Venus_Jump(9, 258, 40);
   Venus_ObjTurn(9, 0xb000, 0);
-  Venus_Wait(30);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjVar(9, 2);
-  Venus_Wait(10);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjTurn(9, 0xf000, 0);
-  Venus_Wait(10);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(8, 3);
-  Venus_Wait(10);
+  Import_EventWait(30);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetVarCbAndRefresh(9, 2);
+  Import_EventWait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Actor_ArmCallback(9, 0xf000, 0);
+  Import_EventWait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  Import_EventWait(10);
   Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
-  Venus_ObjTurn(9, 0xb000, 0);
-  Venus_Wait(20);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(5, 3);
-  Venus_Wait(10);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(20);
-  Venus_ObjModeWait(9, 4);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjVar(9, 2);
-  Venus_Wait(10);
-  Venus_MessagePut(9, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(8, 3);
-  Venus_Wait(20);
-  Venus_ObjTurn(8, FACING_WEST, 0);
-  Venus_Wait(20);
-  Venus_MessagePut(0x2008, 0);
-  Venus_Wait(10);
-  Venus_ObjVar(5, 2);
-  Venus_Wait(10);
-  Venus_ObjTurn(5, 0x1000, 0);
-  Venus_Wait(30);
+  Import_EventWait(10);
+  Actor_ArmCallback(9, 0xb000, 0);
+  Import_EventWait(20);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(5, 3);
+  Import_EventWait(10);
+  Func_02001c24(5, 0);
+  Import_EventWait(20);
+  Motion_SetModeAndWaitAnimation(9, 4);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetVarCbAndRefresh(9, 2);
+  Import_EventWait(10);
+  Func_02001c24(9, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  Import_EventWait(20);
+  Actor_ArmCallback(8, FACING_WEST, 0);
+  Import_EventWait(20);
+  Func_02001c24(0x2008, 0);
+  Import_EventWait(10);
+  Motion_SetVarCbAndRefresh(5, 2);
+  Import_EventWait(10);
+  Actor_ArmCallback(5, 0x1000, 0);
+  Import_EventWait(30);
   Venus_Jump(5, 261, 30);
-  Venus_MessagePut(5, 0);
-  Venus_Wait(10);
-  Venus_ObjModeWait(5, 3);
-  Venus_Wait(20);
-  Venus_ObjAnim(9, 3);
-  Venus_ObjModeWait(8, 3);
-  Venus_Wait(20);
+  Func_02001c24(5, 0);
+  Import_EventWait(10);
+  Motion_SetModeAndWaitAnimation(5, 3);
+  Import_EventWait(20);
+  Import_ActorSetAnimation(9, 3);
+  Motion_SetModeAndWaitAnimation(8, 3);
+  Import_EventWait(20);
   Venus_ObjSpeed(8, 0x13333, 0x9999);
-  Venus_ObjAnim(8, 2);
+  Import_ActorSetAnimation(8, 2);
   actor = Import_ActorGet(5);
   if (actor != NULL)
     Actor_ResetAndSetPosition(8, actor->xPixel, actor->zPixel);
-  Venus_ObjCommitHere(8);
-  Venus_ObjSetPos(8, 0, 0);
+  Actor_WaitForMoveById(8);
+  Func_02001be4(8, 0, 0);
   Venus_ObjSpeed(9, 0x13333, 0x9999);
-  Venus_ObjAnim(9, 2);
+  Import_ActorSetAnimation(9, 2);
   actor = Import_ActorGet(5);
   if (actor != NULL)
     Actor_ResetAndSetPosition(9, actor->xPixel, actor->zPixel);
-  Venus_ObjCommitHere(9);
-  Venus_ObjSetPos(9, 0, 0);
-  Venus_Wait(10);
-  Venus_ObjCommit(5, 16, 0);
+  Actor_WaitForMoveById(9);
+  Func_02001be4(9, 0, 0);
+  Import_EventWait(10);
+  Actor_CommitPositionAndActivate(5, 16, 0);
   Venus_ObjWalk(5, 680, 944);
-  Venus_Wait(15);
-  Venus_ObjTurn(5, 0xd000, 0);
-  Venus_Wait(50);
-  Venus_ObjTurn(5, 0, 0);
-  Venus_Wait(15);
+  Import_EventWait(15);
+  Actor_ArmCallback(5, 0xd000, 0);
+  Import_EventWait(50);
+  Actor_ArmCallback(5, 0, 0);
+  Import_EventWait(15);
   Venus_ObjWalk(5, 728, 944);
   Venus_ObjWalk(5, 728, 928);
-  Venus_ObjSetPos(5, PIXELS(728), PIXELS(912));
-  Venus_Se(129);
+  Func_02001be4(5, PIXELS(728), PIXELS(912));
+  Import_SoundPlay(129);
   Venus_ObjEffectSet(5, -1);
-  Venus_Wait(40);
-  Venus_CopyCells(53, 50, 42, 49, 1, 1);
-  Venus_CopyCells(55, 117, 41, 117, 3, 5);
-  Venus_FlagClr(513);
+  Import_EventWait(40);
+  Import_MapCopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
+  Import_MapCopyCellPictureIndicesRect(55, 117, 41, 117, 3, 5);
+  GameFlag_ClearBit(513);
   Venus_ObjSetPos(10, PIXELS(664), PIXELS(792));
   Venus_CamMove(-1, -1, -1, 0);
   gMainRoutineWork.currentOwner = 5;
-  Venus_PartyRemove(4);
-  Venus_Wait(50);
+  Party_RemoveActiveOwner(4);
+  Import_EventWait(50);
   work = Ram_HeapSlots->eventWork;
   work->delay = 60;
   work->screenEffect = 256;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Venus_Countdown(22);
+  Func_02001c54(22);
 }

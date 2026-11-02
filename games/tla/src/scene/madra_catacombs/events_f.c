@@ -73,47 +73,6 @@ static __inline__ s32 Flag_Test(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
-static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020010cc(a, b, c, d, e, f);
-}
-
-static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                          s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020010dc(a, b, c, d, e, f);
-}
-
-static __inline__ void Actor_Place(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001134(id, x, z);
-}
-
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void Cue(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001214(cue);
-}
-
-static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(a, b, c, d);
-}
-
 void Func_02000a28(void) {
   struct Actor *lever = Actor_GetById(8);
   struct Actor *rock = Actor_GetById(64);
@@ -121,11 +80,11 @@ void Func_02000a28(void) {
 
   animation->frame = ((struct AnimationRecord18 *)lever->animation)->frame;
   if (Flag_Test(0x204) != 0 && animation->frame == 0) {
-    Cue(0x217);
+    Func_02001214(0x217);
     rock->x += PIXELS(-2);
     rock->velocityY = PIXELS(2);
-    Flag_Clear(0x204);
+    GameFlag_ClearBit(0x204);
   }
   if (animation->frame != 0)
-    Flag_Set(0x204);
+    GameFlag_SetBit(0x204);
 }

@@ -47,12 +47,7 @@ void Func_02000574(void) {
   GameFlag_SetBit(0x176);
   gMainRoutineWork.savedX = ship->x;
   gMainRoutineWork.savedZ = ship->z;
-  /* FAKEMATCH(one-pass): the angle's store in a once-only block, which
-   * builds its address before the angle's load; as the plain store, 2 of
-   * 149 instructions differ in tla-en. */
-  do {
-    gMainRoutineWork.unk280 = ship->angle;
-  } while (0);
+  gMainRoutineWork.unk280 = ship->angle;
   Func_02004e30(78);
   Func_02004b18(leader, 6);
   wait(6);

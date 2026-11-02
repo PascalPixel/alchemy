@@ -15,7 +15,7 @@ extern u8 MsgFieldWindStoneWarning[];
 
 void Func_02000548(void) {
   Func_02003bc8();
-  Call1(Func_02003c88, 0);
-  Call2(FieldMessage_Show, (s32)MsgFieldWindStoneWarning, 1);
+  Func_02003c88(0);
+  FieldMessage_Show((s32)MsgFieldWindStoneWarning, 1);
   Func_02003bd0();
 }

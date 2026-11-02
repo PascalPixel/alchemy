@@ -13,11 +13,6 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static __inline__ void GameFlag_SetBit_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
 static __inline__ void Func_0200500c_(s32 a, s32 b, s32 c) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200500c(a, b, c);
@@ -37,14 +32,14 @@ static __inline__ void Func_02004ff4_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 void Func_02000c38(void) {
   Func_02004ff4_(16, 25, 0, 5, 5, 40, 8);
   if (GameFlag_Test_(0xa63) == 0) {
-    GameFlag_SetBit_(0xa63);
+    GameFlag_SetBit(0xa63);
     Func_02002cb4(2);
   }
 }
 
 void Func_02000c74(void) {
   Func_02004ff4_(18, 17, 0, 3, 3, 31, 0);
-  if (GameFlag_Test_(0x9b7) == 0) {
+  if (GameFlag_Test(0x9b7) == 0) {
     Func_0200500c_(249, 328, 344);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b7;
     gMainRoutineWork.battleRule24b = 2;

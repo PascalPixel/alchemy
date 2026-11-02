@@ -6,14 +6,14 @@ void Func_02003dd4(void) {
   Func_02005dac(26, 17, 1, 1, 8, 19);
   Func_02005dac(26, 17, 1, 1, 24, 19);
   Call6((void (*)())Func_02005d9c, 90, 17, 72, 19, 1, 2);
-  Call6((void (*)())Func_02005d9c, 90, 17, 88, 19, 1, 2);
+  Func_02005d9c(90, 17, 88, 19, 1, 2);
 }
 
 void Func_02003e28(void) {
   Func_02005dac(25, 17, 1, 1, 8, 19);
   Func_02005dac(25, 17, 1, 1, 24, 19);
   Call6((void (*)())Func_02005d9c, 89, 17, 72, 19, 1, 2);
-  Call6((void (*)())Func_02005d9c, 89, 17, 88, 19, 1, 2);
+  Func_02005d9c(89, 17, 88, 19, 1, 2);
 }
 
 void Func_02003e7c(struct FieldActor *source) {

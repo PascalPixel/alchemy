@@ -118,29 +118,6 @@ static inline void GabombaStatueChamber_BlendStart(s32 a, s32 b, s32 c, s32 d,
   Func_02001d68(a, b, c, d, e, f);
 }
 
-static inline s32 GabombaStatueChamber_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static inline void GabombaStatueChamber_FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static inline void GabombaStatueChamber_ObjArm(s32 actor, s32 angle,
-                                               s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ArmCallback(actor, angle, frames);
-}
-
-static inline void
-GabombaStatueChamber_ObjSetPos(struct GabombaStatueChamberObject *object, s32 x,
-                               s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndResetMotion(object, x, y, z);
-}
-
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Func_02001e98(s32 speed, s32 acceleration);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -158,22 +135,6 @@ void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
-static inline void GabombaStatueChamber_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static inline void GabombaStatueChamber_ObjSpeed(s32 actor, s32 speed,
-                                                 s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static inline void GabombaStatueChamber_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndReset(actor, x, z);
-}
-
 static inline void GabombaStatueChamber_ObjPosSet(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001e10(actor, x, z);
@@ -185,48 +146,9 @@ static inline void GabombaStatueChamber_MapCopy(s32 a, s32 b, s32 c, s32 d,
   Func_02001d58(a, b, c, d, e, f);
 }
 
-static inline void GabombaStatueChamber_Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static inline void GabombaStatueChamber_SePlay(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001f10(cue);
-}
-
-static inline void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-#define GABOMBA_STATUE_CHAMBER_TASK_ADD(func, priority)                    \
-  {                                                                            \
-    /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
-     * task function load. */                                                       \
-    s32 priority_ = (priority);                                                \
-    Task_Add((func), priority_);                      \
-  }
-
 static inline void GabombaStatueChamber_ObjEmoteWait(s32 actor, s32 emote) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001e90(actor, emote);
-}
-
-static inline void GabombaStatueChamber_TaskAdd(void (*func)(void),
-                                                s32 priority) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Task_Add(func, priority);
-}
-
-static inline void GabombaStatueChamber_MessagePut(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001e60(speaker, flags);
-}
-
-static inline void GabombaStatueChamber_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldMessage_ShowAtActor(speaker, flags);
 }
 
 // ---- this overlay

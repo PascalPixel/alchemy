@@ -5,7 +5,7 @@ void Func_0200030c(void) {
 
   Func_020031e0();
   Func_02003280(0);
-  Call2((void (*)())Func_02003248, 0x7fff, 0);
+  Func_02003248(0x7fff, 0);
   Func_02003258(30);
   FieldEvent_Wait(30);
   Func_020032b8(190);
@@ -26,7 +26,7 @@ void Func_0200030c(void) {
   work = Ram_HeapSlots->eventWork;
   work->field166 = 0;
   FieldEvent_Wait(30);
-  Call2((void (*)())Func_02003248, 0x10000, 0);
+  Func_02003248(0x10000, 0);
   Func_02003258(30);
   FieldEvent_Wait(30);
   FieldEvent_Wait(10);

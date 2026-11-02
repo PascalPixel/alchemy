@@ -35,14 +35,11 @@ void VENT_BOUNCE(struct Actor *object) {
   object->unk4c = dz - dz / 16;
   object->scaleX += object->speedLimit;
   sprite = object->animation;
-  /* FAKEMATCH: a one-pass block with the acceleration read first; without it
-   * sched2 copies the object for the spin's address before the scale store
-   * (differ 2). */
-  do {
+  {
     s32 acceleration = object->acceleration;
 
     object->scaleY += acceleration;
-  } while (0);
+  }
   sprite->rotation += object->action;
   if (other->y == other->terrainHeight && VENT_TOUCHING(object, other)) {
     object->z -= object->unk4c;

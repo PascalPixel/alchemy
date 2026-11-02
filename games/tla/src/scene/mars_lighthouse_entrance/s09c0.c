@@ -31,7 +31,7 @@ void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_020009c0(void) {
   Func_02004d10(0x10000, 0x2000);
-  Camera_SetBounds(PIXELS(88), -1, PIXELS(696), 1);
+  Camera_MoveWithinMapBounds(PIXELS(88), -1, PIXELS(696), 1);
   Func_020019c4();
 }
 

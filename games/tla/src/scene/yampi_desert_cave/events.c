@@ -63,8 +63,8 @@ void Func_02000e14(s32 arg0) {
     goto L_02008e3a;
   if (arg0 != 3)
     goto L_02008e3a;
-  Value3((s32 (*)())Func_020018a8, 11, 0, 0);
-  Call1((void (*)())GameFlag_SetBit, 0x300);
+  Func_020018a8(11, 0, 0);
+  GameFlag_SetBit(0x300);
 L_02008e3a:
   return;
 }
@@ -77,8 +77,8 @@ void Func_02000e3c(s32 arg0) {
     goto L_02008e66;
   if (arg0 != 3)
     goto L_02008e66;
-  Call3((void (*)())Func_020018a8, 15, 0, 0);
-  Value1((s32 (*)())GameFlag_SetBit, 0x301);
+  Func_020018a8(15, 0, 0);
+  GameFlag_SetBit(0x301);
 L_02008e66:
   return;
 }

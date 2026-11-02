@@ -41,12 +41,12 @@ loop_3:
   wait(1);
   if (0x3332 < OBJ(gData_0200480c)->scaleX)
     goto loop_3;
-  Scene_Call4090(22, 0, 0);
+  Func_02004090(22, 0, 0);
   FieldEvent_Wait(20);
   Scene_CamBounds(PIXELS(232), -1, PIXELS(196), 1);
   Func_02004100(gMainRoutineWork.currentOwner, 0x101, 0);
   Scene_SetSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
-  Scene_SetPositionAndReset(gMainRoutineWork.currentOwner, 232, 164);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 232, 164);
   FieldEvent_Wait(20);
   angle = 0x4000;
   Scene_Call4098(21, 232 << 16, 184 << 16, angle);
@@ -63,7 +63,7 @@ loop_3:
   Actor_SetPartAttribute(Actor_GetById(21), 0);
   Actor_SetSingleChildFlags(Actor_GetById(21), 1);
   Scene_SetSpeed(21, 0x19999, 0xcccc);
-  Scene_SetPositionAndCommit(21, 216, 184);
+  Actor_SetPositionAndCommit(21, 216, 184);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, angle, 0);
   Func_020040e8(21, 0);
   FieldEvent_Wait(20);
@@ -92,7 +92,7 @@ step_13:
   Func_020041f8(153);
   partner->velocityY = 0x80000;
   Actor_SetSingleChildFlags(Actor_GetById(21), 0);
-  Scene_SetPositionAndCommit(21, 232, 168);
+  Actor_SetPositionAndCommit(21, 232, 168);
   FieldEvent_Wait(3);
   Func_020041f8(204);
   i = 0;
@@ -104,7 +104,7 @@ step_5:
   i++;
   if (i <= 5)
     goto step_5;
-  Scene_Call4090(21, 0, 0);
+  Func_02004090(21, 0, 0);
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();

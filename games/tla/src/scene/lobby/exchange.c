@@ -14,11 +14,6 @@
 s32 Func_0200039c(void);
 s32 Func_02000578(void);
 
-static __inline__ void Flag_SetByte(s32 flag, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetByte(flag, value);
-}
-
 /// Resets the transfer state, as system/serial/reset_transfer.c does.
 // In The Lost Age's store order.
 static __inline__ void Lobby_ResetTransferState(void) {
@@ -76,7 +71,7 @@ s32 Func_020007b8(void) {
     if (result < 0)
       goto fail;
   }
-  Flag_SetByte(0x3f0, first);
+  GameFlag_SetByte(0x3f0, first);
   result = first;
 check:
   if (first < 0) {

@@ -68,16 +68,6 @@ void Func_02000a28(void);
 void Func_02000c94(void);
 void Func_02000cf4(void);
 
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void Cue(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001214(cue);
-}
-
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(a, b, c, d);
@@ -102,8 +92,8 @@ void Func_02000a88(void) {
   Func_020010c4(object);
   object->angle = FACING_NORTH;
   Actor_SetMovementTypeById(party->currentOwner, gData_0200121c);
-  Wait(12);
-  Cue(123);
+  wait(12);
+  Func_02001214(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_0200117c(work->returnEntrance);

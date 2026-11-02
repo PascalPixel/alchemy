@@ -49,7 +49,7 @@ void Func_02001a04(void) {
   Actor_SetSpritePriority(9, 1);
   LemurianShip_ObjSpeed(9, 0xcccc, 0x6666);
   Actor_Jump(9, 6, 0);
-  LemurianShip_ObjCommit(9, 832, 88);
+  Actor_SetPositionAndCommit(9, 832, 88);
   FieldEvent_Wait(20);
   LemurianShip_ObjSpeed(9, 0x19999, 0xcccc);
   Actor_SetSpritePriority(9, 3);

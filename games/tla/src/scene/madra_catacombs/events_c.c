@@ -68,47 +68,6 @@ void Func_02000a28(void);
 void Func_02000c94(void);
 void Func_02000cf4(void);
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
-static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020010cc(a, b, c, d, e, f);
-}
-
-static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                          s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020010dc(a, b, c, d, e, f);
-}
-
-static __inline__ void Actor_Place(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001134(id, x, z);
-}
-
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void Cue(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001214(cue);
-}
-
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(a, b, c, d);
@@ -122,10 +81,10 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Func_0200110c();
   Func_020011ac(0);
   if (mode == 2)
-    Cue(188);
+    Func_02001214(188);
   else
-    Cue(158);
-  Map_CopyCells(a, b, c, d, mode, f);
+    Func_02001214(158);
+  Func_020010cc(a, b, c, d, mode, f);
   FieldEvent_Wait(20);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   if (mode == 1) {
@@ -137,8 +96,8 @@ void Func_02000b38(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
     object->angle = FACING_NORTH;
   }
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner, gData_0200121c);
-  Wait(12);
-  Cue(123);
+  wait(12);
+  Func_02001214(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_0200117c(work->returnEntrance);
@@ -158,7 +117,7 @@ void Func_02000c94(void) {
   Camera_SetBounds(-1, -1, -1, 0);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
-  Wait(1);
+  wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -171,7 +130,7 @@ void Func_02000cf4(void) {
   Camera_SetBounds(-1, -1, -1, 0);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
-  Wait(1);
+  wait(1);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);

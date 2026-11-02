@@ -52,32 +52,6 @@ static __inline__ void Actor_ArmCallback_(s32 actor, s32 angle,
   Actor_ArmCallback(actor, angle, frames);
 }
 
-static __inline__ void Func_02004df8_(s32 value, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004df8(value, mode);
-}
-
-static __inline__ void Actor_SetPositionAndReset_(s32 actor, s32 x,
-                                                         s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndReset(actor, x, z);
-}
-
-static __inline__ void Func_02004d00_(s32 actor, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004d00(actor, angle);
-}
-
-static __inline__ void Func_02004d10_(s32 actor, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004d10(actor, value);
-}
-
-static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004d08(actor, value, frames);
-}
-
 void Func_02000994(void) {
   struct Actor *object;
   s32 x;
@@ -96,49 +70,49 @@ void Func_02000994(void) {
     x <<= 4;
     z <<= 4;
     if (seen) {
-      Func_02004df8_(0x16666, 6);
+      Func_02004df8(0x16666, 6);
       Func_02004c98(5, gMainRoutineWork.currentOwner);
       wait(1);
-      Actor_SetPositionAndReset_(5, x + 24, z - 12);
+      Actor_SetPositionAndReset(5, x + 24, z - 12);
       Actor_ArmCallback_(5, FACING_SOUTHWEST, 0);
-      Func_02004d00_(gMainRoutineWork.currentOwner, FACING_NORTHEAST);
+      Func_02004d00(gMainRoutineWork.currentOwner, FACING_NORTHEAST);
       Func_02004da8();
       Func_02004cd8((s32)MsgWeShouldnT);
       Func_02004cf0(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
       wait(1);
-      Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 7312, 8192);
-      Func_02004df8_(0x10000, 6);
+      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 7312, 8192);
+      Func_02004df8(0x10000, 6);
     } else {
-      Func_02004df8_(0x16666, 6);
+      Func_02004df8(0x16666, 6);
       Func_02004c98(5, gMainRoutineWork.currentOwner);
       wait(1);
       z -= 12;
-      Actor_SetPositionAndReset_(5, x + 24, z);
+      Actor_SetPositionAndReset(5, x + 24, z);
       Actor_ArmCallback_(5, FACING_SOUTHWEST, 0);
-      Func_02004d00_(gMainRoutineWork.currentOwner, FACING_NORTHEAST);
+      Func_02004d00(gMainRoutineWork.currentOwner, FACING_NORTHEAST);
       Func_02004da8();
       Func_02004cd8((s32)MsgYouReNot);
       Func_02004cf0(5, 0);
       Func_02004db0();
       Actor_ArmCallback_(5, FACING_WEST, 0);
-      Func_02004d10_(gMainRoutineWork.currentOwner, 258);
-      Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, x + 12, z);
-      Func_02004d00_(gMainRoutineWork.currentOwner, 0);
+      Func_02004d10(gMainRoutineWork.currentOwner, 258);
+      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, x + 12, z);
+      Func_02004d00(gMainRoutineWork.currentOwner, 0);
       Actor_SetModeById(5, 4);
       Func_02004da8();
       Func_02004cf0(5, 0);
-      Func_02004d08_(5, 265, 0);
+      Func_02004d08(5, 265, 0);
       Func_02004cf0(5, 0);
       Actor_SetModeById(5, 3);
       Func_02004cf0(5, 0);
       Func_02004db0();
       Actor_JoinLeader(5);
       wait(1);
-      Actor_SetPositionAndReset_(gMainRoutineWork.currentOwner, 7312, 8192);
+      Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 7312, 8192);
       Flag_Set(0x9b3);
-      Func_02004df8_(0x10000, 6);
+      Func_02004df8(0x10000, 6);
     }
     wait(8);
     Func_02004c28();

@@ -5,15 +5,7 @@ s32 Func_020005c0(struct Actor *object) {
   ((struct FieldSprite *)object->animation)->priority = 2;
   object->priorityFlags &= 0xfe;
   object->motionFlags = 0;
-  {
-    s32 step = -0x40000;
-
-    /* FAKEMATCH: the object passes through an asm that reads the step, so the
-     * step's pool load comes before the y load; as plain C, the y load comes
-     * first. */
-    __asm__("" : "+l"(object) : "l"(step));
-    object->y += step;
-  }
+  object->y -= 0x40000;
   return 0;
 }
 

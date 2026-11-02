@@ -41,7 +41,7 @@ void Func_02000808(void) {
 
   flag = Value1((s32 (*)())GameFlag_Test, 0x320);
   if (flag == 0) {
-    Call1((void (*)())GameFlag_SetBit, 0x320);
+    GameFlag_SetBit(0x320);
     Func_020051ac();
     Func_02005324(0);
     Actor_SetSingleChildFlags(Actor_GetById(22), 0);

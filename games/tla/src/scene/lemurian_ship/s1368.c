@@ -70,7 +70,7 @@ void Func_02001474(void) {
       LemurianShip_MapCopy(18, 126, 4, 85, 1, 2);
   } else if (z == 26) {
     if (x == 7)
-      LemurianShip_MapCopy(18, 126, 7, 86, 1, 1);
+      Func_02002c30(18, 126, 7, 86, 1, 1);
   } else if (z == 27) {
     if (x == 4)
       LemurianShip_MapCopy(18, 126, 4, 87, 1, 2);

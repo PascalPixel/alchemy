@@ -28,16 +28,8 @@ void Func_02000288(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[0];
   struct Actor *object = Func_02002074();
   s32 offset = Math_Sine(gData_020024b0) >> 2;
-  s32 step;
 
   object->y += offset;
-  /* FAKEMATCH: a one-pass block around the last three statements and an empty
-   * asm taking the step load the layer word between the halves of 0x200; as
-   * plain statements, 4 instructions differ in tla-en. */
-  do {
-    step = 0x200;
-    LAYER_WORD(layer, 12) += offset;
-    gData_020024b0 += step;
-  } while (0);
-  asm("" : : "l"(step));
+  LAYER_WORD(layer, 12) += offset;
+  gData_020024b0 += 0x200;
 }

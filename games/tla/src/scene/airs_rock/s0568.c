@@ -24,21 +24,20 @@ extern u8 gMainRoutineWork[];
 
 void Func_02000568(void) {
   Func_02003bc8();
-  Call1(Func_02003c88, 0);
-  Call1(Func_02003cd8, 0x9e);
+  Func_02003c88(0);
+  Func_02003cd8(0x9e);
   Call6(Func_02003b68, 64, 64, 83, 35, 1, 2);
-  Call1(Func_02003b70, 0);
-  Call1(FieldEvent_Wait, 45);
-  Call3(Actor_SetSpeedParameters, FIELD_AT(gMainRoutineWork, s32, 532),
-        0x8000, 0x4000);
-  Call3(Actor_ResetAndSetPositionInMode2, FIELD_AT(gMainRoutineWork, s32, 532),
-        312, 680);
-  Call1(FieldEvent_Wait, 5);
+  Func_02003b70(0);
+  FieldEvent_Wait(45);
+  Actor_SetSpeedParameters(FIELD_AT(gMainRoutineWork, s32, 532), 0x8000,
+                           0x4000);
+  Actor_ResetAndSetPositionInMode2(FIELD_AT(gMainRoutineWork, s32, 532), 312,
+                                   680);
+  FieldEvent_Wait(5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Call1(Actor_WaitForMoveById,
-        FIELD_AT(gMainRoutineWork, s32, 532));
-  Call1(Func_02003cd8, 0x7b);
-  Call1(Func_02003c48, 4);
+  Actor_WaitForMoveById(FIELD_AT(gMainRoutineWork, s32, 532));
+  Func_02003cd8(0x7b);
+  Func_02003c48(4);
   Func_02003bd0();
 }

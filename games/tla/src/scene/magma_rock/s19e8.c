@@ -15,19 +15,14 @@ void Func_020019e8(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-
   {
     s32 scene = party->scene;
-    /* FAKEMATCH(pin): the mode copied into r6 after the scene is read, as
-     * native; as mode passed on directly, 2 of 31 instructions differ in
-     * tla-en. */
-    register s32 savedMode asm("r6") = mode;
 
     if (scene == (s32)&SceneId_Ov691Room1)
       work->target = Actor_GetById(15);
     else if (scene == (s32)&SceneId_Ov691Room2)
       work->target = Actor_GetById(14);
-    Func_020014bc(savedMode, cue);
+    Func_020014bc(mode, cue);
   }
   GameFlag_SetBit(0x200);
 }
@@ -38,19 +33,14 @@ void Func_02001a38(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-
   {
     s32 scene = party->scene;
-    /* FAKEMATCH(pin): the mode copied into r6 after the scene is read, as in
-     * Func_020019e8; as mode passed on directly, 2 of 32 instructions differ
-     * in tla-en. */
-    register s32 savedMode asm("r6") = mode;
 
     if (scene == (s32)&SceneId_Ov691Room1)
       work->target = Actor_GetById(16);
     else if (scene == (s32)&SceneId_Ov691Room2)
       work->target = Actor_GetById(10);
-    Func_020014bc(savedMode, cue);
+    Func_020014bc(mode, cue);
   }
   GameFlag_SetBit(0x201);
 }

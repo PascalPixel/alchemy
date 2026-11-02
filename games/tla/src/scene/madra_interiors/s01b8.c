@@ -7,9 +7,9 @@ void Func_020001b8(s32 actor) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001f00(actor);
   } else {
-    if (FlagCheck(0x8ff))
+    if (GameFlag_Test(0x8ff))
       Func_02001e18((s32)MsgMadraInteriors149);
-    else if (FlagCheck(0x8ab))
+    else if (GameFlag_Test(0x8ab))
       Func_02001e18((s32)MsgMadraInteriors81);
     else
       Func_02001e18((s32)MsgMadraInteriors33);
@@ -32,15 +32,15 @@ void Func_0200023c(void) {
 void Func_0200028c(void) {
   s32 msg;
 
-  if (FlagCheck(0x98a)) {
-    if (FlagCheck(0x310))
+  if (GameFlag_Test(0x98a)) {
+    if (GameFlag_Test(0x310))
       msg = (s32)MsgMadraInteriors111;
     else
       msg = (s32)MsgMadraInteriors118;
     Func_02001e18(msg);
     Func_02001e30(10, 0);
   } else {
-    if (FlagCheck(0x210)) {
+    if (GameFlag_Test(0x210)) {
       Func_02001e18((s32)MsgMadraInteriors116);
       Func_02001e30(10, 0);
     } else {
@@ -52,15 +52,15 @@ void Func_0200028c(void) {
 }
 
 void Func_02000308(void) {
-  if (FlagCheck(0x98a)) {
-    if (FlagCheck(0x310)) {
+  if (GameFlag_Test(0x98a)) {
+    if (GameFlag_Test(0x310)) {
       Func_02001e18((s32)MsgMadraInteriors112);
       Func_02001e30(11, 0);
     } else {
       Func_02001e18((s32)MsgMadraInteriors119);
       Func_02001e30(11, 0);
     }
-  } else if (FlagCheck(0x210)) {
+  } else if (GameFlag_Test(0x210)) {
     Func_02001e18((s32)MsgMadraInteriors117);
     Func_02001e30(11, 0);
   } else {
@@ -70,8 +70,8 @@ void Func_02000308(void) {
 }
 
 void Func_02000368(void) {
-  if (FlagCheck(0x98a)) {
-    if (FlagCheck(0x310)) {
+  if (GameFlag_Test(0x98a)) {
+    if (GameFlag_Test(0x310)) {
       Func_02001e18((s32)MsgMadraInteriors113);
       Func_02001e30(10, 0);
     } else {
@@ -79,7 +79,7 @@ void Func_02000368(void) {
       Func_02001e30(10, 0);
     }
   } else {
-    s32 flag = FlagCheck(0x210);
+    s32 flag = GameFlag_Test(0x210);
     s32 msg = (s32)MsgMadraInteriors108;
 
     if (flag) {
@@ -93,8 +93,8 @@ void Func_02000368(void) {
 }
 
 void Func_020003c8(void) {
-  if (FlagCheck(0x98a)) {
-    if (FlagCheck(0x310)) {
+  if (GameFlag_Test(0x98a)) {
+    if (GameFlag_Test(0x310)) {
       Func_02001e18((s32)MsgMadraInteriors114);
       Func_02001e30(11, 0);
     } else {
@@ -102,7 +102,7 @@ void Func_020003c8(void) {
       Func_02001e30(11, 0);
     }
   } else {
-    s32 flag = FlagCheck(0x210);
+    s32 flag = GameFlag_Test(0x210);
     s32 msg = (s32)MsgMadraInteriors109;
 
     if (flag) {
@@ -117,7 +117,7 @@ void Func_020003c8(void) {
 
 void Func_02000428(void) {
   if (!FlagCheck(0x211)) {
-    FlagSet(0x211);
+    GameFlag_SetBit(0x211);
     Func_02001e18((s32)MsgUhhhnnnUhhhnnn2);
     Actor_CommitPositionAndActivate(14, -12, 0);
     FieldEvent_Wait(20);
@@ -141,15 +141,15 @@ const u8 *Func_020004c4(void) {
     return gData_02002c9c;
   if (gMainRoutineWork.entrance == 20)
     return gData_02002bb8;
-  if (FlagCheck(0x8ff))
+  if (GameFlag_Test(0x8ff))
     return gData_0200308c;
-  if (FlagCheck(0x8ab))
+  if (GameFlag_Test(0x8ab))
     return gData_02002da4;
   return gData_020028a0;
 }
 
 void Func_02000534(void) {
-  if (FlagCheck(0x8ab)) {
+  if (GameFlag_Test(0x8ab)) {
     ActorPlace(26, PIXELS(888), PIXELS(8));
   } else {
     Func_02001d38(Actor_GetById(26), 242);

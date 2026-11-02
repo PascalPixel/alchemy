@@ -15,8 +15,8 @@ extern u8 gMainRoutineWork[];
 extern u8 MsgAlhafraInteriors48[];
 
 void Func_0200047c(s32 a0, s32 a1) {
-  Call3(Actor_TurnToFaceEachOther, a1, FIELD_AT(gMainRoutineWork, s32, 532), 0);
-  Call1(Func_02000b24, (s32)MsgAlhafraInteriors48);
-  Call2(Func_02000b3c, a1, 0);
+  Actor_TurnToFaceEachOther(a1, FIELD_AT(gMainRoutineWork, s32, 532), 0);
+  Func_02000b24((s32)MsgAlhafraInteriors48);
+  Func_02000b3c(a1, 0);
   Call3(Actor_ArmCallback, a1, 0xe000, 0);
 }

@@ -58,20 +58,17 @@ s32 Func_02002614(void) {
     *effect = value;
     Func_020045dc(skip);
   } else {
-    if (!Flag_Test(0xa3d))
+    if (!GameFlag_Test(0xa3d))
       GameFlag_SetBit(0x201);
-    if (Flag_Test(0x201)) {
+    if (GameFlag_Test(0x201)) {
       Func_0200461c(1);
     } else {
-      {
-        /* FAKEMATCH: the value pinned to r3 loads from the pool before the
-         * register address starts, as the native does; as a plain store, one
-         * row is reordered in tla-en. */
-        register u16 alpha __asm__("r3") = 0xc08;
+      /* FAKEMATCH: the value pinned to r3 loads from the pool before the
+       * register address starts, as the native does; as a plain store, one
+       * row is reordered in tla-en. */
+      register u16 alpha __asm__("r3") = 0xc08;
 
-
-        REG_BLDALPHA = alpha;
-      }
+      REG_BLDALPHA = alpha;
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       Task_Add(Func_020018e0, 0x480);
       Func_02004414(0);
@@ -84,13 +81,13 @@ s32 Func_02002614(void) {
     }
     scene = gMainRoutineWork.scene;
     if (scene == (s32)&SceneId_Ov6a8Room2) {
-      if (!Flag_Test(0x300))
+      if (!GameFlag_Test(0x300))
         Actor_SetWideSprite(64, 1);
       Func_020027e4();
     } else if (scene == (s32)&SceneId_Ov6a8Room3) {
       Func_02002878();
     }
-    if (Flag_Test(0x201)) {
+    if (GameFlag_Test(0x201)) {
       Func_0200459c(0x10004, 1);
       Func_020045a4(16);
       wait(16);

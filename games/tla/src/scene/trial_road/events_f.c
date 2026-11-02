@@ -25,10 +25,6 @@ void Func_02000924(s32 id) {
   if (object != NULL) {
     Func_0200070c(id, -16);
     object->collisionFlags = 0;
-    /* FAKEMATCH: stores collisionFlags before it copies the object for the
-     * priority flags (differ 2 without it). */
-    do {
-    } while (0);
     object->priorityFlags |= 2;
     Func_020057c8(object, 6);
   }
@@ -40,10 +36,6 @@ void Func_0200095c(s32 id) {
   if (object != NULL) {
     Func_0200070c(id, 16);
     object->collisionFlags = 1;
-    /* FAKEMATCH: stores collisionFlags before it copies the object for the
-     * priority flags (differ 2 without it). */
-    do {
-    } while (0);
     object->priorityFlags &= 0xfd;
     Func_020057c8(object, 5);
   }

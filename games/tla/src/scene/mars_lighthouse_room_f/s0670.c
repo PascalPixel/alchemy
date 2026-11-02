@@ -12,7 +12,7 @@ void Func_02000670(void) {
   Func_020055e0();
   wait(20);
   Func_020055d0(0x50000, 0xa000);
-  Camera_SetBounds(PIXELS(248), -1, PIXELS(872), 1);
+  Camera_MoveWithinMapBounds(PIXELS(248), -1, PIXELS(872), 1);
   Func_020055e0();
   FieldEvent_Wait(120);
   Func_02005568();
@@ -21,7 +21,7 @@ void Func_02000670(void) {
 void Func_020006f4(s32 burst) {
   if (!Flag_IsSet(0xa46)) {
     Func_020054e0_(29, 60, 3, 4, 14, 50);
-    Func_020054f0_(93, 60, 3, 4, 78, 50);
+    Func_020054f0(93, 60, 3, 4, 78, 50);
     if (burst && !Flag_IsSet(0xa43))
       Func_0200055c(14);
     Flag_Set(0xa43);
@@ -69,9 +69,9 @@ void Func_020007f0(s32 unused, s32 id) {
         wait(1);
       Func_020056c0(133);
     }
-    Func_020054f0_(71, 24, 7, 1, 71, 5);
-    Func_020054e8_(7, 24, 7, 1, 7, 7);
-    Func_020054e8_(7, 88, 7, 1, 7, 71);
+    Func_020054f0(71, 24, 7, 1, 71, 5);
+    Func_020054e8(7, 24, 7, 1, 7, 7);
+    Func_020054e8(7, 88, 7, 1, 7, 71);
     Func_020056c0(167);
     Func_02005598(id, 0, 0);
     Flag_Set(0x358);
@@ -98,7 +98,6 @@ void Func_02000900(void) {
 void Func_02000944(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 frame;
-  s32 delta;
 
   /* FAKEMATCH: taking the object's address keeps the motion flags' address
    * inside the loop; without it GCSE hoists it out (differ 24). */
@@ -112,11 +111,7 @@ step:
   if (frame == 5)
     Func_020056c0(204);
   object->motionFlags = 0;
-  delta = -0x400;
-  /* FAKEMATCH: the barrier loads the first step before the scale it is added
-   * to; plainly sched2 loads the scale first (differ 2). */
-  asm volatile("" : "+l"(delta));
-  object->scaleX += delta;
+  object->scaleX += (-0x400);
   object->scaleY += -0x300;
   object->y += -0x9999;
   wait(1);

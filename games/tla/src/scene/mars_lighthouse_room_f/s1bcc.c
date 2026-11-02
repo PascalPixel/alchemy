@@ -40,15 +40,11 @@ void Func_02001bcc(void) {
   actor9->y.fixed = actor9->terrainHeight;
   actor10->motionFlags = 0;
   actor10->y.fixed = actor10->terrainHeight;
-  if (Value1((s32 (*)())GameFlag_Test, 0xa0a)) {
+  if (GameFlag_Test(0xa0a)) {
     actor9->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
 
-      /* FAKEMATCH(barrier): step held apart from the y load (and r3 kept
-       * from it) loads the rise before actor 23's y; as actor23->y.fixed +=
-       * 0x1eb80, 2 of 165 instructions differ in tla-en. */
-      __asm__("" : "+l"(step) : : "r3");
       actor23->y.fixed += step;
     }
     actor23->x.fixed -= 0x28f40;
@@ -61,9 +57,6 @@ void Func_02001bcc(void) {
     {
       s32 step = 0x1eb80;
 
-      /* FAKEMATCH(barrier): as above; as actor23->y.fixed += 0x1eb80, 2 of
-       * 165 instructions differ in tla-en. */
-      __asm__("" : "+l"(step) : : "r3");
       actor23->y.fixed += step;
     }
     actor23->x.fixed += 0x28f40;
@@ -71,16 +64,12 @@ void Func_02001bcc(void) {
     Animation_ApplyChildValues(Actor_GetById(10), 4);
     Animation_ApplyChildValues(Actor_GetById(12), 4);
   }
-  if (Value1((s32 (*)())GameFlag_Test, 0xa0a) &&
-      Value1((s32 (*)())GameFlag_Test, 0xa0b)) {
+  if (GameFlag_Test(0xa0a) && GameFlag_Test(0xa0b)) {
     actor9->y.fixed += 0x199900;
     actor10->y.fixed += 0x199900;
     {
       s32 step = 0x1b8480;
 
-      /* FAKEMATCH(barrier): as above; as actor23->y.fixed += 0x1b8480, 2 of
-       * 165 instructions differ in tla-en. */
-      __asm__("" : "+l"(step) : : "r3");
       actor23->y.fixed += step;
     }
     actor9->motionFlags = 4;

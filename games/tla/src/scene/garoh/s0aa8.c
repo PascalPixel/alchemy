@@ -30,8 +30,8 @@ s32 Func_02000aa8(void) {
     Actor_SetSpritePriority(13, 1);
     Actor_SetSpritePriority(14, 1);
     if (GameFlag_Test(0x91f)) {
-      /* FAKEMATCH(temporary): the angle in its own local; as Value4(...,
-       * 0x4000), 4 of 128 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the angle in its own local; as a plain 0x4000
+       * argument, 4 of 128 instructions differ in tla-en. */
       s32 angle = 0x4000;
 
       Value4((s32 (*)())Func_02005214, 10, PIXELS(328), PIXELS(162), angle);

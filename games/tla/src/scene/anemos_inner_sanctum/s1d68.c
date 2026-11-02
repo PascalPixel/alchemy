@@ -26,7 +26,7 @@ void Func_02001d68(void) {
   Actor_SetModeById(9, 2);
   object->y = -0x400000;
   Func_020033e0_(9, PIXELS(728), PIXELS(120));
-  Func_020033e0_(gMainRoutineWork.currentOwner, PIXELS(728), PIXELS(120));
+  Func_020033e0(gMainRoutineWork.currentOwner, PIXELS(728), PIXELS(120));
   Actor_GetById(gMainRoutineWork.currentOwner)->y = -0x300000;
   Event_StartScreenTransition();
   object->acceleration = 0x10000;

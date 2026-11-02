@@ -59,7 +59,7 @@ loop:
     goto loop;
   Func_020034b8(158);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room1) {
-    Func_02003320_(gData_020043e4, 33, 7);
+    Func_02003320(gData_020043e4, 33, 7);
   } else {
     s32 index = work->value / 2 - 1;
 

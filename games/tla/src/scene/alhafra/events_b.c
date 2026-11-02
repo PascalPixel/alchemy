@@ -24,7 +24,7 @@ void Func_0200013c(s32 actor) {
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Func_02001d34(), 0) == 0) {
       Func_02001c74(msg + 1);
-      Call1((void (*)())GameFlag_SetBit, 0x8b0);
+      GameFlag_SetBit(0x8b0);
     } else {
       Func_02001c74(msg + 2);
     }

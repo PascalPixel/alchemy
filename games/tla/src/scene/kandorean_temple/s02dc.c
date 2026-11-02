@@ -35,11 +35,6 @@ s32 Func_0200035c(struct Actor *object) {
   object->motionFlags = 0;
   object->scaleX = 0xcccc;
   object->scaleY = 0xcccc;
-  /* FAKEMATCH: the loop note ends the scheduling block after the scale stores;
-   * without it the collision flags are addressed before them (one reordered
-   * row). */
-  do {
-  } while (0);
   object->collisionFlags |= 8;
   Actor_SetSingleChildFlags(object, 0);
   return 0;

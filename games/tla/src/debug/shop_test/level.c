@@ -40,10 +40,7 @@ void Func_02000748(void) {
       Text_DrawNumberInWindow(unit[15], 0, window, 72, 48);
     }
     wait(1);
-    /* FAKEMATCH: the volatile reads load the pressed keys again for each test,
-     * as the native does (plain: differ 30). */
-    if ((((volatile struct InputState *)&gInput)->pressed & 8) ||
-        (((volatile struct InputState *)&gInput)->pressed & 4)) {
+    if ((gInput.pressed & 8) || (gInput.pressed & 4)) {
       Func_02000704(5);
       Func_02000e78(93);
       redraw = 1;
@@ -52,12 +49,12 @@ void Func_02000748(void) {
      * Select tests' input address here, so the A test loads it again as the
      * native does (differ 17 without). */
     __asm__ volatile("" : : : "memory");
-    if (((volatile struct InputState *)&gInput)->pressed & 1) {
+    if (gInput.pressed & 1) {
       Func_02000704(1);
       Func_02000e78(91);
       redraw = 1;
     }
-    if (((volatile struct InputState *)&gInput)->pressed & 2)
+    if (gInput.pressed & 2)
       break;
   }
   Func_02000e78(113);

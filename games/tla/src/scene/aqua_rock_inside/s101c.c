@@ -22,10 +22,6 @@ void Func_0200107c(s32 unused, s32 id) {
     {
       s32 row = 33;
 
-      /* FAKEMATCH(barrier): sets the row argument before x is loaded, as the
-       * native does; as Func_02003d1c_(8, 33, 1, 1, object->x >> 20, 34) at
-       * both calls, 10 of 37 instructions differ in tla-en. */
-      asm("" : "+l"(row) : : "memory");
       Func_02003d1c_(8, row, 1, 1, object->x >> 20, 34);
     }
     object = Actor_GetById(11);
@@ -33,9 +29,7 @@ void Func_0200107c(s32 unused, s32 id) {
     {
       s32 row = 33;
 
-      /* FAKEMATCH(barrier): as above. */
-      asm("" : "+l"(row) : : "memory");
-      Func_02003d1c_(8, row, 1, 1, object->x >> 20, 34);
+      Func_02003d1c(8, row, 1, 1, object->x >> 20, 34);
     }
   }
 }

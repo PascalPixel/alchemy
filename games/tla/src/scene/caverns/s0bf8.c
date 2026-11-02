@@ -18,6 +18,6 @@ void Func_02000bf8(s32 unused, s32 id) {
   struct FieldActor *object = Actor_GetById(id);
 
   object->motionFlags = 0;
-  Call6((void (*)())Func_020010ac, 13, 12, 2, 1, 13, 10);
-  Call6((void (*)())Func_020010ac, 16, 10, 1, 1, object->x >> 20, 10);
+  Func_020010ac(13, 12, 2, 1, 13, 10);
+  Func_020010ac(16, 10, 1, 1, object->x >> 20, 10);
 }

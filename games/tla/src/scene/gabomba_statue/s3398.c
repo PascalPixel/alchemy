@@ -30,7 +30,6 @@ static __inline__ void Map_CopyBlock(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 /// Prepares the current room.
 s32 Func_02003398(void) {
   s16 scene;
-  struct MainRoutineWork *party;
 
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->screenEffect = 521;
   if (gMainRoutineWork.scene != (s32)&SceneId_Ov671Room1) {
@@ -43,12 +42,7 @@ s32 Func_02003398(void) {
     Func_02001c10();
   }
   Actor_GetById(Func_0200584c())->priorityFlags |= 0x20;
-  party = &gMainRoutineWork;
-  /* FAKEMATCH: the native loads gMainRoutineWork's address before it builds the
-   * scene's offset; the plain read builds the offset first (one reordered pair,
-   * differ 2). */
-  asm volatile("" : "+l"(party));
-  scene = party->scene;
+  scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov671Room1) {
     Func_020034ec();
   } else if (scene == (s32)&SceneId_Ov671Room2) {

@@ -24,8 +24,8 @@ void Func_02000e2c(void) {
         Func_02002da8(0);
         FieldEvent_Wait(20);
         Func_02002de0(183);
-        LemurianShip_MapCopy(35, 68, 35, 69, 1, 1);
-        LemurianShip_BlendStart(35, 0, 1, 1, column, row);
+        Func_02002c30(35, 68, 35, 69, 1, 1);
+        Func_02002c38(35, 0, 1, 1, column, row);
         object->motionFlags = done;
         Actor_SetSpritePriority(8, 3);
         if (object->z > leader->z)
@@ -35,7 +35,7 @@ void Func_02000e2c(void) {
           wait(1);
         }
         Actor_SetModeById(8, 3);
-        LemurianShip_ObjPlace(10, PIXELS(568), PIXELS(152));
+        Func_02002cd0(10, PIXELS(568), PIXELS(152));
         FieldEvent_Wait(20);
         GameFlag_SetBit(0x202);
         if (object->z > leader->z) {
@@ -58,8 +58,8 @@ void Func_02000e2c(void) {
         Func_02002da8(0);
         FieldEvent_Wait(20);
         Func_02002de0(183);
-        LemurianShip_MapCopy(29, 68, 29, 69, 1, 1);
-        LemurianShip_BlendStart(35, 0, 1, 1, column, row);
+        Func_02002c30(29, 68, 29, 69, 1, 1);
+        Func_02002c38(35, 0, 1, 1, column, row);
         object->motionFlags = done;
         Actor_SetSpritePriority(9, 3);
         if (object->z > leader->z)
@@ -69,7 +69,7 @@ void Func_02000e2c(void) {
           wait(1);
         }
         Actor_SetModeById(9, 3);
-        LemurianShip_ObjPlace(11, PIXELS(472), PIXELS(152));
+        Func_02002cd0(11, PIXELS(472), PIXELS(152));
         FieldEvent_Wait(20);
         GameFlag_SetBit(0x203);
         if (object->z > leader->z) {

@@ -17,10 +17,10 @@ void Func_020005dc(s32 a0) {
   s32 t2;
 
   Func_02002a44();
-  Call1(Func_02002b64, 0);
+  Func_02002b64(0);
   t2 = Value3(Func_02002a5c, a0, 0x19f, -1);
   if (t2 == 0) {
-    Call1(GameFlag_ClearBit, 0xa74);
+    GameFlag_ClearBit(0xa74);
   }
   Func_02002a4c();
 }

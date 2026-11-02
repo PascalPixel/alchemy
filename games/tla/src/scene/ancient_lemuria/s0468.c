@@ -46,7 +46,7 @@ void Func_02000468(void) {
   if (!GameFlag_Test(0x96c))
     return;
   object = Actor_GetById(12);
-  Call1(GameFlag_SetBit, 0x96d);
+  GameFlag_SetBit(0x96d);
   GameFlag_ClearBit(0x96e);
   Func_02000080(13);
   Call3(Func_0200195c, 12, 270 << 16, 184 << 16);

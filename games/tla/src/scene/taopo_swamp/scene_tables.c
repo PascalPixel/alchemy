@@ -1,6 +1,6 @@
 #include "local.h"
 
-void Func_02000038(void) { Func_02002940_(8, 11); }
+void Func_02000038(void) { Func_02002940(8, 11); }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

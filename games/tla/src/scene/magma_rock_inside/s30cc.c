@@ -43,41 +43,41 @@ void Func_020030cc(void) {
   struct Actor *object;
 
   Func_02004d40();
-  Call1(Func_02004e90, 0);
+  Func_02004e90(0);
   FieldMessage_Show(MsgBlazeTabletInscription, 1);
   if (Value1(GameFlag_Test, 0x9fa) != 0) {
     Func_02004d48();
   } else {
-    Call1(Func_02004dd0, (s32)MsgBlazeTabletInscription);
+    Func_02004dd0((s32)MsgBlazeTabletInscription);
     EVENT_WORK->messageId++;
     Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xb333,
           0x5999);
     Call3(Actor_SetSpeedParameters, 5, 0xb333, 0x5999);
-    Call2(Func_02004da8, 5, gMainRoutineWork.currentOwner);
-    Call1(FieldEvent_Wait, 1);
+    Func_02004da8(5, gMainRoutineWork.currentOwner);
+    FieldEvent_Wait(1);
     Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner, 256,
           136);
-    Call3(Actor_ResetAndSetPositionInMode2, 5, 272, 136);
-    Call1(Actor_WaitForMoveById, gMainRoutineWork.currentOwner);
-    Call1(Actor_WaitForMoveById, 5);
+    Actor_ResetAndSetPositionInMode2(5, 272, 136);
+    Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
+    Actor_WaitForMoveById(5);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_EAST, 0);
-    Call3(Actor_ArmCallback, 5, FACING_WEST, 0);
-    Call1(FieldEvent_Wait, 10);
+    Actor_ArmCallback(5, FACING_WEST, 0);
+    FieldEvent_Wait(10);
     Call2(Func_02004de0, 5, 0);
-    Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
-    Call1(FieldEvent_Wait, 30);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+    FieldEvent_Wait(30);
     Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 256, 152);
     Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 0);
-    Call1(FieldEvent_Wait, 20);
-    Call3(Actor_ArmCallback, 5, FACING_SOUTH, 0);
-    Call1(FieldEvent_Wait, 20);
-    Call2(Actor_SetModeById, 5, 3);
-    Call1(FieldEvent_Wait, 30);
+    FieldEvent_Wait(20);
+    Actor_ArmCallback(5, FACING_SOUTH, 0);
+    FieldEvent_Wait(20);
+    Actor_SetModeById(5, 3);
+    FieldEvent_Wait(30);
     Call3(Actor_ArmCallback, 5, FACING_NORTH, 0);
-    Call1(FieldEvent_Wait, 20);
+    FieldEvent_Wait(20);
     Call3(Actor_SetPositionAndReset, 5, 264, 137);
-    Call3(Actor_ArmCallback, 5, FACING_NORTH, 0);
-    Call1(FieldEvent_Wait, 20);
+    Actor_ArmCallback(5, FACING_NORTH, 0);
+    FieldEvent_Wait(20);
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
     FieldMessage_Show(MsgBlazeTabletInscription + 3, 1);
 #else
@@ -87,21 +87,21 @@ void Func_020030cc(void) {
     Call3(Func_02004d10, -1, -1, 0xe666);
     Call0(Func_02004d18);
     Call2(Func_02002cd0, 8, 5);
-    Call2(Party_LearnAbility, 5, 0x9a);
-    Call1(GameFlag_SetBit, 0x9fa);
-    Call3(Actor_TurnToFaceEachOther, gMainRoutineWork.currentOwner, 5, 0);
-    Call1(FieldEvent_Wait, 10);
-    Call2(Actor_SetModeById, 5, 3);
-    Call2(Actor_SetModeById, gMainRoutineWork.currentOwner, 3);
-    Call1(FieldEvent_Wait, 20);
+    Party_LearnAbility(5, 0x9a);
+    GameFlag_SetBit(0x9fa);
+    Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 5, 0);
+    FieldEvent_Wait(10);
+    Actor_SetModeById(5, 3);
+    Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
+    FieldEvent_Wait(20);
     Call3(Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
-    Call2(Actor_SetModeById, 5, 2);
+    Actor_SetModeById(5, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != 0)
-      Call3(Actor_ResetAndSetPosition, 5, FIELD_AT(object, s16, 10),
-            FIELD_AT(object, s16, 18));
-    Call1(Actor_WaitForMoveById, 5);
-    Call3(Func_02004da0, 5, 0, 0);
+      Actor_ResetAndSetPosition(5, FIELD_AT(object, s16, 10),
+                                FIELD_AT(object, s16, 18));
+    Actor_WaitForMoveById(5);
+    Func_02004da0(5, 0, 0);
     Actor_SetActionCallback(Actor_GetById(8), 9);
     Func_02004d48();
   }

@@ -127,20 +127,9 @@ static inline s32 ShamanVillage_FlagCheck(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static inline void ShamanVillage_FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
 static inline void ShamanVillage_ObjArm(s32 actor, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(actor, angle, frames);
-}
-
-static inline void ShamanVillage_ObjSetPos(struct ShamanVillageObject *object,
-                                           s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndResetMotion(object, x, y, z);
 }
 
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -183,37 +172,9 @@ static inline void ShamanVillage_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e,
   Func_02004844(a, b, c, d, e, f);
 }
 
-static inline void ShamanVillage_Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static inline void ShamanVillage_SePlay(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Import_SoundPlay(cue);
-}
-
-static inline void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-#define SHAMAN_VILLAGE_TASK_ADD(func, priority)                            \
-  {                                                                            \
-    /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
-     * task function load. */                                                       \
-    s32 priority_ = (priority);                                                \
-    Task_Add((func), priority_);                      \
-  }
-
 static inline void ShamanVillage_ObjEmoteWait(s32 actor, s32 emote) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020049d4(actor, emote);
-}
-
-static inline void ShamanVillage_TaskAdd(void (*func)(void), s32 priority) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Task_Add(func, priority);
 }
 
 static inline void ShamanVillage_MessagePut(s32 speaker, s32 flags) {

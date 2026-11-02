@@ -14,12 +14,10 @@ void Func_02003a28(s32 *out, s32 zArg) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   u32 slot;
 
-  {
-    register s32 shifted asm("r2") = z >> 20;
-    register s32 top asm("r3") = 64;
+  register s32 shifted asm("r2") = z >> 20;
+  register s32 top asm("r3") = 64;
 
-    z = top - shifted;
-  }
+  z = top - shifted;
   for (slot = 0; slot <= 63; slot++) {
     struct Actor *object = work->objects[slot];
 

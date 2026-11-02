@@ -67,16 +67,6 @@ void Func_02004214(s32 a, s32 b, s32 c);
 void Func_0200423c(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                    s32 destY, s32 mode);
 
-static inline void Contigo_ObjFollow(s32 actor, s32 target) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_WatchAndSetScript(actor, target);
-}
-
-static inline void Contigo_Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
 static inline void Contigo_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(actor, speed, acceleration);
@@ -87,34 +77,9 @@ static inline void Contigo_ObjWalk(s32 actor, s32 x, s32 z) {
   Actor_SetPositionAndReset(actor, x, z);
 }
 
-static inline void Contigo_ObjCommit(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndCommit(actor, x, z);
-}
-
 static inline void Contigo_ObjTurn(s32 actor, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(actor, angle, frames);
-}
-
-static inline void Contigo_ObjMoveTo(s32 actor, s32 target) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020040e4(actor, target);
-}
-
-static inline void Contigo_ObjAction(s32 actor, const void *script) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetMovementTypeById(actor, script);
-}
-
-static inline void Contigo_ObjActionRefresh(s32 actor, const void *script) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetMovementTypeAndWaitById(actor, script);
-}
-
-static inline void Contigo_ObjReset(s32 actor) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_Stop(actor);
 }
 
 static inline void Contigo_CamMove(s32 x, s32 y, s32 z, s32 mode) {
@@ -122,24 +87,9 @@ static inline void Contigo_CamMove(s32 x, s32 y, s32 z, s32 mode) {
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
-static inline void Contigo_ObjModeWait(s32 actor, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Motion_SetModeAndWaitAnimation(actor, mode);
-}
-
-static inline void Contigo_MessageSet(s32 message) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200412c(message);
-}
-
 static inline void Contigo_MessagePut(s32 speaker, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004144(speaker, flags);
-}
-
-static inline void Contigo_ObjMode(s32 actor, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetModeById(actor, mode);
 }
 
 static inline void Contigo_ObjEmote(s32 actor, s32 emote) {
@@ -168,45 +118,15 @@ static inline void Contigo_CamSpeed(s32 speed, s32 acceleration) {
   Func_0200418c(speed, acceleration);
 }
 
-static inline void Contigo_ObjLaunch(s32 actor, s32 speed, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_Jump(actor, speed, frames);
-}
-
-static inline void Contigo_ObjShake(s32 actor, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200413c(actor, a, b);
-}
-
 static inline s32 Contigo_MessageOpen(s32 speaker, s32 flags) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return FieldMessage_ShowAtActor(speaker, flags);
-}
-
-static inline void Contigo_Se(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020042b4(cue);
-}
-
-static inline void Contigo_ObjPlaceTurn(s32 actor, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020040dc(actor, x, z, angle);
-}
-
-static inline void Contigo_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020040d4(actor, x, z);
 }
 
 static inline void Contigo_PairShow(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                     s32 g, s32 h, s32 i, s32 j, s32 k) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004164(a, b, c, d, e, f, g, h, i, j, k);
-}
-
-static inline void Contigo_ObjVar(s32 actor, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Motion_SetVarCbAndRefresh(actor, value);
 }
 
 static inline void Contigo_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,

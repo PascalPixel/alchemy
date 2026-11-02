@@ -91,7 +91,7 @@ void Func_02000378(void) {
     Func_02000e74();
     Func_02000ef4(0);
     Func_02000ea4(MsgYouReGoing);
-    Call2((void (*)())Actor_StartRepeatedMotion, 20, 1);
+    Actor_StartRepeatedMotion(20, 1);
     FieldEvent_Wait(15);
     Func_02000eb4(20, 0);
     GameFlag_SetBit(0x9ab);

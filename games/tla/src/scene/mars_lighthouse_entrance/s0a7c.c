@@ -39,7 +39,7 @@ void Func_02000a7c(void) {
   Camera_SetBounds(PIXELS(872), -1, PIXELS(168), 1);
   Func_02004d20();
   FieldEvent_Wait(40);
-  Camera_SetBounds(PIXELS(872), -1, PIXELS(264), 1);
+  Camera_MoveWithinMapBounds(PIXELS(872), -1, PIXELS(264), 1);
   Func_02004d20();
   FieldEvent_Wait(120);
   Func_02004cb0();

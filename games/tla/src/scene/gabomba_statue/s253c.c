@@ -76,11 +76,6 @@ static __inline__ void Actor_Place(s32 id, s32 x, s32 z) {
   Actor_ResetAndSetPositionInMode2(id, x, z);
 }
 
-static __inline__ void Func_02005764_(s32 id, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02005764(id, value);
-}
-
 static __inline__ void Func_02005774_(s32 id, s32 value) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005774(id, value);
@@ -89,11 +84,6 @@ static __inline__ void Func_02005774_(s32 id, s32 value) {
 static __inline__ void Func_020057e4_(s32 a, s32 b) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020057e4(a, b);
-}
-
-static __inline__ void Func_020057dc_(s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_020057dc(a, b);
 }
 
 static __inline__ void Actor_Slide(s32 id, s32 x, s32 z, s32 speed) {
@@ -125,7 +115,7 @@ void Func_0200253c(void) {
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
   Func_02005754(MsgGabombaFocusEnergies);
-  Func_02005764_(24, 0);
+  Func_02005764(24, 0);
   Func_02005724(23, gMainRoutineWork.currentOwner);
   Func_02005724(5, gMainRoutineWork.currentOwner);
   Func_02005724(6, gMainRoutineWork.currentOwner);
@@ -149,15 +139,15 @@ void Func_0200253c(void) {
   Actor_SetMovementTypeAndWaitById(23, gData_02005be8);
   FieldEvent_Wait(40);
   Func_02005774_(23, FACING_NORTH + FACING_STEP);
-  Func_02005764_(23, 0);
-  Camera_SetSpeed(0x4cccc, 0x9999);
-  Camera_SetBounds(PIXELS(434), -1, PIXELS(168), 1);
+  Func_02005764(23, 0);
+  Func_020057a4(0x4cccc, 0x9999);
+  Camera_MoveWithinMapBounds(PIXELS(434), -1, PIXELS(168), 1);
   Func_020057b4();
   FieldEvent_Wait(20);
   Actor_Turn(6, FACING_SOUTHEAST, 0);
   Actor_Turn(5, FACING_NORTHWEST, 0);
-  Actor_Turn(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
-  Actor_Turn(7, FACING_SOUTHEAST, 40);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
+  Actor_ArmCallback(7, FACING_SOUTHEAST, 40);
   Actor_GetById(7)->angle = FACING_SOUTH;
   Actor_GetById(gMainRoutineWork.currentOwner)->angle = 0x4000;
   Actor_GetById(6)->angle = FACING_SOUTH;
@@ -169,7 +159,7 @@ void Func_0200253c(void) {
   Actor_Place(7, 400, 272);
   Actor_Place(gMainRoutineWork.currentOwner, 420, 272);
   Actor_Place(6, 444, 272);
-  Actor_Place(5, 468, 272);
+  Actor_ResetAndSetPositionInMode2(5, 468, 272);
   FieldEvent_Wait(20);
   Func_020057e4(0x10000, 0);
   Func_020057dc(0, 0);
@@ -194,7 +184,7 @@ void Func_020027cc(void) {
     Actor_Slide(23, PIXELS(432), PIXELS(312), slow);
   }
   Actor_Slide(6, PIXELS(448), PIXELS(312), speed);
-  Actor_Slide(5, PIXELS(468), PIXELS(312), speed);
+  Func_0200571c(5, PIXELS(468), PIXELS(312), speed);
   wait(1);
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x202;
   Event_StartScreenTransition();
@@ -203,12 +193,12 @@ void Func_020027cc(void) {
   Func_02005854(220);
   wait(1);
   Func_020057e4_(0x10000, 0);
-  Func_020057dc_(0x7fff, 0);
+  Func_020057dc(0x7fff, 0);
   Func_020057ec(40);
   wait(80);
   Func_02000f6c();
   wait(1);
-  Func_020057dc_(0x10000, 0);
+  Func_020057dc(0x10000, 0);
   Func_020057ec(10);
   wait(20);
   Func_0200578c_(gMainRoutineWork.currentOwner, 256, 0);
@@ -220,7 +210,7 @@ void Func_020027cc(void) {
   Actor_Turn(5, FACING_NORTH, 0);
   Actor_Turn(6, FACING_NORTH, 0);
   Actor_Turn(7, FACING_NORTH, 0);
-  Actor_Turn(23, FACING_NORTHWEST + FACING_STEP, 60);
+  Actor_ArmCallback(23, FACING_NORTHWEST + FACING_STEP, 60);
   Func_02005854(130);
   Actor_SetPartAttribute(Actor_GetById(9), 7);
   Actor_SetPartAttribute(Actor_GetById(10), 7);

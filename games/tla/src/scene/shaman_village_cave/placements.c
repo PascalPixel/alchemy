@@ -22,21 +22,21 @@ const struct ActorPlacement *Scene_GetPlacements(void) {
 }
 
 void Func_02000358(void) {
-  Call1((void (*)())GameFlag_SetBit, 0x200);
+  GameFlag_SetBit(0x200);
   return;
 }
 
 void Func_02000364(void) {
-  Call1((void (*)())GameFlag_SetBit, 0x201);
+  GameFlag_SetBit(0x201);
   return;
 }
 
 void Func_02000374(void) {
-  Call1((void (*)())GameFlag_SetBit, 0x202);
+  GameFlag_SetBit(0x202);
   return;
 }
 
 void Func_02000384(void) {
-  Call1((void (*)())GameFlag_SetBit, 0x203);
+  GameFlag_SetBit(0x203);
   return;
 }

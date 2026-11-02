@@ -112,9 +112,9 @@ void Func_02001c7c(void) {
   JupiterLighthouseRoomM_AddHp(0, -10000);
   Unit_Calculate(0);
   Unit_Calculate(2);
-  JupiterLighthouseRoomM_AddHp(0, 173);
+  Unit_AddHp(0, 173);
   JupiterLighthouseRoomM_AddPp(2, -10000);
-  JupiterLighthouseRoomM_AddPp(0, -10000);
+  Unit_AddPp(0, -10000);
   gMainRoutineWork.currentOwner = 0;
   Func_02004904(102, 4);
 }

@@ -42,7 +42,7 @@ void Func_02001138(void) {
     wait(1);
   }
   Actor_SetSpritePriority(8, 2);
-  LemurianShip_MapCopy(4, 123, 35, 69, 1, 1);
+  Func_02002c30(4, 123, 35, 69, 1, 1);
   LemurianShip_BlendStart(36, 0, 1, 1, 35, 9);
   Func_02002de0(188);
   LemurianShip_MapCopy(7, 124, 31, 64, 3, 2);
@@ -68,7 +68,7 @@ void Func_020011f4(void) {
     wait(1);
   }
   Actor_SetSpritePriority(9, 2);
-  LemurianShip_MapCopy(4, 123, 29, 69, 1, 1);
+  Func_02002c30(4, 123, 29, 69, 1, 1);
   LemurianShip_BlendStart(36, 0, 1, 1, 29, 9);
   Func_02002de0(188);
   LemurianShip_MapCopy(7, 124, 31, 64, 3, 2);

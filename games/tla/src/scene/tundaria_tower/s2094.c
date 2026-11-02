@@ -17,17 +17,15 @@ void Func_02002094(u16 *table) {
     return;
   row = table;
 loop:
-  {
-    id = row[0];
-    object = Actor_GetById(id);
-    x = row[1];
-    z = row[2];
+  id = row[0];
+  object = Actor_GetById(id);
+  x = row[1];
+  z = row[2];
 
-    object->collisionFlags &= 0xfe;
-    Actor_SetSingleChildFlags(object, 0);
-    Func_02002184(id, (u16)x, (u16)z, BYTE_AT(object, 34));
-    row += 3;
-  }
+  object->collisionFlags &= 0xfe;
+  Actor_SetSingleChildFlags(object, 0);
+  Func_02002184(id, (u16)x, (u16)z, BYTE_AT(object, 34));
+  row += 3;
   if (row[0] != 0xffff)
     goto loop;
 }

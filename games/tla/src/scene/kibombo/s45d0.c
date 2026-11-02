@@ -9,7 +9,7 @@ void Func_020045d0(void) {
   Func_02005ba4(0x4cccc, 0x9999);
   Kibombo_CamMove(132 << 17, 0, 200 << 17, 1);
   Func_02005bb4();
-  Kibombo_Wait(10);
+  FieldEvent_Wait(10);
   Actor_Jump(18, 6, 0);
   Actor_Jump(19, 6, 0);
   Actor_Jump(20, 6, 0);
@@ -20,10 +20,10 @@ void Func_020045d0(void) {
   Actor_Jump(25, 6, 40);
   Kibombo_ObjTurn(20, FACING_SOUTH + FACING_STEP);
   Actor_Jump(20, 2, 0);
-  Kibombo_MessagePut(0x4000 + 20, 0);
+  Func_02005b64(0x4000 + 20, 0);
   Kibombo_ObjTurn(23, FACING_SOUTHEAST + FACING_STEP);
   Actor_Jump(23, 2, 0);
-  Kibombo_MessagePut(0x4000 + 23, 0);
+  Func_02005b64(0x4000 + 23, 0);
   Actor_SetMovementTypeById(18, gData_020061a8);
   Actor_SetMovementTypeById(19, gData_020061a8);
   Actor_SetMovementTypeById(20, gData_020061a8);
@@ -32,11 +32,11 @@ void Func_020045d0(void) {
   Actor_SetMovementTypeById(23, gData_020061a8);
   Actor_SetMovementTypeById(24, gData_020061a8);
   Actor_SetMovementTypeById(25, gData_020061a8);
-  Kibombo_Wait(40);
+  FieldEvent_Wait(40);
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Actor_Jump(17, 2, 10);
   Actor_Jump(17, 4, 10);
-  Kibombo_MessagePut(17, 0);
+  Func_02005b64(17, 0);
   Actor_Stop(18);
   Actor_Stop(19);
   Actor_Stop(20);
@@ -45,7 +45,7 @@ void Func_020045d0(void) {
   Actor_Stop(23);
   Actor_Stop(24);
   Actor_Stop(25);
-  Kibombo_Wait(40);
+  FieldEvent_Wait(40);
   Kibombo_ObjArm(18, FACING_NORTH + FACING_STEP, 0);
   Kibombo_ObjArm(19, FACING_NORTH + FACING_STEP, 0);
   Kibombo_ObjArm(20, FACING_NORTH + FACING_STEP, 0);
@@ -60,7 +60,7 @@ void Func_020045d0(void) {
   Motion_SetModeAndWaitAnimation(17, 3);
   Kibombo_MessagePut(0x8000 + 17, 0);
   Actor_Jump(17, 4, 10);
-  Kibombo_MessagePut(0x8000 + 17, 0);
+  Func_02005b64(0x8000 + 17, 0);
 }
 
 void Func_020047e4(void) {
@@ -80,25 +80,14 @@ void Func_020047e4(void) {
   if (object != 0) {
     // Lowers the object 0x4000 a frame down to y 0x240000.
     object->motionFlags = 0;
-    {
-      /* FAKEMATCH(pin): 0x240000 built as 144 << 14 in r1, held by the
-       * barrier below; as a plain local behind the barrier, 10 of 71
-       * instructions differ in tla-en. */
-      register s32 limit asm("r1") = 144;
-
-      /* FAKEMATCH(barrier): the limit is started before y is loaded and
-       * finished after it, as the native does; as object->y > 0x240000, 2 of
-       * 71 instructions differ in tla-en. */
-      __asm__("" : "+l"(limit), "+l"(object));
-      if (object->y > limit << 14) {
-        do {
-          Kibombo_ObjArm(17, FACING_NORTH + FACING_STEP, 0);
-          slot = &gData_02007950;
-          object = *slot;
-          object->y += 0xffffc000;
-          wait(1);
-        } while ((*slot)->y > 0x240000);
-      }
+    if (object->y > 144 << 14) {
+      do {
+        Actor_ArmCallback(17, FACING_NORTH + FACING_STEP, 0);
+        slot = &gData_02007950;
+        object = *slot;
+        object->y += 0xffffc000;
+        wait(1);
+      } while ((*slot)->y > 0x240000);
     }
   }
   Motion_SetModeAndWaitAnimation(17, 4);

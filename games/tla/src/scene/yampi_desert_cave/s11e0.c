@@ -14,11 +14,6 @@ static __inline__ s32 GameFlag_GetByte_(s32 flag) {
   return GameFlag_GetByte(flag);
 }
 
-static __inline__ void GameFlag_SetByte_(s32 flag, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetByte(flag, value);
-}
-
 void Func_020011e0(void) {
   s32 step = GameFlag_GetByte_(0x278);
   s32 index = (step / 32) * 2;
@@ -29,6 +24,6 @@ void Func_020011e0(void) {
     Func_020018a8(16, column << 19, row << 19);
     if (GameFlag_Test(0x104) == 0)
       step++;
-    GameFlag_SetByte_(0x278, step);
+    GameFlag_SetByte(0x278, step);
   }
 }

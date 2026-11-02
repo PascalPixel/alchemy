@@ -10,8 +10,8 @@
 
 struct Actor *Actor_GetById(s32 id);
 s32 SceneActor_CalculateFixedPointDistance(s32 *from, s32 *to);
-s32 Func_020002d8(struct Actor *actor, struct Actor *target,
-                  s32 distance, s32 flag);
+s32 Func_020002d8(struct Actor *actor, struct Actor *target, s32 distance,
+                  s32 flag);
 void Func_020043c4(struct Actor *actor, s32 mode);
 
 /// Once the leader is within 11 of the actor, stops it (Func_020043c4 mode
@@ -25,14 +25,7 @@ s32 Func_020003bc(struct Actor *actor) {
   s32 flag = 0;
   struct Actor *target;
 
-  {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-
-    /* FAKEMATCH(barrier): the barrier of the pin above: it holds r2 until the
-     * address is loaded. */
-    __asm__("" : "+l"(party) : : "r2");
-    target = Actor_GetById(party->currentOwner);
-  }
+  target = Actor_GetById(gMainRoutineWork.currentOwner);
   if (SceneActor_CalculateFixedPointDistance(&target->x, &actor->x) <= 11) {
     actor->movementState = flag;
     Func_020043c4(actor, 2);

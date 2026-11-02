@@ -27,12 +27,8 @@ void Func_02001364(void) {
       CameraMove((x << 16) - 0x10000, -1, (z << 16) + 0x10000, 1);
       break;
     case 1: {
-      s32 back = -0x10000;
-
-      /* FAKEMATCH: the barrier loads -0x10000 before the 0x10000 of x is
-       * built; as one expression, 2 instructions differ in tla-en. */
-      __asm__("" : : "l"(back));
-      Camera_MoveWithinMapBounds((x << 16) + 0x10000, -1, (z << 16) + back, 1);
+      Camera_MoveWithinMapBounds((x << 16) + 0x10000, -1, (z << 16) - 0x10000,
+                                 1);
       break;
     }
     case 2:

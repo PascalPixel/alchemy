@@ -24,10 +24,10 @@ void Func_02001314(s32 a0) {
   FIELD_AT(t0, s32, 28) = 0x6666;
   FIELD_AT(t0, s32, 24) = 0x6666;
   FIELD_AT((t0 + 0x55), u8, 0) = 0;
-  Call2(Actor_SetPartAttribute, t0, 2);
-  Call2(Scene_SetActorSpritePriority, t0, 1);
-  Call2(Func_02004d9c, t0, 1);
-  Call2(Actor_SetSingleChildFlags, t0, 0);
-  Call2(Animation_SetStateFlags, t0, 1);
-  Call2(Func_02004dac, t0, (s32)gData_02005208);
+  Actor_SetPartAttribute(t0, 2);
+  Scene_SetActorSpritePriority(t0, 1);
+  Func_02004d9c(t0, 1);
+  Actor_SetSingleChildFlags(t0, 0);
+  Animation_SetStateFlags(t0, 1);
+  Func_02004dac(t0, (s32)gData_02005208);
 }

@@ -14,18 +14,18 @@ void Func_02001218(void) {
   Actor_SetSpritePriority(
       7, Actor_GetById(gMainRoutineWork.currentOwner)->sprite->priority);
   wait(1);
-  Kibombo_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
   Kibombo_ObjSpeed(7, 0x19999, 0xcccc);
-  Kibombo_ObjWalk(7, 62, 444);
-  Kibombo_ObjTurn(7, FACING_SOUTHEAST);
+  Actor_SetPositionAndReset(7, 62, 444);
+  Func_02005b7c(7, FACING_SOUTHEAST);
   Func_02005b4c((s32)MsgNowThatIKnow);
-  Kibombo_MessagePut(7, 0);
+  Func_02005b64(7, 0);
   Actor_GetById(7)->priorityFlags |= 1;
   Kibombo_ObjWalk(7, 56, 420);
   Kibombo_ObjWalk(7, 40, 344);
   Func_02005b0c(7, 0, 0);
   Kibombo_ObjPlace(gMainRoutineWork.currentOwner, 80, 510);
-  Kibombo_Wait(10);
+  FieldEvent_Wait(10);
   Func_02005bc4(5);
   GameFlag_ClearBit(0x92e);
   GameFlag_SetBit(0x92f);

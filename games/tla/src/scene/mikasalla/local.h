@@ -47,53 +47,6 @@ static __inline__ s32 GameFlag_Test_(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static __inline__ void GameFlag_SetBit_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void FieldEvent_Wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static __inline__ struct Actor *Actor_GetById_(s32 id) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Actor_GetById(id);
-}
-
-static __inline__ void Actor_SetModeById_(u32 id, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetModeById(id, mode);
-}
-
-static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
-                                                        s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(id, speed, acceleration);
-}
-
-static __inline__ void
-Actor_SetSingleChildFlags_(struct Actor *object, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSingleChildFlags(object, flags);
-}
-
-static __inline__ void FieldMessage_ShowAtActor_(s32 id, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldMessage_ShowAtActor(id, flags);
-}
-
-static __inline__ s32 Event_AskYesNoWithActorAnimation_(s32 id, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Event_AskYesNoWithActorAnimation(id, flags);
-}
-
 static __inline__ void Func_02000628_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -110,11 +63,6 @@ static __inline__ void Actor_CommitPositionAndActivate_(s32 id, s32 x,
                                                                s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_CommitPositionAndActivate(id, x, z);
-}
-
-static __inline__ void Actor_ArmCallback_(s32 id, s32 angle, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ArmCallback(id, angle, flags);
 }
 
 static __inline__ void Actor_SetPositionAndReset_(s32 id, s32 x, s32 z) {

@@ -13,11 +13,6 @@ void wait(s32 frames);
 void Func_02005854(s32 sound);
 void Event_FinishScreenTransition(void);
 
-static __inline__ void Actor_Cue(s32 id, s32 value) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02005794(id, value);
-}
-
 void Func_02000a20(struct Actor *object) {
   u32 i;
   s32 delta;
@@ -31,11 +26,7 @@ void Func_02000a20(struct Actor *object) {
   object->z = 0xf741cf;
   object->angle = FACING_SOUTH;
   party = &gMainRoutineWork;
-  /* FAKEMATCH: the native loads gMainRoutineWork's address among the stores
-   * above and builds the owner's offset after them; the plain order builds the
-   * offset before the angle store (differ 4). */
-  asm volatile("" : "+l"(party));
-  Actor_Cue(party->currentOwner, 258);
+  Func_02005794(party->currentOwner, 258);
   Actor_SetModeById(party->currentOwner, 27);
   FieldEvent_Wait(30);
   Actor_SetModeById(party->currentOwner, 28);

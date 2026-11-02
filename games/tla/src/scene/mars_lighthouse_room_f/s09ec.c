@@ -27,7 +27,7 @@ void Func_020009ec(void) {
   Flag_Set(0x350);
   if (!Flag_IsSet(0x351)) {
     Func_020055d0(0x20000, 0x4000);
-    Camera_SetBounds(PIXELS(616), -1, PIXELS(24), 1);
+    Camera_MoveWithinMapBounds(PIXELS(616), -1, PIXELS(24), 1);
     FieldEvent_Wait(60);
     Func_02005660();
     Func_020055f0(9);
@@ -37,7 +37,7 @@ void Func_020009ec(void) {
 void Func_02000aac(void) {
   Func_020027ac(3, 3);
   Func_020055d0(0x10000, 0x2000);
-  Camera_SetBounds(PIXELS(184), -1, PIXELS(560), 1);
+  Camera_MoveWithinMapBounds(PIXELS(184), -1, PIXELS(560), 1);
 }
 
 void Func_02000ad8(void) {
@@ -51,7 +51,7 @@ void Func_02000ad8(void) {
   Flag_Clear(0x104);
   FieldEvent_Wait(60);
   Func_020055d0(0x30000, 0x6000);
-  Camera_SetBounds(PIXELS(184), -1, PIXELS(744), 1);
+  Camera_MoveWithinMapBounds(PIXELS(184), -1, PIXELS(744), 1);
   Func_020055e0();
   FieldEvent_Wait(60);
   Func_02005568();
@@ -89,10 +89,6 @@ void Func_02000b40(void) {
     Actor_GetById(gMainRoutineWork.currentOwner);
     keys = &gInput.held;
     table = gData_02005f18;
-    /* FAKEMATCH: the barrier loads the table's address before the direction
-     * mask's 15, and the byte offset keeps the table as the base register; as
-     * no barrier, 4 instructions differ in tla-en. */
-    asm volatile("" : "+l"(table));
     angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
     if (angle != -1) {
       struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapWork;

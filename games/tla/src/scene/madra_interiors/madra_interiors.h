@@ -57,11 +57,6 @@ static inline s32 FlagCheck(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static inline void FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
 static inline void ActorTurn(s32 actor, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(actor, angle, frames);
@@ -70,11 +65,6 @@ static inline void ActorTurn(s32 actor, s32 angle, s32 frames) {
 static inline void ActorPlace(s32 actor, s32 x, s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001db8(actor, x, z);
-}
-
-static inline void ActorPlaceFacing(s32 actor, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001dc0(actor, x, z, angle);
 }
 
 #endif

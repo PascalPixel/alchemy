@@ -30,7 +30,7 @@ void Func_02000328(void) {
 
 
   saved = work->value1ac;
-  Func_020012ec_(0x202108, 1);
+  Func_020012ec(0x202108, 1);
   Func_020012ec_(0x10000, 2);
   ((struct IsletCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
@@ -39,7 +39,7 @@ void Func_02000328(void) {
   Func_0200132c();
   wait(40);
   Func_02000158();
-  Func_020012ec_(0x10000, 1);
+  Func_020012ec(0x10000, 1);
   Func_020012fc(16);
   wait(16);
   {

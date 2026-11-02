@@ -10,15 +10,10 @@
 s32 Func_0200014c(struct Actor *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   u8 *event = Ram_HeapSlots->eventWork;
-  struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *leader;
   s32 force = 0;
 
-  /* FAKEMATCH(barrier): holding gMainRoutineWork's address with r2 clobbered
-   * loads it before the owner offset is built; as Actor_GetById(gMainRoutineWork.
-   * currentOwner), 4 of 82 instructions differ in tla-en. */
-  asm("" : "+l"(party) : : "r2");
-  leader = Actor_GetById(party->currentOwner);
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
 
   if (SceneActor_CalculateFixedPointDistance(&leader->x, &object->x) <= 11) {
     u8 *state = &object->movementState;

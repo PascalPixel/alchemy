@@ -17,7 +17,7 @@ s32 Func_02000b18(void) {
       Func_02002018(77, 15, 75, 15, 1, 1);
     }
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-    if (Flag_Test(0x205))
+    if (GameFlag_Test(0x205))
       Func_02002030(9, 11, 1, 1, 11, 11);
 #else
     if (GameFlag_Test(0x204)) {

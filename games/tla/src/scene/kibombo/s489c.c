@@ -2,7 +2,7 @@
 
 void Func_0200489c(void) {
   Func_02004524();
-  Kibombo_SePlay(0x240);
+  Func_02005c9c(0x240);
   Actor_SetPartAttribute(Actor_GetById(12), 7);
   Actor_SetPartAttribute(Actor_GetById(13), 7);
   wait(8);
@@ -37,7 +37,7 @@ void Func_02004978(void) {
   Func_02005b94(17, 0x100, 20);
   Func_02005b4c((s32)MsgLookTheGreat);
   Func_02005b5c(17, 0, 20);
-  Kibombo_SePlay(0x240);
+  Func_02005c9c(0x240);
   Func_020036e0(1, 0);
   FieldEvent_Wait(20);
   Func_02005c9c(162);

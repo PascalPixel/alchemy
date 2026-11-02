@@ -25,19 +25,19 @@ void Func_02003d30(void) {
   ShamanVillage_ObjPut(17, PIXELS(264), PIXELS(128), angle);
   ShamanVillage_ObjSpeed(16, 0x19999, 0xcccc);
   ShamanVillage_ObjSpeed(17, 0x19999, 0xcccc);
-  ShamanVillage_CamSpeed(0xcccc, 0x1999);
-  ShamanVillage_CamMove(PIXELS(224), -1, PIXELS(280), 1);
+  Func_020049e4(0xcccc, 0x1999);
+  Camera_MoveWithinMapBounds(PIXELS(224), -1, PIXELS(280), 1);
   ShamanVillage_ObjWalk2(16, 184, 256);
   ShamanVillage_ObjWalk(17, 264, 256);
-  ShamanVillage_ObjArm(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHEAST, 0);
   ShamanVillage_ObjWalk2(16, 208, 264);
-  ShamanVillage_ObjWalk(17, 240, 264);
+  Actor_SetPositionAndReset(17, 240, 264);
   Actor_SetModeById(16, 1);
   FieldEvent_Wait(10);
-  ShamanVillage_ObjArm(16, angle, 0);
-  ShamanVillage_ObjArm(17, angle, 0);
+  Actor_ArmCallback(16, angle, 0);
+  Actor_ArmCallback(17, angle, 0);
   ShamanVillage_ObjTurn(15, FACING_WEST);
-  ShamanVillage_ObjArm(gMainRoutineWork.currentOwner, 0, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
   Func_020049f4();
   Func_0200498c((s32)MsgShamanMustFinishTrialRoad);
   ShamanVillage_MessagePut(0x200f, 0);
@@ -48,7 +48,7 @@ void Func_02003d30(void) {
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
       Motion_SetModeAndWaitAnimation(15, 3);
       Import_SoundPlay(76);
-      ShamanVillage_MessagePut(0x200f, 0);
+      Func_020049a4(0x200f, 0);
       GameFlag_SetBit(0x200);
       Func_02001380();
       return;
@@ -59,11 +59,11 @@ void Func_02003d30(void) {
   }
   ShamanVillage_MessageOpen(0x200f, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 1) {
-    ShamanVillage_MessagePut(0x200f, 0);
+    Func_020049a4(0x200f, 0);
     Func_0200289c();
   } else {
     EVENT_WORK->field1c4++;
-    ShamanVillage_MessagePut(0x200f, 0);
+    Func_020049a4(0x200f, 0);
     Func_0200290c();
   }
   Func_02004a2c();

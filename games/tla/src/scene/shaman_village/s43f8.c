@@ -21,7 +21,7 @@ void Func_020043f8(void) {
     } else if (GameFlag_Test(0x94f) && !GameFlag_Test(0x9e1)) {
       ShamanVillage_ObjPlace(15, PIXELS(120), PIXELS(208));
       ShamanVillage_ObjPlace(16, PIXELS(104), PIXELS(212));
-      ShamanVillage_ObjPlace(17, PIXELS(136), PIXELS(212));
+      Func_02004934(17, PIXELS(136), PIXELS(212));
       wait(1);
     }
   }
@@ -31,8 +31,8 @@ void Func_020043f8(void) {
     s32 width = 1;
     s32 height = 2;
 
-    ShamanVillage_MapCopy(48, 40, 77, 21, width, height);
-    ShamanVillage_MapCopy(48, 40, 81, 25, width, height);
+    Func_02004844(48, 40, 77, 21, width, height);
+    Func_02004844(48, 40, 81, 25, width, height);
   }
   Func_02004a44();
   Func_02004a4c(0, 0x204, 19, 20);
@@ -44,9 +44,6 @@ void Func_020043f8(void) {
      * reordered in tla-en. */
     register u16 alpha __asm__("r3") = 0xc08;
 
-    /* FAKEMATCH: the barrier of the pin above: it holds r2 until the value is
-     * loaded. */
-    __asm__("" : "+l"(alpha) : : "r2");
     REG_BLDALPHA = alpha;
   }
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;

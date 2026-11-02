@@ -27,14 +27,8 @@ void GameFlag_SetBit(s32);
 struct Actor *Actor_GetById(s32);
 
 void Func_02000660(void) {
-  struct MainRoutineWork *party;
-
   Func_02000f14(249, 40, 168);
-  party = &gMainRoutineWork;
-  /* FAKEMATCH: ⚓️ loads the party's address before it builds the field offset.
-   */
-  __asm__ volatile("" : "+l"(party));
-  party->battleRule24b = 2;
+  gMainRoutineWork.battleRule24b = 2;
   Func_02000ebc(14, 0);
 }
 

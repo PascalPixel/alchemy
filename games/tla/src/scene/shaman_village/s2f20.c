@@ -19,26 +19,20 @@ void Func_02002a20(void);
 /// Func_02002a20 and picks the script the mode runs, then rewinds the
 /// task's timer and position.
 void Func_02002f20(s32 modeArg, s32 paramArg) {
-  /* FAKEMATCH: the parameter pointer and the two pins copy the arguments into
-   * r5 and r6 after both store addresses load, as the native does; as plain
-   * parameters, 2 instructions differ in tla-en. */
-  u16 *paramPtr = &gData_02006494;
-  s32 mode = modeArg;
-  register s32 param asm("r6") = paramArg;
   s32 handler;
 
-  gData_020064b0 = mode;
-  *paramPtr = (param << 4);
+  gData_020064b0 = modeArg;
+  gData_02006494 = paramArg << 4;
 
   Task_Add(Func_02002a20, 0x480);
 
   handler = (s32)gData_0200515a;
-  if (mode == 2) {
+  if (modeArg == 2) {
     handler = (s32)gData_02004b58;
-  } else if (mode == 4) {
+  } else if (modeArg == 4) {
     handler = (s32)gData_02005186;
-  } else if (mode == 3) {
-    if (param != 0) {
+  } else if (modeArg == 3) {
+    if (paramArg != 0) {
       handler = (s32)gData_02004b80;
     } else {
       handler = (s32)gData_02005204;

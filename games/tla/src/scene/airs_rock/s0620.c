@@ -21,23 +21,22 @@ void Func_02000620(void) {
   struct Actor *leader;
   s32 value;
 
-  object = (struct Actor *)Value1(Actor_GetById, 11);
-  value = Value3(Func_02000348, 3, 70, 67);
+  object = (struct Actor *)Actor_GetById(11);
+  value = Func_02000348(3, 70, 67);
   Func_02003bc8();
-  Call1(Func_02003c88, 0);
+  Func_02003c88(0);
   if ((object->x >> 20) == 32) {
-    Call1(GameFlag_SetBit, 0x311);
+    GameFlag_SetBit(0x311);
     value &= 0xff;
     Func_02000384(4, 70, 67, value);
-    Call4(Func_02000384, 2, 33, 54, value);
+    Func_02000384(2, 33, 54, value);
   } else {
-    Call1(GameFlag_ClearBit, 0x311);
+    GameFlag_ClearBit(0x311);
     value = (value & 0xff) | 0xff00;
     Func_02000384(4, 70, 67, value);
-    Call4(Func_02000384, 2, 33, 54, value);
+    Func_02000384(2, 33, 54, value);
   }
-  leader =
-      (struct Actor *)Value1(Actor_GetById, gMainRoutineWork.currentOwner);
+  leader = (struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner);
   if ((leader->y >> 19) == 26)
     Call6(Func_02003b80, 70, 67, 1, 1, 33, 54);
   Func_02003bd0();

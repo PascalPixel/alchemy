@@ -27,16 +27,16 @@ void Func_02003c8c(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
   Func_02005390();
   Func_020053a8_(0, 527, 8, 9);
-  Func_020053a8_(1, 528, 10, 11);
+  Func_020053a8(1, 528, 10, 11);
   if (GameFlag_Test_(0x849) == 0) {
-    Actor_SetModeById_(13, 5);
-    Actor_SetModeById_(15, 5);
+    Actor_SetModeById(13, 5);
+    Actor_SetModeById(15, 5);
   }
-  Actor_SetModeById_(14, 5);
+  Actor_SetModeById(14, 5);
   Task_Add(Func_02001c8c, TASK_PASS_VBLANK);
   if ((gMainRoutineWork.entrance >= 4 && gMainRoutineWork.entrance <= 6) ||
       gMainRoutineWork.entrance == 14) {
-    if (GameFlag_Test_(0x84a)) {
+    if (GameFlag_Test(0x84a)) {
       /* FAKEMATCH: a temporary builds the angle ahead of the other arguments
        * (one reordered row as a plain argument). */
       s32 angle = 0x5000;
@@ -44,7 +44,7 @@ void Func_02003c8c(void) {
       Func_02005238_(12, PIXELS(432), PIXELS(394), angle);
     } else {
       Func_02004fb4();
-      if (GameFlag_Test_(0x849))
+      if (GameFlag_Test(0x849))
         Func_02003c54();
     }
   }
@@ -54,29 +54,29 @@ void Func_02003c8c(void) {
   asm("" ::: "memory");
   if ((gMainRoutineWork.entrance >= 1 && gMainRoutineWork.entrance <= 3) ||
       gMainRoutineWork.entrance == 9) {
-    if (GameFlag_Test_(0x212))
+    if (GameFlag_Test(0x212))
       Func_02001f3c();
-    if (GameFlag_Test_(0x849)) {
+    if (GameFlag_Test(0x849)) {
       /* FAKEMATCH: a temporary set just before its call builds the angle ahead
        * of the other arguments, as above. */
       s32 angle;
 
-      Func_02005230_(12, 0, 0);
+      Func_02005230(12, 0, 0);
       angle = 0xb000;
       Func_02005238_(15, PIXELS(408), PIXELS(664), angle);
-    } else if (GameFlag_Test_(0x848)) {
-      Func_02005230_(12, 0, 0);
-      Func_02005230_(15, 0, 0);
+    } else if (GameFlag_Test(0x848)) {
+      Func_02005230(12, 0, 0);
+      Func_02005230(15, 0, 0);
     } else {
       Func_02003e8c();
     }
   } else if (gMainRoutineWork.entrance == 6) {
-    if (GameFlag_Test_(0x849) == 0)
+    if (GameFlag_Test(0x849) == 0)
       Func_020044d4();
   } else if (gMainRoutineWork.entrance == 13) {
     Func_020046d8();
   } else if (gMainRoutineWork.entrance == 14) {
-    if (GameFlag_Test_(0x849) == 0)
+    if (GameFlag_Test(0x849) == 0)
       Func_0200482c();
   }
 #if (LANGUAGE != LANGUAGE_JAPANESE) /* not in the Japanese edition */
@@ -84,6 +84,6 @@ void Func_02003c8c(void) {
    * address again. */
   asm("" ::: "memory");
   if (gMainRoutineWork.entrance >= 8 && gMainRoutineWork.entrance <= 9)
-    GameFlag_ClearBit_(0x12f);
+    GameFlag_ClearBit(0x12f);
 #endif
 }

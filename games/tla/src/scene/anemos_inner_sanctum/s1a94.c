@@ -56,7 +56,7 @@ void Func_02001a94(void) {
   Func_020034b8(188);
   Func_02003328_(18, 4, column, 4, 1, 2);
   wait(5);
-  Func_02003328_(18, 7, column, 4, 1, 2);
+  Func_02003328(18, 7, column, 4, 1, 2);
   wait(5);
   Func_02003380(column << 20, 0x580000, 0, 0);
   Func_020033a0();

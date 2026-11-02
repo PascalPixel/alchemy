@@ -11,7 +11,7 @@ void Func_02002550(void) {
   /* FAKEMATCH: keeps the entry store before the size is built (differ 2
    * without) */
   __asm__("");
-  VramBlock_LoadCached_(work->vramEntry, 0x100, buffer);
+  VramCache_Load(work->vramEntry, 0x100, buffer);
   Heap_Release(buffer);
   // Use a value-returning call; a void declaration changes argument order
   // (differ 2).

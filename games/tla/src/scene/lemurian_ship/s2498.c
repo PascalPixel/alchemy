@@ -12,57 +12,63 @@ void Func_02002498(void) {
   Func_02002dc8(gData_02003010);
   Actor_GetById(8)->priorityFlags |= 32;
   Actor_SetSpritePriority(8, 1);
-  if (LemurianShip_FlagCheck(0x938)) {
+  if (GameFlag_Test(0x938)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 32);
-    LemurianShip_ObjSetPos(Actor_GetById(16), PIXELS(776), 0, PIXELS(520));
+    Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(776), 0,
+                                    PIXELS(520));
     Actor_GetById(16)->height = 0;
-    if (!LemurianShip_FlagCheck(0x228))
-      LemurianShip_ObjPlace(9, 0, 0);
+    if (!GameFlag_Test(0x228))
+      Func_02002cd0(9, 0, 0);
   } else {
     Func_0200245c(9);
   }
-  if (LemurianShip_FlagCheck(0x939)) {
+  if (GameFlag_Test(0x939)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 53, 32);
-    LemurianShip_ObjSetPos(Actor_GetById(17), PIXELS(856), 0, PIXELS(520));
+    Actor_SetPositionAndResetMotion(Actor_GetById(17), PIXELS(856), 0,
+                                    PIXELS(520));
     Actor_GetById(17)->height = 0;
-    if (!LemurianShip_FlagCheck(0x229))
-      LemurianShip_ObjPlace(10, 0, 0);
+    if (!GameFlag_Test(0x229))
+      Func_02002cd0(10, 0, 0);
   } else {
     Func_0200245c(10);
   }
-  if (LemurianShip_FlagCheck(0x93a)) {
+  if (GameFlag_Test(0x93a)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 43, 37);
-    LemurianShip_ObjSetPos(Actor_GetById(18), PIXELS(696), 0, PIXELS(600));
+    Actor_SetPositionAndResetMotion(Actor_GetById(18), PIXELS(696), 0,
+                                    PIXELS(600));
     Actor_GetById(18)->height = 0;
-    if (!LemurianShip_FlagCheck(0x22a))
-      LemurianShip_ObjPlace(11, 0, 0);
+    if (!GameFlag_Test(0x22a))
+      Func_02002cd0(11, 0, 0);
   } else {
     Func_0200245c(11);
   }
-  if (LemurianShip_FlagCheck(0x93b)) {
+  if (GameFlag_Test(0x93b)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 37);
-    LemurianShip_ObjSetPos(Actor_GetById(19), PIXELS(776), 0, PIXELS(600));
+    Actor_SetPositionAndResetMotion(Actor_GetById(19), PIXELS(776), 0,
+                                    PIXELS(600));
     Actor_GetById(19)->height = 0;
-    if (!LemurianShip_FlagCheck(0x22b))
-      LemurianShip_ObjPlace(12, 0, 0);
+    if (!GameFlag_Test(0x22b))
+      Func_02002cd0(12, 0, 0);
   } else {
     Func_0200245c(12);
   }
-  if (LemurianShip_FlagCheck(0x93c)) {
+  if (GameFlag_Test(0x93c)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 50, 37);
-    LemurianShip_ObjSetPos(Actor_GetById(20), PIXELS(808), 0, PIXELS(600));
+    Actor_SetPositionAndResetMotion(Actor_GetById(20), PIXELS(808), 0,
+                                    PIXELS(600));
     Actor_GetById(20)->height = 0;
-    if (!LemurianShip_FlagCheck(0x22c))
-      LemurianShip_ObjPlace(13, 0, 0);
+    if (!GameFlag_Test(0x22c))
+      Func_02002cd0(13, 0, 0);
   } else {
     Func_0200245c(13);
   }
-  if (LemurianShip_FlagCheck(0x93e)) {
+  if (GameFlag_Test(0x93e)) {
     LemurianShip_BlendStart(44, 0, 1, 1, 48, 43);
-    LemurianShip_ObjSetPos(Actor_GetById(22), PIXELS(776), 0, PIXELS(696));
+    Actor_SetPositionAndResetMotion(Actor_GetById(22), PIXELS(776), 0,
+                                    PIXELS(696));
     Actor_GetById(22)->height = 0;
-    if (!LemurianShip_FlagCheck(0x22e))
-      LemurianShip_ObjPlace(15, 0, 0);
+    if (!GameFlag_Test(0x22e))
+      Func_02002cd0(15, 0, 0);
   } else {
     Func_0200245c(15);
   }

@@ -51,13 +51,8 @@ void Func_020005cc(s32 skip);
 void Func_020005dc(s32 cue);
 void Func_02000310(s32 kind, s32 frames);
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
 void Func_02000120(void) {
-  if (Flag_Test(0x800) != 0) {
+  if (GameFlag_Test(0x800) != 0) {
     Func_0200055c();
     Func_020005cc(0);
     Event_StartScreenTransition();

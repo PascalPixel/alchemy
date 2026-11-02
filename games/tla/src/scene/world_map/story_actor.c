@@ -36,11 +36,7 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
   s32 y;
   s32 z;
   s32 radius;
-  s32 step;
-  /* FAKEMATCH: pinned, the rise is shared with the radius in r4 and the z
-   * constant takes r3, as in the native (unpinned the radius copy comes last
-   * again: differ 2). */
-  register s32 rise asm("r4");
+  s32 rise;
 
   if (gFrameCount & 2)
     Animation_ApplyChildValues(marker, 10);
@@ -55,22 +51,10 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
     rise = 0x100000;
     marker->y.fixed = y + rise;
     marker->z.fixed = z;
-    /* FAKEMATCH: after this one-pass block the radius, a forced temporary, is
-     * copied to its argument before the angle is read; passing the rise
-     * itself, 2 instructions differ in tla-en. */
-    do {
-    } while (0);
     radius = rise;
     Vector_AddPolarOffsetFar(radius, *angle, &marker->x);
     marker->facing = *angle + 0x4000;
-    /* FAKEMATCH: the one-pass block and the empty asm start the step 0x400
-     * before the angle is read again, as in the native (plain, the read comes
-     * first: differ 2). */
-    do {
-    } while (0);
-    step = 0x400;
-    asm("" : "+r"(step));
-    *angle += step;
+    *angle += 0x400;
   }
 }
 

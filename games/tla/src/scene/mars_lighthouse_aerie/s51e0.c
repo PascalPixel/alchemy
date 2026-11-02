@@ -30,7 +30,7 @@ void Func_020051e0(void) {
 
   
   saved = work->value1ac;
-  Func_0200575c_(0x202108, 1);
+  Func_0200575c(0x202108, 1);
   Func_0200575c_(0x10000, 2);
   ((struct MarsLighthouseAerieEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x100;
   Event_StartScreenTransition();
@@ -39,7 +39,7 @@ void Func_020051e0(void) {
   Func_020057c4();
   wait(40);
   Func_02005010();
-  Func_0200575c_(0x10000, 1);
+  Func_0200575c(0x10000, 1);
   Func_0200576c(16);
   wait(16);
   {

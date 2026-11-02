@@ -30,7 +30,7 @@ void Func_02000acc(void) {
 
 
   saved = work->value1ac;
-  Func_020018f0_(0x202108, 1);
+  Func_020018f0(0x202108, 1);
   Func_020018f0_(0x10000, 2);
   ((struct YampiDesertCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac =
       0x100;
@@ -40,7 +40,7 @@ void Func_02000acc(void) {
   Func_02001950();
   wait(40);
   Func_020008fc();
-  Func_020018f0_(0x10000, 1);
+  Func_020018f0(0x10000, 1);
   Func_02001900(16);
   wait(16);
   {

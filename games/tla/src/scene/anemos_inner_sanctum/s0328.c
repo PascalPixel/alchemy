@@ -31,7 +31,7 @@ void Func_02000328(void) {
 
 
   saved = work->value1ac;
-  Func_02003458_(0x202108, 1);
+  Func_02003458(0x202108, 1);
   Func_02003458_(0x10000, 2);
   ((struct AnemosInnerSanctumEventWork *)Ram_HeapSlots->eventWork)->value1ac =
       0x100;
@@ -41,7 +41,7 @@ void Func_02000328(void) {
   Func_020034a8();
   wait(40);
   Func_02000158();
-  Func_02003458_(0x10000, 1);
+  Func_02003458(0x10000, 1);
   Func_02003468(16);
   wait(16);
   {

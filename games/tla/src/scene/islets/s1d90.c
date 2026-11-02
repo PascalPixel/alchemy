@@ -34,42 +34,41 @@ void Func_02001db0(void) {
     return;
   if (z > 0xac0000)
     return;
-  ((void (*)())Func_02003e64)();
-  Call1((void (*)())Func_02003fa4, 0);
-  Call2((void (*)())Actor_SetModeById, 19, 1);
-  Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner,
-        216, 184);
-  Call2((void (*)())Func_02003fac, gMainRoutineWork.currentOwner, 9);
-  Call1((void (*)())Func_02003f24, (s32)MsgThankYouSo);
-  Call3((void (*)())Actor_Jump, 9, 2, 10);
-  Call3((void (*)())Actor_Jump, 9, 4, 10);
+  Func_02003e64();
+  Func_02003fa4(0);
+  Actor_SetModeById(19, 1);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 216, 184);
+  Func_02003fac(gMainRoutineWork.currentOwner, 9);
+  Func_02003f24((s32)MsgThankYouSo);
+  Actor_Jump(9, 2, 10);
+  Actor_Jump(9, 4, 10);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Call3((void (*)())Actor_ArmCallback, 9, FACING_WEST, 10);
-  Call2((void (*)())Func_02003f2c, 9, 0);
+  Func_02003f2c(9, 0);
   Actor_GetById(9)->actionFlags &= ~1;
-  Call3((void (*)())Actor_SetPositionAndReset, 9, 222, 186);
-  Call1((void (*)())FieldEvent_Wait, 1);
+  Actor_SetPositionAndReset(9, 222, 186);
+  FieldEvent_Wait(1);
   Actor_GetById(9)->actionFlags |= 1;
   Actor_GetById(9)->actionFlags &= ~1;
-  Call3((void (*)())Actor_SetPositionAndReset, 9, 232, 186);
-  Call1((void (*)())FieldEvent_Wait, 1);
+  Actor_SetPositionAndReset(9, 232, 186);
+  FieldEvent_Wait(1);
   Actor_GetById(9)->actionFlags |= 1;
-  Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, FACING_SOUTH);
-  Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 28);
+  Func_02003f3c(gMainRoutineWork.currentOwner, FACING_SOUTH);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   item = Actor_GetById(20);
   item->motionFlags = 0;
   Call2((void (*)())Func_02003e3c, (s32)item, 0x1c4);
-  Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)item, leader->x,
-        leader->y + PIXELS(24), leader->z);
-  Call1((void (*)())FieldEvent_Wait, 20);
-  ((void (*)())Func_02003fc4)();
+  Actor_SetPositionAndResetMotion(item, leader->x, leader->y + PIXELS(24),
+                                  leader->z);
+  FieldEvent_Wait(20);
+  Func_02003fc4();
   Value2((s32 (*)())PartyInventory_GiveItem, 0x1c4, 0);
-  ((void (*)())Func_02003fbc)();
-  Call3((void (*)())Func_02003edc, 20, 0, 0);
-  Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 1);
-  ((void (*)())Func_02003fb4)();
+  Func_02003fbc();
+  Func_02003edc(20, 0, 0);
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+  Func_02003fb4();
   Call2((void (*)())Func_02003f3c, 9, FACING_NORTHWEST + FACING_STEP);
-  Call1((void (*)())GameFlag_SetBit, 0xaa2);
-  ((void (*)())Func_02003e6c)();
+  GameFlag_SetBit(0xaa2);
+  Func_02003e6c();
 }

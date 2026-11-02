@@ -13,7 +13,7 @@ s32 Func_02001358();
 extern u8 MsgAndTheOthers[];
 
 void Func_02000054(void) {
-  Call2(FieldMessage_Show, (s32)MsgAndTheOthers, 1);
-  Call1(Func_02001408, 0x7e);
-  Call1(Func_02001358, 1);
+  FieldMessage_Show((s32)MsgAndTheOthers, 1);
+  Func_02001408(0x7e);
+  Func_02001358(1);
 }

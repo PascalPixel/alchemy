@@ -106,37 +106,32 @@ s32 Func_02002020(void) {
   } else if (scene == (s32)&SceneId_Ov67cRoom5) {
     if ((u32)(entrance - 5) <= 1) {
       Func_02003ab0(gData_020040f4, gData_02004102, Func_02001fcc);
-      Call1((void (*)())Func_02003ecc, 170);
+      Func_02003ecc(170);
     }
   } else if (scene == (s32)&SceneId_Ov67cRoom6) {
     if (entrance == 5 || entrance == 7) {
       Func_02003ab0(gData_02004106, gData_02004114, Func_02001fcc);
-      Call1((void (*)())Func_02003ecc, 170);
-      Call2((void (*)())Func_0200107c, 0, 10);
+      Func_02003ecc(170);
+      Func_0200107c(0, 10);
     }
     if (!GameFlag_Test(0x238)) {
-      Call1((void (*)())Func_02001e78, 9);
-      Call2((void (*)())Actor_SetModeById, 9, 3);
+      Func_02001e78(9);
+      Actor_SetModeById(9, 3);
     }
     object = Actor_GetById(12);
-    Call2((void (*)())Actor_SetSingleChildFlags, object, 0);
-    /* FAKEMATCH(one-pass): the collision byte stored in a once-only block, so
-     * the priority byte is addressed after the store; as a plain store, 2 of
-     * 308 instructions differ in tla-en. */
-    do {
-      object->collisionFlags = 0;
-    } while (0);
+    Actor_SetSingleChildFlags(object, 0);
+    object->collisionFlags = 0;
     object->priorityFlags |= 2;
     object->update = (void (*)(void))Func_02001ea0;
     if (!GameFlag_Test(0x109) && entrance == 13)
       Func_02001f04();
   } else if (scene == (s32)&SceneId_Ov67cRoom9) {
     if (GameFlag_Test(0x24b)) {
-      Call2((void (*)())Actor_SetPartAttribute, Actor_GetById(9), 5);
-      Call1((void (*)())Func_02001e78, 9);
-      Call2((void (*)())Actor_SetModeById, 9, 3);
+      Actor_SetPartAttribute(Actor_GetById(9), 5);
+      Func_02001e78(9);
+      Actor_SetModeById(9, 3);
     } else {
-      Call2((void (*)())Actor_SetPartAttribute, Actor_GetById(9), 6);
+      Actor_SetPartAttribute(Actor_GetById(9), 6);
     }
     FIELD_AT(Actor_GetById(10), u8, 98) = 1;
     FIELD_AT(Actor_GetById(11), u8, 98) = 1;

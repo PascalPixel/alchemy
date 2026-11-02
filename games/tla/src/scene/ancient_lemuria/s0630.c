@@ -70,12 +70,12 @@ s32 Func_020006bc(void) {
     GameFlag_SetBit(0x12f);
   if (GameFlag_Test(0x961)) {
     Func_0200195c_(8, 136 << 16, 584 << 16);
-    Func_0200195c_(9, 0, 0);
-    Func_0200195c_(10, 0, 0);
+    Func_0200195c(9, 0, 0);
+    Func_0200195c(10, 0, 0);
   }
   if (GameFlag_Test_(0x96d))
     Func_0200195c_(12, 312 << 16, 184 << 16);
-  if (gMainRoutineWork.entrance == 1 && !GameFlag_Test_(0x96d) &&
+  if (gMainRoutineWork.entrance == 1 && !GameFlag_Test(0x96d) &&
       GameFlag_Test(0x96c)) {
     *(void (**)(void))(Actor_GetById(13) + 108) = Func_02000048;
     *(u16 *)(Actor_GetById(13) + 100) = 0;

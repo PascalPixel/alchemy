@@ -73,16 +73,6 @@ static __inline__ s32 Flag_Test(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
 static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020010cc(a, b, c, d, e, f);
@@ -94,55 +84,35 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
   Func_020010dc(a, b, c, d, e, f);
 }
 
-static __inline__ void Actor_Place(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001134(id, x, z);
-}
-
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void Cue(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001214(cue);
-}
-
-static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(a, b, c, d);
-}
-
 void Func_0200072c(void) {
-  if (Flag_Test(0x8cb) != 0)
+  if (GameFlag_Test(0x8cb) != 0)
     Map_CopyCells(72, 63, 36, 38, 1, 2);
   else
     Map_CopyCells(71, 63, 36, 38, 1, 2);
-  Flag_Set(0x203);
+  GameFlag_SetBit(0x203);
 }
 
 void Func_02000778(void) {
   Map_CopyCells(70, 63, 36, 38, 1, 2);
-  Flag_Clear(0x203);
+  GameFlag_ClearBit(0x203);
 }
 
 void Func_020007a0(void) {
-  if (Flag_Test(0x203) != 0 && Flag_Test(0x8cb) == 0) {
+  if (GameFlag_Test(0x203) != 0 && Flag_Test(0x8cb) == 0) {
     Func_0200110c();
     Func_020011ac(1);
-    Cue(161);
-    Map_CopyCells(72, 63, 36, 38, 1, 2);
+    Func_02001214(161);
+    Func_020010cc(72, 63, 36, 38, 1, 2);
     FieldEvent_Wait(40);
-    Cue(188);
-    Map_CopyCells(71, 66, 97, 39, 2, 2);
-    Wait(2);
-    Map_CopyCells(73, 66, 97, 39, 2, 2);
-    Wait(2);
-    Map_CopyCells(75, 66, 97, 39, 2, 2);
+    Func_02001214(188);
+    Func_020010cc(71, 66, 97, 39, 2, 2);
+    wait(2);
+    Func_020010cc(73, 66, 97, 39, 2, 2);
+    wait(2);
+    Func_020010cc(75, 66, 97, 39, 2, 2);
     Map_CopyAttributes(33, 37, 2, 2, 33, 39);
-    Wait(1);
-    Flag_Set(0x8cb);
+    wait(1);
+    GameFlag_SetBit(0x8cb);
     Func_02001114();
   } else {
     Func_0200110c();

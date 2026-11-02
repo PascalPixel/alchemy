@@ -47,9 +47,9 @@ void Func_0200390c(void) {
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   owner->priorityFlags |= 32;
-  if (Flag_Test(0x878) == 0) {
+  if (GameFlag_Test(0x878) == 0) {
     Func_02003a30();
-    if (Flag_Test(0x871) != 0) {
+    if (GameFlag_Test(0x871) != 0) {
       Map_CopyAttributes(0, 0, 1, 1, 15, 5);
       if (gData_02004420 != NULL) {
         Actor_SetPosition(gData_02004420, 248 << 16, 0, 176 << 15);
@@ -67,9 +67,9 @@ void Func_0200390c(void) {
   if (Flag_Test(0x871) != 0)
     Func_02003c68(9, 0, 0);
   Func_020035ec();
-  if (Flag_Test(265) == 0) {
+  if (GameFlag_Test(265) == 0) {
     if (gMainRoutineWork.entrance > 16) {
-      if (gMainRoutineWork.entrance == 37 && Flag_Test(0x871) == 0)
+      if (gMainRoutineWork.entrance == 37 && GameFlag_Test(0x871) == 0)
         Func_02002c14();
       else
         Func_02003764();

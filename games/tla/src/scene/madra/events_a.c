@@ -17,8 +17,7 @@ void Actor_CenterOnColumn(s32 id, s32 column, s32 offset);
 void Actor_SetAngleToward(s32 id, s32 target, s32 flags);
 void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 id, s32 x, s32 z);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Motion_SetModeAndWaitAnimation(s32 id, s32 mode);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 void FieldMessage_ShowAtActor(s32 id, s32 flags);
@@ -74,92 +73,9 @@ extern u8 MsgHeyMisterAre;
 extern u8 MsgDidYouCome;
 extern u8 MsgIsThereBy;
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void CommitPos(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_CommitPositionAndActivate(id, x, z);
-}
-
-static __inline__ void ArmCallback(s32 id, s32 angle, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ArmCallback(id, angle, flags);
-}
-
-static __inline__ void Walk(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002c08(id, a, b);
-}
-
-static __inline__ void OpenAt(s32 id, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldMessage_ShowAtActor(id, flags);
-}
-
-static __inline__ void CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002af0(a, b, c, d, e, f);
-}
-
-static __inline__ void CopyCells2(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002af8(a, b, c, d, e, f);
-}
-
-static __inline__ void Emote(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002be0(id, a, b);
-}
-
-static __inline__ void Face(s32 id, s32 target, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetAngleToward(id, target, flags);
-}
-
-static __inline__ void Anim(s32 id, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Motion_SetModeAndWaitAnimation(id, mode);
-}
-
-static __inline__ void Show(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002b88(id, a, b);
-}
-
-static __inline__ void Place(s32 id, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002b90(id, x, y, z);
-}
-
-static __inline__ void Speed(s32 id, s32 s, s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(id, s, a);
-}
-
-static __inline__ void SetPos(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndReset(id, x, z);
-}
-
-static __inline__ void Turn(s32 id, s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002bf8(id, a);
-}
-
 void Func_02000108(s32 arg) {
-  s32 angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
-
-  /* FAKEMATCH: the native loads the angle before building the quarter turn. */
-  __asm__ volatile("" : "+r"(angle));
-  if ((u16)((angle + 0x2000) & 0xc000) == 0xc000) {
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+            0xc000) == 0xc000) {
     Func_02002c88(4, arg);
     return;
   }
@@ -173,11 +89,8 @@ void Func_02000108(s32 arg) {
 }
 
 void Func_0200018c(s32 arg) {
-  s32 angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
-
-  /* FAKEMATCH: the native loads the angle before building the quarter turn. */
-  __asm__ volatile("" : "+r"(angle));
-  if ((u16)((angle + 0x2000) & 0xc000) == 0xc000) {
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+            0xc000) == 0xc000) {
     Func_02002c88(5, arg);
     return;
   }
@@ -191,11 +104,8 @@ void Func_0200018c(s32 arg) {
 }
 
 void Func_02000210(s32 arg) {
-  s32 angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
-
-  /* FAKEMATCH: the native loads the angle before building the quarter turn. */
-  __asm__ volatile("" : "+r"(angle));
-  if ((u16)((angle + 0x2000) & 0xc000) == 0xc000) {
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+            0xc000) == 0xc000) {
     Func_02002c88(6, arg);
     return;
   }

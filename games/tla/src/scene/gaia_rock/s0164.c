@@ -16,7 +16,7 @@ void Func_02000100(s32 id);
 #define DROP_OBJECT(id) Func_02000100(id)
 #else
 void Func_02000100(s32 id, s32 cue);
-#define DROP_OBJECT_CALLED(id) Call2((void (*)())Func_02000100, id, 181)
+#define DROP_OBJECT_CALLED(id) Func_02000100(id, 181)
 #define DROP_OBJECT(id) Func_02000100(id, 181)
 #endif
 
@@ -32,7 +32,7 @@ void Func_02000164(s32 unused, s32 id) {
   if (id == 16 && Value1((s32 (*)())GameFlag_Test, 0x920) == 0 &&
       (object->x >> 19) <= 11) {
     DROP_OBJECT_CALLED(16);
-    Call1((void (*)())GameFlag_SetBit, 0x920);
+    GameFlag_SetBit(0x920);
     Call6((void (*)())Func_02000e44, 6, 27, 1, 1, 5, 27);
   }
   if (id == 19 && GameFlag_Test(0x921) == 0) {

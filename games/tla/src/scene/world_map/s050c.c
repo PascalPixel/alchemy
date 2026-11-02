@@ -4,17 +4,16 @@
 #include "main_routine_work.h"
 
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Unit_AddPp();
 void Func_02003c3c(void);
 void Func_02004a1c(void);
 
 /// Sets render mode 7, clears object 8's child flags, then adds up the PP of
 /// the active party; when it is 0, the current owner gets 1 PP back. The loop
-/// is the listing's goto loop, which the loop pass leaves alone (gMainRoutineWork
-/// reloaded each pass); its first test reads pp, which still holds the
-/// index's 0.
+/// is the listing's goto loop, which the loop pass leaves alone
+/// (gMainRoutineWork reloaded each pass); its first test reads pp, which still
+/// holds the index's 0.
 void Func_0200050c(void) {
   s32 count;
   /* FAKEMATCH(pin): the PP total in r6; as a plain local, 19 of 42
@@ -22,15 +21,7 @@ void Func_0200050c(void) {
   register s32 pp asm("r6");
   s32 i;
 
-  {
-    /* FAKEMATCH(temporary): gMainRoutineWork's address loaded before the field's
-     * offset, through an empty asm on it (barrier); as
-     * gMainRoutineWork.renderMode = 7, 2 of 42 instructions differ in tla-en. */
-    struct MainRoutineWork *state = &gMainRoutineWork;
-
-    __asm__ __volatile__("" : "+r"(state));
-    state->renderMode = 7;
-  }
+  gMainRoutineWork.renderMode = 7;
   Func_02003c3c();
   Func_02004a1c();
   Actor_SetSingleChildFlags(Actor_GetById(8), 0);
@@ -40,15 +31,7 @@ void Func_0200050c(void) {
   if (pp < count) {
   loop:
     // One member's PP.
-    {
-      /* FAKEMATCH(pin): gMainRoutineWork's address in r2, loaded before the
-       * table's offset through an empty asm on it (barrier); unpinned, 6 of
-       * 42 instructions differ in tla-en, and without the asm, 2. */
-      register struct MainRoutineWork *state asm("r2") = &gMainRoutineWork;
-
-      __asm__ __volatile__("" : "+r"(state));
-      pp += ((struct BattleUnit *)Unit_Get(state->activeOwners[i]))->pp;
-    }
+    pp += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.activeOwners[i]))->pp;
     i++;
     if (i < count)
       goto loop;

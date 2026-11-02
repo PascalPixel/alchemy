@@ -12,12 +12,12 @@ void GameFlag_ClearBit();
 void Func_02003fec();
 
 void Func_020025a4(void) {
-  Call1((void (*)())GameFlag_SetBit, 0x218);
+  GameFlag_SetBit(0x218);
   return;
 }
 
 void Func_020025b0(void) {
-  Value1((s32 (*)())GameFlag_ClearBit, 0x218);
+  GameFlag_ClearBit(0x218);
   return;
 }
 

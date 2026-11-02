@@ -49,11 +49,7 @@ void Func_02000480(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     Actor_SetPartAttribute(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    /* FAKEMATCH(one-pass): the flag cleared in a once-only block; as a plain
-     * statement, 4 of 214 instructions differ in tla-en. */
-    do {
-      effect->priorityFlags &= ~1;
-    } while (0);
+    effect->priorityFlags &= ~1;
     // Read as its low byte: (u8)options->priority orders the loads apart.
     sprite->priority = *(u8 *)&options->priority;
     Scene_SetActorSpritePriority(effect, options->priority);

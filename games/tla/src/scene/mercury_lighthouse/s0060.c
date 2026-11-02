@@ -13,11 +13,6 @@ void Func_02000060(struct Actor *object) {
     return;
   }
   *timer = ((Random16Far() * 80) >> 16) + 40;
-  /* FAKEMATCH: the empty one-pass block ends the scheduling region, so the
-   * timer is stored before the state's address is started as in the native
-   * (differ 2 without it). */
-  do {
-  } while (0);
   state = (u8 *)object + 99;
   switch (*state) {
   case 0:

@@ -5,11 +5,7 @@ void Func_02000e90(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
   s16 y = layer->y >> 16;
 
-  /* FAKEMATCH: a one-pass block builds the store's address before 1448 (one
-   * reordered row), as in overlay 679. */
-  do {
-    gData_02002ce0 = 1448 - y;
-  } while (0);
+  gData_02002ce0 = 1448 - y;
   gData_02002ce4 = layer->x >> 16;
   gData_02002ce6 = (s16)(layer->x >> 16) - (gFrameCount >> 2);
 }

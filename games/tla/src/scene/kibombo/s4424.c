@@ -6,9 +6,7 @@ void Func_02005bdc(s32 a, s32 b);
 
 void Func_02004424(void) {
   struct KibomboEventWork *work;
-  /* FAKEMATCH: the pin keeps the screen effect in r6 for both stores; as a
-   * plain local it swaps with the callback in r5 (differ 39). */
-  register s32 effect asm("r6");
+  s32 effect;
 
   Func_02005a9c();
   Func_02005c3c(0);
@@ -16,22 +14,17 @@ void Func_02004424(void) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Func_020032b0();
   KIBOMBO_TASK_ADD(Func_02002ccc, 1152);
-  effect = 129;
   work = Ram_HeapSlots->eventWork;
-  /* FAKEMATCH: the empty asm starts the effect's 513 before the event work load
-   * and finishes it after, as the native does; with a volatile barrier the load
-   * comes first, without one both constants come first (differ 2 and 4). */
-  asm("" : "+l"(effect) : "l"(work));
-  work->screenEffect = effect = effect * 2 + 255;
+  work->screenEffect = effect = 513;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
   Func_02005b4c((s32)MsgOhTheMagic);
-  Kibombo_MessagePut(17, 0);
+  Func_02005b64(17, 0);
   Kibombo_ObjTurn(17, FACING_SOUTHEAST + FACING_STEP);
   Kibombo_MessagePut(0x4011, 0);
   Kibombo_ObjTurn(17, FACING_SOUTH + FACING_STEP);
-  Kibombo_MessagePut(0x4011, 0);
+  Func_02005b64(0x4011, 0);
   Task_RemoveFar(Func_02002ccc);
   Kibombo_ObjTurn(17, FACING_NORTH + FACING_STEP);
   Func_02005bdc(0x10000, 0);

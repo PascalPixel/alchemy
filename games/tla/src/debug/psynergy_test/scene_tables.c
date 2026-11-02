@@ -165,7 +165,7 @@ void Func_0200026c(void) {
 
   FieldMessage_Show((s32)MsgTheBodyIs, 1);
   Unit_AddHpBy(4, -100);
-  Unit_AddHpBy(5, -100);
+  Unit_AddHp(5, -100);
   Unit_AddHp(6, -33);
   Unit_AddPp(4, -50);
   Unit_AddPp(5, -40);
@@ -239,7 +239,7 @@ static __inline__ void Actor_SetPositionById(s32 actor, s32 x, s32 z) {
 }
 
 void Func_02000464(s32 unused, s32 actor) {
-  Actor_Emote(actor, 0x100, 50);
+  Func_02000eac(actor, 0x100, 50);
   Actor_Jump(actor, 6, 15);
   Actor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);

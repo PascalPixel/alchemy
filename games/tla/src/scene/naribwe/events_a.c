@@ -2,7 +2,6 @@
 
 void Func_02000088(void) {
   u8 *work = Ram_HeapSlots->eventWork;
-  struct MainRoutineWork *party;
   u8 *flag;
 
   /* FAKEMATCH: ⚓️ loads the event work before it builds the flag's offset;
@@ -11,12 +10,7 @@ void Func_02000088(void) {
   asm volatile("");
   flag = work + 0xd38;
   *flag = 1;
-  party = &gMainRoutineWork;
-  /* FAKEMATCH: ⚓️ loads gMainRoutineWork's address before it builds the
-   * entrance's offset; read as a plain field the offset's first half is
-   * scheduled ahead of the load (differ 2). */
-  asm volatile("" : "+l"(party));
-  if (party->entrance != 10)
+  if (gMainRoutineWork.entrance != 10)
     *flag = 0;
 }
 
@@ -35,7 +29,7 @@ void Func_020000d8(void) {
     FieldMessage_ShowAtActor(14, 0);
     if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
       Func_02000584(msg + 1);
-      GameFlag_SetBit_(0x85d);
+      GameFlag_SetBit(0x85d);
     } else {
       Func_02000584(msg + 2);
     }
@@ -82,11 +76,8 @@ void Func_020001a8(void) {
 }
 
 void Func_020001f0(s32 actor) {
-  s32 angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
-
-  /* FAKEMATCH: the native loads the angle before building the quarter turn. */
-  __asm__ volatile("" : "+r"(angle));
-  if ((u16)((angle + 0x2000) & 0xc000) == 0x8000) {
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+            0xc000) == 0x8000) {
     Func_020005e4(16, actor);
     return;
   }
@@ -98,11 +89,8 @@ void Func_020001f0(s32 actor) {
 }
 
 void Func_02000250(s32 actor) {
-  s32 angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
-
-  /* FAKEMATCH: the native loads the angle before building the quarter turn. */
-  __asm__ volatile("" : "+r"(angle));
-  if ((u16)((angle + 0x2000) & 0xc000) == 0x8000) {
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+            0xc000) == 0x8000) {
     Func_020005e4(16, actor);
     return;
   }
@@ -114,11 +102,8 @@ void Func_02000250(s32 actor) {
 }
 
 void Func_020002b0(s32 actor) {
-  s32 angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
-
-  /* FAKEMATCH: the native loads the angle before building the quarter turn. */
-  __asm__ volatile("" : "+r"(angle));
-  if ((u16)((angle + 0x2000) & 0xc000) == 0xc000) {
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+            0xc000) == 0xc000) {
     Func_020005ec(actor);
     return;
   }
@@ -130,11 +115,8 @@ void Func_020002b0(s32 actor) {
 }
 
 void Func_0200030c(s32 actor) {
-  s32 angle = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
-
-  /* FAKEMATCH: the native loads the angle before building the quarter turn. */
-  __asm__ volatile("" : "+r"(angle));
-  if ((u16)((angle + 0x2000) & 0xc000) == 0xc000) {
+  if ((u16)((Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
+            0xc000) == 0xc000) {
     Func_020005ec(actor);
     return;
   }

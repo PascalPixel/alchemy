@@ -10,8 +10,8 @@ void Func_0200071c(void) {
   Func_02003ef4(0x22d);
   priority = 0x480;
   Task_Add(Func_020006d0, priority);
-  Func_02003e44_(0x28000, 0x4000);
-  Camera_MoveWithinMapBounds_(PIXELS(776), -1, PIXELS(648), 1);
+  Func_02003e44(0x28000, 0x4000);
+  Camera_MoveWithinMapBounds(PIXELS(776), -1, PIXELS(648), 1);
   Func_02003e54();
   FieldEvent_Wait(30);
   Func_02003d84();

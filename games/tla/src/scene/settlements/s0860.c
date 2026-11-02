@@ -60,11 +60,9 @@ void Func_02000860(void) {
   struct OrbitSprite *sprite;
   u8 *transfer;
 
-  {
-    register u16 alpha __asm__("r3") = 0xc08;
+  register u16 alpha __asm__("r3") = 0xc08;
 
-    REG_BLDALPHA = alpha;
-  }
+  REG_BLDALPHA = alpha;
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   {
     s32 priority = 0x480;

@@ -14,13 +14,7 @@ void Func_02000850(s32 unused, s32 id) {
     AnkohlRuins_Call2dfc(3, 68, 1, 1, 4, 69);
     AnkohlRuins_Call2dfc(3, 69, 1, 1, 3, 70);
   }
-  /* FAKEMATCH(barrier): memory barriers before the later scene tests reload
-   * gMainRoutineWork's address, as the native does; as plain statements, 70 of
-   * 235 instructions differ in tla-en. */
-  if (id == 8 && ({
-        __asm__("" : : : "memory");
-        gMainRoutineWork.scene;
-      }) == (s32)&SceneId_Ov686Room3) {
+  if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_Ov686Room3) {
     Func_02002dfc(32, 71, 1, 1, 33, 71);
     AnkohlRuins_Call2dfc(31, 70, 1, 1, 32, 70);
     if (object->x >> 20 == 32) {
@@ -28,6 +22,9 @@ void Func_02000850(s32 unused, s32 id) {
       GameFlag_SetBit(0x9c7);
     }
   }
+  /* FAKEMATCH(barrier): a memory barrier makes the Room4 test reload
+   * gMainRoutineWork's address; without it, 70 of 235 instructions differ in
+   * tla-en. */
   __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room4) {
     if (id == 8) {
@@ -49,7 +46,6 @@ void Func_02000850(s32 unused, s32 id) {
       }
     }
   }
-  __asm__("" : : : "memory");
   if (id == 8 && gMainRoutineWork.scene == (s32)&SceneId_Ov686Room5) {
     Func_02002dfc(16, 83, 1, 1, 17, 83);
     Func_02002dfc(19, 82, 1, 1, 18, 82);

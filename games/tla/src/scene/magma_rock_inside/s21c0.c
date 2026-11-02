@@ -44,22 +44,17 @@ void Func_020021c0(void) {
     Func_02004f30(0x22d);
     {
       register u16 alpha __asm__("r3") =
-          0x1000; /* FAKEMATCH: the blend value pinned to r3 in a one-pass
-                     block, as the native stores it (differ 20 as a plain store,
-                     37 without the pins, 20 without the blocks). */
+          0x1000; /* FAKEMATCH: the blend value pinned to r3, as the native
+                   stores it (differ 20 as a plain store, 37 without the pins).
+                 */
 
       /* FAKEMATCH: with the pin above. */
       REG_BLDALPHA = alpha;
     }
     REG_BLDCNT = 0x3f10;
     {
-      /* FAKEMATCH(pin): the prepared actor held in r0, the register it is
-       * returned in, until the motion flags are cleared; as actor =
-       * OverlayObject_PrepareObject(...) ahead of the store, 2 of 138
-       * instructions differ in tla-en. */
-      register struct FieldActor *prepared __asm__("r0") =
-          OverlayObject_PrepareObject(other->x, other->terrainHeight,
-                                      other->z + 0x300000, 312);
+      struct FieldActor *prepared = OverlayObject_PrepareObject(
+          other->x, other->terrainHeight, other->z + 0x300000, 312);
 
       other->motionFlags = 0;
       actor = prepared;
@@ -76,8 +71,7 @@ void Func_020021c0(void) {
     FieldEvent_Wait(1);
     {
       register u16 off __asm__("r3") =
-          0; /* FAKEMATCH: the zero pinned to r3 in a one-pass block (differ 4
-                as a plain store). */
+          0; /* FAKEMATCH: the zero pinned to r3 (differ 4 as a plain store). */
 
       /* FAKEMATCH: with the pin above. */
       REG_BLDCNT = off;

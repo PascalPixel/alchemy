@@ -42,11 +42,11 @@ void Func_02001f7c(void) {
   row = raft->z >> 20;
   if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(0x146)) {
     AnkohlRuins_Call2dfc(35, 83, 5, 4, 12, 96);
-    AnkohlRuins_FlagSet(0x146);
+    GameFlag_SetBit(0x146);
   }
   if (row == 37 && AnkohlRuins_FlagCheck(0x146)) {
     AnkohlRuins_Call2dfc(40, 83, 5, 4, 12, 96);
-    AnkohlRuins_FlagClear(0x146);
+    GameFlag_ClearBit(0x146);
   }
   if (row > 41) {
     Task_RemoveFar(Func_02001f7c);

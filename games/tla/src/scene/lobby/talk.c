@@ -45,7 +45,7 @@ s32 Func_02001130(s32 actor) {
   Func_02001ab4(0);
   Actor_SetAngleToward(actor, gMainRoutineWork.currentOwner, 0);
   if (GameFlag_Test(0x304)) {
-    Flag_Test(0x2f4);
+    GameFlag_Test(0x2f4);
     base = GameFlag_Test(actor + 0x2f0);
     if (GameFlag_Test(0x305)) {
       if (base)

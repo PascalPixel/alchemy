@@ -3,16 +3,16 @@
 void Func_02000650(void) {
   Func_02000988();
   Func_02000a70(0);
-  Func_020009d0_(8, PIXELS(472), PIXELS(480));
+  Func_020009d0(8, PIXELS(472), PIXELS(480));
   FieldEvent_Wait(16);
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
   Func_02000a18(gMainRoutineWork.currentOwner, 0x100, 0);
   Camera_FollowActor(8, 1);
   Func_02000a30();
-  Actor_Jump_(8, 4, 0);
+  Actor_Jump(8, 4, 0);
   FieldEvent_Wait(16);
   Actor_Jump(8, 4, 0);
-  Actor_SetPositionAndCommit_(8, 480, 472);
+  Actor_SetPositionAndCommit(8, 480, 472);
   FieldEvent_Wait(30);
   Actor_Jump(8, 2, 0);
   Actor_SetPositionAndCommit_(8, 496, 464);
@@ -28,7 +28,7 @@ void Func_0200071c(void) {
 
   Func_02000988();
   Func_02000a70(0);
-  Func_020009d0_(8, PIXELS(472), PIXELS(480));
+  Func_020009d0(8, PIXELS(472), PIXELS(480));
   FieldEvent_Wait(16);
   Actor_SetAngleToward(gMainRoutineWork.currentOwner, 8, 0);
   x = 0x100;
@@ -41,10 +41,10 @@ void Func_0200071c(void) {
   FieldEvent_Wait(16);
   Camera_FollowActor(8, 1);
   Func_02000a30();
-  Actor_Jump_(8, 4, 0);
+  Actor_Jump(8, 4, 0);
   FieldEvent_Wait(16);
   Actor_Jump(8, 4, 0);
-  Actor_SetPositionAndCommit_(8, 488, 480);
+  Actor_SetPositionAndCommit(8, 488, 480);
   FieldEvent_Wait(30);
   Actor_Jump(8, 2, 0);
   Actor_SetPositionAndCommit_(8, 504, 472);
@@ -62,7 +62,7 @@ void Func_02000800(void) {
   Func_02000a70(0);
   Func_02000a00((s32)&MsgMyThatWas);
   Func_020009d0_(9, PIXELS(512), PIXELS(432));
-  Func_020009d0_(gMainRoutineWork.currentOwner, PIXELS(528), PIXELS(432));
+  Func_020009d0(gMainRoutineWork.currentOwner, PIXELS(528), PIXELS(432));
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02000a08(9, 0, 10);

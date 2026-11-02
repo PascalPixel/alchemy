@@ -76,19 +76,10 @@ void Func_02000aac(struct Actor *object) {
 void Func_02000af8(s32 unused, u32 id) {
   struct Actor *object = Actor_GetById(id);
   u32 direction;
-  /* FAKEMATCH: the state pointer pinned to r8 and loaded behind an empty asm,
-   * with the direction read from r0 after it, loads first after the call;
-   * without the r8 pin, 16 instructions differ in tla-en. */
-  register s32 *state asm("r8");
+  s32 *state;
 
-  {
-    register u32 ret asm("r0") = Func_02004904();
-    s32 *address = (s32 *)(gData_020023c4 + 0x288);
-
-    __asm__ volatile("" : : "l"(address));
-    direction = ret;
-    state = address;
-  }
+  direction = Func_02004904();
+  state = (s32 *)(gData_020023c4 + 0x288);
   object->collisionFlags = 0;
   Func_02004d9c(object, ((direction & 0xc000) >> 14) + 2);
   if (direction & 0x4000)

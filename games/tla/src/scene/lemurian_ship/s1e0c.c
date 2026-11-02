@@ -39,22 +39,22 @@ void Func_02001e0c(void) {
       Func_02002cd0(15, 0, 0);
       Func_02002c30(68, 68, 50, 64, 3, 3);
       LemurianShip_BlendStart(102, 16, 3, 2, 110, 4);
-      LemurianShip_BlendStart(50, 0, 3, 1, 50, 4);
+      Func_02002c38(50, 0, 3, 1, 50, 4);
     } else {
       RAISE(15, 206 << 18, 144 << 15)
       Func_02002c30(72, 68, 50, 64, 3, 3);
-      LemurianShip_BlendStart(106, 16, 3, 2, 110, 4);
-      LemurianShip_BlendStart(50, 1, 3, 1, 50, 4);
+      Func_02002c38(106, 16, 3, 2, 110, 4);
+      Func_02002c38(50, 1, 3, 1, 50, 4);
       if (GameFlag_Test(0x212))
-        LemurianShip_BlendStart(110, 1, 3, 1, 110, 4);
+        Func_02002c38(110, 1, 3, 1, 110, 4);
       else
-        LemurianShip_BlendStart(110, 0, 3, 1, 110, 4);
+        Func_02002c38(110, 0, 3, 1, 110, 4);
     }
   }
   if (GameFlag_Test(0x933)) {
-    LemurianShip_BlendStart(42, 0, 1, 1, 46, 5);
-    LemurianShip_BlendStart(43, 0, 1, 1, 45, 5);
-    LemurianShip_BlendStart(43, 0, 1, 1, 47, 5);
+    Func_02002c38(42, 0, 1, 1, 46, 5);
+    Func_02002c38(43, 0, 1, 1, 45, 5);
+    Func_02002c38(43, 0, 1, 1, 47, 5);
     RAISE(16, 186 << 18, 176 << 15)
     if (!GameFlag_Test(0x223))
       Func_02002cd0(10, 0, 0);
@@ -64,11 +64,11 @@ void Func_02001e0c(void) {
   if (GameFlag_Test(0x934)) {
     struct LemurianShipObject *block = Actor_GetById(8);
 
-    LemurianShip_BlendStart(42, 0, 1, 1, 47, 9);
-    LemurianShip_BlendStart(43, 0, 1, 1, 46, 9);
-    LemurianShip_BlendStart(43, 0, 1, 1, 48, 9);
-    LemurianShip_BlendStart(43, 0, 1, 1, 47, 10);
-    LemurianShip_BlendStart(43, 0, 1, 1, 47, 8);
+    Func_02002c38(42, 0, 1, 1, 47, 9);
+    Func_02002c38(43, 0, 1, 1, 46, 9);
+    Func_02002c38(43, 0, 1, 1, 48, 9);
+    Func_02002c38(43, 0, 1, 1, 47, 10);
+    Func_02002c38(43, 0, 1, 1, 47, 8);
     RAISE(17, 190 << 18, 152 << 16)
     if (block->x >> 20 == 47 && block->z >> 20 == 8)
       Func_02002dc8(gData_02003010);
@@ -82,11 +82,11 @@ void Func_02001e0c(void) {
     s32 x = block->x >> 20;
     s32 z = block->z >> 20;
 
-    LemurianShip_BlendStart(42, 0, 1, 1, 49, 7);
-    LemurianShip_BlendStart(43, 0, 1, 1, 49, 6);
-    LemurianShip_BlendStart(43, 0, 1, 1, 50, 7);
-    LemurianShip_BlendStart(43, 0, 1, 1, 48, 7);
-    LemurianShip_BlendStart(43, 0, 1, 1, 49, 8);
+    Func_02002c38(42, 0, 1, 1, 49, 7);
+    Func_02002c38(43, 0, 1, 1, 49, 6);
+    Func_02002c38(43, 0, 1, 1, 50, 7);
+    Func_02002c38(43, 0, 1, 1, 48, 7);
+    Func_02002c38(43, 0, 1, 1, 49, 8);
     RAISE(18, 198 << 18, 240 << 15)
     if ((x == 48 && z == 7) || (x == 49 && z == 8))
       Func_02002dc8(gData_02003010);
@@ -104,11 +104,11 @@ void Func_02001e0c(void) {
     Func_02001dc8(13);
   }
   if (GameFlag_Test(0x937)) {
-    LemurianShip_BlendStart(42, 0, 1, 1, 51, 9);
-    LemurianShip_BlendStart(43, 0, 1, 1, 51, 8);
-    LemurianShip_BlendStart(43, 0, 1, 1, 50, 9);
-    LemurianShip_BlendStart(43, 0, 1, 1, 52, 9);
-    LemurianShip_BlendStart(43, 0, 1, 1, 51, 10);
+    Func_02002c38(42, 0, 1, 1, 51, 9);
+    Func_02002c38(43, 0, 1, 1, 51, 8);
+    Func_02002c38(43, 0, 1, 1, 50, 9);
+    Func_02002c38(43, 0, 1, 1, 52, 9);
+    Func_02002c38(43, 0, 1, 1, 51, 10);
     RAISE(20, 206 << 18, 152 << 16)
     if (!GameFlag_Test(0x227))
       Func_02002cd0(14, 0, 0);

@@ -26,20 +26,19 @@ void Func_02001bb0(void) {
   s32 t7;
 
   Func_020028b4();
-  Call1(Func_020029cc, 0);
-  Call1(Func_0200293c, (s32)MsgNotThatWayThe);
-  Call4(Func_020029d4, 8, 0x10, 0, 0x8000);
-  Call1(Actor_WaitForMoveById, 8);
-  Call3(Func_0200294c, 0x2008, 0, 0xa);
-  Call2(Actor_SetModeById, 8, 2);
-  t7 = Value1(Actor_GetById, 5);
+  Func_020029cc(0);
+  Func_0200293c((s32)MsgNotThatWayThe);
+  Func_020029d4(8, 0x10, 0, 0x8000);
+  Actor_WaitForMoveById(8);
+  Func_0200294c(0x2008, 0, 0xa);
+  Actor_SetModeById(8, 2);
+  t7 = Actor_GetById(5);
   if (t7 != 0) {
-    Call3(Actor_ResetAndSetPosition, 8, FIELD_AT(t7, s16, 10),
-          FIELD_AT(t7, s16, 18));
+    Actor_ResetAndSetPosition(8, FIELD_AT(t7, s16, 10), FIELD_AT(t7, s16, 18));
   }
-  Call1(Actor_WaitForMoveById, 8);
-  Call3(Func_0200290c, 8, 0, 0);
-  Call1(FieldEvent_Wait, 10);
+  Actor_WaitForMoveById(8);
+  Func_0200290c(8, 0, 0);
+  FieldEvent_Wait(10);
   Call3(Actor_CommitPositionAndActivate, 5, -16, 0);
   Func_020028bc();
 }

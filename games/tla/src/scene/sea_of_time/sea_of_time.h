@@ -104,11 +104,6 @@ static inline s32 SeaOfTime_FlagCheck(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static inline void SeaOfTime_FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
 static inline void SeaOfTime_CamMove(s32 x, s32 y, s32 z, s32 mode) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
@@ -122,11 +117,6 @@ static inline void SeaOfTime_Tint(s32 a, s32 b, s32 c) {
 static inline s32 SeaOfTime_Cos(s32 angle) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Math_Cosine(angle);
-}
-
-static inline s32 SeaOfTime_Sin(s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Math_Sine(angle);
 }
 
 #endif

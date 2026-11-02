@@ -16,8 +16,8 @@ extern u8 MsgGaiaRockInside05[];
 
 void Func_02000edc(void) {
   Func_02004e5c();
-  Call1(Func_02004fcc, 0);
-  Call1(Func_02004f0c, (s32)MsgGaiaRockInside05);
-  Call2(Func_02004f14, 0xa, 0);
+  Func_02004fcc(0);
+  Func_02004f0c((s32)MsgGaiaRockInside05);
+  Func_02004f14(0xa, 0);
   Func_02004e64();
 }

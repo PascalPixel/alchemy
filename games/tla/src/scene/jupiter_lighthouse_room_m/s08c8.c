@@ -32,7 +32,7 @@ void Func_020008c8(void) {
   Func_0200474c_(49, 103, 4, 3, 49, 76);
   FieldEvent_Wait(6);
   Func_020049c4(133);
-  Func_0200474c_(49, 100, 4, 3, 49, 76);
+  Func_0200474c(49, 100, 4, 3, 49, 76);
   FieldEvent_Wait(20);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_020048f4();

@@ -36,13 +36,12 @@ void Func_02005688(s32 a) {
 }
 
 void Func_020056c4(s32 a) {
-  u8 *work = Ram_HeapSlots->unkec[0];
   struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
   /* FAKEMATCH: a word temporary builds 0 with movs for both halfword stores,
    * where a halfword constant loads from the pool. */
   s32 zero = 0;
 
-  *(u16 *)(work + 234) = zero;
+  *(u16 *)((Ram_HeapSlots->unkec[0]) + 234) = zero;
   control->field0a = a;
   control->field06 = zero;
   control->state = 1;

@@ -61,103 +61,100 @@ void Func_02000ce0(void) {
     return;
   }
   Func_02001f5c();
-  Call1((void (*)())Func_020020ac, 0);
+  Func_020020ac(0);
   Call3((void (*)())Actor_SetSpeedParameters, 4, 0xcccc, 0x6666);
-  Call3((void (*)())Actor_SetPositionAndReset, 4, 264, 136);
+  Actor_SetPositionAndReset(4, 264, 136);
   Func_0200201c(MsgLookItS);
   Call4((void (*)())Func_020020b4, 5, 16, -16, FACING_SOUTH);
   Call4((void (*)())Func_020020b4, 9, 32, -16, FACING_SOUTH);
   Call4((void (*)())Func_020020b4, 6, -16, -16, FACING_SOUTH);
-  Call1((void (*)())FieldEvent_Wait, 80);
-  Value3(Func_0200204c, 9, 0x102, 20);
+  FieldEvent_Wait(80);
+  Func_0200204c(9, 0x102, 20);
   Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, 0xcccc);
-  Call3((void (*)())Actor_SetPositionAndReset, 9, 300, 152);
-  Call1((void (*)())FieldEvent_Wait, 10);
+  Actor_SetPositionAndReset(9, 300, 152);
+  FieldEvent_Wait(10);
   Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 20);
   Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTHEAST + FACING_STEP, 20);
   Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
-  Call2((void (*)())Func_02002034, 9, 0);
-  Call2((void (*)())Func_0200205c, 0x4cccc, 0x9999);
+  Func_02002034(9, 0);
+  Func_0200205c(0x4cccc, 0x9999);
   Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(200), -1, PIXELS(344),
         1);
   Func_0200206c();
-  Call1((void (*)())FieldEvent_Wait, 20);
-  Call2((void (*)())Func_0200205c, 0x13333, 0x2666);
+  FieldEvent_Wait(20);
+  Func_0200205c(0x13333, 0x2666);
   Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(600), -1, PIXELS(344),
         1);
   Func_0200206c();
-  Call1((void (*)())FieldEvent_Wait, 40);
-  Call2((void (*)())Func_0200205c, 0x66666, 0xcccc);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(264), -1, PIXELS(128),
-        1);
+  FieldEvent_Wait(40);
+  Func_0200205c(0x66666, 0xcccc);
+  Camera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(128), 1);
   Func_0200206c();
-  Call2((void (*)())Motion_SetModeAndWaitAnimation, 5, 4);
-  Call2((void (*)())Func_02002034, 0x2005, 0);
-  Call2((void (*)())Func_02002044, 6, FACING_EAST);
-  Call2((void (*)())Actor_SetModeById, 6, 4);
-  Call2((void (*)())Func_02002034, 6, 0);
+  Motion_SetModeAndWaitAnimation(5, 4);
+  Func_02002034(0x2005, 0);
+  Func_02002044(6, FACING_EAST);
+  Actor_SetModeById(6, 4);
+  Func_02002034(6, 0);
   Call2((void (*)())Func_02002044, 9, FACING_NORTHWEST + FACING_STEP);
-  Value3(Func_0200204c, 9, 0x101, 0);
+  Func_0200204c(9, 0x101, 0);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 9, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHEAST, 0);
-  Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
-        FACING_SOUTHEAST, 0);
-  answer = Value2(Event_AskYesNoWithActorAnimation,
-                  gMainRoutineWork.currentOwner, 0);
+  Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
+  answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
   owner = gMainRoutineWork.currentOwner;
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
-    Call2((void (*)())Actor_SetModeById, 9, 3);
-    Call2((void (*)())Func_02002034, 9, 0);
+    Actor_SetModeById(9, 3);
+    Func_02002034(9, 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
     Actor_WaitForAnimationChange(owner);
     Func_0200201c(MsgLookItS + 5); // the fifth message after it
-    Call2((void (*)())Func_02002034, 9, 0);
+    Func_02002034(9, 0);
   }
-  Call2((void (*)())Actor_SetModeById, 5, 4);
-  Call2((void (*)())Func_02002034, 0x2005, 0);
-  Call2((void (*)())Func_02002044, 6, FACING_EAST);
-  Call2((void (*)())Actor_SetModeById, 6, 4);
-  Call2((void (*)())Func_02002034, 6, 0);
-  Call2((void (*)())Actor_SetModeById, 9, 4);
-  Call2((void (*)())Func_02002034, 9, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0xcccc, 0x6666);
+  Actor_SetModeById(5, 4);
+  Func_02002034(0x2005, 0);
+  Func_02002044(6, FACING_EAST);
+  Actor_SetModeById(6, 4);
+  Func_02002034(6, 0);
+  Actor_SetModeById(9, 4);
+  Func_02002034(9, 0);
+  Actor_SetSpeedParameters(9, 0xcccc, 0x6666);
   Actor_GetById(9)->actionFlags &= ~1;
-  Call3((void (*)())Actor_SetPositionAndReset, 9, 288, 144);
-  Call1((void (*)())FieldEvent_Wait, 1);
+  Actor_SetPositionAndReset(9, 288, 144);
+  FieldEvent_Wait(1);
   Actor_GetById(9)->actionFlags |= 1;
-  Call2((void (*)())Func_02002034, 0x2009, 0);
-  Call2((void (*)())Actor_SetModeById, 6, 3);
-  Call2((void (*)())Actor_SetModeById, 5, 3);
-  Call2((void (*)())Actor_SetModeById, 4, 3);
-  Call2((void (*)())Motion_SetModeAndWaitAnimation, 9, 3);
+  Func_02002034(0x2009, 0);
+  Actor_SetModeById(6, 3);
+  Actor_SetModeById(5, 3);
+  Actor_SetModeById(4, 3);
+  Motion_SetModeAndWaitAnimation(9, 3);
   Call3((void (*)())Actor_SetSpeedParameters, 9, 0x13333, 0x9999);
   Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
   Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
   {
     struct Actor *target;
 
-    Call2((void (*)())Actor_SetModeById, 9, 2);
+    Actor_SetModeById(9, 2);
     target = Actor_GetById(4);
     if (target != NULL)
       Actor_ResetAndSetPosition(9, ((s16 *)&target->x)[1],
                                 ((s16 *)&target->z)[1]);
-    Call2((void (*)())Actor_SetModeById, 5, 2);
+    Actor_SetModeById(5, 2);
     target = Actor_GetById(4);
     if (target != NULL)
       Actor_ResetAndSetPosition(5, ((s16 *)&target->x)[1],
                                 ((s16 *)&target->z)[1]);
-    Call2((void (*)())Actor_SetModeById, 6, 2);
+    Actor_SetModeById(6, 2);
     target = Actor_GetById(4);
     if (target != NULL)
       Actor_ResetAndSetPosition(6, ((s16 *)&target->x)[1],
                                 ((s16 *)&target->z)[1]);
   }
-  Call1((void (*)())Actor_WaitForMoveById, 6);
-  Call3((void (*)())Func_02001fc4, 6, 0, 0);
-  Call3((void (*)())Func_02001fc4, 5, 0, 0);
-  Call3((void (*)())Func_02001fc4, 9, 0, 0);
+  Actor_WaitForMoveById(6);
+  Func_02001fc4(6, 0, 0);
+  Func_02001fc4(5, 0, 0);
+  Func_02001fc4(9, 0, 0);
   Func_02001f64();
   Flag_Set(0x980);
 }

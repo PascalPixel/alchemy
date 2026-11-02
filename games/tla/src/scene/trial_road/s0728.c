@@ -8,15 +8,9 @@ void Func_02000728(s32 a, s32 id) {
 
 
   mode = party->renderMode;
-  {
-    /* FAKEMATCH: the id copy pinned to r0 after the mode read stays in the
-     * load's delay slot; as a plain local it joins the parameter and rises
-     * above the barrier (differ 2). */
-    register s32 target asm("r0") = id;
 
-    if (mode == 0)
-      Func_02000660(target);
-  }
+  if (mode == 0)
+    Func_02000660(id);
 }
 
 /// While the party's render mode is 0, sets the map cell flag under the object.
@@ -26,13 +20,7 @@ void Func_02000748(s32 a, s32 id) {
 
 
   mode = party->renderMode;
-  {
-    /* FAKEMATCH: the id copy pinned to r0 after the mode read stays in the
-     * load's delay slot; as a plain local it joins the parameter and rises
-     * above the barrier (differ 2). */
-    register s32 target asm("r0") = id;
 
-    if (mode == 0)
-      Func_0200062c(target);
-  }
+  if (mode == 0)
+    Func_0200062c(id);
 }

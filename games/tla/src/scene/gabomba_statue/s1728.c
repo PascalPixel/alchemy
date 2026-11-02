@@ -43,8 +43,8 @@ void Func_0200176c(void) {
    * already in a register here; the plain call loads the owner first (one
    * reordered pair, differ 2) */
   asm volatile("" : "+l"(speed));
-  Actor_SetSpeed(gMainRoutineWork.currentOwner, speed, 0x19999);
-  Actor_SetPosition(gMainRoutineWork.currentOwner, 152, 488);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, speed, 0x19999);
+  Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 152, 488);
   actor->motionFlags = 3;
   FieldEvent_Wait(8);
   Func_02005854(161);

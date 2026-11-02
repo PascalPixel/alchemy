@@ -50,37 +50,6 @@ struct CellRecord {
 extern const u16 gData_02003fda[];
 extern const struct CellRecord gData_0200410e[];
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
-  GameFlag_ClearBit(flag);
-}
-
-static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                          s32 f) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
-  Func_02003bf0(a, b, c, d, e, f);
-}
-
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
-  wait(frames);
-}
-
 void Func_020018a8(void) {
   const u16 *cell = &gData_0200410e[0].present;
   s32 flag = 0x240;
@@ -88,8 +57,8 @@ void Func_020018a8(void) {
   const u16 *dest;
 
   for (i = 0; i <= 7; i++) {
-    if (Flag_Test(0x109) != 0) {
-      if (Flag_Test(flag) != 0) {
+    if (GameFlag_Test(0x109) != 0) {
+      if (GameFlag_Test(flag) != 0) {
         s32 x;
         s32 y;
 
@@ -104,11 +73,11 @@ void Func_020018a8(void) {
       }
     } else {
       if (*cell != 0)
-        Flag_Set(flag);
+        GameFlag_SetBit(flag);
       cell += 6;
     }
     flag++;
   }
-  if (Flag_Test(0x109) == 0)
+  if (GameFlag_Test(0x109) == 0)
     Func_02001804();
 }

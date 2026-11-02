@@ -33,16 +33,8 @@ static inline void GondowanCliffs_Jump(s32 actor, s32 height, s32 frames) {
   /* FAKEMATCH: the native loads the actor after the height and frames, as
    * overlay 694's Contigo_Jump. */
   register s32 h __asm__("r1") = height;
-  s32 f = frames;
-  s32 a = actor;
 
-  Func_020012a4(a, h, f);
-}
-
-static inline void GondowanCliffs_ObjEmote(s32 actor, s32 emote) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer; as a
-   * direct call its 258 is shared with the jump's (14 differ). */
-  Func_020012ac(actor, emote);
+  Func_020012a4(actor, h, frames);
 }
 
 /// The scene that asks where the party intends to go, to help recover the black
@@ -73,7 +65,7 @@ void Func_020007d8(void) {
   Actor_SetAngleToward(6, 5, 0);
   Func_02001294(6, 0);
   Actor_WatchAndSetScript(6, gMainRoutineWork.currentOwner);
-  GondowanCliffs_ObjEmote(gMainRoutineWork.currentOwner, 258);
+  Func_020012ac(gMainRoutineWork.currentOwner, 258);
   FieldEvent_Wait(30);
   Motion_SetModeAndWaitAnimation(22, 3);
   Func_02001294(22, 0);
@@ -82,16 +74,16 @@ void Func_020007d8(void) {
   Actor_SetModeById(5, 3);
   Motion_SetModeAndWaitAnimation(22, 3);
   FieldEvent_Wait(30);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 584, 472);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 584, 472);
   Func_0200124c(22, 0, 0);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 568, 480);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 568, 480);
   Func_0200124c(6, 0, 0);
   GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 552, 488);
   Func_0200124c(5, 0, 0);
   GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 528, 488);
   Event_FinishScreenTransition();
   Func_0200131c(123);
-  GondowanCliffs_ObjWalk(gMainRoutineWork.currentOwner, 512, 488);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 512, 488);
   Event_WaitTransitionFrames();
   Func_020012bc(1);
 }

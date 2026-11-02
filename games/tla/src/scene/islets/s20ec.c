@@ -34,16 +34,12 @@ void Func_02002144(void) {
   object = Actor_GetById(13);
   gData_02005198 = x1 = object->x;
   {
-    s32 *p = &gData_02005190;
     /* FAKEMATCH(pin): object 13's z in r2, as the native keeps it for its
      * test; as a plain local, 31 of 58 instructions differ in tla-en. */
     register s32 z asm("r2");
 
-    /* FAKEMATCH(barrier): clobbering r2 loads the address before z; as the
-     * plain store, 2 of 58 instructions differ in tla-en. */
-    __asm__("" : "+l"(p) : : "r2");
     z = object->z;
-    *p = z;
+    gData_02005190 = z;
     z1 = z;
   }
   if (*x0 >> 20 == 7 && *z0 >> 20 == 29 && x1 >> 20 == 7 && z1 >> 20 == 28)

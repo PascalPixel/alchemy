@@ -18,11 +18,6 @@ static inline void FlagSet(s32 flag) {
   GameFlag_SetBit(flag);
 }
 
-static inline void FlagClr(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
 void Func_020038e8(void) {
   void *work = Ram_HeapSlots->eventWork;
 
@@ -34,6 +29,6 @@ void Func_020038e8(void) {
     FlagSet(0x106);
     Func_02004594();
     Func_020045e4();
-    FlagClr(0x106);
+    GameFlag_ClearBit(0x106);
   }
 }

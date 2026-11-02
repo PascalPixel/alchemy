@@ -22,12 +22,6 @@ static inline void MadraCatacombs_CopyAttributes(s32 a, s32 b, s32 c, s32 d,
   Func_020010dc(a, b, c, d, e, f);
 }
 
-static inline void MadraCatacombs_Wait(s32 frames) {
-  /* FAKEMATCH: scene calls reach the main image through one inline layer, as
-   * the draft of this function had it. */
-  wait(frames);
-}
-
 /// Places actors 10 to 19 in two columns, then sends actors 20 to 29 to them
 /// one each.
 void Func_02000958(void) {
@@ -57,5 +51,5 @@ void Func_02000958(void) {
     actor++;
   }
   MadraCatacombs_CopyAttributes(0, 0, 2, 2, 9, 22);
-  MadraCatacombs_Wait(1);
+  wait(1);
 }

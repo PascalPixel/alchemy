@@ -26,26 +26,6 @@ void Func_020043fc(struct Actor *object);
 void Func_02004404(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_0200458c(s32 entrance);
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004404(a, b, c, d, e, f);
-}
-
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void Cue(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200463c(cue);
-}
-
 void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   struct EventWork154 *work = Ram_HeapSlots->eventWork;
   struct Actor *object;
@@ -53,12 +33,12 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
 
   Func_02004464();
   Func_020045ec(0);
-  if (!Flag_Test(0x200)) {
+  if (!GameFlag_Test(0x200)) {
     if (mode == 2)
-      Cue(188);
+      Func_0200463c(188);
     else
-      Cue(158);
-    Map_CopyCells(a, b, c, d, mode, f);
+      Func_0200463c(158);
+    Func_02004404(a, b, c, d, mode, f);
     FieldEvent_Wait(20);
   }
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
@@ -72,8 +52,8 @@ void Func_020019a4(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   }
   Actor_SetMovementTypeById(gMainRoutineWork.currentOwner,
                                           gData_020046f8);
-  Wait(12);
-  Cue(123);
+  wait(12);
+  Func_0200463c(123);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_0200458c(work->returnEntrance);

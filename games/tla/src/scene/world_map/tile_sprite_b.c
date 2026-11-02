@@ -71,10 +71,6 @@ s32 Func_020003b4(struct Actor *object) {
   object->acceleration = 0x1000;
   object->speedLimit = 0x1000;
   z = object->z;
-  /* FAKEMATCH: the empty asm ties z to x, so z loads before x's offset is
-   * added, as in the native (plain: differ 2; a one-pass block before the call:
-   * 4; alchemy permute, 3 minutes: nothing closer). */
-  asm("" : "+r"(z) : "r"(x));
   Func_02004b50(object, x - 0x1e0000, object->y, z + 0x80000);
   return 0;
 }

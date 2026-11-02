@@ -35,11 +35,6 @@ void Func_02000fe0(const u8 *event) {
       u16 winout = 0xf1f;
 
       REG_WINOUT = winout;
-      /* FAKEMATCH(one-pass): the display control's address is built after
-       * the window store, as in the native; without it, 2 of 130
-       * instructions differ in tla-en (an empty asm there: 14). */
-      do {
-      } while (0);
     }
     REG_DISPCNT |= 0x8000;
     Func_02000df0();

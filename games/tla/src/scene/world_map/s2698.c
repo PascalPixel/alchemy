@@ -41,16 +41,6 @@ static __inline__ void Func_02004d78_(s32 a, s32 b) {
   Func_02004d78(a, b);
 }
 
-static __inline__ void Func_02004d80_(s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004d80(a, b);
-}
-
-static __inline__ void Func_02004df8_(s32 value, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02004df8(value, mode);
-}
-
 void Func_02002698(void) {
   Func_02003d44(1);
   Func_02004cd8((s32)MsgTheyVeDone);
@@ -60,7 +50,7 @@ void Func_02002698(void) {
   Func_02004cf0(5, 0);
   Func_02004db0();
   Func_02004e30(145);
-  Func_02004d80_(0x7fff, 0);
+  Func_02004d80(0x7fff, 0);
   Func_02004d78_(0x10000, 0);
   Func_02004d88(60);
   Task_Add(Func_02002594, TASK_PASS_VBLANK);
@@ -74,7 +64,7 @@ void Func_02002698(void) {
   Func_02004db0();
   Func_02004b78_(0x70000, 0x70000, 0x10000);
   Camera_MoveWithinMapBounds_(PIXELS(1988), -1, PIXELS(7553), 1);
-  Func_02004df8_(0x9999, 60);
+  Func_02004df8(0x9999, 60);
   Func_02004d30();
   FieldEvent_Wait(30);
   Func_02004da8();
@@ -105,7 +95,7 @@ void Func_02002698(void) {
   Func_02002640(0, 160, 32, 0);
   wait(20);
   Func_02002640(32, 160, 32, 0);
-  Camera_MoveWithinMapBounds_(PIXELS(2148), -1, PIXELS(7553), 1);
+  Camera_MoveWithinMapBounds(PIXELS(2148), -1, PIXELS(7553), 1);
   Func_02004d30();
   Func_02004da8();
   Func_02004cf0(8, 0);

@@ -41,13 +41,12 @@ void Func_02000e7c(s32 id) {
   s32 c;
 
   Func_02001bcc();
-  Call1((void (*)())Func_02001d04, 0);
-  Call1((void (*)())Func_02001c6c, (s32)MsgOh2);
-  Call2((void (*)())Animation_SetIndexAndInitializeObjects,
-        (s32)Actor_GetById(12), 56);
+  Func_02001d04(0);
+  Func_02001c6c((s32)MsgOh2);
+  Animation_SetIndexAndInitializeObjects((s32)Actor_GetById(12), 56);
   if (id == 21) {
     Call3((void (*)())Actor_SetPositionAndReset, 4, 376, 968);
-    Call3((void (*)())Actor_ArmCallback, 4, FACING_EAST, 0);
+    Actor_ArmCallback(4, FACING_EAST, 0);
     Call4((void (*)())Func_02001d0c, 12, 16, -16, FACING_EAST);
     a = 0;
     b = 0x800a;
@@ -60,44 +59,44 @@ void Func_02000e7c(s32 id) {
     b = -10;
     c = 0x3000;
   }
-  Call1((void (*)())Actor_WaitForMoveById, 12);
-  Call2((void (*)())Actor_WatchAndSetScript, 4, 12);
+  Actor_WaitForMoveById(12);
+  Actor_WatchAndSetScript(4, 12);
   Call3((void (*)())Actor_SetSpeedParameters, 12, 0x10000, 0x8000);
-  Call2((void (*)())Camera_FollowActor, 12, 1);
+  Camera_FollowActor(12, 1);
   Call3((void (*)())Actor_SetPositionAndReset, 12, 464, 952);
-  Call2((void (*)())Func_02001c94, 12, a);
-  Call1((void (*)())FieldEvent_Wait, 10);
+  Func_02001c94(12, a);
+  FieldEvent_Wait(10);
   Value3((s32 (*)())Func_02001ca4, 12, 0x100, 30);
-  Call3((void (*)())Func_02001c7c, 12, 0, 5);
-  Call2((void (*)())Func_02001c94, 12, b);
-  Call1((void (*)())FieldEvent_Wait, 10);
+  Func_02001c7c(12, 0, 5);
+  Func_02001c94(12, b);
+  FieldEvent_Wait(10);
   Value3((s32 (*)())Func_02001ca4, 12, 0x100, 30);
-  Call3((void (*)())Func_02001c7c, 12, 0, 5);
+  Func_02001c7c(12, 0, 5);
   Call3((void (*)())Actor_SetPositionAndReset, 12, 464, 784);
-  Call1((void (*)())FieldEvent_Wait, 10);
+  FieldEvent_Wait(10);
   Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Call3((void (*)())Actor_Jump, 12, 6, 15);
-  Call3((void (*)())Actor_Jump, 12, 6, 23);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Func_02001c94, 12, c);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  Call3((void (*)())Func_02001c7c, 12, 0, 5);
-  Call1((void (*)())FieldEvent_Wait, 20);
-  Call2((void (*)())Actor_SetSpritePriority, 4, 1);
+  Actor_Jump(12, 6, 15);
+  Actor_Jump(12, 6, 23);
+  FieldEvent_Wait(10);
+  Func_02001c94(12, c);
+  FieldEvent_Wait(10);
+  Func_02001c7c(12, 0, 5);
+  FieldEvent_Wait(20);
+  Actor_SetSpritePriority(4, 1);
   Call3((void (*)())Func_02001c2c, 4, PIXELS(464), PIXELS(856));
   Call3((void (*)())Actor_SetPositionAndReset, 4, 464, 796);
-  Call1((void (*)())FieldEvent_Wait, 10);
-  Call2((void (*)())Motion_SetModeAndWaitAnimation, 12, 3);
-  Call1((void (*)())FieldEvent_Wait, 10);
+  FieldEvent_Wait(10);
+  Motion_SetModeAndWaitAnimation(12, 3);
+  FieldEvent_Wait(10);
   Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
-  Call2((void (*)())Actor_SetModeById, 12, 2);
+  Actor_SetModeById(12, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
                               ((s16 *)&leader->z)[1]);
-  Call1((void (*)())Actor_WaitForMoveById, 12);
-  Call3((void (*)())Func_02001c2c, 12, 0, 0);
-  Call1((void (*)())FieldEvent_Wait, 10);
+  Actor_WaitForMoveById(12);
+  Func_02001c2c(12, 0, 0);
+  FieldEvent_Wait(10);
   Actor_GetById(4)->priorityFlags |= 1;
   Call3((void (*)())Actor_SetPositionAndReset, 4, 464, 776);
   Func_020001bc();
@@ -108,25 +107,24 @@ void Func_0200109c(void) {
   struct Actor *leader;
 
   Func_02001bcc();
-  Call1((void (*)())Func_02001d04, 0);
-  Call1((void (*)())Func_02001c6c, (s32)MsgWhereAreYou);
-  Call2((void (*)())Animation_SetIndexAndInitializeObjects,
-        (s32)Actor_GetById(12), 56);
+  Func_02001d04(0);
+  Func_02001c6c((s32)MsgWhereAreYou);
+  Animation_SetIndexAndInitializeObjects((s32)Actor_GetById(12), 56);
   Call2((void (*)())Func_02001c94, 4, FACING_SOUTH);
-  Call2((void (*)())Actor_SetSpritePriority, 12, 1);
-  Call4((void (*)())Func_02001d0c, 12, 0, 16, FACING_NORTH + FACING_STEP);
-  Call1((void (*)())Actor_WaitForMoveById, 12);
-  Call1((void (*)())FieldEvent_Wait, 5);
-  Call3((void (*)())Func_02001c7c, 12, 0, 5);
+  Actor_SetSpritePriority(12, 1);
+  Func_02001d0c(12, 0, 16, FACING_NORTH + FACING_STEP);
+  Actor_WaitForMoveById(12);
+  FieldEvent_Wait(5);
+  Func_02001c7c(12, 0, 5);
   Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, 0x9999);
-  Call2((void (*)())Actor_SetModeById, 12, 2);
+  Actor_SetModeById(12, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
     Actor_ResetAndSetPosition(12, ((s16 *)&leader->x)[1],
                               ((s16 *)&leader->z)[1]);
-  Call1((void (*)())Actor_WaitForMoveById, 12);
-  Call3((void (*)())Func_02001c2c, 12, 0, 0);
-  Call1((void (*)())FieldEvent_Wait, 10);
+  Actor_WaitForMoveById(12);
+  Func_02001c2c(12, 0, 0);
+  FieldEvent_Wait(10);
   Call3((void (*)())Actor_CommitPositionAndActivate, 4, 0, -16);
   Func_020001bc();
   Func_02001bd4();

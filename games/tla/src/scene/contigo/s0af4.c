@@ -41,7 +41,7 @@ void Func_02000af4(void) {
     FieldMessage_Show((s32)MsgContigo163, 1);
   else
     FieldMessage_Show((s32)MsgContigo64, 1);
-  Contigo_ObjMode(17, 3);
+  Actor_SetModeById(17, 3);
   Func_020041d4(0x10000, 0);
   Func_020041cc(0x204084, 1);
   Func_020041dc(16);
@@ -64,7 +64,7 @@ void Func_02000af4(void) {
       goto grow;
   }
   Task_Add(Func_02000a80, 0x480);
-  Contigo_Wait(120);
+  FieldEvent_Wait(120);
   Task_RemoveFar(Func_02000a80);
   if (effect != 0) {
     i = 0;
@@ -84,19 +84,19 @@ void Func_02000af4(void) {
   Func_020041cc(0x10000, 1);
   Func_020041dc(16);
   if (GameFlag_Test(0x9b2))
-    Contigo_MessageSet((s32)MsgContigo164);
+    Func_0200412c((s32)MsgContigo164);
   else
-    Contigo_MessageSet((s32)MsgContigo65);
-  Contigo_ObjVar(17, 2);
-  Contigo_MessagePut(17, 0);
-  Contigo_ObjMode(17, 1);
+    Func_0200412c((s32)MsgContigo65);
+  Motion_SetVarCbAndRefresh(17, 2);
+  Func_02004144(17, 0);
+  Actor_SetModeById(17, 1);
   Contigo_Jump(14, 259, 0);
   Contigo_ObjTurn(14, FACING_WEST, 20);
-  Contigo_MessagePut(14, 0);
-  Contigo_ObjFace(15, FACING_EAST);
-  Contigo_MessagePut(15, 0);
-  Contigo_ObjMode(14, 3);
-  Contigo_ObjModeWait(15, 3);
+  Func_02004144(14, 0);
+  Func_0200415c(15, FACING_EAST);
+  Func_02004144(15, 0);
+  Actor_SetModeById(14, 3);
+  Motion_SetModeAndWaitAnimation(15, 3);
   Contigo_ObjTurn(15, 0xd000, 0);
   Contigo_ObjFace(14, 0x3000);
   Func_02004074();

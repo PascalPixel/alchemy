@@ -24,13 +24,13 @@ void Func_020000d0(void) {
 
   t0 = Value1(GameFlag_Test, 0x200);
   if (t0 == 0) {
-    Call1(GameFlag_SetBit, 0x200);
+    GameFlag_SetBit(0x200);
     Func_02000070();
   }
   Func_02001380();
-  Call1(Func_020013f8, 0);
-  Call3(Actor_SetPositionAndReset, actor, 120, 152);
-  Call3(Actor_ArmCallback, actor, FACING_SOUTH, 0);
+  Func_020013f8(0);
+  Actor_SetPositionAndReset(actor, 120, 152);
+  Actor_ArmCallback(actor, FACING_SOUTH, 0);
   Func_020001e4();
   Func_02001388();
 }

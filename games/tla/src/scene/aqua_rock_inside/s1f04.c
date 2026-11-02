@@ -34,7 +34,7 @@ fall:
     goto fall;
   Func_02002bd4(object);
   Animation_ApplyChildValues(object, 0);
-  Actor_SetSpeedParameters_(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x20000, 0x10000);
   *flags = saved;
   object->velocityY = 0x80000;
   Func_02003ef4(215);

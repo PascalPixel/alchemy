@@ -8,7 +8,7 @@ void Func_02000954(void) {
 
     Func_02000d00();
     Func_02000dd0(0);
-    Call3((void (*)())Func_02000d88, 32, 256, 60);
+    Func_02000d88(32, 256, 60);
     message = MsgWouldYouBe;
     Func_02000d60(message);
     /* FAKEMATCH: the native schedules this call as a value-returning one (the

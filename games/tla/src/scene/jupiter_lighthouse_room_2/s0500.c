@@ -56,17 +56,17 @@ void Func_02000500(s32 unused, s32 id) {
     Actor_SetSpritePriority(id, 3);
     Func_0200227c(id, 0, 0);
     Func_0200220c(28, 39, 1, 1, 20, 39);
-    CopyCells(28, 39, 1, 1, 20, 39);
-    CopyCells(92, 39, 1, 1, 84, 39);
+    Func_02002214(28, 39, 1, 1, 20, 39);
+    Func_02002214(92, 39, 1, 1, 84, 39);
     FieldEvent_Wait(30);
     Func_0200232c(167);
-    CopyCells(92, 40, 1, 1, 84, 40);
+    Func_02002214(92, 40, 1, 1, 84, 40);
     FieldEvent_Wait(20);
     Func_0200232c(167);
     CopyCells(92, 41, 1, 1, 84, 41);
     FieldEvent_Wait(20);
     Func_0200232c(167);
-    CopyCells(93, 41, 1, 1, 85, 41);
+    Func_02002214(93, 41, 1, 1, 85, 41);
     Func_02002304(168 << 17, 164 << 18, 2, 236);
   }
 }

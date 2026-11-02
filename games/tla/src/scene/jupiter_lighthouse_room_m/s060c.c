@@ -126,7 +126,7 @@ void Func_0200060c(void) {
     if (spot == 2)
       Actor_OffsetPositionAndResetMotion_(23, -32, 0);
     else
-      Actor_OffsetPositionAndResetMotion_(23, 32, 0);
+      Actor_OffsetPositionAndResetMotion(23, 32, 0);
     FieldEvent_Wait(7);
     Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
     object->gravity = 0x8000;

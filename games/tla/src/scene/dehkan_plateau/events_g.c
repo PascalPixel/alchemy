@@ -53,32 +53,6 @@ struct CellRecord {
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
-static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                          s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003bf0(a, b, c, d, e, f);
-}
-
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
 void Func_02003c70(u32 id, s32 x, s32 z, s16 angle);
 struct Actor *Func_02003cc8(s32 id, s32 a, s32 b);
 void Func_02003cf0(void);
@@ -107,16 +81,6 @@ static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
   Camera_MoveWithinMapBounds(a, b, c, d);
 }
 
-static __inline__ void Actor_FaceToward(s32 id, s32 target, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetAngleToward(id, target, mode);
-}
-
-static __inline__ void Actor_SetTurn(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003cc8(id, a, b);
-}
-
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_SetSpeedParameters(id, speed, acceleration);
@@ -127,109 +91,74 @@ static __inline__ void Actor_MoveTo(s32 id, s32 x, s32 z) {
   Actor_SetPositionAndReset(id, x, z);
 }
 
-static __inline__ void Actor_Launch(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_Jump(id, a, b);
-}
-
 static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, s32 angle) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02003c70(id, x, z, angle);
-}
-
-static __inline__ void Actor_PlaceOnTerrain(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003c68(id, x, z);
-}
-
-static __inline__ void Map_CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003be0(a, b, c, d, e, f);
-}
-
-static __inline__ void Cue(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02003df8(cue);
-}
-
-static __inline__ void Pause(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static __inline__ void Actor_SetVariant(s32 id, s32 variant) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpritePriority(id, variant);
-}
-
-static __inline__ struct Actor *Actor_Get(s32 id) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Actor_GetById(id);
 }
 
 void Func_020021e8(void) {
   Func_02003c28();
   Func_02003d78(0);
   Func_02003cf8()->motionFlags = 0;
-  Camera_SetBounds(658 << 16, -1, 164 << 16, 1);
+  Camera_MoveWithinMapBounds(658 << 16, -1, 164 << 16, 1);
   Func_02003cf0();
-  Actor_FaceToward(24, gMainRoutineWork.currentOwner, 0);
-  Actor_SetTurn(24, 0x100, 40);
+  Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
+  Func_02003cc8(24, 0x100, 40);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 664, 136);
-  Map_CopyCells(68, 33, 105, 6, 1, 1);
-  Cue(161);
+  Func_02003be0(68, 33, 105, 6, 1, 1);
+  Func_02003df8(161);
   Func_020021b4();
-  Flag_Set(0x247);
+  GameFlag_SetBit(0x247);
   Actor_MoveTo(24, 664, 104);
-  Map_CopyCells(69, 33, 105, 4, 1, 1);
-  Cue(229);
+  Func_02003be0(69, 33, 105, 4, 1, 1);
+  Func_02003df8(229);
   Func_020021b4();
-  Pause(10);
-  Actor_Launch(24, 6, 16);
+  FieldEvent_Wait(10);
+  Actor_Jump(24, 6, 16);
   Actor_PlaceFacing(24, 222 << 18, 168 << 16, FACING_SOUTH);
-  Pause(20);
-  Flag_Set(0x86c);
+  FieldEvent_Wait(20);
+  GameFlag_SetBit(0x86c);
   Func_02003c30();
 }
 
 void Func_020022e0(void) {
   Func_02003c28();
   Func_02003d78(0);
-  Camera_SetBounds(245 << 18, -1, 168 << 16, 1);
+  Camera_MoveWithinMapBounds(245 << 18, -1, 168 << 16, 1);
   Func_02003cf0();
-  Actor_FaceToward(24, gMainRoutineWork.currentOwner, 0);
-  Actor_SetTurn(24, 0x100, 40);
-  Actor_Get(24)->motionFlags = 0;
-  Actor_SetVariant(24, 1);
+  Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
+  Func_02003cc8(24, 0x100, 40);
+  Actor_GetById(24)->motionFlags = 0;
+  Actor_SetSpritePriority(24, 1);
   Actor_SetSpeed(24, 0x19999, 0xcccc);
   Actor_MoveTo(24, 940, 168);
   Actor_MoveTo(24, 984, 152);
   Actor_MoveTo(24, 1040, 152);
-  Actor_PlaceOnTerrain(24, 0, 0);
-  Pause(20);
-  Flag_Set(0x86d);
+  Func_02003c68(24, 0, 0);
+  FieldEvent_Wait(20);
+  GameFlag_SetBit(0x86d);
   Func_02003c30();
 }
 
 void Func_02002390(void) {
   Func_02003c28();
   Func_02003d78(0);
-  Camera_SetBounds(144 << 16, -1, 214 << 15, 1);
+  Camera_MoveWithinMapBounds(144 << 16, -1, 214 << 15, 1);
   Func_02003cf0();
-  Actor_FaceToward(25, gMainRoutineWork.currentOwner, 0);
-  Actor_SetTurn(25, 0x100, 40);
+  Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
+  Func_02003cc8(25, 0x100, 40);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
-  Actor_MoveTo(25, 168, 104);
-  Pause(10);
-  Cue(153);
-  Actor_Get(25)->velocityY = 0x80000;
-  Actor_SetSingleChildFlags(Actor_Get(25), 0);
-  Actor_MoveTo(25, 200, 104);
-  Actor_SetSingleChildFlags(Actor_Get(25), 1);
+  Actor_SetPositionAndReset(25, 168, 104);
+  FieldEvent_Wait(10);
+  Func_02003df8(153);
+  Actor_GetById(25)->velocityY = 0x80000;
+  Actor_SetSingleChildFlags(Actor_GetById(25), 0);
+  Actor_SetPositionAndReset(25, 200, 104);
+  Actor_SetSingleChildFlags(Actor_GetById(25), 1);
   Actor_MoveTo(25, 294, 104);
   Actor_PlaceFacing(25, 212 << 17, 208 << 15, FACING_SOUTH);
-  Flag_Set(0x86e);
+  GameFlag_SetBit(0x86e);
   Func_02003c30();
 }
 
@@ -240,9 +169,9 @@ void Func_02002458(void) {
   Func_02003cf8()->motionFlags = 0;
   Camera_SetBounds(212 << 17, -1, 208 << 15, 1);
   Func_02003cf0();
-  Actor_FaceToward(25, gMainRoutineWork.currentOwner, 0);
-  Actor_SetTurn(25, 0x100, 20);
-  Camera_SetBounds(212 << 17, -1, 152 << 16, 1);
+  Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
+  Func_02003cc8(25, 0x100, 20);
+  Camera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
   Actor_SetSpeed(25, 0x19999, 0xcccc);
   Actor_MoveTo(25, 424, 152);
   Actor_ArmCallback(25, FACING_EAST, 20);
@@ -250,13 +179,13 @@ void Func_02002458(void) {
   Actor_MoveTo(25, 440, 152);
   Actor_MoveTo(25, 456, 168);
   Actor_MoveTo(25, 456, 184);
-  Flag_Set(0x241);
-  Map_CopyCells(69, 51, 92, 11, 1, 1);
-  Cue(161);
+  GameFlag_SetBit(0x241);
+  Func_02003be0(69, 51, 92, 11, 1, 1);
+  Func_02003df8(161);
   Func_020021b4();
   Actor_MoveTo(25, 456, 216);
   Actor_MoveTo(25, 584, 216);
   Actor_PlaceFacing(25, 154 << 18, 140 << 17, FACING_SOUTH);
-  Flag_Set(0x86f);
+  GameFlag_SetBit(0x86f);
   Func_02003c30();
 }

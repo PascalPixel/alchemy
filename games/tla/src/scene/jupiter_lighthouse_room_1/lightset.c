@@ -47,10 +47,6 @@ void Func_02000408(s32 id) {
   object = Actor_GetById(id);
   object->motionFlags = 4;
   height = object->terrainHeight;
-  /* FAKEMATCH: ⚓️ loads the ground height before it clears the word; without it
-   * the zero is stored first (2 differ); plain statement order and a
-   * pointer-typed field did not move the load */
-  asm volatile("" : "+l"(height));
   WORD_AT(object, 68) = 0;
   object->y = height + 0x200000;
   {

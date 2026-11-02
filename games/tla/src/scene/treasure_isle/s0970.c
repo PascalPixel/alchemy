@@ -13,9 +13,9 @@ s32 GameFlag_SetBit();
 void Func_02000970(void) {
   s32 t0;
 
-  t0 = Value1(Actor_GetById, 11);
+  t0 = Actor_GetById(11);
   FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9) =
       ((-13 & FIELD_AT(FIELD_AT(t0, s32, 80), s8, 9)) | 4);
   FIELD_AT((t0 + 0x23), u8, 0) = (0xfe & FIELD_AT((t0 + 0x23), u8, 0));
-  Call1(GameFlag_SetBit, 0x202);
+  GameFlag_SetBit(0x202);
 }

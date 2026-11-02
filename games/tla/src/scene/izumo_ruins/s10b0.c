@@ -19,17 +19,10 @@ void Func_020010f0(s32 aArg, s32 b) {
 
 
   scene = party->scene;
-  {
-    /* FAKEMATCH: the first argument pinned to r5 after the scene read stays
-     * after it, as in ⚓️; as the parameter it is copied above the barrier
-     * (differ 2). */
-    register s32 a asm("r5") = aArg;
-
-    if (scene == (s32)&SceneId_Ov67FRoom1)
-      Func_020000a4(gData_02001674, a, b);
-    else
-      Func_020000a4(gData_02001688, a, b);
-    if (a == 1)
-      Func_02000f30(Actor_GetById(work->objectId));
-  }
+  if (scene == (s32)&SceneId_Ov67FRoom1)
+    Func_020000a4(gData_02001674, aArg, b);
+  else
+    Func_020000a4(gData_02001688, aArg, b);
+  if (aArg == 1)
+    Func_02000f30(Actor_GetById(work->objectId));
 }

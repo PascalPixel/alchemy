@@ -28,7 +28,7 @@ s32 Func_02001564(struct Actor *object) {
       count = GameFlag_GetByte_(0x230);
       if (count <= 3) {
         count++;
-        GameFlag_SetByte_(0x230, count);
+        GameFlag_SetByte(0x230, count);
       }
       if (count != 0)
         Func_02000920(0, 10);

@@ -38,7 +38,7 @@ void Func_02000af0(void) {
   Call3((void (*)())Func_020010d4, 25, PIXELS(235), PIXELS(483));
   Call3((void (*)())Func_020010d4, 26, PIXELS(232), PIXELS(496));
   Call3((void (*)())Func_020010d4, 27, PIXELS(277), PIXELS(483));
-  Call3((void (*)())Func_020010d4, 28, PIXELS(280), PIXELS(496));
+  Func_020010d4(28, PIXELS(280), PIXELS(496));
   Func_02000ad4(owner);
   Func_02000ad4(23);
   Func_02000ad4(24);
@@ -49,14 +49,14 @@ void Func_02000af0(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_02001104(MsgHereTheIntruder);
-  Value3((s32 (*)())Func_0200111c, 27, 259, 30);
+  Func_0200111c(27, 259, 30);
   Func_0200110c(27, 0);
   Actor_SetAngleToward(27, 25, 0);
   FieldEvent_Wait(10);
   Motion_SetModeAndWaitAnimation(25, 3);
   Actor_SetAngleToward(27, owner, 0);
   FieldEvent_Wait(10);
-  Value3((s32 (*)())Func_0200111c, 27, 263, 30);
+  Func_0200111c(27, 263, 30);
   Func_0200110c(27, 0);
   Motion_SetModeAndWaitAnimation(27, 3);
   Func_0200110c(27, 0);
@@ -72,7 +72,7 @@ void Func_02000af0(void) {
   Actor_WatchAndSetScript(28, owner);
   FieldEvent_Wait(2);
   Actor_GetById(owner)->actionFlags &= ~1;
-  Call3((void (*)())Actor_SetPositionAndReset, owner, 256, 552);
+  Actor_SetPositionAndReset(owner, 256, 552);
   FieldEvent_Wait(1);
   Actor_GetById(owner)->actionFlags |= 1;
   Actor_SetModeById(23, 1);

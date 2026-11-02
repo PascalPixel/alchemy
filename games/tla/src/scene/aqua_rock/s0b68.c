@@ -20,7 +20,7 @@ void Func_02000b68(s32 unused, s32 id) {
   Func_02002a48(0);
   object->update = (void (*)(void))Func_02000b10;
   wait(30);
-  if (GameFlag_Test_(0xa68) == 0)
+  if (GameFlag_Test(0xa68) == 0)
     Func_02002834(26);
   else
     Func_02002834(0);

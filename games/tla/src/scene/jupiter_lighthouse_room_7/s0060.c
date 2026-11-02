@@ -23,7 +23,7 @@ void Func_02000100(void) {
 
   if (!Value1((s32 (*)())GameFlag_Test, 0xa1b) && object->x >> 20 == 8 &&
       object->z >> 20 == 37) {
-    Call1((void (*)())GameFlag_SetBit, 0xa1b);
+    GameFlag_SetBit(0xa1b);
     Func_02000060(1);
   }
 }

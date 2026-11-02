@@ -52,16 +52,16 @@ s32 Func_02002c54(void) {
   object->motionFlags = 0;
   object->y = PIXELS(32);
   object->terrainHeight = PIXELS(32);
-  if (GameFlag_Test_(514)) {
+  if (GameFlag_Test(514)) {
     Func_0200474c(49, 106, 4, 3, 49, 76);
     Func_02004744(49, 45, 4, 1, 49, 44);
   }
-  if (GameFlag_Test_(2591)) {
+  if (GameFlag_Test(2591)) {
     Func_0200474c(49, 106, 4, 3, 49, 76);
     Func_02004744(49, 45, 4, 1, 49, 44);
     Func_02004844(23, 0, 0);
     if (GameFlag_Test_(2595)) {
-      if (!GameFlag_Test_(2593)) {
+      if (!GameFlag_Test(2593)) {
         Func_02000c08();
         Func_02001e38();
       }
@@ -85,7 +85,7 @@ s32 Func_02002c54(void) {
     }
   }
   Actor_GetById(23)->motionFlags = 0;
-  if (GameFlag_Test_(2573))
+  if (GameFlag_Test(2573))
     Func_02004844(23, 0, 0);
   if (gMainRoutineWork.entrance == 99)
     Func_02001ed0();

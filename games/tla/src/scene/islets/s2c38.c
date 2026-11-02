@@ -4,12 +4,8 @@
 void Func_02002c38(void) {
   struct IsletsMapFlags *map = (struct IsletsMapFlags *)Ram_HeapSlots->mapWork;
   struct Actor *spawned;
-  struct MainRoutineWork *party = &gMainRoutineWork;
 
-  /* FAKEMATCH: the listing loads gMainRoutineWork's address before it builds
-   * the entrance offset */
-  asm volatile("" : "+l"(party));
-  if (party->entrance == 2)
+  if (gMainRoutineWork.entrance == 2)
     GameFlag_ClearBit(0x12f);
   map->mode = 1;
   Actor_SetSingleChildFlags(Actor_GetById(11), 0);

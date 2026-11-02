@@ -46,23 +46,15 @@ void Func_020035d8(void) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   else if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Test(0xa29)) {
-      /* FAKEMATCH: each one-pass block loads the scene id before the field
-       * offset; as plain assignments, 19 instructions differ in tla-en. */
-      do {
-        scene = (s32)&SceneId_Ov661Room1;
-      } while (0);
+      scene = (s32)&SceneId_Ov661Room1;
       MAIN_ROUTINE_WORK_U16(0x260) = scene;
       Scene_StoreU16(&MAIN_ROUTINE_WORK_U16(0x262), 1);
     } else if (GameFlag_Test(0xa2a)) {
-      do {
-        scene = (s32)&SceneId_Ov661Room8;
-      } while (0);
+      scene = (s32)&SceneId_Ov661Room8;
       MAIN_ROUTINE_WORK_U16(0x260) = scene;
       Scene_StoreU16(&MAIN_ROUTINE_WORK_U16(0x262), 2);
     } else if (GameFlag_Test(0xa2b)) {
-      do {
-        scene = (s32)&SceneId_Ov661Room9;
-      } while (0);
+      scene = (s32)&SceneId_Ov661Room9;
       MAIN_ROUTINE_WORK_U16(0x260) = scene;
       Scene_StoreU16(&MAIN_ROUTINE_WORK_U16(0x262), 2);
     }

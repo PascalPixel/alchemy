@@ -13,8 +13,8 @@ void Func_020024f0(void) {
     Func_02003e64();
     Func_02003fa4(0);
     object->motionFlags = 0;
-    Call3((void (*)())Actor_SetPositionAndReset,
-          gMainRoutineWork.currentOwner, 72, 280);
+    Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner,
+          72, 280);
     object->motionFlags = 3;
     Func_02003e6c();
   }
@@ -23,16 +23,11 @@ void Func_020024f0(void) {
 void Func_0200253c(void) {
   struct Actor *object;
   u16 *state;
-  u32 value;
 
   if (gInput.held & 0x80) {
     state = gSceneState;
     object = Actor_GetById(gMainRoutineWork.currentOwner);
-    value = *state;
-    /* FAKEMATCH(barrier): clobbering r2 loads the word before 0xfff6 is built
-     * in r2; as the plain load, 2 of 41 instructions differ in tla-en. */
-    __asm__("" : "+l"(value) : : "r2");
-    if ((u16)(value + 0xfff6) > 200) {
+    if ((u16)(*state + 0xfff6) > 200) {
       Func_02003e64();
       Func_02003fa4(0);
       object->motionFlags = 0;

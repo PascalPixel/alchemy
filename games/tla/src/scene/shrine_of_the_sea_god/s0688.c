@@ -20,7 +20,7 @@ void Func_02000688(void) {
   Func_02003b08(0);
   Func_020039a0();
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  ShrineOfTheSeaGod_CamMove(248 << 16, -1, 168 << 16, 1);
+  Camera_MoveWithinMapBounds(248 << 16, -1, 168 << 16, 1);
   Func_02003ac8();
   Func_02003b48(244);
   Io_Write16(BLEND_ALPHA(1, 16), &REG_BLDALPHA);

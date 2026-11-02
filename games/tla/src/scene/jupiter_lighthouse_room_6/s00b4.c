@@ -14,7 +14,7 @@ void Func_02000108(void) {
   Func_02001bec(134);
   JupiterLighthouseRoom6_MapPlay(84, 36, 2, 3, 78, 40);
   wait(6);
-  JupiterLighthouseRoom6_MapPlay(84, 42, 2, 3, 78, 40);
+  Func_02001b0c(84, 42, 2, 3, 78, 40);
   JupiterLighthouseRoom6_BlendStart(20, 44, 2, 1, 14, 42);
 }
 
@@ -23,7 +23,7 @@ void Func_02000154(void) {
 
   if (!JupiterLighthouseRoom6_FlagCheck(0xa19) && object->x >> 20 == 4 &&
       object->z >> 20 == 37) {
-    JupiterLighthouseRoom6_FlagSet(0xa19);
+    GameFlag_SetBit(0xa19);
     Func_020000b4(1);
   }
 }

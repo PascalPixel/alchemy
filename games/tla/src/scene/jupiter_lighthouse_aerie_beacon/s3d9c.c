@@ -38,34 +38,34 @@ s32 Func_02003d9c(void) {
 
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x201;
   Call2(Func_020059b4, 0xf, 1);
-  Call2(Func_020059b4, 0x10, 1);
-  t2 = Value1(Actor_GetById, FIELD_AT(gMainRoutineWork, s32, 532));
+  Func_020059b4(0x10, 1);
+  t2 = Actor_GetById(FIELD_AT(gMainRoutineWork, s32, 532));
   FIELD_AT((t2 + 0x23), u8, 0) = (0x40 | FIELD_AT((t2 + 0x23), u8, 0));
-  t3 = Value1(Actor_GetById, 17);
+  t3 = Actor_GetById(17);
   FIELD_AT((t3 + 0x23), u8, 0) = (FIELD_AT((t3 + 0x23), u8, 0) | 0x80);
-  t4 = Value1(Actor_GetById, 18);
+  t4 = Actor_GetById(18);
   FIELD_AT((t4 + 0x23), u8, 0) = (FIELD_AT((t4 + 0x23), u8, 0) | 0x80);
-  t5 = Value1(Actor_GetById, 19);
+  t5 = Actor_GetById(19);
   FIELD_AT((t5 + 0x23), u8, 0) = (FIELD_AT((t5 + 0x23), u8, 0) | 0x80);
-  t6 = Value1(Actor_GetById, 20);
+  t6 = Actor_GetById(20);
   FIELD_AT((t6 + 0x23), u8, 0) = (FIELD_AT((t6 + 0x23), u8, 0) | 0x80);
-  t7 = Value1(Actor_GetById, 21);
+  t7 = Actor_GetById(21);
   FIELD_AT((t7 + 0x23), u8, 0) = (FIELD_AT((t7 + 0x23), u8, 0) | 0x80);
-  t8 = Value1(Actor_GetById, 22);
+  t8 = Actor_GetById(22);
   FIELD_AT((t8 + 0x23), u8, 0) = (0x80 | FIELD_AT((t8 + 0x23), u8, 0));
-  t9 = Value1(GameFlag_Test, 0xa21);
+  t9 = GameFlag_Test(0xa21);
   if (t9 == 0) {
     Func_02004644();
   } else {
-    t11 = Value1(Actor_GetById, 24);
+    t11 = Actor_GetById(24);
     FIELD_AT(t11, s32, 24) = 0;
   }
   if ((u32)((FIELD_AT(gMainRoutineWork, u16, 482) - 1) << 16) > 0x10000) {
-    Call3(Func_02005884, 24, 0, 0);
+    Func_02005884(24, 0, 0);
   }
-  Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 36), 0);
-  Call2(Actor_SetSingleChildFlags, Value1(Actor_GetById, 36), 0);
-  Call2(Task_Add, (s32)Func_020005b8, 0x480);
+  Actor_SetSingleChildFlags(Actor_GetById(36), 0);
+  Actor_SetSingleChildFlags(Actor_GetById(36), 0);
+  Task_Add((s32)Func_020005b8, 0x480);
   if (FIELD_AT(gMainRoutineWork, s16, 482) == 9) {
     Func_02000cd0();
 
@@ -73,11 +73,11 @@ s32 Func_02003d9c(void) {
     FIELD_AT(gMainRoutineWork, u16, 610) = 1;
   } else {
     if (FIELD_AT(gMainRoutineWork, s16, 482) == 0xa) {
-      Call1(Party_AddActiveOwner, 5);
+      Party_AddActiveOwner(5);
       Func_02001388();
     } else {
       if (FIELD_AT(gMainRoutineWork, s16, 482) == 0xb) {
-        Call1(Party_AddActiveOwner, 6);
+        Party_AddActiveOwner(6);
         Func_020016e8();
       } else {
         if (FIELD_AT(gMainRoutineWork, s16, 482) == 0xc) {
@@ -86,10 +86,10 @@ s32 Func_02003d9c(void) {
           if (FIELD_AT(gMainRoutineWork, s16, 482) == 0xd) {
             Func_02001bc4();
           } else {
-            t25 = Value1(GameFlag_Test, 0xa21);
+            t25 = GameFlag_Test(0xa21);
             if (t25 != 0) {
               Call3(Func_02005884, 27, 0, 0);
-              Call3(Func_02005884, 28, 0, 0);
+              Func_02005884(28, 0, 0);
             }
           }
         }

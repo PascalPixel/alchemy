@@ -133,8 +133,8 @@ void Func_02000568(void) {
   Speed_Set(0x33333, 0x6666);
   Camera_SetBounds(PIXELS(160), -1, PIXELS(240), 1);
   Func_02001174();
-  Speed_Set(0x6666, 0xccc);
-  Camera_SetBounds(PIXELS(160), -1, PIXELS(186), 1);
+  Func_02001164(0x6666, 0xccc);
+  Camera_MoveWithinMapBounds(PIXELS(160), -1, PIXELS(186), 1);
   Func_02001214(168);
   Actor_Place(14, PIXELS(136), PIXELS(258));
   Actor_Place(19, PIXELS(184), PIXELS(258));

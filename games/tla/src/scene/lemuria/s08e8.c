@@ -53,35 +53,35 @@ void Func_020008e8(void) {
 /// records that the party took it.
 void Func_02000934(void) {
   if (Value1(GameFlag_Test, 0x908)) {
-    Call3(Actor_SetAngleToward, 30, gMainRoutineWork.currentOwner, 0);
-    Call1((void (*)())Actor_RefreshSelectorById, 30);
-    Call1(Func_02001c6c, (s32)MsgYouLookLike);
-    Call2(Func_02001c84, 30, 0);
+    Actor_SetAngleToward(30, gMainRoutineWork.currentOwner, 0);
+    Actor_RefreshSelectorById(30);
+    Func_02001c6c((s32)MsgYouLookLike);
+    Func_02001c84(30, 0);
     Call2(Func_02001c94, 30, FACING_NORTH + FACING_STEP);
     return;
   }
   Func_02001bcc();
-  Call1(Func_02001d04, 0);
-  Call1(Func_02001c6c, (s32)MsgDoYouWish);
-  Value3(Func_02001ca4, 30, 0x100, 30);
-  Call3(Actor_SetAngleToward, 30, gMainRoutineWork.currentOwner, 0);
-  Call1((void (*)())Actor_RefreshSelectorById, 30);
-  Call1(FieldEvent_Wait, 5);
-  Value2(FieldMessage_ShowAtActor, 30, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, 4, 0)) {
-    Call1(FieldEvent_Wait, 30);
-    Call3(Func_02001c7c, 30, 0, 0);
+  Func_02001d04(0);
+  Func_02001c6c((s32)MsgDoYouWish);
+  Func_02001ca4(30, 0x100, 30);
+  Actor_SetAngleToward(30, gMainRoutineWork.currentOwner, 0);
+  Actor_RefreshSelectorById(30);
+  FieldEvent_Wait(5);
+  FieldMessage_ShowAtActor(30, 0);
+  if (Event_AskYesNoWithActorAnimation(4, 0)) {
+    FieldEvent_Wait(30);
+    Func_02001c7c(30, 0, 0);
   } else {
-    Call1(FieldEvent_Wait, 20);
-    Call2(Motion_SetModeAndWaitAnimation, 30, 3);
+    FieldEvent_Wait(20);
+    Motion_SetModeAndWaitAnimation(30, 3);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
-    Call3(Func_02001c7c, 30, 0, 5);
-    Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 464, 1040);
-    Call2(Func_02001c94, gMainRoutineWork.currentOwner, FACING_NORTH);
-    Call1(FieldEvent_Wait, 5);
+    Func_02001c7c(30, 0, 5);
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 464, 1040);
+    Func_02001c94(gMainRoutineWork.currentOwner, FACING_NORTH);
+    FieldEvent_Wait(5);
     Call3(Actor_SetSpeedParameters, 30, 0x13333, 0x9999);
-    Call3(Actor_SetPositionAndReset, 30, 440, 1048);
-    Call1(GameFlag_SetBit, 0x908);
+    Actor_SetPositionAndReset(30, 440, 1048);
+    GameFlag_SetBit(0x908);
   }
   Call2(Func_02001c94, 30, FACING_NORTH + FACING_STEP);
   Func_02001bd4();

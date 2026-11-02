@@ -83,23 +83,23 @@ void Func_02002e78(void) {
     Func_02004cd8((s32)MsgTakeTheTiller);
     FieldEvent_Wait(40);
     Func_02004ce8(7, 0, 10);
-    Func_02004d08_(8, 256, 30);
+    Func_02004d08(8, 256, 30);
     Func_02004ce8(4, 0, 10);
     Func_02004ce8(7, 0, 10);
-    Func_02004d08_(8, 257, 30);
+    Func_02004d08(8, 257, 30);
     Func_02004ce8(6, 0, 10);
     Func_02004ce8(9, 0, 10);
-    Func_02004d08_(8, 264, 30);
+    Func_02004d08(8, 264, 30);
     Func_02004ce8(5, 0, 10);
     /* FAKEMATCH: called as returning a value, which the native's argument order
      * shows (r1 before r0). */
     ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(7, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-      Func_02004d08_(8, 265, 30);
+      Func_02004d08(8, 265, 30);
       Func_02004ce8(9, 0, 10);
       ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
     } else {
-      Func_02004d08_(8, 265, 30);
+      Func_02004d08(8, 265, 30);
       ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
       Func_02004ce8(9, 0, 10);
     }
@@ -109,19 +109,19 @@ void Func_02002e78(void) {
     Func_02004d08_(8, 257, 30);
     Func_02004ce8(6, 0, 10);
     Func_02004ce8(9, 0, 10);
-    Func_02004d08_(8, 256, 30);
+    Func_02004d08(8, 256, 30);
     Func_02004ce8(5, 0, 10);
     Func_02004ce8(9, 0, 10);
     Func_02004ce8(6, 0, 10);
     Func_02004d08_(8, 264, 30);
     Func_02004ce8(5, 0, 10);
-    Func_02004d08_(8, 258, 30);
+    Func_02004d08(8, 258, 30);
     Func_02004ce8(6, 0, 10);
     Func_02004ce8(5, 0, 10);
     Func_02004ce8(9, 0, 10);
-    Func_02004d08_(8, 257, 30);
+    Func_02004d08(8, 257, 30);
     Func_02004ce8(7, 0, 10);
-    Func_02004d08_(8, 264, 30);
+    Func_02004d08(8, 264, 30);
     Func_02004ce8(9, 0, 10);
     Func_02004ce8(6, 0, 10);
     Func_02004ce8(5, 0, 10);

@@ -28,6 +28,6 @@ L_02009030:
 }
 
 void Func_02001038(void) {
-  ((void (*)())Func_020011c0)();
+  Func_020011c0();
   return;
 }

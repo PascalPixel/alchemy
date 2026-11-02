@@ -12,6 +12,7 @@ extern u8 gData_02002b88[];
 extern u8 gData_02002b60[];
 
 void Func_020000b4(void) {
-  Call4(Func_0200231c, (s32)gData_02002b60, FIELD_AT(gData_02002b88, s32, 0),
-        FIELD_AT(gData_02002b88, s32, 4), FIELD_AT(gData_02002b88, s32, 8));
+  Func_0200231c((s32)gData_02002b60, FIELD_AT(gData_02002b88, s32, 0),
+                FIELD_AT(gData_02002b88, s32, 4),
+                FIELD_AT(gData_02002b88, s32, 8));
 }

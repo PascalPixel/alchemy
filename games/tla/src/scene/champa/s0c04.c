@@ -14,10 +14,10 @@ s32 Func_02002a04();
 s32 Func_02000c04(void) {
   s32 t0;
 
-  t0 = Value1(GameFlag_Test, 0x97f);
+  t0 = GameFlag_Test(0x97f);
   if (t0 != 0) {
     Call6(Func_02002a0c, 0xb, 0x33, 5, 4, 0x10, 0x17);
-    Call6(Func_02002a04, 11, 51, 5, 6, 16, 23);
+    Func_02002a04(11, 51, 5, 6, 16, 23);
   }
   return 0;
 }

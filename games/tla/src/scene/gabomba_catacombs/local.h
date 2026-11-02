@@ -78,16 +78,6 @@ static __inline__ void Actor_OffsetPositionAndResetMotion_(s32 id, s32 x,
   Actor_OffsetPositionAndResetMotion(id, x, z);
 }
 
-static __inline__ void Func_0200125c_(s32 a) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200125c(a);
-}
-
-static __inline__ void Func_02001204_(s32 id, s32 emote) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001204(id, emote);
-}
-
 struct GabombaCatacombsVec {
   s32 x;
   s32 y;

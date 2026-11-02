@@ -17,11 +17,6 @@ void Func_020032b0(s32 a);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void Task_Add(void (*func)(void), s32 priority);
 
-static __inline__ void SetValue(s32 id, s32 value) {
-  /* FAKEMATCH(wrapper): forwarded inline; see scene_call.h. */
-  Func_02000058(id, value);
-}
-
 static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
   /* FAKEMATCH(wrapper): forwarded inline; see scene_call.h. */
   Func_02003270(a, b, c, d, e, f, g);
@@ -82,13 +77,12 @@ s32 Func_02000e84(void) {
       {
         s32 priority = 0x480;
 
-        asm volatile("" : "+l"(priority));
         Task_Add(Func_020003c4, priority);
       }
       Func_02000058(12, 4);
       Func_02000058(13, 5);
       Func_02000058(14, 2);
-      SetValue(15, 3);
+      Func_02000058(15, 3);
       if (!GameFlag_Test(0xa32))
         Func_020031f8(12, 0, 0);
       if (!GameFlag_Test(0xa33))

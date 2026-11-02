@@ -40,7 +40,7 @@ void Func_0200038c(void) {
       Func_02002488();
       Func_02002590(0);
       Func_02002550(gMainRoutineWork.currentOwner, 0x102);
-      Yallam_Offset(gMainRoutineWork.currentOwner, 16, 0);
+      Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 16, 0);
       leader->velocityY = 0x60000;
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
       Func_02002490();

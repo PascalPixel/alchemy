@@ -30,14 +30,14 @@ extern u8 MsgProx62[];
 
 void Func_02000ad8(void) {
   Func_02004464();
-  Call1(Func_020045ec, 0);
+  Func_020045ec(0);
   Call2(Func_0200456c, 0x4cccc, 0x9999);
   Call4(Camera_MoveWithinMapBounds, PIXELS(160), -1, PIXELS(160), 1);
   Func_0200457c();
-  Call1(FieldEvent_Wait, 40);
+  FieldEvent_Wait(40);
   Call2(Motion_SetVarCbAndRefresh, 0xa, 1);
   Call2(Func_0200454c, 10, 0xb000);
-  Call1(Func_0200451c, (s32)MsgProx62);
+  Func_0200451c((s32)MsgProx62);
   Call2(Func_02004534, 10, 0);
   Call2(Func_02004564, 0xc, 0x102);
   Call2(Func_02004564, 0xd, 0x102);
@@ -45,7 +45,7 @@ void Func_02000ad8(void) {
   Call2(Func_02004564, 0xf, 0x102);
   Call2(Func_02004564, 0x10, 0x102);
   Call2(Func_02004564, 0x11, 0x102);
-  Call1(FieldEvent_Wait, 20);
+  FieldEvent_Wait(20);
   Call2(Func_0200454c, 10, 0x5000);
   Call2(Func_02004534, 10, 0);
   Call2(Func_02004534, 10, 0);
@@ -55,7 +55,7 @@ void Func_02000ad8(void) {
   Call2(Func_02004564, 0xf, 0x102);
   Call2(Func_02004564, 0x10, 0x102);
   Call2(Func_02004564, 0x11, 0x102);
-  Call1(FieldEvent_Wait, 20);
+  FieldEvent_Wait(20);
   Call2(Actor_SetModeById, 12, 4);
   Call2(Func_02004534, 12, 0);
   Call3(Actor_ArmCallback, 10, 0x3000, 0);
@@ -67,7 +67,7 @@ void Func_02000ad8(void) {
     __asm__ volatile("" : "+l"(anim));
     /* FAKEMATCH: the second forced temporary of the same call, as above. */
     __asm__ volatile("" : "+l"(zero));
-    Call3(Func_0200455c, 10, anim << 1, zero);
+    Func_0200455c(10, anim << 1, zero);
   }
   Call2(Motion_SetModeAndWaitAnimation, 13, 4);
   Call2(Func_02004534, 13, 0);
@@ -110,7 +110,7 @@ void Func_02000ad8(void) {
   Call2(Func_02004534, 11, 0);
   Call3(Actor_ArmCallback, 10, 0xb000, 80);
   Call2(Motion_SetModeAndWaitAnimation, 10, 4);
-  Call2(Func_02004534, 10, 0);
-  Call1(GameFlag_SetBit, 0x9c1);
+  Func_02004534(10, 0);
+  GameFlag_SetBit(0x9c1);
   Func_0200446c();
 }

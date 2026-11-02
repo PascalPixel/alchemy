@@ -16,17 +16,17 @@ void Func_02003684(void) {
   Func_02005370(0);
   Func_02005388(162);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-  wait_(1);
+  wait(1);
   leader->motionFlags = 0;
   Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
                                    PIXELS(440), PIXELS(-20), PIXELS(200));
   Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(13), PIXELS(440), PIXELS(-20),
+  Actor_SetPositionAndResetMotion_(Actor_GetById(13), PIXELS(440), PIXELS(-20),
                                    PIXELS(204));
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(15), PIXELS(440), PIXELS(-20),
+  Actor_SetPositionAndResetMotion_(Actor_GetById(15), PIXELS(440), PIXELS(-20),
                                    PIXELS(200));
-  Actor_SetSpritePriority_(13, 2);
-  Actor_SetSpritePriority_(15, 3);
+  Actor_SetSpritePriority(13, 2);
+  Actor_SetSpritePriority(15, 3);
   {
     u8 *flags = &second->priorityFlags;
     s32 c = 2 | *flags;
@@ -34,8 +34,8 @@ void Func_02003684(void) {
     *flags = c;
   }
   second->scaleY = 0x400;
-  Actor_SetModeById_(13, 4);
-  Actor_SetModeById_(15, 2);
+  Actor_SetModeById(13, 4);
+  Actor_SetModeById(15, 2);
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -44,7 +44,7 @@ rise:
   first->y += PIXELS(4);
   leader->y += PIXELS(4);
   Func_02000cd8(15, 0x4ccc, 0x4ccc);
-  wait_(1);
+  wait(1);
   /* FAKEMATCH: as in Func_0200393c, a volatile read for the test. */
   if (*(volatile s32 *)&first->y < 0)
     goto rise;
@@ -65,17 +65,17 @@ void Func_020037e0(void) {
   Func_02005370(0);
   Func_02005388(162);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
-  wait_(1);
+  wait(1);
   leader->motionFlags = 0;
   Actor_SetPositionAndResetMotion_(Actor_GetById(gMainRoutineWork.currentOwner),
                                    PIXELS(600), PIXELS(-20), PIXELS(232));
   Actor_SetSingleChildFlags_(Actor_GetById(gMainRoutineWork.currentOwner), 0);
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(14), PIXELS(600), PIXELS(-20),
+  Actor_SetPositionAndResetMotion_(Actor_GetById(14), PIXELS(600), PIXELS(-20),
                                    PIXELS(236));
-  Actor_SetPositionAndResetMotion_(Actor_GetById_(16), PIXELS(600), PIXELS(-20),
+  Actor_SetPositionAndResetMotion_(Actor_GetById(16), PIXELS(600), PIXELS(-20),
                                    PIXELS(232));
-  Actor_SetSpritePriority_(14, 2);
-  Actor_SetSpritePriority_(16, 3);
+  Actor_SetSpritePriority(14, 2);
+  Actor_SetSpritePriority(16, 3);
   {
     u8 *flags = &second->priorityFlags;
     s32 c = 2 | *flags;
@@ -83,8 +83,8 @@ void Func_020037e0(void) {
     *flags = c;
   }
   second->scaleY = 0x400;
-  Actor_SetModeById_(14, 4);
-  Actor_SetModeById_(16, 2);
+  Actor_SetModeById(14, 4);
+  Actor_SetModeById(16, 2);
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 521;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -93,7 +93,7 @@ rise:
   first->y += PIXELS(4);
   leader->y += PIXELS(4);
   Func_02000cd8(16, 0x4ccc, 0x4ccc);
-  wait_(1);
+  wait(1);
   /* FAKEMATCH: as in Func_0200393c, a volatile read for the test. */
   if (*(volatile s32 *)&first->y < 0)
     goto rise;

@@ -43,8 +43,6 @@ void Func_020007a4(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
   s32 spot;
   s32 i;
-  s32 y;
-  s32 height;
 
   if (object->terrainHeight !=
       Map_GetTerrainHeight(object->terrainId, object->x, object->z)) {
@@ -89,7 +87,7 @@ void Func_020007a4(s32 unused, s32 id) {
     Camera_MoveWithinMapBounds(166 << 18, -1, PIXELS(136), 1);
     Func_02002bd4();
     FieldEvent_Wait(20);
-    Call1(Func_02002c5c, 151);
+    Func_02002c5c(151);
     Func_02002ad4(object, 3);
     object->priorityFlags &= ~2;
     Func_02002c3c(object->x, object->z, object->terrainId, 255);
@@ -108,14 +106,14 @@ void Func_020007a4(s32 unused, s32 id) {
     GameFlag_SetBit(2586);
     Actor_SetSingleChildFlags(Actor_GetById(20), 0);
     FieldEvent_Wait(30);
-    Call1(Func_02002c5c, 167);
+    Func_02002c5c(167);
     Func_020005e8(1);
     if (!Value1(GameFlag_Test, 2583))
       return;
     object = Actor_GetById(9);
     GameFlag_ClearBit(2583);
     FieldEvent_Wait(20);
-    Call1(Func_02002c5c, 151);
+    Func_02002c5c(151);
     Func_02002ad4(object, 3);
     object->priorityFlags &= ~2;
     Func_02002c3c(object->x, object->z, object->terrainId, 255);

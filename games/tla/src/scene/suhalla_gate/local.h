@@ -53,36 +53,6 @@ void Event_WaitTransitionFrames(void);
 extern u8 MsgMyThatWas;
 extern u8 MsgNotThatWay;
 
-static __inline__ s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void GameFlag_SetBit_(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-static __inline__ void FieldEvent_Wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static __inline__ struct Actor *Actor_GetById_(s32 id) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return Actor_GetById(id);
-}
-
-static __inline__ void Actor_SetModeById_(u32 id, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetModeById(id, mode);
-}
-
 static __inline__ void Actor_CenterOnColumn_(s32 id, s32 column,
                                                     s32 offset) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -100,17 +70,6 @@ static __inline__ void Func_020009d0_(s32 id, s32 x, s32 z) {
   Func_020009d0(id, x, z);
 }
 
-static __inline__ void Actor_SetAngleToward_(s32 id, s32 target,
-                                                    s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetAngleToward(id, target, flags);
-}
-
-static __inline__ void Actor_Jump_(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_Jump(id, a, b);
-}
-
 static __inline__ void Actor_SetPositionAndCommit_(s32 id, s32 x,
                                                           s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -121,42 +80,6 @@ static __inline__ void Actor_ResetAndSetPositionInMode2_(s32 id, s32 x,
                                                                 s32 z) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ResetAndSetPositionInMode2(id, x, z);
-}
-
-static __inline__ void Actor_ResetAndSetPosition_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ResetAndSetPosition(id, x, z);
-}
-
-static __inline__ void Actor_WaitForMoveById_(s32 id) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_WaitForMoveById(id);
-}
-
-static __inline__ void Actor_CommitPositionAndActivate_(s32 id, s32 x,
-                                                               s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_CommitPositionAndActivate(id, x, z);
-}
-
-static __inline__ void Motion_SetModeAndWaitAnimation_(s32 id, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Motion_SetModeAndWaitAnimation(id, mode);
-}
-
-static __inline__ void Motion_SetVarCbAndRefresh_(s32 id, s32 variant) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Motion_SetVarCbAndRefresh(id, variant);
-}
-
-static __inline__ void Event_StartScreenTransition_(void) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Event_StartScreenTransition();
-}
-
-static __inline__ void Event_WaitTransitionFrames_(void) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Event_WaitTransitionFrames();
 }
 
 #endif

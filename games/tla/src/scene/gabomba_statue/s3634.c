@@ -41,80 +41,80 @@ void Func_02003634(void) {
       t30, t42, t43, t46, t50, t53, t59, t60, p_r3, v_r5;
   const u8 *table;
 
-  t1 = Value1((s32 (*)())Actor_GetById, 10);
-  Call2((void (*)())Actor_SetPartAttribute, t1, 3);
-  Call2((void (*)())Task_Add, (s32)Func_02002074, 0x480);
-  t4 = Value1((s32 (*)())Actor_GetById, 11);
-  Call2((void (*)())Actor_SetPartAttribute, t4, 11);
-  t6 = Value1((s32 (*)())Actor_GetById, 12);
-  Call2((void (*)())Actor_SetPartAttribute, t6, 11);
-  t8 = Value1((s32 (*)())Actor_GetById, 13);
-  Call2((void (*)())Actor_SetPartAttribute, t8, 10);
-  t10 = Value1((s32 (*)())Actor_GetById, 14);
-  Call2((void (*)())Actor_SetPartAttribute, t10, 10);
-  t12 = Value1((s32 (*)())Actor_GetById, 16);
-  Call2((void (*)())Actor_SetSingleChildFlags, t12, 0);
-  t14 = Value1((s32 (*)())Actor_GetById, 17);
-  Call2((void (*)())Actor_SetSingleChildFlags, t14, 0);
-  t16 = Value1((s32 (*)())Actor_GetById, 18);
-  Call2((void (*)())Actor_SetSingleChildFlags, t16, 0);
-  t18 = Value1((s32 (*)())Actor_GetById, 19);
-  Call2((void (*)())Actor_SetSingleChildFlags, t18, 0);
-  t20 = Value1((s32 (*)())Actor_GetById, 20);
-  Call2((void (*)())Actor_SetSingleChildFlags, t20, 0);
-  t22 = Value1((s32 (*)())Actor_GetById, 21);
-  Call2((void (*)())Actor_SetSingleChildFlags, t22, 0);
-  t24 = Value1((s32 (*)())Actor_GetById, 22);
-  Call2((void (*)())Actor_SetSingleChildFlags, t24, 0);
-  t26 = Value1((s32 (*)())GameFlag_Test, 0x8fb);
+  t1 = Actor_GetById(10);
+  Actor_SetPartAttribute(t1, 3);
+  Task_Add((s32)Func_02002074, 0x480);
+  t4 = Actor_GetById(11);
+  Actor_SetPartAttribute(t4, 11);
+  t6 = Actor_GetById(12);
+  Actor_SetPartAttribute(t6, 11);
+  t8 = Actor_GetById(13);
+  Actor_SetPartAttribute(t8, 10);
+  t10 = Actor_GetById(14);
+  Actor_SetPartAttribute(t10, 10);
+  t12 = Actor_GetById(16);
+  Actor_SetSingleChildFlags(t12, 0);
+  t14 = Actor_GetById(17);
+  Actor_SetSingleChildFlags(t14, 0);
+  t16 = Actor_GetById(18);
+  Actor_SetSingleChildFlags(t16, 0);
+  t18 = Actor_GetById(19);
+  Actor_SetSingleChildFlags(t18, 0);
+  t20 = Actor_GetById(20);
+  Actor_SetSingleChildFlags(t20, 0);
+  t22 = Actor_GetById(21);
+  Actor_SetSingleChildFlags(t22, 0);
+  t24 = Actor_GetById(22);
+  Actor_SetSingleChildFlags(t24, 0);
+  t26 = GameFlag_Test(0x8fb);
   if (t26 == 0)
     goto L_0200b6f2;
-  t27 = Value1((s32 (*)())GameFlag_Test, 0x8fd);
+  t27 = GameFlag_Test(0x8fd);
   if (t27 != 0)
     goto L_0200b6f2;
   Func_02002f70();
   goto L_0200b856;
 L_0200b6f2:
-  t29 = Value1((s32 (*)())GameFlag_Test, 0x8fc);
+  t29 = GameFlag_Test(0x8fc);
   if (t29 == 0)
     goto L_0200b762;
-  t30 = Value1((s32 (*)())Actor_GetById, gMainRoutineWork.currentOwner);
+  t30 = Actor_GetById(gMainRoutineWork.currentOwner);
   v_r5 = t30;
-  Call3((void (*)())Func_02005714, 11, 0, 0);
-  Call3((void (*)())Func_02005714, 12, 0, 0);
-  Call3((void (*)())Func_02005714, 13, 0, 0);
-  Call3((void (*)())Func_02005714, 14, 0, 0);
+  Func_02005714(11, 0, 0);
+  Func_02005714(12, 0, 0);
+  Func_02005714(13, 0, 0);
+  Func_02005714(14, 0, 0);
   Func_020053ac();
   Func_020056b4();
-  Call1((void (*)())Func_0200580c, 0);
+  Func_0200580c(0);
   Call4((void (*)())Camera_MoveWithinMapBounds, FIELD_AT(v_r5, s32, 8), -1,
         FIELD_AT(v_r5, s32, 16), 0);
   Func_0200564c();
-  Call1((void (*)())wait, 1);
+  wait(1);
   Func_020056bc();
 L_0200b762:
-  t42 = Value1((s32 (*)())GameFlag_Test, 0x8f6);
+  t42 = GameFlag_Test(0x8f6);
   if (t42 == 0)
     goto L_0200b78e;
-  t43 = Value1((s32 (*)())GameFlag_Test, 0x8fd);
+  t43 = GameFlag_Test(0x8fd);
   if (t43 != 0)
     goto L_0200b78e;
-  Call1((void (*)())Func_020052a4, 0);
-  Call2((void (*)())Task_Add, (s32)Func_02001ac0, 0x480);
+  Func_020052a4(0);
+  Task_Add((s32)Func_02001ac0, 0x480);
 L_0200b78e:
-  t46 = Value0((s32 (*)())Func_02003604);
+  t46 = Func_02003604();
   /* FAKEMATCH(temporary): the table's address in a local set after the call,
    * which makes it the load's base register; as gData_02005d8c's address
    * added in place, 2 of 211 instructions differ in tla-en. */
   table = gData_02005d8c;
-  Call4((void (*)())Func_020048a4, 19, 11, *(s32 *)(table + (t46 << 2)), 16);
-  Call2((void (*)())Actor_SetModeById, 15, 5);
+  Func_020048a4(19, 11, *(s32 *)(table + (t46 << 2)), 16);
+  Actor_SetModeById(15, 5);
   if (FIELD_AT(&gMainRoutineWork, s16, 482) != 2)
     goto L_0200b7c0;
   Func_020027cc();
   goto L_0200b856;
 L_0200b7c0:
-  t50 = Value1((s32 (*)())GameFlag_Test, 0x8f6);
+  t50 = GameFlag_Test(0x8f6);
   if (t50 != 0)
     goto L_0200b7e4;
   if (FIELD_AT(&gMainRoutineWork, s16, 482) != 1) {
@@ -132,21 +132,21 @@ L_0200b7e4:
   if (t53 == 0)
     goto L_0200b856;
   Func_020056b4();
-  Call1((void (*)())Func_0200580c, 0);
+  Func_0200580c(0);
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x201;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FIELD_AT((FIELD_AT(0x3000000, s32, 108) + 0x1ac), s32, 0) = 0x209;
-  Call1((void (*)())GameFlag_ClearBit, 0x8fc);
-  t59 = Value1((s32 (*)())GameFlag_Test, 0x9eb);
+  GameFlag_ClearBit(0x8fc);
+  t59 = GameFlag_Test(0x9eb);
   if (t59 == 0)
     goto L_0200b84a;
-  t60 = Value1((s32 (*)())GameFlag_Test, 0x9ec);
+  t60 = GameFlag_Test(0x9ec);
   if (t60 != 0)
     goto L_0200b84a;
   Func_02003338();
 L_0200b84a:
-  Call1((void (*)())GameFlag_ClearBit, 0x12f);
+  GameFlag_ClearBit(0x12f);
   Func_020056bc();
 L_0200b856:
 }

@@ -108,22 +108,6 @@ static inline s32 JupiterLighthouseRoom6_FlagCheck(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static inline void JupiterLighthouseRoom6_FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static inline void JupiterLighthouseRoom6_ObjArm(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ArmCallback(actor, angle, frames);
-}
-
-static inline void JupiterLighthouseRoom6_ObjSetPos(struct JupiterLighthouseRoom6Object *object,
-                                          s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndResetMotion(object, x, y, z);
-}
-
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 struct JupiterLighthouseRoom6Object *Func_02001b9c(void);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
@@ -138,60 +122,6 @@ void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
-
-static inline void JupiterLighthouseRoom6_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static inline void JupiterLighthouseRoom6_ObjSpeed(s32 actor, s32 speed,
-                                         s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static inline void JupiterLighthouseRoom6_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndReset(actor, x, z);
-}
-
-static inline void JupiterLighthouseRoom6_Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static inline void JupiterLighthouseRoom6_SePlay(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001bec(cue);
-}
-
-static inline void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-#define JUPITER_LIGHTHOUSE_ROOM_6_TASK_ADD(func, priority)                            \
-  {                                                                            \
-    /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
-     * task function load. */                                                       \
-    s32 priority_ = (priority);                                                \
-    Task_Add((func), priority_);                      \
-  }
-
-static inline void JupiterLighthouseRoom6_ObjEmoteWait(s32 actor, s32 emote) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02001b84(actor, emote);
-}
-
-static inline void JupiterLighthouseRoom6_TaskAdd(void (*func)(void), s32 priority) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Task_Add(func, priority);
-}
-
-static inline void JupiterLighthouseRoom6_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldMessage_ShowAtActor(speaker, flags);
-}
 
 void Func_02001b0c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 

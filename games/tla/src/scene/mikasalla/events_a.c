@@ -66,14 +66,8 @@ void Func_0200009c(void) {
   asm("");
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x4000);
   Actor_GetById(gMainRoutineWork.currentOwner)->motionFlags = 0;
-  {
-    s32 mode = 2;
 
-    /* FAKEMATCH: the mode passes through an asm so that it is set before the
-     * owner id is loaded (differ 2 without it). */
-    __asm__("" : "+l"(mode));
-    Actor_SetModeById(gMainRoutineWork.currentOwner, mode);
-  }
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   if (index != 4) {
     Actor_CenterOnColumn_(gMainRoutineWork.currentOwner, 2, -8);
     FieldEvent_Wait(10);

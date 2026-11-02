@@ -37,17 +37,12 @@ void Func_02000094(s32 unused, s32 id) {
     test:;
     } while (y > floor || object->velocityY != 0);
     {
-      s32 zero;
       /* FAKEMATCH(temporary): the motion flags cleared from a zero of their
        * own; as a plain 0 store, 2 of 50 instructions differ in tla-en. */
       s32 cleared = 0;
 
       object->motionFlags = cleared;
-      zero = 0;
-      /* FAKEMATCH(barrier): the call's zero is built before the position
-       * loads; as a plain 0 argument, 2 of 50 instructions differ in tla-en. */
-      __asm__("" : : "r"(zero));
-      Func_020021e0(object->x, object->z, zero, 0);
+      Func_020021e0(object->x, object->z, 0, 0);
     }
     Func_020022c0(object->x, object->z, 0, 128);
   }

@@ -28,21 +28,21 @@ s32 Func_0200086c(void) {
       Call3((void (*)())Func_020009f8, 16, PIXELS(632), PIXELS(346));
       Call3((void (*)())Actor_ArmCallback, 16, FACING_SOUTH, 0);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-      Call3((void (*)())Func_020009f8, 17, 0, 0);
+      Func_020009f8(17, 0, 0);
 #endif
     } else {
-      Call2((void (*)())Func_02000a60, 14, 0);
+      Func_02000a60(14, 0);
     }
     Actor_SetSingleChildFlags(Actor_GetById(17), 0);
-    Call2((void (*)())Actor_SetSpritePriority, 11, 2);
+    Actor_SetSpritePriority(11, 2);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov677Room2) {
-    Call1((void (*)())Func_02000a48, 0);
-    Call2((void (*)())Actor_SetSpritePriority, 12, 2);
+    Func_02000a48(0);
+    Actor_SetSpritePriority(12, 2);
     Actor_GetById(12)->collisionFlags |= 4;
-    Call2((void (*)())Actor_SetSpritePriority, 10, 2);
+    Actor_SetSpritePriority(10, 2);
     Actor_GetById(10)->collisionFlags |= 4;
-    Call2((void (*)())Actor_SetSpritePriority, 11, 2);
+    Actor_SetSpritePriority(11, 2);
     Actor_GetById(11)->collisionFlags |= 4;
   }
   return 0;

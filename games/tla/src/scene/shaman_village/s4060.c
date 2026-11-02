@@ -14,7 +14,7 @@ void Func_02004060(void) {
 
     ShamanVillage_ObjPut(15, PIXELS(168), PIXELS(568), angle);
     ShamanVillage_ObjPut(17, PIXELS(216), PIXELS(536), angle);
-    ShamanVillage_ObjPut(16, PIXELS(120), PIXELS(536), angle);
+    Func_0200493c(16, PIXELS(120), PIXELS(536), angle);
     wait(1);
   }
   Actor_SetModeById(8, 2);
@@ -35,8 +35,8 @@ void Func_02004060(void) {
     Func_02004934(15, 0, 0);
     Func_02004934(17, 0, 0);
     Func_02004934(16, 0, 0);
-    ShamanVillage_BlendStart(10, 12, 3, 1, 10, 13);
-    ShamanVillage_BlendStart(15, 12, 3, 1, 15, 13);
+    Func_0200484c(10, 12, 3, 1, 10, 13);
+    Func_0200484c(15, 12, 3, 1, 15, 13);
     ShamanVillage_BlendStart(9, 20, 3, 1, 9, 21);
   }
 }
@@ -59,7 +59,7 @@ void Func_020041b8(void) {
     wait(10);
   }
   if (GameFlag_Test(0x9e1)) {
-    ShamanVillage_MapCopy(64, 0, 76, 2, 3, 3);
+    Func_02004844(64, 0, 76, 2, 3, 3);
     ShamanVillage_BlendStart(12, 5, 3, 1, 12, 6);
   }
   if (GameFlag_Test(0x94d))

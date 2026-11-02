@@ -50,30 +50,10 @@ struct CellRecord {
 extern const u16 gData_02003fd2[];
 extern const struct CellRecord gData_02004066[];
 
-static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static __inline__ void Flag_Set(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static __inline__ void Flag_Clear(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_ClearBit(flag);
-}
-
 static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
                                           s32 f) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02003bf0(a, b, c, d, e, f);
-}
-
-static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
 }
 
 void Func_02001554(s32 a, s32 b) { Func_020000a4(gData_02003f98, a, b); }
@@ -107,8 +87,8 @@ void Func_020015e0(void) {
     Func_02003c28();
     Func_02003d78(0);
     Func_020015b8(object);
-    Map_CopyAttributes(54, 32, 2, 1, x, 64);
-    Flag_Set(0x301);
+    Func_02003bf0(54, 32, 2, 1, x, 64);
+    GameFlag_SetBit(0x301);
     Func_02003c30();
   }
 }
@@ -123,11 +103,11 @@ void Func_02001640(void) {
   if (x == 52) {
     Func_02003c28();
     Func_02003d78(0);
-    Map_CopyAttributes(51, 7, 1, 1, x, 7);
-    Wait(1);
+    Func_02003bf0(51, 7, 1, 1, x, 7);
+    wait(1);
     Func_020015b8(object);
-    Map_CopyAttributes(50, 7, 1, 1, x, 7);
-    Flag_Set(0x840);
+    Func_02003bf0(50, 7, 1, 1, x, 7);
+    GameFlag_SetBit(0x840);
     Func_02003c30();
   }
 }
@@ -142,10 +122,10 @@ void Func_020016b0(void) {
   if (x == 47) {
     Func_02003c28();
     Func_02003d78(0);
-    Map_CopyAttributes(47, 12, 1, 1, x, 13);
-    Wait(1);
+    Func_02003bf0(47, 12, 1, 1, x, 13);
+    wait(1);
     Func_020015b8(object);
-    Map_CopyAttributes(50, 16, 1, 1, x, 13);
+    Func_02003bf0(50, 16, 1, 1, x, 13);
     Actor_SetSpritePriority(19, 2);
     Func_02003c30();
   } else if (x == 46) {
@@ -163,7 +143,7 @@ void Func_0200172c(void) {
   Map_CopyAttributes(38, 32, 1, 1, 37, 33);
   Map_CopyAttributes(30, 32, 1, 2, 38, 32);
   Map_CopyAttributes(40, 64, 4, 3, 36, 64);
-  Flag_Set(0x841);
+  GameFlag_SetBit(0x841);
 }
 
 void Func_02001788(void) {
@@ -179,23 +159,23 @@ void Func_020017a0(void) {
     Func_02003c28();
     Func_02003d78(0);
     *flags = 0;
-    Wait(1);
+    wait(1);
     Func_02003de8();
     Func_0200172c();
-    Wait(1);
+    wait(1);
     *flags = 3;
     Func_02003c30();
   }
 }
 
-void Func_020017f4(void) { Flag_Clear(0x201); }
+void Func_020017f4(void) { GameFlag_ClearBit(0x201); }
 
 void Func_02001804(void) {
   s32 flag;
 
   flag = 0x320;
 loop:
-  Flag_Clear(flag);
+  GameFlag_ClearBit(flag);
   if (flag != 0x35f) {
     flag++;
     goto loop;

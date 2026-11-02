@@ -15,6 +15,6 @@ void Func_0200178c(void) {
 
   t0 = Func_020030e0();
   if (t0 != 0) {
-    Call1(Func_02003450, 0xb);
+    Func_02003450(0xb);
   }
 }

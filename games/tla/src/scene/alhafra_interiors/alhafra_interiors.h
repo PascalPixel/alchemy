@@ -99,33 +99,6 @@ void Func_02000b7c(void);
 
 void Event_StartScreenTransition(void);
 
-static inline void AlhafraInteriors_ObjTurn(s32 actor, s32 angle) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02000b4c(actor, angle);
-}
-
-static inline s32 AlhafraInteriors_FlagCheck(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  return GameFlag_Test(flag);
-}
-
-static inline void AlhafraInteriors_FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
-static inline void AlhafraInteriors_ObjArm(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_ArmCallback(actor, angle, frames);
-}
-
-static inline void
-AlhafraInteriors_ObjSetPos(struct AlhafraInteriorsObject *object, s32 x, s32 y,
-                           s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndResetMotion(object, x, y, z);
-}
-
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_SetPositionAndReset(s32 actor, s32 x, s32 z);
@@ -140,66 +113,6 @@ void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void Actor_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 void Actor_WaitForMoveById(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
-
-static inline void AlhafraInteriors_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Camera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-static inline void AlhafraInteriors_ObjSpeed(s32 actor, s32 speed,
-                                             s32 acceleration) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
-
-static inline void AlhafraInteriors_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Actor_SetPositionAndReset(actor, x, z);
-}
-
-static inline void AlhafraInteriors_Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static inline void AlhafraInteriors_SePlay(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02000bdc(cue);
-}
-
-static inline void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
-#define ALHAFRA_INTERIORS_TASK_ADD(func, priority)                         \
-  {                                                                            \
-    /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
-     * task function load. */                                                       \
-    s32 priority_ = (priority);                                                \
-    Task_Add((func), priority_);                      \
-  }
-
-static inline void AlhafraInteriors_ObjEmoteWait(s32 actor, s32 emote) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02000b64(actor, emote);
-}
-
-static inline void AlhafraInteriors_TaskAdd(void (*func)(void),
-                                            s32 priority) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Task_Add(func, priority);
-}
-
-static inline void AlhafraInteriors_MessagePut(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02000b3c(speaker, flags);
-}
-
-static inline void AlhafraInteriors_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldMessage_ShowAtActor(speaker, flags);
-}
 
 s32 Func_02000ba4(void);
 

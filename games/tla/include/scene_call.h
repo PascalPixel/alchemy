@@ -3,12 +3,12 @@
 
 #include "types.h"
 
-// Scene forwarding. ⚓️'s scene files reach the main image through their own static
-// inline wrappers, one per imported call, as ☀️'s scene layer (field_event.h)
-// does. The wrapper's parameters keep each call's own constants and stack
-// arguments in their own registers; called directly, nearby calls share a
-// constant in one register or reuse r3 for each stack argument. Every wrapper
-// carries the tag `FAKEMATCH: forwarded inline; see scene_call.h.`
+// Scene forwarding. ⚓️'s scene files call the main image directly, except where
+// a static inline wrapper is the only form that matches, as in ☀️'s scene layer
+// (field_event.h). The wrapper's parameters keep each call's own constants and
+// stack arguments in their own registers; called directly at those sites, nearby
+// calls share a constant in one register or reuse r3 for each stack argument.
+// Every wrapper carries the tag `FAKEMATCH: forwarded inline; see scene_call.h.`
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

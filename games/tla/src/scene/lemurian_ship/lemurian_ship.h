@@ -122,11 +122,6 @@ static inline s32 LemurianShip_FlagCheck(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-static inline void LemurianShip_FlagSet(s32 flag) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  GameFlag_SetBit(flag);
-}
-
 static inline void LemurianShip_ObjArm(s32 actor, s32 angle, s32 frames) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Actor_ArmCallback(actor, angle, frames);
@@ -177,21 +172,6 @@ static inline void LemurianShip_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e,
   Func_02002c30(a, b, c, d, e, f);
 }
 
-static inline void LemurianShip_Wait(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldEvent_Wait(frames);
-}
-
-static inline void LemurianShip_SePlay(s32 cue) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002de0(cue);
-}
-
-static inline void wait_(s32 frames) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  wait(frames);
-}
-
 #define LEMURIAN_SHIP_TASK_ADD(func, priority)                             \
   {                                                                            \
     /* FAKEMATCH: a temporary keeps the priority constant ahead of the         \
@@ -208,16 +188,6 @@ static inline void LemurianShip_ObjEmoteWait(s32 actor, s32 emote) {
 static inline void LemurianShip_TaskAdd(void (*func)(void), s32 priority) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Task_Add(func, priority);
-}
-
-static inline void LemurianShip_MessagePut(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_02002d20(speaker, flags);
-}
-
-static inline void LemurianShip_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  FieldMessage_ShowAtActor(speaker, flags);
 }
 
 void FieldMessage_Show(s32 message, s32 position);

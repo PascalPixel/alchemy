@@ -25,16 +25,14 @@ void Func_020000f4(void) {
     register s32 saved asm("r1");
     s32 index;
 
-    {
-      /* FAKEMATCH(pin): the read stays in r3; as a plain local, 6 of 35
-       * instructions differ in tla-en. */
-      register s32 raw asm("r3") = *(volatile u16 *)&BG_PLTT_COLOR(12, 14);
+    /* FAKEMATCH(pin): the read stays in r3; as a plain local, 6 of 35
+     * instructions differ in tla-en. */
+    register s32 raw asm("r3") = *(volatile u16 *)&BG_PLTT_COLOR(12, 14);
 
-      /* FAKEMATCH(barrier): the barrier keeps the sign extension apart from
-       * the read; without it, 6 of 35 instructions differ in tla-en. */
-      asm("" : "+r"(raw));
-      saved = (s16)raw;
-    }
+    /* FAKEMATCH(barrier): the barrier keeps the sign extension apart from
+     * the read; without it, 6 of 35 instructions differ in tla-en. */
+    asm("" : "+r"(raw));
+    saved = (s16)raw;
     index = 14;
   loop:
     palette = (volatile u16 *)&BG_PLTT_COLOR(12, 0);

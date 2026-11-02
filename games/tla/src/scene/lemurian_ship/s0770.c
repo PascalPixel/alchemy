@@ -18,7 +18,7 @@ void Func_02000798(void) {
   if (x == 16) {
     Func_02002c68();
     Func_02002da8(0);
-    LemurianShip_BlendStart(16, 47, 1, 1, x, 46);
+    Func_02002c38(16, 47, 1, 1, x, 46);
     wait(1);
     flags = &object->motionFlags;
     *flags = 3;

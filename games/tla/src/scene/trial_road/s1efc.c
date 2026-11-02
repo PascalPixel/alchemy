@@ -15,15 +15,7 @@ void Func_02001eb0(void) {
 
     if (!started) {
       *flags = 5;
-      {
-        s32 y = object->y;
-
-        /* FAKEMATCH: y passes through an empty asm, so ⚓️'s order holds: the
-         * step's first half, the y load, its second half; plain, y loads first
-         * (differ 2). */
-        asm("" : "+l"(y));
-        object->y = y + 0x88000;
-      }
+      object->y += 0x88000;
     } else {
       *flags = 3;
       object->y = 0;

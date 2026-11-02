@@ -19,16 +19,10 @@ void Func_02000c90(s32 firstId, s32 secondId) {
   s32 y;
 
   y = first->y;
-  /* FAKEMATCH: the barrier holds r3 until the height is read, so the angle is
-   * started after it as the native has; plain, the angle is started first (one
-   * reordered row). */
-  __asm__("" : "+l"(y) : : "r3");
   Func_02000c40(first->x, y + rise, first->z, 0x1000, 15);
   Func_02002bc4(151);
   FieldEvent_Wait(15);
   y = second->y;
-  /* FAKEMATCH: the same barrier for the second angle. */
-  __asm__("" : "+l"(y) : : "r3");
   Func_02000c40(second->x, y + rise, second->z, 0xf000, 15);
   Func_02002bc4(151);
   FieldEvent_Wait(15);

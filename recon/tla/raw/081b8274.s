@@ -1,5 +1,5 @@
 .syntax unified
-	.balign 4 @next
+	.balign 4
 	.thumb
 	.global Func_081b8274
 	.thumb_func

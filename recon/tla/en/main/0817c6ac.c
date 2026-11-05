@@ -1,3 +1,11 @@
+// Measured 2026-11-05 (tla-en): differ 139 of 627, draft 628; through a byte-array
+// corner it was 90 (629), so this is a rise that removes a false form: the listing has
+// no store of distance before the second call, which reload_cse drops only when the
+// corner store can't alias the slot, so corner is a struct. half is a real local:
+// radiusX now ranks over radiusY as in the listing (radiusY in r2, caller-saved at
+// sp+12). Left: corner->z's zero is r1 in the listing, set before the sine's multiply
+// and stored after it, which sets the reload rotation for everything below; a zero
+// local there (s32, s8, u8, inner or outer) does nothing.
 // Measured 2026-11-05 (tla-en): differ 120 of 631 (from 150): radiusY's wobble is
 // added late, in place, as the listing does (corner between). radiusY still ranks
 // over radiusX here, so it takes r7 where the listing spills it to sp+12; a
@@ -35,6 +43,12 @@ struct ModelTexture {
   u32 logHeight : 8;
   u32 unk02 : 16;
   const void *pixels;
+};
+
+struct Corner {
+  s8 x;
+  s8 y;
+  s8 z;
 };
 
 struct RenderModel {
@@ -270,7 +284,8 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         s32 thickness;
         s32 radiusX;
         s32 radiusY;
-        s8 *corner;
+        struct Corner *corner;
+        s32 half;
 
         if (distance < 0) {
           distance = -distance;
@@ -281,17 +296,17 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
           thickness = 24;
         }
         thickness = thickness * width / 0x10000;
-        radiusY = height + thickness / -2;
-        corner = (s8 *)gMapCellBuffer + vertex * 4;
-        radiusX = distance + thickness / -2 + wobble;
-        radiusY += wobble;
+        half = thickness / -2;
+        corner = (struct Corner *)gMapCellBuffer + vertex;
+        radiusY = height + half + wobble;
+        radiusX = distance + half + wobble;
         for (i = 0; i != 2; i++) {
-          corner[0] = ((Trig_Cos(angle) * radiusX) >> 16) - distance;
-          corner[1] = -((Trig_Sin(angle) * radiusY) >> 16);
-          corner[2] = 0;
+          corner->x = ((Trig_Cos(angle) * radiusX) >> 16) - distance;
+          corner->y = -((Trig_Sin(angle) * radiusY) >> 16);
+          corner->z = 0;
           radiusY += thickness;
           radiusX += thickness;
-          corner += 4;
+          corner++;
         }
         if (j == 32) {
           endX = (((distance + wobble) * Trig_Cos(angle)) >> 16) - distance;

@@ -1290,10 +1290,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2010, 16, 64, 0x10000);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2810, 16, 64, 0x10000);
       dst = work->sheet + 0x2010;
-      for (x = 0; x != 64; x++) {
-        for (bandColumn = 0; bandColumn != 32; bandColumn++) {
-          if (*dst > x)
-            *dst = x;
+      for (i = 0; i != 64; i++) {
+        for (j = 0; j != 32; j++) {
+          if (*dst > i)
+            *dst = i;
           dst++;
         }
       }
@@ -1302,21 +1302,21 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 32; i++)
         work->particles[i].variant = 0;
       for (i = 1; i != 8; i++) {
-        for (j = 0; j != 10; j = width) {
+        s32 next;
+
+        for (j = 0; j != 10; j = next) {
           u8 *src = work->sheet + gData_08197410[j];
-          u8 *out = work->sheet + gData_08197410[j] + i * 0x302;
-          s32 n;
+          u8 *out = work->sheet + (gData_08197410[j] + i * 0x302);
+          s32 off;
 
-          width = j + 1;
-          n = width * 2;
-          n *= width;
+          next = j + 1;
 
-          for (byteIndex = 0; byteIndex != n; byteIndex++) {
-            u8 v = src[byteIndex] - i * 8;
+          for (off = 0; off != next * 2 * next; off++) {
+            u8 v = *src++ - i * 8;
 
             if (v > 63)
               v = 0;
-            out[byteIndex] = v;
+            *out++ = v;
           }
         }
       }

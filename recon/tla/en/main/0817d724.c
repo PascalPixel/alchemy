@@ -1,5 +1,6 @@
-// 2026-11-05: differ 106 of 1034 (tla-en). Green is read, then set to red: that keeps
-// the read shared, hence lsls 16, lsrs 26, and the count (Daedalus shows the plain form).
+// 2026-11-05: differ 106 of 1034 (tla-en). Green read, then set to red before the
+// clamps: count and later rows agree, but the colour loop still has lsrs 10 and a
+// copy for lsls 16, lsrs 26, so that loop is not settled.
 // 2026-11-05: differ 130 of 1034 (tla-en). Tried on the colour loop, none
 // giving lsls 16, lsrs 26: u16 and s16 locals with narrowing casts (165 to
 // 172), u16 red and blue (141, 168), a bitfield (148), a mask local (184), an

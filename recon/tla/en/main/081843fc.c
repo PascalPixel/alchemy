@@ -208,6 +208,12 @@ struct ResourceTableEntry {
   u16 tile;
 };
 
+struct MeshVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+};
+
 struct WordPair {
   s32 a;
   s32 b;
@@ -1701,13 +1707,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         y = 0;
         off = 0;
         for (; j != 12; j++, off += 8) {
-          s8 *v = (s8 *)gMapCellBuffer + off;
+          struct MeshVertex *v = (struct MeshVertex *)(gMapCellBuffer + off);
           s32 x = 0;
 
-          for (i = 0; i != 2; i++, x += 10, v += 4) {
-            v[0] = x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5;
-            v[1] = y;
-            v[2] = z;
+          for (i = 0; i != 2; i++, x += 10, v++) {
+            v->x = x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5;
+            v->y = y;
+            v->z = z;
           }
           jitter = jitter + (Random16() & 7) - 4;
           y -= 6;

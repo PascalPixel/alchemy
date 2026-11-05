@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 694 of 7666, slots normalized 492, high
-// registers blind too 482, every register blind 194. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 648 of 7666, slots normalized 446, high
+// registers blind too 438, every register blind 194. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -2164,8 +2164,8 @@ CLEAR(buffer, 0x1000);
               r = (p->y >> 16) - k * 2;
               if (r >= 0) {
                   s32 n;
-                x = target[0] / 2 + ((r * Trig_Sin(p->x)) >> 16);
-                y = target[1] + ((r * Trig_Cos(p->x)) >> 16);
+                x = target[0] / 2 + ((Trig_Sin(p->x) * r) >> 16);
+                y = target[1] + ((Trig_Cos(p->x) * r) >> 16);
                 n = 2 - k / 8;
                 drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1],
                                   x - n / 2, y - n, n, n * 2);
@@ -2249,9 +2249,9 @@ CLEAR(buffer, 0x1000);
       tex->height = 6;
       tex->pixels = buffer;
       model->kind = 7;
-      model->texture = tex;
-      model->matrix = matrix;
       model->mesh = gData_081990d0;
+      model->matrix = matrix;
+      model->texture = tex;
       for (i = 0; i != 4; i++) {
         start = gData_0819895e[i] + 4;
         model->frame = (frame * 8 + i * 32) & 127;
@@ -2288,8 +2288,8 @@ CLEAR(buffer, 0x1000);
         for (i = 0; i != 16; i++, p++) {
           p->life = -i * 2;
           p->x = Random16();
-          p->z = i * 2 + 80;
           p->vx = (Random16() & 511) + 512;
+          p->z = i * 2 + 80;
         }
       }
       for (i = 0; i != 0x400; i++) {
@@ -2306,8 +2306,8 @@ CLEAR(buffer, 0x1000);
           s32 x;
           s32 y;
           m = __modsi3(i, 3);
-          x = point2[0] + ((p->z * Trig_Sin(p->x)) >> 16);
-          y = point2[1] + ((p->z * Trig_Cos(p->x)) >> 16);
+          x = point2[0] + ((Trig_Sin(p->x) * p->z) >> 16);
+          y = point2[1] + ((Trig_Cos(p->x) * p->z) >> 16);
           p->z -= 4;
           p->x += p->vx;
           if (kind == 16)

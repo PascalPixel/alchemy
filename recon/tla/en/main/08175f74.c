@@ -1463,11 +1463,15 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   CpuFill(work->buffer + 0x2000, 0x1000, 0x3f3f3f3f);
   Resource_LoadAndDecompress((s32)&Value_000000c3, work->buffer + 0x3000, 0, 0);
   Resource_LoadAndDecompress((s32)&Value_00000134, glyphs, 0, 0);
-  i = 0;
-empty:
-  i += 35;
-  if (i != 0x302) {
-    goto empty;
+  {
+    s32 limit = 0x302;
+
+    i = 0;
+  empty:
+    i += 35;
+    if (i != limit) {
+      goto empty;
+    }
   }
   for (i = 0; i != 0x1000; i++) {
     if (work->buffer[0x3000 + i] != 0) {
@@ -1727,15 +1731,14 @@ empty:
       if (frame >= 0) {
         DISPLAY_1120->unk4 += 0xfff4;
         BattleEffect_LoadBlitter(104, 27);
-        halfCell = width / 2;
-        phase = frame << 10;
-        for (i = 0; i != 4; i++) {
-          struct Particle *column = &work->columns[i];
-          s32 y2 = i * 30 - 26;
-
-          column->x = shake + i * 8 +
-                      ((Trig_Sin(phase) * 4) >> 16);
-          column->y = i * 30;
+        {
+        struct Particle *column;
+        s32 x;
+        s32 y;
+        s32 y2;
+        for (i = 0, y2 = -26, y = 0, x = shake, phase = frame << 10, column = work->columns, halfCell = width / 2; i != 4; i++, y2 += 30, y += 30, x += 8, phase += 0x2000, column++) {
+          column->x = x + ((Trig_Sin(phase) * 4) >> 16);
+          column->y = y;
           if (i == 3) {
             column->x -= 8;
             column->y = y2;
@@ -1744,7 +1747,7 @@ empty:
           }
           SYSTEM_WORK->blit(canvas, work->buffer, column->x - halfCell, column->y,
                             halfCell, 56);
-          phase += 0x2000;
+        }
         }
         HeapSlot_Release(104);
         for (i = 0; i != 12; i++) {

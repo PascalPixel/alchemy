@@ -1389,6 +1389,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         SceneTransform_ApplyYaw(frame << 10);
         Render_TransformVertices(gData_08199210, texture, 4);
         Render_DrawModelList(model);
+        if (frame > twice) {
+          twice = frame;
+        }
         if (frame > -48) {
           Render_ResetTransformState();
           Func_08015160(0x20000, -0x300000, 0);

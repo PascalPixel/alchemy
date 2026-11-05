@@ -1,31 +1,11 @@
-// Draft, differ 54 of 126 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 54 (tla-en); notes below may predate it.
-// Draft, differ 59 of 126, skeleton gap 19 (tla-en, 2026-11-01)
-// Sets the blend and loads two pictures (Data_02002620 and Data_02002af8) into
-// VRAM for the sprites at Data_02003060 and Data_02003030, then schedules
-// Func_020002b4.
-// Left: the 0x1000 of Heap_Alloc, REG_BLDALPHA and both VramCache_Load calls is
-// one pseudo here (CSE, then a subreg for the halfword store). With 5 refs it
-// outranks the 8 of the sprite's priority field and takes r8, so 8 is rebuilt
-// and the native's r8/0x1000 pair is swapped: the native rebuilds 0x1000 at each
-// use and keeps 8 in r8. Almost all of the skeleton gap is this one thing.
-// Measured: giving Heap_Alloc and alpha other values (diagnostic only) puts 8
-// in r8; forwarding Heap_Alloc through a static inline, so the argument
-// goes straight to r0, measures differ 28, skeleton 11. That is a `wrapper`
-// device (MemAlloc_ in the scene local.h files, Heap_CallAlternatePool), left out
-// of this no-new-device round; whether it is source here is a counting decision
-// (S2). Failed to unshare it: a `size` local, s32 or u16, unprototyped or u16
-// parameters, sizeof, and (diagnostic only) a one-pass block around the two
-// register writes.
-// After that the near miss is order, seen in the forwarded form: the native has
-// mov r9, r0 first after Heap_Alloc, and movs r7, #32 before Func_02001f6c.
-// sched2 gives both too low a priority here. Reading the tiles and slots back
-// through the locals, sprite pointers, inner blocks, declaration order,
-// non-volatile writes and field order all leave it or lose (field order 79-93).
-// Measured forms: an s32 control and alpha give the native's movs/lsls and
-// adds r3, #2 (a HImode constant loads from the pool). The address locals give
-// the native's load before each call (a plain `x = f()` loads after it, also as
-// a struct field or array element), one each: sharing two by reuse is 67, 8 worse.
+// // Draft, differ 28 of 126 (tla-en, 2026-11-05).
+// // Sets the blend and loads two pictures (Data_02002620 and Data_02002af8) into
+// // VRAM for the sprites at Data_02003060 and Data_02003030, then schedules
+// // Func_020002b4.
+// // The wrapper keeps 0x1000 out of one shared pseudo, so 8 takes r8 as in the
+// // native. Address locals give the native's load before each call. Left: order
+// // only, the blend registers' constants after buffer's copy, r7's 32 taken at the
+// // first use, and the last two bitfield stores.
 #include "types.h"
 #include "call.h"
 #include "io_reg.h"
@@ -71,7 +51,9 @@ s32 Task_Add(void (*func)(void), s32 priority);
 void Func_020002b4(void);
 
 void Func_020003a0(void) {
-  void *buffer = Heap_Alloc(0x1000);
+  /* FAKEMATCH(wrapper): forwarded, so that its 0x1000 goes straight to r0; as a
+   * direct call, 54 of 126 instructions differ in tla-en. */
+  void *buffer = (void *)Value1((s32 (*)())Heap_Alloc, 0x1000);
   s32 control = 0x3f40;
   s32 alpha = 0x1000;
   s32 *firstSlot;
@@ -82,8 +64,8 @@ void Func_020003a0(void) {
   REG_BLDCNT = control;
   REG_BLDALPHA = alpha;
   Func_02001f6c(Data_02002620, buffer);
-  *firstSlot = Resource_FindFreeEntry();
   firstSlot = &gData_02003020;
+  *firstSlot = Resource_FindFreeEntry();
   firstTile = &Data_02003088;
   *firstTile = VramCache_Load(gData_02003020, 0x1000, buffer);
   Func_02002104(&Data_02003060, 0, 0, 0xc0000000, Data_02003088);

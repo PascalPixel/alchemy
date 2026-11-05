@@ -11,6 +11,8 @@
 // mask lands after green and blue.
 // The steps' shape comes from s16 values read through u16; the loops are
 // label and goto because a real loop hoists the constants the listing reloads.
+// Measured 5 November 2026 (-Os): differ 22 of 307 (tla-en), plain loops and two
+// parameter blocks; left, the colour read order and one orrs order.
 #include "iwram_call.h"
 #include "call.h"
 #include "actor.h"
@@ -56,6 +58,8 @@ void Func_02001a14(void) {
   u32 i;
   s32 changed;
   u16 *palette;
+  s32 params[10];
+  s32 burst[10];
 
   Func_02001fac();
   Call1((void (*)())Func_02002044, 0);
@@ -80,20 +84,18 @@ void Func_02001a14(void) {
   FIELD_AT(((s32)Ram_HeapSlots->eventWork), u16, 362) = 200;
   Call1((void (*)())Func_02002054, 0x212);
   Call1((void (*)())FieldEvent_Wait, 40);
-  i = 0;
-next_ember:
+  for (i = 0; i != 360; i++) {
     if ((i & 31) == 0)
       Call1((void (*)())Func_02002054, 164);
     if (i < 120) {
       if (i & 15)
-        goto skip;
+        continue;
     } else if (i < 240) {
       if (i & 7)
-        goto skip;
+        continue;
     } else if (i & 1)
-      goto skip;
+      continue;
     {
-      s32 params[10];
       s32 mask = 31;
       s32 x = Random16Far();
       s32 y = Random16Far();
@@ -109,51 +111,39 @@ next_ember:
                     params);
       Call1((void (*)())wait, 1);
     }
-skip:
-  i++;
-  if (i != 360)
-    goto next_ember;
-  i = 0;
-burst:
-  {
-    s32 params[10];
-    s32 mask;
+  }
+  for (i = 0; i != 16; i++) {
+    s32 mask = 31;
     s32 x = Random16Far();
     s32 y = Random16Far();
 
-    params[2] = 0x18000;
-    params[3] = 0x18000;
-    params[1] = 7;
-    mask = 31;
-    params[0] = 1;
+    burst[2] = 0x18000;
+    burst[3] = 0x18000;
+    burst[1] = 7;
+    burst[0] = 1;
     x &= mask;
     x <<= 16;
     x += 0x1500000;
     Func_0200015c(x, 0, ((y & mask) << 16) + 0xb00000, 0, 0x10000, 0, 0xb0000,
-                  params);
-    i++;
+                  burst);
     Call1((void (*)())wait, 1);
   }
-  if (i != 16)
-    goto burst;
   Func_02001f64(actor);
   Call1((void (*)())Func_02002054, 0x22d);
-again:
+  do {
     Call1((void (*)())wait, 10);
     palette = (u16 *)0x5000062;
     changed = 0;
-    i = 1;
-  entry:
-    {
+    for (i = 1; i != 14; i++) {
       u32 color = *palette;
-      s32 red = color & 31;
       s16 green = ((u16)color >> 5) & 31;
       s16 blue = ((u16)color >> 10) & 31;
+      s32 red = color & 31;
       u16 level;
 
-      color = red;
-      if (color < 11) {
-        red = color + 1;
+      level = red;
+      if (level < 11) {
+        red = level + 1;
         changed = 1;
       }
       level = red;
@@ -181,16 +171,15 @@ again:
         blue = level - 1;
         changed = 1;
       }
-      *palette = ((u16)blue << 10) | ((u16)green << 5) | (u16)red;
-      i++;
+      {
+        s32 value = ((u16)blue << 10) | ((u16)green << 5) | (u16)red;
+
+        *palette = value;
+      }
       palette++;
     }
-    if (i != 14)
-      goto entry;
-    FIELD_AT((s32)gData_020022cc, s32, 0) +=
-        FIELD_AT((s32)gFrameCount, s32, 0) & 1;
-    if (changed)
-      goto again;
+    *(s32 *)gData_020022cc += *(s32 *)gFrameCount & 1;
+  } while (changed);
   Call1((void (*)())Task_RemoveFar, (s32)Func_02001650);
   Func_0200204c();
   Call1((void (*)())GameFlag_SetBit, 0x940);

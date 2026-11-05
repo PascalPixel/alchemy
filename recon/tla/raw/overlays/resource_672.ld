@@ -22,7 +22,7 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_statue_chamber/panels.o"(.text)
         "*/games/tla/src/scene/gabomba_statue_chamber/s1094.o"(.text)
         "*/games/tla/src/scene/gabomba_statue_chamber/s10d4.o"(.text)
-        "*/resource_672_overlay.o"(.text.x02009710)
+        "*/games/tla/src/scene/gabomba_statue_chamber/s1710.o"(.text)
         "*/games/tla/src/scene/gabomba_statue_chamber/prepare.o"(.text)
         "*/resource_672_overlay.o"(.text.x02009ba8)
         "*/games/tla/src/scene/gabomba_statue_chamber/s1c44.o"(.text)

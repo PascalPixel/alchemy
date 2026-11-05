@@ -30,7 +30,7 @@ SECTIONS
         "*/games/tla/src/scene/staff_credit/s1a34.o"(.text)
         "*/resource_64c_overlay.o"(.text.x02009ad0)
         "*/resource_64c_overlay.o"(.text.x02009be0)
-        "*/resource_64c_overlay.o"(.text.x02009d90)
+        "*/games/tla/src/scene/staff_credit/s1d90.o"(.text)
         "*/games/tla/src/scene/staff_credit/release.o"(.text)
         "*/games/tla/src/scene/staff_credit/import.o"(.text)
         "*/games/tla/src/scene/staff_credit/graphics.o"(.rodata)

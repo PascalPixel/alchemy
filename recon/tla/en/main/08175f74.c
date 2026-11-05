@@ -959,7 +959,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         s32 scale136[2] = {0x10000, 0x10000};
 
         if (frame < 260) {
-          struct SpriteObject *object = work->objects[13];
           u8 *low = (u8 *)0x02014000;
           u8 *high = (u8 *)0x02014001;
 
@@ -971,13 +970,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             u8 *highByte = high + pixel;
             s32 texel = *lowByte | (*highByte << 8);
 
-            *(u16 *)(OBJ_VRAM + (row + TILE_SLOTS[object->slot].offset) + column) = texel;
+            *(u16 *)(OBJ_VRAM + (row + TILE_SLOTS[work->objects[13]->slot].offset) + column) = texel;
             column = order[0x1001] * 2;
             pixel = row + column;
             lowByte = low + pixel;
             highByte = high + pixel;
             texel = *lowByte | (*highByte << 8);
-            *(u16 *)(OBJ_VRAM + (row + TILE_SLOTS[object->slot].offset) + column) = texel;
+            *(u16 *)(OBJ_VRAM + (row + TILE_SLOTS[work->objects[13]->slot].offset) + column) = texel;
           }
         }
         scale136[1] = scale136[0] = (155 << 12) - (frame << 11);

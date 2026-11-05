@@ -1,8 +1,6 @@
-// Measured 2026-11-05 (tla-en): differ 58 of 236. The return 1 block sits after
-// the first loop (goto fail, with done before the store of pos), which took 88
-// to 58 with the step a u16 field. Left: the native's two reads at entry, ldrsh
-// for the test and ldrh for step; a volatile cast gives both and 48 but adds a
-// shift pair.
+// Measured 2026-11-05 (tla-en): differ 35 of 236, 17 with slots and pool
+// offsets normalized. The step is an s32 local read from its u16 field: the
+// test casts it to s16 where the listing has ldrsh.
 // Draft, differ 94 of 236: runs one step of the intro's vertical picture scroll. The
 // position moves from pos toward limit by step, waiting frames between moves
 // (1 when a key cuts the wait short, else 0 with pos updated). Scrolling
@@ -46,7 +44,7 @@ s32 Func_081a68b4(struct TitleScroll *s) {
   struct TitleFadeTimers *timers = Ram_HeapSlots->unk84[10];
   s32 i;
   s32 j;
-  u16 step;
+  s32 step;
 
   step = s->step;
   if ((s16)step > 0) {

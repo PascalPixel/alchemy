@@ -1,8 +1,3 @@
-// Under -Os, 5 November: differ 71 of 213 (tla-en); older figures below predate it.
-// Draft, differ 89 of 213: the rising platforms callback: for each of the 16
-// entries it raises or lowers the platform on its timer, writes its height
-// into the collision map and cell flags, and carries its rider with a
-// bobbing sine. Left: register choice and reloaded timer compares.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -41,20 +36,23 @@ extern u8 gData_020023c4[];
 
 s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
-void Func_020041f8(s32 cue);
+void Func_0200131c(s32 cue);
 s32 Math_Sine(s32 angle);
 
-void Func_020039b8(void) {
+// The swinging actors' callback, the same as Yampi Desert's platforms: for each
+// of the 16 entries it moves the actor on its timer, writes its height to the
+// collision and cell maps, and carries its rider with a bob.
+void Func_02000be4(void) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
   struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct RideEntry *entry = work->entries;
   s32 value = work->value;
   u8 *terrain = map->layers[0].terrainIds;
   struct MapCell *cells = map->layers[0].cells;
+  s32 i = 0;
   s32 *collision = (s32 *)Ram_MapCollision + value;
-  struct RideEntry *entry = work->entries;
-  s32 i;
 
-  for (i = 0; i <= 15; i++, collision++, entry++) {
+  for (; i <= 15; collision++, entry++, i++) {
     struct Actor *object;
     struct Actor *rider;
     struct MapCell *cell;
@@ -66,11 +64,11 @@ void Func_020039b8(void) {
     if (object->x == 0 && object->z == 0)
       continue;
     if (entry->timer == entry->riseAt) {
-      Func_020041f8(206);
+      Func_0200131c(206);
       entry->step = 4;
     }
     if (entry->timer == entry->fallAt) {
-      Func_020041f8(395);
+      Func_0200131c(395);
       entry->step = -8;
     }
     if (entry->step != 0) {
@@ -100,15 +98,19 @@ void Func_020039b8(void) {
       cell->attributeB |= 128;
     if (entry->height != 0)
       cell->attributeB |= 16;
+    else
+      cell->attributeB = 0;
     rider = entry->rider;
     if (rider == NULL)
       continue;
     if (entry->height == 0) {
       rider->y = object->y + -0x100000;
     } else {
+      s32 wave;
+
       entry->phase += 0x1000;
-      rider->y = object->y + (entry->height << 16) +
-                 (Iwram_MulQ16(0x20000, Math_Sine(entry->phase)) + -0xe0000);
+      wave = Iwram_MulQ16(0x20000, Math_Sine(entry->phase)) + -0xe0000;
+      rider->y = object->y + (entry->height << 16) + wave;
     }
     rider->x = object->x;
     rider->z = object->z;

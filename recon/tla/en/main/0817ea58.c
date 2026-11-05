@@ -1152,8 +1152,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     if (frame == 0) {
       s32 z;
 
-      z = 0;
-      for (i = 0; i != 16; i++) {
+      for (i = 0, z = 0; i != 16; i++, z -= 0x100) {
         Particle *p;
 
         p = &work->particles[i];
@@ -1168,7 +1167,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         work->sprites[i]->rotation = p->z;
         work->sprites[i]->unk16 = 0;
         work->sprites[i]->unk17 = 8;
-        z -= 0x100;
       }
       for (i = 0; i != 512; i++)
         PARTICLES[i].timer = -1;

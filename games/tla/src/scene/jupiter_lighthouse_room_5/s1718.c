@@ -1,8 +1,3 @@
-// Draft, differ 8 (tla-en, 2026-11-05). Func_02001718 of overlay 69e.
-// Five devices gone (a rise from nothing: 31 to 8 with them gone). Plain
-// loop, byte bitfields, Task_Add inline needs a tag on adoption. Left: the
-// depth's subtract and store come before the age store natively, and the task
-// call's shift before its address.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -55,13 +50,8 @@ s32 Func_020029f8(struct Actor *object);
 void Task_Add(void (*func)(void), s32 priority);
 void Func_02001538(void);
 
-static __inline__ void StartTask(void (*func)(void), s32 priority) {
-  Task_Add(func, priority);
-}
-
 void Func_02001718(const s32 *from, const s32 *to) {
-  struct SparkWork *work =
-      HeapSlot_AllocFar(220, sizeof(struct SparkWork));
+  struct SparkWork *work = HeapSlot_AllocFar(220, sizeof(struct SparkWork));
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct SparkSprite *sprite;
   struct Spark *spark;
@@ -73,7 +63,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
   work->from[1] = from[1];
   work->from[2] = from[2];
   work->to[0] = to[0];
-    work->to[1] = to[1];
+  work->to[1] = to[1];
   work->to[2] = to[2];
   Func_020027b8(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs), work);
   entry = Resource_FindFreeEntry();
@@ -84,17 +74,24 @@ void Func_02001718(const s32 *from, const s32 *to) {
   spark = work->sparks;
   sprite = work->sprites;
   for (; i <= 95; i++, sprite++, spark++) {
-  Func_020029e0(sprite, 4, 4, 0, tile + (i & 15) * 2);
-  sprite->fullColor = 1;
-  sprite->palette = 0;
-  sprite->priority = Func_020029f0(leader) & 3;
-  ((union { u16 v; s32 w; } *)&sprite->depth)->v = Func_020029f8(leader) - 1;
-  spark->age = -1;
+    Func_020029e0(sprite, 4, 4, 0, tile + (i & 15) * 2);
+    sprite->fullColor = 1;
+    sprite->palette = 0;
+    sprite->priority = Func_020029f0(leader) & 3;
+    // Through a union, so this store may alias the age store after it.
+    ((union {
+       u16 v;
+       s32 w;
+     } *)&sprite->depth)
+        ->v = Func_020029f8(leader) - 1;
+    spark->age = -1;
   }
-    {
+  {
     s32 zero = 0;
 
     work->next = zero;
   }
-  StartTask(Func_02001538, 0x480);
+  /* FAKEMATCH(wrapper): the task through Value2; as a direct call, 8 of 145
+   * instructions differ in tla-en. */
+  Value2((s32 (*)())Task_Add, (s32)Func_02001538, 0x480);
 }

@@ -1,5 +1,3 @@
-// Draft, differ 40: overlay 6a1's copy of the function drafted in
-// resource_6ad_c_02004938.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -11,7 +9,8 @@ extern const s8 gData_020022dc[][4];
 
 struct Actor *Actor_GetById(s32 id);
 void Func_020021b0(s32 x, s32 z, s32 width, s32 height, s32 toX, s32 toZ);
-void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height, s32 value);
+void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, s32 width, s32 height,
+                           s32 value);
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
@@ -45,8 +44,9 @@ s32 Func_02000af0(s32 id) {
   x = (object->x + (gData_020022dc[j][0] << 16)) >> 20;
   z = (object->z + (gData_020022dc[j][1] << 16)) >> 20;
   mapX = *(s32 *)(map + 328) >> 20;
+  i = mapX;
   mapZ = *(s32 *)(map + 332) >> 20;
-  toX = x + (u16)mapX;
+  toX = x + (u16)i;
   toZ = z + (u16)mapZ;
   Func_020021b0(x, z, width, height, toX, toZ);
   Map_FillCellRectByte2(0, x, z, width, height, 255);

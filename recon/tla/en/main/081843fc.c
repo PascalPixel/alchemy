@@ -1816,7 +1816,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             if (q->variant >= 0) {
               s32 n = (q->variant >> 2) + 2;
 
-              blit[0](canvas, sprites + gData_08197410[n - 1],
+              blit[0](canvas, sprites + *(gData_08197410 + n - 1),
                       HALF_HI(q->x) - n / 2, HALF_HI(q->y) - n, n, n * 2);
               BattleEffectKernels_IntegrateVector2(q, 56, 0x2000);
               q->velocityX -= work->scrollStepX << 12;

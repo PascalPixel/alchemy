@@ -1,6 +1,3 @@
-// Draft, differ 6 (tla-en, 2026-11-05). Func_02000bd8 of overlay 6ab.
-// Plain search loop. Left: the palette store: address r3 and value r2
-// natively, here the reverse. Its two inlines need wrapper tags on adoption.
 #include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 
 extern struct Actor *Data_02004cec;
@@ -22,8 +19,7 @@ s32 Inventory_AddItem(s32 owner, s32 item);
 void FieldMessage_Show(s32 message, s32 position);
 u8 *Unit_Get(s32 owner);
 void Func_020042c4(s32 owner, s32 slot);
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
-                                      s32 y, s32 z);
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_020041ec(struct Actor *object);
 void Func_020043c4(s32 a, s32 b);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
@@ -33,9 +29,11 @@ void Func_02004404(s32 a, s32 b);
 void Func_02004414(s32 frames);
 void Func_020042a4(s32 message, s32 a, s32 b);
 
-static __inline__ void Func_0200440c_(s32 a, s32 b) { Func_0200440c(a, b); }
-
-static __inline__ void Func_02004404_(s32 a, s32 b) { Func_02004404(a, b); }
+static __inline__ void Func_0200440c_(s32 a, s32 b) {
+  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 10 of 155
+   * instructions differ in tla-en. */
+  Func_0200440c(a, b);
+}
 
 void Func_02000bd8(void) {
   struct Actor *leader;
@@ -81,13 +79,21 @@ void Func_02000bd8(void) {
     Camera_MoveWithinMapBounds(170 << 18, -1, 146 << 16, 1);
     Func_020043d4();
     Func_0200440c_(0x10000, 0);
-    Func_02004404_(0x10003, 0);
+    Func_02004404(0x10003, 0);
     Func_02004414(20);
     wait(20);
-    *(u16 *)0x0500021e = 0x7fff;
+    {
+      // A halfword in its own local, so the address takes the register first.
+      struct {
+        u16 value;
+      } white;
+
+      white.value = 0x7fff;
+      *(u16 *)0x0500021e = white.value;
+    }
     wait(1);
     Func_020042a4((s32)&MsgMarsStar06, 0, 0);
-    Func_02004404_(0x10000, 0);
+    Func_02004404(0x10000, 0);
     Func_02004414(20);
     wait(20);
   }

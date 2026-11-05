@@ -18,7 +18,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_star_room/s0ab4.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s0ae4.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/talk.o"(.text)
-        "*/resource_6ab_overlay.o"(.text.x02008bd8)
+        "*/games/tla/src/scene/mars_lighthouse_star_room/s0bd8.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/tiles.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s0db8.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/note.o"(.text)

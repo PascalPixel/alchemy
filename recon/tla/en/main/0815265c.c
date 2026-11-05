@@ -1,7 +1,7 @@
-// Measured 2026-11-05 (tla-en): differ 60 of 2239. Left: spill slots: draw's
-// address sits at sp+40 where the listing has sp+36 and the fade limit the
-// other way round, 32 rows; a local for the limit, declared at the top or in
-// the loop, does not move them. Then five sites of order.
+// Measured 2026-11-05 (tla-en): differ 28 of 2239. The spill slots agree: gcse
+// numbers its reaching registers by hash bucket, (plus shots -8) buckets by
+// shots' pseudo number, so shots, user and k are declared in the block where
+// the volley starts. Left: sites of order.
 
 // Draft, differ 130 of 2239, skeleton gap 48 (tla-en, 2026-11-01)
 // BattleEffect_RunProjectileVolleyB, the body behind the 22 wrappers
@@ -172,12 +172,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   struct BattleEffectWork *work;
   s32 frame;
   u8 *sheet;
-  s32 shots;
   s32 target;
   s32 i;
   s32 j;
-  struct EffectPosition *user;
-  s32 k;
   u8 *widths;
   u8 *heights;
   s32 limit;
@@ -427,6 +424,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   for (i = 0; i != 64; i++)
     work->particles[i].variant = -1;
+  {s32 shots; struct EffectPosition *user; s32 k;
   if (mode == 8 || mode == 11 || mode == 14)
     shots = 32;
   else if (mode == 20)
@@ -829,5 +827,6 @@ dz = object->z - mote->z;
       SummonEffect_RunCanvasMode3(effect);
   } else {
     BattleEffect_EndCanvasLayer();
+  }
   }
 }

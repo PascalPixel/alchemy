@@ -971,13 +971,13 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           s32 st = Data_08199754[i];
 
           if (frame > st && frame < st + 100) {
-            ty = -0x2c0000;
-            sh = -16;
             s = (frame - st) * 2978;
+            ty = -0x2c0000;
             if (s > 65535) {
               s = 0x10000;
             }
             texture.pixels = work->sheet;
+            sh = -16;
             model->kind = 6;
             model->shade = sh;
             Render_ResetTransformState();

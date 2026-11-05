@@ -1,3 +1,5 @@
+// Near miss, differ 12 of 238 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
 // 18 of 238 in tla-en. The native spills its arguments to the stack before it
 // builds the heap slots' address; this builds the address first (row 8).
@@ -109,6 +111,7 @@ void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
   Unit_CalculateFar(unitId);
   without[0] = unit->atk;
   without[1] = unit->def;
+  asm("");
   without[2] = unit->agi;
   without[3] = unit->luck;
   for (i = 0; i <= 2; i++) {

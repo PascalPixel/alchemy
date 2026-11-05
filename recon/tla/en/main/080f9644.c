@@ -1,3 +1,5 @@
+// Near miss, differ 22 of 1355 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 34 of 1355 (tla-en, 2026-10-31): the item menu's command
 // loop (use, give, drop, equip, swap, trade, remove), the twin of The Broken
 // Seal's ItemMenu_RunCommands (games/tbs/src/menu/menu/item.c), with The Lost
@@ -421,7 +423,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       size = BATTLE_UNIT_SIZE;
       sourceCopy = Heap_Alloc(size);
       targetCopy = Heap_Alloc(size);
-      Iwram_CopyWords(sourceCopy, source, size);
+  {
+    register __typeof__(size) hoisted asm("r2") = size;
+    Iwram_CopyWords(sourceCopy, source, hoisted );
+  }
       Iwram_CopyWords(targetCopy, target, size);
       movedSource = 0;
       while (movedSource <= 29) {
@@ -489,6 +494,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         ItemMenu_SetMessageWindowHeight5();
         WindowSprite_RedrawSavedRectFar(menu->messageWindow);
         menu->itemOwner = menu->targetOwner;
+  asm("");
         menu->selectedItem &= 0x1ff;
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);

@@ -1,3 +1,5 @@
+// Near miss, differ 4 of 1044 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 44 of 1044, skeleton gap 26 (tla-en, 2026-11-01): the frame,
 // every register and spill slot are the native's; what is left is order.
 // Left: five store-against-constant orders in sched2 (the native's str before
@@ -383,8 +385,12 @@ void Func_080ec4d4(void) {
           cursorY = 0;
         Text_DrawMessageFar(nearestName, work->window, cursorX,
                                cursorY);
-        Data_0202a63c = width;
-        Data_0202a63e = height;
+        {
+          register s32 value asm("r2") = width;
+          Data_0202a63c = value;
+          value = height;
+          Data_0202a63e = value;
+        }
         Data_0202a638 = cursorX;
         Data_0202a63a = cursorY;
       }
@@ -407,8 +413,13 @@ void Func_080ec4d4(void) {
     }
     if (cursorY < 0)
       cursorY = 0;
-    width = cursorX - Data_0202a638;
-    height = cursorY - Data_0202a63a;
+    {
+      s32 x = Data_0202a638;
+      s16 *savedY = &Data_0202a63a;
+      width = cursorX - x;
+      asm("");
+      height = cursorY - *savedY;
+    }
     Func_080ec484(work->window, width, height);
     Data_0202a638 = cursorX;
     Data_0202a63a = cursorY;

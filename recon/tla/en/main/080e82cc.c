@@ -1,3 +1,5 @@
+// Near miss, differ 2 of 563 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 42 of 563, skeleton gap 38 (tla-en, 2026-11-01)
 // Starts the ring of Func_080e807c round the caster. Unless the ring is
 // already up (the event work's byte at 0xcac), it clears BG0's map and a
@@ -155,13 +157,17 @@ void Func_080e82cc(void) {
       s32 y;
 
       gBgScroll[0].x = 64 - x;
+  do {
       y = *((s16 *)pos + 5);
+  } while (0);
       gBgScroll[0].y = 64 - y;
     }
     Iwram_FillWords((void *)0x06002000, 0x800, 0);
 
+  do {
     HeapSlot_Release(96);
     picture = HeapSlot_AllocEwram(96, 0x2000);
+  } while (0);
     Iwram_FillWords(picture, 0x2000, 0);
 
     wait(1);
@@ -171,6 +177,7 @@ void Func_080e82cc(void) {
       s32 control;
 
       control = 0x480;
+  asm("");
       REG_BG0CNT = control;
     }
     Resource_DecodeType01(

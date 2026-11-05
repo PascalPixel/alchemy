@@ -1,3 +1,5 @@
+// Near miss, differ 4 of 724 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 24 of 724, skeleton gap 24 (tla-en, 2026-11-01): an event command run on an object (targetId): 48
 // runes (FieldEffect_Runes) gather on it in a 16-by-3 grid while pebbles
 // (FieldEffect_Pebbles) fly up from it for 40 frames; the object takes mode
@@ -261,6 +263,7 @@ void Func_080ea14c(s32 targetId) {
           work->originZ = startZ;
         }
         work->moving = 1;
+  asm("");
         work->spacing = 0x40000;
         work->state = 2;
         if (timer == 0)

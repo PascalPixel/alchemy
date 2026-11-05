@@ -1,3 +1,5 @@
+// Near miss, differ 10 of 130 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 4 of 130 (tla-en, 2026-10-31; 48 before): advances the
 // battle highlight while its mode is set: modes 6 and 4 fade the blend in (or
 // out) over 32 frames at half steps, mode 2 blends by the sixteen-step ramp,
@@ -67,8 +69,7 @@ void Graphics_AdvancePaletteCycle(void) {
       REG_BLDALPHA = 0x10;
       REG_BLDY = gBattleEffect_HighlightBlendRamp[battle->highlightStep];
       mask = 0xf;
-      do {
-      } while (0);
+  __asm__("" : "=r"(mask) : "0"(mask));
       battle->highlightStep = ((battle->highlightStep + 1) & mask) |
                               (battle->highlightStep > 14 ? 0x10 : 0);
     }

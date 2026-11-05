@@ -1,3 +1,5 @@
+// Near miss, differ 40 of 84 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 52 of 84: register choice and order. The native keeps the
 // layer 2 table in r10 and the slot in r4, spilled to sp 0 across
 // Func_080eab98, and adds the slot to the shape row before that call; this
@@ -43,7 +45,7 @@ void Func_080eadfc(void) {
 
   if (target != NULL) {
     struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
-    struct SwitchCell *cells = map->layers[target->terrainId].cells;
+    register struct SwitchCell *cells asm("r6") = map->layers[target->terrainId].cells;
     struct SwitchCell *blocks = map->layers[2].cells;
     u8 *shapes = &gMapShapeGrid[((s32)cells - 0x02010000) >> 2];
     u32 key = Func_080202f0(target->terrainId, target->x, target->z);
@@ -56,7 +58,7 @@ void Func_080eadfc(void) {
     flags = cells[slot].flags;
     target->unk4c = flags;
     cells[slot].flags = flags | 0x80;
-    shapes[slot] = tag;
     blocks[slot].block = 0xff;
+    shapes[slot] = tag;
   }
 }

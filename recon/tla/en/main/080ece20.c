@@ -1,3 +1,5 @@
+// Near miss, differ 79 of 149 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // First draft of Func_080ece20: draws the world map picture on BG1, scrolled
 // to the cursor in gWorldMapWork (resource 36, or 35 at the origin when the
 // halfword at 0x640 is set): the palette, then 21 rows of 31 tiles from the
@@ -48,7 +50,7 @@ void Func_080ece20(void) {
   s32 bufferRow;
   s32 unwrapped;
   s32 cell;
-  u32 i;
+  register u32 i asm("r4");
   s32 right;
   s32 bottom;
 
@@ -78,6 +80,7 @@ void Func_080ece20(void) {
   for (row = 0; row <= 20; row++) {
     bufferRow = firstRow + row;
     unwrapped = bufferRow;
+  __asm__("" : "=r"(unwrapped) : "0"(unwrapped));
     if (bufferRow > 23)
       bufferRow -= 24;
     z = (column & 31) + (unwrapped << 5);

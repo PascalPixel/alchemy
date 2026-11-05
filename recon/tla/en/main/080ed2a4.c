@@ -1,3 +1,5 @@
+// Near miss, differ 47 of 548 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 127 of 548, skeleton gap 23 (tla-en, 2026-11-01): same calls,
 // fields, control flow and block order; what is left is below.
 // Runs the world map screen (mode 0 to look, nonzero to choose a destination)
@@ -159,9 +161,13 @@ s32 Func_080ed2a4(s32 mode) {
     objects->suspended = 1;
     wait(1);
     ((struct MapViewWork *)map)->picturePending = 1;
+  do {
     blend = REG_BLDALPHA;
+  } while (0);
   } else {
+  do {
     event->viewCenter->movementState = 1;
+  } while (0);
     savedDelay = event->delay;
     event->delay = 6;
     event->screenEffect = 0;
@@ -295,6 +301,7 @@ s32 Func_080ed2a4(s32 mode) {
         routine->unk2be = (s32)&SceneId_Ov64a;
         entrance = place->entrance;
         Data_02000500 = place->flag;
+  __asm__("" : "=r"(Data_02000500) : "0"(Data_02000500));
         Func_080ca368(place->scene, entrance);
         goto done;
       }
@@ -302,7 +309,10 @@ s32 Func_080ed2a4(s32 mode) {
         if (mode != 0) {
           routine = (struct WorldMapChoice *)&gMainRoutineWork;
           routine->unk2be = 0xffff;
-          Data_02000500 = -1;
+  {
+    __typeof__(-1) hoisted = -1;
+    Data_02000500 =  hoisted ;
+  }
         }
         goto done;
       }

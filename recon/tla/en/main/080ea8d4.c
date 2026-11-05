@@ -1,3 +1,5 @@
+// Near miss, differ 10 of 141 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
 // 12 of 141 in tla-en. First difference: this issues `sub sp, #4` earlier (row
 // 8) than the native does (row 11).
@@ -72,6 +74,7 @@ void Func_080ea8d4(struct ActorFlag *list) {
       object->collisionFlags &= ~1;
       Actor_SetSingleChildFlagsFar(object, 0);
       x = object->x;
+  asm("");
       cell[2] = 0xff;
       Func_080ea8a8(x + step, object->z, object->terrainId,
                     object->terrainHeight);

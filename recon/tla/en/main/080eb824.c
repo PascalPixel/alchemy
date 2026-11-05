@@ -1,3 +1,5 @@
+// Near miss, differ 16 of 116 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 22 of 116 (2026-10-15, written from the listing; ☀️ has no
 // twin). The command's 0 comes from the literal pool, as in the ROM (a
 // halfword zero kept in a register). What remains: the pixel map loop gives the
@@ -34,7 +36,9 @@ void Func_080eb824(void) {
   s32 y;
   s32 x;
 
+  do {
   Iwram_FillWords(work, sizeof(*work), 0);
+  } while (0);
   work->tile = *(u16 *)(windowTiles + 0x1348);
   work->mode = CANVAS_SPRITE_16_COLORS;
   work->command = 0;

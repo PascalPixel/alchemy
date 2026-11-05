@@ -1,3 +1,5 @@
+// Near miss, differ 90 of 603 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 109 of 603, skeleton gap 27 (tla-en, 2026-11-01)
 // Func_0810106c: the Djinn menu's screen loop, the twin of The Broken Seal's
 // DjinnMenu_RunScreen (games/tbs/src/menu/menu/djinn.c), confirmed statement
@@ -101,7 +103,7 @@ void Func_081019a4(struct DjinnElementList *list);
 
 s32 Func_0810106c(void) {
   struct DjinnMenuWork *menu;
-  struct MenuIcon *cursor;
+  register struct MenuIcon *cursor asm("r5");
   s32 result;
   s32 step;
   s32 menuResult;
@@ -112,7 +114,10 @@ s32 Func_0810106c(void) {
   result = 0;
   menuResult = 0;
   menu = Ram_HeapSlots->menuRuntime;
+  do {
   cursor = menu->cursor;
+  __asm__("" : "=r"(cursor) : "0"(cursor));
+  } while (0);
   cursor->active = 13;
   cursor->animStep = 0;
   Func_08101638();
@@ -147,8 +152,8 @@ s32 Func_0810106c(void) {
       menu->owner = menu->owners[menu->selectedColumn[0]];
       menu->shownOwner[0] = menu->owners[menu->selectedColumn[0]];
       menu->arrows[0]->active = 13;
-      menu->arrows[1]->active = 13;
       result = Func_08104540();
+      menu->arrows[1]->active = 13;
       if (result == -2)
         done = 1;
       step = 2;
@@ -202,7 +207,9 @@ s32 Func_0810106c(void) {
       }
       break;
     case 7:
+  do {
       menu->arrows[0]->active = 13;
+  } while (0);
       menu->arrows[1]->active = 13;
       result = Func_081039fc(1);
       if (result == -2)
@@ -224,7 +231,9 @@ s32 Func_0810106c(void) {
       step = 0;
       break;
     case 6:
+  do {
       menu->arrows[0]->active = 13;
+  } while (0);
       menu->arrows[1]->active = 13;
       result = Func_081039fc(2);
       if (result == -2)
@@ -268,6 +277,7 @@ s32 Func_0810106c(void) {
       break;
     case 5:
       menu->arrows[0]->active = 13;
+  asm("");
       menu->arrows[1]->active = 13;
       result = Func_081039fc(3);
       if (result == -2)

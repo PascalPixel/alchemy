@@ -1,3 +1,5 @@
+// Near miss, differ 20 of 906 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
 // 57 of 906 in tla-en. First difference: this issues `lsls r3, r3, #18` earlier
 // (row 18) than the native does (row 20).
@@ -170,8 +172,10 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       for (i = 0; i < 4; i++) {
         Window_SetTilemapEntryFar(window, 0x5001 + i, column + i * 2, y + 5,
                                     0);
-        Window_SetTilemapEntryFar(window, unit->djinnActiveCounts[i] + 0xf030,
-                                    column + i * 2 + 1, y + 5, 0);
+  {
+    register __typeof__(column + i * 2 + 1) hoisted asm("r2") = column + i * 2 + 1;
+    Window_SetTilemapEntryFar(window, unit->djinnActiveCounts[i] + 0xf030, hoisted , y + 5, 0);
+  }
       }
       if (unit->hp != originalUnit->hp) {
         Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72,
@@ -282,7 +286,10 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
 
   if (page == 0)
     SideObject_CreateFar(ownerId, 0, side, window, 0, 0);
-  Iwram_CopyWords(unit, originalUnit, sizeof(struct BattleUnit));
+  {
+    register __typeof__(unit) hoisted asm("r0") = unit;
+    Iwram_CopyWords( hoisted , originalUnit, sizeof(struct BattleUnit));
+  }
   Heap_Release(originalUnit);
   return 1;
 }

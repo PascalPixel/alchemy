@@ -14588,15 +14588,15 @@ msgctxt "MsgActorDefends"
 msgid "03631"
 msgstr "{argument_actor_name:1} está defendiéndose."
 
-msgctxt "message"
+msgctxt "MsgActorUsesBattleItem"
 msgid "03632"
 msgstr "¡{argument_actor_name:1} usa {argument_item_name:2}!"
 
-msgctxt "message"
+msgctxt "MsgActorRaisesItem"
 msgid "03633"
 msgstr "¡{argument_actor_name:1} levanta {argument_item_name:2}!"
 
-msgctxt "message"
+msgctxt "MsgWeaponHowls"
 msgid "03634"
 msgstr ""
 "¡{argument_item_name:2} de {argument_actor_name:1} está\n"
@@ -14606,7 +14606,7 @@ msgctxt "message"
 msgid "03635"
 msgstr "¡{argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgItemAlreadyUsed"
 msgid "03636"
 msgstr ""
 "¡El objeto de {argument_actor_name:1}\n"
@@ -14728,7 +14728,7 @@ msgctxt "message"
 msgid "03663"
 msgstr "¡{argument_actor_name:1} esquiva el ataque!"
 
-msgctxt "message"
+msgctxt "MsgPartyDefeated"
 msgid "03664"
 msgstr "¡El equipo de {protagonist_name} cayó!"
 
@@ -14754,27 +14754,27 @@ msgctxt "MsgGotItem"
 msgid "03669"
 msgstr "Recibes {argument_item_name:10}."
 
-msgctxt "message"
+msgctxt "MsgGoesDownInDefeat"
 msgid "03670"
 msgstr "{argument_actor_name:1} cayó en la lucha..."
 
-msgctxt "message"
+msgctxt "MsgActorCasts"
 msgid "03671"
 msgstr "¡{argument_actor_name:1} lanza {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgActorCastsSpecial"
 msgid "03672"
 msgstr "¡{argument_actor_name:1} invoca {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgActorCastsDjinni"
 msgid "03673"
 msgstr "¡{argument_actor_name:1} libera {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgAttacksAlly"
 msgid "03674"
 msgstr "¡{argument_actor_name:1} ataca a un aliado!"
 
-msgctxt "message"
+msgctxt "MsgStopHittingYourself"
 msgid "03675"
 msgstr "¡{argument_actor_name:1} está golpeándose!"
 
@@ -14782,7 +14782,7 @@ msgctxt "MsgAllResting"
 msgid "03676"
 msgstr "¡Todos están durmiendo!"
 
-msgctxt "message"
+msgctxt "MsgActorUnleashesDjinn"
 msgid "03677"
 msgstr "¡{argument_actor_name:1} usa {argument_ability_name}!"
 
@@ -14790,11 +14790,11 @@ msgctxt "message"
 msgid "03678"
 msgstr "¡{argument_actor_name:1} asigna a {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgActorSummons"
 msgid "03679"
 msgstr "¡{argument_actor_name:1} invoca {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgSummonLacksDjinn"
 msgid "03680"
 msgstr ""
 "¡{argument_actor_name:1} invocó {argument_ability_name} pero\n"
@@ -14828,7 +14828,7 @@ msgctxt "MsgNoTimeToRun"
 msgid "03687"
 msgstr "¡Éste no es momento para escapar!"
 
-msgctxt "message"
+msgctxt "MsgActorRuns"
 msgid "03688"
 msgstr "¡{argument_actor_name:1} huye!"
 
@@ -14905,15 +14905,15 @@ msgctxt "MsgPsynergyBlocked"
 msgid "03706"
 msgstr "¡Pero tiene bloqueada la Psinergía!"
 
-msgctxt "message"
+msgctxt "MsgIsParalyzed"
 msgid "03707"
 msgstr "¡{argument_actor_name:1} no puede moverse!"
 
-msgctxt "message"
+msgctxt "MsgIsAsleep"
 msgid "03708"
 msgstr "¡{argument_actor_name:1} duerme!"
 
-msgctxt "message"
+msgctxt "MsgIsBound"
 msgid "03709"
 msgstr "¡Algo está reteniendo a {argument_actor_name:1}!"
 
@@ -14921,7 +14921,7 @@ msgctxt "message"
 msgid "03710"
 msgstr "¡El ataque de {argument_actor_name:1} falló!"
 
-msgctxt "message"
+msgctxt "MsgDjinnInRecovery"
 msgid "03711"
 msgstr "¡{argument_ability_name} se está recuperando!"
 
@@ -15089,7 +15089,7 @@ msgctxt "MsgImmobile"
 msgid "03752"
 msgstr "¡{argument_actor_name:1} no puede moverse!"
 
-msgctxt "message"
+msgctxt "MsgUnableToMove"
 msgid "03753"
 msgstr "¡{argument_actor_name:1} no puede moverse!"
 
@@ -15109,7 +15109,7 @@ msgctxt "MsgCounterReady"
 msgid "03757"
 msgstr "¡{argument_actor_name:1} prepara el contraataque!"
 
-msgctxt "message"
+msgctxt "MsgDjinnRecoverFaster"
 msgid "03758"
 msgstr "¡Los Djinn se recuperan antes!"
 
@@ -15605,15 +15605,15 @@ msgctxt "message"
 msgid "03869"
 msgstr "No puede usar un Djinn dos veces."
 
-msgctxt "message"
+msgctxt "MsgActorUsesAbility"
 msgid "03870"
 msgstr "¡{argument_actor_name:1} usa {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgActorUnleashesAbility"
 msgid "03871"
 msgstr "¡{argument_actor_name:1} usa {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d53"
 msgid "03872"
 msgstr "¡{argument_actor_name:1} emite ondas ultrasónicas!"
 
@@ -15633,55 +15633,55 @@ msgctxt "MsgNoOneCame"
 msgid "03876"
 msgstr "¡Pero no vino nadie!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d58"
 msgid "03877"
 msgstr "¡{argument_actor_name:1} te mira ferozmente!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d59"
 msgid "03878"
 msgstr ""
 "¡{argument_actor_name:1} se intimidó y\n"
 "no puede dejar de temblar!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d5a"
 msgid "03879"
 msgstr ""
 "¡La siniestra mirada de\n"
 "{argument_actor_name:1} se vuelve hacia ti!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d5b"
 msgid "03880"
 msgstr "¡{argument_actor_name:1} se come algunos gusanos!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d5c"
 msgid "03881"
 msgstr "¡{argument_actor_name:1} crea {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d5d"
 msgid "03882"
 msgstr "¡{argument_actor_name:1} usa {argument_ability_name}!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d5e"
 msgid "03883"
 msgstr "{argument_actor_name:1} te mira miserablemente."
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d5f"
 msgid "03884"
 msgstr "¡{argument_actor_name:1} se enfurece brutalmente!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d60"
 msgid "03885"
 msgstr "¡{argument_actor_name:1} despide un olor putrefacto!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d61"
 msgid "03886"
 msgstr "¡{argument_actor_name:1} intenta dividirse!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d62"
 msgid "03887"
 msgstr "¡{argument_actor_name:1} busca aliados!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d63"
 msgid "03888"
 msgstr "{argument_actor_name:1} busca ayuda."
 
@@ -15689,7 +15689,7 @@ msgctxt "message"
 msgid "03889"
 msgstr "¡{argument_actor_name:1} vuelve al combate!"
 
-msgctxt "message"
+msgctxt "MsgEnemyAbility0d65"
 msgid "03890"
 msgstr "¡{argument_actor_name:1} no puede moverse!"
 
@@ -18879,15 +18879,15 @@ msgctxt "message"
 msgid "04650"
 msgstr "Salir"
 
-msgctxt "message"
+msgctxt "MsgInStock"
 msgid "04651"
 msgstr "disponible(s)."
 
-msgctxt "message"
+msgctxt "MsgTradeForWhat"
 msgid "04652"
 msgstr "¿Cambiar por qué?"
 
-msgctxt "message"
+msgctxt "MsgNoneInStock"
 msgid "04653"
 msgstr "No tiene."
 

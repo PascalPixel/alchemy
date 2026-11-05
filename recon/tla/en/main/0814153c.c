@@ -1,3 +1,5 @@
+// Near miss, differ 673 of 2159 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 821 of 2159, skeleton gap 90 (tla-en, 2026-11-01)
 // BattleEffect_RunEclipse: control flow, frame (184) and spill slots follow the
 // listing; nearly all that is left is one cause, the Iwram fills and copies.
@@ -318,6 +320,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   baseY = 0;
   velX = 0;
   velY = 0;
+  __asm__("" : "=r"(velY) : "0"(velY));
   work->transferMode = 2;
   work->transferValue = 50;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
@@ -477,6 +480,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       model->vertices = verts;
       p = work->particles;
       origin = -0x400000;
+  __asm__("" : "=r"(origin) : "0"(origin));
       for (i = 0; i != 8; i++, p++) {
         p->variant++;
         p->x += p->y;
@@ -584,6 +588,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;
+  __asm__("" : "=r"(REG_DISPCNT) : "0"(REG_DISPCNT));
   gCameraSceneParameters[4] = 120;
   work->transferMode = 3;
   work->transferValue = 0x02020202;
@@ -704,6 +709,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 26; frame++) {
     if ((gInput.repeat & 3) && count == -1) {
       count = 8;
+  __asm__("" : "=r"(count) : "0"(count));
     }
     if (frame <= 6 && count == -1) {
       s32 v = 31 - frame * 8;

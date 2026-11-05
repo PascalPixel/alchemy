@@ -1,3 +1,5 @@
+// Near miss, differ 16 of 302 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 28 of 302 (54 before; 2026-10-26). The palette loop is a
 // goto loop, as the native rebuilds the palette address from i each pass and
 // loads it from the pool (a for loop strength-reduces it, 54), with 0x90000
@@ -85,6 +87,7 @@ void Func_080e5a64(void) {
     green = Trig_Sin(((((blend->phase >> 1) + i) << 16) + base) >> 5) * 12;
     *(u16 *)(0x050003c0 + i * 2) =
         (((green >> 16) + 16) << 5) | blue | ((red >> 16) + 16);
+  asm("");
     if (++i < 32)
       goto palette;
   }

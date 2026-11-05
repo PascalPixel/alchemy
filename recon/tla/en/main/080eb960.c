@@ -1,3 +1,5 @@
+// Near miss, differ 90 of 325 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // First draft of Func_080eb960, written from the listing; no ☀️ twin. An
 // object vanishes in a whirl of sparks: 64 sprites of picture 0x1ea (8x8, 256
 // colours, the object's priority) circle out from it, each spark rising and
@@ -67,12 +69,22 @@ void Func_080eb960(s32 objectId) {
   s32 position[3];
 
   Resource_DecodeType01(Resource_GetTableEntry(0x1ea), work);
-  entry = Resource_FindFreeEntry();
+  {
+    __typeof__(Resource_FindFreeEntry()) hoisted = Resource_FindFreeEntry();
+    asm("");
+    entry =  hoisted ;
+  }
   tiles = VramCache_Load(entry, sizeof(work->picture), work);
+  __asm__("" : "=r"(tiles) : "0"(tiles));
   spark = work->sparks;
   sprite = work->sprites;
   for (i = 0; i < 64; i++, sprite++, spark++) {
-    Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
+  {
+  do {
+    register __typeof__(4) hoisted asm("r1") = 4;
+    Func_080eaf98(sprite, hoisted , 4, 0, tiles + (i & 15) * 2);
+  } while (0);
+  }
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->depth = BattleEffect_GetObjectDepth(object);
@@ -93,6 +105,7 @@ void Func_080eb960(s32 objectId) {
         s32 radius = Random16() * 6 + 0xc0000;
 
         spark = &work->sparks[next];
+  __asm__("" : "=r"(spark) : "0"(spark));
         spark->age = 0;
         spark->centre[0] = object->x;
         spark->centre[1] = object->y + 0x140000;
@@ -111,17 +124,19 @@ void Func_080eb960(s32 objectId) {
         continue;
       if ((u32)spark->age < SPARK_LIFE) {
         position[0] = spark->centre[0];
+  do {
         position[1] = spark->centre[1];
         position[2] = spark->centre[2];
         Vector_AddPolarOffset(spark->radius, spark->angle, position);
+  } while (0);
         if (position[2] > object->z)
           sprite->depth = depth + 2;
         else
           sprite->depth = depth - 2;
         Camera_WorldToScreen(position);
         sprite->x = position[0];
-        sprite->y = position[2];
         sprite->oam.index = tiles + (spark->age & 3) * 2;
+        sprite->y = position[2];
         Func_080eb01c(sprite);
         spark->angle += 0x800;
         spark->radius -= 0x3333;

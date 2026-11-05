@@ -1,3 +1,5 @@
+// Near miss, differ 12 of 1864 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 50 of 1864, skeleton gap 50 (tla-en, 2026-11-01)
 
 // Twin: The Broken Seal's BattleEffect_RunTargetStrike, rebuilt by ⚓️ for 21
@@ -470,8 +472,10 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80,
                targetPosition.x / 2 - 18, 56, 18, 48);
       HeapSlot_Release(SLOT_BLITTER);
-      BUILD_BLITTER(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
-                    RECORD(mode, RECORD_BLEND));
+  {
+    __typeof__(RECORD(mode, RECORD_BLEND)) hoisted = RECORD(mode, RECORD_BLEND);
+    BUILD_BLITTER(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X, hoisted );
+  }
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80, targetPosition.x / 2,
                56, 18, 48);
       HeapSlot_Release(SLOT_BLITTER);
@@ -539,8 +543,10 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
             (gData_08197492[image] / 2);
         y = center.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gData_08197498[image] / 2);
-        BUILD_BLITTER(SLOT_BLITTER_ALTERNATE, 7, 7,
-                      Data_08197605[Random16() & 3] | CLIP, BLIT_ADDITIVE);
+  {
+    __typeof__(Data_08197605[Random16() & 3] | CLIP) hoisted = Data_08197605[Random16() & 3] | CLIP;
+    BUILD_BLITTER(SLOT_BLITTER_ALTERNATE, 7, 7, hoisted , BLIT_ADDITIVE);
+  }
         gBlitterAlternate(canvas, work->sheet + gData_08197486[image], x, y,
                           gData_08197492[image], gData_08197498[image]);
         HeapSlot_Release(SLOT_BLITTER_ALTERNATE);

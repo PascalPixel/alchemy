@@ -1,3 +1,5 @@
+// Near miss, differ 44 of 477 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 60 of 477, skeleton gap 4 (tla-en, 2026-11-01)
 //
 // An empty asm before the first statement does not help.
@@ -194,7 +196,10 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
       speed = (Random16() & 0x3ff) + 0x800;
       mote->y = source->y + (Random16() << 4) + 0x50000;
     } else {
+  do {
       angle = Random16();
+  } while (0);
+  __asm__("" : "=r"(angle) : "0"(angle));
       speed = Random16() & 0x3ff;
       mote->y = source->y + 0x50000;
       speed += 32;

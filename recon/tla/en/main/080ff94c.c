@@ -1,3 +1,5 @@
+// Near miss, differ 4 of 239 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
 // 8 of 239 in tla-en. First difference: this issues `str r3, [r1, #24]` earlier
 // (row 21) than the native does (row 23). A one-pass block around
@@ -96,7 +98,9 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
       if (ability->element != 4) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
                                     row * 2 + 2, 4);
+  do {
         Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 15);
+  } while (0);
         Render_SetTilemapFlagRect(window, 25, row * 2 + 2, 3, 1, 15);
       } else {
         Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 19, 1, 15);

@@ -1,3 +1,5 @@
+// Near miss, differ 869 of 2579 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 876 of 2579, skeleton gap 248 (tla-en, 2026-11-01)
 // BattleEffect_RunCruelRuin. The frame is the listing's 196 bytes and the stack
 // aggregates sit where it has them: pos, place, texture, texture2, req, texture3.
@@ -890,6 +892,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         faded:
           Render_ResetTransformState();
           x = -0x180000;
+  __asm__("" : "=r"(x) : "0"(x));
           if (t >= 0) {
             x = (t << 16) + -0x180000;
           }

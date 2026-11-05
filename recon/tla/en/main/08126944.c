@@ -1,3 +1,5 @@
+// Near miss, differ 2 of 20 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 4 of 20 (tla-en, 2026-10-31): sched2 order of the
 // REG_BLDCNT store; plain C gives the store priority 1 (a leaf), and the native
 // order needs priority 3 with one dependent and BLDALPHA's address set ahead of
@@ -20,8 +22,11 @@
 
 void Func_08126944(void) {
   s32 step;
+  asm("");
 
+  do {
   REG_BLDCNT = 0x2044;
+  } while (0);
   /* FAKEMATCH(barrier): an empty asm after the store; without it, 6 of 20
    * instructions differ in tla-en. */
   __asm__("" : : : "memory");

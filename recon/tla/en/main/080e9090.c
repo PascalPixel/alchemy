@@ -1,3 +1,5 @@
+// Near miss, differ 78 of 202 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 90 of 202 (2026-10-15, written from the listing; ☀️ has no
 // twin). Kind 27's BattleEffect_RunViewSway (view_sway.c) is the same sway along the
 // other axis. What remains: the ROM's frame is 32 bytes and this one 28; the
@@ -138,8 +140,8 @@ void Func_080e9090(void) {
       break;
     }
     wait(1);
-    frameCount++;
     frames++;
+    frameCount++;
   } while (state != SWAY_DONE);
 
   Func_080e8c9c();

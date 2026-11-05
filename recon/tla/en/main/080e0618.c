@@ -1,3 +1,4 @@
+// 2026-11-05: differ 68 of 394 with the pointers set in the for. With one store of the tile, 3 takes a register and 0x3ff reloads as the native does, but the arms merge (100).
 // Draft, differ 99 of 394 (2026-10-18): Func_080e0618, the frame callback
 // Func_080e09c0 installs: it sprays particles round the effect's object and
 // moves the object through five phases. Left: in the sprite loop the native
@@ -89,9 +90,8 @@ void Func_080e0618(void) {
     work->next = (work->next + 1) & 63;
   }
 
-  particle = work->particles;
-  sprite = work->sprites;
-  for (i = 0; i <= 63; i++, sprite++, particle++) {
+  for (i = 0, particle = work->particles, sprite = work->sprites; i <= 63;
+       i++, sprite++, particle++) {
     s32 timer = particle->timer;
 
     if (timer >= 0) {

@@ -1716,10 +1716,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         if (member->timer == 2 || member->timer == 7) {
           Func_0814cd48(arg->actors[i], 7, 5, i, 32);
         }
+        if (actor == 0) {
+          landed = 2;
+        }
         if (member->timer == 6) {
           Func_0814cd48(arg->actors[i], 15, -1, i, 32);
         }
-        __asm__("" : : "r"(actor));
         if (member->timer == 8) {
           actor->x = 0;
           actor->y = 148 << 16;

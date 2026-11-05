@@ -934,40 +934,43 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     s32 a;
     s32 b;
     s32 k;
-    s32 n = 0;
+    s32 m;
+    s32 n;
+    s32 mask;
+    s32 t;
     u8 *sheet;
+    s32 hi;
+    register u32 c asm("r1");
 
     Iwram_CopyWords((void *)BG_PLTT, e, 32);
     e += 32;
     Resource_DecodeType01(e, work->sheet);
     sheet = work->sheet + 0x1000;
+    n = 0;
+    mask = 15;
     for (row = 0; row != 15; row++) {
-      s32 y = row * 2;
+      for (a = 0; a != 2; a++) {
+        for (b = 0; b != 2; b++) {
+          s32 offset;
 
-      a = 0;
-    nextA:
-      b = 0;
-    nextB: {
-      s32 offset = ((y + a) << 4) + b << 3;
+          t = row * 2;
+          t += a;
+          t <<= 4;
+          t += b;
+          offset = t << 3;
+          for (k = 0; k != 8; k++, offset += 16) {
+            u8 *d = sheet + offset;
 
-      for (k = 0; k != 8; k++, offset += 16) {
-        u8 *d = sheet + offset;
-
-        for (row2 = 0; row2 != 4; row2++) {
-          u32 c = work->sheet[n];
-
-          d[0] = c & 15;
-          d[1] = c >> 4 & 15;
-          n++;
-          d += 2;
+            for (m = 0; m != 4; m++) {
+              c = work->sheet[n];
+              hi = c >> 4 & 15;
+              d[0] = mask & c;
+              d[1] = hi;
+              n++;
+              d += 2;
+            }
+          }
         }
-      }
-    }
-      if (++b != 2) {
-        goto nextB;
-      }
-      if (++a != 2) {
-        goto nextA;
       }
     }
   }

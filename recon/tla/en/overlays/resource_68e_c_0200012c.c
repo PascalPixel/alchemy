@@ -38,7 +38,6 @@ s32 Func_0200012c(void) {
   blend = 0x3f42;
   FIELD_AT(0x4000050, u16, 0) = blend;
   // Device still to tag at adoption: the barrier here.
-   * 27 of 80 instructions differ in tla-en. */
   asm("");
   FIELD_AT(0x4000052, u16, 0) = 0x80c;
   Call2(Actor_SetModeById, 0x18, 2);

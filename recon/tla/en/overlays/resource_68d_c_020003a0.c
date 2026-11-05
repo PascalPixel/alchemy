@@ -1,7 +1,8 @@
-// Draft, differ 14 of 126 (tla-en, 2026-11-05). Sets the blend and loads two pictures
+// Draft, differ 4 of 126 (tla-en, 5 November 2026). Sets the blend and loads two pictures
 // into VRAM for the sprites at Data_02003060 and Data_02003030, then schedules
-// Func_020002b4. Left: the second sprite's last bit-field store comes before the global
-// stores in the native, after them here.
+// Func_020002b4. One untagged barrier holds the first global store behind the last
+// bit-field store. Left: in the second sprite, ands r5, r2 comes after strb r3, [r6, #9] in
+// the native.
 #include "types.h"
 #include "call.h"
 #include "io_reg.h"
@@ -81,6 +82,7 @@ void Func_020003a0(void) {
   Data_02003030.blend = 1;
   Data_02003030.palette = 0;
   Data_02003090 = 0;
+  __asm__("");
   Data_02003024 = 0;
   Data_02003098 = 0;
   gData_0200308c = 0;

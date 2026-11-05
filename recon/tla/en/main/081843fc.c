@@ -967,9 +967,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             s32 half;
             s32 j;
 
+            j = 3;
             q = &work->particles[3];
             half = (bx + (s32)((u32)bx >> 31)) >> 1;
-            for (j = 3; j != 64; j++, q++) {
+            for (; j != 64; j++, q++) {
               if (q->variant < 0) {
                 s32 angle;
                 s32 speed;

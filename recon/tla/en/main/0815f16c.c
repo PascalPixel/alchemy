@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 547 of 7666, slots normalized 363, high
-// registers blind too 361, every register blind 149. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 521 of 7666, slots normalized 351, high
+// registers blind too 349, every register blind 137. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -353,8 +353,8 @@ void Sound_PlayFar(s32);
 #define RINGS ((struct Particle *)0x02016e00)
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
-static __inline__ void CLEAR(void *dst, s32 size) { ((void (*)(void *, s32))0x03000258)(dst, size); }
-static __inline__ void FILL(void *dst, s32 size, s32 value) { ((void (*)(void *, s32, s32))0x03000260)(dst, size, value); }
+static __inline__ void CLEAR(void *dst, s32 size) { ((s32 (*)(void *, s32))0x03000258)(dst, size); }
+static __inline__ void FILL(void *dst, s32 size, s32 value) { ((s32 (*)(void *, s32, s32))0x03000260)(dst, size, value); }
 #define RELOAD_BLITTER(slot, n) do { HeapSlot_Release(slot); BattleEffect_LoadBlitter(slot, n); } while (0)
 #define RELEASE_BLITTERS() do { HeapSlot_Release(188); HeapSlot_Release(104); } while (0)
 

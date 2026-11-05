@@ -886,10 +886,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         work->transferValue = 50;
       }
       if ((u32)(frame - 274) <= 27) {
-        u8 *cells = gMapCellBuffer;
-
         s = (frame << 11) - 0x85000;
-        texture.pixels = cells;
+        texture.pixels = cellBuffer;
         model->kind = 7;
         sh = 0;
         if (frame > 293) {

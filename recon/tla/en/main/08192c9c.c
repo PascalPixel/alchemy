@@ -1,3 +1,30 @@
+// Measured 2026-11-05 (tla-en): differ 510 of 5364, 248 with slots and pool
+// offsets normalized, 104 with registers masked too (draft 5362 instructions,
+// frame 420, pools equal island by island). Calls agree in order. The rest is
+// reload's choices and a few forms:
+// What this round settled, all from the listing: the low stack slots are
+// expressions PRE hoists (the rings' radii are not variables, the splash has two
+// cell variables, its ring offset is added before the sum, the spray's position
+// is y + segment * 32 for loop.c to reduce); a constant pseudo with no register
+// is rematerialized at each use, which is what the listing's repeated pool loads
+// are (function locals scene and streaks, a five-bit mask set in the frame loop
+// that loop.c hoists with every 31 it matches); every word fill and decode ends
+// its block through a once-only macro, so the &work one-pass device is gone
+// (S2: a macro every use matches through); the drop frames walk their pointers,
+// stepped at the loop's end, in i and j with the width in its own local; each
+// loop has its own locals where the listing has low registers for them.
+// Reload picks its scratch registers in rotation across the whole function, so
+// one reload more or less shifts every scratch after it: most of the registers
+// still differing follow the first mismatch above them, so read this top down.
+// Still open, top first:
+// 1. Opening and 446 fades hoist a second 31 (r6, r5) and copy it for red; red
+//    here is built in the loop. The other fades now match with a plain c & 31.
+// 2. The 423 band's (i - top) * 2 reduces to a giv where the listing keeps top in
+//    r7 and recomputes; a break form and every spelling compile the same.
+// 3. The 754 frames' giv step (0xf8000000) is hoisted to ip in the listing.
+// 4. Slots: &canvas and &sparks are swapped (176, 184), and the tail of PRE's
+//    registers comes in another hash order, about 280 of the raw rows. Twenty-odd
+//    more insns at GCSE give the same figure, so the order waits on the regnos.
 // Measured 2026-11-05 (tla-en): differ 2371 of 5364, 915 with slots and pool
 // offsets normalized, 241/244 with registers masked too (draft 5367
 // instructions, frame 416 where the listing has 420). Calls agree in order, 258

@@ -323,6 +323,7 @@ void Sound_PlayFar(s32);
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
 static __inline__ void CLEAR(void *dst, s32 size) { ((void (*)(void *, s32))0x03000258)(dst, size); }
 #define RELOAD_BLITTER(slot, n) do { HeapSlot_Release(slot); BattleEffect_LoadBlitter(slot, n); } while (0)
+#define RELEASE_BLITTERS() do { HeapSlot_Release(188); HeapSlot_Release(104); } while (0)
 
 void Func_0815f16c(struct SummonAction *action, s32 kind) {
   u8 *buffer;
@@ -1239,8 +1240,7 @@ CLEAR(buffer, 0x1000);
           x = ((Trig_Sin(angle) << 3) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
           y = ((amp * Trig_Cos(angle)) >> 16) + off - gData_08197498[m] / 2;
-          HeapSlot_Release(188);
-          HeapSlot_Release(104);
+          RELEASE_BLITTERS();
           Func_08196404(188, 7, 7, gData_0819887e[Random16() & 3] | 3, 0);
           IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 56,
                         gData_08197492[m], gData_08197498[m]);

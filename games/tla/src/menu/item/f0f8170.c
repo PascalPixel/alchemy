@@ -1,25 +1,3 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 8 of 494 in tla-en. The native spills its arguments to the stack before it
-// builds the heap slots' address; this builds the address first (row 9). An
-// empty asm after `created = 0;` measured 4. No single empty asm or one-pass
-// block reaches 0.
-// First draft of Func_080f8170, written from the listing and ☀️'s twin
-// Menu_DrawOwnerStatusPanel (games/tbs/src/menu/menu/common.c): the item
-// menu's status panel for a party member (window at tile 0,5, 13 by 12): the
-// name, up to two ailments or the level, and below them what the mode's panel
-// kind asks for. ⚓️ adds kind 9, the class an equipment change would give
-// (with the equipped item, its preview removal or its equipping undone after).
-// Message numbers stay numbers: the Poison to Haunt labels (4359 to 4362),
-// Cannot equip (4176), Learned and Will learn (4178, 4177) have no catalog
-// names yet.
-// Differ 14 of 494 (2026-10-19). Messages must be symbols: as numbers they are
-// split into movs and shifts where the native loads them (164). Kind 9 needs
-// its gotos in this order (18 the other way). Left, all order: the native
-// stores slot before mode in the prologue, loads mode before it builds the
-// 0x100 mask (twice), and builds the copy's size after IwramCopyWords' entry.
-// Adopting it needs the seven unnamed messages named in every edition's
-// catalog, whose numbers differ (04359 is Poison in English, another message in
-// German).
 #include "types.h"
 #include "battle_unit.h"
 #include "item.h"
@@ -44,19 +22,19 @@ enum StatusPanelKind {
 
 // Messages are linker symbols; the unnamed ones by their numbers.
 extern char MsgClassName, MsgExpLabel, MsgPanelStatLabel, MsgAbilityNothing;
-extern char Msg04359, Msg04360, Msg04361, Msg04362;
-extern char Msg04176, Msg04177, Msg04178;
+extern char MsgPoisonLabel, MsgVenomLabel, MsgCurseLabel, MsgHauntLabel;
+extern char MsgCannotEquip, MsgWillLearn, MsgLearned;
 #define MESSAGE_CLASS_NAME ((s32)&MsgClassName)
 #define MESSAGE_EXP_LABEL ((s32)&MsgExpLabel)
 #define MESSAGE_PANEL_STAT_LABEL ((s32)&MsgPanelStatLabel)
 #define MESSAGE_ABILITY_NAME ((s32)&MsgAbilityNothing)
-#define MESSAGE_POISON_LABEL ((s32)&Msg04359)
-#define MESSAGE_VENOM_LABEL ((s32)&Msg04360)
-#define MESSAGE_CURSE_LABEL ((s32)&Msg04361)
-#define MESSAGE_HAUNT_LABEL ((s32)&Msg04362)
-#define MESSAGE_CANNOT_EQUIP ((s32)&Msg04176)
-#define MESSAGE_WILL_LEARN ((s32)&Msg04177)
-#define MESSAGE_LEARNED ((s32)&Msg04178)
+#define MESSAGE_POISON_LABEL ((s32)&MsgPoisonLabel)
+#define MESSAGE_VENOM_LABEL ((s32)&MsgVenomLabel)
+#define MESSAGE_CURSE_LABEL ((s32)&MsgCurseLabel)
+#define MESSAGE_HAUNT_LABEL ((s32)&MsgHauntLabel)
+#define MESSAGE_CANNOT_EQUIP ((s32)&MsgCannotEquip)
+#define MESSAGE_WILL_LEARN ((s32)&MsgWillLearn)
+#define MESSAGE_LEARNED ((s32)&MsgLearned)
 
 struct InventoryMenuState {
   u8 unk000[0x28];
@@ -96,6 +74,14 @@ void Text_DrawStatComparison(struct BattleUnit *unit,
                                struct BattleUnit *backup,
                                struct RenderInput *window);
 void StatusPanel_DrawHpPp(struct BattleUnit *unit, struct RenderInput *window);
+
+static inline void RestoreUnit(struct BattleUnit *unit,
+                               struct BattleUnit *backup) {
+  /* FAKEMATCH(wrapper): both restores forwarded through an inline, so the size
+     loads after the call's other arguments; as direct Iwram_CopyWords calls, 2
+     of 494 instructions differ in tla-en. */
+  Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
+}
 
 void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
   s32 created;
@@ -192,7 +178,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
     Window_SetTilemapEntryFar(window, 0xf12a, 3, 5, 0);
     value = unit->classIndex + MESSAGE_CLASS_NAME;
     Text_DrawCharacterAtOffsetFar(value, window, 0, 48);
-    Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
+    RestoreUnit(unit, backup);
     Heap_Release(backup);
     break;
   case STATUS_PANEL_EXPERIENCE:
@@ -223,7 +209,7 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
       Inventory_EquipFar(owner, slot);
     Unit_CalculateFar(owner);
     Text_DrawStatComparison(unit, backup, window);
-    Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
+    RestoreUnit(unit, backup);
     Heap_Release(backup);
     break;
   case STATUS_PANEL_LEARN: {

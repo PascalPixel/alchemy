@@ -1,3 +1,4 @@
+// Draft, differ 123 of 325 (tla-en, 2026-11-05); 63 with slots and pool offsets normalized, 23 with registers blind too. The search's untagged asms, the pin on the size and its typeof temporaries are gone, which raises the raw figure from 90; the native's frame is 48 with one more spill and the sprite of the second loop in r4 (a caller-save at sp + 4), copied to r6.
 // Near miss, differ 90 of 325 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // First draft of Func_080eb960, written from the listing; no ☀️ twin. An
@@ -50,41 +51,32 @@ void Actor_SetSingleChildFlagsFar(struct Actor *object,
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
 
+extern char ResourceId_SparkleFade;
 void Func_080eb960(s32 objectId) {
-  struct SparkWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_SPARKS, sizeof(struct SparkWork));
+  struct SparkWork *work = HeapSlot_Alloc(HEAP_SLOT_SPARKS, sizeof(struct SparkWork));
   struct Actor *object = ObjectTable_Get(objectId);
   s32 depth = BattleEffect_GetObjectDepth(object);
-  u16 angle = object->angle;
+  s32 angle = (u16)object->angle;
+  s32 spawning;
   s32 entry;
   s32 tiles;
   struct Spark *spark;
   struct EffectSprite *sprite;
   s32 i;
   s32 n;
-  s32 spawning;
   s32 phase;
   s32 next;
   s32 frame;
   s32 position[3];
 
-  Resource_DecodeType01(Resource_GetTableEntry(0x1ea), work);
-  {
-    __typeof__(Resource_FindFreeEntry()) hoisted = Resource_FindFreeEntry();
-    asm("");
-    entry =  hoisted ;
-  }
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_SparkleFade), work);
+  entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, sizeof(work->picture), work);
-  __asm__("" : "=r"(tiles) : "0"(tiles));
+
   spark = work->sparks;
   sprite = work->sprites;
   for (i = 0; i < 64; i++, sprite++, spark++) {
-  {
-  do {
-    register __typeof__(4) hoisted asm("r1") = 4;
-    Func_080eaf98(sprite, hoisted , 4, 0, tiles + (i & 15) * 2);
-  } while (0);
-  }
+    Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->depth = BattleEffect_GetObjectDepth(object);
@@ -105,7 +97,7 @@ void Func_080eb960(s32 objectId) {
         s32 radius = Random16() * 6 + 0xc0000;
 
         spark = &work->sparks[next];
-  __asm__("" : "=r"(spark) : "0"(spark));
+
         spark->age = 0;
         spark->centre[0] = object->x;
         spark->centre[1] = object->y + 0x140000;
@@ -124,11 +116,9 @@ void Func_080eb960(s32 objectId) {
         continue;
       if ((u32)spark->age < SPARK_LIFE) {
         position[0] = spark->centre[0];
-  do {
         position[1] = spark->centre[1];
         position[2] = spark->centre[2];
         Vector_AddPolarOffset(spark->radius, spark->angle, position);
-  } while (0);
         if (position[2] > object->z)
           sprite->depth = depth + 2;
         else

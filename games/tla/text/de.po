@@ -18903,15 +18903,15 @@ msgctxt "MsgAgilityLabel"
 msgid "04636"
 msgstr "Geschw."
 
-msgctxt "message"
+msgctxt "MsgCannotEquip"
 msgid "04637"
 msgstr "Nicht anlegbar"
 
-msgctxt "message"
+msgctxt "MsgWillLearn"
 msgid "04638"
 msgstr "wird erlernt"
 
-msgctxt "message"
+msgctxt "MsgLearned"
 msgid "04639"
 msgstr "Erlernt"
 
@@ -19665,19 +19665,19 @@ msgctxt "MsgStatusNameDown"
 msgid "04822"
 msgstr "K.O."
 
-msgctxt "message"
+msgctxt "MsgPoisonLabel"
 msgid "04823"
 msgstr "Gift"
 
-msgctxt "message"
+msgctxt "MsgVenomLabel"
 msgid "04824"
 msgstr "St. Gift"
 
-msgctxt "message"
+msgctxt "MsgCurseLabel"
 msgid "04825"
 msgstr "Fluch"
 
-msgctxt "message"
+msgctxt "MsgHauntLabel"
 msgid "04826"
 msgstr "Spuk"
 

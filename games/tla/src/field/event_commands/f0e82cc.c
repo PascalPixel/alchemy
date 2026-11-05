@@ -1,47 +1,3 @@
-// Near miss, differ 2 of 563 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Draft, differ 42 of 563, skeleton gap 38 (tla-en, 2026-11-01)
-// Starts the ring of Func_080e807c round the caster. Unless the ring is
-// already up (the event work's byte at 0xcac), it clears BG0's map and a
-// 0x2000-byte picture on BG0 (heap slot 96), and for 64 frames sparkles
-// (FieldEffect_StarSparkleFade) rise from two points that circle the caster
-// 55 pixels out, half a turn apart, while from frame 32 four rings of radius
-// 52 to 55 are drawn into the picture (Func_080e7f94) as the circle turns;
-// then FieldEffect_RingArcs replaces the picture and 32 motes (resource
-// 0x1ed, OBJ palette 15) start orbiting 64 pixels out from the caster, one
-// frame apart. Either way the ring is marked up for 600 frames (0xcae) and
-// Func_080e807c runs as a frame callback.
-// Left: only sched2 order; every register and the instruction count agree.
-// 1. Five orders need a store ranked one cycle higher than the compiler ranks
-// it, which no source change here gives: the spill of work before the lsls of
-// the heap base (16 feeds the load at 25, cost 2, prio 23 against 24); the
-// four zero/one spills before the lsls of 0xcac; tile's spill at sp 24 before
-// the two lsls; and strb r6 before movs r2, #0, which with `off` a leaf store
-// also puts ldr r6 above movs r1, #144 (prio 4 where 5 ties it). A store
-// ranked +1 in arm_priority_cost would fit all of them; untested, a compiler
-// question for Pascal (K2). `ldr r4, [sp, #40]` before ldr r0 is the
-// same-address reload that the load rule makes wait.
-// 2. Three orders need a scheduling barrier: IwramFillWords' ldr r6 stays below
-// the gBgScroll stores, 0x2000 below the first fill (with mov r9, r0 and the
-// pool branch after them), and lsls r2 before subs r3, #204, a tie on forward
-// dependents that a barrier after the BG0CNT store would settle. A once-only
-// block round each fill measures 28 and is the form Func_080e7fec's tagged
-// device has for the same map clear, but no device reaches 0 while part 1
-// stands, so none is kept; the FillWords_ forwarder changes nothing.
-// Evidence that shaped this: registers came from the reload order of the
-// preheaders. i = 0 comes before every loop's pointers (197 to 169). `place` is
-// set from `position` inside the motes' loop, so loop.c hoists a copy of gcse's
-// reaching register into r8, the native's copy of sp 4: set outside the loop,
-// loop.c deletes it (169 to 105), and pos reused for it costs 100 to 250. The
-// mote sprite is an index, a giv set after those hoisted constants, and its
-// byte 5 store falls between byte 9's two (66 to 42). The setup loop's sprite
-// is an index, its mote a pointer stepped after i, or -13 is hoisted. The
-// frame's spill order is the declaration order (pos last); a halfword zero is
-// what the pool's 0 is, and it crosses Task_Add and wait, so `off`; Task_Add is
-// s32; case 0 and 1 both set phase before timer; BG0CNT's value is a local so
-// r3 keeps the DMA channel and reload makes subs r3, #204 (`control`); the 999
-// store is a struct field, whose constant is split, where a cast pointer loads
-// it from the pool.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -157,17 +113,28 @@ void Func_080e82cc(void) {
       s32 y;
 
       gBgScroll[0].x = 64 - x;
-  do {
       y = *((s16 *)pos + 5);
-  } while (0);
       gBgScroll[0].y = 64 - y;
     }
-    Iwram_FillWords((void *)0x06002000, 0x800, 0);
+    {
+      s32 (*fill)(void *, s32, u32);
 
-  do {
-    HeapSlot_Release(96);
-    picture = HeapSlot_AllocEwram(96, 0x2000);
-  } while (0);
+      /* FAKEMATCH(one-pass): an empty block before the fill's entry is read, so the
+         entry loads ahead of the size's constant; as a direct
+         Iwram_FillWords call, 2 of 563 instructions differ in tla-en. */
+      do {
+      } while (0);
+      fill = Iwram_FillWords;
+      fill((void *)0x06002000, 0x800, 0);
+    }
+
+    /* FAKEMATCH(one-pass): a once-only block round the picture's release and
+       allocation, which ends scheduling at both sides; without it, 8 of 563
+       instructions differ in tla-en. */
+    do {
+      HeapSlot_Release(96);
+      picture = HeapSlot_AllocEwram(96, 0x2000);
+    } while (0);
     Iwram_FillWords(picture, 0x2000, 0);
 
     wait(1);
@@ -177,7 +144,9 @@ void Func_080e82cc(void) {
       s32 control;
 
       control = 0x480;
-  asm("");
+      /* FAKEMATCH(barrier): an empty asm between the control value and its store
+         to BG0's register; without it, 2 of 563 instructions differ in tla-en. */
+      asm("");
       REG_BG0CNT = control;
     }
     Resource_DecodeType01(

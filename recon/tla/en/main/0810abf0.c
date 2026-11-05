@@ -1,3 +1,4 @@
+// Draft, differ 81 of 297 (tla-en, 2026-11-05); 57 with slots and pool offsets normalized, 15 with registers blind too. chooseAgain = 1 now sits after messageBase's set, once for all three retries: that makes the two conflict, so chooseAgain spills to sp + 4 as natively and the frame is 16. The native sets it at each retry's end (three rows off), and what makes it conflict there is not found.
 // Draft, differ 134 of 297, skeleton gap 18/8 (tla-en, 2026-11-01)
 // Twin of ☀️'s Sanctum_RunPartyService (games/tbs/src/shop/shop/sanctum.c):
 // the sanctum's service for one party member at a time, four a page. It asks
@@ -85,6 +86,8 @@ s32 Func_0810abf0(void) {
   s32 price;
   s32 messageBase;
 
+  chooseAgain = 0;
+  memberIndex = 0;
   redraw = 1;
   serviceKind = shop->partyAction;
   Func_0810a9ac((s32)Msg04823);
@@ -95,9 +98,7 @@ s32 Func_0810abf0(void) {
   Func_080f8060(listWindow, 2, 0);
   priceWindow = Window_CreateFar(1, 16, 23, 3, 2);
 
-  memberIndex = 0;
   unitId = 0;
-  chooseAgain = 0;
   while (memberIndex < shop->partyMemberCount) {
     unitId = shop->partyMemberIds[memberIndex];
     if (Shop_CanServe(unitId, serviceKind) != 0)
@@ -144,16 +145,15 @@ s32 Func_0810abf0(void) {
       MessageArgument_PushFar(unitId, 1);
       MessageArgument_PushFar(price, 5);
       messageBase = (s32)Msg04824;
+      chooseAgain = 1;
       Func_0810a9ac(messageBase);
       if (Func_08108660(0) != 0) {
         Func_0810a9fc(messageBase + 2);
-        chooseAgain = 1;
         continue;
       }
       if ((u32)price > gMainRoutineWork.coins) {
         Sound_PlayFar(113);
         Func_0810a9fc(messageBase + 1);
-        chooseAgain = 1;
         continue;
       }
       MessageArgument_PushFar(unitId, 1);

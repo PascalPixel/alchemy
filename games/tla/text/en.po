@@ -16975,15 +16975,15 @@ msgctxt "MsgAgilityLabel"
 msgid "04175"
 msgstr "Agility"
 
-msgctxt "message"
+msgctxt "MsgCannotEquip"
 msgid "04176"
 msgstr "Can't equip"
 
-msgctxt "message"
+msgctxt "MsgWillLearn"
 msgid "04177"
 msgstr "Will learn"
 
-msgctxt "message"
+msgctxt "MsgLearned"
 msgid "04178"
 msgstr "Learned"
 
@@ -17724,19 +17724,19 @@ msgctxt "MsgStatusNameDown"
 msgid "04358"
 msgstr "Down"
 
-msgctxt "message"
+msgctxt "MsgPoisonLabel"
 msgid "04359"
 msgstr "Poison"
 
-msgctxt "message"
+msgctxt "MsgVenomLabel"
 msgid "04360"
 msgstr "Venom"
 
-msgctxt "message"
+msgctxt "MsgCurseLabel"
 msgid "04361"
 msgstr "Curse"
 
-msgctxt "message"
+msgctxt "MsgHauntLabel"
 msgid "04362"
 msgstr "Haunt"
 

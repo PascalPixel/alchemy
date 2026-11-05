@@ -1,3 +1,4 @@
+// Draft, differ 127 of 762 (tla-en, 2026-11-05); 97 with slots and pool offsets normalized, 21 with registers blind too.
 // Near miss, differ 139 of 762 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 158 (2026-10-26, statements reordered).
@@ -110,7 +111,7 @@ s32 Func_080fdad4(s32 paneIndex) {
   s32 window;
   s32 changed;
   s32 moved;
-  s8 listMode;
+  s32 listMode;
   s32 member;
   s32 ownerCount;
   u8 i;

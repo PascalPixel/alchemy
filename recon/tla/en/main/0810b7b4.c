@@ -1,3 +1,4 @@
+// Draft, differ 145 of 233 (tla-en, 2026-11-05); 141 with slots and pool offsets normalized, 29 with registers blind too.
 // Draft: picks a party member and then one of their items (Func_0810b9c0),
 // four members a page, returning the unit and slot through the pointers (both
 // -1 when cancelled). As ☀️'s Shop_PickUnitItem (games/tbs/src/shop/shop.c),
@@ -75,10 +76,11 @@ s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   listWindow = Window_CreateFar(0, 14, 13, 3, 2);
   shop->listWindow = listWindow;
   iconWindow = Window_CreateFar(30, 0, 1, 1, 2);
+  result = 0;
   icon = WindowSprite_CreateFar(shop->cursorIcon, 0x40000000,
-                                (struct RenderInput *)iconWindow, 0, 0);
+                                (struct RenderInput *)iconWindow, 0, result);
   icon->active = 4;
-  icon->kind = 0;
+  icon->kind = result;
   Func_08108aa8(&shop->cursor, -32, 112);
   shop->cursor.anchor = icon;
   shop->mode = 1;

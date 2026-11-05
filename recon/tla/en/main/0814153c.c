@@ -1,3 +1,4 @@
+// Draft, differ 284 of 2159 (tla-en, 2026-11-05); 192 with slots and pool offsets normalized, 60 with registers blind too. Fills and copies forwarded through inlines (S2 wrapper; tag and measure each on adoption).
 // Near miss, differ 673 of 2159 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 821 of 2159, skeleton gap 90 (tla-en, 2026-11-01)
@@ -213,6 +214,14 @@ void Heap_Release(void *buffer);
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->slot].offset)
 
+// Forwarded so that a constant size reaches the call's register at each call.
+static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
+  Iwram_FillWords(destination, size, value);
+}
+static __inline__ void CopyWords_(void *destination, const void *source, s32 size) {
+  Iwram_CopyWords(destination, source, size);
+}
+
 // Eclipse: the battlefield scrolls up into a night sky, thirty-two shards
 // of a black moon rise over the foes, its ring of light flares and
 // collapses, then the moon's beam strikes and a dark sphere bursts.
@@ -283,7 +292,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       Task_Add(Func_0813baec, 0x480);
       transition[4] = 1;
       cells = Resource_GetTableEntry((s32)&ResourceId_GoldenDragonTiles);
-      Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
+      CopyWords_((void *)OBJ_PLTT, cells, 480);
       cells += 480;
       Resource_DecodeType01(cells, gMapCellBuffer);
       tiles = gMapCellBuffer;
@@ -291,25 +300,25 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         obj = Func_0815b290(32, 32, 0x80002000, 0);
         obj->priority = 2;
         work->objects[i] = obj;
-        Iwram_CopyWords((void *)OBJ_TILES(obj), tiles, 0x400);
+        CopyWords_((void *)OBJ_TILES(obj), tiles, 0x400);
         tiles += 0x400;
       }
       cells = Resource_GetTableEntry((s32)&ResourceId_GoldenDragonHeadTiles);
-      Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
+      CopyWords_((void *)OBJ_PLTT, cells, 480);
       cells += 480;
       Resource_DecodeType01(cells, gMapCellBuffer);
       obj = Func_0815b290(32, 32, 0x80002000, 0);
       work->objects[31] = obj;
       obj->priority = 2;
-      Iwram_CopyWords((void *)OBJ_TILES(obj), gMapCellBuffer, 0x400);
+      CopyWords_((void *)OBJ_TILES(obj), gMapCellBuffer, 0x400);
     }
     scroll += 4;
     REG_BG2X = scroll << 8;
     work->transferPending = 1;
     wait(1);
   }
-  Iwram_FillWords(canvas, 0x3c00, 0);
-  Iwram_FillWords((void *)0x06004000, 0x3c00, 0);
+  FillWords_(canvas, 0x3c00, 0);
+  FillWords_((void *)0x06004000, 0x3c00, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   REG_DISPCNT = 0x7741;
   REG_BG2PA = 0x80;
@@ -320,12 +329,11 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   baseY = 0;
   velX = 0;
   velY = 0;
-  __asm__("" : "=r"(velY) : "0"(velY));
   work->transferMode = 2;
   work->transferValue = 50;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit[0] = Ram_HeapSlots->unk64[1];
-  Iwram_CopyWords((void *)BG_PLTT,
+  CopyWords_((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
   for (frame = 0; frame != 220 && !(gInput.repeat & 3); frame++) {
     if (frame == 0) {
@@ -362,7 +370,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     }
     for (i = 0; i != 17; i++) {
       if (frame == Data_0819774f[i]) {
-        Iwram_FillWords(canvas, 0x3c00, Data_08197760[i]);
+        FillWords_(canvas, 0x3c00, Data_08197760[i]);
       }
     }
     req = Data_08196de0;
@@ -486,7 +494,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         p->x += p->y;
         if ((u32)p->variant <= 47) {
           Render_ResetTransformState();
-          Func_08015160(cx + ((i & 3) << 17) + 0x20000 + origin, cy - (((i & 3) + 2) << 16) + origin, 0);
+          Func_08015160(((i & 3) << 17) + 0x20000 + cx + origin, cy - (((i & 3) + 2) << 16) + origin, 0);
           Func_080151e4(0x8000, 0x10000, 0x10000);
           Func_080150e4(p->x);
           Func_080151e4(Trig_Sin(p->variant * 682) + 0x4000, 0x20000, 0x10000);
@@ -582,17 +590,16 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   REG_DISPCNT = 1;
   gBgScroll[1].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
-  Iwram_FillWords(canvas, 0x4000, 0);
-  Iwram_FillWords((void *)0x06004000, 0x4000, 0);
+  FillWords_(canvas, 0x4000, 0);
+  FillWords_((void *)0x06004000, 0x4000, 0);
   wait(1);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;
-  __asm__("" : "=r"(REG_DISPCNT) : "0"(REG_DISPCNT));
   gCameraSceneParameters[4] = 120;
   work->transferMode = 3;
   work->transferValue = 0x02020202;
-  Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+  FillWords_(canvas, 0x4000, 0x3f3f3f3f);
   REG_BG2CNT = 0x784;
   effect->actors[effect->count] = 0xff;
   BattleActor_SpawnObjectsForListFar(effect->actors, 0);
@@ -622,7 +629,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     if (frame == 18) {
       work->shakeFrames = 90;
       Sound_PlayFar(145);
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      FillWords_(canvas, 0x4000, 0x3f3f3f3f);
       for (i = 0; i != effect->count; i++) {
         Func_0814cd48(effect->actors[i], 7, 5, i, 4);
       }
@@ -870,7 +877,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  Iwram_FillWords((void *)0x06004000, 0x3c00, 0x3f3f3f3f);
+  FillWords_((void *)0x06004000, 0x3c00, 0x3f3f3f3f);
   gBgScroll[1].x = savedScroll;
   transition[4] = 0;
   gCameraSceneParameters[4] = 120;
@@ -879,7 +886,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   work->transferMode = 3;
   work->transferValue = 0x02020202;
   Graphics_LoadGreyRamp();
-  Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+  FillWords_(canvas, 0x3c00, 0x3f3f3f3f);
   Func_081180e8(134);
   for (frame = 0; frame != 32; frame++) {
     work->transferPending = 1;

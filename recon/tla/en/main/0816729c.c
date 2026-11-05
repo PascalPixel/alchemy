@@ -529,11 +529,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
+      shade = 0;
       s = (frame << 13) - 0x11e000;
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = gData_02014000;
-      shade = 0;
       model->texture = &texture;
       model->kind = 7;
       model->mesh = gData_08199364;

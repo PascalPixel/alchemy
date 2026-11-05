@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 365 of 7666, slots normalized 243, high
-// registers blind too 243, every register blind 95. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 289 of 7666, slots normalized 173, high
+// registers blind too 173, every register blind 89. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -2033,6 +2033,7 @@ CLEAR(buffer, 0x1000);
       }
     } else if (kind == 71 || kind == 80 || kind == 82) {
       void *matrix;
+      struct Model *model;
       s32 fade;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
@@ -2055,7 +2056,7 @@ CLEAR(buffer, 0x1000);
       if (frame == 8)
         Sound_PlayFar(104);
       if (fade >= -63) {
-        angle = frame << 12;
+        fade = frame << 12;
         if (kind == 82) {
           SceneTransform_ApplyPitch(-0x800);
           SceneTransform_ApplyYaw(-frame << 11);
@@ -2064,7 +2065,7 @@ CLEAR(buffer, 0x1000);
           SceneTransform_ApplyPitch(-0x1000);
           SceneTransform_ApplyYaw(frame << 11);
         }
-        Func_0801521c(angle);
+        Func_0801521c(fade);
         Render_TransformVertices(gData_08199210, matrix, 4);
         Render_DrawModelList(model);
         if (kind != 82) {
@@ -2079,14 +2080,13 @@ CLEAR(buffer, 0x1000);
       if (kind == 82) {
           s32 m;
           s32 two;
-          s32 size;
         m = frame / 4;
         two = m * 2;
-        size = 0x10000;
+        fade = 0x10000;
         if (frame > 39)
-          size = 0x38000 - (frame << 12);
-        if (two > 1 && size > 0) {
-          Func_0815b434(work->frames, m * 4, size);
+          fade = 0x38000 - (frame << 12);
+        if (two > 1 && fade > 0) {
+          Func_0815b434(work->frames, m * 4, fade);
           HeapSlot_Release(188);
           Func_0818caa8(work->frames, target[0] / 2, target[1], m * 4);
           BattleEffect_LoadBlitter(188, 15);

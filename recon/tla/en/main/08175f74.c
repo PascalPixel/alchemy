@@ -445,7 +445,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   s32 halfCell;
   s32 twenty;
   s32 width;
-  s32 cellBytes;
 
   canvas = SYSTEM_WORK->canvas;
   work = SYSTEM_WORK->summon;
@@ -525,11 +524,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   }
   Resource_LoadAndDecompress((s32)&Value_00000134, glyphs, 0, 0);
   Resource_LoadAndDecompress((s32)&Value_00000134, work->buffer, 0, 0);
-  cell = 4;
-  cellBytes = cell * cell * 2;
   for (j = 0; j != 10; j++) {
-    
-    for (i = 0; i != cellBytes; i++) {
+    cell = 4;
+    for (i = 0; i != cell * cell * 2; i++) {
       s32 value = work->buffer[gData_08197410[cell - 1] + i];
 
       if (value != 0) {
@@ -994,9 +991,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         if (frame < 260) {
           u8 *low = (u8 *)0x02014000;
           u8 *high = (u8 *)0x02014001;
+          u8 *orderCopy = order;
 
           for (i = 0; i != 64; i++) {
-            s32 column = order[0x1000] * 2;
+            s32 column = (orderCopy = order)[0x1000] * 2;
             s32 row = i * 64;
             s32 pixel = row + column;
             u8 *lowByte = low + pixel;
@@ -1004,7 +1002,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             s32 texel = *lowByte | (*highByte << 8);
 
             *(u16 *)(OBJ_VRAM + (row + TILE_SLOTS[work->objects[13]->slot].offset) + column) = texel;
-            column = order[0x1001] * 2;
+            column = orderCopy[0x1001] * 2;
             pixel = row + column;
             lowByte = low + pixel;
             highByte = high + pixel;

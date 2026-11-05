@@ -1608,9 +1608,11 @@ dead = i / 3;
       for (i = 1; i != 8; i++) {
         u8 *src = work->sheet + 0x1810;
         u8 *out = work->sheet + 0x1810 + i * 0x800;
-        u8 v = white - i * 8;
+        u8 v;
 
-        for (j = 0; j != 0x800; j++) {
+        j = 0;
+        v = white - i * 8;
+        for (; j != 0x800; j++) {
           if (v < *src)
             *out = v;
           else

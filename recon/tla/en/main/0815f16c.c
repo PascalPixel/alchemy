@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 489 of 7666, slots normalized 321, high
-// registers blind too 319, every register blind 115. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 457 of 7666, slots normalized 311, high
+// registers blind too 311, every register blind 111. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -2381,12 +2381,14 @@ CLEAR(buffer, 0x1000);
         REG_BLDALPHA = (64 - frame) | 0x1000;
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
-        m = __modsi3(i, 3);
+        s32 three;
+        three = 3;
+        m = __modsi3(i, three);
         EffectPosition_ProjectPoint(p, point);
         point[0] = point[0] / 2;
         drawFuncs.draw[i & 1](screen, buffer + m * 0x240, point[0] - 12,
                               point[1] - 12, 24, 24);
-        BattleEffectKernels_IntegrateVector3(p, 60, 1 << ((i & 3) + 11));
+        BattleEffectKernels_IntegrateVector3(p, 60, 1 << ((i & three) + 11));
         p->life++;
       }
     } else if (kind == 76) {

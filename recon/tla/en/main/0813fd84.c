@@ -1,4 +1,4 @@
-// Draft, differ 83 of 2579 (tla-en, 2026-11-05), 2578 instructions here. The frame, every slot and every pool agree.
+// Draft, differ 79 of 2579 (tla-en, 2026-11-05), 2578 instructions here. The frame, every slot and every pool agree.
 // BattleEffect_RunCruelRuin. What this round settled, each read from the listing and each a real form:
 // - Loop givs: grey, blue and green are givs of frame (blue first, as the slots order them); grey reduces because
 //   the palette test and its colour spell frame - 80 again, and that second giv combines with the first.
@@ -1016,7 +1016,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     if (v > 63) {
       v = 63;
     }
-    c = work->sheet + i;
+    c = (u8 *)(i + (s32)work + 1792);
     for (j = 0; j != 120; j++) {
       *c = v;
       c += 120;

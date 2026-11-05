@@ -1,3 +1,7 @@
+// 2026-11-05: differ 130 of 471 (tla-en). spark is one local per block. The
+// frame count: the listing tests stagger against -54 (312 dies, combine folds it)
+// and hoists stagger + 54 from the bottom; here PRE shares it. Tried without
+// change: while, for (;;) with break, sinkFrame + 22.
 // Draft of BattleEffect_RunCool, effect kind 75 (Cool), The Broken Seal's
 // BattleEffect_RunUndeadSword as The Lost Age reworked it (structure twin
 // 0.772): the two columns became up to ten leaning ice columns, three
@@ -101,7 +105,6 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   s32 sinkFrame;
   DrawRectangle draw[2];
   struct EffectPosition ends[2];
-  struct EffectStep *spark;
   s32 frame;
   s32 i;
 
@@ -131,7 +134,8 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != stagger + 54; frame++) {
     // Frame 0: 16 sparks leave the ground in random directions.
     if (frame == 0) {
-      spark = work->particles;
+      struct EffectStep *spark = work->particles;
+
       for (i = 0; i != 16; i++, spark++) {
         s32 speed = (Random16() & 0x1ff) + 128;
         s32 angle = Random16() & 0xffff;
@@ -215,7 +219,8 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
     // Spark i rises from frame 8 + 2i through seven pictures, three frames
     // apiece; past the first 16 they wait until the columns sink.
     BattleEffect_FetchRectangleBlitters(effect->side, draw);
-    spark = work->particles;
+    {
+    struct EffectStep *spark = work->particles;
     for (i = 0; i != effect->variant * 4 + 8; i++, spark++) {
       if ((i <= 15 || frame >= sinkFrame) && frame >= i * 2 + 8 &&
           spark->variant <= 28) {
@@ -232,6 +237,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
         spark->variant++;
         BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);
       }
+    }
     }
     HeapSlot_Release(188);
     HeapSlot_Release(104);

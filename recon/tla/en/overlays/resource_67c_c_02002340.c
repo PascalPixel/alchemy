@@ -35,9 +35,10 @@ struct MapBits {
 
 #define BG1_SET_PRIORITY_1()                                                   \
   do {                                                                         \
-    u16 control[2];                                                            \
-    control[1] = REG_BG1CNT & 0xfffc;                                          \
-    REG_BG1CNT = control[1] | 1;                                               \
+    /* FAKEMATCH(dead): the value kept in memory by its taken address; as a plain \
+     * local, 59 of 931 instructions differ in tla-en. */                      \
+    *&control = REG_BG1CNT & 0xfffc;                                           \
+    REG_BG1CNT = *&control | 1;                                                \
   } while (0)
 
 void Func_02003278(void);
@@ -66,6 +67,7 @@ void Func_02003ee4();
 s32 Func_02002340(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
+  u16 control;
   s32 i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16,
       i17;
   struct Actor *object;
@@ -188,14 +190,13 @@ s32 Func_02002340(void) {
         Call1((void (*)())GameFlag_SetBit, 0x249);
       }
       i9 = 12;
-    clear_statues:
-      object = Actor_GetById(i9);
-      object->motionFlags = 0;
-      object->terrainHeight = 0;
-      object->y = 0;
-      i9++;
-      if (i9 <= 14)
-        goto clear_statues;
+      do {
+        object = Actor_GetById(i9);
+        object->motionFlags = 0;
+        object->terrainHeight = 0;
+        object->y = 0;
+        i9++;
+      } while (i9 <= 14);
       goto statues_cleared;
     }
   no_statues:
@@ -223,14 +224,13 @@ s32 Func_02002340(void) {
     }
     if (!GameFlag_Test(0x238)) {
       i11 = 13;
-    clear_boulders:
-      object = Actor_GetById(i11);
-      object->motionFlags = 0;
-      object->x = 0;
-      object->z = 0;
-      i11++;
-      if (i11 <= 15)
-        goto clear_boulders;
+      do {
+        object = Actor_GetById(i11);
+        object->motionFlags = 0;
+        object->x = 0;
+        object->z = 0;
+        i11++;
+      } while (i11 <= 15);
       goto done;
     } else {
       Call6((void (*)())Func_02003d24, 114, 39, 1, 2, 113, 39);

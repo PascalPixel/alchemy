@@ -1,7 +1,7 @@
-// Draft, differ 48 of 80: overlay 694's copy of the function drafted in
-// resource_662_c_020007dc.c (overlay 662's Func_020007dc, differ 48 there), whose
-// header says what it is, what still differs and what was tried.
-#include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
+// Ported from games/tla/src/scene/islet_cave/s0038.c.
+#include "types.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
 
@@ -13,6 +13,9 @@ extern u16 *gData_02006004;
 void Func_020041cc(s32 a, s32 b);
 void Func_02000328(void);
 
+/// Records the four palette lists, writes each listed palette entry from its
+/// red, green and blue, then copies two palettes from block32 and starts the
+/// blend.
 void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   u8 *saved = Ram_HeapSlots->block32;
 
@@ -24,18 +27,25 @@ void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   next:
     {
       int red = *colours++;
-      int green = *colours++;
       int index = *slots++;
+      int green = *colours++;
       int blue = *colours++;
-      int value = (blue << 10) | (green << 5) | red;
+      int value;
 
-      ((u16 *)0x05000000)[index] = value;
+      /* FAKEMATCH(one-pass): the colour's build and store in a once-only
+       * block, so both lists are stepped right after their loads and the
+       * next entry's marker loads before 0xffff is built; as plain
+       * statements, 22 of 80 instructions differ in tla-en. */
+      do {
+        value = (blue << 10) | (green << 5) | red;
+        ((u16 *)BG_PLTT)[index] = value;
+      } while (0);
     }
     if (*slots != 0xffff && *colours != 0xffff)
       goto next;
   }
-  Dma_Set((const void *)0x05000000, saved, 0x84000070, REG_DMA3);
-  Dma_Set((const void *)0x05000200, saved + 448, 0x84000070, REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
   Func_020041cc(0x10000, 0);
   if ((s8)gMainRoutineWork.unk2c2 == 2)
     Func_02000328();

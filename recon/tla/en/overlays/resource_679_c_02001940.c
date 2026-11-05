@@ -1,13 +1,4 @@
-// Draft of Func_02001940 (overlay 679, 185 instructions), differ 90: the ground
-// particles' update, ported from ☀️'s FieldEffect_UpdateGroundParticles (⚓️ has 64
-// particles in heap slot 29, a leader pointer at 0x808 that may be NULL, and
-// new positions leader + Random16Far() * 240 - 0x780000 and * 160 - 0x500000,
-// with the terrain height unshifted). As ☀️'s for loop, loop.c adds a count-down
-// register (differ 105); as this goto loop the counter stays in r10 as the
-// native's. Left, mostly allocation: the frame pointer takes r6 and the screen
-// y r4, where the native has r4 and r6 (y then shares r6 with the leader); the
-// bitfield stores interleave differently. Measured: the declaration order of
-// frame, x and y (no change); new variables for the new position (91, 161).
+// Ported from games/tla/src/scene/aqua_rock/s25d4.c.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -53,20 +44,18 @@ void Func_02001940(void) {
   struct MapWork *view = Ram_HeapSlots->mapWork;
   struct GroundParticleWork *work = Ram_HeapSlots->unk70[1];
   s32 *camera = &view->viewX;
+  struct GroundParticle *particle = work->particles;
   s32 cameraX = camera[0];
   s32 cameraZ = camera[1];
-  struct GroundParticle *particle = work->particles;
   u32 i;
 
-  i = 0;
-loop:
-  {
+  for (i = 0; i < 64; i++, particle++) {
     s16 *frame;
     s32 x;
     s32 y;
 
     if (--particle->timer == 0xffff)
-      goto next;
+      continue;
     if (GameFlag_Test(0x166))
       particle->timer++;
     frame = &gData_02001f18[5 * particle->timer];
@@ -91,17 +80,13 @@ loop:
         particle->posX = x;
         particle->posZ = y;
         particle->posY = Map_GetTerrainHeight(0, x, y);
+        particle->timer = 16;
       } else {
         particle->posX = 0;
         particle->posZ = 0;
         particle->posY = 0;
+        particle->timer = 16;
       }
-      particle->timer = 16;
     }
   }
-next:
-  i++;
-  particle++;
-  if (i < 64)
-    goto loop;
 }

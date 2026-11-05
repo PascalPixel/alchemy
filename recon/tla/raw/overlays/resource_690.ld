@@ -36,7 +36,7 @@ SECTIONS
         "*/games/tla/src/scene/settlements/s156c.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/resource_690_overlay.o"(.text.x0200961e)
-        "*/resource_690_overlay.o"(.text.x02009620)
+        "*/games/tla/src/scene/settlements/s1620.o"(.text)
         "*/games/tla/src/scene/settlements/s16a4.o"(.text)
         "*/games/tla/src/scene/settlements/s16b0.o"(.text)
         "*/games/tla/src/scene/settlements/s173c.o"(.text)

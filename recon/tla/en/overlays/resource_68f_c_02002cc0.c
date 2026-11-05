@@ -1,53 +1,57 @@
-// Draft, differ 44 of 57 (register choice): the native keeps the timer in r3
-// and the offsets and the mask 7 in r2, this draft the other way round. The
-// goto loop keeps the offsets and the counter in r8 as the native has them (a
-// do-while hoists them, differ 60). The same update is overlay 6A8's
-// Func_02004114. Permute 1 minute: differ 36 only through an inline helper.
-// Measured against its copies: overlay 691's Func_0200379c (differ 44 of 57).
-#include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
+// Ported from games/tla/src/scene/magma_rock/s379c.c.
+#include "types.h"
+#include "system/ram_buffer.h"
 
-struct Spark {
-  s32 position[3];
-  s32 velocity[3];
-  s32 timer;
+struct Particle {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  s32 age;
 };
 
-struct SparkSprite {
-  u8 unk00[8];
-  u16 tile : 10;
-  u16 unk08_10 : 2;
-  u16 unk08_12 : 4;
-  u8 unk0a[0x1e];
+struct ParticleSprite {
+  u8 unk0[8];
+  u16 attr;
+  u8 unkA[30];
 };
 
-struct SparkWork {
-  u8 unk0000[0x500];
-  struct Spark sparks[64];
-  struct SparkSprite sprites[64];
+struct ParticleWork {
+  u8 tiles[0x500];
+  struct Particle particles[64];
+  struct ParticleSprite sprites[64];
   s16 next;
-  u16 tileBase;
-  s16 resource;
+  u16 tile;
 };
 
-void Func_02003198(struct SparkSprite *sprite, struct Spark *spark);
-void Func_020031a0(struct Spark *spark, s32 a, s32 b);
+void Func_02003198(struct ParticleSprite *sprite, struct Particle *particle);
+void Func_020031a0(struct Particle *particle, s32 unk1, s32 step);
 
 void Func_02002cc0(void) {
-  struct SparkWork *work = Ram_HeapSlots->menuRuntime;
-  struct Spark *spark = work->sparks;
-  struct SparkSprite *sprite = work->sprites;
-  s32 i = 63;
+  struct ParticleWork *work = Ram_HeapSlots->menuRuntime;
+  struct Particle *particle = work->particles;
+  struct ParticleSprite *sprite = work->sprites;
+  s32 i;
+  s32 step = -0x8000;
 
-loop:
-  if ((u32)spark->timer < 20) {
-    sprite->tile = work->tileBase + ((spark->timer >> 2) & 7) * 8;
-    Func_02003198(sprite, spark);
-    Func_020031a0(spark, 63, -0x8000);
-    spark->timer++;
+  i = 63;
+next:
+  if ((u32)particle->age <= 19) {
+    u16 *base = &work->tile;
+    s32 mask = 7;
+    s32 tile = (u16)((*base + ((particle->age >> 2) & mask) * 8) & 0x3ff);
+    s32 attr = sprite->attr;
+
+    sprite->attr = (attr & ~0x3ff) | tile;
+    Func_02003198(sprite, particle);
+    Func_020031a0(particle, 63, step);
+    particle->age++;
   }
   i--;
   sprite++;
-  spark++;
+  particle++;
   if (i >= 0)
-    goto loop;
+    goto next;
 }

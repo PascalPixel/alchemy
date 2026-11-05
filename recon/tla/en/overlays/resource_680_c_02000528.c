@@ -9,6 +9,7 @@
 // holds no r11. The priority byte's zero comes from the pool with a plain byte
 // store.
 #include "types.h"
+#include "call.h"
 
 struct OrbitEffect {
   u8 unk00[6];
@@ -52,7 +53,7 @@ loop:
     position[2] = source->z;
     radius = Random16Far();
     Vector_AddPolarOffsetFar(radius * 5 + 0x30000, Random16Far(), position);
-    effect = Actor_Spawn(308, position[0], position[1], position[2]);
+    effect = (struct OrbitEffect *)Value4((s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
     if (effect != NULL) {
       effect->update = Func_02000474;
       effect->timer = timer;
@@ -64,8 +65,8 @@ loop:
       Func_02000e5c(effect, 2);
     }
   }
-  i++;
   timer -= 2;
+  i++;
   if (i < 16)
     goto loop;
   return 0;

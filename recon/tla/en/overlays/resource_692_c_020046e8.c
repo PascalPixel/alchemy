@@ -11,6 +11,7 @@
 extern const s32 gData_02005638[];
 
 struct Actor *Actor_GetById(s32 id);
+struct FieldActor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 u32 Func_02004e98(struct FieldSprite *sprite, u32 frame);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
@@ -27,9 +28,14 @@ void Func_020046e8(s32 spread) {
   u32 i = 0;
 
   do {
-    effect = (struct FieldEffect *)Import_ActorCreate(
-        285, leader->x + (i << 17) - 0x80000,
-        leader->y - (((Random16Far() * 14) >> 16) << 16) - 0x20000, leader->z);
+    {
+      /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
+       * one expression, 14 of 122 instructions differ in tla-en. */
+      s32 y = leader->y - (((Random16Far() * 14) >> 16) << 16);
+
+      effect = (struct FieldEffect *)Import_ActorCreate(
+          285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
+    }
     if (effect != 0) {
       frame = Func_02004e98(effect->sprite, frame);
       effect->motionFlags = 0;
@@ -37,7 +43,7 @@ void Func_020046e8(s32 spread) {
       Actor_SetSingleChildFlags(effect, 0);
       Func_02004c98(effect, 2);
       Func_02004ca0(effect, gData_02005638);
-      effect->scaleX = effect->scaleY = 0xb333;
+      effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
         effect->velocity.x = Iwram_MulQ16(Math_Cosine(i << 13), 0x13333);

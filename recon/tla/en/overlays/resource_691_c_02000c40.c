@@ -27,8 +27,8 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
 void Func_02000dc0(void);
 
 void Func_02000c40(struct Actor *object) {
-  s16 *timer = &object->action;
   struct Actor *linked = object->watchedObject;
+  s16 *timer = &object->action;
 
   if (*timer < 50) {
     u32 phase = gFrameCount & 3;

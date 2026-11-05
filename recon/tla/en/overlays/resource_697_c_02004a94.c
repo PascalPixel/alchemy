@@ -42,9 +42,14 @@ void Func_02004a94(s32 spread) {
   u32 i = 0;
 
   do {
-    effect = (struct FieldEffect *)Func_020057d8(
-        285, (i << 17) + leader->x - 0x80000,
-        leader->y - (((Random16Far() * 14) >> 16) << 16) - 0x20000, leader->z);
+    {
+      /* FAKEMATCH(temporary): y held in a local, so x is computed before it; as
+       * one expression, 14 of 122 instructions differ in tla-en. */
+      s32 y = leader->y - (((Random16Far() * 14) >> 16) << 16);
+
+      effect = (struct FieldEffect *)Func_020057d8(
+          285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
+    }
     if (effect != 0) {
       frame = Func_020059f0(effect->sprite, frame);
       effect->motionFlags = 0;

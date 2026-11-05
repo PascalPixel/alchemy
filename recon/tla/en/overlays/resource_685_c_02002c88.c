@@ -55,6 +55,12 @@ void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height,
 
 extern char ResourceId_GlowDisc;
 
+static __inline__ void Place(struct ChampaCliffCavesSprite *a, s32 b, s32 c, u32 d, s32 e) {
+  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78 instructions
+   * differ in tla-en. */
+  Func_020035fc(a, b, c, d, e);
+}
+
 void Func_02002c88(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuRuntime;
   struct ChampaCliffCavesSprite *sprite;
@@ -64,8 +70,8 @@ void Func_02002c88(void) {
   s32 vram;
 
   Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_GlowDisc), work);
-  tile = work->tiles;
   i = 0;
+  tile = work->tiles;
 next:
   if ((*tile & 0xf0) == 0xf0)
     *tile = (*tile & 0xf) + 0x60;
@@ -78,7 +84,7 @@ next:
   work->entryA = entry;
   work->vramA = vram;
   sprite = &work->spriteA;
-  Func_020035fc(sprite, 31, 31, 0xc0000000, vram);
+  Place(sprite, 31, 31, 0xc0000000, vram);
   sprite->fullColor = 1;
   sprite->palette = 0;
   sprite->priority = 2;

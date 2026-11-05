@@ -4,11 +4,11 @@ SECTIONS
     {
         "*/games/tla/src/scene/izumo_ruins/entry.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s0038.o"(.text)
-        "*/resource_67f_overlay.o"(.text.x020080a4)
+        "*/games/tla/src/scene/izumo_ruins/s00a4.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s0128.o"(.text)
         "*/resource_67f_overlay.o"(.text.x020081d0)
         "*/games/tla/src/scene/izumo_ruins/s02f8.o"(.text)
-        "*/resource_67f_overlay.o"(.text.x0200848c)
+        "*/games/tla/src/scene/izumo_ruins/s048c.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s056c.o"(.text)
         "*/resource_67f_overlay.o"(.text.x02008584)
         "*/games/tla/src/scene/izumo_ruins/s06ec.o"(.text)

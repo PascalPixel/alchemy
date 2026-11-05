@@ -79,7 +79,6 @@ void Func_02001944(void) {
   struct Actor *actor =
       (struct Actor *)Value1(Actor_GetById, 8);
   struct Actor *leader;
-  s16 *count;
   Call1(Func_02002520, MsgHereLetMe);
   Call2(Func_02002538, 8, 0);
   Call1(Actor_Stop, 9);
@@ -119,7 +118,6 @@ void Func_02001944(void) {
   Call2(Motion_SetModeAndWaitAnimation, 5, 3);
   Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
   Call2(Actor_SetModeById, 5, 2);
-  count = &actor->action;
   leader =
       (struct Actor *)Value1(Actor_GetById, gMainRoutineWork.currentOwner);
   if (leader != 0)
@@ -150,9 +148,13 @@ void Func_02001944(void) {
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait1:
-  Call1(wait, 1);
-  if (*count != 34)
-    goto wait1;
+  {
+    s16 *count = &actor->action;
+
+    Call1(wait, 1);
+    if (*count != 34)
+      goto wait1;
+  }
   actor->unk66 = 2;
   Call1(wait, 1);
   Call2(Func_02002538, 8, 0);

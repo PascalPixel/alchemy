@@ -54,7 +54,7 @@ next:
   cells = map->layers[object->terrainId].cells;
   shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
   if (GameFlag_Test(nextFlag)) {
-    Func_020058e0(table[0], 0, 0);
+    Func_020058e0(id, 0, 0);
   } else {
     s32 shape;
     u8 *slot;

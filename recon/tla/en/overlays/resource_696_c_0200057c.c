@@ -55,6 +55,7 @@
 // resource_directory.s on adoption: the ids load from the pool, as symbols.
 // The stage loop's i - (i / 4) * 4 is the native's form; i % 4 emits a mask.
 #include "types.h"
+#include "call.h"
 #include "scene_tables.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -130,11 +131,11 @@ void Func_0200057c(void) {
   Heap_Release(buffer);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_SetSpritePriority(14, 1);
-  {
+  do {
     s32 control = 0x40d;
 
     REG_BG0CNT = control;
-  }
+  } while (0);
   REG_BG0CNT &= ~3;
   REG_BG0CNT |= 1;
   Dma_Fill16(16, (void *)0x06002000, 0x500);
@@ -183,17 +184,17 @@ row:
     }
     FieldEvent_Wait(1);
   }
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Call2(Camera_FollowActor, gMainRoutineWork.currentOwner, 1);
   Func_020049f4();
-  Func_020049e4(0x10000, 0x2000);
-  Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(424), 1);
+  Call2(Func_020049e4, 0x10000, 0x2000);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(168), -1, PIXELS(424), 1);
   Func_020049f4();
   Task_Add(Func_02000378, 0xc80);
   Import_SoundPlay(207);
   REG_BLDALPHA = 0xf00;
   REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= DISPCNT_BG0_ON;
-  Func_02004864(0x10000, 0x10000, 0x10000);
+  Call3(Func_02004864, 0x10000, 0x10000, 0x10000);
   i = 0;
 rise:
   REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
@@ -203,7 +204,7 @@ rise:
   if (i != 64)
     goto rise;
   FieldEvent_Wait(60);
-  Func_02004864(0x30000, 0x30000, 0x10000);
+  Call3(Func_02004864, 0x30000, 0x30000, 0x10000);
   REG_BLDALPHA = 0x1000;
   REG_BLDCNT = 0x3f42;
   Func_02004844(2, 83, 36, 64, 16, 16);
@@ -234,8 +235,7 @@ swirl:
   REG_BLDCNT = 0xa44;
   i = 0;
 stage:
-  Func_02004844((i - (i / 4) * 4) * 14 + 45, (i / 4) * 12 + 90, 4, 19, 13,
-                11);
+  Call6(Func_02004844, (i - (i / 4) * 4) * 14 + 45, (i / 4) * 12 + 90, 4, 19, 13, 11);
   j = 0;
 frame:
   if ((j & 3) == 0) {
@@ -294,24 +294,32 @@ clear:
   Func_02004844(36, 64, 2, 83, 16, 16);
   REG_BLDCNT = 0x3f41;
   REG_BLDALPHA = 15;
-  Func_02004864(-1, -1, 0xe666);
+  Call3(Func_02004864, -1, -1, 0xe666);
   Import_SoundPlay(390);
   OBJ14_BYTE(98) = 6;
   i = 0;
 fade:
-  REG_BLDALPHA = ((i >> 2) << 8) | (16 - (i >> 2));
+  {
+    u32 q = i >> 2;
+
+    REG_BLDALPHA = (q << 8) | (16 - q);
+  }
   i++;
   FieldEvent_Wait(1);
   if (i != 65)
     goto fade;
   Task_RemoveFar(Func_02000378);
-  OBJ14_BYTE(99) = 0;
+  {
+    s32 zero = 0;
+
+  OBJ14_BYTE(99) = zero;
   wait(30);
-  Actor_GetById(14)->update = 0;
+  Actor_GetById(14)->update = (void *)zero;
   Actor_SetPartAttribute(Actor_GetById(14), 6);
   Func_0200486c();
   FieldEvent_Wait(60);
-  REG_BLDCNT = 0;
+  REG_BLDCNT = zero;
+  }
   Func_020047d4();
   Func_020047bc();
   Func_0200488c(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
@@ -321,7 +329,7 @@ fade:
   REG_DISPCNT |= DISPCNT_BG2_ON;
   Func_0200482c();
   wait(1);
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
+  Call2(Camera_FollowActor, gMainRoutineWork.currentOwner, 1);
   Func_020049f4();
   {
     s32 width = 6;

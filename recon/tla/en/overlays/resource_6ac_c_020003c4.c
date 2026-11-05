@@ -1,14 +1,9 @@
-// Draft, differ 97 of 179 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// over byte offsets (the native reloads both tables' addresses on every pass).
-// Room M's palette cycle, scheduled by Func_02000e84: while no event runs, it
-// saves palette rows 2 and 8 the first time, then every 8 calls rotates four
-// six-colour runs by one, restores the runs of the cells whose flags 0xa32 to
-// 0xa35 are clear, and queues the row for DMA. Left, as in Treasure Isle's
-// Func_02000ba0: the native reloads IwramCopyWords' address for each call and
-// keeps the event work's byte (0 here, stored as the reset counter) in r5 and
-// the counter's address in r7; here IwramCopyWords stays in r5 and every
-// callee-saved register shifts (a forwarding inline for the copies changes
-// nothing).
+// Draft, differ 124 (tla-en, 2026-11-05). Func_020003c4 of overlay 6ac.
+// Plain loops under -Os. Natively busy is r5, base r8, i r4 saved around
+// __modsi3 in a slot, at r7 stepping 2 from 8 with r2 chained +12, +20, +12,
+// and the table's address reloaded per pass, and a table pointer set in the
+// loop stays live to the end. Left: that giv shape; here it uses a shift and
+// displacements.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -34,7 +29,8 @@ void Func_020003c4(void) {
   s32 busy;
   s32 base;
   s32 i;
-  s32 at;
+  s32 k;
+  u16 *dst;
 
   if (work->unk166 != 0)
     return;
@@ -48,41 +44,23 @@ void Func_020003c4(void) {
     gData_02003704 = busy;
   }
   base = gData_02003704 / 8 % 6;
-  /* FAKEMATCH(barrier): the empty asm on base changes its allocation rank; as no
-   * asm, 110 of 179 instructions differ in tla-en. */
-  asm("" : "=r"(base) : "0"(base));
-  at = 8;
-  /* FAKEMATCH(barrier): the empty asm on at changes its allocation rank; as no
-   * asm, 107 of 179 instructions differ in tla-en. */
-  asm("" : "=r"(at) : "0"(at));
-  i = 0;
-next:
-  {
-    s32 j = (base + i) % 6 * 2;
-    /* FAKEMATCH(barrier): the empty asm on j changes its allocation rank; as no
-     * asm, 101 of 179 instructions differ in tla-en. */
-    asm("" : : "r"(j));
+  for (k = 4, i = 0; i <= 5; i++, k++) {
+    s32 j = (base + i) % 6;
 
-    *(u16 *)((u8 *)Data_02003a1c + at) = *(u16 *)((u8 *)Data_020039dc + j + 8);
-    *(u16 *)((u8 *)Data_02003a1c + at + 12) =
-        *(u16 *)((u8 *)Data_020039dc + j + 20);
-    *(u16 *)((u8 *)Data_02003a1c + at + 32) =
-        *(u16 *)((u8 *)Data_020039dc + j + 40);
-    *(u16 *)((u8 *)Data_02003a1c + at + 44) =
-        *(u16 *)((u8 *)Data_020039dc + j + 52);
+    dst = Data_02003a1c;
+    dst[k] = Data_020039dc[j + 4];
+    dst[k + 6] = Data_020039dc[j + 10];
+    dst[k + 16] = Data_020039dc[j + 20];
+    dst[k + 22] = Data_020039dc[j + 26];
   }
-  i++;
-  at += 2;
-  if (i <= 5)
-    goto next;
   if (!Flag_IsSet(0xa32))
-    Iwram_CopyWords(&Data_02003a1c[10], Data_0200ba70, 12);
+    Iwram_CopyWords(&dst[10], Data_0200ba70, 12);
   if (!Flag_IsSet(0xa33))
-    Iwram_CopyWords(&Data_02003a1c[20], Data_0200ba70, 12);
+    Iwram_CopyWords(&dst[20], Data_0200ba70, 12);
   if (!Flag_IsSet(0xa34))
-    Iwram_CopyWords(&Data_02003a1c[26], Data_0200ba70, 12);
+    Iwram_CopyWords(&dst[26], Data_0200ba70, 12);
   if (!Flag_IsSet(0xa35))
-    Iwram_CopyWords(&Data_02003a1c[4], Data_0200ba70, 12);
-  IO_WRITE_QUEUE_PUSH(0x05000100, (u32)Data_02003a1c, 0x84000010);
+    Iwram_CopyWords(&dst[4], Data_0200ba70, 12);
+  IO_WRITE_QUEUE_PUSH(0x05000100, (u32)dst, 0x84000010);
   gData_02003704++;
 }

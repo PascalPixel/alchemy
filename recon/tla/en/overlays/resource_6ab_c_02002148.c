@@ -1,26 +1,10 @@
-// Draft, differ 112 of 236 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Control flow, types and every load agree with the listing; 242 instructions
-// against 236, frame 24 against 16. Left, one cause: gcse's PRE (.07.gcse,
-// "PRE/HOIST: edge (1,2)") moves &actor->terrainId, work + 104, work + 106 and
-// &position from the loop onto its entry edge. The bytes build all four inside
-// the loop, after the terrain call. The four new pseudos are live across the
-// loop: &position takes r8 (the listing's scan counter), &actor->terrainId
-// spills to sp + 4, and the counter falls to r4 with a caller save at sp + 0
-// (11 weighted refs beat 4 * 1 call). Every other register difference follows.
-// Nothing in plain C kills these expressions: actor and work are set once and
-// the frame address never changes, and the sibling drafts 64b_020006d0,
-// 652_02000878 and 661_02003b80 reach the same end. Spelling the fields through
-// pointers or a pos local, separate clamp locals, a for (;;) head and hoisting
-// the pointers by hand change nothing or lose. A real for or do-while for the
-// steps loses (153): loop.c moves the velocity-clearing block out; a for for
-// the scan loses too (153). Sharing i between the two loops loses (158).
-// Call3 stays: a direct Func_0200436c gives 148 or 157.
-// Func_02001fcc's -10 stays negated before its 0, listing the other way round;
-// a prototype or a one-constant local does not move it.
-// `goto done` has to be the test: `if (i < 10) goto step` threads into a far
-// branch and costs one b.n.
-// The renderMode test reaches the last store with `work` never set, in JA too:
-// the skip path reads an unset local.
+// Draft, differ 116 (tla-en, 2026-11-05). Func_02002148 of overlay 6ab.
+// Plain loops and block-scoped counters under -Os; the barrier and one-pass
+// are gone. A rise from 112: the step counter and the pointers set per pass
+// now sit as natively. Left: the frame address of position takes r8 here and
+// the scan counter spills to r10 and a slot, where natively that pseudo gets
+// no register and is rebuilt per use (add r1, sp, 4); the frame is 20 against
+// 16.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -61,101 +45,78 @@ void Func_02002148(void) {
     ((s32 (*)())Func_02001fcc)(-10, 0);
     actor = Actor_GetById(main->currentOwner);
     work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
-    /* FAKEMATCH(barrier): the empty asm on work changes its allocation rank; as no
-     * asm, 116 of 236 instructions differ in tla-en. */
-    asm("" : "=r"(work) : "0"(work));
     Func_020042dc();
     Func_0200444c(0);
     actor->update = Func_02002120;
     actor->angle = 0x4000;
     Func_020041cc(actor, 49);
-  loop:
-    {
-      s32 result;
-
-      result = Func_0200422c(actor->terrainId, actor->x, actor->z);
-
-      if (result == 7) {
+    for (;;) {
+      if (Func_0200422c(actor->terrainId, actor->x, actor->z) == 7) {
         s32 i;
 
-        /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-         * order around it; as the plain statement, 114 of 236 instructions differ
-         * in tla-en. */
-        do {
-          actor->velocityX = work->unk68 << 17;
-        } while (0);
+        actor->velocityX = work->unk68 << 17;
         actor->velocityZ = work->unk6a << 17;
         actor->acceleration = 0x1000;
-        i = 0;
-      step:
-        position.x = actor->x + (work->unk68 << 19);
-        position.y = actor->y;
-        position.z = actor->z + (work->unk6a << 19);
-        if (Func_0200424c(actor) != 0) {
-          actor->velocityX = 0;
-          actor->velocityZ = 0;
-          goto done;
+        for (i = 0; i <= 9; i++) {
+          position.x = actor->x + (work->unk68 << 19);
+          position.y = actor->y;
+          position.z = actor->z + (work->unk6a << 19);
+          if (Func_0200424c(actor) != 0) {
+            actor->velocityX = 0;
+            actor->velocityZ = 0;
+            break;
+          }
+          wait(1);
         }
-        wait(1);
-        i++;
-        if (i >= 10)
-          goto done;
-        goto step;
+        break;
       } else {
-        s32 result2;
+        s32 result;
+        s32 radius;
+        struct Actor *other;
+        u8 *flags;
+        s32 x, z, off;
+        s32 i;
 
         position.x = actor->x + (work->unk68 << 19);
         position.y = actor->y;
         position.z = actor->z + (work->unk6a << 19);
-        result2 = Func_0200424c(actor);
-        if (result2 > 0)
-          goto done;
-        if (result2 < 0) {
+        result = Func_0200424c(actor);
+        if (result > 0)
+          break;
+        if (result < 0) {
           actor->angle = 0x4000;
           Call3((void (*)())Func_0200436c, gMainRoutineWork.currentOwner, 6,
                 -1);
-          goto done;
+          break;
         }
-        {
-          s32 radius = actor->radius - 2;
-          struct Actor *other = Ram_HeapSlots->scriptObjects;
-          s32 i;
-          s32 x, z, off;
-
-          u8 *flags = &other->collisionFlags;
-
-          i = 0;
-        scan:
+        radius = actor->radius - 2;
+        other = Ram_HeapSlots->scriptObjects;
+        flags = &other->collisionFlags;
+        for (i = 0; i <= 63; i++, flags += 128, other++) {
           if (other->script != 0 && (*flags & 1) && other != actor &&
               Func_0200428c(&other->x, radius, &position, other->radius - 2) >=
                   0) {
             wait(1);
             goto done;
           }
-          i++;
-          flags += 128;
-          other++;
-          if (i < 64)
-            goto scan;
-          x = actor->x += work->unk68 << 17;
-          z = actor->z + (work->unk6a << 17);
-          actor->z = z;
-          off = (x & 0xfffff) + 0xfff80000;
-          if (off > 0x10000)
-            off = 0x10000;
-          if (off < (s32)0xffff0000)
-            off = 0xffff0000;
-          actor->x = x - off;
-          off = (z & 0xfffff) + 0xfff80000;
-          if (off > 0x10000)
-            off = 0x10000;
-          if (off < (s32)0xffff0000)
-            off = 0xffff0000;
-          actor->z = z - off;
-          work->unk04 = 0;
-          wait(1);
-          goto loop;
         }
+        x = actor->x += work->unk68 << 17;
+        z = actor->z + (work->unk6a << 17);
+        actor->z = z;
+        off = (x & 0xfffff) + 0xfff80000;
+        if (off > 0x10000)
+          off = 0x10000;
+        if (off < (s32)0xffff0000)
+          off = 0xffff0000;
+        actor->x = x - off;
+        off = (z & 0xfffff) + 0xfff80000;
+        if (off > 0x10000)
+          off = 0x10000;
+        if (off < (s32)0xffff0000)
+          off = 0xffff0000;
+        actor->z = z - off;
+        work->unk04 = 0;
+        wait(1);
       }
     }
   done:

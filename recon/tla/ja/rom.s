@@ -1658,17 +1658,7 @@ DisplayScroll_DrawMessageLine:
 	.thumb_func
 Func_081a150c:
 	.incbin "baserom.gba", 0x001a14f8, 0x000000d0
-	.section .rom.001a6638, "ax"
-	.global Func_081a6638
-	.type Func_081a6638, %function
-	.thumb_func
-Func_081a6638:
-	.incbin "baserom.gba", 0x001a6638, 0x000000ec
-	.global Func_081a6724
-	.type Func_081a6724, %function
-	.thumb_func
-Func_081a6724:
-	.incbin "baserom.gba", 0x001a6724, 0x00000190
+	.section .rom.001a68b4, "ax"
 	.global Func_081a68b4
 	.type Func_081a68b4, %function
 	.thumb_func

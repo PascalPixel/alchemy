@@ -3875,13 +3875,13 @@ main	rom_main_10	games/tla/src/graphics/credits/font	.rodata
 main	rom_main_11	games/tla/src/gamepak/far_call/resource_b	.text
 main	rom_main_11	games/tla/src/menu/title_intro/title_wait	.text
 main	rom_main_11	games/tla/src/menu/title_intro/f1a6154	.text	en de es fr it ja
-main	rom_main_11	recon/tla/ja/rom	.rom.001a6638	ja
-main	rom_main_11	recon/tla/it/rom	.rom.001a6638	it
-main	rom_main_11	recon/tla/fr/rom	.rom.001a6638	fr
-main	rom_main_11	recon/tla/es/rom	.rom.001a6638	es
-main	rom_main_11	recon/tla/de/rom	.rom.001a6638	de
-main	rom_main_11	recon/tla/raw/081a6638	.text	en
-main	rom_main_11	recon/tla/raw/081a6724	.text	en
+main	rom_main_11	games/tla/src/menu/title_intro/f1a6638	.text	en de es fr it ja
+main	rom_main_11	games/tla/src/menu/title_intro/f1a6724	.text	en de es fr it ja
+main	rom_main_11	recon/tla/ja/rom	.rom.001a68b4	ja
+main	rom_main_11	recon/tla/it/rom	.rom.001a68b4	it
+main	rom_main_11	recon/tla/fr/rom	.rom.001a68b4	fr
+main	rom_main_11	recon/tla/es/rom	.rom.001a68b4	es
+main	rom_main_11	recon/tla/de/rom	.rom.001a68b4	de
 main	rom_main_11	recon/tla/raw/081a68b4	.text	en
 main	rom_main_11	games/tla/src/menu/title_intro/title_logo_piece	.text
 main	rom_main_11	recon/tla/raw/081a6b50	.text	en

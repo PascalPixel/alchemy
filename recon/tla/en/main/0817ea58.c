@@ -287,7 +287,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       u16 *col;
       s32 n;
       s32 w;
+      s32 off;
       u8 *mp;
+      s32 k;
       s32 r, g, b;
       s32 v;
       const u8 *src;
@@ -328,12 +330,13 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Task_Add(Func_0813baec, 0x480);
       ctl[4] = 1;
       Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->frames, 0, 0);
+      off = 0x700;
       n = 3;
       w = 32;
-      for (j = 0; j != 10; j++) {
-        mp = map + j * 32;
+      for (j = 0, k = 0; j != 10; j++, k += 16) {
+        mp = map + k * 2;
         for (i = 0; i != w; i++) {
-          v = work->frames[gData_08197410[n] + i];
+          v = ((u8 *)work)[gData_08197410[n] + i + off];
           if (v != 0) {
             v = v - j * 4 - 40;
             if (v <= 0)

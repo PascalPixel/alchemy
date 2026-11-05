@@ -1,3 +1,4 @@
+// 2026-11-05: differ 81 of 543 (tla-en). A wrapper gains 4. Left as below.
 // Draft, differ 87 of 543, skeleton gap 17 (tla-en, 2026-11-01)
 // BattleEffect_RunFirePuppet. Everything but two spots follows the listing, and
 // allocation matches through the arm: one counter i serves the strike loop and
@@ -142,6 +143,12 @@ extern const u8 Data_081991e0[];  // its corners
 #define FIRE_PUPPET_FRAMES 103
 #define PUPPET_SEGMENTS 33
 
+static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 85 of 543 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
 // Abilities: Fire Puppet.
 //
 // From the caster rises a flaming arm (33 segments of two vertices each, a
@@ -192,7 +199,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F2, work->sheet + 0x4000, 0,
                              0);
-  Iwram_CopyWords((void *)BG_PLTT,
+  CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet),
                   128);
   REG_BG2PA = 0x80;

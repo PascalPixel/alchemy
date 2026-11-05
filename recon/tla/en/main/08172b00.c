@@ -1,3 +1,5 @@
+// 2026-11-05: differ 51 of 1216 (tla-en). A wrapper and a statement move gain
+// 16. Left as below.
 // Draft, differ 75 of 1216, skeleton gap 29 (tla-en, 2026-11-01)
 // The frame (144) and every stack slot now agree. What fixed them: blit is an
 // 8-byte struct, a DImode pseudo whose spill slot leaves the unused word at sp
@@ -144,6 +146,12 @@ struct ModelVertex {
   s8 unk03;
 };
 
+static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 67 of 1216 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
 void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
   void *canvas;
   struct BattleEffectWork *work;
@@ -207,7 +215,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
                                1);
     Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
                                work->sheet + 0x2000, 1, 1);
-    Iwram_CopyWords((void *)BG_PLTT,
+    CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
     frames = 102;
@@ -487,8 +495,8 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         model->scrollV = frame & 63;
         model->shade = shade;
         model->unk04 = 3;
-        Render_ProjectVertices(gMapCellBuffer, Data_02012000, 64);
         Render_DrawModelList(model);
+        Render_ProjectVertices(gMapCellBuffer, Data_02012000, 64);
       }
       gCameraSceneParameters[3] = 120;
       Heap_Release(model);

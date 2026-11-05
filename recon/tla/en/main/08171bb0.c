@@ -1,3 +1,6 @@
+// 2026-11-05: differ 20 of 1748 (tla-en). Wrappers on the three palette copies
+// gain 6. Left: mode 4's giv order and the sched2 rows below; pin and
+// statement-move searches found nothing.
 // Draft, differ 36 of 1748, skeleton gap 13 (tla-en, 2026-11-01)
 // Same instruction count as the listing; the frame (176 bytes), every stack
 // slot and all the loops' registers match. What is left, about 18 pairs:
@@ -155,6 +158,12 @@ u8 *Unit_Get(s32 unit);
 void Render_ProjectVertices(const u8 *vertices, void *projected, s32 count);
 void SceneTransform_ApplyPosition(void *position);
 
+static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 6 of 1748 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
 // The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
 // Poison Flow (3) and Raging Flood (4): a twisting funnel of water (or wind)
 // rises around the target, with spray, bubbles and a burst.
@@ -219,7 +228,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
         }
       }
       }
-      Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+      CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
     } else {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, sheet, 0, 0);
     }
@@ -256,10 +265,10 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet, work->sheet + 0x2000, 1, 1);
   if (mode == 3) {
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
+    CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
   }
   if (mode == 4 || mode == 2) {
-    Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet), 128);
+    CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet), 128);
   }
   columns = (mode == 2 || mode == 4) ? 8 : 4;
   Render_BuildQuadStrip(mesh, columns, 32, 32);

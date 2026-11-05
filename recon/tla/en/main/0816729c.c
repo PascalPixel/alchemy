@@ -1,3 +1,6 @@
+// 2026-11-05: differ 137 of 2680 (tla-en). With the twin's two dead branches
+// and a wrapper on the first palette copy. Left: scheduling rows and pool
+// offsets that follow them, across the draft.
 // Draft, differ 258 of 2680, skeleton gap 41/39 (tla-en, 2026-11-01)
 // BattleEffect_RunJudgment, the same calls and control flow as the listing; its
 // twin is The Broken Seal's judgment.c. Re-measured under the 1 November
@@ -220,6 +223,12 @@ void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
 
+static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 186 of 2680 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
 // Judgment: the sky gathers sixteen tiles of light that fold into a sigil,
 // then the sigil's beam strikes and the ground erupts in a ring of
 // shockwaves and debris.
@@ -265,12 +274,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
 
   pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
-  {
-    u8 *palette = pal;
-
-    pal += 512;
-    Iwram_CopyWords((void *)OBJ_PLTT, palette, 512);
-  }
+  CopyWords((void *)OBJ_PLTT, pal, 512);
+  pal += 512;
   Resource_DecodeType01(pal, cells);
   for (i = 0; i != 16; i++) {
     struct JudgmentObject *obj = Func_0815b290(32, 32, 0x80002000, 0);
@@ -830,6 +835,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
             half = radius / 2;
             dx = (half * sx) / 8;
             right = cx + dx;
+            /* FAKEMATCH(dead): a branch whose store the next line overwrites
+             * restores the label CSE and reload saw between the edges; without
+             * it, 324 of 2680 instructions differ in tla-en. */
+            if (dx > cx)
+              left = 0;
             left = cx - dx;
             bottom = cy + (slope * squash) / 8;
             top = cy - (slope * sx) / 8;
@@ -859,6 +869,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
             halfSlope = slope / 2;
             dx = (halfSlope * sx) / 8;
             right = cx + dx;
+            /* FAKEMATCH(dead): a branch whose store the next line overwrites
+             * restores the label CSE and reload saw between the edges; without
+             * it, 199 of 2680 instructions differ in tla-en. */
+            if (dx > cx)
+              left = 0;
             left = cx - dx;
             bottom = cy + (radius * squash) / 8;
             top = cy - (radius * sx) / 8;

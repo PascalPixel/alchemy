@@ -1,3 +1,6 @@
+// 2026-11-05: differ 121 of 828 (tla-en). The dead read of shade is in, giving
+// the frame of 116. Left: the preheader's three stack copies and the ring's
+// entry below.
 // Draft, differ 352 of 828, skeleton gap 50 (tla-en, 2026-11-01)
 // BattleEffect_RunLightSurge: same calls and control flow, draft 824
 // instructions. Nearly all of what is left comes from one cause: the listing
@@ -450,7 +453,10 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     }
     Heap_Release(model);
     Heap_Release(vertices);
-    Func_08158ce0(4, 4);
+    /* FAKEMATCH(dead): a read of shade the compiler folds to nothing, which
+     * spills shade to the listing's slot; as a plain 4, 352 of 828 instructions
+     * differ in tla-en. */
+    Func_08158ce0(4, 4 + ((shade & 255) >> 8));
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);

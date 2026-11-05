@@ -1,3 +1,6 @@
+// 2026-11-05: differ 20 of 747 (tla-en). A wrapper on the palette copy gains
+// 2. A one-pass round ball->variant++ and a barrier after the second blitter
+// build reach 12; what is left is sched2 order, so they stay out.
 // Draft, differ 32 of 747, skeleton gap 32 (tla-en, 2026-11-01)
 // Every register and branch now agrees; what is left is five sched2 orders, no
 // shape and no allocation. All five are the K2 load model's: a load or a pooled
@@ -147,6 +150,12 @@ extern const u8 gData_08199268[];          // a bolt's mesh
 extern const u8 gData_081991b0[];          // its corners (Thunder Mine)
 extern const u8 Data_081991c0[];           // and (Earth Force)
 
+static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 2 of 747 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
 // The body of Thunder Mine (mode 0) and Earth Force (mode 1): a ball of
 // light (Thunder Mine) or a falling rock's glow (Earth Force) crosses to the
 // target, trailed by 40 spinning bolts, and grows; when it arrives the
@@ -196,7 +205,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              buffer, 1, 1);
   if (mode == 1) {
-    Iwram_CopyWords((void *)BG_PLTT,
+    CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC),
                     128);
   }

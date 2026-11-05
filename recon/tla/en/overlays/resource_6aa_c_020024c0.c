@@ -5,6 +5,7 @@
 // in r7 and the leader in r8, and the owner byte's base and offset in sl and r8
 // across the call, where this spills them to a 20-byte stack frame).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "battle_unit.h"
@@ -41,7 +42,7 @@ void Func_020024c0(void) {
     if (i < count)
       goto save;
   }
-  Func_02004da8(-10, 0);
+  Call2((void (*)())Func_02004da8, -10, 0);
   work->downCount = 0;
   work->standingCount = 0;
   Func_02004d08(leader, 258);

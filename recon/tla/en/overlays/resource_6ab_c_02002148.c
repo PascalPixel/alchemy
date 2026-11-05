@@ -58,7 +58,7 @@ void Func_02002148(void) {
   if (main->renderMode == 0) {
     struct Actor *actor;
 
-    Func_02001fcc(-10, 0);
+    ((s32 (*)())Func_02001fcc)(-10, 0);
     actor = Actor_GetById(main->currentOwner);
     work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
     Func_020042dc();

@@ -9,6 +9,7 @@
 // into the first pass in r2 where the native keeps it in r3, and the gravity
 // store comes after gMainRoutineWork's pool load.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"

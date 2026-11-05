@@ -13,6 +13,7 @@
 // is strength-reduced, which the listing does not do. The outer loop stays a
 // for: as a goto, CSE merges 0x17fff with 0x18000.
 #include "types.h"
+#include "call.h"
 struct SceneActor {
   u8 pad0[16];
   s32 unk_10;

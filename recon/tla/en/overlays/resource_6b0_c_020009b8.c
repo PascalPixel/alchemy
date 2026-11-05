@@ -15,6 +15,7 @@
 // an inline (37).
 
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))

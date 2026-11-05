@@ -64,7 +64,7 @@ void Func_020014d4(s32 a, s32 b);
 void Func_020014e4(const void *message);
 void Func_020014ec(s32 a, s32 b, s32 c);
 void Func_020014f4(s32 a, s32 b);
-void Func_0200150c(s32 a, s32 b, s32 c);
+s32 Func_0200150c(s32 a, s32 b, s32 c);
 void Func_02001514(s32 a, s32 b);
 void Func_0200151c(s32 a, s32 b);
 void Func_0200152c(void);
@@ -104,7 +104,7 @@ s32 Func_02000564(void) {
   u16 *color, *out;
   u8 *message;
   struct Actor *object;
-  u32 *held;
+  volatile u32 *held;
   struct HeapSlots *slots;
 
   buffer = Heap_AllocEwram(0x200);
@@ -145,7 +145,7 @@ s32 Func_02000564(void) {
       if (i != 10)
         goto L1;
     Call2((void (*)())Actor_SetActionById, 8, 0);
-    Iwram_CopyWords(buffer, (void *)0x5000008, 14);
+    Call3((void (*)())Iwram_CopyWords, (s32)buffer, 0x5000008, 14);
     j = 0;
     L2:
       out = (u16 *)0x500000e;
@@ -202,7 +202,7 @@ s32 Func_02000564(void) {
   } else if (mode == 3) {
     slots = Ram_HeapSlots;
     block = slots->block32;
-    Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
+    Call3((void (*)())Iwram_CopyWords, (s32)buffer, 0x5000000, 0x1c0);
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x1000000, -1, 0x900000, 0);
     Call2((void (*)())Func_0200151c, 0x10000, 0x2000);
     Call2((void (*)())Actor_SetModeById, 8, 14);
@@ -298,7 +298,7 @@ s32 Func_02000564(void) {
     Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
     Call2((void (*)())Actor_SetModeById, 8, 15);
     Call3((void (*)())Func_020014ec, 0x2008, 0, 150);
-    Call3((void (*)())Func_0200150c, 8, 0x101, 30);
+    Func_0200150c(8, 0x101, 30);
     Call2((void (*)())Actor_SetModeById, 8, 1);
     Call3((void (*)())Actor_ArmCallback, 8, 0x6000, 0);
     Call1((void (*)())FieldEvent_Wait, 10);
@@ -378,7 +378,7 @@ s32 Func_02000564(void) {
       j++;
       if (j != 4)
         goto L8;
-    Call3((void (*)())Func_0200150c, 8, 0x108, 30);
+    Func_0200150c(8, 0x108, 30);
     Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
     Call1((void (*)())FieldEvent_Wait, 10);
     Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 8), 0);
@@ -481,12 +481,11 @@ ACTOR(8)->y -= 0x851eb;
     Call1((void (*)())FieldEvent_Wait, 60);
     Call2((void (*)())Actor_SetModeById, 9, 7);
     Call3((void (*)())Func_020014ec, 9, 0, 5);
-    Call3((void (*)())Func_0200150c, 8, 0x101, 30);
+    Func_0200150c(8, 0x101, 30);
     Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
     Call2((void (*)())Actor_SetModeById, 9, 8);
     Call3((void (*)())Func_020014ec, 9, 0, 5);
-    j = 0x20000;
-    for (i = 0; i != 4; i++, j += 0x10000) {
+    for (i = 0, j = 0x20000; i != 4; i++, j += 0x10000) {
       Call3((void (*)())Func_0200147c, j, j, 0x10000);
       Call1((void (*)())FieldEvent_Wait, 8);
     }

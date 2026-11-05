@@ -24,6 +24,7 @@
 // orders (no change). (void)&local on direction, width and height gave 188/40
 // through ADDRESSOF: a taken-address device, so not kept.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct PushMove {

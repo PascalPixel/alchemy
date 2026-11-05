@@ -6,6 +6,7 @@
 // through a copy in r0 where this uses r2 and r4, and the callee-saved
 // registers and the pool order differ from there.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct MarsLighthouseAerieSprite {

@@ -24,6 +24,7 @@
 // the native, but it adds 6 to the gap while the hoist stands). position->z =
 // z = startZ gives gap 46/44 but differ 278.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "fixed_math.h"
 #include "ram_buffer.h"
@@ -111,7 +112,7 @@ top:
     heading = (s16)ArcTan2(z - actor->z, x - actor->x);
     heading = (s16)((heading + 0x2000) & -0x4000);
   }
-  Vector_AddPolarOffsetFar(PIXELS(16), heading, &probe);
+  Call3((void (*)())Vector_AddPolarOffsetFar, PIXELS(16), heading, &probe);
   nextBehavior = Func_02004424(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >

@@ -4,6 +4,7 @@
 // longer form, so a tla-en diff of this draft compares a different body).
 // The earlier 2-instruction miss (the actor's copy into r5) no longer shows.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

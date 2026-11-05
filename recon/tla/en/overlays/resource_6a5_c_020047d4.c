@@ -35,6 +35,7 @@
 // through MAP_WORD (201), declaration and scope orders of every local,
 // s16 frame, u32 tile. const on the count local folds it. No device added.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_event.h"
@@ -94,8 +95,10 @@ void Func_020047d4(void) {
       *word++ = (screenY & 0xff) | ((x & 0x1ff) << 16) | 0x40002000;
     } else {
       frame = *timer;
-      x = (x >> 16) - 8;
-      screenY = (screenY >> 16) - 64;
+      x = (x >> 16);
+      screenY = (screenY >> 16);
+      x -= 8;
+      screenY -= 64;
       if (x <= -32 || x >= 320 || screenY <= -64 || screenY >= 176)
         continue;
       word = (u32 *)oam;

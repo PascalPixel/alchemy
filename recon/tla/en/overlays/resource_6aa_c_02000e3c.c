@@ -11,6 +11,7 @@
 // tagged one-pass block; this draft uses a do-while(0) macro instead, with one
 // use, which S2 lets stand only while every use matches through it.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "map.h"

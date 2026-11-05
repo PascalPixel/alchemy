@@ -29,6 +29,7 @@
 // wait is a goto loop because a loop with notes hoists 999 and the step's
 // address, which the listing rebuilds on each pass.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"

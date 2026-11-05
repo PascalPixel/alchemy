@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/debug/level/level.o"(.text)
         "*/resource_6b7_overlay.o"(.text.x0200817c)
         "*/games/tla/src/debug/level/talk.o"(.text)
-        "*/resource_6b7_overlay.o"(.text.x020082cc)
+        "*/games/tla/src/debug/level/s02cc.o"(.text)
         "*/games/tla/src/debug/level/finish.o"(.text)
         "*/games/tla/src/debug/level/s0590.o"(.text)
         "*/games/tla/src/debug/level/pose.o"(.text)

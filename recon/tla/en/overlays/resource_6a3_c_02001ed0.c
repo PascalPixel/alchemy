@@ -34,6 +34,7 @@
 // cast change nothing here. Earlier: a real loop keeps the pool form but hoists
 // it into r7, which the native never saves.
 #include "types.h"
+#include "call.h"
 #include "edition.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -495,7 +496,7 @@ void Func_02001ed0(void) {
 
   Func_020047d4();
   Func_0200494c(0);
-  Camera_MoveWithinMapBounds(0x2e10000, 0, 0xd10000, 0);
+  Call4((void (*)())Camera_MoveWithinMapBounds, 0x2e10000, 0, 0xd10000, 0);
   gMainRoutineWork.currentOwner = 4;
   Party_RemoveActiveOwner(0);
   Party_RemoveActiveOwner(2);
@@ -505,12 +506,12 @@ void Func_02001ed0(void) {
   Party_RemoveActiveOwner(3);
   Party_RemoveActiveOwner(1);
   Party_AddActiveOwner(4);
-  Actor_SetSpeedParameters(4, 0x10000, 0x8000);
-  Func_0200484c(4, 0x2980000, 0x580000, 0x4000);
+  Call3((void (*)())Actor_SetSpeedParameters, 4, 0x10000, 0x8000);
+  { s32 c_ = 0x4000; Func_0200484c(4, 0x2980000, 0x580000, c_); }
   Func_0200484c(0x1b, 0x2cd0000, 0xd00000, 0x2000);
-  Func_0200484c(0x1a, 0x2e10000, 0xc30000, 0x2000);
+  Call4((void (*)())Func_0200484c, 0x1a, 0x2e10000, 0xc30000, 0x2000);
   Func_0200484c(0, 0x2f90000, 0xdb0000, 0xa000);
-  Func_0200484c(2, 0x2e50000, 0xe80000, 0xa000);
+  Call4((void (*)())Func_0200484c, 2, 0x2e50000, 0xe80000, 0xa000);
   Actor_SetMovementTypeById(3, (s32)gData_02005548);
   v18 = Actor_GetById(0);
   Actor_SetSingleChildFlags((struct Actor *)v18, 0);
@@ -531,7 +532,7 @@ void Func_02001ed0(void) {
   Actor_StartRepeatedMotion(0, 2);
   Motion_SetVarCbAndRefresh(2, 2);
   FieldEvent_Wait(5);
-  Func_020048cc(0x1a, 0x100, 0x1e);
+  Call3((void (*)())Func_020048cc, 0x1a, 0x100, 0x1e);
   Func_0200489c(0x1a, 0, 5);
   Func_020048b4(0x1b, 0xe000);
   FieldEvent_Wait(0xa);
@@ -549,32 +550,32 @@ void Func_02001ed0(void) {
   Func_02004964(6, 0, 0, 0x4000);
   Camera_FollowActor(6, 1);
   Func_02004964(7, 0x10, 0, 0x4000);
-  Func_02004964(0x1c, -16, 0x18, 0x2000);
-  Func_02004964(5, -16, 0, 0x2000);
+  Call4((void (*)())Func_02004964, 0x1c, -16, 0x18, 0x2000);
+  Call4((void (*)())Func_02004964, 5, -16, 0, 0x2000);
   Actor_CommitPositionAndActivate(4, 0x10, 0x18);
   Actor_ArmCallback(4, 0x4000, 0);
   Func_020048cc(0x1c, 0x100, 0x1e);
   Func_0200489c(0x1c, 0, 5);
   Func_020048b4(0x1c, 0);
   FieldEvent_Wait(0xa);
-  Actor_ArmCallback(4, 0x8000, 0);
+  Call3((void (*)())Actor_ArmCallback, 4, 0x8000, 0);
   Func_0200489c(0x1c, 0, 0x23);
   Actor_SetModeById(4, 3);
   ACTOR_SET_MODE_AND_WAIT(0x1c, 3, 0x14);
   FieldEvent_Wait(0xa);
-  Actor_ResetAndSetPositionInMode2(4, 0x2ab, 0xba);
-  Actor_ResetAndSetPositionInMode2(0x1c, 0x29b, 0xca);
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 4, 0x2ab, 0xba);
+  Call3((void (*)())Actor_ResetAndSetPositionInMode2, 0x1c, 0x29b, 0xca);
   Actor_SetMovementTypeById(4, (s32)gData_02004a6c);
   Actor_SetMovementTypeById(0x1c, (s32)gData_02004a90);
-  Actor_ArmCallback(0x1a, 0x8000, 0);
-  Actor_ArmCallback(0x1b, 0x8000, 0);
-  Func_020048cc(6, 0x102, 0x1e);
+  Call3((void (*)())Actor_ArmCallback, 0x1a, 0x8000, 0);
+  Call3((void (*)())Actor_ArmCallback, 0x1b, 0x8000, 0);
+  Call3((void (*)())Func_020048cc, 6, 0x102, 0x1e);
   Func_0200489c(6, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(5, 4, 0x21);
   Func_0200489c(5, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(7, 3, 0x14);
   FieldEvent_Wait(0xa);
-  Actor_SetAngleToward(5, 7, 0);
+  { s32 c_ = 0; Actor_SetAngleToward(5, 7, c_); }
   Actor_SetAngleToward(6, 7, 0);
   Actor_SetAngleToward(7, 5, 0);
   Func_0200489c(7, 0, 5);
@@ -591,21 +592,21 @@ void Func_02001ed0(void) {
   Camera_FollowActor(4, 1);
   Func_020048f4();
   FieldEvent_Wait(0x14);
-  Func_020048cc(0x1a, 0x107, 0x1e);
+  Call3((void (*)())Func_020048cc, 0x1a, 0x107, 0x1e);
   Func_0200489c(0x1a, 0, 5);
-  Func_020048cc(0x1b, 0x107, 0x1e);
+  Call3((void (*)())Func_020048cc, 0x1b, 0x107, 0x1e);
   Func_0200489c(0x1b, 0, 5);
-  Func_020048b4(0x1a, 0xc000);
+  Call2((void (*)())Func_020048b4, 0x1a, 0xc000);
   FieldEvent_Wait(0xa);
-  Func_020048b4(0x1a, 0x8000);
+  Call2((void (*)())Func_020048b4, 0x1a, 0x8000);
   FieldEvent_Wait(0xa);
   Func_020048b4(0x1a, 0x4000);
   FieldEvent_Wait(0xa);
-  Func_020048b4(0x1a, 0x8000);
+  Call2((void (*)())Func_020048b4, 0x1a, 0x8000);
   FieldEvent_Wait(0xa);
   Func_020048b4(0x1a, 0xc000);
   FieldEvent_Wait(0xa);
-  Func_020048b4(0x1a, 0x8000);
+  Call2((void (*)())Func_020048b4, 0x1a, 0x8000);
   Func_0200489c(0x1a, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(0x1b, 4, 0x21);
   Func_0200489c(0x1b, 0, 5);
@@ -647,7 +648,7 @@ L_0200a412:
   Actor_TurnToFaceEachOther(0x1a, 0x1b, 0);
   Actor_RefreshSelectorById(0x1a);
   Actor_RefreshSelectorById(0x1b);
-  Func_020048cc(0x1a, 0x105, 0);
+  Call3((void (*)())Func_020048cc, 0x1a, 0x105, 0);
   Func_020048cc(0x1b, 0x105, 0x1e);
   Actor_SetAngleToward(0x1c, 0x1b, 0);
   ACTOR_SET_MODE_AND_WAIT(0x1c, 4, 0x21);
@@ -663,9 +664,9 @@ L_0200a412:
   Func_0200489c(0x1a, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(0x1b, 4, 0x21);
   Func_0200489c(0x1b, 0, 5);
-  Func_020048cc(0x1a, 0x108, 0x1e);
+  Call3((void (*)())Func_020048cc, 0x1a, 0x108, 0x1e);
   Func_0200489c(0x1a, 0, 5);
-  Func_020048cc(0x1b, 0x108, 0x1e);
+  Call3((void (*)())Func_020048cc, 0x1b, 0x108, 0x1e);
   Func_0200489c(0x1b, 0, 5);
   FieldEvent_Wait(0x14);
   Motion_SetVarCbAndRefresh(0x1a, 2);
@@ -684,10 +685,10 @@ L_0200a412:
   Actor_TurnToFaceEachOther(4, 0x1c, 0);
   Actor_RefreshSelectorById(4);
   Actor_RefreshSelectorById(0x1c);
-  Func_020048cc(4, 0x108, 0);
-  Func_020048cc(6, 0x108, 0);
-  Func_020048cc(5, 0x108, 0);
-  Func_020048cc(7, 0x108, 0);
+  Call3((void (*)())Func_020048cc, 4, 0x108, 0);
+  Call3((void (*)())Func_020048cc, 6, 0x108, 0);
+  Call3((void (*)())Func_020048cc, 5, 0x108, 0);
+  Call3((void (*)())Func_020048cc, 7, 0x108, 0);
   Func_020048cc(0x1c, 0x108, 0x28);
   Actor_SetAngleToward(4, 0x1a, 0);
   Actor_SetAngleToward(5, 0x1a, 0);
@@ -725,18 +726,18 @@ L_0200a6e0:
   Actor_TurnToFaceEachOther(0x1a, 0x1b, 0);
   Actor_RefreshSelectorById(0x1a);
   Actor_RefreshSelectorById(0x1b);
-  Func_020048cc(0x1b, 0x108, 0);
-  Func_020048cc(0x1a, 0x108, 0x1e);
+  Call3((void (*)())Func_020048cc, 0x1b, 0x108, 0);
+  Call3((void (*)())Func_020048cc, 0x1a, 0x108, 0x1e);
   Actor_SetAngleToward(0x1a, 4, 0);
   Actor_SetAngleToward(4, 0x1b, 0);
-  Actor_SetPositionAndReset(0x1b, 0x2bb, 0xca);
+  Call3((void (*)())Actor_SetPositionAndReset, 0x1b, 0x2bb, 0xca);
   ACTOR_SET_MODE_AND_WAIT(0x1b, 3, 0x14);
   FieldEvent_Wait(0xa);
   Func_0200489c(0x1b, 0, 5);
-  Func_020048cc(0, 0x100, 0);
-  Func_020048cc(4, 0x100, 0);
-  Func_020048cc(2, 0x100, 0);
-  Func_020048cc(5, 0x100, 0);
+  Call3((void (*)())Func_020048cc, 0, 0x100, 0);
+  Call3((void (*)())Func_020048cc, 4, 0x100, 0);
+  Call3((void (*)())Func_020048cc, 2, 0x100, 0);
+  Call3((void (*)())Func_020048cc, 5, 0x100, 0);
   Func_020048cc(0x1c, 0x100, 0x1e);
   Func_020048cc(0x1c, 0x109, 0x1e);
   Actor_ArmCallback(0x1c, 0, 0);
@@ -755,8 +756,8 @@ L_0200a6e0:
   Func_020048cc(0x1a, 0x107, 0x1e);
   Actor_ArmCallback(0x1b, 0, 0);
   Func_0200489c(0x1b, 0, 5);
-  Actor_SetSpeedParameters(7, 0x40000, 0x20000);
-  Actor_SetSpeedParameters(0x1b, 0x20000, 0x10000);
+  Call3((void (*)())Actor_SetSpeedParameters, 7, 0x40000, 0x20000);
+  Call3((void (*)())Actor_SetSpeedParameters, 0x1b, 0x20000, 0x10000);
   Actor_OffsetPositionAndReset(7, 8, 0x18);
   Actor_CommitPositionAndActivate(0x1b, 8, 4);
   Actor_WaitForMoveById(7);
@@ -809,10 +810,10 @@ end:
   FieldEvent_Wait(0x14);
   ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
   FieldEvent_Wait(0x14);
-  Actor_SetSpeedParameters(7, 0x20000, 0x10000);
-  Actor_SetSpeedParameters(0x1a, 0x8000, 0x4000);
-  Actor_SetSpeedParameters(0x1b, 0x8000, 0x4000);
-  Actor_SetSpeedParameters(4, 0x8000, 0x4000);
+  Call3((void (*)())Actor_SetSpeedParameters, 7, 0x20000, 0x10000);
+  Call3((void (*)())Actor_SetSpeedParameters, 0x1a, 0x8000, 0x4000);
+  Call3((void (*)())Actor_SetSpeedParameters, 0x1b, 0x8000, 0x4000);
+  Call3((void (*)())Actor_SetSpeedParameters, 4, 0x8000, 0x4000);
   Actor_SetMovementTypeById(0x1a, (s32)gData_020059a4);
   FieldEvent_Wait(0x28);
   Actor_OffsetPositionAndResetMotion(7, -16, 0);
@@ -827,11 +828,11 @@ end:
   Actor_RefreshSelectorById(4);
   Actor_SetModeById(4, 1);
   Actor_StartRepeatedMotion(7, 2);
-  Actor_ArmCallback(7, 0xc000, 0);
-  Actor_ArmCallback(0x1c, 0xc000, 0);
+  Call3((void (*)())Actor_ArmCallback, 7, 0xc000, 0);
+  Call3((void (*)())Actor_ArmCallback, 0x1c, 0xc000, 0);
   Func_0200489c(7, 0, 5);
   Camera_FollowActor(6, 1);
-  Func_020048b4(4, 0x4000);
+  Call2((void (*)())Func_020048b4, 4, 0x4000);
   FieldEvent_Wait(0xa);
   Func_020048cc(4, 0x101, 0x1e);
   Func_020048cc(7, 0x109, 0x1e);
@@ -839,11 +840,11 @@ end:
   Func_020048cc(4, 0x100, 0x1e);
   Func_020048cc(6, 0x106, 0x1e);
   Func_0200489c(6, 0, 5);
-  Func_020048b4(4, 0x4000);
+  Call2((void (*)())Func_020048b4, 4, 0x4000);
   FieldEvent_Wait(0xa);
   ACTOR_SET_MODE_AND_WAIT(5, 3, 0x14);
   FieldEvent_Wait(0xa);
-  Actor_ArmCallback(5, 0xc000, 0);
+  Call3((void (*)())Actor_ArmCallback, 5, 0xc000, 0);
   Func_0200489c(5, 0, 5);
   Func_020048b4(4, 0x4000);
   FieldEvent_Wait(0xa);
@@ -852,7 +853,7 @@ end:
   Func_0200489c(0x1c, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(4, 3, 0x14);
   FieldEvent_Wait(0xa);
-  Actor_SetSpeedParameters(7, 0x10000, 0x8000);
+  Call3((void (*)())Actor_SetSpeedParameters, 7, 0x10000, 0x8000);
   Actor_SetMovementTypeById(7, (s32)gData_020059a4);
   Actor_RefreshSelectorById(7);
   Party_AddActiveOwner(7);
@@ -860,7 +861,7 @@ end:
   Func_02004844(7, 0, 0);
   FieldEvent_Wait(0x14);
   Event_ClearInvalidPackedValues();
-  Actor_SetPositionAndReset(4, 0x298, 0x46);
+  Call3((void (*)())Actor_SetPositionAndReset, 4, 0x298, 0x46);
   Func_020047dc();
 }
 #endif

@@ -11,5 +11,6 @@ s32 Func_02004794(u16 *list) {
     list++;
     count++;
   }
-  return count - 1;
+  count--;
+  return count;
 }

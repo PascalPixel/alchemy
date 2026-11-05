@@ -8,6 +8,7 @@
 // take r8, r5, r6 and r10 where the native has r5, r6, r8 and r10. The test of
 // flag 0xa3c as an enclosing if changes nothing.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 

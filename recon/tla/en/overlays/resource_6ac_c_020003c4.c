@@ -10,6 +10,7 @@
 // callee-saved register shifts (a forwarding inline for the copies changes
 // nothing).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "io_write_queue.h"

@@ -15,14 +15,13 @@ s32 Func_020003b4(u32 layer, s32 x, s32 y);
 s32 Func_020003f0(u32 layer, s32 x, s32 y, s32 value);
 
 void Func_02000454(const u8 *data) {
+  const u16 *ids = (const u16 *)data;
   struct Actor *leader =
       (struct Actor *)Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *object;
   s32 height;
   s32 cell;
-  const u16 *ids;
 
-  ids = (const u16 *)data;
   if (*ids == 0xffff)
     goto done;
 loop:

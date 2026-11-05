@@ -19,6 +19,7 @@
 // function scope), keys in a local, goto to a shared cancel (144), for (;;) and
 // do/while (221), a one-pass block, 48 orders of the locals' declarations.
 #include "types.h"
+#include "call.h"
 #include "input.h"
 #include "dma.h"
 #include "io_reg.h"

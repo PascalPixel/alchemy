@@ -44,6 +44,7 @@
 // the first two loops (234), a for record loop (254), a struct-wrapped peerSlots
 // (216, unchanged), result after timeout (222), memberIds after peerSlots (220).
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 #include "heap_release.h"
 #include "owner_state.h"

@@ -25,6 +25,7 @@
 // -mthumb-slow-loads (2026-10-26) it no longer compiles exactly, so it is back
 // on its listing.
 #include "types.h"
+#include "call.h"
 #include "field_event.h"
 #include "flag_call.h"
 

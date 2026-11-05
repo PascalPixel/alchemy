@@ -26,7 +26,9 @@ void Func_02002fc4(struct Actor *self) {
   object->acceleration = 0x2000;
   animation->angle = angle - 0x4000;
   object->scaleX = 0;
-  object->scaleY = 0;
+  do {
+    object->scaleY = 0;
+  } while (0);
   object->action = 0;
   object->watchedObject = self->watchedObject;
   Func_02004de0(104);

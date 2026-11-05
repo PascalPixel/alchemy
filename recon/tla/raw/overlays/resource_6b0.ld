@@ -56,7 +56,7 @@ SECTIONS
         "*/games/tla/src/scene/anemos_inner_sanctum/move.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s2780.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s2948.o"(.text)
-        "*/resource_6b0_overlay.o"(.text.x0200aa74)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s2a74.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s2cb8.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s2db0.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)

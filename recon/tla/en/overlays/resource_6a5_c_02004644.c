@@ -1,6 +1,7 @@
 // Draft, differ 10 of 165 (was 94): overlay 6a5's copy of overlay 698's
 // Func_0200091c, as resource_6a2_c_02000a88.c, whose header says what is left.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
 
@@ -44,7 +45,7 @@ void Func_02004644(void) {
     right->y += 0x66640;
     rider->y += 0x1eb80;
     rider->x += 0x28f40;
-    *(s16 *)&sprite->rotation += -0x800;
+    sprite->rotation -= 0x800;
     Animation_ApplyChildValues(Actor_GetById(10), 4);
     Animation_ApplyChildValues(Actor_GetById(12), 4);
   }

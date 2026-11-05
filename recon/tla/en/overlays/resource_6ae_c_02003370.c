@@ -8,6 +8,7 @@
 // branches (the step 0x24000 in r1, the sprite in r1), some loads one
 // instruction off, and the literal pool's order.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "frame.h"
 

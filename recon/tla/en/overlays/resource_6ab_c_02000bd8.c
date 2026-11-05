@@ -32,7 +32,7 @@ void Func_020043a4(s32 id, s32 angle);
 void Func_02004204(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_0200420c(struct Actor *object);
 void PartyInventory_Remove(s32 item);
-void Inventory_AddItem(s32 owner, s32 item);
+s32 Inventory_AddItem(s32 owner, s32 item);
 void FieldMessage_Show(s32 message, s32 position);
 u8 *Unit_Get(s32 owner);
 void Func_020042c4(s32 owner, s32 slot);

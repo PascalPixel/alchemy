@@ -1,13 +1,13 @@
-// Draft of overlay 6ae's Func_0200508c, the twin of overlay 6b0's
-// Func_020001d4: its draft (resource_6b0_c_020001d4.c) with this overlay's
-// symbols: differ 10 of 15. Left: what that draft's header records.
+// Draft: overlay 6ae's copy of resource_6aa_c_02004794.c, with this overlay's symbols.
 #include "types.h"
 
 s32 Func_0200508c(u16 *list) {
-  s32 count;
+  s32 count = 0;
 
-  for (count = 0; list[count] != 0xffff; count++)
-    ;
+  while (*list != 0xffff) {
+    list++;
+    count++;
+  }
   count--;
   return count;
 }

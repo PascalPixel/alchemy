@@ -20,6 +20,7 @@
 // order by spill slot (declaration order changes nothing here); else arm
 // first; a dx local (worse, 233); radius in two statements (224, gap 38 + 44).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -86,7 +87,7 @@ again:
     heading = (s16)ArcTan2(lastZ - subject->z, lastX - subject->x);
     heading = (s16)((heading + 0x2000) & 0xc000);
   }
-  Vector_AddPolarOffsetFar(0x100000, heading, probe);
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, heading, probe);
 
   nextBehavior = Func_02004424(subject->terrainId, probe[0], probe[2]);
   if (nextBehavior != 255 &&
@@ -111,7 +112,7 @@ again:
   }
 
   for (;;) {
-    Vector_AddPolarOffsetFar(0x100000, heading, probe);
+    Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, heading, probe);
     nextBehavior = Func_02004424(subject->terrainId, probe[0], probe[2]);
     if (nextBehavior == 255) {
       break;

@@ -36,7 +36,7 @@ void Func_0200475c(s32 a, s32 b, s32 c);
 void Actor_Jump(s32 id, s32 mode, s32 value);
 void Actor_OffsetPositionAndReset(s32 id, s32 dx, s32 dz);
 void Func_0200474c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Func_020049ac(s32 x, s32 z, s32 a, s32 b);
+s32 Func_020049ac(s32 x, s32 z, s32 a, s32 b);
 void Func_020046b4(void);
 void Func_020046a4(void);
 void Func_02004784(s32 hue, s32 brightness);

@@ -302,7 +302,10 @@ L_0200b8ac:
   Call1((void (*)())Func_0200361c, 0);
   Call1((void (*)())Func_0200361c, 3);
   t127 = OWNER;
-  Call4((void (*)())Func_02005684, t127, 0x1e40000, 0x1380000, 0xe000);
+  {
+    s32 speed = 0xe000;
+    Call4((void (*)())Func_02005684, t127, 0x1e40000, 0x1380000, speed);
+  }
   t129 = OWNER;
   Call2((void (*)())Actor_SetSpritePriority, t129, 1);
   Call1((void (*)())wait, 1);

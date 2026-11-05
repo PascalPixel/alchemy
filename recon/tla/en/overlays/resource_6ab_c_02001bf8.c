@@ -1,5 +1,6 @@
 // Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "types.h"
+#include "call.h"
 
 typedef struct Actor {
   u8 pad0[8];

@@ -2,6 +2,7 @@
 // Func_020050b0: its draft (resource_6ae_c_020050b0.c) with this overlay's
 // symbols: differ 90 of 120. Left: what that draft's header records.
 #include "types.h"
+#include "call.h"
 
 extern u16 gData_0200687c;
 extern u16 *Data_02006880;

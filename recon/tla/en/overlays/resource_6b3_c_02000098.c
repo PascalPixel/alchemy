@@ -6,6 +6,7 @@
 // here the buffer is in r6 and 0x800 is shared. The resource id as u16 changes
 // nothing.
 #include "types.h"
+#include "call.h"
 #include "dma.h"
 #include "io_reg.h"
 

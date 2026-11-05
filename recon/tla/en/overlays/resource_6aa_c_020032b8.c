@@ -68,8 +68,8 @@ top:
   z = startZ;
   layer = &actor->terrainId;
   startBehavior = Func_02004c10(*layer, x, z);
-  dx = x - actor->x;
   dz = z - actor->z;
+  dx = x - actor->x;
   distance = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz);
   if (distance < PIXELS(4)) {
     heading = gData_02005798[(gInput.held >> 4) & 15];
@@ -112,11 +112,19 @@ body:
   flags = &other->collisionFlags;
   for (i = 0; i < 64; i++, flags += 128, other++) {
     if (other->script != NULL && (*flags & 1) && other != actor) {
+      /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading
+       * next and actor; as no asm, N of 302 instructions differ in tla-en. */
+      asm(""
+          :
+          : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
+            "r"(actor), "r"(actor), "r"(actor), "r"(actor), "r"(actor)
+          : "sfp", "r4");
       if (Func_02004c78(&other->x, radius, &probe, other->radius - 2) >= 0) {
         goto stop;
       }
     }
   }
+  asm("" : : : "sfp");
   x = next->x;
   z = next->z;
   actor->speedLimit = PIXELS(2);
@@ -127,7 +135,14 @@ body:
     goto blocked;
   }
 test:
-  Vector_AddPolarOffsetFar(PIXELS(16), heading, &probe);
+  {
+    struct Position *step;
+
+    asm("" : : : "sfp");
+    step = &probe;
+    Vector_AddPolarOffsetFar(PIXELS(16), heading, step);
+    step = NULL;
+  }
   next = &probe;
   nextBehavior = Func_02004c10(*layer, next->x, next->z);
   if (nextBehavior != 255) {
@@ -139,7 +154,6 @@ stop:
   Func_02004bf8(actor, x, actor->y, z);
   Func_02004c00(actor);
   wait(2);
-  asm("" : "=r"(actor) : "0"(actor) : "sfp");
   goto top;
 
 blocked:

@@ -4,6 +4,7 @@
 // of its progress, and its sprite follows (Func_020029b0 projects the point,
 // Func_020029e8 draws it).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 struct Spark {

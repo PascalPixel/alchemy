@@ -35,6 +35,7 @@
 // do-while outer loop; j = 0 at the top of the outer loop (78) or after the
 // position stores (137).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "system/vector3.h"
 

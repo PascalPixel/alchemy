@@ -53,6 +53,7 @@ SECTIONS
         "*/resource_6aa_overlay.o"(.text.x0200a4c0)
         "*/games/tla/src/field/field_effect/advance_spin.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/flash.o"(.text)
+        "*/games/tla/src/scene/mars_lighthouse_entrance/s263c.o"(.text)
         "*/resource_6aa_overlay.o"(.text.x0200a63c)
         "*/games/tla/src/scene/mars_lighthouse_entrance/ride_step.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s2860.o"(.text)

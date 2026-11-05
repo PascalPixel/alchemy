@@ -1,5 +1,8 @@
-// Draft, differ 2 (tla-en, 2026-11-05). Func_0200263c of overlay 6aa.
-// Overlay 6ab's Func_02002148 with this overlay's symbols; see that draft.
+#include "edition.h"
+
+// The Japanese form differs and stays on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -15,22 +18,21 @@ struct Work020023c4 {
   s16 unk6a;
 };
 
-void Func_020024c0();
+void Func_02002368();
 struct Actor *Actor_GetById(s32 id);
-void Func_02004ca8(void);
-void Func_02004da0(s32 a);
-void Func_02004bc0(struct Actor *actor, s32 a);
-s32 Func_02004c18(s32 terrain, s32 x, s32 z);
-s32 Func_02004c38(struct Actor *actor);
-void Func_02004ce8();
-s32 Func_02004c78(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
+void Func_020031e0(void);
+void Func_02003280(s32 a);
+void Func_02003118(struct Actor *actor, s32 a);
+s32 Func_02003168(s32 terrain, s32 x, s32 z);
+s32 Func_02003180(struct Actor *actor);
+void Func_02003200();
+s32 Func_020031b0(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
 void wait(s32 frames);
 void Animation_ApplyChildValues(struct Actor *actor, s32 a);
-void Func_02002614(void);
+void Func_020024bc(void);
 extern u8 gData_020023c4[];
 
-
-void Func_0200263c(void) {
+void Func_020024e4(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
   struct Work020023c4 *work;
   struct Vector3 position;
@@ -38,26 +40,30 @@ void Func_0200263c(void) {
   if (main->renderMode == 0) {
     struct Actor *actor;
 
-    ((s32 (*)())Func_020024c0)(-10, 0);
+    ((s32 (*)())Func_02002368)(-10, 0);
     actor = Actor_GetById(main->currentOwner);
     work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
-    Func_02004ca8();
-    Func_02004da0(0);
-    actor->update = Func_02002614;
+    Func_020031e0();
+    Func_02003280(0);
+    actor->update = Func_020024bc;
     actor->angle = 0x4000;
-    Func_02004bc0(actor, 49);
+    Func_02003118(actor, 49);
     for (;;) {
-      if (Func_02004c18(actor->terrainId, actor->x, actor->z) == 7) {
+      if (Func_02003168(actor->terrainId, actor->x, actor->z) == 7) {
         s32 i;
 
-        actor->velocityX = work->unk68 << 17;
+        ((union {
+           s32 value;
+           u16 half;
+         } *)&actor->velocityX)
+            ->value = work->unk68 << 17;
         actor->velocityZ = work->unk6a << 17;
         actor->acceleration = 0x1000;
         for (i = 0; i <= 9; i++) {
           position.x = actor->x + (work->unk68 << 19);
           position.y = actor->y;
           position.z = actor->z + (work->unk6a << 19);
-          if (Func_02004c38(actor) != 0) {
+          if (Func_02003180(actor) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
             break;
@@ -76,12 +82,12 @@ void Func_0200263c(void) {
         position.x = actor->x + (work->unk68 << 19);
         position.y = actor->y;
         position.z = actor->z + (work->unk6a << 19);
-        result = Func_02004c38(actor);
+        result = Func_02003180(actor);
         if (result > 0)
           break;
         if (result < 0) {
           actor->angle = 0x4000;
-          Call3((void (*)())Func_02004ce8, gMainRoutineWork.currentOwner, 6,
+          Call3((void (*)())Func_02003200, gMainRoutineWork.currentOwner, 6,
                 -1);
           break;
         }
@@ -90,16 +96,15 @@ void Func_0200263c(void) {
         flags = &other->collisionFlags;
         for (i = 0; i <= 63; i++, flags += 128, other++) {
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())Func_02004c78, (s32)&other->x, radius, (s32)&position,
-                 other->radius - 2) >=
-                  0) {
+              Value4((s32 (*)())Func_020031b0, (s32)&other->x, radius,
+                     (s32)&position, other->radius - 2) >= 0) {
             wait(1);
             goto done;
           }
         }
-        /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
-         * the order around it; as the plain statement, 8 of 236 instructions
-         * differ in tla-en. */
+        /* FAKEMATCH(one-pass): the statement in a once-only block, whose end
+         * holds the order around it; as the plain statement, 8 of 236
+         * instructions differ in tla-en. */
         do {
           x = actor->x += work->unk68 << 17;
         } while (0);
@@ -127,3 +132,5 @@ void Func_0200263c(void) {
   }
   work->unk04 = 0;
 }
+
+#endif

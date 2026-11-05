@@ -1,3 +1,4 @@
+// Draft, differ 4 of 158 (tla-en, 2026-11-05); 2 with slots and pool offsets normalized, 0 with registers blind too.
 // Draft, differ 62 of 158: the battle test menu, ☀️'s DebugBattle_RunMenu
 // (games/tbs/src/battle/battle.c) in ⚓️'s form: Down is read once on entry,
 // the first encounter is 69, Start calls Func_08118954 (empty), B marks the
@@ -16,6 +17,7 @@
 
 extern u8 gData_03001110;
 extern u16 Data_02000436;
+extern char ResourceId_ColossoBackdrop;
 
 void Func_080ad090(void);
 void Window_LoadGraphics(void);
@@ -37,6 +39,8 @@ void DebugBattle_RunMenu(void) {
   s32 encounter;
   s32 preset;
   s32 loadedPreset;
+  struct InputState *input;
+  struct MainRoutineWork *m;
 
   Func_080ad090();
 restart:
@@ -45,33 +49,34 @@ restart:
   Task_ResetAll();
   Heap_Initialize();
   VramCache_Reset();
-  GameFlag_SetBit(362);
   encounter = 69;
+  GameFlag_SetBit(362);
   if (down) {
-    loadedPreset = -1;
     preset = 0;
+    loadedPreset = -1;
     GameFlag_ClearBit(362);
+    input = &gInput;
     for (;;) {
       GameFlag_ClearBit(32);
       wait(1);
       for (;;) {
-        if (gInput.repeat & 0x10)
+        if (input->repeat & 0x10)
           encounter++;
-        if (gInput.repeat & 0x20)
+        if (input->repeat & 0x20)
           encounter--;
-        if (gInput.repeat & 0x40)
+        if (input->repeat & 0x40)
           encounter -= 10;
-        if (gInput.repeat & 0x80)
+        if (input->repeat & 0x80)
           encounter += 10;
-        if (gInput.repeat & 0x100)
+        if (input->repeat & 0x100)
           preset++;
-        if (gInput.repeat & 0x200)
+        if (input->repeat & 0x200)
           preset--;
-        if (gInput.repeat & 1)
+        if (input->repeat & 1)
           break;
-        if (gInput.repeat & 8)
+        if (input->repeat & 8)
           Func_08118954();
-        if ((gInput.repeat & 2) || startModeSet)
+        if ((input->repeat & 2) || startModeSet)
           startModeSet = 1;
         wait(1);
       }
@@ -80,15 +85,16 @@ restart:
         DebugParty_LoadPreset(preset);
         loadedPreset = preset;
       }
-      if (gInput.held & 0x80)
+      if (input->held & 0x80)
         GameFlag_SetBit(364);
       Unit_CalculateFar(0);
-      Data_02000436 = 0x2b;
+      Data_02000436 = (s32)&ResourceId_ColossoBackdrop;
+      m = &gMainRoutineWork;
       if (encounter == 28)
         GameFlag_SetBit(366);
       GameFlag_SetBit(354);
       if (startModeSet)
-        gMainRoutineWork.battleRule24b = 5;
+        m->battleRule24b = 5;
       Func_081197f0(encounter);
       gData_03001110 = 1;
       Window_LoadGraphics();

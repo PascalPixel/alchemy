@@ -1,3 +1,4 @@
+// Draft, differ 26 of 57 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 32 of 57 (tla-en); older figures below predate it.
 // Draft, differ 26 of 57: the listing copies four palette colours with the
 // source walking from one pool address (adds r3, #2) and each destination an
@@ -19,7 +20,12 @@ s32 Func_02000a18(void) {
     *(u16 *)0x50000f8 = src[1];
     *(u16 *)0x50000fa = src[2];
     *(u16 *)0x50000fc = src[3];
-    Call6(Func_02001bcc, 37, 18, 2, 2, 37, 33);
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 32 of 57 instructions differ
+     * in tla-en. */
+    do {
+      Call6(Func_02001bcc, 37, 18, 2, 2, 37, 33);
+    } while (0);
     Call6(Func_02001bcc, 37, 18, 2, 3, 39, 31);
     Call6(Func_02001bcc, 50, 80, 7, 5, 35, 95);
   }

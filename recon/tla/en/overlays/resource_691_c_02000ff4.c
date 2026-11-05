@@ -1,5 +1,7 @@
+// Draft, differ 32 of 67 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 33 (tla-en); notes below may predate it.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 
@@ -27,6 +29,9 @@ void Func_02000ff4(struct Actor *object) {
 
   if (object->action > 528) {
     mask = 2;
+    /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+     * 33 of 67 instructions differ in tla-en. */
+    asm("");
     goto blink;
   }
   if (object->action > 400) {

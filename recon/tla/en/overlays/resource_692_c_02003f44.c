@@ -7,6 +7,7 @@
 // native rebuilds the end marker for the test at the bottom. Rough: the native
 // keeps the id and flag on the stack and the cells in r5.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"

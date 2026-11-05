@@ -1,4 +1,4 @@
-// Draft, differ 56 of 126, skeleton gap 3 (tla-en, 2026-11-01)
+// Draft, differ 40 of 126 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Overlay 6ad's copy of resource_69c_c_02000c78.c, shared with overlay 6a1 and
 // others: finds an object's footprint by its sprite's shape in a six-entry
 // table and copies the cells under it (Func_020054e8), then fills byte 2 of
@@ -14,6 +14,7 @@
 // The increment's lsl plus 0x10000 comes only from spelling it shifted: a real
 // for loop gets strength-reduced, and plain i + 1 keeps adds #1.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_sprite.h"

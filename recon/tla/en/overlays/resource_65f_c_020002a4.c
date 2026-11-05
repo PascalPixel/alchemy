@@ -39,6 +39,7 @@
 // after s1 at declaration, i and lineCount scope and order, frame << 10 as a
 // local or in two steps (worse), multiply operand order (no change).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "dma.h"

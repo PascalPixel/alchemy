@@ -1,3 +1,4 @@
+// Draft, differ 26 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 28 of 76 (tla-en); older figures below predate it.
 // Draft, differ 19 of 76: raises the cells under the held actor again.
 // Two minutes of permute took it from 79. Left: register choice of the
@@ -91,6 +92,9 @@ void Func_02000e9c(void) {
 
     attribute = cells->attributeB;
     cells += index;
+    /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+     * 28 of 76 instructions differ in tla-en. */
+    asm("");
     raised |= attribute;
     *shapes = value;
     cells->attributeB = raised;

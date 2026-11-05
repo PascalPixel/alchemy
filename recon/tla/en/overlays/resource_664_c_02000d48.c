@@ -10,6 +10,7 @@
 // pool). Left: as Func_020010b4's draft, the shot and the zero swap r6 and
 // r7, which moves most rows.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

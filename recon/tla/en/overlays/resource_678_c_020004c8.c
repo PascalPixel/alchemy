@@ -26,6 +26,7 @@
 // The table's pool entry is gData_020029c0 + 1: a block-scope `index` is what
 // keeps `hole - 10` out of that constant; a struct member gives ldrb [rN, #1].
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "system/vector3.h"

@@ -44,6 +44,7 @@
 // loops with givs still reduced, classic GCSE and hoisting in place of PRE, the
 // flag loop's shared i + 1). That needs re-measuring and only Pascal can weigh it.
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
 #include "battle/battle_unit.h"

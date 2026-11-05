@@ -1,3 +1,4 @@
+// Draft, differ 21 of 90 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 39 (tla-en); notes below may predate it.
 // Draft, differ 39 of 90: Func_02001e08's twin for the cell west of the leader:
 // pushes the object found there, copies its cells and sets flag 0x8db when it
@@ -6,6 +7,7 @@
 // column as a local set before the search is the closest form (plain
 // constants 45).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 
@@ -30,6 +32,9 @@ void Func_02001edc(void) {
   position[1] = leader->y;
   position[2] = leader->z;
   column = 99;
+  /* FAKEMATCH(barrier): the empty asm on column changes its allocation rank; as no
+   * asm, 39 of 90 instructions differ in tla-en. */
+  asm("" : : "r"(column));
   object = Actor_FindInCell(position);
   Func_0200074c(object);
   Func_020005cc(object->terrainId, object->x >> 20, object->z >> 20,

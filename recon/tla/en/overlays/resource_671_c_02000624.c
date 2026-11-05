@@ -1,3 +1,4 @@
+// Draft, differ 22 of 63 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 26 of 63 (tla-en); older figures below predate it.
 // Draft, differ 24 of 63 (was 47): ported from Func_020005b4 (find_near.c). The native
 // rebuilds the vector's stack address (mov r4, sp) inside the loop and keeps
@@ -17,6 +18,7 @@
 // which keeps id in r7. Pinning the first block's pointer to r2 too does not
 // free it (24).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 
@@ -63,7 +65,12 @@ struct Orbiter *Func_02000624(struct Orbiter *origin, s32 id) {
   s32 position[3];
   s32 i;
 
-  position[0] = origin->x;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 26 of 63 instructions differ
+   * in tla-en. */
+  do {
+    position[0] = origin->x;
+  } while (0);
   Vector_AddPolarOffsetFar(0x100000, origin->facing, position);
   position[2] = origin->z;
   for (i = 8; i < 64; i++) {

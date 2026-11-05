@@ -1,4 +1,4 @@
-// Draft, differ 62 of 174, skeleton gap 21 (tla-en, 2026-11-01)
+// Draft, differ 31 of 174 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Same function as overlay 694's Func_02003cd8, and that form closed most of
 // the distance here. Each frame the object's count (byte 0x63) cycles its
 // animation on odd counts; in state 0 (byte 0x62) every 16th count restarts
@@ -27,6 +27,7 @@
 // Overlay 694's own form shares one pointer for position and sprite, which
 // also reaches differ 62: a local reused for a second value, not needed here.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "effect_sprite.h"
 
@@ -81,9 +82,6 @@ void Func_02000ad0(struct Actor *object) {
   (*count)++;
   // Default: a second set keeps loop.c from hoisting p = position.
   p = 0;
-  /* FAKEMATCH(barrier): the empty asm on p changes its allocation rank; as no
-   * asm, 43 of 174 instructions differ in tla-en. */
-  asm("" : : "r"(p));
   for (i = 0; i < 2; i++) {
     sine = Math_Sine(work->timers[i] << 10);
     if (work->timers[i] < 0)
@@ -106,9 +104,9 @@ void Func_02000ad0(struct Actor *object) {
       /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
        * order around it; as the plain statement, 45 of 174 instructions differ
        * in tla-en. */
-      do {
+      {
         sprite->y = y;
-      } while (0);
+      }
       sprite->x = x;
       sprite->scaleX = sine;
       sprite->scaleY = sine;

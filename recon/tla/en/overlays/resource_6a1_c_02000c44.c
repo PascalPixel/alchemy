@@ -65,9 +65,6 @@ s32 Func_02000c44(struct PushMove *move) {
             ABS(gData_020022dc[direction][3])) >> 4;
   dx = gData_020022f4[box.stepIndex] & 0xffff0000;
   dz = gData_020022f4[box.stepIndex] << 16;
-  /* FAKEMATCH(barrier): the empty asm on dz changes its allocation rank; as no
-   * asm, 130 of 171 instructions differ in tla-en. */
-  asm("" : "=r"(dz) : "0"(dz));
   move->unk14 = 0;
   count = 0;
   layer = &object->terrainId;

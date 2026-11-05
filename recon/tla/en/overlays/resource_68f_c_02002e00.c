@@ -1,3 +1,4 @@
+// Draft, differ 33 of 83 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 35 (tla-en); notes below may predate it.
 // Draft, differ 82 of 83: the falling rocks' setup (Func_02002d44 spawns them):
 // loads ResourceId_FallingRock's tiles into heap slot 220 and resets the 64
@@ -66,6 +67,9 @@ void Func_02002e00(void) {
   work->tileBase = tile;
   rock = work->rocks;
   work->resource = resource;
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 35 of 83 instructions differ in tla-en. */
+  asm("");
   sprite = work->sprites;
   for (i = 63; i >= 0; i--) {
     Func_02003190(sprite, 8, 8, 0x40000000, tile);

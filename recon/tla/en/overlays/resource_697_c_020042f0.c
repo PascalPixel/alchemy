@@ -1,3 +1,4 @@
+// Draft, differ 4 of 130 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 4 (tla-en); notes below may predate it.
 // Draft, differ 31 of 130, skeleton gap 7 (tla-en, 2026-11-01): overlay 697's copy
 // of the trap table's setup, resource_692_c_02003f44.c's twin. A trap whose second
@@ -15,6 +16,7 @@
 // slot and cell are taken early on purpose: separate pointers, set above the calls,
 // keep their adds where the listing has them.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"

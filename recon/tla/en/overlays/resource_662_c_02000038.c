@@ -23,6 +23,7 @@
 // dx and dz locals, declaration orders, toX and toZ for the first call, u16 ax.
 // The compiler change did not close this one.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"

@@ -49,6 +49,7 @@
 // and marks the ends. The four scans are label loops, as the native's are:
 // written as C loops, loop.c rotates them.
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 
 #define GRID_WIDTH 28

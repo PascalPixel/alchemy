@@ -1,3 +1,4 @@
+// Draft, differ 2 of 175 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 6 of 175 (tla-en); older figures below predate it.
 // Draft, differ 6 of 175, skeleton gap 3 (tla-en, 2026-11-01)
 // Twin of ☀️'s PushedActor_AdvancePair (scene/shared/staged_actor.h): the same
@@ -21,6 +22,7 @@
 // alias the stack and shows no gap, which fits. No source form found to make
 // it wait.
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 
 struct StagedPosition {
@@ -122,11 +124,19 @@ void Func_0200038c(void) {
   lead->moveRateX = rate;
   lead->moveRateZ = rate;
   Func_02001b44(lead, dst.x, dst.y, dst.z);
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 4 of 175 instructions differ in tla-en. */
+  asm("");
   Func_02001b4c(next);
   Func_02001cbc();
   next->x = dst.x;
   next->velocityX = 0;
-  next->z = dst.z;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 6 of 175 instructions differ
+   * in tla-en. */
+  do {
+    next->z = dst.z;
+  } while (0);
   next->velocityZ = 0;
   lead->targetX = 0x80000000;
   lead->targetZ = 0x80000000;

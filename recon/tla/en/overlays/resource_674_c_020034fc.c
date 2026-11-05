@@ -1,3 +1,4 @@
+// Draft, differ 6 of 145 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 6 of 145 (tla-en); older figures below predate it.
 // Draft, differ 107 of 145, skeleton gap 27 (tla-en, 2026-11-01)
 // Overlay 674's palette queue step, the twin of ☀️'s PaletteCycle_Step and of
@@ -14,6 +15,7 @@
 // goto loops are worse. alchemy permute (6 minutes, on the older form) found
 // nothing closer.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"

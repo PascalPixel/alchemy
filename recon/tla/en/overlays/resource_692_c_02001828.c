@@ -135,7 +135,7 @@ void Func_02001828(void) {
       open = 212;
     GameFlag_ClearBit(768);
     facing = 0;
-    Func_02000694(0, 15, 13, 64);
+    ((s32 (*)())Func_02000694)(0, 15, 13, 64);
     Actor_SetSpritePriority(15, 3);
     for (j = 0; j != 7; j++)
       Actor_SetModeById(j + 9, 1);
@@ -150,8 +150,8 @@ void Func_02001828(void) {
     if (Value1((s32 (*)())GameFlag_Test, 769))
       open = 212;
     GameFlag_ClearBit(769);
-    Func_02000694(0, 24, 15, 64);
-    Func_02000694(0, 9, 16, 64);
+    ((s32 (*)())Func_02000694)(0, 24, 15, 64);
+    ((s32 (*)())Func_02000694)(0, 9, 16, 64);
     Actor_SetModeById(11, 4);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room5) {
     // The native tests and clears flag 770 in both arms.

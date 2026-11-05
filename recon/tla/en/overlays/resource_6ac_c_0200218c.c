@@ -1,4 +1,4 @@
-// Draft, differ 98 of 145, skeleton gap 14/18 (tla-en, 2026-11-01)
+// Draft, differ 28 of 145 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Overlay 6ac's Func_0200218c, the twin of overlay 6aa's Func_020022e4.
 // Left: one allocation, and nearly every difference follows from it. The native
 // uses no r4: stops r8, id sl, target r9, i fp, height on the stack at sp+0. Here
@@ -24,6 +24,7 @@
 // 8 refs or a third call crossed, and stops 16 refs or a fifth; no plain source
 // found gives both.
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 #include "actor.h"
 
@@ -123,5 +124,5 @@ void Func_0200218c(u16 *targets, u16 *stops, s32 a2, s32 a3) {
       REG_BLDCNT = cnt;
     }
   }
-  Task_Add(Func_02001f94, 0x480);
+  ((s32 (*)())Task_Add)(Func_02001f94, 0x480);
 }

@@ -110,7 +110,7 @@ void Func_0200274c(struct Actor *actor) {
       actor->acceleration = 0x4000;
       actor->action = 1;
       Func_0200446c(145);
-      Func_02004264(0x50000, 0x50000, 0x10000);
+      Call3((void (*)())Func_02004264, 0x50000, 0x50000, 0x10000);
       Call3((void (*)())Func_02004264, -1, -1, 0xe666);
       if (actor->watchedObject != NULL)
         ((void (*)(struct Actor *))actor->watchedObject)(actor);

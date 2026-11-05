@@ -35,6 +35,7 @@
 // slot last in each (other places 151 to 202). `kind` read once before the
 // if is the listing's own load.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "map.h"

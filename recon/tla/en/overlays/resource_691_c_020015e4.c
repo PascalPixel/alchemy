@@ -39,6 +39,7 @@
 #include "system/field_effect.h"
 #include "system/main_routine_work.h"
 #include "types.h"
+#include "call.h"
 
 struct MagmaRockEffectConfig {
   s32 kind;

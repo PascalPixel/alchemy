@@ -1,3 +1,4 @@
+// Draft, differ 13 of 266 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 15 of 266 (tla-en); older figures below predate it.
 // Draft, differ 49 of 266, skeleton gap 15 (9 removed, 6 added) (tla-en,
 // 2026-11-01) The update Func_02001b54 gives its shots, overlay 664's
@@ -23,6 +24,7 @@
 // (u16 adds extensions); near's zero, the angle store and the priority store
 // each sit an instruction away from the native, a sched2 tie.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -80,6 +82,9 @@ void Func_02001908(struct Actor *shot) {
       s32 *leaderPosition = &leader->x, *shotPosition = &shot->x;
 
       near = 0;
+      /* FAKEMATCH(barrier): the empty asm on near changes its allocation rank; as no
+       * asm, 15 of 266 instructions differ in tla-en. */
+      asm("" : "=r"(near) : "0"(near));
       if (gMainRoutineWork.renderMode == 2) {
         if (Func_020018d8(leaderPosition, shotPosition) <= 16 &&
             leader->z >> 20 == shot->z >> 20)

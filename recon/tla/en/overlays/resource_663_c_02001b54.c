@@ -11,6 +11,7 @@
 // IwramMulQ16's address in r5; this draft keeps 0x80000 in r5, the routine in
 // r8 and the options' address in r9.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"

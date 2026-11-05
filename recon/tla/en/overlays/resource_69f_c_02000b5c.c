@@ -22,6 +22,7 @@
 // Tried without gain: a goto loop (177), s16 types for timer, frame and mode,
 // y += z, separate first and second words.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_event.h"

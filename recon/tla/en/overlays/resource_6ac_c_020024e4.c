@@ -42,6 +42,7 @@
 // bottom-entered slide or scan (no gain, or an entry branch), a one-pass block
 // (experiment, worse), pos set once before the loop (differ 127, j takes r4).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
@@ -149,7 +150,7 @@ void Func_020024e4(void) {
         goto done;
       if (result < 0) {
         actor->angle = 0x4000;
-        Func_02003200(gMainRoutineWork.currentOwner, 6, -1);
+        Call3((void (*)())Func_02003200, gMainRoutineWork.currentOwner, 6, -1);
         goto done;
       }
       {

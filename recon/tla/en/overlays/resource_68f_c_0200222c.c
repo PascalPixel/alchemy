@@ -25,6 +25,7 @@
 // is not. Next lead: what keeps cell out of local-alloc (2 or 0 deaths, or a
 // second block) without reusing a local.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

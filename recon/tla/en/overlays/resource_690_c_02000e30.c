@@ -1,3 +1,4 @@
+// Draft, differ 27 of 35 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 32 (tla-en); notes below may predate it.
 // Draft, differ 40 of 35: the hblank split of Func_02000e90's values. The
 // native rebuilds each register address for each store (0x04000014 twice,
@@ -10,6 +11,9 @@ void Func_02000e30(void) {
   if (REG_VCOUNT < gData_02002ce0) {
     REG_BLDCNT = 0;
     REG_BG1HOFS = gData_02002ce4;
+    /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+     * 32 of 35 instructions differ in tla-en. */
+    asm("");
   } else {
     REG_BG1HOFS = gData_02002ce6;
     REG_BLDALPHA = 0x100c;

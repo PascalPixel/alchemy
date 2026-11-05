@@ -18,6 +18,7 @@
 // r11 and cells on the stack, with base and z << 16 outranking z and cells in
 // global's priorities. Declaration order and scopes do not move them.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 

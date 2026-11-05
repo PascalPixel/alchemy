@@ -50,6 +50,7 @@
 // is not a recovered type, so taken back out); count * dx, dz before dx and
 // declaration orders (no gain).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct PushMove {

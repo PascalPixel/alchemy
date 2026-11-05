@@ -1,4 +1,4 @@
-// Draft, differ 17 of 29: raises each active owner by levels. A goto loop keeps
+// Draft, differ 17 of 29 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // loop.c from strength-reducing the index (the for loop: 22), so the native's
 // lsls, mov sp, ldrh comes out; but GCSE's PRE then reuses the array address
 // computed for Party_ListActiveOwners's argument (insn 31 becomes a copy of
@@ -10,6 +10,7 @@
 // with s32, u32, s16, u16 or u8 index over s16 or u16 owners (22 to 43), four
 // more minutes of permute (17).
 #include "types.h"
+#include "call.h"
 #include "owner_state.h"
 #include "main_routine_work.h"
 

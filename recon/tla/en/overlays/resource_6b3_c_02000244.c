@@ -1,4 +1,4 @@
-// Draft, differ 19 of 102: centres a message and hands it to Func_02000158. x
+// Draft, differ 19 of 102 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // and y stay in their stack slots for Text_GetMessageSize; GCSE copies
 // their loads for the closing call into each branch, so an empty asm with a
 // memory clobber before the call keeps them as one load each, as the native has
@@ -18,6 +18,7 @@
 // struct (the stores then stay, but through a base register: 75 differ).
 
 #include "types.h"
+#include "call.h"
 
 extern s32 gData_02000a28;
 
@@ -66,6 +67,5 @@ void Func_02000244(s32 message, s32 position, s32 frames) {
       line = 15;
     }
   }
-  __asm__("" : : : "memory");
   Func_02000158(message, x, y, left, line, frames, mode);
 }

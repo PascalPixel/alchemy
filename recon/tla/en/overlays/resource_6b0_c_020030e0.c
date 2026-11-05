@@ -1,6 +1,7 @@
-// Draft, differ 34 of 76: overlay 6b0's copy of resource_6ab_c_02003f9c.c, with
+// Draft, differ 34 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // this overlay's symbols; that header says what is left.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 
@@ -41,7 +42,6 @@ s32 Func_020030e0(void) {
   s32 count;
 
   first = state->count;
-  __asm__("" : : : "memory");
   count = (u16)state->count;
   i = 0;
   if (i < first) {

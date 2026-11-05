@@ -1,3 +1,4 @@
+// Draft, differ 13 of 50 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 15 (tla-en); notes below may predate it.
 // Draft, differ 35 of 50: the native takes both scene state addresses before
 // the flag test, reloads the table each pass beside an i * 4 index and a
@@ -23,7 +24,12 @@ void Func_02002cb4(u8 mode) {
     s32 i;
     s32 id;
 
-    gSceneState[0] = 0;
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 15 of 50 instructions differ
+     * in tla-en. */
+    do {
+      gSceneState[0] = 0;
+    } while (0);
     gSceneState[1] = 0;
     Actor_GetById(Func_02004fe4())->priorityFlags |= 0x40;
     for (i = 0, id = 8; id <= 16; i++, id++) {

@@ -135,7 +135,7 @@ void Func_02002ae8(struct Effect *effect) {
     position.x = effect->x;
     position.y = effect->y;
     position.z = effect->z;
-    Vector_AddPolarOffsetFar(0x80000, effect->heading, &position);
+    Call3((void (*)())Vector_AddPolarOffsetFar, 0x80000, effect->heading, &position);
     if (Func_02003168(0, position.x, position.z) == 7) {
       effect->unk38[2] = 0x80000000;
       effect->unk38[1] = 0x80000000;
@@ -143,7 +143,7 @@ void Func_02002ae8(struct Effect *effect) {
       effect->unk34 = 0x4000;
       state->value = 1;
       Func_020032b8(145);
-      Func_02003198(0x50000, 0x50000, 0x10000);
+      Call3((void (*)())Func_02003198, 0x50000, 0x50000, 0x10000);
       Call3((void (*)())Func_02003198, -1, -1, 0xe666);
       if (effect->unk68 != 0)
         effect->unk68(effect);

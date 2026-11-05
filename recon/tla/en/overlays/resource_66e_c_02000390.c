@@ -1,3 +1,4 @@
+// Draft, differ 37 of 376 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 40 of 376 (tla-en); older figures below predate it.
 // Matches: differ 0 (tla-ja, 2026-11-02)
 // Japanese-only: the listing's section sits under .ifdef TLA_EDITION_JA, the
@@ -167,14 +168,19 @@ read:
   Func_02001148(10, 0);
   unitData = Unit_Get(unit);
   info = Func_020010b8(unitData->items[slot]);
-  item = unitData->items[slot];
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 39 of 376 instructions differ
+   * in tla-en. */
+  do {
+    item = unitData->items[slot];
+  } while (0);
   if ((u16)(item - 0x1b7) <= 2) {
     Func_02000920();
   } else if ((u16)item == 326) {
     Func_02001138(message + 29);
     Func_02001148(10, 0);
     if (!GameFlag_Test(0x940)) {
-      Func_02001138(message + 30);
+      ((s32 (*)())Func_02001138)(message + 30);
       Func_02001148(10, 0);
     } else {
       Func_02001138(message + 31);

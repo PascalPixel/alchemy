@@ -147,9 +147,6 @@ next:
       /* FAKEMATCH(barrier): the empty asm on tile changes its allocation rank; as no
        * asm, 44 of 168 instructions differ in tla-en. */
       asm("" : : "r"(tile));
-      /* FAKEMATCH(barrier): the empty asm on tile changes its allocation rank; as no
-       * asm, 62 of 168 instructions differ in tla-en. */
-      asm("" : "=r"(tile) : "0"(tile));
       word = sprite->attr2;
       /* FAKEMATCH(barrier): the empty asm on word changes its allocation rank; as no
        * asm, 64 of 168 instructions differ in tla-en. */

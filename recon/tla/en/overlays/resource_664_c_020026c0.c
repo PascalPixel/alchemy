@@ -1,3 +1,4 @@
+// Draft, differ 32 of 70 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 36 of 70 (tla-en); older figures below predate it.
 // Draft, differ 38 of 70: once the controlled character stands still on
 // another cell, puts back the cell attributes Func_02002898 saved at
@@ -6,6 +7,7 @@
 // counter (0x16a). The same listing as overlay 692's Func_020024ac. Left: order
 // and registers; the native tests the velocities before reading the last cell.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
@@ -39,6 +41,9 @@ void Func_020026c0(void) {
   if (last == -1 || cell == last)
     return;
   gData_02006c0c = -1;
+  /* FAKEMATCH(barrier): the empty asm on gData_02006c0c changes its allocation rank; as no
+   * asm, 36 of 70 instructions differ in tla-en. */
+  asm("" : : "r"(gData_02006c0c));
   x = last >> 16;
   z = last & 0xffff;
   Func_02005db4(73, 72, gData_020073dc, gData_020073e0, gData_020073e4,

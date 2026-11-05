@@ -1,3 +1,4 @@
+// Draft, differ 18 of 116 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 18 of 116 (tla-en); older figures below predate it.
 // Draft, differ 32 of 116: inside an event, the leader steps back 8 pixels and
 // turns (cue 308) while the map's two scrolling layers (the map work's 0x108
@@ -5,6 +6,7 @@
 // the blend fades a layer in; then cues 298 and 125, the leader is put on
 // layer 1 and flags 0x206 and 0x207 are set. Left: the native writes the blend after building both halves, with the count in r1, and tests the 352 frames against 351 where this draft compares with 352.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

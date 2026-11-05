@@ -26,6 +26,7 @@
 // retired: the weighting is explained by the shared variables above.
 #include "iwram_call.h"
 #include "types.h"
+#include "call.h"
 
 struct SpringPoint {
   s32 x;

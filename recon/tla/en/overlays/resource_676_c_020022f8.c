@@ -1,9 +1,11 @@
+// Draft, differ 4 of 92 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 4 (tla-en); notes below may predate it.
 // Near miss (26 instructions differ, one register swap): the native keeps
 // the object in r6 and the step in r7, the draft the other way round.
 // Tried: loops counting up, the step as i * 40, declaring the counters
 // first; the swap stays.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 

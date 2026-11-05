@@ -25,6 +25,7 @@
 // Compiler question, out of scope and untested (K3): flat ref counts, as in
 // overlay 6a3's header, would give this ranking and leave pool loads in place.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_event.h"

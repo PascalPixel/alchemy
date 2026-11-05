@@ -103,7 +103,7 @@ void Func_02004d10(struct PushMove move) {
            4;
   Func_02004a44(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x8000, 0x1999);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
+  Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 8);
   wait(15);
   {
     s32 deltaX = (move.x - from[0]) >> 17;
@@ -120,7 +120,7 @@ void Func_02004d10(struct PushMove move) {
     Func_02005480(object, 2);
   Func_020056c0(239);
   Actor_SetSpeedParameters(move.id, 0x8000, 0x1999);
-  Func_020054b8(object, move.x, move.y, move.z);
+  Call4((void (*)())Func_020054b8, object, move.x, move.y, move.z);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x1999);

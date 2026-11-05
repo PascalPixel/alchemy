@@ -1,3 +1,4 @@
+// Draft, differ 14 of 260 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 16 of 260 (tla-en); older figures below predate it.
 // 26 October 2026, under -mthumb-slow-loads: differ 18 of 260: the constant 1
 // and 2 kept in r8 by the native are rebuilt in other registers; alchemy
@@ -61,6 +62,9 @@ void Func_02000870(void) {
         s32 held = 1;
 
         FieldEvent_Wait(held);
+        /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+         * 16 of 260 instructions differ in tla-en. */
+        asm("");
       }
       Actor_GetById(9)->unk5a[0] |= 1;
       Func_02002de0(243);

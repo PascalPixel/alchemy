@@ -1,3 +1,4 @@
+// Draft, differ 20 of 57 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 20 of 57 (tla-en); older figures below predate it.
 // Draft, differ 22 of 57 (was 54), registers only: the Venus Lighthouse
 // entrance's spark animation, each live spark (frame below 16) stepping its
@@ -10,6 +11,7 @@
 // part), the frame pinned to r3 (28, or 15 with the frame read again for the
 // shift), five minutes of alchemy-devtools permute (nothing under 22).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 struct SparkState {

@@ -38,6 +38,7 @@
 // the priority read as a u16 and tested as an s16, in each arm. Declaring
 // picture, tile, viewY in the listing's slot order changes nothing.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_event.h"

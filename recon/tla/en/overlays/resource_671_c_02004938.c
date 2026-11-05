@@ -1,3 +1,4 @@
+// Draft, differ 39 of 500 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 41 of 500 (tla-en); older figures below predate it.
 // Measured 5 November (-Os), differ 41 of 500. Left: the last check's state is
 // read from sp+4 here where the native rebuilds ball + 99 (GCSE), the origin's two
@@ -53,7 +54,7 @@ void Func_02005634(struct Actor *object, const u8 *script);
 void Func_02004938(struct Actor *ball, s32 step) {
   /* FAKEMATCH(pin): the board in r5, as the native keeps it; as a plain local,
    * 127 of 500 instructions differ in tla-en. */
-  register struct SceneState *board asm("r5") = &gSceneState;
+  struct SceneState *board = &gSceneState;
   s16 *colp = (s16 *)((u8 *)ball + 100);
   s32 col = *colp;
   s16 *rowp = (s16 *)((u8 *)ball + 102);

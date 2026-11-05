@@ -1,4 +1,4 @@
-// Draft, differ 149 of 216, skeleton gap 10 and 7 (tla-en, 2026-11-01)
+// Draft, differ 6 of 216 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // All control flow is here; what is left is allocation. Two faults remain.
 // 1. j goes to r2 with caller-saves (13 refs against 3 calls, 4 * 3 < 13), so
 // the listing's r10, the eighth save and the r8 push are missing. No loop
@@ -158,9 +158,9 @@ L2:
     /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
      * order around it; as the plain statement, 12 of 216 instructions differ
      * in tla-en. */
-    do {
+    {
       Actor_GetById(*p++)->unk_55 = 0;
-    } while (0);
+    }
     /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
      * 8 of 216 instructions differ in tla-en. */
     asm("");

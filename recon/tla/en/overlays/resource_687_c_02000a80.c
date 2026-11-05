@@ -1,3 +1,4 @@
+// Draft, differ 18 of 188 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 19 (tla-en); notes below may predate it.
 // Draft, differ 89 of 188, skeleton gap 13 (tla-en, 2026-11-01)
 // What is left is GCSE's PRE: the listing keeps redundancies PRE removes here. An
@@ -129,8 +130,12 @@ void Func_02000a80(void) {
       u32 z;
       u32 x;
 
-      params.unk_18 = 0x2a1;
-      params.unk_00 = 2;
+      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+       * 19 of 188 instructions differ in tla-en. */
+      do {
+        params.unk_18 = 0x2a1;
+        params.unk_00 = 2;
+      } while (0);
       x = Random16Far() & 31;
       z = Random16Far() & 31;
       Call1(Func_02002054, 246);

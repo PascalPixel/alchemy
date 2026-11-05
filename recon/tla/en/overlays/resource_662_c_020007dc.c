@@ -1,3 +1,4 @@
+// Draft, differ 12 of 80 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 22 of 80 (tla-en); older figures below predate it.
 // Draft, differ 48 of 80 (was 50): overlay 662's Func_020007dc, the
 // representative of its copies in 675, 694, 6aa, 6ac, 6ae and 6b0. It records
@@ -40,7 +41,12 @@ void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b) {
       int blue = *colours++;
       int value = (blue << 10) | (green << 5) | red;
 
-      ((u16 *)0x05000000)[index] = value;
+      /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+       * order around it; as the plain statement, 22 of 80 instructions differ
+       * in tla-en. */
+      do {
+        ((u16 *)0x05000000)[index] = value;
+      } while (0);
     }
     if (*slots != 0xffff && *colours != 0xffff)
       goto next;

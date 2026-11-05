@@ -2,6 +2,7 @@
 // resource_69c_c_02000f34.c (overlay 69c's Func_02000f34, differ 151 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"

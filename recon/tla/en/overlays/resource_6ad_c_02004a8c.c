@@ -38,6 +38,7 @@
 // with size's members swapped, but gap 33: direction takes a register and loses
 // its slot, so it is not kept. All-plain scalars give 213, gap 41.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct PushMove {

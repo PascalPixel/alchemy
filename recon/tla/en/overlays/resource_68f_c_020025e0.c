@@ -17,6 +17,7 @@
 // Func_020024e8 keeps flag + 1 in its own variable; as an inline argument,
 // differ 68. Func_0200222c has the same loop body and frame shape.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

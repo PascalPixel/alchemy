@@ -1,3 +1,4 @@
+// Draft, differ 51 of 120 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 51 (tla-en); notes below may predate it.
 // Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "types.h"
@@ -33,10 +34,10 @@ void Func_020001f8(void) {
     /* FAKEMATCH(one-pass): the block ends CSE's run, so count is copied from
      * the test's address here and not above the test; as plain statements,
      * 20 of 120 instructions differ in tla-en. */
-    do {
+    {
       table = gData_02001a18;
       step = &gData_02001a34;
-    } while (0);
+    }
     count = &gData_02001a30;
     do {
       slot = (u16 *)0x05000000 + table[*step * gData_02001a30 + i];
@@ -52,10 +53,6 @@ void Func_020001f8(void) {
       i++;
     } while (i < *count);
   }
-  /* FAKEMATCH(barrier): the memory clobber keeps GCSE from carrying the
-   * address of gData_02001a30 past the loop, so it reloads here; as no asm, 21
-   * of 120 instructions differ in tla-en. */
-  asm("" ::: "memory");
   slot = (u16 *)0x05000000 + gData_02001a24[gData_02001a30];
   index = gData_02001a30 * 3;
   list = gData_02001a14 ? &gData_02001a28 : &Data_02001a2c;
@@ -71,18 +68,14 @@ void Func_020001f8(void) {
   r = *colour++;
   /* FAKEMATCH(one-pass): as in the loop; as a plain statement, 2 of 120
    * instructions differ in tla-en. */
-  do {
+  {
     *slot = b << 10 | g << 5 | r;
-  } while (0);
+  }
   gData_02001a14 ^= 1;
   /* FAKEMATCH(volatile): the volatile read issues after the left half of the
    * step's zero extension; as a plain read, 2 of 120 instructions differ in
    * tla-en. */
   if (++gData_02001a34 == gData_02001a30) {
     gData_02001a34 = 0;
-    /* FAKEMATCH(barrier): the two uses and the longer life set the slot's
-     * allocation priority between i's and r's, so it takes r4 and i r5; as no
-     * asm, 18 of 120 instructions differ in tla-en. */
-    asm("" : : "r"(slot), "r"(slot));
   }
 }

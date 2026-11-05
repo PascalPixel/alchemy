@@ -1,4 +1,4 @@
-// Draft, differ 66 of 174, skeleton gap 24 (tla-en, 2026-11-01)
+// Draft, differ 25 of 174 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // The update hook Func_020053e4 installs: animates the object every other
 // frame, starts one of two rising sprite pairs every 16 frames (sound 0x256),
 // and in mode 1 frees itself once both have passed 31.
@@ -117,9 +117,9 @@ void Func_02005268(struct Actor *object) {
           /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
            * order around it; as the plain statement, 41 of 174 instructions differ
            * in tla-en. */
-          do {
+          {
             sprite->unk10 = z;
-          } while (0);
+          }
           sprite->unk0c = x;
           sprite->unk14 = sprite->unk18 = sine;
           if (j == 0) {

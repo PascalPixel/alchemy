@@ -1,3 +1,4 @@
+// Draft, differ 21 of 198 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 29 of 198 (tla-en); older figures below predate it.
 // Draft, differ 77 of 198: a push in Eastern Alhafra: while object 16 stands
 // unpushed (flag 0x8a4 clear) its cells are blocked; a measured push
@@ -8,6 +9,7 @@
 // (Func_02000fa4, cue 240, mode 8) before the camera follows the leader
 // again. Left: the native keeps object 16 in r10 and the address of the push state's stacked half in r8, and builds 0xc000 in r2; the falling loop and the six cell clears are close.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 
@@ -58,11 +60,11 @@ void Func_02000514(void) {
       Camera_MoveWithinMapBounds(0x1500000, -1, 0x2300000, 1);
       Func_020044c4(push);
       Func_02004c7c(gate->x - 0x180000, gate->z, 0, 0);
-      Func_02004c7c(gate->x + 0x80000, gate->z, 0, 0);
+      ((s32 (*)())Func_02004c7c)(gate->x + 0x80000, gate->z, 0, 0);
       Func_02004c7c(gate->x - 0x180000, gate->z, 2, 0);
       Func_02004c7c(gate->x - 0x80000, gate->z, 2, 0);
-      Func_02004c7c(gate->x + 0x80000, gate->z, 2, 0);
-      Func_02004c7c(gate->x + 0x180000, gate->z, 2, 0);
+      ((s32 (*)())Func_02004c7c)(gate->x + 0x80000, gate->z, 2, 0);
+      ((s32 (*)())Func_02004c7c)(gate->x + 0x180000, gate->z, 2, 0);
       Actor_SetModeById(15, 3);
       Actor_OffsetPositionAndResetMotion(15, 0, 16);
       FieldEvent_Wait(20);

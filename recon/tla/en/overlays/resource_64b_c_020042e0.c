@@ -1,3 +1,4 @@
+// Draft, differ 13 of 227 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 15 of 227 (tla-en); older figures below predate it.
 // Draft, differ 25 of 227 (was 45): queues the second world map picture (its
 // tiles, frames and palette) and scrolls it in over 96 frames, then fades and
@@ -12,6 +13,7 @@
 // differ in order by one instruction each. Permuter forms at 19 to 23 are
 // one-pass blocks and temporaries.
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "ram_buffer.h"
@@ -45,6 +47,9 @@ void Func_020042e0(void) {
   frames = buffer + 0x2000;
   Func_02004aa8(gWorldMapPackedPicturesB, frames);
   ime = &REG_IME;
+  /* FAKEMATCH(barrier): the empty asm on ime changes its allocation rank; as no
+   * asm, 15 of 227 instructions differ in tla-en. */
+  asm("" : "=r"(ime) : "0"(ime));
   IO_WRITE_QUEUE_PUSH_IME(ime, 0x050001c0, (u32)gWorldMapPalettesB, 0x80000010);
   IO_WRITE_QUEUE_PUSH_IME(ime, 0x06000000, (u32)buffer, 0x84000400);
   IO_WRITE_QUEUE_PUSH_IME(ime, 0x06001000, (u32)frames, 0x84000800);

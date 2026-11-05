@@ -35,6 +35,7 @@
 // block, old and now read through work reach the pool entries; the entry's first
 // three words go through a post-incremented pointer.
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 #include "graphics/vram_tab.h"
 

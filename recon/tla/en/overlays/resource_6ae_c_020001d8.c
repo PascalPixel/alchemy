@@ -1,4 +1,4 @@
-// Draft, differ 41 of 124: rewritten from the listing, with the loop as a goto
+// Draft, differ 18 of 124 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // loop (as a for loop: 73). The aerie's setup: marks the leader and objects 10
 // to 16, and under flag 0xa3c places objects 8 and 9, starts their actions and
 // schedules Func_020004a4. Func_0200567c goes through a forwarding inline
@@ -47,9 +47,9 @@ next:
   /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
    * order around it; as the plain statement, 59 of 124 instructions differ
    * in tla-en. */
-  do {
+  {
     object->priorityFlags |= 0x80;
-  } while (0);
+  }
   Animation_ApplyChildValues(object, 5);
   if (++i <= 16)
     goto next;

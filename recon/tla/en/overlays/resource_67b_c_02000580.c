@@ -40,6 +40,7 @@
 // the map and its attributes (Func_02002968, Func_02002958) until the
 // gate's height is drawn.
 #include "types.h"
+#include "call.h"
 
 struct Unk02003450 {
   s16 unk00[16];

@@ -1,3 +1,4 @@
+// Draft, differ 30 of 247 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 39 of 247 (tla-en); older figures below predate it.
 // Draft, differ 56 of 247, skeleton gap 5/7 (tla-en, 2026-11-01)
 // Receiving clear data over the link cable: waits for a peer with a matching
@@ -20,6 +21,7 @@
 // macros for French and Spanish; 0x55 in tla-en is listed as MsgFieldRepelEvil
 // only by coincidence of value.
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
 #include "io_reg.h"
@@ -172,15 +174,20 @@ done:
   Func_02002228();
   wait(10);
   Window_Close(window, 2);
-  flags = gGameFlagBytes;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 32 of 247 instructions differ
+   * in tla-en. */
+  do {
+    flags = gGameFlagBytes;
+  } while (0);
   copyWords = Iwram_CopyWords;
   copyWords(flags + 0x220, Ram_ReceivedUnits, 0xd20);
-  copyWords(flags, Ram_ReceivedFlags, 0x214);
+  Call3((void (*)())copyWords, flags, Ram_ReceivedFlags, 0x214);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);
   Unit_Calculate(3);
-  copyWords(Ram_ReceivedFlags, flags, 0xf40);
+  Call3((void (*)())copyWords, Ram_ReceivedFlags, flags, 0xf40);
   Func_02002310(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   return 1;
 }

@@ -1,3 +1,4 @@
+// Draft, differ 4 of 159 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 4 (tla-en); notes below may predate it.
 // Draft, differ 104 of 159, skeleton gap 12 (tla-en, 2026-11-01): a charge-up
 // step for the controlled character in Taopo Swamp: holding the direction pad
@@ -22,6 +23,7 @@
 // set after the call, before it, or in the sprite branch (no change), set before
 // the loop or at its top (131, actor r7, sprite r8), the two byte stores swapped.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
 

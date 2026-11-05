@@ -29,6 +29,7 @@
 //   signed 16-bit bit-field for the flag (252, gap 56/60), s16 (gap 56/60).
 // - q also set at the walk's top: 259, gap 49/50, redundant, so not kept.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -95,7 +96,7 @@ retry:
     angle = (s16)ArcTan2(lastZ - object->z, lastX - object->x);
     angle = (s16)((angle + 0x2000) & 0xffffc000);
   }
-  Vector_AddPolarOffsetFar(0x100000, angle, position);
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, position);
   value = Func_02004224(*terrain, p[0], p[2]);
   if (value != 255 &&
       Map_GetTerrainHeight(*terrain, p[0], p[2]) - object->y <= 0x80000) {

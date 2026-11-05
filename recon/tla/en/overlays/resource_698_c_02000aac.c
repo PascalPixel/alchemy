@@ -11,6 +11,7 @@
 // depth in r11 and spills the view height and tile, where this spills the
 // view x and tile. Tried: the view height read first, a goto loop.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_event.h"

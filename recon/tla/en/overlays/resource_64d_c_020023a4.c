@@ -1,3 +1,4 @@
+// Draft, differ 20 of 215 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 20 of 215 (tla-en); older figures below predate it.
 // Draft, differ 50 of 215 (was 94): the Venus Lighthouse entrance glow:
 // takes heap slot 220, loads gField_Tiles64D's tiles, sets up its sixteen
@@ -10,6 +11,7 @@
 // loads. Tried: statement moves and four permuter minutes (48 by its count,
 // no closer form).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 

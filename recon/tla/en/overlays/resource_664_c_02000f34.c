@@ -3,6 +3,7 @@
 // Func_02001b54 (the same listing, with Func_02000d48 as its shots' update),
 // whose draft holds its notes.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"

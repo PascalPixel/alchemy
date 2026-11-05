@@ -12,6 +12,7 @@
 // probably not local to the block, but reusing the variable before the branch
 // ranked it too high (differ 83). A real while or for duplicates the test.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -37,7 +38,7 @@ void Func_02000584(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
   Func_020014a8(8, gMainRoutineWork.currentOwner);
-  Func_020014a8(9, gMainRoutineWork.currentOwner);
+  ((s32 (*)())Func_020014a8)(9, gMainRoutineWork.currentOwner);
   Func_020014a8(10, gMainRoutineWork.currentOwner);
   wait(1);
   Func_0200056c(8);

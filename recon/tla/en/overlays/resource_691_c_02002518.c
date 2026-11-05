@@ -1,3 +1,4 @@
+// Draft, differ 8 of 112 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
 // Draft, differ 26 of 112, skeleton gap 3 (tla-en, 2026-11-01)
 // Builds four parts around the watched object of an object whose update is
@@ -22,6 +23,7 @@
 // sprite layout of 08021a84 (slot at 16, retainCacheEntry at bit 0 of 17) reads
 // better but lets the store float, differ 28; byte 98 is not unk5c (that is 94).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))

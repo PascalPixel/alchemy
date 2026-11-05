@@ -43,6 +43,7 @@
 // Compiler question for Pascal only (K3), not tested: a PRE that leaves pool
 // loads alone would close item 1 in this whole family of drafts.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_event.h"

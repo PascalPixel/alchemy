@@ -1,3 +1,4 @@
+// Draft, differ 2 of 613 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
 // Func_0200115c: differ 2 of 613. One pair is left: after the fourth
 // Func_0200343c the native shifts the scale (lsls r5) before it adds the object
@@ -244,8 +245,6 @@ void Func_0200115c(void) {
     Func_0200343c_(656 << 16, 224 << 16, 0, -4);
     Func_0200343c_(656 << 16, 240 << 16, 0, -4);
     Func_0200343c_(656 << 16, 256 << 16, 0, -4);
-    /* FAKEMATCH: barrier, see the header. */
-    __asm__("");
     WORD_AT(object, 72) = 0x4000;
     object->motionFlags = 2;
     object->terrainHeight = 0xfc190000;
@@ -297,8 +296,6 @@ void Func_0200115c(void) {
     WORD_AT(object, 108) = (s32)Func_02001138;
     WORD_AT(object, 28) = 0x4000;
     ((s32 (*)(s32, s32, s32))Actor_Jump)(13, 11, 0);
-    /* FAKEMATCH: barrier, see the header. */
-    __asm__("");
     Func_0200362c(147);
     Actor_SetSpeedParameters_(13, 0x33333, 0x19999);
     Actor_SetPositionAndReset_(13, 584, 248);

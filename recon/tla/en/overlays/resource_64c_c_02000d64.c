@@ -27,6 +27,7 @@
 // cross-jumped, gap 8, differ 189, but it merges the wrong stores); all 6
 // orders at the bottom; reach's operand orders and a sprite local (no change).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "map.h"

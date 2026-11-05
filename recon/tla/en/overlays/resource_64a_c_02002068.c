@@ -1,3 +1,4 @@
+// Draft, differ 11 of 137 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 11 of 137 (tla-en); older figures below predate it.
 // Draft, differ 83 of 137 (was 106): turns packed clear data into password
 // characters, six bits each with every tenth skipped, and scrambles them.
@@ -9,6 +10,7 @@
 // native computes from n (r8) where gcse folds n's zero here. Tried: dst[n]
 // for p (121: n then takes r4).
 #include "types.h"
+#include "call.h"
 
 s32 Func_02002068(u8 *src, s32 length, u8 *dst) {
   u8 saved[260];

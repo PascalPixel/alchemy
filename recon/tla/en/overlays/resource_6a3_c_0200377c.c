@@ -25,6 +25,7 @@
 // sx, sy and x reuse, word's position, large as a read in place, a shared
 // priority local and the depth shift split all measured same or worse.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_event.h"

@@ -1,4 +1,4 @@
-// Draft, differ 35 of 145 (tla-en, 2026-11-05). Older notes below may predate this figure.
+// Draft, differ 31 of 145 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // its work in heap slot 220, loads the spark picture (ResourceId_ColouredOrbs,
 // entry 0x1ef of the resource directory, which needs that name added there
 // before adoption) into VRAM, sets up its 96 4 by 4 sprites at the leader's
@@ -83,9 +83,9 @@ void Func_02001718(const s32 *from, const s32 *to) {
   /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
    * order around it; as the plain statement, 89 of 145 instructions differ
    * in tla-en. */
-  do {
+  {
     work->to[1] = to[1];
-  } while (0);
+  }
   work->to[2] = to[2];
   Func_020027b8(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs), work);
   entry = Resource_FindFreeEntry();

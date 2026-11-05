@@ -9,6 +9,7 @@
 // tests of the scene again before the dimming) and the register holding
 // gMainRoutineWork.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

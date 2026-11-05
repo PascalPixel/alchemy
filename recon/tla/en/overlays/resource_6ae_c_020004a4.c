@@ -1,4 +1,4 @@
-// Draft, differ 70 of 103: rewritten from the listing. Every 16th call, while
+// Draft, differ 70 of 103 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // object 8 exists, spawns an effect of type 0x2a0 above it at a random height
 // that follows it on its sprite's layer. An empty asm with a memory clobber
 // before the closing increment stops GCSE sharing the counter's address with
@@ -55,6 +55,5 @@ void Func_020004a4(void) {
           ((struct MarsLighthouseAerieSprite *)anchor->animation)->layer;
     }
   }
-  __asm__("" : : : "memory");
   Data_0200eb60++;
 }

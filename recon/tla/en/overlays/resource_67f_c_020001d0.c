@@ -6,6 +6,7 @@
 // Measured against its copies: overlay 68F's Func_0200222c (differ 94 of 130),
 // overlay 691's Func_02002d08 (differ 94 of 130).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

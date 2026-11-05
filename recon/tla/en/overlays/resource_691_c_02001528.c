@@ -1,81 +1,98 @@
-// Measured under -Os, 5 November 2026: differ 117 (tla-en); notes below may predate it.
-// Draft, differ 150 of 91: translated from its listing; names and structure still
-// to do.
-#include "iwram_call.h"
-#include "call.h"
-#include "actor.h"
-#include "main_routine_work.h"
-#include "ram_buffer.h"
-#include "text/msg_ids.h"
+// Draft of overlay 691's Func_02001528, translated from its listing.
 #include "types.h"
-
+#include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-
 s32 Func_02003a6c();
 
-s32 Func_02001528(s32 a0) {
-  s32 r5, r4, r0, r2, r6, r1, ip, r3, v0;
 
-  r5 = FIELD_AT(a0, s32, 104);
-  r4 = r4 + 100;
-  r4 = r5;
-  r0 = a0;
-  r2 = FIELD_AT(r4, s16, 0);
-  if ((FIELD_AT(r4, s16, 0)) <= 35)
+void Func_02001528(s32 p0) {
+  s32 v_ip, v_r1, v_r2, v_r3, v_r4, v_r5, v_r6;
+
+  v_r5 = FIELD_AT(p0, s32, 104);
+  v_r4 = v_r5;
+  v_r4 = v_r4 + 100;
+  v_r2 = FIELD_AT(v_r4, s16, 0);
+  if (v_r2 <= 35)
     goto L_0200955c;
-  if (r2 >= (((FIELD_AT(r0, u8, 98)) << 1) + 36))
+  v_r3 = p0 + 98;
+  v_r3 = FIELD_AT(v_r3, u8, 0);
+  v_r3 = v_r3 << 1;
+  v_r3 = v_r3 + 36;
+  if (v_r2 >= v_r3)
     goto L_0200955c;
-  FIELD_AT(r0, s32, 12) = (FIELD_AT(r5, s32, 12)) + 2097152;
-  r6 = 0;
-  r2 = ((FIELD_AT(r5, s32, 12)) + 2097152) + ((*(s16 *)(r4 + r6)) << 19);
-  r1 = -0x1180000;
+  v_r2 = FIELD_AT(v_r5, s32, 12);
+  v_r2 = v_r2 + 0x200000;
+  FIELD_AT(p0, s32, 12) = v_r2;
+  v_r6 = 0;
+  v_r3 = FIELD_AT(v_r4 + v_r6, s16, 0);
+  v_r3 = v_r3 << 19;
+  v_r2 = v_r2 + v_r3;
   goto L_020095be;
 L_0200955c:
-  r6 = 0;
-  ip = 98 + r0;
-  r2 = FIELD_AT(r0, u8, 98);
-  r1 = *(s16 *)(r4 + r6);
-  if ((((FIELD_AT(r0, u8, 98)) << 1) + 36) >= (*(s16 *)(r4 + r6)))
+  ;
+  v_r2 = 98 + p0;
+  v_ip = v_r2;
+  v_r2 = FIELD_AT(v_r2, u8, 0);
+  v_r6 = 0;
+  v_r1 = FIELD_AT(v_r4 + v_r6, s16, 0);
+  v_r3 = v_r2 << 1;
+  v_r3 = v_r3 + 36;
+  if (v_r3 >= v_r1)
     goto L_02009588;
-  if (r1 >= 0x14c)
+  if (v_r1 >= 0x14c)
     goto L_02009588;
-  r6 = 128;
-  r6 = r6 << 14;
-  FIELD_AT(r0, s32, 12) = ((FIELD_AT(r5, s32, 12)) + (r2 << 20)) + r6;
+  v_r3 = FIELD_AT(v_r5, s32, 12);
+  v_r2 = v_r2 << 20;
+  v_r6 = 128;
+  v_r3 = v_r3 + v_r2;
+  v_r6 = v_r6 << 14;
+  v_r3 = v_r3 + v_r6;
+  FIELD_AT(p0, s32, 12) = v_r3;
   goto L_020095de;
 L_02009588:
-  r1 = FIELD_AT(r4, s16, 0);
-  if ((FIELD_AT(r4, s16, 0)) <= 0x14c)
+  ;
+  v_r1 = FIELD_AT(v_r4, s16, 0);
+  if (v_r1 <= 0x14c)
     goto L_020095c4;
-  r6 = ip;
-  r6 = r6 + 255;
-  r6 = 78;
-  r2 = FIELD_AT(r6, u8, 0);
-  if (r1 >= (((FIELD_AT(r6, u8, 0)) << 1) + r6))
+  v_r6 = v_ip;
+  v_r2 = FIELD_AT(v_r6, u8, 0);
+  v_r6 = 78;
+  v_r3 = v_r2 << 1;
+  v_r6 = v_r6 + 255;
+  v_r3 = v_r3 + v_r6;
+  if (v_r1 >= v_r3)
     goto L_020095c4;
-  FIELD_AT(r0, s32, 12) = ((FIELD_AT(r5, s32, 12)) + (r2 << 20)) + 2097152;
-  r6 = 0;
-  r2 = (((FIELD_AT(r5, s32, 12)) + (r2 << 20)) + 2097152) -
-       ((*(s16 *)(r4 + r6)) << 19);
-  r1 = 0xa600000;
+  v_r3 = v_r2 << 20;
+  v_r2 = FIELD_AT(v_r5, s32, 12);
+  v_r2 = v_r2 + v_r3;
+  v_r2 = v_r2 + 0x200000;
+  FIELD_AT(p0, s32, 12) = v_r2;
+  v_r6 = 0;
+  v_r3 = FIELD_AT(v_r4 + v_r6, s16, 0);
+  v_r3 = v_r3 << 19;
+  v_r2 = v_r2 - v_r3;
 L_020095be:
-  FIELD_AT(r0, s32, 12) = r2 + r1;
+  ;
+  v_r2 = v_r2 + v_r1;
+  FIELD_AT(p0, s32, 12) = v_r2;
   goto L_020095de;
 L_020095c4:
-  r6 = r6 + 255;
-  r6 = 78;
-  r1 = 0;
-  r2 = ((FIELD_AT(r0, u8, 98)) << 1) + r6;
-  r3 = FIELD_AT(r4, s16, 0);
-  if ((((FIELD_AT(r0, u8, 98)) << 1) + r6) >= (FIELD_AT(r4, s16, 0)))
+  ;
+  v_r3 = p0 + 98;
+  v_r3 = FIELD_AT(v_r3, u8, 0);
+  v_r6 = 78;
+  v_r3 = v_r3 << 1;
+  v_r6 = v_r6 + 255;
+  v_r2 = v_r3 + v_r6;
+  v_r3 = FIELD_AT(v_r4, s16, 0);
+  if (v_r2 >= v_r3)
     goto L_020095de;
-  v0 = Func_02003a6c();
-  r0 = v0;
+  Call4((void (*)())Func_02003a6c, p0, 0, v_r2, v_r3);
 L_020095de:
-  return r0;
+  ;
 }

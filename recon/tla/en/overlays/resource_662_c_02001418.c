@@ -1,3 +1,4 @@
+// Draft, differ 22 of 390 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 34 of 390 (tla-en); older figures below predate it.
 // Draft, differ 85 of 390 (was 86; ja 90 of 386 before): Yampi Desert Cave's
 // map setup for its three rooms: pillars, palette cycle, Retreat destination,
@@ -116,9 +117,15 @@ s32 Func_02001418(void) {
     if (!GameFlag_Test(65) && !GameFlag_Test(145)) {
       s32 step = GameFlag_GetByte(0x278);
       s32 placed = GameFlag_Test(0x271);
+      /* FAKEMATCH(barrier): the empty asm on placed changes its allocation rank; as no
+       * asm, 34 of 390 instructions differ in tla-en. */
+      asm("" : : "r"(placed));
 
       if (placed) {
         s32 index = step / 32;
+        /* FAKEMATCH(barrier): the empty asm on index changes its allocation rank; as no
+         * asm, 24 of 390 instructions differ in tla-en. */
+        asm("" : : "r"(index));
 
         Func_020018a8(16, 0, 0);
         Func_020018a8(17, gData_020019cc[index * 2] << 19,

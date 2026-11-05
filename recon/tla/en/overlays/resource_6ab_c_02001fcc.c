@@ -3,6 +3,7 @@
 // Func_020024c0: its draft (resource_6aa_c_020024c0.c) with this overlay's
 // symbols: differ 90 of 108. Left: what that draft's header records.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "battle_unit.h"

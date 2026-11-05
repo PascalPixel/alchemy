@@ -1,3 +1,4 @@
+// Draft, differ 10 of 177 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 14 (tla-en); notes below may predate it.
 // Matches: differ 0 (tla-en, 2026-11-02). The non-Japanese body of
 // games/tla/src/scene/ankohl_ruins/s0418.c, adopted before this draft existed;
@@ -88,14 +89,14 @@ void Func_02000418(void) {
   effect->palette = 7;
   effect->update = Effect_AdvanceMotion;
   effect = &options;
+  /* FAKEMATCH(barrier): the empty asm on effect changes its allocation rank; as no
+   * asm, 14 of 177 instructions differ in tla-en. */
+  asm("" : "=r"(effect) : "0"(effect));
   effect->scaleX = 0xa3d7;
   effect->scaleY = 0xa3d7;
   i = 0;
 loop:
   angle = i << 12;
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading effect and
-   * leader; as plain C with no asm, 16 of 177 instructions differ in tla-en. */
-  asm("" : : "r"(effect), "r"(leader), "r"(leader) : "sfp");
   velocity[0] = Math_Cosine(angle);
   velocity[1] = 0;
   velocity[2] = Math_Sine(angle);

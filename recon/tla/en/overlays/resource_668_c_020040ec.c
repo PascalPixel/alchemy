@@ -1,3 +1,4 @@
+// Draft, differ 28 of 126 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 28 of 126 (tla-en); older figures below predate it.
 // Draft, differ 60 of 126, skeleton gap 3 (tla-en, 2026-11-01)
 // For a pushable object (its animation one of the six kinds in gData_02004ca4)
@@ -30,6 +31,7 @@
 // (u16)i, box bytes and absolute values as locals, height in two steps, swapped
 // compares, an ABS macro.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 

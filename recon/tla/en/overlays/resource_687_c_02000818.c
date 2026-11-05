@@ -40,6 +40,7 @@
 #include "actor.h"
 #include "ram_buffer.h"
 #include "types.h"
+#include "call.h"
 
 struct Spark {
   s32 mode;

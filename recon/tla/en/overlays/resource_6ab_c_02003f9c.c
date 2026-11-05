@@ -1,4 +1,4 @@
-// Draft, differ 34 of 76: overlay 6ab's copy of the spot check drafted in
+// Draft, differ 4 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // resource_698_c_0200180c.c, with this overlay's symbols, its loop as a goto
 // loop. The listing tests the count once with ldrsh before the loop and loads
 // it again unextended (ldrh) for the loop's own test, sign-extending it on
@@ -7,6 +7,7 @@
 // in r6 and the index in r7, here the other way round (an asm on the state,
 // other declaration orders and permute for 4 minutes change nothing).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 
@@ -52,7 +53,6 @@ s32 Func_02003f9c(void) {
     i = zero;
     spot = state->spots;
   }
-  __asm__("" : : : "memory");
   count = (u16)state->count;
   if (i < first) {
   next:

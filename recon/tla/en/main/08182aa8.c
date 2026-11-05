@@ -496,8 +496,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 282) <= 17) {
       s32 g = (frame - 282) / 2 + 14;
-      s32 b = frame - 253;
       u16 *dst = (u16 *)OBJ_PLTT;
+      s32 b = frame - 253;
       u32 c;
 
       if (g > 31) {
@@ -1176,7 +1176,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     lift = frame * 8 - 128;
     s = (frame << 13) + -0x20000;
     d = frame - 16;
-    for (i = 0; i != 3; i++, lift -= 64, s += -0x10000, d -= 8) {
+    for (i = 0; i != 3; lift -= 64, s += -0x10000, i++, d -= 8) {
       if (d >= 0) {
         s32 sh2 = 0;
 

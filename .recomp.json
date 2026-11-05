@@ -1,0 +1,8 @@
+{
+  "$schema": "https://recomp.fyi/schema/v1.json",
+  "game": "Golden Sun",
+  "wikidata": "Q1545555",
+  "system": "GBA",
+  "type": "decomp",
+  "status": "complete"
+}

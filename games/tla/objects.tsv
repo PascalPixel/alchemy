@@ -474,12 +474,7 @@ main	rom_main_01	games/tla/src/field/map/mapdata	.rodata
 main	rom_main_01	games/tla/src/field/map/griddata	.rodata
 main	rom_main_01	games/tla/src/field/script/object_script	.rodata
 main	rom_main_01	games/tla/src/field/map/layered	.rodata
-main	rom_main_01	recon/tla/it/rom	.rom.00030310	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00030310	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00030310	es
-main	rom_main_01	recon/tla/de/rom	.rom.00030310	de
-main	rom_main_01	recon/tla/raw/08030310	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0003028c	ja
+main	rom_main_01	games/tla/src/field/map/f030310	.rodata
 main	rom_main_02	games/tla/src/gamepak/far_call/uitext
 main	rom_main_02	games/tla/src/gamepak/far_call/uitext_2
 main	rom_main_02	games/tla/src/gamepak/far_call/uitext_3

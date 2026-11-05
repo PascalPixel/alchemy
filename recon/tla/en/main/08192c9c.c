@@ -340,7 +340,11 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   s32 cel;
   s32 sheetOffset;
   u8 *cells;
-  s32 j1;
+  s32 j11;
+  s32 j12;
+  s32 j13;
+  s32 j14;
+  s32 j15;
   s32 j6;
   s32 a;
   s32 px;
@@ -350,10 +354,10 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   if (t < Data_08199f40[small] * 2) {
     r = Data_08199f40[small] * 2 - t;
     cel = r / 6;
-    cells = sprites + cel * 8;
     sheetOffset = cel * 0x302;
-    for (j1 = 0; j1 != 64; j1++) {
-      a = j1 << 10;
+    cells = sprites + cel * 8;
+    for (j11 = 0; j11 != 64; j11++) {
+      a = j11 << 10;
       px = (r * Trig_Sin(a) / 2 >> 16) + x;
       py = (r * Trig_Cos(a) >> 16) + y;
       draw(canvas, cells + 444, px, py - 2, 2, 4);
@@ -368,8 +372,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 98;
       blit = draw;
       ring = sprites + offset;
-      for (j1 = 0; j1 != 8; j1++) {
-        a = (j1 << 13) + (t * 5 << 9);
+      for (j12 = 0; j12 != 8; j12++) {
+        a = (j12 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         blit(canvas, ring, px - 3, py - 7, 7, 14);
@@ -390,8 +394,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 344;
       blit = draw;
       ring = sprites + offset;
-      for (j1 = 0; j1 != 8; j1++) {
-        a = (j1 << 13) + (t * 5 << 9);
+      for (j13 = 0; j13 != 8; j13++) {
+        a = (j13 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         blit(canvas, ring, px - 2, py - 5, 5, 10);
@@ -410,14 +414,14 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       if (cel == 64)
         cel = 56;
       ring = sprites + (cel + 444);
-      for (j1 = 0; j1 != 64; j1++) {
-        a = j1 << 10;
+      for (j14 = 0; j14 != 64; j14++) {
+        a = j14 << 10;
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         draw(canvas, ring, px - 1, py - 2, 2, 4);
       }
-      for (j1 = 0; j1 != 64; j1++) {
-        a = j1 << 10;
+      for (j15 = 0; j15 != 64; j15++) {
+        a = j15 << 10;
         py = (r * Trig_Cos(a) >> 16) + y + Data_08199f48[small] * 2;
         px = (r * Trig_Sin(a) * 2 >> 16) + x;
         draw(canvas, ring, px - 1, py - 2, 2, 4);
@@ -603,6 +607,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s32 i;
   s32 j;
   s32 c4;
+  s32 w;
 
   s32 k;
   s32 c0;
@@ -784,7 +789,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         SCENE->radius -= 0x1000;
         if (!(frame & 15)) {
           for (i = 0; i != 128; i++) {
-            s16 c = FADE_PLTT[i];
+            s32 c = FADE_PLTT[i];
             s32 r = 31;
             u16 g = (u16)c >> 5 & 31;
             s32 b = (u16)c >> 10 & 31;
@@ -830,7 +835,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The crystal: sixteen sprites, the sparks and the first motes.
     if (frame == 176) {
-      void *colors;
+      u8 *colors;
 
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       work->transferPending = 1;
@@ -839,8 +844,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       BattleBackground_LoadFar(1, (s32)&ResourceId_Data076, 0);
       colors = Resource_GetTableEntry((s32)&ResourceId_Data0A5);
       Dma_Set(colors, (void *)(PLTT + 0x200), 0x84000080, REG_DMA3);
-      Resource_DecodeType01((u8 *)colors + 0x200, Data_02010578);
-      tiles = Data_02010578;
+      colors += 0x200;
+      Resource_DecodeType01(colors, Data_02010578);
+      tiles = (u8 *)(Ram_MapCellBuffer + 0x578);
       for (i = 0; i != 16; i++) {
         struct IrisSprite *obj = Func_0815b290(32, 32, 0x80002000, 0);
 
@@ -851,14 +857,15 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
       colors = Resource_GetTableEntry((s32)&ResourceId_Data09A);
       Iwram_FillWords((void *)(PLTT + 0x3e0), 32, -1);
-      Resource_DecodeType01((u8 *)colors + 32, work->sheet);
+      colors += 32;
+      Resource_DecodeType01(colors, work->sheet);
       for (i = 0; i != 15; i++) {
         struct IrisSprite *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
 
         objects[i] = obj;
         ((struct IrisSpriteFlags *)obj)->priority = 1;
-        sparks->frames[i] = i;
         sparks->tiles[i] = obj->tile;
+        sparks->frames[i] = i;
         Dma_Set(work->sheet + i * 128, (void *)OBJ_TILES(obj), 0x84000020,
                 REG_DMA3);
       }
@@ -898,16 +905,21 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 177) <= 216) {
       scale = Data_08196f48;
+      pos[3] = 0;
       pos[1] = 0xff0000;
       lift = 0;
-      pos[3] = 0;
       if (frame > 350) {
         u16 *pal = (u16 *)(PLTT + 0x200);
 
         for (i = 0; i != 255; i++) {
-          s32 r = pal[i] & 31;
-          s32 g = pal[i] >> 5 & 31;
-          s32 b = pal[i] >> 10 & 31;
+          s32 c = pal[i];
+          s32 r = 31;
+          s32 g;
+          s32 b;
+
+          r &= c;
+          g = (u16)c >> 5 & 31;
+          b = (u16)c >> 10 & 31;
 
           if (r != 31)
             r++;
@@ -945,11 +957,13 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       if (frame <= 191) {
         for (c1 = 0; c1 != 3; c1++) {
           u8 v = frame + (c1 & 1) * 47 + 80;
+          s32 end;
 
           y = c1 + 62;
           off = ((y & 7) << 3) + ((y >> 3) << 10);
-          for (x = 0; x != 128; x += 8) {
-            for (m = x; m != x + 8; m++) {
+          for (x = 0; x != 128; x = end) {
+            end = x + 8;
+            for (m = x; m != end; m++) {
               if (canvas[off] < v)
                 canvas[off] = v;
               off++;
@@ -1002,11 +1016,13 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1010;
       REG_BG2CNT = 0x784;
       for (i = 1; i != 8; i++) {
-        for (c4 = 0; c4 != 10; c4++) {
+        for (c4 = 0; c4 != 10; c4 = w) {
           u8 *src = work->sheet + gData_08197410[c4];
           u8 *out = work->sheet + gData_08197410[c4] + i * 0x302;
-          s32 w = c4 + 1;
-          s32 n = w * 2 * w;
+          s32 n;
+
+          w = c4 + 1;
+          n = w * 2 * w;
 
           for (j = 0; j != n; j++) {
             u8 v = src[j] - i * 8;

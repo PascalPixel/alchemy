@@ -1,3 +1,5 @@
+// 2026-11-05: differ 104 of 2680 (tla-en). The flash reads *src per channel, no u16 c;
+// that is item (3) below closed, and the count now equal.
 // 2026-11-05: differ 137 of 2680 (tla-en). With the twin's two dead branches
 // and a wrapper on the first palette copy. Left: scheduling rows and pool
 // offsets that follow them, across the draft.
@@ -490,10 +492,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         volatile u16 *dst = (volatile u16 *)OBJ_PLTT;
 
         for (i = 0; i != 256; i++, src++, dst++) {
-          u16 c = *src;
-          s32 r = (c & 31) + addR;
-          s32 g = (((u16)c >> 5) & 31) + addG;
-          s32 b = (((u16)c >> 10) & 31) + addB;
+          s32 r = (*src & 31) + addR;
+          s32 g = ((*src >> 5) & 31) + addG;
+          s32 b = ((*src >> 10) & 31) + addB;
 
           if (r > 31)
             r = 31;

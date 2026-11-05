@@ -1,3 +1,5 @@
+// 2026-11-05: differ 106 of 1034 (tla-en). Green is read, then set to red: that keeps
+// the read shared, hence lsls 16, lsrs 26, and the count (Daedalus shows the plain form).
 // 2026-11-05: differ 130 of 1034 (tla-en). Tried on the colour loop, none
 // giving lsls 16, lsrs 26: u16 and s16 locals with narrowing casts (165 to
 // 172), u16 red and blue (141, 168), a bitfield (148), a mask local (184), an
@@ -313,14 +315,17 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
       for (i = 0, color = (u16 *)(BG_PLTT + 96); i != 128; i++, color++) {
         s32 red = *color & 31;
-        s32 blue = (u16)((s16)*color >> 10) & 31;
+        s32 green = (*color >> 5) & 31;
+        s32 blue = (*color >> 10) & 31;
+
+        green = red;
         if (red > 31) {
           red = 31;
         }
         if (blue > 31) {
           blue = 31;
         }
-        *color = (red << 10) | (red << 5) | blue;
+        *color = (red << 10) | (green << 5) | blue;
       }
       BattleEffect_BuildRepeatingTilemap();
       gBgScroll[1].y = 104;

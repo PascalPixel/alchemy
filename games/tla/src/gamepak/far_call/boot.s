@@ -1,6 +1,8 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/gamepak/far_call/veneer.s"
+	.global FarCall_RuntimeTable
+FarCall_RuntimeTable:
 	.global waitFar
 	.thumb_func
 waitFar:

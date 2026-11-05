@@ -1,11 +1,3 @@
-// Draft, differ 8 of 66 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
-// Draft, differ 26 of 66: points the map work's focus (0x178) at cell (x, z):
-// its position in 16.16 pixels, the cell's halfword coordinates, its
-// pointers into gMapCellBuffer and gMapShapeGrid (cells two to a step), unit
-// scales and cleared motion, then its scrolled position from the map's
-// scroll; redraws with Func_02002810 and waits a frame. Left: registers for the
-// field offsets and the order of the zero stores against the index arithmetic.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -34,10 +26,11 @@ void wait(s32 frames);
 
 void Func_02001ff0(s32 x, s32 z) {
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
-  struct MapFocus *focus = (struct MapFocus *)(map + 0x178);
-  s32 index;
+  struct MapFocus *focus;
+  s32 index, fx = x << 19;
 
-  focus->x = x << 19;
+  focus = (struct MapFocus *)(map + 0x178);
+  focus->x = fx;
   focus->z = z << 19;
   focus->unk28 = 127;
   focus->unk2a = 0x3f80;
@@ -48,7 +41,7 @@ void Func_02001ff0(s32 x, s32 z) {
   focus->unk18[2] = 0;
   focus->unk18[3] = 0;
   index = (z / 2 << 7) + x / 2;
-  focus->scaleX = focus->scaleZ = 0x10000;
+  focus->scaleZ = focus->scaleX = 0x10000;
   focus->cell = gMapCellBuffer + index * 4;
   focus->shape = gMapShapeGrid + index;
   focus->scrolledX = Iwram_MulQ16(*(s32 *)(map + 0xe4), 0x10000) + focus->x;

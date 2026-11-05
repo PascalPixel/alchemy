@@ -24,7 +24,7 @@ SECTIONS
         "*/games/tla/src/scene/yallam/s1d14.o"(.text)
         "*/games/tla/src/scene/yallam/s1ec0.o"(.text)
         "*/games/tla/src/scene/yallam/s2244.o"(.text)
-        "*/resource_676_overlay.o"(.text.x0200a2f8)
+        "*/games/tla/src/scene/yallam/s22f8.o"(.text)
         "*/games/tla/src/scene/yallam/s23c8.o"(.text)
         "*/games/tla/src/scene/yallam/import.o"(.text)
         "*/games/tla/src/scene/yallam/data.o"(.data)

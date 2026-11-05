@@ -1,21 +1,3 @@
-// Under -Os, 5 November: differ 2 of 128 (tla-en); older figures below predate it.
-// Draft, differ 2 of 128, skeleton gap 1 (tla-en, 2026-11-01)
-// Left: one sched2 tie at the second camera call. The native sets the mode
-// (movs r3, #1) before lsls r0; the draft sets it last, after lsls r2. All the
-// candidates tie, so the order comes from insn position: the native has the set
-// of r3 ahead of x's load, the draft has r0 to r3 in order. The first call, with
-// mode 0, already matches. world_map's Func_02002e00 has the same pair and pins
-// r3 for it; that is a device and is not used here.
-// Tried for the pair, no gain: mode as a local at the top, first, in an inner
-// block or `register`; x as a local; the camera unprototyped; other loop forms
-// (a plain goto loop ties, a for loop is worse); s32 returns on the camera or
-// Func_02001578 are worse (differ 4).
-// What closed the rest, for the next reader: cameraY and cameraZ set once at the
-// top go unallocated and rematerialize at each call, as written inline they
-// shared r5 and r6. The entrance pointer keeps the second test a load of its
-// own, as aqua_rock's s17f4.c does; read directly, gcse merges the two tests
-// into a halfword load compared shifted. The loop is entered at its test, as in
-// world_map, or the test is copied ahead and gInput hoisted.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -77,7 +59,11 @@ s32 Func_02000514(void) {
     FieldEvent_Wait(10);
     Func_02001578(0x20000, 0x4000);
     {
-      do { Call4((void (*)())Camera_MoveWithinMapBounds, 144 << 16, cameraY, cameraZ, 1); } while (0);
+      /* FAKEMATCH(pin): the mode in r3 ahead of the other arguments; as a
+       * literal, 2 of 128 instructions differ in tla-en. */
+      register s32 mode asm("r3") = 1;
+
+      Camera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, mode);
     }
     goto check;
     do {

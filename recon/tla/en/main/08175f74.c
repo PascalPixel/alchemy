@@ -595,18 +595,23 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       work->transferValue = 75;
       REG_BLDALPHA = 0x1010;
       {
+        u32 hidden;
+        struct {
+          u16 value;
+        } mask;
         s32 *timer;
         u32 *b;
         u32 *a;
 
-        for (i = 0, timer = &PARTICLES[0].timer, b = (u32 *)0x02014004,
+        for (i = 0, hidden = (240 << 16) + 160, mask.value = 0xf000,
+            timer = &PARTICLES[0].timer, b = (u32 *)0x02014004,
             a = OAM_BUFFER; i != 64; i++) {
           s32 t;
 
-          *a = (240 << 16) + 160;
+          *a = hidden;
           t = *timer;
           timer += 7;
-          *b = tiles[t / 16] | 0xf000;
+          *b = tiles[t / 16] | mask.value;
           b += 2;
           a += 2;
         }

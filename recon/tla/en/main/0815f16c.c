@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 497 of 7666, slots normalized 329, high
-// registers blind too 327, every register blind 123. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 489 of 7666, slots normalized 321, high
+// registers blind too 319, every register blind 115. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -356,7 +356,7 @@ void Sound_PlayFar(s32);
 static __inline__ void CLEAR(void *dst, s32 size) { ((s32 (*)(void *, s32))0x03000258)(dst, size); }
 static __inline__ void FILL(void *dst, s32 size, s32 value) { ((s32 (*)(void *, s32, s32))0x03000260)(dst, size, value); }
 #define RELOAD_BLITTER(slot, n) do { HeapSlot_Release(slot); BattleEffect_LoadBlitter(slot, n); } while (0)
-#define RELEASE_BLITTERS() do { HeapSlot_Release(188); HeapSlot_Release(104); } while (0)
+#define RELEASE_BLITTERS() HeapSlot_Release(188); do { HeapSlot_Release(104); } while (0)
 
 void Func_0815f16c(struct SummonAction *action, s32 kind) {
   u8 *buffer;

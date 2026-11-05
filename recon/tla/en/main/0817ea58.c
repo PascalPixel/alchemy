@@ -271,16 +271,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   s32 wavePhase;
   s32 savedY;
   s32 bgX;
-  Vec3 *posp;
-  s32 z;
-  s32 swayX;
-  s32 bobX;
-  void **blits;
-  u16 *pal;
-  s32 bobY;
-  s32 swayY;
-  s32 *ringX;
-  s32 row;
   struct SummonWork *work;
   s32 i;
   s32 j;
@@ -415,6 +405,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
     }
     if (frame > 27) {
+      Vec3 *posp;
+      s32 row;
+      Sprite **slot;
+
       scale = Data_08196ed0;
       pos.w = 0;
       pos.y = 0xff0000;
@@ -425,27 +419,27 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         waveX -= 0x200000;
         waveScroll -= 0x200000;
       }
-      for (j = 0; j != 2; j++) {
-        z = (j << 21) + 0x670000;
-        row = j * 9;
+      for (j = 0, row = 0; j != 2; j++, row += 9) {
+        slot = &work->sprites[row];
         for (i = 0; i != 9; i++) {
           Sprite *obj;
           s32 v;
 
           posp = &pos;
           posp->x = (i << 21) + waveX;
-          posp->z = z;
+          posp->z = ((j << 5) + 103) << 16;
           if (i == 8) {
             obj = work->sprites[row + 8];
             v = (wavePhase + 71) % 8;
           } else {
-            obj = (&work->sprites[row])[i];
+            v = row + i;
+            obj = work->sprites[v];
             v = (wavePhase + 64 + i) % 8;
           }
-          obj->tile = work->particles[j * 9 + v].timer & 0x3ff;
+          obj->tile = work->particles[row + v].timer & 0x3ff;
           if (pos.x > 0xffffff)
             pos.x -= 0x1200000;
-          Render_ApplyProjectedPlacementFar(work->sprites[row + i], &pos, &scale, 0);
+          Render_ApplyProjectedPlacementFar(*slot++, &pos, &scale, 0);
         }
       }
     }
@@ -454,6 +448,15 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     work->transferPending = 1;
     wait(1);
   }
+
+  {
+  void **blits;
+  u16 *pal;
+  s32 swayX;
+  s32 swayY;
+  s32 bobX;
+  s32 bobY;
+  s32 *ringX;
 
   HeapSlot_Release(104);
   Iwram_Clear(dest, 0x3c00);
@@ -1046,14 +1049,16 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     }
     {
     Vec3 *wave;
+    s32 row;
+    Sprite **slot;
 
-    wave = &pos2;
-    for (j = 0; j != 2; j++) {
-      row = j * 9;
+    for (j = 0, row = 0; j != 2; j++, row += 9) {
+      slot = &work->sprites[row];
       for (i = 0; i != 9; i++) {
         Sprite *obj;
         s32 v;
 
+        wave = &pos2;
         wave->x = (i << 21) + waveX;
         wave->z = (((j << 5) - Data_081994f0[work->shake]) << 16) + shipY +
                   0x840000;
@@ -1061,13 +1066,14 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           obj = work->sprites[row + 8];
           v = (wavePhase + 71) % 8;
         } else {
-          obj = (&work->sprites[row])[i];
+          v = row + i;
+          obj = work->sprites[v];
           v = (wavePhase + 64 + i) % 8;
         }
-        obj->tile = work->particles[j * 9 + v].timer & 0x3ff;
+        obj->tile = work->particles[row + v].timer & 0x3ff;
         if (pos2.x > 0xffffff)
           pos2.x -= 0x1200000;
-        Render_ApplyProjectedPlacementFar(work->sprites[row + i], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(*slot++, &pos2, &scale2, 0);
       }
     }
     }
@@ -1266,4 +1272,5 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   HeapSlot_Release(188);
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
+  }
 }

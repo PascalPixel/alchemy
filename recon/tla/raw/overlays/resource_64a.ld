@@ -13,6 +13,7 @@ SECTIONS
         "*/resource_64a_overlay.o"(.text.x02008b24)
         "*/resource_64a_overlay.o"(.text.x02008db4)
         "*/resource_64a_overlay.o"(.text.x02008e44)
+        "*/games/tla/src/scene/clear/s0e44.o"(.text)
         "*/games/tla/src/scene/clear/s1804.o"(.text)
         "*/games/tla/src/scene/clear/s187c.o"(.text)
         "*/resource_64a_overlay.o"(.text.x020098e0)

@@ -212,10 +212,11 @@ void Resource_DecodeType01(const void *source, void *destination);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 
 #define SLOT_ALT 188 // unkb8[1]
-#define FILL(dst, size, value)                                                 \
-  do {                                                                         \
-    Iwram_FillWords(dst, size, value);                                         \
-  } while (0)
+static inline void FILL(void *dst, s32 size, s32 value) {
+  do {
+    Iwram_FillWords(dst, size, value);
+  } while (0);
+}
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
     BattleEffect_LoadBlitter(SLOT_ALT, mode);                                  \
     ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);       \

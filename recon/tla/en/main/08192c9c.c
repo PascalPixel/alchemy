@@ -396,7 +396,7 @@ void Heap_Release(void *buffer);
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries[((u8 *)(obj))[16]].tile)
+  (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
 #define SCENE (&Data_02012ee0)
 #define PLTT 0x05000000
 #define STREAK(i, j) (((struct IrisPoint *)Data_02012ef4)[(i) * 10 + (j)])

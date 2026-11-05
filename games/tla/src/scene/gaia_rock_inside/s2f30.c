@@ -1,41 +1,11 @@
-// Measured under -Os, 5 November 2026 over the whole extent (0x0200af30 to
-// 0x0200c264): differ 214 of 1969 (tla-en); the notes below may predate it.
-// Func_02002f64 is not a function: 0x02002f64 is a far `bl` inside Func_02002f30,
-// which opens with the 26 instructions ending section .text.x0200ad30. This file
-// holds that whole function, linked 0x0200af30 to 0x0200c264. Adopting it means
-// replacing both scaffold pieces. The numbers above compare the draft's text with
-// that whole extent. `diff --symbol Func_02002f64` sees only the 522 decoded
-// instructions after the far jump, so it can never reach 0 here and its figure
-// means nothing for this draft.
-// It is the room-entry code of the five Gaia Rock rooms, chosen by
-// gMainRoutineWork.scene, then by entrance in room 1.
-// Closed this round, all plain C: `work` at the top and `room` from the entrance
-// test on are separate pointers, as the listing's r7 and r8; `entrance` is the
-// pointer kept to the leave tail, whose saved scene reads are s16 casts; the burst
-// loop's i++ comes last and sched2 lifts it; room 2's mask is never modified.
-// Left:
-// - Frame is 36 bytes, native 28. PRE removes the load of `room`, inserting loads
-//   on the three edges into its join (.07.gcse), so its pseudo lives across
-//   entrance 9 in r9. That spills the dragon's movementState address to sp+8 and
-//   `flag` to sp+12. Native keeps the load at linked 0x0200b164. Reading the (u16) test
-//   through `work`, or Camera_FollowActor's owner through gMainRoutineWork, removes
-//   the insertion but scores worse (498, 521): `room` then outranks `work` for r7.
-// - `work` is in r8 and `room` in r9; native has r7 and r8. With the insertion
-//   gone `room` takes r7 and nothing here conflicts with it there, so what keeps
-//   native's `room` out of r7 is still unknown.
-// - flag: the 0x18000 pseudo is local to one block and local-alloc gives it r10,
-//   so `flag` goes to the stack; native rebuilds 0x18000 and 0x60000 at each store.
-//   Tried without effect: do-while around each store. CSE's 1,000-insn flush is
-//   not it: the block is 340 insns.
-// - The burst loop at linked 0x0200b5a6: PRE hoists sp+12 to the preheader edge;
-//   native rebuilds it in the body (the landing-burst family). Alpha's address
-//   likewise: native builds it twice, PRE here keeps one pseudo in r7.
-// Every remaining PRE case is a load or frame address native leaves alone, which
-// is a question about the compiler, not this source.
-// Settled: every call goes through call.h (Value1 for flags). Reading the first
-// entrance through `work` and the second through `early` keeps PRE from leaving
-// an ldrh. `work` and gMainRoutineWork compile alike at the owner reads and the
-// entrance == 6 test, where CSE already has the base.
+/// @file
+/// Room entry for the five Gaia Rock rooms, chosen by scene, then by entrance
+/// in the first room.
+#include "edition.h"
+
+// The Japanese form differs and is still on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -147,6 +117,8 @@ void wait();
 s32 Func_02002f30(void) {
   s32 message;
   struct MainRoutineWork *work;
+  /* FAKEMATCH(pin): room in r8, which leaves r7 to the owner pointer; as a
+   * plain local, 82 of 1969 instructions differ in tla-en. */
   register struct MainRoutineWork *room asm("r8");
   s16 *entrance;
   s16 *early;
@@ -173,39 +145,39 @@ s32 Func_02002f30(void) {
       Event_WaitTransitionFrames();
       C1(FieldEvent_Wait, 60);
       {
-      s32 ending = 20;
-      if (Test(0x307)) {
-        C1(GameFlag_ClearBit, 0x307);
-        C1(GameFlag_SetBit, 0x9bc);
-        ending = 21;
-      }
-      if (Test(0x308)) {
-        C1(GameFlag_ClearBit, 0x308);
-        C1(GameFlag_SetBit, 0x9bd);
-        ending = 22;
-      }
-      if (Test(0x309)) {
-        C1(GameFlag_ClearBit, 0x309);
-        C1(GameFlag_SetBit, 0x9be);
-        ending = 23;
-      }
-      if (Test(0x30a)) {
-        C1(GameFlag_ClearBit, 0x30a);
-        C1(GameFlag_SetBit, 0x9bf);
-        ending = 24;
-      }
-      C1(Func_02005014, 564);
-      Func_02002d30();
-      C1(FieldEvent_Wait, 15);
-      Actor_SetModeById(8, 3);
-      C1(Func_02005014, 530);
-      C3(Func_02004e24, 0x20000, 0x20000, 0x10000);
-      C3(Func_02004e24, -1, -1, 0xe666);
-      C1(FieldEvent_Wait, 120);
-      Actor_SetModeById(8, 1);
-      C1(FieldEvent_Wait, 60);
-      C1(GameFlag_SetBit, 0x109);
-      C1(Func_02004f6c, ending);
+        s32 ending = 20;
+        if (Test(0x307)) {
+          C1(GameFlag_ClearBit, 0x307);
+          C1(GameFlag_SetBit, 0x9bc);
+          ending = 21;
+        }
+        if (Test(0x308)) {
+          C1(GameFlag_ClearBit, 0x308);
+          C1(GameFlag_SetBit, 0x9bd);
+          ending = 22;
+        }
+        if (Test(0x309)) {
+          C1(GameFlag_ClearBit, 0x309);
+          C1(GameFlag_SetBit, 0x9be);
+          ending = 23;
+        }
+        if (Test(0x30a)) {
+          C1(GameFlag_ClearBit, 0x30a);
+          C1(GameFlag_SetBit, 0x9bf);
+          ending = 24;
+        }
+        C1(Func_02005014, 564);
+        Func_02002d30();
+        C1(FieldEvent_Wait, 15);
+        Actor_SetModeById(8, 3);
+        C1(Func_02005014, 530);
+        C3(Func_02004e24, 0x20000, 0x20000, 0x10000);
+        C3(Func_02004e24, -1, -1, 0xe666);
+        C1(FieldEvent_Wait, 120);
+        Actor_SetModeById(8, 1);
+        C1(FieldEvent_Wait, 60);
+        C1(GameFlag_SetBit, 0x109);
+        C1(Func_02004f6c, ending);
       }
     }
     if ((u16)(gMainRoutineWork.entrance - 9) <= 1) {
@@ -343,7 +315,8 @@ s32 Func_02002f30(void) {
         C2(Actor_SetAnimationSpeed, partner, 0);
         C1(FieldEvent_Wait, 15);
         C1(Func_02005014, 215);
-        object = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 285, 0x1e80000, -0x100000, 0x1590000);
+        object = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 285,
+                                        0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Func_02004dac, object, gData_0200539c);
         C2(Func_02004d9c, object, 1);
@@ -354,7 +327,8 @@ s32 Func_02002f30(void) {
         C1(FieldEvent_Wait, 55);
         C1(FieldEvent_Wait, 5);
         C1(Func_02005014, 136);
-        object = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 412, 0x1e80000, -0x100000, 0x1590000);
+        object = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 412,
+                                        0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Func_02004dac, object, gData_02005360);
         ((struct GaiaRockAnimation *)object->animation)->angle = 0x2000;
@@ -379,7 +353,8 @@ s32 Func_02002f30(void) {
           dz = -8;
           if ((i & 1) == 0)
             dz = 8;
-          shards[i] = Import_ActorCreate(403, 0x1c80000 + (dx << 16), -0x200000, 0x1660000 + (dz << 16));
+          shards[i] = Import_ActorCreate(403, 0x1c80000 + (dx << 16), -0x200000,
+                                         0x1660000 + (dz << 16));
           C2(Func_02004d9c, shards[i], 2);
           C2(Actor_SetSingleChildFlags, shards[i], 0);
           C2(Func_02004dac, shards[i], gData_0200539c);
@@ -538,7 +513,8 @@ s32 Func_02002f30(void) {
         struct Actor *ownerActor = Actor_GetById(*owner);
 
         if (ownerActor != NULL)
-          Actor_ResetAndSetPosition(11, ownerActor->x >> 16, ownerActor->z >> 16);
+          Actor_ResetAndSetPosition(11, ownerActor->x >> 16,
+                                    ownerActor->z >> 16);
       }
       C1(Actor_WaitForMoveById, 11);
       C3(Func_02004ebc, 11, 0, 0);
@@ -568,7 +544,9 @@ s32 Func_02002f30(void) {
       C1(FieldEvent_Wait, 30);
       {
         s32 x;
-        s32 z;
+        /* FAKEMATCH(pin): z in r5 and x in r6; as a plain local, 12 of 1969
+         * instructions differ in tla-en. */
+        register s32 z asm("r5");
 
         x = 0x1d00000;
         z = 0x15c0000;
@@ -632,8 +610,7 @@ s32 Func_02002f30(void) {
       Func_02004f14(10, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
-      C2(Func_02004f64, (s16)room->savedScene,
-         (s16)room->savedEntrance);
+      C2(Func_02004f64, (s16)room->savedScene, (s16)room->savedEntrance);
       C2(Func_02005004, room->scene, *entrance);
       Func_02004e64();
     }
@@ -719,7 +696,8 @@ s32 Func_02002f30(void) {
       C3(Func_02004ebc, 11, 0x2a00000, 0x1800000);
       C2(Actor_SetSingleChildFlags, Actor_GetById(11), 0);
       object = Actor_GetById(11);
-      other = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 324, object->x, object->y, object->z);
+      other = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 324,
+                                     object->x, object->y, object->z);
       if (other != NULL) {
         C2(Actor_SetSingleChildFlags, other, 0);
         C2(Func_02004dac, other, gData_020053d8);
@@ -780,3 +758,5 @@ end:
   C1(Func_02004fc4, 0);
   return 0;
 }
+
+#endif

@@ -364,9 +364,10 @@ void Heap_Release(void *buffer);
 // The 128 background colours the scene fades (entries 96 to 223).
 #define FADE_PLTT ((u16 *)(PLTT + 0xc0))
 
+static inline void Iris_FillWords(void *d, s32 n, u32 v) { Iwram_FillWords(d, n, v); }
 #define FILL_WORDS(dest, size, value)                                          \
   do {                                                                         \
-    Iwram_FillWords(dest, size, value);                                        \
+    Iris_FillWords(dest, size, value);                                        \
   } while (0)
 
 #define DECODE_01(src, dest)                                                   \

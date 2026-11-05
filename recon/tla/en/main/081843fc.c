@@ -1756,7 +1756,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 }
               }
               if (frame >= lim && frame < lim + 8) {
-                blit[0](canvas, bolts + ((p2->variant / 2) & 3) * 2880,
+                blit[0](canvas, ((p2->variant / 2) & 3) * 2880 + gData_02014000,
                         p2->x - 12, 0, 24, 120);
                 p2->variant++;
               }

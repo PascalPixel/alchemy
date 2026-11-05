@@ -1044,8 +1044,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     s32 row;
     Sprite **slot;
 
-    for (j = 0, row = 0; j != 2; j++, row += 9) {
-      for (i = 0, slot = &work->sprites[row]; i != 9; i++) {
+    for (j = 0; j != 2; j++) {
+      row = j * 9;
+      for (i = 0; i != 9; i++) {
         Sprite *obj;
         s32 v;
 
@@ -1061,7 +1062,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         }
         if (pos2.x > 0xffffff)
           pos2.x -= 0x1200000;
-        Render_ApplyProjectedPlacementFar(*slot++, &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos2, &scale2, 0);
       }
     }
     }

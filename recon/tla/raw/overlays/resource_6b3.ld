@@ -5,7 +5,7 @@ SECTIONS
         "*/games/tla/src/scene/epilogue/entry.o"(.text)
         "*/games/tla/src/scene/epilogue/scene_tables.o"(.text)
         "*/games/tla/src/scene/epilogue/s005c.o"(.text)
-        "*/resource_6b3_overlay.o"(.text.x02008098)
+        "*/games/tla/src/scene/epilogue/s0098.o"(.text)
         "*/games/tla/src/scene/epilogue/s0158.o"(.text)
         "*/resource_6b3_overlay.o"(.text.x02008244)
         "*/games/tla/src/scene/epilogue/s0318.o"(.text)

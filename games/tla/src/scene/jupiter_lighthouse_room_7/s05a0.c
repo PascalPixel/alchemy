@@ -1,7 +1,3 @@
-// Draft, differ 37 (tla-en, 2026-11-05). Func_020005a0 of overlay 6a0.
-// Byte offsets stepping 4 from 0 and from 2 give the listing's shape. Left:
-// the first read's ldrh with shifts, -1 in r6, and z's operand order:
-// natively the giv sits first in the address.
 #include "types.h"
 #include "actor.h"
 

@@ -1,4 +1,3 @@
-// Draft, differ 47 (tla-en, 2026-11-05). Func_020004a4 of overlay 6ae.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -23,8 +22,6 @@ struct Actor *Func_02005574(s32 type, s32 x, s32 y, s32 z);
 void Func_0200556c(struct Actor *object, const u8 *script);
 void Func_020005a0(void);
 
-#define Func_02005574(a0, a1, a2, a3) Value4((s32 (*)())Func_02005574, (s32)(a0), (s32)(a1), (s32)(a2), (s32)(a3))
-
 void Func_020004a4(void) {
   struct Actor *anchor = Actor_GetById(8);
   s32 offset = (Random16Far() * 48 >> 16) << 16;
@@ -33,8 +30,11 @@ void Func_020004a4(void) {
   u32 phase;
 
   if (anchor != NULL && (phase = Data_0200eb60 & 15) == 0) {
-    object = Func_02005574(0x2a0, anchor->x + 0x80000,
-                           anchor->y + offset + 0x80000, anchor->z);
+    /* FAKEMATCH(wrapper): the spawn forwarded through Value4; as a direct call,
+     * 35 of 103 instructions differ in tla-en. */
+    object = (struct Actor *)Value4((s32 (*)())Func_02005574, 0x2a0,
+                                    anchor->x + 0x80000,
+                                    anchor->y + offset + 0x80000, anchor->z);
     offset = (offset / 0x60000) << 16;
     if (object != NULL) {
       u8 zero;
@@ -43,13 +43,20 @@ void Func_020004a4(void) {
       Func_0200556c(object, gData_02006ad0);
       Actor_SetPartAttribute(object, 10);
       object->motionFlags = phase;
-      object->action = Random16Far() & 0x0ffff000;
+      {
+        /* FAKEMATCH(temporary): the masked value held in a local; as
+         * object->action = Random16Far() & 0x0ffff000, 45 of 103 instructions
+         * differ in tla-en. */
+        s32 action = Random16Far() & 0x0ffff000;
+
+        object->action = action;
+      }
       object->unk66 = phase;
       object->update = Func_020005a0;
       zero = 0;
       object->watchedObject = anchor;
       object->speedLimit = Math_Sine((offset & 0xfffff) >> 4) * 24 >> 16;
-      sprite->unk1a = zero;
+      ((u8 *)sprite)[26] = zero;
       sprite->layer =
           ((struct MarsLighthouseAerieSprite *)anchor->animation)->layer;
     }

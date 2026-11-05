@@ -1,8 +1,3 @@
-// Draft, differ 56 (tla-en, 2026-11-05). Func_02000098 of overlay 6b3.
-// Barrier and one-pass gone (a rise from 50); pointers set before the calls,
-// resource id from its table, a byte local for the zero, Value forms where
-// the constant is not shared. Left: rank: buffer natively in r8 with r7
-// unused, sprite r6, slot r5.
 #include "types.h"
 #include "call.h"
 #include "dma.h"
@@ -39,10 +34,22 @@ void Func_02000834(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
                    s32 tile);
 void Func_0200005c(void);
 
+static __inline__ void Set(struct EpilogueSprite *sprite, s32 a, s32 b, u32 c,
+                           s32 tile) {
+  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 6 of 69
+   * instructions differ in tla-en. */
+  Func_02000834(sprite, a, b, c, tile);
+}
+
 void Func_02000098(void) {
+  /* FAKEMATCH(wrapper): the size through Value1; as a direct call, 21 of 69
+   * instructions differ in tla-en. */
   void *buffer = (void *)Value1((s32 (*)())Heap_Alloc, 0x800);
   struct EpilogueSprite *sprite;
   s32 *slot;
+  s32 *tileSlot;
+  s8 zero;
+  s32 priority;
   s32 value;
 
   Dma_Set(Data_02000874, (void *)0x050003c0, 0x80000010, REG_DMA3);
@@ -51,19 +58,17 @@ void Func_02000098(void) {
   slot = &Data_020008f0;
   value = Resource_FindFreeEntry();
   *slot = value;
-  slot = &Data_02000a30;
-  value = Value3((s32 (*)())VramCache_Load, value, 0x800, (s32)buffer);
-  *slot = value;
-  Func_02000834(sprite, 0, 0, 0xc0000000, value);
+  tileSlot = &Data_02000a30;
+  value = VramCache_Load(value, 0x800, buffer);
+  *tileSlot = value;
+  Set(sprite, 0, 0, 0xc0000000, value);
   sprite->unk1e = 240;
   sprite->unk09_2 = 0;
   sprite->unk05_5 = 0;
   sprite->unk09_4 = 14;
   Heap_Release(buffer);
-  {
-    s8 zero = 0;
-
-    gData_02000a34 = zero;
-  }
-  Task_Add(Func_0200005c, 0x480);
+  zero = 0;
+  gData_02000a34 = zero;
+  priority = 0x480;
+  Task_Add(Func_0200005c, priority);
 }

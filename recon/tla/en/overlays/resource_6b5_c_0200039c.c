@@ -40,8 +40,8 @@ s32 Func_0200039c(void) {
 
   size = 0x154;
   heap = Heap_AllocEwram(size);
-  timeout = 900;
   result = 0;
+  timeout = 900;
   for (slot = 0;; slot++) {
     if (slot > 2)
       goto second;
@@ -99,7 +99,9 @@ s32 Func_0200039c(void) {
     if (transfer == -1)
       break;
     while (Func_0200193c() != 0) {
-      if (gSerialReceivedSize > 0x154)
+      s32 limit = 0x154;
+
+      if (gSerialReceivedSize > limit)
         {
         result = -1;
         goto done;

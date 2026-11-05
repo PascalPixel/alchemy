@@ -171,65 +171,6 @@ Func_02000e3c:
 	.4byte 0xffff6667
 .L_02008fa0:
 	.4byte gMainRoutineWork
-	.section .text.x02009254,"ax",%progbits
-	.balign 4
-	.global Func_02001254
-	.thumb_func
-Func_02001254:
-	push {r5, lr}
-	ldr r3, .L_0200927c
-	ldr r5, .L_02009280
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	cmp r3, #59
-	bgt .L_02009284
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #0
-	bne .L_02009298
-	movs r0, #0
-	movs r1, #3
-	bl Func_0200246c
-	ldr r3, .L_02009278
-	b .L_02009296
-	.2byte 0x0000
-.L_02009278:
-	.4byte 0x00000001
-.L_0200927c:
-	.4byte gData_020068a0
-.L_02009280:
-	.4byte gData_02006868
-.L_02009284:
-	movs r1, #0
-	ldrsh r3, [r5, r1]
-	cmp r3, #1
-	bne .L_02009298
-	movs r0, #0
-	movs r1, #67
-	bl Func_0200246c
-	ldr r3, .L_020092b0
-.L_02009296:
-	strh r3, [r5]
-.L_02009298:
-	ldr r2, .L_020092b4
-	movs r1, #150
-	ldrh r3, [r2]
-	lsls r1, r1, #17
-	adds r3, #1
-	strh r3, [r2]
-	lsls r3, r3, #16
-	cmp r3, r1
-	ble .L_020092b8
-	ldr r3, .L_020092b0
-	strh r3, [r2]
-	b .L_020092b8
-.L_020092b0:
-	.4byte 0x00000000
-.L_020092b4:
-	.4byte gData_020068a0
-.L_020092b8:
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x0200a4c0,"ax",%progbits
 	.balign 4
 	.global Func_020024c0

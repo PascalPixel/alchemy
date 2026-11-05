@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 2015 of 4580, 1577 with slots and pool
-// offsets normalized, 395 with registers normalized as well. Every stack slot
+// Measured 2026-11-05 (tla-en): differ 1999 of 4580, 1561 with slots and pool
+// offsets normalized, 393 with registers normalized as well. Every stack slot
 // has the listing's reference count at the listing's offset. Measure
 // 081843fc,081848ec together.
 // What round 3 settled by reading the listing:
@@ -1277,9 +1277,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Sound_PlayFar(104);
         }
         if (frame == 128) {
-          u16 *c = (u16 *)(BG_PLTT + 0x60);
+          u16 *c;
 
           work->shakeFrames = 16;
+          c = (u16 *)(BG_PLTT + 0x60);
           for (i = 0; i != 128; i++, c++) {
             *c ^= 0x7fff;
           }

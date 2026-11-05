@@ -1088,7 +1088,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           dx = 347 - frame;
           dz = (frame - 347) / 4;
         }
-        scale120[1] = scale120[0] = (frame << 11) - 0xa5000;
+        scale120[0] = scale120[1] = (frame << 11) - 0xa5000;
         pos184[3] = 0;
         pos184[1] = 0xff0000;
         pos184[0] = (dx << 16) + (184 << 15);
@@ -1188,13 +1188,14 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       s32 row = (radius - 10) / 6;
       s32 x;
       s32 y;
-      s32 w = 4;
-      s32 h = 8;
+      s32 w;
+      s32 h;
 
       if (row < 0) {
         row = 0;
       }
-      for (i = 0; i != 256; i++) {
+      w = 4;
+      for (i = 0, h = 8; i != 256; i++) {
         x = ((Trig_Sin(i << 8) * radius * 2) >> 16) + 66;
         y = ((Trig_Cos(i << 8) * radius) >> 16) + 68;
         routine[0](canvas, glyphs + row * 32, x - w / 2, y, w, h);
@@ -1205,9 +1206,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
       for (i = 0; i != 128; i++, color++) {
         s32 r = *color & 31;
-        s32 g = ((*color >> 5) & 31) - 1;
+        s32 g = (*color >> 5) & 31;
         s32 b = (*color >> 10) & 31;
 
+        g--;
         if (g < 0) {
           r--;
         }
@@ -1237,7 +1239,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         work->transferMode = 3;
         work->transferValue = 0x04040404;
         source = (u8 *)Resource_GetTableEntry((s32)&Value_000000b5);
-        Resource_DecodeType01(source + 32, work->buffer + 0x2400);
+        source += 32;
+        Resource_DecodeType01(source, work->buffer + 0x2400);
         for (y = 0; y != 80; y++) {
           for (x = 0; x != 184; x += 2) {
             u16 *dst =

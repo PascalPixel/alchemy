@@ -1,10 +1,9 @@
-// Measured 2026-11-05 (tla-en): differ 2613 of 5364, 2019 with slots and pool
-// offsets normalized. Counters follow the listing's loops: r10's loops are i,
-// r11's are j, and a loop the listing counts in r8 or a low register has a
-// variable of its own (the c variables, placeholders). i must rank below the
-// second palette's pseudo, about 1.93 of global.c's rank, for r10; a loop
-// more or less on i moves it to r7 and costs 1700. Shape differs by small
-// hunks only (none over 5 instructions).
+// Measured 2026-11-05 (tla-en): differ 2369 of 5364, 1795 with slots and pool
+// offsets normalized. Colours read into s16 locals took it from 2613: c, r,
+// b. Counters follow the listing's loops: r10's loops are i, r11's are j, and
+// a loop the listing counts in r8 or a low register has a variable of its own
+// (the c variables, placeholders). A loop more or less on i can move it to r7
+// and cost 1700. Shape differs by small hunks only.
 // Measured 2026-11-05 (tla-en): differ 3039 of 5364. Measure with all five
 // addresses (the figure before this one, 3800 of 4851, was the parent alone:
 // 3287 of 5364 with all five). A tagged one-pass block settles the frame at
@@ -786,9 +785,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         SCENE->radius -= 0x1000;
         if (!(frame & 15)) {
           for (i = 0; i != 128; i++) {
-            s32 c = FADE_PLTT[i];
+            s16 c = FADE_PLTT[i];
             s32 r = 31;
-            s32 g = (u16)c >> 5 & 31;
+            u16 g = (u16)c >> 5 & 31;
             s32 b = (u16)c >> 10 & 31;
 
             r &= c;
@@ -1179,7 +1178,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 128; i++) {
         s32 r = FADE_PLTT[i] & 31;
         s32 g = FADE_PLTT[i] >> 5 & 31;
-        s32 b = FADE_PLTT[i] >> 10 & 31;
+        s16 b = FADE_PLTT[i] >> 10 & 31;
 
         if (r > 3)
           r -= 2;
@@ -1199,7 +1198,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       off = 0x302;
       for (i = 0; i != 128; i++) {
         s32 c = FADE_PLTT[i];
-        s32 r = c & 31;
+        s16 r = c & 31;
         s32 g = (u16)c >> 5 & 31;
         s32 b = (u16)c >> 10 & 31;
 
@@ -1413,7 +1412,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The healing: rings turning about the centre, then the great glow.
     if ((u32)(frame - 639) <= 110) {
-      s32 sinT = Trig_Sin(0x7800);
+      s16 sinT = Trig_Sin(0x7800);
       s32 cosT = Trig_Cos(0x7800);
 
       for (i = 0; i != 80; i += 8) {
@@ -1574,7 +1573,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     if (frame > 816) {
       for (i = 0; i != 128; i++) {
-        s32 c = FADE_PLTT[i];
+        s16 c = FADE_PLTT[i];
         s32 r = c & 31;
         s32 g = (u16)c >> 5 & 31;
         s32 b = (u16)c >> 10 & 31;

@@ -1,5 +1,6 @@
-// Measured 2026-11-05 (tla-en): differ 2281 of 4580, 1835 with slots and pool
-// offsets normalized. Four more loops take a counter of their own (the c
+// Measured 2026-11-05 (tla-en): differ 2143 of 4580, 1733 with slots and pool
+// offsets normalized. Types as read: Data_0819983a's value u16, the tone s16,
+// one counter s16. Four more loops take a counter of their own (the c
 // variables).
 // Draft, differ 2834 of 4580, skeleton gap 323 (tla-en, 2026-11-01)
 // BattleEffect_RunCatastrophe; the same calls and control flow as the listing.
@@ -305,7 +306,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
   s32 j;
-  s32 c0;
+  s16 c0;
   s32 c1;
   s32 c2;
   struct EffectStep *p;
@@ -820,7 +821,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     }
     {
       for (i = 0; i != 17; i++) {
-        s32 t = Data_0819983a[i];
+        u16 t = Data_0819983a[i];
 
         if (frame == t + 242) {
           work->transferMode = 1;
@@ -1335,7 +1336,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Render_DrawModelList(model2);
           texture2.pixels = gMapCellBuffer;
           for (i = 0; i != 3; i++) {
-            s32 tone = sh2 + (Trig_Cos(a + i * 21845 + 10922) << 3 >> 16) - 16;
+            s16 tone = sh2 + (Trig_Cos(a + i * 21845 + 10922) << 3 >> 16) - 16;
             s32 v;
 
             Transform_Push();

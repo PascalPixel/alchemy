@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 28 of 2239. The spill slots agree: gcse
+// Measured 2026-11-05 (tla-en): differ 22 of 2239. The spill slots agree: gcse
 // numbers its reaching registers by hash bucket, (plus shots -8) buckets by
 // shots' pseudo number, so shots, user and k are declared in the block where
 // the volley starts. Left: sites of order.
@@ -795,8 +795,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
 dx = object->x - mote->x;
 dy = object->y + half - mote->y;
 dz = object->z - mote->z;
-            mote->velocityX += dx >> 7;
             mote->velocityY += dy >> 8;
+            mote->velocityX += dx >> 7;
             mote->velocityZ += dz >> 8;
             if ((object->x < 0 ? -object->x : object->x) <
                 (mote->x < 0 ? -mote->x : mote->x))

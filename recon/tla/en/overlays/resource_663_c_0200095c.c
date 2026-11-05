@@ -104,8 +104,7 @@ void Func_0200095c(void) {
   Func_02003bc8();
   Func_02003c88(0);
   Func_02003cd8(207);
-  gust =
-      (struct Actor *)Import_ActorCreate(280, leader->x, leader->y, leader->z);
+  gust = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 280, leader->x, leader->y, leader->z);
   Func_02003b28(gust, 2);
   Actor_SetSingleChildFlags(gust, 0);
   gust->scaleX = 0x1b333;
@@ -156,11 +155,13 @@ void Func_0200095c(void) {
   do {
     hit = Func_02000348(2, cell.x, cell.z);
     cell.x += delta.x;
-    cell.z += delta.z;
     hit >>= 8;
+    cell.z += delta.z;
     steps += 2;
   } while (hit == 0);
-  flag = (Func_02000348(2, cell.x, cell.z) >> 8) - 1;
+  flag = Func_02000348(2, cell.x, cell.z);
+  flag >>= 8;
+  flag -= 1;
   steps -= 2;
   newX = ((s16 *)&effect->target->x)[1] + ((steps * delta.x) << 3);
   newZ = ((s16 *)&effect->target->z)[1] + ((steps * delta.z) << 3);
@@ -178,8 +179,8 @@ void Func_0200095c(void) {
     leaves.type = 674;
     leaves.palette = 2;
     velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
-    velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
     velocity.y = gust->y + ((Random16Far() & 31) << 16);
+    velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
     Effect_Spawn(gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
                  EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                  &leaves);

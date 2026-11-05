@@ -16719,7 +16719,7 @@ msgctxt "message"
 msgid "04111"
 msgstr "Shortcut"
 
-msgctxt "message"
+msgctxt "MsgShortcutHelp"
 msgid "04112"
 msgstr "{button_icon:3}{button_icon:4}:Set shortcut"
 

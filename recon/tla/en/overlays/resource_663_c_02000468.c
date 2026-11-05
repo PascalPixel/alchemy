@@ -1,30 +1,29 @@
-// Under -Os, 5 November: differ 39 of 40 (tla-en); older figures below predate it.
+// Draft of overlay 663's Func_02000468, rewritten from the listing's translation.
 #include "types.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+#include "ram_buffer.h"
+#include "actor.h"
+#include "map.h"
 
-#include "call.h"
+struct CellFlagObject {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+  u8 unk14[0x63 - 0x14];
+  u8 marked;
+};
 
-void Func_02000468(s32 a0) {
-  if (FIELD_AT((0x63 + a0), u8, 0) != 0) {
-    if (FIELD_AT(0x3000000, s32, 32) != 0) {
-      FIELD_AT((FIELD_AT((FIELD_AT(0x3000000, s32, 32) + 0x1a8), s32, 0) +
-                (((FIELD_AT(a0, s32, 8) >> 20) +
-                  ((((FIELD_AT(a0, s32, 16) - FIELD_AT(a0, s32, 12)) >> 20) + 1)
-                   << 7))
-                 << 2)),
-               u8, 2) = 0;
-      FIELD_AT((FIELD_AT((FIELD_AT(0x3000000, s32, 32) + 0x1a8), s32, 0) +
-                (((FIELD_AT(a0, s32, 8) >> 20) +
-                  ((((FIELD_AT(a0, s32, 16) - FIELD_AT(a0, s32, 12)) >> 20) - 1)
-                   << 7))
-                 << 2)),
-               u8, 2) = 0;
-      FIELD_AT((0x63 + a0), u8, 0) = 0;
+void Func_02000468(struct CellFlagObject *object) {
+  struct MapWork *map;
+
+  if (object->marked != 0) {
+    map = Ram_HeapSlots->mapWork;
+    if (map != NULL) {
+      struct MapCell **cells = &map->layers[2].cells;
+
+      (*cells)[(object->x >> 20) + ((((object->z - object->y) >> 20) + 1) << 7)].collisionCode = 0;
+      (*cells)[(object->x >> 20) + ((((object->z - object->y) >> 20) - 1) << 7)].collisionCode = 0;
+      object->marked = 0;
     }
   }
 }

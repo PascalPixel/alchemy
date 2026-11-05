@@ -120,7 +120,7 @@ s32 Func_02004280(void) {
       Func_02004dc4();
       wait(1);
       Iwram_CopyWords(Data_0202de00, gData_020053e4, 24);
-      Func_02004de4(Data_0202de00);
+      Call1((void (*)())Func_02004de4, (s32)Data_0202de00);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov681Room2) {
     switch (gMainRoutineWork.entrance) {

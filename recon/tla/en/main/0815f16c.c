@@ -1,7 +1,15 @@
-// Measured 2026-11-05 (tla-en): differ 4002 of 7666. Left: far off: the empty
-// asms on scroll, amp, buffer and others are a greedy search's, and stay only
-// because they moved it from 4660 to 4002. The frame is 260 of 264 and the
-// parameter's slot is still in a register.
+// Measured 2026-11-05 (tla-en): differ 4589 of 7666. Left: far off. With its
+// stack slots and r10/r11 renamed, about 2450 rows differ, most of them
+// reload's rotating registers cascading from earlier rows. The frame is 256 of
+// 264: the listing keeps m * 0xa00 and the third source at kind 60 in memory
+// (sp+28 and sp+24), though r7, r9 and r11 go unused in that block there; no
+// reason found (clobbers of those registers do not move them). i is r11 in the
+// listing, r10 here; pinned to r11 it brings r8, r10 and r9's use counts to the
+// listing's but adds 150 instructions (differ 7096). Settled today: kind 16's
+// counter is the function's i, and j, then i * 8, then src are set in that
+// order; kind 80's i is its own; the clears go through an inline forwarder, so
+// 0x3c00 is built anew for each. Kind 80's i * 64 and i * 2 are
+// strength-reduced in the listing and not here.
 
 // Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every
@@ -306,7 +314,7 @@ void Sound_PlayFar(s32);
 #define RINGS ((struct Particle *)0x02016e00)
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
-#define CLEAR(dst, size) ((void (*)(void *, s32))0x03000258)(dst, size)
+static __inline__ void CLEAR(void *dst, s32 size) { ((void (*)(void *, s32))0x03000258)(dst, size); }
 #define RELOAD_BLITTER(slot, n) do { HeapSlot_Release(slot); BattleEffect_LoadBlitter(slot, n); } while (0)
 
 void Func_0815f16c(struct SummonAction *action, s32 kind) {
@@ -364,23 +372,21 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   } else if (kind == 42 || kind == 15) {
     Resource_LoadAndDecompress((s32)&Value_0000016d, buffer, 1, 0);
   } else if (kind == 16) {
-    s32 i;
+
     s32 j;
     s32 v;
 
     Resource_LoadAndDecompress((s32)&Value_000000d9, buffer, 1, 0);
-    for (i = 1; i != 8; i++) {
-      src = buffer;
-      for (j = 0; j != 0x400; j++) {
+for (i = 1; i != 8; i++) { s32 fade; j = 0; fade = i * 8;
+src = buffer;
+for (; j != 0x400; j++) {
         v = *src++;
         if (v != 0) {
-          v -= i * 8;
+v -= fade;
           if (v <= 0)
             v = 1;
         }
         buffer[i * 0x400 + j] = v;
-        /* FAKEMATCH(barrier): the empty asm gives buffer a reference more, which moves it in the allocators' ranking; as no asm, 4033 of 7666 instructions differ in tla-en. */
-        __asm__("" : : "r"(buffer));
       }
     }
   } else if (kind == 10) {
@@ -413,7 +419,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
 
     Resource_LoadAndDecompress((s32)&Value_00000192, buffer, 1, 0);
     Resource_LoadAndDecompress((s32)&Value_00000188, work->frames, 1, 1);
-    ((void (*)(void *, s32))0x03000258)(buffer + 0xc56, 0x4000);
+CLEAR(buffer + 0xc56, 0x4000);
     for (i = 0; i != 4; i++) {
       for (j = 0; j != 120; j++) {
         for (k = 0; k != 24; k++)
@@ -431,14 +437,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Resource_LoadAndDecompress((s32)&Value_0000013e, buffer + 0xd80, 1, 0);
   } else if (kind == 80) {
     u8 *dst;
-    s32 k;
+s32 k; s32 i;
 
     Resource_LoadAndDecompress((s32)&Value_0000013a, buffer + 0x1000, 1, 0);
-    ((void (*)(void *, s32))0x03000258)(buffer, 0x1000);
+CLEAR(buffer, 0x1000);
     for (i = 0; i != 48; i++) {
-      u8 *mirror = buffer + i * 64 + 0x237;
-      dst = buffer + 0x208 + i * 64;
-      src = buffer + (i * 2 + i) * 8 + 0x1000;
+u8 *mirror = buffer + i * 64 + 0x237; dst = buffer + i * 64 + 0x208;
+src = buffer + (i * 2 + i) * 8 + 0x1000;
+
       for (k = 0; k != 24; k++) {
         *dst++ = *src;
         *mirror-- = *src++;
@@ -808,8 +814,6 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     work->particle[i].life = 0;
   if (kind != 44) {
     half = BattleUnit_GetEffectHeightFar(action->actor) / 2;
-    /* FAKEMATCH(barrier): the empty asm gives half a reference more, which moves it in the allocators' ranking; as no asm, 4004 of 7666 instructions differ in tla-en. */
-    __asm__("" : : "r"(half));
     p = work->particle;
     for (i = 0; i != 32; i++, p++) {
       p->x = object2->x;
@@ -1201,8 +1205,6 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
 
         if (kind == 14) {
           amp = 12;
-          /* FAKEMATCH(barrier): the empty asm gives amp a reference more, which moves it in the allocators' ranking; as no asm, 4385 of 7666 instructions differ in tla-en. */
-          __asm__("" : : "r"(amp));
           off = 24;
         } else {
           off = 0;
@@ -1267,8 +1269,6 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         x = target[0] / 2;
         top = frame * 32 - 232;
         scroll = frame * 16 - 48;
-        /* FAKEMATCH(barrier): the empty asm gives scroll a reference more, which moves it in the allocators' ranking; as no asm, 4628 of 7666 instructions differ in tla-en. */
-        __asm__("" : : "r"(scroll));
         if (top > 0)
           top = 0;
         while (scroll > 104)
@@ -1742,8 +1742,6 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         struct Particle *p;
         if (action->side == 0) {
           step = (14 - frame) * 3;
-          /* FAKEMATCH(barrier): the empty asm gives step a reference more, which moves it in the allocators' ranking; as no asm, 4005 of 7666 instructions differ in tla-en. */
-          __asm__("" : : "r"(step));
           x = target[0] / 2 + step * 2;
           y = target[1] - step * 4 + 24;
         } else {
@@ -1881,8 +1879,6 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         model = Render_AllocateModelList(1);
         texture164.width = 5;
         texture164.height = 7;
-        /* FAKEMATCH(barrier): the empty asm gives &texture164 a reference more, which moves it in the allocators' ranking; as no asm, 4009 of 7666 instructions differ in tla-en. */
-        __asm__("" : : "r"(&texture164));
         model->kind = 6;
         model->mesh = gData_08199268;
         model->matrix = matrix;

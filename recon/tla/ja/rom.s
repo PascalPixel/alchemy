@@ -471,13 +471,6 @@ Func_080d1f20:
 	.incbin "baserom.gba", 0x000d343e, 0x00000002
 	.section .rom.000d41c6, "ax"
 	.incbin "baserom.gba", 0x000d41c6, 0x00000002
-	.section .rom.000d4ce8, "ax"
-	.balign 4
-	.global Func_080d4d08
-	.type Func_080d4d08, %function
-	.thumb_func
-Func_080d4d08:
-	.incbin "baserom.gba", 0x000d4ce8, 0x000003f0
 	.section .rom.000d5396, "ax"
 	.incbin "baserom.gba", 0x000d5396, 0x00000002
 	.section .rom.000d564e, "ax"

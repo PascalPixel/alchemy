@@ -1,5 +1,12 @@
-// 2026-11-05: differ 92 of 2680 (tla-en). The first queue loop reads objects as u32, so the read keeps its place after the queue store; the draw macro closes on an empty block.
-// that is item (3) below closed, and the count now equal.
+// Measured 2026-11-05 (tla-en): differ 60 of 2680, slots normalized 28, sizes equal.
+// Left: order rows in the queue loops, the draws and the frame's model stores; the second
+// queue loop's table and source swapped between r4 and r5 (equal refs); and the rings'
+// and the flash's reload registers (ldr r4 where this has r2, subs r2 where this has
+// subs r3), one step behind with nothing visible taking it.
+// What settled rows this round: every copy goes through the CopyWords inline, FILL
+// is an inline around a one-pass block, DRAW_ALT's barrier sits between the draw and the
+// release, the palette step's 512 is a local, and shade's default is set right after
+// the model, which keeps r0 busy for reload.
 // 2026-11-05: differ 137 of 2680 (tla-en). With the twin's two dead branches
 // and a wrapper on the first palette copy. Left: scheduling rows and pool
 // offsets that follow them, across the draft.
@@ -212,16 +219,16 @@ void Resource_DecodeType01(const void *source, void *destination);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 
 #define SLOT_ALT 188 // unkb8[1]
-#define FILL(dst, size, value)                                                 \
-  do {                                                                         \
-    Iwram_FillWords(dst, size, value);                                         \
-  } while (0)
+static inline void FILL(void *dst, s32 size, s32 value) {
+  do {
+    Iwram_FillWords(dst, size, value);
+  } while (0);
+}
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
     BattleEffect_LoadBlitter(SLOT_ALT, mode);                                  \
     ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);       \
-    HeapSlot_Release(SLOT_ALT);                                                \
-  do {                                                                         \
-  } while (0)
+    do { } while (0);                                                          \
+    HeapSlot_Release(SLOT_ALT)
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
 
@@ -284,7 +291,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
     obj->priority = 2;
     work->objects[i] = obj;
-    Iwram_CopyWords((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
+    CopyWords((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
   }
   gCameraSceneParameters[4] = 240;
   wait(1);
@@ -304,7 +311,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   pal = Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet);
-  Iwram_CopyWords((void *)BG_PLTT, pal, 128);
+  CopyWords((void *)BG_PLTT, pal, 128);
   work->transferMode = 2;
   work->transferValue = 50;
   REG_BG2CNT = 0x784;
@@ -323,16 +330,16 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
       {
-        u8 *palette = pal;
+        s32 size = 512;
 
-        pal += 512;
-        Iwram_CopyWords((void *)OBJ_PLTT, palette, 512);
+        CopyWords((void *)OBJ_PLTT, pal, 512);
+        pal += size;
       }
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
         struct JudgmentObject *obj = work->objects[i];
 
-        Iwram_CopyWords((void *)OBJ_TILES(obj), Ram_MapCellBuffer + i * 0x400,
+        CopyWords((void *)OBJ_TILES(obj), Ram_MapCellBuffer + i * 0x400,
                         0x400);
       }
       depth = -0x400000;
@@ -414,10 +421,10 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame == 72) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightBTiles);
       {
-        u8 *palette = pal;
+        s32 size = 512;
 
-        pal += 512;
-        Iwram_CopyWords((void *)OBJ_PLTT, palette, 512);
+        CopyWords((void *)OBJ_PLTT, pal, 512);
+        pal += size;
       }
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
@@ -430,10 +437,10 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame == 76) {
       pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightCTiles);
       {
-        u8 *palette = pal;
+        s32 size = 512;
 
-        pal += 512;
-        Iwram_CopyWords((void *)OBJ_PLTT, palette, 512);
+        CopyWords((void *)OBJ_PLTT, pal, 512);
+        pal += size;
       }
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 13; i++) {
@@ -529,11 +536,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
+      shade = 0;
       s = (frame << 13) - 0x11e000;
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = gData_02014000;
-      shade = 0;
       model->texture = &texture;
       model->kind = 7;
       model->mesh = gData_08199364;

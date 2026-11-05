@@ -1,5 +1,22 @@
-// Measured 2026-11-05 (tla-en): differ 107 of 2667, slots normalized 77 (from 86). Orders of the plain
-// assignments searched: see the sites below for what is left.
+// Measured 2026-11-05 (tla-en): differ 4 of 2667, slots normalized 2, sizes equal. No device
+// but the CLEAR inline, which needs S2's wrapper tag or the game's own layer.
+// Left, two rows:
+// - Dive ramp: ldr r2 (the pool constant) before muls; here after it. The dump gives
+//   the mul priority 7 (cost 4) and the load 6; the same ramp's second row, whose
+//   frame was read earlier, has muls first in the listing too. See the report.
+// - Fill loop: ldr r3 for its pointer where post-reload CSE here turns the load into
+//   adds r3, r0, #0: r0 holds the same pool word from the shade store above. A label
+//   or a clobber between them stops it, at the cost of other rows.
+// What settled the rest this round:
+// - The mesh setup reads Data_08199bf9 plainly: loop.c hoists the unchanging reads,
+//   which is what orders none, x0 and the base, with no stepped pointer and no pin.
+// - The wave's y is declared inside its loop: loop.c hoists it, where PRE and cse2
+//   would hoist and fold its shift.
+// - The draw and particle loops take p = &array[i] at a fixed address or work, so
+//   the giv's start comes after the hoisted table.
+// - objects[18] is stored through a sprite pointer: as void * it conflicts with
+//   FieldSprite's alias set, whose bit-field load then had to wait for the store.
+// - The fade loop indexes the symbol, the clears go through an inline.
 // Draft, differ 121 of 2667, skeleton gap 11 + 12 (tla-en, 2026-11-01)
 // BattleEffect_RunHaures: frame and spill slots agree; the old volatile dst
 // pointers are gone, no device is left here. Facts that closed the rest:
@@ -160,7 +177,7 @@ struct WingVertex {
 };
 
 extern u8 gMapCellBuffer[];
-extern u8 gData_02014000[];
+#define gData_02014000 ((u8 *)0x02014000)
 extern u8 Data_02010ae8[];
 extern u8 Data_02010be0[];
 extern u8 Data_02010fa0[];
@@ -224,6 +241,8 @@ void Heap_Release(void *buffer);
 // The spark row keeps frame * 2 + frame: frame * 3 folds with the row's size.
 // Haures: shadowed wings unfold over a dark pool, the demon climbs out of a
 // vortex and dives through the foes, scattering into black feathers.
+static __inline__ void CLEAR(void *dst, s32 size) { Iwram_ClearWords(dst, size); }
+static __inline__ void PLACE(s32 x, s32 y) { Func_08015160(x << 16, y << 16, 0); }
 void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   u8 *battle;
   u8 *canvas;
@@ -308,7 +327,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
   }
   sprite = Func_0815b290(64, 64, 0xc0002000, 0);
-  work->objects[18] = sprite;
+  ((struct FieldSprite **)work->objects)[18] = sprite;
   sprite->blendMode = 1;
   STAMP_TILES(work) =
       gResourceTableEntries[sprite->vramBlock].tile + 0x06010000;
@@ -601,11 +620,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           model->vertices = buffer;
           if ((u32)(frame - 236) <= 31) {
             s32 v = frame - 235;
-            u8 *q = shades;
 
-            for (i = 0; i != 31; i++, q += 2) {
-              q[0] = v;
-              q[1] = v;
+            for (i = 0; i != 31; i++) {
+              Data_02010fa0[i * 2] = v;
+              Data_02010fa0[i * 2 + 1] = v;
             }
           }
           model->shade = (s32)shades;
@@ -731,7 +749,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         if ((u32)cut <= 5) {
           s32 j;
 
-          Iwram_ClearWords(buffer, 0xd80);
+          CLEAR(buffer, 0xd80);
           for (j = 0; j != 72; j++) {
             s32 m;
 
@@ -827,20 +845,16 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         cells = work->sheet;
         mesh = work->sheet + 0x800;
         if (frame == 277) {
-          const u8 *q = Data_08199bf9;
           s32 none;
           s32 j;
 
-          for (j = 0, none = 0; j != 31; q += 10, j++) {
-            s32 y0 = q[1];
-            s32 x0 = q[0];
-
+          for (j = 0, none = 0; j != 31; j++) {
             for (i = 0; i != 4; i++) {
               s8 *dst = (s8 *)cells + j * 16 + i * 4;
 
               dst[2] = none;
-              dst[0] = Data_08199bf9[j * 10 + i * 2 + 2] - x0;
-              dst[1] = Data_08199bf9[j * 10 + i * 2 + 3] - y0;
+              dst[0] = Data_08199bf9[j * 10 + i * 2 + 2] - Data_08199bf9[j * 10];
+              dst[1] = Data_08199bf9[j * 10 + i * 2 + 3] - Data_08199bf9[j * 10 + 1];
             }
             mesh[j * 12 + 1] = 1;
             mesh[j * 12 + 2] = 2;
@@ -864,9 +878,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           Data_02010fa0[i] = 1;
         }
         {
-          struct EffectStep *p = work->particles;
-
-          for (i = 0; i != 31; i++, p++) {
+          for (i = 0; i != 31; i++) {
+            struct EffectStep *p = &work->particles[i];
             model->mesh = mesh + i * 12;
             if ((u32)(HALF_HI(p->x) + 16) <= 152 && (p->y >> 16) >= -16 &&
                 (p->y >> 16) <= 136) {
@@ -934,7 +947,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 0);
   {
-    Iwram_ClearWords(buffer, 0x6c00);
+    CLEAR(buffer, 0x6c00);
     for (i = 0; i != 6; i++) {
       s32 j;
 
@@ -986,9 +999,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       velocity.b = 0;
     }
     {
-      struct EffectStep *p = SPARKS;
-
-      for (i = 0; i != 512; i++, p++) {
+      for (i = 0; i != 512; i++) {
+        struct EffectStep *p = &((struct EffectStep *)0x02014000)[i];
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;
 
@@ -1103,18 +1115,17 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       if (frame >= start && frame < start + 16) {
         s32 amp = Trig_Sin((frame - start) << 11) / 8;
         s32 x;
-        s32 y = -4;
-        s32 y2 = -4;
         s32 m;
 
         for (m = 0; m != 3; m++) {
+          s32 y = -4;
           x = m * 20 - 16;
           Render_ResetTransformState();
           if (i == 0) {
             Func_08015160(x << 16, y << 16, 0);
             Func_080150e4(-0x2000);
           } else {
-            Func_08015160((x - 16) << 16, y2 << 16, 0);
+            Func_08015160((x - 16) << 16, y << 16, 0);
             Func_080150e4(0x27d0);
           }
           Func_080151e4(0x30000, amp, 0x20000);

@@ -1,6 +1,34 @@
-// Measured 2026-11-05 (tla-en): differ 183 of 7666, slots normalized 103, high
-// registers blind too 101, every register blind 63. The frame is the listing's
-// 264 and i is r11 (226 of 229 rows).
+// Measured 2026-11-05 (tla-en): differ 10 of 7666, slots normalized 5, sizes equal.
+// What is left is four scheduling ties, each one row moved; none has a register or
+// form behind it, and no reshaping tried moves them:
+// - Kind 16: strb before adds r0; here adds r0 first. Written with buffer[j] the
+//   tie goes the listing's way (the source step is moved up from the loop's end),
+//   but the two pointers then swap r1 and r2: dst lives 13 insns, src 12, equal refs.
+// - Center: ldr r5 [sp, 16] before str r2 [sp, 56]; here after it.
+// - Kind 14's y: mov r2, r8 before adds r5 and muls; here after them.
+// - Kind 96's pair: mov r8, r0 after movs r3, #56 and adds r1; here before them.
+// Those are the load and multiply rows of K2's approximated table; see the report.
+//
+// What settled the rest this round, all from the listing:
+// - sched2 moves the head of an else arm above the branch (interblock). Kind 70's
+//   p and i look set before its if; they belong to the loop in the else arm.
+// - Kinds 80 and 85 are plain nested loops indexing the buffer; the goto rows, row
+//   locals and closing one-pass blocks were standing in for them.
+// - Kind 79's gravity is an if and an else: its label ends CSE's block, which is
+//   what leaves the loop's pointer as a copy after it.
+// - Model.fade and Texture.pixels have their own alias sets (long, u8 *): a load
+//   or store of another type no longer waits on them. A store order settled there
+//   is kind 84's and kind 90's.
+// - k = 0 before threshold makes row * 69 outrank k at kind 85 (L 40 against 38).
+//
+// Before adoption: every device below still needs S2's exact tag with N measured.
+// RELEASE_BLITTERS and RELOAD_BLITTER are exempt only if every use matches through
+// them; CLEAR and FILL are wrappers unless they are the game's own layer; the "X"
+// at the first projection is a barrier. Kind 85 holds r2 across h with a pin and two
+// asms (reload otherwise gives h r2 where the listing has r3, one step behind, with
+// nothing visible taking it) and cuts threshold in its loop (a copy GCSE otherwise
+// propagates away, though the listing keeps t in lr and threshold in ip; the source's
+// form of that copy is not known). Data_02010208 and Value_ symbols need homes.
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
 // their blitters in a do { } while (0), which ends CSE's block, so the two table
@@ -39,29 +67,6 @@
 // value through a long-lived local of the function gives it a high register, as
 // kind 85's limit does for its row base.
 //
-// Left, top down (slots normalized 103, every register blind 72):
-// - Kind 80 (28): r3, r2, r1 for three, mirror and source; here r2, r1, r2. The
-//   destination's symbol loads into r1 in the listing. The buffer here is the symbol
-//   gMapCellBuffer, the constant everywhere else; Data_02010208 needs a home.
-// - Kind 85 (34): the base's long-lived local takes r8 and h sl, swapped; reload is
-//   one step behind from the arm's first load (r3 where the listing has r5), and
-//   no reload shows between. threshold's asm cut stands for a copy GCSE otherwise
-//   propagates away; the source's form of that copy is not known.
-// - The projection's fresh add takes the asm's second mention of o; the source's
-//   second mention is not known.
-// - Kind 79 (15): the copy of the step is r8 and the step r7, here reversed by
-//   rank; first uses read the step in the listing, so p is replaced there up to the
-//   first label, and p is not the shared one. record_giv makes a giv non-replaceable
-//   only when it is mentioned outside the loop or the biv steps inside its life.
-// - Kind 70's step starts from i at run time, 4 rows: i = 0 is above the if, so
-//   the biv's start is not known; the listing has no multiply.
-// - Ties: kind 90's texture store order (8), kind 84's pixels (4), kind 16's store (2),
-//   the first center store (2), kind 14's mov r2, r8 (2).
-//
-// Before adoption: RELEASE_BLITTERS and RELOAD_BLITTER are exempt only if every
-// use matches through them, CLEAR and FILL need S2's wrapper tags unless they are
-// the game's own layer, and both asms (the "X" at the first projection, the cut on
-// kind 85's threshold) and kind 80 and 85's closing do { } while (0) are barriers.
 
 // Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every
@@ -167,7 +172,7 @@ struct Texture {
   u8 width;
   u8 height;
   u16 unk2;
-  void *pixels;
+  u8 *pixels;
 };
 
 struct Model {
@@ -176,7 +181,7 @@ struct Model {
   const void *mesh;
   void *matrix;
   struct Texture *texture;
-  s32 fade;
+  long fade;
   u8 unk18;
   u8 frame;
 };
@@ -437,16 +442,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     u8 *src;
 
     Resource_LoadAndDecompress((s32)&Value_000000d9, buffer, 1, 0);
-for (i = 1; i != 8; i++) { s32 fade; j = 0; fade = i * 8;
-src = buffer;
-for (; j != 0x400; j++) {
+    for (i = 1; i != 8; i++) {
+      s32 fade; j = 0; fade = i * 8; src = buffer;
+      for (; j != 0x400; j++) {
         v = *src++;
         if (v != 0) {
-v -= fade;
+          v -= fade;
           if (v <= 0)
             v = 1;
         }
-        buffer[i * 0x400 + j] = v;
+        buffer[j + i * 0x400] = v;
       }
     }
   } else if (kind == 10) {
@@ -496,40 +501,16 @@ CLEAR(buffer + 0xc56, 0x4000);
     Resource_LoadAndDecompress((s32)&Value_0000018a, buffer, 0, 0);
     Resource_LoadAndDecompress((s32)&Value_0000013e, buffer + 0xd80, 1, 0);
   } else if (kind == 80) {
-    u8 *dst;
-    s32 row;
-    s32 two;
-    u8 *b;
-s32 k; s32 i;
+    s32 k; s32 i;
 
     Resource_LoadAndDecompress((s32)&Value_0000013a, buffer + 0x1000, 1, 0);
 CLEAR(buffer, 0x1000);
-    b = gMapCellBuffer;
-    i = 0;
-    two = 0;
-    row = 0;
-  rows:
-    {
-      u8 *mirror;
-      s32 three;
-      three = two + i;
-      mirror = row + b;
-      dst = row + Data_02010208;
-      src = three * 8 + b;
-      src += 0x1000;
-      mirror += 0x237;
-
+    for (i = 0; i != 48; i++) {
       for (k = 0; k != 24; k++) {
-        *dst++ = *src;
-        *mirror-- = *src++;
+        buffer[0x208 + i * 64 + k] = buffer[0x1000 + i * 24 + k];
+        buffer[0x237 + i * 64 - k] = buffer[0x1000 + i * 24 + k];
       }
     }
-    i++;
-    two += 2;
-    row += 64;
-    if (i != 48)
-      goto rows;
-    do { } while (0);
   } else if (kind == 79) {
     s32 i;
     s32 k;
@@ -1144,25 +1125,22 @@ CLEAR(buffer, 0x1000);
       Transform_SetLookAt(bg, (u8 *)bg + 12);
       if (frame > 3) {
         if (kind == 79) {
+          struct Particle *r = work->particle;
           for (i = 0; i != 64; i++) {
-            p = &work->particle[i];
-            if (p->life > 0) {
+            r = &work->particle[i];
+            if (r->life > 0) {
                 s32 n;
-              n = (p->life >> 2) + 1;
+              n = (r->life >> 2) + 1;
               if (n > 10)
                 n = 10;
-              EffectPosition_ProjectPoint(p, point);
+              EffectPosition_ProjectPoint(r, point);
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1],
                                 point[0] - n / 2, point[1] - n, n, n * 2);
-              {
-                s32 gravity;
-                gravity = 0;
-                if (kind != 89)
-                  gravity = -0x800;
-                BattleEffectKernels_IntegrateVector3(p, 62, gravity);
-              }
-              p->life -= 2;
+              { s32 gravity;
+              if (kind == 89) gravity = 0; else gravity = -0x800;
+              BattleEffectKernels_IntegrateVector3(r, 62, gravity); }
+              r->life -= 2;
             }
           }
         } else {
@@ -1517,41 +1495,28 @@ CLEAR(buffer, 0x1000);
       y = frame * 28 - 96;
       if (y > 16)
         y = 16;
-      h = 96;
+      {
+        register s32 hold __asm__("r2");
+        __asm__("" : "=r"(hold));
+        h = 96;
+        __asm__("" : "=r"(h) : "0"(h), "r"(hold));
+      }
       if (frame > 7) {
         s32 t;
-        s32 off;
         i = 0;
         t = 0;
         row = 112 - frame * 2;
-        off = row * 69;
-      rows2:
-        if (row >= 0 && row < 96) {
-          s32 k;
-          s32 threshold;
-          s32 cell;
-          u8 *from;
-          u8 *to;
-          k = 0;
-          threshold = t;
-          __asm__("" : "=r"(threshold) : "0"(threshold));
-          cell = (row & 15) * 69;
-          to = buffer + off;
-          limit = (s32)((u8 *)work + cell);
-          from = (u8 *)limit + 0x700;
-          for (; k != 69; k++) {
-          if (*from++ < threshold)
-              *to = 0;
-            to++;
+        for (; i != 34; i++, t++, row++) {
+          if (row >= 0 && row < 96) {
+            s32 k;
+            s32 threshold;
+            for (k = 0, threshold = t; k != 69; k++) {
+              __asm__("" : "=r"(threshold) : "0"(threshold));
+              if (work->frames[(row & 15) * 69 + k] < threshold)
+                buffer[row * 69 + k] = 0;
+            }
           }
         }
-        i++;
-        t++;
-        off += 69;
-        row++;
-        if (i != 34)
-          goto rows2;
-        do { } while (0);
       }
       drawFuncs.draw[0](screen, buffer, 29, y, 69, h);
       if (frame > 5) {
@@ -1885,7 +1850,6 @@ CLEAR(buffer, 0x1000);
       s32 y;
       if (frame > 31)
         REG_BLDALPHA = (48 - frame) | 0x1000;
-      i = 0;
       if (frame < 14) {
         struct Particle *p;
         if (action->side == 0) {
@@ -1913,7 +1877,7 @@ CLEAR(buffer, 0x1000);
           }
         }
       } else {
-        for (; i != 16; i++) {
+        for (i = 0; i != 16; i++) {
             s32 m;
           particle = &SPARKS[i];
           { s32 a; a = __modsi3(i, 5) * 3;
@@ -2051,8 +2015,11 @@ CLEAR(buffer, 0x1000);
             else if (frame >= i + 4)
               fade = -((frame - i - 4) * 16);
             model->fade = fade;
-            texture164.pixels = buffer + 0xc56 + (p->life << 12);
-            p->life = (p->life + 1) & 3;
+            {
+              s32 life = p->life;
+              texture164.pixels = buffer + 0xc56 + (life << 12);
+              p->life = (life + 1) & 3;
+            }
             Render_ResetTransformState();
             Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16,
                           0);
@@ -2313,11 +2280,11 @@ CLEAR(buffer, 0x1000);
       tex = &texture132;
       tex->width = 6;
       tex->height = 6;
+      model->texture = tex;
+      model->matrix = matrix;
       tex->pixels = buffer;
       model->kind = 7;
       model->mesh = gData_081990d0;
-      model->matrix = matrix;
-      model->texture = tex;
       for (i = 0; i != 4; i++) {
         start = gData_0819895e[i] + 4;
         model->frame = (frame * 8 + i * 32) & 127;

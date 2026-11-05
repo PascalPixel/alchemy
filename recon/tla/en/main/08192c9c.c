@@ -743,6 +743,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   }
 
   s32 motesMask;
+  u8 *tileBuffer;
   s32 pos[4];
   struct Scale scale;
   struct Scale shrink;
@@ -793,11 +794,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     camera[27] = yaw;
   }
+  tileBuffer = Data_02010578;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   BattleEffect_LoadBlitter(SLOT_ALT, 3);
   draw[0] = Ram_HeapSlots->unk64[1];
   draw[1] = Ram_HeapSlots->unkb8[1];
-  Resource_LoadAndDecompress((s32)&ResourceId_Data134, Data_02010578, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, tileBuffer, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   for (i = 0; i != 0x302; i++)
     sprites[i] >>= 1;
@@ -988,8 +990,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       colors = Resource_GetTableEntry((s32)&ResourceId_Data0A5);
       Dma_Set(colors, (void *)(PLTT + 0x200), 0x84000080, REG_DMA3);
       colors += 0x200;
-      Resource_DecodeType01(colors, Data_02010578);
-      tiles = (u8 *)0x02010578;
+      Resource_DecodeType01(colors, tileBuffer);
+      tiles = tileBuffer;
       for (i = 0; i != 16; i++) {
         struct IrisSprite *obj = Func_0815b290(32, 32, 0x80002000, 0);
 

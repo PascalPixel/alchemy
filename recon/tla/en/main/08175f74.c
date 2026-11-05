@@ -876,15 +876,25 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           REVEAL_BUFFER[0x1000 + i] = i;
         }
         {
+          u8 *slot;
           s32 half = 0x1000;
 
-          for (i = 0; i != 32; i++) {
-            u8 *other = (Random16() & 31) + gData_02014000 + half;
-            u8 swap = REVEAL_BUFFER[0x1000 + i];
+          for (i = 0, slot = REVEAL_BUFFER + 0x1000; i != 32;) {
+            u8 *other;
+            u8 swap;
+            u8 value;
 
-            REVEAL_BUFFER[0x1000 + i] = *other;
+            half = 0x1000;
+            other = (Random16() & 31) + gData_02014000;
+            other += half;
+            swap = *slot;
+            value = *other;
+            i++;
+            *slot = value;
             *other = swap;
+            slot++;
           }
+          __asm__("" : : "r"(half));
         }
       }
       {

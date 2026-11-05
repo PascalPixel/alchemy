@@ -1,3 +1,6 @@
+// 2026-11-05: differ 2 of 436 (tla-en). The opening one-pass is gone, and the
+// final 0 is a named local. Left, sched2 only: the hoisted copy to r10 before
+// mov r7, r9.
 // Draft (tla-en): listing 436 instructions, draft 436, common 424, differ 24
 // (2026-10-26: the pinned BLDALPHA value and its one-pass block are gone,
 // under -mthumb-slow-loads the plain store measures the same;
@@ -121,11 +124,6 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
   struct EffectStep *step;
   s32 i;
 
-  /* FAKEMATCH: the native spills the effect argument before it loads the
-   * heap slots; this one-pass block ends the block there (differ 2 more
-   * without it). */
-  do {
-  } while (0);
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(0);
@@ -242,7 +240,12 @@ void BattleEffect_RunBackstab(struct BattleEffectArgument *effect) {
     wait(1);
   }
 
-  battle[0x866] = 0;
+  {
+    // A local for the 0: the listing builds the address first, in r2.
+    s32 cleared = 0;
+
+    battle[0x866] = cleared;
+  }
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();

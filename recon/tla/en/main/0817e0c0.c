@@ -1,3 +1,5 @@
+// 2026-11-05: differ 56 of 601 (tla-en). Statement moves gain 12. Left: reload
+// rotation from the flash's model stores.
 // 2026-10-26 (round 5): differ 82 of 601 (draft 601). The flash's brightness
 // stored between its texture's two size bytes (a statement-move search): 127 to
 // 82.
@@ -266,11 +268,11 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     vertices = Heap_AllocEwram(32);
     quad = Render_AllocateModelList(1);
     TEXTURE_SIZE(texture, 5, 6);
+    quad->vertices = vertices;
     texture.pixels = work->sheet;
     quad->texture = &texture;
     quad->faces = Data_081992b0;
     quad->kind = 6;
-    quad->vertices = vertices;
     quad->brightness = 0;
     if (frame < LUNGE_STREAK_FRAMES) {
       Render_ResetTransformState();
@@ -297,10 +299,10 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
       if (brightness > 0)
         brightness = 0;
       texture.logWidth = 7;
-      quad->brightness = brightness;
       texture.logHeight = 7;
       quad->kind = 7;
       texture.pixels = Ram_MapCellBuffer;
+      quad->brightness = brightness;
       quad->faces = gData_08199364;
       Render_ResetTransformState();
       Func_080151e4(0x8000, 0x10000, 0x8000);

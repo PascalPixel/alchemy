@@ -1,43 +1,3 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 8 of
-// 374 with an empty asm the greedy device search placed before the stack
-// offset's reload (10 without it): the second word's copy to fp after the
-// store to sp+40, the loop's 0 and its copy to r9 after the two stack
-// pointers' stores, and the reload of sp+8 after the store to sp+16.
-// Draft of BattleEffect_RunStoneJustice, effect kind 100 (Stone Justice), written from the
-// listing on The Broken Seal's canvas skeleton. No close twin (shape
-// BattleEffect_RunSpire 0.502, call order BattleEffect_RunPrism
-// 0.680); the shard drawing follows BattleEffect_RunSpire, and the
-// shard tables are its gSpire_ShardWidths, Heights and Cells.
-
-// Listing 374 instructions, draft 374, differ 14 (2026-10-18).
-// Left: order rows only. The native stores the third argument before it
-// copies the second to fp, loads the BLDCNT zero before it starts the
-// sheet offset (224), loads the blitter slot before its offset, sets frame
-// (r9) after the two position pointers, and starts REG_BG2X's address
-// before it reads the user's x.
-// Tried (differ):
-// first draft, plain HI macro, pointer-stepped rock loops          372
-// the two positions declared user first (their stack slots)        366
-// scrollSpeed += 0x8000 then * 60 / 64 (two statements; one fold
-// of the constant into the multiply otherwise)                    356
-// width and height as locals before the call                        352
-// the throw loop indexed (&work->particles[i])                       332
-// both rock loops indexed, an explicit height accumulator,
-// direct work->particles[i] fields                          332-384
-// HI as ((struct Half *)&v)->hi, *(s16 *)((u8 *)&v + 2),
-// (s16)(v >> 16), *((s16 *)&v + 1)                                332
-// HI through an inline helper (FAKEMATCH below)                       30
-// alchemy permute 8 minutes, 2 jobs (found the helper)                30
-// the BG2PA halfword pinned in a one-pass block (FAKEMATCH)         24
-// the height read where the call uses it (no local)                 18
-// BattleEffect_LoadBlitter returning s32, as defined                    16
-// an empty asm after the REG_BG2X store (FAKEMATCH)                 14
-// the BLDCNT zero pinned as BG2PA's (16), an empty asm after the
-// blitter slot read (22), position pointers before the loop (36),
-// the frame loop as do-while (14), alchemy permute 5 minutes (14)
-// The helper is a device here: BattleEffect_RunPlumeEdge goes from 36 to 135 with
-// it, and BattleEffect_RunHurricane from 218 to 212.
-
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -51,12 +11,11 @@
 #include "battle_effect_work.h"
 
 // The pixel half of a 16.16 fixed-point value.
-/* FAKEMATCH: the halves are read through an inline helper. Through the
- * cast macro ((s16 *)&v)[1], or any plain form tried (see the header), the
- * rock loop keeps i in r8 and spills the hit flag, and the stack frame grows by a
- * word (differ 332); through the helper the allocation is the native's
- * (differ 30). */
-static inline s16 *Fixed_Halves(s32 *value) { return (s16 *)value; }
+static inline s16 *Fixed_Halves(s32 *value) {
+  /* FAKEMATCH(wrapper): the halves read through this inline; as the cast
+   * ((s16 *)&v)[1], 324 of 374 instructions differ in tla-en. */
+  return (s16 *)value;
+}
 #define HI(v) (Fixed_Halves(&(v))[1])
 
 // The Lost Age numbers the blitter modes from the other end of The Broken
@@ -77,18 +36,18 @@ extern u16 gData_081974bc[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 blitter); // BattleEffect_BuildBlitter, packed
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 blitter); // BattleEffect_BuildBlitter, packed
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);          // BattleEffect_TintBattler
+                   s32 frames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 mask, u32 range); // Camera_ApplyShake
 void BattleEffect_StartActorMotion(s32 actor, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
-void Actor_SetAnimationSpeedFar(struct MotionObject *object,
-                                            s32 value);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
+void Actor_SetAnimationSpeedFar(struct MotionObject *object, s32 value);
 void Actor_SetMode(struct MotionObject *object, s32 mode);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Sound_PlayFar(s32 cue);
 
 // Stone Justice: 21 boulders rise in a column beside the user and tumble
@@ -121,21 +80,11 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  {
-    /* FAKEMATCH: the native loads the BG2PA halfword from the pool before it
-     * starts the register's address; pinned to r3 in a one-pass block it
-     * does (differ 22 without it). */
-    register u16 value __asm__("r3");
-
-    do {
-      value = 0x100;
-    } while (0);
-    REG_BG2PA = value;
-  }
+  REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
-  BattleEffect_LoadBlitter(104,
-                BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(
+      104, BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 1;
   work->transferValue = 0;
@@ -186,9 +135,6 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
     }
     scrollX = scroll >> 16;
     REG_BG2X = (64 - (userPosition.x - scrollX)) << 8;
-    /* FAKEMATCH: the native stores REG_BG2X before it clears the hit flag
-     * (differ 16 without the barrier). */
-    __asm__("");
 
     // Each boulder spins through three pictures of its shard (z is its
     // spin rate, velocityZ the angle) and hits the target once it passes
@@ -204,8 +150,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
 
       blit(canvas, work->sheet + gData_081974bc[cell] + 0x83c,
            HI(rock->x) - width / 2 + scrollX,
-           HI(rock->y) - gData_081974ad[cell] / 2, width,
-           gData_081974ad[cell]);
+           HI(rock->y) - gData_081974ad[cell] / 2, width, gData_081974ad[cell]);
       if (rock->variant == 0) {
         if (effect->side == 0) {
           if (targetPosition.x > HI(rock->x) + userPosition.x - 64) {
@@ -240,8 +185,8 @@ void BattleEffect_RunStoneJustice(struct BattleEffectArgument *effect) {
         cueTimer = 8;
         Sound_PlayFar(134);
       }
-      BattleEffect_StartActorMotion(effect->actors[0], 1, 2 << 16, 4 << 16, 2 << 16,
-                                150);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 2 << 16, 4 << 16,
+                                    2 << 16, 150);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 4);
       work->shakeFrames = 2;
     }

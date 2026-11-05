@@ -163,7 +163,7 @@ Resource_DirectoryTable:
 	resource , Slots_PerfectBanner
 	resource , Slots_FinalGameBanner
 	resource , Summon_GreenHairedMaidenTiles
-	resource , Summon_SeaSerpentTiles
+	resource SeaSerpentTiles, Summon_SeaSerpentTiles
 	resource , Summon_PinkPetalsTiles
 	resource , Summon_CrimsonBeastTiles
 	resource , Summon_RedSlashTiles
@@ -190,7 +190,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data0B1
 	resource , Resource_Data0B2
 	resource , Resource_Data0B3
-	resource , Resource_Data0B4
+	resource Data0B4, Resource_Data0B4
 	resource , Resource_Data0B5
 	resource , BattleEffect_CharmRingSheet
 	resource WhirlBeamSheet, BattleEffect_WhirlBeamSheet
@@ -215,18 +215,18 @@ Resource_DirectoryTable:
 	resource , Resource_Data0CA
 	resource , Resource_Data0CB
 	resource CloudSwirlSheet, BattleEffect_CloudSwirlSheet
-	resource , BattleEffect_DustBlobSheet
+	resource DustBlobSheet, BattleEffect_DustBlobSheet
 	resource , Resource_Data0CE
-	resource , Resource_Data0CF
+	resource Data0CF, Resource_Data0CF
 	resource , Resource_Data0D0
 	resource , BattleEffect_FeatherSheet
 	resource , Resource_Data0D2
 	resource , Resource_Data0D3
-	resource , BattleEffect_LightBurstSheet
+	resource LightBurstSheet, BattleEffect_LightBurstSheet
 	resource StarCrossSheet, BattleEffect_StarCrossSheet
-	resource , BattleEffect_CornerGlowSheet
-	resource , Resource_Data0D7
-	resource , Resource_Data0D8
+	resource CornerGlowSheet, BattleEffect_CornerGlowSheet
+	resource Data0D7, Resource_Data0D7
+	resource Data0D8, Resource_Data0D8
 	resource , BattleEffect_ImpFaceSheet
 	resource Data0DA, Resource_Data0DA
 	resource GreatSwordSheet, BattleEffect_GreatSwordSheet
@@ -254,7 +254,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data0F1
 	resource , Resource_Data0F2
 	resource Data0F3, Resource_Data0F3
-	resource , BattleEffect_SmokeBandSheet
+	resource SmokeBandSheet, BattleEffect_SmokeBandSheet
 	resource Data0F5, Resource_Data0F5
 	resource , BattleEffect_DustCloudSheet
 	resource , Resource_Data0F7
@@ -307,7 +307,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_BlueCrescentSheet
 	resource , BattleEffect_OverlayImageA
 	resource , BattleEffect_VioletMoteSheet
-	resource , BattleEffect_FireballSheet
+	resource FireballSheet, BattleEffect_FireballSheet
 	resource MemberBurstImage, BattleEffect_MemberBurstImage
 	resource SlashSheet, BattleEffect_SlashSheet
 	resource WaveSheet, BattleEffect_WaveSheet
@@ -331,7 +331,7 @@ Resource_DirectoryTable:
 	resource FlashBurstSheet, BattleEffect_FlashBurstSheet
 	resource ThornSheet, BattleEffect_ThornSheet
 	resource , BattleEffect_CometSheetA
-	resource , BattleEffect_CometSheetB
+	resource CometSheetB, BattleEffect_CometSheetB
 	resource , BattleEffect_CometSheetC
 	resource , BattleEffect_WhirlwindSheet
 	resource GreenPillarSheet, BattleEffect_GreenPillarSheet

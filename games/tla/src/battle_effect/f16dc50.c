@@ -1,51 +1,3 @@
-// Draft, differ 18 of 1101, skeleton gap 12 (tla-en, 2026-11-01)
-// Two places are left, nothing else differs.
-// 1. The opening's two Iwram_ClearWords calls (14 of the 18). The native builds
-// 0x3c00 in r1 before each; a direct call's constant gets one pseudo, CSE
-// shares it and it stays in r5. Sending the first call alone through
-// ClearWords_ (static inline, as canvas.c) closes this and takes the draft to
-// differ 4, gap 4. That is a FAKEMATCH(wrapper) device and it does not reach
-// differ 0 on its own, so it is not here. Plain forms tried: block locals for
-// the size and the address, a do/while round each call (worse, 50).
-// 2. The falling Djinni's blitter (the last 4). After Render_ProjectPoint the
-// native issues movs r1, #40 first and ldr r5, [sp, #48] after both stack
-// stores; ours loads the two screen words first and that reload before the
-// stores. sched2: all of these rank at priority 7 but the stores at 6, and
-// the loads win on forward dependents (5 to 4). The native's order needs the
-// stores at or above the reload, which no source change moved: this is the
-// load-after-store issued too early that K2's -mthumb-slow-loads approximates,
-// so it may be a question about the option and not about this C. Tried:
-// locals for x, y and size, the blitter through a local, pointer or wrapper,
-// a void cast of the call, byte and element forms of the sheet address, a
-// pointer to dropScreen, dropScreen as an array or volatile, a do/while round
-// the call or the projection, an empty asm after the projection.
-// spireShade holds 0 and then -32, so it is a temporary device with no tag yet:
-// without it CSE forms -32 as 7 - 39 (differ goes from 18 to 74); one-constant
-// locals for -32, wherever set, are also worse. Tag it at adoption with N
-// measured then. Ram_MeshBuffer belongs in ram_buffer.h at adoption.
-// 2026-11-01, what closed the gap from 781: every reload rotates through a
-// spill set, and r4 joins that set only where r0 to r3 are all busy, which is
-// the first quad's stores with quad2 formed after them, left and right formed
-// before. The rest followed: quad[4..9] and quad2's store order; the buffers at
-// constant addresses (the mesh's second base is then +12 of the first, by
-// reload_cse_move2add); speed and angle each one expression, so the add moves
-// over the call only in sched2; mistSheet one constant across the function, so
-// it gets no register and is rematerialized; mesh a local set first; x and y
-// before the first blitter's sheet address; the mist's loop on the shared i;
-// the turn an if/else; the shard angle a giv of (frame + i) << 10; the mist's
-// size its own variable; Task_Add's real return type; pointer fields for shade
-// and pixels with different alias sets, which orders their stores.
-// 2026-10-31: frame is spilled and vertices kept in r11 as in the native once
-// column is not caller-saved; camera, savedYaw and target live in a block after
-// the blitter fetch, as the native's spill-slot order shows. The yaw is the
-// tree's u16 (its -14000 clamp stores 0xc950), each particle loop takes its own
-// &work->particles[i], and the spire is a second if under frame < 64, as the
-// native's re-test shows.
-// 2026-10-19: the native's arrays above the arguments' slots take 92 bytes:
-// the falling Djinni is projected into dropScreen, not a point of its own;
-// screenB is declared before screenA and frame after work, as the native's
-// stack offsets show.
-
 #include "battle_effect.h"
 #include "battle_display.h"
 #include "battle_effect_work.h"
@@ -186,6 +138,12 @@ extern const u8 Data_08198ec4[];
 extern const u8 Data_0819919c[];
 extern const u8 Data_081991a4[];
 
+static inline s32 ClearWords(void *destination, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_ClearWords, 14 of 1101 instructions differ in tla-en. */
+  return Iwram_ClearWords(destination, size);
+}
+
 // Abilities: Serac.
 //
 // The Mercury Djinni drops onto the target, dust bursting where it lands;
@@ -211,7 +169,7 @@ void BattleEffect_RunSerac(struct BattleEffectArgument *effect) {
     BattleEffect_StartTiledCanvas(0x2000);
   }
   Func_0815585c(effect, (effect->side << 4) | 0x101, screenA, screenB);
-  Iwram_ClearWords((void *)0x06004000, 0x3c00);
+  ClearWords((void *)0x06004000, 0x3c00);
   Iwram_ClearWords(canvas, 0x3c00);
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x100;

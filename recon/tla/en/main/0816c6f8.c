@@ -1,3 +1,7 @@
+// 2026-11-05: differ 10 of 1139 (tla-en). A discarded volatile read closes
+// bg2pa and bg2pd. Left, sched2 only: asrs r5 against asrs r2, and the dome
+// model's kind store; greedy barrier, one-pass, pin and statement-move
+// searches found nothing.
 // Draft, differ 24 of 1139, skeleton gap 18 (tla-en, 2026-11-01)
 // BattleEffect_RunGeode: frame, spill slots and allocation agree with the
 // listing, the draft is 2 instructions short and nothing else is left but order.
@@ -367,8 +371,16 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       }
       work->bg2x = (64 - (centerX << 5) / size) << 8;
       work->bg2y = centerY << 8;
-      work->bg2pa = 0x2000 / size;
-      work->bg2pd = 0x100;
+      {
+        s32 ratio = 0x2000 / size;
+
+        /* FAKEMATCH(volatile): a discarded read before each store, the form
+         * kept; as plain stores, 4 of 1139 instructions differ in tla-en. */
+        *(volatile u16 *)&work->bg2pa;
+        work->bg2pa = ratio;
+        *(volatile u16 *)&work->bg2pd;
+        work->bg2pd = 0x100;
+      }
       for (row = 0, height = -64, angle = 0; row != DOME_ROWS;
            height += 8, angle += 2184, row++) {
         s32 lift = -Trig_Cos(angle) * 3;

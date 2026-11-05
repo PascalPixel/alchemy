@@ -1,24 +1,3 @@
-// Near miss, differ 12 of 743 (tla-en, 2026-10-31): three sched2 orders.
-// The palette copy loads IwramCopyWords after `lsls r0` (native between
-// `movs r0, #160` and it); the corner loop's preheader loads the corner
-// table before building &corners (native after); the mote loop's preheader
-// copies i + 1 after `movs r3, #4` (native right after i * 12).
-// Draft of BattleEffect_RunVoidBeam, decompiled from the listing; the same
-// 45 calls and control flow.
-// 2026-10-19: the native stack frame is 248 bytes (here 184 at first). Its
-// arrays are point at sp 236, then 132 bytes of corners from sp 104 (11
-// points, of which the hexagon uses 6), then the ring and the segment;
-// its two blitters are one pair stored together (sp 56 and 60); frame is
-// declared after canvas, camera before sprites.
-// 2026-10-31: the frame is 248 and every slot in place. The extra slot
-// (sp 32) is the mote loop's own copy of i + 1, which loop.c hoists only
-// when (i + 1) % 6 is written in the loop rather than kept in a local; the
-// rune and the two gradients count with their own block-scoped j (one
-// shared k took r4 in all of them); &work->cameraDelta spills above caster
-// and traced only when they are declared in a block after the sway code.
-// Func_08196404 and Task_Add return s32, as the tree declares them: with
-// void the first argument loads before the others.
-
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -139,6 +118,12 @@ extern const s8 Data_08196e9c[];   // the hexagon's corners (z, y)
 #define VOID_BEAM_FRAMES 88
 #define BEAM_SEGMENTS 10
 
+static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 2 of 743 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
 // Abilities: Void Beam.
 //
 // A hexagon of motes is traced, side by side, around the caster while a
@@ -200,9 +185,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
       buffer[0x208 + i * 64 + 47 - j] = buffer[0x1000 + i * 24 + j];
     }
   }
-  Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
-                  128);
+  CopyWords((void *)BG_PLTT,
+            Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
 
   // The beam's body: a 32-line gradient.
   row = work->sheet + 0x1a20;

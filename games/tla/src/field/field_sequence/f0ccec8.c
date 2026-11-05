@@ -1,21 +1,3 @@
-// Near miss, differ 2 of 707 (tla-en, 2026-11-05; 200 before): each row field read through a pointer set from the row's end, the trap with its own local, the object-79 and opening assignments in the listing's order, the event work's field. Left: movs r5, #0 (found) issues before the store of object in the native. The message names stand for 0xdc4, 0xdef, 0xe0f to 0xe1c, 0xde5, 0x137f and 0x15b5. Older notes follow.
-// Draft, differ 212 of 707: examines or talks to object id (bit 12 for no
-// opening message). Objects past 63 are containers, their row of
-// Func_080ceba8's table (from 64, eight bytes: type, a no-hint flag, the
-// flag that marks it opened, the contents), or object 79, the one container
-// whose contents are the event work's 0xd34: types 128 and 129 (opening
-// messages 0xdc5), 130 to 132 (0xdc9), 132 (0xdde) and 133 (0xde4). An opened
-// container (GameFlag_IsConditionActive) gives what it holds: type 130 a trap
-// that drains the party, 132 the runes (Func_080ea14c), 129 a
-// battle with an enemy group of zone 104 or 105, a Mimic-like shape a
-// message, coins (bit 15 of the contents) or an item; an empty one shows
-// 0xdf0 and up. Any other object runs its talk script (Func_080ccd78: the
-// paused object's stage-7 one first), turned toward the leader by its
-// placement's kind, with the leader stopped and linked to it.
-// Left: the native reads each row field with its own offset from the row
-// address (0xfffffe00 to 0xfffffe06; written as a halfword array the
-// allocation shifts, 528) and keeps the no-hint flag at sp 4; the message
-// names stand for 0xdc4, 0xdef, 0xe0f to 0xe1c, 0xde5 and 0x15b5.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -28,10 +10,10 @@ struct ActorPlacement {
   s8 kind;
 };
 
-extern char MsgKey137f, MsgCheckedContainer, MsgContainerEmpty, MsgContainerHint,
-    MsgContainerTrap, MsgContainerTrapEnd, MsgContainerMonster, MsgSarcophagus,
-    MsgContainerShape, MsgFoundCoins, MsgInventoryFull, MsgFoundItem,
-    MsgFoundItemFor;
+extern char MsgKey137f, MsgKey0dc4, MsgKey0def, MsgKey15b5,
+    MsgKey0e17, MsgKey0e19, MsgKey0e1a, MsgKey0de5,
+    MsgKey0e1c, MsgKey0e10, MsgFoundItem, MsgItemReceived,
+    MsgItemGiven;
 
 struct ContainerRow {
   s16 type;
@@ -132,8 +114,8 @@ s32 Func_080ccec8(s32 id) {
   silent = id & 0x1000;
   event = Ram_HeapSlots->eventWork;
   id &= 0xfff;
-  object = Actor_GetById(id);
   found = 0;
+  object = Actor_GetById(id);
   if (id > 63) {
     if (id != 79) {
       row = Func_080ceba8();
@@ -174,11 +156,11 @@ s32 Func_080ccec8(s32 id) {
       *busy = 1;
       if (silent == 0)
         FieldMessage_ShowFar(
-            found + (s32)&MsgCheckedContainer, 1);
-      if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors1 && noHint == 0 &&
+            found + (s32)&MsgKey0dc4, 1);
+      if (gMainRoutineWork.scene == (s32)&SceneId_VenusLighthouse && noHint == 0 &&
           !GameFlag_Test(flag)) {
         MessageArgument_PushFar(contents, 2);
-        FieldMessage_ShowFar((s32)&MsgContainerHint, 1);
+        FieldMessage_ShowFar((s32)&MsgKey15b5, 1);
       }
       if (!GameFlag_IsConditionActive(flag))
         goto empty;
@@ -197,20 +179,20 @@ s32 Func_080ccec8(s32 id) {
         Func_080cf350(trap);
         Sound_PlayFar(83);
         MessageArgument_PushFar(contents, 5);
-        FieldMessage_ShowFar((s32)&MsgContainerTrap, 3);
+        FieldMessage_ShowFar((s32)&MsgKey0e17, 3);
         BattleParty_ApplyDrain(1999, 0);
         PartyStatus_CreateWindowFar(1);
         Sound_PlayFar(126);
         if (Party_CountActiveOwnersFar() == 1)
-          FieldMessage_ShowFar((s32)&MsgContainerTrap + 6, 1);
+          FieldMessage_ShowFar((s32)&MsgKey0e17 + 6, 1);
         else
-          FieldMessage_ShowFar((s32)&MsgContainerTrap + 1, 1);
+          FieldMessage_ShowFar((s32)&MsgKey0e17 + 1, 1);
         PartyStatus_CloseFar();
         trap->update = NULL;
         Actor_SetMode(trap, 2);
         Sound_PlayFar(246);
         Event_Wait(30);
-        FieldMessage_ShowFar((s32)&MsgContainerTrapEnd, 1);
+        FieldMessage_ShowFar((s32)&MsgKey0e19, 1);
         ObjectEvent_Remove(index);
         if (flag != -1)
           GameFlag_SetBit(flag);
@@ -241,13 +223,13 @@ s32 Func_080ccec8(s32 id) {
         gMainRoutineWork.battleRule24b = 2;
         BattleEffect_SelectBattleCue(104, contents);
         Sound_PlayFar(gMainRoutineWork.sceneCue);
-        FieldMessage_ShowFar((s32)&MsgContainerMonster, 1);
+        FieldMessage_ShowFar((s32)&MsgKey0e1a, 1);
         goto done;
       }
       if (type == 133)
-        FieldMessage_ShowFar((s32)&MsgSarcophagus, 1);
+        FieldMessage_ShowFar((s32)&MsgKey0de5, 1);
       if (Actor_GetSpriteShape(index)) {
-        FieldMessage_ShowFar((s32)&MsgContainerShape, 1);
+        FieldMessage_ShowFar((s32)&MsgKey0e1c, 1);
         if (Party_FindOwnerWithActionFar(136) != -1)
           ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
         goto done;
@@ -266,7 +248,7 @@ s32 Func_080ccec8(s32 id) {
         Sound_PlayFar(83);
         contents &= 0x7fff;
         MessageArgument_PushFar(contents, 5);
-        FieldMessage_ShowFar((s32)&MsgFoundCoins, 3);
+        FieldMessage_ShowFar((s32)&MsgKey0e10, 3);
         Party_AdjustCoinsFar(contents);
         if (flag != -1)
           GameFlag_SetBit(flag);
@@ -293,8 +275,8 @@ s32 Func_080ccec8(s32 id) {
       slot = PartyInventory_AddFar(contents);
       if (slot == -1) {
         MessageArgument_PushFar(contents, 2);
-        FieldMessage_ShowFar((s32)&MsgInventoryFull, 1);
-        FieldMessage_ShowFar((s32)&MsgInventoryFull + 4, 1);
+        FieldMessage_ShowFar((s32)&MsgFoundItem, 1);
+        FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
         if (type != 131)
           Actor_ReleaseIfPresent(shown);
         if (type == 128)
@@ -307,10 +289,10 @@ s32 Func_080ccec8(s32 id) {
       Sound_PlayFar(83);
       MessageArgument_PushFar(contents, 2);
       if (slot == gMainRoutineWork.currentOwner) {
-        FieldMessage_ShowFar((s32)&MsgFoundItem, 3);
+        FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
       } else {
         MessageArgument_PushFar(slot, 1);
-        FieldMessage_ShowFar((s32)&MsgFoundItemFor, 3);
+        FieldMessage_ShowFar((s32)&MsgItemGiven, 3);
       }
       if (flag != -1)
         GameFlag_SetBit(flag);
@@ -325,7 +307,7 @@ s32 Func_080ccec8(s32 id) {
       result = 0;
       goto done;
     empty:
-      FieldMessage_ShowFar(found + (s32)&MsgContainerEmpty,
+      FieldMessage_ShowFar(found + (s32)&MsgKey0def,
                                              1);
     done:
       *busy = 0;

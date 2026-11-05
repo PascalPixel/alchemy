@@ -1316,12 +1316,7 @@ main	rom_main_04	recon/tla/raw/080ccd78	.text	en
 main	rom_main_04	recon/tla/ja/rom	.rom.000ccd6e	ja
 main	rom_main_04	recon/tla/ja/rom	.rom.000ccd70	ja
 main	rom_main_04	games/tla/src/field/field_sequence/overlay_call	.text
-main	rom_main_04	recon/tla/it/rom	.rom.000ccec8	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000d1ec8	fr
-main	rom_main_04	recon/tla/es/rom	.rom.000d5ec8	es
-main	rom_main_04	recon/tla/de/rom	.rom.000d9ec8	de
-main	rom_main_04	recon/tla/raw/080ccec8	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000ccec0	ja
+main	rom_main_04	games/tla/src/field/field_sequence/f0ccec8	.text	en de es fr it ja
 main	rom_main_04	games/tla/src/field/field_sequence/run_descriptor_handler	.text
 main	rom_main_04	games/tla/src/field/event/push_keys	.text
 main	rom_main_04	recon/tla/es/rom	.rom.000d6808	es

@@ -870,9 +870,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         work->transferValue = 50;
       }
       if ((u32)(frame - 274) <= 27) {
+        s = (frame << 11) - 0x85000;
         texture.pixels = gMapCellBuffer;
         model->kind = 7;
-        s = (frame << 11) - 0x85000;
         sh = 0;
         if (frame > 293) {
           sh = (294 - frame) << 3;

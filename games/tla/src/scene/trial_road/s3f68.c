@@ -1,36 +1,6 @@
-// Measured under -Os, 5 November 2026: differ 34 (tla-en); notes below may predate it.
-// Draft, differ 187 of 252, skeleton gap 29 (tla-en, 2026-11-01): 17 listing
-// instructions missing, 12 extra, no device left. Removed this round: attr set
-// twice (the inner loop is now labels and goto, which keeps tile + frame in the
-// body by itself) and the s16 cast read of the cap's height. Found, each
-// measured (gap 51 to 29): in the cap x shifts straight after its subtraction,
-// and depth comes before sy.
-// Left, two causes, neither reached in plain C.
-// 1. PRE (gcse.c, the .07.gcse dump): mover->offset's (mem:HI) at the latch is
-// redundant with itself round the back edge on every path that skips the call,
-// so PRE moves it after the call and into the preheader and the cap's read
-// goes too. That is the ldrh before the loop and at its end, where the native
-// rereads with ldrsh at the latch and after the loop, with no store or set of
-// mover on those paths. Any plain read has this: only a kill stops it (an asm
-// memory clobber does, volatile does not fit). The native keeping it may be a
-// question about the pass, not this source; the same listing is in 66b's
-// Func_02000dac and 661's Func_02003b80, and that is a matter for Pascal (K3).
-// 2. Allocation: height takes r4 by caller-save (15 refs, 2 calls crossed), so
-// object r8, lift r10, viewY r11, x r5, z r7. The native has z r5, sy r6, x r7,
-// height r8, object r10, entry r9, lift r11, viewY on the stack. Its frame is
-// 36 with sp+0 never used, as if a caller-save slot was set up for r4 and the
-// pseudo left it during reload; unproved. With height pinned to r8 and barriers
-// as a probe (not kept) gap is 25 and the frame 32, with y separate from sy.
-// Tried, no better: height, z and y as inner-block variables per region (they
-// go low, so the native's are shared; gap 97); y as its own variable in the loop
-// (same gap), the cap or both; for instead of goto (gap 56); x as one
-// expression; x shifted later in the cap; z before height; entry[n] for cursor.
-// Draws the Trial Road movers' columns: for each raised mover (of 16) it
-// queues one 16 by 16 sprite per 16 pixels of its offset and a bobbing cap on
-// top, animated over 4 frames every 3, projected from the map's view and kept
-// to the screen, at most 80 sprites (Func_02005790 queues each three-word
-// entry at its depth, as Trial Road's cell sprite does).
-#include "../../../../games/tla/src/scene/trial_road/trial_road.h"
+/// @file
+/// Queues the Trial Road movers' sprites.
+#include "trial_road.h"
 #include "iwram_call.h"
 #include "frame.h"
 #include "map.h"
@@ -106,8 +76,8 @@ void Func_02003f68(void) {
     next:
       if (count > 79)
         goto skip;
-      height = object->y + (lift << 16) - viewY;
       x = object->x - viewX;
+      height = object->y + (lift << 16) - viewY;
       z = object->z - viewZ - viewY;
       x = (x >> 16) - 8;
       sy = z - height;
@@ -132,9 +102,9 @@ void Func_02003f68(void) {
     if (count > 79)
       continue;
     x = object->x - viewX;
-    x = (x >> 16) - 8;
     height = object->y + (mover->offset << 16) - viewY;
     z = object->z - viewZ - viewY;
+    x = (x >> 16) - 8;
     sy = z - height;
     bob = Iwram_MulQ16(rise, Math_Sine(mover->bob));
     sy = ((sy + bob + rise) >> 16) - 4;

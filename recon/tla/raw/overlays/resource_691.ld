@@ -57,7 +57,7 @@ SECTIONS
         "*/resource_691_overlay.o"(.text.x0200a518)
         "*/resource_691_overlay.o"(.text.x0200a618)
         "*/games/tla/src/scene/magma_rock/prepare.o"(.text)
-        "*/resource_691_overlay.o"(.text.x0200ad08)
+        "*/games/tla/src/scene/magma_rock/s2d08.o"(.text)
         "*/games/tla/src/scene/magma_rock/s2e30.o"(.text)
         "*/games/tla/src/scene/magma_rock/s2fc4.o"(.text)
         "*/games/tla/src/scene/magma_rock/set_state.o"(.text)

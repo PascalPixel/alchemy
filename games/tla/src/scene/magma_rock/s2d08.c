@@ -1,5 +1,5 @@
-// Draft, differ 4: overlay 691's copy of the function drafted in
-// resource_697_c_020042f0.c, whose header says what it is and what still differs.
+/// @file
+/// On entering, sets each listed pillar from its two flags, then lifts the leader onto the ground under it.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -27,7 +27,7 @@ void Func_02002d08(const u16 *table) {
   s32 nextFlag;
   struct MapCell *cells;
   u8 *shapes;
-  u8 *cell;
+  struct MapCell *cell;
   s32 index;
   struct Actor *leader;
   s32 ground;
@@ -49,12 +49,12 @@ next:
     s32 height;
 
     index = Func_02003c04(object);
-    cell = (u8 *)&cells[index];
+    cell = &cells[index];
     slot = shapes + index;
     shape = Func_02003adc(object->terrainId, object->x, object->z);
     height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
     Func_02003b3c(id);
-    cell[3] = 128;
+    cell->attributeB = 128;
     *slot = Func_02003c24(object->terrainId, shape, (height >> 19) + 4);
     if (GameFlag_Test(flag))
       Func_02003a54(object, 0);

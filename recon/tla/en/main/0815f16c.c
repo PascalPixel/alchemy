@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 803 of 7666, slots normalized 529, high
-// registers blind too 501, every register blind 207. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 712 of 7666, slots normalized 510, high
+// registers blind too 482, every register blind 194. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -384,6 +384,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   u8 *src;
   u8 *dst;
   s32 v;
+  s32 *vec;
 
   buffer = (u8 *)0x02010000;
   sparks = (struct Particle *)0x02016000;
@@ -693,9 +694,10 @@ CLEAR(buffer, 0x1000);
     work->particle[i].vz = Random16() & 0xffff;
   }
   Actor_SetAnimationSpeedFar(object, 0);
-  origin[0] = object->x;
-  origin[1] = object->y + 0x500000;
-  origin[2] = object->z;
+  vec = origin;
+  vec[0] = object->x;
+  vec[1] = object->y + 0x500000;
+  vec[2] = object->z;
   save24 = object->unk24;
   save28 = object->unk28;
   save2c = object->unk2c;
@@ -706,8 +708,9 @@ CLEAR(buffer, 0x1000);
   object->unk2c = 0;
   object->unk34 = 0;
   object->unk48 = 0;
-  EffectPosition_ProjectScaledBattler(action->target, base);
-  base[0] = base[0] / 2;
+  vec = base;
+  EffectPosition_ProjectScaledBattler(action->target, vec);
+  vec[0] = vec[0] / 2;
   Sound_PlayFar(212);
 
   for (frame = 0; frame != 32; frame++) {
@@ -1966,14 +1969,16 @@ CLEAR(buffer, 0x1000);
       if (frame > 3) {
         struct Particle *p;
         struct Model *model;
+        struct Texture *tex;
         matrix = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
         texture164.width = 5;
         texture164.height = 7;
         model->kind = 6;
+        tex = &texture164;
         model->mesh = gData_08199268;
         model->matrix = matrix;
-        model->texture = &texture164;
+        model->texture = tex;
         for (i = 0; i != 20; i++) {
           struct Particle *p;
           p = &RINGS[i];
@@ -1982,7 +1987,7 @@ CLEAR(buffer, 0x1000);
             if (frame == i)
               fade -= 16;
             else if (frame >= i + 4)
-              fade = -((frame - i) * 16 - 64);
+              fade = -((frame - i - 4) * 16);
             model->fade = fade;
             texture164.pixels = buffer + 0xc56 + (p->life << 12);
             p->life = (p->life + 1) & 3;

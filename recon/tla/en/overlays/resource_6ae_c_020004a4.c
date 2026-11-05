@@ -1,8 +1,4 @@
-// Draft, differ 70 (tla-en, 2026-11-05). Func_020004a4 of overlay 6ae.
-// A byte local holds the zero: a QImode constant comes from the pool (ldr r0,
-// 0; mov r9, r0), as the listing has it. Left: reload's scratch choice, r2
-// and r4 here against r0 natively, which moves every later scratch; and the
-// fields' order at the end.
+// Draft, differ 47 (tla-en, 2026-11-05). Func_020004a4 of overlay 6ae.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -26,6 +22,8 @@ void Actor_SetPartAttribute(struct Actor *object, s32 value);
 struct Actor *Func_02005574(s32 type, s32 x, s32 y, s32 z);
 void Func_0200556c(struct Actor *object, const u8 *script);
 void Func_020005a0(void);
+
+#define Func_02005574(a0, a1, a2, a3) Value4((s32 (*)())Func_02005574, (s32)(a0), (s32)(a1), (s32)(a2), (s32)(a3))
 
 void Func_020004a4(void) {
   struct Actor *anchor = Actor_GetById(8);

@@ -1,10 +1,8 @@
-// Draft, differ 116 (tla-en, 2026-11-05). Func_02002148 of overlay 6ab.
-// Plain loops and block-scoped counters under -Os; the barrier and one-pass
-// are gone. A rise from 112: the step counter and the pointers set per pass
-// now sit as natively. Left: the frame address of position takes r8 here and
-// the scan counter spills to r10 and a slot, where natively that pseudo gets
-// no register and is rebuilt per use (add r1, sp, 4); the frame is 20 against
-// 16.
+// Draft, differ 2 (tla-en, 2026-11-05). Func_02002148 of overlay 6ab.
+// Value4 on the scan's call gives position's address its own pseudo, so the
+// hoisted one gets no register, as natively: 116 to 8. Plain loops, block
+// counters. One tagged one-pass holds the x store. Left: the step counter's
+// zero after the z read here, before it natively.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -33,6 +31,7 @@ void wait(s32 frames);
 void Animation_ApplyChildValues(struct Actor *actor, s32 a);
 void Func_02002120(void);
 extern u8 gData_020023c4[];
+
 
 void Func_02002148(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
@@ -94,13 +93,19 @@ void Func_02002148(void) {
         flags = &other->collisionFlags;
         for (i = 0; i <= 63; i++, flags += 128, other++) {
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Func_0200428c(&other->x, radius, &position, other->radius - 2) >=
+              Value4((s32 (*)())Func_0200428c, (s32)&other->x, radius, (s32)&position,
+                 other->radius - 2) >=
                   0) {
             wait(1);
             goto done;
           }
         }
-        x = actor->x += work->unk68 << 17;
+        /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
+         * the order around it; as the plain statement, 8 of 236 instructions
+         * differ in tla-en. */
+        do {
+          x = actor->x += work->unk68 << 17;
+        } while (0);
         z = actor->z + (work->unk6a << 17);
         actor->z = z;
         off = (x & 0xfffff) + 0xfff80000;

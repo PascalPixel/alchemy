@@ -1346,11 +1346,6 @@ BattleEffect_RunDaedalusAlt:
 	.thumb_func
 BattleEffect_RunVengeance:
 	.incbin "baserom.gba", 0x001811d4, 0x0000073c
-	.section .rom.00181ed4, "ax"
-	.balign 4
-	.global Func_08181ed4
-Func_08181ed4:
-	.incbin "baserom.gba", 0x00181ed4, 0x000004bc
 	.section .rom.00182aa8, "ax"
 	.balign 4
 	.global BattleEffect_RunCoatlicue

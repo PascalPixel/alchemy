@@ -1863,6 +1863,7 @@ CLEAR(buffer, 0x1000);
           x = target[0] + step * 2;
           y = target[1] - step * 4 + 24;
         } else {
+          s32 step;
           step = (14 - frame) * 3;
           x = target[0] - step * 2;
           y = target[1] - step * 4 + 24;
@@ -2191,6 +2192,7 @@ CLEAR(buffer, 0x1000);
       if (frame == 4)
         work->unk77a8 = 8;
     } else if (kind == 90) {
+      struct Texture *tex;
       s32 scale;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);

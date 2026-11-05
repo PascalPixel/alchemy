@@ -160,7 +160,7 @@ struct WingVertex {
 };
 
 extern u8 gMapCellBuffer[];
-extern u8 gData_02014000[];
+#define gData_02014000 ((u8 *)0x02014000)
 extern u8 Data_02010ae8[];
 extern u8 Data_02010be0[];
 extern u8 Data_02010fa0[];
@@ -983,9 +983,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       velocity.b = 0;
     }
     {
-      struct EffectStep *p = SPARKS;
-
-      for (i = 0; i != 512; i++, p++) {
+      for (i = 0; i != 512; i++) {
+        struct EffectStep *p = &((struct EffectStep *)0x02014000)[i];
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;
 

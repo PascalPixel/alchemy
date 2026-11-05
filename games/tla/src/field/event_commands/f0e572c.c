@@ -1,17 +1,3 @@
-// Near miss, differ 56 of 366 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Draft, differ 72 of 366: a field effect that starts Func_080e4d9c: the scene
-// is raised ten pixels, the canvas sprite starts at the scene's position
-// with the caster's priority and depth (four nearer when the scene faces
-// 0xc000) and the glow disc (FieldEffect_GlowDisc) in its canvas; 32 sparks
-// of Data_080f3984 start on a ring 20 to 40 pixels out, drifting outward,
-// two frames apart, and 32 bursts of FieldEffect_Explosion wait. With cue
-// 130 the callback runs until its phase reaches 999, the effect's stage-5
-// event running each frame with the shake level and the frame count (999 on
-// the last frame).
-// Left: register choice in the two sprite loops (the native keeps the
-// spark loop's counter in r10 set after r8, and the burst loop's sprite in
-// r5 and its tile in r6) and a few reordered stores.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -60,7 +46,7 @@ struct FxScene {
 };
 
 extern const u8 Data_080f3984[];
-extern char ResourceId_Explosion, ResourceId_GlowDisc;
+extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
 
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
@@ -78,7 +64,7 @@ s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 s32 Func_080ce31c(s32 kind);
 void *Func_080ce458(u32 kind, s32 entry, s32 arg);
@@ -98,11 +84,13 @@ void Func_080e572c(void) {
   s32 sparkEntry;
   s32 sparkTile;
   s32 burstEntry;
-  register s32 tile asm("r6");
+  s32 tile;
   s32 radius;
   s32 angle;
   s32 kind;
   s32 frame;
+  s32 (*mul)(s32, s32);
+  struct EffectSprite *burstSprite;
   s32 i;
 
   scene->y += 0xa0000;
@@ -125,44 +113,44 @@ void Func_080e572c(void) {
 
   sparkEntry = Resource_FindFreeEntry();
   sparkTile = VramCache_Load(sparkEntry, 64, Data_080f3984);
-  particle = work->sparks;
-  sprite = work->sparkSprites;
-  for (i = 0; i < 32; i++) {
+  for (i = 0, particle = work->sparks, mul = Iwram_MulQ16,
+      sprite = work->sparkSprites;
+       i < 32;) {
     Func_080eaf98(sprite, 4, 4, 0, sparkTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = canvas->priority;
     sprite->depth = canvas->depth + 1;
-    sprite->scaleX = sprite->scaleY = 0x10000;
+    sprite->scaleY = sprite->scaleX = 0x10000;
     radius = Random16() * 20 + 0x140000;
     angle = Random16();
-    particle->x = Iwram_MulQ16(Trig_Cos(angle), radius);
-    particle->y = Iwram_MulQ16(Trig_Sin(angle), radius);
+    particle->x = mul(Trig_Cos(angle), radius);
+    particle->y = mul(Trig_Sin(angle), radius);
     radius /= 12;
     angle += 0x8000;
-    particle->velocityX = Iwram_MulQ16(Trig_Cos(angle), radius);
-    particle->velocityY = Iwram_MulQ16(Trig_Sin(angle), radius);
+    particle->velocityX = mul(Trig_Cos(angle), radius);
+    particle->velocityY = mul(Trig_Sin(angle), radius);
     particle->timer = -i * 2;
-  asm("");
+    i++;
     sprite++;
     particle++;
   }
 
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Explosion),
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
                         work);
   burstEntry = Resource_FindFreeEntry();
   tile = VramCache_Load(burstEntry, 0x400, work);
   work->burstTile = tile;
   particle = work->bursts;
-  sprite = work->burstSprites;
-  for (i = 31; i >= 0; i--) {
-    Func_080eaf98(sprite, 8, 8, 0x40000000, tile);
-    sprite->depth = canvas->depth + 1;
-    sprite->oam.priority = canvas->priority;
-    sprite->oam.palette256 = 0;
-    sprite->oam.palette = 15;
+  burstSprite = work->burstSprites;
+  for (i = 0; i < 32; i++) {
+    Func_080eaf98(burstSprite, 8, 8, 0x40000000, tile);
+    burstSprite->depth = canvas->depth + 1;
+    burstSprite->oam.priority = canvas->priority;
+    burstSprite->oam.palette256 = 0;
+    burstSprite->oam.palette = 15;
     particle->timer = -1;
-    sprite++;
+    burstSprite++;
     particle++;
   }
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),

@@ -2076,13 +2076,18 @@ main	rom_main_05	recon/tla/es/rom	.rom.000eda28	es
 main	rom_main_05	recon/tla/fr/rom	.rom.000e9a28	fr
 main	rom_main_05	games/tla/src/field/event_commands/f0e4d9c	.text	en de es fr it ja
 main	rom_main_05	games/tla/src/field/event_commands/psynergy_effects_05	.text
-main	rom_main_05	recon/tla/de/rom	.rom.000f272c	de
-main	rom_main_05	recon/tla/es/rom	.rom.000ee720	es
-main	rom_main_05	recon/tla/fr/rom	.rom.000ea720	fr
-main	rom_main_05	recon/tla/it/rom	.rom.000e5720	it
-main	rom_main_05	recon/tla/raw/080e572c	.text	en
+main	rom_main_05	games/tla/src/field/event_commands/f0e572c	.text	de
+main	rom_main_05	recon/tla/de/rom	.rom.000f2a64	de
+main	rom_main_05	games/tla/src/field/event_commands/f0e572c	.text	es
+main	rom_main_05	recon/tla/es/rom	.rom.000eea58	es
+main	rom_main_05	games/tla/src/field/event_commands/f0e572c	.text	fr
+main	rom_main_05	recon/tla/fr/rom	.rom.000eaa58	fr
+main	rom_main_05	games/tla/src/field/event_commands/f0e572c	.text	it
+main	rom_main_05	recon/tla/it/rom	.rom.000e5a58	it
+main	rom_main_05	games/tla/src/field/event_commands/f0e572c	.text	en
 main	rom_main_05	recon/tla/raw/080e5a64	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000e56e8	ja
+main	rom_main_05	games/tla/src/field/event_commands/f0e572c	.text	ja
+main	rom_main_05	recon/tla/ja/rom	.rom.000e5a20	ja
 main	rom_main_05	games/tla/src/field/event_commands/psynergy_effects_10	.text
 main	rom_main_05	games/tla/src/field/event_commands/psynergy_effects_06	.text
 main	rom_main_05	recon/tla/de/rom	.rom.000f2d5c	de

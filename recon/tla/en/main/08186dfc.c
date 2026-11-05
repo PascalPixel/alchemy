@@ -225,6 +225,7 @@ void Heap_Release(void *buffer);
 // Haures: shadowed wings unfold over a dark pool, the demon climbs out of a
 // vortex and dives through the foes, scattering into black feathers.
 static __inline__ void CLEAR(void *dst, s32 size) { Iwram_ClearWords(dst, size); }
+static __inline__ void PLACE(s32 x, s32 y) { Func_08015160(x << 16, y << 16, 0); }
 void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   u8 *battle;
   u8 *canvas;
@@ -1099,18 +1100,17 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       if (frame >= start && frame < start + 16) {
         s32 amp = Trig_Sin((frame - start) << 11) / 8;
         s32 x;
-        s32 y = -4;
-        s32 y2 = -4;
         s32 m;
 
         for (m = 0; m != 3; m++) {
+          s32 y = -4;
           x = m * 20 - 16;
           Render_ResetTransformState();
           if (i == 0) {
             Func_08015160(x << 16, y << 16, 0);
             Func_080150e4(-0x2000);
           } else {
-            Func_08015160((x - 16) << 16, y2 << 16, 0);
+            Func_08015160((x - 16) << 16, y << 16, 0);
             Func_080150e4(0x27d0);
           }
           Func_080151e4(0x30000, amp, 0x20000);

@@ -715,11 +715,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 540) {
-        p = Ram_EffectSteps;
+        struct EffectStep *p = Ram_EffectSteps;
+        s32 m = 63;
 
         for (i = 0; i != 384; i++, p++) {
           p->y = 0;
-          p->velocityY = -((Random16() & 63) + 32) << 15;
+          p->velocityY = -((Random16() & m) + 32) << 15;
         }
       }
       {

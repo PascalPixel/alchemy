@@ -1346,12 +1346,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             for (i = 0; i != 4; i++) {
               s32 n = i & 3;
               s32 angle = Random16();
-              s32 x =
-                  (Trig_Sin(angle) * r >> 17) + 60 - (gData_08197492[n] >> 1);
-              s32 y =
-                  top + (Trig_Cos(angle) * r >> 17) - (gData_08197498[n] >> 1);
+              s32 x = (Trig_Sin(angle) * r >> 17) + 60;
+              s32 y;
 
-              LOAD_ALT_BLITTER(SLOT_ALT, Data_081999ee[Random16() & 3] | 3);
+              x -= gData_08197492[n] >> 1;
+              y = top + (Trig_Cos(angle) * r >> 17) - (gData_08197498[n] >> 1);
+
+              {s32 c = Data_081999ee[Random16() & 3] | 3; LOAD_ALT_BLITTER(SLOT_ALT, c);}
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                   canvas, work->sheet + 0x800 + gData_08197486[n], x, y,
                   gData_08197492[n], gData_08197498[n]);

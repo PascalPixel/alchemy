@@ -1067,17 +1067,17 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
         for (j = 0; j != 10; j = next) {
           u8 *src = work->sheet + gData_08197410[j];
-          u8 *out = work->sheet + gData_08197410[j] + i * 0x302;
+          u8 *out = work->sheet + (gData_08197410[j] + i * 0x302);
           s32 off;
 
           next = j + 1;
 
           for (off = 0; off != next * 2 * next; off++) {
-            u8 v = src[off] - i * 8;
+            u8 v = *src++ - i * 8;
 
             if (v > 63)
               v = 0;
-            out[off] = v;
+            *out++ = v;
           }
         }
       }

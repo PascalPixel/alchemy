@@ -1,3 +1,7 @@
+// Measured 2026-11-05 (tla-en): differ 120 of 631 (from 150): radiusY's wobble is
+// added late, in place, as the listing does (corner between). radiusY still ranks
+// over radiusX here, so it takes r7 where the listing spills it to sp+12; a
+// separate start local keeps that order but costs 178.
 // 2026-11-05: differ 150 of 627 (tla-en). The word of the frame is in, as a
 // two-word blitter struct. Left: items 2 and 3 below and their reload
 // rotation.
@@ -277,8 +281,11 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
           thickness = 24;
         }
         thickness = thickness * width / 0x10000;
-        for (i = 0, radiusY = height + thickness / -2 + wobble, radiusX = distance + thickness / -2 + wobble, corner = (s8 *)gMapCellBuffer + vertex * 4;
-             i != 2; i++) {
+        radiusY = height + thickness / -2;
+        corner = (s8 *)gMapCellBuffer + vertex * 4;
+        radiusX = distance + thickness / -2 + wobble;
+        radiusY += wobble;
+        for (i = 0; i != 2; i++) {
           corner[0] = ((Trig_Cos(angle) * radiusX) >> 16) - distance;
           corner[1] = -((Trig_Sin(angle) * radiusY) >> 16);
           corner[2] = 0;

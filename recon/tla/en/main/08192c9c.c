@@ -339,15 +339,12 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   s32 r;
   s32 cel;
   s32 sheetOffset;
-  u8 *cells;
   s32 j11;
   s32 j12;
   s32 j13;
   s32 j14;
   s32 j15;
   s32 j6;
-  s32 a;
-  s32 px;
   s32 py;
   u8 *ring;
 
@@ -355,12 +352,12 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
     r = Data_08199f40[small] * 2 - t;
     cel = r / 6;
     sheetOffset = cel * 0x302;
-    cells = sprites + cel * 8;
     for (j11 = 0; j11 != 64; j11++) {
+        s32 px; s32 a;
       a = j11 << 10;
       px = (r * Trig_Sin(a) / 2 >> 16) + x;
       py = (r * Trig_Cos(a) >> 16) + y;
-      draw(canvas, cells + 444, px, py - 2, 2, 4);
+      draw(canvas, sprites + cel * 8 + 444, px, py - 2, 2, 4);
     }
     if (small == 0) {
       s32 offset = 0;
@@ -373,6 +370,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       blit = draw;
       ring = sprites + offset;
       for (j12 = 0; j12 != 8; j12++) {
+        s32 px; s32 a;
         a = (j12 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
@@ -395,6 +393,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       blit = draw;
       ring = sprites + offset;
       for (j13 = 0; j13 != 8; j13++) {
+        s32 px; s32 a;
         a = (j13 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
@@ -415,12 +414,14 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         cel = 56;
       ring = sprites + (cel + 444);
       for (j14 = 0; j14 != 64; j14++) {
+        s32 px; s32 a;
         a = j14 << 10;
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         draw(canvas, ring, px - 1, py - 2, 2, 4);
       }
       for (j15 = 0; j15 != 64; j15++) {
+        s32 px; s32 a;
         a = j15 << 10;
         py = (r * Trig_Cos(a) >> 16) + y + Data_08199f48[small] * 2;
         px = (r * Trig_Sin(a) * 2 >> 16) + x;
@@ -1016,20 +1017,21 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1010;
       REG_BG2CNT = 0x784;
       for (i = 1; i != 8; i++) {
-        for (c4 = 0; c4 != 10; c4 = w) {
-          u8 *src = work->sheet + gData_08197410[c4];
-          u8 *out = work->sheet + gData_08197410[c4] + i * 0x302;
+        for (j = 0; j != 10; j = w) {
+          u8 *src = work->sheet + gData_08197410[j];
+          u8 *out = work->sheet + gData_08197410[j] + i * 0x302;
           s32 n;
 
-          w = c4 + 1;
-          n = w * 2 * w;
+          w = j + 1;
+          n = w * 2;
+          n *= w;
 
-          for (j = 0; j != n; j++) {
-            u8 v = src[j] - i * 8;
+          for (c4 = 0; c4 != n; c4++) {
+            u8 v = src[c4] - i * 8;
 
             if (v > 63)
               v = 0;
-            out[j] = v;
+            out[c4] = v;
           }
         }
       }
@@ -1045,11 +1047,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           sprites[508 + i * 8 + j] = Data_0819a038[j];
       dst = sprites;
       for (i = 0; i != 2; i++) {
-        for (off = 0; off != 3; off++) {
+        for (j = 0; j != 3; j++) {
           u8 *src = work->sheet + gData_08197410[Data_0819a040[i] - 1];
 
-          for (m = 0; m != Data_0819a040[i] * Data_0819a040[i] * 2; m++) {
-            s32 v = *src++ - off * 16;
+          for (m = 0; m != *(Data_0819a040 + i) * *(Data_0819a040 + i) * 2; m++) {
+            s32 v = *src++ - j * 16;
 
             if (v < 0)
               v = 0;

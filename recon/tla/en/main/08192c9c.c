@@ -1,9 +1,10 @@
-// Measured 2026-11-05 (tla-en): differ 2338 of 5364, 1762 with slots and pool
+// Measured 2026-11-05 (tla-en): differ 2314 of 5364, 1772 with slots and pool
 // offsets normalized. Colours read into s16 locals took it from 2613: c, r,
 // b. Counters follow the listing's loops: r10's loops are i, r11's are j, and
 // a loop the listing counts in r8 or a low register has a variable of its own
-// (the c variables, placeholders). A loop more or less on i can move it to r7
-// and cost 1700. Shape differs by small hunks only.
+// (the c variables, placeholders); the splash's five loops share one, r7 in
+// the listing. A loop more or less on i can move it to r7 and cost 1700.
+// Shape differs by small hunks only.
 // Measured 2026-11-05 (tla-en): differ 3039 of 5364. Measure with all five
 // addresses (the figure before this one, 3800 of 4851, was the parent alone:
 // 3287 of 5364 with all five). A tagged one-pass block settles the frame at
@@ -340,10 +341,6 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   s32 sheetOffset;
   u8 *cells;
   s32 j1;
-  s32 j2;
-  s32 j3;
-  s32 j4;
-  s32 j5;
   s32 j6;
   s32 a;
   s32 px;
@@ -371,8 +368,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 98;
       blit = draw;
       ring = sprites + offset;
-      for (j2 = 0; j2 != 8; j2++) {
-        a = (j2 << 13) + (t * 5 << 9);
+      for (j1 = 0; j1 != 8; j1++) {
+        a = (j1 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         blit(canvas, ring, px - 3, py - 7, 7, 14);
@@ -393,8 +390,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 344;
       blit = draw;
       ring = sprites + offset;
-      for (j3 = 0; j3 != 8; j3++) {
-        a = (j3 << 13) + (t * 5 << 9);
+      for (j1 = 0; j1 != 8; j1++) {
+        a = (j1 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         blit(canvas, ring, px - 2, py - 5, 5, 10);
@@ -413,14 +410,14 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       if (cel == 64)
         cel = 56;
       ring = sprites + (cel + 444);
-      for (j4 = 0; j4 != 64; j4++) {
-        a = j4 << 10;
+      for (j1 = 0; j1 != 64; j1++) {
+        a = j1 << 10;
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         draw(canvas, ring, px - 1, py - 2, 2, 4);
       }
-      for (j5 = 0; j5 != 64; j5++) {
-        a = j5 << 10;
+      for (j1 = 0; j1 != 64; j1++) {
+        a = j1 << 10;
         py = (r * Trig_Cos(a) >> 16) + y + Data_08199f48[small] * 2;
         px = (r * Trig_Sin(a) * 2 >> 16) + x;
         draw(canvas, ring, px - 1, py - 2, 2, 4);

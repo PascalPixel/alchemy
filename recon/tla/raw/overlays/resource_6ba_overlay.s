@@ -1,42 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008704,"ax",%progbits
-	.balign 4
-	.global Func_02000704
-	.thumb_func
-Func_02000704:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	sub sp, #32
-	mov r8, r0
-	mov r0, sp
-	bl Party_ListActiveOwners
-	movs r6, #0
-	adds r7, r0, #0
-	cmp r6, r7
-	bge .L_0200873e
-.L_0200871c:
-	lsls r3, r6, #1
-	mov r2, sp
-	ldrh r5, [r2, r3]
-	adds r6, #1
-	adds r0, r5, #0
-	bl Unit_Get
-	ldrb r1, [r0, #15]
-	adds r0, r5, #0
-	add r1, r8
-	bl Unit_LevelUpTo
-	adds r0, r5, #0
-	bl Unit_Calculate
-	cmp r6, r7
-	blt .L_0200871c
-.L_0200873e:
-	add sp, #32
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x02008848,"ax",%progbits
 	.global Func_02000848
 	.thumb_func

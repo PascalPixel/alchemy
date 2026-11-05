@@ -1,5 +1,6 @@
-// Draft, differ 29: overlay 6b8's copy of the function drafted in
-// resource_6ae_c_020053e4.c, whose header says what it is and what still differs.
+// Draft, differ 2 (tla-en, 2026-11-05). Func_02000c4c of overlay 6b8.
+// Byte bitfields on the sprite (the 3 then builds with movs). Left: adds r5,
+// r2, r7 where this has adds r5, r7, r2 for the row's first sprite.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -11,11 +12,14 @@ struct ResourceTableEntry {
 
 struct SparkleSprite {
   u8 unk00[5];
-  u8 attr5;
+  u8 attr5Low : 5;
+  u8 flag : 1;
+  u8 attr5High : 2;
   u8 unk06[2];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
+  u8 unk08;
+  u8 unk09 : 2;
+  u8 priority : 2;
+  u8 palette : 4;
   u8 unk0a[0x1e];
 };
 
@@ -56,11 +60,12 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork *work) {
   tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
+    col = 1;
     sprite = &work->sprites[row * 2];
-    for (col = 1; col >= 0; col--) {
+    for (; col >= 0; col--) {
       Func_02000ee4(sprite, 16, 16, 0x80004000, tile);
-      ((u8 *)sprite)[5] &= ~32;
-      ((u8 *)sprite)[9] &= 15;
+      sprite->flag = 0;
+      sprite->palette = 0;
       sprite->priority = Func_02000ef4(object) & 3;
       sprite++;
     }

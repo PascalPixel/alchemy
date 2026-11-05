@@ -1,18 +1,7 @@
-// Draft, differ 30 of 323 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Structure matches: all five loops, the bitfields, pools and calls. Left: the
-// listing keeps the particle pointer in r7 and sprite and frame in r6, here
-// swapped (particle outranks sprite in global.c whether or not it is shared
-// with the flight loop, and for-loop weights did not change that); the frame is
-// 24 bytes against 28 (sp+24 is unused in the listing); the scheduling of the
-// first bitfield block and of the timer load (r3 in the listing, r2 here)
-// follows from those. Forms that were measured to matter: only the first loop
-// is written with a label, since as a for loop its 0 is hoisted; slot holds
-// that 0 because a second set stops it being rematerialized, which puts it in
-// r11 as the listing has it; the 0x1000 passes through sheet for r5; column
-// carries the tile argument; the first timer read goes through a union because
-// a second alias set is what stops PRE reusing the load at the join. Call3
-// keeps the two 0x60000 unshared. The source form behind the slot, sheet and
-// union shapes is unknown.
+// Draft, differ 82 (tla-en, 2026-11-05). Func_020006b0 of overlay 6a7.
+// Four barriers gone (a rise from 30), the sheet loop a plain for, the tile
+// argument inline. Left: particle r6, sprite r7 here, natively the reverse,
+// and the frame 24 against 28.
 #include "types.h"
 #include "system/dma.h"
 #include "call.h"
@@ -121,25 +110,11 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
   tiles = VramCache_Load(entry, 0x500, work);
   particle = work->particles;
   sprite = work->sprites;
-  /* FAKEMATCH(barrier): the empty asm on sprite changes its allocation rank; as no
-   * asm, 94 of 323 instructions differ in tla-en. */
-  asm("" : "=r"(sprite) : "0"(sprite));
-  /* FAKEMATCH(barrier): the empty asm on sprite changes its allocation rank; as no
-   * asm, 109 of 323 instructions differ in tla-en. */
-  asm("" : "=r"(sprite) : "0"(sprite));
-  i = 0;
-  /* FAKEMATCH(barrier): the empty asm on i changes its allocation rank; as no
-   * asm, 32 of 323 instructions differ in tla-en. */
-  asm("" : "=r"(i) : "0"(i));
-sheetLoop:
-  column = (i & 3) * 8 + tiles;
-  Func_02000b40(sprite, 0, 0, 0x40000000, column);
+  for (i = 0; i <= 53; i++) {
+  Func_02000b40(sprite, 0, 0, 0x40000000, (i & 3) * 8 + tiles);
   slot = 0;
   sprite->unk_1e = 250;
   sprite->oam.priority = slot;
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 107 of 323 instructions differ in tla-en. */
-  asm("");
   sprite->oam.fullColor = 1;
   sprite->oam.palette = slot;
   column = i / 6;
@@ -153,9 +128,7 @@ sheetLoop:
   particle->unk_14 = slot;
   particle->age = slot;
   particle++;
-  i++;
-  if (i <= 53)
-    goto sheetLoop;
+  }
   sparks = Heap_AllocEwram(0x600);
   sheet = (void *)0x1000;
   sheet = Heap_Alloc((s32)sheet);

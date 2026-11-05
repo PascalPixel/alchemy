@@ -1,5 +1,6 @@
-// Draft, differ 23: overlay 6b9's copy of the function drafted in
-// resource_691_c_020038dc.c, whose header says what it is and what still differs.
+// Draft, differ 2 (tla-en, 2026-11-05). Func_0200029c of overlay 6b9.
+// Plain loop and statement order, Value3 for the VRAM load, no barrier. Left:
+// lsls r1 before ldr r0 ahead of Task_Add.
 #include "call.h"
 #include "types.h"
 #include "system/task.h"
@@ -52,27 +53,20 @@ void Func_0200029c(void) {
   struct RockSprite *sprite;
 
   Func_02000560(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
-  tile = VramCache_Load(entry, 0x500, work);
   entry = Resource_FindFreeEntry();
+  tile = Value3((s32 (*)())VramCache_Load, entry, 0x500, (s32)work);
   work->tileBase = tile;
-  rock = work->rocks;
   work->resource = entry;
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 25 of 83 instructions differ in tla-en. */
-  asm("");
+  rock = work->rocks;
   sprite = work->sprites;
-  i = 63;
-  do {
+  for (i = 63; i >= 0; i--, sprite++, rock++) {
     Func_020005f0(sprite, 8, 8, 0x40000000, tile);
     sprite->unk05_5 = 1;
     sprite->palette = 0;
     sprite->priority = 0;
     sprite->unk1e = 240;
     rock->timer = -1;
-    i--;
-    sprite++;
-    rock++;
-  } while (i >= 0);
+  }
   {
     s32 zero = 0;
 

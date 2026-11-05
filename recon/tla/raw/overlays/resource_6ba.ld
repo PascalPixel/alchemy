@@ -15,7 +15,7 @@ SECTIONS
         "*/games/tla/src/debug/shop_test/give.o"(.text)
         "*/games/tla/src/debug/shop_test/scene_events.o"(.text)
         "*/games/tla/src/debug/shop_test/prepare.o"(.text)
-        "*/resource_6ba_overlay.o"(.text.x02008704)
+        "*/games/tla/src/debug/shop_test/s0704.o"(.text)
         "*/games/tla/src/debug/shop_test/level.o"(.text)
         "*/resource_6ba_overlay.o"(.text.x02008848)
         "*/games/tla/src/debug/shop_test/forward.o"(.text)

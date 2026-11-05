@@ -9,12 +9,9 @@
 #include "text/msg_ids.h"
 #include "types.h"
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+#include "actor.h"
+#include "system/vector3.h"
+#include "system/io_reg.h"
 
 extern u8 gData_0200308c[];
 extern u8 Data_02003098[];
@@ -29,67 +26,55 @@ void Func_02002124();
 s32 Func_020020d4();
 s32 Func_0200210c();
 
-s32 Func_020002b4(s32 a0, s32 a1, s32 a2) {
-  s32 r1, r2, r3, r4, r6, v0, r5, v1, r0, v2, v3;
-  s32 stack[3];
+void Func_020002b4(void) {
+  struct Vector3 position;
+  s8 mode = gData_0200308c[0];
 
-  /* sub (s32)stack, #12 */
-  r1 = a1;
-  r2 = a2;
-  r3 = ((FIELD_AT((s32)gData_0200308c, u8, 0)) << 24) >> 24;
-  if ((((FIELD_AT((s32)gData_0200308c, u8, 0)) << 24) >> 24) != 1)
-    goto L_020082e8;
-  r4 = (s32)Data_02003098;
-  FIELD_AT(67108946, u16, 0) =
-      ((*(u8 *)(((s32)Data_02002fd7) + (((FIELD_AT(r4, s32, 0)) >> 3) & 15)))
-       << 8) |
-      (16 -
-       (*(u8 *)(((s32)Data_02002fd7) + (((FIELD_AT(r4, s32, 0)) >> 3) & 15))));
-  FIELD_AT(r4, s32, 0) = (FIELD_AT(r4, s32, 0)) + 1;
-  r1 = *(u8 *)(((s32)Data_02002fd7) + (((FIELD_AT(r4, s32, 0)) >> 3) & 15));
-  r2 = ((*(u8 *)(((s32)Data_02002fd7) + (((FIELD_AT(r4, s32, 0)) >> 3) & 15)))
-        << 8) |
-       (16 -
-        (*(u8 *)(((s32)Data_02002fd7) + (((FIELD_AT(r4, s32, 0)) >> 3) & 15))));
-  goto L_02008338;
-L_020082e8:
-  if (r3 != 2)
-    goto L_02008338;
-  r6 = (s32)Data_02003098;
-  v0 = __modsi3((FIELD_AT(r6, s32, 0)) >> 2, 28);
-  r5 = v0;
-  FIELD_AT(67108946, u16, 0) = *(u16 *)(((s32)gData_02002fe8) + (r5 << 1));
-  r2 = *(u16 *)(((s32)gData_02002fe8) + (r5 << 1));
-  if (r5 == 0) {
-    FIELD_AT((s32)Data_02003090, s32, 0) = 1;
-    FIELD_AT((s32)Data_02003024, s32, 0) = r5;
-    Call1((void (*)())Func_02002124, 153);
+  if (mode == 1) {
+    s32 *time = (s32 *)Data_02003098;
+    s32 t = *time;
+    s32 level = Data_02002fd7[(t >> 3) & 15];
+
+    {
+      s32 value = (level << 8) | (16 - level);
+
+      REG_BLDALPHA = value;
+    }
+    t++;
+    *time = t;
+  } else if (mode == 2) {
+    s32 *time = (s32 *)Data_02003098;
+    s32 step = (*time >> 2) % 28;
+
+    {
+      s32 value = ((u16 *)gData_02002fe8)[step];
+
+      REG_BLDALPHA = value;
+    }
+    if (step == 0) {
+      *(s32 *)Data_02003090 = 1;
+      *(s32 *)Data_02003024 = step;
+      Func_02002124(153);
+    }
+    if (step == 14) {
+      *(s32 *)Data_02003090 = 0;
+      *(s32 *)Data_02003024 = 1;
+      Func_02002124(153);
+    }
+    (*time)++;
   }
-  if (r5 == 14) {
-    FIELD_AT((s32)Data_02003090, s32, 0) = 0;
-    FIELD_AT((s32)Data_02003024, s32, 0) = 1;
-    Call1((void (*)())Func_02002124, 153);
+  position.x = 0x3400000;
+  position.y = 0;
+  position.z = 0x1c00000;
+  Func_020020d4(&position);
+  if (*(s32 *)Data_02003090 != 0) {
+    ((struct Actor *)Data_02003060)->y = position.x;
+    ((struct Actor *)Data_02003060)->z = position.z;
+    Func_0200210c(Data_02003060);
   }
-  FIELD_AT(r6, s32, 0) = (FIELD_AT(r6, s32, 0)) + 1;
-L_02008338:
-  r5 = (s32)stack;
-  FIELD_AT(r5, s32, 0) = 0x3400000;
-  FIELD_AT(r5, s32, 4) = 0;
-  FIELD_AT(r5, s32, 8) = 0x1c00000;
-  v1 = Func_020020d4(r5);
-  r0 = v1;
-  if ((FIELD_AT((s32)Data_02003090, s32, 0)) != 0) {
-    FIELD_AT((s32)Data_02003060, s32, 12) = FIELD_AT(r5, s32, 0);
-    FIELD_AT((s32)Data_02003060, s32, 16) = FIELD_AT(r5, s32, 8);
-    v2 = Func_0200210c((s32)Data_02003060, r1);
-    r0 = v2;
+  if (*(s32 *)Data_02003024 != 0) {
+    ((struct Actor *)Data_02003030)->y = position.x;
+    ((struct Actor *)Data_02003030)->z = position.z;
+    Func_0200210c(Data_02003030);
   }
-  if ((FIELD_AT((s32)Data_02003024, s32, 0)) != 0) {
-    FIELD_AT((s32)Data_02003030, s32, 12) = FIELD_AT(r5, s32, 0);
-    FIELD_AT((s32)Data_02003030, s32, 16) = FIELD_AT(r5, s32, 8);
-    v3 = Func_0200210c((s32)Data_02003030, r1);
-    r0 = v3;
-  }
-  /* add (s32)stack, #12 */
-  return r0;
 }

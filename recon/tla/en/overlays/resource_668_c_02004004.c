@@ -1,12 +1,6 @@
 // Draft of overlay 668's Func_02004004, translated from its listing.
 #include "types.h"
 #include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 s32 HeapSlot_AllocFar();
 s32 Resource_GetTableEntry();
 s32 Func_020049d4();
@@ -16,48 +10,64 @@ s32 Func_02004c64();
 s32 Task_Add();
 extern u8 Func_02003ec4[];
 
-void Func_02004004(void) {
-  u8 frame[4];
-  s32 v_r0, v_r10, v_r2, v_r3, v_r5, v_r6, v_r7, v_r8;
+extern char ResourceId_FallingRock;
 
-  v_r7 = v_r10;
-  v_r6 = v_r8;
-  v_r0 = HeapSlot_AllocFar(220, 0x1608);
-  v_r6 = v_r0;
-  Call1((void (*)())Resource_GetTableEntry, 0x1f0);
-  Func_020049d4();
-  v_r0 = Resource_FindFreeEntry();
-  v_r5 = v_r0;
-  v_r0 = VramCache_Load();
-  v_r10 = v_r0;
-  v_r3 = v_r6 + 0x1602;
-  FIELD_AT(v_r3, u16, 0) = v_r10;
-  v_r3 = v_r6 + 0x1604;
-  FIELD_AT(v_r3, u16, 0) = v_r5;
-  v_r7 = v_r6 + 0x500;
-  v_r5 = v_r6 + 0xc00;
-  v_r8 = 63;
-L_0200c05c:
-  ;
-  /* XXX stack argument */;
-  Call4((void (*)())Func_02004c64, v_r5, 8, 8, 0x40000000);
-  v_r3 = FIELD_AT(v_r5, u8, 5);
-  v_r3 = v_r3 | 32;
-  v_r2 = FIELD_AT(v_r5, u8, 9);
-  FIELD_AT(v_r5, u8, 5) = v_r3;
-  v_r3 = 15 & v_r2;
-  v_r3 = v_r3 & -13;
-  FIELD_AT(v_r5, u8, 9) = v_r3;
-  FIELD_AT(v_r5, u16, 30) = 240;
-  v_r8 = v_r8 + -1;
-  FIELD_AT(v_r7, s32, 24) = -1;
-  v_r5 = v_r5 + 40;
-  v_r7 = v_r7 + 28;
-  if (v_r8 >= 0)
-    goto L_0200c05c;
-  v_r2 = v_r6 + 0x1600;
-  FIELD_AT(v_r2, u16, 0) = 0;
-  Call4((void (*)())Task_Add, (s32)Func_02003ec4, 0x480, v_r2, 0);
-  v_r8 = v_r3;
-  v_r10 = v_r5;
+struct SpriteRecord {
+  u8 unk00[5];
+  u8 flags5;
+  u8 unk06[3];
+  u8 flags9;
+  u8 unk0a[30 - 10];
+  u16 unk1e;
+  u8 unk20[8];
+};
+
+struct ChainRecord {
+  u8 unk00[24];
+  s32 next;
+};
+
+struct SceneryWork {
+  u8 unk0000[0x500];
+  struct ChainRecord chain[64];
+  u8 unk0c00[0];
+  struct SpriteRecord sprites[64];
+  u16 count;
+  u16 tiles;
+  u16 entry;
+};
+
+void Func_02004004(void) {
+  struct SceneryWork *work = (struct SceneryWork *)HeapSlot_AllocFar(220, 0x1608);
+  s32 entry, tiles, i;
+  struct SpriteRecord *sprite;
+  struct ChainRecord *chain;
+
+  Func_020049d4(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  entry = Resource_FindFreeEntry();
+  tiles = Value3((s32 (*)())VramCache_Load, entry, 0x500, (s32)work);
+  work->tiles = tiles;
+  work->entry = entry;
+  chain = (struct ChainRecord *)((u8 *)work + 0x500);
+  sprite = (struct SpriteRecord *)((u8 *)work + 0xc00);
+  for (i = 63; i >= 0; i--) {
+    Func_02004c64(sprite, 8, 8, 0x40000000, tiles);
+    {
+      s32 bit = sprite->flags5 | 32;
+
+      sprite->flags5 = bit;
+    }
+    {
+      s32 flags = sprite->flags9 & 15;
+
+      flags &= ~12;
+      sprite->flags9 = flags;
+    }
+    sprite->unk1e = 240;
+    chain->next = -1;
+    sprite++;
+    chain++;
+  }
+  work->count = 0;
+  Task_Add((s32)Func_02003ec4, 0x480);
 }

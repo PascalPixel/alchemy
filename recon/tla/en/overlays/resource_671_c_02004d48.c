@@ -1,207 +1,136 @@
-// Draft of overlay 671's Func_02004d48, translated from its listing.
+// Draft of overlay 671's Func_02004d48, rewritten from the listing's translation.
 #include "types.h"
 #include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Actor_GetById();
-s32 Func_02005654();
-s32 Func_02005624();
-s32 Func_02004938();
-s32 wait();
-s32 GameFlag_SetBit();
 
+struct Racer {
+  u8 unk00[8];
+  s32 x;
+  u8 unk0c[76 - 12];
+  u32 unk4c;
+  u8 unk50[98 - 80];
+  u8 unk62;
+  u8 state;
+  u16 unk64;
+  u16 unk66;
+};
 
-void Func_02004d48(s32 p0, s32 p1) {
-  u8 frame[8];
-  s32 s0, s4, v_r0, v_r10, v_r11, v_r2, v_r3, v_r5, v_r6, v_r7, v_r8, v_r9;
+struct Racer *Actor_GetById();
+void Func_02005654();
+void Func_02005624();
+void Func_02004938();
+void wait();
+void GameFlag_SetBit();
 
-  v_r7 = v_r11;
-  v_r6 = v_r10;
-  v_r5 = v_r9;
-  v_r7 = v_r8;
-  v_r11 = p0;
-  v_r2 = v_r11 + 1;
-  /* XXX stack argument */;
-  /* XXX stack argument */;
-  v_r0 = Actor_GetById(p0);
-  v_r7 = v_r0;
-  v_r9 = 0;
-  v_r3 = v_r7 + 100;
-  FIELD_AT(v_r3, u16, 0) = v_r9;
-  v_r10 = 7;
-  v_r3 = v_r3 + 2;
-  FIELD_AT(v_r3, u16, 0) = v_r10;
-  v_r8 = 1;
-  v_r3 = v_r3 - 4;
-  v_r5 = 2;
-  FIELD_AT(v_r3, u8, 0) = v_r5;
-  v_r3 = v_r3 + 1;
-  FIELD_AT(v_r3, u8, 0) = v_r8;
-  FIELD_AT(v_r7, s32, 76) = v_r9;
-  v_r0 = Func_02005654();
-  Call2((void (*)())Func_02005624, v_r7, 2);
-  v_r0 = s0;
-  v_r6 = s0;
-  v_r0 = Actor_GetById(v_r0);
-  v_r7 = v_r0;
-  v_r3 = v_r7 + 100;
-  FIELD_AT(v_r3, u16, 0) = v_r5;
-  v_r3 = v_r3 + 2;
-  FIELD_AT(v_r3, u16, 0) = v_r10;
-  v_r3 = v_r3 - 4;
-  FIELD_AT(v_r3, u8, 0) = 0;
-  v_r3 = v_r3 + 1;
-  FIELD_AT(v_r3, u8, 0) = v_r8;
-  FIELD_AT(v_r7, s32, 76) = v_r9;
-  v_r0 = Func_02005654();
-  v_r6 = v_r6 + 1;
-  Call2((void (*)())Func_02005624, v_r7, 2);
-  v_r0 = Actor_GetById(v_r6);
-  v_r7 = v_r0;
-  v_r2 = v_r7 + 100;
-  FIELD_AT(v_r2, u16, 0) = 8;
-  v_r3 = v_r7 + 102;
-  FIELD_AT(v_r3, u16, 0) = v_r10;
-  v_r3 = v_r3 - 4;
-  FIELD_AT(v_r3, u8, 0) = 2;
-  v_r3 = v_r3 + 1;
-  FIELD_AT(v_r3, u8, 0) = v_r8;
-  FIELD_AT(v_r7, s32, 76) = v_r9;
-  v_r0 = Func_02005654();
-  v_r6 = v_r6 + 1;
-  Call2((void (*)())Func_02005624, v_r7, 2);
-  v_r0 = Actor_GetById(v_r6);
-  v_r7 = v_r0;
-  v_r2 = v_r7 + 100;
-  FIELD_AT(v_r2, u16, 0) = 10;
-  v_r3 = v_r7 + 102;
-  FIELD_AT(v_r3, u16, 0) = v_r10;
-  v_r3 = v_r3 - 4;
-  FIELD_AT(v_r3, u8, 0) = 0;
-  v_r3 = v_r3 + 1;
-  FIELD_AT(v_r3, u8, 0) = v_r8;
-  FIELD_AT(v_r7, s32, 76) = v_r9;
-  v_r0 = Func_02005654();
-  Call2((void (*)())Func_02005624, v_r7, 2);
-  v_r10 = 0;
-L_0200ce40:
-  ;
-  v_r9 = 1;
-  v_r5 = 0;
-L_0200ce46:
-  ;
-  v_r2 = 4 + v_r11;
-  v_r8 = v_r2;
-  v_r6 = v_r11;
-  if (v_r11 >= v_r8)
-    goto L_0200ce7c;
-L_0200ce52:
-  ;
-  v_r0 = Actor_GetById(v_r6);
-  v_r7 = v_r0;
-  v_r3 = v_r7 + 99;
-  v_r3 = FIELD_AT(v_r3, u8, 0);
-  if (v_r3 == 0)
-    goto L_0200ce6c;
-  if (v_r3 == 7)
-    goto L_0200ce6c;
-  v_r9 = 0;
-L_0200ce6c:
-  ;
-  v_r6 = v_r6 + 1;
-  Call4((void (*)())Func_02004938, v_r7, v_r5, v_r6, v_r3);
-  if (v_r6 < v_r8)
-    goto L_0200ce52;
-L_0200ce7c:
-  ;
-  v_r5 = v_r5 + 1;
-  Call1((void (*)())wait, 1);
-  if (v_r5 <= 15)
-    goto L_0200ce46;
-  if (v_r9 != 0)
-    goto L_0200ce98;
-  v_r10 = v_r10 + 1;
-  if (v_r10 <= 127)
-    goto L_0200ce40;
-L_0200ce98:
-  ;
-  Call1((void (*)())wait, 20);
-  v_r3 = s4;
-  if (v_r3 == 0)
-    goto L_0200cf32;
-  v_r0 = Actor_GetById(v_r11);
-  v_r3 = FIELD_AT(v_r0, s32, 8);
-  v_r6 = 0;
-  v_r5 = 0;
-  if (v_r3 == 0)
-    goto L_0200ceb8;
-  v_r6 = FIELD_AT(v_r0, s32, 76);
-L_0200ceb8:
-  ;
-  v_r0 = s0;
-  v_r0 = Actor_GetById(v_r0);
-  v_r3 = FIELD_AT(v_r0, s32, 8);
-  if (v_r3 == 0)
-    goto L_0200ced0;
-  v_r0 = FIELD_AT(v_r0, s32, 76);
-  if (v_r6 == 0)
-    goto L_0200cece;
-  if ((u32)v_r6 <= (u32)v_r0)
-    goto L_0200ced0;
-L_0200cece:
-  ;
-  v_r6 = v_r0;
-L_0200ced0:
-  ;
-  v_r0 = v_r11 + 2;
-  v_r0 = Actor_GetById(v_r0);
-  v_r3 = FIELD_AT(v_r0, s32, 8);
-  if (v_r3 == 0)
-    goto L_0200cee0;
-  v_r5 = FIELD_AT(v_r0, s32, 76);
-L_0200cee0:
-  ;
-  v_r0 = v_r11 + 3;
-  v_r0 = Actor_GetById(v_r0);
-  v_r3 = FIELD_AT(v_r0, s32, 8);
-  if (v_r3 == 0)
-    goto L_0200cefa;
-  v_r0 = FIELD_AT(v_r0, s32, 76);
-  if (v_r5 == 0)
-    goto L_0200cef8;
-  if ((u32)v_r5 <= (u32)v_r0)
-    goto L_0200cefa;
-L_0200cef8:
-  ;
-  v_r5 = v_r0;
-L_0200cefa:
-  ;
-  if (v_r6 == 0)
-    goto L_0200cf2a;
-  if (v_r5 == 0)
-    goto L_0200cf32;
-  if (v_r6 == v_r5)
-    goto L_0200cf32;
-  if ((u32)v_r6 >= (u32)v_r5)
-    goto L_0200cf1c;
-  Call1((void (*)())GameFlag_SetBit, 0x9eb);
-  goto L_0200cf32;
-L_0200cf1c:
-  ;
-  Call1((void (*)())GameFlag_SetBit, 0x9eb);
-  goto L_0200cf32;
-L_0200cf2a:
-  ;
-  if (v_r5 != 0)
-    goto L_0200cf32;
-L_0200cf32:
-  ;
-  v_r8 = v_r3;
-  v_r9 = v_r5;
-  v_r10 = v_r6;
-  v_r11 = v_r7;
+s32 Func_02004d48(s32 first, s32 check) {
+  struct Racer *racer;
+  s32 second = first + 1;
+  s32 zero, seven, one, two;
+  s32 frame, tries, id;
+  s32 done;
+
+  racer = Actor_GetById(first);
+  zero = 0;
+  racer->unk64 = zero;
+  seven = 7;
+  racer->unk66 = seven;
+  one = 1;
+  two = 2;
+  racer->unk62 = two;
+  racer->state = one;
+  racer->unk4c = zero;
+  Func_02005654();
+  Call2((void (*)())Func_02005624, racer, 2);
+  {
+    s32 next = second;
+
+    racer = Actor_GetById(next);
+    racer->unk64 = two;
+    racer->unk66 = seven;
+    racer->unk62 = 0;
+    racer->state = one;
+    racer->unk4c = zero;
+    Func_02005654();
+    next++;
+    Call2((void (*)())Func_02005624, racer, 2);
+    racer = Actor_GetById(next);
+    racer->unk64 = 8;
+    racer->unk66 = seven;
+    {
+      s32 k = 2;
+
+      racer->unk62 = k;
+    }
+    racer->state = one;
+    racer->unk4c = zero;
+    Func_02005654();
+    next++;
+    Call2((void (*)())Func_02005624, racer, 2);
+    racer = Actor_GetById(next);
+    racer->unk64 = 10;
+    racer->unk66 = seven;
+    racer->unk62 = 0;
+    racer->state = one;
+    racer->unk4c = zero;
+    Func_02005654();
+    Func_02005624(racer, 2);
+  }
+  for (tries = 0; tries <= 127; tries++) {
+    done = 1;
+    for (frame = 0; frame <= 15; frame++) {
+      for (id = first; id < first + 4; id++) {
+        racer = Actor_GetById(id);
+        if (racer->state != 0 && racer->state != 7)
+          done = 0;
+        Func_02004938(racer, frame, id);
+      }
+      wait(1);
+    }
+    if (done)
+      break;
+  }
+  wait(20);
+  if (check) {
+    u32 a = 0;
+    u32 b = 0;
+
+    {
+      struct Racer *one = Actor_GetById(first);
+
+      if (one->x != 0)
+        a = one->unk4c;
+    }
+    {
+      struct Racer *other = Actor_GetById(second);
+
+      if (other->x != 0 && (a == 0 || a > other->unk4c))
+        a = other->unk4c;
+    }
+    {
+      struct Racer *one = Actor_GetById(first + 2);
+
+      if (one->x != 0)
+        b = one->unk4c;
+    }
+    {
+      struct Racer *other = Actor_GetById(first + 3);
+
+      if (other->x != 0 && (b == 0 || b > other->unk4c))
+        b = other->unk4c;
+    }
+    if (a != 0) {
+      if (b == 0)
+        return 1;
+      if (a == b)
+        return 0;
+      if (a < b) {
+        GameFlag_SetBit(0x9eb);
+        return 1;
+      }
+      GameFlag_SetBit(0x9eb);
+      return 2;
+    }
+    if (b != 0)
+      return 2;
+  }
+  return 3;
 }

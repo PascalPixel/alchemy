@@ -1,17 +1,10 @@
-// Draft, differ 82 of 145 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Draft of overlay 6aa's Func_020022e4, written from its listing: unless flag
-// 0x109 is set it records up to four objects from a 0-ended list of ids and
-// flags as the beam's targets and up to four stops from a second list, then
-// sets the beam's two values, the blend if none is set, and Func_020020ec as a
-// callback. Differ 141 of 145. Left: register allocation from the first list on
-// (the native keeps the id in sl and spills the target height, where this keeps
-// the id in r4 and spills it across each call).
+// Draft, differ 28: overlay 6aa's copy of the function drafted in
+// resource_6ac_c_0200218c.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
 #include "io_reg.h"
 #include "actor.h"
 
-/// One object the beam reaches, as Func_020022e4 records it.
 struct MarsLighthouseBeamTarget {
   u16 active;
   u16 index;
@@ -21,22 +14,26 @@ struct MarsLighthouseBeamTarget {
   s32 height; ///< 16.16 pixels
 };
 
+/// One pair of the beam's second list.
+struct MarsLighthouseBeamStop {
+  u16 unk00;
+  u16 unk02;
+};
+
 struct MarsLighthouseBeam {
   u8 unk00[10];
   u16 unk0a;
   u8 unk0c[4];
   s32 unk10;
   struct MarsLighthouseBeamTarget targets[4];
-  u16 stopCount;
-  u16 stops[7];
+  struct MarsLighthouseBeamStop stops[4];
 };
 
 extern u8 gData_020023c4[];
 
 s32 GameFlag_Test(s32 flag);
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Task_Add(void (*func)(void), s32 priority);
 void Func_020020ec(void);
 
@@ -48,72 +45,61 @@ void Func_020022e4(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   s32 i;
 
   if (GameFlag_Test(0x109) == 0) {
-    id = *targets++;
     i = 0;
-    if (id > 0) {
-    nextTarget:
-      {
-        s32 flags = *targets;
-        s32 height = flags & 15;
-        struct Actor *object;
+    while ((id = *targets++) > 0) {
+      s32 flags = *targets;
+      s32 height = flags & 15;
+      struct Actor *object;
 
-        flags &= 0xf0;
-        object = Actor_GetById(id);
-        /* FAKEMATCH(barrier): the empty asm on object changes its allocation rank; as no
-         * asm, 92 of 145 instructions differ in tla-en. */
-        asm("" : "=r"(object) : "0"(object));
-        targets++;
-        if (object != NULL) {
-          Actor_SetSingleChildFlags(object, 0);
-          ((u8 *)object)[98] = 1;
-          if ((flags & 0x80) == 0)
-            object->collisionFlags = 0;
-          target->active = 1;
-          target->flags = flags;
-          target->object = Actor_GetById(id);
-          target->height = height << 16;
-          target->index = i;
-          target++;
-        }
+      flags &= 0xf0;
+      object = Actor_GetById(id);
+      targets++;
+      if (object != NULL) {
+        Actor_SetSingleChildFlags(object, 0);
+        ((u8 *)object)[98] = 1;
+        if ((flags & 0x80) == 0)
+          object->collisionFlags = 0;
+        target->active = 1;
+        target->flags = flags;
+        target->object = Actor_GetById(id);
+        target->height = height << 16;
+        target->index = i;
+        target++;
       }
       i++;
-      if (i <= 3) {
-        id = *targets++;
-        if (id > 0)
-          goto nextTarget;
-      }
+      if (i > 3)
+        break;
     }
     if (stops != NULL) {
-      u16 *stop;
+      s32 count;
+      s32 value;
 
       i = 0;
-      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-       * 85 of 145 instructions differ in tla-en. */
-      asm("");
-      beam->stopCount = *stops++;
-      if ((s16)beam->stopCount > 0) {
-        stop = &beam->stopCount;
-      nextStop:
-        stop[1] = *stops;
-        i++;
-        stops++;
-        stop += 2;
-        if (i <= 3) {
-          *stop = *stops++;
-          if ((s16)*stop > 0)
-            goto nextStop;
-        }
+      count = *stops++;
+      beam->stops[i].unk00 = count;
+      if (count > 0) {
+        do {
+          beam->stops[i].unk02 = *stops++;
+          i++;
+          if (i > 3)
+            break;
+          value = *stops++;
+          beam->stops[i].unk00 = value;
+        } while (value > 0);
       }
     }
   }
   beam->unk10 = a2;
   beam->unk0a = a3;
   if (REG_BLDCNT == 0) {
-    REG_BLDALPHA = 0x608;
-    REG_BLDCNT = 0x3f10;
-    /* FAKEMATCH(barrier): the empty asm on REG_BLDCNT changes its allocation rank; as no
-     * asm, 86 of 145 instructions differ in tla-en. */
-    asm("" : : "r"(REG_BLDCNT));
+    {
+      s32 alpha = 0xc08;
+      REG_BLDALPHA = alpha;
+    }
+    {
+      s32 cnt = 0x3f10;
+      REG_BLDCNT = cnt;
+    }
   }
-  Task_Add(Func_020020ec, 0x480);
+  ((s32 (*)())Task_Add)(Func_020020ec, 0x480);
 }

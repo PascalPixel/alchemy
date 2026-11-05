@@ -1,145 +1,141 @@
-// Draft, differ 155 of 236, skeleton gap 17/26 (tla-en, 2026-11-01)
-// Each pass checks the terrain ahead and the other solid actors, then steps
-// by unk68 and unk6a and eases toward the centre of its cell. Left: gcse PRE
-// (edge 1 to 2 in the .gcse dump) hoists actor + 34, work + 104, work + 106 and
-// the frame address of point above the loop's first call. The listing keeps
-// all four in the loop: actor + 34 first thing, the other three after the call,
-// straight before cmp r0, #7, in sl, r9 and r1. Everything else follows from
-// that: this draft spills actor + 34 (frame 24 against 16), so registers differ.
-// Measured with dx, dz and p set at that point, as here: alchemy-gcc reproduces
-// the listing's whole first block once PRE is stopped. A goto loop opening with
-// `if (running)` on a flag that is 1 and never cleared does it (cprop folds the
-// test but PRE still sees its edge; skeleton 17/22, differ 169); that flag is a
-// device, so it is not used. Tried without it: for (;;) with no locals (156),
-// goto outer loop (162), a done flag in while (212, rotated, so PRE still
-// hoists), the flag cleared on each exit with goto top (185 to 194), a loop
-// once-only block after the call (158), locals' order, set order and locals set
-// before the loop (155 to 159).
-// The listing also does not merge the search's point with p: `add r2, sp, #4`
-// is rebuilt in the loop and p dies in r1 at the call. PRE here replaces it
-// with p's register, which then lives across calls in r4. No C form here keeps
-// the two apart, since sfp + N is never killed. Both facts read as no PRE at
-// all in this function, and three addresses placed just before the compare
-// read like a hoist to the end of the block. That is a compiler question, out
-// of scope for a draft and not tested; same family as the landing-burst drafts.
-// Func_02004ca8 takes the actor alone (r1 and r2 are not set for it), and work
-// is really read uninitialized when renderMode is nonzero.
+// Draft, differ 112: overlay 6aa's copy of the function drafted in
+// resource_6ab_c_02002148.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
-#include "ram_buffer.h"
-#include "main_routine_work.h"
 #include "actor.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "vector3.h"
 
-struct RideWork {
+struct Work020023c4 {
   u8 unk00[4];
   u16 unk04;
-  u8 unk06[0x62];
-  s16 unk68; ///< added to x, << 19 for the point ahead, << 17 for a step
-  s16 unk6a; ///< the same for z
+  u8 unk06[0x68 - 6];
+  s16 unk68;
+  s16 unk6a;
 };
 
+void Func_020024c0();
+struct Actor *Actor_GetById(s32 id);
+void Func_02004ca8(void);
+void Func_02004da0(s32 a);
+void Func_02004bc0(struct Actor *actor, s32 a);
+s32 Func_02004c18(s32 terrain, s32 x, s32 z);
+s32 Func_02004c38(struct Actor *actor);
+void Func_02004ce8();
+s32 Func_02004c78(s32 *from, s32 radius, struct Vector3 *to, s32 radius2);
+void wait(s32 frames);
+void Animation_ApplyChildValues(struct Actor *actor, s32 a);
+void Func_02002614(void);
 extern u8 gData_020023c4[];
 
-s32 Func_020024c0(s32 a, s32 b);
-struct Actor *Actor_GetById(s32 id);
-s32 Func_02004ca8(struct Actor *actor);
-s32 Func_02004da0(s32 a);
-void Func_02004bc0(struct Actor *actor, s32 a);
-s32 Func_02004c18(s32 terrainId, s32 x, s32 z);
-s32 Func_02004c38(struct Actor *actor, s32 *point);
-s32 Func_02004c78(s32 *position, s32 radius, s32 *point, s32 otherRadius);
-s32 Func_02004ce8(s32 id, s32 a, s32 b);
-void Func_02002614(void);
-s32 Animation_ApplyChildValues(struct Actor *actor, s32 a);
-void wait(s32 frames);
-
 void Func_0200263c(void) {
-  struct RideWork *work;
-  struct Actor *actor;
-  s32 point[3];
+  struct MainRoutineWork *main = &gMainRoutineWork;
+  struct Work020023c4 *work;
+  struct Vector3 position;
 
-  if (gMainRoutineWork.renderMode == 0) {
-    Func_020024c0(-10, 0);
-    actor = Actor_GetById(gMainRoutineWork.currentOwner);
-    work = (struct RideWork *)(gData_020023c4 + 0x188);
-    Func_02004ca8(actor);
+  if (main->renderMode == 0) {
+    struct Actor *actor;
+
+    ((s32 (*)())Func_020024c0)(-10, 0);
+    actor = Actor_GetById(main->currentOwner);
+    work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
+    /* FAKEMATCH(barrier): the empty asm on work changes its allocation rank; as no
+     * asm, 116 of 236 instructions differ in tla-en. */
+    asm("" : "=r"(work) : "0"(work));
+    Func_02004ca8();
     Func_02004da0(0);
     actor->update = Func_02002614;
     actor->angle = 0x4000;
     Func_02004bc0(actor, 49);
-    for (;;) {
+  loop:
+    {
       s32 result;
-      s32 kind;
-      s16 *dx, *dz;
-      s32 *p;
-      kind = Func_02004c18(actor->terrainId, actor->x, actor->z);
-      dx = &work->unk68;
-      dz = &work->unk6a;
-      p = point;
-      if (kind == 7) {
-        s32 i;
-        actor->velocityX = *dx << 17;
-        actor->velocityZ = *dz << 17;
-        actor->acceleration = 0x1000;
-        for (i = 0; i <= 9; i++) {
-          point[0] = actor->x + (*dx << 19);
-          point[1] = actor->y;
-          point[2] = actor->z + (*dz << 19);
-          if (Func_02004c38(actor, point) != 0) {
-            actor->velocityX = 0;
-            actor->velocityZ = 0;
-            goto done;
-          }
-          wait(1);
-        }
-        goto done;
-      }
-      p[0] = actor->x + (*dx << 19);
-      p[1] = actor->y;
-      p[2] = actor->z + (*dz << 19);
-      result = Func_02004c38(actor, p);
-      if (result > 0)
-        goto done;
-      if (result < 0) {
-        actor->angle = 0x4000;
-        Func_02004ce8(gMainRoutineWork.currentOwner, 6, -1);
-        goto done;
-      }
-      {
-        struct Actor *other;
-        s32 radius;
-        s32 i;
-        s32 x, z, d;
 
-        radius = actor->radius - 2;
-        other = Ram_HeapSlots->scriptObjects;
-        for (i = 0; i <= 63; i++, other++) {
-          if (other->script != 0 && (other->collisionFlags & 1) != 0 &&
-              other != actor &&
-              Func_02004c78(&other->x, radius, point, other->radius - 2) >= 0) {
+      result = Func_02004c18(actor->terrainId, actor->x, actor->z);
+
+      if (result == 7) {
+        s32 i;
+
+        /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+         * order around it; as the plain statement, 114 of 236 instructions differ
+         * in tla-en. */
+        do {
+          actor->velocityX = work->unk68 << 17;
+        } while (0);
+        actor->velocityZ = work->unk6a << 17;
+        actor->acceleration = 0x1000;
+        i = 0;
+      step:
+        position.x = actor->x + (work->unk68 << 19);
+        position.y = actor->y;
+        position.z = actor->z + (work->unk6a << 19);
+        if (Func_02004c38(actor) != 0) {
+          actor->velocityX = 0;
+          actor->velocityZ = 0;
+          goto done;
+        }
+        wait(1);
+        i++;
+        if (i >= 10)
+          goto done;
+        goto step;
+      } else {
+        s32 result2;
+
+        position.x = actor->x + (work->unk68 << 19);
+        position.y = actor->y;
+        position.z = actor->z + (work->unk6a << 19);
+        result2 = Func_02004c38(actor);
+        if (result2 > 0)
+          goto done;
+        if (result2 < 0) {
+          actor->angle = 0x4000;
+          Call3((void (*)())Func_02004ce8, gMainRoutineWork.currentOwner, 6,
+                -1);
+          goto done;
+        }
+        {
+          s32 radius = actor->radius - 2;
+          struct Actor *other = Ram_HeapSlots->scriptObjects;
+          s32 i;
+          s32 x, z, off;
+
+          u8 *flags = &other->collisionFlags;
+
+          i = 0;
+        scan:
+          if (other->script != 0 && (*flags & 1) && other != actor &&
+              Func_02004c78(&other->x, radius, &position, other->radius - 2) >=
+                  0) {
             wait(1);
             goto done;
           }
+          i++;
+          flags += 128;
+          other++;
+          if (i < 64)
+            goto scan;
+          x = actor->x += work->unk68 << 17;
+          z = actor->z + (work->unk6a << 17);
+          actor->z = z;
+          off = (x & 0xfffff) + 0xfff80000;
+          if (off > 0x10000)
+            off = 0x10000;
+          if (off < (s32)0xffff0000)
+            off = 0xffff0000;
+          actor->x = x - off;
+          off = (z & 0xfffff) + 0xfff80000;
+          if (off > 0x10000)
+            off = 0x10000;
+          if (off < (s32)0xffff0000)
+            off = 0xffff0000;
+          actor->z = z - off;
+          work->unk04 = 0;
+          wait(1);
+          goto loop;
         }
-        x = actor->x + (*dx << 17);
-        actor->x = x;
-        z = actor->z + (*dz << 17);
-        actor->z = z;
-        d = (x & 0xfffff) - 0x80000;
-        if (d > 0x10000)
-          d = 0x10000;
-        if (d < -0x10000)
-          d = -0x10000;
-        actor->x = x - d;
-        d = (z & 0xfffff) - 0x80000;
-        if (d > 0x10000)
-          d = 0x10000;
-        if (d < -0x10000)
-          d = -0x10000;
-        actor->z = z - d;
       }
-      work->unk04 = 0;
-      wait(1);
     }
   done:
     actor->update = 0;

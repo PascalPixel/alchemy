@@ -1,9 +1,8 @@
-// Draft, differ 71 of 120 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Draft of overlay 6aa's Func_020047b8, the twin of overlay 6ae's
-// Func_020050b0: its draft (resource_6ae_c_020050b0.c) with this overlay's
-// symbols: differ 90 of 120. Left: what that draft's header records.
+// Draft, differ 2: overlay 6aa's copy of the function drafted in
+// resource_6ac_c_0200170c.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
+#include "io_reg.h"
 
 extern u16 gData_0200687c;
 extern u16 *Data_02006880;
@@ -19,8 +18,8 @@ void Func_020047b8(void) {
   s32 step;
   u32 i;
   u16 *src;
-  u16 *dst;
-  s32 r, g, b;
+  volatile u16 *dst;
+  int red, green, blue;
 
   step = 0;
   if (gData_02006884 != 0) {
@@ -35,28 +34,37 @@ void Func_020047b8(void) {
     return;
   src = Data_02006894;
   for (i = 0; i < gData_02006898; i++) {
-    dst = (u16 *)0x5000000 + Data_02006880[gData_0200689c * gData_02006898 + i];
-    /* FAKEMATCH(barrier): the empty asm on dst changes its allocation rank; as no
-     * asm, 95 of 120 instructions differ in tla-en. */
-    asm("" : : "r"(dst));
-    r = *src++;
-    g = *src++;
-    b = *src++;
-    /* FAKEMATCH(barrier): the empty asm on b changes its allocation rank; as no
-     * asm, 75 of 120 instructions differ in tla-en. */
-    asm("" : "=r"(b) : "0"(b));
-    *dst = (b << 10) | (g << 5) | r;
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 28 of 120 instructions differ
+     * in tla-en. */
+    do {
+      dst = &BG_PLTT[Data_02006880[gData_0200689c * gData_02006898 + i]];
+    } while (0);
+    red = *src++;
+    green = *src++;
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 6 of 120 instructions differ
+     * in tla-en. */
+    do {
+      blue = *src++;
+    } while (0);
+    *dst = (blue << 10) | (green << 5) | red;
   }
-  dst = (u16 *)0x5000000 + gData_0200e88c[gData_02006898];
-  src = (gData_0200687c != 0 ? gData_02006890 : Data_02006894) +
-        gData_02006898 * 3;
-  *dst = (src[2] << 10) | (src[1] << 5) | src[0];
+  dst = &BG_PLTT[gData_0200e88c[gData_02006898]];
+  if (gData_0200687c != 0)
+    src = gData_02006890 + gData_02006898 * 3;
+  else
+    src = Data_02006894 + gData_02006898 * 3;
+  red = *src++;
+  green = *src++;
   /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 73 of 120 instructions differ
+   * order around it; as the plain statement, 22 of 120 instructions differ
    * in tla-en. */
   do {
-    gData_0200687c ^= 1;
+    blue = *src++;
   } while (0);
+  *dst = (blue << 10) | (green << 5) | red;
+  gData_0200687c ^= 1;
   if (++gData_0200689c == gData_02006898)
     gData_0200689c = 0;
 }

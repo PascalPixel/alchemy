@@ -1,11 +1,5 @@
-// Measured under -Os, 5 November 2026: differ 67 (tla-en); notes below may predate it.
-// Draft, differ 116 of 130: the trap table's setup (shared with overlay 697 and
-// the other trap maps): a trap whose second flag is set is put away; any other
-// marks its cell (attribute byte 128), writes a shape for its height into the
-// shape grid, and takes mode 0 when its first flag is set. Then the leader is
-// lifted onto the ground if it stands below it. A goto loop because the
-// native rebuilds the end marker for the test at the bottom. Rough: the native
-// keeps the id and flag on the stack and the cells in r5.
+// Draft, differ 4: overlay 692's copy of the function drafted in
+// resource_697_c_020042f0.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -28,16 +22,15 @@ void Func_02004c98(struct Actor *object, s32 mode);
 void Func_02003f44(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object;
-  struct MapCell *cells;
-  /* FAKEMATCH(pin): shapes in r5, as the native keeps it; as a plain local,
-   * 90 of 130 instructions differ in tla-en. */
-  register u8 *shapes asm("r5");
-  u8 *cell;
   s32 id;
   s32 flag;
+  s32 nextFlag;
+  struct MapCell *cells;
+  u8 *shapes;
+  u8 *cell;
   s32 index;
-  s32 shape;
-  s32 height;
+  struct Actor *leader;
+  s32 ground;
 
   if (*table == 0xffff)
     goto done;
@@ -45,18 +38,24 @@ next:
   id = table[0];
   object = Actor_GetById(id);
   flag = table[1];
+  nextFlag = flag + 1;
   cells = map->layers[object->terrainId].cells;
   shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
-  if (GameFlag_Test(flag + 1)) {
+  if (GameFlag_Test(nextFlag)) {
     Func_02004da0(id, 0, 0);
   } else {
+    s32 shape;
+    u8 *slot;
+    s32 height;
+
     index = Func_02004ed0(object);
     cell = (u8 *)&cells[index];
-    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    slot = shapes + index;
     shape = Func_02004d20(object->terrainId, object->x, object->z);
+    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
     Func_02004df8(id);
     cell[3] = 128;
-    shapes[index] = Func_02004ef0(object->terrainId, shape, (height >> 19) + 4);
+    *slot = Func_02004ef0(object->terrainId, shape, (height >> 19) + 4);
     if (GameFlag_Test(flag))
       Func_02004c98(object, 0);
   }
@@ -64,10 +63,10 @@ next:
   if (*table != 0xffff)
     goto next;
 done:
-  object = Actor_GetById(gMainRoutineWork.currentOwner);
-  height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-  if (object->y < height) {
-    object->terrainHeight = height;
-    object->y = height;
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  ground = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);
+  if (leader->y < ground) {
+    leader->terrainHeight = ground;
+    leader->y = ground;
   }
 }

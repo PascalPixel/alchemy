@@ -1,29 +1,5 @@
-// Draft, differ 218 of 200, skeleton gap 24 (tla-en, 2026-11-01)
-// Overlay 6a3's copy of the function drafted in resource_69d/02008e58.c
-// (overlay 69d's Func_02000e58). Shape follows the matched sibling in
-// games/tla/src/field/map/cell_sprite.c (view, x, sy, masks in place).
-// The gap left is allocation and the moves and reloads it forces; the body's
-// shape is closed. Three causes, from the diff --rtl dumps:
-// - Registers. Listing: actor r5, oam r6, frame r7, viewZ r8, i r9, viewX r10,
-//   depth r11, large ip; tile sp+4, viewY sp+0. r8, r10, r9, r11 is allocation
-//   order, so it wants viewZ > viewX > i > depth > viewY > tile. Here refs and
-//   live are viewX 5/119, viewZ 5/116, viewY 5/104, depth 4/76, i 10/208,
-//   tile 3/107, which ranks i, depth, viewY, viewZ, viewX, tile.
-// - gData_02005a82's address: PRE carries the top test's load to the bottom
-//   test in one pseudo (reg 166) across both calls. The listing reloads it.
-// - The -1 compare hoists on loop.c's second pass into a call-crossing pseudo
-//   (reg 129); the listing keeps it in the body. Those two extra pseudos take
-//   registers the listing gives to its locals.
-// A goto loop keeps -1 in the body but loses -16 and -64 (combine folds to -15
-// and -63 with blt): differ 233, gap 34. It does not stop PRE.
-// Compiler lead, out of scope here, for Pascal (K3): all three fit
-// optimize_size, untested. flow.c counts refs flat there, which gives viewX 4,
-// viewZ 4, i 6, viewY 3, depth 2, tile 2: the listing's order but for
-// viewY over depth; gcse.c runs classic GCSE and hoisting instead of PRE;
-// loop.c skips move_movables, so nothing leaves the body.
-// Kept because they closed gaps: y, x, z in that order (gap 26 to 24);
-// sx, sy and x reuse, word's position, large as a read in place, a shared
-// priority local and the depth shift split all measured same or worse.
+// Draft, differ 18: overlay 6a3's copy of the function drafted in
+// resource_698_c_02000aac.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -53,61 +29,71 @@ void Func_020046ac(struct LightOam *oam, s32 depth);
 void Func_0200377c(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
-  s32 viewX = view[0] & 0xffff0000;
-  s32 viewZ = view[1] & 0xffff0000;
-  s32 tile = gResourceTableEntries[gData_02005a80].offset >> 5;
-  struct LightOam *oam = Data_02005ac4;
-  s32 viewY = map->origin[1];
+  s32 viewX, viewZ, tile, viewY;
+  struct LightOam *oam;
   s32 i;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  tile = gResourceTableEntries[gData_02005a80].offset >> 5;
+  viewY = map->origin[1];
+  oam = Data_02005ac4;
 
   for (i = 0; i < gData_02005a82; i++) {
-    struct FieldActor *actor;
-    s32 x, y, z, depth, sx, sy, ox, oy, diff, large;
-    s16 frame;
-    u32 *word;
-    u16 *timer;
-
-    actor = gData_02005a84[i];
-    if (actor == 0 || actor->x == 0)
-      continue;
-    y = actor->y - viewY + 0x80000;
-    x = actor->x - viewX;
-    z = actor->z - viewZ - viewY;
-    diff = z - y;
-    depth = ((y + z) >> 16) + 58;
-    large = gData_02005b84;
-    timer = &actor->timer;
-    x >>= 16;
-    sy = diff >> 16;
-    if (large == 0) {
-      frame = *timer;
-      ox = x - 8;
-      oy = sy - 16;
-      if (ox <= -16 || ox >= 320 || oy <= -16 || oy >= 240)
-        continue;
-      word = (u32 *)oam;
-      ox &= 0x1ff;
-      oy &= 0xff;
-      *word++ = 0;
-      *word++ = oy | (ox << 16) | 0x40002000;
-    } else {
-      frame = *timer;
-      ox = x - 8;
-      oy = sy - 64;
-      if (ox <= -32 || ox >= 320 || oy <= -64 || oy >= 176)
-        continue;
-      word = (u32 *)oam;
-      ox &= 0x1ff;
-      oy &= 0xff;
-      *word++ = 0;
-      *word++ = oy | (ox << 16) | 0xc000a000;
+    struct FieldActor *actor = gData_02005a84[i];
+    if (actor != 0 && actor->x != 0) {
+      s32 big, ox, y, z, oy, depth;
+      u32 *word;
+      big = gData_02005b84;
+      ox = actor->x - viewX;
+      y = actor->y - viewY + 0x80000;
+      z = actor->z - viewZ - viewY;
+      oy = z - y;
+      depth = ((y + z) >> 16) + 58;
+      if (big == 0) {
+        s32 x, sy;
+        s32 frame;
+        frame = (s16)actor->timer;
+        x = ox >> 16;
+        sy = oy >> 16;
+        ox = x - 8;
+        oy = sy - 16;
+        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
+          continue;
+        ox &= 0x1ff;
+        oy &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = oy | (ox << 16) | 0x40002000;
+        *word = (tile + frame * 8) | 0x800;
+        if (gData_02005b86 == -1)
+          oam->priority = Func_0200499c(actor);
+        else
+          oam->priority = gData_02005b86;
+        Func_020046ac(oam, depth);
+        oam++;
+      } else {
+        s32 x, sy;
+        s32 frame;
+        frame = (s16)actor->timer;
+        x = ox >> 16;
+        sy = oy >> 16;
+        ox = x - 8;
+        oy = sy - 64;
+        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
+          continue;
+        ox &= 0x1ff;
+        oy &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = oy | (ox << 16) | 0xc000a000;
+        *word = (tile + frame * 8) | 0x800;
+        if (gData_02005b86 == -1)
+          oam->priority = Func_0200499c(actor);
+        else
+          oam->priority = gData_02005b86;
+        Func_020046ac(oam, depth);
+        oam++;
+      }
     }
-    *word = (tile + frame * 8) | 0x800;
-    if (gData_02005b86 == -1)
-      oam->priority = Func_0200499c(actor);
-    else
-      oam->priority = gData_02005b86;
-    Func_020046ac(oam, depth);
-    oam++;
   }
 }

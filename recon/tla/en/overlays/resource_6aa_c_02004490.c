@@ -1,7 +1,5 @@
-// Draft, differ 47 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Draft of overlay 6aa's Func_02004490, the twin of overlay 698's
-// Func_0200180c: its draft (resource_698_c_0200180c.c) with this overlay's
-// symbols: differ 47 of 76. Left: what that draft's header records.
+// Draft, differ 4: overlay 6aa's copy of the function drafted in
+// resource_6ab_c_02003f9c.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -38,26 +36,40 @@ s32 Func_02004490(void) {
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &Data_020068b4;
-  struct Spot *spot = state->spots;
+  struct Spot *spot;
+  s32 first;
+  s32 count;
   s32 i;
-  s16 count = state->count;
 
-  for (i = 0; i < count; i++, spot++) {
+  {
+    s32 zero = 0;
+    first = state->count;
+    i = zero;
+    spot = state->spots;
+  }
+  count = (u16)state->count;
+  if (i < first) {
+  next:
     if (spot->x == x && spot->z == z) {
       if (!GameFlag_Test(spot->flag)) {
         Func_020040f0(state, spot);
         GameFlag_SetBit(spot->flag);
         state->current = i;
-        break;
+        goto done;
       }
       if (i == state->current)
-        break;
+        goto done;
       state->current = i;
       Func_02004160(state, spot);
       GameFlag_SetByte(state->flagByte, x);
       GameFlag_SetByte(state->flagByte + 8, z);
       return 1;
     }
+    i++;
+    spot++;
+    if (i < (s16)count)
+      goto next;
   }
+done:
   return 0;
 }

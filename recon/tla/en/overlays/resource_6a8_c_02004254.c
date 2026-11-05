@@ -1,63 +1,95 @@
-// Draft of overlay 6a8's Func_02004254, translated from its listing.
+// Draft, differ 12: overlay 6a8's copy of the function drafted in
+// resource_692_c_02004b18.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 HeapSlot_AllocFar();
-s32 Resource_GetTableEntry();
-s32 Func_02004384();
-s32 Resource_FindFreeEntry();
-s32 VramCache_Load();
-s32 Func_02004604();
-s32 Task_Add();
-extern u8 Func_02004114[];
+#include "ram_buffer.h"
+
+struct Rock {
+  s32 position[3];
+  s32 velocity[3];
+  s32 timer;
+};
+
+struct RockSprite {
+  u8 unk00[5];
+  u8 unk05;
+  u8 unk06[2];
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[0x14];
+  u16 unk1e;
+  u8 unk20[8];
+};
+
+struct RockWork {
+  u8 tiles[0x500];
+  struct Rock rocks[64];
+  struct RockSprite sprites[64];
+  s16 next;
+  u16 tileBase;
+  s16 resource;
+};
+
+extern char ResourceId_FallingRock;
+
+s32 Random16Far(void);
+void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
+void *HeapSlot_AllocFar(s32 slot, s32 size);
+void *Resource_GetTableEntry(s32 id);
+s32 Resource_FindFreeEntry(void);
+s32 VramCache_Load(s32 entry, s32 size, void *data);
+void Task_Add(void (*func)(void), s32 priority);
+void Func_02004384(void *resource, void *destination);
+void Func_02004604(struct RockSprite *sprite, s32 a, s32 b, s32 c, s32 tile);
+void Func_02004f18(struct RockSprite *sprite, struct Rock *rock);
+void Func_02004f20(struct Rock *rock, s32 a, s32 b);
+void Func_02004114(void);
+
+static __inline__ s32 VramLoad(s32 entry, s32 size, void *data) {
+  /* FAKEMATCH: as in the scene layer, the inline parameters keep the size its
+   * own constant; called directly, the rock offset reuses it across the call.
+   */
+  return VramCache_Load(entry, size, data);
+}
 
 void Func_02004254(void) {
-  u8 frame[4];
-  s32 v_r0, v_r10, v_r2, v_r3, v_r5, v_r6, v_r7, v_r8;
+  struct RockWork *work =
+      HeapSlot_AllocFar(220, sizeof(struct RockWork));
+  struct Rock *rock;
+  struct RockSprite *sprite;
+  s32 entry;
+  s32 tile;
+  s32 i;
 
-  v_r7 = v_r10;
-  v_r6 = v_r8;
-  v_r0 = HeapSlot_AllocFar(220, 0x1608);
-  v_r6 = v_r0;
-  Call1((void (*)())Resource_GetTableEntry, 0x1f0);
-  Func_02004384();
-  v_r0 = Resource_FindFreeEntry();
-  v_r5 = v_r0;
-  v_r0 = VramCache_Load();
-  v_r10 = v_r0;
-  v_r3 = v_r6 + 0x1602;
-  FIELD_AT(v_r3, u16, 0) = v_r10;
-  v_r3 = v_r6 + 0x1604;
-  FIELD_AT(v_r3, u16, 0) = v_r5;
-  v_r7 = v_r6 + 0x500;
-  v_r5 = v_r6 + 0xc00;
-  v_r8 = 63;
-L_0200c2ac:
-  ;
-  /* XXX stack argument */;
-  Call4((void (*)())Func_02004604, v_r5, 8, 8, 0x40000000);
-  v_r3 = FIELD_AT(v_r5, u8, 5);
-  v_r3 = v_r3 | 32;
-  v_r2 = FIELD_AT(v_r5, u8, 9);
-  FIELD_AT(v_r5, u8, 5) = v_r3;
-  v_r3 = 15 & v_r2;
-  v_r3 = v_r3 & -13;
-  FIELD_AT(v_r5, u8, 9) = v_r3;
-  FIELD_AT(v_r5, u16, 30) = 240;
-  v_r8 = v_r8 + -1;
-  FIELD_AT(v_r7, s32, 24) = -1;
-  v_r5 = v_r5 + 40;
-  v_r7 = v_r7 + 28;
-  if (v_r8 >= 0)
-    goto L_0200c2ac;
-  v_r2 = v_r6 + 0x1600;
-  FIELD_AT(v_r2, u16, 0) = 0;
-  Call4((void (*)())Task_Add, (s32)Func_02004114, 0x480, v_r2, 0);
-  v_r8 = v_r3;
-  v_r10 = v_r5;
+  Func_02004384(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  entry = Resource_FindFreeEntry();
+  tile = VramLoad(entry, 0x500, work);
+  work->tileBase = tile;
+  work->resource = entry;
+  rock = work->rocks;
+  sprite = work->sprites;
+  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
+   * the bytes rebuild the constants on every pass and count in r8, and a for
+   * loop hoists them. */
+  i = 63;
+do {
+  {
+    Func_02004604(sprite, 8, 8, 0x40000000, tile);
+    sprite->unk05 |= 0x20;
+    sprite->palette = 0;
+    sprite->priority = 0;
+    sprite->unk1e = 240;
+    rock->timer = -1;
+    i += -1;
+    sprite++;
+    rock++;
+  }
+} while (i >= 0);
+  work->next = 0;
+  {
+    s32 priority = 0x480;
+
+    Task_Add(Func_02004114, priority);
+  }
 }

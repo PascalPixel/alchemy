@@ -648,7 +648,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     }
     if (frame == 310) {
-      p = Ram_EffectSteps;
+      struct EffectStep *p = Ram_EffectSteps;
 
       for (i = 0; i != 80; i++, p++) {
         p->x = ((Random16() & 63) + 28) << 16;

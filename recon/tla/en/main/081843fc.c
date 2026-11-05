@@ -735,9 +735,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         }
       }
     } else if (frame == 450) {
-      u8 *cells = Data_02011000;
+      u8 *cells;
 
       swapped = 0;
+      cells = Data_02011000;
       for (i = 0; i != 4; cells += 1024, i++) {
         COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells, 1024);
       }
@@ -806,9 +807,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       s32 st = Data_08199816[i];
 
       if (frame >= st && frame < st + 8) {
+        s32 c = Data_08199832[i];
+
         shade = (st - frame) << 3;
         model->shade = shade;
-        texture.pixels = work->sheet + Data_08199832[i] * 0x600;
+        texture.pixels = work->sheet + c * 0x600;
         Render_ResetTransformState();
         Func_08015160((Data_08199824[i] - 48) << 16,
                       (Data_0819982b[i] - 44) << 16, 0);

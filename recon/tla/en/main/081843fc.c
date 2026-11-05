@@ -1006,7 +1006,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       s32 spread = 8;
 
       if (frame > 611) {
-        sx = 0x50000 - frame * 61845 + 0x2418834;
+        sx = sx - frame * 61845 + 0x2418834;
       }
       if (sx <= 65535) {
         sx = 0x10000;
@@ -1107,7 +1107,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         if (s > 0 && frame <= 601) {
           shade = -16;
           if (frame > 589) {
-            shade = -16 - frame * 2 + 1180;
+            shade = shade - frame * 2 + 1180;
           }
           if (shade > -64) {
             model->shade = shade;
@@ -1136,7 +1136,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
       shade = 0;
       if (frame > 611) {
-        shade = -frame * 8 + 4896;
+        shade = shade - frame * 8 + 4896;
       }
       if (shade > -64) {
         model->shade = shade;
@@ -1600,7 +1600,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         s32 x = 0;
 
         if (frame > 71) {
-          x = -frame * 8 + 576;
+          x = x - frame * 8 + 576;
         }
         x += 116;
         q = &Data_02016d00[(frame & 31) * 2];

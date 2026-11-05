@@ -20,7 +20,7 @@ SECTIONS
         "*/games/tla/src/scene/sea_of_time/clock.o"(.text)
         "*/resource_687_overlay.o"(.text.x02008c94)
         "*/resource_687_overlay.o"(.text.x02008da0)
-        "*/resource_687_overlay.o"(.text.x02008ef0)
+        "*/games/tla/src/scene/sea_of_time/s0ef0.o"(.text)
         "*/games/tla/src/scene/sea_of_time/enter.o"(.text)
         "*/games/tla/src/scene/sea_of_time/s10a8.o"(.text)
         "*/resource_687_overlay.o"(.text.x02009108)

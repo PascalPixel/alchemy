@@ -1017,21 +1017,18 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1010;
       REG_BG2CNT = 0x784;
       for (i = 1; i != 8; i++) {
-        for (j = 0; j != 10; j = w) {
-          u8 *src = work->sheet + gData_08197410[j];
-          u8 *out = work->sheet + gData_08197410[j] + i * 0x302;
-          s32 n;
+        for (k = 0; k != 10; k++) {
+          u8 *src = work->sheet + gData_08197410[k];
+          u8 *out = work->sheet + gData_08197410[k] + i * 0x302;
+          s32 w = k + 1;
+          s32 n = w * 2 * w;
 
-          w = j + 1;
-          n = w * 2;
-          n *= w;
-
-          for (c4 = 0; c4 != n; c4++) {
-            u8 v = src[c4] - i * 8;
+          for (off = 0; off != n; off++) {
+            u8 v = src[off] - i * 8;
 
             if (v > 63)
               v = 0;
-            out[c4] = v;
+            out[off] = v;
           }
         }
       }
@@ -1193,9 +1190,14 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 401) <= 30 && (frame & 1)) {
       Resource_GetTableEntry((s32)&ResourceId_VioletSkyBackdrop);
       for (i = 0; i != 128; i++) {
-        s32 r = FADE_PLTT[i] & 31;
-        s32 g = FADE_PLTT[i] >> 5 & 31;
-        s16 b = FADE_PLTT[i] >> 10 & 31;
+        s32 c = FADE_PLTT[i];
+        s32 r = 31;
+        s32 g;
+        s32 b;
+
+        r &= c;
+        g = (u16)c >> 5 & 31;
+        b = (u16)c >> 10 & 31;
 
         if (r > 3)
           r -= 2;
@@ -1215,9 +1217,13 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       off = 0x302;
       for (i = 0; i != 128; i++) {
         s32 c = FADE_PLTT[i];
-        s16 r = c & 31;
-        s32 g = (u16)c >> 5 & 31;
-        s32 b = (u16)c >> 10 & 31;
+        s32 r = 31;
+        s32 g;
+        s32 b;
+
+        r &= c;
+        g = (u16)c >> 5 & 31;
+        b = (u16)c >> 10 & 31;
 
         FADE_PLTT[i] = (b + 1) << 10 | (g + 1) << 5 | (r + 1);
       }
@@ -1247,18 +1253,21 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 32; i++)
         work->particles[i].variant = 0;
       for (i = 1; i != 8; i++) {
-        for (k = 0; k != 10; k++) {
-          u8 *src = work->sheet + gData_08197410[k];
-          u8 *out = work->sheet + gData_08197410[k] + i * 0x302;
-          s32 w = k + 1;
-          s32 n = w * 2 * w;
+        for (j = 0; j != 10; j = w) {
+          u8 *src = work->sheet + gData_08197410[j];
+          u8 *out = work->sheet + gData_08197410[j] + i * 0x302;
+          s32 n;
 
-          for (off = 0; off != n; off++) {
-            u8 v = src[off] - i * 8;
+          w = j + 1;
+          n = w * 2;
+          n *= w;
+
+          for (c4 = 0; c4 != n; c4++) {
+            u8 v = src[c4] - i * 8;
 
             if (v > 63)
               v = 0;
-            out[off] = v;
+            out[c4] = v;
           }
         }
       }
@@ -1431,23 +1440,23 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The healing: rings turning about the centre, then the great glow.
     if ((u32)(frame - 639) <= 110) {
-      s16 sinT = Trig_Sin(0x7800);
+      s32 sinT = Trig_Sin(0x7800);
       s32 cosT = Trig_Cos(0x7800);
 
-      for (i = 0; i != 80; i += 8) {
-        if (638 + i < frame && frame < 670 + i) {
-          s32 t = frame - i - 638;
+      for (j = 0; j != 80; j += 8) {
+        if (638 + j < frame && frame < 670 + j) {
+          s32 t = frame - j - 638;
           s32 ry = t >> 1;
           s32 tile = gData_08197410[0] + t / 4 * 0x302;
-          s32 shift = i >> 1;
+          s32 shift = j >> 1;
           s32 rx = t >> 2;
 
-          for (c1 = 0; c1 != 128; c1++) {
-            s32 a = c1 << 9;
+          for (i = 0; i != 128; i++) {
+            s32 a = i << 9;
             s32 sx = rx * Trig_Sin(a);
-            s32 sy = ry * Trig_Cos(a) * 2;
-            s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
-            s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT);
+            s32 sy = ry * Trig_Cos(a);
+            s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy * 2, sinT);
+            s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy * 2, cosT);
 
             draw[0](canvas, work->sheet + tile, (px >> 16) + shift + 64,
                     (py >> 16) - shift + 63, 1, 2);
@@ -1469,10 +1478,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 32; i++)
         Dma_Set(work->sheet + 0x1bf0 - i * 32, work->sheet + 0x1c10 + i * 32,
                 0x84000010, REG_DMA3);
-      for (c1 = 1; c1 != 8; c1++) {
+      for (i = 1; i != 8; i++) {
         u8 *src = work->sheet + 0x1810;
-        u8 *out = work->sheet + 0x1810 + c1 * 0x800;
-        u8 v = 64 - c1 * 8;
+        u8 *out = work->sheet + 0x1810 + i * 0x800;
+        u8 v = 64 - i * 8;
 
         for (j = 0; j != 0x800; j++) {
           if (v < src[j])
@@ -1591,11 +1600,13 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         gBgScroll[1].y = gBgScroll[1].y - (frame & 1) - 2;
     }
     if (frame > 816) {
-      for (c1 = 0; c1 != 128; c1++) {
-        s16 c = FADE_PLTT[c1];
-        s32 r = c & 31;
+      for (i = 0; i != 128; i++) {
+        s32 c = FADE_PLTT[i];
+        s32 r = 31;
         s32 g = (u16)c >> 5 & 31;
         s32 b = (u16)c >> 10 & 31;
+
+        r &= c;
 
         if (r <= 30)
           r++;
@@ -1603,7 +1614,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           g++;
         if (b <= 30)
           b++;
-        FADE_PLTT[c1] = b << 10 | g << 5 | r;
+        FADE_PLTT[i] = b << 10 | g << 5 | r;
       }
     }
     frame++;

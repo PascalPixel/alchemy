@@ -317,6 +317,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   s32 sh;
   s32 ty;
   s32 spin;
+  s32 zero = 0;
   s16 list[14];
   s32 place[4];
   struct WordPair req;
@@ -659,7 +660,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           p->velocityY = Data_08199727[k] << 12;
           p->z = ((Random16() & 3) + Data_08199730[k]) << 16;
           p->velocityZ = Data_08199739[k] << 10;
-          p->variant = 0;
+          p->variant = zero;
         }
       }
     }
@@ -708,7 +709,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           p->x = (Random16() % 160 - 80) << 16;
           p->y = (Random16() % 160 + 48) << 16;
           p->z = (Random16() % 160 - 80) << 16;
-          p->velocityX = 0;
+          p->velocityX = zero;
           p->velocityY =
               (-((Random16() & 63) + 32) << 10) - (1 << (16 - p->variant));
           p->velocityZ = Random16();
@@ -719,7 +720,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 m = 63;
 
         for (i = 0; i != 384; i++, p++) {
-          p->y = 0;
+          p->y = zero;
           p->velocityY = -((Random16() & m) + 32) << 15;
         }
       }

@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 1019 of 7666, slots normalized 717, high
-// registers blind too 689, every register blind 273. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 986 of 7666, slots normalized 696, high
+// registers blind too 668, every register blind 268. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -345,7 +345,7 @@ void Sound_PlayFar(s32);
 #define PLTT ((void *)0x05000000)
 #define PLTT_U16 ((volatile u16 *)0x05000000)
 #define BG_VRAM ((void *)0x06004000)
-#define SPARKS ((struct Particle *)0x02016000)
+#define SPARKS sparks
 #define RINGS ((struct Particle *)0x02016e00)
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
@@ -356,6 +356,7 @@ static __inline__ void FILL(void *dst, s32 size, s32 value) { ((void (*)(void *,
 
 void Func_0815f16c(struct SummonAction *action, s32 kind) {
   u8 *buffer;
+  struct Particle *sparks;
   struct SummonWork *work;
   void *screen;
   s32 frame;
@@ -385,6 +386,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   s32 v;
 
   buffer = (u8 *)0x02010000;
+  sparks = (struct Particle *)0x02016000;
   work = IWRAM->summon;
   screen = IWRAM->screen;
   bg = IWRAM->bg;

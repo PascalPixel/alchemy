@@ -1367,11 +1367,14 @@ CLEAR(buffer, 0x1000);
         p = SPARKS;
         for (i = 0; i != 16; i++, p++) {
           if (frame >= i / 2 + 4) {
+            s32 life;
             life = p->life;
             if (life <= 11) {
+              s32 half;
+              half = life / 2;
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
-              drawFuncs.draw[0](screen, buffer + (life / 2) * 0x800,
+              drawFuncs.draw[0](screen, buffer + half * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
               BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
               p->life++;
@@ -1421,6 +1424,7 @@ CLEAR(buffer, 0x1000);
       }
     } else if (kind == 85) {
       s32 h;
+      s32 y;
       REG_BLDCNT = 0;
       work->unk7780 = 1;
       work->unk7784 = 0;
@@ -1436,14 +1440,18 @@ CLEAR(buffer, 0x1000);
         y = 16;
       h = 96;
       if (frame > 7) {
-        s32 i;
+        s32 t;
+        t = 0;
         row = 112 - frame * 2;
-        for (i = 0; i != 34; i++, row++) {
+        for (i = 0; i != 34; i++, t++, row++) {
           if (row >= 0 && row < 96) {
+            s32 threshold;
+            s32 k;
+            threshold = t;
             src = work->frames + (row & 15) * 69;
             dst = buffer + row * 69;
             for (k = 0; k != 69; k++) {
-              if (*src++ < i)
+              if (*src++ < threshold)
                 *dst = 0;
               dst++;
             }
@@ -1502,11 +1510,14 @@ CLEAR(buffer, 0x1000);
         p = SPARKS;
         for (i = 0; i != limit; i++, p++) {
           if (frame >= i / 2 + 4) {
+            s32 life;
             life = p->life;
             if (life <= 9) {
+              s32 half;
+              half = life / 2;
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
-              drawFuncs.draw[0](screen, buffer + 0xd80 + (life / 2) * 0x800,
+              drawFuncs.draw[0](screen, buffer + 0xd80 + half * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
               BattleEffectKernels_IntegrateVector3(p, 64, 0x1000);
               p->life++;

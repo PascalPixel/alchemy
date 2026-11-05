@@ -1315,11 +1315,6 @@ BattleEffect_RunStarMine:
 	.thumb_func
 BattleEffect_RunRisingDragonEnemy:
 	.incbin "baserom.gba", 0x0017d724, 0x00000954
-	.section .rom.0017e0c0, "ax"
-	.balign 4
-	.global Func_0817e0c0
-Func_0817e0c0:
-	.incbin "baserom.gba", 0x0017e0c0, 0x000005a8
 	.section .rom.0017ea58, "ax"
 	.global BattleEffect_RunDaedalus
 	.type BattleEffect_RunDaedalus, %function

@@ -1,48 +1,3 @@
-// 2026-11-05: differ 26 of 601 (tla-en): the streak's brightness is a local set between its two size writes, its stores in the listing's order. Left: the flash's reload rotation, the spark table base in r3 against r1, two ties on mov r5, r9.
-// 2026-11-05: differ 56 of 601 (tla-en). Statement moves gain 12. Left: reload
-// rotation from the flash's model stores.
-// 2026-10-26 (round 5): differ 82 of 601 (draft 601). The flash's brightness
-// stored between its texture's two size bytes (a statement-move search): 127 to
-// 82.
-// 2026-10-26: differ 127 of 601, with Task_Add returning
-// s32 as defined.
-// Draft (tla-en): listing 601 instructions, draft 600, common 530, differ 141.
-// The body of effect kinds 311, 314, 326, 339, 433 and 457 (variant_j.c's
-// BattleEffect_RunBoneCharge to BattleEffect_RunLivingArmor pass modes 4, 1, 2, 3, 4 and 5). Written
-// from the listing on ☀️'s skeleton; its nearest ☀️ shape is
-// BattleEffect_RunRushingStrike (0.54), which is no twin.
-// Written 2026-10-15 (lane N2). The frame matches (texture sp+44, the
-// blitter pair sp+52, screen sp+60, caster sp+72, target sp+84; mode,
-// canvas, frame, camera and the spark cels spilled at sp+40 down to sp+24).
-// Left:
-// - after the Task_Add call the native copies the effect argument from
-// fp into r5 once and loads its fields through r5 for the lunge, the
-// target object and its place; here each load copies fp afresh.
-// - the prologue loads work before camera and sets the sheet offset 0x700
-// after the heap loads; the blitter pair's address goes straight to r1.
-// - the streak quad's stores are scheduled in another order, the native
-// setting brightness's 0 into r1 early.
-// - the hit frame keeps frame in r5 for the flash's 8 (here r3), and a
-// few argument moves elsewhere.
-// Measured: the first draft 485; the flash's 128x128 size as two byte
-// stores (the native strb through the hoisted &texture; the streak's is
-// a masked word): 447; frame declared before camera (its spill slot
-// then comes before camera's and the spark cels'): 435; the three
-// EffectPositions declared target, caster, screen (their slots then
-// match): 433; mode 5's cel computed before the projection call (the
-// native rounds the division before the call): 349; the spark size
-// computed before the call likewise: 201; a block-scoped pointer for
-// each particle loop (the step pointer then takes r5 before the hoisted
-// 255, as native): 145.
-// alchemy permute, 10 minutes, two jobs: 127 with the streak's ~0xff mask
-// forced into a temporary before the loop (not taken: a device for 18
-// rows of register choice).
-// 2026-10-19 (run 33): work declared before canvas (the native loads canvas
-// into r2 and work into r1 for r9): 145 to 141.
-// Resources 0x134 (Resource_Data134), 0xc2 (Resource_Data0C2), 0x181
-// (Resource_Data181), 0x13e (BattleEffect_FlashBurstSheet), 0x186, 0x17d,
-// 0x17f, 0x184 and 0x148 need names in gamepak/resource_directory.s when
-// this is adopted.
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "battle_action.h"
@@ -72,11 +27,6 @@ struct Texture {
   void *pixels;
 };
 
-#define TEXTURE_SIZE(texture, logWidth, logHeight)                             \
-  do {                                                                         \
-    *(u32 *)&(texture) = (*(u32 *)&(texture) & ~0xff) | (logWidth);            \
-    *(u32 *)&(texture) = (*(u32 *)&(texture) & ~0xff00) | (logHeight) << 8;    \
-  } while (0)
 
 // One entry of the list Render_DrawModelList draws; kinds 6 and 7 are textured
 // quads.
@@ -160,6 +110,8 @@ void BattleEffect_EndCanvasLayer(void);
 void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
   struct Texture texture;
   DrawRectangle draw[2];
+  u8 *flashPixels = Ram_MapCellBuffer;
+  s32 height;
   struct EffectPosition target;
   struct EffectPosition caster;
   struct EffectPosition screen;
@@ -229,7 +181,6 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     // target, 8 pixels to the outside of it, flying back the other way.
     if (frame == 0) {
       struct EffectStep *spark = gData_02014000;
-      struct EffectStep *burst;
 
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         spark->x = targetObject->x;
@@ -246,8 +197,8 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
           spark->velocityX = -spark->velocityX;
         spark->variant = i / 2 + 16;
       }
-      burst = work->particles;
-      for (i = 0; i != SPARK_COUNT; i++, burst++) {
+      for (i = 0; i != SPARK_COUNT; i++) {
+        struct EffectStep *burst = &work->particles[i];
         burst->x = targetObject->x;
         if (burst->x < 0)
           burst->x += -8 << 16;
@@ -301,11 +252,11 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
       brightness = 32 - flashFrame * 8;
       if (brightness > 0)
         brightness = 0;
+      quad->brightness = brightness;
       texture.logWidth = 7;
       texture.logHeight = 7;
+      texture.pixels = flashPixels;
       quad->kind = 7;
-      texture.pixels = Ram_MapCellBuffer;
-      quad->brightness = brightness;
       quad->faces = gData_08199364;
       Render_ResetTransformState();
       Func_080151e4(0x8000, 0x10000, 0x8000);
@@ -337,8 +288,12 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
       struct EffectStep *spark;
 
       Render_ResetTransformState();
-      Transform_SetLookAt(camera, camera + 3);
       spark = gData_02014000;
+      /* FAKEMATCH(barrier): an empty asm on spark, which ranks it over the screen
+       * pointer; with spark set after the look-at and no asm, 2 of 601
+       * instructions differ in tla-en. */
+      __asm__("" : "=r"(spark) : "0"(spark));
+      Transform_SetLookAt(camera, camera + 3);
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         s32 life = spark->variant;
 
@@ -347,8 +302,9 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
 
           EffectPosition_ProjectPoint(&spark->x, &screen);
           screen.x >>= 1;
+          height = size * 2;
           draw[i & 1](canvas, sparkCels + gData_08197410[size - 1],
-                      screen.x - size / 2, screen.y - size, size, size * 2);
+                      screen.x - size / 2, screen.y - size, size, height);
           BattleEffectKernels_IntegrateVector3(spark, 60, -0x200);
           spark->variant--;
         }
@@ -356,9 +312,9 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
 
       // Mode 5's flame bursts rise through six 32x64 cels in 24 frames.
       if (mode == 5) {
-        struct EffectStep *burst = work->particles;
 
-        for (i = 0; i != BURST_COUNT; i++, burst++) {
+        for (i = 0; i != BURST_COUNT; i++) {
+          struct EffectStep *burst = &work->particles[i];
           s32 life = burst->variant;
 
           if (life >= 0 && life < 24) {

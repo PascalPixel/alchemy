@@ -42,14 +42,14 @@ void Func_020001d0(u16 *list) {
         Func_020014a0(id, 0, 0);
       } else {
         s32 index = Func_02001508(object);
+        struct MapCell *cell = cells + index;
         s32 shape;
         s32 ground;
 
         shape = Func_02001478(object->terrainId, object->x, object->z);
-        cells += index;
         ground = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
         Func_020014c0(id);
-        cells->attributeB = 128;
+        cell->attributeB = 128;
         *(shapes + index) =
             Func_02001528(object->terrainId, shape, (ground >> 19) + 4);
         if (GameFlag_Test(flag))

@@ -1,13 +1,33 @@
-// Measured 2026-11-05 (tla-en): differ 2143 of 4580, 1733 with slots and pool
-// offsets normalized. Types as read: Data_0819983a's value u16, the tone s16,
-// one counter s16. Four more loops take a counter of their own (the c
-// variables).
-// Draft, differ 2834 of 4580, skeleton gap 323 (tla-en, 2026-11-01)
+// Measured 2026-11-05 (tla-en): differ 2015 of 4580, 1577 with slots and pool
+// offsets normalized, 395 with registers normalized as well. Every stack slot
+// has the listing's reference count at the listing's offset. Measure
+// 081843fc,081848ec together.
+// What round 3 settled by reading the listing:
+// - e is one function-level variable; each section's cells its own. The first
+//   cells is the fixed address, the decode's argument the symbol, so CSE keeps
+//   them apart. The step comes before the counter (cells += 1024, i++).
+// - No loop has a counter of its own beyond i and j: the burst, the wave of
+//   particles and the debris all count on i (r9 in the listing). The tornado's
+//   inner counter is a block's own j, with a row local holding i << 12.
+// - OBJ_TILES reads the slot through its field: the char read made a dependency
+//   that moved every object store. The first fade writes the object palette
+//   (literal 0x05000202); the instruction diff cannot show a wrong literal, so
+//   every pool still needs checking at adoption.
+// - The meteor has one b = 0x80000 - drift across its two sites (slot 88).
+// What is left:
+// - PRE (gcse) shares (b >> 31) and off + idx across a join here, where the
+//   listing rebuilds them after it (the second off + idx is lexically idx +
+//   off, with its own n * 2). The sign shift is avoided with a plain-C spelling
+//   of the halves; n is not, and the burst rotates from there. No limit in
+//   gcse.c explains it (469 blocks, 28 PRE substitutions).
+// - e takes r6 where the listing has r7, so each resource section rotates among
+//   r5, r6, r7: e's priority (20 refs over 40 insns) beats cells and the copy's
+//   address here, and the listing has them first.
+// - The tone is s16 here, a sign extension the listing lacks; as s32 the last
+//   subtraction sinks past two calls and the figure rises by 34.
 // BattleEffect_RunCatastrophe; the same calls and control flow as the listing.
 // The function runs on through listing 081848ec, whose Func_081848ec and
-// Func_08185b9c are labels inside it (the second the first loop's test), so
-// measure both: alchemy-devtools diff 081843fc.c 081843fc,081848ec. A single
-// address gives a false figure.
+// Func_08185b9c are labels inside it (the second the first loop's test).
 // What the listing's stack and registers proved:
 // - The frame is 272, as in the listing, and the opening 137 instructions
 // match.
@@ -40,11 +60,8 @@
 // - frame * 3's giv is second pass in the listing (slot 20 below the spins), as
 //   is the burst base (slot 24); here the base is first pass, and spins and off
 //   sit 4 lower than the listing's, so those slots differ.
-// - The sign of bx: here bx / 2 shares one asr #31 across the switch, the
-// listing
-//   folds both uses to lsr #31; the flash table loop reads [r4, ip] with i * 2
-//   reduced, here a stepped address; (i << 12) in the tornado copy is reduced
-//   here and rebuilt in the listing.
+// - The flash table loop reads [r4, ip] with i * 2 reduced, here a stepped
+//   address.
 // - Searches over the wave mesh's declaration order and over j's scope (each
 //   loop its own j moves frame and registers away) have converged.
 // Measured here: a resource id passed as (s32)&ResourceId_X loads from the pool

@@ -1,8 +1,3 @@
-// Draft, differ 5 of 102 (tla-en, 2026-11-05), from 19. Func_02000244 of
-// overlay 6b3: centres a message and hands it to Func_02000158. mode and line
-// set after x and y give the listing's ranks. Left: the listing builds x's
-// and y's zero in r4 apart from the mode's zero in r3; CSE here keeps one
-// pseudo for both.
 
 // Draft of overlay 6b3 Func_02000244: centres a message and hands it to
 // Func_02000158. The logic is right; the listing keeps x and y in their stack
@@ -25,16 +20,16 @@ void Func_02000244(s32 message, s32 position, s32 frames) {
   s32 y;
   s32 width;
   s32 height;
-  s32 mode;
+  s32 mode = 0;
   s32 left;
-  s32 line;
+  s32 line = 0;
   s32 half;
   s32 wide;
 
-  x = 0;
-  y = 0;
-  mode = 0;
-  line = 0;
+  // Default: nothing to the left yet; x and y start from it.
+  left = 0;
+  x = left;
+  y = left;
   wide = message & 0x8000;
   Text_GetMessageSize(gData_02000a28, &x, &y, &width, &height);
   if (width <= 24) {

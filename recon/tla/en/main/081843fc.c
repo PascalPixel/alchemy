@@ -430,7 +430,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       work->objects[i] = obj;
       COPY_WORDS((void *)OBJ_TILES(obj), cells, 1024);
     }
-    cells = Data_02016000;
+  }
+  {
+    u8 *cells = Data_02016000;
+
     for (i = 0; i != 4; cells += 1024, i++) {
       obj = Func_0815b3b0(32, 32, 0x80002000, 0);
       work->objects[24 + i] = obj;

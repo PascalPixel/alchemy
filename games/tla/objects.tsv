@@ -2216,12 +2216,7 @@ main	rom_main_05	recon/tla/de/rom	.rom.000f8824	de
 main	rom_main_05	recon/tla/raw/080eb824	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000eb768	ja
 main	rom_main_05	games/tla/src/field/event_commands/fxend	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000eb954	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000f0954	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000f4954	es
-main	rom_main_05	recon/tla/de/rom	.rom.000f8960	de
-main	rom_main_05	recon/tla/raw/080eb960	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000eb8a4	ja
+main	rom_main_05	games/tla/src/field/event_commands/f0eb960	.text
 main	rom_main_05	games/tla/src/field/event_commands/slot_update	.text
 main	rom_main_05	games/tla/src/field/event_commands/slot_update_motion	.text
 main	rom_main_05	games/tla/src/field/event_commands/has_pending_target	.text

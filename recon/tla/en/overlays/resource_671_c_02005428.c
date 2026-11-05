@@ -37,15 +37,12 @@ void Func_020054ac(s32 id, s32 a, s32 flag, s32 terrain);
 void Func_02005428(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
 
-  goto test;
-  do {
+  while (*list != 0xffff) {
     u32 entry = *list;
     s32 id = work->objectId;
 
     if (id == entry) {
-      /* FAKEMATCH(pin): the object in r6, as the native keeps it; as a plain
-       * local, 23 of 61 instructions differ in tla-en. */
-      register struct Actor *object asm("r6") = Actor_GetById(id);
+      struct Actor *object = Actor_GetById(id);
       s32 a;
       s32 flag;
 
@@ -62,6 +59,5 @@ void Func_02005428(u16 *list, s32 mode, s32 count) {
       break;
     }
     list += 3;
-  test:;
-  } while (*list != 0xffff);
+  }
 }

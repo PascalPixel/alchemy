@@ -26,7 +26,7 @@ SECTIONS
         "*/resource_668_overlay.o"(.text.x0200c4c4)
         "*/games/tla/src/scene/eastern_alhafra/s4774.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra/s47fc.o"(.text)
-        "*/resource_668_overlay.o"(.text.x0200c868)
+        "*/games/tla/src/scene/eastern_alhafra/s4868.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra/s48ec.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra/import.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra/data.o"(.data)

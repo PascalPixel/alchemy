@@ -10,9 +10,7 @@ void Func_02000570(void) {
   void *event;
 
   if (!FlagCheck(0x8ab)) {
-    do {
       event = Ram_HeapSlots->eventWork;
-    } while (0);
     FIELD_AT(event, u16, 0xd4c) = 3;
     if (!FlagCheck(0x911)) {
       Func_020007dc();

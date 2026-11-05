@@ -34,7 +34,7 @@ extern s16 gData_02003c14;
 extern s16 gData_02003990[2][160];
 
 void Func_020015a0(void) {
-  register struct MapLayer *layer asm("r8") = &Ram_HeapSlots->mapWork->layer;
+  struct MapLayer *layer = &Ram_HeapSlots->mapWork->layer;
   s16 *line = gData_02003990[gData_02003c14];
   s32 i;
 

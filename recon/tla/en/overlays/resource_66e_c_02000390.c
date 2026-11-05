@@ -74,7 +74,6 @@ void Func_02000390(void) {
 ask:
   /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 63 of 374
    * instructions differ in tla-ja. */
-  asm("" : : : "sfp");
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   /* FAKEMATCH(temporary): item also holds this call's result; as a separate
    * test of the call, 23 of 374 instructions differ in tla-ja. */

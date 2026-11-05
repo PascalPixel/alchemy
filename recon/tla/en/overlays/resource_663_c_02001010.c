@@ -172,9 +172,7 @@ row:
   Task_Add(Func_02000ef4, 0xc80);
   Func_02003cd8(163);
   REG_BLDALPHA = 0xf00;
-  do {
     REG_BLDCNT = 0x3f41;
-  } while (0);
   REG_DISPCNT |= 0x100;
   Call3((void (*)())Func_02003b98, 0x10000, 0x10000, 0x10000);
   i = 0;
@@ -246,8 +244,6 @@ fade:
   shared = 1;
   REG_BG1CNT |= shared;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
-  do {
-  } while (0);
   {
     u8 *owner = &Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags;
 

@@ -71,7 +71,6 @@ void Func_020010b4(struct Actor *shot) {
     {
       s32 cue = 284;
 
-      asm volatile("" : "+l"(cue));
       Func_02005f8c(shot, cue + 255);
     }
     ((struct Shot *)shot)->unk63 = 0;

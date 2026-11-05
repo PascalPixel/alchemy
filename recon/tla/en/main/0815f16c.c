@@ -1490,15 +1490,25 @@ CLEAR(buffer, 0x1000);
       y = frame * 28 - 96;
       if (y > 16)
         y = 16;
-      h = 96;
+      {
+        register s32 hold __asm__("r2");
+        __asm__("" : "=r"(hold));
+        h = 96;
+        __asm__("" : : "r"(hold));
+      }
       if (frame > 7) {
+        s32 t;
         i = 0;
+        t = 0;
         row = 112 - frame * 2;
-        for (; i != 34; i++, row++) {
+        for (; i != 34; i++, t++, row++) {
           if (row >= 0 && row < 96) {
             s32 k;
-            s32 threshold = i;
-            for (k = 0; k != 69; k++) {
+            s32 threshold;
+            k = 0;
+            threshold = t;
+            __asm__("" : "=r"(threshold) : "0"(threshold));
+            for (; k != 69; k++) {
               if (work->frames[(row & 15) * 69 + k] < threshold)
                 buffer[row * 69 + k] = 0;
             }

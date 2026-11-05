@@ -803,7 +803,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       if (frame == 243) {
         source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009d);
         CpuFill(PLTT + 0x1c0, 64, 0);
-        Resource_DecodeType01(source + 64, REVEAL_BUFFER);
+        source += 64;
+        Resource_DecodeType01(source, REVEAL_BUFFER);
         for (i = 0; i != 0x1000; i++) {
           if (REVEAL_BUFFER[i] != 0) {
             REVEAL_BUFFER[i] += 192;
@@ -812,14 +813,18 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         for (i = 0; i != 32; i++) {
           REVEAL_BUFFER[0x1000 + i] = i;
         }
-        for (i = 0; i != 32; i++) {
-          u8 *other = gData_02014000 + (Random16() & 31);
-          u8 swap = REVEAL_BUFFER[0x1000 + i];
+        {
+          s32 half = 0x1000;
 
-          other += 0x1000;
+          for (i = 0; i != 32; i++) {
+            u8 *other = gData_02014000 + (Random16() & 31);
+            u8 swap = REVEAL_BUFFER[0x1000 + i];
 
-          REVEAL_BUFFER[0x1000 + i] = *other;
-          *other = swap;
+            other += half;
+
+            REVEAL_BUFFER[0x1000 + i] = *other;
+            *other = swap;
+          }
         }
       }
       {
@@ -846,8 +851,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         scale152[1] = 0x10000;
         scale152[0] = 0x10000;
         for (i = 0; i != 12; i++) {
-          pos216[0] = posX + ((i % 4) << 21);
-          pos216[2] = posZ + ((i / 4) << 21);
+          pos216[0] = ((i % 4) << 21) + posX;
+          pos216[2] = ((i / 4) << 21) + posZ;
           Render_ApplyProjectedPlacementFar(work->objects[i], pos216, scale152,
                                             0);
         }
@@ -859,15 +864,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       if (frame >= 200 && frame < 302) {
         void *texture = Heap_AllocEwram(32);
         struct Model *model = Render_AllocateModelList(1);
-        s32 base = 100000;
-        s32 kind = 7;
         s32 t = frame - 200;
         s32 depth;
         s32 scale;
 
-
         depth = t * 4 - 64;
-        scale = base - t * 1524;
+        scale = 100000 - t * 1524;
         if (frame > 253) {
           depth = (254 - frame) * 8;
         }
@@ -883,7 +885,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         desc144.a = 7;
         desc144.b = 7;
         desc144.tiles = work->buffer + 0x1000;
-        model->kind = kind;
+        model->kind = 7;
         model->desc = &desc144;
         model->mesh = gData_08199364;
         model->texture = texture;
@@ -900,7 +902,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         if (frame > 231) {
           t = frame - 232;
           depth = t * 2 - 64;
-          scale = base - t * 1200;
+          scale = 100000 - t * 1200;
           if (depth < -64) {
             depth = -64;
           }
@@ -913,7 +915,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           desc144.tiles = work->buffer;
           model->desc = &desc144;
           model->mesh = gData_08199340;
-          model->kind = kind;
+          model->kind = 7;
           model->texture = texture;
           Render_ResetTransformState();
           Func_08015160(-0x80000, -0x80000, 0);

@@ -1242,7 +1242,7 @@ CLEAR(buffer, 0x1000);
           angle = Random16() & 0xffff;
           x = ((Trig_Sin(angle) << 3) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
-          y = ((amp * Trig_Cos(angle)) >> 16) + off - gData_08197498[m] / 2;
+          y = ((Trig_Cos(angle) * amp) >> 16) + off - gData_08197498[m] / 2;
           RELEASE_BLITTERS();
           Func_08196404(188, 7, 7, gData_0819887e[Random16() & 3] | 3, 0);
           IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 56,
@@ -1258,13 +1258,12 @@ CLEAR(buffer, 0x1000);
         for (i = 0; i != 3; i++) {
             s32 m;
             s32 x;
-          angle = Random16() & 0xffff;
           m = i & 3;
+          angle = Random16() & 0xffff;
           x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
           y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
-          HeapSlot_Release(188);
-          HeapSlot_Release(104);
+          RELEASE_BLITTERS();
           Func_08196404(188, 7, 7, gData_08198882[Random16() & 3] | 3, 1);
           IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
@@ -1277,9 +1276,10 @@ CLEAR(buffer, 0x1000);
         if (frame >= i + 4) {
           life = p->life;
           if (life <= 23) {
+            life = life / 4;
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
-            drawFuncs.draw[1](screen, buffer + 0x1809 + (life / 4) * 0x480,
+            drawFuncs.draw[1](screen, buffer + 0x1809 + life * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
             BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
             p->life++;

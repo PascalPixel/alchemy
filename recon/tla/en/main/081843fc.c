@@ -1766,10 +1766,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Heap_Release(model3);
         if (frame <= 87) {
 
+          i = 0;
           p2 = work->particles;
           {
 
-            for (i = 0; i != 6; p2++, i++) {
+            for (; i != 6; p2++, i++) {
               s32 lim = i * 8 + 16;
 
               if (frame == lim) {
@@ -1806,22 +1807,27 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 }
               }
               if (frame >= lim && frame < lim + 8) {
-                blit[0](canvas, ((p2->variant / 2) & 3) * 2880 + gData_02014000,
+                u8 *src = gData_02014000;
+
+                blit[0](canvas, ((p2->variant / 2) & 3) * 2880 + src,
                         p2->x - 12, 0, 24, 120);
                 p2->variant++;
               }
             }
           }
-          q = debris;
-          for (i = 0; i != 100; i++, q++) {
-            if (q->variant >= 0) {
-              s32 n = (q->variant >> 2) + 2;
+          {
+            struct EffectStep *d = debris;
 
-              blit[0](canvas, sprites + *(gData_08197410 + n - 1),
-                      HALF_HI(q->x) - n / 2, HALF_HI(q->y) - n, n, n * 2);
-              BattleEffectKernels_IntegrateVector2(q, 56, 0x2000);
-              q->velocityX -= work->scrollStepX << 12;
-              q->variant--;
+            for (i = 0; i != 100; i++, d++) {
+              if (d->variant >= 0) {
+                s32 n = (d->variant >> 2) + 2;
+
+                blit[0](canvas, sprites + *(gData_08197410 + n - 1),
+                        HALF_HI(d->x) - n / 2, HALF_HI(d->y) - n, n, n * 2);
+                BattleEffectKernels_IntegrateVector2(d, 56, 0x2000);
+                d->velocityX -= work->scrollStepX << 12;
+                d->variant--;
+              }
             }
           }
         }

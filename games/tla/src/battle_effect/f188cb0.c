@@ -1,33 +1,3 @@
-// Measured 2026-11-05 (tla-en): differ 2 of 529. One pair: movs r2 ahead of the
-// pooled 0x100 at BG2PA. Every order of the pins keeps it.
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 10 of
-// 529; a greedy device search found nothing lower.
-// Near miss: listing 529 instructions, draft 529, differ 12. ☀️ twin:
-// BattleEffect_RunHelmSplitter (effect.c, structure 0.800): the same swirl and
-// spark burst, with a second variant ⚓️ added at the target.
-// Statements, allocation and frame all match (effect r10, work r11, canvas at
-// sp+16, the two blitters at sp+20, the position at sp+28 and its address in
-// r9, frame and frame - 8 spilled); what is left (12 rows) is sched2 order in
-// four places: the frame loop's preheader (the native clears frame and builds
-// -8 before it starts the position's address), the second side's cell blit
-// (the native loads biasX's table before 0x700), the spark spawn's entry test
-// (the native builds -16 before it loads the variant) and the spark height test
-// (the native loads y before 0x680000). Each is the native issuing a store or a
-// load sooner than agscc's arm9tdmi costs rank it. Measured: the BLDALPHA and
-// BG2PA stores take f18284c.c's blend pin (each differ 2 without); the timer
-// clear through &sparks->variant, i before the pixel pointer, the pixels
-// indexed and the sparks as &sparks[i] (as in BattleEffect_RunHelmSplitter) are
-// the source's forms (38 to 22); a one-pass block on y fixes the height test
-// but moves the IntegrateVector2 arguments (18); an asm barrier on y relays out
-// the function (105). 2026-10-15 (fx-n3): rewritten for reading on struct
-// BattleEffectWork, with the resource ids and ☀️'s table names (effect_table.s:
-// gData_08199d40 CellSourceOffsets, 08199d4e CellBiasX, 08199d55 CellBiasY,
-// 08199d31 CellWidths, 08199d38 CellHeights); BLDALPHA's pin as one macro,
-// BG2PA's pin alone (with the barrier too: 26, its estimated four bytes move
-// the next literal pool); still 18. alchemy permute (10 min, 2 jobs, 2,732
-// candidates): nothing below 18. The tables extern without const, as
-// ☀️'s readers declare them: 18 to 12 (the native reloads the cell tables
-// after each call).
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -42,18 +12,6 @@
 // The transfer task runs at this priority, where ☀️'s runs at 0x480.
 #define TASK_PASS_FRAME 0xc80
 
-// FAKEMATCH: ⚓️ loads a pooled halfword before it starts the register's
-// address; the plain store starts the address first (one reordered pair,
-// differ 2). Only a halfword register loads from the pool, so the value is
-// pinned to the r3 it already takes, and the barrier holds r2 until it is
-// loaded, as in f18284c.c.
-#define REG_WRITE16_POOLED(reg, value)                                         \
-  {                                                                            \
-    register u16 pooled_ __asm__("r3") = (value);                              \
-    __asm__("" : "+l"(pooled_) : : "r2");                                      \
-    (reg) = pooled_;                                                           \
-  }
-
 extern char ResourceId_FireSwirlSheet;
 extern char ResourceId_PinkStarSheet;
 extern char ResourceId_SkullSheet;
@@ -61,11 +19,11 @@ extern char ResourceId_BlueFlameSheet;
 
 // The swirl's seven growth frames, cut from one sheet. Not const: the native
 // reloads them after every call.
-extern u16 gHelmSplitter_Cells[];
-extern s8 gHelmSplitter_CellBiasX[];
-extern s8 gHelmSplitter_CellBiasY[];
-extern u8 gHelmSplitter_CellWidths[];
-extern u8 gHelmSplitter_CellHeights[];
+extern u16 gData_08199d40[];
+extern s8 gData_08199d4e[];
+extern s8 gData_08199d55[];
+extern u8 gData_08199d31[];
+extern u8 gData_08199d38[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void *Resource_GetTableEntry(s32 id);
@@ -110,14 +68,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
 
   // Set up the canvas and load the swirl and the spark sheets.
   BattleEffect_StartCanvasLayer(1);
-  REG_WRITE16_POOLED(REG_BLDALPHA, 0x1010);
+  REG_BLDALPHA = 0x1010;
   if (effect->variant == 0) {
-    // FAKEMATCH: as above, but here the pin alone loads the value between
-    // the halves of the address (differ 2 without; the barrier too: 26, its
-    // estimated four bytes move the next literal pool).
-    register u16 scale __asm__("r3") = 0x100;
-
-    REG_BG2PA = scale;
+    REG_BG2PA = 0x100;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FireSwirlSheet, work->sheet, 1,
                              1);
@@ -172,18 +125,18 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
         if (cell > 6)
           cell = 6;
         if (effect->side == 0) {
-          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
-                  gHelmSplitter_CellBiasX[cell] + 30,
-                  gHelmSplitter_CellBiasY[cell] + position.y - 60,
-                  gHelmSplitter_CellWidths[cell],
-                  gHelmSplitter_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gData_08199d40[cell],
+                  gData_08199d4e[cell] + 30,
+                  gData_08199d55[cell] + position.y - 60,
+                  gData_08199d31[cell],
+                  gData_08199d38[cell]);
         } else {
-          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
-                  -gHelmSplitter_CellBiasX[cell] -
-                      gHelmSplitter_CellWidths[cell] + 98,
-                  gHelmSplitter_CellBiasY[cell] + position.y - 60,
-                  gHelmSplitter_CellWidths[cell],
-                  gHelmSplitter_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gData_08199d40[cell],
+                  -gData_08199d4e[cell] -
+                      gData_08199d31[cell] + 98,
+                  gData_08199d55[cell] + position.y - 60,
+                  gData_08199d31[cell],
+                  gData_08199d38[cell]);
         }
       }
     } else {
@@ -194,18 +147,18 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
         if (cell > 6)
           cell = 6;
         if (effect->side == 0) {
-          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
-                  position.x / 2 + gHelmSplitter_CellBiasX[cell] - 16,
-                  gHelmSplitter_CellBiasY[cell] + position.y - 92,
-                  gHelmSplitter_CellWidths[cell],
-                  gHelmSplitter_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gData_08199d40[cell],
+                  position.x / 2 + gData_08199d4e[cell] - 16,
+                  gData_08199d55[cell] + position.y - 92,
+                  gData_08199d31[cell],
+                  gData_08199d38[cell]);
         } else {
-          draw[0](canvas, work->sheet + gHelmSplitter_Cells[cell],
-                  position.x / 2 - gHelmSplitter_CellBiasX[cell] -
-                      gHelmSplitter_CellWidths[cell] + 16,
-                  gHelmSplitter_CellBiasY[cell] + position.y - 92,
-                  gHelmSplitter_CellWidths[cell],
-                  gHelmSplitter_CellHeights[cell]);
+          draw[0](canvas, work->sheet + gData_08199d40[cell],
+                  position.x / 2 - gData_08199d4e[cell] -
+                      gData_08199d31[cell] + 16,
+                  gData_08199d55[cell] + position.y - 92,
+                  gData_08199d31[cell],
+                  gData_08199d38[cell]);
         }
       }
     }

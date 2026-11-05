@@ -1467,21 +1467,12 @@ BattleEffect_RunHaures:
 	.thumb_func
 BattleEffect_RunDeathPlunge:
 	.incbin "baserom.gba", 0x00188714, 0x0000059c
-	.global BattleEffect_RunHelmSplitter
-	.type BattleEffect_RunHelmSplitter, %function
-	.thumb_func
-BattleEffect_RunHelmSplitter:
-	.incbin "baserom.gba", 0x00188cb0, 0x00000498
+	.section .rom.00189148, "ax"
 	.global BattleEffect_RunDragonCloud
 	.type BattleEffect_RunDragonCloud, %function
 	.thumb_func
 BattleEffect_RunDragonCloud:
 	.incbin "baserom.gba", 0x00189148, 0x000009cc
-	.global BattleEffect_RunLegend
-	.type BattleEffect_RunLegend, %function
-	.thumb_func
-BattleEffect_RunLegend:
-	.incbin "baserom.gba", 0x00189b14, 0x000006dc
 	.section .rom.0018ad40, "ax"
 	.balign 4
 	.global Func_0818ad40

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 85 (tla-en); notes below may predate it.
 // Draft, differ 87 of 187: translated from its listing; names and structure still
 // to do.
 #include "iwram_call.h"

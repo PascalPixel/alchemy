@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 220 (tla-en); notes below may predate it.
 // Draft, differ 206 of 315, skeleton gap 54 (tla-en, 2026-11-01): control flow,
 // calls, the frame (88 bytes, same slots) and memory accesses follow the
 // listing; what is left comes from two things, both GCSE's. The listing
@@ -130,8 +131,8 @@ void Func_0200054c(void) {
   }
   dx = object->x - center[0];
   dz = object->z - center[2];
-  x = Iwram_MulQ16(dx, cosine) - Iwram_MulQ16(dz, sine);
   z = Iwram_MulQ16(dx, sine) + Iwram_MulQ16(dz, cosine);
+  x = Iwram_MulQ16(dx, cosine) - Iwram_MulQ16(dz, sine);
   x += center[0];
   z += center[2];
   object->z = z;

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 90 (tla-en); notes below may predate it.
 // Draft, differ 116 of 130: the trap table's setup (shared with overlay 697 and
 // the other trap maps): a trap whose second flag is set is put away; any other
 // marks its cell (attribute byte 128), writes a shape for its height into the
@@ -48,8 +49,8 @@ next:
   } else {
     index = Func_02004ed0(object);
     cell = (u8 *)&cells[index];
-    shape = Func_02004d20(object->terrainId, object->x, object->z);
     height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    shape = Func_02004d20(object->terrainId, object->x, object->z);
     Func_02004df8(id);
     cell[3] = 128;
     shapes[index] = Func_02004ef0(object->terrainId, shape, (height >> 19) + 4);

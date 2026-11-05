@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
 // Draft, differ 105 of 87, skeleton gap 43 (tla-en, 2026-11-01)
 // The backward twin of Func_0802b590 (field/map/edit.c): copies a width by
 // height block of map cells and their shape-grid bytes from (srcX, srcY) to
@@ -43,12 +44,11 @@ void Func_0200217c(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
 
     col = width - 1;
     if (col >= 0) {
-    next:
+    do {
       *dstCell-- = *srcCell--;
       *dstShape-- = *srcShape--;
       col--;
-      if (col >= 0)
-        goto next;
+    } while (col >= 0);
     }
   }
 }

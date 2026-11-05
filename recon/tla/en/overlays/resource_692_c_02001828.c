@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 131 (tla-en); notes below may predate it.
 // Draft, differ 172 of 496, skeleton gap 62 (tla-en, 2026-11-01)
 // Re-measured after the compiler change: the frame (92), the sp offsets and the
 // instruction shapes stand, and the arm statement orders below were refitted by
@@ -139,8 +140,8 @@ void Func_02001828(void) {
     for (j = 0; j != 7; j++)
       Actor_SetModeById(j + 9, 1);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room3) {
-    baseX = 224 << 17;
     dstZ = 21;
+    baseX = 224 << 17;
     dstX = 92;
     i = 83;
     srcX = 28;
@@ -166,8 +167,8 @@ void Func_02001828(void) {
         open = 212;
       GameFlag_ClearBit(770);
     } else {
-      baseX = 206 << 18;
       dstZ = 42;
+      baseX = 206 << 18;
       dstX = 115;
       i = 104;
       srcX = 51;
@@ -243,7 +244,7 @@ void Func_02001828(void) {
   p[0] = (leader->x & 0xfff00000) + 0x80000;
   p[1] = leader->y;
   p[2] = (leader->z & 0xfff00000) + 0x80000;
-  Vector_AddPolarOffsetFar(0x100000, facing ^ 0x8000, p);
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, (s32)facing ^ 0x8000, (s32)p);
   leader->angle = facing;
   Actor_SetPositionAndReset(*(s32 *)j, ((s16 *)p)[1], ((s16 *)p)[5]);
   Actor_GetById(*(s32 *)j)->actionFlags |= 1;

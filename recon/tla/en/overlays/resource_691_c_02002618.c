@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
 // Draft, differ 8 of 732, skeleton gap 4 (tla-en, 2026-11-01): the start entry
 // of overlay 691's three rooms. It sets screen effect 0x204 and the Retreat
 // point (SceneId_Ov691Room1, entrance 1), then by scene and entrance places

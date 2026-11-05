@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 7 (tla-en); notes below may predate it.
 // Near miss of Func_020001d4 (15 native instructions, 7 differ): the native
 // loads the 0xffff terminator from the literal pool and compares in r1 on both
 // tests. With the terminator in a u32 local the loop's registers match (as a

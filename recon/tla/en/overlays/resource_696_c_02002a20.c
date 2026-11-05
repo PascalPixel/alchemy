@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 204 (tla-en); notes below may predate it.
 // Draft, differ 126 of 556, skeleton gap 26 (tla-en, 2026-11-01)
 // The portrait mode task, ☀️'s Colosso_UpdateLettering
 // (scene/shared/colosso_task.h) with overlay 696's variables and the French
@@ -130,8 +131,8 @@ commands:
     } else {
       s32 start, progress, target;
       start = gData_02006498;
-      target = *targetVar;
       progress = ++gData_02006508;
+      target = *targetVar;
       scale = start + (target - start) * progress / duration;
       if (progress >= duration)
         *durationVar = 0;
@@ -141,8 +142,8 @@ commands:
     s16 *durationVar = &gData_020064c4;
     s16 *targetVar;
     s32 duration;
-    duration = *durationVar;
     targetVar = &gData_020064b4;
+    duration = *durationVar;
     if (duration == 0) {
       blend = *targetVar;
     } else {
@@ -163,8 +164,8 @@ commands:
     s32 duration;
     duration = *durationVar;
     targetVar = &gData_02006504;
-    t = work;
     packed = scale << 16;
+    t = work;
     if (duration == 0) {
       pos = *targetVar;
     } else {

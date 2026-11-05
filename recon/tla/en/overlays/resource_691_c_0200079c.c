@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 35 (tla-en); notes below may predate it.
 // Draft, differ 78 of 110: translated from its listing; names and structure still
 // to do.
 #include "iwram_call.h"
@@ -31,8 +32,8 @@ s32 Func_0200079c(s32 a0, s32 a1, s32 a2, s32 a3) {
     goto L_0200887c;
 L_020087b2:
   v0 = Actor_GetById(FIELD_AT(r8, u16, 0));
-  r7 = v0;
   r10 = 34 + r7;
+  r7 = v0;
   v1 = Map_GetTerrainHeight(FIELD_AT(r7, u8, 34), FIELD_AT(r7, s32, 8),
                             FIELD_AT(r7, s32, 16));
   r6 = v1;
@@ -45,8 +46,8 @@ L_020087b2:
   Call2((void (*)())Actor_SetSingleChildFlags, r7, 0);
   r6 = r6 >> 19;
   r6 = r6 + 4;
-  r6 = r7;
   r6 = r6 + 99;
+  r6 = r7;
   Func_020005cc(FIELD_AT(r10, u8, 0), (FIELD_AT(r7, s32, 8)) >> 20,
                 (FIELD_AT(r7, s32, 16)) >> 20, r6);
   FIELD_AT(r6, u8, 0) = r5;

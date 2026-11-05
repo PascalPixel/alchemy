@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 32 (tla-en); notes below may predate it.
 // Draft, differ 46 of 171, skeleton gap 8 (tla-en, 2026-11-01)
 // Func_02002250's twin for the other bubbles of gData_020034f0: each starts
 // within 12 pixels of the source object, falls to the ground's height and then
@@ -74,7 +75,7 @@ void Func_020023c0(void) {
   }
   bubble = work->bubbles;
   i = 63;
-loop:
+do {
   if (bubble->x != 0) {
     if (Map_GetTerrainHeight(0, bubble->x, bubble->z) < bubble->y)
       bubble->y += -0x20000;
@@ -87,8 +88,8 @@ loop:
     bubble->age++;
     x = bubble->x - viewX;
     z = bubble->z;
-    z -= viewZ + lift;
     y = bubble->y - lift;
+    z -= viewZ + lift;
     screenY = (z - y) >> 16;
     y += z;
     y >>= 16;
@@ -108,6 +109,5 @@ loop:
   }
   i--;
   bubble++;
-  if (i >= 0)
-    goto loop;
+} while (i >= 0);
 }

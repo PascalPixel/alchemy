@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 51 (tla-en); notes below may predate it.
 // Draft, differ 88 of 75: records which of eleven listed cells persons 10 and
 // 11 stand on, as the two halves of the byte flag 0x210. Translated from its
 // listing; names and structure still to do.
@@ -25,8 +26,8 @@ s32 Func_02002974(void) {
 
   v0 = Actor_GetById(10);
   r8 = (FIELD_AT(v0, s32, 8)) >> 19;
-  r9 = 0;
   r10 = 0;
+  r9 = 0;
   r7 = (FIELD_AT(v0, s32, 16)) >> 19;
   v1 = Actor_GetById(11);
   r6 = (FIELD_AT(v1, s32, 8)) >> 19;

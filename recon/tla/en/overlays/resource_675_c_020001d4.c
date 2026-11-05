@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 3 (tla-en); notes below may predate it.
 // Draft, differ 13 of 15: the native loads 0xffff from the literal pool before
 // the loop and jumps over the pool to the count - 1 tail; this form builds
 // 0xffff in three instructions and falls through.

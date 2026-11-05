@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 32 (tla-en); notes below may predate it.
 // Matches: differ 0 (tla-en, 2026-11-02). The non-Japanese body of
 // games/tla/src/scene/ankohl_ruins/s0418.c, adopted before this draft existed;
 // both devices below came with it. The leader lands and 17 dust effects spread
@@ -82,8 +83,8 @@ void Func_02000418(void) {
   Func_02002eec(204);
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
-  effect = &options;
   effect->palette = 7;
+  effect = &options;
   effect->update = Effect_AdvanceMotion;
   effect->scaleX = 0xa3d7;
   effect->scaleY = 0xa3d7;

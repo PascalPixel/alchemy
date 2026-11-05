@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 62 (tla-en); notes below may predate it.
 // Draft, differ 65 of 82: places count effects in a row, rows times, each row
 // two pixels further down (z), waiting between rows. Left: the native keeps
 // rows in r11 and builds z << 16 inside the inner loop, where this form hoists

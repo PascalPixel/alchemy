@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
 // Draft, differ 26 of 66: points the map work's focus (0x178) at cell (x, z):
 // its position in 16.16 pixels, the cell's halfword coordinates, its
 // pointers into gMapCellBuffer and gMapShapeGrid (cells two to a step), unit
@@ -45,8 +46,8 @@ void Func_02001ff0(s32 x, s32 z) {
   focus->unk18[2] = 0;
   focus->unk18[3] = 0;
   index = (z / 2 << 7) + x / 2;
-  focus->cell = gMapCellBuffer + index * 4;
   focus->scaleX = focus->scaleZ = 0x10000;
+  focus->cell = gMapCellBuffer + index * 4;
   focus->shape = gMapShapeGrid + index;
   focus->scrolledX = Iwram_MulQ16(*(s32 *)(map + 0xe4), 0x10000) + focus->x;
   focus->scrolledZ =

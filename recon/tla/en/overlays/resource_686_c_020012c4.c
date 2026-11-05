@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 123 (tla-en); notes below may predate it.
 // Draft, differ 178 of 148, skeleton gap 44 (tla-en, 2026-11-01)
 // Control flow, switch, fields and arguments are the native's; almost all of
 // the gap is allocation, and it has two causes this form cannot reach.
@@ -113,8 +114,8 @@ void Func_020012c4(void) {
           break;
         }
       }
-      sx = ((x - viewX) >> 16) - 8;
       sy = ((z - viewZ - y) >> 16) - 8;
+      sx = ((x - viewX) >> 16) - 8;
       if (sx >= -15 && sx <= 319 && sy >= -15 && sy <= 239) {
         sx &= 511;
         sy &= 255;

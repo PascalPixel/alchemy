@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 65 (tla-en); notes below may predate it.
 // Near miss (87 of 197 instructions differ): the native keeps the
 // palette fill's colour and base inside its loop, reloading both each pass,
 // and builds the entrance offset in r0; the draft hoists them. Destined
@@ -60,6 +61,10 @@ s32 Func_02001cdc(void) {
         Func_020018a8(89, 85, 9);
     }
   }
-  Task_Add(Func_02001650, 0xc80);
+  {
+    s32 priority = 0xc80;
+
+    Task_Add(Func_02001650, priority);
+  }
   return 0;
 }

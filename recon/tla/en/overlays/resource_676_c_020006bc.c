@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 560 (tla-en); notes below may predate it.
 // Draft, differ 567 of 1,163, skeleton gap 9 (tla-en, 2026-11-01)
 // Every path step goes through an inline wrapper, the event layer's habit:
 // a direct call puts the id's move after the constants in all 162 steps.
@@ -552,8 +553,8 @@ void Func_020006bc(s32 actor) {
       (*timer)++;
   case 224:
   case 240:
-    Actor_SetDestination(actor, 248, 872);
     object->timer++;
+    Actor_SetDestination(actor, 248, 872);
     return;
   case 242:
     Actor_SetDestination(actor, 268, 868);

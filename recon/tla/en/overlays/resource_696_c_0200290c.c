@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 56 (tla-en); notes below may predate it.
 // Draft, differ 75 of 119, skeleton gap 10/7 (tla-en, 2026-11-01)
 // Near miss of Func_0200290c of overlay 696. Control flow, loads and scheduling
 // agree; what is left is one allocation. The native gives items r6, slot r5, the
@@ -44,8 +45,8 @@ void Func_0200290c(void) {
   Func_0200498c((s32)MsgShamanMissingShamanRod);
   if (PartyInventory_FindOwner(65) == -1)
     goto refuse;
-  count = Party_ListActiveOwners(owners);
   remaining = 8;
+  count = Party_ListActiveOwners(owners);
   for (i = 0; i < count; i++) {
     s16 *owner = &owners[i];
     items = (u16 *)(Unit_Get(*owner) + 216);

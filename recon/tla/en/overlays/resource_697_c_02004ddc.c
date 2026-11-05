@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 58 (tla-en); notes below may predate it.
 // Near miss, differ 173 of 442 (tla-en, 2026-10-31): control flow, calls and
 // data accesses are the native's; 66 of the differing lines are pool and branch
 // offsets, shifted because the draft is 3 instructions longer (445).
@@ -69,8 +70,8 @@ void Func_02004ddc(void) {
   if (rival == 0)
     return;
   if (state->mode == 4) {
-    z = leader->z;
     x = leader->x;
+    z = leader->z;
     if ((u32)(z - 0x1000000) > 0x1300000)
       x = 0x2100000 - (x & 0xffff0000);
     if (gMainRoutineWork.entrance & 1)

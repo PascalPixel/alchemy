@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 1480 (tla-en); notes below may predate it.
 // Draft, differ 448 of 1972, skeleton gap 74/72 (tla-en, 2026-11-01)
 // Func_02002f64 is not a function: 0x02002f64 is a far `bl` inside Func_02002f30,
 // which opens with the 26 instructions ending section .text.x0200ad30. This file
@@ -278,16 +279,16 @@ s32 Func_02002f30(void) {
         Actor_SetModeById(10, 6);
         C1(FieldEvent_Wait, 10);
         dragon->velocityY = 0x60000;
-        C1(FieldEvent_Wait, 10);
         dragon->movementState = 1;
+        C1(FieldEvent_Wait, 10);
         partner->movementState = 1;
         C2(Actor_SetAnimationSpeed, dragon, 0);
         C2(Actor_SetAnimationSpeed, partner, 0);
         C2(Animation_ApplyChildValues, dragon, 6);
         C2(Animation_ApplyChildValues, partner, 6);
         width = 30;
-        height = 19;
         C6(Func_02004e04, 85, 76, 5, 2, width, height);
+        height = 19;
         C1(Func_02005014, 572);
         C2(Func_02004f94, 0x7fff, 0);
         C1(Func_02004fa4, 10);
@@ -323,8 +324,8 @@ s32 Func_02002f30(void) {
         C1(Func_02005014, 572);
         {
           struct Actor *a = Actor_GetById(10);
-          mask &= a->actionFlags;
           a->actionFlags = mask;
+          mask &= a->actionFlags;
         }
         C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
         dragon->velocityY = fast;
@@ -434,8 +435,8 @@ s32 Func_02002f30(void) {
       Actor_SetModeById(8, 3);
       Actor_GetById(11)->speedLimit = scale = 0x10000;
       dragon = Actor_GetById(10);
-      slow = 0x8000;
       dragon->speedLimit = slow;
+      slow = 0x8000;
       owner = &room->currentOwner;
       C3(Func_02004ebc, 11, 0x1b80000, 0x1380000);
       C3(Func_02004ebc, *owner, 0x1c80000, 0x1480000);

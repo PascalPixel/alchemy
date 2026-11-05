@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/sea_of_time/object.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_687_overlay.o"(.text.x0200815a)
-        "*/resource_687_overlay.o"(.text.x0200815c)
+        "*/games/tla/src/scene/sea_of_time/s015c.o"(.text)
         "*/games/tla/src/scene/sea_of_time/map.o"(.text)
         "*/games/tla/src/scene/sea_of_time/scene_tables.o"(.text)
         "*/games/tla/src/scene/sea_of_time/s043c.o"(.text)

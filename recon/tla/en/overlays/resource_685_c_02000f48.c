@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 68 (tla-en); notes below may predate it.
 // Draft of overlay 685's Func_02000f48, differ 68 of 205: the trident talk,
 // which takes the first of items 439 to 441 the party holds and runs the next
 // of three flagged scenes with it, or says one of four lines. The gotos give

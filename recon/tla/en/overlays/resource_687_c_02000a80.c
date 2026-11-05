@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 19 (tla-en); notes below may predate it.
 // Draft, differ 89 of 188, skeleton gap 13 (tla-en, 2026-11-01)
 // What is left is GCSE's PRE: the listing keeps redundancies PRE removes here. An
 // earlier analysis-only compile with -fno-gcse gave its reloads, work in r11 and

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 4 (tla-en); notes below may predate it.
 // Near miss (26 instructions differ, one register swap): the native keeps
 // the object in r6 and the step in r7, the draft the other way round.
 // Tried: loops counting up, the step as i * 40, declaring the counters
@@ -64,8 +65,8 @@ void Func_020022f8(void) {
   }
   Func_02002458(object);
   FieldEvent_Wait(2);
-  Func_020025a0(240);
   sprite->tile = 0;
+  Func_020025a0(240);
   object->x = 0xa80000;
   object->z = 0xc00000;
   object->y = 0;

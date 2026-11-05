@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 153 (tla-en); notes below may predate it.
 // Draft, differ 171 of 200, skeleton gap 23 (tla-en, 2026-11-01)
 // Overlay 69a's copy of the function drafted in resource_698_c_02000aac.c, whose
 // header says what it is. Skeleton gap is 20 removed, 23 added. Re-measured on
@@ -84,9 +85,9 @@ void Func_02000b3c(void) {
 
     if (actor == 0 || actor->x == 0)
       continue;
-    x = actor->x - viewX;
     y = actor->y - viewY + 0x80000;
     z = actor->z - viewZ - viewY;
+    x = actor->x - viewX;
     sy = z - y;
     y += z;
     depth = (y >> 16) + 58;
@@ -102,16 +103,16 @@ void Func_02000b3c(void) {
       x &= 0x1ff;
       sy &= 0xff;
       word = (u32 *)oam;
-      *word++ = 0;
       *word++ = sy | (x << 16) | 0x40002000;
+      *word++ = 0;
     } else {
       frame = *timer;
       x = sx - 8;
       sy = ty - 64;
       if ((u32)(x + 31) > 350 || sy <= -64 || sy > 175)
         continue;
-      x &= 0x1ff;
       sy &= 0xff;
+      x &= 0x1ff;
       word = (u32 *)oam;
       *word++ = 0;
       *word++ = sy | (x << 16) | 0xc000a000;

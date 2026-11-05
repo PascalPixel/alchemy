@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
 // Draft, differ 24 of 150, skeleton gap 10 (tla-en, 2026-11-01)
 // Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 // halfword pairs; flag + 1 set means the actor is parked at (0, 0), otherwise
@@ -63,41 +64,38 @@ void Func_020030bc(u16 *list) {
   Func_02003b0c(9, 0, 0);
   Func_02003b0c(10, 0, 0);
   wait(1);
-  while (list[0] != 0xffff) {
-    u32 id = list[0];
+  if (*list == 0xffff)
+    goto done;
+next:
+  {
+    s32 id = list[0];
     struct Actor *object = Actor_GetById(id);
     s32 flag = list[1];
-    s32 next = flag + 1;
+    s32 nextFlag = flag + 1;
     u8 *layer = &object->terrainId;
     struct MapCell *cells = map->layers[*layer].cells;
     u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
     object->unk5c[0] = 3;
-    if (GameFlag_Test(next)) {
+    if (GameFlag_Test(nextFlag)) {
       Func_02003b0c(id, 0, 0);
     } else {
-      struct {
-        s32 unused;
-        struct MapCell *cell;
-      } pair;
-      u8 *index = (u8 *)Func_02003c04(object);
-      struct MapCell *cell;
-      s32 shape;
-      s32 ground;
+      s32 index = Func_02003c04(object);
+      u8 *cell = (u8 *)&cells[index];
+      u8 *slot = shapes + index;
+      s32 shape = Func_02003adc(*layer, object->x, object->z);
+      s32 ground = Map_GetTerrainHeight(*layer, object->x, object->z);
 
-      pair.cell = cells;
-      pair.cell += (s32)index;
-      index += (s32)shapes;
-      shape = Func_02003adc(*layer, object->x, object->z);
-      ground = Map_GetTerrainHeight(*layer, object->x, object->z);
-      cell = pair.cell;
       Func_02003b3c(id);
-      cell->attributeB = 128;
-      *index = Func_02003c24(*layer, shape, (ground >> 19) + 4);
+      cell[3] = 128;
+      *slot = Func_02003c24(*layer, shape, (ground >> 19) + 4);
       if (GameFlag_Test(flag))
         ObjectVisual_CopyAttributes(id, 9);
     }
-    list += 2;
   }
+  list += 2;
+  if (*list != 0xffff)
+    goto next;
+done:
   wait(10);
 }

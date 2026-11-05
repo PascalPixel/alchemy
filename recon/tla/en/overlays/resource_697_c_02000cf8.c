@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 37 (tla-en); notes below may predate it.
 // Draft, differ 51 of 57: blocks the three cells through an object's cell on
 // layers 0 and 2 (byte 2 set to 255): the column above and below it in mode
 // 0, the row beside it otherwise.
@@ -16,15 +17,15 @@ void Func_02000cf8(s32 id, s32 mode) {
   low = map->layers[0].cells + index * 4;
   high = map->layers[2].cells + index * 4;
   if (mode == 0) {
-    low[-0x200 + 2] = 0xff;
     low[2] = 0xff;
+    low[-0x200 + 2] = 0xff;
     low[0x200 + 2] = 0xff;
     high[-0x200 + 2] = 0xff;
     high[2] = 0xff;
     high[0x200 + 2] = 0xff;
   } else {
-    low[-4 + 2] = 0xff;
     low[2] = 0xff;
+    low[-4 + 2] = 0xff;
     low[4 + 2] = 0xff;
     high[-4 + 2] = 0xff;
     high[2] = 0xff;

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 52 (tla-en); notes below may predate it.
 // Draft, differ 68 of 150, skeleton gap 18 (tla-en, 2026-11-01)
 // The trap table's setup for maps with objects 8 to 10 (shared with overlay 697
 // and the other trap maps): those three are placed and put away first; then
@@ -78,8 +79,7 @@ void Func_020042f8(const u16 *table) {
   Func_02004da0(9, 0, 0);
   Func_02004da0(10, 0, 0);
   wait(1);
-  goto test;
-next:
+  while (*table != 0xffff) {
   id = table[0];
   object = Actor_GetById(id);
   flag = table[1];
@@ -91,22 +91,20 @@ next:
   if (GameFlag_Test(putAwayFlag)) {
     Func_02004da0(id, 0, 0);
   } else {
-    index = Func_02004ed0(object);
     cells += index;
+    index = Func_02004ed0(object);
     cell = (u8 *)cells;
     out = shapes + index;
     shape = Func_02004d20(*terrainId, object->x, object->z);
     height = Map_GetTerrainHeight(*terrainId, object->x, object->z);
     Func_02004df8(id);
     level = (height >> 19) + 4;
-    cell[3] = 128;
     *out = Func_02004ef0(*terrainId, shape, level);
+    cell[3] = 128;
     if (GameFlag_Test(flag))
       ObjectVisual_CopyAttributes(id, 9);
   }
   table += 2;
-test:
-  if (*table != 0xffff)
-    goto next;
+  }
   wait(10);
 }

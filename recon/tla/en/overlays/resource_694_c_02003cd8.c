@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 41 (tla-en); notes below may predate it.
 // Draft, differ 62 of 174, skeleton gap 21 (tla-en, 2026-11-01)
 // The update Func_02003e54 hooks: the object's frame count (byte 0x63) cycles
 // its animation on odd frames; in state 0 (byte 0x62) every 16th frame starts
@@ -112,8 +113,8 @@ void Func_02003cd8(struct Actor *object) {
     sprite = &work->sprites[i * 2];
     for (; j <= 1; j++, sprite++) {
       sprite->z = z;
-      sprite->x = x;
       sprite->scaleX = sine;
+      sprite->x = x;
       sprite->scaleY = sine;
       if (j == 0) {
         sprite->depth = Func_0200425c(object) - 1;

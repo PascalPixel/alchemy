@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 99 (tla-en); notes below may predate it.
 // Draft, differ 203 of 184, skeleton gap 49 (tla-en, 2026-11-01)
 // Draws Aqua Rock's thirty-two water spouts: for each active one a top sprite
 // and, when it stands above its base, a column sprite as tall as its height,
@@ -81,15 +82,15 @@ void Func_020030f4(void) {
 
       if (position != 0) {
         s32 relative;
+        z = position[2] - viewZ - originY;
         x = position[0] - viewX;
         relative = position[1] + entry->height - originY;
-        z = position[2] - viewZ - originY;
         screenY = z - relative;
         y = relative;
       } else {
         s32 relative;
-        x = entry->x - viewX;
         relative = entry->height - originY;
+        x = entry->x - viewX;
         z = entry->z - viewZ - originY;
         screenY = z - relative;
         y = relative;
@@ -98,17 +99,17 @@ void Func_020030f4(void) {
         attributes = 0x800;
       else
         attributes = 0xc00;
-      depth = ((y + z) >> 16) + 50;
       x = (x >> 16) - 8;
       screenY = (screenY >> 16) - 8;
+      depth = ((y + z) >> 16) + 50;
       if ((u32)(x + 15) <= 270) {
         s32 rise;
 
         if ((u32)(screenY + 47) <= 238) {
           u32 offset;
           x &= 511;
-          screenY &= 255;
           offset = entry->kind << 3;
+          screenY &= 255;
           entry->top[0] = 0;
           screenY |= x << 16;
           screenY |= 0x40002000;

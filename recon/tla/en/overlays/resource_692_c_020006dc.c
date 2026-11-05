@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 24 (tla-en); notes below may predate it.
 // Draft, differ 34 of 61: overlay 692's copy of the function drafted in
 // resource_691_c_020006cc.c (overlay 691's Func_020006cc, differ 34 there), whose
 // header says what it is, what still differs and what was tried.
@@ -16,8 +17,7 @@ void Func_020006dc(u16 *ids) {
   struct MapCell **cells;
   s32 x, z;
 
-  goto check;
-loop:
+  while (*ids != 0xffff) {
   object = Actor_GetById(*ids);
   blocked = (u8 *)object + 0x63;
   *blocked = 0;
@@ -33,7 +33,5 @@ loop:
     *blocked = 1;
   }
   ids++;
-check:
-  if (*ids != 0xffff)
-    goto loop;
+  }
 }

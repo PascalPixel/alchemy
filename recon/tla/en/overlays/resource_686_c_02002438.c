@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 118 (tla-en); notes below may predate it.
 // Draft, differ 139 of 989: translated from its listing, with the rooms
 // compared as their linker ids (SceneId_Ov686Room1 to 8, loaded from the pool
 // as the native does); names and structure still to do. Left: the native saves
@@ -367,8 +368,8 @@ L_0200aa16:
   Call3((void (*)())Func_02002e6c, FIELD_AT(r5, s32, 532), 0, 0);
   Call3((void (*)())Func_02002e6c, 10, 0, 0);
   Event_StartScreenTransition();
-  Call1((void (*)())FieldEvent_Wait, 15);
   v50 = Actor_GetById(10);
+  Call1((void (*)())FieldEvent_Wait, 15);
   r5 = v50;
   Call3((void (*)())Func_02002e6c, 10, 0x1480000, 0x2f80000);
   FIELD_AT(r5, s32, 12) = (FIELD_AT(r5, s32, 12)) + 8388608;

@@ -20,7 +20,7 @@ SECTIONS
         "*/games/tla/src/scene/yallam/s1688.o"(.text)
         "*/games/tla/src/scene/yallam/s182c.o"(.text)
         "*/games/tla/src/scene/yallam/s1904.o"(.text)
-        "*/resource_676_overlay.o"(.text.x02009944)
+        "*/games/tla/src/scene/yallam/s1944.o"(.text)
         "*/games/tla/src/scene/yallam/s1d14.o"(.text)
         "*/games/tla/src/scene/yallam/s1ec0.o"(.text)
         "*/games/tla/src/scene/yallam/s2244.o"(.text)

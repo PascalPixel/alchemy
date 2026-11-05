@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 145 (tla-en); notes below may predate it.
 // Draft, differ 168 of 150, skeleton gap 21/17 (tla-en, 2026-11-01)
 // Each of the 14 colours of BG palette 3 steps one unit per channel toward
 // gData_020026c0, every 10 frames, until none changes. Rewritten from the listing

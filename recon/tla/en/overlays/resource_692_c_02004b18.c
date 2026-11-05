@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 12 (tla-en); notes below may predate it.
 // Draft, differ 83 of 83: the falling rocks' start, overlay 692's copy of overlay 6a8's falling
 // rocks (resource_6a8_c_02004114.c, whose header says what differs there and
 // why the loops are goto loops).
@@ -73,20 +74,23 @@ void Func_02004b18(void) {
    * the bytes rebuild the constants on every pass and count in r8, and a for
    * loop hoists them. */
   i = 63;
-loop:
+do {
   {
     Func_02004f10(sprite, 8, 8, 0x40000000, tile);
     sprite->unk05 |= 0x20;
     sprite->palette = 0;
     sprite->priority = 0;
     sprite->unk1e = 240;
-    i += -1;
     rock->timer = -1;
+    i += -1;
     sprite++;
     rock++;
   }
-  if (i >= 0)
-    goto loop;
+} while (i >= 0);
   work->next = 0;
-  Task_Add(Func_020049d8, 0x480);
+  {
+    s32 priority = 0x480;
+
+    Task_Add(Func_020049d8, priority);
+  }
 }

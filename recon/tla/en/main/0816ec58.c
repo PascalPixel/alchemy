@@ -104,11 +104,9 @@ void Sound_PlayFar(s32 cue);
 void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  s32 stagger;
   s32 sinkFrame;
   DrawRectangle draw[2];
   struct EffectPosition ends[2];
-  s32 end;
   s32 frame;
   s32 i;
 
@@ -125,6 +123,9 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  {
+  s32 stagger;
+
   stagger = effect->variant * 4;
   sinkFrame = stagger + 32;
 
@@ -137,7 +138,6 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
 
   frame = 0;
   if (stagger != -54) {
-  end = stagger + 54;
   top:
   {
     // Frame 0: 16 sparks leave the ground in random directions.
@@ -257,10 +257,11 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  if (++frame != end)
+  if (++frame != stagger + 54)
     goto top;
   }
 
+  }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

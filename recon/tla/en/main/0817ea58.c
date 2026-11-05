@@ -1,43 +1,55 @@
-// 2026-11-05: differ 1140 of 3921 (tla-en). Declaration order alone (a greedy
-// search) gains 68; the causes below stand.
-// Draft, differ 1208 of 3921, skeleton gap 126/126 (tla-en, 2026-11-01)
-// The second phase's frame loop is a label-and-goto loop: as a for loop, loop.c
-// hoists the frame-address copies, they take REG_EQUIV and work loses r11. The
-// first and third phases stay for loops. &pos2, &scale2, &scale and &pos3 are
-// gcse PRE's pseudos, not locals. Slots 188 down to 96 now equal the listing's.
-// Left, largest first:
-// 1. Slots 92 and 88: the listing keeps the wave pointer and z there, and all of
-//    84 to 24 sit 8 too high here. wave and posp survive gcse's second cprop only
-//    when assigned inside the loop body (loop.c then hoists the copy, the listing's
-//    mov r9, r4); that alone costs 22 and more, because row and row * 4 then spill.
-//    z = 0 before the frame loop makes z non-replaceable and gives it slot 88, but
-//    its giv is then "not worth while" (benefit -2) and [sp, #12] never appears; a
-//    struct { s32 z; Vec3 *pos; } and a separate reduced temporary gives the copy
-//    form and frame +12. The slot 28 shim here is &PARTICLES[256] + i * 16 + m,
-//    whose i * 448 giv takes one low slot; the listing has (i << 4) + m unreduced.
-// 2. Wave loops: the listing has row in a low register, &sprites[row + 8] as an
-//    outer giv, the else arm indexed unreduced and the call's sprite ldmia. Here
-//    row is r9 and (&work->sprites[row])[i] keeps the else arm unreduced through
-//    row * 4. work->sprites[row + i] in the arm is reduced by the second loop pass
-//    (--rtl .08.loop, benefit 7); it also folds to row + 8 under i == 8. A sweep of
-//    the spellings, each wave loop alone, gains nothing.
-// 3. 0x1c0 and DECODE_BUFFER after the copy calls are rebuilt in the listing and
-//    shared here, which puts src in r7 rather than r5 and shifts the sprite
-//    setup. A do { } while (0) copy macro does not fix it (and is a device).
-// 4. p->ay is reread after p->ay = 0 in the listing; only a different alias set
-//    keeps the load, and that spelling is a disguise. Left folded.
-// 5. The map loop's row is a counter of 16 shifted left there, j * 32 here; both
-//    row forms lose 900 to outer reduction. 0x700 therefore sits in r0 here.
-// 6. Scheduling pairs and reload rotation, about 40 small hunks.
-// Tried and gaining: scoped q per block, p set after the third hull part, blit
-// arguments with a call computed first in a local, radius read before n, Trig
-// result first in multiplies, pos3.z reread instead of p->y.
+// 2026-11-05: differ 155 of 3921 (tla-en), draft 3918; frame and every spill slot
+// equal the listing's; with registers, slots and offsets masked, 77 lines apart.
+// The method that moved it: reload registers rotate through the spill list one per
+// reload (allocate_reload_reg), so a wrong scratch register downstream means a reload
+// too many or too few upstream, in RTL order, which sched2 hides. Read each from the
+// reload dump's order; the raw figure jumps by hundreds on one such reload.
+// What is settled, each from the listing:
+// - Spill slots run in pseudo order, so the second phase's locals are a block after
+//   the first phase, and the wave height and pointer belong to the first phase.
+// - Both wave loops: row = j * 9 and the call reads sprites[j * 9 + i], not row + i, so
+//   PRE leaves it alone and it is an inner giv reduced in the second loop pass, its
+//   init emitted after the hoists, where the outer pass does not see it.
+// - The else arm's index is set in two steps, which leaves it unreduced.
+// - First wave loop: the height is one expression, hoisted in the second pass only
+//   at an inner count of 60 or less; each arm's index carries the row, ranking row
+//   above the pointer and the giv (r7, r4, r9). Its count is exactly 60 without the
+//   tile's explicit mask.
+// - Second wave loop: each arm stores the tile itself and their tails cross-jump, with
+//   a word mask (no mid-loop pool). The camera follow is two statements the same way.
+// - sprites[i + 18] with i known 21 after its loop gives [fp, r3]; sprites[39] does not.
+// - A red local that is not set from the constant first keeps r before g.
+// - Hoists set the reload order: the turret's x and ringX are assigned in their loops.
+// - pixels and off are long-lived constant locals with no register, rematerialized at
+//   each use: the beam's r0 reload and the map loop's movs r7, #224.
+// - The explosion blit's x, n, y locals in that order; the shake readout's bg local;
+//   the map row counter of 16 (mp set in the for).
+// Left, about 75 hunks, most of them order only:
+// 1. First wave loop: arm t and x are r3, r2 in the listing, r2, r3 here (the modulo's
+//    temporaries are local and take r3 first; a tagged pin on the result gives the
+//    listing's arms but adds 2 to the count, 62, and stops the height's hoist). The
+//    listing also builds the 0x3ff mask (the explicit & 0x3ff form, +2, 62). So the
+//    listing's inner loop holds 2 to 4 fewer insns than this one somewhere; not found.
+//    Computing (j << 5) + 103 earlier hoists it at any count but in the first pass,
+//    which swaps slots 12 and 16: raw 207, masked 83.
+// 2. Map loop's w, n, table in r4, r5, r6 here r6, r5, r4: the reverse of the hoist
+//    order, so their priorities are not yet explained.
+// 3. Third phase: z = 0 and i = 0 are two constant loads in the listing, one here
+//    (find_equiv_reg finds the first), 2 instructions and the pool offsets after.
+// 4. Order only, by sched2 tie or alias: the sprite pointer loads after the q stores
+//    (1991, 2771, 2904; reading sprites as s32 moves these but others too, 327), the
+//    calls before hoisted constants (447, 3408; do { } while (0) settles them, one-pass,
+//    not kept), mov r9 and add fp (553, 3026), Task_Add's argument order (144).
+// 5. p->ay's reread goes through a volatile view (needs its S2 tag at adoption).
+// Earlier measures that still stand: the second phase's frame loop is a label-and-goto
+// loop (as a for, the frame-address copies are hoisted and work loses r11).
 #include "resource.h"
 #include "heap_release.h"
 #include "system/iwram_call.h"
 #include "types.h"
 typedef volatile u16 vu16;
 typedef volatile u32 vu32;
+typedef volatile s32 vs32;
 
 typedef struct Particle {
   s32 x;
@@ -144,7 +156,7 @@ struct SystemWork {
 };
 
 #define SYSTEM ((struct SystemWork *)0x03000000)
-#define Iwram_Copy Iwram_CopyWords
+static inline void Iwram_Copy(void *d, const void *s, s32 n) { Iwram_CopyWords(d, s, n); }
 #define Iwram_Clear Iwram_ClearWords
 extern VramSlot gResourceTableEntries[];
 #define VRAM_SLOTS gResourceTableEntries
@@ -255,17 +267,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   s32 wavePhase;
   s32 savedY;
   s32 bgX;
-  Vec3 *posp;
-  s32 z;
-  s32 swayX;
-  s32 bobX;
-  void **blits;
-  u16 *pal;
-  s32 bobY;
-  s32 swayY;
-  s32 *ringX;
-  s32 row;
   struct SummonWork *work;
+  s32 k;
   s32 i;
   s32 j;
 
@@ -293,7 +296,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       u16 *col;
       s32 n;
       s32 w;
+      s32 off;
       u8 *mp;
+      s32 k;
       s32 r, g, b;
       s32 v;
       const u8 *src;
@@ -304,14 +309,15 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       targets[0] = 255;
       BattleActor_SpawnObjectsForListFar(targets, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-      for (i = 0, col = (u16 *)0x050000c0; i != 128; i++, col++) {
+      for (col = (u16 *)0x050000c0, i = 0; i != 128; i++, col++) {
         s32 mid;
+        s32 s;
 
-        r = *col & 0x1f;
+        s = *col & 0x1f;
         mid = (*col >> 5) & 0x1f;
         b = ((*col >> 10) & 0x1f) - 4;
         g = mid - 4;
-        r -= 4;
+        r = s - 4;
         if (g < 0)
           g = 0;
         if (r < 0)
@@ -333,12 +339,12 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Task_Add(Func_0813baec, 0x480);
       ctl[4] = 1;
       Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->frames, 0, 0);
+      off = 0x700;
       n = 3;
       w = 32;
-      for (j = 0; j != 10; j++) {
-        mp = map + j * 32;
-        for (i = 0; i != w; i++) {
-          v = work->frames[gData_08197410[n] + i];
+      for (j = 0, k = 0; j != 10; j++, k += 16) {
+        for (i = 0, mp = (u8 *)(k * 2 + (s32)map); i != w; i++) {
+          v = ((u8 *)work)[gData_08197410[n] + i + off];
           if (v != 0) {
             v = v - j * 4 - 40;
             if (v <= 0)
@@ -377,7 +383,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
                    DECODE_BUFFER + i * 0x400, 0x400);
       }
       obj = Func_0815b290(32, 64, 0xc000a000, 0);
-      work->sprites[39] = obj;
+      work->sprites[i + 18] = obj;
       obj->priority = 3;
       Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER + i * 0x400, 0x800);
@@ -399,6 +405,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       }
     }
     if (frame > 27) {
+      Vec3 *posp;
+      s32 row;
+      Sprite **slot;
+
       scale = Data_08196ed0;
       pos.w = 0;
       pos.y = 0xff0000;
@@ -409,27 +419,27 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         waveX -= 0x200000;
         waveScroll -= 0x200000;
       }
-      posp = &pos;
       for (j = 0; j != 2; j++) {
-        z = (j << 21) + 0x670000;
         row = j * 9;
         for (i = 0; i != 9; i++) {
           Sprite *obj;
           s32 v;
 
+          posp = &pos;
           posp->x = (i << 21) + waveX;
-          posp->z = z;
+          posp->z = ((j << 5) + 103) << 16;
           if (i == 8) {
             obj = work->sprites[row + 8];
-            v = (wavePhase + 71) % 8;
+            v = row + (wavePhase + 71) % 8;
           } else {
-            obj = (&work->sprites[row])[i];
-            v = (wavePhase + 64 + i) % 8;
+            k = row; k += i;
+            obj = work->sprites[k];
+            v = row + (wavePhase + 64 + i) % 8;
           }
-          obj->tile = work->particles[j * 9 + v].timer & 0x3ff;
+          obj->tile = work->particles[v].timer;
           if (pos.x > 0xffffff)
             pos.x -= 0x1200000;
-          Render_ApplyProjectedPlacementFar(work->sprites[row + i], &pos, &scale, 0);
+          Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos, &scale, 0);
         }
       }
     }
@@ -438,6 +448,16 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     work->transferPending = 1;
     wait(1);
   }
+
+  {
+  void **blits;
+  u16 *pal;
+  s32 swayX;
+  s32 swayY;
+  s32 bobX;
+  s32 bobY;
+  s32 *ringX;
+  void *pixels;
 
   HeapSlot_Release(104);
   Iwram_Clear(dest, 0x3c00);
@@ -455,7 +475,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0BA, work->frames, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->frames + 0x6c0, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0BB, work->frames + 0x36c0, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, DECODE_BUFFER, 0, 0);
+  pixels = DECODE_BUFFER;
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   Iwram_Copy((void *)0x05000000, (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
              128);
   work->transferMode = 2;
@@ -707,11 +728,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     if (frame >= 578 && frame < 594)
       work->unk7798 = ~((frame - 578) / 8);
     {
-      s32 v;
-
-      v = camera - swayX + bobX + 0x780000;
       for (i = 0; i != 2; i++) {
-        pos2.x = v;
+        pos2.x = camera - swayX + bobX + 0x780000;
         pos2.z = (((i << 5) - Data_081994f0[work->shake]) << 16) + swayY + bobY +
                  0x640000;
         Render_ApplyProjectedPlacementFar(work->sprites[32 + i], &pos2, &scale2,
@@ -801,17 +819,12 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       prevCamera = camera;
       {
         Particle *f;
-        s32 x;
 
         f = &work->particles[22];
         if (f->timer > 229)
-          x = f->x + ((f->timer - 230) << 17);
+          camera += (0x980000 - (f->x + ((f->timer - 230) << 17)) - camera) / 4;
         else if (f->timer > 0)
-          x = f->x;
-        else
-          goto camera_done;
-        camera += (0x980000 - x - camera) / 4;
-      camera_done:;
+          camera += (0x980000 - f->x - camera) / 4;
       }
       if (p->timer > 1) {
         p->x += p->vx;
@@ -890,7 +903,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       beam = Render_AllocateModelList(1);
       bitmap.width = 7;
       bitmap.height = 7;
-      bitmap.data = DECODE_BUFFER;
+      bitmap.data = pixels;
       beam[4] = (s32)&bitmap;
       beam[1] = 0;
       beam[2] = (s32)gData_08199364;
@@ -917,8 +930,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->particles[30].x = 0;
       work->particles[30].vx = 0x80000;
     }
-    ringX = &work->particles[30].x;
     for (j = 0; j != 1; j++) {
+      ringX = &work->particles[30].x;
       if (frame >= Data_0819958c[j] &&
           frame < Data_0819958c[j] + 26) {
         s32 radius;
@@ -1030,40 +1043,40 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     }
     {
     Vec3 *wave;
+    s32 row;
+    Sprite **slot;
 
-    wave = &pos2;
     for (j = 0; j != 2; j++) {
       row = j * 9;
       for (i = 0; i != 9; i++) {
         Sprite *obj;
         s32 v;
 
+        wave = &pos2;
         wave->x = (i << 21) + waveX;
         wave->z = (((j << 5) - Data_081994f0[work->shake]) << 16) + shipY +
                   0x840000;
         if (i == 8) {
-          obj = work->sprites[row + 8];
-          v = (wavePhase + 71) % 8;
+          work->sprites[row + i]->tile = work->particles[row + (wavePhase + 71) % 8].timer & 0x3ff;
         } else {
-          obj = (&work->sprites[row])[i];
-          v = (wavePhase + 64 + i) % 8;
+          k = row; k += i;
+          work->sprites[k]->tile = work->particles[row + (wavePhase + 64 + i) % 8].timer & 0x3ff;
         }
-        obj->tile = work->particles[j * 9 + v].timer & 0x3ff;
         if (pos2.x > 0xffffff)
           pos2.x -= 0x1200000;
-        Render_ApplyProjectedPlacementFar(work->sprites[row + i], &pos2, &scale2, 0);
+        Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos2, &scale2, 0);
       }
     }
     }
     for (j = 0; j != 4; j++) {
       for (i = 0; i != 6; i++) {
         if (frame >= i * 2 + 490 && frame < i * 2 + 502) {
-          s32 v;
+          s32 x, y, n;
 
-          v = Data_0819959c[j][i][1] + (swayY >> 16) - Data_081994f0[work->shake];
-          ((BlitFunc)blit[0])(dest,
-                              &work->frames[(frame - (i * 2 + 490)) / 2 * 288],
-                              Data_0819959c[j][i][0] - 6, v - 12, 12, 24);
+          x = Data_0819959c[j][i][0];
+          n = (frame - (i * 2 + 490)) / 2;
+          y = Data_0819959c[j][i][1] + (swayY >> 16) - Data_081994f0[work->shake];
+          ((BlitFunc)blit[0])(dest, &work->frames[n * 288], x - 6, y - 12, 12, 24);
         }
       }
     }
@@ -1085,10 +1098,13 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     {
       s32 *shake;
       s32 v;
+      struct BgScroll *bg;
+      s32 *params;
 
       shake = &work->shake;
+      bg = gBgScroll;
       v = Data_081994f0[*shake];
-      gBgScroll[1].y = v + 32;
+      bg[1].y = v + 32;
       gCameraSceneParameters[4] = 120 - v;
       if (*shake > 0)
         *shake -= 1;
@@ -1137,15 +1153,14 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     if (frame == 0) {
       s32 z;
 
-      z = 0;
-      for (i = 0; i != 16; i++) {
+      for (i = 0, z = 0; i != 16; i++, z -= 0x100) {
         Particle *p;
 
         p = &work->particles[i];
         p->timer = 0;
         Random16();
         p->ay = 0;
-        p->z = z - p->ay * 40 - 0x800;
+        p->z = z - *(vs32 *)&p->ay * 40 - 0x800;
         p->vx = -Trig_Cos(p->z) * 8;
         p->vy = -Trig_Sin(p->z) * 8;
         p->x = ((Random16() % 80 + 80) << 16) - p->vx * 24;
@@ -1153,7 +1168,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         work->sprites[i]->rotation = p->z;
         work->sprites[i]->unk16 = 0;
         work->sprites[i]->unk17 = 8;
-        z -= 0x100;
       }
       for (i = 0; i != 512; i++)
         PARTICLES[i].timer = -1;
@@ -1196,7 +1210,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         } else {
           Particle *q;
 
-          q = &PARTICLES[256] + i * 16 + (frame - Data_081995cc[i]) % 16;
+          { s32 m = (frame - Data_081995cc[i]) % 16; q = &PARTICLES[(i << 4) + m + 256]; }
           q->x = p->x / 2;
           q->y = p->y - 0x100000;
           q->vx = 0;
@@ -1249,4 +1263,5 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   HeapSlot_Release(188);
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();
+  }
 }

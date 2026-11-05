@@ -43,7 +43,7 @@ void Func_02000848(void) {
   s32 item;
   s32 redraw;
   s32 entryCount;
-  u8 step;
+  s8 step;
 
   entryCount = ITEM_COUNT;
   step = 0;
@@ -90,7 +90,7 @@ void Func_02000848(void) {
       Func_02000e78(111);
     }
     if (gInput.repeat & 0x40) {
-      step = 255;
+      step = -1;
       item--;
       redraw = 1;
       Func_02000e78(111);
@@ -102,7 +102,7 @@ void Func_02000848(void) {
       Func_02000e78(111);
     }
     if (gInput.repeat & 0x20) {
-      step = 255;
+      step = -1;
       item -= 10;
       redraw = 1;
       Func_02000e78(111);
@@ -114,18 +114,18 @@ void Func_02000848(void) {
       Func_02000e78(111);
     }
     if (gInput.repeat & 0x200) {
-      step = 255;
+      step = -1;
       item -= 30;
       redraw = 1;
       Func_02000e78(111);
     }
-    if ((s8)step == -1) {
+    if (step == -1) {
       for (item = (item + ITEM_COUNT) % entryCount;
            Func_02000d48(item & 0x1ff)->icon == 0;
            item = (item + ITEM_COUNT - 1) % entryCount)
         ;
     }
-    if ((s8)step == 1) {
+    if (step == 1) {
       for (item = (item + ITEM_COUNT) % entryCount;
            Func_02000d48(item & 0x1ff)->icon == 0;
            item = (item + ITEM_COUNT + 1) % entryCount)

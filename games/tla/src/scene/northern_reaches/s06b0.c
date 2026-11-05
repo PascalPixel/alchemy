@@ -1,7 +1,3 @@
-// Draft, differ 82 (tla-en, 2026-11-05). Func_020006b0 of overlay 6a7.
-// Four barriers gone (a rise from 30), the sheet loop a plain for, the tile
-// argument inline. Left: particle r6, sprite r7 here, natively the reverse,
-// and the frame 24 against 28.
 #include "types.h"
 #include "system/dma.h"
 #include "call.h"
@@ -56,11 +52,6 @@ struct Spark6a7 {
   s32 timer;
 };
 
-union SparkView {
-  s32 s;
-  u32 u;
-};
-
 struct Work6a7 {
   u8 sheet[0x1000];
   struct Sprite6a7 sprites[54];
@@ -89,8 +80,8 @@ s32 Resource_ResetEntry(u32 slot);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void wait(s32 frames);
 extern const u16 Field_Palette685[];
-extern char ResourceId_Data1F2;
-extern char ResourceId_Data1E8;
+extern char ResourceId_FieldEffectIceShard;
+extern char ResourceId_FieldEffectExplosion;
 
 void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
   struct Work6a7 *work;
@@ -100,41 +91,48 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
   struct Spark6a7 *sparks;
   struct Spark6a7 *spark;
   s32 *timer;
+  // Unused: gives the stack frame its 4 bytes.
+  u8 frameSlot[4];
   void *sheet;
-  s32 i, frame, column, slot, entry, tiles, flying, sparkTiles;
+  s32 i, frame, column, zero, entry, sparkEntry, tiles, flying, sparkTiles;
 
   work = HeapSlot_AllocFar(220, 0x1e58);
   flying = 0;
-  Func_020009f0(Resource_GetTableEntry((s32)&ResourceId_Data1F2), work);
+  Func_020009f0(Resource_GetTableEntry((s32)&ResourceId_FieldEffectIceShard),
+                work);
   entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, 0x500, work);
+  i = 0;
   particle = work->particles;
   sprite = work->sprites;
-  for (i = 0; i <= 53; i++) {
-  Func_02000b40(sprite, 0, 0, 0x40000000, (i & 3) * 8 + tiles);
-  slot = 0;
-  sprite->unk_1e = 250;
-  sprite->oam.priority = slot;
-  sprite->oam.fullColor = 1;
-  sprite->oam.palette = slot;
-  column = i / 6;
-  particle->x = position[0] + (column << 20);
-  particle->y = position[1] - ((i % 6) << 20);
-  column -= 4;
-  sprite++;
-  particle->z = position[2];
-  particle->velocityX = (Random16Far() * 3 >> 1) * column;
-  particle->velocityY = (Random16Far() << 2) + 0x20000;
-  particle->unk_14 = slot;
-  particle->age = slot;
-  particle++;
+  for (; i <= 53; i++) {
+    Func_02000b40(sprite, 0, 0, 0x40000000, (i & 3) * 8 + tiles);
+    zero = 0;
+    sprite->unk_1e = 250;
+    sprite->oam.priority = zero;
+    sprite->oam.fullColor = 1;
+    sprite->oam.palette = zero;
+    column = i / 6;
+    particle->x = position[0] + (column << 20);
+    particle->y = position[1] - ((i % 6) << 20);
+    column -= 4;
+    sprite++;
+    particle->z = position[2];
+    particle->velocityX = (Random16Far() * 3 >> 1) * column;
+    particle->velocityY = (Random16Far() << 2) + 0x20000;
+    particle->unk_14 = zero;
+    particle->age = zero;
+    particle++;
   }
   sparks = Heap_AllocEwram(0x600);
+  /* FAKEMATCH(temporary): the size held in the local that then takes the
+   * buffer; as Heap_Alloc(0x1000), 19 of 323 instructions differ in tbs-en. */
   sheet = (void *)0x1000;
   sheet = Heap_Alloc((s32)sheet);
-  Func_020009f0(Resource_GetTableEntry((s32)&ResourceId_Data1E8), sheet);
-  slot = Resource_FindFreeEntry();
-  sparkTiles = VramCache_Load(slot, 0x400, sheet);
+  Func_020009f0(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
+                sheet);
+  sparkEntry = Resource_FindFreeEntry();
+  sparkTiles = VramCache_Load(sparkEntry, 0x400, sheet);
   Heap_Release(sheet);
   timer = &sparks->timer;
   for (i = 95; i >= 0; i--) {
@@ -176,7 +174,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
     }
     spark = sparks;
     do {
-      if (((union SparkView *)&spark->timer)->s == 0) {
+      if (spark->timer == 0) {
         spark->oam.words.first = 0x40000000;
         spark->oam.words.second = 0;
         spark->oam.oam.x = (Random16Far() << 7 >> 16) + 52;
@@ -196,7 +194,7 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
     } while ((s32)spark <= (s32)&sparks[95]);
     wait(1);
   }
-  Resource_ResetEntry(slot);
+  Resource_ResetEntry(sparkEntry);
   Heap_Release(sparks);
   FieldEvent_Wait(40);
   Func_02000a50(0, 0, 0);

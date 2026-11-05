@@ -508,7 +508,7 @@ Resource_DirectoryTable:
 	resource ColouredOrbs, FieldEffect_ColouredOrbs
 	resource FallingRock, FieldEffect_FallingRock
 	resource WaterSplash, FieldEffect_WaterSplash
-	resource , FieldEffect_IceShard
+	resource FieldEffectIceShard, FieldEffect_IceShard
 	resource , FieldEffect_WhiteSparkle
 	resource , FieldEffect_Runes
 	resource , FieldEffect_Pebbles

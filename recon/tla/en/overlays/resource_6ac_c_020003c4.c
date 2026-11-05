@@ -10,11 +10,11 @@
 #include "io_write_queue.h"
 #include "flag_call.h"
 
-struct MarsLighthouseRoomMWork {
+struct Overlay6acEventWork {
   u8 unk000[0x166];
   s16 unk166;
   u8 unk168[0xb3c];
-  s8 unkca4;
+  u8 unkca4;
 };
 
 extern s32 gData_02003704;
@@ -24,10 +24,10 @@ extern u16 Data_02003a1c[];
 extern const u16 Data_0200ba70[];
 
 void Func_020003c4(void) {
-  struct MarsLighthouseRoomMWork *work = Ram_HeapSlots->eventWork;
-  s32 busy;
+  struct Overlay6acEventWork *work = Ram_HeapSlots->eventWork;
   s32 base;
   s32 i;
+  s8 busy;
 
   if (work->unk166 != 0)
     return;
@@ -38,7 +38,7 @@ void Func_020003c4(void) {
     Iwram_CopyWords(gData_02003a5c, (void *)0x05000040, 32);
     Iwram_CopyWords(Data_020039dc, (void *)0x05000100, 64);
     Iwram_CopyWords(Data_02003a1c, Data_020039dc, 64);
-    gData_02003704 = busy;
+    gData_02003704 = 0;
   }
   base = gData_02003704 / 8 % 6;
   for (i = 0; i <= 5; i++) {

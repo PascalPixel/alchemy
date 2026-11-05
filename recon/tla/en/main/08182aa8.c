@@ -284,7 +284,16 @@ void Heap_Release(void *buffer);
   do {                                                                         \
     s32 n_ = (p)->z;                                                           \
                                                                                \
-    BLIT_CELL(0x4800, n_, HALF_HI((p)->x), HALF_HI((p)->y));                   \
+    {                                                                          \
+      u8 *src_ = work->sheet + 0x4800 + Data_081996ca[n_];                     \
+      s32 x0_ = HALF_HI((p)->x);                                               \
+      u8 w_ = Data_081996ac[n_];                                               \
+      s32 x_ = x0_ - (w_ >> 1);                                                \
+      s32 y_ = HALF_HI((p)->y);                                                \
+      u8 h_ = Data_081996bb[n_];                                               \
+                                                                               \
+      blit[0](canvas, src_, x_, y_ - (h_ >> 1), w_, h_);                       \
+    }                                                                          \
     BattleEffectKernels_IntegrateVector2(p, 63, -0x4000);                      \
     if ((p)->y < -(Data_081996bb[n_] << 16)) {                                 \
       (p)->variant = -1;                                                       \

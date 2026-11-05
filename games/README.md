@@ -1,9 +1,10 @@
 # Introduction
 
-Alchemy rebuilds the Game Boy Advance games Golden Sun: The Broken Seal and
-Golden Sun: The Lost Age byte for byte from readable C, assembly and editable
-pictures, music and text, in all six languages they were released in:
-Japanese, English, German, Spanish, French and Italian. Every build is
+Alchemy is a [matching decompilation](tbs/glossary.md#matching-decompilation)
+of the Game Boy Advance games Golden Sun: The Broken Seal and Golden Sun: The
+Lost Age: readable code, images, music and text that build the same ROMs as the
+originals, byte for byte, in all six languages they were released in: Japanese,
+English, German, Spanish, French and Italian. Every build is
 checked against the original cartridges' hashes, bugs included, so the source
 is the game as it shipped. The Broken Seal is fully rebuilt, and these pages
 are written from its source; The Lost Age is still being rebuilt.

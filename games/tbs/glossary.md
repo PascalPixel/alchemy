@@ -98,8 +98,8 @@ Evidence: Camelot: the game's text.
 
 ### Matching decompilation
 
-Alchemy is C and assembly written by hand that compiles back into exactly the
-bytes on the cartridges, checked against `rom.sha1`, so the source sometimes
+Alchemy is C and assembly written and matched until it compiles back into
+exactly the bytes on the cartridges, checked against `rom.sha1`, so the source sometimes
 keeps an unusual form where plainer C would behave the same
 ([Introduction](../README.md)).
 

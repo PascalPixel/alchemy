@@ -259,6 +259,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   s32 spin;
   s32 spread;
   s32 grow;
+  s32 spin2;
   s32 petals; // the block's address as a number, see the header
   s32 i;
   s32 j;
@@ -526,6 +527,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->x[i] = 0xf00000;
           w->y[i] = 0x300000;
         } else if (frame <= 47) {
+          spin2 = w->y[i];
           w->x[i] += -0x30000;
           w->y[i] += 0x18000;
         } else if (frame <= 79) {

@@ -1637,11 +1637,10 @@ dead = i / 3;
         s32 a = i * 384;
         s32 sx = Trig_Sin(a) * (t << 1);
         s32 sy = Trig_Cos(a) * t;
-        s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
-        s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT);
+        s32 px = (Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT)) >> 16;
+        s32 py = (Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT)) >> 16;
 
-        ((DrawRectangle)draw[0])(canvas, work->sheet + tile, (px >> 16) + 101, (py >> 16) + 26,
-                6, 12);
+        ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px + 101, py + 26, 6, 12);
       }
     }
     if ((u32)(frame - 783) <= 46) {
@@ -1654,11 +1653,10 @@ dead = i / 3;
         s32 a = i * 384;
         s32 sx = Trig_Sin(a) * (t >> 1);
         s32 sy = Trig_Cos(a) * (t << 1);
-        s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
-        s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT);
+        s32 px = (Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT)) >> 16;
+        s32 py = (Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT)) >> 16;
 
-        ((DrawRectangle)draw[0])(canvas, work->sheet + tile, (px >> 16) + 93, (py >> 16) + 32, 6,
-                12);
+        ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px + 93, py + 32, 6, 12);
       }
     }
     if (frame > 758) {

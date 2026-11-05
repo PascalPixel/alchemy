@@ -1,7 +1,7 @@
 // Draft, differ 14 of 150 (tla-en, 2026-11-05). Each of the 14 colours of BG palette 3
-// // steps one unit per channel toward gData_020026c0, every 10 frames, until none changes:
-// // the fade written as Func_02001108 writes it. Left: palette and table swap r4 and r3 on
-// // their way to r8 and r11, and one add's place.
+// steps one unit per channel toward gData_020026c0, every 10 frames, until none changes:
+// the fade written as Func_02001108 writes it. Left: palette and table swap r4 and r3 on
+// their way to r8 and r11, and one add's place.
 #include "types.h"
 #include "call.h"
 #include "system/io_reg.h"

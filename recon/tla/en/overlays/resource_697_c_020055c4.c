@@ -57,6 +57,7 @@ void Func_020055c4(s32 a, s32 b) {
   struct TrialRoadLink *link = HeapSlot_AllocEwram(236, 0x3934);
   void *buffer = Heap_AllocEwram(576);
   s32 zero;
+  s32 owner;
   u16 *unkda;
   u16 *unke0;
   s32 *height;
@@ -67,10 +68,11 @@ void Func_020055c4(s32 a, s32 b) {
   link->b = b;
   height = &link->height;
   unkf0 = &link->unkf0;
-  unke0 = &link->unke0;
+  owner = gMainRoutineWork.currentOwner;
   unkda = &link->unkda;
+  unke0 = &link->unke0;
   vramEntry = &link->vramEntry;
-  if (a == gMainRoutineWork.currentOwner) {
+  if (a == owner) {
     *height = 0xa00000;
     *unkf0 = 0xf9a00000;
   } else {

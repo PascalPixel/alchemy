@@ -1,4 +1,4 @@
-// Under -Os, 5 November: differ 5 of 2142 (tla-en); older figures below predate it.
+// Repaired 5 November (a second copy of call.h's wrappers stopped it compiling): differ 3 of 2142 (tla-en); older figures below predate it.
 // Measured 5 November (-Os), differ 5 of 2142. The shared 1 is settled: a local
 // one set at the first bit set, with the middle sets through a byte local and the
 // last as one |= *flags. One store through struct SparkRecord gives the stall the
@@ -86,26 +86,6 @@ void Func_02002a5c();
 void Import_SoundPlay();
 extern u8 MsgThereTheyAre[];
 void VenusLighthouseEntrance_UpdateSparkTrail(void);
-
-static __inline__ void Call1(void (*f)(), s32 a0) { f(a0); }
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0) { return f(a0); }
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1) { f(a0, a1); }
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1) { return f(a0, a1); }
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2) {
-  f(a0, a1, a2);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2) {
-  return f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3) {
-  f(a0, a1, a2, a3);
-}
 
 struct SparkRecord {
   u8 unk00[100];

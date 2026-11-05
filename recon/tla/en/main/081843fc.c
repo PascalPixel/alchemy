@@ -1791,7 +1791,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                   break;
                 }
                 j = 0;
-                q = &debris[(i & 7) * 12];
+                q = (struct EffectStep *)((i & 7) * 336 + (s32)debris);
                 for (; j != 12; j++, q++) {
                   s32 angle;
                   s32 speed;

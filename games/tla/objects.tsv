@@ -3632,33 +3632,24 @@ main	rom_main_09	recon/tla/de/rom	.rom.00175f74	de
 main	rom_main_09	recon/tla/raw/08175f74	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.00175f74	ja
 main	rom_main_09	games/tla/src/battle_effect/strip_quads	.text
-main	rom_main_09	games/tla/src/battle_effect/f178710	.text	it
-main	rom_main_09	games/tla/src/battle_effect/f178ee4	.text	it
+main	rom_main_09	games/tla/src/battle_effect/f178710	.text	en de es fr it ja
+main	rom_main_09	games/tla/src/battle_effect/f178ee4	.text	en de es fr it ja
 main	rom_main_09	recon/tla/it/rom	.rom.00179394	it
 main	rom_main_09	games/tla/src/battle_effect/f179994	.text	it
 main	rom_main_09	games/tla/src/battle_effect/f179e6c	.text	it
 main	rom_main_09	recon/tla/it/rom	.rom.00179f16	it
-main	rom_main_09	games/tla/src/battle_effect/f178710	.text	fr
-main	rom_main_09	games/tla/src/battle_effect/f178ee4	.text	fr
 main	rom_main_09	recon/tla/fr/rom	.rom.00179394	fr
 main	rom_main_09	games/tla/src/battle_effect/f179994	.text	fr
 main	rom_main_09	games/tla/src/battle_effect/f179e6c	.text	fr
 main	rom_main_09	recon/tla/fr/rom	.rom.00179f16	fr
-main	rom_main_09	games/tla/src/battle_effect/f178710	.text	es
-main	rom_main_09	games/tla/src/battle_effect/f178ee4	.text	es
 main	rom_main_09	recon/tla/es/rom	.rom.00179394	es
 main	rom_main_09	games/tla/src/battle_effect/f179994	.text	es
 main	rom_main_09	games/tla/src/battle_effect/f179e6c	.text	es
 main	rom_main_09	recon/tla/es/rom	.rom.00179f16	es
-main	rom_main_09	games/tla/src/battle_effect/f178710	.text	de
-main	rom_main_09	games/tla/src/battle_effect/f178ee4	.text	de
 main	rom_main_09	recon/tla/de/rom	.rom.00179394	de
 main	rom_main_09	games/tla/src/battle_effect/f179994	.text	de
 main	rom_main_09	games/tla/src/battle_effect/f179e6c	.text	de
 main	rom_main_09	recon/tla/de/rom	.rom.00179f16	de
-main	rom_main_09	games/tla/src/battle_effect/f178710	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.00178710	ja
-main	rom_main_09	games/tla/src/battle_effect/f178ee4	.text	en ja
 main	rom_main_09	recon/tla/raw/08179394	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.00179398	ja
 main	rom_main_09	games/tla/src/battle_effect/f179994	.text	en ja

@@ -1,3 +1,4 @@
+#include "edition.h"
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -87,6 +88,12 @@ void Transform_Push(void);
 void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define MOTION_PERCENT 300
+#else
+#define MOTION_PERCENT 200
+#endif
+
 #define SLOT_BLITTER 104 // unk64[1]
 
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
@@ -229,7 +236,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
         } else {
           Func_081180e8(144);
           BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
-                                        0x70000, 200);
+                                        0x70000, MOTION_PERCENT);
         }
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       }

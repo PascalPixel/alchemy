@@ -1617,13 +1617,6 @@ Func_08172b00:
 	.thumb_func
 BattleEffect_RunCharon:
 	.incbin "baserom.gba", 0x00175f74, 0x0000270c
-	.section .rom.00178710, "ax"
-	.balign 4
-	.global BattleEffect_RunRisingDragon
-	.type BattleEffect_RunRisingDragon, %function
-	.thumb_func
-BattleEffect_RunRisingDragon:
-	.incbin "baserom.gba", 0x00178710, 0x000007d8
 	.section .rom.00179398, "ax"
 	.global BattleEffect_RunRagingHeat
 	.type BattleEffect_RunRagingHeat, %function

@@ -1,3 +1,4 @@
+// Draft, differ 56 of 193 (tla-en, 2026-11-05): the dead header read is kept in a volatile local (untagged yet), which restores the frame of 20. Left: the first test's tails cross-jump into the loop's end tests here; the native's end test loads 0x4000 from the pool, so it stays apart. Older notes follow.
 // Draft, differ 68 of 193: places the scene's markers from its Func_080ceba8
 // rows (a type, an event id, a flag and a pad): for each of the first 16 rows
 // whose flag is clear and whose event has not run, a marker object goes at its
@@ -36,6 +37,7 @@ void Func_080cf554(void) {
   s32 originX = origin[0] & 0xffff0000;
   s32 originZ = origin[1] & 0xffff0000;
   u8 result[12];
+  volatile s32 headerWord;
   struct Actor *object;
   s32 type;
   s32 id;
@@ -47,10 +49,11 @@ void Func_080cf554(void) {
   s32 dx;
   s32 dz;
 
+  headerWord = (*(s32 **)map)[1];
   if (entry == NULL)
     return;
-  type = *entry++;
   i = 0;
+  type = *entry++;
   if (type == 0 || (type & 0x4000))
     return;
   do {

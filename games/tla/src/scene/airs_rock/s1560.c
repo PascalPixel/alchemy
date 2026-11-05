@@ -1,26 +1,3 @@
-// Under -Os, 5 November: differ 6 of 377 (tla-en); older figures below predate it.
-// Draft, differ 69 of 377, skeleton gap 25 (tla-en, 2026-11-01)
-// The leader rides the object it stands on (its watchedObject) in Air's Rock:
-// while that object's byte 0x63 is set the leader is carried up on it, rising
-// faster each frame and spinning and flickering by the frame count (cue 137 at
-// the start, 0x120 at the end). Facing up (0xc000), the leader then waits up to
-// 60 frames for up, right or left toward a cell Func_02000348 doesn't block,
-// else takes the first free one of up, right and left, and jumps there (cue
-// 152); facing any other way it drops off in front while a dust object
-// (Func_02003c40) falls to the ground. Flag 0x250 is set throughout.
-// Left: GCSE's PRE and then loop.c move leader + 35 out of the rising loop into
-// r9, where the native builds it on each pass in r1 and again after the cue;
-// that one step causes the 8-byte frame (a spill of r1 around wait), the extra
-// branch after the loop and most of the gap. No spelling of the xor, no bit
-// temporary and no move of the priority pointer changes it, and a goto loop
-// does not stop PRE and lets combine turn the 0xbffff compare into a shifted
-// 0xc0000, so the rising loop stays a while. The other differences are two pool
-// loads scheduled one slot off (0xbffff, and 0xfff00000 in both fallbacks).
-// Forms that matter: the waiting loop is built from a label because loop.c
-// hoists gInput out of a do loop; facing is a u16 local so the else arm rereads
-// the angle and compares in full width; still is the zero the native keeps in
-// r6 across the calls; leader->angle = dz keeps the order of the two offsets;
-// Call4 keeps the three -1s in their own registers.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -53,7 +30,7 @@ void Func_02001560(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *ride = leader->watchedObject;
   struct Actor *rider, *dust;
-  u8 *riding, *motion, *priority;
+  u8 *riding, *motion;
   s32 rise, dx, dz, moved, i, height;
   s32 angle;
   u16 facing;
@@ -80,12 +57,11 @@ void Func_02001560(void) {
   }
   Func_02003cd8(0x120);
   facing = ride->angle;
-  priority = &leader->priorityFlags;
   if (facing == 0xc000) {
     rider = ride->watchedObject;
     dx = 0;
     dz = 0;
-    *priority = 4;
+    leader->priorityFlags = 4;
     leader->x = (((leader->x >> 19) & ~1) + 1) << 19;
     i = 0;
     leader->y = (((ride->y >> 19) & ~1) + 3) << 19;
@@ -144,7 +120,7 @@ void Func_02001560(void) {
     leader->acceleration = 0x8000;
     leader->velocityY = 0x40000;
     *motion = 2;
-    *priority = 1;
+    leader->priorityFlags = 1;
     leader->terrainId = ((u8 *)rider)[98];
     Func_02003b58(leader, leader->x + dx, leader->y, leader->z + dz);
     OverlayObject_WaitUntilIdle(leader);
@@ -158,7 +134,7 @@ void Func_02001560(void) {
     still = 0;
     Actor_SetSingleChildFlags(leader, 1);
     leader->velocityY = 0x60000;
-    *priority = 1;
+    leader->priorityFlags = 1;
     *motion = 3;
     Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
     dust = Func_02003c40();

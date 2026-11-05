@@ -1,12 +1,5 @@
-// Under -Os, 5 November: differ 20 of 169 (tla-en); older figures below predate it.
-// Draft, differ 63 of 169 (was 81): when actor `id` stands at x 76 and actor
-// 15 has reached x 76 too, inside an event: the actor rocks over for 18
-// frames, is thrown down to (1193, 530) with the screen shaking (cues 188 and
-// 141), lands in a cloud (type 276, Func_020001ec), plays cue 154 and mode 3;
-// actor 15 is made to stand in front and flag 0x884 is set. The calls whose
-// constants the native builds afresh go through CallN. Left: the native keeps
-// the sprite's rotation address and 0xcccc in high registers, reuses the zero
-// in r5 for the cleared update and orders the options' stores otherwise.
+// Draft, differ 4 of 169 (tla-en, 5 November), no device: when actor id stands at x 76 and actor 15 has reached x 76 too, the actor rocks over and is thrown down.
+// Left: the cleared update's store (r5 is 0), ahead of the options' first store in the native, among the arguments here.
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
@@ -37,6 +30,7 @@ void GameFlag_SetBit(s32 flag);
 
 void Func_020003f8(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
+  s32 unused[3];
   struct EffectOptions options;
   struct FieldSprite *sprite;
   u32 i;
@@ -52,7 +46,11 @@ void Func_020003f8(s32 unused, s32 id) {
     for (i = 0; i <= 17; i++) {
       wait(1);
       sprite = actor->animation;
-      sprite->rotation += -256;
+      {
+        s32 value = sprite->rotation;
+
+        sprite->rotation = value - 256;
+      }
       actor->x -= Math_Cosine(((struct FieldSprite *)actor->animation)->rotation) / 2;
       actor->targetX = 0x80000000;
     }
@@ -65,12 +63,12 @@ void Func_020003f8(s32 unused, s32 id) {
     Actor_WaitForMoveById(id);
     Func_020003dc(actor, 0);
     Func_0200131c(188);
-    Func_020011f4(0x50000, 0x50000, 0x10000);
+    Call3((void (*)())Func_020011f4, 0x50000, 0x50000, 0x10000);
     Func_0200131c(141);
     Call3((void (*)())Func_020011f4, -1, -1, 0xe666);
     ((struct FieldSprite *)actor->animation)->rotation = 0x1000;
-    options.type = 276;
     actor->update = 0;
+    options.type = 276;
     options.startScaleX = 0x8000;
     options.targetScaleX = 0x18000;
     options.targetScaleY = 0x13333;

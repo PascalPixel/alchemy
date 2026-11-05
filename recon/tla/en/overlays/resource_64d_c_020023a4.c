@@ -1,15 +1,4 @@
-// Draft, differ 20 of 215 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 20 of 215 (tla-en); older figures below predate it.
-// Draft, differ 50 of 215 (was 94): the Venus Lighthouse entrance glow:
-// takes heap slot 220, loads gField_Tiles64D's tiles, sets up its sixteen
-// sprites and effect 290 over object id, then runs Func_02001fd0 until
-// stage 999. The wait for stage 999 is a goto loop (the native rebuilds the
-// stage's address and 999 in each pass), and the object's angle is a
-// 16-bit bitfield of its animation, so 0x4000 is built with movs rather
-// than loaded as a halfword constant. Left: register choice in the sprite
-// loop's bitfield stores (r1 and r2 swapped) and the order of three setup
-// loads. Tried: statement moves and four permuter minutes (48 by its count,
-// no closer form).
+// Draft, differ 4 of 215 (tla-en, 5 November), no device: two ties. movs r3, #0 ahead of adds r2, #91 at the first store, and the pool load of -0xc0000 ahead of the read of x.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -106,13 +95,14 @@ void Func_020023a4(s32 id) {
   work->tileTop = tile + 32;
   state = work->states;
   sprite = work->sprites;
-  for (i = 15; i >= 0; i--) {
+  for (i = 15; i >= 0;) {
     Func_02002a0c(sprite, 8, 8, 0x40000000, tile);
     sprite->unk1e = Func_02002a2c(object) - 2;
     sprite->priority = Func_02002a24(object);
-    state->frame = -1;
     sprite->fullColor = 1;
     sprite->palette = 0;
+    state->frame = -1;
+    i--;
     sprite++;
     state++;
   }

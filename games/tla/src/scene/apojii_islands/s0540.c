@@ -1,11 +1,3 @@
-// Draft, differ 8 of 152 (tla-en, 2026-11-05).
-// Draft, differ 41 of 152 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 41 (tla-en); notes below may predate it.
-// Draft, differ 43 of 145: a palette cycle for two 16-colour palettes (from
-// 0x05000060 and 0x050001a0): unless the event work is busy or its byte
-// 0xca4 is set, saves both palettes and working copies on the first frame,
-// then every eight frames rotates their last four colours one place and
-// queues both copies' transfer for the next frame. Left: the native keeps the busy byte through a sign-extending load in r8 and its first exit test uses r5 for the zero; the rotation loop is close.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -26,7 +18,7 @@ void Func_02000540(void) {
   if (busy != 0)
     return;
   if (gData_020024c8 == -1) {
-    Iwram_CopyWords(Data_020029d8, (void *)0x05000060, 32);
+    Call3((void (*)())Iwram_CopyWords, (s32)Data_020029d8, 0x05000060, 32);
     Iwram_CopyWords(Data_020029f8, Data_020029d8, 32);
     Iwram_CopyWords(Data_02002a18, (void *)0x050001a0, 32);
     Iwram_CopyWords(Data_02002a38, Data_02002a18, 32);
@@ -34,8 +26,13 @@ void Func_02000540(void) {
   }
   phase = gData_020024c8 / 8 % 4;
   for (k = 0; k <= 3; k++) {
-    j = (phase + k) % 4;
-    Data_020029f8[12 + j] = Data_020029d8[12 + k];
+    /* FAKEMATCH(one-pass): the phase and the first colour in a once-only block,
+     * whose end holds the order around it; as plain statements, 6 of 152
+     * instructions differ in tla-en. */
+    do {
+      j = (phase + k) % 4;
+      Data_020029f8[12 + j] = Data_020029d8[12 + k];
+    } while (0);
     Data_02002a38[12 + j] = Data_02002a18[12 + k];
   }
   IO_WRITE_QUEUE_PUSH(0x05000060, (u32)Data_020029f8, 0x84000008);

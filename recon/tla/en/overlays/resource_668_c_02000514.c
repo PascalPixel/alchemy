@@ -1,81 +1,121 @@
-// Draft, differ 21 of 198 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 29 of 198 (tla-en); older figures below predate it.
-// Draft, differ 77 of 198: a push in Eastern Alhafra: while object 16 stands
-// unpushed (flag 0x8a4 clear) its cells are blocked; a measured push
-// (Func_02004240) is carried out (Func_020044c4) at once unless flag 0x8a4
-// is set and the leader faces other than left; otherwise, inside an event,
-// flag 0x8a6 is set, the camera moves, the push is carried out, object 15's
-// six cells are cleared and it falls (up to 60 frames) into place
-// (Func_02000fa4, cue 240, mode 8) before the camera follows the leader
-// again. Left: the native keeps object 16 in r10 and the address of the push state's stacked half in r8, and builds 0xc000 in r2; the falling loop and the six cell clears are close.
+// Draft, differ 2 of 198 (tla-en, 5 November), no device: one tie, the door's wait loop: movs r0, #1 ahead of adds r5, #1 in the native.
+#define OWN_Actor_SetSingleChildFlags
+#include "battle.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "lib.h"
+#include "menu.h"
+#include "sound.h"
+#include "system.h"
 #include "types.h"
-#include "call.h"
-#include "actor.h"
+#include "scene_tables.h"
 #include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "event_work.h"
+#include "call.h"
+#include "text/msg_ids.h"
 
-struct PushState {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 kind;
-  s32 number;
-  s32 unk14;
+struct DoorPlan {
+  s32 value[6];
 };
 
-struct Actor *Actor_GetById(u32 id);
-s32 GameFlag_Test(s32 flag);
-void GameFlag_SetBit(s32 flag);
-void Func_02004c7c(s32 x, s32 z, s32 layer, s32 value);
-s32 Func_02004240(struct PushState *push);
-void Func_020044c4(struct PushState push);
-void Func_02004a94(void);
-void Func_02004a9c(void);
-void Func_02004be4(s32 skip);
-void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Actor_SetModeById(u32 id, s32 mode);
-void Actor_OffsetPositionAndResetMotion(u32 id, s32 dx, s32 dz);
-void FieldEvent_Wait(s32 frames);
-void wait(s32 frames);
-void Func_02000fa4(void);
-void Func_02004c9c(s32 cue);
-void Camera_FollowActor(u32 id, s32 mode);
+extern u8 gData_02004d0c[];
+extern u8 gData_02004dbc[];
+extern u8 gData_02004fe4[];
+extern u8 gData_02005290[];
 
+s32 GameFlag_Test();
+void GameFlag_SetBit();
+struct Actor *Actor_GetById();
+s32 Actor_SetSingleChildFlags();
+void Actor_Stop();
+void Actor_OffsetPositionAndResetMotion();
+void Actor_SetAngleToward();
+void Actor_SetSpeedParameters();
+void Actor_ArmCallback();
+void Actor_SetPositionAndReset();
+void Actor_WaitForMoveById();
+void Motion_SetVarCbAndRefresh();
+void FieldEvent_Wait();
+s32 FieldMessage_ShowAtActor();
+s32 Event_AskYesNoWithActorAnimation();
+void Event_FinishScreenTransition();
+void Event_WaitTransitionFrames();
+void Func_02000fa4(void);
+void Func_0200112c(void);
+void Func_020017ec(void);
+void Func_02001cb0(void);
+void Func_02003f48(s32, s32, s32, s32);
+void Func_02004004(void);
+void Func_020040c0(void);
+s32 Func_02004240(struct DoorPlan *);
+void Func_020044c4(struct DoorPlan);
+void Func_02004868(void *, s32, s32);
+s32 Func_02004a0c();
+struct Actor *Func_02004a1c();
+s32 Func_02004a24();
+s32 Func_02004a34();
+s32 Func_02004a44();
+s32 Func_02004a7c();
+s32 Func_02004a84();
+void Func_02004a94();
+void Func_02004a9c();
+s32 Func_02004b04();
+s32 Func_02004b3c();
+s32 Func_02004b4c();
+s32 Func_02004b5c();
+s32 Func_02004b6c();
+s32 Func_02004bac();
+s32 Func_02004bb4();
+s32 Func_02004be4();
+s32 Func_02004bec();
+s32 Func_02004c24();
+s32 Func_02004c44();
+s32 Func_02004c4c();
+void Func_02004c9c(s32);
+s32 Func_02004c7c();
+s32 Func_02004c8c();
+
+void Camera_MoveWithinMapBounds();
 void Func_02000514(void) {
-  struct Actor *gate = Actor_GetById(15);
-  struct Actor *block = Actor_GetById(16);
-  struct PushState push;
-  u32 facing = (Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) &
-               0xc000;
+  struct Actor *door;
+  struct Actor *block;
+  struct DoorPlan plan;
+  s32 facing;
   s32 i;
 
-  if (block != 0 && !GameFlag_Test(0x8a4))
+  door = Actor_GetById(15);
+  block = Actor_GetById(16);
+  facing = (Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) & 0xc000;
+  if (block != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
     Func_02004c7c(block->x, block->z, 2, 255);
-  if (Func_02004240(&push)) {
-    if (!GameFlag_Test(0x8a4) || facing == 0xc000) {
-      Func_020044c4(push);
+  if (Func_02004240(&plan) != 0) {
+    if (Value1(GameFlag_Test, 0x8a4) == 0 || facing == 0xc000) {
+      Func_020044c4(plan);
     } else {
       GameFlag_SetBit(0x8a6);
       Func_02004a94();
       Func_02004be4(0);
-      Camera_MoveWithinMapBounds(0x1500000, -1, 0x2300000, 1);
-      Func_020044c4(push);
-      Func_02004c7c(gate->x - 0x180000, gate->z, 0, 0);
-      ((s32 (*)())Func_02004c7c)(gate->x + 0x80000, gate->z, 0, 0);
-      Func_02004c7c(gate->x - 0x180000, gate->z, 2, 0);
-      Func_02004c7c(gate->x - 0x80000, gate->z, 2, 0);
-      ((s32 (*)())Func_02004c7c)(gate->x + 0x80000, gate->z, 2, 0);
-      ((s32 (*)())Func_02004c7c)(gate->x + 0x180000, gate->z, 2, 0);
+      Call4((void (*)())Camera_MoveWithinMapBounds, 0x1500000, -1, 0x2300000, 1);
+      Func_020044c4(plan);
+      Func_02004c7c(door->x - 0x180000, door->z, 0, 0);
+      Func_02004c7c(door->x + 0x80000, door->z, 0, 0);
+      Func_02004c7c(door->x - 0x180000, door->z, 2, 0);
+      Func_02004c7c(door->x - 0x80000, door->z, 2, 0);
+      Func_02004c7c(door->x + 0x80000, door->z, 2, 0);
+      Func_02004c7c(door->x + 0x180000, door->z, 2, 0);
       Actor_SetModeById(15, 3);
       Actor_OffsetPositionAndResetMotion(15, 0, 16);
       FieldEvent_Wait(20);
-      gate->gravity = 0xccc;
-      gate->motionFlags = 3;
+      door->gravity = 0xccc;
+      door->motionFlags = 3;
       i = 0;
-      while (gate->y > 0) {
-        wait(1);
-        i++;
-        if (i > 59)
-          break;
+      if (door->y > 0) {
+        do {
+          i++;
+          wait(1);
+        } while (i <= 59 && door->y > 0);
       }
       Func_02000fa4();
       Func_02004c9c(240);
@@ -85,6 +125,6 @@ void Func_02000514(void) {
       Func_02004a9c();
     }
   }
-  if (block != 0 && !GameFlag_Test(0x8a4))
+  if (block != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
     Func_02004c7c(block->x, block->z, 2, 0);
 }

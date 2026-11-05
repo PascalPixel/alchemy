@@ -2140,58 +2140,6 @@ Func_0200329c:
 .L_ja_0200b324:
 	.4byte 0x03090000
 	.endif
-	.section .text.x0200b410,"ax",%progbits
-	.global Func_02003410
-	.thumb_func
-Func_02003410:
-	push {r5, lr}
-	movs r0, #112
-	movs r1, #180
-	bl HeapSlot_AllocEwram
-	movs r5, #0
-	adds r4, r0, #0
-.L_0200b41e:
-	movs r3, #0
-	str r3, [r4]
-	strh r3, [r4, #4]
-	strh r3, [r4, #6]
-	strh r3, [r4, #8]
-	strh r3, [r4, #10]
-	movs r2, #0
-.L_0200b42c:
-	lsls r3, r2, #16
-	lsrs r3, r3, #16
-	ldr r1, .L_0200b45c
-	lsls r2, r3, #1
-	adds r2, #12
-	strh r1, [r4, r2]
-	adds r3, #1
-	movs r1, #128
-	lsls r3, r3, #16
-	lsls r1, r1, #13
-	asrs r2, r3, #16
-	cmp r3, r1
-	bne .L_0200b42c
-	movs r2, #128
-	lsls r3, r5, #16
-	lsls r2, r2, #9
-	movs r1, #128
-	adds r3, r3, r2
-	lsls r1, r1, #11
-	adds r4, #44
-	asrs r5, r3, #16
-	cmp r3, r1
-	bne .L_0200b41e
-	b .L_0200b460
-.L_0200b45c:
-	.4byte 0x00000000
-.L_0200b460:
-	adds r2, r0, #0
-	adds r2, #176
-	movs r3, #0
-	strh r3, [r2]
-	pop {r5, pc}
-	.2byte 0x0000
 	.section .text.x0200b684,"ax",%progbits
 	.balign 4
 	.global Func_02003684

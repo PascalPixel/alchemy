@@ -1,20 +1,4 @@
-// Draft, differ 8 of 150 (tla-en, 5 November 2026), from 56: the marked cell its
-// own local. Left: adds r2, r2, r3 into sl for the shape table, operands turned
-// here; the cell's strb in order.
-// Draft, differ 56 of 150 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 56 (tla-en); notes below may predate it.
-// Draft, differ 58 of 150, skeleton gap 32 (tla-en, 2026-11-01)
-// The variant of Func_020001d0 that first gathers people 8 to 10 on the leader
-// and copies person 9's look onto each pillar whose second flag is set. The
-// same function is overlay 68F's Func_020025e0 and 691's Func_020030bc.
-// Left is allocation: the listing has the terrain pointer in r7, the cells in
-// r6, the index in r8, and the cell pointer in a stack slot; here r6 goes to
-// the index, so the terrain pointer falls to a high register. Keeping a
-// separate `cell = cells + index` ties its shift temporary to the cell pointer
-// (local-alloc), which takes r6 from the cells and pushes `list` to the stack
-// (differ 90); the listing's temporary stays in r3, so its cell pointer is
-// probably not local to the block, but reusing the variable before the branch
-// ranked it too high (differ 83). A real while or for duplicates the test.
+// Draft, differ 4 of 150 (tla-en, 5 November): the shape grid in a local before the loop. One tie: the cell's strb after (ground >> 19) + 4 in the native; 655's Func_02000584 is its twin.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -40,6 +24,7 @@ void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 
 void Func_02000584(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
+  u8 *grid;
 
   Func_020014a8(8, gMainRoutineWork.currentOwner);
   Func_020014a8(9, gMainRoutineWork.currentOwner);
@@ -54,6 +39,7 @@ void Func_02000584(u16 *list) {
   Func_020014a0(9, 0, 0);
   Func_020014a0(10, 0, 0);
   wait(1);
+  grid = gMapShapeGrid;
   while (list[0] != 0xffff) {
   {
     u32 id = list[0];
@@ -62,7 +48,7 @@ void Func_02000584(u16 *list) {
     u8 *terrain = &object->terrainId;
     s32 next = flag + 1;
     struct MapCell *cells = map->layers[*terrain].cells;
-    u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+    u8 *shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
     object->unk5c[0] = 3;
     if (GameFlag_Test(next)) {

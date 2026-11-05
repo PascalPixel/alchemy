@@ -1585,8 +1585,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         struct Particle *p = &PARTICLES[96 + i];
 
         if (p->timer >= 0 && p->timer < 24) {
-          routine[0](canvas, SPRITE_BUFFER + (p->timer / 4) * 2048,
-                  (p->x >> 16) - 16, (p->y >> 16) - 32, 32, 64);
+          s32 row = (p->timer / 4) * 2048;
+          u8 *buffer = SPRITE_BUFFER;
+          s32 x = (p->x >> 16) - 16;
+
+          buffer += row;
+          routine[0](canvas, buffer, x, (p->y >> 16) - 32, 32, 64);
           BattleEffectKernels_IntegrateVector2(p, 60, -0x2000);
         }
         p->timer++;

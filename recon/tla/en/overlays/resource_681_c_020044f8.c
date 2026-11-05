@@ -85,6 +85,8 @@ typedef struct {
   Unk_Step steps[15];
 } Unk_Path;
 
+#define gPath ((Unk_Path *)(gData_020023c4 + 0x288))
+
 extern u32 gRandomState;
 extern u8 gData_020023c4[];
 s32 GameFlag_Test(s32 flag);
@@ -106,12 +108,12 @@ void Func_020044f8(s32 seed) {
   Unk_Grid *grid;
   Unk_Path *path;
   Unk_Step *steps;
-  Unk_Cell *cell;
+  register Unk_Cell *cell asm("ip");
   s32 x, y, nx, ny, step, tries, dir, i, v, next;
   u32 saved;
 
   saved = gRandomState;
-  path = (Unk_Path *)(gData_020023c4 + 0x288);
+  path = gPath;
   steps = path->steps;
   if (GameFlag_Test(0x109))
     return;
@@ -121,14 +123,14 @@ void Func_020044f8(s32 seed) {
 restart:
   grid = Heap_AllocEwram_(sizeof *grid);
   Iwram_ClearWords(grid, sizeof *grid);
-  x = GRID_WIDTH / 2;
-  y = GRID_WIDTH / 2;
   // BUG: this runs 29 times, so row 28 and column 28 lie past the 28 by 28 cells
   // and the last row's marks land after the block.
   {
     Unk_Cell *a, *b, *e;
     s32 o, t;
     b = &AT(GRID_WIDTH, 0);
+    x = GRID_WIDTH / 2;
+    y = GRID_WIDTH / 2;
     i = GRID_WIDTH;
     o = 0;
     a = grid->cells;
@@ -295,7 +297,6 @@ restart:
     steps[step].unk_0 = step;
     y = cell->unk_2;
   }
-  path = (Unk_Path *)(gData_020023c4 + 0x288);
   steps[14].unk_5 = 251;
   steps[1].unk_2 = 250;
   path->unk_0 = 1;

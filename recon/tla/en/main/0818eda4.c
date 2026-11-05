@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 8 of 895. Settled: i & 1 with a constant local at the
+// Measured 2026-11-05 (tla-en): differ 4 of 895. Settled: i & 1 with a constant local at the
 // loop's top (the 1 is rebuilt at reload and the copy of i dies in the and), j = 0 before blend.
 // Left, from the top: half's output copy after size * 2 in both spark loops (order only); the
 // vertices store before logWidth's in the first texture block (the listing's logWidth store comes
@@ -212,12 +212,17 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
  j = 0;
  blend = odd * 4;
 
+          {
+            s32 twice = size * 2;
+            s32 half = (u32)size >> 1;
+
           for (; j != 2; j++) {
             (*(DrawRectangle *)((u8 *)draw + blend))(
                 canvas, graphics + gData_08197410[size - 1],
-                HI(step->x) - ((u32)size >> 1), HI(step->y) - size, size,
-                size * 2);
+                HI(step->x) - half, HI(step->y) - size, size,
+                twice);
             BattleEffectKernels_IntegrateVector2(step, 64, 0);
+          }
           }
           step->variant++;
         }
@@ -257,12 +262,17 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
  j = 0;
  blend = odd * 4;
 
+          {
+            s32 twice = size * 2;
+            s32 half = (u32)size >> 1;
+
           for (; j != 4; j++) {
             (*(DrawRectangle *)((u8 *)draw + blend))(
                 canvas, graphics + gData_08197410[size - 1],
-                HI(step->x) - ((u32)size >> 1), HI(step->y) - size, size,
-                size * 2);
+                HI(step->x) - half, HI(step->y) - size, size,
+                twice);
             BattleEffectKernels_IntegrateVector2(step, 64, 0);
+          }
           }
           step->variant++;
         }

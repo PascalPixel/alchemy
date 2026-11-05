@@ -1548,10 +1548,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         u8 v = 64 - i * 8;
 
         for (j = 0; j != 0x800; j++) {
-          if (v < src[j])
-            out[j] = v;
+          if (v < *src)
+            *out = v;
           else
-            out[j] = src[j];
+            *out = *src;
+          out++;
+          src++;
         }
       }
     }

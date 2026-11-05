@@ -3630,20 +3630,15 @@ main	rom_main_09	recon/tla/de/rom	.rom.00179f16	de
 main	rom_main_09	recon/tla/raw/08179f18	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.00179f1a	ja
 main	rom_main_09	games/tla/src/battle_effect/actor_move_outward	.text
-main	rom_main_09	recon/tla/it/rom	.rom.0017b66c	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0017b66c	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0017b66c	es
-main	rom_main_09	recon/tla/de/rom	.rom.0017b66c	de
-main	rom_main_09	recon/tla/raw/0817b66c	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.0017b670	ja
+main	rom_main_09	games/tla/src/battle_effect/f17b66c	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/set_record_priority	.text
-main	rom_main_09	recon/tla/raw/0817b9b8	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f17b9b8	.text	en de es fr it ja
+main	rom_main_09	recon/tla/de/rom	.rom.0017bd88	de
+main	rom_main_09	recon/tla/es/rom	.rom.0017bd88	es
+main	rom_main_09	recon/tla/fr/rom	.rom.0017bd88	fr
+main	rom_main_09	recon/tla/it/rom	.rom.0017bd88	it
+main	rom_main_09	recon/tla/ja/rom	.rom.0017bd8c	ja
 main	rom_main_09	recon/tla/raw/0817bd88	.text	en
-main	rom_main_09	recon/tla/de/rom	.rom.0017b9b8	de
-main	rom_main_09	recon/tla/es/rom	.rom.0017b9b8	es
-main	rom_main_09	recon/tla/fr/rom	.rom.0017b9b8	fr
-main	rom_main_09	recon/tla/it/rom	.rom.0017b9b8	it
-main	rom_main_09	recon/tla/ja/rom	.rom.0017b9bc	ja
 main	rom_main_09	games/tla/src/battle_effect/f17c27c	.text	en de es fr it ja
 main	rom_main_09	recon/tla/raw/0817c6ac	.text	en
 main	rom_main_09	recon/tla/de/rom	.rom.0017c6ac	de

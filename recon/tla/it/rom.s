@@ -1478,20 +1478,7 @@ BattleEffect_RunRagingHeat:
 	.thumb_func
 BattleEffect_RunFlora:
 	.incbin "baserom.gba", 0x00179f18, 0x000016bc
-	.section .rom.0017b66c, "ax"
-	.balign 4
-	.global BattleEffect_RunSabreDance
-	.type BattleEffect_RunSabreDance, %function
-	.thumb_func
-BattleEffect_RunSabreDance:
-	.incbin "baserom.gba", 0x0017b66c, 0x00000304
-	.section .rom.0017b9b8, "ax"
-	.balign 4
-	.global BattleEffect_RunBackstab
-	.type BattleEffect_RunBackstab, %function
-	.thumb_func
-BattleEffect_RunBackstab:
-	.incbin "baserom.gba", 0x0017b9b8, 0x000003d0
+	.section .rom.0017bd88, "ax"
 	.global BattleEffect_RunFirePuppet
 	.type BattleEffect_RunFirePuppet, %function
 	.thumb_func

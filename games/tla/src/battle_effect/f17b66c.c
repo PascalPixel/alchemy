@@ -1,39 +1,3 @@
-// 2026-11-05: differ 8 of 326 (tla-en). The pin and the empty one-pass are
-// gone: stale, the plain store measures better. Left, sched2 only: the dagger
-// loop's preheader and a pool load against a stack reload.
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 14 of
-// 326; a greedy device search found nothing lower.
-// Draft (tla-en): listing 326 instructions, draft 326, common 318, differ 16.
-// Effect kind 76, written from the listing (☀️'s nearest shapes are
-// BattleEffect_RunUndeadSword, 0.55, and BattleEffect_RunEruption; neither is
-// a twin). The shape matches; what is left is the arm9tdmi scheduling
-// leftover.
-// In this draft: BG2PA's 0x100 pinned to r3 behind a one-pass block (as
-// s2614.c), so it loads from the pool before the register address as the
-// native does, and the frame-80 block's "drift" temporary (alchemy
-// permute's), which puts velocityX's store after velocityY's.
-// Left:
-// - the one-pass block's barrier depends on every earlier use of r10, so
-// sched2 now prefers "add r1, r10" to the resource id's pool load before
-// Resource_LoadAndDecompress (a one-pass block around or before that
-// call only moves the swap). f18284c.c's empty asm instead keeps the
-// start but counts four estimated bytes, and the halfword pool (range
-// 64) is then placed before the loop with a jump around it.
-// - frame's 0 is set between "mov r3, sp" and "adds r3, #12"; the native
-// stores &texture at sp+8 first. Through a "source" local set before the
-// loop the order is right but &texture takes r2 and the 0 r3.
-// - the frame-0 block's setup (y, i, the zero and step) is in another
-// order; the size mask's pool load comes after the stack load of
-// texture.size (the native loads the pool word first, as if the load
-// after the primitive's unk14 store waited a cycle more); the step
-// mask's pool load comes one row late.
-// The texture's size word is two byte fields written with masks: as u32
-// bitfields the compiler stores bytes (differ 57).
-// alchemy permute (22 minutes over three runs): differ 16 at best.
-// 2026-10-15 (lane N2): rewritten with the work struct, named constants
-// and comments; the same 326 instructions and differ 16.
-// Resource 0x139 (BattleEffect_CrossedDaggersSheet) needs its name in
-// gamepak/resource_directory.s when this is adopted.
 #include "battle_effect_work.h"
 #include "effect_step.h"
 #include "io_reg.h"
@@ -48,7 +12,9 @@
 // A dagger's texture: log2 of its width and height in the first word (32x32
 // here), then its pixels.
 struct DaggerTexture {
-  u32 size;
+  u32 logWidth : 8;
+  u32 logHeight : 8;
+  u32 rest : 16;
   void *pixels;
 };
 
@@ -77,15 +43,14 @@ void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
 s32 Task_Add(s32 func, s32 priority);
 s32 Task_Remove(s32 func);
 void *GetBattleObjectSlotFar(s32 id);
-void EffectPosition_ProjectBattler(
-    s32 id, struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 u32 Random16(void);
 void Render_ResetTransformState(void);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void Func_0814cd48(s32 actor, s32 palette, s32 member, s32 timer, s32 frames);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void *Heap_AllocEwram(s32 size);
 struct RenderPrimitive *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -94,7 +59,7 @@ void Func_080150e4(s32 angle);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderPrimitive *list);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Heap_Release(void *buffer);
 void Func_08158ce0(s32 x, s32 y);
 void BattleEffect_CountDownBattlerTints(void);
@@ -138,18 +103,20 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     // The first frame lines the daggers up below the canvas, each spinning
     // the other way from its neighbour.
     if (frame == 0) {
-      s32 y = 128 << 16;
+      s32 y;
+      s32 zero;
 
-      for (i = 0, dagger = work->particles; i != 32; i++, dagger++) {
+      for (i = 0, zero = 0, y = 128 << 16, dagger = work->particles; i != 32;
+           i++, dagger++) {
         dagger->x = ((Random16() & 63) + 32) << 16;
         dagger->y = y;
         dagger->z = Random16();
-        dagger->velocityX = 0;
+        dagger->velocityX = zero;
         dagger->velocityY = -((Random16() & 31) + 32) << 10;
         dagger->velocityZ = (Random16() & 0x3ff) + 0x400;
         if (i & 1)
           dagger->velocityZ = -dagger->velocityZ;
-        dagger->variant = 0;
+        dagger->variant = zero;
         y += 8 << 16;
       }
     }
@@ -176,8 +143,8 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
     vertices = Heap_AllocEwram(32);
     quad = Render_AllocateModelList(1);
     quad->unk14 = 0;
-    texture.size = (texture.size & ~0xff) | 5;
-    texture.size = (texture.size & ~0xff00) | 5 << 8;
+    texture.logWidth = 5;
+    texture.logHeight = 5;
     quad->texture = &texture;
     texture.pixels = work->sheet;
     quad->kind = 9;

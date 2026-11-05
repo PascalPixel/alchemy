@@ -127,7 +127,7 @@ body:
   }
 test:
   /* FAKEMATCH(barrier): the asm tied to heading, with an r4 clobber so PRE
-   * leaves it, loads the angle ahead of the address; as heading in the call, 2
+   * leaves it, loads the angle ahead of the address; as heading in the call, 44
    * of 246 instructions differ in tla-en. */
   asm("" : "=r"(angle) : "0"(heading) : "r4");
   step = &probe;

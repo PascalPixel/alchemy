@@ -29,9 +29,6 @@ void Func_0200073c(s32 cue);
 static inline u32 Input_PressedFenced(u32 mask) {
   u32 keys = gInput.pressed & mask;
 
-  /* FAKEMATCH(barrier): the memory clobber makes the next test load gInput's
-   * address again; as a plain test, 60 of 284 instructions differ in tla-en. */
-  __asm__ volatile("" : "+r"(keys) : : "memory");
   return keys;
 }
 

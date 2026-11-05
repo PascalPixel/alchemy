@@ -27,7 +27,7 @@ SECTIONS
         "*/games/tla/src/scene/treasure_isle/s0a5c.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0a8c.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0b3c.o"(.text)
-        "*/resource_6af_overlay.o"(.text.x02008ba0)
+        "*/games/tla/src/scene/treasure_isle/s0ba0.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0cf4.o"(.text)
         "*/games/tla/src/scene/treasure_isle/prepare.o"(.text)
         "*/games/tla/src/scene/treasure_isle/s0f4c.o"(.text)

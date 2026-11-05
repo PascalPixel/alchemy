@@ -1,11 +1,3 @@
-// Draft, differ 96 of 152: rewritten from the listing. Treasure Isle's palette
-// cycle, scheduled by Func_02000cf4: while no event runs, it saves the two
-// four-colour runs at palette entries 0x30 and 0xa0 the first time, then every
-// 8 calls rotates them by one and queues both for DMA. Left: the native keeps
-// the event work's byte (which is 0 on this path, and is stored as the reset
-// counter) in r8, loading it with ldrb and shifts, where this keeps it in r7
-// and loads it with ldrsb; that moves the counter's address and every register
-// after it, and the copy loop's index and offset trade registers.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -21,8 +13,8 @@ struct TreasureIsleEventWork {
 
 extern s32 gData_02001aa4;
 extern u16 Data_02001aa8[];
-extern u16 gData_02001ac8[];
-extern u16 Data_02001ae8[];
+extern volatile u16 gData_02001ac8[];
+extern volatile u16 Data_02001ae8[];
 extern u16 Data_02001b08[];
 
 void Func_02000ba0(void) {
@@ -38,11 +30,14 @@ void Func_02000ba0(void) {
     return;
   if (gData_02001aa4 == -1) {
     Call3((void (*)())Iwram_CopyWords, Data_02001aa8, (void *)0x05000060, 32);
-    Iwram_CopyWords(gData_02001ac8, Data_02001aa8, 32);
-    Iwram_CopyWords(Data_02001ae8, (void *)0x05000140, 32);
-    Iwram_CopyWords(Data_02001b08, Data_02001ae8, 32);
+    Iwram_CopyWords((void *)gData_02001ac8, Data_02001aa8, 32);
+    Iwram_CopyWords((void *)Data_02001ae8, (void *)0x05000140, 32);
+    Iwram_CopyWords(Data_02001b08, (void *)Data_02001ae8, 32);
     gData_02001aa4 = 0;
   }
+  /* FAKEMATCH(volatile): two of the colour arrays read and written as volatile,
+   * which keeps the second read after the first store; as plain u16, 6 of 152
+   * instructions differ in tla-en. */
   phase = gData_02001aa4 / 8 % 4;
   for (i = 0; i <= 3; i++) {
     gData_02001ac8[(phase + i) % 4 + 2] = Data_02001aa8[i + 2];

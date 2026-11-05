@@ -1,11 +1,10 @@
-// Measured 2026-11-05 (tla-en): differ 15 of 12.
-// Draft, differ 15 of 12: a track command handler that clears the track's
-// modulation and flags the pitch or volume update its target needs, as
-// ClearModM (games/tla/src/sound/driver.c) with the
-// handler's player argument. A sound-library function: the draft compiles
-// with the game profile, where the build routes the library through
-// old_agbcc. Other: the game compiler saves lr and keeps a flags load in each
-// arm; the listing (old_agbcc's shape) picks the constant, then one or.
+// Blocked, 5 November 2026: a track command handler that clears the track's
+// modulation and flags the pitch or volume update its target needs, as ClearModM
+// (games/tla/src/sound/driver.c) with the handler's player argument. It starts on
+// a halfword boundary, 2 bytes past a word, where old_agbcc and the game compiler
+// both align a function to 4, so neither route can place C there. Through the
+// sound route this C gives 14 instructions to the listing's 12; game route 15 of
+// 12.
 #include "types.h"
 #include "sound_driver.h"
 

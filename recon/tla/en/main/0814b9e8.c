@@ -1,5 +1,6 @@
-// Measured 2026-11-05 (tla-en): differ 168 of 549. Left: allocation: the frame
-// is 80 of 88 (see below).
+// Measured 2026-11-05 (tla-en): differ 178 of 549. Left: allocation: the frame
+// is 80 of 88; the listing has caller-save slots there (a pointer in r4 saved
+// at sp+8) as 0814a814 does.
 
 // Draft, differ 183 of 549, skeleton gap 31 (tla-en, 2026-11-01)
 // Func_0814b9e8, the body of three effect kinds through BattleEffect_RunBalm
@@ -227,6 +228,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     // middle while the canvas fades.
     if (effect->prelude == 1) {
       x = ((-Trig_Sin(frame << 11) * 20) >> 16) + 44;
+      /* FAKEMATCH(barrier): the empty asm gives x a reference more, which moves it in the allocators' ranking; as no asm, 179 of 549 instructions differ in tla-en. */
+      __asm__("" : "=r"(x) : "0"(x));
       y = ((Trig_Cos(frame << 11) * 4) >> 16) + anchor[1] - 24;
       if (frame > 32)
         y = y - frame * 4 + 128;
@@ -241,8 +244,6 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
         Iwram_FillWords(work->sheet, 128, 0x28282828 - frame / 2 * 0x01010101);
         i = 0;
         angle = frame << 9;
-        /* FAKEMATCH(barrier): the empty asm gives angle a reference more, which moves it in the allocators' ranking; as no asm, 179 of 549 instructions differ in tla-en. */
-        __asm__("" : : "r"(angle));
         for (; i != 16; i++) {
           lineX = ((Trig_Sin(angle) * frame) >> 16) + 64;
           lineY = ((Trig_Cos(angle) * frame) / 8 >> 16) - 16;

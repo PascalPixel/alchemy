@@ -489,8 +489,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   cell = 4;
   cellBytes = cell * cell * 2;
   for (j = 0; j != 10; j++) {
-    s32 row = j * 16;
-
+    
     for (i = 0; i != cellBytes; i++) {
       s32 value = work->buffer[gData_08197410[cell - 1] + i];
 
@@ -500,7 +499,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           value = 1;
         }
       }
-      glyphs[row * 2 + i] = value;
+      glyphs[cell * cell * j * 2 + i] = value;
     }
   }
   Resource_LoadAndDecompress((s32)&Value_000000b4, work->buffer, 0, 0);

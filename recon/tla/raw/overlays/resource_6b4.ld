@@ -15,7 +15,7 @@ SECTIONS
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/resource_6b4_overlay.o"(.text.x02008476)
         "*/games/tla/src/scene/mt_aleph_summit/s0478.o"(.text)
-        "*/resource_6b4_overlay.o"(.text.x02008564)
+        "*/games/tla/src/scene/mt_aleph_summit/s0564.o"(.text)
         "*/games/tla/src/scene/mt_aleph_summit/prepare.o"(.text)
         "*/games/tla/src/scene/mt_aleph_summit/import.o"(.text)
         "*/games/tla/src/scene/mt_aleph_summit/data.o"(.data)

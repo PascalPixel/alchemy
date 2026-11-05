@@ -1,31 +1,3 @@
-// Draft, differ 69 of 1526, skeleton gap 39 (tla-en, 2026-11-01)
-// Mt. Aleph's Golden Sun event, chosen by gMainRoutineWork.entrance: 10 leaves
-// at once, 2 and 3 play the event's two halves, and anything else waits for a
-// key. Func_02001534 is the veneer of Event_SetDestinationFar. The scene 0x136
-// argument is the unnamed scenes.s row of overlay 0x6b3, written here as
-// SceneId_Ov6b3: that row needs the name before adoption.
-//
-// Left, almost all sched2 order: the constant pushes' lsls and adds around the
-// count store, the value pushes' orrs, and argument movs. Two real gaps remain.
-// gInput.held is read twice in the last loop; the native reloads it after the
-// conditional reset, and CSE keeps the first read here. Declaring held as a
-// volatile pointer gives the reload (differ 54, gap 36) but is a new device, so
-// it is not used.
-// Allocation: the native has the heap slots pointer in r8 and block32 in sl,
-// the draft the reverse. The heap slots variable already doubles as the map
-// work pointer, as the native's r8 does.
-//
-// Measured forms to keep. Loops are goto loops: for loops or do-while lose 2
-// to 35 skeleton rows each (loop.c hoists constants the native rebuilds); only
-// the loop with step j += 0x10000 is a real for with != 4, its step after the
-// loop's continue note. scale doubles as the mode 3 zero: a separate zero local
-// has a constant REG_EQUAL note and costs allocation. The palette loop reads an
-// s32 c and shifts (u16)c, which gives ldrh, the halfword shifts and the
-// pooled mask; a u16 local sign-loads. i is r5 and j is r6 throughout.
-//
-// Tried with no gain: goto form of the last loop, held as a plain member or
-// set outside the loop, u32 value, the 0x1000 operand first, the value inline
-// in the push (worse), slots declared first, block32 read earlier.
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
@@ -95,6 +67,12 @@ extern u8 MsgGoldenSunFormation[];
 extern char SceneId_Ov64c;
 extern char SceneId_Ov6b3;
 
+static __inline__ void CopyToPalette(void *from, void *to, s32 size) {
+  /* FAKEMATCH(wrapper): the copy forwarded inline; as Call3, 4 of 1526
+   * instructions differ in tla-en. */
+  Iwram_CopyWords(from, to, size);
+}
+
 s32 Func_02000564(void) {
   u8 *block;
   void *buffer;
@@ -110,7 +88,7 @@ s32 Func_02000564(void) {
   buffer = Heap_AllocEwram(0x200);
   Func_02001454();
   Call2((void (*)())Func_02001484, gMainRoutineWork.paletteGlow[0],
-                gMainRoutineWork.paletteGlow[1]);
+        gMainRoutineWork.paletteGlow[1]);
   Call3((void (*)())Func_020014b4, 4, 0, 0);
   mode = gMainRoutineWork.entrance;
   if (mode == 10) {
@@ -118,7 +96,8 @@ s32 Func_02000564(void) {
   } else if (mode == 2) {
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x1000000, -1, 0x800000, 0);
     Call2((void (*)())Func_0200151c, 0x10000, 0x2000);
-    Call2((void (*)())Actor_SetSingleChildFlags, (s32)Value1((s32 (*)())Actor_GetById, 8), 0);
+    Call2((void (*)())Actor_SetSingleChildFlags,
+          (s32)Value1((s32 (*)())Actor_GetById, 8), 0);
     Call2((void (*)())Actor_SetModeById, 8, 12);
     Call2((void (*)())Actor_SetActionById, 8, 8);
     ((struct EventWorkView *)Ram_HeapSlots->eventWork)->unk1ac = 0;
@@ -134,49 +113,50 @@ s32 Func_02000564(void) {
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x13c0000, -1, 0x13e0000, 1);
     Func_0200152c();
     i = 0;
-    L1:
-      if (i == 3) {
-        Call2((void (*)())Func_0200151c, 0x1999, 0x333);
-        Call4((void (*)())Camera_MoveWithinMapBounds, 0x13c0000, -1, 0x12c0000, 1);
-      }
-      ACTOR(8)->z -= 0x10000;
-      Call1((void (*)())wait, 30);
-      i++;
-      if (i != 10)
-        goto L1;
+  L1:
+    if (i == 3) {
+      Call2((void (*)())Func_0200151c, 0x1999, 0x333);
+      Call4((void (*)())Camera_MoveWithinMapBounds, 0x13c0000, -1, 0x12c0000,
+            1);
+    }
+    ACTOR(8)->z -= 0x10000;
+    Call1((void (*)())wait, 30);
+    i++;
+    if (i != 10)
+      goto L1;
     Call2((void (*)())Actor_SetActionById, 8, 0);
     Call3((void (*)())Iwram_CopyWords, (s32)buffer, 0x5000008, 14);
     j = 0;
-    L2:
-      out = (u16 *)0x500000e;
-      color = out;
-      i = 0;
-      L3:
-        c = *color;
-        r = c & 31;
-        g = ((u16)c >> 5) & 31;
-        b = ((u16)c >> 10) & 31;
-        r += j;
-        g += j / 16;
-        b -= j;
-        if (r > 31)
-          r = 31;
-        if (g > 31)
-          g = 31;
-        if (b < 8)
-          b = 8;
-        if (b > 31)
-          b = 31;
-        *out = (b << 10) | (g << 5) | r;
-        color++;
-        out++;
-        i++;
-        if (i != 8)
-          goto L3;
-      Call1((void (*)())wait, 4);
-      j++;
-      if (j != 10)
-        goto L2;
+  L2:
+    out = (u16 *)0x500000e;
+    color = out;
+    i = 0;
+  L3:
+    c = *color;
+    r = c & 31;
+    g = ((u16)c >> 5) & 31;
+    b = ((u16)c >> 10) & 31;
+    r += j;
+    g += j / 16;
+    b -= j;
+    if (r > 31)
+      r = 31;
+    if (g > 31)
+      g = 31;
+    if (b < 8)
+      b = 8;
+    if (b > 31)
+      b = 31;
+    *out = (b << 10) | (g << 5) | r;
+    color++;
+    out++;
+    i++;
+    if (i != 8)
+      goto L3;
+    Call1((void (*)())wait, 4);
+    j++;
+    if (j != 10)
+      goto L2;
     Call3((void (*)())Func_0200150c, 8, 0x102, 0);
     Call1((void (*)())wait, 30);
     Call1((void (*)())Func_020014e4, MsgGoldenSunFormation);
@@ -186,26 +166,23 @@ s32 Func_02000564(void) {
     Call2((void (*)())Func_020014f4, 0x4008, 0);
     Call2((void (*)())Actor_SetActionById, 8, 32);
     i = 0;
-    L4:
-      if (i == 16) {
-        Call4((void (*)())Camera_MoveWithinMapBounds, 0x13c0000, -1, 0x800000, 1);
-        Call2((void (*)())Func_0200151c, 0x20000, 0x4000);
-      }
-      if (i == 19)
-        Event_FinishScreenTransition();
-      ACTOR(8)->z -= 0x20000;
-      Call1((void (*)())wait, 8);
-      i++;
-      if (i != 20)
-        goto L4;
+  L4:
+    if (i == 16) {
+      Call4((void (*)())Camera_MoveWithinMapBounds, 0x13c0000, -1, 0x800000, 1);
+      Call2((void (*)())Func_0200151c, 0x20000, 0x4000);
+    }
+    if (i == 19)
+      Event_FinishScreenTransition();
+    ACTOR(8)->z -= 0x20000;
+    Call1((void (*)())wait, 8);
+    i++;
+    if (i != 20)
+      goto L4;
     Func_02001534((s32)&SceneId_Ov64c, 1);
   } else if (mode == 3) {
     slots = Ram_HeapSlots;
     block = slots->block32;
-    /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-     * 4 of 1526 instructions differ in tla-en. */
-    asm("");
-    Call3((void (*)())Iwram_CopyWords, (s32)buffer, 0x5000000, 0x1c0);
+    CopyToPalette(buffer, (void *)0x5000000, 0x1c0);
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x1000000, -1, 0x900000, 0);
     Call2((void (*)())Func_0200151c, 0x10000, 0x2000);
     Call2((void (*)())Actor_SetModeById, 8, 14);
@@ -228,12 +205,12 @@ s32 Func_02000564(void) {
     Event_WaitTransitionFrames();
     Call3((void (*)())Func_0200147c, 0x40000, 0x40000, 0x10000);
     i = 0;
-    L5:
-      gBgScroll[2].y += 8;
-      Call1((void (*)())FieldEvent_Wait, 5);
-      i++;
-      if (i != 30)
-        goto L5;
+  L5:
+    gBgScroll[2].y += 8;
+    Call1((void (*)())FieldEvent_Wait, 5);
+    i++;
+    if (i != 30)
+      goto L5;
     Call2((void (*)())Actor_SetModeById, 8, 15);
     Call1((void (*)())wait, 60);
     Call1((void (*)())Func_02001594, 212);
@@ -242,32 +219,32 @@ s32 Func_02000564(void) {
     REG_BLDCNT = 0x3f42;
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1002, 0x20000);
     j = 0;
-    L6:
-      if (j == 16) {
-        Call1((void (*)())Func_02001594, 140);
-        Call2((void (*)())Actor_SetModeById, 8, 16);
-      }
-      if (j == 51) {
-        Call1((void (*)())Func_02001594, 107);
-        Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
-        Iwram_CopyWords(block + 0xf80, block + 0x1040, 96);
-      }
-      if (j >= 16 && j <= 28) {
-        value = (j - 16) / 2 + 2;
-        IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, value | 0x1000, 0x20000);
-      }
-      if (j >= 34 && j <= 50) {
-        value = (j - 34) / 2 + 8;
-        IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, value | 0x1000, 0x20000);
-      }
-      if (j >= 20 && j <= 51)
-        Call3((void (*)())Func_020002a4, (u16 *)0x5000080, (u16 *)0x50000c0, 16);
-      if (j > 49)
-        Call3((void (*)())Func_0200032c, (u16 *)0x5000000, 224, 1);
-      Call1((void (*)())wait, 4);
-      j++;
-      if (j != 84)
-        goto L6;
+  L6:
+    if (j == 16) {
+      Call1((void (*)())Func_02001594, 140);
+      Call2((void (*)())Actor_SetModeById, 8, 16);
+    }
+    if (j == 51) {
+      Call1((void (*)())Func_02001594, 107);
+      Iwram_CopyWords(buffer, (void *)0x5000000, 0x1c0);
+      Iwram_CopyWords(block + 0xf80, block + 0x1040, 96);
+    }
+    if (j >= 16 && j <= 28) {
+      value = (j - 16) / 2 + 2;
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, value | 0x1000, 0x20000);
+    }
+    if (j >= 34 && j <= 50) {
+      value = (j - 34) / 2 + 8;
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, value | 0x1000, 0x20000);
+    }
+    if (j >= 20 && j <= 51)
+      Call3((void (*)())Func_020002a4, (u16 *)0x5000080, (u16 *)0x50000c0, 16);
+    if (j > 49)
+      Call3((void (*)())Func_0200032c, (u16 *)0x5000000, 224, 1);
+    Call1((void (*)())wait, 4);
+    j++;
+    if (j != 84)
+      goto L6;
     Call2((void (*)())Actor_SetSpritePriority, 8, 3);
     Call3((void (*)())Func_0200147c, -1, -1, 0xe666);
     Call1((void (*)())Func_02001594, 0x186);
@@ -277,12 +254,12 @@ s32 Func_02000564(void) {
     Call1((void (*)())wait, 1);
     Call2((void (*)())Task_Add, Func_02000394, 0x480);
     j = 0;
-    L7:
-      Call3((void (*)())Func_020002a4, (u16 *)0x5000000, buffer, 224);
-      Call1((void (*)())wait, 4);
-      j++;
-      if (j != 32)
-        goto L7;
+  L7:
+    Call3((void (*)())Func_020002a4, (u16 *)0x5000000, buffer, 224);
+    Call1((void (*)())wait, 4);
+    j++;
+    if (j != 32)
+      goto L7;
     Call2((void (*)())Actor_SetSpritePriority, 8, 1);
     Call2((void (*)())Actor_SetModeById, 8, 1);
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x1000000, -1, 0x800000, 1);
@@ -319,7 +296,8 @@ s32 Func_02000564(void) {
     Call1((void (*)())FieldEvent_Wait, 50);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
     Call1((void (*)())FieldEvent_Wait, 5);
-    Call2((void (*)())Actor_SetSingleChildFlags, (s32)Value1((s32 (*)())Actor_GetById, 9), 0);
+    Call2((void (*)())Actor_SetSingleChildFlags,
+          (s32)Value1((s32 (*)())Actor_GetById, 9), 0);
     Call3((void (*)())Actor_SetPositionAndReset, 9, 216, 96);
     Call3((void (*)())Actor_ArmCallback, 8, 0x2000, 0);
     Call3((void (*)())Func_0200150c, 8, 0x102, 30);
@@ -355,55 +333,58 @@ s32 Func_02000564(void) {
     Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
     Call2((void (*)())Actor_SetModeById, 8, 13);
     Func_02001574();
-    Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 8), 2);
+    Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 8),
+          2);
     Call1((void (*)())Func_02001594, 178);
     Call2((void (*)())Func_02001564, 8, 0x4084);
     Call1((void (*)())FieldEvent_Wait, 20);
     Call2((void (*)())Actor_SetModeById, 9, 3);
     Call3((void (*)())Actor_SetSpeedParameters, 9, 0x1999, 0xccc);
     j = 0;
-    L8:
-      if (j & 1) {
-        Call3((void (*)())Actor_SetPositionAndReset, 9, 216, 96);
-      } else {
-        ACTOR(9)->actionFlags &= ~1;
-        Call3((void (*)())Actor_ResetAndSetPositionInMode2, 9, 208, 88);
-      }
-      i = 0;
-      L9:
-        Call2((void (*)())Func_020014d4, 9, 0x100);
-        Call1((void (*)())FieldEvent_Wait, 3);
-        Call2((void (*)())Func_020014d4, 9, 0);
-        Call1((void (*)())FieldEvent_Wait, 3);
-        i++;
-        if (i != 10)
-          goto L9;
-      j++;
-      if (j != 4)
-        goto L8;
+  L8:
+    if (j & 1) {
+      Call3((void (*)())Actor_SetPositionAndReset, 9, 216, 96);
+    } else {
+      ACTOR(9)->actionFlags &= ~1;
+      Call3((void (*)())Actor_ResetAndSetPositionInMode2, 9, 208, 88);
+    }
+    i = 0;
+  L9:
+    Call2((void (*)())Func_020014d4, 9, 0x100);
+    Call1((void (*)())FieldEvent_Wait, 3);
+    Call2((void (*)())Func_020014d4, 9, 0);
+    Call1((void (*)())FieldEvent_Wait, 3);
+    i++;
+    if (i != 10)
+      goto L9;
+    j++;
+    if (j != 4)
+      goto L8;
     Func_0200150c(8, 0x108, 30);
     Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
     Call1((void (*)())FieldEvent_Wait, 10);
-    Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 8), 0);
+    Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 8),
+          0);
     Func_02001584();
     Func_0200157c();
     Call2((void (*)())Actor_SetModeById, 9, 6);
     Func_02001574();
-    Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 9), 2);
+    Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 9),
+          2);
     Call1((void (*)())wait, 30);
     Call1((void (*)())Func_02001594, 212);
     Call3((void (*)())Func_0200147c, 0x100000, 0x100000, 0x10000);
     i = 0;
-    L10:
-Call2((void (*)())Func_0200153c, 0x10005, 1);
+  L10:
+    Call2((void (*)())Func_0200153c, 0x10005, 1);
     Call1((void (*)())Func_02001544, 1);
     Call1((void (*)())FieldEvent_Wait, 2);
     Call2((void (*)())Func_0200153c, 0x10000, 1);
     Call1((void (*)())Func_02001544, 1);
     Call1((void (*)())FieldEvent_Wait, 2);
-      i++;
-      if (i != 4)
-        goto L10;
+    i++;
+    if (i != 4)
+      goto L10;
     Call3((void (*)())Func_0200147c, 0, 0, 0);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
     Call1((void (*)())Field_StartPaletteTransition, 1);
@@ -423,39 +404,40 @@ Call2((void (*)())Func_0200153c, 0x10005, 1);
     Call1((void (*)())Func_02001594, 178);
     i = 0;
     ACTOR(8)->motionFlags = i;
-    L11:
-      if (i == 16)
-        Call2((void (*)())Actor_SetModeById, 8, 18);
+  L11:
+    if (i == 16)
+      Call2((void (*)())Actor_SetModeById, 8, 18);
     ACTOR(8)->y += 0x2666;
     Call1((void (*)())FieldEvent_Wait, 1);
-      i++;
-      if (i != 64)
-        goto L11;
+    i++;
+    if (i != 64)
+      goto L11;
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
     Call1((void (*)())FieldEvent_Wait, 5);
     Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
     i = 0;
-    L12:
-ACTOR(8)->y += 0x10000;
+  L12:
+    ACTOR(8)->y += 0x10000;
     Call1((void (*)())FieldEvent_Wait, 1);
-      i++;
-      if (i != 32)
-        goto L12;
+    i++;
+    if (i != 32)
+      goto L12;
     ACTOR(8)->motionFlags = 1;
     i = 0;
-    L13:
-ACTOR(8)->y -= 0x851eb;
+  L13:
+    ACTOR(8)->y -= 0x851eb;
     Call1((void (*)())FieldEvent_Wait, 1);
-      i++;
-      if (i != 5)
-        goto L13;
+    i++;
+    if (i != 5)
+      goto L13;
     Call2((void (*)())Func_02000478, 0x100, 16);
     Call2((void (*)())Actor_SetModeById, 8, 17);
     Call1((void (*)())Func_02001594, 145);
     Call3((void (*)())Func_0200147c, 0x100000, 0x100000, 0x10000);
     Call1((void (*)())FieldEvent_Wait, 10);
     Call3((void (*)())Func_0200147c, -1, -1, 0xe666);
-    Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 9), 0);
+    Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 9),
+          0);
     Func_02001584();
     Func_0200157c();
     Call1((void (*)())Func_02001594, 0x186);
@@ -474,12 +456,13 @@ ACTOR(8)->y -= 0x851eb;
     Call1((void (*)())FieldEvent_Wait, 120);
     Call1((void (*)())Func_02001594, 107);
     i = 0;
-    L14:
-      Call3((void (*)())Func_0200147c, (i << 16) + 0x10000, (i << 16) + 0x10000, 0x10000);
-      Call1((void (*)())FieldEvent_Wait, 8);
-      i++;
-      if (i != 2)
-        goto L14;
+  L14:
+    Call3((void (*)())Func_0200147c, (i << 16) + 0x10000, (i << 16) + 0x10000,
+          0x10000);
+    Call1((void (*)())FieldEvent_Wait, 8);
+    i++;
+    if (i != 2)
+      goto L14;
     Call2((void (*)())Actor_SetModeById, 9, 8);
     Call1((void (*)())FieldEvent_Wait, 60);
     Call2((void (*)())Actor_SetModeById, 9, 7);
@@ -506,27 +489,27 @@ ACTOR(8)->y -= 0x851eb;
     Call3((void (*)())Func_0200147c, 0x100000, 0x100000, 0x10000);
     j = 0;
     scale = -0x1e000;
-    L16:
-      if (j == 20)
-        Call2((void (*)())Actor_SetModeById, 9, 7);
-      if (j >= 30 && j <= 46) {
-        ACTOR(9)->scaleX = 0x10000 - scale;
-        ACTOR(9)->scaleY = scale + 0x10000;
-        ACTOR(9)->z -= 0x20000;
-      }
-      if (j == 47)
-        Call3((void (*)())Func_020014b4, 9, 0, 0);
-      if (j == 64) {
-        Call2((void (*)())Func_0200153c, 0x7fff, 0);
-        Call1((void (*)())Func_02001544, 64);
-      }
-      FIELD(slots, 332) -= 0x10000;
-      ACTOR(8)->z += 0x10000;
-      Call1((void (*)())wait, 1);
-      j++;
-      scale += 0x1000;
-      if (j != 128)
-        goto L16;
+  L16:
+    if (j == 20)
+      Call2((void (*)())Actor_SetModeById, 9, 7);
+    if (j >= 30 && j <= 46) {
+      ACTOR(9)->scaleX = 0x10000 - scale;
+      ACTOR(9)->scaleY = scale + 0x10000;
+      ACTOR(9)->z -= 0x20000;
+    }
+    if (j == 47)
+      Call3((void (*)())Func_020014b4, 9, 0, 0);
+    if (j == 64) {
+      Call2((void (*)())Func_0200153c, 0x7fff, 0);
+      Call1((void (*)())Func_02001544, 64);
+    }
+    FIELD(slots, 332) -= 0x10000;
+    ACTOR(8)->z += 0x10000;
+    Call1((void (*)())wait, 1);
+    j++;
+    scale += 0x1000;
+    if (j != 128)
+      goto L16;
     Call1((void (*)())Func_02001594, 78);
     Call1((void (*)())FieldEvent_Wait, 32);
     Call1((void (*)())Func_02001594, 208);
@@ -551,7 +534,8 @@ ACTOR(8)->y -= 0x851eb;
       if (*held & 1)
         break;
       if (j == 0) {
-        Call2((void (*)())Actor_SetSingleChildFlags, (s32)Value1((s32 (*)())Actor_GetById, 8), 0);
+        Call2((void (*)())Actor_SetSingleChildFlags,
+              (s32)Value1((s32 (*)())Actor_GetById, 8), 0);
         Call2((void (*)())Actor_SetModeById, 8, 12);
       }
     }

@@ -1492,39 +1492,18 @@ CLEAR(buffer, 0x1000);
         y = 16;
       h = 96;
       if (frame > 7) {
-        s32 t;
-        s32 off;
         i = 0;
-        t = 0;
         row = 112 - frame * 2;
-        off = row * 69;
-      rows2:
-        if (row >= 0 && row < 96) {
-          s32 k;
-          s32 threshold;
-          s32 cell;
-          u8 *from;
-          u8 *to;
-          k = 0;
-          threshold = t;
-          __asm__("" : "=r"(threshold) : "0"(threshold));
-          cell = (row & 15) * 69;
-          to = buffer + off;
-          limit = (s32)((u8 *)work + cell);
-          from = (u8 *)limit + 0x700;
-          for (; k != 69; k++) {
-          if (*from++ < threshold)
-              *to = 0;
-            to++;
+        for (; i != 34; i++, row++) {
+          if (row >= 0 && row < 96) {
+            s32 k;
+            s32 threshold = i;
+            for (k = 0; k != 69; k++) {
+              if (work->frames[(row & 15) * 69 + k] < threshold)
+                buffer[row * 69 + k] = 0;
+            }
           }
         }
-        i++;
-        t++;
-        off += 69;
-        row++;
-        if (i != 34)
-          goto rows2;
-        do { } while (0);
       }
       drawFuncs.draw[0](screen, buffer, 29, y, 69, h);
       if (frame > 5) {

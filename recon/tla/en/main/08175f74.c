@@ -1318,6 +1318,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       s32 depth;
       s32 rise = -52576;
       s32 base;
+      s32 quarter;
       s32 twice;
       void *texture = Heap_AllocEwram(32);
       struct Model *model = Render_AllocateModelList(1);
@@ -1325,8 +1326,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       work->transferMode = 2;
       work->transferValue = 50;
       twice = frame * 2;
-      base = frame * 1524;
+      quarter = frame * 381;
       depth = twice - 64;
+      base = quarter * 4;
       scale112 = 115536 - base;
       if (frame > 55) {
         scale112 = base + rise;

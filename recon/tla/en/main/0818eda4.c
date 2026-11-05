@@ -1,4 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 166 of 895.
+// Measured 2026-11-05 (tla-en): differ 160 of 895. Left first: i & 1, where the
+// 1 ties to the result; an explicit odd local changes nothing.
 // Draft, differ 172 of 895, skeleton gap 32 (tla-en, 2026-11-01)
 // Effect kind 123, written from the listing on The Broken Seal's canvas
 // skeleton (twins: BattleEffect_RunTitanBlade 0.46, by call order
@@ -196,9 +197,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         struct EffectStep *step = &work->particles[i];
 
         if (step->variant >= 0 && frame >= i / 4) {
-          s32 size = (i & 1) + 5;
-          s32 blend = (i & 1) * 4;
-          s32 j;
+          s32 odd = i;
+ s32 size;
+ s32 blend;
+ s32 j;
+ odd &= 1;
+ size = odd + 5;
+ blend = odd * 4;
 
           for (j = 0; j != 2; j++) {
             (*(DrawRectangle *)((u8 *)draw + blend))(
@@ -235,9 +240,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       // Four steps a frame.
       for (i = 0, step = work->particles; i != 32; i++, step++) {
         if (step->variant >= 0) {
-          s32 size = (i & 1) + 2;
-          s32 blend = (i & 1) * 4;
-          s32 j;
+          s32 odd = i;
+ s32 size;
+ s32 blend;
+ s32 j;
+ odd &= 1;
+ size = odd + 2;
+ blend = odd * 4;
 
           for (j = 0; j != 4; j++) {
             (*(DrawRectangle *)((u8 *)draw + blend))(

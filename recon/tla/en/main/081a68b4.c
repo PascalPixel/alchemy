@@ -1,4 +1,8 @@
-// Measured 2026-11-05 (tla-en): differ 88 of 236.
+// Measured 2026-11-05 (tla-en): differ 58 of 236. The return 1 block sits after
+// the first loop (goto fail, with done before the store of pos), which took 88
+// to 58 with the step a u16 field. Left: the native's two reads at entry, ldrsh
+// for the test and ldrh for step; a volatile cast gives both and 48 but adds a
+// shift pair.
 // Draft, differ 94 of 236: runs one step of the intro's vertical picture scroll. The
 // position moves from pos toward limit by step, waiting frames between moves
 // (1 when a key cuts the wait short, else 0 with pos updated). Scrolling
@@ -20,7 +24,7 @@
 struct TitleScroll {
   s16 pos;
   s16 limit;
-  s16 step;
+  u16 step;
   u8 *src;
   u8 *dst;
   u16 *cursor;
@@ -42,12 +46,13 @@ s32 Func_081a68b4(struct TitleScroll *s) {
   struct TitleFadeTimers *timers = Ram_HeapSlots->unk84[10];
   s32 i;
   s32 j;
-  u16 step = s->step;
+  u16 step;
 
-  if (s->step > 0) {
-    for (i = s->pos; i < s->limit; i += s->step) {
+  step = s->step;
+  if ((s16)step > 0) {
+    for (i = s->pos; i < s->limit; i += (s16)s->step) {
       if (Title_WaitOrPress(s->frames))
-        return 1;
+        goto fail;
       if (s->scroll > 0) {
         Dma_Set(s->src, s->dst, 0x840001e0, REG_DMA3);
         s->src += 0x780;
@@ -75,12 +80,16 @@ s32 Func_081a68b4(struct TitleScroll *s) {
         PaletteFade_Start(10);
       }
     }
+    goto done;
+  fail:
+    return 1;
   } else {
     for (i = s->pos; i > s->limit; i += (s16)step) {
       gBgScroll[1].y += step;
       s->scroll -= step;
       if (s->scroll > 8) {
-        if ((s16)--s->rows == 0) {
+        s->rows--;
+        if (s->rows == 0) {
           s->rows = 1;
           Dma_Set(s->src, s->dst, 0x840001e0, REG_DMA3);
           s->src -= 0x780;
@@ -93,10 +102,11 @@ s32 Func_081a68b4(struct TitleScroll *s) {
         s->scroll -= 8;
       }
       if (Title_WaitOrPress(s->frames))
-        return 1;
+        goto fail;
       step = s->step;
     }
   }
+done:
   s->pos = i;
   return 0;
 }

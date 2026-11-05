@@ -1,4 +1,7 @@
-// Measured 2026-11-05 (tla-en): differ 207 of 1246.
+// Measured 2026-11-05 (tla-en): differ 92 of 1246. The flight's base is card.x
+// - 64 (the draft had lost the 64), the sleep step is &particles[time], the
+// first spawn's step an integer sum. Left: the native's copy of card.x into r5
+// before __divsi3; step in r5 and the 127 mask in r6 in both spawns.
 // Draft, differ 213 of 1246, skeleton gap 27 (tla-en, 2026-11-01)
 // No close ☀️ twin (call order BattleEffect_RunBoreas 0.468): ⚓️'s own effect
 // on ☀️'s frame, a sibling of the four cards of Func_0818a220. The card itself
@@ -291,11 +294,10 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
     // background follows it as far as it can scroll.
     if (frame <= 47) {
       s32 left = card.x;
-      s32 q = frame * (middle.x - left) / 48;
+            s32 q = frame * (middle.x - left) / 48;
       s32 x;
 
-      x = left + q;
-      left -= 64;
+      x = left - 64 + q;
 
       if (x < 0) {
         overflow = x;
@@ -403,7 +405,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         s32 time = frame - 48;
         s32 first = time * 2;
 
-        for (i = 0, step = &work->particles[first]; i != 2; i++, step++) {
+        for (i = 0, step = (struct EffectStep *)(first * 28 + (s32)work->particles); i != 2; i++, step++) {
           step->x = 64 << 16;
           step->y = 48 << 16;
           step->velocityX = ((Random16() & 127) - 64) << 11;
@@ -434,7 +436,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 64)
         Func_081180e8(-1);
       if (frame >= 48 && frame <= 79) {
-        step = work->particles + (frame - 48);
+        { s32 time = frame - 48; step = &work->particles[time]; }
         step->x = 64 << 16;
         step->y = 48 << 16;
         step->velocityX = ((Random16() & 127) - 64) << 11;

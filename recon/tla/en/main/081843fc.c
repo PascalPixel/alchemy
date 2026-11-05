@@ -923,8 +923,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s32 a = Data_08199916[n];
           u8 *src;
           s32 bx;
-          s32 w;
           s32 h;
+          s32 w;
           s32 x;
           s32 x0;
           s32 y0;
@@ -944,8 +944,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             continue;
           }
           w = 10;
-          src = sprites + gData_08197410[9];
           h = 20;
+          src = sprites + gData_08197410[9];
           x0 = p->x / 8 - 5;
           bx = span - drift;
           x = x0 + (bx / 2 >> 16);

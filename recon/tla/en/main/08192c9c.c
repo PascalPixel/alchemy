@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 2369 of 5364, 1795 with slots and pool
+// Measured 2026-11-05 (tla-en): differ 2338 of 5364, 1762 with slots and pool
 // offsets normalized. Colours read into s16 locals took it from 2613: c, r,
 // b. Counters follow the listing's loops: r10's loops are i, r11's are j, and
 // a loop the listing counts in r8 or a low register has a variable of its own
@@ -605,6 +605,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s32 lift;
   s32 i;
   s32 j;
+  s32 c4;
+
   s32 k;
   s32 c0;
   s32 c1;
@@ -667,8 +669,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   draw[1] = Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, Data_02010578, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  for (i = 0; i != 0x302; i++)
-    sprites[i] >>= 1;
+  for (j = 0; j != 0x302; j++)
+    sprites[j] >>= 1;
   Func_0815b434(work->sheet, 32, 0x10000);
   Graphics_LoadGreyRamp();
   frame = 0;
@@ -1003,10 +1005,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1010;
       REG_BG2CNT = 0x784;
       for (i = 1; i != 8; i++) {
-        for (k = 0; k != 10; k++) {
-          u8 *src = work->sheet + gData_08197410[k];
-          u8 *out = work->sheet + gData_08197410[k] + i * 0x302;
-          s32 w = k + 1;
+        for (c4 = 0; c4 != 10; c4++) {
+          u8 *src = work->sheet + gData_08197410[c4];
+          u8 *out = work->sheet + gData_08197410[c4] + i * 0x302;
+          s32 w = c4 + 1;
           s32 n = w * 2 * w;
 
           for (j = 0; j != n; j++) {
@@ -1572,8 +1574,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         gBgScroll[1].y = gBgScroll[1].y - (frame & 1) - 2;
     }
     if (frame > 816) {
-      for (i = 0; i != 128; i++) {
-        s16 c = FADE_PLTT[i];
+      for (c1 = 0; c1 != 128; c1++) {
+        s16 c = FADE_PLTT[c1];
         s32 r = c & 31;
         s32 g = (u16)c >> 5 & 31;
         s32 b = (u16)c >> 10 & 31;
@@ -1584,7 +1586,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           g++;
         if (b <= 30)
           b++;
-        FADE_PLTT[i] = b << 10 | g << 5 | r;
+        FADE_PLTT[c1] = b << 10 | g << 5 | r;
       }
     }
     frame++;

@@ -1519,8 +1519,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy * 2, sinT);
             s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy * 2, cosT);
 
-            px = (px >> 16) + shift;
-            draw[0](canvas, work->sheet + tile, px + 64, (py >> 16) - shift + 63, 1, 2);
+            px = (px >> 16) + shift + 64;
+            py = (py >> 16) - shift + 63;
+            draw[0](canvas, work->sheet + tile, px, py, 1, 2);
           }
         }
       }

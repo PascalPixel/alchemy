@@ -2160,7 +2160,7 @@ main	rom_main_05	recon/tla/it/rom	.rom.000ea7b4	it
 main	rom_main_05	games/tla/src/field/map/cell_mark	.text	it
 main	rom_main_05	recon/tla/it/rom	.rom.000ea8c6	it
 main	rom_main_05	recon/tla/it/rom	.rom.000ea8c8	it
-main	rom_main_05	recon/tla/it/rom	.rom.000eaa08	it
+main	rom_main_05	games/tla/src/field/map/f0eaa14	.text	it
 main	rom_main_05	games/tla/src/field/map/cell_index	.text	it
 main	rom_main_05	games/tla/src/field/map/cell_tag	.text	it
 main	rom_main_05	recon/tla/it/rom	.rom.000eabc4	it
@@ -2169,13 +2169,13 @@ main	rom_main_05	recon/tla/es/rom	.rom.000f37b4	es
 main	rom_main_05	games/tla/src/field/map/cell_mark	.text	es
 main	rom_main_05	recon/tla/es/rom	.rom.000f38c6	es
 main	rom_main_05	recon/tla/es/rom	.rom.000f38c8	es
-main	rom_main_05	recon/tla/es/rom	.rom.000f3a08	es
+main	rom_main_05	games/tla/src/field/map/f0eaa14	.text	es
 main	rom_main_05	recon/tla/fr/rom	.rom.000ef140	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000ef7b4	fr
 main	rom_main_05	games/tla/src/field/map/cell_mark	.text	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000ef8c6	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000ef8c8	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000efa08	fr
+main	rom_main_05	games/tla/src/field/map/f0eaa14	.text	fr
 main	rom_main_05	games/tla/src/field/map/cell_index	.text	es fr
 main	rom_main_05	games/tla/src/field/map/cell_tag	.text	es fr
 main	rom_main_05	recon/tla/de/rom	.rom.000f714c	de
@@ -2183,13 +2183,14 @@ main	rom_main_05	recon/tla/de/rom	.rom.000f77c0	de
 main	rom_main_05	games/tla/src/field/map/cell_mark	.text	de
 main	rom_main_05	recon/tla/de/rom	.rom.000f78d2	de
 main	rom_main_05	recon/tla/de/rom	.rom.000f78d4	de
-main	rom_main_05	recon/tla/de/rom	.rom.000f7a14	de
+main	rom_main_05	games/tla/src/field/map/f0eaa14	.text	de
 main	rom_main_05	recon/tla/raw/080ea14c	.text	en
 main	rom_main_05	recon/tla/raw/080ea7c0	.text	en
 main	rom_main_05	games/tla/src/field/map/cell_mark	.text	ja en
 main	rom_main_05	recon/tla/raw/080ea8d4	.text	en
-main	rom_main_05	recon/tla/raw/080eaa14	.text	en
+main	rom_main_05	games/tla/src/field/map/f0eaa14	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000ea818	ja
+main	rom_main_05	games/tla/src/field/map/f0eaa14	.text	ja
 main	rom_main_05	games/tla/src/field/map/cell_index	.text	ja en de
 main	rom_main_05	games/tla/src/field/map/cell_tag	.text	ja en de
 main	rom_main_05	recon/tla/raw/080eabd0	.text	en

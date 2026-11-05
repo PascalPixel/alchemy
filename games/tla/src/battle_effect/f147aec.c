@@ -1,43 +1,3 @@
-// Near miss, differ 4 of 1072 (tla-en, 2026-10-30): two stack loads that
-// alchemy-gcc issues one slot early: the argument effect's spill (ldr r2,
-// [sp, #64]) before alternate = 0 is stored, and the blitter pair's address
-// (ldr r1, [sp, #40]) before the spark draw's fifth argument is stored.
-// -mthumb-slow-loads ranks every load a cycle slower, so each load outranks
-// the store beside it; the native issues only its pool loads early. An empty
-// asm or a one-pass block after alternate = 0 closes the first but moves the
-// transfer value's add r2, sl (4 either way); alternate volatile, 267;
-// alternate set in an else or from the comparison, 42 and 198; the slot or
-// the actor read before alternate = 0, 200. The plain form measured 6 on
-// 2026-10-30 (10 on 2026-10-25, same source); its third row, Iwram_CopyWords's
-// pool load after the destination's shift, closes with the routine's address
-// in a temporary (tagged at the call).
-//
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 10. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early. The first is the
-// argument's spill, which the native stores before it starts the 0x03000000
-// base; an empty asm before the first statement closes that row (differ 8).
-
-// Summon 7, mode 0 (the wrapper in series_e.c; mode 1 is the kind that
-// casts the same scene from the caster's side). Twin: The Broken Seal's
-// BattleEffect_RunPaletteParticles, ported call for call. The Lost Age's
-// changes: every picture unpacked by Resource_LoadAndDecompress; the pair
-// from BattleEffect_FetchRectangleBlitters; BG2CNT set with the blending; an
-// alternate layout (formation 6, eight pixels right and lower, sparks and
-// flashes with it) when the first target's animation kind is 2; formation
-// resource 647; two separate mode-0 tests at the teardown; the callback at
-// 0xc80.
-
-// Left earlier (before -mthumb-slow-loads): order only: about twenty single
-// swaps of a load (the argument's spill, a pooled constant, the work pointer)
-// with the constant beside it.
-
-// Tried (2026-10-15): The Broken Seal's layout, every local at the top,
-// 102 (the spill slots of dir, the alternate flag and focus come before
-// the blitter pair's address); the effect state (focus, dir, alternate) in a
-// block opened after the transfer callback, as The Broken Seal's
-// EmberColumns does, 40: the native's slot order.
-
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"
@@ -64,18 +24,20 @@
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);                   // ..ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // ..ProcessPendingGraphicsTransfer
 void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
 void Func_081180e8(s32 phase);              // BattlePlayback_StartFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);                    // BattleEffect_TintBattler
+                   s32 frames); // BattleEffect_TintBattler
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // ..SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 priority); // ..SpawnObjects
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 priority);     // ..SpawnObjects
 void Func_0816442c(s32 formation, s32 x, s32 y);  // ..PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y);  // ..RunImpactBurst
 void Func_08164a4c(s32 blue, s32 green, s32 red); // Palette_BrightenBgEntries
@@ -144,7 +106,7 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
 
     /* FAKEMATCH(temporary): the routine's address named once the palette's
      * source is fetched, so its pool load leads the destination's shift; as
-     * Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(...), 128), 6
+     * Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(...), 128), 2
      * of 1072 instructions differ in tla-en. */
     copy((void *)BG_PLTT, lightning, 128);
   }
@@ -159,9 +121,8 @@ void Func_08147aec(struct BattleEffectArgument *effect, s32 mode) {
     // When the first target's animation kind is 2 the formation stands 8
     // pixels further right and lower, with its sparks and flashes.
     alternate = 0;
-    asm("");
-    if (((struct Actor *)GetBattleObjectSlotFar(effect->actors[0])
-             ->object)
+
+    if (((struct Actor *)GetBattleObjectSlotFar(effect->actors[0])->object)
             ->animationKind == 2)
       alternate = 1;
 

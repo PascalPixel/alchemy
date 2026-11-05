@@ -1,32 +1,3 @@
-// Near miss, differ 40 of 604 (effect kind 13, the fire pillars).
-//
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 40. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early. The first is the
-// argument's spill, which the native stores before it starts the 0x03000000
-// base; an empty asm before the first statement closes that row (differ 38).
-
-// ☀️ twin: BattleEffect_RunVolcano (games/tbs/src/effect/effect.c), shape
-// 0.847, structure 1.000. ⚓️'s changes: the effect argument read directly,
-// the red and orange palettes from directory rows 0x147 and 0x148, two max
-// blitters from BattleEffect_LoadBlitter(104, 0x13) and (188, 0x17) (⚓️ max is mode
-// 1), the camera from Ram_HeapSlots->cameraWork, the pillar's x before its
-// y, the transfer callback at 0xc80, and the tables under their ⚓️ labels
-// (pillar counts Data_08197a20, depths Data_08197a23, start frames
-// Data_08197a2f).
-
-// Same frame and instruction count. What is left is order, most of it in
-// the pillar loop's set-up (18 rows: the native keeps the start-frame
-// pointer, the frame's low bit, the sheet address and the screen record's
-// address in four spill slots set in another order) and in the base cel's
-// draws; elsewhere single rows and pool offsets.
-
-// Tried (differ):
-// ☀️'s body with ⚓️'s names and tables                              120
-// the camera's yaw stepped as ☀️ writes it: yaw + 192, and
-// (s16)yaw - 192 (plain -= 192 builds 0xff40 and adds)             102
-// greedy declaration-order scan, every local through every place    102
-
 #include "types.h"
 #include "system.h"
 #include "io_reg.h"
@@ -58,7 +29,7 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
 extern char ResourceId_FirePillarSheetA; // directory row 0x146
-extern char ResourceId_ParticleSpritesA; // directory row 0x134
+extern char ResourceId_Data134; // directory row 0x134
 extern char ResourceId_RedPaletteB;      // directory row 0x147
 extern char ResourceId_OrangePaletteB;   // directory row 0x148
 
@@ -69,12 +40,14 @@ extern u16 gData_08197410[];  // ☀️ gBattleEffect_MoteCells
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 flags); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ BattleEffect_TintBattler
 void Sound_PlayFar(s32 cue);
@@ -104,20 +77,35 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  if (effect->variant == 0)
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_RedPaletteB), 128);
-  else if (effect->variant == 2)
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
-  BattleEffect_LoadBlitter(HEAP_BLITTER,
-                BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
+  if (effect->variant == 0) {
+    const void *palette = Resource_GetTableEntry((s32)&ResourceId_RedPaletteB);
+    s32 (*copy)(void *destination, const void *source, s32 size) =
+        Iwram_CopyWords;
+
+    /* FAKEMATCH(temporary): the routine's address named once the palette's
+     * source is fetched, so its pool load leads the destination's shift; as
+     * Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(...), 128), 2
+     * of 604 instructions differ in tla-en. */
+    copy((void *)BG_PLTT, palette, 128);
+  } else if (effect->variant == 2) {
+    const void *palette =
+        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
+    s32 (*copy)(void *destination, const void *source, s32 size) =
+        Iwram_CopyWords;
+
+    /* FAKEMATCH(temporary): the routine's address named once the palette's
+     * source is fetched, so its pool load leads the destination's shift; as
+     * Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(...), 128), 2
+     * of 604 instructions differ in tla-en. */
+    copy((void *)BG_PLTT, palette, 128);
+  }
+  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
+                                             COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
-                                            COMPOSITE_CLIP_Y |
-                                            COMPOSITE_FLIP_X);
+  BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
+                           BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
+                               COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
 
   for (i = 0; i != SPARK_MAX; i++)
@@ -158,8 +146,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
 
     if (frame < 64) {
       for (pillar = 0; pillar != Data_08197a20[effect->variant]; pillar++) {
-        EffectPosition_ProjectPoint((s32 *)&work->particles[pillar],
-                                           &screen);
+        EffectPosition_ProjectPoint((s32 *)&work->particles[pillar], &screen);
         screen.x /= 2;
         screen.y -= 8;
         if (frame == Data_08197a2f[pillar])

@@ -300,7 +300,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_ShurikenSheet
 	resource FlareSheet, BattleEffect_FlareSheet
 	resource FlareImage, BattleEffect_FlareImage
-	resource , BattleEffect_VioletPaletteB
+	resource VioletPaletteB, BattleEffect_VioletPaletteB
 	resource , BattleEffect_FireSwirlSheet
 	resource , BattleEffect_VioletLightningSheetB
 	resource FireBurstSheet, BattleEffect_FireBurstSheet
@@ -308,7 +308,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_OverlayImageA
 	resource , BattleEffect_VioletMoteSheet
 	resource , BattleEffect_FireballSheet
-	resource , BattleEffect_MemberBurstImage
+	resource MemberBurstImage, BattleEffect_MemberBurstImage
 	resource , BattleEffect_SlashSheet
 	resource , BattleEffect_WaveSheet
 	resource TargetBurstImage, BattleEffect_TargetBurstImage
@@ -337,7 +337,7 @@ Resource_DirectoryTable:
 	resource GreenPillarSheet, BattleEffect_GreenPillarSheet
 	resource VineSheet, BattleEffect_VineSheet
 	resource FirePillarSheetA, BattleEffect_FirePillarSheetA
-	resource , BattleEffect_RedPaletteB
+	resource RedPaletteB, BattleEffect_RedPaletteB
 	resource OrangePaletteB, BattleEffect_OrangePaletteB
 	resource EffectPalette02, BattleEffect_EffectPalette02
 	resource , BattleEffect_EffectPalette03
@@ -375,7 +375,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_WispSheet
 	resource GreenVineSheet, BattleEffect_GreenVineSheet
 	resource , BattleEffect_PortalSheet
-	resource , BattleEffect_SkullSheet
+	resource SkullSheet, BattleEffect_SkullSheet
 	resource , BattleEffect_HeartSheet
 	resource , BattleEffect_CounterRevealSheet
 	resource , BattleEffect_RedCrescentSheetA
@@ -414,7 +414,7 @@ Resource_DirectoryTable:
 	resource VortexSheet, BattleEffect_VortexSheet
 	resource TornadoSheet, BattleEffect_TornadoSheet
 	resource CrystalSheet, BattleEffect_CrystalSheet
-	resource , BattleEffect_LightningPillarSheet
+	resource LightningPillarSheet, BattleEffect_LightningPillarSheet
 	resource , BattleEffect_StagedParticlePath
 	resource , BattleEffect_DualStreamPath
 	resource , Field_PerspectiveDataA

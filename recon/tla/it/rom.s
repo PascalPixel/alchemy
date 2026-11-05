@@ -1283,20 +1283,6 @@ BattleEffect_RunEclipse:
 	.thumb_func
 Func_08142944:
 	.incbin "baserom.gba", 0x00142944, 0x000006bc
-	.section .rom.00144044, "ax"
-	.balign 4
-	.global BattleEffect_RunHaunt
-	.type BattleEffect_RunHaunt, %function
-	.thumb_func
-BattleEffect_RunHaunt:
-	.incbin "baserom.gba", 0x00144044, 0x00000324
-	.section .rom.00144628, "ax"
-	.balign 4
-	.global Func_08144628
-	.type Func_08144628, %function
-	.thumb_func
-Func_08144628:
-	.incbin "baserom.gba", 0x00144628, 0x00000484
 	.section .rom.0014512c, "ax"
 	.balign 4
 	.global Func_0814512c
@@ -1326,13 +1312,8 @@ BattleEffect_RunShiningStar:
 	.thumb_func
 BattleEffect_RunProcne:
 	.incbin "baserom.gba", 0x00146e00, 0x00000cd4
-	.section .rom.00147aec, "ax"
+	.section .rom.00148458, "ax"
 	.balign 4
-	.global Func_08147aec
-	.type Func_08147aec, %function
-	.thumb_func
-Func_08147aec:
-	.incbin "baserom.gba", 0x00147aec, 0x0000096c
 	.global BattleEffect_RunNereid
 	.type BattleEffect_RunNereid, %function
 	.thumb_func
@@ -1344,23 +1325,6 @@ BattleEffect_RunNereid:
 	.thumb_func
 Func_081496c8:
 	.incbin "baserom.gba", 0x001496c8, 0x000000cc
-	.global BattleEffect_RunPlasma
-	.type BattleEffect_RunPlasma, %function
-	.thumb_func
-BattleEffect_RunPlasma:
-	.incbin "baserom.gba", 0x00149794, 0x00000400
-	.section .rom.00149bac, "ax"
-	.balign 4
-	.global BattleEffect_RunSparkGroups
-	.type BattleEffect_RunSparkGroups, %function
-	.thumb_func
-BattleEffect_RunSparkGroups:
-	.incbin "baserom.gba", 0x00149bac, 0x000006b8
-	.global BattleEffect_RunVolcano
-	.type BattleEffect_RunVolcano, %function
-	.thumb_func
-BattleEffect_RunVolcano:
-	.incbin "baserom.gba", 0x0014a264, 0x00000544
 	.section .rom.0014a812, "ax"
 	.incbin "baserom.gba", 0x0014a812, 0x00000002
 	.section .rom.0014a814, "ax"
@@ -1490,7 +1454,9 @@ Func_0815b510:
 	.type Func_0815b634, %function
 	.thumb_func
 Func_0815b634:
-	.incbin "baserom.gba", 0x0015b634, 0x00000130
+	.incbin "baserom.gba", 0x0015b634, 0x00000058
+	.section .rom.0015b764, "ax"
+	.balign 4
 	.global BattleEffect_RunUlysses
 	.type BattleEffect_RunUlysses, %function
 	.thumb_func

@@ -1,47 +1,3 @@
-// Draft, differ 14 of 783, skeleton gap 7 (tla-en, 2026-11-01)
-// BattleEffect_RunSparkGroups, the body of the spark-group effects through
-// BattleEffect_RunNova (kind 0), BattleEffect_RunDynamite (kind 1) and
-// BattleEffect_RunThrash (kind 2).
-
-// ☀️ twin: BattleEffect_RunSparkGroups
-// (games/tbs/src/battle_effect/battle_effect/plasma.c), confirmed statement by
-// statement. ⚓️'s changes: kind 1 also starts a palette fade (work->fadeFrames
-// 24, work->fadeStep 0); the blitter pair comes from
-// BattleEffect_FetchRectangleBlitters(0, draw) where ☀️ loads max and additive
-// blitters itself; the effect runs count * 8 + 40 frames (☀️ + 56); kinds 1
-// and 2 play cue 145 with phase 145 at frame 2; the variant 3 wipe goes through
-// the IWRAM call layer; the transfer callback runs at 0xc80.
-
-// Left: instruction order only, no device, every register agrees. Two blocks:
-// - the end of the set-up group loop: the listing has ldr i, movs 224, ...,
-//   adds i, lsls row, str giv, str i, adds row; here the row runs ahead of the
-//   stores (10 instructions);
-// - the spark's draw call: the listing stores size to [sp, #0] before
-//   [sp, #4], here after the reload of &draw (4 instructions).
-// Both are sched2 only. --rtl shows the stores' priority too low by the same
-// amount: with a store then a load of memory costing a full load (3), as
-// loads in the same blocks do, the sched2 ranking gives the listing's order in
-// both blocks. That is the load-after-store model of -mthumb-slow-loads (K2),
-// a compiler question for Pascal, not something this source can change.
-
-// What closed the rest (differ 386 to 14), each a plain form:
-// - `spark` and `point` are one variable per loop, not shared ones: the two
-//   loops of each hold them in different registers;
-// - `sparks`, set once from gMapCellBuffer, gets no register, so reload
-//   rematerializes it at each use and that moves the rotation of reload
-//   registers (the listing's pool load into r5 in the second spark loop);
-// - both flash loops index particles[i * FLASH_POINTS + j], the second one
-//   keeping i * 16 as a giv through the frame.
-
-// Tried, no gain (differ 14 unless noted):
-// asm("") at the end of the set-up group body; a one-pass block there;
-// asm("") before the spark draw (16); a height local for size * 2 (203);
-// s32 for the spark's x and y, either or both, in either order; a spelled-out
-// size++; &graphics[...]; speed in two statements (258); sparks set at the top
-// of the function; ☀️'s &sparks[...] + j spelling (same bytes as sparks + ...).
-// A barrier cannot give the listing's order: the row's first shift sits
-// between the increment and the two stores, on both sides of any barrier.
-
 #include "types.h"
 #include "system.h"
 #include "io_reg.h"
@@ -80,7 +36,7 @@ struct CameraWork {
 };
 
 extern char ResourceId_FlashBurstSheet;    // directory row 0x13e
-extern char ResourceId_ParticleSpritesA;   // directory row 0x134
+extern char ResourceId_Data134;   // directory row 0x134
 extern char ResourceId_OrangePaletteB;     // directory row 0x148
 extern char ResourceId_LightningBoltSheet; // directory row 0x188
 
@@ -95,7 +51,8 @@ extern struct EffectStep gMapCellBuffer[];
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
 void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
@@ -105,7 +62,7 @@ void BattleEffect_FetchRectangleBlitters(
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ BattleEffect_TintBattler
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Sound_PlayFar(s32 cue);
 
 #define SHAPE(n) Data_081979de[effect->variant][n]
@@ -117,7 +74,8 @@ void Sound_PlayFar(s32 cue);
 // apart: each opens with a big flash, a ring of small flashes and a spray
 // of sparks that fall (or, from the caster, rise) and bounce; six frames
 // after each burst the targets flash and recoil.
-void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) {
+void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
+                                 s32 kind) {
   struct EffectPosition pos;
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
@@ -158,15 +116,29 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect, s32 kind) 
   BattleEffect_FetchRectangleBlitters(0, draw);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   if (kind == SPARKS_ORANGE) {
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+    const void *palette =
+        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
+    s32 (*copy)(void *destination, const void *source, s32 size) =
+        Iwram_CopyWords;
+
+    /* FAKEMATCH(temporary): the routine's address named once the palette's
+     * source is fetched, so its pool load leads the destination's shift; as
+     * Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(...), 128), 2
+     * of 783 instructions differ in tla-en. */
+    copy((void *)BG_PLTT, palette, 128);
   } else if (kind == SPARKS_FROM_ACTOR) {
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
-                    128);
+    const void *palette =
+        Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
+    s32 (*copy)(void *destination, const void *source, s32 size) =
+        Iwram_CopyWords;
+
+    /* FAKEMATCH(temporary): the routine's address named once the palette's
+     * source is fetched, so its pool load leads the destination's shift; as
+     * Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(...), 128), 2
+     * of 783 instructions differ in tla-en. */
+    copy((void *)BG_PLTT, palette, 128);
   }
 
   sparks = gMapCellBuffer;

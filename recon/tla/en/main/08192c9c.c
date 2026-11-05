@@ -1285,8 +1285,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
       Graphics_LoadGreyRamp();
       for (i = 0; i != 6; i += 2) {
-        Func_0815b434(work->sheet + off, i + 14, 0x10000);
-        off += (i + 14) * 2 * (i + 14);
+        s32 n = i + 14;
+
+        Func_0815b434(work->sheet + off, n, 0x10000);
+        off += n * 2 * n;
       }
       FILL_WORDS(work->sheet + 0x1810, 0x1000, 0);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2010, 16, 64, 0x10000);

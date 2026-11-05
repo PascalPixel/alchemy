@@ -1357,7 +1357,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       s32 quarter;
       s32 twice;
       struct ModelDesc *t2;
-      register struct ModelDesc *d asm("r8");
+      struct ModelDesc *d;
       void *texture = Heap_AllocEwram(32);
       struct Model *model = Render_AllocateModelList(1);
 
@@ -1386,7 +1386,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       t2 = &desc112;
       model->desc = t2;
       model->texture = texture;
-      d = t2;
+      __asm__("" : "=r"(d) : "0"(t2));
+      __asm__("" : "=r"(d) : "0"(d));
       if (depth > -48) {
         model->depth = depth;
         Render_ResetTransformState();

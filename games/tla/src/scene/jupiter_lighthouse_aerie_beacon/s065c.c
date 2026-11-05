@@ -1,19 +1,3 @@
-// Draft, differ 52 of 684, skeleton gap 12 (tla-en, 2026-11-01)
-// Left: the two motion resets. The listing loads 0x80000000 into r3 afresh in
-// each, a pseudo of its own that crosses no call; here CSE shares one pseudo
-// across the calls between them, reload rematerialises it into r2 and the zero
-// takes r3, so sched2 puts the zero stores first. The listing also needs its
-// reload order unchanged: the `ldr r6, =0` before the third wait comes from the
-// first reset's HImode zero, so a CSE boundary has to fall after that store
-// and before the second reset. A do-while(0) macro round both resets separates
-// the constants but loses that zero and moves effect to r6 (differ 211); one
-// round only the second, or round the call before it, leaves them merged (72,
-// 58: cse2 joins them again); a block-scoped local for the marker and an inline
-// helper change nothing. Also left: the camera call's lsls pair (Call4 and
-// Value4 the same). Each stored 4 is an s32 local on purpose: as a QImode
-// constant its store inherits r3 and every later reload swaps r2 and r3.
-// Actor 31 and 32 store scaleY before scaleX in source; the listing's second
-// block prints them the other way only because of reload order.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -99,7 +83,9 @@ void Func_0200065c(void) {
       Call1((void (*)())wait, 20);
       Call1((void (*)())PartyInventory_Remove, 245);
       actor4 = Actor_GetById(4);
-      created = (struct Actor *)Value4((s32 (*)())Func_0200576c, 0x1e9, actor4->x, actor4->y + 0x80000, actor4->z);
+      created =
+          (struct Actor *)Value4((s32 (*)())Func_0200576c, 0x1e9, actor4->x,
+                                 actor4->y + 0x80000, actor4->z);
       if (created != 0) {
         sprite = created->animation;
         sprite->unk1b[0] = 0;
@@ -113,7 +99,8 @@ void Func_0200065c(void) {
         created->acceleration = 0xccc;
         buffer = HeapSlot_AllocFar(68, 0x608);
         Call1((void (*)())Func_020057d4, 246);
-        Call3((void (*)())VramCache_Load, sprite->vramBlock, 128, (s32)(buffer + 0x400));
+        Call3((void (*)())VramCache_Load, sprite->vramBlock, 128,
+              (s32)(buffer + 0x400));
         Call1((void (*)())HeapSlot_Release, 68);
       }
       Call2((void (*)())Actor_SetSpritePriority, 37, 1);
@@ -134,7 +121,8 @@ void Func_0200065c(void) {
         created->gravity = 0x9999;
         created->bounce = 0xcccc;
         created->velocityY = 0x80000;
-        Call4((void (*)())Func_02005784, created, 0x2000000, 0x800000, 0x1260000);
+        Call4((void (*)())Func_02005784, created, 0x2000000, 0x800000,
+              0x1260000);
         Call4((void (*)())Func_02005784, actor37, 0x2000000, -1, 0x1260000);
         Call2((void (*)())Func_02005894, 7, gMainRoutineWork.currentOwner);
         Call1((void (*)())wait, 1);
@@ -153,15 +141,17 @@ void Func_0200065c(void) {
         *flags = state;
         Call1((void (*)())FieldEvent_Wait, 90);
         *flags = 0;
-        Call4((void (*)())Func_02005784, created, 0x2000000, 0x800000, 0x1080000);
+        Call4((void (*)())Func_02005784, created, 0x2000000, 0x800000,
+              0x1080000);
         Call4((void (*)())Func_02005784, actor37, 0x2000000, -1, 0x1080000);
         *flags = state;
         Call1((void (*)())FieldEvent_Wait, 60);
         *flags = 0;
+        actor37->x = 0;
         actor37->targetX = 0x80000000;
         actor37->targetY = 0x80000000;
         actor37->targetZ = 0x80000000;
-        actor37->x = 0;
+
         actor37->y = 0;
         actor37->z = 0;
         actor37->velocityX = 0;
@@ -172,12 +162,13 @@ void Func_0200065c(void) {
         *flags = state;
         Call1((void (*)())FieldEvent_Wait, 90);
         *flags = 0;
-        Call4((void (*)())Func_02005784, created, 0x2000000, 0x5c0000, 0x1080000);
+        Call4((void (*)())Func_02005784, created, 0x2000000, 0x5c0000,
+              0x1080000);
         Call1((void (*)())Func_0200578c, created);
+        created->x = 0;
         created->targetX = 0x80000000;
         created->targetY = 0x80000000;
         created->targetZ = 0x80000000;
-        created->x = 0;
         created->y = 0;
         created->z = 0;
         created->velocityX = 0;
@@ -214,11 +205,13 @@ void Func_0200065c(void) {
       Actor_GetById(28)->priorityFlags |= 1;
       Actor_GetById(31)->priorityFlags |= 1;
       Actor_GetById(32)->priorityFlags |= 1;
-      Call4((void (*)())Camera_MoveWithinMapBounds, 0x2000000, 0x600000, 0x1080000, 1);
+      Call4((void (*)())Camera_MoveWithinMapBounds, 0x2000000, 0x600000,
+            0x1080000, 1);
       Func_02005924();
       Call2((void (*)())Actor_SetSpritePriority, 31, 1);
       Call2((void (*)())Actor_SetSpritePriority, 32, 1);
-      Call2((void (*)())Actor_SetSpritePriority, gMainRoutineWork.currentOwner, 1);
+      Call2((void (*)())Actor_SetSpritePriority, gMainRoutineWork.currentOwner,
+            1);
       Call2((void (*)())Actor_SetSpritePriority, 7, 1);
       Call1((void (*)())FieldEvent_Wait, 20);
       Actor_SetSingleChildFlags(Actor_GetById(31), 0);

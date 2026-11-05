@@ -319,23 +319,23 @@ extern u8 gData_02014000[];
 #define REG_IME (*(u16 *)0x04000208)
 
 
-extern u8 Value_00000075;
-extern u8 Value_0000009b;
-extern u8 Value_0000009c;
-extern u8 Value_0000009d;
-extern u8 Value_0000009e;
-extern u8 Value_0000009f;
-extern u8 Value_000000b4;
-extern u8 Value_000000b5;
-extern u8 Value_000000b6;
-extern u8 Value_000000b8;
-extern u8 Value_000000bd;
-extern u8 Value_000000be;
-extern u8 Value_000000c2;
-extern u8 Value_000000c3;
-extern u8 Value_00000134;
-extern u8 Value_00000137;
-extern u8 Value_0000013e;
+extern char ResourceId_AerialViewBackdrop;
+extern char ResourceId_CrimsonBeastTiles;
+extern char ResourceId_RedSlashTiles;
+extern char ResourceId_RedCrescentTiles;
+extern char ResourceId_WhiteArrowsTiles;
+extern char ResourceId_WhiteWispsTiles;
+extern char ResourceId_Data0B4;
+extern char ResourceId_Data0B5;
+extern char ResourceId_CharmRingSheet;
+extern char ResourceId_EffectPalette00;
+extern char ResourceId_BoltSheet;
+extern char ResourceId_CurseSealSheet;
+extern char ResourceId_Data0C2;
+extern char ResourceId_Data0C3;
+extern char ResourceId_Data134;
+extern char ResourceId_ParticleSpritesD;
+extern char ResourceId_FlashBurstSheet;
 
 extern u16 gData_08197410[];
 extern u8 gData_08198c67[];
@@ -475,7 +475,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   wait(1);
   Palette_LoadBasicObjColors();
   scene->unk867 = 1;
-  BattleBackground_LoadFar(1, (s32)&Value_00000075, 0);
+  BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Func_08164b2c(0, -20, -20);
   Func_08163c2c(1, 1);
   REG_BLDALPHA = 0x1010;
@@ -485,7 +485,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   blit = routine;
   BattleEffect_FetchRectangleBlitters(0, blit);
 
-  source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009c);
+  source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_RedSlashTiles);
   CpuCopy(PLTT + 0x120, source, 0x140);
   source += 0x140;
   Resource_DecodeType01(source, work->buffer);
@@ -505,7 +505,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   work->objects[0]->oamPriority = 0;
   work->objects[0]->unk17 = 32;
 
-  source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009e);
+  source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_WhiteArrowsTiles);
   CpuCopy(PLTT + 0x1f0, source, 32);
   source += 32;
   Resource_DecodeType01(source, work->buffer);
@@ -522,8 +522,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     SPRITES[16 + i] = object;
     CpuCopy(object, sprites[0], 24);
   }
-  Resource_LoadAndDecompress((s32)&Value_00000134, glyphs, 0, 0);
-  Resource_LoadAndDecompress((s32)&Value_00000134, work->buffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, glyphs, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->buffer, 0, 0);
   for (j = 0; j != 10; j++) {
     cell = 4;
     for (i = 0; i != cell * cell * 2; i++) {
@@ -538,9 +538,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       glyphs[cell * cell * j * 2 + i] = value;
     }
   }
-  Resource_LoadAndDecompress((s32)&Value_000000b4, work->buffer, 0, 0);
-  Resource_LoadAndDecompress((s32)&Value_000000b6, work->buffer + 0x1000, 1, 1);
-  source = (u8 *)Resource_GetTableEntry((s32)&Value_000000bd);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->buffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_CharmRingSheet, work->buffer + 0x1000, 1, 1);
+  source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
   CpuCopy(PLTT, source, 128);
   REG_BG2CNT = 0x784;
   REG_BG2X = 0x800;
@@ -667,7 +667,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       Render_ApplyProjectedPlacementFar(work->objects[0], pos232, scale160, 0);
     }
     if (frame == 131) {
-      BattleBackground_LoadFar(1, (s32)&Value_00000075, 0);
+      BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
       CpuFill(PLTT + 0x60, 0x100, 0x7fff7fff);
       CpuFill(canvas, 0x3c00, 0x3f3f3f3f);
     }
@@ -675,7 +675,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       CpuFill(canvas, 0x3c00, (0x3f - (frame - 132) * 4) * 0x01010101);
     }
     if ((frame & 3) == 0 && (frame >= 132 && frame < 240)) {
-      u16 *target = Resource_GetTableEntry((s32)&Value_00000075);
+      u16 *target = Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop);
       u16 *color = PLTT + 0x60;
 
       for (i = 0; i != 128; i++, target++, color++) {
@@ -742,7 +742,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
     }
     if (frame >= 132 && frame < 240) {
-      u16 *target = Resource_GetTableEntry((s32)&Value_0000009b);
+      u16 *target = Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
       u16 *color = PLTT + 0x100;
 
       for (i = 0; i != 192; i++, target++, color++) {
@@ -789,7 +789,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       fade = 1;
     }
     if (fade == 1) {
-      u16 *color = Resource_GetTableEntry((s32)&Value_0000009b);
+      u16 *color = Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
 
       for (i = 0; i != 192; i++, color++) {
         s32 r = (*color & 31) + red;
@@ -821,7 +821,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       if (frame == 132) {
         ResourceObject_ReleaseFar(
             (struct ResourceObjectWork *)work->objects[0]);
-        source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009b);
+        source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
         CpuFill(PLTT + 0x100, 0x180, 0x7fff7fff);
         source += 0x180;
         Resource_DecodeType01(source, work->buffer + 0x2400);
@@ -833,7 +833,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           CpuCopy(OBJ_VRAM + objectSlots[object->slot].offset,
                   work->buffer + 0x2400 + i * 0x400, 0x400);
         }
-        source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009f);
+        source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_WhiteWispsTiles);
         CpuCopy(PLTT + 0x1e0, source, 32);
         CpuFill(PLTT + 0x1e0, 32, 0x7fff7fff);
         source += 32;
@@ -857,18 +857,18 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           object->unk17 = 32;
           CpuFill(OBJ_VRAM + tileSlots[object->slot].offset, 0x1000, 0);
         }
-        source = (u8 *)Resource_GetTableEntry((s32)&Value_000000b8);
+        source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_EffectPalette00);
         CpuCopy(PLTT, source, 128);
-        Resource_LoadAndDecompress((s32)&Value_00000137, work->buffer + 0x2400,
+        Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->buffer + 0x2400,
                                    0, 0);
         CpuCopy(glyphs, work->buffer + 0x2400, 0x302);
-        Resource_LoadAndDecompress((s32)&Value_000000be, work->buffer + 0x1000,
+        Resource_LoadAndDecompress((s32)&ResourceId_CurseSealSheet, work->buffer + 0x1000,
                                    1, 1);
         posX = 144 << 15;
         posZ = 224 << 14;
       }
       if (frame == 243) {
-        source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009d);
+        source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_RedCrescentTiles);
         CpuFill(PLTT + 0x1c0, 64, 0);
         source += 64;
         Resource_DecodeType01(source, gData_02014000);
@@ -936,7 +936,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
       }
       if (frame == 200) {
-        source = (u8 *)Resource_GetTableEntry((s32)&Value_000000bd);
+        source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
         CpuCopy(PLTT, source, 128);
       }
       if (frame >= 200 && frame < 302) {
@@ -1039,7 +1039,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Render_ApplyProjectedPlacementFar(work->objects[13], pos200, scale136,
                                           0);
         {
-          u16 *target = Resource_GetTableEntry((s32)&Value_0000009d);
+          u16 *target = Resource_GetTableEntry((s32)&ResourceId_RedCrescentTiles);
           u16 *color = PLTT + 0x1c0;
 
           for (i = 0; i != 32; i++, target++, color++) {
@@ -1067,16 +1067,16 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         if (frame == 302) {
           CpuFill(canvas, 0x3c00, 0x3f3f3f3f);
           CpuFill(PLTT + 0x1c0, 64, 0x7fff7fff);
-          CpuCopy(PLTT + 0x60, Resource_GetTableEntry((s32)&Value_00000075),
+          CpuCopy(PLTT + 0x60, Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop),
                   0x100);
-          source = (u8 *)Resource_GetTableEntry((s32)&Value_000000bd);
+          source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_BoltSheet);
           CpuCopy(PLTT, source, 128);
-          Resource_LoadAndDecompress((s32)&Value_000000c2,
+          Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
                                      work->buffer + 0x1000, 0, 0);
           Graphics_LoadGreyRamp();
         }
         if (frame > 303) {
-          u16 *target = Resource_GetTableEntry((s32)&Value_00000075);
+          u16 *target = Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop);
           u16 *color = PLTT + 0x60;
 
           for (i = 0; i != 128; i++, target++, color++) {
@@ -1219,7 +1219,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           CpuFill(PLTT + 0x60, 0x100, 0x7fff7fff);
         }
         if (t >= 0 && t < 160) {
-          u16 *target = Resource_GetTableEntry((s32)&Value_00000075);
+          u16 *target = Resource_GetTableEntry((s32)&ResourceId_AerialViewBackdrop);
           u16 *color = PLTT + 0x60;
 
           for (i = 0; i != 128; i++, target++, color++) {
@@ -1321,7 +1321,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
         work->transferMode = 3;
         work->transferValue = 0x04040404;
-        source = (u8 *)Resource_GetTableEntry((s32)&Value_000000b5);
+        source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_Data0B5);
         source += 32;
         Resource_DecodeType01(source, work->buffer + 0x2400);
         for (y = 0; y != 80; y++) {
@@ -1343,7 +1343,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
       }
       if (frame < 88) {
-        u16 *color = Resource_GetTableEntry((s32)&Value_000000b5);
+        u16 *color = Resource_GetTableEntry((s32)&ResourceId_Data0B5);
         u16 *entry = PLTT + 0xe0;
 
         for (i = 0; i != 16; i++, color++, entry++) {
@@ -1486,7 +1486,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   REG_DISPCNT = 0x141;
   wait(1);
   scene->unk867 = 0;
-  __asm__("");
   BattleBackground_LoadFar(1, scene->unk670, 24);
   {
     s32 (*fill)(void *, s32, u32) = Iwram_FillWords;
@@ -1532,8 +1531,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   Func_0815b434(work->buffer, 56, 0x10000);
   Func_0815b434(work->buffer + 0x1000, 16, 0x10000);
   CpuFill(work->buffer + 0x2000, 0x1000, 0x3f3f3f3f);
-  Resource_LoadAndDecompress((s32)&Value_000000c3, work->buffer + 0x3000, 0, 0);
-  Resource_LoadAndDecompress((s32)&Value_00000134, glyphs, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C3, work->buffer + 0x3000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, glyphs, 0, 0);
   {
     s32 limit;
 
@@ -1627,7 +1626,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           PARTICLES[128 + i].vy = (Trig_Cos(angle) * speed) >> 6;
           PARTICLES[128 + i].timer = (Random16() & 15) + 16;
         }
-        Resource_LoadAndDecompress((s32)&Value_0000013e, SPRITE_BUFFER, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, SPRITE_BUFFER, 1, 0);
         Sound_PlayFar(144);
         CpuFill(canvas, 0x3c00, 0x3f3f3f3f);
         REG_BG2CNT = 0x784;

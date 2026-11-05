@@ -127,7 +127,7 @@ Resource_DirectoryTable:
 	resource , Battle_RedHazeBackdrop
 	resource DesertBackdrop, Battle_DesertBackdrop
 	resource DuskCloudsBackdrop, Battle_DuskCloudsBackdrop
-	resource , Battle_AerialViewBackdrop
+	resource AerialViewBackdrop, Battle_AerialViewBackdrop
 	resource , Battle_SunsetBackdrop
 	resource , Battle_StarfieldFlareBackdrop
 	resource , Battle_EarthHorizonBackdrop
@@ -165,11 +165,11 @@ Resource_DirectoryTable:
 	resource , Summon_GreenHairedMaidenTiles
 	resource SeaSerpentTiles, Summon_SeaSerpentTiles
 	resource , Summon_PinkPetalsTiles
-	resource , Summon_CrimsonBeastTiles
-	resource , Summon_RedSlashTiles
-	resource , Summon_RedCrescentTiles
-	resource , Summon_WhiteArrowsTiles
-	resource , Summon_WhiteWispsTiles
+	resource CrimsonBeastTiles, Summon_CrimsonBeastTiles
+	resource RedSlashTiles, Summon_RedSlashTiles
+	resource RedCrescentTiles, Summon_RedCrescentTiles
+	resource WhiteArrowsTiles, Summon_WhiteArrowsTiles
+	resource WhiteWispsTiles, Summon_WhiteWispsTiles
 	resource , Summon_ForestCanopyTiles
 	resource , Summon_BronzeAutomatonTiles
 	resource , Summon_MissileTiles
@@ -191,21 +191,21 @@ Resource_DirectoryTable:
 	resource , Resource_Data0B2
 	resource , Resource_Data0B3
 	resource Data0B4, Resource_Data0B4
-	resource , Resource_Data0B5
-	resource , BattleEffect_CharmRingSheet
+	resource Data0B5, Resource_Data0B5
+	resource CharmRingSheet, BattleEffect_CharmRingSheet
 	resource WhirlBeamSheet, BattleEffect_WhirlBeamSheet
-	resource , BattleEffect_EffectPalette00
+	resource EffectPalette00, BattleEffect_EffectPalette00
 	resource , BattleEffect_EffectPalette01
 	resource , Resource_Data0BA
 	resource , Resource_Data0BB
 	resource , BattleEffect_ThinBoltSheet
-	resource , BattleEffect_BoltSheet
-	resource , BattleEffect_CurseSealSheet
+	resource BoltSheet, BattleEffect_BoltSheet
+	resource CurseSealSheet, BattleEffect_CurseSealSheet
 	resource , BattleEffect_CrackedTextureSheet
 	resource , BattleEffect_CrossTextureSheet
 	resource Data0C1, Resource_Data0C1
 	resource Data0C2, Resource_Data0C2
-	resource , Resource_Data0C3
+	resource Data0C3, Resource_Data0C3
 	resource , Resource_Data0C4
 	resource , BattleEffect_PetalSheet
 	resource , BattleEffect_CrescentRowSheet

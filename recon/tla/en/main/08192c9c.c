@@ -1000,15 +1000,17 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           Func_0814cd48(work->effect->actors[i], -1, 5, -1, 0);
       }
       if (frame <= 191) {
-        for (row = 0; row != 3; row++) {
-          u8 v = frame + (row & 1) * 47 + 80;
-          s32 end;
+        for (i = 0; i != 3; i++) {
+          u8 v = frame + (i & 1) * 47 + 80;
+          s32 y;
+          s32 off;
+          s32 x;
+          s32 m;
 
-          y = row + 62;
+          y = i + 62;
           off = ((y & 7) << 3) + ((y >> 3) << 10);
-          for (x = 0; x != 128; x = end) {
-            end = x + 8;
-            for (m = x; m != end; m++) {
+          for (x = 0; x != 128; x += 8) {
+            for (m = x; m != x + 8; m++) {
               if (canvas[off] < v)
                 canvas[off] = v;
               off++;

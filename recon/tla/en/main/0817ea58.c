@@ -445,6 +445,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   s32 bobX;
   s32 bobY;
   s32 *ringX;
+  void *pixels;
 
   HeapSlot_Release(104);
   Iwram_Clear(dest, 0x3c00);
@@ -462,7 +463,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0BA, work->frames, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->frames + 0x6c0, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0BB, work->frames + 0x36c0, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, DECODE_BUFFER, 0, 0);
+  pixels = DECODE_BUFFER;
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   Iwram_Copy((void *)0x05000000, (const void *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet),
              128);
   work->transferMode = 2;
@@ -881,14 +883,12 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     work->sprites[39]->unk17 = 32;
     if (frame >= 568) {
       s32 *beam;
-      void *pixels;
       void *buffer;
       s32 v;
       s32 z;
 
       buffer = Heap_AllocEwram(512);
       beam = Render_AllocateModelList(1);
-      pixels = DECODE_BUFFER;
       bitmap.width = 7;
       bitmap.height = 7;
       bitmap.data = pixels;

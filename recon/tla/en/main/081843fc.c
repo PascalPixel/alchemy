@@ -1512,8 +1512,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               s32 angle = i * 1365;
               s32 rr = (a & 31) + 32;
 
-              p->x = (rr * Trig_Sin(angle) >> 16) + 60;
-              p->y = (rr * Trig_Cos(angle) >> 16) + 60;
+              p->x = (Trig_Sin(angle) * rr >> 16) + 60;
+              p->y = (Trig_Cos(angle) * rr >> 16) + 60;
               p->z = (Random16() & 3) + 5;
               p->variant = -(Random16() & 15);
             }
@@ -1531,11 +1531,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           }
         }
         if (work->shakeFrames > 0) {
+          s32 m = 7;
           s32 a = Random16();
           s32 b = Random16();
 
-          b = (b & 7) + 28;
-          a = (a & 7) - 4;
+          a &= m;
+          b &= m;
+          a -= 4;
+          b += 28;
           gBgScroll[1].x = a;
           gBgScroll[1].y = b;
           work->shakeFrames--;

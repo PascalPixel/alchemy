@@ -506,7 +506,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F8, work->sheet + 0x2000, 0,
                              0);
   COPY_WORDS((void *)BG_PLTT,
-             Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 512);
+             Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, Data_02012000, 0, 0);
   zero = 0;
@@ -1279,7 +1279,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           work->transferValue = 50;
           COPY_WORDS((void *)BG_PLTT,
                      Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
-                     512);
+                     128);
         }
         if (rise <= 0xfffff) {
           rise += 0x10000;

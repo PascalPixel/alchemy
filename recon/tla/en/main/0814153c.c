@@ -1,4 +1,5 @@
-// Draft, differ 284 of 2159 (tla-en, 2026-11-05); 192 with slots and pool offsets normalized, 60 with registers blind too. Fills and copies forwarded through inlines (S2 wrapper; tag and measure each on adoption).
+// Draft, differ 332 of 2159 (tla-en, 2026-11-05); 242 with slots and pool offsets normalized, 56 with registers blind too. A rise from 284 (204, 72 by the same count) that removes a false form: the shard loop's barrier is gone and that loop now matches whole, its origin and x plain body locals; the last model's stores take the listing's order (an order search reaches 312 again, further from the listing, and is not kept).
+// Measured here: a constant loop.c hoists and global.c gives no register is rebuilt at each use by reload, so `movs rN, #128; lsls` in a loop can be a hoisted pseudo. origin (life 11, hoisted after 0x20000) gets fp and 0x20000 is rebuilt, so rank decides which is which. Texture's address outranks 0x10000 by 15 in 10000 once model->kind comes before texture.pixels; that order is what puts it in r7. Left: the 136 loop (dst's step rebuilt, size hoisted in r7: as a reduced giv it is benefit 2 times 17 against 43 insns; through one pseudo shared by CSE it is what this draft has), the ring's y and angle (y 0.5000 and angle 0.5121 by global.c, the listing has them the other way; y needs live 27 or angle live 84), and the reload order of cx and cy after the first model (bucket 900, registers only). Forwarding the mesh through a local before the texture stores costs 139. Fills and copies forwarded through inlines (S2 wrapper; tag and measure each on adoption).
 // Near miss, differ 673 of 2159 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 821 of 2159, skeleton gap 90 (tla-en, 2026-11-01)
@@ -838,11 +839,11 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     }
     texture3.logHeight = 5;
     texture3.logWidth = 7;
-    model->vertices = gMapCellBuffer;
-    model->mesh = Data_02012800;
-    model->kind = 7;
     texture3.pixels = work->sheet + 0x400;
     model->texture = &texture3;
+    model->kind = 7;
+    model->mesh = Data_02012800;
+    model->vertices = gMapCellBuffer;
     model->unk04 = shade;
     model->scrollU = shade;
     model->scrollV = shade;

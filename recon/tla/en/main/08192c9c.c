@@ -1170,7 +1170,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     if (frame == 370) {
       Func_0815b434(work->sheet + 0x3e8, 16, 0x10000);
       for (i = 0; i != 16; i++) {
-        Dma_Set(work->sheet + 0x3e8 + i * 8, work->sheet + 0x302 + i * 16,
+        Dma_Set(work->sheet + 0x3e8 + (i << 3), work->sheet + 0x302 + (i << 4),
                 0x80000008, REG_DMA3);
         for (j = 0; j != 8; j++)
           work->sheet[0x30a + i * 16 + j] = work->sheet[0x3ef + i * 8 - j];
@@ -1178,7 +1178,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1008;
     }
     if ((u32)(frame - 414) <= 7)
-      REG_BLDALPHA = (frame - 406) | 0x1000;
+      { s32 alpha = frame - 406; REG_BLDALPHA = alpha | 0x1000; }
     if (frame > 385)
       gCameraSceneParameters[4] = 2556 - frame * 6;
     if (frame <= 422) {

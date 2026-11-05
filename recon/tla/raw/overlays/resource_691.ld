@@ -22,7 +22,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/scene_tables.o"(.text)
         "*/games/tla/src/scene/magma_rock/exits.o"(.text)
         "*/games/tla/src/scene/magma_rock/s0940.o"(.text)
-        "*/resource_691_overlay.o"(.text.x02008a48)
+        "*/games/tla/src/scene/magma_rock/s0a48.o"(.text)
         "*/games/tla/src/scene/magma_rock/s0c08.o"(.text)
         "*/games/tla/src/scene/magma_rock/s0c40.o"(.text)
         "*/games/tla/src/scene/magma_rock/s0d40.o"(.text)

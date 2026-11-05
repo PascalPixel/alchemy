@@ -334,8 +334,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       n = 3;
       w = 32;
       for (j = 0, k = 0; j != 10; j++, k += 16) {
-        mp = map + k * 2;
-        for (i = 0; i != w; i++) {
+        for (i = 0, mp = k * 2 + map; i != w; i++) {
           v = ((u8 *)work)[gData_08197410[n] + i + off];
           if (v != 0) {
             v = v - j * 4 - 40;

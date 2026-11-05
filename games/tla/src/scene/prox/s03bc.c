@@ -46,4 +46,32 @@ s32 Func_020003bc(struct Actor *actor) {
   return 0;
 }
 
+#else
+
+struct Actor *Actor_GetById(s32 id);
+s32 Func_020002d8(struct Actor *actor, struct Actor *target, s32 distance,
+                  s32 flag);
+
+s32 Func_020003bc(struct Actor *actor) {
+  u8 *tiles = Ram_HeapSlots->windowTiles;
+  u8 *work = Ram_HeapSlots->eventWork;
+  s16 *action = &actor->action;
+  s32 flag = 0;
+  struct Actor *target;
+
+  if (*action == 0)
+    target = Actor_GetById(18);
+  else if (*action == 1)
+    target = Actor_GetById(16);
+  else
+    target = Actor_GetById(17);
+  if (Func_020002d8(actor, target, 24, 0) == 0) {
+    target = Actor_GetById(gMainRoutineWork.currentOwner);
+    if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (*action & 2))
+      flag = 1;
+    Func_020002d8(actor, target, 32, flag);
+  }
+  return 0;
+}
+
 #endif

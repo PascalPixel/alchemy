@@ -1,13 +1,8 @@
-// Draft, differ 19 of 102 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// and y stay in their stack slots for Text_GetMessageSize; GCSE copies
-// their loads for the closing call into each branch, so an empty asm with a
-// memory clobber before the call keeps them as one load each, as the native has
-// (without it: 64; with x and y volatile their addresses take registers: 100).
-// Left, register allocation: the native gives the message r8, the wait r10 and
-// the mode r9 and stores the zeros of x and y from r4, where this gives the
-// mode r8, the message r10 and the wait r9 and stores the zeros from r3; a
-// pinned mode (29) or another place for its zero (30) is worse, and permute
-// found nothing in 8 minutes.
+// Draft, differ 5 of 102 (tla-en, 2026-11-05), from 19. Func_02000244 of
+// overlay 6b3: centres a message and hands it to Func_02000158. mode and line
+// set after x and y give the listing's ranks. Left: the listing builds x's
+// and y's zero in r4 apart from the mode's zero in r3; CSE here keeps one
+// pseudo for both.
 
 // Draft of overlay 6b3 Func_02000244: centres a message and hands it to
 // Func_02000158. The logic is right; the listing keeps x and y in their stack

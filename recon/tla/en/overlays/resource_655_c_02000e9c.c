@@ -87,17 +87,10 @@ void Func_02000e9c(void) {
   shapes += index;
   {
     s32 value = Func_02003dd0(*layer, shape, (level >> 19) + 4);
-    u8 attribute;
-    s32 raised = 192;
 
-    attribute = cells->attributeB;
     cells += index;
-    /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-     * 28 of 76 instructions differ in tla-en. */
-    asm("");
-    raised |= attribute;
     *shapes = value;
-    cells->attributeB = raised;
+    cells->attributeB |= 192;
   }
   cells += 128;
   cells->attributeB |= 64;

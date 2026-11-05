@@ -990,12 +990,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           continue;
         }
         if (frame <= 293) {
-          s = Data_08199758[i] + Data_08199760[i] * (frame - Data_08199756[i]);
+          s = Data_08199758[i] + (frame - Data_08199756[i]) * Data_08199760[i];
           if (s > Data_08199764[i]) {
             s = Data_08199764[i];
           }
           if (frame > 209) {
-            s -= Data_08199760[i] * t;
+            s -= t * Data_08199760[i];
           }
           Render_ResetTransformState();
           Func_080151e4(0x8000, 0x10000, 0x8000);

@@ -1634,7 +1634,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           u8 *buffer = SPRITE_BUFFER;
           s32 x = (p->x >> 16) - 16;
 
-          buffer += row;
+          row += (s32)buffer;
+          buffer = (u8 *)row;
           routine[0](canvas, buffer, x, (p->y >> 16) - 32, 32, 64);
           BattleEffectKernels_IntegrateVector2(p, 60, -0x2000);
         }

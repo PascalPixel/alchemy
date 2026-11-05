@@ -557,9 +557,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     if (frame <= 379) {
       gBgScroll[1].y = 104 - frame * 104 / 379;
     } else {
-      s32 v = (frame - 380) / 4;
+      s32 v;
 
-      gBgScroll[1].y = v;
+      gBgScroll[1].y = v = (frame - 380) / 4;
       if ((u32)(v << 16) > 0x680000) {
         gBgScroll[1].y = 104;
       }
@@ -910,8 +910,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         idx = p->variant;
 
         if (frame == (Data_081998a4[i * 13 + idx] - 492) / 2 + 489) {
-          s32 n = off + idx;
           s32 count = 0;
+          s32 n = off + idx;
           s32 a = Data_08199916[n];
           u8 *src;
           s32 bx;

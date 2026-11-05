@@ -1562,6 +1562,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     s32 slideStep;
     u8 *bolts;
     void *quads = Data_02011000;
+    void *strip = Data_02012000;
     struct EffectStep *debris = &Data_02016d00[64];
 
     bolts = gData_02014000;
@@ -1724,10 +1725,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         slide += slideStep;
         texture3.logWidth = 6;
         texture3.logHeight = 5;
-        {void *strip = Data_02012000;
         texture3.pixels = work->sheet;
+        model3->mesh = strip;
         model3->scrollU = (frame << 3) & 127;
-        model3->mesh = strip;}
         Render_ResetTransformState();
         Func_080151e4(0x8000, 0x10000, 0x8000);
         a = frame * 3 * 127 * 16;

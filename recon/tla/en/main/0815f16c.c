@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 507 of 7666, slots normalized 337, high
-// registers blind too 335, every register blind 131. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 497 of 7666, slots normalized 329, high
+// registers blind too 327, every register blind 123. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1382,7 +1382,7 @@ CLEAR(buffer, 0x1000);
         h = 48;
         BattleEffect_LoadBlitter(188, 19);
         IWRAM_SLOT_BC(screen, buffer, x - 24, h, 24, h);
-        RELOAD_BLITTER(188, 23);
+        HeapSlot_Release(188); BattleEffect_LoadBlitter(188, 23);
         IWRAM_SLOT_BC(screen, buffer, x, h, 24, h);
         HeapSlot_Release(188);
       }
@@ -1541,7 +1541,7 @@ CLEAR(buffer, 0x1000);
         else
           m = 3;
         HeapSlot_Release(188);
-        RELOAD_BLITTER(104, 3);
+        HeapSlot_Release(104); BattleEffect_LoadBlitter(104, 3);
         IWRAM_SLOT_68(screen, buffer + m * 0x360, target[0] / 2 - 18, 56, 18,
                       48);
         RELOAD_BLITTER(104, 7);

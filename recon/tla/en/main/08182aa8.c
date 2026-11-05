@@ -1,34 +1,34 @@
-// Measured 2026-11-05 (tla-en): differ 885 of 2781, 763 with slots and pool
-// offsets normalized. Three more loops take a counter of their own.
-// Draft, differ 1075 of 2781, skeleton gap 107/106 (tla-en, 2026-11-01)
-// BattleEffect_RunCoatlicue: same calls and control flow, draft 2780 of 2781
-// instructions, frame 164 and every stack slot as in the native. Registers
-// agree for frame (r11), i (r8), k (r10), model and the last loop's locals.
-// What is left, by cause; the first is worth most of the differ:
-// - Palette ease, sr. Reload hands out spill registers in turn, so everything
-//   from this loop on is one rotation off. The native computes the red mask
-//   into a fresh register (mov r3, r9; ands r3, r1; adds r1, r3, r2), which
-//   takes r2 for tr and evicts sg to sp+8, three reloads the draft lacks.
-//   regmove's fixup_match_1 merges that temporary into s because s dies at the
-//   and and the temporary dies at the add. Native needs a form where it does
-//   not: the and's first operand the mask, or the temporary set twice. Tried,
-//   none closes it: s as the outer s or as an entry variable shared by both
-//   palette loops, sr += tr (the mask loses r9 and rematerializes, frame 160),
-//   sg likewise, tr + red, (u8) and (u16) red, u16 v then s, a red local, every
-//   order of sb, sg, sr. Fix this first, then re-read everything below.
-// - The second palette's red: the native has movs r2, #31; ands r2, r3 ahead of
-//   the shared shift, keeping the green and blue pool mask apart. Red first
-//   makes CSE take the halfword mask as the low part of red's register. Only
-//   r = 31; r &= s does it, a forced temporary, so blue, green, red stays; its
-//   b.n is a literal pool jump that follows when the length is right.
-// - spin is set at the top of the frame loop so loop.c reduces it: a giv with
-//   add cost 2 needs a replaceable long-lived use plus one more site, which is
-//   why Yaw(frame << 9) stays spelled out once. GCSE then folds the two i-loop
-//   Yaw sites into the reduced slot, where the native keeps mov, lsls. A spin
-//   set only at the model block is not replaceable and is not reduced.
-// - The cells loop has the object slots in r7 and cells in r5, the native the
-//   reverse, with i's zero set earlier. Tried: stepped pointer, slot pointer,
-//   indexed, shifted index, operand order, inner obj, moved i.
+// Measured 2026-11-05 (tla-en): differ 305 of 2781, 245 with slots and pool
+// offsets normalized, 57 with registers normalized as well. Frame 164 and every
+// stack slot as in the listing. No loop has a counter of its own beyond i and k.
+// What round 4 settled by reading the listing:
+// - Reload hands out spill registers in turn, so one stray reload shifts every
+//   later figure; work from the top down.
+// - The zeros stored through memory (place[3], step->z, the scrolls, variant,
+//   velocityX, y) come from one zero set once after the opening slide. It takes
+//   no register, so reload makes each in its turn and no loop hoists it (610 to
+//   405 from these alone, and the rotation falls into step behind them).
+// - The second palette's s is its own, red first through a temporary set twice.
+// - The spark, the ninth cell and the spawn read their position, d and p first
+//   and on locals of their own; i = 0 comes before its neighbours in four loops.
+// What is left:
+// - The first palette's red holds its temporary through an untagged barrier
+//   (t = COLOR_RED(s), kept apart from sr): the listing has mov r3, r9; ands r3,
+//   r1; adds r1, r3, r2, where regmove merges t into s because s dies at the and
+//   and t at the add. s = COLOR_RED(s) + tr gives the rows exactly, since the add
+//   then sets s, but s outlives its register and everything rotates. Needs its
+//   tag, or the plain form, before adoption. The second palette's t = 31 is a
+//   temporary and needs its tag too.
+// - PRE folds Yaw(frame << 9) in the two shock loops into spin; the listing has
+//   mov, lsls there and spin everywhere else. Spellings fold back ((f << a) << b,
+//   f + f) or grow the frame. From here on everything is one rotation off: an
+//   input-only barrier gives the shape, but with r0 tied. This is what stands
+//   between 305 and the rows that are left.
+// - The cells loop has the object slots in r7 and cells in r5, the listing the
+//   reverse (12 rows). Tried: stepped pointer, slot pointer, a block local.
+// - The second texture: the listing has add r7, sp, #92; adds r2, r7, #0 and
+//   stores through both, here a direct sp + 92 and sp + 93. Through a pointer
+//   either folds back or takes a stack slot.
 // Measured: gData_02015000 is a constant address, the native pools its +24 and
 // a symbol leaves an add; gMapCellBuffer is the set-once local for its first
 // five uses and the symbol for the three texture.pixels, chosen per site. Row
@@ -277,7 +277,16 @@ void Heap_Release(void *buffer);
   do {                                                                         \
     s32 n_ = (p)->z;                                                           \
                                                                                \
-    BLIT_CELL(0x4800, n_, HALF_HI((p)->x), HALF_HI((p)->y));                   \
+    {                                                                          \
+      u8 *src_ = work->sheet + 0x4800 + Data_081996ca[n_];                     \
+      s32 x0_ = HALF_HI((p)->x);                                               \
+      u8 w_ = Data_081996ac[n_];                                               \
+      s32 x_ = x0_ - (w_ >> 1);                                                \
+      s32 y_ = HALF_HI((p)->y);                                                \
+      u8 h_ = Data_081996bb[n_];                                               \
+                                                                               \
+      blit[0](canvas, src_, x_, y_ - (h_ >> 1), w_, h_);                       \
+    }                                                                          \
     BattleEffectKernels_IntegrateVector2(p, 63, -0x4000);                      \
     if ((p)->y < -(Data_081996bb[n_] << 16)) {                                 \
       (p)->variant = -1;                                                       \
@@ -302,7 +311,6 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   u16 *table;
   s32 frame;
   s32 i;
-  s32 c0;
   s32 k;
   s32 y;
   s32 level;
@@ -311,6 +319,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   s32 sh;
   s32 ty;
   s32 spin;
+  s32 zero;
   s16 list[14];
   s32 place[4];
   struct WordPair req;
@@ -335,6 +344,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
+  zero = 0;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
@@ -479,8 +489,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 282) <= 17) {
       s32 g = (frame - 282) / 2 + 14;
-      s32 b = frame - 253;
       u16 *dst = (u16 *)OBJ_PLTT;
+      s32 b = frame - 253;
       u32 c;
 
       if (g > 31) {
@@ -489,8 +499,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       if (b > 31) {
         b = 31;
       }
+      i = 0;
       c = b << 10 | g << 5;
-      for (i = 0; i != 256; i++) {
+      for (; i != 256; i++) {
         *dst++ = c;
       }
     }
@@ -520,8 +531,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 cr = COLOR_RED(c);
         s32 sb = COLOR_BLUE(s) + k;
         s32 sg = COLOR_GREEN(s) + tg;
-        s32 sr = COLOR_RED(s) + tr;
+        s32 t = COLOR_RED(s);
+        s32 sr;
 
+        __asm__("" : "=r"(t) : "0"(t));
+        sr = t + tr;
         if (cb < sb - 1) {
           cb += 2;
         } else if (cb > sb + 1) {
@@ -562,18 +576,23 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       s32 d = frame - 520;
       u16 *e = Resource_GetTableEntry((s32)&ResourceId_BellMaidenTiles);
       u16 *dst = (u16 *)OBJ_PLTT;
-      s32 half = d / 2;
+      s32 half;
 
-      for (c0 = 0; c0 != 256; c0++, e++, dst++) {
+      i = 0;
+      half = d / 2;
+      for (; i != 256; i++, e++, dst++) {
         s32 b;
         s32 g;
         s32 r;
+        s32 s;
+        s32 t;
 
         s = *e;
+        t = 31;
+        t &= s;
+        r = t + d;
         g = COLOR_GREEN(s) + half;
-        b = COLOR_BLUE(s);
-        r = COLOR_RED(s) + d;
-        b += d / 4;
+        b = COLOR_BLUE(s) + d / 4;
 
         if (r > 31) {
           r = 31;
@@ -590,7 +609,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 292) <= 253) {
       req = Data_08196ef0;
       place[1] = 0xff0000;
-      place[3] = 0;
+      place[3] = zero;
       if (frame == 360) {
         grid.b = 0x240000;
       }
@@ -607,8 +626,10 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
                                           0);
       }
     }
-    if ((u32)(frame - 274) <= 23) {
-      p = &Ram_EffectSteps[frame - 274 + 80];
+    {
+    s32 d = frame - 274;
+    if ((u32)d <= 23) {
+      struct EffectStep *p = &(&Ram_EffectSteps[80])[d];
       {
         s32 x = ((Random16() & 15) + 52) << 16;
 
@@ -619,6 +640,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       p->velocityY = -((Random16() & 15) + 8) << 12;
       p->z = (Random16() & 7) + 5;
       p->variant = 32;
+    }
     }
     if (frame == 310) {
       p = Ram_EffectSteps;
@@ -644,7 +666,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           p->velocityY = Data_08199727[k] << 12;
           p->z = ((Random16() & 3) + Data_08199730[k]) << 16;
           p->velocityZ = Data_08199739[k] << 10;
-          p->variant = 0;
+          p->variant = zero;
         }
       }
     }
@@ -681,29 +703,33 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       Func_080151e4(55536, 45536, 27768);
       if (frame == 360) {
-        struct EffectStep *p = Ram_EffectSteps;
+        struct EffectStep *p;
 
         if (skip == 0) {
           work->transferMode = 2;
           work->transferValue = 75;
         }
+        p = Ram_EffectSteps;
         for (i = 0; i != 384; i++, p++) {
           p->variant = Random16() & 3;
           p->x = (Random16() % 160 - 80) << 16;
           p->y = (Random16() % 160 + 48) << 16;
           p->z = (Random16() % 160 - 80) << 16;
-          p->velocityX = 0;
+          p->velocityX = zero;
           p->velocityY =
               (-((Random16() & 63) + 32) << 10) - (1 << (16 - p->variant));
           p->velocityZ = Random16();
         }
       }
       if (frame == 540) {
-        p = Ram_EffectSteps;
+        struct EffectStep *p = Ram_EffectSteps;
+        s32 m;
 
-        for (i = 0; i != 384; i++, p++) {
-          p->y = 0;
-          p->velocityY = -((Random16() & 63) + 32) << 15;
+        i = 0;
+        m = 63;
+        for (; i != 384; i++, p++) {
+          p->y = zero;
+          p->velocityY = -((Random16() & m) + 32) << 15;
         }
       }
       {
@@ -765,10 +791,18 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           if (n < 0) {
             n = 0;
           }
-          BLIT_CELL(0x53b8, n, x, top >> 16);
+          {
+            u8 *src = work->sheet + 0x53b8 + Data_081996ca[n];
+            u8 w = Data_081996ac[n];
+            s32 x0 = x - (w >> 1);
+            s32 y0 = top >> 16;
+            u8 h = Data_081996bb[n];
+
+            blit[0](canvas, src, x0, y0 - (h >> 1), w, h);
+          }
           BattleEffectKernels_IntegrateVector3(step, 64, 0);
           if (step->z < 0) {
-            step->z = 0;
+            step->z = zero;
           }
           if (i == 6 && step->y < -(Data_081996bb[n] << 16)) {
             step->variant = -1;
@@ -785,15 +819,16 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       verts = Heap_AllocEwram(512);
       model = Render_AllocateModelList(1);
       model->texture = &texture;
-      texture.logHeight = 7;
       texture.logWidth = 7;
+      texture.logHeight = 7;
       model->mesh = gData_08199364;
       model->vertices = verts;
       t = frame - 210;
       if ((u32)t <= 107) {
-        s32 pitch = 4000;
+        s32 pitch;
 
         ty = (frame * 3 << 13) - 0x4ec000;
+        pitch = 4000;
         if (ty > 0x180000) {
           ty = 0x180000;
         }
@@ -839,21 +874,23 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       if ((u32)(frame - 273) <= 7 && skip == 0) {
         s32 d = frame - 273;
+        s32 *value;
         s32 v;
 
         work->transferMode = 1;
+        value = &work->transferValue;
         v = d * 0x101;
         v = v + (v << 16);
-        work->transferValue = 0x3f3f3f3f - (v << 2);
+        *value = 0x3f3f3f3f - (v << 2);
       }
       if (frame == 281 && skip == 0) {
-        work->transferValue = 50;
         work->transferMode = 2;
+        work->transferValue = 50;
       }
       if ((u32)(frame - 274) <= 27) {
-        texture.pixels = gMapCellBuffer;
-        model->kind = 7;
         s = (frame << 11) - 0x85000;
+        texture.pixels = cellBuffer;
+        model->kind = 7;
         sh = 0;
         if (frame > 293) {
           sh = (294 - frame) << 3;
@@ -876,13 +913,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
 
             texture.pixels = gMapCellBuffer;
             sh = -16;
+            d = frame - st;
             model->kind = 6;
             model->shade = sh;
-            d = frame - st;
             Render_ResetTransformState();
             s = d << 13;
             if (i > 1) {
-              ty = -0x2c0000;
+              s32 ty = -0x2c0000;
+
               if (frame > 539) {
                 ty += (frame - 539) << 20;
               }
@@ -899,16 +937,16 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
       if (frame > 80) {
-        for (c0 = 0; c0 != 3; c0++) {
-          if (frame == Data_0819974e[c0]) {
+        for (i = 0; i != 3; i++) {
+          if (frame == Data_0819974e[i]) {
             Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
           }
-          if (frame > Data_0819974e[c0] && frame < Data_0819974e[c0] + 10) {
-            s32 d = frame - Data_0819974e[c0];
-            sh = d * 16 - 56;
+          if (frame > Data_0819974e[i] && frame < Data_0819974e[i] + 10) {
+            s32 d = frame - Data_0819974e[i];
             s = 0x14000 - (d << 13);
+            texture.pixels = cellBuffer;
             model->kind = 7;
-            texture.pixels = gMapCellBuffer;
+            sh = d * 16 - 56;
             if (sh > 0) {
               sh = 0;
             }
@@ -916,7 +954,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             Render_ResetTransformState();
             Func_08015160(-0x40000, -0x2c0000, 0);
             Func_080151e4(s, s << 1, s);
-            Func_080150e4((c0 << 14) + 0x2000);
+            Func_080150e4((i << 14) + 0x2000);
             SceneTransform_ApplyPitch(-0x1000);
             SceneTransform_ApplyYaw(frame << 9);
             Render_TransformVertices(gData_08199210, verts, 64);
@@ -929,13 +967,13 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           s32 st = Data_08199754[i];
 
           if (frame > st && frame < st + 100) {
-            ty = -0x2c0000;
-            sh = -16;
             s = (frame - st) * 2978;
+            ty = -0x2c0000;
             if (s > 65535) {
               s = 0x10000;
             }
             texture.pixels = work->sheet;
+            sh = -16;
             model->kind = 6;
             model->shade = sh;
             Render_ResetTransformState();
@@ -961,19 +999,19 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       model->mesh = Data_02014800;
       model->kind = 7;
       model->vertices = verts;
-      model->scrollU = 0;
-      model->scrollV = 0;
+      model->scrollU = zero;
+      model->scrollV = zero;
       for (i = 0; i != 2; i++) {
         if (frame < Data_08199756[i]) {
           continue;
         }
         if (frame <= 293) {
-          s = Data_08199758[i] + Data_08199760[i] * (frame - Data_08199756[i]);
+          s = Data_08199758[i] + (frame - Data_08199756[i]) * Data_08199760[i];
           if (s > Data_08199764[i]) {
             s = Data_08199764[i];
           }
           if (frame > 209) {
-            s -= Data_08199760[i] * t;
+            s -= t * Data_08199760[i];
           }
           Render_ResetTransformState();
           Func_080151e4(0x8000, 0x10000, 0x8000);
@@ -1066,8 +1104,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 512);
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+  frame = 0;
   Func_08164b2c(0, 0, 11);
-  for (frame = 0; frame != 60; frame++) {
+  for (; frame != 60; frame++) {
     s32 s;
     s32 lift;
     struct RenderModel *model2;
@@ -1091,7 +1130,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       {
         struct EffectStep *p = Ram_EffectSteps;
 
-        for (c0 = 0; c0 != 256; c0++, p++) {
+        for (i = 0; i != 256; i++, p++) {
           p->x = (Random16() & 127) << 16;
           p->y = ((Random16() & 255) + 120) << 16;
           p->velocityX = ((Random16() & 31) - 16) << 13;
@@ -1131,10 +1170,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     model2->vertices = verts2;
     model2->kind = 6;
     texture2.pixels = work->sheet;
+    i = 0;
     lift = frame * 8 - 128;
     s = (frame << 13) + -0x20000;
     d = frame - 16;
-    for (i = 0; i != 3; i++, lift -= 64, s += -0x10000, d -= 8) {
+    for (; i != 3; lift -= 64, s += -0x10000, i++, d -= 8) {
       if (d >= 0) {
         s32 sh2 = 0;
 

@@ -1841,8 +1841,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       Camera_ApplyVerticalShake(8);
       BattleEffect_CountDownBattlerTints();
-      work->transferPending = 1;
-      frame++;
+      {
+        s32 *pending = &work->transferPending;
+
+        frame++;
+        *pending = 1;
+      }
       wait(1);
     } while (frame != 104);
     transition[4] = 0;

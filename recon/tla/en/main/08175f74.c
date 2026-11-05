@@ -1,3 +1,5 @@
+// 2026-11-05: differ 1688 of 4354 (tla-en). The third phase has its own counter m
+// (r9 and actor r10 as the listing there); the first two keep i, r8 here.
 // 2026-11-05: differ 1754 of 4354 (tla-en). Measured from the lreg and greg
 // dumps: i is one pseudo in both, with the same 51 steps. r2764 is the actor
 // with 30 refs, an ActorPos read at +8, +12 and +16. A pin on i gives 4353;
@@ -368,6 +370,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   s32 shake;
   s16 savedUnit30;
   s32 i;
+  s32 m;
   s32 fade;
   u16 *palette;
   u8 *source;
@@ -1392,10 +1395,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   REG_BLDALPHA = 0x410;
   REG_BG2X = 0;
   REG_BG2CNT = 0x786;
-  for (i = 1; i != 64; i++) {
-    s32 q = i * 2 / 3;
+  for (m = 1; m != 64; m++) {
+    s32 q = m * 2 / 3;
     s32 r = 31 - q;
-    s32 g = 8 - i / 2;
+    s32 g = 8 - m / 2;
     s32 b = 27 - q;
 
     if (r < 0) {
@@ -1407,7 +1410,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (b < 0) {
       b = 0;
     }
-    PLTT[i] = (b << 10) | (g << 5) | r;
+    PLTT[m] = (b << 10) | (g << 5) | r;
   }
   arg->actors[arg->count] = (u32)&Value_000000ff;
   BattleActor_SpawnObjectsForListFar((struct Local264 *)arg->actors, 0);
@@ -1416,30 +1419,30 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   CpuFill(work->buffer + 0x2000, 0x1000, 0x3f3f3f3f);
   Resource_LoadAndDecompress((s32)&Value_000000c3, work->buffer + 0x3000, 0, 0);
   Resource_LoadAndDecompress((s32)&Value_00000134, glyphs, 0, 0);
-  i = 0;
+  m = 0;
 empty:
-  i += 35;
-  if (i != 0x302) {
+  m += 35;
+  if (m != 0x302) {
     goto empty;
   }
-  for (i = 0; i != 0x1000; i++) {
-    if (work->buffer[0x3000 + i] != 0) {
-      work->buffer[0x3000 + i] = 63;
+  for (m = 0; m != 0x1000; m++) {
+    if (work->buffer[0x3000 + m] != 0) {
+      work->buffer[0x3000 + m] = 63;
     }
   }
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
-  for (i = 0; i != 16; i++) {
-    work->drops[i].timer = -i;
+  for (m = 0; m != 16; m++) {
+    work->drops[m].timer = -m;
   }
-  for (i = 0; i != 128; i++) {
-    PARTICLES[i].timer = -1;
+  for (m = 0; m != 128; m++) {
+    PARTICLES[m].timer = -1;
   }
-  for (i = 0; i != arg->count; i++) {
-    struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[i]);
+  for (m = 0; m != arg->count; m++) {
+    struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[m]);
 
-    work->homes[i].x = actor->x;
-    work->homes[i].y = actor->y;
-    work->homes[i].z = actor->z;
+    work->homes[m].x = actor->x;
+    work->homes[m].y = actor->y;
+    work->homes[m].z = actor->z;
   }
 
   frame = 0;
@@ -1453,14 +1456,14 @@ empty:
       Sound_PlayFar(162);
       work->wave = 160;
       shake = 0;
-      for (i = 0; i != arg->count; i++) {
-        work->members[i].timer = -1;
+      for (m = 0; m != arg->count; m++) {
+        work->members[m].timer = -1;
       }
       x = -0x2000000;
-      for (i = 0; i != arg->count; i++) {
-        struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[i]);
+      for (m = 0; m != arg->count; m++) {
+        struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[m]);
 
-        Func_0814cd48(arg->actors[i], 0, 5, -1, -1);
+        Func_0814cd48(arg->actors[m], 0, 5, -1, -1);
         actor->x = x;
         actor->y = 0x140000;
         actor->z = 0;
@@ -1472,8 +1475,8 @@ empty:
       work->transferMode = 1;
       work->transferValue = 0;
       ColorBuffer_ScaleFar(scene->palette, PLTT + 0x60, 0x99a0, 128);
-      for (i = 0; i != arg->count; i++) {
-        struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[i]);
+      for (m = 0; m != arg->count; m++) {
+        struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[m]);
 
         actor->x = 0;
         actor->y = 0x7c0000;
@@ -1486,25 +1489,25 @@ empty:
     }
     if (frame >= 140) {
       if (frame == 140) {
-        for (i = 0; i != 32; i++) {
+        for (m = 0; m != 32; m++) {
           s32 speed = (Random16() & 511) + 32;
           s32 angle = Random16();
 
-          PARTICLES[96 + i].x = 240 << 14;
-          PARTICLES[96 + i].y = 240 << 14;
-          PARTICLES[96 + i].vx = (Trig_Sin(angle) * speed) >> 5;
-          PARTICLES[96 + i].vy = (Trig_Cos(angle) * speed) >> 5;
-          PARTICLES[96 + i].timer = 0;
+          PARTICLES[96 + m].x = 240 << 14;
+          PARTICLES[96 + m].y = 240 << 14;
+          PARTICLES[96 + m].vx = (Trig_Sin(angle) * speed) >> 5;
+          PARTICLES[96 + m].vy = (Trig_Cos(angle) * speed) >> 5;
+          PARTICLES[96 + m].timer = 0;
         }
-        for (i = 0; i != 128; i++) {
+        for (m = 0; m != 128; m++) {
           s32 speed = (Random16() & 255) + 32;
           s32 angle = Random16();
 
-          PARTICLES[128 + i].x = 240 << 14;
-          PARTICLES[128 + i].y = 240 << 14;
-          PARTICLES[128 + i].vx = (Trig_Sin(angle) * speed) >> 6;
-          PARTICLES[128 + i].vy = (Trig_Cos(angle) * speed) >> 6;
-          PARTICLES[128 + i].timer = (Random16() & 15) + 16;
+          PARTICLES[128 + m].x = 240 << 14;
+          PARTICLES[128 + m].y = 240 << 14;
+          PARTICLES[128 + m].vx = (Trig_Sin(angle) * speed) >> 6;
+          PARTICLES[128 + m].vy = (Trig_Cos(angle) * speed) >> 6;
+          PARTICLES[128 + m].timer = (Random16() & 15) + 16;
         }
         Resource_LoadAndDecompress((s32)&Value_0000013e, SPRITE_BUFFER, 1, 0);
         Sound_PlayFar(144);
@@ -1512,27 +1515,27 @@ empty:
         REG_BG2CNT = 0x784;
         work->transferMode = 2;
         work->transferValue = 50;
-        for (i = 0; i != arg->count; i++) {
-          struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[i]);
+        for (m = 0; m != arg->count; m++) {
+          struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[m]);
 
           actor->x = 0;
           actor->y = 0x200000;
-          actor->z = work->homes[i].z;
+          actor->z = work->homes[m].z;
         }
-        for (i = 0; i != arg->count; i++) {
+        for (m = 0; m != arg->count; m++) {
           s32 spin = Random16();
 
-          BattleEffect_StartActorMotion(arg->actors[i], 1, 0x40000, 0x80000,
+          BattleEffect_StartActorMotion(arg->actors[m], 1, 0x40000, 0x80000,
                                     spin * 2 + 0x20000,
                                     (Random16() & 31) + 120);
-          Func_0814cd48(arg->actors[i], 7, 5, i, 32);
+          Func_0814cd48(arg->actors[m], 7, 5, m, 32);
         }
         work->unk77a8 = 3;
       }
       BattleEffect_LoadBlitter(104, 31);
       routine[0] = SYSTEM_WORK->blit;
-      for (i = 0; i != 16; i++) {
-        struct Particle *p = &PARTICLES[96 + i];
+      for (m = 0; m != 16; m++) {
+        struct Particle *p = &PARTICLES[96 + m];
 
         if (p->timer >= 0 && p->timer < 24) {
           routine[0](canvas, SPRITE_BUFFER + (p->timer / 4) * 2048,
@@ -1541,8 +1544,8 @@ empty:
         }
         p->timer++;
       }
-      for (i = 0; i != 128; i++) {
-        struct Particle *p = &PARTICLES[128 + i];
+      for (m = 0; m != 128; m++) {
+        struct Particle *p = &PARTICLES[128 + m];
 
         if (p->timer >= 0) {
           s32 size = (p->timer >> 3) + 2;
@@ -1563,11 +1566,11 @@ empty:
       HeapSlot_Release(104);
     }
     if (frame < 120) {
-      for (i = 0; i != 3; i++) {
-        if (frame == gData_08198c67[i]) {
+      for (m = 0; m != 3; m++) {
+        if (frame == gData_08198c67[m]) {
           CpuFill(PLTT + 0x60, 0x100, 0x7fff7fff);
         }
-        if (frame >= gData_08198c67[i] + 1 && frame < gData_08198c67[i] + 16) {
+        if (frame >= gData_08198c67[m] + 1 && frame < gData_08198c67[m] + 16) {
           u16 *target = SYSTEM_WORK->scene->palette;
           u16 *color = PLTT + 0x60;
 
@@ -1628,9 +1631,9 @@ empty:
           shake = 0;
         }
       }
-      for (i = 0; i != arg->count; i++) {
-        struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[i]);
-        struct Particle *member = &work->members[i];
+      for (m = 0; m != arg->count; m++) {
+        struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[m]);
+        struct Particle *member = &work->members[m];
         s32 landed = 0;
 
         if (actor->y < 0x640000) {
@@ -1645,12 +1648,12 @@ empty:
           }
           if (landed == 1) {
             member->timer = 0;
-            EffectPosition_ProjectScaledBattler(arg->actors[i], member);
+            EffectPosition_ProjectScaledBattler(arg->actors[m], member);
             Sound_PlayFar(103);
             for (j = 0; j != 16; j++) {
               s32 angle = Random16() & 0x7fff;
               s32 speed;
-              struct Particle *p = &PARTICLES[i * 16 + j];
+              struct Particle *p = &PARTICLES[m * 16 + j];
 
               speed = (Random16() & 255) + 256;
 
@@ -1664,10 +1667,10 @@ empty:
           }
         }
         if (member->timer == 2 || member->timer == 7) {
-          Func_0814cd48(arg->actors[i], 7, 5, i, 32);
+          Func_0814cd48(arg->actors[m], 7, 5, m, 32);
         }
         if (member->timer == 6) {
-          Func_0814cd48(arg->actors[i], 15, -1, i, 32);
+          Func_0814cd48(arg->actors[m], 15, -1, m, 32);
         }
         if (member->timer == 8) {
           actor->x = 0;
@@ -1680,14 +1683,14 @@ empty:
         BattleEffect_LoadBlitter(104, 27);
         halfCell = 28;
         phase = frame << 10;
-        for (i = 0; i != 4; i++) {
-          struct Particle *column = &work->columns[i];
-          s32 y2 = i * 30 - 26;
+        for (m = 0; m != 4; m++) {
+          struct Particle *column = &work->columns[m];
+          s32 y2 = m * 30 - 26;
 
-          column->x = shake + i * 8 +
+          column->x = shake + m * 8 +
                       ((Trig_Sin(phase) * 4) >> 16);
-          column->y = i * 30;
-          if (i == 3) {
+          column->y = m * 30;
+          if (m == 3) {
             column->x -= 8;
             column->y = y2;
             HeapSlot_Release(104);
@@ -1698,15 +1701,15 @@ empty:
           phase += 0x2000;
         }
         HeapSlot_Release(104);
-        for (i = 0; i != 12; i++) {
-          struct Particle *drop = &work->drops[i];
+        for (m = 0; m != 12; m++) {
+          struct Particle *drop = &work->drops[m];
 
           if (++drop->timer == 4) {
             drop->timer = 0;
           }
           if (drop->timer == 0) {
-            drop->x = (Random16() % 24 + shake - i * 2) << 16;
-            drop->y = (160 << 15) + i * (192 << 10);
+            drop->x = (Random16() % 24 + shake - m * 2) << 16;
+            drop->y = (160 << 15) + m * (192 << 10);
             drop->vx = -(Random16() & 0xffff) - 0x4000;
             drop->vy = -0x10000;
           }
@@ -1719,19 +1722,19 @@ empty:
         }
         BattleEffect_LoadBlitter(104, 31);
         routine[0] = SYSTEM_WORK->blit;
-        for (i = 0; i != 4; i++) {
-          s32 width = 120 - work->columns[i].x;
+        for (m = 0; m != 4; m++) {
+          s32 width = 120 - work->columns[m].x;
 
           if (width > 0) {
-            routine[0](canvas, work->buffer + 0x2000, work->columns[i].x, i * 30,
+            routine[0](canvas, work->buffer + 0x2000, work->columns[m].x, m * 30,
                     width, 30);
           }
         }
         HeapSlot_Release(104);
         BattleEffect_LoadBlitter(104, 47);
         routine[0] = SYSTEM_WORK->blit;
-        for (i = 0; i != 96; i++) {
-          struct Particle *p = &PARTICLES[i];
+        for (m = 0; m != 96; m++) {
+          struct Particle *p = &PARTICLES[m];
 
           if (p->timer >= 0) {
             s32 size = (p->timer >> 3) + 2;
@@ -1756,8 +1759,8 @@ empty:
       model->mesh = gData_08199340;
       model->desc = &desc104;
       model->texture = texture;
-      for (i = 0; i != arg->count; i++) {
-        struct Particle *member = &work->members[i];
+      for (m = 0; m != arg->count; m++) {
+        struct Particle *member = &work->members[m];
         s32 timer = member->timer;
 
         if (timer >= 0 && timer < 18) {
@@ -1784,7 +1787,7 @@ empty:
     wait(1);
     frame++;
   } while (frame != 180);
-  for (i = 0; i != arg->count; i++) {
+  for (m = 0; m != arg->count; m++) {
   }
   HeapSlot_Release(188);
   Task_Remove(gData_08143001);

@@ -1518,6 +1518,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     s32 slideStep;
     u8 *bolts;
 
+    bolts = gData_02014000;
     slide = 0;
     slideStep = 0;
     Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
@@ -1531,7 +1532,6 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
                                work->sheet + 0x800, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-    bolts = gData_02014000;
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->sheet + 0x1800, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, bolts, 1,

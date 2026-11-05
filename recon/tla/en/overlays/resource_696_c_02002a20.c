@@ -120,63 +120,54 @@ commands:
     goto commands;
   }
   {
-    s16 *durationVar = &gData_02006490;
-    s16 *targetVar;
     s32 duration;
     gData_020064bc--;
-    duration = *durationVar;
-    targetVar = &gData_020064a4;
+    duration = gData_02006490;
     if (duration == 0) {
-      scale = *targetVar;
+      scale = gData_020064a4;
     } else {
       s32 start, progress, target;
       start = gData_02006498;
+      target = gData_020064a4;
       progress = ++gData_02006508;
-      target = *targetVar;
       scale = start + (target - start) * progress / duration;
       if (progress >= duration)
-        *durationVar = 0;
+        gData_02006490 = 0;
     }
   }
   {
-    s16 *durationVar = &gData_020064c4;
-    s16 *targetVar;
     s32 duration;
-    targetVar = &gData_020064b4;
-    duration = *durationVar;
+    duration = gData_020064c4;
     if (duration == 0) {
-      blend = *targetVar;
+      blend = gData_020064b4;
     } else {
       s32 start, progress, target;
       start = gData_020064b8;
-      target = *targetVar;
+      target = gData_020064b4;
       progress = ++gData_020064ac;
       blend = start + (target - start) * progress / duration;
       if (progress >= duration)
-        *durationVar = 0;
+        gData_020064c4 = 0;
     }
   }
   {
-    s16 *durationVar = &gData_0200649c;
-    s16 *targetVar;
     u32 packed;
     u32 *t;
     s32 duration;
-    duration = *durationVar;
-    targetVar = &gData_02006504;
-    packed = scale << 16;
-    t = work;
+    duration = gData_0200649c;
     if (duration == 0) {
-      pos = *targetVar;
+      pos = gData_02006504;
     } else {
       s32 start, progress, target;
       start = gData_02006500;
-      target = *targetVar;
+      target = gData_02006504;
       progress = ++gData_020064a8;
       pos = start + (target - start) * progress / duration;
       if (progress >= duration)
-        *durationVar = 0;
+        gData_0200649c = 0;
     }
+    t = work;
+    packed = scale << 16;
     {
       u32 low, word;
       t[1] &= 0xffff0000;
@@ -194,9 +185,7 @@ commands:
   pos = gData_020064a0 / 256;
   switch (gData_020064b0) {
   case 1: {
-    i = 0;
-  titleLoop:
-    {
+    for (i = 0; i < 4; i++) {
       y = 56;
       flags = 0x80004000;
       x = pos + scale * (i * 32 - 48) / 256;
@@ -209,16 +198,11 @@ commands:
         Func_020047cc(sprite++, 236);
       }
       tile += 8;
-      i++;
-      if (i < 4)
-        goto titleLoop;
     }
     break;
   }
   case 3: {
-    i = 0;
-  resultLoop:
-    {
+    for (i = 0; i < 2; i++) {
       y = 48;
       flags = 0x80004000;
       x = pos + scale * (i * 32 - 16) / 256;
@@ -231,17 +215,12 @@ commands:
         Func_020047cc(sprite++, 236);
       }
       tile += 8;
-      i++;
-      if (i < 2)
-        goto resultLoop;
     }
     break;
   }
 #if defined(TLA_EDITION_FR)
   case 4: {
-    i = 0;
-  goLoop:
-    {
+    for (i = 0; i < 2; i++) {
       y = 64;
       flags = 0x80004000;
       x = pos + scale * (i * 32 - 16) / 256;
@@ -254,9 +233,6 @@ commands:
         Func_020047cc(sprite++, 236);
       }
       tile += 8;
-      i++;
-      if (i < 2)
-        goto goLoop;
     }
     break;
   }

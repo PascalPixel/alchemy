@@ -450,68 +450,6 @@ Func_02002b8c:
 	mov r8, r3
 	mov r10, r5
 	pop {r5, r6, r7, pc}
-	.section .text.x0200acb4,"ax",%progbits
-	.global Func_02002cb4
-	.thumb_func
-Func_02002cb4:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	lsls r0, r0, #24
-	lsrs r0, r0, #24
-	ldr r5, .L_0200ad24
-	mov r8, r0
-	movs r0, #10
-	adds r0, #255
-	adds r6, r5, #2
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_0200ad14
-	strh r0, [r5]
-	strh r0, [r6]
-	bl Func_02004fe4
-	bl Actor_GetById
-	adds r0, #35
-	ldrb r2, [r0]
-	movs r3, #64
-	orrs r3, r2
-	strb r3, [r0]
-	movs r7, #0
-	movs r5, #8
-	movs r6, #2
-.L_0200acec:
-	ldr r2, .L_0200ad28
-	lsls r3, r7, #2
-	ldrsh r1, [r2, r3]
-	ldrsh r2, [r2, r6]
-	adds r0, r5, #0
-	lsls r1, r1, #19
-	lsls r2, r2, #19
-	bl Func_02004ebc
-	mov r0, r8
-	lsls r1, r0, #24
-	asrs r1, r1, #24
-	adds r0, r5, #0
-	adds r5, #1
-	bl Func_02002b04
-	adds r6, #4
-	adds r7, #1
-	cmp r5, #16
-	ble .L_0200acec
-.L_0200ad14:
-	movs r1, #144
-	lsls r1, r1, #3
-	ldr r0, .L_0200ad2c
-	bl Task_Add
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-.L_0200ad24:
-	.4byte gSceneState
-.L_0200ad28:
-	.4byte gData_0200533c
-.L_0200ad2c:
-	.4byte Func_02002b8c
 	.section .text.x0200af30,"ax",%progbits
 	.balign 4
 	.ifdef TLA_EDITION_JA

@@ -87,11 +87,11 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
   Call2((void (*)())Iwram_ClearWords, (s32)(Data_02007048), (s32)(32));
   if (spare & 1)
     return -1;
+  x = x0;
   cells = (u8 *)gSceneState;
   one = 1;
   step = 0;
   attempts = 0;
-  x = x0;
   z = z0;
   while (1) {
     if (++attempts > 1280)
@@ -104,9 +104,11 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
     Data_02006fe8[step] = x;
     Data_02007008[step] = z;
     Data_02006fc8[step] = direction;
-    Data_02007048[step] = Data_02007048[step] |
-                          (gData_02005ac8 + 1)[Data_02007028[step]] |
-                          1 << ((direction + 2) & 3);
+    {
+      u8 *joins = gData_02005ac8 + 1;
+      Data_02007048[step] = Data_02007048[step] | joins[Data_02007028[step]] |
+                            1 << ((direction + 2) & 3);
+    }
     tries = 0;
     while (1) {
       u32 value;
@@ -119,10 +121,13 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
       tried = Data_02007048[step];
       if ((tried >> dir) & one)
         continue;
-      index = dir * 2;
-      nextX = x + (gData_02005ac0 + 1)[index];
-      index += 1;
-      nextZ = z + (gData_02005ac0 + 1)[index];
+      {
+        s8 *steps = gData_02005ac0 + 1;
+        index = dir * 2;
+        nextX = x + steps[index];
+        index += 1;
+        nextZ = z + steps[index];
+      }
       if (nextX > 10 || nextZ > 7)
         goto blocked;
       if (step == length - 1 && (nextX != endX || nextZ != endZ))
@@ -139,7 +144,10 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
       }
       Data_02007048[step] = tried | one << dir;
       piece = Func_02004224(direction, dir, Data_02007028[step]);
-      Func_02004270(x, z, piece, (cells + (z * 11 + x) * 4)[2] | one << bit);
+      {
+        s32 offset = (z * 11 + x) * 4;
+        Func_02004270(x, z, piece, (cells + offset)[2] | one << bit);
+      }
       step++;
       x = nextX;
       z = nextZ;

@@ -23,6 +23,7 @@
 #include "input.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
+#include "call.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -74,7 +75,9 @@ s32 Func_02000514(void) {
     Event_WaitTransitionFrames();
     FieldEvent_Wait(10);
     Func_02001578(0x20000, 0x4000);
-    Camera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, 1);
+    {
+      Call4((void (*)())Camera_MoveWithinMapBounds, 144 << 16, cameraY, cameraZ, 1);
+    }
     goto check;
     do {
       wait(1);

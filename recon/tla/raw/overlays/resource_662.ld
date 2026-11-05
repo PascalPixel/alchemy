@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/scene/yampi_desert_cave/s0754.o"(.text)
         "*/resource_662_overlay.o"(.text.x020087dc)
         "*/games/tla/src/scene/yampi_desert_cave/stop.o"(.text)
-        "*/resource_662_overlay.o"(.text.x02008978)
+        "*/games/tla/src/scene/yampi_desert_cave/s0978.o"(.text)
         "*/resource_662_overlay.o"(.text.x0200899c)
         "*/games/tla/src/scene/yampi_desert_cave/s0acc.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/s0b54.o"(.text)

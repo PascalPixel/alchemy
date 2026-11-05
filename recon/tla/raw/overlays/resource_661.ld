@@ -56,7 +56,7 @@ SECTIONS
         "*/games/tla/src/scene/yampi_desert/s2b84.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s2c6c.o"(.text)
         "*/games/tla/src/scene/yampi_desert/events_c.o"(.text)
-        "*/resource_661_overlay.o"(.text.x0200ad6c)
+        "*/games/tla/src/scene/yampi_desert/s2d6c.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s2e14.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s2e98.o"(.text)
         "*/resource_661_overlay.o"(.text.x0200aebc)

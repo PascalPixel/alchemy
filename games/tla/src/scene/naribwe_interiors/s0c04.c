@@ -1,13 +1,6 @@
-// Draft, differ 140 of 167 (the switch and both loops have the native's shape;
-// the count is inflated by pool offsets). Left: loop.c strength-reduces the
-// limits[group] store into a walking pointer and GCSE's PRE and loop.c hoist
-// the array's stack address into a callee-saved register; the native rebuilds
-// both (mov r2, sp; str r0, [r2, r3]) on every pass, which shifts every
-// register after it. As a volatile array only the hoisted sp copy and the
-// lowest group's register (r9 for r10) are left (differ 117). Tried: the first
-// loop as a goto loop.
 #include "types.h"
 #include "text/msg_ids.h"
+#include "call.h"
 
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
@@ -16,7 +9,7 @@ s32 Func_02000b60(s32 group);
 s32 Func_02000ba0(s32 limit, s32 group, s32 *out);
 
 u8 *Func_02000c04(void) {
-  s32 *hints = HeapSlot_AllocEwram(252, 320);
+  s32 *hints = (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram, 252, 320);
   s32 limits[4];
   s32 count = 0;
   s32 lowest = 9999;

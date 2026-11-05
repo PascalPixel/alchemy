@@ -1,13 +1,4 @@
-// Draft, differ 2 of 375, skeleton gap 1 (tla-en, 2026-11-01)
-// Func_02000f60's twin for the second statue (actor 10, its steps 12 and 17 to
-// 20, gData_020062a4, flags 0x300 and 0x209). Each flag arm is written out in
-// full: cross-jumping merges their tails, and 999 and 2999 stay in registers.
-// Left: one pair, in the Actor_SetPositionAndResetMotion(.., 0x1780000, 0,
-// 0xf80000) call of timer 3000; the native sets r2 before the shift of r3, ours
-// after it. Locals for x, y, z and the actor, in each order, either change
-// nothing or cost more; it is a scheduling tie, the same in every spelling
-// tried.
-#include "../../../../games/tla/src/scene/kandorean_temple/local.h"
+#include "local.h"
 #include "call.h"
 
 extern s32 gData_020062a4;
@@ -131,8 +122,8 @@ void Func_020012c4(void) {
       Func_02005230(19, 0, 0);
       Func_02005230(20, 0, 0);
       Actor_SetModeById(10, 1);
-      Actor_SetPositionAndResetMotion(Actor_GetById(10), 0x1780000, 0,
-                                      0xf80000);
+      Call4((void (*)())Actor_SetPositionAndResetMotion,
+            (s32)Actor_GetById(10), 0x1780000, 0, 0xf80000);
       Actor_GetById(10)->priorityFlags |= 2;
       Actor_SetSpritePriority(10, 3);
       if (GameFlag_Test(0x209)) {

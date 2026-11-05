@@ -1,12 +1,4 @@
-// Draft, differ 24 of 199 (was 69): the leader and actor 14: Func_02001340
-// lines them up, flag 0x230 is set, a burst of 17 effects plays and actor 14
-// sinks. The sinking loop's 0x200 turn is a variable set before it (found by
-// a permute search; a temporary device on adoption, though the native still
-// builds 0x200 in the loop). Left: register choice: the native keeps the
-// leader in r10 and the options' address in r8, here the other way round,
-// and forms the velocity's address after the cosine call. A barrier after
-// the turn gives 22.
-#include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
+#include "shrine_of_the_sea_god.h"
 #include "call.h"
 
 /// field_effect.h's EffectOptions, which this overlay's headers cannot include.
@@ -88,6 +80,10 @@ void Func_02001474(void) {
   spin = 0x200;
   for (i = 0; i <= 7;) {
     sprite->rotation += spin;
+    /* FAKEMATCH(barrier): an empty asm after the rotation's store, which the
+     * next load of the stone follows; as no asm, 2 of 199 instructions differ
+     * in tla-en. */
+    asm("");
     stone->z += 0x10000;
     i++;
     wait(1);

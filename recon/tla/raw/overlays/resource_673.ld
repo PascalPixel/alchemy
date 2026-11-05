@@ -12,7 +12,7 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_catacombs/regions.o"(.text)
         "*/games/tla/src/scene/gabomba_catacombs/exits.o"(.text)
         "*/games/tla/src/scene/gabomba_catacombs/placements.o"(.text)
-        "*/resource_673_overlay.o"(.text.x02008ecc)
+        "*/games/tla/src/scene/gabomba_catacombs/s0ecc.o"(.text)
         "*/games/tla/src/scene/gabomba_catacombs/prepare.o"(.text)
         "*/games/tla/src/scene/gabomba_catacombs/import.o"(.text)
         "*/games/tla/src/scene/gabomba_catacombs/data.o"(.data)

@@ -1,13 +1,11 @@
-// Near miss, differ 31 of 2,484 (6,308 bytes), lifted mechanically from the
-// listing: 656 calls through call.h's layer or direct, with tagged argument
-// barriers where the bytes need them. Left: (1) two call sites one instruction
-// out of order (Call2 with 5, 3 and the call whose first argument is 0x200a);
-// (2) at the sprite scale store the native loads the sprite before it starts
-// 0x6666, and keeps one load of the sprite; (3) after the 21-step loop the
-// native stores the 0x4000 angle before the next call's zero; (4) the literal
-// pools then fall where the native's do (the rest of the count).
 #include "types.h"
 #include "call.h"
+
+#define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                  \
+  do {                                                                         \
+    Call2(Actor_SetModeById, id, mode);                                        \
+    Call1(FieldEvent_Wait, frames);                                            \
+  } while (0)
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -146,14 +144,7 @@ L_0200ba1e:;
   Call4(Camera_MoveWithinMapBounds, 0x1480000, -1, 0xb80000, 1);
   Func_020052b4();
   Call1(FieldEvent_Wait, 10);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 0x600a, 0, 0);
   Call2(Actor_SetModeById, 4, 3);
@@ -180,8 +171,8 @@ L_0200ba8c:;
   {
     s32 a1 = 0x102;
     s32 a2 = 30;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Func_0200528c(9, a1, a2);
   }
@@ -196,8 +187,8 @@ L_0200ba8c:;
   {
     s32 a1 = 0x101;
     s32 a2 = 30;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Func_0200528c(9, a1, a2);
   }
@@ -209,8 +200,8 @@ L_0200ba8c:;
   {
     s32 a1 = 0x100;
     s32 a2 = 20;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Func_0200528c(5, a1, a2);
   }
@@ -225,52 +216,31 @@ L_0200ba8c:;
   Call3(Actor_ArmCallback, 10, 0x5000, 0);
   Call1(FieldEvent_Wait, 20);
   Call3(Func_0200525c, 0x600a, 0, 0);
-  {
-    s32 a0 = 4;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(4, 3, 20);
   Call1(FieldEvent_Wait, 35);
   Call3(Actor_CommitPositionAndActivate, 10, -8, 0);
   {
     s32 a1 = 0x5000;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_ArmCallback(10, a1, a2);
   }
   Call1(FieldEvent_Wait, 25);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 0x600a, 0, 0);
   {
     s32 a1 = 0x102;
     s32 a2 = 30;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Func_0200528c(9, a1, a2);
   }
   Call3(Func_0200525c, 9, 0, 0);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
-  }
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_MODE_THEN_WAIT(10, 4, 33);
   Call3(Func_0200525c, 0x600a, 0, 0);
   Func_0200528c(9, 0x103, 45);
   Call3(Actor_Jump, 9, 6, 15);
@@ -291,20 +261,13 @@ L_0200ba8c:;
   {
     s32 a1 = 4;
     s32 a2 = -12;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_CommitPositionAndActivate(10, a1, a2);
   }
   Call1(FieldEvent_Wait, 10);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
-  }
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_MODE_THEN_WAIT(10, 4, 33);
   Call3(Func_0200525c, 0x200a, 0, 0);
   Call3(Actor_ArmCallback, 10, 0x4000, 0);
   Call1(FieldEvent_Wait, 30);
@@ -312,23 +275,9 @@ L_0200ba8c:;
   Call2(Actor_SetModeById, 4, 3);
   Call2(Actor_SetModeById, 5, 3);
   Call2(Actor_SetModeById, 6, 3);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1(FieldEvent_Wait, 20);
-  Call1(FieldEvent_Wait, 20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 0x200a, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 10, 2);
@@ -345,8 +294,8 @@ L_0200ba8c:;
   {
     s32 a1 = 0x101;
     s32 a2 = 30;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Func_0200528c(6, a1, a2);
   }
@@ -354,58 +303,37 @@ L_0200ba8c:;
   {
     s32 a1 = 0x3000;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_ArmCallback(10, a1, a2);
   }
   Call1(FieldEvent_Wait, 20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 0x200a, 0, 0);
   {
     s32 a1 = 0x102;
     s32 a2 = 30;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Func_0200528c(10, a1, a2);
   }
   Call3(Func_0200525c, 0x200a, 0, 0);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 9, 0, 0);
   {
     s32 a1 = 0x5000;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_ArmCallback(10, a1, a2);
   }
   Call1(FieldEvent_Wait, 20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
-  }
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_MODE_THEN_WAIT(10, 4, 33);
   Call3(Func_0200525c, 0x200a, 0, 0);
   Call3(Actor_ArmCallback, 9, 0x2000, 0);
   Call3(Actor_ArmCallback, 4, 0xa000, 0);
@@ -435,71 +363,36 @@ L_0200bf6a:;
   Call3(Func_0200525c, 9, 0, 0);
   Func_0200528c(10, 0x101, 30);
   Call3(Func_0200525c, 0x200a, 0, 0);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 9, 0, 0);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 10);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 0x200a, 0, 0);
   {
     s32 a1 = 0x100;
     s32 a2 = 30;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Func_0200528c(10, a1, a2);
   }
   Call3(Func_0200525c, 0x200a, 0, 0);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 9, 0, 0);
   {
     s32 a1 = 0x2000;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_ArmCallback(9, a1, a2);
   }
   Call1(FieldEvent_Wait, 30);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 9, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 10, 2);
@@ -507,49 +400,28 @@ L_0200bf6a:;
   {
     s32 a1 = 0xc000;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_ArmCallback(10, a1, a2);
   }
   Call1(FieldEvent_Wait, 30);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 0x200a, 0, 0);
   Call2(Actor_SetModeById, 4, 3);
-  {
-    s32 a0 = 5;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(5, 3, 20);
   Call1(FieldEvent_Wait, 30);
   {
     s32 a1 = 0xe000;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_ArmCallback(9, a1, a2);
   }
   Call1(FieldEvent_Wait, 25);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 9, 0, 0);
   Call2(Actor_StartRepeatedMotion, 10, 3);
@@ -558,14 +430,7 @@ L_0200bf6a:;
   Call3(Actor_ArmCallback, 10, 0x5000, 0);
   Call1(FieldEvent_Wait, 30);
   Call3(Func_0200525c, 0x200a, 0, 0);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 9, 0, 0);
   Func_0200528c(10, 0x100, 30);
@@ -599,14 +464,7 @@ L_0200c216:;
   Call3(Actor_CommitPositionAndActivate, 10, 16, 16);
   Call3(Actor_SetSpeedParameters, 10, 0xb333, 0x5999);
   Call3(Func_0200525c, 10, 0, 0);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1(FieldEvent_Wait, 10);
   t8 = Value1(GameFlag_Test, 7);
   if (t8 == 0)
@@ -630,26 +488,12 @@ L_0200c2bc:;
   Call3(Actor_ArmCallback, 10, 0x5000, 0);
   Call1(FieldEvent_Wait, 20);
   Call3(Func_0200525c, 10, 0, 0);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
-  }
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_MODE_THEN_WAIT(9, 4, 33);
   Call3(Func_0200525c, 9, 0, 0);
   Call3(Actor_ArmCallback, 10, 0x2000, 0);
   Call1(FieldEvent_Wait, 20);
   Call3(Func_0200525c, 10, 0, 0);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call1(FieldEvent_Wait, 20);
   Func_0200528c(6, 0x106, 40);
@@ -681,8 +525,8 @@ L_0200c456:;
   {
     s32 a1 = 0x101;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Func_0200528c(9, a1, a2);
   }
@@ -695,8 +539,8 @@ L_0200c484:;
   {
     s32 a1 = 0x101;
     s32 a2 = 50;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Func_0200528c(10, a1, a2);
   }
@@ -708,33 +552,19 @@ L_0200c484:;
   Call3(Func_0200525c, 9, 0, 0);
   Func_0200528c(6, 0x107, 30);
   Call3(Func_0200525c, 6, 0, 0);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
-  }
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_MODE_THEN_WAIT(10, 4, 33);
   Call3(Func_0200525c, 10, 0, 0);
   Call3(Actor_ArmCallback, 6, 0xc000, 0);
   Call1(FieldEvent_Wait, 20);
   Func_0200528c(6, 0x103, 30);
   Call3(Func_0200525c, 6, 0, 0);
-  {
-    s32 a0 = 6;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
-  }
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_MODE_THEN_WAIT(6, 4, 33);
   Call3(Func_0200525c, 6, 0, 0);
   {
     s32 a1 = 0x105;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Func_0200528c(9, a1, a2);
   }
@@ -770,14 +600,7 @@ L_0200c596:;
   Call3(Actor_Jump, 9, 6, 23);
   Call1(FieldEvent_Wait, 10);
   Call2(Actor_SetModeById, 9, 3);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 10);
   v5 = 0;
   Call11(Func_0200527c, 10, 9, 2, 9, 5, 9, 17, 14, 20, 9, v5);
@@ -799,24 +622,10 @@ L_0200c694:;
   Call2(Motion_SetVarCbAndRefresh, 10, 2);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 10, 0, 0);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 10, 0, 0);
-  {
-    s32 a0 = 6;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(6, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 6, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 9, 2);
@@ -827,14 +636,7 @@ L_0200c694:;
   Call3(Actor_ArmCallback, 9, 0xa000, 0);
   Call1(FieldEvent_Wait, 20);
   Call3(Func_0200525c, 9, 0, 0);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Actor_CommitPositionAndActivate, 9, -18, 0);
   Call3(Actor_ArmCallback, 5, 0xc000, 0);
@@ -845,17 +647,9 @@ L_0200c694:;
   Call1(FieldEvent_Wait, 20);
   Call3(Actor_ArmCallback, 10, 0x5000, 0);
   Call1(FieldEvent_Wait, 20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 20);
-  Call1(FieldEvent_Wait, 20);
-  Call2(Actor_SetModeById, 5, 3);
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(5, 3, 20);
   Call1(FieldEvent_Wait, 10);
   t14 = Value1(GameFlag_Test, 7);
   if (t14 == 0)
@@ -864,14 +658,7 @@ L_0200c694:;
   Call3(Func_0200525c, 0x2009, 0, 0);
   Call3(Actor_ArmCallback, 10, 0x5000, 0);
   Call1(FieldEvent_Wait, 20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 20);
   Call2(Actor_SetModeById, 7, 3);
   Call1(FieldEvent_Wait, 20);
@@ -886,20 +673,13 @@ L_0200c892:;
   {
     s32 a1 = 0x3000;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_ArmCallback(9, a1, a2);
   }
   Call1(FieldEvent_Wait, 20);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 9, 0, 0);
   Call3(Actor_ArmCallback, 9, 0xe000, 0);
@@ -909,39 +689,18 @@ L_0200c892:;
   {
     s32 a1 = 0x5000;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_ArmCallback(10, a1, a2);
   }
   Call1(FieldEvent_Wait, 20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 30);
-  {
-    s32 a0 = 4;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(4, 3, 20);
   Call1(FieldEvent_Wait, 25);
   Call3(Func_0200525c, 0x200a, 0, 0);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
-  }
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_MODE_THEN_WAIT(9, 4, 33);
   Call3(Func_0200525c, 9, 0, 0);
   Call3(Actor_ArmCallback, 10, 0xc000, 0);
   Call1(FieldEvent_Wait, 40);
@@ -960,25 +719,14 @@ L_0200c892:;
   {
     s32 a1 = -16;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
-    asm volatile("" : "+l"(a1), "+l"(a2));
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     Actor_CommitPositionAndActivate(10, a1, a2);
   }
   Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 4, 33);
   {
     s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
-  }
-  Call1(FieldEvent_Wait, 33);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
     Actor_ArmCallback(a0, 0, 0);
   }
   Call1(FieldEvent_Wait, 20);
@@ -1000,19 +748,12 @@ L_0200c892:;
   Call3(Func_0200525c, 10, 0, 0);
   Call2(Motion_SetVarCbAndRefresh, 10, 2);
   Call1(FieldEvent_Wait, 10);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 5);
   t15 = Value1(Actor_GetById, 12);
   v5 = t15;
-  *(s32 *)(*(s32 *)(v5 + 80) + 12) = 0x6666;
   v8 = *(s32 *)(v5 + 80);
+  *(s32 *)(v8 + 12) = 0x6666;
   Call2(Actor_SetSpritePriority, 12, 1);
   t16 = Value1(Actor_GetById, 12);
   Call2(Actor_SetSingleChildFlags, t16, 0);
@@ -1025,8 +766,8 @@ L_0200caf6:;
   *(s32 *)(v8 + 12) = (t17 + 0x6666);
   {
     s32 angle = *(u16 *)(v5 + 6);
-    /* FAKEMATCH: the native starts the 0x1000 step before it loads the angle;
-     * the plain sum loads first (one reordered pair, differ 2). */
+    /* FAKEMATCH(barrier): the native starts the 0x1000 step before it loads
+     * the angle; as the plain sum, 2 of 2484 instructions differ in tla-en. */
     __asm__("" : "+l"(angle));
     *(u16 *)(v5 + 6) = angle + 0x1000;
   }
@@ -1037,12 +778,10 @@ L_0200caf6:;
     goto L_0200caf6;
   FIELD_AT(v5, u16, 6) = 0x4000;
   {
-    s32 a1 = 0;
     s32 a2 = 8;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
-    asm volatile("" : "+l"(a1), "+l"(a2));
-    Actor_CommitPositionAndActivate(12, a1, a2);
+    s32 a1 = 0;
+
+    Call3(Actor_CommitPositionAndActivate, 12, a1, a2);
   }
   t18 = Value1(Actor_GetById, 12);
   Call2(Actor_SetSingleChildFlags, t18, 1);
@@ -1065,11 +804,15 @@ L_0200caf6:;
   Call3(Func_0200525c, 0x200a, 0, 0);
   Call3(Actor_ArmCallback, 10, 0x5000, 0);
   Call1(FieldEvent_Wait, 20);
-  Call2(FieldMessage_ShowAtActor, 0x200a, 0);
+  {
+    s32 a1 = 0;
+
+    Value2(FieldMessage_ShowAtActor, 0x200a, a1);
+  }
   Call3(Actor_ArmCallback, 9, 0x3000, 0);
   Call3(Actor_ArmCallback, 5, 0x8000, 0);
   Call3(Actor_ArmCallback, 6, 0x8000, 0);
-  t19 = Value1(GameFlag_Test, 7);
+  t19 =Value1(GameFlag_Test, 7);
   if (t19 == 0)
     goto L_0200cc42;
   Call3(Actor_ArmCallback, 7, 0x8000, 0);
@@ -1089,9 +832,6 @@ L_0200cc7c:;
       (*(u16 *)((FIELD_AT(0x3000000, s32, 108) + 0x1c4)) + 1);
   {
     s32 a0 = 0x200a;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
     Func_0200525c(a0, 0, 0);
   }
 L_0200cca2:;
@@ -1115,8 +855,8 @@ L_0200ccdc:;
   Call3(Actor_CommitPositionAndActivate, 10, 0, -8);
   Call1(FieldEvent_Wait, 1);
   t23 = Value1(Actor_GetById, 10);
-  /* FAKEMATCH: the value is ORed into the register that holds the constant, as
-   * the native does; as one |= the constant is built second. */
+  /* FAKEMATCH(temporary): the value is ORed into the register that holds the
+   * constant; as one |=, 4 of 2484 instructions differ in tla-en. */
   b1 = 1;
   b1 |= *(u8 *)((t23 + 90));
   *(u8 *)((t23 + 90)) = b1;
@@ -1143,22 +883,15 @@ L_0200cda2:;
   {
     s32 a1 = 0x108;
     s32 a2 = 30;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Func_0200528c(6, a1, a2);
   }
   Call3(Func_0200525c, 6, 0, 0);
   Call3(Actor_ArmCallback, 5, 0, 0);
   Call1(FieldEvent_Wait, 30);
-  {
-    s32 a0 = 5;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(5, 3, 20);
   Call1(FieldEvent_Wait, 20);
   Call3(Actor_ArmCallback, 9, 0xe000, 0);
   Call1(FieldEvent_Wait, 20);
@@ -1167,65 +900,35 @@ L_0200cda2:;
   {
     s32 a1 = 0xc000;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     asm volatile("" : "+l"(a1), "+l"(a2));
     Actor_ArmCallback(5, a1, a2);
   }
   Call1(FieldEvent_Wait, 20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 4);
-  }
-  Call1(FieldEvent_Wait, 33);
+  ACTOR_MODE_THEN_WAIT(10, 4, 33);
   Call3(Func_0200525c, 0x200a, 0, 0);
-  {
-    s32 a0 = 9;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
+  ACTOR_MODE_THEN_WAIT(9, 3, 20);
   Call1(FieldEvent_Wait, 20);
-  Call1(FieldEvent_Wait, 20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 10);
   {
     s32 a1 = 0x108;
     s32 a2 = 30;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
-    asm volatile("" : "+l"(a1), "+l"(a2));
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     Func_0200528c(5, a1, a2);
   }
   Call3(Func_0200525c, 0x2005, 0, 0);
   {
     s32 a1 = 0x3000;
     s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
-    asm volatile("" : "+l"(a1), "+l"(a2));
+    /* FAKEMATCH(barrier): the native loads the later arguments before the
+     * first; as plain calls, 177 of 2484 instructions differ in tla-en. */
     Actor_ArmCallback(10, a1, a2);
   }
   Call1(FieldEvent_Wait, 20);
-  {
-    s32 a0 = 10;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(10, 3, 20);
   Call1(FieldEvent_Wait, 20);
   Call2(Actor_SetModeById, 4, 3);
   Call2(Actor_SetModeById, 5, 3);
@@ -1247,14 +950,7 @@ L_0200cf2a:;
   Call2(Motion_SetVarCbAndRefresh, 9, 2);
   Call1(FieldEvent_Wait, 10);
   Call3(Func_0200525c, 9, 0, 0);
-  {
-    s32 a0 = 4;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(4, 3, 20);
   Call1(FieldEvent_Wait, 20);
   t26 = Value1(GameFlag_Test, 7);
   if (t26 == 0)
@@ -1263,14 +959,7 @@ L_0200cf2a:;
 L_0200cfbc:;
   Call2(Actor_SetModeById, 5, 3);
   Call2(Actor_SetModeById, 6, 3);
-  {
-    s32 a0 = 4;
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
-    Actor_SetModeById(a0, 3);
-  }
-  Call1(FieldEvent_Wait, 20);
+  ACTOR_MODE_THEN_WAIT(4, 3, 20);
   Call1(FieldEvent_Wait, 20);
   Call3(Actor_SetSpeedParameters, 9, 0x13333, 0x9999);
   Call2(Actor_SetModeById, 9, 2);
@@ -1323,9 +1012,6 @@ L_0200d0fa:;
   p2 = (s32)gMainRoutineWork;
   {
     s32 a0 = *(s32 *)((p2 + 0x214));
-    /* FAKEMATCH: the native loads the first argument before the others; the
-     * plain call loads it last. */
-    asm volatile("" : "+l"(a0));
     Camera_FollowActor(a0, 1);
   }
   Func_020051b4();

@@ -21,6 +21,7 @@
 // every edition) needs a linked name, the eight Msg names need their PO
 // contexts (messages 5, 7, 8 and 36 to 41 are plain numbers there), and
 // SceneId_Lobby needs a name for row 312 of scenes.s (0x6b5, the lobby).
+#include "edition.h"
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -94,6 +95,14 @@ void Party_AddActiveOwner(s32 id);
 #define PARTY_WORD(party, index) FIELD_AT(party, u32, 4 * (index))
 
 #define Ram_MapCellBackup FIXED_ADDRESS((u8 *), 0x02013000, gMapCellBackup)
+
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+#define YEAH_WIDTH 6
+#elif (LANGUAGE == LANGUAGE_SPANISH)
+#define YEAH_WIDTH 10
+#else
+#define YEAH_WIDTH 8
+#endif
 
 /// Swaps the map cell buffer out around a password or link screen.
 #define COPY_CELLS(to, from)                                                   \
@@ -211,10 +220,15 @@ top:
       } else if (result == 0) {
         SAVE_CELLS();
         Func_02002350();
+#if (LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_JAPANESE)
         status = Func_02000e44();
         RESTORE_CELLS()
         if (status == -1)
           goto enter;
+#else
+        Func_02000e44();
+        RESTORE_CELLS()
+#endif
         Func_02002370(Ram_MapCellBackup, 1, 0);
       }
     } else {
@@ -239,7 +253,7 @@ top:
     save:
       message = (s32)MsgPlayOnEasyLevel;
       FieldMessage_Show(message, 13);
-      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, 8, 0);
+      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i == 0) {
         if (gData_02003860 == 0) {
@@ -261,7 +275,7 @@ top:
         }
       }
       FieldMessage_Show((s32)MsgPlayOnHardLevel, 13);
-      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, 8, 0);
+      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i == 0) {
         Flag_Set(46);
@@ -269,7 +283,7 @@ top:
         goto leave;
       }
       FieldMessage_Show((s32)MsgPlayOnNormalLevel, 13);
-      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, 8, 0);
+      i = Menu_RunConfirmSelection(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i != 0)
         goto save;
@@ -392,7 +406,9 @@ again:
     if (++i < limit)
       goto shut;
   }
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   Flag_Set(0x109);
+#endif
 finish:
   ((struct EventWork *)Ram_HeapSlots->eventWork)->countdown = 999;
   FieldEvent_Wait(30);

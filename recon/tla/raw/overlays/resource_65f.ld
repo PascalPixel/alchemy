@@ -30,10 +30,10 @@ SECTIONS
         "*/games/tla/src/scene/garoh/s12a8.o"(.text)
         "*/games/tla/src/scene/garoh/spawn.o"(.text)
         "*/games/tla/src/scene/garoh/push.o"(.text)
-        "*/resource_65f_overlay.o"(.text.x02009490)
+        "*/games/tla/src/scene/garoh/s1490.o"(.text)
         "*/games/tla/src/scene/garoh/s22f4.o"(.text)
         "*/games/tla/src/scene/garoh/s2694.o"(.text)
-        "*/resource_65f_overlay.o"(.text.x0200b878)
+        "*/games/tla/src/scene/garoh/s3878.o"(.text)
         "*/games/tla/src/scene/garoh/import.o"(.text)
         "*/games/tla/src/scene/garoh/data.o"(.data)
     }

@@ -1,20 +1,3 @@
-// Draft, differ 108 of 449, skeleton gap 16 (tla-en, 2026-11-01)
-// The Venus Lighthouse entrance glow's scheduled update: steps through its
-// eight stages (rise, wait, lift the object, hold, fall, fade the effect,
-// shake) by timer, spins the object and draws the column of glow sprites, the
-// top one bobbing on a sine.
-// Left: work takes r7 and sprite r6, the listing's r6 and r7: sprite outranks
-// work in global.c (14 refs over 39 insns) unless it is set at the loop's head,
-// which puts its copy too early (differ 44, gap 26). The other gap is order:
-// the listing's s32 stores in stage 6 and the last sprite come before the next
-// constants; unions on the s16 fields and the positions did not move them.
-// Forms that matter: a timer reread mixes work->timer and *timer, or gcse's PRE
-// merges the reads (volatile gives ldrh and a shift instead of ldrsh); -1 goes
-// through work->timer, as *timer it comes from the pool; state and sprite stay
-// function scope so loop.c keeps their copies; frameStep and mask keep
-// tileTop's address short-lived, or loop.c hoists it into r9, and mask set
-// before the address breaks the reload order. Call3 and Value2 (call.h) keep
-// the constant arguments unshared, as the matched scenes do.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -141,6 +124,10 @@ void Func_02001fd0(void) {
       scale = 0;
     effect->scaleX = scale;
     effect->scaleY = scale;
+    /* FAKEMATCH(barrier): an empty asm after the scale's stores, which the
+     * timer's address follows; as no asm, 2 of 449 instructions differ in
+     * tla-en. */
+    asm("");
     timer = &work->timer;
     if (work->timer == 10)
       Import_SoundPlay(310);

@@ -93,6 +93,7 @@ void Scene_RunSoldierInterception(void) {
   s32 rec;
   u8 *record;
   s32 v5;
+  s32 byte;
   s32 callback;
 
   Call1(Func_02002854, 0x890);
@@ -447,7 +448,7 @@ void Scene_RunSoldierInterception(void) {
   Call3(Func_020028d4, 20, 0x1cccc, 0xe666);
   Call3(Func_020028d4, 19, 0x1cccc, 0xe666);
   Call3(Func_020028d4, 18, 0x1cccc, 0xe666);
-  Call3(Func_020028d4, 17, 0x1cccc, 0xe666);
+  Value3(Func_020028d4, 17, 0x1cccc, 0xe666);
   v5 = 0;
   rec = Func_020028cc(20);
   callback = (s32)VenusLighthouseEntrance_UpdateSparkTrail;
@@ -539,13 +540,14 @@ void Scene_RunSoldierInterception(void) {
   Func_020028ac(55);
   *(s32 *)(rec + 8) += -0x40000;
   *(s32 *)(rec + 16) += 0x40000;
-  *(u16 *)(*(s32 *)(rec + 80) + 18) = v5;
   {
     s32 shown = 0x4000;
+    s32 target = *(s32 *)(rec + 80);
 
+    *(u16 *)(target + 18) = v5;
     *(u16 *)(rec + 6) = shown;
   }
-  Func_02002924(17, 6, 40);
+  Call3(Func_02002924, 17, 6, 40);
   Func_02002914(17, 11);
   Import_SoundPlay(135);
   Func_020028ac(14);
@@ -557,8 +559,16 @@ void Scene_RunSoldierInterception(void) {
   Func_020028ac(14);
   Func_020028ac(20);
   *(u16 *)p10 = v5;
-  *(s32 *)(rec + 108) = callback;
-  Func_02002914(17, 10);
+  {
+    s32 next = 17;
+
+    /* FAKEMATCH(barrier): the native loads the next actor id before it stores
+     * the spark callback; as the plain store then call, 2 of 2142 instructions
+     * differ in tla-en. */
+    asm volatile("" : "+l"(next));
+    *(s32 *)(rec + 108) = callback;
+    Func_02002914(next, 10);
+  }
   Call3(Func_020028e4, 17, 224, 0x1d8);
   Func_020028ac(30);
   *(s32 *)(rec + 108) = v5;
@@ -575,7 +585,14 @@ void Scene_RunSoldierInterception(void) {
   Func_0200298c();
   Func_020028ac(10);
   Call3(Func_02002954, 9, 0xb000, 0);
-  Func_02002954(5, 0x4000, 0);
+  {
+    s32 a0 = 5;
+
+    /* FAKEMATCH(barrier): the native loads the actor before it copies the
+     * angle; as the plain call, 2 of 2142 instructions differ in tla-en. */
+    asm volatile("" : "+l"(a0));
+    Func_02002954(a0, 0x4000, 0);
+  }
   Call3(Func_02002954, 8, 0x3000, 0);
   Func_020028ac(15);
   Func_0200294c(9, 0, 10);
@@ -669,7 +686,13 @@ void Scene_RunSoldierInterception(void) {
   *(u8 *)(Func_020028cc(15) + 90) &= 254;
   Call3(Func_020028f4, 15, 0x1f8, 0x1b8);
   Func_020028ac(1);
-  *(u8 *)(Func_020028cc(15) + 90) |= 1;
+  {
+    u8 *flags = Func_020028cc(15) + 90;
+    s32 one = 1;
+
+    byte = *flags;
+    *flags = byte | one;
+  }
   Func_0200290c(15, 0, 0);
   Func_020028ac(10);
   Call3(Func_020028d4, 9, 0xcccc, 0x6666);
@@ -699,7 +722,13 @@ void Scene_RunSoldierInterception(void) {
   Func_0200294c(8, 0, 10);
   Call3(Func_02002964, 5, 0x109, 80);
   Func_020028ac(10);
-  Call3(Func_02002964, 8, 0x106, 40);
+  {
+    s32 a1 = 0x106;
+    s32 a2 = 40;
+    s32 a0 = 8;
+
+    Value3(Func_02002964, a0, a1, a2);
+  }
   Value2(Func_02002944, 8, 0);
   if (Value2(Func_020028c4, 5, 0) == 0) {
     Func_020028ac(20);

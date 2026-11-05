@@ -1,20 +1,4 @@
-// Draft, differ 21 of 369, skeleton gap 2 (tla-en, 2026-11-01)
-// The Kandorean Temple statue (actor 9) and its steps, run by gData_020062a0:
-// they rise, bob on a sine and sink again, carrying the leader while flag 0x208
-// is set; Func_020012c4 is its twin for actor 10. Each arm of flag 0x301 is
-// written out in full: cross-jumping merges their tails, and 999 and 2999 stay
-// in registers.
-// Left: one instruction, and the 20 differ lines are its branch and pool
-// distances. At timer 3000 the native builds 0xd80000 twice, in r1 and in r3;
-// CSE here builds it once and copies. Tried without change: locals for x and z,
-// tile << 16, PIXELS(216), an unsigned constant, a cast call, Call4 and an
-// inline wrapper, const parameters included. The native's pair looks like
-// direct moves into the argument registers, which would also settle the same
-// pair in Func_020012c4.
-// Note for adoption: flag is a forced temporary, so *timer loads after the call
-// and before the test; written as if (GameFlag_Test(0x301)) with a load in each
-// arm the gap is 3. It needs a temporary tag or a better form.
-#include "../../../../games/tla/src/scene/kandorean_temple/local.h"
+#include "local.h"
 #include "call.h"
 
 extern s32 gData_020062a0;
@@ -139,7 +123,7 @@ void Func_02000f60(void) {
     Func_02005230(15, 0, 0);
     Func_02005230(16, 0, 0);
     Actor_SetModeById(9, 1);
-    Actor_SetPositionAndResetMotion(Actor_GetById(9), 0xd80000, 0, 0xd80000);
+    Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)Actor_GetById(9), 0xd80000, 0, 0xd80000);
     Actor_GetById(9)->priorityFlags |= 2;
     Actor_SetSpritePriority(9, 3);
     if (GameFlag_Test(0x208)) {

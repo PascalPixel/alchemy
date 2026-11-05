@@ -11,7 +11,7 @@ SECTIONS
         "*/resource_66e_overlay.o"(.text.x02008390)
         "*/games/tla/src/scene/naribwe_interiors/reading.o"(.text)
         "*/resource_66e_overlay.o"(.text.x02008ba0)
-        "*/resource_66e_overlay.o"(.text.x02008c04)
+        "*/games/tla/src/scene/naribwe_interiors/s0c04.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors/prepare.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors/import.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors/data.o"(.data)

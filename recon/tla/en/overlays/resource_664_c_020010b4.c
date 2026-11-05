@@ -31,6 +31,7 @@
 #include "ram_buffer.h"
 #include "field_sprite.h"
 #include "iwram_call.h"
+#include "call.h"
 #include "field/event_work.h"
 
 extern u8 gData_020061cc[];
@@ -67,7 +68,12 @@ void Func_020010b4(struct Actor *shot) {
   }
   Actor_SetAnimationSpeed(shot, 16);
   if (Func_02000690(2, shot->x >> 20, (shot->z - shot->y) >> 20) >> 8 == 212) {
-    Func_02005f8c(shot, 539);
+    {
+      s32 cue = 284;
+
+      asm volatile("" : "+l"(cue));
+      Func_02005f8c(shot, cue + 255);
+    }
     ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
     Func_02005d6c(shot, gData_020061cc);

@@ -1,22 +1,4 @@
-// Draft, differ 74 of 1485, skeleton gap 16 (tla-en, 2026-11-01)
-// Garoh's long scene with actors 4 to 9 after MsgGaroh01, with two bird-path
-// loops on Math_Sine. The paths step through Garoh_PathStep, so the native's
-// multiply-then-divide survives (a plain expression folds it to one multiply);
-// each Math_Sine result is taken into a variable first, so the step is computed
-// before the amplitude. The message decrement goes through s16, which gives the
-// native's subs #1 (u16 builds 0xffff). ACTOR_MODE_THEN_WAIT's do-while(0) is
-// what keeps the arguments in order: its loop notes are a scheduling barrier,
-// without which sched2 issues the last argument first at about 20 calls, as it
-// counts the calls after a set of r1 or r2.
-// Left, all inside the two loops: gcse's PRE hoists position's address (sfp-12,
-// edge into loop 1) and loop 2's toX - x and toZ - z, where the native forms
-// them inside and keeps only the targets in r9 and sl; r5 to r7 rotate from
-// that. PRE needs the operands untouched earlier in the block, so the native's
-// loop 2 likely sets one there. Tried without gain: for and do loops, constant
-// targets (loop.c then hoists the subtraction), a twice-set temporary in
-// Garoh_PathStep, s32 *p set in, or before, loop 1, and each callee's return
-// type switched between Call and Value.
-#include "../../../../games/tla/src/scene/garoh/garoh.h"
+#include "garoh.h"
 #include "main_routine_work.h"
 #include "event_work.h"
 #include "call.h"
@@ -76,6 +58,7 @@ void Func_02001490(void) {
   struct Actor *bird;
   s32 i;
   s32 position[3];
+  s32 *pos;
   s32 x, z;
   s32 toX, toZ;
 
@@ -133,7 +116,8 @@ loop1:
     s32 wave;
 
     wave = Math_Sine(i << 13);
-    position[0] = Garoh_PathStep(0x680000, 0x580000, i) - wave * 12;
+    pos = position;
+    pos[0] = Garoh_PathStep(0x680000, 0x580000, i) - wave * 12;
     wave = Math_Sine(i << 13);
     position[2] = Garoh_PathStep(0x200000, 0x780000, i) - wave * 7;
     position[1] = 0;

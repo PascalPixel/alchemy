@@ -1,11 +1,8 @@
-// Draft, differ 78 of 200 (was 82; the English listing; the Japanese one
-// does not save and restore the leader's priority flags): inside an event,
-// the leader is carried up 80 pixels with a lift object (type 280, cue 137),
-// spinning and flickering until it stops, then drops (cues 288 and 152) onto
-// the ground below the lift and walks off it; the lift and the prepared
-// object are removed. The speed and acceleration are stored in that order.
-// Left: mostly the choice among r1, r2 and r3 for the field addresses and
-// constants, and the pool offsets that follow.
+#include "edition.h"
+
+// The Japanese form differs and is still on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -95,3 +92,5 @@ void Func_02004cc8(void) {
   Event_WaitTransitionFrames();
   Func_02005e1c();
 }
+
+#endif

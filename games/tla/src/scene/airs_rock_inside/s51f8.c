@@ -1,31 +1,8 @@
-// Draft, differ 27 of 1091, skeleton gap 3 (tla-en, 2026-11-01)
-// Air's Rock's map setup, by room: sets the screen
-// effect, the leader's priority bit 5 and flags 0x300 and 0x89f, then
-// places what each room's flags have moved: the pushed pillars
-// (Func_02005e6c, then Func_02005f6c with the room's pillar table), the
-// pillars of light the Whirlwind and beam scenes leave (flags 0x899 and
-// 0x89a: Func_02001084 or a dark palette), the opened walls and their cells
-// (Func_02005d9c, Func_02005dac), the blending callbacks (Func_02004f3c,
-// Func_02001690) and the rooms' scenes by entrance (Ov664Room1's entrance
-// 11 runs Func_0200505c before flag 265, entrance 16 drops the leader in;
-// Ov664Room2's entrance 3 Func_02004cc8). Returns 0.
-// Left, two sites; everything else that differs is pool and branch offsets.
-// 1. Ov664Room1's third entrance test: the native loads gMainRoutineWork from
-// the pool at the join, where GCSE's PRE deletes that load as partly redundant
-// with the second test's and CSE2 then keeps the address in r5 across
-// Func_02004eb0. This costs the 23 entries around the first pool, which lands
-// one branch earlier. The kill PRE would need between the two tests is not in
-// the listing. No gain from: `>= 14`, De Morgan on the second test, its two
-// arms in full, a one-pass block, a local for the entrance (worse, 39 to 45),
-// a static inline read.
-// 2. Ov664Room5's Func_0200062c: lsls r3, #8 of 0xff00 comes last in the
-// native. Call4 gets that (differ 25), left out as a new wrapper; a local, u16
-// or u32 parameter or another spelling of the value gives no gain.
-// The Call3 and Call6 wrappers cannot go: without them differ is 147.
-// Func_02005f5c, Func_0200062c and Task_Add return a value: void reorders the
-// next call's argument loads. The `one` local and Ov664Room5's goto loop keep
-// the native's constants (r6 holds 1 through Ov664Room7; 1 and 2 stay in the loop).
-// Rooms 3 and 8 pass 245 to Func_02005f4c (Func_080c8688 through its veneer).
+#include "edition.h"
+
+// The Japanese form differs and is still on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -205,7 +182,7 @@ s32 Func_020051f8(void) {
     if (GameFlag_Test(514 + i)) {
       z = 24 - (i << 1);
       Call6(Func_02005d9c, 65, 1, 80, z, 1, 2);
-      Func_0200062c(0, 16, z, 0xff00);
+      Call4((void (*)())Func_0200062c, 0, 16, z, 0xff00);
     }
     i++;
     if (i != 6)
@@ -309,3 +286,5 @@ s32 Func_020051f8(void) {
   }
   return 0;
 }
+
+#endif

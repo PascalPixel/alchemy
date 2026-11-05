@@ -1,18 +1,8 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// The Islets trade of item 455 with object 9: with it in the party, the leader
-// steps up; if flag 513 is set (asked before) object 9 asks again (MsgOhYouRe),
-// else it tells its story (MsgIMSoVery), the leader steps back and forth while
-// the gift (object type 163) and object type 14 (script gData_020044f0) appear,
-// object 9 hops and asks; a yes runs Func_0200129c with the gift, a no sets flag
-// 513 and puts the gift away.
-// Without the item, after flag 0xaa5 object 9 offers to take the party along
-// (MsgWantToGo): a yes counts in the event work halfword 0x1c4, sets the boat
-// block byte 661 to 99, puts the leader aboard (Func_02001278) and sails off
-// with objects 9 and 10 (Func_02003f7c(3)); before it, it says MsgIMSoVeryVery.
-// Closed by: both arms written in full (cross-jumping makes the shared
-// Func_0200129c and refusal tails); the gift is the first object made (the
-// listing passes r7, not the second object); one gift per branch for allocation;
-// the block byte stored through the struct s1bf4.c uses; Call forms as siblings.
+#include "edition.h"
+
+// The Japanese form differs and is still on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -232,3 +222,5 @@ void Func_020014e0(void) {
   }
   Func_02003e6c();
 }
+
+#endif

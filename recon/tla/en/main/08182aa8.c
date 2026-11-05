@@ -1,5 +1,12 @@
-// Measured 2026-11-05 (tla-en): differ 885 of 2781, 763 with slots and pool
-// offsets normalized. Three more loops take a counter of their own.
+// Measured 2026-11-05 (tla-en): differ 935 of 2781, 805 with slots and pool
+// offsets normalized, 221 with registers normalized as well. No loop has a
+// counter of its own beyond i and k: the second palette and the debris count on
+// i (r8 in the listing), the raw figure rising as the palette loop's registers
+// rotate. Tried at the palette's red without effect or worse: (31 & s), tr +
+// (s & 31), s & (u16)31, sr = 31; sr &= s. Texture store orders and bitfields
+// do not move the shape. PRE folds all four frame << 9 sites into spin; the
+// listing rebuilds two of them, and (frame << 8) * 2 or (frame << 4) << 5 fold
+// back to the same RTL.
 // Draft, differ 1075 of 2781, skeleton gap 107/106 (tla-en, 2026-11-01)
 // BattleEffect_RunCoatlicue: same calls and control flow, draft 2780 of 2781
 // instructions, frame 164 and every stack slot as in the native. Registers
@@ -302,7 +309,6 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   u16 *table;
   s32 frame;
   s32 i;
-  s32 c0;
   s32 k;
   s32 y;
   s32 level;
@@ -899,12 +905,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
       if (frame > 80) {
-        for (c0 = 0; c0 != 3; c0++) {
-          if (frame == Data_0819974e[c0]) {
+        for (i = 0; i != 3; i++) {
+          if (frame == Data_0819974e[i]) {
             Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
           }
-          if (frame > Data_0819974e[c0] && frame < Data_0819974e[c0] + 10) {
-            s32 d = frame - Data_0819974e[c0];
+          if (frame > Data_0819974e[i] && frame < Data_0819974e[i] + 10) {
+            s32 d = frame - Data_0819974e[i];
             sh = d * 16 - 56;
             s = 0x14000 - (d << 13);
             model->kind = 7;
@@ -916,7 +922,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             Render_ResetTransformState();
             Func_08015160(-0x40000, -0x2c0000, 0);
             Func_080151e4(s, s << 1, s);
-            Func_080150e4((c0 << 14) + 0x2000);
+            Func_080150e4((i << 14) + 0x2000);
             SceneTransform_ApplyPitch(-0x1000);
             SceneTransform_ApplyYaw(frame << 9);
             Render_TransformVertices(gData_08199210, verts, 64);

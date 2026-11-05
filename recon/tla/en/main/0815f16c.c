@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 521 of 7666, slots normalized 351, high
-// registers blind too 349, every register blind 137. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 507 of 7666, slots normalized 337, high
+// registers blind too 335, every register blind 131. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1003,8 +1003,10 @@ CLEAR(buffer, 0x1000);
     struct Particle *p;
     if (kind != 41 && kind != 62 && kind != 83 && kind != 85 && kind != 86 &&
         kind != 88) {
+      s32 *w;
+      w = work->wave;
       for (i = 0; i != 160; i++)
-        work->wave[i] =
+        *w++ =
             (0x40000 - (Trig_Sin((frame << 12) + (i << 11)) << 2)) >> 10;
     }
     switch (kind) {

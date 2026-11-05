@@ -1336,26 +1336,25 @@ dead = i / 3;
       off = 0x302;
       {
       u16 *fade = FADE_PLTT;
+      s32 red = 31;
 
       for (i = 0; i != 128; i++) {
         s32 c = *fade;
-        s32 r = 31;
-        s32 g;
-        s32 b;
+        s32 r = red & c;
+        s32 g = (u16)c >> 5 & 31;
+        s32 b = (u16)c >> 10 & 31;
 
-        r &= c;
-        g = (u16)c >> 5 & 31;
-        b = (u16)c >> 10 & 31;
-
-        *fade++ = (b + 1) << 10 | (g + 1) << 5 | (r + 1);
+        g += 1;
+        *fade++ = (b + 1) << 10 | g << 5 | (r + 1);
       }
       }
       Graphics_LoadGreyRamp();
       for (i = 0; i != 6; i += 2) {
         s32 n = i + 14;
+        s32 w = n * 2;
 
         Func_0815b434(work->sheet + off, n, 0x10000);
-        off += n * 2 * n;
+        off += n * w;
       }
       FILL_WORDS(work->sheet + 0x1810, 0x1000, 0);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2010, 16, 64, 0x10000);

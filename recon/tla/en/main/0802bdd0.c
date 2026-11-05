@@ -1,3 +1,4 @@
+// 2026-11-05: still 57 of 59 by hand and by three minutes of permuter (57). With cell locals, a local 1 and tile += 0x400 (the listing's shapes) 73.
 // Near miss, differ 57 of 59 (2026-10-18): The Broken Seal's
 // Map_SetWindowCellTile without the view test: puts world map tile
 // (x / 16, y / 16) at cell (px / 16, py / 16) of the tile grid and draws it

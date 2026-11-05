@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 26 of 193 with a for loop whose condition holds the three exit tests. Left: the native has a copy of the first row's two type tests at the head (0x4000 built in place) and in its bottom test 0x4000 from the pool; here the head jumps to the bottom test. An && in an exit test holds a label, so jump.c does not copy it. Still holds the untagged volatile headerWord.
 // Draft, differ 56 of 193 (tla-en, 2026-11-05): the dead header read is kept in a volatile local (untagged yet), which restores the frame of 20. Left: the first test's tails cross-jump into the loop's end tests here; the native's end test loads 0x4000 from the pool, so it stays apart. Older notes follow.
 // Draft, differ 68 of 193: places the scene's markers from its Func_080ceba8
 // rows (a type, an event id, a flag and a pad): for each of the first 16 rows
@@ -52,11 +53,7 @@ void Func_080cf554(void) {
   headerWord = (*(s32 **)map)[1];
   if (entry == NULL)
     return;
-  i = 0;
-  type = *entry++;
-  if (type == 0 || (type & 0x4000))
-    return;
-  do {
+  for (i = 0; i <= 15 && (type = *entry++) != 0 && !(type & 0x4000); i++) {
     id = entry[0];
     flag = entry[1];
     entry += 3;
@@ -94,5 +91,5 @@ void Func_080cf554(void) {
       Actor_SetMode(object, 1);
       ((struct FieldSprite *)object->animation)->priority = 1;
     }
-  } while (++i <= 15 && (type = *entry++) != 0 && !(type & 0x4000));
+  }
 }

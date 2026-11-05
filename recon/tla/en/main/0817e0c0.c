@@ -1,3 +1,4 @@
+// 2026-11-05: differ 26 of 601 (tla-en): the streak's brightness is a local set between its two size writes, its stores in the listing's order. Left: the flash's reload rotation, the spark table base in r3 against r1, two ties on mov r5, r9.
 // 2026-11-05: differ 56 of 601 (tla-en). Statement moves gain 12. Left: reload
 // rotation from the flash's model stores.
 // 2026-10-26 (round 5): differ 82 of 601 (draft 601). The flash's brightness
@@ -267,13 +268,15 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
     EffectPosition_ProjectBattler(effect->actor, &caster);
     vertices = Heap_AllocEwram(32);
     quad = Render_AllocateModelList(1);
-    TEXTURE_SIZE(texture, 5, 6);
-    quad->vertices = vertices;
+    *(u32 *)&texture = (*(u32 *)&texture & ~0xff) | 5;
+    brightness = 0;
+    *(u32 *)&texture = (*(u32 *)&texture & ~0xff00) | 6 << 8;
     texture.pixels = work->sheet;
     quad->texture = &texture;
     quad->faces = Data_081992b0;
     quad->kind = 6;
-    quad->brightness = 0;
+    quad->vertices = vertices;
+    quad->brightness = brightness;
     if (frame < LUNGE_STREAK_FRAMES) {
       Render_ResetTransformState();
       Func_080151e4(0x8000, 0x10000, 0x8000);

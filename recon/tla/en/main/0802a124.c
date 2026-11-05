@@ -1,3 +1,4 @@
+// 2026-11-05: differ 54 of 470. Every row but one site is a pool offset or follows it: the first retry store is strh r3, [r4, r0] with r0 reloaded from collision's slot, unscaled, so the index 0 was replaced by the register holding 0 (collision). Tried: collision and count zeroed in the branch, list[collision] with count = 1, a cut of collision's constant by an empty asm (86, scales it).
 // Near miss, differ 64 of 470: script command 0x22, the sibling of
 // Func_080279b0 (The Broken Seal's Actor_MoveOnWorldMap): moves an object
 // on the world map by the direction pad at a fixed pace (L repeating runs

@@ -1,44 +1,45 @@
-// 2026-11-05: differ 211 of 3921 (tla-en), draft 3918; frame and every spill slot
-// equal the listing's; with registers, slots and offsets masked, 89 lines apart,
-// 107 of the raw lines in the first wave loop. The header's method: reload
-// registers rotate through the spill list one per reload (allocate_reload_reg), so a
-// wrong scratch register downstream means a reload too many or too few upstream, in
-// RTL order, which sched2 hides. Read each from the reload dump's order.
-// What this round settled, each from the listing:
-// - Spill slots run in pseudo order, so the second phase's locals are a block
-//   after the first phase, and wave height and pointer are the first phase's.
-// - Each wave loop has its own row stepped in the for (its row * 4 stays unreduced);
-//   the height is one expression hoisted and reduced, so its copy takes slot 88.
-// - First wave loop: each arm's index carries the row (v = row + ... % 8): row's four
-//   extra references rank it above the sprite pointer and the giv (r7, r4, r9).
-// - Second wave loop: each arm stores the tile itself and their tails cross-jump;
-//   that form's mask is a word constant, as the pools show (no mid-loop pool). The
-//   camera follow is two statements the same way.
+// 2026-11-05: differ 155 of 3921 (tla-en), draft 3918; frame and every spill slot
+// equal the listing's; with registers, slots and offsets masked, 77 lines apart.
+// The method that moved it: reload registers rotate through the spill list one per
+// reload (allocate_reload_reg), so a wrong scratch register downstream means a reload
+// too many or too few upstream, in RTL order, which sched2 hides. Read each from the
+// reload dump's order; the raw figure jumps by hundreds on one such reload.
+// What is settled, each from the listing:
+// - Spill slots run in pseudo order, so the second phase's locals are a block after
+//   the first phase, and the wave height and pointer belong to the first phase.
+// - Both wave loops: row = j * 9 and the call reads sprites[j * 9 + i], not row + i, so
+//   PRE leaves it alone and it is an inner giv reduced in the second loop pass, its
+//   init emitted after the hoists, where the outer pass does not see it.
 // - The else arm's index is set in two steps, which leaves it unreduced.
+// - First wave loop: the height is one expression, hoisted in the second pass only
+//   at an inner count of 60 or less; each arm's index carries the row, ranking row
+//   above the pointer and the giv (r7, r4, r9). Its count is exactly 60 without the
+//   tile's explicit mask.
+// - Second wave loop: each arm stores the tile itself and their tails cross-jump, with
+//   a word mask (no mid-loop pool). The camera follow is two statements the same way.
 // - sprites[i + 18] with i known 21 after its loop gives [fp, r3]; sprites[39] does not.
 // - A red local that is not set from the constant first keeps r before g.
 // - Hoists set the reload order: the turret's x and ringX are assigned in their loops.
 // - pixels and off are long-lived constant locals with no register, rematerialized at
-//   each use: that is the beam's r0 reload and the map loop's movs r7, #224.
-// - The explosion blit's x, n, y locals in that order; the shake readout's bg local.
-// Left:
-// 1. First wave loop's head (and 14 lines of the second's): the listing's order is
-//    counter, hoisted copy, then the sprite pointer's init, which only an inner giv on
-//    the call (work->sprites[row + i], no slot, arm 8 as row + i) gives, as its init
-//    is emitted after the hoists. That form matches both pass-1 and pass-2 decisions
-//    in the first loop but for one: the outer pass then reduces row * 4 + work
-//    (benefit 5 from expand_mult's copy, lifetime 2, 102 vs 80), one slot too many,
-//    frame 272; in the second, statement copies in the arms lift the inner count past
-//    the giv. Measured raw 962, masked 138. Arm 8's t and x (r3, r2 in the listing, r2,
-//    r3 here) follow the same reload order: with the arm's statement form they are
-//    right, but the count then stops the height's hoist (70 vs 60).
+//   each use: the beam's r0 reload and the map loop's movs r7, #224.
+// - The explosion blit's x, n, y locals in that order; the shake readout's bg local;
+//   the map row counter of 16 (mp set in the for).
+// Left, about 75 hunks, most of them order only:
+// 1. First wave loop: arm t and x are r3, r2 in the listing, r2, r3 here (the modulo's
+//    temporaries are local and take r3 first; a tagged pin on the result gives the
+//    listing's arms but adds 2 to the count, 62, and stops the height's hoist). The
+//    listing also builds the 0x3ff mask (the explicit & 0x3ff form, +2, 62). So the
+//    listing's inner loop holds 2 to 4 fewer insns than this one somewhere; not found.
+//    Computing (j << 5) + 103 earlier hoists it at any count but in the first pass,
+//    which swaps slots 12 and 16: raw 207, masked 83.
 // 2. Map loop's w, n, table in r4, r5, r6 here r6, r5, r4: the reverse of the hoist
 //    order, so their priorities are not yet explained.
 // 3. Third phase: z = 0 and i = 0 are two constant loads in the listing, one here
-//    (find_equiv_reg finds the first), 2 instructions and the pool offsets after; a
-//    do { } while (0) after the spawn call settles the order there (one-pass, not kept).
-// 4. Trail writes: the sprite pointer load falls after the shift chain and the store
-//    in the listing, which needs an alias conflict with the q store. Order only.
+//    (find_equiv_reg finds the first), 2 instructions and the pool offsets after.
+// 4. Order only, by sched2 tie or alias: the sprite pointer loads after the q stores
+//    (1991, 2771, 2904; reading sprites as s32 moves these but others too, 327), the
+//    calls before hoisted constants (447, 3408; do { } while (0) settles them, one-pass,
+//    not kept), mov r9 and add fp (553, 3026), Task_Add's argument order (144).
 // 5. p->ay's reread goes through a volatile view (needs its S2 tag at adoption).
 // Earlier measures that still stand: the second phase's frame loop is a label-and-goto
 // loop (as a for, the frame-address copies are hoisted and work loses r11).

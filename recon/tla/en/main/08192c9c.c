@@ -1,7 +1,6 @@
-// Measured 2026-11-05 (tla-en): differ 510 of 5364, 248 with slots and pool
-// offsets normalized, 104 with registers masked too (draft 5362 instructions,
-// frame 420, pools equal island by island). Calls agree in order. The rest is
-// reload's choices and a few forms:
+// Measured 2026-11-05 (tla-en): differ 496 of 5364, 111 with slots and pool
+// offsets normalized, 43 with registers masked too (draft 5364 instructions,
+// frame 420, pools equal island by island). Calls agree in order.
 // What this round settled, all from the listing: the low stack slots are
 // expressions PRE hoists (the rings' radii are not variables, the splash has two
 // cell variables, its ring offset is added before the sum, the spray's position
@@ -12,19 +11,29 @@
 // its block through a once-only macro, so the &work one-pass device is gone
 // (S2: a macro every use matches through); the drop frames walk their pointers,
 // stepped at the loop's end, in i and j with the width in its own local; each
-// loop has its own locals where the listing has low registers for them.
+// loop has its own locals where the listing has low registers for them; the
+// fades walk a pointer set before their counter; statement order inside a loop's
+// head settles who ties to whom (the band's y before its shade, the scaled cell
+// before the sheet offset, canvas and cell before a streak's point).
 // Reload picks its scratch registers in rotation across the whole function, so
 // one reload more or less shifts every scratch after it: most of the registers
 // still differing follow the first mismatch above them, so read this top down.
 // Still open, top first:
 // 1. Opening and 446 fades hoist a second 31 (r6, r5) and copy it for red; red
-//    here is built in the loop. The other fades now match with a plain c & 31.
+//    here is built in the loop. c & 31 after blue and green hoists it but ties
+//    red to c; c & 31 first shares the hoisted 31 with the pool's. The second and
+//    last fades, with c & 31 last, hoist a 31 where the listing builds it in the
+//    loop: 2 rows each.
 // 2. The 423 band's (i - top) * 2 reduces to a giv where the listing keeps top in
 //    r7 and recomputes; a break form and every spelling compile the same.
 // 3. The 754 frames' giv step (0xf8000000) is hoisted to ip in the listing.
-// 4. Slots: &canvas and &sparks are swapped (176, 184), and the tail of PRE's
-//    registers comes in another hash order, about 280 of the raw rows. Twenty-odd
-//    more insns at GCSE give the same figure, so the order waits on the regnos.
+// 4. Slots: &canvas and &sparks are swapped (176, 184; the listing's three frame
+//    addresses number in declaration order though they are stored in code order),
+//    and the tail of PRE's registers comes in another hash order, the rest of the
+//    raw rows (385). PRE's index is the operand's regno plus a code constant, mod
+//    a table of insns / 4: no table size gives the listing's order with these
+//    regnos, so it waits on the pseudo count before each ring.
+// 5. The drop frames' counter and its i * 8 copy swap r4 and r5 (both sites).
 // Measured 2026-11-05 (tla-en): differ 2371 of 5364, 915 with slots and pool
 // offsets normalized, 241/244 with registers masked too (draft 5367
 // instructions, frame 416 where the listing has 420). Calls agree in order, 258

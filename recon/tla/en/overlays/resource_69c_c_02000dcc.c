@@ -74,9 +74,8 @@ s32 Func_02000dcc(struct PushMove *move) {
   struct Actor *object;
   s32 stepIndex;
   s32 position[3];
-  /* FAKEMATCH(pin): direction in r5, as the native keeps it; as a plain local,
-   * 138 of 171 instructions differ in tla-en. */
-  register s32 direction asm("r5");
+  s32 direction;
+  s32 *p;
   s32 width;
   s32 height;
   s32 dx;
@@ -85,11 +84,10 @@ s32 Func_02000dcc(struct PushMove *move) {
   s32 row;
   s32 col;
   u8 *layer;
-  s32 *cellX;
 
-  object = Func_02000f34(&stepIndex, &move->unk10, &move->direction);
+  object = Func_02000f34(&stepIndex, &move->unk10, p = (s32 *)&move->direction);
   if (object != 0) {
-    direction = move->direction;
+    direction = *p;
     width = (ABS(gData_02002484[direction][0]) +
              ABS(gData_02002484[direction][2])) >>
             4;
@@ -99,43 +97,36 @@ s32 Func_02000dcc(struct PushMove *move) {
     dx = gData_0200249c[stepIndex] & 0xffff0000;
     dz = gData_0200249c[stepIndex] << 16;
     move->unk14 = 0;
-    layer = &object->terrainId;
     count = 0;
+    layer = &object->terrainId;
     *layer = 2;
     move->x = object->x + dx;
     move->z = object->z + dz;
     position[1] = object->y;
-  step:
-    position[2] = move->z + (gData_02002484[move->direction][1] << 16);
-    row = 0;
-    if (row < height) {
-    nextRow:
-      cellX = position;
-      *cellX = move->x + (gData_02002484[move->direction][0] << 16);
-      col = 0;
-      if (col < width) {
-      nextCol:
-        if (Func_02002338(object, position) == 2)
-          goto blocked;
-        *cellX += 0x100000;
-        col++;
-        if (col < width)
-          goto nextCol;
+    for (;;) {
+      position[2] = move->z + (gData_02002484[direction][1] << 16);
+      for (row = 0; row < height; row++) {
+        p = position;
+        *p = move->x + (gData_02002484[direction][0] << 16);
+        for (col = 0; col < width; col++) {
+          if (Func_02002338(object, position) == 2)
+            goto blocked;
+          *p += 0x100000;
+        }
+        position[2] += 0x100000;
       }
-      position[2] += 0x100000;
-      row++;
-      if (row < height)
-        goto nextRow;
+      move->x += dx;
+      count++;
+      move->z += dz;
     }
-    move->x += dx;
-    count++;
-    move->z += dz;
-    goto step;
   blocked:
     *layer = 0;
     if (count == 0)
       return 0;
-    move->x = object->x + dx * count;
+    {
+      s32 x = object->x;
+      move->x = x + dx * count;
+    }
     move->y = object->y;
     move->z = object->z + dz * count;
     return 1;

@@ -1630,17 +1630,12 @@ main	rom_main_05	games/tla/src/field/event_commands/f0d85b8	.text
 main	rom_main_05	games/tla/src/field/object/motion_move_halfway_toward_target_copy	.text
 main	rom_main_05	games/tla/src/field/work9c/f0d8740	.text	en de es fr it ja
 main	rom_main_05	games/tla/src/field/work9c/f0d897c	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000d89f4	it
+main	rom_main_05	games/tla/src/field/work9c/f0d8a00	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d8c04	it
-main	rom_main_05	recon/tla/es/rom	.rom.000e19f4	es
 main	rom_main_05	recon/tla/es/rom	.rom.000e1c04	es
-main	rom_main_05	recon/tla/fr/rom	.rom.000dd9f4	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000ddc04	fr
-main	rom_main_05	recon/tla/de/rom	.rom.000e5a00	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e5c10	de
-main	rom_main_05	recon/tla/raw/080d8a00	.text	en
 main	rom_main_05	recon/tla/raw/080d8c10	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000d89bc	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d8bcc	ja
 main	rom_main_05	games/tla/src/field/work9c/f0d8d40	.text
 main	rom_main_05	games/tla/src/field/work9c/f0d8d68	.text

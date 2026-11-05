@@ -1,15 +1,3 @@
-// Draft, differ 90 of 246 (254 before, 2026-10-26): the heap slot 0x9c work's per-frame
-// callback (Func_080d897c schedules it). For each of the eight slots it draws
-// a sprite at the midpoint of each pair of neighbouring nodes in the slot's
-// chain, 4 pixels up, turned along the pair (ArcTan2 plus a quarter turn,
-// through an affine matrix when the angle is not 0) and given the slot's
-// priority, culled to the screen and sorted into the OAM buckets by depth; the
-// chain's first node takes the last angle. The declarations follow the
-// native's spill slots, and the sprite's position, depth key and pointer are
-// formed before its stores, as the native does. Left: register choice (the
-// native keeps the previous y in r8 and the new y in r6, the sprite pointer in
-// r4 and the depth key in r8; here r6, r10, r6 and r4). Func_080d9b80 is the heap slot 0xa0
-// sibling.
 #include "types.h"
 #include "sprite.h"
 #include "map.h"
@@ -55,14 +43,22 @@ s32 ArcTan2(s32 y, s32 x);
 s32 AffineMatrix_BuildForEffect(struct ChainTransform *source);
 void Func_080140d8(void *entry, s32 slot);
 
+/// The heap slot 0x9c work's per-frame callback (Func_080d897c schedules it).
+/// For each of the eight slots it draws a sprite at the midpoint of each pair
+/// of neighbouring nodes in the slot's chain, 4 pixels up, turned along the
+/// pair and given the slot's priority, culled to the screen and sorted into the
+/// OAM buckets by depth; the chain's first node takes the last angle.
 void Func_080d8a00(void) {
+  /* FAKEMATCH(temporary): prevY reused for the midpoint's height and then the
+     depth key; as a height of its own, 137 of 246 instructions differ in
+     tla-en. */
   struct ChainWork *work = Ram_HeapSlots->unk84[6];
   struct ChainSlot *slot = work->slots;
   s32 i;
   s32 prevX = 0;
+  s32 prevY = 0;
   u32 tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   s32 prevZ = 0;
-  s32 prevY = 0;
   s32 started = 0;
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
@@ -76,28 +72,31 @@ void Func_080d8a00(void) {
   for (i = 7; i >= 0; i--, slot++) {
     for (node = slot->head; node != NULL; node = node->next) {
       s32 priority = slot->priority;
+      s32 y = node->y;
       s32 x = node->x;
       s32 z = node->z;
-      s32 y = node->y + 0xfffc0000;
+
+      y += 0xfffc0000;
 
       if (started) {
         s32 screenX;
-        s32 height;
         s32 depth;
         s32 screenY;
 
         angle = ((u16)ArcTan2(prevX - x, (z - prevZ) + (prevY - y)) + 0x4000) &
                 0xffff;
         screenX = (prevX + x) / 2 - viewX;
-        height = (prevY + y) / 2 - originY;
+        prevY = (prevY + y) / 2 - originY;
         depth = (prevZ + z) / 2 - viewZ - originY;
-        screenY = depth - height;
+        screenY = depth - prevY;
         if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
             screenY <= 0xdfffff) {
           s32 spriteX = ((screenX >> 16) - 4) & 0x1ff;
           s32 spriteY = ((screenY >> 16) - 4) & 0xff;
-          s32 key = ((height + depth) >> 16) + 58;
-          struct AnimationSpritePart *sprite = &node->sprite;
+          struct AnimationSpritePart *sprite;
+
+          prevY = ((prevY + depth) >> 16) + 58;
+          sprite = &node->sprite;
 
           ((u32 *)sprite)[0] = 0;
           ((u32 *)&node->sprite)[1] = spriteY | (spriteX << 16) | 0x2000;
@@ -111,7 +110,7 @@ void Func_080d8a00(void) {
           }
           node->sprite.priority = priority;
           node->angle = angle;
-          Func_080140d8(sprite, key);
+          Func_080140d8(sprite, prevY);
         }
       }
       prevX = x;

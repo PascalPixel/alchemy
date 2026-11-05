@@ -1,3 +1,4 @@
+// Draft, differ 53 of 107, 21 normalized, 5 with registers ignored (tla-en, 2026-11-05): flags and the raw halfword read apart, the scene as 0xfff and its raw value. Left: the native holds the scene's mask in r10 before the and (a one-pass block around it gives 51, shape 3), and the temporaries after it take r1, r2 and r0 where this has r0, r1 and r2.
 // Draft, differ 57 of 107, skeleton gap 9 (tla-en, 2026-11-01)
 // Twin of The Broken Seal's Actor_PlaceMapActors (the same pending-event test,
 // flag 0x109, range 300 to 380, placement match and 32-pixel lift); ⚓️ places
@@ -35,10 +36,14 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
 
 void Func_080d784c(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 flags = party->pendingDjinnEvent & 0xf000;
-  u32 scene = party->pendingDjinnEvent & 0xfff;
+  s32 flags = party->pendingDjinnEvent;
+  u32 raw = (u16)party->pendingDjinnEvent;
+  u32 scene;
   s32 id;
 
+  flags &= 0xf000;
+  scene = 0xfff;
+  scene &= raw;
   if (GameFlag_Test(0x109) != 0 && flags == 0) {
     flags = scene & 0x800;
     scene &= 0x7ff;

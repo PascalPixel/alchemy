@@ -3648,12 +3648,7 @@ main	rom_main_09	recon/tla/ja/rom	.rom.00192850	ja
 main	rom_main_09	games/tla/src/battle_effect/f195a9c	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f196248	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/nibble_pair	.text
-main	rom_main_09	recon/tla/it/rom	.rom.00196404	it
-main	rom_main_09	recon/tla/fr/rom	.rom.00196404	fr
-main	rom_main_09	recon/tla/es/rom	.rom.00196404	es
-main	rom_main_09	recon/tla/de/rom	.rom.00196404	de
-main	rom_main_09	recon/tla/raw/08196404	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.00196408	ja
+main	rom_main_09	games/tla/src/battle_effect/f196404	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/run_relocated_kernel_0	.text
 main	rom_main_09	games/tla/src/battle_effect/project_vertices	.text
 main	rom_main_09	games/tla/src/battle_effect/fxconst	.rodata

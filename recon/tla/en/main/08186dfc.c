@@ -827,20 +827,16 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         cells = work->sheet;
         mesh = work->sheet + 0x800;
         if (frame == 277) {
-          const u8 *q = Data_08199bf9;
           s32 none;
           s32 j;
 
-          for (j = 0, none = 0; j != 31; q += 10, j++) {
-            s32 y0 = q[1];
-            s32 x0 = q[0];
-
+          for (j = 0, none = 0; j != 31; j++) {
             for (i = 0; i != 4; i++) {
               s8 *dst = (s8 *)cells + j * 16 + i * 4;
 
               dst[2] = none;
-              dst[0] = Data_08199bf9[j * 10 + i * 2 + 2] - x0;
-              dst[1] = Data_08199bf9[j * 10 + i * 2 + 3] - y0;
+              dst[0] = Data_08199bf9[j * 10 + i * 2 + 2] - Data_08199bf9[j * 10];
+              dst[1] = Data_08199bf9[j * 10 + i * 2 + 3] - Data_08199bf9[j * 10 + 1];
             }
             mesh[j * 12 + 1] = 1;
             mesh[j * 12 + 2] = 2;

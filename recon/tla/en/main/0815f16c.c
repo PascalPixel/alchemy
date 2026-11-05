@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 430 of 7666, slots normalized 308, high
-// registers blind too 308, every register blind 108. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 384 of 7666, slots normalized 262, high
+// registers blind too 262, every register blind 106. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1001,6 +1001,7 @@ CLEAR(buffer, 0x1000);
 
   for (frame = 0; frame != duration; frame++) {
     struct Particle *p;
+    struct Particle *r2;
     if (kind != 41 && kind != 62 && kind != 83 && kind != 85 && kind != 86 &&
         kind != 88) {
       s32 *w;
@@ -1867,17 +1868,17 @@ CLEAR(buffer, 0x1000);
       } else {
         for (; i != 16; i++) {
             s32 m;
-          p = &SPARKS[i];
+          r2 = &SPARKS[i];
           { s32 a; a = __modsi3(i, 5) * 3;
-          m = a + __modsi3(__divsi3(p->life, 96), 3); }
+          m = a + __modsi3(__divsi3(r2->life, 96), 3); }
           drawFuncs.draw[i > 2 ? 0 : 1](screen, buffer + 0x800 + gData_08197834[m],
-                                 (p->x >> 16) - gData_0819781a[m] / 2,
-                                 (p->y >> 16) - gData_08197826[m] / 2,
+                                 (r2->x >> 16) - gData_0819781a[m] / 2,
+                                 (r2->y >> 16) - gData_08197826[m] / 2,
                                  gData_0819781a[m], gData_08197826[m]);
-          BattleEffectKernels_IntegrateVector2(p, 64, 0x2000);
-          p->life += p->z;
-          if (p->z > 1 && (frame & 1))
-            p->z--;
+          BattleEffectKernels_IntegrateVector2(r2, 64, 0x2000);
+          r2->life += r2->z;
+          if (r2->z > 1 && (frame & 1))
+            r2->z--;
         }
       }
     } else if (kind == 94) {
@@ -1909,7 +1910,7 @@ CLEAR(buffer, 0x1000);
         work->unk77a8 = 8;
       }
       i = 0;
-      p = work->particle;
+      r2 = work->particle;
       if (frame < 14) {
         if (action->side == 0) {
           x = target[0] + (14 - frame) * 3 * 2;
@@ -1921,25 +1922,25 @@ CLEAR(buffer, 0x1000);
         drawFuncs.draw[0](screen, buffer + 0x2000, 32, y - 32, 64, 64);
         REG_BG2X = (64 - x) << 8;
       } else {
-        for (; i != 32; i++, p++) {
+        for (; i != 32; i++, r2++) {
             s32 m;
           s32 w;
           s32 h;
           s32 left;
           s32 top;
           m = __modsi3(i, 5) * 3;
-          m += __modsi3(__divsi3(p->z, 96), 3);
+          m += __modsi3(__divsi3(r2->z, 96), 3);
           w = gData_0819749e[m];
-          left = (p->x >> 16) - w / 2;
-          top = p->y >> 16;
+          left = (r2->x >> 16) - w / 2;
+          top = r2->y >> 16;
           h = gData_081974ad[m];
           top -= h / 2;
           drawFuncs.draw[0](screen, buffer + 0x83c + gData_081974bc[m],
                             left, top, w, h);
-          BattleEffectKernels_IntegrateVector2(p, 63, 0x8000);
-          p->z += p->vz;
-          if ((frame & 1) && p->vz > 0)
-            p->vz--;
+          BattleEffectKernels_IntegrateVector2(r2, 63, 0x8000);
+          r2->z += r2->vz;
+          if ((frame & 1) && r2->vz > 0)
+            r2->vz--;
         }
       }
     } else if (kind == 84) {

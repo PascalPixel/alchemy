@@ -1,3 +1,4 @@
+// Draft, differ 843 of 2579 (tla-en, 2026-11-05); 665 with slots and pool offsets normalized, 237 with registers blind too. Fills and copies forwarded through inlines (S2 wrapper; tag and measure each on adoption).
 // Near miss, differ 869 of 2579 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 876 of 2579, skeleton gap 248 (tla-en, 2026-11-01)
@@ -235,6 +236,14 @@ void Heap_Release(void *buffer);
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                        \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
 
+// Forwarded so that a constant size reaches the call's register at each call.
+static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
+  Iwram_FillWords(destination, size, value);
+}
+static __inline__ void CopyWords_(void *destination, const void *source, s32 size) {
+  Iwram_CopyWords(destination, source, size);
+}
+
 // Cruel Ruin: a pillar of dark light swallows the caster, a shadowed sky
 // rains ruin in six blasts while the ground splits, then a black sphere
 // bursts over the foes.
@@ -310,7 +319,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   }
   actor[18] = 0xab85;
   actor[3] = 0;
-  Iwram_FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
+  FillWords_((void *)0x06004000, 0x4000, 0x3f3f3f3f);
   gCameraSceneParameters[4] = 240;
   BattleEffect_SelectLivingTargets(work->effect);
   BattleBackground_LoadFar(1, (s32)&ResourceId_SunbeamCloudsBackdrop, 0);
@@ -439,7 +448,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       Func_08164b2c(fr >> 16, fg >> 16, fb >> 16);
     }
     if (frame == 124) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      FillWords_(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame <= 123) {
       s32 size = 140;
@@ -678,10 +687,10 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   }
   work->transferMode = 2;
   work->transferValue = 50;
-  Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+  FillWords_(canvas, 0x4000, 0x3f3f3f3f);
   work->transferPending = 1;
   wait(1);
-  Iwram_FillWords(canvas, 0x4000, 0);
+  FillWords_(canvas, 0x4000, 0);
   REG_BG2CNT = 0x786;
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   Func_08164abc(31, 31, 31);
@@ -691,7 +700,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   {
     u8 *e = Resource_GetTableEntry((s32)&ResourceId_ForestCanopyTiles);
 
-    Iwram_FillWords((void *)&OBJ_PLTT_COLOR(15, 0), 32, 0x7fff7fff);
+    FillWords_((void *)&OBJ_PLTT_COLOR(15, 0), 32, 0x7fff7fff);
     Resource_DecodeType01(e + 32, work->sheet);
   }
   for (j = 0; j != 2; j++) {
@@ -701,12 +710,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       obj = Func_0815b290(32, 32, 0x80000000, 0xf000);
       work->objects[j * 9 + i] = obj;
       obj->priority = 1;
-      Iwram_CopyWords((void *)OBJ_TILES(obj), src, 512);
+      CopyWords_((void *)OBJ_TILES(obj), src, 512);
       src += 512;
     }
     obj = Func_0815b3b0(32, 32, 0x80000000, 0xf000);
     work->objects[j * 9 + 8] = obj;
-    Iwram_CopyWords(obj, work->objects[j * 9], 24);
+    CopyWords_(obj, work->objects[j * 9], 24);
     for (i = 0; i != 8; i++) {
       work->particles[j * 9 + i].variant =
           ((struct RuinObject *)work->objects[j * 9 + i])->tile;
@@ -793,7 +802,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
           Sound_PlayFar(144);
         }
         work->shakeFrames = 8;
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        FillWords_(canvas, 0x4000, 0x3f3f3f3f);
       }
       if ((u32)d <= 15) {
         s32 r = (Trig_Sin(d << 11) * Data_0819770a[i] >> 16) + 2;
@@ -986,7 +995,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   work->transferMode = 3;
   work->transferValue = 0x02020202;
-  Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+  FillWords_(canvas, 0x4000, 0x3f3f3f3f);
   REG_BG2CNT = 0x784;
   effect->actors[effect->count] = 0xff;
   BattleActor_SpawnObjectsForListFar(effect->actors, 0);
@@ -1020,7 +1029,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         Func_081180e8(134);
       }
       if (frame == 107) {
-        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        FillWords_(canvas, 0x4000, 0x3f3f3f3f);
       }
       if (frame > 107) {
         work->transferMode = 3;

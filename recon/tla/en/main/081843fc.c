@@ -1498,8 +1498,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s32 a = Random16();
           s32 b = Random16();
 
-          gBgScroll[1].x = (a & 7) - 4;
-          gBgScroll[1].y = (b & 7) + 28;
+          a = (a & 7) - 4;
+          b = (b & 7) + 28;
+          gBgScroll[1].x = a;
+          gBgScroll[1].y = b;
           work->shakeFrames--;
         } else {
           gBgScroll[1].x = 0;
@@ -1514,6 +1516,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   {
     s32 slide;
     s32 slideStep;
+    u8 *bolts;
 
     slide = 0;
     slideStep = 0;
@@ -1528,10 +1531,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
                                work->sheet + 0x800, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
+    bolts = gData_02014000;
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->sheet + 0x1800, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                               gData_02014000, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, bolts, 1,
+                               0);
     Render_BuildQuadStrip(Data_02012000, 4, 32, 11);
     REG_BG2CNT = 0x784;
     frame = 0;
@@ -1752,7 +1756,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 }
               }
               if (frame >= lim && frame < lim + 8) {
-                blit[0](canvas, gData_02014000 + ((p2->variant / 2) & 3) * 2880,
+                blit[0](canvas, bolts + ((p2->variant / 2) & 3) * 2880,
                         p2->x - 12, 0, 24, 120);
                 p2->variant++;
               }

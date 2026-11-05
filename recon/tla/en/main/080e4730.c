@@ -1,3 +1,4 @@
+// Draft, differ 116 of 332 (tla-en, 2026-11-05); 108 with slots and pool offsets normalized, 20 with registers blind too.
 // Near miss, differ 163 (244 before statements reordered 2026-10-26) of 332: the native keeps resource 0x1e1 in the pool,
 // hoists the picture's VRAM offset (tiles << 5) out of the frame loop and
 // keeps the effect pointer and the frame counter in other registers; the
@@ -28,7 +29,8 @@ void Actor_SetOthersPaused(struct Actor *excludedObject,
                                     s32 groupMode, s32 action);
 s32 Task_Remove(void (*func)(void));
 void Func_080e42d4(void);
-void *Resource_GetTableEntry(u16 resourceId);
+void *Resource_GetTableEntry(s32 resourceId);
+extern char ResourceId_DustPuffA;
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
@@ -71,6 +73,7 @@ void Func_080e4730(void) {
   u8 *party;
   s32 ripple;
   s32 pictureTiles;
+  s32 pictureOffset;
   s32 frame;
   s32 i;
   s32 delay;
@@ -79,7 +82,7 @@ void Func_080e4730(void) {
   gMainRoutineWork[620] = 0;
   Actor_SetOthersPaused(owner, 1, 0);
   Task_Remove(Func_080e42d4);
-  Resource_DecodeType01(Resource_GetTableEntry(0x1e1), work);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
   particleEntry = Resource_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
   particle = work + 0x1200;
@@ -116,6 +119,7 @@ void Func_080e4730(void) {
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
   Func_080e4510(work + 0x1900, pictureTiles);
   wait(1);
+  pictureOffset = pictureTiles * 32;
   ripple = 0;
   for (frame = 0; frame < 78; frame++) {
     if (frame == 0)
@@ -123,7 +127,7 @@ void Func_080e4730(void) {
     if (frame <= 64) {
       Func_080e446c(work, work + 0x400, 92 - ripple / 2);
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
-          work + 0x400, 32, 32, (u8 *)0x06010000 + pictureTiles * 32);
+          work + 0x400, 32, 32, (u8 *)0x06010000 + pictureOffset);
       Func_080e45a0(work + 0x1900);
     }
     if (frame == 66) {

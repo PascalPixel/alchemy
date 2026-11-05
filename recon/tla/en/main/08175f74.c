@@ -1,5 +1,7 @@
-// 2026-11-05: differ 1688 of 4354 (tla-en). The third phase has its own counter m
-// (r9 and actor r10 as the listing there); the first two keep i, r8 here.
+// 2026-11-05: differ 1668 of 4354 (tla-en). The third phase has its own counter m
+// (r9, and actor r10, as the listing there); the first two keep i, r8 here. Fade's t
+// and the second slots are their own. A search cut phase at its += 0x2000 (1580),
+// which reads it unset, so it is not kept: that loop's phase wants another look.
 // 2026-11-05: differ 1754 of 4354 (tla-en). Measured from the lreg and greg
 // dumps: i is one pseudo in both, with the same 51 steps. r2764 is the actor
 // with 30 refs, an ActorPos read at +8, +12 and +16. A pin on i gives 4353;
@@ -377,6 +379,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   s32 t;
   struct SpriteObject **sprites;
   struct TileSlot *slots;
+  struct TileSlot *objectSlots;
   s32 cell;
   s32 phase;
   s32 halfCell;
@@ -694,7 +697,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       fade = 1;
     }
     if (frame >= 251 && frame < 283) {
-      t = (frame - 251) / 2;
+      s32 t = (frame - 251) / 2;
+
       red = 4 - t / 4;
       green = -(t / 2);
       blue = 8 - t / 2;
@@ -744,13 +748,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         CpuFill(PLTT + 0x100, 0x180, 0x7fff7fff);
         source += 0x180;
         Resource_DecodeType01(source, work->buffer + 0x2400);
-        slots = TILE_SLOTS;
+        objectSlots = TILE_SLOTS;
         for (i = 0; i != 12; i++) {
           struct SpriteObject *object = Func_0815b290(32, 32, 0x80002000, 0);
 
           object->priority = 3;
           work->objects[i] = object;
-          CpuCopy(OBJ_VRAM + slots[object->slot].offset,
+          CpuCopy(OBJ_VRAM + objectSlots[object->slot].offset,
                   work->buffer + 0x2400 + i * 0x400, 0x400);
         }
         source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009f);

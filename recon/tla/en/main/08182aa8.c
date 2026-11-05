@@ -783,7 +783,15 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           if (n < 0) {
             n = 0;
           }
-          BLIT_CELL(0x53b8, n, x, top >> 16);
+          {
+            u8 *src = work->sheet + 0x53b8 + Data_081996ca[n];
+            u8 w = Data_081996ac[n];
+            s32 x0 = x - (w >> 1);
+            s32 y0 = top >> 16;
+            u8 h = Data_081996bb[n];
+
+            blit[0](canvas, src, x0, y0 - (h >> 1), w, h);
+          }
           BattleEffectKernels_IntegrateVector3(step, 64, 0);
           if (step->z < 0) {
             step->z = zero;

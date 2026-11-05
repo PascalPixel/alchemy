@@ -1,4 +1,14 @@
 // Draft, differ 843 of 2579 (tla-en, 2026-11-05); 665 with slots and pool offsets normalized, 237 with registers blind too. Fills and copies forwarded through inlines (S2 wrapper; tag and measure each on adoption).
+// Object loop, measured 5 November, not kept because the whole figure rises (raw 855 to 1311, normalized 731 to 893):
+// with `s32 row = j * 9` in the j loop, Apply's objects[j * 9 + i], the i == 8 arm through row + 8 and an
+// else arm whose row + i is cut with `__asm__("" : "=r"(n) : "0"(n))`, the listing's shape appears: the else
+// arm stays whole, Apply is the ldmia, last steps by 36 and row by 9, in r4. Plain row + i in the else arm is a
+// giv with benefit 7, and (7) * 17 passes loop.c's test against the loop's 74 insns, so it reduces. What stays
+// is rank: the lo-class pseudos take r5, r6, r7 and then r4 (caller-saved), so the listing needs j and row above
+// Apply (global.c: j 0.69, row 0.77, Apply 0.78 here); an extra use of j puts j in r7 (normalized 743) and Apply
+// still beats row by 1 in live length. Apply is a giv only on loop's second run here, so its init sits next to
+// the label; the listing's init comes earlier, before i = 0 and the j << 21 use.
+// level as frame * 2 in place of the stepped local: benefit 2 less add cost is 0, never reduced (raw 1813).
 // Near miss, differ 869 of 2579 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 876 of 2579, skeleton gap 248 (tla-en, 2026-11-01)

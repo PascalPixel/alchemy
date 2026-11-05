@@ -21,7 +21,7 @@ struct RenderModel {
   const void *mesh;
   void *vertices;
   struct ModelTexture *texture;
-  s32 shade;
+  long shade; // long: its store orders after texture's, as an s32 one does not
   u8 scrollU;
   u8 scrollV;
 };
@@ -88,10 +88,12 @@ void Transform_Push(void);
 void Transform_Pop(void);
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
+// Where the second strike sends the target: its motion's x, as a percent of its
+// anchor's x.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define MOTION_PERCENT 300
+#define TARGET_ANCHOR_PERCENT 300
 #else
-#define MOTION_PERCENT 200
+#define TARGET_ANCHOR_PERCENT 200
 #endif
 
 #define SLOT_BLITTER 104 // unk64[1]
@@ -236,7 +238,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
         } else {
           Func_081180e8(144);
           BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
-                                        0x70000, MOTION_PERCENT);
+                                        0x70000, TARGET_ANCHOR_PERCENT);
         }
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
       }
@@ -353,9 +355,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
         model->scrollV = 0;
         model->kind = 6;
         model->texture = &texture;
-        /* FAKEMATCH(signature): shade stored as a pointer; as model->shade = 0,
-         * 2 of 884 instructions differ in tla-en. */
-        *(void **)&model->shade = 0;
+        model->shade = 0;
         model->vertices = vertices;
         for (i = 0; i != effect->variant + 1; i++) {
           if (arcs[i * 2 + 1] >= arcs[i * 2]) {

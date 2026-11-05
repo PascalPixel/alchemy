@@ -100,8 +100,8 @@ void Func_020051a0(void) {
     return;
   object = ObjectTable_Get(work->a);
   if (object != NULL) {
-    register s32 x asm("r9");
     s32 lift;
+    register s32 x asm("r9");
     s32 side = gMainRoutineWork.entrance & 1;
     if (side) {
       x = (object->x - work->originX) / PIXELS(16) + work->fade * 6 +
@@ -109,11 +109,14 @@ void Func_020051a0(void) {
       lift = Func_02002ce8(0);
       y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;
       do {
-      s32 px = x;
+      s32 px = x & 511;
+      y &= 255;
       px &= 511;
       y &= 255;
+      y |= px << 16;
+      y |= 0x40000000;
       *cursor++ = 0;
-      *cursor++ = y | (px << 16) | 0x40000000;
+      *cursor++ = y;
       *cursor++ = (tile + 10) | 0xe400;
       Func_02005790(entry++, 255);
       } while (0);
@@ -123,11 +126,14 @@ void Func_020051a0(void) {
       lift = Func_02002ce8(0);
       y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;
       do {
-      s32 px = x;
+      s32 px = x & 511;
+      y &= 255;
       px &= 511;
       y &= 255;
+      y |= px << 16;
+      y |= 0x40000000;
       *cursor++ = 0;
-      *cursor++ = y | (px << 16) | 0x40000000;
+      *cursor++ = y;
       *cursor++ = (tile + 10) | 0xe400;
       Func_02005790(entry++, 255);
       } while (0);
@@ -137,11 +143,11 @@ void Func_020051a0(void) {
   if (object == NULL || object->x == 0)
     return;
   {
-    register s32 x asm("r9");
     s32 lift;
     // XXX: this side's offset adds scrollX where the first marker's subtracts
     // it; the native does so, and a render of the course's far side would show
     // whether it is a slip.
+    register s32 x asm("r9");
     s32 side = gMainRoutineWork.entrance & 1;
     if (side) {
       x = (object->x - work->originX) / PIXELS(16) + work->fade * 6 +
@@ -150,11 +156,14 @@ void Func_020051a0(void) {
       y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 +
           4;
       do {
-      s32 px = x;
+      s32 px = x & 511;
+      y &= 255;
       px &= 511;
       y &= 255;
+      y |= px << 16;
+      y |= 0x40000000;
       *cursor++ = 0;
-      *cursor++ = y | (px << 16) | 0x40000000;
+      *cursor++ = y;
       *cursor++ = (tile + 14) | 0xe400;
       Func_02005790(entry, 255);
       } while (0);
@@ -165,11 +174,14 @@ void Func_020051a0(void) {
       y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 +
           4;
       do {
-      s32 px = x;
+      s32 px = x & 511;
+      y &= 255;
       px &= 511;
       y &= 255;
+      y |= px << 16;
+      y |= 0x40000000;
       *cursor++ = 0;
-      *cursor++ = y | (px << 16) | 0x40000000;
+      *cursor++ = y;
       *cursor++ = (tile + 14) | 0xe400;
       Func_02005790(entry, 255);
       } while (0);

@@ -446,24 +446,26 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
     }
   } else {
     if (t < Data_08199f40[small] * 2 + Data_08199f40[small]) {
+      s32 ringCel;
+
       r = t - Data_08199f40[small] * 2;
-      cel = r / 3 * 8;
-      if (cel == 64)
-        cel = 56;
-      cel += 444;
+      ringCel = r / 3 * 8;
+      if (ringCel == 64)
+        ringCel = 56;
+      ringCel += 444;
       for (point = 0; point != 64; point++) {
         s32 px; s32 a; s32 py;
         a = point << 10;
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
-        draw(canvas, sprites + cel, px - 1, py - 2, 2, 4);
+        draw(canvas, sprites + ringCel, px - 1, py - 2, 2, 4);
       }
       for (point = 0; point != 64; point++) {
         s32 px; s32 a; s32 py;
         a = point << 10;
         px = (r * Trig_Sin(a) * 2 >> 16) + x;
         py = (r * Trig_Cos(a) >> 16) + y + Data_08199f48[small] * 2;
-        draw(canvas, sprites + cel, px - 1, py - 2, 2, 4);
+        draw(canvas, sprites + ringCel, px - 1, py - 2, 2, 4);
       }
     }
     for (segment = 0, column = y; segment < t - Data_08199f40[small] * 2 && column <= 112;

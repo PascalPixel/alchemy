@@ -842,10 +842,10 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       }
       inner = 64 - v;
       c = v;
-      dot[0] = c;
-      dot[1] = c;
       sx = 18 - c / 2;
       sy = 36 - c;
+      dot[0] = c;
+      dot[1] = c;
       Func_080150e4(frame << 10);
       if (frame <= 221) {
         SceneTransform_ApplyPitch(sy << 10);
@@ -935,7 +935,6 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     s32 b;
     s32 k;
     s32 m;
-    s32 n;
     s32 mask;
     s32 t;
     u8 *sheet;
@@ -946,7 +945,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     e += 32;
     Resource_DecodeType01(e, work->sheet);
     sheet = work->sheet + 0x1000;
-    n = 0;
+    i = 0;
     mask = 15;
     for (row = 0; row != 15; row++) {
       for (a = 0; a != 2; a++) {
@@ -962,11 +961,11 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
             u8 *d = sheet + offset;
 
             for (m = 0; m != 4; m++) {
-              c = work->sheet[n];
-              hi = c >> 4 & 15;
-              d[0] = mask & c;
+              c = work->sheet[i];
+              hi = c >> 4 & mask;
+              d[0] = c & 15;
               d[1] = hi;
-              n++;
+              i++;
               d += 2;
             }
           }

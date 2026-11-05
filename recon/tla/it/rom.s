@@ -1703,18 +1703,6 @@ Func_081b243c:
 	.thumb_func
 Func_081b8274:
 	.incbin "baserom.gba", 0x001b8274, 0x000000d8
-	.section .rom.001c00b0, "ax"
-	.incbin "baserom.gba", 0x001c00b0, 0x00000064
-	.section .rom.001c0114, "ax"
-	.global LeftoverSoundDriver_StaleCallTarget
-LeftoverSoundDriver_StaleCallTarget:
-	.incbin "baserom.gba", 0x001c0114, 0x00000054
-	.section .rom.001c0168, "ax"
-	.global Func_081c0168
-	.type Func_081c0168, %function
-	.thumb_func
-Func_081c0168:
-	.incbin "baserom.gba", 0x001c0168, 0x00000030
 	.section .rom.001c0428, "ax"
 	.global Func_081c0428
 Func_081c0428:

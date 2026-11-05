@@ -3962,22 +3962,7 @@ main	rom_main_15	games/tla/src/gamepak/far_call/sound_driver
 main	rom_main_15	games/tla/src/gamepak/far_call/table_48
 main	rom_main_15	games/tla/src/gamepak/far_call/table_49
 main	rom_main_15	games/tla/src/gamepak/far_call/sound	.text
-main	rom_main_15	recon/tla/it/rom	.rom.001c00b0	it
-main	rom_main_15	recon/tla/it/rom	.rom.001c0114	it
-main	rom_main_15	recon/tla/it/rom	.rom.001c0168	it
-main	rom_main_15	recon/tla/fr/rom	.rom.001c00b0	fr
-main	rom_main_15	recon/tla/fr/rom	.rom.001c0114	fr
-main	rom_main_15	recon/tla/fr/rom	.rom.001c0168	fr
-main	rom_main_15	recon/tla/es/rom	.rom.001c00b0	es
-main	rom_main_15	recon/tla/es/rom	.rom.001c0114	es
-main	rom_main_15	recon/tla/es/rom	.rom.001c0168	es
-main	rom_main_15	recon/tla/de/rom	.rom.001c00b0	de
-main	rom_main_15	recon/tla/de/rom	.rom.001c0114	de
-main	rom_main_15	recon/tla/de/rom	.rom.001c0168	de
-main	rom_main_15	recon/tla/raw/081c00b0		en
-main	rom_main_15	recon/tla/ja/rom	.rom.001c00b0	ja
-main	rom_main_15	recon/tla/ja/rom	.rom.001c0114	ja
-main	rom_main_15	recon/tla/ja/rom	.rom.001c0168	ja
+main	rom_main_15	games/tla/src/sound/driver/leftover_mplay_main_tail
 main	rom_main_15	games/tla/src/sound/driver/leftover_handle_note
 main	rom_main_15	games/tla/src/sound/driver/leftover_release_key
 main	rom_main_15	games/tla/src/sound/driver/leftover_clear_modulation	.text

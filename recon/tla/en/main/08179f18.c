@@ -224,6 +224,11 @@ static inline u8 *SheetOf(struct BattleEffectWork *owner)
   return owner->sheet;
 }
 
+static inline s32 HoldFor(s32 value, s32 offset) {
+  asm("" : "+r"(value) : "r"(offset));
+  return value;
+}
+
 void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -646,7 +651,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->x[i] = ((Random16() & 7) << 16) + 0xa80000;
           w->y[i] = ((Random16() & 7) << 16) + 0x5c0000;
           w->vx[i] = Trig_Sin(a) * s / 256;
-          w->vy[i] = Trig_Cos(a) * s / 256;
+          w->vy[i] = HoldFor(Trig_Cos(a), i * 4) * s / 256;
         } else if (frame == 252) {
           u32 a = Random16() & 0xffff;
           s32 s = ((Random16() & 255) << 1) + 256;
@@ -654,7 +659,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->x[i] = ((Random16() & 7) << 16) + 0x5c0000;
           w->y[i] = ((Random16() & 7) << 16) + 0x680000;
           w->vx[i] = Trig_Sin(a) * s / 256;
-          w->vy[i] = Trig_Cos(a) * s / 256;
+          w->vy[i] = HoldFor(Trig_Cos(a), i * 4) * s / 256;
         } else if (frame > 111) {
           w->x[i] += w->vx[i];
           w->y[i] += w->vy[i];

@@ -28,7 +28,7 @@ SECTIONS
         "*/games/tla/src/scene/sea_of_time/s1650.o"(.text)
         "*/games/tla/src/scene/sea_of_time/sink.o"(.text)
         "*/resource_687_overlay.o"(.text.x02009a14)
-        "*/resource_687_overlay.o"(.text.x02009cdc)
+        "*/games/tla/src/scene/sea_of_time/s1cdc.o"(.text)
         "*/games/tla/src/scene/sea_of_time/fade.o"(.text)
         "*/games/tla/src/scene/sea_of_time/import.o"(.text)
         "*/games/tla/src/scene/sea_of_time/data.o"(.data)

@@ -1,7 +1,5 @@
-// Measured under -Os, 5 November 2026: differ 64 (tla-en); notes below may predate it.
-// Draft, differ 46 of 250: the party meets person 11 on the ledge: they talk,
-// the ground shakes, the screen blends out and back while the ledge changes,
-// the party gains the item and person 11 joins the leader (flag 0x9ba).
+/// @file
+/// The party meets person 11 on the ledge: they talk, the ground shakes, the screen blends out and back while the ledge changes, the party gains the item and person 11 joins the leader (flag 0x9ba).
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -39,11 +37,17 @@ s32 Func_02004e64(void);
 
 s32 Func_020019cc(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  /* FAKEMATCH(volatile): the blend level rereads through its slot; as a plain local,
+   * 112 of 250 instructions differ in tla-en. */
   volatile u16 level;
-  s32 message = (s32)MsgGaiaRockInside09;
+  s32 message;
 
+  /* FAKEMATCH(wrapper): the calls that repeat an argument are forwarded through
+   * call.h, so each builds its own; as direct calls, 32 of 250 instructions differ
+   * in tla-en. */
   Func_02004e5c();
   Call1((void (*)())Func_02004fcc, 0);
+  message = (s32)MsgGaiaRockInside09;
   ((s32 (*)())FieldMessage_Show)(message, 1);
   Call3((void (*)())Func_02004f2c, gMainRoutineWork.currentOwner, 0x100, 0);
   if (leader->z >> 19 <= 39) {
@@ -84,26 +88,20 @@ s32 Func_020019cc(void) {
   Func_02004e2c();
   Func_02004ddc();
   level = REG_BLDALPHA & 0xff;
-  if (level != 0) {
-  fadeOut:
+  while (level != 0) {
     REG_BLDALPHA = level | 0x1000;
     level--;
     wait(1);
-    if (level != 0)
-      goto fadeOut;
   }
   REG_DISPCNT &= ~0x200;
   Call2((void (*)())Func_020015d0, 12, 4);
-  REG_BLDALPHA = level | 0x1000;
   REG_DISPCNT |= 0xf00;
+  REG_BLDALPHA = level | 0x1000;
   REG_BLDCNT = 0x3f42;
-  if (level != 8) {
-  fadeIn:
+  while (level != 8) {
     REG_BLDALPHA = level | 0x1000;
     level++;
     wait(1);
-    if (level != 8)
-      goto fadeIn;
   }
   Func_02004dd4();
   Call3((void (*)())Func_02004ebc, 12, 0, 0);
@@ -111,10 +109,13 @@ s32 Func_020019cc(void) {
   Call1((void (*)())GameFlag_SetBit, 0x9ba);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x13333, 0x9999);
   Call2((void (*)())Actor_SetModeById, 11, 2);
-  leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  if (leader != 0)
-    Call3((void (*)())Actor_ResetAndSetPosition, 11,
-          ((s16 *)&leader->x)[1], ((s16 *)&leader->z)[1]);
+  {
+    struct Actor *owner = Actor_GetById(gMainRoutineWork.currentOwner);
+
+    if (owner != 0)
+      Call3((void (*)())Actor_ResetAndSetPosition, 11,
+            ((s16 *)&owner->x)[1], ((s16 *)&owner->z)[1]);
+  }
   Call1((void (*)())Actor_WaitForMoveById, 11);
   Call3((void (*)())Func_02004ebc, 11, 0, 0);
   Call1((void (*)())FieldEvent_Wait, 20);

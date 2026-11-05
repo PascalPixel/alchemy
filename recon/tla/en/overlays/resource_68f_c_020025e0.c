@@ -1,21 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 60 (tla-en); notes below may predate it.
-// Draft, differ 60 of 150, skeleton gap 15 (tla-en, 2026-11-01)
-// Control flow, calls and data access are right; the gap is one allocation.
-// The native spills the cell pointer (cells + index, sp+4; an unused slot at
-// sp+0, likely index * 4 spilled too), so cells takes r6, the terrainId address
-// r7, shape r10 and index and the shape pointer r8, frame 16. Here the frame is
-// 8. With separate `cell` and `slot` locals, local-alloc ties index * 4 to cell
-// in r6, which conflicts with cells and pushes `list` onto the stack: differ 90,
-// though the --rtl dumps give index r8 and shape r10 as the native has them.
-// The lead: `cell` must not tie to index * 4 (the native has it in r3) and
-// must still lose its register. Tried without gain: cell = cells then +=, index
-// + cells, a named offset, index reused as the pointer, shape reused from
-// index, one scope for all locals, u32 id and flag, a terrainId pointer local
-// (differ 62), a two-word struct for cell (folds to the same code).
-// nextFlag is a plain local, not a forced one: the native reads flag + 1 before
-// the terrainId, the reload copy `adds r0, r2, #0` shows it, and the neighbour
-// Func_020024e8 keeps flag + 1 in its own variable; as an inline argument,
-// differ 68. Func_0200222c has the same loop body and frame shape.
+// Draft, differ 8 of 150 (tla-en, 5 November 2026), under -Os: registers and frame are the native's. Left: the third Func_02003088's r2 ahead of its r0, the shape address's sum tied to the grid's register, and the first load's order. Sets the listed pillars as Func_0200222c does, after moving actors 8 to 10 to the leader.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -70,13 +53,13 @@ void Func_020025e0(u16 *list) {
       s32 index = Func_02003160(object);
       s32 shape;
       s32 ground;
-      cells += index;
-      shapes += index;
+      struct MapCell *cell = &cells[index];
+      u8 *slot = shapes + index;
       shape = Func_02003010(object->terrainId, object->x, object->z);
       ground = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
       Func_020030c0(id);
-      cells->attributeB = 128;
-      *shapes = Func_02003180(object->terrainId, shape, (ground >> 19) + 4);
+      cell->attributeB = 128;
+      *slot = Func_02003180(object->terrainId, shape, (ground >> 19) + 4);
       if (GameFlag_Test(flag))
         ObjectVisual_CopyAttributes(id, 9);
     }

@@ -1,9 +1,6 @@
-// Measured under -Os, 5 November 2026: differ 65 (tla-en); notes below may predate it.
-// Near miss (87 of 197 instructions differ): the native keeps the
-// palette fill's colour and base inside its loop, reloading both each pass,
-// and builds the entrance offset in r0; the draft hoists them. Destined
-// for the head of scene/sea_of_time/fade.c as the overlay's start.
-#include "../../../../games/tla/src/scene/sea_of_time/sea_of_time.h"
+/// @file
+/// The overlay's start: sets the screen effect, restores the clock and palette in the first room, draws the unlit cells in the second, and schedules the frame callback.
+#include "sea_of_time.h"
 #include "main_routine_work.h"
 #include "scene_ids.h"
 
@@ -24,13 +21,18 @@ s32 Func_02001cdc(void) {
             (volatile u32 *)0x040000d4);
     if (GameFlag_Test(0x200)) {
       u32 *state = gSceneState;
-      u32 i;
+      u32 offset, i;
 
       gData_020022c8 = *state++;
       gData_020022cc = *state++;
       gFrameCount = *state;
-      for (i = 1; i != 14; i++)
-        ((volatile u16 *)0x05000060)[i] = 0x5ccb;
+      i = 1;
+      offset = 98;
+      do {
+        *(volatile u16 *)(offset + 0x05000000) = 0x5ccb;
+        i++;
+        offset += 2;
+      } while (i != 14);
       Task_Add(Func_02000c50, 0x480);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov687Room2) {
@@ -49,9 +51,13 @@ s32 Func_02001cdc(void) {
           Func_020018a8(47, 27, 12);
         if (!GameFlag_Test(0xa94))
           Func_020018a8(59, 19, 13);
-        *(volatile u16 *)0x0500001e &= 0xffe0;
-        Dma_Set((const void *)0x05000000, Ram_HeapSlots->block32, 0x84000070,
-                (volatile u32 *)0x040000d4);
+        {
+          void *block = Ram_HeapSlots->block32;
+
+          *(volatile u16 *)0x0500001e &= 0xffe0;
+          Dma_Set((const void *)0x05000000, block, 0x84000070,
+                  (volatile u32 *)0x040000d4);
+        }
         Func_0200201c(0x10000, 0);
       }
       if (gMainRoutineWork.entrance == 4 && !GameFlag_Test(265))

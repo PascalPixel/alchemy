@@ -1,65 +1,49 @@
-// Measured 2026-11-05 (tla-en): differ 399 of 597.
-// Draft, differ 399 of 597, skeleton gap 55 (tla-en, 2026-11-01)
-// Func_08196404 is The Lost Age's BattleEffect_BuildBlitter, The Broken Seal's
-// step list (games/tbs/src/battle_effect/battle_effect/blitter.c) walked once:
-// a fixed 436-byte block, short copies as ldmia/stmia pairs, longer ones by
-// DMA, modes 0 additive, 1 max, 2 transparent, default copy, and the second
-// run copied from the first by its measured length.
-// Left, nearly all of it the short block copies, which plain C cannot spell:
-// - The native copies always go r0 to r1 with scratch from r2 up, as Dma_Set's
-//   fixed registers do, and load four registers for 16 bytes
-//   (ldmia r0!, {r2, r3, r4, r5}), here and in 0801399c only. No compiler
-//   pattern does either: thumb_expand_movstrqi has movmem12b and movmem8b, the
-//   pattern's in and out land in r3 and r2, and a 16-byte struct copy is ldmia
-//   of three plus ldr/str. So flags & 12 and the 0x00ffffff mask stay in low
-//   registers where the native needs ip and a second pool load: most of differ
-//   399.
-// - After a copy the native steps with adds r6, #12 and adds r7, #12.
-//   Post-reload CSE (cselib) sees the pattern's advanced registers and writes
-//   register copies; do-while blocks do not stop it. Advancing dst before the
-//   copy is worse (gap 98).
-// Measured in scratch only, never to go here without Pascal: this same file
-// with COPY_FROM as an inline asm helper in the shape of Dma_Set (r0 and r1
-// pinned, ldmia/stmia of 4, 3 or 2 words, clobbers r2 up) is differ 39, gap 7.
-// All that differs then is the two sites below, so everything else here is
-// the source's shape, and the question is whether such a helper is proven
-// (CAMELOT_ASM, S1) as Dma_Set is. That is Pascal's call.
-// The two sites, both open with or without the helper:
-// - 436 sits in a register first (movs r6, #218; lsls r6, r6, #1;
-//   adds r1, r6, #0). A size local folds, in a block or a do-while. One size variable set here
-//   and again at COPY_BYTES keeps it (helper differ 14, gap 2; here differ 398,
-//   gap 50) but is a reused variable, S2's temporary, and gives r5 where the
-//   native has r6, so it is not the whole story and stays out.
-// - COPY_BYTES: the native shifts into r2, copies to r5 and divides r2 in place;
-//   here r5 first, with adds r2, r5, #3. u32, s32, two locals and a chained
-//   assignment all compile the same.
-// Settled: an 8-byte struct must be BLKmode to reach movmem8b (MOVE_RATIO is 2),
-// which struct Words2's byte array gives; u32 w[2] is DImode and ldmias on r7
-// and r6 (differ 381, gap 65). The twin's stepping do-while COPY, COPY_LONG and
-// COPY_BYTES and its return through a local replaced the plain statements and
-// the spelled-out store-flag: helper differ 71 to 39, here gap 68 to 55 with
-// differ 400 to 399. The frame's 136
-// bytes are unexplained; without frame, differ 405. COPY_TWICE stays in each
-// arm: its longer RTL moves live lengths so that runCopy outranks runSize. The
-// partial run's modes default, 2 and 1 choose a part first, because arms that
-// each copy get different scratch and do not cross-jump. run and cell are one
-// variable (lr). control is a kept 0x84000000 so the second DMA builds 5 | r5;
-// spelled DMA_COPY_WORDS at both it measured differ 408, gap 76, before the
-// macros above.
+/// @file
+/// Func_08196404 walks The Lost Age's blitter template once and writes the
+/// blitter's ARM code into a heap slot: The Broken Seal's step list
+/// (battle_effect/blitter.c) with short copies as block moves and longer ones
+/// by DMA, modes 0 additive, 1 max, 2 transparent, default copy, and the
+/// second run copied from the first by its measured length.
+
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "heap_release.h"
 
-struct Words2 {
-  u8 bytes[8];
-};
-struct Words3 {
-  u32 w[3];
-};
-struct Words4 {
-  u32 w[4];
-};
+CAMELOT_ASM("ldmia and stmia of two registers from r0 to r1 with scratch from "
+            "r2 up, in the shape of Dma_Set: agscc's block moves leave r0 and "
+            "r1 to the allocator")
+static __inline__ void CopyWords2(const void *source, void *destination) {
+  register const void *from __asm__("r0") = source;
+  register void *to __asm__("r1") = destination;
+  __asm__ volatile("ldmia %0!, {r2, r3}\n\tstmia %1!, {r2, r3}"
+                   : "+r"(from), "+r"(to)
+                   :
+                   : "r2", "r3", "memory");
+}
+
+CAMELOT_ASM("ldmia and stmia of three registers from r0 to r1 with scratch "
+            "from r2 up, in the shape of Dma_Set: agscc's block moves leave r0 "
+            "and r1 to the allocator")
+static __inline__ void CopyWords3(const void *source, void *destination) {
+  register const void *from __asm__("r0") = source;
+  register void *to __asm__("r1") = destination;
+  __asm__ volatile("ldmia %0!, {r2, r3, r4}\n\tstmia %1!, {r2, r3, r4}"
+                   : "+r"(from), "+r"(to)
+                   :
+                   : "r2", "r3", "r4", "memory");
+}
+
+CAMELOT_ASM("ldmia and stmia of four registers: agscc's block moves stop at "
+            "three, so a 16-byte struct copy compiles to 12 and 4")
+static __inline__ void CopyWords4(const void *source, void *destination) {
+  register const void *from __asm__("r0") = source;
+  register void *to __asm__("r1") = destination;
+  __asm__ volatile("ldmia %0!, {r2, r3, r4, r5}\n\tstmia %1!, {r2, r3, r4, r5}"
+                   : "+r"(from), "+r"(to)
+                   :
+                   : "r2", "r3", "r4", "r5", "memory");
+}
 
 extern const u32 BattleEffect_PatchTemplateCode[];
 extern const u32 BattleEffect_Mask[];
@@ -89,7 +73,7 @@ extern const u32 BattleEffect_ColorForward[];
     *dst++ = (word);                                                           \
   } while (0)
 #define COPY_FROM(from, n)                                                     \
-  *(struct Words##n *)dst = *(const struct Words##n *)(from);                  \
+  CopyWords##n(from, dst);                                                     \
   dst += (n)
 #define COPY(n)                                                                \
   do {                                                                         \
@@ -101,13 +85,6 @@ extern const u32 BattleEffect_ColorForward[];
     Dma_Set(src, dst, control | (n), REG_DMA3);                                \
     dst += (n);                                                                \
     src += (n);                                                                \
-  } while (0)
-#define COPY_BYTES(from, bytes)                                                \
-  do {                                                                         \
-    s32 size = (bytes);                                                        \
-                                                                               \
-    Dma_Set(from, dst, DMA_COPY_WORDS(size / 4), REG_DMA3);                    \
-    dst = (u32 *)((u8 *)dst + size);                                           \
   } while (0)
 #define COPY_DMA(from, n)                                                      \
   Dma_Set(from, dst, DMA_COPY_WORDS(n), REG_DMA3);                             \
@@ -145,7 +122,10 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   u32 frame[34];
 
   src = BattleEffect_PatchTemplateCode;
-  dst = HeapSlot_Alloc(slot, 436);
+  /* FAKEMATCH(temporary): dst holds the block's size before its address; as
+   * HeapSlot_Alloc(slot, 436), 31 of 597 instructions differ in tla-en. */
+  dst = (u32 *)436;
+  dst = HeapSlot_Alloc(slot, (s32)dst);
 
   COPY(4);
   if (mode == 0) {
@@ -363,8 +343,24 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
     PUT(src[1]);
   }
   src += 2;
+  /* FAKEMATCH(one-pass): keeps the step before the size's load; without it, 2
+   * of 597 instructions differ in tla-en. */
+  do {
+  } while (0);
 
-  COPY_BYTES(runCopy, (u32)runSize / 4 * 4);
+  {
+    u32 words = (u32)runSize / 4;
+    /* FAKEMATCH(pin): count fixed in r2, where the rounded size is built; as a
+     * plain local, 35 of 597 instructions differ in tla-en. */
+    register s32 count __asm__("r2") = words * 4;
+    s32 size = count;
+
+    /* FAKEMATCH(barrier): an empty asm keeps words alive past count's set; as
+     * nothing, 6 of 597 instructions differ in tla-en. */
+    __asm__("" : : "r"(words));
+    Dma_Set(runCopy, dst, DMA_COPY_WORDS(count / 4), REG_DMA3);
+    dst = (u32 *)((u8 *)dst + size);
+  }
   PATCH(skip);
 
   COPY(3);

@@ -1,3 +1,6 @@
+// Measured 2026-11-05 (tla-en): differ 98: the model's mesh and vertices are typed pointers, not void.
+// Measured 2026-11-05 (tla-en): 106 of 1034, unchanged. 280 + 300 typings of the colour loop's
+// blue: none gives lsls 16, lsrs 26 with ldrh and a pooled 31 without costing more elsewhere.
 // 2026-11-05: differ 106 of 1034 (tla-en). Green read, then set to red before the
 // clamps: count and later rows agree, but the colour loop still has lsrs 10 and a
 // copy for lsls 16, lsrs 26, so that loop is not settled.
@@ -65,8 +68,8 @@ struct ModelTexture {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
-  void *vertices;
+  const u8 *mesh;
+  s16 *vertices;
   struct ModelTexture *texture;
   s32 shade;
   u8 scrollU;

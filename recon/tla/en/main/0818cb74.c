@@ -1,3 +1,15 @@
+// Measured 2026-11-05 (tla-en): differ 96: the model's mesh and vertices are typed pointers, not void.
+// Measured 2026-11-05 (tla-en): differ 98 of 1122, 13 with slots and pool offsets
+// normalized. Left: &texture spills to sp+20 and start takes r10 in the listing, the other way
+// here (364 ranks 3 * 9 / 85 over start's 3 * 11 / 116); gMapCellBuffer's pool load; and
+// the first setup's store order, a figure from a search (kind, texture, scrollU first)
+// where the listing stores unk04, pixels, kind, texture, mesh, vertices, scrollU, scrollV
+// and has its scroll bytes on one zero.
+// Measured 2026-11-05 (tla-en): differ 139 of 1122, 21 with slots and pool offsets
+// normalized. A rise from 130 that removes a false order: the listing allocates the
+// vertices before the model list, so the old order's 130 was not the program's.
+// Left: the first model setup's zeros (one for unk04, one for the scroll bytes, one
+// for i; a do-while(0) after unk04 moved it to 415, so that is not the cut).
 // Measured 2026-11-05 (tla-en): differ 130 of 1122. Frame 104, every slot as
 // the native: picture is written as x, a temporary device (tag it at adoption;
 // as its own local the frame is 100). The spray's statements now run in the
@@ -62,8 +74,8 @@ struct ModelTexture {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
-  void *vertices;
+  const u8 *mesh;
+  s16 *vertices;
   struct ModelTexture *texture;
   s32 shade;
   u8 scrollU;
@@ -383,17 +395,17 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
     if (frame > 7) {
       s32 scale;
 
-      model = Render_AllocateModelList(1);
-      model->unk04 = 0;
       vertices = Heap_AllocEwram(0x400);
+      model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
       model->kind = 7;
       model->texture = &texture;
       model->scrollU = 0;
+      model->unk04 = 0;
       model->mesh = Data_08198ec4;
-      texture.pixels = Ram_MapCellBuffer;
       model->vertices = vertices;
+      texture.pixels = Ram_MapCellBuffer;
       model->scrollV = 0;
 
       // Eight rings of foam.
@@ -446,7 +458,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           }
         }
         for (i = 0, start = 18, spinner = &work->particles[32]; i != 7;
-             i++, spinner++, start += 4) {
+             start += 4, i++, spinner++) {
 
           scale = i * 4;
           if (frame < start || frame >= scale + 42) {

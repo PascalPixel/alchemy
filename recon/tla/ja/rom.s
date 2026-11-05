@@ -842,12 +842,6 @@ Func_080fd2e8:
 	.thumb_func
 Func_080fd6f0:
 	.incbin "baserom.gba", 0x000fd724, 0x0000011c
-	.section .rom.000fdb08, "ax"
-	.global Func_080fdad4
-	.type Func_080fdad4, %function
-	.thumb_func
-Func_080fdad4:
-	.incbin "baserom.gba", 0x000fdb08, 0x00000690
 	.section .rom.000fe8c6, "ax"
 	.incbin "baserom.gba", 0x000fe8c6, 0x00000002
 	.section .rom.000feef4, "ax"
@@ -953,13 +947,13 @@ Func_0810abf0:
 	.incbin "baserom.gba", 0x0010ac00, 0x000002b4
 	.section .rom.0010b05a, "ax"
 	.incbin "baserom.gba", 0x0010b05a, 0x00000002
-	.section .rom.0010b7c4, "ax"
+	.section .rom.0010b9d0, "ax"
 	.balign 4
-	.global Func_0810b7b4
-	.type Func_0810b7b4, %function
+	.global Func_0810b9c0
+	.type Func_0810b9c0, %function
 	.thumb_func
-Func_0810b7b4:
-	.incbin "baserom.gba", 0x0010b7c4, 0x000004f0
+Func_0810b9c0:
+	.incbin "baserom.gba", 0x0010b9d0, 0x000002e4
 	.section .rom.0011843c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011843c, 0x00000188
@@ -1416,11 +1410,6 @@ BattleEffect_RunDragonCloud:
 	.global Func_0818ad40
 Func_0818ad40:
 	.incbin "baserom.gba", 0x0018ad44, 0x00000b28
-	.global BattleEffect_RunTripleChomp
-	.type BattleEffect_RunTripleChomp, %function
-	.thumb_func
-BattleEffect_RunTripleChomp:
-	.incbin "baserom.gba", 0x0018b86c, 0x000003f8
 	.section .rom.0018bc9c, "ax"
 	.balign 4
 	.global Func_0818bc98
@@ -1476,12 +1465,6 @@ BattleEffect_RunOdyssey:
 	.thumb_func
 BattleEffect_RunIris:
 	.incbin "baserom.gba", 0x00192ca0, 0x00002e00
-	.section .rom.00196408, "ax"
-	.global Func_08196404
-	.type Func_08196404, %function
-	.thumb_func
-Func_08196404:
-	.incbin "baserom.gba", 0x00196408, 0x00000508
 	.section .rom.001a06e0, "ax"
 	.global Func_081a06e0
 	.type Func_081a06e0, %function

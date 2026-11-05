@@ -1,26 +1,21 @@
-// Draft, differ 127 of 762 (tla-en, 2026-11-05); 97 with slots and pool offsets normalized, 21 with registers blind too.
-// Near miss, differ 139 of 762 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Near miss, differ 158 (2026-10-26, statements reordered).
-// First draft of Func_080fdad4: the Psynergy list of the member in
-// paneIndex, the twin of The Broken Seal's PsynergyMenu_RunList
-// (games/tbs/src/menu/menu/psynergy.c). ⚓️ sets the field shortcuts as the
-// party's packed events (Party_SetPackedEvent), moves the member row through
-// Func_08104ef8 and Menu_HighlightPageEntry, and tests Select as held. MsgShortcutHelp
-// and MsgChangeCharacterHelp are messages 4112 and 4282 in English; they need
-// their names in the six catalogs before this links. Differ 228 of 762
-// (2026-10-19, four instructions long): the native shares one call of
-// Func_080fd6f0 between the two list modes, where the tails here differ by
-// the order of the state pointer's reload; the counters' registers and some
-// offsets' moves differ after it. The locals are declared in the order that
-// gives the native stack slots (otherwise differ 268).
+/// @file
+/// Func_080fdad4 runs the Psynergy list of the member in paneIndex, the twin
+/// of The Broken Seal's PsynergyMenu_RunList
+/// (games/tbs/src/menu/menu/psynergy.c).
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
 #include "battle_unit.h"
+#include "edition.h"
 
-// The pressed keys, read again at each test.
-#define KEYS_PRESSED (((volatile struct InputState *)&gInput)->pressed)
+// The Japanese list puts its cursor and its help line at other columns.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define CURSOR_X 98
+#define CHANGE_HELP_X 16
+#else
+#define CURSOR_X 88
+#define CHANGE_HELP_X 0
+#endif
 
 struct MenuResult {
   s32 ownerState;
@@ -78,7 +73,7 @@ struct PsynergyMenuState {
 extern u8 MsgShortcutHelp[], MsgChangeCharacterHelp[];
 
 s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
-                            s32 frame);
+                          s32 frame);
 s32 GameFlag_Test(s32 flag);
 struct BattleUnit *Unit_Get(s32 owner);
 s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
@@ -94,10 +89,10 @@ s32 Func_080f8f9c(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
 struct BattleAct *BattleAction_Get(s32 action);
 void Sound_PlayFar(s32 cue);
 void Window_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
-                                    s32 height);
+                                  s32 height);
 void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
-void Func_08104ef8(s32 first);
+void Menu_CreateOwnerEntryObjects(s32 first);
 void Menu_HighlightPageEntry(s32 window, s32 selection, s32 count);
 void Func_080f8170(s32 window, s32 ownerId, s32 x, s32 y);
 void PsynergyMenu_CallIconRoutineWithValue(struct PsynergyMenuState *menu,
@@ -125,10 +120,10 @@ s32 Func_080fdad4(s32 paneIndex) {
   struct MenuResult state;
 
   menu = Ram_HeapSlots->menuRuntime;
-  menu->paneIcon[paneIndex]->active = 13;
   result = 0;
   previous = 0;
   shortcutHelp = 0;
+  menu->paneIcon[paneIndex]->active = 13;
   Window_UpdateOrCreate(&menu->listWindow, 13, 3, 17, 14, 2);
   window = menu->listWindow;
   done = 0;
@@ -141,18 +136,19 @@ s32 Func_080fdad4(s32 paneIndex) {
       menu->psynergyCount = Func_080fd6f0(owner, menu->psynergies, 2);
     PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
     Func_080fd80c(&state, paneIndex);
-    redraw = 1;
     changed = 1;
-  __asm__("" : "=r"(changed) : "0"(changed));
+    redraw = 1;
     menu->paneIcon[paneIndex]->active = 1;
 
     while (!GameFlag_Test(0x150)) {
-      Func_080f8a44(88, state.row * 16 + 36);
+      Func_080f8a44(CURSOR_X, state.row * 16 + 36);
 
       if (changed != 0) {
         changed = 0;
-        if (menu->psynergies[previous] != 0)
-          Icon_PrepareActor(menu->entryIcons[previous]);
+        if (menu->psynergies[previous] != 0) {
+          icon = menu->entryIcons[previous];
+          Icon_PrepareActor(icon);
+        }
         if (redraw != 0) {
           redraw = 0;
           wait(1);
@@ -188,9 +184,9 @@ s32 Func_080fdad4(s32 paneIndex) {
         changed = 0;
 
       if (menu->mode == 0) {
-        if ((KEYS_PRESSED & 4) && shortcutHelp == 0) {
+        if ((gInput.pressed & 4) && shortcutHelp == 0) {
           ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                                 OWNER_ACTION_ID_MASK);
+                                     OWNER_ACTION_ID_MASK);
           if (ability->unk04[2] == 0) {
             Sound_PlayFar(114);
           } else {
@@ -201,16 +197,18 @@ s32 Func_080fdad4(s32 paneIndex) {
             Text_DrawCharacterAtOffsetFar(MsgShortcutHelp, window, 0, 88);
           }
         }
-        if ((gInput.held & 4) == 0 && shortcutHelp == 1) {
+        /* FAKEMATCH(volatile): held read afresh for this test; as plain
+         * gInput.held, 85 of 762 instructions differ in tla-en. */
+        if ((*(volatile u32 *)&gInput.held & 4) == 0 && shortcutHelp == 1) {
           shortcutHelp = 0;
           menu->flags &= ~2;
           Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
-          Text_DrawCharacterAtOffsetFar(MsgChangeCharacterHelp, window, 0,
-                                          88);
+          Text_DrawCharacterAtOffsetFar(MsgChangeCharacterHelp, window,
+                                        CHANGE_HELP_X, 88);
         }
       }
 
-      if (KEYS_PRESSED & 1) {
+      if (gInput.pressed & 1) {
         if (menu->mode != 0) {
           Sound_PlayFar(130);
           result = menu->psynergies[state.selectedIndex];
@@ -224,7 +222,7 @@ s32 Func_080fdad4(s32 paneIndex) {
             continue;
           }
           ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                                 OWNER_ACTION_ID_MASK);
+                                     OWNER_ACTION_ID_MASK);
           if (ability->ppCost > owner->pp) {
             Sound_PlayFar(114);
           } else {
@@ -236,7 +234,7 @@ s32 Func_080fdad4(s32 paneIndex) {
         }
       }
 
-      if (KEYS_PRESSED & 2) {
+      if (gInput.pressed & 2) {
         Sound_PlayFar(113);
         result = -1;
         done = 1;
@@ -245,9 +243,9 @@ s32 Func_080fdad4(s32 paneIndex) {
 
       if (((gInput.repeat & 0x100) || (gInput.repeat & 0x200)) &&
           (gInput.held & 4) == 0) {
+        member = menu->tabIndex[paneIndex];
         ownerCount = menu->ownerCount;
         listMode = menu->mode != 0 ? 1 : 2;
-        member = menu->tabIndex[paneIndex];
         Sound_PlayFar(111);
         menu->selectedIndexByOwner[menu->ownerIds[paneIndex]] =
             state.selectedIndex;
@@ -263,7 +261,7 @@ s32 Func_080fdad4(s32 paneIndex) {
                                               menu->psynergies, listMode);
         } while (menu->psynergyCount == 0);
         menu->tabIndex[paneIndex] = member;
-        Func_08104ef8(member / 4 * 4);
+        Menu_CreateOwnerEntryObjects(member / 4 * 4);
         Menu_HighlightPageEntry(menu->rowWindow, member, ownerCount);
         menu->arrows[0]->active = 13;
         menu->arrows[1]->active = 13;
@@ -273,9 +271,9 @@ s32 Func_080fdad4(s32 paneIndex) {
         break;
       }
 
-      if ((KEYS_PRESSED & 0x200) && (gInput.held & 4)) {
+      if ((gInput.pressed & 0x200) && (gInput.held & 4)) {
         ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                               OWNER_ACTION_ID_MASK);
+                                   OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
           Sound_PlayFar(114);
         } else if (Party_SetPackedEvent(menu->ownerIds[paneIndex],
@@ -289,9 +287,9 @@ s32 Func_080fdad4(s32 paneIndex) {
         }
       }
 
-      if ((KEYS_PRESSED & 0x100) && (gInput.held & 4)) {
+      if ((gInput.pressed & 0x100) && (gInput.held & 4)) {
         ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                               OWNER_ACTION_ID_MASK);
+                                   OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
           Sound_PlayFar(114);
         } else if (Party_SetPackedEvent(menu->ownerIds[paneIndex],

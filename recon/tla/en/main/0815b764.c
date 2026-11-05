@@ -1,3 +1,14 @@
+// Measured 2026-11-05 (tla-en): differ 261: the model's mesh and vertices are typed pointers, not void.
+// Measured 2026-11-05 (tla-en): with function-level i at the ship placement (no inner s32 i)
+// the counts agree, 1932 and 1932, at differ 342; the inner i kept here gives 263 and 1931.
+// Decl scans (all blocks, moves and 4000 random orders): no effect. The ship-burst block:
+// in the listing frame reloads into r7 above the block's stores, two ticks ahead of here;
+// locals taking frame or frame - 76 before verts, and every order of the model's statements, do not move it.
+// Measured 2026-11-05 (tla-en): differ 263 of 1932, 79 normalized: Task_Add returns s32.
+// 2026-11-05, unchanged at 271 of 1932: at the ship-burst block the reload order
+// draw r3, frame r4, then verts is the draft's next register, r7; the listing's
+// verts is r1, so r7 and r0 were taken or busy there. Tried a frame * 3 local
+// before the verts store (326), a start local (563), swapped arms (342): worse.
 // Measured 2026-11-05 (tla-en): differ 271 of 1932 (scoping the
 // ship-placement loop's i to its block took it from 350). Left: at the
 // ship-burst model block the listing reads verts into r1 and j's zero into
@@ -80,8 +91,8 @@ struct ModelTexture {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
-  void *vertices;
+  const u8 *mesh;
+  s16 *vertices;
   struct ModelTexture *texture;
   s32 shade;
   u8 scrollU;
@@ -128,7 +139,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);

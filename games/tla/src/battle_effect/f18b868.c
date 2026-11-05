@@ -1,33 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 129 of 434.
-// Near miss: listing 434 instructions, draft 433, differ 151. No ☀️ twin: the
-// frame and the spark blitting are ☀️'s (BattleEffect_RunVenus, shape
-// 0.572), the bite drawn as a textured quad through ⚓️'s model kernels is ⚓️'s
-// own. The native stack frame (84) holds effect at sp+60, work 56, canvas 52, frame
-// 48, the blitter pair at 40 and 44 (the second word unused), graphics 36, the
-// vertices 32, the model 28, the texture's and the position's addresses at 24
-// and 20, the speed (120 + 20 * bite) at 16 and the bite's particle offset at
-// 12; the texture is at sp+64 and the position at sp+72.
-// Earlier: differ 411 (draft 425; the alignment drifts from the first spill).
-// A two-word blitter array (one DImode pseudo, as in Func_08182898 and
-// Func_0818c7b8): 463 to 411.
-// 2026-10-15 (fx-n3), rewritten for reading and measured, in order: the
-// sparks at the fixed map cell buffer + 0x4000 rather than an EWRAM label
-// (the native folds the variant's offset into one pooled address): 336; the
-// burst loop with its own counter: 332; declarations in the native's spill
-// order (work, canvas, frame, the blitter pair, graphics, vertices, model)
-// and the hit's speed as i * 20 + 120: 320; one counter for the clear, bite
-// and draw loops, as the native keeps them in r9 (the frame then is 84): 284;
-// the tables extern without const (the native reloads them after calls):
-// 165; the anchor as (&work->particles[i])->x, written BITE_ANCHOR (an
-// alchemy permute find; work->particles[i].x is 396): 151.
-// No effect: the order of the three aggregate locals (all six, 332); the
-// scalar declarations' order (spark, i, j, model, 24 orders, 284).
-// Worse: each spark as &SPARKS[i * 128 + j] in the burst loop: 387.
-// Left: the model's allocation (the native spills it and reloads it in r0,
-// so its kind is a fresh 7, not the bitfield's), the burst loop's spark and
-// angle registers swapped (r7 and r6 natively), one draw-loop instruction
-// short, and the TLA load-before-constant pairs. alchemy permute (10 min, 2
-// jobs): 151 as above.
+/// @file
+/// Triple Chomp's effect: the caster lunges, three bites close on the target.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -38,10 +10,11 @@
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
 
-// The transfer task runs at this priority, where ☀️'s runs at 0x480.
+// The transfer task runs at this priority, where The Broken Seal's runs at
+// 0x480.
 #define TASK_PASS_FRAME 0xc80
 
-// ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
+// The Lost Age's blitter modes count the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
@@ -94,14 +67,14 @@ extern u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
-void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
+void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
+                                    s32 percent);
 void wait(s32 frames);
-void BattleEffect_LoadBlitter(s32 slot, s32 packed);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void *Resource_GetTableEntry(s32 id);
 void *Heap_AllocEwram(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
-void EffectPosition_ProjectBattler(
-    s32 id, struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -119,7 +92,7 @@ void Func_0801521c(s32 scale);
 void Render_TransformVertices(void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Heap_Release(void *block);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void BattleEffect_CountDownBattlerTints(void);
@@ -136,15 +109,16 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  DrawRectangle draw[2];
+  DrawRectangle draw[2]; // Unused: [1] gives the stack frame its 4 bytes.
   u8 *graphics;
   void *vertices;
   struct Model *model;
   struct ModelTexture texture;
   struct EffectPosition position;
-  struct EffectStep *spark;
+  struct EffectStep *drawn;
   s32 i;
   s32 j;
+  u8 *pixels = Ram_MapCellBuffer;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -161,11 +135,12 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
 
   // A clipped, mirrored MAX blitter for the sparks; the jaw's texture, the
   // spark sheet and the blue flame's colours.
-  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
-                BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        BLIT_MAX));
+  BattleEffect_LoadBlitter(
+      HEAP_SLOT_BLITTER,
+      BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+              BLIT_MAX));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Ram_MapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
   Iwram_CopyWords((void *)0x05000000,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
@@ -181,12 +156,12 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     EffectPosition_ProjectBattler(effect->actors[0], &position);
+    texture.logWidth = 7;
+    texture.logHeight = 7;
+    texture.pixels = pixels;
     model->mesh = gData_08199364;
     model->kind = 7;
-    texture.logHeight = 7;
     model->texture = &texture;
-    texture.logWidth = 7;
-    texture.pixels = Ram_MapCellBuffer;
     model->vertices = vertices;
 
     // The three bites; the native counts them in the same register as the
@@ -195,8 +170,8 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
       // The bite closes: 32 sparks fly from the target's middle, and the
       // target jolts and flashes. The last bite ends the action.
       if (frame == gData_08199d94[i]) {
-        spark = &SPARKS[i * 128];
         for (j = 0; j != 32; j++) {
+          struct EffectStep *spark = &SPARKS[i * 128 + j];
           s32 angle;
           s32 force;
 
@@ -213,14 +188,13 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
           BITE_ANCHOR(i)->x = position.x;
           BITE_ANCHOR(i)->y = position.y - 24;
           spark->variant = (Random16() & 7) + 16;
-          spark++;
         }
         if (i == 2)
           Func_081180e8(134);
         else
           Sound_PlayFar(134);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000, 0,
-                                  i * 20 + 120);
+                                      i * 20 + 120);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 8;
       }
@@ -249,21 +223,22 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     }
 
     // Each spark is drawn and moved twice a frame, shrinking as it dies.
-    spark = SPARKS;
+    drawn = SPARKS;
     for (i = 0; i != SPARK_COUNT; i++) {
-      s32 size = spark->variant;
+      s32 left = drawn->variant;
 
-      if (size >= 0) {
-        size = (size >> 2) + 3;
+      if (left >= 0) {
+        s32 size = (left >> 2) + 3;
+
         draw[0](canvas, graphics + gData_08197410[size - 1],
-                HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 62, 0);
+                HI(drawn->x) - size / 2, HI(drawn->y) - size, size, size * 2);
+        BattleEffectKernels_IntegrateVector2(drawn, 62, 0);
         draw[0](canvas, graphics + gData_08197410[size - 1],
-                HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 62, 0);
-        spark->variant--;
+                HI(drawn->x) - size / 2, HI(drawn->y) - size, size, size * 2);
+        BattleEffectKernels_IntegrateVector2(drawn, 62, 0);
+        drawn->variant--;
       }
-      spark++;
+      drawn++;
     }
 
     Heap_Release(model);

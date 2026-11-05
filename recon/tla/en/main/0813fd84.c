@@ -1,4 +1,4 @@
-// Draft, differ 48 of 2579 (tla-en, 2026-11-05). The frame, every slot and every pool agree.
+// Draft, differ 44 of 2579 (tla-en, 2026-11-05). The frame, every slot and every pool agree.
 // BattleEffect_RunCruelRuin. What this round settled, each read from the listing and each a real form:
 // - Loop givs: grey, blue and green are givs of frame (blue first, as the slots order them); grey reduces because
 //   the palette test and its colour spell frame - 80 again, and that second giv combines with the first.
@@ -845,7 +845,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         p->x = Data_08197724[i] << 16;
       }
       if (frame >= start && frame < start + 32) {
-        s32 size = Data_08197720[i];
+        s32 size = 0;
+        s32 px = 0;
+        s32 py = 0;
+        s32 angle = 0;
+        s32 scale = 0;
+        size = Data_08197720[i];
 
         if (p->y < Data_08197730[i] << 16) {
           p->x -= Data_08197728[i] << 16;
@@ -855,10 +860,14 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         }
         p->x += 0x80000;
         Render_ResetTransformState();
-        Func_08015160(p->x + -0x400000, p->y + -0x400000, 0);
+        px = p->x + -0x400000;
+        py = p->y + -0x400000;
+        Func_08015160(px, py, 0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
-        Func_080150e4(Data_08197734[i]);
-        Func_080151e4(size * 9400, 0x20000, 0x8000);
+        angle = Data_08197734[i];
+        Func_080150e4(angle);
+        scale = size * 9400;
+        Func_080151e4(scale, 0x20000, 0x8000);
         Render_TransformVertices(Data_081976e0, verts, 4);
         Func_0815b434(work->sheet, size, 0x10000);
         Func_0818caa8(work->sheet, HI(p->x) - 1, HI(p->y), size);

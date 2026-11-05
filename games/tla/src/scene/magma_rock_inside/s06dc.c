@@ -1,8 +1,6 @@
-// Draft, differ 24 of 61 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 24 (tla-en); notes below may predate it.
-// Draft, differ 34 of 61: overlay 692's copy of the function drafted in
-// resource_691_c_020006cc.c (overlay 691's Func_020006cc, differ 34 there), whose
-// header says what it is, what still differs and what was tried.
+/// @file
+/// For each id of a list ended by 0xffff: clears the object's mark and, on a cell with
+/// attribute bit 6, blocks the cells ahead of and behind it and sets the mark.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -17,6 +15,7 @@ void Func_020006dc(u16 *ids) {
   u8 *blocked;
   struct MapWork *map;
   struct MapCell **cells;
+  struct MapCell *cell;
   s32 x, z;
 
   while (*ids != 0xffff) {
@@ -30,8 +29,12 @@ void Func_020006dc(u16 *ids) {
     cells = &map->layers[2].cells;
     z = (object->z - object->y) >> 20;
     x = object->x >> 20;
-    ((u8 *)&(*cells)[x + ((z + 1) << 7)])[2] = 255;
-    (*cells)[x + ((z - 1) << 7)].collisionCode = -1;
+    cell = *cells;
+    cell += x + ((z + 1) << 7);
+    cell->collisionCode = 255;
+    cell = *cells;
+    cell += x + ((z - 1) << 7);
+    cell->collisionCode = 255;
     *blocked = 1;
   }
   ids++;

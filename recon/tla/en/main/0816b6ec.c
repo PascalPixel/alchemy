@@ -1,3 +1,7 @@
+// 2026-11-05: differ 50 of 609 (tla-en). Measured: x and y as one expression, scale
+// per arm, one counter k for k, j and the target loop gave the listing's r7 and
+// count. Left: frame 0 (length by two moves, -length rebuilt per row) and the
+// vertices literal in the draw (as Data_02010108 alone it moves PRE, differ 398).
 // Draft of Func_0816b6ec, decompiled from the listing: differ 196 of 609 (draft
 // 607), the same 48 calls and control flow.
 // Left (2026-10-19): r6 and r7 trade places for the vertex pointer, the
@@ -316,10 +320,10 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     model->vertices = vertices;
     model->shade = shade;
     for (k = 0; k != Data_08198b24[mode]; k++) {
-      s32 scale;
-
       Render_ResetTransformState();
       if (mode == 0) {
+        s32 scale;
+
         Func_08015160((screen.x / 2 - 64) << 16, 0x280000, 0);
         SceneTransform_ApplyPitch(k << 11);
         SceneTransform_ApplyYaw(k * 21000 + yaw);
@@ -329,6 +333,8 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
         }
         Func_080151e4(scale * 3 / 2, 0x10000, scale * 3 / 2);
       } else {
+        s32 scale;
+
         Func_08015160((screen.x / 2 - 64) << 16, (k << 20) + 0x100000, 0);
         SceneTransform_ApplyPitch((k << 12) - 0x800);
         SceneTransform_ApplyYaw(k * 21000 + yaw);

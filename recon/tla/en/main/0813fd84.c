@@ -1,4 +1,4 @@
-// Draft, differ 89 of 2579 (tla-en, 2026-11-05), 2578 instructions here. The frame, every slot and every pool agree.
+// Draft, differ 83 of 2579 (tla-en, 2026-11-05), 2578 instructions here. The frame, every slot and every pool agree.
 // BattleEffect_RunCruelRuin. What this round settled, each read from the listing and each a real form:
 // - Loop givs: grey, blue and green are givs of frame (blue first, as the slots order them); grey reduces because
 //   the palette test and its colour spell frame - 80 again, and that second giv combines with the first.
@@ -945,15 +945,16 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
 
       for (i = 0; i != 9; i++) {
         s32 mask = ~0x3ff;
+        s32 k_ = 64;
+        s32 tile = i + k_ + phase;
         place[0] = (i << 21) + scrollX;
         place[2] = 0x790000 + (j << 21);
         if (i == 8) {
           obj = *last;
           {s32 t_ = phase + 71; s32 q_ = t_; if (t_ < 0) q_ = phase + 78; q_ >>= 3; q_ <<= 3; u = t_ - q_;}
         } else {
-          u = row + i;
-          obj = work->objects[u];
-          u = (phase + 64 + i) % 8;
+          {s32 m = row; m += i; obj = work->objects[m];}
+          {s32 x_ = phase + i; s32 q_ = tile; if (tile < 0) q_ = x_ + 71; q_ >>= 3; q_ <<= 3; u = tile - q_;}
         }
 {s32 v = work->particles[row + u].variant & 0x3ff; s32 x = obj->attr.all & mask; obj->attr.all = x | v;}
         if (place[0] > 0xffffff) {

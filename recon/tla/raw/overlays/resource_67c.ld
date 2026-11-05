@@ -67,7 +67,7 @@ SECTIONS
         "*/resource_67c_overlay.o"(.text.x0200b4fc)
         "*/games/tla/src/scene/aqua_rock_inside/s3628.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside/s3688.o"(.text)
-        "*/resource_67c_overlay.o"(.text.x0200b6b8)
+        "*/games/tla/src/scene/aqua_rock_inside/s36b8.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside/s3844.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside/s3994.o"(.text)
         "*/games/tla/src/scene/aqua_rock_inside/s39f0.o"(.text)

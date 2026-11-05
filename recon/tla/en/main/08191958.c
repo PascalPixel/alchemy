@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 58 of 185.
 // Draft, differ 66 of 185 (no device): summon 25's screen wipe (called at
 // its start with a midpoint callback). Written from the listing; no Broken
 // Seal twin (twins12 0.46).

@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 12 of 303.
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 14 of
 // 303; a greedy device search found nothing lower.
 // Near miss: listing 303 instructions, draft 303, differ 16. No close ☀️

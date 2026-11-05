@@ -15703,11 +15703,11 @@ msgctxt "MsgSlotsBet"
 msgid "03893"
 msgstr "Pun."
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceCoins"
 msgid "03894"
 msgstr "Mon."
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceWinnings"
 msgid "03895"
 msgstr "Vincite:"
 
@@ -15759,7 +15759,7 @@ msgctxt "MsgSlotsCannotPull"
 msgid "03907"
 msgstr "non puoi tirare la leva!"
 
-msgctxt "message"
+msgctxt "MsgDiceGameThrow"
 msgid "03908"
 msgstr "{button_icon:1}:Lancia"
 
@@ -15767,27 +15767,27 @@ msgctxt "message"
 msgid "03909"
 msgstr "{button_icon:2}:Esci"
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigher"
 msgid "03910"
 msgstr "Se il totale è più di 15,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLower"
 msgid "03911"
 msgstr "Se il totale è meno di 13,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigherAgain"
 msgid "03912"
 msgstr "Se il nuovo totale è più alto,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLowerAgain"
 msgid "03913"
 msgstr "Se il nuovo totale è più basso,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameChoose"
 msgid "03914"
 msgstr "hai vinto!"
 
-msgctxt "message"
+msgctxt "MsgDiceGameDoubleUp"
 msgid "03915"
 msgstr "Vuoi raddoppiare?"
 

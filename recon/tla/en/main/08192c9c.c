@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 3800 of 4851.
 // Draft, differ 3287 of 5364, skeleton gap 373 + 380 (tla-en, 2026-11-01)
 // Measure with the four nested functions' listings as well:
 // diff ...08192c9c.c 0819284c,08192894,081929fc,08192a4c,08192c9c. Measured

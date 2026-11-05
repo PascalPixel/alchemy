@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 26 of 13.
 // Draft, differ 26 of 13 with the game profile, and identical with old_agbcc
 // -O2 -mthumb-interwork (2026-10-24): the work copy of the sound library's
 // MPlayFadeOut, as in ☀️ (games/tbs/src/sound/audio.c),

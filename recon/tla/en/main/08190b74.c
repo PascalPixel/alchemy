@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 10 of 1075.
 // Draft, differ 20 of 1075, skeleton gap 18 (tla-en, 2026-11-01)
 //
 // BattleEffect_RunOdyssey, effect kind 125. Every instruction, register and

@@ -1,3 +1,6 @@
+// Measured 2026-11-05 (tla-en): differ 24 of 1556. One-pass blocks around the
+// two FillWords_ calls give 16; what is left then is half's sign + hx at two
+// sites, the 256 limit's register and one store order.
 // Draft, differ 26 of 1556, skeleton gap 16 (tla-en, 2026-11-01)
 // BattleEffect_RunMeteorBlow: allocation, slots and spill rotation now agree
 // with the listing; what is left is five sched2 ties and one operand order.

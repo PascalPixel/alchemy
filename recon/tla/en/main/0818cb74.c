@@ -1,3 +1,5 @@
+// Measured 2026-11-05 (tla-en): differ 245 of 1122; 184 with picture written as x
+// (a temporary device, not in this draft).
 // Draft, differ 408 of 1122, skeleton gap 44 (tla-en, 2026-11-01)
 // BattleEffect_RunTrident: same calls and control flow, draft 1120 instructions.
 // Left, the one blocker first: the frame is 100 bytes, not 104, so every sp
@@ -348,12 +350,12 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           s32 speed = (Random16() & 511) + 512;
           s32 sine;
 
-          sine = Trig_Sin(heading) * speed;
-          x = centerX << 16;
-          p->x = (sine >> 4) + x;
-          p->y = ((Trig_Cos(heading) * speed) >> 3) + 0x680000;
           angle += 0xc000;
           p->velocityX = (Trig_Sin(angle) * speed) >> 9;
+          p->x = (sine >> 4) + x;
+          sine = Trig_Sin(heading) * speed;
+          p->y = ((Trig_Cos(heading) * speed) >> 3) + 0x680000;
+          x = centerX << 16;
           p->velocityY = (Trig_Cos(angle) * speed) >> 8;
           p->velocityZ = (Random16() & 7) + 4;
         }
@@ -384,8 +386,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       model->kind = 7;
       model->vertices = vertices;
       model->mesh = Data_08198ec4;
-      model->texture = &texture;
       texture.pixels = Ram_MapCellBuffer;
+      model->texture = &texture;
       model->scrollU = 0;
       model->scrollV = 0;
 

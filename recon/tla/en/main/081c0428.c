@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 61 of 44.
 // Draft, differ 61 of 44: the work copy of the PCM key-to-frequency
 // interpolation, as ☀️'s MidiKeyToFreq (games/tbs/src/sound/audio.c);
 // its tables' pool words are zero in the copy. A sound-library function: the

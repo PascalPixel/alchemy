@@ -1,3 +1,5 @@
+// Measured 2026-11-05 (tla-en): differ 2 of 529. One pair: movs r2 ahead of the
+// pooled 0x100 at BG2PA. Every order of the pins keeps it.
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 10 of
 // 529; a greedy device search found nothing lower.
 // Near miss: listing 529 instructions, draft 529, differ 12. ☀️ twin:

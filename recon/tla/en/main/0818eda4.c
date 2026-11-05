@@ -1,3 +1,5 @@
+// Measured 2026-11-05 (tla-en): differ 160 of 895. Left first: i & 1, where the
+// 1 ties to the result; an explicit odd local changes nothing.
 // Draft, differ 172 of 895, skeleton gap 32 (tla-en, 2026-11-01)
 // Effect kind 123, written from the listing on The Broken Seal's canvas
 // skeleton (twins: BattleEffect_RunTitanBlade 0.46, by call order
@@ -195,9 +197,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         struct EffectStep *step = &work->particles[i];
 
         if (step->variant >= 0 && frame >= i / 4) {
-          s32 size = (i & 1) + 5;
-          s32 blend = (i & 1) * 4;
-          s32 j;
+          s32 odd = i;
+ s32 size;
+ s32 blend;
+ s32 j;
+ odd &= 1;
+ size = odd + 5;
+ blend = odd * 4;
 
           for (j = 0; j != 2; j++) {
             (*(DrawRectangle *)((u8 *)draw + blend))(
@@ -234,9 +240,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       // Four steps a frame.
       for (i = 0, step = work->particles; i != 32; i++, step++) {
         if (step->variant >= 0) {
-          s32 size = (i & 1) + 2;
-          s32 blend = (i & 1) * 4;
-          s32 j;
+          s32 odd = i;
+ s32 size;
+ s32 blend;
+ s32 j;
+ odd &= 1;
+ size = odd + 2;
+ blend = odd * 4;
 
           for (j = 0; j != 4; j++) {
             (*(DrawRectangle *)((u8 *)draw + blend))(
@@ -295,8 +305,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         if (frame >= start && frame < i * 2 + 70) {
           s32 scale;
 
-          model->shade = 0;
           scale = 0x20000 - ((frame - start) << 13);
+          model->shade = 0;
           Render_ResetTransformState();
           Func_080151e4(0x8000, 0x10000, 0x8000);
           Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
@@ -310,8 +320,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       // Their splashes: growing and darkening, faster after eight frames.
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = gData_02014000;
       model->mesh = gData_08199364;
+      texture.pixels = gData_02014000;
       model->kind = 7;
       for (i = 0; i != 16; i++) {
         struct EffectStep *step = &work->particles[i + 32];

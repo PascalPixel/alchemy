@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 4347 of 527.
 // Draft, differ 2834 of 4580, skeleton gap 323 (tla-en, 2026-11-01)
 // BattleEffect_RunCatastrophe; the same calls and control flow as the listing.
 // The function runs on through listing 081848ec, whose Func_081848ec and

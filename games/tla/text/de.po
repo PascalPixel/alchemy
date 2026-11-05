@@ -15774,11 +15774,11 @@ msgctxt "MsgSlotsBet"
 msgid "03893"
 msgstr "Wette"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceCoins"
 msgid "03894"
 msgstr "Münzen"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceWinnings"
 msgid "03895"
 msgstr "Gewinn:"
 
@@ -15830,7 +15830,7 @@ msgctxt "MsgSlotsCannotPull"
 msgid "03907"
 msgstr "Du kannst nicht drehen!"
 
-msgctxt "message"
+msgctxt "MsgDiceGameThrow"
 msgid "03908"
 msgstr "{button_icon:1}:Werfen"
 
@@ -15838,27 +15838,27 @@ msgctxt "message"
 msgid "03909"
 msgstr "{button_icon:2}:Aufhören"
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigher"
 msgid "03910"
 msgstr "Zeigen die Würfel mehr als 15,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLower"
 msgid "03911"
 msgstr "Zeigen die Würfel weniger als 13,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigherAgain"
 msgid "03912"
 msgstr "Ist die Summe höher,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLowerAgain"
 msgid "03913"
 msgstr "Ist die Summe niedriger,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameChoose"
 msgid "03914"
 msgstr "ist es ein Treffer!"
 
-msgctxt "message"
+msgctxt "MsgDiceGameDoubleUp"
 msgid "03915"
 msgstr "Möchtest du verdoppeln?"
 

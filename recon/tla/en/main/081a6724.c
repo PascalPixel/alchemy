@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 116 of 160.
 // Draft, differ 131 of 160: shows a two-layer picture of the intro, as
 // Func_081a6638 does: BG3's map numbers rows 7 to 9 from tile 64 over a
 // blank of 0x3040 with rows 10 and 11 of 0x3060, BG0's map numbers rows 10

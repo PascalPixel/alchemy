@@ -1,3 +1,5 @@
+// Measured 2026-11-05 (tla-en): differ 104 of 2667. Orders of the plain
+// assignments searched: see the sites below for what is left.
 // Draft, differ 121 of 2667, skeleton gap 11 + 12 (tla-en, 2026-11-01)
 // BattleEffect_RunHaures: frame and spill slots agree; the old volatile dst
 // pointers are gone, no device is left here. Facts that closed the rest:
@@ -854,8 +856,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         texture3.logWidth = 8;
         texture3.logHeight = 7;
         texture3.pixels = buffer;
-        model->texture = &texture3;
         model->kind = 1;
+        model->texture = &texture3;
         model->vertices = verts;
         model->shade = (s32)shades;
         for (i = 0; i != 31; i++) {
@@ -1086,8 +1088,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
     verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
-    model->shade = -8;
     model->kind = 7;
+    model->shade = -8;
     model->texture = &texture4;
     texture4.logWidth = 6;
     texture4.logHeight = 5;

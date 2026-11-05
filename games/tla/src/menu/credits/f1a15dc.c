@@ -1,4 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
 // Shows a scrolling picture on the hidden one of the two BG character blocks.
 // With no resource it fills the map buffer with a plain tile word and clears
 // the palette half; otherwise it clears the block's first 2 KB, expands
@@ -8,12 +7,7 @@
 // tilemap (Func_081a1294, inlined), flips the block and restarts the fade-in
 // counter. Func_081a1294's body is inlined here, so in the module it is a GNU
 // inline function defined before this one. The size is a linker symbol (the
-// pool holds 0x234 where movs and a shift would do), still to be defined in
-// constants.ld. What closed it: one volatile word through Dma_Fill32Cell (its
-// address stays in a register), RamCode_Load, the fill word set first in each
-// arm (the arms then end alike and cross-jump into the join), both per-column
-// pointers as column * stride (0x1000 stays in r11 and 0x7ff loses its
-// register), and the expander returning s32.
+// pool holds 0x234 where movs and a shift would do).
 #include "types.h"
 #include "dma.h"
 #include "ram_code.h"
@@ -40,7 +34,7 @@ static inline void Func_081a1294(const u8 *source, u8 *destination,
   u32 from;
 
   start = (Data_02007518 >> 19) << 6;
-  gData_02007520 = gScrollTarget = position;
+  gScrollTarget = gData_02007520 = position;
   gData_0200751c = position << 16;
   for (column = 0; column < 15; column++) {
     u8 *to = destination + column * 0x800;
@@ -57,6 +51,8 @@ static inline void Func_081a1294(const u8 *source, u8 *destination,
 }
 
 void Func_081a15dc(s32 resource, u8 *map, s32 position) {
+  /* FAKEMATCH(volatile): the DMA fill word volatile, so its address stays in a
+   * register; as a plain u32, 10 of 209 instructions differ in tla-en. */
   volatile u32 cell;
   u32 word;
   u32 fill = 0;

@@ -13917,7 +13917,7 @@ msgctxt "MsgSlotsCannotPull"
 msgid "03446"
 msgstr "you can't pull the lever!"
 
-msgctxt "message"
+msgctxt "MsgDiceGameThrow"
 msgid "03447"
 msgstr "{button_icon:1}:Throw"
 
@@ -13925,27 +13925,27 @@ msgctxt "message"
 msgid "03448"
 msgstr "{button_icon:2}:Quit"
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigher"
 msgid "03449"
 msgstr "If the dice total more than 15,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLower"
 msgid "03450"
 msgstr "If the dice total less than 13,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigherAgain"
 msgid "03451"
 msgstr "If the new total is higher,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLowerAgain"
 msgid "03452"
 msgstr "If the new total is lower,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameChoose"
 msgid "03453"
 msgstr "it's a hit!"
 
-msgctxt "message"
+msgctxt "MsgDiceGameDoubleUp"
 msgid "03454"
 msgstr "Do you want to double up?"
 

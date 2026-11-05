@@ -143,25 +143,25 @@ Resource_DirectoryTable:
 	resource SlotsIcons, Slots_Icons
 	resource SlotsJackpotBanner, Slots_JackpotBanner
 	resource LuckyDiceBoard, LuckyDice_Board
-	resource , Slots_DomePicture
+	resource SlotsDomePicture, Slots_DomePicture
 	resource LuckyDiceSprites, LuckyDice_Sprites
-	resource , Resource_Data087
-	resource , Slots_YouWinBanner
-	resource , Slots_YouLoseBanner
-	resource , Slots_HigherBanner
-	resource , Slots_LowerBanner
-	resource , Slots_DoubleUpBanner
-	resource , Slots_CashOutBanner
-	resource , Slots_PinkDigits
-	resource , Slots_OrangeDigits
-	resource , Slots_GreenDigits
-	resource , Slots_TimesSign
-	resource , Slots_SmallDoubleUpBanner
-	resource , Slots_OnePairBanner
-	resource , Slots_TwoPairBanner
-	resource , Slots_TripleBanner
-	resource , Slots_PerfectBanner
-	resource , Slots_FinalGameBanner
+	resource Data087, Resource_Data087
+	resource SlotsYouWinBanner, Slots_YouWinBanner
+	resource SlotsYouLoseBanner, Slots_YouLoseBanner
+	resource SlotsHigherBanner, Slots_HigherBanner
+	resource SlotsLowerBanner, Slots_LowerBanner
+	resource SlotsDoubleUpBanner, Slots_DoubleUpBanner
+	resource SlotsCashOutBanner, Slots_CashOutBanner
+	resource SlotsPinkDigits, Slots_PinkDigits
+	resource SlotsOrangeDigits, Slots_OrangeDigits
+	resource SlotsGreenDigits, Slots_GreenDigits
+	resource SlotsTimesSign, Slots_TimesSign
+	resource SlotsSmallDoubleUpBanner, Slots_SmallDoubleUpBanner
+	resource SlotsOnePairBanner, Slots_OnePairBanner
+	resource SlotsTwoPairBanner, Slots_TwoPairBanner
+	resource SlotsTripleBanner, Slots_TripleBanner
+	resource SlotsPerfectBanner, Slots_PerfectBanner
+	resource SlotsFinalGameBanner, Slots_FinalGameBanner
 	resource , Summon_GreenHairedMaidenTiles
 	resource SeaSerpentTiles, Summon_SeaSerpentTiles
 	resource , Summon_PinkPetalsTiles

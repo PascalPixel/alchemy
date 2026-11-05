@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 48 of 28.
 // Draft, differ 48 of 28: the work copy of the sound initialization, as ☀️'s
 // m4aSoundInit (games/tbs/src/sound/audio.c). The listing starts at
 // the copy's second call: its first ten instructions (from 081c04cc) sit in

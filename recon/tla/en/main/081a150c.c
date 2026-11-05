@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 12 of 69.
 // Draft, differ 12 of 69 (was 32): sets up a scrolling picture scene:
 // clears the frame flags and the scroll words, resets the task table and adds
 // Func_081a133c, then sets up BG2, BG3 and blending as Func_081a06e0 does,

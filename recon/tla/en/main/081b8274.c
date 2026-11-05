@@ -1,3 +1,5 @@
+// Measured 2026-11-05 (tla-en): differ 2 of 105. One pair: the x reload ahead
+// of muls. Eleven spellings of the sprite word keep it or lose more.
 // Near miss, differ 6 of 105 (tla-en, 2026-10-31): scheduler order only,
 // three pairs sched2 orders by its cost model, each a stack access the
 // native issues one place earlier. The x spill (priority 9) loses to

@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 20 of 1022.
 // Draft, differ 50 of 1022, skeleton gap 20 (tla-en, 2026-11-01)
 // The body of the canvas burst family (BattleEffect_RunCanvasMode0,
 // BattleEffect_RunCanvasModeByCount and BattleEffect_RunCanvasMode3WithAction

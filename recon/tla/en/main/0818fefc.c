@@ -1,3 +1,5 @@
+// Measured 2026-11-05 (tla-en): differ 40 of 1361. Orders of the plain
+// assignments searched; the rest is sched2 order.
 // Draft, differ 62 of 1361, skeleton gap 20/20 (tla-en, 2026-11-01)
 // BattleEffect_RunMegiddo. Frame (220), control flow, calls, pools and nearly
 // every register agree. What is left is two causes.
@@ -619,9 +621,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
 
     verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
+    texture2.pixels = sheet2;
     texture2.logWidth = 7;
     texture2.logHeight = 7;
-    texture2.pixels = sheet2;
     model->kind = 7;
     model->mesh = gData_08199364;
     model->texture = &texture2;

@@ -861,9 +861,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           Data_02010fa0[i] = 1;
         }
         {
-          struct EffectStep *p = work->particles;
-
-          for (i = 0; i != 31; i++, p++) {
+          for (i = 0; i != 31; i++) {
+            struct EffectStep *p = &work->particles[i];
             model->mesh = mesh + i * 12;
             if ((u32)(HALF_HI(p->x) + 16) <= 152 && (p->y >> 16) >= -16 &&
                 (p->y >> 16) <= 136) {

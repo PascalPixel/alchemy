@@ -1,4 +1,4 @@
-// Draft, differ 74 of 2159 (tla-en, 2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
+// Draft, differ 70 of 2159 (tla-en, 2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
 // BattleEffect_RunEclipse. Measured here: a constant loop.c hoists and global.c gives no register is rebuilt at each use by reload, and reload picks its registers round-robin, so a constant that is one (sparks, vertices, mesh2) puts the names right for many lines after it. `movs rN, #128; lsls` in a loop is usually such a hoisted constant; so is a pool load early in a block.
 // Left, in order of reach:
 // - The 136 loop, two instructions short: the listing has size hoisted in r7, the routine in r6, dst in r5 and the step 0x400 rebuilt in the loop; here size and the step are one register (CSE), r6, with the routine in r7. dst + i * step with a constant step outside the frame loop gets the rebuilt step, but size then has no register (the table outranks it, r7, and slot 8 goes, so the frame shrinks by 4).
@@ -574,7 +574,9 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   REG_DISPCNT = 1;
   gBgScroll[1].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
+  do { } while (0);
   FillWords_(canvas, 0x4000, 0);
+  do { } while (0);
   FillWords_((void *)0x06004000, 0x4000, 0);
   wait(1);
   REG_BLDALPHA = 0x1010;

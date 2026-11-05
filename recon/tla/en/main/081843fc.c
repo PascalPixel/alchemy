@@ -1542,6 +1542,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     s32 slide;
     s32 slideStep;
     u8 *bolts;
+    struct EffectStep *debris = &Data_02016d00[64];
 
     bolts = gData_02014000;
     slide = 0;
@@ -1607,7 +1608,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                                         0x40000, 150);
           Func_0814cd48(effect->actors[i], 7, 5, i, 16);
           EffectPosition_ProjectBattler(effect->actors[i], &pos);
-          q = &Data_02016d00[64 + i * 16];
+          q = &debris[i * 16];
           for (j = 0; j != 16; j++, q++) {
             s32 angle;
             s32 speed;
@@ -1766,7 +1767,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                   Sound_PlayFar(172);
                   break;
                 }
-                q = &Data_02016d00[64 + (i & 7) * 12];
+                q = &debris[(i & 7) * 12];
                 for (j = 0; j != 12; j++, q++) {
                   s32 angle;
                   s32 speed;
@@ -1787,7 +1788,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               }
             }
           }
-          q = &Data_02016d00[64];
+          q = debris;
           for (i = 0; i != 100; i++, q++) {
             if (q->variant >= 0) {
               s32 n = (q->variant >> 2) + 2;

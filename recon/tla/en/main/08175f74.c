@@ -1378,8 +1378,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       s32 base;
       s32 quarter;
       s32 twice;
-      struct ModelDesc *t2;
-      struct ModelDesc *d;
       void *texture = Heap_AllocEwram(32);
       struct Model *model = Render_AllocateModelList(1);
 
@@ -1404,12 +1402,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       desc112.b = 6;
       desc112.tiles = work->buffer;
       model->kind = 7;
+      model->desc = &desc112;
       model->mesh = gData_08199340;
-      t2 = &desc112;
       model->texture = texture;
-      d = t2;
-      model->desc = t2;
-      t2 = (struct ModelDesc *)model;
       if (depth > -48) {
         model->depth = depth;
         Render_ResetTransformState();
@@ -1440,8 +1435,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       if (frame > 55) {
         s32 last = frame * 2 - 208;
 
-        __asm__("" : "=r"(d) : "0"(d));
-        d->tiles = work->buffer + 0x1000;
+        desc112.tiles = work->buffer + 0x1000;
         if (last >= -32) {
           last = -32;
         }
@@ -1466,7 +1460,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Render_DrawModelList(model);
         }
       }
-      Heap_Release(t2);
+      Heap_Release(model);
       Heap_Release(texture);
       while (work->frameSync, work->frameSync <= 1) {
       }

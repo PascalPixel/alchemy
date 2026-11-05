@@ -1,4 +1,4 @@
-// Draft, differ 304 of 2579 (tla-en, 2026-11-05); 228 with slots and pool offsets normalized, 74 with registers blind too. The frame, every slot and all pools but the 23 and 24 word one now agree.
+// Draft, differ 304 of 2579 (tla-en, 2026-11-05); 228 with slots and pool offsets normalized, 74 with registers blind too. The frame, every slot and every pool now agree.
 // BattleEffect_RunCruelRuin. What this round settled, each read from the listing and each a real form:
 // - Loop givs: grey, blue and green are givs of frame (blue first, as the slots order them); grey reduces because
 //   the palette test and its colour spell frame - 80 again, and that second giv combines with the first.
@@ -24,7 +24,10 @@
 //   r9's pseudo is set and the slot copies it (gcse's reaching register); one instruction, and all pool offsets after.
 // - The cell loop: k r2, acc r1, half r4 are right, reload order of k * 32 and cells is not (acc would have to be set
 //   before k * 32 is reloaded, which drops its rank under half).
-// - Ties: LoadBlitter's r1 before r0, 0x10000 before work->sheet in the shaded circle call, -13 kept in r4.
+// - The priority mask: -13 is a QImode constant hoisted out of both creation loops with no register; the listing
+//   rebuilds it in r4 and copies it to r2 (one more instruction, which is where the pool offsets between here and
+//   the add above part), here reload rebuilds it in r2 at once. Eclipse's same mask has a register (sl) and agrees.
+// - Ties: LoadBlitter's r1 before r0, 0x10000 before work->sheet in the shaded circle call.
 // Adoption: the resource directory has no names yet for the ids written here as ResourceId_Data0B4, Data0C2, Data0C9,
 // Data0CA, Data104, CornerRuneASheet, ForestCanopyTiles and SunbeamCloudsBackdrop. Barrier-free so far; the
 // do { } while (0) of LOAD_BLITTER and WAIT_TRANSFER's volatile reads need their S2 reading then.

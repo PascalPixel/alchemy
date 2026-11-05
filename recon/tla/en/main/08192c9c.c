@@ -643,6 +643,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   }
 
   typeof(SCENE) scene;
+  s32 motesMask;
   u8 *sprites;
   struct IrisPoint (*streaks)[10];
   s32 pos[4];
@@ -733,6 +734,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   Render_ResetTransformState();
 
   for (;;) {
+    motesMask = 31;
     // A or B: skips the opening, or the rest of the scene.
     if (gInput.repeat & 3) {
       if (frame <= 175) {
@@ -889,7 +891,6 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     // The crystal: sixteen sprites, the sparks and the first motes.
     if (frame == 176) {
       u8 *colors;
-      s32 mask = 31;
 
       FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
       work->transferPending = 1;
@@ -947,12 +948,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 6; i++) {
         work->particles[i].x = (Random16() % 15 << 16) + 0x210000;
         work->particles[i].y = (Random16() % 15 << 16) + 0x390000;
-        work->particles[i].velocityX = -(Random16() & mask) << 12;
+        work->particles[i].velocityX = -(Random16() & motesMask) << 12;
       }
       for (; i != 12; i++) {
         work->particles[i].x = (Random16() % 15 << 16) + 0x510000;
         work->particles[i].y = (Random16() % 15 << 16) + 0x390000;
-        work->particles[i].velocityX = (Random16() & mask) << 12;
+        work->particles[i].velocityX = (Random16() & motesMask) << 12;
       }
       work->transferMode = 2;
       work->transferValue = 70;
@@ -1446,7 +1447,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             if (frame <= 509)
               work->particles[n].x += (Random16() & 63) << 16;
             else
-              work->particles[n].x += (Random16() & 31) << 16;
+              work->particles[n].x += (Random16() & motesMask) << 16;
             work->particles[n].y = 0x7f0000;
             work->particles[n].velocityX = (Random16() & 15) << 12;
             work->particles[n].velocityY =

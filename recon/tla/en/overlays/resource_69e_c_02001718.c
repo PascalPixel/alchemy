@@ -1,15 +1,8 @@
-// Draft, differ 31 of 145 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// its work in heap slot 220, loads the spark picture (ResourceId_ColouredOrbs,
-// entry 0x1ef of the resource directory, which needs that name added there
-// before adoption) into VRAM, sets up its 96 4 by 4 sprites at the leader's
-// priority with every spark idle (age -1), and schedules its update
-// (Func_02001538). The sprites' bits are written through the OAM bitfields, the
-// VRAM load goes through the call layer (CSE kept its 0x400 for the sparks'
-// address) and the sprite loop is a goto loop (the native builds 15 again each
-// pass). Left: the native reads the resource id from the pool after keeping the
-// leader in r11, its from and to stores derive every second offset from the one
-// before (adds r1, #8), and its priority mask is copied (adds r2, r1, #0)
-// before the and.
+// Draft, differ 8 (tla-en, 2026-11-05). Func_02001718 of overlay 69e.
+// Five devices gone (a rise from nothing: 31 to 8 with them gone). Plain
+// loop, byte bitfields, Task_Add inline needs a tag on adoption. Left: the
+// depth's subtract and store come before the age store natively, and the task
+// call's shift before its address.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -23,16 +16,15 @@ struct Spark {
 
 struct SparkSprite {
   u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
+  u8 y;
+  u8 low : 5;
+  u8 fullColor : 1;
+  u8 shape : 2;
   u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
+  u8 tile;
+  u8 tileHigh : 2;
+  u8 priority : 2;
+  u8 palette : 4;
   u8 unk0a[0x14];
   u16 depth;
   u8 unk20[8];
@@ -63,6 +55,10 @@ s32 Func_020029f8(struct Actor *object);
 void Task_Add(void (*func)(void), s32 priority);
 void Func_02001538(void);
 
+static __inline__ void StartTask(void (*func)(void), s32 priority) {
+  Task_Add(func, priority);
+}
+
 void Func_02001718(const s32 *from, const s32 *to) {
   struct SparkWork *work =
       HeapSlot_AllocFar(220, sizeof(struct SparkWork));
@@ -75,17 +71,9 @@ void Func_02001718(const s32 *from, const s32 *to) {
 
   work->from[0] = from[0];
   work->from[1] = from[1];
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 41 of 145 instructions differ in tla-en. */
-  asm("");
   work->from[2] = from[2];
   work->to[0] = to[0];
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 89 of 145 instructions differ
-   * in tla-en. */
-  {
     work->to[1] = to[1];
-  }
   work->to[2] = to[2];
   Func_020027b8(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs), work);
   entry = Resource_FindFreeEntry();
@@ -95,29 +83,18 @@ void Func_02001718(const s32 *from, const s32 *to) {
   i = 0;
   spark = work->sparks;
   sprite = work->sprites;
-next:
+  for (; i <= 95; i++, sprite++, spark++) {
   Func_020029e0(sprite, 4, 4, 0, tile + (i & 15) * 2);
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 39 of 145 instructions differ in tla-en. */
-  asm("");
   sprite->fullColor = 1;
   sprite->palette = 0;
-  sprite->priority = Func_020029f0(leader);
+  sprite->priority = Func_020029f0(leader) & 3;
   sprite->depth = Func_020029f8(leader) - 1;
   spark->age = -1;
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 37 of 145 instructions differ in tla-en. */
-  asm("");
-  i++;
-  sprite++;
-  spark++;
-  if (i <= 95)
-    goto next;
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 87 of 145 instructions differ
-   * in tla-en. */
-  do {
-    work->next = 0;
-  } while (0);
-  Task_Add(Func_02001538, 0x480);
+  }
+    {
+    s32 zero = 0;
+
+    work->next = zero;
+  }
+  StartTask(Func_02001538, 0x480);
 }

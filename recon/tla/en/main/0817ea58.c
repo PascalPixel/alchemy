@@ -1044,14 +1044,11 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         wave->z = (((j << 5) - Data_081994f0[work->shake]) << 16) + shipY +
                   0x840000;
         if (i == 8) {
-          obj = work->sprites[row + 8];
-          v = row + (wavePhase + 71) % 8;
+          work->sprites[row + i]->tile = work->particles[row + (wavePhase + 71) % 8].timer & 0x3ff;
         } else {
           k = row; k += i;
-          obj = work->sprites[k];
-          v = row + (wavePhase + 64 + i) % 8;
+          work->sprites[k]->tile = work->particles[row + (wavePhase + 64 + i) % 8].timer & 0x3ff;
         }
-        { s32 t = work->particles[v].timer & 0x3ff; v = (*(u16 *)&obj->unk00[8] & ~0x3ff) | t; *(u16 *)&obj->unk00[8] = v; }
         if (pos2.x > 0xffffff)
           pos2.x -= 0x1200000;
         Render_ApplyProjectedPlacementFar(*slot++, &pos2, &scale2, 0);

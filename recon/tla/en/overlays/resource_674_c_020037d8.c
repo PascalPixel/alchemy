@@ -1,3 +1,8 @@
+// Draft, differ 34 of 171 (tla-en, 5 November 2026), from 74: no call for the kind, the
+// layer set before it is written. Left: kind sits at sp+20 in the native, ahead of the
+// spilled locals, and (ashift kind 2) is recomputed at nextStep; read through a pointer
+// it lands at sp+4 in the frame, by value gcse shares row (131). An array of one is the
+// same as the pointer.
 // Under -Os, 5 November: differ 74 of 171 (tla-en); older figures below predate it.
 // Draft, differ 156 of 171, skeleton gap 23 (tla-en, 2026-11-01): overlay 674's
 // copy of overlay 668's Func_02004240 (the same listing); what it measures is
@@ -67,16 +72,10 @@ static __inline__ s32 BoxByte(s32 index) {
   return ((s8 *)gData_0200407c)[index];
 }
 
-static __inline__ s32 KindIndex(s32 *kind) { return *kind * 4; }
-
 static __inline__ s32 BoxSpan(s32 *kind, s32 start) {
   return (Abs(gData_0200407c[*kind][start]) +
           Abs(gData_0200407c[*kind][start + 2])) >>
          4;
-}
-
-static __inline__ void LoadKind(s32 *kind, struct PushState *push) {
-  *kind = push->kind;
 }
 
 s32 Func_020037d8(struct PushState *push) {
@@ -87,45 +86,39 @@ s32 Func_020037d8(struct PushState *push) {
 
   object = Func_02003940(&direction, &push->number, &push->kind);
   if (object != 0) {
-    Call2((void (*)())LoadKind, (s32)(&kind), (s32)(push));
-    {
-      struct {
-        s32 height;
-        s32 width;
-      } size;
-      struct {
-        s32 index;
-        u8 *layer;
-      } box;
-    size.width = BoxSpan(&kind, 0);
-    size.height = BoxSpan(&kind, 1);
+    s32 height, width, index;
+    u8 *layer;
+
+    kind = push->kind;
+    width = BoxSpan(&kind, 0);
+    height = BoxSpan(&kind, 1);
     offset = gData_02004094[direction];
     dx = offset & 0xffff0000;
     dz = offset << 16;
     push->unk14 = 0;
     steps = 0;
-    *box.layer = 2;
-    box.layer = &object->terrainId;
+    layer = &object->terrainId;
+    *layer = 2;
     push->x = object->x + dx;
     push->z = object->z + dz;
     cell.y = object->y;
   nextStep:
-    box.index = KindIndex(&kind);
-    cell.z = push->z + (BoxByte(box.index + 1) << 16);
+    index = kind * 4;
+    cell.z = push->z + (BoxByte(index + 1) << 16);
     j = 0;
-    if (j >= size.height)
+    if (j >= height)
       goto stepFree;
   nextRow:
-    cell.x = push->x + (BoxByte(box.index) << 16);
+    cell.x = push->x + (BoxByte(index) << 16);
     i = 0;
-    for (; i < size.width; i++) {
+    for (; i < width; i++) {
       if (Func_02003e2c(object, &cell) == 2)
         goto blocked;
       cell.x += 0x100000;
     }
     cell.z += 0x100000;
     j++;
-    if (j < size.height)
+    if (j < height)
       goto nextRow;
   stepFree:
     push->x += dx;
@@ -133,14 +126,13 @@ s32 Func_020037d8(struct PushState *push) {
     push->z += dz;
     goto nextStep;
   blocked:
-    *box.layer = 0;
+    *layer = 0;
     result = 0;
     if (steps != 0) {
       push->x = object->x + dx * steps;
+      result = 1;
       push->y = object->y;
       push->z = object->z + dz * steps;
-      result = 1;
-    }
     }
   } else
     result = 0;

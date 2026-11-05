@@ -658,21 +658,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s32 lift;
   s32 i;
   s32 j;
-  s32 byteIndex;
-  s32 width;
 
-  s32 k;
   s32 column;
-  s32 row;
-  s32 bandColumn;
   s32 m;
-  s32 x;
-  s32 y;
   s32 off;
-  s32 top;
   u8 *dst;
   u8 *tiles;
-  u8 v;
 
   scene = SCENE;
   streaks = Data_02012ef4;

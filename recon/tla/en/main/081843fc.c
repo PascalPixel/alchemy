@@ -297,7 +297,7 @@ void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
 void Camera_ApplyVerticalShake(s32 range);
 void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
 void Func_08164b2c(s32 r, s32 g, s32 b);
-void Func_08196404(s32 slot, s32 width, s32 height, s32 mode, s32 flags);
+s32 Func_08196404(s32 slot, s32 width, s32 height, s32 mode, s32 flags);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
 void Heap_Release(void *buffer);

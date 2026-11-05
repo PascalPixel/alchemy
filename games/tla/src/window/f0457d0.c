@@ -1,25 +1,3 @@
-// Draft, differ 17 of 1119, skeleton gap 9 (tla-en, 2026-11-01)
-// The battle command row, The Broken Seal's BattleCommandRow_Run
-// (games/tbs/src/window/screens/battle_command_row.c) on this game's work and
-// command numbers. The party's row (mode 0) is Fight (14), command 49 (when
-// the battle allows it, no reserve member is chosen and more than four are
-// active), Flee (4, when flee is passed above 0 and the battle rule is not 2)
-// and Status (7); a member's row Attack (0), Psynergy (1), Djinn (15) and
-// Summon (16) as in The Broken Seal, Item (2) and Defend (3). B cancels in
-// both rows. The tutorial's actors are 4 to 6.
-// Left, all plain C with no device:
-// - The strip's closing loop: the native keeps the add of 0x452 apart from the
-//   store; here it folds into strh r6, [r3, r7]. The Broken Seal's tagged
-//   FAKEMATCH(volatile) on that store gives differ 8, gap 4 + 4 (the same
-//   device as its twin; left out of this draft for now). Eight respellings of
-//   the address gained nothing.
-// - Two scheduling pairs: str r5, [sp, #4] falls after mov ip, r6 in both icon
-//   loops, and the first entry's strh falls after movs r6, #228. Reordering the
-//   value and index expressions and naming the kind changed neither.
-// What moved it: battleMenu is its own variable (read early, in r5), the two
-// rows keep separate counters, message is declared where it is used (its
-// spill slot follows), the flag store is through a plain u8 pointer (a struct
-// field keeps the commandKinds reload from happening), and Task_Add returns s32.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -400,8 +378,11 @@ s32 Func_080457d0(s32 mode, s32 fleeAllowed) {
         s32 col;
 
         for (col = 0; col <= 2; col++)
-          *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 5 + (col & 3)) =
-              0xf07f;
+          /* FAKEMATCH(volatile): the add of 0x452 stays apart from the store it
+           * addresses; as a plain store, 11 of 1119 instructions differ in
+           * tla-en. */
+          *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 5 +
+                            (col & 3)) = 0xf07f;
       }
     }
   }

@@ -1,20 +1,3 @@
-// Draft, differ 6 of 225, skeleton gap 4 (tla-en, 2026-11-01): grows a slot's
-// chain of nodes (heap slot 0x9c work) out from (x, y, z) a node a frame. It
-// clears the slot's active halfword and its flag, copies the node list into a
-// 0x200-byte buffer, puts both ends in mode 3, waits 4 frames, then each frame
-// lays the nodes up to the frame's count on a flat spiral around the point
-// (Func_080d9194's) and pulls each later node to within 6 units of the one
-// before it. Allocation and frame match; two sched2 orders are left. The entry
-// stores run y, z, x before the 192 load here z, the load, y, x (sched2 ranks z
-// 14 and y 13; the native needs y above z, and no statement order, declaration
-// order or loop spelling changed that). In the first loop the native copies the
-// counter for its compare ahead of stmia; here after it (all do-while and
-// separate-cursor spellings measured the same). Facts that fixed the rest: the
-// distance shares radius's variable (r5 is overwritten on the path back to the
-// spiral branch); lastX and lastY are read back from the node after its store;
-// a 0 local set before the active test is the stores' zero; the stack order
-// fixes the declaration order, segments to nodes. Work9c's header has no name
-// for these slot fields, so the structs stay here.
 #include "types.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
@@ -78,9 +61,17 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
   slot->unk18 = zero;
   if (slot->flag != 0)
     GameFlag_ClearBit(slot->flag);
-  for (i = 0; i <= segments; i++) {
-    *cursor++ = node;
-    node = node->next;
+  if (segments >= 0) {
+    i = segments + 1;
+    do {
+      i += -1;
+      /* FAKEMATCH(barrier): an empty asm reading the counter, which copies it
+       * for the compare ahead of the store; as the plain counted loop, 2 of 225
+       * instructions differ in tla-en. */
+      asm("" : : "l"(i));
+      *cursor++ = node;
+      node = node->next;
+    } while (i != 0);
   }
   Actor_SetMode(work->from, 3);
   Actor_SetMode(work->to, 3);
@@ -128,3 +119,5 @@ s32 Func_080d9790(s32 index, s32 x, s32 y, s32 z) {
   Heap_Release(nodes);
   return 0;
 }
+
+void Func_080d9974(void) {}

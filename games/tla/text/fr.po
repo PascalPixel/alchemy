@@ -15305,11 +15305,11 @@ msgctxt "message"
 msgid "03801"
 msgstr "Lier Djinn"
 
-msgctxt "message"
+msgctxt "MsgKey0d0d"
 msgid "03802"
 msgstr "{button_icon:4}:Psy modifiée"
 
-msgctxt "message"
+msgctxt "MsgKey0d0e"
 msgid "03803"
 msgstr "PV"
 
@@ -19358,11 +19358,11 @@ msgctxt "MsgDjinnStatusHelp"
 msgid "04766"
 msgstr "{button_icon:4}:Statut"
 
-msgctxt "message"
+msgctxt "MsgKey10d3"
 msgid "04767"
 msgstr "* Psynergie gagnée"
 
-msgctxt "message"
+msgctxt "MsgKey10d4"
 msgid "04768"
 msgstr "* Psynergie perdue"
 
@@ -19382,7 +19382,7 @@ msgctxt "MsgDjinnCompareTrade"
 msgid "04772"
 msgstr "Echanger"
 
-msgctxt "message"
+msgctxt "MsgKey10d9"
 msgid "04773"
 msgstr "* Sans changement"
 
@@ -19807,7 +19807,7 @@ msgctxt "message"
 msgid "04870"
 msgstr "Vitesse message"
 
-msgctxt "message"
+msgctxt "MsgKey113b"
 msgid "04871"
 msgstr "Lente"
 
@@ -19831,7 +19831,7 @@ msgctxt "message"
 msgid "04876"
 msgstr "Dialogue"
 
-msgctxt "message"
+msgctxt "MsgKey1141"
 msgid "04877"
 msgstr "Non"
 
@@ -19843,7 +19843,7 @@ msgctxt "message"
 msgid "04879"
 msgstr "Veille auto."
 
-msgctxt "message"
+msgctxt "MsgKey1144"
 msgid "04880"
 msgstr "Non"
 
@@ -19851,7 +19851,7 @@ msgctxt "message"
 msgid "04881"
 msgstr "Oui"
 
-msgctxt "message"
+msgctxt "MsgKey1146"
 msgid "04882"
 msgstr "Changer couleur fenêtre."
 
@@ -19962,7 +19962,7 @@ msgstr ""
 "appuyez sur Select et sur\n"
 "les boutons L et R.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKey1161"
 msgid "04909"
 msgstr ""
 "En mode veille, appuyez sur\n"

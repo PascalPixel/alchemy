@@ -1,37 +1,31 @@
-// Matches: differ 0 (tla-en, 2026-11-01), measured with its nested function:
-// alchemy-devtools diff ... 08046414,080464dc, 767 of 767 instructions. Alone,
-// 080464dc reads differ 80, skeleton 0 removed, 80 added, because the 80 nested
-// instructions count as draft-only. The Djinn change preview, The Broken
-// Seal's BattleDjinnMenu_ShowChangePreview (games/tbs/src/window/screens/
-// battle_djinn_preview.c, confirmed) on this game's unit layout, messages and
-// text colours, with its nested arrow function Func_08046414. The stat page's
-// window is 20 tiles wide, and Attack keeps the vitals' digit offset. Messages
-// are written as symbols (placeholders Msg_xxxx where en.po names none), which
-// load from the pool as the native does.
-// The three preheader instructions left by the old model closed by themselves
-// with the compiler change; the index cast in the nested function went too.
-// One device stays, FAKEMATCH(dead), the twin's own: without the pair, x takes
-// r9, the chain copy r5 and the zero r8. Other forms all stay at 32 or worse:
-// a set-once &window local at the top 21 (chain leaves r9 anyway), set before
-// the first use 32, earlier 56, inside the if 56; a window local at the append
-// 32; a window value local before the stores 32. Dropping (s16) on x and y 34.
-// To settle at adoption: Text_RenderWideStringInWindow and
-// Window_DrawThreeTileColumn have no prototype in scope, as in the twin's menu
-// object, because the call must return int: void prototypes read differ 12 and
-// 2, int prototypes for both read 0. Modern GCC refuses the implicit form, so
-// adoption needs the twin's UBFIX pair of prototypes.
 #include "types.h"
+#include "edition.h"
 #include "window.h"
 #include "uiwindow.h"
 #include "iwram_call.h"
 
+// Where the line at the bottom starts: further left in French.
+#if (LANGUAGE == LANGUAGE_FRENCH)
+#define TOTAL_LABEL_X 24
+#else
+#define TOTAL_LABEL_X 32
+#endif
+
+// The tile drawn beside each row of the second list.
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define ROW_MARK_TILE 0xf005
+#else
+#define ROW_MARK_TILE 0xf01e
+#endif
+
 extern u8 MsgAbilityNothing[];
 extern u8 MsgClassName[];
-extern u8 Msg_0d0d[];
-extern u8 Msg_0d0e[];
-extern u8 Msg_10d3[];
-extern u8 Msg_10d4[];
-extern u8 Msg_10d9[];
+extern u8 MsgKey0d0d[];
+extern u8 MsgKey0d0e[];
+extern u8 MsgKey10d3[];
+extern u8 MsgKey10d4[];
+extern u8 MsgKey10d9[];
 
 struct PreviewUnit {
   u8 unk000[0x38];
@@ -199,7 +193,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
     page = pages;
 
   if (page == 0) {
-    s32 label = (s32)Msg_0d0e;
+    s32 label = (s32)MsgKey0d0e;
 
     Text_DrawCharacterAtOffset(label, window, 0, 8);
     Text_DrawCharacterAtOffset(label + 1, window, 0, 16);
@@ -229,7 +223,7 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
     Window_DrawDividerLine(window, 0, 8, 19, 8);
     if (gained != 0 || lost != 0)
       Func_08041f70(PREVIEW_RED);
-    Text_DrawCharacterAtOffset((s32)Msg_0d0d, window, 24, 64);
+    Text_DrawCharacterAtOffset((s32)MsgKey0d0d, window, 24, 64);
     Func_08041f70(PREVIEW_WHITE);
   }
 
@@ -264,23 +258,23 @@ struct Window *Func_080464dc(struct Window *window, s32 member,
                                        (s32)MsgAbilityNothing,
                                    window, 16, visibleRow * 16);
       Window_SetTilemapEntry(window, 0xf01f, 11, visibleRow * 2, 0);
-      Window_SetTilemapEntry(window, 0xf01e, 12, visibleRow * 2, 0);
+      Window_SetTilemapEntry(window, ROW_MARK_TILE, 12, visibleRow * 2, 0);
       Text_DrawNumberInWindow(BattleAction_Get(changedAbilities[i])->ppCost,
                                 2, window, 104, visibleRow * 16);
     }
     if (gained != 0) {
       Func_08041f70(PREVIEW_YELLOW);
-      Text_DrawCharacterAtOffset((s32)Msg_10d3, window, 32, 80);
+      Text_DrawCharacterAtOffset((s32)MsgKey10d3, window, TOTAL_LABEL_X, 80);
       summaryRows = 1;
     }
     if (lost != 0) {
       Func_08041f70(PREVIEW_RED);
-      Text_DrawCharacterAtOffset((s32)Msg_10d4, window, 32,
+      Text_DrawCharacterAtOffset((s32)MsgKey10d4, window, TOTAL_LABEL_X,
                                    summaryRows * 8 + 80);
       summaryRows++;
     }
     if (summaryRows == 0)
-      Text_DrawCharacterAtOffset((s32)Msg_10d9, window, 32, 80);
+      Text_DrawCharacterAtOffset((s32)MsgKey10d9, window, TOTAL_LABEL_X, 80);
     Func_08041f70(PREVIEW_WHITE);
     Func_08041f70(PREVIEW_WHITE);
     Window_DrawDividerLine(window, 0, 10, 19, 10);

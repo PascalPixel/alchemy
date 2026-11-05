@@ -1,15 +1,3 @@
-// Near miss, differ 14 of 146 (16 before; 2026-10-26, the scale reset before
-// the priority flag): the leader lets go of a grabbed item
-// (Func_080d5720) toward the held direction: with no direction it returns 0; it
-// snaps to its cell's centre, and if the cell one step ahead is free it faces
-// that way, its saved motion flags, frame and priority come back, cue 152 plays
-// and it moves onto that cell, the render mode returning to 0. Returns 1 when
-// it moved. No ☀️ twin found. Left: instruction order only: the native
-// interleaves the vector's y and z copies with the polar offset's argument
-// setup, loads the table before starting the 15 mask, and moves three
-// address adds one slot. The event work halfword is a struct field: through
-// a cast pointer its zero comes from the pool and is shared with the render
-// mode's (differ 58).
 #include "types.h"
 #include "field_sprite.h"
 #include "input.h"
@@ -50,9 +38,9 @@ s32 Func_080d57e4(void) {
       Func_08020210(leader, position))
     return 0;
   leader->angle = angle;
-  leader->scaleX = 0x10000;
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->action;
+  leader->scaleX = 0x10000;
   sprite->nextFrame = leader->unk66;
   sprite->rotation = 0;
   Sound_PlayFar(152);

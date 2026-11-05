@@ -15287,11 +15287,11 @@ msgctxt "message"
 msgid "03801"
 msgstr "Asignar Djinn"
 
-msgctxt "message"
+msgctxt "MsgKey0d0d"
 msgid "03802"
 msgstr "{button_icon:4}:Cambios en Psi."
 
-msgctxt "message"
+msgctxt "MsgKey0d0e"
 msgid "03803"
 msgstr "PV"
 
@@ -19343,11 +19343,11 @@ msgctxt "MsgDjinnStatusHelp"
 msgid "04766"
 msgstr "{button_icon:4}:Estado"
 
-msgctxt "message"
+msgctxt "MsgKey10d3"
 msgid "04767"
 msgstr "* Psi. ganada"
 
-msgctxt "message"
+msgctxt "MsgKey10d4"
 msgid "04768"
 msgstr "* Psi. perdida"
 
@@ -19367,7 +19367,7 @@ msgctxt "MsgDjinnCompareTrade"
 msgid "04772"
 msgstr "Cambiar"
 
-msgctxt "message"
+msgctxt "MsgKey10d9"
 msgid "04773"
 msgstr "* Sin cambios"
 
@@ -19791,7 +19791,7 @@ msgctxt "message"
 msgid "04870"
 msgstr "Velocidad del texto"
 
-msgctxt "message"
+msgctxt "MsgKey113b"
 msgid "04871"
 msgstr "Lento"
 
@@ -19815,7 +19815,7 @@ msgctxt "message"
 msgid "04876"
 msgstr "Voces"
 
-msgctxt "message"
+msgctxt "MsgKey1141"
 msgid "04877"
 msgstr "No"
 
@@ -19827,7 +19827,7 @@ msgctxt "message"
 msgid "04879"
 msgstr "Salvapantallas"
 
-msgctxt "message"
+msgctxt "MsgKey1144"
 msgid "04880"
 msgstr "No"
 
@@ -19835,7 +19835,7 @@ msgctxt "message"
 msgid "04881"
 msgstr "Sí"
 
-msgctxt "message"
+msgctxt "MsgKey1146"
 msgid "04882"
 msgstr "Cambia el color de la ventana."
 
@@ -19946,7 +19946,7 @@ msgstr ""
 "Pulsa SELECT, el Botón L y\n"
 "el Botón R para cancelarlo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKey1161"
 msgid "04909"
 msgstr ""
 "En el modo Salvapantallas, pulsa\n"

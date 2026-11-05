@@ -1,16 +1,3 @@
-// Draft, differ 27 of 458 (2026-10-26, 38 before): sprite->affine cleared
-// after affineIndex, as the device search found. Earlier notes follow.
-// Draft, differ 38 of 458 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 27
-// with `sprite->affine = 0;` moved after `sprite->affineIndex = 0;`, and finds
-// nothing closer.
-// Draft, differ 56 of 458 (2026-10-18): a dozen load-earlier schedules (the
-// lane's near misses), and the branch offsets they move: the native
-// function is four bytes longer, its page-arrow case placing its literal pool
-// after the VBlank count's load, where this places it before.
-// ☀️'s WindowSprite_UpdateAll with this game's sprite modes (no
-// pulse; four hops; an off-screen test for mode 19).
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
@@ -99,8 +86,8 @@ void WindowSprite_UpdateAll(void) {
           sprite->shape = 2;
           sprite->y =
               output->y + gUiSprite_CursorBobOffsets[gVBlankCount % 80] + 2;
-          sprite->affineIndex = 0;
           sprite->affine = 0;
+          sprite->affineIndex = 0;
         }
         break;
       case 5:

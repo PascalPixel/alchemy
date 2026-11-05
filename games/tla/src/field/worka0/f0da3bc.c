@@ -1,20 +1,3 @@
-// Draft, differ 10 of 319, skeleton gap 8 (tla-en, 2026-11-01): the heap slot
-// 0xa0 work's twin of Func_080d9498, which Func_080da334 calls: stretches slot
-// `index`'s chain between (x, y, z) and the target point for twice its segment
-// count of frames, one segment per 6 units of the distance plus one. The last
-// node rides the line between the ends, raised by a sine wave across the line's
-// heading; each node before it is pulled to within 6 units of the next, and the
-// frame ends at the first node already that close. At the end it starts the
-// slot's wobble.
-// Left: three scheduling pairs, every register and stack slot already agrees:
-// the store of z against `movs r3, #192` in the prologue, `adds r0, #1` and its
-// store of segments around the head's index arithmetic, and `mov r1, r8`
-// against the stmia in the copy loop. Tried with no gain: every order of the
-// opening declarations and assignments, `1 + n / 6`, a separate length local,
-// and the copy loop as while, do-while, a counted-down for and a split store.
-// What settled allocation: ex, ey, ez are reused from the setup for the inner
-// loop's deltas; `height` holds both the wave and the distance; the two
-// offsets are separate variables; last[XYZ] take the store second.
 #include "worka0.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
@@ -48,9 +31,17 @@ s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   u16 angle;
 
   cursor = nodes = Heap_Alloc(0x200);
-  for (i = 0; i <= segments; i++) {
-    *cursor++ = node;
-    node = node->next;
+  if (segments >= 0) {
+    i = segments + 1;
+    do {
+      i += -1;
+      /* FAKEMATCH(barrier): an empty asm reading the counter, which copies it
+       * for the compare ahead of the store; as the plain counted loop, 2 of 319
+       * instructions differ in tla-en. */
+      asm("" : : "l"(i));
+      *cursor++ = node;
+      node = node->next;
+    } while (i != 0);
   }
   angle = ArcTan2(ex, ey);
   sine = Trig_Sin(angle);

@@ -15286,11 +15286,11 @@ msgctxt "message"
 msgid "03801"
 msgstr "Piazz. Djinn"
 
-msgctxt "message"
+msgctxt "MsgKey0d0d"
 msgid "03802"
 msgstr "{button_icon:4}:Psinergia otten."
 
-msgctxt "message"
+msgctxt "MsgKey0d0e"
 msgid "03803"
 msgstr "PS"
 
@@ -19329,11 +19329,11 @@ msgctxt "MsgDjinnStatusHelp"
 msgid "04766"
 msgstr "{button_icon:4}:Stato"
 
-msgctxt "message"
+msgctxt "MsgKey10d3"
 msgid "04767"
 msgstr "* Psin. ottenuta"
 
-msgctxt "message"
+msgctxt "MsgKey10d4"
 msgid "04768"
 msgstr "* Psinergia persa"
 
@@ -19353,7 +19353,7 @@ msgctxt "MsgDjinnCompareTrade"
 msgid "04772"
 msgstr "Scambia"
 
-msgctxt "message"
+msgctxt "MsgKey10d9"
 msgid "04773"
 msgstr "* Nessuna modifica"
 
@@ -19777,7 +19777,7 @@ msgctxt "message"
 msgid "04870"
 msgstr "Velocità messaggi"
 
-msgctxt "message"
+msgctxt "MsgKey113b"
 msgid "04871"
 msgstr "Bassa"
 
@@ -19801,7 +19801,7 @@ msgctxt "message"
 msgid "04876"
 msgstr "Voce"
 
-msgctxt "message"
+msgctxt "MsgKey1141"
 msgid "04877"
 msgstr "No"
 
@@ -19813,7 +19813,7 @@ msgctxt "message"
 msgid "04879"
 msgstr "Auto-riposo"
 
-msgctxt "message"
+msgctxt "MsgKey1144"
 msgid "04880"
 msgstr "No"
 
@@ -19821,7 +19821,7 @@ msgctxt "message"
 msgid "04881"
 msgstr "Sì"
 
-msgctxt "message"
+msgctxt "MsgKey1146"
 msgid "04882"
 msgstr "Cambia colore della finestra."
 
@@ -19932,7 +19932,7 @@ msgstr ""
 "Premi SELECT e i pulsanti\n"
 "L e R per uscire.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKey1161"
 msgid "04909"
 msgstr ""
 "Dalla modalità Riposo premi\n"

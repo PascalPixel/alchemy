@@ -1,25 +1,3 @@
-// Draft, differ 18 of 923, skeleton gap 18 (tla-en, 2026-11-01)
-// The bow game's frame callback, which Func_080e1f2c installs: a state machine on the work's phase (0x424) and its frame timer
-// (0x426): the bow grows in (0), the flaming arrow is drawn back and loosed
-// (1), flies until it passes the target, hits an object of the event work's
-// list (its index becomes the result) or something solid (2), then the bow
-// shrinks away (3) while a hit arrow wobbles and vanishes or a missed one
-// shrinks (4), and the phase ends at 999 (5). Each frame it also grows or
-// shrinks the bow, steps the bow's drawing pose by the frame count at 0x42a,
-// draws both sprites, moves the arrow, sprays ten sparks from the bowstring
-// onto the canvas and places the canvas behind the arrow. Allocation, frame
-// and control flow all match; what is left is six sched2 orderings, each a
-// few instructions: the hit block's result store against its phase address,
-// the first polar call's scene reload, the spark's delay reload after its
-// velocity, its source address against y, its delay increment, and the last
-// pos reload, which the native hoists over both calls. Tried without effect:
-// operand orders, a local for the delay, for y and for the source, the
-// spark's condition forms, and moving each motion set. Forms the match
-// depends on: one motion pointer serves the sparks too (the native's r7, and
-// why it loses r5 and r6), sprite is set before the first Camera_WorldToScreen
-// so that it crosses a call, the object index and the spark count are separate,
-// the wobble entry is read first into w, and the two "passed" tests keep their
-// own copies of the phase step for cross-jumping to merge.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -340,6 +318,8 @@ again:
         BattleEffect_DrawCanvasBlock(Data_080eda0c + (motion->delay & 1) * 64,
                                      x, (s16)(motion->y >> 16), 8, 8);
         BattleEffect_IntegrateVector2(&motion->x, 60, 0);
+/* FAKEMATCH(barrier): an empty asm after `BattleEffect_IntegrateVector2(&motion->x, 60, 0);`; as plain statements, 2 of 923 instructions differ in tla-en. */
+asm("");
       }
       motion->delay++;
       if (work->sparksRepeat == 1 && motion->delay == 10)

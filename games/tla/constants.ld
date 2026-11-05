@@ -9,3 +9,4 @@ Render_DecodePictureBlockSize = Render_DecodePictureEnd - Render_DecodePictureCo
 Text_DecodeSymbolCodeSize = Text_DecodeSymbolEnd - Text_DecodeSymbolCode;
 BattleEffect_ExpandCodeSize = BattleEffect_DotProduct2 - BattleEffect_ExpandCode;
 Model_DecodeCodeSize = Model_DecodeEnd - Model_DecodeCode;
+Data_08021824Size = Resource_GetMetadataRecordFar - Data_08021824;

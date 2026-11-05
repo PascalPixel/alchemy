@@ -1,22 +1,3 @@
-// Near miss, differ 14 of 606 (tla-en, 2026-10-31): six swaps in sched2's
-// ties remain (the object load and its move after the decoder copy, the
-// screen top's height load, the flags pointer's add, the layer argument's
-// reload, the shadow priority's address, the sprite's reload after the first
-// scale store); no statement order, operand order or loop-start form tried
-// moves them.
-// The Broken Seal's ActorSystem_PlaceSprites
-// (games/tbs/src/field/field/actor_camera.c), the scrolling camera that
-// places every object's sprite each frame (Func_080230e0 adds it at 0x480).
-// This game's changes: priorityFlags bit 4 hides an object as if off
-// screen; with automatic priority (bit 0) the priority comes from three
-// cells under the object's feet (7 pixels left, 6 right and centre; the two
-// sides only where the ground there is the object's own height), an odd one
-// preferred, and the map's base priority plus one when ground 16 or 32
-// pixels south rises above the object (bit 5 skips the heights); heights
-// are taken relative to the followed point's; bit 3 places through
-// Func_08022318 with the object's byte 0x63, and an object off screen with
-// byte 0x5c bit 1 set is placed by Func_08021a84 instead of releasing its
-// VRAM.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -128,8 +109,13 @@ void Func_0802386c(void) {
                            2),
             REG_DMA3);
   } while (0);
-  object = Ram_HeapSlots->scriptObjects;
-  system->used = 0;
+  {
+    // The zero is set before the objects are read.
+    u32 zero = 0;
+
+    object = Ram_HeapSlots->scriptObjects;
+    system->used = zero;
+  }
   for (objectIndex = 0; objectIndex < 64; objectIndex++, object++) {
     if (object->script == NULL)
       continue;

@@ -13443,11 +13443,11 @@ msgctxt "message"
 msgid "03340"
 msgstr "Set Djinni"
 
-msgctxt "message"
+msgctxt "MsgKey0d0d"
 msgid "03341"
 msgstr "{button_icon:4}:Psynergy Gained"
 
-msgctxt "message"
+msgctxt "MsgKey0d0e"
 msgid "03342"
 msgstr "HP"
 
@@ -17499,11 +17499,11 @@ msgctxt "MsgDjinnStatusHelp"
 msgid "04306"
 msgstr "{button_icon:4}:Status"
 
-msgctxt "message"
+msgctxt "MsgKey10d3"
 msgid "04307"
 msgstr "* Psynergy Gained"
 
-msgctxt "message"
+msgctxt "MsgKey10d4"
 msgid "04308"
 msgstr "* Psynergy Lost"
 
@@ -17523,7 +17523,7 @@ msgctxt "MsgDjinnCompareTrade"
 msgid "04312"
 msgstr "Trade"
 
-msgctxt "message"
+msgctxt "MsgKey10d9"
 msgid "04313"
 msgstr "* No change"
 
@@ -17948,7 +17948,7 @@ msgctxt "message"
 msgid "04410"
 msgstr "Message speed"
 
-msgctxt "message"
+msgctxt "MsgKey113b"
 msgid "04411"
 msgstr "Slow"
 
@@ -17972,7 +17972,7 @@ msgctxt "MsgSpeechLabel"
 msgid "04416"
 msgstr "Speech"
 
-msgctxt "message"
+msgctxt "MsgKey1141"
 msgid "04417"
 msgstr "Off"
 
@@ -17984,7 +17984,7 @@ msgctxt "MsgAutoSleepLabel"
 msgid "04419"
 msgstr "Auto-Sleep"
 
-msgctxt "message"
+msgctxt "MsgKey1144"
 msgid "04420"
 msgstr "Off"
 
@@ -17992,7 +17992,7 @@ msgctxt "message"
 msgid "04421"
 msgstr "On"
 
-msgctxt "message"
+msgctxt "MsgKey1146"
 msgid "04422"
 msgstr "Change the window's color."
 
@@ -18103,7 +18103,7 @@ msgstr ""
 "Press Select and the\n"
 "L & R Buttons to exit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKey1161"
 msgid "04449"
 msgstr ""
 "In Sleep Mode, press Select and\n"

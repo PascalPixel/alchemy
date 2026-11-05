@@ -1,22 +1,5 @@
-// Draft, differ 6 of 535, skeleton gap 2 (tla-en, 2026-11-01): the option
-// screen, the twin of ☀️'s SettingsMenu_Run
-// (games/tbs/src/window/window/settings_menu.c), the same loops, rows, preset
-// stepping and returns; this game adds the sleep notice (MsgOptionE) before
-// saving. The five messages (0x113b, 0x1141, 0x1144, 0x1146 and 0x1161 in
-// English) are pool symbols the catalogs must name before adoption (MsgOptionA
-// to MsgOptionE here). Ported from the twin: choiceIcons as [3][3], which
-// places the third row at 0x604, and `work->preset++` before `redraw = 1`,
-// replacing the reorder an earlier device search had kept (30 before).
-// Remaining: two pairs. The cursor row's sum lands in the register of the
-// window's y rather than the temporary's (`y` split into three statements
-// loads the window's y first, as the native does; one expression loads it last
-// and adds an instruction, differ 63); the second preset's table address is
-// loaded after work->preset instead of before, though the first preset's order
-// agrees. Tried without gain: other operand orders and splits of the y sum, a
-// shift, `i` as a holder, table element types and const, casts, `*(p + n)`,
-// and option[] in place of the hue and brightness pointers. The saved settings
-// are gMainRoutineWork's fields; a byte pointer there costs over a hundred.
 #include "types.h"
+#include "edition.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
@@ -38,7 +21,15 @@ struct OptionScreen {
   struct WindowSprite *choiceIcons[3][3];
 };
 
-extern u8 MsgOptionA[], MsgOptionB[], MsgOptionC[], MsgOptionD[], MsgOptionE[];
+// Where the first choice's field ends: wider in German, French and Italian.
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||                 \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define FIRST_CHOICE_RIGHT 208
+#else
+#define FIRST_CHOICE_RIGHT 200
+#endif
+
+extern u8 MsgKey113b[], MsgKey1141[], MsgKey1144[], MsgKey1146[], MsgKey1161[];
 extern const s8 gOptionMenu_SpeedIcons[], gOptionMenu_SpeechIcons[],
     gOptionMenu_SleepIcons[];
 extern const u8 gOptionMenu_FirstColorPresets[],
@@ -46,7 +37,7 @@ extern const u8 gOptionMenu_FirstColorPresets[],
 
 void Func_0803fc38(void);
 void Func_0803fd14(void);
-struct RenderInput *Func_0803fd28(void);
+struct RenderInput *Menu_OpenWorkspaceOptions(void);
 void Func_0803f9c0(s32 hue, s32 brightness);
 struct RenderInput *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                     s32 style);
@@ -91,7 +82,7 @@ s32 Func_080400e8(void) {
   Func_0803fc38();
   work = Ram_HeapSlots->unkd0[0];
   helpWindow = Window_Create(1, 2, 28, 3, 2);
-  settingsWindow = Func_0803fd28();
+  settingsWindow = Menu_OpenWorkspaceOptions();
   pair = RenderResource_CreatePair(7, settingsWindow, 64, -48);
   wait(1);
   hue = &work->option[0];
@@ -151,26 +142,28 @@ s32 Func_080400e8(void) {
       y = (s16)settingsWindow->y * 8 + 20;
       Func_08108040(work->marker[1], x, y, 1);
 
-      x = work->option[2] + (s32)MsgOptionA;
-      Window_ClearInteriorTiles(settingsWindow, 160, 40, 200, 48);
+      x = work->option[2] + (s32)MsgKey113b;
+      Window_ClearInteriorTiles(settingsWindow, 160, 40, FIRST_CHOICE_RIGHT, 48);
       Text_DrawCharacterAtOffset(x, settingsWindow, 160, 40);
-      x = work->option[3] + (s32)MsgOptionB;
+      x = work->option[3] + (s32)MsgKey1141;
       Window_ClearInteriorTiles(settingsWindow, 160, 64, 184, 72);
       Text_DrawCharacterAtOffset(x, settingsWindow, 160, 64);
-      x = work->option[4] + (s32)MsgOptionC;
+      x = work->option[4] + (s32)MsgKey1144;
       Window_ClearInteriorTiles(settingsWindow, 160, 88, 184, 96);
       Text_DrawCharacterAtOffset(x, settingsWindow, 160, 88);
       Func_0803f9c0(*hue, *brightness);
 
       x = (s16)settingsWindow->x * 8;
-      y = (s16)settingsWindow->y;
-      y += selectedOption * 3;
-      y = y * 8 + 4;
+      {
+        s32 top = (s16)settingsWindow->y;
+
+        y = (selectedOption * 3 + top) * 8 + 4;
+      }
       if (selectedOption == 0)
         y += 8;
       Func_08108040(work->cursor, x, y, 3);
       WindowSprite_ClearList(helpWindow);
-      Text_DrawMessage(selectedOption + (s32)MsgOptionD, helpWindow, 0, 0);
+      Text_DrawMessage(selectedOption + (s32)MsgKey1146, helpWindow, 0, 0);
     }
     Func_08045018(pair);
     wait(1);
@@ -221,7 +214,7 @@ s32 Func_080400e8(void) {
   Window_Close(settingsWindow, 2);
   if (result == 0) {
     if (gMainRoutineWork.unk244[6] == 0 && work->option[4] == 1)
-      FieldMessage_Show((s32)MsgOptionE, 1);
+      FieldMessage_Show((s32)MsgKey1161, 1);
   }
   if (result == 0) {
     gMainRoutineWork.paletteGlow[0] = work->option[0];

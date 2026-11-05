@@ -15347,11 +15347,11 @@ msgctxt "message"
 msgid "03801"
 msgstr "Bündnis"
 
-msgctxt "message"
+msgctxt "MsgKey0d0d"
 msgid "03802"
 msgstr "{button_icon:4}: zus. Psynergy"
 
-msgctxt "message"
+msgctxt "MsgKey0d0e"
 msgid "03803"
 msgstr "KP"
 
@@ -19439,11 +19439,11 @@ msgctxt "MsgDjinnStatusHelp"
 msgid "04770"
 msgstr "{button_icon:4}:Status"
 
-msgctxt "message"
+msgctxt "MsgKey10d3"
 msgid "04771"
 msgstr "* neue Psynergy"
 
-msgctxt "message"
+msgctxt "MsgKey10d4"
 msgid "04772"
 msgstr "* geht verloren"
 
@@ -19463,7 +19463,7 @@ msgctxt "MsgDjinnCompareTrade"
 msgid "04776"
 msgstr "Tauschen"
 
-msgctxt "message"
+msgctxt "MsgKey10d9"
 msgid "04777"
 msgstr "* Keine Veränd."
 
@@ -19889,7 +19889,7 @@ msgctxt "message"
 msgid "04874"
 msgstr "Text-Geschw."
 
-msgctxt "message"
+msgctxt "MsgKey113b"
 msgid "04875"
 msgstr "Langsam"
 
@@ -19913,7 +19913,7 @@ msgctxt "message"
 msgid "04880"
 msgstr "Sprache"
 
-msgctxt "message"
+msgctxt "MsgKey1141"
 msgid "04881"
 msgstr "Aus"
 
@@ -19925,7 +19925,7 @@ msgctxt "message"
 msgid "04883"
 msgstr "Auto-Schlaf"
 
-msgctxt "message"
+msgctxt "MsgKey1144"
 msgid "04884"
 msgstr "Aus"
 
@@ -19933,7 +19933,7 @@ msgctxt "message"
 msgid "04885"
 msgstr "Ein"
 
-msgctxt "message"
+msgctxt "MsgKey1146"
 msgid "04886"
 msgstr "Farbe des Fensters verändern."
 
@@ -20044,7 +20044,7 @@ msgstr ""
 "Drücke Select und {button_icon:3}+{button_icon:4},\n"
 "um fortzufahren.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKey1161"
 msgid "04913"
 msgstr ""
 "Drücke Select sowie die L- und\n"

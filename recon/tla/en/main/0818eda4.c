@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 142 of 895. Settled: i & 1 with a constant local at the
+// Measured 2026-11-05 (tla-en): differ 8 of 895. Settled: i & 1 with a constant local at the
 // loop's top (the 1 is rebuilt at reload and the copy of i dies in the and), j = 0 before blend.
 // Left, from the top: half's output copy after size * 2 in both spark loops (order only); the
 // vertices store before logWidth's in the first texture block (the listing's logWidth store comes
@@ -272,6 +272,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
     {
       void *projected = Heap_AllocEwram(32);
       struct RenderModel *model = Render_AllocateModelList(1);
+      void *splash = gData_02014000;
 
       // Eight flashes turn about the caster, each for 16 frames from its
       // start, swinging wider and back with a sine.
@@ -330,8 +331,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       // Their splashes: growing and darkening, faster after eight frames.
       texture.logWidth = 7;
       texture.logHeight = 7;
+      texture.pixels = splash;
       model->mesh = gData_08199364;
-      texture.pixels = gData_02014000;
       model->kind = 7;
       for (i = 0; i != 16; i++) {
         struct EffectStep *step = &work->particles[i + 32];

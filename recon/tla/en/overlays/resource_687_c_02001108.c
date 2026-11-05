@@ -89,7 +89,7 @@ void Func_02001108(void) {
 fade:
     wait(10);
     changed = 0;
-    for (i = 1, palette = &BG_PLTT_COLOR(3, 1); i != 15; i++, palette++) {
+    for (i = 1, palette = &BG_PLTT_COLOR(3, 1); i != 15; palette++, i++) {
       u16 color = *palette;
       u16 target = gData_020026c0[i - 1];
       u16 r = color & 31;

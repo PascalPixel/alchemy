@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 603 of 7666, slots normalized 409, high
-// registers blind too 407, every register blind 181. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 597 of 7666, slots normalized 403, high
+// registers blind too 401, every register blind 179. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1425,7 +1425,7 @@ CLEAR(buffer, 0x1000);
     } else if (kind == 8) {
     } else if (kind == 41) {
       s16 *t = (s16 *)target;
-      y = ((Trig_Cos(frame << 9) << 2) >> 16) + t[3] + 16;
+      y = t[3] + ((Trig_Cos(frame << 9) << 2) >> 16) + 16;
       if (frame < 4) {
         drawFuncs.draw[0](screen, work->frames,
                           gData_0819750c[action->side * 7],
@@ -1468,7 +1468,8 @@ CLEAR(buffer, 0x1000);
       work->unk7780 = 1;
       work->unk7784 = 0;
       HeapSlot_Release(188);
-      RELOAD_BLITTER(104, 35);
+      HeapSlot_Release(104);
+      BattleEffect_LoadBlitter(104, 35);
       drawFuncs.draw[0] = IWRAM_SLOT_68;
       if (frame == 0) {
         for (i = 0; i != 1104; i++)

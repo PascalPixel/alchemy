@@ -933,6 +933,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     // The crystal: sixteen sprites, the sparks and the first motes.
     if (frame == 176) {
       u8 *colors;
+      struct ResourceTableEntry *table;
 
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       work->transferPending = 1;
@@ -956,6 +957,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       FILL_WORDS((void *)(PLTT + 0x3e0), 32, -1);
       colors += 32;
       DECODE_01(colors, work->sheet);
+      table = gResourceTableEntries;
       for (i = 0; i != 15; i++) {
         struct IrisSprite *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
 
@@ -963,7 +965,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         ((struct IrisSpriteFlags *)obj)->priority = 1;
         sparks->tiles[i] = obj->tile;
         sparks->frames[i] = i;
-        Dma_Set(work->sheet + i * 128, (void *)OBJ_TILES(obj), 0x84000020,
+        Dma_Set(work->sheet + i * 128, (void *)(0x06010000 + table[obj->resource].tile), 0x84000020,
                 REG_DMA3);
       }
       for (; i != 36; i++) {

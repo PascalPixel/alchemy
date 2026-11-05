@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 187 of 7666, slots normalized 107, high
-// registers blind too 105, every register blind 63. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 185 of 7666, slots normalized 105, high
+// registers blind too 103, every register blind 65. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1527,8 +1527,9 @@ CLEAR(buffer, 0x1000);
           k = 0;
           threshold = t;
           __asm__("" : "=r"(threshold) : "0"(threshold));
-          limit = (s32)((row & 15) * 69 + (u8 *)work);
+          cell = (row & 15) * 69;
           to = buffer + off;
+          limit = (s32)((u8 *)work + cell);
           from = (u8 *)limit + 0x700;
           for (; k != 69; k++) {
           if (*from++ < threshold)

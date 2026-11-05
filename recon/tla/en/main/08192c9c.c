@@ -471,6 +471,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   s32 point;
   s32 segment;
   s32 column;
+  s32 dead;
 
   sprites = Ram_HeapSlots->unk64[0];
   draw = Ram_HeapSlots->unk64[1];
@@ -497,8 +498,10 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 196;
       else if (t <= 23)
         offset = 98;
-      blit = draw;
+      dead = t * 4;
+      dead /= 3;
       ring = sprites + offset;
+      blit = draw;
       for (spoke = 0; spoke != 8; spoke++) {
         s32 px; s32 a; s32 py;
         a = (spoke << 13) + (t * 5 << 9);
@@ -522,8 +525,10 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 394;
       else if (t <= 23)
         offset = 344;
-      blit = draw;
+      dead = t * 4;
+      dead /= 3;
       ring = sprites + offset;
+      blit = draw;
       for (spoke = 0; spoke != 8; spoke++) {
         s32 px; s32 a; s32 py;
         a = (spoke << 13) + (t * 5 << 9);

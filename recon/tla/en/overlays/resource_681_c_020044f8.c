@@ -7,7 +7,7 @@
 //
 // Allocation: the native's order is grid (r5), nx (r6), step (r7), y (r8), x
 // (r10), tries (r9), steps (r11), with ny last in r1 by caller-save. Giving the
-// walk its own column (wx) fixed x (388 to 360), because the step phase's x then
+// walk its own column (x) fixed x (388 to 360), because the step phase's x then
 // has its own live length; splitting the row too lost (382), and step sharing with
 // n, the border counter, or next is a local reused for a second value and also
 // lost or was rejected for that (390, 401; next gains 365 only by accident).
@@ -107,7 +107,7 @@ void Func_020044f8(s32 seed) {
   Unk_Step *steps;
   Unk_Cell *cell;
   Unk_Cell *p;
-  s32 x, y, wx, nx, ny, step, n, tries, dir, i, v, next, k, c;
+  s32 x, y, nx, ny, step, tries, dir, i, v, next, c;
   u32 saved;
 
   saved = gRandomState;
@@ -147,7 +147,7 @@ restart:
     if (i >= 0)
       goto border;
   }
-  for (step = 1; step <= 14; step++) {
+  for (step = 1; step <= 14;) {
     tries = 0;
   retry:
     if (++tries > 16)
@@ -183,25 +183,28 @@ restart:
       ny = y - 1;
       break;
     }
-    cell->unk_0 = step;
-    cell = &AT(x, y);
-    cell->unk_1 = nx;
-    cell->unk_2 = ny;
+    {
+      Unk_Cell *here = &AT(x, y);
+      here->unk_0 = step;
+      step++;
+      here->unk_1 = nx;
+      here->unk_2 = ny;
+    }
     x = nx;
     y = ny;
   }
 
-  wx = GRID_WIDTH / 2;
+  x = GRID_WIDTH / 2;
   y = GRID_WIDTH / 2;
-  for (n = 1; n <= 14; n = next) {
-    cell = &AT(wx, y);
-    next = n + 1;
+  for (step = 1; step <= 14; step = next) {
+    cell = &AT(x, y);
+    next = step + 1;
 
-    c = AT(wx, y + 1).unk_0;
-    v = n;
+    c = AT(x, y + 1).unk_0;
+    v = step;
     if (c == next)
       v = next;
-    else if (c == n - 1)
+    else if (c == step - 1)
       v = c;
     else {
       p = cell;
@@ -215,16 +218,16 @@ restart:
     }
     if (v == 0)
       v = 1;
-    steps[n].unk_2 = v;
+    steps[step].unk_2 = v;
 
-    c = AT(wx, y - 1).unk_0;
-    v = n;
+    c = AT(x, y - 1).unk_0;
+    v = step;
     if (c == next)
       v = next;
-    else if (c == n - 1)
+    else if (c == step - 1)
       v = c;
     else {
-      p = &AT(wx, y);
+      p = &AT(x, y);
     scanDown:
       p += GRID_WIDTH;
       c = p->unk_0;
@@ -235,19 +238,19 @@ restart:
     }
     if (v == 0)
       v = 1;
-    steps[n].unk_5 = v;
+    steps[step].unk_5 = v;
 
-    c = AT(wx - 1, y).unk_0;
-    v = n;
+    c = AT(x - 1, y).unk_0;
+    v = step;
     if (c == next)
       v = next;
-    else if (c == n - 1)
+    else if (c == step - 1)
       v = c;
     else {
-      k = wx;
+      nx = x;
     scanRight:
-      k++;
-      c = AT(k, y).unk_0;
+      nx++;
+      c = AT(nx, y).unk_0;
       if (c == v - 1) {
         v = c;
         goto scanRight;
@@ -255,19 +258,19 @@ restart:
     }
     if (v == 0)
       v = 1;
-    steps[n].unk_3 = v;
+    steps[step].unk_3 = v;
 
-    c = AT(wx + 1, y).unk_0;
-    v = n;
+    c = AT(x + 1, y).unk_0;
+    v = step;
     if (c == next)
       v = next;
-    else if (c == n - 1)
+    else if (c == step - 1)
       v = c;
     else {
-      k = wx;
+      nx = x;
     scanLeft:
-      k--;
-      c = AT(k, y).unk_0;
+      nx--;
+      c = AT(nx, y).unk_0;
       if (c == v - 1) {
         v = c;
         goto scanLeft;
@@ -275,9 +278,9 @@ restart:
     }
     if (v == 0)
       v = 1;
-    steps[n].unk_4 = v;
-    wx = cell->unk_1;
-    steps[n].unk_0 = n;
+    steps[step].unk_4 = v;
+    x = cell->unk_1;
+    steps[step].unk_0 = step;
     y = cell->unk_2;
   }
   path = (Unk_Path *)(gData_020023c4 + 0x288);

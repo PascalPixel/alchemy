@@ -915,7 +915,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             break;
           }
           {
-            s32 half = bx / 2;
+            s32 half = (bx + ((u32)bx >> 31)) >> 1;
             s32 j;
 
             for (j = 3; j != 64; j++) {
@@ -1039,6 +1039,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       if ((u32)d <= 58) {
         s32 s = d * 4424;
         s32 a;
+        s32 b;
 
         shade = -16;
         if (s > 0x22538) {
@@ -1053,7 +1054,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model->vertices = verts;
         texture.pixels = work->sheet + 0x1000;
         Render_ResetTransformState();
-        Func_08015160((0x80000 - drift) / 2 + 0x50000, camZ + 0xe60000, 0);
+        b = 0x80000 - drift;
+        Func_08015160(b / 2 + 0x50000, camZ + 0xe60000, 0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
         SceneTransform_ApplyPitch(18768);
         a = -frame << 10;
@@ -1102,7 +1104,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               }
               Func_08015160(0, v, 0);
             }
-            Func_08015160((0x80000 - drift) / 2 + 0x50000, camZ + 0xdc0000, 0);
+            Func_08015160(((b + ((u32)b >> 31)) >> 1) + 0x50000, camZ + 0xdc0000, 0);
             Func_080151e4(0x10000, 32000, 0x10000);
             Func_080150e4(frame << 11);
             Func_0801521c(s);

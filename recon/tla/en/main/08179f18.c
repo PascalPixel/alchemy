@@ -1,3 +1,30 @@
+// Draft, differ 300 of 2583 (tla-en, 2026-11-05), draft 2581; about 84 rows differ once registers, slots and
+// offsets are ignored, and about 150 of the raw rows are the tile sheet. The pool holds the listing's words apart from one
+// repeat of 0xfffec000. Not adoptable yet. Devices held, none tagged: the read of y into spin2 and the two dead frame tests.
+// Settled 2026-11-05, each measured:
+// - `spin2 = w->y[i]` in petal 0's frame <= 47 branch stays until flow deletes it, and that use is what lets 224 hoist:
+//   count 2569 to 2583, 512 to 448. As `not desirable` said (threshold 16, savings 3, life 9, 474 insns).
+// - The last branch of petals 0 and 1 ends with a test of frame whose body flow deletes: reload's rotation in the listing is one
+//   ahead after each, and the frame == 112 tails stop cross-jumping, 448 to 300. Adding it to petals 2 to 5 makes things worse (440
+//   to 510), so those four are as they stand. The body has to survive cse, so it assigns a variable that is live elsewhere.
+//   Which test the original had is unknown. t in r3 and val in r2 in those branches then come out of the rotation.
+// - The glyph destination is an index, sprites[i * 18 + 590 + j]: (i * 8 + i) * 2 is what i * 18 expands to.
+// Open, top down:
+// - Fourth setup loop: cells in r6 and the object pointer in r5, the reverse here. In global's order cells must fall below
+//   the object pointer (33 / 28 against 24 / 27), and every spelling tried keeps both givs at those ranks. i = 0 comes first.
+// - Glyph read: adds r3, r3, r6; ldrb r3, [r3, #0] in the listing, ldrb r3, [r6, r3] here, 1 row short.
+// - Tile sheet, measured by normalized rows since the raw figure counts the frame. The listing's inner body:
+//   c in r1, hi in r2 through a 15 rebuilt in r3, lo through mov r3, fp and ands r3, r1. Three locals overlap, which pushes
+//   d to r0, the source to r4, offset to r5, m to r6, k to r7, then b to ip, a to lr, y to r8, n to sl, sheet to r9, the
+//   mask to fp, and row and row * 2 stay at sp 60 and sp 44. Here c ties to lo in r3, so a reload needs r4, which spills offset.
+//   A grid of 1344 forms (out of for and goto per level, seven bodies, chain or expression, pointer or index, hand-stepped
+//   row * 2 or not) tops out at 116 slot rows: hand-stepped twice, a and b real, k goto, m real, d a pointer, work->sheet[n]
+//   read by index, s32 t chained over several sets so nothing hoists or reduces (raw 367 because the frame is 4 short).
+//   With a and b real the 15 and 0x700 hoist unless written as &work->sheet[n], so the 0x700 is that form; with goto
+//   loops PRE hoists y + a. The literal 15 that the listing rebuilds is hoisted in every form with a real loop around it.
+// - Small scheduling ties: muls at the second setup, ldr r5, [sp, #20] and ldr r1, [sp, #124] around a muls, the ring's model
+//   stores, and one store the listing cross-jumps at petal 1's first branch.
+// Older notes, still true where they do not contradict the above:
 // 2026-11-05: differ 522 of 2583 (tla-en). The sheet's address is a local set before the row
 // loop and d steps per column, which brings sp 44 in as a slot. Still open there: the listing
 // keeps row * 2 as a hand-stepped or reduced value at sp 44, copied to r8 per row, a and b in

@@ -50,6 +50,11 @@
 #define C4(f, a, b, c, d) Call4((void (*)())f, a, b, c, d)
 #define C6(f, a, b, c, d, e, g) Call6((void (*)())f, a, b, c, d, e, g)
 
+struct GaiaRockAnimation {
+  u8 unk00[18];
+  u16 angle;
+};
+
 struct GaiaRockInsideSceneWork {
   u8 unk000[0x1ac];
   s32 screenEffect;
@@ -142,7 +147,7 @@ void wait();
 s32 Func_02002f30(void) {
   s32 message;
   struct MainRoutineWork *work;
-  struct MainRoutineWork *room;
+  register struct MainRoutineWork *room asm("r8");
   s16 *entrance;
   s16 *early;
 
@@ -218,12 +223,14 @@ s32 Func_02002f30(void) {
     entrance = &room->entrance;
     if (*entrance == 9) {
       s32 none;
+      s32 found;
 
       if (Test(0x927))
         goto end;
       C1(Func_02005014, 53);
+      found = Value1((s32 (*)())PartyInventory_FindOwner, 451);
       none = -1;
-      if (Value1((s32 (*)())PartyInventory_FindOwner, 451) != none) {
+      if (found != none) {
         s32 flag;
         struct Actor *dragon;
         struct Actor *partner;
@@ -279,8 +286,8 @@ s32 Func_02002f30(void) {
         Actor_SetModeById(10, 6);
         C1(FieldEvent_Wait, 10);
         dragon->velocityY = 0x60000;
-        dragon->movementState = 1;
         C1(FieldEvent_Wait, 10);
+        dragon->movementState = 1;
         partner->movementState = 1;
         C2(Actor_SetAnimationSpeed, dragon, 0);
         C2(Actor_SetAnimationSpeed, partner, 0);
@@ -324,8 +331,8 @@ s32 Func_02002f30(void) {
         C1(Func_02005014, 572);
         {
           struct Actor *a = Actor_GetById(10);
-          a->actionFlags = mask;
           mask &= a->actionFlags;
+          a->actionFlags = mask;
         }
         C3(Actor_ResetAndSetPositionInMode2, 10, 456, 360);
         dragon->velocityY = fast;
@@ -350,9 +357,9 @@ s32 Func_02002f30(void) {
         object = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 412, 0x1e80000, -0x100000, 0x1590000);
         C2(Actor_SetSingleChildFlags, object, 0);
         C2(Func_02004dac, object, gData_02005360);
-        *(u16 *)((u8 *)object->animation + 18) = 0x2000;
+        ((struct GaiaRockAnimation *)object->animation)->angle = 0x2000;
         object->speedLimit = 0x18000;
-        object->motionFlags = 0;
+        *(u8 *)&object->motionFlags = 0;
         object->targetX = 0x1c80000;
         object->targetY = -0x200000;
         object->targetZ = 0x1660000;
@@ -365,9 +372,7 @@ s32 Func_02002f30(void) {
         object->x = 0;
         object->z = 0;
         C3(Func_02004e24, fast, fast, 0x10000);
-        i = 0;
-      burst:
-        {
+        for (i = 0; i < 4; i++) {
           dx = -8;
           if (i > 1)
             dx = 8;
@@ -379,10 +384,7 @@ s32 Func_02002f30(void) {
           C2(Func_02004d9c, shards[i], 2);
           C2(Actor_SetSingleChildFlags, shards[i], 0);
           C2(Func_02004dac, shards[i], gData_0200539c);
-          i++;
         }
-        if (i < 4)
-          goto burst;
         dragon->velocityY = 0xa0000;
         Actor_GetById(10)->actionFlags &= 254;
         C3(Actor_ResetAndSetPositionInMode2, 10, 432, 320);
@@ -558,32 +560,28 @@ s32 Func_02002f30(void) {
       C1(Func_02005014, 107);
       Func_02004ddc();
       alpha = *(u8 *)&alpha;
-      if (alpha != 0) {
-      fade:
+      while (alpha != 0) {
         REG_BLDALPHA = alpha | 0x1000;
         alpha = alpha + 0xffff;
         C1(wait, 1);
-        if (alpha != 0)
-          goto fade;
       }
       REG_DISPCNT &= 0xfdff;
       C1(FieldEvent_Wait, 30);
       {
-        s32 x = 0x1d00000;
-        s32 z = 0x15c0000;
+        s32 z;
+        s32 x;
 
+        x = 0x1d00000;
+        z = 0x15c0000;
         object = OverlayObject_PrepareObject(x, -0x200000, z, 323);
         C3(Func_02004ebc, 12, x, z);
       }
-      i = 0;
-    sink:
-      if (__modsi3(i, 5) == 0)
-        Func_02001c9c();
-      other->z += -0x10000;
-      i++;
-      C1(FieldEvent_Wait, 2);
-      if (i < 20)
-        goto sink;
+      for (i = 0; i < 20; i++) {
+        if (i % 5 == 0)
+          Func_02001c9c();
+        other->z += -0x10000;
+        C1(FieldEvent_Wait, 2);
+      }
       C1(GameFlag_SetBit, 0x9ee);
       C3(Func_02004e24, -1, -1, 0xe666);
       object->x = 0;
@@ -595,13 +593,10 @@ s32 Func_02002f30(void) {
       REG_DISPCNT |= 0xf00;
       REG_BLDALPHA = alpha | 0x1000;
       REG_BLDCNT = 0x3f42;
-      if (alpha != 8) {
-      fadeIn:
+      while (alpha != 8) {
         REG_BLDALPHA = alpha | 0x1000;
         alpha++;
         C1(wait, 1);
-        if (alpha != 8)
-          goto fadeIn;
       }
       Func_02004dd4();
       Func_02004e64();
@@ -610,8 +605,12 @@ s32 Func_02002f30(void) {
       C1(Func_02004fcc, 0);
       C3(Func_02004ebc, 9, 0, 0);
       C3(Func_02004ebc, 10, 0x1c00000, 0x1580000);
-      C3(Actor_SetAngleToward, 10, room->currentOwner, 0);
-      C2(Actor_SetModeById, room->currentOwner, 19);
+      {
+        s32 *lead = &room->currentOwner;
+
+        C3(Actor_SetAngleToward, 10, *lead, 0);
+        C2(Actor_SetModeById, *lead, 19);
+      }
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       message = (s32)MsgFieldYouYouCannotFightThe;
@@ -626,12 +625,12 @@ s32 Func_02002f30(void) {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       C1(FieldEvent_Wait, 30);
-      C2(Actor_StartRepeatedMotion, 10, 2);
+      Actor_StartRepeatedMotion(10, 2);
       C1(FieldEvent_Wait, 30);
       message = (s32)MsgFieldLikeISaidTheSerpent;
     leave:
       C1(Func_02004f0c, message);
-      C2(Func_02004f14, 10, 0);
+      Func_02004f14(10, 0);
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
       C2(Func_02004f64, (s16)room->savedScene,
@@ -721,7 +720,7 @@ s32 Func_02002f30(void) {
       C3(Func_02004ebc, 11, 0x2a00000, 0x1800000);
       C2(Actor_SetSingleChildFlags, Actor_GetById(11), 0);
       object = Actor_GetById(11);
-      other = Import_ActorCreate(324, object->x, object->y, object->z);
+      other = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 324, object->x, object->y, object->z);
       if (other != NULL) {
         C2(Actor_SetSingleChildFlags, other, 0);
         C2(Func_02004dac, other, gData_020053d8);
@@ -752,11 +751,11 @@ s32 Func_02002f30(void) {
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
       Func_02004d00();
     if (Test(0x303))
-      C4(Func_02004a5c, 11, 0x1800000, 0x4b0000, 0x2a80000);
+      Func_02004a5c(11, 0x1800000, 0x4b0000, 0x2a80000);
     if (Test(0x304))
-      C4(Func_02004a5c, 12, 0x1cf0000, 0x330000, 0x2a80000);
+      Func_02004a5c(12, 0x1cf0000, 0x330000, 0x2a80000);
     if (Test(0x305))
-      C4(Func_02004a5c, 13, 0x2350000, 0x370000, 0x2a80000);
+      Func_02004a5c(13, 0x2350000, 0x370000, 0x2a80000);
     if (Test(0x9bc)) {
       s32 width;
       s32 height;

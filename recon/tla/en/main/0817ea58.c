@@ -1,5 +1,5 @@
-// 2026-11-05: differ 155 of 3921 (tla-en), draft 3918; frame and every spill slot
-// equal the listing's; with registers, slots and offsets masked, 77 lines apart.
+// 2026-11-05: differ 66 of 3921 (tla-en), draft 3919; frame and every spill slot equal
+// the listing's; with registers, slots and offsets masked, 20 lines apart.
 // The method that moved it: reload registers rotate through the spill list one per
 // reload (allocate_reload_reg), so a wrong scratch register downstream means a reload
 // too many or too few upstream, in RTL order, which sched2 hides. Read each from the
@@ -7,40 +7,48 @@
 // What is settled, each from the listing:
 // - Spill slots run in pseudo order, so the second phase's locals are a block after
 //   the first phase, and the wave height and pointer belong to the first phase.
-// - Both wave loops: row = j * 9 and the call reads sprites[j * 9 + i], not row + i, so
-//   PRE leaves it alone and it is an inner giv reduced in the second loop pass, its
-//   init emitted after the hoists, where the outer pass does not see it.
+// - Both wave loops: the first arm reads j * 9, the second sets row = j * 9 and steps
+//   k from it, so the row's giv combines late and its stepper comes before the
+//   pointer's. The call reads sprites[j * 9 + i], not row + i, so PRE leaves it alone
+//   and it is an inner giv reduced in the second loop pass.
 // - The else arm's index is set in two steps, which leaves it unreduced.
-// - First wave loop: the height is one expression, hoisted in the second pass only
-//   at an inner count of 60 or less; each arm's index carries the row, ranking row
-//   above the pointer and the giv (r7, r4, r9). Its count is exactly 60 without the
-//   tile's explicit mask.
+// - First wave loop: the loop optimizer runs twice, and the listing's height is
+//   hoisted and reduced in the second run only (slot 12, whole height): its base h
+//   has a life of 2 because the stored x is computed before it (k, reused, so x is
+//   no giv). Each arm reads the timer, so the index chain is local to the arm and the
+//   modulo's temporaries take r3, r2; the one tail takes the explicit mask, built by
+//   movs because it moves and rematerializes, and -1024 stays in the loop in HImode,
+//   whose short pool range forces the mid-loop pool.
 // - Second wave loop: each arm stores the tile itself and their tails cross-jump, with
 //   a word mask (no mid-loop pool). The camera follow is two statements the same way.
+// - The sprite struct has an s32 (FieldSprite's scale): its members then conflict with
+//   s32 stores, so a load after such a store costs its full latency, which orders
+//   every sprite pointer load after q's and pos2's stores. No device needed.
 // - sprites[i + 18] with i known 21 after its loop gives [fp, r3]; sprites[39] does not.
 // - A red local that is not set from the constant first keeps r before g.
 // - Hoists set the reload order: the turret's x and ringX are assigned in their loops.
 // - pixels and off are long-lived constant locals with no register, rematerialized at
 //   each use: the beam's r0 reload and the map loop's movs r7, #224.
 // - The explosion blit's x, n, y locals in that order; the shake readout's bg local;
-//   the map row counter of 16 (mp set in the for).
-// Left, about 75 hunks, most of them order only:
-// 1. First wave loop: arm t and x are r3, r2 in the listing, r2, r3 here (the modulo's
-//    temporaries are local and take r3 first; a tagged pin on the result gives the
-//    listing's arms but adds 2 to the count, 62, and stops the height's hoist). The
-//    listing also builds the 0x3ff mask (the explicit & 0x3ff form, +2, 62). So the
-//    listing's inner loop holds 2 to 4 fewer insns than this one somewhere; not found.
-//    Computing (j << 5) + 103 earlier hoists it at any count but in the first pass,
-//    which swaps slots 12 and 16: raw 207, masked 83.
-// 2. Map loop's w, n, table in r4, r5, r6 here r6, r5, r4: the reverse of the hoist
-//    order, so their priorities are not yet explained.
-// 3. Third phase: z = 0 and i = 0 are two constant loads in the listing, one here
-//    (find_equiv_reg finds the first), 2 instructions and the pool offsets after.
-// 4. Order only, by sched2 tie or alias: the sprite pointer loads after the q stores
-//    (1991, 2771, 2904; reading sprites as s32 moves these but others too, 327), the
-//    calls before hoisted constants (447, 3408; do { } while (0) settles them, one-pass,
-//    not kept), mov r9 and add fp (553, 3026), Task_Add's argument order (144).
-// 5. p->ay's reread goes through a volatile view (needs its S2 tag at adoption).
+//   the map row counter of 16 (mp set in the for). Task_Add returns s32.
+// Forms kept for now, each needing S2's tag at adoption: k reused for the wave x
+// (temporary), __asm__ cutting i before DECODE_BUFFER + i * 0x400 (barrier; i known
+// 21 makes cse2 swap the add's operands), the empty asm before the missile sprites'
+// loop (barrier; the call stays before the hoisted constants), p->ay's volatile view.
+// Left, about 20 hunks:
+// 1. Third phase: the listing loads zero three times (r4 for i, r0 for z, r7 for the
+//    stores); here find_equiv_reg gives z r4 and the two reloads after it run one
+//    behind: z r1 here, r2 there, and the -1 of the next loop is subs r1, #1 here, movs
+//    and negs there. z as a giv of i (z = i * -0x100 at the top of the body) makes the
+//    two zeros but ranks above the stored zero (11 refs, 124 against 126; native below).
+//    Keeping i or z from the reload through an asm breaks the hoists' order.
+// 2. Map loop's w, n, table in r4, r5, r6 here r6, r5, r4. The native order is
+//    table, 6, 32 by live length, so 32 is set after the inner loop's hoists; g reused
+//    for the width (for-init) gives table r6, 6 r5 but ranks above k (r0 there).
+// 3. The spawn call before the second-phase sprites' hoists: an empty asm or
+//    do { } while (0) settles the call but moves its arguments (the call's priority falls).
+// 4. pos.x loads before the 0xffffff reload in the listing; here the load waits on the
+//    tile store (cost 3). Only with the struct's s32 present.
 // Earlier measures that still stand: the second phase's frame loop is a label-and-goto
 // loop (as a for, the frame-address copies are hoisted and work loses r11).
 #include "resource.h"
@@ -78,7 +86,8 @@ typedef struct Sprite {
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u8 unk0a[6];
+  u8 unk0a[2];
+  s32 scale;
   u8 vram;
   u8 unk11;
   u16 rotation;
@@ -202,7 +211,7 @@ void BattleEffect_StartCanvasLayer(s32);
 void Func_0813ba50(void);
 void Func_08179e6c(void);
 s32 BattleEffect_LoadBlitter(s32, s32);
-void Task_Add(void *, s32);
+s32 Task_Add(void *, s32);
 void BattleActor_SpawnObjectsForListFar(void *, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
@@ -385,6 +394,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       obj = Func_0815b290(32, 64, 0xc000a000, 0);
       work->sprites[i + 18] = obj;
       obj->priority = 3;
+      __asm__("" : "=r"(i) : "0"(i));
       Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
@@ -396,6 +406,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->sprites[41] = obj;
       Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER, 0x100);
+      __asm__("");
       for (i = 0; i != 15; i++) {
         work->sprites[42 + i] = Func_0815b3b0(16, 8, 0x4000, 0xf000);
         Iwram_Copy(work->sprites[42 + i], work->sprites[41], 24);
@@ -420,23 +431,29 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         waveScroll -= 0x200000;
       }
       for (j = 0; j != 2; j++) {
-        row = j * 9;
         for (i = 0; i != 9; i++) {
           Sprite *obj;
           s32 v;
 
           posp = &pos;
-          posp->x = (i << 21) + waveX;
-          posp->z = ((j << 5) + 103) << 16;
+          {
+            s32 h;
+
+            k = (i << 21) + waveX;
+            h = (j << 5) + 103;
+            posp->x = k;
+            posp->z = h << 16;
+          }
           if (i == 8) {
-            obj = work->sprites[row + 8];
-            v = row + (wavePhase + 71) % 8;
+            obj = work->sprites[j * 9 + 8];
+            v = work->particles[j * 9 + (wavePhase + 71) % 8].timer;
           } else {
+            row = j * 9;
             k = row; k += i;
             obj = work->sprites[k];
-            v = row + (wavePhase + 64 + i) % 8;
+            v = work->particles[row + (wavePhase + 64 + i) % 8].timer;
           }
-          obj->tile = work->particles[v].timer;
+          obj->tile = v & 0x3ff;
           if (pos.x > 0xffffff)
             pos.x -= 0x1200000;
           Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos, &scale, 0);
@@ -1047,7 +1064,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     Sprite **slot;
 
     for (j = 0; j != 2; j++) {
-      row = j * 9;
       for (i = 0; i != 9; i++) {
         Sprite *obj;
         s32 v;
@@ -1057,8 +1073,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         wave->z = (((j << 5) - Data_081994f0[work->shake]) << 16) + shipY +
                   0x840000;
         if (i == 8) {
-          work->sprites[row + i]->tile = work->particles[row + (wavePhase + 71) % 8].timer & 0x3ff;
+          work->sprites[j * 9 + i]->tile = work->particles[j * 9 + (wavePhase + 71) % 8].timer & 0x3ff;
         } else {
+          row = j * 9;
           k = row; k += i;
           work->sprites[k]->tile = work->particles[row + (wavePhase + 64 + i) % 8].timer & 0x3ff;
         }

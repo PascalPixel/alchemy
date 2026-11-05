@@ -1,3 +1,14 @@
+// 2026-11-05, differ 261 of 1932 unchanged. Diagnosis of the ship-burst block by a
+// consumed reload: __asm__("" : : "r"(frame)) before model->vertices = verts gives
+// the listing's count (1932) and 226; adding a second consumed reload gives verts r1
+// and j's zero r2 as in the listing (219). So reload order is r4 (the cmp's frame), r7
+// (frame, inherited through the giv inits), r0 busy or used, r1 verts, r2 zero, r3 and
+// r4 the giv constants, which reads as frame * 3 (r0 here) being computed before the
+// verts store. Giv inits are emitted before the j loop's start, after every statement
+// of the block, so that order is not explained. A frame * 3 local before the store
+// with sc = (f3 - 228 - j * 48) * 1024 - 0x12000 loses sc's giv (324, 1928). These two
+// asm forms were diagnostics only and are not in this draft. After this block the
+// place loop (frame - 108) also differs; it was not worked.
 // Measured 2026-11-05 (tla-en): differ 261: the model's mesh and vertices are typed pointers, not void.
 // Measured 2026-11-05 (tla-en): with function-level i at the ship placement (no inner s32 i)
 // the counts agree, 1932 and 1932, at differ 342; the inner i kept here gives 263 and 1931.

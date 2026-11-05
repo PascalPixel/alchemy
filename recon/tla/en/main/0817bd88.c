@@ -1,3 +1,5 @@
+// 2026-11-05: differ 69 of 543 (tla-en). buffer holds Data_02012000, set once at the
+// top so reload rebuilds it. Left as below.
 // 2026-11-05: differ 81 of 543 (tla-en). A wrapper gains 4. Left as below.
 // Draft, differ 87 of 543, skeleton gap 17 (tla-en, 2026-11-01)
 // BattleEffect_RunFirePuppet. Everything but two spots follows the listing, and

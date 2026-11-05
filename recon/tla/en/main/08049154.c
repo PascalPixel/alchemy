@@ -1,3 +1,4 @@
+// Near miss, differ 4 of 984 (tla-en, 2026-11-05): the zero and row in the item menu's form, tagged. With a one-pass block around WindowSprite_RedrawSavedRect (untagged, not kept) differ 2: only adds r0, #1 before movs r3, #1 at the first highlight; pins on r0 to r3 leave it at 2 to 6.
 // Draft, differ 24 of 984, skeleton gap 20 (tla-en, 2026-11-01): the battle
 // summon menu, The Broken Seal's BattleSummonMenu_Run (games/tbs/src/window/
 // screens/battle_summon_menu.c) on this game's work and messages. The list
@@ -181,15 +182,23 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
   window = Window_Create(13, 11, 17, 9, 6);
 
   for (index = 0; index < 4; index++) {
-    s32 y = index * 2;
+    s32 y;
+    /* FAKEMATCH(temporary): the attribute zero and the window's y in one local,
+     * so the zero has no equivalence note and loads first; as the plain macro,
+     * 2 of 984 instructions differ in tla-en. */
+    u32 t = 0;
 
+    y = index * 2;
+    /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the zero
+     * ahead of the stores; without it, 12 of 984 instructions differ in
+     * tla-en. */
+    asm("");
     sprite = &sprites[index];
-    do {
-      sprites[index].oam.word.attr01 = 0x40000000;
-      sprites[index].oam.word.attr23 = 0;
-    } while (0);
+    sprites[index].oam.word.attr01 = 0x40000000;
+    sprites[index].oam.word.attr23 = t;
     sprite->oam.f.x = window->x * 8 + 8;
-    sprite->oam.f.y = (y + window->y) * 8 + 4;
+    t = window->y;
+    sprite->oam.f.y = (y + t) * 8 + 4;
   }
   for (index = 0; index < 4; index++) {
     s32 slot = VramCache_AllocEntry(128);

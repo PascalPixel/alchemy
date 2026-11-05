@@ -1,3 +1,4 @@
+// Near miss, differ 2 of 1931 with its nested Func_0804bbd0 (tla-en, 2026-11-05; 18 more are the stand-in for Battle_DrawPartyPanelsWithEmptyList): the twin's three barriers and wrapper are in, untagged yet. Left: the summon's ldr of state before eors, the header's one pair with no device; a local, pin, one-pass, barrier or memory operand for ok or state does not move it, and any asm naming state before the nested function changes the frame (differ 276).
 // Draft, differ 52 of 1949, skeleton gap 16 (tla-en, 2026-11-01): 8 removed, 8
 // added. The two nested functions are compiled here but have their own
 // listings, so measure all three with alchemy-devtools diff DRAFT.c
@@ -456,7 +457,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       }
       command = &commandsOut[commandIndex];
       actorId = actors[commandIndex];
-      unit = Unit_Get(actorId);
+      unit = (struct BattleUnit *)(s32)((s64 (*)(s32))Unit_Get)(actorId);
       {
         struct PartyCommandState *navigation = NAVIGATION;
         struct MenuSprite *iconSprite;
@@ -590,6 +591,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
+        __asm__ volatile("");
         iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
         work->textPalette = 5;
@@ -655,6 +657,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         COMMAND_ICON_X(state) = 56;
         iconSprite->oam.word.attr01 = 0x40000400;
         iconSprite->oam.word.attr23 = 0;
+        __asm__ volatile("");
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(
@@ -828,6 +831,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         commandWindow = Window_Create(9, 17, 16, 3, 6);
         COMMAND_ICON_X(state) = 48;
         iconSprite->oam.word.attr01 = 0x40000400;
+        __asm__ volatile("");
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;

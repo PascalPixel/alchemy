@@ -1,18 +1,8 @@
-// Measured 2026-11-05 (tla-en): differ 96 of 1591. Left: measure with
-// 08164c0c,08164c70,08164cc4: differ 6 of 1681, three sites of a load the
-// native issues earlier than alchemy-gcc does, the load and store line K2 calls
-// an approximation.
-
-// Draft, differ 24 of 1681, skeleton gap 11 (tla-en, 2026-11-01): a near miss,
-// sched2 orders loads later than the native, which counts their latency higher.
-// Measure the nested helpers with the body (alchemy diff DRAFT
-// 08164c0c,08164c70,08164cc4); against 08164cc4 alone the helpers' 90
-// instructions show as added (differ 114, skeleton 11 removed, 101 added).
 // BattleEffect_RunParticleStreams, summon 11 and summon 0's default
 // (BattleEffect_RunSceneEffect's default case, through BattleEffect_RunMeteor and
 // BattleEffect_RunOuterSpace in particle_stream_modes.c), with its nested
-// helpers AddFlame (Func_08164c0c) and AddMote (Func_08164c70, unused), which
-// adopt with it (S1 notes; alchemy permute cannot parse them).
+// helpers AddFlame (Func_08164c0c) and AddMote (Func_08164c70, unused).
+
 
 // Twin: ☀️ BattleEffect_RunParticleStreams (games/tbs/src/effect/effect.c),
 // ported: the heap blocks read from Ram_HeapSlots (canvas first), the effect
@@ -21,46 +11,6 @@
 // 0x2001 (☀️ 483), mode 0's spawn 650 (☀️ 381), the palette lines at 0x7640 in
 // the work (☀️ 0x1f80), the blitter modes counted down from 3, and the callback
 // orders 0xc80, 0xcfe and 0xcff (☀️ 0x480, 0x4fe, 0x4ff).
-
-// Devices, as ☀️'s twin has them (each tag gives its measured difference):
-// the mode test through direction, the frame count and work pinned in the
-// heat loop with their barrier, the r6 clobber around the first cue, and the
-// level pin. The two nested helpers, AddFlame (08164c0c) and AddMote
-// (08164c70), now match alone (2026-10-26, under -mthumb-slow-loads; they
-// differed by 4 rows each before it).
-
-// Left, 24 rows (2026-10-31; 36 before the transfer mode was held in a
-// variable, 50 on 2026-10-26, 73 before the IWRAM calls went through local
-// inline forwarders, as f143d80.c makes them and as The Broken Seal's IWRAM
-// call layer makes every IWRAM call, which reloads the map cell buffer for
-// each fill as the native does): all scheduling, each a load the native
-// issues earlier: IwramCopyWords' and IwramFillWords' entry and the
-// spilled canvas before the size and value (sched2 ranks a load feeding the
-// call one cycle below the native, then prefers r1 and r2 for their
-// output dependences), ldr r1 before movs r0, #0 ahead of the 63 colours,
-// and gBgScroll[1].y's ldrh one slot later in the native after savedX's
-// spill, which leaves the 3 for the transfer mode (r6, now right) after
-// the blitter build here instead of filling the transition load's slot;
-// one ldr r4, [sp, #40] and the movs r2, #0 / mov fp, r2 pair in act two.
-// The known store-then-load limit of -mthumb-slow-loads (the sched2 dump
-// shows each); the prologue now matches. The skeleton gap is these same rows:
-// every instruction is present, only their order differs. The transfer mode's
-// insn sits before the blitter call in RTL and in r6 from global allocation;
-// sched2 itself carries it across the call, since the call does not clobber r6.
-
-// Tried (differ): the plain port without devices and with the unused fill
-// word ☀️ needs for its DMA (877 listed parent first, 709 helpers first);
-// without fill, which fixes the frame of the nested functions' chain (546);
-// the heat devices one by one (477 without the clobber block, 236 without
-// the pins, 219 without the level pin); mode tested directly (189); on
-// 2026-10-31, from 24, each IWRAM call direct instead of through its
-// forwarder, in order: 26, 45, 26, 24, 26; the transfer mode variable also
-// passed as the blitter's flags (24, the call still takes movs r3, #3);
-// on 2026-11-01, all 24 unless noted: the transfer mode set at four other
-// points; the blast loop as a do-while; the forwarders through a function
-// pointer local or returning void; the pale colours through a pointer local
-// (walking it, 28); work->frame++ before frame++ (56). Source order does not
-// reach these rows; what is left is -mthumb-slow-loads' latency model.
 
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -254,9 +204,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   REG_BG2PA = 0x100;
 
   // Mode 1: the user leaps and flashes; the streams lean the user's way.
-  /* FAKEMATCH: tested through direction so that CSE keeps the mode reload
-   * in this arm, as ☀️'s twin; testing mode directly turns ldr r4, [sp, #76]
-   * into movs r4, #1 (differ 189 instead of 187). */
+  /* FAKEMATCH(temporary): tested through direction so that CSE keeps the mode
+   * reload in this arm; as if (mode == 1), 2 of 1681 instructions differ in
+   * tla-en. */
   direction = mode;
   if (direction == 1) {
     struct MotionObject *user = GetBattleObjectSlotFar(effect->actor)->object;
@@ -302,7 +252,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
   // BG1 shows the ground: the map cell buffer filled with colour 1.
   FillWords_(Ram_MapCellBuffer, 0x8000, 0x01010101);
-  CopyWords_((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+  /* FAKEMATCH(one-pass): the copy's block; as a plain statement, 2 of 1681
+   * instructions differ in tla-en. */
+  do {
+    CopyWords_((void *)0x06008000, Ram_MapCellBuffer, 0x7800);
+  } while (0);
   wait(1);
   REG_BLDCNT = 0;
   REG_BG2PA = 0x100;
@@ -317,7 +271,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
 
     ((u16 *)0x05000100)[i] = (blue << 10) | (green << 5) | red;
   }
-  FillWords_(canvas, 0x4000, 0);
+  /* FAKEMATCH(one-pass): the clear's block; as a plain statement, 4 of 1681
+   * instructions differ in tla-en. */
+  do {
+    FillWords_(canvas, 0x4000, 0);
+  } while (0);
+
   for (i = 0; i != 256; i++) {
     s32 x = Random16() & 127;
     s32 y = Random16() & 127;
@@ -395,12 +354,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     frame = 0;
     do {
       s32 angle = frame << 8;
-      /* FAKEMATCH: the frame count pinned to r2 and the work's copy to r0, as
-       * in ☀️'s twin, so that the division's temp stays canonical and the line
-       * pointer starts from r0 (differ 236 without these and the barrier
-       * below, 187 with them). */
+      /* FAKEMATCH(pin): the frame count in r2, so the division's temporary
+       * stays apart; as a plain local, 10 of 1681 instructions differ in
+       * tla-en. */
       register s32 count asm("r2") = work->frame;
-      /* FAKEMATCH: see count. */
+      /* FAKEMATCH(pin): the work's copy in r0, where the line pointer starts;
+       * as a plain local, 12 of 1681 instructions differ in tla-en. */
       register u8 *base asm("r0") = (u8 *)work;
       s32 heat = count / 4;
       u16 *line;
@@ -408,8 +367,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       s32 x;
       s32 y;
 
-      /* FAKEMATCH: count read and base passed through, keeping count's load
-       * apart from the division (☀️'s measured form). */
+      /* FAKEMATCH(barrier): count read and base passed through an empty asm,
+       * keeping count's load apart from the division; as no asm, 11 of 1681
+       * instructions differ in tla-en. */
       asm("" : "=r"(base) : "0"(base), "r"(count));
       line = HEAT_LINES(base);
 
@@ -423,15 +383,17 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       {
         s32 hold;
 
-        /* FAKEMATCH: hold takes r7 across the call and r6 is clobbered, so
-         * heat takes r4 and the native's sp+8 caller-save around the cue
-         * (differ 477 without this block, 187 with it). */
+        /* FAKEMATCH(barrier): hold takes r7 across the call, so heat takes r4
+         * and the native's sp+8 caller-save around the cue; as no asm on hold,
+         * 336 of 1681 instructions differ in tla-en. */
         asm("" : "=r"(hold));
-        /* FAKEMATCH: see hold. */
+        /* FAKEMATCH(barrier): r6 clobbered around the cue; as no clobber, 350
+         * of 1681 instructions differ in tla-en. */
         asm("" : : : "r6");
         if (frame == 0)
           Sound_PlayFar(SE_STREAMS);
-        /* FAKEMATCH: see hold. */
+
+        /* FAKEMATCH(barrier): hold's use, the other half of the asm above. */
         asm("" : : "r"(hold));
       }
 
@@ -442,9 +404,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       for (; i != 135; i++) {
         s32 green = i - 16;
         s32 red = green;
-        /* FAKEMATCH: level pinned to r2, as in ☀️'s twin: unpinned it
-         * swaps registers with the quotient (differ 219 without it, 187 with
-         * it). The quotient keeps the explicit bias of ☀️'s form. */
+        /* FAKEMATCH(pin): level in r2, where unpinned it swaps registers with
+         * the quotient; as a plain local, 42 of 1681 instructions differ in
+         * tla-en. The quotient keeps the explicit bias of the other game's
+         * form. */
+
         register s32 level asm("r2");
 
         if (green < 0)

@@ -1,6 +1,13 @@
-// Measured 2026-11-05 (tla-en): differ 178 of 549. Left: allocation: the frame
-// is 80 of 88; the listing has caller-save slots there (a pointer in r4 saved
-// at sp+8) as 0814a814 does.
+// Measured 2026-11-05 (tla-en): differ 2 of 549, no device. Left: one pair, the
+// loop's opening: ldr r6, [sp, #32] (quad) comes before str r2, [sp, #12] (i * 3's
+// start) here and after it in the listing. A delay variable set before quad gives
+// that order but swaps the slots at sp+12 and sp+16 (24 rows).
+// Settled today: draw is the first of a two-element array declared after canvas.
+// sp+24 is its unread second element, and as an array each use reads the stack
+// again, so r7 is free to reload it across both Djinn calls; that gives the
+// listing's caller-save of the sheet pointer in r4 and x in r8, with no barrier.
+// The quads' delay is i * 3 (the slot at sp+12 is a giv), and the step of quad
+// belongs in the for update, after i++. The older notes below predate all this.
 
 // Draft, differ 183 of 549, skeleton gap 31 (tla-en, 2026-11-01)
 // Func_0814b9e8, the body of three effect kinds through BattleEffect_RunBalm
@@ -141,13 +148,12 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   s32 x;
   s32 frame;
   struct RenderJob *job;
-  DrawRectangle draw;
   void *vertices;
   void *canvas;
+  DrawRectangle draws[2];
   s32 i;
   s32 height;
   s32 fade;
-  s32 delay;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -188,7 +194,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   else
     BattleEffect_LoadBlitter(HEAP_BLITTER,
                   BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draws[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   for (frame = 0; frame != QUAD_FRAMES; frame++) {
     if (frame == 8)
@@ -228,14 +234,12 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     // middle while the canvas fades.
     if (effect->prelude == 1) {
       x = ((-Trig_Sin(frame << 11) * 20) >> 16) + 44;
-      /* FAKEMATCH(barrier): the empty asm gives x a reference more, which moves it in the allocators' ranking; as no asm, 179 of 549 instructions differ in tla-en. */
-      __asm__("" : "=r"(x) : "0"(x));
       y = ((Trig_Cos(frame << 11) * 4) >> 16) + anchor[1] - 24;
       if (frame > 32)
         y = y - frame * 4 + 128;
-      draw(canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
+      draws[0](canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
       if (frame <= 3)
-        draw(canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
+        draws[0](canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
       if (frame <= 79) {
         s32 angle;
         s32 lineX;
@@ -247,7 +251,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
         for (; i != 16; i++) {
           lineX = ((Trig_Sin(angle) * frame) >> 16) + 64;
           lineY = ((Trig_Cos(angle) * frame) / 8 >> 16) - 16;
-          draw(canvas, work->sheet, lineX, lineY, 1, 128);
+          draws[0](canvas, work->sheet, lineX, lineY, 1, 128);
           angle += 0x1000;
         }
       }
@@ -272,12 +276,10 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
       job->faces = gData_08199340;
       job->vertices = vertices;
 
-      delay = 0;
-      quad = work->particles;
-      for (i = 0; i != QUAD_COUNT; i++) {
+      for (i = 0, quad = work->particles; i != QUAD_COUNT; i++, quad++) {
         s32 scale = quad->variant;
 
-        if (frame >= delay) {
+        if (frame >= i * 3) {
           s32 across;
           s32 deep;
 
@@ -303,8 +305,6 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
           Render_TransformVertices(gData_08199210, vertices, 4);
           Render_DrawModelList(job);
         }
-        delay += 3;
-        quad++;
       }
       Heap_Release(job);
       Heap_Release(vertices);

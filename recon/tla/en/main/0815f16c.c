@@ -1,15 +1,22 @@
-// Measured 2026-11-05 (tla-en): differ 4589 of 7666. Left: far off. With its
-// stack slots and r10/r11 renamed, about 2450 rows differ, most of them
-// reload's rotating registers cascading from earlier rows. The frame is 256 of
-// 264: the listing keeps m * 0xa00 and the third source at kind 60 in memory
-// (sp+28 and sp+24), though r7, r9 and r11 go unused in that block there; no
-// reason found (clobbers of those registers do not move them). i is r11 in the
-// listing, r10 here; pinned to r11 it brings r8, r10 and r9's use counts to the
-// listing's but adds 150 instructions (differ 7096). Settled today: kind 16's
-// counter is the function's i, and j, then i * 8, then src are set in that
-// order; kind 80's i is its own; the clears go through an inline forwarder, so
-// 0x3c00 is built anew for each. Kind 80's i * 64 and i * 2 are
-// strength-reduced in the listing and not here.
+// Measured 2026-11-05 (tla-en): differ 2913 of 7666, slots normalized 2337,
+// high registers blind too 1883, every register blind 681. The frame is now
+// the listing's 264. Settled today: the two slots at kind 60 are one local
+// array of two, with element 1 holding m * 0xa00 and element 0 the third
+// source. A local array whose address is not taken gets its stack slots after
+// the spills start and its stores stay even when unread, which is the
+// listing's unread str at sp+24. Its name and type are a placeholder. The
+// ring loop at kinds 81 to 93 reads p = &SPARKS[i], with its own k, which
+// gives the listing's hidden step register (a giv in a high register copied
+// to r6). Kind 80's row and two are named so i * 64 and i * 2 stay apart from
+// their bases, though they are not yet reduced as in the listing. Scoping n,
+// m, x, y, fade, life and p to their blocks gave most of the rest. Left: i is
+// one long pseudo in r11 in the listing (231 mentions, as when it is pinned),
+// r10 here: i needs pseudos ranked above it in r8, r10 and r9 where it is
+// live. The three-round loops at kinds 14 and 68 keep their table loads
+// inside the loop in the listing where this hoists them; as goto loops they
+// stop hoisting but the rest of the function flips to 4500 rows, so that is
+// not settled. Some edits flip the low registers of the whole function the
+// same way, so read such a jump before trusting it.
 
 // Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every
@@ -442,8 +449,14 @@ s32 k; s32 i;
     Resource_LoadAndDecompress((s32)&Value_0000013a, buffer + 0x1000, 1, 0);
 CLEAR(buffer, 0x1000);
     for (i = 0; i != 48; i++) {
-u8 *mirror = buffer + i * 64 + 0x237; dst = buffer + i * 64 + 0x208;
-src = buffer + (i * 2 + i) * 8 + 0x1000;
+      s32 row;
+      s32 two;
+      u8 *mirror;
+      row = i * 64;
+      two = i * 2;
+      src = buffer + 0x1000 + (two + i) * 8;
+      mirror = buffer + row + 0x237;
+      dst = row + (u8 *)0x02010208;
 
       for (k = 0; k != 24; k++) {
         *dst++ = *src;
@@ -1059,6 +1072,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
           p = work->particle;
           for (i = 0; i != 64; i++, p++) {
             if (p->life > 0) {
+                s32 n;
               n = (p->life >> 2) + 1;
               if (n > 10)
                 n = 10;
@@ -1066,7 +1080,13 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1],
                                 point[0] - n / 2, point[1] - n, n, n * 2);
-              BattleEffectKernels_IntegrateVector3(p, 62, kind == 89 ? 0 : -0x800);
+              {
+                s32 gravity;
+                gravity = 0;
+                if (kind != 89)
+                  gravity = -0x800;
+                BattleEffectKernels_IntegrateVector3(p, 62, gravity);
+              }
               p->life -= 2;
             }
           }
@@ -1074,6 +1094,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
           for (i = 0; i != 64; i++) {
             p = &work->particle[i / 2];
             if (p->life > 0) {
+                s32 n;
               n = __divsi3(p->life, 20) + 2;
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
@@ -1211,6 +1232,8 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
           amp = 32;
         }
         for (i = 0; i != 3; i++) {
+            s32 m;
+            s32 x;
           m = i & 3;
           angle = Random16() & 0xffff;
           x = ((Trig_Sin(angle) << 3) >> 16) + target[0] / 2 -
@@ -1230,6 +1253,8 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
       if (frame >= 8 && frame < 24) {
         s32 y;
         for (i = 0; i != 3; i++) {
+            s32 m;
+            s32 x;
           angle = Random16() & 0xffff;
           m = i & 3;
           x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
@@ -1281,6 +1306,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
         if (frame == 8)
           work->unk77a8 = 8;
         if (frame > 1) {
+            struct Particle *p;
           count = 0;
           p = work->particle;
           for (i = 0; i != 64; i++, p++) {
@@ -1318,14 +1344,17 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
       if (frame > 15)
         REG_BLDALPHA = (32 - frame) | 0x1000;
       if (frame > 5) {
-        s32 x;
+          s32 x;
+ s32 o[2];
         x = target[0] / 2;
         m = __modsi3(frame / 2, 3);
-        drawFuncs.draw[0](screen, buffer + 0xc56 + m * 0xa00, x - 20, 16, 40,
+ o[1] = m * 0xa00;
+        drawFuncs.draw[0](screen, buffer + 0xc56 + o[1], x - 20, 16, 40,
                           32);
         drawFuncs.draw[0](screen, buffer + 0x2a56 + m * 0x500, x - 20, 48,
                           40, 32);
-        drawFuncs.draw[0](screen, buffer + 0x1156 + m * 0xa00, x - 20, 80,
+ o[0] = (s32)(buffer + 0x1156) + o[1];
+        drawFuncs.draw[0](screen, (u8 *)o[0], x - 20, 80,
                           40, 32);
       }
     } else if (kind == 5 || kind == 53 || kind == 78) {
@@ -1446,6 +1475,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
     } else if (kind == 96 || kind == 97 || kind == 98) {
       if (frame < 20) {
+          s32 m;
         if (frame < 8)
           m = gData_08198886[frame / 2];
         else
@@ -1655,6 +1685,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
       p = SPARKS;
       for (i = 0; i != 64; i++, p++) {
         if (p->x >= 0 && frame >= i / 2) {
+            s32 m;
           m = i & 3;
           Render_ResetTransformState();
           SceneTransform_ApplyPitch(p->vx);
@@ -1768,6 +1799,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
         }
       } else {
         for (; i != 16; i++, p++) {
+            s32 m;
           m = __modsi3(i, 5) * 3;
           m += __modsi3(__divsi3(p->life, 96), 3);
           drawFuncs.draw[i <= 2](screen, buffer + 0x800 + gData_08197834[m],
@@ -1823,6 +1855,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
         REG_BG2X = (64 - x) << 8;
       } else {
         for (; i != 32; i++, p++) {
+            s32 m;
           m = __modsi3(i, 5) * 3;
           m += __modsi3(__divsi3(p->z, 96), 3);
           drawFuncs.draw[0](screen, buffer + 0x83c + gData_081974bc[m],
@@ -1858,6 +1891,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
         Sound_PlayFar(390);
       if (frame >= 8 && frame < 24) {
         for (i = 0; i != 3; i++) {
+            s32 x;
           angle = Random16() & 0xffff;
           m = i & 3;
           x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
@@ -1953,6 +1987,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
       Heap_Release(model);
       Heap_Release(matrix);
       if (kind == 82) {
+          s32 m;
         m = frame / 4;
         size = 0x10000;
         if (frame > 39)
@@ -2023,6 +2058,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
         for (i = 0; i != 3; i++) {
           t = frame - i * 4;
           if (t >= 0) {
+              s32 fade;
             fade = 0;
             if (t > 7)
               fade = (8 - t) * 8;
@@ -2055,11 +2091,14 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
           }
         }
         if (frame > 4) {
-          p = SPARKS;
-          for (i = 0; i != 64; i++, p++) {
+          for (i = 0; i != 64; i++) {
+            struct Particle *p;
+            s32 k;
+            p = &SPARKS[i];
             for (k = 0; k != 12; k++) {
               r = (p->y >> 16) - k * 2;
               if (r >= 0) {
+                  s32 n;
                 x = target[0] / 2 + ((r * Trig_Sin(p->x)) >> 16);
                 y = target[1] + ((r * Trig_Cos(p->x)) >> 16);
                 n = 2 - k / 8;
@@ -2086,6 +2125,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
       model->matrix = matrix;
       t = frame - 4;
       if (t >= 0) {
+          s32 fade;
         angle = t << 14;
         fade = 0;
         if (t > 7)
@@ -2213,6 +2253,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
       p = SPARKS;
       for (i = 0; i != 32; i++, p++) {
         if (frame >= i / 2 + 4 && p->life <= 23) {
+            s32 m;
           m = 0;
           if (p->life > 11)
             m = (p->life - 12) / 2;
@@ -2238,6 +2279,7 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
       p = SPARKS;
       for (i = 0; i != 24; i++, p++) {
         if (frame >= i / 2 + 4 && p->life <= 23) {
+            s32 m;
           m = 0;
           if (p->life > 11)
             m = __divsi3(p->life - 12, 3);
@@ -2282,8 +2324,10 @@ src = buffer + (i * 2 + i) * 8 + 0x1000;
       p = SPARKS;
       for (i = 0; i != 32; i++, p++) {
         if (frame >= i / 2 + 4) {
+            s32 life;
           life = p->life;
           if (life <= 23) {
+              s32 m;
             m = life / 4;
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;

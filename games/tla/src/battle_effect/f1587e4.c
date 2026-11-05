@@ -1,7 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 2 of 571. Left: one row: the stack
-// argument's store after movs r1, #7.
-
-// Draft of BattleEffect_RunGround, effect kind 203: the Venus Djinn's rock toss.
+// BattleEffect_RunGround, effect kind 203: the Venus Djinn's rock toss.
 
 // On screen: the background slowly takes on the portal's colours from
 // frame 17. Six rocks leave the caster one after another, every two
@@ -28,23 +25,6 @@
 // arguments, and the chips' blitter built by BattleEffect_BuildBlitter
 // directly. Other editions place a differently built version; only the
 // English listing was compared.
-
-// Listing 571 instructions, draft 571, differ 24 (2026-10-26). target is
-// declared in a block opened where it is first set: its pseudo is then
-// numbered after the screen point's address, and the two take their spill
-// slots in the native's order (target at sp+24, the address at sp+28;
-// 34 to 24). Left: rows one place apart (constants and stores around the
-// heap base, the blitter's stacked arguments, pool loads), the known
-// store-then-load scheduling limit; an empty asm before the heap reads
-// fixes the prologue's two rows (22).
-
-// Tried:
-// ☀️'s body with The Lost Age's changes                      42
-// the preparer's two arrays declared before the position,
-// as the native stack frame has them (screen at sp+84)          42 -> 36
-// declaration order, a greedy sweep of 12 locals           36
-// target in a block from its first assignment (kept)       34 -> 24
-// barriers at every statement, one at a time               22
 
 #include "types.h"
 #include "battle_effect_work.h"
@@ -250,8 +230,15 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
               s32 chipY;
 
               // A max blitter with the chip's own flip, for this chip only.
-              Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7, chip->velocityY,
-                            BLIT_MAX);
+              {
+                s32 mode = BLIT_MAX;
+                s32 flags = chip->velocityY;
+                /* FAKEMATCH(barrier): an empty asm after the mode and the flags
+                 * are read; as a plain call, 2 of 571 instructions differ in
+                 * tla-en. */
+                __asm__("");
+                Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7, flags, mode);
+              }
               draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
               if (chip->velocityY & COMPOSITE_FLIP_X)
                 chipX = x - Data_08198528[chip->velocityX] -

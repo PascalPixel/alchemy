@@ -1576,18 +1576,17 @@ dead = i / 3;
           s32 t = frame - j - 638;
           s32 ry = t >> 1;
           s32 tile = gData_08197410[0] + t / 4 * 0x302;
-          s32 shift = j >> 1;
 
           for (i = 0; i != 128; i++) {
             s32 a = i << 9;
-            s32 sx = Trig_Sin(a) * (t >> 2);
+            s32 sx = Trig_Sin(a) * (ry >> 1);
             s32 sy = Trig_Cos(a) * ry;
             s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy * 2, sinT);
             s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy * 2, cosT);
             s32 py2;
 
-            px = (px >> 16) + shift + 64;
-            py2 = (py >> 16) - shift + 63;
+            px = (px >> 16) + (j >> 1) + 64;
+            py2 = (py >> 16) - (j >> 1) + 63;
             ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px, py2, 1, 2);
           }
         }

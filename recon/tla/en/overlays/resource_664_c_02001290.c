@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 122 of 184 (tla-en); older figures below predate it.
 // Draft, differ 63 of 184 (was 65): an object's update: while none of the
 // event work's four busy counters (0x15a, 0x15e, 0x166, 0x168) is set it
 // counts frames in its action parameter, and at 240 (playing cue 202 unless
@@ -47,8 +48,8 @@ void Func_02001290(struct Actor *object) {
     if (!GameFlag_Test(0x250))
       Func_02005f8c(object, 202);
     if (object->angle == 0xc000) {
-      position.x = object->x;
       position.z = object->z;
+      position.x = object->x;
     } else {
       position.x =
           object->x + Iwram_MulQ16(0x80000, Math_Cosine(object->angle));

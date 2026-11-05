@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 22 of 246 (tla-en); older figures below predate it.
 // Draft, differ 73 of 246: the first statue carries the leader up and
 // sinks; Func_020032c8 is its twin. Both loops are goto loops, as the native
 // builds their constants in each pass. Left: register choice (the leader and
@@ -20,7 +21,7 @@ void Func_0200306c(void) {
   s32 limit;
 
   Func_020051c0();
-  Func_02005370(0);
+  Call1((void (*)())Func_02005370, (s32)(0));
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   Func_020052f0()->motionFlags = 0;
   leader->motionFlags = 0;

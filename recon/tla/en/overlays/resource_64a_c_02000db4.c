@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 29 of 69 (tla-en); older figures below predate it.
 // Draft, differ 79 of 69: ⚓️'s Window_SetTilemapFlagRect (window/
 // fixed_block.c) as overlay 64A's copy. The native strength-reduces the row
 // base (work + y * 64, stepping 64) and adds x * 2 + 8 per row, keeps width

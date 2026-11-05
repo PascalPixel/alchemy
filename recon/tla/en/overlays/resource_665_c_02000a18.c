@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 32 of 57 (tla-en); older figures below predate it.
 // Draft, differ 26 of 57: the listing copies four palette colours with the
 // source walking from one pool address (adds r3, #2) and each destination an
 // explicit constant that reload turns into adds r2, #2, the last one rebuilt;

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 39 of 247 (tla-en); older figures below predate it.
 // Draft, differ 56 of 247, skeleton gap 5/7 (tla-en, 2026-11-01)
 // Receiving clear data over the link cable: waits for a peer with a matching
 // signature, then the transfer, and copies the received flags and units in.
@@ -117,8 +118,8 @@ receive:
   wait(10);
   Serial_StartReceive(Ram_MapCellBackup);
   wait(10);
-  idle = 0;
   linkMask = 3;
+  idle = 0;
   ok = 1;
   shown = 0;
   i = 0;
@@ -173,8 +174,8 @@ done:
   Window_Close(window, 2);
   flags = gGameFlagBytes;
   copyWords = Iwram_CopyWords;
-  copyWords(flags, Ram_ReceivedFlags, 0x214);
   copyWords(flags + 0x220, Ram_ReceivedUnits, 0xd20);
+  copyWords(flags, Ram_ReceivedFlags, 0x214);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 18 of 116 (tla-en); older figures below predate it.
 // Draft, differ 32 of 116: inside an event, the leader steps back 8 pixels and
 // turns (cue 308) while the map's two scrolling layers (the map work's 0x108
 // and 0x178) climb a pixel a frame for 352 frames and, from frame 17 to 79,
@@ -37,14 +38,14 @@ void Func_02000d3c(void) {
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Func_02001e70(gMainRoutineWork.currentOwner, 0x4000);
   Func_02001f10(308);
-  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   step = 1;
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   for (i = 0; i <= 351; i++) {
   if ((u32)(i - 17) <= 62) {
     fade = (step + 1) / 4;
     alpha = 16 - fade;
-    REG_BLDALPHA = (fade << 8) | alpha;
     step++;
+    REG_BLDALPHA = (fade << 8) | alpha;
   }
   *(s32 *)(lower + 12) += 0x10000;
   *(s32 *)(upper + 12) += 0x10000;

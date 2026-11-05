@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 94 of 493 (tla-en); older figures below predate it.
 // Draft, differ 112 of 493, skeleton gap 11 (tla-en, 2026-11-01)
 // Steps onto a listed cell in rooms 1, 2, 3 and 5 (SceneId_Ov655Room1 to
 // Room5): either falls through to exit work->exit or opens the cell and sets
@@ -225,8 +226,8 @@ void Func_02001a30(void) {
       if (i == 5)
         Func_02003df8(204);
       leader->scaleX += -0x400;
-      leader->scaleY += -0x300;
       leader->y += -0x9999;
+      leader->scaleY += -0x300;
       wait(1);
     }
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;

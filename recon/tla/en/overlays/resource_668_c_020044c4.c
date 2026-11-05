@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 221 of 305 (tla-en); older figures below predate it.
 // Draft, differ 221 of 305, skeleton gap 101 (tla-en, 2026-11-01)
 // Re-measured after the compiler change: the old near miss is gone, and the
 // draft stood at differ 314, gap 110, with no device. Everything below is plain

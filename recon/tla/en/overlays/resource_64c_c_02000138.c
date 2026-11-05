@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 104 of 99 (tla-en); older figures below predate it.
 // Draft, differ 81 of 99, skeleton gap 22 removed, 11 added (tla-en, 2026-11-01)
 // Fills a 64 by 64 grid of levels, each ring a quarter circle drawn with the
 // midpoint algorithm, its level from the cosine of its radius.
@@ -22,6 +23,7 @@
 // inner block (125) or used only by the compares (111), forty declaration
 // orders (all 81), cell replaced by indexing, level * scale.
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 
 s32 Math_Cosine(s32 angle);
@@ -35,14 +37,14 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
   u8 *cell;
   s32 edge = 63;
 
-  Iwram_FillWords(grid, 0x1000, 0x01010101);
+  Call3((void (*)())Iwram_FillWords, (s32)(grid), (s32)(0x1000), (s32)(0x01010101));
   i = 0;
   if (count == 1)
     return;
 nextRing:
   last = count - 1;
-  y = 0;
   level = (Math_Cosine((i << 14) / last) * 15) >> 16;
+  y = 0;
   x = i;
   error = i;
   level = scale * level / 0x10000;
@@ -53,8 +55,8 @@ nextRing:
   if (x >= y) {
   nextCell:
     column = edge - x;
-    row = edge - y;
     cell = &grid[row * 64 + column];
+    row = edge - y;
     cell[0] = level;
     if (column < edge)
       cell[1] = level;

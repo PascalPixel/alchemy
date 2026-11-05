@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 41 of 131 (tla-en); older figures below predate it.
 // Draft, differ 67 of 131, skeleton gap 10 (tla-en, 2026-11-01)
 // Overlay 655's Func_02000d78 and overlay 676's copy, with this overlay's
 // import stubs: lowers the cells under the held actor (or the one the leader
@@ -55,13 +56,13 @@ void Func_0200014c(u16 *list) {
       s32 index = Func_020011d4(held);
       s32 result = Func_020011f4(*layer, kind, (height >> 19) - 4);
 
-      shape += index;
       index <<= 2;
+      shape += index;
       entry = cell + index;
       *shape = result;
       entry[3] &= 63;
-      cell = entry + 0x200;
       cell[3] &= 191;
+      cell = entry + 0x200;
       HELD_OBJECT(work) = held;
     }
     list++;

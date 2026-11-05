@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 68 of 131 (tla-en); older figures below predate it.
 // Draft, differ 85 of 131, skeleton gap 11/8 (tla-en, 2026-11-01)
 // Lowers the cells under the held actor (or the one the leader carries) and
 // keeps it at 0xcbc of the event work.
@@ -109,10 +110,10 @@ void Func_02000d78(u16 *list) {
       s32 level = Map_GetTerrainHeight(*layer, held->x, held->z);
       s32 index = Func_02003db0(held);
 
+      *shapes = Func_02003dd0(*layer, shape, level);
       level >>= 19;
       level -= 4;
       shapes += index;
-      *shapes = Func_02003dd0(*layer, shape, level);
       cells[index].attributeB &= 63;
       cells[index + 128].attributeB &= 191;
       HELD_OBJECT(work) = held;

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 2 of 128 (tla-en); older figures below predate it.
 // Draft, differ 2 of 128, skeleton gap 1 (tla-en, 2026-11-01)
 // Left: one sched2 tie at the second camera call. The native sets the mode
 // (movs r3, #1) before lsls r0; the draft sets it last, after lsls r2. All the

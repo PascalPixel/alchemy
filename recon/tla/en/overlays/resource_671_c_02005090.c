@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 138 of 167 (tla-en); older figures below predate it.
 // Draft, differ 123 of 167, skeleton gap 63 (tla-en, 2026-11-01)
 // Builds the five-digit counter's sprites (the work at gData_020023c4 + 0x288):
 // decodes three digit lists (Func_02004f84), copies each digit's 64-byte
@@ -71,8 +72,8 @@ void Func_020055ec(void *oam, s32 priority);
 
 void Func_02005090(void) {
   struct Work *work = (struct Work *)(gData_020023c4 + 0x288);
-  u8 *digit = work->digit;
   s32 *value = &work->value;
+  u8 *digit = work->digit;
   u8 *tiles = work->tiles;
   u8 *pixels = work->pixels;
   u32 tile = gResourceTableEntries[work->block].offset >> 5;
@@ -98,9 +99,9 @@ loop1:
   effect.x = 0x200;
   effect.y = 0x200;
   plain = AffineMatrix_BuildForEffect(&effect);
-  scale = Func_02005020(*value);
   effect.z = 0;
   effect.x = scale;
+  scale = Func_02005020(*value);
   effect.y = scale;
   scaled = AffineMatrix_BuildForEffect(&effect);
   old = work->old;

@@ -1,23 +1,3 @@
-// Draft, differ 117 of 190, skeleton gap 9 (tla-en, 2026-11-01)
-// Draws the Gabomba Statue grid's movable pieces (actors first to end - 1):
-// each live piece gets an OAM entry at state->oam on, its picture by the kind
-// of the grid cell under it (four bytes a cell, 11 cells a row from the origin),
-// and, while rotation is set, the rotation matrix built from it; Func_020055ec
-// draws it at its depth.
-// Left: the native sets tile (r11) before the rotation test and keeps the matrix
-// at sp+0. Priority decides that: as u32, tile has 3 refs over 102 insns and the
-// matrix 4 over 202, so tile is spilled instead (skeleton 14, r0 to r2 otherwise
-// close). u16 tile puts the matrix on the stack, because the zero extension is
-// hoisted to a 75-insn pseudo, but sets r11 after the test and takes r5 until
-// then, which moves the temporaries (r5 for r0 and so on, and -63 comes from
-// `subs #59` on the -4). Wanted: tile at exactly 4 refs. A two-step shift or
-// index then tile in the one local gives 5, which puts tile above the scroll
-// and breaks r9 to r11 (gap 12). Order: depth before sy gets pz r0, but x and
-// z's registers need sy first as the native has it (r1, r2, gap 11, sy in r0).
-// Settled: the effect is the 16-bit bitfield, written z, x, y; the sprite's two
-// byte fields; the first words through a post-incremented pointer; x and sy
-// masked before the first store. A stack struct for the matrix and the effect
-// loses the bitfield read-modify-writes; a goto loop changes no refs.
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
@@ -88,8 +68,8 @@ void Func_02004710(void) {
       s32 y = piece->y + 0x100000;
       s32 pz = piece->z;
       s32 z = pz - scrollZ;
-      s32 depth = ((y + z) >> 16) + 58;
       s32 sy = z - y;
+      s32 depth = ((y + z) >> 16) + 58;
       s32 cellX = (px >> 20) - state->originX;
       s32 cellZ = (pz >> 20) - state->originZ;
       s32 kind = state->cells[cellZ * 11 + cellX].kind;

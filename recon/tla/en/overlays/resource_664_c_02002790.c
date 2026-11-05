@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 75 of 101 (tla-en); older figures below predate it.
 // Draft, differ 84 of 101: Func_02002898's twin for scenes 0x55 to 0x57 and
 // 0x59 to 0x5b and 0x5d, putting back the cells from (70, 72): when the
 // controlled character moves to another cell, saves the 1 by 2 cell

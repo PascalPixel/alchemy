@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 29 of 49 (tla-en); older figures below predate it.
 // Draft, differ 33 of 49: the palette cycle Func_02000074 schedules. With the
 // counter read as volatile every access up to the first colour matches (the
 // native reloads it after the conditional reset; unqualified, the reset is

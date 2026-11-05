@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 36 of 171 (tla-en); older figures below predate it.
 // Draft, differ 173 of 171, skeleton gap 34 (tla-en, 2026-11-01)
 // Finds how far a pushed object can slide in the leader's direction, probing
 // its footprint cell by cell until Func_02001850 reports a wall.
@@ -50,11 +51,11 @@ s32 Func_020001d4(s32 *position) {
     h = (ABS(gData_02001974[kind * 4 + 1]) +
          ABS(gData_02001974[kind * 4 + 3])) >>
         4;
-    dx = gData_0200198c[direction] & 0xffff0000;
-    dz = gData_0200198c[direction] << 16;
     count = 0;
+    dz = gData_0200198c[direction] << 16;
     position[5] = count;
     state = &object->terrainId;
+    dx = gData_0200198c[direction] & 0xffff0000;
     *state = 2;
     position[0] = object->x + dx;
     position[2] = object->z + dz;

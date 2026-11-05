@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 76 of 187 (tla-en); older figures below predate it.
 // Draft, differ 88 of 187 (was 90): the leader and monster 8 drop into the
 // sand pit, each in a ring of dust, the monster leaps to its spot and the
 // battle starts with escape forbidden and the defeat destination set.
@@ -56,11 +57,15 @@ void Func_02002ebc(void) {
   wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(Data_02000454), 0);
   leader->motionFlags = 0;
-  leader->y = 0x820000;
   leader->gravity = 0x8000;
+  leader->y = 0x820000;
   leader->bounce = 0;
   Actor_SetSingleChildFlags(Actor_GetById(8), 0);
-  Func_02004098(8, 232 << 16, 148 << 16, 0x4000);
+  {
+    s32 held = 0x4000;
+
+    Call4((void (*)())Func_02004098, (s32)(8), (s32)(232 << 16), (s32)(148 << 16), (s32)(held));
+  }
   monster->motionFlags = 0;
   monster->y = 0x820000;
   monster->gravity = 0x8000;

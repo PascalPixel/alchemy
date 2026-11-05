@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 71 of 213 (tla-en); older figures below predate it.
 // Draft, differ 89 of 213: the rising platforms callback: for each of the 16
 // entries it raises or lowers the platform on its timer, writes its height
 // into the collision map and cell flags, and carries its rider with a

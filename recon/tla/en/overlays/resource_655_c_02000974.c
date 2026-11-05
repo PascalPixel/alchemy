@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 67 of 122 (tla-en); older figures below predate it.
 // Draft, differ 79 of 122: eight puffs (type 285) in a row over the
 // leader, flung outwards when mode is set. A goto loop. Left: register
 // choice (the native keeps the leader in r7 and the count in r10).

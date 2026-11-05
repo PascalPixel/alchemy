@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 39 of 182 (tla-en); older figures below predate it.
 // Draft, differ 83 of 182: the Islets' marching guards (objects 11 to 18):
 // while the event work is busy or flag 0x218 is set they stand still;
 // once the controlled character drops below height -12 they stand and the

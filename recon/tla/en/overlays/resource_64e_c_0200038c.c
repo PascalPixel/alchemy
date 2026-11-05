@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 6 of 175 (tla-en); older figures below predate it.
 // Draft, differ 6 of 175, skeleton gap 3 (tla-en, 2026-11-01)
 // Twin of ☀️'s PushedActor_AdvancePair (scene/shared/staged_actor.h): the same
 // three probes through the direction table, the solid flag, the 0x3333 rate,

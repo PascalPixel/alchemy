@@ -69,7 +69,7 @@ SECTIONS
         "*/games/tla/src/scene/yampi_desert/s36d0.o"(.text)
         "*/games/tla/src/scene/yampi_desert/events_e.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s3820.o"(.text)
-        "*/resource_661_overlay.o"(.text.x0200b88c)
+        "*/games/tla/src/scene/yampi_desert/s388c.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s3910.o"(.text)
         "*/resource_661_overlay.o"(.text.x0200b9b8)
         "*/resource_661_overlay.o"(.text.x0200bb80)

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 289 of 632 (tla-en); older figures below predate it.
 // Draft, differ 490 of 632, skeleton gap 53/55 (tla-en, 2026-11-01)
 // Whirlwind in Air's Rock: a gust (object type 280)
 // rises from the target (the effect work's object at 0x14) and grows,
@@ -153,8 +154,8 @@ void Func_0200095c(void) {
   delta.x = Math_Cosine(angle) >> 16;
   delta.z = Math_Sine(angle) >> 16;
   do {
-    hit = Func_02000348(2, cell.x, cell.z);
     cell.x += delta.x;
+    hit = Func_02000348(2, cell.x, cell.z);
     cell.z += delta.z;
     hit >>= 8;
     steps += 2;
@@ -170,15 +171,15 @@ void Func_0200095c(void) {
   cell.z = newZ;
   Func_02003b58(gust, cell.x << 16, gust->y, cell.z << 16);
   Call2(Func_02003c20, 0x50000, 0x50000);
-  Camera_MoveWithinMapBounds(newX << 16, -1, newZ << 16, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, (s32)(newX << 16), (s32)(-1), (s32)(newZ << 16), (s32)(1));
   while (Func_02003ba8(gust) == 0) {
   if ((gFrameCount & 1) == 0) {
     leaves.priority = 1;
     leaves.type = 674;
     leaves.palette = 2;
     velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
-    velocity.y = gust->y + ((Random16Far() & 31) << 16);
     velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
+    velocity.y = gust->y + ((Random16Far() & 31) << 16);
     Effect_Spawn(gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
                  EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                  &leaves);

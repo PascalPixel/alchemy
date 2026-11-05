@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 24 of 129 (tla-en); older figures below predate it.
 // Draft, differ 55 of 129: actor id flashes, then eight puffs over actor
 // center and flag is set. Left: register choice.
 #include "types.h"

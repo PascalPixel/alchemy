@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 26 of 79 (tla-en); older figures below predate it.
 // Draft, differ 43 of 79: the body of Func_02001630 (s1630.c) with the target
 // as parameters. Left are the registers: the native keeps x in r6 and shifts it
 // there (lsls r6, r6, #16), z in r8, the leader in r10 and the event work in
@@ -69,7 +70,11 @@ void Func_020011bc(s32 x, s32 z) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
-  Actor_Place(leader, x << 16, 0xfff40000, z << 16);
+  {
+    s32 held = 0xfff40000;
+
+    Actor_Place(leader, x << 16, held, z << 16);
+  }
   Func_02005664(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   Func_02005854(123);

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 11 of 83 (tla-en); older figures below predate it.
 // Draft, differ 65 of 83 (was 67, a raw draft calling absolute addresses),
 // rewritten from the listing: the Venus Lighthouse entrance's spark setup.
 // It takes heap slot 220, unpacks resource 0x1e1 (directory.s's DustPuffA)
@@ -12,6 +13,7 @@
 // to r8 (64, the loop is no longer reversed), five minutes of psynergy
 // permute (nothing valid under 65).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 struct SparkState {
@@ -77,5 +79,5 @@ void Func_020026f4(void) {
     state->frame = -1;
   }
   work->unk2180 = 0;
-  Task_Add(Func_0200258c, 0x480);
+  Call2((void (*)())Task_Add, (s32)(Func_0200258c), (s32)(0x480));
 }

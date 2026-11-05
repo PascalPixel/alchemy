@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 57 of 153 (tla-en); older figures below predate it.
 // Draft, differ 63 of 153 (was 107): a launcher's update, overlay 664's
 // Func_02001290 with a new shot each time: while none of the event work's
 // four busy counters is set it counts frames in its action parameter, and at

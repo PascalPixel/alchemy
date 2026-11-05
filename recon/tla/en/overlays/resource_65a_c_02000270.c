@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 28 of 76 (tla-en); older figures below predate it.
 // Draft, differ 19 of 76: overlay 655's Func_02000e9c
 // (resource_655_c_02000e9c.c), which this overlay has instruction for
 // instruction with its own import stubs.

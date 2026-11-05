@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 34 of 543 (tla-en); older figures below predate it.
 // Measured 5 November (-Os), differ 37 to 40 of 543: the end's last set is
 // `orrs r5, r3; strb r5`, the result tied to the shared 1 as in overlay 64d's
 // Func_02000510. `shared |= *flags; *flags = shared;` gives that shape; the set
@@ -172,9 +173,7 @@ row:
   Task_Add(Func_02000ef4, 0xc80);
   Func_02003cd8(163);
   REG_BLDALPHA = 0xf00;
-  do {
     REG_BLDCNT = 0x3f41;
-  } while (0);
   REG_DISPCNT |= 0x100;
   Call3((void (*)())Func_02003b98, 0x10000, 0x10000, 0x10000);
   i = 0;
@@ -227,8 +226,8 @@ burst:
   i = 0;
 fade:
   REG_BLDALPHA = ((i >> 2) << 8) | (16 - (i >> 2));
-  i++;
   FieldEvent_Wait(1);
+  i++;
   if (i != 65)
     goto fade;
   Task_RemoveFar(Func_02000ef4);
@@ -246,8 +245,6 @@ fade:
   shared = 1;
   REG_BG1CNT |= shared;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
-  do {
-  } while (0);
   {
     u8 *owner = &Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags;
 

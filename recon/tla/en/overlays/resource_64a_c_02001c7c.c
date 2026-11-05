@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 134 of 479 (tla-en); older figures below predate it.
 // Measured 5 November (-Os), differ about 160 of 479: plain for loops and a u16
 // count give nearly every row (it was 481). Left: the count loop's registers: the
 // native keeps the table in r7, n in ip, m in lr and count in r9; here loop.c
@@ -189,8 +190,9 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
       struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
 
       for (m = 0; m != 23; m++) {
+        s32 count = 0;
         u16 *items = unit->inventory;
-        u16 count = 0;
+        s32 quantity;
 
         for (n = 0; n != 15; n++) {
           u32 value = *items++;
@@ -198,12 +200,13 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
           if (gData_0200271c[m] == (value & 0x1ff))
             count = value >> 11;
         }
+        quantity = count << 16;
         if (bit < 0) {
-          out[pos] += count >> -bit;
+          out[pos] += (u32)(quantity >> 16) >> -bit;
           bit += 8;
           pos++;
         }
-        out[pos] += count << bit;
+        out[pos] += (quantity >> 16) << bit;
         bit -= 5;
         if (bit == -5) {
           pos++;

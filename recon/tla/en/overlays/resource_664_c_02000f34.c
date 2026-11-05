@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 57 of 153 (tla-en); older figures below predate it.
 // Draft, differ 63 of 153 (was 107): overlay 664's copy of overlay 663's
 // Func_02001b54 (the same listing, with Func_02000d48 as its shots' update),
 // whose draft holds its notes.

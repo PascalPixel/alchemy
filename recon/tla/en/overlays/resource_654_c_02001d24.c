@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 14 of 656 (tla-en); older figures below predate it.
 // Near miss (16 of 656 instructions differ, was 80). Object 13's motion flags
 // are cleared after its sprite's rotation is set, so the zero is the low byte
 // of the register holding field18's -0x10000, as the native stores it (with
@@ -112,7 +113,7 @@ void Func_02001d24(void) {
   {
     s32 a0 = 13;
 
-    ShrineOfTheSeaGod_ObjMode(a0, 3);
+    Call2((void (*)())ShrineOfTheSeaGod_ObjMode, (s32)(a0), (s32)(3));
   }
   ShrineOfTheSeaGod_ObjPlace(12, 394 << 16, 286 << 16);
   wait(1);
@@ -149,13 +150,13 @@ void Func_02001d24(void) {
   {
     s32 a0 = 12;
 
-    ShrineOfTheSeaGod_ObjLaunch(a0, 4, 20);
+    Call3((void (*)())ShrineOfTheSeaGod_ObjLaunch, (s32)(a0), (s32)(4), (s32)(20));
   }
   Func_02003a78(12, 0, 20);
   ShrineOfTheSeaGod_Jump(13, 261, 40);
   ShrineOfTheSeaGod_Jump(12, 257, 60);
   ShrineOfTheSeaGod_MessagePut(12, 0);
-  ShrineOfTheSeaGod_ObjMode(13, 4);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjMode, (s32)(13), (s32)(4));
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   ShrineOfTheSeaGod_Jump(12, 256, 20);
   ShrineOfTheSeaGod_MessagePut(12, 0);
@@ -163,7 +164,7 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   ShrineOfTheSeaGod_ObjTurn(12, 0x8000, 0);
   ShrineOfTheSeaGod_MessagePut(12, 0);
-  ShrineOfTheSeaGod_ObjModeWait(13, 4);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjModeWait, (s32)(13), (s32)(4));
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   ShrineOfTheSeaGod_Jump(12, 265, 40);
   ShrineOfTheSeaGod_MessagePut(12, 0);
@@ -171,15 +172,15 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_Jump(13, 256, 0);
   ShrineOfTheSeaGod_ObjTurn(12, 0xb000, 0);
   ShrineOfTheSeaGod_ObjTurn(13, 0x3000, 40);
-  ShrineOfTheSeaGod_ObjLaunch(13, 4, 40);
+  Call3((void (*)())ShrineOfTheSeaGod_ObjLaunch, (s32)(13), (s32)(4), (s32)(40));
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  ShrineOfTheSeaGod_ObjMode(12, 3);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjMode, (s32)(12), (s32)(3));
   ShrineOfTheSeaGod_MessagePut(12, 0);
-  ShrineOfTheSeaGod_ObjModeWait(13, 3);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjModeWait, (s32)(13), (s32)(3));
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   ShrineOfTheSeaGod_MessagePut(12, 0);
-  ShrineOfTheSeaGod_ObjMode(12, 3);
-  ShrineOfTheSeaGod_ObjModeWait(13, 3);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjMode, (s32)(12), (s32)(3));
+  Call2((void (*)())ShrineOfTheSeaGod_ObjModeWait, (s32)(13), (s32)(3));
   ShrineOfTheSeaGod_ObjSpeed(12, 0x13333, 0x9999);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x13333, 0x9999);
   callback = gData_02003c58;
@@ -197,7 +198,7 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0, 0);
   ShrineOfTheSeaGod_ObjTurn(14, 0x8000, 20);
   ShrineOfTheSeaGod_MessagePut(14, 0);
-  ShrineOfTheSeaGod_ObjMode(14, 2);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjMode, (s32)(14), (s32)(2));
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != NULL)
     Actor_ResetAndSetPosition(14, ((s16 *)&leader->x)[1],

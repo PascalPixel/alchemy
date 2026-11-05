@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 11 of 137 (tla-en); older figures below predate it.
 // Draft, differ 83 of 137 (was 106): turns packed clear data into password
 // characters, six bits each with every tenth skipped, and scrambles them.
 // The clearing and saving loops are goto loops walking a pointer, as the

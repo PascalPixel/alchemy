@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 29 of 198 (tla-en); older figures below predate it.
 // Draft, differ 77 of 198: a push in Eastern Alhafra: while object 16 stands
 // unpushed (flag 0x8a4 clear) its cells are blocked; a measured push
 // (Func_02004240) is carried out (Func_020044c4) at once unless flag 0x8a4
@@ -69,8 +70,8 @@ void Func_02000514(void) {
       gate->motionFlags = 3;
       i = 0;
       while (gate->y > 0) {
-        i++;
         wait(1);
+        i++;
         if (i > 59)
           break;
       }

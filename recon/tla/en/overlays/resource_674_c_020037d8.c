@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 74 of 171 (tla-en); older figures below predate it.
 // Draft, differ 156 of 171, skeleton gap 23 (tla-en, 2026-11-01): overlay 674's
 // copy of overlay 668's Func_02004240 (the same listing); what it measures is
 // in that draft's header.
@@ -42,6 +43,7 @@
 // (174), by-value box inlines (PRE merges the shift, 213), a struct table of s8
 // fields (235), wholly plain locals and loops (243, frame 44).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "system/vector3.h"
 
@@ -85,7 +87,7 @@ s32 Func_020037d8(struct PushState *push) {
 
   object = Func_02003940(&direction, &push->number, &push->kind);
   if (object != 0) {
-    LoadKind(&kind, push);
+    Call2((void (*)())LoadKind, (s32)(&kind), (s32)(push));
     {
       struct {
         s32 height;
@@ -102,8 +104,8 @@ s32 Func_020037d8(struct PushState *push) {
     dz = offset << 16;
     push->unk14 = 0;
     steps = 0;
-    box.layer = &object->terrainId;
     *box.layer = 2;
+    box.layer = &object->terrainId;
     push->x = object->x + dx;
     push->z = object->z + dz;
     cell.y = object->y;
@@ -114,8 +116,8 @@ s32 Func_020037d8(struct PushState *push) {
     if (j >= size.height)
       goto stepFree;
   nextRow:
-    i = 0;
     cell.x = push->x + (BoxByte(box.index) << 16);
+    i = 0;
     for (; i < size.width; i++) {
       if (Func_02003e2c(object, &cell) == 2)
         goto blocked;

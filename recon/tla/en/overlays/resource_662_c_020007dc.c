@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 22 of 80 (tla-en); older figures below predate it.
 // Draft, differ 48 of 80 (was 50): overlay 662's Func_020007dc, the
 // representative of its copies in 675, 694, 6aa, 6ac, 6ae and 6b0. It records
 // the four lists, writes each listed palette entry from its red, green and
@@ -34,8 +35,8 @@ void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   next:
     {
       int red = *colours++;
-      int green = *colours++;
       int index = *slots++;
+      int green = *colours++;
       int blue = *colours++;
       int value = (blue << 10) | (green << 5) | red;
 

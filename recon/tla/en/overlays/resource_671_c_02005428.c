@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 0 of 61 (tla-en); older figures below predate it.
 // Near miss, differ 5 of 61 (tla-en, 2026-10-31): only the entry block
 // differs; the native starts the end mark 0xffff (movs r1, #255) before the
 // entry jump and copies the count to r10 after the mode, both left by the
@@ -37,15 +38,12 @@ void Func_020054ac(s32 id, s32 a, s32 flag, s32 terrain);
 void Func_02005428(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
 
-  goto test;
-  do {
+  while (*list != 0xffff) {
     u32 entry = *list;
     s32 id = work->objectId;
 
     if (id == entry) {
-      /* FAKEMATCH(pin): the object in r6, as the native keeps it; as a plain
-       * local, 23 of 61 instructions differ in tla-en. */
-      register struct Actor *object asm("r6") = Actor_GetById(id);
+      struct Actor *object = Actor_GetById(id);
       s32 a;
       s32 flag;
 
@@ -62,6 +60,5 @@ void Func_02005428(u16 *list, s32 mode, s32 count) {
       break;
     }
     list += 3;
-  test:;
-  } while (*list != 0xffff);
+  }
 }

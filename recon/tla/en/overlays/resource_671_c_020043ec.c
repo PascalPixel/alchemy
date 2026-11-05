@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 58 of 95 (tla-en); older figures below predate it.
 // Draft, differ 62 of 95: in mode 1, marks the 11-by-8 grid cell under the
 // object the effect work names (gSceneState's cells, four bytes each, from the
 // grid's origin) with the mode, redraws it (Func_0200566c), parks the object,

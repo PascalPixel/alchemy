@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 72 of 276 (tla-en); older figures below predate it.
 // Draft of Func_02003284 (overlay 655, 696 bytes), differ 77 of 276: the room
 // entry written in the scene layer of Func_02003164 and Func_0200390c. The
 // statements are the native's; what differs is where a zero and the 0xfe
@@ -156,7 +157,11 @@ void Func_02003284(void) {
     s32 angle = 0x4000;
 
     object = Actor_GetById(18);
-    Map_CopyAttributes(27, 8, 1, 1, 27, 9);
+    {
+      s32 held = 1;
+
+      Map_CopyAttributes(27, 8, held, 1, 27, 9);
+    }
     Actor_SetModeById(18, 4);
     object->priorityFlags |= 2;
     *((u8 *)object + 89) &= ~1;
@@ -174,8 +179,8 @@ void Func_02003284(void) {
   Func_020013b0();
   Func_02001fc4();
   object = Actor_GetById(27);
-  *((u8 *)object + 85) = zero;
   object->y = zero;
+  *((u8 *)object + 85) = zero;
   gData_0200567c = zero;
   gData_02005678 = zero;
   Task_Add(Func_02001ee8, TASK_PASS_VBLANK);

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 30 of 48 (tla-en); older figures below predate it.
 // Draft, differ 66 of 48: the native keeps the output cursor in a stack slot
 // (str r2, [sp]; stmia r3!, {r6}; str back) although r9 and r11 are free, and
 // tests the limit before the loop; this form keeps the cursor in a register.

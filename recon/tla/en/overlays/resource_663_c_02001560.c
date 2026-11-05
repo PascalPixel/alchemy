@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 6 of 377 (tla-en); older figures below predate it.
 // Draft, differ 69 of 377, skeleton gap 25 (tla-en, 2026-11-01)
 // The leader rides the object it stands on (its watchedObject) in Air's Rock:
 // while that object's byte 0x63 is set the leader is carried up on it, rising

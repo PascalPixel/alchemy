@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 112 of 217 (tla-en); older figures below predate it.
 // Draft, differ 131 of 217 (was 143): Func_020010b4's twin for another shot:
 // it also stops while the leader's movement is 5, and on a cell of kind 212 it
 // ends with one of two end scripts by its angle; otherwise, the first time it
@@ -64,8 +65,8 @@ void Func_02000d48(struct Actor *shot) {
     }
     if (near && !GameFlag_Test(0x104)) {
       leader->watchedObject = shot;
-      leader->angle = shot->angle;
       leader->priorityFlags &= ~1;
+      leader->angle = shot->angle;
       ((struct FieldSprite *)leader->animation)->priority =
           ((struct FieldSprite *)shot->animation)->priority;
       {

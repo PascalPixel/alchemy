@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 80 of 160 (tla-en); older figures below predate it.
 // Draft, differ 108 of 160, skeleton gap 13 (tla-en, 2026-11-01)
 // Yampi Desert Cave: finds a pushed object's kind by its sprite, copies its
 // footprint between the map layers, then marks its cells.
@@ -61,8 +62,8 @@ s32 Func_02000038(s32 id) {
   w = (ABS(gData_02001974[kind][0]) + ABS(gData_02001974[kind][2])) >> 4;
   h = (ABS(gData_02001974[kind][1]) + ABS(gData_02001974[kind][3])) >> 4;
   x = (object->x + (gData_02001974[kind][0] << 16)) >> 20;
-  z = (object->z + (gData_02001974[kind][1] << 16)) >> 20;
   ax = *(s32 *)&map->layers[1].unk08[0] >> 20;
+  z = (object->z + (gData_02001974[kind][1] << 16)) >> 20;
   az = *(s32 *)&map->layers[1].unk08[4] >> 20;
   bx = *(s32 *)&map->layers[2].unk08[0];
   bz = *(s32 *)&map->layers[2].unk08[4];

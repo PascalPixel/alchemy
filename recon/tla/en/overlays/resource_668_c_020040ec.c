@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 28 of 126 (tla-en); older figures below predate it.
 // Draft, differ 60 of 126, skeleton gap 3 (tla-en, 2026-11-01)
 // For a pushable object (its animation one of the six kinds in gData_02004ca4)
 // copies the cells under its box (gData_02004cb0: four signed bytes a kind, in
@@ -66,8 +67,8 @@ s32 Func_020040ec(s32 id) {
   width = (Abs(gData_02004cb0[found][0]) + Abs(gData_02004cb0[found][2])) >> 4;
   height = (Abs(gData_02004cb0[found][1]) + Abs(gData_02004cb0[found][3])) >> 4;
   x = (object->x + (gData_02004cb0[found][0] << 16)) >> 20;
-  z = (object->z + (gData_02004cb0[found][1] << 16)) >> 20;
   fromX = *(s32 *)(map + 0x148) >> 20;
+  z = (object->z + (gData_02004cb0[found][1] << 16)) >> 20;
   fromZ = *(s32 *)(map + 0x14c) >> 20;
   toX = x + (u16)fromX;
   toZ = z + (u16)fromZ;

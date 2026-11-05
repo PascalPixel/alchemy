@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 132 of 423 (tla-en); older figures below predate it.
 // Draft, differ 210 of 423, skeleton gap 62 (tla-en, 2026-11-01): 30 removed,
 // 32 added.
 // Unpacks clear data, in the layout The Broken Seal's
@@ -73,8 +74,8 @@ void Func_020018e0(s32 mode, u8 *in) {
   s32 bit;
 
   levelBits = in[0] | in[1] << 8 | in[2] << 16 | (in[3] & 0xf0) << 20;
-  djinnBits = (in[3] & 0x0f) | in[4] << 4 | in[5] << 12 | in[6] << 20;
   flagBits = in[7];
+  djinnBits = (in[3] & 0x0f) | in[4] << 4 | in[5] << 12 | in[6] << 20;
   keyItemBits = in[8];
 
   if (mode != 2) {

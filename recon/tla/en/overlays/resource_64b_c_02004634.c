@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 17 of 120 (tla-en); older figures below predate it.
 // Draft of Func_02004634 (overlay 64B, 120 instructions), differ 69: the linked
 // pair of effects, ported from ☀️'s WorldMap_CreateAttachedEffects (⚓️ creates
 // kind 271, its updates are Func_020045e4 and Func_02004598, the sprite's
@@ -67,9 +68,9 @@ do {
     child = Func_02004b30_(271, parent->x, parent->y, parent->z);
     pair[i] = child;
     if (child != NULL) {
+      child->motionFlags = 0;
       child->terrainHeight = parent->terrainHeight;
       part = child->animation;
-      child->motionFlags = 0;
       child->action = 0;
       child->watchedObject = parent;
       if (part != NULL) {

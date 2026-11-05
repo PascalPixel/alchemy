@@ -96,7 +96,6 @@ void Func_02001828(void) {
   u8 *flags;
   u32 i = 0;
   u32 j;
-  u32 column;
   s32 *p;
   s32 rowAbove;
 
@@ -125,11 +124,11 @@ void Func_02001828(void) {
   // room 3's test and reuses that load for room 5's.
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room2) {
     srcX = 20;
-    baseX = 160 << 17;
-    ((s32 *)j)[1] = 0;
-    dstZ = 26;
     i = 89;
     dstX = 84;
+    dstZ = 26;
+    baseX = 160 << 17;
+    ((s32 *)j)[1] = 0;
     ((s32 *)j)[2] = 212 << 17;
     if (Value1((s32 (*)())GameFlag_Test, 768))
       open = 212;
@@ -140,11 +139,11 @@ void Func_02001828(void) {
     for (j = 0; j != 7; j++)
       Actor_SetModeById(j + 9, 1);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room3) {
+    srcX = 28;
+    i = 83;
+    dstX = 92;
     dstZ = 21;
     baseX = 224 << 17;
-    dstX = 92;
-    i = 83;
-    srcX = 28;
     ((s32 *)j)[1] = 0;
     ((s32 *)j)[2] = 172 << 17;
     if (Value1((s32 (*)())GameFlag_Test, 769))
@@ -156,10 +155,10 @@ void Func_02001828(void) {
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room5) {
     // The native tests and clears flag 770 in both arms.
     if (gMainRoutineWork.entrance <= 8) {
-      dstZ = 13;
+      srcX = 49;
       i = 75;
       dstX = 113;
-      srcX = 49;
+      dstZ = 13;
       baseX = 198 << 18;
       ((s32 *)j)[1] = 0;
       ((s32 *)j)[2] = 216 << 16;
@@ -167,11 +166,11 @@ void Func_02001828(void) {
         open = 212;
       GameFlag_ClearBit(770);
     } else {
+      srcX = 51;
+      i = 104;
+      dstX = 115;
       dstZ = 42;
       baseX = 206 << 18;
-      dstX = 115;
-      i = 104;
-      srcX = 51;
       ((s32 *)j)[1] = 0;
       ((s32 *)j)[2] = 170 << 18;
       if (Value1((s32 (*)())GameFlag_Test, 770))
@@ -196,16 +195,14 @@ void Func_02001828(void) {
     // The column loop is written with goto: the native shows none of the loop
     // pass work in it (i << 18 is not strength-reduced); as a for loop, 202 of
     // 496 instructions differ.
+    __asm__("" : : : "sfp");
     for (i = 0; i != 10; i++) {
-    column = 0;
-  spawn:
+    for (j = 0; j != 6; j++) {
     p = position;
     p[0] = baseX + ((Random16Far() % 48) << 16);
     Func_0200015c(p[0], p[1], p[2] + (i << 18) + 0x170000,
                   0, 0x10000, 0, 0x330000, &options);
-    column++;
-    if (column != 6)
-      goto spawn;
+    }
     wait(3);
     Call6((void (*)())Func_02004cd8, 75, 64, dstX, dstZ, 3, (i >> 1) + 1);
     }
@@ -213,14 +210,11 @@ void Func_02001828(void) {
     // addresses and loads 16 and 0x3f44 from the literal pool on every pass,
     // where the loop pass hoists all four out of a for loop; as a for loop,
     // 214 of 496 instructions differ.
-    j = 0;
-  fade:
+    for (j = 0; j != 64; j++) {
     REG_BLDALPHA = ((j >> 2) << 8) | (16 - (j >> 2));
     REG_BLDCNT = 0x3f44;
     wait(3);
-    j++;
-    if (j != 64)
-      goto fade;
+    }
     Call6((void (*)())Func_02004cd8, 78, 64, dstX, dstZ, 3, 5);
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room2)
@@ -232,7 +226,11 @@ void Func_02001828(void) {
   Call6((void (*)())Func_02004cd8, 72, 63, srcX, rowAbove, 3, 4);
   Func_02004d18();
   Func_02004f30(584);
-  *flags |= 64;
+  {
+    s32 bit = 64;
+    bit |= *flags;
+    *flags = bit;
+  }
   FieldEvent_Wait(20);
   j = (u32)&gMainRoutineWork.currentOwner;
   Actor_GetById(*(s32 *)j)->actionFlags &= ~1;

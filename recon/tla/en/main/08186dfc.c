@@ -310,7 +310,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
   }
   sprite = Func_0815b290(64, 64, 0xc0002000, 0);
-  work->objects[18] = sprite;
+  ((struct FieldSprite **)work->objects)[18] = sprite;
   sprite->blendMode = 1;
   STAMP_TILES(work) =
       gResourceTableEntries[sprite->vramBlock].tile + 0x06010000;

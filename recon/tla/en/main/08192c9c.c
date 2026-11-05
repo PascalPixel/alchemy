@@ -1218,6 +1218,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 423) <= 19) {
       s32 step = frame - 422;
+      s32 top;
+      s32 off;
+      s32 k;
+      s32 m;
+      u8 v;
 
       top = 120 - step * 8;
       for (i = top; i != top + 40 && (v = (i - top) * 2, i <= 127); i++) {
@@ -1289,12 +1294,15 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       } while (0);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2010, 16, 64, 0x10000);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2810, 16, 64, 0x10000);
-      dst = work->sheet + 0x2010;
-      for (i = 0; i != 64; i++) {
-        for (j = 0; j != 32; j++) {
-          if (*dst > i)
-            *dst = i;
-          dst++;
+      {
+        u8 *ramp = work->sheet + 0x2010;
+
+        for (i = 0; i != 64; i++) {
+          for (j = 0; j != 32; j++) {
+            if (*ramp > i)
+              *ramp = i;
+            ramp++;
+          }
         }
       }
       for (i = 0; i != 36; i++)
@@ -1325,6 +1333,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 447) <= 15) {
       s32 step = frame - 446;
+      s32 top;
+      s32 off;
+      s32 x;
+      s32 m;
 
       top = 136 - step * 8;
       for (i = top; i != 0; i--) {

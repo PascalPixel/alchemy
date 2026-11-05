@@ -1,4 +1,4 @@
-// Draft, differ 102 of 2159 (tla-en, 2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
+// Draft, differ 80 of 2159 (tla-en, 2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
 // BattleEffect_RunEclipse. Measured here: a constant loop.c hoists and global.c gives no register is rebuilt at each use by reload, and reload picks its registers round-robin, so a constant that is one (sparks, vertices, mesh2) puts the names right for many lines after it. `movs rN, #128; lsls` in a loop is usually such a hoisted constant; so is a pool load early in a block.
 // Left, in order of reach:
 // - The 136 loop, two instructions short: the listing has size hoisted in r7, the routine in r6, dst in r5 and the step 0x400 rebuilt in the loop; here size and the step are one register (CSE), r6, with the routine in r7. dst + i * step with a constant step outside the frame loop gets the rebuilt step, but size then has no register (the table outranks it, r7, and slot 8 goes, so the frame shrinks by 4).
@@ -782,9 +782,9 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       Sound_PlayFar(208);
       Func_0818de3c(Data_02011000, 16, 8, 8, 8);
-      for (ring = 0, offset = 0; ring != 8; offset += 64, ring++) {
-        s32 y = -Trig_Cos(ring * 0x888) * 96 >> 16;
-        s32 rr = Trig_Sin(ring * 0x888) * 48 >> 16;
+      {s32 a_ = 0; for (ring = 0, offset = 0; ring != 8; a_ += 0x888, offset += 64, ring++) {
+        s32 y = -Trig_Cos(a_) * 96 >> 16;
+        s32 rr = Trig_Sin(a_) * 48 >> 16;
         struct EclipseVertex *v = (struct EclipseVertex *)Data_02010800;
 
         k = 0;
@@ -796,7 +796,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           v++;
         }
       }
-      Func_081885f0(Data_02012000, Data_02012800, 32);
+      }Func_081885f0(Data_02012000, Data_02012800, 32);
     }
     texture3.logWidth = 5;
     texture3.logHeight = 5;

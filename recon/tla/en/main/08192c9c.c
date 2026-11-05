@@ -1063,15 +1063,16 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 0x1010;
       REG_BG2CNT = 0x784;
       for (i = 1; i != 8; i++) {
-        for (k = 0; k != 10; k = bandColumn) {
-          u8 *src = work->sheet + gData_08197410[k];
-          u8 *out = work->sheet + gData_08197410[k] + i * 0x302;
-          s32 n;
+        s32 next;
 
-          bandColumn = k + 1;
-          n = bandColumn * 2 * bandColumn;
+        for (j = 0; j != 10; j = next) {
+          u8 *src = work->sheet + gData_08197410[j];
+          u8 *out = work->sheet + gData_08197410[j] + i * 0x302;
+          s32 off;
 
-          for (off = 0; off != n; off++) {
+          next = j + 1;
+
+          for (off = 0; off != next * 2 * next; off++) {
             u8 v = src[off] - i * 8;
 
             if (v > 63)

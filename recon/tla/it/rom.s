@@ -957,13 +957,13 @@ Func_0810abf0:
 	.incbin "baserom.gba", 0x0010abf4, 0x00000294
 	.section .rom.0010b02e, "ax"
 	.incbin "baserom.gba", 0x0010b02e, 0x00000002
-	.section .rom.0010b798, "ax"
+	.section .rom.0010b9a4, "ax"
 	.balign 4
-	.global Func_0810b7b4
-	.type Func_0810b7b4, %function
+	.global Func_0810b9c0
+	.type Func_0810b9c0, %function
 	.thumb_func
-Func_0810b7b4:
-	.incbin "baserom.gba", 0x0010b798, 0x000004fc
+Func_0810b9c0:
+	.incbin "baserom.gba", 0x0010b9a4, 0x000002f0
 	.section .rom.0011843c, "ax"
 	.balign 4
 	.global Func_0811843c

@@ -1,13 +1,7 @@
-// Draft, differ 145 of 233 (tla-en, 2026-11-05); 141 with slots and pool offsets normalized, 29 with registers blind too.
-// Draft: picks a party member and then one of their items (Func_0810b9c0),
-// four members a page, returning the unit and slot through the pointers (both
-// -1 when cancelled). As ☀️'s Shop_PickUnitItem (games/tbs/src/shop/shop.c),
-// with ⚓️'s cursor work (Func_08108148, Func_0810824c), its page cursor helper
-// (Func_08108690) and the item list's mode stored at 0x50b.
-// Draft, differ 169 of 233 (2026-10-19), the shape matching throughout: the
-// native gives the result r6 and uses it as the zero argument of the cursor
-// icon call, where unitId's r9 serves here, which moves the shop work's offsets
-// into other low registers; the same A and B test pattern as 08109ad8.
+/// @file
+/// Func_0810b7b4 picks a party member and then one of their items, four members
+/// a page, returning the unit and slot through the pointers (both -1 when
+/// cancelled): the twin of The Broken Seal's Shop_PickUnitItem.
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -60,9 +54,9 @@ void Window_CloseFar(void *window, s32 style);
 
 s32 Func_0810b7b4(s32 *outUnit, s32 *outSlot, s32 itemMode) {
   struct ShopRuntime *shop;
-  s32 memberIndex = 0;
-  s32 redraw = 1;
   s32 unitId = 0;
+  s32 redraw = 1;
+  s32 memberIndex = 0;
   void *listWindow;
   void *iconWindow;
   struct WindowSprite *icon;

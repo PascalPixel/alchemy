@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 399 of 597.
 // Draft, differ 399 of 597, skeleton gap 55 (tla-en, 2026-11-01)
 // Func_08196404 is The Lost Age's BattleEffect_BuildBlitter, The Broken Seal's
 // step list (games/tbs/src/battle_effect/battle_effect/blitter.c) walked once:

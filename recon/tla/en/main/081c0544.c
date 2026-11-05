@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 3 of 4.
 // Near miss, differ 3 of 4 (tla-en, 2026-10-31): only the return, the game
 // profile's pop {pc} against the interworking pop {r0}; bx r0. Compiled by
 // hand through the sound library's route (cpp0, then old_agbcc

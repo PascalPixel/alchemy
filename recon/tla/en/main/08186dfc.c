@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 121 of 2667.
 // Draft, differ 121 of 2667, skeleton gap 11 + 12 (tla-en, 2026-11-01)
 // BattleEffect_RunHaures: frame and spill slots agree; the old volatile dst
 // pointers are gone, no device is left here. Facts that closed the rest:

@@ -1833,7 +1833,7 @@ BattleEffect_RunOdyssey:
 	.type BattleEffect_RunIris, %function
 	.thumb_func
 BattleEffect_RunIris:
-	.incbin "baserom.gba", 0x00192ca0, 0x000035ac
+	.incbin "baserom.gba", 0x00192ca0, 0x00002e00
 	.section .rom.00196408, "ax"
 	.global Func_08196404
 	.type Func_08196404, %function
@@ -1864,12 +1864,6 @@ DisplayScroll_DrawMessageLine:
 	.thumb_func
 Func_081a150c:
 	.incbin "baserom.gba", 0x001a14f8, 0x000000d0
-	.section .rom.001a15c8, "ax"
-	.global Func_081a15dc
-	.type Func_081a15dc, %function
-	.thumb_func
-Func_081a15dc:
-	.incbin "baserom.gba", 0x001a15c8, 0x000001f4
 	.section .rom.001a6638, "ax"
 	.global Func_081a6638
 	.type Func_081a6638, %function
@@ -1905,18 +1899,6 @@ Func_081a729c:
 	.thumb_func
 Title_NoOpPalette:
 	.incbin "baserom.gba", 0x001a7514, 0x00000004
-	.section .rom.001a76f8, "ax"
-	.global Func_081a76f8
-	.type Func_081a76f8, %function
-	.thumb_func
-Func_081a76f8:
-	.incbin "baserom.gba", 0x001a76f8, 0x00000174
-	.section .rom.001a786c, "ax"
-	.global Data_081a786c
-	.type Data_081a786c, %function
-	.thumb_func
-Data_081a786c:
-	.incbin "baserom.gba", 0x001a786c, 0x00000004
 	.section .rom.001ac15c, "ax"
 	.global LuckyDice_Run
 	.type LuckyDice_Run, %function
@@ -1933,13 +1915,12 @@ LuckyDice_Run:
 LuckyWheels_Run:
 	.incbin "baserom.gba", 0x001b3364, 0x00000988
 	.section .rom.001b8272, "ax"
-	.incbin "baserom.gba", 0x001b8272, 0x000000da
-	.section .rom.001b83c4, "ax"
-	.global Func_081b83c4
-	.type Func_081b83c4, %function
+	.incbin "baserom.gba", 0x001b8272, 0x00000002
+	.global Func_081b8274
+	.type Func_081b8274, %function
 	.thumb_func
-Func_081b83c4:
-	.incbin "baserom.gba", 0x001b83c4, 0x00001f48
+Func_081b8274:
+	.incbin "baserom.gba", 0x001b8274, 0x000000d8
 	.section .rom.001c00b0, "ax"
 	.incbin "baserom.gba", 0x001c00b0, 0x00000064
 	.section .rom.001c0114, "ax"

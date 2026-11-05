@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 408 of 1122.
 // Draft, differ 408 of 1122, skeleton gap 44 (tla-en, 2026-11-01)
 // BattleEffect_RunTrident: same calls and control flow, draft 1120 instructions.
 // Left, the one blocker first: the frame is 100 bytes, not 104, so every sp

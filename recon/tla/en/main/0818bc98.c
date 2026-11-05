@@ -1,3 +1,5 @@
+// Measured 2026-11-05 (tla-en): differ 4 of 1251. Two pairs left: mov r8 ahead
+// of the vertices store, mov sl after asrs r6 at the flash loop's head.
 // Draft, differ 32 of 1251, skeleton gap 14 (tla-en, 2026-11-01)
 // All that is left is order, with the same instructions and registers. In every
 // site a store to the stack comes earlier in the
@@ -424,8 +426,8 @@ void Func_0818bc98(struct BattleEffectArgument *effect, s32 mode) {
         texture.logWidth = 7;
         texture.logHeight = 7;
         model->kind = 6;
-        model->mesh = gData_08199364;
         model->texture = &texture;
+        model->mesh = gData_08199364;
         model->vertices = vertices;
         texture.pixels = Ram_MapCellBuffer;
 

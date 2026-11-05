@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 178 of 418.
 // Near miss, differ 182 of 418 (tla-en, 2026-10-31; draft 418 instructions,
 // no device): the native's shape, left with allocation. An unused solid
 // renderer, the filled twin of Func_08196248 (same setup, transform, corner

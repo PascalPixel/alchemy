@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 20 of 11.
 // Draft, differ 20 of 11: the cut-off head of a work copy of the song start,
 // as ☀️'s m4aSongNumStart (games/tbs/src/sound/audio.c): the copy stops
 // after the player slot's offset, and the listing's last four words are the

@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 104 of 513.
 // 2026-10-26 (round 5): differ 112. spawned is declared in a block opened after
 // BattleEffect_FetchRectangleBlitters, so its pseudo comes after the blitter
 // pair's address and the two spill slots take the native's places (the pair's

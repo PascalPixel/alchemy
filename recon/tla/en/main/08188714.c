@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 10 of 636.
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 28 of
 // 636 with a one-pass block and two empty asm the greedy device search
 // placed (36 without them); the rest is the instruction order described

@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 166 of 895.
 // Draft, differ 172 of 895, skeleton gap 32 (tla-en, 2026-11-01)
 // Effect kind 123, written from the listing on The Broken Seal's canvas
 // skeleton (twins: BattleEffect_RunTitanBlade 0.46, by call order

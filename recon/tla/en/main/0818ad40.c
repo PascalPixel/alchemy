@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 207 of 1246.
 // Draft, differ 213 of 1246, skeleton gap 27 (tla-en, 2026-11-01)
 // No close ☀️ twin (call order BattleEffect_RunBoreas 0.468): ⚓️'s own effect
 // on ☀️'s frame, a sibling of the four cards of Func_0818a220. The card itself

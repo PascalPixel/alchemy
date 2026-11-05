@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 18 of 10.
 // Draft, differ 18 of 10 with the game profile, and identical with old_agbcc
 // -O2 -mthumb-interwork (2026-10-24): the work copy of the sound library's
 // MPlayContinue, as in ☀️ (games/tbs/src/sound/audio.c),

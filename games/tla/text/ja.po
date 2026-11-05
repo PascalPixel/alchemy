@@ -13857,11 +13857,11 @@ msgctxt "MsgSlotsBet"
 msgid "03434"
 msgstr "ベット"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceCoins"
 msgid "03435"
 msgstr "コイン"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceWinnings"
 msgid "03436"
 msgstr "しはらい"
 
@@ -13909,7 +13909,7 @@ msgctxt "MsgSlotsAllHeld"
 msgid "03447"
 msgstr "すべてとめるとスタートできません"
 
-msgctxt "message"
+msgctxt "MsgDiceGameThrow"
 msgid "03448"
 msgstr "A なげる"
 
@@ -13917,27 +13917,27 @@ msgctxt "message"
 msgid "03449"
 msgstr "B やめる"
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigher"
 msgid "03450"
 msgstr "ダイスのごうけいが 15以上なら"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLower"
 msgid "03451"
 msgstr "ダイスのごうけいが 13以下なら  "
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigherAgain"
 msgid "03452"
 msgstr "ぜんかいのごうけいより おおきければ"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLowerAgain"
 msgid "03453"
 msgstr "ぜんかいのごうけいより ちいさければ"
 
-msgctxt "message"
+msgctxt "MsgDiceGameChoose"
 msgid "03454"
 msgstr "あたりです"
 
-msgctxt "message"
+msgctxt "MsgDiceGameDoubleUp"
 msgid "03455"
 msgstr "ダブルアップしますか?"
 

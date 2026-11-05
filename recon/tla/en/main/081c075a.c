@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 15 of 12.
 // Draft, differ 15 of 12: a track command handler that clears the track's
 // modulation and flags the pitch or volume update its target needs, as
 // ClearModM (games/tla/src/sound/driver.c) with the

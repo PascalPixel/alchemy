@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 88 of 236.
 // Draft, differ 94 of 236: runs one step of the intro's vertical picture scroll. The
 // position moves from pos toward limit by step, waiting frames between moves
 // (1 when a key cuts the wait short, else 0 with pos updated). Scrolling

@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 129 of 434.
 // Near miss: listing 434 instructions, draft 433, differ 151. No ☀️ twin: the
 // frame and the spark blitting are ☀️'s (BattleEffect_RunVenus, shape
 // 0.572), the bite drawn as a textured quad through ⚓️'s model kernels is ⚓️'s

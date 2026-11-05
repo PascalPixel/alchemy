@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 1075 of 2781.
 // Draft, differ 1075 of 2781, skeleton gap 107/106 (tla-en, 2026-11-01)
 // BattleEffect_RunCoatlicue: same calls and control flow, draft 2780 of 2781
 // instructions, frame 164 and every stack slot as in the native. Registers

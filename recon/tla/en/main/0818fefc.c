@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 48 of 1361.
 // Draft, differ 62 of 1361, skeleton gap 20/20 (tla-en, 2026-11-01)
 // BattleEffect_RunMegiddo. Frame (220), control flow, calls, pools and nearly
 // every register agree. What is left is two causes.

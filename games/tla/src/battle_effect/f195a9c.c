@@ -1,5 +1,4 @@
-// Draft, differ 6 of 966, skeleton gap 2 (tla-en, 2026-11-01; draft 966
-// instructions, no device). A textured triangle rasterizer that draws a mesh
+// A textured triangle rasterizer that draws a mesh
 // into the 8x8-tiled effect canvas, keeping the brighter of the canvas and
 // texture colour indices: the textured member of the family of Func_0819574c
 // (filled) and Func_08196248 (wireframe). No Broken Seal twin found.
@@ -9,17 +8,6 @@
 // from ax at offsets. The declaration order gives the native's stack slots.
 // ax is spelled as an integer sum: &vertices[vertexCount] adds its operands
 // the other way round (one more instruction differs).
-// Left, in three pairs:
-// - After the sort the native has str [sp,#24] before asrs r2, r0: both rank
-//   5 in sched2 and the earlier insn wins the tie, so the native's RTL has the
-//   store first, but computing middle first makes reload give middle r2 and
-//   top r3 (differ 41). Tried: every order of top, middle and bottom, block
-//   locals for the two loads, and const and halfword spellings of bottom.
-// - uB, vB: the native stores uv[0] to uB then uA, and likewise for v, at any
-//   spelling of the assignment here. cse2 orders the pair by which lives
-//   longer: "uB += duB; vB += dvB;" after "vA += dvA;" in the lower loop
-//   (flow deletes them) gives both stores and differ 2. Those are dead stores
-//   left out of this round; they need a dead tag under S2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -73,8 +61,7 @@ struct MeshFace {
 // The texture steps along a scanline, from the middle corner's row.
 #define STEP_RIGHTWARD()                                                       \
   {                                                                            \
-    width =                                                                    \
-        DIFF_ABS(ax[3] - ax[0] - Iwram_MulQ16(dxB, ax[4] - ax[1]));            \
+    width = DIFF_ABS(ax[3] - ax[0] - Iwram_MulQ16(dxB, ax[4] - ax[1]));        \
     dudx = Iwram_RatioMulQ14(width, uv[1][0] - uv[0][0] -                      \
                                         Iwram_MulQ16(duB, ax[4] - ax[1]));     \
     dvdx = Iwram_RatioMulQ14(width, uv[1][1] - uv[0][1] -                      \
@@ -84,8 +71,7 @@ struct MeshFace {
   }
 #define STEP_LEFTWARD()                                                        \
   {                                                                            \
-    width =                                                                    \
-        DIFF_ABS(Iwram_MulQ16(dxB, ax[4] - ax[1]) - (ax[3] - ax[0]));          \
+    width = DIFF_ABS(Iwram_MulQ16(dxB, ax[4] - ax[1]) - (ax[3] - ax[0]));      \
     dudx = Iwram_RatioMulQ14(width, Iwram_MulQ16(duB, ax[4] - ax[1]) -         \
                                         (uv[1][0] - uv[0][0]));                \
     dvdx = Iwram_RatioMulQ14(width, Iwram_MulQ16(dvB, ax[4] - ax[1]) -         \
@@ -240,6 +226,12 @@ void Func_08195a9c(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
           xB += dxB;
           uA += duA;
           vA += dvA;
+          /* FAKEMATCH(dead): edge B's values stepped on though nothing reads
+           * them again; flow deletes both, and cse2 then stores uv[0] to uB
+           * ahead of uA, as the native does; as no steps, 4 of 966 instructions
+           * differ in tla-en. */
+          uB += duB;
+          vB += dvB;
         }
       }
     }

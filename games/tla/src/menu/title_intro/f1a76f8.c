@@ -1,12 +1,7 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Twin of The Broken Seal's Title_ShowCamelotLogo: the same resource, BG2 set-up,
-// DMA copies, 120-frame tile cycle and A or Start exit. Ported from its C: the
-// `result` local (zero, stored to gBgScroll[2].y and returned), the one buffer
-// local and `* 1024 + buffer`; the two earlier FAKEMATCH notes are gone with
-// the forced forms. The listing's next word, Data_081a786c, is a no-op
-// `void f(void) {}` (Title_NoOpColor there): outside this extent, so it left
-// this draft and returns at adoption. Pool: the listing names gMapCellBuffer
-// and resource 0x21; check both against the build at adoption.
+// Twin of The Broken Seal's Title_ShowCamelotLogo: the same resource, BG2
+// set-up, DMA copies, 120-frame tile cycle and A or Start exit. Ported from its
+// C: the `result` local (zero, stored to gBgScroll[2].y and returned), the one
+// buffer local and `* 1024 + buffer`.
 
 #include "resource.h"
 #include "types.h"
@@ -31,7 +26,7 @@ void Fade_Wait(void);
 void Func_08014b70(void);
 void Window_LoadGraphics(void);
 
-s32 Title_ShowAnimatedSplash(void) {
+s32 Func_081a76f8(void) {
   s32 result;
   u32 i;
   u8 *buffer;
@@ -70,8 +65,7 @@ s32 Title_ShowAnimatedSplash(void) {
   Fade_Wait();
   REG_DISPCNT = 0x1540;
   for (i = 0; i < 120; i++) {
-    Dma_Set(((gFrameCount >> 3) & 3) * 1024 + buffer,
-            BG_CHAR_BLOCK(1) + 0x100,
+    Dma_Set(((gFrameCount >> 3) & 3) * 1024 + buffer, BG_CHAR_BLOCK(1) + 0x100,
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x340 / 4, REG_DMA3);
     if (gInput.pressed & (KEY_A | KEY_START))
       break;

@@ -1,3 +1,5 @@
+// Measured 2026-11-05 (tla-en): differ 28 of 1123. Empty asm after the
+// velocityZ store and the y store give 22; nothing lower.
 // Draft, differ 44 of 1123, skeleton gap 26 (tla-en, 2026-11-01)
 // ☀️ twin: BattleEffect_RunDragonCloud (dragon_cloud.c): the puff arc, the
 // faded copies of the pillar sheet, the head flying the path and its trail, the

@@ -211,9 +211,9 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet + 0x2000, 0,
                              0);
   if (mode == 1) {
-    u8 *pixel = work->sheet + 0x3000;
+    u8 *pixel;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, pixel, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, pixel = work->sheet + 0x3000, 1, 0);
     for (i = 0; i != 0x1b00; i++, pixel++) {
       if (*pixel != 0) {
         *pixel += 8;

@@ -1788,13 +1788,11 @@ CLEAR(buffer, 0x1000);
       if (frame < 14) {
         struct Particle *p;
         if (action->side == 0) {
-          step = (14 - frame) * 3;
-          x = target[0] / 2 + step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] / 2 + (14 - frame) * 3 * 2;
+          y = target[1] - (14 - frame) * 3 * 4 + 24;
         } else {
-          step = (14 - frame) * 3;
-          x = target[0] / 2 - step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] / 2 - (14 - frame) * 3 * 2;
+          y = target[1] - (14 - frame) * 3 * 4 + 24;
         }
         drawFuncs.draw[1](screen, buffer, x - 16, y - 32, 32, 64);
         if (frame == 13) {
@@ -1859,14 +1857,11 @@ CLEAR(buffer, 0x1000);
       p = work->particle;
       if (frame < 14) {
         if (action->side == 0) {
-          step = (14 - frame) * 3;
-          x = target[0] + step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] + (14 - frame) * 3 * 2;
+          y = target[1] - (14 - frame) * 3 * 4 + 24;
         } else {
-          s32 step;
-          step = (14 - frame) * 3;
-          x = target[0] - step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] - (14 - frame) * 3 * 2;
+          y = target[1] - (14 - frame) * 3 * 4 + 24;
         }
         drawFuncs.draw[0](screen, buffer + 0x2000, 32, y - 32, 64, 64);
         REG_BG2X = (64 - x) << 8;

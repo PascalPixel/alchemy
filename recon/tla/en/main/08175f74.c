@@ -1736,7 +1736,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         s32 x;
         s32 y;
         s32 y2;
-        for (i = 0, y2 = -26, y = 0, x = shake, phase = frame << 10, column = work->columns, halfCell = width / 2; i != 4; i++, y2 += 30, y += 30, x += 8, phase += 0x2000, column++) {
+        for (i = 0, y2 = -26, y = 0, x = shake, phase = frame << 10, column = work->columns, halfCell = width / 2; i != 4; y2 += 30, y += 30, x += 8, phase += 0x2000, column++, i++) {
           column->x = x + ((Trig_Sin(phase) * 4) >> 16);
           column->y = y;
           if (i == 3) {
@@ -1814,10 +1814,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
 
         if (timer >= 0 && timer < 18) {
           s32 step = timer * 3;
+          s32 depth = step - 64;
           s32 size = step * 1016 + 0x800;
 
-          model->depth = step - 64;
           member->timer = timer + 1;
+          model->depth = depth;
           Render_ResetTransformState();
           Func_08015160((member->x / 2 - 56) << 16, (member->y - 56) << 16, 0);
           Func_080151e4(size / 3, size, size);

@@ -808,17 +808,12 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       prevCamera = camera;
       {
         Particle *f;
-        s32 x;
 
         f = &work->particles[22];
         if (f->timer > 229)
-          x = f->x + ((f->timer - 230) << 17);
+          camera += (0x980000 - (f->x + ((f->timer - 230) << 17)) - camera) / 4;
         else if (f->timer > 0)
-          x = f->x;
-        else
-          goto camera_done;
-        camera += (0x980000 - x - camera) / 4;
-      camera_done:;
+          camera += (0x980000 - f->x - camera) / 4;
       }
       if (p->timer > 1) {
         p->x += p->vx;

@@ -83,9 +83,15 @@ void Func_02000e9c(void) {
   level = Map_GetTerrainHeight(*layer, held->x, held->z);
   index = Func_02003db0(held);
   shapes += index;
-  *shapes = Func_02003dd0(*layer, shape, (level >> 19) + 4);
-  cells += index;
-  cells->attributeB |= 192;
+  {
+    s32 value = Func_02003dd0(*layer, shape, (level >> 19) + 4);
+    u8 attribute;
+
+    cells += index;
+    attribute = cells->attributeB;
+    *shapes = value;
+    cells->attributeB = attribute | 192;
+  }
   cells += 128;
   cells->attributeB |= 64;
 }

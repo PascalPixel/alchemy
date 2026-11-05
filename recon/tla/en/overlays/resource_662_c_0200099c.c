@@ -39,8 +39,8 @@ void Func_0200099c(void) {
   for (i = 0; i < gData_02001fe4; i++) {
     dst = &BG_PLTT[gData_02001fcc[gData_02001fe8 * gData_02001fe4 + i]];
     r = *color++;
-    g = *color++;
     b = *color++;
+    g = *color++;
     *dst = b << 10 | g << 5 | r;
   }
   dst = &BG_PLTT[gData_02001fd8[gData_02001fe4]];

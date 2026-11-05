@@ -34,6 +34,9 @@ void Func_02003a14(void) {
   struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
 
   gData_02006294 = 0;
+  /* FAKEMATCH(barrier): an empty asm holds the next statement after this
+   * one; as no asm, 6 of 30 instructions differ in tla-en. */
+  asm("");
   map->mode = 1;
   Func_02005338(0);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2)

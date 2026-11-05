@@ -60,6 +60,9 @@ void Func_02001458(struct Actor *object) {
       *counter = value;
     }
     object->unk4c = 0;
+    /* FAKEMATCH(barrier): an empty asm holds the next statement after this
+     * one; as no asm, 22 of 200 instructions differ in tla-en. */
+    asm("");
     object->speedLimit = -object->speedLimit >> 1;
     object->z = leader->z - 0x80000;
   }

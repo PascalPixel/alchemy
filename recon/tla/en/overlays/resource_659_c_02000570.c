@@ -20,11 +20,27 @@ void Func_02000570(void) {
     }
   } else if (FlagCheck(0x8ff)) {
     ActorPlaceFacing(9, 0x2000000, 0x3490000, 0xe000);
-    ActorPlaceFacing(10, 0x1d80000, 0x36d0000, 0xc000);
+    {
+      s32 held = 0xc000;
+
+      {
+        s32 held = 10;
+
+        ActorPlaceFacing(held, 0x1d80000, 0x36d0000, held);
+      }
+    }
     ActorPlace(8, 0, 0);
   } else {
     ActorPlaceFacing(9, 0x2000000, 0x3490000, 0xa000);
-    ActorPlaceFacing(10, 0x1d80000, 0x36d0000, 0xc000);
+    {
+      s32 held = 0xc000;
+
+      {
+        s32 held = 10;
+
+        ActorPlaceFacing(held, 0x1d80000, 0x36d0000, held);
+      }
+    }
     ActorPlace(8, 0, 0);
   }
 }

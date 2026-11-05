@@ -38,9 +38,9 @@ void Func_02000be4(void) {
   u8 *table = gData_020023c4 + 0x188;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;
   u8 *shape = *(u8 **)(map + 0x13c);
-  u8 *cells = *(u8 **)(map + 0x138);
   s32 *collision = gMapCollision + *(s16 *)(table + 2);
   struct SwingActor *swing = (struct SwingActor *)(table + 4);
+  u8 *cells = *(u8 **)(map + 0x138);
   struct Actor *actor, *shadow;
   s32 n, cell, flag;
   u8 *flags;

@@ -109,10 +109,10 @@ void Func_02000d78(u16 *list) {
       s32 level = Map_GetTerrainHeight(*layer, held->x, held->z);
       s32 index = Func_02003db0(held);
 
+      *shapes = Func_02003dd0(*layer, shape, level);
       level >>= 19;
       level -= 4;
       shapes += index;
-      *shapes = Func_02003dd0(*layer, shape, level);
       cells[index].attributeB &= 63;
       cells[index + 128].attributeB &= 191;
       HELD_OBJECT(work) = held;

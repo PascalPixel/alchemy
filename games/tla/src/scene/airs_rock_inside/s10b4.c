@@ -1,30 +1,3 @@
-// Draft, differ 13 of 211, skeleton gap 5 (tla-en, 2026-11-01)
-// The update Func_02001290 gives its shots: while the event work is busy it
-// stops; on a cell of kind 212 it ends (cue 539, its end script
-// gData_020061cc); otherwise, the first time it reaches the leader (within 16
-// pixels on the same height when the leader climbs, else within 8 on the same
-// level) and flag 0x104 is clear, it carries the leader along (counter 0x16a
-// 200, movement 0); it moves 1.5 pixels a frame along its angle, upward when
-// its angle is 0xc000.
-// Left, two pairs; the other differ rows are branch distances that follow them.
-// 1. Before Func_02005f8c the native puts "adds r0, r6" between "lsls r1" and
-// "adds r1, #255"; here r1's chain finishes first. sched2 ties the two on
-// priority and forward dependents, and the r1 insn has the lower LUID. Tried
-// without change: s32 return, u32 and u16 cue, no prototype, a cue local, s32
-// return on Func_02005d6c. Moving the call after the flag stores worsens it.
-// 2. The native copies the angle into r0 before "cmp r3, r2", and its else arm
-// has no load; here the then arm copies and the else arm reloads. A local (s32
-// or u16, one arm or both) or a word compare gives one pseudo: ldrh r0 and
-// cmp r0 (differ 19 or 41). The copy sits just before the branch, which is
-// where gcse's code hoisting would put it, but this is inferred and untested,
-// and that pass is a compiler question, out of scope for a draft.
-// What closed the distance from 129: speed as a local, so 0x18000 is rebuilt
-// at each call and the shot takes r6; the position pointers taken before the
-// height test; near = 0 before them; leader->angle before watchedObject; shot's
-// two bytes as struct members with no pointer (raw bytes stay at 15).
-// struct Shot overlaps Actor's callback at 0x60, so what those bytes are is
-// still open.
-// The counter's 200 goes through the EventWork member, so it needs no s32.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -76,6 +49,9 @@ void Func_020010b4(struct Actor *shot) {
     ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
     Func_02005d6c(shot, gData_020061cc);
+    /* FAKEMATCH(barrier): an empty asm holds the next statement after this
+     * one; as no asm, 2 of 211 instructions differ in tla-en. */
+    asm("");
     return;
   }
   if (((struct Shot *)shot)->unk62 == 0) {

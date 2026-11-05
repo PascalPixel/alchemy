@@ -7,8 +7,8 @@ void Func_02001b50(void) {
   struct Actor *lift;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = leader->x;
-  s32 z = leader->z;
   s32 cellX = x >> 20;
+  s32 z = leader->z;
   s32 cellZ = z >> 20;
   s32 riding = 0;
 

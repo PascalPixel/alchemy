@@ -60,8 +60,8 @@ void Func_020001d0(const void *data) {
       s32 id = list[0];
       struct Actor *object = Actor_GetById(id);
       s32 flag = list[1];
-      s32 nextFlag = flag + 1;
       struct MapCell *cells = map->layers[object->terrainId].cells;
+      s32 nextFlag = flag + 1;
       u8 *shapes =
           gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
 
@@ -70,8 +70,8 @@ void Func_020001d0(const void *data) {
         list += 2;
       } else {
         s32 index = Func_02003db0(object);
-        u8 *cell;
         s32 offset = index * 4;
+        u8 *cell;
         s32 shape, terrainHeight;
 
         index += (s32)shapes;

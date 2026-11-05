@@ -29,9 +29,9 @@ next:
       s32 x = *cell++;
       s32 y = *cell++;
 
-      flag -= 800;
       Map_CopyCells(3, 8, x, y, 1, 1);
       x = *cell++;
+      flag -= 800;
       y = *cell;
       Map_CopyCells(67, 3, x, y, 1, 5);
       if (flag == 1)

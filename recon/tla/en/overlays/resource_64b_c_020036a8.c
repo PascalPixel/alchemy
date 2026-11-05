@@ -80,8 +80,8 @@ void Func_020036a8(void) {
   struct Actor **slot;
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *object = work->viewCenter;
-  s32 zoom = Ram_HeapSlots->mapWork->zoom;
   s32 x = object->x;
+  s32 zoom = Ram_HeapSlots->mapWork->zoom;
   u8 kind = placement->kind;
   s32 z = object->z;
   struct Actor **objects = gData_02006c08;
@@ -113,8 +113,8 @@ top : {
     px = placement->x << 16;
     pz = placement->z << 16;
     if (px > left && px < right && pz > top && pz < bottom) {
-      s32 shown = 1;
       s32 flag = placement->flag;
+      s32 shown = 1;
 
       if (flag != -1) {
         if (flag & 0x1000)
@@ -139,8 +139,8 @@ top : {
           *slot = object;
         }
         if (routine->ownerOverride == 0) {
-          s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
           s32 dx = object->x - leader->x;
+          s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
           s32 reach, dz;
 
           if (dx < 0)

@@ -225,8 +225,8 @@ void Func_02001a30(void) {
       if (i == 5)
         Func_02003df8(204);
       leader->scaleX += -0x400;
-      leader->scaleY += -0x300;
       leader->y += -0x9999;
+      leader->scaleY += -0x300;
       wait(1);
     }
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;

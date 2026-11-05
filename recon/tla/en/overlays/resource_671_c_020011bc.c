@@ -69,7 +69,11 @@ void Func_020011bc(s32 x, s32 z) {
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 13);
-  Actor_Place(leader, x << 16, 0xfff40000, z << 16);
+  {
+    s32 held = 0xfff40000;
+
+    Actor_Place(leader, x << 16, held, z << 16);
+  }
   Func_02005664(leader);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   Func_02005854(123);

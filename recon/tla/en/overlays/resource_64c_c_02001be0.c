@@ -83,9 +83,9 @@ void Func_02001be0(s32 progress) {
   loop:
     {
       s32 odd, j;
-      s32 row = (base / 8) * 32;
       s32 half = i / 2;
       u8 *source = gData_020040d8 + 4;
+      s32 row = (base / 8) * 32;
       u8 *dest = gData_02003fd8 + 4;
 
       source += row;

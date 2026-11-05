@@ -82,8 +82,8 @@ s32 Func_02004d48(s32 first, s32 judge) {
     done = 1;
     for (frame = 0; frame <= 15; frame++) {
       for (id = first; id < first + 4; id++) {
-        racer = Actor_GetById(id);
         stage = ((u8 *)racer)[0x63];
+        racer = Actor_GetById(id);
         if (stage != 0 && stage != 7)
           done = 0;
         Func_02004938(racer, frame, id);

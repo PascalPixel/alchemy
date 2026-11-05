@@ -47,6 +47,9 @@ void Func_0200258c(void) {
     if ((u32)value < 16) {
       value = work->tileBase + ((state->frame >> 1) & 7) * 8;
       sprite->tile = value;
+      /* FAKEMATCH(barrier): an empty asm holds the next statement after this
+       * one; as no asm, 22 of 57 instructions differ in tla-en. */
+      asm("");
       Func_02002a14(sprite, state);
       Func_02002a1c(state, 64, 0);
       state->frame++;

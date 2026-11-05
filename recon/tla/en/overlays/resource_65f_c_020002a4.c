@@ -75,13 +75,13 @@ void Func_020002a4(void) {
     if (i == lineCount)
       goto lines_done;
     {
-      s32 s1 = sine(a);
       s32 s2 = sine(b);
+      s32 s1 = sine(a);
 
       *line = ((s2 * 7 + s1 * 3) >> 19) + x;
       i++;
-      a += stepA;
       line++;
+      a += stepA;
       b += stepB;
     }
     if (i != 160)

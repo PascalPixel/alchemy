@@ -56,7 +56,11 @@ void Func_02000870(void) {
       LemurianShip_ObjSpeed(9, 0x26666, 0x13333);
       Actor_GetById(9)->unk5a[0] &= ~1;
       LemurianShip_ObjWalk(9, 824, 88);
-      FieldEvent_Wait(1);
+      {
+        s32 held = 1;
+
+        FieldEvent_Wait(held);
+      }
       Actor_GetById(9)->unk5a[0] |= 1;
       Func_02002de0(243);
       LemurianShip_ObjEmoteWait(gMainRoutineWork.currentOwner, 0x102);

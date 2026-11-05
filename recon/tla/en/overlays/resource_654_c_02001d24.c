@@ -171,15 +171,15 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_Jump(13, 256, 0);
   ShrineOfTheSeaGod_ObjTurn(12, 0xb000, 0);
   ShrineOfTheSeaGod_ObjTurn(13, 0x3000, 40);
-  ShrineOfTheSeaGod_ObjLaunch(13, 4, 40);
+  Call3((void (*)())ShrineOfTheSeaGod_ObjLaunch, (s32)(13), (s32)(4), (s32)(40));
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  ShrineOfTheSeaGod_ObjMode(12, 3);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjMode, (s32)(12), (s32)(3));
   ShrineOfTheSeaGod_MessagePut(12, 0);
-  ShrineOfTheSeaGod_ObjModeWait(13, 3);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjModeWait, (s32)(13), (s32)(3));
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   ShrineOfTheSeaGod_MessagePut(12, 0);
-  ShrineOfTheSeaGod_ObjMode(12, 3);
-  ShrineOfTheSeaGod_ObjModeWait(13, 3);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjMode, (s32)(12), (s32)(3));
+  Call2((void (*)())ShrineOfTheSeaGod_ObjModeWait, (s32)(13), (s32)(3));
   ShrineOfTheSeaGod_ObjSpeed(12, 0x13333, 0x9999);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x13333, 0x9999);
   callback = gData_02003c58;
@@ -197,7 +197,7 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.currentOwner, 0, 0);
   ShrineOfTheSeaGod_ObjTurn(14, 0x8000, 20);
   ShrineOfTheSeaGod_MessagePut(14, 0);
-  ShrineOfTheSeaGod_ObjMode(14, 2);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjMode, (s32)(14), (s32)(2));
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != NULL)
     Actor_ResetAndSetPosition(14, ((s16 *)&leader->x)[1],

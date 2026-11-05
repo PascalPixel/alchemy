@@ -168,9 +168,9 @@ void Func_020026b8(void) {
   x = 0x4000;
 sweep:
   beam[6] = x;
-  beam[7] = z;
   ((u8 *)Actor_GetById(12))[98] = Random16Far() & 7;
   wait(1);
+  beam[7] = z;
   x += 0x400;
   z += 0xfffffc00;
   if (x != 0x48000)
@@ -197,8 +197,8 @@ flicker:
   i = 0;
 fade:
   REG_BLDALPHA = ((i >> 3) << 8) | (0x10 - (i >> 3));
-  i++;
   FieldEvent_Wait(1);
+  i++;
   if (i != 129)
     goto fade;
   Task_RemoveFar(Func_02000ef4);

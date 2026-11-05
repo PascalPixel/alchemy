@@ -64,8 +64,8 @@ void Func_02000d48(struct Actor *shot) {
     }
     if (near && !GameFlag_Test(0x104)) {
       leader->watchedObject = shot;
-      leader->angle = shot->angle;
       leader->priorityFlags &= ~1;
+      leader->angle = shot->angle;
       ((struct FieldSprite *)leader->animation)->priority =
           ((struct FieldSprite *)shot->animation)->priority;
       {

@@ -56,11 +56,15 @@ void Func_02002ebc(void) {
   wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(Data_02000454), 0);
   leader->motionFlags = 0;
-  leader->y = 0x820000;
   leader->gravity = 0x8000;
+  leader->y = 0x820000;
   leader->bounce = 0;
   Actor_SetSingleChildFlags(Actor_GetById(8), 0);
-  Func_02004098(8, 232 << 16, 148 << 16, 0x4000);
+  {
+    s32 held = 0x4000;
+
+    Call4((void (*)())Func_02004098, (s32)(8), (s32)(232 << 16), (s32)(148 << 16), (s32)(held));
+  }
   monster->motionFlags = 0;
   monster->y = 0x820000;
   monster->gravity = 0x8000;

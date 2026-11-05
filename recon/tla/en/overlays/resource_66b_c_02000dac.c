@@ -72,10 +72,10 @@ void Func_0200119c(u32 *oam, s32 depth);
 
 void Func_02000dac(void) {
   struct SwingWork *work = (struct SwingWork *)(gData_020023c4 + 0x188);
-  struct SwingActor *swing = work->actors;
   s32 k;
-  u32 tile = gResourceTableEntries[work->entry].offset >> 5;
+  struct SwingActor *swing = work->actors;
   s32 frame;
+  u32 tile = gResourceTableEntries[work->entry].offset >> 5;
   u32 *oam = work->oam;
   s32 count = 0;
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -118,8 +118,8 @@ void Func_02000dac(void) {
     *p++ = screenY | x << 16 | 0x40002000;
     *p = (tile + frame) | 0x800;
     Func_0200119c(oam, depth);
-    count++;
     oam += 3;
+    count++;
   next:
     h += 16;
     if (h < swing->height)
@@ -146,7 +146,7 @@ void Func_02000dac(void) {
     *p++ = screenY | x << 16 | 0x40002000;
     *p = (tile + frame - 32) | 0x800;
     Func_0200119c(oam, depth);
-    count++;
     oam += 3;
+    count++;
   }
 }

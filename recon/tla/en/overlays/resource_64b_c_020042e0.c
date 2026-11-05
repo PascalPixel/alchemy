@@ -66,7 +66,11 @@ void Func_020042e0(void) {
   Func_02004e30(164);
   wait(120);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x100;
-  Func_02004d78(0x7fff, 0);
+  {
+    s32 held = 0;
+
+    Func_02004d78(0x7fff, held);
+  }
   Func_02004d88(1);
   QueueIoWriteDelay2(0x04000052, 0x1000);
   wait(1);

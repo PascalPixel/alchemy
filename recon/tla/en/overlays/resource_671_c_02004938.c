@@ -1,3 +1,7 @@
+// Measured 5 November (-Os), differ 41 of 500. Left: the last check's state is
+// read from sp+4 here where the native rebuilds ball + 99 (GCSE), the origin's two
+// reads go through r5 where the native adds to r3 and keeps r5, and the final
+// stores follow from that.
 // Near miss, differ 226 of 500 (tla-en, 2026-10-31): the native keeps the
 // ball in r11, the row in r8 and the heading in r9 (here r8, r9 and r11),
 // gSceneState in r5 through the set-up, and 0x80000 in no register (built
@@ -20,6 +24,7 @@
 // stops with sound 204 (gData_02006f38), except at cell (24, 14), where it
 // is home (7); a goal piece takes it with sound 204.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "iwram_call.h"
 
@@ -45,28 +50,37 @@ void Func_02005854(s32 sound);
 void Func_02005634(struct Actor *object, const u8 *script);
 
 void Func_02004938(struct Actor *ball, s32 step) {
+  /* FAKEMATCH(pin): the board in r5, as the native keeps it; as a plain local,
+   * 127 of 500 instructions differ in tla-en. */
+  register struct SceneState *board asm("r5") = &gSceneState;
   s16 *colp = (s16 *)((u8 *)ball + 100);
-  struct SceneState *board = &gSceneState;
   s32 col = *colp;
   s16 *rowp = (s16 *)((u8 *)ball + 102);
   s32 row = *rowp;
   u8 *headingp = (u8 *)ball + 98;
   s32 heading = *headingp;
   s32 angle = heading << 14;
-  struct PuzzleCell *cell = &board->cells[row * 11 + col];
-  s32 key = (heading << 8) + cell->piece;
-  s32 goal = cell->marked;
+  s32 index = (row * 11 + col) * 4;
+  s32 piece = ((u8 *)board)[index];
+  s32 goal = ((struct PuzzleCell *)(index + (u8 *)board))->marked;
+  s32 key = (heading << 8) + piece;
   s32 d = step - 8;
   s32 arc = step << 10;
   u8 *state;
-  s32 s = Iwram_MulQ16(0x80000, Math_Sine(arc));
-  s32 c = Iwram_MulQ16(0x80000, Math_Cosine(arc));
-  s32 x = ((board->originX + col) << 20) + 0x80000;
-  s32 z = ((board->originZ + row) << 20) + 0x80000;
+  s32 s = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Math_Sine(arc));
+  s32 c = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Math_Cosine(arc));
+  s32 z;
+  s32 x;
 
+  {
+    s16 *origin = &board->originX;
+
+    x = ((origin[0] + col) << 20) + 0x80000;
+    z = ((origin[1] + row) << 20) + 0x80000;
+  }
   state = (u8 *)ball + 99;
   if (goal == 2) {
-    col = row = heading = 0;
+    heading = row = col = 0;
     if (*state == 1) {
       Func_02005854(204);
       Func_02005634(ball, gData_02006f38);
@@ -160,13 +174,13 @@ void Func_02004938(struct Actor *ball, s32 step) {
     angle = arc + 0xc000;
     break;
   case 11:
-    col = row = heading = 0;
+    heading = row = col = 0;
     break;
   case 267:
-    col = row = heading = 0;
+    heading = row = col = 0;
     break;
   case 523:
-    col = row = heading = 0;
+    heading = row = col = 0;
     break;
   case 10:
   case 266:
@@ -187,10 +201,10 @@ void Func_02004938(struct Actor *ball, s32 step) {
     }
     break;
   case 779:
-    col = row = heading = 0;
+    heading = row = col = 0;
     break;
   default:
-    col = row = heading = 0;
+    heading = row = col = 0;
     if (*state == 1) {
       Func_02005854(132);
       Func_02005634(ball, gData_02006ec0);
@@ -207,8 +221,8 @@ done:
   if (((u8 *)ball)[99] == 1) {
     ball->y = 0;
     ball->x = x;
-    ball->z = z;
     ball->angle = angle;
+    ball->z = z;
     ball->unk4c++;
   }
 }

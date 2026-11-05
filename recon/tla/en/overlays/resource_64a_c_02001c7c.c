@@ -189,8 +189,8 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
       struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
 
       for (m = 0; m != 23; m++) {
-        u16 *items = unit->inventory;
         s32 count = 0;
+        u16 *items = unit->inventory;
         s32 quantity;
 
         for (n = 0; n != 15; n++) {

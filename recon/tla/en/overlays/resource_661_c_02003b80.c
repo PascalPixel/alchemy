@@ -66,10 +66,10 @@ s32 Math_Sine(s32 angle);
 
 void Func_02003b80(void) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-  struct RideEntry *entry = work->entries;
   s32 i;
-  u32 tile = gResourceTableEntries[work->entry].offset >> 5;
+  struct RideEntry *entry = work->entries;
   s32 frame;
+  u32 tile = gResourceTableEntries[work->entry].offset >> 5;
   u32 *oam = work->block;
   s32 count = 0;
   struct MapWork *map = Ram_HeapSlots->mapWork;
@@ -100,8 +100,8 @@ void Func_02003b80(void) {
     y = object->y + (h << 16) - originY;
     z = object->z - viewZ - originY;
     sy = z - y;
-    sy = (sy >> 16) - 16;
     x = (x >> 16) - 8;
+    sy = (sy >> 16) - 16;
     depth = ((y + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
       goto next;
@@ -112,8 +112,8 @@ void Func_02003b80(void) {
     *p++ = sy | x << 16 | 0x40002000;
     *p = (tile + frame) | 0x800;
     Func_02003f88(oam, depth);
-    count++;
     oam += 3;
+    count++;
   next:
     h += 16;
     if (h < entry->height)
@@ -128,8 +128,8 @@ void Func_02003b80(void) {
     sy = ((sy + Iwram_MulQ16(-0x20000, Math_Sine(entry->phase)) + -0x20000) >>
           16) -
          4;
-    x = (x >> 16) - 8;
     depth = ((y + z) >> 16) + 58;
+    x = (x >> 16) - 8;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
       continue;
     x &= 511;
@@ -139,7 +139,7 @@ void Func_02003b80(void) {
     *p++ = sy | x << 16 | 0x40002000;
     *p = (tile + frame - 32) | 0x800;
     Func_02003f88(oam, depth);
-    count++;
     oam += 3;
+    count++;
   }
 }

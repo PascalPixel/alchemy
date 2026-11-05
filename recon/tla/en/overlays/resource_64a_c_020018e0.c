@@ -73,8 +73,8 @@ void Func_020018e0(s32 mode, u8 *in) {
   s32 bit;
 
   levelBits = in[0] | in[1] << 8 | in[2] << 16 | (in[3] & 0xf0) << 20;
-  djinnBits = (in[3] & 0x0f) | in[4] << 4 | in[5] << 12 | in[6] << 20;
   flagBits = in[7];
+  djinnBits = (in[3] & 0x0f) | in[4] << 4 | in[5] << 12 | in[6] << 20;
   keyItemBits = in[8];
 
   if (mode != 2) {

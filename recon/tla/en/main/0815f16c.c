@@ -1120,25 +1120,22 @@ CLEAR(buffer, 0x1000);
       Transform_SetLookAt(bg, (u8 *)bg + 12);
       if (frame > 3) {
         if (kind == 79) {
+          struct Particle *r = work->particle;
           for (i = 0; i != 64; i++) {
-            p = &work->particle[i];
-            if (p->life > 0) {
+            r = &work->particle[i];
+            if (r->life > 0) {
                 s32 n;
-              n = (p->life >> 2) + 1;
+              n = (r->life >> 2) + 1;
               if (n > 10)
                 n = 10;
-              EffectPosition_ProjectPoint(p, point);
+              EffectPosition_ProjectPoint(r, point);
               point[0] = point[0] / 2;
               drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1],
                                 point[0] - n / 2, point[1] - n, n, n * 2);
-              {
-                s32 gravity;
-                gravity = 0;
-                if (kind != 89)
-                  gravity = -0x800;
-                BattleEffectKernels_IntegrateVector3(p, 62, gravity);
-              }
-              p->life -= 2;
+              { s32 gravity;
+              if (kind == 89) gravity = 0; else gravity = -0x800;
+              BattleEffectKernels_IntegrateVector3(r, 62, gravity); }
+              r->life -= 2;
             }
           }
         } else {

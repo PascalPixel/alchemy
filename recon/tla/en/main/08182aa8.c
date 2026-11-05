@@ -317,7 +317,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   s32 sh;
   s32 ty;
   s32 spin;
-  s32 zero = 0;
+  s32 zero;
   s16 list[14];
   s32 place[4];
   struct WordPair req;
@@ -342,6 +342,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
+  zero = 0;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);

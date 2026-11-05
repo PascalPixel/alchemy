@@ -1,32 +1,3 @@
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 20 of
-// 386; a greedy device search found nothing lower.
-// Draft (tla-en): listing 386 instructions, draft 386, common 374, differ 24.
-// The body of effect kinds 348, 353, 389 and 431 (BattleEffect_RunSpasm to
-// BattleEffect_RunSack in variant_k.c pass modes 0 to 3). Written from the
-// listing; ☀️'s BattleEffect_RunFortyEightFrameEffect has the same frame count
-// and shape (0.55) but is not its twin.
-// The shape matches, including the three mirrored copies as indexed loops
-// (written with walking pointers loop.c makes outer givs of them: differ
-// 206). Left: in each copy's inner loop the native steps the left pointer
-// before its second load (ldrb, add r4, strb, add r0, ldrb, add r2, strb,
-// sub r1); the draft loads first. After the calls the native loads the
-// pool word (IwramClearWords, IwramCopyWords, BG2PA's 0x100) before the
-// neighbouring constant, and the first "mov r3, #192" comes after the
-// argument's spill. u32 or u8 counters and a s8 canvas change nothing.
-// The copy loops' order is what sched2 gives when a load after a store to
-// the canvas waits two cycles (here one): the second ldrb is ready at
-// once and goes before the left pointer's add. Measured against it: an
-// empty asm or a volatile memory barrier between the copies (loop.c
-// then rebuilds the row pointers: differ 166), a one-pass block around
-// the second copy (differ 278), a volatile load or store (the address
-// givs no longer combine: 166 to 267), an asm with an unused output
-// (deleted), and walking pointers per row (206).
-// 2026-10-15 (lane N2): rewritten with the work struct, one mirroring macro
-// for the three copies and named constants; the same 386 instructions and
-// differ 24.
-// Resources 0x13c (BattleEffect_EarthWallSheet), 0x148 (BattleEffect_OrangePaletteB),
-// 0x129 (BattleEffect_FireballSheet) and 0x150 (BattleEffect_MarsDjinnSheet) need
-// their names in gamepak/resource_directory.s when this is adopted.
 #include "battle_effect_work.h"
 #include "effect_step.h"
 #include "io_reg.h"
@@ -99,8 +70,7 @@ void Resource_LoadAndDecompress(s32 resourceId, void *target, s32 unpack,
 void *Resource_GetTableEntry(s32 resourceId);
 s32 Task_Add(s32 func, s32 priority);
 s32 Task_Remove(s32 func);
-void EffectPosition_ProjectBattler(
-    s32 id, struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
@@ -119,6 +89,18 @@ void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_EndCanvasLayer(void);
+
+static inline s32 ClearWords(void *destination, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_ClearWords, 2 of 386 instructions differ in tla-en. */
+  return Iwram_ClearWords(destination, size);
+}
+
+static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 4 of 386 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
 
 // A symmetrical burst over the target. Three half-pictures of the earth
 // wall sheet are mirrored into three 64x64 cels; the burst grows through
@@ -142,22 +124,19 @@ void Func_0817e698(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet,
                              work->sheet + PICTURE_OFFSET, 1, 1);
-  Iwram_ClearWords(work->sheet, 0x4000);
+  ClearWords(work->sheet, 0x4000);
   MIRROR_HALF(0, PICTURE_OFFSET + 0xa8e, 17, 49)
   MIRROR_HALF(1, PICTURE_OFFSET + 0xdcf, 19, 55)
   MIRROR_HALF(2, PICTURE_OFFSET + 0x11e4, 20, 64)
   if (mode == 3)
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+    CopyWords((void *)BG_PLTT,
+              Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   else if (mode == 2)
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_FireballSheet),
-                    128);
+    CopyWords((void *)BG_PLTT,
+              Resource_GetTableEntry((s32)&ResourceId_FireballSheet), 128);
   else
-    Iwram_CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet),
-                    128);
+    CopyWords((void *)BG_PLTT,
+              Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
 
   // Centre the canvas's x 64 on the target.
   EffectPosition_ProjectBattler(effect->actors[0], &target);

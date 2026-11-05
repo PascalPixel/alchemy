@@ -631,8 +631,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           if (b > 31) {
             b = 31;
           }
-          *dst++ = b << 10 | g << 5 | r;
           src2++;
+          *dst++ = b << 10 | g << 5 | r;
         }
       }
     }
@@ -1030,8 +1030,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 602) <= 15 || (u32)(frame - 630) <= 3) {
       s32 n = 1;
-      s32 base = Random16() % 3;
       s32 sx = 0x50000;
+      s32 base = Random16() % 3;
       s32 spread = 8;
 
       if (frame > 611) {
@@ -1532,8 +1532,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s32 a = Random16();
           s32 b = Random16();
 
-          a = (a & 7) - 4;
           b = (b & 7) + 28;
+          a = (a & 7) - 4;
           gBgScroll[1].x = a;
           gBgScroll[1].y = b;
           work->shakeFrames--;

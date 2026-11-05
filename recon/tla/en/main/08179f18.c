@@ -93,7 +93,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  const void *pixels;
+  u8 *pixels;
 };
 
 struct RenderModel {

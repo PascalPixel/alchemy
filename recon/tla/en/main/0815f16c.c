@@ -682,6 +682,7 @@ CLEAR(buffer, 0x1000);
   for (frame = 0; frame != 32; frame++) {
     struct Particle *p;
     s32 n;
+    s32 *q;
     count = 0;
     p = work->particle;
     for (i = 0; i != 64; i++, p++) {
@@ -692,21 +693,22 @@ CLEAR(buffer, 0x1000);
           Func_080150e4(p->vz);
           SceneTransform_ApplyPitch(p->vx);
           SceneTransform_ApplyYaw(p->vy);
-          EffectPosition_ProjectPoint(p, pos);
-          pos[0] = pos[0] / 2 + base[0];
+          q = pos;
+          EffectPosition_ProjectPoint(p, q);
+          q[0] = q[0] / 2 + base[0];
           if (kind <= 37)
-            pos[1] = pos[1] + base[1] - 8;
+            q[1] = q[1] + base[1] - 8;
           else if (kind == 65)
-            pos[1] = pos[1] + base[1] + 44;
+            q[1] = q[1] + base[1] + 44;
           else
-            pos[1] = pos[1] + base[1] + 12;
-          if (pos[2] < -60)
-            pos[2] = -60;
-          if (pos[2] > 60)
-            pos[2] = 60;
-          pos[2] += 60;
+            q[1] = q[1] + base[1] + 12;
+          if (q[2] < -60)
+            q[2] = -60;
+          if (q[2] > 60)
+            q[2] = 60;
+          q[2] += 60;
           drawFuncs.draw[1](screen, (u8 *)tiles + gData_08197410[n - 1],
-                            pos[0] - n / 2, pos[1] - n, n, n * 2);
+                            q[0] - n / 2, q[1] - n, n, n * 2);
           p->x -= 4;
         }
         count++;
@@ -714,10 +716,11 @@ CLEAR(buffer, 0x1000);
     }
     if (kind <= 37 && count < 64) {
       Render_ResetTransformState();
+      q = pos;
       Transform_SetLookAt(bg, (u8 *)bg + 12);
       EffectPosition_ProjectPoint(origin, pos);
-      pos[0] = pos[0] / 2;
-      drawFuncs.draw[0](screen, buffer + 0x3c56, pos[0] - 10, pos[1] - 4, 20,
+      q[0] = pos[0] / 2;
+      drawFuncs.draw[0](screen, buffer + 0x3c56, q[0] - 10, q[1] - 4, 20,
                         40);
     }
     work->unk78e8 = 1;

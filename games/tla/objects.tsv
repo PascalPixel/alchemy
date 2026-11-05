@@ -311,13 +311,18 @@ main	rom_main_01	games/tla/src/field/script/offset	.text
 main	rom_main_01	games/tla/src/field/script/f025160	.text	en de es fr it ja
 main	rom_main_01	games/tla/src/field/script/f025428	.text
 main	rom_main_01	games/tla/src/field/script/approach_watched	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00025698	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00025698	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00025698	es
-main	rom_main_01	recon/tla/de/rom	.rom.00025698	de
-main	rom_main_01	recon/tla/raw/08025698	.text	en
+main	rom_main_01	games/tla/src/field/script/f025698	.text	it
+main	rom_main_01	recon/tla/it/rom	.rom.00025830	it
+main	rom_main_01	games/tla/src/field/script/f025698	.text	fr
+main	rom_main_01	recon/tla/fr/rom	.rom.00025830	fr
+main	rom_main_01	games/tla/src/field/script/f025698	.text	es
+main	rom_main_01	recon/tla/es/rom	.rom.00025830	es
+main	rom_main_01	games/tla/src/field/script/f025698	.text	de
+main	rom_main_01	recon/tla/de/rom	.rom.00025830	de
+main	rom_main_01	games/tla/src/field/script/f025698	.text	en
 main	rom_main_01	recon/tla/raw/08025830	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00025698	ja
+main	rom_main_01	games/tla/src/field/script/f025698	.text	ja
+main	rom_main_01	recon/tla/ja/rom	.rom.00025830	ja
 main	rom_main_01	games/tla/src/field/script/operands	.text
 main	rom_main_01	games/tla/src/field/script/script_operand_position	.text
 main	rom_main_01	recon/tla/it/rom	.rom.00025c8a	it

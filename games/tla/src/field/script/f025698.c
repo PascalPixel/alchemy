@@ -1,14 +1,3 @@
-// Draft, differ 20 of 188 (2026-10-26, 28 before): each probe copies y after
-// z. Earlier notes follow.
-// Near miss, differ 28 of 188, all instruction order (the same 188
-// instructions): The Broken Seal's Actor_Wander on this game's headers. Where
-// a position is copied field by field before a call, the native puts one
-// argument instruction between each store and the next load (str x; lsls r1;
-// ldr y; add r1, sl; str y; mov r0, r8; ldr z); here each load follows its
-// store at once and the argument instructions fill only the load-to-store slots
-// (sched2: the next load has priority 40, the argument chain 36). At the top
-// the native stores both limit values before it clears tries; tries cleared
-// after the square in source is differ 66.
 #include "types.h"
 #include "field.h"
 #include "system.h"
@@ -29,7 +18,7 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *position);
 s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 
-s32 Actor_Wander(struct ActorScriptView *object) {
+s32 Func_08025698(struct ActorScriptView *object) {
   struct FieldPosition pos;
   struct FieldPosition probe;
   s32 base;
@@ -62,24 +51,24 @@ retry:
     if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
                                   (s32 *)&pos) != 0)
       goto retry;
-    if (Map_CheckObjectStep((struct Actor *)object, &pos) != 0)
+    if (Func_0802d87c((struct Actor *)object, &pos) != 0)
       goto retry;
     radius += 0x80000;
     probe.x = object->x;
-    probe.z = object->z;
     probe.y = object->y;
+    probe.z = object->z;
     Vector_AddPolarOffset(radius, heading, &probe);
     probe.x = object->x;
-    probe.z = object->z;
     probe.y = object->y;
+    probe.z = object->z;
     Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
-    if (Map_CheckObjectStep((struct Actor *)object, &probe) != 0)
+    if (Func_0802d87c((struct Actor *)object, &probe) != 0)
       goto retry;
     probe.x = object->x;
-    probe.z = object->z;
     probe.y = object->y;
+    probe.z = object->z;
     Vector_AddPolarOffset(radius, heading - 0x2000, &probe);
-    if (Map_CheckObjectStep((struct Actor *)object, &probe) != 0)
+    if (Func_0802d87c((struct Actor *)object, &probe) != 0)
       goto retry;
     do {
       dx = pos.x / 0x10000 - object->homeX;
@@ -93,7 +82,16 @@ retry:
   object->turnedBack = 1;
   return 0;
 found:
-  Actor_SetMoveTarget((struct Actor *)object, pos.x, pos.y, pos.z);
+  {
+    /* FAKEMATCH(pin): the object in r0 ahead of the target's words; as a plain
+     * argument, 2 of 188 instructions differ in tla-en. */
+    register struct Actor *moved asm("r0") = (struct Actor *)object;
+
+    /* FAKEMATCH(barrier): an empty asm after the pin, which holds it ahead; without
+     * it, 2 of 188 instructions differ in tla-en. */
+    asm("");
+    Actor_SetMoveTarget(moved, pos.x, pos.y, pos.z);
+  }
   object->scriptCursor += 4;
   return 1;
 }

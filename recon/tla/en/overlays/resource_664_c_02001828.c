@@ -1,3 +1,7 @@
+// Draft, differ 20 of 1527 (tla-en, 5 November 2026): order ties only, the cell
+// stores ahead of the gust's as in Func_0200095c, the target read at each use.
+// Left: motionFlags' strb and the watched-object store in the pick-up block, ldr r5
+// and movs r1 at steps.
 // Under -Os, 5 November: differ 52 of 1527 (tla-en); older figures below predate it.
 // Measured 5 November (-Os), differ about 89 of 1527: while loops bring the
 // allocation to the native's. Left: the argument to Func_02005d8c shifts a copy of
@@ -226,19 +230,17 @@ void Func_02001828(void) {
   } while (hit == 0);
   Func_02000690(2, cell.x, cell.z);
   {
-  struct Actor *target = TARGET(effect);
-  s32 dx = dir.x;
   s32 x;
   s32 z;
 
   steps -= 2;
-  x = ((s16 *)&target->x)[1] + ((steps * dx) << 3);
-  z = ((s16 *)&target->z)[1] + ((steps * dir.z) << 3);
+  x = ((s16 *)&TARGET(effect)->x)[1] + ((steps * dir.x) << 3);
+  z = ((s16 *)&TARGET(effect)->z)[1] + ((steps * dir.z) << 3);
   ((struct FieldSprite *)gust->animation)->priority = 1;
+  cell.x = x;
+  cell.z = z;
   gust->speedLimit = 0x40000;
   gust->acceleration = 0x40000;
-  cell.z = z;
-  cell.x = x;
   Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
   Call2((void (*)())Func_02005ed4, 0x50000, 0x50000);
   z <<= 16;
@@ -330,9 +332,12 @@ void Func_02001828(void) {
       }
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
-        one = 0x10000; // 1.0 in 16.16
-        dust.startScaleX = dust.startScaleY =
-            (Random16Far() & 0xffff) + one;
+        {
+          s32 random = Random16Far();
+
+          one = 0x10000; // 1.0 in 16.16
+          dust.startScaleX = dust.startScaleY = (random & 0xffff) + one;
+        }
         velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = one;
         velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);

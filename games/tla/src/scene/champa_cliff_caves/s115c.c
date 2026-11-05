@@ -1,18 +1,4 @@
-// Draft, differ 2 of 613 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
-// Func_0200115c: differ 2 of 613. One pair is left: after the fourth
-// Func_0200343c the native shifts the scale (lsls r5) before it adds the object
-// to the flags offset (adds r2, r2, r7); here the add has five dependents and
-// the shift three, because the barriers below hide the later stores of r5. What
-// this draft measured: every call with a constant goes through a scene inline
-// (direct calls share their costly constants in r5 to r10: differ 298); the two
-// palette rows are read with one walking pointer; the locals are declared
-// current, target, position. The asm barriers are devices, each needed for one
-// pair: before the object fields, after each launch (which is also called as
-// returning a value, so r0 loads last), around the target address in the
-// palette copy, and after the party pointer. A do-while block in their place
-// moves the hoisted zero out of r10.
-#include "../../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
+#include "scene.h"
 #include "scene_ids.h"
 #include "flag_call.h"
 
@@ -56,65 +42,51 @@ void Func_02002f58(struct Position *position);
 void Func_02001138(void);
 
 static __inline__ void Func_0200351c_(s32 actor, s32 value, s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 44 of
+   * 613 instructions differ in tla-en. */
   Func_0200351c(actor, value, frames);
 }
 
 static __inline__ void Func_02003544_(s32 actor, s32 value, s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 41 of
+   * 613 instructions differ in tla-en. */
   Func_02003544(actor, value, frames);
 }
 
 static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 2 of
+   * 613 instructions differ in tla-en. */
   Func_020034d4(actor, x, z);
 }
 
-static __inline__ void Camera_MoveWithinMapBounds_(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
-  Camera_MoveWithinMapBounds(a, b, c, d);
-}
-
 static __inline__ void Func_0200343c_(s32 x, s32 z, s32 a, s32 b) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 32 of
+   * 613 instructions differ in tla-en. */
   Func_0200343c(x, z, a, b);
 }
 
 static __inline__ void Func_02003434_(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 58 of
+   * 613 instructions differ in tla-en. */
   Func_02003434(a, b, c);
 }
 
-static __inline__ void Actor_ResetAndSetPositionInMode2_(s32 actor,
-                                                                s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
-  Actor_ResetAndSetPositionInMode2(actor, x, z);
-}
-
-static __inline__ void Actor_SetPositionAndReset_(s32 actor, s32 x,
-                                                         s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+static __inline__ void Actor_SetPositionAndReset_(s32 actor, s32 x, s32 z) {
+  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 2 of
+   * 613 instructions differ in tla-en. */
   Actor_SetPositionAndReset(actor, x, z);
 }
 
 static __inline__ void Actor_SetSpeedParameters_(s32 id, s32 speed,
-                                                        s32 acceleration) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+                                                 s32 acceleration) {
+  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 6 of
+   * 613 instructions differ in tla-en. */
   Actor_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void FieldMessage_ShowAtActor_(s32 speaker, s32 flags) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH(wrapper): forwarded through this inline; as a direct call, 35 of
+   * 613 instructions differ in tla-en. */
   ((s32 (*)(s32, s32))FieldMessage_ShowAtActor)(speaker, flags);
 }
 
@@ -123,7 +95,6 @@ void Func_0200115c(void) {
   struct Palette5 target;
   struct Position position;
   const u16 *colour;
-  u16 *to;
   struct MainRoutineWork *party;
   struct FieldActor *object = Actor_GetById(13);
 
@@ -137,7 +108,7 @@ void Func_0200115c(void) {
     Func_0200350c((s32)MsgBackForMore);
     Func_0200351c_(11, 0, 5);
     Func_0200362c(36);
-    Camera_MoveWithinMapBounds_(664 << 16, -1, 0x1000000, 1);
+    Camera_MoveWithinMapBounds(664 << 16, -1, 0x1000000, 1);
     Func_02003564();
     FieldEvent_Wait(5);
     Motion_SetModeAndWaitAnimation(8, 4);
@@ -150,7 +121,7 @@ void Func_0200115c(void) {
     Func_0200351c_(11, 0, 5);
     Func_0200362c(36);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
-    Camera_MoveWithinMapBounds_(664 << 16, -1, 0x1000000, 1);
+    Camera_MoveWithinMapBounds(664 << 16, -1, 0x1000000, 1);
     Func_02003564();
     FieldEvent_Wait(5);
     Actor_Jump(11, 6, 15);
@@ -248,13 +219,11 @@ void Func_0200115c(void) {
     WORD_AT(object, 72) = 0x4000;
     object->motionFlags = 2;
     object->terrainHeight = 0xfc190000;
-    ((s32 (*)(s32, s32, s32))Actor_Jump)(12, 10, 0);
-    /* FAKEMATCH: barrier, see the header. */
-    __asm__("");
+    Actor_Jump(12, 10, 0);
     Func_0200362c(146);
     Actor_SetSpritePriority(12, 1);
     Actor_SetSpeedParameters_(12, 0x30000, 0x18000);
-    Actor_ResetAndSetPositionInMode2_(12, 644, 248);
+    Actor_ResetAndSetPositionInMode2(12, 644, 248);
     FieldEvent_Wait(21);
     Func_020034d4_(12, 0, 0);
     FieldEvent_Wait(50);
@@ -265,21 +234,16 @@ void Func_0200115c(void) {
     colour = (const u16 *)0x050000e4;
     current.colour[0] = *colour++;
     current.colour[1] = *colour++;
-    /* FAKEMATCH: barrier, see the header. */
-    __asm__("");
-    to = target.colour;
-    /* FAKEMATCH: the target address is taken here, see the header. */
-    asm volatile("" : "+l"(to));
     current.colour[2] = *colour++;
     current.colour[3] = *colour++;
     current.colour[4] = *colour++;
     colour = (const u16 *)0x050001a4;
-    to[0] = *colour++;
-    to[1] = *colour++;
-    to[2] = *colour++;
-    to[3] = *colour++;
-    to[4] = *colour++;
-    Func_02000734(&current, (struct Palette5 *)to, 48);
+    target.colour[0] = *colour++;
+    target.colour[1] = *colour++;
+    target.colour[2] = *colour++;
+    target.colour[3] = *colour++;
+    target.colour[4] = *colour++;
+    Func_02000734(&current, &target, 48);
     FieldEvent_Wait(20);
     Func_0200362c(194);
     position.x = 0x02960000;
@@ -295,14 +259,15 @@ void Func_0200115c(void) {
     WORD_AT(object, 24) = 0x4000;
     WORD_AT(object, 108) = (s32)Func_02001138;
     WORD_AT(object, 28) = 0x4000;
-    ((s32 (*)(s32, s32, s32))Actor_Jump)(13, 11, 0);
+    Actor_Jump(13, 11, 0);
     Func_0200362c(147);
     Actor_SetSpeedParameters_(13, 0x33333, 0x19999);
     Actor_SetPositionAndReset_(13, 584, 248);
     Party_SetFields1f2And1f4((s32)&SceneId_Ov685Room4, 98);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov685Room4, 99);
     party = &gMainRoutineWork;
-    /* FAKEMATCH: barrier, see the header. */
+    /* FAKEMATCH(barrier): holds the 2's store after the party pointer; as no
+     * asm, 10 of 613 instructions differ in tla-en. */
     __asm__("");
     party->battleRule24b = 2;
     Func_0200357c(12, 5);

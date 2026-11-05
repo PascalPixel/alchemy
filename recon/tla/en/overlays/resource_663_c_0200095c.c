@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 289 of 632 (tla-en); older figures below predate it.
 // Draft, differ 490 of 632, skeleton gap 53/55 (tla-en, 2026-11-01)
 // Whirlwind in Air's Rock: a gust (object type 280)
 // rises from the target (the effect work's object at 0x14) and grows,

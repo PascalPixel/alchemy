@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 14 of 247 (tla-en); older figures below predate it.
 // Draft, differ 64 of 247: Func_0200306c's twin for the second statue.
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "event_work.h"

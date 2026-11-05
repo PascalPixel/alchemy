@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 6 of 145 (tla-en); older figures below predate it.
 // Draft, differ 107 of 145, skeleton gap 27 (tla-en, 2026-11-01)
 // Overlay 674's palette queue step, the twin of ☀️'s PaletteCycle_Step and of
 // the main image's PaletteQueue_StepCycles behind three event-work checks.

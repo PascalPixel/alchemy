@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 122 of 184 (tla-en); older figures below predate it.
 // Draft, differ 63 of 184 (was 65): an object's update: while none of the
 // event work's four busy counters (0x15a, 0x15e, 0x166, 0x168) is set it
 // counts frames in its action parameter, and at 240 (playing cue 202 unless

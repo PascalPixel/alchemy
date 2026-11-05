@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 26 of 126 (tla-en); older figures below predate it.
 // Draft, differ 56 of 126, skeleton gap 0 (tla-en, 2026-11-01): overlay 674's
 // copy of overlay 668's Func_020040ec (the same listing, calling Func_02003790
 // where 668 calls Map_FillCellRectByte2). The instruction stream matches; only

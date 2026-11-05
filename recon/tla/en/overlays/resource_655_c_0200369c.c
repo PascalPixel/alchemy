@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 12 of 86 (tla-en); older figures below predate it.
 // Draft of Func_0200369c (overlay 655), differ 12 of 86: the room entry of
 // Func_02003aa0 with its own cells. One spot is left: the native reads the
 // entrance as an unsigned halfword (ldrh r5), tests 11 to 39 on it, and

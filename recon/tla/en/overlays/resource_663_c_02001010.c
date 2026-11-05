@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 34 of 543 (tla-en); older figures below predate it.
 // Measured 5 November (-Os), differ 37 to 40 of 543: the end's last set is
 // `orrs r5, r3; strb r5`, the result tied to the shared 1 as in overlay 64d's
 // Func_02000510. `shared |= *flags; *flags = shared;` gives that shape; the set

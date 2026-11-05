@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 4 of 30 (tla-en); older figures below predate it.
 // Near miss, differ 6 of 30 (tla-en, 2026-10-31): scheduler order only. The
 // native loads the address of gData_02006294 first, issues the ldrb of byte
 // 0x17 one slot after the store to gData_02006294 (subs r3, #13 between) and

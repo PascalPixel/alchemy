@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 24 of 145 (tla-en); older figures below predate it.
 // Draft, differ 75 of 145, skeleton gap 13/16 (tla-en, 2026-11-01)
 // Func_02000d3c's companion: the map's two scrolling layers (0x108 and 0x178)
 // climb 352 pixels at once while a layer fades in (frames 17 to 79), then

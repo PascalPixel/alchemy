@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 81 of 110 (tla-en); older figures below predate it.
 // Draft, differ 61 of 110, skeleton gap 12 (tla-en, 2026-11-01): Garoh's
 // scanline wave, building 160 BG offsets from two sines and starting an HBlank
 // DMA. The gap is 7 listing instructions missing and 12 added, all from the

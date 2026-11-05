@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 20 of 57 (tla-en); older figures below predate it.
 // Draft, differ 22 of 57 (was 54), registers only: the Venus Lighthouse
 // entrance's spark animation, each live spark (frame below 16) stepping its
 // tile through eight frames from the tile base. One local carrying both the

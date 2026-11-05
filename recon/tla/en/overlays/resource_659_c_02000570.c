@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 22 of 72 (tla-en); older figures below predate it.
 // Near miss, differ 24 of 72: the listing loads x = 0x02000000 for actor 9 from
 // the literal pool in both branches, where this draft builds it as 128 << 18
 // (the split constant; 0x1d80000 for actor 10 is built in both). No compiled ⚓️

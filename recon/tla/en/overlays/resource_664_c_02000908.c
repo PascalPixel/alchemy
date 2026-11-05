@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 33 of 58 (tla-en); older figures below predate it.
 // Draft, differ 47 of 58: places the objects of a list ended by 0xffff: each
 // entry (three halfwords) names an object, the first of its three script
 // choices and the flag that picks between them; the object stops moving,

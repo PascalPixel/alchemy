@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 24 of 61 (tla-en); older figures below predate it.
 // Draft, differ 34 of 61: overlay 663's copy of overlay 691's Func_020006cc
 // (the same listing, calling Func_02000348 where 691 calls
 // MapCell_GetAttributes), whose draft holds its notes.

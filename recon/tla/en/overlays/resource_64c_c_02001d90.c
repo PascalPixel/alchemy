@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 37 of 75 (tla-en); older figures below predate it.
 // Draft, differ 49 of 75: overlay 64b's Func_020048f4 (the cursor over the
 // leader and its gauge), which this overlay has instruction for instruction
 // under its own names; its draft is resource_64b_c_020048f4.c and its

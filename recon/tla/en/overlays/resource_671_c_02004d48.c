@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 87 of 230 (tla-en); older figures below predate it.
 // Draft, differ 99 of 230, skeleton gap 19 (tla-en, 2026-11-01)
 // Runs a race of the four objects from `first` (two teams of two): sets each
 // one's starting place and stage, steps them all with Func_02004938 sixteen

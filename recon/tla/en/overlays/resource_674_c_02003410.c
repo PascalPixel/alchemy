@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 31 of 42 (tla-en); older figures below predate it.
 // Draft of overlay 674's Func_02003410, its palette queue's allocation (the
 // main image's PaletteQueue_Initialize with other loops), differ 30
 // of 42. The native keeps the queue in r0, the entry in r4 and i in r5,

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 23 of 133 (tla-en); older figures below predate it.
 // Draft, differ 38 of 133: sets flag 0x208 or 0x209 while the leader
 // stands on a lift's cell (27, 12 or 37, 14), and 0x17d while on either.
 // Left: register choice only (r5 and r6, r8 and r10 swapped).

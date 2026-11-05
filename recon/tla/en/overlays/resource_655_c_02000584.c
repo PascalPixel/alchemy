@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 8 of 150 (tla-en); older figures below predate it.
 // Draft, differ 62 of 150, skeleton gap 12 (tla-en, 2026-11-01)
 // Func_020001d0 with actors 8 to 10 placed at the leader first and attributes
 // copied for set flags. Ported from 67F's Func_02000584, the same function; the

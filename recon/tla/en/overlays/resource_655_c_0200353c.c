@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 69 of 79 (tla-en); older figures below predate it.
 // Draft of Func_0200353c (overlay 655; Func_020035ec is the same search with
 // other cells): the block layout and the instructions match, the registers
 // do not (differ 85 of 79 by position): the native keeps the flag in r5 and

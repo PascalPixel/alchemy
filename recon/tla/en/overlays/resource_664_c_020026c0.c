@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 36 of 70 (tla-en); older figures below predate it.
 // Draft, differ 38 of 70: once the controlled character stands still on
 // another cell, puts back the cell attributes Func_02002898 saved at
 // (73, 72) and forgets the cell; in scene 0x59 it also records the kind of

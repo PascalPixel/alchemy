@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 39 of 247 (tla-en); older figures below predate it.
 // Draft, differ 56 of 247, skeleton gap 5/7 (tla-en, 2026-11-01)
 // Receiving clear data over the link cable: waits for a peer with a matching
 // signature, then the transfer, and copies the received flags and units in.

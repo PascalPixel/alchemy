@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 131 of 484 (tla-en); older figures below predate it.
 // Draft, differ 146 of 484 (was 218): a beam of light in Air's Rock: BG0 is
 // hidden while its tiles (two blocks) and its map (offset to its tiles and
 // copied in 18 rows of 32 bytes) are loaded; object 12 glows (Func_0200092c)

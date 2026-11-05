@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 6 of 53 (tla-en); older figures below predate it.
 // Near miss, differ 10 of 53: the wave table builder. HBlank's
 // Func_02001558 (wave.c) streams the line table this fills: each of the 160
 // lines is the layer's y plus a sine of (frame - line - y + 160). Plain

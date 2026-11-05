@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 20 of 169 (tla-en); older figures below predate it.
 // Draft, differ 63 of 169 (was 81): when actor `id` stands at x 76 and actor
 // 15 has reached x 76 too, inside an event: the actor rocks over for 18
 // frames, is thrown down to (1193, 530) with the screen shaking (cues 188 and

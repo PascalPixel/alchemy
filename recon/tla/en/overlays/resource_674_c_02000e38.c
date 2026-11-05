@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 58 of 445 (tla-en); older figures below predate it.
 // Draft, differ 73 of 445, skeleton gap 10 removed, 11 added (tla-en, 2026-11-01)
 // The Islets' trade of the milk (item 454) with object 11: with the milk in the
 // party, object 11 turns and hops toward the leader (MsgSniffSniffI), the two

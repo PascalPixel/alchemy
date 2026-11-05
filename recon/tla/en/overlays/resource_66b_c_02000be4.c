@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 76 of 213 (tla-en); older figures below predate it.
 // Draft, differ 106 of 213: updates the swinging actors recorded by
 // Func_02001068 (16 records of gData_020023c4 + 0x188): at each end of its
 // period an actor plays cue 206 or 395 and starts rising or sinking, its

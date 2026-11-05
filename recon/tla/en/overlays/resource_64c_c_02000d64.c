@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 138 of 260 (tla-en); older figures below predate it.
 // Draft, differ 155 of 260, skeleton gap 9 (tla-en, 2026-11-01)
 // Overlay 64b's Func_020036a8 (the world map's placed objects, shown and
 // hidden as the view moves) under this overlay's names: shows the objects

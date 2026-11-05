@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 68 of 131 (tla-en); older figures below predate it.
 // Draft, differ 85 of 131, skeleton gap 11/8 (tla-en, 2026-11-01)
 // Lowers the cells under the held actor (or the one the leader carries) and
 // keeps it at 0xcbc of the event work.

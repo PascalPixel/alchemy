@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 34 of 390 (tla-en); older figures below predate it.
 // Draft, differ 85 of 390 (was 86; ja 90 of 386 before): Yampi Desert Cave's
 // map setup for its three rooms: pillars, palette cycle, Retreat destination,
 // BG priorities and the chest follower. Left: register choice and the native

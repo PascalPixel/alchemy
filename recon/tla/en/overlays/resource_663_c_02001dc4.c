@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 46 of 193 (tla-en); older figures below predate it.
 // Draft, differ 83 of 193, skeleton gap 25 (13 removed, 12 added) (tla-en,
 // 2026-11-01)
 // A rockfall at (x, z): twelve dust effects scattered over 64 by 64 pixels

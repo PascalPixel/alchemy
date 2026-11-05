@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 51 of 119 (tla-en); older figures below predate it.
 // Draft, differ 126 of 119, skeleton gap 21 (tla-en, 2026-11-01)
 // Two label-and-goto loops over the 8 by 11 cells keep every field offset in
 // the body, as the native does; the old inline wrapper and real for loops are

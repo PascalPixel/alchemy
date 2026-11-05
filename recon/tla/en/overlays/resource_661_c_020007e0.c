@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 34 of 130 (tla-en); older figures below predate it.
 // Draft, differ 34 of 130 (was 81): the reverse of Func_020006ac, lowering
 // each listed pillar whose flag is clear and clearing flag 0x20b. The walk is
 // a goto loop entered by a first test of the end mark, as the native has the

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 15 of 58 (tla-en); older figures below predate it.
 // Draft, differ 71 of 58: adds a red, green and blue step to each colour
 // of a palette, clamped to 0 to 31. Left: register choice (the native keeps
 // count in r7 and the shifted colour in r8, and reads the blue step from its

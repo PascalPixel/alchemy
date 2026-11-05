@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 198 of 305 (tla-en); older figures below predate it.
 // Draft, differ 210 of 305, skeleton gap 88 (tla-en, 2026-11-01)
 // Re-measured after the compiler change; -mthumb-slow-loads is gone, so the old
 // sched2 notes here went with it. The source is unchanged: nothing plain beat it.

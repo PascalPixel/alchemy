@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 46 of 714 (tla-en); older figures below predate it.
 // Draft, differ 57 of 714, skeleton gap 10 (tla-en, 2026-11-01)
 // The Venus Djinni (actor 9) joins on the world map and offers its tutorial,
 // as The Broken Seal's WorldMap_MeetFlint; the second visit offers it again.

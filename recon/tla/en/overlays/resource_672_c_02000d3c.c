@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 18 of 116 (tla-en); older figures below predate it.
 // Draft, differ 32 of 116: inside an event, the leader steps back 8 pixels and
 // turns (cue 308) while the map's two scrolling layers (the map work's 0x108
 // and 0x178) climb a pixel a frame for 352 frames and, from frame 17 to 79,

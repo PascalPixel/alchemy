@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 11 of 83 (tla-en); older figures below predate it.
 // Draft, differ 65 of 83 (was 67, a raw draft calling absolute addresses),
 // rewritten from the listing: the Venus Lighthouse entrance's spark setup.
 // It takes heap slot 220, unpacks resource 0x1e1 (directory.s's DustPuffA)

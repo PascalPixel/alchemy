@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 176 of 278 (tla-en); older figures below predate it.
 // Draft, differ 229 of 278, skeleton gap 24 (tla-en, 2026-11-01)
 // The control flow, calls, arguments and memory accesses are the native's;
 // what is left is allocation, and most of the skeleton gap is its spills and

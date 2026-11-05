@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 36 of 171 (tla-en); older figures below predate it.
 // Draft, differ 173 of 171, skeleton gap 34 (tla-en, 2026-11-01)
 // Finds how far a pushed object can slide in the leader's direction, probing
 // its footprint cell by cell until Func_02001850 reports a wall.

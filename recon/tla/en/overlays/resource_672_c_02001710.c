@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 126 of 369 (tla-en); older figures below predate it.
 // Draft, differ 14 of 369, skeleton gap 0 (tla-en, 2026-11-01)
 // The Gabomba statue chamber's scene before the ceremony: the party and
 // objects 5, 6, 7, 11 and 12 are placed, the screen fades in, object 12 walks

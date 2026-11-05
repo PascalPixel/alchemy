@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 14 of 656 (tla-en); older figures below predate it.
 // Near miss (16 of 656 instructions differ, was 80). Object 13's motion flags
 // are cleared after its sprite's rotation is set, so the zero is the low byte
 // of the register holding field18's -0x10000, as the native stores it (with

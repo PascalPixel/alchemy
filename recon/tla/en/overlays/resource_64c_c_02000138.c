@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 104 of 99 (tla-en); older figures below predate it.
 // Draft, differ 81 of 99, skeleton gap 22 removed, 11 added (tla-en, 2026-11-01)
 // Fills a 64 by 64 grid of levels, each ring a quarter circle drawn with the
 // midpoint algorithm, its level from the cosine of its radius.

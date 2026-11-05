@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 17 of 120 (tla-en); older figures below predate it.
 // Draft of Func_02004634 (overlay 64B, 120 instructions), differ 69: the linked
 // pair of effects, ported from ☀️'s WorldMap_CreateAttachedEffects (⚓️ creates
 // kind 271, its updates are Func_020045e4 and Func_02004598, the sprite's

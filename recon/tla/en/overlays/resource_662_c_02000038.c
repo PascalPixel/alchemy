@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 80 of 160 (tla-en); older figures below predate it.
 // Draft, differ 108 of 160, skeleton gap 13 (tla-en, 2026-11-01)
 // Yampi Desert Cave: finds a pushed object's kind by its sprite, copies its
 // footprint between the map layers, then marks its cells.

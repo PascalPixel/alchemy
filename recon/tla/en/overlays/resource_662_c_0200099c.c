@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 97 of 120 (tla-en); older figures below predate it.
 // Draft, differ 81 of 120, skeleton gap 29 (tla-en, 2026-11-01)
 // The palette cycle callback: on each step it writes the cycle's colours to
 // their palette entries and flashes one more.

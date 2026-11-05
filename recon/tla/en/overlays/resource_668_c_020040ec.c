@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 28 of 126 (tla-en); older figures below predate it.
 // Draft, differ 60 of 126, skeleton gap 3 (tla-en, 2026-11-01)
 // For a pushable object (its animation one of the six kinds in gData_02004ca4)
 // copies the cells under its box (gData_02004cb0: four signed bytes a kind, in

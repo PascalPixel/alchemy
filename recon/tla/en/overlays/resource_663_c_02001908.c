@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 15 of 266 (tla-en); older figures below predate it.
 // Draft, differ 49 of 266, skeleton gap 15 (9 removed, 6 added) (tla-en,
 // 2026-11-01) The update Func_02001b54 gives its shots, overlay 664's
 // Func_02000d48 with one more ending: it stops while the event work is busy or

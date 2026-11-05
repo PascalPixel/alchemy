@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 44 of 123 (tla-en); older figures below predate it.
 // Draft, differ 90 of 123, skeleton gap 15 (tla-en, 2026-11-01)
 // Raises each listed actor's cells (the shape grid and the cell flags of its
 // cell and the one below); the same function as overlay 655's Func_02000c64

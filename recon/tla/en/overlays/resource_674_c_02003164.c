@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 73 of 134 (tla-en); older figures below predate it.
 // Draft of overlay 674's Func_02003164, differ 91 of 134 (13 more
 // instructions): a room's setup written from the listing. The native keeps the
 // map work in r5, a zero for the motion flags in r6 and object 10 in r7, and

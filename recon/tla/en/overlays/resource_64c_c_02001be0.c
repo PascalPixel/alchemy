@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 18 of 181 (tla-en); older figures below predate it.
 // Draft, differ 78 of 181, skeleton gap 4 (tla-en, 2026-11-01)
 // Redraws the world map gauge (a 0x100-byte palette and tile strip) when its
 // level or blink changes. The same function as overlay 64b's Func_02004744.

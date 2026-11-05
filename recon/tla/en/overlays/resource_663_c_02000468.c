@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 39 of 40 (tla-en); older figures below predate it.
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \

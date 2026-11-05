@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 64 of 155 (tla-en); older figures below predate it.
 // Draft, differ 66 of 155: every eighth frame pair, while none of the event
 // work's four busy counters is set, starts a drip (Func_0200160c) at a place
 // chosen by scene: in scene 0x57 one of two spots by the frame and flag

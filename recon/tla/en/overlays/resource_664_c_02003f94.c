@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 2 of 75 (tla-en); older figures below predate it.
 // Near miss, differ 2 of 75 (tla-en, 2026-10-30): scheduler order. sched2
 // hoists the multiply routine's address (a bare constant set of r6, with no
 // dependence) above the cosine call into the stall after the angle's load;

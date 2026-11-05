@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 37 of 75 (tla-en); older figures below predate it.
 // Draft, differ 49 of 75: the world map cursor: counts down while A or B is
 // held, redraws the gauge and queues its sprite over the leader. Left: the
 // sprite word order and register choice around the stmia stores.

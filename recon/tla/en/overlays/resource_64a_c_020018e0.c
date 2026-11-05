@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 132 of 423 (tla-en); older figures below predate it.
 // Draft, differ 210 of 423, skeleton gap 62 (tla-en, 2026-11-01): 30 removed,
 // 32 added.
 // Unpacks clear data, in the layout The Broken Seal's

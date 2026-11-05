@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 94 of 493 (tla-en); older figures below predate it.
 // Draft, differ 112 of 493, skeleton gap 11 (tla-en, 2026-11-01)
 // Steps onto a listed cell in rooms 1, 2, 3 and 5 (SceneId_Ov655Room1 to
 // Room5): either falls through to exit work->exit or opens the cell and sets

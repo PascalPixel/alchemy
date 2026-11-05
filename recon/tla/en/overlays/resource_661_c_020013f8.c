@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 30 of 124 (tla-en); older figures below predate it.
 // Draft, differ 30 of 124 (was 48): the twin of Func_020012dc for the other
 // room (row 89): resets the stone, copies the four blocks and moves the
 // leader off the cells the blocks cover. The last three moves shift the

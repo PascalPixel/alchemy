@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 76 of 187 (tla-en); older figures below predate it.
 // Draft, differ 88 of 187 (was 90): the leader and monster 8 drop into the
 // sand pit, each in a ring of dust, the monster leaps to its spot and the
 // battle starts with escape forbidden and the defeat destination set.

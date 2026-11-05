@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 138 of 260 (tla-en); older figures below predate it.
 // Draft, differ 147 of 260, skeleton gap 11 (tla-en, 2026-11-01)
 // Shows the world map's placed objects that come within the view and whose
 // flags allow them, hides those that leave it, and starts a placement's

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 0 of 61 (tla-en); older figures below predate it.
 // Near miss, differ 5 of 61 (tla-en, 2026-10-31): only the entry block
 // differs; the native starts the end mark 0xffff (movs r1, #255) before the
 // entry jump and copies the count to r10 after the mode, both left by the

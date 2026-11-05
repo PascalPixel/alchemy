@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 107 of 252 (tla-en); older figures below predate it.
 // Draft, differ 190 of 252, skeleton gap 42 (tla-en, 2026-11-01): 23 listing
 // instructions missing, 19 extra, no device.
 // Draws the swinging actors' ropes and heads (the 16 records of

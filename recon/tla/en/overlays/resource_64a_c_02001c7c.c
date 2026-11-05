@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 134 of 479 (tla-en); older figures below predate it.
 // Measured 5 November (-Os), differ about 160 of 479: plain for loops and a u16
 // count give nearly every row (it was 481). Left: the count loop's registers: the
 // native keeps the table in r7, n in ip, m in lr and count in r9; here loop.c

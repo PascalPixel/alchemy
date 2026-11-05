@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 107 of 252 (tla-en); older figures below predate it.
 // Draft, differ 196 of 252, skeleton gap 44 (tla-en, 2026-11-01): 24 removed,
 // 20 added. Draws the rising platforms' columns as sprites, one 16-pixel piece
 // per step of height and a bobbing top, up to 80. No device in the draft.

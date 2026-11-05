@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 69 of 92 (tla-en); older figures below predate it.
 // Draft, differ 78 of 92: when the controlled character moves to another cell,
 // copies the 1 by 2 cell attributes under it to the spare cells at (73, 72)
 // and copies the ones at (71, 72) in their place: at x, below z by its height

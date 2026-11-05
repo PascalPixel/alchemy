@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 52 of 1527 (tla-en); older figures below predate it.
 // Measured 5 November (-Os), differ about 89 of 1527: while loops bring the
 // allocation to the native's. Left: the argument to Func_02005d8c shifts a copy of
 // z (adds r4, r5) that CSE merges here, then reload's rotation (the zero of carried

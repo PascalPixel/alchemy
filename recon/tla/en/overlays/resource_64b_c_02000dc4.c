@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 51 of 270 (tla-en); older figures below predate it.
 // Draft, differ 104 of 270: the world map's entrance handler: restores the
 // ship's place, then runs the script for the entrance taken. Left: register
 // choice in the ship block (the native keeps gMainRoutineWork in r5, the override

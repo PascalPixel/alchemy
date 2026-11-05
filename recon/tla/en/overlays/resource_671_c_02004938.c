@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 41 of 500 (tla-en); older figures below predate it.
 // Measured 5 November (-Os), differ 41 of 500. Left: the last check's state is
 // read from sp+4 here where the native rebuilds ball + 99 (GCSE), the origin's two
 // reads go through r5 where the native adds to r3 and keeps r5, and the final

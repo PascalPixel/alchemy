@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 74 of 171 (tla-en); older figures below predate it.
 // Draft, differ 156 of 171, skeleton gap 23 (tla-en, 2026-11-01): overlay 674's
 // copy of overlay 668's Func_02004240 (the same listing); what it measures is
 // in that draft's header.

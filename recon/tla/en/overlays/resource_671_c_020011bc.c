@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 26 of 79 (tla-en); older figures below predate it.
 // Draft, differ 43 of 79: the body of Func_02001630 (s1630.c) with the target
 // as parameters. Left are the registers: the native keeps x in r6 and shifts it
 // there (lsls r6, r6, #16), z in r8, the leader in r10 and the event work in

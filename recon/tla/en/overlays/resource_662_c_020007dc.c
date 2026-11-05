@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 22 of 80 (tla-en); older figures below predate it.
 // Draft, differ 48 of 80 (was 50): overlay 662's Func_020007dc, the
 // representative of its copies in 675, 694, 6aa, 6ac, 6ae and 6b0. It records
 // the four lists, writes each listed palette entry from its red, green and

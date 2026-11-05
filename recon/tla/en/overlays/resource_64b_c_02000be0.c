@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 32 of 129 (tla-en); older figures below predate it.
 // Draft, differ 53 of 129: gazing over the side of the boat: one roll in
 // sixteen finds coins, the next shakes the camera, the rest show one of the
 // MsgTheBoatS messages. Left: the native keeps the found object in r6 and

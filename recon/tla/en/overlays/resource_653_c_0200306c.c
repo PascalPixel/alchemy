@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 22 of 246 (tla-en); older figures below predate it.
 // Draft, differ 73 of 246: the first statue carries the leader up and
 // sinks; Func_020032c8 is its twin. Both loops are goto loops, as the native
 // builds their constants in each pass. Left: register choice (the leader and

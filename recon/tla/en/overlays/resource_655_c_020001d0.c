@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 46 of 130 (tla-en); older figures below predate it.
 // Draft, differ 18 of 130, skeleton gap 2 (tla-en, 2026-11-01)
 // The Dehkan Plateau prepare step for a list of (actor, flag) pairs: an actor
 // whose second flag is set is put away, otherwise its cell is marked and the

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 15 of 227 (tla-en); older figures below predate it.
 // Draft, differ 25 of 227 (was 45): queues the second world map picture (its
 // tiles, frames and palette) and scrolls it in over 96 frames, then fades and
 // restores the window palette. The scroll's x is x * 16 kept in a temporary

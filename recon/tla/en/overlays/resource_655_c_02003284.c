@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 72 of 276 (tla-en); older figures below predate it.
 // Draft of Func_02003284 (overlay 655, 696 bytes), differ 77 of 276: the room
 // entry written in the scene layer of Func_02003164 and Func_0200390c. The
 // statements are the native's; what differs is where a zero and the 0xfe

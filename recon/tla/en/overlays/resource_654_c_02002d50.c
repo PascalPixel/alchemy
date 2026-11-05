@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 78 of 106 (tla-en); older figures below predate it.
 // Near miss, differ 6 of 106 (tla-en, 2026-10-31): both rows come from one
 // insn, the state pointer's add. In the native it is in the jump-table block
 // before sched2: its bb2 uses no call result, so the call keeps a low priority

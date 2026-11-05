@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 17 of 120 (tla-en); older figures below predate it.
 // Draft, differ 71 of 120: overlay 64b's Func_02004634 (the linked pair of
 // effects), which this overlay has instruction for instruction under its own
 // names; its draft is resource_64b_c_02004634.c and its remaining difference

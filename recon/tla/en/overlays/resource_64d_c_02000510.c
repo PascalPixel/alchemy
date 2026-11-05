@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 5 of 2142 (tla-en); older figures below predate it.
 // Measured 5 November (-Os), differ 5 of 2142. The shared 1 is settled: a local
 // one set at the first bit set, with the middle sets through a byte local and the
 // last as one |= *flags. One store through struct SparkRecord gives the stall the

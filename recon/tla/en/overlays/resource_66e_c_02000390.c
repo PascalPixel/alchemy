@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 40 of 376 (tla-en); older figures below predate it.
 // Matches: differ 0 (tla-ja, 2026-11-02)
 // Japanese-only: the listing's section sits under .ifdef TLA_EDITION_JA, the
 // other editions link games/tla/src/scene/naribwe_interiors/s0390.c, so measure

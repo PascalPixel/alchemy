@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 904 of 7666, slots normalized 620, high
-// registers blind too 592, every register blind 230. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 803 of 7666, slots normalized 529, high
+// registers blind too 501, every register blind 207. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1906,12 +1906,19 @@ CLEAR(buffer, 0x1000);
       } else {
         for (; i != 32; i++, p++) {
             s32 m;
+          s32 w;
+          s32 h;
+          s32 left;
+          s32 top;
           m = __modsi3(i, 5) * 3;
           m += __modsi3(__divsi3(p->z, 96), 3);
+          w = gData_0819749e[m];
+          left = (p->x >> 16) - w / 2;
+          top = p->y >> 16;
+          h = gData_081974ad[m];
+          top -= h / 2;
           drawFuncs.draw[0](screen, buffer + 0x83c + gData_081974bc[m],
-                            (p->x >> 16) - gData_0819749e[m] / 2,
-                            (p->y >> 16) - gData_081974ad[m] / 2,
-                            gData_0819749e[m], gData_081974ad[m]);
+                            left, top, w, h);
           BattleEffectKernels_IntegrateVector2(p, 63, 0x8000);
           p->z += p->vz;
           if ((frame & 1) && p->vz > 0)
@@ -1922,7 +1929,6 @@ CLEAR(buffer, 0x1000);
       s32 fade;
       s32 angle;
       if (frame == 0) {
-        s32 i;
         struct Particle *p;
         p = RINGS;
         for (i = 0; i != 32; i++, p++) {

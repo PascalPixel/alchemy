@@ -192,6 +192,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
   s32 j;
   s32 limit;
   s32 first;
+  s32 slot;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -420,8 +421,9 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       if (frame >= 48 && frame <= 79) {
         s32 time = frame - 48;
 
-        first = time * 2;
-        for (i = 0, step = (struct EffectStep *)(first * 28 + (s32)work->particles); i != 2; i++, step++) {
+        slot = time * 2;
+        for (i = 0; i != 2; i++) {
+          step = &work->particles[slot + i];
           step->x = 64 << 16;
           step->y = 48 << 16;
           step->velocityX = ((Random16() & 127) - 64) << 11;
@@ -452,12 +454,15 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 64)
         Func_081180e8(-1);
       if (frame >= 48 && frame <= 79) {
-        { s32 time = frame - 48; step = &work->particles[time]; }
-        step->x = 64 << 16;
-        step->y = 48 << 16;
-        step->velocityX = ((Random16() & 127) - 64) << 11;
-        step->velocityY = ((Random16() & 127) - 64) << 11;
-        step->variant = mode;
+        struct EffectStep *sheep;
+
+        slot = frame - 48;
+        sheep = (struct EffectStep *)(slot * 28 + (s32)work->particles);
+        sheep->x = 64 << 16;
+        sheep->y = 48 << 16;
+        sheep->velocityX = ((Random16() & 127) - 64) << 11;
+        sheep->velocityY = ((Random16() & 127) - 64) << 11;
+        sheep->variant = mode;
       }
       for (i = 0; i != 64; i++) {
         step = &work->particles[i];
@@ -503,15 +508,16 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
 
       // The shards tumble through three cells and darken.
       if (time >= 24 && time <= 60) {
-        s32 fade = 0;
         s32 shade;
 
+        first = 0;
+
         if (time > 28) {
-          fade = (time - 24) / 4;
-          if (fade > 7)
-            fade = 7;
+          first = (time - 24) / 4;
+          if (first > 7)
+            first = 7;
         }
-        shade = fade * 696;
+        shade = first * 696;
         for (i = 0; i != 32; i++) {
           s32 cell;
 

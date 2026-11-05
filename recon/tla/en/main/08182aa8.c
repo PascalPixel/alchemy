@@ -1,34 +1,39 @@
-// Measured 2026-11-05 (tla-en): differ 305 of 2781, 245 with slots and pool
-// offsets normalized, 57 with registers normalized as well. Frame 164 and every
-// stack slot as in the listing. No loop has a counter of its own beyond i and k.
-// What round 4 settled by reading the listing:
-// - Reload hands out spill registers in turn, so one stray reload shifts every
-//   later figure; work from the top down.
-// - The zeros stored through memory (place[3], step->z, the scrolls, variant,
-//   velocityX, y) come from one zero set once after the opening slide. It takes
-//   no register, so reload makes each in its turn and no loop hoists it (610 to
-//   405 from these alone, and the rotation falls into step behind them).
-// - The second palette's s is its own, red first through a temporary set twice.
-// - The spark, the ninth cell and the spawn read their position, d and p first
-//   and on locals of their own; i = 0 comes before its neighbours in four loops.
-// What is left:
-// - The first palette's red holds its temporary through an untagged barrier
-//   (t = COLOR_RED(s), kept apart from sr): the listing has mov r3, r9; ands r3,
-//   r1; adds r1, r3, r2, where regmove merges t into s because s dies at the and
-//   and t at the add. s = COLOR_RED(s) + tr gives the rows exactly, since the add
-//   then sets s, but s outlives its register and everything rotates. Needs its
-//   tag, or the plain form, before adoption. The second palette's t = 31 is a
-//   temporary and needs its tag too.
-// - PRE folds Yaw(frame << 9) in the two shock loops into spin; the listing has
-//   mov, lsls there and spin everywhere else. Spellings fold back ((f << a) << b,
-//   f + f) or grow the frame. From here on everything is one rotation off: an
-//   input-only barrier gives the shape, but with r0 tied. This is what stands
-//   between 305 and the rows that are left.
-// - The cells loop has the object slots in r7 and cells in r5, the listing the
-//   reverse (12 rows). Tried: stepped pointer, slot pointer, a block local.
-// - The second texture: the listing has add r7, sp, #92; adds r2, r7, #0 and
-//   stores through both, here a direct sp + 92 and sp + 93. Through a pointer
-//   either folds back or takes a stack slot.
+// Measured 2026-11-05 (tla-en): differ 2 of 2781, register-normalized 2. Frame
+// 164 and every stack slot as in the listing. Pools are not yet checked against
+// the listing. The draft holds one barrier and one temporary; both are tagged.
+// What is left, one row out of place: the third shock's clamp. The listing has
+// adds r3, #162; movs r1, #255; adds r6, r2, #0; muls r6, r3; lsls r1, r1, #8;
+// adds r1, #255; the draft has the multiply before movs r1. The sched2 dump gives
+// the multiply priority 5 (cost 4 to the branch) and movs r1 priority 4, so the
+// multiply wins on priority, not on a tie: moving the constant earlier in the RTL
+// does not change it. r1 is a reload in the listing (the rotation runs r0, r1, r2,
+// r4 through it), so a local holding 65535 is not the form either. Tried: limit
+// locals (folded by CSE or hoisted), an inline clamp, ternaries, an empty asm on
+// a limit, a pinned limit, ten minutes of alchemy-devtools permute (5132 candidates,
+// none better). What could lower the multiply's priority or delay it one cycle
+// is not known.
+// What round 5 settled by reading the listing and the loop and sched2 dumps:
+// - The first object loop steps its own cells from the symbol, with i set first:
+//   objects r5, cells r7.
+// - The ring of stones and the healing sparks each have their own pointer; the
+//   sparks index it, so its step is a reduced giv whose start follows the hoisted
+//   table (Ram_EffectSteps[i], 103 to 75).
+// - spin is ((frame - 1) << 9) + 512: its slot steps as a giv of frame, while the
+//   shock loops' frame << 9 stays a plain shift. With frame << 9 PRE folds those
+//   two into spin; a spin stepped by hand takes a low stack slot (257 to 179).
+// - ty is set before s in the third shock: it holds r7 through s's reloads, which
+//   is why the frame read takes r0 (179 to 128).
+// - The coil mesh is a set-once local like zero and the cell buffer: reload makes
+//   it in turn, in r0 (67 to 10). Two palette copies move 128 words, not 512; two
+//   fills go through an inline so the function address loads before the value.
+// - The stone's screen x is read before its y (10 to 2).
+// What earlier rounds settled: the zeros stored through memory come from one zero
+// set once after the opening slide; it takes no register, so reload makes each in
+// its turn and no loop hoists it. Reload hands out spill registers in turn, so one
+// stray reload shifts every later figure: work from the top down. The second
+// palette's s is its own. The spark, the ninth cell and the spawn read their
+// position, d and p first and on locals of their own; i = 0 comes before its
+// neighbours in four loops.
 // Measured: gData_02015000 is a constant address, the native pools its +24 and
 // a symbol leaves an add; gMapCellBuffer is the set-once local for its first
 // five uses and the symbol for the three texture.pixels, chosen per site. Row
@@ -41,9 +46,9 @@
 // doubles as the palette's blue target, which blocks r4. blit[2] and grid are
 // 8-byte locals, which gives the unused word at sp+68 and the pair at sp+56.
 // BLIT_CELL's order (cell offset, width, height) sets the live length of the
-// height table's address, and that decides frame's register. CopyWords is
-// inline so its constant size stays out of CSE (without it, differ 1366); it
-// carries no tag, the question against S2's wrapper kind is open.
+// height table's address, and that decides frame's register. CopyWords and
+// FillWords are inline so their constant stays out of CSE (without CopyWords,
+// differ 1366); they carry no tag, the question against S2's wrapper kind is open.
 // ResourceId_BellMaidenTiles (0xa7), ResourceId_BlueFlameSheet (0x130), Data0FB
 // and Data0FC are not yet named in resource_directory.s; adoption names them
 // there. They are symbols because the native loads ids from the pool.
@@ -297,6 +302,10 @@ static inline void CopyWords(void *destination, const void *source, s32 size) {
   Iwram_CopyWords(destination, source, size);
 }
 
+static inline void FillWords(void *destination, s32 size, s32 value) {
+  Iwram_FillWords(destination, size, value);
+}
+
 // Coatlicue: the ground opens over a green dusk, the serpent goddess rises in
 // a spiral of stone, her coils sweep the field and her light heals the party.
 void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
@@ -320,6 +329,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   s32 ty;
   s32 spin;
   s32 zero;
+  u8 *coilMesh = Data_02014800;
   s16 list[14];
   s32 place[4];
   struct WordPair req;
@@ -359,7 +369,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   FILL_GRADIENT(table, i, level, color);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, 3326);
   skip = 0;
-  Func_081885f0(Data_02014400, Data_02014800, 32);
+  Func_081885f0(Data_02014400, coilMesh, 32);
   list[0] = 255;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
@@ -367,12 +377,17 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
 
     CopyWords((void *)OBJ_PLTT, e, 512);
     Resource_DecodeType01(e + 512, cellBuffer);
-    for (i = 0; i != 12; i++) {
+    {
+    u8 *cells;
+
+    i = 0;
+    cells = gMapCellBuffer;
+    for (; i != 12; cells += 1024, i++) {
       obj = Func_0815b290(32, 32, 0x80002000, 0);
       obj->priority = 2;
       work->objects[i] = obj;
-      CopyWords((void *)OBJ_TILES(obj), cellBuffer + i * 1024, 1024);
-    }
+      CopyWords((void *)OBJ_TILES(obj), cells, 1024);
+    }}
   }
   Graphics_LoadGreyRamp();
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, cellBuffer, 0, 0);
@@ -395,7 +410,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0x3f44;
   REG_BLDALPHA = 0x1010;
   for (frame = 0; frame != 602; frame++) {
-    spin = frame << 9;
+    spin = ((frame - 1) << 9) + 512;
     if ((gInput.repeat & 3) && frame <= 581 && skip == 0) {
       skip = 1;
     }
@@ -534,6 +549,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 t = COLOR_RED(s);
         s32 sr;
 
+        /* FAKEMATCH(barrier): t held apart from s through an empty asm; as sr = COLOR_RED(s) + tr, 15 of 2781 instructions differ in tla-en. */
         __asm__("" : "=r"(t) : "0"(t));
         sr = t + tr;
         if (cb < sb - 1) {
@@ -588,6 +604,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 t;
 
         s = *e;
+        /* FAKEMATCH(temporary): red through a temporary set twice; as r = COLOR_RED(s) + d, 17 of 2781 instructions differ in tla-en. */
         t = 31;
         t &= s;
         r = t + d;
@@ -643,7 +660,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     }
     }
     if (frame == 310) {
-      p = Ram_EffectSteps;
+      struct EffectStep *p = Ram_EffectSteps;
 
       for (i = 0; i != 80; i++, p++) {
         p->x = ((Random16() & 63) + 28) << 16;
@@ -752,8 +769,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           if (n > 14) {
             n = 14;
           }
-          q->y = HALF_HI(q->y);
-          q->x = HALF_HI(q->x) + 60;
+          {
+            s32 x = HALF_HI(q->x);
+
+            q->y = HALF_HI(q->y);
+            q->x = x + 60;
+          }
           if (frame > 539) {
             q->y = q->y + (frame << 4) - 8608;
           } else if (frame > 517) {
@@ -967,8 +988,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           s32 st = Data_08199754[i];
 
           if (frame > st && frame < st + 100) {
-            s = (frame - st) * 2978;
             ty = -0x2c0000;
+            s = (frame - st) * 2978;
             if (s > 65535) {
               s = 0x10000;
             }
@@ -989,15 +1010,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           }
         }
       }
-      {
-        u8 *sheet = work->sheet + 0x4000;
-
-        texture.logHeight = 4;
-        texture.logWidth = 7;
-        texture.pixels = sheet;
-      }
-      model->mesh = Data_02014800;
+      texture.logWidth = 7;
+      texture.logHeight = 4;
+      texture.pixels = work->sheet + 0x4000;
       model->kind = 7;
+      model->mesh = coilMesh;
       model->vertices = verts;
       model->scrollU = zero;
       model->scrollV = zero;
@@ -1087,7 +1104,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  Iwram_FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
+  FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   for (i = 0; i != 12; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
@@ -1102,10 +1119,10 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 120;
   wait(1);
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 512);
-  Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
-  frame = 0;
+                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+  FillWords(canvas, 0x4000, 0x3f3f3f3f);
   Func_08164b2c(0, 0, 11);
+  frame = 0;
   for (; frame != 60; frame++) {
     s32 s;
     s32 lift;
@@ -1121,8 +1138,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       Func_08164a4c(-4, -4, -4);
     }
     if (frame > 48) {
-      d = frame - 48;
-      Func_08164b2c(-d, -d, 11 - d * 2);
+      s32 fade = frame - 48;
+
+      Func_08164b2c(-fade, -fade, 11 - fade * 2);
     }
     if (frame == 0) {
       work->transferMode = 3;
@@ -1140,13 +1158,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
     }
-    {
-      p = Ram_EffectSteps;
+    for (i = 0; i != 256; i++) {
+      struct EffectStep *p = &Ram_EffectSteps[i];
 
-      for (i = 0; i != 256; i++, p++) {
-        if (p->variant >= 0) {
-          DRAW_SPARK(p);
-        }
+      if (p->variant >= 0) {
+        DRAW_SPARK(p);
       }
     }
     for (i = 0; i != effect->count; i++) {

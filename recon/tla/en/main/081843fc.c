@@ -1,91 +1,94 @@
-// Measured 2026-11-05 (tla-en): differ 678 of 4580, 422 with slots and pool
-// offsets normalized, 144 with registers normalized as well. Every stack slot
-// has the listing's reference count at the listing's offset. Measure
-// 081843fc,081848ec together.
-// What round 3 settled by reading the listing:
-// - e is one function-level variable; each section's cells its own. The first
-//   cells is the fixed address, the decode's argument the symbol, so CSE keeps
-//   them apart. The step comes before the counter (cells += 1024, i++).
-// - No loop has a counter of its own beyond i and j: the burst, the wave of
-//   particles and the debris all count on i (r9 in the listing). The tornado's
-//   inner counter is a block's own j, with a row local holding i << 12.
-// - OBJ_TILES reads the slot through its field: the char read made a dependency
-//   that moved every object store. The first fade writes the object palette
-//   (literal 0x05000202); the instruction diff cannot show a wrong literal, so
-//   every pool still needs checking at adoption.
-// - The meteor has one b = 0x80000 - drift across its two sites (slot 88).
+// Measured 2026-11-05 (tla-en): differ 101 of 4580, 35 with slots and pool
+// offsets normalized, 23 with registers normalized as well. Measure
+// 081843fc,081848ec together. Every stack slot as in the listing; most of raw is
+// pool offsets, which fall into step as the rows do. Pools not yet checked.
+// sched2's rank is priority, then relation to the last insn, then the number of
+// insns that depend on this one, then RTL order; the dump's table gives all but
+// the listing's, and dependents count anti and alias edges, so types and registers
+// settle ties.
+// What is left, all small:
+// - The wave's buffer load (row 4080): the listing has it as a reload in r0 before
+//   i's zero in r3; here it takes r3 and i reuses x's zero, one instruction short.
+//   i before x gives the zero but moves the rotation one on for the rest of the
+//   scene. A set-once local and an integer sum have not moved the r3.
+// - cellBuffer + 0x1000 has its operands the other way (row 240), and the second
+//   object loop loads Iwram after cells (row 199).
+// - The bolts' load sinks past five calls in the listing (rows 3626 to 3677), here
+//   past none; set later, r5 falls into reload's choice at row 3629.
+// - The sparks' stack arguments (rows 3038 to 3073), the tornado's hoisted offset
+//   (row 2723), the fill's two loads (row 3766), the band's frame read (row 4182) and
+//   the claw's pointer reload (row 4236).
+// What round 5 settled by reading the listing and the loop dumps:
+// - The burst's stride is a local set before its call: its life of 6 is below
+//   loop.c's bar in the first pass and above it in the second, so its multiply is a
+//   giv only then and takes the last slot, as the listing has it (205 to 159).
+// - The wave's mesh is written through a vertex struct: the writes cannot alias the
+//   stack, so reload_cse drops the caller-saves' second stores (145 to 101).
+// - The mesh field is const u8 *, so its store does not alias the pixels'; the
+//   blitter builder returns s32. The bolt's pointer comes before its offset, so
+//   their steps follow the listing's order.
+// - The spawn's sum and base are set inside its loop, the base from a scene-level
+//   steps (a set-once local): loop.c hoists them in that order, so x takes r3, and q
+//   indexes the base, so it is a reduced giv (231 to 205, 97 to 69 normalized).
+// - off is declared before jitter and set after the counter: global.c ranks by
+//   floor_log2(refs) * refs / length, 36 / 72 against 33 / 66, a tie that lower
+//   pseudo numbers win (247 to 231).
+// - The cell buffer is a set-once local with no register, so reload makes it at
+//   each use (678 to 627); the band's mesh likewise (strip), set at scene level.
+// - Three scales were wrong: the scattered bolts' and the flash's z is 0x10000. Two
+//   palette copies move 128, not 512 (544 to 502).
+// - Steps before counters: p2++, i++ and a += 21845, i++ (498 to 482); p++, i++ in
+//   the burst.
+// - A pointer of its own where the listing has another register: the debris draw
+//   (408 to 370). Indexed where its start follows a guard or a hoist: the shock's
+//   sparks (251 to 247).
+// - A local set before its calls sinks past them in sched2 and takes a callee-saved
+//   register: the shake's m = 7 (572 to 546).
+// - Integer sums keep their operand order where a pointer sum canonicalizes: the
+//   debris offsets (i * 448 + (s32)debris).
+// - The frame step sits between the pending address and its store, or CSE and reload
+//   reuse the store's 1 (370 to 333). h = n * 2 before the debris source keeps its
+//   table out of a hoist (432 to 320). The scattered bolt's cell is read once (300
+//   to 263). The arms' phase is k + a on a local k, so it is reduced apart from k
+//   (261 to 251). j is the function's in the first burst (314 to 302).
 // What round 4 settled by reading the listing:
 // - Reload rotates its scratch registers, so one stray reload shifts every later
 //   figure: raw moved by hundreds on single edits. Work from the top down.
-// - A value set at the top of a block can sink past its calls in sched2: bolts is
-//   set first in its block, which is what keeps r5 out of reload's choice (1439 to
-//   1286). The second moon's scattered particles walk on their own pointer, so
-//   model2 is r7 with the giv in r6 (1619 to 1485).
 // - Values that start from a known constant step from their own name (shade -
-//   frame * 2 + 1180, sx - frame * 61845 + K, x - frame * 8 + 576): CSE keeps the
-//   constant in its register (1858 to 1745).
+//   frame * 2 + 1180, sx - frame * 61845 + K, x - frame * 8 + 576).
 // - Each section decodes into the sheet, then sets cells from it: the sheet's
-//   temporary takes r5 first, so the address takes r6 and e r7 (1041 to 937).
+//   temporary takes r5 first, so the address takes r6 and e r7.
 // - zero, span (0x80000), debris (particles[64]), bolts and quads are constants
 //   set once in a long-lived local. Each takes no register, so reload remakes it
-//   at every use and neither a loop nor PRE moves it (span: 1254 to 1041; debris:
-//   921 to 830).
-// - A counter's zero comes before the statement above its loop in several loops
-//   (j before q, i before p): reload's order shows it (748 to 678).
-// What is left:
-// - The barrier on idx is untagged and stands in for what stops the sharing: the
-//   listing rebuilds off + idx after the if (a != 0) join, and neither cse1's skip
-//   nor PRE shares it there. Forms tried without a barrier: the if as one to three
-//   ifs, with an else, a goto, one-pass blocks; off as a stepped variable (its slot
-//   says it is a loop.c giv), i * 12 at each site.
-// - x << 16 in the debris spawn stays in its loop in the listing; here it moves out
-//   ahead of the loop, with no movable row in the loop dump, and rotation is lost
-//   from there to the end of the scene.
-// - The motion loop's i * 448 giv is second pass in the listing (slot 24), first
-//   pass here (slot 40), benefit 10, lifetime 1, threshold 15, against 76 insns;
-//   spellings of the index do not move it. j takes r8 and the i * 2 + 36 giv sl
-//   where the listing has them the other way (j 15/74 against 17/132).
-// - The swap loop reads its object's tiles and cell in the other order, and the
-//   jitter block has off and jitter in each other's registers (r1, r4).
+//   at every use and neither a loop nor PRE moves it.
+// - A counter's zero comes before the statement above its loop in several loops.
+// What round 3 settled by reading the listing:
+// - e is one function-level variable; each section's cells its own. The step comes
+//   before the counter (cells += 1024, i++).
+// - The burst, the wave of particles and the debris all count on i (r9). The
+//   tornado's inner counter is a block's own j, with a row local holding i << 12.
+// - OBJ_TILES reads the slot through its field. The first fade writes the object
+//   palette (literal 0x05000202); every pool still needs checking at adoption.
+// - The meteor has one b = 0x80000 - drift across its two sites (slot 88).
+// The barrier on idx stands in for what stops the sharing: the listing rebuilds
+// off + idx after the if (a != 0) join, and neither cse1's skip nor PRE shares it
+// there. Spellings of either sum fold back to the plain form.
 // BattleEffect_RunCatastrophe; the same calls and control flow as the listing.
 // The function runs on through listing 081848ec, whose Func_081848ec and
 // Func_08185b9c are labels inside it (the second the first loop's test).
 // What the listing's stack and registers proved:
-// - The frame is 272, as in the listing, and the opening 137 instructions
-// match.
-// - blit is DrawRectangle blit[2]: a DImode pseudo, so the first load's store
-//   stays (sp+156, with sp+160 unused) and Ram_HeapSlots stays in r5 across the
-//   opening calls. list is s16 list[14], as in the family.
-// - apply is s32 apply[2] = {0, 0} in a block of its own: the listing stores
-// the
+// - The frame is 272. blit is DrawRectangle blit[2]: a DImode pseudo, so the first
+//   load's store stays (sp+156, with sp+160 unused). list is s16 list[14].
+// - apply is s32 apply[2] = {0, 0} in a block of its own: the listing stores the
 //   pair as one DImode zero.
-// - i (r9) counts almost every loop; j (r10) counts the fade's outer loop, the
-//   particle and burst loops, the wave rows and the bolt's debris. The p loops
-//   set p = &work->particles[i] inside the loop, so p is a reduced giv.
-// - Stack slots below the declared locals are loop.c's givs: the zoom and tilt
-//   (frame multiples), frame * 3 (t), and i * 12 (off), i * 8 + 80 (start) and
-//   i * 8 + 16 (lim), each set at its loop's top. Slot order is first pass,
-//   inner loops first, then second pass.
+// - i (r9) counts almost every loop; j (r10) the fade's outer loop, the particle and
+//   burst loops, the wave rows and the bolt's debris. The p loops set p =
+//   &work->particles[i] inside the loop, so p is a reduced giv.
+// - Stack slots below the declared locals are loop.c's givs, each set at its loop's
+//   top. Slot order is first pass, inner loops first, then second pass.
 // - (frame - 370) * k folds apart, so d holds it; (frame - 128) << 1 does not.
-// - The colour channels read through *src three times (HImode masks, the pooled
-//   31); both palette loops match that way.
-// - The burst sets its sprite, 10 and 20 first and computes bx after the p->x
-//   test, which is also what stops the 0x80000 - drift hoist out of its loop.
-// - Scratch registers rotate from the first difference; most of what is left
-//   from line 170 on has the listing's shape with other registers.
-// What is left:
-// - First difference: the listing rebuilds 384 for e += 384 after the first
-//   copy, where cse2 here reuses the size's pseudo, so e, 384 and the copy's
-//   address take other registers and reload's rotation starts there. cse2
-//   ignores the loop-end note, so the listing has a label there or a different
-//   expression; e + 384, u16 *e, a block and a local n did not separate them.
-// - frame * 3's giv is second pass in the listing (slot 20 below the spins), as
-//   is the burst base (slot 24); here the base is first pass, and spins and off
-//   sit 4 lower than the listing's, so those slots differ.
-// - The flash table loop reads [r4, ip] with i * 2 reduced, here a stepped
-//   address.
-// - Searches over the wave mesh's declaration order and over j's scope (each
-//   loop its own j moves frame and registers away) have converged.
+// - The colour channels read through *src three times (HImode masks, the pooled 31).
+// - The burst sets its sprite, 10 and 20 first and computes bx after the p->x test.
 // Measured here: a resource id passed as (s32)&ResourceId_X loads from the pool
 // as in the listing; ids without a name in resource_directory.s are declared
 // below and need one there before adoption. COPY_WORDS's one-pass block keeps
@@ -112,7 +115,7 @@ struct ModelTexture {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
+  const u8 *mesh;
   void *vertices;
   struct ModelTexture *texture;
   s32 shade;
@@ -211,6 +214,12 @@ struct ResourceTableEntry {
   u16 tile;
 };
 
+struct MeshVertex {
+  s8 x;
+  s8 y;
+  s8 z;
+};
+
 struct WordPair {
   s32 a;
   s32 b;
@@ -300,7 +309,7 @@ void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
 void Camera_ApplyVerticalShake(s32 range);
 void Func_08164a4c(s32 red, s32 green, s32 blue); // Palette_BrightenBgEntries
 void Func_08164b2c(s32 r, s32 g, s32 b);
-void Func_08196404(s32 slot, s32 width, s32 height, s32 mode, s32 flags);
+s32 Func_08196404(s32 slot, s32 width, s32 height, s32 mode, s32 flags);
 void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
                           s32 count);
 void Heap_Release(void *buffer);
@@ -308,6 +317,10 @@ void Heap_Release(void *buffer);
 // Copies words through the IWRAM routine as one statement.
 static inline s32 COPY_WORDS(void *dst, const void *src, s32 size) {
   return Iwram_CopyWords(dst, src, size);
+}
+
+static inline void FILL_WORDS(void *dst, s32 size, s32 value) {
+  Iwram_FillWords(dst, size, value);
 }
 
 // Sets up the alternate blitter as one statement.
@@ -362,6 +375,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   u16 *src2;
   u8 *e;
   s32 zero;
+  u8 *cellBuffer = gMapCellBuffer;
   s32 span = 0x80000;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -426,7 +440,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     e = Resource_GetTableEntry((s32)&ResourceId_ChainedDemonTiles);
     COPY_WORDS((void *)OBJ_PLTT, e, 384);
     e += 384;
-    Resource_DecodeType01(e, gMapCellBuffer);
+    Resource_DecodeType01(e, cellBuffer);
     cells = Ram_MapCellBuffer;
     for (i = 0; i != 24; cells += 1024, i++) {
       obj = Func_0815b290(32, 32, 0x80002000, 0);
@@ -434,8 +448,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       work->objects[i] = obj;
       COPY_WORDS((void *)OBJ_TILES(obj), cells, 1024);
     }
-  }
-  {
+    {
     u8 *cells = Data_02016000;
 
     for (i = 0; i != 4; cells += 1024, i++) {
@@ -444,11 +457,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       COPY_WORDS(obj, work->objects[i], 24);
       COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells, 1024);
     }
-  }
-  {
-    u8 *cells = gMapCellBuffer;
-
-    COPY_WORDS(cells + 0x1000, Data_02016000, 0x1000);
+    }
+    COPY_WORDS(cellBuffer + 0x1000, Data_02016000, 0x1000);
   }
   for (i = 0; i != 6; i++) {
     obj = Func_0815b3b0(32, 32, 0x80002000, 0);
@@ -505,7 +515,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F8, work->sheet + 0x2000, 0,
                              0);
   COPY_WORDS((void *)BG_PLTT,
-             Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 512);
+             Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, Data_02012000, 0, 0);
   zero = 0;
@@ -568,9 +578,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         gBgScroll[1].y = 104;
       }
     }
-    if ((u32)(d = frame - 370) <= 59) {
-      sway = Trig_Sin(d * 273 / 2) << 4;
-    }
+    {
+      s32 e2 = frame - 370;
+      if ((u32)e2 <= 59) {
+      sway = Trig_Sin(e2 * 273 / 2) << 4;
+    } }
     if ((u32)(frame - 420) <= 51) {
       drift = (420 - frame) << 12;
       sway += -0x4000;
@@ -632,8 +644,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           if (b > 31) {
             b = 31;
           }
-          *dst++ = b << 10 | g << 5 | r;
           src2++;
+          *dst++ = b << 10 | g << 5 | r;
         }
       }
     }
@@ -758,8 +770,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       if (frame == 339) {
         swapped = 1;
         for (i = 0; i != 4; i++) {
-          COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]),
-                     gMapCellBuffer + (i << 10), 1024);
+          void *tiles = (void *)OBJ_TILES(work->objects[24 + i]);
+
+          COPY_WORDS(tiles, cellBuffer + i * 1024, 1024);
         }
       }
     } else if (frame == 450) {
@@ -907,20 +920,23 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 489) <= 130) {
       shade = 0;
       for (i = 0; i != 3; i++) {
-        s32 off = i * 12;
+        s32 off;
         s32 idx;
 
         p = &work->particles[i];
+        off = i * 12;
         idx = p->variant;
 
         if (frame == (Data_081998a4[i * 13 + idx] - 492) / 2 + 489) {
           s32 count = 0;
+          const s16 *table = Data_08199916;
           s32 n = off + idx;
-          s32 a = Data_08199916[n];
+          s32 k = n * 2;
+          s32 a = *(const s16 *)((s32)table + k);
           u8 *src;
           s32 bx;
-          s32 w;
           s32 h;
+          s32 w;
           s32 x;
           s32 x0;
           s32 y0;
@@ -931,6 +947,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             p->y = Data_08199880[n] << 3;
             p->z = a << 8;
           }
+          /* FAKEMATCH(barrier): idx held through an empty asm so off + idx is rebuilt; as the plain sum, 3380 of 4580 instructions differ in tla-en. */
           __asm__("" : "=r"(idx) : "0"(idx));
           p->velocityY = Data_081998f2[idx + off];
           p->velocityZ = Data_0819995e[idx + off];
@@ -940,8 +957,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             continue;
           }
           w = 10;
-          src = sprites + gData_08197410[9];
           h = 20;
+          src = sprites + gData_08197410[9];
           x0 = p->x / 8 - 5;
           bx = span - drift;
           x = x0 + (bx / 2 >> 16);
@@ -960,11 +977,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             break;
           }
           {
-            s32 half = (bx + (s32)((u32)bx >> 31)) >> 1;
+            s32 half;
             s32 j;
 
+            j = 3;
             q = &work->particles[3];
-            for (j = 3; j != 64; j++, q++) {
+            half = (bx + (s32)((u32)bx >> 31)) >> 1;
+            for (; j != 64; j++, q++) {
               if (q->variant < 0) {
                 s32 angle;
                 s32 speed;
@@ -984,8 +1003,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           }
         }
         if (p->velocityX != -1) {
+          s32 cell = p->velocityX;
+
           model->shade = shade;
-          texture.pixels = work->sheet + 0x2000 + (p->velocityX << 12);
+          texture.pixels = work->sheet + 0x2000 + (cell << 12);
           Render_ResetTransformState();
           {
             s32 t = p->x / 8;
@@ -994,7 +1015,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             Func_08015160(((t - 64) << 16) + b / 2,
                           ((p->y / 8 - 64) << 16) + camZ + sway, 0);
           }
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          Func_080151e4(0x8000, 0x10000, 0x10000);
           Func_080150e4(p->z);
           Func_080151e4(0x40000, 85536, 0x8000);
           Render_TransformVertices(Data_081991d0, verts, 4);
@@ -1022,7 +1043,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       texture.pixels = work->sheet + p->z;
       Render_ResetTransformState();
       Func_08015160((span - drift) / 2 + 0x40000, camZ + 0xcc0000, 0);
-      Func_080151e4(0x8000, 0x10000, 0x8000);
+      Func_080151e4(0x8000, 0x10000, 0x10000);
       Func_080150e4(p->y);
       Func_080151e4(0x40000, 85536, 0x8000);
       Render_TransformVertices(Data_081991d0, verts, 4);
@@ -1030,8 +1051,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 602) <= 15 || (u32)(frame - 630) <= 3) {
       s32 n = 1;
-      s32 base = Random16() % 3;
       s32 sx = 0x50000;
+      s32 base = Random16() % 3;
       s32 spread = 8;
 
       if (frame > 611) {
@@ -1049,8 +1070,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       model->kind = 6;
       model->shade = shade;
-      p4 = work->particles;
-      for (i = 0; i != n; i++, p4++) {
+      for (i = 0; i != n; i++) {
+        struct EffectStep *p4 = &work->particles[i];
+
         p4->x = (Random16() % spread - spread / 2) << 16;
         p4->y = camZ + 0xc80000;
         p4->z = ((base + i) % 3 << 12) + 0x2000;
@@ -1104,7 +1126,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Func_08015160(b / 2 + 0x50000, camZ + 0xe60000, 0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
         SceneTransform_ApplyPitch(18768);
-        a = -frame << 10;
+        a = -frame;
+        a <<= 10;
         Func_080150e4(a);
         Func_0801521c(s);
         Func_08015160(0, -0xf0000, 0);
@@ -1112,12 +1135,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Func_08015160(0, 0xf0000, 0);
         Render_DrawModelList(model);
         texture.pixels = work->sheet;
-        i = 0;
-        a += 10922;
-        for (; i != 3; i++, a += 21845) {
+        for (i = 0; i != 3; i++) {
           Transform_Push();
           Func_080150e4(i * 21845 + 10922);
-          model->shade = -24 - (Trig_Cos(a) << 3 >> 16);
+          {s32 phase = i * 21845 + 10922; model->shade = -24 - (Trig_Cos(phase + a) << 3 >> 16);}
           Func_08015160(0, -0x100000, 0);
           if (frame > 579) {
             s32 v = (frame - 580) * 1096;
@@ -1197,11 +1218,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         y = 64;
       }
       if (r <= 38) {
-        Func_0815b434(gMapCellBuffer, r, 96000);
+        Func_0815b434(cellBuffer, r, 96000);
       } else {
         r = 38;
       }
-      Func_0818caa8(gMapCellBuffer, 62, y, r);
+      Func_0818caa8(cellBuffer, 62, y, r);
     }
     work->transferPending = 1;
     wait(1);
@@ -1227,7 +1248,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   Func_08164b2c(0, -16, -16);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             gMapCellBuffer, 1, 1);
+                             cellBuffer, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x800,
                              1, 0);
   Iwram_ClearWords(work->sheet + 0x1456, 0x4000);
@@ -1235,11 +1256,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     {
       s32 j;
       s32 row = i << 12;
-      u8 *cells = Ram_MapCellBuffer;
+      u8 *cells = cellBuffer;
 
       for (j = 0; j != 120; j++) {
         u8 *dst = work->sheet + (row + j * 32) + 0x145a;
-        u8 *src = cells + (i * 45 * 64 + j * 24);
+        u8 *src = cells + i * 45 * 64 + j * 24;
         s32 m;
 
         for (m = 0; m != 24; m++) {
@@ -1248,7 +1269,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0EE, gMapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0EE, cellBuffer, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0EF, Data_02011000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Data_02012000, 0, 0);
   {
@@ -1273,7 +1294,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           work->transferValue = 50;
           COPY_WORDS((void *)BG_PLTT,
                      Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
-                     512);
+                     128);
         }
         if (rise <= 0xfffff) {
           rise += 0x10000;
@@ -1344,15 +1365,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             for (i = 0; i != 4; i++) {
               s32 n = i & 3;
               s32 angle = Random16();
-              s32 x =
-                  (Trig_Sin(angle) * r >> 17) + 60 - (gData_08197492[n] >> 1);
-              s32 y =
-                  top + (Trig_Cos(angle) * r >> 17) - (gData_08197498[n] >> 1);
+              s32 x = (Trig_Sin(angle) * r >> 17) + 60;
+              s32 y;
 
-              LOAD_ALT_BLITTER(SLOT_ALT, Data_081999ee[Random16() & 3] | 3);
+              x -= gData_08197492[n] >> 1;
+              y = top + (Trig_Cos(angle) * r >> 17) - (gData_08197498[n] >> 1);
+
+              {s32 c = Data_081999ee[Random16() & 3] | 3; LOAD_ALT_BLITTER(SLOT_ALT, c);}
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                   canvas, work->sheet + 0x800 + gData_08197486[n], x, y,
-                  gData_08197492[n], gData_08197498[n]);
+                  gData_08197492[n], *(gData_08197498 + n));
               HeapSlot_Release(SLOT_ALT);
             }
           }
@@ -1392,9 +1414,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Render_TransformVertices(Data_081991e0, verts2, 4);
           Func_08015160(0, 0xf0000, 0);
           Render_DrawModelList(model2);
-          texture2.pixels = gMapCellBuffer;
+          texture2.pixels = cellBuffer;
           for (i = 0; i != 3; i++) {
-            s32 tone = sh2 + (Trig_Cos(a + i * 21845 + 10922) << 3 >> 16) - 16;
+            s32 k = i * 21845 + 10922;
+            s32 tone = sh2 + (Trig_Cos(a + k) << 3 >> 16) - 16;
             s32 v;
 
             Transform_Push();
@@ -1463,7 +1486,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model2->shade = zero;
         if (frame == 0) {
           p = work->particles;
-          for (i = 0; i != 16; i++, p++) {
+          for (i = 0; i != 16; p++, i++) {
             p->z = Data_081999f2[i];
             p->velocityZ = (Random16() & 255) + 128;
             if (Random16() & 1) {
@@ -1509,8 +1532,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               s32 angle = i * 1365;
               s32 rr = (a & 31) + 32;
 
-              p->x = (rr * Trig_Sin(angle) >> 16) + 60;
-              p->y = (rr * Trig_Cos(angle) >> 16) + 60;
+              p->x = (Trig_Sin(angle) * rr >> 16) + 60;
+              p->y = (Trig_Cos(angle) * rr >> 16) + 60;
               p->z = (Random16() & 3) + 5;
               p->variant = -(Random16() & 15);
             }
@@ -1528,11 +1551,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           }
         }
         if (work->shakeFrames > 0) {
+          s32 m = 7;
           s32 a = Random16();
           s32 b = Random16();
 
-          a = (a & 7) - 4;
-          b = (b & 7) + 28;
+          a &= m;
+          b &= m;
+          a -= 4;
+          b += 28;
           gBgScroll[1].x = a;
           gBgScroll[1].y = b;
           work->shakeFrames--;
@@ -1551,12 +1577,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     s32 slideStep;
     u8 *bolts;
     void *quads = Data_02011000;
+    void *strip = Data_02012000;
+    struct EffectStep *steps = Data_02016d00;
     struct EffectStep *debris = &Data_02016d00[64];
 
     bolts = gData_02014000;
     slide = 0;
     slideStep = 0;
-    Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+    FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
     work->transferPending = 1;
     wait(1);
     gBgScroll[1].x = savedScroll;
@@ -1611,14 +1639,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       if (frame == 66) {
         for (i = 0; i != effect->count; i++) {
-          s32 j;
-
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                         0x40000, 150);
           Func_0814cd48(effect->actors[i], 7, 5, i, 16);
-          EffectPosition_ProjectBattler(effect->actors[i], &pos);
+          {s32 a = effect->actors[i];
+          s32 k = 448;
+          EffectPosition_ProjectBattler(a, &pos);
           j = 0;
-          q = &debris[i * 16];
+          q = (struct EffectStep *)(i * k + (s32)debris);}
           for (; j != 16; j++, q++) {
             s32 angle;
             s32 speed;
@@ -1646,14 +1674,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         if (frame > 71) {
           x = x - frame * 8 + 576;
         }
-        x += 116;
-        i = 0;
-        q = &Data_02016d00[(frame & 31) * 2];
-        for (; i != 2; i++, q++) {
+        for (i = 0; i != 2; i++) {
+          s32 sum = x + 116;
+          struct EffectStep *base = (struct EffectStep *)((frame & 31) * 56 + (s32)steps);
+          struct EffectStep *q = &base[i];
           s32 angle;
           s32 speed;
 
-          q->x = x << 16;
+          q->x = sum << 16;
           q->y = (Random16() % 112 + 4) << 16;
           angle = (Random16() & 0x7fff) + 0x8000;
           speed = (Random16() & 127) + 128;
@@ -1672,22 +1700,26 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         }
       }
       if (frame <= 87) {
+        s32 off;
         s32 jitter = 0;
-        s32 z = 0;
-        s32 y = 0;
-        s32 off = 0;
+        s32 z;
+        s32 y;
         s32 a;
         s32 b;
         s32 c;
 
-        for (j = 0; j != 12; j++, off += 8) {
-          s8 *v = (s8 *)gMapCellBuffer + off;
+        j = 0;
+        z = 0;
+        y = 0;
+        off = 0;
+        for (; j != 12; j++, off += 8) {
+          struct MeshVertex *v = (struct MeshVertex *)(gMapCellBuffer + off);
           s32 x = 0;
 
-          for (i = 0; i != 2; i++, x += 10, v += 4) {
-            v[0] = x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5;
-            v[1] = y;
-            v[2] = z;
+          for (i = 0; i != 2; i++, x += 10, v++) {
+            v->x = x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5;
+            v->y = y;
+            v->z = z;
           }
           jitter = jitter + (Random16() & 7) - 4;
           y -= 6;
@@ -1714,8 +1746,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         texture3.logWidth = 6;
         texture3.logHeight = 5;
         texture3.pixels = work->sheet;
+        model3->mesh = strip;
         model3->scrollU = (frame << 3) & 127;
-        model3->mesh = Data_02012000;
         Render_ResetTransformState();
         Func_080151e4(0x8000, 0x10000, 0x8000);
         a = frame * 3 * 127 * 16;
@@ -1726,11 +1758,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Transform_Push();
         Func_080150e4(0x4000);
         Func_0801521c(0x42ee0);
-        Render_TransformVertices(gMapCellBuffer, quads, 24);
+        Render_TransformVertices(cellBuffer, quads, 24);
         Render_DrawModelList(model3);
         Transform_Pop();
-        model3->mesh = gData_08199340;
         texture3.logWidth = 6;
+        model3->mesh = gData_08199340;
         texture3.logHeight = 6;
         model3->scrollU = 0;
         texture3.pixels = work->sheet + 0x800;
@@ -1754,10 +1786,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Heap_Release(model3);
         if (frame <= 87) {
 
+          i = 0;
           p2 = work->particles;
           {
 
-            for (i = 0; i != 6; i++, p2++) {
+            for (; i != 6; p2++, i++) {
               s32 lim = i * 8 + 16;
 
               if (frame == lim) {
@@ -1779,7 +1812,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                   break;
                 }
                 j = 0;
-                q = &debris[(i & 7) * 12];
+                q = (struct EffectStep *)((i & 7) * 336 + (s32)debris);
                 for (; j != 12; j++, q++) {
                   s32 angle;
                   s32 speed;
@@ -1794,22 +1827,29 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 }
               }
               if (frame >= lim && frame < lim + 8) {
-                blit[0](canvas, ((p2->variant / 2) & 3) * 2880 + gData_02014000,
+                u8 *src = gData_02014000;
+
+                blit[0](canvas, ((p2->variant / 2) & 3) * 2880 + src,
                         p2->x - 12, 0, 24, 120);
                 p2->variant++;
               }
             }
           }
-          q = debris;
-          for (i = 0; i != 100; i++, q++) {
-            if (q->variant >= 0) {
-              s32 n = (q->variant >> 2) + 2;
+          {
+            struct EffectStep *d = debris;
 
-              blit[0](canvas, sprites + gData_08197410[n - 1],
-                      HALF_HI(q->x) - n / 2, HALF_HI(q->y) - n, n, n * 2);
-              BattleEffectKernels_IntegrateVector2(q, 56, 0x2000);
-              q->velocityX -= work->scrollStepX << 12;
-              q->variant--;
+            for (i = 0; i != 100; i++, d++) {
+              if (d->variant >= 0) {
+                s32 n = (d->variant >> 2) + 2;
+
+                s32 h = n * 2;
+
+                blit[0](canvas, sprites + gData_08197410[n - 1],
+                        HALF_HI(d->x) - n / 2, HALF_HI(d->y) - n, n, h);
+                BattleEffectKernels_IntegrateVector2(d, 56, 0x2000);
+                d->velocityX -= work->scrollStepX << 12;
+                d->variant--;
+              }
             }
           }
         }
@@ -1823,8 +1863,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       Camera_ApplyVerticalShake(8);
       BattleEffect_CountDownBattlerTints();
-      frame++;
-      work->transferPending = 1;
+      {
+        s32 *pending = &work->transferPending;
+
+        frame++;
+        *pending = 1;
+      }
       wait(1);
     } while (frame != 104);
     transition[4] = 0;

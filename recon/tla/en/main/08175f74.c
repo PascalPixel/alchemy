@@ -1501,24 +1501,20 @@ empty:
       frame = 120;
     }
     if (frame == 0) {
-      s32 x;
-
       Sound_PlayFar(162);
       work->wave = 160;
       shake = 0;
       for (i = 0; i != arg->count; i++) {
         work->members[i].timer = -1;
       }
-      x = -0x2000000;
       for (i = 0; i != arg->count; i++) {
         struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[i]);
 
         Func_0814cd48(arg->actors[i], 0, 5, -1, -1);
-        actor->x = x;
-        actor->y = 0x140000;
+        actor->x = -(i + 4) * 0x800000;
         actor->z = 0;
+        actor->y = 0x140000;
         actor->unk48 = 0;
-        x -= 0x800000;
       }
     }
     if (frame == 120) {
@@ -1574,10 +1570,11 @@ empty:
         }
         for (i = 0; i != arg->count; i++) {
           s32 spin = Random16();
+          s32 delay = (Random16() & 31) + 120;
+          s32 speed = spin * 2 + 0x20000;
 
           BattleEffect_StartActorMotion(arg->actors[i], 1, 0x40000, 0x80000,
-                                    spin * 2 + 0x20000,
-                                    (Random16() & 31) + 120);
+                                    speed, delay);
           Func_0814cd48(arg->actors[i], 7, 5, i, 32);
         }
         work->unk77a8 = 3;

@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 34 of 828. The ring entry is built in index in place, its first read goes through index, and top shares index (r5, as the listing; tag temporary on adoption); steps run ring, then i, and flash, glow, bolt, then i. Left: camera + 3 at sp+8 under frame << 8 at sp+12 (22 rows): the listing's slot says its pseudo is later than anything in the frame loop's source, as a gcse temporary would be, and 0817bd88 shows the same under its length << 5; a second occurrence of camera + 3 is not found (the look-at copied into the turn arms: 87; phase locals: 60, 168). Then frame in r4 against r1 at the pillars, and one tie on movs r1, #4. The dead read of shade stays tagged.
 // Measured 2026-11-05 (tla-en): differ 88: the model's mesh and vertices are typed pointers, not void.
 // Measured 2026-11-05 (tla-en): differ 92 of 828, counts equal: left, the first draw's x, is a local (r9).
 // Left: the ring's entry (the listing builds it in r5 from index in place), the preheader's three copies.
@@ -293,11 +294,11 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     Transform_SetLookAt(camera, camera + 3);
 
     // The rings: four quarter circles each, upper halves for the first 16.
-    for (i = 0, ring = work->particles; i != 28; i++, ring++) {
+    for (i = 0, ring = work->particles; i != 28; ring++, i++) {
+      void *cel;
       s32 half;
       s32 index;
       s16 *entry;
-      s32 top;
       s32 left;
       s32 size;
 
@@ -316,18 +317,21 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       y = pos->y;
       BattleEffect_LoadBlitter(
           188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-      entry = &circles[index];
+      index <<= 1;
+      index += (s32)circles;
       half = size >> 1;
+      cel = (void *)(*(s16 *)index + cells);
+      entry = (s16 *)index;
       left = x - half;
-      top = y - size;
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (void *)(*entry + cells),
-                                               left, top, half, size);
+      index = y - size;
+      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cel,
+                                               left, index, half, size);
       HeapSlot_Release(188);
       BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
                                                       COMPOSITE_CLIP_Y |
                                                       COMPOSITE_FLIP_X));
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (void *)(*entry + cells),
-                                               x, top, half, size);
+                                               x, index, half, size);
       HeapSlot_Release(188);
       if (i > 15) {
         BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
@@ -361,7 +365,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     texture.pixels = work->sheet + 0x4000;
     for (i = 0, flash = work->particles, glow = &work->particles[16],
         bolt = &work->particles[32];
-         i != SURGE_BOLTS; i++, flash++, glow++, bolt++) {
+         i != SURGE_BOLTS; flash++, glow++, bolt++, i++) {
       s32 t = ++bolt->variant;
       struct EffectPosition *out;
 

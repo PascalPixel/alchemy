@@ -1,3 +1,4 @@
+// 2026-11-05: still 66 of 165. A local for 384 (70) falls to gcse: its const-prop folds the spin's add, and the constant in the loop has life 1 of 64 real insns, so loop.c leaves it where the native hoists it and cse2 shares r8. What gives the constant life 5 or more in the loop is not found.
 // 2026-10-26: differ 66; resource 0x1e0 is FieldEffect_Leaves in the directory
 // (ResourceId_Leaves, to name there when this adopts); the native keeps 384
 // in r8 across the particle loop and spills the heading.

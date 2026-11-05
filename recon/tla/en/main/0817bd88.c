@@ -1,3 +1,4 @@
+// 2026-11-05: differ 41 of 543 (tla-en): a row pointer from j * 8 replaces the offset variable, which lets loop.c make the giv (slot sp+20); the model stores in the listing's order. Left: the native adds cells at the row from the pool (here the giv holds it, set in the preheader), camera + 3 at sp+28 under both length << 5 copies (here sp+32), one tie on the shade store; the rest is pool offsets.
 // 2026-11-05: differ 69 of 543 (tla-en). buffer holds Data_02012000, set once at the
 // top so reload rebuilds it. Left as below.
 // 2026-11-05: differ 81 of 543 (tla-en). A wrapper gains 4. Left as below.
@@ -88,7 +89,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -235,7 +236,6 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
     if (frame > 15) {
       s32 length;
       s32 j;
-      s32 offset;
       struct ModelVertex (*cells)[2] = gMapCellBuffer;
       u8 *projected = Data_02011000;
       s32 shade;
@@ -249,20 +249,23 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       }
 
       // The arm's vertices, thicker at its root.
-      for (j = 0, offset = 0; j != PUPPET_SEGMENTS; j++, offset += 8) {
+      for (j = 0; j != PUPPET_SEGMENTS; j++) {
+        s32 offset = j * 8;
         s32 width = 50 - ((Trig_Sin(j * 862 + 4310) * 44) >> 16);
         s32 wobble = ((Trig_Sin((frame + j) << 11) << 4) >> 16) * j / 32;
         s32 outer;
+        struct ModelVertex *row;
 
         i = 0;
         outer = width + wobble;
         do {
-          ((struct ModelVertex *)((s8 *)cells + offset))[i].x =
+          row = (struct ModelVertex *)(offset + (s8 *)cells);
+          row[i].x =
               ((Trig_Cos(j * length) * (i * width + wobble + 16)) >> 16) -
               outer / 2 - 16;
-          ((struct ModelVertex *)((s8 *)cells + offset))[i].y =
+          row[i].y =
               -((Trig_Sin(j * length) * (i * width + j + wobble + 32)) >> 16);
-          ((struct ModelVertex *)((s8 *)cells + offset))[i].z = 0;
+          row[i].z = 0;
           i++;
         } while (i != 2);
         if (j == 32) {
@@ -277,10 +280,10 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       texture.logWidth = 7;
       texture.logHeight = 5;
       texture.pixels = work->sheet;
-      model->shade = shade;
-      model->mesh = buffer;
       model->kind = 6;
+      model->mesh = buffer;
       model->vertices = projected;
+      model->shade = shade;
       model->texture = &texture;
       EffectPosition_ProjectScaledBattler(effect->actor, &pos);
       model->scrollV = 0;

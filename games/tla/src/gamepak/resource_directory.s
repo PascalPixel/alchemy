@@ -395,12 +395,12 @@ Resource_DirectoryTable:
 	resource SparkleDots, BattleEffect_SparkleDots
 	resource PinkBurstSheet, BattleEffect_PinkBurstSheet
 	resource , BattleEffect_LightFanSheet
-	resource , Resource_Data181
+	resource Data181, Resource_Data181
 	resource DustPuffSheet, BattleEffect_DustPuffSheet
 	resource GoldShellSheet, BattleEffect_GoldShellSheet
 	resource BlastSheet, BattleEffect_BlastSheet
 	resource FlameSheetB, BattleEffect_FlameSheetB
-	resource , BattleEffect_FirePillarSheetB
+	resource FirePillarSheetB, BattleEffect_FirePillarSheetB
 	resource RockSpireSheet, BattleEffect_RockSpireSheet
 	resource LightningBoltSheet, BattleEffect_LightningBoltSheet
 	resource BeamImage, BattleEffect_BeamImage

@@ -1,3 +1,4 @@
+// 2026-11-05: without the pin and barrier below, allocation matches the listing wholly and 121 of 183 differ, every row reload rotation over r0, r2, r3 where the native rotates over r0 to r3: r1 must enter the spill set, as the second round below says. Not reached.
 // Near miss, differ 86 of 183 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 121 of 183, skeleton gap 28 (tla-en, 2026-11-01): snapshots

@@ -1,15 +1,3 @@
-// Near miss, differ 78 of 202 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Near miss, differ 90 of 202 (2026-10-15, written from the listing; ☀️ has no
-// twin). Kind 27's BattleEffect_RunViewSway (view_sway.c) is the same sway along the
-// other axis. What remains: the ROM's frame is 32 bytes and this one 28; the
-// ROM keeps a copy of the shake phase in its own slot for the object loop and
-// walks the objects and offsets with pointers that loop.c starts there, so
-// every slot of the work, event, frame count and phase sits 4 bytes higher. Measured:
-// pointer walks and the phase copy as source variables, at function or block
-// scope (185-190: the copy coalesces and the frame stays 28); the offset as
-// s32 (162). Permute 5 min, 2 jobs: 79 only with (amplitude + 1) > 1, not
-// kept.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -69,7 +57,6 @@ void Func_080e9090(void) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 frameCount;
   s32 phase;
-  s32 shakePhase;
   s32 i;
   s32 amplitude;
   s32 state;
@@ -83,7 +70,6 @@ void Func_080e9090(void) {
 
   phase = 0;
   frameCount = 0;
-  shakePhase = 0;
   amplitude = SWAY_START;
   state = SWAY_GROW;
   frames = 0;
@@ -95,16 +81,15 @@ void Func_080e9090(void) {
     if (event->controlMode == 2) {
       for (i = 0; i < work->count; i++) {
         struct ObjectSprite *sprite = work->objects[i]->animation;
-        u16 offset = work->spriteOffsets[i];
+        s32 offset = work->spriteOffsets[i];
 
         if (amplitude > 0)
-          sprite->offsetX = offset + Iwram_MulQ16(Trig_Sin(shakePhase << 11),
-                                                  amplitude / 384);
+          sprite->offsetX =
+              offset + Iwram_MulQ16(Trig_Sin(phase * 3 << 11), amplitude / 384);
         else
           sprite->offsetX = offset;
       }
     }
-    shakePhase += 3;
 
     Func_080e8b44(VIEW_MOVE_X, phase++, amplitude);
     switch (state) {

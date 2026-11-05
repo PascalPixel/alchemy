@@ -1,10 +1,3 @@
-// Draft, differ 82 of 262: the native spills shadowHalfWidth (sp+16) and
-// keeps shadowHalfHeight in r11, here both take r9 and r10, which moves the
-// spill slots and the rotated path's registers. Moving the rotated path's
-// locals to function scope changes nothing.
-// The sibling of Render_ApplyProjectedPlacement (0x080220f0) that
-// takes the draw slot: the shadow is 16 by 8 pixels (32 by 16 at double
-// size) and both sprites go into Oam_AddSpriteAtDepth's slot depth.
 #include "types.h"
 #include <affine.h>
 #include "sprite.h"
@@ -30,6 +23,10 @@ struct PlacedObject {
 
 #define OBJECT_SHADOW 1
 
+static inline u8 PlacedObject_Height(struct PlacedObject *object) {
+  return object->height;
+}
+
 s32 Func_08021a84(struct PlacedObject *object, s32 mode);
 void Oam_AddSpriteAtDepth(void *entry, s32 slot);
 s32 Trig_Sin(s32 angle);
@@ -40,7 +37,7 @@ void Func_08022318(struct PlacedObject *object, s32 *pos, s32 *scale, s32 mode,
   s32 matrix;
   u32 halfWidth;
   u32 halfHeight;
-  s32 shadowHalfWidth;
+  s32 extentX;
   s32 affine;
   s32 px;
   s32 py;
@@ -48,7 +45,8 @@ void Func_08022318(struct PlacedObject *object, s32 *pos, s32 *scale, s32 mode,
   s32 pw;
   s32 scaleX;
   s32 scaleY;
-  s32 shadowHalfHeight;
+  s32 extentY;
+  // Unused: gives the stack frame its 24 bytes.
   s32 ground[3];
   s32 screen[3];
   s32 flip;
@@ -57,14 +55,20 @@ void Func_08022318(struct PlacedObject *object, s32 *pos, s32 *scale, s32 mode,
   s32 anchorY;
   s32 x;
   s32 y;
+  struct AnimationSpritePart *part;
 
+  /* FAKEMATCH(temporary): the shadow's half size and the anchor's offset share
+   * extentX and extentY; as locals of their own, 74 of 262 instructions differ
+   * in tla-en. */
   halfWidth = object->width >> 1;
-  shadowHalfHeight = 4;
-  halfHeight = object->height >> 1;
-  shadowHalfWidth = 8;
-  px = *pos++;
+  /* FAKEMATCH(wrapper): the height read through an inline; as object->height,
+   * 4 of 262 instructions differ in tla-en. */
+  halfHeight = PlacedObject_Height(object) >> 1;
+  extentX = 8;
+  extentY = 4;
   scaleX = *scale++;
   scaleY = *scale;
+  px = *pos++;
   py = *pos++;
   pz = *pos++;
   pw = *pos;
@@ -86,18 +90,17 @@ void Func_08022318(struct PlacedObject *object, s32 *pos, s32 *scale, s32 mode,
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
-    shadowHalfWidth = 16;
-    shadowHalfHeight = 8;
+    extentX = 16;
+    extentY = 8;
   }
 
-  y = ((pz - pw) >> 16) - shadowHalfHeight;
+  y = ((pz - pw) >> 16) - extentY;
   if ((object->flags & OBJECT_SHADOW) && y < 160) {
-    struct AnimationSpritePart *shadow = &object->shadow;
-
-    shadow->affine = 0;
-    shadow->x = (px >> 16) - shadowHalfWidth;
-    shadow->y = y;
-    Oam_AddSpriteAtDepth(shadow, depth);
+    part = &object->shadow;
+    part->affine = 0;
+    part->x = (px >> 16) - extentX;
+    part->y = y;
+    Oam_AddSpriteAtDepth(part, depth);
   }
 
   if (scaleX == 0 || scaleY == 0)
@@ -109,19 +112,19 @@ void Func_08022318(struct PlacedObject *object, s32 *pos, s32 *scale, s32 mode,
   } else {
     s32 sin = Trig_Sin(object->rotation);
     s32 cos = Trig_Cos(object->rotation);
-    s32 offsetX = object->offsetX * scaleX;
-    s32 offsetY = ((object->height >> 1) - object->offsetY) * scaleY;
 
-    anchorX = Iwram_MulQ16(cos, offsetX) + Iwram_MulQ16(sin, offsetY);
-    anchorY = Iwram_MulQ16(cos, offsetY) - Iwram_MulQ16(sin, offsetX);
+    extentX = object->offsetX * scaleX;
+    /* FAKEMATCH(wrapper): the height read through an inline; as object->height,
+     * 2 of 262 instructions differ in tla-en. */
+    extentY = ((PlacedObject_Height(object) >> 1) - object->offsetY) * scaleY;
+
+    anchorX = Iwram_MulQ16(cos, extentX) + Iwram_MulQ16(sin, extentY);
+    anchorY = Iwram_MulQ16(cos, extentY) - Iwram_MulQ16(sin, extentX);
   }
   x = (px >> 16) - halfWidth + ((anchorX + 0xffff) >> 16);
   y = ((pz - py) >> 16) - halfHeight - ((anchorY + 0xffff) >> 16);
   if (x < 240 && y < 160) {
-    /* FAKEMATCH: the part is pinned to the r0 the native addresses its
-     * attributes through, as in Render_ApplyProjectedPlacement. */
-    register struct AnimationSpritePart *part asm("r0") = &object->part;
-
+    part = &object->part;
     part->x = x;
     part->y = y;
     part->affine = affine;

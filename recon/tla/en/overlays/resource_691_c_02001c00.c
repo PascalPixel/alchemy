@@ -74,6 +74,7 @@ void Func_02001c00(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct MagmaRockEffectOptions options;
   s32 position[3];
+  struct MagmaRockEffectOptions *opt;
   s32 *offset;
   s32 i;
   u32 phase;
@@ -85,17 +86,26 @@ void Func_02001c00(void) {
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 6);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 10);
   Actor_SetActionById(gMainRoutineWork.currentOwner, 32);
-  options.kind = 1;
-  options.palette = 14;
-  options.scaleX = 0xcccc;
-  options.scaleY = 0xcccc;
-  offset = position;
+  opt = &options;
+  opt->kind = 1;
+  opt->palette = 14;
+  opt->scaleX = 0xcccc;
+  opt->scaleY = 0xcccc;
   i = 0;
 first:
-  offset[0] = ((Random16Far() & 15) << 16) - 0x80000;
+  {
+    s32 r = Random16Far();
+
+    /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
+     * position's address to the loop's entry; as no asm, 20 of 218 instructions
+     * differ in tla-en. */
+    __asm__("" : : : "sfp");
+    offset = position;
+    offset[0] = ((r & 15) << 16) - 0x80000;
+  }
   offset[1] = (Random16Far() & 15) << 16;
   Func_0200015c(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
-                0x13333, 0, 0xb0000, &options);
+                0x13333, 0, 0xb0000, opt);
   wait(5);
   i++;
   if (i != 8)
@@ -114,7 +124,7 @@ second:
     offset[0] = ((Random16Far() & 15) << 16) - 0x80000;
     offset[1] = (Random16Far() & 15) << 16;
     Func_0200015c(leader->x + offset[0], leader->y + offset[1], leader->z, 0,
-                  0x13333, phase, 0xb0000, &options);
+                  0x13333, phase, 0xb0000, opt);
   }
   wait(1);
   if (leader->velocityY != 0) {

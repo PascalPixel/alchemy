@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/s015c.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/distance.o"(.text)
         "*/games/tla/src/field/object/find_in_cell.o"(.text)
-        "*/resource_691_overlay.o"(.text.x020083b4)
+        "*/games/tla/src/scene/magma_rock/s03b4.o"(.text)
         "*/games/tla/src/field/map/cell_fill_byte.o"(.text)
         "*/games/tla/src/scene/magma_rock/distance.o"(.text)
         "*/games/tla/src/scene/magma_rock/s05cc.o"(.text)

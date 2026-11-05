@@ -1,23 +1,4 @@
-// Draft, differ 80 of 181, skeleton gap 18 (tla-en, 2026-11-01)
-// An object vanishes in a burst of light: it spins for sixteen frames unless
-// told not to, then hides while a sprite (palette 15) plays its eight-frame
-// flash over it for seventy-two frames, twice as large in mode 1; the object is
-// then moved away and the sprite freed. The resource is 0x1e8,
-// FieldEffect_Explosion in gamepak/resource_directory.s, which would need a
-// ResourceId_FieldEffectExplosion name there; as a plain number it is split
-// instead of the listing's pool load.
-// Left: every remaining skeleton line but two follows from the object sitting
-// in r8 and the tile in r7, where the listing has them the other way round.
-// global.c ranks the tile (16 refs across 120 insns) above the object (10 across
-// 65); the listing's str r0 for the fifth argument is reload reusing r0 once the
-// tile is in a high register, so it is no missing variable, and a copy of the
-// tile collapses in CPROP. The tile would need more than 138 insns of life, or
-// the object 12 refs. The other two lines: the listing builds 0x400 again after
-// VramCache_Load, but with the sprite assigned there CSE keeps the argument's
-// pseudo across the call and it takes r5, so the sprite is assigned before the
-// call, which puts its add before the bl. s32 angle keeps 0x2000 in the spin
-// loop; object->angle += 0x2000 hoists it to the pool. z is what lets the value
-// stay in a register across the scale stores.
+#include "call.h"
 #include "types.h"
 #include "actor.h"
 #include "system/dma.h"
@@ -68,6 +49,13 @@ void Func_020034d4(s32 id, s32 x, s32 z);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
 
+static __inline__ void Place(struct FlashSprite *a, s32 b, s32 c, u32 d,
+                             s32 e) {
+  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 181
+   * instructions differ in tla-en. */
+  Func_020035fc(a, b, c, d, e);
+}
+
 void Func_020029f8(s32 id, s32 mode) {
   struct FlashWork *work = HeapSlot_AllocFar(220, 0x428);
   struct Actor *object = Actor_GetById(id);
@@ -94,9 +82,9 @@ void Func_020029f8(s32 id, s32 mode) {
   Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
                 work);
   slot = Resource_FindFreeEntry();
+  tile = Value3((s32 (*)())VramCache_Load, slot, 0x400, (s32)work);
   sprite = &work->sprite;
-  tile = VramCache_Load(slot, 0x400, work);
-  Func_020035fc(sprite, 8, 16, 0x40000000, tile);
+  Place(sprite, 8, 16, 0x40000000, tile);
   sprite->unk1e = 240;
   sprite->priority = 1;
   sprite->fullColor = 0;

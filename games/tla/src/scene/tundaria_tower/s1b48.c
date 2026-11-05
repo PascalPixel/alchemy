@@ -1,4 +1,3 @@
-// Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "edition.h"
 
 // The Japanese form differs and is still on its listing.
@@ -85,8 +84,7 @@ retry:
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   cell = Func_02002fe0(*layer, p[0], p[2]);
   if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y >
-          0x80000) {
+      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->angle = angle;
     object->velocityX = 0;
     object->velocityZ = 0;

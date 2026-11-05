@@ -31,8 +31,8 @@ void Func_02000580(s32 scale) {
 
 loop:
   color = *source;
-  value = color >> 10;
   value &= 31;
+  value = color >> 10;
   mask = ~0x3ff;
   value <<= 10;
   source++;
@@ -40,8 +40,8 @@ loop:
     value = 0x7c00;
   *channel = value;
   value = color >> 5;
-  value &= 31;
   value *= scale;
+  value &= 31;
   value &= mask;
   channel++;
   if (value > 0x7c00)

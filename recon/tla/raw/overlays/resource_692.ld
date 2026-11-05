@@ -13,7 +13,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock_inside/s015c.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s033c.o"(.text)
         "*/games/tla/src/field/object/find_in_cell.o"(.text)
-        "*/resource_692_overlay.o"(.text.x020083b4)
+        "*/games/tla/src/scene/magma_rock_inside/s03b4.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s0538.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/s0594.o"(.text)
         "*/games/tla/src/scene/magma_rock_inside/dist.o"(.text)

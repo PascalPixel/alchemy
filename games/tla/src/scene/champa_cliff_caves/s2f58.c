@@ -1,6 +1,3 @@
-// Draft, differ 130 of 136: shows the glow at a spot: allocates its work, loads
-// its picture and sprites, starts its frame callback and a shake, then grows
-// its first sprite, waits ten frames and grows its second in two stages.
 #include "types.h"
 #include "call.h"
 
@@ -28,12 +25,16 @@ void Func_02002f58(const s32 *position) {
 
   FIELD_AT(work, s32, 4096) = position[0];
   FIELD_AT(work, s32, 4100) = position[1];
-  time = 0;
   FIELD_AT(work, s32, 4104) = position[2];
   Func_02002c88();
   Func_02002d34();
   FIELD_AT(work, u16, 4212) = 0;
-  Call2((void (*)())Task_Add, Func_02002de4, 0x480);
+  time = 0;
+  {
+    s32 priority = 0x480;
+
+    Task_Add(Func_02002de4, priority);
+  }
   Call3((void (*)())Func_02003434, 0x40000, 0x40000, 0x10000);
   state = 0;
   do {

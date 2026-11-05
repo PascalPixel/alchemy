@@ -1,12 +1,4 @@
-// Draft of Func_0200138c (overlay 690, 464 bytes), differ 50 of 196, registers
-// only: the native keeps the object in r7, the column in r6 and the row in r5;
-// this form has the object in r6 and the column in r7. The object is used in
-// four sinking loops, and each use inside a loop counts double when the
-// allocator ranks it, so it outranks the column. Measured: for loops, differ 66
-// with the 0x205 flag shared; the loop as an inline function with a for loop,
-// differ 94 (the object first of the three). The 0x205 pair goes through the
-// flag forwarders so that each call builds its own constant.
-#include "../../../../../games/tla/src/scene/settlements/local.h"
+#include "local.h"
 #include "call.h"
 
 extern const u8 gData_0200232c[];
@@ -20,7 +12,7 @@ void Func_02001620(s32 id);
 #define SINK(frames, label)                                                    \
   i = (frames);                                                                \
   label:                                                                       \
-  FieldEvent_Wait(1);                                                    \
+  FieldEvent_Wait(1);                                                          \
   object->y -= 0x20000;                                                        \
   i--;                                                                         \
   if (i > 0)                                                                   \

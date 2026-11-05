@@ -1,30 +1,3 @@
-// Draft, differ 211 of 304, skeleton gap 43 (tla-en, 2026-11-01)
-// Calls, branches, loops and fields follow the native and the adopted relative
-// Func_02001b48 (tundaria_tower/s1b48.c), whose plain statement order and goto
-// loops this text now takes. Left: GCSE PRE hoists &position and
-// &object->terrainId above the retry label and turns every later &position into
-// a copy of one register (07.gcse: edge 0 to 1, expressions 3 and 11). The
-// native recomputes add sp, #28 after every call and computes &terrainId on each
-// pass. The rest of the gap is allocation that follows from the hoisted register.
-// Func_02001b48 reaches the native only with tagged devices this draft may not
-// add: an empty asm clobbering sfp at each loop stops the hoist, and j holds the
-// position's address and then the overlap counter (the native's r10 in both).
-// Ruled out as an allocation effect: PRE's reaching register has no REG_EQUIV
-// note (17.lreg, the set on edge 0 to 1), so losing its hard register would give
-// a stack slot, never the native's rematerialized add sp, #28. All five sites
-// reach gcse as sets of a pseudo and hash to one expression, so no plain spelling
-// separates them.
-// Compiler question for Pascal (K3), not pursued here: gcse.c does not count a
-// call as setting sfp, and every native add sp, #28 follows a call since the
-// last one, as if the native's did. That would not explain &terrainId. An
-// analysis-only compile with -Os left 32 of 302 lines differing, before this
-// round's reordering, against 177 with -fno-gcse.
-// Tried on this text, no gain: declaration order of j, flags, q, p, entry,
-// layer and cell (identical); a set-once local for Iwram_MulQ16 (identical);
-// s32 angle (differ 209, gap 47); (s16) casts on it (identical); p for q,
-// position for p or q, q as the overlap argument (identical or worse); one pair
-// of targets (218); dx before dz (worse); for (;;) in place of goto retry (245).
-// Earlier: a head-tested loop flag (gap 117), angle == -1, targets from p[].
 #include "call.h"
 #include "types.h"
 #include "actor.h"
@@ -127,7 +100,8 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Value4((s32 (*)())Func_02003028, (s32)&entry->x, radius, (s32)position, entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Func_02003028, (s32)&entry->x, radius, (s32)position,
+               entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;

@@ -1,17 +1,3 @@
-// Draft, differ 6 of 175, skeleton gap 6 (tla-en, 2026-11-01)
-// Twin of ☀️ PushedActor_AdvancePair (scene/shared/staged_actor.h): same
-// probes, same push (animation 8, wait 15, sound 185, rate one fifth of a
-// pixel), same settle. Overlay 692's copy of resource_64e_c_0200038c.c's
-// function. Ported from the twin: struct FieldPosition dst and the coordinate
-// union; neither moved differ, the coordinate union drops the s16 cast. Taken
-// from the 64e draft: next's x velocity stored before its z (8 to 6). Its z
-// before y in the raised probe is worse here (12). Left: one scheduling group
-// after Func_02004eb8; the native issues next's x, reloads dst.z, then stores
-// the x velocity and z, with the leader's copy to r2 after movs r3, #128; this
-// draft stores the x velocity first and copies the leader earlier. Tried:
-// all 720 orders of next's four stores and the leader's two targets (none
-// under 6), chained zeros (8 or 6), comma form (8), rate as u32 and declared
-// first (6). The 64e header's alias note fits this spot.
 #include "types.h"
 #include "main_routine_work.h"
 
@@ -55,7 +41,8 @@ struct StagedActor {
 extern s32 gData_02004fec[];
 
 struct StagedActor *Actor_GetById(s32 actor);
-struct StagedActor *Actor_FindInCell(struct FieldPosition *position, struct StagedActor *self);
+struct StagedActor *Actor_FindInCell(struct FieldPosition *position,
+                                     struct StagedActor *self);
 void Func_02004c98(struct StagedActor *object, s32 mode);
 void Func_02004cc8(struct StagedActor *object, s32 x, s32 y, s32 z);
 void Func_02004cd0(struct StagedActor *object);
@@ -125,9 +112,15 @@ void Func_020003b4(void) {
   Func_02004cd0(next);
   Func_02004eb8();
   next->x.fixed = dst.x;
-  next->velocityX = 0;
-  next->z.fixed = dst.z;
-  next->velocityZ = 0;
+  {
+    /* FAKEMATCH(temporary): z read ahead of velocityX's store; as dst.z at its
+     * store, 4 of 175 instructions differ in tla-en. */
+    s32 z = dst.z;
+
+    next->velocityX = 0;
+    next->z.fixed = z;
+    next->velocityZ = 0;
+  }
   lead->targetX = 0x80000000;
   lead->targetZ = 0x80000000;
   lead->velocityX = 0;

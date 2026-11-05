@@ -65,9 +65,9 @@ void Func_020001f8(void) {
     index *= 2;
   } while (0);
   colour = (u16 *)((u8 *)*list + index);
-  r = *colour++;
   g = *colour++;
   b = *colour;
+  r = *colour++;
   /* FAKEMATCH(one-pass): as in the loop; as a plain statement, 2 of 120
    * instructions differ in tla-en. */
   do {

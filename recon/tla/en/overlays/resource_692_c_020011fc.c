@@ -58,20 +58,17 @@ void Func_020011fc(void) {
   leader->velocityY = 0x4cccc;
   leader->motionFlags &= 0x7e;
   Actor_SetSingleChildFlags(leader, 0);
-  i = 0;
   stepX = (position[0] - leader->x) / 12;
   stepZ = (position[2] - leader->z) / 12;
-  goto test;
-loop:
+  i = 0;
+  do {
     leader->x += target->x - position[0] + stepX;
     leader->z += target->z - position[2] + stepZ;
     position[0] = target->x;
     position[2] = target->z;
     wait(1);
     i++;
-test:
-  if (i != 12)
-    goto loop;
+  } while (i != 12);
   leader->x = target->x;
   leader->y = leader->terrainHeight = target->y + 0x100000;
   leader->z = target->z;

@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/scene/lobby/peer.o"(.text)
         "*/games/tla/src/scene/lobby/lobby.o"(.text)
         "*/games/tla/src/scene/lobby/circle.o"(.text)
-        "*/resource_6b5_overlay.o"(.text.x0200839c)
+        "*/games/tla/src/scene/lobby/s039c.o"(.text)
         "*/games/tla/src/scene/lobby/owners.o"(.text)
         "*/resource_6b5_overlay.o"(.text.x02008578)
         "*/games/tla/src/scene/lobby/exchange.o"(.text)

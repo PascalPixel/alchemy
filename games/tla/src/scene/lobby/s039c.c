@@ -1,10 +1,3 @@
-// Draft, differ 50 (tla-en, 2026-11-05). Func_0200039c of overlay 6b5.
-// The whole layout and the frame now match: the receive loop's top is moved
-// to its bottom by the two break exits, and the same in the one-shot recovery
-// loop. Direct result = -1 sites (cross-jumped back to one) rank result above
-// slot, as natively; Call2 on the decoder stops the sp address being shared.
-// Left: scratch r2 and r3 swapped, from the hoisted gSerialReceivedSize
-// address being in r2 where the native has r3 and the head's order.
 #include "types.h"
 #include "edition.h"
 #include "serial.h"
@@ -51,29 +44,27 @@ s32 Func_0200039c(void) {
     if (transfer == -1)
       break;
     while (Func_0200193c() != 0) {
-      if (gSerialReceivedSize > size)
-        {
+      if (gSerialReceivedSize > size) {
         result = -1;
         goto done;
       }
       wait(1);
       if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-        if (++tries > 24)
-          {
-        result = -1;
-        goto done;
-      }
+        if (++tries > 24) {
+          result = -1;
+          goto done;
+        }
       }
     }
-    if (gSerialReceivedSize != size)
-      {
-        result = -1;
-        goto done;
-      }
+    if (gSerialReceivedSize != size) {
+      result = -1;
+      goto done;
+    }
     if (record[0x12a] != 0)
       result++;
     wait(2);
-    Call2((void (*)())Message_DecodeRawUnbounded, (s32)MsgEnemyLabel, namePrefix);
+    Call2((void (*)())Message_DecodeRawUnbounded, (s32)MsgEnemyLabel,
+          namePrefix);
     for (i = 0; i <= LOBBY_PREFIX_LIMIT && namePrefix[i] != 0; i++)
       ;
 #if LOBBY_PREFIX_LIMIT == 7
@@ -101,18 +92,16 @@ s32 Func_0200039c(void) {
     while (Func_0200193c() != 0) {
       s32 limit = 0x154;
 
-      if (gSerialReceivedSize > limit)
-        {
+      if (gSerialReceivedSize > limit) {
         result = -1;
         goto done;
       }
       wait(1);
       if (--timeout < 0 || (gLinkStatus & 3) != 3) {
-        if (++tries > 24)
-          {
-        result = -1;
-        goto done;
-      }
+        if (++tries > 24) {
+          result = -1;
+          goto done;
+        }
       }
     }
     if (gSerialReceivedSize != 0x154)

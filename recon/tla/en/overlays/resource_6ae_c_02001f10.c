@@ -85,7 +85,7 @@ static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
 
 void Func_02001f10(void) {
   struct {
-    u8 bytes[8];
+    u8 bytes[4];
   } held;
   s32 lastArg, spill, zero, scratch;
   s32 owner, actor, mask, owner2, one, t1;

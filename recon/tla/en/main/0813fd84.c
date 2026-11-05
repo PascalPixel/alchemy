@@ -1,4 +1,4 @@
-// Draft, differ 168 of 2579 (tla-en, 2026-11-05); 96 with pool offsets normalized. The frame, every slot and every pool agree.
+// Draft, differ 89 of 2579 (tla-en, 2026-11-05), 2578 instructions here. The frame, every slot and every pool agree.
 // BattleEffect_RunCruelRuin. What this round settled, each read from the listing and each a real form:
 // - Loop givs: grey, blue and green are givs of frame (blue first, as the slots order them); grey reduces because
 //   the palette test and its colour spell frame - 80 again, and that second giv combines with the first.
@@ -48,6 +48,12 @@ struct ModelTexture {
   const void *pixels;
 };
 
+struct ModelTextureB {
+  u32 logWidth : 8;
+  u32 logHeight : 8;
+  u32 unk02 : 16;
+  const void *pixels;
+};
 struct RenderModel {
   s32 kind;
   s32 unk04;
@@ -568,7 +574,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       }
     }
     if (frame > 123) {
-      texture.logWidth = 5;
+      ((struct ModelTextureB *)&texture)->logWidth = 5;
       texture.logHeight = 2;
       texture.pixels = work->sheet + 0x3648;
       model->mesh = Data_08199220;

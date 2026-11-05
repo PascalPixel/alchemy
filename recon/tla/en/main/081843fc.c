@@ -1319,8 +1319,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
           Func_08164b2c(d - 11, frame - 136, 3 - d);
         }
-        ry = rise >> 16;
         r = 16;
+        ry = rise >> 16;
         if (frame > 92) {
           r = frame - 75;
         }

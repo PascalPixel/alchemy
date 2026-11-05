@@ -1,4 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 259 (tla-en), center a struct, so the address is rebuilt where the native rebuilds it. Older notes below predate it.
+// Draft, differ 187 of 315 (tla-en, 5 November 2026), under -Os. Older notes below predate it. Left: the nudges' constants take reload registers by rotation (r1, r1, r5, r1 in the native; both x arms in r1 cross-jump), the multiply's address takes r6 where the native has x there and the address in r8, and 0x8000 kept in r11 across the flip test (a local is folded back by cprop).
 // Draft, differ 206 of 315, skeleton gap 54 (tla-en, 2026-11-01): control flow,
 // calls, the frame (88 bytes, same slots) and memory accesses follow the
 // listing; what is left comes from two things, both GCSE's. The listing
@@ -111,21 +111,14 @@ void Func_0200054c(void) {
   center.x = (((object->x >> 21) + center.x) << 21) + 0x100000;
   center.z = (((object->z >> 21) + center.z) << 21) + 0x100000;
   if (Func_020003d0(pos, &center) > 46) {
-    {
-      s32 step;
-
-      if (*pos < center.x)
-        step = 0x8000;
-      else
-        step = -0x8000;
-      *pos += step;
-    }
-    z = object->z;
-    if (z < center.z)
-      z += 0x8000;
+    if (*pos < center.x)
+      *pos += 0x8000;
     else
-      z -= 0x8000;
-    object->z = z;
+      *pos -= 0x8000;
+    if (object->z < center.z)
+      object->z += 0x8000;
+    else
+      object->z -= 0x8000;
   }
   if (Func_0200034c(1, center.x >> 20, center.z >> 20) >> 8 == 40) {
     turn[0] = SeaOfTime_Cos(-0x200);

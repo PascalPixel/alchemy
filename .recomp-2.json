@@ -1,0 +1,16 @@
+{
+  "$schema": "https://recomp.fyi/schema/v1.json",
+  "game": "Golden Sun: The Lost Age",
+  "wikidata": "Q2342264",
+  "system": "GBA",
+  "type": "decomp",
+  "original": [
+    { "region": "Japan", "serial": "AGFJ", "sha1": "4c79e60962299654981628ccd99b122ef27043f7" },
+    { "region": "USA", "serial": "AGFE", "sha1": "b500663220cb9bf56b9f8e8c0c544f1d6fa3a824" },
+    { "region": "Germany", "serial": "AGFD", "sha1": "7820b4c7ba9002b0e9be23a6f45a9ab204986438" },
+    { "region": "Spain", "serial": "AGFS", "sha1": "a2e3e80036195343c2713410ac14f4e329e3f40d" },
+    { "region": "France", "serial": "AGFF", "sha1": "f14855c0f8c87a95cc52189e8e3b2bd9df186322" },
+    { "region": "Italy", "serial": "AGFI", "sha1": "57f1d005666b81645e55412658427e27099c5907" }
+  ],
+  "status": "in-progress"
+}

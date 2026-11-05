@@ -4,5 +4,13 @@
   "wikidata": "Q1545555",
   "system": "GBA",
   "type": "decomp",
+  "original": [
+    { "region": "Japan", "serial": "AGSJ", "sha1": "35ef9e4c9f38183ebd6a3e3923a11ce9a4333718" },
+    { "region": "USA", "serial": "AGSE", "sha1": "5c4695205413df7db52b9a184815a07783999971" },
+    { "region": "Germany", "serial": "AGSD", "sha1": "c23ab91a39434623cf1a999f387d743ade1a22a6" },
+    { "region": "Spain", "serial": "AGSS", "sha1": "de0bdc889594b012cad213ca83707feb81ada28b" },
+    { "region": "France", "serial": "AGSF", "sha1": "42f3b262c16cfc5bde1fa2b25016fb74046de1b3" },
+    { "region": "Italy", "serial": "AGSI", "sha1": "ca45e04b26b2f040ac63e679a459d21869f5f28d" }
+  ],
   "status": "complete"
 }

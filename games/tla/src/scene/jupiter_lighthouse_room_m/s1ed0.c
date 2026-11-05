@@ -71,7 +71,6 @@ void Func_020047dc(void);
   } while (0)
 
 // The Japanese form differs and is still on its listing.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
 
 static __inline__ void Walk(s32 id, s32 speed, s32 frames) {
   /* FAKEMATCH(wrapper): the walk forwarded inline, so its constants stay out of
@@ -452,9 +451,9 @@ void Func_02001ed0(void) {
   Camera_FollowActor(4, 1);
   Func_02004844(7, 0, 0);
   FieldEvent_Wait(0x14);
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   Event_ClearInvalidPackedValues();
+#endif
   Call3((void (*)())Actor_SetPositionAndReset, 4, 0x298, 0x46);
   Func_020047dc();
 }
-
-#endif

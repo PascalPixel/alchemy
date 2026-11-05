@@ -85,6 +85,7 @@ void Func_020029c8(struct Actor *actor) {
       sum = Random16Far();
       sum += Random16Far();
       half = 0x8000;
+      scale = (sum >> 2) + half;
       Func_02004bd0(object, gData_020056d0);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
@@ -95,7 +96,6 @@ void Func_020029c8(struct Actor *actor) {
       }
       velocity = Iwram_MulQ16(radius, Math_Sine(angle));
       object->gravity = 0x547a;
-      scale = (sum >> 2) + half;
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = half;

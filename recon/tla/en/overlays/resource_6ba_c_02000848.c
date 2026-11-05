@@ -1,8 +1,7 @@
-// Draft, differ 94 (tla-en, 2026-11-05). Func_02000848 of overlay 6ba.
-// A rise from 70: the barrier is gone, the inner loops plain, step a u8
-// stored as 255 and read (s8), which gives the listing's shifts. Left: rank
-// only: item r5, gInput r6, redraw r8, step sl, against the native gInput r5,
-// item r6, step r8, redraw sl.
+// Draft, differ 38 of 258 (tla-en, 2026-11-05). Func_02000848 of overlay 6ba.
+// item set before the second window, which gives it r6 as natively; step a
+// real s8. Left: rank only: redraw 10/348 outranks step 9/328 (r8 and sl),
+// the native the other way.
 #include "types.h"
 #include "call.h"
 #include "input.h"
@@ -43,13 +42,13 @@ void Func_02000848(void) {
   s32 item;
   s32 redraw;
   s32 entryCount;
-  u8 step;
+  s8 step;
 
   entryCount = ITEM_COUNT;
   step = 0;
   window = Window_Create(0, 0, 30, 7, 2);
-  details = Window_Create(0, 8, 13, 10, 2);
   item = 1;
+  details = Window_Create(0, 8, 13, 10, 2);
   redraw = 1;
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
@@ -90,7 +89,7 @@ void Func_02000848(void) {
       Func_02000e78(111);
     }
     if (gInput.repeat & 0x40) {
-      step = 255;
+      step = -1;
       item--;
       redraw = 1;
       Func_02000e78(111);
@@ -102,7 +101,7 @@ void Func_02000848(void) {
       Func_02000e78(111);
     }
     if (gInput.repeat & 0x20) {
-      step = 255;
+      step = -1;
       item -= 10;
       redraw = 1;
       Func_02000e78(111);
@@ -114,18 +113,18 @@ void Func_02000848(void) {
       Func_02000e78(111);
     }
     if (gInput.repeat & 0x200) {
-      step = 255;
+      step = -1;
       item -= 30;
       redraw = 1;
       Func_02000e78(111);
     }
-    if ((s8)step == -1) {
+    if (step == -1) {
       for (item = (item + ITEM_COUNT) % entryCount;
            Func_02000d48(item & 0x1ff)->icon == 0;
            item = (item + ITEM_COUNT - 1) % entryCount)
         ;
     }
-    if ((s8)step == 1) {
+    if (step == 1) {
       for (item = (item + ITEM_COUNT) % entryCount;
            Func_02000d48(item & 0x1ff)->icon == 0;
            item = (item + ITEM_COUNT + 1) % entryCount)

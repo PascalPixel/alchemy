@@ -1,7 +1,8 @@
-// Draft, differ 22 (tla-en, 2026-11-05). Func_020024d4 of overlay 6ab.
-// A plain one-pass for and direct calls; the barrier is gone. Left: angle
-// takes r8 here and IwramMulQ16's address sl, natively the reverse; a zero's
-// order at the end.
+// Draft, differ 8 of 168 (tla-en, 2026-11-05), from 22. Func_020024d4 of
+// overlay 6ab. Scale computed before the calls gives the mul pointer r8 and
+// the angle r10, as natively, but moves its shift; natively lsrs and add come
+// after the gravity store. Left: the shift's place, and the sprite's and
+// owner's loads after the zero and the half's copy natively.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -87,6 +88,7 @@ void Func_020024d4(struct Actor *actor) {
       sum = Random16Far();
       sum += Random16Far();
       half = 0x8000;
+      scale = (sum >> 2) + half;
       Func_020041dc(object, gData_02004774);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
@@ -97,7 +99,6 @@ void Func_020024d4(struct Actor *actor) {
       }
       velocity = Iwram_MulQ16(radius, Math_Sine(angle));
       object->gravity = 0x547a;
-      scale = (sum >> 2) + half;
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = half;

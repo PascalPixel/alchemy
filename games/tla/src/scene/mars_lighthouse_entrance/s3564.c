@@ -1,8 +1,5 @@
 #include "edition.h"
 
-// The Japanese form differs and is still on its listing.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -74,7 +71,11 @@ retry:
     angle = gData_02005798[(gInput.held >> 4) & 15];
     // -1 for no direction, tested as its halfword.
     if ((u16)angle == 0xffff)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+      return;
+#else
       goto end;
+#endif
   } else {
     angle = ArcTan2(targetZ - object->z, targetX - object->x);
     angle = (angle + 0x2000) & 0xc000;
@@ -100,18 +101,26 @@ retry:
   Func_02004bf8(object, x, object->y, z);
   Func_02004bc0(object, 2);
   Actor_SetAnimationSpeed(object, 48);
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+  Func_02004c00(object);
+#else
   for (i = 0; i <= 179 && Func_02004c70(object) == 0; i++) {
     if (gData_020068b0 != 0)
       goto end;
     wait(1);
   }
+#endif
   object->update = (void (*)(void))Func_020031f8;
   goto walk;
 walkNext:
   if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
     goto blocked;
   if (gData_020068b0 != 0)
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+    goto blocked;
+#else
     goto end;
+#endif
   radius = object->radius - 2;
   entry = Ram_HeapSlots->scriptObjects;
   j = 0;
@@ -172,5 +181,3 @@ end:
   object->acceleration = 0x4000;
   Func_02004bc0(object, 1);
 }
-
-#endif

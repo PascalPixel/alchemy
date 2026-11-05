@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/debug/psynergy_test/prepare.o"(.text)
         "*/games/tla/src/debug/psynergy_test/s0a10.o"(.text)
         "*/games/tla/src/debug/psynergy_test/s0ad0.o"(.text)
-        "*/resource_6b8_overlay.o"(.text.x02008c4c)
+        "*/games/tla/src/debug/psynergy_test/s0c4c.o"(.text)
         "*/games/tla/src/debug/psynergy_test/glow_end.o"(.text)
         "*/games/tla/src/debug/psynergy_test/import.o"(.text)
         "*/games/tla/src/debug/psynergy_test/data.o"(.data)

@@ -1983,17 +1983,17 @@ main	rom_main_05	games/tla/src/field/event_commands/f0e1024	.text	en de es fr it
 main	rom_main_05	games/tla/src/field/event_commands/arcmsg	.text
 main	rom_main_05	games/tla/src/field/event_commands/flicker_object	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000e143c	it
-main	rom_main_05	recon/tla/it/rom	.rom.000e1500	it
+main	rom_main_05	games/tla/src/field/event_commands/f0e150c	.text	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000e643c	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000e6500	fr
+main	rom_main_05	games/tla/src/field/event_commands/f0e150c	.text	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000ea43c	es
-main	rom_main_05	recon/tla/es/rom	.rom.000ea500	es
+main	rom_main_05	games/tla/src/field/event_commands/f0e150c	.text	es
 main	rom_main_05	recon/tla/de/rom	.rom.000ee448	de
-main	rom_main_05	recon/tla/de/rom	.rom.000ee50c	de
+main	rom_main_05	games/tla/src/field/event_commands/f0e150c	.text	de
 main	rom_main_05	recon/tla/raw/080e1448	.text	en
-main	rom_main_05	recon/tla/raw/080e150c	.text	en
+main	rom_main_05	games/tla/src/field/event_commands/f0e150c	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000e1404	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000e14c8	ja
+main	rom_main_05	games/tla/src/field/event_commands/f0e150c	.text	ja
 main	rom_main_05	games/tla/src/field/event_commands/arc_effect	.text
 main	rom_main_05	games/tla/src/field/event_commands/f0e1678	.text	it
 main	rom_main_05	games/tla/src/field/event_commands/f0e1678	.text	fr

@@ -1,16 +1,3 @@
-// Draft, differ 103 of 112 (111 before statements reordered 2026-10-26): register allocation differs throughout. The
-// native keeps the position array's address in r7 and the group counter
-// on the stack, computes each group's sprites as group * 80 inside the loop
-// and spills the inner counter around every call (r2 via sp 0); this keeps
-// the inner counter in r7 and the group's offset as a stack giv. The age
-// tests are two compares in the native; written as one range test GCC folds
-// them to an unsigned compare (differ 116), so the negative age continues
-// apart here.
-// BattleEffect_UpdateArcEffect, the arc effect's task (heap
-// slot 0xf8, arc_effect.h). For 32 frames after a group starts, its two arc
-// sprites rise from the target object by a pixel a frame and swell and shrink
-// with the sine of the age; the second is drawn a pixel lower, flipped
-// upside down, behind the target where the first is in front of it.
 #include "types.h"
 #include "fixed_math.h"
 #include "actor.h"
@@ -40,9 +27,9 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object);
 void Func_080eb01c(struct ArcSprite *sprite);
 
 void BattleEffect_UpdateArcEffect(void) {
-  s32 group;
   struct ArcWork *work = Ram_HeapSlots->block62;
   struct Actor *target = work->target;
+  s32 group;
   s32 position[3];
   s32 i;
 
@@ -59,10 +46,10 @@ void BattleEffect_UpdateArcEffect(void) {
       position[1] = target->y + (work->age[group] << 16);
       position[2] = target->z;
       Camera_WorldToScreen(position);
-      y = position[2];
       x = position[0];
-      sprite = work->sprites[group];
-      for (i = 0; i < 2; i++, sprite++) {
+      y = position[2];
+      for (i = 0; i < 2; i++) {
+        sprite = &work->sprites[group][i];
         sprite->x = x;
         sprite->y = y;
         sprite->scaleX = scale;

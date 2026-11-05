@@ -665,12 +665,6 @@ Func_080e0618:
 	.thumb_func
 BattleEffect_SpawnScaledArcObjects:
 	.incbin "baserom.gba", 0x000ea43c, 0x000000c4
-	.section .rom.000ea500, "ax"
-	.global BattleEffect_UpdateArcEffect
-	.type BattleEffect_UpdateArcEffect, %function
-	.thumb_func
-BattleEffect_UpdateArcEffect:
-	.incbin "baserom.gba", 0x000ea500, 0x000000f0
 	.section .rom.000eaf20, "ax"
 	.global Func_080e1f2c
 	.type Func_080e1f2c, %function

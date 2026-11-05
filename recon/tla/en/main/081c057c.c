@@ -1,4 +1,8 @@
-// Measured 2026-11-05 (tla-en): differ 45 of 31.
+// Blocked, 5 November 2026: the work copy of ☀️'s m4aSongNumStartOrChange.
+// Through the sound route (old_agbcc -O2 -mthumb-interwork, SOUND_C) this C emits
+// the listing's instructions; the game route differs by 45. What stops it is not
+// the code: both pool words are 0 and the calls reach 0x081c0c84, inside another
+// routine. C reaches those only by names at those addresses, which O2 forbids.
 #include "sound_driver.h"
 #include "ram_buffer.h"
 

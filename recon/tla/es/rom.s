@@ -34,7 +34,7 @@ Render_ProjectPoint:
 	.section .rom.00016e2e, "ax"
 	.incbin "baserom.gba", 0x00016e2e, 0x00000002
 	.section .rom.000212d8, "ax"
-	.incbin "baserom.gba", 0x000212d8, 0x0000042c
+	.incbin "baserom.gba", 0x000212d8, 0x00000194
 	.section .rom.00022010, "ax"
 	.global Func_08022010
 	.type Func_08022010, %function
@@ -1546,13 +1546,8 @@ Func_081b8274:
 	.global Func_081c0428
 Func_081c0428:
 	.incbin "baserom.gba", 0x001c0428, 0x00000064
-	.section .rom.001c0490, "ax"
-	.balign 4
-	.global Func_081c0490
-	.type Func_081c0490, %function
-	.thumb_func
-Func_081c0490:
-	.incbin "baserom.gba", 0x001c0490, 0x00000158
+	.section .rom.001c04cc, "ax"
+	.incbin "baserom.gba", 0x001c04cc, 0x0000011c
 	.section .rom.001c075a, "ax"
 	.global Func_081c075a
 	.type Func_081c075a, %function

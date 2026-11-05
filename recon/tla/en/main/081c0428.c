@@ -1,11 +1,10 @@
-// Measured 2026-11-05 (tla-en): differ 61 of 44.
-// Draft, differ 61 of 44: the work copy of the PCM key-to-frequency
-// interpolation, as ☀️'s MidiKeyToFreq (games/tbs/src/sound/audio.c);
-// its tables' pool words are zero in the copy. A sound-library function: the
-// draft compiles with the game profile, where the build routes the library
-// through old_agbcc. Other: register choice (r8 for the wave, where the
-// listing has ip), and the game compiler indexes the tables with ldrb/ldr
-// [rN, rM] where the listing adds first.
+// Blocked, 5 November 2026: the work copy of the PCM key-to-frequency
+// interpolation, as ☀️'s MidiKeyToFreq (games/tbs/src/sound/audio.c). Through
+// the sound route (old_agbcc -O2 -mthumb-interwork, SOUND_C) this C emits the
+// listing's 44 instructions, all of them; the game route differs by 61. What
+// stops it is not the code: both pool words are 0 and both calls reach
+// 0x081bf80c, in the zero fill before the sound bank. C reaches those only by
+// a name at that address, which O2 forbids.
 #include "types.h"
 
 u32 umul3232H32(u32 left, u32 right);

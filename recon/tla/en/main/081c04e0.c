@@ -1,13 +1,12 @@
-// Measured 2026-11-05 (tla-en): differ 48 of 28.
-// Draft, differ 48 of 28: the work copy of the sound initialization, as ☀️'s
-// m4aSoundInit (games/tbs/src/sound/audio.c). The listing starts at
-// the copy's second call: its first ten instructions (from 081c04cc) sit in
-// the pool words of 081c04ac's listing, so the draft compiles the whole
-// function and the comparison covers only the listing's part. A
-// sound-library function: the draft compiles with the game profile, where the
-// build routes the library through old_agbcc. Other: register choice
-// (r5-r7 and r3 against the listing's r4-r6 and r0), the count's
-// narrowing and the game compiler's rotated loop.
+// Blocked, 5 November 2026: the work copy of the sound initialization, as ☀️'s
+// m4aSoundInit (games/tbs/src/sound/audio.c). The listing starts at the copy's
+// second call: its head, from 081c04cc, is recon/tla/raw/081c04cc.s. Through the
+// sound route (old_agbcc -O2 -mthumb-interwork, SOUND_C) this C emits the head's
+// instructions and all of the listing's; the game route differs by 48. What
+// stops it is not the code: the first call is a bl to itself, the others reach
+// addresses of an older layout, and the pool words but the block copy's
+// control word are 0. C reaches those only by names at those addresses, which
+// O2 forbids.
 #include "types.h"
 #include "sound_driver.h"
 #include "ram_buffer.h"

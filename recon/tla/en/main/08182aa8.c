@@ -324,6 +324,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   s32 ty;
   s32 spin;
   s32 zero;
+  u8 *coilMesh = Data_02014800;
   s16 list[14];
   s32 place[4];
   struct WordPair req;
@@ -363,7 +364,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   FILL_GRADIENT(table, i, level, color);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, 3326);
   skip = 0;
-  Func_081885f0(Data_02014400, Data_02014800, 32);
+  Func_081885f0(Data_02014400, coilMesh, 32);
   list[0] = 255;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
@@ -1000,12 +1001,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       texture.logWidth = 7;
       texture.logHeight = 4;
-      model->scrollU = 0;
-      model->scrollV = 0;
-      model->kind = 7;
-      model->vertices = verts;
-      model->mesh = Data_02014800;
       texture.pixels = work->sheet + 0x4000;
+      model->kind = 7;
+      model->mesh = coilMesh;
+      model->vertices = verts;
+      model->scrollU = zero;
+      model->scrollV = zero;
       for (i = 0; i != 2; i++) {
         if (frame < Data_08199756[i]) {
           continue;

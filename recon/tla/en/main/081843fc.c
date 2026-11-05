@@ -1359,7 +1359,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               {s32 c = Data_081999ee[Random16() & 3] | 3; LOAD_ALT_BLITTER(SLOT_ALT, c);}
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                   canvas, work->sheet + 0x800 + gData_08197486[n], x, y,
-                  gData_08197492[n], gData_08197498[n]);
+                  gData_08197492[n], *(gData_08197498 + n));
               HeapSlot_Release(SLOT_ALT);
             }
           }
@@ -1834,8 +1834,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       Camera_ApplyVerticalShake(8);
       BattleEffect_CountDownBattlerTints();
-      frame++;
       work->transferPending = 1;
+      frame++;
       wait(1);
     } while (frame != 104);
     transition[4] = 0;

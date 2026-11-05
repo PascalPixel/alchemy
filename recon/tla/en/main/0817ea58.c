@@ -1,3 +1,9 @@
+// 2026-11-05: differ 1030 of 3921 (tla-en), draft 3923; with registers, slots
+// and offsets masked, 212 lines apart. This round: the copy calls through an
+// inline, so 0x1c0 is rebuilt (item 3); p->ay reread after a one-pass block,
+// as the listing does (item 4, needs its S2 tag at adoption); the trail index
+// as one (i << 4) + m, which removes the slot 28 shim; posp set in the wave
+// loop's body, hoisted as in the listing.
 // 2026-11-05: differ 1140 of 3921 (tla-en). Declaration order alone (a greedy
 // search) gains 68; the causes below stand.
 // Draft, differ 1208 of 3921, skeleton gap 126/126 (tla-en, 2026-11-01)
@@ -144,7 +150,7 @@ struct SystemWork {
 };
 
 #define SYSTEM ((struct SystemWork *)0x03000000)
-#define Iwram_Copy Iwram_CopyWords
+static inline void Iwram_Copy(void *d, const void *s, s32 n) { Iwram_CopyWords(d, s, n); }
 #define Iwram_Clear Iwram_ClearWords
 extern VramSlot gResourceTableEntries[];
 #define VRAM_SLOTS gResourceTableEntries
@@ -409,7 +415,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         waveX -= 0x200000;
         waveScroll -= 0x200000;
       }
-      posp = &pos;
       for (j = 0; j != 2; j++) {
         z = (j << 21) + 0x670000;
         row = j * 9;
@@ -417,6 +422,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           Sprite *obj;
           s32 v;
 
+          posp = &pos;
           posp->x = (i << 21) + waveX;
           posp->z = z;
           if (i == 8) {
@@ -1145,6 +1151,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         p->timer = 0;
         Random16();
         p->ay = 0;
+        do { } while (0);
         p->z = z - p->ay * 40 - 0x800;
         p->vx = -Trig_Cos(p->z) * 8;
         p->vy = -Trig_Sin(p->z) * 8;
@@ -1196,7 +1203,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         } else {
           Particle *q;
 
-          q = &PARTICLES[256] + i * 16 + (frame - Data_081995cc[i]) % 16;
+          { s32 m = (frame - Data_081995cc[i]) % 16; q = &PARTICLES[(i << 4) + m + 256]; }
           q->x = p->x / 2;
           q->y = p->y - 0x100000;
           q->vx = 0;

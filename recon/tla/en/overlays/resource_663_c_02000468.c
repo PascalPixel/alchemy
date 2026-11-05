@@ -20,9 +20,13 @@ void Func_02000468(struct CellFlagObject *object) {
     map = Ram_HeapSlots->mapWork;
     if (map != NULL) {
       struct MapCell **cells = &map->layers[2].cells;
+      s32 row = (object->z - object->y) >> 20;
+      s32 x = object->x >> 20;
+      struct MapCell *cell = &(*cells)[x + ((row + 1) << 7)];
 
-      (*cells)[(object->x >> 20) + ((((object->z - object->y) >> 20) + 1) << 7)].collisionCode = 0;
-      (*cells)[(object->x >> 20) + ((((object->z - object->y) >> 20) - 1) << 7)].collisionCode = 0;
+      cell->collisionCode = 0;
+      cell = &(*cells)[x + ((row - 1) << 7)];
+      cell->collisionCode = 0;
       object->marked = 0;
     }
   }

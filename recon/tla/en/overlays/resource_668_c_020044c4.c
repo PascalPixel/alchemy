@@ -1,4 +1,12 @@
 // Under -Os, 5 November: differ 221 of 305 (tla-en); older figures below predate it.
+// Tried under -Os, 5 November, no gain, all device forms: empty do-while (212) or
+// empty asm or unused labels (221) after Func_02004c9c(239) and Func_02004a34: they
+// end cse's block, but gcse's first cprop then folds direction (CONST-PROP in .gcse),
+// where the native keeps it in r9 with one set and no increment, so something stops
+// the set being recorded or available. u16 direction changes nothing. An asm-set
+// direction with the labels: 292. A local for the table folds into box + row (241).
+// The one-pass for from Func_02004a34 to before Func_02004a3c gives the table its r5
+// and the owner address its rebuild, but keeps its back branch under -Os too (253).
 // Draft, differ 221 of 305, skeleton gap 101 (tla-en, 2026-11-01)
 // Re-measured after the compiler change: the old near miss is gone, and the
 // draft stood at differ 314, gap 110, with no device. Everything below is plain

@@ -1,15 +1,3 @@
-// Under -Os, 5 November: differ 122 of 184 (tla-en); older figures below predate it.
-// Draft, differ 63 of 184 (was 65): an object's update: while none of the
-// event work's four busy counters (0x15a, 0x15e, 0x166, 0x168) is set it
-// counts frames in its action parameter, and at 240 (playing cue 202 unless
-// flag 0x250 is set) it launches the first free one of objects 13 to 15 from
-// 8 pixels ahead along its angle, with Func_020010b4 as its update, and a
-// dust effect below it. The position is declared before the options, so the
-// frame matches (position at sp+56, options at sp+16). Left: the native keeps
-// the action field's address in r10 and IwramMulQ16's in r5, builds 0x80000
-// afresh for each product and the position's address once; this draft keeps
-// 0x80000 in r5 and the routine in r10, and saves r9 too. Measured: Value2
-// for the products (67).
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -32,6 +20,11 @@ void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 void Func_020010b4(void);
 
+// An object's update: while none of the event work's four busy counters (0x15a,
+// 0x15e, 0x166, 0x168) is set it counts frames in its action parameter, and at
+// 240 (playing cue 202 unless flag 0x250 is set) it launches the first free one
+// of objects 13 to 15 from 8 pixels ahead along its angle, with Func_020010b4
+// as its update, and a dust effect below it.
 void Func_02001290(struct Actor *object) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct Actor *shot;
@@ -49,12 +42,16 @@ void Func_02001290(struct Actor *object) {
     if (!GameFlag_Test(0x250))
       Func_02005f8c(object, 202);
     if (object->angle == 0xc000) {
-      position.z = object->z;
       position.x = object->x;
+      position.z = object->z;
     } else {
-      position.x =
-          object->x + Iwram_MulQ16(0x80000, Math_Cosine(object->angle));
-      position.z = object->z + Iwram_MulQ16(0x80000, Math_Sine(object->angle));
+      /* FAKEMATCH(wrapper): forwarded, so each product builds its own 0x80000
+       * and they share the routine's address; as direct calls, 129 of 184
+       * instructions differ in tla-en. */
+      position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                      Math_Cosine(object->angle));
+      position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                      Math_Sine(object->angle));
     }
     for (i = 0; i != 3; i++) {
       shot = Actor_GetById(13 + i);

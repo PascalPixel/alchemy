@@ -1,3 +1,4 @@
+// Draft, differ 116 of 167 (tla-en, 2026-11-05).
 // Under -Os, 5 November: differ 138 of 167 (tla-en); older figures below predate it.
 // Draft, differ 123 of 167, skeleton gap 63 (tla-en, 2026-11-01)
 // Builds the five-digit counter's sprites (the work at gData_020023c4 + 0x288):
@@ -73,53 +74,55 @@ void Func_020055ec(void *oam, s32 priority);
 
 void Func_02005090(void) {
   struct Work *work = (struct Work *)(gData_020023c4 + 0x288);
-  s32 *value = &work->value;
   u8 *digit = work->digit;
-  u8 *tiles = work->tiles;
-  u8 *pixels = work->pixels;
-  u32 tile = gResourceTableEntries[work->block].offset >> 5;
+  s32 block = work->block;
+  s32 *value = &work->value;
+  u32 tile = gResourceTableEntries[block].offset >> 5;
+  u8 *old = work->pixels;
+  u8 *now = work->tiles;
   struct Sprite *oam = work->oam;
   struct Effect effect;
-  s32 plain, scaled, i, affine, scale;
+  s32 plain, scaled, i, scale;
   u32 *p;
-  u8 *old, *now;
 
   Func_02004f84(*value + 50, digit);
   Func_02004f84(*value + 60, work->old);
   Func_02004f84(*value, work->now);
-  i = 4;
-loop1:
-  Iwram_CopyWords(tiles, pixels + (*digit << 6) - 0xc00, 64);
-  i--;
-  tiles += 64;
-  digit++;
-  if (i >= 0)
-    goto loop1;
+  for (i = 4; i >= 0; i--) {
+    Iwram_CopyWords(now, old + (*digit << 6) - 0xc00, 64);
+    now += 64;
+    digit++;
+  }
   VramCache_Load(work->block, 320, work->tiles);
   effect.z = 0;
   effect.x = 0x200;
   effect.y = 0x200;
   plain = AffineMatrix_BuildForEffect(&effect);
+  scale = Func_02005020(*value);
   effect.z = 0;
   effect.x = scale;
-  scale = Func_02005020(*value);
   effect.y = scale;
   scaled = AffineMatrix_BuildForEffect(&effect);
   old = work->old;
   now = work->now;
-  for (i = 0; i <= 4; i++) {
+  for (i = 0; i <= 4;) {
     p = (u32 *)oam;
     *p++ = 0;
     *p++ = (i << 20) | 0x8000;
     *p = tile | 0x400;
     oam->b5 |= 3;
-    if (*old++ != *now++ || i == 2)
-      affine = scaled;
-    else
-      affine = plain;
-    oam->affine = affine;
-    Func_020055ec(oam, 236);
-    tile += 2;
-    oam++;
+    if (*old++ != *now++ || i == 2) {
+      oam->affine = scaled;
+      Func_020055ec(oam, 236);
+      i++;
+      tile += 2;
+      oam++;
+    } else {
+      oam->affine = plain;
+      Func_020055ec(oam, 236);
+      i++;
+      tile += 2;
+      oam++;
+    }
   }
 }

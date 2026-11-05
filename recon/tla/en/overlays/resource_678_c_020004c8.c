@@ -1,3 +1,4 @@
+// Draft, differ 77 of 166 (tla-en, 2026-11-05).
 // Measured under -Os, 5 November 2026: differ 77 (tla-en); notes below may predate it.
 // Draft, differ 117 of 166, skeleton gap 9/6 (tla-en, 2026-11-01)
 // Taopo Swamp's sinking holes: looks up hole n (from 10) of the current room
@@ -57,8 +58,8 @@ void Func_020004c8(s32 hole) {
       return;
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov678Room7) {
-    s32 index = hole - 10;
-    found = Func_02002708((gData_020029c0 + 1)[index]);
+    u8 *table = gData_020029c0 + 1;
+    found = Func_02002708(table[hole - 10]);
     if (hole == 10 && GameFlag_Test(545))
       return;
     if (hole == 12 && GameFlag_Test(545))
@@ -85,10 +86,14 @@ sink:
   }
   leader->z += 0x20000;
   slip = (leader->x & 0xfffff) + 0xfff80000;
-  if (slip > 0x10000)
-    slip = 0x10000;
-  if (slip < -0x10000)
-    slip = -0x10000;
+  {
+    s32 high = 0x10000;
+    s32 low = -0x10000;
+    if (slip > high)
+      slip = high;
+    if (slip < low)
+      slip = low;
+  }
   leader->x -= slip;
   leader->angle += 0x1000;
   wait(1);

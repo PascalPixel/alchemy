@@ -1,19 +1,3 @@
-// Under -Os, 5 November: differ 94 of 493 (tla-en); older figures below predate it.
-// Draft, differ 112 of 493, skeleton gap 11 (tla-en, 2026-11-01)
-// Steps onto a listed cell in rooms 1, 2, 3 and 5 (SceneId_Ov655Room1 to
-// Room5): either falls through to exit work->exit or opens the cell and sets
-// its flag. The control flow, loads and shared call tails all match; srcX,
-// srcY, width and height set after one another give the two-cell copies their
-// shared tails, and each group's scene is its own local. cellX is reused for
-// the doubled index because the native keeps both in r8. Left, all allocation
-// or scheduling:
-// - GCSE's PRE keeps Room1's id in a pseudo from the first copy's compare to
-//   the second's, through the no-call path past the Room5 test; the native
-//   loads it afresh. Neither a helper inline nor per-group scopes change it.
-// - The loop counter takes r5; the native keeps it in r8. Sharing it with cellX
-//   lets that variable take a low register ahead of n.
-// - The store of work in the prologue and of motionFlags come one slot later
-//   than the native, behind a pool load.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -110,6 +94,9 @@ void Func_02003d78(s32 skip);
 
 #define SCENE(name) ((s32)&SceneId_##name)
 
+// Steps onto a listed cell in rooms 1, 2, 3 and 5 (SceneId_Ov655Room1 to
+// Room5): either falls through to exit work->exit or opens the cell and sets
+// its flag. cellX is reused for the doubled index and the fall's frame count.
 void Func_02001a30(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
@@ -117,7 +104,6 @@ void Func_02001a30(void) {
   s32 cellZ = ((leader->z >> 20) << 1) + 1;
   s32 n, flag;
   u16 *record, *next;
-  u32 i;
 
   if (gMainRoutineWork.scene == SCENE(Ov655Room1)) {
     n = work->exit - 11;
@@ -222,12 +208,12 @@ void Func_02001a30(void) {
     }
     Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
     FieldEvent_Wait(16);
-    for (i = 0; i <= 39; i++) {
-      if (i == 5)
+    for (cellX = 0; (u32)cellX <= 39; cellX++) {
+      if (cellX == 5)
         Func_02003df8(204);
       leader->scaleX += -0x400;
-      leader->y += -0x9999;
       leader->scaleY += -0x300;
+      leader->y += -0x9999;
       wait(1);
     }
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;

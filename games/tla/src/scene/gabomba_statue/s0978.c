@@ -1,9 +1,3 @@
-// Draft, differ 24 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 24 of 76 (tla-en); older figures below predate it.
-// Draft, differ 70 of 76, a first form written from the listing (push.c's
-// Func_02000c38 is the nearest relative). Left: the native keeps dx in r1 and
-// builds its constants in r4, and reloads actor->z after the first clamp, where
-// CSE here carries the stored value into the second test.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -14,6 +8,10 @@ s32 Func_0200584c(void);
 struct Actor *Func_020005b4(struct Actor *origin, s32 id);
 void Func_020006ac(struct Actor *object, s32 dx, s32 dz, s32 velocity);
 
+// Moves the controlled character with the platform kind 359 along x by the
+// speed in gData_02005af0, backward when the platform faces half a turn; it
+// stays within 2 pixels of the platform's z, and past 20 pixels on x it steps
+// off (Func_020006ac).
 void Func_02000978(void) {
   s32 *speed = &gData_02005af0;
 
@@ -23,7 +21,7 @@ void Func_02000978(void) {
     s32 dx = *speed << 15;
 
     if (found != NULL) {
-      s32 diff;
+      s32 diff, x, foundX;
 
       if (found->angle == 0x8000)
         dx = -dx;
@@ -31,17 +29,20 @@ void Func_02000978(void) {
         actor->z = found->z + 0x20000;
       if (found->z - actor->z > 0x20000)
         actor->z = found->z - 0x20000;
-      actor->x += dx;
-      diff = found->x - actor->x;
-      if (diff >= 0 ? diff >= 0x140000 : actor->x - found->x >= 0x140000) {
+      x = actor->x + dx;
+      actor->x = x;
+      foundX = found->x;
+      diff = foundX - x;
+      if (diff >= 0 ? diff >= 0x140000 : x - foundX >= 0x140000) {
         s32 sign;
+        s32 offset;
 
-        diff = actor->x - found->x;
         sign = 0;
-        if (diff != 0) {
+        offset = actor->x - foundX;
+        if (offset != 0) {
           sign = 1;
-          if (diff <= 0)
-            sign = -1;
+          if (offset <= 0)
+            sign = -sign;
         }
         Func_020006ac(actor, sign * 0xc0000, 0, 0x20000);
       }

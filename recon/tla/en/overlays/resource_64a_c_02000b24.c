@@ -1,3 +1,4 @@
+// Draft, differ 20 of 247 (tla-en, 2026-11-05).
 // Draft, differ 30 of 247 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 39 of 247 (tla-en); older figures below predate it.
 // Draft, differ 56 of 247, skeleton gap 5/7 (tla-en, 2026-11-01)
@@ -181,8 +182,8 @@ done:
     flags = gGameFlagBytes;
   } while (0);
   copyWords = Iwram_CopyWords;
-  copyWords(flags + 0x220, Ram_ReceivedUnits, 0xd20);
   Call3((void (*)())copyWords, flags, Ram_ReceivedFlags, 0x214);
+  copyWords(flags + 0x220, Ram_ReceivedUnits, 0xd20);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);

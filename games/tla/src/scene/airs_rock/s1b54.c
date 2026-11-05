@@ -1,15 +1,3 @@
-// Under -Os, 5 November: differ 57 of 153 (tla-en); older figures below predate it.
-// Draft, differ 63 of 153 (was 107): a launcher's update, overlay 664's
-// Func_02001290 with a new shot each time: while none of the event work's
-// four busy counters is set it counts frames in its action parameter, and at
-// 240 (cue 202 unless flag 0x250 is set) it creates a shot of type 280 8
-// pixels ahead along its angle, with Func_02001908 as its update, and a dust
-// effect below it. The same listing as overlay 664's Func_02000f34. The
-// position and the options are read through pointers taken at the top of the
-// launch, as the native forms both addresses there (sp+56 in r6, sp+16 in
-// r8). Left: the native builds 0x80000 afresh for each product and keeps
-// IwramMulQ16's address in r5; this draft keeps 0x80000 in r5, the routine in
-// r8 and the options' address in r9.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -31,6 +19,10 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    const struct EffectOptions *options);
 void Func_02001908(void);
 
+// A launcher's update, the Air's Rock Inside launcher with a new shot each
+// time: while none of the event work's four busy counters is set it counts
+// frames in its action parameter, and at 240 launches a shot 8 pixels ahead
+// along its angle with a dust effect below it.
 void Func_02001b54(struct Actor *object) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct Actor *shot;
@@ -41,21 +33,22 @@ void Func_02001b54(struct Actor *object) {
       *(s16 *)(work + 0x15e) != 0 || *(s16 *)(work + 0x168) != 0)
     return;
   if (object->action == 240) {
-    struct Vector3 *pos = &position;
-    struct EffectOptions *opt = &options;
-
     if (!GameFlag_Test(0x250))
       Func_02003cd0(object, 202);
     if (object->angle == 0xc000) {
-      pos->x = object->x;
-      pos->z = object->z;
+      position.x = object->x;
+      position.z = object->z;
     } else {
-      pos->x =
-          object->x + Iwram_MulQ16(0x80000, Math_Cosine(object->angle));
-      pos->z = object->z + Iwram_MulQ16(0x80000, Math_Sine(object->angle));
+      /* FAKEMATCH(wrapper): forwarded, so each product builds its own constant and
+       * they share the routine's address; as direct calls, 106 of 153
+       * instructions differ in tla-en. */
+      position.x = object->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                      Math_Cosine(object->angle));
+      position.z = object->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
+                                      Math_Sine(object->angle));
     }
-    shot = (struct Actor *)Import_ActorCreate(280, pos->x,
-                                                       object->y, pos->z);
+    shot = (struct Actor *)Import_ActorCreate(280, position.x,
+                                                       object->y, position.z);
     Func_02003b28(shot, 2);
     Actor_SetSingleChildFlags(shot, 0);
     ((struct FieldSprite *)shot->animation)->priority = 1;
@@ -66,10 +59,10 @@ void Func_02001b54(struct Actor *object) {
     shot->update = Func_02001908;
     shot->watchedObject = object;
     object->action = 0;
-    opt->priority = 1;
-    opt->palette = 7;
-    Func_0200015c(pos->x, object->y, pos->z - 0x60000, 0, 0, 0,
-                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, opt);
+    options.priority = 1;
+    options.palette = 7;
+    Func_0200015c(position.x, object->y, position.z - 0x60000, 0, 0, 0,
+                  EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
   object->action++;
 }

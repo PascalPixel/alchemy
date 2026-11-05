@@ -1,8 +1,3 @@
-// Draft, differ 35 of 75 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 37 of 75 (tla-en); older figures below predate it.
-// Draft, differ 49 of 75: the world map cursor: counts down while A or B is
-// held, redraws the gauge and queues its sprite over the leader. Left: the
-// sprite word order and register choice around the stmia stores.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -22,11 +17,14 @@ void Func_02004744(s32 progress);
 void Render_ProjectPoint(s32 *position, s32 *screen);
 void Func_02004ad0(u32 *oam, s32 priority);
 
+// The world map cursor: counts down while A or B is held, redraws the gauge and
+// queues its sprite over the leader.
 void Func_020048f4(void) {
   u32 *oam = Data_02006e14;
   s32 tile = gResourceTableEntries[gData_02006e0e].offset >> 5;
   struct Actor *leader = Actor_GetById(Func_02004e10());
   s32 screen[3];
+  u32 attributes;
 
   if ((gInput & 3) != 0 && GameFlag_Test(0x106) == 0 && leader->y > 0x40000) {
     if (--gData_02006e10 <= 0) {
@@ -35,14 +33,15 @@ void Func_020048f4(void) {
     }
   }
   Func_02004744(Func_02004c10());
+  attributes = 0x80004000;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
-  *oam++ = 0;
-  *oam++ = 0x80004000 | ((screen[0] - 16) << 16) | (screen[1] - 32);
+  {
+    s32 x = screen[0] - 16;
+    s32 y = screen[1] - 32;
+
+    *oam++ = 0;
+    *oam++ = (y | (x << 16)) | attributes;
+  }
   *oam = tile | 0x400;
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 37 of 75 instructions differ
-   * in tla-en. */
-  do {
-    Func_02004ad0(Data_02006e14, 255);
-  } while (0);
+  Func_02004ad0(Data_02006e14, 255);
 }

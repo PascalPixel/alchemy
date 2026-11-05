@@ -1,3 +1,6 @@
+// Draft, differ 8 of 150 (tla-en, 5 November 2026), from 56: the marked cell its
+// own local. Left: adds r2, r2, r3 into sl for the shape table, operands turned
+// here; the cell's strb in order.
 // Draft, differ 56 of 150 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 56 (tla-en); notes below may predate it.
 // Draft, differ 58 of 150, skeleton gap 32 (tla-en, 2026-11-01)
@@ -66,15 +69,15 @@ void Func_02000584(u16 *list) {
       Func_020014a0(id, 0, 0);
     } else {
       s32 index = Func_02001508(object);
+      struct MapCell *cell = cells + index;
       u8 *shape = shapes + index;
       s32 kind, ground;
 
-      cells += index;
       kind = Func_02001478(*terrain, object->x, object->z);
       ground = Map_GetTerrainHeight(*terrain, object->x, object->z);
 
       Func_020014c0(id);
-      cells->attributeB = 128;
+      cell->attributeB = 128;
       *shape = Func_02001528(*terrain, kind, (ground >> 19) + 4);
       if (GameFlag_Test(flag))
         ObjectVisual_CopyAttributes(id, 9);

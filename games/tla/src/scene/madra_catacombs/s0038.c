@@ -1,16 +1,3 @@
-// Under -Os, 5 November: differ 44 of 123 (tla-en); older figures below predate it.
-// Draft, differ 90 of 123, skeleton gap 15 (tla-en, 2026-11-01)
-// Raises each listed actor's cells (the shape grid and the cell flags of its
-// cell and the one below); the same function as overlay 655's Func_02000c64
-// under this overlay's import stubs. What is left is allocation, plus one
-// order: local-alloc gives shapes r4 and saves it around the flags call, so
-// shape lands in r9, object in r6 and every mov becomes adds. The native has
-// shapes r5, cells r6, object r8, level r10, index r9, shape on the stack, and
-// no r4 at all, as if no pseudo found CALLER_SAVE_PROFITABLE (the lreg dump
-// shows loop-weighted refs of 20 for object, 12 for level). The native also
-// stores *shapes after loading the next id, which sched2 cannot do here while
-// the two may alias. Declaration order, scopes, for, while and label loops,
-// a const list, struct MapCell pointers and an id temporary gained nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -28,12 +15,25 @@ s32 Func_020010ec(s32 layer, s32 x, s32 z);
 s32 Func_020011d4(struct Actor *object);
 s32 Func_020011f4(s32 layer, s32 shape, s32 height);
 
+// One-field views: the terminator's read and the shape store are memory of their
+// own to sched2, which sinks them past the cell stores; plain reads and stores
+// keep their order. A struct is padded to 4 bytes here, so the pointers stay plain.
+struct ListedActor {
+  u16 id;
+};
+
+struct ShapeCell {
+  u8 shape;
+};
+
+// Raises each listed actor's cells: the shape grid and the cell flags under it,
+// then lifts the leader if the new terrain is above the leader.
 void Func_02000038(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *leader;
   s32 height;
 
-  while (*list != 0xffff) {
+  while (((struct ListedActor *)list)->id != 0xffff) {
     struct Actor *object = Actor_GetById(*list);
     u8 *layer = &object->terrainId;
     s32 shape = Func_020010ec(*layer, object->x, object->z);
@@ -42,25 +42,27 @@ void Func_02000038(u16 *list) {
     u8 *cells;
     u8 *shapes;
     u8 newShape;
+    u8 *grid;
 
     level >>= 19;
     index = Func_020011d4(object);
     cells = (u8 *)map->layers[*layer].cells;
-    shapes = gMapShapeGrid +
-             (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
+    grid = FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid);
+    shapes =
+        grid + (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
     object->motionFlags = 0;
     object->collisionFlags = 0;
-    level += 4;
     Actor_SetSingleChildFlags(object, 0);
+    level += 4;
     newShape = Func_020011f4(*layer, shape, level);
     shapes += index;
     index <<= 2;
+    ((struct ShapeCell *)shapes)->shape = newShape;
     cells += index;
+    ((struct MapCell *)cells)->attributeB |= 192;
     cells += 0x200;
-    cells[3] |= 192;
+    ((struct MapCell *)cells)->attributeB |= 64;
     list++;
-    *shapes = newShape;
-    cells[3] |= 64;
   }
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);

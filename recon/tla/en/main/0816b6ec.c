@@ -195,9 +195,9 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
   for (frame = 0; frame != frames; frame++) {
     s32 shade;
     s32 height;
+    s32 y;
     s32 angle;
     s8 *corner;
-    s32 j;
 
     if (frame == 0) {
       s32 length;
@@ -225,11 +225,9 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
 
     // The djinni, bobbing over the caster and rising from frame 8.
     if (frame <= 79) {
-      s32 x = ((Trig_Sin(frame << 11) << 3) >> 16) + screen.x / 2;
-      s32 y = ((Trig_Cos(frame << 11) << 2) >> 16) + screen.y;
+      s32 x = ((Trig_Sin(frame << 11) << 3) >> 16) + screen.x / 2 - 10;
+      s32 y = ((Trig_Cos(frame << 11) << 2) >> 16) + screen.y - 24;
 
-      x -= 10;
-      y -= 24;
       if (frame > 7) {
         y = y - frame * 4 + 32;
       }
@@ -238,6 +236,8 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
 
     // The funnel's tail trails its head.
     if ((frame & 1) || frame > 47 || frame <= 31) {
+      s8 *corner;
+      s32 i;
       for (i = 32; i != 0; i--) {
         corner = (s8 *)gMapCellBuffer + (i - 1) * 8;
         for (k = 0; k != 2; k++) {
@@ -261,12 +261,12 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       height = 30 - ((Trig_Sin(frame * 820) * 20) >> 16);
     }
     corner = (s8 *)gMapCellBuffer;
-    height = -height;
+    y = -height;
     for (k = 0; k != 2; k++) {
       corner[0] = (u32)Trig_Sin(angle) >> 11;
-      corner[1] = height;
+      corner[1] = y;
       corner[2] = (u32)Trig_Cos(angle) >> 11;
-      height -= 24;
+      y -= 24;
       corner += 4;
     }
 
@@ -280,10 +280,10 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 12) {
         Func_081180e8(-1);
       }
-      for (i = 0; i != effect->count; i++) {
-        if (frame == i * 4 + 12) {
+      for (k = 0; k != effect->count; k++) {
+        if (frame == k * 4 + 12) {
           Sound_PlayFar(126);
-          Func_0814cd48(effect->actors[i], 7, -1, i, 8);
+          Func_0814cd48(effect->actors[k], 7, -1, k, 8);
         }
       }
     }
@@ -315,23 +315,23 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     gCameraSceneParameters[4] = 104;
     model->vertices = vertices;
     model->shade = shade;
-    for (j = 0; j != Data_08198b24[mode]; j++) {
+    for (k = 0; k != Data_08198b24[mode]; k++) {
       s32 scale;
 
       Render_ResetTransformState();
       if (mode == 0) {
         Func_08015160((screen.x / 2 - 64) << 16, 0x280000, 0);
-        SceneTransform_ApplyPitch(j << 11);
-        SceneTransform_ApplyYaw(j * 21000 + yaw);
+        SceneTransform_ApplyPitch(k << 11);
+        SceneTransform_ApplyYaw(k * 21000 + yaw);
         scale = 85536 - Trig_Sin(frame * 964);
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;
         }
         Func_080151e4(scale * 3 / 2, 0x10000, scale * 3 / 2);
       } else {
-        Func_08015160((screen.x / 2 - 64) << 16, (j << 20) + 0x100000, 0);
-        SceneTransform_ApplyPitch((j << 12) - 0x800);
-        SceneTransform_ApplyYaw(j * 21000 + yaw);
+        Func_08015160((screen.x / 2 - 64) << 16, (k << 20) + 0x100000, 0);
+        SceneTransform_ApplyPitch((k << 12) - 0x800);
+        SceneTransform_ApplyYaw(k * 21000 + yaw);
         scale = 0x10000 - Trig_Sin(frame * 682) / 4;
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;

@@ -1310,9 +1310,10 @@ CLEAR(buffer, 0x1000);
           work->unk77a8 = 8;
         if (frame > 1) {
             struct Particle *p;
-          count = 0;
+          i = 0;
           p = work->particle;
-          for (i = 0; i != 64; i++, p++) {
+          count = 0;
+          for (; i != 64; i++, p++) {
             if (p->life == 0) {
               count++;
               p->x = object2->x;
@@ -1334,11 +1335,12 @@ CLEAR(buffer, 0x1000);
       HeapSlot_Release(188);
       HeapSlot_Release(104);
       if (frame >= 4 && frame < 24) {
+        s32 h = 48;
         x = target[0] / 2;
         BattleEffect_LoadBlitter(188, 19);
-        IWRAM_SLOT_BC(screen, buffer, x - 24, 48, 24, 48);
+        IWRAM_SLOT_BC(screen, buffer, x - 24, h, 24, h);
         RELOAD_BLITTER(188, 23);
-        IWRAM_SLOT_BC(screen, buffer, x, 48, 24, 48);
+        IWRAM_SLOT_BC(screen, buffer, x, h, 24, h);
         HeapSlot_Release(188);
       }
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);

@@ -840,10 +840,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           s32 half = 0x1000;
 
           for (i = 0; i != 32; i++) {
-            u8 *other = gData_02014000 + (Random16() & 31);
+            u8 *other = (Random16() & 31) + gData_02014000 + half;
             u8 swap = REVEAL_BUFFER[0x1000 + i];
-
-            other += half;
 
             REVEAL_BUFFER[0x1000 + i] = *other;
             *other = swap;

@@ -996,12 +996,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       texture.logWidth = 7;
       texture.logHeight = 4;
-      model->mesh = Data_02014800;
+      model->scrollU = 0;
+      model->scrollV = 0;
       model->kind = 7;
-      texture.pixels = work->sheet + 0x4000;
-      model->scrollU = zero;
-      model->scrollV = zero;
       model->vertices = verts;
+      model->mesh = Data_02014800;
+      texture.pixels = work->sheet + 0x4000;
       for (i = 0; i != 2; i++) {
         if (frame < Data_08199756[i]) {
           continue;

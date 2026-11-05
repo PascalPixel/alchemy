@@ -1,8 +1,3 @@
-// Under -Os, 5 November: differ 22 of 246 (tla-en); older figures below predate it.
-// Draft, differ 73 of 246: the first statue carries the leader up and
-// sinks; Func_020032c8 is its twin. Both loops are goto loops, as the native
-// builds their constants in each pass. Left: register choice (the leader and
-// the ride in r6 and r7 the other way round).
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "event_work.h"
 
@@ -17,11 +12,11 @@ void Func_0200306c(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *statue = Actor_GetById(9);
   struct Actor *ride = Func_020052f0();
-  s16 i;
+  s16 i; u16 next;
   s32 limit;
 
   Func_020051c0();
-  Call1((void (*)())Func_02005370, (s32)(0));
+  Func_02005370(0);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   Func_020052f0()->motionFlags = 0;
   leader->motionFlags = 0;
@@ -43,8 +38,10 @@ do {
   Func_02000cd8(14, 0x10000, limit);
   Func_02000cd8(15, 0x8000, limit);
   Func_02000cd8(16, 0, limit);
-  i++;
-} while ((u16)i <= 15);
+  next = i;
+  next++;
+  i = next;
+} while (next <= 15);
   Func_02005158();
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
@@ -72,7 +69,7 @@ do {
   Func_02005230(15, 0, 0);
   Func_02005230(16, 0, 0);
   Actor_SetModeById(9, 1);
-  Actor_SetPositionAndResetMotion(Actor_GetById(9), 0xd80000, 0, 0xd80000);
+  Actor_SetPositionAndResetMotion_(Actor_GetById(9), 0xd80000, 0, 0xd80000);
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(9, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);

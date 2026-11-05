@@ -1,5 +1,3 @@
-// Under -Os, 5 November: differ 14 of 247 (tla-en); older figures below predate it.
-// Draft, differ 64 of 247: Func_0200306c's twin for the second statue.
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "event_work.h"
 
@@ -14,7 +12,7 @@ void Func_020032c8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *statue = Actor_GetById(10);
   struct Actor *ride = Func_020052f0();
-  s16 i;
+  s16 i; u16 next;
   s32 limit;
 
   Func_020051c0();
@@ -40,8 +38,10 @@ do {
   Func_02000cd8(18, 0x10000, limit);
   Func_02000cd8(19, 0x8000, limit);
   Func_02000cd8(20, 0, limit);
-  i++;
-} while ((u16)i <= 15);
+  next = i;
+  next++;
+  i = next;
+} while (next <= 15);
   Func_02005158();
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
@@ -69,7 +69,7 @@ do {
   Func_02005230(19, 0, 0);
   Func_02005230(20, 0, 0);
   Actor_SetModeById(10, 1);
-  Actor_SetPositionAndResetMotion(Actor_GetById(10), 0x1780000, 0, 0xf80000);
+  Actor_SetPositionAndResetMotion_(Actor_GetById(10), 0x1780000, 0, 0xf80000);
   statue->priorityFlags |= 2;
   Actor_SetSpritePriority(10, 3);
   Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);

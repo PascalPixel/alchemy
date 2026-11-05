@@ -1,18 +1,3 @@
-// Draft, differ 16 of 200 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 16 of 200 (tla-en); older figures below predate it.
-// Draft, differ 22 of 200 (was 67): a bouncing object's update: it stops
-// animating while any of the event work's four busy counters is set; with its
-// action count at zero it is removed (or parked at 0, 0); otherwise it
-// bounces back off the leader (and records 201 in the event work's counter
-// 0x16a), off object 8 in scene 0x57 or off objects 12 to 14 in scene 0x5c,
-// moves by its speeds and grows. The 201 goes through an s32 (a halfword
-// constant would come from the pool and move the pool into the middle), the
-// object's position pointer is taken just before the leader test (so the
-// leader takes r8 and the pointer r10), and the speed's update is read before
-// the scale's. Left: in scene 0x5c's loop the native keeps the count in r5
-// and the object in r7 (here the reverse), and a few rows of the leader's
-// bounce come in another order. Measured: the loop as goto or do, a u32
-// count (64), the loop's object in a variable of its own (no change).
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -53,8 +38,7 @@ void Func_02001458(struct Actor *object) {
     }
     return;
   }
-  pos = &object->x;
-  if (Func_02000cec(&leader->x, pos) <= 8 &&
+  if (Func_02000cec(&leader->x, pos = &object->x) <= 8 &&
       ((s16 *)&leader->y)[1] == ((s16 *)&object->y)[1]) {
     {
       s16 *counter = (s16 *)(work + 0x16a);
@@ -78,13 +62,15 @@ void Func_02001458(struct Actor *object) {
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room8) {
     for (i = 0; i != 3; i++) {
-      other = Actor_GetById(i + 12);
+      struct Actor *other2 = Actor_GetById(i + 12);
+#define other other2
       if (Func_02000cec(&other->x, pos) <= 8) {
         object->speedLimit = -object->speedLimit >> 1;
         object->unk4c = 0;
         object->z = other->z - 0x80000;
       }
     }
+#undef other
   }
   object->action--;
   object->z += object->speedLimit;

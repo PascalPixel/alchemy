@@ -1,16 +1,3 @@
-// Draft, differ 6 of 171 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 12 of 171 (tla-en); older figures below predate it.
-// Draft, differ 37 of 171 (was 41; 6 of 160 in tla-ja before): the Kandorean
-// Temple's prepare step. Japanese lacks the final flag 0x12f clear. Left: the
-// native reloads gMainRoutineWork's address for the final test; this draft keeps it.
-// Measured: gcse inserts the address load on the path that skips the inner
-// tests and keeps it in r5 across their calls, where the native loads it into
-// r2 there and again at the join. The final entrance read through a volatile
-// pointer reloads it (differ 21) but reads it as ldrh and compares it shifted;
-// a switch over the inner tests (46).
-// Func_02005170's last argument goes through a local (41 to 37): the
-// native stores the 1 and the 4 on the stack in that order (a temporary device
-// if adopted).
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "edition.h"
 #include "flag_call.h"
@@ -43,21 +30,22 @@ void Func_02002a84(void) {
   Func_02005338(0);
   if (Flag_IsSet(0x92d)) {
     {
+      s32 e = 1;
       s32 f = 4;
 
-      Func_02005170(41, 0, 20, 0, 1, f);
+      Func_02005170(41, 0, 20, 0, e, f);
     }
-    Func_02005230_(11, 0, 0);
-    ((void (*)())Func_02005230_)(12, 0, 0);
-    Func_02005230_(13, 0, 0);
+    Func_02005230(11, 0, 0);
+    Func_02005230(12, 0, 0);
+    Func_02005230(13, 0, 0);
   }
   if (GameFlag_Test(0x109) == 0) {
     if (gMainRoutineWork.entrance == 2) {
       Actor_GetById(gMainRoutineWork.currentOwner)->y = 0x400000;
     } else if (gMainRoutineWork.entrance == 3 && Flag_IsSet(0x92d) == 0) {
-      Func_02005230_(11, 0, 0);
-      ((void (*)())Func_02005230_)(12, 0, 0);
-      ((void (*)())Func_02005230_)(13, 0, 0);
+    Func_02005230(11, 0, 0);
+    Func_02005230(12, 0, 0);
+    Func_02005230(13, 0, 0);
       Func_02005028();
     }
   }

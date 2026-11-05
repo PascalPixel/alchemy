@@ -1,11 +1,3 @@
-// Draft, differ 13 of 64 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 13 of 64 (tla-en); older figures below predate it.
-// Draft, differ 64 of 64: creates eight objects of type 672, each with its
-// sprite at priority 1, a phase of 16 times its number in byte 0x63, a
-// speed of 0x8000 plus 0x1000 times its number and Func_02000550 as its
-// update; odd ones take action 212, even ones 116. Left: registers (the
-// native keeps the count in r6 and a zero in r7) and the native takes both
-// action field addresses and counts up before the parity test.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -26,11 +18,12 @@ void Func_02004eb0(void) {
 do {
   object = Import_ActorCreate(672, 0, 0, 0);
   sprite = object->animation;
-  object->motionFlags = 0;
   sprite->priority = 1;
   ((u8 *)object)[0x63] = i << 4;
-  object->priorityFlags = 0;
-  object->speedLimit = object->acceleration = (i << 12) + 0x8000;
+  { s32 zero = 0;
+  object->motionFlags = zero;
+  object->priorityFlags = zero; }
+  object->acceleration = object->speedLimit = (i << 12) + 0x8000;
   object->update = Func_02000550;
   Actor_SetSingleChildFlags(object, 0);
   Actor_SetPartAttribute(object, 2);

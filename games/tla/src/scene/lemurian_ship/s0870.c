@@ -1,18 +1,3 @@
-// Draft, differ 14 of 260 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 16 of 260 (tla-en); older figures below predate it.
-// 26 October 2026, under -mthumb-slow-loads: differ 18 of 260: the constant 1
-// and 2 kept in r8 by the native are rebuilt in other registers; alchemy
-// permute 6 minutes leaves 14.
-// Draft, differ 18 of 260: the second door scene, the twin of Func_02000af4
-// with a helper (actor 9) who walks ahead when flag 0x932 is clear. Left:
-// register allocation of two constants in the helper's branch. The native
-// shares the 2 of the two state stores in r8 and builds each 1 afresh (ldrb r2
-// first, then movs r3, #1 for the bit set); this draft shares the 1 of the bit
-// set and the last state store in r8 and builds each 2. Measured: the state
-// pointer taken after the flag test (68 to 18), a local helper for
-// Func_02002c48 so its 0x10000 is not shared with field48 (in the same step), a
-// "+l" barrier on the bit set or a one-pass block after it (18), a variable for
-// the 2 (59).
 #include "../../../../games/tla/src/scene/lemurian_ship/lemurian_ship.h"
 
 void Actor_WatchAndSetScript(s32 actor, s32 target);
@@ -22,6 +7,8 @@ static inline void LemurianShip_SetWork(s32 a, s32 b, s32 c) {
 }
 
 void Func_02000870(void) {
+  /* FAKEMATCH(wrapper): Func_02002c48 through LemurianShip_SetWork; as a direct
+   * call, 54 of 260 instructions differ in tla-en. */
   struct LemurianShipObject *leader;
   struct LemurianShipObject *helper;
   s32 opened;
@@ -58,22 +45,24 @@ void Func_02000870(void) {
       LemurianShip_ObjSpeed(9, 0x26666, 0x13333);
       Actor_GetById(9)->unk5a[0] &= ~1;
       LemurianShip_ObjWalk(9, 824, 88);
+      FieldEvent_Wait(1);
       {
-        s32 held = 1;
+        /* FAKEMATCH(temporary): the bit in a local the byte is or'ed into; as
+         * unk5a[0] |= 1, 47 of 260 instructions differ in tla-en. */
+        u8 *bits = &Actor_GetById(9)->unk5a[0];
+        s32 value = 1;
 
-        FieldEvent_Wait(held);
-        /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-         * 16 of 260 instructions differ in tla-en. */
-        asm("");
+        value |= *bits;
+        *bits = value;
       }
-      Actor_GetById(9)->unk5a[0] |= 1;
       Func_02002de0(243);
       LemurianShip_ObjEmoteWait(gMainRoutineWork.currentOwner, 0x102);
       LemurianShip_SetWork(0, 0x20000, 0x10000);
       FieldEvent_Wait(20);
       LemurianShip_SetWork(0, 0, 0);
       LemurianShip_MapCopy(68, 68, 50, 64, 3, 3);
-      *state = 2;
+      { s32 two = 2;
+      *state = two;
       FieldEvent_Wait(20);
       LemurianShip_ObjArm(gMainRoutineWork.currentOwner, 0x6000, 20);
       Actor_Jump(gMainRoutineWork.currentOwner, 4, 0);
@@ -82,7 +71,7 @@ void Func_02000870(void) {
       LemurianShip_ObjTurn(gMainRoutineWork.currentOwner, 0x8000);
       Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 9);
       helper->field48 = 0x10000;
-      helper->field22 = 2;
+      helper->field22 = two; }
       Actor_Jump(9, 4, 0);
       LemurianShip_ObjCommit(9, 832, 74);
       Actor_Jump(9, 4, 0);

@@ -1,8 +1,6 @@
-// Draft, differ 70 (tla-en, 2026-11-05). Func_02001fcc of overlay 6ab.
-// Plain loops under -Os. Left: allocation rank by one insn: the second loop's
-// owner offset ranks 3 refs over 19 insns against the count's 5 over 64, so
-// it takes r7 and the count r8; natively the count has r7, the leader then
-// the offset r8 and the base sl.
+// Draft, differ 2 (tla-en, 2026-11-05). Func_02001fcc of overlay 6ab.
+// Call2 on the cue call keeps 258 out of CSE, which settles the ranks. Left:
+// the count's store comes after the index's shifts natively.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -37,14 +35,16 @@ void Func_02001fcc(void) {
   Func_02004454(-10, 0);
   work->downCount = 0;
   work->standingCount = 0;
-  Func_020043bc(leader, 258);
+  Call2((void (*)())Func_020043bc, leader, 258);
   for (i = 0; i < count; i++) {
-    struct BattleUnit *unit = Unit_Get(*(gMainRoutineWork.activeOwners + i));
+    u8 *main = (u8 *)&gMainRoutineWork;
+    s32 at = i + 536;
+    struct BattleUnit *unit = Unit_Get(main[at]);
 
     if (unit->hp > 0) {
       work->standingCount++;
     } else if (hp[i] != 0) {
-      work->downOwners[(s16)work->downCount++] = gMainRoutineWork.activeOwners[i];
+      work->downOwners[(s16)work->downCount++] = main[at];
       work->unk16a = 0xffff;
       ((u8 *)unit)[0x131] = 0;
     }

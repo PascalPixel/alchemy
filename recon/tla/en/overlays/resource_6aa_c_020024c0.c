@@ -1,5 +1,5 @@
-// Draft, differ 70: overlay 6aa's copy of the function drafted in
-// resource_6ad_c_02002800.c, whose header says what it is and what still differs.
+// Draft, differ 2 (tla-en, 2026-11-05). Func_020024c0 of overlay 6aa.
+// Overlay 6ab's Func_02001fcc with this overlay's symbols; see that draft.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -22,42 +22,30 @@ struct BattleUnit *Unit_Get(s32 owner);
 
 void Func_020024c0(void) {
   struct MarsLighthouseEventWork *work = Ram_HeapSlots->eventWork;
-  s32 leader;
+  s32 leader = Func_02004dc0();
   s32 count;
   s32 i;
   s16 hp[8];
 
-  leader = Func_02004dc0();
   Actor_GetById(leader);
   count = Party_CountActiveOwners();
-  i = 0;
-  if (i < count) {
-  save:
+  for (i = 0; i < count; i++)
     hp[i] = Unit_Get(gMainRoutineWork.activeOwners[i])->hp;
-    i++;
-    if (i < count)
-      goto save;
-  }
   Func_02004da8(-10, 0);
   work->downCount = 0;
   work->standingCount = 0;
-  Func_02004d08(leader, 258);
-  i = 0;
-  if (i < count) {
-  check:
-    {
-      struct BattleUnit *unit = Unit_Get(gMainRoutineWork.activeOwners[i]);
+  Call2((void (*)())Func_02004d08, leader, 258);
+  for (i = 0; i < count; i++) {
+    u8 *main = (u8 *)&gMainRoutineWork;
+    s32 at = i + 536;
+    struct BattleUnit *unit = Unit_Get(main[at]);
 
-      if (unit->hp > 0) {
-        work->standingCount++;
-      } else if (hp[i] != 0) {
-        work->downOwners[(s16)work->downCount++] = *(gMainRoutineWork.activeOwners + i);
-        work->unk16a = 0xffff;
-        ((u8 *)unit)[0x131] = 0;
-      }
+    if (unit->hp > 0) {
+      work->standingCount++;
+    } else if (hp[i] != 0) {
+      work->downOwners[(s16)work->downCount++] = main[at];
+      work->unk16a = 0xffff;
+      ((u8 *)unit)[0x131] = 0;
     }
-    i++;
-    if (i < count)
-      goto check;
   }
 }

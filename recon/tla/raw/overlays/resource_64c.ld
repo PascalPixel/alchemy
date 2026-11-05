@@ -29,7 +29,7 @@ SECTIONS
         "*/games/tla/src/scene/staff_credit/cycle_b.o"(.text)
         "*/games/tla/src/scene/staff_credit/s1a34.o"(.text)
         "*/resource_64c_overlay.o"(.text.x02009ad0)
-        "*/resource_64c_overlay.o"(.text.x02009be0)
+        "*/games/tla/src/scene/staff_credit/s1be0.o"(.text)
         "*/resource_64c_overlay.o"(.text.x02009d90)
         "*/games/tla/src/scene/staff_credit/release.o"(.text)
         "*/games/tla/src/scene/staff_credit/import.o"(.text)

@@ -1,3 +1,4 @@
+// Near miss, differ 2 of 707 (tla-en, 2026-11-05; 200 before): each row field read through a pointer set from the row's end, the trap with its own local, the object-79 and opening assignments in the listing's order, the event work's field. Left: movs r5, #0 (found) issues before the store of object in the native. The message names stand for 0xdc4, 0xdef, 0xe0f to 0xe1c, 0xde5, 0x137f and 0x15b5. Older notes follow.
 // Draft, differ 212 of 707: examines or talks to object id (bit 12 for no
 // opening message). Objects past 63 are containers, their row of
 // Func_080ceba8's table (from 64, eight bytes: type, a no-hint flag, the
@@ -18,6 +19,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
+#include "field/event_work.h"
 #include "actor.h"
 #include "scene_ids.h"
 
@@ -26,7 +28,7 @@ struct ActorPlacement {
   s8 kind;
 };
 
-extern char MsgCheckedContainer, MsgContainerEmpty, MsgContainerHint,
+extern char MsgKey137f, MsgCheckedContainer, MsgContainerEmpty, MsgContainerHint,
     MsgContainerTrap, MsgContainerTrapEnd, MsgContainerMonster, MsgSarcophagus,
     MsgContainerShape, MsgFoundCoins, MsgInventoryFull, MsgFoundItem,
     MsgFoundItemFor;
@@ -112,10 +114,10 @@ s32 Func_080ccec8(s32 id) {
   struct Actor *shown;
   struct ContainerRow *row;
   struct TalkEvent *talk;
+  s32 noHint;
   u8 *busy;
   s32 found;
   s32 type;
-  s32 noHint;
   s32 flag;
   s32 contents;
   s32 index;
@@ -124,10 +126,10 @@ s32 Func_080ccec8(s32 id) {
 
   placement = Scene_FindActorPlacement(id);
   result = -1;
-  silent = id & 0x1000;
   savedAngle = 0;
   paused = 0;
   busyFlags = 0;
+  silent = id & 0x1000;
   event = Ram_HeapSlots->eventWork;
   id &= 0xfff;
   object = Actor_GetById(id);
@@ -136,16 +138,22 @@ s32 Func_080ccec8(s32 id) {
     if (id != 79) {
       row = Func_080ceba8();
       if (row != NULL) {
-        type = row[id - 64].type;
+        u8 *end = (u8 *)row + id * 8;
+        s16 *p;
+        p = (s16 *)(end - 0x200);
+        type = *p;
         index = id;
         found = 1;
-        noHint = row[id - 64].noHint;
-        flag = row[id - 64].flag;
-        contents = row[id - 64].contents;
+        p = (s16 *)(end - 0x1fe);
+        noHint = *p;
+        p = (s16 *)(end - 0x1fc);
+        flag = *p;
+        p = (s16 *)(end - 0x1fa);
+        contents = *p;
       }
     } else {
-      noHint = result;
       type = 131;
+      noHint = result;
       flag = result;
       contents = *(s16 *)(event + 0xd34);
       index = 79;
@@ -183,9 +191,10 @@ s32 Func_080ccec8(s32 id) {
       if (type == 129)
         ObjectEvent_SetMode4WithCue(index);
       if (type == 130) {
-        shown = ObjectEvent_GetObject(index);
-        shown->update = Marker_MoveLeaderAwayFromEmitter;
-        Func_080cf350(shown);
+        struct Actor *trap = ObjectEvent_GetObject(index);
+
+        trap->update = Marker_MoveLeaderAwayFromEmitter;
+        Func_080cf350(trap);
         Sound_PlayFar(83);
         MessageArgument_PushFar(contents, 5);
         FieldMessage_ShowFar((s32)&MsgContainerTrap, 3);
@@ -197,8 +206,8 @@ s32 Func_080ccec8(s32 id) {
         else
           FieldMessage_ShowFar((s32)&MsgContainerTrap + 1, 1);
         PartyStatus_CloseFar();
-        shown->update = NULL;
-        Actor_SetMode(shown, 2);
+        trap->update = NULL;
+        Actor_SetMode(trap, 2);
         Sound_PlayFar(246);
         Event_Wait(30);
         FieldMessage_ShowFar((s32)&MsgContainerTrapEnd, 1);
@@ -240,7 +249,7 @@ s32 Func_080ccec8(s32 id) {
       if (Actor_GetSpriteShape(index)) {
         FieldMessage_ShowFar((s32)&MsgContainerShape, 1);
         if (Party_FindOwnerWithActionFar(136) != -1)
-          *(s16 *)((u8 *)Ram_HeapSlots->eventWork + 346) = 1;
+          ((struct EventWork *)Ram_HeapSlots->eventWork)->unk15a = 1;
         goto done;
       }
       if (contents & 0x8000) {
@@ -336,7 +345,7 @@ s32 Func_080ccec8(s32 id) {
         return result;
       if (talk->script >= 0x10000) {
         Event_RunMessage(id, BattleEffect_GetFlags(id) * 2 +
-                                        ((Random16() << 1) >> 16) + 0x137f);
+                                        ((Random16() << 1) >> 16) + (s32)&MsgKey137f);
         goto resume;
       }
       goto check;

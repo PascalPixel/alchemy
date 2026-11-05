@@ -1,7 +1,3 @@
-// Under -Os, 5 November: differ 67 of 122 (tla-en); older figures below predate it.
-// Draft, differ 79 of 122: eight puffs (type 285) in a row over the
-// leader, flung outwards when mode is set. A goto loop. Left: register
-// choice (the native keeps the leader in r7 and the count in r10).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -66,22 +62,22 @@ struct EffectView {
 
 extern const u8 gData_02003e00[];
 
+// Eight puffs (type 285) in a row over the leader, flung outwards when mode is
+// set.
 void Func_02000974(s32 mode) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 frame = 0;
   u32 i;
 
   for (i = 0; i <= 7; i++) {
-  {
     struct Actor *object;
     struct EffectView *effect;
+    s32 y = leader->y - ((((Random16Far() * 7) << 1) >> 16) << 16);
 
-    object = Func_02003bb0(
-        285, leader->x + (i << 17) - 0x80000,
-        leader->y - ((((Random16Far() * 7) << 1) >> 16) << 16) - 0x20000,
-        leader->z);
+    object = Func_02003bb0(285, (i << 17) + leader->x - 0x80000, y - 0x20000,
+                           leader->z);
     if (object == NULL)
-      goto skip;
+      continue;
     effect = (struct EffectView *)object;
     frame = Func_02003d80(effect->sprite, frame);
     object->motionFlags = 0;
@@ -104,7 +100,5 @@ void Func_02000974(s32 mode) {
     effect->scaleRateX = -0x800;
     effect->scaleRateY = -0x600;
     effect->update = Effect_AdvanceMotionAtLeaderPriority;
-  }
-skip:
   }
 }

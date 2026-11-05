@@ -1,24 +1,8 @@
-// Draft, differ 199 (231 before statements reordered 2026-10-26).
-// Draft, differ 243 of 543: uses Psynergy on the field, this game's form of
-// ☀️'s Field_UsePsynergy (games/tbs/src/field/field_sequence/psynergy.c).
-// code holds the Psynergy (bits 0 to 9), its user (10 to 13, 15 for the
-// first) and bit 13 to run only its packed action. Psynergy does nothing
-// with flag 382 set; in event mode 3, abilities 144 and 155 do nothing and
-// 153 sets flag 327 (and the event work's 0x16a to 253) on the ship with
-// flag 0x8df; ability 139 does nothing on the ship. Retreat (149) asks
-// first and, unless flag 324 blocks it, sets the party's destination to its
-// retreat point. The map's events for the cast (stage 8 before anything,
-// then stages 1, 0 and 5 of the Psynergy's group, Func_080ce458) decide the
-// target and whether the effect plays; the user pays the PP, the effect
-// runs between the before and after events, and an object the effect hit
-// (0xd30) runs its stage-2 event.
-// Left: the native keeps the retreat flag, group, before event and event
-// work at sp 0, 4, 8 and 12 (here 4 bytes higher) and the order of a few
-// constants; the message names stand for 0xdba to 0xdbd.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
+#include "field/event_work.h"
 #include "scene_ids.h"
 
 struct PendingEvent {
@@ -38,8 +22,8 @@ struct FieldUnit {
   s16 pp;
 };
 
-extern char MsgNotEnoughPp, MsgNothingHappened, MsgUseAbilityConfirm,
-    MsgDoesNotWorkHere;
+extern char MsgKey0dba, MsgKey0dbb, MsgKey0dbc,
+    MsgKey0dbd;
 
 struct BattleAct *BattleAction_Get(s32 actionId);
 struct FieldUnit *Unit_Get(s32 unitId);
@@ -95,35 +79,35 @@ s32 Func_080ce61c(u32 code) {
   if (userId == 15)
     userId = 0;
   if (GameFlag_Test(382)) {
-    FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
+    FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
     return 0;
   }
   if (((s8 *)event)[394] == 3) {
     if (abilityId == 144 || abilityId == 155) {
-      FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
+      FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
       return 0;
     }
     if (abilityId == 153) {
       if (gMainRoutineWork.ownerOverride != 0 && GameFlag_Test(0x8df)) {
         GameFlag_SetBit(327);
-        *(s16 *)(event + 362) = 253;
+        ((struct EventWork *)event)->unk16a = 253;
         return 0;
       }
-      FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
+      FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
       return 0;
     }
   }
   if (gMainRoutineWork.ownerOverride != 0 && abilityId == 139) {
-    FIELD_PSYNERGY_MESSAGE(userId, 139, MsgNothingHappened);
+    FIELD_PSYNERGY_MESSAGE(userId, 139, MsgKey0dbb);
     return 0;
   }
   if (abilityId == 149) {
     if (GameFlag_Test(324)) {
-      FIELD_PSYNERGY_MESSAGE(userId, 149, MsgDoesNotWorkHere);
+      FIELD_PSYNERGY_MESSAGE(userId, 149, MsgKey0dbd);
       return 0;
     }
     MessageArgument_PushFar(149, 4);
-    FieldMessage_ShowFar((s32)&MsgUseAbilityConfirm, 13);
+    FieldMessage_ShowFar((s32)&MsgKey0dbc, 13);
     cost = Func_080d295c(1);
     Message_CloseFinishedWindowsFar();
     if (cost != 0)
@@ -137,7 +121,7 @@ s32 Func_080ce61c(u32 code) {
       entrance = (u16)state->retreatEntrance;
       state->entrance = entrance;
     }
-    *(s16 *)(event + 344) = 999;
+    ((struct EventWork *)event)->countdown = 999;
     retreat = 1;
   }
 
@@ -156,20 +140,24 @@ s32 Func_080ce61c(u32 code) {
   before = Func_080ce458(0x10000005, group, selector);
   after = Func_080ce458(5, group, selector);
   during = Func_080ce458(0x50000005, group, selector);
-  if (abilityId == 156 && gMainRoutineWork.scene != (s32)&SceneId_Ov64a &&
+  if (abilityId == 156 && gMainRoutineWork.scene != (s32)&SceneId_WorldMap &&
       before == NULL && after == NULL && during == NULL) {
-    FIELD_PSYNERGY_MESSAGE(userId, 156, MsgDoesNotWorkHere);
+    FIELD_PSYNERGY_MESSAGE(userId, 156, MsgKey0dbd);
     return 0;
   }
   if (userId <= 7) {
-    cost = BattleAction_Get(abilityId)->ppCost;
-    if (Unit_Get(userId)->pp < cost) {
+    struct BattleAct *action = BattleAction_Get(abilityId);
+
+    struct FieldUnit *unit = Unit_Get(userId);
+    s32 ppCost = action->ppCost;
+
+    if (unit->pp < ppCost) {
       if (retreat)
-        *(s16 *)(event + 344) = 0;
-      FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
+        ((struct EventWork *)event)->countdown = 0;
+      FIELD_PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dba);
       return 0;
     }
-    Unit_AddPpFar(userId, -cost);
+    Unit_AddPpFar(userId, -ppCost);
   }
   if (group == 23) {
     object = ObjectTable_Get(Party_GetLeaderActor());
@@ -193,10 +181,14 @@ s32 Func_080ce61c(u32 code) {
   }
   BattleEffect_LoadActionEffectResources(abilityId, 0);
   event[0xcb6] = 1;
-  if (before != NULL && (before->trigger & 0x200)) {
-    effect = Ram_HeapSlots->effectWork;
-    effect[34] = 0;
-    effect[35] = 0;
+  {
+    u32 zero = 0;
+
+    if (before != NULL && (before->trigger & 0x200)) {
+      effect = Ram_HeapSlots->effectWork;
+      effect[34] = zero;
+      effect[35] = zero;
+    }
   }
   if (after != NULL && (after->trigger & 0x200)) {
     effect = Ram_HeapSlots->effectWork;
@@ -220,7 +212,8 @@ s32 Func_080ce61c(u32 code) {
   BattleEffect_StopMainActor();
   hit = ((s8 *)event)[0xd30];
   if (hit != -1) {
-    pending = Func_080ce458(0x20000005, group, hit | 0x100);
+    selector = hit | 0x100;
+    pending = Func_080ce458(0x20000005, group, selector);
     if (pending != NULL)
       Field_RunPsynergyEvent(pending, userId, ((s8 *)event)[0xd30]);
   }

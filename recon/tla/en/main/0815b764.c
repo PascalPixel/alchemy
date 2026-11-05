@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 263 of 1932, 79 normalized: Task_Add returns s32.
 // 2026-11-05, unchanged at 271 of 1932: at the ship-burst block the reload order
 // draw r3, frame r4, then verts is the draft's next register, r7; the listing's
 // verts is r1, so r7 and r0 were taken or busy there. Tried a frame * 3 local
@@ -132,7 +133,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);

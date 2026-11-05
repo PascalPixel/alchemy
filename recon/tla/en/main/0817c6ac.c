@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 137 of 627: Task_Add returns s32; the note below still holds.
 // Measured 2026-11-05 (tla-en): differ 139 of 627, draft 628; through a byte-array
 // corner it was 90 (629), so this is a rise that removes a false form: the listing has
 // no store of distance before the second call, which reload_cse drops only when the
@@ -113,7 +114,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);

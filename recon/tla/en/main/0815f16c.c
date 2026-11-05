@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 1233 of 7666, slots normalized 887, high
+// Measured 2026-11-05 (tla-en): differ 1135 of 7666, slots normalized 815, high
 // registers blind too 845, every register blind 345. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
@@ -140,7 +140,7 @@ struct BattleObject {
   s32 unk48;
 };
 
-typedef void (*DrawFunc)(void *, const void *, s32, s32, s32, s32);
+typedef s32 (*DrawFunc)(void *, const void *, s32, s32, s32, s32);
 
 struct DrawFuncs {
   DrawFunc draw[2];
@@ -331,7 +331,7 @@ void Func_0815f0a0(s32);
 void Graphics_PackTileRows(void *, void *, s32, s32);
 void Func_0818caa8(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
-void Func_08196404(s32, s32, s32, s32, s32);
+s32 Func_08196404(s32, s32, s32, s32, s32);
 void Render_TransformVertices(const void *, void *, s32);
 struct Model *Render_AllocateModelList(s32);
 void Render_DrawModelList(struct Model *);
@@ -1304,12 +1304,14 @@ CLEAR(buffer, 0x1000);
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
         if (frame >= i + 4) {
+          s32 life;
           life = p->life;
           if (life <= 23) {
-            life = life / 4;
+            s32 m;
+            m = life / 4;
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
-            drawFuncs.draw[1](screen, buffer + 0x1809 + life * 0x480,
+            drawFuncs.draw[1](screen, buffer + 0x1809 + m * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
             BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
             p->life++;

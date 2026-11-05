@@ -1648,8 +1648,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s32 x = 0;
 
           for (i = 0; i != 2; i++, x += 10, v += 4) {
-            v[1] = y;
             v[0] = x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5;
+            v[1] = y;
             v[2] = z;
           }
           jitter = jitter + (Random16() & 7) - 4;
@@ -1658,8 +1658,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model3 = Render_AllocateModelList(1);
         model3->kind = 6;
         model3->texture = &texture3;
-        model3->scrollV = 0;
         model3->shade = 0;
+        model3->scrollV = 0;
         model3->vertices = Data_02011000;
         if (frame == 16) {
           slideStep = -0x80000;

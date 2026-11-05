@@ -1,6 +1,34 @@
-// Measured 2026-11-05 (tla-en): differ 183 of 7666, slots normalized 103, high
-// registers blind too 101, every register blind 63. The frame is the listing's
-// 264 and i is r11 (226 of 229 rows).
+// Measured 2026-11-05 (tla-en): differ 10 of 7666, slots normalized 5, sizes equal.
+// What is left is four scheduling ties, each one row moved; none has a register or
+// form behind it, and no reshaping tried moves them:
+// - Kind 16: strb before adds r0; here adds r0 first. Written with buffer[j] the
+//   tie goes the listing's way (the source step is moved up from the loop's end),
+//   but the two pointers then swap r1 and r2: dst lives 13 insns, src 12, equal refs.
+// - Center: ldr r5 [sp, 16] before str r2 [sp, 56]; here after it.
+// - Kind 14's y: mov r2, r8 before adds r5 and muls; here after them.
+// - Kind 96's pair: mov r8, r0 after movs r3, #56 and adds r1; here before them.
+// Those are the load and multiply rows of K2's approximated table; see the report.
+//
+// What settled the rest this round, all from the listing:
+// - sched2 moves the head of an else arm above the branch (interblock). Kind 70's
+//   p and i look set before its if; they belong to the loop in the else arm.
+// - Kinds 80 and 85 are plain nested loops indexing the buffer; the goto rows, row
+//   locals and closing one-pass blocks were standing in for them.
+// - Kind 79's gravity is an if and an else: its label ends CSE's block, which is
+//   what leaves the loop's pointer as a copy after it.
+// - Model.fade and Texture.pixels have their own alias sets (long, u8 *): a load
+//   or store of another type no longer waits on them. A store order settled there
+//   is kind 84's and kind 90's.
+// - k = 0 before threshold makes row * 69 outrank k at kind 85 (L 40 against 38).
+//
+// Before adoption: every device below still needs S2's exact tag with N measured.
+// RELEASE_BLITTERS and RELOAD_BLITTER are exempt only if every use matches through
+// them; CLEAR and FILL are wrappers unless they are the game's own layer; the "X"
+// at the first projection is a barrier. Kind 85 holds r2 across h with a pin and two
+// asms (reload otherwise gives h r2 where the listing has r3, one step behind, with
+// nothing visible taking it) and cuts threshold in its loop (a copy GCSE otherwise
+// propagates away, though the listing keeps t in lr and threshold in ip; the source's
+// form of that copy is not known). Data_02010208 and Value_ symbols need homes.
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
 // their blitters in a do { } while (0), which ends CSE's block, so the two table
@@ -39,29 +67,6 @@
 // value through a long-lived local of the function gives it a high register, as
 // kind 85's limit does for its row base.
 //
-// Left, top down (slots normalized 103, every register blind 72):
-// - Kind 80 (28): r3, r2, r1 for three, mirror and source; here r2, r1, r2. The
-//   destination's symbol loads into r1 in the listing. The buffer here is the symbol
-//   gMapCellBuffer, the constant everywhere else; Data_02010208 needs a home.
-// - Kind 85 (34): the base's long-lived local takes r8 and h sl, swapped; reload is
-//   one step behind from the arm's first load (r3 where the listing has r5), and
-//   no reload shows between. threshold's asm cut stands for a copy GCSE otherwise
-//   propagates away; the source's form of that copy is not known.
-// - The projection's fresh add takes the asm's second mention of o; the source's
-//   second mention is not known.
-// - Kind 79 (15): the copy of the step is r8 and the step r7, here reversed by
-//   rank; first uses read the step in the listing, so p is replaced there up to the
-//   first label, and p is not the shared one. record_giv makes a giv non-replaceable
-//   only when it is mentioned outside the loop or the biv steps inside its life.
-// - Kind 70's step starts from i at run time, 4 rows: i = 0 is above the if, so
-//   the biv's start is not known; the listing has no multiply.
-// - Ties: kind 90's texture store order (8), kind 84's pixels (4), kind 16's store (2),
-//   the first center store (2), kind 14's mov r2, r8 (2).
-//
-// Before adoption: RELEASE_BLITTERS and RELOAD_BLITTER are exempt only if every
-// use matches through them, CLEAR and FILL need S2's wrapper tags unless they are
-// the game's own layer, and both asms (the "X" at the first projection, the cut on
-// kind 85's threshold) and kind 80 and 85's closing do { } while (0) are barriers.
 
 // Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every

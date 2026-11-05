@@ -330,9 +330,9 @@ void Heap_Release(void *buffer);
 // splash's duration, then a smaller pair of rings and a column of spray
 // rises while the screen shakes; the drop itself is drawn last.
 static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
-  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
   u8 *sprites = Ram_HeapSlots->unk64[0];
   DrawRectangle draw = Ram_HeapSlots->unk64[1];
   DrawRectangle drawAlt = Ram_HeapSlots->unkb8[1];
@@ -737,10 +737,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 15; i++) {
         struct IrisPoint *s = Data_02012ef4[i];
 
-        s->speed = Data_0819a01a[i];
         s->x = Data_08199fde[i] << 16;
         s->y = Data_08199fed[i] << 16;
         s->angle = Data_08199ffc[i];
+        s->speed = Data_0819a01a[i];
         s->unk10 = 0;
         for (j = 1; j != 10; j++) {
           STREAK(i, j).x = 0x960000;

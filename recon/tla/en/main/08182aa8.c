@@ -367,12 +367,17 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
 
     CopyWords((void *)OBJ_PLTT, e, 512);
     Resource_DecodeType01(e + 512, cellBuffer);
-    for (i = 0; i != 12; i++) {
+    {
+    u8 *cells;
+
+    i = 0;
+    cells = gMapCellBuffer;
+    for (; i != 12; cells += 1024, i++) {
       obj = Func_0815b290(32, 32, 0x80002000, 0);
       obj->priority = 2;
       work->objects[i] = obj;
-      CopyWords((void *)OBJ_TILES(obj), cellBuffer + i * 1024, 1024);
-    }
+      CopyWords((void *)OBJ_TILES(obj), cells, 1024);
+    }}
   }
   Graphics_LoadGreyRamp();
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, cellBuffer, 0, 0);

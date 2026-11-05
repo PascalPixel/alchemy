@@ -1,29 +1,10 @@
-// Near miss, differ 4 of 984 (tla-en, 2026-11-05): the zero and row in the item menu's form, tagged. With a one-pass block around WindowSprite_RedrawSavedRect (untagged, not kept) differ 2: only adds r0, #1 before movs r3, #1 at the first highlight; pins on r0 to r3 leave it at 2 to 6.
-// Draft, differ 24 of 984, skeleton gap 20 (tla-en, 2026-11-01): the battle
-// summon menu, The Broken Seal's BattleSummonMenu_Run (games/tbs/src/window/
-// screens/battle_summon_menu.c) on this game's work and messages. The list
-// window stands at column 13, 17 tiles wide; the standby counts above it are
-// tiles (counts of ten and more from tile 0xf196), and each summon's cost is
-// drawn from column 11. Same instructions, frame (372), stack slots and
-// registers as the listing; what is left is instruction order inside six
-// blocks, all before the standby counts: the pool load and the index step in
-// the first sprite loop, the copy beside the store of the ordered list's
-// address, x + 1 in the first highlight, the drawnRow and mask stores, and
-// element = 0 before the standby load. Here the draft moves loads earlier than
-// the listing does, which looks like K2's -mthumb-slow-loads model, not source.
-// The twin's forms settle the rest: its declaration order fixes the stack, the
-// blink loop's own tile leaves r4 to index, and col = 0 belongs before the
-// affordability scan. Tried: mask before drawnRow (loses an instruction, CSE
-// reuses the zero), swapped operands and sprite stores, the sprite-loop forms.
-// The cursor pushed through sprite and the rows' goto are the twin's devices;
-// they need its tags on adoption.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
 
 extern u8 MsgAbilityNothing[];
-extern u8 Msg_0885[];
+extern u8 MsgAbilityDescription[];
 
 struct SummonMenuWindow {
   u8 unk00[8];
@@ -249,8 +230,15 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
-      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
-                          window->width - 2, 1, 15);
+      {
+        s32 x = window->x + 1;
+        /* FAKEMATCH(barrier): an empty asm on x, which issues its add after the
+         * other arguments; as x inside the call, 2 of 984 instructions differ
+         * in tla-en. */
+        asm("" : "=r"(x) : "0"(x));
+        Window_HighlightRect(x, window->y + drawnRow * 2 + 1, window->width - 2, 1,
+                             15);
+      }
       Vram_FillWindowBlockPattern();
       {
         const struct SummonDefinition *definition;
@@ -258,7 +246,7 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
 
         definition =
             SummonDefinition_Get(orderedSummons[firstEntry + selectedRow]);
-        Message_CopyExpanded(definition->abilityId + (s32)Msg_0885, text,
+        Message_CopyExpanded(definition->abilityId + (s32)MsgAbilityDescription, text,
                                  52);
         Text_DrawWideStringAtOffset(text, description, 0, 4);
         drawnRow = selectedRow;
@@ -270,7 +258,11 @@ s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby) {
       }
 
       if (firstEntry != drawnFirstEntry) {
-        WindowSprite_RedrawSavedRect(window);
+        /* FAKEMATCH(one-pass): the saved window's redraw in a block that runs
+         * once; as a plain call, 2 of 984 instructions differ in tla-en. */
+        do {
+          WindowSprite_RedrawSavedRect(window);
+        } while (0);
         {
           s32 element;
 

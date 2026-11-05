@@ -1,3 +1,4 @@
+// Draft, differ 164 of 211, 75 with slots and pool offsets normalized, 15 with registers ignored as well (tla-en, 2026-11-05): box test reads its edges first, as the native. Left is allocation: the native holds gMainRoutineWork in r6 before the first call, a register only a pseudo live across a call or across blocks takes; reusing x's shifted variable for it gives 162, norm 74.
 // Draft, differ 177 (201 before statements reordered 2026-10-26).
 // Draft, differ 196 of 211 (2026-10-18), from the listing: reads the map's
 // entrance stream (gData_0202e000) for the current entrance, places the
@@ -33,12 +34,16 @@ s32 Func_080cc7c4(void) {
   s32 top;
   s32 bottom;
   s32 right;
+  s32 leftEdge, topEdge, rightEdge, bottomEdge;
 
   cursor = gData_0202e000 + (u16)Stream_ReadU16(&cursor);
   for (;; cursor += 6) {
     if (*(s8 *)cursor == -1) {
+      {
+      s32 zero = 0;
       Data_02000448 = 0x4000;
-      Data_0200044c = 0;
+      Data_0200044c = zero;
+      }
       return 0;
     }
     if (*(s8 *)cursor == entrance) {
@@ -66,8 +71,12 @@ s32 Func_080cc7c4(void) {
           top = *(s8 *)cursor++;
           right = *(s8 *)cursor++;
           bottom = *(s8 *)cursor++;
-          if (x >= left << 4 && x <= right << 4 && z - height >= top << 4 &&
-              z - height <= bottom << 4) {
+          leftEdge = left << 4;
+          topEdge = top << 4;
+          rightEdge = right << 4;
+          bottomEdge = bottom << 4;
+          if (x >= leftEdge && x <= rightEdge && z - height >= topEdge &&
+              z - height <= bottomEdge) {
             map->minX = left << 20;
             map->minZ = top << 20;
             map->maxX = right << 20;

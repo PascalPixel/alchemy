@@ -1,4 +1,5 @@
 .syntax unified
+	.balign 4
 	.thumb
 	.global Menu_StepRight
 	.thumb_func

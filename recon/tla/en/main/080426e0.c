@@ -1,3 +1,4 @@
+// Draft, differ 42 of 137, 20 normalized, 2 with registers ignored (tla-en, 2026-11-05): the guarded goto loop with the menu state read first and again at the loop's exit gives the native's shape. Left: two copies the native has and this lacks, the table's address through r7 into r2 and the state from r4 into r3 before its test; forms with a second local fold away.
 // Draft, differ 80 of 137, 2026-10-15: The Broken Seal's
 // Window_DrawColumnBorders on this game's window (signed position,
 // tilemap rows indexed directly, the column added before it is doubled).
@@ -26,10 +27,12 @@ void Func_080426e0(struct Window *window, u32 flags) {
   s32 bias = 0;
   u32 max = window->width - 1;
   s32 i;
+  u8 state = canvas->menuState;
   u32 rows = window->height;
   u32 col;
   u32 row;
   u16 *dest;
+  const s8 *table;
 
   if ((flags & 1) == 0)
     flags &= ~2;
@@ -38,7 +41,9 @@ void Func_080426e0(struct Window *window, u32 flags) {
     first = 0;
   }
   i = first;
-  while (gWindow_PartyColumnOffsets[i] >= 0) {
+  table = gWindow_PartyColumnOffsets;
+  if (table[i] >= 0) {
+  next:
     col = gWindow_PartyColumnOffsets[i] + bias;
     if (col < max) {
       for (row = 0; row != rows; row++) {
@@ -52,8 +57,12 @@ void Func_080426e0(struct Window *window, u32 flags) {
       }
     }
     i++;
+    table = gWindow_PartyColumnOffsets;
+    if (table[i] >= 0)
+      goto next;
+    state = canvas->menuState;
   }
-  if (canvas->menuState) {
+  if (state) {
     dest =
         canvas->tilemap[(s16)window->y + window->height - 1] + (s16)window->x;
     col = 1;

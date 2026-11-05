@@ -11,13 +11,6 @@ System_InstallIwramAndIrqs:
 	.thumb_func
 System_WaitForFrameInterrupt:
 	.incbin "baserom.gba", 0x000134b0, 0x000000b0
-	.section .rom.0001399c, "ax"
-	.balign 4
-	.global Func_0801399c
-	.type Func_0801399c, %function
-	.thumb_func
-Func_0801399c:
-	.incbin "baserom.gba", 0x0001399c, 0x00000194
 	.section .rom.00014174, "ax"
 	.global VramCache_AllocateBlocks
 	.type VramCache_AllocateBlocks, %function
@@ -155,8 +148,6 @@ Func_0802dd70:
 	.thumb_func
 Func_0802de8c:
 	.incbin "baserom.gba", 0x0002de08, 0x000005b8
-	.section .rom.0003028c, "ax"
-	.incbin "baserom.gba", 0x0003028c, 0x00000010
 	.section .rom.0003938e, "ax"
 	.incbin "baserom.gba", 0x0003938e, 0x00000002
 	.section .rom.00039446, "ax"
@@ -178,12 +169,6 @@ Message_Start:
 	.thumb_func
 Message_StepScript:
 	.incbin "baserom.gba", 0x00039858, 0x0000060c
-	.section .rom.00039f28, "ax"
-	.global Func_08039f94
-	.type Func_08039f94, %function
-	.thumb_func
-Func_08039f94:
-	.incbin "baserom.gba", 0x00039f28, 0x000000c0
 	.section .rom.0003a3da, "ax"
 	.incbin "baserom.gba", 0x0003a3da, 0x00000002
 	.section .rom.0003a890, "ax"
@@ -242,10 +227,8 @@ Func_0803c274:
 	.thumb_func
 Func_0803e7c8:
 	.incbin "baserom.gba", 0x0003e8fc, 0x00000124
-	.section .rom.0003ec60, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0003ec60, 0x000000b0
 	.section .rom.0003ed10, "ax"
+	.balign 4
 	.global Menu_StepRight
 	.type Menu_StepRight, %function
 	.thumb_func
@@ -349,12 +332,6 @@ Func_08044dc8:
 	.thumb_func
 Func_0804bc08:
 	.incbin "baserom.gba", 0x0004bdf4, 0x000011a8
-	.section .rom.0004d360, "ax"
-	.global Menu_RunResourceSelectionLoop
-	.type Menu_RunResourceSelectionLoop, %function
-	.thumb_func
-Menu_RunResourceSelectionLoop:
-	.incbin "baserom.gba", 0x0004d360, 0x00000120
 	.section .rom.0004d676, "ax"
 	.incbin "baserom.gba", 0x0004d676, 0x00000002
 	.section .rom.0004d9fc, "ax"
@@ -432,12 +409,6 @@ Func_080ccd78:
 	.thumb_func
 SceneEvent_FindActiveRecord:
 	.incbin "baserom.gba", 0x000ccd70, 0x0000010c
-	.section .rom.000ccec0, "ax"
-	.global Func_080ccec8
-	.type Func_080ccec8, %function
-	.thumb_func
-Func_080ccec8:
-	.incbin "baserom.gba", 0x000ccec0, 0x000006bc
 	.section .rom.000cd800, "ax"
 	.balign 4
 	.global Func_080cd808
@@ -640,12 +611,6 @@ Func_080e0618:
 	.thumb_func
 BattleEffect_SpawnScaledArcObjects:
 	.incbin "baserom.gba", 0x000e1404, 0x000000c4
-	.section .rom.000e14c8, "ax"
-	.global BattleEffect_UpdateArcEffect
-	.type BattleEffect_UpdateArcEffect, %function
-	.thumb_func
-BattleEffect_UpdateArcEffect:
-	.incbin "baserom.gba", 0x000e14c8, 0x000000f0
 	.section .rom.000e1ee8, "ax"
 	.global Func_080e1f2c
 	.type Func_080e1f2c, %function

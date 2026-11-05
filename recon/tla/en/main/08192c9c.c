@@ -1486,11 +1486,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           s32 ry = t >> 1;
           s32 tile = gData_08197410[0] + t / 4 * 0x302;
           s32 shift = j >> 1;
-          s32 rx = t >> 2;
 
           for (i = 0; i != 128; i++) {
             s32 a = i << 9;
-            s32 sx = rx * Trig_Sin(a);
+            s32 sx = (t >> 2) * Trig_Sin(a);
             s32 sy = ry * Trig_Cos(a);
             s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy * 2, sinT);
             s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy * 2, cosT);
@@ -1533,11 +1532,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 cosT = Trig_Cos(0x5800);
       s32 t = frame - 758;
       s32 tile = gData_08197410[5] + t / 4 * 0x302;
-      s32 rx = t * 2;
 
       for (i = 0; i != 96; i++) {
         s32 a = i * 384;
-        s32 sx = rx * Trig_Sin(a);
+        s32 sx = (t << 1) * Trig_Sin(a);
         s32 sy = t * Trig_Cos(a);
         s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
         s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT);
@@ -1551,13 +1549,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 cosT = Trig_Cos(0xe000);
       s32 t = frame - 782;
       s32 tile = gData_08197410[5] + t / 6 * 0x302;
-      s32 rx = t >> 1;
-      s32 ry = t * 2;
 
       for (i = 0; i != 197; i++) {
         s32 a = i * 384;
-        s32 sx = rx * Trig_Sin(a);
-        s32 sy = ry * Trig_Cos(a);
+        s32 sx = (t >> 1) * Trig_Sin(a);
+        s32 sy = (t << 1) * Trig_Cos(a);
         s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
         s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT);
 

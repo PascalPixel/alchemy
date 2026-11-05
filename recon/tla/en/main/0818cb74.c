@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 139 of 1122, 21 with slots and pool offsets
+// normalized. A rise from 130 that removes a false order: the listing allocates the
+// vertices before the model list, so the old order's 130 was not the program's.
+// Left: the first model setup's zeros (one for unk04, one for the scroll bytes, one
+// for i; a do-while(0) after unk04 moved it to 415, so that is not the cut).
 // Measured 2026-11-05 (tla-en): differ 130 of 1122. Frame 104, every slot as
 // the native: picture is written as x, a temporary device (tag it at adoption;
 // as its own local the frame is 100). The spray's statements now run in the
@@ -383,17 +388,17 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
     if (frame > 7) {
       s32 scale;
 
-      model = Render_AllocateModelList(1);
-      model->unk04 = 0;
       vertices = Heap_AllocEwram(0x400);
+      model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
       model->kind = 7;
+      model->unk04 = 0;
+      model->mesh = Data_08198ec4;
+      model->vertices = vertices;
+      texture.pixels = Ram_MapCellBuffer;
       model->texture = &texture;
       model->scrollU = 0;
-      model->mesh = Data_08198ec4;
-      texture.pixels = Ram_MapCellBuffer;
-      model->vertices = vertices;
       model->scrollV = 0;
 
       // Eight rings of foam.

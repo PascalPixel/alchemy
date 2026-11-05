@@ -91,11 +91,19 @@ void Func_020032d4(u32 first, s32 level, s32 baseLevel) {
                                                ((u16)row << 7)] = 120;
         }
       }
-      cell++;
-      if ((u16)++column < width)
-        goto columnTop;
+      {
+        s32 next = (column << 16) + 0x10000;
+        column = next >> 16;
+        cell++;
+        if ((u32)next >> 16 < width)
+          goto columnTop;
+      }
     }
-    if ((u16)++row < depth)
-      goto rowTop;
+    {
+      s32 next = (row << 16) + 0x10000;
+      row = next >> 16;
+      if ((u32)next >> 16 < depth)
+        goto rowTop;
+    }
   }
 }

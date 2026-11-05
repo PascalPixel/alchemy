@@ -162,7 +162,8 @@ struct CellCopy {
 };
 
 /// The seal being opened: its cell animations, its flag, where the leader
-/// jumps back to and where its statue returns if the story does not go on.
+/// jumps back to, the cells that close it again (`closed`) and where its
+/// statue returns if the story does not go on.
 struct SealOpening {
   struct CellCopy open;
   struct CellCopy pulseA;
@@ -172,7 +173,7 @@ struct SealOpening {
   s32 facing;       ///< 1/65536 turns
   s32 destinationX; ///< pixels
   s32 destinationZ; ///< pixels
-  struct CellCopy stairs[3];
+  struct CellCopy closed[3];
   s32 actorId;
   s32 actorX;    ///< pixels
   s32 actorZ;    ///< pixels
@@ -687,11 +688,12 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
 
 /// Unused: called only from the branch of SolSanctumStatue_OpenSeal that
 /// cannot run, since SolSanctumStatue_SelectStoryExit returns only 1 or -1.
-/// Once the northwest, southwest and southeast seals were open, the player
-/// would have seen the camera pan away from the leader while a patch of the
-/// floor flashed ever faster, then a larger block of the floor redrawn before
-/// the camera came back.
-static void SolSanctumStatue_UnusedUncoverStairway(void) {
+/// Once the northwest, southwest and southeast seals were open, the leader
+/// would have walked to the eastern hall's disc and the camera panned to it;
+/// the panels beside the disc flash ever faster, then the disc goes dark and
+/// its beams are gone (the cells every seal's closed copies restore), and the
+/// camera comes back. Nothing here uncovers anything.
+static void SolSanctumStatue_UnusedPutOutSeals(void) {
   struct MapGridScrollWork *grid;
   struct Actor *leader;
   s32 *savedOrigin;
@@ -731,7 +733,7 @@ static void SolSanctumStatue_UnusedUncoverStairway(void) {
     Event_Wait(40);
     approachSide = 2;
   }
-  // Flash progressively faster before uncovering the stairway.
+  // Flash progressively faster before the disc goes dark.
   for (frame = 0; frame != 6; frame++) {
     MapGrid_CopyCellsTo(2, 28, 34, 10, 4, 2);
     Event_Wait(8);
@@ -837,8 +839,8 @@ static void SolSanctumStatue_JumpSouth(void) {
   }
 }
 
-/// Unused: the northwest statue slides by itself to (504, 152), where it
-/// opens its seal, unless that seal is already open.
+/// Unused: the eastern hall's northwest statue slides by itself to (504, 152),
+/// where it opens its seal, unless that seal is already open.
 ///
 /// Nothing calls it; the player moves the statue there with Move instead.
 UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
@@ -1385,24 +1387,24 @@ static void SolSanctumStatue_OpenNorthwestSeal(void) {
   seal->facing = FACING_SOUTH;
   seal->destinationX = 500;
   seal->destinationZ = 132;
-  seal->stairs[0].sourceX = 8;
-  seal->stairs[0].sourceY = 55;
-  seal->stairs[0].destinationX = 32;
-  seal->stairs[0].destinationY = 40;
-  seal->stairs[0].width = 4;
-  seal->stairs[0].height = 3;
-  seal->stairs[1].sourceX = 2;
-  seal->stairs[1].sourceY = 30;
-  seal->stairs[1].destinationX = 34;
-  seal->stairs[1].destinationY = 10;
-  seal->stairs[1].width = 2;
-  seal->stairs[1].height = 1;
-  seal->stairs[2].sourceX = 2;
-  seal->stairs[2].sourceY = 28;
-  seal->stairs[2].destinationX = 16;
-  seal->stairs[2].destinationY = 10;
-  seal->stairs[2].width = 2;
-  seal->stairs[2].height = 1;
+  seal->closed[0].sourceX = 8;
+  seal->closed[0].sourceY = 55;
+  seal->closed[0].destinationX = 32;
+  seal->closed[0].destinationY = 40;
+  seal->closed[0].width = 4;
+  seal->closed[0].height = 3;
+  seal->closed[1].sourceX = 2;
+  seal->closed[1].sourceY = 30;
+  seal->closed[1].destinationX = 34;
+  seal->closed[1].destinationY = 10;
+  seal->closed[1].width = 2;
+  seal->closed[1].height = 1;
+  seal->closed[2].sourceX = 2;
+  seal->closed[2].sourceY = 28;
+  seal->closed[2].destinationX = 16;
+  seal->closed[2].destinationY = 10;
+  seal->closed[2].width = 2;
+  seal->closed[2].height = 1;
   seal->actorId = ACTOR_NORTHWEST_STATUE;
   seal->actorX = 488;
   seal->actorZ = 152;
@@ -1440,24 +1442,24 @@ static void SolSanctumStatue_OpenNortheastSeal(void) {
   seal->facing = FACING_SOUTH;
   seal->destinationX = 654;
   seal->destinationZ = 132;
-  seal->stairs[0].sourceX = 12;
-  seal->stairs[0].sourceY = 55;
-  seal->stairs[0].destinationX = 36;
-  seal->stairs[0].destinationY = 40;
-  seal->stairs[0].width = 4;
-  seal->stairs[0].height = 3;
-  seal->stairs[1].sourceX = 4;
-  seal->stairs[1].sourceY = 30;
-  seal->stairs[1].destinationX = 36;
-  seal->stairs[1].destinationY = 10;
-  seal->stairs[1].width = 2;
-  seal->stairs[1].height = 1;
-  seal->stairs[2].sourceX = 4;
-  seal->stairs[2].sourceY = 28;
-  seal->stairs[2].destinationX = 18;
-  seal->stairs[2].destinationY = 10;
-  seal->stairs[2].width = 2;
-  seal->stairs[2].height = 1;
+  seal->closed[0].sourceX = 12;
+  seal->closed[0].sourceY = 55;
+  seal->closed[0].destinationX = 36;
+  seal->closed[0].destinationY = 40;
+  seal->closed[0].width = 4;
+  seal->closed[0].height = 3;
+  seal->closed[1].sourceX = 4;
+  seal->closed[1].sourceY = 30;
+  seal->closed[1].destinationX = 36;
+  seal->closed[1].destinationY = 10;
+  seal->closed[1].width = 2;
+  seal->closed[1].height = 1;
+  seal->closed[2].sourceX = 4;
+  seal->closed[2].sourceY = 28;
+  seal->closed[2].destinationX = 18;
+  seal->closed[2].destinationY = 10;
+  seal->closed[2].width = 2;
+  seal->closed[2].height = 1;
   seal->actorId = ACTOR_NORTHEAST_STATUE;
   seal->actorX = 664;
   seal->actorZ = 152;
@@ -1495,24 +1497,24 @@ static void SolSanctumStatue_OpenSouthwestSeal(void) {
   seal->facing = FACING_NORTH;
   seal->destinationX = 500;
   seal->destinationZ = 216;
-  seal->stairs[0].sourceX = 8;
-  seal->stairs[0].sourceY = 58;
-  seal->stairs[0].destinationX = 32;
-  seal->stairs[0].destinationY = 43;
-  seal->stairs[0].width = 4;
-  seal->stairs[0].height = 1;
-  seal->stairs[1].sourceX = 2;
-  seal->stairs[1].sourceY = 31;
-  seal->stairs[1].destinationX = 34;
-  seal->stairs[1].destinationY = 11;
-  seal->stairs[1].width = 2;
-  seal->stairs[1].height = 1;
-  seal->stairs[2].sourceX = 2;
-  seal->stairs[2].sourceY = 29;
-  seal->stairs[2].destinationX = 16;
-  seal->stairs[2].destinationY = 11;
-  seal->stairs[2].width = 2;
-  seal->stairs[2].height = 1;
+  seal->closed[0].sourceX = 8;
+  seal->closed[0].sourceY = 58;
+  seal->closed[0].destinationX = 32;
+  seal->closed[0].destinationY = 43;
+  seal->closed[0].width = 4;
+  seal->closed[0].height = 1;
+  seal->closed[1].sourceX = 2;
+  seal->closed[1].sourceY = 31;
+  seal->closed[1].destinationX = 34;
+  seal->closed[1].destinationY = 11;
+  seal->closed[1].width = 2;
+  seal->closed[1].height = 1;
+  seal->closed[2].sourceX = 2;
+  seal->closed[2].sourceY = 29;
+  seal->closed[2].destinationX = 16;
+  seal->closed[2].destinationY = 11;
+  seal->closed[2].width = 2;
+  seal->closed[2].height = 1;
   seal->actorId = ACTOR_SOUTHWEST_STATUE;
   seal->actorX = 488;
   seal->actorZ = 200;
@@ -1550,24 +1552,24 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
   seal->facing = FACING_NORTH;
   seal->destinationX = 654;
   seal->destinationZ = 216;
-  seal->stairs[0].sourceX = 12;
-  seal->stairs[0].sourceY = 58;
-  seal->stairs[0].destinationX = 36;
-  seal->stairs[0].destinationY = 43;
-  seal->stairs[0].width = 4;
-  seal->stairs[0].height = 1;
-  seal->stairs[1].sourceX = 4;
-  seal->stairs[1].sourceY = 31;
-  seal->stairs[1].destinationX = 36;
-  seal->stairs[1].destinationY = 11;
-  seal->stairs[1].width = 2;
-  seal->stairs[1].height = 1;
-  seal->stairs[2].sourceX = 4;
-  seal->stairs[2].sourceY = 29;
-  seal->stairs[2].destinationX = 18;
-  seal->stairs[2].destinationY = 11;
-  seal->stairs[2].width = 2;
-  seal->stairs[2].height = 1;
+  seal->closed[0].sourceX = 12;
+  seal->closed[0].sourceY = 58;
+  seal->closed[0].destinationX = 36;
+  seal->closed[0].destinationY = 43;
+  seal->closed[0].width = 4;
+  seal->closed[0].height = 1;
+  seal->closed[1].sourceX = 4;
+  seal->closed[1].sourceY = 31;
+  seal->closed[1].destinationX = 36;
+  seal->closed[1].destinationY = 11;
+  seal->closed[1].width = 2;
+  seal->closed[1].height = 1;
+  seal->closed[2].sourceX = 4;
+  seal->closed[2].sourceY = 29;
+  seal->closed[2].destinationX = 18;
+  seal->closed[2].destinationY = 11;
+  seal->closed[2].width = 2;
+  seal->closed[2].height = 1;
   seal->actorId = ACTOR_SOUTHEAST_STATUE;
   seal->actorX = 664;
   seal->actorZ = 200;
@@ -1619,9 +1621,9 @@ static void SolSanctumStatue_OpenSeal(void) {
         Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
         Actor_ResetAndSetPosition(ACTOR_PARTY_LEADER, seal->destinationX,
                                   seal->destinationZ);
-        COPY_CELLS(seal->stairs[0]);
-        COPY_CELLS(seal->stairs[1]);
-        COPY_CELLS(seal->stairs[2]);
+        COPY_CELLS(seal->closed[0]);
+        COPY_CELLS(seal->closed[1]);
+        COPY_CELLS(seal->closed[2]);
         Actor_GetById(seal->actorId)->steeringFlags &= ~ACTOR_FACES_MOTION;
         Actor_SetPositionAndCommit(seal->actorId, seal->actorX, seal->actorZ);
         Actor_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1635,7 +1637,7 @@ static void SolSanctumStatue_OpenSeal(void) {
           GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN)) {
         if (!Event_GetFlag(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
           GameFlag_Set(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
-          SolSanctumStatue_UnusedUncoverStairway();
+          SolSanctumStatue_UnusedPutOutSeals();
         }
       } else if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN)) {
         Import_EventSetExitRequest(

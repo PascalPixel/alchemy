@@ -864,9 +864,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     model->scrollU = 64;}
     {
       u8 *cells = gMapCellBuffer;
-      s32 mask = 127;
+      s32 mask;
 
-      for (i = 0; i != 2; cells += 264, i++) {
+      for (i = 0, mask = 127; i != 2; cells += 264, i++) {
         s32 t = frame - i * 46 - 12;
 
         if ((u32)t <= 45) {
@@ -880,7 +880,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             v = mask & ~v;
             model->scrollU = v;
             if (t <= 32) {
-              u8 *m = t * 24 + strip;
+              u8 *m = (u8 *)(t * 24 + (s32)strip);
               m[0] = i;
               m[1] = i;
               m[2] = i;
@@ -892,7 +892,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             {
             s32 z = 0;
             if (t <= 15) {
-              u8 *m = t * 48 + strip;
+              u8 *m = (u8 *)(t * 48 + (s32)strip);
               m[0] = z;
               m[1] = z;
               m[2] = z;

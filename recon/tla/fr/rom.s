@@ -1318,11 +1318,6 @@ BattleEffect_RunDragonCloud:
 	.global Func_0818ad40
 Func_0818ad40:
 	.incbin "baserom.gba", 0x0018ad40, 0x00000b28
-	.global BattleEffect_RunTripleChomp
-	.type BattleEffect_RunTripleChomp, %function
-	.thumb_func
-BattleEffect_RunTripleChomp:
-	.incbin "baserom.gba", 0x0018b868, 0x000003f8
 	.section .rom.0018bc98, "ax"
 	.balign 4
 	.global Func_0818bc98

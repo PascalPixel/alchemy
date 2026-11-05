@@ -3571,8 +3571,8 @@ main	rom_main_09	recon/tla/fr/rom	.rom.0018ad40	fr
 main	rom_main_09	recon/tla/es/rom	.rom.0018ad40	es
 main	rom_main_09	recon/tla/de/rom	.rom.0018ad40	de
 main	rom_main_09	recon/tla/raw/0818ad40	.text	en
-main	rom_main_09	recon/tla/raw/0818b868	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.0018ad44	ja
+main	rom_main_09	games/tla/src/battle_effect/f18b868	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/summon_modes_5	.text
 main	rom_main_09	recon/tla/it/rom	.rom.0018bc98	it
 main	rom_main_09	recon/tla/fr/rom	.rom.0018bc98	fr

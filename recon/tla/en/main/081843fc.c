@@ -1,30 +1,32 @@
-// Measured 2026-11-05 (tla-en): differ 247 of 4580, 113 with slots and pool
-// offsets normalized, 53 with registers normalized as well. Measure
+// Measured 2026-11-05 (tla-en): differ 205 of 4580, 69 with slots and pool
+// offsets normalized, 41 with registers normalized as well. Measure
 // 081843fc,081848ec together. Most of raw is pool offsets, which fall into step as
-// the rows do: the draft is one instruction long (two stray stores, below).
+// the rows do: the draft is two instructions long (two stray stores, below).
 // What stops it, largest first:
 // - The burst's i * 448 giv (slot 24 in the listing, 40 here; every other giv slot
 //   sits 4 too low because of it). Slot order is pseudo order, and loops run last
 //   to first, so the listing makes this giv after the first scene's: second pass.
 //   loop.c reduces when benefit * lifetime * 15 >= real insns, 77 in the first pass
 //   and 73 in the second, so the product must be 5. The log gives benefit 10, less
-//   2 for the add: 8. Every spelling of 448 tried gives 8 or fails to reduce; a
-//   reused function-level local is not replaceable but has a huge lifetime. Also
-//   rotates r4, r5, r6 at the giv's step (rows 3925 to 3934).
-// - The jitter block: off holds r1 and jitter r4 in the listing, the reverse here.
-//   global.c ranks by floor_log2(refs) * refs / length: jitter 12 refs over 72,
-//   off 11 over 68, so jitter comes first. Inner-loop reads weigh more, so a goto
-//   inner loop would flip it, but PRE then hoists its (frame + j * 2) << 10. Costs
-//   25 rows, and the two stores that make the draft one long.
-// - The spawn: (x + 116) << 16 stays in its loop only with the sum inside the loop,
-//   which loop.c hoists after q's start; the listing has the sum before q's math
-//   (x in r3). A local holding the sum has its shift hoisted. 14 rows.
+//   2 for the add: 8. Every spelling of 448 tried gives 8 or fails to reduce (192
+//   two-part sums among them); a reused function-level local is not replaceable
+//   but has a huge lifetime. Also rotates r4, r5, r6 at the giv's step (rows 3925
+//   to 3934).
+// - The jitter block's reloads: the listing loads the buffer into r0 and zeroes i
+//   through r3; here the buffer takes r3 and i reuses x's zero. Two caller-save
+//   stores come back after the inner loop (row 4111).
 // - Ties sched2 settles the other way: the second object loop's Iwram and cells
 //   loads (row 199), cellBuffer + 0x1000's operands (row 240), the third shock's
 //   texture and mesh stores (row 2242), the sparks' reads (rows 3038 to 3073), the
 //   bolts' load (row 3626: it sinks past five calls in the listing, here past none,
 //   and r5 must stay out of reload's choice until then), the band's stores.
 // What round 5 settled by reading the listing and the loop dumps:
+// - The spawn's sum and base are set inside its loop, the base from a scene-level
+//   steps (a set-once local): loop.c hoists them in that order, so x takes r3, and q
+//   indexes the base, so it is a reduced giv (231 to 205, 97 to 69 normalized).
+// - off is declared before jitter and set after the counter: global.c ranks by
+//   floor_log2(refs) * refs / length, 36 / 72 against 33 / 66, a tie that lower
+//   pseudo numbers win (247 to 231).
 // - The cell buffer is a set-once local with no register, so reload makes it at
 //   each use (678 to 627); the band's mesh likewise (strip), set at scene level.
 // - Three scales were wrong: the scattered bolts' and the flash's z is 0x10000. Two
@@ -62,9 +64,9 @@
 // - OBJ_TILES reads the slot through its field. The first fade writes the object
 //   palette (literal 0x05000202); every pool still needs checking at adoption.
 // - The meteor has one b = 0x80000 - drift across its two sites (slot 88).
-// The barrier on idx is untagged and stands in for what stops the sharing: the
-// listing rebuilds off + idx after the if (a != 0) join, and neither cse1's skip nor
-// PRE shares it there. Needs its tag or the plain form before adoption.
+// The barrier on idx stands in for what stops the sharing: the listing rebuilds
+// off + idx after the if (a != 0) join, and neither cse1's skip nor PRE shares it
+// there. Spellings of either sum fold back to the plain form.
 // BattleEffect_RunCatastrophe; the same calls and control flow as the listing.
 // The function runs on through listing 081848ec, whose Func_081848ec and
 // Func_08185b9c are labels inside it (the second the first loop's test).
@@ -930,6 +932,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             p->y = Data_08199880[n] << 3;
             p->z = a << 8;
           }
+          /* FAKEMATCH(barrier): idx held through an empty asm so off + idx is rebuilt; as the plain sum, 3380 of 4580 instructions differ in tla-en. */
           __asm__("" : "=r"(idx) : "0"(idx));
           p->velocityY = Data_081998f2[idx + off];
           p->velocityZ = Data_0819995e[idx + off];

@@ -547,12 +547,20 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
 // of light climb, the scene fills with rising motes, rays turn about the
 // centre, and the screen whitens as she heals the party.
 void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
-  struct IrisSparks *sparks;
-  struct IrisSprite **objects;
+  typeof(SCENE) scene = SCENE;
+  struct IrisPoint (*streaks)[10] = Data_02012ef4;
+  u8 *canvas = Ram_HeapSlots->battleFxWork[1];
+  struct BattleEffectWork *work =
+      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  struct IrisSprite **objects = (struct IrisSprite **)gMapCellBuffer;
+  u8 *sprites = Ram_HeapSlots->unk64[0];
+  struct IrisSparks *sparks = &Data_02011f40;
+  u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
+  s32 savedScroll = gBgScroll[1].x;
+  s16 *camera = Ram_HeapSlots->cameraWork;
+  s32 savedZoom;
   s32 frame;
-  struct BattleEffectWork *work;
   DrawRectangle draw[2];
-  u8 *canvas;
 
   // The first spark slot with no life left, or -1.
   s32 FindFreeSpark(void) {
@@ -688,15 +696,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
   }
 
-  typeof(SCENE) scene;
   s32 motesMask;
-  u8 *sprites;
-  struct IrisPoint (*streaks)[10];
   s32 pos[4];
-  u8 *battle;
-  s32 savedScroll;
-  s16 *camera;
-  s32 savedZoom;
   struct Scale scale;
   struct Scale shrink;
   struct ModelTexture texture;
@@ -711,16 +712,6 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   u8 *dst;
   u8 *tiles;
 
-  scene = SCENE;
-  streaks = Data_02012ef4;
-  canvas = Ram_HeapSlots->battleFxWork[1];
-  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  objects = (struct IrisSprite **)gMapCellBuffer;
-  sprites = Ram_HeapSlots->unk64[0];
-  sparks = &Data_02011f40;
-  battle = (u8 *)Ram_HeapSlots->battleWork;
-  savedScroll = gBgScroll[1].x;
-  camera = Ram_HeapSlots->cameraWork;
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0x2000);
   Func_0813ba50();

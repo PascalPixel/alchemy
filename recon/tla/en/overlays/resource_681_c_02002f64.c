@@ -1,5 +1,5 @@
-// Measured under -Os, 5 November 2026: differ 1480 (tla-en); notes below may predate it.
-// Draft, differ 448 of 1972, skeleton gap 74/72 (tla-en, 2026-11-01)
+// Measured under -Os, 5 November 2026 over the whole extent (0x0200af30 to
+// 0x0200c264): differ 214 of 1969 (tla-en); the notes below may predate it.
 // Func_02002f64 is not a function: 0x02002f64 is a far `bl` inside Func_02002f30,
 // which opens with the 26 instructions ending section .text.x0200ad30. This file
 // holds that whole function, linked 0x0200af30 to 0x0200c264. Adopting it means
@@ -287,8 +287,8 @@ s32 Func_02002f30(void) {
         C2(Animation_ApplyChildValues, dragon, 6);
         C2(Animation_ApplyChildValues, partner, 6);
         width = 30;
-        C6(Func_02004e04, 85, 76, 5, 2, width, height);
         height = 19;
+        C6(Func_02004e04, 85, 76, 5, 2, width, height);
         C1(Func_02005014, 572);
         C2(Func_02004f94, 0x7fff, 0);
         C1(Func_02004fa4, 10);
@@ -399,7 +399,7 @@ s32 Func_02002f30(void) {
         C2(Actor_SetMovementTypeById, 10, movement);
         C1(FieldEvent_Wait, 20);
         C2(Func_02004f14, 0x600a, 0);
-        C2(Camera_FollowActor, room->currentOwner, 1);
+        C2(Camera_FollowActor, gMainRoutineWork.currentOwner, 1);
         Func_02004f54();
         C2(Actor_SetSpritePriority, 10, 3);
         C6(Func_02004dfc, 30, 19, 1, 1, 27, 19);
@@ -434,9 +434,9 @@ s32 Func_02002f30(void) {
       C3(Func_02004ebc, 9, 0, 0);
       Actor_SetModeById(8, 3);
       Actor_GetById(11)->speedLimit = scale = 0x10000;
+      slow = 0x8000;
       dragon = Actor_GetById(10);
       dragon->speedLimit = slow;
-      slow = 0x8000;
       owner = &room->currentOwner;
       C3(Func_02004ebc, 11, 0x1b80000, 0x1380000);
       C3(Func_02004ebc, *owner, 0x1c80000, 0x1480000);
@@ -533,9 +533,12 @@ s32 Func_02002f30(void) {
       C1(FieldEvent_Wait, 30);
       C2(Motion_SetModeAndWaitAnimation, 11, 3);
       C2(Actor_SetModeById, 11, 2);
-      object = Actor_GetById(*owner);
-      if (object != NULL)
-        Actor_ResetAndSetPosition(11, object->x >> 16, object->z >> 16);
+      {
+        struct Actor *ownerActor = Actor_GetById(*owner);
+
+        if (ownerActor != NULL)
+          Actor_ResetAndSetPosition(11, ownerActor->x >> 16, ownerActor->z >> 16);
+      }
       C1(Actor_WaitForMoveById, 11);
       C3(Func_02004ebc, 11, 0, 0);
       C1(Actor_WaitForMoveById, 11);

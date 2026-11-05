@@ -107,7 +107,7 @@ void Func_020044f8(s32 seed) {
   Unk_Step *steps;
   Unk_Cell *cell;
   Unk_Cell *p;
-  s32 x, y, nx, ny, step, tries, dir, i, v, next, c;
+  s32 x, y, nx, ny, step, tries, dir, i, v, next;
   u32 saved;
 
   saved = gRandomState;
@@ -200,7 +200,9 @@ restart:
     cell = &AT(x, y);
     next = step + 1;
 
-    c = AT(x, y + 1).unk_0;
+    {
+    s32 c = AT(x, y + 1).unk_0;
+
     v = step;
     if (c == next)
       v = next;
@@ -218,9 +220,12 @@ restart:
     }
     if (v == 0)
       v = 1;
+    }
     steps[step].unk_2 = v;
 
-    c = AT(x, y - 1).unk_0;
+    {
+    s32 c = AT(x, y - 1).unk_0;
+
     v = step;
     if (c == next)
       v = next;
@@ -238,9 +243,12 @@ restart:
     }
     if (v == 0)
       v = 1;
+    }
     steps[step].unk_5 = v;
 
-    c = AT(x - 1, y).unk_0;
+    {
+    s32 c = AT(x - 1, y).unk_0;
+
     v = step;
     if (c == next)
       v = next;
@@ -258,9 +266,12 @@ restart:
     }
     if (v == 0)
       v = 1;
+    }
     steps[step].unk_3 = v;
 
-    c = AT(x + 1, y).unk_0;
+    {
+    s32 c = AT(x + 1, y).unk_0;
+
     v = step;
     if (c == next)
       v = next;
@@ -278,6 +289,7 @@ restart:
     }
     if (v == 0)
       v = 1;
+    }
     steps[step].unk_4 = v;
     x = cell->unk_1;
     steps[step].unk_0 = step;

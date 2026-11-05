@@ -870,22 +870,29 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         scene->y -= 0x10000;
         scene->radius -= 0x1000;
         if (!(frame & 15)) {
+          {
+          u16 *fade = FADE_PLTT;
+
           for (i = 0; i != 128; i++) {
-            s32 c = FADE_PLTT[i];
+            s32 c = *fade;
             s32 r = 31;
             u16 g = (u16)c >> 5 & 31;
             s32 b = (u16)c >> 10 & 31;
 
             r &= c;
 
-            FADE_PLTT[i] = (b + 1) << 10 | (g + 1) << 5 | (r + 1);
+            *fade++ = (b + 1) << 10 | (g + 1) << 5 | (r + 1);
+          }
           }
         }
       } else {
         scene->radius += 0x2000;
         if (!(frame & 7)) {
+          {
+          u16 *fade = FADE_PLTT;
+
           for (i = 0; i != 128; i++) {
-            s32 c = FADE_PLTT[i];
+            s32 c = *fade;
             s32 b = (u16)c >> 10 & 31;
             s32 g = (u16)c >> 5 & 31;
             s32 r = c & 31;
@@ -896,7 +903,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
               g--;
             if (b < 15)
               b++;
-            FADE_PLTT[i] = b << 10 | g << 5 | r;
+            *fade++ = b << 10 | g << 5 | r;
+          }
           }
         }
       }
@@ -1284,8 +1292,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 401) <= 30 && (frame & 1)) {
       Resource_GetTableEntry((s32)&ResourceId_VioletSkyBackdrop);
+      {
+      u16 *fade = FADE_PLTT;
+
       for (i = 0; i != 128; i++) {
-        s32 c = FADE_PLTT[i];
+        s32 c = *fade;
         s32 r = 31;
         s32 g;
         s32 b;
@@ -1300,7 +1311,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           g -= 2;
         if (b > 3)
           b -= 2;
-        FADE_PLTT[i] = b << 10 | g << 5 | r;
+        *fade++ = b << 10 | g << 5 | r;
+      }
       }
     }
 
@@ -1310,8 +1322,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       Render_ResetTransformState();
       BattleBackground_LoadFar(1, (s32)&ResourceId_Data077, 0);
       off = 0x302;
+      {
+      u16 *fade = FADE_PLTT;
+
       for (i = 0; i != 128; i++) {
-        s32 c = FADE_PLTT[i];
+        s32 c = *fade;
         s32 r = 31;
         s32 g;
         s32 b;
@@ -1320,7 +1335,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         g = (u16)c >> 5 & 31;
         b = (u16)c >> 10 & 31;
 
-        FADE_PLTT[i] = (b + 1) << 10 | (g + 1) << 5 | (r + 1);
+        *fade++ = (b + 1) << 10 | (g + 1) << 5 | (r + 1);
+      }
       }
       Graphics_LoadGreyRamp();
       for (i = 0; i != 6; i += 2) {
@@ -1701,8 +1717,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         gBgScroll[1].y = gBgScroll[1].y - (frame & 1) - 2;
     }
     if (frame > 816) {
+      {
+      u16 *fade = FADE_PLTT;
+
       for (i = 0; i != 128; i++) {
-        s32 c = FADE_PLTT[i];
+        s32 c = *fade;
         s32 b = (u16)c >> 10 & 31;
         s32 g = (u16)c >> 5 & 31;
         s32 r = c & 31;
@@ -1713,7 +1732,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           g++;
         if (b <= 30)
           b++;
-        FADE_PLTT[i] = b << 10 | g << 5 | r;
+        *fade++ = b << 10 | g << 5 | r;
+      }
       }
     }
     frame++;

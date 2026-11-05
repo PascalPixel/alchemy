@@ -67,6 +67,13 @@ struct EffectView {
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
+// A one-field view: the shape store is memory of its own to sched2, which sinks
+// it past the cell's first read. A struct is padded to 4 bytes here, so the
+// pointer stays plain.
+struct ShapeCell {
+  u8 shape;
+};
+
 void Func_02000e9c(void) {
   struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);
   u8 *layer;
@@ -89,7 +96,7 @@ void Func_02000e9c(void) {
     s32 value = Func_02003dd0(*layer, shape, (level >> 19) + 4);
 
     cells += index;
-    *shapes = value;
+    ((struct ShapeCell *)shapes)->shape = value;
     cells->attributeB |= 192;
   }
   cells += 128;

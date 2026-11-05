@@ -1,3 +1,7 @@
+// Measured 2026-11-05 (tla-en): 116 of 332, unchanged; 114 with i = 0 before the first loop's
+// pointers. 4000 random declaration orders and party set anywhere earlier: no gain. First
+// difference: y's 0xa0000 goes to r6 in the listing and r5 here, and gMainRoutineWork
+// then to r6 and r3. Removing the party local makes the draft 327 long, so party stays.
 // Draft, differ 116 of 332 (tla-en, 2026-11-05); 108 with slots and pool offsets normalized, 20 with registers blind too.
 // Near miss, differ 163 (244 before statements reordered 2026-10-26) of 332: the native keeps resource 0x1e1 in the pool,
 // hoists the picture's VRAM offset (tiles << 5) out of the frame loop and

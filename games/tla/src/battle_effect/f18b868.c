@@ -10,10 +10,11 @@
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
 
-// The transfer task runs at this priority, where ☀️'s runs at 0x480.
+// The transfer task runs at this priority, where The Broken Seal's runs at
+// 0x480.
 #define TASK_PASS_FRAME 0xc80
 
-// ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
+// The Lost Age's blitter modes count the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 // BattleEffect_LoadBlitter's packed argument: the mode in the high nibble.
@@ -66,14 +67,14 @@ extern u16 gData_08197410[];
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
-void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames, s32 percent);
+void BattleEffect_SetApproachMotion(s32 actor, s32 target, s32 frames,
+                                    s32 percent);
 void wait(s32 frames);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 void *Resource_GetTableEntry(s32 id);
 void *Heap_AllocEwram(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
-void EffectPosition_ProjectBattler(
-    s32 id, struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
@@ -91,7 +92,7 @@ void Func_0801521c(s32 scale);
 void Render_TransformVertices(void *corners, void *vertices, s32 count);
 void Render_DrawModelList(struct Model *model);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Heap_Release(void *block);
 void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void BattleEffect_CountDownBattlerTints(void);
@@ -134,9 +135,10 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
 
   // A clipped, mirrored MAX blitter for the sparks; the jaw's texture, the
   // spark sheet and the blue flame's colours.
-  BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
-                BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
-                        BLIT_MAX));
+  BattleEffect_LoadBlitter(
+      HEAP_SLOT_BLITTER,
+      BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+              BLIT_MAX));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, graphics, 0, 0);
@@ -192,7 +194,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
         else
           Sound_PlayFar(134);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000, 0,
-                                  i * 20 + 120);
+                                      i * 20 + 120);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 8;
       }

@@ -1,3 +1,5 @@
+// Measured 2026-11-05 (tla-en): 146 of 568, unchanged. 216 spellings of the glow's stores and
+// 80 loop, row and mirror forms: none better; 4000 random declaration orders: no effect.
 // 2026-11-05, unchanged at 146 of 568: a scale local inside the splash loop, with
 // its half shifted, does hold 25000 (draft 563) but moves the rest to 231.
 // Draft, differ 146 of 568, skeleton gap 23 (tla-en, 2026-11-01)

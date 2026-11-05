@@ -1,3 +1,5 @@
+// Measured 2026-11-05 (tla-en): 106 of 1034, unchanged. 280 + 300 typings of the colour loop's
+// blue: none gives lsls 16, lsrs 26 with ldrh and a pooled 31 without costing more elsewhere.
 // 2026-11-05: differ 106 of 1034 (tla-en). Green read, then set to red before the
 // clamps: count and later rows agree, but the colour loop still has lsrs 10 and a
 // copy for lsls 16, lsrs 26, so that loop is not settled.

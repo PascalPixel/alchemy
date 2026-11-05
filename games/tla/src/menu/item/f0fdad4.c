@@ -1,6 +1,7 @@
 /// @file
 /// Func_080fdad4 runs the Psynergy list of the member in paneIndex, the twin
-/// of The Broken Seal's PsynergyMenu_RunList (games/tbs/src/menu/menu/psynergy.c).
+/// of The Broken Seal's PsynergyMenu_RunList
+/// (games/tbs/src/menu/menu/psynergy.c).
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -15,7 +16,6 @@
 #define CURSOR_X 88
 #define CHANGE_HELP_X 0
 #endif
-
 
 struct MenuResult {
   s32 ownerState;
@@ -73,7 +73,7 @@ struct PsynergyMenuState {
 extern u8 MsgShortcutHelp[], MsgChangeCharacterHelp[];
 
 s32 Window_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
-                            s32 frame);
+                          s32 frame);
 s32 GameFlag_Test(s32 flag);
 struct BattleUnit *Unit_Get(s32 owner);
 s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode);
@@ -89,7 +89,7 @@ s32 Func_080f8f9c(s32 mode, s32 count, s32 rows, s32 *row, s32 *page);
 struct BattleAct *BattleAction_Get(s32 action);
 void Sound_PlayFar(s32 cue);
 void Window_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width,
-                                    s32 height);
+                                  s32 height);
 void Text_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 void Menu_CreateOwnerEntryObjects(s32 first);
@@ -186,7 +186,7 @@ s32 Func_080fdad4(s32 paneIndex) {
       if (menu->mode == 0) {
         if ((gInput.pressed & 4) && shortcutHelp == 0) {
           ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                                 OWNER_ACTION_ID_MASK);
+                                     OWNER_ACTION_ID_MASK);
           if (ability->unk04[2] == 0) {
             Sound_PlayFar(114);
           } else {
@@ -222,7 +222,7 @@ s32 Func_080fdad4(s32 paneIndex) {
             continue;
           }
           ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                                 OWNER_ACTION_ID_MASK);
+                                     OWNER_ACTION_ID_MASK);
           if (ability->ppCost > owner->pp) {
             Sound_PlayFar(114);
           } else {
@@ -273,7 +273,7 @@ s32 Func_080fdad4(s32 paneIndex) {
 
       if ((gInput.pressed & 0x200) && (gInput.held & 4)) {
         ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                               OWNER_ACTION_ID_MASK);
+                                   OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
           Sound_PlayFar(114);
         } else if (Party_SetPackedEvent(menu->ownerIds[paneIndex],
@@ -289,7 +289,7 @@ s32 Func_080fdad4(s32 paneIndex) {
 
       if ((gInput.pressed & 0x100) && (gInput.held & 4)) {
         ability = BattleAction_Get(menu->psynergies[state.selectedIndex] &
-                               OWNER_ACTION_ID_MASK);
+                                   OWNER_ACTION_ID_MASK);
         if (ability->unk04[2] == 0) {
           Sound_PlayFar(114);
         } else if (Party_SetPackedEvent(menu->ownerIds[paneIndex],

@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): with function-level i at the ship placement (no inner s32 i)
+// the counts agree, 1932 and 1932, at differ 342; the inner i kept here gives 263 and 1931.
+// Decl scans (all blocks, moves and 4000 random orders): no effect. The ship-burst block:
+// in the listing frame reloads into r7 above the block's stores, two ticks ahead of here;
+// locals taking frame or frame - 76 before verts, and every order of the model's statements, do not move it.
 // Measured 2026-11-05 (tla-en): differ 263 of 1932, 79 normalized: Task_Add returns s32.
 // 2026-11-05, unchanged at 271 of 1932: at the ship-burst block the reload order
 // draw r3, frame r4, then verts is the draft's next register, r7; the listing's

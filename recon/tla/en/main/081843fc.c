@@ -1748,8 +1748,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Render_TransformVertices(cellBuffer, quads, 24);
         Render_DrawModelList(model3);
         Transform_Pop();
-        model3->mesh = gData_08199340;
         texture3.logWidth = 6;
+        model3->mesh = gData_08199340;
         texture3.logHeight = 6;
         model3->scrollU = 0;
         texture3.pixels = work->sheet + 0x800;

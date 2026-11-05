@@ -1,3 +1,6 @@
+// Measured 2026-11-05 (tla-en): differ 2 of 571. Left: one row: the stack
+// argument's store after movs r1, #7.
+
 // Draft of BattleEffect_RunGround, effect kind 203: the Venus Djinn's rock toss.
 
 // On screen: the background slowly takes on the portal's colours from

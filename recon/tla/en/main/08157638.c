@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 2 of 415. Left: one row: a multiply the
+// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
+// too high (its cost of 4), so the constant or the multiply comes ahead of
+// independent rows (the stack argument's store after the multiply).
+
 // Draft of BattleEffect_RunMercury, effect kind 281: the Mercury Djinn's flames.
 
 // On screen: a small Mercury Djinn circles over the targets, one turn every

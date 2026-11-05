@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 54 of 2239. Left: spill slots: draw's
+// address (gcse's pseudo, now that draw is no local) sits at sp+40 where the
+// native has sp+36, and the fade limit at sp+36 where the native has sp+40: 32
+// rows. The rest is five sites of order.
+
 // Draft, differ 130 of 2239, skeleton gap 48 (tla-en, 2026-11-01)
 // BattleEffect_RunProjectileVolleyB, the body behind the 22 wrappers
 // of projectile_volley_b.c (23 effect kinds, modes 0-24).
@@ -56,6 +61,16 @@
 #include "resource.h"
 #include "system.h"
 #include "transform.h"
+
+static __inline__ s32 CopyWords_(void *destination, const void *source, s32 size) {
+  return Iwram_CopyWords(destination, source, size);
+}
+
+
+static __inline__ s32 ClearWords_(void *destination, s32 size) {
+  return Iwram_ClearWords(destination, size);
+}
+
 
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
@@ -168,7 +183,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   s32 limit;
   s32 row;
   s32 column;
-  DrawRectangle *draw;
+  
     u8 *palette;
   s32 origin[3];
   s32 djinniTarget[3];
@@ -211,29 +226,29 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   // The blitters: [0] MAX and [1] ADDITIVE, mirrored for the far side.
   if (effect->prelude == 1) {
     if (effect->side == 0) {
-      BattleEffect_FetchRectangleBlitters(0, draw = pair);
+      BattleEffect_FetchRectangleBlitters(0, pair);
     } else {
       BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
       pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
       BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, CLIP | COMPOSITE_FLIP_X));
-      draw = pair;
-      draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+      
+      pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     }
   } else if (mode == 20) {
     BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_TRANSPARENT, CLIP));
     pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
-    draw = pair;
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+    
+    pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
     REG_BLDALPHA = 0x310;
   } else if (mode == 7 || mode == 21) {
     BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
     pair[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
-    draw = pair;
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+    
+    pair[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   } else {
-    BattleEffect_FetchRectangleBlitters(effect->side, draw = pair);
+    BattleEffect_FetchRectangleBlitters(effect->side, pair);
   }
 
   // The pictures and the colors.
@@ -257,7 +272,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         *cell = value - 16;
     }
     if (mode == 17)
-      Iwram_CopyWords((void *)BG_PLTT,
+      CopyWords_((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                       128);
   } else if (mode == 20) {
@@ -269,7 +284,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   } else if (mode == 22) {
     Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet,
                                work->sheet + VOLLEY_B_PICTURE, 1, 1);
-    Iwram_CopyWords((void *)BG_PLTT,
+    CopyWords_((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
   } else if (mode == 21) {
@@ -285,12 +300,12 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
     REG_BLDALPHA = 0x410;
   } else if (mode == 18) {
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
-    Iwram_CopyWords((void *)BG_PLTT,
+    CopyWords_((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
   } else if (mode == 19) {
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 0);
-    Iwram_CopyWords((void *)BG_PLTT,
+    CopyWords_((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
   } else if (mode == 24) {
@@ -302,7 +317,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         work->sheet[VOLLEY_B_PICTURE + i * 1152 +
                     Random16() % 1152] = 0;
     }
-    Iwram_CopyWords((void *)BG_PLTT,
+    CopyWords_((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
   } else if (mode == 12 || mode == 16) {
@@ -318,11 +333,11 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       }
     }
     if (mode == 12)
-      Iwram_CopyWords((void *)BG_PLTT,
+      CopyWords_((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_LimePalette),
                       128);
     else
-      Iwram_CopyWords((void *)BG_PLTT,
+      CopyWords_((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet),
                       128);
   } else {
@@ -389,7 +404,11 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         break;
       }
       if (palette != NULL)
-        Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+        /* FAKEMATCH(temporary): the routine's address named first, so its pool load leads the arguments; as a direct call, 2 of 2239 instructions differ in tla-en. */
+        {
+        __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;
+        routine((void *)BG_PLTT, palette, 128);
+        }
     }
   }
 
@@ -540,8 +559,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       if (frame > 56)
         y = y - frame * 2 + 112;
       if (frame <= 3)
-        draw[1](canvas, work->sheet + VOLLEY_B_DJINNI, x, y, 20, 40);
-      draw[1](canvas, work->sheet + VOLLEY_B_DJINNI, x, y, 20, 40);
+        pair[1](canvas, work->sheet + VOLLEY_B_DJINNI, x, y, 20, 40);
+      pair[1](canvas, work->sheet + VOLLEY_B_DJINNI, x, y, 20, 40);
     }
 
     if (mode == 5 || mode == 23) {
@@ -601,7 +620,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         if (mode == 22 && (i & 1))
           continue;
         if (age > 7)
-          draw[effect->side](canvas, work->sheet + VOLLEY_B_PICTURE,
+          pair[effect->side](canvas, work->sheet + VOLLEY_B_PICTURE,
                              HI(shot->x) - 16, HI(shot->y) - 32, 32, 64);
       } else if (mode == 22) {
         if (i & 1)
@@ -620,7 +639,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         if (i & 1) {
           s32 y = shot->y + (Trig_Sin((i * 2 + frame) << 11) << 5);
 
-          draw[1](canvas, work->sheet + cel * 1024, HI(shot->x) - 16,
+          pair[1](canvas, work->sheet + cel * 1024, HI(shot->x) - 16,
                   (y >> 16) - 16, 32, 32);
         }
       } else if (mode == 20) {
@@ -637,7 +656,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         s32 cel = age >> 2;
         s32 y = shot->y + (wobble << 5);
 
-        draw[1](canvas, work->sheet + cel * 1152, HI(shot->x) - 12, (y >> 16) - 24,
+        pair[1](canvas, work->sheet + cel * 1152, HI(shot->x) - 12, (y >> 16) - 24,
                 24, 48);
       } else if (mode == 18) {
         if (age > 1)
@@ -649,7 +668,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                   HI(shot->x) - 16, HI(shot->y) - 32, 32, 64);
       } else if (mode == 24) {
         if (age > 1)
-          draw[1](canvas, work->sheet + VOLLEY_B_PICTURE + age / 4 * 1152,
+          pair[1](canvas, work->sheet + VOLLEY_B_PICTURE + age / 4 * 1152,
                   HI(shot->x) - 12, HI(shot->y) - 24, 24, 48);
       } else if (mode != 5) {
         if (age > 1)
@@ -703,7 +722,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
                 canvas, work->sheet + gData_08197486[cel], x, y,
                 widths[cel], heights[cel]);
             HeapSlot_Release(188);
-            BattleEffect_FetchRectangleBlitters(effect->side, draw);
+            BattleEffect_FetchRectangleBlitters(effect->side, pair);
           }
         }
       }
@@ -775,9 +794,11 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
             s32 dy;
             s32 dz;
 
-            dy = object->y + half - mote->y;
-            dz = object->z - mote->z;
-            dx = object->x - mote->x;
+dx = object->x - mote->x;
+dy = object->y + half - mote->y;
+dz = object->z - mote->z;
+/* FAKEMATCH(barrier): the empty asm gives dz a reference more, which moves it in the allocators' ranking; as no asm, 60 of 2239 instructions differ in tla-en. */
+__asm__("" : : "r"(dz));
             mote->velocityX += dx >> 7;
             mote->velocityY += dy >> 8;
             mote->velocityZ += dz >> 8;
@@ -800,8 +821,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
   HeapSlot_Release(104);
   if (mode == 11 || mode == 14 || mode == 18) {
     // Hand over to the canvas effect: clear both canvases first.
-    Iwram_ClearWords((void *)0x06004000, 0x3c00);
-    Iwram_ClearWords(canvas, 0x3c00);
+    ClearWords_((void *)0x06004000, 0x3c00);
+    ClearWords_(canvas, 0x3c00);
     effect->prelude = 0;
     Task_Remove(Palette_StepFadeTransfer);
     if (mode == 14)

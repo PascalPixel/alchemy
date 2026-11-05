@@ -1,45 +1,3 @@
-// Draft of BattleEffect_RunAtalanta, summon scene 4 (BattleEffect_RunSceneEffect's case 4).
-
-// Twin: The Broken Seal's BattleEffect_RunAtalanta (effect.c), call
-// for call, with The Lost Age's changes:
-// - the giant is eleven sprite objects (Func_0815b290, priority 1, their
-// 1 KB of tiles copied to object VRAM) in a grid of four rows of three,
-// the bottom row two pieces moved half a piece over, where The Broken
-// Seal places nine resource objects; battle work byte 0x867 is set to
-// 1 for them;
-// - the targets come from work->effect, which the dispatcher stored;
-// - after the giant, object palette 0's sixteen colors are copied into
-// background palette 5 by DMA and color 0x5e takes object color 0xf4
-// (Func_0814cca8, then Palette_LoadBasicObjColors);
-// - blitters through BattleEffect_LoadBlitter, callbacks ordered 0xc80, the backdrop
-// ResourceId_VioletSkyBackdrop, the skip on gInput.repeat.
-// Resources not yet named in directory.s, by row and asset: 0xa6
-// Summon_LeafWarriorTiles, 0x12b BattleEffect_SlashSheet, 0x163
-// BattleEffect_LimePalette, 0x195 BattleEffect_StagedParticlePath and 0x178
-// BattleEffect_EmberStreakSheet.
-
-// Draft, differ 38 of 1115, skeleton gap 17 (tla-en, 2026-11-01)
-
-// Left: instruction order only. Every register and stack slot agrees (work
-// in r9, column in r4 saved around the call, frame 128); the 34 differing
-// lines are adjacent pairs in sched2 ties: sub sp before the movs of 0x3000000
-// in the prologue, the ldr of IwramCopyWords before the second half of 512,
-// the stores of a zero (i, frame, pathX, pathY, pathX * 65536) a slot or two
-// earlier than here, and the second ldr of the draw pair after its store.
-// Block 0 runs through the calls, so these priorities all come from one chain.
-
-// What fixed the rest, keep these forms:
-// - x is `* 65536`, not `<< 16`, and the row 3 x is computed in full rather than
-// `+= 32 << 16`: otherwise loop.c makes it a giv, which costs a register and
-// spills work.
-// - the tiles are `tiles + i * 0x400`, so the step's constant is loop.c's own;
-// `tiles += 0x400` hoists it. tiles is set at the top: that keeps it off r5.
-// - scrollX stays s32: u16 reads it with ldrsh.
-
-// Tried without gain: the six statements of the prologue in every order (38 at
-// best), draw[1] before draw[0] or through a pointer, y as `* 65536` or
-// reordered, the giant's loop as a do-while.
-
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -62,6 +20,19 @@
 #include "transform.h"
 #include "vram_tab.h"
 
+// The blitter slots read as what they hold, a drawing routine.
+#define ALTERNATE_BLITTER_SLOT                                                 \
+  (((struct {                                                                  \
+     u8 before[188];                                                           \
+     DrawRectangle draw;                                                       \
+   } *)Ram_HeapSlots)                                                          \
+       ->draw)
+
+static __inline__ s32 CopyWords_(void *destination, const void *source,
+                                 s32 size) {
+  return Iwram_CopyWords(destination, source, size);
+}
+
 // The canvas layer and its helpers; the comments give The Broken Seal's
 // names where the twin is known.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
@@ -71,14 +42,16 @@ void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void Func_0814cca8(void); // BattleEffect_SetupBlendedDisplay
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot,
+                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames);       // BattleEffect_TintBattler
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_08158ce0(s32 x, s32 y);          // Camera_ApplyShake
 void Func_08163c2c(s32 layer, s32 value);
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void Palette_LoadBasicObjColors(void);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 
@@ -103,8 +76,9 @@ struct SpriteObject {
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 shape,
                                    u32 attributes);
 
-// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus The
-// Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
+// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus
+// The Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and
+// COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -197,7 +171,10 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   // The giant: eleven sprite objects with their tiles.
   ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
   picture = Resource_GetTableEntry((s32)&ResourceId_LeafWarriorTiles);
-  Iwram_CopyWords(OBJ_PLTT, picture, 512);
+  /* FAKEMATCH(wrapper): the copy through an inline forwarder, whose parameter
+   * leaves 512 a constant set in argument order; as a direct call, 2 of 1115
+   * instructions differ in tla-en. */
+  CopyWords_(OBJ_PLTT, picture, 512);
   // Two steps: one `+= 512` reuses the size's constant across the call.
   picture += 256;
   picture += 256;
@@ -220,7 +197,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, CLIP));
   BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_ADDITIVE, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = ALTERNATE_BLITTER_SLOT;
   gCameraSceneParameters[4] = 240;
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
@@ -377,7 +354,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   Palette_LoadBasicObjColors();
   Dma_Set(OBJ_PLTT, (void *)(BG_PLTT + 80), 0x80000010,
           (volatile u32 *)0x040000d4);
-  BG_PLTT[94] = OBJ_PLTT[244];
+  BG_PLTT[94] = BG_PLTT[244];
   for (i = 0; i != GIANT_PIECES; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
   REG_BG2PA = 0x80;

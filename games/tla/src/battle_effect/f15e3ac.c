@@ -1,75 +1,3 @@
-// Near miss, differ 10 of 687 (tla-en, 2026-10-30), unchanged since
-// 2026-10-26. Both BG1CNT stores are plain (the pinned halfwords and their
-// one-pass blocks matched no better); the empty asm at the start still saves
-// two rows (12 without it). Left, three places where the native issues a
-// store before a load or constant this schedules first:
-// - draw[0]'s store (str r2, [sp, #56]) comes before draw[1]'s slot read
-//   (ldr r3, [r3, #0]) and the array's address (mov r1, sp) in the native,
-//   after both here; in the sched2 dump the store has priority 37, the read 40
-//   and the copy 39.
-// - camera + 3, hoisted before the frame loop (adds r6, #12; str r6, [sp,
-//   #8]), comes right after the camera's reload in the native, after the
-//   frame's zero and &pos here: all three have priority 2 and the zero is
-//   first in insn order; the native also puts the store (priority 1) before
-//   the zero.
-// - the spark draw's two stacked arguments (str r4, [sp, #0] and [sp, #4])
-//   come before the array's reload (ldr r5, [sp, #12]) in the native, after
-//   it here.
-// Tried on 2026-10-30, none below 10: an empty asm after each statement of
-// the body, a one-pass block around each one-line statement, both around
-// the draw pair (12) or the wait after it (12), the pair written in the
-// other order (29), through a pointer (24) or as *draw and *(draw + 1) (24),
-// camera + 3 as &camera[3] (10) or a named eye set before the loop (66) or
-// at the start (309), the draw called through (*draw[...]), its size * 2
-// named, its index as i / 2 & 1 (all 10), size = (size >> 3) + 2 (14).
-// The permuter stopped at "Text_MessageContexts: no main-image code
-// extent" on this tree.
-
-// Draft of Func_0815e3ac, the battle effect BattleEffect_DispatchByIdRange
-// runs for kinds below 100 (except 10): a beam strikes the target and
-// sparks fly from it.
-
-// On screen: the canvas layer opens over the battle view, centred on the
-// first target within 128 pixels. A beam reaches out from beside the
-// caster towards the target, its picture chosen by the kind: kind 4 a
-// six-cel wave (12 frames), kinds 0-2, 5 and 6 a six-cel arc (12 frames),
-// kind 3 a six-cel strike that stretches across (18 frames). An orb
-// flashes on the target from frame 4 to 15. At frame 4 the target recoils
-// (kind 7 motion 4, kinds 5 and 6 motion 1, kind 8 a long push back, the
-// rest motion 0); at frame 5 the battle resumes with hit cue 134 for an
-// enemy whose summon entry is flagged, 133 otherwise. From frame 4, 64
-// sparks fly out of the middle of the target in pairs, away from the
-// caster, shrinking as they go. After 32 frames the layer closes.
-
-// Setup: the battle display and the canvas tile map on BG1, two blitters
-// for the caster's side (additive and max; kinds 5 and 6 also flip them
-// vertically), the beam's sheet for the kind, the palette of the Mars
-// Djinn (an enemy caster) or of the star crescent sheet (a party member)
-// by DMA, the spark sheet, the orb sheet, the transfer callback (half the
-// last frame left behind), and the sparks at the target.
-
-// Port of The Broken Seal's BattleEffect_RunBeam, with The Lost
-// Age's heap slots, blitter modes (3 minus ☀️'s) and task priority, no
-// work->effect store, and these changes: kind 6 joins kind 5, kind 3 has
-// its own test, the beam is drawn additive (☀️ draws it with max), the
-// recoil depends on the kind, the summon test reads the enemy id, and the
-// palette goes by DMA.
-
-// Listing 687 instructions, draft 687, differ 44 (2026-10-18; 50 before the
-// three devices below: the argument's store before the RAM base and both
-// BG1CNT halfwords pinned to r3, as in BattleEffect_RunUndeadSword). Left: rows
-// one place apart (stack and pool loads, constants built around them, the
-// call arguments' stores), the usual residue; no allocation difference.
-
-// Tried:
-// ☀️'s body with The Lost Age's changes, the beam with
-// draw[1] as ☀️ has it                                   210 (695 rows)
-// the beam with draw[0], as the listing loads [sp, #56]    210 -> 54
-// declaration order, a greedy sweep                        54
-// the tables without const, as ☀️'s readers extern theirs 54 -> 50
-// the start barrier and the two BG1CNT pins                50 -> 44
-// an empty asm between draw[0] and draw[1]                 44
-
 #include "types.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"
@@ -82,12 +10,27 @@
 #include "motobj.h"
 #include "ram_buffer.h"
 
+// The blitter slots read as what they hold, a drawing routine.
+#define ALTERNATE_BLITTER_SLOT                                                 \
+  (((struct {                                                                  \
+     u8 before[188];                                                           \
+     DrawRectangle draw;                                                       \
+   } *)Ram_HeapSlots)                                                          \
+       ->draw)
+#define BLITTER_SLOT                                                           \
+  (((struct {                                                                  \
+     u8 before[104];                                                           \
+     DrawRectangle draw;                                                       \
+   } *)Ram_HeapSlots)                                                          \
+       ->draw)
+
 // Byte offsets of the two blitter slots in gHeapSlots (unk64[1], unkb8[1]).
 #define HEAP_BLITTER 104
 #define HEAP_BLITTER_ALTERNATE 188
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; BattleEffect_LoadBlitter takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleEffect_LoadBlitter takes mode << 4 |
+// flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -125,16 +68,15 @@ void *Unit_Get(s32 owner);
 s32 Summon_IsEntrySecondaryFlaggedFar(s32 enemyId);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void EffectPosition_ProjectScaledBattler(s32 actor,
-                                        struct EffectPosition *position);
-void EffectPosition_ProjectSprite(s32 actor,
-                                             struct EffectPosition *position);
+                                         struct EffectPosition *position);
+void EffectPosition_ProjectSprite(s32 actor, struct EffectPosition *position);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Render_ResetTransformState(void);
 void Transform_SetLookAt(void *camera, void *eye);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 // Configures the battle display for an effect.
 void Func_0813ba50(void);
 // Sets up the canvas tile map on BG1.
@@ -168,9 +110,6 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  /* FAKEMATCH(barrier): the empty asm stores the argument before the RAM base
-   * is started; as plain statements, 12 of 687 instructions differ in tla-en. */
-  __asm__("");
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   sheet = Ram_HeapSlots->unk64[0];
@@ -187,44 +126,51 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
   if (kind == 5 || kind == 6) {
     if (effect->side == 0) {
       BattleEffect_LoadBlitter(HEAP_BLITTER,
-                    BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                               COMPOSITE_FLIP_Y));
+                               BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
+                                                          COMPOSITE_CLIP_Y |
+                                                          COMPOSITE_FLIP_Y));
       BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                    BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                          COMPOSITE_FLIP_Y));
+                               BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
+                                                     COMPOSITE_CLIP_Y |
+                                                     COMPOSITE_FLIP_Y));
     } else {
       BattleEffect_LoadBlitter(HEAP_BLITTER,
-                    BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                               COMPOSITE_FLIP));
+                               BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
+                                                          COMPOSITE_CLIP_Y |
+                                                          COMPOSITE_FLIP));
       BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                    BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                          COMPOSITE_FLIP));
+                               BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
+                                                     COMPOSITE_CLIP_Y |
+                                                     COMPOSITE_FLIP));
     }
   } else {
     if (effect->side == 0) {
-      BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_ADDITIVE,
-                                          COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                    BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      BattleEffect_LoadBlitter(
+          HEAP_BLITTER,
+          BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      BattleEffect_LoadBlitter(
+          HEAP_BLITTER_ALTERNATE,
+          BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
     } else {
       BattleEffect_LoadBlitter(HEAP_BLITTER,
-                    BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                               COMPOSITE_FLIP_X));
+                               BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
+                                                          COMPOSITE_CLIP_Y |
+                                                          COMPOSITE_FLIP_X));
       BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                    BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                          COMPOSITE_FLIP_X));
+                               BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
+                                                     COMPOSITE_CLIP_Y |
+                                                     COMPOSITE_FLIP_X));
     }
   }
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = ALTERNATE_BLITTER_SLOT;
   wait(1);
 
   // The beam's sheet for the kind.
   if (kind == 4) {
     Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work->sheet, 1, 1);
   } else if (kind == 3) {
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet,
-                               0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet, 0, 0);
   } else {
     switch (kind) {
     case 0:
@@ -306,7 +252,7 @@ void Func_0815e3ac(struct BattleEffectArgument *effect) {
         Func_08118088(effect->actors[0], 1);
       else if (kind == 8)
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x10000, 0x40000,
-                                  0x30000, 150);
+                                      0x30000, 150);
       else
         Func_08118088(effect->actors[0], 0);
     }

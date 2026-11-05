@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 28 of 2209. Left: order and a swapped
+// zero and constant in the setup; a multiply the native issues later than
+// alchemy-gcc does: sched2 ranks the chain into muls too high (its cost of 4),
+// so the constant or the multiply comes ahead of independent rows.
+
 // Draft, differ 40 of 2209, skeleton gap 32 (tla-en, 2026-11-01)
 // BattleEffect_RunAzul. Control flow, types, stack slots, frame and allocation
 // agree with the listing; what is left is instruction order inside blocks, with
@@ -797,6 +802,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           texture2.pixels = gData_02014000;
           texture2.logWidth = 7;
           model->mesh = gData_08199364;
+          /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 2 of 2209 instructions differ in tla-en. */
+          __asm__("");
           texture2.logHeight = 7;
           model->shade = shade;
           Render_ResetTransformState();

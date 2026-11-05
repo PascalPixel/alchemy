@@ -1,50 +1,3 @@
-// Draft, differ 69 of 511, skeleton gap 5/4 (tla-en, 2026-11-01)
-//
-// The body of four effect kinds (BattleEffect_RunDemonNight and the next three
-// wrappers pass modes 0 to 3). Twin: The Broken Seal's
-// BattleEffect_RunGatheringLights, whose modes 0 to 2 these are (same setup,
-// three images and 20x32 draw, 128 slots per target, 20-frame turns, frame 80
-// damage, frames 70 and 71 tint and sound, gravity call with 62, 0). The Lost
-// Age adds mode 3 and reworks the effect: the picture unpacked by
-// Resource_LoadAndDecompress, the palette for mode 0 or 3 the pink burst's,
-// Func_0815b634 in mode 3, BattleEffect_FetchRectangleBlitters for the caster's
-// side; the background's wave moves BG1 (BattleEffect_ArmBg1HBlankDma arms its
-// HBlank DMA) by an amplitude that swells and dies over the effect; motes are
-// pulled twice as hard across (x and z) and freed once they cross their target,
-// not once they are near it; in mode 3 each arrival pushes the target back
-// (BattleEffect_StartActorMotion) with a cue on every other mote. The edition
-// level is "struct": the other editions' scaffolds hold this function in
-// another shape; check them before adopting.
-
-// Left: the listing is one instruction longer, which alone moves every pool
-// load and branch offset after it (most of the 69 rows are those).
-// - &pos: movs r3, #80 and add r3, sp in the native, add r3, sp, #80 here. Reload
-//   writes the two instructions in both; the peephole joins them here because
-//   they stay adjacent. The native's sched2 puts ldr r0, [sp, #20] between them,
-//   which needs that load's priority above the add's (here 4 against 5).
-// - moteDistance: the native compares and negates the copy (cmp r2, negs r2, r2);
-//   CSE here puts x in its place. CSE keeps the copy only when the copy outlives
-//   x: giving it a later use reproduces the form and wrecks allocation (310).
-// - single swaps: str [sp, #36] with its neighbours, the two Transform_SetLookAt
-//   argument loads, lsls r0, #19 with the pool load of the copy routine.
-
-// Tried (2026-11-01, from the 36-of-511, gap 7/7 draft): the crossing test as a
-// || of two && arms, each storing its sign test in crossed: both the store-flag
-// and the threaded jumps now match (the assignment keeps the value alive; the
-// plain tests, inline predicates, a ternary, reusing the x local give 90 or
-// 100). moteDistance as a copy tested by if, an inline, __builtin_abs, or from
-// mote->x with no x local (no change), shared with the wave loop's x (no
-// change), the distance test repeated in each arm (86). A pointer to pos at
-// any scope (79 or 129). The camera as a struct of eye and focus, the palette
-// source in a local, the twin's [][2] table (no change); k * 20 in a local
-// (171); the index spellings (69 to 71).
-
-// Tried (2026-10-15): the plain port 261; the BG1 scroll read once before
-// the line loop 143; the frame-80 phase as else-if with the call repeated for
-// mode 3 (one load of mode per test, as the native; 108 from 123 with
-// mode == 0 || mode == 3, 129 as a ternary argument); sin * sway, not
-// sway * sin (4 rows).
-
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"
@@ -67,20 +20,21 @@
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // ..ProcessPendingGraphicsTransfer
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);                    // BattleEffect_TintBattler
+                   s32 frames); // BattleEffect_TintBattler
 void BattleEffect_FetchRectangleBlitters(
-    s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
+    s32 flip, DrawRectangle *draw);      // ..FetchRectangleBlitters
 void BattleEffect_ArmBg1HBlankDma(void); // arms the BG1 scroll's HBlank DMA
-void Func_0815b634(void); // mode 3 only
+void Func_0815b634(void);                // mode 3 only
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Sound_PlayFar(s32 cue);
 
 extern char ResourceId_MemberBurstImage;
@@ -126,7 +80,14 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
     palette = (s32)&ResourceId_MarsDjinnSheet;
   else
     palette = (s32)&ResourceId_MercuryDjinnSheet;
-  Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(palette), 128);
+  /* FAKEMATCH(temporary): the routine's address named first, so its pool load
+   * leads the arguments; as a direct call, 2 of 511 instructions differ in
+   * tla-en. */
+  {
+    const void *source_ = Resource_GetTableEntry(palette);
+    __typeof__(Iwram_CopyWords) routine = Iwram_CopyWords;
+    routine((void *)BG_PLTT, source_, 128);
+  }
   if (mode == 3)
     Func_0815b634();
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
@@ -177,6 +138,9 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
 
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.
+    /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm,
+     * 2 of 511 instructions differ in tla-en. */
+    __asm__("");
     row = work->bg2xLines;
     sway = Trig_Sin((frame << 15) /
                     (Data_08197864[mode * 2 + 1] + effect->count * 20)) *
@@ -232,14 +196,20 @@ void Func_08144628(struct BattleEffectArgument *effect, s32 mode) {
               // It has crossed once it is as far out from the middle as its
               // target is, on the target's side.
               targetDistance = target->x < 0 ? -target->x : target->x;
-              moteDistance = x < 0 ? -x : x;
+              moteDistance = x;
+              /* FAKEMATCH(barrier): the empty asm keeps the copy apart from x,
+               * so the sign test reads the copy; as x < 0 ? -x : x, 4 of 511
+               * instructions differ in tla-en. */
+              __asm__("" : "=r"(moteDistance) : "0"(moteDistance));
+              if (moteDistance < 0)
+                moteDistance = -moteDistance;
               if (targetDistance <= moteDistance &&
                   ((x < 0 && (crossed = target->x < 0)) ||
                    (x >= 0 && (crossed = target->x >= 0)))) {
                 mote->variant = -1;
                 if (mode == 3) {
                   BattleEffect_StartActorMotion(effect->actors[k], 1, 0x20000,
-                                            0x20000, 0x20000, i * 8 + 100);
+                                                0x20000, 0x20000, i * 8 + 100);
                   if ((i & 1) && frame != 80)
                     Sound_PlayFar(134);
                 }

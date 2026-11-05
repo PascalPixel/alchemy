@@ -1,3 +1,7 @@
+// Measured 2026-11-05 (tla-en): differ 188 of 755. Left: allocation: the frame
+// is 112 of 120; the two missing slots are the target's offset and member * 8.
+// The asm on angle halves the differ.
+
 // Draft, differ 338 of 755: BattleEffect_RunTargetMotes, the body of nine effect
 // kinds through the wrappers in games/tla/src/battle_effect/render_mode.c
 // (modes 0 to 7).
@@ -39,6 +43,11 @@
 #include "transform.h"
 #include "fixed_math.h"
 #include "resource.h"
+
+static __inline__ s32 CopyWords_(void *destination, const void *source, s32 size) {
+  return Iwram_CopyWords(destination, source, size);
+}
+
 
 #define HEAP_BLITTER 104           // ☀️ HEAP_SLOT_BLITTER
 #define HEAP_BLITTER_ALTERNATE 188 // ☀️ HEAP_SLOT_BLITTER_ALTERNATE
@@ -145,7 +154,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
     Resource_LoadAndDecompress((s32)&ResourceId_VortexSheet, work->sheet, 1, 0);
     palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   }
-  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+  CopyWords_((void *)BG_PLTT, palette, 128);
   if (mode == 4)
     Resource_LoadAndDecompress((s32)&ResourceId_HeartSheet, work->sheet, 1, 1);
   if (mode == 3)
@@ -216,6 +225,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
           s32 y;
 
           angle = Random16() & 0xffff;
+          /* FAKEMATCH(barrier): the empty asm gives angle a reference more, which moves it in the allocators' ranking; as no asm, 334 of 755 instructions differ in tla-en. */
+          __asm__("" : : "r"(angle));
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
               (gData_08197492[frame & 3] >> 1);

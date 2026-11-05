@@ -1,3 +1,7 @@
+// Measured 2026-11-05 (tla-en): differ 24 of 444. Left: the map buffer and both
+// band counters are set before the first call in the native, with the buffer
+// moved to lr for the loop; set there here the differ rises to 32 to 57.
+
 // Near miss of BattleEffect_RunQuake, effect kind 1: differ 42 of 444 (draft 444).
 
 // Twin: The Broken Seal's BattleEffect_RunQuake (effect.c), call for call.

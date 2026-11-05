@@ -1,60 +1,3 @@
-// Draft, differ 22 of 734, skeleton gap 5 (tla-en, 2026-11-01)
-
-// No twin: an effect new to ⚓️, reached from the scenes through the
-// far-call table (table_47.s) with a kind of 78, 79 or 80. Its frame is the
-// canvas skeleton of the scene effects (its own heap blocks, the work marked
-// active, the canvas transfer), and its pictures are textured models drawn
-// by the IWRAM renderer (Render_AllocateModelList, Render_TransformVertices,
-// Render_DrawModelList), as 0813d098's star is.
-
-// Left: one allocation swap, and the one wrong read that stands in for it. The
-// ring loop's `model->corners` is wrong: the listing has `ldr r1, [sp, #12]`,
-// plain `corners`. With plain `corners` global.c ranks the corners (14 refs over
-// 173 insns, priority .2428) just ahead of the centre's address (27 over 462,
-// .2338), so the corners take r11, the address a stack slot, the frame is 76 and
-// differ 189. The wrong read drops the corners to 11 refs and gives the native's
-// allocation. Everything else matches: the 22 are that read and the scratch
-// registers it rotates in the second model block. The read at the crystals
-// instead (ring plain, crystal `model->corners`) puts the ring and that whole
-// block right, skeleton 2/3, but rotates the tail, differ 73. So the true read
-// is very likely differ 0 once the address outranks the corners.
-//
-// What the swap needs, from the counts: the address at 29 refs, or 28 with one
-// insn less or one more among the corners; or, at 27, 42M + 66N >= 720 for M
-// insns fewer outside the corners' life and N more inside it. Its 27 are the
-// preheader set and the copy to the reads (1 each), ProjectBattler's argument, 4
-// reads and writes in each of the two side kinds and 2 in the third (2 each), and
-// the crystal's read (3). Proof of the mechanism: writing y before x in the burst
-// shortens the reads' copy to life 15, loop.c leaves it in place (threshold
-// between 15 and 20 at savings 2 over 528 insns), cse2 sends all four reads
-// through the address, 34 refs, floor_log2 5: frame 80 and r11 right, but those
-// four reads come out `mov rN, r11` and not `[sp, #68]`, differ 164.
-//
-// Tried for the swap, no change: a pointer to the centre at the burst, at cx or
-// around the crystal's read; a named half for that read; before this round, center
-// as s32[3], a pointer in or out of the loop, named temporaries for the transforms'
-// arguments. The burst's and cx's copies match as one movable (insn 835 "matches
-// 548"), both from the same register; unmatching them would be the 28th ref, and
-// nothing found does it. MEM costs too much for the corners to be "LO_REGS or
-// none". Untested: a second back edge cross-jumped away at jump2 would raise the
-// head of the loop a level and the ring and crystals not, and it might explain the
-// odd `frame >= 0`; a second copy of the tail with frame++ also breaks index's giv.
-//
-// Found this round, all from which register a value lands in:
-// - `bias` is one variable for both depthBias stores: r0 at the zero is its global
-//   register, which is also why the base reloads in r1. For review: both values
-//   are the model's depth bias, so it is one meaning and not a reuse (S2).
-// - `flashes` is a one-constant local across the burst and the flash loop, set
-//   after the frame-48 block (before it, CSE builds the variant pointer from it).
-//   It gets no register, so it reloads in r0 after index in r4.
-// - `k = 0` and `spread = 15` are set before the burst's pointer, so zero and 15
-//   take r1 and r2 ahead of index.
-// - `Data_081977ec[i] + 48` keeps `ldrb r3; adds r1, r3, #0`, now that bias's
-//   register is settled.
-// `draw[2]` is the unused word at sp+40. The flash pointer is a giv of a base
-// outside the loop. `speed = 31; speed &= Random16()` gives `movs r5, #31; ands r5,
-// r0`; the constant set moves below the call.
-
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -138,17 +81,17 @@ extern char ResourceId_EffectPalette03;
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
+s32 BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // the canvas transfer callback
 void Palette_StepFadeTransfer(void);
 s32 Task_Add(void *func, s32 order);
 s32 Task_Remove(void *func);
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 u32 Random16(void);
-void EffectPosition_ProjectBattler(s32 actor,
-                                                 struct EffectPosition *out);
+void EffectPosition_ProjectBattler(s32 actor, struct EffectPosition *out);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
@@ -221,6 +164,10 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
       center.y -= 24;
     } else {
       center.y -= 48;
+      /* FAKEMATCH(barrier): the empty asm gives the centre's address two more
+       * references, so global.c ranks it above the corners; as no asm, 189 of
+       * 734 instructions differ in tla-en. */
+      __asm__("" : : "r"(&center));
     }
 
     if (frame == 0) {
@@ -302,7 +249,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
         for (i = 0; i != 16; i++, flash++) {
           if (flash->variant >= 0 && flash->variant <= 17) {
             draw[0](canvas, work->sheet + (flash->variant / 3 << 11),
-                 HI(flash->x) - 16, HI(flash->y) - 48, 32, 64);
+                    HI(flash->x) - 16, HI(flash->y) - 48, 32, 64);
             BattleEffectKernels_IntegrateVector2(flash, 62, -0x800);
             flash->variant++;
           }
@@ -373,7 +320,7 @@ void Func_08142944(struct BattleEffectArgument *effect, s32 kind) {
           Func_080150e4(ring->x);
           Func_080151e4(Trig_Sin(ring->variant * 682) + 0x10000, 0x20000,
                         0x10000);
-          Render_TransformVertices(gData_081991b0, model->corners, 4);
+          Render_TransformVertices(gData_081991b0, corners, 4);
           Render_DrawModelList(model);
         }
       }

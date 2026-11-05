@@ -1,31 +1,3 @@
-// Near miss, differ 34 of 355 (the draft has 356).
-//
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 34. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early. The first is the
-// argument's spill, which the native stores before it starts the 0x03000000
-// base; an empty asm before the first statement closes that row (differ 32).
-
-// Effect kind 39. Twin: The Broken Seal's BattleEffect_RunHaunt, ported
-// call for call. The Lost Age's changes: work and canvas read directly, the
-// camera read again each frame; the skull sheet unpacked with its palette by
-// Resource_LoadAndDecompress and the pink burst palette copied after it;
-// BattleEffect_FetchRectangleBlitters for the max and additive pair; both callbacks
-// at 0xc80; the effect runs count * 32 + 64 frames (96 there) and begins the
-// results at frame 92 (96 there); the actor loops read the effect argument.
-
-// Left: order and one instruction. The native takes &pos as add r1, sp, #64
-// where agscc builds it as movs r1, #64; add r1, sp (the extra instruction:
-// in the native the address passes through a low register before r8, in the
-// draft r8's pseudo is reloaded); 0xc80 is built whole before the first
-// call in the native; the rest are single swaps of a load with its
-// neighbour.
-
-// Tried (2026-10-15): alchemy permute 10 minutes (nothing below 75 kept: a
-// temporary for target->z, a block, a moved statement); a greedy scan of
-// the declaration order (k first) 75 -> 69; pos before the point, which
-// gives the native's slots (64 and 52), is 69 too and is kept.
-
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"
@@ -47,11 +19,12 @@
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // ..ProcessPendingGraphicsTransfer
 void BattleEffect_CountDownBattlerTints(void);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_0814cd48(s32 actor, s32 palette, s32 duration, s32 timer,
-                   s32 frames);                    // BattleEffect_TintBattler
+                   s32 frames); // BattleEffect_TintBattler
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void BattleEffect_ArmBg2AffineHBlankDma(void);
@@ -128,7 +101,12 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
 
       // Each target's skulls turn about a point 20 pixels above it.
       Render_ResetTransformState();
-      Transform_SetLookAt(camera, camera + 3);
+      /* FAKEMATCH(one-pass): the block ends CSE's block and parts the
+       * scheduler's rows; as a plain statement, 2 of 355 instructions differ in
+       * tla-en. */
+      do {
+        Transform_SetLookAt(camera, camera + 3);
+      } while (0);
       point[0] = target->x;
       point[1] = 20 << 16;
       point[2] = target->z;

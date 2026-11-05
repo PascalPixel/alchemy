@@ -1,3 +1,6 @@
+// Measured 2026-11-05 (tla-en): differ 168 of 549. Left: allocation: the frame
+// is 80 of 88 (see below).
+
 // Draft, differ 183 of 549, skeleton gap 31 (tla-en, 2026-11-01)
 // Func_0814b9e8, the body of three effect kinds through BattleEffect_RunBalm
 // (mode 0), BattleEffect_RunTinder (mode 1) and BattleEffect_RunPhoenix
@@ -45,6 +48,11 @@
 #include "battle_effect_work.h"
 #include "fixed_math.h"
 #include "resource.h"
+
+static __inline__ s32 CopyWords_(void *destination, const void *source, s32 size) {
+  return Iwram_CopyWords(destination, source, size);
+}
+
 
 #define HEAP_BLITTER 104 // ☀️ HEAP_SLOT_BLITTER
 
@@ -151,7 +159,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
                                work->sheet + SHEET_TEXTURE, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + SHEET_DJINN, 1, 0);
-    Iwram_CopyWords((void *)BG_PLTT,
+    CopyWords_((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                     128);
   } else if (mode == QUADS_MARS) {
@@ -233,6 +241,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
         Iwram_FillWords(work->sheet, 128, 0x28282828 - frame / 2 * 0x01010101);
         i = 0;
         angle = frame << 9;
+        /* FAKEMATCH(barrier): the empty asm gives angle a reference more, which moves it in the allocators' ranking; as no asm, 179 of 549 instructions differ in tla-en. */
+        __asm__("" : : "r"(angle));
         for (; i != 16; i++) {
           lineX = ((Trig_Sin(angle) * frame) >> 16) + 64;
           lineY = ((Trig_Cos(angle) * frame) / 8 >> 16) - 16;

@@ -1,3 +1,6 @@
+// Measured 2026-11-05 (tla-en): differ 22 of 518. Left: order and registers at
+// the loop's tail (the advance of the y step and the stride).
+
 // Near miss, differ 48 of 518.
 //
 // Measured 2026-10-25 under -mthumb-slow-loads: differ 48. Most rows left are

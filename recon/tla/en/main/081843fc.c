@@ -1389,7 +1389,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Render_DrawModelList(model2);
           texture2.pixels = gMapCellBuffer;
           for (i = 0; i != 3; i++) {
-            s16 tone = sh2 + (Trig_Cos(a + i * 21845 + 10922) << 3 >> 16) - 16;
+            s32 tone = sh2 + (Trig_Cos(a + i * 21845 + 10922) << 3 >> 16) - 16;
             s32 v;
 
             Transform_Push();

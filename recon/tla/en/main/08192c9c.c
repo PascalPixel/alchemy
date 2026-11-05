@@ -387,6 +387,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   u8 *sprites;
   s32 r;
   s32 cel;
+  s32 cel8;
   s32 sheetOffset;
   s32 point;
   s32 segment;
@@ -398,14 +399,14 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   if (t < *(Data_08199f40 + small) * 2) {
     r = *(Data_08199f40 + small) * 2 - t;
     cel = r / 6;
+    cel8 = cel * 8;
     sheetOffset = cel * 0x302;
-    cel *= 8;
     for (point = 0; point != 64; point++) {
         s32 px; s32 a; s32 py;
       a = point << 10;
       px = (r * Trig_Sin(a) / 2 >> 16) + x;
       py = (r * Trig_Cos(a) >> 16) + y;
-      draw(canvas, sprites + cel + 444, px, py - 2, 2, 4);
+      draw(canvas, sprites + cel8 + 444, px, py - 2, 2, 4);
     }
     if (small == 0) {
       s32 offset = 0;

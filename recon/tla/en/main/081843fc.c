@@ -1560,6 +1560,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     u8 *bolts;
     void *quads = Data_02011000;
     void *strip = Data_02012000;
+    struct EffectStep *steps = Data_02016d00;
     struct EffectStep *debris = &Data_02016d00[64];
 
     bolts = gData_02014000;
@@ -1653,13 +1654,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         if (frame > 71) {
           x = x - frame * 8 + 576;
         }
-        i = 0;
-        q = &Data_02016d00[(frame & 31) * 2];
-        for (; i != 2; i++, q++) {
+        for (i = 0; i != 2; i++) {
+          s32 sum = x + 116;
+          struct EffectStep *base = (struct EffectStep *)((frame & 31) * 56 + (s32)steps);
+          struct EffectStep *q = &base[i];
           s32 angle;
           s32 speed;
 
-          q->x = (x + 116) << 16;
+          q->x = sum << 16;
           q->y = (Random16() % 112 + 4) << 16;
           angle = (Random16() & 0x7fff) + 0x8000;
           speed = (Random16() & 127) + 128;

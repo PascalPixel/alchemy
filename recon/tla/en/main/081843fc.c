@@ -1,26 +1,32 @@
-// Measured 2026-11-05 (tla-en): differ 205 of 4580, 69 with slots and pool
-// offsets normalized, 41 with registers normalized as well. Measure
-// 081843fc,081848ec together. Most of raw is pool offsets, which fall into step as
-// the rows do: the draft is two instructions long (two stray stores, below).
-// What stops it, largest first:
-// - The burst's i * 448 giv (slot 24 in the listing, 40 here; every other giv slot
-//   sits 4 too low because of it). Slot order is pseudo order, and loops run last
-//   to first, so the listing makes this giv after the first scene's: second pass.
-//   loop.c reduces when benefit * lifetime * 15 >= real insns, 77 in the first pass
-//   and 73 in the second, so the product must be 5. The log gives benefit 10, less
-//   2 for the add: 8. Every spelling of 448 tried gives 8 or fails to reduce (192
-//   two-part sums among them); a reused function-level local is not replaceable
-//   but has a huge lifetime. Also rotates r4, r5, r6 at the giv's step (rows 3925
-//   to 3934).
-// - The jitter block's reloads: the listing loads the buffer into r0 and zeroes i
-//   through r3; here the buffer takes r3 and i reuses x's zero. Two caller-save
-//   stores come back after the inner loop (row 4111).
-// - Ties sched2 settles the other way: the second object loop's Iwram and cells
-//   loads (row 199), cellBuffer + 0x1000's operands (row 240), the third shock's
-//   texture and mesh stores (row 2242), the sparks' reads (rows 3038 to 3073), the
-//   bolts' load (row 3626: it sinks past five calls in the listing, here past none,
-//   and r5 must stay out of reload's choice until then), the band's stores.
+// Measured 2026-11-05 (tla-en): differ 101 of 4580, 35 with slots and pool
+// offsets normalized, 23 with registers normalized as well. Measure
+// 081843fc,081848ec together. Every stack slot as in the listing; most of raw is
+// pool offsets, which fall into step as the rows do. Pools not yet checked.
+// sched2's rank is priority, then relation to the last insn, then the number of
+// insns that depend on this one, then RTL order; the dump's table gives all but
+// the listing's, and dependents count anti and alias edges, so types and registers
+// settle ties.
+// What is left, all small:
+// - The wave's buffer load (row 4080): the listing has it as a reload in r0 before
+//   i's zero in r3; here it takes r3 and i reuses x's zero, one instruction short.
+//   i before x gives the zero but moves the rotation one on for the rest of the
+//   scene. A set-once local and an integer sum have not moved the r3.
+// - cellBuffer + 0x1000 has its operands the other way (row 240), and the second
+//   object loop loads Iwram after cells (row 199).
+// - The bolts' load sinks past five calls in the listing (rows 3626 to 3677), here
+//   past none; set later, r5 falls into reload's choice at row 3629.
+// - The sparks' stack arguments (rows 3038 to 3073), the tornado's hoisted offset
+//   (row 2723), the fill's two loads (row 3766), the band's frame read (row 4182) and
+//   the claw's pointer reload (row 4236).
 // What round 5 settled by reading the listing and the loop dumps:
+// - The burst's stride is a local set before its call: its life of 6 is below
+//   loop.c's bar in the first pass and above it in the second, so its multiply is a
+//   giv only then and takes the last slot, as the listing has it (205 to 159).
+// - The wave's mesh is written through a vertex struct: the writes cannot alias the
+//   stack, so reload_cse drops the caller-saves' second stores (145 to 101).
+// - The mesh field is const u8 *, so its store does not alias the pixels'; the
+//   blitter builder returns s32. The bolt's pointer comes before its offset, so
+//   their steps follow the listing's order.
 // - The spawn's sum and base are set inside its loop, the base from a scene-level
 //   steps (a set-once local): loop.c hoists them in that order, so x takes r3, and q
 //   indexes the base, so it is a reduced giv (231 to 205, 97 to 69 normalized).

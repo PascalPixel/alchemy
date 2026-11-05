@@ -1,11 +1,12 @@
 // Draft, differ 70 of 2159 (tla-en, 2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
 // BattleEffect_RunEclipse. Measured here: a constant loop.c hoists and global.c gives no register is rebuilt at each use by reload, and reload picks its registers round-robin, so a constant that is one (sparks, vertices, mesh2) puts the names right for many lines after it. `movs rN, #128; lsls` in a loop is usually such a hoisted constant; so is a pool load early in a block.
+// Settled: size set twice stays a hoisted register (one set is replaced into the call by loop.c's single-use
+// rule), the copy's destination is the base plus i rows, the ring's angle is its own variable.
 // Left, in order of reach:
-// - The 136 loop, two instructions short: the listing has size hoisted in r7, the routine in r6, dst in r5 and the step 0x400 rebuilt in the loop; here size and the step are one register (CSE), r6, with the routine in r7. dst + i * step with a constant step outside the frame loop gets the rebuilt step, but size then has no register (the table outranks it, r7, and slot 8 goes, so the frame shrinks by 4).
-// - Slots 16 and 20: place and texture3's address are gcse's reaching registers and their order is by hash, over a table sized by the insn count; 20 extra statements swap them (measured), so they should come right when the count does.
+// - Slots 16 and 20: place and texture3's address are gcse's reaching registers and their order is by hash
+//   bucket, over a table sized by the insn count; they should come right when the count does.
 // - The first model's kind: the listing stores it after pixels, but pixels first lengthens &texture's life by one and it loses r7 to 0x10000 (global.c 0.316 against 0.317).
-// - The ring: y r8, angle r9, offset fp in the listing; here y and angle swap (0.519 against 0.525).
-// - The late 0x4000 fills load the routine and the fixed address against the argument order.
+// - The sparks' table pointer before p: the listing loads r6 then r5.
 // Measured: blit is two words (slot 88, 92 unused); one i for shard, flash,
 // streak and slot; j for the fill columns and sparks, k for the ring columns;
 // model and verts belong to each block; ring and offset are set together so

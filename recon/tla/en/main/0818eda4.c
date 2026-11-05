@@ -1,13 +1,10 @@
-// Measured 2026-11-05 (tla-en): differ 160 of 895, a rise from 158 that removes
-// a false form: the splash loop now counts with the function's one i, not a
-// counter of its own, and takes the listing's high registers (i r8, age sl, back
-// r9, over fp). What is left in that block is the reload rotation, one register
-// behind from texture's reload (listing r1, here r0) to the loop's top, and
-// shade -= age * 8; shade += 64 gives the listing's in-place r3. Holding shade at
-// loop level measures 92 and hides the rotation, but the listing computes it after
-// the two frame tests, so it stays inside.
-// Measured 2026-11-05 (tla-en): differ 158 of 895, 154 with slots and pool
-// offsets normalized.
+// Measured 2026-11-05 (tla-en): differ 146 of 895. Settled: i & 1 with a constant local at the
+// loop's top (the 1 is rebuilt at reload and the copy of i dies in the and), j = 0 before blend.
+// Left, from the top: half's output copy after size * 2 in both spark loops (order only); the
+// vertices store before logWidth's in the first texture block (the listing's logWidth store comes
+// first, and viewing it as bytes or a second struct does not move it); then the reload rotation
+// is one register behind in the third texture block (listing base r1, pixels r0, mesh r3; here
+// base r0) down to the splash loop's top, and shade -= age * 8; shade += 64.
 // Draft, differ 172 of 895, skeleton gap 32 (tla-en, 2026-11-01)
 // Effect kind 123, written from the listing on The Broken Seal's canvas
 // skeleton (twins: BattleEffect_RunTitanBlade 0.46, by call order
@@ -212,9 +209,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
  s32 j;
  odd &= one;
  size = odd + 5;
+ j = 0;
  blend = odd * 4;
 
-          for (j = 0; j != 2; j++) {
+          for (; j != 2; j++) {
             (*(DrawRectangle *)((u8 *)draw + blend))(
                 canvas, graphics + gData_08197410[size - 1],
                 HI(step->x) - ((u32)size >> 1), HI(step->y) - size, size,
@@ -256,9 +254,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
  s32 j;
  odd &= one;
  size = odd + 2;
+ j = 0;
  blend = odd * 4;
 
-          for (j = 0; j != 4; j++) {
+          for (; j != 4; j++) {
             (*(DrawRectangle *)((u8 *)draw + blend))(
                 canvas, graphics + gData_08197410[size - 1],
                 HI(step->x) - ((u32)size >> 1), HI(step->y) - size, size,

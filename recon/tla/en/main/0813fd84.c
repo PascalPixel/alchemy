@@ -13,21 +13,25 @@
 //   (pixels, strip, six merged with the setup's 6) are what make the register names line up downstream.
 // - i = 0 before the pointers it sits beside; particle pointers are body locals (givs), not stepped by hand.
 // - The false device `__asm__("" : "=r"(x) : "0"(x))` is gone.
+// Later forms, each read from the listing: the cell loop's height and half are set before their
+// loop; the creation loops own their object local (it conflicted with the particle pointer); the tile
+// store reads through int locals so its and ties to the halfword; tile is taken at the loop's top,
+// where its giv is replaceable, and the modulo keeps a quotient local so the shift is in place; the
+// else arm's index is a block local set twice, which loop.c leaves alone; logWidth's store through
+// a second struct view does not alias logHeight's, so movs r5, #160 and add r5, sp stay adjacent and
+// the peephole folds them to add r5, sp, #160.
 // Left, in order of reach:
-// - The tile block: the index is u, the frame loop's local, so it ranks low and takes r2 as in the listing. Left: the
-//   listing has phase + 71 in r3 and shifts in place (lsls r2, r2, #3); here the remainder's shift is a local that
-//   takes r3 first, so phase + 71 takes r1 and obj r0, which rotates the reload registers down to the end of the loop
-//   (buckets 2000 and 2100). Tried: u / 8 by hand in three spellings (loses the arms' shape), x locals (lose the giv of
-//   phase + 64 + i), row + (..) % 8 in the arms, an inline Mod8.
-// - j-loop steps: the listing steps row before last; here last first, because Apply's j * 9 makes row's giv the later.
-// - add r5, sp, #160 here is movs r5, #160; add r5, sp: the listing's slot 44 is set directly and r9 copies it, here
-//   r9's pseudo is set and the slot copies it (gcse's reaching register); one instruction, and all pool offsets after.
-// - The cell loop: k r2, acc r1, half r4 are right, reload order of k * 32 and cells is not (acc would have to be set
-//   before k * 32 is reloaded, which drops its rank under half).
-// - The priority mask: -13 is a QImode constant hoisted out of both creation loops with no register; the listing
-//   rebuilds it in r4 and copies it to r2 (one more instruction, which is where the pool offsets between here and
-//   the add above part), here reload rebuilds it in r2 at once. Eclipse's same mask has a register (sl) and agrees.
-// - Ties: LoadBlitter's r1 before r0, 0x10000 before work->sheet in the shaded circle call.
+// - The priority mask: the listing has movs r4, #13; negs r4, r4; adds r2, r4, #0, a hoisted QImode -13 and
+//   its copy. loop.c's single-use replacement in a loop with calls deletes that copy here (insn 3013), so
+//   reload rebuilds -13 in r2; every spelling of the store and of a mask local measured gives the same or
+//   worse. One instruction short, and the reload that follows is r4 where the listing has r0.
+// - The six blasts: lsls r2 before add r0 at the shaded circle, add r1 and adds r3 at the first blit, movs r1
+//   before str r5 at the second. Order only; constant locals, routine locals and sheet locals do not move them.
+// - The hoist order r5 then r7 before the four strikes: sheet's 0x700 must miss loop.c's first pass
+//   (threshold 9 * life 12 >= 104 real insns). Six dead stores in the loop body measure 75 by raising the
+//   count to 110; no real form found yet.
+// - The else arm's reload order, r0, r1, r2 here and r1, r2, r0 in the listing (one rotation), the object
+//   loop's row before last step, and the end's 0x670 before y's 32.
 // Adoption: the resource directory has no names yet for the ids written here as ResourceId_Data0B4, Data0C2, Data0C9,
 // Data0CA, Data104, CornerRuneASheet, ForestCanopyTiles and SunbeamCloudsBackdrop. Barrier-free so far; the
 // do { } while (0) of LOAD_BLITTER and WAIT_TRANSFER's volatile reads need their S2 reading then.

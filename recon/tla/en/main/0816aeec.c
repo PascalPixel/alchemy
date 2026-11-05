@@ -1,3 +1,19 @@
+// 2026-11-05, differ 266 of 902 unchanged, measured from the lreg and greg dumps. Lo
+// registers go r3 (the column's locals), then by rank: quad r2, then the native's
+// vertex r1, u r0, Q r4, b r5, c r6, d r7 (kicked to its slot by reload). In the draft
+// i = v dies into Q (r138), and Q r4 is the two as one hard register, so the native's
+// one mov r4, r9 needs only the ranks. Ranks here: u 12 refs across 19 (1.89), vertex
+// 17 across 44 (1.55), column 46 across 156 (1.47), Q 17 across 49 (1.39), i 97 across
+// 452 (1.29). Moving quad[20] = u after quad[1] puts u at 24 or more and gives vertex
+// r1 and u r0 (u at exactly 24 is 628, past it 950), but then the column takes r4, i
+// goes to r8 and the frame falls to 124 or 120. The column cannot be kept out of r4
+// without ranking below Q: Q's length is the column loop's and no store order changes
+// it, and 18 refs on Q would need 46 insns. Other r4 candidates do not hold: i live
+// across the column loop ranks 1.15 and takes r8; cprop replaces every use of i = v
+// in the column loop; i set at the top of the column loop (hoisted as a set-once user
+// variable, then a giv copy) gives 955 to 964; splitting i's other loops into their
+// own locals (all 256 subsets) gives nothing below 266; a separate wave column ranks
+// the grid's column higher still (849).
 // 2026-11-05: differ 266 of 902 (tla-en), 76 masked. pixel = ... in the call's
 // argument settles the reload rotation up to the grid. Not gained: the frame loop as
 // a label and a goto (642: this one keeps its notes), i = row << 4 with a from the

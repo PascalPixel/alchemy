@@ -1,3 +1,7 @@
+// 2026-11-05: differ 4 of 1216 (tla-en). Two sched2 ties left: the second shift of
+// 2560 in the turn, and the 6000 multiply before screen's reload. Measured: the
+// listing draws after it projects; cells, projected and mesh are set once at the
+// top (spilled, rebuilt from the pool); turn holds frame << 5 and takes full less it.
 // 2026-11-05: differ 51 of 1216 (tla-en). A wrapper and a statement move gain
 // 16. Left as below.
 // Draft, differ 75 of 1216, skeleton gap 29 (tla-en, 2026-11-01)
@@ -153,6 +157,9 @@ static inline s32 CopyWords(void *destination, const void *source, s32 size) {
 }
 
 void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
+  u8 *mesh;
+  u8 *projected;
+  u8 *cells;
   void *canvas;
   struct BattleEffectWork *work;
   struct {
@@ -171,6 +178,9 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
   s32 count;
   s32 i;
 
+  mesh = gData_02014000;
+  projected = Data_02012000;
+  cells = gMapCellBuffer;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = (s16 *)Ram_HeapSlots->cameraWork;
@@ -220,7 +230,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
                     128);
     frames = 102;
   } else {
-    Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, gMapCellBuffer, 1,
+    Resource_LoadAndDecompress((s32)&ResourceId_PetalSheet, cells, 1,
                                0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->sheet + 0x2000, 1, 0);
@@ -260,7 +270,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         s32 turn = 256;
 
         if (frame > 71) {
-          turn = (80 - frame) * 32;
+          { s32 full = 2560; turn = frame << 5; turn = full - turn; }
         }
         if (effect->side == 0) {
           camera[27] -= turn;
@@ -384,7 +394,7 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         } else {
           x = screen.x / 2 - 46;
         }
-        blit.draw(canvas, gMapCellBuffer + picture * 6000, x, screen.y - 50, 60,
+        blit.draw(canvas, (u8 *)(picture * 6000 + (s32)cells), x, screen.y - 50, 60,
              100);
       }
     }
@@ -445,11 +455,11 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         s32 row;
         s32 angle;
 
-        Func_0818de3c(gData_02014000, 8, 8, 8, 8);
+        Func_0818de3c(mesh, 8, 8, 8, 8);
         for (row = 0, angle = 0; row != 8; angle += 4681, row++) {
           s32 y = (-Trig_Cos(angle) * 48) >> 16;
           s32 radius = (Trig_Sin(angle) * 48) >> 16;
-          struct ModelVertex *vertex = (struct ModelVertex *)gMapCellBuffer;
+          struct ModelVertex *vertex = (struct ModelVertex *)cells;
           s32 k;
 
           for (k = 0; k != 8; k++) {
@@ -489,14 +499,14 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
         }
         model->kind = 6;
         model->texture = &texture;
-        model->mesh = gData_02014000;
-        model->vertices = Data_02012000;
+        model->mesh = mesh;
+        model->vertices = projected;
         model->scrollU = (frame / 4) & 63;
         model->scrollV = frame & 63;
         model->shade = shade;
         model->unk04 = 3;
+        Render_ProjectVertices(cells, projected, 64);
         Render_DrawModelList(model);
-        Render_ProjectVertices(gMapCellBuffer, Data_02012000, 64);
       }
       gCameraSceneParameters[3] = 120;
       Heap_Release(model);

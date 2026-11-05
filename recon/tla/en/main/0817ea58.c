@@ -918,8 +918,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->particles[30].x = 0;
       work->particles[30].vx = 0x80000;
     }
-    ringX = &work->particles[30].x;
     for (j = 0; j != 1; j++) {
+      ringX = &work->particles[30].x;
       if (frame >= Data_0819958c[j] &&
           frame < Data_0819958c[j] + 26) {
         s32 radius;

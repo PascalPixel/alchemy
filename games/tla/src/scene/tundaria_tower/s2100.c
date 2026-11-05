@@ -21,14 +21,10 @@ void Func_02002100(u16 *list, s32 mode, s32 count) {
 top:
   {
     u32 entry = *list;
-    /* FAKEMATCH(dead): the effect work read through its own address; as
-     * work->objectId, 21 of 61 instructions differ in tla-en. */
-    s32 id = (*&work)->objectId;
+    s32 id = work->objectId;
 
     if (id == entry) {
-      /* FAKEMATCH(pin): the object in r6, as the native keeps it; as a plain
-       * local, 18 of 61 instructions differ in tla-en. */
-      register struct Actor *object asm("r6") = Actor_GetById(id);
+      struct Actor *object = Actor_GetById(id);
       s32 a;
       s32 flag;
 

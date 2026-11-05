@@ -83,8 +83,8 @@ stop:
     s32 zero = 0;
 
     /* FAKEMATCH(temporary): one word zero clears the ride byte, then the
-     * update; as self->update = 0; *((u8 *)self + 0x63) = 0;, 12 of 197
-     * instructions differ in tla-en (byte first, 23). */
+     * update; as self->update = 0; *((u8 *)self + 0x63) = 0;, 4 of 197
+     * instructions differ in tla-en (byte first, 15). */
     *((u8 *)self + 0x63) = zero;
     self->update = (void *)zero;
   }

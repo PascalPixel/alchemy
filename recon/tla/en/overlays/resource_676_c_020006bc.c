@@ -46,7 +46,9 @@ static __inline__ void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration) {
 }
 
 void Func_020006bc(s32 actor) {
-  struct YallamActor *object = Actor_GetById(actor);
+  /* FAKEMATCH(pin): the object in r5, as the native keeps it; as a plain local,
+   * 560 of 1163 instructions differ in tla-en. */
+  register struct YallamActor *object asm("r5") = Actor_GetById(actor);
   u8 *state = &object->state;
   u8 s = *state;
   s16 *timer;

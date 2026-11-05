@@ -96,22 +96,10 @@ s32 Func_02001950(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   // copy's masks out of them and 321 of 268 instructions differ.
   j = 0;
   if (j < height) {
-    /* FAKEMATCH(dead): an always-false entry into the row loop's tail; as no
-     * entry, 73 of 268 instructions differ in tla-en. */
-    if (!((height << 1) & 1))
-      goto row;
-    j = height;
-    goto rowNext;
   row:
     cell = rows + (j << 7);
     i = 0;
     if (i < width) {
-      /* FAKEMATCH(dead): an always-false entry into the column loop's tail; as
-       * no entry, 85 of 268 instructions differ in tla-en. */
-      if (!((width << 1) & 1))
-        goto column;
-      i = width;
-      goto columnNext;
     column:
       event = cell->event;
       if (event != 0 && event >= kind) {
@@ -176,12 +164,6 @@ s32 Func_02001950(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     entry = table->entries;
     k = 0;
     if (k < table->count) {
-      /* FAKEMATCH(dead): an always-false entry into the leader loop's tail; as
-       * no entry, 236 of 268 instructions differ in tla-en. */
-      if (!((leaderX << 1) & 1))
-        goto leaderRow;
-      k = leaderX;
-      goto leaderNext;
     leaderRow:
       do {
         if (entry->x == leaderX && entry->z == leaderZ)
@@ -198,12 +180,6 @@ s32 Func_02001950(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     u32 *word = buffer;
     s32 count = 63;
 
-    /* FAKEMATCH(dead): an always-false entry into the fill loop's tail; as no
-     * entry, 10 of 268 instructions differ in tla-en. */
-    if (!(((s32)buffer << 1) & 1))
-      goto fill;
-    count = (s32)buffer;
-    goto fillNext;
   fill:
     *word++ = 0x11111111;
   fillNext:

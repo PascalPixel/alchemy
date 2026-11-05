@@ -27,22 +27,16 @@ void Func_02001620(s32 objectId) {
 
   object = Actor_GetById(objectId);
   params.update = Effect_AdvanceMotion;
-  /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
-   * the bytes form the vector's address after the cosine call on every pass,
-   * and a for loop hoists it. */
-  angleStep = 0;
-burst:
-  angle = angleStep << 12;
-  vec.x = Math_Cosine(angle);
-  vec.y = 0;
-  z = Math_Sine(angle);
-  x = vec.x;
-  vec.z = z;
-  x += x / 3;
-  vec.x = x;
-  Func_020000b8(object->x, object->y, object->z, x, vec.y, z, 0x01000001,
-                &params);
-  angleStep += 2;
-  if (angleStep <= 16)
-    goto burst;
+  for (angleStep = 0; angleStep <= 16; angleStep += 2) {
+    angle = angleStep << 12;
+    vec.x = Math_Cosine(angle);
+    vec.y = 0;
+    z = Math_Sine(angle);
+    x = vec.x;
+    vec.z = z;
+    x += x / 3;
+    vec.x = x;
+    Func_020000b8(object->x, object->y, object->z, x, vec.y, z, 0x01000001,
+                  &params);
+  }
 }

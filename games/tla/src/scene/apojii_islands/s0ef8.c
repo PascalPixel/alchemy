@@ -10,8 +10,8 @@ void Func_02000ef8(void) {
     REG_BLDCNT = 0;
   } else {
     value = gData_02002a9e;
-    /* FAKEMATCH(one-pass): the once-only block orders this statement; without
-     * it, 9 of 35 instructions differ in tla-en. */
+    /* FAKEMATCH(one-pass): the once-only block orders this statement; as a
+     * plain statement, 9 of 35 instructions differ in tla-en. */
     do {
       REG_BG1HOFS = value;
     } while (0);

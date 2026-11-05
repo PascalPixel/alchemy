@@ -7,16 +7,13 @@ s32 Camera_FollowActor(s32 id, s32 a);
 void Actor_SetMovementTypeById(s32 id, const void *callback);
 void Func_02001620(s32 id);
 
-/* FAKEMATCH: the sinking loop is written with goto so that it carries no loop
- * notes. */
-#define SINK(frames, label)                                                    \
+#define SINK(frames)                                                           \
   i = (frames);                                                                \
-  label:                                                                       \
-  FieldEvent_Wait(1);                                                          \
-  object->y -= 0x20000;                                                        \
-  i--;                                                                         \
-  if (i > 0)                                                                   \
-  goto label
+  do {                                                                         \
+    FieldEvent_Wait(1);                                                        \
+    object->y -= 0x20000;                                                      \
+    i--;                                                                       \
+  } while (i > 0)
 
 void Func_0200138c(void) {
   struct Actor *object;
@@ -33,21 +30,21 @@ void Func_0200138c(void) {
   if (column == 12 && row == 15) {
     GameFlag_SetBit(0x221);
     object->motionFlags = 0;
-    SINK(32, sink1);
+    SINK(32);
     Func_02001620(10);
     FieldEvent_Wait(20);
   } else if (!Flag_Test(0x205) && column == 16 && row == 15) {
     object->motionFlags = 0;
     Flag_Set(0x205);
     GameFlag_SetBit(0x221);
-    SINK(48, sink2);
+    SINK(48);
     Func_02001620(10);
     FieldEvent_Wait(30);
   } else if (column == 19 && row == 15) {
     Func_02002030(18, 16, 1, 1, column, row);
     object->motionFlags = 0;
     GameFlag_SetBit(0x221);
-    SINK(32, sink3);
+    SINK(32);
     Func_02001620(10);
     if (!GameFlag_Test(102)) {
       Func_020020c0(11, 0, 0);
@@ -59,7 +56,7 @@ void Func_0200138c(void) {
     Func_02002030(1, 3, 1, 1, 12, row);
     Func_02002030(1, 3, 1, 1, column, row);
     object->motionFlags = 0;
-    SINK(16, sink4);
+    SINK(16);
     Func_02001620(10);
     FieldEvent_Wait(20);
     GameFlag_SetBit(0x204);

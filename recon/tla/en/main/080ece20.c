@@ -1,3 +1,4 @@
+// Draft, differ 68 of 149 (tla-en, 2026-11-05); 34 with slots and pool offsets normalized, 16 with registers blind too. x is reused for the cell pointer (a temporary, to tag) and z for the tile; the search's asm is gone. Left: unwrapped ranks first (12 over 15) and takes r5, where the native saves it in r2 around __modsi3, which needs r5 to r7 all busy at that point, and the spill set then rotates the top's r2, r4 and r0.
 // Draft, differ 92 of 149 (tla-en, 2026-11-05); 86 with slots and pool offsets normalized, 14 with registers blind too. The pin on i is gone (it was 79 with it, and left a top test the native lacks). Left: the native gives the unwrapped row r2 with a caller-save at sp 0, the cell giv r5 and i r4; here the unwrapped row takes r5, the giv r4.
 // Near miss, differ 79 of 149 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
@@ -88,11 +89,12 @@ void Func_080ece20(void) {
     z = (z + 128) % 768 + 256;
     Resource_DecodeType01((u8 *)graphics + graphics[unwrapped + 1],
                           Ram_MapCellBuffer + (bufferRow << 12));
-    cell = (bufferRow << 6) + column;
+    x = (bufferRow << 6) + column;
+    x = (x << 6) + (s32)Ram_MapCellBuffer;
     for (i = 0; i <= 30; i++) {
-      Dma_Set(Ram_MapCellBuffer + (cell << 6), (void *)(0x06000000 + (z << 6)),
+      Dma_Set((void *)x, (void *)(0x06000000 + (z << 6)),
               0x84000010, (volatile u32 *)0x040000d4);
-      cell++;
+      x += 64;
       z++;
       if (i + column == 31)
         z -= 32;

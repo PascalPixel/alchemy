@@ -989,8 +989,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           }
         }
         if (p->velocityX != -1) {
+          s32 cell = p->velocityX;
+
           model->shade = shade;
-          texture.pixels = work->sheet + 0x2000 + (p->velocityX << 12);
+          texture.pixels = work->sheet + 0x2000 + (cell << 12);
           Render_ResetTransformState();
           {
             s32 t = p->x / 8;

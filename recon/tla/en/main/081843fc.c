@@ -445,7 +445,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells, 1024);
     }
     }
-    {s32 n = 4; COPY_WORDS(cellBuffer + n * 1024, Data_02016000, n * 1024);}
+    COPY_WORDS(cellBuffer + 0x1000, Data_02016000, 0x1000);
   }
   for (i = 0; i != 6; i++) {
     obj = Func_0815b3b0(32, 32, 0x80002000, 0);
@@ -994,7 +994,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             Func_08015160(((t - 64) << 16) + b / 2,
                           ((p->y / 8 - 64) << 16) + camZ + sway, 0);
           }
-          Func_080151e4(0x8000, 0x10000, 0x8000);
+          Func_080151e4(0x8000, 0x10000, 0x10000);
           Func_080150e4(p->z);
           Func_080151e4(0x40000, 85536, 0x8000);
           Render_TransformVertices(Data_081991d0, verts, 4);
@@ -1022,7 +1022,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       texture.pixels = work->sheet + p->z;
       Render_ResetTransformState();
       Func_08015160((span - drift) / 2 + 0x40000, camZ + 0xcc0000, 0);
-      Func_080151e4(0x8000, 0x10000, 0x8000);
+      Func_080151e4(0x8000, 0x10000, 0x10000);
       Func_080150e4(p->y);
       Func_080151e4(0x40000, 85536, 0x8000);
       Render_TransformVertices(Data_081991d0, verts, 4);
@@ -1104,7 +1104,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Func_08015160(b / 2 + 0x50000, camZ + 0xe60000, 0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
         SceneTransform_ApplyPitch(18768);
-        a = -frame << 10;
+        a = -frame;
+        a <<= 10;
         Func_080150e4(a);
         Func_0801521c(s);
         Func_08015160(0, -0xf0000, 0);
@@ -1717,7 +1718,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model3->scrollU = (frame << 3) & 127;
         model3->mesh = Data_02012000;
         Render_ResetTransformState();
-        Func_080151e4(0x8000, 0x10000, 0x8000);
+        Func_080151e4(0x8000, 0x10000, 0x10000);
         a = frame * 3 * 127 * 16;
         b = frame << 13;
         c = Trig_Sin(a);

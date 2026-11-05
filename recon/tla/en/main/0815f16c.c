@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 369 of 7666, slots normalized 243, high
+// Measured 2026-11-05 (tla-en): differ 365 of 7666, slots normalized 243, high
 // registers blind too 243, every register blind 95. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
@@ -16,7 +16,7 @@
 // Two facts to read this function by. sched2 moves an instruction across a call
 // when it only touches a callee-saved register, so an r5 set before a call and
 // read after is often a reload, not a local. And reload rotates through r0, r1,
-// r2, r3, r5: one reload more or less shifts the low registers of every later
+// particle, r3, r5: one reload more or less shifts the low registers of every later
 // row, so differences are read from the top, and one fix can settle hundreds.
 //
 // Four more facts, each of which settled many rows here. A local mentioned once in
@@ -1001,7 +1001,7 @@ CLEAR(buffer, 0x1000);
 
   for (frame = 0; frame != duration; frame++) {
     struct Particle *p;
-    struct Particle *r2;
+    struct Particle *particle;
     if (kind != 41 && kind != 62 && kind != 83 && kind != 85 && kind != 86 &&
         kind != 88) {
       s32 *w;
@@ -1395,7 +1395,6 @@ CLEAR(buffer, 0x1000);
       if (frame > 5) {
           s32 x;
         s32 o1;
-        u8 *o0;
         x = target[0] / 2;
         m = __modsi3(frame / 2, 3);
         o1 = m * 0xa00;
@@ -1403,9 +1402,12 @@ CLEAR(buffer, 0x1000);
                           32);
         drawFuncs.draw[0](screen, buffer + 0x2a56 + m * 0x500, x - 20, 48,
                           40, 32);
+        {
+        u8 *o0;
         o0 = buffer + 0x1156 + o1;
         drawFuncs.draw[0](screen, o0, x - 20, 80,
                           40, 32);
+        }
       }
     } else if (kind == 5 || kind == 53 || kind == 78) {
       if (frame < 24) {
@@ -1872,17 +1874,17 @@ CLEAR(buffer, 0x1000);
       } else {
         for (; i != 16; i++) {
             s32 m;
-          r2 = &SPARKS[i];
+          particle = &SPARKS[i];
           { s32 a; a = __modsi3(i, 5) * 3;
-          m = a + __modsi3(__divsi3(r2->life, 96), 3); }
+          m = a + __modsi3(__divsi3(particle->life, 96), 3); }
           drawFuncs.draw[i > 2 ? 0 : 1](screen, buffer + 0x800 + gData_08197834[m],
-                                 (r2->x >> 16) - gData_0819781a[m] / 2,
-                                 (r2->y >> 16) - gData_08197826[m] / 2,
+                                 (particle->x >> 16) - gData_0819781a[m] / 2,
+                                 (particle->y >> 16) - gData_08197826[m] / 2,
                                  gData_0819781a[m], gData_08197826[m]);
-          BattleEffectKernels_IntegrateVector2(r2, 64, 0x2000);
-          r2->life += r2->z;
-          if (r2->z > 1 && (frame & 1))
-            r2->z--;
+          BattleEffectKernels_IntegrateVector2(particle, 64, 0x2000);
+          particle->life += particle->z;
+          if (particle->z > 1 && (frame & 1))
+            particle->z--;
         }
       }
     } else if (kind == 94) {
@@ -1914,7 +1916,7 @@ CLEAR(buffer, 0x1000);
         work->unk77a8 = 8;
       }
       i = 0;
-      r2 = work->particle;
+      particle = work->particle;
       if (frame < 14) {
         if (action->side == 0) {
           x = target[0] + (14 - frame) * 3 * 2;
@@ -1926,25 +1928,25 @@ CLEAR(buffer, 0x1000);
         drawFuncs.draw[0](screen, buffer + 0x2000, 32, y - 32, 64, 64);
         REG_BG2X = (64 - x) << 8;
       } else {
-        for (; i != 32; i++, r2++) {
+        for (; i != 32; i++, particle++) {
             s32 m;
           s32 w;
           s32 h;
           s32 left;
           s32 top;
           m = __modsi3(i, 5) * 3;
-          m += __modsi3(__divsi3(r2->z, 96), 3);
+          m += __modsi3(__divsi3(particle->z, 96), 3);
           w = gData_0819749e[m];
-          left = (r2->x >> 16) - w / 2;
-          top = r2->y >> 16;
+          left = (particle->x >> 16) - w / 2;
+          top = particle->y >> 16;
           h = gData_081974ad[m];
           top -= h / 2;
           drawFuncs.draw[0](screen, buffer + 0x83c + gData_081974bc[m],
                             left, top, w, h);
-          BattleEffectKernels_IntegrateVector2(r2, 63, 0x8000);
-          r2->z += r2->vz;
-          if ((frame & 1) && r2->vz > 0)
-            r2->vz--;
+          BattleEffectKernels_IntegrateVector2(particle, 63, 0x8000);
+          particle->z += particle->vz;
+          if ((frame & 1) && particle->vz > 0)
+            particle->vz--;
         }
       }
     } else if (kind == 84) {

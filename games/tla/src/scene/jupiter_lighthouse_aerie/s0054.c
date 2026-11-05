@@ -1,16 +1,15 @@
-// Draft, differ 82 of 153: raises objects 9 and 10 of Jupiter Lighthouse's aerie
-// with object 23 riding along, sound 556: in modes 0
-// and 2 object 9 rises over 64 frames while 23 drifts left and its sprite turns
-// one way; in the others object 10 rises and 23 drifts right, turning back. In
-// modes 2 and 3 both then rise together over 256 frames with sounds 522, 390
-// and 80, and all three take motion flags 4.
 #include "types.h"
+
+union ActorCoordinate {
+  s32 value;
+  u16 half;
+};
+
 #include "call.h"
 #include "actor.h"
 
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x,
-                                      s32 y, s32 z);
+void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02002b68(s32 sound);
 void wait(s32 frames);
 void FieldEvent_Wait(s32 frames);
@@ -30,7 +29,8 @@ void Func_02000054(s32 mode) {
     for (i = 0; i <= 63; i++) {
       left->y += 0x1999;
       rider->y += 0x7ae;
-      rider->x += -0xa3d;
+      // Through a union, so this store may alias the sprite read after it.
+      ((union ActorCoordinate *)&rider->x)->value += -0xa3d;
       *(u16 *)(sprite + 18) += 32;
       wait(1);
     }

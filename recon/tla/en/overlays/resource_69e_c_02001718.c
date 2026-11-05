@@ -88,7 +88,7 @@ void Func_02001718(const s32 *from, const s32 *to) {
   sprite->fullColor = 1;
   sprite->palette = 0;
   sprite->priority = Func_020029f0(leader) & 3;
-  sprite->depth = Func_020029f8(leader) - 1;
+  ((union { u16 v; s32 w; } *)&sprite->depth)->v = Func_020029f8(leader) - 1;
   spark->age = -1;
   }
     {

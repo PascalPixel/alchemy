@@ -1,16 +1,21 @@
-// Draft of overlay 6ab's Func_020002f4, translated from its listing: differ 18
-// of 255 in tla-en (was 33). The scene compared first is SceneId_Ov6abRoom1, as
-// the native's pool shows, and the second flag test reuses an earlier
-// temporary, which gives the native's registers there. Left: the order and
-// registers of the leader's position from the two saved cells.
+// Draft, differ 14 of 255 (tla-en, 2026-11-05). Func_020002f4 of overlay 6ab,
+// rewritten readable from the translator's map, nested for its one exit.
+// Left: the leader's position block: the follower's offset through r3 and the
+// leader through r1 natively, r1 and r3 here, with one untagged once-only
+// block that holds x first.
 #include "types.h"
 #include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+#include "actor.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+
+struct Overlay6abEventWork {
+  u8 unk000[0x1ac];
+  s32 unk1ac;
+  u8 unk1b0[0x1c];
+  struct Actor *unk1cc;
+};
+
 s32 Func_02000714();
 s32 Func_02000ae4();
 s32 Func_02000d88();
@@ -26,136 +31,91 @@ s32 Func_0200443c();
 s32 GameFlag_GetByte();
 s32 GameFlag_SetBit();
 s32 GameFlag_Test();
-s32 Actor_SetSpritePriority();
-s32 Actor_GetById();
 s32 wait();
-extern u8 Data_02004cec[];
-extern u8 gMainRoutineWork[];
+struct Actor *Actor_GetById(s32 id);
+extern s32 Data_02004cec;
 extern char SceneId_Ov6abRoom1;
 
 s32 Func_020002f4(void) {
-  s32 v_r7, v_r8, v_r10, v_r6, v_r5, t0, t1, t2, t7, t12;
-  s32 t13, t14, t15, t16, t17, t18, t20, t22, t24, t27;
-  s32 t28, t31, t34, t35, t40, t42, t45, t46;
+  s32 scene = gMainRoutineWork.scene;
+  s32 entrance = gMainRoutineWork.entrance;
 
-  t0 = FIELD_AT((s32)gMainRoutineWork, s16, 480);
-  t1 = FIELD_AT((s32)gMainRoutineWork, s16, 482);
-  t2 = FIELD_AT(0x3000000, s32, 108);
-  FIELD_AT(t2, s32, 428) = 0x204;
-  *(s32 *)(s32)Data_02004cec = 0;
+  ((struct Overlay6abEventWork *)Ram_HeapSlots->eventWork)->unk1ac = 0x204;
+  Data_02004cec = 0;
   Call1((void (*)())GameFlag_SetBit, 0x112);
   Func_02001d7c();
   Call4((void (*)())Func_02001df0, 0, 0, 0, 88);
-  v_r10 = 0x3000000;
-  v_r8 = (s32)gMainRoutineWork;
-  v_r7 = t1;
-  if (t0 == (s32)&SceneId_Ov6abRoom1)
-    goto L_02008350;
-  goto L_0200853a;
-L_02008350:
+  if (scene == (s32)&SceneId_Ov6abRoom1) {
   Call1((void (*)())Func_0200443c, 0);
-  t7 = Value1((s32 (*)())GameFlag_Test, 0xa30);
-  if (t7 == 0)
-    goto L_020083ac;
-  Call6((void (*)())Func_0200423c, 65, 65, 9, 21, 38, 24);
-  Call6((void (*)())Func_02004244, 65, 65, 9, 21, 38, 24);
-  Call6((void (*)())Func_02004244, 76, 64, 9, 22, 38, 87);
-  Call6((void (*)())Func_02004244, 76, 64, 9, 22, 102, 23);
-L_020083ac:
-  if (v_r7 != 11)
-    goto L_0200840a;
-  t12 = FIELD_AT(v_r8, s32, 532);
-  t13 = Value1((s32 (*)())Actor_GetById, t12);
-  t14 = FIELD_AT(v_r10, s32, 108);
-  t15 = Value1((s32 (*)())GameFlag_GetByte, 0x340);
-  t16 = Value1((s32 (*)())GameFlag_GetByte, 0x348);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 18 of 255 instructions differ
-   * in tla-en. */
-  do {
-    v_r6 = (t14 + 0x1cc);
-  } while (0);
-  t17 = *(s32 *)v_r6;
-  FIELD_AT(t13, s32, 16) = ((t16 << 20) - 0x1280000);
-  v_r5 = ((t15 << 20) + 0x80000);
-  FIELD_AT(t13, s32, 8) = v_r5;
-  FIELD_AT(t17, s32, 8) = v_r5;
-  t18 = FIELD_AT(t13, s32, 16);
-  FIELD_AT(t17, s32, 16) = t18;
-  Func_020041fc();
-  t20 = Value1((s32 (*)())GameFlag_Test, 0x109);
-  if (t20 != 0)
-    goto L_0200840a;
-  Func_02003e04();
-L_0200840a:
-  if ((u32)(v_r7 - 9) > (u32)1)
-    goto L_02008422;
-  t16 = Value1((s32 (*)())GameFlag_Test, 0x109);
-  if (t16 != 0)
-    goto L_02008422;
-  Func_02003e04();
-L_02008422:
-  if (v_r7 == 1)
-    goto L_0200842c;
-  if (v_r7 == 20)
-    goto L_0200842c;
-  goto L_0200853a;
-L_0200842c:
-  t24 = Value1((s32 (*)())GameFlag_Test, 0xa30);
-  if (t24 != 0)
-    goto L_02008452;
-  Call2((void (*)())Actor_SetSpritePriority, 11, 3);
-  Call2((void (*)())Actor_SetSpritePriority, 12, 3);
-  t27 = Value1((s32 (*)())Actor_GetById, 12);
-  FIELD_AT(t27, s32, 24) = 0xffff0000;
-L_02008452:
-  t28 = Value1((s32 (*)())GameFlag_Test, 0xa4b);
-  if (t28 == 0)
-    goto L_02008470;
-  Func_02000d88();
-  Call3((void (*)())Func_0200432c, 10, 0, 0);
-  goto L_02008494;
-L_02008470:
-  t31 = Value1((s32 (*)())GameFlag_Test, 0xa4a);
-  if (t31 == 0)
-    goto L_0200848a;
-  Call1((void (*)())GameFlag_SetBit, 0x233);
-  goto L_02008494;
-L_0200848a:
-  Call3((void (*)())Func_0200432c, 10, 0, 0);
-L_02008494:
-  t34 = Value1((s32 (*)())GameFlag_Test, 0xa3b);
-  if (t34 == 0)
-    goto L_02008532;
-  t35 = Value1((s32 (*)())GameFlag_Test, 0xa30);
-  if (t35 != 0)
-    goto L_020084c2;
-  Call3((void (*)())Func_0200432c, 11, 0, 0);
-  Call3((void (*)())Func_0200432c, 12, 0, 0);
-L_020084c2:
-  Func_02000d88();
-  Call1((void (*)())wait, 10);
-  t40 = Value1((s32 (*)())GameFlag_Test, 0xa3a);
-  if (t40 != 0)
-    goto L_020084f8;
-  Call1((void (*)())Func_02000ae4, 0);
-  t42 = Value1((s32 (*)())GameFlag_Test, 0x109);
-  if (t42 != 0)
-    goto L_020084f8;
-  Call1((void (*)())Func_02000db8, 13);
-  Call1((void (*)())Func_02000db8, 14);
-L_020084f8:
-  t45 = Value1((s32 (*)())Actor_GetById, 13);
-  t46 = FIELD_AT(t45, s32, 8);
-  if (t46 <= 0x1900000)
-    goto L_0200853a;
-  Call6((void (*)())Func_0200423c, 39, 22, 2, 1, 43, 13);
-  Call6((void (*)())Func_0200423c, 31, 21, 2, 2, 40, 12);
-  goto L_0200853a;
-L_02008532:
-  if (v_r7 != 20)
-    goto L_0200853a;
-  Func_02000714();
-L_0200853a:
+  if (Value1((s32 (*)())GameFlag_Test, 0xa30)) {
+    Call6((void (*)())Func_0200423c, 65, 65, 9, 21, 38, 24);
+    Call6((void (*)())Func_02004244, 65, 65, 9, 21, 38, 24);
+    Call6((void (*)())Func_02004244, 76, 64, 9, 22, 38, 87);
+    Call6((void (*)())Func_02004244, 76, 64, 9, 22, 102, 23);
+  }
+  if (entrance == 11) {
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+    struct Overlay6abEventWork *work = Ram_HeapSlots->eventWork;
+    s32 column = GameFlag_GetByte(0x340);
+    s32 row = GameFlag_GetByte(0x348);
+    struct Actor **follower;
+    struct Actor *other;
+    s32 x, z, base;
+
+    x = (column << 20) + 0x80000;
+    do {} while (0);
+    base = -0x1280000;
+    follower = &work->unk1cc;
+    z = (row << 20) + base;
+    other = *follower;
+    leader->z = z;
+    leader->x = x;
+    other->x = x;
+    other->z = leader->z;
+    Func_020041fc();
+    if (!Value1((s32 (*)())GameFlag_Test, 0x109))
+      Func_02003e04();
+  }
+  if ((u32)(entrance - 9) <= 1) {
+    if (!Value1((s32 (*)())GameFlag_Test, 0x109))
+      Func_02003e04();
+  }
+  if (entrance == 1 || entrance == 20) {
+  if (!Value1((s32 (*)())GameFlag_Test, 0xa30)) {
+    Call2((void (*)())Actor_SetSpritePriority, 11, 3);
+    Call2((void (*)())Actor_SetSpritePriority, 12, 3);
+    Actor_GetById(12)->scaleX = 0xffff0000;
+  }
+  if (Value1((s32 (*)())GameFlag_Test, 0xa4b)) {
+    Func_02000d88();
+    Call3((void (*)())Func_0200432c, 10, 0, 0);
+  } else if (Value1((s32 (*)())GameFlag_Test, 0xa4a)) {
+    Call1((void (*)())GameFlag_SetBit, 0x233);
+  } else {
+    Call3((void (*)())Func_0200432c, 10, 0, 0);
+  }
+  if (Value1((s32 (*)())GameFlag_Test, 0xa3b)) {
+    if (!Value1((s32 (*)())GameFlag_Test, 0xa30)) {
+      Call3((void (*)())Func_0200432c, 11, 0, 0);
+      Call3((void (*)())Func_0200432c, 12, 0, 0);
+    }
+    Func_02000d88();
+    Call1((void (*)())wait, 10);
+    if (!Value1((s32 (*)())GameFlag_Test, 0xa3a)) {
+      Call1((void (*)())Func_02000ae4, 0);
+      if (!Value1((s32 (*)())GameFlag_Test, 0x109)) {
+        Call1((void (*)())Func_02000db8, 13);
+        Call1((void (*)())Func_02000db8, 14);
+      }
+    }
+    if (Actor_GetById(13)->x > 0x1900000) {
+      Call6((void (*)())Func_0200423c, 39, 22, 2, 1, 43, 13);
+      Call6((void (*)())Func_0200423c, 31, 21, 2, 2, 40, 12);
+    }
+  } else if (entrance == 20) {
+    Func_02000714();
+  }
+  }
+  }
   return 0;
 }

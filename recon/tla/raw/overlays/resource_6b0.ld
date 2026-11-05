@@ -8,7 +8,7 @@ SECTIONS
         "*/games/tla/src/scene/anemos_inner_sanctum/s0158.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s0178.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s01d4.o"(.text)
-        "*/resource_6b0_overlay.o"(.text.x020081f8)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s01f8.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s0328.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/resource_6b0_overlay.o"(.text.x020083f6)

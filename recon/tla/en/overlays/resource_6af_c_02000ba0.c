@@ -46,9 +46,7 @@ void Func_02000ba0(void) {
   phase = gData_02001aa4 / 8 % 4;
   for (i = 0; i <= 3; i++) {
     gData_02001ac8[(phase + i) % 4 + 2] = Data_02001aa8[i + 2];
-    do {
-      Data_02001b08[(phase + i) % 4 + 2] = Data_02001ae8[i + 2];
-    } while (0);
+    Data_02001b08[(phase + i) % 4 + 2] = Data_02001ae8[i + 2];
   }
   IO_WRITE_QUEUE_PUSH(0x05000060, (u32)gData_02001ac8, 0x84000008);
   IO_WRITE_QUEUE_PUSH(0x05000140, (u32)Data_02001b08, 0x84000008);

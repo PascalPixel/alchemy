@@ -88,7 +88,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_entrance/stop.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s4738.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s4794.o"(.text)
-        "*/resource_6aa_overlay.o"(.text.x0200c7b8)
+        "*/games/tla/src/scene/mars_lighthouse_entrance/s47b8.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s48e8.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s4970.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s49dc.o"(.text)

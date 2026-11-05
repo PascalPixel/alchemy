@@ -642,6 +642,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
   }
 
+  typeof(SCENE) scene;
   u8 *sprites;
   s32 pos[4];
   u8 *battle;
@@ -671,6 +672,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   u8 *tiles;
   u8 v;
 
+  scene = SCENE;
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   objects = (struct IrisSprite **)gMapCellBuffer;
@@ -785,9 +787,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The opening: the circle and the streaks.
     if (frame == 0) {
-      SCENE->x = 0x3c0000;
-      SCENE->y = 0x800000;
-      SCENE->radius = 0xc0000;
+      scene->x = 0x3c0000;
+      scene->y = 0x800000;
+      scene->radius = 0xc0000;
       for (i = 0; i != 15; i++) {
         struct IrisPoint *s = Data_02012ef4[i];
 
@@ -805,7 +807,6 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       work->transferValue = 50;
     }
     if (frame <= 175) {
-      typeof(SCENE) scene = SCENE;
       BattleEffect_LoadBlitter(SLOT_ALT, 3);
       draw[1] = Ram_HeapSlots->unkb8[1];
       for (i = 0; i != 15; i++) {

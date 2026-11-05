@@ -1,5 +1,12 @@
-// 2026-11-05: differ 92 of 2680 (tla-en). The first queue loop reads objects as u32, so the read keeps its place after the queue store; the draw macro closes on an empty block.
-// that is item (3) below closed, and the count now equal.
+// Measured 2026-11-05 (tla-en): differ 60 of 2680, slots normalized 28, sizes equal.
+// Left: order rows in the queue loops, the draws and the frame's model stores; the second
+// queue loop's table and source swapped between r4 and r5 (equal refs); and the rings'
+// and the flash's reload registers (ldr r4 where this has r2, subs r2 where this has
+// subs r3), one step behind with nothing visible taking it.
+// What settled rows this round: every copy goes through the CopyWords inline, FILL
+// is an inline around a one-pass block, DRAW_ALT's barrier sits between the draw and the
+// release, the palette step's 512 is a local, and shade's default is set right after
+// the model, which keeps r0 busy for reload.
 // 2026-11-05: differ 137 of 2680 (tla-en). With the twin's two dead branches
 // and a wrapper on the first palette copy. Left: scheduling rows and pool
 // offsets that follow them, across the draft.

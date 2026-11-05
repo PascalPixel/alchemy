@@ -1085,10 +1085,13 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     {
       s32 *shake;
       s32 v;
+      struct BgScroll *bg;
+      s32 *params;
 
       shake = &work->shake;
+      bg = gBgScroll;
       v = Data_081994f0[*shake];
-      gBgScroll[1].y = v + 32;
+      bg[1].y = v + 32;
       gCameraSceneParameters[4] = 120 - v;
       if (*shake > 0)
         *shake -= 1;

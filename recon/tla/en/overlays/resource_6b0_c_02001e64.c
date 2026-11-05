@@ -1,4 +1,4 @@
-// Draft, differ 62 of 913, skeleton gap 10 (tla-en, 2026-11-01)
+// Draft, differ 2 of 913 (tla-en, 2026-11-05). The event store first, gMainRoutineWork after it. Left: one door call (entrance 11): its stack store after the shifts natively. Older notes below predate this.
 // Overlay 6b0's Func_02001e64: the scene entry setup, one branch per room
 // (scenes 0x12f to 0x133, which the listing loads from the pool, so they are
 // SceneId symbols rather than plain constants).
@@ -62,11 +62,11 @@ s32 Func_02001e64(void) {
   s32 t149, t154, t155, v_two;
 
   v_r2 = 0x3000000;
-  v_r6 = (s32)&gMainRoutineWork;
   v_r7 = 0x204;
   /* FAKEMATCH(barrier): the empty asm on v_r7 changes its allocation rank; as no
    * asm, 43 of 913 instructions differ in tla-en. */
   asm("" : "=r"(v_r7) : "0"(v_r7));
+  v_r6 = (s32)&gMainRoutineWork;
   FIELD_AT(FIELD_AT(v_r2, s32, 108), s32, 428) = v_r7;
   v_r1 = gMainRoutineWork.scene;
   if (v_r1 != (s32)&SceneId_Ov6b0Room1)

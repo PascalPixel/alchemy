@@ -1050,8 +1050,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
       for (i = 0; i != 256; i++) {
         s32 a = i << 8;
-        s32 px = radius * Trig_Sin(a);
-        s32 py = radius * Trig_Cos(a);
+        s32 px = Trig_Sin(a) * radius;
+        s32 py = Trig_Cos(a) * radius;
 
         draw[0](canvas, work->sheet + gData_08197410[3], (px >> 16) + 58,
                 (py * 2 >> 16) + 48, 4, 8);
@@ -1107,11 +1107,13 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           u8 *src = work->sheet + gData_08197410[Data_0819a040[i] - 1];
 
           for (m = 0; m != *(Data_0819a040 + i) * *(Data_0819a040 + i) * 2; m++) {
-            s32 v = *src++ - j * 16;
+            s32 v = *src - j * 16;
 
             if (v < 0)
               v = 0;
-            *dst++ = v;
+            *dst = v;
+            src++;
+            dst++;
           }
         }
       }
@@ -1119,11 +1121,13 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         u8 *src = work->sheet + gData_08197410[1];
 
         for (m = 0; m != 8; m++) {
-          s32 v = *src++ - j * 8;
+          s32 v = *src - j * 8;
 
           if (v < 0)
             v = 0;
-          *dst++ = v;
+          *dst = v;
+          src++;
+          dst++;
         }
       }
     }

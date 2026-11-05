@@ -1126,8 +1126,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       Func_08164a4c(-4, -4, -4);
     }
     if (frame > 48) {
-      d = frame - 48;
-      Func_08164b2c(-d, -d, 11 - d * 2);
+      s32 fade = frame - 48;
+
+      Func_08164b2c(-fade, -fade, 11 - fade * 2);
     }
     if (frame == 0) {
       work->transferMode = 3;
@@ -1145,13 +1146,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
     }
-    {
-      p = Ram_EffectSteps;
+    for (i = 0; i != 256; i++) {
+      struct EffectStep *p = &Ram_EffectSteps[i];
 
-      for (i = 0; i != 256; i++, p++) {
-        if (p->variant >= 0) {
-          DRAW_SPARK(p);
-        }
+      if (p->variant >= 0) {
+        DRAW_SPARK(p);
       }
     }
     for (i = 0; i != effect->count; i++) {

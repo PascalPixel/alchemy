@@ -5,7 +5,11 @@
 // past one block (a block's own local ties to the load and the copy goes), so it
 // shares first with the first spawn, which then has first in r5 for r2. Left:
 // step in r5 and the 127 mask in r6 in both spawns, with first and sp+8 following;
-// model->vertices stored three instructions early.
+// model->vertices stored three instructions early. Step as its own local in both
+// spawns gives r5 and r6 as the listing there (and first r2) but costs a slot
+// (frame 88): 431 raw. One pseudo across the flight and both spawns goes to r6
+// behind &card. Both spawns' r5 hold while &card takes r6 only if the flight's
+// base is local yet untied, which no form here gives.
 // Measured 2026-11-05 (tla-en): differ 92 of 1246. The flight's base is card.x
 // - 64 (the draft had lost the 64), the sleep step is &particles[time], the
 // first spawn's step an integer sum. Left: the native's copy of card.x into r5

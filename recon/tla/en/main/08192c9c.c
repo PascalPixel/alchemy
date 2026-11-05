@@ -1604,9 +1604,9 @@ dead = i / 3;
         Dma_Set(work->sheet + 0x1bf0 - (i << 5), work->sheet + 0x1c10 + (i << 5),
                 0x84000010, REG_DMA3);
       for (i = 1; i != 8; i++) {
+        u8 v = 64 - i * 8;
         u8 *src = work->sheet + 0x1810;
         u8 *out = work->sheet + 0x1810 + i * 0x800;
-        u8 v = 64 - i * 8;
 
         for (j = 0; j != 0x800; j++) {
           if (v < *src)

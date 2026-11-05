@@ -1,12 +1,3 @@
-// Draft, differ 6 of 65 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 6 (tla-en); notes below may predate it.
-// Draft, differ 12 of 65: saves person 10 (a copy of the object, its mode, its
-// animation and its place) and stops it where it stands; person 9 halts too
-// when it runs one of its two walking scripts. Func_02000fac restores it.
-// The position is read once into x and z before the copies, and the targets
-// are set x, y, z (from 24). Left: the store-then-load rows: after each store
-// the native issues a pool load or a store before the next load from the
-// objects, where this draft loads at once.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -42,13 +33,10 @@ void Func_02000f00(void) {
   Data_020064f4 = sprite[24];
   {
     s32 x = object->x;
-    s32 z = object->z;
+    s32 z;
 
-    /* FAKEMATCH(one-pass): the empty block ends CSE's run here; with no block, 8 of 65 instructions
-     * differ in tla-en. */
-    do {
-    } while (0);
     gData_020064ec = x;
+    z = object->z;
     object->update = 0;
     gData_020064f0 = z;
     object->velocityZ = 0;

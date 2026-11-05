@@ -35,16 +35,16 @@ void Func_020001f8(void) {
     dst = &BG_PLTT[gData_02006004[gData_02006020 * gData_0200601c + i]];
     red = *src++;
     green = *src++;
-    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-     * order around it; as the plain statement, 4 of 120 instructions differ
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
+     * the order around it; as the plain statement, 4 of 120 instructions differ
      * in tla-en. */
     do {
       blue = *src++;
     } while (0);
     *dst = (blue << 10) | (green << 5) | red;
-    /* FAKEMATCH(one-pass): the count's step in a once-only block, whose end holds
-     * it before the exit test's load; as the for loop's own step, 2 of 120
-     * instructions differ in tla-en. */
+    /* FAKEMATCH(one-pass): the count's step in a once-only block, whose end
+     * holds it before the exit test's load; as the for loop's own step, 2 of
+     * 120 instructions differ in tla-en. */
     do {
       i++;
     } while (0);
@@ -56,8 +56,8 @@ void Func_020001f8(void) {
     src = Data_02006018 + gData_0200601c * 3;
   red = *src++;
   green = *src++;
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 2 of 120 instructions differ
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
+   * the order around it; as the plain statement, 2 of 120 instructions differ
    * in tla-en. */
   do {
     blue = *src++;

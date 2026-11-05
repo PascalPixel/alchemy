@@ -80,7 +80,7 @@ SECTIONS
         "*/games/tla/src/scene/trial_road/balance.o"(.text)
         "*/resource_697_overlay.o"(.text.x0200cddc)
         "*/resource_697_overlay.o"(.text.x0200d1a0)
-        "*/resource_697_overlay.o"(.text.x0200d5c4)
+        "*/games/tla/src/scene/trial_road/s55c4.o"(.text)
         "*/games/tla/src/scene/trial_road/s5688.o"(.text)
         "*/games/tla/src/scene/trial_road/import.o"(.text)
         "*/games/tla/src/scene/trial_road/data.o"(.data)

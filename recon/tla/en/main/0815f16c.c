@@ -1,22 +1,48 @@
-// Measured 2026-11-05 (tla-en): differ 2913 of 7666, slots normalized 2337,
-// high registers blind too 1883, every register blind 681. The frame is now
-// the listing's 264. Settled today: the two slots at kind 60 are one local
-// array of two, with element 1 holding m * 0xa00 and element 0 the third
-// source. A local array whose address is not taken gets its stack slots after
-// the spills start and its stores stay even when unread, which is the
-// listing's unread str at sp+24. Its name and type are a placeholder. The
-// ring loop at kinds 81 to 93 reads p = &SPARKS[i], with its own k, which
-// gives the listing's hidden step register (a giv in a high register copied
-// to r6). Kind 80's row and two are named so i * 64 and i * 2 stay apart from
-// their bases, though they are not yet reduced as in the listing. Scoping n,
-// m, x, y, fade, life and p to their blocks gave most of the rest. Left: i is
-// one long pseudo in r11 in the listing (231 mentions, as when it is pinned),
-// r10 here: i needs pseudos ranked above it in r8, r10 and r9 where it is
-// live. The three-round loops at kinds 14 and 68 keep their table loads
-// inside the loop in the listing where this hoists them; as goto loops they
-// stop hoisting but the rest of the function flips to 4500 rows, so that is
-// not settled. Some edits flip the low registers of the whole function the
-// same way, so read such a jump before trusting it.
+// Measured 2026-11-05 (tla-en): differ 1233 of 7666, slots normalized 887, high
+// registers blind too 845, every register blind 345. The frame is the listing's
+// 264 and i is r11 (226 of 229 rows).
+//
+// What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
+// their blitters in a do { } while (0), which ends CSE's block, so the two table
+// loads stay short-lived, the loop no longer hoists them, and with m first and
+// m, x and y local to the loop, r8, r10 and r9 fill before i is allocated.
+// A pair of block locals freed most of the rest: life and its half at kinds 5 and
+// 86, m, x and y at kind 15. Loops whose p is stepped with i read p = &SPARKS[i]:
+// loop reduction keeps the step in its own register with p a copy, exactly as
+// the listing's kind 66. Where i is set before its pointer (kind 44 and the
+// first particles), i = 0 comes first. Kind 41's offsets 0x1cd2 and 0x3781 were
+// wrong by the work's 0x700.
+//
+// Two facts to read this function by. sched2 moves an instruction across a call
+// when it only touches a callee-saved register, so an r5 set before a call and
+// read after is often a reload, not a local. And reload rotates through r0, r1,
+// r2, r3, r5: one reload more or less shifts the low registers of every later
+// row, so differences are read from the top, and one fix can settle hundreds.
+//
+// Left, top down:
+// - Kind 80: i * 2 is its own register stepping by 2 and i * 64 another by 64, with
+//   0x237 and 0x1000 not hoisted; plain forms and explicit steps both lose.
+// - The first origin projection: the listing has a fresh add r1, sp, #228 and
+//   reloads pos through r3 and then r5. q in the first frame loop lowers the
+//   figure and is probably not the source's form: it drops the hoisted pos in r8
+//   and hoists 10 into r9 instead. An inlined projection gives the fresh add
+//   without settling the rest.
+// - Origin's slot is sp+56 where the listing has sp+16, with 20 to 56 four low:
+//   the listing keeps PRE's reaching register, here copy propagation removes it.
+// - Kind 60: the third source is r5 in the listing, r1 here. Reload's rotation is
+//   one step off from there to kind 5's end. Every plain spelling compiles alike.
+// - Kind 85's row loop hoists 15 and 0x700 where the listing does not.
+// - Kind 79's first arm: SPARKS->vx in its else takes r5 here, a fresh pool load in
+//   the listing, so the two stores cross-jump. A symbol for SPARKS does not help.
+// - Kind 70: p = &SPARKS[i] with an a-then-m split gets the shape, but its giv
+//   starts from i * 28 at run time since i = 0 is above the if, and p is r7 where
+//   the listing's stepping register is r8. Kind 94 is near this and its arguments
+//   load in another order.
+// - Kinds 71 and 82: model in r7 and fade in r5, r6 and r7 in the listing.
+//
+// Before adoption: RELEASE_BLITTERS and RELOAD_BLITTER are exempt only if every
+// use matches through them, CLEAR and FILL need S2's wrapper tags unless they are
+// the game's own layer, q needs its form settled.
 
 // Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every
@@ -1816,18 +1842,19 @@ CLEAR(buffer, 0x1000);
           }
         }
       } else {
-        for (; i != 16; i++, p++) {
-            s32 m;
-          m = __modsi3(i, 5) * 3;
-          m += __modsi3(__divsi3(p->life, 96), 3);
-          drawFuncs.draw[i <= 2](screen, buffer + 0x800 + gData_08197834[m],
-                                 (p->x >> 16) - gData_0819781a[m] / 2,
-                                 (p->y >> 16) - gData_08197826[m] / 2,
+        for (; i != 16; i++) {
+            s32 m; struct Particle *q;
+          q = &SPARKS[i];
+          { s32 a; a = __modsi3(i, 5) * 3;
+          m = a + __modsi3(__divsi3(q->life, 96), 3); }
+          drawFuncs.draw[i > 2 ? 0 : 1](screen, buffer + 0x800 + gData_08197834[m],
+                                 (q->x >> 16) - gData_0819781a[m] / 2,
+                                 (q->y >> 16) - gData_08197826[m] / 2,
                                  gData_0819781a[m], gData_08197826[m]);
-          BattleEffectKernels_IntegrateVector2(p, 64, 0x2000);
-          p->life += p->z;
-          if (p->z > 1 && (frame & 1))
-            p->z--;
+          BattleEffectKernels_IntegrateVector2(q, 64, 0x2000);
+          q->life += q->z;
+          if (q->z > 1 && (frame & 1))
+            q->z--;
         }
       }
     } else if (kind == 94) {

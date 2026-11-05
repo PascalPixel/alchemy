@@ -59,7 +59,6 @@ SECTIONS
         "*/games/tla/src/scene/prox/s38e8.o"(.text)
         "*/games/tla/src/scene/prox/s391c.o"(.text)
         "*/games/tla/src/scene/prox/s3bc8.o"(.text)
-        "*/resource_6a8_overlay.o"(.text.x0200bbc8)
         "*/games/tla/src/scene/prox/s3edc.o"(.text)
         "*/games/tla/src/scene/prox/s3ee8.o"(.text)
         "*/games/tla/src/scene/prox/s4114.o"(.text)

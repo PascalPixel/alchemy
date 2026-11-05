@@ -54,6 +54,7 @@
 #include "types.h"
 typedef volatile u16 vu16;
 typedef volatile u32 vu32;
+typedef volatile s32 vs32;
 
 typedef struct Particle {
   s32 x;
@@ -1167,8 +1168,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         p->timer = 0;
         Random16();
         p->ay = 0;
-        do { } while (0);
-        p->z = z - p->ay * 40 - 0x800;
+        p->z = z - *(vs32 *)&p->ay * 40 - 0x800;
         p->vx = -Trig_Cos(p->z) * 8;
         p->vy = -Trig_Sin(p->z) * 8;
         p->x = ((Random16() % 80 + 80) << 16) - p->vx * 24;

@@ -1,3 +1,11 @@
+// 2026-11-05: differ 1754 of 4354 (tla-en). Measured from the lreg and greg
+// dumps: i is one pseudo in both, with the same 51 steps. r2764 is the actor
+// with 30 refs, an ActorPos read at +8, +12 and +16. A pin on i gives 4353;
+// three to six empty asm uses of actor in the block at the last actor loop give
+// 2287 to 2322, so neither is the way. Declaration moves gain nothing. In
+// global's order only the member giv outranks i among pseudos that end in a
+// high register, so the listing's r10 needs a pseudo above 1.71 that this
+// draft lacks, or a copy preference, untested.
 // Draft, differ 1754 of 4354, skeleton gap 356 (tla-en, 2026-11-01)
 // The whole of BattleEffect_RunCharon, same control flow and calls, frame 324
 // as the native, every stack slot in place. No devices.

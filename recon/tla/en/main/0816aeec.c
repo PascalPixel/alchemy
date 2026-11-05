@@ -1,3 +1,5 @@
+// 2026-11-05: differ 274 of 902 (tla-en). Declaration moves and wrappers
+// beyond the one in place gain nothing; the Q allocation below stands.
 // 2026-11-05: differ 274 of 902 (tla-en). A wrapper on one Iwram call gains 2;
 // the allocation below still stands.
 // Draft, differ 276 of 902, skeleton gap 80 (tla-en, 2026-11-01)

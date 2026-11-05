@@ -1,5 +1,4 @@
-// Draft, differ 32 of 70 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 36 of 70 (tla-en); older figures below predate it.
+// Draft, differ 6 of 70 (tla-en, 2026-11-05), no device; left: the saved cell's address in r4 where the native has r2.
 // Draft, differ 38 of 70: once the controlled character stands still on
 // another cell, puts back the cell attributes Func_02002898 saved at
 // (73, 72) and forgets the cell; in scene 0x59 it also records the kind of
@@ -33,7 +32,6 @@ void Func_020026c0(void) {
   s32 z = actor->z >> 20;
   s32 cell = (x << 16) + z;
   s32 last;
-  u8 *work;
 
   if (actor->velocityX != 0 || actor->velocityZ != 0)
     return;
@@ -41,17 +39,19 @@ void Func_020026c0(void) {
   if (last == -1 || cell == last)
     return;
   gData_02006c0c = -1;
-  /* FAKEMATCH(barrier): the empty asm on gData_02006c0c changes its allocation rank; as no
-   * asm, 36 of 70 instructions differ in tla-en. */
-  asm("" : : "r"(gData_02006c0c));
   x = last >> 16;
   z = last & 0xffff;
-  Func_02005db4(73, 72, gData_020073dc, gData_020073e0, gData_020073e4,
+  Call6((void (*)())Func_02005db4, 73, 72, gData_020073dc, gData_020073e0, gData_020073e4,
                 gData_020073e8);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room5) {
-    work = Ram_HeapSlots->eventWork;
-    cell = Func_02000690(2, x, z) >> 8;
-    if (cell != 0)
-      *(s16 *)(work + 0x16a) = cell + 200;
+    u8 *work = Ram_HeapSlots->eventWork;
+    s32 found = Func_02000690(2, x, z) >> 8;
+
+    if (found != 0)
+      {
+        s32 value = found + 200;
+
+        *(s16 *)(work + 0x16a) = value;
+      }
   }
 }

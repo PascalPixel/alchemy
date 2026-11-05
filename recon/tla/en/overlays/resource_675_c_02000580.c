@@ -32,33 +32,30 @@ void Func_02000580(s32 scale) {
   u32 i = 0;
   u32 color, value, mask;
 
-loop:
-  color = *source;
-  value &= 31;
-  value = color >> 10;
-  mask = ~0x3ff;
-  value <<= 10;
-  source++;
-  if (value > 0x7c00)
-    value = 0x7c00;
-  *channel = value;
-  value = color >> 5;
-  value *= scale;
-  value &= 31;
-  value &= mask;
-  channel++;
-  if (value > 0x7c00)
-    value = 0x7c00;
-  *channel = value;
-  value = color & 31;
-  value *= scale;
-  value &= mask;
-  channel++;
-  if (value > 0x7c00)
-    value = 0x7c00;
-  i++;
-  *channel = value;
-  channel++;
-  if (i < count)
-    goto loop;
+  do {
+    color = *source;
+    value = (color >> 10) & 31;
+    mask = ~0x3ff;
+    value <<= 10;
+    source++;
+    if (value > 0x7c00)
+      value = 0x7c00;
+    *channel = value;
+    value = (color >> 5) & 31;
+    value *= scale;
+    value &= mask;
+    channel++;
+    if (value > 0x7c00)
+      value = 0x7c00;
+    *channel = value;
+    value = color & 31;
+    value *= scale;
+    value &= mask;
+    channel++;
+    if (value > 0x7c00)
+      value = 0x7c00;
+    i++;
+    *channel = value;
+    channel++;
+  } while (i < count);
 }

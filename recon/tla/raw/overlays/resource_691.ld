@@ -29,7 +29,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/s0dc0.o"(.text)
         "*/games/tla/src/scene/magma_rock/s0ee4.o"(.text)
         "*/games/tla/src/scene/magma_rock/blink.o"(.text)
-        "*/resource_691_overlay.o"(.text.x02008ff4)
+        "*/games/tla/src/scene/magma_rock/s0ff4.o"(.text)
         "*/games/tla/src/scene/magma_rock/s1084.o"(.text)
         "*/games/tla/src/scene/magma_rock/s10cc.o"(.text)
         "*/games/tla/src/scene/magma_rock/s1110.o"(.text)

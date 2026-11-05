@@ -1,6 +1,3 @@
-// Measured under -Os, 5 November 2026: differ 80 (tla-en); notes below may predate it.
-// Draft, differ 80 of 96: translated from its listing; names and structure still
-// to do.
 #include "iwram_call.h"
 #include "call.h"
 #include "actor.h"
@@ -36,18 +33,31 @@ void Func_020002b4(void) {
     s32 level = Data_02002fd7[(t >> 3) & 15];
 
     {
-      s32 value = (level << 8) | (16 - level);
+      s32 value = level << 8;
+      /* FAKEMATCH(one-pass): an empty block holds the shift first; with no
+       * block, 2 of 96 instructions differ in tla-en. */
+      do {
+      } while (0);
+      value |= 16 - level;
 
       REG_BLDALPHA = value;
     }
-    t++;
+    /* FAKEMATCH(one-pass): the step in a once-only block holds it after the
+     * store; as the plain statement, 2 of 96 instructions differ in tla-en. */
+    do {
+      t++;
+    } while (0);
     *time = t;
   } else if (mode == 2) {
     s32 *time = (s32 *)Data_02003098;
     s32 step = (*time >> 2) % 28;
 
     {
-      s32 value = ((u16 *)gData_02002fe8)[step];
+      u16 *table = (u16 *)gData_02002fe8;
+      /* FAKEMATCH(temporary): the offset in a local puts the table first in the
+       * load; as table[step], 2 of 96 instructions differ in tla-en. */
+      s32 at = step * 2;
+      s32 value = *(u16 *)((u8 *)table + at);
 
       REG_BLDALPHA = value;
     }

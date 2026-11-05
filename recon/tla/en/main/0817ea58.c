@@ -418,8 +418,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         waveX -= 0x200000;
         waveScroll -= 0x200000;
       }
-      for (j = 0, row = 0; j != 2; j++, row += 9) {
-        for (i = 0, slot = &work->sprites[row]; i != 9; i++) {
+      for (j = 0; j != 2; j++) {
+        row = j * 9;
+        for (i = 0; i != 9; i++) {
           Sprite *obj;
           s32 v;
 
@@ -434,10 +435,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             obj = work->sprites[k];
             v = row + (wavePhase + 64 + i) % 8;
           }
-          obj->tile = work->particles[v].timer & 0x3ff;
+          obj->tile = work->particles[v].timer;
           if (pos.x > 0xffffff)
             pos.x -= 0x1200000;
-          Render_ApplyProjectedPlacementFar(*slot++, &pos, &scale, 0);
+          Render_ApplyProjectedPlacementFar(work->sprites[j * 9 + i], &pos, &scale, 0);
         }
       }
     }

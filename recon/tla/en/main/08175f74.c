@@ -1269,14 +1269,18 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       s32 y;
       s32 w;
       s32 h;
+      s32 cosine;
 
       if (row < 0) {
         row = 0;
       }
       w = 4;
       for (i = 0, h = 8; i != 256; i++) {
-        x = ((Trig_Sin(i << 8) * radius * 2) >> 16) + 66;
-        y = ((Trig_Cos(i << 8) * radius) >> 16) + 68;
+        x = (Trig_Sin(i << 8) * radius * 2) >> 16;
+        cosine = Trig_Cos(i << 8);
+        do { } while (0);
+        y = ((cosine * radius) >> 16) + 68;
+        x += 66;
         routine[0](canvas, glyphs + row * 32, x - w / 2, y, w, h);
       }
     }

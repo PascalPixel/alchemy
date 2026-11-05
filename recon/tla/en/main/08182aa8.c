@@ -941,10 +941,10 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           }
           if (frame > Data_0819974e[i] && frame < Data_0819974e[i] + 10) {
             s32 d = frame - Data_0819974e[i];
-            sh = d * 16 - 56;
             s = 0x14000 - (d << 13);
+            texture.pixels = cellBuffer;
             model->kind = 7;
-            texture.pixels = gMapCellBuffer;
+            sh = d * 16 - 56;
             if (sh > 0) {
               sh = 0;
             }

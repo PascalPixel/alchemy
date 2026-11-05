@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 4002 of 7666. Left: far off: the empty
+// asms on scroll, amp, buffer and others are a greedy search's, and stay only
+// because they moved it from 4660 to 4002. The frame is 260 of 264 and the
+// parameter's slot is still in a register.
+
 // Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every
 // slot above the low spills sits 8 low (action 120 against 128), and i takes r10
@@ -374,6 +379,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
             v = 1;
         }
         buffer[i * 0x400 + j] = v;
+        /* FAKEMATCH(barrier): the empty asm gives buffer a reference more, which moves it in the allocators' ranking; as no asm, 4033 of 7666 instructions differ in tla-en. */
+        __asm__("" : : "r"(buffer));
       }
     }
   } else if (kind == 10) {
@@ -801,6 +808,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     work->particle[i].life = 0;
   if (kind != 44) {
     half = BattleUnit_GetEffectHeightFar(action->actor) / 2;
+    /* FAKEMATCH(barrier): the empty asm gives half a reference more, which moves it in the allocators' ranking; as no asm, 4004 of 7666 instructions differ in tla-en. */
+    __asm__("" : : "r"(half));
     p = work->particle;
     for (i = 0; i != 32; i++, p++) {
       p->x = object2->x;
@@ -1192,6 +1201,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
 
         if (kind == 14) {
           amp = 12;
+          /* FAKEMATCH(barrier): the empty asm gives amp a reference more, which moves it in the allocators' ranking; as no asm, 4385 of 7666 instructions differ in tla-en. */
+          __asm__("" : : "r"(amp));
           off = 24;
         } else {
           off = 0;
@@ -1256,6 +1267,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         x = target[0] / 2;
         top = frame * 32 - 232;
         scroll = frame * 16 - 48;
+        /* FAKEMATCH(barrier): the empty asm gives scroll a reference more, which moves it in the allocators' ranking; as no asm, 4628 of 7666 instructions differ in tla-en. */
+        __asm__("" : : "r"(scroll));
         if (top > 0)
           top = 0;
         while (scroll > 104)
@@ -1729,6 +1742,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         struct Particle *p;
         if (action->side == 0) {
           step = (14 - frame) * 3;
+          /* FAKEMATCH(barrier): the empty asm gives step a reference more, which moves it in the allocators' ranking; as no asm, 4005 of 7666 instructions differ in tla-en. */
+          __asm__("" : : "r"(step));
           x = target[0] / 2 + step * 2;
           y = target[1] - step * 4 + 24;
         } else {
@@ -1866,6 +1881,8 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
         model = Render_AllocateModelList(1);
         texture164.width = 5;
         texture164.height = 7;
+        /* FAKEMATCH(barrier): the empty asm gives &texture164 a reference more, which moves it in the allocators' ranking; as no asm, 4009 of 7666 instructions differ in tla-en. */
+        __asm__("" : : "r"(&texture164));
         model->kind = 6;
         model->mesh = gData_08199268;
         model->matrix = matrix;

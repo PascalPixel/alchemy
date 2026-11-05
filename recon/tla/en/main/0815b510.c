@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 4 of 142. Left: one site: a multiply the
+// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
+// too high (its cost of 4), so the constant or the multiply comes ahead of
+// independent rows (the clear's size).
+
 // Near miss, differ 4 of 142 (tla-en, 2026-10-30): one place in the
 // prologue, scheduler order, no device left. The native schedules the
 // size's sign shift (lsrs r3, r6, #31) before the copy of last to r9 and

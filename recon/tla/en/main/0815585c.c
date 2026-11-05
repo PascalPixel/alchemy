@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 49 of 818. Left: the native reloads
+// anchor and work after the first anchor test (ldr r4, [sp, #20]) where reload
+// inherits them here, as if a label stood there at reload; total then stays in
+// r2 for the short case.
+
 // Draft of Func_0815585c, The Broken Seal's BattleEffect_RunDjinniEntrance
 // (games/tbs/src/effect/effect.c): differ 81 of 818 (tla-en,
 // 2026-10-26). The Lost Age reworked it: the kind, the side and the anchor

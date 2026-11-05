@@ -1,3 +1,6 @@
+// Measured 2026-11-05 (tla-en): differ 14 of 1676. Left: seven rows in four
+// sites, see below: a stop for CSE that the scheduler cannot see.
+
 // Draft, differ 14 of 1676 (all six editions, 2026-11-01)
 // BattleEffect_RunThor, Thor (scene kind 12). Instructions, registers, frame and
 // allocation agree; 7 instructions sit in the wrong place, at four sites:

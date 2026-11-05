@@ -1,3 +1,7 @@
+// Measured 2026-11-05 (tla-en): differ 120 of 1146. Left: allocation in the
+// Djinni block: the native holds effect->prelude in r8 and reuses it as the
+// mode 1 argument; a local for it does not take r8.
+
 // Draft, differ 120 of 1146, skeleton gap 28 (tla-en, 2026-11-01)
 // Func_0814fab8 is the body behind the twelve wrappers of
 // stat_boost.c (17 effect kinds).

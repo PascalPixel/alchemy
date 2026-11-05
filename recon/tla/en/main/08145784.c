@@ -1,3 +1,9 @@
+// Measured 2026-11-05 (tla-en): differ 31 of 549. Left: one root: the side is
+// read into r0 with a copy to r3 for the panel index, where the native keeps it
+// in r0 with no copy (gcse's saved copy of effect->side); the rest of the rows
+// are literal pool offsets that follow from the one extra instruction. A pinned
+// local reaches 18 and loses the reload after the first draw.
+
 // Near miss, differ 97 of 549 (the draft has 550).
 
 // Effect kind 40. Twin: The Broken Seal's BattleEffect_RunCounterReveal, ported
@@ -95,7 +101,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
-  cells = gMapCellBuffer;
+
   /* FAKEMATCH: the zero is held in r8 through the setup calls, as in The
    * Broken Seal's twin, for the transfer value. Measured (2026-10-15): the
    * literal 0 stored directly, differ 176 for 97. */
@@ -105,7 +111,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   // panels into the map buffer, two transparent blitters (the second
   // flipped), the wave's HBlank DMA and a transfer that clears the canvas.
   BattleEffect_StartTiledCanvas(0x2000);
-  REG_BG2PA = 0x100;
+REG_BG2PA = 0x100; cells = gMapCellBuffer;
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,
                              1, 1);

@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 2 of 699. Left: one row: a multiply the
+// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
+// too high (its cost of 4), so the constant or the multiply comes ahead of
+// independent rows (movs r3, #58 after the loads).
+
 // Draft, differ 68 of 699: Func_08163e14, unused (no handler, summon case or
 // call reaches it), a second copy of The Broken Seal's
 // BattleEffect_RunNereid (summon 2's, which The Lost Age keeps at

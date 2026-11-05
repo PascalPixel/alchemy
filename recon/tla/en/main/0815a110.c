@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 4 of 989. Left: one site: a load the
+// native issues earlier than alchemy-gcc does, the load and store line K2 calls
+// an approximation (the height table's pool load after spot.y), and its spill's
+// store.
+
 // Draft, differ 34 of 989, skeleton gap 17 (tla-en, 2026-11-01)
 // Twin of The Broken Seal's BattleEffect_RunFlurry (flurry.c): the same
 // approach, packed orb sheet, strike loop, motes and teardown, with the
@@ -364,7 +369,9 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
                                           COMPOSITE_FLIP));
     }
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+
+
+draw[1] = ((struct { u8 before[188]; DrawRectangle draw; } *)Ram_HeapSlots)->draw;
     for (i = 0; i != blows; i++) {
       s32 start = i * RECORD(RECORD_INTERVAL);
 
@@ -423,7 +430,9 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect,
     BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-    draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+
+
+draw[1] = ((struct { u8 before[188]; DrawRectangle draw; } *)Ram_HeapSlots)->draw;
     for (i = 0; i != MOTE_COUNT; i++) {
       struct EffectStep *mote = &MOTES[i];
       s32 size = mote->variant;

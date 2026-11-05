@@ -1,4 +1,4 @@
-// Draft, differ 70 of 2159 (tla-en, 2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
+// Draft, differ 70 of 2159, 30 with slots normalized (tla-en, 2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
 // BattleEffect_RunEclipse. Measured here: a constant loop.c hoists and global.c gives no register is rebuilt at each use by reload, and reload picks its registers round-robin, so a constant that is one (sparks, vertices, mesh2) puts the names right for many lines after it. `movs rN, #128; lsls` in a loop is usually such a hoisted constant; so is a pool load early in a block.
 // Settled: size set twice stays a hoisted register (one set is replaced into the call by loop.c's single-use
 // rule), the copy's destination is the base plus i rows, the ring's angle is its own variable.
@@ -749,18 +749,20 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       q->velocityY = 0;
       q->variant = (Random16() & 15) + 16;
     }
+    {const u16 *cells_ = gData_08197410;
     p = gData_02014000;
     for (i = 0; i != 512; i++, p++) {
       if (p->variant >= 0) {
         s32 n = (p->variant >> 3) + 1;
+        s32 off = n * 2 - 2;
 
-        blit[0](canvas, sprites + gData_08197410[n - 1], (p->x >> 16) - n / 2,
+        blit[0](canvas, sprites + *(u16 *)((u8 *)cells_ + off), (p->x >> 16) - n / 2,
              (p->y >> 16) - n, n, n * 2);
         BattleEffectKernels_IntegrateVector2(p, 60, -0x4000);
         p->variant--;
       }
     }
-    model = Render_AllocateModelList(1);
+    }model = Render_AllocateModelList(1);
     shade = 0;
     if (frame <= 31) {
       s32 s = 0x10000;

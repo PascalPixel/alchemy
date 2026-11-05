@@ -1,4 +1,4 @@
-// Draft, differ 4 of 158 (tla-en, 2026-11-05); 2 with slots and pool offsets normalized, 0 with registers blind too.
+// Draft, differ 4 of 158 (tla-en, 2026-11-05); 2 with slots and pool offsets normalized, 0 with registers blind too. Left: the 0x2b and the address load the other way round (r3, r2); a local, an inline and a one-pass block do not settle it.
 // Draft, differ 62 of 158: the battle test menu, ☀️'s DebugBattle_RunMenu
 // (games/tbs/src/battle/battle.c) in ⚓️'s form: Down is read once on entry,
 // the first encounter is 69, Start calls Func_08118954 (empty), B marks the

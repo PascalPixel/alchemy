@@ -1,7 +1,7 @@
-// Draft, differ 15 (tla-en, 2026-11-05). Func_02001424 of overlay 6ab.
-// The arithmetic stepped in place as the listing does. Left: the first
-// multiply's shift in r3 here, in r5 natively; and object's reload into r0
-// before the child flags call, which reload-cse removes here.
+// Draft, differ 7 of 91 (tla-en, 2026-11-05), from 15: the multiply stepped
+// in r5 through a local. Left: object's reload into r0 before the child flags
+// call, which reload-cse removes here (r0 still holds it from the spawn), one
+// instruction, and the pool and branch offsets it moves.
 #include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 #include "frame.h"
 
@@ -11,20 +11,24 @@ void Func_02001424(void) {
   u32 frame = gFrameCount;
   struct Actor *object;
   struct FieldSprite *sprite;
-  u32 x;
+  u32 x, r;
   s32 z;
   s32 column;
 
   if (frame & 1)
     return;
   if ((frame >> 1) & 1) {
-    x = Random16Far() * 7;
+    r = Random16Far();
+    x = r << 3;
+    x -= r;
     z = Random16Far() * 15;
     x <<= 2;
     x >>= 16;
     column = 155;
   } else {
-    x = Random16Far() * 7;
+    r = Random16Far();
+    x = r << 3;
+    x -= r;
     z = Random16Far() * 15;
     x <<= 2;
     x >>= 16;

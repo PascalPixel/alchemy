@@ -1072,12 +1072,14 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
           next = j + 1;
 
-          for (off = 0; off != next * 2 * next; off++) {
-            u8 v = *src++ - i * 8;
+          for (off = 0; off != (next << 1) * next; off++) {
+            u8 v = *src - i * 8;
 
             if (v > 63)
               v = 0;
-            *out++ = v;
+            *out = v;
+            src++;
+            out++;
           }
         }
       }
@@ -1319,12 +1321,14 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
           next = j + 1;
 
-          for (off = 0; off != next * 2 * next; off++) {
-            u8 v = *src++ - i * 8;
+          for (off = 0; off != (next << 1) * next; off++) {
+            u8 v = *src - i * 8;
 
             if (v > 63)
               v = 0;
-            *out++ = v;
+            *out = v;
+            src++;
+            out++;
           }
         }
       }

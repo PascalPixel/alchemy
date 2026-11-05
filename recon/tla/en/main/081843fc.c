@@ -310,6 +310,10 @@ static inline s32 COPY_WORDS(void *dst, const void *src, s32 size) {
   return Iwram_CopyWords(dst, src, size);
 }
 
+static inline void FILL_WORDS(void *dst, s32 size, s32 value) {
+  Iwram_FillWords(dst, size, value);
+}
+
 // Sets up the alternate blitter as one statement.
 #define LOAD_ALT_BLITTER(slot, colour)                                         \
   do {                                                                         \
@@ -1562,7 +1566,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     bolts = gData_02014000;
     slide = 0;
     slideStep = 0;
-    Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+    FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
     work->transferPending = 1;
     wait(1);
     gBgScroll[1].x = savedScroll;

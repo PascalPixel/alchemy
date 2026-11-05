@@ -386,7 +386,7 @@ void Func_080ec4d4(void) {
         Text_DrawMessageFar(nearestName, work->window, cursorX,
                                cursorY);
         {
-          register s32 value asm("r2") = width;
+          s32 value = width;
           Data_0202a63c = value;
           value = height;
           Data_0202a63e = value;

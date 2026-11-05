@@ -577,12 +577,15 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 b;
         s32 g;
         s32 r;
+        s32 s;
+        s32 t;
 
         s = *e;
+        t = 31;
+        t &= s;
+        r = t + d;
         g = COLOR_GREEN(s) + half;
-        b = COLOR_BLUE(s);
-        r = COLOR_RED(s) + d;
-        b += d / 4;
+        b = COLOR_BLUE(s) + d / 4;
 
         if (r > 31) {
           r = 31;

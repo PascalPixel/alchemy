@@ -1,3 +1,5 @@
+// Draft, differ 12 of 270 (tla-en, 5 November 2026), from 51. Left: case 98's store
+// has the sum in r3 and the offset and value in r2 in the native; turned here.
 // Under -Os, 5 November: differ 51 of 270 (tla-en); older figures below predate it.
 // Draft, differ 104 of 270: the world map's entrance handler: restores the
 // ship's place, then runs the script for the entrance taken. Left: register
@@ -90,14 +92,15 @@ s32 Func_02000dc4(void) {
       Func_020012bc(gMainRoutineWork.entrance);
     break;
   case 77:
-    break;
     Func_020029a4();
+    break;
   case 78:
     Func_02003490();
     break;
   case 59:
-    if (GameFlag_Test(0x90a) == 0 && GameFlag_Test(0xa5f) != 0) {
-      GameFlag_SetBit(0x90a);
+    if (Value1((s32 (*)())GameFlag_Test, 0x90a) == 0 &&
+        GameFlag_Test(0xa5f) != 0) {
+      Call1((void (*)())GameFlag_SetBit, 0x90a);
       Func_02001c5c();
     }
     break;

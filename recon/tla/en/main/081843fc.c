@@ -918,7 +918,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s32 count = 0;
           const s16 *table = Data_08199916;
           s32 n = off + idx;
-          s32 a = table[n];
+          s32 k = n * 2;
+          s32 a = *(const s16 *)((s32)table + k);
           u8 *src;
           s32 bx;
           s32 h;

@@ -1,4 +1,4 @@
-// Draft, differ 141 of 4354 (tla-en, 2026-11-05), draft 4355 instructions; about 40 rows differ once
+// Draft, differ 105 of 4354 (tla-en, 2026-11-05), draft 4355 instructions; about 30 rows differ once
 // registers, slots and offsets are ignored, and the literal pool holds the listing's words in order.
 // Devices held so far, none tagged yet: the two dead tests (frame > twice before the fourth model, actor == 0
 // in the last actor loop), and a pin of the description pointer d to r8.
@@ -16,13 +16,10 @@
 // - frame < 132. add r2, sp, #112 then mov r8, r2 needs a low pseudo; every plain form reaches the rows
 //   movs r2, #112; add r2, sp; mov r8, r2 (the pseudo renames to d or takes REG_EQUIV). The pin gives the row, and
 //   moves reload's order one step at the third model (mov r5, r8 comes first).
-// - Sprite loop's source: row in r1 and the symbol in r3 in the listing, the reverse here. x is before the add, which
-//   is what the listing's r4 and r6 scratches want.
 // - Scheduling ties where the listing sets r0 last: 0xc80's local closed the first; the others (first CpuCopy, the
 //   64 x 64 object, the OAM constant, routine[0]'s canvas twice, LoadBlitter(104, 27)) are open. Sched2 picks the smallest
 //   LUID in a list of three or more, and with two in the list what swap_sort leaves last.
-// - One count row (the 16) moves everything after it by 2 bytes, so the pool barrier at the palette loop sits on
-//   the earlier label: a halfword constant's 256-byte reach depends on that alignment. Those 43 rows should close with it.
+////   the earlier label: a halfword constant's 256-byte reach depends on that alignment. Those 43 rows should close with it.
 // Settled 2026-11-05, each measured:
 // - Reload's rotation in the listing is two ahead from the fourth model's test on. A test of two spilled values
 //   whose body flow deletes keeps both reloads until flow2 and jump2 remove them; 932 to 703. Which values
@@ -34,6 +31,8 @@
 // - frame * 381 first, then depth, then times four. Depth before size in the third model and in the member model; t before
 //   height; step before wave.
 // - The actor x is -(i + 4) * 0x800000; zero stored before y gives it the life to hoist. The speed is its own local after delay.
+// - The sprite's row accumulates the buffer (row += (s32)buffer), x before that, which ties the sum to the row and leaves r4 and r6
+//   for the scratches. The frame 88 palette steps its own pointer, set before the loop, so it comes before t56's hoist.
 // - The column loop steps its own y2, y, x, phase and column, set in the for clause in that order, i last in the step. Its
 //   height is width, so the 56 is live while the system pointer is built.
 // - twenty / 2 inline in the fade; the limit of the counting loop is a local set after i; the palette entry pointer is set

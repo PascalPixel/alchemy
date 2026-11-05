@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 597 of 7666, slots normalized 403, high
-// registers blind too 401, every register blind 179. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 585 of 7666, slots normalized 391, high
+// registers blind too 389, every register blind 175. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -2057,11 +2057,14 @@ CLEAR(buffer, 0x1000);
       Heap_Release(matrix);
       if (kind == 82) {
           s32 m;
+          s32 two;
+          s32 size;
         m = frame / 4;
+        two = m * 2;
         size = 0x10000;
         if (frame > 39)
           size = 0x38000 - (frame << 12);
-        if (m * 2 > 1 && size > 0) {
+        if (two > 1 && size > 0) {
           Func_0815b434(work->frames, m * 4, size);
           HeapSlot_Release(188);
           Func_0818caa8(work->frames, target[0] / 2, target[1], m * 4);

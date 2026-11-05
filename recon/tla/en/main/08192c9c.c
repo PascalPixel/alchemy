@@ -983,15 +983,14 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       colors = Resource_GetTableEntry((s32)&ResourceId_Data0A5);
       Dma_Set(colors, (void *)(PLTT + 0x200), 0x84000080, REG_DMA3);
       colors += 0x200;
-      DECODE_01(colors, Data_02010578);
-      tiles = Data_02010578;
+      Resource_DecodeType01(colors, Data_02010578);
+      tiles = (u8 *)0x02010578;
       for (i = 0; i != 16; i++) {
         struct IrisSprite *obj = Func_0815b290(32, 32, 0x80002000, 0);
 
         work->objects[i] = obj;
         ((struct IrisSpriteFlags *)obj)->priority = 1;
-        Dma_Set(tiles, (void *)OBJ_TILES(obj), 0x84000100, REG_DMA3);
-        tiles += 0x400;
+        Dma_Set(tiles + i * 0x400, (void *)OBJ_TILES(obj), 0x84000100, REG_DMA3);
       }
       colors = Resource_GetTableEntry((s32)&ResourceId_Data09A);
       FILL_WORDS((void *)(PLTT + 0x3e0), 32, -1);

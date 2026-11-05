@@ -40,13 +40,15 @@ void Func_0200099c(void) {
   for (i = 0; i < gData_02001fe4; i++) {
     dst = &BG_PLTT[gData_02001fcc[gData_02001fe8 * gData_02001fe4 + i]];
     r = *color++;
-    b = *color++;
     g = *color++;
+    b = *color++;
     *dst = b << 10 | g << 5 | r;
   }
   dst = &BG_PLTT[gData_02001fd8[gData_02001fe4]];
-  color =
-      (gData_02001fc8 ? gData_02001fdc : gData_02001fe0) + gData_02001fe4 * 3;
+  if (gData_02001fc8)
+    color = gData_02001fdc + gData_02001fe4 * 3;
+  else
+    color = gData_02001fe0 + gData_02001fe4 * 3;
   r = *color++;
   g = *color++;
   b = *color;

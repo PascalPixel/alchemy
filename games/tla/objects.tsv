@@ -3589,7 +3589,7 @@ main	rom_main_09	recon/tla/de/rom	.rom.0018de3c	de
 main	rom_main_09	recon/tla/ja/rom	.rom.0018de40	ja
 main	rom_main_09	recon/tla/raw/0818de3c	.text	en
 main	rom_main_09	recon/tla/raw/0818df5c	.text	en
-main	rom_main_09	recon/tla/raw/0818eda4	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f18eda4	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/canvas_modes	.text
 main	rom_main_09	recon/tla/raw/0818f620	.text	en
 main	rom_main_09	recon/tla/raw/0818fefc	.text	en

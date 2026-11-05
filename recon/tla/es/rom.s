@@ -1422,11 +1422,6 @@ BattleEffect_RunTrident:
 	.thumb_func
 BattleEffect_RunMeteorBlow:
 	.incbin "baserom.gba", 0x0018df5c, 0x00000e48
-	.global BattleEffect_RunLiquifier
-	.type BattleEffect_RunLiquifier, %function
-	.thumb_func
-BattleEffect_RunLiquifier:
-	.incbin "baserom.gba", 0x0018eda4, 0x00000828
 	.section .rom.0018f620, "ax"
 	.balign 4
 	.global Func_0818f620

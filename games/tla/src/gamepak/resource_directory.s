@@ -213,7 +213,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data0C8
 	resource Data0C9, Resource_Data0C9
 	resource , Resource_Data0CA
-	resource , Resource_Data0CB
+	resource Data0CB, Resource_Data0CB
 	resource CloudSwirlSheet, BattleEffect_CloudSwirlSheet
 	resource DustBlobSheet, BattleEffect_DustBlobSheet
 	resource Data0CE, Resource_Data0CE

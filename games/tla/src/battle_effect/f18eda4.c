@@ -1,29 +1,3 @@
-// Measured 2026-11-05 (tla-en): differ 4 of 895. Settled: i & 1 with a constant local at the
-// loop's top (the 1 is rebuilt at reload and the copy of i dies in the and), j = 0 before blend.
-// Left, from the top: half's output copy after size * 2 in both spark loops (order only); the
-// vertices store before logWidth's in the first texture block (the listing's logWidth store comes
-// first, and viewing it as bytes or a second struct does not move it); then the reload rotation
-// is one register behind in the third texture block (listing base r1, pixels r0, mesh r3; here
-// base r0) down to the splash loop's top, and shade -= age * 8; shade += 64.
-// Draft, differ 172 of 895, skeleton gap 32 (tla-en, 2026-11-01)
-// Effect kind 123, written from the listing on The Broken Seal's canvas
-// skeleton (twins: BattleEffect_RunTitanBlade 0.46, by call order
-// BattleEffect_RunJupiter 0.50), with the ARM model renderer for its flashes,
-// shards, splashes and rings.
-// Control flow, givs, frame (92 bytes) and stack slots agree with the native;
-// the gap is instruction order alone. Left: `i & 1` in the spark loops (native
-// copies i and loads the 1 at reload, here the constant's pseudo ties to the
-// result), the third texture block (native loads pixels and mesh before their
-// stores, here kind's store goes first and frame reloads twice), which also
-// rotates r0-r2 through the splash loop.
-// What fixed the shape, kept on purpose: one counter i for every outer loop, j
-// and step local to each loop, projected and model in a block after the
-// sparks, s32 size with (u32)size >> 1, blend as the scaled offset (its spill
-// slot comes before projected's), Trig_Sin(...) * speed, the shard step after
-// start and the splash step before age, age and back at loop level with shade
-// and scale inside the test, and the first picture load by its address.
-// Tried: statement orders of the three texture blocks, blend mutated in place,
-// blend as a pointer (worse). The permute tool refuses a draft outside recon/.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -50,8 +24,8 @@ struct ModelTexture {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
-  void *vertices;
+  const u8 *mesh;
+  u8 *vertices;
   struct ModelTexture *texture;
   s32 shade;
 };
@@ -204,25 +178,24 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
 
         if (step->variant >= 0 && frame >= i / 4) {
           s32 odd = i;
- s32 size;
- s32 blend;
- s32 j;
- odd &= one;
- size = odd + 5;
- j = 0;
- blend = odd * 4;
+          s32 size;
+          s32 blend;
+          s32 j;
+          odd &= one;
+          size = odd + 5;
+          j = 0;
+          blend = odd * 4;
 
           {
             s32 twice = size * 2;
             s32 half = (u32)size >> 1;
 
-          for (; j != 2; j++) {
-            (*(DrawRectangle *)((u8 *)draw + blend))(
-                canvas, graphics + gData_08197410[size - 1],
-                HI(step->x) - half, HI(step->y) - size, size,
-                twice);
-            BattleEffectKernels_IntegrateVector2(step, 64, 0);
-          }
+            for (; j != 2; j++) {
+              (*(DrawRectangle *)((u8 *)draw + blend))(
+                  canvas, graphics + gData_08197410[size - 1],
+                  HI(step->x) - half, HI(step->y) - size, size, twice);
+              BattleEffectKernels_IntegrateVector2(step, 64, 0);
+            }
           }
           step->variant++;
         }
@@ -254,25 +227,24 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         s32 one = 1;
         if (step->variant >= 0) {
           s32 odd = i;
- s32 size;
- s32 blend;
- s32 j;
- odd &= one;
- size = odd + 2;
- j = 0;
- blend = odd * 4;
+          s32 size;
+          s32 blend;
+          s32 j;
+          odd &= one;
+          size = odd + 2;
+          j = 0;
+          blend = odd * 4;
 
           {
             s32 twice = size * 2;
             s32 half = (u32)size >> 1;
 
-          for (; j != 4; j++) {
-            (*(DrawRectangle *)((u8 *)draw + blend))(
-                canvas, graphics + gData_08197410[size - 1],
-                HI(step->x) - half, HI(step->y) - size, size,
-                twice);
-            BattleEffectKernels_IntegrateVector2(step, 64, 0);
-          }
+            for (; j != 4; j++) {
+              (*(DrawRectangle *)((u8 *)draw + blend))(
+                  canvas, graphics + gData_08197410[size - 1],
+                  HI(step->x) - half, HI(step->y) - size, size, twice);
+              BattleEffectKernels_IntegrateVector2(step, 64, 0);
+            }
           }
           step->variant++;
         }
@@ -353,8 +325,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           s32 shade = back * 4;
           s32 scale = age << 14;
 
-          if (age > 7)
-          {
+          if (age > 7) {
             shade -= age * 8;
             shade += 64;
           }

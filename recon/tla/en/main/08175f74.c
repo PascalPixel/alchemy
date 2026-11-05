@@ -391,9 +391,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   canvas = SYSTEM_WORK->canvas;
   work = SYSTEM_WORK->summon;
   unit88 = SYSTEM_WORK->unit88;
-  sprites = (struct SpriteObject **)gMapCellBuffer;
   savedWidth = DISPLAY_1120->unk4;
   glyphs = SYSTEM_WORK->glyphs;
+  sprites = (struct SpriteObject **)gMapCellBuffer;
   scene = SYSTEM_WORK->scene;
   BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
@@ -435,8 +435,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   {
     struct SpriteObject *object = Func_0815b290(64, 64, 0xc0002000, 0);
 
-    object->priority = 3;
     work->objects[0] = object;
+    object->priority = 3;
     slots = TILE_SLOTS;
     CpuCopy(OBJ_VRAM + slots[object->slot].offset, work->buffer, 0x1000);
   }
@@ -449,8 +449,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   Resource_DecodeType01(source, work->buffer);
   for (i = 0; i != 16; i++) {
     struct SpriteObject *object = Func_0815b290(16, 16, 0, 0xf000);
-    object->priority = 1;
     SPRITES[i] = object;
+    object->priority = 1;
     CpuCopy(OBJ_VRAM + slots[object->slot].offset, work->buffer + i * 32,
             32);
     tiles[i] = SPRITES[i]->tile;
@@ -536,11 +536,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       work->transferValue = 75;
       REG_BLDALPHA = 0x1010;
       {
-        s32 *timer = &PARTICLES[0].timer;
-        u32 *b = (u32 *)0x02014004;
-        u32 *a = OAM_BUFFER;
+        s32 *timer;
+        u32 *b;
+        u32 *a;
 
-        for (i = 0; i != 64; i++) {
+        for (i = 0, timer = &PARTICLES[0].timer, b = (u32 *)0x02014004,
+            a = OAM_BUFFER; i != 64; i++) {
           s32 t;
 
           *a = (240 << 16) + 160;
@@ -594,7 +595,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (t56 >= 0 && t56 < 76) {
       s32 scale160[2] = {0x10000, 0x10000};
 
-      scale160[1] = scale160[0] = Trig_Sin(t56 << 7) * 2 + 0x4000;
+      scale160[0] = scale160[1] = Trig_Sin(t56 << 7) * 2 + 0x4000;
       pos232[3] = 0;
       pos232[1] = 0xff0000;
       pos232[0] = 114 << 16;
@@ -613,7 +614,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       u16 *target = Resource_GetTableEntry((s32)&Value_00000075);
       u16 *color = PLTT + 0x60;
 
-      for (i = 0; i != 128; i++) {
+      for (i = 0; i != 128; i++, target++, color++) {
         s32 r = (*color >> 10) & 31;
         s32 g = (*color >> 5) & 31;
         s32 b = *color & 31;
@@ -649,8 +650,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           b--;
         }
         *color = (r << 10) | (g << 5) | b;
-        target++;
-        color++;
       }
       for (i = 0; i != 15; i++) {
         s32 r = 31 - (frame - 132) / 4;
@@ -682,7 +681,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       u16 *target = Resource_GetTableEntry((s32)&Value_0000009b);
       u16 *color = PLTT + 0x100;
 
-      for (i = 0; i != 192; i++) {
+      for (i = 0; i != 192; i++, target++, color++) {
         s32 r = (*color >> 10) & 31;
         s32 g = (*color >> 5) & 31;
         s32 b = *color & 31;
@@ -700,8 +699,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           b--;
         }
         *color = (r << 10) | (g << 5) | b;
-        target++;
-        color++;
       }
     }
     fade = 0;
@@ -728,7 +725,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (fade == 1) {
       u16 *color = Resource_GetTableEntry((s32)&Value_0000009b);
 
-      for (i = 0; i != 192; i++) {
+      for (i = 0; i != 192; i++, color++) {
         s32 r = (*color & 31) + red;
         s32 g = ((*color >> 5) & 31) + green;
         s32 b = ((*color >> 10) & 31) + blue;
@@ -752,7 +749,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           b = 0;
         }
         PLTT[0x100 + i] = (b << 10) | (g << 5) | r;
-        color++;
       }
     }
     if (frame >= 132 && frame < 860) {
@@ -965,7 +961,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           u16 *target = Resource_GetTableEntry((s32)&Value_0000009d);
           u16 *color = PLTT + 0x1c0;
 
-          for (i = 0; i != 32; i++) {
+          for (i = 0; i != 32; i++, target++, color++) {
             s32 r = (*color >> 10) & 31;
             s32 g = (*color >> 5) & 31;
             s32 b = *color & 31;
@@ -983,8 +979,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
               b++;
             }
             *color = (r << 10) | (g << 5) | b;
-            target++;
-            color++;
           }
         }
       }
@@ -1004,7 +998,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           u16 *target = Resource_GetTableEntry((s32)&Value_00000075);
           u16 *color = PLTT + 0x60;
 
-          for (i = 0; i != 128; i++) {
+          for (i = 0; i != 128; i++, target++, color++) {
             s32 r = (*color >> 10) & 31;
             s32 g = (*color >> 5) & 31;
             s32 b = *color & 31;
@@ -1031,8 +1025,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
               b--;
             }
             *color = (r << 10) | (g << 5) | b;
-            target++;
-            color++;
           }
         }
         if (frame > 301) {
@@ -1148,7 +1140,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           u16 *target = Resource_GetTableEntry((s32)&Value_00000075);
           u16 *color = PLTT + 0x60;
 
-          for (i = 0; i != 128; i++) {
+          for (i = 0; i != 128; i++, target++, color++) {
             s32 r = (*color >> 10) & 31;
             s32 g = (*color >> 5) & 31;
             s32 b = *color & 31;
@@ -1184,8 +1176,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
               b -= 2;
             }
             *color = (r << 10) | (g << 5) | b;
-            target++;
-            color++;
           }
         }
       }
@@ -1210,7 +1200,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (frame >= 108 && frame < 132) {
       u16 *color = PLTT + 0x60;
 
-      for (i = 0; i != 128; i++) {
+      for (i = 0; i != 128; i++, color++) {
         s32 r = *color & 31;
         s32 g = ((*color >> 5) & 31) - 1;
         s32 b = (*color >> 10) & 31;
@@ -1234,7 +1224,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           b = 0;
         }
         *color = (b << 10) | (g << 5) | r;
-        color++;
       }
     }
     if (t56 >= 0 && t56 < 36) {
@@ -1267,7 +1256,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       if (frame < 88) {
         u16 *color = Resource_GetTableEntry((s32)&Value_000000b5);
 
-        for (i = 0; i != 16; i++) {
+        for (i = 0; i != 16; i++, color++) {
           s32 add = ((Trig_Cos(t56 << 9) * 12) >> 16) + 16;
           s32 r = (*color & 31) + add;
           s32 g = ((*color >> 5) & 31) + add;
@@ -1283,7 +1272,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             b = 31;
           }
           PLTT[0xe0 + i] = (b << 10) | (g << 5) | r;
-          color++;
         }
       }
     }

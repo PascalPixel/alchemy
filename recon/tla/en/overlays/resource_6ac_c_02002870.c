@@ -1,29 +1,5 @@
-// Draft, differ 67 of 168, skeleton gap 16/13 (tla-en, 2026-11-01)
-// One burst particle thrown from the actor: kind 0x1e9 at a jittered position,
-// random speed and size, its sprite taking the owner sprite's shape and tile.
-// Same shape as 6ab's Func_020024d4 and 6aa's Func_020029c8; no device here.
-// What the form rests on, each measured here:
-// - goto loop: for or do/while (differ 125) hoists the zero and 0x8000 into
-//   high registers and frees i from the stack; the listing rebuilds them.
-//   `i = 0 ... --i >= 0` is loop.c's reversed count, kept by hand.
-// - c, d and e read raw, shifted at the sum: closes the lsls order.
-// - sprite->tile as a bit-field: 5 fewer than an s32 word, and swaps r1 and r3
-//   to the listing's, but its mask pool lands after the epilogue. The listing's
-//   pool before the epilogue, with a `b` over it, needs `s32 word` with
-//   `(word & ~0x3ff) | ...` (differ 72, or 71 with word = ~0x3ff; word &= ...).
-// Left:
-// - source takes r4 with a caller-save slot at sp+0, so the frame is 8 not 4,
-//   i moves to sp+4 and the tail differs; the listing has it in r8. The lreg
-//   dump gives it 12 refs across 2 calls, and 4 * 2 < 12 makes r4 profitable;
-//   it needs 8 refs or 3 calls, and five reads plus a set after the last
-//   multiply give neither. This is most of the 67.
-// - Sharing x and source in one variable lands it in r8 (differ 38 with y
-//   shifted early, 52 with the raw c): rejected, a local reused for a second
-//   value is a `temporary` device, and this round adds none. `register`, y
-//   reused and scoped copies gave nothing.
-// - The stores before Resource_ResetEntry: movs r6, #0 issues after the
-//   animation load; statement order does not move it (three orders here, 1440
-//   in 6ab's draft), and it cannot be judged until source is in r8.
+// Draft, differ 22 (tla-en, 2026-11-05). Func_02002870 of overlay 6ac.
+// Overlay 6ab's Func_020024d4 with this overlay's symbols; see that draft.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -80,9 +56,7 @@ void Func_02002870(struct Actor *actor) {
 
   if (work->owner == NULL)
     return;
-  i = 0;
-next:
-  {
+  for (i = 0; i >= 0; i--) {
     struct Actor *object;
     s32 a, b, c, d, e;
     s32 x, y, z;
@@ -102,7 +76,6 @@ next:
       u32 sum;
       s32 scale;
       s32 half;
-      s32 (*multiply)(s32, s32);
       struct Sprite *sprite;
       struct Sprite *source;
       s32 velocity;
@@ -112,28 +85,24 @@ next:
       sum = Random16Far();
       sum += Random16Far();
       half = 0x8000;
-      /* FAKEMATCH(barrier): the empty asm on half changes its allocation rank; as no
-       * asm, 39 of 168 instructions differ in tla-en. */
-      asm("" : : "r"(half));
       Func_02003120(object, gData_02003304);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
       {
         s32 cosine = Math_Cosine(angle);
-        multiply = Iwram_MulQ16;
         radius <<= 3;
-        object->velocityZ = multiply(radius, cosine);
+        object->velocityZ = Iwram_MulQ16(radius, cosine);
       }
-      velocity = multiply(radius, Math_Sine(angle));
+      velocity = Iwram_MulQ16(radius, Math_Sine(angle));
       object->gravity = 0x547a;
       scale = (sum >> 2) + half;
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = half;
       sprite = object->animation;
-      source = work->owner->animation;
-      object->acceleration = 0;
       object->velocityX = velocity;
+      object->acceleration = 0;
+      source = work->owner->animation;
       Resource_ResetEntry(sprite->vramBlock);
       sprite->keepEntry = 1;
       sprite->vramBlock = work->vramBlock;
@@ -148,6 +117,4 @@ next:
       sprite->tile = source->tile;
     }
   }
-  if (--i >= 0)
-    goto next;
 }

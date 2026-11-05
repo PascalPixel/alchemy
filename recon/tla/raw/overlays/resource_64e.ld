@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/venus_lighthouse/s0150.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/distance.o"(.text)
         "*/games/tla/src/field/object/find_in_cell.o"(.text)
-        "*/resource_64e_overlay.o"(.text.x0200838c)
+        "*/games/tla/src/scene/venus_lighthouse/s038c.o"(.text)
         "*/games/tla/src/field/map/cell_fill_byte.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/cellfill.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/flicker.o"(.text)

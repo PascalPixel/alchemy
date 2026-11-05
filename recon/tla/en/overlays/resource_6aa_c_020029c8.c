@@ -1,5 +1,5 @@
-// Draft, differ 35: overlay 6aa's copy of the function drafted in
-// resource_6ac_c_02002870.c, whose header says what it is and what still differs.
+// Draft, differ 22 (tla-en, 2026-11-05). Func_020029c8 of overlay 6aa.
+// Overlay 6ab's Func_020024d4 with this overlay's symbols; see that draft.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -56,9 +56,7 @@ void Func_020029c8(struct Actor *actor) {
 
   if (work->owner == NULL)
     return;
-  i = 0;
-next:
-  {
+  for (i = 0; i >= 0; i--) {
     struct Actor *object;
     s32 a, b, c, d, e;
     s32 x, y, z;
@@ -78,7 +76,6 @@ next:
       u32 sum;
       s32 scale;
       s32 half;
-      s32 (*multiply)(s32, s32);
       struct Sprite *sprite;
       struct Sprite *source;
       s32 velocity;
@@ -88,28 +85,24 @@ next:
       sum = Random16Far();
       sum += Random16Far();
       half = 0x8000;
-      /* FAKEMATCH(barrier): the empty asm on half changes its allocation rank; as no
-       * asm, 39 of 168 instructions differ in tla-en. */
-      asm("" : : "r"(half));
       Func_02004bd0(object, gData_020056d0);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
       {
         s32 cosine = Math_Cosine(angle);
-        multiply = Iwram_MulQ16;
         radius <<= 3;
-        object->velocityZ = multiply(radius, cosine);
+        object->velocityZ = Iwram_MulQ16(radius, cosine);
       }
-      velocity = multiply(radius, Math_Sine(angle));
+      velocity = Iwram_MulQ16(radius, Math_Sine(angle));
       object->gravity = 0x547a;
       scale = (sum >> 2) + half;
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = half;
       sprite = object->animation;
-      source = work->owner->animation;
-      object->acceleration = 0;
       object->velocityX = velocity;
+      object->acceleration = 0;
+      source = work->owner->animation;
       Resource_ResetEntry(sprite->vramBlock);
       sprite->keepEntry = 1;
       sprite->vramBlock = work->vramBlock;
@@ -124,6 +117,4 @@ next:
       sprite->tile = source->tile;
     }
   }
-  if (--i >= 0)
-    goto next;
 }

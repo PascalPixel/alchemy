@@ -4,61 +4,6 @@
 	.2byte 0x0000
 	.section .text.x020080b6,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x02008e30,"ax",%progbits
-	.balign 4
-	.global Func_02000e30
-	.thumb_func
-Func_02000e30:
-	push {lr}
-	movs r3, #128
-	lsls r3, r3, #19
-	adds r3, #6
-	ldrh r2, [r3]
-	ldr r3, .L_02008e5c
-	ldr r3, [r3]
-	cmp r2, r3
-	bge .L_02008e64
-	ldr r3, .L_02008e60
-	ldrh r2, [r3]
-	movs r3, #128
-	lsls r3, r3, #19
-	adds r3, #20
-	strh r2, [r3]
-	movs r2, #128
-	ldr r3, .L_02008e58
-	lsls r2, r2, #19
-	adds r2, #80
-	b .L_02008e7e
-.L_02008e58:
-	.4byte 0x00000000
-.L_02008e5c:
-	.4byte gData_02002ce0
-.L_02008e60:
-	.4byte gData_02002ce4
-.L_02008e64:
-	ldr r3, .L_02008e8c
-	ldrh r2, [r3]
-	movs r3, #128
-	lsls r3, r3, #19
-	adds r3, #20
-	strh r2, [r3]
-	movs r2, #128
-	ldr r3, .L_02008e84
-	lsls r2, r2, #19
-	adds r2, #82
-	strh r3, [r2]
-	ldr r3, .L_02008e88
-	subs r2, #2
-.L_02008e7e:
-	strh r3, [r2]
-	pop {pc}
-	.2byte 0x0000
-.L_02008e84:
-	.4byte 0x0000100c
-.L_02008e88:
-	.4byte 0x00003f42
-.L_02008e8c:
-	.4byte gData_02002ce6
 	.section .text.x0200961e,"ax",%progbits
 	.2byte 0x0000
 	.section .text.x02009a1c,"ax",%progbits

@@ -1,12 +1,7 @@
-// Draft, differ 54 of 207 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// aerie's closing: by its frame counter it sets the blend and scale (frames 0,
-// 8, 16), parks object 8 below the floor (24), then raises it, spawning effects
-// of type 0x2a0 behind it (25, 26) until it stands high enough, and removes
-// itself after Data_02006b68 frames. Func_020055c4 goes through a forwarding
-// inline, and empty asms with memory clobbers keep GCSE from carrying object
-// 8's y into the raising branches. Left: register choices in the raising
-// branches (the step 0x24000 in r1, the sprite in r1), some loads one
-// instruction off, and the literal pool's order.
+// Draft, differ 56 (tla-en, 2026-11-05). Func_02003370 of overlay 6ae.
+// Barrier gone (a rise from 54), a byte local for the zero. Left: reload's
+// scratch: r2 where the native has r1, from the action store's mask, which
+// natively goes to r3 with r0 kept.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -105,21 +100,21 @@ void Func_02003370(void) {
     object = Func_02005574(
         0x2a0, anchor->x,
         anchor->y - ((Random16Far() * 80 >> 16) << 16) - 0x80000, anchor->z);
-        /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-         * 58 of 207 instructions differ in tla-en. */
-        asm("");
     if (object != NULL) {
+      u8 zero;
+
       sprite = object->animation;
       Func_0200556c(object, gData_02006180);
       Actor_SetPartAttribute(object, 1);
       object->motionFlags = 0;
       object->action = Random16Far() & 0x0ffff000;
+      zero = 0;
       object->unk66 = 0;
       ((u8 *)object)[98] = Random16Far() >> 13;
       object->update = Func_020000e4;
       object->speedLimit = Math_Sine(Random16Far() * 0xffff >> 20) * 24;
       object->speedLimit = anchor->speedLimit >> 16;
-      sprite->unk1a = 0;
+      sprite->unk1a = zero;
       sprite->layer = 1;
     }
   }

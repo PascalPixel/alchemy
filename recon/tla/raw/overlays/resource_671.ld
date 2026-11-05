@@ -24,7 +24,7 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_statue/push.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/setup.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s1124.o"(.text)
-        "*/resource_671_overlay.o"(.text.x020091bc)
+        "*/games/tla/src/scene/gabomba_statue/s11bc.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/warp.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s1630.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s1728.o"(.text)

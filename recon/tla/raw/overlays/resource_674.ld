@@ -49,7 +49,7 @@ SECTIONS
         "*/games/tla/src/scene/islets/s3790.o"(.text)
         "*/resource_674_overlay.o"(.text.x0200b7d8)
         "*/games/tla/src/scene/islets/s3940.o"(.text)
-        "*/resource_674_overlay.o"(.text.x0200ba5c)
+        "*/games/tla/src/scene/islets/s3a5c.o"(.text)
         "*/games/tla/src/scene/islets/s3d0c.o"(.text)
         "*/games/tla/src/scene/islets/import.o"(.text)
         "*/games/tla/src/scene/islets/data.o"(.data)

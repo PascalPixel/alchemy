@@ -279,7 +279,7 @@ static inline s32 COPY_WORDS(void *dst, const void *src, s32 size) {
 
 #define SLOT_ALT 188 // unkb8[1]
 #define OBJ_TILES(obj)                                                         \
-  (0x06010000 + gResourceTableEntries[((u8 *)(obj))[16]].tile)
+  (0x06010000 + gResourceTableEntries[((struct SpriteObject *)(obj))->slot].tile)
 #define HALF_HI(v) (((s16 *)&(v))[1])
 
 // Catastrophe: a black moon rises over a burning city, its towers crack and
@@ -306,8 +306,6 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
   s32 j;
-  s32 c1;
-  s32 c2;
   struct EffectStep *p;
   struct EffectStep *q;
   struct SpriteObject *obj;
@@ -672,7 +670,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           if (j == 0) {
             src = (u16 *)(work->sheet + 0x5002);
             n = 240;
-            dst = (u16 *)(BG_PLTT + 1);
+            dst = (u16 *)(OBJ_PLTT + 1);
           } else {
             dst = (u16 *)(BG_PLTT + 0x60);
             src = (u16 *)(battle + 0x56c);
@@ -918,8 +916,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             s32 half = (bx + (s32)((u32)bx >> 31)) >> 1;
             s32 j;
 
-            for (j = 3; j != 64; j++) {
-              q = &work->particles[j];
+            q = &work->particles[3];
+            for (j = 3; j != 64; j++, q++) {
               if (q->variant < 0) {
                 s32 angle;
                 s32 speed;
@@ -1737,7 +1735,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             }
           }
           q = &Data_02016d00[64];
-          for (c2 = 0; c2 != 100; c2++, q++) {
+          for (i = 0; i != 100; i++, q++) {
             if (q->variant >= 0) {
               s32 n = (q->variant >> 2) + 2;
 

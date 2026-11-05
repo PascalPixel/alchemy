@@ -86,12 +86,10 @@ loop:
     s32 timer = rock->timer;
 
     if ((u32)timer <= 19) {
-      u16 *tileBase = &work->tileBase;
-      s32 frame = timer >> 2;
+      u16 tile = work->tileBase;
       s32 frameMask = 7;
-      s32 base = *tileBase;
 
-      sprite->tile = base + (frame & frameMask) * 8;
+      sprite->tile = tile + ((timer >> 2) & frameMask) * 8;
       Func_02004c6c(sprite, rock);
       Call3((void (*)())Func_02004c74, rock, 63, -0x8000);
       rock->timer++;

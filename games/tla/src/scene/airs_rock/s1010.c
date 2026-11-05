@@ -1,27 +1,3 @@
-// Draft, differ 30 of 543 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 34 of 543 (tla-en); older figures below predate it.
-// Measured 5 November (-Os), differ 37 to 40 of 543: the end's last set is
-// `orrs r5, r3; strb r5`, the result tied to the shared 1 as in overlay 64d's
-// Func_02000510. `shared |= *flags; *flags = shared;` gives that shape; the set
-// before it then builds its own 1 (a known constant) or, past a one-pass block,
-// copies it (adds r3, r6). r5 and r6 stay swapped with gMainRoutineWork.
-// Draft, differ 41 of 543 (was 253): the first beam of light in Air's Rock,
-// the same loading and sparks as Func_020026b8's with object 8 glowing (the
-// leader and object 8 take action variant 1, BG0 sits on BG1's priority 2):
-// the camera moves to (0x14a, 0x49), the light glows in over 64 frames
-// (Func_02000ef4), then for 255 frames it throws sparks (Effect_Spawn with
-// Func_02000f9c) at random places every fourth frame while the blend fades;
-// the cells at (68, 0) and (38, 9) open (Func_02003b50), the light fades over
-// 65 frames (cue 390), the display is put back and flag 0x858 set.
-// Written as overlay 664's Func_02003654 (adopted): the spark loop's forms,
-// calls through CallN, the spark options and velocity declared in the spark
-// block (so the frame matches: options at sp+16, velocity at sp+56, the fill
-// at sp+70) and the spark loop counting in a counter of its own (with one
-// counter the native's r7 goes to the frame count's low bits).
-// Left: the end keeps the zero of the glow byte apart from the later zeros
-// (the native builds one 0 in r5 for the glow byte, the update and BLDCNT)
-// and swaps r5 and r6 for gMainRoutineWork; order around the BLDCNT store (the
-// one-pass block there is a trial), the spark call's options and the fade.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -59,8 +35,7 @@ void Func_020008ac(void);
 u32 Random16Far(void);
 void Func_02003b28(struct Actor *object, s32 mode);
 void Func_02003b38(struct Actor *object, const u8 *script);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        u32 value);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void FieldEvent_Wait(s32 frames);
 void wait(s32 frames);
@@ -92,7 +67,7 @@ void Func_02003b80(s32 x, s32 z, s32 a, s32 b, s32 width, s32 height);
 void Func_02003b50(void);
 
 void Func_02001010(void) {
-  s32 shared;
+  struct MainRoutineWork *work;
   u16 *buffer = Heap_Alloc(0x680);
   u16 *cell;
   struct Actor *spark;
@@ -102,7 +77,8 @@ void Func_02001010(void) {
   Func_02003bc8();
   Func_02003c88(0);
   REG_DISPCNT &= ~0x100;
-  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles), buffer);
+  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
+                buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
@@ -144,8 +120,7 @@ row:
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(
-          0x2a0, Actor_GetById(8)->x, Actor_GetById(8)->y,
-          Actor_GetById(8)->z);
+          0x2a0, Actor_GetById(8)->x, Actor_GetById(8)->y, Actor_GetById(8)->z);
       {
         s32 priority = ((s8 *)Actor_GetById(8)->animation)[9] & 12;
 
@@ -174,7 +149,7 @@ row:
   Task_Add(Func_02000ef4, 0xc80);
   Func_02003cd8(163);
   REG_BLDALPHA = 0xf00;
-    REG_BLDCNT = 0x3f41;
+  REG_BLDCNT = 0x3f41;
   REG_DISPCNT |= 0x100;
   Call3((void (*)())Func_02003b98, 0x10000, 0x10000, 0x10000);
   i = 0;
@@ -192,25 +167,25 @@ glow:
   {
     u32 j = 0;
 
-burst:
-  j++;
-  if ((j & 3) == 0) {
-    struct Vector3 velocity;
-    struct EffectOptions options;
+  burst:
+    j++;
+    if ((j & 3) == 0) {
+      struct Vector3 velocity;
+      struct EffectOptions options;
 
-    options.priority = 1;
-    options.update = Func_02000f9c;
-    velocity.x = 0;
-    velocity.y = 0;
-    velocity.z = 0xfffe0000;
-    x = ((Random16Far() % 144) << 16) + 0x1000000;
-    Effect_Spawn(x, 0, (Random16Far() % 144) << 16, velocity.x, velocity.y,
-                 velocity.z, EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
-                 &options);
-  }
-  REG_BLDALPHA = (((j >> 4) & 15) << 8) | (16 - ((j >> 4) & 15));
-  ((u8 *)Actor_GetById(8))[98] = Random16Far() & 7;
-  FieldEvent_Wait(1);
+      options.priority = 1;
+      options.update = Func_02000f9c;
+      velocity.x = 0;
+      velocity.y = 0;
+      velocity.z = 0xfffe0000;
+      x = ((Random16Far() % 144) << 16) + 0x1000000;
+      Func_0200015c(x, 0, (Random16Far() % 144) << 16, velocity.x, velocity.y,
+                   velocity.z, EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY | 1,
+                   &options);
+    }
+    REG_BLDALPHA = (((j >> 4) & 15) << 8) | (16 - ((j >> 4) & 15));
+    ((u8 *)Actor_GetById(8))[98] = Random16Far() & 7;
+    FieldEvent_Wait(1);
     if (j != 255)
       goto burst;
   }
@@ -232,40 +207,36 @@ fade:
   if (i != 65)
     goto fade;
   Task_RemoveFar(Func_02000ef4);
-  ((u8 *)Actor_GetById(8))[99] = 0;
-  wait(30);
-  Actor_GetById(8)->update = 0;
-  Actor_SetPartAttribute(Actor_GetById(8), 6);
-  Func_02003ba0();
-  FieldEvent_Wait(60);
-  REG_BLDCNT = 0;
+  {
+    s32 zero = 0;
+
+    ((u8 *)Actor_GetById(8))[99] = zero;
+    wait(30);
+    Actor_GetById(8)->update = (void (*)(void))zero;
+    Actor_SetPartAttribute(Actor_GetById(8), 6);
+    Func_02003ba0();
+    FieldEvent_Wait(60);
+    REG_BLDCNT = zero;
+  }
   Func_02003b00();
   Func_02003af8();
-  Func_02003bb8(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 34 of 543 instructions differ
-   * in tla-en. */
-  do {
-    REG_BG1CNT &= ~3;
-  } while (0);
-  shared = 1;
-  /* FAKEMATCH(barrier): the empty asm on shared changes its allocation rank; as no
-   * asm, 32 of 543 instructions differ in tla-en. */
-  asm("" : : "r"(shared));
-  REG_BG1CNT |= shared;
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
+  work = &gMainRoutineWork;
+  Func_02003bb8(work->paletteGlow[0], work->paletteGlow[1]);
+  REG_BG1CNT &= ~3;
+  REG_BG1CNT |= 1;
   {
-    u8 *owner = &Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags;
+    s32 *ownerId = &work->currentOwner;
 
-    *owner = shared | *owner;
-  }
-  {
-    u8 *flags = &Actor_GetById(8)->priorityFlags;
+    Actor_GetById(*ownerId)->priorityFlags &= ~32;
+    Actor_GetById(*ownerId)->priorityFlags |= 1;
+    {
+      u8 *flags = &Actor_GetById(8)->priorityFlags;
+      u8 v = *flags | 1;
 
-    shared |= *flags;
-    *flags = shared;
+      *flags = v;
+    }
+    Camera_FollowActor(*ownerId, 1);
   }
-  Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
   GameFlag_SetBit(0x858);
   Func_02003bd0();

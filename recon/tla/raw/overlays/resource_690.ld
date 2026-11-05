@@ -23,7 +23,7 @@ SECTIONS
         "*/games/tla/src/scene/settlements/s0c1c.o"(.text)
         "*/games/tla/src/scene/settlements/s0c44.o"(.text)
         "*/games/tla/src/scene/settlements/s0cfc.o"(.text)
-        "*/resource_690_overlay.o"(.text.x02008d14)
+        "*/games/tla/src/scene/settlements/s0d14.o"(.text)
         "*/games/tla/src/scene/settlements/s0e04.o"(.text)
         "*/resource_690_overlay.o"(.text.x02008e30)
         "*/games/tla/src/scene/settlements/s0ed0.o"(.text)

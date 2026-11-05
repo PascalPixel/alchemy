@@ -1,4 +1,4 @@
-// Under -Os, 5 November: differ 78 of 106 (tla-en); older figures below predate it.
+// Draft, differ 6 of 106 (tla-en, 2026-11-05): the two-compare arms read through a local again; the older notes below still hold.
 // Near miss, differ 6 of 106 (tla-en, 2026-10-31): both rows come from one
 // insn, the state pointer's add. In the native it is in the jump-table block
 // before sched2: its bb2 uses no call result, so the call keeps a low priority
@@ -55,28 +55,44 @@ void Func_02002d50(void) {
       Func_020029a4();
     break;
   case 15:
-    if (*state == 1)
-      Func_02002830();
-    else if (*state == 4 && !GameFlag_Test(0x206))
-      Func_02002b50();
+    {
+      u8 current = *state;
+
+      if (current == 1)
+        Func_02002830();
+      else if (current == 4 && !GameFlag_Test(0x206))
+        Func_02002b50();
+    }
     break;
   case 16:
-    if (*state == 1)
-      Func_02002b18();
-    else if (*state == 5)
-      Func_02002c50();
+    {
+      u8 current = *state;
+
+      if (current == 1)
+        Func_02002b18();
+      else if (current == 5)
+        Func_02002c50();
+    }
     break;
   case 17:
-    if (*state == 2)
-      Func_0200291c();
-    else if (*state == 4)
-      Func_02002c18();
+    {
+      u8 current = *state;
+
+      if (current == 2)
+        Func_0200291c();
+      else if (current == 4)
+        Func_02002c18();
+    }
     break;
   case 18:
-    if (*state == 2)
-      Func_02002a2c();
-    else if (*state == 5 && !GameFlag_Test(0x206))
-      Func_02002c88();
+    {
+      u8 current = *state;
+
+      if (current == 2)
+        Func_02002a2c();
+      else if (current == 5 && !GameFlag_Test(0x206))
+        Func_02002c88();
+    }
     break;
   case 19:
     if (*state == 3)
@@ -85,7 +101,7 @@ void Func_02002d50(void) {
   case 20:
     if (*state == 3)
       Func_020029dc();
-    break;
     GameFlag_ClearBit(0x206);
+    break;
   }
 }

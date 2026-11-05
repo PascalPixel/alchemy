@@ -17,7 +17,7 @@ SECTIONS
         "*/games/tla/src/scene/tundaria_tower/scene_tables.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/exits.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/script1.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x020085d0)
+        "*/games/tla/src/scene/tundaria_tower/s05d0.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/fall.o"(.text)
         "*/resource_68f_overlay.o"(.text.x02008708)
         "*/games/tla/src/scene/tundaria_tower/events_a.o"(.text)

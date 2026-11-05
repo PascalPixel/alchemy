@@ -91,14 +91,14 @@ void Func_02000580(void) {
         open = slots->unk18[i];
         closed = open ^ 1;
         if (tick & 1) {
-          Func_02002968(open * 3 + (s16)a, (s16)b + row, 3, 1,
+          Call6((void (*)())Func_02002968, open * 3 + (s16)a, (s16)b + row, 3, 1,
                         (s16)c, (s16)d + row);
-          Func_02002958(open * 3 + gate->unk00[2], gate->unk00[3] + row, 3, 1,
+          Call6((void (*)())Func_02002958, open * 3 + gate->unk00[2], gate->unk00[3] + row, 3, 1,
                         gate->unk00[6], gate->unk00[7] + row);
         } else {
-          Func_02002968(closed * 3 + (s16)a, (s16)b + row, 3,
+          Call6((void (*)())Func_02002968, closed * 3 + (s16)a, (s16)b + row, 3,
                         1, (s16)c, (s16)d + row);
-          Func_02002958(closed * 3 + gate->unk00[2], gate->unk00[3] + row, 3,
+          Call6((void (*)())Func_02002958, closed * 3 + gate->unk00[2], gate->unk00[3] + row, 3,
                         1, gate->unk00[6], gate->unk00[7] + row);
         }
         s->unk14[i]++;

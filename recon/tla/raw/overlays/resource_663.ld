@@ -33,7 +33,7 @@ SECTIONS
         "*/resource_663_overlay.o"(.text.x0200895c)
         "*/games/tla/src/scene/airs_rock/s0ef4.o"(.text)
         "*/games/tla/src/scene/airs_rock/s0f9c.o"(.text)
-        "*/resource_663_overlay.o"(.text.x02009010)
+        "*/games/tla/src/scene/airs_rock/s1010.o"(.text)
         "*/resource_663_overlay.o"(.text.x02009560)
         "*/games/tla/src/scene/airs_rock/s18ac.o"(.text)
         "*/games/tla/src/scene/airs_rock/s18d8.o"(.text)

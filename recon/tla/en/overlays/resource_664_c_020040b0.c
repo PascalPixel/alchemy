@@ -12,7 +12,7 @@
 #include "system/vector3.h"
 
 extern u32 gFrameCount;
-u16 Random16Far(void);
+u32 Random16Far(void);
 void Func_020002f4(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    const struct EffectOptions *options);
@@ -23,11 +23,14 @@ void Func_020040b0(struct Actor *object) {
   s32 frame = gFrameCount & 7;
 
   if (frame == 0) {
+    s32 mask;
+
     options.palette = 7;
-    position.x = object->x + (((Random16Far() & 31) - 16) << 16);
     options.type = 673;
     options.priority = 1;
-    position.y = object->y + ((Random16Far() & 31) << 16) + 0x80000;
+    mask = 31;
+    position.x = object->x + (((Random16Far() & mask) - 16) << 16);
+    position.y = object->y + ((Random16Far() & mask) << 16) + 0x80000;
     position.z = object->z;
     Func_020002f4(
         position.x, position.y, position.z + 0x40000, 0, 0x8000, frame,

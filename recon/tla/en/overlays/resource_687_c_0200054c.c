@@ -1,4 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 220 (tla-en); notes below may predate it.
+// Measured under -Os, 5 November 2026: differ 259 (tla-en), center a struct, so the address is rebuilt where the native rebuilds it. Older notes below predate it.
 // Draft, differ 206 of 315, skeleton gap 54 (tla-en, 2026-11-01): control flow,
 // calls, the frame (88 bytes, same slots) and memory accesses follow the
 // listing; what is left comes from two things, both GCSE's. The listing
@@ -53,18 +53,17 @@ void Func_0200054c(void) {
   struct SeaOfTimeEventWork0154 *work =
       (struct SeaOfTimeEventWork0154 *)Ram_HeapSlots->eventWork;
   struct SeaOfTimeObject *object = Actor_GetById(8);
-  s32 center[3];
+  struct { s32 x, y, z; } center;
   s32 ends[4];
   struct SeaOfTimeSpark spark;
   s32 *pos;
-  s32 *offset;
-  s32 cosine;
-  s32 sine;
   s32 dx;
   s32 dz;
   s32 x;
   s32 z;
   s32 phase;
+  s32 frame;
+  s32 *counter;
   s32 c;
   s32 s;
   s32 flip;
@@ -72,75 +71,81 @@ void Func_0200054c(void) {
   s32 py;
   s32 pz;
 
-  offset = center;
   pos = &object->x;
   switch (work->unk154) {
   case 30:
-    offset[0] = 0;
-    offset[2] = -1;
+    center.x = 0;
+    center.z = -1;
     break;
   case 32:
-    offset[0] = -1;
-    offset[2] = 0;
+    center.x = -1;
+    center.z = 0;
     break;
   case 34:
-    offset[0] = 0;
-    offset[2] = 1;
+    center.x = 0;
+    center.z = 1;
     break;
   case 36:
-    offset[0] = 1;
-    offset[2] = 0;
+    center.x = 1;
+    center.z = 0;
     break;
   case 31:
-    offset[0] = -1;
-    offset[2] = -1;
+    center.x = -1;
+    center.z = -1;
     break;
   case 33:
-    offset[0] = -1;
-    offset[2] = 1;
+    center.x = -1;
+    center.z = 1;
     break;
   case 35:
-    offset[0] = 1;
-    offset[2] = 1;
+    center.x = 1;
+    center.z = 1;
     break;
   case 37:
-    offset[0] = 1;
-    offset[2] = -1;
+    center.x = 1;
+    center.z = -1;
     break;
   }
-  center[0] = (((object->x >> 21) + center[0]) << 21) + 0x100000;
-  center[2] = (((object->z >> 21) + center[2]) << 21) + 0x100000;
-  if (Func_020003d0(pos, center) > 46) {
-    if (*pos < center[0])
-      *pos += 0x8000;
-    else
-      *pos -= 0x8000;
+  center.x = (((object->x >> 21) + center.x) << 21) + 0x100000;
+  center.z = (((object->z >> 21) + center.z) << 21) + 0x100000;
+  if (Func_020003d0(pos, &center) > 46) {
+    {
+      s32 step;
+
+      if (*pos < center.x)
+        step = 0x8000;
+      else
+        step = -0x8000;
+      *pos += step;
+    }
     z = object->z;
-    if (z < center[2])
+    if (z < center.z)
       z += 0x8000;
     else
       z -= 0x8000;
     object->z = z;
   }
-  if (Func_0200034c(1, center[0] >> 20, center[2] >> 20) >> 8 == 40) {
-    cosine = SeaOfTime_Cos(-0x200);
-    sine = SeaOfTime_Sin(-0x200);
+  if (Func_0200034c(1, center.x >> 20, center.z >> 20) >> 8 == 40) {
+    c = SeaOfTime_Cos(-0x200);
+    s = SeaOfTime_Sin(-0x200);
   } else {
-    cosine = SeaOfTime_Cos(0x200);
-    sine = SeaOfTime_Sin(0x200);
+    c = SeaOfTime_Cos(0x200);
+    s = SeaOfTime_Sin(0x200);
   }
-  dx = object->x - center[0];
-  dz = object->z - center[2];
-  z = Iwram_MulQ16(dx, sine) + Iwram_MulQ16(dz, cosine);
-  x = Iwram_MulQ16(dx, cosine) - Iwram_MulQ16(dz, sine);
-  x += center[0];
-  z += center[2];
+  dx = object->x - center.x;
+  dz = object->z - center.z;
+  x = Iwram_MulQ16(dx, c) - Iwram_MulQ16(dz, s);
+  z = Iwram_MulQ16(dx, s) + Iwram_MulQ16(dz, c);
+  x += center.x;
+  z += center.z;
   object->z = z;
   object->x = x;
 
-  phase = gFrameCount & 3;
+  counter = &gFrameCount;
+  frame = *counter;
+  phase = frame & 3;
   if (phase == 0) {
-    if ((gFrameCount & 10) == 0)
+    if ((frame & 10) == 0)
       Func_02002054(0x255);
     spark.mode = 2;
     spark.kind = 7;
@@ -160,7 +165,7 @@ void Func_0200054c(void) {
       ends[1] += -0xc0000;
       ends[3] += -0xc0000;
     }
-    flip = gFrameCount & 4;
+    flip = *counter & 4;
     px = ends[0];
     py = object->y;
     pz = ends[1];

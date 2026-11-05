@@ -14,7 +14,7 @@ SECTIONS
         "*/games/tla/src/scene/world_map/s06d0.o"(.text)
         "*/games/tla/src/scene/world_map/s0918.o"(.text)
         "*/games/tla/src/scene/world_map/s0994.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x02008be0)
+        "*/games/tla/src/scene/world_map/s0be0.o"(.text)
         "*/games/tla/src/scene/world_map/s0d1c.o"(.text)
         "*/games/tla/src/scene/world_map/tower_calls.o"(.text)
         "*/games/tla/src/scene/world_map/scene_events.o"(.text)

@@ -1,4 +1,4 @@
-// Under -Os, 5 November: differ 68 of 131 (tla-en); older figures below predate it.
+// Draft, differ 27 of 131 (tla-en, 2026-11-05): level is shifted and lowered for the shape call; left: the native reads the attribute before it stores the shape, and one instruction.
 // Draft, differ 85 of 131, skeleton gap 11/8 (tla-en, 2026-11-01)
 // Lowers the cells under the held actor (or the one the leader carries) and
 // keeps it at 0xcbc of the event work.
@@ -109,13 +109,15 @@ void Func_02000d78(u16 *list) {
       s32 shape = Func_02003c10(*layer, held->x, held->z);
       s32 level = Map_GetTerrainHeight(*layer, held->x, held->z);
       s32 index = Func_02003db0(held);
+      s32 value;
 
-      *shapes = Func_02003dd0(*layer, shape, level);
-      level >>= 19;
-      level -= 4;
       shapes += index;
-      cells[index].attributeB &= 63;
-      cells[index + 128].attributeB &= 191;
+      value = Func_02003dd0(*layer, shape, (level >> 19) - 4);
+      cells += index;
+      *shapes = value;
+      cells->attributeB &= 63;
+      cells += 128;
+      cells->attributeB &= 191;
       HELD_OBJECT(work) = held;
     }
     list++;

@@ -35,7 +35,7 @@ SECTIONS
         "*/resource_661_overlay.o"(.text.x020093f8)
         "*/games/tla/src/scene/yampi_desert/s1518.o"(.text)
         "*/games/tla/src/scene/yampi_desert/events_a.o"(.text)
-        "*/resource_661_overlay.o"(.text.x02009690)
+        "*/games/tla/src/scene/yampi_desert/s1690.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s1b70.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s1bec.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s1c5c.o"(.text)

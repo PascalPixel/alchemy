@@ -1,10 +1,3 @@
-// Draft, differ 12 of 86 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 12 of 86 (tla-en); older figures below predate it.
-// Draft of Func_0200369c (overlay 655), differ 12 of 86: the room entry of
-// Func_02003aa0 with its own cells. One spot is left: the native reads the
-// entrance as an unsigned halfword (ldrh r5), tests 11 to 39 on it, and
-// sign-extends it only after the call, adding the flag base into r5 before
-// copying it to r0; an s16 local reads it sign-extended once (ldrsh).
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -31,11 +24,14 @@ void Func_0200369c(void) {
     Func_02003be0(3, 69, 30, 93, 1, 4);
   }
   {
-    s16 entrance = gMainRoutineWork.entrance;
+    s32 entrance = *(u16 *)&gMainRoutineWork.entrance;
 
-    if (entrance >= 11 && entrance <= 39) {
+    if ((u16)(entrance - 11) <= 28) {
       Func_02001804();
-      GameFlag_SetBit(entrance + 789);
+      entrance <<= 16;
+      entrance >>= 16;
+      entrance += 789;
+      GameFlag_SetBit(entrance);
     }
   }
   Func_0200353c();

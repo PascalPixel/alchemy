@@ -170,8 +170,8 @@ void Func_02001828(void) {
     gust->scaleY += 0x1999;
     FieldEvent_Wait(1);
   }
-  gust->z = TARGET(effect)->z + 0xffff0000;
   Func_02005d94(gust);
+  gust->z = TARGET(effect)->z + 0xffff0000;
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(

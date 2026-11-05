@@ -782,7 +782,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
         frame = 446;
       } else {
-        FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
+        Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
         work->transferPending = 1;
         wait(1);
         break;
@@ -929,7 +929,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     if (frame == 176) {
       u8 *colors;
 
-      FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       work->transferPending = 1;
       wait(1);
       battle[0x867] = 1;
@@ -1321,7 +1321,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
     // The fountain: the second backdrop, the motes and the light shafts.
     if (frame == 446) {
-      FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
+      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       Render_ResetTransformState();
       BattleBackground_LoadFar(1, (s32)&ResourceId_Data077, 0);
       off = 0x302;

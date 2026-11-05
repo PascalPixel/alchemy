@@ -81,8 +81,11 @@ void Func_02002250(void) {
         bubble->x = 0;
       bubble->age++;
       x = bubble->x - viewX;
-      z = bubble->z - viewZ - lift;
-      y = bubble->y - lift;
+      y = bubble->y;
+      z = bubble->z;
+      y -= lift;
+      z -= viewZ;
+      z -= lift;
       screenY = z - y;
       y += z;
       y >>= 16;

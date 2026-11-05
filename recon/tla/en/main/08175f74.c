@@ -1746,7 +1746,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
             BattleEffect_LoadBlitter(104, 19);
           }
           SYSTEM_WORK->blit(canvas, work->buffer, column->x - halfCell, column->y,
-                            halfCell, 56);
+                            halfCell, width);
         }
         }
         HeapSlot_Release(104);

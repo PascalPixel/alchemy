@@ -312,14 +312,15 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       targets[0] = 255;
       BattleActor_SpawnObjectsForListFar(targets, 0);
       BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
-      for (i = 0, col = (u16 *)0x050000c0; i != 128; i++, col++) {
+      for (col = (u16 *)0x050000c0, i = 0; i != 128; i++, col++) {
         s32 mid;
+        s32 s;
 
-        r = *col & 0x1f;
+        s = *col & 0x1f;
         mid = (*col >> 5) & 0x1f;
         b = ((*col >> 10) & 0x1f) - 4;
         g = mid - 4;
-        r -= 4;
+        r = s - 4;
         if (g < 0)
           g = 0;
         if (r < 0)

@@ -251,11 +251,11 @@ struct SystemWork {
   struct SummonWork *summon;
   u8 *canvas;
   u8 *glyphs;
-  void (*blit)(void *, const void *, s32, s32, s32, s32);
+  s32 (*blit)(void *, const void *, s32, s32, s32, s32);
   u8 unk6c[0x44];
   struct Unit88 *unit88;
   u8 unkb4[0x8];
-  void (*blitBc)(void *, const void *, s32, s32, s32, s32);
+  s32 (*blitBc)(void *, const void *, s32, s32, s32, s32);
 };
 
 struct Input {
@@ -288,7 +288,7 @@ struct RegisterQueue {
   struct RegisterQueueEntry entries[32];
 };
 
-typedef void (*DrawRectangleFn)(void *canvas, const void *source, s32 x, s32 y,
+typedef s32 (*DrawRectangleFn)(void *canvas, const void *source, s32 x, s32 y,
                                 s32 width, s32 height);
 
 #define SYSTEM_WORK ((struct SystemWork *)0x03000000)
@@ -380,7 +380,7 @@ void Graphics_LoadGreyRamp(void);
 void Func_0815b434(void *, s32, s32);
 void HeapSlot_Release(s32);
 void Func_0818caa8(void *, s32, s32, s32);
-void BattleEffect_LoadBlitter(s32, s32);
+s32 BattleEffect_LoadBlitter(s32, s32);
 void ColorBuffer_ScaleFar(void *, void *, s32, s32);
 struct ActorPos **GetBattleObjectSlotFar(s32);
 void Func_0814cd48(s32, s32, s32, s32, s32);
@@ -840,9 +840,12 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           work->objects[12] = object;
           object->priority = 3;
           tileSlots = TILE_SLOTS;
-          CpuCopy(OBJ_VRAM + tileSlots[object->slot].offset,
-                  work->buffer + 0x2400, 0x800);
-          do { } while (0);
+          {
+            u8 *vram = OBJ_VRAM;
+
+            vram += tileSlots[object->slot].offset;
+            CpuCopy(vram, work->buffer + 0x2400, 0x800);
+          }
           object = Func_0815b290(64, 64, 0xc0002000, 0);
           work->objects[13] = object;
           object->priority = 2;

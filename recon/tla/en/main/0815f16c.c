@@ -2252,9 +2252,13 @@ CLEAR(buffer, 0x1000);
       }
       EffectPosition_ProjectScaledBattler(action->actor, point2);
       point2[0] = point2[0] / 2;
-      p = SPARKS;
-      for (i = 0; i != 16; i++, p++) {
+      for (i = 0; i != 16; i++) {
+        struct Particle *p;
+        p = &SPARKS[i];
         if (p->life >= 0 && p->z > 0) {
+          s32 m;
+          s32 x;
+          s32 y;
           m = __modsi3(i, 3);
           x = point2[0] + ((p->z * Trig_Sin(p->x)) >> 16);
           y = point2[1] + ((p->z * Trig_Cos(p->x)) >> 16);

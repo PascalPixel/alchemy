@@ -78,7 +78,6 @@ void Func_0200297c(void) {
   s32 result;
   s32 i;
   s32 j;
-  s32 running; // One constant for its whole life: see the header.
 
   if (gMainRoutineWork.renderMode == 0) {
     Func_02002800(-10, 0);
@@ -89,13 +88,7 @@ void Func_0200297c(void) {
     actor->update = Func_02002954;
     actor->angle = 0x4000;
     Func_02005480(actor, 49);
-    running = 1;
-    /* FAKEMATCH(barrier): the empty asm on running changes its allocation rank; as no
-     * asm, 74 of 236 instructions differ in tla-en. */
-    asm("" : : "r"(running));
-    goto test;
-  top:
-    {
+    while (1) {
       result = Func_020054d8(actor->terrainId, actor->x, actor->z);
       stepX = &work->stepX;
       stepZ = &work->stepZ;
@@ -103,35 +96,29 @@ void Func_0200297c(void) {
         actor->velocityX = *stepX << 17;
         actor->velocityZ = *stepZ << 17;
         actor->acceleration = 0x1000;
-        i = 0;
-      sliding:
-        position.x = actor->x + (*stepX << 19);
-        position.y = actor->y;
-        position.z = actor->z + (*stepZ << 19);
-        if (Func_020054f8(actor, &position) != 0) {
-          actor->velocityX = 0;
-          actor->velocityZ = 0;
-          goto done;
+        for (i = 0; i <= 9; i++) {
+          position.x = actor->x + (*stepX << 19);
+          position.y = actor->y;
+          position.z = actor->z + (*stepZ << 19);
+          if (Func_020054f8(actor, &position) != 0) {
+            actor->velocityX = 0;
+            actor->velocityZ = 0;
+            break;
+          }
+          wait(1);
         }
-        wait(1);
-        i++;
-        if (i <= 9)
-          goto sliding;
-        goto done;
+        break;
       }
       position.x = actor->x + (*stepX << 19);
       position.y = actor->y;
       position.z = actor->z + (*stepZ << 19);
       result = Func_020054f8(actor, &position);
-      /* FAKEMATCH(barrier): the empty asm on result changes its allocation rank; as no
-       * asm, 71 of 236 instructions differ in tla-en. */
-      asm("" : "=r"(result) : "0"(result));
       if (result > 0)
-        goto done;
+        break;
       if (result < 0) {
         actor->angle = 0x4000;
         Call3((void (*)())Func_020055a8, gMainRoutineWork.currentOwner, 6, -1);
-        goto done;
+        break;
       }
       {
         s32 radius = actor->radius - 2;
@@ -141,26 +128,15 @@ void Func_0200297c(void) {
 
         other = Ram_HeapSlots->scriptObjects;
         flags = &other->collisionFlags;
-        j = 0;
-      scan:
-        if (other->script != NULL && (*flags & 1) != 0 && other != actor) {
-          if (Func_02005538(&other->x, radius, &position, other->radius - 2) >=
-              0) {
-            wait(1);
-            goto done;
+        for (j = 0; j <= 63; j++, flags += sizeof(struct Actor), other++) {
+          if (other->script != NULL && (*flags & 1) != 0 && other != actor) {
+            if (Func_02005538(&other->x, radius, &position, other->radius - 2) >= 0) {
+              wait(1);
+              goto done;
+            }
           }
         }
-        j++;
-        flags += sizeof(struct Actor);
-        other++;
-        if (j <= 63)
-          goto scan;
-        /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-         * order around it; as the plain statement, 68 of 236 instructions differ
-         * in tla-en. */
-        do {
-          x = actor->x += *stepX << 17;
-        } while (0);
+        x = actor->x += *stepX << 17;
         z = actor->z + (*stepZ << 17);
         actor->z = z;
         snap = (x & 0xfffff) - 0x80000;
@@ -179,9 +155,6 @@ void Func_0200297c(void) {
         wait(1);
       }
     }
-  test:
-    if (running)
-      goto top;
   done:
     actor->update = NULL;
     Animation_ApplyChildValues(actor, 0);

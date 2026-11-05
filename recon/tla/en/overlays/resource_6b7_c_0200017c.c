@@ -20,6 +20,5 @@ void Func_0200017c(s32 delta) {
   s32 i;
 
   count = Party_ListActiveOwners((s16 *)owners);
-  for (i = 0; i < count; i++)
-    Func_02000160(owners[i], delta);
+  i = 0; if (i < count) { loop: Func_02000160(owners[i], delta); i++; if (i < count) goto loop; }
 }

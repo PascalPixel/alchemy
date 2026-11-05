@@ -1,6 +1,9 @@
-// Measured 2026-11-05 (tla-en): differ 196 of 1932. Left: allocation and order
-// all through; the forwarders bring the frame to 152 and the discarded reads of
-// bg2pa and bg2pd are in. See below for the reload order.
+// Measured 2026-11-05 (tla-en): differ 350 of 1932. Left: the frame, every
+// spill slot and the instruction count now agree with the listing, without the
+// search's asm. Rows from the ship-burst model block on are reload's rotation:
+// the listing has verts in r1 and frame in r7 where this has verts in r7 and
+// frame in r1, and it stays one register behind to the frame loop's end. Before
+// that block only scheduling pairs remain.
 
 // Draft, differ 780 of 1932, skeleton gap 102 (tla-en, 2026-11-01)
 // BattleEffect_RunUlysses: same calls and control flow as the listing.
@@ -698,8 +701,6 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
 
     if ((u32)(frame - 108) <= 179) {
       req = Data_08196e54;
-      /* FAKEMATCH(barrier): the empty asm gives &req a reference more, which moves it in the allocators' ranking; as no asm, 350 of 1932 instructions differ in tla-en. */
-      __asm__("" : : "r"(&req));
       if (frame > 131) {
         s32 u = frame - 132;
 

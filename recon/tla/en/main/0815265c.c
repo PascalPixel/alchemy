@@ -1,7 +1,7 @@
-// Measured 2026-11-05 (tla-en): differ 54 of 2239. Left: spill slots: draw's
-// address (gcse's pseudo, now that draw is no local) sits at sp+40 where the
-// native has sp+36, and the fade limit at sp+36 where the native has sp+40: 32
-// rows. The rest is five sites of order.
+// Measured 2026-11-05 (tla-en): differ 60 of 2239. Left: spill slots: draw's
+// address sits at sp+40 where the listing has sp+36 and the fade limit the
+// other way round, 32 rows; a local for the limit, declared at the top or in
+// the loop, does not move them. Then five sites of order.
 
 // Draft, differ 130 of 2239, skeleton gap 48 (tla-en, 2026-11-01)
 // BattleEffect_RunProjectileVolleyB, the body behind the 22 wrappers
@@ -797,8 +797,6 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
 dx = object->x - mote->x;
 dy = object->y + half - mote->y;
 dz = object->z - mote->z;
-/* FAKEMATCH(barrier): the empty asm gives dz a reference more, which moves it in the allocators' ranking; as no asm, 60 of 2239 instructions differ in tla-en. */
-__asm__("" : : "r"(dz));
             mote->velocityX += dx >> 7;
             mote->velocityY += dy >> 8;
             mote->velocityZ += dz >> 8;

@@ -1,6 +1,11 @@
-// Measured 2026-11-05 (tla-en): differ 188 of 755. Left: allocation: the frame
-// is 112 of 120; the two missing slots are the target's offset and member * 8.
-// The asm on angle halves the differ.
+// Measured 2026-11-05 (tla-en): differ 8 of 755. Left: the two tables' indexed
+// reads have base and index swapped (ldrb r3, [r7, r1] where the listing has
+// [r1, r7]), which comes of reading them through the held locals, and two order
+// rows. What settled the rest: the two tables read through locals held by an
+// empty asm with an output (the widths then take r8 and the heights r4 with a
+// caller-save slot at sp+8), so mode takes r10; angle takes r2 with a
+// caller-save slot at sp+12; a one-pass block before y and before the blitter
+// call; frame, total, member, count in that order.
 
 // Draft, differ 338 of 755: BattleEffect_RunTargetMotes, the body of nine effect
 // kinds through the wrappers in games/tla/src/battle_effect/render_mode.c
@@ -110,12 +115,12 @@ void Sound_PlayFar(s32 cue);
 // in the mode's palette; mode 3 adds the tornado's glints, and mode 7 sends
 // the caster at the first target for the final blow.
 void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
-  s32 total;
-  s32 member;
-  s32 count;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
+s32 total;
+  s32 member;
+s32 count;
   struct EffectPosition screen;
   s32 point[3];
   struct EffectPosition base;
@@ -217,29 +222,31 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
       // Mode 3: two tornado glints a frame around the target, each drawn
       // with a blitter of its own, mirrored at random.
       if (mode == 3 && frame > member * 8 && frame < member * 8 + 32) {
-        EffectPosition_ProjectScaledBattler(effect->actors[member], &base);
+
+
+
+EffectPosition_ProjectScaledBattler(effect->actors[member], &base);
+
         for (i = 0; i != 2; i++) {
           s32 angle;
           s32 radius;
           s32 x;
-          s32 y;
+s32 y; const u8 *h; const u8 *w;
 
           angle = Random16() & 0xffff;
-          /* FAKEMATCH(barrier): the empty asm gives angle a reference more, which moves it in the allocators' ranking; as no asm, 334 of 755 instructions differ in tla-en. */
-          __asm__("" : : "r"(angle));
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
-              (gData_08197492[frame & 3] >> 1);
-          y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
-              (gData_08197498[frame & 3] >> 1);
-          Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7,
+((w = gData_08197492)[frame & 3] >> 1); __asm__("" : "=r"(w) : "0"(w));
+y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
+((h = gData_08197498)[frame & 3] >> 1); __asm__("" : "=r"(h) : "0"(h));
+do { } while (0); Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                             Data_08197a34[Random16() & 3],
                         BLITTER_MAX);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas,
               work->sheet + gData_08197486[frame & 3] + RENDER_MODE_TORNADO, x,
-              y + 16, gData_08197492[frame & 3], gData_08197498[frame & 3]);
+y + 16, w[frame & 3], h[frame & 3]);
           HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
         }
       }
@@ -277,7 +284,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) 
               s32 cel = mote->variant / 4;
 
               EffectPosition_ProjectPoint((s32 *)mote, &screen);
+              /* FAKEMATCH(one-pass): the block ends CSE's block and parts the scheduler's rows; as a plain statement, 32 of 755 instructions differ in tla-en. */
+              do {
               screen.x >>= 1;
+              } while (0);
               if (mode == 5 || mode == 7)
                 draw[1](canvas, work->sheet + cel * 1600, screen.x - 20,
                         screen.y - 20, 40, 40);

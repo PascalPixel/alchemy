@@ -1902,15 +1902,16 @@ CLEAR(buffer, 0x1000);
       if (frame == 24)
         Sound_PlayFar(390);
       if (frame >= 8 && frame < 24) {
+        s32 y;
         for (i = 0; i != 3; i++) {
+            s32 m;
             s32 x;
-          angle = Random16() & 0xffff;
           m = i & 3;
+          angle = Random16() & 0xffff;
           x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
           y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
-          HeapSlot_Release(188);
-          HeapSlot_Release(104);
+          RELEASE_BLITTERS();
           Func_08196404(188, 7, 7, gData_0819894e[Random16() & 3] | 3, 1);
           IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);

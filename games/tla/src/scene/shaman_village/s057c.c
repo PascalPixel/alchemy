@@ -1,59 +1,3 @@
-// Draft, differ 161 of 720, skeleton gap 57 (tla-en, 2026-11-01)
-// A Shaman Village scene around object 14, in the idiom of Air's Rock's
-// Func_02001f7c (games/tla/src/scene/airs_rock/s1f7c.c): loads the whirlwind's pictures into background
-// 1, sets the leader and object 14 on their action variants, sound 246 while
-// for 45 frames object 14 sheds circling, blinking objects (type 672) every
-// fourth frame; then the camera to (168, 424), sound 207 with the screen
-// shaking and a blend over 64 frames, the map's cells redrawn in stages
-// (Func_02004844) while effects (Func_020000b8) rise and object 14 flickers,
-// eight rounds of the background's halves swapped, sound 390, the blend
-// cleared, the palette restored (Func_0200488c from the options' hue and
-// brightness) and flag 2380 set.
-//
-// Left: the loops are goto loops as in that twin: the native hoists nothing
-// and CSE carries REG_BLDALPHA's address and 16 past them. The -mthumb-slow-loads
-// removal closed nothing here; the differences below are all allocation or
-// constants. Everything from the top to the spawn now matches but for these.
-// - The blocker is the effect spawn's allocation, and it looks like the
-//   compiler's reference weight, not source (K1, K3: out of scope, so this
-//   stops here). The native has the velocity pointer r6, 127 r8, the options
-//   pointer r10 and j r9, with r4 free and a 72-byte frame. Here 127 is r6, the
-//   velocity pointer r4, options r8, j r10, frame 76. The frame loop sits at
-//   flow depth 2, so refs weigh 3: 127 has 9 refs across 1 call, options 12
-//   across 2, and CALLER_SAVE_PROFITABLE (4 * calls < refs) sends a pseudo to r4
-//   before r8; r4 then saves round the Random16Far call at sp+16. Only weight 1
-//   explains the native (127 at weight 2 still takes r4), and it also orders the
-//   velocity pointer above 127. A real branch entering the stage and frame loops
-//   past their headers makes both irreducible (depth 0) and the spawn then
-//   allocates as the native. No plain loop form gets there. Pascal's lead:
-//   whether the native's flow weighs refs by loop notes, which goto loops lack,
-//   where alchemy-gcc weighs CFG natural loops.
-// - Constants: the shake and camera calls want each argument built alone, as
-//   an inline's parameter does (The Broken Seal's event.h has MapGrid_SetShake
-//   and FieldCamera_SetSpeed here). Func_02004864 and Func_020049e4 are those
-//   calls. Set-once locals do nothing, cprop folds them. Through Call2 and Call3
-//   this is differ 123, gap 29; S2 tags those as wrapper, so they stay out until
-//   Pascal says whether that layer counts as source.
-// - BG0CNT's control wants a block of its own: do { } while (0) (one-pass, kept
-//   out) gives differ 157; a u16 or u32 local or a shared one does not.
-//   All kept-out devices together: differ 119, gap 25.
-// - The zero before byte 99 is shared with update and BLDCNT in the native. A
-//   bit-field store or an s32 local gets the sharing, but moves the frame count
-//   into r6 and the first Actor_GetById copy to the stack: frame 80, differ 184.
-//   The tail's pointer and 1 are then swapped (r5 and r6): a work pointer set
-//   earlier does not change that.
-// - Stage call: 13 and 11 as width and height locals, as the call before the
-//   loop has them, take r4 and r5 and lose 2.
-// - Tried without gain: Vector3 by value (ldmia, frame 80, differ 293), velocity
-//   as a Vector3 (neutral), velocity set later, a separate z, row and column
-//   locals, a set-once count local, six forms of the tile mask.
-// - Closed: the sprite's priority written in one expression with no block
-//   locals fixed the reload rotation before the spawn, so the twin's cell =
-//   spark->animation (temporary) is not needed.
-// ResourceId_WhirlwindTiles and ResourceId_WhirlwindMap (ids 0x1be, 0x1bf,
-// Field_WhirlwindTiles and Field_WhirlwindMap) need names in
-// resource_directory.s on adoption: the ids load from the pool, as symbols.
-// The stage loop's i - (i / 4) * 4 is the native's form; i % 4 emits a mask.
 #include "types.h"
 #include "call.h"
 #include "scene_tables.h"
@@ -143,10 +87,11 @@ void Func_0200057c(void) {
   Func_0200479c(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   i = 0;
   cell = buffer;
-mask: {
-  s32 t = (*cell + 0xff40) & 0xfff;
-  *cell = t | 0x1000;
-}
+mask:
+  {
+    s32 t = (*cell + 0xff40) & 0xfff;
+    *cell = t | 0x1000;
+  }
   i++;
   cell++;
   if (i != 288)
@@ -167,7 +112,8 @@ row:
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(0x2a0, Actor_GetById(14)->x,
-                                 Actor_GetById(14)->y, Actor_GetById(14)->z);
+                                                 Actor_GetById(14)->y,
+                                                 Actor_GetById(14)->z);
       ((struct SpriteAttr2High *)spark->animation)->priority =
           (((s8 *)Actor_GetById(14)->animation)[9] & 12) >> 2;
       spark->priorityFlags |= 1;
@@ -230,8 +176,8 @@ swirl:
 
     REG_BG2CNT = control;
   }
-  /* FAKEMATCH(one-pass): the empty block ends CSE's run here; without it, 2 of 720 instructions
-   * differ in tla-en. */
+  /* FAKEMATCH(one-pass): the empty block ends CSE's run here; without it, 2 of
+   * 720 instructions differ in tla-en. */
   do {
   } while (0);
   Dma_Set((void *)0x06002800, (void *)0x06003000, 0x84000200, REG_DMA3);
@@ -239,7 +185,8 @@ swirl:
   REG_BLDCNT = 0xa44;
   i = 0;
 stage:
-  Call6(Func_02004844, (i - (i / 4) * 4) * 14 + 45, (i / 4) * 12 + 90, 4, 19, 13, 11);
+  Call6(Func_02004844, (i - (i / 4) * 4) * 14 + 45, (i / 4) * 12 + 90, 4, 19,
+        13, 11);
   j = 0;
 frame:
   if ((j & 3) == 0) {
@@ -255,8 +202,8 @@ frame:
     {
       s32 x = ((Random16Far() & 127) << 16) + (208 << 15);
 
-      Func_020000b8(x, 0, (472 - (Random16Far() & 127)) << 16, v[0],
-                    v[1], v[2], 0x1020001, &options);
+      Func_020000b8(x, 0, (472 - (Random16Far() & 127)) << 16, v[0], v[1], v[2],
+                    0x1020001, &options);
     }
   }
   REG_BLDALPHA = ((j >> 2) << 8) | (16 - (j >> 2));
@@ -316,17 +263,18 @@ fade:
   {
     s32 zero = 0;
 
-  OBJ14_BYTE(99) = zero;
-  wait(30);
-  Actor_GetById(14)->update = (void *)zero;
-  Actor_SetPartAttribute(Actor_GetById(14), 6);
-  Func_0200486c();
-  FieldEvent_Wait(60);
-  REG_BLDCNT = zero;
+    OBJ14_BYTE(99) = zero;
+    wait(30);
+    Actor_GetById(14)->update = (void *)zero;
+    Actor_SetPartAttribute(Actor_GetById(14), 6);
+    Func_0200486c();
+    FieldEvent_Wait(60);
+    REG_BLDCNT = zero;
   }
   Func_020047d4();
   Func_020047bc();
-  Func_0200488c(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+  Func_0200488c(gMainRoutineWork.paletteGlow[0],
+                gMainRoutineWork.paletteGlow[1]);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Actor_GetById(14)->priorityFlags |= 1;

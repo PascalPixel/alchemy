@@ -22,7 +22,7 @@ SECTIONS
         "*/games/tla/src/scene/apojii_islands/events_d.o"(.text)
         "*/games/tla/src/scene/apojii_islands/s0d90.o"(.text)
         "*/games/tla/src/scene/apojii_islands/events_e.o"(.text)
-        "*/resource_679_overlay.o"(.text.x02008ef8)
+        "*/games/tla/src/scene/apojii_islands/s0ef8.o"(.text)
         "*/games/tla/src/scene/apojii_islands/events_f.o"(.text)
         "*/games/tla/src/scene/apojii_islands/prepare.o"(.text)
         "*/games/tla/src/scene/apojii_islands/s1054.o"(.text)

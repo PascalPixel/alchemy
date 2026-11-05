@@ -456,8 +456,8 @@ Resource_DirectoryTable:
 	resource WorldMapTilesD4, WorldMap_TilesD4
 	resource WorldMapTilesD5, WorldMap_TilesD5
 	resource WorldMapTilesD6, WorldMap_TilesD6
-	resource , Field_WhirlwindTiles
-	resource , Field_WhirlwindMap
+	resource WhirlwindTiles, Field_WhirlwindTiles
+	resource WhirlwindMap, Field_WhirlwindMap
 	resource LightningTiles, Field_LightningTiles
 	resource LightningMap, Field_LightningMap
 	resource , Field_WalkPathA
@@ -483,7 +483,7 @@ Resource_DirectoryTable:
 	resource Icons, Ui_Icons
 	resource CommandIcons, Ui_CommandIcons
 	resource , Ui_Flags
-	resource , FieldEffect_GlowDisc
+	resource GlowDisc, FieldEffect_GlowDisc
 	resource , FieldEffect_RingOrb
 	resource , FieldEffect_RingArcs
 	resource RedFlameBurst, FieldEffect_RedFlameBurst

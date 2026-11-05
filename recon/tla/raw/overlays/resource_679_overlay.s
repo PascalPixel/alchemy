@@ -374,60 +374,6 @@ Func_02000540:
 	.4byte gIoWriteQueue
 .L_02008690:
 	.4byte 0x04000208
-	.section .text.x02008ef8,"ax",%progbits
-	.global Func_02000ef8
-	.thumb_func
-Func_02000ef8:
-	push {lr}
-	movs r3, #128
-	lsls r3, r3, #19
-	adds r3, #6
-	ldrh r2, [r3]
-	ldr r3, .L_02008f24
-	ldr r3, [r3]
-	cmp r2, r3
-	bge .L_02008f2c
-	ldr r3, .L_02008f28
-	ldrh r2, [r3]
-	movs r3, #128
-	lsls r3, r3, #19
-	adds r3, #20
-	strh r2, [r3]
-	movs r2, #128
-	ldr r3, .L_02008f20
-	lsls r2, r2, #19
-	adds r2, #80
-	b .L_02008f46
-.L_02008f20:
-	.4byte 0x00000000
-.L_02008f24:
-	.4byte gData_02002a98
-.L_02008f28:
-	.4byte gData_02002a9c
-.L_02008f2c:
-	ldr r3, .L_02008f54
-	ldrh r2, [r3]
-	movs r3, #128
-	lsls r3, r3, #19
-	adds r3, #20
-	strh r2, [r3]
-	movs r2, #128
-	ldr r3, .L_02008f4c
-	lsls r2, r2, #19
-	adds r2, #82
-	strh r3, [r2]
-	ldr r3, .L_02008f50
-	subs r2, #2
-.L_02008f46:
-	strh r3, [r2]
-	pop {pc}
-	.2byte 0x0000
-.L_02008f4c:
-	.4byte 0x0000100c
-.L_02008f50:
-	.4byte 0x00003f42
-.L_02008f54:
-	.4byte gData_02002a9e
 	.section .text.x020095f8,"ax",%progbits
 	.global Func_020015f8
 	.thumb_func

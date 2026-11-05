@@ -1608,8 +1608,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                                         0x40000, 150);
           Func_0814cd48(effect->actors[i], 7, 5, i, 16);
           EffectPosition_ProjectBattler(effect->actors[i], &pos);
+          j = 0;
           q = &debris[i * 16];
-          for (j = 0; j != 16; j++, q++) {
+          for (; j != 16; j++, q++) {
             s32 angle;
             s32 speed;
 

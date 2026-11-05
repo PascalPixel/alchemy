@@ -1,9 +1,3 @@
-// Draft, differ 26 of 129 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 32 of 129 (tla-en); older figures below predate it.
-// Draft, differ 53 of 129: gazing over the side of the boat: one roll in
-// sixteen finds coins, the next shakes the camera, the rest show one of the
-// MsgTheBoatS messages. Left: the native keeps the found object in r6 and
-// reads the offset x once for both paths, and builds the shake's -1s apart.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -44,7 +38,9 @@ void Func_02000be0(void) {
     s32 amount = (((unit[15] * Random16Far()) << 1) >> 16) + 0x8001;
     s32 position[3];
     s32 x;
-    struct Actor *object;
+    /* FAKEMATCH(pin): object in r6, which leaves r7 to the amount; as a plain
+     * local, 24 of 129 instructions differ in tla-en. */
+    register struct Actor *object asm("r6");
 
     FieldMessage_Show((s32)MsgThereAreSome, 1);
     position[0] = leader->x;
@@ -54,12 +50,8 @@ void Func_02000be0(void) {
     object = Actor_GetById(79);
     x = position[0];
     if (object == NULL) {
-      /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-       * order around it; as the plain statement, 32 of 129 instructions differ
-       * in tla-en. */
-      do {
-        object = Func_02004b30(0x1e9, x, position[1], position[2]);
-      } while (0);
+      object = (struct Actor *)Value4((s32 (*)())Func_02004b30, 0x1e9, x,
+                                      position[1], position[2]);
       if (object == NULL)
         return;
       work->objects[slot] = object;
@@ -69,11 +61,10 @@ void Func_02000be0(void) {
       object->z = position[2];
     }
     Func_02004e18(79, amount);
-    *(u16 *)((u8 *)work + 0xd34) = amount;
-    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-     * order around it; as the plain statement, 30 of 129 instructions differ
-     * in tla-en. */
+    /* FAKEMATCH(one-pass): the store and the call in a once-only block; as
+     * plain statements, 6 of 129 instructions differ in tla-en. */
     do {
+      *(u16 *)((u8 *)work + 0xd34) = amount;
       Func_02004d70(0x1000 | slot);
     } while (0);
   } else if (roll == 1) {

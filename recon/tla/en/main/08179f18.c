@@ -1,20 +1,21 @@
-// Draft, differ 6 of 2583 (tla-en, 2026-11-05), draft 2583: two sites, three rows each, pool words as
-// the listing's. Everything else in the function agrees.
-// What is left is the scheduler ranking a multiply against a stack load:
-// - The second Trig_Cos tail (w->vy[i] = Trig_Cos(a) * s / 256): the listing loads sp 20 into r5 before
-//   the multiply, this after. sched2 ranks the multiply 5 (cost 4 + the branch) and the load 4 (cost 3 +
-//   the add). The load comes first in RTL already, so only the rank stands in the way.
-// - The ring (b = m * grow, then m * spread): the listing loads spread into r1 before the first multiply
-//   and stores a after it. Both rank 43; the multiply wins on its 5 dependents against 3.
-// The first setup loop's two statements stopped on the same ranks (7 against 6) until a one-pass block
-// put the row shift ahead of the multiply; with a multiply costing 3 rather than 4, all three sites rank
-// as the listing orders them, with no device. That table line is the compiler's and is left alone.
-// Tried at the two sites, none closer: one-pass blocks around the call, the address, the load and after
-// the division; a pinned load; empty asm inputs ordering the load; const and pure on Trig_*; statement
-// order (rr ahead of b is 538, slots and the later allocation follow it).
+// Draft, differ 4 of 2583 (tla-en, 2026-11-05), draft 2583: one site, pool words as the listing's.
+// Everything else in the function agrees.
+// What is left is the scheduler ranking a multiply against a stack load, in the ring: b = m * grow, then
+// m * spread. The listing loads spread into r1 before the first multiply and stores a after it. Both rank
+// 43; the multiply wins on its 5 dependents against 3.
+// Three sites stopped on this: the first setup loop (multiply 7 against shift 6), the second Trig_Cos
+// tail (multiply 5 against load 4) and the ring. With a multiply costing 3 rather than 4 in the core unit,
+// all three rank as the listing orders them, with no device. That table line is the compiler's and is
+// left alone. The first two now hold by devices, a one-pass block and an empty asm.
+// The empty asm that orders the Trig_Cos tail does not fit the ring: HoldFor(m, spread) counts 4 bytes,
+// and the ring's back branch, bne.n -248 here, goes long past -250 (39, 7 rows). A second one on its own
+// would raise the load by the 1 it needs and has the same cost. Also tried in the ring, none closer:
+// one-pass blocks around the load and after the division; a pinned load; a local for the product (66, 73);
+// rr ahead of b (538, the slots and later allocation follow it).
 // Devices held, each tagged below with N measured against this draft: e and c pinned, SheetOf and
-// ClearWords wrappers, the one-pass block with its named constant.
+// ClearWords wrappers, the one-pass block with its named constant, HoldFor's empty asm.
 // Settled 2026-11-05, each measured:
+// - The second Trig_Cos tail's load ahead of its multiply through HoldFor (6 to 4).
 // - cells and source are one number, 0x02010000, so the pools hold one word for both (34 to 6).
 // - The particle pointer is &work->particles[i]: a reduced giv sets it behind the first test (48 to 40).
 // - k = 0 ahead of offset, and offset + (s32)sheet for the operand order (40 to 36).
@@ -23,7 +24,7 @@
 // - The sheet counts with i; t = row * 2 stepped so nothing hoists or reduces; offsets by k (126 to 100).
 // - w->y[i] += 0 in petals 0 and 1 holds the reload rotation; source is a number, so it stays a
 //   constant reload; draw[2] is one DImode pseudo; petals is a number, keeping its REG_EQUIV.
-// Open before adoption: the two sites; what would put e in r6 without the pin (r5 is free for it here,
+// Open before adoption: the ring; what would put e in r6 without the pin (r5 is free for it here,
 // and every function-level variable tried either keeps r5 or moves the setup); c in r1 likewise; the
 // resource names (Data09A and others) from the game's data; names from evidence (H3).
 #include "types.h"
@@ -225,6 +226,9 @@ static inline u8 *SheetOf(struct BattleEffectWork *owner)
 }
 
 static inline s32 HoldFor(s32 value, s32 offset) {
+  /* FAKEMATCH(barrier): an empty asm reading the offset, in an inline so the two
+   * tails stay one line and cross-jump; as Trig_Cos(a) * s / 256, 6 of 2583
+   * instructions differ in tla-en. */
   asm("" : "+r"(value) : "r"(offset));
   return value;
 }

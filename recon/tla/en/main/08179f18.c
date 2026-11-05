@@ -355,8 +355,6 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   size = 3;
   for (i = 0; i != 10; i++) {
-    u8 *dst = sprites + (i * 8 + i) * 2;
-
     for (j = 0; j != 18; j++) {
       s32 v = source[gData_08197410[size - 1] + j];
 
@@ -366,7 +364,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           v = 1;
         }
       }
-      dst[590 + j] = v;
+      sprites[i * 18 + 590 + j] = v;
     }
   }
   REG_DISPCNT = 0x7741;

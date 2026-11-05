@@ -561,7 +561,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s16 *camera = Ram_HeapSlots->cameraWork;
   s32 savedZoom;
   s32 frame;
-  DrawRectangle draw[2];
+  void *draw[2];
 
   // The first spark slot with no life left, or -1.
   s32 FindFreeSpark(void) {
@@ -688,7 +688,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           if (offset == 0x3800)
             work->particles[i].variant = 0;
         } else {
-          draw[0](canvas, work->sheet + (gData_08197410[n - 1] + offset),
+          ((DrawRectangle)draw[0])(canvas, work->sheet + (gData_08197410[n - 1] + offset),
                   px - n / 2, py - n, n, n * 2);
         }
         work->particles[i].x += work->particles[i].velocityX;
@@ -863,7 +863,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
               u8 *cell = sprites + gData_08197410[size - 1];
               struct IrisPoint *p = &STREAK(i, j);
 
-              draw[1](to, cell,
+              ((DrawRectangle)draw[1])(to, cell,
                       HALF(p, 1) - (size >> 1), HALF(p, 3) - size, size,
                       size * 2);
             }
@@ -1092,11 +1092,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         s32 px = Trig_Sin(a) * radius;
         s32 py = Trig_Cos(a) * radius;
 
-        draw[0](canvas, work->sheet + gData_08197410[3], (px >> 16) + 58,
+        ((DrawRectangle)draw[0])(canvas, work->sheet + gData_08197410[3], (px >> 16) + 58,
                 (py * 2 >> 16) + 48, 4, 8);
       }
       for (i = 0; i != 12; i++) {
-        draw[0](canvas, work->sheet + gData_08197410[1],
+        ((DrawRectangle)draw[0])(canvas, work->sheet + gData_08197410[1],
                 (work->particles[i].x >> 16) - 2,
                 (work->particles[i].y >> 16) - 2, 2, 4);
         work->particles[i].x += work->particles[i].velocityX;
@@ -1585,7 +1585,7 @@ dead = i / 3;
 
             px = (px >> 16) + shift + 64;
             py2 = (py >> 16) - shift + 63;
-            draw[0](canvas, work->sheet + tile, px, py2, 1, 2);
+            ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px, py2, 1, 2);
           }
         }
       }
@@ -1636,7 +1636,7 @@ dead = i / 3;
         s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
         s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT);
 
-        draw[0](canvas, work->sheet + tile, (px >> 16) + 101, (py >> 16) + 26,
+        ((DrawRectangle)draw[0])(canvas, work->sheet + tile, (px >> 16) + 101, (py >> 16) + 26,
                 6, 12);
       }
     }
@@ -1653,7 +1653,7 @@ dead = i / 3;
         s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
         s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT);
 
-        draw[0](canvas, work->sheet + tile, (px >> 16) + 93, (py >> 16) + 32, 6,
+        ((DrawRectangle)draw[0])(canvas, work->sheet + tile, (px >> 16) + 93, (py >> 16) + 32, 6,
                 12);
       }
     }

@@ -307,7 +307,7 @@ extern u8 gData_08198c67[];
 extern const u8 gData_08199210[];
 extern const u8 gData_08199340[];
 extern const u8 gData_08199364[];
-extern u8 gData_08143001[];
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 
 void BattleEffect_StartCanvasLayer(s32);
 void Func_0813ba50(void);
@@ -425,7 +425,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   PLTT[0] = 0;
   PLTT[1] = 0;
   work->transferMode = 0;
-  Task_Add(gData_08143001, 0xc80);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Func_08163c2c(1, 0);
   DISPLAY_11E0->width = 240;
   unit88->unk10 = 1;
@@ -1122,7 +1122,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         work->transferMode = 1;
         work->transferValue = 0;
         REG_BLDCNT = 0;
-        for (i = 0; i != 63; i++) {
+        { u16 *entry = PLTT + 1;
+        for (i = 0; i != 63; i++, entry++) {
           s32 r = 31 - i;
           s32 b = r;
 
@@ -1132,8 +1133,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           if (b < 0) {
             b = 0;
           }
-          PLTT[1 + i] = (b << 10) | r;
-        }
+          *entry = (b << 10) | r;
+        } }
       }
       if (frame > 346) {
         s32 t = frame * 4 - 1380;
@@ -1224,9 +1225,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
     }
     if (frame >= 108 && frame < 132) {
-      u16 *color = PLTT + 0x60;
+      u16 *color;
 
-      for (i = 0; i != 128; i++, color++) {
+      for (i = 0, color = PLTT + 0x60; i != 128; i++, color++) {
         s32 r = *color & 31;
         s32 g = (*color >> 5) & 31;
         s32 b = (*color >> 10) & 31;
@@ -1464,9 +1465,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   Resource_LoadAndDecompress((s32)&Value_000000c3, work->buffer + 0x3000, 0, 0);
   Resource_LoadAndDecompress((s32)&Value_00000134, glyphs, 0, 0);
   {
-    s32 limit = 0x302;
+    s32 limit;
 
     i = 0;
+    limit = 0x302;
   empty:
     i += 35;
     if (i != limit) {
@@ -1840,6 +1842,6 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   for (i = 0; i != arg->count; i++) {
   }
   HeapSlot_Release(188);
-  Task_Remove(gData_08143001);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

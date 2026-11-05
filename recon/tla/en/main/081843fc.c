@@ -908,10 +908,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 489) <= 130) {
       shade = 0;
       for (i = 0; i != 3; i++) {
-        s32 off = i * 12;
+        s32 off;
         s32 idx;
 
         p = &work->particles[i];
+        off = i * 12;
         idx = p->variant;
 
         if (frame == (Data_081998a4[i * 13 + idx] - 492) / 2 + 489) {

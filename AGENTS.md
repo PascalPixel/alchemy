@@ -125,7 +125,7 @@ The docs are the folder READMEs, the four division pages, the front page, the gl
 - **A2** A picture is drawn the way the game shows it: sheets at their real width or sprite shape, tilemapped pictures as the map shows them, animations one frame wide.
 - **A3** An all-grey palette only where the build writes that palette from it.
 - **A4** Every file an encoder reads is a prerequisite: one Makefile rule per kind of asset, with the encoder listing what else it read in a `.d` file beside its output.
-- **A5** No JSON. A table the code reads as it stands is a C array at its place in the ROM, read through its struct with designated initializers and a comment naming each entry from the game's text.
+- **A5** No JSON, apart from `.recomp.json` and `.recomp-2.json` at the root, one per game, which recomp.fyi reads and nothing here does (Pascal, 5 November 2026). A table the code reads as it stands is a C array at its place in the ROM, read through its struct with designated initializers and a comment naming each entry from the game's text.
 - **A6** Each edition combines its text, fonts and layout with its measured code differences; differing resources are chosen in their owning module or rule.
 
 ### Compilers

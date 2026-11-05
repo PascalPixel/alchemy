@@ -1009,7 +1009,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         u16 *pal = (u16 *)(PLTT + 0x200);
 
         for (i = 0; i != 255; i++) {
-          s32 c = pal[i];
+          s32 c = *pal;
           s32 r = 31;
           s32 g;
           s32 b;
@@ -1024,7 +1024,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             g++;
           if (b != 31)
             b++;
-          pal[i] = b << 10 | g << 5 | r;
+          *pal++ = b << 10 | g << 5 | r;
         }
       }
       if (frame <= 385) {

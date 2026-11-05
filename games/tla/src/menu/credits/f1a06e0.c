@@ -1,18 +1,3 @@
-// Measured 2026-11-05 (tla-en): differ 94 of 195, 82 with slots and pool
-// offsets normalized. 16 - step in a local of its own builds with movs as the
-// listing does.
-// Draft, differ 108 of 195: the credits and slide show driver. It resets the
-// task table, starts the scroll task and sets up BG2, BG3 and blending;
-// mode 1 cross-fades the slides until START or the scroll ends, other modes
-// start the scrolling credits (mode - 2) and wait for their end. Left:
-// register choice in the slide loop (the native keeps the slide counter in
-// r10, the blend register in r9, the counter word in r11, the slide's parity
-// in r5 then r1 and the START mask in r7; here parity takes r7 and the
-// registers rotate), the native computing 16 - step with movs #16 where the
-// draft pools it, and a dead load of gInput.pressed before the second
-// wait's held test that no plain C here emits. The prologue, the register
-// setup and the credits branch match. Tried: parity recomputed at each use
-// (differ 113).
 #include "types.h"
 #include "io_reg.h"
 #include "io_write.h"
@@ -36,12 +21,14 @@ void Func_081a0fb8(void);
 void Window_LoadGraphics(void);
 void Func_08014b70(void);
 
+/// The credits and slide show driver. It resets the task table, starts the
+/// scroll task and sets up BG2, BG3 and blending; mode 1 cross-fades the slides
+/// until START or the scroll ends, other modes start the scrolling credits
+/// (mode - 2) and wait for their end.
 s32 Func_081a06e0(s32 mode) {
   s32 slide;
-  s32 odd;
   s32 step;
   s32 frame;
-  u32 blend;
 
   gRenderOamEnabled = 0;
   gCpuLoadDisplayEnabled = 0;
@@ -49,8 +36,7 @@ s32 Func_081a06e0(s32 mode) {
   Data_02007500 = 0;
   gAutoSleepEnabled = 0;
   Task_ResetAll();
-  Task_Add(DisplayScroll_StepPositionEveryFourVBlanks,
-                                TASK_PASS_FRAME);
+  Task_Add(DisplayScroll_StepPositionEveryFourVBlanks, TASK_PASS_FRAME);
   Io_Write16(0x40, &REG_DISPCNT);
   DisplayScroll_BuildHblankWordTable((u32 *)0x06007800);
   DisplayScroll_BuildHblankWordTable((u32 *)0x0600f800);
@@ -62,27 +48,30 @@ s32 Func_081a06e0(s32 mode) {
   Io_Write16(0x2844, &REG_BLDCNT);
 
   if (mode == 1) {
+
     Func_081a0a70();
     wait(60);
     for (slide = 0;; slide++) {
-      odd = slide & 1;
-      Func_081a052c(gDisplayScroll_SlideResources[slide], odd ^ 1);
-      blend = 0xf00;
+      s16 *count = &Data_02007500;
+
+      Func_081a052c(gDisplayScroll_SlideResources[slide], (slide & 1) ^ 1);
       for (step = 1; step <= 16; step++) {
-        if (odd) {
-          u32 t = 16 - step;
-          REG_BLDALPHA = (step << 8) | t;
+        if (slide & 1) {
+          s32 t = 16;
+          s32 hi = step << 8;
+          s32 r = t - step;
+          REG_BLDALPHA = hi | r;
         } else
-          REG_BLDALPHA = blend | step;
+          REG_BLDALPHA = ((16 - step) << 8) | step;
         for (frame = 0; frame <= 3; frame++) {
           if (gInput.held & 8)
             goto done;
           wait(1);
         }
-        blend -= 0x100;
       }
-      if (Data_02007500 == 0) {
+      if (*count == 0) {
         do {
+          gInput.pressed;
           if (gInput.held & 8)
             goto done;
           if (gDisplayScroll_Busy == 2)

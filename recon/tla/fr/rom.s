@@ -1334,12 +1334,6 @@ BattleEffect_RunOdyssey:
 	.thumb_func
 BattleEffect_RunIris:
 	.incbin "baserom.gba", 0x00192c9c, 0x00002e00
-	.section .rom.001a06e0, "ax"
-	.global Func_081a06e0
-	.type Func_081a06e0, %function
-	.thumb_func
-Func_081a06e0:
-	.incbin "baserom.gba", 0x001a06e0, 0x000001e4
 	.section .rom.001a0be8, "ax"
 	.balign 4
 	.global DisplayScroll_DrawMessageLine

@@ -3638,13 +3638,9 @@ main	rom_main_10	games/tla/src/menu/credits/credits_background_expand_2_commands
 main	rom_main_10	games/tla/src/menu/credits/clear_character_block	.text
 main	rom_main_10	games/tla/src/menu/credits/load_character_block	.text
 main	rom_main_10	games/tla/src/menu/credits/scroll	.text
-main	rom_main_10	recon/tla/raw/081a06e0	.text	en
-main	rom_main_10	recon/tla/de/rom	.rom.001a06e0	de
-main	rom_main_10	recon/tla/es/rom	.rom.001a06e0	es
-main	rom_main_10	recon/tla/fr/rom	.rom.001a06e0	fr
-main	rom_main_10	recon/tla/it/rom	.rom.001a06e0	it
+main	rom_main_10	games/tla/src/menu/credits/f1a06e0	.text
 main	rom_main_10	games/tla/src/menu/credits/f1a08c4	.text	en de es fr it
-main	rom_main_10	recon/tla/ja/rom	.rom.001a06e0	ja
+main	rom_main_10	recon/tla/ja/rom	.rom.001a08c4	ja
 main	rom_main_10	games/tla/src/menu/credits/crawl	.text
 main	rom_main_10	games/tla/src/menu/credits/f1a0a70	.text
 main	rom_main_10	recon/tla/it/rom	.rom.001a0be8	it

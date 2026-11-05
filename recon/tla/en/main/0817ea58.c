@@ -881,15 +881,17 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     work->sprites[39]->unk17 = 32;
     if (frame >= 568) {
       s32 *beam;
+      void *pixels;
       void *buffer;
       s32 v;
       s32 z;
 
       buffer = Heap_AllocEwram(512);
       beam = Render_AllocateModelList(1);
+      pixels = DECODE_BUFFER;
       bitmap.width = 7;
       bitmap.height = 7;
-      bitmap.data = DECODE_BUFFER;
+      bitmap.data = pixels;
       beam[4] = (s32)&bitmap;
       beam[1] = 0;
       beam[2] = (s32)gData_08199364;

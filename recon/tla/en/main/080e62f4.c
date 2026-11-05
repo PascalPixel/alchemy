@@ -1,3 +1,5 @@
+// Near miss, differ 36 of 67 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss: listing 66 instructions, draft 62, common 43, differ 42; the rest
 // differs in instruction order.
 #include "types.h"
@@ -61,13 +63,13 @@ s32 Trig_Sin(s32 angle);
 
 void Func_080e62f4(u8 *source, u8 *destination, s32 phase) {
   s32 width = 32;
-  s32 height = 32;
+  register s32 height asm("r6") = 32;
   s32 column;
 
   Iwram_ClearWords(destination, 0x400);
   for (column = 0; column < width; column++) {
     s32 wave = (Trig_Sin(column << 13) << 3) + 0x80000;
-    s32 position = phase * 0x19999 - 0x7c0000;
+    register s32 position asm("r4") = phase * 0x19999 - 0x7c0000;
     u8 *from = source + column;
     s32 row;
 

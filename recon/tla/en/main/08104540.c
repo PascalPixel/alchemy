@@ -1,3 +1,5 @@
+// Near miss, differ 22 of 436 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 28 of 436, skeleton gap 5 (tla-en, 2026-11-01)
 // Twin of ☀️'s DjinnMenu_ShowMemberStatus
 // (games/tbs/src/menu/menu/djinn_preview.c): same calls, windows, keys, sounds
@@ -211,7 +213,10 @@ s32 Func_08104540(void) {
     }
     wait(1);
   }
-  Task_Add(Menu_UpdateEntryObjectTransforms, 0x480);
+  {
+    __typeof__(0x480) hoisted = 0x480;
+    Task_Add(Menu_UpdateEntryObjectTransforms, hoisted );
+  }
   ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   Window_CloseIfOpen(helpWindowSlot, 1);
   wait(1);

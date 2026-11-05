@@ -1,3 +1,5 @@
+// Near miss, differ 72 of 159 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 85 of 159 (2026-10-19; 142 before): register choice and some
 // order. The native keeps the object in r6 and the change flag in r7, the
 // cell table in r8 and the shape row in r9, and spills the slot and key (sp
@@ -101,8 +103,8 @@ void Func_080eaa14(struct ActorFlag *list) {
         cell = (struct SwitchCell *)*cells;
         *shapes = Func_080eab98(object->terrainId, key, height);
         if (GameFlag_Test(flag)) {
-          cell->block = 0;
           cell->raised = 1;
+          cell->block = 0;
         } else {
           cell->block = 0xff;
           cell->raised = 0;

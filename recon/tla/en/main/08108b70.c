@@ -1,3 +1,5 @@
+// Near miss, differ 8 of 540 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 26 of 540, skeleton gap 4 (tla-en, 2026-11-01)
 // Func_08108b70: the shop's buy menu, confirmed twin of ☀️'s Shop_SelectBuy
 // (games/tbs/src/shop/shop/buy.c): pick an item from the stock (Select shows
@@ -130,7 +132,7 @@ s32 Func_08108b70(void) {
   s32 stockCount;
   s32 itemId;
   struct ItemDefinition *stockDefinition;
-  s32 selectionResult;
+  register s32 selectionResult asm("r5");
   s32 purchaseResult;
   s32 unitId;
   s32 capacitySlot;
@@ -205,8 +207,10 @@ next_page:
 
   shop->selectedItem = shop->stockItemIds[selected];
   Func_081084f4((s32)MsgWhoGetsThis);
+  do {
   selectedDefinition = Item_Get(shop->selectedItem);
   quantity = 1;
+  } while (0);
   unitId = 0;
   repromptRecipient = 0;
   selectionIndex = 0;

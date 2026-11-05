@@ -1,3 +1,5 @@
+// Near miss, differ 56 of 366 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 72 of 366: a field effect that starts Func_080e4d9c: the scene
 // is raised ten pixels, the canvas sprite starts at the scene's position
 // with the caster's priority and depth (four nearer when the scene faces
@@ -96,7 +98,7 @@ void Func_080e572c(void) {
   s32 sparkEntry;
   s32 sparkTile;
   s32 burstEntry;
-  s32 tile;
+  register s32 tile asm("r6");
   s32 radius;
   s32 angle;
   s32 kind;
@@ -141,6 +143,7 @@ void Func_080e572c(void) {
     particle->velocityX = Iwram_MulQ16(Trig_Cos(angle), radius);
     particle->velocityY = Iwram_MulQ16(Trig_Sin(angle), radius);
     particle->timer = -i * 2;
+  asm("");
     sprite++;
     particle++;
   }

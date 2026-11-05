@@ -1,3 +1,5 @@
+// Near miss, differ 26 of 938 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 50 of 938, skeleton gap 24 (tla-en, 2026-11-01): a field
 // Psynergy that grows something from the
 // ground before the caster (on a 16-pixel grid, unless the event mode is 3):
@@ -334,7 +336,10 @@ void Func_080e68d0(void) {
 
   work->phase = 0;
   work->timer = 0;
-  Task_Add(Func_080e6400, 0x480);
+  {
+    __typeof__(0x480) hoisted = 0x480;
+    Task_Add(Func_080e6400, hoisted );
+  }
   if (work->mode == 1) {
     frame = 0;
     while (work->phase != 999) {
@@ -356,7 +361,10 @@ void Func_080e68d0(void) {
         stage = 2;
       scene->stage = stage;
       scene->frame = frame;
-      Field_RunPsynergyEvent(pending, stage, frame);
+  {
+    register __typeof__(frame) hoisted asm("r2") = frame;
+    Field_RunPsynergyEvent(pending, stage, hoisted );
+  }
       frame++;
     }
     Field_RunPsynergyEvent(pending, 999, frame);

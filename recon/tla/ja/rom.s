@@ -1104,8 +1104,6 @@ Func_081197f0:
 	.incbin "baserom.gba", 0x0011b376, 0x00000002
 	.section .rom.0011b756, "ax"
 	.incbin "baserom.gba", 0x0011b756, 0x00000002
-	.section .rom.0011b9f8, "ax"
-	.incbin "baserom.gba", 0x0011b9f8, 0x00000230
 	.section .rom.0011c532, "ax"
 	.incbin "baserom.gba", 0x0011c532, 0x00000002
 	.section .rom.0011c666, "ax"

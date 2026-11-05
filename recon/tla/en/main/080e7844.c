@@ -1,3 +1,5 @@
+// Near miss, differ 44 of 871 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 75 of 871, skeleton gap 31 (tla-en, 2026-11-01)
 // A field Psynergy cast 32 pixels before the caster:
 // a glowing disc (FieldEffect_GlowDisc, copied to the sprite VRAM the window
@@ -143,6 +145,7 @@ void Func_080e7844(void) {
   found = -1;
   fade = -1;
   pending = NULL;
+  asm("");
   caster = scene->mainObject;
   BattleEffect_InitializeSharedScene();
   pos[0] = caster->x;
@@ -162,8 +165,8 @@ void Func_080e7844(void) {
     }
   }
   if (Func_080cda84(scene->fieldKind, caster, pos) == -1) {
-    result = 0;
     pending = NULL;
+    result = 0;
   } else if (Func_080dbd5c(pos[0], pos[2], caster->terrainId) != 0) {
     pending = Func_080ce458(0x50000005, scene->fieldKind,
                             Func_080dbdc8(pos[0], pos[2], caster->terrainId));
@@ -275,8 +278,10 @@ loaded:
       blue += add;
       if (blue > 31)
         blue = 31;
+  do {
       packed = (blue << 10) | (green << 5) | red;
       ((u16 *)0x05000200)[255 - i] = packed;
+  } while (0);
     }
     if (fade != -1 && fade <= 126)
       fade++;

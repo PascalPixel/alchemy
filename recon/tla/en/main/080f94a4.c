@@ -1,3 +1,5 @@
+// Near miss, differ 22 of 162 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // First draft of Func_080f94a4: the item picker an event script opens, the
 // twin of ☀️'s ItemMenu_Run (games/tbs/src/menu/menu.c) in its
 // TBS_PATCH_1 form: opens the item menu over the field (saving the window
@@ -61,7 +63,7 @@ void Event_ClearInvalidPackedValuesFar(void);
 void wait(s32 frames);
 
 s32 Func_080f94a4(void) {
-  void *backup;
+  register void *backup asm("r4");
   struct InventoryMenuState *screen;
   s32 item;
   s32 target;
@@ -72,6 +74,7 @@ s32 Func_080f94a4(void) {
   screen = HeapSlot_Alloc(220, 0xcec);
   size = 0x2000;
   backup = Heap_AllocEwram(size);
+  asm("");
   Ram_HeapSlots->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
@@ -84,7 +87,10 @@ s32 Func_080f94a4(void) {
   screen->messageWindow = Window_CreateFar(13, 0, 17, 3, 2);
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(backup, (void *)0x06004000, size);
-  Iwram_FillWords((void *)0x06004000, size, 0x33333333);
+  {
+    register __typeof__(size) hoisted asm("r1") = size;
+    Iwram_FillWords((void *)0x06004000, hoisted , 0x33333333);
+  }
   Text_UseExtraTilesFar(1);
 
   Menu_CancelSoundReset();

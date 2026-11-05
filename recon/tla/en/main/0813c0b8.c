@@ -1,3 +1,5 @@
+// Near miss, differ 136 of 563 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 213 of 563.
 
 // Twin: The Broken Seal's BattleEffect_RunDouse (effect kind 9 in both
@@ -149,6 +151,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   // drops' fall, then the targets' width, then nothing.
   if (effect->side == 0) {
     line = gMapCellBuffer;
+  __asm__("" : "=r"(line) : "0"(line));
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 103)
         line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);

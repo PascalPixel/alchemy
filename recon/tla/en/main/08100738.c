@@ -1,3 +1,5 @@
+// Near miss, differ 12 of 90 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft of Item_Use (Func_08100738): applies the slot's action, then consumes
 // or transforms the item on success; the twin of The Broken Seal's Item_Use
 // (games/tbs/src/menu/menu/use.c), rewritten with ⚓️'s calls and menu work
@@ -44,7 +46,10 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   if (useResult != -1) {
     item = Item_Get(unit->inventory[slot]);
     if (item->useType == 1) {
-      Inventory_RemoveFar(ownerId, slot);
+  {
+    register __typeof__(slot) hoisted asm("r1") = slot;
+    Inventory_RemoveFar(ownerId, hoisted );
+  }
       menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
     }
     if (item->useType == 4) {

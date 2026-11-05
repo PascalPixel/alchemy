@@ -1,3 +1,5 @@
+// Near miss, differ 76 of 506 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 99 of 506, skeleton gap 37 (tla-en, 2026-11-01)
 // The frame callback of Func_080e3d04's spray: every
 // fourth frame while it is emitting, a free one of sixteen drops starts at
@@ -86,7 +88,7 @@ void Func_080e38c8(void) {
   struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleFxWork[0];
   struct SprayScene *scene = Ram_HeapSlots->effectWork;
   struct SprayEvent *event = Ram_HeapSlots->eventWork;
-  struct Actor *object;
+  register struct Actor *object asm("r4");
   struct EffectSprite *sprite;
   struct SprayParticle *particle;
   struct SprayParticle *puff;
@@ -105,6 +107,7 @@ void Func_080e38c8(void) {
         if (object == NULL)
           object = scene->mainObject;
         sprite->depth = BattleEffect_GetObjectDepth(object);
+  asm("");
         if (work->mode == 3) {
           work->speed = 0x26666;
           work->lifetime = 33;

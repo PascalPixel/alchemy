@@ -1,3 +1,5 @@
+// Near miss, differ 40 of 125 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 66 of 125: register choice and order. The native keeps the
 // layer's cell table in r10 and the shape row (offset already added) in r5,
 // and builds the slot's offset into r8 after Func_080eab98; this keeps the
@@ -63,14 +65,15 @@ void Func_080eabd0(u16 *actors) {
     u8 flags;
 
     object->motionFlags = 0;
+  asm("");
     object->collisionFlags = 0;
     Actor_SetSingleChildFlagsFar(object, 0);
     tag = Func_080eab98(object->terrainId, key, level + 4);
     flags = ((u8 *)&cells[slot])[3];
     object->unk4c = flags;
     ((u8 *)&cells[slot])[3] = flags | 0x80;
-    shapes[slot] = tag;
     blocks[slot].block = 0xff;
+    shapes[slot] = tag;
   }
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   height = Map_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);

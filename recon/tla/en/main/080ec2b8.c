@@ -1,3 +1,5 @@
+// Near miss, differ 34 of 216 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // First draft of Func_080ec2b8, written from the listing: picks the world map
 // place for the cursor. The nearest shown place (its flag-entry state not 0 or
 // 15, its flag 0x180 + n set) to the cursor wins; when the cursor is already
@@ -69,7 +71,7 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
     cursorY = Data_0202a648[1];
   }
   for (count = 0; count < 128 && places[count].flag != 0; count++) {
-    s32 flag;
+    register s32 flag asm("r6");
     u32 state;
 
     place = &places[count];

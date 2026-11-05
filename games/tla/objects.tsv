@@ -2229,12 +2229,8 @@ main	rom_main_05	games/tla/src/field/event_commands/clear_owned_slot	.text
 main	rom_main_05	games/tla/src/field/event_commands/f0ebf94	.text
 main	rom_main_05	games/tla/src/field/event_commands/cleanup_resources_and_window	.text
 main	rom_main_05	games/tla/src/field/event_commands/f0ec16c	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000ec1c4	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000f11c4	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000f51c4	es
-main	rom_main_05	recon/tla/de/rom	.rom.000f91d0	de
-main	rom_main_05	recon/tla/raw/080ec1d0	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000ec114	ja
+main	rom_main_05	games/tla/src/field/event_commands/f0ec1d0	.text	en de es fr it
 main	rom_main_05	games/tla/src/field/event_commands/f0ec298	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000ec2ac	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000f12ac	fr
@@ -2808,12 +2804,7 @@ main	rom_main_08	recon/tla/raw/0811b75a	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.0011b756	ja
 main	rom_main_08	games/tla/src/battle/presentation/f11b75c	.text	en de es fr it ja
 main	rom_main_08	games/tla/src/battle/motion/objects	.text
-main	rom_main_08	recon/tla/it/rom	.rom.0011ba14	it
-main	rom_main_08	recon/tla/fr/rom	.rom.0011ba14	fr
-main	rom_main_08	recon/tla/es/rom	.rom.0011ba14	es
-main	rom_main_08	recon/tla/de/rom	.rom.0011ba14	de
-main	rom_main_08	recon/tla/raw/0811b9fc	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.0011b9f8	ja
+main	rom_main_08	games/tla/src/battle/motion/f11b9fc	.text	en de es fr it ja
 main	rom_main_08	games/tla/src/battle/motion/reset_battle_object_record_groups	.text
 main	rom_main_08	games/tla/src/battle/motion/camera_flag	.text
 main	rom_main_08	games/tla/src/battle/motion/get_motion_record	.text

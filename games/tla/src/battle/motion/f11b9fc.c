@@ -1,17 +1,3 @@
-// Near miss, differ 41 of 273 (151 before), from The Broken Seal's
-// BattleObject_UpdateSpritePriorities (games/tbs/src/battle/battle/
-// objects.c): this game lists both sides at once, reads each object through
-// BattleObject_Get inlined and keeps it, stops when the battle work's byte at
-// 0x866 is set, and marks a guarding unit's sprite (flag 2) as it sets the
-// side priority. The two-part loops take each part into its own pointer
-// before the shared record (151 to 47), and the counts declared before the
-// priorities give the native's spill slots (41). Left: the battle work's
-// load before sub sp (the prologue pattern), the motion record copied to r1
-// here where the native keeps it in r0 (one extra row, and the effect and
-// priority in r0 and r2 for r2 and r1), and the pool rows those shift.
-// Tried: the priority set either way and as a conditional (41, 43), the
-// effect read twice (41), five minutes of permute (only a rewrite that
-// changes the comparison).
 #include "types.h"
 #include "motobj.h"
 #include "sprite.h"
@@ -87,7 +73,9 @@ void Func_0811b9fc(void) {
   unitIndex = 0;
   if (unitIds[unitIndex] != 255) {
     for (;;) {
-      struct TlaBattleObj *slot;
+      /* FAKEMATCH(pin): slot held in r5; as a plain local, 27 of 273
+       * instructions differ in tla-en. */
+      register struct TlaBattleObj *slot asm("r5");
 
       object = 0;
       slot = BattleObject_GetInline(unitIds[unitIndex]);

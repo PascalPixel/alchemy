@@ -1,3 +1,5 @@
+// Near miss, differ 86 of 183 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 121 of 183, skeleton gap 28 (tla-en, 2026-11-01): snapshots
 // five fixed units (Felix, Piers, Jenna and two at 0x80 and 0x81,
 // Data_0812a16c) into EWRAM: whether each is in the battle party, the first
@@ -81,10 +83,10 @@ u32 BattleParty_IsUnitListed(u32 id);
 
 void Func_0811843c(void) {
   s32 i;
-  s32 j;
+  register s32 j asm("r8");
   struct Snapshot *snap = &Data_0200ff58;
   u8 (*copies)[28] = Data_0200ff6c;
-  u8 *ids = Data_0812a16c;
+  register u8 *ids asm("r8") = Data_0812a16c;
 
   for (i = 0; i <= 4; i++) {
     struct SnapshotUnit *unit = Unit_Get(ids[i]);
@@ -96,6 +98,7 @@ void Func_0811843c(void) {
         snap->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
         Data_0200ffec[i].unk2 = unit->unk3a;
       }
+  asm("");
       if (i <= 2) {
         for (j = 0; j <= 3; j++)
           snap->tags[i][j] = unit->tags[j];

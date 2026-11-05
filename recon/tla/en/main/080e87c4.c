@@ -1,3 +1,5 @@
+// Near miss, differ 24 of 226 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 36 of 226 (2026-10-18, written from the listing; ☀️ has
 // no twin): the burst of 64 sparkles Func_080e807c's effect ends with. The
 // resource is directory entry 0x1ea, FieldEffect_SparkleFade: adoption names it
@@ -80,9 +82,11 @@ void Func_080e87c4(void) {
   event->unkcae = 0;
   Task_Remove(Func_080e807c);
   wait(1);
+  do {
   Sound_PlayFar(167);
   Iwram_FillWords((void *)0x06002000, 0x500, 0xf000f000);
   Window_LoadGraphics();
+  } while (0);
   {
     /* FAKEMATCH: ⚓️ builds the control word with a shift; stored as a
      * halfword constant it loads from the pool, which also places the pool

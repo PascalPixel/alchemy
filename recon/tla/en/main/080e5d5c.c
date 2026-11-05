@@ -1,3 +1,5 @@
+// Near miss, differ 30 of 639 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 99 of 639, skeleton gap 11 (tla-en, 2026-11-01)
 // A field Psynergy that raises a glowing object
 // (object 352) before the caster or at the target: the scene sits 32 pixels
@@ -130,11 +132,11 @@ void Func_080e5d5c(void) {
   s32 glowEntry;
   s32 inReach;
   s32 lift;
-  s32 glowTile;
+  register s32 glowTile asm("r9");
   s32 spot;
   s32 size = 0x800;
   s32 rise;
-  s32 speed;
+  register s32 speed asm("r6");
   s32 angle;
   s32 frame;
   s32 i;
@@ -210,7 +212,9 @@ void Func_080e5d5c(void) {
                         Ram_HeapSlots->battleFxWork[1]);
   canvas->command = CANVAS_UPLOAD;
 
+  do {
   Iwram_FillWords(work, size, 0);
+  } while (0);
   glowEntry = Resource_FindFreeEntry();
   glowTile = VramCache_Load(glowEntry, size, work);
   glow = &work->glow;

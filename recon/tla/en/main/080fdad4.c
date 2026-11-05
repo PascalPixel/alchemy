@@ -1,3 +1,5 @@
+// Near miss, differ 139 of 762 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 158 (2026-10-26, statements reordered).
 // First draft of Func_080fdad4: the Psynergy list of the member in
 // paneIndex, the twin of The Broken Seal's PsynergyMenu_RunList
@@ -140,6 +142,7 @@ s32 Func_080fdad4(s32 paneIndex) {
     Func_080fd80c(&state, paneIndex);
     redraw = 1;
     changed = 1;
+  __asm__("" : "=r"(changed) : "0"(changed));
     menu->paneIcon[paneIndex]->active = 1;
 
     while (!GameFlag_Test(0x150)) {

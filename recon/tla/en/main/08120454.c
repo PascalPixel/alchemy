@@ -1,3 +1,5 @@
+// Near miss, differ 4 of 3451 (tla-en, 2026-11-05), with untagged empty asms, one-pass
+// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 8 of 3451, skeleton gap 3 (tla-en, 2026-11-01)
 // BattleTarget_Execute, tla-en 0x08120454: the twin of
 // BattleAbility_ApplyToTarget (games/tbs/src/battle/battle/ability.c).
@@ -1579,6 +1581,7 @@ power_end:
     case 60:
       ap = dealt;
       dmg = actor->hp;
+  __asm__("" : "=r"(dmg) : "0"(dmg));
       if (action->effect == 60)
         ap /= 2;
       kind = ap;

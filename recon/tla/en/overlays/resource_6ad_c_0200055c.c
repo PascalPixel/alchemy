@@ -32,7 +32,7 @@ loop:
       s32 scale = (Random16Far() >> 1) + 0x4000;
 
       if (Random16Far() <= 0x7fff)
-        Func_02005490(object, gData_02005b68);
+        Call2((void (*)())Func_02005490, object, gData_02005b68);
       else
         Func_02005490(object, gData_02005bac);
       Actor_SetSingleChildFlags(object, 0);

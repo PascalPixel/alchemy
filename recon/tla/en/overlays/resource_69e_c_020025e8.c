@@ -2,6 +2,7 @@
 // resource_698_c_0200180c.c (overlay 698's Func_0200180c, differ 47 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 

@@ -7,6 +7,7 @@
 // and loads it with ldrsb; that moves the counter's address and every register
 // after it, and the copy loop's index and offset trade registers.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "io_write_queue.h"
@@ -36,7 +37,7 @@ void Func_02000ba0(void) {
   if (busy != 0)
     return;
   if (gData_02001aa4 == -1) {
-    Iwram_CopyWords(Data_02001aa8, (void *)0x05000060, 32);
+    Call3((void (*)())Iwram_CopyWords, Data_02001aa8, (void *)0x05000060, 32);
     Iwram_CopyWords(gData_02001ac8, Data_02001aa8, 32);
     Iwram_CopyWords(Data_02001ae8, (void *)0x05000140, 32);
     Iwram_CopyWords(Data_02001b08, Data_02001ae8, 32);
@@ -45,7 +46,9 @@ void Func_02000ba0(void) {
   phase = gData_02001aa4 / 8 % 4;
   for (i = 0; i <= 3; i++) {
     gData_02001ac8[(phase + i) % 4 + 2] = Data_02001aa8[i + 2];
-    Data_02001b08[(phase + i) % 4 + 2] = Data_02001ae8[i + 2];
+    do {
+      Data_02001b08[(phase + i) % 4 + 2] = Data_02001ae8[i + 2];
+    } while (0);
   }
   IO_WRITE_QUEUE_PUSH(0x05000060, (u32)gData_02001ac8, 0x84000008);
   IO_WRITE_QUEUE_PUSH(0x05000140, (u32)Data_02001b08, 0x84000008);

@@ -8,6 +8,7 @@
 // branches (the step 0x24000 in r1, the sprite in r1), some loads one
 // instruction off, and the literal pool's order.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "frame.h"
 
@@ -106,6 +107,9 @@ void Func_02003370(void) {
     object = Func_02005574(
         0x2a0, anchor->x,
         anchor->y - ((Random16Far() * 80 >> 16) << 16) - 0x80000, anchor->z);
+        /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+         * 58 of 207 instructions differ in tla-en. */
+        asm("");
     if (object != NULL) {
       sprite = object->animation;
       Func_0200556c(object, gData_02006180);

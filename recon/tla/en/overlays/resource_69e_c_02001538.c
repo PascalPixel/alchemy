@@ -1,9 +1,10 @@
-// Draft, differ 142 of 131: the spark ring's update (Func_02001650 adds sparks):
+// Draft, differ 63 of 131 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // each live spark moves from the work's start point to its end point over its
 // duration (speed, in frames), bowed sideways by its direction times the sine
 // of its progress, and its sprite follows (Func_020029b0 projects the point,
 // Func_020029e8 draws it).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 struct Spark {
@@ -52,9 +53,15 @@ void Func_02001538(void) {
                   spark->age * (work->to[0] - work->from[0]) / duration +
                   sine * spark->dx;
     sine = Math_Sine((spark->age << 15) / duration);
+    /* FAKEMATCH(barrier): the empty asm on sine changes its allocation rank; as no
+     * asm, 83 of 131 instructions differ in tla-en. */
+    asm("" : : "r"(sine));
     position[1] = work->from[1] +
                   spark->age * (work->to[1] - work->from[1]) / duration +
                   sine * spark->dy;
+                  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+                   * 65 of 131 instructions differ in tla-en. */
+                  asm("");
     position[2] = work->from[2] +
                   spark->age * (work->to[2] - work->from[2]) / duration;
     Func_020029b0(position);

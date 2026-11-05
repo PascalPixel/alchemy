@@ -1,4 +1,4 @@
-// Draft, differ 43 of 145: starts the spark ring between from and to: allocates
+// Draft, differ 35 of 145 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // its work in heap slot 220, loads the spark picture (ResourceId_ColouredOrbs,
 // entry 0x1ef of the resource directory, which needs that name added there
 // before adoption) into VRAM, sets up its 96 4 by 4 sprites at the leader's
@@ -75,9 +75,17 @@ void Func_02001718(const s32 *from, const s32 *to) {
 
   work->from[0] = from[0];
   work->from[1] = from[1];
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 41 of 145 instructions differ in tla-en. */
+  asm("");
   work->from[2] = from[2];
   work->to[0] = to[0];
-  work->to[1] = to[1];
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 89 of 145 instructions differ
+   * in tla-en. */
+  do {
+    work->to[1] = to[1];
+  } while (0);
   work->to[2] = to[2];
   Func_020027b8(Resource_GetTableEntry((s32)&ResourceId_ColouredOrbs), work);
   entry = Resource_FindFreeEntry();
@@ -89,16 +97,27 @@ void Func_02001718(const s32 *from, const s32 *to) {
   sprite = work->sprites;
 next:
   Func_020029e0(sprite, 4, 4, 0, tile + (i & 15) * 2);
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 39 of 145 instructions differ in tla-en. */
+  asm("");
   sprite->fullColor = 1;
   sprite->palette = 0;
   sprite->priority = Func_020029f0(leader);
   sprite->depth = Func_020029f8(leader) - 1;
   spark->age = -1;
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 37 of 145 instructions differ in tla-en. */
+  asm("");
   i++;
   sprite++;
   spark++;
   if (i <= 95)
     goto next;
-  work->next = 0;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 87 of 145 instructions differ
+   * in tla-en. */
+  do {
+    work->next = 0;
+  } while (0);
   Task_Add(Func_02001538, 0x480);
 }

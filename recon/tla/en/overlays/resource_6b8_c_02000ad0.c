@@ -81,6 +81,9 @@ void Func_02000ad0(struct Actor *object) {
   (*count)++;
   // Default: a second set keeps loop.c from hoisting p = position.
   p = 0;
+  /* FAKEMATCH(barrier): the empty asm on p changes its allocation rank; as no
+   * asm, 43 of 174 instructions differ in tla-en. */
+  asm("" : : "r"(p));
   for (i = 0; i < 2; i++) {
     sine = Math_Sine(work->timers[i] << 10);
     if (work->timers[i] < 0)
@@ -96,8 +99,16 @@ void Func_02000ad0(struct Actor *object) {
     x = p[0];
     y = p[2];
     sprite = &work->sprites[i * 2];
+    /* FAKEMATCH(barrier): the empty asm on sprite changes its allocation rank; as no
+     * asm, 42 of 174 instructions differ in tla-en. */
+    asm("" : : "r"(sprite));
     for (; j <= 1; j++, sprite++) {
-      sprite->y = y;
+      /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+       * order around it; as the plain statement, 45 of 174 instructions differ
+       * in tla-en. */
+      do {
+        sprite->y = y;
+      } while (0);
       sprite->x = x;
       sprite->scaleX = sine;
       sprite->scaleY = sine;

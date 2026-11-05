@@ -1,3 +1,4 @@
+// Draft, differ 83 of 145 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Draft of overlay 6aa's Func_020022e4, written from its listing: unless flag
 // 0x109 is set it records up to four objects from a 0-ended list of ids and
 // flags as the beam's targets and up to four stops from a second list, then
@@ -57,6 +58,9 @@ void Func_020022e4(u16 *targets, u16 *stops, s32 a2, s32 a3) {
 
         flags &= 0xf0;
         object = Actor_GetById(id);
+        /* FAKEMATCH(barrier): the empty asm on object changes its allocation rank; as no
+         * asm, 92 of 145 instructions differ in tla-en. */
+        asm("" : "=r"(object) : "0"(object));
         targets++;
         if (object != NULL) {
           Actor_SetSingleChildFlags(object, 0);
@@ -82,6 +86,9 @@ void Func_020022e4(u16 *targets, u16 *stops, s32 a2, s32 a3) {
       u16 *stop;
 
       i = 0;
+      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+       * 85 of 145 instructions differ in tla-en. */
+      asm("");
       beam->stopCount = *stops++;
       if ((s16)beam->stopCount > 0) {
         stop = &beam->stopCount;
@@ -102,7 +109,13 @@ void Func_020022e4(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   beam->unk0a = a3;
   if (REG_BLDCNT == 0) {
     REG_BLDALPHA = 0x608;
+    /* FAKEMATCH(barrier): the empty asm on REG_BLDALPHA changes its allocation rank; as no
+     * asm, 91 of 145 instructions differ in tla-en. */
+    asm("" : "=r"(REG_BLDALPHA) : "0"(REG_BLDALPHA));
     REG_BLDCNT = 0x3f10;
+    /* FAKEMATCH(barrier): the empty asm on REG_BLDCNT changes its allocation rank; as no
+     * asm, 86 of 145 instructions differ in tla-en. */
+    asm("" : : "r"(REG_BLDCNT));
   }
   Task_Add(Func_020020ec, 0x480);
 }

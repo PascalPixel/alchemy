@@ -1,4 +1,4 @@
-// Draft, differ 71 of 120, skeleton gap 14 (tla-en, 2026-11-01)
+// Draft, differ 20 of 120 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Twin of overlay 6ae's Func_020050b0 and overlay 6aa's Func_020047b8, a
 // palette cycle. The palette writes go through the volatile BG_PLTT: a volatile
 // reference in the loop stops loop.c turning two of the colour pointer's three
@@ -51,10 +51,24 @@ void Func_0200170c(void) {
     return;
   src = Data_02003930;
   for (i = 0; i < gData_02003934; i++) {
-    dst = &BG_PLTT[Data_0200391c[gData_02003938 * gData_02003934 + i]];
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 28 of 120 instructions differ
+     * in tla-en. */
+    do {
+      dst = &BG_PLTT[Data_0200391c[gData_02003938 * gData_02003934 + i]];
+    } while (0);
+    /* FAKEMATCH(barrier): the empty asm on dst changes its allocation rank; as no
+     * asm, 95 of 120 instructions differ in tla-en. */
+    asm("" : : "r"(dst));
     red = *src++;
     green = *src++;
     blue = *src++;
+    /* FAKEMATCH(barrier): the empty asm on blue changes its allocation rank; as no
+     * asm, 30 of 120 instructions differ in tla-en. */
+    asm("" : : "r"(blue));
+    /* FAKEMATCH(barrier): the empty asm on blue changes its allocation rank; as no
+     * asm, 32 of 120 instructions differ in tla-en. */
+    asm("" : "=r"(blue) : "0"(blue));
     *dst = (blue << 10) | (green << 5) | red;
   }
   dst = &BG_PLTT[gData_02003928[gData_02003934]];
@@ -64,7 +78,12 @@ void Func_0200170c(void) {
     src = Data_02003930 + gData_02003934 * 3;
   red = *src++;
   green = *src++;
-  blue = *src++;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 22 of 120 instructions differ
+   * in tla-en. */
+  do {
+    blue = *src++;
+  } while (0);
   *dst = (blue << 10) | (green << 5) | red;
   gData_02003918 ^= 1;
   if (++gData_02003938 == gData_02003934)

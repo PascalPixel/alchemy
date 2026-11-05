@@ -5,6 +5,7 @@
 // permute (1 minute) reached differ 14 by reading the value into the angle
 // variable first, which is no source form.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 extern const u16 gData_020022d0[];

@@ -94,7 +94,12 @@ done:
   Func_02001ad4(78);
   wait(120);
   Func_02001ad4(0x2c5);
-  Func_02001a64((s32)MsgComeBackWhen);
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 20 of 153 instructions differ
+   * in tla-en. */
+  do {
+    Func_02001a64((s32)MsgComeBackWhen);
+  } while (0);
   Func_02001a74(actor, 0);
   wait(10);
   Func_02001a1c();

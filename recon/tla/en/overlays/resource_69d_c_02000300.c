@@ -1,3 +1,4 @@
+// Draft, differ 2 of 57 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Draft of Func_02000300 (overlay 69D, 57 instructions), differ 20: seven
 // objects of kind 672 with random speeds and phases 0, 5, 10 ..., each updated
 // by Func_02000244. Written from the listing. With i < 7 the loop counts down
@@ -7,6 +8,7 @@
 // the priority as explicit byte masks (20 to 23); pinning i to r7, or i and the
 // phase, 37 to 43.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
 
@@ -23,6 +25,9 @@ void Func_02000300(void) {
   s32 phase;
 
   phase = 0;
+  /* FAKEMATCH(barrier): the empty asm on phase changes its allocation rank; as no
+   * asm, 8 of 57 instructions differ in tla-en. */
+  asm("" : "=r"(phase) : "0"(phase));
   for (i = 0; i != 7; i++) {
     object = Func_02001dc0(672, 0, 0, 0);
     object->motionFlags = 0;

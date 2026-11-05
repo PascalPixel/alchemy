@@ -14,6 +14,7 @@
 // comparison operands costs 4; s32 counters and a later work load change
 // nothing.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "event_work.h"

@@ -1,3 +1,4 @@
+// Draft, differ 73 of 108 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Draft of overlay 6ac's Func_02002368, the twin of overlay 6aa's
 // Func_020024c0: its draft (resource_6aa_c_020024c0.c) with this overlay's
 // symbols: differ 90 of 108. Left: what that draft's header records.
@@ -49,6 +50,9 @@ void Func_02002368(void) {
       struct BattleUnit *unit;
       u8 *owner = &gMainRoutineWork.activeOwners[i];
       unit = Unit_Get(*owner);
+      /* FAKEMATCH(barrier): the empty asm on unit changes its allocation rank; as no
+       * asm, 84 of 108 instructions differ in tla-en. */
+      asm("" : "=r"(unit) : "0"(unit));
 
       if (unit->hp > 0) {
         work->standingCount++;

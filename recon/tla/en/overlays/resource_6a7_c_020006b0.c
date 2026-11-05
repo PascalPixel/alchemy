@@ -1,4 +1,4 @@
-// Draft, differ 139 of 323, skeleton gap 19 (tla-en, 2026-11-01)
+// Draft, differ 30 of 323 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Structure matches: all five loops, the bitfields, pools and calls. Left: the
 // listing keeps the particle pointer in r7 and sprite and frame in r6, here
 // swapped (particle outranks sprite in global.c whether or not it is shared
@@ -121,13 +121,25 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
   tiles = VramCache_Load(entry, 0x500, work);
   particle = work->particles;
   sprite = work->sprites;
+  /* FAKEMATCH(barrier): the empty asm on sprite changes its allocation rank; as no
+   * asm, 94 of 323 instructions differ in tla-en. */
+  asm("" : "=r"(sprite) : "0"(sprite));
+  /* FAKEMATCH(barrier): the empty asm on sprite changes its allocation rank; as no
+   * asm, 109 of 323 instructions differ in tla-en. */
+  asm("" : "=r"(sprite) : "0"(sprite));
   i = 0;
+  /* FAKEMATCH(barrier): the empty asm on i changes its allocation rank; as no
+   * asm, 32 of 323 instructions differ in tla-en. */
+  asm("" : "=r"(i) : "0"(i));
 sheetLoop:
   column = (i & 3) * 8 + tiles;
   Func_02000b40(sprite, 0, 0, 0x40000000, column);
   slot = 0;
   sprite->unk_1e = 250;
   sprite->oam.priority = slot;
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 107 of 323 instructions differ in tla-en. */
+  asm("");
   sprite->oam.fullColor = 1;
   sprite->oam.palette = slot;
   column = i / 6;

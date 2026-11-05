@@ -24,7 +24,7 @@
      type v;                                                                   \
    } *)(base))                                                                 \
        ->v)
-s32 Camera_MoveWithinMapBounds();
+void Camera_MoveWithinMapBounds();
 s32 Event_StartScreenTransition();
 s32 Event_WaitTransitionFrames();
 s32 FieldEvent_Wait();
@@ -84,6 +84,9 @@ static __inline__ void W_Func_02005714(s32 a0, s32 a1, s32 a2) {
 }
 
 void Func_02001f10(void) {
+  struct {
+    u8 bytes[8];
+  } held;
   s32 lastArg, spill, zero, scratch;
   s32 owner, actor, mask, owner2, one, t1;
   s32 t2, t3, t16, t22, t24, t26, t34, t43;
@@ -399,7 +402,7 @@ L_0200a47a:
   t244 = Value1(Actor_GetById, 21);
   scratch = FIELD_AT(t244, u8, 90);
   mask = (mask & scratch);
-  FIELD_AT(t244, u8, 90) = mask;
+  FIELD_AT(t244, u8, 90) = (u8)mask;
   Call3(Actor_SetPositionAndReset, 21, 0x1da, 0x13c);
   Call1(FieldEvent_Wait, 1);
   t248 = Value1(Actor_GetById, 21);

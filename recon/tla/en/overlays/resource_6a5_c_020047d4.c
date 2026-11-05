@@ -35,6 +35,7 @@
 // through MAP_WORD (201), declaration and scope orders of every local,
 // s16 frame, u32 tile. const on the count local folds it. No device added.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_event.h"
@@ -79,12 +80,18 @@ void Func_020047d4(void) {
       continue;
     x = actor->x - cameraX;
     y = actor->y - originY + 0x80000;
+    /* FAKEMATCH(barrier): the empty asm on y changes its allocation rank; as no
+     * asm, 126 of 200 instructions differ in tla-en. */
+    asm("" : : "r"(y));
     z = actor->z - cameraZ - originY;
     screenY = z - y;
     depth = ((y + z) >> 16) + 58;
     timer = (s16 *)&actor->timer;
     if (gData_02006b70 == 0) {
       frame = *timer;
+      /* FAKEMATCH(barrier): the empty asm on frame changes its allocation rank; as no
+       * asm, 124 of 200 instructions differ in tla-en. */
+      asm("" : "=r"(frame) : "0"(frame));
       x = (x >> 16) - 8;
       screenY = (screenY >> 16) - 16;
       if (x <= -16 || x >= 320 || screenY <= -16 || screenY >= 240)
@@ -94,8 +101,10 @@ void Func_020047d4(void) {
       *word++ = (screenY & 0xff) | ((x & 0x1ff) << 16) | 0x40002000;
     } else {
       frame = *timer;
-      x = (x >> 16) - 8;
-      screenY = (screenY >> 16) - 64;
+      x = (x >> 16);
+      screenY = (screenY >> 16);
+      x -= 8;
+      screenY -= 64;
       if (x <= -32 || x >= 320 || screenY <= -64 || screenY >= 176)
         continue;
       word = (u32 *)oam;

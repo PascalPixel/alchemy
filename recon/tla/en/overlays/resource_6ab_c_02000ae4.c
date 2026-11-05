@@ -21,8 +21,15 @@ void Func_02000ae4(s32 rise) {
   struct Actor *object;
   struct FieldSprite *sprite;
 
-  object = Data_02004cec = Func_020041e4(0x1e9, 0x2be0000, 0, 0xe00000);
-  block = NULL;
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 31 of 80 instructions differ in tla-en. */
+  do {
+    object = Data_02004cec = Func_020041e4(0x1e9, 0x2be0000, 0, 0xe00000);
+    block = NULL;
+    /* FAKEMATCH(barrier): the empty asm on block changes its allocation rank; as no
+     * asm, 29 of 80 instructions differ in tla-en. */
+    asm("" : "=r"(block) : "0"(block));
+  } while (0);
   if (object == NULL)
     return;
   sprite = object->animation;
@@ -30,6 +37,9 @@ void Func_02000ae4(s32 rise) {
   sprite->palette = 0;
   sprite->priority = 1;
   object->motionFlags = 3;
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 15 of 80 instructions differ in tla-en. */
+  asm("");
   object->unk5c[0] = 1;
   object->update = Func_02000ab4;
   sprite->nextFrame = 0;

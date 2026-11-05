@@ -44,6 +44,7 @@
 // the first two loops (234), a for record loop (254), a struct-wrapped peerSlots
 // (216, unchanged), result after timeout (222), memberIds after peerSlots (220).
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 #include "heap_release.h"
 #include "owner_state.h"
@@ -150,7 +151,12 @@ next:
   Heap_Release(heap);
   size = 0x154;
   heap = Heap_AllocEwram(size);
-  Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 50 of 264 instructions differ
+   * in tla-en. */
+  do {
+    Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
+  } while (0);
   {
     s32 timeout;
     s32 tries;

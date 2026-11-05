@@ -1,9 +1,11 @@
+// Draft, differ 35 of 85 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Matches: differ 0 of 67 (tla-ja, 2026-10-30), literal pool included.
 // Draft of overlay 6a8's Func_020003bc in Japanese, the one edition still on
 // its listing (English to Italian link games/tla/src/scene/prox/s03bc.c, a
 // longer form, so a tla-en diff of this draft compares a different body).
 // The earlier 2-instruction miss (the actor's copy into r5) no longer shows.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -28,6 +30,9 @@ s32 Func_020003bc(struct Actor *actor) {
     target = Actor_GetById(gMainRoutineWork.currentOwner);
     if ((*(s16 *)(work + 352) != 0 || tiles[4] != 0) && (actor->action & 2))
       flag = 1;
+      /* FAKEMATCH(barrier): the empty asm on flag changes its allocation rank; as no
+       * asm, 48 of 85 instructions differ in tla-en. */
+      asm("" : "=r"(flag) : "0"(flag));
     Func_020002d8(actor, target, 32, flag);
   }
   return 0;

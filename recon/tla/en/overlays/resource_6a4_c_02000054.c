@@ -5,6 +5,7 @@
 // modes 2 and 3 both then rise together over 256 frames with sounds 522, 390
 // and 80, and all three take motion flags 4.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct Actor *Actor_GetById(s32 id);

@@ -3,6 +3,7 @@
 // what it is and what was tried. Forwarding one call through an inline wrapper
 // (a FAKEMATCH(wrapper) on adoption) gained 4.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_sprite.h"

@@ -1,4 +1,4 @@
-// Draft, differ 112 of 236, skeleton gap 8/12 (tla-en, 2026-11-01)
+// Draft, differ 100 of 236 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Overlay 6ac's Func_020024e4, the same slide as 6ab Func_02002148 and 6ad
 // Func_0200297c. All three loops are goto loops: real ones move the exit blocks
 // to the end of the function (loop.c). Func_02002368 stays unprototyped: that
@@ -99,11 +99,17 @@ void Func_020024e4(void) {
     actor->angle = 0x4000;
     Func_02003118(actor, 49);
     running = 1;
+    /* FAKEMATCH(barrier): the empty asm on running changes its allocation rank; as no
+     * asm, 109 of 236 instructions differ in tla-en. */
+    asm("" : : "r"(running));
     goto test;
   top:
     {
       result = Func_02003168(actor->terrainId, actor->x, actor->z);
       stepX = &work->stepX;
+      /* FAKEMATCH(barrier): the empty asm on stepX changes its allocation rank; as no
+       * asm, 116 of 236 instructions differ in tla-en. */
+      asm("" : "=r"(stepX) : "0"(stepX));
       stepZ = &work->stepZ;
       pos = &position;
       if (result == 7) {
@@ -113,7 +119,15 @@ void Func_020024e4(void) {
         i = 0;
       sliding:
         pos = &position;
-        position.x = actor->x + (*stepX << 19);
+        /* FAKEMATCH(barrier): the empty asm on pos changes its allocation rank; as no
+         * asm, 111 of 236 instructions differ in tla-en. */
+        asm("" : "=r"(pos) : "0"(pos));
+        /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+         * order around it; as the plain statement, 108 of 236 instructions differ
+         * in tla-en. */
+        do {
+          position.x = actor->x + (*stepX << 19);
+        } while (0);
         position.y = actor->y;
         position.z = actor->z + (*stepZ << 19);
         if (Func_02003180(actor, pos) != 0) {
@@ -160,7 +174,12 @@ void Func_020024e4(void) {
         other++;
         if (j <= 63)
           goto scan;
-        x = actor->x += *stepX << 17;
+        /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+         * order around it; as the plain statement, 106 of 236 instructions differ
+         * in tla-en. */
+        do {
+          x = actor->x += *stepX << 17;
+        } while (0);
         z = actor->z + (*stepZ << 17);
         actor->z = z;
         snap = (x & 0xfffff) - 0x80000;

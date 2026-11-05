@@ -69,7 +69,12 @@ L_020083ac:
   t14 = FIELD_AT(v_r10, s32, 108);
   t15 = Value1((s32 (*)())GameFlag_GetByte, 0x340);
   t16 = Value1((s32 (*)())GameFlag_GetByte, 0x348);
-  v_r6 = (t14 + 0x1cc);
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 18 of 255 instructions differ
+   * in tla-en. */
+  do {
+    v_r6 = (t14 + 0x1cc);
+  } while (0);
   t17 = *(s32 *)v_r6;
   FIELD_AT(t13, s32, 16) = ((t16 << 20) - 0x1280000);
   v_r5 = ((t15 << 20) + 0x80000);

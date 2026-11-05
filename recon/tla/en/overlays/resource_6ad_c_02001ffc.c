@@ -86,6 +86,9 @@ void Func_02001ffc(struct Actor *object) {
 
       object->unk4c = 0;
       object->z -= speed;
+      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+       * 26 of 167 instructions differ in tla-en. */
+      asm("");
       object->gravity += speed >> 2;
     }
     work->landed = 1;

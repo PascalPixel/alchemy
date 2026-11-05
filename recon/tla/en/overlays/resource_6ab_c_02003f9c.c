@@ -41,15 +41,19 @@ s32 Func_02003f9c(void) {
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &gData_02004cf4;
-  struct Spot *spot = state->spots;
-  s32 i;
+  struct Spot *spot;
   s32 first;
   s32 count;
+  s32 i;
 
-  first = state->count;
+  {
+    s32 zero = 0;
+    first = state->count;
+    i = zero;
+    spot = state->spots;
+  }
   __asm__("" : : : "memory");
   count = (u16)state->count;
-  i = 0;
   if (i < first) {
   next:
     if (spot->x == x && spot->z == z) {

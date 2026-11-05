@@ -35,6 +35,7 @@
 // do-while outer loop; j = 0 at the top of the outer loop (78) or after the
 // position stores (137).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "system/vector3.h"
 
@@ -109,8 +110,16 @@ void Func_02005268(struct Actor *object) {
         x = ((struct Vector3 *)sprite)->x;
         z = ((struct Vector3 *)sprite)->z;
         sprite = &work->sprites[i * 2];
+        /* FAKEMATCH(barrier): the empty asm on sprite changes its allocation rank; as no
+         * asm, 39 of 174 instructions differ in tla-en. */
+        asm("" : : "r"(sprite));
         for (; j < 2; j++) {
-          sprite->unk10 = z;
+          /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+           * order around it; as the plain statement, 41 of 174 instructions differ
+           * in tla-en. */
+          do {
+            sprite->unk10 = z;
+          } while (0);
           sprite->unk0c = x;
           sprite->unk14 = sprite->unk18 = sine;
           if (j == 0) {

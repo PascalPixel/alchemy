@@ -204,6 +204,9 @@ void Func_02000ac8(void) {
   Call1((void (*)())FieldEvent_Wait, 48);
 
   last = count - 1;
+  /* FAKEMATCH(barrier): the empty asm on last changes its allocation rank; as no
+   * asm, 40 of 630 instructions differ in tla-en. */
+  asm("" : "=r"(last) : "0"(last));
   i = 0;
   if (count != 0) {
     goto shuffleTest;
@@ -258,6 +261,9 @@ void Func_02000ac8(void) {
       REG_BLDALPHA = i | 0x1000;
       i--;
       Call1((void (*)())wait, 8);
+      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+       * 42 of 630 instructions differ in tla-en. */
+      asm("");
       if (i != 0)
         goto fadeOut;
     }

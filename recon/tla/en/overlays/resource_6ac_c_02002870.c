@@ -112,6 +112,9 @@ next:
       sum = Random16Far();
       sum += Random16Far();
       half = 0x8000;
+      /* FAKEMATCH(barrier): the empty asm on half changes its allocation rank; as no
+       * asm, 39 of 168 instructions differ in tla-en. */
+      asm("" : : "r"(half));
       Func_02003120(object, gData_02003304);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;

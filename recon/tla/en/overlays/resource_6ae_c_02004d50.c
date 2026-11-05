@@ -13,7 +13,12 @@ void Func_02004d50(s32 id) {
   if (held == id) {
     work[0x138a] = 0;
     party->held |= 0xffff;
-    Actor_GetById(held)->update = NULL;
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 31 of 32 instructions differ
+     * in tla-en. */
+    do {
+      Actor_GetById(held)->update = NULL;
+    } while (0);
     Actor_SetPartAttribute(Actor_GetById(held), 0);
   }
 }

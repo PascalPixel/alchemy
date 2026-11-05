@@ -1,4 +1,4 @@
-// Draft, differ 222 of 304, skeleton gap 41 (tla-en, 2026-11-01)
+// Draft, differ 98 of 304 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // The Broken Seal's Imil_RunIceSlide with The Lost Age's additions, as overlay
 // 690's Func_02001d3c: heading from the keys when the actor is near its cell's
 // middle (distance < 0x40000) or else from the way back to the middle, rounded
@@ -20,6 +20,7 @@
 // order by spill slot (declaration order changes nothing here); else arm
 // first; a dx local (worse, 233); radius in two statements (224, gap 38 + 44).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -67,7 +68,12 @@ again:
   subject->velocityX = 0;
   subject->velocityZ = 0;
 
-  x = (subject->x & 0xfff00000) + 0x80000;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 107 of 304 instructions differ
+   * in tla-en. */
+  do {
+    x = (subject->x & 0xfff00000) + 0x80000;
+  } while (0);
   probe[0] = x;
   probe[1] = subject->y;
   z = (subject->z & 0xfff00000) + 0x80000;
@@ -86,7 +92,7 @@ again:
     heading = (s16)ArcTan2(lastZ - subject->z, lastX - subject->x);
     heading = (s16)((heading + 0x2000) & 0xc000);
   }
-  Vector_AddPolarOffsetFar(0x100000, heading, probe);
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, heading, probe);
 
   nextBehavior = Func_02004424(subject->terrainId, probe[0], probe[2]);
   if (nextBehavior != 255 &&
@@ -111,7 +117,7 @@ again:
   }
 
   for (;;) {
-    Vector_AddPolarOffsetFar(0x100000, heading, probe);
+    Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, heading, probe);
     nextBehavior = Func_02004424(subject->terrainId, probe[0], probe[2]);
     if (nextBehavior == 255) {
       break;

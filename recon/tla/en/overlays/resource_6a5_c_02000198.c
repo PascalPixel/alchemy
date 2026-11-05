@@ -30,6 +30,7 @@
 // call (same); barriers before the y updates (62, 73); alchemy permute 10
 // minutes (the counter temporary, 18 to 16).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
 

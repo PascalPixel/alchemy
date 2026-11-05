@@ -1,4 +1,4 @@
-// Draft, differ 226 of 304, skeleton gap 88 (tla-en, 2026-11-01)
+// Draft, differ 62 of 304 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Control flow, types and calls follow the listing: every block, the restart
 // after a blocked step, the rotated walk and the 64-object scan are in place.
 // The locals are in the order of the listing's slots: pos 28, startCell 24,
@@ -116,7 +116,12 @@ restart:
     actor->velocityX = 0;
     actor->velocityZ = 0;
     actor->x = centerX;
-    actor->z = centerZ;
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 74 of 304 instructions differ
+     * in tla-en. */
+    do {
+      actor->z = centerZ;
+    } while (0);
     goto stop;
   }
   while (Vector_AddPolarOffsetFar(0x100000, direction, &pos),

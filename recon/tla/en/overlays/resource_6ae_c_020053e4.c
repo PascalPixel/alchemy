@@ -5,6 +5,7 @@
 // counters (999, 999, 0), links object and work both ways, hooks the object's
 // update (Func_02005268) and gives each sprite the object's priority.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct ResourceTableEntry {

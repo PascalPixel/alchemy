@@ -1345,8 +1345,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (!(frame & 7) && frame <= 501) {
           s32 s;
 
-          s = FindFreeSpark();
           spans2 = Data_08196fbc;
+          s = FindFreeSpark();
 
           if (s != -1) {
             s32 r = Random16() & 127;
@@ -1398,16 +1398,17 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       if (shade < 0 || shade > 63)
         shade = 63;
       BattleEffect_DrawDiagonalCanvasLine(0,
-                    (Iwram_MulQ16((frame - 521) << 16, 0x400) + 0x7b0000) >> 16,
+                    (Iwram_MulQ16((frame - 521) * 0x10000, 0x400) + 0x7b0000) >> 16,
                     frame - 521, shade);
     }
     if ((u32)(frame - 531) <= 209) {
+      s32 x = 0x40000;
       s16 shade = 741 - frame;
 
       if (shade < 0 || shade > 63)
         shade = 63;
-      BattleEffect_DrawDiagonalCanvasLine((0x40000 - Iwram_MulQ16((frame - 530) << 16, 0x400)) >> 16,
-                    127, frame - 530, shade);
+      x -= Iwram_MulQ16((frame - 530) * 0x10000, 0x400);
+      BattleEffect_DrawDiagonalCanvasLine(x >> 16, 127, frame - 530, shade);
     }
     if ((u32)(frame - 535) <= 209) {
       s16 shade = 745 - frame;
@@ -1415,16 +1416,17 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       if (shade < 0 || shade > 63)
         shade = 63;
       BattleEffect_DrawDiagonalCanvasLine(0,
-                    (Iwram_MulQ16((frame - 534) << 16, 0x600) + 0x780000) >> 16,
+                    (Iwram_MulQ16((frame - 534) * 0x10000, 0x600) + 0x780000) >> 16,
                     frame - 534, shade);
     }
     if ((u32)(frame - 554) <= 209) {
+      s32 x = 0x60000;
       s16 shade = 764 - frame;
 
       if (shade < 0 || shade > 63)
         shade = 63;
-      BattleEffect_DrawDiagonalCanvasLine((0x60000 - Iwram_MulQ16((frame - 553) << 16, 0x600)) >> 16,
-                    127, frame - 553, shade);
+      x -= Iwram_MulQ16((frame - 553) * 0x10000, 0x600);
+      BattleEffect_DrawDiagonalCanvasLine(x >> 16, 127, frame - 553, shade);
     }
 
     // The healing: rings turning about the centre, then the great glow.

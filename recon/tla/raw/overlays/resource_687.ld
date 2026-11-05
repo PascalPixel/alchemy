@@ -25,7 +25,7 @@ SECTIONS
         "*/games/tla/src/scene/sea_of_time/s10a8.o"(.text)
         "*/resource_687_overlay.o"(.text.x02009108)
         "*/games/tla/src/scene/sea_of_time/blocks.o"(.text)
-        "*/resource_687_overlay.o"(.text.x02009650)
+        "*/games/tla/src/scene/sea_of_time/s1650.o"(.text)
         "*/games/tla/src/scene/sea_of_time/sink.o"(.text)
         "*/resource_687_overlay.o"(.text.x02009a14)
         "*/resource_687_overlay.o"(.text.x02009cdc)

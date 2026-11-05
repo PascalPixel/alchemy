@@ -33,65 +33,83 @@ void GameFlag_ClearBit();
 s32 Func_02001fb4();
 
 s32 Func_02000da0(void) {
-  s32 i, changed, offset;
-  volatile u16 *palette;
-  u8 *table;
+  s32 changed;
 
   Task_RemoveFar(Func_02000c50);
   Func_02001fac();
   Func_02002044(0);
   Func_02002054(0x22c);
   *gData_020022cc = 1;
-fade:
-  wait(10);
-  changed = 0;
-  i = 1;
-  table = (u8 *)gData_020026c0;
-  offset = 0;
-  palette = &BG_PLTT_COLOR(3, 1);
-step: {
-  s32 color = *palette;
-  u16 target = *(u16 *)(offset + table);
-  u16 red = color & 31;
-  s16 green = ((u16)color >> 5) & 31;
-  s16 blue = ((u16)color >> 10) & 31;
-  u16 targetRed = target & 31;
-  u16 targetGreen = (target >> 5) & 31;
-  u16 targetBlue = (target >> 10) & 31;
-  if ((u16)red < targetRed) {
-    red = (u16)red + 1;
-    changed = 1;
-  }
-  if ((u16)red > targetRed) {
-    red = (u16)red - 1;
-    changed = 1;
-  }
-  if ((u16)green < targetGreen) {
-    green = (u16)green + 1;
-    changed = 1;
-  }
-  if ((u16)green > targetGreen) {
-    green = (u16)green - 1;
-    changed = 1;
-  }
-  if ((u16)blue < targetBlue) {
-    blue = (u16)blue + 1;
-    changed = 1;
-  }
-  if ((u16)blue > targetBlue) {
-    blue = (u16)blue - 1;
-    changed = 1;
-  }
-  color = ((u16)blue << 10) | ((u16)green << 5) | (u16)red;
-  *palette = color;
-}
-  i++;
-  palette++;
-  offset += 2;
-  if (i != 15)
-    goto step;
-  if (changed)
-    goto fade;
+  do {
+    s32 i, offset;
+    volatile u16 *palette;
+    u8 *table;
+
+    wait(10);
+    table = (u8 *)gData_020026c0;
+    palette = &BG_PLTT_COLOR(3, 1);
+    changed = 0;
+    i = 1;
+    offset = 0;
+    for (; i != 15; i++) {
+      s32 color = *palette;
+      s16 target = *(s16 *)(offset + table);
+      s32 narrow = (u16)color;
+      u16 targetGreen = ((u16)target >> 5) & 31;
+      s32 red = color & 31;
+      s16 green = ((u16)color >> 5) & 31;
+      u16 targetBlue = ((u16)target >> 10) & 31;
+      s16 blue = ((u16)color >> 10) & 31;
+      s32 wide = (u16)target;
+      s32 targetRed = wide & 31;
+      {
+        u16 x = red;
+        if (x < (u16)targetRed) {
+          red = x + 1;
+          changed = 1;
+        }
+      }
+      {
+        u16 x = red;
+        if (x > (u16)targetRed) {
+          red = (s16)(x - 1);
+          changed = 1;
+        }
+      }
+      {
+        u16 x = green;
+        if (x < targetGreen) {
+          green = x + 1;
+          changed = 1;
+        }
+      }
+      {
+        u16 x = green;
+        if (x > targetGreen) {
+          green = (u16)(x - 1);
+          changed = 1;
+        }
+      }
+      {
+        u16 x = blue;
+        if (x < targetBlue) {
+          blue = x + 1;
+          changed = 1;
+        }
+      }
+      {
+        u16 x = blue;
+        if (x > targetBlue) {
+          blue = (u16)(x - 1);
+          changed = 1;
+        }
+      }
+      color = ((u16)blue << 10) | ((u16)green << 5) | (u16)red;
+      *palette = color;
+      palette++;
+      offset += 2;
+    }
+  } while (changed);
   *gData_020022cc = 1;
   GameFlag_ClearBit(0x200);
   return Func_02001fb4();

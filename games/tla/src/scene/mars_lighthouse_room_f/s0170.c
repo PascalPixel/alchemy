@@ -1,6 +1,5 @@
 #include "edition.h"
 
-// The Japanese form differs and is still on its listing.
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 
 #include "room.h"
@@ -36,5 +35,11 @@ void Func_02000170(void) {
   }
   Func_02005688();
 }
+
+#else
+
+#include "room.h"
+
+void Func_02000170(void) { Func_02005688(); }
 
 #endif

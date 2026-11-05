@@ -1,7 +1,3 @@
-// Draft, differ 56 (tla-en, 2026-11-05). Func_02003370 of overlay 6ae.
-// Barrier gone (a rise from 54), a byte local for the zero. Left: reload's
-// scratch: r2 where the native has r1, from the action store's mask, which
-// natively goes to r3 with r0 kept.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -37,7 +33,8 @@ void Func_020057dc(s32 sound);
 void Func_020000e4(void);
 
 static __inline__ void SetScale(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH(wrapper): forwarded inline (scene_call.h). */
+  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 41 of 207
+   * instructions differ in tla-en. */
   Func_020055c4(a, b, c);
 }
 
@@ -97,25 +94,42 @@ void Func_02003370(void) {
     break;
   }
   if (spawn) {
-    object = Func_02005574(
-        0x2a0, anchor->x,
+    /* FAKEMATCH(wrapper): the spawn forwarded through Value4; as a direct call,
+     * 2 of 207 instructions differ in tla-en. */
+    object = (struct Actor *)Value4(
+        (s32 (*)())Func_02005574, 0x2a0, anchor->x,
         anchor->y - ((Random16Far() * 80 >> 16) << 16) - 0x80000, anchor->z);
     if (object != NULL) {
       u8 zero;
+      s32 mask;
 
       sprite = object->animation;
       Func_0200556c(object, gData_02006180);
       Actor_SetPartAttribute(object, 1);
       object->motionFlags = 0;
-      object->action = Random16Far() & 0x0ffff000;
+      {
+        /* FAKEMATCH(temporary): the masked value held in a local; as
+         * object->action = Random16Far() & 0x0ffff000, 36 of 207 instructions
+         * differ in tla-en. */
+        s32 action = Random16Far() & 0x0ffff000;
+
+        object->action = action;
+      }
       zero = 0;
       object->unk66 = 0;
-      ((u8 *)object)[98] = Random16Far() >> 13;
+      {
+        /* FAKEMATCH(temporary): the byte held in a local; as a direct store, 2
+         * of 207 instructions differ in tla-en. */
+        u8 phase = Random16Far() >> 13;
+
+        ((u8 *)object)[98] = phase;
+      }
       object->update = Func_020000e4;
       object->speedLimit = Math_Sine(Random16Far() * 0xffff >> 20) * 24;
       object->speedLimit = anchor->speedLimit >> 16;
       sprite->unk1a = zero;
-      sprite->layer = 1;
+      mask = -13;
+      ((u8 *)sprite)[9] = (((u8 *)sprite)[9] & mask) | 4;
     }
   }
   if (++Data_02006ccc > Data_02006b68)

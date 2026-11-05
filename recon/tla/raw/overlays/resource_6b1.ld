@@ -15,7 +15,6 @@ SECTIONS
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/reset.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/events_b.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/s0588.o"(.text)
-        "*/resource_6b1_overlay.o"(.text.x02008588)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/events_c.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/prepare.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum_entrance/s0858.o"(.text)

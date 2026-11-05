@@ -5,15 +5,14 @@
 #include "types.h"
 #include "actor.h"
 
-extern s16 gData_02002c64[];
+extern s16 gData_02002c64[][2];
 
 s32 Func_020005a0(struct Actor *actor) {
-  u8 *table = (u8 *)gData_02002c64;
-  s32 x;
-  s32 z;
+  s32 i;
 
-  for (x = 0, z = 2; *(s16 *)(table + x) != -1; x += 4, z += 4) {
-    if (*(s16 *)(table + x) == actor->x >> 20 && *(s16 *)(table + z) == actor->z >> 20)
+  for (i = 0; gData_02002c64[i][0] != -1; i++) {
+    if (gData_02002c64[i][0] == actor->x >> 20 &&
+        gData_02002c64[i][1] == actor->z >> 20)
       return 1;
   }
   return 0;

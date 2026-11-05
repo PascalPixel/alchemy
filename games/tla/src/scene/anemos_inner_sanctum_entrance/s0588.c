@@ -1,8 +1,4 @@
 #include "edition.h"
-
-// The Japanese form differs and is still on its listing.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-
 #include "anemos_inner_sanctum_entrance.h"
 
 extern const s8 gData_02000eec[];
@@ -35,8 +31,10 @@ void Func_02000588(void) {
   if (Func_02000c8c(object->terrainId, object->x, object->z) != 77)
     return;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   MoveTo(object, (object->x & 0xfff00000) + 0x80000, object->y,
          (object->z & 0xfff00000) + 0x80000);
+#endif
   {
     s32 id = gMainRoutineWork.currentOwner;
 
@@ -97,5 +95,3 @@ land:
 }
 
 void Func_02000710(void) {}
-
-#endif

@@ -20,7 +20,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_aerie/orbit.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/s326c.o"(.text)
         "*/games/tla/src/field/object/park_record.o"(.text)
-        "*/resource_6ae_overlay.o"(.text.x0200b370)
+        "*/games/tla/src/scene/mars_lighthouse_aerie/s3370.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/events_d.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/events_e.o"(.text)
         "*/resource_6ae_overlay.o"(.text.x0200b658)

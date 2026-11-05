@@ -994,15 +994,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           }
         }
       }
-      {
-        u8 *sheet = work->sheet + 0x4000;
-
-        texture.logHeight = 4;
-        texture.logWidth = 7;
-        texture.pixels = sheet;
-      }
+      texture.logWidth = 7;
+      texture.logHeight = 4;
       model->mesh = Data_02014800;
       model->kind = 7;
+      texture.pixels = work->sheet + 0x4000;
       model->scrollU = zero;
       model->scrollV = zero;
       model->vertices = verts;

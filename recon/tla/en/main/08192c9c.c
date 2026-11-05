@@ -369,6 +369,11 @@ void Heap_Release(void *buffer);
     Iwram_FillWords(dest, size, value);                                        \
   } while (0)
 
+#define DECODE_01(src, dest)                                                   \
+  do {                                                                         \
+    Resource_DecodeType01(src, dest);                                          \
+  } while (0)
+
 // A splash where a drop lands: rings spread from (x, y) for twice the
 // splash's duration, then a smaller pair of rings and a column of spray
 // rises while the screen shakes; the drop itself is drawn last.
@@ -893,7 +898,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       colors = Resource_GetTableEntry((s32)&ResourceId_Data0A5);
       Dma_Set(colors, (void *)(PLTT + 0x200), 0x84000080, REG_DMA3);
       colors += 0x200;
-      Resource_DecodeType01(colors, Data_02010578);
+      DECODE_01(colors, Data_02010578);
       tiles = Data_02010578;
       for (i = 0; i != 16; i++) {
         struct IrisSprite *obj = Func_0815b290(32, 32, 0x80002000, 0);
@@ -906,7 +911,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       colors = Resource_GetTableEntry((s32)&ResourceId_Data09A);
       FILL_WORDS((void *)(PLTT + 0x3e0), 32, -1);
       colors += 32;
-      Resource_DecodeType01(colors, work->sheet);
+      DECODE_01(colors, work->sheet);
       for (i = 0; i != 15; i++) {
         struct IrisSprite *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
 

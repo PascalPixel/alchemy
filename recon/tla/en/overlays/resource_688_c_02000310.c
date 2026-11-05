@@ -1,5 +1,4 @@
-// Draft, differ 14 of 84 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 18 (tla-en); notes below may predate it.
+// Draft, differ 4 of 84 (tla-en, 2026-11-05). Older notes may predate this.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -109,8 +108,7 @@ void Func_02000310(s32 kind, s32 frames) {
     height = 10;
     x = 5;
   }
-  Message_OpenWindow(work->message++, width, height,
-                           (resource << 16) | 2);
+  Call4((void (*)())Message_OpenWindow, work->message++, width, height, (resource << 16) | 2);
   x = Func_0200053c(id, 0, x, 5);
   while (Message_AllTyped() == 0)
     wait(1);

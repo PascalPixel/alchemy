@@ -1,5 +1,4 @@
-// Draft, differ 26 of 130 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 34 of 130 (tla-en); older figures below predate it.
+// Draft, differ 6 of 130 (tla-en, 2026-11-05) with two untagged pins, cells in r6 and index in r10; left: grid loaded before the shapes add. Older notes may predate this.
 // Draft, differ 34 of 130 (was 81): the reverse of Func_020006ac, lowering
 // each listed pillar whose flag is clear and clearing flag 0x20b. The walk is
 // a goto loop entered by a first test of the end mark, as the native has the
@@ -56,9 +55,9 @@ next:
     set = GameFlag_Test(*list);
     if (!set) {
       s32 layer = object->terrainId;
-      struct MapCell *cells = map->layers[layer].cells;
+      register struct MapCell *cells asm("r6") = map->layers[layer].cells;
       u8 *shapes = gMapShapeGrid + (((s32)cells - 0x02010000) >> 2);
-      s32 index = Func_020041e0(object);
+      register s32 index asm("r10") = Func_020041e0(object);
       s32 shape = Func_02004020(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
       struct MapCell *cell = cells + index;

@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 1135 of 7666, slots normalized 815, high
-// registers blind too 845, every register blind 345. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 1019 of 7666, slots normalized 717, high
+// registers blind too 689, every register blind 273. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1367,8 +1367,9 @@ CLEAR(buffer, 0x1000);
       HeapSlot_Release(188);
       HeapSlot_Release(104);
       if (frame >= 4 && frame < 24) {
-        s32 h = 48;
+        s32 h;
         x = target[0] / 2;
+        h = 48;
         BattleEffect_LoadBlitter(188, 19);
         IWRAM_SLOT_BC(screen, buffer, x - 24, h, 24, h);
         RELOAD_BLITTER(188, 23);
@@ -1382,16 +1383,17 @@ CLEAR(buffer, 0x1000);
         REG_BLDALPHA = (32 - frame) | 0x1000;
       if (frame > 5) {
           s32 x;
- s32 o[2];
+        s32 o1;
+        u8 *o0;
         x = target[0] / 2;
         m = __modsi3(frame / 2, 3);
- o[1] = m * 0xa00;
-        drawFuncs.draw[0](screen, buffer + 0xc56 + o[1], x - 20, 16, 40,
+        o1 = m * 0xa00;
+        drawFuncs.draw[0](screen, buffer + 0xc56 + o1, x - 20, 16, 40,
                           32);
         drawFuncs.draw[0](screen, buffer + 0x2a56 + m * 0x500, x - 20, 48,
                           40, 32);
- o[0] = (s32)(buffer + 0x1156) + o[1];
-        drawFuncs.draw[0](screen, (u8 *)o[0], x - 20, 80,
+        o0 = buffer + 0x1156 + o1;
+        drawFuncs.draw[0](screen, o0, x - 20, 80,
                           40, 32);
       }
     } else if (kind == 5 || kind == 53 || kind == 78) {

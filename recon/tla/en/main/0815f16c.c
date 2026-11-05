@@ -32,21 +32,27 @@
 // until reload takes r4 adds r4 to the rotation for the whole function, and the
 // figure jumps to about 4400. Reading such a jump as a wrong form is a mistake.
 //
-// Left, top down (slots normalized 243, every register blind 95):
-// - Kind 80 (43): i * 2 and i * 64 are their own registers stepping by 2 and 64,
-//   the buffer is in ip, 0x237 and 0x1000 not hoisted. Explicit steps get the shape
-//   but push reload into r4. The loop has 25 real insns; loop.c hoists below 31.
-// - Kind 85 (85): 15 and 0x700 no longer hoist and t and its copy are lr and ip,
-//   through the asm cut on threshold and cell's reuse, which are both stand-ins:
-//   GCSE propagates a plain copy away. Left are k r5 and the row giv r4 (swapped
-//   here), the destination before the source, and a source through sl.
-// - Kinds 71 and 82 (about 40): the listing has model r6, fade r7, matrix r8 and r5
-//   free for reload; here model r7, fade r5. A local model gets r6 but matrix
-//   moves to r7. Something blocks r5 across the arm at allocation in the listing.
+// Three more facts that settled large arms. A loop written with labels and goto
+// has no loop notes, so nothing hoists out of it and its steps are explicit: kinds
+// 80 and 85. A local reused for several values is global and ranks low: kind 71's
+// fade, angle and size are one local, which is what keeps r5 free there. Passing a
+// value through a long-lived local of the function gives it a high register, as
+// kind 85's limit does for its row base.
+//
+// Left, top down (slots normalized 103, every register blind 72):
+// - Kind 80 (28): r3, r2, r1 for three, mirror and source; here r2, r1, r2. The
+//   destination's symbol loads into r1 in the listing. The buffer here is the symbol
+//   gMapCellBuffer, the constant everywhere else; Data_02010208 needs a home.
+// - Kind 85 (34): the base's long-lived local takes r8 and h sl, swapped; reload is
+//   one step behind from the arm's first load (r3 where the listing has r5), and
+//   no reload shows between. threshold's asm cut stands for a copy GCSE otherwise
+//   propagates away; the source's form of that copy is not known.
 // - The projection's fresh add takes the asm's second mention of o; the source's
 //   second mention is not known.
 // - Kind 79 (15): the copy of the step is r8 and the step r7, here reversed by
-//   rank; p would have to be the longer-lived of the two.
+//   rank; first uses read the step in the listing, so p is replaced there up to the
+//   first label, and p is not the shared one. record_giv makes a giv non-replaceable
+//   only when it is mentioned outside the loop or the biv steps inside its life.
 // - Kind 70's step starts from i at run time, 4 rows: i = 0 is above the if, so
 //   the biv's start is not known; the listing has no multiply.
 // - Ties: kind 90's texture store order (8), kind 84's pixels (4), kind 16's store (2),
@@ -54,7 +60,8 @@
 //
 // Before adoption: RELEASE_BLITTERS and RELOAD_BLITTER are exempt only if every
 // use matches through them, CLEAR and FILL need S2's wrapper tags unless they are
-// the game's own layer, and the "X" asm at the first projection is a barrier.
+// the game's own layer, and both asms (the "X" at the first projection, the cut on
+// kind 85's threshold) and kind 80 and 85's closing do { } while (0) are barriers.
 
 // Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every

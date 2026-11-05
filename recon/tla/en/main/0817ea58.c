@@ -422,8 +422,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         waveScroll -= 0x200000;
       }
       for (j = 0, row = 0; j != 2; j++, row += 9) {
-        slot = &work->sprites[row];
-        for (i = 0; i != 9; i++) {
+        for (i = 0, slot = &work->sprites[row]; i != 9; i++) {
           Sprite *obj;
           s32 v;
 
@@ -1055,8 +1054,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     Sprite **slot;
 
     for (j = 0, row = 0; j != 2; j++, row += 9) {
-      slot = &work->sprites[row];
-      for (i = 0; i != 9; i++) {
+      for (i = 0, slot = &work->sprites[row]; i != 9; i++) {
         Sprite *obj;
         s32 v;
 

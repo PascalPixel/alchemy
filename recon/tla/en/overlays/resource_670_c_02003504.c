@@ -44,7 +44,7 @@ void Func_02003504(void) {
   Func_02005c9c(209);
   i = 0;
   angle = 0;
-next:
+do {
   x = center->x;
   y = center->y + 0x180000;
   z = center->z;
@@ -66,6 +66,5 @@ next:
   }
   i++;
   angle += 0x160000;
-  if (i <= 15)
-    goto next;
+} while (i <= 15);
 }

@@ -1,3 +1,8 @@
+// Measured 5 November (-Os), differ about 160 of 479: plain for loops and a u16
+// count give nearly every row (it was 481). Left: the count loop's registers: the
+// native keeps the table in r7, n in ip, m in lr and count in r9; here loop.c
+// hoists the table out of the m loop and it ranks lower. Frame 60 in the native
+// (stats at sp+28, stat at sp+4, unit at sp+0); here value spills too.
 // Draft, differ 481 of 479, skeleton gap 125 (tla-en, 2026-11-01)
 // Packs the four units' base stats, levels, Djinn, items and their counts into
 // clear data, sized by the password kind; FileScreen_PackPasswordData in
@@ -64,16 +69,14 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   u8 found;
   u8 flags;
   u32 stats[8];
+  u32 *stat;
   s32 i;
-  s32 packMember;
-  s32 countMember;
   s32 pos;
   s32 bit;
   s32 j;
   s32 k;
   s32 n;
   s32 m;
-  s32 count;
   s32 slot;
 
   size = 11;
@@ -88,40 +91,22 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
     size = 9;
     break;
   }
-  i = 0;
-  if (size != 0) {
-    u8 *p = out;
-
-  clear:
-    *p = 0;
-    i++;
-    p++;
-    if (i != size)
-      goto clear;
-  }
+  for (i = 0; i != size; i++)
+    out[i] = 0;
   levels = 0;
   djinn = 0;
   found = 0;
   flags = 0;
-  i = 0;
-zero:
-  stats[i] = 0;
-  i++;
-  if (i != 8)
-    goto zero;
-  i = 0;
-test:
-  if (GameFlag_Test(gData_02002700[i]))
-    flags |= 1 << i;
-  i++;
-  if (i != 6)
-    goto test;
+  for (i = 0; i != 8; i++)
+    { stat = stats; stat[i] = 0; }
+  for (i = 0; i != 6; i++) {
+    if (GameFlag_Test(gData_02002700[i]))
+      flags |= 1 << i;
+  }
   pos = 4;
   for (i = 0; i != 4; i++) {
     struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
     struct UnitBaseStats *base = (struct UnitBaseStats *)&unit->baseHp;
-    u16 *items;
-    u16 *wanted;
     s32 value;
 
     if (base->hp > 1999)
@@ -169,98 +154,62 @@ test:
     levels |= unit->level << (i * 7);
     for (j = 0; j != 4; j++)
       djinn += unit->djinnAvailable[j] << (j * 7);
-    items = unit->inventory;
-    wanted = gData_0200270c;
-    j = 0;
-  item:
-    {
-      s32 item = *items & 0x1ff;
-      u16 *cursor = wanted;
+    for (j = 0; j != 15; j++) {
+      s32 item = unit->inventory[j] & 0x1ff;
 
-      k = 0;
-    want:
-      if (item == *cursor++)
-        found |= 1 << k;
-      k++;
-      if (k != 8)
-        goto want;
+      for (k = 0; k != 8; k++) {
+        if (item == gData_0200270c[k])
+          found |= 1 << k;
+      }
     }
-    j++;
-    items++;
-    if (j != 15)
-      goto item;
     pos += 8;
   }
   if (mode == 0) {
     pos = 39;
     bit = 0;
-    for (packMember = 0; packMember != 4; packMember++) {
-      struct BattleUnit *unit = Unit_Get(gData_020026f0[packMember]);
-      u16 *items = unit->inventory;
-      u8 *p = out + pos;
+    for (i = 0; i != 4; i++) {
+      struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
 
-      slot = 0;
-    pack:
-      {
-        s32 item = *items++ & 0x1ff;
+      for (slot = 0; slot != 15; slot++) {
+        s32 item = unit->inventory[slot] & 0x1ff;
 
-        p[0] += item >> (bit + 1);
-        p[1] += item << (7 - bit);
+        out[pos] += item >> (bit + 1);
+        out[pos + 1] += item << (7 - bit);
         pos++;
         bit++;
-        p++;
         if (bit == 7) {
           bit = 0;
-          p++;
           pos++;
         }
       }
-      slot++;
-      if (slot != 15)
-        goto pack;
     }
     pos = 107;
     bit = -1;
-    for (countMember = 0; countMember != 4; countMember++) {
-      struct BattleUnit *unit = Unit_Get(gData_020026f0[countMember]);
-      u8 *p = out + pos;
+    for (i = 0; i != 4; i++) {
+      struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
 
-      m = 0;
-    stack:
-      {
+      for (m = 0; m != 23; m++) {
         u16 *items = unit->inventory;
-        u16 quantity;
+        u16 count = 0;
 
-        count = 0;
-        n = 0;
-      count:
-        {
+        for (n = 0; n != 15; n++) {
           u32 value = *items++;
 
-          if ((value & 0x1ff) == gData_0200271c[m])
+          if (gData_0200271c[m] == (value & 0x1ff))
             count = value >> 11;
         }
-        n++;
-        if (n != 15)
-          goto count;
-        quantity = count;
         if (bit < 0) {
-          *p += quantity >> -bit;
+          out[pos] += count >> -bit;
           bit += 8;
           pos++;
-          p++;
         }
-        *p += quantity << bit;
+        out[pos] += count << bit;
         bit -= 5;
         if (bit == -5) {
           pos++;
-          p++;
           bit = 3;
         }
       }
-      m++;
-      if (m != 23)
-        goto stack;
     }
     out[165] = (u32)gMainRoutineWork.coins >> 16;
     out[166] = (u32)gMainRoutineWork.coins >> 8;
@@ -269,9 +218,7 @@ test:
   if (mode != 2) {
     s32 statsOffset = 8 + (mode != 0);
 
-    i = 0;
-  rows:
-    {
+    for (i = 0; i != 2; i++) {
       out[statsOffset] = stats[i * 4] >> 24;
       out[statsOffset + 1] = stats[i * 4] >> 16;
       out[statsOffset + 2] = stats[i * 4] >> 8;
@@ -290,9 +237,6 @@ test:
       out[statsOffset + 13] = stats[i * 4 + 3] >> 12;
       out[statsOffset + 14] = stats[i * 4 + 3] >> 4;
       statsOffset += 15;
-      i++;
-      if (i != 2)
-        goto rows;
     }
   }
   out[0] = levels;

@@ -39,8 +39,7 @@ void Func_02000d3c(void) {
   Func_02001f10(308);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   step = 1;
-  i = 0;
-climb:
+  for (i = 0; i <= 351; i++) {
   if ((u32)(i - 17) <= 62) {
     fade = (step + 1) / 4;
     alpha = 16 - fade;
@@ -50,9 +49,7 @@ climb:
   *(s32 *)(lower + 12) += 0x10000;
   *(s32 *)(upper + 12) += 0x10000;
   wait(1);
-  i++;
-  if (i <= 351)
-    goto climb;
+  }
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Func_02001f10(298);
   wait(1);

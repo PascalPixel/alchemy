@@ -72,8 +72,7 @@ void Func_02000aa8(void) {
   if (leader == NULL)
     return;
   frame = 0;
-  i = 0;
-loop:
+  for (i = 0; i <= 16; i++) {
   {
     struct Actor *object =
         Func_02003bb0(285, leader->x, leader->y, leader->z);
@@ -100,7 +99,5 @@ loop:
     effect->sprite->priority = ((struct EffectView *)leader)->sprite->priority;
   }
 skip:
-  i++;
-  if (i <= 16)
-    goto loop;
+  }
 }

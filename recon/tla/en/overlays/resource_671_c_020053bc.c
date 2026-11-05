@@ -59,8 +59,7 @@ void Func_02005428(const u16 *entry, s32 set, s32 step) {
 
   // A goto loop: as while ((value = *entry) != 0xffff), 42 of 61 instructions
   // differ in tla-en.
-  goto test;
-next:
+  while (*entry != 0xffff) {
   key = entry[0];
   id = work->target;
   if (id == key) {
@@ -78,7 +77,5 @@ next:
     return;
   }
   entry += 3;
-test:
-  if (*entry != 0xffff)
-    goto next;
+  }
 }

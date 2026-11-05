@@ -64,15 +64,12 @@ void Func_020043ec(s32 mode) {
 next:
   col = 0;
   occupied = state->cells[row * 11 + col].occupied;
-  goto test;
-step:
+  while (occupied != 2) {
   col++;
   if (col > 10)
     goto done;
   occupied = state->cells[row * 11 + col].occupied;
-test:
-  if (occupied != 2)
-    goto step;
+  }
   found = 1;
 done:
   if (found)

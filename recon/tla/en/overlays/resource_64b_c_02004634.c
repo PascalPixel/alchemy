@@ -62,7 +62,7 @@ void Func_02004634(struct Actor *parent) {
   // goto loop: a for loop lets loop.c hoist the mask and the array address
   // (95).
   i = 0;
-loop:
+do {
   {
     child = Func_02004b30_(271, parent->x, parent->y, parent->z);
     pair[i] = child;
@@ -88,8 +88,7 @@ loop:
       }
     }
   }
-  if (++i <= 1)
-    goto loop;
+} while (++i <= 1);
   {
     struct Actor *p = pair[0];
     struct FieldSprite *sp = p->animation;

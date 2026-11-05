@@ -171,8 +171,7 @@ void Func_0200095c(void) {
   Func_02003b58(gust, cell.x << 16, gust->y, cell.z << 16);
   Call2(Func_02003c20, 0x50000, 0x50000);
   Camera_MoveWithinMapBounds(newX << 16, -1, newZ << 16, 1);
-  goto travelTest;
-travel:
+  while (Func_02003ba8(gust) == 0) {
   if ((gFrameCount & 1) == 0) {
     leaves.priority = 1;
     leaves.type = 674;
@@ -185,9 +184,7 @@ travel:
                  &leaves);
   }
   FieldEvent_Wait(1);
-travelTest:
-  if (Func_02003ba8(gust) == 0)
-    goto travel;
+  }
   if (hit == 255) {
     Func_02003cd8(136);
   } else {

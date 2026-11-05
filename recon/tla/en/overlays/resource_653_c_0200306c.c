@@ -32,7 +32,7 @@ void Func_0200306c(void) {
   Func_020053d8(162);
   Func_02000d64();
   i = 0;
-rise:
+do {
   leader->y += 0x48000;
   statue->y += 0x48000;
   ride->y += 0x1cccc;
@@ -43,15 +43,14 @@ rise:
   Func_02000cd8(15, 0x8000, limit);
   Func_02000cd8(16, 0, limit);
   i++;
-  if ((u16)i <= 15)
-    goto rise;
+} while ((u16)i <= 15);
   Func_02005158();
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(10);
-fall:
+do {
   leader->y += -0x6c000;
   statue->y += -0x6c000;
   ride->y += -0x2b333;
@@ -62,8 +61,7 @@ fall:
   Func_02000cf8(15, 0xc000, limit);
   Func_02000cf8(16, 0, limit);
   wait(1);
-  if (Actor_GetById(16)->scaleY > limit)
-    goto fall;
+} while (Actor_GetById(16)->scaleY > limit);
   gData_02006298 = 0;
   GameFlag_ClearBit(0x20c);
   Func_020053d8(390);

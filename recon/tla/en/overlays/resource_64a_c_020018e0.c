@@ -66,21 +66,11 @@ void Func_020018e0(s32 mode, u8 *in) {
   u8 keyItemBits;
   u32 packedStats[8];
   s32 i;
-  s32 slotUnit;
-  s32 inputIndex;
-  s32 bitOffset;
   s32 j;
   s32 n;
   s32 m;
-  s32 shift;
-  s32 following;
-  u8 *stream;
-  u8 *bytes;
-  u8 *cursor;
-  struct BattleUnit *levelMember;
-  struct BattleUnit *clearMember;
-  struct BattleUnit *slotMember;
-  struct BattleUnit *countMember;
+  s32 position;
+  s32 bit;
 
   levelBits = in[0] | in[1] << 8 | in[2] << 16 | (in[3] & 0xf0) << 20;
   djinnBits = (in[3] & 0x0f) | in[4] << 4 | in[5] << 12 | in[6] << 20;
@@ -88,99 +78,65 @@ void Func_020018e0(s32 mode, u8 *in) {
   keyItemBits = in[8];
 
   if (mode != 2) {
-    // As a value: in + 8 + (mode != 0) becomes a conditional add.
     s32 statsOffset = 8 + (mode != 0);
-    s32 offset;
-    s32 second;
-    s32 third;
 
-    i = 0;
-    offset = 4;
-    stream = statsOffset + in;
-  unpack:
-    packedStats[i * 4] =
-          stream[0] << 24 | stream[1] << 16 | stream[2] << 8 | stream[3];
-      i++;
-      *(u32 *)((u8 *)packedStats + offset) =
-          stream[4] << 24 | stream[5] << 16 | stream[6] << 8 | stream[7];
-      second = offset + 4;
-      *(u32 *)((u8 *)packedStats + second) =
-          stream[7] << 28 | stream[8] << 20 | stream[9] << 12 |
-          stream[10] << 4 | stream[11] >> 4;
-      third = offset + 8;
-      *(u32 *)((u8 *)packedStats + third) =
-          stream[11] << 28 | stream[12] << 20 | stream[13] << 12 |
-          stream[14] << 4;
-      offset += 16;
-      stream += 15;
-    if (i != 2)
-      goto unpack;
-    i = 0;
-  stats:
-    {
-      // baseHp, basePp, then baseAttack to baseAgility at 4 to 6 and baseLuck
-      // at byte 14: the native addresses them from baseHp.
-      s16 *stats = &((struct BattleUnit *)Unit_Get(gData_020026a0[i]))->baseHp;
-
-      stats[0] = packedStats[i * 2] >> 21;
-      stats[1] = packedStats[i * 2] << 11 >> 21;
-      stats[4] = packedStats[i * 2] & 0x1ff;
-      stats[5] = packedStats[i * 2 + 1] >> 22 & 0x1ff;
-      stats[6] = packedStats[i * 2 + 1] >> 12 & 0x1ff;
-      ((u8 *)stats)[14] = packedStats[i * 2 + 1] >> 4 & 0x7f;
+    for (i = 0; i != 2; i++) {
+      packedStats[i * 4] = in[statsOffset] << 24 | in[statsOffset + 1] << 16 |
+                           in[statsOffset + 2] << 8 | in[statsOffset + 3];
+      packedStats[i * 4 + 1] = in[statsOffset + 4] << 24 |
+                               in[statsOffset + 5] << 16 |
+                               in[statsOffset + 6] << 8 | in[statsOffset + 7];
+      packedStats[i * 4 + 2] =
+          in[statsOffset + 7] << 28 | in[statsOffset + 8] << 20 |
+          in[statsOffset + 9] << 12 | in[statsOffset + 10] << 4 |
+          in[statsOffset + 11] >> 4;
+      packedStats[i * 4 + 3] = in[statsOffset + 11] << 28 |
+                               in[statsOffset + 12] << 20 |
+                               in[statsOffset + 13] << 12 |
+                               in[statsOffset + 14] << 4;
+      statsOffset += 15;
     }
-    i++;
-    if (i != 4)
-      goto stats;
+    for (i = 0; i != 4; i++) {
+      s16 *stats = &((struct BattleUnit *)Unit_Get(gData_020026a0[i]))->baseHp;
+      s32 at = i * 8;
+
+#define WORD (*(u32 *)((u8 *)packedStats + at))
+      stats[0] = WORD >> 21;
+      stats[1] = WORD << 11 >> 21;
+      stats[4] = WORD & 0x1ff;
+      at += 4;
+      stats[5] = WORD >> 22 & 0x1ff;
+      stats[6] = WORD >> 12 & 0x1ff;
+      ((u8 *)stats)[14] = WORD >> 4 & 0x7f;
+#undef WORD
+    }
   }
 
-  i = 0;
-flags:
-  {
-    s32 bit = (flagBits >> i) & 1;
-    u8 *table;
-    s32 index;
-
-    following = i + 1;
-    table = (u8 *)gData_02002490;
-    index = i * 2;
-    if (bit)
-      GameFlag_SetBit(*(u16 *)(table + index));
+  for (i = 0; i != 6; i++) {
+    if ((flagBits >> i) & 1)
+      GameFlag_SetBit(gData_02002490[i]);
     else
-      GameFlag_ClearBit(*(u16 *)(table + index));
+      GameFlag_ClearBit(gData_02002490[i]);
   }
-  i = following;
-  if (i != 6)
-    goto flags;
 
-  i = 0;
-  shift = 0;
-levels:
-  levelMember = Unit_Get(gData_020026a0[i]);
-  *(u8 *)&levelMember->level = levelBits >> shift & 0x7f;
+  for (i = 0; i != 4; i++) {
+    struct BattleUnit *unit = Unit_Get(gData_020026a0[i]);
+
+    *(u8 *)&unit->level = levelBits >> (i * 7) & 0x7f;
 #if LANGUAGE != LANGUAGE_JAPANESE
-  levelMember->experience = Unit_GetExperienceForLevel(i, levelMember->level);
+    unit->experience = Unit_GetExperienceForLevel(i, unit->level);
 #endif
-  i++;
-  shift += 7;
-  if (i != 4)
-    goto levels;
+  }
 
   Djinn_GetRecoveryTable(0)->count = 0;
-  i = 0;
-clearDjinn:
-  clearMember = Unit_Get(gData_020026a0[i]);
-  // The native clears the same 40 bytes, djinnAvailable through
-  // djinnActiveCounts, four times.
-  n = 0;
-clearDjinnFour:
-  Iwram_ClearWordsEntry(clearMember->djinnAvailable, 40);
-  n++;
-  if (n != 4)
-    goto clearDjinnFour;
-  i++;
-  if (i != 4)
-    goto clearDjinn;
+  for (i = 0; i != 4; i++) {
+    struct BattleUnit *unit = Unit_Get(gData_020026a0[i]);
+
+    // The native clears the same 40 bytes, djinnAvailable through
+    // djinnActiveCounts, four times.
+    for (n = 0; n != 4; n++)
+      Iwram_ClearWordsEntry(unit->djinnAvailable, 40);
+  }
 
   for (i = 0; i != 28; i++) {
     s32 element = i / 7;
@@ -196,100 +152,64 @@ clearDjinnFour:
 
   if (mode != 0) {
     Unit_Get(gData_020026a0[0]);
-    i = 0;
-  keyItems:
-    if ((keyItemBits >> i) & 1)
-      PartyInventory_Add(gData_020026b0[i]);
-    i++;
-    if (i != 8)
-      goto keyItems;
+    for (i = 0; i != 8; i++) {
+      if ((keyItemBits >> i) & 1)
+        PartyInventory_Add(gData_020026b0[i]);
+    }
   }
 
   if (mode == 0) {
-    u16 *slot;
+    position = 39;
+    bit = 0;
+    for (i = 0; i != 4; i++) {
+      struct BattleUnit *unit = Unit_Get(gData_020026a0[i]);
 
-    inputIndex = 39;
-    bitOffset = 0;
-    slotUnit = 0;
-  inventories:
-    slotMember = Unit_Get(gData_020026a0[slotUnit]);
-    slot = slotMember->inventory;
-    bytes = in + inputIndex;
-    n = 0;
-  inventorySlots:
-    *slot = (bytes[0] << (bitOffset + 1) | bytes[1] >> (7 - bitOffset)) & 0x1ff;
-    slot++;
-    bitOffset++;
-    bytes++;
-    inputIndex++;
-    if (bitOffset == 7) {
-      bitOffset = 0;
-      bytes++;
-      inputIndex++;
-    }
-    n++;
-    if (n != 15)
-      goto inventorySlots;
-    slotUnit++;
-    if (slotUnit != 4)
-      goto inventories;
-
-    inputIndex = 107;
-    bitOffset = -1;
-    slotUnit = 0;
-  countUnits:
-    {
-      countMember = Unit_Get(gData_020026a0[slotUnit]);
-      m = 0;
-      cursor = in + inputIndex;
-    countItems:
-      j = 0;
-      if (bitOffset < 0) {
-        j = cursor[0] << -bitOffset & 0x1f;
-        cursor++;
-        inputIndex++;
-        bitOffset += 8;
-      }
-      j += cursor[0] >> bitOffset & 0x1f;
-      bitOffset -= 5;
-      if (bitOffset == -5) {
-        cursor++;
-        inputIndex++;
-        bitOffset = 3;
-      }
-      j &= 0x1f;
-      {
-        s32 slotOffset = 216;
-
-        n = 0;
-      countSlots:
-        {
-          s32 item = *(u16 *)((u8 *)countMember + slotOffset);
-
-          if ((item & 0x1ff) == gData_020026c0[m])
-            *(u16 *)((u8 *)countMember + slotOffset) = item | j << 11;
+      for (n = 0; n != 15; n++) {
+        unit->inventory[n] =
+            (in[position] << (bit + 1) | in[position + 1] >> (7 - bit)) & 0x1ff;
+        bit++;
+        position++;
+        if (bit == 7) {
+          bit = 0;
+          position++;
         }
-        n++;
-        slotOffset += 2;
-        if (n != 15)
-          goto countSlots;
       }
-      m++;
-      if (m != 23)
-        goto countItems;
-      slotUnit++;
     }
-    if (slotUnit != 4)
-      goto countUnits;
+
+    position = 107;
+    bit = -1;
+    for (i = 0; i != 4; i++) {
+      struct BattleUnit *unit = Unit_Get(gData_020026a0[i]);
+
+      for (m = 0; m != 23; m++) {
+        j = 0;
+        if (bit < 0) {
+          j = in[position] << -bit & 0x1f;
+          position++;
+          bit += 8;
+        }
+        j += in[position] >> bit & 0x1f;
+        bit -= 5;
+        if (bit == -5) {
+          position++;
+          bit = 3;
+        }
+        j &= 0x1f;
+        for (n = 0; n != 15; n++) {
+          s32 item = unit->inventory[n];
+          s32 masked = item & 0x1ff;
+
+          if (masked == gData_020026c0[m])
+            unit->inventory[n] = j << 11 | item;
+        }
+      }
+    }
 
     gMainRoutineWork.coins = in[165] << 16 | in[166] << 8 | in[167];
   }
 
-  i = 0;
-calculate:
-  Unit_UpdateClass(gData_020026a0[i]);
-  Unit_Calculate(gData_020026a0[i]);
-  i++;
-  if (i != 4)
-    goto calculate;
+  for (i = 0; i != 4; i++) {
+    Unit_UpdateClass(gData_020026a0[i]);
+    Unit_Calculate(gData_020026a0[i]);
+  }
 }

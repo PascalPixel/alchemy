@@ -20,7 +20,7 @@ void Func_02004eb0(void) {
   s32 i = 0;
   struct FieldSprite *sprite;
 
-loop:
+do {
   object = Import_ActorCreate(672, 0, 0, 0);
   sprite = object->animation;
   sprite->priority = 1;
@@ -40,6 +40,5 @@ loop:
   }
   i++;
   Animation_SetStateFlags(object, 1);
-  if (i != 8)
-    goto loop;
+} while (i != 8);
 }

@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/scene/staff_credit/s005c.o"(.text)
         "*/resource_64c_overlay.o"(.text.x020080c0)
         "*/resource_64c_overlay.o"(.text.x02008138)
-        "*/resource_64c_overlay.o"(.text.x0200820c)
+        "*/games/tla/src/scene/staff_credit/s020c.o"(.text)
         "*/games/tla/src/scene/staff_credit/s0b64.o"(.text)
         "*/games/tla/src/scene/staff_credit/prepare.o"(.text)
         "*/games/tla/src/scene/staff_credit/s0cbc.o"(.text)

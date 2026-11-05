@@ -81,8 +81,7 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
   Actor_SetPartAttribute(Actor_GetById(id), 0);
   leader = Actor_GetById(center);
   frame = 0;
-  i = 0;
-loop:
+  for (i = 0; i <= 7; i++) {
   {
     struct Actor *object;
     struct EffectView *effect;
@@ -112,9 +111,7 @@ loop:
     effect->update = Effect_AdvanceMotion;
   }
 skip:
-  i++;
-  if (i <= 7)
-    goto loop;
+  }
   GameFlag_SetBit(flag);
   FieldEvent_Wait(20);
 }

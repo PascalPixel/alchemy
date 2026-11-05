@@ -1,3 +1,7 @@
+// Measured 5 November (-Os), differ about 89 of 1527: while loops bring the
+// allocation to the native's. Left: the argument to Func_02005d8c shifts a copy of
+// z (adds r4, r5) that CSE merges here, then reload's rotation (the zero of carried
+// in r5 here r3), and order around steps -= 2.
 // Draft, differ 309 of 1527, skeleton gap 37/34 (tla-en, 2026-11-01)
 // Whirlwind inside Air's Rock, overlay 664's larger
 // copy of overlay 663's Func_0200095c: a gust (object type 280) rises from
@@ -167,8 +171,7 @@ void Func_02001828(void) {
   }
   Func_02005d94(gust);
   gust->z = TARGET(effect)->z + 0xffff0000;
-  goto grow;
-growing:
+  while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(
           0x2a0, TARGET(effect)->x, TARGET(effect)->y, TARGET(effect)->z);
@@ -193,9 +196,7 @@ growing:
       Actor_SetPartAttribute(TARGET(effect), 4);
     }
     FieldEvent_Wait(1);
-grow:
-  if (gust->scaleY <= 0x1cccb)
-    goto growing;
+  }
   Actor_SetPartAttribute(TARGET(effect), 0);
   Func_02005f94(136);
   cell.x = TARGET(effect)->x >> 20;
@@ -223,24 +224,28 @@ grow:
     steps += 2;
   } while (hit == 0);
   Func_02000690(2, cell.x, cell.z);
-  steps -= 2;
   {
-  s32 x = ((s16 *)&TARGET(effect)->x)[1] + ((steps * dir.x) << 3);
-  s32 z = ((s16 *)&TARGET(effect)->z)[1] + ((steps * dir.z) << 3);
+  struct Actor *target = TARGET(effect);
+  s32 dx = dir.x;
+  s32 x;
+  s32 z;
+
+  steps -= 2;
+  x = ((s16 *)&target->x)[1] + ((steps * dx) << 3);
+  z = ((s16 *)&target->z)[1] + ((steps * dir.z) << 3);
   ((struct FieldSprite *)gust->animation)->priority = 1;
   gust->speedLimit = 0x40000;
   gust->acceleration = 0x40000;
   cell.x = x;
   cell.z = z;
   Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
-  Func_02005ed4(0x50000, 0x50000);
+  Call2((void (*)())Func_02005ed4, 0x50000, 0x50000);
   z <<= 16;
   x <<= 16;
-  Camera_MoveWithinMapBounds(x, -1, z, 1);
+  Call4((void (*)())Camera_MoveWithinMapBounds, x, -1, z, 1);
   }
   carried = 0;
-  goto travel;
-travelling:
+  while (Func_02005dec(gust) == 0) {
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
       object = Actor_GetById(8);
       if (gust->x >> 19 == object->x >> 19 && carried == 0)
@@ -268,9 +273,7 @@ travelling:
                     &leaves);
     }
     FieldEvent_Wait(1);
-travel:
-  if (Func_02005dec(gust) == 0)
-    goto travelling;
+  }
   if (carried != 0) {
     object = gust->watchedObject;
     object->x = (carried >> 16) << 19;
@@ -317,8 +320,7 @@ travel:
     Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
     hit -= 30;
     i = 0;
-    goto blow;
-  blowing:
+    while (Func_02005dec(gust) == 0) {
       if (hit > 4)
         goto shrink;
       if (i == 0) {
@@ -370,9 +372,7 @@ travel:
         Func_02005d84();
       }
       FieldEvent_Wait(1);
-  blow:
-    if (Func_02005dec(gust) == 0)
-      goto blowing;
+    }
     Func_02005f94(298);
   }
 shrink:

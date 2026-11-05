@@ -44,7 +44,7 @@ void Func_02003144(void) {
   z = Actor_GetById(8)->z / 0x10000;
   i = 0;
   {
-  hide:
+  do {
     if (Actor_GetById(i) != NULL) {
       Data_02006be8[i] = i;
       Actor_GetById(i)->scaleX = 0;
@@ -54,8 +54,7 @@ void Func_02003144(void) {
       Data_02006be8[i] = -1;
     }
     i++;
-    if (i <= 7)
-      goto hide;
+  } while (i <= 7);
   }
   Actor_GetById(23)->scaleX = 0;
   Actor_SetSingleChildFlags(Actor_GetById(23), 0);

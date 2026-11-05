@@ -16,8 +16,7 @@ void Func_020003e8(u16 *ids) {
   struct MapCell **cells;
   s32 x, z;
 
-  goto check;
-loop:
+  while (*ids != 0xffff) {
   object = Actor_GetById(*ids);
   blocked = (u8 *)object + 0x63;
   *blocked = 0;
@@ -33,7 +32,5 @@ loop:
     *blocked = 1;
   }
   ids++;
-check:
-  if (*ids != 0xffff)
-    goto loop;
+  }
 }

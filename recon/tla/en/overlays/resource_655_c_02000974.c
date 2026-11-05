@@ -70,8 +70,7 @@ void Func_02000974(s32 mode) {
   s32 frame = 0;
   u32 i;
 
-  i = 0;
-loop:
+  for (i = 0; i <= 7; i++) {
   {
     struct Actor *object;
     struct EffectView *effect;
@@ -106,7 +105,5 @@ loop:
     effect->update = Effect_AdvanceMotionAtLeaderPriority;
   }
 skip:
-  i++;
-  if (i <= 7)
-    goto loop;
+  }
 }

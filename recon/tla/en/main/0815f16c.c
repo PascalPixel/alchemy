@@ -167,7 +167,7 @@ struct Texture {
   u8 width;
   u8 height;
   u16 unk2;
-  void *pixels;
+  u8 *pixels;
 };
 
 struct Model {

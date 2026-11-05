@@ -35,7 +35,7 @@ SECTIONS
         "*/resource_679_overlay.o"(.text.x020095f8)
         "*/games/tla/src/scene/apojii_islands/s17bc.o"(.text)
         "*/resource_679_overlay.o"(.text.x020097f8)
-        "*/resource_679_overlay.o"(.text.x02009940)
+        "*/games/tla/src/scene/apojii_islands/s1940.o"(.text)
         "*/games/tla/src/scene/apojii_islands/s1ad8.o"(.text)
         "*/games/tla/src/scene/apojii_islands/events_j.o"(.text)
         "*/games/tla/src/scene/apojii_islands/import.o"(.text)

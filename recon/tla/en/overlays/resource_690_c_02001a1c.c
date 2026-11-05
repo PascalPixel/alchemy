@@ -35,158 +35,184 @@
 // (46/49); volatile u16 (48/47), plain u16 (49/50), plain s16 (55/58); a for
 // second wait loop (46/52); declaration swaps, inner scopes, target or layer set
 // later, target passed to the polar call: all unchanged.
+#include "edition.h"
+
+// The Japanese form differs and is still on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
+#include "input.h"
+#include "call.h"
 
-struct SettlementsProbe {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-extern u32 gInput;
 extern volatile s16 gData_02002ce8;
-void wait(s32 frames);
-void Func_0200173c(void);
-void Func_02001fe0(struct Actor *object, s32 a);
-extern s16 gData_020022b6[];
-void Func_020016b0(struct Actor *object);
-s32 ArcTan2(s32 y, s32 x);
-void Vector_AddPolarOffsetFar(s32 distance, s32 heading,
-                              struct SettlementsProbe *probe);
-s32 Func_02002028(s32 layer, s32 x, s32 z);
+extern s16 Func_0200173c[];
+void Func_02001fe0(struct Actor *object);
+void gData_020022b6(void);
+s32 Func_020016b0(s32 layer, s32 x, s32 z);
+void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Func_02002008(struct Actor *object, s32 x, s32 y, s32 z);
+s32 ArcTan2(s32 y, s32 x);
+void Func_02002028(struct Actor *object, s32 x, s32 y, s32 z);
+void Func_02002008(struct Actor *object, s32 mode);
+void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
 void Func_02002010(struct Actor *object);
 s32 Func_02002048(struct Actor *object);
-s32 Func_02002050(s32 *a, s32 radiusA, struct SettlementsProbe *b, s32 radiusB);
-void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
+s32 Func_02002050(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+void wait(s32 frames);
 
 void Func_02001a1c(void) {
   struct Actor *object;
-  struct SettlementsProbe probe;
   s32 startCell;
-  s32 lastX;
-  s32 lastZ;
+  s32 targetX;
+  s32 targetZ;
   s32 x;
   s32 z;
   u8 *layer;
   s32 radius;
-  struct SettlementsProbe *target;
-  s16 heading;
-  s32 nextCell;
+  s32 position[3];
+  s32 dx, dz;
+  s32 cell;
+  s16 angle;
   s32 i;
-  s32 slot;
-  s32 distance;
-  s32 dx;
-  s32 dz;
-  struct Actor *other;
+  s32 j;
+  struct Actor *entry;
+  u8 *flags;
+  s32 *q;
+  s32 *p;
 
+  /* FAKEMATCH(volatile): gData_02002ce8 read as a volatile s16, reread after
+   * each test and for lsls #16; as a plain u16, 52 of 347 instructions differ
+   * in tla-en. */
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   gData_02002ce8 = 0;
-again:
-  Func_0200173c();
+retry:
+  gData_020022b6();
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->targetX = 0x80000000;
   object->targetZ = 0x80000000;
   object->velocityX = 0;
   object->velocityZ = 0;
-  target = &probe;
-  x = (object->x & 0xfff00000) + 0x80000;
-  target->x = x;
-  target->y = object->y;
-  z = (object->z & 0xfff00000) + 0x80000;
-  target->z = z;
-  lastZ = z;
-  lastX = x;
+  p = position;
+  p[0] = x = (object->x & 0xfff00000) + 0x80000;
+  p[1] = object->y;
+  p[2] = z = (object->z & 0xfff00000) + 0x80000;
+  targetZ = z;
+  targetX = x;
   layer = &object->terrainId;
-  startCell = Func_02002028(*layer, lastX, lastZ);
-  dx = lastX - object->x;
-  dz = lastZ - object->z;
-  distance = Iwram_MulQ16(dx, dx);
-  distance += Iwram_MulQ16(dz, dz);
-  if (distance < 0x40000) {
-    heading = gData_020022b6[(gInput >> 4) & 15];
-    if ((u16)heading == 0xffff)
+  startCell = Func_020016b0(*layer, targetX, targetZ);
+  dz = targetZ - object->z;
+  dx = targetX - object->x;
+  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
+    angle = Func_0200173c[(gInput.held >> 4) & 15];
+    // -1 for no direction, tested as its halfword.
+    if ((u16)angle == 0xffff)
       goto end;
   } else {
-    heading = ArcTan2(lastZ - object->z, lastX - object->x);
-    heading = (heading + 0x2000) & 0xc000;
+    angle = ArcTan2(targetZ - object->z, targetX - object->x);
+    angle = (angle + 0x2000) & 0xc000;
   }
-  Vector_AddPolarOffsetFar(0x100000, heading, &probe);
-  nextCell = Func_02002028(*layer, target->x, target->z);
-  if (nextCell != 255 &&
-      Map_GetTerrainHeight(*layer, target->x, target->z) - object->y <=
+  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 30
+   * of 347 instructions differ in tla-en. */
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  cell = Func_020016b0(*layer, p[0], p[2]);
+  if (cell == 255 ||
+      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y >
           0x80000) {
-    target->x = x;
-    target->z = z;
-    object->speedLimit = 0x20000;
-    object->acceleration = 0x1999;
-    object->action = 0;
-    Func_02002008(object, x, object->y, z);
-    Func_02001fe0(object, 2);
-    Actor_SetAnimationSpeed(object, 48);
-  } else {
-    object->angle = heading;
+    object->angle = angle;
     object->velocityX = 0;
     object->velocityZ = 0;
     object->x = x;
     object->z = z;
     goto end;
   }
-  for (i = 0; i <= 179 && !Func_02002048(object); i++) {
+  p[0] = x;
+  p[2] = z;
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x1999;
+  object->action = 0;
+  Func_02002028(object, x, object->y, z);
+  Func_02002008(object, 2);
+  Actor_SetAnimationSpeed(object, 48);
+  for (i = 0; i <= 179 && Func_02002048(object) == 0; i++) {
     if (gData_02002ce8 != 0)
       goto end;
     wait(1);
   }
-  object->update = (void (*)(void))Func_020016b0;
-  while (Vector_AddPolarOffsetFar(0x100000, heading, &probe), nextCell = Func_02002028(*layer, target->x, target->z), nextCell != 255) {
-    if (Map_GetTerrainHeight(*layer, target->x, target->z) - object->y > 0x80000)
-      goto stopped;
-    if (gData_02002ce8 != 0)
-      goto end;
-    radius = object->radius - 2;
-    other = Ram_HeapSlots->scriptObjects;
-    for (slot = 0; slot <= 63; slot++) {
-      if (other->script != 0 && (other->collisionFlags & 1) && other != object &&
-          Func_02002050(&other->x, radius, &probe, other->radius - 2) >= 0)
-        goto stopped;
-      other++;
-    }
-    lastX = target->x;
-    lastZ = target->z;
-    object->speedLimit = 0x20000;
-    object->acceleration = 0x1999;
-    Func_02002008(object, target->x, target->y, target->z);
-    i = 0;
-    goto walking;
-  walkLoop:
-    wait(1);
-    i++;
-  walking:
-    if (i <= 179 && !Func_02002048(object) && gData_02002ce8 == 0)
-      goto walkLoop;
-    if (gData_02002ce8 != 0)
-      goto end;
-    if (nextCell != startCell) {
-      wait(10);
-      goto end;
-    }
+  object->update = (void (*)(void))Func_02001fe0;
+  goto walk;
+walkNext:
+  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
+    goto blocked;
+  if (gData_02002ce8 != 0)
+    goto end;
+  radius = object->radius - 2;
+  entry = Ram_HeapSlots->scriptObjects;
+  j = 0;
+  flags = &entry->collisionFlags;
+overlap:
+  if (entry->script != NULL && (1 & *flags) && entry != object) {
+    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
+     * call, 2 of 347 instructions differ in tla-en. */
+    if (Value4((s32 (*)())Func_02002050, (s32)&entry->x, radius, (s32)position,
+               entry->radius - 2) >= 0)
+      goto blocked;
   }
-stopped:
+  j++;
+  flags += sizeof(*entry);
+  entry++;
+  if (j <= 63)
+    goto overlap;
+  targetX = q[0];
+  targetZ = q[2];
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x1999;
+  Func_02002028(object, q[0], q[1], q[2]);
+  i = 0;
+  goto test;
+next:
+  wait(1);
+  i++;
+test:
+  if (i <= 179 && Func_02002048(object) == 0 && gData_02002ce8 == 0)
+    goto next;
+  if (gData_02002ce8 != 0)
+    goto end;
+  if (cell != startCell)
+    goto changed;
+walk:
+  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
+   * position's address; as no asm, 94 of 347 instructions differ in tla-en. */
+  __asm__("" : : : "sfp");
+  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
+   * of 347 instructions differ in tla-en. */
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  q = position;
+  cell = Func_020016b0(*layer, q[0], q[2]);
+  if (cell != 255)
+    goto walkNext;
+blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
-  Func_02002008(object, lastX, object->y, lastZ);
+  /* FAKEMATCH(one-pass): the once-only block round the call; as no block, 2 of
+   * 347 instructions differ in tla-en. */
+  do {
+    Func_02002028(object, targetX, object->y, targetZ);
+  } while (0);
   Func_02002010(object);
   wait(2);
-  goto again;
+  goto retry;
+changed:
+  wait(10);
 end:
-  object->update = 0;
+  object->update = NULL;
   object->actionFlags |= 1;
   object->acceleration = 0x4000;
-  Func_02001fe0(object, 1);
+  Func_02002008(object, 1);
 }
+
+#endif

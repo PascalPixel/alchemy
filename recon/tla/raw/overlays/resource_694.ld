@@ -3,7 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/contigo/entry.o"(.text)
-        "*/resource_694_overlay.o"(.text.x02008038)
+        "*/games/tla/src/scene/contigo/s0038.o"(.text)
         "*/games/tla/src/scene/contigo/stop.o"(.text)
         "*/resource_694_overlay.o"(.text.x020081d4)
         "*/resource_694_overlay.o"(.text.x020081f8)

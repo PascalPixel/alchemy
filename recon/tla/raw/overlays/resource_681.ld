@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/gaia_rock_inside/s00d0.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_681_overlay.o"(.text.x0200815a)
-        "*/resource_681_overlay.o"(.text.x0200815c)
+        "*/games/tla/src/scene/gaia_rock_inside/s015c.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/scene_tables.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s0344.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s036c.o"(.text)

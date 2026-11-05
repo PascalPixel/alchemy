@@ -4,4 +4,4 @@
 #define EFFECT_SET_SCRIPT Func_02004dac
 #define EFFECT_SCRIPTS gData_0200541c
 #define EFFECT_SPRITE_PRIORITY
-#include "../../../../games/tla/src/field/field_effect/spawn.c"
+#include "../../field/field_effect/spawn.c"

@@ -30,6 +30,7 @@
 // IwramMulQ16's callee-saved home fits refs not weighted by the retry loop's
 // depth. Overlays 68f (0200189c), 6ab (02002dc4) and 6ad (02004140) stop at the
 // same point, so one answer would reach this family.
+#include "call.h"
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -68,6 +69,7 @@ void Func_02001770(void) {
   struct Actor *entry;
   u8 *flags;
   s32 *p;
+  s32 *q;
 
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
 retry:
@@ -86,8 +88,8 @@ retry:
   targetX = x;
   layer = &object->terrainId;
   startCell = Func_02002028(*layer, targetX, targetZ);
-  dx = targetX - object->x;
   dz = targetZ - object->z;
+  dx = targetX - object->x;
   if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
     angle = gData_020022b6[(gInput.held >> 4) & 15];
     if ((u16)angle == 0xffff)
@@ -96,21 +98,13 @@ retry:
     angle = ArcTan2(targetZ - object->z, targetX - object->x);
     angle = (angle + 0x2000) & 0xc000;
   }
+  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse's hoist of the
+   * position's address; as no asm, 2 of 304 instructions differ in tla-en. */
+  __asm__("" : : : "sfp");
   Vector_AddPolarOffsetFar(0x100000, angle, position);
   cell = Func_02002028(*layer, p[0], p[2]);
-  if (cell != 255 &&
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y <= 0x80000) {
-    p[0] = x;
-    p[2] = z;
-    object->speedLimit = 0x20000;
-    object->acceleration = 0x1999;
-    object->action = 0;
-    Func_02002008(object, x, object->y, z);
-    Func_02001fe0(object, 2);
-    Actor_SetAnimationSpeed(object, 48);
-    Func_02002010(object);
-    object->update = Func_020016b0;
-  } else {
+  if (cell == 255 ||
+      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
     object->angle = angle;
     object->velocityX = 0;
     object->velocityZ = 0;
@@ -118,30 +112,51 @@ retry:
     object->z = z;
     goto end;
   }
-  while (Vector_AddPolarOffsetFar(0x100000, angle, position), p = position,
-         (cell = Func_02002028(*layer, p[0], p[2])) != 255) {
-    if (Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000)
+  p[0] = x;
+  p[2] = z;
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x1999;
+  object->action = 0;
+  Func_02002008(object, x, object->y, z);
+  Func_02001fe0(object, 2);
+  Actor_SetAnimationSpeed(object, 48);
+  Func_02002010(object);
+  object->update = Func_020016b0;
+  goto walk;
+walkNext:
+  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y > 0x80000)
+    goto blocked;
+  radius = object->radius - 2;
+  entry = Ram_HeapSlots->scriptObjects;
+  j = 0;
+  flags = &entry->collisionFlags;
+overlap:
+  if (entry->script != NULL && (1 & *flags) && entry != object) {
+    if (Value4((s32 (*)())Func_02002050, (s32)&entry->x, radius, (s32)position, entry->radius - 2) >= 0)
       goto blocked;
-    radius = object->radius - 2;
-    entry = Ram_HeapSlots->scriptObjects;
-    flags = &entry->collisionFlags;
-    for (j = 0; j <= 63; j++) {
-      if (entry->script != NULL && (1 & *flags) && entry != object) {
-        if (Func_02002050(&entry->x, radius, position, entry->radius - 2) >= 0)
-          goto blocked;
-      }
-      flags += sizeof(*entry);
-      entry++;
-    }
-    targetX = p[0];
-    targetZ = p[2];
-    object->speedLimit = 0x20000;
-    object->acceleration = 0x1999;
-    Func_02002008(object, p[0], p[1], p[2]);
-    Func_02002010(object);
-    if (cell != startCell)
-      goto moved;
   }
+  j++;
+  flags += sizeof(*entry);
+  entry++;
+  if (j <= 63)
+    goto overlap;
+  targetX = q[0];
+  targetZ = q[2];
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x1999;
+  Func_02002008(object, q[0], q[1], q[2]);
+  Func_02002010(object);
+  if (cell != startCell)
+    goto moved;
+walk:
+  /* FAKEMATCH(barrier): as the one above; as no asm, 126 of 304 instructions
+   * differ in tla-en. */
+  __asm__("" : : : "sfp");
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
+  q = position;
+  cell = Func_02002028(*layer, q[0], q[2]);
+  if (cell != 255)
+    goto walkNext;
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;

@@ -1,4 +1,3 @@
-// Ported from games/tla/src/scene/aqua_rock/s25d4.c.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

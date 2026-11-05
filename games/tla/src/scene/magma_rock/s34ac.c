@@ -1,29 +1,3 @@
-// Draft, differ 81 of 122, skeleton gap 13 (tla-en, 2026-11-01)
-// Overlay 691's copy of the debris burst in resource_697_c_02004a94.c and
-// resource_692_c_020046e8.c: eight pieces of actor type 285 around the leader.
-// The statements are right; what is left is allocation. The listing has leader
-// r7, spread r8, i r10, frame r9; this draft has i r7, leader r8, spread r10.
-// Ranks from the lreg dump (log2(refs) * refs / length): i 3*11/190, leader
-// 2*7/96, spread 2*7/102. i needs at most 7 refs, or leader and spread 8.
-// Proved: one more ref each outside the loop gives the listing's registers.
-// __asm__("" : : "r"(leader), "r"(spread)); after the loop gives differ 6, gap
-// 2. That is a barrier, which comes out because it does not reach differ 0.
-// Under it the y local (computed before the x sum) lands the x and y constants
-// in r0 and r3 as the listing does; without y, differ 26 to 30.
-// The 6 left under the barrier are the -13 mask store. The listing has ldrb r3,
-// mask r2, ands r3, r2, then 4 in r2, with the sprite load after both scale
-// stores. As written here (u8 value) combine puts the mask first in the and, so
-// the result ties to the mask: ldrb r2, mask r3, and the load goes early.
-// s8 value: ldrb r3, mask r2, but the result is still tied to the mask (8). No
-// value local: the result ties to the ldrb, but the QI mask and the 4 outrank
-// it in local-alloc and take r3 (14). The bit-field gives 18, or 30 without y.
-// A one-constant mask local loses the reload through r0 and rotates the spills
-// (56 to 64). To finish: keep the and's operands in load-then-mask order with
-// value, or rank the load's quantity above the mask's; both need a barrier
-// accepted first.
-// Tried under the barrier: goto loop (58), scale store orders (32), x + i << 17
-// (83), raw u8 masks (69), wrappers (14 to 64), one-pass around the and (8), a
-// constant local for the type (no effect). Without the barrier: for loop (96).
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"

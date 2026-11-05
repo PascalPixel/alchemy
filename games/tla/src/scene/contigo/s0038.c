@@ -1,4 +1,3 @@
-// Ported from games/tla/src/scene/islet_cave/s0038.c.
 #include "types.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

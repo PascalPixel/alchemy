@@ -1,4 +1,3 @@
-// Ported from games/tla/src/scene/magma_rock/s379c.c.
 #include "types.h"
 #include "system/ram_buffer.h"
 

@@ -1,13 +1,3 @@
-// Near miss: differ 82 of 88 as a goto loop (registers), differ 109 as a for
-// loop. The native keeps everything inside the loop: mov r5, sp for the
-// position on every pass, 0x30000 rebuilt (shared by the radius and the scale),
-// the priority byte's zero loaded from the pool into r5, and the timer a second
-// counter in r10 stepped by -2 beside i in r8. As a for loop, loop.c hoists all
-// three and the timer is 20 - 2 * i. As the goto loop below only gcse's
-// hoisting of the position address (sfp - 12) remains, with the source in r8
-// and the position in r7 where the native has r7 and r5; the native's stack frame
-// holds no r11. The priority byte's zero comes from the pool with a plain byte
-// store.
 #include "types.h"
 #include "call.h"
 
@@ -53,7 +43,8 @@ loop:
     position[2] = source->z;
     radius = Random16Far();
     Vector_AddPolarOffsetFar(radius * 5 + 0x30000, Random16Far(), position);
-    effect = (struct OrbitEffect *)Value4((s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
+    effect = (struct OrbitEffect *)Value4(
+        (s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
     if (effect != NULL) {
       effect->update = Func_02000474;
       effect->timer = timer;

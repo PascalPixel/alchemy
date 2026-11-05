@@ -1,4 +1,3 @@
-// Ported from games/tla/src/scene/trial_road/s4bc8.c.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

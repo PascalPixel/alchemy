@@ -8,6 +8,7 @@
 // only with changes that are not the same program (an extra store, a duplicated
 // if).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "main_routine_work.h"
@@ -49,7 +50,11 @@ void Func_02000230(s32 kind) {
     target[1] = 144 << 16;
     target[2] = 144 << 18;
   }
-  Task_Add(Func_020000b4, 0x480);
+  {
+    s32 priority = 0x480;
+
+    Task_Add(Func_020000b4, priority);
+  }
   Camera_FollowActor(owner, 1);
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;

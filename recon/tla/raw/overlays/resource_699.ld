@@ -28,7 +28,7 @@ SECTIONS
         "*/resource_699_overlay.o"(.text.x02009092)
         "*/games/tla/src/scene/jupiter_lighthouse_basement/s1094.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_basement/s125c.o"(.text)
-        "*/resource_699_overlay.o"(.text.x02009388)
+        "*/games/tla/src/scene/jupiter_lighthouse_basement/s1388.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_basement/s15cc.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_basement/s16c4.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)

@@ -25,6 +25,7 @@
 // position for p or q, q as the overlap argument (identical or worse); one pair
 // of targets (218); dx before dz (worse); for (;;) in place of goto retry (245).
 // Earlier: a head-tested loop flag (gap 117), angle == -1, targets from p[].
+#include "call.h"
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -92,13 +93,16 @@ retry:
     angle = ArcTan2(targetZ - object->z, targetX - object->x);
     angle = (angle + 0x2000) & 0xc000;
   }
+  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse's hoist of the
+   * position's address; as no asm, 2 of 304 instructions differ in tla-en. */
+  __asm__("" : : : "sfp");
   Vector_AddPolarOffsetFar(0x100000, angle, position);
   cell = Func_02002fe0(*layer, p[0], p[2]);
   if (cell == 255 ||
       Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y > 0x80000) {
+    object->angle = angle;
     object->velocityX = 0;
     object->velocityZ = 0;
-    object->angle = angle;
     object->x = x;
     object->z = z;
     goto end;
@@ -123,7 +127,7 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Func_02003028(&entry->x, radius, position, entry->radius - 2) >= 0)
+    if (Value4((s32 (*)())Func_02003028, (s32)&entry->x, radius, (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -140,7 +144,10 @@ overlap:
   if (cell != startCell)
     goto moved;
 walk:
-  Vector_AddPolarOffsetFar(0x100000, angle, position);
+  /* FAKEMATCH(barrier): as the one above; as no asm, 126 of 304 instructions
+   * differ in tla-en. */
+  __asm__("" : : : "sfp");
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   q = position;
   cell = Func_02002fe0(*layer, q[0], q[2]);
   if (cell != 255)

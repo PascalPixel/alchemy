@@ -7,6 +7,7 @@
 // differ 94 (the object first of the three). The 0x205 pair goes through the
 // flag forwarders so that each call builds its own constant.
 #include "../../../../../games/tla/src/scene/settlements/local.h"
+#include "call.h"
 
 extern const u8 gData_0200232c[];
 
@@ -33,7 +34,7 @@ void Func_0200138c(void) {
 
   Func_02002068();
   Func_02002150(0);
-  Camera_FollowActor(10, 1);
+  Call2((void (*)())Camera_FollowActor, 10, 1);
   object = Actor_GetById(10);
   column = object->x >> 20;
   row = object->z >> 20;

@@ -1,6 +1,3 @@
-// Draft, differ 92 of 122: eight pieces of debris in a row across the leader
-// (shared with overlay 697 and the other trap maps), shrinking and spinning as
-// they fall; with spread set they also fly out along eight angles.
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"

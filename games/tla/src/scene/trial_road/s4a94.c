@@ -1,10 +1,3 @@
-// Draft, differ 79 of 122: eight dust clouds in a row across the leader, thrown
-// out in a ring when spread is set and straight up otherwise. Overlay 68F's
-// Func_020029d0 and 691's Func_020034ac are copies with small changes.
-// The ring's outward speed is the cosine scaled by Iwram_MulQ16 by 0x13333,
-// which the earlier draft left out. Left, allocation: the native keeps the
-// leader in r7, spread in r8 and the count in r10 (here r8, r10 and r7), and
-// its bitfield mask comes from r0 through a copy.
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"
@@ -12,20 +5,20 @@
 #include "field_sprite.h"
 #include "field_effect.h"
 
-extern const s32 gData_02001540[];
+extern const s32 gData_02006254[];
 
 struct Actor *Actor_GetById(s32 id);
-struct FieldActor *Func_02001438(s32 type, s32 x, s32 y, s32 z);
+struct FieldActor *Func_020057d8(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
-u32 Func_020014f0(struct FieldSprite *sprite, u32 frame);
+u32 Func_020059f0(struct FieldSprite *sprite, u32 frame);
 void Actor_SetSingleChildFlags(struct FieldEffect *effect, s32 flags);
-void Func_02001428(struct FieldEffect *effect, s32 mode);
-void Func_02001430(struct FieldEffect *effect, const s32 *script);
+void Func_020057c8(struct FieldEffect *effect, s32 mode);
+void Func_020057d0(struct FieldEffect *effect, const s32 *script);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
-void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
+void Func_02004a14(union FieldObject *object);
 
-void Func_02000974(s32 spread) {
+void Func_02004a94(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;
   u32 frame = 0;
@@ -37,16 +30,16 @@ void Func_02000974(s32 spread) {
        * one expression, 14 of 122 instructions differ in tla-en. */
       s32 y = leader->y - (((Random16Far() * 14) >> 16) << 16);
 
-      effect = (struct FieldEffect *)Func_02001438(
+      effect = (struct FieldEffect *)Func_020057d8(
           285, (i << 17) + leader->x - 0x80000, y - 0x20000, leader->z);
     }
     if (effect != 0) {
-      frame = Func_020014f0(effect->sprite, frame);
+      frame = Func_020059f0(effect->sprite, frame);
       effect->motionFlags = 0;
       effect->collisionFlags = 0;
       Actor_SetSingleChildFlags(effect, 0);
-      Func_02001428(effect, 2);
-      Func_02001430(effect, gData_02001540);
+      Func_020057c8(effect, 2);
+      Func_020057d0(effect, gData_02006254);
       effect->scaleY = effect->scaleX = 0xb333;
       effect->sprite->priority = 1;
       if (spread != 0) {
@@ -60,7 +53,7 @@ void Func_02000974(s32 spread) {
       effect->spin = ((Random16Far() << 9) >> 16) - 0x100;
       effect->scaleRateX = -0x800;
       effect->scaleRateY = -0x600;
-      effect->update = Effect_AdvanceMotionAtLeaderPriority;
+      effect->update = Func_02004a14;
     }
     i++;
   } while (i <= 7);

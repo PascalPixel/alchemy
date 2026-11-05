@@ -144,7 +144,11 @@ void Func_02001944(void) {
   Call1(Func_02001904, 9);
   Call1(Func_02001904, 11);
   Call1(Func_02001904, gMainRoutineWork.currentOwner);
-  Call2(Task_Add, (s32)Func_02001688, 0x480);
+  {
+    s32 priority = 0x480;
+
+    Task_Add(Func_02001688, priority);
+  }
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait1:

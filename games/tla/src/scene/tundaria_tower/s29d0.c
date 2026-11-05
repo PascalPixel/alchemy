@@ -1,20 +1,3 @@
-// Draft, differ 87 of 122, skeleton gap 16 (tla-en, 2026-11-01)
-// Eight effects in a row across the leader, each with a random height; mode
-// nonzero sends them out in a fan. Statements, fields, shifts, pool loads and
-// the shared velocity.z tail (velocityZ) are the native's. What is left is
-// allocation, and the skeleton gap follows from it: i in a high register adds
-// its reloads, which rotates every scratch register and moves the sprite load.
-// The native has leader r7, mode r8, i r10, state r9. Here it is i r7, leader
-// r8, state r10, mode r9. Priorities from the .17.lreg dump (floor_log2(refs) *
-// refs / live): i 3*11/186, leader 2*7/94, state 2*5/184, mode 1*3/100; i and
-// state are doubled by their zero. Goto, do-while, s32 i with an unsigned
-// compare, declaration order and mode written into the else arm (7 refs) leave
-// i first. Dropping loop weight from refs would give leader, mode, i, state,
-// the native's order exactly: one more function for the -Os lead, a compiler
-// question for Pascal (K3), not tested. Permute 2 minutes reached differ 48 to
-// 57 only with a dead second y and an `if (leader)` that adds refs: dead code,
-// rejected. Also tried with no gain: chained scales, sprite, x and scale
-// locals, argument forms. The sibling Func_02002b04 has the same i and state.
 #include "types.h"
 #include "iwram_call.h"
 #include "actor.h"

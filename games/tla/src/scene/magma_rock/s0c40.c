@@ -1,10 +1,3 @@
-// Draft, differ 51 of 113: the update of a glowing object: for its first 50
-// frames it throws effect 403 every fourth frame and blinks, then blinks on
-// another rhythm until frame 140, glows (attribute 7) until 144, and then
-// hands its position to its watched object, which takes Func_02000dc0. The
-// mask is set before the random draw as overlay 686's Func_020023d0 does.
-// Left: the native keeps the frame count's address in r9 for the blink test,
-// the phase in r6 and the parameters' address in r8.
 #include "types.h"
 #include "actor.h"
 

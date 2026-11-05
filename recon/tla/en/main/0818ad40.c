@@ -1,3 +1,23 @@
+// Measured 2026-11-05 (tla-en): differ 92 of 1246, 48 with slots and pool offsets
+// normalized, 20 with registers masked too. What settled it this round:
+// - The butterflies' step by index (`&work->particles[slot + i]`): the reduced giv's
+//   start then comes after the loop's hoists, so the 127 in r6 is live there and
+//   the step's reload takes r0, as the listing.
+// - The sheep's step local (r5 by local-alloc, the 127 r6 behind it), through
+//   `slot`, a variable set in both spawns: a block's own `frame - 48` makes the
+//   step's fields dest-address givs of frame, and their reduction takes a frame slot.
+// - u8 *pixels: `void *pixels` puts void * in the texture's alias set, so the
+//   vertices store conflicted with the texture word.
+// Left, top first:
+// 1. The flight's copy of card.x (adds r5, r2): first has to be global or it ties
+//    to the load. A second lifetime in a later block gives the copy (`first = x <<
+//    8` before the store, or `first = card.y - 1`), but x then takes r2 for r3: its
+//    preferences are r2 and r3, from what is not found.
+// 2. REG_BG2X before scroll: a local for the value gives the listing's order, with
+//    x in r0 tied to the quotient.
+// 3. The sleep spawn reloads sp+8 (ldr r0) where this draft inherits r6 from the
+//    compare. One reload more or less rotates every scratch after it: the other
+//    rows from there on follow it.
 // Measured 2026-11-05 (tla-en): differ 82 of 1246, 40 with slots and pool offsets
 // normalized, 11 with registers masked too. The flight now reads as the listing:
 // the difference is multiplied first, card.x copied after it, and the base
@@ -85,7 +105,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  void *pixels;
+  u8 *pixels;
 };
 
 // One entry of a model list, as Render_AllocateModelList allocates them and
@@ -192,6 +212,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
   s32 j;
   s32 limit;
   s32 first;
+  s32 slot;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -420,8 +441,9 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       if (frame >= 48 && frame <= 79) {
         s32 time = frame - 48;
 
-        first = time * 2;
-        for (i = 0, step = (struct EffectStep *)(first * 28 + (s32)work->particles); i != 2; i++, step++) {
+        slot = time * 2;
+        for (i = 0; i != 2; i++) {
+          step = &work->particles[slot + i];
           step->x = 64 << 16;
           step->y = 48 << 16;
           step->velocityX = ((Random16() & 127) - 64) << 11;
@@ -452,12 +474,15 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       if (frame == 64)
         Func_081180e8(-1);
       if (frame >= 48 && frame <= 79) {
-        { s32 time = frame - 48; step = &work->particles[time]; }
-        step->x = 64 << 16;
-        step->y = 48 << 16;
-        step->velocityX = ((Random16() & 127) - 64) << 11;
-        step->velocityY = ((Random16() & 127) - 64) << 11;
-        step->variant = mode;
+        struct EffectStep *sheep;
+
+        slot = frame - 48;
+        sheep = (struct EffectStep *)(slot * 28 + (s32)work->particles);
+        sheep->x = 64 << 16;
+        sheep->y = 48 << 16;
+        sheep->velocityX = ((Random16() & 127) - 64) << 11;
+        sheep->velocityY = ((Random16() & 127) - 64) << 11;
+        sheep->variant = mode;
       }
       for (i = 0; i != 64; i++) {
         step = &work->particles[i];

@@ -1,3 +1,14 @@
+// Measured 2026-11-05 (tla-en): differ 86 of 1146, unchanged this round. Tried:
+// - flags ^ two function-level constants no register holds (four, four2): the first
+//   build then matches, 4 from reload in r4 and the mode in r5, 136 normalized with
+//   rotation after it. The second build's mode 0 stores before its xor here and after
+//   it in the listing (movs r5, #0 ... str r5 just before the call). One such constant
+//   for both lets PRE share the xor.
+// - A test on a constant only GCSE knows, between the builds: it cuts CSE1, but cse2
+//   then shares the xor. Static inlines for the two loads: 1011.
+// - The palette copies' `ldr r3` before `lsls r0, #19`: priority and dependants tie,
+//   so the listing has the entry's load earlier in RTL than the 0x05000000; a local for
+//   the palette does not move it.
 // Measured 2026-11-05 (tla-en): differ 86 of 1146. Left: y takes its -24 in its
 // initializer and the second xor reads a constant held by an empty asm with an
 // output, which cuts CSE with no scheduling barrier; that gives the listing's

@@ -1,16 +1,20 @@
-// Draft, differ 264 of 497 (tla-en, 5 November 2026), under -Os, with one untagged pin.
-// Everything before the markers now has the native's registers and frame: *cursor++ and
-// entry++ are bivs (loop.c gives the reduced pointer r4), x and y scoped as here, a
-// temporary for y + 32 so local-alloc's order gives 0xe400 r5, x << 16 r6, 0 r8.
-// Left: 1. the two arms of each marker are one tail in the native, and here stay two
-// identical runs (102 instructions): flow puts a (use 0) after a call that ends the
-// fall-through arm, so find_cross_jump's first pair never matches; no form tried lifts
-// it (if/else, switch, dead stores, noop moves). A switch stops the hoisting of the
-// arms' common addresses, which the native has.
-// 2. the marker's x wants r9 with its tie to x & 511 kept (`mov r0, r9; ands r0, r3`),
-// but its own rank (8 refs over 52) beats the object's and takes r5; the pin here
-// gives r9 and the wrong tie. 3. The do blocks stop CSE giving the side test's 0 to
-// the first word's store in the else arm; they may be the source's macro.
+// Draft, differ 397 of 497, draft 498 instructions (tla-en, 5 November 2026), under -Os, with
+// two untagged pins (x r9, arg r0). The figure rose from 264 on purpose: the 102 instructions
+// of duplicated marker tails are gone, so what is left is allocation and slots, not shape.
+// The native's arms are one tail. Sched2 runs before jump2 in this compiler, and the tail
+// starts at mov r9, r2 with movs r0, #n still inside each arm, so the source has two whole
+// tails which jump2 cross-jumps. Here find_cross_jump refuses them: flow.c's find_basic_blocks
+// puts a (use 0) after the call that ends the fall-through arm, and none after the call that
+// the first arm's jump follows. An empty asm after the call is refused too (ASM_INPUT),
+// an arm's dead store goes before flow2, and a label after the first arm's call is tensioned
+// or merged away with its (use 0). So one tail is written here, and arg's pin keeps movs r0
+// in the arms, because gcse's cprop moves a plain arg = n to the join.
+// Tie evidence: mov r0, r9; ands r0, r3 and mov r1, r8; orrs r1, r3 are in-out reloads of
+// x & 511 and (tile + n) | 0xe400 tied by regmove to high registers. x ranks above object
+// (.385 against .242) without the pin, and takes r5 where the native has object.
+// Left: native order is object r5, ptr240 r6, tile+n r8, cursor+4 r10, x r9, entry+12 and the
+// second &scrollY spilled (frame 40); here tile+n r6, ptr240 r7, cursor+4 r8, entry+12 r10
+// (frame 32). The do { } while (0) is what hoists those invariants above the side test.
 // The Trial Road link display's scheduled callback (Func_020055c4 starts it):
 // its fade state falls during events or with flag 262 and otherwise rises to
 // 2 (unke0 holds it at 2); rising from 0 to 1 it loads the palette and picture
@@ -51,6 +55,30 @@ extern const u8 gData_020062d4[];
 void Func_02005770(const void *source, void *destination);
 void Func_02005790(void *entry, s32 priority);
 s32 Func_02002ce8(s32 side);
+
+#define MARKER(left, right, which, tileAdd, entryArg)                          \
+  do {                                                                         \
+    s32 lift, px;                                                              \
+    register s32 x asm("r9");                                                  \
+    register s32 arg asm("r0");                                                \
+    if (side) {                                                                \
+      x = (object->x - work->originX) / PIXELS(16) + left;                     \
+      arg = which;                                                             \
+    } else {                                                                   \
+      x = (object->x - work->originX) / PIXELS(16) + right;                    \
+      arg = which;                                                             \
+    }                                                                          \
+    lift = Func_02002ce8(arg);                                                 \
+    y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4; \
+    px = x & 511;                                                              \
+    y &= 255;                                                                  \
+    *cursor++ = 0;                                                             \
+    y |= px << 16;                                                             \
+    y |= 0x40000000;                                                           \
+    *cursor++ = y;                                                             \
+    *cursor++ = (tile + (tileAdd)) | 0xe400;                                   \
+    Func_02005790(entryArg, 255);                                              \
+  } while (0)
 
 void Func_020051a0(void) {
   struct TrialRoadLinkWork *work = Ram_HeapSlots->unkec[0];
@@ -112,91 +140,19 @@ void Func_020051a0(void) {
     return;
   object = ObjectTable_Get(work->a);
   if (object != NULL) {
-    s32 lift;
-    register s32 x asm("r9");
     s32 side = gMainRoutineWork.entrance & 1;
-    if (side) {
-      x = (object->x - work->originX) / PIXELS(16) + work->fade * 6 +
-          work->scrollX - 19;
-      lift = Func_02002ce8(0);
-      y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;
-      do {
-      s32 px = x & 511;
-      y &= 255;
-      px &= 511;
-      y &= 255;
-      y |= px << 16;
-      y |= 0x40000000;
-      *cursor++ = 0;
-      *cursor++ = y;
-      *cursor++ = (tile + 10) | 0xe400;
-      Func_02005790(entry++, 255);
-      } while (0);
-    } else {
-      x = (object->x - work->originX) / PIXELS(16) - work->fade * 6 -
-          work->scrollX + 232;
-      lift = Func_02002ce8(0);
-      y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;
-      do {
-      s32 px = x & 511;
-      y &= 255;
-      px &= 511;
-      y &= 255;
-      y |= px << 16;
-      y |= 0x40000000;
-      *cursor++ = 0;
-      *cursor++ = y;
-      *cursor++ = (tile + 10) | 0xe400;
-      Func_02005790(entry++, 255);
-      } while (0);
-    }
+    MARKER(work->fade * 6 + work->scrollX - 19,
+           -work->fade * 6 - work->scrollX + 232, 0, 10, entry++);
   }
   object = ObjectTable_Get(work->b);
   if (object == NULL || object->x == 0)
     return;
   {
-    s32 lift;
     // XXX: this side's offset adds scrollX where the first marker's subtracts
     // it; the native does so, and a render of the course's far side would show
     // whether it is a slip.
-    register s32 x asm("r9");
     s32 side = gMainRoutineWork.entrance & 1;
-    if (side) {
-      x = (object->x - work->originX) / PIXELS(16) + work->fade * 6 +
-          work->scrollX + 189;
-      lift = Func_02002ce8(1);
-      y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 +
-          4;
-      do {
-      s32 px = x & 511;
-      y &= 255;
-      px &= 511;
-      y &= 255;
-      y |= px << 16;
-      y |= 0x40000000;
-      *cursor++ = 0;
-      *cursor++ = y;
-      *cursor++ = (tile + 14) | 0xe400;
-      Func_02005790(entry, 255);
-      } while (0);
-    } else {
-      x = (object->x - work->originX) / PIXELS(16) - work->fade * 6 +
-          work->scrollX + 23;
-      lift = Func_02002ce8(1);
-      y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 +
-          4;
-      do {
-      s32 px = x & 511;
-      y &= 255;
-      px &= 511;
-      y &= 255;
-      y |= px << 16;
-      y |= 0x40000000;
-      *cursor++ = 0;
-      *cursor++ = y;
-      *cursor++ = (tile + 14) | 0xe400;
-      Func_02005790(entry, 255);
-      } while (0);
-    }
+    MARKER(work->fade * 6 + work->scrollX + 189,
+           -work->fade * 6 + work->scrollX + 23, 1, 14, entry);
   }
 }

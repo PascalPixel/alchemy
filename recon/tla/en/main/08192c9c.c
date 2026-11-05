@@ -724,8 +724,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   draw[1] = Ram_HeapSlots->unkb8[1];
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, Data_02010578, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  for (j = 0; j != 0x302; j++)
-    sprites[j] >>= 1;
+  for (i = 0; i != 0x302; i++)
+    sprites[i] >>= 1;
   Func_0815b434(work->sheet, 32, 0x10000);
   Graphics_LoadGreyRamp();
   frame = 0;
@@ -855,8 +855,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       } else {
         scene->radius += 0x2000;
         if (!(frame & 7)) {
-          for (y = 0; y != 128; y++) {
-            s32 c = FADE_PLTT[y];
+          for (i = 0; i != 128; i++) {
+            s32 c = FADE_PLTT[i];
             s32 r = 31;
             s32 g = (u16)c >> 5 & 31;
             s32 b = (u16)c >> 10 & 31;
@@ -868,7 +868,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
               g--;
             if (b < 15)
               b++;
-            FADE_PLTT[y] = b << 10 | g << 5 | r;
+            FADE_PLTT[i] = b << 10 | g << 5 | r;
           }
         }
       }

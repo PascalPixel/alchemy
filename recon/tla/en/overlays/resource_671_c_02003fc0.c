@@ -71,6 +71,7 @@ void Func_02004270(s32 x, s32 z, s32 piece, s32 flags);
 s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
                   s32 last, s32 bit) {
   u8 *cells;
+  s32 piece;
   s32 spare, step, dir, used, dz, index, one;
   u32 x, z, nextX, nextZ, tries, attempts;
   u8 tried;
@@ -137,8 +138,8 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
           goto blocked;
       }
       Data_02007048[step] = tried | one << dir;
-      Func_02004270(x, z, Func_02004224(direction, dir, Data_02007028[step]),
-                    (cells + (z * 11 + x) * 4)[2] | one << bit);
+      piece = Func_02004224(direction, dir, Data_02007028[step]);
+      Func_02004270(x, z, piece, (cells + (z * 11 + x) * 4)[2] | one << bit);
       step++;
       x = nextX;
       z = nextZ;
@@ -167,8 +168,8 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
 done:
   {
     s32 offset = (nextZ * 11 + nextX) * 4;
-    Func_02004270(nextX, nextZ, Func_02004224(dir, last, cells[offset]),
-                  (cells + offset)[2] | 1 << bit);
+    piece = Func_02004224(dir, last, cells[offset]);
+    Func_02004270(nextX, nextZ, piece, (cells + offset)[2] | 1 << bit);
   }
   return 0;
 }

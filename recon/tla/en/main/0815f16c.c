@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 986 of 7666, slots normalized 696, high
-// registers blind too 668, every register blind 268. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 920 of 7666, slots normalized 630, high
+// registers blind too 602, every register blind 236. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1775,8 +1775,8 @@ CLEAR(buffer, 0x1000);
           p->vx = -0x30000;
         else
           SPARKS->vx = 0x30000;
-        p->x += -p->vx * 12;
         p->vy = 0x80000;
+        p->x += -p->vx * 12;
         p->y += -p->vy * 12;
       }
       if (frame <= 150) {
@@ -1806,13 +1806,11 @@ CLEAR(buffer, 0x1000);
       s32 x;
       if (frame < 6) {
         if (action->side == 0) {
-          step = (6 - frame) * 3;
-          x = target[0] / 2 + step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] / 2 + (6 - frame) * 3 * 2;
+          y = target[1] - (6 - frame) * 3 * 4 + 24;
         } else {
-          step = (6 - frame) * 3;
-          x = target[0] / 2 - step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] / 2 - (6 - frame) * 3 * 2;
+          y = target[1] - (6 - frame) * 3 * 4 + 24;
         }
         drawFuncs.draw[1](screen, buffer, x - 16, y - 32, 32, 64);
       }

@@ -1,46 +1,3 @@
-// Draft, differ 18 of 1827, skeleton gap 18 (tla-en, 2026-11-01): sched2 order
-// only; measure with both addresses, as below (0812381c alone counts the nested
-// function's 226 instructions as added).
-// Draft of Func_0812381c with its nested Func_08123648 (compare both:
-// alchemy-devtools diff 0812381c.c 08123648,0812381c): ☀️'s BattleActionRun_Build
-// and BattleActionRun_SetTargets (games/tbs/src/battle/battle/action.c), ported.
-// ⚓️ differs: the plan's second unit (its byte 2) and its word at 100 are
-// cleared with it; command 9 skips the checks for what stops the actor and
-// attacks the aimed unit (ability 299, or the plain attack for enemies 101 to
-// 103); Psynergy 590 to 597 and 600 to 627 take their own cast messages; a
-// summon counts the standby Djinn of both sides in a link battle, and summon
-// 402 records which side summoned it in the battle work (0x862, 0x865);
-// effect 89 doubles or triples a blow 179 times in 256; abilities 178 and 374
-// and effect 82 roll their hit by the distance table Data_0812896c (the plain
-// rate 100 unless they aim one unit); ability 312 picks a second unit with
-// Func_0811f5a4 and 316 re-aims at random up to ten times; the attack's
-// animation comes from Func_0811d79c for a party member. The nested function
-// counts targets twice for effect 75, the second time with range 11.
-// Message names are ours where en.po has none: the enemy abilities' are
-// numbered (MsgEnemyAbility0d53 and on), the rest ☀️'s.
-// Remaining: where the native waits after a store before an extended load
-// (ldrb, ldrh, ldrsb) that -mthumb-slow-loads lets go first: the four target
-// loops' targetCount reload after their store (the native steps the index or
-// pointer first), actor->enemyId after the attack's presentationFlags = 0,
-// and the nested function's mode load after the ability is saved; two ties
-// (the nested function's request slot load after enemyCount's spill, ranked
-// one higher by the load rule; the parent's battle work constant before the
-// actor's frame store, by sched2's last-insn class).
-// Forms measured: the plan's first stores in ☀️'s order (actorId read between
-// hauntDamage and targetCount, 56 to 30), case 0's count before its offset,
-// command 9's target id before its multiplier (28 to 18); the enemy ability
-// messages switched in ☀️'s order (the case bodies' layout follows it), the
-// Psynergy messages as a switch on ranges (if-else chains fold into a range
-// test or split the default's call), the attack's distance through abs()
-// (the native's compare and negate around a byte load), the held keys through
-// a volatile view, the animation table const (its value is reused after the
-// store), one amount and chance for the two blow cases and one index for
-// their loops. Measured without gain (differ 18 or worse): includeDowned, mode
-// and battle assigned apart from their declarations, the two count or two
-// frame declarations swapped, actor->enemyId or the result held in a local
-// around the attack's presentationFlags, aimedPlace local to its block, the
-// critical loop as a do-while (22), the blow loops stepping inside the store,
-// the request's target read through place (187).
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -117,7 +74,7 @@ extern char MsgEnemyAbility0d61;
 extern char MsgEnemyAbility0d62;
 extern char MsgEnemyAbility0d63;
 extern char MsgEnemyAbility0d65;
-extern char MsgDjinnSet;
+extern char MsgDjinnIsSet;
 extern char MsgDjinnInRecovery;
 extern char MsgActorUnleashesDjinn;
 extern char MsgSummonLacksDjinn;
@@ -144,7 +101,7 @@ void Unit_CalculateFar(s32);
 void Sound_PlayFar(s32 cue);
 void Actor_SetMode(struct MotionObject *object, s32 mode);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
-void Func_08123574(s32 side, u8 *counts);
+void BattleParty_CountStandbyDjinn(s32 side, u8 *counts);
 u32 BattleParty_IsUnitListed(u32 id);
 s32 Item_GetEquippedElementFar(s32 unitId);
 s32 BattleClass_GetAttackEffect(s32 classId);
@@ -266,6 +223,8 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
   if (actor->hp == 0)
     return -2;
 
+  /* FAKEMATCH(volatile): the held keys read afresh at each test; as plain
+   * gInput.held, 12 of 1827 instructions differ in tla-en. */
   if (gDebugMode && GameFlag_Test(365) && (KEYS_HELD & 0x100)) {
     s32 enemy = 1;
     s32 index;
@@ -548,13 +507,12 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
                              (request->parameter & 255) + 300);
         BattleEvent_Push(BATTLE_EVENT_SOUND, 175);
         BattleEvent_Push(BATTLE_EVENT_DRAW_STATUS, 0);
-        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)&MsgDjinnSet);
+        BattleEvent_Push(BATTLE_EVENT_MESSAGE, (u32)&MsgDjinnIsSet);
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
         Sound_PlayFar(212);
         Actor_SetMode(BattleObject_Get(request->unitId)->object, 3);
         Actor_SetAnimationSpeedFar(
-            (struct ActorView *)BattleObject_Get(request->unitId)->object,
-            32);
+            (struct ActorView *)BattleObject_Get(request->unitId)->object, 32);
         Func_08127308(request->unitId, (request->parameter >> 8) & 15, 3, 0);
         BattlePlayback_WaitForReady();
         return -2;
@@ -590,16 +548,18 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     s32 index;
 
     summon = SummonDefinition_Get(request->parameter);
-    Func_08123574(((struct ActionRunBattleWork *)Ram_HeapSlots->battleWork)->twoSided
-                      ? request->unitId
-                      : 0,
-                  counts);
+    BattleParty_CountStandbyDjinn(
+        ((struct ActionRunBattleWork *)Ram_HeapSlots->battleWork)->twoSided
+            ? request->unitId
+            : 0,
+        counts);
     side = 0;
     if ((u16)request->unitId > 7 &&
         ((struct ActionRunBattleWork *)Ram_HeapSlots->battleWork)->twoSided)
       side = 1;
-    list =
-        (struct DjinnRecoveryListDraft *)((u8 *)Djinn_GetRecoveryTableFar(side) + 8);
+    list = (struct DjinnRecoveryListDraft *)((u8 *)Djinn_GetRecoveryTableFar(
+                                                 side) +
+                                             8);
     for (index = 0; index < 4 && counts[index] >= summon->djinnRequired[index];
          index++)
       counts[index] = summon->djinnRequired[index];
@@ -647,6 +607,8 @@ s32 Func_0812381c(struct BattleActionRecord *request, struct BattlePlan *plan) {
     }
     MessageArgument_PushFar(request->unitId, 1);
     Message_ShowAndWaitCoreFar((s32)&MsgActorAttacks);
+    /* FAKEMATCH(one-pass): the checks in a once-only block left by break; as a
+     * plain if, 119 of 1827 instructions differ in tla-en. */
     do {
       if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
           target->immobile != 0 || target->charm != 0)

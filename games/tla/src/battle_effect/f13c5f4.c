@@ -1,35 +1,3 @@
-// Draft, differ 30 of 580, skeleton gap 11 (tla-en, 2026-11-01)
-//
-// Twin: The Broken Seal's BattleEffect_RunStreakVolley, the body of its five
-// coloured streak effects: the same calls, resources, particle sums and hit
-// logic, in the same order. ⚓️ adds one thing: when each target's streaks
-// start, modes 1 to 4 play their own cry. The rest is the twin with ⚓️'s
-// calling conventions (the effect read from the argument, heap blocks as
-// Ram_HeapSlots fields, BattleEffect_LoadBlitter with ⚓️'s mode numbers, callback
-// order 0xc80, BattleEffectKernels_IntegrateVector3 for
-// Particle_AdvanceWithGravity3D).
-
-// Left, two things. The native keeps the heap base 0x03000000 in r5 up to the
-// alternate blitter's read at the join (adds r3, r5, #0; adds r3, #188): GCSE's
-// const-prop folds heap + 188 here into a constant, so the base dies at the
-// first blitter read, that read lands in r5 and the join builds the base again
-// (the skeleton's first two hunks, 6 of the 11). The rest are single rows of
-// scheduling: reloads of the spilled effect, and a constant, one slot from
-// where the native issues them against the stores round them.
-
-// Tried:
-// the twin as ported                                         365
-// alchemy permute, 10 minutes: the start frame kept in lift's local
-// (tagged; as its own local 365, without lift 388)            56
-// the alternate blitter read once after the side branch       40
-// 2026-11-01, none moves differ 30 / skeleton 11 unless noted:
-// the twin's slots and cursor locals; the heap base as a local, a second local,
-// an initializer, a local in each arm, or Ram_HeapSlots directly; the read
-// through a pointer, or through a pointer set before the side branch (41);
-// the twin's plain start frame check, as its own local at either place, or
-// with an unused local (351); lift before streaks; j before frame; row set
-// apart; a local for effect in the loop tests.
-
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -85,7 +53,7 @@ void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
@@ -121,6 +89,10 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
   s32 lift = 20 << 16;
 
   heap = Ram_HeapSlots;
+  /* FAKEMATCH(barrier): an empty asm through heap, which hides its value from
+   * the compiler's constant and copy folding; as plain statements, 16 of 580
+   * instructions differ in tla-en. */
+  __asm__("" : "=r"(heap) : "0"(heap));
   work = (struct BattleEffectWork *)heap->battleFxWork[0];
   canvas = heap->battleFxWork[1];
   camera = heap->cameraWork;
@@ -129,15 +101,17 @@ void Func_0813c5f4(struct BattleEffectArgument *effect, s32 mode) {
   // The upper half draws mirrored top to bottom; the far side mirrors
   // left to right as well.
   if (effect->side == 0) {
-    BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
+    BattleEffect_LoadBlitter(SLOT_BLITTER,
+                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_Y));
     drawUpper = heap->unk64[1];
     BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_MAX, CLIP));
     drawLower = heap->unkb8[1];
   } else {
-    BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
+    BattleEffect_LoadBlitter(SLOT_BLITTER,
+                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP));
     drawUpper = heap->unk64[1];
     BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                  BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
     drawLower = heap->unkb8[1];
   }
 

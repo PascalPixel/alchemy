@@ -1,12 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Brings a unit back from a saved battle object: its sprite spins up and
-// fades out over 16 frames, its records are released and the saved 44 bytes
-// copied back over its battle object, then the party (or the one unit) is
-// rebuilt and the sprite fades back in over 16 frames at its target position.
-// No ☀️ twin found. What closed it: the id list is the stack array itself, not
-// a pointer local (the copy in r11 and the offset-indexed first loop are the
-// compiler's own); the last party list count is its own local; and one counter
-// i serves every loop, which orders allocation. No devices.
 #include "types.h"
 #include "battle.h"
 #include "battle_action.h"
@@ -26,7 +17,7 @@ struct SavedBattleObj {
 
 void wait(s32 frames);
 s32 BattleParty_ListActorIds(s32 side, u16 *ids);
-s32 Func_0811a4e0(s32 unitId);
+s32 SummonSlot_RegisterActorSprites(s32 unitId);
 void ResourceSlot_LoadFar(s32 slot, s32 a, s32 b, s32 c);
 
 void Func_0811e830(struct SavedBattleObj *saved) {
@@ -67,7 +58,7 @@ void Func_0811e830(struct SavedBattleObj *saved) {
   } else {
     count = BattleParty_ListActorIds((saved->unitId != 0) + 1, ids);
     for (i = 0; i < count; i++) {
-      s32 resource = Func_0811a4e0(ids[i]);
+      s32 resource = SummonSlot_RegisterActorSprites(ids[i]);
 
       if (resource)
         BattleObject_Get(ids[i])->resource = resource;

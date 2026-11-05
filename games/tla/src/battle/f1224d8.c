@@ -1,59 +1,3 @@
-// Near miss, differ 6 of 783 (both functions; tla-en, 2026-10-30), with one
-// tagged empty asm (8 without it); measure with alchemy-devtools diff
-// 08122514.c 081224d8,08122514. Left, both scheduling: (1) failedChoices'
-// zero (movs r3, #0) and its spill store: the native builds the zero before
-// the unit's reload and stores it between needsChoice's and itemsAllowed's,
-// where sched2 here ranks it at 6 under the stores of 1 (7) and the reload
-// (8); (2) abilityId's copy to r9 for an item, ahead of the two request
-// stores here (all three priority 1, class 3, and the earlier insn wins) and
-// after them natively. Writing abilityId = item->actionId after both stores
-// puts the copy where the native has it, but item's pseudo (8 refs over 11
-// insns) then ranks under useItem's (24 over 42) in global allocation and
-// the two swap r5 and r6: 32; with only the command store before it, 6;
-// useItem's two ands as one expression, 81. Tried (2026-10-30): the opening
-// assignments in five orders and as separate statements (6 to 12; selection
-// = -1U first, 331), the inventory mask's operands swapped (6); on the
-// stores-first form, item and useItem declared in other orders (still 32).
-// alchemy-devtools permute cannot parse the nested function.
-// 2026-10-26: differ 6 of 783 (both functions). The summon search reads
-// each Djinni count through the definition (summon->djinnRequired[element]),
-// as The Broken Seal's action.c does, rather than through a pointer to the
-// array: the first comparison then folds element 0 as the native does (12 to
-// 8). Left: the opening stores' zero, issued after the unit reload here and
-// before it natively, and abilityId's copy to r9 for an item, before the two
-// request stores here and after them natively (swapping those statements: 32).
-// Under -mthumb-slow-loads (26 October 2026): differ 40 of 755 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, each call argument copied into its
-// argument register (pinned) at the call or up to three statements before it;
-// none reaches 0.
-// Draft of Func_08122514 with its nested Func_081224d8 (compare both:
-// alchemy-devtools diff 08122514.c 081224d8,08122514): an enemy's choice of
-// action, ☀️'s BattleAI_ChooseAction (games/tbs/src/battle/battle/
-// enemy_ai.c) with ⚓️'s additions: enemies 101, 369, 373 and 376 keep their
-// action memory per action of the turn in the battle work and take another
-// definition for their second to fourth action (and set the battle work's byte
-// at 0x869); enemy 218 rotates through the definitions of Data_08128960; an
-// in-order enemy's memory still advances when its action is not an ability;
-// effects 74 and 88 raise the action's priority by 10000 as the round is
-// built; ability 729 summons the last learned summon whose Djinn are on
-// standby; abilities 723 and 731 aim with actor 128; effects 86 and 87 need
-// room for another enemy; it returns -1 for a party member and 0 otherwise.
-// Near miss, differ 42 of 783 (2026-10-24), instruction order only, 14 pairs:
-// the native issues a load one or two slots earlier than alchemy-gcc (ahead of
-// an independent constant or shift), as ⚓️'s other near misses do, in the
-// nested function's roll mask, the opening stores, the two bitfield updates of
-// enemy 218's form, the in-order advance, the item-path store, the 10000, the
-// summon count call and the closing form update; and the first Djinn
-// comparison of the summon search reads required[element] with element in a
-// register where the native has folded it to 0 (the native's movs r4, #0 comes
-// after both loads; the pointer form *required moves the increment ahead of
-// the bound test). Forms measured: unit declared first (its stack slot after
-// retry's), selectionMemory before the definition call, return -1 (unit then
-// spills and selection takes r11; 230 without), the battle work read through
-// the expression at each use (42; 230 with a local per block), the goto loop
-// (177; 230 as do-while), and 509 through an s32 temporary (a halfword
-// constant otherwise loads from the pool as two halves).
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -103,7 +47,7 @@ u32 Random16(void);
 s32 Func_0811f66c(s32 actorId, struct BattleAct *ability);
 s32 Func_0811f4d4(s32 party);
 s32 Battle_FindTaggedSlotByValue(u32 id);
-void Func_08123574(s32 side, u8 *counts);
+void BattleParty_CountStandbyDjinn(s32 side, u8 *counts);
 s32 Summon_ListLearnedFar(u8 *list);
 
 extern u8 Data_0812cc5c[];
@@ -162,8 +106,9 @@ s32 Func_08122514(struct BattleActionRecord *request, s32 retry) {
   }
 
   unit = Unit_Get(request->unitId);
-  needsChoice = itemsAllowed = 1;
+  itemsAllowed = 1;
   failedChoices = 0;
+  needsChoice = 1;
   selection = -1U;
   if (unit->classIndex != 0)
     return -1;
@@ -344,12 +289,12 @@ select_again:
         request->command = COMMAND_ATTACK;
       if (abilityId == 729) {
         request->command = COMMAND_SUMMON;
-        Func_08123574(0, counts);
+        BattleParty_CountStandbyDjinn(0, counts);
         summonIndex = Summon_ListLearnedFar(summons);
-        /* FAKEMATCH(barrier): an empty asm after the summon count call
-         * (found by a barrier search, 2026-10-26), which places the call's
-         * result copy as the native has it; as without it, 8 of 783
-         * instructions differ in tla-en (with the nested Func_081224d8). */
+        /* FAKEMATCH(barrier): an empty asm between `summonIndex =
+         * Summon_ListLearnedFar(summons);` and `for (summonIndex--; summonIndex
+         * >= 0; summonIndex--) {`, which keeps their instructions apart; as
+         * plain statements, 2 of 783 instructions differ in tla-en. */
         asm("");
         for (summonIndex--; summonIndex >= 0; summonIndex--) {
           summon = SummonDefinition_Get(summons[summonIndex]);

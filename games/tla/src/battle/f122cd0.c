@@ -1,34 +1,3 @@
-// Near miss, differ 10 of 870 (tla-en, 2026-10-31, nested function included;
-// 36 of 844 for the parent alone): instruction order only, three pairs one
-// slot from the native, each a sched2 choice the C does not move: sub sp
-// after the entry's two offset constants (priority 7 to their 8); in the
-// defeat event, the flags offset's reload before the actorId store (40 to
-// 39); in the arrow prompt, the copy of x into r2 before the 0xa000 shift
-// (equal priority; the copy has more dependents).
-// QueueIoWriteDelay10 and QueueIoWriteDelay6 were implicit (called for a
-// value): prototyped as io_write_queue.h has them, 14 became 10. The other
-// prototypes follow their definitions (no change in the count). Measured
-// without effect: the arrow's two words stored in the other order (32), x
-// set to 0 at its stores (159) or before the arrowResource test (10), the
-// defeat's actorId as the call's assigned argument (10) or a local (64), the
-// flags read into a local first (10). Permuter (4 minutes, about 4,400
-// candidates, the nested function held out of its rewrites): none better.
-// Under -mthumb-slow-loads (26 October 2026): differ 46 of 844 in tla-en.
-// Tried then, one edit at a time: an empty asm barrier after each statement,
-// each adjacent pair of statements swapped, each call argument copied into
-// its argument register (pinned) at the call or up to three statements
-// before it; none reaches 0. One barrier (after line 221 of the draft as it stood)
-// lowers it to 42, and no second one lowers it further.
-// Draft of BattleEvent_Playback with its nested Func_08122cd0 (compare both:
-// alchemy-devtools diff 08122d10.c 08122cd0,08122d10): ☀️'s BattlePlayback_Run
-// (games/tbs/src/battle/battle/playback.c), ported; the nested function is
-// ☀️'s BattleSprite_ClearTiles. ⚓️ adds event 15 (BattleActor_RemoveFromLists),
-// lets gLastFrameVBlanks push a hit's flash on a frame, flashes for 8 frames
-// rather than 9, and keeps the message window in heap slot 0x94.
-// Forms measured: the held keys read through a volatile view (as ☀️'s
-// gKeysHeld is volatile; read plainly, the second test reuses the first read:
-// 58), and the fading byte stored as a u8 (tla's battle object splits ☀️'s
-// halfword, as reset_actor.c's TlaBattleObj shows; 98 as the s16).
 #include "types.h"
 #include "battle.h"
 #include "battle_unit.h"
@@ -199,10 +168,12 @@ void BattleEvent_Playback(void) {
             MessageArgument_PushFar(events->queue.operands[eventIndex], 5);
             break;
           case BATTLE_EVENT_ITEM_NAME:
-            MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x1ff, 2);
+            MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x1ff,
+                                    2);
             break;
           case BATTLE_EVENT_ABILITY_NAME:
-            MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x3fff, 4);
+            MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x3fff,
+                                    4);
             break;
           case BATTLE_EVENT_MARK:
             ((struct BattleMessageDisplay *)Ram_HeapSlots->unk84[4])->marked =
@@ -272,8 +243,7 @@ void BattleEvent_Playback(void) {
             BattleMotion_SetRecordChildValues(
                 slot->object, BattleMotion_GetSlotPalette(
                                   events->queue.operands[eventIndex]));
-            BattleObject_UpdatePose(
-                events->queue.operands[eventIndex]);
+            BattleObject_UpdatePose(events->queue.operands[eventIndex]);
             break;
           }
           case 15:
@@ -313,11 +283,18 @@ void BattleEvent_Playback(void) {
       QueueIoWriteDelay6(0x0400004a, 16);
       ((u32 *)prompt)[1] = 0xa000;
       ((u32 *)prompt)[2] = x;
+      /* FAKEMATCH(barrier): an empty asm between `((u32 *)prompt)[2] = x;` and
+       * `prompt->tile = VramCache_Reload(events->arrowResource,
+       * pictureTiles);`, which keeps their instructions apart; as plain
+       * statements, 4 of 870 instructions differ in tla-en. */
+      asm("");
       prompt->tile = VramCache_Reload(events->arrowResource, pictureTiles);
       x = window->x * 8 + (offset->x >> 8) + 4;
       prompt->x = x;
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                   (offset->y >> 8) + 6;
+      /* FAKEMATCH(volatile): the held keys read afresh at each test; as plain
+       * gInput.held, 16 of 870 instructions differ in tla-en. */
       if ((KEYS_HELD & 2) || (gInput.pendingPressed & 0x303) ||
           ((u32)(gVBlankCount - events->timer) > 10 && (KEYS_HELD & 0x303))) {
         Sound_PlayFar(111);

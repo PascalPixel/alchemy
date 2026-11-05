@@ -1,22 +1,3 @@
-// Under -mthumb-slow-loads (26 October 2026): differ 50 of 885 in tla-en.
-// Tried, one edit at a time: an empty asm barrier after each statement, each
-// adjacent pair of statements swapped, each call argument copied into its
-// argument register (pinned) at the call or up to three statements before it;
-// none reaches 0. Greedy single barriers and a swap reach 28 after six
-// rounds, with five barriers.
-// Draft, differ 84 of 885, from The Broken Seal's Battle_RunEncounter
-// (games/tbs/src/battle/battle/run.c): this game allocates by heap
-// byte offset and fills with IwramFillWords, creates the camera through
-// BattleCamera_Create, plays one battle song, runs a reserve swap each
-// round, lets a pending tagged action or a queued extra action repeat the
-// current action slot, plays the Djinn tutorial's messages through
-// Tutorial_GetDjinnGiveMessage, and treats enemy groups 74 to 80 and 638 as
-// scripted battles. The control flow, frame and registers match; left is
-// the order of about forty rows, nearly all a constant or pool load the
-// native issues one or two rows away from here (the transition's stores,
-// the fill calls' arguments, the heap offsets 0x24b and 0x20e, the round
-// end's 0x860 and 0x864), and the pool offsets those moves shift. The
-// queued action's side reuses the queue's register (queue &= 1): 198 to 84.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -115,7 +96,7 @@ void BattleSpoils_Clear(void);
 s32 VramCache_AllocEntry(s32 size);
 u32 Battle_RandomFar(void);
 void Func_08125d74(s32 enemyCount, s32 enemyGroup);
-void BattleStaging_UpdateCamera(void);
+void Func_08118adc(void);
 void Func_0811b9fc(void);
 s32 Func_0811a39c(s32 side, s32 value);
 void Func_081195ec(void);
@@ -146,7 +127,7 @@ void MessageArgument_ClearAllFar(void);
 void MessageArgument_PushFar(s32 slot, s32 kind);
 void Message_ShowAndWaitCoreFar(s32 message);
 void BattleMessage_WaitForAdvance(void);
-void Func_081284c0(void);
+void Battle_AwardSpoils(void);
 void Fade_ToBlack(s32 vblanks);
 void Fade_Wait(void);
 s32 BattleParty_PrepareActiveOwners(u16 *owners);
@@ -190,12 +171,23 @@ s32 Func_081197f0(s32 enemyGroup) {
   GameFlag_SetBit(0x169);
   Render_ResetTransformState();
 
-  Iwram_FillWords(camera, sizeof(struct BattleCamera), 0);
+  /* FAKEMATCH(one-pass): a once-only block from `Iwram_FillWords(camera,
+   * sizeof(struct BattleCamera), 0);`, which ends the scheduler's region there;
+   * as plain statements, 12 of 885 instructions differ in tla-en. */
+  do {
+    Iwram_FillWords(camera, sizeof(struct BattleCamera), 0);
+  } while (0);
   Iwram_FillWords(battle, sizeof(struct EncounterWork), 0);
   battle->promptSlot = -1;
   battle->enemyGroup = enemyGroup;
   HeapSlot_AllocEwram(148, 12);
-  Iwram_FillWords(Ram_HeapSlots->unk84[4], 12, 0);
+  /* FAKEMATCH(one-pass): a once-only block from
+   * `Iwram_FillWords(Ram_HeapSlots->unk84[4], 12, 0);`, which ends the
+   * scheduler's region there; as plain statements, 6 of 885 instructions differ
+   * in tla-en. */
+  do {
+    Iwram_FillWords(Ram_HeapSlots->unk84[4], 12, 0);
+  } while (0);
   battle->background = Event_GetSpecialValueFar();
   HeapSlot_AllocEwram(16, 0xe00);
   HeapSlot_AllocEwram(12, 0x600);
@@ -210,15 +202,24 @@ s32 Func_081197f0(s32 enemyGroup) {
 
   if (GameFlag_Test(0x16c) != 0) {
     battle->twoSided = 1;
+    /* FAKEMATCH(barrier): an empty asm between `battle->twoSided = 1;` and
+     * `gMainRoutineWork.battleStart = 4;`, which keeps their instructions
+     * apart; as plain statements, 4 of 885 instructions differ in tla-en. */
+    asm("");
     gMainRoutineWork.battleStart = 4;
   }
   if (battle->twoSided != 0) {
-    gBattleRandomSeed = 0;
+    /* FAKEMATCH(one-pass): a once-only block from `gBattleRandomSeed = 0;`,
+     * which ends the scheduler's region there; as plain statements, 4 of 885
+     * instructions differ in tla-en. */
+    do {
+      gBattleRandomSeed = 0;
+    } while (0);
     for (linkWaitFrames = 0;;) {
       if ((gLinkStatus & 3) == 3)
         break;
-      linkWaitFrames++;
       wait(1);
+      linkWaitFrames++;
       if (linkWaitFrames > 24) {
         battle->linkPaused = 1;
         break;
@@ -232,7 +233,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     BattleParty_AssignMemberSlots();
     battle->battleType = 0;
   }
-  Task_Add(BattleStaging_UpdateCamera, 0x47f);
+  Task_Add(Func_08118adc, 0x47f);
 
   cue = gMainRoutineWork.sceneCue;
   if (cue != 0) {
@@ -331,8 +332,13 @@ s32 Func_081197f0(s32 enemyGroup) {
         }
         if (enemyGroup == 80)
           Func_081197a8(80);
-        if (actingUnit <= 7 && battle->defeated == 1)
+        if (actingUnit <= 7 && battle->defeated == 1) {
+          /* FAKEMATCH(barrier): an empty asm between `{` and
+           * `battle->defeatState = 3;`, which keeps their instructions apart;
+           * as plain statements, 2 of 885 instructions differ in tla-en. */
+          asm("");
           battle->defeatState = 3;
+        }
         goto won;
       }
       if (battle->pendingUnit != -1 &&
@@ -385,14 +391,13 @@ s32 Func_081197f0(s32 enemyGroup) {
     if (GameFlag_Test(0x16e) == 0)
       continue;
 
-    window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 7,
-                                         0, 4, 1);
+    window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 7, 0, 4, 1);
     while (Message_AllTypedFar() == 0)
       wait(1);
     Window_CloseFar(window, 1);
     wait(1);
-    window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 8,
-                                         10, 4, 1);
+    window =
+        Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() + 8, 10, 4, 1);
     Func_08120060(44, 24);
     Window_CloseFar(window, 1);
     wait(1);
@@ -410,14 +415,14 @@ won_scripted:
         Sound_PlayFar(58);
         if (battle->defeatState <= 1) {
           BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
-                           26);
+                            26);
           MessageArgument_ClearAllFar();
           MessageArgument_PushFar(128, 1);
           Message_ShowAndWaitCoreFar(battle->defeatState + (s32)MsgDowned);
           BattleMessage_WaitForAdvance();
         }
       }
-      Func_081284c0();
+      Battle_AwardSpoils();
     }
     Sound_PlayFar(78);
   }
@@ -460,8 +465,8 @@ fled:
   Sound_PlayFar(78);
   Fade_ToBlack(30);
   Fade_Wait();
-  scripted = enemyGroup - 74;
   result = 999;
+  scripted = enemyGroup - 74;
 
 finished:
   if ((u32)scripted <= 1)

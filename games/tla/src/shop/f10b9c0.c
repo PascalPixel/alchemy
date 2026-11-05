@@ -1,20 +1,3 @@
-// Draft, differ 8 of 321, skeleton gap 4 (tla-en, 2026-11-01)
-// Draft: picks one of a unit's items in the five-column inventory grid for
-// the sell and drop lists, with the item's panel (Func_0810bca0) and plain
-// name drawn as the cursor moves. A refuses an item the shop's check
-// (Func_080ad268, or Func_080ad270 in the drop mode) flags, with message 4676
-// or 4675; SELECT held shows the item's details until it is released. As ☀️'s
-// Shop_SelectSell (games/tbs/src/shop/shop.c) inner loop. Returns the slot,
-// or -1 when cancelled.
-// Allocation, frame and every instruction agree; three sched2 placements are
-// left. str r0 at sp + 28 (before movs #192) and at sp + 24 (before the lsls
-// of the cursor anchor's offset) each issue one place earlier in the listing,
-// and ldr r4, [sp, #4] after the SELECT details open issues after the strb to
-// detailsHidden. All three want a store followed by a missing load ranked one
-// cycle higher than arm_adjust_cost's 2 (insn 4 at 113 against the movs at
-// 114): the -mthumb-slow-loads approximation, no C reshaping reaches it. The
-// two windows stay separate pseudos so that the item window fits r3 with a
-// caller save, and the declaration order sets the stack slots.
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
@@ -45,7 +28,7 @@ struct ShopUnit {
 };
 
 // Unnamed in the catalog yet: 4676 and 4675 take placeholders here.
-extern u8 Msg04676[], Msg04675[], MsgItemPlainName[];
+extern u8 MsgCannotRemoveIt[], MsgCannotDropIt[], MsgItemPlainName[];
 
 struct ShopUnit *Unit_Get(s32 unitId);
 void *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -117,9 +100,9 @@ s32 Func_0810b9c0(s32 unitId) {
         break;
       }
       if (flags & 1)
-        Message_OpenWindowFar((s32)Msg04676, 8, 1, 0);
+        Message_OpenWindowFar((s32)MsgCannotRemoveIt, 8, 1, 0);
       else if (flags & 2)
-        Message_OpenWindowFar((s32)Msg04675, 8, 1, 0);
+        Message_OpenWindowFar((s32)MsgCannotDropIt, 8, 1, 0);
       Sound_PlayFar(113);
       while (Message_AllTypedFar() == 0)
         wait(1);
@@ -139,6 +122,10 @@ s32 Func_0810b9c0(s32 unitId) {
       details = Window_CreateFar(0, 9, 16, 10, 2);
       ItemMenu_DrawItemDetailsFar(details, item);
       shop->detailsHidden = 0;
+      /* FAKEMATCH(barrier): an empty asm between `shop->detailsHidden = 0;` and
+       * `while (gInput.held & 4)`, which keeps their instructions apart; as
+       * plain statements, 4 of 321 instructions differ in tla-en. */
+      asm("");
       while (gInput.held & 4)
         wait(1);
       shop->detailsHidden = 1;

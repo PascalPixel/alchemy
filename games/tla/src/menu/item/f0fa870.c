@@ -1,26 +1,26 @@
-// Near miss, differ 10 of 387 (tla-en, 2026-10-31): instruction order only.
-// In the first block sched2 issues the 0x215 offset's `movs r2, #139` before
-// `sub sp, #16` (at t=4 the offset chain has priority 52 against sub sp's 50,
-// both through the r3 reuse that follows; the native issues sub sp there). In
-// the label draws the native passes 2 before the window to the number draw and
-// sets the x before the message in the third case: exactly the order three
-// separate Text_DrawCharacterAtOffsetFar calls give, so its shared draw is
-// probably jump2 cross-jumping three calls. As three calls this measures
-// differ 36: the last call ends its block before the join label, so flow adds
-// a (use (const_int 0)) after it and cross-jumping stops there; a dead store
-// after the calls (differ 38) lets only part of the tail merge.
-// First draft of Func_080fa870: the twin of ☀️'s ItemMenu_SelectTarget
-// (games/tbs/src/menu/menu/item.c), choosing the party member to use (mode 0)
-// or give (mode 1) the selected item to. This game pages the members four at a
-// time through the cursor helper Menu_MoveGridCursor, which also replaces the Left
-// and Right tests; the item's owner is restored to the page on the way out.
-//
-// The window loaded before the count, the label and x chosen in each case
-// before one draw, the marker's x as u16 and selection * 3 written first took
-// differ 127 to 12, then 10.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
+#include "edition.h"
+
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+#define TRADE_LABEL_X 16
+#define IN_STOCK_LABEL_X 24
+#define ITEM_INFO_CLEAR WindowSprite_ClearListFar
+#define ITEM_INFO_DRAW Text_DrawMessageFar
+#else
+#define TRADE_LABEL_X 0
+#define ITEM_INFO_CLEAR WindowSprite_RedrawSavedRectFar
+#define ITEM_INFO_DRAW Text_DrawCharacterAtOffsetFar
+#endif
+
+#if (LANGUAGE == LANGUAGE_SPANISH)
+#define IN_STOCK_LABEL_X 30
+#elif (LANGUAGE == LANGUAGE_FRENCH)
+#define IN_STOCK_LABEL_X 29
+#elif (LANGUAGE != LANGUAGE_JAPANESE)
+#define IN_STOCK_LABEL_X 32
+#endif
 
 struct TargetMarker {
   u8 unk00[5];
@@ -77,17 +77,17 @@ void *Unit_Get(s32 owner);
 void Task_Add(void (*func)(void), s32 priority);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
-void Func_08104ef8(s32 first);
+void Menu_CreateOwnerEntryObjects(s32 first);
 void wait(s32 frames);
 void Menu_HighlightPageEntry(void *window, s32 selection, s32 count);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
 void Window_DrawDividerLineFar(void *window, s32 x0, s32 y0, s32 x1, s32 y1);
 void Window_ClearInteriorTilesFar(void *window, s32 x, s32 y, s32 width,
-                                    s32 height);
+                                  s32 height);
 s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
 s32 ItemMenu_CountItems(s32 owner);
 void Text_DrawNumberInWindowFar(s32 value, s32 digits, void *window, s32 x,
-                                  s32 y);
+                                s32 y);
 void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 void Func_080fae8c(s32 owner, s32 slot, s32 mode, s32 target);
 s32 ItemMenu_IsSpecial(s32 item);
@@ -124,7 +124,7 @@ s32 Func_080fa870(s32 mode) {
       marker->oamX = marker->x =
           ((selection * 3 + menu->pageWindow->x) << 3) - 2;
       if (redraw == 2) {
-        Func_08104ef8(selection / 4 * 4);
+        Menu_CreateOwnerEntryObjects(selection / 4 * 4);
         wait(1);
       }
       Menu_HighlightPageEntry(menu->pageWindow, selection, count);
@@ -137,14 +137,25 @@ s32 Func_080fa870(s32 mode) {
               menu->ownerIds[selection], menu->selectedItems[0] & 0x1ff);
           if (ItemMenu_CountItems(menu->ownerIds[selection]) == 15 &&
               heldCount == 0) {
-            labelX = 0;
+            labelX = TRADE_LABEL_X;
             label = (s32)MsgTradeForWhat;
           } else if (heldCount != 0) {
             Text_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);
-            labelX = 32;
+            /* FAKEMATCH(barrier): an empty asm between
+             * `Text_DrawNumberInWindowFar(heldCount, 2, window, 8, 72);` and
+             * `labelX = IN_STOCK_LABEL_X;`, which keeps their instructions
+             * apart; as plain statements, 2 of 387 instructions differ in
+             * tla-en. */
+            asm("");
+            labelX = IN_STOCK_LABEL_X;
             label = (s32)MsgInStock;
           } else {
             labelX = 16;
+            /* FAKEMATCH(barrier): an empty asm between `labelX = 16;` and
+             * `label = (s32)MsgNoneInStock;`, which keeps their instructions
+             * apart; as plain statements, 2 of 387 instructions differ in
+             * tla-en. */
+            asm("");
             label = (s32)MsgNoneInStock;
           }
           Text_DrawCharacterAtOffsetFar(label, window, labelX, 72);
@@ -160,10 +171,10 @@ s32 Func_080fa870(s32 mode) {
           Func_080f8170(menu->statusWindow, menu->ownerIds[selection],
                         menu->selectedSlots[0], 0);
         if (!GameFlag_Test(0x151) && !descriptionShown) {
-          WindowSprite_RedrawSavedRectFar(menu->infoWindow);
-          Text_DrawCharacterAtOffsetFar((menu->selectedItems[0] & 0x1ff) +
-                                              (s32)MsgItemPlainName,
-                                          menu->infoWindow, 0, 0);
+          ITEM_INFO_CLEAR(menu->infoWindow);
+          ITEM_INFO_DRAW((menu->selectedItems[0] & 0x1ff) +
+                             (s32)MsgItemPlainName,
+                         menu->infoWindow, 0, 0);
           descriptionShown = 1;
         } else {
           GameFlag_ClearBit(0x151);
@@ -199,7 +210,7 @@ s32 Func_080fa870(s32 mode) {
   menu->paneOwner[1] = menu->ownerIds[selection];
   selection = menu->paneIndex[0];
   count = menu->ownerCount;
-  Func_08104ef8(selection / 4 * 4);
+  Menu_CreateOwnerEntryObjects(selection / 4 * 4);
   Menu_HighlightPageEntry(menu->pageWindow, selection, count);
   menu->ownerIcons[0]->state = 13;
   menu->ownerIcons[1]->state = 13;

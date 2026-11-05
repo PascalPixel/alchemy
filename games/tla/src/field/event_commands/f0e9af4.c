@@ -1,25 +1,3 @@
-// Near miss, differ 16 of 318 (tla-en, 2026-10-31): scheduler order only.
-// 12 at the opening: the tile's address starts before the slot's store and
-// the tile's store comes before the scale's address. -mthumb-slow-loads
-// charges 2 from the tile's store to its reload for Func_080eaf98 (same
-// address), so in sched2 the tile's address chain ranks 72 against the scale's
-// 71; the native's interleaving fits the two at equal rank. 4 in the fall: the
-// glow's 100 is stored and the motion flags pointer copied to r10 before the
-// scale's address starts; the native starts that address (movs, lsls r6)
-// before the store and copies after it. The render mode's barrier is gone (16
-// without it, 18 with it); the remaining barrier placed before the glowHeld
-// store or after the scale's store gives 20, a one-pass block round the glow's
-// stores 18. alchemy-devtools permute (4 minutes): nothing below 16.
-// Near miss, differ 10 of 318 (2026-10-18, before -mthumb-slow-loads, written
-// from the listing; ☀️ has no twin): field Psynergy kind 24, the glow
-// Func_080e9940 draws each frame. The resource is
-// directory entry 0x1da, FieldEffect_RingOrb: adoption names it RingOrb in
-// gamepak/resource_directory.s. The object search has a counter of its own, as
-// the ROM keeps it in r4 and saves it around the call (one i for every loop
-// takes r5, 38 -> 20); the slot is stored before the tile (46 -> 38), the
-// countdown is a for loop (20 -> 18) and the list is indexed (18 -> 16, order
-// in four places, before the barriers). alchemy-devtools permute (5 minutes, before the
-// barriers): 14 with a one-pass block around the three stores after the fall.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -66,8 +44,8 @@ extern char ResourceId_RingOrb;
 void wait(s32 frames);
 s32 Func_080dbcc0(s32 x, s32 z, s32 layer);
 s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
-                                         s32 y, s32 z);
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
+                                        s32 z);
 void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
 s32 Resource_ResetEntry(u32 entry);
 void HeapSlot_Release(s32 slot);
@@ -154,10 +132,6 @@ void Func_080e9af4(void) {
     work->scale = 0;
     event->glowHeld = 0;
     event->glow = 100;
-    /* FAKEMATCH(barrier): the empty asm keeps the scale's address after the
-     * glow's stores; as the plain stores, 18 of 318 instructions differ in
-     * tla-en. */
-    asm("");
     for (i = 0; i < 32; i++) {
       if (i == 10)
         Sound_PlayFar(246);

@@ -110,7 +110,7 @@ Resource_DirectoryTable:
 	resource , Battle_AngelHallBackdrop
 	resource , Battle_PurpleLighthouseBackdrop
 	resource , Battle_StormyLighthouseBackdrop
-	resource , Battle_SerpentStarsBackdrop
+	resource SerpentStarsBackdrop, Battle_SerpentStarsBackdrop
 	resource , Battle_IceHallBackdrop
 	resource , Battle_OrbAltarBackdrop
 	resource , Battle_PurpleCaveBackdrop
@@ -292,7 +292,7 @@ Resource_DirectoryTable:
 	resource FlameBladeSheet, BattleEffect_FlameBladeSheet
 	resource SwordSheet, BattleEffect_SwordSheet
 	resource IceTileSheet, BattleEffect_IceTileSheet
-	resource , BattleEffect_FiveModeImage
+	resource FiveModeImage, BattleEffect_FiveModeImage
 	resource , BattleEffect_SpiderWebSheet
 	resource , BattleEffect_VioletLightningSheetA
 	resource , BattleEffect_YellowSparkSheet
@@ -337,7 +337,7 @@ Resource_DirectoryTable:
 	resource GreenPillarSheet, BattleEffect_GreenPillarSheet
 	resource VineSheet, BattleEffect_VineSheet
 	resource FirePillarSheetA, BattleEffect_FirePillarSheetA
-	resource , BattleEffect_RedPaletteB
+	resource RedPaletteB, BattleEffect_RedPaletteB
 	resource OrangePaletteB, BattleEffect_OrangePaletteB
 	resource EffectPalette02, BattleEffect_EffectPalette02
 	resource , BattleEffect_EffectPalette03
@@ -484,7 +484,7 @@ Resource_DirectoryTable:
 	resource CommandIcons, Ui_CommandIcons
 	resource , Ui_Flags
 	resource , FieldEffect_GlowDisc
-	resource , FieldEffect_RingOrb
+	resource RingOrb, FieldEffect_RingOrb
 	resource , FieldEffect_RingArcs
 	resource RedFlameBurst, FieldEffect_RedFlameBurst
 	resource VioletFlameBurst, FieldEffect_VioletFlameBurst

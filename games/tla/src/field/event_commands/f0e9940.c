@@ -1,18 +1,3 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 10 of 194 in tla-en. First difference: this issues `adds r5, #1` earlier (row
-// 105) than the native does (row 108).
-// Near miss, differ 14 of 194 (2026-10-15, written from the listing; ☀️ has no
-// twin). Kind 24 (Func_080e9af4) runs it each frame; Func_080e989c gives its
-// colours. What remains is order: the ROM loads the event work just after
-// the player's lookup, counts i after the palette pointer, sets the priority
-// mask earlier, and stores the flattened scale before the screen y.
-// Measured: the first test as == 0 with the hold inside (107 -> 91); the
-// sprite through a local pointer, as the ROM addresses it from work + 0x1000
-// (91 -> 20); x, y, scaleX, scaleY stored in that order (20 -> 14; six
-// other orders 18-20); the scales declared the other way (20); palette[i],
-// OBJ_PALETTE_14[i] and the store apart from its increment (14). Permute 5
-// min, 2 jobs: 12 only with a one-pass block around the palette store, not
-// kept.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -62,8 +47,7 @@ void Camera_WorldToScreen(s32 *position);
 // player, flattened to three quarters of its height.
 void Func_080e9940(void) {
   struct GlowWork *work = Ram_HeapSlots->battleFxWork[0];
-  struct Actor *player =
-      ObjectTable_Get(Party_GetLeaderActor());
+  struct Actor *player = ObjectTable_Get(Party_GetLeaderActor());
   struct GlowEvent *event = Ram_HeapSlots->eventWork;
   u16 *palette;
   s32 position[3];
@@ -94,9 +78,15 @@ void Func_080e9940(void) {
 
   // Cycle the glow's colours; the last takes the 15th's level.
   palette = OBJ_PALETTE_14;
-  for (i = 0; i < 16; i++)
-    *palette++ =
-        Func_080e989c((((s16)work->phase >> 2) + i / 2) % 24, i == 15 ? 14 : i);
+  for (i = 0; i < 16; i++) {
+    /* FAKEMATCH(one-pass): a once-only block from `*palette++ =`, which ends
+     * the scheduler's region there; as plain statements, 2 of 194 instructions
+     * differ in tla-en. */
+    do {
+      *palette++ = Func_080e989c((((s16)work->phase >> 2) + i / 2) % 24,
+                                 i == 15 ? 14 : i);
+    } while (0);
+  }
   work->phase++;
 
   // Draw it under the player.

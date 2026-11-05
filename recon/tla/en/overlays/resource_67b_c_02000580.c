@@ -1,23 +1,37 @@
-// Draft, differ 264 of 209, skeleton gap 76 (tla-en, 2026-11-01)
+// Draft, differ 262 of 209, skeleton gap 66 (tla-en, 2026-11-01)
 // The native's ldrh ahead of the odd-frame test and the shifts in both arms
 // are s32 locals read through (u16) and used through (s16): tick (its ldrsh
-// and ldrh pair) and a, b, c, d, which took the skeleton from 125 to 76 and
-// the draft to 209 instructions. dbac is the best load order of the 48 tried.
+// and ldrh pair) and a, b, c, d, which took the skeleton from 125 to 66 (33
+// removed, 33 added) and the draft to 209 instructions. dbac is the best load
+// order of the 48 tried.
 // What is left is one missing pseudo, and it sets the frame (16, native 20):
 // the native holds a copy of slots in sp+12, set each pass at the inner top
-// (mov r0, r8; str r0, [sp, #12]) and read only by the tick increment. Here
-// GCSE's copy propagation replaces that copy (insns 410, 415 in .07.gcse) with
-// slots, however it is spelled, so the reload rotation differs throughout, and
-// flag lands in r0 where the native has r4. gcse.c's hash_scan_set drops a copy
-// whose source or destination is set later in its block, which may be the way
-// to look. The slot pointer's spill order puts it after n and before the
-// loop's offset registers.
+// (mov r0, r8; str r0, [sp, #12]) and read only by the tick increment, whose
+// block is the first one past cse1's reach. Here that last use is folded back
+// onto slots, so the reload rotation differs throughout, and flag lands in r0
+// where the native has r4.
+// Who folds it, read from the dumps: a copy goes in gcse's first cprop; a
+// `s = &gate->unk00[1]` at the inner top is not a copy, but PRE turns it into
+// `s = reg` (the header's old `.07.gcse` insns) and the last cprop, gcse.c's
+// one_cprop_pass (pass + 1, 1), then folds that. hash_scan_set drops a copy
+// only when its source or destination is set later in its block, and only a
+// second value in s would do that, which is a reused local. Nothing else in
+// the inner loop kills the copy, the increment has no path round it, and a
+// do-while does not change it: loop.c leaves the copy in place ("savings 1 not
+// desirable"), so hoisting is not the problem. Why the native's cprop left this
+// one use is open; if no source form does, it is a compiler question, which is
+// out of scope here.
 // Tried without gain: `s` set at both tops (same code), slots = s in an arm or
-// before the increment (76 to 88), the slot step as a static
+// before the increment (66 to 88), the slot step as a static
 // inline (identical), Data_02003450[n] indexing (141), only gate stepped with
 // outer and inner pointers, or a macro recomputing gate + 2 at each use (93 to
-// 106: loop.c reduces it, but folds the gate reads onto that pointer, where the
-// native keeps them on r10), flag shared with the slot's queued state (78).
+// 119: loop.c reduces it, but folds the gate reads onto that pointer, where the
+// native keeps them on r10, because combine_givs takes every address it can
+// express; `slots` must be a real second pointer), flag shared with the slot's
+// queued state (78), s from gate + 2 beside a stepped slots with for or
+// do-while (94, 217 instructions: PRE's insert on the back edge splits it and
+// loop.c drops the outer loop for multiple entry points), the increment alone
+// through that s (82), slots declared after n (same code).
 // Aqua Rock's five water gates (Data_02003450, 32 bytes each): each follows
 // its flag (the low 12 bits of unk00[9], inverted by bit 12); a change
 // queues the new state in one of its two animation slots, and each running

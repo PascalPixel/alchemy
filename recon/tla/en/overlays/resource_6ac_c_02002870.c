@@ -1,112 +1,150 @@
-// Draft of overlay 6ac's Func_02002870, translated from its listing: differ
-// 170 of 168. Left: its shape: 164 instructions against the listing's 168.
+// Draft, differ 67 of 168, skeleton gap 16/13 (tla-en, 2026-11-01)
+// One burst particle thrown from the actor: kind 0x1e9 at a jittered position,
+// random speed and size, its sprite taking the owner sprite's shape and tile.
+// Same shape as 6ab's Func_020024d4 and 6aa's Func_020029c8; no device here.
+// What the form rests on, each measured here:
+// - goto loop: for or do/while (differ 125) hoists the zero and 0x8000 into
+//   high registers and frees i from the stack; the listing rebuilds them.
+//   `i = 0 ... --i >= 0` is loop.c's reversed count, kept by hand.
+// - c, d and e read raw, shifted at the sum: closes the lsls order.
+// - sprite->tile as a bit-field: 5 fewer than an s32 word, and swaps r1 and r3
+//   to the listing's, but its mask pool lands after the epilogue. The listing's
+//   pool before the epilogue, with a `b` over it, needs `s32 word` with
+//   `(word & ~0x3ff) | ...` (differ 72, or 71 with word = ~0x3ff; word &= ...).
+// Left:
+// - source takes r4 with a caller-save slot at sp+0, so the frame is 8 not 4,
+//   i moves to sp+4 and the tail differs; the listing has it in r8. The lreg
+//   dump gives it 12 refs across 2 calls, and 4 * 2 < 12 makes r4 profitable;
+//   it needs 8 refs or 3 calls, and five reads plus a set after the last
+//   multiply give neither. This is most of the 67.
+// - Sharing x and source in one variable lands it in r8 (differ 38 with y
+//   shifted early, 52 with the raw c): rejected, a local reused for a second
+//   value is a `temporary` device, and this round adds none. `register`, y
+//   reused and scoped copies gave nothing.
+// - The stores before Resource_ResetEntry: movs r6, #0 issues after the
+//   animation load; statement order does not move it (three orders here, 1440
+//   in 6ab's draft), and it cannot be judged until source is in r8.
 #include "types.h"
 #include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_02003120();
-s32 Func_02003128();
-s32 Math_Cosine();
-s32 Math_Sine();
-s32 Actor_SetSingleChildFlags();
-s32 Random16Far();
-s32 ResourceMetadata_ClearRecord();
-s32 Resource_ResetEntry();
-extern u8 IwramMulQ16[];
+#include "actor.h"
+#include "iwram_call.h"
+
+struct Sprite {
+  u8 unk00[4];
+  u16 y : 8;
+  u16 affine : 2;
+  u16 blendMode : 2;
+  u16 mosaic : 1;
+  u16 fullColor : 1;
+  u16 shape : 2;
+  u16 x : 9;
+  u16 affineIndex : 5;
+  u16 size : 2;
+  u16 tile : 10;
+  u16 attr2Rest : 6;
+  u8 unk0a[6];
+  u8 vramBlock;
+  u8 keepEntry : 1;
+  u8 unk11 : 7;
+  u16 rotation;
+  u8 unk14[2];
+  u8 unk16[5];
+  u8 unk1b;
+  u8 unk1c[12];
+  void *record;
+};
+
+struct Work {
+  u8 unk00[12];
+  u16 vramBlock;
+  u8 unk0e[98];
+  struct Actor *owner;
+};
+
 extern u8 gData_020023c4[];
 extern u8 gData_02003304[];
+struct Actor *Func_02003128(s32 kind, s32 x, s32 y, s32 z);
+void Func_02003120(struct Actor *object, const void *script);
+s32 Math_Cosine(s32 angle);
+s32 Math_Sine(s32 angle);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
+s32 Random16Far(void);
+void ResourceMetadata_ClearRecord(void *record);
+void Resource_ResetEntry(s32 entry);
 
-void Func_02002870(s32 p0) {
-  s32 sp_[1];
-  s32 v_r11, v_r5, v_r8, v_r6, v_r7, t0, t1, t2, t3, t4;
-  s32 t5, t6, t7, t8, t9, t10, t11, t12, t13, t16;
-  s32 t17, t18, t19, t20, t21, t22, t23, t25, t26, t27;
-  s32 t29, t30, t31, t32, t33, t34, t35, t36, t37;
+#define WORK ((struct Work *)(gData_020023c4 + 0x188))
 
-  t0 = FIELD_AT(((s32)gData_020023c4 + 0x188), s32, 112);
-  v_r11 = p0;
-  if (t0 != 0)
-    goto L_0200a88c;
-  goto L_0200a9e4;
-L_0200a88c:
-  *(s32 *)sp_ = 0;
-L_0200a890:
-  t1 = Value0((s32 (*)())Random16Far);
-  t2 = Value0((s32 (*)())Random16Far);
-  t3 = FIELD_AT(v_r11, s32, 8);
-  v_r5 = (t1 << 4);
-  v_r8 = (t3 + v_r5);
-  t4 = Value0((s32 (*)())Random16Far);
-  t5 = Value0((s32 (*)())Random16Far);
-  t6 = Value0((s32 (*)())Random16Far);
-  t7 = FIELD_AT(v_r11, s32, 16);
-  t8 = FIELD_AT(v_r11, s32, 12);
-  v_r5 = (t5 << 4);
-  v_r8 = (v_r8 - (t2 << 4));
-  v_r6 = (((t4 << 3) + t8) + 0x40000);
-  t9 = Value4((s32 (*)())Func_02003128, 0x1e9, v_r8, v_r6,
-              ((t7 + v_r5) - (t6 << 4)));
-  v_r7 = t9;
-  if (v_r7 == 0)
-    goto L_0200a9c4;
-  t10 = Value0((s32 (*)())Random16Far);
-  t11 = Value0((s32 (*)())Random16Far);
-  t12 = Value0((s32 (*)())Random16Far);
-  t13 = Value0((s32 (*)())Random16Far);
-  Call2((void (*)())Func_02003120, v_r7, (s32)gData_02003304);
-  Call2((void (*)())Actor_SetSingleChildFlags, v_r7, 0);
-  FIELD_AT(v_r7, s32, 40) = ((t10 << 2) + 0x20000);
-  t16 = Value1((s32 (*)())Math_Cosine, t10);
-  v_r6 = (t11 << 3);
-  t17 = ((s32 (*)())(s32)IwramMulQ16)(v_r6, t16);
-  FIELD_AT(v_r7, s32, 44) = t17;
-  t18 = Value1((s32 (*)())Math_Sine, t10);
-  t19 = ((s32 (*)())(s32)IwramMulQ16)(v_r6, t18);
-  FIELD_AT(v_r7, s32, 72) = 0x547a;
-  t20 = FIELD_AT(((s32)gData_020023c4 + 0x188), s32, 112);
-  v_r5 = (((u32)(t12 + t13) >> 2) + 0x8000);
-  FIELD_AT(v_r7, s32, 24) = v_r5;
-  FIELD_AT(v_r7, s32, 28) = v_r5;
-  FIELD_AT(v_r7, s32, 68) = 0x8000;
-  t21 = FIELD_AT(v_r7, s32, 80);
-  FIELD_AT(v_r7, s32, 36) = t19;
-  FIELD_AT(v_r7, s32, 52) = 0;
-  t22 = FIELD_AT(t20, s32, 80);
-  t23 = FIELD_AT(t21, u8, 16);
-  Call1((void (*)())Resource_ResetEntry, t23);
-  t25 = FIELD_AT(t21, u8, 17);
-  FIELD_AT(t21, u8, 17) = (t25 | 1);
-  t26 = FIELD_AT(((s32)gData_020023c4 + 0x188), u16, 12);
-  t27 = FIELD_AT(t21, s32, 40);
-  FIELD_AT(t21, u8, 16) = t26;
-  Call1((void (*)())ResourceMetadata_ClearRecord, t27);
-  FIELD_AT(t21, s32, 40) = 0;
-  FIELD_AT(t21, u8, 27) = 0;
-  t29 = FIELD_AT(t22, u8, 20);
-  t30 = FIELD_AT(t21, u8, 5);
-  FIELD_AT(t21, u8, 20) = t29;
-  t31 = FIELD_AT(t22, u8, 21);
-  FIELD_AT(t21, u8, 21) = t31;
-  t32 = FIELD_AT(t22, u8, 5);
-  FIELD_AT(t21, u8, 5) = ((63 & t30) | (((u32)t32 >> 6) << 6));
-  t33 = FIELD_AT(t22, u8, 7);
-  t34 = FIELD_AT(t21, u8, 7);
-  FIELD_AT(t21, u8, 7) = ((63 & t34) | (((u32)t33 >> 6) << 6));
-  t35 = FIELD_AT(t22, u16, 8);
-  t36 = FIELD_AT(t21, u16, 8);
-  FIELD_AT(t21, u16, 8) = ((t36 & -0x400) | ((u32)(t35 << 22) >> 22));
-L_0200a9c4:
-  t37 = *(s32 *)sp_;
-  *(s32 *)sp_ = (t37 - 1);
-  if ((t37 - 1) < 0)
-    goto L_0200a9d0;
-  goto L_0200a890;
-L_0200a9d0:
-  goto L_0200a9e4;
-L_0200a9e4:
-  return;
+void Func_02002870(struct Actor *actor) {
+  struct Work *work = WORK;
+  s32 i;
+
+  if (work->owner == NULL)
+    return;
+  i = 0;
+next:
+  {
+    struct Actor *object;
+    s32 a, b, c, d, e;
+    s32 x, y, z;
+
+    a = Random16Far();
+    b = Random16Far();
+    x = actor->x + a * 16;
+    x -= b * 16;
+    c = Random16Far();
+    d = Random16Far();
+    e = Random16Far();
+    z = actor->z + d * 16 - e * 16;
+    y = c * 8 + actor->y + 0x40000;
+    object = Func_02003128(0x1e9, x, y, z);
+    if (object != NULL) {
+      s32 angle, radius;
+      u32 sum;
+      s32 scale;
+      s32 half;
+      s32 (*multiply)(s32, s32);
+      struct Sprite *sprite;
+      struct Sprite *source;
+      s32 velocity;
+
+      angle = Random16Far();
+      radius = Random16Far();
+      sum = Random16Far();
+      sum += Random16Far();
+      half = 0x8000;
+      Func_02003120(object, gData_02003304);
+      Actor_SetSingleChildFlags(object, 0);
+      object->velocityY = angle * 4 + 0x20000;
+      {
+        s32 cosine = Math_Cosine(angle);
+        multiply = Iwram_MulQ16;
+        radius <<= 3;
+        object->velocityZ = multiply(radius, cosine);
+      }
+      velocity = multiply(radius, Math_Sine(angle));
+      object->gravity = 0x547a;
+      scale = (sum >> 2) + half;
+      object->scaleX = scale;
+      object->scaleY = scale;
+      object->bounce = half;
+      sprite = object->animation;
+      source = work->owner->animation;
+      object->acceleration = 0;
+      object->velocityX = velocity;
+      Resource_ResetEntry(sprite->vramBlock);
+      sprite->keepEntry = 1;
+      sprite->vramBlock = work->vramBlock;
+      ResourceMetadata_ClearRecord(sprite->record);
+      sprite->record = NULL;
+      sprite->unk1b = 0;
+      sprite->unk14[0] = source->unk14[0];
+      sprite->unk14[1] = source->unk14[1];
+      sprite->shape = source->shape;
+      sprite->size = source->size;
+
+      sprite->tile = source->tile;
+    }
+  }
+  if (--i >= 0)
+    goto next;
 }

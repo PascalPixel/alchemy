@@ -29,7 +29,7 @@ Func_0801399c:
 	ldr r5, .L_08013a74
 	bl Serial_ExchangePayloads
 	strh r0, [r5]
-	bl Func_08016990
+	bl Serial_StepBlockTransfer
 .L_080139d6:
 	bl SoundDriver_VSyncRefresh
 	ldr r3, .L_08013a78

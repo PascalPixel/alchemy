@@ -11,18 +11,8 @@ void Func_0200063c(s32 x, s32 y) {
 
   ShrineOfTheSeaGod_CopyRect(x, y, 6, 56, 18, 6);
   for (i = 0; i < 16; i++) {
-    /* FAKEMATCH(temporary): the first layer's y read before the step is
-     * loaded; as layer0->y += step, 2 of 33 instructions differ in tla-en. */
-    s32 y0 = layer0->y;
-    s32 step = -0x2000;
-    s32 frames = 1;
-
-    /* FAKEMATCH(barrier): the step loaded from the pool and wait()'s 1 set
-     * in each pass; as layer0->y += -0x2000 and layer1->y += -0x2000 with
-     * wait(1), 10 of 33 instructions differ in tla-en. */
-    asm volatile("" : "+r"(step), "+r"(frames));
-    layer0->y = y0 + step;
-    layer1->y += step;
-    wait(frames);
+    layer0->y += -0x2000;
+    layer1->y += -0x2000;
+    wait(1);
   }
 }

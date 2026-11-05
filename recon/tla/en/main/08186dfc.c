@@ -1,27 +1,34 @@
-// Draft, differ 289 of 2667, skeleton gap 89 (tla-en, 2026-11-01)
-// BattleEffect_RunHaures: the 192-byte frame and every spill slot now agree,
-// bar one reload of mesh at sp+24. What carried it: position and velocity are
-// struct WordPair (DImode spill pairs); draw[2] is one 8-byte pseudo; cut comes
-// from a giv (a body local plus one inline frame - 267 combine, or loop.c
-// refuses it); row and scroll are givs too, not hand counters; buffer, shades,
-// wing and strip are set-once locals that reload at each use; p and the inner
-// counters belong to one loop each. Left, in listing order:
-// - Wave loop: the listing keeps y = -4 in r9 and shifts it inside the loop;
-// here
-//   y << 16 folds to a pooled constant, which costs 3 instructions and moves
-//   registers through about 110 lines. s16, a for-init set and a goto loop do
-//   not stop the fold; a second dead set of y does, but loop.c then hoists the
-//   shift.
-// - Mesh setup: none should sit in r5 and x0 in r4, here the reverse, and mesh
-// is
-//   copied from r5 where the listing reloads it from sp+24.
-// - Last shade loop: the listing loads Data_02010fa0 twice, here reload
-// inherits.
-// - Draw loop: gData_08197410 should load before p, but a pointer local that
-// does
-//   that gives add-then-subs for [n - 1].
-// - Palette ramp, sprite 18 store, particle 63 stores: order and register
-// choice.
+// Draft, differ 121 of 2667, skeleton gap 11 + 12 (tla-en, 2026-11-01)
+// BattleEffect_RunHaures: frame and spill slots agree; the old volatile dst
+// pointers are gone, no device is left here. Facts that closed the rest:
+// position and velocity are struct WordPair (DImode pairs); draw[2] is one
+// 8-byte pseudo; cut, row and scroll are givs; buffer, shades, wing and strip
+// are set-once locals; the first two palette loops share one dst.
+// Left, in listing order:
+// - Sprite 18: ldrb of byte 5 should come before the objects[18] store; moving
+//   the statements costs 70.
+// - Sheet halving: w is assigned inside the call's argument so r0 is busy at the
+//   sum and the constant takes r1. It is an odd spelling; a separate w = line
+//   costs 6 of differ (the r0/r1 pair only).
+// - Morph: the caller-save reload of a (sp+8) comes one tie early.
+// - Fade loop (frame 236 on): v should get r3 and the pointer r2; scope, u8,
+//   sharing q and indexing do not move it.
+// - Dive ramp: req.a's pool load should come before muls; a tie.
+// - Mesh setup, about 45 lines: none should sit in r5 and x0 in r4. Priority
+//   order is none, x0, y0 (lreg: 1.02, .77, .73). The Data_08199bf9 base is
+//   hoisted out of both loops by PRE and spilled here, then reloaded; the
+//   listing fits a block-local base in r4, which blocks none but not x0 (no
+//   y0 conflict-free slot, so r6). Table locals in the body, literal zeros and
+//   a row pointer all lose more than they gain.
+// - Draw loop: gData_08197410 should load before p; a pointer local gives
+//   add-then-subs for [n - 1], in every spelling tried.
+// - Wave loop: PRE hoists y << 16 out of the loop when both arms share one y,
+//   and cse2 then folds it to a pooled constant. Two one-constant locals keep
+//   the shift in the arms; the listing has one register, so y is rematerialized
+//   in the first arm (2 extra instructions, 3 diff lines, branch distances).
+//   Same PRE question as the mesh base: the listing behaves as if the loop's
+//   entry were still conditional when PRE ran. Answering it would likely close
+//   both.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -242,6 +249,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   const u8 *q2;
   u8 *buffer;
   u8 *shades;
+  u16 *dst;
 
   buffer = gMapCellBuffer;
   shades = Data_02010fa0;
@@ -317,14 +325,14 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
   }
   {
-    u32 *w = (u32 *)(work->sheet + 0x4000);
+    u32 *w;
     u32 mask;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, w, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+                               w = (u32 *)(work->sheet + 0x4000), 0, 0);
     mask = 0x7f7f7f7f;
     for (i = 0; i != 1024; i++) {
-      *w = (*w >> 1) & mask;
-      w++;
+      w[i] = (w[i] >> 1) & mask;
     }
   }
   for (i = 0; i != 31; i++) {
@@ -339,7 +347,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   Data_02010be0[1] = 0;
   Data_02010be0[2] = 0;
   {
-    volatile u16 *dst = BG_PLTT + 1;
+    dst = BG_PLTT + 1;
 
     for (i = 1; i != 64; i++) {
       s32 b;
@@ -358,8 +366,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         s32 t = i - 32;
 
         b = t * 4;
-        r = b;
         g = t;
+        r = b;
         if (r > 31) {
           r = 31;
         }
@@ -371,11 +379,11 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     }
   }
   {
-    volatile u16 *dst = &OBJ_PLTT_COLOR(14, 0);
+    dst = &OBJ_PLTT_COLOR(14, 0);
 
-    for (i = 0; i != 16; i++) {
-      s32 r = i * 2 + 2;
+    for (i = 0; i != 16; i++, dst++) {
       s32 b = i * 3 + 2;
+      s32 r = i * 2 + 2;
 
       if (r > 31) {
         r = 31;
@@ -383,7 +391,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
       if (b > 31) {
         b = 31;
       }
-      *dst++ = b << 10 | (i + 2) << 5 | r;
+      *dst = b << 10 | (i + 2) << 5 | r;
     }
   }
   BattleBackground_LoadFar(1, (s32)&ResourceId_MossCaveBackdrop, 0);
@@ -420,9 +428,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           }
         }
         {
-          struct EffectStep *p = &work->particles[4];
-
-          for (i = 0; i != 8; i++, p++) {
+          for (i = 0; i != 8; i++) {
+            struct EffectStep *p = &work->particles[i + 4];
             p->x = (Random16() & 15) + 24;
             p->y = Random16() & 7;
             p->variant = i * 3;
@@ -518,8 +525,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           verts = Heap_AllocEwram(32);
           model = Render_AllocateModelList(1);
           texture.logWidth = 6;
-          texture.logHeight = 6;
           t = frame - 47;
+          texture.logHeight = 6;
           texture.pixels = work->sheet + 0x4000;
           sh = frame - 111;
           if (sh > 0) {
@@ -547,8 +554,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           model->kind = 9;
           model->texture = &texture;
           model->mesh = Data_08199244;
-          model->shade = sh;
           model->vertices = verts;
+          model->shade = sh;
           Render_ResetTransformState();
           Func_08015160(0, 0x240000, 0);
           s = (t * 3 << 8) + 1024;
@@ -608,7 +615,6 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         req = Data_08196f00;
         place2[3] = 0;
         if (frame > 149) {
-          s32 y;
 
           position.a += velocity.a;
           position.b += velocity.b;
@@ -625,10 +631,9 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           velocity.b = velocity.b * 60 / 64;
           req.a = 0x10000;
           req.b = 0x10000;
-          y = position.b;
-          for (i = 0; i != 2; i++, y += 0x200000) {
+          for (i = 0; i != 2; i++) {
             place2[0] = position.a;
-            place2[1] = 0x1100000 - y;
+            place2[1] = 0x1100000 - (position.b + i * 0x200000);
             place2[2] = 0x1000000;
             Render_ApplyProjectedPlacementFar(work->objects[i], place2,
                                               (s32 *)&req, 0);
@@ -637,9 +642,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
             Func_08196404(SLOT_ALT, 6, 6, 3, 1);
             draw[1] = Ram_HeapSlots->unkb8[1];
             {
-              struct EffectStep *p = &work->particles[4];
-
-              for (i = 0; i != 8; i++, p++) {
+              for (i = 0; i != 8; i++) {
+                struct EffectStep *p = &work->particles[i + 4];
                 s32 n = (p->variant / 4) % 6;
                 u8 *src = work->sheet + gData_0819747a[n];
                 u32 w = gData_08197467[n];
@@ -682,7 +686,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         s32 s;
 
         if (frame == 267) {
-          volatile u16 *dst = BG_PLTT + 1;
+          u16 *dst = BG_PLTT + 1;
 
           for (i = 1; i != 64; i++) {
             s32 v = i;
@@ -1096,17 +1100,19 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
 
       if (frame >= start && frame < start + 16) {
         s32 amp = Trig_Sin((frame - start) << 11) / 8;
-        s32 x = -0x100000;
+        s32 x;
         s32 y = -4;
+        s32 y2 = -4;
         s32 m;
 
-        for (m = 0; m != 3; m++, x += 0x140000) {
+        for (m = 0; m != 3; m++) {
+          x = m * 20 - 16;
           Render_ResetTransformState();
           if (i == 0) {
-            Func_08015160(x, y << 16, 0);
+            Func_08015160(x << 16, y << 16, 0);
             Func_080150e4(-0x2000);
           } else {
-            Func_08015160(x + -0x100000, y << 16, 0);
+            Func_08015160((x - 16) << 16, y2 << 16, 0);
             Func_080150e4(0x27d0);
           }
           Func_080151e4(0x30000, amp, 0x20000);
@@ -1140,9 +1146,9 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         v = 80;
       }
       left = 4;
-      right = 123;
       corner[1] = 60 - v;
       corner[5] = 60 - v;
+      right = 123;
       corner[0] = left;
       corner[4] = right;
       corner[8] = left;

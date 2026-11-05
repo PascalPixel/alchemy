@@ -1,11 +1,25 @@
-// Draft, differ 115 of 216 (was 121): overlay 6a3's copy of the function
-// drafted in resource_698_c_020003cc.c (overlay 698's Func_020003cc), whose
-// header says what it is and what was tried. The camera call forwarded through
-// an inline wrapper gained 6. Left: the native keeps the event work in sl and
-// the motion-flags address in r9 (here r9 and fp); it compares the rise with
-// 0x3ffff from the pool (bgt) where the source's form gives 0x40000 (bge); it
-// stores the two halfword 1s from a word constant, where these plain stores
-// load a halfword from the pool.
+// Draft, differ 54 of 216, skeleton gap 6/10 (tla-en, 2026-11-01)
+// Overlay 6a3's copy of the function drafted in resource_698_c_020003cc.c: the
+// leader rides up with its watched object, spinning and flickering, until that
+// object clears its flag; then it is set down on the 8-pixel grid beside it,
+// falls to the ground and the camera follows it again.
+// What closed it, for the copies: real loops, not goto (a goto loop's compare
+// folds 0x3ffff to 0x40000); struct EventWork members for the three halfwords,
+// which alone gives the native's movs, the pooled 1 and 0 and the address
+// before the value, with no word local; the angle in an s32 local, shifted
+// inside both expressions, which keeps asrs and the ands-then-asrs order.
+// Left, one cause: gcse's PRE hoists actor + 35 out of the rise loop (pseudo set
+// on both edges of the entry test, sl here), where the native rebuilds it in
+// r1 and r3. Every remaining difference follows: the extra pushed register
+// (fp), work and the motion address one high register along (r9 and fp, native
+// sl and r9), the three instructions before the loop, and the pool offsets.
+// This is the "native keeps it in the loop" family; no plain C stops it.
+// Tried without gain: no p, or p scoped or set at the top of the body (74 to
+// 89, a spill), p set once before the loop (85), if plus do-while, spelled-out
+// xor, raw offset, bit as a local (68), direct camera call (60, shares the -1s).
+// The camera wrapper is carried from the earlier draft, not new. p is set twice
+// to one address; removing that costs 20. Field names are placeholders: 0x63 of
+// linked is unexplained (the high byte of callback in this struct).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -31,40 +45,50 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 y, s32 z, s32 mode
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
+struct EventWork {
+  u8 unk000[0x154];
+  u16 unk154;
+  u8 unk156[0xd44 - 0x156];
+  u16 unkD44;
+  u16 unkD46;
+};
+
 void Func_0200309c(void) {
-  u8 *work = Ram_HeapSlots->eventWork;
+  struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;
   struct Actor *shadow;
-  s32 facing;
+  u8 *p;
+  s32 angle;
   s32 i;
 
   Func_020047d4();
   Func_0200494c(0);
   i = 0;
-  *(u16 *)(work + 0xd46) = 0;
+  work->unkD46 = i;
+
   actor->motionFlags = 4;
   Actor_SetSingleChildFlags(actor, 0);
-  if (*((u8 *)linked + 0x63) != 0) {
-  rise:
+
+  while (*((u8 *)linked + 0x63) != 0) {
     actor->x = linked->x;
     actor->y = linked->y + i;
     actor->z = linked->z;
     if (i <= 0x3ffff)
       i += 0x1999;
     actor->angle = (u8)gFrameCount << 12;
-    actor->priorityFlags ^= 2 << (gFrameCount & 1);
+    p = &actor->priorityFlags;
+    *p ^= 2 << (gFrameCount & 1);
     wait(1);
-    if (*((u8 *)linked + 0x63) != 0)
-      goto rise;
   }
-  *(u16 *)(work + 0xd44) = 1;
-  *(u16 *)(work + 0xd46) = 1;
-  facing = linked->angle >> 13;
-  actor->x = (((linked->x >> 19) & ~1) + facing - 1) << 19;
-  actor->z = (((linked->z >> 19) & ~1) - (facing & 2) + 1) << 19;
+  work->unkD44 = 1;
+  work->unkD46 = 1;
+  angle = linked->angle;
+  actor->x = (((linked->x >> 19) & ~1) + (angle >> 13) - 1) << 19;
+  actor->z = (((linked->z >> 19) & ~1) - ((angle >> 13) & 2) + 1) << 19;
   actor->velocityY = 0x60000;
-  actor->priorityFlags = 1;
+  p = &actor->priorityFlags;
+  *p = 1;
   actor->motionFlags = 3;
   Actor_SetSingleChildFlags(actor, 1);
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
@@ -76,25 +100,27 @@ void Func_0200309c(void) {
                 actor->z);
   i = 0;
   if (actor->y > actor->terrainHeight + 0x100000) {
-  fall:
-    i++;
-    wait(1);
-    if (i <= 59 && actor->y > actor->terrainHeight + 0x100000)
-      goto fall;
+    do {
+      wait(1);
+      i++;
+      if (i > 59)
+        break;
+    } while (actor->y > actor->terrainHeight + 0x100000);
   }
   Func_020049c4(127);
   i = 0;
   if (actor->velocityY != 0) {
-  settle:
-    i++;
-    wait(1);
-    if (i <= 59 && actor->velocityY != 0)
-      goto settle;
+    do {
+      wait(1);
+      i++;
+      if (i > 59)
+        break;
+    } while (actor->velocityY != 0);
   }
   Func_0200472c(shadow);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
-  *(u16 *)(work + 0xd46) = 1;
-  *(u16 *)(work + 0x154) = 0;
+  work->unkD46 = 1;
+  work->unk154 = 0;
   Func_020047dc();
 }

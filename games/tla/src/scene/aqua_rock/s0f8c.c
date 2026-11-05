@@ -17,20 +17,17 @@ void Func_02000f8c(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct AquaRockEventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 x = object->x;
-  s32 z = object->z;
-  s32 y = object->y;
   s32 col;
   s32 row;
 
   if (gMainRoutineWork.renderMode == 2) {
-    col = x >> 20;
-    row = (z - y - 0xc0000) >> 20;
+    col = object->x >> 20;
+    row = (object->z - object->y - 0xc0000) >> 20;
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
       work->field16a = 44;
   } else {
-    col = x >> 20;
-    row = (z - y) >> 20;
+    col = object->x >> 20;
+    row = (object->z - object->y) >> 20;
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
       Func_02001e00();
   }

@@ -1,10 +1,21 @@
-// Draft, differ 187 of 160: other, register pressure. The native stack frame is
-// 56 bytes with the ids at sp + 8: it spills the store pointer of the
-// distinct-id loop (sp 4) across the call and the sort's halfword swap
-// value (sp 2), keeps the ids' base in r7 and the -1 end mark in r11; this
-// draft needs no spill (frame 48), so allocation differs from the first
-// loop on. An explicit store pointer (*out++ = id) measured 182; the swap
-// through two s16 locals 178, the swap's form the spill shows is this one.
+// Draft, differ 18 of 160, skeleton gap 2 (tla-en, 2026-11-01)
+// Left: only the two calls of the last loop. The native loads ids[i] (r2)
+// ahead of work->kind, with sl in r4 and #30 in r3, and at the next call has
+// sl in r3 and #24, #26 in r2, r4; this draft loads kind first, through r2
+// and r0, and then uses r2, r4, r3. The instructions are the same set, so
+// this is reload's choice of scratch registers: lreg has kind then ids[i],
+// and a native r2 and r0 both look busy when kind is reloaded.
+// Tried with no gain: a named id or kind local in any order (combine moves the
+// load back down), real prototypes, s16 parameters, no prototype, a static
+// inline around the call (a device, measured only), event at function
+// scope, declaration orders, s32 or u16 swap, every sharing of the five loop
+// counters. Lead: find what puts the ids[i] load before the kind load.
+// What closed the rest, all plain C: the swap saves ids[i], as written below;
+// cells indexed, so loop.c makes the pointer giv; the scan shares j with the
+// sort, so cse2 turns count + 1 into j + 1 (the store's r4 is loop.c's giv of
+// count, kept in r4 and saved at sp + 4 across the call: no store pointer in
+// the source); layer read through a struct, because a char read depends on
+// that caller save and sched2 then issues it before the shifts.
 // Draft: runs the field events an effect touched (heap slot 0xe0 effect
 // work). Each cell in the event work's list at 0xcc0 (x, z pairs ending in
 // -1) is resolved to an event id at the owner object's layer byte; the
@@ -14,9 +25,14 @@
 #include "types.h"
 #include "ram_buffer.h"
 
+struct TouchOwner {
+  u8 unk00[34];
+  u8 layer;
+};
+
 struct TouchWork {
   u8 unk00[16];
-  u8 *owner;
+  struct TouchOwner *owner;
   u8 unk14[4];
   s16 argument0;
   s16 argument1;
@@ -35,21 +51,21 @@ void Field_RunPsynergyEvent(s32 event, s32 argument0, s32 argument1);
 
 void Func_080e249c(void) {
   struct TouchWork *work = Ram_HeapSlots->effectWork;
-  struct TouchCell *cell =
+  struct TouchCell *cells =
       (struct TouchCell *)((u8 *)Ram_HeapSlots->eventWork + 0xcc0);
-  u8 *owner = work->owner;
+  struct TouchOwner *owner = work->owner;
   s32 count = 0;
   s16 ids[24];
   s32 i, j;
 
-  for (; cell->x != -1; cell++) {
-    s16 id = Func_080dbdc8(cell->x << 20, cell->z << 20, owner[34]);
+  for (i = 0; cells[i].x != -1; i++) {
+    s16 id = Func_080dbdc8(cells[i].x << 20, cells[i].z << 20, owner->layer);
 
-    for (i = 0; i < count; i++) {
-      if (ids[i] == id)
+    for (j = 0; j < count; j++) {
+      if (ids[j] == id)
         break;
     }
-    if (i == count)
+    if (j == count)
       ids[count++] = id;
   }
   ids[count] = -1;
@@ -58,10 +74,10 @@ void Func_080e249c(void) {
     for (i = 0; i < count - 1; i++) {
       for (j = i + 1; j < count; j++) {
         if (ids[i] > ids[j]) {
-          s16 swap = ids[j];
+          s16 swap = ids[i];
 
-          ids[j] = ids[i];
-          ids[i] = swap;
+          ids[i] = ids[j];
+          ids[j] = swap;
         }
       }
     }

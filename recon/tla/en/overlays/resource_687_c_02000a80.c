@@ -1,35 +1,32 @@
-// Draft, differ 135 of 188, skeleton gap 28 (tla-en, 2026-11-01)
-// What is left is GCSE's PRE: the listing behaves as if it never ran. An earlier
-// analysis-only compile with -fno-gcse gave its reloads, work in r11 and index at
-// sp+16. That reading is a compiler question, out of scope here, so nothing below
-// changes it; this note records how far C alone gets.
-// PRE worked out from gcse.c and the .07.gcse dump: a store anywhere in a block ends
-// availability of every MEM, pool loads included. So a value loaded before a store in
-// its block cannot be reused past the block. Three forms below come from that, each
-// a spelling kept for its effect: the four delta reads each take a different
-// expression (union or plain, HImode or zero-extended, since expr_equiv_p compares
-// alias sets), so none is partly redundant; count2 takes its address before the store
-// to gData_020022bc; diff comes before the last read, which gives the listing's
-// scratch r5 there. tail gives 200 a temporary half the size, so zero gets r3.
-// z <<= 16 after the call raises z's priority, so x gets r6 and z r5.
-// Without a device, two redundancies remain, and they cost the 135: the pool load of
-// gData_020022bc (bb 2 to the store after the if) and (ashift index 16) (the call
-// block to the table read). The second keeps index in a register and pushes work to
-// the sp+16 slot, and everything after shifts.
-// With barriers this body reaches differ 12, skeleton gap 1; they are out because
-// that is not differ 0. Index must be s32 with the (s16) cast on its assignment:
-//   asm("" : : "m"(index));    just before frame = &gFrameCount (index in memory,
-//                              and its store comes first)
-//   asm("" : : : "memory");    just after nowRaw = (ends the pool load's availability)
-// The 12 left at that point: count2's address is in r1 where the listing has r3 (the
-// listing loads it after the store, and a memory asm there moves the pool 8 bytes
-// early, differ 32, because an empty asm counts 4), and the two index reads load into
-// r3 where the listing has r0 and r4, because a memory read ties to the shift's result
-// and only a true spill gives the listing's form. A union view of index (HImode read
-// at one site), an 8-byte local (a set through a subreg is not hashed), `<< 8 << 8`
-// with or without a one-pass block, and set-once address locals all failed to split
-// that shift or the pool load: cse folds or merges them, or they get registers.
-// Volatile globals are out: a volatile HImode read becomes ldrh and shifts, not ldrsh.
+// Draft, differ 89 of 188, skeleton gap 13 (tla-en, 2026-11-01)
+// What is left is GCSE's PRE: the listing keeps redundancies PRE removes here. An
+// earlier analysis-only compile with -fno-gcse gave its reloads, work in r11 and
+// index at sp+16. That is a compiler question, out of scope here, so it stays open.
+// PRE from gcse.c and the .07.gcse dump: a store anywhere in a block ends availability
+// of every MEM, pool loads included, so PRE reloads after a store and keeps the value.
+// NOT SOURCE, none of these may be adopted: spots.spot[index & 0xffff] emits an ands
+// and a split 0xffff the listing lacks. It stands where (u16)index belongs because it
+// breaks PRE's (ashift index 16) between the table read and the spot read: index then
+// spills to sp+16, work takes r11 and the whole tail from the table read on matches.
+// With (u16)index, or index as u16 or s32, this body is differ 135, gap 28; & 0xffff on
+// a u16 folds back to the same thing. The second site alone masked gives 94.
+// These are aliasing or order spellings kept for their effect, which review rejects,
+// and each only stops one merge: the union and plain delta reads (without them 175),
+// count2 taken before the store (without it 97), tail (without it 114).
+// Plain C with none of this, every read spelled gData_*, is differ 248, gap 41.
+// One redundancy still open: the pool load of gData_020022bc from the first read to
+// the store after the if. It keeps that address in r6, so stamp falls to ip and the
+// listing's frame r6, stamp r7 is lost; that is most of the top half's difference.
+// Nothing tried splits it. u16 last, phase from *frame (88, gap 14, skeleton worse),
+// and storing nowRaw (142) gain nothing.
+// With barriers (out, no new device) the earlier body reached differ 12, gap 1:
+//   asm("" : : "m"(index));    just before frame = &gFrameCount
+//   asm("" : : : "memory");    just after nowRaw =
+// which shows the statements and their order are right. A union view of index, an
+// 8-byte local, `<< 8 << 8` and set-once address locals all failed to split the shift
+// or the pool load. Volatile globals are out: a volatile HImode read becomes ldrh and
+// shifts, not ldrsh. Forcing index into memory (a one-element array) is the same
+// device as the barrier and the listing's slot is below params, so it is a real spill.
 #include "iwram_call.h"
 #include "call.h"
 #include "actor.h"
@@ -138,8 +135,9 @@ void Func_02000a80(void) {
       Call1(Func_02002054, 246);
       x <<= 16;
       z <<= 16;
-      Func_0200015c(spots.spot[(u16)index].x + x, 0,
-                    spots.spot[(u16)index].z + z, 0, 0x13333, phase,
+      // Not source; see the header.
+      Func_0200015c(spots.spot[index & 0xffff].x + x, 0,
+                    spots.spot[index & 0xffff].z + z, 0, 0x13333, phase,
                     0x120001, &params);
     }
   }

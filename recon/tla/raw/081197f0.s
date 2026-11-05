@@ -881,7 +881,7 @@ Func_081197f0:
 	bl Message_ShowAndWaitCoreFar
 	bl BattleMessage_WaitForAdvance
 .L_08119f2a:
-	bl Func_081284c0
+	bl Battle_AwardSpoils
 .L_08119f2e:
 	movs r0, #78
 	bl Sound_PlayFar

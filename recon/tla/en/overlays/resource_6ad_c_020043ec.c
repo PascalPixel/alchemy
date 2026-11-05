@@ -1,33 +1,43 @@
-// Draft, differ 250 of 347, skeleton gap 94 (tla-en, 2026-11-01)
-// Control flow, types and the 40-byte frame agree with the listing; the slots
-// are in the listing's order (startCell, x, z, cellX, cellZ, then the terrain
-// address, then radius). What is left comes from the outer retry loop, in two
-// ways, and both are measured:
+// Draft, differ 210 of 347, skeleton gap 72 (tla-en, 2026-11-01)
+// Twin: The Broken Seal's Imil_RunIceSlide (a `layer` local, probe, x and z).
+// Control flow, types and the 40-byte frame agree with the listing. The slots
+// are the listing's: pos 28, startCell 24, x 20, z 16, cellX 12, cellZ 8, layer 4,
+// radius 0. Closed this round in plain C, in order: the second wait loop as labels
+// (a real while hoists gData_020074c8's address: 248 to 233), `multiply`, a local
+// holding IwramMulQ16 for its whole life (228: it takes r8 as the listing does,
+// and the x, z and layer slots line up), dz before dx (210). No device was added;
+// the draft carries none to remove. `multiply` is set at the top of the loop,
+// though the listing loads it just before the first multiply: set there it crosses
+// one call, is saved around it in r3 and differs by 247. Set above the label: 218.
+// What is left comes from the outer retry loop, in two ways:
 // - PRE: gcse hoists actor + 34 and pos's address onto the entry edge (07.gcse:
-//   PRE/HOIST edge (0,1)). The listing computes actor + 34 after the label, and
-//   builds pos at each call with p still live, so nothing unified those.
-// - Weight: flow counts the block at depth 1 (12.life), so the multiply address
-//   has 6 refs across 1 call and CALLER_SAVE_PROFITABLE puts it in r3 with a
-//   save at sp+4. The listing has it in r8 with no save, which fits 3 refs,
-//   depth 0: the listing's allocation looks as if the back edge were not there.
-// Evidence, none of it kept: `goto start` replaced by `return` gives differ 155,
-// with the frame, the slots, r8 and cellZ on the stack all right, so the weight
-// is the larger part. A dead test at the top of the loop (once = 1 before the
-// label, `if (once == 0) goto done;` after it, folded by gcse's last cprop) stops
-// the hoist but leaves depth 1: 244. A never-taken jump from the entry to a label
-// before wait(2) makes the loop irreducible, depth 0 (205), but PRE then hoists
-// on both entry edges, and `(u8)(s32)actor >> 8` folds only to a cmp the listing
-// lacks. An empty asm rewriting actor stops actor + 34 only: 257. None reaches
-// differ 0, so all came out. No plain form was found that drops the back edge
-// from gcse and flow and still ends in `b` to the label; the sibling drafts
-// 02004140 and 0200470c stop at the same retry loop and 02003d80 at the same
-// hoist. No PRE plus depth-0 refs is what optimize_size gives (gcse.c, flow.c):
-// that is a compiler question, for Pascal (K3), and is untested here.
-// Tried without gain: separate p and q (256, cse merges them or PRE keeps them
-// apart), pos with no pointer (256), a terrain local (no change), for (;;) (290),
-// radius or dx, dz, dist in other scopes and orders (no change), j != 64 (no
-// differ change, gap 98), inline x and z (252), returns-twice on Func_0200410c
-// (353). gData_020074c8 is volatile s16: it gives the ldrh, lsls, cmp reads.
+//   PRE/HOIST edge (0,1)). The listing computes actor + 34 after the label, keeps
+//   p in r10 for the first region, makes another in r6 at the test, and builds pos
+//   at each call. Both expressions are anticipated at the label and available on
+//   the back edge, so a loop that always runs them is hoisted, whatever its form.
+//   This is most of the skeleton gap (35 removed, 37 added): the hoisted pseudo
+//   also holds r10, so radius takes r8 rather than sp+0, j takes r4 with a save at
+//   sp+0 rather than r10, the giv takes r6 rather than r8, and angle and cell swap
+//   r9 and r11.
+// - Weight: flow counts the block at depth 1 (12.life). The listing's allocation
+//   fits depth 0, as if the back edge were not there.
+// Earlier measurements, none kept: `goto start` replaced by `return` gave 155. A
+// dead test at the top of the loop stopped the hoist but left depth 1 (244); a
+// never-taken jump to a label before wait(2) made the loop irreducible, depth 0
+// (205), but PRE then hoisted on both edges; an empty asm rewriting actor stopped
+// actor + 34 only (257). All are devices. The sibling drafts 02004140 and 0200470c
+// stop at the same retry loop and 02003d80 at the same hoist. No PRE plus depth-0
+// refs is what optimize_size gives (gcse.c, flow.c): a compiler question for Pascal
+// (K3), out of scope here and untested.
+// Tried without gain this round: no pointer, or no `p = pos` at the test (230);
+// separate p and q (230); struct pos (233); a `layer` set above the label (238);
+// volatile off (235) or u16 (259); inline x and z, angle or cell declared elsewhere,
+// radius and j in a block, the scan with continue, other++ in the body, nested ifs
+// in the poll test, cell assigned in the test, if/else for angle, one sum for dist,
+// z before x, dist > 0x3ffff, << 16 for the marker (all no change); other before
+// radius (214); velocity before angle in the blocked arm (247); dz and dx locals
+// for ArcTan2 (341). One expression for the two angle lines gives differ 206 but
+// gap 92, so it came back out: it drops the listing's lsls and asrs pair.
 #include "types.h"
 #include "actor.h"
 #include "call.h"
@@ -60,13 +70,17 @@ void Func_020043ec(void) {
   struct Actor *actor;
   s32 pos[3];
   s32 *p;
-  s32 startCell, x, z, cellX, cellZ, cell, i, j, dx, dz, dist, radius;
+  s32 (*multiply)(s32, s32);
+  s32 startCell, x, z, cellX, cellZ;
+  u8 *layer;
+  s32 cell, i, j, dx, dz, dist, radius;
   s32 angle;
   struct Actor *other;
 
   actor = ObjectTable_Get(FIELD_AT(gMainRoutineWork, s32, 532));
   gData_020074c8 = 0;
 start:
+    multiply = IwramMulQ16;
     Func_0200410c();
     actor->speedLimit = 0x10000;
     actor->acceleration = 0x8000;
@@ -80,13 +94,14 @@ start:
     p[1] = actor->y;
     cellZ = (actor->z & 0xfff00000) + 0x80000;
     p[2] = cellZ;
-    x = cellX;
     z = cellZ;
-    startCell = Func_020054d0(actor->terrainId, x, z);
-    dx = x - actor->x;
+    x = cellX;
+    layer = &actor->terrainId;
+    startCell = Func_020054d0(*layer, x, z);
     dz = z - actor->z;
-    dist = IwramMulQ16(dx, dx);
-    dist += IwramMulQ16(dz, dz);
+    dx = x - actor->x;
+    dist = multiply(dx, dx);
+    dist += multiply(dz, dz);
     if (dist >= 0x40000)
       goto far;
     angle = gData_02005f38[(gInput >> 4) & 15];
@@ -98,9 +113,9 @@ start:
     angle = (s16)((angle + 0x2000) & -0x4000);
   move:
     Vector_AddPolarOffsetFar(0x100000, angle, pos);
-    cell = Func_020054d0(actor->terrainId, p[0], p[2]);
+    cell = Func_020054d0(*layer, p[0], p[2]);
     if (cell != 255 &&
-        Map_GetTerrainHeight(actor->terrainId, p[0], p[2]) - actor->y <= 0x80000) {
+        Map_GetTerrainHeight(*layer, p[0], p[2]) - actor->y <= 0x80000) {
       p[0] = cellX;
       p[2] = cellZ;
       actor->speedLimit = 0x20000;
@@ -127,7 +142,7 @@ start:
     actor->update = Func_02004080;
     goto test;
   body:
-      if (Map_GetTerrainHeight(actor->terrainId, p[0], p[2]) - actor->y > 0x80000)
+      if (Map_GetTerrainHeight(*layer, p[0], p[2]) - actor->y > 0x80000)
         goto blocked;
       if (gData_020074c8 != 0)
         goto done;
@@ -145,10 +160,13 @@ start:
       actor->acceleration = 0x1999;
       Func_020054b8(actor, p[0], p[1], p[2]);
       i = 0;
-      while (i <= 179 && Func_02005530(actor) == 0 && gData_020074c8 == 0) {
-        wait(1);
-        i++;
-      }
+      goto poll;
+    pause:
+      wait(1);
+      i++;
+    poll:
+      if (i <= 179 && Func_02005530(actor) == 0 && gData_020074c8 == 0)
+        goto pause;
       if (gData_020074c8 != 0)
         goto done;
       if (cell != startCell)
@@ -156,7 +174,7 @@ start:
   test:
       Vector_AddPolarOffsetFar(0x100000, angle, pos);
       p = pos;
-      cell = Func_020054d0(actor->terrainId, p[0], p[2]);
+      cell = Func_020054d0(*layer, p[0], p[2]);
       if (cell != 255)
         goto body;
   blocked:

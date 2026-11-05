@@ -8,7 +8,7 @@ ObjectTable_SnapshotFar:
 	.global Func_080c8630
 	.thumb_func
 Func_080c8630:
-	overlay_veneer Func_080cae5c
+	overlay_veneer ObjectTable_Restore
 	.global Func_080c8638
 	.thumb_func
 Func_080c8638:

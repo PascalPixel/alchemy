@@ -55,8 +55,6 @@ void Func_02000418(void) {
   u32 i;
   s32 angle;
   s32 velocity[3];
-  s32 z;
-  struct LandingEffectOptions *effect;
 
   Func_02002e44();
   Func_02002edc(0);
@@ -73,29 +71,21 @@ void Func_02000418(void) {
   Func_02002eec(204);
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
-  effect = &options;
-  effect->palette = 7;
-  effect->update = Effect_AdvanceMotion;
-  effect->scaleX = 0xa3d7;
-  effect->scaleY = 0xa3d7;
+  options.palette = 7;
+  options.update = Effect_AdvanceMotion;
+  options.scaleX = 0xa3d7;
+  options.scaleY = 0xa3d7;
   i = 0;
 loop:
   angle = i << 12;
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp and reading effect and
-   * leader; as plain C with no asm, 16 of 177 instructions differ in tla-en. */
-  asm("" : : "r"(effect), "r"(leader), "r"(leader) : "sfp");
   velocity[0] = Math_Cosine(angle);
   velocity[1] = 0;
   velocity[2] = Math_Sine(angle);
   velocity[0] += velocity[0] >> 1;
   velocity[0] += ((Random16Far() * 3) << 14 >> 16) - 0x6000;
-  /* FAKEMATCH(temporary): z holding the third velocity for the call; as
-   * velocity[2] += with velocity[2] passed, 47 of 177 instructions differ in
-   * tla-en. */
-  z = velocity[2] + ((Random16Far() * 3) << 13 >> 16) - 0x3000;
-  velocity[2] = z;
-  Func_0200015c(leader->x, leader->y, leader->z, velocity[0], velocity[1], z,
-                0x1090001, effect);
+  velocity[2] += ((Random16Far() * 3) << 13 >> 16) - 0x3000;
+  Func_0200015c(leader->x, leader->y, leader->z, velocity[0], velocity[1],
+                velocity[2], 0x1090001, &options);
   i++;
   if (i <= 16)
     goto loop;

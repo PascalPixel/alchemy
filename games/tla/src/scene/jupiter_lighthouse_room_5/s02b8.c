@@ -63,7 +63,6 @@ static __inline__ void Bring(s32 id) {
 /// plays.
 void Func_020002b8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u32 pulseState;
   struct Actor *a = Actor_GetById(13);
   struct Actor *b = Actor_GetById(14);
   struct Actor *c = Actor_GetById(15);
@@ -77,10 +76,6 @@ void Func_020002b8(void) {
   GameFlag_SetBit(2560);
   Func_020029a8(0);
   Func_02002940(gMainRoutineWork.currentOwner, FACING_NORTH);
-  /* FAKEMATCH(temporary): the pulse state 3 held from the turn on, so its
-   * register spans the quickening loop and the pulse's address and zero take
-   * r9 and r11; as a plain 3, 30 of 395 instructions differ in tla-en. */
-  pulseState = 3;
   FieldEvent_Wait(30);
   leader->update = Func_02000120;
   FieldEvent_Wait(30);
@@ -101,20 +96,18 @@ void Func_020002b8(void) {
   gData_02003274 = 0;
   gData_02003278 = 1;
   Task_Add(Func_02000294, 0x480);
-  i = 0;
-quicken:
-  gData_02003274 = 0;
-  wait((20 - i) / 2);
-  gData_02003274 = 1;
-  wait(1);
-  if (++i <= 19)
-    goto quicken;
+  for (i = 0; i < 20; i++) {
+    gData_02003274 = 0;
+    wait((20 - i) / 2);
+    gData_02003274 = 1;
+    wait(1);
+  }
   Func_02002a40(390);
   Call3((void (*)())Func_02002870, 0x10000, 0x10000, 0x10000);
   gData_02003274 = 1;
   FieldEvent_Wait(90);
   Call3((void (*)())Func_02002870, 0x30000, 0x30000, 0x10000);
-  gData_02003274 = pulseState;
+  gData_02003274 = 3;
   gData_02003278 = 0;
   FieldEvent_Wait(40);
   Bring(23);
@@ -165,15 +158,13 @@ quicken:
   b->motionFlags = 0;
   c->motionFlags = 0;
   d->motionFlags = 0;
-  i = 15;
-rise:
-  a->y += PIXELS(2);
-  b->y += PIXELS(2);
-  c->y += PIXELS(2);
-  d->y += PIXELS(2);
-  wait(1);
-  if (--i >= 0)
-    goto rise;
+  for (i = 0; i < 16; i++) {
+    a->y += PIXELS(2);
+    b->y += PIXELS(2);
+    c->y += PIXELS(2);
+    d->y += PIXELS(2);
+    wait(1);
+  }
   Func_02000e04(13);
   Func_02000e04(14);
   Func_02000e04(15);

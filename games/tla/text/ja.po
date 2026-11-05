@@ -14,19 +14,19 @@ msgctxt "MsgRustySword2"
 msgid "00000"
 msgstr "(きろくされてません)"
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(神殿からのスタートになります)"
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(まだクリアしてません)"
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(データがこわれています)"
 
-msgctxt "message"
+msgctxt "MsgSavePostReunion"
 msgid "00004"
 msgstr "(ごうりゅう後のデータです)"
 
@@ -12805,7 +12805,7 @@ msgctxt "MsgDmgP"
 msgid "03187"
 msgstr "{argument_actor_name:234} {argument_signed_number}の ダメージ!"
 
-msgctxt "message"
+msgctxt "MsgReaperCalls"
 msgid "03188"
 msgstr "{argument_actor_name:234} しりょうのよびごえをきいた!"
 
@@ -12817,7 +12817,7 @@ msgctxt "MsgPpLossP"
 msgid "03190"
 msgstr "{argument_actor_name:234} {argument_signed_number}の EPダメージ!"
 
-msgctxt "message"
+msgctxt "MsgStrengthExhausted"
 msgid "03191"
 msgstr "{argument_actor_name:234} 力つきた・・・"
 
@@ -12885,15 +12885,15 @@ msgctxt "message"
 msgid "03205"
 msgstr "{argument_actor_name:224}ちを たおした!"
 
-msgctxt "message"
+msgctxt "MsgGotExperience"
 msgid "03206"
 msgstr "{argument_signed_number}ポイントの けいけんちを かくとく{pause_20_skippable}"
 
-msgctxt "message"
+msgctxt "MsgGotCoins"
 msgid "03207"
 msgstr "{argument_signed_number}コインを 手に入れた"
 
-msgctxt "message"
+msgctxt "MsgGotItem"
 msgid "03208"
 msgstr "{argument_item_name:134} 手に入れた"
 
@@ -12999,7 +12999,7 @@ msgctxt "MsgSpiritDrain"
 msgid "03233"
 msgstr "{argument_actor_name:234} {argument_signed_number}の ダメージ!"
 
-msgctxt "message"
+msgctxt "MsgCurseDamage"
 msgid "03234"
 msgstr "{argument_actor_name:234} 呪いで{argument_signed_number}のダメージ!"
 
@@ -13031,7 +13031,7 @@ msgctxt "message"
 msgid "03241"
 msgstr "{argument_actor_name:233} けっかいをうちやぶった!"
 
-msgctxt "message"
+msgctxt "MsgPoisonDamage"
 msgid "03242"
 msgstr "{argument_actor_name:234} 毒で{argument_signed_number}のダメージ!"
 
@@ -13039,7 +13039,7 @@ msgctxt "MsgNoEffect"
 msgid "03243"
 msgstr "{argument_actor_name:234} ガードした!"
 
-msgctxt "message"
+msgctxt "MsgNimblyDodgesBlow"
 msgid "03244"
 msgstr "{argument_actor_name:234} すばやくかわした!"
 
@@ -13211,7 +13211,7 @@ msgctxt "message"
 msgid "03286"
 msgstr "{argument_actor_name:234} すばやさが{argument_signed_number}ダウン!"
 
-msgctxt "message"
+msgctxt "MsgEarthPowerUp"
 msgid "03287"
 msgstr "{argument_actor_name:233} 地エレメンタルパワーが{argument_signed_number}アップ!"
 
@@ -13279,15 +13279,15 @@ msgctxt "message"
 msgid "03303"
 msgstr "{argument_actor_name:234} メロウスペルのこうかがきえた!"
 
-msgctxt "message"
+msgctxt "MsgResNormal"
 msgid "03304"
 msgstr "{argument_actor_name:233} エレメンタルたいせいが もどった!"
 
-msgctxt "message"
+msgctxt "MsgAtkNormal"
 msgid "03305"
 msgstr "{argument_actor_name:234} こうげき力がもどった!"
 
-msgctxt "message"
+msgctxt "MsgDefNormal"
 msgid "03306"
 msgstr "{argument_actor_name:234} ぼうぎょ力がもどった!"
 
@@ -13311,7 +13311,7 @@ msgctxt "MsgCureSpirit"
 msgid "03311"
 msgstr "{argument_actor_name:233} しびれがきえた!"
 
-msgctxt "message"
+msgctxt "MsgConscious2"
 msgid "03312"
 msgstr "{argument_actor_name:234} われにかえった!"
 
@@ -13323,7 +13323,7 @@ msgctxt "message"
 msgid "03314"
 msgstr "{argument_actor_name:233} からだがもとにもどった!"
 
-msgctxt "message"
+msgctxt "MsgRefrainEnd"
 msgid "03315"
 msgstr "{argument_actor_name:234} HPかいふくのこうかがきえた!"
 
@@ -13359,37 +13359,37 @@ msgctxt "message"
 msgid "03323"
 msgstr "しょうかん スタンバイじょうたいです"
 
-msgctxt "message"
+msgctxt "MsgLevelUp"
 msgid "03324"
 msgstr ""
 "{argument_actor_name:234} "
 "{argument_class_name:218}ベル{argument_signed_number}になった!"
 
-msgctxt "message"
+msgctxt "MsgMasteredAbility"
 msgid "03325"
 msgstr "{argument_class_name:233}{argument_ability_name}をマスター!"
 
-msgctxt "message"
+msgctxt "MsgMaxHpRises"
 msgid "03326"
 msgstr "さいだいHPが {argument_signed_number}上がった!"
 
-msgctxt "message"
+msgctxt "MsgMaxPpRises"
 msgid "03327"
 msgstr "さいだいEPが {argument_signed_number}上がった!"
 
-msgctxt "message"
+msgctxt "MsgAttackRises"
 msgid "03328"
 msgstr "こうげきが {argument_signed_number}上がった!"
 
-msgctxt "message"
+msgctxt "MsgDefenseRises"
 msgid "03329"
 msgstr "ぼうぎょが {argument_signed_number}上がった!"
 
-msgctxt "message"
+msgctxt "MsgAgilityRises"
 msgid "03330"
 msgstr "すばやさが {argument_signed_number}上がった!"
 
-msgctxt "message"
+msgctxt "MsgLuckRises"
 msgid "03331"
 msgstr "うんが {argument_signed_number}上がった!"
 
@@ -16820,11 +16820,11 @@ msgctxt "message"
 msgid "04139"
 msgstr "かいふくEP/ターン"
 
-msgctxt "message"
+msgctxt "MsgDjinnLabel"
 msgid "04140"
 msgstr "ジン"
 
-msgctxt "message"
+msgctxt "MsgPowerLabel"
 msgid "04141"
 msgstr "パワー"
 
@@ -16884,7 +16884,7 @@ msgctxt "message"
 msgid "04155"
 msgstr "まい"
 
-msgctxt "message"
+msgctxt "MsgRearrangeHelp"
 msgid "04156"
 msgstr "LR:ならびかえ"
 
@@ -16908,7 +16908,7 @@ msgctxt "message"
 msgid "04161"
 msgstr "でつかえます"
 
-msgctxt "message"
+msgctxt "MsgDjinnListHelp"
 msgid "04162"
 msgstr "SEL:ジンのいちらん"
 
@@ -17468,11 +17468,11 @@ msgctxt "message"
 msgid "04301"
 msgstr "クラスチェンジしません"
 
-msgctxt "message"
+msgctxt "MsgDjinnPsyHelp"
 msgid "04302"
 msgstr "R:{argument_actor_name:233}エナジー"
 
-msgctxt "message"
+msgctxt "MsgDjinnStatusHelp"
 msgid "04303"
 msgstr "R:ステータス"
 
@@ -17484,19 +17484,19 @@ msgctxt "message"
 msgid "04305"
 msgstr "*なくなるエナジー"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareSet"
 msgid "04306"
 msgstr "セットします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareStandby"
 msgid "04307"
 msgstr "スタンバイにします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareGive"
 msgid "04308"
 msgstr "わたします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareTrade"
 msgid "04309"
 msgstr "こうかんします"
 
@@ -17600,7 +17600,7 @@ msgctxt "message"
 msgid "04334"
 msgstr "わたします"
 
-msgctxt "message"
+msgctxt "MsgDjinnCompareConfirm"
 msgid "04335"
 msgstr "よろしいですか?"
 
@@ -17904,7 +17904,7 @@ msgctxt "message"
 msgid "04402"
 msgstr "ぼうぎょが上がった!!"
 
-msgctxt "message"
+msgctxt "MsgChooseCharacter"
 msgid "04403"
 msgstr "キャラクタをえらんでください"
 
@@ -18016,7 +18016,7 @@ msgctxt "message"
 msgid "04430"
 msgstr "Bボタン:おしまい"
 
-msgctxt "message"
+msgctxt "MsgSaveYourQuest"
 msgid "04431"
 msgstr "ぼうけんをきろく"
 
@@ -18024,7 +18024,7 @@ msgctxt "message"
 msgid "04432"
 msgstr "いますぐスリープ"
 
-msgctxt "message"
+msgctxt "MsgChangeSettings"
 msgid "04433"
 msgstr "かんきょうせってい"
 
@@ -18032,7 +18032,7 @@ msgctxt "message"
 msgid "04434"
 msgstr "たいせんきろく"
 
-msgctxt "message"
+msgctxt "MsgRoughMenu"
 msgid "04435"
 msgstr "がさつメニュー"
 
@@ -19151,32 +19151,32 @@ msgstr ""
 "こわれる前に なおしなよ{page_break}"
 "さてと どれをしゅうりするんだい?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRepairNotHandled"
 msgid "04701"
 msgstr ""
 "わるいが {argument_item_name:234}\n"
 "あつかってないんだよ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgRepairNotDamaged"
 msgid "04702"
 msgstr ""
 "あれ {argument_item_name:234}\n"
 "どこも キズついてないぜ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgRepairStuckOn"
 msgid "04703"
 msgstr ""
 "{argument_item_name:150}゙ はずれないぜ\n"
 "これじゃ しゅうりはムリだな\n"
 "わるいけど はずしてきてくれよ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgRepairNotEnoughMoney"
 msgid "04704"
 msgstr ""
 "おや せっかくだけど\n"
 "お金が たりないようだぜ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgRepairOffer"
 msgid "04705"
 msgstr ""
 "{argument_item_name:233}しゅうりなら\n"

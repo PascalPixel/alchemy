@@ -4,13 +4,23 @@
 // cells (120).
 // The loops are built from labels because the listing shows no loop work: both
 // 0x80000 loads stay in the body and neither counter is strength-reduced; any
-// for or while form reduces both and hoists the constants (gap 75). The counters
-// are s16 read as u16. What is left is mainly each counter's tail: the listing
-// computes (counter << 16) + 0x10000, then asr and lsr 16, where this emits
-// adds #1 first. Spelling that sum out, in u16 temporaries or directly, gives the
-// lsl first but drops the asr and folds the counter into its shifted value
-// (gap 43). The rest follows from it: cells stays spilled and the head's
-// row << 16 lands in r8, not fp, so first takes ip, not sl.
+// for or while form reduces both and hoists the constants (gap 75). This pass
+// dropped the x, y and next locals with no change in measure.
+// Left, step: the listing computes (counter << 16) + 0x10000, then asr and
+// lsr 16; this emits adds #1, lsls. u16 counters with ++column < width give
+// that form (a u16 plus goes through zero-extension, which combine distributes;
+// an s16 plus does not), but gcse's PRE then shares counter << 16 with the body
+// and the row head, leaving gap 41 and differ 185.
+// Left, allocation: the listing gives map ip, row lr, cells r8, first sl, work
+// r9, row << 16 fp, and width and depth the stack. This gives width fp and
+// cells the stack, with first in ip. The -O2 priorities (cells 5 refs, width 6,
+// first 10, from the lreg dump) cannot give that order; the listing's order
+// fits refs not weighted by loop depth, and its tail fits no PRE. Both are
+// compiler questions, out of scope here.
+// Tried without effect: a sweep of 72 pairs of s16 or u16 counters with next,
+// pre and post steps, declaration scopes, cell++ after the counter, kind
+// outside the loop. Worse: cells + corner at the row head (gap 43), terrainIds
+// indexed through layer (gap 54) or with corner in the index (gap 41).
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -54,23 +64,20 @@ void Func_020032d4(u32 first, s32 level, s32 baseLevel) {
   *(s32 *)(Data_0202c001 + 0x1df) = level << 8;
   cells += corner;
   row = 0;
-  if ((u16)row < depth) {
+  if (row < depth) {
     struct MapCell *cell;
     s16 column;
   rowTop:
     cell = cells + ((u16)row << 7);
     column = 0;
-    if ((u16)column < width) {
+    if (column < width) {
     columnTop:
       {
         u32 kind = cell->collisionCode;
 
         if (kind != 0 && kind >= first && kind < first + 8) {
-          u16 x = column;
-          u16 y = row;
-
-          spout->x = (x << 20) + originX + 0x80000;
-          spout->z = (y << 20) + originZ + 0x80000;
+          spout->x = ((u16)column << 20) + originX + 0x80000;
+          spout->z = ((u16)row << 20) + originZ + 0x80000;
           spout->baseY = baseLevel << 19;
           spout->y = level << 19;
           spout->frame = kind - first;
@@ -78,22 +85,15 @@ void Func_020032d4(u32 first, s32 level, s32 baseLevel) {
           spout->active = 1;
           spout++;
           work->count++;
-          (map->layers[0].terrainIds + corner)[x + (y << 7)] = 120;
+          (map->layers[0].terrainIds + corner)[(u16)column +
+                                               ((u16)row << 7)] = 120;
         }
       }
       cell++;
-      {
-        u16 next = column + 1;
-        column = next;
-        if (next < width)
-          goto columnTop;
-      }
+      if ((u16)++column < width)
+        goto columnTop;
     }
-    {
-      u16 next = row + 1;
-      row = next;
-      if (next < depth)
-        goto rowTop;
-    }
+    if ((u16)++row < depth)
+      goto rowTop;
   }
 }

@@ -1,4 +1,5 @@
-// Draft, differ 147 of 1091: Air's Rock's map setup, by room: sets the screen
+// Draft, differ 27 of 1091, skeleton gap 3 (tla-en, 2026-11-01)
+// Air's Rock's map setup, by room: sets the screen
 // effect, the leader's priority bit 5 and flags 0x300 and 0x89f, then
 // places what each room's flags have moved: the pushed pillars
 // (Func_02005e6c, then Func_02005f6c with the room's pillar table), the
@@ -8,10 +9,22 @@
 // Func_02001690) and the rooms' scenes by entrance (Ov664Room1's entrance
 // 11 runs Func_0200505c before flag 265, entrance 16 drops the leader in;
 // Ov664Room2's entrance 3 Func_02004cc8). Returns 0.
-// Left: the native saves only r5 and r6 and reloads gMainRoutineWork from the pool
-// for each later entrance test in Ov664Room1, where the draft keeps it in r5
-// across the calls (saving r7 and r8 too) and shares the tests' loads; the rest
-// is branch offsets.
+// Left, two sites; everything else that differs is pool and branch offsets.
+// 1. Ov664Room1's third entrance test: the native loads gMainRoutineWork from
+// the pool at the join, where GCSE's PRE deletes that load as partly redundant
+// with the second test's and CSE2 then keeps the address in r5 across
+// Func_02004eb0. This costs the 23 entries around the first pool, which lands
+// one branch earlier. The kill PRE would need between the two tests is not in
+// the listing. No gain from: `>= 14`, De Morgan on the second test, its two
+// arms in full, a one-pass block, a local for the entrance (worse, 39 to 45),
+// a static inline read.
+// 2. Ov664Room5's Func_0200062c: lsls r3, #8 of 0xff00 comes last in the
+// native. Call4 gets that (differ 25), left out as a new wrapper; a local, u16
+// or u32 parameter or another spelling of the value gives no gain.
+// The Call3 and Call6 wrappers cannot go: without them differ is 147.
+// Func_02005f5c, Func_0200062c and Task_Add return a value: void reorders the
+// next call's argument loads. The `one` local and Ov664Room5's goto loop keep
+// the native's constants (r6 holds 1 through Ov664Room7; 1 and 2 stay in the loop).
 // Rooms 3 and 8 pass 245 to Func_02005f4c (Func_080c8688 through its veneer).
 #include "types.h"
 #include "ram_buffer.h"
@@ -31,7 +44,7 @@ void GameFlag_SetBit(s32 flag);
 void Func_02002770(void);
 void wait(s32 frames);
 void Func_02005d84(void);
-void Task_Add(void (*func)(void), s32 priority);
+s32 Task_Add(void (*func)(void), s32 priority);
 void Func_02004f3c(void);
 void Func_02001690(void);
 void Func_02004eb0(void);
@@ -49,8 +62,8 @@ void Func_0200505c(void);
 void Func_02004cc8(void);
 void Func_02005f4c(s32 id);
 void Func_02005f54(void);
-void Func_02005f5c(s32 slot, s32 a, s32 b);
-void Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
+s32 Func_02005f5c(s32 slot, s32 a, s32 b);
+s32 Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
 void Actor_SetActionCallback(struct Actor *object, s32 action);
 void Func_02000908(const u8 *table);
 
@@ -59,7 +72,7 @@ void Func_02000908(const u8 *table);
 
 s32 Func_020051f8(void) {
   struct Actor *object;
-  s32 i, z;
+  s32 i, z, one;
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
@@ -158,11 +171,11 @@ s32 Func_020051f8(void) {
     Actor_SetSingleChildFlags(Actor_GetById(13), 0);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
     Func_02005f54();
-    Call3(Func_02005f5c, 0, 11, 12);
-    Call3(Func_02005f5c, 1, 13, 14);
-    Call3(Func_02005f5c, 2, 15, 0x10);
-    Call3(Func_02005f5c, 3, 17, 18);
-    Call3(Func_02005f5c, 4, 19, 20);
+    Func_02005f5c(0, 11, 12);
+    Func_02005f5c(1, 13, 14);
+    Func_02005f5c(2, 15, 0x10);
+    Func_02005f5c(3, 17, 18);
+    Func_02005f5c(4, 19, 20);
     ((u8 *)Actor_GetById(18))[98] = 1;
     if (GameFlag_Test(769)) {
       Call6(Func_02005d9c, 69, 0x40, 29, 85, 5, 7);
@@ -187,13 +200,16 @@ s32 Func_020051f8(void) {
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room5) {
     GameFlag_SetBit(324);
     Func_02002770();
-    for (i = 0; i != 6; i++) {
-      if (GameFlag_Test(514 + i)) {
-        z = 24 - (i << 1);
-        Call6(Func_02005d9c, 65, 1, 80, z, 1, 2);
-        Func_0200062c(0, 16, z, 0xff00);
-      }
+    i = 0;
+  loop:
+    if (GameFlag_Test(514 + i)) {
+      z = 24 - (i << 1);
+      Call6(Func_02005d9c, 65, 1, 80, z, 1, 2);
+      Func_0200062c(0, 16, z, 0xff00);
     }
+    i++;
+    if (i != 6)
+      goto loop;
     Actor_GetById(8)->motionFlags = 0;
     object = Actor_GetById(8);
     Actor_GetById(8)->terrainHeight = 0x100000;
@@ -202,9 +218,9 @@ s32 Func_020051f8(void) {
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
     Func_02002770();
     Func_02005f54();
-    Call3(Func_02005f5c, 0, 11, 12);
-    Call3(Func_02005f5c, 1, 13, 14);
-    Call3(Func_02005f5c, 2, 15, 0x10);
+    Func_02005f5c(0, 11, 12);
+    Func_02005f5c(1, 13, 14);
+    Func_02005f5c(2, 15, 0x10);
     if (!GameFlag_Test(770)) {
       Call6(Func_02005d9c, 69, 0x40, 0x20, 79, 5, 7);
       Call6(Func_02005dac, 49, 15, 5, 5, 0x20, 15);
@@ -227,10 +243,11 @@ s32 Func_020051f8(void) {
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
     Func_02002770();
-    ((u8 *)Actor_GetById(12))[98] = 1;
-    ((u8 *)Actor_GetById(13))[98] = 1;
-    ((u8 *)Actor_GetById(14))[98] = 1;
-    ((u8 *)Actor_GetById(15))[98] = 1;
+    one = 1;
+    ((u8 *)Actor_GetById(12))[98] = one;
+    ((u8 *)Actor_GetById(13))[98] = one;
+    ((u8 *)Actor_GetById(14))[98] = one;
+    ((u8 *)Actor_GetById(15))[98] = one;
     if (!GameFlag_Test(265)) {
       GameFlag_SetBit(513);
       GameFlag_SetBit(514);
@@ -240,12 +257,12 @@ s32 Func_020051f8(void) {
       Call3(Func_02005e6c, 8, 0x1580000, 0x2b80000);
     Func_02005f6c(gData_02006068);
     if (GameFlag_Test(772)) {
-      Call6(Func_02005d9c, 39, 82, 38, 82, 1, 3);
+      Call6(Func_02005d9c, 39, 82, 38, 82, one, 3);
       Call6(Func_02005dac, 39, 82, 1, 1, 38, 82);
       Call6(Func_02005dac, 38, 19, 1, 1, 38, 18);
     }
     if (GameFlag_Test(773)) {
-      Call6(Func_02005d9c, 39, 82, 38, 99, 1, 3);
+      Call6(Func_02005d9c, 39, 82, 38, 99, one, 3);
       Call6(Func_02005dac, 38, 98, 1, 1, 38, 99);
       Call6(Func_02005dac, 38, 35, 1, 1, 38, 37);
     }

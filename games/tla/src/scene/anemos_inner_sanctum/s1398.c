@@ -49,17 +49,11 @@ void Func_02001398(void) {
   s32 all;
   s32 i;
   s32 id;
-  s32 x;
-  s32 z;
-  s32 scene;
 
-  scene = gMainRoutineWork.scene;
-  x = leader->x;
-  z = leader->z;
-  if (scene == (s32)&SceneId_Ov6B0Room4)
-    Func_02003328(17, 71, x >> 20, (z >> 20) + 64, 1, 1);
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4)
+    Func_02003328(17, 71, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
   else
-    Func_02003328(54, 87, x >> 20, (z >> 20) + 64, 1, 1);
+    Func_02003328(54, 87, leader->x >> 20, (leader->z >> 20) + 64, 1, 1);
   Func_020034b8(106);
   object = Create(0x15d, ((leader->x >> 20) << 20) + 0x80000, 0,
                   ((leader->z >> 20) << 20) + 0x80000);
@@ -73,12 +67,9 @@ void Func_02001398(void) {
   Actor_SetSingleChildFlags(object, 0);
   Func_020032e8(object, gData_02003574);
   GameFlag_SetBit(work->unk154 + 0x1ce);
-  i = 1;
   all = GameFlag_Test(0x200);
-next:
-  all &= GameFlag_Test(0x200 + i);
-  if (++i != 7)
-    goto next;
+  for (i = 1; i != 7; i++)
+    all &= GameFlag_Test(0x200 + i);
   if (all) {
     Func_02003398();
     Func_02003488(0);

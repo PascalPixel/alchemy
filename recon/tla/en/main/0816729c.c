@@ -1,34 +1,44 @@
-// Draft, differ 1047 of 2680, skeleton gap 164/155 (tla-en, 2026-11-01)
+// Draft, differ 258 of 2680, skeleton gap 41/39 (tla-en, 2026-11-01)
 // BattleEffect_RunJudgment, the same calls and control flow as the listing; its
-// twin is The Broken Seal's judgment.c. The frame is now the listing's 188:
-// the twin's draw[2] (blit is draw[0], the strike's blitter draw[1], both at sp
-// 76) and one shared pal fixed every slot from sp 44 up. Closed this round: the
-// flash loop's stepped src and dst, cells + i * 0x400 as a giv (a hand step
-// loses the constant's rebuild in the loop), the flares' literal 24.
-// What is left, with its root first. (1) First palette load: the listing
-// builds 512 twice, once into r2 and once after the call for pal += 512. Here
-// CSE shares it across the call in r5, so the IWRAM copy's address goes to r6,
-// cells to r8 and the first loop's registers shift one; &place then misses r11
-// and sits on the stack. Neither a direct Iwram_CopyWordsEntry call, a
-// do { } while (0) around the copy nor a static inline loader stops the
-// sharing. Setting cells after the decode call (it then rises above the calls
-// by itself) gives skeleton 164/154 but differ 1064, and 0x78f0 takes r6. (2)
-// Frame 0's second cell loop: the listing keeps a stepped pointer in r5 and the
-// copy's address in r4 with i in r7; a local base here gives i r8 and costs
-// hundreds, so the plain gMapCellBuffer + i * 0x400 stays unreduced. (3)
-// Constants: 22 and 24 are lifted out of the strike loop as REG_EQUIV pseudos
-// and rebuilt at each use, where the listing holds them in r8 and r6 inside
-// each block, and it rebuilds the 0x030000bc slot address instead. One-constant
-// locals only made the frame 180. (4) The beam: a do { } while (0) draw macro
-// does rebuild work->sheet per draw as the listing does, but drops the frame to
-// 184 and moves the slot address from r10 to r7; not kept. (5) The flash's
-// green and blue mask is pooled in the listing with an inline 31 for red; all
-// three channel orders tried give one shared movs. (6) gBgScroll[1].y takes the
-// twin's tagged temporary to keep the AND mask immediate, not added since it
-// would not reach differ 0. A goto strike loop gives skeleton 213/183.
+// twin is The Broken Seal's judgment.c. Re-measured under the 1 November
+// compiler: the stale notes are gone, and the root causes below are what is
+// left. The frame is the listing's 188.
+// Closed this round, for whoever meets the same shapes: the ring locals
+// declared top, bottom, left, right (local-alloc's ties, 140 instructions);
+// Ram_MapCellBuffer, the constant, at every site but the top's cells (it lets
+// the frame-0 cell loop reduce its giv); the debris loop's p = &particles[i]
+// inside the loop; height / 2 with the shard tables' reads left in place;
+// shade's default set before model->texture; u16 c in the flash loop, which is
+// what pools the 31 mask; the twin's sx = 8 in place of a cast through u32.
+// DRAW_ALT and FILL are do { } while (0) macros that every use matches through
+// (S2): their loop notes stop CSE sharing work->sheet between draws and are
+// sched2's barrier around each fill. Their review is open: the round's brief
+// forbade one-pass blocks, and they are kept only on S2's macro wording. As plain
+// statements the draft measures differ 462, skeleton 96/88.
+// What is left, with its root first. (1) The rings, about 90 instructions: the
+// listing reloads cx twice between right and left, so reload saw a label there.
+// The twin's two tagged FAKEMATCH(dead) branches (if (dx > cx) left = 0; before
+// each left = cx - dx) take this draft to differ 171, skeleton 37/38; they are
+// not added, since this round adds no device. A plain form that leaves that
+// label would close it. (2) First palette load, about 30: the listing's 512 is
+// one shared pseudo with no hard register, rebuilt into r2 for the call and by
+// reload into r1 after it for pal += 512, and that extra reload is why the next
+// reloads start one register on. Copy-then-add gives the pseudo r5 and shifts
+// everything; add-before-copy, the other three sites' form, is kept as the
+// nearer. A one-pass copy macro and a one-constant size local both lose. (3)
+// The flash's red channel: u16 c gives the pooled mask for green and blue but
+// ldrsh and a 31 << 16 mask for red, where the listing has ldrh and movs 31;
+// s32 c gives the reverse. r = 31; r &= c, bitfields and several u16 forms all
+// lose. (4) DRAW_ALT's LoadBlitter arguments come out r0 first after the
+// loop-begin note, and draw[0]'s pointer load one slot early; moving the
+// do { } to the load, the draw or the release alone costs more than it gains.
+// (5) Scheduling ties: the queue loop's value store, the first model's constant
+// (r0 here, r1 in the listing, so shade takes r2).
+// loop.c's dump shows the second pass moves a constant when
+// 9 * savings * life >= the loop's real insns; that is how the 24 rebuilt across
+// the strike loop was traced.
 // Adopting needs names in resource_directory.s for the ResourceId_ symbols
-// declared below that it does not yet name, and SCALE's cast is what keeps the
-// << 3 and / 8 from folding.
+// declared below that it does not yet name.
 // The native's arrays, from the top of its frame: anchor (sp 176), pos (164),
 // the swords' placement (148), the falling objects' placement (132, drift
 // here), req (124), the first texture (116), the glare's texture (108) and
@@ -66,8 +76,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot,
-                              s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -104,7 +113,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -167,7 +176,6 @@ extern char ResourceId_ExplosionSheet;
 extern char ResourceId_OverlayImageA;
 
 extern struct ResourceTableEntry gResourceTableEntries[];
-extern u8 gMapCellBuffer[];
 extern u8 gData_02014000[];
 extern const u16 gData_08197410[]; // gBattleEffect_MoteCells
 struct JudgmentScale {
@@ -199,12 +207,18 @@ void Resource_DecodeType01(const void *source, void *destination);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
 
 #define SLOT_ALT 188 // unkb8[1]
+#define FILL(dst, size, value)                                                 \
+  do {                                                                         \
+    Iwram_FillWords(dst, size, value);                                         \
+  } while (0)
+#define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
+  do {                                                                         \
+    BattleEffect_LoadBlitter(SLOT_ALT, mode);                                  \
+    ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);       \
+    HeapSlot_Release(SLOT_ALT);                                                \
+  } while (0)
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
-
-// The rings' width scale, 8 in eighths: through unsigned so the step survives
-// folding.
-#define SCALE(v) ((s32)((u32)(v) << 3) / 8)
 
 // Judgment: the sky gathers sixteen tiles of light that fold into a sigil,
 // then the sigil's beam strikes and the ground erupts in a ring of
@@ -227,7 +241,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   s32 depth;
   s32 zoom;
   s32 addR, addG, addB;
-  s32 cx, cy, squash, ring, rings, shift;
+  s32 cx, cy, squash, sx, ring, rings, shift;
   s32 i;
   u8 *cells;
   u8 *pal;
@@ -236,23 +250,27 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   transition = Ram_HeapSlots->transitionWork;
   sprites = Ram_HeapSlots->unk64[0];
-  cells = gMapCellBuffer;
+  cells = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(0x2000);
   REG_BG2PA = 0x100;
   Func_0813ba50();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 3);
-  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 0;
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   Func_08163c2c(0, 0);
   BattleEffect_SelectLivingTargets(work->effect);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
 
   pal = Resource_GetTableEntry((s32)&ResourceId_WingedKnightATiles);
-  Iwram_CopyWords((void *)OBJ_PLTT, pal, 512);
-  pal += 512;
+  {
+    u8 *palette = pal;
+
+    pal += 512;
+    Iwram_CopyWords((void *)OBJ_PLTT, palette, 512);
+  }
   Resource_DecodeType01(pal, cells);
   for (i = 0; i != 16; i++) {
     struct JudgmentObject *obj = Func_0815b290(32, 32, 0x80002000, 0);
@@ -303,18 +321,18 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         pal += 512;
         Iwram_CopyWords((void *)OBJ_PLTT, palette, 512);
       }
-      Resource_DecodeType01(pal, gMapCellBuffer);
+      Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
         struct JudgmentObject *obj = work->objects[i];
 
-        Iwram_CopyWords((void *)OBJ_TILES(obj), gMapCellBuffer + i * 0x400,
+        Iwram_CopyWords((void *)OBJ_TILES(obj), Ram_MapCellBuffer + i * 0x400,
                         0x400);
       }
       depth = -0x400000;
       zoom = 0x80000;
     }
     if (frame == 143) {
-      Iwram_FillWords(canvas, 0x4000, 0x2a2a2a2a);
+      FILL(canvas, 0x4000, 0x2a2a2a2a);
       Sound_PlayFar(145);
     }
     if (frame == 80) {
@@ -394,11 +412,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         pal += 512;
         Iwram_CopyWords((void *)OBJ_PLTT, palette, 512);
       }
-      Resource_DecodeType01(pal, gMapCellBuffer);
+      Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
         IO_WRITE_QUEUE_PUSH(
             OBJ_TILES((struct JudgmentObject *)work->objects[i]),
-            (u32)(gMapCellBuffer + i * 0x400), 0x84000100);
+            (u32)(Ram_MapCellBuffer + i * 0x400), 0x84000100);
       }
     }
     if (frame == 76) {
@@ -409,11 +427,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         pal += 512;
         Iwram_CopyWords((void *)OBJ_PLTT, palette, 512);
       }
-      Resource_DecodeType01(pal, gMapCellBuffer);
+      Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 13; i++) {
         IO_WRITE_QUEUE_PUSH(
             OBJ_TILES((struct JudgmentObject *)work->objects[Data_08198ab4[i]]),
-            (u32)(gMapCellBuffer + i * 0x400), 0x84000100);
+            (u32)(Ram_MapCellBuffer + i * 0x400), 0x84000100);
       }
     }
 
@@ -435,7 +453,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
           s32 k = i & 3;
           s32 a = Random16() & 0xffff;
           s32 x = ((size * Trig_Sin(a)) >> 16) - (Data_08198ace[k] >> 1);
-          s32 y = ((size * Trig_Cos(a)) >> 16) - (Data_08198ad4[k] >> 1);
+          s32 y = ((size * Trig_Cos(a)) >> 16) - (Data_08198ad4[k] / 2);
 
           draw[0](canvas, work->sheet + Data_08198ac2[k], x + 60, y + 80,
                   Data_08198ace[k], Data_08198ad4[k]);
@@ -455,11 +473,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         flag = 1;
       }
       if (frame == 143) {
-        addR = addG = addB = 31;
+        addB = addG = addR = 31;
         flag = 1;
       }
       if ((u32)(frame - 144) <= 8) {
-        addG = addR = addB = 304 - frame * 2;
+        addB = addR = addG = 304 - frame * 2;
         flag = 1;
       }
       if (flag == 1) {
@@ -467,7 +485,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         volatile u16 *dst = (volatile u16 *)OBJ_PLTT;
 
         for (i = 0; i != 256; i++, src++, dst++) {
-          s32 c = *src;
+          u16 c = *src;
           s32 r = (c & 31) + addR;
           s32 g = (((u16)c >> 5) & 31) + addG;
           s32 b = (((u16)c >> 10) & 31) + addB;
@@ -492,14 +510,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame > 143) {
       s32 y = frame * 16 - 2272;
 
-      BattleEffect_LoadBlitter(SLOT_ALT, 3);
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet, 36, y, 24,
-                                               64);
-      HeapSlot_Release(SLOT_ALT);
-      BattleEffect_LoadBlitter(SLOT_ALT, 7);
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, work->sheet, 60, y, 24,
-                                               64);
-      HeapSlot_Release(SLOT_ALT);
+      DRAW_ALT(3, work->sheet, 36, y, 24, 64);
+      DRAW_ALT(7, work->sheet, 60, y, 24, 64);
     }
 
     if ((u32)(frame - 144) <= 15) {
@@ -514,11 +526,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = gData_02014000;
+      shade = 0;
       model->texture = &texture;
       model->kind = 7;
       model->mesh = gData_08199364;
       model->vertices = verts;
-      shade = 0;
       if (frame > 151) {
         shade = (frame * -8) + 1216;
       }
@@ -538,7 +550,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != 160 && (frame <= 4 || !(gInput.repeat & 3)));
 
-  Iwram_FillWords(canvas, 0x4000, 0);
+  FILL(canvas, 0x4000, 0);
   for (i = 0; i != 16; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
@@ -579,16 +591,17 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x100;
   REG_BG2X = -0x3c00;
   REG_BG2CNT = 0x784;
-  Iwram_FillWords(canvas, 0x4000, 0);
+  FILL(canvas, 0x4000, 0);
   cx = 60;
-  squash = 6;
   cy = 44;
-  ring = 0;
+  squash = 6;
   shift = 0;
+  ring = 0;
+  sx = 8;
   rings = 2;
   work->transferMode = 2;
   work->transferValue = 75;
-  Iwram_FillWords(work->sheet, 0x3840, 0);
+  FILL(work->sheet, 0x3840, 0);
 
   // The strike: the beam, the shockwave rings and the debris.
   for (frame = 0; frame != 336; frame++) {
@@ -628,7 +641,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 318) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      FILL(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame == 319) {
       Graphics_LoadGreyRamp();
@@ -638,7 +651,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     if (frame == 64) {
       IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
       IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
-      Iwram_FillWords(canvas, 0x4000, 0);
+      FILL(canvas, 0x4000, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                  work->sheet + 0x4000, 1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
@@ -652,7 +665,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 69) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      FILL(canvas, 0x4000, 0x3f3f3f3f);
     }
     if (frame == 70) {
       BattleStaging_ConfigurePaletteFadeFar(
@@ -664,13 +677,13 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       ring = 0;
       rings = 4;
       squash = 8;
-      Iwram_FillWords(work->sheet, 0x3840, 0);
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      FILL(work->sheet, 0x3840, 0);
+      FILL(canvas, 0x4000, 0x3f3f3f3f);
       BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
     }
     if (frame == 214) {
-      Iwram_FillWords(work->sheet, 0x3840, 0);
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      FILL(work->sheet, 0x3840, 0);
+      FILL(canvas, 0x4000, 0x3f3f3f3f);
       BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
       {
         struct EffectStep *p = work->particles;
@@ -686,8 +699,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
     if (frame == 280) {
       Func_0814cca8();
-      Iwram_FillWords(work->sheet, 0x3840, 0);
-      Iwram_FillWords(canvas, 0x4000, 0x01010101);
+      FILL(work->sheet, 0x3840, 0);
+      FILL(canvas, 0x4000, 0x01010101);
       transition[4] = 0;
       REG_BLDALPHA = 0x1010;
       {
@@ -727,33 +740,22 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
     }
     if (frame == 182) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      FILL(canvas, 0x4000, 0x3f3f3f3f);
     }
 
     if (frame <= 63) {
       u8 *sheet;
       s32 top = frame - 4;
-      s32 y;
 
       if ((frame & 7) < 4) {
         sheet = work->sheet + 0x4000;
       } else {
         sheet = work->sheet + 0x4240;
       }
-      y = top - 24;
-      BattleEffect_LoadBlitter(SLOT_ALT, 19);
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, 36, y, 24, 24);
-      HeapSlot_Release(SLOT_ALT);
-      BattleEffect_LoadBlitter(SLOT_ALT, 23);
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, 59, y, 24, 24);
-      HeapSlot_Release(SLOT_ALT);
-      y = top - 1;
-      BattleEffect_LoadBlitter(SLOT_ALT, 27);
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, 36, y, 24, 24);
-      HeapSlot_Release(SLOT_ALT);
-      BattleEffect_LoadBlitter(SLOT_ALT, 31);
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, 59, y, 24, 24);
-      HeapSlot_Release(SLOT_ALT);
+      DRAW_ALT(19, sheet, 36, top - 24, 24, 24);
+      DRAW_ALT(23, sheet, 59, top - 24, 24, 24);
+      DRAW_ALT(27, sheet, 36, top - 1, 24, 24);
+      DRAW_ALT(31, sheet, 59, top - 1, 24, 24);
     }
     if ((u32)(frame - 64) <= 1) {
       draw[0](canvas, work->sheet + 0x6000, 52, 51, 16, 17);
@@ -796,11 +798,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       glare.logWidth = 7;
       glare.logHeight = 7;
       glare.pixels = gData_02014000;
-      model->texture = &glare;
+      shade = 0;
       model->kind = 7;
+      model->texture = &glare;
       model->mesh = gData_08199364;
       model->vertices = verts;
-      shade = 0;
       if (frame > 79) {
         shade = (frame * -8) + 640;
       }
@@ -823,14 +825,14 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
           s32 err = ring;
 
           while (radius >= slope) {
-            s32 half, halfSlope, left, right, top, bottom, dx;
+            s32 half, halfSlope, top, bottom, left, right, dx;
 
             half = radius / 2;
-            dx = SCALE(half);
+            dx = (half * sx) / 8;
             right = cx + dx;
             left = cx - dx;
             bottom = cy + (slope * squash) / 8;
-            top = cy - SCALE(slope);
+            top = cy - (slope * sx) / 8;
             if (top < 0)
               top = 0;
             if (bottom > 119)
@@ -855,11 +857,11 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
             work->sheet[top * 120 + left] = 20;
 
             halfSlope = slope / 2;
-            dx = SCALE(halfSlope);
+            dx = (halfSlope * sx) / 8;
             right = cx + dx;
             left = cx - dx;
             bottom = cy + (radius * squash) / 8;
-            top = cy - SCALE(radius);
+            top = cy - (radius * sx) / 8;
             if (left < 0)
               left = 0;
             if (right > 119)
@@ -915,7 +917,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       shift -= 8;
     }
     if (frame == 238) {
-      Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+      FILL(canvas, 0x4000, 0x3f3f3f3f);
     }
     if ((u32)(frame - 214) <= 65) {
       gBgScroll[1].x += 8;
@@ -931,8 +933,8 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
 
       drift[3] = 0;
       drift[1] = 0;
-      p = work->particles;
-      for (i = 0; i != 16; i++, p++) {
+      for (i = 0; i != 16; i++) {
+        p = &work->particles[i];
         if (p->variant != 0) {
           scale[0] = p->z + (p->y >> 7);
           if (scale[0] <= 0x7ff) {
@@ -982,7 +984,7 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
     }
     HeapSlot_Release(SLOT_ALT);
     if (frame > 63) {
-      gBgScroll[1].y = (Random16() & 3) + 30;
+      gBgScroll[1].y = Random16() % 4 + 30;
     }
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;

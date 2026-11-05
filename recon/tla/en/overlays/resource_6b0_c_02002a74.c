@@ -1,22 +1,36 @@
-// Draft, differ 306 of 268, skeleton gap 38 (tla-en, 2026-11-01)
+// Draft, differ 288 of 268, skeleton gap 32 (tla-en, 2026-11-01)
 // Overlay 6b0's Func_02002a74, the twin of overlay 698's Func_020011a0. Fills
 // the cell table from the map's cells whose event byte is the given kind or
 // the next one, restores the copied cells of those already flagged, finds the
 // leader's entry and loads the sprite's tiles for Func_02002948.
-// Left: allocation first. The native keeps the table in r8, the entries in r9,
-// kind + 1 in r10, the cell in r11, cellX and cellZ in r7 and r6, and i and j
-// on the stack; here r11 is the table, r8 the entries, r9 i, r10 the cell, r6
-// kind + 1, and cellZ takes r4 with a save around each call. Priorities say
-// kind + 1 (2.07) should lose to cellX and cellZ (1.67, 1.4) and to the table
-// (0.54), so its live range or refs differ in a way not yet found; plain forms
-// for it (a user variable, an outer one, the bare expression) change nothing,
-// and an extra copy of cellX or cellZ is merged by CSE.
-// Also left: gcse's PRE turns the second loop's table->count into a register
-// reloaded after the store to current, where the native rereads it; volatile
-// stops that but is a device and widens the gap (44/50). The two ands with 64
-// share one register in the native, which here is rematerialized.
-// Tried: table as the bare global (gap 49/45), a separate pointer in the
-// second loop (42/37), bit-field count (no change).
+// Closed: both map loops as label-and-goto (38 to 32). The 64 stays in the
+// body, so the two ands share one register as the native's do; written as for
+// loops, loop.c hoists it and each and rebuilds it.
+// Left, allocation first; the rest of the gap mostly follows from it. The
+// native has the table in r8, entry r9, kind + 1 r10, cell r11, cellX r7,
+// cellZ r6, and i (slot 16) and j (slot 12) on the stack, with entries in slot
+// 8: the declared order here gives those slots once i spills. Here the table
+// is r9, entry r8, cell r10, i r11, kind + 1 r6, and cellZ r4 with a save
+// around each call. Priorities from the lreg dump: last 1.93 (refs 9, live
+// 14), cellX 1.55 and cellZ 1.32 (refs 15), entry .635, cell .541, table .536,
+// i .533. So the native needs cellX and cellZ above last, the table above
+// entry and cell, and i below them all. last must also refuse r4 and r0 to r3:
+// by the caller-save rule that takes 4 * calls >= refs, or a conflict with the
+// else arm's locals, yet its only uses are the two compares and it crosses one
+// call. Six uses (refs 18) would lift cellX and cellZ past it, and the listing
+// shows only five. Not found.
+// Also left: gcse's PRE turns the second loop's table->count into a register,
+// inserted after the store to current and in the preheader, where the native
+// rereads it. No loop form changes that (while, if plus goto, bottom entry).
+// Tried with no gain: last as an outer, bare or s32 variable; event s32; cellX
+// and cellZ as outers or swapped; flag++ in the store; entries set from the
+// table, before or after the clear (the entry pointer falls to .512 after it,
+// but the code moves away); indexed table->entries[n] (gap 44); a separate
+// pointer in the second loop (37/32); i and j swapped; a mask local for 64,
+// which cprop folds; s16 mask locals merge the table->x loads the native keeps.
+// Not adopted: the second loop's counter as i measures 19/26 (differ 265), but
+// that reuses a local for a second value, and the native has it in r2 with i
+// on the stack.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -117,10 +131,16 @@ s32 Func_02002a74(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   width = (map->maxX - minX) >> 20;
   height = (map->maxZ - minZ) >> 20;
   rows = cells + ((minZ >> 20) << 7) + (minX >> 20);
-  for (j = 0; j < height; j++) {
+  j = 0;
+  if (j < height) {
+  outer:
+    {
     struct CellMapCell *cell = rows + (j << 7);
 
-    for (i = 0; i < width; i++, cell++) {
+    i = 0;
+    if (i < width) {
+    inner:
+      {
       u32 event = cell->event;
 
       if (event != 0 && event >= kind) {
@@ -146,7 +166,16 @@ s32 Func_02002a74(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
           entry++;
         }
       }
+      }
+      i++;
+      cell++;
+      if (i < width)
+        goto inner;
     }
+    }
+    j++;
+    if (j < height)
+      goto outer;
   }
   if (GameFlag_Test(0x109)) {
     struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);

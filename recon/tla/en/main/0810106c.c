@@ -1,13 +1,23 @@
-// Near miss, differ 120 (2026-10-26, statements reordered).
-// First draft of Func_0810106c: the Djinn menu's screen loop, the twin of
-// The Broken Seal's DjinnMenu_RunScreen (games/tbs/src/menu/menu/djinn.c).
-// ⚓️ drops the pair steps 4 and 8 (they close the screen), hides the page
+// Draft, differ 109 of 603, skeleton gap 27 (tla-en, 2026-11-01)
+// Func_0810106c: the Djinn menu's screen loop, the twin of The Broken Seal's
+// DjinnMenu_RunScreen (games/tbs/src/menu/menu/djinn.c), confirmed statement
+// by statement. The Lost Age drops the pair steps 4 and 8, hides the page
 // arrows before each confirmation and adds Func_08104540 (step 10) and
 // Func_08101d5c (step 15) as its status and help pages.
-// Differ 137 of 603 (2026-10-19, three instructions short): the native
-// builds the arrows' offsets afresh (movs 190; lsls) and loads each arrow into
-// the offset's register, where agscc derives the second offset from a
-// register it kept; the setup's constants are also in another order.
+// What is left is one cause. The listing keeps the cursor at entry and each
+// arrow in one pointer: r1 everywhere, and the arrows' offsets are rebuilt
+// (movs 190; lsls) because the load overwrites them. Declaring
+// `struct MenuIcon *icon` in place of `cursor` and writing every arrow pair as
+//   icon = menu->arrows[0]; icon->active = 13;
+//   icon = menu->arrows[1]; icon->active = 13;
+// gives differ 0, skeleton 0, with no other change. The entry's r3 and r2
+// conflicts are what push that one pseudo to r1. That form is a local reused
+// for two values, a `temporary` device under S2, and this round added none, so
+// it is not applied; adopting it needs the tag, with 109 of 603 as its N of M.
+// Tried and no gain (109, gap 27): one `arrow` local declared first, after
+// `cursor` or last; `arrow0` and `arrow1`; a block-scoped arrow in each case;
+// a do-while macro holding the arrow; no cursor local; cursor declared last;
+// `menuResult = result = 0`. Only a pseudo also live at entry reaches r1.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -45,9 +55,11 @@ struct DjinnMenuWork {
   u8 unk214;
   u8 ownerCount;
   u8 shownOwner[2];
+  u8 unk218[4];
+  u16 pending;
+  u8 unk21e[0x3a];
   u8 pairIndex[2];
   u8 pairElement[2];
-  u16 pending;
 };
 
 void Func_08101638(void);
@@ -96,8 +108,8 @@ s32 Func_0810106c(void) {
   s32 done;
   s32 listIndex;
 
-  result = 0;
   done = 0;
+  result = 0;
   menuResult = 0;
   menu = Ram_HeapSlots->menuRuntime;
   cursor = menu->cursor;
@@ -110,8 +122,8 @@ s32 Func_0810106c(void) {
     switch (step) {
     case 0:
       if (result < 0) {
-        done = 1;
         menuResult = -1;
+        done = 1;
       }
       step = 2;
       break;

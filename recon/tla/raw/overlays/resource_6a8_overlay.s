@@ -86,141 +86,6 @@ Func_020003bc:
 .L_ja_0200844c:
 	.4byte gMainRoutineWork
 	.endif
-	.section .text.x0200848c,"ax",%progbits
-	.global Func_0200048c
-	.thumb_func
-Func_0200048c:
-	push {lr}
-	ldr r3, .L_02008544
-	movs r1, #240
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_02008548
-	cmp r2, r3
-	bne .L_020084c0
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #197
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020084c0
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #204
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_020084c0
-	ldr r0, .L_0200854c
-	b .L_02008542
-.L_020084c0:
-	ldr r3, .L_02008544
-	movs r2, #240
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, .L_02008550
-	cmp r2, r3
-	bne .L_020084d6
-	ldr r0, .L_02008554
-	b .L_02008542
-.L_020084d6:
-	ldr r3, .L_02008558
-	cmp r2, r3
-	bne .L_020084f2
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #61
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020084ee
-	ldr r0, .L_0200855c
-	b .L_02008542
-.L_020084ee:
-	ldr r0, .L_02008560
-	b .L_02008542
-.L_020084f2:
-	ldr r3, .L_02008564
-	cmp r2, r3
-	bne .L_0200851a
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #61
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008516
-	ldr r0, .L_02008568
-	movs r3, #3
-	adds r2, r0, #0
-	adds r2, #46
-	strb r3, [r2]
-	adds r2, #72
-	strb r3, [r2]
-	b .L_02008542
-.L_02008516:
-	ldr r0, .L_0200856c
-	b .L_02008542
-.L_0200851a:
-	ldr r3, .L_02008570
-	cmp r2, r3
-	bne .L_02008536
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #61
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008532
-	ldr r0, .L_02008574
-	b .L_02008542
-.L_02008532:
-	ldr r0, .L_02008578
-	b .L_02008542
-.L_02008536:
-	ldr r3, .L_0200857c
-	cmp r2, r3
-	bne .L_02008540
-	ldr r0, .L_02008580
-	b .L_02008542
-.L_02008540:
-	ldr r0, .L_02008584
-.L_02008542:
-	pop {pc}
-.L_02008544:
-	.4byte gMainRoutineWork
-.L_02008548:
-	.4byte 0x0000010d
-.L_0200854c:
-	.4byte gData_02004b2c
-.L_02008550:
-	.4byte 0x0000010e
-.L_02008554:
-	.4byte gData_02004c4c
-.L_02008558:
-	.4byte 0x0000010f
-.L_0200855c:
-	.4byte gData_02004f04
-.L_02008560:
-	.4byte gData_02004d9c
-.L_02008564:
-	.4byte 0x00000110
-.L_02008568:
-	.4byte gData_0200521c
-.L_0200856c:
-	.4byte gData_0200506c
-.L_02008570:
-	.4byte 0x00000111
-.L_02008574:
-	.4byte gData_020054a4
-.L_02008578:
-	.4byte gData_02005444
-.L_0200857c:
-	.4byte 0x00000112
-.L_02008580:
-	.4byte gData_0200551c
-.L_02008584:
-	.4byte gData_02004b14
 	.section .text.x0200b91c,"ax",%progbits
 	.balign 4
 	.global Func_0200391c
@@ -1328,6 +1193,279 @@ Func_02003bc8:
 .L_0200bed8:
 	.4byte Func_0200385c
 	.endif
+	.section .text.x0200bee8,"ax",%progbits
+	.global Func_02003ee8
+	.thumb_func
+Func_02003ee8:
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	ldr r3, .L_0200bf54
+	movs r1, #133
+	lsls r1, r1, #2
+	adds r3, r3, r1
+	ldr r0, [r3]
+	sub sp, #32
+	bl ObjectTable_Get
+	adds r5, r0, #0
+	ldrh r3, [r5, #6]
+	movs r2, #128
+	lsls r2, r2, #6
+	adds r3, r3, r2
+	ldr r2, .L_0200bf50
+	ands r3, r2
+	lsls r3, r3, #16
+	asrs r3, r3, #16
+	str r3, [sp, #16]
+.L_0200bf1a:
+	bl Func_020038e8
+	movs r3, #128
+	lsls r3, r3, #9
+	str r3, [r5, #48]
+	movs r3, #128
+	lsls r3, r3, #8
+	str r3, [r5, #52]
+	movs r3, #128
+	lsls r3, r3, #24
+	str r3, [r5, #56]
+	str r3, [r5, #64]
+	movs r3, #0
+	str r3, [r5, #36]
+	str r3, [r5, #44]
+	ldr r2, .L_0200bf58
+	ldr r3, [r5, #8]
+	movs r1, #128
+	lsls r1, r1, #12
+	ands r3, r2
+	mov r9, r1
+	add r6, sp, #20
+	add r3, r9
+	str r3, [r6]
+	mov r8, r3
+	b .L_0200bf5c
+	.2byte 0x0000
+.L_0200bf50:
+	.4byte 0xffffc000
+.L_0200bf54:
+	.4byte gMainRoutineWork
+.L_0200bf58:
+	.4byte 0xfff00000
+.L_0200bf5c:
+	ldr r3, [r5, #12]
+	str r3, [r6, #4]
+	ldr r3, [r5, #16]
+	ands r3, r2
+	adds r7, r3, r1
+	mov r2, r8
+	str r7, [r6, #8]
+	str r2, [sp, #8]
+	str r7, [sp, #4]
+	movs r3, #34
+	adds r3, r3, r5
+	ldrb r0, [r3]
+	adds r1, r2, #0
+	adds r2, r7, #0
+	mov r11, r3
+	bl Func_02004424
+	str r0, [sp, #12]
+	movs r0, #128
+	ldr r1, [sp, #16]
+	lsls r0, r0, #13
+	adds r2, r6, #0
+	bl Vector_AddPolarOffsetFar
+	mov r1, r11
+	ldrb r0, [r1]
+	ldr r2, [r6, #8]
+	ldr r1, [r6]
+	bl Func_02004424
+	mov r10, r0
+	cmp r0, #255
+	beq .L_0200bff0
+	mov r2, r11
+	ldrb r0, [r2]
+	ldr r1, [r6]
+	ldr r2, [r6, #8]
+	bl Map_GetTerrainHeight
+	ldr r3, [r5, #12]
+	subs r0, r0, r3
+	cmp r0, r9
+	bgt .L_0200bff0
+	ldr r3, [sp, #8]
+	ldr r2, .L_0200bfe8
+	str r3, [r6]
+	ldr r1, [sp, #4]
+	movs r3, #128
+	lsls r3, r3, #10
+	str r1, [r6, #8]
+	str r3, [r5, #48]
+	movs r3, #200
+	lsls r3, r3, #5
+	adds r3, #153
+	str r3, [r5, #52]
+	adds r3, r5, #0
+	adds r3, #100
+	strh r2, [r3]
+	adds r0, r5, #0
+	movs r1, #2
+	bl Func_020043c4
+	adds r0, r5, #0
+	movs r1, #48
+	bl Actor_SetAnimationSpeed
+	ldr r3, .L_0200bfec
+	str r3, [r5, #108]
+	b .L_0200c09a
+	.2byte 0x0000
+.L_0200bfe8:
+	.4byte 0x00000000
+.L_0200bfec:
+	.4byte Func_0200385c
+.L_0200bff0:
+	add r1, sp, #16
+	ldrh r1, [r1]
+	movs r3, #0
+	mov r2, r8
+	strh r1, [r5, #6]
+	str r3, [r5, #36]
+	str r3, [r5, #44]
+	str r2, [r5, #8]
+	str r7, [r5, #16]
+	b .L_0200c0e6
+.L_0200c004:
+	mov r3, r11
+	ldrb r0, [r3]
+	ldr r1, [r7]
+	ldr r2, [r7, #8]
+	bl Map_GetTerrainHeight
+	ldr r3, [r5, #12]
+	movs r1, #128
+	subs r0, r0, r3
+	lsls r1, r1, #12
+	cmp r0, r1
+	bgt .L_0200c0ba
+	ldrh r3, [r5, #32]
+	movs r2, #0
+	subs r3, #2
+	str r3, [sp, #0]
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r6, [r3, #20]
+	movs r3, #89
+	adds r3, r3, r6
+	mov r9, r2
+	mov r8, r3
+.L_0200c032:
+	ldr r3, [r6]
+	cmp r3, #0
+	beq .L_0200c05c
+	mov r1, r8
+	ldrb r2, [r1]
+	movs r3, #1
+	ands r3, r2
+	cmp r3, #0
+	beq .L_0200c05c
+	cmp r6, r5
+	beq .L_0200c05c
+	ldrh r3, [r6, #32]
+	adds r0, r6, #0
+	adds r0, #8
+	subs r3, #2
+	ldr r1, [sp, #0]
+	add r2, sp, #20
+	bl Func_02004454
+	cmp r0, #0
+	bge .L_0200c0ba
+.L_0200c05c:
+	movs r2, #1
+	add r9, r2
+	movs r3, #128
+	mov r1, r9
+	add r8, r3
+	adds r6, #128
+	cmp r1, #63
+	ble .L_0200c032
+	ldr r2, [r7]
+	adds r0, r5, #0
+	str r2, [sp, #8]
+	ldr r3, [r7, #8]
+	str r3, [sp, #4]
+	movs r3, #128
+	lsls r3, r3, #10
+	str r3, [r5, #48]
+	movs r3, #200
+	lsls r3, r3, #5
+	adds r3, #153
+	str r3, [r5, #52]
+	ldr r1, [r7]
+	ldr r2, [r7, #4]
+	ldr r3, [r7, #8]
+	bl Func_020043f4
+	adds r0, r5, #0
+	bl Func_020043fc
+	ldr r1, [sp, #12]
+	cmp r10, r1
+	bne .L_0200c0e0
+.L_0200c09a:
+	movs r0, #128
+	ldr r1, [sp, #16]
+	add r2, sp, #20
+	lsls r0, r0, #13
+	bl Vector_AddPolarOffsetFar
+	mov r2, r11
+	add r7, sp, #20
+	ldrb r0, [r2]
+	ldr r1, [r7]
+	ldr r2, [r7, #8]
+	bl Func_02004424
+	mov r10, r0
+	cmp r0, #255
+	bne .L_0200c004
+.L_0200c0ba:
+	movs r3, #128
+	lsls r3, r3, #10
+	str r3, [r5, #48]
+	movs r3, #128
+	lsls r3, r3, #9
+	str r3, [r5, #52]
+	ldr r2, [r5, #12]
+	adds r0, r5, #0
+	ldr r1, [sp, #8]
+	ldr r3, [sp, #4]
+	bl Func_020043f4
+	adds r0, r5, #0
+	bl Func_020043fc
+	movs r0, #2
+	bl wait
+	b .L_0200bf1a
+.L_0200c0e0:
+	movs r0, #10
+	bl wait
+.L_0200c0e6:
+	movs r3, #0
+	str r3, [r5, #108]
+	adds r1, r5, #0
+	adds r1, #90
+	ldrb r2, [r1]
+	movs r3, #1
+	orrs r3, r2
+	strb r3, [r1]
+	movs r3, #128
+	lsls r3, r3, #7
+	str r3, [r5, #52]
+	adds r0, r5, #0
+	movs r1, #1
+	bl Func_020043c4
+	add sp, #32
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
 	.section .text.x0200c114,"ax",%progbits
 	.balign 4
 	.global Func_02004114

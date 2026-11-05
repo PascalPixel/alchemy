@@ -9,7 +9,6 @@ SECTIONS
         "*/games/tla/src/scene/epilogue/s0158.o"(.text)
         "*/resource_6b3_overlay.o"(.text.x02008244)
         "*/games/tla/src/scene/epilogue/s0318.o"(.text)
-        "*/resource_6b3_overlay.o"(.text.x02008318)
         "*/games/tla/src/scene/epilogue/prepare.o"(.text)
         "*/games/tla/src/scene/epilogue/import.o"(.text)
         "*/games/tla/src/scene/epilogue/pal.o"(.rodata)

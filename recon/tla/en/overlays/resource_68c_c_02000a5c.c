@@ -1,32 +1,31 @@
-// Draft, differ 107 of 883, skeleton gap 37 removed, 38 added (tla-en, 2026-11-01)
-// Plain C leaves one cause: the listing's allocation. The listing has target r8,
-// start r10, pos r9, actor r11 and radius spilled to sp+8; here PRE hoists
-// pos's address, so the second loop's pos is posAddress in a stack slot, and
-// radius (8 refs, 84 insns) outranks the actor (35 refs, 672 insns) for r11.
-// floor_log2 makes both a step: pos set in the first loop and kept in the second
-// is one pseudo of 30 refs and about 242 insns, ahead of start and target (28)
-// until they reach 32 refs, and the actor needs 39 to pass radius.
-// Tested to differ 6 of 883, skeleton gap 3, with six devices, taken out since
-// they stop short of 0. Re-apply together, on this draft:
-// - first loop as a goto loop, no loop notes, so loop.c leaves the set alone:
-//   "i = 0; never = 0; top: ... wait(1); i++; if (i <= 191) goto top;"
-// - dead test ahead of the set, stops PRE, folded by the second cprop pass:
-//   "if (never == 0) pos = posBuf;", no posAddress
-// - twice at the top of the third loop, adds refs and emits nothing:
-//   asm("" : : "r"(start), "r"(target), "r"(actor));
-// - empty do { } while (0): before that dead test (keeps add rN, sp, #12 joined),
-//   after "flags = ...", between "angle = 0xb000" and "i = 0", and before
-//   "actor->angle = 0x8000" (ends CSE's path, keeps the pooled zero).
-// Three asms lift target over i and lose r7, so two is the count.
-// Those 6 are swapped pairs and look like the schedule model, not source:
-// - second setup: listing strb; mov r2, sl; ldr r3, [r1, #8]; movs r7, #0; str.
-//   thumb_load_stored_back_p exempts that load from the load-after-store wait
-//   because target[2]'s later str r3, [r1, #8] has the same text, a false
-//   read-modify-write. A question for Pascal (K2), not for this draft.
-// - first loop: listing adds r3, r3, r1 before lsls r0, r0, #5, then str r0 and
-//   str r3 in that order. A temporary, a barrier, a step local and << all fail.
-// Tried: 8-byte struct for angle and radius, plain arrays with no pointers, plain
-// position array, a pos per loop, operand asms in the second setup.
+// Draft, differ 150 of 883, skeleton gap 29 removed, 29 added (tla-en, 2026-11-01)
+// Plain source: frame 48 as in the listing, one pos set before the first loop, no
+// flags, zero, posAddress or reused phase. The differ is higher than the 107 of
+// the two-pointer form (pos copied from a posAddress in the loop, frame 52, gap
+// 37), but that is only a register rotation: what is left is two causes.
+// 1. Allocation. Listing: target r8, start r10, pos r9, actor r11, radius sp+8.
+//    Here pos r8, target r9, start r10, radius r11, actor sp+8. Priorities
+//    (floor_log2(refs) * refs / live): pos 29/253, start and target 28/about 313,
+//    radius 8/83, actor 35/670. Start and target need 32 refs to pass pos, actor
+//    needs 39 to pass radius; the listing has no extra instruction that gives
+//    them. Refs are read at lreg, so the extra ones vanish in reload, or the third
+//    loop weighs three levels deeper (+6 start, +6 target, +6 actor, pos unchanged
+//    fits all four inequalities, but the listing has one back edge there).
+//    Radius is not excluded by class: HI_REGS 64 against MEM 128.
+// 2. pos's address. The listing has add r2, sp, #12; mov r9, r2 inside the first
+//    loop and never sets r9 again. PRE hoists that set even from a goto loop
+//    (reg 861, no REG_EQUAL, so reload cannot rematerialize it); a copy from a local
+//    in the loop is undone by the final cprop pass, which rewrites the second
+//    loop's uses, and cse2 then makes the local canonical. Only a conditional that
+//    cprop folds after PRE stopped it, and that is dead code.
+// Those devices (goto first loop, dead test, asm refs in the third loop, empty
+// do-whiles) reached differ 6, gap 3, and stay out. What they left was two swapped
+// pairs: strb/mov/ldr in the second setup, adds r3, r3, r1 and lsls r0, r0, #5 in
+// the first loop.
+// Tried, no gain: 8-byte struct for angle and radius (frame 56); a radius per loop
+// (single-block pseudos go to local-alloc and take r8); a pos per loop (differ 146,
+// gap 29, frame 48, the same rotation); start and target set again in each setup;
+// goto first loop (gap 31); plain arrays; radius after angle.
 #include "iwram_call.h"
 #include "call.h"
 #include "actor.h"
@@ -71,10 +70,9 @@ s32 Func_02002834();
 s32 Func_02000a5c(s32 a0, s32 a1, s32 a2) {
   struct Actor *actor;
   s32 startBuf[3], targetBuf[3], posBuf[3];
-  s32 *start, *target, *pos, *posAddress;
+  s32 *start, *target, *pos;
   s32 radius, angle;
-  u8 *flags;
-  s32 result, i, phase, sine, answer, zero;
+  s32 result, i, phase, sine, answer;
 
   actor = (struct Actor *)Actor_GetById(11);
   result = GameFlag_Test(0x965);
@@ -198,27 +196,24 @@ L_02008a86:
   Call2((void (*)())Func_020028e4, 11, 0x102);
   Call1((void (*)())FieldEvent_Wait, 50);
   Value2((s32 (*)())Actor_SetModeById, 11, 3);
-  flags = &actor->motionFlags;
-  zero = 0;
-  *flags = zero;
+  actor->motionFlags = 0;
   start = startBuf;
   start[0] = actor->x;
   start[1] = actor->y;
   start[2] = actor->z;
   target = targetBuf;
   target[0] = 0x740000;
-  target[1] = zero;
+  target[1] = 0;
   target[2] = 0x6e0000;
   angle = 0xb000;
-  posAddress = posBuf;
+  pos = posBuf;
   for (i = 0; i <= 191; i++) {
     phase = i * 32768 / 192;
     radius = Math_Sine(phase) * 32;
     angle += 512;
-    pos = posAddress;
     pos[0] = start[0] + (target[0] - start[0]) * i / 192;
-    phase = Math_Sine(phase);
-    pos[1] = start[1] + (target[1] - start[1]) * i / 192 + phase * 56;
+    sine = Math_Sine(phase);
+    pos[1] = start[1] + (target[1] - start[1]) * i / 192 + sine * 56;
     pos[2] = start[2] + (target[2] - start[2]) * i / 192;
     Vector_AddPolarOffsetFar(radius, angle, pos);
     actor->x = pos[0];
@@ -264,7 +259,7 @@ L_02008a86:
   Value3((s32 (*)())Func_020028dc, 10, 0x108, 40);
   Call2((void (*)())Actor_SetModeById, 11, 3);
   Call1((void (*)())FieldEvent_Wait, 40);
-  *flags = 0;
+  actor->motionFlags = 0;
   start[0] = actor->x;
   start[1] = actor->y;
   start[2] = actor->z;

@@ -16,7 +16,7 @@ SECTIONS
         "*/resource_679_overlay.o"(.text.x020083e8)
         "*/resource_679_overlay.o"(.text.x02008540)
         "*/games/tla/src/scene/apojii_islands/events_b.o"(.text)
-        "*/resource_679_overlay.o"(.text.x020086bc)
+        "*/games/tla/src/scene/apojii_islands/s06bc.o"(.text)
         "*/games/tla/src/scene/apojii_islands/events_c.o"(.text)
         "*/games/tla/src/scene/apojii_islands/s07a4.o"(.text)
         "*/games/tla/src/scene/apojii_islands/events_d.o"(.text)

@@ -1,33 +1,44 @@
-// Draft, differ 501 of 497, skeleton gap 165 (tla-en, 2026-11-01)
-// Left: one extra entry branch on each of the two loops, then allocation. The
-// native falls into both loops, but keeps every row and pair invariant inside
-// them. gcse's PRE hoists those (work + 218 to 222, tile + 8, x << 16) from any
-// loop it can enter on an edge, guarded or not, so both loops here are gotos
-// entered at their tests (gap 190 to 165 with the calls in the arms). The two
-// `b` lines are the price; whatever let the original fall in without PRE
-// hoisting is unknown, and it is the same gap as the landing-burst family. An
-// asm output on work at the row top also stops PRE (a for loop then stays), but
-// it is a barrier that did not reach differ 0, so it came out. A row count held
-// in a local defeats cse's fold of the entry test, but the test then stays.
+// Draft, differ 475 of 497, skeleton gap 153 (tla-en, 2026-11-01)
+// Left: the two loops' entries, then allocation; 20 plain reshapes gained nothing
+// more after the marker masks (x &= 511; y &= 255 before the word, which took
+// differ 495 to 475). No device is left in the draft to remove.
+// Loops: the native falls into both loops and keeps every invariant inside them.
+// The gcse dump shows why this source cannot: PRE copies work + 218 to 222 onto
+// the row loop's entry edge and x << 16 and tile + 8 onto the pair loop's, from
+// any loop entered on an edge, whether a for or a goto. Only entering at the test
+// stops it, because the expression is then not anticipated there, so both loops
+// here are gotos entered at their tests, and the two `b` lines are the price.
+// Falling into goto loops (if (y < 160) around them, bottom tests as the native)
+// gives the native's frame of 40 but gap 184 and differ 516. Real for loops also
+// let loop.c hoist 0 and 0xe400: gap 228, differ 558. Those two constants stay
+// in the loop only because a goto loop has no notes. Nothing in reach of the C
+// keeps PRE out of a fall-in loop; PRE is skipped only under optimize_size or
+// setjmp, so what remains there is a compiler question (K1 to K3), not a source
+// one. It is the same gap as the landing-burst family.
+// pair: the native's copy sits after the y test, so it looks like a loop.c
+// reduced giv, but neither cursor[n] nor u32 *pair = cursor in a for loop gets
+// reduced: cse folds the copy, and the combined address giv is "not worth
+// while" (-204 vs 34). A hand pair is what works here.
 // Allocation, by global.c priority (floor_log2(refs) * refs / live):
 // - The native has work r11, x r9, y r7, pair r4, zero r8, second r10, shifted
 //   r6 and attributes r5, with i, flip, row, tile, entry and cursor on the stack.
-//   Here pair (26 refs over 40) takes r7 ahead of y (about 1.3), so y is r6, the
-//   x << 16 and zero temporaries lose local-alloc and take r4 and r9, x is r10
-//   and i is r11. That is most of the remaining mov/ldr skeleton lines; in r7
-//   pair += 6 also sinks past the call, as a callee-saved set may.
-// - work wants about 25 refs over its 240 to pass i and flip (it has 18 to 20).
-//   Starting i at the row top only hands r11 to flip; reading fade and scrollX
-//   directly in the arms adds refs but i keeps r11 (gap 190). Setting pair at
-//   the row top does not move it off r7. Declaration order changes nothing.
-// - base stays apart from work: dropping it (cursor, entry and work as copies
-//   of one load, which is the native's first block, and which explains why the
-//   code before the row loop reads [sp, 36]) gives gap 174, differ 540 until the
-//   allocation above is fixed. cprop folds work to cursor there, not in the loop.
-// Tried without gain: a for pair loop (loop.c hoists 0, 0xe400 and x << 16),
-// zero, attributes and shifted locals (folded, same output; zero's and
-// attributes' pseudos rematerialize unless they win a register). 576 is rebuilt
-// for VramCache_Load in the native; here it stays in a register.
+//   Here pair (26 refs over 40, 2.6) takes r7 ahead of y (29 over 90, 1.29), and
+//   no shape moved that: y would need pair's live length to double. Then x is
+//   r10, i (0.40) is r11 and work is on the stack, which is most of the remaining
+//   mov/ldr skeleton lines. work has 18 to 22 refs over about 300.
+// - The .18.greg dispositions look like reload's retries, not global.c's first
+//   choice: locals skip r6 and r10 there, which y and x then hold. Read them so.
+// - base stays apart from work: dropping it (cursor, entry and work as copies of
+//   one load, which is the native's first block, and which explains why the code
+//   before the row loop reads [sp, 36]) gives gap 154, differ 512 until the
+//   allocation above is fixed. Reading the row head through work: differ 486.
+// Tried without gain: declaration order (spill slots do not follow it here),
+// scopes of i, x, y and fade, shared marker pointers, reading the marker fields
+// without pointer locals (gap 184), statement order of flip, i and y, an inline
+// second (gap 169), y |= the word (differ 497, and a reused local), x and y masks
+// in one statement. 576 is rebuilt for VramCache_Load in the native and shared
+// here; s4188.c's matched Pool_Alloc wrapper is the known cure, and it is a
+// tagged device, so it stays out of this round.
 // Calls in both marker arms are right: cross-jumping makes the native's shared
 // `mov r9, r2; bl`, with the argument set in each arm.
 //
@@ -186,9 +197,11 @@ rowTest:
       lift = Func_02002ce8(0);
     }
     y = (object->z - *originZ) / PIXELS(16) + *scrollY - lift * 36 + 4;
+    x &= 511;
+    y &= 255;
     *cursor = 0;
     cursor = next;
-    *cursor++ = ((x & 511) << 16) | (y & 255) | 0x40000000;
+    *cursor++ = y | (x << 16) | 0x40000000;
     *cursor++ = sprite | 0xe400;
     Func_02005790(entry, 255);
     entry = nextEntry;
@@ -217,9 +230,11 @@ rowTest:
       lift = Func_02002ce8(1);
     }
     y = (object->z - *originZ) / PIXELS(16) + *scrollYMarker - lift * 36 + 4;
+    x &= 511;
+    y &= 255;
     *cursor = 0;
     cursor = next;
-    *cursor++ = ((x & 511) << 16) | (y & 255) | 0x40000000;
+    *cursor++ = y | (x << 16) | 0x40000000;
     *cursor = sprite | 0xe400;
     Func_02005790(entry, 255);
   }

@@ -68,7 +68,7 @@ s32 Func_0200236c(void) {
   Func_02001fcc();
 #else
   /* FAKEMATCH(wrapper): Func_02001fcc called through a cast to
-   * s32 (*)(s32, s32) with -10 and 0; as Func_02001fcc(), 5 of 138
+   * s32 (*)(s32, s32) with -10 and 0; as Func_02001fcc(), 3 of 138
    * instructions differ in tla-en. */
   ((s32 (*)(s32, s32))Func_02001fcc)(-10, 0);
 #endif
@@ -82,37 +82,19 @@ s32 Func_0200236c(void) {
   leader->update = (void (*)(void))Func_02002120;
   leader->angle = 0x4000;
   Func_020041cc(leader, 49);
-  // As while (ride->car->stopped == 0), or a do-while under an if, 17 of 138
-  // instructions differ in tla-en.
-  if (ride->car->stopped != 0)
-    goto done;
-step:
-  {
-    s32 kind = Func_0200422c(0, leader->x, leader->z);
-    struct RideCar *car = ride->car;
-
-    if (kind != 7) {
-      leader->x += car->stepX;
-      leader->z += car->stepZ;
+  while (ride->car->stopped == 0) {
+    if (Func_0200422c(0, leader->x, leader->z) != 7) {
+      leader->x += ride->car->stepX;
+      leader->z += ride->car->stepZ;
     } else {
-      if (car->stepX != 0)
+      if (ride->car->stepX != 0)
         leader->x = (leader->x & 0xfff00000) + 0x80000;
-      {
-        /* FAKEMATCH(temporary): the car reloaded through a pointer to its
-         * slot; as ride->car->stepZ, which keeps the car from the first test,
-         * 9 of 138 instructions differ in tla-en. */
-        struct RideCar **slot = &ride->car;
-
-        if ((*slot)->stepZ != 0)
-          leader->z = (leader->z & 0xfff00000) + 0x80000;
-      }
+      if (ride->car->stepZ != 0)
+        leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
     wait(1);
   }
-  if (ride->car->stopped == 0)
-    goto step;
-done:
   FieldEvent_Wait(30);
   leader->update = 0;
   Animation_ApplyChildValues(leader, 0);

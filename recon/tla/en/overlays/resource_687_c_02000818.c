@@ -1,13 +1,41 @@
-// Near miss, differ 197 of 280 (tla-en, 2026-10-31): control flow, calls,
-// fields and constants are the native's; what remains is allocation. The
-// native keeps dx in r11, dz in r9, &spark in r10 and &gFrameCount (then
-// gFrameCount & 4) in r7, spilling gFrameCount & 3 to sp+16; this draft ranks
-// gFrameCount & 3 above dx, so dx spills (sp+24, shifting targetX/targetZ
-// down a slot), &spark takes r7, gFrameCount & 4 takes r5 and 0xb0000 is
-// rebuilt per call. In the offset block the native gives cosine * 12 r3 and
-// the first actor->x load r1; here the load takes r3. The first spawn's x, y
-// and z are read before the gFrameCount & 4 test, as the native does, only
-// through the locals x0, y0, z0. Names are still placeholders.
+// Draft, differ 197 of 280, skeleton gap 21 (tla-en, 2026-11-01): control flow,
+// calls, fields and constants are the native's; what remains is allocation.
+// Re-measured with the 1 November compiler: unchanged, so none of it was
+// slow-loads, and this draft carries no device to remove. The native keeps dx in
+// r11, dz in r9, &spark in r10, &gFrameCount (then gFrameCount & 4) in r7, and
+// 0xb0000 in r5 once per arm, spilling gFrameCount & 3 to sp+16. This draft has
+// &spark r7, gFrameCount & 3 r10, &gFrameCount r9, dz r11, and spills dx (sp+24,
+// shifting targetX and targetZ down a slot), with 0xb0000 rebuilt per call.
+// Three causes found, in the .08.loop and .17.lreg dumps:
+// 1. 0xb0000: loop.c hoists it from the inner loop (savings 2, life 31), so it
+//    gets no register. It stays in the arms only with neither loop valid for
+//    loop.c, and then it goes to local-alloc and takes r5 as the native's does.
+//    Plain outer gotos do not work: cleanup_cfg moves the body after the test,
+//    because the body has one predecessor and ends in a jump (differ 269). What
+//    works is `goto outerTest; do { ...; goto innerTest; innerTop: ...; innerTest:
+//    if (Func_02001f9c(actor) == 0) goto innerTop; outerTest:; } while (...)`,
+//    the jump in from outside making the do-while invalid for loop.c. Alone that
+//    is differ 255, gap 25.
+// 2. r6 and r7: with (1) and `flip = gFrameCount & 4` read before x0, y0 and z0,
+//    flip's live length goes 24 to 27, pos outranks it, and pos r6, flip r7 and
+//    &gFrameCount r7 all land. Differ 221, gap 25: the whole arms then line up
+//    apart from what (3) leaves. flip alone with real loops: 199, gap 27.
+// 3. Still open at that point: &spark ranks above actor (1.10 against 1.00, so
+//    r8 and r10 are swapped; it needs live length 108, it has 98, or one ref
+//    fewer) and gFrameCount & 3 ranks above dz and dx (0.56 against 0.17), taking
+//    r9. Its reads are 24 weighted refs over 172 insns, so priority cannot put it
+//    under dx unless refs or live length differ by three times, which no form
+//    tried does. Likely reload evicts it from a low register in the native
+//    (r5 is the spill register all through there), which would also change who
+//    gets r10. The kept form is the one with the best measure, (1) and (2) being
+//    worse until (3) closes; start from them.
+// Tried, no change from (2): gFrameCount & 3 as a user local, as `phase = 3;
+// phase &= gFrameCount`, gFrameCount in a local, `sp = &spark`, flip declared
+// first. Worse: dx and dz declared first (229), reading the arguments in the arms
+// (243), one `size` local set in both arms (213), goto on the inner loop only (no
+// change, the outer loop hoists it), `s32 size` per arm (no change, hoisted).
+// In the offset block the native gives cosine * 12 r3 and the first actor->x
+// load r1; here the load takes r3. Names are still placeholders.
 #include "actor.h"
 #include "ram_buffer.h"
 #include "types.h"

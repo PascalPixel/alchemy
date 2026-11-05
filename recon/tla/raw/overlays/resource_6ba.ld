@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/debug/shop_test/s02a8.o"(.text)
         "*/games/tla/src/debug/shop_test/loop_call.o"(.text)
         "*/games/tla/src/debug/shop_test/treasure.o"(.text)
-        "*/resource_6ba_overlay.o"(.text.x02008520)
+        "*/games/tla/src/debug/shop_test/s0520.o"(.text)
         "*/games/tla/src/debug/shop_test/djinn.o"(.text)
         "*/games/tla/src/debug/shop_test/give.o"(.text)
         "*/games/tla/src/debug/shop_test/scene_events.o"(.text)

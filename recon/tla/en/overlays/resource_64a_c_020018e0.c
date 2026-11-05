@@ -1,46 +1,47 @@
-// Draft, differ 248 of 423, skeleton gap 82 (tla-en, 2026-11-01): 40 removed,
-// 42 added.
+// Draft, differ 210 of 423, skeleton gap 62 (tla-en, 2026-11-01): 30 removed,
+// 32 added.
 // Unpacks clear data, in the layout The Broken Seal's
 // FileScreen_PackPasswordData packs (and Func_02001c7c here), into the four
 // units' base stats, levels and Djinn, the story flags, the Psynergy items and
 // the inventories with their counts. Control flow, calls and memory accesses
 // are the native's, except as listed below.
-// Loops: unpack, stats, flags and the slot loops are gotos, so
-// that loop.c leaves constants in them, with the native's strength reductions
-// spelled out (offset, second, third, bytes, cursor, slot, slotOffset).
-// Allocation hangs on what crosses calls. in reaches a register only when
-// nothing hoisted lives beside it, which is why the draft has:
-// - cursor split from bytes, and stream from both;
-// - second and third as temporaries in place of one shared next;
-// - itemOffset stepping by 2 to 46 where the native has m stepping by 1 to 23
-//   and rebuilds m * 2 in the slot loop. PRE hoists m * 2 out of even a goto
-//   loop, and that pseudo takes the register in needs. A copy of m at the top
-//   of the loop is folded by cprop. This costs the two instructions of m * 2;
-// - level stored through a u8 pointer, whose field store otherwise leaves a
-//   zero that gcse carries across two calls in place of the count = 0 store's;
-// - s32 item, because u16 gives a HImode 0x1ff that PRE carries across a call.
+// Loops: every loop but the two 28-count Djinn loops is a goto, so that loop.c
+// leaves constants in them, with the native's strength reductions spelled out
+// (offset, second, third, bytes, cursor, slot, slotOffset). Re-measured on
+// 1 November with no gain from plain forms: the level field store (differ
+// 248), no following (229), gData_02002490[i] in the flag loop (234), no
+// second and third (240), packedStats[i * 4 - 3] (305), real for loops for the
+// slots (304 to 345). Each of these is still needed at this differ.
+// Gained on 1 November: gData_020026c0[m] with m stepping to 23 and no table
+// local, as the native counts (differ 248 to 212), plain in[165] to in[167]
+// for the coins, item | j << 11.
 // Left, in order of size:
-// - The count and inventory sections' labels. The draft has bitOffset r7, j r5,
-//   slotUnit r9, m lr, table r10, in r11, mode r9, djinnBits r10; the native
-//   has bitOffset r5, j r1, the unit r7, m r9, table lr, in r10, mode r11,
-//   djinnBits r9. item is spilled here where the native spills item & 0x1ff
-//   only: reload runs one low register short. The rest of those sections' lines
-//   follow from these.
-// - The frame address is hoisted out of the stats loop (the native rebuilds it
-//   there, 4 more bytes of frame here), and that moves i++ and the second and
-//   third temporaries by a few places.
+// - Allocation of the count and inventory sections, which rotates registers
+//   through the whole function. Here: in r11, mode r9, djinnBits r10, slotUnit
+//   r10, bitOffset r7, j r5, slotOffset r4, cursor r0, countMember ip, item
+//   spilled to r11 or sp+0. Native: in r10, mode r11, djinnBits r9, slotUnit
+//   r7, bitOffset r5, j r1, slotOffset r0, cursor ip, countMember r11, item r4,
+//   and only item & 0x1ff spilled to sp+0 (native frame 40, here 36). The cause
+//   read from the greg dump: item ranks first and takes r1, so j takes r5, n
+//   r6, bitOffset r7, and slotUnit falls to a high register, which is what
+//   pushes in to r11. Reload then spills r1 (item) where the native spills r2.
+//   countMember's preference for r0 keeps slotOffset off r0 in global.c's first
+//   pass. One i for the unit loops fails for a different reason: at 590 insns
+//   of live length it ranks last, takes r8, and the function grows to 459.
+// - PRE hoists m * 2 out of the slot loop (the native rebuilds it, lsls r2, r3,
+//   #1, with gData_020026c0 hoisted to lr instead), and the 0x1ff load stays in
+//   it here where it is the split form in the native.
+// - The frame address sits above the unpack loop, native inside it.
 // - clearMember->djinnAvailable is hoisted out of the clear loop by PRE.
-// Tried with no gain: one counter for all loops or for the last three (differ
-// 269 to 454), bitOffset, inputIndex and the unit split per section (equal or
-// worse), do loops for stats and the clear (worse), a real unpack do loop (its
-// reductions fold the frame into a pointer).
-// What blocks a match is a compiler question (K1 to K3), so it stops here.
-// alchemy-gcc's -Os does exactly what the native shows and -O2 cannot: loop.c
-// skips move_movables but still reduces givs (constants stay in real loops),
-// gcse.c runs classic GCSE and code hoisting in place of PRE (the flag loop's
-// shared head, no hoisting of m * 2), and toplev.c leaves refs unweighted by
-// loop depth (the allocation order above). An earlier hand trial of -Os reached
-// 138 lines of register allocation. Only Pascal can weigh that.
+//   Entering that loop at its bottom test stops the hoist (gap 63), at differ
+//   221, so it is not used.
+// Tried with no gain on 1 November: split or shared n, bitOffset, inputIndex,
+// j (as count or high), member, cursor; a one-time copy of the frame address at
+// the top of the unpack loop; bottom-entered unpack and slot loops.
+// The rest looks like a compiler question (K1 to K3), out of scope here: an
+// older note found -Os does what the native shows (constants left in real
+// loops with givs still reduced, classic GCSE and hoisting in place of PRE, the
+// flag loop's shared i + 1). That needs re-measuring and only Pascal can weigh it.
 #include "types.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
@@ -65,13 +66,12 @@ void Func_020018e0(s32 mode, u8 *in) {
   u8 keyItemBits;
   u32 packedStats[8];
   s32 i;
-  s32 clearUnit;
   s32 slotUnit;
   s32 inputIndex;
   s32 bitOffset;
   s32 j;
   s32 n;
-  s32 itemOffset;
+  s32 m;
   s32 shift;
   s32 following;
   u8 *stream;
@@ -167,9 +167,9 @@ levels:
     goto levels;
 
   Djinn_GetRecoveryTable(0)->count = 0;
-  clearUnit = 0;
+  i = 0;
 clearDjinn:
-  clearMember = Unit_Get(gData_020026a0[clearUnit]);
+  clearMember = Unit_Get(gData_020026a0[i]);
   // The native clears the same 40 bytes, djinnAvailable through
   // djinnActiveCounts, four times.
   n = 0;
@@ -178,8 +178,8 @@ clearDjinnFour:
   n++;
   if (n != 4)
     goto clearDjinnFour;
-  clearUnit++;
-  if (clearUnit != 4)
+  i++;
+  if (i != 4)
     goto clearDjinn;
 
   for (i = 0; i != 28; i++) {
@@ -237,9 +237,10 @@ clearDjinnFour:
     inputIndex = 107;
     bitOffset = -1;
     slotUnit = 0;
-    do {
+  countUnits:
+    {
       countMember = Unit_Get(gData_020026a0[slotUnit]);
-      itemOffset = 0;
+      m = 0;
       cursor = in + inputIndex;
     countItems:
       j = 0;
@@ -258,7 +259,6 @@ clearDjinnFour:
       }
       j &= 0x1f;
       {
-        u16 *table = gData_020026c0;
         s32 slotOffset = 216;
 
         n = 0;
@@ -266,21 +266,23 @@ clearDjinnFour:
         {
           s32 item = *(u16 *)((u8 *)countMember + slotOffset);
 
-          if ((item & 0x1ff) == *(u16 *)((u8 *)table + itemOffset))
-            *(u16 *)((u8 *)countMember + slotOffset) = j << 11 | item;
+          if ((item & 0x1ff) == gData_020026c0[m])
+            *(u16 *)((u8 *)countMember + slotOffset) = item | j << 11;
         }
         n++;
         slotOffset += 2;
         if (n != 15)
           goto countSlots;
       }
-      itemOffset += 2;
-      if (itemOffset != 46)
+      m++;
+      if (m != 23)
         goto countItems;
       slotUnit++;
-    } while (slotUnit != 4);
-    bytes = in + 165;
-    gMainRoutineWork.coins = bytes[0] << 16 | bytes[1] << 8 | in[167];
+    }
+    if (slotUnit != 4)
+      goto countUnits;
+
+    gMainRoutineWork.coins = in[165] << 16 | in[166] << 8 | in[167];
   }
 
   i = 0;

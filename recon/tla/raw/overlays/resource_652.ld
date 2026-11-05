@@ -8,7 +8,7 @@ SECTIONS
         "*/games/tla/src/scene/daila_interiors/villager.o"(.text)
         "*/games/tla/src/scene/daila_interiors/s0704.o"(.text)
         "*/games/tla/src/scene/daila_interiors/item.o"(.text)
-        "*/resource_652_overlay.o"(.text.x02008878)
+        "*/games/tla/src/scene/daila_interiors/s0878.o"(.text)
         "*/games/tla/src/scene/daila_interiors/arrival.o"(.text)
         "*/games/tla/src/scene/daila_interiors/import.o"(.text)
         "*/games/tla/src/scene/daila_interiors/data.o"(.data)

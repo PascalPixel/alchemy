@@ -1,44 +1,52 @@
-// Draft, differ 422 of 1077, skeleton gap 50 (tla-en, 2026-11-01; ja and fr
-// differ in layout): the password entry screen: a 17 by 4 character grid, the
-// entered password in pages of 50 and its check before the clear data is
-// loaded. Settled: WindowSprite_Create takes five arguments and
-// OUTPUT_SIZE_16X16, the two cursors are 16-byte ShopCursor locals, gInput is
-// the tree's InputState, the discarded cursor % 10 is a call, the code read
-// from the grid is s32, the key test is (keys << 16) & 0x10000, the first
-// column step shares column + 1, the page position is -pages + 18 in the native
-// but -pages then += 18 measures better here, and the page, cell and wait loops
-// are goto loops (their constants stay inside).
-// Closed this round, and worth keeping: the static inlines give every cursor
-// use its add rN, sp at the call, since an inlined parameter is substituted as
-// (plus sfp N) and PRE sees no pseudo set; the sprite local puts the address
-// after the create call. The stack layout is now the native's (frame 124,
-// column spilled). shared is one s32 across the native's r8 (x, the mask 7, the
-// result box, the cell pointer) and action across sl (with size and count); as
-// separate variables each is caller-saved or takes a callee register, and
-// column stays in r11. value is the native's second r6 (message, frame, size
-// less 2): in i itself i falls one reference short of 128 and loses r6 to the
-// clearing pointer. held is a set-once pointer used only by the four direction
-// tests, which reload rematerializes; a function-wide one rematerializes the
-// keys too. entry holds the main work base because a set-once local there is
-// folded back to pool loads. The nested length test gives the second ldr of
-// mode.
+// Draft, differ 320 of 1077, skeleton gap 22 removed, 14 added (tla-en,
+// 2026-11-01; ja and fr differ in layout): the password entry screen: a 17 by
+// 4 character grid, the entered password in pages of 50 and its check before
+// the clear data is loaded.
+// Settled: WindowSprite_Create takes five arguments and OUTPUT_SIZE_16X16, the
+// two cursors are 16-byte ShopCursor locals, gInput is the tree's InputState,
+// the discarded cursor % 10 is a call, the code read from the grid is s32, the
+// key test is (keys << 16) & 0x10000, and the first column step shares
+// column + 1. The static inlines give every cursor use its add rN, sp at the
+// call. The stack layout is the native's (frame 124, column spilled).
+// Closed this round: height is a set-once local, so reload rematerializes the
+// 1 after the register arguments, in r4 (both Func_02000db4 calls); the
+// direction tests read plain gInput, and the old held pointer is gone (it gave
+// a reload register where the native loads into the result); the cell code is
+// raw plus a u8 code, which is the native's adds r1, r2, #0 and puts the page
+// index in r0 and the base in r4; the index is i + page * 50; y is set before
+// i in the divider loop, which takes i from 286 to 284 live insns and wins r6
+// back from the clearing pointer (6 * 87 / 284 against 3 * 11 / 18), so one
+// more insn of i's life loses it again. message, frame and size2 are separate
+// now and measure the same as the one value they replaced.
 // Left, in this order:
 // 1. window takes fp here and r9 there, page and the i * 4 giv the reverse, and
-// action takes r9 for sl. global.c allocates page (10 refs / 75, 0.40) and the
-// giv (9 / 74, 0.36) before window (43 / 724, 0.30), so page takes r10 and the
-// giv r9. The native needs window first, and no plain form found lowers both.
-// By hand count, not measured: without loop weights all three orders come out
-// right (page 6, giv 5, and x and the mask stop being caller-save profitable
-// with no sharing at all), which points at unweighted refs, as optimize_size
-// gives. That is a compiler question (K3), not tried here; shared, action and
-// value may be artefacts of it.
-// 2. The first clearing loop enters at its bottom test only so PRE leaves
-// work + 2 inside the loop; this adds a b.n the native lacks. A top-entered
-// goto loop hoists it (435), a for measured 551, and four address spellings
-// 480. Something else must stop that hoist.
-// 3. Reload's rotation leaves the native at the Iwram_ClearWords in the cell
-// setup loop: the store takes r1 for work here and r3 there, so r3 is overwritten
-// by 99 and work is reloaded in the native. Most of the rest is that rotation.
+// action takes r9 for sl: about 196 of the 320 are that rename. global.c ranks
+// page (0.40) and the giv (0.36) above window (0.29). The native needs window
+// first, and no plain form lowers them. Unweighted refs would give every one
+// of these orders by hand count, and would also keep x and the mask out of r4
+// as separate variables: shared (x, mask 7, result box, cell pointer), action
+// (with size and count) and entry (slot, then the main work pointer) are each
+// one variable for several values only because of that. Split, they measure
+// 686, 883, 862 and 443. These reused locals are devices if adopted (S2).
+// That is a compiler question (K1 to K3), out of scope here.
+// 2. PRE, also a compiler question: the native reloads gInput for each of the
+// four direction tests, keeps work + 2 in the first clearing loop, and keeps
+// gMainRoutineWork in one single-block pseudo; PRE here shares the first (r5,
+// which also rotates row's reloads), hoists the second (hence the bottom entry
+// and its extra b.n; top entry measures 331, for 447) and makes the third a
+// long-lived unallocated pseudo (plain reads measure 337). Reusing entry stands
+// in for it; the two glow loads then miss the native's adds r5, r5, r3, whose
+// reload rotation also lets the two cursor-- arms cross-jump here.
+// 3. The second loop pass hoists at 13 real insns (threshold * life 1). The
+// page loop is a real for in the native: i - pages + 18 gives exactly its
+// negs r3; adds r5, r3, #0; adds r5, #18, but the stack 0 hoists into r7 (323).
+// The clearing tail's (i * 4 + work) + 200 and (i + 400) + work are loop.c
+// givs from a for over work->cells[i], but 99 and the call address hoist too
+// (770). So both stay goto loops, x = -pages; x += 18 stands in, and the tail
+// differs by operand order. Spellings of the pointers change nothing.
+// 4. Reload rotation: the Iwram_ClearWords in the cell setup loop (r2 for r3),
+// the first cursor's window reads (r2 for r4), and the keys extension, which
+// the native puts in r2 and here stays in r3.
 #include "types.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
@@ -145,11 +153,11 @@ static inline void Cursor_Show(struct ShopCursor *cursor, s32 x, s32 y) {
     Text_DrawStringInWindow(gData_02002454, window, 0, 8);                     \
     Text_DrawStringInWindow(gData_02002468, window, 0, 16);                    \
     Text_DrawStringInWindow(gData_0200247c, window, 0, 24);                    \
-    value = MSGNO(MsgFieldSpace);                                              \
+    message = MSGNO(MsgFieldSpace);                                              \
     Window_DrawDividerLine(window, 20, 0, 20, 5);                              \
-    Text_DrawCharacterAtOffset(value++, window, 160, 0);                       \
-    Text_DrawCharacterAtOffset(value++, window, 160, 8);                       \
-    Text_DrawCharacterAtOffset(value, window, 160, 24);                        \
+    Text_DrawCharacterAtOffset(message++, window, 160, 0);                       \
+    Text_DrawCharacterAtOffset(message++, window, 160, 8);                       \
+    Text_DrawCharacterAtOffset(message, window, 160, 24);                        \
   }
 
 s32 Func_02000e44(void) {
@@ -176,11 +184,13 @@ s32 Func_02000e44(void) {
   s32 action;
   s32 page;
   s32 i;
-  s32 value;
+  s32 message;
+  s32 frame;
+  s32 size2;
   s32 entry;
-  struct InputState *held;
   struct WindowSprite *sprite;
   u16 *palette;
+  s32 height;
 
   Func_02002208();
   Func_02002310(gMainRoutineWork.paletteGlow[0],
@@ -260,10 +270,10 @@ clear_test:
     sprite->oam.priority = 0;
     Cursor_Place(&gridStore, (s16)grid->x * 8 - 4, (s16)grid->y * 8 + 12);
   }
-  held = &gInput;
-  drawMode = 1;
+  height = 1;
   drawColumn = 0;
   drawRow = 0;
+  drawMode = 1;
   cursorX = (s16)window->x * 8 - 8;
   cursorY = (s16)window->y * 8 + 11;
   state = 0;
@@ -271,9 +281,9 @@ clear_test:
     action = -1;
     if (state == 2)
       state = 1;
-    Func_02000db4(window, drawColumn, drawRow, drawMode, 1, 15);
+    Func_02000db4(window, drawColumn, drawRow, drawMode, height, 15);
     if (state == 0) {
-      if (held->repeat & 16) {
+      if (gInput.repeat & 16) {
         Func_02002408(111);
         {
           s32 next = column + 1;
@@ -284,20 +294,20 @@ clear_test:
             column = next % 17;
         }
       }
-      if (held->repeat & 32) {
+      if (gInput.repeat & 32) {
         Func_02002408(111);
         if (row == 2)
           column = (column + 15) % 16;
         else
           column = (column + 16) % 17;
       }
-      if (held->repeat & 128) {
+      if (gInput.repeat & 128) {
         Func_02002408(111);
         row = (row + 1) % 4;
         if (column == 16 && row == 2)
           row = 3;
       }
-      if (held->repeat & 64) {
+      if (gInput.repeat & 64) {
         Func_02002408(111);
         row = (row + 3) % 4;
         if (column == 16 && row == 2)
@@ -317,7 +327,7 @@ clear_test:
       drawColumn++;
     if (column > 15)
       drawColumn++;
-    Func_02000db4(window, drawColumn, row, drawMode, 1, 14);
+    Func_02000db4(window, drawColumn, row, drawMode, height, 14);
     {
       s32 x = ((s16)window->x + column) * 8 - 8;
       s32 y = ((s16)window->y + row) * 8 + 11;
@@ -341,14 +351,14 @@ clear_test:
       s32 x;
 
       shared = 7;
-      value = (gVBlankCount >> 1) & shared;
+      frame = (gVBlankCount >> 1) & shared;
       col = cell % 10;
       x = col * 12 + (s16)grid->x * 8 + 16;
 
       if (col > 4)
         x += 10;
-      x += gData_02002438[value];
-      y += gData_02002438[(value + 5) & shared];
+      x += gData_02002438[frame];
+      y += gData_02002438[(frame + 5) & shared];
       Cursor_Show(&gridStore, x, y);
     }
     if (advance > 0 && ++advance == 8) {
@@ -399,13 +409,13 @@ clear_test:
           s16 crc;
 
           action = Func_02002068(Data_0200274a, length, Data_0200288a);
-          value = action - 2;
-          check = Func_0200217c(value, Data_0200288a);
+          size2 = action - 2;
+          check = Func_0200217c(size2, Data_0200288a);
 
           state = 0;
           shared = (s32)Window_Create(5, 12, 20, 3, 2);
           crc = check;
-          if (Data_0200288a[value] == (u16)crc >> 8 &&
+          if (Data_0200288a[size2] == (u16)crc >> 8 &&
               Data_0200288a[action - 1] == (u16)crc % 256) {
             Text_DrawCharacterAtOffset(MSGNO(MsgFieldPasswordAccepted), (struct Window *)shared,
                                        0, 0);
@@ -478,7 +488,7 @@ clear_test:
     {
       s32 y;
 
-      for (i = 0, y = 2; i != 4; i++, y += 2)
+      for (y = 2, i = 0; i != 4; i++, y += 2)
         Window_DrawDividerLine(grid, 0, y, 18, y);
     }
     {
@@ -518,14 +528,15 @@ clear_test:
 
     draw_cell:
       {
-        s32 code = Data_0200274a[page * 50 + i];
+        s32 raw = Data_0200274a[i + page * 50];
+        u8 code = raw;
 
         if (code != *shown) {
-          *shown = code;
+          *shown = raw;
           if (code == 99) {
             Iwram_ClearWords(*(void **)shared, 128);
           } else {
-            Func_02000a70(Data_0200274a[page * 50 + i], glyph);
+            Func_02000a70(Data_0200274a[i + page * 50], glyph);
             Func_02002328(glyph[0], *(void **)shared);
           }
         }

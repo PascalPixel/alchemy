@@ -1,32 +1,35 @@
-// Draft, differ 226 of 304, skeleton gap 88 (tla-en, 2026-11-01)
+// Draft, differ 224 of 304, skeleton gap 42/44 (tla-en, 2026-11-01)
 // Written from overlay 68f's Func_0200189c, the same 302-instruction routine:
 // from a whole cell, take a step toward the keys' heading (or snap toward the
 // cell centre first), walk on one cell at a time while the ground is level and
 // none of the 64 objects blocks it, retrying after a blocked step. Calls,
-// branches, loops and fields follow the listing.
+// branches, loops and fields follow the listing. No devices are in this draft.
 // Left: GCSE's PRE hoists &position and &object->terrainId over the retry label
-// onto edge (0,1) (07.gcse: expressions 3 and 11) and takes every later
-// position address from that one pseudo, a long-lived high register. The
-// listing sets both after the label, keeps the address in r10 and r6 only where
-// it is used, and builds each position argument afresh with add rN, sp, #28,
-// so r10 is free again for the scan counter. Most other differences follow.
+// (07.gcse: expressions 3 and 11) and takes every later position address from
+// that one pseudo, here r8 for the whole function. The listing builds the
+// address afresh after each call (add r2, sp, #28; add r6, sp, #28), sets
+// terrainId's address after the label, and so frees its high registers: r8 for
+// IwramMulQ16 then flags, r10 for p then the scan counter, r9 angle, r11 cell.
+// Here z takes r9, angle r11, cell r10, the scan counter a caller-saved r4 and
+// IwramMulQ16 a caller-save slot, sp+4. Every skeleton line left is one of
+// these reloads or a schedule that follows it; none is a source shape.
 // Why no plain form was found: PRE needs only that an operand stays unchanged
-// around the loop, and a frame address has no operand C can set; for a function
-// this size gcse.c stands aside only if it calls setjmp. Reload cannot
-// rematerialize the address either: the pseudo PRE creates has no REG_EQUIV note.
-// Measured, not kept: empty asm operands re-setting object at the label do stop
-// the terrainId hoist; with the two pointer sets also through them differ was
-// 211, gap 30 and 33, but the hoisted address then took a stack slot (sub sp,
-// #44), so short of differ 0 the devices came back out.
-// An analysis-only compile with -fno-gcse rebuilds the address after the label
-// as the listing does (with r8 for r10); only its first blocks were read, and no
-// whole-function differ was taken. That is a compiler question (K3) for Pascal,
-// out of scope here. Overlays 68f (0200189c) and 6ad (02004140) stop at the same
-// point, so one answer would reach this family.
-// Tried at the real options: separate p and q (232, gap 92), s32 angle (217, but
-// gap 95, so not kept), position[] in either or both parts (232), p or layer set
-// before the label (232), layer through object each time (226), scan locals in
-// an inner block (232), cell declared first (226).
+// around the loop, and a frame address has no operand C can set. Reload cannot
+// rematerialize the address either: PRE's pseudo has no REG_EQUIV note.
+// Tried at the real options, no instruction changed (differ 224): declaration
+// order of x and z, angle, cell, the scan locals, radius; s32 angle; a MulQ
+// local; a dist local; targetX before targetZ; layer through object each time;
+// x and z set apart from their stores; flags as entry + 89; the scan's steps in
+// its for header; i < 64; goto forms of the walk, the scan, or both. Worse: q
+// apart from p (230, gap 43/47), no p at all (230), p set once (230).
+// Measured, not kept: empty asm operands re-setting object at the label stop
+// the terrainId hoist; with the two pointer sets too, 211, gap 30/33, but the
+// hoisted address then took a stack slot. Such devices are ruled out here.
+// A compiler question, out of scope, for Pascal: every &position site in the
+// listing follows a call, as if a call killed frame addresses for GCSE, and
+// IwramMulQ16's callee-saved home fits refs not weighted by the retry loop's
+// depth. Overlays 68f (0200189c), 6ab (02002dc4) and 6ad (02004140) stop at the
+// same point, so one answer would reach this family.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

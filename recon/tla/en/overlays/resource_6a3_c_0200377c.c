@@ -1,25 +1,29 @@
-// Draft, differ 221 of 200, skeleton gap 26 (tla-en, 2026-11-01)
+// Draft, differ 218 of 200, skeleton gap 24 (tla-en, 2026-11-01)
 // Overlay 6a3's copy of the function drafted in resource_69d/02008e58.c
 // (overlay 69d's Func_02000e58). Shape follows the matched sibling in
 // games/tla/src/field/map/cell_sprite.c (view, x, sy, masks in place).
-// Left, from the dumps (diff --rtl):
+// The gap left is allocation and the moves and reloads it forces; the body's
+// shape is closed. Three causes, from the diff --rtl dumps:
 // - Registers. Listing: actor r5, oam r6, frame r7, viewZ r8, i r9, viewX r10,
-//   depth r11, large ip; tile sp+4, viewY sp+0. Draft ranks i, depth, viewY,
-//   viewZ, viewX, tile, so viewX takes the stack slot. The listing needs viewX
-//   and viewZ above i (priority 2*5/120 against 3*10/208), which is at least
-//   three more refs each at lreg, and final code shows one use each. Not found.
-//   viewY set first, or i set twice, only permutes the high registers.
-// - gData_02005a82's address: PRE copies it (a pool load available from the
-//   top test along every continue path), and the listing reloads it. A
-//   memory-clobber asm at the top of the body stops that (0 substs, differ
-//   209), and a set-once pointer local is rematerialized but PRE then takes
-//   *count; neither reached 0, so both came out.
-// - The -1 compare hoists on loop.c's second pass: 15 * 2 * life 4 >= 117 real
-//   insns. Four more real insns in the loop, or life 3, keeps it in the body.
-// - A goto loop loses -16 and -64: loop.c's single-use constant substitution
-//   needs loop notes and a call, else combine folds to -15 and -63 with blt.
-// Tried: 4,600 combinations of statement order, sx/sy/x reuse, a large local,
-// a timer pointer (the listing's shared adds #100), word and mask order.
+//   depth r11, large ip; tile sp+4, viewY sp+0. r8, r10, r9, r11 is allocation
+//   order, so it wants viewZ > viewX > i > depth > viewY > tile. Here refs and
+//   live are viewX 5/119, viewZ 5/116, viewY 5/104, depth 4/76, i 10/208,
+//   tile 3/107, which ranks i, depth, viewY, viewZ, viewX, tile.
+// - gData_02005a82's address: PRE carries the top test's load to the bottom
+//   test in one pseudo (reg 166) across both calls. The listing reloads it.
+// - The -1 compare hoists on loop.c's second pass into a call-crossing pseudo
+//   (reg 129); the listing keeps it in the body. Those two extra pseudos take
+//   registers the listing gives to its locals.
+// A goto loop keeps -1 in the body but loses -16 and -64 (combine folds to -15
+// and -63 with blt): differ 233, gap 34. It does not stop PRE.
+// Compiler lead, out of scope here, for Pascal (K3): all three fit
+// optimize_size, untested. flow.c counts refs flat there, which gives viewX 4,
+// viewZ 4, i 6, viewY 3, depth 2, tile 2: the listing's order but for
+// viewY over depth; gcse.c runs classic GCSE and hoisting instead of PRE;
+// loop.c skips move_movables, so nothing leaves the body.
+// Kept because they closed gaps: y, x, z in that order (gap 26 to 24);
+// sx, sy and x reuse, word's position, large as a read in place, a shared
+// priority local and the depth shift split all measured same or worse.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -57,15 +61,16 @@ void Func_0200377c(void) {
 
   for (i = 0; i < gData_02005a82; i++) {
     struct FieldActor *actor;
-    s32 x, y, z, depth, frame, sx, sy, ox, oy, diff, large;
+    s32 x, y, z, depth, sx, sy, ox, oy, diff, large;
+    s16 frame;
     u32 *word;
     u16 *timer;
 
     actor = gData_02005a84[i];
     if (actor == 0 || actor->x == 0)
       continue;
-    x = actor->x - viewX;
     y = actor->y - viewY + 0x80000;
+    x = actor->x - viewX;
     z = actor->z - viewZ - viewY;
     diff = z - y;
     depth = ((y + z) >> 16) + 58;
@@ -74,7 +79,7 @@ void Func_0200377c(void) {
     x >>= 16;
     sy = diff >> 16;
     if (large == 0) {
-      frame = (s16)*timer;
+      frame = *timer;
       ox = x - 8;
       oy = sy - 16;
       if (ox <= -16 || ox >= 320 || oy <= -16 || oy >= 240)
@@ -85,7 +90,7 @@ void Func_0200377c(void) {
       *word++ = 0;
       *word++ = oy | (ox << 16) | 0x40002000;
     } else {
-      frame = (s16)*timer;
+      frame = *timer;
       ox = x - 8;
       oy = sy - 64;
       if (ox <= -32 || ox >= 320 || oy <= -64 || oy >= 176)

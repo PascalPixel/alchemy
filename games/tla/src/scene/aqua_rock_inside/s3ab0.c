@@ -55,11 +55,6 @@ void Func_02003ab0(const u16 *spots, const u16 *levels, void (*handler)(void)) {
       x = *spots++;
     }
     if (levels != 0) {
-      /* FAKEMATCH(barrier): the form kept; as no asm, 89 of 112 instructions
-       * differ in tla-en. */
-      asm(""
-          :
-          : "r"(levels), "r"(levels), "r"(levels), "r"(levels), "r"(levels));
       x = *levels++;
       i = 0;
       if (x > 0) {

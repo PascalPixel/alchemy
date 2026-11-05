@@ -1,4 +1,4 @@
-// Draft, differ 237 of 347, skeleton gap 45 removed, 48 added (tla-en, 2026-11-01)
+// Draft, differ 235 of 347, skeleton gap 44 removed, 47 added (tla-en, 2026-11-01)
 // Written from the listing (no twin: the same retry, step and 64-object scan as
 // Func_02001770, Func_02001d3c, 6ad 02004140 and 68f 02001b48, which stand at
 // gap 88 to 97 or are unmeasured). Calls, branches, loops and frame agree.
@@ -14,8 +14,11 @@
 // changed nothing (dump checked). Why the native escapes PRE is a compiler
 // question, out of scope for a draft.
 // Measured lead, not kept: object = actor copied at the label stops the
-// object + 34 hoist: differ 229, gap 41/42. It is a forced temporary (S2) and
+// object + 34 hoist: differ 227, gap 40/41. It is a forced temporary (S2) and
 // does not reach differ 0, so it came back out.
+// Re-measured on the 1 November compiler: the gap is still these two hoists, and
+// the native keeps r10 for the slot count and r6 for a second target set in the
+// loop test, which only appear once they are gone (second target alone: 44/49).
 // gData_02002ce8 measures best as volatile s16 (reloaded at each test, ldrh with
 // lsls 16; volatile u16 51/55, plain s16 57/64), an inference from the code, so
 // this draft has its own includes: local.h says plain u16. Adopting needs that declaration
@@ -27,7 +30,11 @@
 // u16 heading (62/67); heading == -1 (47/50); terrainId direct, a flags
 // pointer, for-step other++, inner scopes for dx and dz, the sum in the compare,
 // s32 heading, a function-pointer local for the multiply: all unchanged;
-// x and z declared first (247); indexing other from slot (252).
+// x and z declared first (247); indexing other from slot (252). Also, on the new
+// compiler: for (;;) retry (53/56); shared i for the scan (44/55); slot != 64
+// (46/49); volatile u16 (48/47), plain u16 (49/50), plain s16 (55/58); a for
+// second wait loop (46/52); declaration swaps, inner scopes, target or layer set
+// later, target passed to the polar call: all unchanged.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

@@ -1,4 +1,4 @@
-// Draft, differ 491 of 632, skeleton gap 109 (tla-en, 2026-11-01)
+// Draft, differ 490 of 632, skeleton gap 53/55 (tla-en, 2026-11-01)
 // Whirlwind in Air's Rock: a gust (object type 280)
 // rises from the target (the effect work's object at 0x14) and grows,
 // shedding sparks (object type 0x2a0, Func_02000840) every fourth frame
@@ -10,21 +10,29 @@
 // source and offset), copying its cells and attributes along each fourth
 // frame while it throws dust, sets that thing's flag (0x850 + hit - 1)
 // with cue 298; then the gust shrinks and rises away over 8 frames.
-// Left: allocation, and it needs lighter refs than alchemy-gcc gives. The
-// native's frame is 128 and it saves nothing around a call in the blow loop:
-// the cell copies sit in r10 and r9, 0x10000 in r10 across Math_Cosine, 3 in r4.
-// Those refs are 6, 5 and 3 unweighted, none above 4 * calls crossed, so r4 and
-// r2 are not profitable; at flow's weight of 2 for a loop they are, which gives
-// cellX r4 with a save at sp+16, 0x10000 r2 with a save at sp+20, a frame of 136
-// and a rotated reload set for the whole function. A second entry into the loop
-// (so it is no natural loop) gives the frame of 128 at once: `if ((hit & 3) >= 0)
-// goto blowTest;`, always true, folded by combine to the listing's plain `b`.
-// With the same on travel it reached differ 389, skeleton gap 47; it is dead code
-// on every loop, not source, and left out. The native looks as if goto loops had
-// no weight: that is a compiler question (K3), not settled here.
-// Also left: the native computes the [hit][1] offset (r8) before the branch on
-// hit & 1. An unread `sourceY = (u16)gData_02004674[hit][1];` beside sourceX
-// gives it and differ 422, skeleton gap 57, but is a dead device short of 0.
+// Left: allocation; the shape is otherwise the native's. alchemy-gcc weights refs
+// by loop depth and the native does not seem to: at flow's weight, steps (9 refs)
+// and the gFrameCount address (pseudo 110) outrank leader, which takes r11, not
+// r10, and the frame is 136, not 128, with the table in r4 saved at sp+16 and
+// 0x10000 in r2 saved at sp+20. The native saves nothing around a call in the blow
+// loop: cell copies in r10 and r9, 0x10000 in r10 across Math_Cosine, 3 in r4. Their
+// refs are 6, 5 and 3 unweighted, none above 4 * calls crossed. Every sp and pool
+// offset and most registers differ from that alone, so differ overstates the gap.
+// A second entry into the loops (`if ((hit & 3) >= 0) goto blowTest;`, always true,
+// folded by combine) gives the frame of 128: differ 419, skeleton gap 61/68 on blow
+// alone, 424, 47/47 with travel too (1 November); it is dead code, not source.
+// Also left, none of it closable in plain C here: the native computes the [hit][1]
+// offset (r8) before the branch on hit & 1, as if hoisted out of both arms (an
+// unread `sourceY = (u16)gData_02004674[hit][1];` gives it, a dead device), and
+// reloads 1 at hit & 1 and in the arms, where CSE skips the first `if` around its
+// block and shares the 1 in r9. A label in that block would stop the skip; a static
+// inline around Effect_Spawn is a new wrapper and measured worse (496, 55/57).
+// Unweighted refs and hoisting out of both arms both read like -Os, against K1 and
+// K2: a compiler question for Pascal (K3), not settled here.
+// Tried, no change: flag in two or three statements, declaration orders, cell
+// copy order, direct last call. Worse: Call wrappers removed (508), while for the
+// travel and blow loops (517), u16 sourceX (487, but gap 56/53, loses the ldrh).
+// 655, not 455, is the growth step: 200 << 1 + 255 in the listing.
 // Found: x and z (sp+20), dx and dz (sp+28) are 8-byte structs. A DImode pseudo
 // written by the word keeps the native's otherwise dead store before the travel
 // loop, and the copies in the blow loop survive CSE. The target is read at each
@@ -129,8 +137,8 @@ void Func_0200095c(void) {
       spark->update = Func_02000840;
     }
     if (gFrameCount & 1) {
-      gust->scaleX += 455;
-      gust->scaleY += 455;
+      gust->scaleX += 655;
+      gust->scaleY += 655;
       Actor_SetPartAttribute(effect->target, 15);
     } else {
       Actor_SetPartAttribute(effect->target, 4);

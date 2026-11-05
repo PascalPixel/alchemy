@@ -27,7 +27,7 @@ SECTIONS
         "*/games/tla/src/scene/kibombo/s3184.o"(.text)
         "*/games/tla/src/scene/kibombo/s31f0.o"(.text)
         "*/games/tla/src/scene/kibombo/s32b0.o"(.text)
-        "*/resource_670_overlay.o"(.text.x0200b308)
+        "*/games/tla/src/scene/kibombo/s3308.o"(.text)
         "*/resource_670_overlay.o"(.text.x0200b504)
         "*/games/tla/src/scene/kibombo/s3610.o"(.text)
         "*/games/tla/src/scene/kibombo/s37e4.o"(.text)

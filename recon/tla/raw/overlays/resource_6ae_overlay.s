@@ -147,50 +147,6 @@ Func_020001d8:
 	.4byte Data_0200eb60
 .L_02008310:
 	.4byte Func_020004a4
-	.section .text.x02008450,"ax",%progbits
-	.global Func_02000450
-	.thumb_func
-Func_02000450:
-	push {lr}
-	ldr r3, .L_02008498
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #1
-	bne .L_02008476
-	movs r0, #160
-	lsls r0, r0, #4
-	adds r0, #61
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008476
-	movs r0, #1
-	bl Func_020057d4
-.L_02008476:
-	ldr r3, .L_02008498
-	movs r2, #253
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r0, [r3, r2]
-	ldr r2, .L_0200849c
-	ldr r3, .L_020084a0
-	movs r1, #160
-	subs r3, r3, r2
-	adds r0, r0, r3
-	lsls r1, r1, #19
-	bl Func_020055dc
-	movs r0, #0
-	pop {pc}
-	.2byte 0x0000
-.L_02008498:
-	.4byte gMainRoutineWork
-.L_0200849c:
-	.4byte 0x0000010e
-.L_020084a0:
-	.4byte 0x00000121
 	.section .text.x020084a4,"ax",%progbits
 	.global Func_020004a4
 	.thumb_func

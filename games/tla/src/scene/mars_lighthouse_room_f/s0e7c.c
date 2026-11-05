@@ -1,9 +1,5 @@
 #include "edition.h"
-
-// The Japanese form differs and is still on its listing.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-
-#include "room.h"
+#include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
 
 extern char SceneId_Ov6adRoom1;
 extern char SceneId_Ov6adRoom2;
@@ -192,7 +188,9 @@ s32 Func_02000e7c(void) {
     BYTE_AT(Actor_GetById(9), 98) = 1;
     if (entrance - 5 <= 1U || entrance == 8) {
       Func_02002624(gData_02005c4c, gData_02005c5a, 0, 88);
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       Func_020002ec();
+#endif
     } else if (entrance == 11 || entrance == 13 || entrance == 14 ||
                entrance == 1 || entrance == 15) {
       Func_02002624(gData_02005c60, gData_02005c6e, 0, 88);
@@ -216,5 +214,3 @@ s32 Func_02000e7c(void) {
   }
   return 0;
 }
-
-#endif

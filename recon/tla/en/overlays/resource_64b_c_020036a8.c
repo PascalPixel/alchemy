@@ -1,40 +1,38 @@
-// Draft, differ 251 of 260, skeleton gap 27 (tla-en, 2026-11-01)
+// Draft, differ 147 of 260, skeleton gap 11 (tla-en, 2026-11-01)
 // Shows the world map's placed objects that come within the view and whose
 // flags allow them, hides those that leave it, and starts a placement's
 // event when the leader touches it. Overlay 64c has the same code (its
-// Func_02000d64), so what closes one closes the other.
-// Left: allocation. The native is placement r8, leader r10, work r9, slot r11,
-// i spilled at sp+16; here slot and i outrank leader and work, so work spills
-// and nearly every register moves. From the lreg dump, priority is leader 7
-// refs over 146, work 6 over 140, slot 11 over 118, i 9 over 228 (doubled by
-// its REG_EQUIV zero). The native's order needs leader 9, work 8, a slot
-// doubled once (236), and i as it is. Those are exactly the counts if the
-// four leader and work uses after routine->ownerOverride sit one loop level
-// deeper at flow (12.life), and the listing has no such back edge, so
-// something folds it after flow. No plain source for that was found.
-// Measured with devices, not kept because none reached differ 0:
-// - `check:` before the ownerOverride test, with `again = placement->unk01;
-//   if (again & 256) goto check;` after it (s32 again; combine folds it, while
-//   again >= 256 and object & 1 stay as code): gives leader 9, work 8, i 10
-//   over 240, and the native's four registers at last, without touching i.
-// - slot needs its REG_EQUIV: `slot = gData_02006c08` at the loop start, with
-//   the pool load kept before the if by a dead `u8 read = placement->kind; u8
-//   kind = read + (s32)objects;`, which gcse turns into the native's r2 and r4
-//   loads and `mov r11, r4`. Together, as a goto loop: differ 168, gap 13.
-// - Still missing then: the `adds r3, r2` of kind before the first test
-//   (combine folds the copy into the compare, or global ties the registers;
-//   a forward jump over the copy and an extra use of kind both failed) and a
-//   reload rotation of one in the spill registers. i = 0 and slot set in both
-//   arms give the right ranks too (length times 4) but reload's r3, r5, r1
-//   order through the arms shows i = 0 follows the second arm, once.
-// Plain forms: object doubling as the view center gives the native's r6
-// there (a separate center takes r3). Head order: x, z, objects, zoom 251,
-// gap 27; x, z, zoom, objects 259, gap 21; zoom first 279. With the older
-// notes: radius * scale 257; the flag read four times 287; indexing
-// placements[i] and gData_02006c08[i] 262; slot initialized at its declaration
-// 281; a local party pointer 289; a real for loop gives the first test's load,
-// not the copy, and `next = i + 1` tested at the bottom (a temporary) drops i
-// to 7 refs and spills it but leaves leader, work and slot rotated (203).
+// Func_02000d64), so what closes one closes the other: its draft still has
+// the old shape, and this one's head order, goto loop and arms should carry.
+// Now right: the native's four registers (placement r8, leader r10, work r9,
+// slot r11, i spilled at sp+16), the loop shape and the head's loads. The
+// goto loop with its test at the bottom, kind read before the if, and slot
+// and i set in the arms did that; a real for or while took 207 to 215 here.
+// Why the arms: each constant set doubles a pseudo's live length, so slot
+// (11 refs) and i (9 refs) at 4x fall below leader and work.
+// Left, 10 removed and 11 added in the skeleton, all around one place:
+// - `i = 0` is in the wrong place, and this form is known not to be the
+//   source's. The native has one `movs r3, #0; str r3, [sp, #16]` after the
+//   second arm: reload's picks run r3, r5, r1, r3 through the first arm and
+//   r5, r3, r5, r1, then r3 for i, so the first arm reloads nothing for i.
+//   Set only there (`i = 0` before the test), i at 2x outranks work: differ
+//   158, gap 14, i in r10 and slot spilled. i wants 7 refs or a third
+//   doubling; `next = i + 1` gives 7 but is a `temporary`. ++i in the test,
+//   i = i + 1 and u32 i = 0 at its declaration (185) did not change it.
+// - `adds r3, r2` before the first test is missing, so kind stays in r1 here
+//   and one fewer pick rotates the loop's scratch registers (r5, r1, r0 in the
+//   native). It survives combine only if it is in another block from the
+//   test. `kind = first` in both arms is propagated away by cprop; a second
+//   local k set in the join or at the bottom folds the same (158), and a
+//   while or do over kind itself takes 207. Unfound: a plain form that keeps
+//   a copy. A dead `(kind = placement->kind)` load keeps it but is a device.
+// - The head's constant is r2 for the native's r3, and the x, kind pair is
+//   swapped; every order of center, x, z, zoom, kind, objects and routine was
+//   measured (1680): this one has the lowest gap, 146 is the lowest differ
+//   (center, x, zoom, kind, z, objects, routine) at gap 14.
+// i's place in the arms is steered: first arm at its end, second at its start,
+// slot last in each (other places 151 to 202). `kind` read once before the
+// if is the listing's own load.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -82,10 +80,11 @@ void Func_020036a8(void) {
   struct Actor **slot;
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *object = work->viewCenter;
+  s32 zoom = Ram_HeapSlots->mapWork->zoom;
   s32 x = object->x;
+  u8 kind = placement->kind;
   s32 z = object->z;
   struct Actor **objects = gData_02006c08;
-  s32 zoom = Ram_HeapSlots->mapWork->zoom;
   struct MainRoutineWork *routine = &gMainRoutineWork;
 
   if (zoom <= 0x10000) {
@@ -93,18 +92,23 @@ void Func_020036a8(void) {
     right = x + 0xa00000;
     top = z - 0x12c0000;
     bottom = z + 0xc80000;
+    i = 0;
+    slot = objects;
   } else {
+    i = 0;
     left = x - 0xf00000;
     right = x + 0xf00000;
     top = z - 0x1c20000;
     bottom = z + 0x12c0000;
+    slot = objects;
   }
-  for (i = 0, slot = objects; i < 128 && placement->kind != 0;
-       i++, slot++, placement++) {
+  if (kind == 0)
+    return;
+top : {
     s32 px, pz;
 
     if (placement->unk01 == 15)
-      continue;
+      goto next;
     object = *slot;
     px = placement->x << 16;
     pz = placement->z << 16;
@@ -124,7 +128,7 @@ void Func_020036a8(void) {
 
           object = Func_02004b30(placement->sprite, px, 0, pz);
           if (object == NULL)
-            continue;
+            goto next;
           Func_02004b20(object, gData_02006bd4);
           object->motionFlags = 0;
           object->collisionFlags = 1;
@@ -153,12 +157,18 @@ void Func_020036a8(void) {
             }
           }
         }
-        continue;
+        goto next;
       }
     }
     if (object != NULL) {
       Func_02004b38(object);
       *slot = NULL;
     }
-  }
+  next:
+    slot++;
+    placement++;
+    i++;
+    if (i < 128 && placement->kind != 0)
+      goto top;
+}
 }

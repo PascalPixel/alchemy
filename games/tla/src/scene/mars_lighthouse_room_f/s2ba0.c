@@ -62,7 +62,7 @@ s32 Func_02002ba0(void) {
 #else
   /* FAKEMATCH(wrapper): called through a cast to the int-returning
    * two-argument type, which sets r1 before negating r0; as Func_02002800(),
-   * 5 of 138 instructions differ in tla-en. */
+   * 3 of 138 instructions differ in tla-en. */
   ((s32 (*)(s32, s32))Func_02002800)(-10, 0);
 #endif
   Func_020055d0(0x70000, 0xe000);
@@ -75,36 +75,19 @@ s32 Func_02002ba0(void) {
   leader->update = (void (*)(void))Func_02002954;
   leader->angle = 0x4000;
   Func_02005480(leader, 49);
-  // A goto loop: as a while loop, 17 of 138 instructions differ in tla-en.
-  if (ride->unk6c->action != 0)
-    goto done;
-step:
-  {
-    s32 kind = Func_020054d8(0, leader->x, leader->z);
-    struct Actor *actor = ride->unk6c;
-
-    if (kind != 7) {
-      leader->x += ((s32 *)actor->unk70)[0];
-      leader->z += ((s32 *)actor->unk70)[2];
+  while (ride->unk6c->action == 0) {
+    if (Func_020054d8(0, leader->x, leader->z) != 7) {
+      leader->x += ((s32 *)ride->unk6c->unk70)[0];
+      leader->z += ((s32 *)ride->unk6c->unk70)[2];
     } else {
-      if (((s32 *)actor->unk70)[0] != 0)
+      if (((s32 *)ride->unk6c->unk70)[0] != 0)
         leader->x = (leader->x & 0xfff00000) + 0x80000;
-      {
-        /* FAKEMATCH(temporary): the actor at unk6c reread through a pointer
-         * to its slot, which keeps the load where the two tests join; as
-         * ride->unk6c, 9 of 138 instructions differ in tla-en. */
-        struct Actor **slot = &ride->unk6c;
-
-        if (((s32 *)(*slot)->unk70)[2] != 0)
-          leader->z = (leader->z & 0xfff00000) + 0x80000;
-      }
+      if (((s32 *)ride->unk6c->unk70)[2] != 0)
+        leader->z = (leader->z & 0xfff00000) + 0x80000;
     }
     ride->active = 0;
     wait(1);
   }
-  if (ride->unk6c->action == 0)
-    goto step;
-done:
   FieldEvent_Wait(30);
   leader->update = 0;
   Animation_ApplyChildValues(leader, 0);

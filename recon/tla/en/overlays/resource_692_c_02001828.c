@@ -1,37 +1,45 @@
-// Draft, differ 209 of 496, skeleton gap 103 (tla-en, 2026-11-01)
-// The frame (92), the sp offsets, the position address and the r5, r6, r7 and
-// r8 assignments are now the native's; what is left is one allocation and the
-// scheduling it moves. Three findings closed most of the distance:
-// - j is one variable for the position's address, the room 2 counter, the column
-//   and fade counters and the address of currentOwner at the end: all r6 in the
-//   native. Its other sets stop GCSE's copy propagation folding PRE's reaching
-//   register into it, and its mention after the last sp+80 stops CSE2 swapping
-//   the copy. The reaching register then takes a REG_EQUIV of sp+80, loses its
-//   allocation and reload rebuilds it, which is the native's add rX, sp, #80.
-// - p is one variable for the spawn loop and the end. As a block local CSE2
-//   folds it away; its two sets keep it, and loop.c cannot move it.
-// - srcZ is i (r8); rowAbove keeps srcZ - 1 for the closing copy (sp+16).
-// Native registers: leader r10, open r11, srcX r9, i r8, j r6, options r7, p r5.
-// Left, in order of size:
-// 1. baseX takes r11, which puts leader in r9 and open in r8: the native
-//    spills baseX, dstX and dstZ. A probe removing their zero initialisers
-//    (one reference less each, 7 instead of 8, crossing floor_log2) gave
-//    exactly the native's ranking, gap 44 with the six missing lines counted,
-//    but the native does store those zeros. One reference less on all three
-//    is also what a missing outer loop level would give (their reads at depth
-//    1 and 2 become 0 and 1); what removes it is open. for, do-while and goto
-//    rows compile identically. A DImode pair for dst.x and dst.z spills them
-//    but misorders the zero stores (differ 213).
-// 2. PRE hoists i << 18 out of the column loop (sl); the native computes it in
-//    each pass. A for loop for the columns costs 36 differ; an entry test that
-//    the last CPROP folds only moves the insertion past the test; entering at
-//    the bottom test would stop it but leaves a branch the native lacks.
-// 3. p's sets come out as add rX, sp, #80; adds r5, rX, #0, because reload
-//    loads the equivalence for a movsi; the native has the add straight into
-//    r5, before the __umodsi3 call. Setting p after the roll, or between the
-//    calls, moves it but keeps the pair.
-// Direct calls instead of Call3, Call6 or the flag wrappers cost 8 to 59 differ.
-// The arm statement orders were fitted to the old allocation; redo them after 1.
+// Draft, differ 172 of 496, skeleton gap 62 (tla-en, 2026-11-01)
+// Re-measured after the compiler change: the frame (92), the sp offsets and the
+// instruction shapes stand, and the arm statement orders below were refitted by
+// moving each statement in turn (207 to 172). What is left is allocation and
+// two gcse effects that no plain C here reproduces. All of 1 to 3 point the same
+// way, so try a source form that does them together, not three fixes.
+// Native registers: leader r10, open r11, srcX r9, i r8, j r6, options r7, p r5;
+// baseX, dstX and dstZ are spilled (sp+32, 28, 24). Draft: i r10, leader r9,
+// dstZ r11, open r8, and srcX is spilled instead.
+// 1. baseX, dstX and dstZ outrank srcX and open by one reference. Each has 5
+//    sets plus its reads in the column loops: 8 weighted references, where 7
+//    would cross floor_log2 (lreg: 8 refs over 452 to 502 insns against srcX's 8
+//    over 552 and open's 7 over 352). Removing their zero initialisers as a
+//    probe gives skeleton gap 85 where this draft then had 101, but the native
+//    stores those zeros. Exactly the three variables read inside the column
+//    loops are over-weighted, and srcX and open are not, so the native's reads
+//    weigh less than the CFG's depth here says (depth 2 and 1). A DImode pair
+//    for dst spills them but misorders the zero stores (209).
+// 2. PRE hoists i << 18 out of the column loop (the native's mov r2, r8; lsls r3,
+//    r2, #18 in each pass), and that register takes r8. A tail form with the
+//    reset beside the back edge (if (i != 10) { column = 0; goto spawn; }) still
+//    hoists (211). The sibling Func_02001350 needs asm("" : "+r"(row)) for this.
+// 3. p's sets come out as add rX, sp, #80; adds r5, rX, #0: GCSE's reaching
+//    register for the frame address has a REG_EQUIV and reload rebuilds it. The
+//    native has the add straight into r5. Moving p's set does nothing. The
+//    sibling needs asm("" : : : "sfp") for this.
+// Items 1 to 3 together look like a compiler question, which is out of scope for
+// a draft (K1 to K3); the -Os lead in the round notes would explain all three,
+// but that is inference and was not measured. No device was added for them.
+// Devices to retire before this can be adopted:
+// - j is reused for the position's address, the room 2 counter, the fade counter
+//   and the address of currentOwner: a local reused for a second value. A
+//   separate room pointer costs 137 (the frame grows to 96), an owner pointer
+//   148, a room counter or a fade counter 8 each, both of those 58. The column
+//   counter has been split off at no cost, and i also holds the source row (srcZ)
+//   before it counts rows; rowAbove keeps srcZ - 1 for the closing copy (sp+16).
+// - The Call3, Call6 and Value1 wrappers: direct everywhere costs 121. One
+//   GameFlag_ClearBit family and the second closing Func_02004d10 went direct at
+//   no cost; each other site costs 1 to 31.
+// Tried without gain: for loops for the columns (202) and fade (214), the zero
+// declarations moved, the options and closing stores reordered, *flags |= 64
+// respelled, i * 0x40000, the operands of the sums swapped.
 //
 // A Magma Rock room's opening event: the leader is centred on its cell, sound
 // 584, the screen shakes (sound 107); by room (2, 3 or 5, the last by entrance)
@@ -87,12 +95,13 @@ void Func_02001828(void) {
   u8 *flags;
   u32 i = 0;
   u32 j;
+  u32 column;
   s32 *p;
   s32 rowAbove;
 
-  /* FAKEMATCH(wrapper): the calls that repeat a constant, the flag calls and
+  /* FAKEMATCH(wrapper): the calls that repeat a constant, the flag tests and
    * the cell copies go through call.h's forwarding inlines, so that each call
-   * builds its own constants and stack arguments; as direct calls, 316 of 496
+   * builds its own constants and stack arguments; as direct calls, 293 of 496
    * instructions differ in tla-en. */
   Func_02004d40();
   Func_02004e90(0);
@@ -114,32 +123,32 @@ void Func_02001828(void) {
   // Each test reads the scene again: the native reloads gMainRoutineWork for
   // room 3's test and reuses that load for room 5's.
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room2) {
-    dstZ = 26;
     srcX = 20;
-    dstX = 84;
     baseX = 160 << 17;
     ((s32 *)j)[1] = 0;
-    ((s32 *)j)[2] = 212 << 17;
+    dstZ = 26;
     i = 89;
+    dstX = 84;
+    ((s32 *)j)[2] = 212 << 17;
     if (Value1((s32 (*)())GameFlag_Test, 768))
       open = 212;
-    Call1((void (*)())GameFlag_ClearBit, 768);
+    GameFlag_ClearBit(768);
     facing = 0;
     Func_02000694(0, 15, 13, 64);
     Actor_SetSpritePriority(15, 3);
     for (j = 0; j != 7; j++)
       Actor_SetModeById(j + 9, 1);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room3) {
-    dstX = 92;
     baseX = 224 << 17;
     dstZ = 21;
+    dstX = 92;
+    i = 83;
+    srcX = 28;
     ((s32 *)j)[1] = 0;
     ((s32 *)j)[2] = 172 << 17;
-    srcX = 28;
-    i = 83;
     if (Value1((s32 (*)())GameFlag_Test, 769))
       open = 212;
-    Call1((void (*)())GameFlag_ClearBit, 769);
+    GameFlag_ClearBit(769);
     Func_02000694(0, 24, 15, 64);
     Func_02000694(0, 9, 16, 64);
     Actor_SetModeById(11, 4);
@@ -147,26 +156,26 @@ void Func_02001828(void) {
     // The native tests and clears flag 770 in both arms.
     if (gMainRoutineWork.entrance <= 8) {
       dstZ = 13;
-      srcX = 49;
+      i = 75;
       dstX = 113;
+      srcX = 49;
       baseX = 198 << 18;
       ((s32 *)j)[1] = 0;
       ((s32 *)j)[2] = 216 << 16;
-      i = 75;
       if (Value1((s32 (*)())GameFlag_Test, 770))
         open = 212;
-      Call1((void (*)())GameFlag_ClearBit, 770);
+      GameFlag_ClearBit(770);
     } else {
-      dstX = 115;
       baseX = 206 << 18;
       dstZ = 42;
+      dstX = 115;
+      i = 104;
+      srcX = 51;
       ((s32 *)j)[1] = 0;
       ((s32 *)j)[2] = 170 << 18;
-      srcX = 51;
-      i = 104;
       if (Value1((s32 (*)())GameFlag_Test, 770))
         open = 212;
-      Call1((void (*)())GameFlag_ClearBit, 770);
+      GameFlag_ClearBit(770);
     }
   }
   Func_02004f30(181);
@@ -184,16 +193,17 @@ void Func_02001828(void) {
     options.palette = 10;
     options.script = gData_0200502c;
     // The column loop is written with goto: the native shows none of the loop
-    // pass work in it (i << 18 is not strength-reduced).
+    // pass work in it (i << 18 is not strength-reduced); as a for loop, 202 of
+    // 496 instructions differ.
     for (i = 0; i != 10; i++) {
-    j = 0;
+    column = 0;
   spawn:
     p = position;
     p[0] = baseX + ((Random16Far() % 48) << 16);
     Func_0200015c(p[0], p[1], p[2] + (i << 18) + 0x170000,
                   0, 0x10000, 0, 0x330000, &options);
-    j++;
-    if (j != 6)
+    column++;
+    if (column != 6)
       goto spawn;
     wait(3);
     Call6((void (*)())Func_02004cd8, 75, 64, dstX, dstZ, 3, (i >> 1) + 1);
@@ -201,7 +211,7 @@ void Func_02001828(void) {
     // The fade loop is written with goto: the native builds both register
     // addresses and loads 16 and 0x3f44 from the literal pool on every pass,
     // where the loop pass hoists all four out of a for loop; as a for loop,
-    // 369 of 496 instructions differ.
+    // 214 of 496 instructions differ.
     j = 0;
   fade:
     REG_BLDALPHA = ((j >> 2) << 8) | (16 - (j >> 2));
@@ -216,7 +226,7 @@ void Func_02001828(void) {
     Actor_GetById(15)->priorityFlags |= 1;
   Func_02004f30(288);
   Func_02004f30(181);
-  Call3((void (*)())Func_02004d10, 0x50000, 0x70000, 0x10000);
+  Func_02004d10(0x50000, 0x70000, 0x10000);
   Call3((void (*)())Func_02004d10, -1, -1, 0xe666);
   Call6((void (*)())Func_02004cd8, 72, 63, srcX, rowAbove, 3, 4);
   Func_02004d18();
@@ -227,7 +237,7 @@ void Func_02001828(void) {
   Actor_GetById(*(s32 *)j)->actionFlags &= ~1;
   /* FAKEMATCH(temporary): the position's address held in a pointer, so that
    * the two halfword reads are taken from it as the native does (movs r2, #2;
-   * ldrsh r1, [r5, r2]); as position[] and ((s16 *)position)[1], 259 of 496
+   * ldrsh r1, [r5, r2]); as position[] and ((s16 *)position)[1], 220 of 496
    * instructions differ in tla-en. */
   p = position;
   p[0] = (leader->x & 0xfff00000) + 0x80000;

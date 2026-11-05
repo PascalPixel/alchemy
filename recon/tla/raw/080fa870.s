@@ -110,7 +110,7 @@ Func_080fa870:
 .L_080fa944:
 	asrs r0, r0, #2
 	lsls r0, r0, #2
-	bl Func_08104ef8
+	bl Menu_CreateOwnerEntryObjects
 	movs r0, #1
 	bl wait
 .L_080fa952:
@@ -395,7 +395,7 @@ Func_080fa870:
 .L_080fab90:
 	asrs r0, r3, #2
 	lsls r0, r0, #2
-	bl Func_08104ef8
+	bl Menu_CreateOwnerEntryObjects
 	ldr r0, [r6, #16]
 	ldr r1, [sp, #12]
 	mov r2, r9

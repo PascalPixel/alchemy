@@ -1,35 +1,47 @@
-// Draft, differ 695 of 902, skeleton gap 141 (tla-en, 2026-11-01)
-// The same 55 calls and control flow, and the frame is now the native's 132
-// bytes with every spill slot where it belongs. What is left is one register
-// rotation: the native keeps r4 out of the reloads (spill set r0, r1, r2, r3,
-// r5, r7), here r4 is a reload register. In the grid the base copy Q (quad[5],
-// [17], [19]) lands in r0 and u in r4, where the native has r4 and r0, and quad
-// and vertex swap r1 and r2; the scratch rotation then runs through the whole
-// function. Next: find what holds r0 when Q is allocated. The lreg and greg
-// dumps say Q ranks just before column; u, quad and vertex fill r3 to r1, so
-// the native has one more low-register pseudo live there. The column * 11
-// temporary (spilled to sp+12 in both) is the suspect: the native deletes that
-// store, this build keeps it.
+// Draft, differ 276 of 902, skeleton gap 80 (tla-en, 2026-11-01)
+// The instruction count, the frame and every spill slot now match; the base,
+// a, x, row and column are in the native's r9, lr, r10, r11 and r8. What is
+// left is one allocation, and the rest of the gap is its reload rotation (the
+// model stores, the camera, scratch registers after the grid). In the column
+// loop the native has Q (the row base copy: quad[5], [17], [19], and b, c, d)
+// in r4, u in r0 and vertex in r1; here Q is r0, u is r1 and vertex is r4. The
+// native also has one copy, mov r4, r9; here it is mov r4, r9 then adds r0, r4,
+// i (r48) dying into the hoisted row << 4 (r134). And the native's vertex start
+// is r4 << 2, where cse folds this to row << 6 through i's REG_EQUAL.
+// Next, from the lreg and greg dumps: the priorities are u 1.89, vertex 1.55,
+// column 1.47, r134 1.39, i 1.29, and strb makes these LO_REGS first. So the
+// native wants vertex above u, and Q above column or Q and i as one pseudo. The
+// direct reading is that Q is i itself, which crosses calls and so can only be
+// r4, but gcse's copy propagation replaces i with the base in the column loop
+// whenever i = v is a plain copy, and i = row << 4 alone is not reduced in the
+// outer loop (no r9 at all, column takes r4). Find the source that keeps i live
+// through the column loop with a still reading the base.
+// i = v is the weak point here: i dies at once and only steers allocation, and
+// without it differ goes to 845. It predates this round, so it stays as a known
+// problem, not as a form to copy.
 // Found by reading the loop, gcse and cse2 dumps, each step measured:
-// - The native's r9 is one row base reduced by the outer loop; its copy in r4
-//   is a pseudo hoisted out of the column loop, so row << 4 is written again in
-//   the if block. A local there is replaced outright and leaves no copy.
-// - row * 15 must sit in the if block, or its row << 4 reaches the first block,
-//   gcse's copy propagation rewrites the later uses, and the row base goes.
-//   That needs mesh in the row body so the pool load still leaves the loop.
-// - A plain shift has no REG_EQUAL note. row * 16 leaves one on the combined
-//   giv and cse2 folds base << 2 to row << 6, so row << 4 must come first.
-// - b, d, c in that order keep +1, +16 and +17 in their own registers (+16
-//   after +17 is derived from it) and give r5, r6 and sp+8.
-// - i = v frees r4 from column, which then takes r8 as in the native, and x, the
-//   base and row fall into r10, r9 and r11.
+// - The native's slots come from the order the outer loop finds its givs:
+//   row * 24, then row << 4 + 15, then row * 15. So quad stays in the if block;
+//   at the top of the column loop the three slots rotate.
+// - mesh and cells are row-level constants: they settle the pool loads and put
+//   vertex's start beside quad's, so r3 is free for both and quad takes r2.
+// - a = i + column reads the base (lr, r9 + r8), and row << 4 in the if block
+//   gives the hoisted copy. Sweeping i, v and row << 4 at each use found this.
+// - (16 - column) * height, Trig_Sin(..) * amplitude and Trig_Sin(..) * height
+//   give the native's multiply operands; position = &screen after the picture
+//   test gives r5 and r6.
+// - b, d, c in that order keep +1, +16 and +17 in their own registers.
 // - blit[2] gives the 8-byte slot at sp+76; Task_Add and
 //   BattleEffect_LoadBlitter return s32.
 // - In the bubble loop, step = &work->particles[i] with the calls on
-//   &work->particles[i] gives r7 and its copy in r8, as in the native.
-// No effect: a local for column * 11, 11 * column, declaration swaps at function
-// level, s32 returns on the other prototypes. Putting the index stores out of
-// order gains 15 and has no meaning, so it was not kept.
+//   &work->particles[i] gives r7 and its copy in r8.
+// No effect or worse (about 25,000 forms swept): every mix of i, v and row << 4
+// at each use, row * 16, a hand-stepped base (983), i set in the column loop
+// (458) or the if block, quad at the top of the loop or from a - row, a local
+// for the +15, the vertex pointer's spellings, declaration orders, separate
+// grid counters (845, 511). Reordering the stores, in data order or at random,
+// moves u's live length but only as noise (best 264) and has no meaning, so
+// it was not kept. No device was added.
 // Decompiled from the listing.
 
 #include "types.h"
@@ -206,21 +218,22 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     s32 v = row << 4;
     s32 x = -60;
     u8 *mesh = gData_02014000;
+    s8 *cells = (s8 *)gMapCellBuffer;
 
     i = v;
 
     for (column = 0; column != WATER_COLUMNS; column++, x += 8) {
-      s8 *vertex = (s8 *)gMapCellBuffer + (i + column) * 4;
+      s8 *vertex = cells + (i + column) * 4;
       s32 u = column * 8;
-      s32 a = v + column;
+      s32 a = i + column;
 
       vertex[0] = column * 11 - 82;
       vertex[1] = 60;
       vertex[2] = row * 24 - 84;
       if (row <= 6 && column <= 14) {
-        s32 b = (row << 4) + column + 1;
-        s32 d = (row << 4) + column + 17;
-        s32 c = (row << 4) + column + 16;
+        s32 b = i + column + 1;
+        s32 d = i + column + 17;
+        s32 c = i + column + 16;
         u8 *quad = mesh + (row * 15 + column) * 24;
 
         quad[4] = x + 67;
@@ -231,9 +244,9 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         quad[9] = (row << 4) + 15;
         quad[16] = u;
         quad[20] = u;
-        quad[5] = row << 4;
-        quad[17] = row << 4;
-        quad[19] = row << 4;
+        quad[5] = (row << 4);
+        quad[17] = (row << 4);
+        quad[19] = (row << 4);
         quad[21] = (row << 4) + 15;
         quad[0] = b;
         quad[1] = d;
@@ -343,12 +356,9 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       s8 *vertex = (s8 *)gMapCellBuffer + offset + 1;
 
       for (column = 0; column != WATER_COLUMNS; column++) {
-        s32 amplitude = height * (16 - column) / 32;
+        s32 amplitude = (16 - column) * height / 32;
 
-        *vertex = ((amplitude * Trig_Sin(angle + column * 5000 +
-                                         Trig_Sin(row * 3553))) >>
-                   16) -
-                  amplitude + 64;
+        *vertex = ((Trig_Sin(angle + column * 5000 + Trig_Sin(row * 3553)) * amplitude) >> 16) - amplitude + 64;
         vertex += 4;
       }
     }
@@ -356,10 +366,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     for (i = 0, bubble = work->particles; i != 20; i++, bubble++) {
       if (bubble->variant == 0) {
         bubble->y =
-            (((height * Trig_Sin(angle + Trig_Sin(3552 + i * 888))) >>
-              16) -
-             height + 64)
-            << 16;
+            (((Trig_Sin(angle + Trig_Sin(3552 + i * 888)) * height) >> 16) - height + 64) << 16;
       }
     }
 
@@ -410,11 +417,12 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       for (i = 0; i != 20; i++) {
         struct EffectStep *step = &work->particles[i];
         s32 picture = step->variant;
-        struct EffectPosition *position = &screen;
+        struct EffectPosition *position;
 
         if (picture < 0) {
           continue;
         }
+        position = &screen;
         if (EffectPosition_ProjectPoint(&work->particles[i], position) == 0 &&
             HI(position->depth) > 10) {
           s32 x = HI(position->x);

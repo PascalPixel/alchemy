@@ -770,66 +770,6 @@ Func_020001e4:
 .L_02008498:
 	.4byte gData_02001700
 	.endif
-	.section .text.x02008884,"ax",%progbits
-	.global Func_02000884
-	.thumb_func
-Func_02000884:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r6, r1, #0
-	adds r7, r2, #0
-	mov r8, r3
-	bl Actor_GetById
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_020088ba
-	ldmia r6!, {r3}
-	ldr r2, .L_020088cc
-	str r3, [r5, #8]
-	ldmia r6!, {r3}
-	str r3, [r5, #12]
-	ldr r3, [r6]
-	strh r7, [r5, #6]
-	str r3, [r5, #16]
-	adds r3, r5, #0
-	adds r3, #85
-	strb r2, [r3]
-	ldr r3, [r5, #80]
-	strb r2, [r3, #26]
-	ldr r1, [sp, #20]
-	bl Actor_SetAnimationSpeed
-.L_020088ba:
-	ldr r0, [r5, #80]
-	movs r1, #0
-	ldrb r3, [r0, #27]
-	cmp r1, r3
-	bge .L_020088e8
-	adds r4, r0, #0
-	adds r4, #40
-	b .L_020088d0
-	.2byte 0x0000
-.L_020088cc:
-	.4byte 0x00000000
-.L_020088d0:
-	ldmia r4!, {r2}
-	ldrb r3, [r2, #5]
-	cmp r3, r8
-	beq .L_020088e0
-	mov r3, r8
-	strb r3, [r2, #5]
-	movs r3, #255
-	strb r3, [r2, #22]
-.L_020088e0:
-	ldrb r3, [r0, #27]
-	adds r1, #1
-	cmp r1, r3
-	blt .L_020088d0
-.L_020088e8:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x02008904,"ax",%progbits
 	.global Func_02000904
 	.thumb_func

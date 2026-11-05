@@ -15,7 +15,7 @@ SECTIONS
         "*/games/tla/src/field/object/wait_until_idle.o"(.text)
         "*/resource_6a9_overlay.o"(.text.x02008454)
         "*/games/tla/src/scene/caverns/s053c.o"(.text)
-        "*/resource_6a9_overlay.o"(.text.x020086a8)
+        "*/games/tla/src/scene/caverns/s06a8.o"(.text)
         "*/games/tla/src/scene/caverns/s07ec.o"(.text)
         "*/games/tla/src/scene/caverns/s0848.o"(.text)
         "*/resource_6a9_overlay.o"(.text.x0200887c)

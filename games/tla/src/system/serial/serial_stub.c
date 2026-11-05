@@ -6,7 +6,7 @@ extern u8 gMapCellBuffer[];
 extern const u8 Cartridge_Restart[];
 
 void Sound_PlayFar(s32 cue);
-void Func_08016180(void);
+void Serial_Initialize(void);
 
 void Func_08016bd8(void) {}
 
@@ -23,7 +23,7 @@ void SerialTest_Run(void) {
   volatile u32 *held;
 
   Sound_PlayFar(3);
-  Func_08016180();
+  Serial_Initialize();
   n = 19;
   tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
   value = (s16)0xf093;

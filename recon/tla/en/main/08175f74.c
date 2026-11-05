@@ -1,19 +1,37 @@
-// Draft, differ 1947 of 4354, skeleton gap 429 (tla-en, 2026-11-01)
+// Draft, differ 1754 of 4354, skeleton gap 356 (tla-en, 2026-11-01)
 // The whole of BattleEffect_RunCharon, same control flow and calls, frame 324
 // as the native, every stack slot in place. No devices.
-// Biggest remainder: the loop counter i is r10 here and r9 in the native, about
-// 170 lines. slots then falls to r9 where the native has r10. Global allocation
-// takes r8, r10, r9, r11, so something conflicting with i holds or prefers r10
-// in the native; hoisted constants rank below i, so they are not it. Splitting
-// i at the second phase got worse (2001). Next: find which pseudo does that.
-// Other open items: j * 16 is a giv stepped by 16 and shifted in the native,
-// here row * 2 steps by 32; order[0x1001] is rebuilt in the reveal loop in the
-// native, hoisted here; the 10 in the fades below frame 120 stays in a register
-// in the native. A do { dim = 10; } while (0) in that loop body reproduces it
-// exactly (CSE's block ends, gcse leaves same-block sets alone, loop.c hoists)
-// but gains only 56 here, so as a device it stayed out. Most of the rest is
-// sched2 ordering around stores and spills.
-// Settled, each measured: no zero, width or bgScroll locals, CSE keeps 0, 240
+// Biggest remainder: i is r10 here and r9 in the native, and everything i
+// displaces rotates with it (about 170 lines directly, more through sched2).
+// Global allocation takes r8, r10, r9, r11. The member loop's giv (refs 40,
+// live 110, priority 1.82) takes r8, then i (refs 574, live 3022, priority 1.71)
+// takes r10, then actor (refs 30, live 96, priority 1.25) takes r9. The native swaps
+// the last two, so actor outranks i there. One more actor use at weight 3 would
+// do it (33 refs is 1.72), but the listing shows no extra use. A local-alloc
+// pseudo in r10 during i's life looks unlikely, every native sl site spans
+// blocks; that and copy preferences are reasoned, not tested. i looks like one
+// pseudo: split between the phases it takes r8 in the first (1843 at best). The frame loops' for, do and while forms do not change either rank.
+// Other open items, none plain so far:
+// - j * 16 is a giv stepped by 16 and shifted in the native, here row * 2 steps
+//   by 32; 14 spellings of row and the store failed.
+// - The OAM loop's timer is a pointer from the pool stepped by 28 in the native,
+//   here an index; a hand-stepped s32 pointer and the literal forms lose.
+// - order[0x1001] is rebuilt in the reveal loop in the native, hoisted here
+//   (loop.c: savings 2, life 2, 43 real insns). A goto loop keeps it but loses
+//   the pool hoists; a pointer set before the loop gains nothing.
+// - The 10 in the fades below frame 120 and the 28 in the column loop stay in
+//   registers in the native, as a minus of a register, which CSE folds here. A
+//   do { dim = 10; } while (0) reproduces the 10 but it is a device, so out.
+// - Hoisted zero in the first actor loop (mov r8): a zero local lost 51.
+// Most of the rest is sched2 ordering that follows the register rotation, and
+// constants rematerialized where the native has fewer free registers. Check
+// the rotation first; several of these may close with it.
+// Pool-position differences (a b.n over a pool) are not source.
+// Settled, each measured: the masked randoms are (Random16() & m) + k in one
+// expression; the reveal swap steps other by 0x1000 after adding the symbol;
+// arg->actors[i] is spelled out in the landing loop, and that loop's two timer
+// tests nest; OAM_BUFFER is the symbol form. No zero, width or bgScroll locals,
+// CSE keeps 0, 240
 // and the scroll address across calls in r8, r5 and r10, and unit88->unk10 = 1
 // comes before the scroll store so 1 overlaps it. sprites is live only for
 // sprites[0] in the setup, other sprite references are the literal address.
@@ -501,8 +519,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       work->transferValue = 75;
       REG_BLDALPHA = 0x1010;
       for (i = 0; i != 64; i++) {
-        ((u32 *)0x02014000)[i * 2] = (240 << 16) + 160;
-        ((u32 *)0x02014004)[i * 2] = tiles[*(s32 *)(0x02014218 + i * 28) / 16] | 0xf000;
+        OAM_BUFFER[i * 2] = (240 << 16) + 160;
+        OAM_BUFFER[i * 2 + 1] = tiles[PARTICLES[i].timer / 16] | 0xf000;
       }
     }
     if (frame >= 132 && frame < 240) {
@@ -768,9 +786,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           REVEAL_BUFFER[0x1000 + i] = i;
         }
         for (i = 0; i != 32; i++) {
-          u8 *base = REVEAL_BUFFER;
-          u8 *other = base + (Random16() & 31) + 0x1000;
+          u8 *other = gData_02014000 + (Random16() & 31);
           u8 swap = REVEAL_BUFFER[0x1000 + i];
+
+          other += 0x1000;
 
           REVEAL_BUFFER[0x1000 + i] = *other;
           *other = swap;
@@ -792,7 +811,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
         scale152[1] = 0x14000;
         scale152[0] = 0x14000;
-        scale152[1] = scale152[0] = posZ / 48 + 0x4000;
+        scale152[0] = scale152[1] = posZ / 48 + 0x4000;
         pos216[0] = posX + 0x400000;
         pos216[2] = 144 << 16;
         Render_ApplyProjectedPlacementFar(work->objects[12], pos216, scale152,
@@ -1460,23 +1479,21 @@ empty:
     if (frame >= 140) {
       if (frame == 140) {
         for (i = 0; i != 32; i++) {
-          s32 speed = Random16() & 511;
+          s32 speed = (Random16() & 511) + 32;
           s32 angle = Random16();
 
           PARTICLES[96 + i].x = 240 << 14;
           PARTICLES[96 + i].y = 240 << 14;
-          speed += 32;
           PARTICLES[96 + i].vx = (Trig_Sin(angle) * speed) >> 5;
           PARTICLES[96 + i].vy = (Trig_Cos(angle) * speed) >> 5;
           PARTICLES[96 + i].timer = 0;
         }
         for (i = 0; i != 128; i++) {
-          s32 speed = Random16() & 255;
+          s32 speed = (Random16() & 255) + 32;
           s32 angle = Random16();
 
           PARTICLES[128 + i].x = 240 << 14;
           PARTICLES[128 + i].y = 240 << 14;
-          speed += 32;
           PARTICLES[128 + i].vx = (Trig_Sin(angle) * speed) >> 6;
           PARTICLES[128 + i].vy = (Trig_Cos(angle) * speed) >> 6;
           PARTICLES[128 + i].timer = (Random16() & 15) + 16;
@@ -1604,8 +1621,7 @@ empty:
         }
       }
       for (i = 0; i != arg->count; i++) {
-        s16 *id = &arg->actors[i];
-        struct ActorPos *actor = *GetBattleObjectSlotFar(*id);
+        struct ActorPos *actor = *GetBattleObjectSlotFar(arg->actors[i]);
         struct Particle *member = &work->members[i];
         s32 landed = 0;
 
@@ -1615,32 +1631,35 @@ empty:
           } else {
             actor->x += 0x20000;
           }
-          if (member->timer == -1 && actor->x > 0x300000) {
+          if (member->timer == -1) {
+          if (actor->x > 0x300000) {
             landed = 1;
           }
           if (landed == 1) {
             member->timer = 0;
-            EffectPosition_ProjectScaledBattler(*id, member);
+            EffectPosition_ProjectScaledBattler(arg->actors[i], member);
             Sound_PlayFar(103);
             for (j = 0; j != 16; j++) {
               s32 angle = Random16() & 0x7fff;
-              s32 speed = Random16() & 255;
+              s32 speed;
               struct Particle *p = &PARTICLES[i * 16 + j];
+
+              speed = (Random16() & 255) + 256;
 
               p->x = member->x << 15;
               p->y = member->y << 16;
-              speed += 256;
               p->vx = -(Trig_Sin(angle) * speed) >> 7;
               p->vy = (Trig_Cos(angle) * speed) >> 6;
               p->timer = (Random16() & 15) + 16;
             }
           }
+          }
         }
         if (member->timer == 2 || member->timer == 7) {
-          Func_0814cd48(*id, 7, 5, i, 32);
+          Func_0814cd48(arg->actors[i], 7, 5, i, 32);
         }
         if (member->timer == 6) {
-          Func_0814cd48(*id, 15, -1, i, 32);
+          Func_0814cd48(arg->actors[i], 15, -1, i, 32);
         }
         if (member->timer == 8) {
           actor->x = 0;

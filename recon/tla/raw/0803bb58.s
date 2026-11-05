@@ -1,4 +1,5 @@
 .syntax unified
+	.balign 4
 	.thumb
 	.global Func_0803bb58
 	.thumb_func

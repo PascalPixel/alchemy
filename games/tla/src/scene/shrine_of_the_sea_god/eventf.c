@@ -160,14 +160,11 @@ void Func_020030fc(void) {
   struct ShrineOfTheSeaGodObject *leader =
       Actor_GetById(gMainRoutineWork.currentOwner);
   struct ShrineOfTheSeaGodObject *object = Actor_GetById(11);
-  s32 x = object->x;
-  u8 *flags = &object->collisionFlags;
 
-  if (x > leader->x)
-    /* FAKEMATCH: the native ties the flag or to the constant's register. */
-    *flags = *flags + 8 - (*flags & 8);
+  if (object->x > leader->x)
+    object->collisionFlags |= 8;
   else
-    *flags &= ~8;
+    object->collisionFlags &= ~8;
 }
 
 void Func_02003134(void) {

@@ -1,26 +1,38 @@
-// Draft, differ 95 of 230, skeleton gap 41 (tla-en, 2026-11-01)
+// Draft, differ 99 of 230, skeleton gap 19 (tla-en, 2026-11-01)
 // Runs a race of the four objects from `first` (two teams of two): sets each
 // one's starting place and stage, steps them all with Func_02004938 sixteen
 // frames at a time until all have finished (stage 0 or 7) or 128 rounds pass,
 // then, when judged, compares each team's best time (unk4c): returns 3 with no
 // times, 1 or 2 for the team with the better time (setting flag 0x9eb), 0 for
 // a tie, or 2 or 1 when only one team finished.
-// The judging's skeleton is closed: early returns, with first + 1 kept in
-// `second`. Left, all in the set-ups and the bound:
-// - The native computes first + 1 before the first call and keeps it on the
-//   stack, with id (r6) a live copy: `ldr r0, [sp]; ldr r6, [sp]`, then
-//   adds r6, #1 across the racers. Sharing id with the race loop and leaving
-//   the judging's first + 1 to gcse reproduces that top, but a HI pseudo for
-//   the 2 pushes racer onto the stack (gap 62). Dropping `second` loses the
-//   top (gap 44).
-// - The native holds 2 in r5 for racer one's lane and racer two's action, yet
-//   loads 2 fresh for racer three's lane. Each strh goes through a HI temporary
-//   that cse then finds for the later QI 2, which is the pool load here; `two`
-//   is a closer form, but no plain form stopped that lookup. A single start
-//   variable reassigned per racer is worse (gap 80).
-// - The bound first + 4 is computed inside the frame loop in the native
-//   (movs r2, #4; add r2, r11; mov r8, r2). Here PRE in gcse hoists it above
-//   the round loop. goto loops and a user-variable bound change nothing.
+// Found this round, all kept below:
+// - The bound stays in the frame loop because `id` is read after `first`'s
+//   last textual use: judging through `id = first` and `id + 1` to `id + 3`
+//   makes id the head of cse's class, so `first + 4` is killed by the copy at
+//   the loop's top and PRE leaves it; gcse's cprop then rewrites the judging to
+//   `first`, and cse2 gives the listing's `first + 4` and `cmp first, limit`.
+// - `Actor_GetById(next++)` gives `ldr r0, [sp]; ldr r6, [sp]`: the increment's
+//   reload sits before the call and sched2 floats only the adds down. The last
+//   call has no increment, as the listing's last racer shows.
+// Left, with the three facts that decide it:
+// - The native holds 1, 7 and 0 in r8, r10 and r9, the registers of limit,
+//   round and done. local-alloc fills r5, r6, r8, r10, r9, r11 by priority, and
+//   global-alloc then kicks out poorly used locals (find_reg). Reusing those
+//   three loop variables for the constants makes them global and closes the
+//   skeleton to gap 10 (5 and 5), differ 72, with frame r5, id r6, racer r7,
+//   but that is a local reused for a second value: a `temporary` device, not
+//   added here. Whether it may be tagged is a counting question for Pascal
+//   (S2). The probe is not in this file.
+// - Without it, `next` beats `two` and takes r5 (listing r6, two r5), so r5 and
+//   r6 are swapped through the set-ups, and id and frame are swapped in the
+//   loop. Sharing `next` with `id` fixes those (differ 77) but the kicked 0
+//   then loads from the pool (gap 37). A local `zero` set at the top does not
+//   float below the first call (gap 33).
+// - Racer one stores the stage before the lane only to bring `two`'s live range
+//   under 33, ahead of the constants; in the listing's order 0 lands in a low
+//   register (gap 31). limit is `first + 4` written in the test: a variable
+//   bound takes r6 and pushes frame to r4 (gap 22), and this form leaves
+//   `mov; adds #4; mov` for the listing's `movs #4; add; mov`.
 #include "types.h"
 #include "actor.h"
 
@@ -40,33 +52,35 @@ void GameFlag_SetBit(s32 flag);
   Func_02005624((racer), 2)
 
 s32 Func_02004d48(s32 first, s32 judge) {
-  s32 second, round, frame, done, stage;
+  s32 second, round, frame, done, stage, id;
   u32 a, b, t;
+  struct Actor *racer;
 
   second = first + 1;
   {
-    struct Actor *racer;
-    s32 id;
-    s8 two = 2;
+    s32 next;
+    s32 two;
 
     racer = Actor_GetById(first);
-    RACER(racer, 0, two);
-    id = second;
-    racer = Actor_GetById(id);
+    racer->action = 0;
+    racer->unk66 = 7;
+    ((u8 *)racer)[0x63] = 1;
+    two = 2;
+    ((u8 *)racer)[0x62] = two;
+    racer->unk4c = 0;
+    Func_02005654();
+    Func_02005624(racer, 2);
+    next = second;
+    racer = Actor_GetById(next++);
     RACER(racer, two, 0);
-    id++;
-    racer = Actor_GetById(id);
+    racer = Actor_GetById(next++);
     RACER(racer, 8, 2);
-    id++;
-    racer = Actor_GetById(id);
+    racer = Actor_GetById(next);
     RACER(racer, 10, 0);
   }
   for (round = 0; round <= 127; round++) {
     done = 1;
     for (frame = 0; frame <= 15; frame++) {
-      struct Actor *racer;
-      s32 id;
-
       for (id = first; id < first + 4; id++) {
         racer = Actor_GetById(id);
         stage = ((u8 *)racer)[0x63];
@@ -85,21 +99,22 @@ s32 Func_02004d48(s32 first, s32 judge) {
   {
     struct Actor *racer;
 
+    id = first;
     a = 0;
     b = 0;
-    racer = Actor_GetById(first);
+    racer = Actor_GetById(id);
     if (racer->x != 0)
       a = racer->unk4c;
-    racer = Actor_GetById(second);
+    racer = Actor_GetById(id + 1);
     if (racer->x != 0) {
       t = racer->unk4c;
       if (a == 0 || a > t)
         a = t;
     }
-    racer = Actor_GetById(first + 2);
+    racer = Actor_GetById(id + 2);
     if (racer->x != 0)
       b = racer->unk4c;
-    racer = Actor_GetById(first + 3);
+    racer = Actor_GetById(id + 3);
     if (racer->x != 0) {
       t = racer->unk4c;
       if (b == 0 || b > t)

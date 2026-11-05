@@ -1,32 +1,43 @@
-// Draft, differ 239 of 278, skeleton gap 35 (tla-en, 2026-11-01)
+// Draft, differ 229 of 278, skeleton gap 24 (tla-en, 2026-11-01)
 // The control flow, calls, arguments and memory accesses are the native's;
-// what is left is allocation, and the skeleton gap is its spills and moves.
-// Forms that closed distance: `one`, a set-once local, keeps 1 out of the
-// registers, so reload rebuilds it at each use as the native does (the plain
-// constant is one CSE pseudo that outranks x and z). The blocked and done sites
-// keep a literal 1, or PRE shares 1 << bit. z is a loop copy of the parameter,
-// as x is: that shortens its life enough to rank with x, and z0 falls into the
-// native's r8 by itself. `piece` shared by both calls goes to global-alloc,
-// which frees r2 for 1 << bit in local-alloc, as in the native. xIndex and
-// zIndex give the native's index-then-add-1 with one table address.
+// what is left is allocation, and most of the skeleton gap is its spills and
+// moves. Forms that closed distance: the outer loop is a label and goto, with
+// a real loop around the search through to the back-step, so nothing hoists
+// the outer loop's table addresses and the ClearWords calls each load their
+// own: x0 and z0 fall into the native's r7 and r8. Func_02004224 nested in
+// Func_02004270's arguments (a block-local temporary, no `piece` variable).
+// `one`, a set-once local, keeps 1 out of the registers, so reload rebuilds it
+// at each use as the native does; without it 326 here. The done site keeps a
+// literal 1. xIndex and zIndex give the native's index-then-add-1 with one
+// table address.
 // Left: the native gives step, dir, used, z, nextZ, x and nextX r5, r6, r7, r8,
-// r10, r9 and r11, piece r4, and keeps attempts and tries at sp+0 and sp+4.
-// Here used and dir are swapped, nextZ takes r4 (saved around calls at sp+0),
-// which sends piece to ip, nextX r8, tries r10, z r9, x r11. Priorities here:
-// nextZ 1.19, nextX 1.18, tries 0.69, z 0.68, x 0.67, piece 0.57. The native's
-// order must be piece, z, nextZ, x, nextX, tries. Open: what keeps nextZ, x and
-// z out of r4. A block-local piece takes r2, because a copy suggestion is
-// allocated first. nextZ refs 20 against 3 calls makes r4 profitable.
-// Tried: tries = 0 before the Data_02007048 store loses tries to the stack as
-// the native does (live 128; gap 34, differ 277, the 11 pseudo then takes r11).
-// A struct of two words for x, z and next is a DImode pseudo, which Thumb
-// cannot keep in high registers (334). A `width = 11` local lets PRE share
-// z * width (329). delta = table + 1 merges table + index (265). Reading into
-// stepX and stepZ before the adds (248, 256 with zIndex after the read).
-// else dir = direction in place of the default before the call (262).
-// Pointer-sum grid access (267). Earlier: the pick
-// search as a do-while measures the same as these gotos; the search as a loop,
-// with done after it, lets loop.c move the blocks ending in a jump out.
+// r10, r9 and r11, the piece r4, attempts sp+0 and tries sp+4. Here used and
+// dir are swapped, nextZ takes r4 (saved around calls at sp+0, 4 * 3 calls <
+// 20 refs), nextX r8, tries r10, z r9, x r11. Three things to find:
+// 1. The piece. The native has no save of r4, so r4 must be taken before nextZ,
+// z and x reach their caller-save retry. A block-local temporary in r4 would do
+// it, because local-alloc's r4 conflicts with all of them, but it takes r2 by
+// its copy suggestion. Global, it ranks 0.57 against nextZ's 1.19 and lands in
+// ip once r4 has gone (ip is the alternate class; r4 is the first free LO_REGS).
+// 2. dir and used. The tail's gSceneState (block-local, crosses a call) takes
+// r6 in local-alloc, which denies dir r6. The native reloads it at both uses,
+// so there it had no block-local pseudo. Ending the search loop before the
+// success path carries it from there (54 insns, global), but that also gives
+// the Data_02007048 and table pseudos registers (352).
+// 3. The order. z, nextZ, x, nextX for r8, r10, r9, r11 needs nextZ and nextX
+// between z (0.68) and x (0.67) or either side of x: 15 refs on 67 and 68 insns
+// would do it exactly (0.672, 0.662), and here they have 20. tries (0.69) must
+// also fall below x.
+// Tried: tries = 0 before the Data_02007048 statement loses tries to the stack
+// as the native does (gap 21, differ 266), but its zero moves up against the
+// native's. The same tree with `while (1)` outside keeps the tables in r7 and
+// r8 across the calls (cse2 turns the hoisted load into a copy of the ClearWords
+// pseudo). Goto at both levels has no loop end before done, and the gSceneState
+// of the search reaches done in a register (353). z as the parameter itself
+// (239, gap 31). Func_02004224 returning u8 (292). Other tried and neutral: a
+// block-scoped piece; u32 parameters; x and z in place of nextX and nextZ at
+// done; dir[2] and dir[2] + 1 indexes (274); reading both steps before the adds
+// (279); else dir = direction (275). 1 << bit at both sites (261).
 //
 // Lays a random path of `length` cells across the
 // Gabomba Statue grid (gSceneState, 11 by 8 cells of four bytes) from
@@ -57,7 +68,7 @@ s32 Func_02004224(s32 from, s32 to, s32 kind);
 void Func_02004270(s32 x, s32 z, s32 piece, s32 flags);
 s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
                   s32 last, s32 bit) {
-  s32 spare, step, dir, used, dz, one, z, xIndex, zIndex, piece;
+  s32 spare, step, dir, used, dz, one, z, xIndex, zIndex;
   u32 x, nextX, nextZ, tries, attempts;
   u8 tried;
 
@@ -79,7 +90,7 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
   attempts = 0;
   x = x0;
   z = z0;
-  while (1) {
+top:
     if (++attempts > 1280)
       goto fail;
     Data_02007028[step] = gSceneState[z * 11 + x].piece;
@@ -91,7 +102,7 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
                           (gData_02005ac8 + 1)[Data_02007028[step]] |
                           1 << ((direction + 2) & 3);
     tries = 0;
-  pick:
+    while (1) {
       if (++tries > 63)
         goto back;
       dir = direction;
@@ -99,7 +110,7 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
         dir = (Random16Far() * 4) >> 16;
       tried = Data_02007048[step];
       if ((tried >> dir) & one)
-        goto pick;
+        continue;
       xIndex = dir * 2;
       zIndex = xIndex + 1;
       nextX = x + (gData_02005ac0 + 1)[xIndex];
@@ -116,8 +127,8 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
       if (gSceneState[nextZ * 11 + nextX].piece == 10)
         goto blocked;
       Data_02007048[step] = tried | one << dir;
-      piece = Func_02004224(direction, dir, Data_02007028[step]);
-      Func_02004270(x, z, piece, gSceneState[z * 11 + x].shape | one << bit);
+      Func_02004270(x, z, Func_02004224(direction, dir, Data_02007028[step]),
+                    gSceneState[z * 11 + x].shape | one << bit);
       step++;
       x = nextX;
       z = nextZ;
@@ -125,11 +136,11 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
       if (step == length)
         goto done;
       Data_02007048[step] = 0;
-      continue;
+      goto top;
     blocked:
       Data_02007048[step] |= 1 << dir;
       if (Data_02007048[step] != 0x0f)
-        goto pick;
+        continue;
   back:
     Data_02007048[step] = 0;
     if (step == 0)
@@ -139,9 +150,12 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
     direction = Data_02006fc8[step - 1];
     Func_02004270(x, z, Data_02007028[step - 1], gData_02007068[step - 1]);
     step--;
-  }
+    goto top;
+    }
 done:
-  piece = Func_02004224(dir, last, gSceneState[nextZ * 11 + nextX].piece);
-  Func_02004270(nextX, nextZ, piece, gSceneState[nextZ * 11 + nextX].shape | 1 << bit);
+  Func_02004270(nextX, nextZ,
+                Func_02004224(dir, last,
+                              gSceneState[nextZ * 11 + nextX].piece),
+                gSceneState[nextZ * 11 + nextX].shape | 1 << bit);
   return 0;
 }

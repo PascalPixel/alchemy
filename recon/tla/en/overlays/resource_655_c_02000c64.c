@@ -1,6 +1,27 @@
-// Draft, differ 109 of 123: raises each listed actor's cells (the shape
-// grid and the cell flags of its cell and the one below). Left: register
-// allocation (the native spills the shape and keeps the level in r10).
+// Draft, differ 78 of 123, skeleton gap 12 (tla-en, 2026-11-01)
+// Raises each listed actor's cells: the shape grid and the cell flags of its
+// cell and the one below.
+// Left: allocation only; the instruction shapes agree. The native has shapes
+// r5, cells r6, the object r8, level r10, index r9, and spills shape; this
+// draft has cells r5, the object r6, level r8, index r10, shape r9, and keeps
+// shapes in r4 saved around the call. The gap's lines are the reloads of that
+// difference. The rebuilt order is local-alloc's: shapes (temporaries tied,
+// refs 16) would have to outrank cells (20 over 33) and the object (20 over
+// 37). Moving the shapes sum past the flag stores lifts it over the object
+// but breaks the pool order and sends the object to r4.
+// The native never holds r4 across a call anywhere in this overlay, though
+// the object (refs 20, 3 calls), level (12, 2) and index (10, 2) all pass
+// 4 * calls < refs. The raw counts (10, 6, 5) would fail it, so this looks
+// like the loop weight on refs, not source; inference, not measured, and a
+// compiler question for Pascal.
+// Closed this round: object->terrainId read as the matched neighbours spell
+// it (CSE makes the +34 pointer); a separate result local, since the native
+// keeps it in r0 to the store; index <<= 2 in place, because with a new local
+// or index *= 4 combine folds shapes + index into the store (gap 21); level
+// >>= 19 as its own statement; FIXED_ADDRESS for the grid (gMapShapeGrid gives
+// gap 14 and differ 90).
+// No change: a terrain pointer local, locals outside the loop, do/while, for,
+// a u8 result, separate cell, below, target or position locals.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -70,30 +91,32 @@ void Func_02000c64(u16 *list) {
 
   while (*list != 0xffff) {
     struct Actor *object = Actor_GetById(*list);
-    u8 *layer = &object->terrainId;
-    s32 shape = Func_02003c10(*layer, object->x, object->z);
-    s32 level = Map_GetTerrainHeight(*layer, object->x, object->z);
+    s32 shape = Func_02003c10(object->terrainId, object->x, object->z);
+    s32 level = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
     s32 index;
-    u8 *cells;
+    struct MapCell *cells;
     u8 *shapes;
+    s32 raised;
 
     level >>= 19;
     index = Func_02003db0(object);
-    cells = (u8 *)map->layers[*layer].cells;
-    shapes = gMapShapeGrid +
-             (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
+    cells = map->layers[object->terrainId].cells;
+    shapes = FIXED_ADDRESS((u8 *), 0x02024000, gMapShapeGrid) +
+             (cells - (struct MapCell *)Ram_MapCellBuffer);
+
     object->motionFlags = 0;
     object->collisionFlags = 0;
     Actor_SetSingleChildFlags(object, 0);
     level += 4;
-    shape = Func_02003dd0(*layer, shape, level);
+    raised = Func_02003dd0(object->terrainId, shape, level);
     shapes += index;
-    cells += index * 4;
-    cells[3] |= 192;
-    cells += 0x200;
-    cells[3] |= 64;
+    index <<= 2;
+    cells = (struct MapCell *)((u8 *)cells + index);
+    cells->attributeB |= 192;
+    cells += 128;
+    cells->attributeB |= 64;
     list++;
-    *shapes = shape;
+    *shapes = raised;
   }
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);

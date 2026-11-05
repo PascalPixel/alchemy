@@ -12,6 +12,25 @@
 // are function-level so their second set keeps them in a register over the
 // __modsi3 call; the ldrb and shifts come from the byte landing in a high
 // register, not from its type; volatile on the counter also gives its reload.
+// The counter's first read through a pointer type is a leftover aliasing
+// spelling, still needed: as plain s32 gcse drops the reload (differ 223, gap
+// 35/18), and a (u32) compare or an `s32 *counter` local do no better (222 to
+// 223; 208 if the local also takes the final increment).
+// The cascade to find: greg's pass 0 takes registers already used, so the
+// if-block's two call-crossing pseudos, local-alloc's r5 and r6 here, put i in
+// r5 and base in r7. Natively i is r7, the offsets r8, r8, r5, r6, and busy,
+// base and entrance sl, r9, fp: r5 and r6 read as taken over the if-block, or
+// local pseudos there were kicked out by find_reg, which would also leave
+// IwramCopyWords unallocated and rematerialized. Unproved.
+// No gain (2026-11-02): i, at and j function-level in any mix (identical code);
+// 0x0200393c in src in the if-block (218, 35/17, 211 with i shared); a
+// function-level copy-entry local (225, 37/18, it takes r8); a `size` local
+// (no change); forwarding inline or one-pass copies (no change, the pseudo
+// survives); table, dst and src split, either order, or src and dst swapped in
+// the last loops (206, 37/17). Probe only, not a form to keep: a made-up
+// struct { s32, s32 } for the last two offsets is live from entry, gives the
+// native's seven pushes and differ 193, gap 38/23, but lands in sl:fp, and it
+// is a device with no evidence.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"

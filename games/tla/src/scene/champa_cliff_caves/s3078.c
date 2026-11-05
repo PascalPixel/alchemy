@@ -22,8 +22,8 @@ void Func_02003078(void) {
   s32 time;
 
   position[0] = FIELD_AT(work, s32, 4096);
-  state = 0;
   position[1] = FIELD_AT(work, s32, 4100) - 0x200000;
+  state = 0;
   time = 0;
   position[2] = FIELD_AT(work, s32, 4104);
   do {

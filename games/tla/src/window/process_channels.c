@@ -12,7 +12,7 @@
 struct Work;
 
 void Window_Close(struct Work *, s32);
-s32 Func_08039864(void *);
+s32 Message_StepScript(void *);
 void Func_0803cbf8(void *);
 
 void Message_UpdateAll(void) {
@@ -35,7 +35,7 @@ void Message_UpdateAll(void) {
         if (pending != 0) {
           Func_0803cbf8(channel);
         } else {
-          kind = Func_08039864(channel);
+          kind = Message_StepScript(channel);
           switch (kind) {
           case 8:
             *(u16 *)(*(u8 **)channel + 0x14) = one;

@@ -8,30 +8,35 @@
 // read only by the entry test, kills it there, and the tail reads the symbol.
 // Reading *actorCount at both tests moves PRE onto the count load itself, and
 // an unused local changes nothing.
-// What is left starts at the priority stores. In the listing the 3 and -13 of
-// the four bit-field stores stay in the loop (movs, negs and a copy at each
-// site, as in overlay 691's Func_020035e0); here loop.c lifts them: four sites
-// merge into savings 4, life 4, and threshold 15 * 16 passes on its second run
-// however large the body (threshold falls by 3 per move, so the first run
-// spares them only because the -1 compare moves first). Their hoisted pseudos
-// then take r9 and fp, and viewX, viewZ and depth spill (frame 24 against 12).
-// Measured: with the second arm's stores as byte masks the group splits, nothing
-// is hoisted, the first arm gets the listing's copy and the gap falls to 73, but
-// those masks then compile to the wrong form (differ 229 to 239), so that stayed
-// out. No plain form found that splits the group: it needs a mask of another
-// mode or value, a pseudo set twice, or a loop.c skip. do { } while (0) around
-// the stores, an s32 local for the -1 test (one or both arms) and extra insns
-// up to 168 real insns do not stop it. A goto loop has no hoist but no copy.
-// Even with it gone, allocation order stays open: the listing wants oam over
-// mode (mode in ip), viewZ and viewX over i, depth over viewY; by the lreg
-// numbers oam 0.37 against mode 0.67 (oam's constant doubles its live length)
-// and viewX 0.06 against i 0.11. If the native's loop.c hoists less (see the
-// landing-burst notes in the facts), this is a compiler question, not source.
+// What is left starts at the priority stores, and it is a compiler question,
+// not source. The listing's copy after -13 (movs #13, negs, adds) proves the
+// mask stays in the loop: reload loads a QImode -13 into a low register and
+// copies it. Here loop.c's second run lifts the 3 and the -13: four sites merge
+// into savings 4, life 4 (life 8 for -13, after cse2), and threshold 15 passes
+// against 151 real insns. The first run spares them only because the -1 compare
+// moves three insns first (threshold 6). Stopping the second run from source
+// needs four moves ahead of the first site, or a group split, and nothing plain
+// gives either. Their hoisted pseudos take r9 and fp (priority 0.106), so viewX,
+// viewZ and depth spill (frame 24 against 12).
+// Measured with -fno-rerun-loop-opt in a direct compile, as an experiment only:
+// all four sites come out as the listing's instructions, copy included. If the
+// native's loop.c hoists less (the landing-burst notes in the facts), the
+// question belongs to Pascal (K3).
+// Allocation is open either way: the listing wants oam over mode (mode in ip),
+// viewZ and viewX over i, depth over viewY; by the lreg numbers oam 0.37 against
+// mode 0.67 (oam's constant doubles its live length) and viewX 0.06 against
+// i 0.11.
+// Tried, no gain: a plain for (differ 226, gap 96; its tail's pool load hoists);
+// i < *actorCount in a for (234); do { } while (0) around the stores (229, the
+// inner loop is phony); byte masks on the second arm (229, gap 83, wrong form);
+// a goto loop (231, no hoist, no copy); mode read at the top of the body (262),
+// no mode local (259), an s16 mode (no change); separate mask statements for
+// viewX and viewZ (235 to 242); no timer pointer (231); the priority read as s16
+// (240).
 // Kept because they closed gaps: a loop with notes, not a goto loop (combine
 // turns <= -16 into < -15); the range tests on ox and oy written twin-style;
 // the priority read as a u16 and tested as an s16, in each arm. Declaring
-// picture, tile, viewY in the listing's slot order changes nothing; separate
-// mask statements for viewX and viewZ cost 6.
+// picture, tile, viewY in the listing's slot order changes nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

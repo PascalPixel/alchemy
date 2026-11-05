@@ -1,140 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020084d4,"ax",%progbits
-	.global Func_020004d4
-	.thumb_func
-Func_020004d4:
-	push {r5, r6, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	ldr r6, .L_020085d4
-	.ifdef TLA_EDITION_JA
-	adds r2, #88
-	.else
-	adds r2, #85
-	.endif
-	str r2, [r3]
-	movs r3, #240
-	lsls r3, r3, #1
-	adds r5, r6, r3
-	movs r3, #0
-	ldrsh r2, [r5, r3]
-	ldr r3, .L_020085d8
-	cmp r2, r3
-	beq .L_0200850e
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r6, r2
-	ldr r0, [r3]
-	bl Actor_GetById
-	adds r0, #35
-	ldrb r2, [r0]
-	movs r3, #32
-	orrs r3, r2
-	strb r3, [r0]
-.L_0200850e:
-	movs r0, #0
-	bl Func_020035ac
-	movs r3, #0
-	ldrsh r2, [r5, r3]
-	ldr r3, .L_020085dc
-	cmp r2, r3
-	bne .L_020085a6
-	movs r2, #241
-	lsls r2, r2, #1
-	adds r5, r6, r2
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #98
-	bne .L_02008530
-	bl Func_02001774
-.L_02008530:
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #99
-	bne .L_02008548
-	movs r3, #245
-	lsls r3, r3, #1
-	adds r2, r6, r3
-	movs r3, #23
-	strh r3, [r2]
-	strh r3, [r5]
-	bl Func_02001868
-.L_02008548:
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #119
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_02008588
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #120
-	bl GameFlag_Test
-	cmp r0, #0
-	bne .L_02008588
-	movs r1, #163
-	movs r0, #10
-	lsls r1, r1, #1
-	bl Func_0200361c
-	movs r1, #166
-	movs r2, #232
-	movs r0, #10
-	lsls r1, r1, #18
-	lsls r2, r2, #16
-	bl Func_020034d4
-	movs r0, #10
-	bl Actor_GetById
-	movs r3, #4
-	adds r0, #85
-	strb r3, [r0]
-.L_02008588:
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #119
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020085ce
-	movs r1, #166
-	movs r2, #200
-	movs r0, #8
-	lsls r1, r1, #18
-	lsls r2, r2, #16
-	bl Func_020034d4
-	b .L_020085ce
-.L_020085a6:
-	ldr r3, .L_020085e0
-	cmp r2, r3
-	bne .L_020085ce
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #126
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_020085ce
-	movs r1, #11
-	movs r0, #8
-	bl Actor_SetModeById
-	movs r0, #8
-	bl Actor_GetById
-	movs r1, #0
-	bl Actor_SetSingleChildFlags
-.L_020085ce:
-	movs r0, #0
-	pop {r5, r6, pc}
-	.2byte 0x0000
-.L_020085d4:
-	.4byte gMainRoutineWork
-.L_020085d8:
-	.4byte 0x000000b9
-.L_020085dc:
-	.4byte 0x000000bc
-.L_020085e0:
-	.4byte 0x000000bb
 	.section .text.x02008734,"ax",%progbits
 	.balign 4
 	.global Func_02000734
@@ -244,6 +109,565 @@ Func_02000734:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
+	.section .text.x02008a34,"ax",%progbits
+	.balign 4
+	.global Func_02000a34
+	.thumb_func
+Func_02000a34:
+	push {r5, r6, r7, lr}
+	mov r7, r11
+	mov r6, r10
+	mov r5, r9
+	push {r5, r6, r7}
+	mov r7, r8
+	push {r7}
+	adds r5, r0, #0
+	movs r0, #10
+	sub sp, #64
+	bl Actor_GetById
+	ldr r3, .L_02008b58
+	adds r7, r0, #0
+	add r0, sp, #28
+	str r3, [r0]
+	movs r2, #160
+	movs r3, #0
+	str r3, [r0, #4]
+	lsls r2, r2, #19
+	movs r3, #238
+	lsls r3, r3, #16
+	adds r2, #228
+	add r1, sp, #52
+	str r3, [r0, #8]
+	ldrh r3, [r2]
+	mov r9, r1
+	mov r4, r9
+	strh r3, [r4]
+	adds r2, #2
+	ldrh r3, [r2]
+	mov r11, r0
+	mov r0, r9
+	strh r3, [r0, #2]
+	adds r2, #2
+	ldrh r3, [r2]
+	adds r2, #2
+	strh r3, [r1, #4]
+	add r6, sp, #40
+	ldrh r3, [r2]
+	strh r3, [r4, #6]
+	ldrh r3, [r2, #2]
+	movs r2, #160
+	strh r3, [r0, #8]
+	lsls r2, r2, #19
+	adds r2, #196
+	ldrh r3, [r2]
+	adds r2, #2
+	strh r3, [r6]
+	ldrh r3, [r2]
+	adds r2, #2
+	strh r3, [r6, #2]
+	ldrh r3, [r2]
+	adds r2, #2
+	strh r3, [r6, #4]
+	ldrh r3, [r2]
+	strh r3, [r6, #6]
+	ldrh r3, [r2, #2]
+	strh r3, [r6, #8]
+	bl Func_0200345c
+	movs r0, #0
+	bl Func_020035b4
+	ldr r0, .L_02008b5c
+	bl Func_0200350c
+	adds r0, r5, #0
+	bl Func_020005e8
+	movs r1, #128
+	lsls r1, r1, #1
+	movs r2, #30
+	movs r0, #8
+	bl Func_02003544
+	movs r0, #8
+	movs r1, #0
+	movs r2, #5
+	bl Func_0200351c
+	movs r1, #132
+	lsls r1, r1, #1
+	movs r2, #30
+	movs r0, #8
+	bl Func_02003544
+	movs r1, #0
+	movs r2, #5
+	movs r0, #8
+	bl Func_0200351c
+	movs r0, #1
+	bl Func_0200067c
+	movs r1, #166
+	movs r2, #200
+	movs r0, #8
+	lsls r1, r1, #2
+	bl Actor_SetPositionAndReset
+	movs r1, #192
+	lsls r1, r1, #6
+	movs r0, #8
+	bl Func_02003534
+	movs r0, #10
+	bl FieldEvent_Wait
+	movs r1, #128
+	lsls r1, r1, #8
+	movs r0, #8
+	bl Func_02003534
+	movs r0, #10
+	bl FieldEvent_Wait
+	movs r1, #0
+	movs r0, #8
+	bl FieldMessage_ShowAtActor
+	movs r0, #4
+	movs r1, #0
+	bl Event_AskYesNoWithActorAnimation
+	cmp r0, #0
+	bne .L_02008b60
+	movs r0, #20
+	bl FieldEvent_Wait
+	movs r1, #0
+	movs r2, #5
+	movs r0, #8
+	bl Func_0200351c
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r1, #226
+	lsls r1, r1, #1
+	adds r2, r2, r1
+	ldrh r3, [r2]
+	adds r3, #1
+	strh r3, [r2]
+	b .L_02008b82
+	.2byte 0x0000
+.L_02008b58:
+	.4byte 0x02960000
+.L_02008b5c:
+	.4byte MsgWellDoneYou
+.L_02008b60:
+	movs r0, #40
+	bl FieldEvent_Wait
+	movs r3, #192
+	lsls r3, r3, #18
+	ldr r2, [r3, #108]
+	movs r3, #226
+	lsls r3, r3, #1
+	adds r2, r2, r3
+	ldrh r3, [r2]
+	movs r0, #8
+	adds r3, #1
+	strh r3, [r2]
+	movs r1, #0
+	movs r2, #5
+	bl Func_0200351c
+.L_02008b82:
+	ldr r3, .L_02008f3c
+	movs r4, #133
+	lsls r4, r4, #2
+	adds r3, r3, r4
+	movs r1, #128
+	ldr r0, [r3]
+	movs r2, #0
+	lsls r1, r1, #6
+	bl Actor_ArmCallback
+	movs r1, #160
+	lsls r1, r1, #7
+	movs r0, #8
+	bl Func_02003534
+	movs r0, #10
+	bl FieldEvent_Wait
+	movs r0, #166
+	movs r1, #1
+	movs r2, #232
+	movs r3, #1
+	negs r1, r1
+	lsls r2, r2, #16
+	lsls r0, r0, #18
+	bl Camera_MoveWithinMapBounds
+	bl Func_02003564
+	movs r0, #10
+	bl FieldEvent_Wait
+	movs r1, #8
+	adds r1, #255
+	movs r2, #40
+	movs r0, #8
+	bl Func_02003544
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	movs r2, #5
+	bl Func_0200351c
+	movs r0, #0
+	mov r8, r0
+.L_02008be0:
+	ldr r3, .L_02008f40
+	add r5, sp, #16
+	adds r2, r5, #0
+	ldmia r3!, {r0, r1, r4}
+	stmia r2!, {r0, r1, r4}
+	movs r1, #9
+	movs r0, #8
+	bl Actor_SetModeById
+	movs r0, #3
+	bl FieldEvent_Wait
+	mov r1, r8
+	lsls r3, r1, #2
+	ldr r1, [r5, r3]
+	movs r0, #10
+	bl Func_0200361c
+	movs r1, #167
+	movs r2, #200
+	movs r0, #10
+	lsls r1, r1, #18
+	lsls r2, r2, #16
+	bl Func_020034d4
+	movs r3, #128
+	lsls r3, r3, #7
+	str r3, [r7, #72]
+	movs r2, #2
+	movs r0, #10
+	movs r1, #4
+	bl Actor_Jump
+	movs r0, #10
+	movs r1, #1
+	bl Actor_SetSpritePriority
+	movs r1, #128
+	movs r2, #128
+	movs r0, #10
+	lsls r1, r1, #9
+	lsls r2, r2, #8
+	bl Actor_SetSpeedParameters
+	movs r1, #0
+	movs r2, #40
+	movs r0, #10
+	bl Actor_OffsetPositionAndResetMotion
+	movs r0, #155
+	lsls r0, r0, #1
+	bl Func_0200362c
+	movs r0, #34
+	bl FieldEvent_Wait
+	ldr r3, [r7, #8]
+	add r2, sp, #4
+	str r3, [r2]
+	ldr r3, [r7, #12]
+	movs r1, #0
+	str r3, [r2, #4]
+	ldr r3, [r7, #16]
+	movs r0, #10
+	str r3, [r2, #8]
+	movs r2, #0
+	bl Func_020034d4
+	movs r0, #20
+	bl FieldEvent_Wait
+	movs r0, #134
+	bl Func_0200362c
+	mov r0, r9
+	adds r1, r6, #0
+	movs r2, #12
+	bl Func_02000734
+	movs r2, #48
+	adds r0, r6, #0
+	mov r1, r9
+	bl Func_02000734
+	movs r0, #10
+	bl FieldEvent_Wait
+	movs r2, #1
+	add r8, r2
+	mov r3, r8
+	cmp r3, #2
+	ble .L_02008be0
+	ldr r5, .L_02008f3c
+	movs r4, #133
+	lsls r4, r4, #2
+	adds r5, r5, r4
+	ldr r0, [r5]
+	bl Actor_GetById
+	adds r0, #90
+	ldrb r2, [r0]
+	movs r1, #254
+	mov r10, r1
+	mov r3, r10
+	ands r3, r2
+	strb r3, [r0]
+	movs r1, #12
+	movs r2, #12
+	ldr r0, [r5]
+	bl Actor_CommitPositionAndActivate
+	movs r0, #1
+	bl FieldEvent_Wait
+	ldr r0, [r5]
+	bl Actor_GetById
+	adds r0, #90
+	movs r2, #1
+	ldrb r3, [r0]
+	mov r8, r2
+	mov r4, r8
+	orrs r3, r4
+	strb r3, [r0]
+	movs r1, #128
+	ldr r0, [r5]
+	lsls r1, r1, #6
+	bl Func_02003534
+	movs r0, #10
+	bl FieldEvent_Wait
+	ldr r0, [r5]
+	movs r1, #22
+	bl Actor_SetModeById
+	movs r0, #20
+	bl FieldEvent_Wait
+	movs r1, #7
+	movs r0, #8
+	bl Actor_SetModeById
+	movs r0, #60
+	bl FieldEvent_Wait
+	movs r0, #78
+	bl Func_0200362c
+	movs r1, #2
+	adds r1, #255
+	movs r2, #60
+	movs r0, #8
+	bl Func_02003544
+	movs r0, #128
+	lsls r0, r0, #6
+	movs r1, #0
+	movs r2, #5
+	adds r0, #8
+	bl Func_0200351c
+	movs r0, #20
+	bl FieldEvent_Wait
+	movs r0, #220
+	bl Func_0200362c
+	movs r2, #48
+	mov r0, r9
+	adds r1, r6, #0
+	bl Func_02000734
+	ldr r0, [r5]
+	movs r1, #3
+	bl Actor_StartRepeatedMotion
+	movs r1, #129
+	ldr r0, [r5]
+	lsls r1, r1, #1
+	bl Func_0200354c
+	movs r0, #50
+	bl FieldEvent_Wait
+	movs r1, #2
+	movs r2, #60
+	adds r1, #255
+	movs r0, #8
+	bl Func_02003544
+	movs r1, #128
+	lsls r1, r1, #5
+	movs r0, #16
+	adds r1, #144
+	bl Func_0200360c
+	movs r0, #128
+	movs r1, #128
+	movs r2, #128
+	lsls r2, r2, #9
+	lsls r1, r1, #10
+	lsls r0, r0, #10
+	bl Func_02003434
+	mov r0, r11
+	bl Func_02003164
+	movs r0, #8
+	movs r1, #1
+	bl Actor_SetModeById
+	movs r1, #6
+	movs r2, #0
+	movs r0, #4
+	bl Actor_Jump
+	movs r0, #194
+	bl Func_0200362c
+	movs r0, #4
+	bl Actor_GetById
+	adds r0, #90
+	ldrb r3, [r0]
+	mov r1, r10
+	adds r2, r1, #0
+	ands r2, r3
+	strb r2, [r0]
+	movs r1, #12
+	movs r2, #12
+	negs r2, r2
+	negs r1, r1
+	movs r0, #4
+	bl Actor_CommitPositionAndActivate
+	movs r0, #1
+	bl FieldEvent_Wait
+	movs r0, #4
+	bl Actor_GetById
+	adds r0, #90
+	ldrb r3, [r0]
+	mov r4, r8
+	orrs r4, r3
+	strb r4, [r0]
+	movs r0, #10
+	mov r8, r4
+	bl FieldEvent_Wait
+	movs r0, #8
+	movs r1, #3
+	bl Actor_StartRepeatedMotion
+	movs r1, #129
+	lsls r1, r1, #1
+	movs r0, #8
+	bl Func_0200354c
+	movs r0, #30
+	bl FieldEvent_Wait
+	movs r0, #128
+	lsls r0, r0, #6
+	adds r0, #8
+	movs r1, #0
+	movs r2, #5
+	bl Func_0200351c
+	movs r0, #128
+	movs r1, #128
+	movs r2, #128
+	lsls r1, r1, #11
+	lsls r2, r2, #9
+	lsls r0, r0, #11
+	bl Func_02003434
+	mov r0, r11
+	bl Func_0200320c
+	movs r0, #194
+	bl Func_0200362c
+	movs r0, #10
+	bl FieldEvent_Wait
+	movs r0, #8
+	movs r1, #6
+	movs r2, #15
+	bl Actor_Jump
+	movs r1, #6
+	movs r2, #23
+	movs r0, #8
+	bl Actor_Jump
+	movs r0, #194
+	bl Func_0200362c
+	movs r0, #10
+	bl FieldEvent_Wait
+	movs r0, #128
+	lsls r0, r0, #6
+	movs r2, #5
+	adds r0, #8
+	movs r1, #0
+	bl Func_0200351c
+	movs r1, #163
+	movs r0, #10
+	lsls r1, r1, #1
+	bl Func_0200361c
+	movs r1, #166
+	movs r2, #232
+	lsls r2, r2, #16
+	movs r0, #10
+	lsls r1, r1, #18
+	bl Func_020034d4
+	adds r5, r7, #0
+	movs r0, #10
+	movs r1, #1
+	bl Actor_SetSpritePriority
+	adds r5, #85
+	movs r3, #2
+	strb r3, [r5]
+	movs r3, #192
+	lsls r3, r3, #13
+	str r3, [r7, #12]
+	ldr r3, .L_02008f44
+	movs r0, #0
+	str r3, [r7, #108]
+	movs r1, #5
+	movs r2, #0
+	str r0, [r7, #20]
+	str r0, [r7, #24]
+	str r0, [r7, #28]
+	movs r0, #10
+	bl Actor_Jump
+	movs r0, #8
+	.ifdef TLA_EDITION_ES
+	bl Field_EndActorSpriteEffect
+	.else
+	.ifdef TLA_EDITION_IT
+	bl Field_EndActorSpriteEffect
+	.else
+	bl Field_StartPaletteTransition
+	.endif
+	.endif
+	bl Func_020032a4
+	movs r2, #230
+	movs r0, #1
+	movs r1, #1
+	lsls r2, r2, #8
+	negs r0, r0
+	negs r1, r1
+	adds r2, #102
+	bl Func_02003434
+	ldr r3, [r7, #12]
+	cmp r3, #0
+	ble .L_02008ebe
+.L_02008eb2:
+	movs r0, #1
+	bl wait
+	ldr r3, [r7, #12]
+	cmp r3, #0
+	bgt .L_02008eb2
+.L_02008ebe:
+	movs r3, #128
+	lsls r3, r3, #9
+	str r3, [r7, #72]
+	movs r3, #0
+	str r3, [r7, #12]
+	movs r3, #4
+	strb r3, [r5]
+	bl Func_020035bc
+	movs r0, #20
+	bl FieldEvent_Wait
+	movs r1, #2
+	movs r0, #8
+	bl Motion_SetVarCbAndRefresh
+	movs r0, #5
+	bl FieldEvent_Wait
+	movs r0, #128
+	lsls r0, r0, #6
+	movs r2, #5
+	adds r0, #8
+	movs r1, #0
+	bl Func_0200351c
+	movs r1, #128
+	lsls r1, r1, #8
+	movs r0, #8
+	bl Func_02003534
+	movs r0, #10
+	bl FieldEvent_Wait
+	movs r0, #128
+	lsls r0, r0, #6
+	movs r2, #5
+	adds r0, #8
+	movs r1, #0
+	bl Func_0200351c
+	movs r1, #160
+	lsls r1, r1, #7
+	movs r0, #8
+	bl Func_02003534
+	movs r0, #10
+	bl FieldEvent_Wait
+	movs r0, #10
+	movs r1, #2
+	bl Actor_SetSpritePriority
+	bl Func_02003464
+	add sp, #64
+	pop {r3, r5, r6, r7}
+	mov r8, r3
+	mov r9, r5
+	mov r10, r6
+	mov r11, r7
+	pop {r5, r6, r7, pc}
+	.2byte 0x0000
+.L_02008f3c:
+	.4byte gMainRoutineWork
+.L_02008f40:
+	.4byte gData_02003634
+.L_02008f44:
+	.4byte Func_02000038
 	.section .text.x02008f48,"ax",%progbits
 	.global Func_02000f48
 	.thumb_func

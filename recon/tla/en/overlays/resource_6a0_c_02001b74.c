@@ -1,17 +1,29 @@
-// Draft, differ 222 of 200, skeleton gap 38 (tla-en, 2026-11-01)
+// Draft, differ 164 of 200, skeleton gap 44 (tla-en, 2026-11-01)
 // Overlay 6a0's copy of the function drafted in resource_698_c_02000aac.c, whose
-// header says what it is. Left: the skeleton's remainder is allocation, not
-// shape. The native keeps view x and z in r10 and r8, the index in r9 and the
-// depth in r11 and spills view height and tile; this spills view x and tile,
-// which moves the sp-relative loads, the hi-register moves and sub sp. The
-// native's flag sits in ip and serves as the 0 stored in the first branch;
-// here the first branch stores a literal 0. The shape comes from the listing:
-// shifted x and y are new variables beside the raw ones (asrs r1, r0), left
-// and top are new again (x + 7 and x + 23 fold from left + 15 and left + 31),
-// and &actor->timer is taken before the branch. Tried: about 5,700 orders of
-// declarations, scopes and statements; declaration order is why the locals
-// sit in this order. View x and z masked in a second step, view height read
-// through a local, and a separate null test gain nothing.
+// header says what it is. Rewritten in overlay 69f's form, 222 to 170: the
+// sprite position is one variable per axis (the listing keeps sy and top in r4),
+// the bounds test x + 7 and x + 23 on the shifted pixel. Declaring tile first
+// gives the listing's slot for it, 170 to 164. No devices. The compiler change
+// closed nothing here. About 6,000 orders of declarations, scopes and statements
+// were measured on this form; order alone stops at 162 with a wider gap.
+// Left, all allocation, skeleton 23 removed, 21 added:
+// - Spills. The listing keeps viewZ r8, viewX r10, i r9, depth r11 and spills tile
+//   sp+4 and viewY sp+0; here viewX spills, which lifts sub sp above the masks.
+//   Refs over live: viewX 5/119, viewY 5/104, i 10/208. Ranking viewX over i
+//   needs about 8 weighted refs, and the source shows 5.
+// - Count's address. PRE carries the head test's pool load to the bottom test in
+//   a pseudo (ip here), as in overlay 69a's header; the listing reloads it there
+//   and keeps ip for mode. No plain C form stops it.
+// - Mode outranks actor, oam and frame (2 * 6 / 15), so actor r6, oam r7 here
+//   against r5, r6. A mode local read between y and z lengthens its life: actor
+//   r5, sy r4, x r1 and sy's pixel r2 then match, but mode r6 and frame ip stay
+//   swapped, 155 with gap 53, 152 with gap 58. The listing's load sits after
+//   depth, so that placement is not kept here; it is the lead if the gap closes.
+// Tried without gain: goto loop (180), do/while with head test (170), timer read
+// in each arm or dropped (165, 169), frame read once (176), mask as a second
+// statement (174), x reused for the left edge (231), s16 frame and timer (same).
+// Compiler question, out of scope and untested (K3): flat ref counts, as in
+// overlay 6a3's header, would give this ranking and leave pool loads in place.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -38,70 +50,56 @@ s32 Func_02002c2c(struct FieldActor *actor);
 void Func_02002aa4(struct LightOam *oam, s32 depth);
 
 void Func_02001b74(void) {
-  struct MapWork *map;
-  s32 *view;
-  s32 i;
-  s32 tile;
-  s32 viewX;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 *view = &map->viewX;
+  s32 tile, viewY, viewX, viewZ;
   struct LightOam *oam;
-  s32 viewZ;
-  s32 viewY;
-  s32 sy;
-  s32 depth;
-  s32 z;
-  s32 flag;
-  s32 left;
-  s32 frame;
-  s32 x;
-  s16 *timer;
-  s32 px;
-  s32 y;
-  s32 top;
-  s32 py;
-  struct FieldActor *actor;
-  u32 *word;
-  map = Ram_HeapSlots->mapWork;
-  view = &map->viewX;
+  s32 i;
+
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
   tile = gResourceTableEntries[gData_020035fc].offset >> 5;
-  viewY = map->origin[1];
   oam = Data_02003640;
+  viewY = map->origin[1];
+
   for (i = 0; i < gData_020035fe; i++) {
-    actor = gData_02003600[i];
+    struct FieldActor *actor = gData_02003600[i];
+    s32 screenX, y, z, screenY, x, sy, depth, frame;
+    u16 *timer;
+    u32 *word;
+
     if (actor == 0 || actor->x == 0)
       continue;
-    x = actor->x - viewX;
+    screenX = actor->x - viewX;
     y = actor->y - viewY + 0x80000;
     z = actor->z - viewZ - viewY;
-    sy = z - y;
+    screenY = z - y;
     depth = ((y + z) >> 16) + 58;
-    px = x >> 16;
-    flag = gData_02003700;
     timer = &actor->timer;
-    py = sy >> 16;
-    if (flag == 0) {
-      frame = *timer;
-      left = px - 8;
-      top = py - 16;
-      if ((u32)(left + 15) > 334 || top <= -16 || top > 239)
+    x = screenX >> 16;
+    sy = screenY >> 16;
+    if (gData_02003700 == 0) {
+      frame = (s16)*timer;
+      screenX = x - 8;
+      screenY = sy - 16;
+      if ((u32)(x + 7) > 334 || screenY <= -16 || screenY > 239)
         continue;
-      left &= 0x1ff;
-      top &= 0xff;
+      screenX &= 0x1ff;
+      screenY &= 0xff;
       word = (u32 *)oam;
       *word++ = 0;
-      *word++ = top | (left << 16) | 0x40002000;
+      *word++ = screenY | (screenX << 16) | 0x40002000;
     } else {
-      frame = *timer;
-      left = px - 8;
-      top = py - 64;
-      if ((u32)(left + 31) > 350 || top <= -64 || top > 175)
+      frame = (s16)*timer;
+      screenX = x - 8;
+      screenY = sy - 64;
+      if ((u32)(x + 23) > 350 || screenY <= -64 || screenY > 175)
         continue;
-      left &= 0x1ff;
-      top &= 0xff;
+      screenX &= 0x1ff;
+      screenY &= 0xff;
       word = (u32 *)oam;
       *word++ = 0;
-      *word++ = top | (left << 16) | 0xc000a000;
+      *word++ = screenY | (screenX << 16) | 0xc000a000;
     }
     *word = (tile + frame * 8) | 0x800;
     if (gData_02003702 == -1)

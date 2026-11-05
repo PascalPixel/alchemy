@@ -1,8 +1,7 @@
 #include "yallam.h"
 #include "edition.h"
 
-// Japanese has no stop beside the leader: its function stays on the
-// overlay's scaffold, with a draft.
+// Japanese has no stop beside the leader.
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 /// Stops the object (mode 2) when the leader is within 11 of it; otherwise
 /// lets it face object 10 or 9 by bit 0 of its action word and, failing that,
@@ -41,6 +40,27 @@ s32 Func_0200014c(struct Actor *object) {
         force = 1;
       Func_02000088(object, leader, 24, force);
     }
+  }
+  return 0;
+}
+#else
+s32 Func_0200014c(struct Actor *object) {
+  u8 *tiles = Ram_HeapSlots->windowTiles;
+  u8 *event = Ram_HeapSlots->eventWork;
+  s32 force = 0;
+  struct Actor *target;
+  u16 *flags = (u16 *)&object->action;
+
+  if (*flags & 1)
+    target = Actor_GetById(10);
+  else
+    target = Actor_GetById(9);
+  if (Func_02000088(object, target, 24, 0) == 0) {
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+
+    if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
+      force = 1;
+    Func_02000088(object, leader, 24, force);
   }
   return 0;
 }

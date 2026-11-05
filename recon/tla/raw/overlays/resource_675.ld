@@ -5,7 +5,7 @@ SECTIONS
         "*/games/tla/src/scene/islet_cave/entry.o"(.text)
         "*/games/tla/src/scene/islet_cave/s0038.o"(.text)
         "*/games/tla/src/scene/islet_cave/s0158.o"(.text)
-        "*/resource_675_overlay.o"(.text.x020081d4)
+        "*/games/tla/src/scene/islet_cave/s01d4.o"(.text)
         "*/resource_675_overlay.o"(.text.x020081f8)
         "*/games/tla/src/scene/islet_cave/s0328.o"(.text)
         "*/games/tla/src/scene/islet_cave/events2.o"(.text)

@@ -1,15 +1,4 @@
-// Draft, differ 20 of 57 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 20 of 57 (tla-en); older figures below predate it.
-// Draft, differ 22 of 57 (was 54), registers only: the Venus Lighthouse
-// entrance's spark animation, each live spark (frame below 16) stepping its
-// tile through eight frames from the tile base. One local carrying both the
-// frame and the new tile keeps the tile base's address inside the loop, as
-// the native does (plain, loop.c hoists it into r8 and the counter moves to
-// r7: 54). Left: the native keeps the frame in r3 and the tile in r1, with
-// separate pseudos; here the shared local takes r0 for both. Measured: a
-// frame local apart from the tile (32, the tile base hoisting returns in
-// part), the frame pinned to r3 (28, or 15 with the frame read again for the
-// shift), five minutes of alchemy-devtools permute (nothing under 22).
+// Draft, differ 2 of 57 (tla-en, 5 November), no device: the two pointer steps at the loop's end in the other order (native adds r6, #40 ahead of adds r5, #28). Their initial order is already the native's.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -48,11 +37,7 @@ void Func_0200258c(void) {
 
     value = state->frame;
     if ((u32)value < 16) {
-      value = work->tileBase + ((state->frame >> 1) & 7) * 8;
-      sprite->tile = value;
-      /* FAKEMATCH(barrier): an empty asm holds the next statement after this
-       * one; as no asm, 22 of 57 instructions differ in tla-en. */
-      asm("");
+      sprite->tile = work->tileBase + ((value >> 1) & 7) * 8;
       Func_02002a14(sprite, state);
       Func_02002a1c(state, 64, 0);
       state->frame++;

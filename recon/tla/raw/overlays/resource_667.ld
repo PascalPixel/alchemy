@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/alhafra_manor/scene_tables.o"(.text)
         "*/games/tla/src/scene/alhafra_manor/talk.o"(.text)
         "*/games/tla/src/scene/alhafra_manor/scene_events.o"(.text)
-        "*/resource_667_overlay.o"(.text.x02008514)
+        "*/games/tla/src/scene/alhafra_manor/s0514.o"(.text)
         "*/games/tla/src/scene/alhafra_manor/prepare.o"(.text)
         "*/games/tla/src/scene/alhafra_manor/s0658.o"(.text)
         "*/games/tla/src/scene/alhafra_manor/update.o"(.text)

@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/eastern_alhafra/entry.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra/scene_tables.o"(.text)
-        "*/resource_668_overlay.o"(.text.x02008200)
+        "*/games/tla/src/scene/eastern_alhafra/s0200.o"(.text)
         "*/games/tla/src/scene/eastern_alhafra/events2.o"(.text)
         "*/resource_668_overlay.o"(.text.x02008514)
         "*/games/tla/src/scene/eastern_alhafra/scene_events.o"(.text)

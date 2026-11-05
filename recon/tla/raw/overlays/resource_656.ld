@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/scene/lemurian_ship/s04f4.o"(.text)
         "*/games/tla/src/scene/lemurian_ship/s065c.o"(.text)
         "*/games/tla/src/scene/lemurian_ship/s0770.o"(.text)
-        "*/resource_656_overlay.o"(.text.x02008870)
+        "*/games/tla/src/scene/lemurian_ship/s0870.o"(.text)
         "*/games/tla/src/scene/lemurian_ship/s0af4.o"(.text)
         "*/games/tla/src/scene/lemurian_ship/s0e2c.o"(.text)
         "*/games/tla/src/scene/lemurian_ship/s10bc.o"(.text)

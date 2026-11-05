@@ -1,45 +1,8 @@
-// Under -Os, 5 November: differ 134 of 479 (tla-en); older figures below predate it.
-// Measured 5 November (-Os), differ about 160 of 479: plain for loops and a u16
-// count give nearly every row (it was 481). Left: the count loop's registers: the
-// native keeps the table in r7, n in ip, m in lr and count in r9; here loop.c
-// hoists the table out of the m loop and it ranks lower. Frame 60 in the native
-// (stats at sp+28, stat at sp+4, unit at sp+0); here value spills too.
-// Draft, differ 481 of 479, skeleton gap 125 (tla-en, 2026-11-01)
-// Packs the four units' base stats, levels, Djinn, items and their counts into
-// clear data, sized by the password kind; FileScreen_PackPasswordData in
-// games/tbs/src/scene/file_screen.c is its twin (confirmed: same clamps, bit
-// layout and coin bytes). This one drops Item_GetDirect and adds the clamps
-// below zero, and the twin's code differs in every loop's hoisting.
-// Shape found: PRE reads the hp, pp and level rereads as copies of the store,
-// which the twin also compiles to, and the native does not. A second read as
-// (u16) into a value tested as (s16) is another expression and keeps the
-// ldrsh. Item loops are gotos. The u32 *stat local is gone: stats[] alone gives
-// the same code, and the native's sp+4 is GCSE's reaching copy of the frame
-// address. A table start plus a cursor (wanted, cursor) gives the native's
-// adds r2, r7, #0 in the item loop.
-// Left: 1. Native r6 is one pseudo, i, for all seven outer loops, as the twin,
-// but shared with the pack and count loops here it falls behind n in global.c
-// (67 refs over 570 against 26 over 80) and takes r8, so packMember and
-// countMember stay separate. Native n sits in ip, m in lr and count in r9.
-// 2. mode must sit in r11, and found outranks it: 4 * 18 / 636 against
-// 3 * 10 / 340. Regmove adds 8 refs when it ties found's ior result to found,
-// since found dies there (fixup_match_1); at 10 refs found would rank below
-// mode. Writing the operands the other way round compiles the same. 3. PRE
-// hoists m << 1 and unit + 216 out of the count loops; the native spills unit
-// to sp+0 and rebuilds both in the loop, and those pseudos take ip and lr.
-// PRE also puts the frame address before the zero loop. 4. The party loop:
-// as a for it strength-reduces i * 8 (add r8, r1) where the native keeps
-// lsls r4, r6, #3 and subs r2, r4, r6, and as a goto (differ 472, gap 164) that
-// part matches but item's 0x1ff turns from the pool into the split form: the
-// native pools it in the item and pack loops, a HImode move, and splits it in
-// the count loop, an SImode one. A u16 item gets the extra shifts (530).
-// Lowest differ seen is 469 at gap 163 (a for over rows with its own counter,
-// no quantity local); lowest gap is 120 at differ 516 (no cursor).
-// Tried, no gain, over about 20,000 measured combinations: loop forms for the
-// party, pack, count and row loops; which outer loops share i; one n or two;
-// items++ position; pos, bit and p step orders; a local table in the count
-// loop; item as s32, u32 or u16 and six spellings of its mask, one-constant
-// masks included.
+// Draft, differ 50 of 479 (tla-en, 5 November): the twin of FileScreen_PackPasswordData in The Broken Seal.
+// Direct unit->inventory[n] reads, a u16 item and the same frame as the native (60).
+// Left: the count loop only. Native n ip, table r7; here table ip, n r7. The native zero-extends the count
+// through one hoisted shift (lsls r4, count, #16, lsrs twice); (u16)count folds away here because combine
+// knows the count's bits, so shifted is a stand-in form, not the source's: find what leaves the count's bits unknown.
 #include "types.h"
 #include "call.h"
 #include "main_routine_work.h"
@@ -105,8 +68,8 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
     if (GameFlag_Test(gData_02002700[i]))
       flags |= 1 << i;
   }
-  pos = 4;
-  for (i = 0; i != 4; i++) {
+  i = 0; pos = 4;
+  for (; i != 4; i++) {
     struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
     struct UnitBaseStats *base = (struct UnitBaseStats *)&unit->baseHp;
     s32 value;
@@ -173,7 +136,7 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
       struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
 
       for (slot = 0; slot != 15; slot++) {
-        s32 item = unit->inventory[slot] & 0x1ff;
+        u16 item = unit->inventory[slot] & 0x1ff;
 
         out[pos] += item >> (bit + 1);
         out[pos + 1] += item << (7 - bit);
@@ -192,22 +155,19 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
 
       for (m = 0; m != 23; m++) {
         s32 count = 0;
-        u16 *items = unit->inventory;
-        u16 quantity;
+s32 shifted;
 
         for (n = 0; n != 15; n++) {
-          u32 value = *items++;
-
-          if (gData_0200271c[m] == (value & 0x1ff))
-            count = value >> 11;
+          if (gData_0200271c[m] == (unit->inventory[n] & 0x1ff))
+            count = unit->inventory[n] >> 11;
         }
-        quantity = count;
+        shifted = count << 16;
         if (bit < 0) {
-          out[pos] += quantity >> -bit;
+          out[pos] += (s32)((u32)shifted >> 16) >> -bit;
           bit += 8;
           pos++;
         }
-        out[pos] += quantity << bit;
+        out[pos] += (u32)shifted >> 16 << bit;
         bit -= 5;
         if (bit == -5) {
           pos++;

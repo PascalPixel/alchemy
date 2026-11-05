@@ -1,20 +1,10 @@
-// Draft, differ 131 of 484 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 131 of 484 (tla-en); older figures below predate it.
-// Draft, differ 146 of 484 (was 218): a beam of light in Air's Rock: BG0 is
-// hidden while its tiles (two blocks) and its map (offset to its tiles and
-// copied in 18 rows of 32 bytes) are loaded; object 12 glows (Func_0200092c)
-// and sheds a spark (object type 0x2a0, Func_020008ac) every fourth frame for
-// 45 frames; the camera moves to the light, the screen flashes, BG0 is shown
-// and scrolled (Func_0200257c, cue 163) while the map work's beam at 0x178
-// sweeps over 272 frames, then the beam flickers (Func_02000ef4) for 257
-// frames and fades over 129 (cue 390); the display is put back and flag 0x87a
-// set. Written with the forms that matched overlay 664's Func_02003654.
-// Left: the native saves only r8 (the beam pointer) with an 8-byte stack frame,
-// keeps the counters in r7, spills the first object of each spark to the
-// stack and keeps the frame count's low bits in r6 as the sparks' 0; this
-// draft keeps the low bits in r8 and the beam in r10. Measured: without the
-// row pointer reuse 184; a counter of its own for the flicker or fade loop
-// 160 to 206; the sweep through the counter 256.
+// Draft, differ 130 of 484 (tla-en, 5 November). A beam of light in Air's Rock.
+// Plain for loops; the sweep uses the counter i (x in r7 as the native); beam stores together.
+// Left, one cause: global.c gives the first Actor_GetById temporary (2 refs over 8, 0.25) r6 ahead of the frame count's
+// low bits (5 over 43, 0.233); the native has the low bits in r6, the temporary on the stack at sp+0 and only r8 saved (the beam).
+// Diagnostic: low pinned to r6 gives 71, the temporary then takes r8 and pushes the beam to r10: the native's temporary is
+// not allocated at all, so find why it has no alternate class before anything else.
+// Tried with no gain: low merged with z (200), per-loop counters (all 32 masks, at best 136), if (!(gFrameCount & 3)).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -81,8 +71,8 @@ void Func_020026b8(void) {
   s32 *beam = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178);
   u16 *cell;
   struct Actor *spark;
-  u32 i;
-  s32 x, z;
+  s32 i;
+  s32 z;
 
   Func_02003bc8();
   Func_02003c88(0);
@@ -162,28 +152,22 @@ void Func_020026b8(void) {
   REG_DISPCNT |= 0x100;
   Call3((void (*)())Func_02003b98, 0x30000, 0x30000, 0x10000);
   z = 0xffff8000;
-  x = 0x4000;
-sweep:
-  beam[6] = x;
+  for (i = 0x4000; i != 0x48000; i += 0x400) {
+  beam[6] = i;
+  beam[7] = z;
   ((u8 *)Actor_GetById(12))[98] = Random16Far() & 7;
   wait(1);
-  beam[7] = z;
-  x += 0x400;
   z += 0xfffffc00;
-  if (x != 0x48000)
-    goto sweep;
+  }
   Task_RemoveFar(Func_0200257c);
   Task_Add(Func_02000ef4, 0xc80);
   REG_BLDALPHA = 8;
   REG_BLDCNT = 0x3f42;
-  i = 0;
-flicker:
+  for (i = 0; i != 257; i++) {
   REG_BLDALPHA = (8 - (i >> 5)) | 0x1000;
   ((u8 *)Actor_GetById(12))[98] = Random16Far() & 7;
   FieldEvent_Wait(1);
-  i++;
-  if (i != 257)
-    goto flicker;
+  }
   REG_DISPCNT &= ~0x200;
   wait(30);
   Call1((void (*)())Func_02003cd8, 390);
@@ -191,13 +175,10 @@ flicker:
   REG_BLDCNT = 0x3f41;
   Call3((void (*)())Func_02003b98, -1, -1, 0xe666);
   ((u8 *)Actor_GetById(12))[98] = 6;
-  i = 0;
-fade:
+  for (i = 0; i != 129; i++) {
   REG_BLDALPHA = ((i >> 3) << 8) | (0x10 - (i >> 3));
   FieldEvent_Wait(1);
-  i++;
-  if (i != 129)
-    goto fade;
+  }
   Task_RemoveFar(Func_02000ef4);
   ((u8 *)Actor_GetById(12))[99] = 0;
   wait(30);

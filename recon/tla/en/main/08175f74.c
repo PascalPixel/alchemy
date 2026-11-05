@@ -1488,9 +1488,18 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   REG_DISPCNT = 0x141;
   wait(1);
   scene->unk867 = 0;
+  __asm__("");
   BattleBackground_LoadFar(1, scene->unk670, 24);
-  CpuFill(canvas, 0x4000, 0);
-  CpuFill((void *)0x06004000, 0x4000, 0);
+  {
+    s32 (*fill)(void *, s32, u32) = Iwram_FillWords;
+    void *video;
+
+    do { } while (0);
+    CpuFill(canvas, 0x4000, 0);
+    video = (void *)0x06004000;
+    do { } while (0);
+    CpuFill(video, 0x4000, 0);
+  }
   DISPLAY_11E0->width = 120;
   unit30 = SYSTEM_WORK->unit30;
   shake = 0;

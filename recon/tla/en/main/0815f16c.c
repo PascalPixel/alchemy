@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 384 of 7666, slots normalized 262, high
-// registers blind too 262, every register blind 106. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 374 of 7666, slots normalized 252, high
+// registers blind too 252, every register blind 104. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -2195,15 +2195,17 @@ CLEAR(buffer, 0x1000);
         }
       }
     } else if (kind == 91) {
+      struct Texture *tex;
       void *matrix;
       s32 t;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       texture140.width = 7;
       texture140.height = 7;
-      texture140.pixels = buffer;
+      tex = &texture140;
+      tex->pixels = buffer;
       model->kind = 7;
-      model->texture = &texture140;
+      model->texture = tex;
       model->mesh = gData_08199364;
       model->matrix = matrix;
       t = frame - 4;
@@ -2224,10 +2226,9 @@ CLEAR(buffer, 0x1000);
           Render_DrawModelList(model);
         }
       }
-      tex = &texture140;
-      tex->width = 7;
-      tex->height = 4;
-      tex->pixels = buffer + 0x4000;
+      texture140.width = 7;
+      texture140.height = 4;
+      texture140.pixels = buffer + 0x4000;
       model->mesh = gData_08198d2c;
       for (i = 0; i != 2; i++) {
         s32 start;

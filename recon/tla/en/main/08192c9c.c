@@ -1011,13 +1011,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
       if (frame <= 191) {
         for (i = 0; i != 3; i++) {
+          s32 y = i + 62;
           u8 v = frame + (i & 1) * 47 + 80;
-          s32 y;
           s32 off;
           s32 x;
           s32 m;
 
-          y = i + 62;
           off = ((y & 7) << 3) + ((y >> 3) << 10);
           for (x = 0; x != 128; x += 8) {
             for (m = x; m != x + 8; m++) {

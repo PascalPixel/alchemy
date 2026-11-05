@@ -1,8 +1,9 @@
-// Draft, differ 50 of 40 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 50 (tla-en); notes below may predate it.
-// Draft, differ 50 of 40: overlay 692's copy of the function drafted in
-// resource_691_c_0200074c.c (overlay 691's Func_0200074c, differ 50 there), whose
-// header says what it is, what still differs and what was tried.
+// Draft, differ 34 of 40 (tla-en, 2026-11-05). Clears markers on the tiles ahead of
+// and behind the object, stored in the third byte of each layer-two cell.
+// One pointer through the map and its cells, and the first cell's base a local.
+// Left: the native holds that pointer in r0 and the object in r5 from entry, though
+// it calls nothing; here the object ranks first (5 refs over 13 against 6 over 23)
+// and keeps r0, the base takes r0 after it and the zero r4.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -27,23 +28,22 @@ struct Object0200074c {
   u8 marked;
 };
 
-// Clears markers on the tiles ahead of and behind the object, stored in the
-// third byte of each layer-two cell.
 void Func_0200075c(struct Object0200074c *object) {
-  struct MapLayers *map;
-  u8 **cells;
+  void *cells;
+  u8 *base;
   s32 x;
   s32 z;
 
   if (object->marked == 0)
     return;
-  map = (struct MapLayers *)Ram_HeapSlots->mapWork;
-  if (map == NULL)
+  cells = Ram_HeapSlots->mapWork;
+  if (cells == NULL)
     return;
-  cells = &map->layers[2].cells;
+  cells = &((struct MapLayers *)cells)->layers[2].cells;
   z = (object->z - object->y) >> 20;
   x = object->x >> 20;
-  (*cells)[((x + ((z + 1) << 7)) << 2) + 2] = 0;
-  (*cells)[((x + ((z - 1) << 7)) << 2) + 2] = 0;
+  base = *(u8 **)cells;
+  base[((x + ((z + 1) << 7)) << 2) + 2] = 0;
+  (*(u8 **)cells)[((x + ((z - 1) << 7)) << 2) + 2] = 0;
   object->marked = 0;
 }

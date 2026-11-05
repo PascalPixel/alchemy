@@ -1,15 +1,17 @@
-// Measured 2026-11-05 (tla-en): differ 4179 of 7666, slots normalized 2407,
-// high registers blind too 1953, every register blind 751. Left: far off. The
-// frame is 256 of 264: the listing keeps m * 0xa00 and the third source at
-// kind 60 in memory (sp+28 and sp+24) with r7 and r9 unmentioned in that
-// block, unexplained. i is one long pseudo in r11 in the listing, 231
-// mentions as when it is pinned; i needs pseudos ranked above it in r8, r10
-// and r9 where it is live. Settled today: the ring loop at kinds 81 to 93
-// reads p = &SPARKS[i], with its own k, which is what gives the listing's
-// hidden step register (a giv in a high register copied to r6). Scoping n, m,
-// x, y, fade, life and p to their blocks gave most of this round's fall;
-// judge such a change with slots and high registers normalized, since the raw
-// figure hides it behind the 8 bytes.
+// Measured 2026-11-05 (tla-en): differ 3006 of 7666, slots normalized 2390,
+// high registers blind too 1938, every register blind 694. The frame is now
+// the listing's 264. Settled today: the two slots at kind 60 are one local
+// array of two, with element 1 holding m * 0xa00 and element 0 the third
+// source. A local array whose address is not taken gets its stack slots after
+// the spills start and its stores stay even when unread, which is the
+// listing's unread str at sp+24. Its name and type are a placeholder. The
+// ring loop at kinds 81 to 93 reads p = &SPARKS[i], with its own k, which
+// gives the listing's hidden step register (a giv in a high register copied
+// to r6). Scoping n, m, x, y, fade, life and p to their blocks gave most of
+// the rest. Left: i is one long pseudo in r11 in the listing (231 mentions,
+// as when it is pinned), r10 here: i needs pseudos ranked above it in r8, r10
+// and r9 where it is live. Some inner loops keep their table loads in the
+// loop where this hoists them (kinds 14 and 68).
 
 // Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every
@@ -1325,14 +1327,17 @@ struct Particle *p;
       if (frame > 15)
         REG_BLDALPHA = (32 - frame) | 0x1000;
       if (frame > 5) {
-        s32 x;
+s32 x;
+ s32 o[2];
         x = target[0] / 2;
         m = __modsi3(frame / 2, 3);
-        drawFuncs.draw[0](screen, buffer + 0xc56 + m * 0xa00, x - 20, 16, 40,
+ o[1] = m * 0xa00;
+        drawFuncs.draw[0](screen, buffer + 0xc56 + o[1], x - 20, 16, 40,
                           32);
         drawFuncs.draw[0](screen, buffer + 0x2a56 + m * 0x500, x - 20, 48,
                           40, 32);
-        drawFuncs.draw[0](screen, buffer + 0x1156 + m * 0xa00, x - 20, 80,
+ o[0] = (s32)(buffer + 0x1156) + o[1];
+        drawFuncs.draw[0](screen, (u8 *)o[0], x - 20, 80,
                           40, 32);
       }
     } else if (kind == 5 || kind == 53 || kind == 78) {

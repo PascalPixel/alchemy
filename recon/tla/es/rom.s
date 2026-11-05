@@ -1531,12 +1531,6 @@ BattleEffect_RunParticleStreams:
 	.thumb_func
 BattleEffect_RunJudgment:
 	.incbin "baserom.gba", 0x0016729c, 0x000017a4
-	.section .rom.001693d0, "ax"
-	.global BattleEffect_RunNeptune
-	.type BattleEffect_RunNeptune, %function
-	.thumb_func
-BattleEffect_RunNeptune:
-	.incbin "baserom.gba", 0x001693d0, 0x00000e48
 	.section .rom.0016aa08, "ax"
 	.global BattleEffect_RunPlumeEdge
 	.type BattleEffect_RunPlumeEdge, %function

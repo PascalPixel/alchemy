@@ -1,50 +1,3 @@
-// Draft, differ 42 of 1632, skeleton gap 20 (tla-en, 2026-11-01)
-// BattleEffect_RunNeptune, summon 6 (BattleEffect_RunSceneEffect's case 6,
-// actflags 0x8006), The Broken Seal's BattleEffect_RunNeptune as The Lost Age
-// reworked it; the twin is confirmed by its statements, order and declarations.
-// No FAKEMATCH device is left: the two one-pass blocks came out.
-
-// Twin: ☀️ BattleEffect_RunNeptune
-// (games/tbs/src/battle_effect/battle_effect/neptune.c), with The Lost Age's
-// changes: no BattleEffect_SpawnObjects; instead its own object build (the
-// palette by Iwram_CopyWords to OBJ palette 0x200, the tiles by
-// Resource_DecodeType01 into the map cell buffer, eight
-// Func_0815b290(32, 32, 0x80002000, 0) with priority 1 and a 1 KB tile copy
-// each to 0x06010000 + gResourceTableEntries[slot].offset, as summons 4 and 24
-// do); battle work byte 0x867 set; the object grid computed from i (no
-// ObjectX/Y tables); Palette_LoadBasicObjColors and a Dma_Set of 16 palette
-// words after the first act; blitter modes 3 and 19 for The Broken Seal's 3
-// and 2.
-
-// Left: order only. The instructions, registers, spill slots and frame all
-// agree; every remaining row is sched2 placing a store after what the native
-// issues it before. Sites: REG_BLDCNT against the serpent's stack stores
-// (a search of all 720 orders of those six statements finds nothing better);
-// the outgoing arguments of the two z-capped-at-4 glow draws, the frame 214
-// draw, the sea's draw, the first two pillar draws and the spark draw, each
-// against the stack or constant work before `draw`'s load; the strh before
-// frame = 0 in act two; and the pillar loop's i = 0 against its two hoisted
-// slot stores. The stores all feed a load after them (the blitter's pointer
-// through sp+20, gBgScroll), so the native ranks a store before a load higher
-// than alchemy-gcc does. That is a question about the scheduling model, K2's
-// -mthumb-slow-loads, and out of a draft's hands. No device can close the glow
-// draws: the native's stores fall inside the split of 0x5520, so a barrier
-// cannot sit between them.
-
-// What carried it from 113 to 42, all plain C: every copy goes through The
-// Broken Seal's typed Iwram_CopyWords inline (iwram_call.h's layer there): the
-// inline keeps the size out of CSE, so 0x200 is built twice and the copy's
-// address gets its own pseudo, r6 then r9; tiles + i * 0x400 rather than a
-// stepped pointer, so loop.c's reduced giv rebuilds 0x400 in the loop and the
-// base stays in r8; tiles = gMapCellBuffer, set after the three heap slots
-// (first, it takes r0 and rotates them); pillarX in its inner block, so it
-// takes sp+24 below the hoisted sheet at sp+28.
-
-// Tried, no gain: a local for z * 2 (none; glintSize worse, 58); a local for
-// the cell address; locals for 104 and 17 at the pillars; a local for the sea's
-// 32 (145); frame = 0 above the display writes (44); one-pass round them (44);
-// REG_BLDCNT at each other position; a stepped pillar pointer (342); one-constant
-// locals or a do-while in place of the inline (253 at best).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -113,6 +66,8 @@ struct ScaledSprite;
 #undef Iwram_CopyWords
 static inline s32 Iwram_CopyWords(volatile void *destination,
                                   const volatile void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to the
+   * fixed entry, 219 of 1632 instructions differ in tla-en. */
   return Iwram_CopyWordsEntry((void *)destination, (const void *)source, size);
 }
 
@@ -131,14 +86,12 @@ extern u16 gData_08197410[];       // ☀️ gBattleEffect_MoteCells
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
-void BattleEffect_ProcessPendingGraphicsTransfer(
-    void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void Func_08163c2c(s32 mode, s32 value);
 s32 BattleEffect_LoadBlitter(
     s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter(slot,
                                  // 7, 7, flags, mode)
-void BattleEffect_SelectLivingTargets(
-    struct BattleEffectArgument *effect);
+void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect);
 struct SpriteObject *Func_0815b290(s32 width, s32 height, u32 attributes,
                                    u32 mode);
 void Func_08143eb4(s32 x0, s32 y0, s32 x1, s32 y1,
@@ -148,8 +101,8 @@ void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void Func_08118088(s32 actor,
                    s32 variant); // BattleMotion_ApplyVariantMotionFar
 void Func_0814cd48(s32 actor, s32 palette, s32 a, s32 timer,
-                   s32 frames);          // BattleEffect_TintBattler
-void Func_08158ce0(s32 x, s32 y);        // Camera_ApplyShake
+                   s32 frames);   // BattleEffect_TintBattler
+void Func_08158ce0(s32 x, s32 y); // Camera_ApplyShake
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_EndCanvasLayer(void);
 void Palette_LoadBasicObjColors(void);
@@ -219,8 +172,7 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   Task_Add(Graphics_ResetBg2Pa, TASK_PASS_FRAME);
   Irq_SetHandler(2, 0, Graphics_SetBg2AffineScaleHalf);
   work->transferMode = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
-                                TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   REG_WININ = 0x2137;
   Func_08163c2c(1, 0);
   REG_WIN0H = 0xf0f0;
@@ -254,11 +206,11 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x80;
   REG_BLDALPHA = 0x1010;
   // The serpent starts low on the right, rising to the left.
+  REG_BLDCNT = 0x3f44;
   openStep = 1;
   serpentX = 140 << 17;
   serpentY = 200 << 16;
   serpentVX = -0x40000;
-  REG_BLDCNT = 0x3f44;
   serpentVY = -0x80000;
   savedScrollX = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->transitionWork;

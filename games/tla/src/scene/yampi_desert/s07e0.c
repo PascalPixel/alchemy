@@ -1,14 +1,3 @@
-// Draft, differ 6 of 130 (tla-en, 2026-11-05) with two untagged pins, cells in r6 and index in r10; left: grid loaded before the shapes add. Older notes may predate this.
-// Draft, differ 34 of 130 (was 81): the reverse of Func_020006ac, lowering
-// each listed pillar whose flag is clear and clearing flag 0x20b. The walk is
-// a goto loop entered by a first test of the end mark, as the native has the
-// test at the top and at the bottom. Left: registers inside the lowering (the
-// native keeps the cells in r6, the shape grid's pointer in r5, the cell
-// index in r10 and the shape in r9; here the pairs are swapped) and the final
-// store, which the native makes through the shape grid's pointer advanced by
-// the index. Measured: the declarations in other orders (no change), the
-// pointer advanced in the source (43), the cell indexed in place (84). The
-// same entry test gives Func_020006ac 107 (its list goes to the stack).
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -35,6 +24,7 @@ s32 Func_020041e8(s32 layer, s32 shape, s32 height);
 void Func_020007e0(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   u16 *list = NULL;
+  u8 *grid = gMapShapeGrid;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov661Room3)
     list = gData_0200478e;
@@ -55,15 +45,14 @@ next:
     set = GameFlag_Test(*list);
     if (!set) {
       s32 layer = object->terrainId;
-      register struct MapCell *cells asm("r6") = map->layers[layer].cells;
-      u8 *shapes = gMapShapeGrid + (((s32)cells - 0x02010000) >> 2);
+      struct MapCell *cells = map->layers[layer].cells;
+      u8 *shapes = (u8 *)((((s32)cells - 0x02010000) >> 2) + (s32)grid);
+      /* FAKEMATCH(pin): the index in r10; as a plain local, 32 of 130 instructions
+       * differ in tla-en. */
       register s32 index asm("r10") = Func_020041e0(object);
       s32 shape = Func_02004020(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
       struct MapCell *cell = cells + index;
-      /* FAKEMATCH(barrier): the empty asm on cell changes its allocation rank; as no
-       * asm, 34 of 130 instructions differ in tla-en. */
-      asm("" : "=r"(cell) : "0"(cell));
 
       object->motionFlags = set;
       cell->collisionCode = 255;

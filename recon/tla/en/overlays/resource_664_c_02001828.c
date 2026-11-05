@@ -135,9 +135,9 @@ struct Cell {
     (object)->motionFlags = 0;                                                 \
     (object)->priorityFlags &= ~1;                                             \
     Actor_SetSingleChildFlags(object, 0);                                      \
-    gust->watchedObject = (object);                                            \
     ((struct FieldSprite *)(object)->animation)->priority =                    \
         ((struct FieldSprite *)gust->animation)->priority;                     \
+    gust->watchedObject = (object);                                            \
     carried = (at);                                                            \
   } while (0)
 
@@ -284,7 +284,8 @@ void Func_02001828(void) {
     object->velocityY = 0x80000;
     object->update = 0;
     object->motionFlags = 2;
-    object->priorityFlags = (object->priorityFlags | 1) & ~6;
+    object->priorityFlags |= 1;
+    object->priorityFlags &= ~6;
     Actor_SetSingleChildFlags(object, 1);
     Scene_SetActorSpritePriority(object, 2);
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
@@ -333,10 +334,10 @@ void Func_02001828(void) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
         {
-          s32 random = Random16Far();
+          s32 random = Random16Far() & 0xffff;
 
           one = 0x10000; // 1.0 in 16.16
-          dust.startScaleX = dust.startScaleY = (random & 0xffff) + one;
+          dust.startScaleX = dust.startScaleY = random + one;
         }
         velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
         velocity.y = one;

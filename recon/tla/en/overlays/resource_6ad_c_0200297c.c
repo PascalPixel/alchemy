@@ -1,38 +1,7 @@
-// Draft, differ 62 of 236 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Overlay 6ad's copy of the slide seen at 6ab Func_02002148 and 6ac Func_020024e4.
-// The frame loop's bottom test closes the PRE problem those two drafts name: with
-// `running` tested at the bottom, entered by `goto test`, the loop has an exit edge
-// while PRE runs, so actor + 34, work + 104, work + 106 stay in the loop. gcse folds
-// the test only in its last cprop pass, after PRE, which leaves the listing's plain
-// back branch; a real while loop lets loop.c hoist them instead (gap 23/29). The
-// same form should open both siblings. `running` holds one constant for its whole
-// life (S2); no source form is known, only this effect.
-// Left, the frame address. The listing sets r1 in the loop head for the else arm,
-// rebuilds it in the slide loop, and builds r2 at the scan call, with no slot for
-// it. Here PRE keeps one reaching register. That costs a stack word, and r1 lost.
-// This closes most of it, to differ 87, gap 11/12, frame 20: declare pos in the
-// loop's block, set pos = &position in the head, use pos in the else arm, and add
-// pos = &position after i++ and after j++. Those two stores are unread (`dead`),
-// and they only stop gcse's last cprop folding the reaching register into pos. They
-// came back out because they do not reach differ 0; the full text is
-// work2/resource_6ad_c_0200297c/x3_with_dead_stores.c in the scratchpad.
-// Left in that form: j takes r4 by caller-saves (refs 11, 1 call), radius r8, the
-// reaching register fp and work a register, where the listing has j r8, radius fp,
-// work spilled to sp+0, no frame word for the save. So something holds r4 across the
-// scan at global-alloc, since radius (refs 5, 1 call) avoids it too, and reload then
-// spills r4, evicting it. Likeliest the reaching register, which needs refs over
-// 16 for 4 calls and priority over j (0.69); it has 13 and 0.25, its live length
-// doubled by REG_EQUIV. Unproved.
-// Left, the slide loop's exit: `if (i <= 9) goto sliding` gives ble/b/b, one branch
-// too many. A do-while gives ble/b but loop.c moves the velocity-clearing block out
-// (find_and_verify_loops needs a barrier at done's depth, so a real outer loop would
-// stop it, but that hoists). The form that gives it here sent the exit to the loop
-// test, which is the wrong target (differ 74, not kept).
-// Func_02002800 returns s32 and stays unprototyped: that gives -10's order.
-// Tried without gain on the differ 87 form: scan as do-while or for (93), pos set
-// in the scan body (96) or before it (146), clamp held in a local from before the
-// scan (131), mask likewise (90), low and high clamp together (165), x's store
-// spelled three ways, the test at the else arm's end, a test at done.
+// Draft, differ 72 of 236 (tla-en, 5 November 2026), plain loops and no device.
+// Left: the hoisted address of position takes r8 here; the listing rebuilds it (add rN, sp, 4)
+// at each use, the mark of a pseudo left without a register, so radius holds r11 and the frame is 16.
+// The first read of stepX also hoists here, where the listing reads it in each arm.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -130,7 +99,8 @@ void Func_0200297c(void) {
         flags = &other->collisionFlags;
         for (j = 0; j <= 63; j++, flags += sizeof(struct Actor), other++) {
           if (other->script != NULL && (*flags & 1) != 0 && other != actor) {
-            if (Func_02005538(&other->x, radius, &position, other->radius - 2) >= 0) {
+            if (Func_02005538(&other->x, radius, &position,
+                              other->radius - 2) >= 0) {
               wait(1);
               goto done;
             }

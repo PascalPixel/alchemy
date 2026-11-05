@@ -411,8 +411,17 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   spread = 0;
   grow = 0;
   for (i = 0; i != 32; i++) {
-    w->x[i] = (i % 8 << 5) + 256;
-    w->y[i] = i / 8 * 22 + 128;
+    s32 q = i / 8;
+    s32 left = 256;
+    s32 t;
+    s32 u2;
+
+    do {
+      t = (i - q * 8) << 5;
+    } while (0);
+    u2 = q * 22;
+    w->x[i] = t + left;
+    w->y[i] = u2 + 128;
   }
   work->transferMode = 2;
   work->transferValue = 50;

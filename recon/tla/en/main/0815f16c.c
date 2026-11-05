@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 639 of 7666, slots normalized 423, high
-// registers blind too 421, every register blind 199. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 612 of 7666, slots normalized 412, high
+// registers blind too 410, every register blind 182. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1823,7 +1823,6 @@ CLEAR(buffer, 0x1000);
       s32 y;
       if (frame > 31)
         REG_BLDALPHA = (48 - frame) | 0x1000;
-      p = SPARKS;
       i = 0;
       if (frame < 14) {
         struct Particle *p;
@@ -1853,18 +1852,18 @@ CLEAR(buffer, 0x1000);
         }
       } else {
         for (; i != 16; i++) {
-            s32 m; struct Particle *q;
-          q = &SPARKS[i];
+            s32 m;
+          p = &SPARKS[i];
           { s32 a; a = __modsi3(i, 5) * 3;
-          m = a + __modsi3(__divsi3(q->life, 96), 3); }
+          m = a + __modsi3(__divsi3(p->life, 96), 3); }
           drawFuncs.draw[i > 2 ? 0 : 1](screen, buffer + 0x800 + gData_08197834[m],
-                                 (q->x >> 16) - gData_0819781a[m] / 2,
-                                 (q->y >> 16) - gData_08197826[m] / 2,
+                                 (p->x >> 16) - gData_0819781a[m] / 2,
+                                 (p->y >> 16) - gData_08197826[m] / 2,
                                  gData_0819781a[m], gData_08197826[m]);
-          BattleEffectKernels_IntegrateVector2(q, 64, 0x2000);
-          q->life += q->z;
-          if (q->z > 1 && (frame & 1))
-            q->z--;
+          BattleEffectKernels_IntegrateVector2(p, 64, 0x2000);
+          p->life += p->z;
+          if (p->z > 1 && (frame & 1))
+            p->z--;
         }
       }
     } else if (kind == 94) {

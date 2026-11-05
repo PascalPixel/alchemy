@@ -1,168 +1,99 @@
-// Draft of overlay 69d's Func_02000e58, translated from its listing.
+// Draft, differ 18: overlay 69d's copy of the function drafted in
+// resource_698_c_02000aac.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 Func_02001ee0();
-s32 Func_02001d80();
-extern u8 gData_0200275c[];
-extern u8 gResourceTableEntries[];
-extern u8 gData_020027a0[];
-extern u8 gData_0200275e[];
-extern u8 gData_02002760[];
-extern u8 gData_02002860[];
-extern u8 gData_02002862[];
+#include "ram_buffer.h"
+#include "map.h"
+#include "field_event.h"
+#include "vram_tab.h"
+
+struct LightOam {
+  u32 link;
+  u32 attr01;
+  u16 tile : 10;
+  u16 priority : 2;
+  u16 palette : 4;
+  u16 unk0a;
+};
+
+extern s16 gData_0200275c;
+extern s16 gData_0200275e;
+extern struct FieldActor *gData_02002760[];
+extern struct LightOam gData_020027a0[];
+extern s16 gData_02002860;
+extern s16 gData_02002862;
+
+s32 Func_02001ee0(struct FieldActor *actor);
+void Func_02001d80(struct LightOam *oam, s32 depth);
 
 void Func_02000e58(void) {
-  u8 frame[8];
-  s32 s0, s4, v_ip, v_r0, v_r1, v_r10, v_r11, v_r2, v_r3, v_r4, v_r5, v_r6, v_r7, v_r8, v_r9;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  s32 *view = &map->viewX;
+  s32 viewX, viewZ, tile, viewY;
+  struct LightOam *oam;
+  s32 i;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  tile = gResourceTableEntries[gData_0200275c].offset >> 5;
+  viewY = map->origin[1];
+  oam = gData_020027a0;
 
-  v_r7 = v_r11;
-  v_r6 = v_r10;
-  v_r5 = v_r9;
-  v_r7 = v_r8;
-  v_r1 = FIELD_AT(0x3000000, s32, 32);
-  v_r2 = v_r1 + 228;
-  v_r0 = FIELD_AT(v_r2, s32, 0);
-  v_r2 = FIELD_AT(v_r2, s32, 4);
-  v_r0 = v_r0 & -0x10000;
-  v_r2 = v_r2 & -0x10000;
-  v_r10 = v_r0;
-  v_r3 = FIELD_AT((s32)gData_0200275c, s16, 0);
-  v_r8 = v_r2;
-  v_r3 = v_r3 << 2;
-  v_r3 = v_r3 + (s32)gResourceTableEntries;
-  v_r3 = FIELD_AT(v_r3, u16, 2);
-  v_r3 = (u32)v_r3 >> 5;
-  /* XXX stack argument */;
-  v_r6 = (s32)gData_020027a0;
-  v_r3 = FIELD_AT(v_r1, s32, 0);
-  v_r3 = FIELD_AT(v_r3, s32, 4);
-  v_r9 = 0;
-  /* XXX stack argument */;
-  v_r3 = FIELD_AT((s32)gData_0200275e, s16, 0);
-  if (v_r9 < v_r3)
-    goto L_02008eaa;
-  goto L_02008fde;
-L_02008eaa:
-  ;
-  v_r3 = v_r9 << 2;
-  v_r5 = FIELD_AT((s32)gData_02002760 + v_r3, s32, 0);
-  if (v_r5 != 0)
-    goto L_02008eb8;
-  goto L_02008fce;
-L_02008eb8:
-  ;
-  v_r3 = FIELD_AT(v_r5, s32, 8);
-  if (v_r3 != 0)
-    goto L_02008ec0;
-  goto L_02008fce;
-L_02008ec0:
-  ;
-  v_r0 = v_r3 - v_r10;
-  v_r2 = s0;
-  v_r3 = FIELD_AT(v_r5, s32, 12);
-  v_r3 = v_r3 - v_r2;
-  v_r2 = FIELD_AT(v_r5, s32, 16);
-  v_r3 = v_r3 + 0x80000;
-  v_r2 = v_r2 - v_r8;
-  v_r1 = s0;
-  v_r2 = v_r2 - v_r1;
-  v_r4 = v_r2 - v_r3;
-  v_r3 = v_r3 + v_r2;
-  v_r3 = v_r3 >> 16;
-  v_r3 = v_r3 + 58;
-  v_r11 = v_r3;
-  v_r2 = FIELD_AT((s32)gData_02002860, s16, 0);
-  v_ip = v_r2;
-  v_r1 = v_r0 >> 16;
-  v_r3 = v_r5 + 100;
-  v_r2 = v_r4 >> 16;
-  if (v_ip != 0)
-    goto L_02008f36;
-  v_r7 = FIELD_AT(v_r3, s16, 0);
-  v_r3 = v_r1 + 7;
-  v_r4 = v_r2;
-  v_r0 = v_r1 - 8;
-  v_r4 = v_r4 - 16;
-  if ((u32)v_r3 > (u32)0x14e)
-    goto L_02008fce;
-  if (v_r4 <= -16)
-    goto L_02008fce;
-  if (v_r4 > 239)
-    goto L_02008fce;
-  v_r0 = v_r0 & 0x1ff;
-  v_r4 = v_r4 & 255;
-  /* XXX stmia r1!, {r3} */
-  v_r3 = v_r0 << 16;
-  v_r4 = v_r4 | v_r3;
-  goto L_02008f72;
-L_02008f36:
-  ;
-  v_r7 = FIELD_AT(v_r3, s16, 0);
-  v_r4 = v_r2;
-  v_r3 = v_r6 + 23;
-  v_r0 = v_r6 - 8;
-  v_r4 = v_r4 - 64;
-  if ((u32)v_r3 > (u32)0x15e)
-    goto L_02008fce;
-  if (v_r4 <= -64)
-    goto L_02008fce;
-  if (v_r4 > 175)
-    goto L_02008fce;
-  v_r0 = v_r0 & 0x1ff;
-  v_r4 = v_r4 & 255;
-  /* XXX stmia r1!, {r3} */
-  v_r3 = v_r0 << 16;
-  v_r4 = v_r4 | v_r3;
-L_02008f72:
-  ;
-  v_r4 = v_r4 | v_r3;
-  /* XXX stmia r1!, {r4} */
-  v_r0 = s4;
-  v_r3 = v_r7 << 3;
-  v_r3 = v_r0 + v_r3;
-  v_r3 = v_r3 | 0x800;
-  FIELD_AT(v_r6, s32, 0) = v_r3;
-  v_r2 = FIELD_AT((s32)gData_02002862, u16, 0);
-  v_r3 = FIELD_AT((s32)gData_02002862, s16, 0);
-  if (v_r3 != -1)
-    goto L_02008fb0;
-  v_r0 = Func_02001ee0(v_r5, 0, v_r2, v_r3);
-  v_r0 = v_r0 & 3;
-  v_r3 = FIELD_AT(v_r6, u8, 9);
-  v_r0 = v_r0 << 2;
-  v_r3 = v_r3 & -13;
-  v_r3 = v_r3 | v_r0;
-  FIELD_AT(v_r6, u8, 9) = v_r3;
-  goto L_02008fc4;
-L_02008fb0:
-  ;
-  v_r3 = 3 & v_r2;
-  v_r2 = FIELD_AT(v_r6, u8, 9);
-  v_r3 = v_r3 << 2;
-  v_r2 = v_r2 & -13;
-  v_r2 = v_r2 | v_r3;
-  FIELD_AT(v_r6, u8, 9) = v_r2;
-L_02008fc4:
-  ;
-  Call4((void (*)())Func_02001d80, v_r6, v_r11, v_r2, v_r3);
-  v_r6 = v_r6 + 12;
-L_02008fce:
-  ;
-  v_r3 = FIELD_AT((s32)gData_0200275e, s16, 0);
-  v_r9 = v_r9 + 1;
-  if (v_r9 >= v_r3)
-    goto L_02008fde;
-  goto L_02008eaa;
-L_02008fde:
-  ;
-  v_r8 = v_r3;
-  v_r9 = v_r5;
-  v_r10 = v_r6;
-  v_r11 = v_r7;
+  for (i = 0; i < gData_0200275e; i++) {
+    struct FieldActor *actor = gData_02002760[i];
+    if (actor != 0 && actor->x != 0) {
+      s32 big, ox, y, z, oy, depth;
+      u32 *word;
+      big = gData_02002860;
+      ox = actor->x - viewX;
+      y = actor->y - viewY + 0x80000;
+      z = actor->z - viewZ - viewY;
+      oy = z - y;
+      depth = ((y + z) >> 16) + 58;
+      if (big == 0) {
+        s32 x, sy;
+        s32 frame;
+        frame = (s16)actor->timer;
+        x = ox >> 16;
+        sy = oy >> 16;
+        ox = x - 8;
+        oy = sy - 16;
+        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
+          continue;
+        ox &= 0x1ff;
+        oy &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = oy | (ox << 16) | 0x40002000;
+        *word = (tile + frame * 8) | 0x800;
+        if (gData_02002862 == -1)
+          oam->priority = Func_02001ee0(actor);
+        else
+          oam->priority = gData_02002862;
+        Func_02001d80(oam, depth);
+        oam++;
+      } else {
+        s32 x, sy;
+        s32 frame;
+        frame = (s16)actor->timer;
+        x = ox >> 16;
+        sy = oy >> 16;
+        ox = x - 8;
+        oy = sy - 64;
+        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
+          continue;
+        ox &= 0x1ff;
+        oy &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = oy | (ox << 16) | 0xc000a000;
+        *word = (tile + frame * 8) | 0x800;
+        if (gData_02002862 == -1)
+          oam->priority = Func_02001ee0(actor);
+        else
+          oam->priority = gData_02002862;
+        Func_02001d80(oam, depth);
+        oam++;
+      }
+    }
+  }
 }

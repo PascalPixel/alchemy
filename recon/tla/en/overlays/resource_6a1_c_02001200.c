@@ -1,6 +1,5 @@
-// Draft, differ 273 of 200: overlay 6a1's copy of the function drafted in
-// resource_69d/02008e58.c (overlay 69d's Func_02000e58), whose
-// header says what it is, what still differs and what was tried.
+// Draft, differ 18: overlay 6a1's copy of the function drafted in
+// resource_698_c_02000aac.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -27,57 +26,74 @@ extern s16 gData_02002bf6;
 s32 Func_020022b0(struct FieldActor *actor);
 void Func_02002130(struct LightOam *oam, s32 depth);
 
-#define MAP_WORD(map, offset) (*(s32 *)((u8 *)(map) + (offset)))
-
 void Func_02001200(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 *camera = (s32 *)((u8 *)map + 228);
-  s32 cameraX = camera[0] & 0xffff0000;
-  s32 cameraZ = camera[1] & 0xffff0000;
-  s32 tile = gResourceTableEntries[gData_02002af0].offset >> 5;
-  struct LightOam *oam = gData_02002b34;
-  s32 originY = map->origin[1];
+  s32 *view = &map->viewX;
+  s32 viewX, viewZ, tile, viewY;
+  struct LightOam *oam;
   s32 i;
+  viewX = view[0] & 0xffff0000;
+  viewZ = view[1] & 0xffff0000;
+  tile = gResourceTableEntries[gData_02002af0].offset >> 5;
+  viewY = map->origin[1];
+  oam = gData_02002b34;
 
   for (i = 0; i < gData_02002af2; i++) {
     struct FieldActor *actor = gData_02002af4[i];
-    s32 x, y, z, depth, frame, sx, sy, ox, oy;
-    u32 *word;
-
-    if (actor == 0 || actor->x == 0)
-      continue;
-    x = actor->x - cameraX;
-    y = actor->y - originY + 0x80000;
-    z = actor->z - cameraZ - originY;
-    sy = z - y;
-    depth = ((y + z) >> 16) + 58;
-    sx = x >> 16;
-    sy >>= 16;
-    if (gData_02002bf4 == 0) {
-      frame = (s16)actor->timer;
-      ox = sx - 8;
-      oy = sy - 16;
-      if (ox <= -16 || ox >= 320 || oy <= -16 || oy >= 240)
-        continue;
-      word = (u32 *)oam;
-      *word++ = 0;
-      *word++ = (oy & 0xff) | ((ox & 0x1ff) << 16) | 0x40002000;
-    } else {
-      frame = (s16)actor->timer;
-      ox = sx - 8;
-      oy = sy - 64;
-      if (ox <= -32 || ox >= 320 || oy <= -64 || oy >= 176)
-        continue;
-      word = (u32 *)oam;
-      *word++ = 0;
-      *word++ = (oy & 0xff) | ((ox & 0x1ff) << 16) | 0xc000a000;
+    if (actor != 0 && actor->x != 0) {
+      s32 big, ox, y, z, oy, depth;
+      u32 *word;
+      big = gData_02002bf4;
+      ox = actor->x - viewX;
+      y = actor->y - viewY + 0x80000;
+      z = actor->z - viewZ - viewY;
+      oy = z - y;
+      depth = ((y + z) >> 16) + 58;
+      if (big == 0) {
+        s32 x, sy;
+        s32 frame;
+        frame = (s16)actor->timer;
+        x = ox >> 16;
+        sy = oy >> 16;
+        ox = x - 8;
+        oy = sy - 16;
+        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
+          continue;
+        ox &= 0x1ff;
+        oy &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = oy | (ox << 16) | 0x40002000;
+        *word = (tile + frame * 8) | 0x800;
+        if (gData_02002bf6 == -1)
+          oam->priority = Func_020022b0(actor);
+        else
+          oam->priority = gData_02002bf6;
+        Func_02002130(oam, depth);
+        oam++;
+      } else {
+        s32 x, sy;
+        s32 frame;
+        frame = (s16)actor->timer;
+        x = ox >> 16;
+        sy = oy >> 16;
+        ox = x - 8;
+        oy = sy - 64;
+        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
+          continue;
+        ox &= 0x1ff;
+        oy &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = oy | (ox << 16) | 0xc000a000;
+        *word = (tile + frame * 8) | 0x800;
+        if (gData_02002bf6 == -1)
+          oam->priority = Func_020022b0(actor);
+        else
+          oam->priority = gData_02002bf6;
+        Func_02002130(oam, depth);
+        oam++;
+      }
     }
-    *word = (tile + frame * 8) | 0x800;
-    if (gData_02002bf6 == -1)
-      oam->priority = Func_020022b0(actor);
-    else
-      oam->priority = gData_02002bf6;
-    Func_02002130(oam, depth);
-    oam++;
   }
 }

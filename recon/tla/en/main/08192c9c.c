@@ -1671,8 +1671,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 128; i++) {
         s32 c = FADE_PLTT[i];
         s32 r = 31;
-        s32 g = (u16)c >> 5 & 31;
         s32 b = (u16)c >> 10 & 31;
+        s32 g = (u16)c >> 5 & 31;
 
         r &= c;
 

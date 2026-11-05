@@ -1,8 +1,7 @@
-// Draft, differ 134 (tla-en, 2026-11-05). Func_020003c4 of overlay 6ac.
-// Direct array reads under a plain loop give the listing's shape (strh
-// through base and index, offsets chained). A rise from 97 with the barriers
-// gone. Left: rank: the table holds r5 where natively busy does, i r4 saved
-// around calls, at r7, the table r6.
+// Draft, differ 2 of 179 (tla-en, 2026-11-05). Func_020003c4 of overlay 6ac.
+// The modulo written at each read, as its neighbour Func_020000c0 does, 134
+// to 2: CSE merges the libcalls after the registers are ranked. Left: the
+// first ldrh before ldr r6.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -42,12 +41,10 @@ void Func_020003c4(void) {
   }
   base = gData_02003704 / 8 % 6;
   for (i = 0; i <= 5; i++) {
-    s32 j = (base + i) % 6;
-
-    Data_02003a1c[i + 4] = Data_020039dc[j + 4];
-    Data_02003a1c[i + 10] = Data_020039dc[j + 10];
-    Data_02003a1c[i + 20] = Data_020039dc[j + 20];
-    Data_02003a1c[i + 26] = Data_020039dc[j + 26];
+    Data_02003a1c[i + 4] = Data_020039dc[(base + i) % 6 + 4];
+    Data_02003a1c[i + 10] = Data_020039dc[(base + i) % 6 + 10];
+    Data_02003a1c[i + 20] = Data_020039dc[(base + i) % 6 + 20];
+    Data_02003a1c[i + 26] = Data_020039dc[(base + i) % 6 + 26];
   }
   if (!Flag_IsSet(0xa32))
     Iwram_CopyWords(&Data_02003a1c[10], Data_0200ba70, 12);

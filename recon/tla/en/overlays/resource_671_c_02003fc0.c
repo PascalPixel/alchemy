@@ -53,8 +53,8 @@
 #include "iwram_call.h"
 
 struct PuzzleCell {
-  u8 unk1;
   u8 piece;
+  u8 unk1;
   u8 shape;
   u8 marked;
 };
@@ -70,8 +70,9 @@ s32 Func_02004224(s32 from, s32 to, s32 kind);
 void Func_02004270(s32 x, s32 z, s32 piece, s32 flags);
 s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
                   s32 last, s32 bit) {
-  s32 spare, step, dir, used, dz, one, z, xIndex, zIndex;
-  u32 x, nextX, nextZ, tries, attempts;
+  u8 *cells;
+  s32 spare, step, dir, used, dz, index, one;
+  u32 x, z, nextX, nextZ, tries, attempts;
   u8 tried;
 
   length--;
@@ -81,22 +82,24 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
   Iwram_ClearWords(Data_02006fc8, 32);
   Iwram_ClearWords(Data_02007028, 32);
   Iwram_ClearWords(Data_02007008, 32);
-  Call2((void (*)())Iwram_ClearWords, (s32)(gData_02007068), (s32)(32));
-  Iwram_ClearWords(Data_02007048, 32);
-  if (spare & 1) {
-  fail:
+  Iwram_ClearWords(gData_02007068, 32);
+  Call2((void (*)())Iwram_ClearWords, (s32)(Data_02007048), (s32)(32));
+  if (spare & 1)
     return -1;
-  }
+  cells = (u8 *)gSceneState;
   one = 1;
   step = 0;
   attempts = 0;
   x = x0;
   z = z0;
-top:
+  while (1) {
     if (++attempts > 1280)
-      goto fail;
-    Data_02007028[step] = gSceneState[z * 11 + x].piece;
-    gData_02007068[step] = gSceneState[z * 11 + x].shape;
+      return -1;
+    {
+      s32 offset = (z * 11 + x) * 4;
+      Data_02007028[step] = cells[offset];
+      gData_02007068[step] = (cells + offset)[2];
+    }
     Data_02006fe8[step] = x;
     Data_02007008[step] = z;
     Data_02006fc8[step] = direction;
@@ -105,32 +108,37 @@ top:
                           1 << ((direction + 2) & 3);
     tries = 0;
     while (1) {
+      u32 value;
       if (++tries > 63)
         goto back;
+      value = Random16Far();
       dir = direction;
-      if (Random16Far() > 0x7fff)
+      if (value > 0x7fff)
         dir = (Random16Far() * 4) >> 16;
       tried = Data_02007048[step];
       if ((tried >> dir) & one)
         continue;
-      xIndex = dir * 2;
-      zIndex = xIndex + 1;
-      nextX = x + (gData_02005ac0 + 1)[xIndex];
-      nextZ = z + (gData_02005ac0 + 1)[zIndex];
+      index = dir * 2;
+      nextX = x + (gData_02005ac0 + 1)[index];
+      index += 1;
+      nextZ = z + (gData_02005ac0 + 1)[index];
       if (nextX > 10 || nextZ > 7)
         goto blocked;
       if (step == length - 1 && (nextX != endX || nextZ != endZ))
         goto blocked;
-      if (gSceneState[nextZ * 11 + nextX].unk1 != 0)
-        goto blocked;
-      used = (gSceneState[nextZ * 11 + nextX].shape >> bit) & one;
-      if (used != 0)
-        goto blocked;
-      if (gSceneState[nextZ * 11 + nextX].piece == 10)
-        goto blocked;
+      {
+        u8 *cell = cells + (nextZ * 11 + nextX) * 4;
+        if (cell[1] != 0)
+          goto blocked;
+        used = (cell[2] >> bit) & one;
+        if (used != 0)
+          goto blocked;
+        if (cell[0] == 10)
+          goto blocked;
+      }
       Data_02007048[step] = tried | one << dir;
       Func_02004270(x, z, Func_02004224(direction, dir, Data_02007028[step]),
-                    gSceneState[z * 11 + x].shape | one << bit);
+                    (cells + (z * 11 + x) * 4)[2] | one << bit);
       step++;
       x = nextX;
       z = nextZ;
@@ -143,21 +151,24 @@ top:
       Data_02007048[step] |= 1 << dir;
       if (Data_02007048[step] != 0x0f)
         continue;
-  back:
+    back:
     Data_02007048[step] = 0;
     if (step == 0)
-      goto fail;
-    x = Data_02006fe8[step - 1];
-    z = Data_02007008[step - 1];
-    direction = Data_02006fc8[step - 1];
-    Func_02004270(x, z, Data_02007028[step - 1], gData_02007068[step - 1]);
+      return -1;
     step--;
+    x = Data_02006fe8[step];
+    z = Data_02007008[step];
+    direction = Data_02006fc8[step];
+    Func_02004270(x, z, Data_02007028[step], gData_02007068[step]);
     goto top;
     }
+    top:;
+  }
 done:
-  Func_02004270(nextX, nextZ,
-                Func_02004224(dir, last,
-                              gSceneState[nextZ * 11 + nextX].piece),
-                gSceneState[nextZ * 11 + nextX].shape | 1 << bit);
+  {
+    s32 offset = (nextZ * 11 + nextX) * 4;
+    Func_02004270(nextX, nextZ, Func_02004224(dir, last, cells[offset]),
+                  (cells + offset)[2] | 1 << bit);
+  }
   return 0;
 }

@@ -1531,7 +1531,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x5810, 16, 32, 0x10000);
       Func_0815b434(work->sheet + 0x1c10, 32, 0x10000);
       for (i = 0; i != 32; i++) {
-        Dma_Set(work->sheet + 0x1c10 + i * 16, work->sheet + 0x1810 + i * 32,
+        Dma_Set(work->sheet + i * 16 + 0x1c10, work->sheet + i * 32 + 0x1810,
                 0x84000008, REG_DMA3);
         for (j = 0; j != 16; j++)
           work->sheet[0x1820 + i * 32 + j] = work->sheet[0x181f + i * 32 - j];
@@ -1580,7 +1580,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 197; i++) {
         s32 a = i * 384;
         s32 sx = Trig_Sin(a) * (t >> 1);
-        s32 sy = (t << 1) * Trig_Cos(a);
+        s32 sy = Trig_Cos(a) * (t << 1);
         s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
         s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT);
 

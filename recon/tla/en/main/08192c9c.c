@@ -483,9 +483,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         draw(canvas, sprites + ringCel, px - 1, py - 2, 2, 4);
       }
     }
-    for (segment = 0, column = y; segment < t - *(Data_08199f40 + small) * 2 && column <= 112;
-         segment++, column += 32)
-      draw(canvas, sprites + 508, x - 4, column, 8, 32);
+    for (segment = 0; segment < t - *(Data_08199f40 + small) * 2 && y + segment * 32 <= 112; segment++)
+      draw(canvas, sprites + 508, x - 4, y + segment * 32, 8, 32);
     if (t < *(Data_08199f40 + small) * 2 + 8) {
       s32 shake = (*(Data_08199f40 + small) * 2 - t + 8) >> 1;
       s16 base = 32;

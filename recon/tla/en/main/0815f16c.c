@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 648 of 7666, slots normalized 446, high
-// registers blind too 438, every register blind 194. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 639 of 7666, slots normalized 423, high
+// registers blind too 421, every register blind 199. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1108,8 +1108,8 @@ CLEAR(buffer, 0x1000);
       Transform_SetLookAt(bg, (u8 *)bg + 12);
       if (frame > 3) {
         if (kind == 79) {
-          p = work->particle;
-          for (i = 0; i != 64; i++, p++) {
+          for (i = 0; i != 64; i++) {
+            p = &work->particle[i];
             if (p->life > 0) {
                 s32 n;
               n = (p->life >> 2) + 1;

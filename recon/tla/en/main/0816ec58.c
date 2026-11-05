@@ -1,3 +1,6 @@
+// 2026-11-05: differ 116 of 471 (tla-en). As a do { } while guarded by if (stagger
+// != -54) the count is 471 and the shape is the listing's, differ 118; left as a for
+// until the reload rows settle. fullHeight is scale, reused.
 // 2026-11-05: differ 130 of 471 (tla-en). spark is one local per block. The
 // frame count: the listing tests stagger against -54 (312 dies, combine folds it)
 // and hoists stagger + 54 from the bottom; here PRE shares it. Tried without
@@ -166,7 +169,6 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
         s32 age = frame - Data_08198bb0[i];
         s32 x = Data_08198b9c[i];
         s32 scale;
-        s32 fullHeight;
         s32 height;
 
         // Two frames after it starts, a column strikes the next target.
@@ -183,13 +185,13 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
         scale = 60;
         if (Data_08198bc4[i] > LEAN_RIGHT)
           scale = 35;
-        fullHeight = Data_08198bba[i] * scale / 64;
+        scale = Data_08198bba[i] * scale / 64;
         if (frame < sinkFrame)
           height = age * 10;
         else
-          height = fullHeight - (frame - sinkFrame) * 10;
-        if (height > fullHeight)
-          height = fullHeight;
+          height = scale - (frame - sinkFrame) * 10;
+        if (height > scale)
+          height = scale;
 
         switch (Data_08198bc4[i]) {
         case LEAN_LEFT:

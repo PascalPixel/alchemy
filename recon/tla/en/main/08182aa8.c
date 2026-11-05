@@ -693,12 +693,13 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       Func_080151e4(55536, 45536, 27768);
       if (frame == 360) {
-        struct EffectStep *p = Ram_EffectSteps;
+        struct EffectStep *p;
 
         if (skip == 0) {
           work->transferMode = 2;
           work->transferValue = 75;
         }
+        p = Ram_EffectSteps;
         for (i = 0; i != 384; i++, p++) {
           p->variant = Random16() & 3;
           p->x = (Random16() % 160 - 80) << 16;
@@ -851,16 +852,18 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       if ((u32)(frame - 273) <= 7 && skip == 0) {
         s32 d = frame - 273;
+        s32 *value;
         s32 v;
 
         work->transferMode = 1;
+        value = &work->transferValue;
         v = d * 0x101;
         v = v + (v << 16);
-        work->transferValue = 0x3f3f3f3f - (v << 2);
+        *value = 0x3f3f3f3f - (v << 2);
       }
       if (frame == 281 && skip == 0) {
-        work->transferValue = 50;
         work->transferMode = 2;
+        work->transferValue = 50;
       }
       if ((u32)(frame - 274) <= 27) {
         texture.pixels = gMapCellBuffer;

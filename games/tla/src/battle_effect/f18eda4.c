@@ -1,32 +1,3 @@
-// Measured 2026-11-05 (tla-en): differ 160 of 895, a rise from 158 that removes
-// a false form: the splash loop now counts with the function's one i, not a
-// counter of its own, and takes the listing's high registers (i r8, age sl, back
-// r9, over fp). What is left in that block is the reload rotation, one register
-// behind from texture's reload (listing r1, here r0) to the loop's top, and
-// shade -= age * 8; shade += 64 gives the listing's in-place r3. Holding shade at
-// loop level measures 92 and hides the rotation, but the listing computes it after
-// the two frame tests, so it stays inside.
-// Measured 2026-11-05 (tla-en): differ 158 of 895, 154 with slots and pool
-// offsets normalized.
-// Draft, differ 172 of 895, skeleton gap 32 (tla-en, 2026-11-01)
-// Effect kind 123, written from the listing on The Broken Seal's canvas
-// skeleton (twins: BattleEffect_RunTitanBlade 0.46, by call order
-// BattleEffect_RunJupiter 0.50), with the ARM model renderer for its flashes,
-// shards, splashes and rings.
-// Control flow, givs, frame (92 bytes) and stack slots agree with the native;
-// the gap is instruction order alone. Left: `i & 1` in the spark loops (native
-// copies i and loads the 1 at reload, here the constant's pseudo ties to the
-// result), the third texture block (native loads pixels and mesh before their
-// stores, here kind's store goes first and frame reloads twice), which also
-// rotates r0-r2 through the splash loop.
-// What fixed the shape, kept on purpose: one counter i for every outer loop, j
-// and step local to each loop, projected and model in a block after the
-// sparks, s32 size with (u32)size >> 1, blend as the scaled offset (its spill
-// slot comes before projected's), Trig_Sin(...) * speed, the shard step after
-// start and the splash step before age, age and back at loop level with shade
-// and scale inside the test, and the first picture load by its address.
-// Tried: statement orders of the three texture blocks, blend mutated in place,
-// blend as a pointer (worse). The permute tool refuses a draft outside recon/.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -53,8 +24,8 @@ struct ModelTexture {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
-  void *vertices;
+  const u8 *mesh;
+  u8 *vertices;
   struct ModelTexture *texture;
   s32 shade;
 };
@@ -202,23 +173,29 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       }
       // Two steps a frame, the n-th spark from frame n / 4.
       for (i = 0; i != 32; i++) {
+        s32 one = 1;
         struct EffectStep *step = &work->particles[i];
 
         if (step->variant >= 0 && frame >= i / 4) {
           s32 odd = i;
- s32 size;
- s32 blend;
- s32 j;
- odd &= 1;
- size = odd + 5;
- blend = odd * 4;
+          s32 size;
+          s32 blend;
+          s32 j;
+          odd &= one;
+          size = odd + 5;
+          j = 0;
+          blend = odd * 4;
 
-          for (j = 0; j != 2; j++) {
-            (*(DrawRectangle *)((u8 *)draw + blend))(
-                canvas, graphics + gData_08197410[size - 1],
-                HI(step->x) - ((u32)size >> 1), HI(step->y) - size, size,
-                size * 2);
-            BattleEffectKernels_IntegrateVector2(step, 64, 0);
+          {
+            s32 twice = size * 2;
+            s32 half = (u32)size >> 1;
+
+            for (; j != 2; j++) {
+              (*(DrawRectangle *)((u8 *)draw + blend))(
+                  canvas, graphics + gData_08197410[size - 1],
+                  HI(step->x) - half, HI(step->y) - size, size, twice);
+              BattleEffectKernels_IntegrateVector2(step, 64, 0);
+            }
           }
           step->variant++;
         }
@@ -247,21 +224,27 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       }
       // Four steps a frame.
       for (i = 0, step = work->particles; i != 32; i++, step++) {
+        s32 one = 1;
         if (step->variant >= 0) {
           s32 odd = i;
- s32 size;
- s32 blend;
- s32 j;
- odd &= 1;
- size = odd + 2;
- blend = odd * 4;
+          s32 size;
+          s32 blend;
+          s32 j;
+          odd &= one;
+          size = odd + 2;
+          j = 0;
+          blend = odd * 4;
 
-          for (j = 0; j != 4; j++) {
-            (*(DrawRectangle *)((u8 *)draw + blend))(
-                canvas, graphics + gData_08197410[size - 1],
-                HI(step->x) - ((u32)size >> 1), HI(step->y) - size, size,
-                size * 2);
-            BattleEffectKernels_IntegrateVector2(step, 64, 0);
+          {
+            s32 twice = size * 2;
+            s32 half = (u32)size >> 1;
+
+            for (; j != 4; j++) {
+              (*(DrawRectangle *)((u8 *)draw + blend))(
+                  canvas, graphics + gData_08197410[size - 1],
+                  HI(step->x) - half, HI(step->y) - size, size, twice);
+              BattleEffectKernels_IntegrateVector2(step, 64, 0);
+            }
           }
           step->variant++;
         }
@@ -271,6 +254,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
     {
       void *projected = Heap_AllocEwram(32);
       struct RenderModel *model = Render_AllocateModelList(1);
+      void *splash = gData_02014000;
 
       // Eight flashes turn about the caster, each for 16 frames from its
       // start, swinging wider and back with a sine.
@@ -307,6 +291,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       model->mesh = Data_08199220;
       model->kind = 7;
       for (i = 0; i != 16; i++) {
+        s32 zero = 0;
         struct EffectStep *step = &work->particles[32 + i];
         s32 start = i * 2 + 54;
 
@@ -314,7 +299,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           s32 scale;
 
           scale = 0x20000 - ((frame - start) << 13);
-          model->shade = 0;
+          model->shade = zero;
           Render_ResetTransformState();
           Func_080151e4(0x8000, 0x10000, 0x8000);
           Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
@@ -328,8 +313,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       // Their splashes: growing and darkening, faster after eight frames.
       texture.logWidth = 7;
       texture.logHeight = 7;
+      texture.pixels = splash;
       model->mesh = gData_08199364;
-      texture.pixels = gData_02014000;
       model->kind = 7;
       for (i = 0; i != 16; i++) {
         struct EffectStep *step = &work->particles[i + 32];
@@ -340,8 +325,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           s32 shade = back * 4;
           s32 scale = age << 14;
 
-          if (age > 7)
-          {
+          if (age > 7) {
             shade -= age * 8;
             shade += 64;
           }

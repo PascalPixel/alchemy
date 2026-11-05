@@ -195,7 +195,7 @@ Resource_DirectoryTable:
 	resource CharmRingSheet, BattleEffect_CharmRingSheet
 	resource WhirlBeamSheet, BattleEffect_WhirlBeamSheet
 	resource EffectPalette00, BattleEffect_EffectPalette00
-	resource , BattleEffect_EffectPalette01
+	resource EffectPalette01, BattleEffect_EffectPalette01
 	resource , Resource_Data0BA
 	resource , Resource_Data0BB
 	resource , BattleEffect_ThinBoltSheet
@@ -213,7 +213,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data0C8
 	resource Data0C9, Resource_Data0C9
 	resource , Resource_Data0CA
-	resource , Resource_Data0CB
+	resource Data0CB, Resource_Data0CB
 	resource CloudSwirlSheet, BattleEffect_CloudSwirlSheet
 	resource DustBlobSheet, BattleEffect_DustBlobSheet
 	resource Data0CE, Resource_Data0CE
@@ -288,13 +288,13 @@ Resource_DirectoryTable:
 	resource LimeColumnSheet, BattleEffect_LimeColumnSheet
 	resource , BattleEffect_RainSheet
 	resource , BattleEffect_FlameSheetA
-	resource , BattleEffect_DemonFaceSheet
+	resource DemonFaceSheet, BattleEffect_DemonFaceSheet
 	resource FlameBladeSheet, BattleEffect_FlameBladeSheet
 	resource SwordSheet, BattleEffect_SwordSheet
 	resource IceTileSheet, BattleEffect_IceTileSheet
 	resource FiveModeImage, BattleEffect_FiveModeImage
 	resource SpiderWebSheet, BattleEffect_SpiderWebSheet
-	resource , BattleEffect_VioletLightningSheetA
+	resource VioletLightningSheetA, BattleEffect_VioletLightningSheetA
 	resource , BattleEffect_YellowSparkSheet
 	resource , BattleEffect_ProjectileVolleyImage
 	resource , BattleEffect_ShurikenSheet
@@ -366,7 +366,7 @@ Resource_DirectoryTable:
 	resource SmokeSheet, BattleEffect_SmokeSheet
 	resource BluePalette, BattleEffect_BluePalette
 	resource LimePalette, BattleEffect_LimePalette
-	resource , BattleEffect_PinkPalette
+	resource PinkPalette, BattleEffect_PinkPalette
 	resource VioletPaletteC, BattleEffect_VioletPaletteC
 	resource CyanPalette, BattleEffect_CyanPalette
 	resource , BattleEffect_TanPalette
@@ -376,7 +376,7 @@ Resource_DirectoryTable:
 	resource GreenVineSheet, BattleEffect_GreenVineSheet
 	resource PortalSheet, BattleEffect_PortalSheet
 	resource SkullSheet, BattleEffect_SkullSheet
-	resource , BattleEffect_HeartSheet
+	resource HeartSheet, BattleEffect_HeartSheet
 	resource , BattleEffect_CounterRevealSheet
 	resource , BattleEffect_RedCrescentSheetA
 	resource , BattleEffect_BlueBeastSheet
@@ -401,7 +401,7 @@ Resource_DirectoryTable:
 	resource BlastSheet, BattleEffect_BlastSheet
 	resource FlameSheetB, BattleEffect_FlameSheetB
 	resource , BattleEffect_FirePillarSheetB
-	resource , BattleEffect_RockSpireSheet
+	resource RockSpireSheet, BattleEffect_RockSpireSheet
 	resource LightningBoltSheet, BattleEffect_LightningBoltSheet
 	resource BeamImage, BattleEffect_BeamImage
 	resource , BattleEffect_TwelveModeImage

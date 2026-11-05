@@ -1035,14 +1035,6 @@ SummonEffect_RunCanvasEffect:
 	.thumb_func
 BattleEffect_RunQuake:
 	.incbin "baserom.gba", 0x00150c74, 0x000003cc
-	.section .rom.0015265a, "ax"
-	.incbin "baserom.gba", 0x0015265a, 0x00000002
-	.section .rom.0015265c, "ax"
-	.global BattleEffect_RunProjectileVolleyB
-	.type BattleEffect_RunProjectileVolleyB, %function
-	.thumb_func
-BattleEffect_RunProjectileVolleyB:
-	.incbin "baserom.gba", 0x0015265c, 0x00001374
 	.section .rom.0015585c, "ax"
 	.global Func_0815585c
 	.type Func_0815585c, %function
@@ -1320,11 +1312,6 @@ BattleEffect_RunTrident:
 	.thumb_func
 BattleEffect_RunMeteorBlow:
 	.incbin "baserom.gba", 0x0018df5c, 0x00000e48
-	.global BattleEffect_RunLiquifier
-	.type BattleEffect_RunLiquifier, %function
-	.thumb_func
-BattleEffect_RunLiquifier:
-	.incbin "baserom.gba", 0x0018eda4, 0x00000828
 	.section .rom.0018f620, "ax"
 	.balign 4
 	.global Func_0818f620

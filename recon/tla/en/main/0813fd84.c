@@ -1,4 +1,4 @@
-// Draft, differ 304 of 2579 (tla-en, 2026-11-05); 228 with slots and pool offsets normalized, 74 with registers blind too. The frame, every slot and every pool now agree.
+// Draft, differ 44 of 2579 (tla-en, 2026-11-05). The frame, every slot and every pool agree.
 // BattleEffect_RunCruelRuin. What this round settled, each read from the listing and each a real form:
 // - Loop givs: grey, blue and green are givs of frame (blue first, as the slots order them); grey reduces because
 //   the palette test and its colour spell frame - 80 again, and that second giv combines with the first.
@@ -13,21 +13,23 @@
 //   (pixels, strip, six merged with the setup's 6) are what make the register names line up downstream.
 // - i = 0 before the pointers it sits beside; particle pointers are body locals (givs), not stepped by hand.
 // - The false device `__asm__("" : "=r"(x) : "0"(x))` is gone.
+// Later forms, each read from the listing: the cell loop's height and half are set before their
+// loop; the creation loops own their object local (it conflicted with the particle pointer); the tile
+// store reads through int locals so its and ties to the halfword; tile is taken at the loop's top,
+// where its giv is replaceable, and the modulo keeps a quotient local so the shift is in place; the
+// else arm's index is a block local set twice, which loop.c leaves alone; logWidth's store through
+// a second struct view does not alias logHeight's, so movs r5, #160 and add r5, sp stay adjacent and
+// the peephole folds them to add r5, sp, #160.
 // Left, in order of reach:
-// - The tile block: the index is u, the frame loop's local, so it ranks low and takes r2 as in the listing. Left: the
-//   listing has phase + 71 in r3 and shifts in place (lsls r2, r2, #3); here the remainder's shift is a local that
-//   takes r3 first, so phase + 71 takes r1 and obj r0, which rotates the reload registers down to the end of the loop
-//   (buckets 2000 and 2100). Tried: u / 8 by hand in three spellings (loses the arms' shape), x locals (lose the giv of
-//   phase + 64 + i), row + (..) % 8 in the arms, an inline Mod8.
-// - j-loop steps: the listing steps row before last; here last first, because Apply's j * 9 makes row's giv the later.
-// - add r5, sp, #160 here is movs r5, #160; add r5, sp: the listing's slot 44 is set directly and r9 copies it, here
-//   r9's pseudo is set and the slot copies it (gcse's reaching register); one instruction, and all pool offsets after.
-// - The cell loop: k r2, acc r1, half r4 are right, reload order of k * 32 and cells is not (acc would have to be set
-//   before k * 32 is reloaded, which drops its rank under half).
-// - The priority mask: -13 is a QImode constant hoisted out of both creation loops with no register; the listing
-//   rebuilds it in r4 and copies it to r2 (one more instruction, which is where the pool offsets between here and
-//   the add above part), here reload rebuilds it in r2 at once. Eclipse's same mask has a register (sl) and agrees.
-// - Ties: LoadBlitter's r1 before r0, 0x10000 before work->sheet in the shaded circle call.
+// - The priority mask: the listing has movs r4, #13; negs r4, r4; adds r2, r4, #0, a hoisted QImode -13 and
+//   its copy. loop.c's single-use replacement in a loop with calls deletes that copy from the bit-field's
+//   expansion (insn 3013), so reload rebuilds -13 in r2. An s8 mask of the creation block, as now, is hoisted
+//   and reloaded in r4 as the listing's rotation needs, but as movs r4, #243; lsls; asrs: three instructions.
+// - The six blasts: lsls r2 before add r0 at the shaded circle, adds r3 before add r1 at the first blit, movs r1
+//   before str r5 at the second. Order only; the listing's order needs 0x10000 set before the call's arguments.
+//   Constant locals, routine locals, sheet locals and inline forwards do not move them.
+// - The else arm's reload order, r0, r1, r2 here and r1, r2, r0 in the listing (one rotation); the object
+//   loop's row before last step; add r6 after movs r4; the end's 0x670 before y's 32; the cell column.
 // Adoption: the resource directory has no names yet for the ids written here as ResourceId_Data0B4, Data0C2, Data0C9,
 // Data0CA, Data104, CornerRuneASheet, ForestCanopyTiles and SunbeamCloudsBackdrop. Barrier-free so far; the
 // do { } while (0) of LOAD_BLITTER and WAIT_TRANSFER's volatile reads need their S2 reading then.
@@ -48,6 +50,12 @@ struct ModelTexture {
   const void *pixels;
 };
 
+struct ModelTextureB {
+  u32 logWidth : 8;
+  u32 logHeight : 8;
+  u32 unk02 : 16;
+  const void *pixels;
+};
 struct RenderModel {
   s32 kind;
   s32 unk04;
@@ -207,9 +215,7 @@ void Heap_Release(void *buffer);
 #define SLOT_ALT 188 // unkb8[1]
 // One draw through a blitter built for it alone.
 #define LOAD_BLITTER(slot, flags)                                              \
-  do {                                                                         \
-    BattleEffect_LoadBlitter(slot, flags);                                     \
-  } while (0)
+  BattleEffect_LoadBlitter(slot, flags); do { } while (0)
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->unkb8[1])
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
@@ -570,7 +576,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       }
     }
     if (frame > 123) {
-      texture.logWidth = 5;
+      ((struct ModelTextureB *)&texture)->logWidth = 5;
       texture.logHeight = 2;
       texture.pixels = work->sheet + 0x3648;
       model->mesh = Data_08199220;
@@ -658,20 +664,24 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       s32 w = Data_08197702[k];
       s8 *v;
       s32 acc;
+      s32 height;
+      s32 half;
 
       if (c > 15) {
         w = w + c * 2 - 32;
       }
+      acc = 0;
       {
         s8 *cells = (s8 *)gMapCellBuffer;
         s32 cell = k * 32 + k + c;
 
-        acc = 0;
         v = cells + cell * 8;
       }
+      height = 126 - c * 7;
+      half = w / 2;
       for (i = 0; i != 2; i++, acc += w, v += 4) {
-        v[0] = 126 - c * 7;
-        v[1] = (Trig_Sin(c * 0x92c) * Data_08197700[k] >> 16) + acc - w / 2;
+        v[0] = height;
+        v[1] = (Trig_Sin(c * 0x92c) * Data_08197700[k] >> 16) + acc - half;
         v[2] = 0;
       }
     }
@@ -697,13 +707,15 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   {s32 q;
   for (q = 0; q != 2; q++) {
     u8 *src;
+    struct RuinObject *obj;
+    s8 mask = -13;
 
     i = 0;
     src = work->sheet + q * 0x1000;
     for (; i != 8; i++) {
       obj = Func_0815b290(32, 32, 0x80000000, 0xf000);
       work->objects[q * 9 + i] = obj;
-      obj->attr.bits.priority = 1;
+      {s32 x = ((u8 *)obj)[9]; x &= mask; x |= 4; ((u8 *)obj)[9] = x;}
       CopyWords_((void *)OBJ_TILES(obj), src, 512);
       src += 512;
     }
@@ -831,7 +843,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         p->x = Data_08197724[i] << 16;
       }
       if (frame >= start && frame < start + 32) {
-        s32 size = Data_08197720[i];
+        s32 size = 0;
+        s32 px = 0;
+        s32 py = 0;
+        s32 angle = 0;
+        s32 scale = 0;
+        size = Data_08197720[i];
 
         if (p->y < Data_08197730[i] << 16) {
           p->x -= Data_08197728[i] << 16;
@@ -841,10 +858,14 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
         }
         p->x += 0x80000;
         Render_ResetTransformState();
-        Func_08015160(p->x + -0x400000, p->y + -0x400000, 0);
+        px = p->x + -0x400000;
+        py = p->y + -0x400000;
+        Func_08015160(px, py, 0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
-        Func_080150e4(Data_08197734[i]);
-        Func_080151e4(size * 9400, 0x20000, 0x8000);
+        angle = Data_08197734[i];
+        Func_080150e4(angle);
+        scale = size * 9400;
+        Func_080151e4(scale, 0x20000, 0x8000);
         Render_TransformVertices(Data_081976e0, verts, 4);
         Func_0815b434(work->sheet, size, 0x10000);
         Func_0818caa8(work->sheet, HI(p->x) - 1, HI(p->y), size);
@@ -861,9 +882,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     model->scrollU = 64;}
     {
       u8 *cells = gMapCellBuffer;
-      s32 mask = 127;
+      s32 mask;
 
-      for (i = 0; i != 2; cells += 264, i++) {
+      for (i = 0, mask = 127; i != 2; cells += 264, i++) {
         s32 t = frame - i * 46 - 12;
 
         if ((u32)t <= 45) {
@@ -877,7 +898,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             v = mask & ~v;
             model->scrollU = v;
             if (t <= 32) {
-              u8 *m = t * 24 + strip;
+              u8 *m = (u8 *)(t * 24 + (s32)strip);
               m[0] = i;
               m[1] = i;
               m[2] = i;
@@ -889,7 +910,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
             {
             s32 z = 0;
             if (t <= 15) {
-              u8 *m = t * 48 + strip;
+              u8 *m = (u8 *)(t * 48 + (s32)strip);
               m[0] = z;
               m[1] = z;
               m[2] = z;
@@ -935,17 +956,19 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       void **last = &work->objects[row + 8];
 
       for (i = 0; i != 9; i++) {
+        s32 mask = ~0x3ff;
+        s32 k_ = 64;
+        s32 tile = i + k_ + phase;
         place[0] = (i << 21) + scrollX;
         place[2] = 0x790000 + (j << 21);
         if (i == 8) {
           obj = *last;
-          u = (phase + 71) % 8;
+          {s32 t_ = phase + 71; s32 q_ = t_; if (t_ < 0) q_ = phase + 78; q_ >>= 3; q_ <<= 3; u = t_ - q_;}
         } else {
-          u = row + i;
-          obj = work->objects[u];
-          u = (phase + 64 + i) % 8;
+          {s32 m = row; m += i; obj = work->objects[m];}
+          {s32 x_ = phase + i; s32 q_ = tile; if (tile < 0) q_ = x_ + 71; q_ >>= 3; q_ <<= 3; u = tile - q_;}
         }
-{s32 v = work->particles[row + u].variant & 0x3ff; s32 mask = ~0x3ff; obj->attr.all = (obj->attr.all & mask) | v;}
+{s32 v = work->particles[row + u].variant & 0x3ff; s32 x = obj->attr.all & mask; obj->attr.all = x | v;}
         if (place[0] > 0xffffff) {
           place[0] += -0x1200000;
         }
@@ -1005,7 +1028,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
     if (v > 63) {
       v = 63;
     }
-    c = work->sheet + i;
+    c = (u8 *)(i + (s32)work + 1792);
     for (j = 0; j != 120; j++) {
       *c = v;
       c += 120;

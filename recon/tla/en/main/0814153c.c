@@ -1,11 +1,16 @@
-// Draft, differ 168 of 2159 (tla-en, 2026-11-05); 94 with slots and pool offsets normalized, 32 with registers blind too. Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
+// Draft, differ 70 of 2159, 30 with slots normalized (tla-en, 2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
 // BattleEffect_RunEclipse. Measured here: a constant loop.c hoists and global.c gives no register is rebuilt at each use by reload, and reload picks its registers round-robin, so a constant that is one (sparks, vertices, mesh2) puts the names right for many lines after it. `movs rN, #128; lsls` in a loop is usually such a hoisted constant; so is a pool load early in a block.
+// Settled: size set twice stays a hoisted register (one set is replaced into the call by loop.c's single-use
+// rule), the copy's destination is the base plus i rows, the ring's angle is its own variable.
 // Left, in order of reach:
-// - The 136 loop, two instructions short: the listing has size hoisted in r7, the routine in r6, dst in r5 and the step 0x400 rebuilt in the loop; here size and the step are one register (CSE), r6, with the routine in r7. dst + i * step with a constant step outside the frame loop gets the rebuilt step, but size then has no register (the table outranks it, r7, and slot 8 goes, so the frame shrinks by 4).
-// - Slots 16 and 20: place and texture3's address are gcse's reaching registers and their order is by hash, over a table sized by the insn count; 20 extra statements swap them (measured), so they should come right when the count does.
-// - The first model's kind: the listing stores it after pixels, but pixels first lengthens &texture's life by one and it loses r7 to 0x10000 (global.c 0.316 against 0.317).
-// - The ring: y r8, angle r9, offset fp in the listing; here y and angle swap (0.519 against 0.525).
-// - The late 0x4000 fills load the routine and the fixed address against the argument order.
+// - Slots 16 and 20: place and texture3's address are gcse's reaching registers, numbered by hash bucket over
+//   a table sized by the insn count at gcse. 20 to 23 more insns there swap them (measured with dead stores to
+//   canvas at the top: differ 56). Most locals take a 0 default badly (frame, i, j, k, scroll and on raise the
+//   figure), and only canvas, work, savedScroll, transition, sprites, battle and origin stay at 70.
+// - The first model's kind: the listing stores it after pixels and has the zero reloaded in r2. Kind after
+//   pixels with a zero local closes the block but moves r7 and the blocks before it (284).
+// - The sparks' table pointer before p: the listing loads r6 then r5; a local for the table before p gets the
+//   order but ldrh r1, [r6, r3] becomes three instructions.
 // Measured: blit is two words (slot 88, 92 unused); one i for shard, flash,
 // streak and slot; j for the fill columns and sparks, k for the ring columns;
 // model and verts belong to each block; ring and offset are set together so
@@ -334,15 +339,12 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     }
     if (frame == 136) {
       u8 *dst = Data_02010400;
-
       for (i = 0; i != 7; i++) {
-        s32 size = 0x400;
-
-        Iwram_CopyWordsEntry(
-            (void *)OBJ_TILES(
-                (struct EclipseObject *)work->objects[Data_08197748[i]]),
-            dst, size);
-        dst += 0x400;
+        
+        void *o = (void *)OBJ_TILES((struct EclipseObject *)work->objects[Data_08197748[i]]);
+        s32 size = 0;
+        size = 0x400;
+        Iwram_CopyWordsEntry(o, &dst[i * 0x400], size);
       }
     }
     if (frame == 48) {
@@ -577,7 +579,9 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   REG_DISPCNT = 1;
   gBgScroll[1].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
+  do { } while (0);
   FillWords_(canvas, 0x4000, 0);
+  do { } while (0);
   FillWords_((void *)0x06004000, 0x4000, 0);
   wait(1);
   REG_BLDALPHA = 0x1010;
@@ -745,18 +749,20 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       q->velocityY = 0;
       q->variant = (Random16() & 15) + 16;
     }
+    {const u16 *cells_ = gData_08197410;
     p = gData_02014000;
     for (i = 0; i != 512; i++, p++) {
       if (p->variant >= 0) {
         s32 n = (p->variant >> 3) + 1;
+        s32 off = n * 2 - 2;
 
-        blit[0](canvas, sprites + gData_08197410[n - 1], (p->x >> 16) - n / 2,
+        blit[0](canvas, sprites + *(u16 *)((u8 *)cells_ + off), (p->x >> 16) - n / 2,
              (p->y >> 16) - n, n, n * 2);
         BattleEffectKernels_IntegrateVector2(p, 60, -0x4000);
         p->variant--;
       }
     }
-    model = Render_AllocateModelList(1);
+    }model = Render_AllocateModelList(1);
     shade = 0;
     if (frame <= 31) {
       s32 s = 0x10000;
@@ -783,9 +789,9 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       Sound_PlayFar(208);
       Func_0818de3c(Data_02011000, 16, 8, 8, 8);
-      for (ring = 0, offset = 0; ring != 8; offset += 64, ring++) {
-        s32 y = -Trig_Cos(ring * 0x888) * 96 >> 16;
-        s32 rr = Trig_Sin(ring * 0x888) * 48 >> 16;
+      {s32 a_ = 0; for (ring = 0, offset = 0; ring != 8; a_ += 0x888, offset += 64, ring++) {
+        s32 y = -Trig_Cos(a_) * 96 >> 16;
+        s32 rr = Trig_Sin(a_) * 48 >> 16;
         struct EclipseVertex *v = (struct EclipseVertex *)Data_02010800;
 
         k = 0;
@@ -797,7 +803,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
           v++;
         }
       }
-      Func_081885f0(Data_02012000, Data_02012800, 32);
+      }Func_081885f0(Data_02012000, Data_02012800, 32);
     }
     texture3.logWidth = 5;
     texture3.logHeight = 5;

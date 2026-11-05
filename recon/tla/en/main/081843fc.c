@@ -109,7 +109,7 @@ struct ModelTexture {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
+  const u8 *mesh;
   void *vertices;
   struct ModelTexture *texture;
   s32 shade;

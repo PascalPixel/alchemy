@@ -1,53 +1,39 @@
-// 2026-11-05: differ 1030 of 3921 (tla-en), draft 3923; with registers, slots
-// and offsets masked, 212 lines apart. This round: the copy calls through an
-// inline, so 0x1c0 is rebuilt (item 3); p->ay reread after a one-pass block,
-// as the listing does (item 4, needs its S2 tag at adoption); the trail index
-// as one (i << 4) + m, which removes the slot 28 shim; posp set in the wave
-// loop's body, hoisted as in the listing.
-// Next, measured and not kept: a stepped Sprite **slot for the call (*slot++,
-// the listing's ldmia) with function-level k set in both arms (k = row + 8,
-// k = row + i; obj = work->sprites[k]) leaves the else arm unreduced, as the
-// listing has it, and keeps frame 268: masked 203, raw 1131 (1087 after a
-// declaration search that scatters the top slots). With k set only in the else
-// arm the arm is reduced again. Left: arm 8 is unreduced there (the listing has
-// an outer giv stepped by 36), row and posp are still in low slots and r9 where
-// the listing has posp and z in 92 and 88. A map row counter (k += 16, the
-// listing's adds r0, #16) gives the listing's rebuilt 0x700 but rotates phase
-// 2: raw 2387, masked 521. Function-level wave for the second loop adds a slot.
-// 2026-11-05: differ 1140 of 3921 (tla-en). Declaration order alone (a greedy
-// search) gains 68; the causes below stand.
-// Draft, differ 1208 of 3921, skeleton gap 126/126 (tla-en, 2026-11-01)
-// The second phase's frame loop is a label-and-goto loop: as a for loop, loop.c
-// hoists the frame-address copies, they take REG_EQUIV and work loses r11. The
-// first and third phases stay for loops. &pos2, &scale2, &scale and &pos3 are
-// gcse PRE's pseudos, not locals. Slots 188 down to 96 now equal the listing's.
-// Left, largest first:
-// 1. Slots 92 and 88: the listing keeps the wave pointer and z there, and all of
-//    84 to 24 sit 8 too high here. wave and posp survive gcse's second cprop only
-//    when assigned inside the loop body (loop.c then hoists the copy, the listing's
-//    mov r9, r4); that alone costs 22 and more, because row and row * 4 then spill.
-//    z = 0 before the frame loop makes z non-replaceable and gives it slot 88, but
-//    its giv is then "not worth while" (benefit -2) and [sp, #12] never appears; a
-//    struct { s32 z; Vec3 *pos; } and a separate reduced temporary gives the copy
-//    form and frame +12. The slot 28 shim here is &PARTICLES[256] + i * 16 + m,
-//    whose i * 448 giv takes one low slot; the listing has (i << 4) + m unreduced.
-// 2. Wave loops: the listing has row in a low register, &sprites[row + 8] as an
-//    outer giv, the else arm indexed unreduced and the call's sprite ldmia. Here
-//    row is r9 and (&work->sprites[row])[i] keeps the else arm unreduced through
-//    row * 4. work->sprites[row + i] in the arm is reduced by the second loop pass
-//    (--rtl .08.loop, benefit 7); it also folds to row + 8 under i == 8. A sweep of
-//    the spellings, each wave loop alone, gains nothing.
-// 3. 0x1c0 and DECODE_BUFFER after the copy calls are rebuilt in the listing and
-//    shared here, which puts src in r7 rather than r5 and shifts the sprite
-//    setup. A do { } while (0) copy macro does not fix it (and is a device).
-// 4. p->ay is reread after p->ay = 0 in the listing; only a different alias set
-//    keeps the load, and that spelling is a disguise. Left folded.
-// 5. The map loop's row is a counter of 16 shifted left there, j * 32 here; both
-//    row forms lose 900 to outer reduction. 0x700 therefore sits in r0 here.
-// 6. Scheduling pairs and reload rotation, about 40 small hunks.
-// Tried and gaining: scoped q per block, p set after the third hull part, blit
-// arguments with a call computed first in a local, radius read before n, Trig
-// result first in multiplies, pos3.z reread instead of p->y.
+// 2026-11-05: differ 602 of 3921 (tla-en), draft 3915; frame and every spill slot
+// equal the listing's; with registers, slots and offsets masked, 142 lines apart.
+// What this round settled, each from the listing:
+// - Spill slots run in pseudo order, so the second phase's locals are a block
+//   after the first phase, and wave height and pointer are the first phase's.
+// - Each wave loop has its own row stepped in the for (its row * 4 stays unreduced);
+//   the height is one expression hoisted and reduced, so its copy takes slot 88.
+// - Each arm's index carries the row (v = row + ... % 8): row's four extra
+//   references rank it above the sprite pointer and the giv, the listing's r7, r4, r9.
+// - The else arm's index is set in two steps, which leaves it unreduced.
+// - The second wave loop's tile mask is a word constant: the halfword form forces
+//   a mid-loop pool there. The first wave loop keeps the bit-field.
+// - sprites[i + 18] with i known 21 after its loop gives [fp, r3]; sprites[39] does not.
+// - A red local that is not set from the constant first keeps r before g.
+// Left:
+// 1. Reload registers rotate through the spill list, one per reload, so one extra or
+//    missing reload shifts every scratch register until the next resync. The
+//    remaining rotation starts at each wave loop's head: the listing's order there
+//    is counter, hoisted copy, then the sprite pointer's init, which only an inner
+//    giv on the call (work->sprites[row + i], no slot, arm 8 as row + i) gives, as
+//    its init is emitted after the hoists. That form matches both loops' pass-1 and
+//    pass-2 decisions but for one thing: in the first loop the outer pass then reduces
+//    row * 4 + work (benefit 5, lifetime 2, 102 vs 80), a slot too many, frame 272;
+//    in the second, the inner count is too high for the giv (82 vs 85 at most in
+//    pass 1, PRE of row + i). Measured raw 1329, masked 213.
+// 2. Map loop: the listing has a row counter of 16 (mp = map + k * 2, k += 16), w, n,
+//    table in r4, r5, r6 and 0x700 rematerialized in the loop. k gives the instructions
+//    but 0x700 takes ip and w, n, table r7, r6, r5: raw 2060. Their priorities need
+//    the reverse of the hoist order. Left as j * 32.
+// 3. p->ay's reread goes through a volatile view (needs its S2 tag at adoption);
+//    do { } while (0) after the spawn call would settle the order at the third phase's
+//    start (a one-pass device, gains 4 masked lines but rotates, not kept).
+// 4. Trail writes: the listing's sprite pointer load falls after the shift chain and
+//    the store, which needs an alias conflict between the q store and the rotation load.
+// Earlier measures that still stand: the second phase's frame loop is a label-and-goto
+// loop (as a for, the frame-address copies are hoisted and work loses r11).
 #include "resource.h"
 #include "heap_release.h"
 #include "system/iwram_call.h"

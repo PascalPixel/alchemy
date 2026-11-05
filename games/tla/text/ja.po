@@ -16952,15 +16952,15 @@ msgctxt "MsgAgilityLabel"
 msgid "04172"
 msgstr "すばやさ"
 
-msgctxt "message"
+msgctxt "MsgCannotEquip"
 msgid "04173"
 msgstr "そうびできません"
 
-msgctxt "message"
+msgctxt "MsgWillLearn"
 msgid "04174"
 msgstr "を しゅうとくします"
 
-msgctxt "message"
+msgctxt "MsgLearned"
 msgid "04175"
 msgstr "しゅうとくずみ"
 
@@ -17700,19 +17700,19 @@ msgctxt "MsgStatusNameDown"
 msgid "04355"
 msgstr "せんとうふのう"
 
-msgctxt "message"
+msgctxt "MsgPoisonLabel"
 msgid "04356"
 msgstr "どく"
 
-msgctxt "message"
+msgctxt "MsgVenomLabel"
 msgid "04357"
 msgstr "もうどく"
 
-msgctxt "message"
+msgctxt "MsgCurseLabel"
 msgid "04358"
 msgstr "のろい"
 
-msgctxt "message"
+msgctxt "MsgHauntLabel"
 msgid "04359"
 msgstr "あくりょう"
 

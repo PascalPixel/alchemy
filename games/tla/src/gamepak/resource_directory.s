@@ -485,7 +485,7 @@ Resource_DirectoryTable:
 	resource , Ui_Flags
 	resource , FieldEffect_GlowDisc
 	resource RingOrb, FieldEffect_RingOrb
-	resource , FieldEffect_RingArcs
+	resource RingArcs, FieldEffect_RingArcs
 	resource RedFlameBurst, FieldEffect_RedFlameBurst
 	resource VioletFlameBurst, FieldEffect_VioletFlameBurst
 	resource YellowFlameBurst, FieldEffect_YellowFlameBurst
@@ -503,7 +503,7 @@ Resource_DirectoryTable:
 	resource SparkleFade, FieldEffect_SparkleFade
 	resource StarSparkleFade, FieldEffect_StarSparkleFade
 	resource , FieldEffect_WhitePuff
-	resource , Resource_Data1ED
+	resource Data1ED, Resource_Data1ED
 	resource ShakeTiles, Resource_Data1EE
 	resource ColouredOrbs, FieldEffect_ColouredOrbs
 	resource FallingRock, FieldEffect_FallingRock

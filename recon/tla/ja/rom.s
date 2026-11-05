@@ -11,13 +11,6 @@ System_InstallIwramAndIrqs:
 	.thumb_func
 System_WaitForFrameInterrupt:
 	.incbin "baserom.gba", 0x000134b0, 0x000000b0
-	.section .rom.0001399c, "ax"
-	.balign 4
-	.global Func_0801399c
-	.type Func_0801399c, %function
-	.thumb_func
-Func_0801399c:
-	.incbin "baserom.gba", 0x0001399c, 0x00000194
 	.section .rom.00014174, "ax"
 	.global VramCache_AllocateBlocks
 	.type VramCache_AllocateBlocks, %function

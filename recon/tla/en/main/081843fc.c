@@ -357,6 +357,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   struct EffectStep *q2;
   u16 *src2;
   u8 *e;
+  s32 zero;
+  s32 span = 0x80000;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -499,6 +501,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
              Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 512);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, Data_02012000, 0, 0);
+  zero = 0;
   camZ = 0;
   swapped = 0;
   drift = 0;
@@ -933,7 +936,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           src = sprites + gData_08197410[9];
           h = 20;
           x0 = p->x / 8 - 5;
-          bx = 0x80000 - drift;
+          bx = span - drift;
           x = x0 + (bx / 2 >> 16);
           y0 = p->y / 8 - 10;
           y = y0 + ((camZ + sway) >> 16);
@@ -978,9 +981,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           texture.pixels = work->sheet + 0x2000 + (p->velocityX << 12);
           Render_ResetTransformState();
           {
-            s32 b = 0x80000 - drift;
+            s32 t = p->x / 8;
+            s32 b = span - drift;
 
-            Func_08015160(((p->x / 8 - 64) << 16) + b / 2,
+            Func_08015160(((t - 64) << 16) + b / 2,
                           ((p->y / 8 - 64) << 16) + camZ + sway, 0);
           }
           Func_080151e4(0x8000, 0x10000, 0x8000);
@@ -1010,7 +1014,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       texture.pixels = work->sheet + p->z;
       Render_ResetTransformState();
-      Func_08015160((0x80000 - drift) / 2 + 0x40000, camZ + 0xcc0000, 0);
+      Func_08015160((span - drift) / 2 + 0x40000, camZ + 0xcc0000, 0);
       Func_080151e4(0x8000, 0x10000, 0x8000);
       Func_080150e4(p->y);
       Func_080151e4(0x40000, 85536, 0x8000);
@@ -1089,7 +1093,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model->vertices = verts;
         texture.pixels = work->sheet + 0x1000;
         Render_ResetTransformState();
-        b = 0x80000 - drift;
+        b = span - drift;
         Func_08015160(b / 2 + 0x50000, camZ + 0xe60000, 0);
         Func_080151e4(0x8000, 0x10000, 0x8000);
         SceneTransform_ApplyPitch(18768);
@@ -1448,7 +1452,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         texture2.logHeight = 7;
         model2->kind = 6;
         model2->mesh = gData_08199268;
-        model2->shade = 0;
+        model2->shade = zero;
         if (frame == 0) {
           p = work->particles;
           for (i = 0; i != 16; i++, p++) {

@@ -1,9 +1,6 @@
-// Draft, differ 29 of 112 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 29 (tla-en); notes below may predate it.
-// Draft, differ 86 of 112: sets up an object's four 16 by 16 sprites in work: loads
-// their tiles (gData_020042bc, 256 bytes) into a free VRAM entry, resets the
-// work's counters (999, 999, 0), links object and work both ways, hooks the
-// object's update (Func_02003cd8) and gives each sprite the object's priority.
+/// @file
+/// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and hands the
+/// object to the update in s3cd8.c.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -15,7 +12,9 @@ struct ResourceTableEntry {
 
 struct SparkleSprite {
   u8 unk00[5];
-  u8 attr5;
+  u8 unk05_0 : 5;
+  u8 blend : 1;
+  u8 unk05_6 : 2;
   u8 unk06[2];
   u16 tile : 10;
   u16 priority : 2;
@@ -60,12 +59,11 @@ void Func_02003e54(struct Actor *object, struct SparkleWork *work) {
   tile = gResourceTableEntries[work->vramEntry].offset >> 5;
   object->watchedObject = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
-    sprite = &work->sprites[row * 2];
-    for (col = 1; col >= 0; col--) {
+    for (col = 1, sprite = work->sprites + row + row; col >= 0; col--) {
       Func_02004244(sprite, 16, 16, 0x80004000, tile);
-      ((u8 *)sprite)[5] &= ~32;
-      ((u8 *)sprite)[9] &= 15;
-      sprite->priority = Func_02004254(object) & 3;
+      sprite->blend = 0;
+      sprite->palette = 0;
+      sprite->priority = Func_02004254(object);
       sprite++;
     }
   }

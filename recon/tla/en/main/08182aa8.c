@@ -400,7 +400,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0x3f44;
   REG_BLDALPHA = 0x1010;
   for (frame = 0; frame != 602; frame++) {
-    spin = frame << 9;
+    spin = ((frame - 1) << 9) + 512;
     if ((gInput.repeat & 3) && frame <= 581 && skip == 0) {
       skip = 1;
     }

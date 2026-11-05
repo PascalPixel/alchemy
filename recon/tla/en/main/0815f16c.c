@@ -322,6 +322,7 @@ void Sound_PlayFar(s32);
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
 static __inline__ void CLEAR(void *dst, s32 size) { ((void (*)(void *, s32))0x03000258)(dst, size); }
+static __inline__ void FILL(void *dst, s32 size, s32 value) { ((void (*)(void *, s32, s32))0x03000260)(dst, size, value); }
 #define RELOAD_BLITTER(slot, n) do { HeapSlot_Release(slot); BattleEffect_LoadBlitter(slot, n); } while (0)
 #define RELEASE_BLITTERS() do { HeapSlot_Release(188); HeapSlot_Release(104); } while (0)
 
@@ -1071,7 +1072,6 @@ CLEAR(buffer, 0x1000);
       Render_ResetTransformState();
       Transform_SetLookAt(bg, (u8 *)bg + 12);
       if (frame > 3) {
-        s32 i;
         if (kind == 79) {
           p = work->particle;
           for (i = 0; i != 64; i++, p++) {
@@ -1363,7 +1363,6 @@ CLEAR(buffer, 0x1000);
                           40, 32);
       }
     } else if (kind == 5 || kind == 53 || kind == 78) {
-      s32 i;
       if (frame < 24) {
         p = SPARKS;
         for (i = 0; i != 16; i++, p++) {
@@ -1383,7 +1382,8 @@ CLEAR(buffer, 0x1000);
     } else if (kind == 4) {
     } else if (kind == 8) {
     } else if (kind == 41) {
-      y = ((Trig_Cos(frame << 9) << 2) >> 16) + ((s16 *)target)[3] + 16;
+      s16 *t = (s16 *)target;
+      y = ((Trig_Cos(frame << 9) << 2) >> 16) + t[3] + 16;
       if (frame < 4) {
         drawFuncs.draw[0](screen, work->frames,
                           gData_0819750c[action->side * 7],
@@ -1393,13 +1393,13 @@ CLEAR(buffer, 0x1000);
           drawFuncs.draw[0](screen, work->frames,
                             gData_0819750c[action->side * 7],
                             y + gData_0819751a[0], 57, 98);
-        drawFuncs.draw[0](screen, work->frames + 0x1cd2,
+        drawFuncs.draw[0](screen, work->frames + 0x15d2,
                           gData_0819750c[action->side * 7 + 1],
                           y + gData_0819751a[1], 99, 69);
         if (frame >= 4 && frame < 6)
-          ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x3f3f3f3f);
+          FILL(screen, 0x4000, 0x3f3f3f3f);
         if (frame >= 6 && frame < 8)
-          drawFuncs.draw[0](screen, work->frames + 0x3781,
+          drawFuncs.draw[0](screen, work->frames + 0x3081,
                             gData_0819750c[action->side * 7 + 2],
                             y + gData_0819751a[2], 128, 91);
         if (frame >= 8 && frame < 10)
@@ -1533,7 +1533,7 @@ CLEAR(buffer, 0x1000);
       if (t >= 0 && t < 16)
         REG_BLDALPHA = ((t / 2 + 8) << 8) | (16 - t);
       if (frame >= 4 && frame < 8)
-        ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x01010101);
+        FILL(screen, 0x4000, 0x01010101);
       if (frame > 3) {
         if (action->side == 0)
           drawFuncs.draw[0](screen, buffer, 32, 21, 96, 88);
@@ -1585,7 +1585,7 @@ CLEAR(buffer, 0x1000);
       if (frame > 4)
         drawFuncs.draw[0](screen, buffer, 35, 17, 60, 95);
       if (frame == 5)
-        ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x3f3f3f3f);
+        FILL(screen, 0x4000, 0x3f3f3f3f);
       if (frame >= 0 && (m = __divsi3(frame, 3)) < 7) {
         if (action->side == 0)
           drawFuncs.draw[0](screen, buffer + gData_081988ee[m],
@@ -1629,7 +1629,7 @@ CLEAR(buffer, 0x1000);
       if (t >= 0 && t < 16)
         REG_BLDALPHA = (16 - t) | 0x1000;
       if (frame >= 4 && frame < 6)
-        ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x3f3f3f3f);
+        FILL(screen, 0x4000, 0x3f3f3f3f);
       if (frame < 4) {
         if (action->side == 1)
           drawFuncs.draw[0](screen, work->frames, 0, 24, 80, 104);
@@ -2221,7 +2221,6 @@ CLEAR(buffer, 0x1000);
       if (frame == 4)
         work->unk77a8 = 20;
     } else if (kind == 15) {
-      s32 i;
       if (frame == 0) {
         struct Particle *p;
         p = SPARKS;
@@ -2320,7 +2319,7 @@ CLEAR(buffer, 0x1000);
       for (i = 0; i != 3; i++) {
         if (frame == i * 3 + 3) {
           Sound_PlayFar(212);
-          ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x2f2f2f2f);
+          FILL(screen, 0x4000, 0x2f2f2f2f);
         }
       }
     } else if (kind == 74) {

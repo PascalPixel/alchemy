@@ -1592,6 +1592,7 @@ dead = i / 3;
     if ((u32)(frame - 755) <= 2 || frame == 781)
       FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
     if (frame == 754) {
+      s32 white;
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x5810, 16, 32, 0x10000);
       Func_0815b434(work->sheet + 0x1c10, 32, 0x10000);
       for (i = 0; i != 32; i++) {
@@ -1603,10 +1604,11 @@ dead = i / 3;
       for (i = 0; i != 32; i++)
         Dma_Set(work->sheet + 0x1bf0 - (i << 5), work->sheet + 0x1c10 + (i << 5),
                 0x84000010, REG_DMA3);
+      white = 64;
       for (i = 1; i != 8; i++) {
-        u8 v = 64 - i * 8;
         u8 *src = work->sheet + 0x1810;
         u8 *out = work->sheet + 0x1810 + i * 0x800;
+        u8 v = white - i * 8;
 
         for (j = 0; j != 0x800; j++) {
           if (v < *src)

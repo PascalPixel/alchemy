@@ -526,8 +526,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 cr = COLOR_RED(c);
         s32 sb = COLOR_BLUE(s) + k;
         s32 sg = COLOR_GREEN(s) + tg;
-        s32 sr = COLOR_RED(s) + tr;
+        s32 t = COLOR_RED(s);
+        s32 sr;
 
+        __asm__("" : "=r"(t) : "0"(t));
+        sr = t + tr;
         if (cb < sb - 1) {
           cb += 2;
         } else if (cb > sb + 1) {

@@ -1,43 +1,41 @@
-// Measured 2026-11-05 (tla-en): differ 196 of 5364; 28 with slots and pool offsets
-// normalized (14 rows), 16 with registers masked too. Measure the rows, not raw.
-// What settled the slots (raw falls to 42 once these two are met; the code rows
-// are unaffected):
-// - The locals nested functions reach get their address pseudos when the nested
-//   function is parsed, so the opening's reads are initializers above the nested
-//   functions: slots 176 to 188 follow.
-// - PRE's table: the listing's low slots need 1977 to 1987 buckets (3952 to 3975
-//   insns alive at GCSE, 16 or so more than here) and every pseudo from the
-//   splash on about 290 higher (290 unused locals at the top show it, with 16
-//   empty asms at the end for the insns: raw 42). PRE's hash is operand regnos
-//   plus constants mod the table, so both move the wrap. Neither is in this draft:
-//   what makes the extra pseudos in the source is not found (inlines or macros
-//   whose temporaries die before GCSE are where to look).
-// What settled code this round, each from the dump or the listing: the 423 band's
-// giv survives only when its loop holds a call or 69 or more insns at loop.c
-// (lifetime * threshold * benefit < insn_count), and a dead division gives that,
-// flow then deletes it: tag it `dead` at adoption unless a real form appears;
-// `white` before the 754 frames' loop, the counter before the shade; fades' red
-// through `m & c` with m set beside it: a hoist or not then follows from threshold
-// against insn_count (the second fade needs one more insn, the u16 v); opening fade's
-// copy needs r set before the and, which only the empty asm gives here (tag it);
-// 446's mask before its loop, `n * w`; healing rings' `ry >> 1` and j >> 1 in
-// the loop; points shifted in their declarations in the large rings; a sprite's
-// resource through its field (a char read conflicts with the store before it); the
-// sparks' table through a local; `void *draw[2]`, so a store and the load after
-// it conflict.
-// Still open, top first:
-// 1. Opening: ldr r1 of the first decode comes before str r3 and adds r0 here,
-//    after them in the listing (2 rows).
-// 2. Crystal's first loop: tiles' ldr r6 first here, last of the four in the listing
-//    (3 rows).
-// 3. Large rings: lsls r2 of the sheet offset after muls here, before it in the
-//    listing (1 row).
-// 4. The two ring arms: PRE's t * 4 comes after ring and blit here (edge insertion
-//    at the join's end), before them in the listing, so reload hands out its
-//    scratches the other way (4 rows at each arm, raw). An occurrence of t * 4 in
-//    the join gives the order but cprop then leaves two pseudos in memory.
-// 5. 423 band: top's 120 dies in the minus, so i's output reload takes r7; the
-//    listing's takes r3 and inherits it for top + 40 (3 rows).
+// Measured 2026-11-05 (tla-en): differ 36 of 5364; 2 with slots and pool offsets
+// normalized (one row), 2 with registers masked too. Measure the rows, not raw.
+// Left: the large rings' sheet offset. `lsls r2, #3` of 0x700 comes after the
+// multiply here and before it in the listing. The two insns tie on priority (10)
+// and on dependants (3 each), so sched2 takes the lower luid, the multiply, whose
+// source is the declaration above the call; every form that moves the multiply
+// past the sheet (a local for the cosine, the call in the argument, a pin on r0)
+// also changes its operands or the registers around it. Measured with
+// -fsched-verbose=5 (out of tree: xgcc with the Makefile's flags, -dR).
+// Slots: 274 to 293 unused locals at the top of the function take raw to 2. PRE's hash is
+// operand regnos plus constants mod the table, so the listing's order of its low
+// slots needs every pseudo from the splash on about 280 higher than this draft's,
+// and 1977 to 1987 buckets (3952 to 3975 insns alive at GCSE, which the dead
+// divisions now give). The source makes those pseudos somewhere with no code; the
+// locals show the count and are not in this draft. Slots 176 to 188 are settled:
+// a local a nested function reaches gets its address pseudo when that function
+// is parsed, so the opening's reads are initializers above the nested functions.
+// What settled the code this round, from the dumps and the listing:
+// - Dead divisions are in three places. The 423 band's loop needs a call or 69 or
+//   more insns for loop.c to leave its giv (lifetime * threshold * benefit <
+//   insn_count); the ring arms need t * 4 to occur in the join, set into a
+//   variable that is set twice so cprop leaves PRE's copy, which puts it ahead of
+//   ring and blit. Flow deletes the divisions. They are S2's `dead` unless the source's
+//   form appears; they need their tags before adoption.
+// - Opening fade: the asm that sets r from m is an untagged `barrier` too; r has to be set
+//   before the and, or it ties to c. Every other fade reads `m & c` beside its m, so
+//   whether m hoists follows threshold against insn_count (the second fade's u16
+//   v is one insn more; the 446 fade's mask sits before its loop).
+// - 423 band: i goes through a local with an insn between (a default for off), so
+//   CSE keeps the copy for combine, which reverses the REG_DEAD notes, and
+//   combine_reloads gives i's output reload the scale's register.
+// - tileBuffer is a constant no register holds, so the decode's ldr r1 is a reload
+//   at the call; set it after effect's last use or it takes effect's register.
+// - The first decode of the crystal has no once-only block: a note attaches to the next
+//   real insn, which then orders everything after it (the verbose dump shows it).
+// - tiles from the symbol: a constant's REG_EQUIV doubles its live length.
+// - void *draw[2]: the store and the load after it then conflict. A sprite's
+//   resource through its field: a char read conflicts with the store before it.
 // Measured 2026-11-05 (tla-en): differ 496 of 5364, 111 with slots and pool
 // offsets normalized, 43 with registers masked too (draft 5364 instructions,
 // frame 420, pools equal island by island). Calls agree in order.

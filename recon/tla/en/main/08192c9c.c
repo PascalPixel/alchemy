@@ -1,8 +1,46 @@
+// Measured 2026-11-05 (tla-en): differ 2371 of 5364, 915 with slots and pool
+// offsets normalized, 241/244 with registers masked too (draft 5367
+// instructions, frame 416 where the listing has 420). Calls agree in order, 258
+// of 258. Compare with registers masked first: most of what is left is reload
+// and allocation following one early choice, so a right form can raise the raw
+// figure while the masked one falls.
+// What the listing settled this round: fades read one colour as an s32 and mask
+// red with `r = 31; r &= c` (first at the whitening, 401 and 446 fades, last at
+// the opening and 816 fades); a sprite's tile is stored before its frame; the
+// crystal's tile buffer is the fixed address, so its pool entry stays apart from
+// the decode call's; the splash computes its cell in the loop (PRE then hoists
+// only the inner sum, as the listing's slot 48 shows), has one counter for its
+// rings (r7), a ring pointer per arm (y then takes r9), and angle and position
+// per loop; the second span table is copied before the free-slot search; the
+// light bars' fixed-point time is `* 0x10000` (folded to frame << 16 plus a
+// constant) with their x a constant local before the shade test; the rings
+// double y at the calls.
+// Still open, each measured:
+// 1. i (r10) has priority 1.92 and one pseudo above it holds r7: i * 8 of the
+//    crystal's drop frames (1.93), which the listing has in r6. One more loop on
+//    i passes it, i takes r7 and the draft falls to about 5273 instructions, so
+//    the crystal band and the 446 clamp, r10 over r11 in the listing, keep their
+//    own counters (row, x with bandColumn): 5 and 6 instructions short there. The
+//    446 frames take `w * 2 * w` for this reason; the listing's form is
+//    `(w * 2) * w`, as the crystal's frames have it.
+// 2. In the splash r takes r7 and the rings' counter r8 (priority 1.53 over
+//    1.28); the listing has them the other way. Sharing the counter with the
+//    column loop as well, which the listing also has in r7, sends it to r4 as a
+//    caller save.
+// 3. A streak head's base stays hoisted: the head's constant and the points' are
+//    one value, so loop.c matches them (`move-insn matches`); the listing reloads
+//    the head's each pass and the points' from its own pool entry. Spelling the
+//    points from the scene's start folds back to the same constant, and a symbol
+//    either way rewrites it from the scene's base.
+// 4. The bright band's (i - top) * 2 still reduces to a giv where the listing
+//    keeps it; top's scope, the shift spelling and i set first do not move it.
+// 5. The opening and 446 fades hoist a second 31 and copy it for red; `c & 31`
+//    shares the green and blue mask instead. All types of c, r, g, b measured.
 // Measured 2026-11-05 (tla-en): differ 2314 of 5364, 1772 with slots and pool
 // offsets normalized. Colours read into s16 locals took it from 2613: c, r,
 // b. Counters follow the listing's loops: r10's loops are i, r11's are j, and
 // a loop the listing counts in r8 or a low register has a variable of its own
-// (the c variables, placeholders); the splash's five loops share one, r7 in
+//; the splash's five loops share one, r7 in
 // the listing. A loop more or less on i can move it to r7 and cost 1700.
 // Shape differs by small hunks only.
 // Measured 2026-11-05 (tla-en): differ 3039 of 5364. Measure with all five
@@ -35,7 +73,7 @@
 //    extra insns move &work, so this may snap only as the count closes.
 // 3. Counters. The listing's registers read plainly: r10 is the outer counter
 //    nearly everywhere, r11 the inner one (the splash loop's outer is r11 with
-//    r10 inside, the crystal c0 is r11 over r8). Writing exactly that gives
+//    r10 inside, the crystal grid is r11 over r8). Writing exactly that gives
 //    4587: i wins r7 and every high-register mov goes. i must fall below the
 //    locals that fill r4 to r8 in the dense loops, so it is the right sharing
 //    with its priority still wrong (refs over live length). The names here are
@@ -311,7 +349,7 @@ void Func_08191cc4(void);
 void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats, s32 scale);
 void Func_08192648(u32 frame, s32 x, s32 y, s32 small);
 void Func_0819273c(s32 halfWidth, s32 x, s32 height);
-void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 w, u8 color);
+void BattleEffect_DrawDiagonalCanvasLine(s32 x, s32 y, s32 width, u8 color);
 void SceneTransform_ResetMatrix(void);
 void SceneTransform_ApplyPosition(s32 *position);
 void Func_080151ac(s32 *scale); // SceneTransform_ApplyScale
@@ -339,17 +377,17 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   s32 r;
   s32 cel;
   s32 sheetOffset;
-  s32 j1;
-  s32 j6;
+  s32 point;
+  s32 segment;
   s32 column;
 
   if (t < Data_08199f40[small] * 2) {
     r = Data_08199f40[small] * 2 - t;
     cel = r / 6;
     sheetOffset = cel * 0x302;
-    for (j1 = 0; j1 != 64; j1++) {
+    for (point = 0; point != 64; point++) {
         s32 px; s32 a; s32 py;
-      a = j1 << 10;
+      a = point << 10;
       px = (r * Trig_Sin(a) / 2 >> 16) + x;
       py = (r * Trig_Cos(a) >> 16) + y;
       draw(canvas, sprites + cel * 8 + 444, px, py - 2, 2, 4);
@@ -365,9 +403,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 98;
       blit = draw;
       ring = sprites + offset;
-      for (j1 = 0; j1 != 8; j1++) {
+      for (point = 0; point != 8; point++) {
         s32 px; s32 a; s32 py;
-        a = (j1 << 13) + (t * 5 << 9);
+        a = (point << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         blit(canvas, ring, px - 3, py - 7, 7, 14);
@@ -389,9 +427,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 344;
       blit = draw;
       ring = sprites + offset;
-      for (j1 = 0; j1 != 8; j1++) {
+      for (point = 0; point != 8; point++) {
         s32 px; s32 a; s32 py;
-        a = (j1 << 13) + (t * 5 << 9);
+        a = (point << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         blit(canvas, ring, px - 2, py - 5, 5, 10);
@@ -412,23 +450,23 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       if (cel == 64)
         cel = 56;
       ring = sprites + (cel + 444);
-      for (j1 = 0; j1 != 64; j1++) {
+      for (point = 0; point != 64; point++) {
         s32 px; s32 a; s32 py;
-        a = j1 << 10;
+        a = point << 10;
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         draw(canvas, ring, px - 1, py - 2, 2, 4);
       }
-      for (j1 = 0; j1 != 64; j1++) {
+      for (point = 0; point != 64; point++) {
         s32 px; s32 a; s32 py;
-        a = j1 << 10;
+        a = point << 10;
         px = (r * Trig_Sin(a) * 2 >> 16) + x;
         py = (r * Trig_Cos(a) >> 16) + y + Data_08199f48[small] * 2;
         draw(canvas, ring, px - 1, py - 2, 2, 4);
       }
     }
-    for (j6 = 0, column = y; j6 < t - Data_08199f40[small] * 2 && column <= 112;
-         j6++, column += 32)
+    for (segment = 0, column = y; segment < t - Data_08199f40[small] * 2 && column <= 112;
+         segment++, column += 32)
       draw(canvas, sprites + 508, x - 4, column, 8, 32);
     if (t < Data_08199f40[small] * 2 + 8) {
       s32 shake = (Data_08199f40[small] * 2 - t + 8) >> 1;
@@ -447,7 +485,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
 }
 
 // Summon 25 (Iris): a circle of light opens over a dark field while fifteen
-// streaks swirl up out of it; the goddess's crystal rises in a 4 x 4 c0
+// streaks swirl up out of it; the goddess's crystal rises in a 4 x 4 grid
 // of sprites and bursts into sparks; drops fall and splash in rings; pillars
 // of light climb, the scene fills with rising motes, rays turn about the
 // centre, and the screen whitens as she heals the party.
@@ -606,13 +644,13 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s32 lift;
   s32 i;
   s32 j;
-  s32 c4;
-  s32 w;
+  s32 byteIndex;
+  s32 width;
 
   s32 k;
-  s32 c0;
-  s32 c1;
-  s32 c3;
+  s32 column;
+  s32 row;
+  s32 bandColumn;
   s32 m;
   s32 x;
   s32 y;
@@ -938,10 +976,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (frame <= 229)
           lift = (Trig_Sin((frame << 6) - 0x2c00) << 6) - 0x147200;
         for (j = 0; j != 4; j++) {
-          for (c0 = 0; c0 != 4; c0++) {
-            pos[0] = 0x480000 + c0 * 0x200000;
+          for (column = 0; column != 4; column++) {
+            pos[0] = 0x480000 + column * 0x200000;
             pos[2] = lift + 0x380000 + j * 0x200000;
-            Render_ApplyProjectedPlacementFar(work->objects[j * 4 + c0], pos,
+            Render_ApplyProjectedPlacementFar(work->objects[j * 4 + column], pos,
                                               (s32 *)&scale, 0);
           }
         }
@@ -955,11 +993,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           Func_0814cd48(work->effect->actors[i], -1, 5, -1, 0);
       }
       if (frame <= 191) {
-        for (c1 = 0; c1 != 3; c1++) {
-          u8 v = frame + (c1 & 1) * 47 + 80;
+        for (row = 0; row != 3; row++) {
+          u8 v = frame + (row & 1) * 47 + 80;
           s32 end;
 
-          y = c1 + 62;
+          y = row + 62;
           off = ((y & 7) << 3) + ((y >> 3) << 10);
           for (x = 0; x != 128; x = end) {
             end = x + 8;
@@ -1019,8 +1057,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         for (k = 0; k != 10; k++) {
           u8 *src = work->sheet + gData_08197410[k];
           u8 *out = work->sheet + gData_08197410[k] + i * 0x302;
-          s32 w = k + 1;
-          s32 n = w * 2 * w;
+          s32 width = k + 1;
+          s32 n = width * 2 * width;
 
           for (off = 0; off != n; off++) {
             u8 v = src[off] - i * 8;
@@ -1241,7 +1279,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2810, 16, 64, 0x10000);
       dst = work->sheet + 0x2010;
       for (x = 0; x != 64; x++) {
-        for (c3 = 0; c3 != 32; c3++) {
+        for (bandColumn = 0; bandColumn != 32; bandColumn++) {
           if (*dst > x)
             *dst = x;
           dst++;
@@ -1252,21 +1290,21 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 32; i++)
         work->particles[i].variant = 0;
       for (i = 1; i != 8; i++) {
-        for (j = 0; j != 10; j = w) {
+        for (j = 0; j != 10; j = width) {
           u8 *src = work->sheet + gData_08197410[j];
           u8 *out = work->sheet + gData_08197410[j] + i * 0x302;
           s32 n;
 
-          w = j + 1;
-          n = w * 2;
-          n *= w;
+          width = j + 1;
+          n = width * 2;
+          n *= width;
 
-          for (c4 = 0; c4 != n; c4++) {
-            u8 v = src[c4] - i * 8;
+          for (byteIndex = 0; byteIndex != n; byteIndex++) {
+            u8 v = src[byteIndex] - i * 8;
 
             if (v > 63)
               v = 0;
-            out[c4] = v;
+            out[byteIndex] = v;
           }
         }
       }

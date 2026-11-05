@@ -437,16 +437,16 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     u8 *src;
 
     Resource_LoadAndDecompress((s32)&Value_000000d9, buffer, 1, 0);
-for (i = 1; i != 8; i++) { s32 fade; j = 0; fade = i * 8;
-src = buffer;
-for (; j != 0x400; j++) {
+    for (i = 1; i != 8; i++) {
+      s32 fade; j = 0; fade = i * 8; src = buffer;
+      for (; j != 0x400; j++) {
         v = *src++;
         if (v != 0) {
-v -= fade;
+          v -= fade;
           if (v <= 0)
             v = 1;
         }
-        buffer[i * 0x400 + j] = v;
+        buffer[j + i * 0x400] = v;
       }
     }
   } else if (kind == 10) {
@@ -496,40 +496,16 @@ CLEAR(buffer + 0xc56, 0x4000);
     Resource_LoadAndDecompress((s32)&Value_0000018a, buffer, 0, 0);
     Resource_LoadAndDecompress((s32)&Value_0000013e, buffer + 0xd80, 1, 0);
   } else if (kind == 80) {
-    u8 *dst;
-    s32 row;
-    s32 two;
-    u8 *b;
-s32 k; s32 i;
+    s32 k; s32 i;
 
     Resource_LoadAndDecompress((s32)&Value_0000013a, buffer + 0x1000, 1, 0);
 CLEAR(buffer, 0x1000);
-    b = gMapCellBuffer;
-    i = 0;
-    two = 0;
-    row = 0;
-  rows:
-    {
-      u8 *mirror;
-      s32 three;
-      three = two + i;
-      mirror = row + b;
-      dst = row + Data_02010208;
-      src = three * 8 + b;
-      src += 0x1000;
-      mirror += 0x237;
-
+    for (i = 0; i != 48; i++) {
       for (k = 0; k != 24; k++) {
-        *dst++ = *src;
-        *mirror-- = *src++;
+        buffer[0x208 + i * 64 + k] = buffer[0x1000 + i * 24 + k];
+        buffer[0x237 + i * 64 - k] = buffer[0x1000 + i * 24 + k];
       }
     }
-    i++;
-    two += 2;
-    row += 64;
-    if (i != 48)
-      goto rows;
-    do { } while (0);
   } else if (kind == 79) {
     s32 i;
     s32 k;

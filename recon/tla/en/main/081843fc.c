@@ -1121,12 +1121,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Func_08015160(0, 0xf0000, 0);
         Render_DrawModelList(model);
         texture.pixels = work->sheet;
-        i = 0;
-        a += 10922;
-        for (; i != 3; a += 21845, i++) {
+        for (i = 0; i != 3; i++) {
           Transform_Push();
           Func_080150e4(i * 21845 + 10922);
-          model->shade = -24 - (Trig_Cos(a) << 3 >> 16);
+          {s32 phase = i * 21845 + 10922; model->shade = -24 - (Trig_Cos(phase + a) << 3 >> 16);}
           Func_08015160(0, -0x100000, 0);
           if (frame > 579) {
             s32 v = (frame - 580) * 1096;

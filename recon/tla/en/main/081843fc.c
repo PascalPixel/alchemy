@@ -1658,14 +1658,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         if (frame > 71) {
           x = x - frame * 8 + 576;
         }
-        x += 116;
         i = 0;
         q = &Data_02016d00[(frame & 31) * 2];
         for (; i != 2; i++, q++) {
           s32 angle;
           s32 speed;
 
-          q->x = x << 16;
+          q->x = (x + 116) << 16;
           q->y = (Random16() % 112 + 4) << 16;
           angle = (Random16() & 0x7fff) + 0x8000;
           speed = (Random16() & 127) + 128;

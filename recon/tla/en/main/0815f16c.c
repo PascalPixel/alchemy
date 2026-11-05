@@ -1885,7 +1885,6 @@ CLEAR(buffer, 0x1000);
       s32 y;
       if (frame > 31)
         REG_BLDALPHA = (48 - frame) | 0x1000;
-      i = 0;
       if (frame < 14) {
         struct Particle *p;
         if (action->side == 0) {
@@ -1913,7 +1912,7 @@ CLEAR(buffer, 0x1000);
           }
         }
       } else {
-        for (; i != 16; i++) {
+        for (i = 0; i != 16; i++) {
             s32 m;
           particle = &SPARKS[i];
           { s32 a; a = __modsi3(i, 5) * 3;

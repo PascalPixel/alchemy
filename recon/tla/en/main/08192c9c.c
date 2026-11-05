@@ -371,9 +371,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];
-  u8 *sprites = Ram_HeapSlots->unk64[0];
-  DrawRectangle draw = Ram_HeapSlots->unk64[1];
-  DrawRectangle drawAlt = Ram_HeapSlots->unkb8[1];
+  DrawRectangle drawAlt;
+  DrawRectangle draw;
+  u8 *sprites;
   s32 r;
   s32 cel;
   s32 sheetOffset;
@@ -381,6 +381,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   s32 segment;
   s32 column;
 
+  sprites = Ram_HeapSlots->unk64[0];
+  draw = Ram_HeapSlots->unk64[1];
+  drawAlt = Ram_HeapSlots->unkb8[1];
   if (t < Data_08199f40[small] * 2) {
     r = Data_08199f40[small] * 2 - t;
     cel = r / 6;
@@ -1499,8 +1502,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy * 2, sinT);
             s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy * 2, cosT);
 
-            draw[0](canvas, work->sheet + tile, (px >> 16) + shift + 64,
-                    (py >> 16) - shift + 63, 1, 2);
+            px = (px >> 16) + shift;
+            draw[0](canvas, work->sheet + tile, px + 64, (py >> 16) - shift + 63, 1, 2);
           }
         }
       }

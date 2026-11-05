@@ -1,10 +1,8 @@
-// Draft, differ 70 of 103 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// object 8 exists, spawns an effect of type 0x2a0 above it at a random height
-// that follows it on its sprite's layer. An empty asm with a memory clobber
-// before the closing increment stops GCSE sharing the counter's address with
-// its first read (87 without). Left: the native tests and reads object 8
-// through a copy in r0 where this uses r2 and r4, and the callee-saved
-// registers and the pool order differ from there.
+// Draft, differ 70 (tla-en, 2026-11-05). Func_020004a4 of overlay 6ae.
+// A byte local holds the zero: a QImode constant comes from the pool (ldr r0,
+// 0; mov r9, r0), as the listing has it. Left: reload's scratch choice, r2
+// and r4 here against r0 natively, which moves every later scratch; and the
+// fields' order at the end.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -41,6 +39,8 @@ void Func_020004a4(void) {
                            anchor->y + offset + 0x80000, anchor->z);
     offset = (offset / 0x60000) << 16;
     if (object != NULL) {
+      u8 zero;
+
       sprite = object->animation;
       Func_0200556c(object, gData_02006ad0);
       Actor_SetPartAttribute(object, 10);
@@ -48,9 +48,10 @@ void Func_020004a4(void) {
       object->action = Random16Far() & 0x0ffff000;
       object->unk66 = phase;
       object->update = Func_020005a0;
+      zero = 0;
       object->watchedObject = anchor;
       object->speedLimit = Math_Sine((offset & 0xfffff) >> 4) * 24 >> 16;
-      sprite->unk1a = 0;
+      sprite->unk1a = zero;
       sprite->layer =
           ((struct MarsLighthouseAerieSprite *)anchor->animation)->layer;
     }

@@ -1,33 +1,9 @@
-// Draft, differ 90 of 316 (tla-en, 2026-11-05). Older notes below may predate this figure.
-//
-// The Jupiter Lighthouse aerie's effect between objects a and b: allocates its
-// work in heap slot 220, loads its two pictures (resources 0x1eb and 0x1f6)
-// into VRAM, sets up 32 small sprites and one large one, picks its start and
-// end points by side, points the event's object (event work word 460) at them
-// (Func_02002a20, Func_02002a28), plays sound 142, runs Func_02001080 as a
-// scheduled callback until its step counter reaches 999, then frees the VRAM
-// entries and the work.
-//
-// Left: the second CSE pass carries the loop body's constants past the loop
-// end, so the 32 reaches the large sprite through a call-saved register and the
-// loop counter spills to the stack (frame 20, listing 12). The listing rebuilds
-// 32 and 240 at the large sprite, so something ends its block at the loop;
-// nothing in the listing shows what. Everything else left follows from that:
-// the counter in r8, tile in r9, the 240 pool load in the loop, and the
-// reload-cse adds on -13 and 32. 512 in a call-saved register copied to r1
-// before VramCache_Load is also unexplained.
-//
-// Measured: a halfword store through a field goes through store_bit_field
-// (direct_store[HImode] is 0 on Thumb) and its constant ends up as SImode movs;
-// through a pointer it stays HImode and comes from the pool, which is how the
-// listing loads 240 at both sites. Cast at both, CSE shares it and the gap
-// rises to 45, so only the large sprite's store is cast. Bitfields at the large
-// sprite (priority, palette) share 15 and -13 with the loop: the byte form with
-// keepPriority keeps them apart, and gives the single load the listing has.
-// Both branches of the side test store all six words: their tails cross-jump
-// into the listing's shared to[1], to[2] with the constants in r0 and r1. The
-// wait is a goto loop because a loop with notes hoists 999 and the step's
-// address, which the listing rebuilds on each pass.
+// Draft, differ 2 (tla-en, 2026-11-05). Func_020017a8 of overlay 6a4.
+// Plain loop counting down with the listing's registers, bitfields at both
+// sprites, 240 through a pointer at both (a halfword constant through a
+// pointer comes from the pool). sprite also holds the 512, needs a temporary
+// tag on adoption. Left: the large sprite's 0x80004000 issues before the
+// stack argument; natively after r0.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -96,39 +72,39 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   s32 smallTile;
   s32 largeTile;
   s32 i;
+  s32 age;
 
   work->first = Actor_GetById(a);
   work->second = Actor_GetById(b);
   Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_Data1EB), work);
   smallEntry = Resource_FindFreeEntry();
   smallTile = VramCache_Load(smallEntry, 256, work);
-  /* FAKEMATCH(barrier): the empty asm on smallTile changes its allocation rank; as no
-   * asm, 93 of 316 instructions differ in tla-en. */
-  asm("" : "=r"(smallTile) : "0"(smallTile));
   work->smallTile = smallTile;
   spark = work->sparks;
+  age = 0;
   sprite = work->sprites;
-  for (i = 0; i < 32; i++, sprite++, spark++) {
+  i = 31;
+  for (; i >= 0; age -= 2, i--, sprite++, spark++) {
     Func_02002b30(sprite, 4, 4, 0, smallTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
-    spark->age = -2 * i;
+    *(u16 *)&sprite->depth = 240;
+    spark->age = age;
   }
   Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_Data1F6), work);
   largeEntry = Resource_FindFreeEntry();
-  largeTile = VramCache_Load(largeEntry, 512, work);
+  {
+    sprite = (struct EffectSprite *)512;
+    largeTile = VramCache_Load(largeEntry, (s32)sprite, work);
+  }
   work->largeTile = largeTile;
   large = &work->large;
   Func_02002b30(large, 30, 7, 0x80004000, largeTile);
   *(u16 *)&large->depth = 240;
-  {
-    s32 keepPriority = ~12;
-
-    ((u8 *)&large->oam)[1] |= 32;
-    ((u8 *)&large->oam)[5] = ((((u8 *)&large->oam)[5] & keepPriority) | 4) & 15;
-  }
+  large->oam.priority = 1;
+  large->oam.palette256 = 1;
+  large->oam.palette = 0;
   large->scaleX = 0;
   large->scaleY = 0;
   if (side == 0) {
@@ -162,12 +138,8 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   work->unkb09 = 1;
   work->unkb0a = 0;
   Task_Add(Func_02001080, 0x480);
-  if (work->step != 999) {
-  again:
+  while (work->step != 999)
     wait(1);
-    if (work->step != 999)
-      goto again;
-  }
   Task_RemoveFar(Func_02001080);
   Resource_ResetEntry(largeEntry);
   Resource_ResetEntry(smallEntry);

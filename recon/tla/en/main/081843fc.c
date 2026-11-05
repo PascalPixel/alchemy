@@ -1678,15 +1678,19 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         }
       }
       if (frame <= 87) {
+        s32 off;
         s32 jitter = 0;
-        s32 z = 0;
-        s32 y = 0;
-        s32 off = 0;
+        s32 z;
+        s32 y;
         s32 a;
         s32 b;
         s32 c;
 
-        for (j = 0; j != 12; j++, off += 8) {
+        j = 0;
+        z = 0;
+        y = 0;
+        off = 0;
+        for (; j != 12; j++, off += 8) {
           s8 *v = (s8 *)gMapCellBuffer + off;
           s32 x = 0;
 

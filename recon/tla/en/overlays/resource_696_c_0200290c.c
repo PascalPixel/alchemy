@@ -41,15 +41,17 @@ void Func_0200290c(void) {
   s32 slot;
   u32 remaining;
   u16 *items;
+  s16 *owner;
 
   Func_0200498c((s32)MsgShamanMissingShamanRod);
   if (PartyInventory_FindOwner(65) == -1)
     goto refuse;
-  remaining = 8;
+  owner = owners;
   count = Party_ListActiveOwners(owners);
+  remaining = 8;
   for (i = 0; i < count; i++) {
-    s16 *owner = &owners[i];
-    items = (u16 *)(Unit_Get(*owner) + 216);
+    s16 id = *owner++;
+    items = (u16 *)(Unit_Get(id) + 216);
     for (slot = 0; slot < 15; slot++) {
       s32 item = items[slot];
       if (item == 0)

@@ -916,8 +916,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
         if (frame == (Data_081998a4[i * 13 + idx] - 492) / 2 + 489) {
           s32 count = 0;
+          const s16 *table = Data_08199916;
           s32 n = off + idx;
-          s32 a = Data_08199916[n];
+          s32 a = table[n];
           u8 *src;
           s32 bx;
           s32 h;

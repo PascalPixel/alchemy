@@ -70,7 +70,7 @@ s32 Func_02004224(s32 from, s32 to, s32 kind);
 void Func_02004270(s32 x, s32 z, s32 piece, s32 flags);
 s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
                   s32 last, s32 bit) {
-  u8 *cells;
+  u8 *cells, *kinds;
   s32 piece;
   s32 spare, step, dir, used, dz, index, one;
   u32 x, z, nextX, nextZ, tries, attempts;
@@ -79,12 +79,12 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
   length--;
   dz = endZ - z0;
   spare = length - abs(endX - x0) - abs(dz);
-  Iwram_ClearWords(Data_02006fe8, 32);
   Iwram_ClearWords(Data_02006fc8, 32);
-  Iwram_ClearWords(Data_02007028, 32);
+  Iwram_ClearWords(Data_02006fe8, 32);
   Iwram_ClearWords(Data_02007008, 32);
-  Iwram_ClearWords(gData_02007068, 32);
-  Call2((void (*)())Iwram_ClearWords, (s32)(Data_02007048), (s32)(32));
+  Iwram_ClearWords(Data_02007028, 32);
+  Iwram_ClearWords(Data_02007048, 32);
+  Call2((void (*)())Iwram_ClearWords, (s32)(gData_02007068), (s32)(32));
   if (spare & 1)
     return -1;
   x = x0;
@@ -99,14 +99,15 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
     {
       s32 offset = (z * 11 + x) * 4;
       Data_02007028[step] = cells[offset];
-      gData_02007068[step] = (cells + offset)[2];
+      gData_02007068[step] = ((struct PuzzleCell *)(cells + offset))->shape;
     }
     Data_02006fe8[step] = x;
     Data_02007008[step] = z;
     Data_02006fc8[step] = direction;
     {
       u8 *joins = gData_02005ac8 + 1;
-      Data_02007048[step] = Data_02007048[step] | joins[Data_02007028[step]] |
+      kinds = Data_02007028;
+      Data_02007048[step] = Data_02007048[step] | joins[kinds[step]] |
                             1 << ((direction + 2) & 3);
     }
     tries = 0;
@@ -142,8 +143,10 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
         if (cell[0] == 10)
           goto blocked;
       }
-      Data_02007048[step] = tried | one << dir;
-      piece = Func_02004224(direction, dir, Data_02007028[step]);
+      tried |= one << dir;
+      Data_02007048[step] = tried;
+      kinds = Data_02007028;
+      piece = Func_02004224(direction, dir, kinds[step]);
       {
         s32 offset = (z * 11 + x) * 4;
         Func_02004270(x, z, piece, (cells + offset)[2] | one << bit);

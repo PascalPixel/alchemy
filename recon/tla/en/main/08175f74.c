@@ -827,10 +827,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         source = (u8 *)Resource_GetTableEntry((s32)&Value_0000009d);
         CpuFill(PLTT + 0x1c0, 64, 0);
         source += 64;
-        Resource_DecodeType01(source, REVEAL_BUFFER);
+        Resource_DecodeType01(source, gData_02014000);
         for (i = 0; i != 0x1000; i++) {
-          if (REVEAL_BUFFER[i] != 0) {
-            REVEAL_BUFFER[i] += 192;
+          if (gData_02014000[i] != 0) {
+            gData_02014000[i] += 192;
           }
         }
         for (i = 0; i != 32; i++) {

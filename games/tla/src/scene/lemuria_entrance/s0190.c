@@ -1,11 +1,6 @@
-// Draft, differ 38 of 153 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 38 (tla-en); notes below may predate it.
-// Draft, differ 64 of 153: 688's scene setup, decompiled from the listing. The
-// native builds the screen effect 0x204 from the event work offset already in
-// r2 (adds r2, #88) and keeps it in r10, reads the entrance with ldrsh at each
-// test, and reloads gMainRoutineWork from the pool for the last test; here 0x204 is
-// built fresh in r1, the second test shares an ldrh, and the address stays in a
-// register. Tried: 0x204 in a local (64), the heap slots in a local (71).
+/// @file
+/// The scene's setup: places its actors, then plays what the entrance it was
+/// reached by calls for.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -28,9 +23,10 @@ void Func_020005a4(s32 scene, s32 entrance);
 void Func_020003cc(void);
 
 s32 Func_02000190(void) {
+  s32 *screen = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
   s32 effect = 0x204;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
+  *screen = effect;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Actor_SetSingleChildFlags(Actor_GetById(19), 0);
   GameFlag_SetBit(0x907);
@@ -59,7 +55,9 @@ s32 Func_02000190(void) {
     gMainRoutineWork.currentOwner = 4;
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = effect;
   }
-  if (gMainRoutineWork.entrance == 3 && GameFlag_Test(0x96b)) {
+  /* FAKEMATCH(wrapper): forwarded, so that the flag number is built for each call; as
+   * GameFlag_Test(0x96b), 15 of 153 instructions differ in tla-en. */
+  if (gMainRoutineWork.entrance == 3 && Value1((s32 (*)())GameFlag_Test, 0x96b)) {
     GameFlag_ClearBit(0x96b);
     Func_020003cc();
   }

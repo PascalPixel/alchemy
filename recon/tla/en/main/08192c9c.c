@@ -821,9 +821,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             s->angle += s->speed * 2 / 3;
             size = (i & 3) + 5;
             for (j = 0; j != 10; j++) {
+              s32 cell = gData_08197410[size - 1];
               struct IrisPoint *p = &STREAK(i, j);
 
-              draw[1](canvas, sprites + gData_08197410[size - 1],
+              draw[1](canvas, sprites + cell,
                       HALF(p, 1) - (size >> 1), HALF(p, 3) - size, size,
                       size * 2);
             }

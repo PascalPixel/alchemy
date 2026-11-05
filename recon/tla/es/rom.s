@@ -867,19 +867,17 @@ Func_08100738:
 	.incbin "baserom.gba", 0x0010688c, 0x000000c0
 	.section .rom.00106e92, "ax"
 	.incbin "baserom.gba", 0x00106e92, 0x00000002
-	.section .rom.001071c0, "ax"
-	.global Func_0810106c
-	.type Func_0810106c, %function
-	.thumb_func
-Func_0810106c:
-	.incbin "baserom.gba", 0x001071c0, 0x00000544
 	.section .rom.0010778c, "ax"
+	.global Func_08101638
+Func_08101638:
 	.incbin "baserom.gba", 0x0010778c, 0x00000228
 	.section .rom.00107c1c, "ax"
 	.global DjinnMenu_DrawPage
 DjinnMenu_DrawPage:
 	.incbin "baserom.gba", 0x00107c1c, 0x00000148
 	.section .rom.00108160, "ax"
+	.global Func_08102008
+Func_08102008:
 	.incbin "baserom.gba", 0x00108160, 0x00001050
 	.section .rom.00109362, "ax"
 	.incbin "baserom.gba", 0x00109362, 0x00000002
@@ -889,6 +887,8 @@ DjinnMenu_DrawPage:
 Func_08103218:
 	.incbin "baserom.gba", 0x00109364, 0x000007e4
 	.section .rom.0010a68c, "ax"
+	.global Func_08104540
+Func_08104540:
 	.incbin "baserom.gba", 0x0010a68c, 0x000003e8
 	.section .rom.0010ab12, "ax"
 	.incbin "baserom.gba", 0x0010ab12, 0x00000002

@@ -1,25 +1,3 @@
-// Near miss, differ 90 of 603 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Draft, differ 109 of 603, skeleton gap 27 (tla-en, 2026-11-01)
-// Func_0810106c: the Djinn menu's screen loop, the twin of The Broken Seal's
-// DjinnMenu_RunScreen (games/tbs/src/menu/menu/djinn.c), confirmed statement
-// by statement. The Lost Age drops the pair steps 4 and 8, hides the page
-// arrows before each confirmation and adds Func_08104540 (step 10) and
-// Func_08101d5c (step 15) as its status and help pages.
-// What is left is one cause. The listing keeps the cursor at entry and each
-// arrow in one pointer: r1 everywhere, and the arrows' offsets are rebuilt
-// (movs 190; lsls) because the load overwrites them. Declaring
-// `struct MenuIcon *icon` in place of `cursor` and writing every arrow pair as
-//   icon = menu->arrows[0]; icon->active = 13;
-//   icon = menu->arrows[1]; icon->active = 13;
-// gives differ 0, skeleton 0, with no other change. The entry's r3 and r2
-// conflicts are what push that one pseudo to r1. That form is a local reused
-// for two values, a `temporary` device under S2, and this round added none, so
-// it is not applied; adopting it needs the tag, with 109 of 603 as its N of M.
-// Tried and no gain (109, gap 27): one `arrow` local declared first, after
-// `cursor` or last; `arrow0` and `arrow1`; a block-scoped arrow in each case;
-// a do-while macro holding the arrow; no cursor local; cursor declared last;
-// `menuResult = result = 0`. Only a pseudo also live at entry reaches r1.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -101,9 +79,16 @@ void Func_081019a4(struct DjinnElementList *list);
     (menu)->selection[0] = column + found * 10;                                \
   } while (0)
 
+/// The Djinn menu's screen loop, the twin of The Broken Seal's
+/// DjinnMenu_RunScreen. The Lost Age drops the pair steps 4 and 8, hides the
+/// page arrows before each confirmation and adds Func_08104540 (step 10) and
+/// Func_08101d5c (step 15) as its status and help pages.
 s32 Func_0810106c(void) {
+  /* FAKEMATCH(temporary): one icon local holding the cursor and then each
+     arrow; as a cursor local and plain arrow stores, 109 of 603 instructions
+     differ in tla-en. */
   struct DjinnMenuWork *menu;
-  register struct MenuIcon *cursor asm("r5");
+  struct MenuIcon *icon;
   s32 result;
   s32 step;
   s32 menuResult;
@@ -114,12 +99,9 @@ s32 Func_0810106c(void) {
   result = 0;
   menuResult = 0;
   menu = Ram_HeapSlots->menuRuntime;
-  do {
-  cursor = menu->cursor;
-  __asm__("" : "=r"(cursor) : "0"(cursor));
-  } while (0);
-  cursor->active = 13;
-  cursor->animStep = 0;
+  icon = menu->cursor;
+  icon->active = 13;
+  icon->animStep = 0;
   Func_08101638();
   wait(1);
   step = 2;
@@ -151,16 +133,20 @@ s32 Func_0810106c(void) {
     case 10:
       menu->owner = menu->owners[menu->selectedColumn[0]];
       menu->shownOwner[0] = menu->owners[menu->selectedColumn[0]];
-      menu->arrows[0]->active = 13;
+      icon = menu->arrows[0];
+      icon->active = 13;
+      icon = menu->arrows[1];
+      icon->active = 13;
       result = Func_08104540();
-      menu->arrows[1]->active = 13;
       if (result == -2)
         done = 1;
       step = 2;
       break;
     case 15:
-      menu->arrows[0]->active = 13;
-      menu->arrows[1]->active = 13;
+      icon = menu->arrows[0];
+      icon->active = 13;
+      icon = menu->arrows[1];
+      icon->active = 13;
       result = Func_08101d5c();
       if (result == -2)
         done = 1;
@@ -207,10 +193,10 @@ s32 Func_0810106c(void) {
       }
       break;
     case 7:
-  do {
-      menu->arrows[0]->active = 13;
-  } while (0);
-      menu->arrows[1]->active = 13;
+      icon = menu->arrows[0];
+      icon->active = 13;
+      icon = menu->arrows[1];
+      icon->active = 13;
       result = Func_081039fc(1);
       if (result == -2)
         done = 1;
@@ -231,10 +217,10 @@ s32 Func_0810106c(void) {
       step = 0;
       break;
     case 6:
-  do {
-      menu->arrows[0]->active = 13;
-  } while (0);
-      menu->arrows[1]->active = 13;
+      icon = menu->arrows[0];
+      icon->active = 13;
+      icon = menu->arrows[1];
+      icon->active = 13;
       result = Func_081039fc(2);
       if (result == -2)
         done = 1;
@@ -254,8 +240,10 @@ s32 Func_0810106c(void) {
       step = 2;
       break;
     case 9:
-      menu->arrows[0]->active = 13;
-      menu->arrows[1]->active = 13;
+      icon = menu->arrows[0];
+      icon->active = 13;
+      icon = menu->arrows[1];
+      icon->active = 13;
       result = Func_081039fc(0);
       if (result == -2)
         done = 1;
@@ -276,9 +264,10 @@ s32 Func_0810106c(void) {
       step = 2;
       break;
     case 5:
-      menu->arrows[0]->active = 13;
-  asm("");
-      menu->arrows[1]->active = 13;
+      icon = menu->arrows[0];
+      icon->active = 13;
+      icon = menu->arrows[1];
+      icon->active = 13;
       result = Func_081039fc(3);
       if (result == -2)
         done = 1;

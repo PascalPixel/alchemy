@@ -481,20 +481,20 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       model->shade = 0;
       texture.logWidth = 5;
       texture.logHeight = 2;
-      texture.pixels = work->sheet + 0x4000;
       model->kind = 6;
+      texture.pixels = work->sheet + 0x4000;
       model->mesh = Data_08199220;
       model->texture = &texture;
       model->vertices = verts;
       p = work->particles;
-      origin = -0x400000;
-  __asm__("" : "=r"(origin) : "0"(origin));
       for (i = 0; i != 8; i++, p++) {
         p->variant++;
         p->x += p->y;
         if ((u32)p->variant <= 47) {
           Render_ResetTransformState();
-          Func_08015160(((i & 3) << 17) + 0x20000 + cx + origin, cy - (((i & 3) + 2) << 16) + origin, 0);
+          {
+            s32 x = ((i & 3) << 17) + 0x20000; s32 o = -0x400000; Func_08015160(cx + x + o, cy - (((i & 3) + 2) << 16) + o, 0);
+          }
           Func_080151e4(0x8000, 0x10000, 0x10000);
           Func_080150e4(p->x);
           Func_080151e4(Trig_Sin(p->variant * 682) + 0x4000, 0x20000, 0x10000);

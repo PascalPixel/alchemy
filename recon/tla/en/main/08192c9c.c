@@ -389,8 +389,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   sprites = Ram_HeapSlots->unk64[0];
   draw = Ram_HeapSlots->unk64[1];
   drawAlt = Ram_HeapSlots->unkb8[1];
-  if (t < Data_08199f40[small] * 2) {
-    r = Data_08199f40[small] * 2 - t;
+  if (t < *(Data_08199f40 + small) * 2) {
+    r = *(Data_08199f40 + small) * 2 - t;
     cel = r / 6;
     sheetOffset = cel * 0x302;
     cel *= 8;
@@ -453,10 +453,10 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
            7, 14);
     }
   } else {
-    if (t < Data_08199f40[small] * 2 + Data_08199f40[small]) {
+    if (t < *(Data_08199f40 + small) * 2 + *(Data_08199f40 + small)) {
       s32 ringCel;
 
-      r = t - Data_08199f40[small] * 2;
+      r = t - *(Data_08199f40 + small) * 2;
       ringCel = r / 3 * 8;
       if (ringCel == 64)
         ringCel = 56;
@@ -476,11 +476,11 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         draw(canvas, sprites + ringCel, px - 1, py - 2, 2, 4);
       }
     }
-    for (segment = 0, column = y; segment < t - Data_08199f40[small] * 2 && column <= 112;
+    for (segment = 0, column = y; segment < t - *(Data_08199f40 + small) * 2 && column <= 112;
          segment++, column += 32)
       draw(canvas, sprites + 508, x - 4, column, 8, 32);
-    if (t < Data_08199f40[small] * 2 + 8) {
-      s32 shake = (Data_08199f40[small] * 2 - t + 8) >> 1;
+    if (t < *(Data_08199f40 + small) * 2 + 8) {
+      s32 shake = (*(Data_08199f40 + small) * 2 - t + 8) >> 1;
 
       gBgScroll[1].y = 32;
       if (t & 1)
@@ -1180,7 +1180,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       gCameraSceneParameters[4] = 2556 - frame * 6;
     if (frame <= 422) {
       if (frame > 370) {
-        s32 h = (frame - 370) * 8;
+        s32 h = (frame - 370) << 3;
 
         if (h > 127)
           h = 127;
@@ -1188,7 +1188,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
       if (frame > 375) {
         struct Widths5 widths = Data_08196f50;
-        s32 h = (frame - 375) * 8;
+        s32 h = (frame - 375) << 3;
 
         if (h > 127)
           h = 127;
@@ -1196,7 +1196,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
       if (frame > 380) {
         struct Widths7 widths = Data_08196f64;
-        s32 h = (frame - 380) * 4;
+        s32 h = (frame - 380) << 2;
         s32 q;
 
         if (h > 127)
@@ -1206,7 +1206,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       }
       if (frame > 382) {
         struct Widths7 widths = Data_08196f80;
-        s32 h = (frame - 382) * 8;
+        s32 h = (frame - 382) << 3;
         s32 q;
 
         if (h > 127)
@@ -1215,7 +1215,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Func_0819273c(widths.w[q], q * 2 + 70, h);
       }
       if (frame > 385) {
-        s32 h = (frame - 385) * 4;
+        s32 h = (frame - 385) << 2;
 
         if (h > 127)
           h = 127;

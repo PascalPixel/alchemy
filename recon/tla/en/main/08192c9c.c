@@ -1538,7 +1538,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
       for (i = 0; i != 96; i++) {
         s32 a = i * 384;
-        s32 sx = (t << 1) * Trig_Sin(a);
+        s32 sx = Trig_Sin(a) * (t << 1);
         s32 sy = t * Trig_Cos(a);
         s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
         s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT);
@@ -1555,7 +1555,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
       for (i = 0; i != 197; i++) {
         s32 a = i * 384;
-        s32 sx = (t >> 1) * Trig_Sin(a);
+        s32 sx = Trig_Sin(a) * (t >> 1);
         s32 sy = (t << 1) * Trig_Cos(a);
         s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT);
         s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT);

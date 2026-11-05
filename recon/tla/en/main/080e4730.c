@@ -1,3 +1,4 @@
+// Draft, differ 76 of 332 (tla-en, 2026-11-05); 38 with slots and pool offsets normalized, 6 with registers blind too. pictureTiles first holds the 0x400 size (a fresh 0x400 for rippled needs it); rippled, pictureOffset and ripple declared in slot order; the two empty asms with inputs keep sprite and party live and are measurement, untagged: they show r5 and r6 are busy at those points in the native, nothing in the listing says why. Left is reload rotation: the native has one more reload before the owner's reload after the animation call, and 63 is a reload in r5.
 // Measured 2026-11-05 (tla-en): 116 of 332, unchanged; 114 with i = 0 before the first loop's
 // pointers. 4000 random declaration orders and party set anywhere earlier: no gain. First
 // difference: y's 0xa0000 goes to r6 in the listing and r5 here, and gMainRoutineWork
@@ -71,13 +72,15 @@ void Func_080e4730(void) {
   s32 particleEntry;
   s32 particleTiles;
   u8 *motionFlags;
+  u8 *rippled;
+
   u8 *sprite;
   u8 *particle;
   u8 *animation;
   u8 *party;
+  s32 pictureOffset;
   s32 ripple;
   s32 pictureTiles;
-  s32 pictureOffset;
   s32 frame;
   s32 i;
   s32 delay;
@@ -89,10 +92,11 @@ void Func_080e4730(void) {
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
   particleEntry = Resource_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
+  i = 0;
   particle = work + 0x1200;
   delay = 0;
   sprite = work + 0x800;
-  for (i = 0; i < 64; i++) {
+  for (; i < 64; i++) {
     Func_080e45a8(sprite, particle, i, particleTiles, *(s16 *)(event + 0xd48));
     *(s32 *)(particle + 24) = delay;
     sprite += 40;
@@ -105,33 +109,36 @@ void Func_080e4730(void) {
   Actor_SetPositionAndResetMotionFar(owner, owner->x, owner->y + 0xa0000,
                                       owner->z);
   party = gMainRoutineWork;
+  asm("" : : "r"(sprite));
   Animation_SetIndexAndInitializeObjectsFar(owner, *(s32 *)(party + 532));
-  animation = owner->animation;
-  animation[5] &= 63;
-  animation = owner->animation;
-  animation[7] = (animation[7] & 63) | 128;
+  ((u8 *)owner->animation)[5] &= 63;
+  ((u8 *)owner->animation)[7] = (((u8 *)owner->animation)[7] & 63) | 128;
   if (*(s8 *)(event + 394) == 3)
     *(s32 *)((u8 *)owner->animation + 12) = 0xc000;
+  asm("" : : "r"(party));
   owner->angle = 0x4000;
   Actor_SetMode(owner, 0);
   Animation_ApplyChildValueToFirstFar(owner->animation, 15);
   wait(1);
   Animation_ApplyChildValueToFirstFar(owner->animation, 0);
-  Func_080e43a4(*(void **)((u8 *)owner->animation + 40), work, 0x400);
+  pictureTiles = 0x400;
+  Func_080e43a4(*(void **)((u8 *)owner->animation + 40), work, pictureTiles);
   Animation_ApplyChildValueToFirstFar(owner->animation, 15);
   pictureEntry = Resource_FindFreeEntry();
-  pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
+  pictureTiles = VramCache_Load(pictureEntry, pictureTiles, NULL);
   Func_080e4510(work + 0x1900, pictureTiles);
   wait(1);
-  pictureOffset = pictureTiles * 32;
+
+  rippled = work + 0x400;
   ripple = 0;
+  pictureOffset = pictureTiles * 32;
   for (frame = 0; frame < 78; frame++) {
     if (frame == 0)
       Sound_PlayFar(544);
     if (frame <= 64) {
-      Func_080e446c(work, work + 0x400, 92 - ripple / 2);
+      Func_080e446c(work, rippled, 92 - ripple / 2);
       ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
-          work + 0x400, 32, 32, (u8 *)0x06010000 + pictureOffset);
+          rippled, 32, 32, (u8 *)0x06010000 + pictureOffset);
       Func_080e45a0(work + 0x1900);
     }
     if (frame == 66) {

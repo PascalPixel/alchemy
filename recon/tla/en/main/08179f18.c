@@ -346,7 +346,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Iwram_CopyWords((void *)0x050003e0, e, 32);
       e += 32;
       Resource_DecodeType01(e, source);
-      cells = gMapCellBuffer;
+      cells = (u8 *)0x02010000;
       for (i = 0; i != 15; i++) {
         struct FloraObject *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
@@ -369,7 +369,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       e = Resource_GetTableEntry((s32)&ResourceId_Data098);
       e += 480;
       Resource_DecodeType01(e, source);
-      cells = gMapCellBuffer;
+      cells = (u8 *)0x02010000;
       for (i = 0; i != 12; i++) {
         struct FloraObject *obj = Func_0815b290(32, 32, 0x80002000, 0);
         obj->flags = 2;

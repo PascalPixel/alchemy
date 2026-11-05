@@ -445,7 +445,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells, 1024);
     }
     }
-    COPY_WORDS(cellBuffer + 0x1000, Data_02016000, 0x1000);
+    {s32 n = 4; COPY_WORDS(cellBuffer + n * 1024, Data_02016000, n * 1024);}
   }
   for (i = 0; i != 6; i++) {
     obj = Func_0815b3b0(32, 32, 0x80002000, 0);
@@ -757,8 +757,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       if (frame == 339) {
         swapped = 1;
         for (i = 0; i != 4; i++) {
-          COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]),
-                     gMapCellBuffer + (i << 10), 1024);
+          void *tiles = (void *)OBJ_TILES(work->objects[24 + i]);
+
+          COPY_WORDS(tiles, cellBuffer + i * 1024, 1024);
         }
       }
     } else if (frame == 450) {

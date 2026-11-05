@@ -164,7 +164,7 @@ struct ModelDesc {
   u32 a : 8;
   u32 b : 8;
   u32 c : 16;
-  void *tiles;
+  u8 *tiles;
 };
 
 struct Model {
@@ -1384,10 +1384,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       model->kind = 7;
       model->mesh = gData_08199340;
       t2 = &desc112;
-      model->desc = t2;
       model->texture = texture;
-      __asm__("" : "=r"(d) : "0"(t2));
-      __asm__("" : "=r"(d) : "0"(d));
+      d = t2;
+      model->desc = t2;
+      t2 = (struct ModelDesc *)model;
       if (depth > -48) {
         model->depth = depth;
         Render_ResetTransformState();
@@ -1418,6 +1418,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       if (frame > 55) {
         s32 last = frame * 2 - 208;
 
+        __asm__("" : "=r"(d) : "0"(d));
         d->tiles = work->buffer + 0x1000;
         if (last >= -32) {
           last = -32;
@@ -1443,7 +1444,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           Render_DrawModelList(model);
         }
       }
-      Heap_Release(model);
+      Heap_Release(t2);
       Heap_Release(texture);
       while (work->frameSync, work->frameSync <= 1) {
       }

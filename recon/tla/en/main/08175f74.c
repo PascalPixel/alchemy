@@ -1621,12 +1621,10 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           u16 *target = SYSTEM_WORK->scene->palette;
           u16 *color = PLTT + 0x60;
 
-          s32 dim = twenty / 2;
-
           for (j = 0; j != 128; j++) {
-            s32 tr = (target[j] & 31) - dim;
+            s32 tr = (target[j] & 31) - twenty / 2;
             s32 tg = ((target[j] >> 5) & 31) - 20;
-            s32 tb = ((target[j] >> 10) & 31) - dim;
+            s32 tb = ((target[j] >> 10) & 31) - twenty / 2;
             s32 r = color[j] & 31;
             s32 g = (color[j] >> 5) & 31;
             s32 b = (color[j] >> 10) & 31;

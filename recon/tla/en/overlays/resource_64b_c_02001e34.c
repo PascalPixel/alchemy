@@ -1,3 +1,4 @@
+// Draft, differ 65 of 714 (tla-en, 2026-11-05).
 // 5 November: differ 65 of 714 with x read first as the native does (46 with the
 // false order). What turns the rest is the zero: after the test of 0x16e the
 // then-arm knows the result is 0 and cse keeps it in r8 for the later stores of 0

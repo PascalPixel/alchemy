@@ -1,3 +1,4 @@
+// Draft, differ 27 of 131 (tla-en, 2026-11-05).
 // Under -Os, 5 November: differ 41 of 131 (tla-en); older figures below predate it.
 // Draft, differ 67 of 131, skeleton gap 10 (tla-en, 2026-11-01)
 // Overlay 655's Func_02000d78 and overlay 676's copy, with this overlay's

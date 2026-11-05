@@ -1,3 +1,4 @@
+// Draft, differ 33 of 40 (tla-en, 2026-11-05).
 // Draft of overlay 663's Func_02000468, rewritten from the listing's translation.
 #include "types.h"
 #include "ram_buffer.h"

@@ -1,3 +1,4 @@
+// Draft, differ 116 of 167 (tla-en, 2026-11-05).
 // Under -Os, 5 November: differ 138 of 167 (tla-en); older figures below predate it.
 // Draft, differ 123 of 167, skeleton gap 63 (tla-en, 2026-11-01)
 // Builds the five-digit counter's sprites (the work at gData_020023c4 + 0x288):

@@ -1,3 +1,4 @@
+// Draft, differ 82 of 187 (tla-en, 2026-11-05).
 // 5 November: differ 82 of 187, y ahead of gravity as the native stores them (a
 // rise that removes a false order). Left: r1 is in the native's spill set and not
 // here, which turns the rotation from the first reload on; no insn found yet that

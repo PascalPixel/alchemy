@@ -1,3 +1,4 @@
+// Draft, differ 115 of 230 (tla-en, 2026-11-05).
 // Draft of overlay 671's Func_02004d48, differ 115 of 230 (tla-en, 5 November 2026), from 134.
 // Left: the native has no CSE across the racers (fresh movs r2, #2 and #0 where the
 // variables hold them), holds racer + 100 in r3 while it sets the first racer's

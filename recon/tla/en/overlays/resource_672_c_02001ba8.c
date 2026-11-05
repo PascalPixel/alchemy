@@ -1,3 +1,4 @@
+// Draft, differ 16 of 69 (tla-en, 2026-11-05).
 // Under -Os, 5 November: differ 24 of 69 (tla-en); older figures below predate it.
 // Draft, differ 50 of 69, skeleton gap 6/8 (tla-en, 2026-11-01)
 // The twin Func_02000be8 opens with this same fade. The native rebuilds its
@@ -51,10 +52,13 @@ void Func_02001ba8(void) {
       i = 0;
     loop:
       if (i >= 17 && i <= 79) {
-        s32 fade = (blend + 1) / 4;
-        s32 alpha = 16 - fade;
-        REG_BLDALPHA = BLEND_ALPHA(alpha, fade);
-        blend++;
+        s32 next = blend + 1;
+        s32 fade = next / 4;
+        u32 alpha = 16 - fade;
+
+        alpha |= fade << 8;
+        REG_BLDALPHA = alpha;
+        blend = next;
       }
       front->y += 0x10000;
       back->y += 0x10000;

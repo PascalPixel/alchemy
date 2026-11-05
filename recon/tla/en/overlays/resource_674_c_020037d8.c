@@ -1,3 +1,4 @@
+// Draft, differ 30 of 171 (tla-en, 2026-11-05).
 // Draft, differ 34 of 171 (tla-en, 5 November 2026), from 74: no call for the kind, the
 // layer set before it is written. Left: kind sits at sp+20 in the native, ahead of the
 // spilled locals, and (ashift kind 2) is recomputed at nextStep; read through a pointer

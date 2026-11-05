@@ -1,3 +1,4 @@
+// Draft, differ 72 of 130 (tla-en, 2026-11-05).
 // Measured under -Os, 5 November 2026: differ 81 (tla-en); notes below may predate it.
 // Draft, differ 94 of 130: on entering, sets each listed pillar from its two
 // flags (pushed: moved to its place; else its cell raised and its shape

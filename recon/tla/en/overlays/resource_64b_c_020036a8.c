@@ -1,3 +1,4 @@
+// Draft, differ 75 of 260 (tla-en, 2026-11-05).
 // Draft, differ under 64c's form (tla-en, 5 November 2026): see the twin overlay 64c's Func_02000d64 for what is left.
 // Under -Os, 5 November: differ 138 of 260 (tla-en); older figures below predate it.
 // Draft, differ 147 of 260, skeleton gap 11 (tla-en, 2026-11-01)

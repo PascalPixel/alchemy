@@ -1,3 +1,4 @@
+// Draft, differ 8 of 152 (tla-en, 2026-11-05).
 // Draft, differ 41 of 152 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 41 (tla-en); notes below may predate it.
 // Draft, differ 43 of 145: a palette cycle for two 16-colour palettes (from

@@ -1,3 +1,4 @@
+// Draft, differ 84 of 110 (tla-en, 2026-11-05).
 // 5 November: differ 84 of 110. The native's first sine is sine(a), held in r8, and
 // it keeps its test of i at the loop's top with i in r6, line in r5, b in r7, a in
 // sl; here the sine result takes r5 in local-alloc, which turns the rest. Nothing

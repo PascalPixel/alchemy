@@ -1,3 +1,4 @@
+// Draft, differ 4 of 57 (tla-en, 2026-11-05).
 // Draft, differ 26 of 57 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 32 of 57 (tla-en); older figures below predate it.
 // Draft, differ 26 of 57: the listing copies four palette colours with the

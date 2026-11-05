@@ -1189,12 +1189,7 @@ BattleEffect_RunNirvana:
 	.thumb_func
 BattleEffect_RunSoulShatter:
 	.incbin "baserom.gba", 0x0016d724, 0x0000052c
-	.section .rom.0016ec58, "ax"
-	.global BattleEffect_RunCool
-	.type BattleEffect_RunCool, %function
-	.thumb_func
-BattleEffect_RunCool:
-	.incbin "baserom.gba", 0x0016ec58, 0x00000428
+	.section .rom.0016f080, "ax"
 	.global BattleEffect_RunWyrdCurse
 	.type BattleEffect_RunWyrdCurse, %function
 	.thumb_func

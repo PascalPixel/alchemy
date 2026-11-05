@@ -62,7 +62,7 @@ SECTIONS
         "*/games/tla/src/scene/dehkan_plateau/events_k.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s30e4.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s3164.o"(.text)
-        "*/resource_655_overlay.o"(.text.x0200b284)
+        "*/games/tla/src/scene/dehkan_plateau/s3284.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s353c.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s35ec.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s369c.o"(.text)

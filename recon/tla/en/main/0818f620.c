@@ -1,4 +1,7 @@
-// Measured 2026-11-05 (tla-en): differ 20 of 1022.
+// Measured 2026-11-05 (tla-en): differ 2 of 1022. The Iwram calls written as
+// static inline wrappers take this from 20 to 2: the DrawDisc stores and both
+// clears come right, so these calls were inline functions in the source. Left:
+// one pair, the pool load ahead of str r7 at the second DrawDisc.
 // Draft, differ 50 of 1022, skeleton gap 20 (tla-en, 2026-11-01)
 // The body of the canvas burst family (BattleEffect_RunCanvasMode0,
 // BattleEffect_RunCanvasModeByCount and BattleEffect_RunCanvasMode3WithAction
@@ -37,6 +40,12 @@
 #include "battle_work.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
+#undef Iwram_CopyWords
+static inline s32 Iwram_CopyWords(void *d, const void *s, s32 n) { return Iwram_CopyWordsEntry(d, s, n); }
+#undef Iwram_FillWords
+static inline s32 Iwram_FillWords(void *d, s32 n, s32 v) { return Iwram_FillWordsEntry(d, n, v); }
+#undef Iwram_ClearWords
+static inline s32 Iwram_ClearWords(void *d, s32 n) { return Iwram_ClearWordsEntry(d, n); }
 
 // The ball is the last particle, never a local: the native rereads its address.
 #define ball (&work->particles[63])

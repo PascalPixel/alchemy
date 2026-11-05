@@ -1,5 +1,10 @@
-// Measured 2026-11-05 (tla-en): differ 245 of 1122; 184 with picture written as x
-// (a temporary device, not in this draft).
+// Measured 2026-11-05 (tla-en): differ 130 of 1122. Frame 104, every slot as
+// the native: picture is written as x, a temporary device (tag it at adoption;
+// as its own local the frame is 100). The spray's statements now run in the
+// listing's order: heading's sine and cosine first, then angle. An earlier
+// search's order here read x and sine before setting them; it is gone. Left:
+// the model setup's three zeros, gMapCellBuffer's pool load before the 0xf8 id,
+// and &texture against 18 for sl.
 // Draft, differ 408 of 1122, skeleton gap 44 (tla-en, 2026-11-01)
 // BattleEffect_RunTrident: same calls and control flow, draft 1120 instructions.
 // Left, the one blocker first: the frame is 100 bytes, not 104, so every sp
@@ -350,12 +355,12 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           s32 speed = (Random16() & 511) + 512;
           s32 sine;
 
+          sine = Trig_Sin(heading) * speed;
+          x = centerX << 16;
+          p->x = (sine >> 4) + x;
+          p->y = ((Trig_Cos(heading) * speed) >> 3) + 0x680000;
           angle += 0xc000;
           p->velocityX = (Trig_Sin(angle) * speed) >> 9;
-          p->x = (sine >> 4) + x;
-          sine = Trig_Sin(heading) * speed;
-          p->y = ((Trig_Cos(heading) * speed) >> 3) + 0x680000;
-          x = centerX << 16;
           p->velocityY = (Trig_Cos(angle) * speed) >> 8;
           p->velocityZ = (Random16() & 7) + 4;
         }
@@ -378,17 +383,17 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
     if (frame > 7) {
       s32 scale;
 
-      vertices = Heap_AllocEwram(0x400);
       model = Render_AllocateModelList(1);
+      model->unk04 = 0;
+      vertices = Heap_AllocEwram(0x400);
       texture.logWidth = 7;
       texture.logHeight = 7;
-      model->unk04 = 0;
       model->kind = 7;
-      model->vertices = vertices;
-      model->mesh = Data_08198ec4;
-      texture.pixels = Ram_MapCellBuffer;
       model->texture = &texture;
       model->scrollU = 0;
+      model->mesh = Data_08198ec4;
+      texture.pixels = Ram_MapCellBuffer;
+      model->vertices = vertices;
       model->scrollV = 0;
 
       // Eight rings of foam.
@@ -442,15 +447,14 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
         }
         for (i = 0, start = 18, spinner = &work->particles[32]; i != 7;
              i++, spinner++, start += 4) {
-          s32 picture;
 
           scale = i * 4;
           if (frame < start || frame >= scale + 42) {
             continue;
           }
-          picture = (spinner->variant / 8) % 3;
+          x = (spinner->variant / 8) % 3;
           model->shade = -16;
-          texture.pixels = work->sheet + (picture << 12) + 0xc56;
+          texture.pixels = work->sheet + (x << 12) + 0xc56;
           Render_ResetTransformState();
           Func_08015160((centerX - 64) << 16, 0x200000, 0);
           Func_080150e4(spinner->z);
@@ -459,7 +463,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           }
           spinner->z += spinner->velocityZ;
           Func_080151e4(0x20000, 0x12710, 0x10000);
-          Render_TransformVertices(Data_08199e24 + picture * 16, vertices, 4);
+          Render_TransformVertices(Data_08199e24 + x * 16, vertices, 4);
           Render_DrawModelList(model);
         }
       }

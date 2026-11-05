@@ -1,4 +1,8 @@
-// Measured 2026-11-05 (tla-en): differ 3800 of 4851.
+// Measured 2026-11-05 (tla-en): differ 3039 of 5364. Measure with all five
+// addresses (the figure before this one, 3800 of 4851, was the parent alone:
+// 3287 of 5364 with all five). A tagged one-pass block settles the frame at
+// 420. Left: allocation throughout, led by the streak base the native reloads
+// each pass and the spilled &work slot.
 // Draft, differ 3287 of 5364, skeleton gap 373 + 380 (tla-en, 2026-11-01)
 // Measure with the four nested functions' listings as well:
 // diff ...08192c9c.c 0819284c,08192894,081929fc,08192a4c,08192c9c. Measured
@@ -343,8 +347,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   if (t < Data_08199f40[small] * 2) {
     r = Data_08199f40[small] * 2 - t;
     cel = r / 6;
-    sheetOffset = cel * 0x302;
     cells = sprites + cel * 8;
+    sheetOffset = cel * 0x302;
     for (j1 = 0; j1 != 64; j1++) {
       a = j1 << 10;
       px = (r * Trig_Sin(a) / 2 >> 16) + x;
@@ -359,8 +363,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 196;
       else if (t <= 23)
         offset = 98;
-      ring = sprites + offset;
       blit = draw;
+      ring = sprites + offset;
       for (j2 = 0; j2 != 8; j2++) {
         a = (j2 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
@@ -381,8 +385,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 394;
       else if (t <= 23)
         offset = 344;
-      ring = sprites + offset;
       blit = draw;
+      ring = sprites + offset;
       for (j3 = 0; j3 != 8; j3++) {
         a = (j3 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
@@ -411,8 +415,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       }
       for (j5 = 0; j5 != 64; j5++) {
         a = j5 << 10;
-        px = (r * Trig_Sin(a) * 2 >> 16) + x;
         py = (r * Trig_Cos(a) >> 16) + y + Data_08199f48[small] * 2;
+        px = (r * Trig_Sin(a) * 2 >> 16) + x;
         draw(canvas, ring, px - 1, py - 2, 2, 4);
       }
     }
@@ -725,10 +729,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 15; i++) {
         struct IrisPoint *s = Data_02012ef4[i];
 
+        s->speed = Data_0819a01a[i];
         s->x = Data_08199fde[i] << 16;
         s->y = Data_08199fed[i] << 16;
         s->angle = Data_08199ffc[i];
-        s->speed = Data_0819a01a[i];
         s->unk10 = 0;
         for (m = 1; m != 10; m++) {
           STREAK(i, m).x = 0x960000;
@@ -845,8 +849,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
         objects[i] = obj;
         ((struct IrisSpriteFlags *)obj)->priority = 1;
-        sparks->tiles[i] = obj->tile;
         sparks->frames[i] = i;
+        sparks->tiles[i] = obj->tile;
         Dma_Set(work->sheet + i * 128, (void *)OBJ_TILES(obj), 0x84000020,
                 REG_DMA3);
       }
@@ -886,9 +890,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 177) <= 216) {
       scale = Data_08196f48;
-      pos[3] = 0;
       pos[1] = 0xff0000;
       lift = 0;
+      pos[3] = 0;
       if (frame > 350) {
         u16 *pal = (u16 *)(PLTT + 0x200);
 
@@ -1196,7 +1200,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Func_0815b434(work->sheet + off, i + 14, 0x10000);
         off += (i + 14) * 2 * (i + 14);
       }
-      Iwram_FillWords(work->sheet + 0x1810, 0x1000, 0);
+      /* FAKEMATCH(one-pass): the block ends CSE, so &work is one pseudo set twice
+       * as the native has it, and the frame is 420; as a plain call, 3287 of 5364
+       * instructions differ in tla-en. */
+      do {
+        Iwram_FillWords(work->sheet + 0x1810, 0x1000, 0);
+      } while (0);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2010, 16, 64, 0x10000);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x2810, 16, 64, 0x10000);
       dst = work->sheet + 0x2010;
@@ -1266,9 +1275,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       texture.logWidth = 5;
       texture.logHeight = 6;
       SceneTransform_ResetMatrix();
+      model->vertices = verts;
       model->kind = 4;
       model->mesh = Data_0819a0d4;
-      model->vertices = verts;
       if (frame <= 563) {
         scroll = 0x1000;
         if (frame > 500) {
@@ -1310,8 +1319,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         if (!(frame & 7) && frame <= 501) {
           s32 s;
 
-          spans2 = Data_08196fbc;
           s = FindFreeSpark();
+          spans2 = Data_08196fbc;
 
           if (s != -1) {
             s32 r = Random16() & 127;

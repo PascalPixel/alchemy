@@ -1,4 +1,6 @@
-// Measured 2026-11-05 (tla-en): differ 1075 of 2781.
+// Measured 2026-11-05 (tla-en): differ 935 of 2781. Statement orders searched,
+// first model setup and the sparks' blocks. Left as below: the palette ease's
+// green in sp+8, and what rotates after it.
 // Draft, differ 1075 of 2781, skeleton gap 107/106 (tla-en, 2026-11-01)
 // BattleEffect_RunCoatlicue: same calls and control flow, draft 2780 of 2781
 // instructions, frame 164 and every stack slot as in the native. Registers
@@ -568,8 +570,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 r;
 
         s = *e;
-        b = COLOR_BLUE(s);
         g = COLOR_GREEN(s) + half;
+        b = COLOR_BLUE(s);
         r = COLOR_RED(s) + d;
         b += d / 4;
 
@@ -783,8 +785,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       verts = Heap_AllocEwram(512);
       model = Render_AllocateModelList(1);
       model->texture = &texture;
-      texture.logWidth = 7;
       texture.logHeight = 7;
+      texture.logWidth = 7;
       model->mesh = gData_08199364;
       model->vertices = verts;
       t = frame - 210;
@@ -845,13 +847,13 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         work->transferValue = 0x3f3f3f3f - (v << 2);
       }
       if (frame == 281 && skip == 0) {
-        work->transferMode = 2;
         work->transferValue = 50;
+        work->transferMode = 2;
       }
       if ((u32)(frame - 274) <= 27) {
-        s = (frame << 11) - 0x85000;
         texture.pixels = gMapCellBuffer;
         model->kind = 7;
+        s = (frame << 11) - 0x85000;
         sh = 0;
         if (frame > 293) {
           sh = (294 - frame) << 3;
@@ -872,8 +874,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           if (frame > st && frame < st + 10) {
             s32 d;
 
-            sh = -16;
             texture.pixels = gMapCellBuffer;
+            sh = -16;
             model->kind = 6;
             model->shade = sh;
             d = frame - st;
@@ -905,8 +907,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             s32 d = frame - Data_0819974e[i];
             sh = d * 16 - 56;
             s = 0x14000 - (d << 13);
-            texture.pixels = gMapCellBuffer;
             model->kind = 7;
+            texture.pixels = gMapCellBuffer;
             if (sh > 0) {
               sh = 0;
             }
@@ -952,12 +954,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       {
         u8 *sheet = work->sheet + 0x4000;
 
-        texture.logWidth = 7;
         texture.logHeight = 4;
+        texture.logWidth = 7;
         texture.pixels = sheet;
       }
-      model->kind = 7;
       model->mesh = Data_02014800;
+      model->kind = 7;
       model->vertices = verts;
       model->scrollU = 0;
       model->scrollV = 0;

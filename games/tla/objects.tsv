@@ -3250,7 +3250,7 @@ main	rom_main_09	recon/tla/fr/rom	.rom.00146a6c	fr
 main	rom_main_09	recon/tla/es/rom	.rom.00146a6c	es
 main	rom_main_09	recon/tla/de/rom	.rom.00146a6c	de
 main	rom_main_09	recon/tla/raw/08146a6c	.text	en
-main	rom_main_09	recon/tla/raw/08146e00	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f146e00	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/series_e	.text
 main	rom_main_09	games/tla/src/battle_effect/f147aec	.text	en de es fr it ja
 main	rom_main_09	recon/tla/it/rom	.rom.00148458	it
@@ -3408,12 +3408,7 @@ main	rom_main_09	games/tla/src/battle_effect/load_and_decompress	.text
 main	rom_main_09	games/tla/src/battle_effect/f157d30	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f15806c	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f15842c	.text	en de es fr it ja
-main	rom_main_09	recon/tla/ja/rom	.rom.001587e4	ja
-main	rom_main_09	recon/tla/it/rom	.rom.001587e4	it
-main	rom_main_09	recon/tla/fr/rom	.rom.001587e4	fr
-main	rom_main_09	recon/tla/es/rom	.rom.001587e4	es
-main	rom_main_09	recon/tla/de/rom	.rom.001587e4	de
-main	rom_main_09	recon/tla/raw/081587e4	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f1587e4	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f158ce0	.text
 main	rom_main_09	games/tla/src/battle_effect/screen_shake	.text
 main	rom_main_09	recon/tla/raw/08158dc8	.text	en
@@ -3490,20 +3485,7 @@ main	rom_main_09	games/tla/src/battle_effect/f164a4c	.text
 main	rom_main_09	games/tla/src/battle_effect/f164abc	.text
 main	rom_main_09	games/tla/src/battle_effect/f164b2c	.text
 main	rom_main_09	games/tla/src/battle_effect/particle_stream_modes	.text
-main	rom_main_09	recon/tla/raw/08164c0a	.text	en
-main	rom_main_09	recon/tla/raw/08164c0c	.text	en
-main	rom_main_09	recon/tla/raw/08164c70	.text	en
-main	rom_main_09	recon/tla/raw/08164cc4	.text	en
-main	rom_main_09	recon/tla/de/rom	.rom.00164c0a	de
-main	rom_main_09	recon/tla/de/rom	.rom.00164cc4	de
-main	rom_main_09	recon/tla/es/rom	.rom.00164c0a	es
-main	rom_main_09	recon/tla/es/rom	.rom.00164cc4	es
-main	rom_main_09	recon/tla/fr/rom	.rom.00164c0a	fr
-main	rom_main_09	recon/tla/fr/rom	.rom.00164cc4	fr
-main	rom_main_09	recon/tla/it/rom	.rom.00164c0a	it
-main	rom_main_09	recon/tla/it/rom	.rom.00164cc4	it
-main	rom_main_09	recon/tla/ja/rom	.rom.00164c0a	ja
-main	rom_main_09	recon/tla/ja/rom	.rom.00164cc4	ja
+main	rom_main_09	games/tla/src/battle_effect/f164cc4	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f165ab4	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f1661dc	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f1665a4	.text	en de es fr it ja

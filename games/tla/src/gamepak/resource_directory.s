@@ -333,7 +333,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_CometSheetA
 	resource CometSheetB, BattleEffect_CometSheetB
 	resource , BattleEffect_CometSheetC
-	resource , BattleEffect_WhirlwindSheet
+	resource WhirlwindSheet, BattleEffect_WhirlwindSheet
 	resource GreenPillarSheet, BattleEffect_GreenPillarSheet
 	resource VineSheet, BattleEffect_VineSheet
 	resource FirePillarSheetA, BattleEffect_FirePillarSheetA
@@ -341,7 +341,7 @@ Resource_DirectoryTable:
 	resource OrangePaletteB, BattleEffect_OrangePaletteB
 	resource EffectPalette02, BattleEffect_EffectPalette02
 	resource EffectPalette03, BattleEffect_EffectPalette03
-	resource , BattleEffect_VioletCometSheet
+	resource VioletCometSheet, BattleEffect_VioletCometSheet
 	resource FlameballSheet, BattleEffect_FlameballSheet
 	resource BoulderSheet, BattleEffect_BoulderSheet
 	resource , BattleEffect_RockWallSheet
@@ -374,7 +374,7 @@ Resource_DirectoryTable:
 	resource , BattleEffect_EffectPalette05
 	resource , BattleEffect_WispSheet
 	resource GreenVineSheet, BattleEffect_GreenVineSheet
-	resource , BattleEffect_PortalSheet
+	resource PortalSheet, BattleEffect_PortalSheet
 	resource SkullSheet, BattleEffect_SkullSheet
 	resource , BattleEffect_HeartSheet
 	resource , BattleEffect_CounterRevealSheet
@@ -399,7 +399,7 @@ Resource_DirectoryTable:
 	resource DustPuffSheet, BattleEffect_DustPuffSheet
 	resource GoldShellSheet, BattleEffect_GoldShellSheet
 	resource BlastSheet, BattleEffect_BlastSheet
-	resource , BattleEffect_FlameSheetB
+	resource FlameSheetB, BattleEffect_FlameSheetB
 	resource , BattleEffect_FirePillarSheetB
 	resource , BattleEffect_RockSpireSheet
 	resource LightningBoltSheet, BattleEffect_LightningBoltSheet

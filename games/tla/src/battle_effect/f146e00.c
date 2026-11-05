@@ -1,9 +1,3 @@
-// Measured 2026-11-05 (tla-en): differ 2 of 1493. Left: one row: the native
-// sets r1 before r0 for Iwram_TransformVector; RTL has r0 first and the two
-// tie. The one-pass block closes the other rows.
-
-// Draft, differ 38 of 1493, skeleton gap 30 (tla-en, 2026-11-01)
-
 // Summon 8 (BattleEffect_RunSceneEffect's case 8). Twin: The Broken Seal's
 // BattleEffect_RunProcne, ported by trial 2 and rewritten here. The
 // Lost Age's changes: BattleEffect_FetchRectangleBlitters for the pair; the
@@ -21,22 +15,6 @@
 // to s16 * gave screen + 6 its own register and two spills); the twin's
 // declaration order; wave and drift in a block opened after the blitter fetch,
 // whose spill slots fall below the pointer to draw.
-
-// Left: instruction count, frame and spill slots all agree, and no instruction
-// is missing. The gap is 15 instructions in the wrong place: six scheduling
-// spots (adds r6, #8 before the ldrh in the first enemy loop; the arguments of
-// GetBattleObjectSlotFar in the second; the strike loop's preheaders; mov r0,
-// r8 before the ring's variant += 2) and one real one: at the comet sparks the
-// native loads r1 with sp + 148 directly and takes r7 = sp + 148 only after
-// Iwram_TransformVector, where the draft sets r7 before the call and copies it.
-// The other two ProjectPoint sites match, so look there first for what stops
-// CSE sharing the address across that call.
-
-// Tried: spark + index, a cast and EffectPosition_Coordinates at the spark
-// call, vector as a struct Vector3, and baseAngle stored first or the frame
-// compare flipped (worse); alchemy permute 6 minutes found nothing with fewer
-// differing instructions (its better weighted score was a temporary for
-// &screen.x at the sparks, differ 42, not kept).
 
 #include "battle.h"
 #include "graphics.h"
@@ -494,7 +472,18 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               index = 0;
               do {
                 if (spark[index].variant > 0) {
-do { Iwram_TransformVector(&spark[index].x, &screen.x); } while (0);
+                  /* FAKEMATCH(one-pass): the block ends CSE's block before the
+                   * transform; as a plain statement, 6 of 1493 instructions
+                   * differ in tla-en. */
+                  do {
+                    void (*transform)(const void *, s32 *) =
+                        Iwram_TransformVector;
+                    /* FAKEMATCH(pin): the result pointer in r1, set ahead of
+                     * r0; as a plain argument, 2 of 1493 instructions differ
+                     * in tla-en. */
+                    register s32 *result __asm__("r1") = &screen.x;
+                    transform(&spark[index].x, result);
+                  } while (0);
                   screen.x = (screen.x >> 17) + 32;
                   screen.y = (screen.y >> 16) + 56;
                   screen.depth >>= 16;

@@ -366,10 +366,6 @@ Func_080ca6e4:
 	.thumb_func
 FieldSequence_Run:
 	.incbin "baserom.gba", 0x000d491c, 0x00000c30
-	.section .rom.000d57c4, "ax"
-	.global Func_080cc7c4
-Func_080cc7c4:
-	.incbin "baserom.gba", 0x000d57c4, 0x000001d0
 	.section .rom.000d5d76, "ax"
 	.incbin "baserom.gba", 0x000d5d76, 0x00000002
 	.section .rom.000d5d78, "ax"

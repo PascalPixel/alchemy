@@ -1075,7 +1075,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           for (k = 0; k != 3; k++) {
             x = frame - 302 - k * 8;
             if (x >= 0) {
-              size = 140000 - (x * 6192 - 16);
+              size = 140000 - x * 6192;
               depth2 = x * 4 - 16;
               if (size < 0) {
                 size = 0;
@@ -1328,7 +1328,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       twice = frame * 2;
       base = frame * 1524;
       depth = twice - 64;
-      scale112 = 100000 - base;
+      scale112 = 115536 - base;
       if (frame > 55) {
         scale112 = base + rise;
       }

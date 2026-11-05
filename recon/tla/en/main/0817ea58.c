@@ -431,13 +431,13 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           posp->z = ((j << 5) + 103) << 16;
           if (i == 8) {
             obj = work->sprites[row + 8];
-            v = (wavePhase + 71) % 8;
+            v = row + (wavePhase + 71) % 8;
           } else {
             k = row; k += i;
             obj = work->sprites[k];
-            v = (wavePhase + 64 + i) % 8;
+            v = row + (wavePhase + 64 + i) % 8;
           }
-          obj->tile = work->particles[row + v].timer & 0x3ff;
+          obj->tile = work->particles[v].timer & 0x3ff;
           if (pos.x > 0xffffff)
             pos.x -= 0x1200000;
           Render_ApplyProjectedPlacementFar(*slot++, &pos, &scale, 0);
@@ -1065,13 +1065,13 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
                   0x840000;
         if (i == 8) {
           obj = work->sprites[row + 8];
-          v = (wavePhase + 71) % 8;
+          v = row + (wavePhase + 71) % 8;
         } else {
           k = row; k += i;
           obj = work->sprites[k];
-          v = (wavePhase + 64 + i) % 8;
+          v = row + (wavePhase + 64 + i) % 8;
         }
-        { s32 t = work->particles[row + v].timer & 0x3ff; v = (*(u16 *)&obj->unk00[8] & ~0x3ff) | t; *(u16 *)&obj->unk00[8] = v; }
+        { s32 t = work->particles[v].timer & 0x3ff; v = (*(u16 *)&obj->unk00[8] & ~0x3ff) | t; *(u16 *)&obj->unk00[8] = v; }
         if (pos2.x > 0xffffff)
           pos2.x -= 0x1200000;
         Render_ApplyProjectedPlacementFar(*slot++, &pos2, &scale2, 0);
@@ -1081,12 +1081,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     for (j = 0; j != 4; j++) {
       for (i = 0; i != 6; i++) {
         if (frame >= i * 2 + 490 && frame < i * 2 + 502) {
-          s32 v;
-
-          v = Data_0819959c[j][i][1] + (swayY >> 16) - Data_081994f0[work->shake];
-          ((BlitFunc)blit[0])(dest,
-                              &work->frames[(frame - (i * 2 + 490)) / 2 * 288],
-                              Data_0819959c[j][i][0] - 6, v - 12, 12, 24);
+          ((BlitFunc)blit[0])(dest, &work->frames[(frame - (i * 2 + 490)) / 2 * 288], Data_0819959c[j][i][0] - 6, Data_0819959c[j][i][1] + (swayY >> 16) - Data_081994f0[work->shake] - 12, 12, 24);
         }
       }
     }

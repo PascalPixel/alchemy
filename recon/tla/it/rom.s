@@ -172,12 +172,6 @@ Message_Start:
 	.thumb_func
 Message_StepScript:
 	.incbin "baserom.gba", 0x00039864, 0x00000650
-	.section .rom.00039f78, "ax"
-	.global Func_08039f94
-	.type Func_08039f94, %function
-	.thumb_func
-Func_08039f94:
-	.incbin "baserom.gba", 0x00039f78, 0x000000c0
 	.section .rom.0003a42a, "ax"
 	.incbin "baserom.gba", 0x0003a42a, 0x00000002
 	.section .rom.0003aaae, "ax"
@@ -229,10 +223,8 @@ Func_0803c274:
 	.thumb_func
 Func_0803e7c8:
 	.incbin "baserom.gba", 0x0003e820, 0x00000124
-	.section .rom.0003eb84, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x0003eb84, 0x000000b0
 	.section .rom.0003ec34, "ax"
+	.balign 4
 	.global Menu_StepRight
 	.type Menu_StepRight, %function
 	.thumb_func
@@ -313,7 +305,7 @@ Func_08044dc8:
 	.section .rom.00046476, "ax"
 	.incbin "baserom.gba", 0x00046476, 0x00000002
 	.section .rom.00046b6c, "ax"
-	.incbin "baserom.gba", 0x00046b6c, 0x00002f58
+	.incbin "baserom.gba", 0x00046b6c, 0x000026f8
 	.section .rom.00049b12, "ax"
 	.incbin "baserom.gba", 0x00049b12, 0x00000002
 	.section .rom.0004a96c, "ax"
@@ -330,12 +322,6 @@ Func_08044dc8:
 	.thumb_func
 Func_0804bc08:
 	.incbin "baserom.gba", 0x0004bdfc, 0x000011a0
-	.section .rom.0004d360, "ax"
-	.global Menu_RunResourceSelectionLoop
-	.type Menu_RunResourceSelectionLoop, %function
-	.thumb_func
-Menu_RunResourceSelectionLoop:
-	.incbin "baserom.gba", 0x0004d360, 0x00000120
 	.section .rom.0004d676, "ax"
 	.incbin "baserom.gba", 0x0004d676, 0x00000002
 	.section .rom.0004d9c8, "ax"

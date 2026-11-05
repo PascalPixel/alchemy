@@ -1,27 +1,3 @@
-// Near miss, differ 2 of 80 (tla-en, 2026-10-31): scheduler order. After the
-// branches join, the native builds the first instruction of the cursor's
-// 0x39e offset (movs r1, #192) before the status store; this builds all of it
-// after. Plain C gives 6 (the two offsets interleaved), and the sched2 dump
-// shows why: the native orders the block as if the status store delayed the
-// cursor load by three cycles, where the cost model charges one (the
-// -mthumb-slow-loads store-then-load rule skips a zero-extended ldrh, and
-// would give two). No source form reaches that; the one-pass block below,
-// milder than the earlier empty asm, keeps the 2. The plain two-field test of
-// top and cursor already compiles to the native's one word load (GCC merges
-// adjacent field compares), and the upScroll store needs no block any more.
-// Permuter (4 minutes): best differ 2, a one-pass block after the store.
-// Why three exactly (sched2 priorities, 2026-10-31): the status chain and the
-// cursor chain meet at the cursor load, so the cursor offset outranks the
-// status address by one unless that store-to-load cost is three; at two
-// (a plain HImode load) movs r1 still lands before adds r2, and any region
-// split leaves the whole offset ahead of movs r3, #1. Measured then: a
-// volatile cursor read 4, a volatile status store 7, inline wrappers around
-// the store, the load or both 6, a pointer temporary for the cursor 6.
-// downArrow = 1 without the cursor local compiles the same as storing it.
-// Draft, differ 2 of 80 in tla-en under -mthumb-slow-loads (2026-10-26). No
-// single empty asm, one-pass block, wrapping block or swap of neighbouring
-// statements brings it closer, nor any pair of empty asm statements or
-// one-pass blocks (device search).
 #include "types.h"
 #include "io_reg.h"
 #include "scene.h"
@@ -96,10 +72,7 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   } else {
     screen->cursor--;
   }
-  do {
-    /* FAKEMATCH(one-pass): the form kept; as a plain status store, 6 of 80 instructions differ in tla-en. */
-    screen->status = NODE_STATUS_SHOWN;
-  } while (0);
+  screen->status = NODE_STATUS_SHOWN;
   Menu_LoadSelectionNodeResource(screen, screen->cursor);
   wait(1);
   Menu_OpenSelectionWindow(screen->node->kind, 0);

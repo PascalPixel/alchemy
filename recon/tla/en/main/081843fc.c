@@ -1470,7 +1470,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Heap_Release(verts2);
         if (frame > 133) {
           if (frame == 134) {
-            p = &work->particles[16];
+            struct EffectStep *p = &work->particles[16];
+
             for (i = 0; i != 48; i++, p++) {
               s32 a = Random16();
               s32 angle = i * 1365;

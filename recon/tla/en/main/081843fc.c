@@ -1545,6 +1545,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     s32 slide;
     s32 slideStep;
     u8 *bolts;
+    void *quads = Data_02011000;
     struct EffectStep *debris = &Data_02016d00[64];
 
     bolts = gData_02014000;
@@ -1688,9 +1689,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model3 = Render_AllocateModelList(1);
         model3->kind = 6;
         model3->texture = &texture3;
-        model3->shade = zero;
+        model3->shade = 0;
         model3->scrollV = 0;
-        model3->vertices = Data_02011000;
+        model3->vertices = quads;
         if (frame == 16) {
           slideStep = -0x80000;
         }
@@ -1719,7 +1720,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Transform_Push();
         Func_080150e4(0x4000);
         Func_0801521c(0x42ee0);
-        Render_TransformVertices(gMapCellBuffer, Data_02011000, 24);
+        Render_TransformVertices(gMapCellBuffer, quads, 24);
         Render_DrawModelList(model3);
         Transform_Pop();
         model3->mesh = gData_08199340;
@@ -1742,7 +1743,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Func_080150e4((y0 - y1) / 512 + -0x400);
         }
         Func_080151e4(0x21170, 105536, 0x10000);
-        Render_TransformVertices(Data_081991e0, Data_02011000, 4);
+        Render_TransformVertices(Data_081991e0, quads, 4);
         Render_DrawModelList(model3);
         Heap_Release(model3);
         if (frame <= 87) {

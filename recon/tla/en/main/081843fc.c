@@ -1623,8 +1623,6 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       if (frame == 66) {
         for (i = 0; i != effect->count; i++) {
-          s32 j;
-
           BattleEffect_StartActorMotion(effect->actors[i], 1, 0x40000, 0x80000,
                                         0x40000, 150);
           Func_0814cd48(effect->actors[i], 7, 5, i, 16);

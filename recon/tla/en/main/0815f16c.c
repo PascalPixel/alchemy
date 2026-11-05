@@ -881,17 +881,19 @@ CLEAR(buffer, 0x1000);
       kind == 83 || kind == 84 || kind == 85 || kind == 86 || kind == 88) {
   } else if (kind == 66) {
     p = SPARKS;
-    for (i = 0; i != 64; i++, p++) {
-      p->x = object2->x;
-      p->y = 0x140000;
-      p->z = object2->z;
+    for (i = 0; i != 64; i++) {
+      struct Particle *q;
+      q = &SPARKS[i];
+      q->x = object2->x;
+      q->y = 0x140000;
+      q->z = object2->z;
       if (object2->x < 0)
-        p->vx = -((Random16() & 255) + 128) << 11;
+        q->vx = -((Random16() & 255) + 128) << 11;
       else
-        p->vx = ((Random16() & 255) + 128) << 11;
-      p->vy = ((Random16() & 255) - 127) << 10;
-      p->vz = 0;
-      p->life = 0;
+        q->vx = ((Random16() & 255) + 128) << 11;
+      q->vy = ((Random16() & 255) - 127) << 10;
+      q->vz = 0;
+      q->life = 0;
     }
   } else {
     struct Particle *p;
@@ -1508,8 +1510,9 @@ CLEAR(buffer, 0x1000);
           limit = 16;
         else
           limit = 24;
-        p = SPARKS;
-        for (i = 0; i != limit; i++, p++) {
+        for (i = 0; i != limit; i++) {
+          struct Particle *p;
+          p = &SPARKS[i];
           if (frame >= i / 2 + 4) {
             s32 life;
             life = p->life;
@@ -1931,8 +1934,9 @@ CLEAR(buffer, 0x1000);
         model->mesh = gData_08199268;
         model->matrix = matrix;
         model->texture = &texture164;
-        p = RINGS;
-        for (i = 0; i != 20; i++, p++) {
+        for (i = 0; i != 20; i++) {
+          struct Particle *p;
+          p = &RINGS[i];
           if (frame >= i && frame < i + 8) {
             fade = 0;
             if (frame == i)
@@ -2097,8 +2101,9 @@ CLEAR(buffer, 0x1000);
         s32 x;
         if (frame == 4) {
           struct Particle *p;
-          p = SPARKS;
-          for (i = 0; i != 64; i++, p++) {
+          for (i = 0; i != 64; i++) {
+            struct Particle *p;
+            p = &SPARKS[i];
             p->x = Random16();
             p->y = 0;
             p->vy = ((Random16() & 3) + 3) << 17;

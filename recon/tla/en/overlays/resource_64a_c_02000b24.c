@@ -181,8 +181,8 @@ done:
     flags = gGameFlagBytes;
   } while (0);
   copyWords = Iwram_CopyWords;
-  copyWords(flags + 0x220, Ram_ReceivedUnits, 0xd20);
   Call3((void (*)())copyWords, flags, Ram_ReceivedFlags, 0x214);
+  copyWords(flags + 0x220, Ram_ReceivedUnits, 0xd20);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);

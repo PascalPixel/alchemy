@@ -832,8 +832,9 @@ CLEAR(buffer, 0x1000);
     work->particle[i].life = 0;
   if (kind != 44) {
     half = BattleUnit_GetEffectHeightFar(action->actor) / 2;
+    i = 0;
     p = work->particle;
-    for (i = 0; i != 32; i++, p++) {
+    for (; i != 32; i++, p++) {
       p->x = object2->x;
       p->y = half;
       p->z = object2->z;

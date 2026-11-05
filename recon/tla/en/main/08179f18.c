@@ -1,85 +1,31 @@
-// Draft, differ 300 of 2583 (tla-en, 2026-11-05), draft 2581; about 84 rows differ once registers, slots and
-// offsets are ignored, and about 150 of the raw rows are the tile sheet. The pool holds the listing's words apart from one
-// repeat of 0xfffec000. Not adoptable yet. Devices held, none tagged: the read of y into spin2 and the two dead frame tests.
+// Draft, differ 6 of 2583 (tla-en, 2026-11-05), draft 2583: two sites, three rows each, pool words as
+// the listing's. Everything else in the function agrees.
+// What is left is the scheduler ranking a multiply against a stack load:
+// - The second Trig_Cos tail (w->vy[i] = Trig_Cos(a) * s / 256): the listing loads sp 20 into r5 before
+//   the multiply, this after. sched2 ranks the multiply 5 (cost 4 + the branch) and the load 4 (cost 3 +
+//   the add). The load comes first in RTL already, so only the rank stands in the way.
+// - The ring (b = m * grow, then m * spread): the listing loads spread into r1 before the first multiply
+//   and stores a after it. Both rank 43; the multiply wins on its 5 dependents against 3.
+// The first setup loop's two statements stopped on the same ranks (7 against 6) until a one-pass block
+// put the row shift ahead of the multiply; with a multiply costing 3 rather than 4, all three sites rank
+// as the listing orders them, with no device. That table line is the compiler's and is left alone.
+// Tried at the two sites, none closer: one-pass blocks around the call, the address, the load and after
+// the division; a pinned load; empty asm inputs ordering the load; const and pure on Trig_*; statement
+// order (rr ahead of b is 538, slots and the later allocation follow it).
+// Devices held, each tagged below with N measured against this draft: e and c pinned, SheetOf and
+// ClearWords wrappers, the one-pass block with its named constant.
 // Settled 2026-11-05, each measured:
-// - `spin2 = w->y[i]` in petal 0's frame <= 47 branch stays until flow deletes it, and that use is what lets 224 hoist:
-//   count 2569 to 2583, 512 to 448. As `not desirable` said (threshold 16, savings 3, life 9, 474 insns).
-// - The last branch of petals 0 and 1 ends with a test of frame whose body flow deletes: reload's rotation in the listing is one
-//   ahead after each, and the frame == 112 tails stop cross-jumping, 448 to 300. Adding it to petals 2 to 5 makes things worse (440
-//   to 510), so those four are as they stand. The body has to survive cse, so it assigns a variable that is live elsewhere.
-//   Which test the original had is unknown. t in r3 and val in r2 in those branches then come out of the rotation.
-// - The glyph destination is an index, sprites[i * 18 + 590 + j]: (i * 8 + i) * 2 is what i * 18 expands to.
-// Open, top down:
-// - Fourth setup loop: cells in r6 and the object pointer in r5, the reverse here. In global's order cells must fall below
-//   the object pointer (33 / 28 against 24 / 27), and every spelling tried keeps both givs at those ranks. i = 0 comes first.
-// - Glyph read: adds r3, r3, r6; ldrb r3, [r3, #0] in the listing, ldrb r3, [r6, r3] here, 1 row short.
-// - Tile sheet, measured by normalized rows since the raw figure counts the frame. The listing's inner body:
-//   c in r1, hi in r2 through a 15 rebuilt in r3, lo through mov r3, fp and ands r3, r1. Three locals overlap, which pushes
-//   d to r0, the source to r4, offset to r5, m to r6, k to r7, then b to ip, a to lr, y to r8, n to sl, sheet to r9, the
-//   mask to fp, and row and row * 2 stay at sp 60 and sp 44. Here c ties to lo in r3, so a reload needs r4, which spills offset.
-//   A grid of 1344 forms (out of for and goto per level, seven bodies, chain or expression, pointer or index, hand-stepped
-//   row * 2 or not) tops out at 116 slot rows: hand-stepped twice, a and b real, k goto, m real, d a pointer, work->sheet[n]
-//   read by index, s32 t chained over several sets so nothing hoists or reduces (raw 367 because the frame is 4 short).
-//   With a and b real the 15 and 0x700 hoist unless written as &work->sheet[n], so the 0x700 is that form; with goto
-//   loops PRE hoists y + a. The literal 15 that the listing rebuilds is hoisted in every form with a real loop around it.
-// - Small scheduling ties: muls at the second setup, ldr r5, [sp, #20] and ldr r1, [sp, #124] around a muls, the ring's model
-//   stores, and one store the listing cross-jumps at petal 1's first branch.
-// Older notes, still true where they do not contradict the above:
-// 2026-11-05: differ 522 of 2583 (tla-en). The sheet's address is a local set before the row
-// loop and d steps per column, which brings sp 44 in as a slot. Still open there: the listing
-// keeps row * 2 as a hand-stepped or reduced value at sp 44, copied to r8 per row, a and b in
-// lr and ip with no (y + a) pseudo, 15 in r11. A hand-stepped y is copy-propagated away (596);
-// a and b as real loops reduce (y + a) << 4, which the listing does not (610 to 1089).
-// The listing has six `frame == 112` tails where this has five: the sixth is cross-jumped here
-// because reload's scratch registers agree, so it follows the rotation and is not source.
-// The first setup loop wants cells in r5 and the object slot in r7, here the reverse; moving
-// cells' set into the for clause or dropping it for source + i * 128 does not change that.
-// 2026-11-05: differ 535 of 2583 (tla-en). The row loop has its own counter (row2).
-// 2026-11-05: differ 565 of 2583 (tla-en). A wrapper on the first clear gains
-// 16. Left as below.
-// Draft, differ 581 of 2583, skeleton gap 59 (tla-en, 2026-11-01)
-// BattleEffect_RunFlora: same calls and control flow, no devices, frame 292 as
-// the listing, high registers as the listing (r8, r9 petals, r10 i, r11).
-// What closed most of the gap, to keep:
-// - draw[2] is one DImode pseudo at sp 164 and 168, and the rings hoist draw[0].
-// - petals is a number: as a pointer it prefers STACK_REG, keeps no REG_EQUIV,
-//   misses the live-length doubling and takes r8 from the second ring's x1.
-// - source is set once at the top: it conflicts with every high register,
-//   stays spilled and is rebuilt from the pool at each use.
-// - c copies the ring colour v, so v loses refs and spills to sp 100.
-// - The second ring has its own x1b to y2b; out and pos come before dot.
-// - struct FloraObject's bits are u16, as the game's other sprites: as u32 the
-//   tile store hoists the wrong mask.
-// - The phase loop steps a pointer and reads it back with / 256: >> 8 narrows
-//   to a HImode shift that CSE forwards from the store.
-// - The ring's x and y are computed before the draw call: inline, fold moves
-//   48 and 92 last and every scratch register below shifts. Function results
-//   multiply first (Trig_Sin(a) * s), m first in m * grow, angle is zeroed
-//   before spin is set (reload's rotation reads that order).
-// Left to settle, top down. Reload's rotation means each one shifts scratch
-// registers below it:
-// - First and fourth setup loops: cells and the object slot take each other's
-//   low registers (r7 and r5, r5 and r6). Stepping cells fixes the first loop's
-//   count only; stepping it in the fourth loop costs 90.
-// - The first 0x4000 is rebuilt in the listing. ClearWords_ (a wrapper device)
-//   on the first call gained 16 before; not used.
-// - Petals 0 and 1, the largest hunk (about 280 lines): the listing's 224 in
-//   petal 0 is an unallocated pseudo that reload rebuilds, so loop.c moved it.
-//   Here "Insn 2081: life 9, savings 3 not desirable": threshold 16 needs
-//   savings * life >= 30 for 474 real insns, and moving it also needs 599 to
-//   stay movable at threshold 13 (under 468 insns). One more insn of life, or
-//   about six fewer in the loop, should close it. y before x, inline start and
-//   literal indexes do not reach it.
-// - Tile sheet: the listing keeps row * 2 at sp 44 (never a register), copies it
-//   to r8 per row, tiles at r9, 15 at r11, one 15 rebuilt in the body, and
-//   computes y + a inside the b loop. Tried: tiles and mask = 15 as set-once
-//   locals with k a label loop and y += 2 (gap 57, differ 643: PRE hoists y + a,
-//   y takes r9 and c spills to sp 8, so it is left out); row * 2 inline stops
-//   the hoist, but the giv is "not worth while" (lifetime 1, 34 vs 42) and the
-//   frame falls to 288; y = row; y *= 2 and a copy local both fold away. While
-//   sp 44 is missing, the hoisted place addresses sit at 44 to 52, not 48 to 56,
-//   and y sits at sp 56.
-
+// - cells and source are one number, 0x02010000, so the pools hold one word for both (34 to 6).
+// - The particle pointer is &work->particles[i]: a reduced giv sets it behind the first test (48 to 40).
+// - k = 0 ahead of offset, and offset + (s32)sheet for the operand order (40 to 36).
+// - The sheet's address through SheetOf ends CSE's block, so 0x700 does not cross the decode call in a
+//   register (100 to 82); with e in r6 and i set after the decode the whole sheet head follows (82 to 48).
+// - The sheet counts with i; t = row * 2 stepped so nothing hoists or reduces; offsets by k (126 to 100).
+// - w->y[i] += 0 in petals 0 and 1 holds the reload rotation; source is a number, so it stays a
+//   constant reload; draw[2] is one DImode pseudo; petals is a number, keeping its REG_EQUIV.
+// Open before adoption: the two sites; what would put e in r6 without the pin (r5 is free for it here,
+// and every function-level variable tried either keeps r5 or moves the setup); c in r1 likewise; the
+// resource names (Data09A and others) from the game's data; names from evidence (H3).
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -264,7 +210,7 @@ void Heap_Release(void *buffer);
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 581 of 2583 instructions differ in tla-en. */
+   * Iwram_ClearWords, 50 of 2583 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
@@ -273,6 +219,8 @@ static inline s32 ClearWords(void *destination, s32 size) {
 // strikes the foes.
 static inline u8 *SheetOf(struct BattleEffectWork *owner)
 {
+  /* FAKEMATCH(wrapper): the address through this inline; as work->sheet at the
+   * call, 90 of 2583 instructions differ in tla-en. */
   return owner->sheet;
 }
 
@@ -416,6 +364,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     s32 t;
     s32 u2;
 
+    /* FAKEMATCH(one-pass): the row shift in a block, 256 named ahead of it; as
+     * (i % 8 << 5) + 256 and i / 8 * 22 + 128, 36 of 2583 instructions differ
+     * in tla-en. */
     do {
       t = (i - q * 8) << 5;
     } while (0);
@@ -943,6 +894,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x80;
   {
+    /* FAKEMATCH(pin): e in r6; as a plain u8 *, 95 of 2583 instructions differ
+     * in tla-en. */
     register u8 *e asm("r6") = Resource_GetTableEntry((s32)&ResourceId_Data09A);
     s32 row;
     s32 a;
@@ -953,6 +906,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     s32 t;
     u8 *sheet;
     s32 hi;
+    /* FAKEMATCH(pin): c in r1; as a plain u32, 671 of 2583 instructions differ
+     * in tla-en. */
     register u32 c asm("r1");
 
     Iwram_CopyWords((void *)BG_PLTT, e, 32);

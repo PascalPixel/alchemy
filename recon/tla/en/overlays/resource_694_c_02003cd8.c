@@ -1,3 +1,4 @@
+// Draft, differ 41 of 174 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 41 (tla-en); notes below may predate it.
 // Draft, differ 62 of 174, skeleton gap 21 (tla-en, 2026-11-01)
 // The update Func_02003e54 hooks: the object's frame count (byte 0x63) cycles
@@ -35,6 +36,7 @@
 // A do { } while (0) around the block gave 51 before the compiler change by
 // leaving x, z and j uninitialized on a path, which changes behaviour: rejected.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct SparkleSprite {

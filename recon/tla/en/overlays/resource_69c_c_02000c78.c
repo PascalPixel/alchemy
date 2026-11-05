@@ -1,3 +1,4 @@
+// Draft, differ 50 of 126 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 50 (tla-en); notes below may predate it.
 // Draft, differ 75 of 126, skeleton gap 7 (tla-en, 2026-11-01)
 // Finds an object's footprint by its sprite's shape in a six-entry table and
@@ -28,6 +29,7 @@
 // do loop, u16 or s16 view locals, a struct or flat table with a k = i * 4
 // index, named left/top locals, or an if/else or result variable at the end.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_sprite.h"

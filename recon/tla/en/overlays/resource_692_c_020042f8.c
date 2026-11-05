@@ -1,3 +1,4 @@
+// Draft, differ 52 of 150 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 52 (tla-en); notes below may predate it.
 // Draft, differ 68 of 150, skeleton gap 18 (tla-en, 2026-11-01)
 // The trap table's setup for maps with objects 8 to 10 (shared with overlay 697
@@ -30,6 +31,7 @@
 // find what keeps the add in place with a separate cell, then what forces the
 // spill. Func_02003f44 and overlay 697's Func_020042f0 should move with it.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"

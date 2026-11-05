@@ -1,3 +1,4 @@
+// Draft, differ 54 of 126 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 54 (tla-en); notes below may predate it.
 // Draft, differ 59 of 126, skeleton gap 19 (tla-en, 2026-11-01)
 // Sets the blend and loads two pictures (Data_02002620 and Data_02002af8) into
@@ -26,6 +27,7 @@
 // the native's load before each call (a plain `x = f()` loads after it, also as
 // a struct field or array element), one each: sharing two by reuse is 67, 8 worse.
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 
 #define TASK_PASS_VBLANK 0x480

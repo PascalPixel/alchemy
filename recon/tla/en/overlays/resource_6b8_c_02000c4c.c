@@ -1,4 +1,4 @@
-// Draft, differ 77 of 112, skeleton gap 29 (tla-en, 2026-11-01)
+// Draft, differ 50 of 112 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Overlay 6b8's copy of resource_694_c_02003e54.c. Sets up an object's four
 // 16 by 16 sprites in work: loads their tiles (gData_02000f44, 256 bytes) into
 // a free VRAM entry, resets the work's counters (999, 999, 0), links object and
@@ -15,6 +15,7 @@
 // the listing's adds copy; a 29th insn is needed. Tried: loop forms, oam
 // pointer, priority and tile temporaries; none moved the skeleton.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "effect_sprite.h"
 

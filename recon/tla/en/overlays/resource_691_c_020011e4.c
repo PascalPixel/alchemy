@@ -1,3 +1,4 @@
+// Draft, differ 45 of 260 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 51 (tla-en); notes below may predate it.
 // Near miss, differ 69 of 260 (tla-en, 2026-10-31): the control flow, calls,
 // fields and frame (68 bytes: config at sp+16, position at sp+56) are the
@@ -183,7 +184,7 @@ hit:
   Func_02003a8c(object);
   object->update = NULL;
   Func_02003a6c(object);
-  GameFlag_SetBit(0x2f0);
+  Call1((void (*)())GameFlag_SetBit, 0x2f0);
   Func_02000c08((u16)i);
   GameFlag_ClearBit(0x2f0);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);

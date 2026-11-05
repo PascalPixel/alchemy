@@ -1,3 +1,4 @@
+// Draft, differ 41 of 152 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 41 (tla-en); notes below may predate it.
 // Draft, differ 43 of 145: a palette cycle for two 16-colour palettes (from
 // 0x05000160 and 0x050001a0): unless the event work is busy or its byte
@@ -5,6 +6,7 @@
 // then every eight frames rotates their last four colours one place and
 // queues both copies' transfer for the next frame. Left: the native keeps the busy byte through a sign-extending load in r8 and its first exit test uses r5 for the zero; the rotation loop is close.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "io_write_queue.h"

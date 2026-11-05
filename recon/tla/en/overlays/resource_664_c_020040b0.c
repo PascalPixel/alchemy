@@ -1,3 +1,4 @@
+// Draft, differ 44 of 63 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 44 of 63 (tla-en); older figures below predate it.
 // Draft, differ 54 of 63: every eighth frame, spawns a rising effect of type
 // 673 (palette 7, priority 1) at a random point up to 16 pixels either side of
@@ -5,6 +6,7 @@
 // Func_02001598, 681's Func_02001548 and 692's Func_02002c48. Left: instruction
 // order and registers around the two random calls.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"

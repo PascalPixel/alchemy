@@ -1,3 +1,4 @@
+// Draft, differ 56 of 150 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 56 (tla-en); notes below may predate it.
 // Draft, differ 58 of 150, skeleton gap 32 (tla-en, 2026-11-01)
 // The variant of Func_020001d0 that first gathers people 8 to 10 on the leader
@@ -38,7 +39,7 @@ void Func_02000584(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
   Func_020014a8(8, gMainRoutineWork.currentOwner);
-  ((s32 (*)())Func_020014a8)(9, gMainRoutineWork.currentOwner);
+  Func_020014a8(9, gMainRoutineWork.currentOwner);
   Func_020014a8(10, gMainRoutineWork.currentOwner);
   wait(1);
   Func_0200056c(8);

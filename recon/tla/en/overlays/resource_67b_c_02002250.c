@@ -1,3 +1,4 @@
+// Draft, differ 42 of 169 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 42 (tla-en); notes below may predate it.
 // Draft, differ 50 of 169, skeleton gap 3 (tla-en, 2026-11-01)
 // Aqua Rock's rising bubbles (gData_020034f0, 64 entries of 28 bytes after a
@@ -17,6 +18,7 @@
 // fold differently); the store through `oam` makes CSE reload age; the
 // for loop is needed for that same -16.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "map.h"
 #include "ram_buffer.h"

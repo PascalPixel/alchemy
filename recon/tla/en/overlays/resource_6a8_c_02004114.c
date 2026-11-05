@@ -1,4 +1,4 @@
-// Draft, differ 49 of 83, skeleton gap 21 (tla-en, 2026-11-01): Func_02004254,
+// Draft, differ 40 of 57 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // the start of overlay 6A8's falling rocks; Func_02004114, the update, is at
 // differ 6 of 57, skeleton gap 6. Diff each with --symbol (the spawn between
 // them, Func_02004198, is adopted as prox/s4198.c). The work is overlay 6B9's
@@ -25,6 +25,7 @@
 // them (differ 60, 48, 84), so the loops are goto loops here. VramLoad as an
 // inline keeps 0x500 from being reused for the rock offset.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "effect_sprite.h"
 
@@ -86,7 +87,7 @@ loop:
 
       sprite->oam.index = base + (frame & mask) * 8;
       Func_0200460c(sprite, rock);
-      Func_02004614(rock, 63, -0x8000);
+      Call3((void (*)())Func_02004614, rock, 63, -0x8000);
       rock->timer++;
     }
     sprite++;

@@ -1,3 +1,4 @@
+// Draft, differ 45 of 193 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 45 (tla-en); notes below may predate it.
 // Draft, differ 168 of 193, skeleton gap 40 (tla-en, 2026-11-01)
 // Advances Aqua Rock's two water streams one cell along the map: each stream
@@ -39,6 +40,7 @@
 // and 128 out, which the listing keeps inside. Whether the source really had such
 // loops is open.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 

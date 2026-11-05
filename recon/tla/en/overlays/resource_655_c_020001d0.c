@@ -1,3 +1,4 @@
+// Draft, differ 46 of 130 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 46 of 130 (tla-en); older figures below predate it.
 // Draft, differ 18 of 130, skeleton gap 2 (tla-en, 2026-11-01)
 // The Dehkan Plateau prepare step for a list of (actor, flag) pairs: an actor
@@ -27,6 +28,7 @@
 //   density 8/23 against 4/11), which is why cell lives at sp+4 and the unread
 //   sp+0 slot exists. Hence offset before the sum, cell declared first.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"

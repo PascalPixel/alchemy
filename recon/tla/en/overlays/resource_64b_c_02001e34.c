@@ -1,3 +1,4 @@
+// Draft, differ 46 of 714 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 46 of 714 (tla-en); older figures below predate it.
 // Draft, differ 57 of 714, skeleton gap 10 (tla-en, 2026-11-01)
 // The Venus Djinni (actor 9) joins on the world map and offers its tutorial,
@@ -32,6 +33,7 @@
 // but flips `adds r1, r7` at Func_02004c98. That ranking is K2's
 // -mthumb-slow-loads model, a compiler question for Pascal, out of scope here.
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 #include "actor.h"
 #include "flag_call.h"

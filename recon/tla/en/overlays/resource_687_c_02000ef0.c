@@ -1,3 +1,4 @@
+// Draft, differ 52 of 165 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 52 (tla-en); notes below may predate it.
 // Near miss, differ 137 of 165 (tla-en, 2026-10-31): control flow, calls,
 // fields, frame layout and constants are the native's; what remains is
@@ -19,6 +20,7 @@
 // (a 76-byte frame, 169 instructions), so this form is kept. Names are still
 // placeholders.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "system/field_effect.h"
 

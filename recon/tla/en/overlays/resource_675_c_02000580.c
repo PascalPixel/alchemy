@@ -1,3 +1,4 @@
+// Draft, differ 41 of 59 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 41 (tla-en); notes below may predate it.
 // Draft, differ 57 of 59, skeleton gap 15/6 (tla-en, 2026-11-01)
 // Scales the 224 colours of the palette copy at the start of heap block 32 into
@@ -21,6 +22,7 @@
 // source++ placement, multiply operand order, locals for 31 and 0x7c00 (same
 // differ, so left out), inner-scope locals.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 void Func_02000580(s32 scale) {

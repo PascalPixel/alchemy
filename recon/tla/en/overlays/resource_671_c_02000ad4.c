@@ -1,3 +1,4 @@
+// Draft, differ 48 of 159 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 48 of 159 (tla-en); older figures below predate it.
 // Draft, differ 120 of 159: moves the controlled character with the moving
 // platforms (Func_020005b4 finds the one under it, 360 forward and 361
@@ -6,6 +7,7 @@
 // steps off (Func_020006ac). In Ov671Room4 at cell (28, 15) or (30, 15) it
 // ends the ride (Func_02000a20) and runs exit 5 or 6 (Func_020057c4). Left: the native keeps the speed in r6 and the actor in r5, shares one sign block per platform and orders the tests otherwise.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 

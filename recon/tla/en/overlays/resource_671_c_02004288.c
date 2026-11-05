@@ -1,3 +1,4 @@
+// Draft, differ 51 of 119 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 51 of 119 (tla-en); older figures below predate it.
 // Draft, differ 126 of 119, skeleton gap 21 (tla-en, 2026-11-01)
 // Two label-and-goto loops over the 8 by 11 cells keep every field offset in
@@ -17,6 +18,7 @@
 // (47 pinned), matching the native's read, read, add, add. It only moves
 // scheduling, so it is left out as a forced temporary.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct PuzzleCell {

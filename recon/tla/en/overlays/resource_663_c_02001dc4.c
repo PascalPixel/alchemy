@@ -1,3 +1,4 @@
+// Draft, differ 43 of 193 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 46 of 193 (tla-en); older figures below predate it.
 // Draft, differ 83 of 193, skeleton gap 25 (13 removed, 12 added) (tla-en,
 // 2026-11-01)
@@ -22,6 +23,7 @@
 // `adds r2, r0, #0` and the reload of v->z: a u8 * store reloads v->z but loses
 // the -13 mask.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "iwram_call.h"
 #include "field_sprite.h"

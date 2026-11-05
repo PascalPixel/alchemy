@@ -421,8 +421,6 @@ Func_080ccec8:
 	.thumb_func
 Func_080ce31c:
 	.incbin "baserom.gba", 0x000ce31c, 0x0000013c
-	.section .rom.000ce61c, "ax"
-	.incbin "baserom.gba", 0x000ce61c, 0x000004e0
 	.section .rom.000cef22, "ax"
 	.incbin "baserom.gba", 0x000cef22, 0x00000002
 	.section .rom.000cf554, "ax"
@@ -667,13 +665,6 @@ Func_080dc6d8:
 	.thumb_func
 BattleEffect_CleanupSceneObjects:
 	.incbin "baserom.gba", 0x000dc7dc, 0x0000016c
-	.section .rom.000dcb38, "ax"
-	.balign 4
-	.global Func_080dcb44
-	.type Func_080dcb44, %function
-	.thumb_func
-Func_080dcb44:
-	.incbin "baserom.gba", 0x000dcb38, 0x00000284
 	.section .rom.000dd048, "ax"
 	.global Func_080dd054
 	.type Func_080dd054, %function

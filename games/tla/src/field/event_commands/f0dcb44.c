@@ -1,12 +1,3 @@
-// Near miss, differ 91 (105 before statements reordered 2026-10-26) of 290 (2026-10-15): the wave scroll's per-frame
-// callback, which wavefx.c removes. The delay, the wave lines and the
-// colour match but for one pair (this builds the page field's offset
-// before the phase's store, the native after it); from the two
-// Scene_FindActorPlacement lookups on, the registers differ: this
-// builds &from in sl first and copies it back (one instruction more, 291
-// against 290), and the orientation tests take r1 and r2 where the native
-// takes r0 and r1. Belongs between Func_080dcadc and hue.c's
-// BattleEffect_ArmBg0HBlankDma.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -69,9 +60,10 @@ void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *object);
 // its 61-frame cycle sends a particle from the target back to the user.
 void Func_080dcb44(void) {
   struct WaveFxWork *work = Ram_HeapSlots->unk4c[3];
-  struct WaveFxVector to;
   struct WaveFxVector from;
+  struct WaveFxVector to;
   struct WaveFxDescriptor *descriptor;
+  s32 spriteId;
   struct WaveFxMetadata *metadata;
   struct WaveFxSprite *sprite;
   struct Actor *source;
@@ -103,15 +95,23 @@ void Func_080dcb44(void) {
     target = Actor_GetById(work->targetId);
     if (source != NULL && target != NULL) {
       descriptor = Scene_FindActorPlacement(work->sourceId);
+      spriteId = descriptor->sprite;
       from.x = source->x;
-      metadata = Resource_GetMetadataRecordFarFar(descriptor->sprite);
-      sprite = target->animation;
+      metadata = Resource_GetMetadataRecordFarFar(spriteId);
       from.y = source->y + (metadata->boxX << 16) - 0x20000;
       from.z = source->z;
+      sprite = target->animation;
       descriptor = Scene_FindActorPlacement(work->targetId);
+      spriteId = descriptor->sprite;
       to.x = target->x;
-      metadata = Resource_GetMetadataRecordFarFar(descriptor->sprite);
-      to.y = target->y + (metadata->boxX << 16) - 0x20000;
+      metadata = Resource_GetMetadataRecordFarFar(spriteId);
+      {
+        s32 box = metadata->boxX;
+        s32 y = target->y;
+
+        y += box << 16;
+        to.y = y - 0x20000;
+      }
       to.z = target->z;
       if (sprite->orientation == 0x8000) {
         to.y -= 0x180000;

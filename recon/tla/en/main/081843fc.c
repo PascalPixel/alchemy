@@ -306,7 +306,6 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
   s32 j;
-  s16 c0;
   s32 c1;
   s32 c2;
   struct EffectStep *p;
@@ -861,28 +860,28 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     model->vertices = verts;
     if ((u32)(frame - 489) <= 130) {
       shade = 0;
-      for (c0 = 0; c0 != 3; c0++) {
-        s32 off = c0 * 12;
+      for (i = 0; i != 3; i++) {
+        s32 off = i * 12;
         s32 idx;
 
-        p = &work->particles[c0];
+        p = &work->particles[i];
         idx = p->variant;
 
-        if (frame == (Data_081998a4[c0 * 13 + idx] - 492) / 2 + 489) {
+        if (frame == (Data_081998a4[i * 13 + idx] - 492) / 2 + 489) {
           s32 n = off + idx;
           s32 count = 0;
           s32 a = Data_08199916[n];
-          s32 bx;
           u8 *src;
+          s32 bx;
           s32 w;
           s32 h;
           s32 x;
           s32 y;
 
           if (a != 0) {
+            p->x = Data_0819985c[n] << 3;
             p->y = Data_08199880[n] << 3;
             p->z = a << 8;
-            p->x = Data_0819985c[n] << 3;
           }
           p->velocityY = Data_081998f2[n];
           p->velocityZ = Data_0819995e[n];
@@ -900,7 +899,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           y = p->y / 8 - 10;
           y += (camZ + sway) >> 16;
           blit[0](canvas, src, x, y, w, h);
-          switch (c0) {
+          switch (i) {
             s32 cue;
 
           case 0:
@@ -943,8 +942,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           model->shade = shade;
           texture.pixels = work->sheet + 0x2000 + (p->velocityX << 12);
           Render_ResetTransformState();
-          Func_08015160(((p->x / 8 - 64) << 16) + (0x80000 - drift) / 2,
-                        ((p->y / 8 - 64) << 16) + camZ + sway, 0);
+          {
+            s32 b = 0x80000 - drift;
+
+            Func_08015160(((p->x / 8 - 64) << 16) + b / 2,
+                          ((p->y / 8 - 64) << 16) + camZ + sway, 0);
+          }
           Func_080151e4(0x8000, 0x10000, 0x8000);
           Func_080150e4(p->z);
           Func_080151e4(0x40000, 85536, 0x8000);

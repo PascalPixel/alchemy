@@ -1,4 +1,3 @@
-// Draft of overlay 67c's Func_02000cc8, rewritten from the listing's translation.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -51,10 +50,17 @@ step:
     object->z += 0x20000;
     x = object->x;
     offset = (x & 0xfffff) - 0x80000;
-    if (offset > 0xffff)
-      offset = 0x10000;
-    if (offset < -0xffff)
-      offset = -0x10000;
+    {
+      /* FAKEMATCH(temporary): each bound in one local just past the limit; as
+       * literal bounds, 4 of 120 instructions differ in tla-en. */
+      s32 limit = 0x10001;
+
+      if (offset >= limit)
+        offset = 0x10000;
+      limit = -0x10001;
+      if (offset <= limit)
+        offset = -0x10000;
+    }
     object->x = x - offset;
   }
   object->angle += 0x1000;

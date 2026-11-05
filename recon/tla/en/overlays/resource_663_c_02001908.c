@@ -1,28 +1,4 @@
-// Draft, differ 13 of 266 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 15 of 266 (tla-en); older figures below predate it.
-// Draft, differ 49 of 266, skeleton gap 15 (9 removed, 6 added) (tla-en,
-// 2026-11-01) The update Func_02001b54 gives its shots, overlay 664's
-// Func_02000d48 with one more ending: it stops while the event work is busy or
-// the leader's movement is 5; it ends (cue 539, one of two end scripts by its
-// angle) on a cell of kind 212 or when it reaches any of objects 8 to 63 (the
-// event work's object table) that is live and not where its launcher stands;
-// the first time it reaches the leader with flag 0x104 clear it carries the
-// leader along; it moves 1.5 pixels a frame along its angle, upward when its
-// angle is 0xc000. speed and cue are locals of the whole function: they lose
-// allocation and reload rebuilds them at each use, as the native does; speed
-// also gives the native its shot in r6. The counter's 200 goes through an s32
-// (as a halfword constant it comes from the pool), the end's zero likewise so
-// one register serves both stores. Both positions are taken before the movement
-// test so the two arms share their tail.
-// Left, the search loop: the native keeps i in r7 and spills objects (reload's
-// ldr, ldmia, adds, str at sp); here objects wins r7 and i sits in r4 saved
-// around the call. Priorities in the lreg dump: i 7 refs over 70 (its i = 8
-// REG_EQUAL note doubles the length), objects 5 over 34. Indexed for, do,
-// goto, counting 0 to 56 or down, near sharing i: none turns that round.
-// Left, smaller: the angle is loaded into r0 here, the native loads r3 and
-// copies to r0 before the compare, and a one-off local cannot split the two
-// (u16 adds extensions); near's zero, the angle store and the priority store
-// each sit an instruction away from the native, a sched2 tie.
+// Draft, differ 2 of 266 (tla-en, 5 November), no device: one tie, the same as 664's Func_02000d48: the counter's address (add r2, r8) ahead of the sprite's strb in the native. Func_02000d48's twin, with another ending.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -126,12 +102,11 @@ void Func_02001908(struct Actor *shot) {
       }
     }
   }
-  angle = shot->angle;
-  if (angle == 0xc000) {
-    shot->x += Iwram_MulQ16(Math_Cosine(angle), speed);
+  if (shot->angle == 0xc000) {
+    shot->x += Iwram_MulQ16(Math_Cosine(shot->angle), speed);
     shot->y -= Iwram_MulQ16(Math_Sine(shot->angle), speed);
   } else {
-    shot->x += Iwram_MulQ16(Math_Cosine(angle), speed);
+    shot->x += Iwram_MulQ16(Math_Cosine(shot->angle), speed);
     shot->z += Iwram_MulQ16(Math_Sine(shot->angle), speed);
   }
 }

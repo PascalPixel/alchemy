@@ -1,22 +1,5 @@
-// Draft, differ 53 of 137 (tla-en, 5 November 2026), from 82. Slots and allocation
-// now right; left is the rotation at the three loads and two subtractions, no order
-// of those seven statements better than this.
-// Measured under -Os, 5 November 2026: differ 82 (tla-en); notes below may predate it.
-// Draft, differ 95 of 137, skeleton gap 35 (tla-en, 2026-11-01)
-// Draws Aqua Rock's thirty-two splashes: each active one as a sprite jittered a
-// few pixels at random about its spot, with a random frame, queued by depth.
-// Left: allocation, and everything else in the gap follows from it. x (6 refs,
-// weighted 12) crosses 2 calls, so CALLER_SAVE_PROFITABLE (4 * calls < refs)
-// puts it in r1 with stack saves; the listing has x in r10, z in r8, splash in
-// r9, viewZ in r11, and originY, viewX, tile and i on the stack. That needs x at
-// weighted 8 or less, which needs `x & 511` to go to its own pseudo, as the
-// listing's `mov r2, r10; ands r2, r3` suggests, but regmove ties the mask's
-// result to x because x dies there: a local, a second set of the local (rawY
-// reused) and a copy before the mask all end the same. The listing's z looks
-// like 6 refs (load, then its final value); z as a separate load gives 7 or a
-// short pseudo, and both lose more than they gain. Label loop and do-while
-// measure the same. frame stays a local: it gives the listing's address built
-// before the third Random16Far and finished after it.
+// Draft, differ 16 of 137 (tla-en, 5 November), from 53: x and y subtract as they read, z in two steps; all allocation agrees.
+// Left: reload's rotation at the sprite word: native tile r2, 0x800 r4, then the counter in r2; here 0x800 r2, the counter r4.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -69,11 +52,10 @@ void Func_020034fc(void) {
 
   do {
     if (splash->active != 0) {
-      s32 y = splash->y;
-      s32 z = splash->z;
       s32 x = splash->x - viewX;
+      s32 y = splash->y - originY;
+      s32 z = splash->z;
       s32 screenY, rawX, rawY;
-      y -= originY;
       z -= viewZ;
       z -= originY;
       screenY = z - y;

@@ -603,7 +603,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 292) <= 253) {
       req = Data_08196ef0;
       place[1] = 0xff0000;
-      place[3] = 0;
+      place[3] = zero;
       if (frame == 360) {
         grid.b = 0x240000;
       }
@@ -786,7 +786,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           BLIT_CELL(0x53b8, n, x, top >> 16);
           BattleEffectKernels_IntegrateVector3(step, 64, 0);
           if (step->z < 0) {
-            step->z = 0;
+            step->z = zero;
           }
           if (i == 6 && step->y < -(Data_081996bb[n] << 16)) {
             step->variant = -1;
@@ -985,8 +985,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       model->mesh = Data_02014800;
       model->kind = 7;
       model->vertices = verts;
-      model->scrollU = 0;
-      model->scrollV = 0;
+      model->scrollU = zero;
+      model->scrollV = zero;
       for (i = 0; i != 2; i++) {
         if (frame < Data_08199756[i]) {
           continue;

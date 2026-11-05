@@ -1,21 +1,13 @@
-// Draft, differ 44 of 1038, skeleton gap 3 (tla-en, 2026-11-01)
-// Left, all allocation or scheduling ties, no structure:
-// - Both Camera_MoveWithinMapBounds calls with constant x, y and z: the native
-//   shifts r0 first; here r0 comes last. Direct calls, Call4, a wrapper and
-//   locals for each argument in several orders all leave the tie.
-// - The native gives 254 r8 and the later 0 r10; here the two swap, because the
-//   zero pseudo (4 refs over 388 insns) outranks mask (6 refs over 612). Mask
-//   needs a seventh ref or a shorter life. This also makes the first mask site
-//   load into r3 where the native loads r2 and masks a copy of 254.
-// - The last flag set ors into r3 where the native keeps the loaded byte there
-//   and ors into r2.
-// - The frame is 4 bytes here and 8 in the native, its one slot at sp+4; that
-//   offset is the rest of the differ. No local was added for it.
-// One actor local holds the 17, 21, 32, 30 and 31 actors in turn, and scratch
-// spans the loop: it must start before the loop and outlive actor, or CSE keeps
-// actor+98 as the loop's address and PRE hoists it out. Func_02005714's calls
-// go through an inline of its own, and Camera_MoveWithinMapBounds's last two
-// calls are direct.
+// Draft, differ 34 of 1038 (tla-en, 2026-11-05). Left: the slots (14 rows):
+// the one spilled actor at sp+4 natively with four empty bytes below it, here
+// at sp with the four above it: a local always sits above reload's slots, and
+// a real stack struct for it takes the frame's address in a register. Rank
+// (16 rows): mask (6 refs, 620 insns) against the zero (4 refs, 390),
+// local-alloc's order; the native has mask first, r8, and a pin on the zero
+// (r10) reaches those rows. Both Camera_MoveWithinMapBounds calls: the native
+// shifts r0 first; here r0 comes last. The last flag set ors into r3 where
+// the native ors into r2. The FIELD_AT and t names are the translator's and
+// need replacing before adoption.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -90,7 +82,6 @@ void Func_02001f10(void) {
   s32 lastArg, spill, zero, scratch;
   s32 owner, actor, mask, owner2, one, t1;
   s32 t2, t16, t34;
-  s32 ;
   s32 t85, t86, t87;
   s32 t158, t162;
   s32 t166, t170;

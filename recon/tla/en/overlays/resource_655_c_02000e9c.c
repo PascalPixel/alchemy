@@ -77,28 +77,30 @@ struct ShapeCell {
 void Func_02000e9c(void) {
   struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);
   u8 *layer;
-  struct MapCell *cells;
+  u8 *cells;
   u8 *shapes;
   s32 shape;
   s32 level;
   s32 index;
+  u8 newShape;
 
   if (held == NULL)
     return;
   layer = &held->terrainId;
-  cells = Ram_HeapSlots->mapWork->layers[*layer].cells;
-  shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+  cells = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
+  shapes = gMapShapeGrid +
+           (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
   shape = Func_02003c10(*layer, held->x, held->z);
   level = Map_GetTerrainHeight(*layer, held->x, held->z);
   index = Func_02003db0(held);
+  level >>= 19;
+  level += 4;
+  newShape = Func_02003dd0(*layer, shape, level);
   shapes += index;
-  {
-    s32 value = Func_02003dd0(*layer, shape, (level >> 19) + 4);
-
-    cells += index;
-    ((struct ShapeCell *)shapes)->shape = value;
-    cells->attributeB |= 192;
-  }
-  cells += 128;
-  cells->attributeB |= 64;
+  index <<= 2;
+  ((struct ShapeCell *)shapes)->shape = newShape;
+  cells += index;
+  ((struct MapCell *)cells)->attributeB |= 192;
+  cells += 0x200;
+  ((struct MapCell *)cells)->attributeB |= 64;
 }

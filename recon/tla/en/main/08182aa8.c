@@ -1104,8 +1104,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 512);
   Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+  frame = 0;
   Func_08164b2c(0, 0, 11);
-  for (frame = 0; frame != 60; frame++) {
+  for (; frame != 60; frame++) {
     s32 s;
     s32 lift;
     struct RenderModel *model2;

@@ -1108,8 +1108,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Func_08015160(0, 0xf0000, 0);
         Render_DrawModelList(model);
         texture.pixels = work->sheet;
+        i = 0;
         a += 10922;
-        for (i = 0; i != 3; i++, a += 21845) {
+        for (; i != 3; i++, a += 21845) {
           Transform_Push();
           Func_080150e4(i * 21845 + 10922);
           model->shade = -24 - (Trig_Cos(a) << 3 >> 16);
@@ -1642,8 +1643,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           x = x - frame * 8 + 576;
         }
         x += 116;
+        i = 0;
         q = &Data_02016d00[(frame & 31) * 2];
-        for (i = 0; i != 2; i++, q++) {
+        for (; i != 2; i++, q++) {
           s32 angle;
           s32 speed;
 
@@ -1772,8 +1774,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                   Sound_PlayFar(172);
                   break;
                 }
+                j = 0;
                 q = &debris[(i & 7) * 12];
-                for (j = 0; j != 12; j++, q++) {
+                for (; j != 12; j++, q++) {
                   s32 angle;
                   s32 speed;
 

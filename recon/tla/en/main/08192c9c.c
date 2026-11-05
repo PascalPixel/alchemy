@@ -395,8 +395,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
     }
     if (small == 0) {
       s32 offset = 0;
-      DrawRectangle blit;
       u8 *ring;
+      DrawRectangle blit;
+      s32 spoke;
 
       if (t <= 11)
         offset = 196;
@@ -404,9 +405,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 98;
       blit = draw;
       ring = sprites + offset;
-      for (point = 0; point != 8; point++) {
+      for (spoke = 0; spoke != 8; spoke++) {
         s32 px; s32 a; s32 py;
-        a = (point << 13) + (t * 5 << 9);
+        a = (spoke << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         blit(canvas, ring, px - 3, py - 7, 7, 14);
@@ -419,8 +420,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
            9, 18);
     } else {
       s32 offset = 294;
-      DrawRectangle blit;
       u8 *ring;
+      DrawRectangle blit;
+      s32 spoke;
 
       if (t <= 11)
         offset = 394;
@@ -428,9 +430,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 344;
       blit = draw;
       ring = sprites + offset;
-      for (point = 0; point != 8; point++) {
+      for (spoke = 0; spoke != 8; spoke++) {
         s32 px; s32 a; s32 py;
-        a = (point << 13) + (t * 5 << 9);
+        a = (spoke << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         blit(canvas, ring, px - 2, py - 5, 5, 10);
@@ -444,26 +446,24 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
     }
   } else {
     if (t < Data_08199f40[small] * 2 + Data_08199f40[small]) {
-      u8 *ring;
-
       r = t - Data_08199f40[small] * 2;
       cel = r / 3 * 8;
       if (cel == 64)
         cel = 56;
-      ring = sprites + (cel + 444);
+      cel += 444;
       for (point = 0; point != 64; point++) {
         s32 px; s32 a; s32 py;
         a = point << 10;
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
-        draw(canvas, ring, px - 1, py - 2, 2, 4);
+        draw(canvas, sprites + cel, px - 1, py - 2, 2, 4);
       }
       for (point = 0; point != 64; point++) {
         s32 px; s32 a; s32 py;
         a = point << 10;
         px = (r * Trig_Sin(a) * 2 >> 16) + x;
         py = (r * Trig_Cos(a) >> 16) + y + Data_08199f48[small] * 2;
-        draw(canvas, ring, px - 1, py - 2, 2, 4);
+        draw(canvas, sprites + cel, px - 1, py - 2, 2, 4);
       }
     }
     for (segment = 0, column = y; segment < t - Data_08199f40[small] * 2 && column <= 112;

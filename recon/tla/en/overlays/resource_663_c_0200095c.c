@@ -154,8 +154,8 @@ void Func_0200095c(void) {
   delta.z = Math_Sine(angle) >> 16;
   do {
     hit = Func_02000348(2, cell.x, cell.z);
-    cell.x += delta.x;
     hit >>= 8;
+    cell.x += delta.x;
     cell.z += delta.z;
     steps += 2;
   } while (hit == 0);
@@ -166,10 +166,10 @@ void Func_0200095c(void) {
   newX = ((s16 *)&effect->target->x)[1] + ((steps * delta.x) << 3);
   newZ = ((s16 *)&effect->target->z)[1] + ((steps * delta.z) << 3);
   ((struct FieldSprite *)gust->animation)->priority = 1;
-  gust->speedLimit = 0x40000;
-  gust->acceleration = 0x40000;
   cell.x = newX;
   cell.z = newZ;
+  gust->speedLimit = 0x40000;
+  gust->acceleration = 0x40000;
   Func_02003b58(gust, cell.x << 16, gust->y, cell.z << 16);
   Call2(Func_02003c20, 0x50000, 0x50000);
   Call4((void (*)())Camera_MoveWithinMapBounds, (s32)(newX << 16), (s32)(-1), (s32)(newZ << 16), (s32)(1));
@@ -214,8 +214,8 @@ void Func_0200095c(void) {
       cell.z = gData_02004674[hit][3] + (gust->z >> 20);
       cellX = cell.x;
       cellZ = cell.z;
-      sourceX = (u16)gData_02004674[hit][0];
       if (hit & 1) {
+        sourceX = (u16)gData_02004674[hit][0];
         Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
               cellZ - 1, 1, 3);
         Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,
@@ -223,6 +223,7 @@ void Func_0200095c(void) {
         Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,
               2, gust->x >> 20, gust->z >> 20);
       } else {
+        sourceX = (u16)gData_02004674[hit][0];
         Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
               cell.z - (hit >> 1), 1, 1);
         Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,

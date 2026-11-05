@@ -1,4 +1,4 @@
-// Under -Os, 5 November: differ 43 of 194 (tla-en); older figures below predate it.
+// Under -Os, 5 November: differ 21 of 194 (tla-en) from 43, each block with its own locals. Left: the address of saved stays in r5 across the wait calls where the listing rebuilds it twice and keeps the copy routine's address in r5; a one-pass block, a wrapper and a top-level pointer do not change it. Older figures below predate it.
 // Draft of Func_020001a0 (overlay 66F, 194 instructions), differ 53: the
 // push-block callback for blocks 14 and 15, written from the listing (the twin
 // map's ☀️ scene is a hint only). Three differences remain:
@@ -36,14 +36,15 @@ void Func_0200119c(s32 value);
 
 void Func_020001a0(s32 unused, s32 id) {
   struct Actor saved;
-  struct Actor *block;
-  struct Actor *other;
-  s32 x;
-  s32 z;
-  s32 cell;
 
   if (id == 14) {
-    block = Actor_GetById(14);
+    struct Actor *block = Actor_GetById(14);
+    struct Actor *other;
+    s32 x;
+    s32 z;
+    s32 cell;
+
+
     if (!Flag_IsSet(0x223) && (x = block->x >> 20) == 47 &&
         (z = block->z >> 20) == 28) {
       Func_0200015c(14);
@@ -68,7 +69,10 @@ void Func_020001a0(s32 unused, s32 id) {
     }
   }
   if (id == 15) {
-    block = Actor_GetById(15);
+    struct Actor *block = Actor_GetById(15);
+    struct Actor *other;
+
+
     if (!Flag_IsSet(0x224) && block->x >> 20 == 53 && block->z >> 20 == 36) {
       s32 dx;
 

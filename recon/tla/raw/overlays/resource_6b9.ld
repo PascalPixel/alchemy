@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/debug/psynergy_test_2/prepare.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2/s015c.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2/s01e0.o"(.text)
-        "*/resource_6b9_overlay.o"(.text.x0200829c)
+        "*/games/tla/src/debug/psynergy_test_2/s029c.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2/sparks.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2/scale.o"(.text)
         "*/games/tla/src/debug/psynergy_test_2/drop.o"(.text)

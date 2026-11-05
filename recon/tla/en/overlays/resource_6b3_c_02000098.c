@@ -30,7 +30,7 @@ extern s8 gData_02000a34;
 void *Heap_Alloc(s32 size);
 void Heap_Release(void *block);
 void *Resource_GetTableEntry(s32 id);
-extern char ResourceId_Data1F8;
+extern char ResourceId_GreenPanel;
 s32 Resource_FindFreeEntry(void);
 s32 VramCache_Load(s32 entry, s32 size, void *data);
 void Task_Add(void (*func)(void), s32 priority);
@@ -47,7 +47,7 @@ void Func_02000098(void) {
 
   Dma_Set(Data_02000874, (void *)0x050003c0, 0x80000010, REG_DMA3);
   sprite = &gData_02000a00;
-  Func_020007ac(Resource_GetTableEntry((s32)&ResourceId_Data1F8), buffer);
+  Func_020007ac(Resource_GetTableEntry((s32)&ResourceId_GreenPanel), buffer);
   slot = &Data_020008f0;
   value = Resource_FindFreeEntry();
   *slot = value;

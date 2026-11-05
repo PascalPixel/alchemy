@@ -1,10 +1,7 @@
-// Draft, differ 32 of 91 (was 79), rewritten from the listing: on even frames
-// creates object kind 0x11d at a random point of one of two columns (cells 155
-// and 178, chosen by frame bit 1), with update Func_020013e4. Left: the native
-// computes each branch's x as r*7 before the second Random16Far call and scales
-// it after, in r5, and builds the create call's x in place in r5; this form
-// computes x after both calls. Tried: x computed in steps (38), x built in
-// place before the call (43), permute 6 minutes.
+// Draft, differ 15 (tla-en, 2026-11-05). Func_02001424 of overlay 6ab.
+// The arithmetic stepped in place as the listing does. Left: the first
+// multiply's shift in r3 here, in r5 natively; and object's reload into r0
+// before the child flags call, which reload-cse removes here.
 #include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 #include "frame.h"
 
@@ -21,18 +18,27 @@ void Func_02001424(void) {
   if (frame & 1)
     return;
   if ((frame >> 1) & 1) {
-    x = (u32)(Random16Far() * 7 * 4) >> 16;
+    x = Random16Far() * 7;
     z = Random16Far() * 15;
+    x <<= 2;
+    x >>= 16;
     column = 155;
   } else {
-    x = (u32)(Random16Far() * 7 * 4) >> 16;
+    x = Random16Far() * 7;
     z = Random16Far() * 15;
+    x <<= 2;
+    x >>= 16;
     column = 178;
   }
-  object = ObjectCreate_(0x11d, (x << 16) + (column << 18), 0x200000,
-                         (((u32)(z << 3) >> 16) << 16) + 0x1cc0000);
-  if (object == NULL)
-    return;
+  column <<= 18;
+  z <<= 3;
+  x <<= 16;
+  x += column;
+  z = (u32)z >> 16;
+  z <<= 16;
+  z += 0x1cc0000;
+  object = ObjectCreate_(0x11d, x, 0x200000, z);
+  if (object != NULL) {
   object->unk5c[0] = 2;
   object->motionFlags = 0;
   object->action = 0;
@@ -46,4 +52,5 @@ void Func_02001424(void) {
   object->update = Func_020013e4;
   Func_020041cc(object, 5);
   Animation_SetStateFlags(object, 1);
+  }
 }

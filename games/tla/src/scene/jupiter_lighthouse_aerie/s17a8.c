@@ -1,9 +1,3 @@
-// Draft, differ 2 (tla-en, 2026-11-05). Func_020017a8 of overlay 6a4.
-// Plain loop counting down with the listing's registers, bitfields at both
-// sprites, 240 through a pointer at both (a halfword constant through a
-// pointer comes from the pool). sprite also holds the 512, needs a temporary
-// tag on adoption. Left: the large sprite's 0x80004000 issues before the
-// stack argument; natively after r0.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -37,8 +31,8 @@ struct BeamWork {
   struct Actor *second;
 };
 
-extern char ResourceId_Data1EB;
-extern char ResourceId_Data1F6;
+extern char ResourceId_StarSparkleFade;
+extern char ResourceId_GoldenTrident;
 
 void *HeapSlot_AllocFar(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
@@ -60,6 +54,13 @@ void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
 void Func_02001080(void);
 
+static __inline__ void SetUp(struct EffectSprite *sprite, s32 pivotX,
+                             s32 pivotY, u32 attributes, s32 tile) {
+  /* FAKEMATCH(wrapper): the setup forwarded inline; as a direct call, 2 of 316
+   * instructions differ in tla-en. */
+  Func_02002b30(sprite, pivotX, pivotY, attributes, tile);
+}
+
 void Func_020017a8(s32 a, s32 b, s32 side) {
   struct BeamWork *work = HeapSlot_AllocFar(220, sizeof(struct BeamWork));
   struct Actor *carrier =
@@ -76,7 +77,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
 
   work->first = Actor_GetById(a);
   work->second = Actor_GetById(b);
-  Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_Data1EB), work);
+  Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
   smallEntry = Resource_FindFreeEntry();
   smallTile = VramCache_Load(smallEntry, 256, work);
   work->smallTile = smallTile;
@@ -92,15 +93,17 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
     *(u16 *)&sprite->depth = 240;
     spark->age = age;
   }
-  Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_Data1F6), work);
+  Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_GoldenTrident), work);
   largeEntry = Resource_FindFreeEntry();
   {
+    /* FAKEMATCH(temporary): sprite also holds the size; as a plain argument, 7
+     * of 316 instructions differ in tla-en. */
     sprite = (struct EffectSprite *)512;
     largeTile = VramCache_Load(largeEntry, (s32)sprite, work);
   }
   work->largeTile = largeTile;
   large = &work->large;
-  Func_02002b30(large, 30, 7, 0x80004000, largeTile);
+  SetUp(large, 30, 7, 0x80004000, largeTile);
   *(u16 *)&large->depth = 240;
   large->oam.priority = 1;
   large->oam.palette256 = 1;

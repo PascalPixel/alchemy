@@ -1,6 +1,3 @@
-// Draft, differ 2 (tla-en, 2026-11-05). Func_0200029c of overlay 6b9.
-// Plain loop and statement order, Value3 for the VRAM load, no barrier. Left:
-// lsls r1 before ldr r0 ahead of Task_Add.
 #include "call.h"
 #include "types.h"
 #include "system/task.h"
@@ -44,6 +41,12 @@ void Func_020005f0(struct RockSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 tile);
 void Func_0200015c(void);
 
+static __inline__ void StartTask(void (*func)(void), s32 priority) {
+  /* FAKEMATCH(wrapper): Task_Add forwarded inline; as a direct call, 6 of 83
+   * instructions differ in tla-en. */
+  Task_Add(func, priority);
+}
+
 void Func_0200029c(void) {
   struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
   s32 entry;
@@ -72,5 +75,5 @@ void Func_0200029c(void) {
 
     work->next = zero;
   }
-  Call2((void (*)())Task_Add, (s32)Func_0200015c, 0x480);
+  StartTask(Func_0200015c, 0x480);
 }

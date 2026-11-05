@@ -512,9 +512,9 @@ Resource_DirectoryTable:
 	resource , FieldEffect_WhiteSparkle
 	resource , FieldEffect_Runes
 	resource , FieldEffect_Pebbles
-	resource , FieldEffect_GoldenTrident
+	resource GoldenTrident, FieldEffect_GoldenTrident
 	resource , FieldEffect_FireColumn
-	resource , Field_GreenPanel
+	resource GreenPanel, Field_GreenPanel
 	resource , Resource_Data1F9
 	resource UiIconTiles, Resource_Data1FA
 	resource ShopGemTiles, Resource_Data1FB

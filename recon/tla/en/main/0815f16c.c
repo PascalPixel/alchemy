@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 287 of 7666, slots normalized 169, high
-// registers blind too 165, every register blind 89. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 248 of 7666, slots normalized 154, high
+// registers blind too 150, every register blind 72. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -364,6 +364,8 @@ static __inline__ void FILL(void *dst, s32 size, s32 value) { ((s32 (*)(void *, 
 #define RELOAD_BLITTER(slot, n) do { HeapSlot_Release(slot); BattleEffect_LoadBlitter(slot, n); } while (0)
 #define RELEASE_BLITTERS() HeapSlot_Release(188); do { HeapSlot_Release(104); } while (0)
 
+extern u8 gMapCellBuffer[];
+extern u8 Data_02010208[];
 void Func_0815f16c(struct SummonAction *action, s32 kind) {
   u8 *buffer;
   struct Particle *sparks;
@@ -488,25 +490,39 @@ CLEAR(buffer + 0xc56, 0x4000);
     Resource_LoadAndDecompress((s32)&Value_0000013e, buffer + 0xd80, 1, 0);
   } else if (kind == 80) {
     u8 *dst;
+    s32 row;
+    s32 two;
+    u8 *b;
 s32 k; s32 i;
 
     Resource_LoadAndDecompress((s32)&Value_0000013a, buffer + 0x1000, 1, 0);
 CLEAR(buffer, 0x1000);
-    for (i = 0; i != 48; i++) {
-      s32 row;
-      s32 two;
+    b = gMapCellBuffer;
+    i = 0;
+    two = 0;
+    row = 0;
+  rows:
+    {
       u8 *mirror;
-      row = i * 64;
-      two = i * 2;
-      src = buffer + 0x1000 + (two + i) * 8;
-      mirror = buffer + row + 0x237;
-      dst = row + (u8 *)0x02010208;
+      s32 three;
+      three = two + i;
+      mirror = row + b;
+      dst = row + Data_02010208;
+      src = three * 8 + b;
+      src += 0x1000;
+      mirror += 0x237;
 
       for (k = 0; k != 24; k++) {
         *dst++ = *src;
         *mirror-- = *src++;
       }
     }
+    i++;
+    two += 2;
+    row += 64;
+    if (i != 48)
+      goto rows;
+    do { } while (0);
   } else if (kind == 79) {
     s32 i;
     s32 k;

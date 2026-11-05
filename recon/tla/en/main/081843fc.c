@@ -1346,8 +1346,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           texture2.logWidth = 6;
           texture2.logHeight = 6;
           model2->shade = sh2;
-          model2->texture = &texture2;
           model2->kind = 6;
+          model2->texture = &texture2;
           model2->mesh = gData_08199340;
           model2->vertices = verts2;
           texture2.pixels = Data_02011000;
@@ -1409,12 +1409,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 }
               }
               if (sh2 > -64) {
-                texture2.pixels = Data_02012000;
-                model2->kind = 6;
                 model2->shade = sh2;
                 model2->mesh = gData_08199364;
-                texture2.logHeight = 7;
+                model2->kind = 6;
+                texture2.pixels = Data_02012000;
                 texture2.logWidth = 7;
+                texture2.logHeight = 7;
                 Render_ResetTransformState();
                 Func_08015160(0, 0x100000, 0);
                 Func_080151e4(0x10000, 32000, 0x10000);

@@ -142,9 +142,9 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   {
     // Frame 0: 16 sparks leave the ground in random directions.
     if (frame == 0) {
-      struct EffectStep *spark = work->particles;
+      struct EffectStep *spark;
 
-      for (i = 0; i != 16; i++, spark++) {
+      for (i = 0, spark = work->particles; i != 16; i++, spark++) {
         s32 speed = (Random16() & 0x1ff) + 128;
         s32 angle = Random16() & 0xffff;
 
@@ -168,7 +168,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
       Func_08196404(188, 7, 7,
                     COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                     mode);
-      draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+      draw[1] = *(DrawRectangle *)0x030000bc;
 
       for (i = 0; i != effect->variant * 3 + 4; i++) {
         s32 age = frame - Data_08198bb0[i];
@@ -227,19 +227,22 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
     // apiece; past the first 16 they wait until the columns sink.
     BattleEffect_FetchRectangleBlitters(effect->side, draw);
     {
-    struct EffectStep *spark = work->particles;
-    for (i = 0; i != effect->variant * 4 + 8; i++, spark++) {
+    for (i = 0; i != effect->variant * 4 + 8; i++) {
+      struct EffectStep *spark = &work->particles[i];
+
       if ((i <= 15 || frame >= sinkFrame) && frame >= i * 2 + 8 &&
           spark->variant <= 28) {
         s32 cell = spark->variant / 3;
         s32 x = HI(spark->x);
         s32 y = HI(spark->y);
         u32 size;
+        u8 *src;
 
         if (cell > 6)
           cell = 6;
+        src = work->sheet + Data_08198bce[cell] + SPARK_OFFSET;
         size = Data_08198bdc[cell];
-        draw[0](canvas, work->sheet + Data_08198bce[cell] + SPARK_OFFSET,
+        draw[0](canvas, src,
                 x - size / 2, y - size / 2, size, size);
         spark->variant++;
         BattleEffectKernels_IntegrateVector2(spark, 62, -0x2000);

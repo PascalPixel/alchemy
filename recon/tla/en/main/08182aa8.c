@@ -506,8 +506,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       if (b > 31) {
         b = 31;
       }
+      i = 0;
       c = b << 10 | g << 5;
-      for (i = 0; i != 256; i++) {
+      for (; i != 256; i++) {
         *dst++ = c;
       }
     }
@@ -582,9 +583,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       s32 d = frame - 520;
       u16 *e = Resource_GetTableEntry((s32)&ResourceId_BellMaidenTiles);
       u16 *dst = (u16 *)OBJ_PLTT;
-      s32 half = d / 2;
+      s32 half;
 
-      for (i = 0; i != 256; i++, e++, dst++) {
+      i = 0;
+      half = d / 2;
+      for (; i != 256; i++, e++, dst++) {
         s32 b;
         s32 g;
         s32 r;
@@ -727,9 +730,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       if (frame == 540) {
         struct EffectStep *p = Ram_EffectSteps;
-        s32 m = 63;
+        s32 m;
 
-        for (i = 0; i != 384; i++, p++) {
+        i = 0;
+        m = 63;
+        for (; i != 384; i++, p++) {
           p->y = zero;
           p->velocityY = -((Random16() & m) + 32) << 15;
         }

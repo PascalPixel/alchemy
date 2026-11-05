@@ -1173,10 +1173,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     model2->vertices = verts2;
     model2->kind = 6;
     texture2.pixels = work->sheet;
+    i = 0;
     lift = frame * 8 - 128;
     s = (frame << 13) + -0x20000;
     d = frame - 16;
-    for (i = 0; i != 3; lift -= 64, s += -0x10000, i++, d -= 8) {
+    for (; i != 3; lift -= 64, s += -0x10000, i++, d -= 8) {
       if (d >= 0) {
         s32 sh2 = 0;
 

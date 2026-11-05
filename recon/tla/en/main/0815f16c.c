@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 248 of 7666, slots normalized 154, high
-// registers blind too 150, every register blind 72. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 244 of 7666, slots normalized 152, high
+// registers blind too 152, every register blind 72. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1512,30 +1512,35 @@ CLEAR(buffer, 0x1000);
       h = 96;
       if (frame > 7) {
         s32 t;
+        s32 off;
+        i = 0;
         t = 0;
         row = 112 - frame * 2;
-        for (i = 0; i != 34; i++, t++, row++) {
-          if (row >= 0 && row < 96) {
-            s32 threshold;
-            s32 k;
-            s32 cell;
-            u8 *from;
-            u8 *to;
-            threshold = t;
-            __asm__("" : "=r"(threshold) : "0"(threshold));
-            cell = row & 15;
-            cell *= 69;
-            to = buffer;
-            to += row * 69;
-            scroll = (s32)((u8 *)work + cell);
-            from = (u8 *)scroll + 0x700;
-            for (k = 0; k != 69; k++) {
-              if (*from++ < threshold)
-                *to = 0;
-              to++;
-            }
+        off = row * 69;
+      rows2:
+        if (row >= 0 && row < 96) {
+          s32 k;
+          s32 threshold;
+          u8 *from;
+          u8 *to;
+          threshold = t;
+          __asm__("" : "=r"(threshold) : "0"(threshold));
+          from = (row & 15) * 69 + (u8 *)work;
+          to = buffer + off;
+          from += 0x700;
+          for (k = 0; k != 69; k++) {
+            if (*from++ < threshold)
+              *to = 0;
+            to++;
           }
         }
+        i++;
+        t++;
+        off += 69;
+        row++;
+        if (i != 34)
+          goto rows2;
+        do { } while (0);
       }
       drawFuncs.draw[0](screen, buffer, 29, y, 69, h);
       if (frame > 5) {

@@ -644,6 +644,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
   typeof(SCENE) scene;
   u8 *sprites;
+  struct IrisPoint (*streaks)[10];
   s32 pos[4];
   u8 *battle;
   s32 savedScroll;
@@ -673,6 +674,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   u8 v;
 
   scene = SCENE;
+  streaks = Data_02012ef4;
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   objects = (struct IrisSprite **)gMapCellBuffer;
@@ -791,7 +793,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       scene->y = 0x800000;
       scene->radius = 0xc0000;
       for (i = 0; i != 15; i++) {
-        struct IrisPoint *s = Data_02012ef4[i];
+        struct IrisPoint *s = streaks[i];
 
         s->x = Data_08199fde[i] << 16;
         s->y = Data_08199fed[i] << 16;
@@ -817,7 +819,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           }
         }
         if (frame >= i * 8 + 24) {
-          struct IrisPoint *s = Data_02012ef4[i];
+          struct IrisPoint *s = streaks[i];
           if (HALF(s, 3) > 59) {
             s32 size;
 

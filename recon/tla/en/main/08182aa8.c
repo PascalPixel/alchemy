@@ -564,7 +564,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       u16 *dst = (u16 *)OBJ_PLTT;
       s32 half = d / 2;
 
-      for (c0 = 0; c0 != 256; c0++, e++, dst++) {
+      for (i = 0; i != 256; i++, e++, dst++) {
         s32 b;
         s32 g;
         s32 r;
@@ -1091,7 +1091,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       {
         struct EffectStep *p = Ram_EffectSteps;
 
-        for (c0 = 0; c0 != 256; c0++, p++) {
+        for (i = 0; i != 256; i++, p++) {
           p->x = (Random16() & 127) << 16;
           p->y = ((Random16() & 255) + 120) << 16;
           p->velocityX = ((Random16() & 31) - 16) << 13;

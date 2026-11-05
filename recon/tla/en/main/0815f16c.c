@@ -176,7 +176,7 @@ struct Model {
   const void *mesh;
   void *matrix;
   struct Texture *texture;
-  s32 fade;
+  long fade;
   u8 unk18;
   u8 frame;
 };
@@ -2002,8 +2002,11 @@ CLEAR(buffer, 0x1000);
             else if (frame >= i + 4)
               fade = -((frame - i - 4) * 16);
             model->fade = fade;
-            texture164.pixels = buffer + 0xc56 + (p->life << 12);
-            p->life = (p->life + 1) & 3;
+            {
+              s32 life = p->life;
+              texture164.pixels = buffer + 0xc56 + (life << 12);
+              p->life = (life + 1) & 3;
+            }
             Render_ResetTransformState();
             Func_08015160((target[0] / 2 - 64) << 16, (target[1] - 64) << 16,
                           0);
@@ -2266,9 +2269,9 @@ CLEAR(buffer, 0x1000);
       tex->height = 6;
       tex->pixels = buffer;
       model->kind = 7;
-      model->mesh = gData_081990d0;
       model->matrix = matrix;
       model->texture = tex;
+      model->mesh = gData_081990d0;
       for (i = 0; i != 4; i++) {
         start = gData_0819895e[i] + 4;
         model->frame = (frame * 8 + i * 32) & 127;

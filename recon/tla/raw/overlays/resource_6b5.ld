@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/scene/lobby/circle.o"(.text)
         "*/games/tla/src/scene/lobby/s039c.o"(.text)
         "*/games/tla/src/scene/lobby/owners.o"(.text)
-        "*/resource_6b5_overlay.o"(.text.x02008578)
+        "*/games/tla/src/scene/lobby/s0578.o"(.text)
         "*/games/tla/src/scene/lobby/exchange.o"(.text)
         "*/games/tla/src/scene/lobby/s0864.o"(.text)
         "*/games/tla/src/scene/lobby/counter.o"(.text)

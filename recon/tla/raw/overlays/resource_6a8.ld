@@ -64,7 +64,7 @@ SECTIONS
         "*/games/tla/src/scene/prox/s3ee8.o"(.text)
         "*/games/tla/src/scene/prox/s4114.o"(.text)
         "*/games/tla/src/scene/prox/s4198.o"(.text)
-        "*/resource_6a8_overlay.o"(.text.x0200c254)
+        "*/games/tla/src/scene/prox/s4254.o"(.text)
         "*/games/tla/src/scene/prox/s4310.o"(.text)
         "*/games/tla/src/scene/prox/import.o"(.text)
         "*/games/tla/src/scene/prox/data.o"(.data)

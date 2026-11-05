@@ -1,5 +1,3 @@
-// Draft, differ 25: overlay 694's copy of the function drafted in
-// resource_6ae_c_02005268.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -67,27 +65,21 @@ void Func_02003cd8(struct Actor *object) {
     sine = Math_Sine(work->unka0[i] << 10);
     if (work->unka0[i] >= 0) {
       if (work->unka0[i] <= 31) {
+        struct Vector3 *p = &position;
+
+        p->x = object->x;
+        p->y = object->y + (work->unka0[i] << 16);
+        p->z = object->z;
+        Func_0200421c(p);
+        x = p->x;
         j = 0;
-        sprite = (struct SparkleSprite *)&position;
-        ((struct Vector3 *)sprite)->x = object->x;
-        ((struct Vector3 *)sprite)->y = object->y + (work->unka0[i] << 16);
-        ((struct Vector3 *)sprite)->z = object->z;
-        Func_0200421c((struct Vector3 *)sprite);
-        x = ((struct Vector3 *)sprite)->x;
-        z = ((struct Vector3 *)sprite)->z;
+        z = p->z;
         sprite = &work->sprites[i * 2];
-        /* FAKEMATCH(barrier): the empty asm on sprite changes its allocation rank; as no
-         * asm, 39 of 174 instructions differ in tla-en. */
-        asm("" : : "r"(sprite));
-        for (; j < 2; j++) {
-          /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-           * order around it; as the plain statement, 41 of 174 instructions differ
-           * in tla-en. */
-          {
-            sprite->unk10 = z;
-          }
+        for (; j <= 1; j++) {
           sprite->unk0c = x;
-          sprite->unk14 = sprite->unk18 = sine;
+          sprite->unk10 = z;
+          sprite->unk14 = sine;
+          sprite->unk18 = sine;
           if (j == 0) {
             sprite->unk1e = Func_0200425c(object) - 1;
           } else {

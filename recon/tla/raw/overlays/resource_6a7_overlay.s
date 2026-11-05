@@ -1,59 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008618,"ax",%progbits
-	.balign 4
-	.global Func_02000618
-	.thumb_func
-Func_02000618:
-	push {r5, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #108]
-	movs r2, #214
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	ldr r5, .L_02008678
-	subs r2, #172
-	str r2, [r3]
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r3, r5, r2
-	ldr r0, [r3]
-	bl Actor_GetById
-	adds r0, #35
-	ldrb r2, [r0]
-	movs r3, #32
-	orrs r3, r2
-	movs r2, #241
-	lsls r2, r2, #1
-	strb r3, [r0]
-	adds r3, r5, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #90
-	bne .L_0200866e
-	movs r0, #144
-	lsls r0, r0, #4
-	adds r0, #10
-	bl GameFlag_SetBit
-	movs r2, #128
-	lsls r2, r2, #2
-	adds r2, #118
-	adds r3, r5, r2
-	movs r2, #1
-	strh r2, [r3]
-	ldr r0, .L_0200867c
-	movs r1, #4
-	bl Func_02000af8
-.L_0200866e:
-	bl Func_02000b08
-	movs r0, #0
-	pop {r5, pc}
-	.2byte 0x0000
-.L_02008678:
-	.4byte gMainRoutineWork
-.L_0200867c:
-	.4byte 0x0000010c
 	.section .text.x020086b0,"ax",%progbits
 	.balign 4
 	.global Func_020006b0

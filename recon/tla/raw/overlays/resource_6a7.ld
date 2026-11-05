@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/northern_reaches/scene_tables.o"(.text)
         "*/games/tla/src/scene/northern_reaches/s01d8.o"(.text)
         "*/games/tla/src/scene/northern_reaches/scene_events.o"(.text)
-        "*/resource_6a7_overlay.o"(.text.x02008618)
+        "*/games/tla/src/scene/northern_reaches/s0618.o"(.text)
         "*/games/tla/src/scene/northern_reaches/s0680.o"(.text)
         "*/resource_6a7_overlay.o"(.text.x020086b0)
         "*/games/tla/src/scene/northern_reaches/import.o"(.text)

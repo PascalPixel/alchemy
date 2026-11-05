@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 79 (tla-en); notes below may predate it.
 // Draft, differ 83 of 97, skeleton gap 15 (tla-en, 2026-11-01): fades five
 // background colours, from palette entry 114 (0x050000e4, not the object
 // palette an older note gave), from one set to another over the given number

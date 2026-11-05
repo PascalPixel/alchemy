@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 41 (tla-en); notes below may predate it.
 // Draft, differ 57 of 59, skeleton gap 15/6 (tla-en, 2026-11-01)
 // Scales the 224 colours of the palette copy at the start of heap block 32 into
 // the work area 0xe00 bytes on, one halfword per channel: blue unscaled, green

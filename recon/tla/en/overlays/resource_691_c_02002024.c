@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 6 (tla-en); notes below may predate it.
 // Draft, differ 55 of 76: four random effect 403 spawns around (x, z), then
 // flag 0x8dc. The instructions are the native's but the registers are not:
 // GCSE hoists the position array's address out of the goto loop (the native

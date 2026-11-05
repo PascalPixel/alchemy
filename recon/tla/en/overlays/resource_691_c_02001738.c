@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 110 (tla-en); notes below may predate it.
 // Draft, differ 118 of 294, skeleton gap 18 (tla-en, 2026-11-01)
 //
 // The code is the native's; what is left is one allocation question and the

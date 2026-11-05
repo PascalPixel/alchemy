@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 4 (tla-en); notes below may predate it.
 // Draft, differ 104 of 159, skeleton gap 12 (tla-en, 2026-11-01): a charge-up
 // step for the controlled character in Taopo Swamp: holding the direction pad
 // raises gSceneState's timer (faster with B held), shown in the sprite's level;
@@ -68,7 +69,7 @@ void Func_02002144(void) {
   if (sprite->child != 0)
     sprite->child[6] = 1;
   sprite->mode = (sprite->mode | 8) & 0xfe;
-  /* FAKEMATCH(one-pass): the once-only block orders this statement; without it, 8 of 159 instructions
+  /* FAKEMATCH(one-pass): the once-only block orders this statement; as a plain statement, 8 of 159 instructions
    * differ in tla-en. */
   do {
     sprite->dirty = 1;

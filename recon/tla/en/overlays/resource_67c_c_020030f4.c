@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 99 (tla-en); notes below may predate it.
 // Draft, differ 203 of 184, skeleton gap 49 (tla-en, 2026-11-01)
 // Draws Aqua Rock's thirty-two water spouts: for each active one a top sprite
 // and, when it stands above its base, a column sprite as tall as its height,

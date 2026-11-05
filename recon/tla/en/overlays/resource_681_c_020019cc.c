@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 64 (tla-en); notes below may predate it.
 // Draft, differ 46 of 250: the party meets person 11 on the ledge: they talk,
 // the ground shakes, the screen blends out and back while the ledge changes,
 // the party gains the item and person 11 joins the leader (flag 0x9ba).

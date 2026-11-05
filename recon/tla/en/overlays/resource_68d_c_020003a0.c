@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 54 (tla-en); notes below may predate it.
 // Draft, differ 59 of 126, skeleton gap 19 (tla-en, 2026-11-01)
 // Sets the blend and loads two pictures (Data_02002620 and Data_02002af8) into
 // VRAM for the sprites at Data_02003060 and Data_02003030, then schedules

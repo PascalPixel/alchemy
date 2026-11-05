@@ -1,27 +1,3 @@
-// Near miss, differ 16 of 367 (tla-en, 2026-10-31): the action field's address
-// is built before the leader is fetched, where the native builds it inside the
-// first wait loop, and a few loads around it follow.
-// A scene in Yallam (message MsgHereLetMe on): actors
-// 9 and 10 run off, actor 5 walks to the controlled character, the party is
-// placed, Func_02001688 is scheduled and actor 8 is walked through three steps
-// (its action count reaching 34, 42 and 108, its phase 1, 2 and 3), then actor
-// 8 asks a yes-or-no question: yes runs Func_02001d14, no fades out and plays
-// cue 123. The first wait reads the action count through a pointer taken
-// before the leader is fetched (30 read from actor): it gives the action
-// field's address r6 as the native has it. Left: the native computes that
-// address inside the first wait loop (the GCSE hoist seen in overlay 698's
-// landing burst) and orders a few loads around it differently.
-// Tried 31 October: read from actor, the gcse dump shows PRE inserting the
-// address on the first loop's entry edge (PRE/HOIST: edge (2,3)), since the
-// later loops anticipate it on every path. A dead early return before the
-// first read (s32 check = 1; if (!check) return;, folded only after PRE)
-// leaves the address in the loop, built at its head, and the later loops
-// reuse it, as the native has them; but the in-loop pointer's loop-weighted
-// refs (8, the phase pointer's 7) rank it first in global, so it takes r5 and
-// the phase pointer r6, the native's swapped (30). Also 30: a dead test around
-// the read alone (the exit still anticipates it), the test at the loop head,
-// the count pointer set in the loop, and a copy p = actor at the loop head
-// (cse folds it). Permute 4 minutes on the dead-return form: 28, a block wrap.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -76,8 +52,7 @@ void FieldEvent_Wait();
 void Func_02002578();
 
 void Func_02001944(void) {
-  struct Actor *actor =
-      (struct Actor *)Value1(Actor_GetById, 8);
+  struct Actor *actor = (struct Actor *)Value1(Actor_GetById, 8);
   struct Actor *leader;
   Call1(Func_02002520, MsgHereLetMe);
   Call2(Func_02002538, 8, 0);
@@ -118,11 +93,11 @@ void Func_02001944(void) {
   Call2(Motion_SetModeAndWaitAnimation, 5, 3);
   Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
   Call2(Actor_SetModeById, 5, 2);
-  leader =
-      (struct Actor *)Value1(Actor_GetById, gMainRoutineWork.currentOwner);
-  if (leader != 0)
-    Call3(Actor_ResetAndSetPosition, 5, ((s16 *)&leader->x)[1],
-          ((s16 *)&leader->z)[1]);
+  leader = (struct Actor *)Value1(Actor_GetById, gMainRoutineWork.currentOwner);
+  if (leader != 0) {
+    Call3(Actor_ResetAndSetPosition, 5, ((s16 *)(&leader->x))[1],
+          ((s16 *)(&leader->z))[1]);
+  }
   Call1(Actor_WaitForMoveById, 5);
   Call3(Func_020024f8, 5, 0, 0);
   Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x19999,
@@ -146,35 +121,39 @@ void Func_02001944(void) {
   Call1(Func_02001904, gMainRoutineWork.currentOwner);
   {
     s32 priority = 0x480;
-
     Task_Add(Func_02001688, priority);
   }
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait1:
   {
-    s16 *count = &actor->action;
-
+    s16 *count;
     Call1(wait, 1);
-    if (*count != 34)
+    if ((*(&actor->action)) != 34) {
       goto wait1;
+    }
   }
+
   actor->unk66 = 2;
   Call1(wait, 1);
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait2:
   Call1(wait, 1);
-  if (actor->action != 42)
+
+  if (actor->action != 42) {
     goto wait2;
+  }
   actor->unk66 = 2;
   Call1(wait, 1);
   Call2(Func_02002538, 8, 0);
   actor->unk66 = 1;
 wait3:
   Call1(wait, 1);
-  if (actor->action != 108)
+
+  if (actor->action != 108) {
     goto wait3;
+  }
   actor->unk66 = 3;
   Call1(wait, 1);
   Call2(Func_02002538, 8, 0);
@@ -189,8 +168,8 @@ wait3:
   Call3(Actor_ArmCallback, 9, 0x8000, 0);
   Call2(Func_02002548, 11, 0x8000);
   Value2(FieldMessage_ShowAtActor, 8, 0);
-  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner, 0) ==
-      0) {
+  if (Value2(Event_AskYesNoWithActorAnimation, gMainRoutineWork.currentOwner,
+             0) == 0) {
     Func_02001d14();
   } else {
     Call3(Func_02002530, 8, 0, 20);

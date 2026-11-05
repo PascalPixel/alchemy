@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
 // Draft, differ 24 of 150, skeleton gap 10 (tla-en, 2026-11-01)
 // Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 // halfword pairs; flag + 1 set means the actor is parked at (0, 0), otherwise

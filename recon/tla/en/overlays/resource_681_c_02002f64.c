@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 1480 (tla-en); notes below may predate it.
 // Draft, differ 448 of 1972, skeleton gap 74/72 (tla-en, 2026-11-01)
 // Func_02002f64 is not a function: 0x02002f64 is a far `bl` inside Func_02002f30,
 // which opens with the 26 instructions ending section .text.x0200ad30. This file

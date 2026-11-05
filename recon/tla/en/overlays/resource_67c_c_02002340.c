@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 12 (tla-en); notes below may predate it.
 // Draft, differ 59 of 931, skeleton gap 7/6 (tla-en, 2026-11-01)
 // Aqua Rock's map preparation: for each room and entrance it sets the water
 // level, places the statues and boulders the flags have moved, opens or closes

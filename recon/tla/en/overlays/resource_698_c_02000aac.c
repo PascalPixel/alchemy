@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 128 (tla-en); notes below may predate it.
 // Draft of overlay 698's Func_02000aac, in 11 overlays of the 698 family:
 // differ 187 of 200. Queues the lit actors' sprites: for each of the
 // gData_02002202 actors in gData_02002204 with a position, projects it from

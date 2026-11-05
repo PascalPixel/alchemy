@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
 // Draft, differ 18 of 45: overlay 692's copy of the function drafted in
 // resource_691_c_02000668.c (overlay 691's Func_02000668, differ 18 there), whose
 // header says what it is, what still differs and what was tried.

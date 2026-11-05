@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 32 (tla-en); notes below may predate it.
 // Matches: differ 0 (tla-en, 2026-11-02). The non-Japanese body of
 // games/tla/src/scene/ankohl_ruins/s0418.c, adopted before this draft existed;
 // both devices below came with it. The leader lands and 17 dust effects spread

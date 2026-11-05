@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 131 (tla-en); notes below may predate it.
 // Draft, differ 172 of 496, skeleton gap 62 (tla-en, 2026-11-01)
 // Re-measured after the compiler change: the frame (92), the sp offsets and the
 // instruction shapes stand, and the arm statement orders below were refitted by

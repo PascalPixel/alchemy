@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 220 (tla-en); notes below may predate it.
 // Draft, differ 206 of 315, skeleton gap 54 (tla-en, 2026-11-01): control flow,
 // calls, the frame (88 bytes, same slots) and memory accesses follow the
 // listing; what is left comes from two things, both GCSE's. The listing

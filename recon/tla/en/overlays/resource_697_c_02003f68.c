@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 34 (tla-en); notes below may predate it.
 // Draft, differ 187 of 252, skeleton gap 29 (tla-en, 2026-11-01): 17 listing
 // instructions missing, 12 extra, no device left. Removed this round: attr set
 // twice (the inner loop is now labels and goto, which keeps tile + frame in the

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 204 (tla-en); notes below may predate it.
 // Draft, differ 126 of 556, skeleton gap 26 (tla-en, 2026-11-01)
 // The portrait mode task, ☀️'s Colosso_UpdateLettering
 // (scene/shared/colosso_task.h) with overlay 696's variables and the French

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 32 (tla-en); notes below may predate it.
 // Draft, differ 40 of 35: the hblank split of Func_02000e90's values. The
 // native rebuilds each register address for each store (0x04000014 twice,
 // 0x04000050 by subs from 0x04000052) and loads the zero for BLDCNT from the

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 41 (tla-en); notes below may predate it.
 // Draft, differ 62 of 174, skeleton gap 21 (tla-en, 2026-11-01)
 // The update Func_02003e54 hooks: the object's frame count (byte 0x63) cycles
 // its animation on odd frames; in state 0 (byte 0x62) every 16th frame starts

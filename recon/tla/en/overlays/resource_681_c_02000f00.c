@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 6 (tla-en); notes below may predate it.
 // Draft, differ 12 of 65: saves person 10 (a copy of the object, its mode, its
 // animation and its place) and stops it where it stands; person 9 halts too
 // when it runs one of its two walking scripts. Func_02000fac restores it.
@@ -41,7 +42,7 @@ void Func_02000f00(void) {
     s32 x = object->x;
     s32 z = object->z;
 
-    /* FAKEMATCH(one-pass): the empty block ends CSE's run here; without it, 8 of 65 instructions
+    /* FAKEMATCH(one-pass): the empty block ends CSE's run here; with no block, 8 of 65 instructions
      * differ in tla-en. */
     do {
     } while (0);

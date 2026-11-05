@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 37 (tla-en); notes below may predate it.
 // Draft, differ 51 of 57: blocks the three cells through an object's cell on
 // layers 0 and 2 (byte 2 set to 255): the column above and below it in mode
 // 0, the row beside it otherwise.

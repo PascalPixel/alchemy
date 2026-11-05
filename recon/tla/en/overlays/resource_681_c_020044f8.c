@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 310 (tla-en); notes below may predate it.
 // Draft, differ 350 of 418, skeleton gap 54 (tla-en, 2026-11-01): x, y, nx, the
 // border's registers and the walk's n, next and cell now agree with the native.
 // What is left is two things, step and tries, and where y << 3 is computed. The

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 92 (tla-en); notes below may predate it.
 // Draft, differ 106 of 241: opens the passages on each side of the hall by how
 // many of its two pairs of flags (0x9bc and 0x9bd, 0x9be and 0x9bf) are set:
 // both open the wide way, one a side way, and a single side opened alone also

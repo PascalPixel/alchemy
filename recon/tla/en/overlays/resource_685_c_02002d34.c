@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 6 (tla-en); notes below may predate it.
 // Draft of overlay 685's Func_02002d34, differ 24 of 78: Func_02002c88's twin for
 // resource 0x1f7 (which wants a ResourceId_Data1F7 name in
 // gamepak/resource_directory.s) and the second sprite, loading 0x800 bytes.

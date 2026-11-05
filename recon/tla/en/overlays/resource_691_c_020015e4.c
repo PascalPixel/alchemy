@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 78 (tla-en); notes below may predate it.
 // Draft, differ 78 of 153, skeleton gap 7 removed, 3 added (tla-en, 2026-11-01)
 //
 // An update hook: the object keeps a height set from the object it watches (at

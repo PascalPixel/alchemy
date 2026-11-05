@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 235 (tla-en); notes below may predate it.
 // Draft, differ 265 of 410, skeleton gap 67 (tla-en, 2026-11-01)
 // Likely the true row loop, measured 1 November after the compiler change:
 // for (row = 0; rows[row].level != 99; row++) { if (i >= rows[row].level) ... }

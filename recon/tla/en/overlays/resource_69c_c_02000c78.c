@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 50 (tla-en); notes below may predate it.
 // Draft, differ 75 of 126, skeleton gap 7 (tla-en, 2026-11-01)
 // Finds an object's footprint by its sprite's shape in a six-entry table and
 // copies the cells under it (Func_02002330), then fills byte 2 of those cells

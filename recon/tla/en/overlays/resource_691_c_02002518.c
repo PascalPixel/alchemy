@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
 // Draft, differ 26 of 112, skeleton gap 3 (tla-en, 2026-11-01)
 // Builds four parts around the watched object of an object whose update is
 // Func_020015e4, each copying the first part's sprite and position and taking

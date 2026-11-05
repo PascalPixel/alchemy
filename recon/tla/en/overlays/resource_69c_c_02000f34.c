@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 59 (tla-en); notes below may predate it.
 // Draft, differ 149 of 132, skeleton gap 11 (tla-en, 2026-11-01)
 // Finds the object the leader is pushing: among objects 8 to 63 whose sprite
 // shape is in the six-entry footprint table, the one whose footprint holds the

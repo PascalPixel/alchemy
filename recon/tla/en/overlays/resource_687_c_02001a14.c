@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 81 (tla-en); notes below may predate it.
 // Draft, differ 121 of 307, skeleton gap 35 (tla-en, 2026-11-01)
 // Left: (1) the second spawn loop's `add r1, sp, #16` is hoisted out of the
 // loop into r6, which shifts that loop's allocation and scheduling; the do and

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 80 (tla-en); notes below may predate it.
 // Draft, differ 121 of 120: Contigo's palette animation update: when its countdown
 // runs out (the next one a frame shorter each time, down to 2), it writes this
 // step's colours (RGB triples from Data_02006018) to their palette entries,

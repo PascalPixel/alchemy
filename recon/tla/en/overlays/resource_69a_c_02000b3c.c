@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 153 (tla-en); notes below may predate it.
 // Draft, differ 171 of 200, skeleton gap 23 (tla-en, 2026-11-01)
 // Overlay 69a's copy of the function drafted in resource_698_c_02000aac.c, whose
 // header says what it is. Skeleton gap is 20 removed, 23 added. Re-measured on

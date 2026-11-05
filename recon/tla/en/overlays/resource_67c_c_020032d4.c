@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 97 (tla-en); notes below may predate it.
 // Draft, differ 113 of 161, skeleton gap 39 (tla-en, 2026-11-01)
 // Adds a water spout on every map cell of the given layer whose spout kind lies
 // in [first, first + 8), at the given heights, and marks those cells as spout

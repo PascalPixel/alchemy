@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 555 (tla-en); notes below may predate it.
 // Draft, differ 475 of 497, skeleton gap 153 (tla-en, 2026-11-01)
 // Left: the two loops' entries, then allocation; 20 plain reshapes gained nothing
 // more after the marker masks (x &= 511; y &= 255 before the word, which took

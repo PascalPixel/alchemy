@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 35 (tla-en); notes below may predate it.
 // Draft, differ 82 of 83: the falling rocks' setup (Func_02002d44 spawns them):
 // loads ResourceId_FallingRock's tiles into heap slot 220 and resets the 64
 // sprites and timers. Left: the native counts in r8 and shares the -1 of the

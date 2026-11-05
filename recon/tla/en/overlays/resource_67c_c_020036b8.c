@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 45 (tla-en); notes below may predate it.
 // Draft, differ 168 of 193, skeleton gap 40 (tla-en, 2026-11-01)
 // Advances Aqua Rock's two water streams one cell along the map: each stream
 // follows the turn its cell's kind gives, leaves a splash on every open cell

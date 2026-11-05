@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 58 (tla-en); notes below may predate it.
 // Near miss, differ 173 of 442 (tla-en, 2026-10-31): control flow, calls and
 // data accesses are the native's; 66 of the differing lines are pool and branch
 // offsets, shifted because the draft is 3 instructions longer (445).

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 42 (tla-en); notes below may predate it.
 // Draft, differ 219 of 350, skeleton gap 87 (tla-en, 2026-11-01). Destined for
 // scene/sea_of_time. Control flow, calls, frame (the fill word at sp+98 above
 // the two effect options at sp+56 and sp+16) and data accesses follow the

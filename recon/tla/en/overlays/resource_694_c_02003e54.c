@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 29 (tla-en); notes below may predate it.
 // Draft, differ 86 of 112: sets up an object's four 16 by 16 sprites in work: loads
 // their tiles (gData_020042bc, 256 bytes) into a free VRAM entry, resets the
 // work's counters (999, 999, 0), links object and work both ways, hooks the

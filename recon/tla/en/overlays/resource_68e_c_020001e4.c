@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 119 (tla-en); notes below may predate it.
 // Draft, differ 144 of 286, skeleton gap 32 (tla-en, 2026-11-01)
 // The Lost Age's twin of The Broken Seal's TolbiSpring_RunSpringGame
 // (games/tbs/src/scene/tolbi_games.c): choose coin or medal, toss, award.

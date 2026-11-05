@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 51 (tla-en); notes below may predate it.
 // Near miss, differ 69 of 260 (tla-en, 2026-10-31): the control flow, calls,
 // fields and frame (68 bytes: config at sp+16, position at sp+56) are the
 // native's; what is left is allocation and scheduling. GCSE merges every

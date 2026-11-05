@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 259 (tla-en); notes below may predate it.
 // Draft, differ 170 of 410, skeleton gap 36 (tla-en, 2026-11-01)
 // Control flow, calls, arguments and fields are the native's; the frame is 24
 // bytes against its 20. This round took it from differ 230, gap 40:

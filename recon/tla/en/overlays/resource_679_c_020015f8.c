@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 31 (tla-en); notes below may predate it.
 // Draft, differ 133 of 189, skeleton gap 11 (tla-en, 2026-11-01)
 // Draws Func_020017f8's cell markers (gData_02002aa0's 128 records): copies the
 // eight marker pictures into their VRAM block, then for each live record on

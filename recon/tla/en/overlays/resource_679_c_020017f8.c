@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 84 (tla-en); notes below may predate it.
 // Draft, differ 108 of 159, skeleton gap 34 (tla-en, 2026-11-01)
 // Scans the visible part of layer 1's cell grid (view bounds minX to maxZ) for
 // cells whose collisionCode lies in [base, base + 4) and records each as a

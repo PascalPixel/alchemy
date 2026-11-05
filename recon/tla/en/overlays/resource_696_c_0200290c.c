@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 56 (tla-en); notes below may predate it.
 // Draft, differ 75 of 119, skeleton gap 10/7 (tla-en, 2026-11-01)
 // Near miss of Func_0200290c of overlay 696. Control flow, loads and scheduling
 // agree; what is left is one allocation. The native gives items r6, slot r5, the

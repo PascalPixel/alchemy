@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
 // Func_0200115c: differ 2 of 613. One pair is left: after the fourth
 // Func_0200343c the native shifts the scale (lsls r5) before it adds the object
 // to the flags offset (adds r2, r2, r7); here the add has five dependents and

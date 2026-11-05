@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 24 (tla-en); notes below may predate it.
 // Draft, differ 34 of 61: marks the layer 2 cells ahead of and behind each
 // object of a table that ends on 0xffff when its cell has attribute 0x40.
 // As a goto loop (as a for loop the loop pass keeps 0xffff in r10 and the

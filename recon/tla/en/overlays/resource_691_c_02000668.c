@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
 // Draft, differ 18 of 45, written with goto as the bytes rebuild 0xffff on
 // every pass: the native keeps the terrain byte address in r3 before it copies
 // it to r8, finishes the height (asrs r5) after the two position loads, and

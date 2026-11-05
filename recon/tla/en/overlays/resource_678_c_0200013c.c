@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 57 (tla-en); notes below may predate it.
 // Draft, differ 46 of 196, skeleton gap 36 (tla-en, 2026-11-01): when actor `id`
 // stands at x 12, inside an event: the actor drops in place, then for 25 frame
 // steps of three frames charges up (its sprite's byte 0x11) and every fourth

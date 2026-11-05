@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 12 (tla-en); notes below may predate it.
 // Draft, differ 83 of 83: the falling rocks' start, overlay 692's copy of overlay 6a8's falling
 // rocks (resource_6a8_c_02004114.c, whose header says what differs there and
 // why the loops are goto loops).

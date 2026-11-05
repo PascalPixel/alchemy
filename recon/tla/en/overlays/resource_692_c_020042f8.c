@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 52 (tla-en); notes below may predate it.
 // Draft, differ 68 of 150, skeleton gap 18 (tla-en, 2026-11-01)
 // The trap table's setup for maps with objects 8 to 10 (shared with overlay 697
 // and the other trap maps): those three are placed and put away first; then

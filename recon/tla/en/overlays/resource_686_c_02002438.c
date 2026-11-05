@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 118 (tla-en); notes below may predate it.
 // Draft, differ 139 of 989: translated from its listing, with the rooms
 // compared as their linker ids (SceneId_Ov686Room1 to 8, loaded from the pool
 // as the native does); names and structure still to do. Left: the native saves

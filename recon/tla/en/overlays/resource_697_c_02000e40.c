@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
 // Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 #include "vector3.h"

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 42 (tla-en); notes below may predate it.
 // Draft, differ 42: the listing keeps height in r4 and reuses r0 for the entry,
 // no r5/r6 saved.
 #include "../../../../games/tla/src/scene/aqua_rock_inside/local.h"

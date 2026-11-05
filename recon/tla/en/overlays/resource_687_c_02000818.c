@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 136 (tla-en); notes below may predate it.
 // Draft, differ 197 of 280, skeleton gap 21 (tla-en, 2026-11-01): control flow,
 // calls, fields and constants are the native's; what remains is allocation.
 // Re-measured with the 1 November compiler: unchanged, so none of it was

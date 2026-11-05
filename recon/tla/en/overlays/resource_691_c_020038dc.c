@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 25 (tla-en); notes below may predate it.
 // Draft, differ 68 of 83, skeleton gap 9 (tla-en, 2026-11-01)
 // The falling rocks' setup, overlay 691's copy of overlay 668's Func_02004004
 // (also 68f, 692, 6a8, 6b9 with their own helpers): loads

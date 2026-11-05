@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 15 (tla-en); notes below may predate it.
 // Draft, differ 35 of 50: the native takes both scene state addresses before
 // the flag test, reloads the table each pass beside an i * 4 index and a
 // reduced second offset, and sign-extends the mode inside the loop; this draft

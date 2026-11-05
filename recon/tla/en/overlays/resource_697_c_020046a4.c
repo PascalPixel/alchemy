@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 56 (tla-en); notes below may predate it.
 // Draft, differ 58 of 150, skeleton gap 32 (tla-en, 2026-11-01): overlay 697's
 // copy of the trap table's setup, as in resource_692_c_020042f8.c (overlay 692's
 // Func_020042f8). The write of 3 is at offset 92, unk5c[0], not movementState.

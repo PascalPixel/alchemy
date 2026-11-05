@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 50 (tla-en); notes below may predate it.
 // Draft, differ 50 of 40 listed (15 common), registers: the native copies the
 // object to r5 on entry though it calls nothing, keeps the map in r0 and adds
 // the cells offset to it at once (adds r0, r0, r3), and reads z, y and x

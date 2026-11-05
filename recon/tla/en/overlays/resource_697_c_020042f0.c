@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 4 (tla-en); notes below may predate it.
 // Draft, differ 31 of 130, skeleton gap 7 (tla-en, 2026-11-01): overlay 697's copy
 // of the trap table's setup, resource_692_c_02003f44.c's twin. A trap whose second
 // flag is set is put away; any other marks its cell (attribute byte 128), writes a

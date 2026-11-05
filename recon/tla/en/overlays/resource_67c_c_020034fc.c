@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 82 (tla-en); notes below may predate it.
 // Draft, differ 95 of 137, skeleton gap 35 (tla-en, 2026-11-01)
 // Draws Aqua Rock's thirty-two splashes: each active one as a sprite jittered a
 // few pixels at random about its spot, with a random frame, queued by depth.

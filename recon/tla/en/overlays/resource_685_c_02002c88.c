@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
 // Draft, differ 24 of 78: loads the glow disc picture (resource 0x1d9, which
 // would need a ResourceId_GlowDisc name in gamepak/resource_directory.s) into
 // the work in heap slot 55, moves every tile byte with the high nibble 0xf to

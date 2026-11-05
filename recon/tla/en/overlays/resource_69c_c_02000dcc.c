@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 138 (tla-en); notes below may predate it.
 // Draft, differ 208 of 171, skeleton gap 36 (tla-en, 2026-11-01)
 // How far a pushed object slides: from the object Func_02000f34 finds, steps
 // its footprint one step at a time in the push direction until a cell of it

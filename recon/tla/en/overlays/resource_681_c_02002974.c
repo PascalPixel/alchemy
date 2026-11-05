@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 51 (tla-en); notes below may predate it.
 // Draft, differ 88 of 75: records which of eleven listed cells persons 10 and
 // 11 stand on, as the two halves of the byte flag 0x210. Translated from its
 // listing; names and structure still to do.

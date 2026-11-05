@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
 // Draft, differ 26 of 66: points the map work's focus (0x178) at cell (x, z):
 // its position in 16.16 pixels, the cell's halfword coordinates, its
 // pointers into gMapCellBuffer and gMapShapeGrid (cells two to a step), unit

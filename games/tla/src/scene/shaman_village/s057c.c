@@ -176,7 +176,7 @@ swirl:
 
     REG_BG2CNT = control;
   }
-  /* FAKEMATCH(one-pass): the empty block ends CSE's run here; without it, 2 of
+  /* FAKEMATCH(one-pass): the empty block ends CSE's run here; with no block, 2 of
    * 720 instructions differ in tla-en. */
   do {
   } while (0);

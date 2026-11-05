@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 69 (tla-en); notes below may predate it.
 // Draft, differ 67 of 130, skeleton gap 13 (tla-en, 2026-11-01): on entering,
 // sets each listed pillar from its two flags (pushed: moved to its place; else
 // its cell raised and its shape redrawn), then lifts the leader onto the ground

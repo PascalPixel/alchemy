@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 60 (tla-en); notes below may predate it.
 // Draft, differ 60 of 150, skeleton gap 15 (tla-en, 2026-11-01)
 // Control flow, calls and data access are right; the gap is one allocation.
 // The native spills the cell pointer (cells + index, sp+4; an unused slot at

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 58 (tla-en); notes below may predate it.
 // Draft, differ 104 of 281: Magma Rock's handler after an object is pushed (the
 // object at event work 0xcbc): in rooms 6 and 7, off the ground it drops onto
 // layer 2 (with flag 770, or always in room 7, it sinks under a blended copy

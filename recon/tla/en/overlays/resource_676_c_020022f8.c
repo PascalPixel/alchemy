@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 4 (tla-en); notes below may predate it.
 // Near miss (26 instructions differ, one register swap): the native keeps
 // the object in r6 and the step in r7, the draft the other way round.
 // Tried: loops counting up, the step as i * 40, declaring the counters

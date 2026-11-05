@@ -28,7 +28,7 @@ SECTIONS
         "*/games/tla/src/scene/trial_road/events_m.o"(.text)
         "*/games/tla/src/scene/trial_road/s0cf8.o"(.text)
         "*/games/tla/src/scene/trial_road/s0d70.o"(.text)
-        "*/resource_697_overlay.o"(.text.x02008e40)
+        "*/games/tla/src/scene/trial_road/s0e40.o"(.text)
         "*/games/tla/src/scene/trial_road/events_j.o"(.text)
         "*/games/tla/src/scene/trial_road/events_n.o"(.text)
         "*/games/tla/src/scene/trial_road/events_o.o"(.text)

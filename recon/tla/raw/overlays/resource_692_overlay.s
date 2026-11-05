@@ -6,58 +6,6 @@
 	.2byte 0x0000
 	.section .text.x0200815a,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x02008880,"ax",%progbits
-	.global Func_02000880
-	.thumb_func
-Func_02000880:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r7, r0, #0
-	b .L_020088d0
-.L_0200888a:
-	ldrh r0, [r7]
-	bl Actor_GetById
-	movs r3, #34
-	adds r6, r0, #0
-	adds r3, r3, r6
-	ldrb r0, [r3]
-	ldr r1, [r6, #8]
-	ldr r2, [r6, #16]
-	mov r8, r3
-	bl Map_GetTerrainHeight
-	adds r2, r6, #0
-	movs r3, #0
-	adds r2, #85
-	strb r3, [r2]
-	adds r2, #4
-	strb r3, [r2]
-	adds r5, r0, #0
-	movs r1, #0
-	adds r0, r6, #0
-	bl Actor_SetSingleChildFlags
-	mov r2, r8
-	ldrb r0, [r2]
-	ldr r1, [r6, #8]
-	ldr r2, [r6, #16]
-	asrs r5, r5, #19
-	adds r5, #4
-	asrs r2, r2, #20
-	adds r3, r5, #0
-	asrs r1, r1, #20
-	adds r7, #6
-	bl Func_020005dc
-.L_020088d0:
-	movs r2, #255
-	ldrh r3, [r7]
-	lsls r2, r2, #8
-	adds r2, #255
-	cmp r3, r2
-	bne .L_0200888a
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x02008ed0,"ax",%progbits
 	.balign 4
 	.global Func_02000ed0

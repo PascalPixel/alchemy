@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/contigo/s0038.o"(.text)
         "*/games/tla/src/scene/contigo/stop.o"(.text)
         "*/resource_694_overlay.o"(.text.x020081d4)
-        "*/resource_694_overlay.o"(.text.x020081f8)
+        "*/games/tla/src/scene/contigo/s01f8.o"(.text)
         "*/games/tla/src/scene/contigo/s0328.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/resource_694_overlay.o"(.text.x020083f6)

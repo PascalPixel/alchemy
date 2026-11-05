@@ -1,8 +1,3 @@
-// Draft, differ 2 of 92 (tla-en, 2026-11-05). Pushes the object in the cell east of
-// the leader one cell further, copying the cells it leaves and enters, and sets flag
-// 0x8d9 when it stops at (16, 36). Actor_FindInCell takes the leader as its second
-// argument, which settles the first block. Left: the first Func_020005cc's ldrb r0
-// comes after the shifts in the native, before them here.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -32,8 +27,15 @@ void Func_02001e08(void) {
   object = Actor_FindInCell(cell, leader);
   Func_0200074c(object);
   terrainId = &object->terrainId;
-  Func_020005cc(*terrainId, object->x >> 20, object->z >> 20,
-                object->terrainHeight >> 19);
+  {
+    /* FAKEMATCH(temporary): the three values held in locals; as call arguments,
+     * 2 of 92 instructions differ in tla-en. */
+    s32 x = object->x >> 20;
+    s32 z = object->z >> 20;
+    s32 height = object->terrainHeight >> 19;
+
+    Func_020005cc(*terrainId, x, z, height);
+  }
   Call6((void (*)())Func_02003aa4, 79, 46, 2, 1, 79, 36);
   Func_020003b4();
   *terrainId = 0;

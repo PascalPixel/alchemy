@@ -864,12 +864,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
       }
       HeapSlot_Release(SLOT_ALT);
-      {
-        s32 size = SCENE->radiusPixels * 2;
-
-        Func_0815b434(work->sheet, size, 0x10000);
-        Func_0818caa8(work->sheet, SCENE->xPixels, SCENE->yPixels, size);
-      }
+      Func_0815b434(work->sheet, SCENE->radiusPixels * 2, 0x10000);
+      Func_0818caa8(work->sheet, SCENE->xPixels, SCENE->yPixels, SCENE->radiusPixels * 2);
       if (frame == 175) {
         REG_BG2CNT = 0x785;
         Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);

@@ -78,15 +78,11 @@ typedef struct Sprite {
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u8 unk0a[6];
-  union {
-    struct {
-      u8 vram;
-      u8 unk11;
-      u16 rotation;
-    };
-    s32 word10;
-  };
+  u8 unk0a[2];
+  s32 scale;
+  u8 vram;
+  u8 unk11;
+  u16 rotation;
   u8 unk14[2];
   u8 unk16;
   u8 unk17;
@@ -427,7 +423,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         waveScroll -= 0x200000;
       }
       for (j = 0; j != 2; j++) {
-        row = j * 9;
         for (i = 0; i != 9; i++) {
           Sprite *obj;
           s32 v;
@@ -442,9 +437,10 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
             posp->z = h << 16;
           }
           if (i == 8) {
-            obj = work->sprites[row + 8];
-            v = work->particles[row + (wavePhase + 71) % 8].timer;
+            obj = work->sprites[j * 9 + 8];
+            v = work->particles[j * 9 + (wavePhase + 71) % 8].timer;
           } else {
+            row = j * 9;
             k = row; k += i;
             obj = work->sprites[k];
             v = work->particles[row + (wavePhase + 64 + i) % 8].timer;
@@ -1060,7 +1056,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     Sprite **slot;
 
     for (j = 0; j != 2; j++) {
-      row = j * 9;
       for (i = 0; i != 9; i++) {
         Sprite *obj;
         s32 v;
@@ -1070,8 +1065,9 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         wave->z = (((j << 5) - Data_081994f0[work->shake]) << 16) + shipY +
                   0x840000;
         if (i == 8) {
-          work->sprites[row + i]->tile = work->particles[row + (wavePhase + 71) % 8].timer & 0x3ff;
+          work->sprites[j * 9 + i]->tile = work->particles[j * 9 + (wavePhase + 71) % 8].timer & 0x3ff;
         } else {
+          row = j * 9;
           k = row; k += i;
           work->sprites[k]->tile = work->particles[row + (wavePhase + 64 + i) % 8].timer & 0x3ff;
         }

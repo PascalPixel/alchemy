@@ -1,4 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 104 (tla-en); notes below may predate it.
+// Draft, differ 136 of 918 (tla-en, 5 November 2026), under -Os, no pin: the registers are the native's; what differs is reload scratch from the next = index + 1 on (r2 and r3 in the native, r1 and r2 here). Notes below predate -Os.
 // Draft, differ 160 of 918, skeleton gap 22 (tla-en, 2026-11-01)
 // The twin of ☀️'s TolbiSpring_UpdateTossSimulation, keeping its toss pointer.
 // What closes it: the ride sits in r7 once deltaX, deltaZ and speed stop
@@ -91,9 +91,8 @@ void Func_02000904(void) {
   s32 *trail0;
   s32 deltaX;
   s32 deltaZ;
-  register s32 speed asm("r10");
+  s32 speed;
   s32 *trail4;
-  s32 *result;
   s32 position;
   // Unused: gives the stack frame its 12 bytes.
   struct SpringPoint spare;
@@ -165,17 +164,16 @@ void Func_02000904(void) {
             s32 distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
 
             gData_02001824 = 1;
-            result = &gData_02001828;
             if (distanceSquared <= 224) {
-              *result = 0;
+              gData_02001828 = 0;
             } else if (distanceSquared <= 624) {
-              *result = 1;
+              gData_02001828 = 1;
             } else if (distanceSquared <= 1088) {
-              *result = 2;
+              gData_02001828 = 2;
             } else if (distanceSquared <= 1680) {
-              *result = 3;
+              gData_02001828 = 3;
             } else {
-              *result = 4;
+              gData_02001828 = 4;
             }
           }
         }

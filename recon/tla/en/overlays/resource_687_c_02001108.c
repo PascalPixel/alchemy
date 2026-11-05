@@ -1,5 +1,6 @@
-// Measured under -Os, 5 November 2026: differ 42 (tla-en); notes below may predate it.
-// Draft, differ 219 of 350, skeleton gap 87 (tla-en, 2026-11-01). Destined for
+// Draft, differ 16 of 350 (tla-en, 2026-11-05). Older notes below may predate this figure.
+// Left: the fade loop's palette and table swap r4 and r3 on their way to r10 and
+// r11; one add's and one shift's place in the schedule.
 // scene/sea_of_time. Control flow, calls, frame (the fill word at sp+98 above
 // the two effect options at sp+56 and sp+16) and data accesses follow the
 // listing. Nearly all of what is left comes from one cause: the listing shows
@@ -88,8 +89,7 @@ void Func_02001108(void) {
 fade:
     wait(10);
     changed = 0;
-    palette = &BG_PLTT_COLOR(3, 1);
-    for (i = 1; i != 15; i++, palette++) {
+    for (i = 1, palette = &BG_PLTT_COLOR(3, 1); i != 15; i++, palette++) {
       u16 color = *palette;
       u16 target = gData_020026c0[i - 1];
       u16 r = color & 31;
@@ -146,8 +146,8 @@ sparks:
     goto next;
   {
     s32 x = Random16Far();
-    s32 z = Random16Far();
     s32 mask = 31;
+    s32 z = Random16Far();
 
     burst.kind = 7;
     Func_0200015c(((x & mask) << 16) + 0x1500000, 0,
@@ -165,8 +165,8 @@ next:
   while (i != 16) {
   {
     s32 x = Random16Far();
-    s32 z = Random16Far();
     s32 mask = 31;
+    s32 z = Random16Far();
 
     rain.scaleX = 0x18000;
     rain.scaleY = 0x18000;

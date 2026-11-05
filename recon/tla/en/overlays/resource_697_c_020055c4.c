@@ -1,5 +1,5 @@
-// Draft, differ 16 of 81 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 16 (tla-en); notes below may predate it.
+// Draft, differ 6 of 81 (tla-en, 2026-11-05). Older notes below may predate this figure.
+// Left: the address of the owner's field is built through r2 in the native, r0 here.
 // Draft, differ 16 of 81, skeleton gap 6 (tla-en, 2026-11-01)
 // Starts an effect between objects a and b: allocates its work in heap slot 236,
 // sets its two ids and a height (0xa00000 when a is the leader, else 0x700000),
@@ -57,6 +57,7 @@ void Func_020055c4(s32 a, s32 b) {
   struct TrialRoadLink *link = HeapSlot_AllocEwram(236, 0x3934);
   void *buffer = Heap_AllocEwram(576);
   s32 zero;
+  s32 owner;
   u16 *unkda;
   u16 *unke0;
   s32 *height;
@@ -67,10 +68,11 @@ void Func_020055c4(s32 a, s32 b) {
   link->b = b;
   height = &link->height;
   unkf0 = &link->unkf0;
-  unke0 = &link->unke0;
+  owner = gMainRoutineWork.currentOwner;
   unkda = &link->unkda;
+  unke0 = &link->unke0;
   vramEntry = &link->vramEntry;
-  if (a == gMainRoutineWork.currentOwner) {
+  if (a == owner) {
     *height = 0xa00000;
     *unkf0 = 0xf9a00000;
   } else {

@@ -1,15 +1,5 @@
-// Measured under -Os, 5 November 2026: differ 70 (tla-en); notes below may predate it.
-// Draft, differ 88 of 213: the Trial Road movers' update (Func_02004224 sets
-// them up): for each of the 16 slots with a placed object, its phase counts up
-// to its period (unless flag 260 is set); at the up phase it rises 4 a frame
-// (sound 206), at the down phase it sinks 8 a frame (sound 395), stopping at
-// its high and low marks; its cell takes the mover's shape and a collision
-// height from the object's height plus its offset, is marked moving or
-// raised, and its marker object follows it, bobbing while raised. The collision
-// pointer is taken first, as the native reads the shape before the map. Left:
-// the phase is read as a halfword for its increment at both compares, the cell
-// flags are written once after a join and read back from the register where the
-// native reads them again, and register choice from there on.
+// Draft, differ 22 of 213 (tla-en, 2026-11-05). Older notes below may predate this figure.
+// Left: the first block's order: the native has the work address in r9 ahead of the shape's read and reloads it for that read.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 #include "iwram_call.h"
 
@@ -42,11 +32,12 @@ s32 Math_Sine(s32 angle);
 void Func_02003da0(void) {
   struct TrialRoadMovers *work =
       (struct TrialRoadMovers *)(gData_020023c4 + 0x188);
-  s32 *collision = &gMapCollision[work->shape];
+  struct TrialRoadMover *mover = work->movers;
   struct TrialRoadMapWork *map = Ram_HeapSlots->mapWork;
+  s32 shape = work->shape;
   u8 *shapes = *(u8 **)((u8 *)map + 316);
   u8 *cells = map->layers[0].cells;
-  struct TrialRoadMover *mover = work->movers;
+  s32 *collision = &gMapCollision[shape];
   struct Actor *object;
   struct Actor *marker;
   s32 cell;
@@ -87,17 +78,27 @@ void Func_02003da0(void) {
     shapes[cell] = (u8)work->shape + i;
     *collision = ((((s16 *)&object->y)[1] + mover->offset) / 8) << 8;
     attributes = cells + cell * 4;
-    attributes[3] = mover->speed != 0 ? 0 : attributes[3] | 128;
-    if (mover->offset != 0)
-      attributes[3] |= 16;
+    if (mover->speed != 0)
+      attributes[3] = 0;
+    else {
+      s32 bits = 128;
+      bits |= attributes[3];
+      attributes[3] = bits;
+    }
+    if (mover->offset != 0) {
+      s32 bits = 16;
+      bits |= attributes[3];
+      attributes[3] = bits;
+    }
     marker = mover->marker;
     if (marker != 0) {
       if (mover->offset == 0) {
         marker->y = object->y - 0x100000;
       } else {
+        s32 wave;
         mover->bob += 0x1000;
-        marker->y = object->y + (mover->offset << 16) +
-                    Iwram_MulQ16(0x20000, Math_Sine(mover->bob)) - 0xe0000;
+        wave = Iwram_MulQ16(0x20000, Math_Sine(mover->bob)) - 0xe0000;
+        marker->y = object->y + (mover->offset << 16) + wave;
       }
       marker->x = object->x;
       marker->z = object->z;

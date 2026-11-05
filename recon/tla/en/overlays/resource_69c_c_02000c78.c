@@ -1,4 +1,4 @@
-// Draft, differ 40: overlay 69c's copy of the function drafted in
+// Draft, differ 22 of 126 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // resource_6ad_c_02004938.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
@@ -43,8 +43,8 @@ s32 Func_02000c78(s32 id) {
   width = (ABS(gData_02002484[j][0]) + ABS(gData_02002484[j][2])) >> 4;
   height = (ABS(gData_02002484[j][1]) + ABS(gData_02002484[j][3])) >> 4;
   x = (object->x + (gData_02002484[j][0] << 16)) >> 20;
-  z = (object->z + (gData_02002484[j][1] << 16)) >> 20;
   mapX = *(s32 *)(map + 328) >> 20;
+  z = (object->z + (gData_02002484[j][1] << 16)) >> 20;
   mapZ = *(s32 *)(map + 332) >> 20;
   toX = x + (u16)mapX;
   toZ = z + (u16)mapZ;

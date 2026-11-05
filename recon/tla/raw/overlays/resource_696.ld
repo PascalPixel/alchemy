@@ -26,7 +26,7 @@ SECTIONS
         "*/games/tla/src/scene/shaman_village/s2068.o"(.text)
         "*/games/tla/src/scene/shaman_village/s279c.o"(.text)
         "*/resource_696_overlay.o"(.text.x0200a90c)
-        "*/resource_696_overlay.o"(.text.x0200aa20)
+        "*/games/tla/src/scene/shaman_village/s2a20.o"(.text)
         "*/games/tla/src/scene/shaman_village/s2f20.o"(.text)
         "*/games/tla/src/scene/shaman_village/lettering.o"(.text)
         "*/games/tla/src/scene/shaman_village/s3040.o"(.text)

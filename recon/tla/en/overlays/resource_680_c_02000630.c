@@ -1,8 +1,6 @@
-// Draft, differ 26 of 32, registers only: the shape agrees instruction for
-// instruction, but the native keeps the work in r2 and the index in r0, copied
-// from the cleared slot pointer (movs r4, #0; adds r0, r4, #0); this form keeps
-// the work in r0 and clears the index in r1 by itself. Starting the index from
-// the slot pointer measures the same.
+// Draft, differ 2 of 32 (tla-en, 2026-11-05). Left: the native copies the index's
+// zero from the slot pointer's (adds r0, r4, #0), here movs r0, #0; starting the
+// index from the slot pointer or a shared zero local measures the same.
 #include "types.h"
 #include "ram_buffer.h"
 

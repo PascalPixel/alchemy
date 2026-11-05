@@ -1,4 +1,16 @@
-// Draft, differ 474 of 497 (tla-en, 5 November 2026), under -Os with plain loops and no goto.
+// Draft, differ 264 of 497 (tla-en, 5 November 2026), under -Os, with one untagged pin.
+// Everything before the markers now has the native's registers and frame: *cursor++ and
+// entry++ are bivs (loop.c gives the reduced pointer r4), x and y scoped as here, a
+// temporary for y + 32 so local-alloc's order gives 0xe400 r5, x << 16 r6, 0 r8.
+// Left: 1. the two arms of each marker are one tail in the native, and here stay two
+// identical runs (102 instructions): flow puts a (use 0) after a call that ends the
+// fall-through arm, so find_cross_jump's first pair never matches; no form tried lifts
+// it (if/else, switch, dead stores, noop moves). A switch stops the hoisting of the
+// arms' common addresses, which the native has.
+// 2. the marker's x wants r9 with its tie to x & 511 kept (`mov r0, r9; ands r0, r3`),
+// but its own rank (8 refs over 52) beats the object's and takes r5; the pin here
+// gives r9 and the wrong tie. 3. The do blocks stop CSE giving the side test's 0 to
+// the first word's store in the else arm; they may be the source's macro.
 // The Trial Road link display's scheduled callback (Func_020055c4 starts it):
 // its fade state falls during events or with flag 262 and otherwise rises to
 // 2 (unke0 holds it at 2); rising from 0 to 1 it loads the palette and picture
@@ -7,13 +19,6 @@
 // in 6 pixels per fade step (the right row mirrored), and on frames 5 to 15 of
 // every 16 a marker over each of the two watched objects, projected at 1/16
 // scale from their positions and the course side.
-// Left: allocation. The native has work r11, x r9, y r7, 0xe400 r5, the shifted x r6
-// and the row's pointer in r4 saved around calls; here that pointer outranks y for a
-// saved register. The fade steps read twice in the native (ldrsh for the test, ldrh for
-// the step, each in its own arm), where here gcse hoists one read over both arms. Marker
-// arms: tile + 10, entry + 1 and cursor + 1 sit before the side test in the native, the
-// mark of whole arms hoisted and cross-jumped; written whole here they allocate apart
-// and stay 589 instructions, so each marker keeps one tail for now.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 #include "frame.h"
 #include "dma.h"
@@ -48,25 +53,24 @@ void Func_02005790(void *entry, s32 priority);
 s32 Func_02002ce8(s32 side);
 
 void Func_020051a0(void) {
-  struct TrialRoadLinkWork *base = Ram_HeapSlots->unkec[0];
-  u32 *cursor = base->oam;
-  struct TrialRoadSprite *entry = (struct TrialRoadSprite *)base->oam;
-  struct TrialRoadLinkWork *work = base;
+  struct TrialRoadLinkWork *work = Ram_HeapSlots->unkec[0];
+  u32 *cursor = (u32 *)work;
+  struct TrialRoadSprite *entry = (struct TrialRoadSprite *)work;
   s16 *vramEntry = &work->vramEntry;
+  u32 row, i;
   s32 tile = gResourceTableEntries[*vramEntry].offset >> 5;
+  u32 flip, word;
+  s32 y;
   u8 *event = Ram_HeapSlots->eventWork;
-  s16 *fade = &work->fade;
-  u32 row;
-  s16 *scrollY;
   struct Actor *object;
 
   if (work->unke0 != 0) {
     work->fade = 2;
   } else if (GameFlag_Test(262) || *(s16 *)(event + 358) != 0) {
-    if (*fade > 0)
-      --*fade;
-  } else if (*fade <= 1) {
-    if (++*fade == 1) {
+    if (work->fade > 0)
+      work->fade--;
+  } else if (work->fade <= 1) {
+    if (++work->fade == 1) {
       void *buffer;
       Dma_Set(Data_020062b4, (void *)0x050003c0, 0x80000010, REG_DMA3);
       buffer = Heap_AllocEwram(576);
@@ -75,16 +79,13 @@ void Func_020051a0(void) {
       Heap_Release(buffer);
     }
   }
-  if (base->fade == 0) {
-    VramCache_ReleaseVram(base->vramEntry);
+  if (((struct TrialRoadLinkWork *)cursor)->fade == 0) {
+    VramCache_ReleaseVram(((struct TrialRoadLinkWork *)cursor)->vramEntry);
     return;
   }
   for (row = 0; row < 2; row++) {
-    s32 x, y;
-    u32 flip, i;
-    u32 *pair;
-    scrollY = &work->scrollY;
-    y = (*scrollY + 8) & 255;
+    s32 x;
+    y = (work->scrollY + 8) & 255;
     if (row == 0) {
       x = work->fade * 6 + work->scrollX - 12;
       x &= 511;
@@ -94,21 +95,16 @@ void Func_020051a0(void) {
       x &= 511;
       flip = 0x10000000;
     }
-    pair = cursor;
     for (i = 0; i < 4 && y < 160; i++) {
-      struct TrialRoadSprite *second;
-      pair[0] = 0;
-      pair[1] = y | (x << 16) | flip | 0x80008000;
-      pair[2] = tile | 0xe400;
-      second = entry + 1;
-      Func_02005790(entry, 255);
-      pair[3] = 0;
-      pair[4] = (y + 32) | (x << 16) | flip | 0x4000;
-      pair[5] = (tile + 8) | 0xe400;
-      pair += 6;
-      cursor += 6;
-      entry += 2;
-      Func_02005790(second, 255);
+      *cursor++ = 0;
+      *cursor++ = y | (x << 16) | flip | 0x80008000;
+      *cursor++ = tile | 0xe400;
+      Func_02005790(entry++, 255);
+      word = y + 32;
+      *cursor++ = 0;
+      *cursor++ = word | (x << 16) | flip | 0x4000;
+      *cursor++ = (tile + 8) | 0xe400;
+      Func_02005790(entry++, 255);
       y += 36;
     }
   }
@@ -116,48 +112,91 @@ void Func_020051a0(void) {
     return;
   object = ObjectTable_Get(work->a);
   if (object != NULL) {
-    s32 x, y, lift;
-    if (gMainRoutineWork.entrance & 1) {
+    s32 lift;
+    register s32 x asm("r9");
+    s32 side = gMainRoutineWork.entrance & 1;
+    if (side) {
       x = (object->x - work->originX) / PIXELS(16) + work->fade * 6 +
           work->scrollX - 19;
       lift = Func_02002ce8(0);
+      y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;
+      do {
+      s32 px = x & 511;
+      y &= 255;
+      px &= 511;
+      y &= 255;
+      y |= px << 16;
+      y |= 0x40000000;
+      *cursor++ = 0;
+      *cursor++ = y;
+      *cursor++ = (tile + 10) | 0xe400;
+      Func_02005790(entry++, 255);
+      } while (0);
     } else {
       x = (object->x - work->originX) / PIXELS(16) - work->fade * 6 -
           work->scrollX + 232;
       lift = Func_02002ce8(0);
+      y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;
+      do {
+      s32 px = x & 511;
+      y &= 255;
+      px &= 511;
+      y &= 255;
+      y |= px << 16;
+      y |= 0x40000000;
+      *cursor++ = 0;
+      *cursor++ = y;
+      *cursor++ = (tile + 10) | 0xe400;
+      Func_02005790(entry++, 255);
+      } while (0);
     }
-    y = (object->z - work->originZ) / PIXELS(16) + *scrollY - lift * 36 + 4;
-    x &= 511;
-    y &= 255;
-    *cursor++ = 0;
-    *cursor++ = y | (x << 16) | 0x40000000;
-    *cursor++ = (tile + 10) | 0xe400;
-    Func_02005790(entry++, 255);
   }
   object = ObjectTable_Get(work->b);
   if (object == NULL || object->x == 0)
     return;
-  // XXX: this side's offset adds scrollX where the first marker's subtracts
-  // it; the native does so, and a render of the course's far side would show
-  // whether it is a slip.
   {
-    s32 x, y, lift;
-    if (gMainRoutineWork.entrance & 1) {
+    s32 lift;
+    // XXX: this side's offset adds scrollX where the first marker's subtracts
+    // it; the native does so, and a render of the course's far side would show
+    // whether it is a slip.
+    register s32 x asm("r9");
+    s32 side = gMainRoutineWork.entrance & 1;
+    if (side) {
       x = (object->x - work->originX) / PIXELS(16) + work->fade * 6 +
           work->scrollX + 189;
       lift = Func_02002ce8(1);
+      y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 +
+          4;
+      do {
+      s32 px = x & 511;
+      y &= 255;
+      px &= 511;
+      y &= 255;
+      y |= px << 16;
+      y |= 0x40000000;
+      *cursor++ = 0;
+      *cursor++ = y;
+      *cursor++ = (tile + 14) | 0xe400;
+      Func_02005790(entry, 255);
+      } while (0);
     } else {
       x = (object->x - work->originX) / PIXELS(16) - work->fade * 6 +
           work->scrollX + 23;
       lift = Func_02002ce8(1);
+      y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 +
+          4;
+      do {
+      s32 px = x & 511;
+      y &= 255;
+      px &= 511;
+      y &= 255;
+      y |= px << 16;
+      y |= 0x40000000;
+      *cursor++ = 0;
+      *cursor++ = y;
+      *cursor++ = (tile + 14) | 0xe400;
+      Func_02005790(entry, 255);
+      } while (0);
     }
-    y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 +
-        4;
-    x &= 511;
-    y &= 255;
-    *cursor++ = 0;
-    *cursor++ = y | (x << 16) | 0x40000000;
-    *cursor++ = (tile + 14) | 0xe400;
-    Func_02005790(entry, 255);
   }
 }

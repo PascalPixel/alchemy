@@ -1,11 +1,6 @@
-// Under -Os, 5 November: differ 23 of 133 (tla-en); older figures below predate it.
-// Draft, differ 38 of 133: sets flag 0x208 or 0x209 while the leader
-// stands on a lift's cell (27, 12 or 37, 14), and 0x17d while on either.
-// Left: register choice only (r5 and r6, r8 and r10 swapped).
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 
 void Func_02001b50(void) {
-  struct Actor *lift;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = leader->x;
   s32 cellX = x >> 20;
@@ -20,7 +15,7 @@ void Func_02001b50(void) {
   if ((u32)(z - 0xb40000) > 0x640000)
     return;
   if (cellX == 27 && cellZ == 12) {
-    lift = Actor_GetById(13);
+    struct Actor *lift = Actor_GetById(13);
     Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                        0);
     Actor_SetModeById(13, 4);
@@ -30,7 +25,7 @@ void Func_02001b50(void) {
     riding = 1;
   }
   if (cellX == 37 && cellZ == 14) {
-    lift = Actor_GetById(14);
+    struct Actor *lift = Actor_GetById(14);
     Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                        0);
     Actor_SetModeById(14, 4);
@@ -43,7 +38,7 @@ void Func_02001b50(void) {
     GameFlag_SetBit(0x17d);
     return;
   }
-  Call2((void (*)())Actor_SetModeById, (s32)(13), (s32)(0));
+  Actor_SetModeById(13, 0);
   Actor_SetModeById(14, 0);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      1);

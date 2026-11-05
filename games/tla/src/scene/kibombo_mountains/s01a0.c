@@ -1,16 +1,3 @@
-// Under -Os, 5 November: differ 21 of 194 (tla-en) from 43, each block with its own locals. Left: the address of saved stays in r5 across the wait calls where the listing rebuilds it twice and keeps the copy routine's address in r5; a one-pass block, a wrapper and a top-level pointer do not change it. Older figures below predate it.
-// Draft of Func_020001a0 (overlay 66F, 194 instructions), differ 53: the
-// push-block callback for blocks 14 and 15, written from the listing (the twin
-// map's ☀️ scene is a hint only). Three differences remain:
-// - block 14 sits in r6 and its cell x in r7; the native has them the other
-// way;
-// - after snapping actor 10's z, the native reloads both z values for the
-// compare; here gcse keeps actor 10's z from the first load and the stores
-// (r2);
-// - the copy buffer's address is kept in r5 and IwramCopyWords in r6; the
-// native rebuilds sp + 8 at each copy and keeps the routine in r5. Measured:
-// the snap as a switch (worse); a separate cell variable for the snap took it
-// from differ 71 to 53.
 #include "types.h"
 #include "actor.h"
 #include "iwram_call.h"
@@ -91,7 +78,7 @@ void Func_020001a0(s32 unused, s32 id) {
         other->z = 0;
         Flag_Set(0x200);
       } else {
-        Iwram_CopyWords(&saved, other, 128);
+        Call3((void (*)())Iwram_CopyWords, (s32)&saved, (s32)other, 128);
         Actor_ResetTargetsAndVelocity(9);
         Actor_Jump(9, 4, 0);
         FieldEvent_Wait(30);
@@ -100,7 +87,7 @@ void Func_020001a0(s32 unused, s32 id) {
         FieldEvent_Wait(60);
         Motion_SetModeAndWaitAnimation(9, 4);
         FieldEvent_Wait(20);
-        Iwram_CopyWords(other, &saved, 128);
+        { void *from = &saved; Iwram_CopyWords(other, from, 128); }
         Call6((void (*)())Func_0200106c, 53, 35, 1, 1, 53, 36);
         Flag_Set(0x224);
       }

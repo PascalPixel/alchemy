@@ -18,7 +18,7 @@ SECTIONS
         "*/games/tla/src/scene/clear/s187c.o"(.text)
         "*/games/tla/src/scene/clear/s18e0.o"(.text)
         "*/resource_64a_overlay.o"(.text.x02009c7c)
-        "*/resource_64a_overlay.o"(.text.x0200a068)
+        "*/games/tla/src/scene/clear/s2068.o"(.text)
         "*/games/tla/src/scene/clear/s217c.o"(.text)
         "*/games/tla/src/scene/clear/import.o"(.text)
         "*/games/tla/src/scene/clear/data.o"(.data)

@@ -1,10 +1,7 @@
-// Draft, differ 18 of 116 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 18 of 116 (tla-en); older figures below predate it.
-// Draft, differ 32 of 116: inside an event, the leader steps back 8 pixels and
-// turns (cue 308) while the map's two scrolling layers (the map work's 0x108
-// and 0x178) climb a pixel a frame for 352 frames and, from frame 17 to 79,
-// the blend fades a layer in; then cues 298 and 125, the leader is put on
-// layer 1 and flags 0x206 and 0x207 are set. Left: the native writes the blend after building both halves, with the count in r1, and tests the 352 frames against 351 where this draft compares with 352.
+// Draft, differ 16 of 116 (tla-en, 5 November): the leader steps back and the map's two scrolling layers sink while the blend fades.
+// The fade's form: next = step + 1; fade = next / 4; blend = fade << 8 before alpha = 16 - fade; blend |= alpha.
+// Left, one cause: next (4 refs over 12) must rank above fade (3 over 4), for next r1, fade r0; here fade r1, next r0.
+// A constant local for the 16 set before the division leaves 8 but moves the 16. Func_02000be8 and Func_02001ba8 share it.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -44,10 +41,15 @@ void Func_02000d3c(void) {
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   for (i = 0; i <= 351; i++) {
   if ((u32)(i - 17) <= 62) {
-    fade = (step + 1) / 4;
+    s32 next = step + 1;
+    s32 blend;
+
+    fade = next / 4;
+    blend = fade << 8;
     alpha = 16 - fade;
-    step++;
-    REG_BLDALPHA = (fade << 8) | alpha;
+    blend |= alpha;
+    REG_BLDALPHA = blend;
+    step = next;
   }
   *(s32 *)(lower + 12) += 0x10000;
   *(s32 *)(upper + 12) += 0x10000;

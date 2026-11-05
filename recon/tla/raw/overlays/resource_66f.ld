@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/kibombo_mountains/s00ec.o"(.text)
         "*/games/tla/src/scene/kibombo_mountains/s015c.o"(.text)
         "*/games/tla/src/scene/kibombo_mountains/action.o"(.text)
-        "*/resource_66f_overlay.o"(.text.x020081a0)
+        "*/games/tla/src/scene/kibombo_mountains/s01a0.o"(.text)
         "*/games/tla/src/scene/kibombo_mountains/s036c.o"(.text)
         "*/games/tla/src/scene/kibombo_mountains/flags.o"(.text)
         "*/games/tla/src/scene/kibombo_mountains/s0440.o"(.text)

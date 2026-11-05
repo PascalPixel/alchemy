@@ -19,7 +19,7 @@ SECTIONS
         "*/resource_64d_overlay.o"(.text.x0200a3a4)
         "*/resource_64d_overlay.o"(.text.x0200a58c)
         "*/games/tla/src/scene/venus_lighthouse_entrance/s260c.o"(.text)
-        "*/resource_64d_overlay.o"(.text.x0200a6f4)
+        "*/games/tla/src/scene/venus_lighthouse_entrance/s26f4.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/sparks.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/import.o"(.text)
         "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)

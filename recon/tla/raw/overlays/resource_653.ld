@@ -30,7 +30,7 @@ SECTIONS
         "*/games/tla/src/scene/kandorean_temple/s1634.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/s1804.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/s19d4.o"(.text)
-        "*/resource_653_overlay.o"(.text.x02009b50)
+        "*/games/tla/src/scene/kandorean_temple/s1b50.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/s1c8c.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/s1f3c.o"(.text)
         "*/games/tla/src/scene/kandorean_temple/s23e8.o"(.text)

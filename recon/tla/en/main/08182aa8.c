@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 339 of 2781, 263 with slots and pool
-// offsets normalized, 69 with registers normalized as well. Frame 164 and every
+// Measured 2026-11-05 (tla-en): differ 305 of 2781, 245 with slots and pool
+// offsets normalized, 57 with registers normalized as well. Frame 164 and every
 // stack slot as in the listing. No loop has a counter of its own beyond i and k.
 // What round 4 settled by reading the listing:
 // - Reload hands out spill registers in turn, so one stray reload shifts every
@@ -20,8 +20,10 @@
 //   tag, or the plain form, before adoption. The second palette's t = 31 is a
 //   temporary and needs its tag too.
 // - PRE folds Yaw(frame << 9) in the two shock loops into spin; the listing has
-//   mov, lsls there and spin everywhere else. Spellings fold back or grow the
-//   frame.
+//   mov, lsls there and spin everywhere else. Spellings fold back ((f << a) << b,
+//   f + f) or grow the frame. From here on everything is one rotation off: an
+//   input-only barrier gives the shape, but with r0 tied. This is what stands
+//   between 305 and the rows that are left.
 // - The cells loop has the object slots in r7 and cells in r5, the listing the
 //   reverse (12 rows). Tried: stepped pointer, slot pointer, a block local.
 // - The second texture: the listing has add r7, sp, #92; adds r2, r7, #0 and

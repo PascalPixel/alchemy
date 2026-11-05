@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 1276 of 4580, 1046 with slots and pool
-// offsets normalized, 242 with registers normalized as well. Every stack slot
+// Measured 2026-11-05 (tla-en): differ 678 of 4580, 422 with slots and pool
+// offsets normalized, 144 with registers normalized as well. Every stack slot
 // has the listing's reference count at the listing's offset. Measure
 // 081843fc,081848ec together.
 // What round 3 settled by reading the listing:
@@ -24,25 +24,29 @@
 // - Values that start from a known constant step from their own name (shade -
 //   frame * 2 + 1180, sx - frame * 61845 + K, x - frame * 8 + 576): CSE keeps the
 //   constant in its register (1858 to 1745).
+// - Each section decodes into the sheet, then sets cells from it: the sheet's
+//   temporary takes r5 first, so the address takes r6 and e r7 (1041 to 937).
+// - zero, span (0x80000), debris (particles[64]), bolts and quads are constants
+//   set once in a long-lived local. Each takes no register, so reload remakes it
+//   at every use and neither a loop nor PRE moves it (span: 1254 to 1041; debris:
+//   921 to 830).
+// - A counter's zero comes before the statement above its loop in several loops
+//   (j before q, i before p): reload's order shows it (748 to 678).
 // What is left:
 // - The barrier on idx is untagged and stands in for what stops the sharing: the
 //   listing rebuilds off + idx after the if (a != 0) join, and neither cse1's skip
 //   nor PRE shares it there. Forms tried without a barrier: the if as one to three
 //   ifs, with an else, a goto, one-pass blocks; off as a stepped variable (its slot
-//   says it is a loop.c giv), i * 12 at each site. As measured with the barrier
-//   the burst lines up row for row.
-// - The second site's 0x80000 - drift comes after the p->x branch in the listing;
-//   here it stays before it, since after the branch loop.c hoists it (savings 3,
-//   life 5, threshold 15 against 218 insns) and cse2 then shares it with bx. That
-//   is where rotation is lost after the burst (from row 1846).
-// - e takes r6 where the listing has r7, and the copy's address r5 or r7 where the
-//   listing has r5 or r6: sections 1 to 5 rotate among r5, r6, r7 (about 200 rows).
-//   In the listing cells, then the address, then e get their registers, which
-//   neither priority nor local-alloc explains; per-section e gives r5.
+//   says it is a loop.c giv), i * 12 at each site.
+// - x << 16 in the debris spawn stays in its loop in the listing; here it moves out
+//   ahead of the loop, with no movable row in the loop dump, and rotation is lost
+//   from there to the end of the scene.
 // - The motion loop's i * 448 giv is second pass in the listing (slot 24), first
-//   pass here (slot 40); spellings of the index do not move it. j takes r8 and the
-//   i * 2 + 36 giv sl where the listing has them the other way (j 15/74 against
-//   17/132); setting j earlier spills it. Rotation is lost from there on.
+//   pass here (slot 40), benefit 10, lifetime 1, threshold 15, against 76 insns;
+//   spellings of the index do not move it. j takes r8 and the i * 2 + 36 giv sl
+//   where the listing has them the other way (j 15/74 against 17/132).
+// - The swap loop reads its object's tiles and cell in the other order, and the
+//   jitter block has off and jitter in each other's registers (r1, r4).
 // BattleEffect_RunCatastrophe; the same calls and control flow as the listing.
 // The function runs on through listing 081848ec, whose Func_081848ec and
 // Func_08185b9c are labels inside it (the second the first loop's test).

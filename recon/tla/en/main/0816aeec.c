@@ -1,3 +1,7 @@
+// 2026-11-05: differ 274 of 902 (tla-en), 78 with registers, slots and offsets
+// masked. No gain from a stepped i (945), q = row << 4 with a from row (843),
+// i = row << 4 set after the row locals (947), u spelled out (904), or a row
+// level cell pointer from i (468, masked 108): it is reduced in the outer loop.
 // 2026-11-05: differ 274 of 902 (tla-en). Declaration moves and wrappers
 // beyond the one in place gain nothing; the Q allocation below stands.
 // 2026-11-05: differ 274 of 902 (tla-en). A wrapper on one Iwram call gains 2;

@@ -4,6 +4,16 @@
 // as the listing does (item 4, needs its S2 tag at adoption); the trail index
 // as one (i << 4) + m, which removes the slot 28 shim; posp set in the wave
 // loop's body, hoisted as in the listing.
+// Next, measured and not kept: a stepped Sprite **slot for the call (*slot++,
+// the listing's ldmia) with function-level k set in both arms (k = row + 8,
+// k = row + i; obj = work->sprites[k]) leaves the else arm unreduced, as the
+// listing has it, and keeps frame 268: masked 203, raw 1131 (1087 after a
+// declaration search that scatters the top slots). With k set only in the else
+// arm the arm is reduced again. Left: arm 8 is unreduced there (the listing has
+// an outer giv stepped by 36), row and posp are still in low slots and r9 where
+// the listing has posp and z in 92 and 88. A map row counter (k += 16, the
+// listing's adds r0, #16) gives the listing's rebuilt 0x700 but rotates phase
+// 2: raw 2387, masked 521. Function-level wave for the second loop adds a slot.
 // 2026-11-05: differ 1140 of 3921 (tla-en). Declaration order alone (a greedy
 // search) gains 68; the causes below stand.
 // Draft, differ 1208 of 3921, skeleton gap 126/126 (tla-en, 2026-11-01)

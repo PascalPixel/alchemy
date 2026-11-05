@@ -284,8 +284,6 @@ extern u8 gData_02014000[];
 #define REG_IME (*(u16 *)0x04000208)
 
 
-extern u8 Value_00000000;
-extern u8 Value_00000080;
 extern u8 Value_00000075;
 extern u8 Value_0000009b;
 extern u8 Value_0000009c;
@@ -303,7 +301,6 @@ extern u8 Value_000000c3;
 extern u8 Value_00000134;
 extern u8 Value_00000137;
 extern u8 Value_0000013e;
-extern u8 Value_000000ff;
 
 extern u16 gData_08197410[];
 extern u8 gData_08198c67[];
@@ -425,8 +422,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
   REG_BG2CNT = 0x784;
-  PLTT[0] = (u32)&Value_00000000;
-  PLTT[1] = (u32)&Value_00000000;
+  PLTT[0] = 0;
+  PLTT[1] = 0;
   work->transferMode = 0;
   Task_Add(gData_08143001, 0xc80);
   Func_08163c2c(1, 0);
@@ -445,7 +442,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   Func_08163c2c(1, 1);
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f44;
-  REG_BG2PA = (u32)&Value_00000080;
+  REG_BG2PA = 0x80;
   REG_BG2X = 0;
   blit = routine;
   BattleEffect_FetchRectangleBlitters(0, blit);
@@ -1460,7 +1457,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
     PLTT[i] = (b << 10) | (g << 5) | r;
   }
-  arg->actors[arg->count] = (u32)&Value_000000ff;
+  arg->actors[arg->count] = 0xff;
   BattleActor_SpawnObjectsForListFar((struct Local264 *)arg->actors, 0);
   Func_0815b434(work->buffer, 56, 0x10000);
   Func_0815b434(work->buffer + 0x1000, 16, 0x10000);

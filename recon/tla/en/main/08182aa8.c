@@ -801,15 +801,16 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       verts = Heap_AllocEwram(512);
       model = Render_AllocateModelList(1);
       model->texture = &texture;
-      texture.logHeight = 7;
       texture.logWidth = 7;
+      texture.logHeight = 7;
       model->mesh = gData_08199364;
       model->vertices = verts;
       t = frame - 210;
       if ((u32)t <= 107) {
-        s32 pitch = 4000;
+        s32 pitch;
 
         ty = (frame * 3 << 13) - 0x4ec000;
+        pitch = 4000;
         if (ty > 0x180000) {
           ty = 0x180000;
         }

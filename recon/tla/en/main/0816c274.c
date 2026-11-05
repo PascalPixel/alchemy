@@ -1,3 +1,6 @@
+// 2026-11-05: differ 6 of 491 (tla-en). Plain block scopes for the shard pointers,
+// cells set once and rebuilt from the pool, camera block opened before its PRE
+// hash changes; three order rows left.
 // Draft of BattleEffect_RunCrystal, decompiled from the listing: differ 168 of
 // 491 (draft 491), same calls and control flow.
 // Left (2026-10-19): the loop counter i takes sl where the native has r8
@@ -77,7 +80,7 @@ struct BattleObjectPosition **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(s32 func, s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -124,14 +127,15 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   s32 i;
   s32 size;
   s32 offset;
-  struct EffectStep *shard;
+  s32 cells;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   discOffsets = (u16 *)(work->sheet + 0x2710);
-  Iwram_ClearWords(gMapCellBuffer, 0x8000);
-  for (i = 0, offset = 0, size = 2; i != 16; i++, size += 2) {
-    Func_0815b434(gMapCellBuffer + offset, size, 0x10000);
+  cells = (s32)gMapCellBuffer;
+  Iwram_ClearWords((void *)cells, 0x8000);
+  for (offset = 0, i = 0, size = 2; i != 16; size += 2, i++) {
+    Func_0815b434((u8 *)(offset + cells), size, 0x10000);
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }
@@ -151,21 +155,19 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
                                   COMPOSITE_FLIP_X);
   }
   draw[0] = BLITTER;
-  work->transferMode = 2;
-  work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
-  // camera and target declared here take their pseudos after the centre
-  // pointer's, which gives the native's stack slots (differ 186 with them
-  // at the top).
   {
     void *camera;
     struct BattleObjectPosition *target;
 
+  work->transferMode = 2;
+  work->transferValue = 75;
+  Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
     camera = Ram_HeapSlots->cameraWork;
     target = *GetBattleObjectSlotFar(effect->actors[0]);
 
     for (frame = 0; frame != CRYSTAL_FRAMES; frame++) {
       if (frame == 0) {
+        struct EffectStep *shard;
         for (i = 0, shard = work->particles; i != CRYSTAL_SHARDS;
              i++, shard++) {
           s32 angle = Random16();
@@ -201,6 +203,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
 
       // The shards, one more every two frames from frame 48.
       if (frame > 47) {
+        struct EffectStep *shard;
         for (i = 0, shard = work->particles; i != CRYSTAL_SHARDS;
              i++, shard++) {
           if (frame >= i * 2 + 48) {
@@ -221,7 +224,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
                 x += (Random16() & 7) - 4;
                 y += (Random16() & 7) - 4;
               }
-              Func_0818caa8(gMapCellBuffer + (s16)discOffsets[cell], x, y,
+              Func_0818caa8((u8 *)((s16)discOffsets[cell] + cells), x, y,
                             width);
             }
             shard->y += shard->velocityY;
@@ -244,8 +247,8 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
         struct RenderModel *model = Render_AllocateModelList(1);
 
         model->kind = 6;
-        model->mesh = gData_08199364;
         model->texture = &texture;
+        model->mesh = gData_08199364;
         model->vertices = vertices;
         texture.logWidth = 7;
         texture.logHeight = 7;

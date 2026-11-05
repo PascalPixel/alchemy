@@ -1,3 +1,5 @@
+// 2026-11-05: differ 69 of 543 (tla-en). buffer holds Data_02012000, set once at the
+// top so reload rebuilds it. Left as below.
 // 2026-11-05: differ 81 of 543 (tla-en). A wrapper gains 4. Left as below.
 // Draft, differ 87 of 543, skeleton gap 17 (tla-en, 2026-11-01)
 // BattleEffect_RunFirePuppet. Everything but two spots follows the listing, and
@@ -157,6 +159,7 @@ static inline s32 CopyWords(void *destination, const void *source, s32 size) {
 // frame 74 it shrinks back. The target's position is kept in the work's
 // last particle.
 void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
+  u8 *buffer;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -170,6 +173,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
   s32 endY;
   s32 i;
 
+  buffer = Data_02012000;
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
@@ -203,7 +207,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet),
                   128);
   REG_BG2PA = 0x80;
-  Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
+  Render_BuildQuadStrip(buffer, 4, 32, 32);
 
   for (frame = 0; frame != FIRE_PUPPET_FRAMES; frame++) {
     Render_ResetTransformState();
@@ -274,7 +278,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       texture.logHeight = 5;
       texture.pixels = work->sheet;
       model->shade = shade;
-      model->mesh = Data_02012000;
+      model->mesh = buffer;
       model->kind = 6;
       model->vertices = projected;
       model->texture = &texture;

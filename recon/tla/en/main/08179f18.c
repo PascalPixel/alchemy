@@ -1,3 +1,4 @@
+// 2026-11-05: differ 535 of 2583 (tla-en). The row loop has its own counter (row2).
 // 2026-11-05: differ 565 of 2583 (tla-en). A wrapper on the first clear gains
 // 16. Left as below.
 // Draft, differ 581 of 2583, skeleton gap 59 (tla-en, 2026-11-01)
@@ -252,6 +253,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   s32 petals; // the block's address as a number, see the header
   s32 i;
   s32 j;
+  s32 row2;
   s32 size;
   s32 dx;
   s32 dy;
@@ -757,9 +759,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
         s32 y;
 
         size = 7;
-        for (j = 0; j != 4; j++) {
-          if (frame >= 208 + j * 4 && i % 4 == 3 - j) {
-            s32 late = frame - j * 4 - 208;
+        for (row2 = 0; row2 != 4; row2++) {
+          if (frame >= 208 + row2 * 4 && i % 4 == 3 - row2) {
+            s32 late = frame - row2 * 4 - 208;
 
             rr = r - late * 4;
             if (rr < 0) {
@@ -910,9 +912,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       s32 offset = ((y + a) << 4) + b << 3;
 
       for (k = 0; k != 8; k++, offset += 16) {
-        for (j = 0; j != 4; j++) {
+        for (row2 = 0; row2 != 4; row2++) {
           u32 c = work->sheet[n];
-          u8 *d = work->sheet + 0x1000 + offset + j * 2;
+          u8 *d = work->sheet + 0x1000 + offset + row2 * 2;
 
           d[0] = c & 15;
           d[1] = c >> 4 & 15;

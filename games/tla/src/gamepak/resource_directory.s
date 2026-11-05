@@ -312,7 +312,7 @@ Resource_DirectoryTable:
 	resource SlashSheet, BattleEffect_SlashSheet
 	resource WaveSheet, BattleEffect_WaveSheet
 	resource TargetBurstImage, BattleEffect_TargetBurstImage
-	resource , BattleEffect_PinkStarSheet
+	resource PinkStarSheet, BattleEffect_PinkStarSheet
 	resource WaterSpraySheet, BattleEffect_WaterSpraySheet
 	resource BlueFlameSheet, BattleEffect_BlueFlameSheet
 	resource , BattleEffect_ExplosionSheet

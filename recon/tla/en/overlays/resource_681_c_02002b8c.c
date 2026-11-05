@@ -1,4 +1,6 @@
-// Draft, differ 24 of 131 (tla-en, 2026-11-05). Older notes below may predate this figure.
+// Draft, differ 19 of 131 (tla-en, 2026-11-05). Left: the native loads frame's 0 from
+// the pool (a HI constant, and the jump over the pool); here CSE reuses a word zero.
+// Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 24 (tla-en); notes below may predate it.
 // Draft, differ 75 of 131: the frame callback of the room where persons 8 to 16
 // sway: all stop while flag 0x106 is set or the event work holds them; else,
@@ -48,7 +50,8 @@ void Func_02002b8c(void) {
   if (*pending == 0)
     return;
 step:
-  if (state->frame == 60) {
+  switch (state->frame) {
+  case 60:
     Func_02002b58(8, 0, 3);
     Func_02002b58(9, 3, 0);
     Func_02002b58(10, 0, 3);
@@ -58,11 +61,14 @@ step:
     Func_02002b58(14, 0, 3);
     Func_02002b58(15, 0, -3);
     Func_02002b58(16, 3, 0);
-  } else if (state->frame == 180) {
+    break;
+  case 180:
     id = 8;
     do {
-      Func_02002b58(++id, 0, 0);
+      Func_02002b58(id, 0, 0);
+      id++;
     } while (id <= 16);
+    break;
   }
   if (++state->frame == 240)
     state->frame = 0;

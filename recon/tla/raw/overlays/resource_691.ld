@@ -71,7 +71,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/leader_call.o"(.text)
         "*/games/tla/src/scene/magma_rock/s379c.o"(.text)
         "*/games/tla/src/scene/magma_rock/s3820.o"(.text)
-        "*/resource_691_overlay.o"(.text.x0200b8dc)
+        "*/games/tla/src/scene/magma_rock/s38dc.o"(.text)
         "*/games/tla/src/scene/magma_rock/sparks.o"(.text)
         "*/games/tla/src/scene/magma_rock/import.o"(.text)
         "*/games/tla/src/scene/magma_rock/data.o"(.data)

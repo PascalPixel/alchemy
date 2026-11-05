@@ -1,11 +1,6 @@
-// Draft, differ 33 of 83 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 35 (tla-en); notes below may predate it.
-// Draft, differ 82 of 83: the falling rocks' setup (Func_02002d44 spawns them):
-// loads ResourceId_FallingRock's tiles into heap slot 220 and resets the 64
-// sprites and timers. Left: the native counts in r8 and shares the -1 of the
-// timers with the count, and rebuilds 0x500 after the VRAM load; this form
-// keeps 0x500 and the work in saved registers. The same function is overlay
-// 668's Func_02004004 and 692's Func_02004b18, drafts with the same gap.
+/// @file
+/// The falling rocks' setup: loads their picture, sets up 64 small sprites, marks each
+/// rock idle and starts the task that spawns them.
 #include "call.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -65,6 +60,8 @@ void Func_02002e00(void) {
 
   Func_02002f40(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
   resource = Resource_FindFreeEntry();
+  /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the argument; as
+   * a direct VramCache_Load call, 41 of 83 instructions differ in tla-en. */
   tile = Value3((s32 (*)())VramCache_Load, resource, sizeof(work->tiles), (s32)work);
   work->tileBase = tile;
   work->resource = resource;
@@ -80,6 +77,12 @@ void Func_02002e00(void) {
     sprite++;
     rock++;
   }
-  work->next = 0;
-  Task_Add(Func_02002cc0, 0x480);
+  {
+    s32 zero = 0;
+
+    work->next = zero;
+  }
+  /* FAKEMATCH(wrapper): forwarded, so that its constant goes straight to the argument; as
+   * a direct Task_Add call, 6 of 83 instructions differ in tla-en. */
+  Value2((s32 (*)())Task_Add, (s32)Func_02002cc0, 0x480);
 }

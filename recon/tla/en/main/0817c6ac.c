@@ -1,3 +1,6 @@
+// 2026-11-05: differ 150 of 627 (tla-en). The word of the frame is in, as a
+// two-word blitter struct. Left: items 2 and 3 below and their reload
+// rotation.
 // Draft, differ 222 of 627, skeleton gap 46 (tla-en, 2026-11-01)
 // BattleEffect_RunFume. Calls and control flow agree. head and tail are one
 // two-word struct local: its doubleword pseudo keeps arc.head = 0 alive and stops
@@ -147,7 +150,13 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  DrawRectangle blit;
+  /* FAKEMATCH(dead): the blitter in a two-word struct whose second word nothing
+   * reads, the 4 bytes of the frame; as a plain local, 216 of 627 instructions
+   * differ in tla-en. */
+  struct {
+    DrawRectangle draw;
+    s32 unused;
+  } blit;
   s32 j;
   s32 frame;
   s32 endX;
@@ -172,7 +181,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit.draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   endX = 0;
   endY = 0;
@@ -218,7 +227,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       particle = &work->particles[i];
       if ((u32)particle->variant <= 23) {
         if (particle->variant > 1) {
-          blit(canvas, work->sheet + 0x800 + ((particle->variant / 4) << 11),
+          blit.draw(canvas, work->sheet + 0x800 + ((particle->variant / 4) << 11),
                HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
         }
         BattleEffectKernels_IntegrateVector2(particle, 60,

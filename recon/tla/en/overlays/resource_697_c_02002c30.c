@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 46 (tla-en); notes below may predate it.
 // Draft, differ 80 of 80: deals the Trial Road's stage order from seed: shuffles
 // 0 to 7 into the eight slots at the start of the stage state, again until both
 // the even and the odd slots hold at least one of the four values in
@@ -40,8 +41,8 @@ draw:
   slot = order;
   i = 0;
 count:
-  special = gData_02005be0;
   k = 0;
+  special = gData_02005be0;
 compare:
   if (*slot == *special++)
     counts[i & 1]++;

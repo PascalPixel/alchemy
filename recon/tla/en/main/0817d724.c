@@ -1,3 +1,8 @@
+// 2026-11-05: differ 130 of 1034 (tla-en). Tried on the colour loop, none
+// giving lsls 16, lsrs 26: u16 and s16 locals with narrowing casts (165 to
+// 172), u16 red and blue (141, 168), a bitfield (148), a mask local (184), an
+// s32 local (181). Judgment's flash loop has the same shape: ldrh, lsls, lsrs
+// 26 and a pooled 31.
 // Draft, differ 142 of 1034, skeleton gap 34 (tla-en, 2026-11-01)
 //
 // BattleEffect_RunRisingDragonEnemy. Same instruction count, calls, control

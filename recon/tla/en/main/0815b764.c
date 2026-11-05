@@ -1,3 +1,10 @@
+// Measured 2026-11-05 (tla-en): differ 350 of 1932. Left: the frame, every
+// spill slot and the instruction count now agree with the listing, without the
+// search's asm. Rows from the ship-burst model block on are reload's rotation:
+// the listing has verts in r1 and frame in r7 where this has verts in r7 and
+// frame in r1, and it stays one register behind to the frame loop's end. Before
+// that block only scheduling pairs remain.
+
 // Draft, differ 780 of 1932, skeleton gap 102 (tla-en, 2026-11-01)
 // BattleEffect_RunUlysses: same calls and control flow as the listing.
 // The largest step left is a counting question for Pascal, so it is not in this
@@ -148,6 +155,14 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #include "input.h"
 #include "io_write_queue.h"
 
+static __inline__ s32 ClearWords_(void *destination, s32 size) {
+  return Iwram_ClearWords(destination, size);
+}
+
+static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
+  return Iwram_FillWords(destination, size, value);
+}
+
 extern char ResourceId_Data0B1;
 extern char ResourceId_Data0B3;
 extern char ResourceId_Data0C7;
@@ -258,9 +273,9 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     s32 y;
     s32 x;
 
-    Iwram_FillWords(map, 256, -1);
+    FillWords_(map, 256, -1);
     map += 64;
-    Iwram_FillWords(map, 128, 0x03ff03ff);
+    FillWords_(map, 128, 0x03ff03ff);
     v = (u32)Data_02010200;
     map += 32;
     for (y = 0; y != 16; y++) {
@@ -304,7 +319,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   shipX = 0xc80000;
   shipZ = 0x540000;
   transition[4] = 1;
-  Iwram_ClearWords(canvas, 0x3c00);
+  ClearWords_(canvas, 0x3c00);
   REG_DISPCNT = 0x7141;
   wait(1);
   for (frame = 0; frame != 326; frame++) {
@@ -385,8 +400,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         z = 0x10800;
       }
       q16 = 0x1000000 / z;
-      work->bg2pa = q16;
-      work->bg2pd = q16;
+*(volatile u16 *)&work->bg2pa; *(volatile u16 *)&work->bg2pa = q16;
+*(volatile u16 *)&work->bg2pd; *(volatile u16 *)&work->bg2pd = q16;
       work->bg2x = (64 - 0xb80000 / z) << 8;
       work->bg2y = (64 - 0x4c0000 / z) << 8;
       if (t <= 15) {
@@ -453,8 +468,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       struct EffectStep *p;
       struct EffectStep *q;
 
-      Iwram_FillWords(canvas, 0x3c00, 0);
-      Iwram_ClearWords((void *)0x06004000, 0x3c00);
+      FillWords_(canvas, 0x3c00, 0);
+      ClearWords_((void *)0x06004000, 0x3c00);
       REG_DISPCNT = 0x7541;
       src = Data_081986aa;
       q = (struct EffectStep *)(work->sheet + 0x4b98);
@@ -745,9 +760,9 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   Func_081180e8(134);
   REG_BG1CNT = 0x1f83;
   wait(1);
-  Iwram_FillWords(Ram_HeapSlots->battleFxWork[1], 0x4000, 0);
-  Iwram_FillWords((void *)0x06004000, 0x3c00, 0);
-  Iwram_FillWords((void *)0x06008000, 0x7800, 0);
+  FillWords_(Ram_HeapSlots->battleFxWork[1], 0x4000, 0);
+  FillWords_((void *)0x06004000, 0x3c00, 0);
+  FillWords_((void *)0x06008000, 0x7800, 0);
   wait(1);
   REG_BLDALPHA = 0x100e;
   REG_BLDCNT = 0x3f46;
@@ -762,11 +777,11 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = work->savedBg1Y;
   gCameraSceneParameters[3] = 120;
   gCameraSceneParameters[4] = 120;
-  Iwram_ClearWords((void *)(BG_PLTT + 96), 256);
+  ClearWords_((void *)(BG_PLTT + 96), 256);
   wait(1);
   BattleBackground_LoadFar(2, *(u16 *)(battle + 0x670), -1);
   REG_BG2CNT = 0x787;
-  Iwram_ClearWords((void *)0x06004000, 0x3c00);
+  ClearWords_((void *)0x06004000, 0x3c00);
   Task_Remove(Palette_StepFadeTransfer);
   gBgScroll[1].y = 32;
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);

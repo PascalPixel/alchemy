@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 23 (tla-en); notes below may predate it.
 // Draft, differ 88 of 173: before flags 0x9ee and 0x9ba, the screen blends out,
 // person 12 sinks into the floor over forty frames with two rings of effects,
 // a boulder drops in its place (flag 0x9ee) and the screen blends back.
@@ -58,8 +59,8 @@ sink:
   if (i == 10)
     Func_02001c9c();
   person->z -= 0x10000;
-  i++;
   FieldEvent_Wait(2);
+  i++;
   if (i <= 19)
     goto sink;
   GameFlag_SetBit(0x9ee);

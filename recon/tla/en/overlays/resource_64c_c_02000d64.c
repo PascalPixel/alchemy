@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 138 of 260 (tla-en); older figures below predate it.
 // Draft, differ 155 of 260, skeleton gap 9 (tla-en, 2026-11-01)
 // Overlay 64b's Func_020036a8 (the world map's placed objects, shown and
 // hidden as the view moves) under this overlay's names: shows the objects
@@ -72,8 +73,8 @@ void Func_02000d64(void) {
   struct Actor **slot;
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *object = work->viewCenter;
-  s32 zoom = Ram_HeapSlots->mapWork->zoom;
   s32 x = object->x;
+  s32 zoom = Ram_HeapSlots->mapWork->zoom;
   u8 kind = placement->kind;
   s32 z = object->z;
   struct Actor **objects = gData_02003dc0;
@@ -105,8 +106,8 @@ top : {
     px = placement->x << 16;
     pz = placement->z << 16;
     if (px > left && px < right && pz > top && pz < bottom) {
-      s32 shown = 1;
       s32 flag = placement->flag;
+      s32 shown = 1;
 
       if (flag != -1) {
         if (flag & 0x1000)
@@ -131,8 +132,8 @@ top : {
           *slot = object;
         }
         if (routine->ownerOverride == 0) {
-          s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
           s32 dx = object->x - leader->x;
+          s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
           s32 reach, dz;
 
           if (dx < 0)
@@ -157,9 +158,9 @@ top : {
       *slot = NULL;
     }
   next:
-    i++;
     slot++;
     placement++;
+    i++;
     if (i < 128 && placement->kind != 0)
       goto top;
 }

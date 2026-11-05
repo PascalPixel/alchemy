@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 52 (tla-en); notes below may predate it.
 // Draft, differ 52 of 92: pushes the object in the cell east of the leader one
 // cell further, copying the cells it leaves and enters, and sets flag 0x8d9
 // when it stops at (16, 36). Left: the native keeps the position's address in

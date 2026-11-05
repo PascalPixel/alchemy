@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 97 of 120 (tla-en); older figures below predate it.
 // Draft, differ 81 of 120, skeleton gap 29 (tla-en, 2026-11-01)
 // The palette cycle callback: on each step it writes the cycle's colours to
 // their palette entries and flashes one more.
@@ -39,8 +40,8 @@ void Func_0200099c(void) {
   for (i = 0; i < gData_02001fe4; i++) {
     dst = &BG_PLTT[gData_02001fcc[gData_02001fe8 * gData_02001fe4 + i]];
     r = *color++;
-    g = *color++;
     b = *color++;
+    g = *color++;
     *dst = b << 10 | g << 5 | r;
   }
   dst = &BG_PLTT[gData_02001fd8[gData_02001fe4]];

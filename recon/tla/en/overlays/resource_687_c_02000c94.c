@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 83 (tla-en); notes below may predate it.
 // Draft, differ 113 of 116: translated from its listing; names and structure still
 // to do.
 #include "iwram_call.h"
@@ -36,8 +37,8 @@ s32 Func_02000c94(s32 a0) {
   Call1((void (*)())Func_02002054, 0x22d);
 L_02008cb2:
   Call1((void (*)())wait, 10);
-  r6 = 160;
   r6 = r6 << 19;
+  r6 = 160;
   r5 = 0;
   r7 = 1;
   r6 = r6 + 98;

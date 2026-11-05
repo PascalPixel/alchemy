@@ -1,3 +1,7 @@
+// Measured 2026-11-05 (tla-en): differ 2 of 760. One pair: the mesh store ahead
+// of the kind store. An empty asm between them fixes it and moves a loop's
+// registers elsewhere (32); no second asm helps; six permuter minutes found
+// nothing.
 // Draft, differ 14 of 760, skeleton gap 14 (tla-en, 2026-11-01)
 // Left: six pairs that differ only in sched2's order, no register or slot:
 // the load of effect waits after the stores before it in the listing (after

@@ -23,9 +23,8 @@ struct FieldSprite {
   u16 priority : 2;
   u16 palette : 4;
   ///@}
-  /// Bytes 2 to 5 hold the sprite's 16.16 scale in the projection draft's
-  /// layout (recon/tla LayeredSprite); not named here.
-  u8 unk0a[6];
+  u8 unk0a[2];
+  s32 scale; ///< 16.16, in the projection draft's layout (LayeredSprite)
   u8 vramBlock; ///< VRAM cache entry holding its tiles
   /// The keep-cache-entry and own-scale bits in the projection draft's layout.
   u8 unk11;

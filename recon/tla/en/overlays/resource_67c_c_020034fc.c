@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 82 (tla-en); notes below may predate it.
 // Draft, differ 95 of 137, skeleton gap 35 (tla-en, 2026-11-01)
 // Draws Aqua Rock's thirty-two splashes: each active one as a sprite jittered a
 // few pixels at random about its spot, with a random frame, queued by depth.
@@ -58,8 +59,8 @@ void Func_020034fc(void) {
   viewX &= 0xffff0000;
   viewZ = view[1] & 0xffff0000;
   originY = map->origin[1];
-  tile = gResourceTableEntries[splashes->resource].unk2 >> 5;
   splash = splashes->splashes;
+  tile = gResourceTableEntries[splashes->resource].unk2 >> 5;
   i = 31;
 
   do {

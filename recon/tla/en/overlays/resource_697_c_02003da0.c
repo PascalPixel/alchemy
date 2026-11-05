@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 70 (tla-en); notes below may predate it.
 // Draft, differ 88 of 213: the Trial Road movers' update (Func_02004224 sets
 // them up): for each of the 16 slots with a placed object, its phase counts up
 // to its period (unless flag 260 is set); at the up phase it rises 4 a frame

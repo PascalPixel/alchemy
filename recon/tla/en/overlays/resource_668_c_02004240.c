@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 23 of 171 (tla-en); older figures below predate it.
 // Near miss, differ 219 of 171 (tla-en, 2026-10-31): the same control flow,
 // calls, accesses and constants as the native; what is left is GCSE and
 // allocation. Measures a push: finds the pushable object ahead of the leader

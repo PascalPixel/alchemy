@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 134 (tla-en); notes below may predate it.
 // Draft, differ 193 of 272, skeleton gap 35 (tla-en, 2026-11-01): 19 removed,
 // 16 added, nearly all order and allocation. Calls, branches and both
 // palette loops are the listing's.

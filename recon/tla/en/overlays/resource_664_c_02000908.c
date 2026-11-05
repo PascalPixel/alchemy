@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 33 of 58 (tla-en); older figures below predate it.
 // Draft, differ 47 of 58: places the objects of a list ended by 0xffff: each
 // entry (three halfwords) names an object, the first of its three script
 // choices and the flag that picks between them; the object stops moving,
@@ -20,8 +21,8 @@ void Func_02000908(u16 *entry) {
     return;
 loop:
   object = Actor_GetById(entry[0]);
-  flag = ((s16 *)entry)[2];
   base = ((s16 *)entry)[1];
+  flag = ((s16 *)entry)[2];
   Actor_SetSingleChildFlags(object, 0);
   base = (u16)base * 3 + GameFlag_Test((u16)flag);
   Func_02005d5c(object, base);

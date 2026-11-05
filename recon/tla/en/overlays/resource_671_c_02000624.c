@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 26 of 63 (tla-en); older figures below predate it.
 // Draft, differ 24 of 63 (was 47): ported from Func_020005b4 (find_near.c). The native
 // rebuilds the vector's stack address (mov r4, sp) inside the loop and keeps
 // only i and the id in r5 and r6; here GCSE's PRE carries the first block's
@@ -63,8 +64,8 @@ struct Orbiter *Func_02000624(struct Orbiter *origin, s32 id) {
   s32 i;
 
   position[0] = origin->x;
-  position[2] = origin->z;
   Vector_AddPolarOffsetFar(0x100000, origin->facing, position);
+  position[2] = origin->z;
   for (i = 8; i < 64; i++) {
     struct Orbiter *object = Actor_GetById(i);
 

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 35 of 135 (tla-en); older figures below predate it.
 // Draft, differ 35 of 135, skeleton gap 3/2 (tla-en, 2026-11-01)
 // A heat haze: fills a 160-line table of three halfwords a line (BG0's two
 // offsets and BG1's horizontal offset) from a sine wave narrowing down the

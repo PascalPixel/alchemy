@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 24 of 76 (tla-en); older figures below predate it.
 // Draft, differ 70 of 76, a first form written from the listing (push.c's
 // Func_02000c38 is the nearest relative). Left: the native keeps dx in r1 and
 // builds its constants in r4, and reloads actor->z after the first clamp, where

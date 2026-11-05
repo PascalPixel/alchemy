@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 259 (tla-en); notes below may predate it.
 // Draft, differ 170 of 410, skeleton gap 36 (tla-en, 2026-11-01)
 // Control flow, calls, arguments and fields are the native's; the frame is 24
 // bytes against its 20. This round took it from differ 230, gap 40:
@@ -95,8 +96,8 @@ step:
       if (j < gData_02003780)
         goto nextFrame;
     }
-    work->level += gData_02003788;
     cells = map->layers[2].cells;
+    work->level += gData_02003788;
     cells += leader->x / 0x100000 + ((leader->z / 0x100000) << 7);
     if (cells->collisionCode == 232) {
       leader->y += gData_02003788;
@@ -118,7 +119,7 @@ step:
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
     gData_02003782 = 0;
-    Task_Add(Func_020015ac, 0x480);
+    Call2((void (*)())Task_Add, (s32)Func_020015ac, 0x480);
   } else {
     Call6((void (*)())Func_02002e04, 69, 6, 1, 2, 68, 5);
     GameFlag_SetBit(0x204);

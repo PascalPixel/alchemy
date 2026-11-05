@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 53 (tla-en); notes below may predate it.
 // Draft, differ 47 of 94: count random sparks around a position through the
 // overlay's spawn (Func_020000b8), written from the listing (its ☀️ twin by
 // shape, mercury_lighthouse.c's MercuryLighthouse_SpawnRandomizedBurst, is a

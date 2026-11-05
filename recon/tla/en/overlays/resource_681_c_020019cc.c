@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 64 (tla-en); notes below may predate it.
 // Draft, differ 46 of 250: the party meets person 11 on the ledge: they talk,
 // the ground shakes, the screen blends out and back while the ledge changes,
 // the party gains the item and person 11 joins the leader (flag 0x9ba).
@@ -93,8 +94,8 @@ s32 Func_020019cc(void) {
   }
   REG_DISPCNT &= ~0x200;
   Call2((void (*)())Func_020015d0, 12, 4);
-  REG_DISPCNT |= 0xf00;
   REG_BLDALPHA = level | 0x1000;
+  REG_DISPCNT |= 0xf00;
   REG_BLDCNT = 0x3f42;
   if (level != 8) {
   fadeIn:

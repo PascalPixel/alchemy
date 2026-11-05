@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 76 of 79 (tla-en); older figures below predate it.
 // Draft, differ 86 of 79: redraws the cells of the first set flag of 800
 // to 863 from gData_02004276. Left: the native walks the table by byte
 // offset and keeps the 1 in r10; this draft indexes it.
@@ -79,8 +80,8 @@ loop:
     s32 y = entry[1];
 
     flag += -800;
-    Func_02003be0(13, 5, x, y, 1, 1);
     x = entry[2];
+    Func_02003be0(13, 5, x, y, 1, 1);
     y = entry[3];
     Func_02003be0(77, 0, x, y, 1, 5);
     if (flag == 1)

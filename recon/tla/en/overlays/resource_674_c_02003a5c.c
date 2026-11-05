@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 198 of 305 (tla-en); older figures below predate it.
 // Draft, differ 210 of 305, skeleton gap 88 (tla-en, 2026-11-01)
 // Re-measured after the compiler change; -mthumb-slow-loads is gone, so the old
 // sched2 notes here went with it. The source is unchanged: nothing plain beat it.
@@ -116,7 +117,11 @@ void Func_02003a5c(struct PushState push) {
   wait(4);
   Func_02003de4(object, 2);
   Func_02003ffc(239);
-  Call3((void (*)())Actor_SetSpeedParameters, push.number, 0x8000, 0x1999);
+  {
+    s32 held = 0x1999;
+
+    Call3((void (*)())Actor_SetSpeedParameters, push.number, 0x8000, held);
+  }
   Func_02003e0c(object, push.x, push.y, push.z);
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
@@ -129,8 +134,8 @@ void Func_02003a5c(struct PushState push) {
   if (push.unk14 != 0)
     push.unk14();
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
-  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   leader->update = 0;
+  Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   Func_02003e14(object);
@@ -140,8 +145,8 @@ void Func_02003a5c(struct PushState push) {
   Func_02003de4(object, 1);
   row = kind * 4;
   rowZ = row + 1;
-  push.x = (push.x + (((s8 *)gData_0200407c)[row] << 16)) >> 20;
   push.z = (push.z + (((s8 *)gData_0200407c)[rowZ] << 16)) >> 20;
+  push.x = (push.x + (((s8 *)gData_0200407c)[row] << 16)) >> 20;
   spareX = *(s32 *)(map + 0x148) >> 20;
   spareZ = *(s32 *)(map + 0x14c) >> 20;
   {

@@ -1,9 +1,11 @@
+// Measured under -Os, 5 November 2026: differ 35 (tla-en); notes below may predate it.
 // Draft, differ 82 of 83: the falling rocks' setup (Func_02002d44 spawns them):
 // loads ResourceId_FallingRock's tiles into heap slot 220 and resets the 64
 // sprites and timers. Left: the native counts in r8 and shares the -1 of the
 // timers with the count, and rebuilds 0x500 after the VRAM load; this form
 // keeps 0x500 and the work in saved registers. The same function is overlay
 // 668's Func_02004004 and 692's Func_02004b18, drafts with the same gap.
+#include "call.h"
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -59,11 +61,11 @@ void Func_02002e00(void) {
   s32 i;
 
   Func_02002f40(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
-  resource = Resource_FindFreeEntry();
   tile = VramCache_Load(resource, sizeof(work->tiles), work);
+  resource = Resource_FindFreeEntry();
   work->tileBase = tile;
-  work->resource = resource;
   rock = work->rocks;
+  work->resource = resource;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--) {
     Func_02003190(sprite, 8, 8, 0x40000000, tile);
@@ -76,5 +78,5 @@ void Func_02002e00(void) {
     rock++;
   }
   work->next = 0;
-  Task_Add(Func_02002cc0, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_02002cc0, 0x480);
 }

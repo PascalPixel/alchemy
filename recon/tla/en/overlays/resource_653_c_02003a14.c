@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 4 of 30 (tla-en); older figures below predate it.
 // Near miss, differ 6 of 30 (tla-en, 2026-10-31): scheduler order only. The
 // native loads the address of gData_02006294 first, issues the ldrb of byte
 // 0x17 one slot after the store to gData_02006294 (subs r3, #13 between) and
@@ -34,6 +35,9 @@ void Func_02003a14(void) {
   struct MapWork17 *map = (struct MapWork17 *)Ram_HeapSlots->mapWork;
 
   gData_02006294 = 0;
+  /* FAKEMATCH(barrier): an empty asm holds the next statement after this
+   * one; as no asm, 6 of 30 instructions differ in tla-en. */
+  asm("");
   map->mode = 1;
   Func_02005338(0);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2)

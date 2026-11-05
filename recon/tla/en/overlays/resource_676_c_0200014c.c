@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 46 (tla-en); notes below may predate it.
 // Matches: differ 0 of 64 (tla-ja, 2026-11-01), its literal pool included.
 // Japanese draft (compare with --edition tla-ja): the other editions'
 // Func_0200014c, adopted in yallam/s014c.c, without the stop beside the

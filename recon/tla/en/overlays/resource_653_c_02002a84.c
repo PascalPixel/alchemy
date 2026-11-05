@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 12 of 171 (tla-en); older figures below predate it.
 // Draft, differ 37 of 171 (was 41; 6 of 160 in tla-ja before): the Kandorean
 // Temple's prepare step. Japanese lacks the final flag 0x12f clear. Left: the
 // native reloads gMainRoutineWork's address for the final test; this draft keeps it.

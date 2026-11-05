@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 18 (tla-en); notes below may predate it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

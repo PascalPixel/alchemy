@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 6 (tla-en); notes below may predate it.
 // Draft, differ 55 of 76: four random effect 403 spawns around (x, z), then
 // flag 0x8dc. The instructions are the native's but the registers are not:
 // GCSE hoists the position array's address out of the goto loop (the native
@@ -36,8 +37,8 @@ void Func_02002024(s32 x, s32 z) {
   cfg->unk08 = 0x20000;
   cfg->unk0c = 0x20000;
   cfg->id = 403;
-  cfg->kind = 1;
   cfg->data = gData_02003d50;
+  cfg->kind = 1;
   i = 0;
 loop:
   position[0] = x + ((Random16Far() & 63) << 16) - 0x200000;

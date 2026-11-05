@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 178 of 418.
 // Near miss, differ 182 of 418 (tla-en, 2026-10-31; draft 418 instructions,
 // no device): the native's shape, left with allocation. An unused solid
 // renderer, the filled twin of Func_08196248 (same setup, transform, corner
@@ -113,9 +114,9 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
     facing =
         Iwram_MulQ16(*bx - *ax, *cy - *ay) - Iwram_MulQ16(*cx - *ax, *by - *ay);
     if (facing >= 0) {
-      color = faces[i].color;
       *ax += 64 << 16;
       *ay += 64 << 16;
+      color = faces[i].color;
       *bx += 64 << 16;
       *by += 64 << 16;
       *cx += 64 << 16;

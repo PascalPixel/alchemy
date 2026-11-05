@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 6 of 128 (tla-en); older figures below predate it.
 // Draft, differ 68 of 128, skeleton gap 22 (tla-en, 2026-11-01)
 // Yampi Desert, for its rooms 3 to 5, raises each listed pillar whose flag is
 // clear: marks its cell, clears its collision and raises the shape grid under

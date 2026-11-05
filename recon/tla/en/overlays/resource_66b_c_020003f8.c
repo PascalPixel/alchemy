@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 20 of 169 (tla-en); older figures below predate it.
 // Draft, differ 63 of 169 (was 81): when actor `id` stands at x 76 and actor
 // 15 has reached x 76 too, inside an event: the actor rocks over for 18
 // frames, is thrown down to (1193, 530) with the screen shaking (cues 188 and
@@ -56,15 +57,15 @@ void Func_020003f8(s32 unused, s32 id) {
       actor->targetX = 0x80000000;
     }
     actor->update = Func_020003cc;
-    Actor_SetSpeedParameters(id, 0x30000, 0x18000);
-    Actor_ResetAndSetPosition(id, 1193, 530);
+    Call3((void (*)())Actor_SetSpeedParameters, (s32)(id), (s32)(0x30000), (s32)(0x18000));
+    Call3((void (*)())Actor_ResetAndSetPosition, (s32)(id), (s32)(1193), (s32)(530));
     actor->gravity = 0xcccc;
     actor->motionFlags = 3;
     actor->terrainId = 0;
     Actor_WaitForMoveById(id);
     Func_020003dc(actor, 0);
     Func_0200131c(188);
-    Call3((void (*)())Func_020011f4, 0x50000, 0x50000, 0x10000);
+    Func_020011f4(0x50000, 0x50000, 0x10000);
     Func_0200131c(141);
     Call3((void (*)())Func_020011f4, -1, -1, 0xe666);
     ((struct FieldSprite *)actor->animation)->rotation = 0x1000;

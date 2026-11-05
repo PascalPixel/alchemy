@@ -1,3 +1,7 @@
+// Measured 2026-11-05 (tla-en): differ 6 of 228. Left: the blitter's add r1, sl
+// before the size constants at three of the four quarters; the empty asm in
+// QUARTER closes the other three rows.
+
 // Draft of BattleEffect_RunSpiderWeb, effect kind 345: a spider web over the targets.
 
 // On screen: a web fades in over the targets, centred between the first
@@ -103,6 +107,9 @@ void SummonEffect_RunCanvasMode1(void *action);
 // released around the draw.
 #define QUARTER(flags, x, y)                                                   \
   do {                                                                         \
+    /* FAKEMATCH(barrier): the empty asm parts the size from the release before \
+     * it; as no asm, 6 of 228 instructions differ in tla-en. */                \
+    __asm__("");                                                                \
     BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, flags));  \
     ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, x, y, size,  \
                                              size);                            \

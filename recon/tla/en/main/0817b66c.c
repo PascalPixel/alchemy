@@ -1,3 +1,6 @@
+// 2026-11-05: differ 8 of 326 (tla-en). The pin and the empty one-pass are
+// gone: stale, the plain store measures better. Left, sched2 only: the dagger
+// loop's preheader and a pool load against a stack reload.
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 14 of
 // 326; a greedy device search found nothing lower.
 // Draft (tla-en): listing 326 instructions, draft 326, common 318, differ 16.
@@ -128,16 +131,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectArgument *effect) {
   // Centre the canvas's x 64 on the target.
   GetBattleObjectSlotFar(effect->actors[0]);
   EffectPosition_ProjectBattler(effect->actors[0], &target);
-  {
-    /* FAKEMATCH: the native loads BG2PA's 0x100 from the pool before it
-     * starts the register's address; the pinned halfword behind a one-pass
-     * block does the same (plain: the address first, one reordered pair). */
-    register u16 scale __asm__("r3") = 0x100;
-
-    do {
-    } while (0);
-    REG_BG2PA = scale;
-  }
+  REG_BG2PA = 0x100;
   REG_BG2X = (64 - target.x) << 8;
 
   for (frame = 0; frame != DAGGER_FRAMES; frame++) {

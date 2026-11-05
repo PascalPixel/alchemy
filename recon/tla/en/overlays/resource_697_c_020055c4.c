@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 16 (tla-en); notes below may predate it.
 // Draft, differ 16 of 81, skeleton gap 6 (tla-en, 2026-11-01)
 // Starts an effect between objects a and b: allocates its work in heap slot 236,
 // sets its two ids and a height (0xa00000 when a is the leader, else 0x700000),

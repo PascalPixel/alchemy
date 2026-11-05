@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 10 of 260 (tla-en); older figures below predate it.
 // Near miss, differ 10 of 260 (tla-en, 2026-10-31): sched2 order only. The
 // scene in which actor 12 gives the party item 198 and leaps away. Its motion
 // flags are cleared after the sprite's rotation is set: the native stores that

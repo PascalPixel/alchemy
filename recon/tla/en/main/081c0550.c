@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 22 of 17.
 #include "sound_driver.h"
 #include "ram_buffer.h"
 

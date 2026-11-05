@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 58 (tla-en); notes below may predate it.
 // Draft, differ 70 of 123: Islet Cave's setup: in its first room it starts the
 // palette lists (Func_02000038); in the third it frees actor 9 and, arriving
 // by entrance 2, places actor 8 and sets flag 0x9cf; in the second it sets

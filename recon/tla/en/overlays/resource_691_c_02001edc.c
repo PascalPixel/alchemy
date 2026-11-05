@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 39 (tla-en); notes below may predate it.
 // Draft, differ 39 of 90: Func_02001e08's twin for the cell west of the leader:
 // pushes the object found there, copies its cells and sets flag 0x8db when it
 // stops at (35, 38). Left: the native copies the leader into r1 and starts the

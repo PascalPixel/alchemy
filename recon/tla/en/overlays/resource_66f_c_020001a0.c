@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 43 of 194 (tla-en); older figures below predate it.
 // Draft of Func_020001a0 (overlay 66F, 194 instructions), differ 53: the
 // push-block callback for blocks 14 and 15, written from the listing (the twin
 // map's ☀️ scene is a hint only). Three differences remain:

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 25 (tla-en); notes below may predate it.
 // Draft, differ 68 of 83, skeleton gap 9 (tla-en, 2026-11-01)
 // The falling rocks' setup, overlay 691's copy of overlay 668's Func_02004004
 // (also 68f, 692, 6a8, 6b9 with their own helpers): loads
@@ -34,6 +35,7 @@
 // offset's r1 and the longer tail sends work to r7). The native shape is what
 // one store with (plus work 0x1600) would reload to; what produces that insn is
 // the open lead.
+#include "call.h"
 #include "types.h"
 #include "system/task.h"
 
@@ -85,11 +87,11 @@ void Func_020038dc(void) {
   struct RockSprite *sprite;
 
   Func_02003a14(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
-  entry = Resource_FindFreeEntry();
   tile = VramCache_Load(entry, 0x500, work);
+  entry = Resource_FindFreeEntry();
   work->tileBase = tile;
-  work->resource = entry;
   rock = work->rocks;
+  work->resource = entry;
   sprite = work->sprites;
   i = 63;
   do {
@@ -108,5 +110,5 @@ void Func_020038dc(void) {
 
     work->next = zero;
   }
-  Task_Add(Func_0200379c, 0x480);
+  Call2((void (*)())Task_Add, (s32)Func_0200379c, 0x480);
 }

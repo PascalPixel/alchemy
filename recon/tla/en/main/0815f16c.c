@@ -1,3 +1,16 @@
+// Measured 2026-11-05 (tla-en): differ 4589 of 7666. Left: far off. With its
+// stack slots and r10/r11 renamed, about 2450 rows differ, most of them
+// reload's rotating registers cascading from earlier rows. The frame is 256 of
+// 264: the listing keeps m * 0xa00 and the third source at kind 60 in memory
+// (sp+28 and sp+24), though r7, r9 and r11 go unused in that block there; no
+// reason found (clobbers of those registers do not move them). i is r11 in the
+// listing, r10 here; pinned to r11 it brings r8, r10 and r9's use counts to the
+// listing's but adds 150 instructions (differ 7096). Settled today: kind 16's
+// counter is the function's i, and j, then i * 8, then src are set in that
+// order; kind 80's i is its own; the clears go through an inline forwarder, so
+// 0x3c00 is built anew for each. Kind 80's i * 64 and i * 2 are
+// strength-reduced in the listing and not here.
+
 // Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every
 // slot above the low spills sits 8 low (action 120 against 128), and i takes r10
@@ -301,7 +314,7 @@ void Sound_PlayFar(s32);
 #define RINGS ((struct Particle *)0x02016e00)
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
-#define CLEAR(dst, size) ((void (*)(void *, s32))0x03000258)(dst, size)
+static __inline__ void CLEAR(void *dst, s32 size) { ((void (*)(void *, s32))0x03000258)(dst, size); }
 #define RELOAD_BLITTER(slot, n) do { HeapSlot_Release(slot); BattleEffect_LoadBlitter(slot, n); } while (0)
 
 void Func_0815f16c(struct SummonAction *action, s32 kind) {
@@ -359,17 +372,17 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   } else if (kind == 42 || kind == 15) {
     Resource_LoadAndDecompress((s32)&Value_0000016d, buffer, 1, 0);
   } else if (kind == 16) {
-    s32 i;
+
     s32 j;
     s32 v;
 
     Resource_LoadAndDecompress((s32)&Value_000000d9, buffer, 1, 0);
-    for (i = 1; i != 8; i++) {
-      src = buffer;
-      for (j = 0; j != 0x400; j++) {
+for (i = 1; i != 8; i++) { s32 fade; j = 0; fade = i * 8;
+src = buffer;
+for (; j != 0x400; j++) {
         v = *src++;
         if (v != 0) {
-          v -= i * 8;
+v -= fade;
           if (v <= 0)
             v = 1;
         }
@@ -406,7 +419,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
 
     Resource_LoadAndDecompress((s32)&Value_00000192, buffer, 1, 0);
     Resource_LoadAndDecompress((s32)&Value_00000188, work->frames, 1, 1);
-    ((void (*)(void *, s32))0x03000258)(buffer + 0xc56, 0x4000);
+CLEAR(buffer + 0xc56, 0x4000);
     for (i = 0; i != 4; i++) {
       for (j = 0; j != 120; j++) {
         for (k = 0; k != 24; k++)
@@ -424,14 +437,14 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
     Resource_LoadAndDecompress((s32)&Value_0000013e, buffer + 0xd80, 1, 0);
   } else if (kind == 80) {
     u8 *dst;
-    s32 k;
+s32 k; s32 i;
 
     Resource_LoadAndDecompress((s32)&Value_0000013a, buffer + 0x1000, 1, 0);
-    ((void (*)(void *, s32))0x03000258)(buffer, 0x1000);
+CLEAR(buffer, 0x1000);
     for (i = 0; i != 48; i++) {
-      u8 *mirror = buffer + i * 64 + 0x237;
-      dst = buffer + 0x208 + i * 64;
-      src = buffer + (i * 2 + i) * 8 + 0x1000;
+u8 *mirror = buffer + i * 64 + 0x237; dst = buffer + i * 64 + 0x208;
+src = buffer + (i * 2 + i) * 8 + 0x1000;
+
       for (k = 0; k != 24; k++) {
         *dst++ = *src;
         *mirror-- = *src++;

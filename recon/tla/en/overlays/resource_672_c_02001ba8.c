@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 24 of 69 (tla-en); older figures below predate it.
 // Draft, differ 50 of 69, skeleton gap 6/8 (tla-en, 2026-11-01)
 // The twin Func_02000be8 opens with this same fade. The native rebuilds its
 // constants every pass and compares with 352 (blt), which is a label-and-goto

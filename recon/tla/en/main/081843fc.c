@@ -1,3 +1,10 @@
+// Measured 2026-11-05 (tla-en): differ 2296 of 4580. Measure both addresses.
+// COPY_WORDS as a static inline function, not a macro, takes this from 2834 to
+// 2476: its constant size goes through the parameter's pseudo, so e += 384
+// rebuilds the 384 as the listing does (S2's wrapper question, as in 08182aa8).
+// Statement orders then give 2296. Left first: the copy's function address, r5
+// in the listing and copied to r8 at the loop, one pseudo in r8 here, so e
+// takes r5 where the listing has r7.
 // Draft, differ 2834 of 4580, skeleton gap 323 (tla-en, 2026-11-01)
 // BattleEffect_RunCatastrophe; the same calls and control flow as the listing.
 // The function runs on through listing 081848ec, whose Func_081848ec and
@@ -263,10 +270,9 @@ void ColorBuffer_ScaleFar(void *source, void *destination, s32 scale,
 void Heap_Release(void *buffer);
 
 // Copies words through the IWRAM routine as one statement.
-#define COPY_WORDS(dst, src, size)                                             \
-  do {                                                                         \
-    Iwram_CopyWords(dst, src, size);                                           \
-  } while (0)
+static inline s32 COPY_WORDS(void *dst, const void *src, s32 size) {
+  return Iwram_CopyWords(dst, src, size);
+}
 
 // Sets up the alternate blitter as one statement.
 #define LOAD_ALT_BLITTER(slot, colour)                                         \
@@ -465,9 +471,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   drift = 0;
   sway = 0;
   cueTimer = 0;
+  cueIndex = 0;
   work->transferMode = 2;
   work->transferValue = 50;
-  cueIndex = 0;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
   blit[0] = Ram_HeapSlots->unk64[1];
   frame = 0;
@@ -594,8 +600,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       s32 fb;
       s32 apply[2] = {0, 0};
 
-      fg = 0;
       fr = 0;
+      fg = 0;
       fb = 0;
       if (frame == 0) {
         fg = -31;
@@ -620,8 +626,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         fb = frame - 257;
         apply[0] = 1;
       } else if (frame == 242) {
-        fg = -31;
         fr = -24;
+        fg = -31;
         apply[0] = 1;
       } else if ((u32)(frame - 256) <= 21) {
         s32 d = frame - 256;
@@ -639,8 +645,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         apply[0] = 1;
       } else if (frame == 324) {
         fr = 31;
-        fb = 31;
         fg = 31;
+        fb = 31;
         apply[0] = 1;
         apply[1] = 1;
       } else if ((u32)(frame - 332) <= 59) {
@@ -654,8 +660,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
         fr = d / 4;
         fg = d / 6;
-        apply[0] = 1;
         fb = d / 16;
+        apply[0] = 1;
       }
       for (j = 0; j != 2; j++) {
         if (apply[j] != 0) {
@@ -668,8 +674,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             n = 240;
             dst = (u16 *)(BG_PLTT + 1);
           } else {
-            src = (u16 *)(battle + 0x56c);
             dst = (u16 *)(BG_PLTT + 0x60);
+            src = (u16 *)(battle + 0x56c);
             n = 128;
           }
           for (i = 1; i != n; i++) {
@@ -873,9 +879,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s32 y;
 
           if (a != 0) {
-            p->x = Data_0819985c[n] << 3;
             p->y = Data_08199880[n] << 3;
             p->z = a << 8;
+            p->x = Data_0819985c[n] << 3;
           }
           p->velocityY = Data_081998f2[n];
           p->velocityZ = Data_0819995e[n];
@@ -886,8 +892,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           }
           src = sprites + gData_08197410[9];
           w = 10;
-          h = 20;
           x = p->x / 8 - 5;
+          h = 20;
           bx = 0x80000 - drift;
           x += (bx / 2) >> 16;
           y = p->y / 8 - 10;
@@ -1207,8 +1213,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Iwram_FillWords(canvas, 0x4000, 0);
           rise = -0x400000;
           Func_08164b2c(0, -16, -16);
-          work->transferMode = 2;
           work->transferValue = 50;
+          work->transferMode = 2;
           COPY_WORDS((void *)BG_PLTT,
                      Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
                      512);
@@ -1312,8 +1318,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           texture2.logWidth = 6;
           texture2.logHeight = 6;
           model2->shade = sh2;
-          model2->kind = 6;
           model2->texture = &texture2;
+          model2->kind = 6;
           model2->mesh = gData_08199340;
           model2->vertices = verts2;
           texture2.pixels = Data_02011000;
@@ -1374,10 +1380,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
                 }
               }
               if (sh2 > -64) {
+                texture2.pixels = Data_02012000;
+                model2->kind = 6;
                 model2->shade = sh2;
                 model2->mesh = gData_08199364;
-                model2->kind = 6;
-                texture2.pixels = Data_02012000;
                 texture2.logHeight = 7;
                 texture2.logWidth = 7;
                 Render_ResetTransformState();
@@ -1505,11 +1511,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       if (frame == 88) {
         Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
+        gBgScroll[1].x = savedScroll;
+        work->scrollStepX = 0;
         work->transferMode = 3;
         work->transferValue = 0x02020202;
-        gBgScroll[1].x = savedScroll;
         gCameraSceneParameters[3] = 120;
-        work->scrollStepX = 0;
         Func_081180e8(134);
       }
       if (frame == 0) {
@@ -1524,8 +1530,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         for (i = 0; i != 164; i++) {
           Data_02016d00[i].variant = -1;
         }
-        slide = 0x800000;
         slideStep = 0;
+        slide = 0x800000;
       }
       if (frame == 16) {
         work->transferMode = 2;
@@ -1581,8 +1587,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           angle = (Random16() & 0x7fff) + 0x8000;
           speed = (Random16() & 127) + 128;
           q->velocityX = Trig_Sin(angle) * speed >> 6;
-          q->velocityY = Trig_Cos(angle) * speed >> 6;
           q->variant = 0;
+          q->velocityY = Trig_Cos(angle) * speed >> 6;
         }
         q2 = Data_02016d00;
         for (i = 0; i != 64; i++, q2++) {
@@ -1608,9 +1614,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s32 x = 0;
 
           for (i = 0; i != 2; i++, x += 10, v += 4) {
+            v[1] = y;
             v[0] = x + (Trig_Sin((frame + j * 2) << 10) * 2 >> 16) + jitter - 5;
             v[2] = z;
-            v[1] = y;
           }
           jitter = jitter + (Random16() & 7) - 4;
           y -= 6;
@@ -1618,8 +1624,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model3 = Render_AllocateModelList(1);
         model3->kind = 6;
         model3->texture = &texture3;
-        model3->shade = 0;
         model3->scrollV = 0;
+        model3->shade = 0;
         model3->vertices = Data_02011000;
         if (frame == 16) {
           slideStep = -0x80000;

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 38 (tla-en); notes below may predate it.
 // Draft of overlay 685's Func_02000f48, differ 68 of 205: the trident talk,
 // which takes the first of items 439 to 441 the party holds and runs the next
 // of three flagged scenes with it, or says one of four lines. The gotos give
@@ -40,7 +41,9 @@ static __inline__ void Func_0200343c_(s32 x, s32 z, s32 a, s32 b) {
 }
 
 void Func_02000f48(s32 actor) {
-  s32 item;
+  /* FAKEMATCH(pin): item in r5, as the native keeps it; as a plain local,
+   * 68 of 205 instructions differ in tla-en. */
+  register s32 item asm("r5");
 
   if ((Actor_GetById(gMainRoutineWork.currentOwner)->x >> 20) <= 41)
     goto first;

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 45 (tla-en); notes below may predate it.
 // Draft, differ 168 of 193, skeleton gap 40 (tla-en, 2026-11-01)
 // Advances Aqua Rock's two water streams one cell along the map: each stream
 // follows the turn its cell's kind gives, leaves a splash on every open cell
@@ -93,24 +94,24 @@ s32 Func_020036b8(s32 first, s32 target) {
           splash->x = stream->x;
           splash->z = stream->z;
           splash->y = stream->y;
-          splash->active = 1;
           again = 1;
+          splash->active = 1;
           splash++;
           state->count++;
           turn = 0;
         } else if (kind >= first && kind <= first + 7) {
-          again = 0;
           turn = gData_0200534c[(stream->direction << 3) + kind - first];
+          again = 0;
           if (turn != 8)
             count = state->count;
         } else if (kind == target) {
-          again = 0;
           turn = 8;
           reached++;
+          again = 0;
           count = state->count;
         } else if (kind == 0) {
-          again = 0;
           turn = 8;
+          again = 0;
         }
         if (turn != 8) {
           stream->direction = (stream->direction + turn) & 3;

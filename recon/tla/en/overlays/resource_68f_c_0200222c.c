@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 67 (tla-en); notes below may predate it.
 // Draft, differ 68 of 130, skeleton gap 12 (tla-en, 2026-11-01): on entering,
 // sets each listed pillar from its two flags (pushed: moved to its place; else
 // its cell raised and its shape redrawn), then lifts the leader onto the ground
@@ -59,8 +60,8 @@ void Func_0200222c(u16 *entries) {
 
       if (GameFlag_Test(flag + 1)) {
         Func_02003088(id, 0, 0);
-        list += 2;
         continue;
+        list += 2;
       } else {
         s32 index = Func_02003160(object);
         struct MapCell *cell;

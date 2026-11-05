@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 40 of 376 (tla-en); older figures below predate it.
 // Matches: differ 0 (tla-ja, 2026-11-02)
 // Japanese-only: the listing's section sits under .ifdef TLA_EDITION_JA, the
 // other editions link games/tla/src/scene/naribwe_interiors/s0390.c, so measure
@@ -74,7 +75,6 @@ void Func_02000390(void) {
 ask:
   /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 63 of 374
    * instructions differ in tla-ja. */
-  asm("" : : : "sfp");
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   /* FAKEMATCH(temporary): item also holds this call's result; as a separate
    * test of the call, 23 of 374 instructions differ in tla-ja. */
@@ -97,8 +97,8 @@ ask:
   Call3((void (*)())Func_02001108, 18, 0x2a00000, 0x680000);
   FieldEvent_Wait(60);
   Func_020010b0(unitData->items[slot], 2);
-  FieldMessage_Show(MsgPlacedOnThe, 1);
   message = MsgAreYouPrepared;
+  FieldMessage_Show(MsgPlacedOnThe, 1);
   Func_02001138(message);
   FieldMessage_ShowAtActor(10, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) != 1)

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 2 of 128 (tla-en); older figures below predate it.
 // Draft, differ 2 of 128, skeleton gap 1 (tla-en, 2026-11-01)
 // Left: one sched2 tie at the second camera call. The native sets the mode
 // (movs r3, #1) before lsls r0; the draft sets it last, after lsls r2. All the
@@ -23,6 +24,7 @@
 #include "input.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
+#include "call.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
@@ -74,7 +76,9 @@ s32 Func_02000514(void) {
     Event_WaitTransitionFrames();
     FieldEvent_Wait(10);
     Func_02001578(0x20000, 0x4000);
-    Camera_MoveWithinMapBounds(144 << 16, cameraY, cameraZ, 1);
+    {
+      do { Call4((void (*)())Camera_MoveWithinMapBounds, 144 << 16, cameraY, cameraZ, 1); } while (0);
+    }
     goto check;
     do {
       wait(1);

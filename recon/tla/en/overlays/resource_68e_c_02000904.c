@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 104 (tla-en); notes below may predate it.
 // Draft, differ 160 of 918, skeleton gap 22 (tla-en, 2026-11-01)
 // The twin of ☀️'s TolbiSpring_UpdateTossSimulation, keeping its toss pointer.
 // What closes it: the ride sits in r7 once deltaX, deltaZ and speed stop
@@ -89,7 +90,7 @@ void Func_02000904(void) {
   s32 *trail0;
   s32 deltaX;
   s32 deltaZ;
-  s32 speed;
+  register s32 speed asm("r10");
   s32 *trail4;
   s32 *result;
   s32 position;
@@ -274,7 +275,7 @@ void Func_02000904(void) {
     modeBits = (u16)obstacle->speedMode;
     next = index + 1;
     if (index <= 1) {
-      speedMode = (s16)modeBits;
+      speedMode = obstacle->speedMode;
       motionStep = 0x10000;
       if (speedMode == 1) {
         motionStep = motionStep * 2;
@@ -282,7 +283,7 @@ void Func_02000904(void) {
       if (speedMode == 2) {
         motionStep = motionStep * 3;
       }
-      if ((s16)reaction > 0) {
+      if (obstacle->reactionFrames > 0) {
         if (index == 0) {
           Func_020012e8(Actor_GetById(18), 3);
         } else {
@@ -320,7 +321,7 @@ void Func_02000904(void) {
         }
       }
     } else if (index == 2) {
-      speedMode = (s16)modeBits;
+      speedMode = obstacle->speedMode;
       motionStep = -64;
       if (speedMode == 1) {
         motionStep = motionStep * 2;
@@ -328,7 +329,7 @@ void Func_02000904(void) {
       if (speedMode == 2) {
         motionStep = motionStep * 3;
       }
-      if ((s16)reaction > 0) {
+      if (obstacle->reactionFrames > 0) {
         Func_020012e8(Actor_GetById(20), 3);
       } else {
         Func_020012e8(Actor_GetById(20), 2);
@@ -340,7 +341,7 @@ void Func_02000904(void) {
       }
     } else {
       cycleFrame = obstacle->pauseOrPhase & 511;
-      speedMode = (s16)modeBits;
+      speedMode = obstacle->speedMode;
       motionStep = 64;
       if (speedMode == 1) {
         motionStep = motionStep * 2;
@@ -348,7 +349,7 @@ void Func_02000904(void) {
       if (speedMode == 2) {
         motionStep = motionStep * 3;
       }
-      if ((s16)reaction > 0) {
+      if (obstacle->reactionFrames > 0) {
         Func_020012e8(Actor_GetById(21), 3);
       } else if (cycleFrame <= 383) {
         obstacle->position.x = Math_Sine(obstacle->heading) * 52 + 0x700000;

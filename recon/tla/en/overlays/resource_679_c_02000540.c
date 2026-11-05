@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 41 (tla-en); notes below may predate it.
 // Draft, differ 43 of 145: a palette cycle for two 16-colour palettes (from
 // 0x05000160 and 0x050001a0): unless the event work is busy or its byte
 // 0xca4 is set, saves both palettes and working copies on the first frame,

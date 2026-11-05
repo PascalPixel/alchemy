@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 176 of 278 (tla-en); older figures below predate it.
 // Draft, differ 229 of 278, skeleton gap 24 (tla-en, 2026-11-01)
 // The control flow, calls, arguments and memory accesses are the native's;
 // what is left is allocation, and most of the skeleton gap is its spills and
@@ -48,11 +49,12 @@
 // Returns 0, or -1 when the parity of the distance rules a path out or the
 // search gives up.
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 
 struct PuzzleCell {
-  u8 piece;
   u8 unk1;
+  u8 piece;
   u8 shape;
   u8 marked;
 };
@@ -75,12 +77,12 @@ s32 Func_02003fc0(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length, s32 direction,
   length--;
   dz = endZ - z0;
   spare = length - abs(endX - x0) - abs(dz);
-  Iwram_ClearWords(Data_02006fc8, 32);
   Iwram_ClearWords(Data_02006fe8, 32);
-  Iwram_ClearWords(Data_02007008, 32);
+  Iwram_ClearWords(Data_02006fc8, 32);
   Iwram_ClearWords(Data_02007028, 32);
+  Iwram_ClearWords(Data_02007008, 32);
+  Call2((void (*)())Iwram_ClearWords, (s32)(gData_02007068), (s32)(32));
   Iwram_ClearWords(Data_02007048, 32);
-  Iwram_ClearWords(gData_02007068, 32);
   if (spare & 1) {
   fail:
     return -1;

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 27 (tla-en); notes below may predate it.
 // Draft, differ 27 of 80: the scene start that sets the event work's 0x1ac
 // word to 0x100, the leader's bit 5 at 0x23, blending 0x3f42 and 0x80c, modes
 // 2 for objects 24 and 25 and, when gMainRoutineWork's 0x1e2 halfword is 1 and

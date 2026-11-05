@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 64 of 155 (tla-en); older figures below predate it.
 // Draft, differ 66 of 155: every eighth frame pair, while none of the event
 // work's four busy counters is set, starts a drip (Func_0200160c) at a place
 // chosen by scene: in scene 0x57 one of two spots by the frame and flag
@@ -6,6 +7,7 @@
 // through jumps between the branches and lays the blocks out in another
 // order.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
@@ -46,7 +48,7 @@ void Func_02001690(void) {
         else if (!GameFlag_Test(0x201))
           Func_0200160c(0x1f80000, 0, 0x1c80000);
         else
-          Func_0200160c(0x2280000, 0, 0x1c80000);
+          Call3((void (*)())Func_0200160c, (s32)(0x2280000), (s32)(0), (s32)(0x1c80000));
       } else {
         Func_0200160c(0x2680000, -0x200000, 0x880000);
       }

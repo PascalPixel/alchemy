@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 38 (tla-en); notes below may predate it.
 // Draft, differ 64 of 153: 688's scene setup, decompiled from the listing. The
 // native builds the screen effect 0x204 from the event work offset already in
 // r2 (adds r2, #88) and keeps it in r10, reads the entrance with ldrsh at each

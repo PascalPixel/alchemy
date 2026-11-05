@@ -1,3 +1,7 @@
+// 2026-11-05: differ 274 of 902 (tla-en). Declaration moves and wrappers
+// beyond the one in place gain nothing; the Q allocation below stands.
+// 2026-11-05: differ 274 of 902 (tla-en). A wrapper on one Iwram call gains 2;
+// the allocation below still stands.
 // Draft, differ 276 of 902, skeleton gap 80 (tla-en, 2026-11-01)
 // The instruction count, the frame and every spill slot now match; the base,
 // a, x, row and column are in the native's r9, lr, r10, r11 and r8. What is
@@ -150,6 +154,12 @@ extern const u8 gData_08199210[]; // its corners
 #define WATER_COLUMNS 16
 #define WATER_ROWS 8
 
+static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 276 of 902 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
 // The body of Dreamtide (mode 0) and Watery Grave (mode 1): a sheet of
 // water (a 16 by 8 grid of vertices, its mesh built here) rolls in under
 // the targets in waves while the camera turns; Dreamtide strikes the first
@@ -208,7 +218,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    Iwram_CopyWords((void *)BG_PLTT,
+    CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
   }
 

@@ -1,9 +1,12 @@
+// Measured under -Os, 5 November 2026: differ 26 (tla-en); notes below may predate it.
 // Draft, differ 42: the listing keeps height in r4 and reuses r0 for the entry,
 // no r5/r6 saved.
 #include "../../../../games/tla/src/scene/aqua_rock_inside/local.h"
 
 void Func_0200349c(u32 index, s32 height) {
-  struct MapWork *map = Ram_HeapSlots->mapWork;
+  /* FAKEMATCH(pin): map in r5, as the native keeps it; as a plain local,
+   * 42 of 41 instructions differ in tla-en. */
+  register struct MapWork *map asm("r5") = Ram_HeapSlots->mapWork;
   struct PillarWork *work = &gData_0200536c;
 
   if (index <= 31) {

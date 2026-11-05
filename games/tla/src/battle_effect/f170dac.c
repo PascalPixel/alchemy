@@ -1,0 +1,374 @@
+#include "battle_effect.h"
+#include "battle_effect_work.h"
+#include "effect_step.h"
+#include "io_reg.h"
+#include "iwram_call.h"
+#include "heap_release.h"
+#include "ram_buffer.h"
+#include "types.h"
+
+struct ModelTexture {
+  u32 logWidth : 8;
+  u32 logHeight : 8;
+  u32 unk02 : 16;
+  const void *pixels;
+};
+
+struct RenderModel {
+  s32 kind;
+  s32 unk04;
+  const void *mesh;
+  void *vertices;
+  struct ModelTexture *texture;
+  s32 shade;
+  u8 scrollU;
+  u8 scrollV;
+};
+
+void BattleEffect_StartCanvasLayer(s32 bgControl);
+void BattleEffect_EndCanvasLayer(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void BattleEffect_CountDownBattlerTints(void);
+void BattleEffect_LoadBlitter(s32 slot,
+                              s32 modeAndFlags); // BattleEffect_BuildBlitter
+void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
+                   s32 timerFrames);              // BattleEffect_TintBattler
+void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
+void Func_0816ae40(u8 *src, u8 *dst, s32 width, s32 height);
+void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
+                   s32 *otherPoint);
+void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
+struct RenderModel *Render_AllocateModelList(s32 count);
+void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_DrawModelList(struct RenderModel *model);
+void Func_08015160(s32 x, s32 y, s32 z);
+void Func_0801521c(s32 scale);
+void SceneTransform_ApplyPitch(s32 angle);
+void SceneTransform_ApplyYaw(s32 angle);
+void Render_ResetTransformState(void);
+void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
+void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
+                                   s32 speedLimit, s32 velocityY, s32 percent);
+void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
+                                       s32 flags);
+void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
+void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
+void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
+void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
+void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
+                                          s32 drag);
+void **GetBattleObjectSlotFar(s32 objectId);
+void *Heap_AllocEwram(s32 size);
+void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
+void *Resource_GetTableEntry(s32 resource);
+s32 Task_Add(void (*func)(void), s32 order);
+s32 Task_Remove(void (*func)(void));
+void HeapSlot_Release(s32 slot);
+void Sound_PlayFar(s32 cue);
+void wait(s32 frames);
+u32 Random16(void);
+s32 Trig_Sin(s32 angle);
+s32 Trig_Cos(s32 angle);
+
+void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
+void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
+                                          s32 gravity);
+s32 BattleUnit_GetEffectHeightFar(s32 unit);
+void Transform_SetLookAt(s32 *eye, s32 *target);
+void BattleEffect_StartTiledCanvas(s32 bgControl);
+void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
+void Transform_Push(void);
+void Transform_Pop(void);
+
+// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
+#define SLOT_BLITTER 104 // unk64[1]
+
+// ⚓️'s blitter modes run the other way from The Broken Seal's.
+enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
+#define BLITTER(mode, flags) ((mode) << 4 | (flags))
+#define HI(v) (((s16 *)&(v))[1])
+
+void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+                  u32 mode);
+void Camera_ApplyPhasedDelta(void); // the camera's sway
+
+struct VoidCaster {
+  u8 unk00[8];
+  s32 x;
+  s32 y;
+  s32 z;
+};
+
+extern char ResourceId_EmberStreakSheet;
+extern char ResourceId_CometSheetB;
+extern char ResourceId_Data134;
+extern char ResourceId_RuneSheet;
+extern char ResourceId_LightningBoltSheet;
+extern u8 gMapCellBuffer[];
+extern const u16 gData_08197410[]; // gBattleEffect_MoteCells
+extern const s8 Data_08196e9c[];   // the hexagon's corners (z, y)
+
+#define VOID_BEAM_FRAMES 88
+#define BEAM_SEGMENTS 10
+
+static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 2 of 743 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
+// Abilities: Void Beam.
+//
+// A hexagon of motes is traced, side by side, around the caster while a
+// ring of 64 gathers behind; at frame 72 a beam (a 32-line gradient,
+// repeated ten times) shoots from the caster toward the targets' side,
+// fading out from frame 80 with the blend.
+void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
+  struct BattleEffectWork *work;
+  void *canvas;
+  s32 frame;
+  DrawRectangle draw[2];
+  s32 *camera;
+  u8 *sprites;
+  s32 point[3];
+  struct EffectPosition corners[11];
+  struct EffectPosition ring;
+  struct EffectPosition segment;
+  s32 flip;
+  s32 count;
+  u8 *row;
+  s32 i;
+  s32 k;
+  u8 *buffer;
+  s32 size;
+
+  work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  canvas = Ram_HeapSlots->battleFxWork[1];
+  camera = Ram_HeapSlots->cameraWork;
+  sprites = Ram_HeapSlots->unk64[0];
+  buffer = Ram_MapCellBuffer;
+  BattleEffect_StartCanvasLayer(1);
+  Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
+                             1);
+  Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB, work->sheet + 0x1000,
+                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
+
+  // The motes, one shade dimmer.
+  for (i = 0; i != 770; i++) {
+    s32 pixel = sprites[i];
+
+    if (pixel != 0) {
+      pixel -= 8;
+      if (pixel <= 0) {
+        pixel = 1;
+      }
+      sprites[i] = pixel;
+    }
+  }
+  Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, buffer + 0x1000, 1, 0);
+  Iwram_ClearWords(buffer, 0x1000);
+
+  // The beam's head: the rune, mirrored to 48 columns.
+  for (i = 0; i != 48; i++) {
+    s32 j;
+
+    for (j = 0; j != 24; j++) {
+      buffer[0x208 + i * 64 + j] = buffer[0x1000 + i * 24 + j];
+      buffer[0x208 + i * 64 + 47 - j] = buffer[0x1000 + i * 24 + j];
+    }
+  }
+  CopyWords((void *)BG_PLTT,
+            Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet), 128);
+
+  // The beam's body: a 32-line gradient.
+  row = work->sheet + 0x1a20;
+  for (i = 0; i != 32; i++) {
+    s32 shade = (Trig_Sin(i << 9) * 63) >> 16;
+    s32 j;
+
+    for (j = 0; j != 32; j++) {
+      *row++ = shade;
+    }
+  }
+  REG_BLDALPHA = 0x1010;
+  flip = 4;
+  if (effect->side != 0) {
+    flip = 0;
+  }
+  Func_08196404(SLOT_BLITTER, 7, 7, flip | 3, 1);
+  Func_08196404(188, 7, 7, flip | 11, 1);
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  work->cameraDelta = 0;
+  work->cameraPhase = 0;
+  Task_Add(Camera_ApplyPhasedDelta, 0x480);
+  work->transferMode = 2;
+  work->transferValue = 50;
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  Sound_PlayFar(140);
+  size = 4;
+
+  for (frame = 0; frame != VOID_BEAM_FRAMES; frame++) {
+    if ((u32)(frame - 9) <= 54) {
+      work->cameraDelta = -256;
+    } else if ((u32)(frame - 64) <= 15) {
+      work->cameraDelta = frame * 16 - 1280;
+    } else {
+      work->cameraDelta = 0;
+    }
+    if (effect->side == 1) {
+      work->cameraDelta = -work->cameraDelta;
+    }
+    if (frame > 79) {
+      s32 fade = frame * 2 - 160;
+
+      REG_BLDALPHA = (16 - fade) | 0x1000;
+    }
+    BattleCamera_SetViewFar(0, 0, 0, 100);
+    Render_ResetTransformState();
+    Transform_SetLookAt(camera, camera + 3);
+    {
+      struct VoidCaster *caster;
+      s32 traced;
+
+      caster = *GetBattleObjectSlotFar(effect->actor);
+      if (caster->x > 0) {
+        point[0] = caster->x - 0x80000;
+      } else {
+        point[0] = caster->x + 0x80000;
+      }
+
+      // The hexagon, one side every 36 frames.
+      traced = frame * 8 - 336;
+      if (traced >= 0) {
+        for (i = 0; i != 6; i++) {
+          s32 corner = (i + 4) % 6;
+
+          point[1] = (Data_08196e9c[corner * 2 + 1] << 16) + 0x1e0000;
+          point[2] = (Data_08196e9c[corner * 2] << 16) + caster->z;
+          EffectPosition_ProjectPoint(point, &corners[i]);
+          corners[i].x >>= 1;
+        }
+        for (i = 0; i != 6; i++) {
+          s32 motes = traced - i * 36;
+
+          if (motes > 36) {
+            motes = 36;
+          }
+          if (motes < 0) {
+            continue;
+          }
+          for (k = 0; k != motes; k++) {
+            s32 x =
+                corners[i].x +
+                Iwram_MulQ16(k * (corners[(i + 1) % 6].x - corners[i].x), 1820);
+            s32 y =
+                corners[i].y +
+                Iwram_MulQ16(k * (corners[(i + 1) % 6].y - corners[i].y), 1820);
+
+            draw[0](canvas, sprites + gData_08197410[size - 1], x - size / 2,
+                    y - size, size, size * 2);
+          }
+        }
+      }
+
+      // The ring behind the caster.
+      count = frame * 3 / 2;
+      if (count > 64) {
+        count = 64;
+      }
+      for (i = 0; i != count; i++) {
+        s32 angle = i << 10;
+
+        point[1] = caster->y - Trig_Cos(angle) * 40 + 0x200000;
+        point[2] = caster->z + Trig_Sin(angle) * 40;
+        EffectPosition_ProjectPoint(point, &ring);
+        ring.x >>= 1;
+        if (ring.depth <= 159) {
+          ring.depth = 160;
+        }
+        if (ring.depth > 799) {
+          ring.depth = 799;
+        }
+        draw[1](canvas, sprites + gData_08197410[size - 1], ring.x - size / 2,
+                ring.y - size, size, size * 2);
+      }
+
+      // The beam.
+      if (frame > 71) {
+        s32 fade;
+
+        if (frame == 72) {
+          work->particles[0].x = point[0];
+          if (work->particles[0].x > 0) {
+            work->particles[0].velocityX = -0x200000;
+          } else {
+            work->particles[0].velocityX = 0x200000;
+          }
+          REG_BG2CNT = 0x784;
+        }
+        if (frame == 72) {
+          work->shakeFrames = 8;
+          Func_081180e8(145);
+          Func_08118088(effect->actors[0], 4);
+          Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
+        }
+        for (i = 0; i != BEAM_SEGMENTS; i++) {
+          point[0] = work->particles[0].x + work->particles[0].velocityX * i;
+          point[1] = 0x1e0000;
+          point[2] = caster->z;
+          EffectPosition_ProjectPoint(point, &segment);
+          segment.x >>= 1;
+          if (effect->side == 0) {
+            segment.x -= 32;
+          }
+          if (i > 0) {
+            draw[0](canvas, work->sheet + 0x1a20, segment.x, segment.y - 32, 32,
+                    32);
+            draw[1](canvas, work->sheet + 0x1a20, segment.x, segment.y, 32, 32);
+          } else if (frame <= 81) {
+            draw[0](canvas, work->sheet + 0x1000, segment.x, segment.y - 36, 32,
+                    36);
+            draw[1](canvas, work->sheet + 0x1000, segment.x, segment.y, 32, 36);
+          }
+        }
+        row = work->sheet + 0x1a20;
+        fade = 0;
+        if (frame > 79) {
+          fade = frame * 8 - 640;
+        }
+        for (i = 0; i != 32; i++) {
+          s32 shade = ((Trig_Sin(i << 9) * 63) >> 16) - fade;
+          s32 j;
+
+          if (shade < 0) {
+            shade = 0;
+          }
+          for (j = 0; j != 32; j++) {
+            *row++ = shade;
+          }
+        }
+      }
+    }
+    if (work->cameraPhase == 0) {
+      work->cameraPhase = 1;
+    }
+    Func_08158ce0(8, 8);
+    BattleEffect_CountDownBattlerTints();
+    work->transferPending = 1;
+    wait(1);
+  }
+  HeapSlot_Release(188);
+  HeapSlot_Release(104);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(Camera_ApplyPhasedDelta);
+  BattleEffect_EndCanvasLayer();
+}

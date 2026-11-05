@@ -1,3 +1,5 @@
+// Measured 2026-11-05 (tla-en): differ 4 of 360. A one-pass block around
+// offsetX and offsetY gives 2: str r6 ahead of adds r3, #8 is all that is left.
 // Draft, differ 27 of 360, skeleton gap 9 (tla-en, 2026-11-01)
 // A frame callback of the intro (its state in heap slot 43, 0x030000ac): clears
 // OAM, then in phase 0 steps an animation through gData_081a8378 along the path

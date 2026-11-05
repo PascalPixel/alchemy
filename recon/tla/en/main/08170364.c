@@ -1,3 +1,6 @@
+// 2026-11-05: differ 28 of 1152 (tla-en). The one-pass round the blitter build
+// is in: the bolt loops' registers now agree. Left: pool loads against ldrsh,
+// placement[2], the bolt preheader, and sched2 rows after stack stores.
 // Draft, differ 232 of 1152, skeleton gap 62 (tla-en, 2026-11-01)
 // BattleEffect_RunMegaera. Control flow, calls and the 124-byte frame agree.
 // Proven here: position and velocity are 8-byte structs in DImode pseudos (the
@@ -462,8 +465,13 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
               s32 gx = column + (Random16() & 7) - (gData_08197492[k] >> 1);
               s32 gy = (Random16() & 63) - (gData_08197498[k] >> 1);
 
-              Func_08196404(188, 7, 7, 3 | Data_08198bf4[Random16() & 3],
-                            Data_08198bf8[effect->variant]);
+              /* FAKEMATCH(one-pass): the blitter's build in a block of its own,
+               * so the table reads stay apart until cse2; as a plain call, 206 of
+               * 1152 instructions differ in tla-en. */
+              do {
+                Func_08196404(188, 7, 7, 3 | Data_08198bf4[Random16() & 3],
+                              Data_08198bf8[effect->variant]);
+              } while (0);
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
                   canvas, gData_02014000 + gData_08197486[k], gx - 4, gy + 40,
                   gData_08197492[k], gData_08197498[k]);

@@ -1,3 +1,7 @@
+// Measured 2026-11-05 (tla-en): differ 178 of 549. Left: allocation: the frame
+// is 80 of 88; the listing has caller-save slots there (a pointer in r4 saved
+// at sp+8) as 0814a814 does.
+
 // Draft, differ 183 of 549, skeleton gap 31 (tla-en, 2026-11-01)
 // Func_0814b9e8, the body of three effect kinds through BattleEffect_RunBalm
 // (mode 0), BattleEffect_RunTinder (mode 1) and BattleEffect_RunPhoenix
@@ -45,6 +49,11 @@
 #include "battle_effect_work.h"
 #include "fixed_math.h"
 #include "resource.h"
+
+static __inline__ s32 CopyWords_(void *destination, const void *source, s32 size) {
+  return Iwram_CopyWords(destination, source, size);
+}
+
 
 #define HEAP_BLITTER 104 // ☀️ HEAP_SLOT_BLITTER
 
@@ -151,7 +160,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
                                work->sheet + SHEET_TEXTURE, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + SHEET_DJINN, 1, 0);
-    Iwram_CopyWords((void *)BG_PLTT,
+    CopyWords_((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                     128);
   } else if (mode == QUADS_MARS) {
@@ -219,6 +228,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     // middle while the canvas fades.
     if (effect->prelude == 1) {
       x = ((-Trig_Sin(frame << 11) * 20) >> 16) + 44;
+      /* FAKEMATCH(barrier): the empty asm gives x a reference more, which moves it in the allocators' ranking; as no asm, 179 of 549 instructions differ in tla-en. */
+      __asm__("" : "=r"(x) : "0"(x));
       y = ((Trig_Cos(frame << 11) * 4) >> 16) + anchor[1] - 24;
       if (frame > 32)
         y = y - frame * 4 + 128;

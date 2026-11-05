@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 58 of 445 (tla-en); older figures below predate it.
 // Draft, differ 73 of 445, skeleton gap 10 removed, 11 added (tla-en, 2026-11-01)
 // The Islets' trade of the milk (item 454) with object 11: with the milk in the
 // party, object 11 turns and hops toward the leader (MsgSniffSniffI), the two
@@ -73,9 +74,9 @@ void Func_02000e38(void) {
     trader = Actor_GetById(11);
     // Default: the trader's first update store reads it.
     gift = 0;
-    right = 0;
-    Call3((void (*)())Actor_SetAngleToward, 11, gMainRoutineWork.currentOwner, 0);
     trader->update = Func_02000df8;
+    Call3((void (*)())Actor_SetAngleToward, 11, gMainRoutineWork.currentOwner, 0);
+    right = 0;
     Call3((void (*)())Actor_Jump, 11, 4, 10);
     trader->update = 0;
     Func_02003f24(MsgSniffSniffI);

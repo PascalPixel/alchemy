@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 93 (tla-en); notes below may predate it.
 // Draft, differ 208 of 171, skeleton gap 36 (tla-en, 2026-11-01)
 // How far a pushed object slides: from the object Func_02000f34 finds, steps
 // its footprint one step at a time in the push direction until a cell of it
@@ -72,7 +73,9 @@ s32 Func_02000dcc(struct PushMove *move) {
   struct Actor *object;
   s32 stepIndex;
   s32 position[3];
-  s32 direction;
+  /* FAKEMATCH(pin): direction in r5, as the native keeps it; as a plain local,
+   * 138 of 171 instructions differ in tla-en. */
+  register s32 direction asm("r5");
   s32 width;
   s32 height;
   s32 dx;
@@ -95,8 +98,8 @@ s32 Func_02000dcc(struct PushMove *move) {
     dx = gData_0200249c[stepIndex] & 0xffff0000;
     dz = gData_0200249c[stepIndex] << 16;
     move->unk14 = 0;
-    count = 0;
     layer = &object->terrainId;
+    count = 0;
     *layer = 2;
     move->x = object->x + dx;
     move->z = object->z + dz;

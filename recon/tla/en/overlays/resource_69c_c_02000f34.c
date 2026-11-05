@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 59 (tla-en); notes below may predate it.
 // Draft, differ 149 of 132, skeleton gap 11 (tla-en, 2026-11-01)
 // Finds the object the leader is pushing: among objects 8 to 63 whose sprite
 // shape is in the six-entry footprint table, the one whose footprint holds the
@@ -66,8 +67,8 @@ nextObject:
       if (*(s16 *)((struct FieldSprite *)object->animation)->record !=
           gData_02002478[k])
         goto skip;
-      ahead = gData_0200249c[*step];
       x = (PIXELS(leader->x) + (ahead >> 16)) >> 4;
+      ahead = gData_0200249c[*step];
       z = (PIXELS(leader->z) + (s16)ahead) >> 4;
       left = (PIXELS(object->x) + gData_02002484[k][0]) >> 4;
       top = (PIXELS(object->z) + gData_02002484[k][1]) >> 4;
@@ -92,8 +93,8 @@ nextObject:
     k++;
     if (k <= 5)
       goto nextShape;
-  index++;
   objects++;
+  index++;
   if (index <= 63)
     goto nextObject;
   return 0;

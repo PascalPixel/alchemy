@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 47 (tla-en); notes below may predate it.
 // Draft, differ 61 of 270, skeleton gap 11 (tla-en, 2026-11-01)
 // Left: the listing keeps 31 in a register across both Random16Far calls and
 // the options address in r8; here 31 is built after them and the address takes

@@ -1,3 +1,6 @@
+// 2026-11-05: differ 14 of 575 (tla-en). Wrappers on the palette copy and the
+// fill close the blitter setup rows. Left: scheduling ties and the spark
+// base's register.
 // Draft, differ 34 of 575, skeleton gap 8 (tla-en, 2026-11-01)
 // Of BattleEffect_RunDaedalusAlt, decompiled from the listing. Same 51 calls
 // and control flow; every difference left is scheduling or one register.
@@ -142,6 +145,18 @@ struct SummonObject {
   u8 unk17;
 };
 
+static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 2 of 575 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
+static inline s32 FillWords(void *destination, s32 size, u32 value) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_FillWords, 30 of 575 instructions differ in tla-en. */
+  return Iwram_FillWords(destination, size, value);
+}
+
 // Abilities: Daedalus (the second scene).
 //
 // The summoned object glides in from the right and down over 92 frames
@@ -203,7 +218,7 @@ next_frame:
       discY = 0x500000;
       work->transferMode = 2;
       work->transferValue = 50;
-      Iwram_CopyWords((void *)BG_PLTT,
+      CopyWords((void *)BG_PLTT,
                       Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                       128);
     }
@@ -232,7 +247,7 @@ next_frame:
           life += 7;
         }
         work->shakeFrames = 8;
-        Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+        FillWords(canvas, 0x3c00, 0x3f3f3f3f);
       }
       if ((u32)(frame - 80) <= 7) {
         centerX = ((Random16() & 63) + 28) << 16;

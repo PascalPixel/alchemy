@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 87 of 230 (tla-en); older figures below predate it.
 // Draft, differ 99 of 230, skeleton gap 19 (tla-en, 2026-11-01)
 // Runs a race of the four objects from `first` (two teams of two): sets each
 // one's starting place and stage, steps them all with Func_02004938 sixteen
@@ -82,8 +83,8 @@ s32 Func_02004d48(s32 first, s32 judge) {
     done = 1;
     for (frame = 0; frame <= 15; frame++) {
       for (id = first; id < first + 4; id++) {
-        racer = Actor_GetById(id);
         stage = ((u8 *)racer)[0x63];
+        racer = Actor_GetById(id);
         if (stage != 0 && stage != 7)
           done = 0;
         Func_02004938(racer, frame, id);

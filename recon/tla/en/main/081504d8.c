@@ -1,3 +1,7 @@
+// Measured 2026-11-05 (tla-en): differ 22 of 553. Left: registers of the
+// hoisted 36 and -4 (r0 and r1, r5) at the head and tail of the target loop;
+// the frame and slots agree.
+
 // Near miss of SummonEffect_RunCanvasEffect, the body behind the four wrappers of
 // summon_canvas_modes.c.
 

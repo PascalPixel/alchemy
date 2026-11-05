@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 20 of 215 (tla-en); older figures below predate it.
 // Draft, differ 50 of 215 (was 94): the Venus Lighthouse entrance glow:
 // takes heap slot 220, loads gField_Tiles64D's tiles, sets up its sixteen
 // sprites and effect 290 over object id, then runs Func_02001fd0 until
@@ -107,9 +108,9 @@ void Func_020023a4(s32 id) {
     Func_02002a0c(sprite, 8, 8, 0x40000000, tile);
     sprite->unk1e = Func_02002a2c(object) - 2;
     sprite->priority = Func_02002a24(object);
+    state->frame = -1;
     sprite->fullColor = 1;
     sprite->palette = 0;
-    state->frame = -1;
     sprite++;
     state++;
   }

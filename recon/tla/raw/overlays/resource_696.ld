@@ -14,7 +14,7 @@ SECTIONS
         "*/games/tla/src/scene/shaman_village/s0458.o"(.text)
         "*/games/tla/src/field/field_effect/circle_blink.o"(.text)
         "*/games/tla/src/scene/shaman_village/s0508.o"(.text)
-        "*/resource_696_overlay.o"(.text.x0200857c)
+        "*/games/tla/src/scene/shaman_village/s057c.o"(.text)
         "*/games/tla/src/scene/shaman_village/s0c80.o"(.text)
         "*/games/tla/src/scene/shaman_village/s0d08.o"(.text)
         "*/games/tla/src/scene/shaman_village/s0fc4.o"(.text)

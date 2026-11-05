@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 44 of 63 (tla-en); older figures below predate it.
 // Draft, differ 54 of 63: every eighth frame, spawns a rising effect of type
 // 673 (palette 7, priority 1) at a random point up to 16 pixels either side of
 // the object and up to 32 pixels beyond it. The same listing as overlay 67c's
@@ -21,9 +22,9 @@ void Func_020040b0(struct Actor *object) {
 
   if (frame == 0) {
     options.palette = 7;
+    position.x = object->x + (((Random16Far() & 31) - 16) << 16);
     options.type = 673;
     options.priority = 1;
-    position.x = object->x + (((Random16Far() & 31) - 16) << 16);
     position.y = object->y + ((Random16Far() & 31) << 16) + 0x80000;
     position.z = object->z;
     Func_020002f4(

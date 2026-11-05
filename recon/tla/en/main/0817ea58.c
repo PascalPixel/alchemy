@@ -1,3 +1,5 @@
+// 2026-11-05: differ 1140 of 3921 (tla-en). Declaration order alone (a greedy
+// search) gains 68; the causes below stand.
 // Draft, differ 1208 of 3921, skeleton gap 126/126 (tla-en, 2026-11-01)
 // The second phase's frame loop is a label-and-goto loop: as a for loop, loop.c
 // hoists the frame-address copies, they take REG_EQUIV and work loses r11. The
@@ -255,12 +257,12 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
   s32 bgX;
   Vec3 *posp;
   s32 z;
+  s32 swayX;
+  s32 bobX;
   void **blits;
   u16 *pal;
-  s32 swayX;
-  s32 swayY;
-  s32 bobX;
   s32 bobY;
+  s32 swayY;
   s32 *ringX;
   s32 row;
   struct SummonWork *work;

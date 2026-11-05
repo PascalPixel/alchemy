@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 44 of 123 (tla-en); older figures below predate it.
 // Draft, differ 90 of 123, skeleton gap 15 (tla-en, 2026-11-01)
 // Raises each listed actor's cells (the shape grid and the cell flags of its
 // cell and the one below); the same function as overlay 655's Func_02000c64
@@ -49,17 +50,17 @@ void Func_02000038(u16 *list) {
              (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
     object->motionFlags = 0;
     object->collisionFlags = 0;
-    Actor_SetSingleChildFlags(object, 0);
     level += 4;
+    Actor_SetSingleChildFlags(object, 0);
     newShape = Func_020011f4(*layer, shape, level);
     shapes += index;
     index <<= 2;
     cells += index;
-    cells[3] |= 192;
     cells += 0x200;
-    cells[3] |= 64;
+    cells[3] |= 192;
     list++;
     *shapes = newShape;
+    cells[3] |= 64;
   }
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   height = Map_GetTerrainHeight(leader->terrainId, leader->x, leader->z);

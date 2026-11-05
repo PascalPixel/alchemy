@@ -1,3 +1,9 @@
+// Measured 2026-11-05 (tla-en): differ 16 of 337. Left: two hoisted addresses
+// in swapped registers (r2 and r4 for 36 and 48), and a multiply the native
+// issues later than alchemy-gcc does: sched2 ranks the chain into muls too high
+// (its cost of 4), so the constant or the multiply comes ahead of independent
+// rows.
+
 // Near miss of BattleEffect_RunBreak, effect kind 43: differ 36 of 337 (draft 337).
 
 // Twin: The Broken Seal's BattleEffect_RunBreak (effect.c), call for

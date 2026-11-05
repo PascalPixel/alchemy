@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 15 (tla-en); notes below may predate it.
 // Draft, differ 8 of 175, skeleton gap 4 (tla-en, 2026-11-01): the frame
 // callback of the glow: cycles thirty-two colours of the object palettes
 // through a wave of greens and blues, places the glow's two sprites at its spot

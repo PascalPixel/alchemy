@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 24 of 61 (tla-en); older figures below predate it.
 // Draft, differ 34 of 61: overlay 663's copy of overlay 691's Func_020006cc
 // (the same listing, calling Func_02000348 where 691 calls
 // MapCell_GetAttributes), whose draft holds its notes.
@@ -16,8 +17,7 @@ void Func_020003e8(u16 *ids) {
   struct MapCell **cells;
   s32 x, z;
 
-  goto check;
-loop:
+  while (*ids != 0xffff) {
   object = Actor_GetById(*ids);
   blocked = (u8 *)object + 0x63;
   *blocked = 0;
@@ -33,7 +33,5 @@ loop:
     *blocked = 1;
   }
   ids++;
-check:
-  if (*ids != 0xffff)
-    goto loop;
+  }
 }

@@ -1,3 +1,4 @@
+// Draft, differ 96 of 3111 (tla-en, 2026-11-05): the empty asms before the two fill loops (untagged yet; 100 without them) stop the list loops' exits threading past the fill loops' tests. Left: the two stack slots of note 1 and the pairs of notes 2 and 3; next's declaration in any position of the function's locals reads 124. Older notes follow.
 // Draft, differ 124 of 3111, skeleton gap 27 (tla-en, 2026-11-01): the battle
 // summary screen, The Broken Seal's BattleStatusScreen_Run
 // (games/tbs/src/window/screens/battle_status.c) grown into four pages that A
@@ -811,6 +812,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           Func_08041f70(15);
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
+        asm("");
         for (; j <= 3; j++)
           iconSprites[j].oam.f.tile =
               VramCache_Reload(iconSlots[j], (const void *)-1);
@@ -890,6 +892,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
               range--;
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
+          asm("");
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =
                 VramCache_Reload(iconSlots[j], (const void *)-1);

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 54 (tla-en); notes below may predate it.
 // Draft, differ 59 of 126, skeleton gap 19 (tla-en, 2026-11-01)
 // Sets the blend and loads two pictures (Data_02002620 and Data_02002af8) into
 // VRAM for the sprites at Data_02003060 and Data_02003030, then schedules
@@ -79,8 +80,8 @@ void Func_020003a0(void) {
   REG_BLDCNT = control;
   REG_BLDALPHA = alpha;
   Func_02001f6c(Data_02002620, buffer);
-  firstSlot = &gData_02003020;
   *firstSlot = Resource_FindFreeEntry();
+  firstSlot = &gData_02003020;
   firstTile = &Data_02003088;
   *firstTile = VramCache_Load(gData_02003020, 0x1000, buffer);
   Func_02002104(&Data_02003060, 0, 0, 0xc0000000, Data_02003088);

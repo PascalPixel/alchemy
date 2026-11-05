@@ -1,3 +1,5 @@
+// Measured under -Os, 5 November 2026: differ 118 (tla-en); notes below may predate it.
+// Left, measured 5 November 2026: an opaque copy of the second 65536 and the -1 reach differ 108; the rest is r1, r2 and r3 rotating through the constants, because they are one C variable each.
 // Draft, differ 139 of 989: translated from its listing, with the rooms
 // compared as their linker ids (SceneId_Ov686Room1 to 8, loaded from the pool
 // as the native does); names and structure still to do. Left: the native saves

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 17 of 120 (tla-en); older figures below predate it.
 // Draft of Func_02004634 (overlay 64B, 120 instructions), differ 69: the linked
 // pair of effects, ported from ☀️'s WorldMap_CreateAttachedEffects (⚓️ creates
 // kind 271, its updates are Func_020045e4 and Func_02004598, the sprite's
@@ -62,14 +63,14 @@ void Func_02004634(struct Actor *parent) {
   // goto loop: a for loop lets loop.c hoist the mask and the array address
   // (95).
   i = 0;
-loop:
+do {
   {
     child = Func_02004b30_(271, parent->x, parent->y, parent->z);
     pair[i] = child;
     if (child != NULL) {
+      child->motionFlags = 0;
       child->terrainHeight = parent->terrainHeight;
       part = child->animation;
-      child->motionFlags = 0;
       child->action = 0;
       child->watchedObject = parent;
       if (part != NULL) {
@@ -88,8 +89,7 @@ loop:
       }
     }
   }
-  if (++i <= 1)
-    goto loop;
+} while (++i <= 1);
   {
     struct Actor *p = pair[0];
     struct FieldSprite *sp = p->animation;

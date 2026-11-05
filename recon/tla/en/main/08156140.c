@@ -1,3 +1,9 @@
+// Measured 2026-11-05 (tla-en): differ 20 of 2278. Left: order: a multiply the
+// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
+// too high (its cost of 4), so the constant or the multiply comes ahead of
+// independent rows, three times; a load the native issues earlier than
+// alchemy-gcc does, the load and store line K2 calls an approximation.
+
 // Draft, differ 76 of 2278, skeleton gap 68 (tla-en, 2026-11-01)
 
 // Draft of BattleEffect_RunProjectileVolley, the body of the volley family:
@@ -737,6 +743,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->y - Data_081984ec[step],
                              Data_081984d7[step], Data_081984de[step]);
               RELEASE_DRAW_BLITTER();
+              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 2 of 2278 instructions differ in tla-en. */
+              __asm__("");
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step], flash->x,
@@ -750,6 +758,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *effect,
                              flash->y - Data_081984d7[step],
                              Data_081984de[step], Data_081984d7[step]);
               RELEASE_DRAW_BLITTER();
+              /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 2 of 2278 instructions differ in tla-en. */
+              __asm__("");
               BattleEffect_LoadBlitter(188, BLITTER_MAX | CLIP | COMPOSITE_FLIP);
               DRAW_ALTERNATE(
                   canvas, work->sheet + Data_081984f4[step] + 0x128a,

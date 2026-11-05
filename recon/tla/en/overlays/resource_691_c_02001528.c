@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 117 (tla-en); notes below may predate it.
 // Draft, differ 150 of 91: translated from its listing; names and structure still
 // to do.
 #include "iwram_call.h"
@@ -21,8 +22,8 @@ s32 Func_02001528(s32 a0) {
   s32 r5, r4, r0, r2, r6, r1, ip, r3, v0;
 
   r5 = FIELD_AT(a0, s32, 104);
-  r4 = r5;
   r4 = r4 + 100;
+  r4 = r5;
   r0 = a0;
   r2 = FIELD_AT(r4, s16, 0);
   if ((FIELD_AT(r4, s16, 0)) <= 35)
@@ -52,8 +53,8 @@ L_02009588:
   if ((FIELD_AT(r4, s16, 0)) <= 0x14c)
     goto L_020095c4;
   r6 = ip;
-  r6 = 78;
   r6 = r6 + 255;
+  r6 = 78;
   r2 = FIELD_AT(r6, u8, 0);
   if (r1 >= (((FIELD_AT(r6, u8, 0)) << 1) + r6))
     goto L_020095c4;
@@ -66,8 +67,8 @@ L_020095be:
   FIELD_AT(r0, s32, 12) = r2 + r1;
   goto L_020095de;
 L_020095c4:
-  r6 = 78;
   r6 = r6 + 255;
+  r6 = 78;
   r1 = 0;
   r2 = ((FIELD_AT(r0, u8, 98)) << 1) + r6;
   r3 = FIELD_AT(r4, s16, 0);

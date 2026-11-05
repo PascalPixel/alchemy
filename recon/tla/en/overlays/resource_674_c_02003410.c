@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 31 of 42 (tla-en); older figures below predate it.
 // Draft of overlay 674's Func_02003410, its palette queue's allocation (the
 // main image's PaletteQueue_Initialize with other loops), differ 30
 // of 42. The native keeps the queue in r0, the entry in r4 and i in r5,
@@ -14,8 +15,8 @@ void Func_02003410(void) {
   s16 i;
   u16 j;
 
-  queue = HeapSlot_AllocEwram(112, sizeof(struct PaletteSnapshotWork));
   i = 0;
+  queue = HeapSlot_AllocEwram(112, sizeof(struct PaletteSnapshotWork));
   entry = queue->entries;
 outer:
   entry->source = 0;

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 52 (tla-en); notes below may predate it.
 // Near miss, differ 137 of 165 (tla-en, 2026-10-31): control flow, calls,
 // fields, frame layout and constants are the native's; what remains is
 // allocation. Global allocation ranks gFrameCount & 4 (16 refs over 22 insns)

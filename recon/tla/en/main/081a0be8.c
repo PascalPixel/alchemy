@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 43 of 88.
 #include "types.h"
 #include "heap_release.h"
 #include "iwram_call.h"

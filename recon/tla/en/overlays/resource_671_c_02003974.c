@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 101 of 115 (tla-en); older figures below predate it.
 // Draft, differ 144 of 115, skeleton gap 24 (tla-en, 2026-11-01)
 // The cell grid of s48a4.c, written from the listing. Two things are left, and
 // the statements are otherwise the native's: a scratch compile of this source

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 16 of 200 (tla-en); older figures below predate it.
 // Draft, differ 22 of 200 (was 67): a bouncing object's update: it stops
 // animating while any of the event work's four busy counters is set; with its
 // action count at zero it is removed (or parked at 0, 0); otherwise it
@@ -60,6 +61,9 @@ void Func_02001458(struct Actor *object) {
       *counter = value;
     }
     object->unk4c = 0;
+    /* FAKEMATCH(barrier): an empty asm holds the next statement after this
+     * one; as no asm, 22 of 200 instructions differ in tla-en. */
+    asm("");
     object->speedLimit = -object->speedLimit >> 1;
     object->z = leader->z - 0x80000;
   }

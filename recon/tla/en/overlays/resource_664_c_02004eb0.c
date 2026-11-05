@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 13 of 64 (tla-en); older figures below predate it.
 // Draft, differ 64 of 64: creates eight objects of type 672, each with its
 // sprite at priority 1, a phase of 16 times its number in byte 0x63, a
 // speed of 0x8000 plus 0x1000 times its number and Func_02000550 as its
@@ -20,12 +21,12 @@ void Func_02004eb0(void) {
   s32 i = 0;
   struct FieldSprite *sprite;
 
-loop:
+do {
   object = Import_ActorCreate(672, 0, 0, 0);
   sprite = object->animation;
+  object->motionFlags = 0;
   sprite->priority = 1;
   ((u8 *)object)[0x63] = i << 4;
-  object->motionFlags = 0;
   object->priorityFlags = 0;
   object->speedLimit = object->acceleration = (i << 12) + 0x8000;
   object->update = Func_02000550;
@@ -38,8 +39,7 @@ loop:
     object->action = 116;
     object->unk66 = 0;
   }
-  i++;
   Animation_SetStateFlags(object, 1);
-  if (i != 8)
-    goto loop;
+  i++;
+} while (i != 8);
 }

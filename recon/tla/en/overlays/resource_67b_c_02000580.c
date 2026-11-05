@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 290 (tla-en); notes below may predate it.
 // Draft, differ 262 of 209, skeleton gap 66 (tla-en, 2026-11-01)
 // The native's ldrh ahead of the odd-frame test and the shifts in both arms
 // are s32 locals read through (u16) and used through (s16): tick (its ldrsh

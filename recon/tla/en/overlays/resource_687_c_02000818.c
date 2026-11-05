@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 101 (tla-en); notes below may predate it.
 // Draft, differ 197 of 280, skeleton gap 21 (tla-en, 2026-11-01): control flow,
 // calls, fields and constants are the native's; what remains is allocation.
 // Re-measured with the 1 November compiler: unchanged, so none of it was
@@ -73,7 +74,9 @@ void Func_02000818(void) {
   struct Spark spark;
   struct EventWork *work;
   struct Actor *actor;
-  s16 angle;
+  /* FAKEMATCH(pin): angle in r7, as the native keeps it; as a plain local,
+   * 136 of 280 instructions differ in tla-en. */
+  register s16 angle asm("r7");
   s32 x, z, dx, dz, targetX, targetZ;
   s32 cosine, sine;
   s32 x0, y0, z0;
@@ -127,8 +130,8 @@ void Func_02000818(void) {
           pos[1] -= 0xc0000;
           pos[3] -= 0xc0000;
         }
-        x0 = pos[0];
         y0 = actor->y;
+        x0 = pos[0];
         z0 = pos[1];
         if (gFrameCount & 4) {
           Func_0200015c(x0 + 0x40000, y0, z0, 0x8000, 0, 0, 0xb0000, &spark);

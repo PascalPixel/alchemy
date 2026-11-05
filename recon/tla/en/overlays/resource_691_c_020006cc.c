@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 24 (tla-en); notes below may predate it.
 // Draft, differ 34 of 61: marks the layer 2 cells ahead of and behind each
 // object of a table that ends on 0xffff when its cell has attribute 0x40.
 // As a goto loop (as a for loop the loop pass keeps 0xffff in r10 and the
@@ -24,8 +25,7 @@ void Func_020006cc(u16 *ids) {
   struct MapCell **cells;
   s32 x, z;
 
-  goto check;
-loop:
+  while (*ids != 0xffff) {
   object = Actor_GetById(*ids);
   blocked = (u8 *)object + 0x63;
   *blocked = 0;
@@ -41,7 +41,5 @@ loop:
     *blocked = 1;
   }
   ids++;
-check:
-  if (*ids != 0xffff)
-    goto loop;
+  }
 }

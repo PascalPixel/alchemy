@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 22 of 1150. Left: order: a multiply the
+// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
+// too high (its cost of 4), so the constant or the multiply comes ahead of
+// independent rows, twice, and the first rows of the model block.
+
 // Draft of BattleEffect_RunZagan, differ 46 of 1150, skeleton gap 21 (tla-en, 2026-11-01)
 // Same calls, control flow, frame and spill slots. What is left is instruction
 // order and two reload registers:
@@ -118,6 +123,7 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 #include "bg_scroll.h"
 #include "input.h"
+static __inline__ s32 Through2_(s32 (*routine)(), s32 a0, s32 a1) { return routine(a0, a1); }
 
 void Func_08179e6c(void);
 void Animation_ApplyChildArgumentFar(void *object, s32 animation);
@@ -186,7 +192,8 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   Func_08179e6c();
   work->transferMode = none;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  /* FAKEMATCH(wrapper): the call through an inline forwarder, whose parameter leaves the constant set in argument order; as a direct call, 2 of 1150 instructions differ in tla-en. */
+  Through2_((s32 (*)())Task_Add, (s32)(BattleEffect_ProcessPendingGraphicsTransfer), (s32)(0xc80));
 
   // The screen slides over to the field.
   for (scroll = -80, frame = 0; frame != 28; frame++) {
@@ -476,6 +483,8 @@ void BattleEffect_RunZagan(struct BattleEffectArgument *effect) {
       model->texture = &texture;
       model->kind = 7;
       model->mesh = Data_08198ec4;
+      /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 2 of 1150 instructions differ in tla-en. */
+      __asm__("");
       model->vertices = vertices;
       model->scrollU = 0;
       model->scrollV = 0;

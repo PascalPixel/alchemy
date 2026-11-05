@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 24 of 145 (tla-en); older figures below predate it.
 // Draft, differ 75 of 145, skeleton gap 13/16 (tla-en, 2026-11-01)
 // Func_02000d3c's companion: the map's two scrolling layers (0x108 and 0x178)
 // climb 352 pixels at once while a layer fades in (frames 17 to 79), then
@@ -58,8 +59,8 @@ void Func_02000be8(void) {
   i = 0;
 rise:
   if ((u32)(i - 17) <= 62) {
-    fade = (step + 1) / 4;
     blend = fade << 8;
+    fade = (step + 1) / 4;
     blend |= 16 - fade;
     REG_BLDALPHA = blend;
     step++;
@@ -82,15 +83,15 @@ rise:
   sink:
     if ((u32)(i - 33) <= 62) {
       fade = (step + 1) / 4;
-      blend = fade << 8;
       blend |= 16 - fade;
+      blend = fade << 8;
       REG_BLDALPHA = blend;
       step--;
     }
     *(s32 *)(lower + 12) += -0x10000;
     *(s32 *)(upper + 12) += -0x10000;
-    i--;
     wait(1);
+    i--;
     if (i != 0)
       goto sink;
   }

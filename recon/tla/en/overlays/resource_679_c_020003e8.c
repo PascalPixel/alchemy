@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 26 (tla-en); notes below may predate it.
 // Draft, differ 85 of 156, skeleton gap 9 (tla-en, 2026-11-01)
 // Func_02000540's twin for the palettes at 0x05000060 and 0x05000080 (the
 // listing's 160 << 19 plus 96 and 128; earlier headers said 0x05000160 and

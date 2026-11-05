@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 108 of 195.
 // Draft, differ 108 of 195: the credits and slide show driver. It resets the
 // task table, starts the scroll task and sets up BG2, BG3 and blending;
 // mode 1 cross-fades the slides until START or the scroll ends, other modes

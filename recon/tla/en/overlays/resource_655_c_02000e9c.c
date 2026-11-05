@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 28 of 76 (tla-en); older figures below predate it.
 // Draft, differ 19 of 76: raises the cells under the held actor again.
 // Two minutes of permute took it from 79. Left: register choice of the
 // layer pointer and the order of the shape store and the cell flags.
@@ -83,9 +84,17 @@ void Func_02000e9c(void) {
   level = Map_GetTerrainHeight(*layer, held->x, held->z);
   index = Func_02003db0(held);
   shapes += index;
-  *shapes = Func_02003dd0(*layer, shape, (level >> 19) + 4);
-  cells += index;
-  cells->attributeB |= 192;
+  {
+    s32 value = Func_02003dd0(*layer, shape, (level >> 19) + 4);
+    u8 attribute;
+    s32 raised = 192;
+
+    attribute = cells->attributeB;
+    cells += index;
+    raised |= attribute;
+    *shapes = value;
+    cells->attributeB = raised;
+  }
   cells += 128;
   cells->attributeB |= 64;
 }

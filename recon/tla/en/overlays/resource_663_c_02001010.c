@@ -1,3 +1,9 @@
+// Under -Os, 5 November: differ 34 of 543 (tla-en); older figures below predate it.
+// Measured 5 November (-Os), differ 37 to 40 of 543: the end's last set is
+// `orrs r5, r3; strb r5`, the result tied to the shared 1 as in overlay 64d's
+// Func_02000510. `shared |= *flags; *flags = shared;` gives that shape; the set
+// before it then builds its own 1 (a known constant) or, past a one-pass block,
+// copies it (adds r3, r6). r5 and r6 stay swapped with gMainRoutineWork.
 // Draft, differ 41 of 543 (was 253): the first beam of light in Air's Rock,
 // the same loading and sparks as Func_020026b8's with object 8 glowing (the
 // leader and object 8 take action variant 1, BG0 sits on BG1's priority 2):
@@ -85,6 +91,7 @@ void Func_02003b80(s32 x, s32 z, s32 a, s32 b, s32 width, s32 height);
 void Func_02003b50(void);
 
 void Func_02001010(void) {
+  s32 shared;
   u16 *buffer = Heap_Alloc(0x680);
   u16 *cell;
   struct Actor *spark;
@@ -166,9 +173,7 @@ row:
   Task_Add(Func_02000ef4, 0xc80);
   Func_02003cd8(163);
   REG_BLDALPHA = 0xf00;
-  do {
     REG_BLDCNT = 0x3f41;
-  } while (0);
   REG_DISPCNT |= 0x100;
   Call3((void (*)())Func_02003b98, 0x10000, 0x10000, 0x10000);
   i = 0;
@@ -221,8 +226,8 @@ burst:
   i = 0;
 fade:
   REG_BLDALPHA = ((i >> 2) << 8) | (16 - (i >> 2));
-  i++;
   FieldEvent_Wait(1);
+  i++;
   if (i != 65)
     goto fade;
   Task_RemoveFar(Func_02000ef4);
@@ -237,10 +242,20 @@ fade:
   Func_02003af8();
   Func_02003bb8(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   REG_BG1CNT &= ~3;
-  REG_BG1CNT |= 1;
+  shared = 1;
+  REG_BG1CNT |= shared;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  Actor_GetById(8)->priorityFlags |= 1;
+  {
+    u8 *owner = &Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags;
+
+    *owner = shared | *owner;
+  }
+  {
+    u8 *flags = &Actor_GetById(8)->priorityFlags;
+
+    shared |= *flags;
+    *flags = shared;
+  }
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
   GameFlag_SetBit(0x858);

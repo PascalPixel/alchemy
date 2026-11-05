@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 61 of 130 (tla-en); older figures below predate it.
 // Draft of overlay 64f's Func_02000494 (0x02008494), the sibling of
 // Func_020003ac (s03ac.c) that sends the party to Suhalla Gate 2: differ 51
 // of 130, from the listing. Every call's constants matched the native once

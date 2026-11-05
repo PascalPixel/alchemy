@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 96 of 1591. Left: measure with
+// 08164c0c,08164c70,08164cc4: differ 6 of 1681, three sites of a load the
+// native issues earlier than alchemy-gcc does, the load and store line K2 calls
+// an approximation.
+
 // Draft, differ 24 of 1681, skeleton gap 11 (tla-en, 2026-11-01): a near miss,
 // sched2 orders loads later than the native, which counts their latency higher.
 // Measure the nested helpers with the body (alchemy diff DRAFT

@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 131 of 484 (tla-en); older figures below predate it.
 // Draft, differ 146 of 484 (was 218): a beam of light in Air's Rock: BG0 is
 // hidden while its tiles (two blocks) and its map (offset to its tiles and
 // copied in 18 rows of 32 bytes) are loaded; object 12 glows (Func_0200092c)
@@ -98,32 +99,33 @@ void Func_020026b8(void) {
   Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   buffer = Heap_Alloc(0x240);
   Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
-  i = 0;
   cell = buffer;
-offset:
-  *cell += 0xff40;
-  i++;
-  cell++;
-  if (i != 0x120)
-    goto offset;
+  for (i = 0; i != 0x120; i++) {
+    *cell += 0xff40;
+    cell++;
+  }
   cell = buffer;
-  i = 0;
-row:
-  Dma_Set(cell, (void *)(0x600200f + (i << 6)), 0x84000008,
-          (volatile u32 *)0x040000d4);
-  i++;
-  cell += 16;
-  if (i != 18)
-    goto row;
+  for (i = 0; i != 18; i++) {
+    Dma_Set(cell, (void *)(0x600200f + (i << 6)), 0x84000008,
+            (volatile u32 *)0x040000d4);
+    cell += 16;
+  }
   Heap_Release(buffer);
   Func_02003cd8(246);
   ((u8 *)Actor_GetById(12))[98] = 9;
   ((u8 *)Actor_GetById(12))[99] = 1;
   Actor_GetById(12)->update = Func_0200092c;
   for (i = 0; i != 45; i++) {
-    if ((gFrameCount & 3) == 0) {
-      spark = Import_ActorCreate(0x2a0, Actor_GetById(12)->x,
-                                  Actor_GetById(12)->y, Actor_GetById(12)->z);
+    s32 low = gFrameCount & 3;
+
+    if (low == 0) {
+      struct Actor *first[1];
+      struct Actor *second;
+
+      first[0] = Actor_GetById(12);
+      second = Actor_GetById(12);
+      spark = Import_ActorCreate(0x2a0, first[0]->x, second->y,
+                                 Actor_GetById(12)->z);
       {
         s32 priority = ((s8 *)Actor_GetById(12)->animation)[9] & 12;
 
@@ -131,7 +133,7 @@ row:
         ((struct SpriteParts *)cell)->part = priority >> 2;
       }
       ((struct ObjBits *)spark)->flags |= 1;
-      spark->motionFlags = 0;
+      spark->motionFlags = low;
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
@@ -167,9 +169,9 @@ row:
   x = 0x4000;
 sweep:
   beam[6] = x;
-  beam[7] = z;
   ((u8 *)Actor_GetById(12))[98] = Random16Far() & 7;
   wait(1);
+  beam[7] = z;
   x += 0x400;
   z += 0xfffffc00;
   if (x != 0x48000)
@@ -196,8 +198,8 @@ flicker:
   i = 0;
 fade:
   REG_BLDALPHA = ((i >> 3) << 8) | (0x10 - (i >> 3));
-  i++;
   FieldEvent_Wait(1);
+  i++;
   if (i != 129)
     goto fade;
   Task_RemoveFar(Func_02000ef4);

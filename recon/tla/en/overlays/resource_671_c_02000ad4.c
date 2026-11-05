@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 48 of 159 (tla-en); older figures below predate it.
 // Draft, differ 120 of 159: moves the controlled character with the moving
 // platforms (Func_020005b4 finds the one under it, 360 forward and 361
 // back): it is kept within 2 pixels of the platform's x and carried along

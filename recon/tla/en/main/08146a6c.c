@@ -1,3 +1,8 @@
+// Measured 2026-11-05 (tla-en): differ 4 of 410. Left: one row: a multiply the
+// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
+// too high (its cost of 4), so the constant or the multiply comes ahead of
+// independent rows (0x199a's shift after two loads).
+
 // Near miss, differ 8 of 410 (tla-en, 2026-10-30): sched2 order at three
 // places, same frame, registers and instructions.
 //

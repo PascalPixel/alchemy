@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 8 of 142.
 // 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 14 of
 // 142: the native interleaves the preheader's stack loads with the stores
 // where this draft issues the loads first. A greedy device search found

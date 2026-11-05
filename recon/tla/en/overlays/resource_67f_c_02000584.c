@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 56 (tla-en); notes below may predate it.
 // Draft, differ 58 of 150, skeleton gap 32 (tla-en, 2026-11-01)
 // The variant of Func_020001d0 that first gathers people 8 to 10 on the leader
 // and copies person 9's look onto each pillar whose second flag is set. The
@@ -48,8 +49,7 @@ void Func_02000584(u16 *list) {
   Func_020014a0(9, 0, 0);
   Func_020014a0(10, 0, 0);
   wait(1);
-  goto test;
-body:
+  while (list[0] != 0xffff) {
   {
     u32 id = list[0];
     struct Actor *object = Actor_GetById(id);
@@ -79,8 +79,6 @@ body:
     }
     list += 2;
   }
-test:
-  if (list[0] != 0xffff)
-    goto body;
+  }
   wait(10);
 }

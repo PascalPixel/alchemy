@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 16 of 260 (tla-en); older figures below predate it.
 // 26 October 2026, under -mthumb-slow-loads: differ 18 of 260: the constant 1
 // and 2 kept in r8 by the native are rebuilt in other registers; alchemy
 // permute 6 minutes leaves 14.
@@ -56,7 +57,11 @@ void Func_02000870(void) {
       LemurianShip_ObjSpeed(9, 0x26666, 0x13333);
       Actor_GetById(9)->unk5a[0] &= ~1;
       LemurianShip_ObjWalk(9, 824, 88);
-      FieldEvent_Wait(1);
+      {
+        s32 held = 1;
+
+        FieldEvent_Wait(held);
+      }
       Actor_GetById(9)->unk5a[0] |= 1;
       Func_02002de0(243);
       LemurianShip_ObjEmoteWait(gMainRoutineWork.currentOwner, 0x102);

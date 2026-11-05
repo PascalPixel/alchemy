@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 22 of 181 (tla-en); older figures below predate it.
 // Draft, differ 68 of 181, skeleton gap 1 (tla-en, 2026-11-02)
 // Redraws the world map gauge (a 0x100-byte palette and tile strip) when its
 // level or blink changes. The same function as overlay 64c's Func_02001be0.
@@ -16,6 +17,7 @@
 // `adds r0` and `lsls r1`, swapped by one tie; a void cast, a size local and
 // a `[0]` element do not move it. The 64c draft has the same remainder.
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 
 extern u32 gFrameCount;
@@ -40,7 +42,7 @@ void Func_02004744(s32 progress) {
   if (kind + level == gData_02006e0c)
     return;
   gData_02006e0c = kind + level;
-  Iwram_ClearWords(Data_02006e20, 0x100);
+  Call2((void (*)())Iwram_ClearWords, (s32)(Data_02006e20), (s32)(0x100));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
 

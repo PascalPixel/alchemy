@@ -1,3 +1,7 @@
+// Measured 2026-11-05 (tla-en): differ 2 of 1493. Left: one row: the native
+// sets r1 before r0 for Iwram_TransformVector; RTL has r0 first and the two
+// tie. The one-pass block closes the other rows.
+
 // Draft, differ 38 of 1493, skeleton gap 30 (tla-en, 2026-11-01)
 
 // Summon 8 (BattleEffect_RunSceneEffect's case 8). Twin: The Broken Seal's
@@ -490,7 +494,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               index = 0;
               do {
                 if (spark[index].variant > 0) {
-                  Iwram_TransformVector(&spark[index].x, &screen.x);
+do { Iwram_TransformVector(&spark[index].x, &screen.x); } while (0);
                   screen.x = (screen.x >> 17) + 32;
                   screen.y = (screen.y >> 16) + 56;
                   screen.depth >>= 16;

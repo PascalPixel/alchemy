@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 129 of 434.
 // Near miss: listing 434 instructions, draft 433, differ 151. No ☀️ twin: the
 // frame and the spark blitting are ☀️'s (BattleEffect_RunVenus, shape
 // 0.572), the bite drawn as a textured quad through ⚓️'s model kernels is ⚓️'s
@@ -180,12 +181,12 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     EffectPosition_ProjectBattler(effect->actors[0], &position);
-    texture.logWidth = 7;
-    texture.logHeight = 7;
-    texture.pixels = Ram_MapCellBuffer;
     model->mesh = gData_08199364;
     model->kind = 7;
+    texture.logHeight = 7;
     model->texture = &texture;
+    texture.logWidth = 7;
+    texture.pixels = Ram_MapCellBuffer;
     model->vertices = vertices;
 
     // The three bites; the native counts them in the same register as the

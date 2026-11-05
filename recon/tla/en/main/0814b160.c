@@ -1,3 +1,7 @@
+// Measured 2026-11-05 (tla-en): differ 16 of 222. Left: two hoisted constants
+// in swapped registers (36 and the stride), r0 and r1 at the head of the loop,
+// r1 and r2 at its tail.
+
 // Near miss, differ 18 of 222 (effect kinds 41 and 354, the target markers).
 
 // ☀️ twin: BattleEffect_RunCurse (games/tbs/src/effect/effect.c), shape

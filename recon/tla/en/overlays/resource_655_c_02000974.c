@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 67 of 122 (tla-en); older figures below predate it.
 // Draft, differ 79 of 122: eight puffs (type 285) in a row over the
 // leader, flung outwards when mode is set. A goto loop. Left: register
 // choice (the native keeps the leader in r7 and the count in r10).
@@ -70,8 +71,7 @@ void Func_02000974(s32 mode) {
   s32 frame = 0;
   u32 i;
 
-  i = 0;
-loop:
+  for (i = 0; i <= 7; i++) {
   {
     struct Actor *object;
     struct EffectView *effect;
@@ -106,7 +106,5 @@ loop:
     effect->update = Effect_AdvanceMotionAtLeaderPriority;
   }
 skip:
-  i++;
-  if (i <= 7)
-    goto loop;
+  }
 }

@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 215 (tla-en); notes below may predate it.
 // Draft, differ 187 of 200: overlay 699's copy of the function drafted in
 // resource_698_c_02000aac.c (overlay 698's Func_02000aac, differ 187 there), whose
 // header says what it is, what still differs and what was tried.
@@ -68,11 +69,11 @@ void Func_02000c94(void) {
       sy -= 64;
       if ((u32)(x + 31) > 350 || sy <= -64 || sy > 175)
         continue;
-      x &= 0x1ff;
       sy &= 0xff;
+      x &= 0x1ff;
       word = (u32 *)oam;
-      *word++ = 0;
       *word++ = sy | (x << 16) | 0xc000a000;
+      *word++ = 0;
     }
     *word = (tile + frame * 8) | 0x800;
     if (gData_020024f6 == -1)

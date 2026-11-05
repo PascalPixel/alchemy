@@ -1,3 +1,4 @@
+// Under -Os, 5 November: differ 6 of 377 (tla-en); older figures below predate it.
 // Draft, differ 69 of 377, skeleton gap 25 (tla-en, 2026-11-01)
 // The leader rides the object it stands on (its watchedObject) in Air's Rock:
 // while that object's byte 0x63 is set the leader is carried up on it, rising
@@ -78,8 +79,8 @@ void Func_02001560(void) {
     wait(1);
   }
   Func_02003cd8(0x120);
-  priority = &leader->priorityFlags;
   facing = ride->angle;
+  priority = &leader->priorityFlags;
   if (facing == 0xc000) {
     rider = ride->watchedObject;
     dx = 0;
@@ -128,8 +129,8 @@ void Func_02001560(void) {
                             (ride->z - ride->y) >> 20)
               << 8) >> 16 != 255)
       goto found;
-    leader->angle = 0x8000;
     dx = 0xfff00000;
+    leader->angle = 0x8000;
   found:
     height = Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx,
                                   ride->z + dz);

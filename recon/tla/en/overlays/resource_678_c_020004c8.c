@@ -1,3 +1,4 @@
+// Measured under -Os, 5 November 2026: differ 77 (tla-en); notes below may predate it.
 // Draft, differ 117 of 166, skeleton gap 9/6 (tla-en, 2026-11-01)
 // Taopo Swamp's sinking holes: looks up hole n (from 10) of the current room
 // (Ov678Room5, 7, 8 or 9; Func_02002708) unless its flag says it is filled

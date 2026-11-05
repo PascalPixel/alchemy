@@ -1,3 +1,5 @@
+// 2026-11-05: differ 565 of 2583 (tla-en). A wrapper on the first clear gains
+// 16. Left as below.
 // Draft, differ 581 of 2583, skeleton gap 59 (tla-en, 2026-11-01)
 // BattleEffect_RunFlora: same calls and control flow, no devices, frame 292 as
 // the listing, high registers as the listing (r8, r9 petals, r10 i, r11).
@@ -223,6 +225,12 @@ void Heap_Release(void *buffer);
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
 
+static inline s32 ClearWords(void *destination, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_ClearWords, 581 of 2583 instructions differ in tla-en. */
+  return Iwram_ClearWords(destination, size);
+}
+
 // Flora: petals swirl in on the wind, the blossom spirit rises among them,
 // her spiral of light and its rings sweep the field, and a storm of petals
 // strikes the foes.
@@ -372,7 +380,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 300 && (!(gInput.repeat & 3) || frame <= 16);
        frame++) {
     if (frame == 0) {
-      Iwram_ClearWords((void *)0x06004000, 0x4000);
+      ClearWords((void *)0x06004000, 0x4000);
       Iwram_ClearWords(canvas, 0x4000);
       for (i = 0; i != 240; i++) {
         w->palette[i] = 0x7fff;

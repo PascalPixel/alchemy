@@ -1,7 +1,7 @@
 /// @file
-/// The casino's dice game (Func_081b83c4, not C yet). Its one table, after
-/// its code, is gLuckyDice_FaceTiles again: the die face tile at each step
-/// of its roll.
+/// The casino's dice game's scoring (the game is in f1b83c4.c). Its one table,
+/// after its code, is gLuckyDice_FaceTiles again: the die face tile at each
+/// step of its roll.
 
 #include "types.h"
 

@@ -93,7 +93,6 @@ void Scene_RunSoldierInterception(void) {
   s32 rec;
   u8 *record;
   s32 v5;
-  s32 byte;
   s32 callback;
 
   Call1(Func_02002854, 0x890);
@@ -686,13 +685,7 @@ void Scene_RunSoldierInterception(void) {
   *(u8 *)(Func_020028cc(15) + 90) &= 254;
   Call3(Func_020028f4, 15, 0x1f8, 0x1b8);
   Func_020028ac(1);
-  {
-    u8 *flags = Func_020028cc(15) + 90;
-    s32 one = 1;
-
-    byte = *flags;
-    *flags = byte | one;
-  }
+  *(u8 *)(Func_020028cc(15) + 90) |= 1;
   Func_0200290c(15, 0, 0);
   Func_020028ac(10);
   Call3(Func_020028d4, 9, 0xcccc, 0x6666);

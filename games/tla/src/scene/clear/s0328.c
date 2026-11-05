@@ -1,28 +1,6 @@
-// Draft, differ 116 of 756, skeleton gap 2 (tla-en, 2026-11-01): the title's
-// file flow: the ending's save question, the file actions, transferring data
-// from Golden Sun (password or link) around the cell buffer swap, the
-// difficulty questions and starting the game. Every instruction is there but
-// one pair: in the save path's last cell copy the native loads the buffer's
-// address before the size's shift (one swap). The other 114 are scratch
-// registers (r1, r2, r3) on the constants and addresses in the palette reads,
-// the zero index of ldrsh and -1. They start at the first palette call, where
-// the native holds the address in r3 and this holds it in r2; parts of the
-// pattern look like reload's register rotation. Tried without effect there:
-// a party local, hue and brightness locals, unk220[5], byte offsets and three
-// prototypes for Func_02002310; Call3 for one copy, in place of Value3.
-//
-// Forms the native forced: every loop is built from labels (loop.c otherwise
-// hoists its addresses); the buffers are constants of each call
-// (Ram_MapCellBackup, and Ram_MapCellBuffer: as symbols their pool loads are
-// shared and five registers become seven); cells and party are one local per
-// site; the copies and flags use call.h's Value3 and flag_call.h's wrappers.
-// i also holds the answers and recovery the first recovery message, for r5
-// and r6. To adopt: Ram_MapCellBackup (Data_02012f94 + 0x6c, 0x02013000 in
-// every edition) needs a linked name, the eight Msg names need their PO
-// contexts (messages 5, 7, 8 and 36 to 41 are plain numbers there), and
-// SceneId_Lobby needs a name for row 312 of scenes.s (0x6b5, the lobby).
 #include "edition.h"
 #include "types.h"
+#include "text/msg_ids.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
@@ -38,15 +16,7 @@ extern s16 gData_02003860;
 extern u32 gData_02001000;
 extern u8 gData_02000000[];
 extern u32 gInput[];
-extern char MsgSomeDataIsCorrupted[];
-extern char MsgDataCouldNotBeRecovered[];
-extern char MsgSaveYourAdventure[];
-extern char MsgTransferDataFromGoldenSun[];
-extern char MsgPlayOnEasyLevel[];
-extern char MsgPlayOnHardLevel[];
-extern char MsgPlayOnNormalLevel[];
-extern char MsgYeah[];
-extern char SceneId_Lobby;
+extern char SceneId_Ov6b5;
 
 void Func_0200005c(void);
 void Func_0200015c(void);
@@ -355,7 +325,7 @@ top:
       Flag_Clear(0x106);
       party->ownerOverride = 0;
       gSleepDisabled = 1;
-      Func_020023b8((s32)&SceneId_Lobby, 1);
+      Func_020023b8((s32)&SceneId_Ov6b5, 1);
     }
     goto finish;
   }

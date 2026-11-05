@@ -6,7 +6,7 @@ SECTIONS
         "*/resource_662_overlay.o"(.text.x02008038)
         "*/games/tla/src/field/map/cellfill.o"(.text)
         "*/resource_662_overlay.o"(.text.x020081d4)
-        "*/resource_662_overlay.o"(.text.x0200833c)
+        "*/games/tla/src/scene/yampi_desert_cave/s033c.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/s0458.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/s0754.o"(.text)
         "*/resource_662_overlay.o"(.text.x020087dc)

@@ -8,6 +8,7 @@
 // for the end of event6.c.
 #include "../../../../games/tla/src/scene/shrine_of_the_sea_god/shrine_of_the_sea_god.h"
 #include "text/msg_ids.h"
+#include "call.h"
 
 extern const u8 gData_02003c58[];
 
@@ -59,16 +60,30 @@ void Func_02001d24(void) {
   sprite = object->sprite;
   Actor_SetSpritePriority(13, 1);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x19999, 0xcccc);
-  ShrineOfTheSeaGod_ObjLaunch(13, 4, 0);
+  {
+    s32 a0 = 13;
+
+    ShrineOfTheSeaGod_ObjLaunch(a0, 4, 0);
+  }
   ShrineOfTheSeaGod_ObjCommit(13, 248, 168);
-  ShrineOfTheSeaGod_ObjMode(13, 6);
-  object->field18 = -0x10000;
-  sprite->rotation = 0xd000;
-  object->motionFlags = 0;
+  {
+    s32 a0 = 13;
+
+    ShrineOfTheSeaGod_ObjMode(a0, 6);
+  }
+  {
+    s32 rotation = 0xd000;
+    u8 *flags = &object->motionFlags;
+    s32 rate = -0x10000;
+
+    object->field18 = rate;
+    sprite->rotation = rotation;
+    *flags = rate;
+  }
   object->y += 0x60000;
   Actor_SetSingleChildFlags(Actor_GetById(13), 0);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x6666, 0x3333);
-  Func_02003990(object, 164 << 17, 152 << 14, 168 << 16);
+  Call4((void (*)())Func_02003990, (s32)object, 164 << 17, 152 << 14, 168 << 16);
   Actor_WaitForMoveById(13);
   object->motionFlags = 3;
   object->height = 0x200000;
@@ -77,7 +92,11 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_ObjMode(13, 1);
   Actor_SetSingleChildFlags(Actor_GetById(13), 1);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x19999, 0xcccc);
-  ShrineOfTheSeaGod_ObjLaunch(13, 4, 0);
+  {
+    s32 a0 = 13;
+
+    ShrineOfTheSeaGod_ObjLaunch(a0, 4, 0);
+  }
   ShrineOfTheSeaGod_ObjCommit(13, 328, 184);
   ShrineOfTheSeaGod_ObjTurn(13, 0, 20);
   ShrineOfTheSeaGod_Jump(13, 256, 40);
@@ -90,7 +109,11 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_ObjTurn(14, 0x8000, 0);
   Func_02003a78(0x200e, 0, 60);
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  ShrineOfTheSeaGod_ObjMode(13, 3);
+  {
+    s32 a0 = 13;
+
+    ShrineOfTheSeaGod_ObjMode(a0, 3);
+  }
   ShrineOfTheSeaGod_ObjPlace(12, 394 << 16, 286 << 16);
   wait(1);
   ShrineOfTheSeaGod_ObjSpeed(12, 0x19999, 0xcccc);
@@ -123,7 +146,11 @@ void Func_02001d24(void) {
   Actor_ArmCallback(12, 0xd000, 0);
   ShrineOfTheSeaGod_MessagePut(12, 0);
   ShrineOfTheSeaGod_ObjAngle(12, 0xb000);
-  ShrineOfTheSeaGod_ObjLaunch(12, 4, 20);
+  {
+    s32 a0 = 12;
+
+    ShrineOfTheSeaGod_ObjLaunch(a0, 4, 20);
+  }
   Func_02003a78(12, 0, 20);
   ShrineOfTheSeaGod_Jump(13, 261, 40);
   ShrineOfTheSeaGod_Jump(12, 257, 60);

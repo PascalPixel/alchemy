@@ -76,7 +76,7 @@ s32 Func_02000514(void) {
     FieldEvent_Wait(10);
     Func_02001578(0x20000, 0x4000);
     {
-      Call4((void (*)())Camera_MoveWithinMapBounds, 144 << 16, cameraY, cameraZ, 1);
+      do { Call4((void (*)())Camera_MoveWithinMapBounds, 144 << 16, cameraY, cameraZ, 1); } while (0);
     }
     goto check;
     do {

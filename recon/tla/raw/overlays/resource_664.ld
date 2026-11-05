@@ -72,7 +72,7 @@ SECTIONS
         "*/resource_664_overlay.o"(.text.x0200ccc8)
         "*/games/tla/src/scene/airs_rock_inside/s4cc8.o"(.text)
         "*/resource_664_overlay.o"(.text.x0200ceb0)
-        "*/resource_664_overlay.o"(.text.x0200cf3c)
+        "*/games/tla/src/scene/airs_rock_inside/s4f3c.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/resource_664_overlay.o"(.text.x0200d05a)
         "*/games/tla/src/scene/airs_rock_inside/s505c.o"(.text)

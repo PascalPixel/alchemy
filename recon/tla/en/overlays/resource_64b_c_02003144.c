@@ -4,6 +4,7 @@
 // in each pass. Left: the native keeps x and z unshifted (r8, r7) and shifts
 // them at each use; this draft keeps them shifted.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 extern char MsgWeDidIt[];
@@ -37,7 +38,7 @@ void Func_02003144(void) {
   Func_02004c20();
   Func_02004db8(0);
   GameFlag_SetBit(0xa78);
-  Actor_SetPositionAndCommit(8, 0x1bf6, 0x2154);
+  Call3((void (*)())Actor_SetPositionAndCommit, 8, 0x1bf6, 0x2154);
   Func_0200050c();
   x = Actor_GetById(8)->x / 0x10000;
   z = Actor_GetById(8)->z / 0x10000;
@@ -48,7 +49,7 @@ void Func_02003144(void) {
       Data_02006be8[i] = i;
       Actor_GetById(i)->scaleX = 0;
       Actor_SetSingleChildFlags(Actor_GetById(i), 0);
-      Func_02004c88(i, x << 16, z << 16);
+      Call3((void (*)())Func_02004c88, i, x << 16, z << 16);
     } else {
       Data_02006be8[i] = -1;
     }

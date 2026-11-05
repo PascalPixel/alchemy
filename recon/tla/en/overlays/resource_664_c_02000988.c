@@ -25,6 +25,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "input.h"
+#include "call.h"
 
 extern char SceneId_Ov664Room1;
 extern s32 gFrameCount;
@@ -141,8 +142,8 @@ void Func_02000988(void) {
             16 !=
         255)
       goto found;
-    leader->angle = 0x8000;
     dx = 0xfff00000;
+    leader->angle = 0x8000;
   found:
     height =
         Map_GetTerrainHeight(((u8 *)rider)[98], ride->x + dx, ride->z + dz);
@@ -166,15 +167,14 @@ void Func_02000988(void) {
     break;
   default:
     angle = ride->angle;
-    angle >>= 13;
-    leader->x = (((ride->x >> 19) & ~1) + angle - 1) << 19;
+    leader->x = (((ride->x >> 19) & ~1) + (angle >>= 13) - 1) << 19;
     leader->z = (((ride->z >> 19) & ~1) - (angle & 2) + 1) << 19;
     noFlags = 0;
     Actor_SetSingleChildFlags(leader, 1);
     leader->velocityY = 0x60000;
     *priority = 33;
     *motion = 3;
-    Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+    Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
     dust = Func_02005ef4();
     dust->speedLimit = 0x80000;
     dust->acceleration = 0x10000;

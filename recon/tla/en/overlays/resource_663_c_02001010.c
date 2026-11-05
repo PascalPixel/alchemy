@@ -85,6 +85,7 @@ void Func_02003b80(s32 x, s32 z, s32 a, s32 b, s32 width, s32 height);
 void Func_02003b50(void);
 
 void Func_02001010(void) {
+  s32 shared;
   u16 *buffer = Heap_Alloc(0x680);
   u16 *cell;
   struct Actor *spark;
@@ -237,10 +238,22 @@ fade:
   Func_02003af8();
   Func_02003bb8(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   REG_BG1CNT &= ~3;
-  REG_BG1CNT |= 1;
+  shared = 1;
+  REG_BG1CNT |= shared;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
-  Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 1;
-  Actor_GetById(8)->priorityFlags |= 1;
+  do {
+  } while (0);
+  {
+    u8 *owner = &Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags;
+
+    *owner = shared | *owner;
+  }
+  {
+    u8 *flags = &Actor_GetById(8)->priorityFlags;
+
+    shared |= *flags;
+    *flags = shared;
+  }
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
   GameFlag_SetBit(0x858);

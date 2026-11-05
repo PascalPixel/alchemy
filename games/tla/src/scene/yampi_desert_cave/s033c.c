@@ -1,14 +1,3 @@
-// Draft, differ 140 of 132 (was 157): finds the pushable object the leader
-// faces among objects 8 to 63, its kind and slot. Rewritten from the listing
-// as two goto loops (the native has no loop optimization: it reloads the
-// sprite id and the tables on each pass and recomputes the kind's row), the
-// outer one stepping a pointer through the event work's object table as the
-// native does in lr. The instructions now follow the native's nearly row for
-// row. Left: registers: the native gives r7, r6 and r5 to the leader, the
-// object and the kind and r9, r8, r10 and ip to the point and box edges; here
-// the edges take the low registers (global.c ranks them first). Measured: the
-// edges declared in the inner block or in another order, the counters signed,
-// either loop as a for loop (154 to 179); permute found nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -65,8 +54,8 @@ inner:
   k++;
   if (k <= 5)
     goto inner;
-  i++;
   entry++;
+  i++;
   if (i <= 63)
     goto outer;
   return NULL;

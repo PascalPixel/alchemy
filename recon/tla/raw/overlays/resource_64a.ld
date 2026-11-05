@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/scene/clear/s005c.o"(.text)
         "*/games/tla/src/scene/clear/s01f4.o"(.text)
         "*/games/tla/src/scene/clear/s02e0.o"(.text)
-        "*/resource_64a_overlay.o"(.text.x02008328)
+        "*/games/tla/src/scene/clear/s0328.o"(.text)
         "*/games/tla/src/scene/clear/prepare.o"(.text)
         "*/games/tla/src/scene/clear/s0a70.o"(.text)
         "*/resource_64a_overlay.o"(.text.x02008b24)

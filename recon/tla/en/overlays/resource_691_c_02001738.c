@@ -1,4 +1,8 @@
-// Draft, differ 123 of 294 (tla-en, 5 November 2026), under -Os, the action pointer local removed: the registers are the native's, the differences its reload scratch registers (first the 15, r0 in the native and r1 here). Older notes predate -Os.
+// Draft, differ 121 of 294 (tla-en, 5 November 2026), under -Os, a plain for loop (the goto was not needed).
+// All of it is reload rotation. The native's reload registers run r0, r1, r2, r3, r4 (the 15, the 100, the 0, the 3 ...),
+// here r1, r2, r4, r1: allocate_reload_reg walks spill_regs, and here no insn's find_reg ever picks r0 (the greg dump has
+// "Using reg" 1, 2, 3 and 4 only), so r0 is not in the list. One insn with r1, r2 and r3 all taken while r0 is free would
+// shift every scratch to the native's; that insn has not been found. Older notes predate -Os.
 // Draft, differ 118 of 294, skeleton gap 18 (tla-en, 2026-11-01)
 //
 // The code is the native's; what is left is one allocation question and the
@@ -124,11 +128,7 @@ void Func_02001738(struct Actor *object) {
     Func_02003c4c(object, 144);
     parts[0] = Import_ActorCreate(0x15f, object->x + 0x10000,
                                   object->y + 0x200000, object->z);
-    i = 1;
-    // A goto loop, as the native: as a do-while loop.c strength-reduces
-    // parts[i] to a walking pointer (ldmia) and spills more (differ 293).
-  next:
-  {
+    for (i = 1; i != 4; i++) {
     u8 *first = parts[0]->animation;
     struct Actor *part = Import_ActorCreate(0x15f, 0, 0, 0);
     u8 *sprite;
@@ -148,9 +148,7 @@ void Func_02001738(struct Actor *object) {
     BYTE_AT(part, 98) = last - i;
     part->update = Func_02001528;
     Actor_SetPartAttribute(part, 3);
-  }
-    if (++i != 4)
-      goto next;
+    }
     {
       struct Actor *part = parts[0];
 
@@ -159,7 +157,7 @@ void Func_02001738(struct Actor *object) {
       Func_02003a54(parts[0], 3);
       Scene_SetActorSpritePriority(parts[0], 3);
       part = parts[0];
-      BYTE_AT(part, 98) = last;
+      BYTE_AT(part, 98) = 3;
       part->watchedObject = object;
       part->update = Func_02001528;
       Actor_SetPartAttribute(part, 3);

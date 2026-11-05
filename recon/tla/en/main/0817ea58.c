@@ -386,7 +386,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
                    DECODE_BUFFER + i * 0x400, 0x400);
       }
       obj = Func_0815b290(32, 64, 0xc000a000, 0);
-      work->sprites[39] = obj;
+      work->sprites[i + 18] = obj;
       obj->priority = 3;
       Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER + i * 0x400, 0x800);

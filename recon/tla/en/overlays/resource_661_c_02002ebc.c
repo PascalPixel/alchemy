@@ -1,16 +1,7 @@
-// Draft, differ 82 of 187 (tla-en, 2026-11-05).
-// 5 November: differ 82 of 187, y ahead of gravity as the native stores them (a
-// rise that removes a false order). Left: r1 is in the native's spill set and not
-// here, which turns the rotation from the first reload on; no insn found yet that
-// needs it (r3 and r2 busy).
-// Under -Os, 5 November: differ 76 of 187 (tla-en); older figures below predate it.
-// Draft, differ 88 of 187 (was 90): the leader and monster 8 drop into the
-// sand pit, each in a ring of dust, the monster leaps to its spot and the
-// battle starts with escape forbidden and the defeat destination set.
-// Actor_SetSpeedParameters goes through CallN, as the native builds
-// its constants afresh. Left: register choice and the native keeping 0 and
-// 3 in r5 for the motion flags (permute found 18 by passing the 2 through a
-// temporary, a register-allocation ripple rather than the source's form).
+// Draft, differ 6 of 187 (tla-en, 5 November), from 82: reload's spill registers rotate through the function, and the native's set is r1, r2, r3.
+// The battle rule store is what brings r1 in: with a local value it needs three.
+// Left: only that store. Native: ldr r3, pool; r1 = offset; adds r2, r3, r1; movs r3, #2; strb r3, [r2]: the value in r3 after an address pseudo in r2.
+// Here the sum stays in r3 and the value takes r2. Pinning the value to r3 leaves 4. p set from the field folds to one pool word (78).
 #include "types.h"
 #include "event_work.h"
 #include "ram_buffer.h"
@@ -103,7 +94,7 @@ void Func_02002ebc(void) {
   monster->gravity = 0xe666;
   Call3((void (*)())Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
   Actor_SetPositionAndCommit(8, 232, 184);
-  gMainRoutineWork.battleRule24b = 2;
+  { s32 v = 2; gMainRoutineWork.battleRule24b = v; }
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov661Room10, 2);
   Func_02004140(10, 0);
 }

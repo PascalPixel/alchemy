@@ -1,9 +1,7 @@
-// Draft, differ 115 of 230 (tla-en, 2026-11-05).
-// Draft of overlay 671's Func_02004d48, differ 115 of 230 (tla-en, 5 November 2026), from 134.
-// Left: the native has no CSE across the racers (fresh movs r2, #2 and #0 where the
-// variables hold them), holds racer + 100 in r3 while it sets the first racer's
-// constants, and keeps next in r6, where here next folds onto second. A do-while
-// macro or empty asm between racers does not end the block for cse1 (119, 123).
+// Draft, differ 63 of 230 (tla-en, 5 November): places four racers, runs them, and compares the times of the two teams.
+// Left: the native copies second into r6 before the second racer's lookup and steps that copy (ldr r6, [sp]; adds r6, #1); here
+// CSE folds id onto second, so it reloads after the call. r8 holds one and r10 seven in the native, swapped here (0.079 to 0.083), and the first racer's
+// address stays in r3 while its constants are set. Tried: every order of the constants' sets, assignment expressions (69 to 73), separators, types of two.
 #include "types.h"
 #include "call.h"
 
@@ -48,17 +46,24 @@ s32 Func_02004d48(s32 first, s32 check) {
   s32 next;
   s32 result;
 
+  racer = Actor_GetById(first);
   zero = 0;
   seven = 7;
   one = 1;
   two = 2;
-  PLACE(first, zero, seven, two, one, zero);
-  next = second;
-  PLACE(next, two, seven, 0, one, zero);
-  next++;
-  PLACE(next, 8, seven, 2, one, zero);
-  next++;
-  PLACE(next, 10, seven, 0, one, zero);
+  racer->unk64 = zero;
+  racer->unk66 = seven;
+  racer->unk62 = two;
+  racer->state = one;
+  racer->unk4c = zero;
+  Func_02005654();
+  Func_02005624(racer, 2);
+  id = second;
+  PLACE(second, two, seven, 0, one, zero);
+  id++;
+  PLACE(id, 8, seven, 2, one, zero);
+  id++;
+  PLACE(id, 10, seven, 0, one, zero);
   for (tries = 0; tries <= 127; tries++) {
     done = 1;
     for (frame = 0; frame <= 15; frame++) {
@@ -78,24 +83,31 @@ s32 Func_02004d48(s32 first, s32 check) {
   if (check) {
     u32 a = 0;
     u32 b = 0;
-
-    racer = Actor_GetById(first);
-    if (racer->x != 0)
-      a = racer->unk4c;
-    racer = Actor_GetById(second);
-    if (racer->x != 0) {
-      u32 value = racer->unk4c;
+    {
+    struct Racer *r = Actor_GetById(first);
+    if (r->x != 0)
+      a = r->unk4c;
+    }
+    {
+    struct Racer *r = Actor_GetById(second);
+    if (r->x != 0) {
+      u32 value = r->unk4c;
       if (a == 0 || a > value)
         a = value;
     }
-    racer = Actor_GetById(first + 2);
-    if (racer->x != 0)
-      b = racer->unk4c;
-    racer = Actor_GetById(first + 3);
-    if (racer->x != 0) {
-      u32 value = racer->unk4c;
+    }
+    {
+    struct Racer *r = Actor_GetById(first + 2);
+    if (r->x != 0)
+      b = r->unk4c;
+    }
+    {
+    struct Racer *r = Actor_GetById(first + 3);
+    if (r->x != 0) {
+      u32 value = r->unk4c;
       if (b == 0 || b > value)
         b = value;
+    }
     }
     if (a != 0) {
       result = 1;

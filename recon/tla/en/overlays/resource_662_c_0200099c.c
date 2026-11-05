@@ -1,20 +1,8 @@
-// Draft, differ 95 of 120 (tla-en, 2026-11-05).
-// Under -Os, 5 November: differ 97 of 120 (tla-en); older figures below predate it.
-// Draft, differ 81 of 120, skeleton gap 29 (tla-en, 2026-11-01)
-// The palette cycle callback: on each step it writes the cycle's colours to
-// their palette entries and flashes one more.
-// Closed: BG_PLTT is volatile, and a volatile in the loop stops loop.c merging
-// the three colour steps (has_volatile), so the stepped pointer now matches.
-// Left: the native keeps 0x05000000 in the loop, but the second loop pass hoists
-// it here (24 real insns, threshold not reached); the native reads the count
-// through two registers (r6 in the body, ip at the test, one register here),
-// which looks like CSE not joining the two reads; i and dst swap r4 and r5.
-// Tried: goto, do/while (loop ignored: PRE gives it two entries, differ 95),
-// while, break forms; declaration orders and scopes (no change); a count
-// pointer local (83 to 98); one-pass blocks (103 to 122).
-// Not kept: `u16 entry; dst = BG_PLTT; entry = ...; dst += entry;` reaches differ
-// 69, gap 21, and keeps the constant in the loop, but dst holds two values
-// (S2 temporary), so it is a new device. Pascal could rule on it.
+// Draft, differ 95 of 120 (tla-en, 5 November).
+// Left: loop.c leaves the bottom test's copy of the count pointer in the loop (adds r1, r7, #0), where the native moves it out (mov ip, r6),
+// so r1 is taken and colour, r and dst rotate. Move decisions depend on the loop's insn count: with all three reads as one expression
+// (wrong program) it moves and the registers agree (77), so the native's loop has fewer insns here: find which.
+// Tried: s32 and u32 and u16 channels, shifted loads, r |= steps, operand orders of the multiply, i s32, dst non-volatile.
 #include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
 #include "system/io_reg.h"
 

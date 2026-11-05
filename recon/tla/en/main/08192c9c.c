@@ -1321,6 +1321,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     }
     if ((u32)(frame - 423) <= 19) {
       s32 step = frame - 422;
+      s32 first;
       s32 dead;
       s32 top;
       s32 off;
@@ -1329,7 +1330,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       u8 v;
 
       top = 120;
-      i = top - step * 8;
+      first = top - step * 8;
+      off = 0;
+      i = first;
       top = i;
       for (; i != top + 40 && (v = (i - top) * 2, i <= 127); i++) {
         if (i >= 0) {

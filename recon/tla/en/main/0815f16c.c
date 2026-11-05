@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 920 of 7666, slots normalized 630, high
-// registers blind too 602, every register blind 236. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 904 of 7666, slots normalized 620, high
+// registers blind too 592, every register blind 230. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -1804,6 +1804,7 @@ CLEAR(buffer, 0x1000);
       }
     } else if (kind == 63 || kind == 64) {
       s32 x;
+      s32 y;
       if (frame < 6) {
         if (action->side == 0) {
           x = target[0] / 2 + (6 - frame) * 3 * 2;
@@ -1816,6 +1817,7 @@ CLEAR(buffer, 0x1000);
       }
     } else if (kind == 70) {
       s32 x;
+      s32 y;
       if (frame > 31)
         REG_BLDALPHA = (48 - frame) | 0x1000;
       p = SPARKS;

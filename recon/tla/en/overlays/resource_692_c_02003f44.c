@@ -1,4 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 90 (tla-en); notes below may predate it.
+// Measured under -Os, 5 November 2026: differ 67 (tla-en); notes below may predate it.
 // Draft, differ 116 of 130: the trap table's setup (shared with overlay 697 and
 // the other trap maps): a trap whose second flag is set is put away; any other
 // marks its cell (attribute byte 128), writes a shape for its height into the
@@ -28,7 +28,9 @@ void Func_02003f44(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object;
   struct MapCell *cells;
-  u8 *shapes;
+  /* FAKEMATCH(pin): shapes in r5, as the native keeps it; as a plain local,
+   * 90 of 130 instructions differ in tla-en. */
+  register u8 *shapes asm("r5");
   u8 *cell;
   s32 id;
   s32 flag;

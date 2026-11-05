@@ -68,7 +68,7 @@ void Func_02000038(void);
 
 s32 Func_02000a34(s32 value) {
   /* FAKEMATCH(wrapper): calls forwarded through call.h's CallN and ValueN; as
-   * direct calls, 180 of 529 instructions differ in tla-en. */
+   * direct calls, 146 of 529 instructions differ in tla-en. */
   struct Actor *thrown = Actor_GetById(10);
   u16 bright[5];
   u16 dim[5];

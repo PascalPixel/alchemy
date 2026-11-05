@@ -48,7 +48,7 @@ void Func_02001a1c(void) {
   s32 *p;
 
   /* FAKEMATCH(volatile): gData_02002ce8 read as a volatile s16, reread after
-   * each test and for lsls #16; as a plain u16, 52 of 347 instructions differ
+   * each test and for lsls #16; as a plain u16, 54 of 347 instructions differ
    * in tla-en. */
   object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   gData_02002ce8 = 0;
@@ -79,7 +79,7 @@ retry:
     angle = ArcTan2(targetZ - object->z, targetX - object->x);
     angle = (angle + 0x2000) & 0xc000;
   }
-  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 30
+  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 2
    * of 347 instructions differ in tla-en. */
   Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   cell = Func_02002028(*layer, p[0], p[2]);
@@ -160,11 +160,7 @@ walk:
 blocked:
   object->speedLimit = 0x20000;
   object->acceleration = 0x10000;
-  /* FAKEMATCH(one-pass): the once-only block round the call; as no block, 2 of
-   * 347 instructions differ in tla-en. */
-  do {
-    Func_02002008(object, targetX, object->y, targetZ);
-  } while (0);
+  Func_02002008(object, targetX, object->y, targetZ);
   Func_02002010(object);
   wait(2);
   goto retry;

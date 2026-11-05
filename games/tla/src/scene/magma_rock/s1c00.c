@@ -67,10 +67,6 @@ first:
   {
     s32 r = Random16Far();
 
-    /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
-     * position's address to the loop's entry; as no asm, 20 of 218 instructions
-     * differ in tla-en. */
-    __asm__("" : : : "sfp");
     offset = position;
     offset[0] = ((r & 15) << 16) - 0x80000;
   }

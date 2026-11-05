@@ -1,4 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 32 (tla-en); notes below may predate it.
+// Measured under -Os, 5 November 2026: differ 14 (tla-en); notes below may predate it.
 // Matches: differ 0 (tla-en, 2026-11-02). The non-Japanese body of
 // games/tla/src/scene/ankohl_ruins/s0418.c, adopted before this draft existed;
 // both devices below came with it. The leader lands and 17 dust effects spread
@@ -66,7 +66,9 @@ void Func_02000418(void) {
   s32 angle;
   s32 velocity[3];
   s32 z;
-  struct LandingEffectOptions *effect;
+  /* FAKEMATCH(pin): effect in r8, as the native keeps it; as a plain local,
+   * 32 of 177 instructions differ in tla-en. */
+  register struct LandingEffectOptions *effect asm("r8");
 
   Func_02002e44();
   Func_02002edc(0);
@@ -84,8 +86,8 @@ void Func_02000418(void) {
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
   effect->palette = 7;
-  effect = &options;
   effect->update = Effect_AdvanceMotion;
+  effect = &options;
   effect->scaleX = 0xa3d7;
   effect->scaleY = 0xa3d7;
   i = 0;

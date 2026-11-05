@@ -1,4 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 56 (tla-en); notes below may predate it.
+// Measured under -Os, 5 November 2026: differ 33 (tla-en); notes below may predate it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -21,7 +21,9 @@ void Func_02001738(void);
 void Func_02000ff4(struct Actor *object) {
   struct MagmaRockEventWork *work = Ram_HeapSlots->eventWork;
   s32 mask;
-  u16 timer = object->action;
+  /* FAKEMATCH(pin): timer in r8, as the native keeps it; as a plain local,
+   * 56 of 67 instructions differ in tla-en. */
+  register u16 timer asm("r8") = object->action;
 
   if (object->action > 528) {
     mask = 2;

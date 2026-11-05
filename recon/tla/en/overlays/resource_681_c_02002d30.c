@@ -1,4 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 92 (tla-en); notes below may predate it.
+// Measured under -Os, 5 November 2026: differ 67 (tla-en); notes below may predate it.
 // Draft, differ 106 of 241: opens the passages on each side of the hall by how
 // many of its two pairs of flags (0x9bc and 0x9bd, 0x9be and 0x9bf) are set:
 // both open the wide way, one a side way, and a single side opened alone also
@@ -11,7 +11,9 @@ void Func_02004e04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void Func_02002d30(void) {
   s8 first = GameFlag_Test(0x9bc);
-  u8 third = GameFlag_Test(0x9be);
+  /* FAKEMATCH(pin): third in r7, as the native keeps it; as a plain local,
+   * 92 of 241 instructions differ in tla-en. */
+  register u8 third asm("r7") = GameFlag_Test(0x9be);
   s8 left = GameFlag_Test(0x9bd) + first;
   s8 right = (s8)third + GameFlag_Test(0x9bf);
 

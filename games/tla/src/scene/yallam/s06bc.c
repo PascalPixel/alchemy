@@ -1,20 +1,3 @@
-// Measured under -Os, 5 November 2026: differ 560 (tla-en); notes below may predate it.
-// Draft, differ 567 of 1,163, skeleton gap 9 (tla-en, 2026-11-01)
-// Every path step goes through an inline wrapper, the event layer's habit:
-// a direct call puts the id's move after the constants in all 162 steps.
-// `s`, the state read once, lets the switch drop its test for 1.
-// Left in the skeleton: case 224 alone keeps its own increment, rebuilding
-// object + 100 after the call and then returning, and builds its z before the
-// id's move. Here PRE (gcse) folds that increment into the shared tail. Tried:
-// object->timer spellings, a cast, a local pointer inside or before the call,
-// an inline taking the object, a local z, a direct call, the timer pointer
-// from state + 2. `break` in place of the increments lets jump2 merge the
-// identical steps, losing 300 instructions.
-// Left in allocation, nearly all the differ: the native has the object in r5,
-// the id in r6 and the timer pointer in r7; the draft rotates them (id r5,
-// timer r6, object r7), since global.c ranks the id first by refs over live
-// length, then the timer pointer. Declaration order, dropping the state
-// pointer, a local timer value, a copied id and a u32 id change nothing.
 #include "types.h"
 
 // The layout Func_02001904 (yallam/s1904.c) reads: state and timer sit where
@@ -38,15 +21,21 @@ void Func_02002450(struct YallamActor *object, s32 x, s32 y, s32 z);
 s32 Func_020006a4(struct YallamActor *object);
 
 static __inline__ void Actor_SetDestination(s32 actor, s32 x, s32 z) {
+  /* FAKEMATCH(wrapper): forwarded inline, so the id moves before the constants;
+   * as a direct call, 320 of 1163 instructions differ in tla-en. */
   Actor_ResetAndSetPosition(actor, x, z);
 }
 
 static __inline__ void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration) {
+  /* FAKEMATCH(wrapper): forwarded inline, as Actor_SetDestination; as a direct
+   * call, 214 of 1163 instructions differ in tla-en. */
   Actor_SetSpeedParameters(actor, speed, acceleration);
 }
 
 void Func_020006bc(s32 actor) {
-  struct YallamActor *object = Actor_GetById(actor);
+  /* FAKEMATCH(pin): the object in r5, as the native keeps it; as a plain local,
+   * 372 of 1163 instructions differ in tla-en. */
+  register struct YallamActor *object asm("r5") = Actor_GetById(actor);
   u8 *state = &object->state;
   u8 s = *state;
   s16 *timer;
@@ -553,8 +542,15 @@ void Func_020006bc(s32 actor) {
       (*timer)++;
   case 224:
   case 240:
-    object->timer++;
-    Actor_SetDestination(actor, 248, 872);
+    Actor_ResetAndSetPosition(actor, 248, 872);
+    {
+      /* FAKEMATCH(pin): the timer's address rebuilt in r2 from the object; as
+       * object->timer++, 190 of 1163 instructions differ in tla-en. */
+      register u8 *step asm("r2") = (u8 *)object;
+
+      step += 100;
+      (*(s16 *)step)++;
+    }
     return;
   case 242:
     Actor_SetDestination(actor, 268, 868);

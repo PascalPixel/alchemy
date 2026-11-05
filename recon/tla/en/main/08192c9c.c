@@ -481,12 +481,13 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       draw(canvas, sprites + 508, x - 4, column, 8, 32);
     if (t < *(Data_08199f40 + small) * 2 + 8) {
       s32 shake = (*(Data_08199f40 + small) * 2 - t + 8) >> 1;
+      s16 base = 32;
 
-      gBgScroll[1].y = 32;
+      gBgScroll[1].y = base;
       if (t & 1)
         gBgScroll[1].y = shake + 32;
       else
-        gBgScroll[1].y = 32 - shake;
+        gBgScroll[1].y = base - shake;
     }
     if (small == 0)
       drawAlt(canvas, work->sheet + 0x1b12, x - 10, y - 20, 20, 40);
@@ -893,7 +894,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       Dma_Set(colors, (void *)(PLTT + 0x200), 0x84000080, REG_DMA3);
       colors += 0x200;
       Resource_DecodeType01(colors, Data_02010578);
-      tiles = (u8 *)(Ram_MapCellBuffer + 0x578);
+      tiles = Data_02010578;
       for (i = 0; i != 16; i++) {
         struct IrisSprite *obj = Func_0815b290(32, 32, 0x80002000, 0);
 

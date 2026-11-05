@@ -79,9 +79,14 @@ typedef struct Sprite {
   u16 priority : 2;
   u16 palette : 4;
   u8 unk0a[6];
-  u8 vram;
-  u8 unk11;
-  u16 rotation;
+  union {
+    struct {
+      u8 vram;
+      u8 unk11;
+      u16 rotation;
+    };
+    s32 word10;
+  };
   u8 unk14[2];
   u8 unk16;
   u8 unk17;
@@ -202,7 +207,7 @@ void BattleEffect_StartCanvasLayer(s32);
 void Func_0813ba50(void);
 void Func_08179e6c(void);
 s32 BattleEffect_LoadBlitter(s32, s32);
-void Task_Add(void *, s32);
+s32 Task_Add(void *, s32);
 void BattleActor_SpawnObjectsForListFar(void *, s32);
 void BattleBackground_LoadFar(s32, s32, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
@@ -385,6 +390,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       obj = Func_0815b290(32, 64, 0xc000a000, 0);
       work->sprites[i + 18] = obj;
       obj->priority = 3;
+      __asm__("" : "=r"(i) : "0"(i));
       Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
@@ -396,6 +402,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       work->sprites[41] = obj;
       Iwram_Copy((void *)(VRAM_SLOTS[obj->vram].offset + 0x06010000),
                  DECODE_BUFFER, 0x100);
+      __asm__("");
       for (i = 0; i != 15; i++) {
         work->sprites[42 + i] = Func_0815b3b0(16, 8, 0x4000, 0xf000);
         Iwram_Copy(work->sprites[42 + i], work->sprites[41], 24);

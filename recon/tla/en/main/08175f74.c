@@ -1,3 +1,30 @@
+// Draft, differ 1016 of 4354 (tla-en, 2026-11-05), same instruction count; only 12 instructions
+// differ by kind once registers, slots and offsets are ignored. What is left is mostly one thing:
+// from `if (frame > -48)` in the frame < 132 block to the end, reload's scratch registers are two
+// behind the listing (r2 where it has r4, then the same two-step offset all the way down), so the
+// rows below are one rotation. Nothing above that line in the draft differs but the items here.
+// Reload rotates through r0 to r7: read a listing's scratch registers in order and a statement
+// that sits in the wrong place shows at once (that is how sprites moved after glyphs).
+// Settled 2026-11-05, each measured:
+// - i and m are one variable. It takes r9 only because the last actor loop's actor outranks it
+//   (rank 1.25 against 1.71; 33 refs would be 1.72). The empty asm use of actor in that loop
+//   gives those 3 refs and is a device, not yet tagged; 2 give 36 and actor takes r8 from the
+//   member giv, so the window is that narrow. Any change to i's refs can flip it: check that
+//   `add r9` is still the counter. A pin on i is far worse (3396), it reserves r9 everywhere.
+//   The real extra use of actor is still open.
+// - Palette loops step target and color in the for clause, after i++ (1381 to 1293).
+// - The OAM loop steps its own three pointers, set in the for clause after i.
+// - Fade's first branch has its own t; red and green before blue.
+// - objectSlots is set in the for clause; objects 12 and 13 share tileSlots, with a one-pass
+//   `do { } while (0)` between them so the 0x06010000 is not shared (a device, not yet tagged;
+//   CpuCopy and CpuFill as do-while macros throughout are worse, 1308 to 1398).
+// - No base or kind in the third model block: 7 comes from desc.a's constant, r9.
+// - The reveal swap's 0x1000 is a local hoisted out of the loop, but the listing builds it with
+//   movs and lsls and a user variable goes to the pool (2 rows).
+// - frame < 132: twice and base (frame * 1524) are their own locals, the third model's depth is
+//   its own. The 100000 there comes from the pool in the listing, here movs and lsls (3 rows).
+// Open: j * 16 as a giv (glyph loop, `u8 *dest = glyphs + row * 2` gives the rows but moves
+// the top of the function through 240's set, 3168); order[0x1001] rebuilt in the reveal loop.
 // 28 and 10 stay in registers as chains only cse2 folds (width and twenty set before
 // the frame loop, halved here), as 0816f080 does; the first phase's i is the next thing.
 // 2026-11-05: differ 1601 of 4354 (tla-en). The third phase has its own counter m

@@ -86,7 +86,7 @@ s32 Func_020037d8(struct PushState *push) {
 
   object = Func_02003940(&direction, &push->number, &push->kind);
   if (object != 0) {
-    s32 height, width, index;
+    s32 index, width, height;
     u8 *layer;
 
     kind = push->kind;

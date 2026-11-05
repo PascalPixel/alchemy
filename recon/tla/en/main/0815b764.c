@@ -1,9 +1,13 @@
-// Measured 2026-11-05 (tla-en): differ 350 of 1932. Left: the frame, every
-// spill slot and the instruction count now agree with the listing, without the
-// search's asm. Rows from the ship-burst model block on are reload's rotation:
-// the listing has verts in r1 and frame in r7 where this has verts in r7 and
-// frame in r1, and it stays one register behind to the frame loop's end. Before
-// that block only scheduling pairs remain.
+// Measured 2026-11-05 (tla-en): differ 271 of 1932 (scoping the
+// ship-placement loop's i to its block took it from 350). Left: at the
+// ship-burst model block the listing reads verts into r1 and j's zero into
+// r2, then frame into r7, which the next giv's temporary overwrites, so t
+// reads frame again; here verts takes r7, the zero r0 and frame r1. The same
+// rows are two reload registers ahead in the listing, with nothing visible
+// before that says why. The giv order itself is right: the steps at the
+// loop's end run r9, r10, r8, r7 on both sides. Swapping the if (j == 0) arms
+// makes the rows after the block agree (257), which shows they follow from
+// this one block.
 
 // Draft, differ 780 of 1932, skeleton gap 102 (tla-en, 2026-11-01)
 // BattleEffect_RunUlysses: same calls and control flow as the listing.
@@ -708,6 +712,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         shipZ = (Trig_Sin(u << 10) << 1) + 0x540000;
       }
       if (draw) {
+s32 i;
         place[3] = place[1] = 0;
         for (i = 0; i != 7; i++) {
           place[0] = (Data_08198654[i] << 16) + shipX - 0x200000;

@@ -1126,12 +1126,6 @@ BattleTarget_Execute:
 	.section .rom.00124e1c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00124e1c, 0x00000570
-	.section .rom.00125bb4, "ax"
-	.global Func_08125bb8
-	.type Func_08125bb8, %function
-	.thumb_func
-Func_08125bb8:
-	.incbin "baserom.gba", 0x00125bb4, 0x00000054
 	.section .rom.001266fa, "ax"
 	.incbin "baserom.gba", 0x001266fa, 0x00000002
 	.section .rom.0012693e, "ax"

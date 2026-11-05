@@ -224,6 +224,7 @@ void Heap_Release(void *buffer);
 // The spark row keeps frame * 2 + frame: frame * 3 folds with the row's size.
 // Haures: shadowed wings unfold over a dark pool, the demon climbs out of a
 // vortex and dives through the foes, scattering into black feathers.
+static __inline__ void CLEAR(void *dst, s32 size) { Iwram_ClearWords(dst, size); }
 void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   u8 *battle;
   u8 *canvas;
@@ -731,7 +732,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         if ((u32)cut <= 5) {
           s32 j;
 
-          Iwram_ClearWords(buffer, 0xd80);
+          CLEAR(buffer, 0xd80);
           for (j = 0; j != 72; j++) {
             s32 m;
 
@@ -930,7 +931,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 0);
   {
-    Iwram_ClearWords(buffer, 0x6c00);
+    CLEAR(buffer, 0x6c00);
     for (i = 0; i != 6; i++) {
       s32 j;
 

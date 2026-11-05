@@ -30,14 +30,16 @@ void Func_02000244(s32 message, s32 position, s32 frames) {
   s32 y;
   s32 width;
   s32 height;
-  s32 mode = 0;
+  s32 mode;
   s32 left;
-  s32 line = 0;
+  s32 line;
   s32 half;
   s32 wide;
 
   x = 0;
   y = 0;
+  mode = 0;
+  line = 0;
   wide = message & 0x8000;
   Text_GetMessageSize(gData_02000a28, &x, &y, &width, &height);
   if (width <= 24) {

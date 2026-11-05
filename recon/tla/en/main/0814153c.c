@@ -3,10 +3,14 @@
 // Settled: size set twice stays a hoisted register (one set is replaced into the call by loop.c's single-use
 // rule), the copy's destination is the base plus i rows, the ring's angle is its own variable.
 // Left, in order of reach:
-// - Slots 16 and 20: place and texture3's address are gcse's reaching registers and their order is by hash
-//   bucket, over a table sized by the insn count; they should come right when the count does.
-// - The first model's kind: the listing stores it after pixels, but pixels first lengthens &texture's life by one and it loses r7 to 0x10000 (global.c 0.316 against 0.317).
-// - The sparks' table pointer before p: the listing loads r6 then r5.
+// - Slots 16 and 20: place and texture3's address are gcse's reaching registers, numbered by hash bucket over
+//   a table sized by the insn count at gcse. 20 to 23 more insns there swap them (measured with dead stores to
+//   canvas at the top: differ 56). Most locals take a 0 default badly (frame, i, j, k, scroll and on raise the
+//   figure), and only canvas, work, savedScroll, transition, sprites, battle and origin stay at 70.
+// - The first model's kind: the listing stores it after pixels and has the zero reloaded in r2. Kind after
+//   pixels with a zero local closes the block but moves r7 and the blocks before it (284).
+// - The sparks' table pointer before p: the listing loads r6 then r5; a local for the table before p gets the
+//   order but ldrh r1, [r6, r3] becomes three instructions.
 // Measured: blit is two words (slot 88, 92 unused); one i for shard, flash,
 // streak and slot; j for the fill columns and sparks, k for the ring columns;
 // model and verts belong to each block; ring and offset are set together so

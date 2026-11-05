@@ -22,16 +22,14 @@
 // the peephole folds them to add r5, sp, #160.
 // Left, in order of reach:
 // - The priority mask: the listing has movs r4, #13; negs r4, r4; adds r2, r4, #0, a hoisted QImode -13 and
-//   its copy. loop.c's single-use replacement in a loop with calls deletes that copy here (insn 3013), so
-//   reload rebuilds -13 in r2; every spelling of the store and of a mask local measured gives the same or
-//   worse. One instruction short, and the reload that follows is r4 where the listing has r0.
-// - The six blasts: lsls r2 before add r0 at the shaded circle, add r1 and adds r3 at the first blit, movs r1
-//   before str r5 at the second. Order only; constant locals, routine locals and sheet locals do not move them.
-// - The hoist order r5 then r7 before the four strikes: sheet's 0x700 must miss loop.c's first pass
-//   (threshold 9 * life 12 >= 104 real insns). Six dead stores in the loop body measure 75 by raising the
-//   count to 110; no real form found yet.
-// - The else arm's reload order, r0, r1, r2 here and r1, r2, r0 in the listing (one rotation), the object
-//   loop's row before last step, and the end's 0x670 before y's 32.
+//   its copy. loop.c's single-use replacement in a loop with calls deletes that copy from the bit-field's
+//   expansion (insn 3013), so reload rebuilds -13 in r2. An s8 mask of the creation block, as now, is hoisted
+//   and reloaded in r4 as the listing's rotation needs, but as movs r4, #243; lsls; asrs: three instructions.
+// - The six blasts: lsls r2 before add r0 at the shaded circle, adds r3 before add r1 at the first blit, movs r1
+//   before str r5 at the second. Order only; the listing's order needs 0x10000 set before the call's arguments.
+//   Constant locals, routine locals, sheet locals and inline forwards do not move them.
+// - The else arm's reload order, r0, r1, r2 here and r1, r2, r0 in the listing (one rotation); the object
+//   loop's row before last step; add r6 after movs r4; the end's 0x670 before y's 32; the cell column.
 // Adoption: the resource directory has no names yet for the ids written here as ResourceId_Data0B4, Data0C2, Data0C9,
 // Data0CA, Data104, CornerRuneASheet, ForestCanopyTiles and SunbeamCloudsBackdrop. Barrier-free so far; the
 // do { } while (0) of LOAD_BLITTER and WAIT_TRANSFER's volatile reads need their S2 reading then.

@@ -20,7 +20,9 @@ struct Rock {
 /// A falling rock's sprite.
 struct RockSprite {
   u8 unk00[5];
-  u8 unk05;
+  u8 unk05_0 : 5;
+  u8 blend : 1;
+  u8 unk05_6 : 2;
   u8 unk06[2];
   u16 tile : 10;
   u16 priority : 2;
@@ -62,18 +64,15 @@ void Func_02002e00(void) {
   s32 i;
 
   Func_02002f40(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
-  tile = VramCache_Load(resource, sizeof(work->tiles), work);
   resource = Resource_FindFreeEntry();
+  tile = Value3((s32 (*)())VramCache_Load, resource, sizeof(work->tiles), (s32)work);
   work->tileBase = tile;
-  rock = work->rocks;
   work->resource = resource;
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 35 of 83 instructions differ in tla-en. */
-  asm("");
+  rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--) {
     Func_02003190(sprite, 8, 8, 0x40000000, tile);
-    sprite->unk05 |= 32;
+    sprite->blend = 1;
     sprite->palette = 0;
     sprite->priority = 0;
     sprite->unk1e = 240;
@@ -82,5 +81,5 @@ void Func_02002e00(void) {
     rock++;
   }
   work->next = 0;
-  Call2((void (*)())Task_Add, (s32)Func_02002cc0, 0x480);
+  Task_Add(Func_02002cc0, 0x480);
 }

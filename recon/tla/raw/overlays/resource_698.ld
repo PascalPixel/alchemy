@@ -25,7 +25,7 @@ SECTIONS
         "*/games/tla/src/scene/jupiter_lighthouse_entrance/s07a4.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_entrance/s087c.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_entrance/s091c.o"(.text)
-        "*/resource_698_overlay.o"(.text.x02008aac)
+        "*/games/tla/src/scene/jupiter_lighthouse_entrance/s0aac.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_entrance/light.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_entrance/lightcue.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)

@@ -1,5 +1,7 @@
-// Draft, differ 18: overlay 6a2's copy of the function drafted in
-// resource_698_c_02000aac.c, whose header says what it is and what still differs.
+/// @file
+/// Queues the lit actors' sprites: for each listed actor with a position, projects it
+/// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
+/// 64 one when the big switch is set, at its animation picture and depth.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -16,17 +18,17 @@ struct LightOam {
   u16 unk0a;
 };
 
-extern s16 gData_0200265c;
-extern s16 gData_0200265e;
-extern struct FieldActor *gData_02002660[];
-extern struct LightOam gData_020026a0[];
-extern s16 gData_02002760;
-extern s16 gData_02002762;
+extern s16 gData_02006a6c;
+extern s16 gData_02006a6e;
+extern struct FieldActor *gData_02006a70[];
+extern struct LightOam Data_02006ab0[];
+extern s16 gData_02006b70;
+extern s16 gData_02006b72;
 
-s32 Func_02001c80(struct FieldActor *actor);
-void Func_02001b40(struct LightOam *oam, s32 depth);
+s32 Func_020059bc(struct FieldActor *actor);
+void Func_0200571c(struct LightOam *oam, s32 depth);
 
-void Func_02000c18(void) {
+void Func_020047d4(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 *view = &map->viewX;
   s32 viewX, viewZ, tile, viewY;
@@ -34,24 +36,24 @@ void Func_02000c18(void) {
   s32 i;
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
-  tile = gResourceTableEntries[gData_0200265c].offset >> 5;
+  tile = gResourceTableEntries[gData_02006a6c].offset >> 5;
   viewY = map->origin[1];
-  oam = gData_020026a0;
+  oam = Data_02006ab0;
 
-  for (i = 0; i < gData_0200265e; i++) {
-    struct FieldActor *actor = gData_02002660[i];
+  for (i = 0; i < gData_02006a6e; i++) {
+    struct FieldActor *actor = gData_02006a70[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
+      s32 frame;
       u32 *word;
-      big = gData_02002760;
       ox = actor->x - viewX;
       y = actor->y - viewY + 0x80000;
       z = actor->z - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
+      big = gData_02006b70;
       if (big == 0) {
         s32 x, sy;
-        s32 frame;
         frame = (s16)actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
@@ -65,15 +67,14 @@ void Func_02000c18(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | 0x40002000;
         *word = (tile + frame * 8) | 0x800;
-        if (gData_02002762 == -1)
-          oam->priority = Func_02001c80(actor);
+        if (gData_02006b72 == -1)
+          oam->priority = Func_020059bc(actor);
         else
-          oam->priority = gData_02002762;
-        Func_02001b40(oam, depth);
+          oam->priority = gData_02006b72;
+        Func_0200571c(oam, depth);
         oam++;
       } else {
         s32 x, sy;
-        s32 frame;
         frame = (s16)actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
@@ -87,11 +88,11 @@ void Func_02000c18(void) {
         *word++ = 0;
         *word++ = oy | (ox << 16) | 0xc000a000;
         *word = (tile + frame * 8) | 0x800;
-        if (gData_02002762 == -1)
-          oam->priority = Func_02001c80(actor);
+        if (gData_02006b72 == -1)
+          oam->priority = Func_020059bc(actor);
         else
-          oam->priority = gData_02002762;
-        Func_02001b40(oam, depth);
+          oam->priority = gData_02006b72;
+        Func_0200571c(oam, depth);
         oam++;
       }
     }

@@ -1,5 +1,7 @@
-// Draft, differ 18: overlay 69c's copy of the function drafted in
-// resource_698_c_02000aac.c, whose header says what it is and what still differs.
+/// @file
+/// Queues the lit actors' sprites: for each listed actor with a position, projects it
+/// from the map's view, skips it off screen, and writes a 16 by 16 sprite, or a 32 by
+/// 64 one when the big switch is set, at its animation picture and depth.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -42,16 +44,16 @@ void Func_02001388(void) {
     struct FieldActor *actor = gData_02002d30[i];
     if (actor != 0 && actor->x != 0) {
       s32 big, ox, y, z, oy, depth;
+      s32 frame;
       u32 *word;
-      big = gData_02002e30;
       ox = actor->x - viewX;
       y = actor->y - viewY + 0x80000;
       z = actor->z - viewZ - viewY;
       oy = z - y;
       depth = ((y + z) >> 16) + 58;
+      big = gData_02002e30;
       if (big == 0) {
         s32 x, sy;
-        s32 frame;
         frame = (s16)actor->timer;
         x = ox >> 16;
         sy = oy >> 16;
@@ -73,7 +75,6 @@ void Func_02001388(void) {
         oam++;
       } else {
         s32 x, sy;
-        s32 frame;
         frame = (s16)actor->timer;
         x = ox >> 16;
         sy = oy >> 16;

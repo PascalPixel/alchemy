@@ -1,6 +1,6 @@
-// // Draft, differ 2 of 90 (tla-en, 2026-11-05). Func_02001e08 pushing west, with flag
-// // 0x8db at (35, 38). Left: the first Func_020005cc's ldrb r0 comes after the shifts
-// // in the native, before them here.
+// Draft, differ 2 of 90 (tla-en, 2026-11-05). Func_02001e08 pushing west, with flag
+// 0x8db at (35, 38). Left: the first Func_020005cc's ldrb r0 comes after the shifts
+// in the native, before them here.
 #include "types.h"
 #include "call.h"
 #include "actor.h"

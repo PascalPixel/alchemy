@@ -1,12 +1,12 @@
-// // Draft, differ 57 of 94 (tla-en, 2026-11-05); the goto loop it replaces measured
-// // 53. Count random sparks around a position through the overlay's spawn
-// // (Func_020000b8).
-// // Left: the native computes velocityX in place before the next call, in r8, with
-// // the mask in sl, the position in fp, x in r6 and count on the stack. Here combine
-// // sinks the -8 and the shift through the calls to the argument, and local-alloc
-// // takes velocityX into r6, which leaves x in r4 saved around its one call. Both
-// // would follow from velocityX living across a block boundary in the native, which
-// // no branch in the listing shows; an empty asm after it stops the sinking only.
+// Draft, differ 57 of 94 (tla-en, 2026-11-05); the goto loop it replaces measured
+// 53. Count random sparks around a position through the overlay's spawn
+// (Func_020000b8).
+// Left: the native computes velocityX in place before the next call, in r8, with
+// the mask in sl, the position in fp, x in r6 and count on the stack. Here combine
+// sinks the -8 and the shift through the calls to the argument, and local-alloc
+// takes velocityX into r6, which leaves x in r4 saved around its one call. Both
+// would follow from velocityX living across a block boundary in the native, which
+// no branch in the listing shows; an empty asm after it stops the sinking only.
 
 #include "../../../../games/tla/src/scene/tundaria_tower/tundaria_tower.h"
 

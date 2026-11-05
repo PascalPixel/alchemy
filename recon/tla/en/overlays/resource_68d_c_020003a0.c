@@ -1,11 +1,11 @@
-// // Draft, differ 28 of 126 (tla-en, 2026-11-05).
-// // Sets the blend and loads two pictures (Data_02002620 and Data_02002af8) into
-// // VRAM for the sprites at Data_02003060 and Data_02003030, then schedules
-// // Func_020002b4.
-// // The wrapper keeps 0x1000 out of one shared pseudo, so 8 takes r8 as in the
-// // native. Address locals give the native's load before each call. Left: order
-// // only, the blend registers' constants after buffer's copy, r7's 32 taken at the
-// // first use, and the last two bitfield stores.
+// Draft, differ 28 of 126 (tla-en, 2026-11-05).
+// Sets the blend and loads two pictures (Data_02002620 and Data_02002af8) into
+// VRAM for the sprites at Data_02003060 and Data_02003030, then schedules
+// Func_020002b4.
+// The wrapper keeps 0x1000 out of one shared pseudo, so 8 takes r8 as in the
+// native. Address locals give the native's load before each call. Left: order
+// only, the blend registers' constants after buffer's copy, r7's 32 taken at the
+// first use, and the last two bitfield stores.
 #include "types.h"
 #include "call.h"
 #include "io_reg.h"

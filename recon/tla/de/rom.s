@@ -17,12 +17,6 @@ System_WaitForFrameInterrupt:
 	.thumb_func
 VramCache_AllocateBlocks:
 	.incbin "baserom.gba", 0x000141a0, 0x00000080
-	.section .rom.0001553c, "ax"
-	.global Transform_BuildLookAt
-	.type Transform_BuildLookAt, %function
-	.thumb_func
-Transform_BuildLookAt:
-	.incbin "baserom.gba", 0x0001553c, 0x000001d8
 	.section .rom.000157a4, "ax"
 	.global Render_ProjectPoint
 	.type Render_ProjectPoint, %function

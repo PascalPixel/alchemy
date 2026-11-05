@@ -1,41 +1,32 @@
-// Measured 2026-11-05 (tla-en): differ 935 of 2781, 805 with slots and pool
-// offsets normalized, 221 with registers normalized as well. No loop has a
-// counter of its own beyond i and k: the second palette and the debris count on
-// i (r8 in the listing), the raw figure rising as the palette loop's registers
-// rotate. Tried at the palette's red without effect or worse: (31 & s), tr +
-// (s & 31), s & (u16)31, sr = 31; sr &= s. Texture store orders and bitfields
-// do not move the shape. PRE folds all four frame << 9 sites into spin; the
-// listing rebuilds two of them, and (frame << 8) * 2 or (frame << 4) << 5 fold
-// back to the same RTL.
-// Draft, differ 1075 of 2781, skeleton gap 107/106 (tla-en, 2026-11-01)
-// BattleEffect_RunCoatlicue: same calls and control flow, draft 2780 of 2781
-// instructions, frame 164 and every stack slot as in the native. Registers
-// agree for frame (r11), i (r8), k (r10), model and the last loop's locals.
-// What is left, by cause; the first is worth most of the differ:
-// - Palette ease, sr. Reload hands out spill registers in turn, so everything
-//   from this loop on is one rotation off. The native computes the red mask
-//   into a fresh register (mov r3, r9; ands r3, r1; adds r1, r3, r2), which
-//   takes r2 for tr and evicts sg to sp+8, three reloads the draft lacks.
-//   regmove's fixup_match_1 merges that temporary into s because s dies at the
-//   and and the temporary dies at the add. Native needs a form where it does
-//   not: the and's first operand the mask, or the temporary set twice. Tried,
-//   none closes it: s as the outer s or as an entry variable shared by both
-//   palette loops, sr += tr (the mask loses r9 and rematerializes, frame 160),
-//   sg likewise, tr + red, (u8) and (u16) red, u16 v then s, a red local, every
-//   order of sb, sg, sr. Fix this first, then re-read everything below.
-// - The second palette's red: the native has movs r2, #31; ands r2, r3 ahead of
-//   the shared shift, keeping the green and blue pool mask apart. Red first
-//   makes CSE take the halfword mask as the low part of red's register. Only
-//   r = 31; r &= s does it, a forced temporary, so blue, green, red stays; its
-//   b.n is a literal pool jump that follows when the length is right.
-// - spin is set at the top of the frame loop so loop.c reduces it: a giv with
-//   add cost 2 needs a replaceable long-lived use plus one more site, which is
-//   why Yaw(frame << 9) stays spelled out once. GCSE then folds the two i-loop
-//   Yaw sites into the reduced slot, where the native keeps mov, lsls. A spin
-//   set only at the model block is not replaceable and is not reduced.
-// - The cells loop has the object slots in r7 and cells in r5, the native the
-//   reverse, with i's zero set earlier. Tried: stepped pointer, slot pointer,
-//   indexed, shifted index, operand order, inner obj, moved i.
+// Measured 2026-11-05 (tla-en): differ 339 of 2781, 263 with slots and pool
+// offsets normalized, 69 with registers normalized as well. Frame 164 and every
+// stack slot as in the listing. No loop has a counter of its own beyond i and k.
+// What round 4 settled by reading the listing:
+// - Reload hands out spill registers in turn, so one stray reload shifts every
+//   later figure; work from the top down.
+// - The zeros stored through memory (place[3], step->z, the scrolls, variant,
+//   velocityX, y) come from one zero set once after the opening slide. It takes
+//   no register, so reload makes each in its turn and no loop hoists it (610 to
+//   405 from these alone, and the rotation falls into step behind them).
+// - The second palette's s is its own, red first through a temporary set twice.
+// - The spark, the ninth cell and the spawn read their position, d and p first
+//   and on locals of their own; i = 0 comes before its neighbours in four loops.
+// What is left:
+// - The first palette's red holds its temporary through an untagged barrier
+//   (t = COLOR_RED(s), kept apart from sr): the listing has mov r3, r9; ands r3,
+//   r1; adds r1, r3, r2, where regmove merges t into s because s dies at the and
+//   and t at the add. s = COLOR_RED(s) + tr gives the rows exactly, since the add
+//   then sets s, but s outlives its register and everything rotates. Needs its
+//   tag, or the plain form, before adoption. The second palette's t = 31 is a
+//   temporary and needs its tag too.
+// - PRE folds Yaw(frame << 9) in the two shock loops into spin; the listing has
+//   mov, lsls there and spin everywhere else. Spellings fold back or grow the
+//   frame.
+// - The cells loop has the object slots in r7 and cells in r5, the listing the
+//   reverse (12 rows). Tried: stepped pointer, slot pointer, a block local.
+// - The second texture: the listing has add r7, sp, #92; adds r2, r7, #0 and
+//   stores through both, here a direct sp + 92 and sp + 93. Through a pointer
+//   either folds back or takes a stack slot.
 // Measured: gData_02015000 is a constant address, the native pools its +24 and
 // a symbol leaves an add; gMapCellBuffer is the set-once local for its first
 // five uses and the symbol for the three texture.pixels, chosen per site. Row

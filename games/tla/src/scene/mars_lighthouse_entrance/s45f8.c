@@ -1,0 +1,51 @@
+#include "types.h"
+#include "main_routine_work.h"
+#include "ram_buffer.h"
+#include "dma.h"
+#include "io_reg.h"
+
+extern u16 *gData_0200e88c;
+extern u16 *gData_02006890;
+extern u16 *Data_02006894;
+extern u16 *Data_02006880;
+
+void Func_02004d58(s32 a, s32 b);
+void Func_020048e8(void);
+
+/// Records the four palette lists, writes each listed palette entry from its
+/// red, green and blue, then copies two palettes from block32 and starts the
+/// blend.
+void Func_020045f8(u16 *slots, u16 *colours, u16 *a, u16 *b) {
+  u8 *saved = Ram_HeapSlots->block32;
+
+  gData_0200e88c = slots;
+  gData_02006890 = colours;
+  Data_02006894 = a;
+  Data_02006880 = b;
+  if (*slots != 0xffff && *colours != 0xffff) {
+  next:
+    {
+      int red = *colours++;
+      int index = *slots++;
+      int green = *colours++;
+      int blue = *colours++;
+      int value;
+
+      /* FAKEMATCH(one-pass): the colour's build and store in a once-only
+       * block, so both lists are stepped right after their loads and the
+       * next entry's marker loads before 0xffff is built; as plain
+       * statements, 22 of 80 instructions differ in tla-en. */
+      do {
+        value = (blue << 10) | (green << 5) | red;
+        ((u16 *)BG_PLTT)[index] = value;
+      } while (0);
+    }
+    if (*slots != 0xffff && *colours != 0xffff)
+      goto next;
+  }
+  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
+  Func_02004d58(0x10000, 0);
+  if ((s8)gMainRoutineWork.unk2c2 == 2)
+    Func_020048e8();
+}

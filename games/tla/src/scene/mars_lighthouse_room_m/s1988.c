@@ -1,7 +1,5 @@
-// Draft of overlay 6ab's Func_020015ec, the twin of overlay 6aa's
-// Func_02001ae0: its draft (resource_6aa_c_02001ae0.c) with this overlay's
-// symbols: differ 95 of 168. Left: what that draft's header records.
-#include "../../../../games/tla/src/scene/mars_lighthouse_entrance/room.h"
+#include "../mars_lighthouse_entrance/room.h"
+#include "field/event_work.h"
 
 struct RideSlot {
   u16 id;
@@ -24,18 +22,18 @@ struct RideWork {
 extern u8 gData_020023c4[];
 
 struct Actor *Actor_GetById(s32 id);
-s32 Func_02001528(struct Actor *a, struct Actor *b);
-s32 Func_0200158c(struct Actor *a, struct Actor *b);
+s32 Func_020018c4(struct Actor *a, struct Actor *b);
+s32 Func_02001928(struct Actor *a, struct Actor *b);
 
-void Func_020015ec(struct Actor *object) {
+void Func_02001988(struct Actor *object) {
   struct RideWork *work = (struct RideWork *)(gData_020023c4 + 0x188);
-  struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *event = Ram_HeapSlots->eventWork;
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 dx = object->bounce;
   s32 dz;
   s32 i;
   s32 direction;
-  struct RideSlot *slot;
+  s32 id;
 
   object->x += dx;
   object->y += object->gravity;
@@ -46,18 +44,20 @@ void Func_020015ec(struct Actor *object) {
   object->scaleX += object->speedLimit;
   object->scaleY += object->acceleration;
   ((struct SpriteParts *)object->animation)->unk12 += object->action;
-  if (leader->y == leader->terrainHeight && Func_02001528(object, leader) &&
+  if (actor->y == actor->terrainHeight && Func_020018c4(object, actor) &&
       gMainRoutineWork.renderMode == 0) {
     if (object->unk4c != 0) {
       work->value68 = 0;
       {
         u16 *cell = &work->direction;
 
-        if (object->unk4c > 0)
+        if (object->unk4c > 0) {
           direction = 1;
-        else
+          *cell = direction;
+        } else {
           direction = 0xffff;
-        *cell = direction;
+          *cell = direction;
+        }
       }
     }
     object->priorityFlags = 2;
@@ -69,14 +69,13 @@ void Func_020015ec(struct Actor *object) {
       object->gravity += speed >> 2;
     }
     work->landed = 1;
-    *(u16 *)(event + 340) = work->value0a;
+    event->exit = work->value0a;
   }
-  slot = work->slots;
-  for (i = 0; i < 4 && slot->id != 0; i++, slot++) {
-    struct Actor *other = Actor_GetById(slot->id);
+  for (i = 0; i < 4 && (id = work->slots[i].id) != 0; i++) {
+    actor = Actor_GetById(id);
 
-    if (other->y == other->terrainHeight && Func_0200158c(object, other)) {
-      if (slot->blocked == 0) {
+    if (actor->y == actor->terrainHeight && Func_02001928(object, actor)) {
+      if (work->slots[i].blocked == 0) {
         s32 speed;
 
         object->priorityFlags = 2;

@@ -28,7 +28,7 @@ SECTIONS
         "*/resource_6ab_overlay.o"(.text.x02009424)
         "*/games/tla/src/scene/mars_lighthouse_star_room/paths.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s1528.o"(.text)
-        "*/resource_6ab_overlay.o"(.text.x020095ec)
+        "*/games/tla/src/scene/mars_lighthouse_star_room/s15ec.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/spawn.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s17c8.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/spawn2.o"(.text)

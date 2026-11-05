@@ -972,8 +972,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           s32 st = Data_08199754[i];
 
           if (frame > st && frame < st + 100) {
-            s = (frame - st) * 2978;
             ty = -0x2c0000;
+            s = (frame - st) * 2978;
             if (s > 65535) {
               s = 0x10000;
             }
@@ -1003,9 +1003,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       }
       model->mesh = Data_02014800;
       model->kind = 7;
-      model->vertices = verts;
       model->scrollU = zero;
       model->scrollV = zero;
+      model->vertices = verts;
       for (i = 0; i != 2; i++) {
         if (frame < Data_08199756[i]) {
           continue;

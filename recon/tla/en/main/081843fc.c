@@ -1,91 +1,86 @@
-// Measured 2026-11-05 (tla-en): differ 678 of 4580, 422 with slots and pool
-// offsets normalized, 144 with registers normalized as well. Every stack slot
-// has the listing's reference count at the listing's offset. Measure
-// 081843fc,081848ec together.
-// What round 3 settled by reading the listing:
-// - e is one function-level variable; each section's cells its own. The first
-//   cells is the fixed address, the decode's argument the symbol, so CSE keeps
-//   them apart. The step comes before the counter (cells += 1024, i++).
-// - No loop has a counter of its own beyond i and j: the burst, the wave of
-//   particles and the debris all count on i (r9 in the listing). The tornado's
-//   inner counter is a block's own j, with a row local holding i << 12.
-// - OBJ_TILES reads the slot through its field: the char read made a dependency
-//   that moved every object store. The first fade writes the object palette
-//   (literal 0x05000202); the instruction diff cannot show a wrong literal, so
-//   every pool still needs checking at adoption.
-// - The meteor has one b = 0x80000 - drift across its two sites (slot 88).
+// Measured 2026-11-05 (tla-en): differ 247 of 4580, 113 with slots and pool
+// offsets normalized, 53 with registers normalized as well. Measure
+// 081843fc,081848ec together. Most of raw is pool offsets, which fall into step as
+// the rows do: the draft is one instruction long (two stray stores, below).
+// What stops it, largest first:
+// - The burst's i * 448 giv (slot 24 in the listing, 40 here; every other giv slot
+//   sits 4 too low because of it). Slot order is pseudo order, and loops run last
+//   to first, so the listing makes this giv after the first scene's: second pass.
+//   loop.c reduces when benefit * lifetime * 15 >= real insns, 77 in the first pass
+//   and 73 in the second, so the product must be 5. The log gives benefit 10, less
+//   2 for the add: 8. Every spelling of 448 tried gives 8 or fails to reduce; a
+//   reused function-level local is not replaceable but has a huge lifetime. Also
+//   rotates r4, r5, r6 at the giv's step (rows 3925 to 3934).
+// - The jitter block: off holds r1 and jitter r4 in the listing, the reverse here.
+//   global.c ranks by floor_log2(refs) * refs / length: jitter 12 refs over 72,
+//   off 11 over 68, so jitter comes first. Inner-loop reads weigh more, so a goto
+//   inner loop would flip it, but PRE then hoists its (frame + j * 2) << 10. Costs
+//   25 rows, and the two stores that make the draft one long.
+// - The spawn: (x + 116) << 16 stays in its loop only with the sum inside the loop,
+//   which loop.c hoists after q's start; the listing has the sum before q's math
+//   (x in r3). A local holding the sum has its shift hoisted. 14 rows.
+// - Ties sched2 settles the other way: the second object loop's Iwram and cells
+//   loads (row 199), cellBuffer + 0x1000's operands (row 240), the third shock's
+//   texture and mesh stores (row 2242), the sparks' reads (rows 3038 to 3073), the
+//   bolts' load (row 3626: it sinks past five calls in the listing, here past none,
+//   and r5 must stay out of reload's choice until then), the band's stores.
+// What round 5 settled by reading the listing and the loop dumps:
+// - The cell buffer is a set-once local with no register, so reload makes it at
+//   each use (678 to 627); the band's mesh likewise (strip), set at scene level.
+// - Three scales were wrong: the scattered bolts' and the flash's z is 0x10000. Two
+//   palette copies move 128, not 512 (544 to 502).
+// - Steps before counters: p2++, i++ and a += 21845, i++ (498 to 482); p++, i++ in
+//   the burst.
+// - A pointer of its own where the listing has another register: the debris draw
+//   (408 to 370). Indexed where its start follows a guard or a hoist: the shock's
+//   sparks (251 to 247).
+// - A local set before its calls sinks past them in sched2 and takes a callee-saved
+//   register: the shake's m = 7 (572 to 546).
+// - Integer sums keep their operand order where a pointer sum canonicalizes: the
+//   debris offsets (i * 448 + (s32)debris).
+// - The frame step sits between the pending address and its store, or CSE and reload
+//   reuse the store's 1 (370 to 333). h = n * 2 before the debris source keeps its
+//   table out of a hoist (432 to 320). The scattered bolt's cell is read once (300
+//   to 263). The arms' phase is k + a on a local k, so it is reduced apart from k
+//   (261 to 251). j is the function's in the first burst (314 to 302).
 // What round 4 settled by reading the listing:
 // - Reload rotates its scratch registers, so one stray reload shifts every later
 //   figure: raw moved by hundreds on single edits. Work from the top down.
-// - A value set at the top of a block can sink past its calls in sched2: bolts is
-//   set first in its block, which is what keeps r5 out of reload's choice (1439 to
-//   1286). The second moon's scattered particles walk on their own pointer, so
-//   model2 is r7 with the giv in r6 (1619 to 1485).
 // - Values that start from a known constant step from their own name (shade -
-//   frame * 2 + 1180, sx - frame * 61845 + K, x - frame * 8 + 576): CSE keeps the
-//   constant in its register (1858 to 1745).
+//   frame * 2 + 1180, sx - frame * 61845 + K, x - frame * 8 + 576).
 // - Each section decodes into the sheet, then sets cells from it: the sheet's
-//   temporary takes r5 first, so the address takes r6 and e r7 (1041 to 937).
+//   temporary takes r5 first, so the address takes r6 and e r7.
 // - zero, span (0x80000), debris (particles[64]), bolts and quads are constants
 //   set once in a long-lived local. Each takes no register, so reload remakes it
-//   at every use and neither a loop nor PRE moves it (span: 1254 to 1041; debris:
-//   921 to 830).
-// - A counter's zero comes before the statement above its loop in several loops
-//   (j before q, i before p): reload's order shows it (748 to 678).
-// What is left:
-// - The barrier on idx is untagged and stands in for what stops the sharing: the
-//   listing rebuilds off + idx after the if (a != 0) join, and neither cse1's skip
-//   nor PRE shares it there. Forms tried without a barrier: the if as one to three
-//   ifs, with an else, a goto, one-pass blocks; off as a stepped variable (its slot
-//   says it is a loop.c giv), i * 12 at each site.
-// - x << 16 in the debris spawn stays in its loop in the listing; here it moves out
-//   ahead of the loop, with no movable row in the loop dump, and rotation is lost
-//   from there to the end of the scene.
-// - The motion loop's i * 448 giv is second pass in the listing (slot 24), first
-//   pass here (slot 40), benefit 10, lifetime 1, threshold 15, against 76 insns;
-//   spellings of the index do not move it. j takes r8 and the i * 2 + 36 giv sl
-//   where the listing has them the other way (j 15/74 against 17/132).
-// - The swap loop reads its object's tiles and cell in the other order, and the
-//   jitter block has off and jitter in each other's registers (r1, r4).
+//   at every use and neither a loop nor PRE moves it.
+// - A counter's zero comes before the statement above its loop in several loops.
+// What round 3 settled by reading the listing:
+// - e is one function-level variable; each section's cells its own. The step comes
+//   before the counter (cells += 1024, i++).
+// - The burst, the wave of particles and the debris all count on i (r9). The
+//   tornado's inner counter is a block's own j, with a row local holding i << 12.
+// - OBJ_TILES reads the slot through its field. The first fade writes the object
+//   palette (literal 0x05000202); every pool still needs checking at adoption.
+// - The meteor has one b = 0x80000 - drift across its two sites (slot 88).
+// The barrier on idx is untagged and stands in for what stops the sharing: the
+// listing rebuilds off + idx after the if (a != 0) join, and neither cse1's skip nor
+// PRE shares it there. Needs its tag or the plain form before adoption.
 // BattleEffect_RunCatastrophe; the same calls and control flow as the listing.
 // The function runs on through listing 081848ec, whose Func_081848ec and
 // Func_08185b9c are labels inside it (the second the first loop's test).
 // What the listing's stack and registers proved:
-// - The frame is 272, as in the listing, and the opening 137 instructions
-// match.
-// - blit is DrawRectangle blit[2]: a DImode pseudo, so the first load's store
-//   stays (sp+156, with sp+160 unused) and Ram_HeapSlots stays in r5 across the
-//   opening calls. list is s16 list[14], as in the family.
-// - apply is s32 apply[2] = {0, 0} in a block of its own: the listing stores
-// the
+// - The frame is 272. blit is DrawRectangle blit[2]: a DImode pseudo, so the first
+//   load's store stays (sp+156, with sp+160 unused). list is s16 list[14].
+// - apply is s32 apply[2] = {0, 0} in a block of its own: the listing stores the
 //   pair as one DImode zero.
-// - i (r9) counts almost every loop; j (r10) counts the fade's outer loop, the
-//   particle and burst loops, the wave rows and the bolt's debris. The p loops
-//   set p = &work->particles[i] inside the loop, so p is a reduced giv.
-// - Stack slots below the declared locals are loop.c's givs: the zoom and tilt
-//   (frame multiples), frame * 3 (t), and i * 12 (off), i * 8 + 80 (start) and
-//   i * 8 + 16 (lim), each set at its loop's top. Slot order is first pass,
-//   inner loops first, then second pass.
+// - i (r9) counts almost every loop; j (r10) the fade's outer loop, the particle and
+//   burst loops, the wave rows and the bolt's debris. The p loops set p =
+//   &work->particles[i] inside the loop, so p is a reduced giv.
+// - Stack slots below the declared locals are loop.c's givs, each set at its loop's
+//   top. Slot order is first pass, inner loops first, then second pass.
 // - (frame - 370) * k folds apart, so d holds it; (frame - 128) << 1 does not.
-// - The colour channels read through *src three times (HImode masks, the pooled
-//   31); both palette loops match that way.
-// - The burst sets its sprite, 10 and 20 first and computes bx after the p->x
-//   test, which is also what stops the 0x80000 - drift hoist out of its loop.
-// - Scratch registers rotate from the first difference; most of what is left
-//   from line 170 on has the listing's shape with other registers.
-// What is left:
-// - First difference: the listing rebuilds 384 for e += 384 after the first
-//   copy, where cse2 here reuses the size's pseudo, so e, 384 and the copy's
-//   address take other registers and reload's rotation starts there. cse2
-//   ignores the loop-end note, so the listing has a label there or a different
-//   expression; e + 384, u16 *e, a block and a local n did not separate them.
-// - frame * 3's giv is second pass in the listing (slot 20 below the spins), as
-//   is the burst base (slot 24); here the base is first pass, and spins and off
-//   sit 4 lower than the listing's, so those slots differ.
-// - The flash table loop reads [r4, ip] with i * 2 reduced, here a stepped
-//   address.
-// - Searches over the wave mesh's declaration order and over j's scope (each
-//   loop its own j moves frame and registers away) have converged.
+// - The colour channels read through *src three times (HImode masks, the pooled 31).
+// - The burst sets its sprite, 10 and 20 first and computes bx after the p->x test.
 // Measured here: a resource id passed as (s32)&ResourceId_X loads from the pool
 // as in the listing; ids without a name in resource_directory.s are declared
 // below and need one there before adoption. COPY_WORDS's one-pass block keeps

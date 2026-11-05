@@ -1,23 +1,3 @@
-// Draft, differ 2 of 94, skeleton gap 1 (tla-en, 2026-11-01)
-// Twin of The Broken Seal's VenusLighthouseAerie_SpawnUpperOrbitParticles
-// (games/tbs/src/scene/venus_lighthouse_aerie.c), the same function statement
-// for statement; the tagged wrapper below stands where that game has its
-// FieldActor_Create inline. Left: the one scheduling pair below. Tried
-// 2026-11-01 against the twin: its nested random calls (differ 2, the same
-// pair, no closer), the direct create call (18), the angle stored without its
-// local (29), the priority through u8 and u32 bit-fields (2), sprite read after
-// the script starts or in the inner scope (2), one zero local for both stores
-// (2), the frame store before the radius (24), the priority byte by hand (21),
-// the radius in a temporary (6).
-// Near miss, differ 2 of 94 (tla-en, 2026-10-30): as overlay 69e's
-// Func_020001a4 (resource_69e_c_020001a4.c), the same function, the sprite's
-// priority byte loads before the radius store, where the native loads it after
-// the store and the zero's copy out of r8: -mthumb-slow-loads's
-// read-modify-write exception gives the load no wait after the store (that
-// draft's header has the sched2 reading and what was tried).
-// History: adopted in 90246a275d and exact under the old options; with
-// -mthumb-slow-loads (2026-10-26) it no longer compiles exactly, so it is back
-// on its listing.
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
@@ -57,17 +37,17 @@ void Func_020004c8(void) {
 
     random = Random16Far();
     effect = Actor_Create(672, center->x,
-                           (s32)((u32)(random << 8) >> 16 << 16) + center->y -
-                               0x1c0000,
-                           center->z);
+                          (s32)((u32)(random << 8) >> 16 << 16) + center->y -
+                              0x1c0000,
+                          center->z);
   } else {
     u32 random;
 
     random = Random16Far();
     effect = Actor_Create(672, center->x,
-                           (s32)((u32)(random << 6) >> 16 << 16) + center->y -
-                               0x1c0000,
-                           center->z);
+                          (s32)((u32)(random << 6) >> 16 << 16) + center->y -
+                              0x1c0000,
+                          center->z);
   }
   if (effect != 0) {
     sprite = effect->animation;

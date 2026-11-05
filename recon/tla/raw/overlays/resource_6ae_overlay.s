@@ -1099,52 +1099,6 @@ Func_02001f10:
 	.4byte gData_02006c20
 .L_0200a988:
 	.4byte gData_02006b70
-	.section .text.x0200cd50,"ax",%progbits
-	.ifdef TLA_EDITION_JA
-	.else
-	.balign 4
-	.global Func_02004d50
-	.thumb_func
-Func_02004d50:
-	push {r5, r6, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r1, [r3, #60]
-	movs r4, #128
-	ldr r3, .L_0200cd98
-	lsls r4, r4, #2
-	adds r4, #106
-	adds r2, r3, r4
-	movs r3, #0
-	ldrsh r6, [r2, r3]
-	ldrh r4, [r2]
-	cmp r6, r0
-	bne .L_0200cd9c
-	movs r0, #152
-	lsls r0, r0, #5
-	adds r0, #138
-	adds r3, r1, r0
-	movs r5, #0
-	strb r5, [r3]
-	ldr r3, .L_0200cd94
-	adds r0, r6, #0
-	orrs r3, r4
-	strh r3, [r2]
-	bl Actor_GetById
-	str r5, [r0, #108]
-	adds r0, r6, #0
-	bl Actor_GetById
-	movs r1, #0
-	bl Actor_SetPartAttribute
-	b .L_0200cd9c
-.L_0200cd94:
-	.4byte 0x0000ffff
-.L_0200cd98:
-	.4byte gMainRoutineWork
-.L_0200cd9c:
-	pop {r5, r6, pc}
-	.2byte 0x0000
-	.endif
 	.section .bss,"aw",%nobits
 	.balign 16
 	.global Data_0200eb60

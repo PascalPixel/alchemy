@@ -1661,8 +1661,8 @@ empty:
         unit30->unk36 = savedUnit30;
       }
       if (frame < 148) {
-        s32 wave = work->wave;
         s32 step = 8 - (frame - 120) / 6;
+        s32 wave = work->wave;
 
         work->wave = wave - step;
         if (wave > 0) {

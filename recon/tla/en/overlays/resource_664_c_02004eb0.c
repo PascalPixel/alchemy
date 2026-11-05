@@ -23,9 +23,9 @@ void Func_02004eb0(void) {
 do {
   object = Import_ActorCreate(672, 0, 0, 0);
   sprite = object->animation;
+  object->motionFlags = 0;
   sprite->priority = 1;
   ((u8 *)object)[0x63] = i << 4;
-  object->motionFlags = 0;
   object->priorityFlags = 0;
   object->speedLimit = object->acceleration = (i << 12) + 0x8000;
   object->update = Func_02000550;
@@ -38,7 +38,7 @@ do {
     object->action = 116;
     object->unk66 = 0;
   }
-  i++;
   Animation_SetStateFlags(object, 1);
+  i++;
 } while (i != 8);
 }

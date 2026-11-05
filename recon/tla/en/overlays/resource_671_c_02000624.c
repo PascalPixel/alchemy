@@ -63,8 +63,8 @@ struct Orbiter *Func_02000624(struct Orbiter *origin, s32 id) {
   s32 i;
 
   position[0] = origin->x;
-  position[2] = origin->z;
   Vector_AddPolarOffsetFar(0x100000, origin->facing, position);
+  position[2] = origin->z;
   for (i = 8; i < 64; i++) {
     struct Orbiter *object = Actor_GetById(i);
 

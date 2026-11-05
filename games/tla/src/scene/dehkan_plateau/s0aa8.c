@@ -1,5 +1,3 @@
-// Draft, differ 53 of 116: seventeen puffs in a ring around the leader.
-// Left: register choice.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -19,8 +17,7 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_0200056c(s32 id);
@@ -73,31 +70,32 @@ void Func_02000aa8(void) {
     return;
   frame = 0;
   for (i = 0; i <= 16; i++) {
-  {
-    struct Actor *object =
-        Func_02003bb0(285, leader->x, leader->y, leader->z);
-    struct EffectView *effect = (struct EffectView *)object;
+    {
+      struct Actor *object =
+          Func_02003bb0(285, leader->x, leader->y, leader->z);
+      struct EffectView *effect = (struct EffectView *)object;
 
-    if (object == NULL)
-      goto skip;
-    frame = Func_02003d80(effect->sprite, frame);
-    object->motionFlags = 0;
-    object->collisionFlags = 0;
-    Actor_SetSingleChildFlags(object, 0);
-    Func_02003ba0(object, 2);
-    Func_02003ba8(object, gData_02003e30);
-    effect->velocityY = 0;
-    effect->velocityX = Math_Cosine(i << 12);
-    effect->velocityZ = Math_Sine(i << 12);
-    effect->velocityX += effect->velocityX >> 1;
-    effect->velocityX += (((Random16Far() * 3) << 14) >> 16) + -0x6000;
-    effect->velocityZ += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
-    effect->spin = (((u32)Random16Far() << 12) >> 16) - 0x800;
-    effect->scaleRateX = 0;
-    effect->scaleRateY = 0;
-    effect->update = Effect_AdvanceMotionAtLeaderPriority;
-    effect->sprite->priority = ((struct EffectView *)leader)->sprite->priority;
-  }
-skip:
+      if (object == NULL)
+        goto skip;
+      frame = Func_02003d80(effect->sprite, frame);
+      object->motionFlags = 0;
+      object->collisionFlags = 0;
+      Actor_SetSingleChildFlags(object, 0);
+      Func_02003ba0(object, 2);
+      Func_02003ba8(object, gData_02003e30);
+      effect->velocityX = Math_Cosine(i << 12);
+      effect->velocityY = 0;
+      effect->velocityZ = Math_Sine(i << 12);
+      effect->velocityX += effect->velocityX >> 1;
+      effect->velocityX += (((Random16Far() * 3) << 14) >> 16) + -0x6000;
+      effect->velocityZ += (((Random16Far() * 3) << 13) >> 16) + -0x3000;
+      effect->spin = (((u32)Random16Far() << 12) >> 16) - 0x800;
+      effect->scaleRateX = 0;
+      effect->scaleRateY = 0;
+      effect->update = Effect_AdvanceMotionAtLeaderPriority;
+      effect->sprite->priority =
+          ((struct EffectView *)leader)->sprite->priority;
+    }
+  skip:
   }
 }

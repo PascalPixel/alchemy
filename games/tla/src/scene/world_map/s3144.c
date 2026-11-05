@@ -1,8 +1,3 @@
-// Draft, differ 66 of 275: the party gathers at the ship after flag 0x8df
-// and talks; the actors present are listed in Data_02006be8 and restored
-// after. Both loops are goto loops, as the native reloads the table address
-// in each pass. Left: the native keeps x and z unshifted (r8, r7) and shifts
-// them at each use; this draft keeps them shifted.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -14,8 +9,7 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void Func_0200050c(void);
 void Func_02004c20(void);
@@ -44,17 +38,17 @@ void Func_02003144(void) {
   z = Actor_GetById(8)->z / 0x10000;
   i = 0;
   {
-  do {
-    if (Actor_GetById(i) != NULL) {
-      Data_02006be8[i] = i;
-      Actor_GetById(i)->scaleX = 0;
-      Actor_SetSingleChildFlags(Actor_GetById(i), 0);
-      Call3((void (*)())Func_02004c88, i, x << 16, z << 16);
-    } else {
-      Data_02006be8[i] = -1;
-    }
-    i++;
-  } while (i <= 7);
+    do {
+      if (Actor_GetById(i) != NULL) {
+        Data_02006be8[i] = i;
+        Actor_GetById(i)->scaleX = 0;
+        Actor_SetSingleChildFlags(Actor_GetById(i), 0);
+        Call3((void (*)())Func_02004c88, i, x << 16, z << 16);
+      } else {
+        Data_02006be8[i] = -1;
+      }
+      i++;
+    } while (i <= 7);
   }
   Actor_GetById(23)->scaleX = 0;
   Actor_SetSingleChildFlags(Actor_GetById(23), 0);

@@ -107,9 +107,9 @@ void Func_020023a4(s32 id) {
     Func_02002a0c(sprite, 8, 8, 0x40000000, tile);
     sprite->unk1e = Func_02002a2c(object) - 2;
     sprite->priority = Func_02002a24(object);
+    state->frame = -1;
     sprite->fullColor = 1;
     sprite->palette = 0;
-    state->frame = -1;
     sprite++;
     state++;
   }

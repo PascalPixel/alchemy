@@ -1,39 +1,15 @@
-// Near miss, differ 18 of 790 (tla-en, 2026-10-30): scheduler order only.
-// Earlier: 545, then 20 (2026-10-26). The battle item menu, The
-// Broken Seal's BattleItemMenu_Run (games/tbs/src/window/screens/battle_item_menu.c)
-// on this game's work, messages and tiles; the frame tees are copied with
-// Func_08049a04 (The Broken Seal's Vram_CopyTile). Written again from the
-// twin's C: the sprites as its MenuSprite and CursorSprite (u16 bitfields,
-// which let loop.c hoist the window reads as the native does: 541 to 66), the
-// cursor reached through sprite, the cursor get, set and tilemap row mark in
-// once-only blocks as the twin's macros are, pageTile (58). The cursor pointer
-// set once more in the item branch is a dead store that orders the spill
-// slots of the sprite and cursor addresses as the native stack frame does (58 to
-// 20); it would be tagged FAKEMATCH(dead). Left, the same instructions in
-// another order within six blocks (the parameter stores now match): the
-// native issues the 0xfffffe00 and 0xfffffc00 mask loads after the sprite and
-// icon-slot addresses are built and spilled; in the first loop the attr23
-// zero before the row offset; in the second the -1 before the slot pointer's
-// spill copy; before the page redraw loop it loads the icon-slot base before
-// the sprite base and copies the latter into sl last. The sched2 dumps show
-// equal priorities broken by RTL order or dependence class, which no source
-// form reached: no single device or pair, no declaration order, 15 minutes and
-// then 4 more of permute (2026-10-30, no candidate beat 18). Tried 2026-10-30
-// without gain: the row offset inlined (539) or set inside the once-only block
-// (52), the initializer as plain stores (28) or through iconSprite (56, 66),
-// the icon tile through iconSprite (335) or a temporary (255), the slot
-// allocation as the reload call's argument or a named temporary (18).
 #include "types.h"
+#include "edition.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
 
 extern u8 MsgItemName[];
 extern u8 MsgItemPlainName[];
-extern u8 Msg_0d46[];
-extern u8 Msg_0d4c[];
-extern u8 Msg_0d4d[];
-extern u8 Msg_0d4f[];
+extern u8 MsgKey0d46[];
+extern u8 MsgKey0d4c[];
+extern u8 MsgKey0d4d[];
+extern u8 MsgKey0d4f[];
 
 struct ItemMenuWindow {
   u8 unk00[8];
@@ -124,6 +100,13 @@ void Vram_FillWindowBlockPattern(void);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 void *Item_Get(s32 item);
 void Message_CopyExpanded(s32 message, u16 *text, s32 capacity);
+
+// How much of a refusal is copied: more in German, Spanish, French and Italian.
+#if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_JAPANESE)
+#define REFUSAL_TEXT_LENGTH 32
+#else
+#define REFUSAL_TEXT_LENGTH 52
+#endif
 void Text_DrawWideStringAtOffset(u16 *text, struct ItemMenuWindow *window,
                                      s32 x, s32 y);
 void WindowSprite_RedrawSavedRect(struct ItemMenuWindow *window);
@@ -180,12 +163,23 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
   window = Window_Create(15, 9, 15, 11, 6);
 
   for (i = 0; i < 5; i++) {
-    s32 y = i * 2;
+    s32 y;
+    /* FAKEMATCH(temporary): the attribute zero and the window's y in one local,
+     * so the zero has no equivalence note and loads first; as the plain macro,
+     * 2 of 790 instructions differ in tla-en. */
+    u32 t = 0;
 
+    y = i * 2;
+    /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the zero
+     * ahead of the stores; without it, 12 of 790 instructions differ in
+     * tla-en. */
+    asm("");
     iconSprite = &sprites[i];
-    MENU_SPRITE_INITIALIZE(sprites[i], 0x40000000);
+    sprites[i].oam.word.attr01 = 0x40000000;
+    sprites[i].oam.word.attr23 = t;
     iconSprite->oam.f.x = window->x * 8 + 8;
-    iconSprite->oam.f.y = (y + window->y) * 8 + 4;
+    t = window->y;
+    iconSprite->oam.f.y = (y + t) * 8 + 4;
   }
   for (i = 0; i < 5; i++) {
     iconSlots[i] = VramCache_AllocEntry(128);
@@ -205,14 +199,14 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
       if (count != 0) {
         if (Item_ClassifyUseAbility(member,
                                     entries[firstEntry + selectedRow]) == 2)
-          Message_CopyExpanded((s32)Msg_0d4f, messageText, 52);
+          Message_CopyExpanded((s32)MsgKey0d4f, messageText, 52);
         else
           Message_CopyExpanded((entries[firstEntry + selectedRow] & 0x1ff) +
                                        (s32)MsgItemPlainName,
                                    messageText, 52);
         sprite = &cursorStorage;
       } else {
-        Message_CopyExpanded((s32)Msg_0d46, messageText, 52);
+        Message_CopyExpanded((s32)MsgKey0d46, messageText, 52);
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
@@ -306,11 +300,11 @@ s32 Func_08049a30(s32 member, u16 *entries, s32 count) {
         }
         Sound_PlayFar(114);
         if (unusableReason == 2)
-          Message_CopyExpanded((s32)Msg_0d4f, messageText, 32);
+          Message_CopyExpanded((s32)MsgKey0d4f, messageText, REFUSAL_TEXT_LENGTH);
         else if (entries[result] & ITEM_BROKEN)
-          Message_CopyExpanded((s32)Msg_0d4d, messageText, 32);
+          Message_CopyExpanded((s32)MsgKey0d4d, messageText, REFUSAL_TEXT_LENGTH);
         else
-          Message_CopyExpanded((s32)Msg_0d4c, messageText, 32);
+          Message_CopyExpanded((s32)MsgKey0d4c, messageText, REFUSAL_TEXT_LENGTH);
         Vram_FillWindowBlockPattern();
         Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       } else {

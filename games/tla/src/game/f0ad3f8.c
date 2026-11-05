@@ -1,22 +1,3 @@
-// Near miss, differ 14 of 900 (tla-en, 2026-10-31): instruction order only,
-// at five sites. Unit_Calculate, The Broken Seal's Unit_Calculate
-// (games/tbs/src/game/game/units.c) on this game's unit. This game's
-// changes, read from the listing: no second equipment bonus (no reset of
-// 0x143 and no effect 24), the lighthouse switch on the unit's id at 0x14a
-// over the eight characters, an enemy's (class 0) turns clamped to 4 rather
-// than 2, and an enemy's HP and PP limits 16383 and 9999 where a character's
-// are 1999; the Attack bonus needs no once-only block here. Left: the native
-// issues the element loop's address add (adds r1, #36) before the Attack
-// load, the Attack and Defense stages' store before the next stage's offset
-// (309, 327), the class multiplies' last store before the second equipment
-// loop's i = 0, and that loop's Item_GetDirect store before j = 0. The sched2
-// dump gives a store a cost of 1, so the constants (priority 2 or more) and
-// the Attack load (31) go first; the native order fits a store costing 3
-// cycles, for its own priority and for a load after it, which no C spelling
-// changes. Indexed element copies give 32; a once-only block after the
-// Attack and Defense stages and an empty asm after the second Item_GetDirect
-// mend four sites, but a barrier after the class multiplies reorders their
-// loads (14 again). Permuter, 4 minutes: nothing below 14.
 #include "heap_release.h"
 #include "types.h"
 #include "item.h"
@@ -178,6 +159,8 @@ void Unit_Calculate(s32 owner) {
       if (work->item->flags & 1)
         st->curse |= 3;
       work->atk += work->item->primaryBonus;
+/* FAKEMATCH(barrier): an empty asm after `work->atk += work->item->primaryBonus;`; as plain statements, 2 of 900 instructions differ in tla-en. */
+asm("");
       work->def += work->item->secondaryBonus;
       for (j = 0; j < 4; j++) {
         kind = work->item->effects[j].kind;

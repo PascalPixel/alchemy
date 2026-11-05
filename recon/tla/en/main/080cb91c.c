@@ -1,3 +1,4 @@
+// Near miss, differ 2 of 1300 (tla-en, 2026-11-05), untagged yet: the volatile reads, the one-pass block round the arrival and the clobber settle the rest; only movs r4, #0 falls before the arrival store where the native has it after. Older notes follow.
 // Draft, differ 183 of 1300, skeleton gap 41 (tla-en, 2026-11-01)
 // FieldSequence_Run, this game's form of ☀️'s FieldSequence_Run
 // (games/tbs/src/field/field_sequence/run.c): runs the current scene until the
@@ -366,13 +367,18 @@ s32 FieldSequence_Run(void) {
     }
     arrivalState = ARRIVAL.state;
     if (arrivalState == 1) {
+      do {
       ARRIVAL.state = 2;
       Func_080e7804();
-      if (ARRIVAL.scene != (s32)&SceneId_Ov64a ||
-          ((value = Func_080c9e1c(ARRIVAL.entrance)) & 16))
+      if (ARRIVAL.scene != (s16)(s32)&SceneId_Ov64a)
+        goto clearOwner;
+      asm("" : : : "r0");
+      if ((value = Func_080c9e1c(ARRIVAL.entrance)) & 16)
+      clearOwner:
         gMainRoutineWork.ownerOverride = 0;
       else if (value & 32)
         gMainRoutineWork.ownerOverride = 1;
+      } while (0);
       Event_SetDestination(ARRIVAL.scene, ARRIVAL.entrance);
     } else if (arrivalState == 2) {
       ARRIVAL.state = 0;
@@ -550,7 +556,8 @@ s32 FieldSequence_Run(void) {
         Sound_PlayFar(111);
         Func_080cb82c();
         GameFlag_SetBit(262);
-        if (gDebugMode && (gInput.held & 2) != 0 && ((gInput.held & 4) != 0)) {
+        if (gDebugMode && (*(volatile u32 *)&gInput.held & 2) != 0 &&
+            ((*(volatile u32 *)&gInput.held & 4) != 0)) {
           Menu_RunSelectionWithCursorObjectFar();
         } else if (GameFlag_Test(263)) {
           work->raisedEvent = 250;
@@ -595,9 +602,9 @@ s32 FieldSequence_Run(void) {
         Leader_StopMoving();
         Func_080cb82c();
         GameFlag_SetBit(262);
-        if (gDebugMode && (gInput.held & 2)) {
+        if (*(volatile u8 *)&gDebugMode && (gInput.held & 2)) {
           Menu_RunSelectionFar();
-        } else if (gDebugMode && (gInput.held & 0x200)) {
+        } else if (*(volatile u8 *)&gDebugMode && (gInput.held & 0x200)) {
           Func_080cc9fc();
         } else if (GameFlag_Test(263)) {
           work->raisedEvent = 250;

@@ -1,16 +1,3 @@
-// Near miss, differ 56 of 535 (2026-10-26: movementAnimation set before
-// collision and four probes copying y after z, 72 to 56): script command 0x23,
-// from the listing and The Broken Seal's FieldObject_UpdatePlayerControl (its
-// later layout: one probe ahead and four 22.5 and 45 degrees off, six retry
-// headings). Moves an object on the field by the direction pad at a slow pace,
-// stepping round walls and stopping at other solid objects (no pushing); with
-// no event work it returns 0, a shortcut key pressed plays cue 113, otherwise
-// the step takes the ground's height and the script advances. Left: the native
-// keeps (u16)angle only in r1 for the first step and computes it again from the
-// spilled angle (kept shifted left 16) at the second probe, where agscc keeps
-// it in r7 from the top; registers shift from there, with r4 taking values
-// the native keeps in r0 to r2. The debug L key is written as ☀️'s (heading
-// set, the pushing loop skipped).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -93,13 +80,13 @@ s32 Func_0802632c(struct Actor *object) {
         Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
         if (Func_0802d958(object, &testPosition) == 0) {
           testPosition.x = object->x;
-          testPosition.z = object->z;
           testPosition.y = object->y;
+          testPosition.z = object->z;
           Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
           if (Func_0802d958(object, &testPosition) == 0) {
             testPosition.x = object->x;
-            testPosition.z = object->z;
             testPosition.y = object->y;
+            testPosition.z = object->z;
             Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
             if (Func_0802d958(object, &testPosition) == 0) {
               testPosition.x = object->x;
@@ -126,8 +113,8 @@ s32 Func_0802632c(struct Actor *object) {
       for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
         heading = angleOffsets[angleIndex];
         position.x = object->x;
-        position.z = object->z;
         position.y = object->y;
+        position.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading, &position);
         if (Func_0802d958(object, &position) != 0)
           continue;
@@ -150,8 +137,8 @@ s32 Func_0802632c(struct Actor *object) {
         if (Func_0802d958(object, &testPosition) != 0)
           continue;
         testPosition.x = object->x;
-        testPosition.z = object->z;
         testPosition.y = object->y;
+        testPosition.z = object->z;
         Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
         if (Func_0802d958(object, &testPosition) == 0)
           goto check_objects;
@@ -227,9 +214,9 @@ s32 Func_0802632c(struct Actor *object) {
       object->action--;
   }
 
+  pressed = 0;
   if (Ram_HeapSlots->eventWork == NULL)
     return 0;
-  pressed = 0;
   if ((gInput.pressed & gMainRoutineWork.keys234) ||
       (gInput.pressed & gMainRoutineWork.keys230) ||
       (gInput.pressed & gMainRoutineWork.keys236) ||

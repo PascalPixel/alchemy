@@ -1,3 +1,4 @@
+// Near miss, differ 6 of 219 (tla-en, 2026-11-05), untagged yet: j at function scope reused for the 4, read by an empty asm in its loop; left is 0x800 + k built before the flag number in the preheader and its step. Older notes follow.
 // Draft, differ 44 of 219, skeleton gap 8 (tla-en, 2026-11-01)
 // Takes over a The Broken Seal save (`save`, laid out as that game's: flag bits
 // at 0x40, its gMainRoutineWork at 0x240, the units at 0x520): its djinn flags
@@ -57,15 +58,16 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   s32 k;
   s32 slot;
   s32 count;
+  s32 j;
 
   for (i = 0, k = 0; i < 4; i++, k += 7) {
-    u32 j;
 
     for (j = 0; j < 7; j++) {
       if (FlagBits_Test(flags, 0x30 + i * 20 + j))
         GameFlag_SetBit(0x800 + k + j);
       else
         GameFlag_ClearBit(0x800 + k + j);
+      asm("" : : "r"(j));
     }
   }
   for (i = 0; i < 6; i++) {
@@ -91,8 +93,8 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
                   state->paletteGlow[1]);
   }
 
-  count = 4;
-  for (i = 0; i < count; i++) {
+  j = 4;
+  for (i = 0; i < (s32)j; i++) {
     struct BattleUnit *unit = Unit_Get(i);
 
     memcpy(name, &units[i], 15);

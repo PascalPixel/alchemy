@@ -1,3 +1,4 @@
+// Draft, differ 26 of 965 (tla-en, 2026-11-05): the debug read is volatile and the retry offsets start at 0x1000 (differ 122 to 26). CLIMBING after the first climb's animation call is a measured form, not yet understood: before it, differ 80 by cross-jumping, though the native stores it before. Older notes follow.
 // Draft, differ 122 of 965, skeleton gap 32 (tla-en, 2026-11-01)
 // Script command 0x1e, walking that turns into climbing: on foot it moves by
 // the direction pad as SC_PLAYER does without pushing (a refused step with up
@@ -139,7 +140,7 @@ s32 Func_080298c0(struct Actor *object) {
     collision = 0;
     // DEAD: the debug read of the held keys is never used.
     if (gDebugMode != 0)
-      (void)gInput.held;
+      (void)*(volatile u32 *)&gInput.held;
     object->speedLimit = 0x8000;
     object->acceleration = 0x4000;
     angle = gData_0802ec5c[(gInput.held >> 4) & 15];
@@ -351,11 +352,11 @@ s32 Func_080298c0(struct Actor *object) {
     if (Func_080c8770(cellX, cellZ, 2)) {
       object->motionFlags = 0;
       object->y += 0x10000;
-      CLIMBING(object) = 1;
       object->velocityX = 0;
       object->velocityY = 0;
       object->velocityZ = 0;
       Actor_SelectAnimation(object, 3);
+      CLIMBING(object) = 1;
       goto done;
     }
   }

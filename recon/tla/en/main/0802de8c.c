@@ -1,3 +1,4 @@
+// Near miss, differ 2 of 665 (tla-en, 2026-11-05), untagged yet: only ldrh r3, [r3, r2] for the native's [r2, r3] at the backdrop read. Older notes follow.
 // Draft, differ 18 of 665, skeleton gap 5 (tla-en, 2026-11-01)
 // The debug sprite viewer, The Broken Seal's SpriteViewer_Run
 // (games/tbs/src/field/field/sprite_viewer.c), which never returns. This
@@ -141,7 +142,7 @@ restart:
     else
       SpriteViewer_SetGridColumnPriority(i, 8);
     SpriteViewer_SetGridColumnColorMode(i, layers[i].colorMode);
-    SpriteViewer_StartStaggeredAnimations(i, layers[i].animationIndex);
+    {s32 a = layers[i].animationIndex; asm(""); SpriteViewer_StartStaggeredAnimations(i, a);}
   }
   Func_0802e4c8(x, y, ring);
   Task_Add(Battle_PlaceActorsByFormationKind, 0x480);
@@ -307,9 +308,9 @@ next:
     }
     if (gInput.pressed & 2) {
       const u16 *colors = gData_0802f054;
-
       backdrop++;
       backdrop &= 7;
+      asm("" : : "l"(colors));
       *(volatile u16 *)0x05000000 = colors[backdrop];
     }
     wait(1);

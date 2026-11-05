@@ -1,26 +1,3 @@
-// Draft, differ 12 of 1094, skeleton gap 4 (tla-en, 2026-11-01)
-// Script command 0x19 (SC_PLAYER), the twin of The Broken Seal's
-// Actor_UpdatePlayerControl (games/tbs/src/field/field/player_control.c), with
-// this game's changes: no fast walk; standing on another object a cell below
-// (priorityFlags bit 6) lets the step through when a still object (bit 7) fills
-// the step and both its sides; wading ground (map byte 0x17 bits 2-3, cell
-// attribute bit 4) hides the sprite's lower half and leaves Func_08026fc8's
-// effect. Taken from the twin: headingCount, whose folded 6 gives cmp #6 and
-// blt; footprintAngle set before the footprint test; the signed reads of unk66;
-// flags before rotation. The angle stays a u16 (as s32, differ 251) and the
-// locals keep frame order.
-// oldFlags is an s32 so that gcse carries the flags byte across the wading
-// branches (the listing's copy into r1); the stores narrow it with (u8) to get
-// the listing's #254 and #251 masks. One pointer, cells, steps to the cell (as
-// a separate cell, differ 26).
-// Left, four pairs: three scheduling swaps (collision's store against lsls r0
-// at the top; angleIndex's store against mov r7, sl before the heading loop and
-// against adds r6, r7 before the push loop) and ands r3, r2 for ands r2, r3 at
-// the wading test.
-// Tried: all 720 orders of the opening assignments, every declaration order and
-// inner scope, loop inits outside the for, and moving the read of oldFlags.
-// Reading attributeB into a local before oldFlags gives ands r2, r3 and differ
-// 8, but it is a forced temporary, so it stays out.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -109,6 +86,7 @@ s32 Func_08027064(struct Actor *object) {
   u16 direction;
   struct Actor *other;
   s32 oldFlags;
+  u32 attribute;
 
   sprite = object->animation;
   movementAnimation = 2;
@@ -388,8 +366,11 @@ counted:
     else
       cells = gMapCellBuffer;
     cells += object->x / 0x100000 + (object->z / 0x100000) * 128;
+    /* FAKEMATCH(temporary): the cell attribute read into a local before the
+     * flags; as a read at the test, 4 of 1094 instructions differ in tla-en. */
+    attribute = cells->attributeB;
     oldFlags = sprite->flags;
-    if (cells->attributeB & 16) {
+    if (attribute & 16) {
       if (!(oldFlags & 8)) {
         sprite->shape11 = (sprite->shape11 & 3) | 16;
         sprite->flags = ((u8)oldFlags | 4) & ~1;

@@ -1,26 +1,3 @@
-// Draft, differ 4 of 578, skeleton gap 2 (tla-en, 2026-11-01)
-// Every instruction and register agrees; two sched2 ties remain, each one
-// instruction in the wrong place. In the first script read, lsls comes before
-// the strb of pos (the listing has strb first; the second read agrees). Before
-// the outline call, the listing loads width first, then system and height;
-// the draft loads width last, after fill. RTL order there is height, width,
-// system, edge, fill, and the argument forms tried (locals for width, height,
-// edge, fill or system, in either order; casts; parameter types; pointer
-// forms for the read) move the tie but do not settle it. Edge or fill as a
-// local adds an instruction.
-// Allocation hangs on three forms: every counter is the one function-level i,
-// which is why the sink and shade loops run in r8; the rows to sink are held
-// in picture, reused (rows as its own local gives differ 60), and
-// outlineHeight and vram are locals only for the scheduling. Loops written
-// up-counting with a limit local reverse in loop.c as the listing's do; the
-// last sink loop stays up-counting in both. Data_08021824Size stands for the
-// outline routine's size, a pool word in the native, which no symbol names yet.
-// ☀️'s Sprite_ComposePicture (games/tbs/src/field/field/sprite_draw.c) on
-// The Lost Age's sprite: command 252 plays a sound, 242 and 243 set the
-// sprite's offsets, a blank or a picture keeps reading commands, flag 0x20
-// takes the mirroring from the kind 2 table without drawing, and the
-// outline (flag 2) is an ARM routine copied to the heap for the call; flags
-// 8 and 4 sink the picture into the ground or shade its lowest rows.
 #include "types.h"
 #include "sprite.h"
 #include "ram_buffer.h"
@@ -278,8 +255,19 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
         u32 outlineHeight;
 
         Dma_Set(Data_08021824, outline, 0x84000000 | (codeSize >> 2), REG_DMA3);
-        outlineHeight = obj->height;
-        outline(obj->width, outlineHeight, pixels, system->edge, system->fill);
+        {
+          /* FAKEMATCH(temporary): the width read into a local ahead of the other
+           * arguments; as a plain argument, 2 of 578 instructions differ in
+           * tla-en. */
+          u32 outlineWidth = obj->width;
+
+          /* FAKEMATCH(barrier): an empty asm after the width, which loads before
+           * the system pointer; without it, 4 of 578 instructions differ in
+           * tla-en. */
+          asm("");
+          outlineHeight = obj->height;
+          outline(outlineWidth, outlineHeight, pixels, system->edge, system->fill);
+        }
         Heap_Release(outline);
       }
       if (obj->flags & 8) {

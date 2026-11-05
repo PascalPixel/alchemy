@@ -216,33 +216,33 @@ main	rom_main_01	games/tla/src/field/f021828	.text
 main	rom_main_01	games/tla/src/field/metadata	.text
 main	rom_main_01	games/tla/src/field/lz	.text
 main	rom_main_01	games/tla/src/field/f0219cc	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00021a84	it
+main	rom_main_01	games/tla/src/field/f021a84	.text	it
 main	rom_main_01	recon/tla/it/rom	.rom.00022010	it
 main	rom_main_01	games/tla/src/field/f0220f0	.text	it
 main	rom_main_01	recon/tla/it/rom	.rom.00022318	it
 main	rom_main_01	games/tla/src/field/f02254c	.text	it
 main	rom_main_01	recon/tla/it/rom	.rom.0002279e	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00021a84	fr
+main	rom_main_01	games/tla/src/field/f021a84	.text	fr
 main	rom_main_01	recon/tla/fr/rom	.rom.00022010	fr
 main	rom_main_01	games/tla/src/field/f0220f0	.text	fr
 main	rom_main_01	recon/tla/fr/rom	.rom.00022318	fr
 main	rom_main_01	games/tla/src/field/f02254c	.text	fr
 main	rom_main_01	recon/tla/fr/rom	.rom.0002279e	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00021a84	es
+main	rom_main_01	games/tla/src/field/f021a84	.text	es
 main	rom_main_01	recon/tla/es/rom	.rom.00022010	es
 main	rom_main_01	games/tla/src/field/f0220f0	.text	es
 main	rom_main_01	recon/tla/es/rom	.rom.00022318	es
 main	rom_main_01	games/tla/src/field/f02254c	.text	es
 main	rom_main_01	recon/tla/es/rom	.rom.0002279e	es
-main	rom_main_01	recon/tla/de/rom	.rom.00021a84	de
+main	rom_main_01	games/tla/src/field/f021a84	.text	de
 main	rom_main_01	recon/tla/de/rom	.rom.00022010	de
 main	rom_main_01	games/tla/src/field/f0220f0	.text	de
 main	rom_main_01	recon/tla/de/rom	.rom.00022318	de
 main	rom_main_01	games/tla/src/field/f02254c	.text	de
 main	rom_main_01	recon/tla/de/rom	.rom.0002279e	de
-main	rom_main_01	recon/tla/raw/08021a84	.text	en
+main	rom_main_01	games/tla/src/field/f021a84	.text	en
 main	rom_main_01	recon/tla/raw/08022010	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00021a84	ja
+main	rom_main_01	games/tla/src/field/f021a84	.text	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.00022010	ja
 main	rom_main_01	games/tla/src/field/f0220f0	.text	en ja
 main	rom_main_01	recon/tla/ja/rom	.rom.00022318	ja
@@ -275,12 +275,12 @@ main	rom_main_01	games/tla/src/field/object/f023680	.text
 main	rom_main_01	games/tla/src/field/object/f0236a8	.text
 main	rom_main_01	games/tla/src/field/object/priority	.text
 main	rom_main_01	games/tla/src/field/object/objlayer	.text
-main	rom_main_01	recon/tla/it/rom	.rom.0002386c	it
-main	rom_main_01	recon/tla/fr/rom	.rom.0002386c	fr
-main	rom_main_01	recon/tla/es/rom	.rom.0002386c	es
-main	rom_main_01	recon/tla/de/rom	.rom.0002386c	de
-main	rom_main_01	recon/tla/raw/0802386c	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0002386c	ja
+main	rom_main_01	games/tla/src/field/object/f02386c	.text	it
+main	rom_main_01	games/tla/src/field/object/f02386c	.text	fr
+main	rom_main_01	games/tla/src/field/object/f02386c	.text	es
+main	rom_main_01	games/tla/src/field/object/f02386c	.text	de
+main	rom_main_01	games/tla/src/field/object/f02386c	.text	en
+main	rom_main_01	games/tla/src/field/object/f02386c	.text	ja
 main	rom_main_01	games/tla/src/field/object/camera_fixed	.text
 main	rom_main_01	games/tla/src/field/script/script	.text
 main	rom_main_01	games/tla/src/field/script/interpreter_wait_for_event_timeout	.text
@@ -311,13 +311,18 @@ main	rom_main_01	games/tla/src/field/script/offset	.text
 main	rom_main_01	games/tla/src/field/script/f025160	.text	en de es fr it ja
 main	rom_main_01	games/tla/src/field/script/f025428	.text
 main	rom_main_01	games/tla/src/field/script/approach_watched	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00025698	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00025698	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00025698	es
-main	rom_main_01	recon/tla/de/rom	.rom.00025698	de
-main	rom_main_01	recon/tla/raw/08025698	.text	en
+main	rom_main_01	games/tla/src/field/script/f025698	.text	it
+main	rom_main_01	recon/tla/it/rom	.rom.00025830	it
+main	rom_main_01	games/tla/src/field/script/f025698	.text	fr
+main	rom_main_01	recon/tla/fr/rom	.rom.00025830	fr
+main	rom_main_01	games/tla/src/field/script/f025698	.text	es
+main	rom_main_01	recon/tla/es/rom	.rom.00025830	es
+main	rom_main_01	games/tla/src/field/script/f025698	.text	de
+main	rom_main_01	recon/tla/de/rom	.rom.00025830	de
+main	rom_main_01	games/tla/src/field/script/f025698	.text	en
 main	rom_main_01	recon/tla/raw/08025830	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00025698	ja
+main	rom_main_01	games/tla/src/field/script/f025698	.text	ja
+main	rom_main_01	recon/tla/ja/rom	.rom.00025830	ja
 main	rom_main_01	games/tla/src/field/script/operands	.text
 main	rom_main_01	games/tla/src/field/script/script_operand_position	.text
 main	rom_main_01	recon/tla/it/rom	.rom.00025c8a	it
@@ -327,21 +332,26 @@ main	rom_main_01	recon/tla/de/rom	.rom.00025c8a	de
 main	rom_main_01	recon/tla/ja/rom	.rom.00025c8a	ja
 main	rom_main_01	games/tla/src/field/script/script_operand_scale	.text
 main	rom_main_01	games/tla/src/field/script/script_operand_flags	.text
-main	rom_main_01	recon/tla/it/rom	.rom.0002632c	it
-main	rom_main_01	recon/tla/fr/rom	.rom.0002632c	fr
-main	rom_main_01	recon/tla/es/rom	.rom.0002632c	es
-main	rom_main_01	recon/tla/de/rom	.rom.0002632c	de
-main	rom_main_01	recon/tla/raw/0802632c	.text	en
+main	rom_main_01	games/tla/src/field/script/f02632c	.text	it
+main	rom_main_01	recon/tla/it/rom	.rom.000267bc	it
+main	rom_main_01	games/tla/src/field/script/f02632c	.text	fr
+main	rom_main_01	recon/tla/fr/rom	.rom.000267bc	fr
+main	rom_main_01	games/tla/src/field/script/f02632c	.text	es
+main	rom_main_01	recon/tla/es/rom	.rom.000267bc	es
+main	rom_main_01	games/tla/src/field/script/f02632c	.text	de
+main	rom_main_01	recon/tla/de/rom	.rom.000267bc	de
+main	rom_main_01	games/tla/src/field/script/f02632c	.text	en
 main	rom_main_01	recon/tla/raw/080267bc	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0002632c	ja
+main	rom_main_01	games/tla/src/field/script/f02632c	.text	ja
+main	rom_main_01	recon/tla/ja/rom	.rom.000267bc	ja
 main	rom_main_01	games/tla/src/field/script/prompt_choice	.text
 main	rom_main_01	games/tla/src/field/script/radius_overlap	.text
 main	rom_main_01	games/tla/src/field/script/f026fc8	.text
-main	rom_main_01	recon/tla/raw/08027064	.text	en
-main	rom_main_01	recon/tla/de/rom	.rom.00027064	de
-main	rom_main_01	recon/tla/es/rom	.rom.00027064	es
-main	rom_main_01	recon/tla/fr/rom	.rom.00027064	fr
-main	rom_main_01	recon/tla/it/rom	.rom.00027064	it
+main	rom_main_01	games/tla/src/field/script/f027064	.text	en
+main	rom_main_01	games/tla/src/field/script/f027064	.text	de
+main	rom_main_01	games/tla/src/field/script/f027064	.text	es
+main	rom_main_01	games/tla/src/field/script/f027064	.text	fr
+main	rom_main_01	games/tla/src/field/script/f027064	.text	it
 main	rom_main_01	recon/tla/ja/rom	.rom.00027064	ja
 main	rom_main_01	games/tla/src/field/script/f0279b0	.text	en de es fr it ja
 main	rom_main_01	games/tla/src/field/script/s27e0c	.text
@@ -638,12 +648,12 @@ main	rom_main_02	recon/tla/raw/0803c274	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.0003c204	ja
 main	rom_main_02	games/tla/src/window/set_tilemap_entry	.text
 main	rom_main_02	games/tla/src/window/f03c40c	.text
-main	rom_main_02	recon/tla/it/rom	.rom.0003c548	it
-main	rom_main_02	recon/tla/fr/rom	.rom.0003c534	fr
-main	rom_main_02	recon/tla/es/rom	.rom.0003c550	es
-main	rom_main_02	recon/tla/de/rom	.rom.0003c544	de
-main	rom_main_02	recon/tla/raw/0803c548	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.0003c600	ja
+main	rom_main_02	games/tla/src/window/f03c548	.text	it
+main	rom_main_02	games/tla/src/window/f03c548	.text	fr
+main	rom_main_02	games/tla/src/window/f03c548	.text	es
+main	rom_main_02	games/tla/src/window/f03c548	.text	de
+main	rom_main_02	games/tla/src/window/f03c548	.text	en
+main	rom_main_02	games/tla/src/window/f03c548	.text	ja
 main	rom_main_02	games/tla/src/window/adjust_value_without_limit	.text
 main	rom_main_02	games/tla/src/window/decode_message	.text
 main	rom_main_02	games/tla/src/window/clear_word_if_set	.text
@@ -737,15 +747,15 @@ main	rom_main_02	games/tla/src/window/optcur	.text
 main	rom_main_02	games/tla/src/window/f03fc38	.text
 main	rom_main_02	games/tla/src/window/optend	.text
 main	rom_main_02	recon/tla/it/rom	.rom.0003fd80	it
-main	rom_main_02	recon/tla/it/rom	.rom.00040140	it
+main	rom_main_02	games/tla/src/window/f0400e8	.text	it
 main	rom_main_02	recon/tla/fr/rom	.rom.0003fd6c	fr
-main	rom_main_02	recon/tla/fr/rom	.rom.0004012c	fr
+main	rom_main_02	games/tla/src/window/f0400e8	.text	fr
 main	rom_main_02	recon/tla/es/rom	.rom.0003fd88	es
-main	rom_main_02	recon/tla/es/rom	.rom.00040148	es
+main	rom_main_02	games/tla/src/window/f0400e8	.text	es
 main	rom_main_02	recon/tla/de/rom	.rom.0003fd7c	de
-main	rom_main_02	recon/tla/de/rom	.rom.0004013c	de
+main	rom_main_02	games/tla/src/window/f0400e8	.text	de
 main	rom_main_02	games/tla/src/window/f03fd28	.text	en
-main	rom_main_02	recon/tla/raw/080400e8	.text	en
+main	rom_main_02	games/tla/src/window/f0400e8	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.0003fe5c	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.0004020c	ja
 main	rom_main_02	games/tla/src/window/screena	.text
@@ -907,23 +917,34 @@ main	rom_main_02	recon/tla/ja/rom	.rom.0004597a	ja
 main	rom_main_02	games/tla/src/window/bg1prio0
 main	rom_main_02	games/tla/src/window/show_message_and_wait_complete	.text
 main	rom_main_02	recon/tla/it/rom	.rom.00045832	it
+main	rom_main_02	games/tla/src/window/f0457d0	.text	it
 main	rom_main_02	recon/tla/fr/rom	.rom.00045856	fr
+main	rom_main_02	games/tla/src/window/f0457d0	.text	fr
 main	rom_main_02	recon/tla/es/rom	.rom.0004585a	es
+main	rom_main_02	games/tla/src/window/f0457d0	.text	es
 main	rom_main_02	recon/tla/de/rom	.rom.00045842	de
+main	rom_main_02	games/tla/src/window/f0457d0	.text	de
 main	rom_main_02	recon/tla/raw/080457ce	.text	en
-main	rom_main_02	recon/tla/raw/080457d0	.text	en
+main	rom_main_02	games/tla/src/window/f0457d0	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.000459ca	ja
 main	rom_main_02	games/tla/src/window/set_rect_highlight	.text
 main	rom_main_02	games/tla/src/window/format_number_to_halfwords	.text
 main	rom_main_02	games/tla/src/window/f046284	.text
 main	rom_main_02	games/tla/src/window/create_output_from_resource_slot	.text
 main	rom_main_02	recon/tla/it/rom	.rom.00046476	it
+main	rom_main_02	games/tla/src/window/f046414	.text	it
+main	rom_main_02	recon/tla/it/rom	.rom.00046b6c	it
 main	rom_main_02	recon/tla/fr/rom	.rom.0004649a	fr
+main	rom_main_02	games/tla/src/window/f046414	.text	fr
+main	rom_main_02	recon/tla/fr/rom	.rom.00046b90	fr
 main	rom_main_02	recon/tla/es/rom	.rom.0004649e	es
+main	rom_main_02	games/tla/src/window/f046414	.text	es
+main	rom_main_02	recon/tla/es/rom	.rom.00046b94	es
 main	rom_main_02	recon/tla/de/rom	.rom.00046486	de
+main	rom_main_02	games/tla/src/window/f046414	.text	de
+main	rom_main_02	recon/tla/de/rom	.rom.00046b7c	de
 main	rom_main_02	recon/tla/raw/08046412	.text	en
-main	rom_main_02	recon/tla/raw/08046414	.text	en
-main	rom_main_02	recon/tla/raw/080464dc	.text	en
+main	rom_main_02	games/tla/src/window/f046414	.text	en
 main	rom_main_02	recon/tla/raw/08046b08	.text	en
 main	rom_main_02	recon/tla/raw/0804868c	.text	en
 main	rom_main_02	recon/tla/raw/08049154	.text	en
@@ -936,14 +957,24 @@ main	rom_main_02	recon/tla/de/rom	.rom.00049b2a	de
 main	rom_main_02	recon/tla/raw/08049a02	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.00049bf2	ja
 main	rom_main_02	games/tla/src/window/copy_tile	.text
-main	rom_main_02	recon/tla/it/rom	.rom.00049b40	it
-main	rom_main_02	recon/tla/fr/rom	.rom.00049b74	fr
-main	rom_main_02	recon/tla/es/rom	.rom.00049b68	es
-main	rom_main_02	recon/tla/de/rom	.rom.00049b58	de
-main	rom_main_02	recon/tla/raw/08049a30	.text	en
-main	rom_main_02	recon/tla/raw/0804a134	.text	en
+main	rom_main_02	games/tla/src/window/f049a30	.text	it
+main	rom_main_02	games/tla/src/window/f04a134	.text	it
+main	rom_main_02	recon/tla/it/rom	.rom.0004a96c	it
+main	rom_main_02	games/tla/src/window/f049a30	.text	fr
+main	rom_main_02	games/tla/src/window/f04a134	.text	fr
+main	rom_main_02	recon/tla/fr/rom	.rom.0004a9a0	fr
+main	rom_main_02	games/tla/src/window/f049a30	.text	es
+main	rom_main_02	games/tla/src/window/f04a134	.text	es
+main	rom_main_02	recon/tla/es/rom	.rom.0004a994	es
+main	rom_main_02	games/tla/src/window/f049a30	.text	de
+main	rom_main_02	games/tla/src/window/f04a134	.text	de
+main	rom_main_02	recon/tla/de/rom	.rom.0004a984	de
+main	rom_main_02	games/tla/src/window/f049a30	.text	en
+main	rom_main_02	games/tla/src/window/f04a134	.text	en
 main	rom_main_02	recon/tla/raw/0804a85c	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.00049c20	ja
+main	rom_main_02	recon/tla/ja/rom	.rom.0004a324	ja
+main	rom_main_02	recon/tla/ja/rom	.rom.0004aa4c	ja
 main	rom_main_02	games/tla/src/window/countdown	.text
 main	rom_main_02	games/tla/src/window/f04b7c0	.text	en de es fr it
 main	rom_main_02	recon/tla/ja/rom	.rom.0004b9b0	ja
@@ -1051,17 +1082,17 @@ main	rom_main_03	games/tla/src/game/newgame	.text
 main	rom_main_03	games/tla/src/game/character/character	.text
 main	rom_main_03	games/tla/src/game/copy_bytes_directional	.text
 main	rom_main_03	recon/tla/it/rom	.rom.000ad3f6	it
-main	rom_main_03	recon/tla/it/rom	.rom.000ad3f8	it
+main	rom_main_03	games/tla/src/game/f0ad3f8	.text	it
 main	rom_main_03	recon/tla/fr/rom	.rom.000b23f6	fr
-main	rom_main_03	recon/tla/fr/rom	.rom.000b23f8	fr
+main	rom_main_03	games/tla/src/game/f0ad3f8	.text	fr
 main	rom_main_03	recon/tla/es/rom	.rom.000b63f6	es
-main	rom_main_03	recon/tla/es/rom	.rom.000b63f8	es
+main	rom_main_03	games/tla/src/game/f0ad3f8	.text	es
 main	rom_main_03	recon/tla/de/rom	.rom.000ba3f6	de
-main	rom_main_03	recon/tla/de/rom	.rom.000ba3f8	de
+main	rom_main_03	games/tla/src/game/f0ad3f8	.text	de
 main	rom_main_03	recon/tla/raw/080ad3f6	.text	en
-main	rom_main_03	recon/tla/raw/080ad3f8	.text	en
+main	rom_main_03	games/tla/src/game/f0ad3f8	.text	en
 main	rom_main_03	recon/tla/ja/rom	.rom.000a83f6	ja
-main	rom_main_03	recon/tla/ja/rom	.rom.000a83f8	ja
+main	rom_main_03	games/tla/src/game/f0ad3f8	.text	ja
 main	rom_main_03	games/tla/src/game/character/lure_cap	.text
 main	rom_main_03	games/tla/src/game/character/add5c	.text
 main	rom_main_03	games/tla/src/game/character/build_stamp	.text
@@ -1211,12 +1242,12 @@ main	rom_main_04	games/tla/src/system/play_saved_music	.text
 main	rom_main_04	games/tla/src/field/field_sequence/find_entry_value	.text
 main	rom_main_04	games/tla/src/field/field_sequence/f0c9e48	.text
 main	rom_main_04	games/tla/src/field/field_sequence/world_map_zone	.text
-main	rom_main_04	recon/tla/it/rom	.rom.000c9fd8	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000cefd8	fr
-main	rom_main_04	recon/tla/es/rom	.rom.000d2fd8	es
-main	rom_main_04	recon/tla/de/rom	.rom.000d6fd8	de
-main	rom_main_04	recon/tla/raw/080c9fd8	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000c9fd8	ja
+main	rom_main_04	games/tla/src/field/field_sequence/f0c9fd8	.text	it
+main	rom_main_04	games/tla/src/field/field_sequence/f0c9fd8	.text	fr
+main	rom_main_04	games/tla/src/field/field_sequence/f0c9fd8	.text	es
+main	rom_main_04	games/tla/src/field/field_sequence/f0c9fd8	.text	de
+main	rom_main_04	games/tla/src/field/field_sequence/f0c9fd8	.text	en
+main	rom_main_04	games/tla/src/field/field_sequence/f0c9fd8	.text	ja
 main	rom_main_04	games/tla/src/field/field_sequence/data_lookup_routines	.text
 main	rom_main_04	games/tla/src/field/field_sequence/f0ca2fc	.text
 main	rom_main_04	games/tla/src/field/field_sequence/rule_position	.text
@@ -1230,12 +1261,12 @@ main	rom_main_04	games/tla/src/field/event/f0ca6e8	.text	en de es fr it ja
 main	rom_main_04	games/tla/src/field/event/f0ca9cc	.text	en de es fr it
 main	rom_main_04	games/tla/src/field/event/f0ca9cc	.text	ja
 main	rom_main_04	games/tla/src/field/object/destroy_at_index	.text
-main	rom_main_04	recon/tla/it/rom	.rom.000caa4c	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000cfa4c	fr
-main	rom_main_04	recon/tla/es/rom	.rom.000d3a4c	es
-main	rom_main_04	recon/tla/de/rom	.rom.000d7a4c	de
-main	rom_main_04	recon/tla/raw/080caa4c	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000caa4c	ja
+main	rom_main_04	games/tla/src/field/object/f0caa4c	.text	it
+main	rom_main_04	games/tla/src/field/object/f0caa4c	.text	fr
+main	rom_main_04	games/tla/src/field/object/f0caa4c	.text	es
+main	rom_main_04	games/tla/src/field/object/f0caa4c	.text	de
+main	rom_main_04	games/tla/src/field/object/f0caa4c	.text	en
+main	rom_main_04	games/tla/src/field/object/f0caa4c	.text	ja
 main	rom_main_04	games/tla/src/field/object/last_active	.text
 main	rom_main_04	games/tla/src/field/field_sequence/viewflag	.text
 main	rom_main_04	games/tla/src/field/object/table	.text
@@ -1515,6 +1546,7 @@ main	rom_main_05	recon/tla/it/rom	.rom.000d5662	it
 main	rom_main_05	games/tla/src/field/object/f0d5670	.text	it
 main	rom_main_05	games/tla/src/field/object/f0d5720	.text	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d57d6	it
+main	rom_main_05	games/tla/src/field/object/f0d57e4	.text	it
 main	rom_main_05	games/tla/src/field/object/f0d5930	.text	it
 main	rom_main_05	games/tla/src/field/object/f0d59dc	.text	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d5a92	it
@@ -1526,6 +1558,7 @@ main	rom_main_05	recon/tla/fr/rom	.rom.000da662	fr
 main	rom_main_05	games/tla/src/field/object/f0d5670	.text	fr
 main	rom_main_05	games/tla/src/field/object/f0d5720	.text	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000da7d6	fr
+main	rom_main_05	games/tla/src/field/object/f0d57e4	.text	fr
 main	rom_main_05	games/tla/src/field/object/f0d5930	.text	fr
 main	rom_main_05	games/tla/src/field/object/f0d59dc	.text	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000daa92	fr
@@ -1537,6 +1570,7 @@ main	rom_main_05	recon/tla/es/rom	.rom.000de662	es
 main	rom_main_05	games/tla/src/field/object/f0d5670	.text	es
 main	rom_main_05	games/tla/src/field/object/f0d5720	.text	es
 main	rom_main_05	recon/tla/es/rom	.rom.000de7d6	es
+main	rom_main_05	games/tla/src/field/object/f0d57e4	.text	es
 main	rom_main_05	games/tla/src/field/object/f0d5930	.text	es
 main	rom_main_05	games/tla/src/field/object/f0d59dc	.text	es
 main	rom_main_05	recon/tla/es/rom	.rom.000dea92	es
@@ -1548,6 +1582,7 @@ main	rom_main_05	recon/tla/de/rom	.rom.000e266e	de
 main	rom_main_05	games/tla/src/field/object/f0d5670	.text	de
 main	rom_main_05	games/tla/src/field/object/f0d5720	.text	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e27e2	de
+main	rom_main_05	games/tla/src/field/object/f0d57e4	.text	de
 main	rom_main_05	games/tla/src/field/object/f0d5930	.text	de
 main	rom_main_05	games/tla/src/field/object/f0d59dc	.text	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e2a9e	de
@@ -1559,13 +1594,14 @@ main	rom_main_05	games/tla/src/field/object/f0d53b8	.text	en ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d564e	ja
 main	rom_main_05	games/tla/src/field/object/f0d5670	.text	en
 main	rom_main_05	games/tla/src/field/object/f0d5720	.text	en
-main	rom_main_05	recon/tla/raw/080d57e4	.text	en
+main	rom_main_05	games/tla/src/field/object/f0d57e4	.text	en
 main	rom_main_05	games/tla/src/field/object/f0d5930	.text	en
 main	rom_main_05	games/tla/src/field/object/f0d59dc	.text	en
 main	rom_main_05	games/tla/src/field/object/f0d5aa0	.text	en de es fr it
 main	rom_main_05	games/tla/src/field/object/f0d5670	.text	ja
 main	rom_main_05	games/tla/src/field/object/f0d5720	.text	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d57c2	ja
+main	rom_main_05	games/tla/src/field/object/f0d57e4	.text	ja
 main	rom_main_05	games/tla/src/field/object/f0d5930	.text	ja
 main	rom_main_05	games/tla/src/field/object/f0d59dc	.text	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d5a7e	ja
@@ -1677,15 +1713,15 @@ main	rom_main_05	games/tla/src/field/work9c/f0d92a4	.text
 main	rom_main_05	games/tla/src/field/work9c/f0d92d4	.text	it
 main	rom_main_05	games/tla/src/field/work9c/f0d9498	.text	it
 main	rom_main_05	games/tla/src/field/work9c/f0d9710	.text	it
-main	rom_main_05	recon/tla/it/rom	.rom.000d9784	it
+main	rom_main_05	games/tla/src/field/work9c/f0d9790	.text	it
 main	rom_main_05	games/tla/src/field/work9c/f0d92d4	.text	fr
 main	rom_main_05	games/tla/src/field/work9c/f0d9498	.text	fr
 main	rom_main_05	games/tla/src/field/work9c/f0d9710	.text	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000de784	fr
+main	rom_main_05	games/tla/src/field/work9c/f0d9790	.text	fr
 main	rom_main_05	games/tla/src/field/work9c/f0d92d4	.text	es
 main	rom_main_05	games/tla/src/field/work9c/f0d9498	.text	es
 main	rom_main_05	games/tla/src/field/work9c/f0d9710	.text	es
-main	rom_main_05	recon/tla/es/rom	.rom.000e2784	es
+main	rom_main_05	games/tla/src/field/work9c/f0d9790	.text	es
 main	rom_main_05	games/tla/src/field/work9c/f0d92d4	.text	de
 main	rom_main_05	games/tla/src/field/work9c/f0d9498	.text	de
 main	rom_main_05	games/tla/src/field/work9c/f0d9710	.text	de
@@ -1694,9 +1730,9 @@ main	rom_main_05	recon/tla/de/rom	.rom.000e6974	de
 main	rom_main_05	games/tla/src/field/work9c/f0d92d4	.text	en ja
 main	rom_main_05	games/tla/src/field/work9c/f0d9498	.text	en ja
 main	rom_main_05	games/tla/src/field/work9c/f0d9710	.text	en
-main	rom_main_05	recon/tla/raw/080d9790	.text	en
+main	rom_main_05	games/tla/src/field/work9c/f0d9790	.text	en
 main	rom_main_05	games/tla/src/field/work9c/f0d9710	.text	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000d974c	ja
+main	rom_main_05	games/tla/src/field/work9c/f0d9790	.text	ja
 main	rom_main_05	games/tla/src/field/work9c/f0d9978	.text
 main	rom_main_05	games/tla/src/field/work9c/f0d9a74	.text
 main	rom_main_05	games/tla/src/field/work9c/f0d9ab0	.text
@@ -1714,9 +1750,9 @@ main	rom_main_05	games/tla/src/field/worka0/f0da1b8	.text	it
 main	rom_main_05	recon/tla/it/rom	.rom.000da21e	it
 main	rom_main_05	recon/tla/it/rom	.rom.000da220	it
 main	rom_main_05	games/tla/src/field/worka0/f0da334	.text	it
-main	rom_main_05	recon/tla/it/rom	.rom.000da3b0	it
+main	rom_main_05	games/tla/src/field/worka0/f0da3bc	.text	it
 main	rom_main_05	games/tla/src/field/worka0/f0da660	.text	it
-main	rom_main_05	recon/tla/it/rom	.rom.000da6d4	it
+main	rom_main_05	games/tla/src/field/worka0/f0da6e0	.text	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000def0e	fr
 main	rom_main_05	games/tla/src/field/worka0/f0d9f1c	.text	fr
 main	rom_main_05	games/tla/src/field/worka0/f0da060	.text	fr
@@ -1725,9 +1761,9 @@ main	rom_main_05	games/tla/src/field/worka0/f0da1b8	.text	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000df21e	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000df220	fr
 main	rom_main_05	games/tla/src/field/worka0/f0da334	.text	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000df3b0	fr
+main	rom_main_05	games/tla/src/field/worka0/f0da3bc	.text	fr
 main	rom_main_05	games/tla/src/field/worka0/f0da660	.text	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000df6d4	fr
+main	rom_main_05	games/tla/src/field/worka0/f0da6e0	.text	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000e2f0e	es
 main	rom_main_05	games/tla/src/field/worka0/f0d9f1c	.text	es
 main	rom_main_05	games/tla/src/field/worka0/f0da060	.text	es
@@ -1736,9 +1772,9 @@ main	rom_main_05	games/tla/src/field/worka0/f0da1b8	.text	es
 main	rom_main_05	recon/tla/es/rom	.rom.000e321e	es
 main	rom_main_05	recon/tla/es/rom	.rom.000e3220	es
 main	rom_main_05	games/tla/src/field/worka0/f0da334	.text	es
-main	rom_main_05	recon/tla/es/rom	.rom.000e33b0	es
+main	rom_main_05	games/tla/src/field/worka0/f0da3bc	.text	es
 main	rom_main_05	games/tla/src/field/worka0/f0da660	.text	es
-main	rom_main_05	recon/tla/es/rom	.rom.000e36d4	es
+main	rom_main_05	games/tla/src/field/worka0/f0da6e0	.text	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e6f1a	de
 main	rom_main_05	games/tla/src/field/worka0/f0d9f1c	.text	de
 main	rom_main_05	games/tla/src/field/worka0/f0da060	.text	de
@@ -1747,9 +1783,9 @@ main	rom_main_05	games/tla/src/field/worka0/f0da1b8	.text	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e722a	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e722c	de
 main	rom_main_05	games/tla/src/field/worka0/f0da334	.text	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e73bc	de
+main	rom_main_05	games/tla/src/field/worka0/f0da3bc	.text	de
 main	rom_main_05	games/tla/src/field/worka0/f0da660	.text	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e76e0	de
+main	rom_main_05	games/tla/src/field/worka0/f0da6e0	.text	de
 main	rom_main_05	recon/tla/ja/rom	.rom.000d9ed6	ja
 main	rom_main_05	games/tla/src/field/worka0/f0d9f1c	.text	en ja
 main	rom_main_05	games/tla/src/field/worka0/f0da060	.text	en
@@ -1757,18 +1793,18 @@ main	rom_main_05	recon/tla/raw/080da0b0	.text	en
 main	rom_main_05	games/tla/src/field/worka0/f0da1b8	.text	en
 main	rom_main_05	recon/tla/raw/080da22c	.text	en
 main	rom_main_05	games/tla/src/field/worka0/f0da334	.text	en
-main	rom_main_05	recon/tla/raw/080da3bc	.text	en
+main	rom_main_05	games/tla/src/field/worka0/f0da3bc	.text	en
 main	rom_main_05	games/tla/src/field/worka0/f0da660	.text	en
-main	rom_main_05	recon/tla/raw/080da6e0	.text	en
+main	rom_main_05	games/tla/src/field/worka0/f0da6e0	.text	en
 main	rom_main_05	games/tla/src/field/worka0/f0da060	.text	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000da06c	ja
 main	rom_main_05	games/tla/src/field/worka0/f0da1b8	.text	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000da1e6	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000da1e8	ja
 main	rom_main_05	games/tla/src/field/worka0/f0da334	.text	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000da378	ja
+main	rom_main_05	games/tla/src/field/worka0/f0da3bc	.text	ja
 main	rom_main_05	games/tla/src/field/worka0/f0da660	.text	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000da69c	ja
+main	rom_main_05	games/tla/src/field/worka0/f0da6e0	.text	ja
 main	rom_main_05	games/tla/src/field/worka0/f0da908	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000da95a	it
 main	rom_main_05	recon/tla/es/rom	.rom.000e395a	es
@@ -1975,12 +2011,12 @@ main	rom_main_05	recon/tla/raw/080e150c	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000e1404	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000e14c8	ja
 main	rom_main_05	games/tla/src/field/event_commands/arc_effect	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000e166c	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000e666c	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000ea66c	es
-main	rom_main_05	recon/tla/de/rom	.rom.000ee678	de
-main	rom_main_05	recon/tla/raw/080e1678	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000e1634	ja
+main	rom_main_05	games/tla/src/field/event_commands/f0e1678	.text	it
+main	rom_main_05	games/tla/src/field/event_commands/f0e1678	.text	fr
+main	rom_main_05	games/tla/src/field/event_commands/f0e1678	.text	es
+main	rom_main_05	games/tla/src/field/event_commands/f0e1678	.text	de
+main	rom_main_05	games/tla/src/field/event_commands/f0e1678	.text	en
+main	rom_main_05	games/tla/src/field/event_commands/f0e1678	.text	ja
 main	rom_main_05	games/tla/src/field/event_commands/call_effect_29	.text
 main	rom_main_05	recon/tla/raw/080e1f2c	.text	en
 main	rom_main_05	recon/tla/raw/080e2264	.text	en

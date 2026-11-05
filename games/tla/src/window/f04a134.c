@@ -1,27 +1,12 @@
-// Draft, differ 12 of 817, skeleton gap 12 (tla-en, 2026-11-01)
-// The battle Psynergy menu, The Broken Seal's BattlePsynergyMenu_Run
-// (games/tbs/src/window/screens/battle_psynergy_menu.c) on this game's work,
-// messages and tiles; the frame tees are copied with Func_08049a04 (The Broken
-// Seal's Vram_CopyTile). Same shape as Func_08049a30, the item menu. Left, the
-// same instructions in another order in two blocks, the remainder Func_08049a30
-// also has: the native issues the 0xfffffe00 and 0xfffffc00 mask loads after
-// the sprite and icon-slot addresses are built and spilled, and in the first
-// loop the attr23 zero before the row offset. loop.c already leaves the sprite
-// address ahead of the mask, so the order is lost in sched2.
-// iconSprite = &cursor at the top of the outer loop gives the native spill
-// slots and pre-loop block; set before the loop or at its first use it is 24 or
-// 42. The cursor macros and the tilemap row mark are the twin's; written as
-// plain statements 18 to 76. Tried without gain: the row offset after the
-// initializer (86) or before it (46), the initializer through iconSprite (64),
-// a walking sprite pointer (165), 5 minutes of permute.
 #include "types.h"
+#include "edition.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
 
 extern u8 MsgAbilityNothing[];
-extern u8 Msg_0885[];
-extern u8 Msg_0d48[];
+extern u8 MsgAbilityDescription[];
+extern u8 MsgKey0d48[];
 
 struct PsynergyMenuWindow {
   u8 unk00[8];
@@ -110,6 +95,27 @@ struct PsynergyMenuOam {
 
 // Sets a menu sprite's attribute words, as The Broken Seal's
 // MenuSprite_Initialize.
+// The list is a tile wider in Spanish and French, and its columns move with it.
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
+#define LIST_WINDOW_X 8
+#define LIST_WINDOW_WIDTH 22
+#define COST_COLUMN 12
+#define COST_X 112
+#define RANGE_COLUMN 16
+#else
+#define LIST_WINDOW_X 9
+#define LIST_WINDOW_WIDTH 21
+#define COST_COLUMN 11
+#define COST_X 104
+#define RANGE_COLUMN 15
+#endif
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define ROW_MARK_TILE 0xf005
+#else
+#define ROW_MARK_TILE 0xf01e
+#endif
+
 #define MENU_SPRITE_INITIALIZE(sprite, shape)                                  \
   do {                                                                         \
     (sprite).oam.word.attr01 = (shape);                                        \
@@ -208,15 +214,26 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
   messageWindow = Window_Create(0, 5, 30, 4, 42);
   iconCount = 5;
   MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
-  window = Window_Create(9, 9, 21, 11, 6);
+  window = Window_Create(LIST_WINDOW_X, 9, LIST_WINDOW_WIDTH, 11, 6);
 
   for (i = 0; i < 5; i++) {
-    s32 y = i * 2;
+    s32 y;
+    /* FAKEMATCH(temporary): the attribute zero and the window's y in one local,
+     * so the zero has no equivalence note and loads first; as the plain macro,
+     * 2 of 817 instructions differ in tla-en. */
+    u32 t = 0;
 
+    y = i * 2;
+    /* FAKEMATCH(barrier): an empty asm after the row, which keeps it and the zero
+     * ahead of the stores; without it, 12 of 817 instructions differ in
+     * tla-en. */
+    asm("");
     iconSprite = &sprites[i];
-    MENU_SPRITE_INITIALIZE(sprites[i], 0x40000000);
+    sprites[i].oam.word.attr01 = 0x40000000;
+    sprites[i].oam.word.attr23 = t;
     iconSprite->oam.f.x = window->x * 8 + 8;
-    iconSprite->oam.f.y = (y + window->y) * 8 + 4;
+    t = window->y;
+    iconSprite->oam.f.y = (y + t) * 8 + 4;
   }
   for (i = 0; i < 5; i++) {
     iconSlots[i] = VramCache_AllocEntry(128);
@@ -236,10 +253,10 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
       Vram_FillWindowBlockPattern();
       if (count != 0)
         Message_CopyExpanded((actions[firstEntry + selectedRow] & 0x3fff) +
-                                     (s32)Msg_0885,
+                                     (s32)MsgAbilityDescription,
                                  messageText, 52);
       else
-        Message_CopyExpanded((s32)Msg_0d48, messageText, 52);
+        Message_CopyExpanded((s32)MsgKey0d48, messageText, 52);
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
       if (firstEntry != drawnFirstEntry) {
@@ -251,8 +268,8 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
           if (encodedAction == 0)
             break;
           action = BattleAction_Get(encodedAction);
-          Window_SetTilemapEntry(window, 0xf01f, 11, i * 2, 0);
-          Window_SetTilemapEntry(window, 0xf01e, 12, i * 2, 0);
+          Window_SetTilemapEntry(window, 0xf01f, COST_COLUMN, i * 2, 0);
+          Window_SetTilemapEntry(window, ROW_MARK_TILE, COST_COLUMN + 1, i * 2, 0);
           Ability_LoadGlyph(encodedAction & 0x3fff, 0, &iconSlots[i], &glyph,
                             1);
           sprites[i].oam.f.tile = glyph;
@@ -265,18 +282,18 @@ s32 Func_0804a134(s32 unitId, u16 *actions, s32 count) {
           work->textPalette = 5;
           Text_DrawCharacterAtOffset(encodedAction + (s32)MsgAbilityNothing,
                                        window, 16, i * 16);
-          Text_DrawNumberAtOffset(action->ppCost, 2, window, 104, i * 16);
+          Text_DrawNumberAtOffset(action->ppCost, 2, window, COST_X, i * 16);
           Func_08041f70(15);
           work->textPalette = 15;
           if (action->element != 4)
-            Window_SetTilemapEntry(window, action->element + 0x5001, 15,
+            Window_SetTilemapEntry(window, action->element + 0x5001, RANGE_COLUMN,
                                      i * 2, 0);
           rangePattern = action->range;
           if (rangePattern == 255)
             rangePattern = 11;
           else
             rangePattern--;
-          Window_DrawThreeTileColumn(window, 16, i * 2, rangePattern, 0);
+          Window_DrawThreeTileColumn(window, RANGE_COLUMN + 1, i * 2, rangePattern, 0);
         }
         iconCount = i;
         drawnFirstEntry = firstEntry;

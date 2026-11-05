@@ -763,7 +763,7 @@ Func_080eb824:
 Func_080ec1d0:
 	.incbin "baserom.gba", 0x000ec114, 0x000000cc
 	.section .rom.000ec200, "ax"
-	.incbin "baserom.gba", 0x000ec200, 0x00000c8c
+	.incbin "baserom.gba", 0x000ec200, 0x00000b38
 	.section .rom.000ed1b0, "ax"
 	.incbin "baserom.gba", 0x000ed1b0, 0x000004e4
 	.section .rom.000ef728, "ax"

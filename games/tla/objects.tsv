@@ -2230,8 +2230,8 @@ main	rom_main_05	recon/tla/de/rom	.rom.000f92b8	de
 main	rom_main_05	recon/tla/raw/080ec2b8	.text	en
 main	rom_main_05	recon/tla/raw/080ec484	.text	en
 main	rom_main_05	recon/tla/raw/080ec4d4	.text	en
-main	rom_main_05	recon/tla/raw/080ece20	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000ec200	ja
+main	rom_main_05	games/tla/src/field/event_commands/f0ece20	.text
 main	rom_main_05	games/tla/src/field/event_commands/world_map_row	.text
 main	rom_main_05	games/tla/src/field/event_commands/world_map_scroll	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000ed298	it

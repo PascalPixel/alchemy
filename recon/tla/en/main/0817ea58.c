@@ -1,37 +1,45 @@
-// 2026-11-05: differ 602 of 3921 (tla-en), draft 3915; frame and every spill slot
-// equal the listing's; with registers, slots and offsets masked, 142 lines apart.
+// 2026-11-05: differ 211 of 3921 (tla-en), draft 3918; frame and every spill slot
+// equal the listing's; with registers, slots and offsets masked, 89 lines apart,
+// 107 of the raw lines in the first wave loop. The header's method: reload
+// registers rotate through the spill list one per reload (allocate_reload_reg), so a
+// wrong scratch register downstream means a reload too many or too few upstream, in
+// RTL order, which sched2 hides. Read each from the reload dump's order.
 // What this round settled, each from the listing:
 // - Spill slots run in pseudo order, so the second phase's locals are a block
 //   after the first phase, and wave height and pointer are the first phase's.
 // - Each wave loop has its own row stepped in the for (its row * 4 stays unreduced);
 //   the height is one expression hoisted and reduced, so its copy takes slot 88.
-// - Each arm's index carries the row (v = row + ... % 8): row's four extra
-//   references rank it above the sprite pointer and the giv, the listing's r7, r4, r9.
+// - First wave loop: each arm's index carries the row (v = row + ... % 8): row's four
+//   extra references rank it above the sprite pointer and the giv (r7, r4, r9).
+// - Second wave loop: each arm stores the tile itself and their tails cross-jump;
+//   that form's mask is a word constant, as the pools show (no mid-loop pool). The
+//   camera follow is two statements the same way.
 // - The else arm's index is set in two steps, which leaves it unreduced.
-// - The second wave loop's tile mask is a word constant: the halfword form forces
-//   a mid-loop pool there. The first wave loop keeps the bit-field.
 // - sprites[i + 18] with i known 21 after its loop gives [fp, r3]; sprites[39] does not.
 // - A red local that is not set from the constant first keeps r before g.
+// - Hoists set the reload order: the turret's x and ringX are assigned in their loops.
+// - pixels and off are long-lived constant locals with no register, rematerialized at
+//   each use: that is the beam's r0 reload and the map loop's movs r7, #224.
+// - The explosion blit's x, n, y locals in that order; the shake readout's bg local.
 // Left:
-// 1. Reload registers rotate through the spill list, one per reload, so one extra or
-//    missing reload shifts every scratch register until the next resync. The
-//    remaining rotation starts at each wave loop's head: the listing's order there
-//    is counter, hoisted copy, then the sprite pointer's init, which only an inner
-//    giv on the call (work->sprites[row + i], no slot, arm 8 as row + i) gives, as
-//    its init is emitted after the hoists. That form matches both loops' pass-1 and
-//    pass-2 decisions but for one thing: in the first loop the outer pass then reduces
-//    row * 4 + work (benefit 5, lifetime 2, 102 vs 80), a slot too many, frame 272;
-//    in the second, the inner count is too high for the giv (82 vs 85 at most in
-//    pass 1, PRE of row + i). Measured raw 1329, masked 213.
-// 2. Map loop: the listing has a row counter of 16 (mp = map + k * 2, k += 16), w, n,
-//    table in r4, r5, r6 and 0x700 rematerialized in the loop. k gives the instructions
-//    but 0x700 takes ip and w, n, table r7, r6, r5: raw 2060. Their priorities need
-//    the reverse of the hoist order. Left as j * 32.
-// 3. p->ay's reread goes through a volatile view (needs its S2 tag at adoption);
-//    do { } while (0) after the spawn call would settle the order at the third phase's
-//    start (a one-pass device, gains 4 masked lines but rotates, not kept).
-// 4. Trail writes: the listing's sprite pointer load falls after the shift chain and
-//    the store, which needs an alias conflict between the q store and the rotation load.
+// 1. First wave loop's head (and 14 lines of the second's): the listing's order is
+//    counter, hoisted copy, then the sprite pointer's init, which only an inner giv on
+//    the call (work->sprites[row + i], no slot, arm 8 as row + i) gives, as its init
+//    is emitted after the hoists. That form matches both pass-1 and pass-2 decisions
+//    in the first loop but for one: the outer pass then reduces row * 4 + work
+//    (benefit 5 from expand_mult's copy, lifetime 2, 102 vs 80), one slot too many,
+//    frame 272; in the second, statement copies in the arms lift the inner count past
+//    the giv. Measured raw 962, masked 138. Arm 8's t and x (r3, r2 in the listing, r2,
+//    r3 here) follow the same reload order: with the arm's statement form they are
+//    right, but the count then stops the height's hoist (70 vs 60).
+// 2. Map loop's w, n, table in r4, r5, r6 here r6, r5, r4: the reverse of the hoist
+//    order, so their priorities are not yet explained.
+// 3. Third phase: z = 0 and i = 0 are two constant loads in the listing, one here
+//    (find_equiv_reg finds the first), 2 instructions and the pool offsets after; a
+//    do { } while (0) after the spawn call settles the order there (one-pass, not kept).
+// 4. Trail writes: the sprite pointer load falls after the shift chain and the store
+//    in the listing, which needs an alias conflict with the q store. Order only.
+// 5. p->ay's reread goes through a volatile view (needs its S2 tag at adoption).
 // Earlier measures that still stand: the second phase's frame loop is a label-and-goto
 // loop (as a for, the frame-address copies are hoisted and work loses r11).
 #include "resource.h"
@@ -334,7 +342,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       n = 3;
       w = 32;
       for (j = 0, k = 0; j != 10; j++, k += 16) {
-        for (i = 0, mp = k * 2 + map; i != w; i++) {
+        for (i = 0, mp = (u8 *)(k * 2 + (s32)map); i != w; i++) {
           v = ((u8 *)work)[gData_08197410[n] + i + off];
           if (v != 0) {
             v = v - j * 4 - 40;

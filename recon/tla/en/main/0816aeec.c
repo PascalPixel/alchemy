@@ -1,3 +1,9 @@
+// 2026-11-05: differ 266 of 902 (tla-en), 76 masked. pixel = ... in the call's
+// argument settles the reload rotation up to the grid. Not gained: the frame loop as
+// a label and a goto (642: this one keeps its notes), i = row << 4 with a from the
+// expression (947, masked 225: i takes r8 and vertex a row << 6 giv at slot 16, 102
+// vs 92 after expand_mult's copy), a base stepped by 16 (825, masked 145), moving
+// u's last store (961: u takes r5). The grid needs vertex above u: 1.55 against 1.89.
 // 2026-11-05: differ 274 of 902 (tla-en), 78 with registers, slots and offsets
 // masked. No gain from a stepped i (945), q = row << 4 with a from row (843),
 // i = row << 4 set after the row locals (947), u spelled out (904), or a row

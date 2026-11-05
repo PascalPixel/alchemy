@@ -894,6 +894,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           s32 w;
           s32 h;
           s32 x;
+          s32 x0;
+          s32 y0;
           s32 y;
 
           if (a != 0) {
@@ -901,35 +903,32 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             p->y = Data_08199880[n] << 3;
             p->z = a << 8;
           }
-          p->velocityY = Data_081998f2[n];
-          p->velocityZ = Data_0819995e[n];
-          p->velocityX = Data_081999a6[n];
+          __asm__("" : "=r"(idx) : "0"(idx));
+          p->velocityY = Data_081998f2[idx + off];
+          p->velocityZ = Data_0819995e[idx + off];
+          p->velocityX = Data_081999a6[idx + off];
           p->variant = idx + 1;
           if (p->velocityX == -1) {
             continue;
           }
-          src = sprites + gData_08197410[9];
           w = 10;
-          x = p->x / 8 - 5;
+          src = sprites + gData_08197410[9];
           h = 20;
+          x0 = p->x / 8 - 5;
           bx = 0x80000 - drift;
-          x += (bx / 2) >> 16;
-          y = p->y / 8 - 10;
-          y += (camZ + sway) >> 16;
+          x = x0 + (bx / 2 >> 16);
+          y0 = p->y / 8 - 10;
+          y = y0 + ((camZ + sway) >> 16);
           blit[0](canvas, src, x, y, w, h);
           switch (i) {
-            s32 cue;
-
           case 0:
-            cue = 186;
-            goto play;
+            Sound_PlayFar(186);
+            break;
           case 1:
-            cue = 187;
-            goto play;
+            Sound_PlayFar(187);
+            break;
           case 2:
-            cue = 222;
-          play:
-            Sound_PlayFar(cue);
+            Sound_PlayFar(222);
             break;
           }
           {

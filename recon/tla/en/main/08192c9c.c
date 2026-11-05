@@ -997,8 +997,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
         work->objects[i] = obj;
         ((struct IrisSpriteFlags *)obj)->priority = 1;
-        Dma_Set(tiles, (void *)OBJ_TILES(obj), 0x84000100, REG_DMA3);
-        tiles += 0x400;
+        Dma_Set(tiles + i * 0x400, (void *)OBJ_TILES(obj), 0x84000100, REG_DMA3);
       }
       colors = Resource_GetTableEntry((s32)&ResourceId_Data09A);
       FILL_WORDS((void *)(PLTT + 0x3e0), 32, -1);

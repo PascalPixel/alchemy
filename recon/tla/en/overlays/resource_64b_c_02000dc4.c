@@ -89,8 +89,8 @@ s32 Func_02000dc4(void) {
       Func_020012bc(gMainRoutineWork.entrance);
     break;
   case 77:
-    Func_020029a4();
     break;
+    Func_020029a4();
   case 78:
     Func_02003490();
     break;

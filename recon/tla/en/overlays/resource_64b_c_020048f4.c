@@ -2,6 +2,7 @@
 // held, redraws the gauge and queues its sprite over the leader. Left: the
 // sprite word order and register choice around the stmia stores.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "vram_tab.h"
 
@@ -32,7 +33,7 @@ void Func_020048f4(void) {
     }
   }
   Func_02004744(Func_02004c10());
-  Render_ProjectPoint(&leader->x, screen);
+  Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x), (s32)(screen));
   *oam++ = 0;
   *oam++ = 0x80004000 | ((screen[0] - 16) << 16) | (screen[1] - 32);
   *oam = tile | 0x400;

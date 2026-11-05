@@ -42,7 +42,7 @@ void Func_02001b50(void) {
     GameFlag_SetBit(0x17d);
     return;
   }
-  Actor_SetModeById(13, 0);
+  Call2((void (*)())Actor_SetModeById, (s32)(13), (s32)(0));
   Actor_SetModeById(14, 0);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
                                      1);

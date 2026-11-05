@@ -69,8 +69,8 @@ void Func_02000514(void) {
       gate->motionFlags = 3;
       i = 0;
       while (gate->y > 0) {
-        i++;
         wait(1);
+        i++;
         if (i > 59)
           break;
       }

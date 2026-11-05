@@ -96,8 +96,8 @@ ask:
   Call3((void (*)())Func_02001108, 18, 0x2a00000, 0x680000);
   FieldEvent_Wait(60);
   Func_020010b0(unitData->items[slot], 2);
-  FieldMessage_Show(MsgPlacedOnThe, 1);
   message = MsgAreYouPrepared;
+  FieldMessage_Show(MsgPlacedOnThe, 1);
   Func_02001138(message);
   FieldMessage_ShowAtActor(10, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) != 1)

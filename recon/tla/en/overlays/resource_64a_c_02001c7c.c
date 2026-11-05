@@ -190,7 +190,8 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
 
       for (m = 0; m != 23; m++) {
         u16 *items = unit->inventory;
-        u16 count = 0;
+        s32 count = 0;
+        s32 quantity;
 
         for (n = 0; n != 15; n++) {
           u32 value = *items++;
@@ -198,12 +199,13 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
           if (gData_0200271c[m] == (value & 0x1ff))
             count = value >> 11;
         }
+        quantity = count << 16;
         if (bit < 0) {
-          out[pos] += count >> -bit;
+          out[pos] += (u32)(quantity >> 16) >> -bit;
           bit += 8;
           pos++;
         }
-        out[pos] += count << bit;
+        out[pos] += (quantity >> 16) << bit;
         bit -= 5;
         if (bit == -5) {
           pos++;

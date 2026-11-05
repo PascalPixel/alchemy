@@ -169,8 +169,8 @@ void Func_02001828(void) {
     gust->scaleY += 0x1999;
     FieldEvent_Wait(1);
   }
-  Func_02005d94(gust);
   gust->z = TARGET(effect)->z + 0xffff0000;
+  Func_02005d94(gust);
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(
@@ -236,8 +236,8 @@ void Func_02001828(void) {
   ((struct FieldSprite *)gust->animation)->priority = 1;
   gust->speedLimit = 0x40000;
   gust->acceleration = 0x40000;
-  cell.x = x;
   cell.z = z;
+  cell.x = x;
   Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
   Call2((void (*)())Func_02005ed4, 0x50000, 0x50000);
   z <<= 16;
@@ -317,7 +317,7 @@ void Func_02001828(void) {
     cell.z = ((s16 *)&gust->z)[1] + dir.z * 48;
     gust->speedLimit = 0x8000;
     gust->acceleration = 0x8000;
-    Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
+    Call4((void (*)())Func_02005d8c, (s32)(gust), (s32)(cell.x << 16), (s32)(gust->y), (s32)(cell.z << 16));
     hit -= 30;
     i = 0;
     while (Func_02005dec(gust) == 0) {

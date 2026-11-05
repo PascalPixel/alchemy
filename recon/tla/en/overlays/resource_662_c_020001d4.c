@@ -50,11 +50,11 @@ s32 Func_020001d4(s32 *position) {
     h = (ABS(gData_02001974[kind * 4 + 1]) +
          ABS(gData_02001974[kind * 4 + 3])) >>
         4;
-    dx = gData_0200198c[direction] & 0xffff0000;
-    dz = gData_0200198c[direction] << 16;
     count = 0;
+    dz = gData_0200198c[direction] << 16;
     position[5] = count;
     state = &object->terrainId;
+    dx = gData_0200198c[direction] & 0xffff0000;
     *state = 2;
     position[0] = object->x + dx;
     position[2] = object->z + dz;

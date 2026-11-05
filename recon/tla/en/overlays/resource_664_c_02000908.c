@@ -20,8 +20,8 @@ void Func_02000908(u16 *entry) {
     return;
 loop:
   object = Actor_GetById(entry[0]);
-  flag = ((s16 *)entry)[2];
   base = ((s16 *)entry)[1];
+  flag = ((s16 *)entry)[2];
   Actor_SetSingleChildFlags(object, 0);
   base = (u16)base * 3 + GameFlag_Test((u16)flag);
   Func_02005d5c(object, base);

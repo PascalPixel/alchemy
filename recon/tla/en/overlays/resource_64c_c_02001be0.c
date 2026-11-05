@@ -14,6 +14,7 @@
 // but put source in r4 and j in r5 (gap 5). A 240 mask local does not help.
 // The clear call's `adds r0` and `lsls r1` also stay swapped.
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 
 extern u32 gFrameCount;
@@ -38,7 +39,7 @@ void Func_02001be0(s32 progress) {
   if (kind + level == gData_02003fc4)
     return;
   gData_02003fc4 = kind + level;
-  Iwram_ClearWords(gData_02003fd8, 0x100);
+  Call2((void (*)())Iwram_ClearWords, (s32)(gData_02003fd8), (s32)(0x100));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
 

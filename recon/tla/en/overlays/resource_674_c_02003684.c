@@ -48,8 +48,8 @@ s32 Func_02003684(s32 id) {
   width = (Abs(gData_0200407c[found][0]) + Abs(gData_0200407c[found][2])) >> 4;
   height = (Abs(gData_0200407c[found][1]) + Abs(gData_0200407c[found][3])) >> 4;
   x = (object->x + (gData_0200407c[found][0] << 16)) >> 20;
-  z = (object->z + (gData_0200407c[found][1] << 16)) >> 20;
   fromX = *(s32 *)(map + 0x148) >> 20;
+  z = (object->z + (gData_0200407c[found][1] << 16)) >> 20;
   fromZ = *(s32 *)(map + 0x14c) >> 20;
   fromX = (u16)fromX;
   Func_02003e24(x, z, width, height, x + fromX, z + (u16)fromZ);

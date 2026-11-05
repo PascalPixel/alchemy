@@ -21,9 +21,9 @@ void Func_020040b0(struct Actor *object) {
 
   if (frame == 0) {
     options.palette = 7;
+    position.x = object->x + (((Random16Far() & 31) - 16) << 16);
     options.type = 673;
     options.priority = 1;
-    position.x = object->x + (((Random16Far() & 31) - 16) << 16);
     position.y = object->y + ((Random16Far() & 31) << 16) + 0x80000;
     position.z = object->z;
     Func_020002f4(

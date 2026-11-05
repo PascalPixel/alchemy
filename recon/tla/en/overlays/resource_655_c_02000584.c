@@ -125,8 +125,8 @@ void Func_02000584(u16 *list) {
       u8 *slot;
       s32 shape, ground;
 
-      slot = shapes + index;
       cell = cells + index;
+      slot = shapes + index;
       shape = Func_02003c10(*terrain, object->x, object->z);
       ground = Map_GetTerrainHeight(*terrain, object->x, object->z);
 

@@ -20,7 +20,7 @@ void Func_0200306c(void) {
   s32 limit;
 
   Func_020051c0();
-  Func_02005370(0);
+  Call1((void (*)())Func_02005370, (s32)(0));
   Camera_MoveWithinMapBounds_(-1, -1, -1, 0);
   Func_020052f0()->motionFlags = 0;
   leader->motionFlags = 0;

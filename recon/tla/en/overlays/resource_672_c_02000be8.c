@@ -58,8 +58,8 @@ void Func_02000be8(void) {
   i = 0;
 rise:
   if ((u32)(i - 17) <= 62) {
-    fade = (step + 1) / 4;
     blend = fade << 8;
+    fade = (step + 1) / 4;
     blend |= 16 - fade;
     REG_BLDALPHA = blend;
     step++;
@@ -82,15 +82,15 @@ rise:
   sink:
     if ((u32)(i - 33) <= 62) {
       fade = (step + 1) / 4;
-      blend = fade << 8;
       blend |= 16 - fade;
+      blend = fade << 8;
       REG_BLDALPHA = blend;
       step--;
     }
     *(s32 *)(lower + 12) += -0x10000;
     *(s32 *)(upper + 12) += -0x10000;
-    i--;
     wait(1);
+    i--;
     if (i != 0)
       goto sink;
   }

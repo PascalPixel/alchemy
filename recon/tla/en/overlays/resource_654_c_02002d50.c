@@ -84,7 +84,7 @@ void Func_02002d50(void) {
   case 20:
     if (*state == 3)
       Func_020029dc();
-    GameFlag_ClearBit(0x206);
     break;
+    GameFlag_ClearBit(0x206);
   }
 }

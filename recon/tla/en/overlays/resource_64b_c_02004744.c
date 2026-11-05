@@ -16,6 +16,7 @@
 // `adds r0` and `lsls r1`, swapped by one tie; a void cast, a size local and
 // a `[0]` element do not move it. The 64c draft has the same remainder.
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 
 extern u32 gFrameCount;
@@ -40,7 +41,7 @@ void Func_02004744(s32 progress) {
   if (kind + level == gData_02006e0c)
     return;
   gData_02006e0c = kind + level;
-  Iwram_ClearWords(Data_02006e20, 0x100);
+  Call2((void (*)())Iwram_ClearWords, (s32)(Data_02006e20), (s32)(0x100));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWords;
 

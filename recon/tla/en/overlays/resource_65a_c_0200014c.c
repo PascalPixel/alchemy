@@ -55,13 +55,13 @@ void Func_0200014c(u16 *list) {
       s32 index = Func_020011d4(held);
       s32 result = Func_020011f4(*layer, kind, (height >> 19) - 4);
 
-      shape += index;
       index <<= 2;
+      shape += index;
       entry = cell + index;
       *shape = result;
       entry[3] &= 63;
-      cell = entry + 0x200;
       cell[3] &= 191;
+      cell = entry + 0x200;
       HELD_OBJECT(work) = held;
     }
     list++;

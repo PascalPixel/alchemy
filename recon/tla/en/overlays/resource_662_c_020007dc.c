@@ -34,8 +34,8 @@ void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   next:
     {
       int red = *colours++;
-      int green = *colours++;
       int index = *slots++;
+      int green = *colours++;
       int blue = *colours++;
       int value = (blue << 10) | (green << 5) | red;
 

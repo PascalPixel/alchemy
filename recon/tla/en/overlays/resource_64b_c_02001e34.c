@@ -114,8 +114,8 @@ void Func_02001e34(void) {
 
   djinni = Actor_GetById(9);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  x = (leader->x - 0x27880000) / 2 + 0x27880000;
   z = (leader->z - 0x20a40000) / 2 + 0x20a40000;
+  x = (leader->x - 0x27880000) / 2 + 0x27880000;
   if (Flag_IsSet(0x16e) == 0) {
     if (gInput & 64)
       Flag_Set(0x175);
@@ -215,8 +215,8 @@ void Func_02001e34(void) {
     Func_02004cf0(9, 0);
     Actor_Jump(9, 2, 30);
     Func_02004cf0(9, 0);
-    djinni->motionFlags = 0;
     SetMoveTarget(djinni, x, 0x100000, z);
+    djinni->motionFlags = 0;
   spin:
     *(u16 *)&djinni->angle += 0x1000;
     wait(1);

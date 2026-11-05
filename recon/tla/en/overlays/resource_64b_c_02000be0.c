@@ -3,6 +3,7 @@
 // MsgTheBoatS messages. Left: the native keeps the found object in r6 and
 // reads the offset x once for both paths, and builds the shake's -1s apart.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
@@ -65,7 +66,7 @@ void Func_02000be0(void) {
     Func_02004d70(0x1000 | slot);
   } else if (roll == 1) {
     Func_02004b78(0x30000, 0x50000, 0x10000);
-    Func_02004b78(-1, -1, 0xe666);
+    Call3((void (*)())Func_02004b78, (s32)(-1), (s32)(-1), (s32)(0xe666));
     FieldEvent_Wait(30);
     FieldMessage_Show((s32)MsgTheBoatS, 1);
   } else {

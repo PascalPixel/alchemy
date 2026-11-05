@@ -37,14 +37,14 @@ void Func_02000d3c(void) {
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Func_02001e70(gMainRoutineWork.currentOwner, 0x4000);
   Func_02001f10(308);
-  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   step = 1;
+  Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   for (i = 0; i <= 351; i++) {
   if ((u32)(i - 17) <= 62) {
     fade = (step + 1) / 4;
     alpha = 16 - fade;
-    REG_BLDALPHA = (fade << 8) | alpha;
     step++;
+    REG_BLDALPHA = (fade << 8) | alpha;
   }
   *(s32 *)(lower + 12) += 0x10000;
   *(s32 *)(upper + 12) += 0x10000;

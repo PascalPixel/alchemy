@@ -12,6 +12,7 @@
 // to r8 (64, the loop is no longer reversed), five minutes of psynergy
 // permute (nothing valid under 65).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 struct SparkState {
@@ -77,5 +78,5 @@ void Func_020026f4(void) {
     state->frame = -1;
   }
   work->unk2180 = 0;
-  Task_Add(Func_0200258c, 0x480);
+  Call2((void (*)())Task_Add, (s32)(Func_0200258c), (s32)(0x480));
 }

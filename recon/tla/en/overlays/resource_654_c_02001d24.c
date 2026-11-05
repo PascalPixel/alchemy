@@ -112,7 +112,7 @@ void Func_02001d24(void) {
   {
     s32 a0 = 13;
 
-    ShrineOfTheSeaGod_ObjMode(a0, 3);
+    Call2((void (*)())ShrineOfTheSeaGod_ObjMode, (s32)(a0), (s32)(3));
   }
   ShrineOfTheSeaGod_ObjPlace(12, 394 << 16, 286 << 16);
   wait(1);
@@ -149,13 +149,13 @@ void Func_02001d24(void) {
   {
     s32 a0 = 12;
 
-    ShrineOfTheSeaGod_ObjLaunch(a0, 4, 20);
+    Call3((void (*)())ShrineOfTheSeaGod_ObjLaunch, (s32)(a0), (s32)(4), (s32)(20));
   }
   Func_02003a78(12, 0, 20);
   ShrineOfTheSeaGod_Jump(13, 261, 40);
   ShrineOfTheSeaGod_Jump(12, 257, 60);
   ShrineOfTheSeaGod_MessagePut(12, 0);
-  ShrineOfTheSeaGod_ObjMode(13, 4);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjMode, (s32)(13), (s32)(4));
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   ShrineOfTheSeaGod_Jump(12, 256, 20);
   ShrineOfTheSeaGod_MessagePut(12, 0);
@@ -163,7 +163,7 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   ShrineOfTheSeaGod_ObjTurn(12, 0x8000, 0);
   ShrineOfTheSeaGod_MessagePut(12, 0);
-  ShrineOfTheSeaGod_ObjModeWait(13, 4);
+  Call2((void (*)())ShrineOfTheSeaGod_ObjModeWait, (s32)(13), (s32)(4));
   ShrineOfTheSeaGod_MessagePut(0x400d, 0);
   ShrineOfTheSeaGod_Jump(12, 265, 40);
   ShrineOfTheSeaGod_MessagePut(12, 0);

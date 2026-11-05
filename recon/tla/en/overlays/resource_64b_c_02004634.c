@@ -67,9 +67,9 @@ do {
     child = Func_02004b30_(271, parent->x, parent->y, parent->z);
     pair[i] = child;
     if (child != NULL) {
+      child->motionFlags = 0;
       child->terrainHeight = parent->terrainHeight;
       part = child->animation;
-      child->motionFlags = 0;
       child->action = 0;
       child->watchedObject = parent;
       if (part != NULL) {

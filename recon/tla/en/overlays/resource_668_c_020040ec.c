@@ -66,8 +66,8 @@ s32 Func_020040ec(s32 id) {
   width = (Abs(gData_02004cb0[found][0]) + Abs(gData_02004cb0[found][2])) >> 4;
   height = (Abs(gData_02004cb0[found][1]) + Abs(gData_02004cb0[found][3])) >> 4;
   x = (object->x + (gData_02004cb0[found][0] << 16)) >> 20;
-  z = (object->z + (gData_02004cb0[found][1] << 16)) >> 20;
   fromX = *(s32 *)(map + 0x148) >> 20;
+  z = (object->z + (gData_02004cb0[found][1] << 16)) >> 20;
   fromZ = *(s32 *)(map + 0x14c) >> 20;
   toX = x + (u16)fromX;
   toZ = z + (u16)fromZ;

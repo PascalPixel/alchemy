@@ -225,8 +225,8 @@ burst:
   i = 0;
 fade:
   REG_BLDALPHA = ((i >> 2) << 8) | (16 - (i >> 2));
-  i++;
   FieldEvent_Wait(1);
+  i++;
   if (i != 65)
     goto fade;
   Task_RemoveFar(Func_02000ef4);

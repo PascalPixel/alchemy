@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 577 of 7666, slots normalized 387, high
-// registers blind too 385, every register blind 173. The frame is the listing's
+// Measured 2026-11-05 (tla-en): differ 551 of 7666, slots normalized 367, high
+// registers blind too 365, every register blind 153. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
 // What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
@@ -240,13 +240,13 @@ extern const u16 gData_08197486[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 extern const u8 gData_0819749e[];
-extern const u8 gData_081974ad[];
-extern const u16 gData_081974bc[];
+extern u8 gData_081974ad[];
+extern u16 gData_081974bc[];
 extern u8 gData_0819750c[];
 extern u8 gData_0819751a[];
 extern const u8 gData_081977f8[];
 extern const u8 gData_0819781a[];
-extern const u8 gData_08197826[];
+extern u8 gData_08197826[];
 extern const u32 gData_08197834[];
 extern const u8 gData_0819887e[];
 extern const u8 gData_08198882[];
@@ -260,7 +260,7 @@ extern const u16 gData_081988ee[];
 extern const u16 gData_081988fc[];
 extern const u16 gData_0819890a[];
 extern const u16 gData_08198918[];
-extern const u16 gData_08198926[];
+extern u16 gData_08198926[];
 extern const u16 gData_08198934[];
 extern const u8 gData_0819893a[];
 extern const u8 gData_0819893d[];

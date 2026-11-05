@@ -535,6 +535,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->y[i] += -0x10000;
         } else if (frame <= 111) {
           w->x[i] += 0x30000;
+          if (frame > 400) {
+            dx = frame;
+          }
         }
         if (frame == 112) {
           w->x[i] = 0x1000000;
@@ -554,6 +557,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->y[i] += 0x6710;
         } else if (frame <= 141) {
           w->x[i] += 0x30000;
+          if (frame > 400) {
+            dx = frame;
+          }
         }
         if (frame == 112) {
           w->x[i] = 0x1000000;

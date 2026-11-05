@@ -1,4 +1,4 @@
-// Draft, differ 46 of 418 (tla-en, 5 November 2026), under -Os.
+// Draft, differ 44 of 418 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Left: register names only. The native has the cell in ip, the row's y << 3 in lr and
 // the step's offset in r9; here the two offsets outrank the cell (5 refs over 75 and 86
 // against 4 over 111), take ip and lr, and the cell takes r9. That also moves the reload
@@ -94,9 +94,9 @@ restart:
   {
     Unk_Cell *a, *b, *e;
     s32 o, t;
-    b = &AT(GRID_WIDTH, 0);
     x = GRID_WIDTH / 2;
     y = GRID_WIDTH / 2;
+    b = &AT(GRID_WIDTH, 0);
     i = GRID_WIDTH;
     o = 0;
     a = grid->cells;

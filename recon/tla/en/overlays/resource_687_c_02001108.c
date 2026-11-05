@@ -1,5 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 42 (tla-en); notes below may predate it.
-// Draft, differ 219 of 350, skeleton gap 87 (tla-en, 2026-11-01). Destined for
+// Draft, differ 20 of 350 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // scene/sea_of_time. Control flow, calls, frame (the fill word at sp+98 above
 // the two effect options at sp+56 and sp+16) and data accesses follow the
 // listing. Nearly all of what is left comes from one cause: the listing shows
@@ -146,8 +145,8 @@ sparks:
     goto next;
   {
     s32 x = Random16Far();
-    s32 z = Random16Far();
     s32 mask = 31;
+    s32 z = Random16Far();
 
     burst.kind = 7;
     Func_0200015c(((x & mask) << 16) + 0x1500000, 0,
@@ -165,8 +164,8 @@ next:
   while (i != 16) {
   {
     s32 x = Random16Far();
-    s32 z = Random16Far();
     s32 mask = 31;
+    s32 z = Random16Far();
 
     rain.scaleX = 0x18000;
     rain.scaleY = 0x18000;

@@ -1,6 +1,4 @@
-// Draft, differ 18 of 188 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 19 (tla-en); notes below may predate it.
-// Draft, differ 89 of 188, skeleton gap 13 (tla-en, 2026-11-01)
+// Draft, differ 14 of 188 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // What is left is GCSE's PRE: the listing keeps redundancies PRE removes here. An
 // earlier analysis-only compile with -fno-gcse gave its reloads, work in r11 and
 // index at sp+16. That is a compiler question, out of scope here, so it stays open.
@@ -120,8 +118,8 @@ void Func_02000a80(void) {
     }
   }
   // Set before the store, so PRE cannot reuse this pool load below.
-  count2 = &gData_020022be;
   gData_020022bc = *(u16 *)(work + 340);
+  count2 = &gData_020022be;
   if (*count2 > 3) {
     phase = gFrameCount & 3;
     if (phase == 0) {

@@ -1,4 +1,4 @@
-// Draft, differ 43 of 213 (tla-en, 5 November 2026), under -Os: the Trial Road movers' update (Func_02004224 sets them up): for each of the 16 slots with a placed object, its phase counts up to its period (unless flag 260 is set); at the up phase it rises 4 a frame (sound 206), at the down phase it sinks 8 a frame (sound 395), stopping at its high and low marks; its cell takes the mover's shape and a collision height from the object's height plus its offset, is marked moving or raised, and its marker object follows it, bobbing while raised.
+// Draft, differ 22 of 213 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Left: the first block's order: the native has the work address in r9 ahead of the shape's read and reloads it for that read.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 #include "iwram_call.h"
@@ -32,12 +32,12 @@ s32 Math_Sine(s32 angle);
 void Func_02003da0(void) {
   struct TrialRoadMovers *work =
       (struct TrialRoadMovers *)(gData_020023c4 + 0x188);
+  struct TrialRoadMover *mover = work->movers;
   struct TrialRoadMapWork *map = Ram_HeapSlots->mapWork;
   s32 shape = work->shape;
   u8 *shapes = *(u8 **)((u8 *)map + 316);
   u8 *cells = map->layers[0].cells;
   s32 *collision = &gMapCollision[shape];
-  struct TrialRoadMover *mover = work->movers;
   struct Actor *object;
   struct Actor *marker;
   s32 cell;

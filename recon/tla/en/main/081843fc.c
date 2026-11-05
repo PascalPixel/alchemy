@@ -1519,11 +1519,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       if (frame == 88) {
         Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
-        gBgScroll[1].x = savedScroll;
-        work->scrollStepX = 0;
         work->transferMode = 3;
         work->transferValue = 0x02020202;
+        gBgScroll[1].x = savedScroll;
         gCameraSceneParameters[3] = 120;
+        work->scrollStepX = 0;
         Func_081180e8(134);
       }
       if (frame == 0) {
@@ -1536,7 +1536,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         work->transferMode = 3;
         work->transferValue = 0x02020202;
         for (i = 0; i != 164; i++) {
-          Data_02016d00[i].variant = -1;
+          FIXED_ADDRESS((struct EffectStep *), 0x02016d00, Data_02016d00)[i].variant = -1;
         }
         slideStep = 0;
         slide = 0x800000;
@@ -1586,7 +1586,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         }
         x += 116;
         q = &Data_02016d00[(frame & 31) * 2];
-        for (c1 = 0; c1 != 2; c1++, q++) {
+        for (i = 0; i != 2; i++, q++) {
           s32 angle;
           s32 speed;
 
@@ -1595,8 +1595,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           angle = (Random16() & 0x7fff) + 0x8000;
           speed = (Random16() & 127) + 128;
           q->velocityX = Trig_Sin(angle) * speed >> 6;
-          q->variant = 0;
           q->velocityY = Trig_Cos(angle) * speed >> 6;
+          q->variant = 0;
         }
         q2 = Data_02016d00;
         for (i = 0; i != 64; i++, q2++) {

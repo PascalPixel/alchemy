@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 96: the model's mesh and vertices are typed pointers, not void.
 // Measured 2026-11-05 (tla-en): differ 98 of 1122, 13 with slots and pool offsets
 // normalized. Left: &texture spills to sp+20 and start takes r10 in the listing, the other way
 // here (364 ranks 3 * 9 / 85 over start's 3 * 11 / 116); gMapCellBuffer's pool load; and
@@ -73,8 +74,8 @@ struct ModelTexture {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
-  void *vertices;
+  const u8 *mesh;
+  s16 *vertices;
   struct ModelTexture *texture;
   s32 shade;
   u8 scrollU;

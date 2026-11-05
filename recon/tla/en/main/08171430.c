@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 88: the model's mesh and vertices are typed pointers, not void.
 // Measured 2026-11-05 (tla-en): differ 92 of 828, counts equal: left, the first draw's x, is a local (r9).
 // Left: the ring's entry (the listing builds it in r5 from index in place), the preheader's three copies.
 // 2026-11-05: differ 121 of 828 (tla-en). The dead read of shade is in, giving
@@ -70,8 +71,8 @@ struct ModelTexture {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
-  void *vertices;
+  const u8 *mesh;
+  s16 *vertices;
   struct ModelTexture *texture;
   s32 shade;
   u8 scrollU;

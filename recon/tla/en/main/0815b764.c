@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 261: the model's mesh and vertices are typed pointers, not void.
 // Measured 2026-11-05 (tla-en): with function-level i at the ship placement (no inner s32 i)
 // the counts agree, 1932 and 1932, at differ 342; the inner i kept here gives 263 and 1931.
 // Decl scans (all blocks, moves and 4000 random orders): no effect. The ship-burst block:
@@ -90,8 +91,8 @@ struct ModelTexture {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
-  void *vertices;
+  const u8 *mesh;
+  s16 *vertices;
   struct ModelTexture *texture;
   s32 shade;
   u8 scrollU;

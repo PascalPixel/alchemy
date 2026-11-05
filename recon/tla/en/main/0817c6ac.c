@@ -1,3 +1,4 @@
+// Measured 2026-11-05 (tla-en): differ 32: the model's mesh and vertices are typed pointers, not void.
 // Measured 2026-11-05 (tla-en): differ 38 of 627, instruction counts equal. The loop
 // over corners now agrees whole: half a real local, corner a struct, radiusX over
 // radiusY in rank (radiusY in r2, caller-saved at sp+12), the vertex buffer's address
@@ -33,8 +34,8 @@ struct Corner {
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
-  void *vertices;
+  const u8 *mesh;
+  s16 *vertices;
   struct ModelTexture *texture;
   s32 shade;
   u8 scrollU;

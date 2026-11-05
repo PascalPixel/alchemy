@@ -202,6 +202,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       }
       // Two steps a frame, the n-th spark from frame n / 4.
       for (i = 0; i != 32; i++) {
+        s32 one = 1;
         struct EffectStep *step = &work->particles[i];
 
         if (step->variant >= 0 && frame >= i / 4) {
@@ -209,7 +210,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
  s32 size;
  s32 blend;
  s32 j;
- odd &= 1;
+ odd &= one;
  size = odd + 5;
  blend = odd * 4;
 
@@ -247,12 +248,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       }
       // Four steps a frame.
       for (i = 0, step = work->particles; i != 32; i++, step++) {
+        s32 one = 1;
         if (step->variant >= 0) {
           s32 odd = i;
  s32 size;
  s32 blend;
  s32 j;
- odd &= 1;
+ odd &= one;
  size = odd + 2;
  blend = odd * 4;
 

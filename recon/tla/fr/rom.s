@@ -1038,14 +1038,6 @@ SummonEffect_RunCanvasEffect:
 	.thumb_func
 BattleEffect_RunQuake:
 	.incbin "baserom.gba", 0x00150c74, 0x000003cc
-	.section .rom.0015265a, "ax"
-	.incbin "baserom.gba", 0x0015265a, 0x00000002
-	.section .rom.0015265c, "ax"
-	.global BattleEffect_RunProjectileVolleyB
-	.type BattleEffect_RunProjectileVolleyB, %function
-	.thumb_func
-BattleEffect_RunProjectileVolleyB:
-	.incbin "baserom.gba", 0x0015265c, 0x00001374
 	.section .rom.0015585c, "ax"
 	.global Func_0815585c
 	.type Func_0815585c, %function

@@ -1,4 +1,4 @@
-// Draft, differ 304 of 2579 (tla-en, 2026-11-05); 228 with slots and pool offsets normalized, 74 with registers blind too. The frame, every slot and every pool now agree.
+// Draft, differ 286 of 2579 (tla-en, 2026-11-05); 214 with pool offsets normalized. The frame, every slot and every pool agree.
 // BattleEffect_RunCruelRuin. What this round settled, each read from the listing and each a real form:
 // - Loop givs: grey, blue and green are givs of frame (blue first, as the slots order them); grey reduces because
 //   the palette test and its colour spell frame - 80 again, and that second giv combines with the first.
@@ -658,20 +658,24 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
       s32 w = Data_08197702[k];
       s8 *v;
       s32 acc;
+      s32 height;
+      s32 half;
 
       if (c > 15) {
         w = w + c * 2 - 32;
       }
+      acc = 0;
       {
         s8 *cells = (s8 *)gMapCellBuffer;
         s32 cell = k * 32 + k + c;
 
-        acc = 0;
         v = cells + cell * 8;
       }
+      height = 126 - c * 7;
+      half = w / 2;
       for (i = 0; i != 2; i++, acc += w, v += 4) {
-        v[0] = 126 - c * 7;
-        v[1] = (Trig_Sin(c * 0x92c) * Data_08197700[k] >> 16) + acc - w / 2;
+        v[0] = height;
+        v[1] = (Trig_Sin(c * 0x92c) * Data_08197700[k] >> 16) + acc - half;
         v[2] = 0;
       }
     }

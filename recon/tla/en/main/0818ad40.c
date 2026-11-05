@@ -508,16 +508,15 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
 
       // The shards tumble through three cells and darken.
       if (time >= 24 && time <= 60) {
+        s32 fade = 0;
         s32 shade;
 
-        first = 0;
-
         if (time > 28) {
-          first = (time - 24) / 4;
-          if (first > 7)
-            first = 7;
+          fade = (time - 24) / 4;
+          if (fade > 7)
+            fade = 7;
         }
-        shade = first * 696;
+        shade = fade * 696;
         for (i = 0; i != 32; i++) {
           s32 cell;
 

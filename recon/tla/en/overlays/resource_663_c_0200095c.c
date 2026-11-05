@@ -1,4 +1,4 @@
-// Under -Os, 5 November: differ 289 of 632 (tla-en); older figures below predate it.
+// Under -Os, 5 November: differ 318 of 632 (tla-en), the travel loop in the order of the native; older figures below predate it. Left first: the native reloads through r5 where this draft has r4 free, so a pseudo in r4 or its spill cost is still missing.
 // Draft, differ 490 of 632, skeleton gap 53/55 (tla-en, 2026-11-01)
 // Whirlwind in Air's Rock: a gust (object type 280)
 // rises from the target (the effect work's object at 0x14) and grows,
@@ -154,8 +154,8 @@ void Func_0200095c(void) {
   delta.x = Math_Cosine(angle) >> 16;
   delta.z = Math_Sine(angle) >> 16;
   do {
-    cell.x += delta.x;
     hit = Func_02000348(2, cell.x, cell.z);
+    cell.x += delta.x;
     cell.z += delta.z;
     hit >>= 8;
     steps += 2;
@@ -196,8 +196,7 @@ void Func_0200095c(void) {
     Func_02003b58(gust, cell.x << 16, gust->y, cell.z << 16);
     Func_02003cd8(235);
     hit -= 30;
-    goto blowTest;
-  blow:
+    while (Func_02003ba8(gust) == 0) {
     if ((gFrameCount & 1) == 0) {
       dust.priority = 1;
       dust.startScaleX = dust.startScaleY = (Random16Far() & 0xffff) + 0x10000;
@@ -233,9 +232,7 @@ void Func_0200095c(void) {
       Func_02003b50();
     }
     FieldEvent_Wait(1);
-  blowTest:
-    if (Func_02003ba8(gust) == 0)
-      goto blow;
+    }
     if (hit == 2) {
       Call6(Func_02003b68, gData_02004674[2][0], gData_02004674[2][1], cell.x,
             cell.z, 1, 1);

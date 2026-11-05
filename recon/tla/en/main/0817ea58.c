@@ -1081,7 +1081,11 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     for (j = 0; j != 4; j++) {
       for (i = 0; i != 6; i++) {
         if (frame >= i * 2 + 490 && frame < i * 2 + 502) {
-          ((BlitFunc)blit[0])(dest, &work->frames[(frame - (i * 2 + 490)) / 2 * 288], Data_0819959c[j][i][0] - 6, Data_0819959c[j][i][1] + (swayY >> 16) - Data_081994f0[work->shake] - 12, 12, 24);
+          s32 x, y;
+
+          x = Data_0819959c[j][i][0];
+          y = Data_0819959c[j][i][1] + (swayY >> 16) - Data_081994f0[work->shake];
+          ((BlitFunc)blit[0])(dest, &work->frames[(frame - (i * 2 + 490)) / 2 * 288], x - 6, y - 12, 12, 24);
         }
       }
     }

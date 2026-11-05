@@ -1,34 +1,39 @@
-// Measured 2026-11-05 (tla-en): differ 305 of 2781, 245 with slots and pool
-// offsets normalized, 57 with registers normalized as well. Frame 164 and every
-// stack slot as in the listing. No loop has a counter of its own beyond i and k.
-// What round 4 settled by reading the listing:
-// - Reload hands out spill registers in turn, so one stray reload shifts every
-//   later figure; work from the top down.
-// - The zeros stored through memory (place[3], step->z, the scrolls, variant,
-//   velocityX, y) come from one zero set once after the opening slide. It takes
-//   no register, so reload makes each in its turn and no loop hoists it (610 to
-//   405 from these alone, and the rotation falls into step behind them).
-// - The second palette's s is its own, red first through a temporary set twice.
-// - The spark, the ninth cell and the spawn read their position, d and p first
-//   and on locals of their own; i = 0 comes before its neighbours in four loops.
-// What is left:
-// - The first palette's red holds its temporary through an untagged barrier
-//   (t = COLOR_RED(s), kept apart from sr): the listing has mov r3, r9; ands r3,
-//   r1; adds r1, r3, r2, where regmove merges t into s because s dies at the and
-//   and t at the add. s = COLOR_RED(s) + tr gives the rows exactly, since the add
-//   then sets s, but s outlives its register and everything rotates. Needs its
-//   tag, or the plain form, before adoption. The second palette's t = 31 is a
-//   temporary and needs its tag too.
-// - PRE folds Yaw(frame << 9) in the two shock loops into spin; the listing has
-//   mov, lsls there and spin everywhere else. Spellings fold back ((f << a) << b,
-//   f + f) or grow the frame. From here on everything is one rotation off: an
-//   input-only barrier gives the shape, but with r0 tied. This is what stands
-//   between 305 and the rows that are left.
-// - The cells loop has the object slots in r7 and cells in r5, the listing the
-//   reverse (12 rows). Tried: stepped pointer, slot pointer, a block local.
-// - The second texture: the listing has add r7, sp, #92; adds r2, r7, #0 and
-//   stores through both, here a direct sp + 92 and sp + 93. Through a pointer
-//   either folds back or takes a stack slot.
+// Measured 2026-11-05 (tla-en): differ 2 of 2781, register-normalized 2. Frame
+// 164 and every stack slot as in the listing. Pools are not yet checked against
+// the listing. The draft holds one barrier and one temporary; both are tagged.
+// What is left, one row out of place: the third shock's clamp. The listing has
+// adds r3, #162; movs r1, #255; adds r6, r2, #0; muls r6, r3; lsls r1, r1, #8;
+// adds r1, #255; the draft has the multiply before movs r1. The sched2 dump gives
+// the multiply priority 5 (cost 4 to the branch) and movs r1 priority 4, so the
+// multiply wins on priority, not on a tie: moving the constant earlier in the RTL
+// does not change it. r1 is a reload in the listing (the rotation runs r0, r1, r2,
+// r4 through it), so a local holding 65535 is not the form either. Tried: limit
+// locals (folded by CSE or hoisted), an inline clamp, ternaries, an empty asm on
+// a limit, a pinned limit, ten minutes of alchemy-devtools permute (5132 candidates,
+// none better). What could lower the multiply's priority or delay it one cycle
+// is not known.
+// What round 5 settled by reading the listing and the loop and sched2 dumps:
+// - The first object loop steps its own cells from the symbol, with i set first:
+//   objects r5, cells r7.
+// - The ring of stones and the healing sparks each have their own pointer; the
+//   sparks index it, so its step is a reduced giv whose start follows the hoisted
+//   table (Ram_EffectSteps[i], 103 to 75).
+// - spin is ((frame - 1) << 9) + 512: its slot steps as a giv of frame, while the
+//   shock loops' frame << 9 stays a plain shift. With frame << 9 PRE folds those
+//   two into spin; a spin stepped by hand takes a low stack slot (257 to 179).
+// - ty is set before s in the third shock: it holds r7 through s's reloads, which
+//   is why the frame read takes r0 (179 to 128).
+// - The coil mesh is a set-once local like zero and the cell buffer: reload makes
+//   it in turn, in r0 (67 to 10). Two palette copies move 128 words, not 512; two
+//   fills go through an inline so the function address loads before the value.
+// - The stone's screen x is read before its y (10 to 2).
+// What earlier rounds settled: the zeros stored through memory come from one zero
+// set once after the opening slide; it takes no register, so reload makes each in
+// its turn and no loop hoists it. Reload hands out spill registers in turn, so one
+// stray reload shifts every later figure: work from the top down. The second
+// palette's s is its own. The spark, the ninth cell and the spawn read their
+// position, d and p first and on locals of their own; i = 0 comes before its
+// neighbours in four loops.
 // Measured: gData_02015000 is a constant address, the native pools its +24 and
 // a symbol leaves an add; gMapCellBuffer is the set-once local for its first
 // five uses and the symbol for the three texture.pixels, chosen per site. Row
@@ -41,9 +46,9 @@
 // doubles as the palette's blue target, which blocks r4. blit[2] and grid are
 // 8-byte locals, which gives the unused word at sp+68 and the pair at sp+56.
 // BLIT_CELL's order (cell offset, width, height) sets the live length of the
-// height table's address, and that decides frame's register. CopyWords is
-// inline so its constant size stays out of CSE (without it, differ 1366); it
-// carries no tag, the question against S2's wrapper kind is open.
+// height table's address, and that decides frame's register. CopyWords and
+// FillWords are inline so their constant stays out of CSE (without CopyWords,
+// differ 1366); they carry no tag, the question against S2's wrapper kind is open.
 // ResourceId_BellMaidenTiles (0xa7), ResourceId_BlueFlameSheet (0x130), Data0FB
 // and Data0FC are not yet named in resource_directory.s; adoption names them
 // there. They are symbols because the native loads ids from the pool.
@@ -544,6 +549,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 t = COLOR_RED(s);
         s32 sr;
 
+        /* FAKEMATCH(barrier): t held apart from s through an empty asm; as sr = COLOR_RED(s) + tr, 15 of 2781 instructions differ in tla-en. */
         __asm__("" : "=r"(t) : "0"(t));
         sr = t + tr;
         if (cb < sb - 1) {
@@ -598,6 +604,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         s32 t;
 
         s = *e;
+        /* FAKEMATCH(temporary): red through a temporary set twice; as r = COLOR_RED(s) + d, 17 of 2781 instructions differ in tla-en. */
         t = 31;
         t &= s;
         r = t + d;

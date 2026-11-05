@@ -7,25 +7,112 @@
 #include "bg_scroll.h"
 #include "edition.h"
 
-// What differs in the Japanese release: the narrower coin windows, the winnings
-// window and its text column, the wider lose message's window, and a guess that
-// can be refused only in the first double-up round.
+// What differs between the releases: the windows' sizes and text columns, a
+// guess that Japan can refuse only in the first double-up round, and the bet's
+// clamp to the player's coins, which the translated releases lack. The Spanish
+// release stays on its scaffold: after the round's digit it adds one more
+// sprite (0x80508000 for round 1, else 0x80548000, tile 200), whose first word
+// it loads again where this C reuses the register: 97 of 3581 instructions
+// differ in tla-es with its table written out.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define COIN_WINDOW_X 19
 #define COIN_WINDOW_WIDTH 11
+#define COIN_TEXT_X 48
+#define HELP_WINDOW_X 22
+#define HELP_WINDOW_WIDTH 8
+#define BET_TEXT_X 24
 #define WINNINGS_WINDOW_X 10
 #define WINNINGS_WINDOW_MARGIN 10
+#define WINNINGS_LABEL_X 40
 #define WINNINGS_TEXT_X 40
+#define RESULT_WINDOW_X 4
 #define RESULT_WINDOW_WIDTH 20
-#define CANNOT_QUIT(round) ((round) == 1)
-#else
+#define ROUND_BANNER_X 608
+#define MULTIPLIER_ZERO_X 80
+#elif LANGUAGE == LANGUAGE_ENGLISH
 #define COIN_WINDOW_X 18
 #define COIN_WINDOW_WIDTH 12
+#define COIN_TEXT_X 48
+#define HELP_WINDOW_X 22
+#define HELP_WINDOW_WIDTH 8
+#define BET_TEXT_X 24
 #define WINNINGS_WINDOW_X 9
 #define WINNINGS_WINDOW_MARGIN 12
+#define WINNINGS_LABEL_X 48
 #define WINNINGS_TEXT_X 48
+#define RESULT_WINDOW_X 4
 #define RESULT_WINDOW_WIDTH 21
+#define ROUND_BANNER_X 608
+#define MULTIPLIER_ZERO_X 80
+#elif LANGUAGE == LANGUAGE_GERMAN
+#define COIN_WINDOW_X 17
+#define COIN_WINDOW_WIDTH 13
+#define COIN_TEXT_X 48
+#define HELP_WINDOW_X 20
+#define HELP_WINDOW_WIDTH 10
+#define BET_TEXT_X 32
+#define WINNINGS_WINDOW_X 7
+#define WINNINGS_WINDOW_MARGIN 14
+#define WINNINGS_LABEL_X 48
+#define WINNINGS_TEXT_X 48
+#define RESULT_WINDOW_X 4
+#define RESULT_WINDOW_WIDTH 21
+#define ROUND_BANNER_X 576
+#define MULTIPLIER_ZERO_X 92
+#elif LANGUAGE == LANGUAGE_FRENCH
+#define COIN_WINDOW_X 16
+#define COIN_WINDOW_WIDTH 14
+#define COIN_TEXT_X 56
+#define HELP_WINDOW_X 20
+#define HELP_WINDOW_WIDTH 10
+#define BET_TEXT_X 24
+#define WINNINGS_WINDOW_X 7
+#define WINNINGS_WINDOW_MARGIN 14
+#define WINNINGS_LABEL_X 56
+#define WINNINGS_TEXT_X 48
+#define RESULT_WINDOW_X 4
+#define RESULT_WINDOW_WIDTH 21
+#define ROUND_BANNER_X 576
+#define MULTIPLIER_ZERO_X 86
+#elif LANGUAGE == LANGUAGE_ITALIAN
+#define COIN_WINDOW_X 18
+#define COIN_WINDOW_WIDTH 12
+#define COIN_TEXT_X 56
+#define HELP_WINDOW_X 20
+#define HELP_WINDOW_WIDTH 10
+#define BET_TEXT_X 24
+#define WINNINGS_WINDOW_X 9
+#define WINNINGS_WINDOW_MARGIN 12
+#define WINNINGS_LABEL_X 56
+#define WINNINGS_TEXT_X 48
+#define RESULT_WINDOW_X 3
+#define RESULT_WINDOW_WIDTH 23
+#define ROUND_BANNER_X 600
+#define MULTIPLIER_ZERO_X 80
+#endif
+
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define CANNOT_QUIT(round) ((round) == 1)
+#else
 #define CANNOT_QUIT(round) ((round) > 0)
+#endif
+
+#if LANGUAGE == LANGUAGE_GERMAN
+#define ROUND_DIGIT_WORD 0x80748000
+#elif LANGUAGE == LANGUAGE_FRENCH
+#define ROUND_DIGIT_WORD 0x80708000
+#elif LANGUAGE == LANGUAGE_ITALIAN
+#define ROUND_DIGIT_WORD 0x80488000
+#else
+#define ROUND_DIGIT_WORD 0x80508000
+#endif
+
+#if LANGUAGE == LANGUAGE_FRENCH
+#define BET_WINDOW_X 17
+#define BET_WINDOW_WIDTH 13
+#else
+#define BET_WINDOW_X COIN_WINDOW_X
+#define BET_WINDOW_WIDTH COIN_WINDOW_WIDTH
 #endif
 
 extern const u8 gData_081ba30c[];
@@ -117,6 +204,7 @@ void Text_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
                                    s32 x, s32 y);
 void Text_DrawNumberInWindowFar(s32 value, s32 width,
                                 struct RenderInput *window, s32 x, s32 y);
+void WindowSprite_PrepareForRedrawFar(struct RenderInput *window);
 void Party_AdjustCoinsFar(s32 amount);
 s32 Party_GetAverageLevelFar(void);
 void Sound_PlayFar(s32 cue);
@@ -345,21 +433,24 @@ void Func_081b83c4(void) {
   WindowSystem_InitFieldFar();
   window = Window_CreateFar(COIN_WINDOW_X, 0, COIN_WINDOW_WIDTH, 3, 6);
   sprites->coinsWindow = window;
-  Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, 48, 0);
+  Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins, window, COIN_TEXT_X,
+                                0);
   Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6, sprites->coinsWindow, 0,
                              0);
-  window = Window_CreateFar(COIN_WINDOW_X, 3, COIN_WINDOW_WIDTH, 3, 6);
+  window = Window_CreateFar(BET_WINDOW_X, 3, BET_WINDOW_WIDTH, 3, 6);
   sprites->betWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceCoins - 1, window, 0, 0);
-  window = Window_CreateFar(22, 16, 8, 4, 6);
+  window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
   sprites->helpWindow = window;
   Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
   Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1, sprites->helpWindow,
                                 0, 8);
   bet = Party_GetAverageLevelFar() * 10;
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
   if ((u32)bet > (u32)gMainRoutineWork.coins)
     bet = gMainRoutineWork.coins;
-  Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+#endif
+  Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
   Sound_PlayFar(1);
 
   frame = 0;
@@ -394,7 +485,7 @@ void Func_081b83c4(void) {
           bet = Party_GetAverageLevelFar() * 10;
           if ((u32)bet > (u32)gMainRoutineWork.coins)
             bet = gMainRoutineWork.coins;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
           Party_AdjustCoinsFar(-bet);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      sprites->coinsWindow, 0, 0);
@@ -402,7 +493,7 @@ void Func_081b83c4(void) {
           timer = 0;
           slide = 0;
           bet = Party_GetAverageLevelFar() * 10;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
         }
       }
     } else if (state == 1) {
@@ -419,7 +510,7 @@ void Func_081b83c4(void) {
           Sound_PlayFar(114);
         } else {
           Window_CloseFar(sprites->helpWindow, 1);
-          window = Window_CreateFar(22, 16, 8, 4, 6);
+          window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
@@ -435,7 +526,7 @@ void Func_081b83c4(void) {
           bet = Party_GetAverageLevelFar() * 10;
           if ((u32)bet > (u32)gMainRoutineWork.coins)
             bet = gMainRoutineWork.coins;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
           Party_AdjustCoinsFar(-bet);
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      sprites->coinsWindow, 0, round);
@@ -466,6 +557,9 @@ void Func_081b83c4(void) {
           }
         }
         if (message != -1) {
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
+          WindowSprite_PrepareForRedrawFar(sprites->helpWindow);
+#endif
           Text_DrawCharacterAtOffsetFar(message, sprites->helpWindow, 0, 0);
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameChoose,
                                         sprites->helpWindow, 0, 8);
@@ -646,7 +740,7 @@ void Func_081b83c4(void) {
             bet *= multiplier;
           else
             bet <<= 1;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
           multiplier <<= 1;
           if (round == 5) {
             target = 14;
@@ -668,11 +762,11 @@ void Func_081b83c4(void) {
           target = 14;
           round = 0;
           bet = Party_GetAverageLevelFar() * 10;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
           multiplier = 0;
           Sound_PlayFar(1);
           state = 0;
-          window = Window_CreateFar(22, 16, 8, 4, 6);
+          window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
@@ -700,7 +794,7 @@ void Func_081b83c4(void) {
         Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings, window, 0, 0);
         Text_DrawCharacterAtOffsetFar((s32)&MsgLuckyDiceWinnings - 1,
                                       sprites->helpWindow,
-                                      digits * 8 + WINNINGS_TEXT_X, 0);
+                                      digits * 8 + WINNINGS_LABEL_X, 0);
         Text_DrawNumberInWindowFar(winnings, digits, sprites->helpWindow,
                                    WINNINGS_TEXT_X, 0);
       }
@@ -710,7 +804,7 @@ void Func_081b83c4(void) {
           Sound_PlayFar(1);
           Sound_PlayFar(112);
           state = 0;
-          window = Window_CreateFar(22, 16, 8, 4, 6);
+          window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1,
@@ -719,7 +813,7 @@ void Func_081b83c4(void) {
           timer = 0;
           paletteRequest = 1;
           bet = Party_GetAverageLevelFar() * 10;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
           if (winnings > 0) {
             Sound_PlayFar(105);
             Party_AdjustCoinsFar(winnings);
@@ -733,7 +827,7 @@ void Func_081b83c4(void) {
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, 6,
                                      sprites->coinsWindow, 0, 0);
           bet--;
-          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, 24, 5);
+          Text_DrawNumberInWindowFar(bet, 6, sprites->betWindow, BET_TEXT_X, 5);
         }
       }
     } else if (state == 5) {
@@ -748,7 +842,8 @@ void Func_081b83c4(void) {
             target = total;
             round++;
             state = 1;
-            window = Window_CreateFar(4, 16, RESULT_WINDOW_WIDTH, 4, 6);
+            window = Window_CreateFar(RESULT_WINDOW_X, 16, RESULT_WINDOW_WIDTH,
+                                      4, 6);
             sprites->helpWindow = window;
             if (total == 24) {
               lower = 1;
@@ -930,11 +1025,11 @@ void Func_081b83c4(void) {
       } else {
         for (index = 0; index != 3; index++) {
           sprites->oam[spriteCount].attr01 =
-              (((608 + index * 16) & 0x1ff) << 16) | 0x40000002;
+              (((ROUND_BANNER_X + index * 16) & 0x1ff) << 16) | 0x40000002;
           sprites->oam[spriteCount].attr2 = (188 + index * 4) | 0x6000;
           spriteCount++;
         }
-        sprites->oam[spriteCount].attr01 = 0x80508000;
+        sprites->oam[spriteCount].attr01 = ROUND_DIGIT_WORD;
         sprites->oam[spriteCount].attr2 = (round * 8 + 200) | 0x8000;
         spriteCount++;
       }
@@ -959,7 +1054,7 @@ void Func_081b83c4(void) {
       sprites->oam[spriteCount].attr2 = 0x9118;
       spriteCount++;
       spriteCount = Func_081b8180(spriteCount, 48, 20, multiplier, 10, 5);
-      spriteCount = Func_081b8180(spriteCount, 80, 20, 0, 11, 1);
+      spriteCount = Func_081b8180(spriteCount, MULTIPLIER_ZERO_X, 20, 0, 11, 1);
     }
 
     // The higher and lower choices, with the target to beat.

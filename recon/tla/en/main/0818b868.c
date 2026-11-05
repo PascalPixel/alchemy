@@ -181,12 +181,12 @@ void BattleEffect_RunTripleChomp(struct BattleEffectArgument *effect) {
     vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     EffectPosition_ProjectBattler(effect->actors[0], &position);
-    texture.logWidth = 7;
-    texture.logHeight = 7;
-    texture.pixels = Ram_MapCellBuffer;
     model->mesh = gData_08199364;
     model->kind = 7;
+    texture.logHeight = 7;
     model->texture = &texture;
+    texture.logWidth = 7;
+    texture.pixels = Ram_MapCellBuffer;
     model->vertices = vertices;
 
     // The three bites; the native counts them in the same register as the

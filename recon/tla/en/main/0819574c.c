@@ -114,9 +114,9 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
     facing =
         Iwram_MulQ16(*bx - *ax, *cy - *ay) - Iwram_MulQ16(*cx - *ax, *by - *ay);
     if (facing >= 0) {
-      color = faces[i].color;
       *ax += 64 << 16;
       *ay += 64 << 16;
+      color = faces[i].color;
       *bx += 64 << 16;
       *by += 64 << 16;
       *cx += 64 << 16;

@@ -296,8 +296,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
         if (frame >= start && frame < i * 2 + 70) {
           s32 scale;
 
-          model->shade = 0;
           scale = 0x20000 - ((frame - start) << 13);
+          model->shade = 0;
           Render_ResetTransformState();
           Func_080151e4(0x8000, 0x10000, 0x8000);
           Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);
@@ -311,8 +311,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       // Their splashes: growing and darkening, faster after eight frames.
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = gData_02014000;
       model->mesh = gData_08199364;
+      texture.pixels = gData_02014000;
       model->kind = 7;
       for (i = 0; i != 16; i++) {
         struct EffectStep *step = &work->particles[i + 32];

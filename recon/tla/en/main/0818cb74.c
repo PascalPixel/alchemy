@@ -349,12 +349,12 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           s32 speed = (Random16() & 511) + 512;
           s32 sine;
 
-          sine = Trig_Sin(heading) * speed;
-          x = centerX << 16;
-          p->x = (sine >> 4) + x;
-          p->y = ((Trig_Cos(heading) * speed) >> 3) + 0x680000;
           angle += 0xc000;
           p->velocityX = (Trig_Sin(angle) * speed) >> 9;
+          p->x = (sine >> 4) + x;
+          sine = Trig_Sin(heading) * speed;
+          p->y = ((Trig_Cos(heading) * speed) >> 3) + 0x680000;
+          x = centerX << 16;
           p->velocityY = (Trig_Cos(angle) * speed) >> 8;
           p->velocityZ = (Random16() & 7) + 4;
         }
@@ -385,8 +385,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       model->kind = 7;
       model->vertices = vertices;
       model->mesh = Data_08198ec4;
-      model->texture = &texture;
       texture.pixels = Ram_MapCellBuffer;
+      model->texture = &texture;
       model->scrollU = 0;
       model->scrollV = 0;
 

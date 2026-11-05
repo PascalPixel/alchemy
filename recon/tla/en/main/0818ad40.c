@@ -272,8 +272,8 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
           middle.x -= 32;
       }
       REG_BG2X = (56 - card.x) << 8;
-      scale = 0;
       scroll = 56 - card.x;
+      scale = 0;
       for (i = 0; i != 64; i++)
         work->particles[i].variant = -1;
     }
@@ -294,8 +294,8 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
       s32 q = frame * (middle.x - left) / 48;
       s32 x;
 
-      left -= 64;
       x = left + q;
+      left -= 64;
 
       if (x < 0) {
         overflow = x;

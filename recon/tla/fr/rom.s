@@ -1818,13 +1818,12 @@ LuckyDice_Run:
 Func_081b243c:
 	.incbin "baserom.gba", 0x001b243c, 0x00000e58
 	.section .rom.001b8272, "ax"
-	.incbin "baserom.gba", 0x001b8272, 0x000000da
-	.section .rom.001b83c4, "ax"
-	.global Func_081b83c4
-	.type Func_081b83c4, %function
+	.incbin "baserom.gba", 0x001b8272, 0x00000002
+	.global Func_081b8274
+	.type Func_081b8274, %function
 	.thumb_func
-Func_081b83c4:
-	.incbin "baserom.gba", 0x001b83c4, 0x00001f40
+Func_081b8274:
+	.incbin "baserom.gba", 0x001b8274, 0x000000d8
 	.section .rom.001c00b0, "ax"
 	.incbin "baserom.gba", 0x001c00b0, 0x00000064
 	.section .rom.001c0114, "ax"

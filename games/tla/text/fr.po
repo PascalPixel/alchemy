@@ -15723,11 +15723,11 @@ msgctxt "MsgSlotsBet"
 msgid "03893"
 msgstr "Pari"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceCoins"
 msgid "03894"
 msgstr "Pièces"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceWinnings"
 msgid "03895"
 msgstr "Gains:"
 
@@ -15779,7 +15779,7 @@ msgctxt "MsgSlotsCannotPull"
 msgid "03907"
 msgstr "vous ne jouerez pas!"
 
-msgctxt "message"
+msgctxt "MsgDiceGameThrow"
 msgid "03908"
 msgstr "{button_icon:1}:Lancer"
 
@@ -15787,27 +15787,27 @@ msgctxt "message"
 msgid "03909"
 msgstr "{button_icon:2}:Quitter"
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigher"
 msgid "03910"
 msgstr "Si le total est supérieur à 15,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLower"
 msgid "03911"
 msgstr "Si le total est inférieur à 13,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigherAgain"
 msgid "03912"
 msgstr "Avec un score plus grand,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLowerAgain"
 msgid "03913"
 msgstr "Avec un score plus petit,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameChoose"
 msgid "03914"
 msgstr "c'est gagné!"
 
-msgctxt "message"
+msgctxt "MsgDiceGameDoubleUp"
 msgid "03915"
 msgstr "Doubler la mise?"
 

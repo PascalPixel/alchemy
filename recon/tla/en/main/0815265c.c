@@ -800,10 +800,18 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
             s32 dz;
 
 dx = object->x - mote->x;
-dy = object->y + half - mote->y;
-dz = object->z - mote->z;
-            mote->velocityY += dy >> 8;
+            dy = object->y + half - mote->y;
+            dz = object->z - mote->z;
+            /* FAKEMATCH(barrier): dy's empty asm adds the references that rank
+             * it above dz and dx; as plain locals, 16 of 2239 instructions
+             * differ in tla-en. */
+            __asm__("" : "=r"(dy) : "0"(dy));
+            /* FAKEMATCH(barrier): dz's empty asm ranks it above dx, which takes
+             * the register after it; with dy's alone, 16 of 2239 instructions
+             * differ in tla-en. */
+            __asm__("" : "=r"(dz) : "0"(dz));
             mote->velocityX += dx >> 7;
+            mote->velocityY += dy >> 8;
             mote->velocityZ += dz >> 8;
             if ((object->x < 0 ? -object->x : object->x) <
                 (mote->x < 0 ? -mote->x : mote->x))

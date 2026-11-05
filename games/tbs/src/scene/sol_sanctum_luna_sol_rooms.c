@@ -47,7 +47,7 @@
 /// open way up from the story flags, unless the entrance's own event
 /// draws them. The falling lights are four tasks, each with a random timer
 /// of its own, that the trap adds and removes. A third statue-room event, the
-/// lit quarters flashing for Kraden
+/// quarters lit since the room last showed them flashing for Kraden
 /// (SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights), is never reached.
 
 #include "main_routine_work.h"

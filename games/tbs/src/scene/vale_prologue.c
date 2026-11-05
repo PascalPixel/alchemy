@@ -366,9 +366,9 @@ static void ValePrologue_StepOffBridge(void) {
 ///
 /// It takes VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR
 /// (SceneId_CottageRoomsA, at COTTAGE_ROOMS_A_FROM_VALE_WEST, the
-/// house VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST and its second door lead to
-/// as well). No trigger names it, and nothing
-/// else takes that exit.
+/// house VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST and
+/// VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_BY_WEST_BANK_DOOR lead to as well). No
+/// trigger names it, and nothing else takes that exit.
 UNUSED static void ValePrologue_UnusedOpenSanctumDoor(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gValePrologue_SanctumDoorOpens, 45, 11);
@@ -494,18 +494,19 @@ static void ValePrologue_LeaveToCottageRoomsAWest(void) {
 }
 
 /// Unused: its row answers cell behavior 11, which no cell of the stormy
-/// night's layout (map/map_000) carries. It would have opened Isaac's
-/// door, as ValePrologue_LeaveToCottageRoomsBWest does for behavior 12,
-/// walked the leader to the same spot and taken
-/// VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR into the house
+/// night's layout (map/map_000) carries. It would have opened the door of the
+/// house west of the river, the one ValePrologue_LeaveToCottageRoomsBWest uses
+/// for behavior 12, one row lower, walked the leader to the same spot and taken
+/// VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_BY_WEST_BANK_DOOR into the house
 /// ValePrologue_LeaveToCottageRoomsAWest leads to
 /// (COTTAGE_ROOMS_A_FROM_VALE_WEST).
-static void ValePrologue_UnusedLeaveToCottageRoomsAWestBySecondDoor(void) {
+static void ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor(void) {
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValePrologue_IsaacsDoorOpens, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Event_Wait(3);
-  Vale_RequestBackdropExit(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR);
+  Vale_RequestBackdropExit(
+      VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_BY_WEST_BANK_DOOR);
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
@@ -1309,7 +1310,7 @@ static void ValePrologue_GaretLeavesHisChest(void) {
   GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
 }
 
-/// Unused: an earlier version of Garet joining Isaac on the stormy night,
+/// Unused: another version of Garet joining Isaac on the stormy night,
 /// which the game never plays.
 ///
 /// Its row answers cell behavior 32, but every way there crosses the cells
@@ -3353,8 +3354,8 @@ u32 gValePrologue_Exits[] = {
                COTTAGE_ROOMS_A_FROM_VALE_NORTH),
     SCENE_EXIT(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST, CottageRoomsA,
                COTTAGE_ROOMS_A_FROM_VALE_WEST),
-    SCENE_EXIT(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR, CottageRoomsA,
-               COTTAGE_ROOMS_A_FROM_VALE_WEST),
+    SCENE_EXIT(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_BY_WEST_BANK_DOOR,
+               CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_WEST),
     SCENE_EXIT(VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR,
                CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_WEST),
     SCENE_EXIT(VALE_PROLOGUE_TO_COTTAGE_ROOMS_B_WEST, CottageRoomsB,
@@ -3447,7 +3448,7 @@ struct Trigger gValePrologue_Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
      EVENT(ValePrologue_LeaveToCottageRoomsAWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
-     EVENT(ValePrologue_UnusedLeaveToCottageRoomsAWestBySecondDoor)},
+     EVENT(ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS,
      EVENT(ValePrologue_LeaveToCottageRoomsBWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,

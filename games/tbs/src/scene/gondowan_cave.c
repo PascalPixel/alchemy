@@ -420,7 +420,8 @@ static void GondowanCave_MovePillar(void) {
   Event_End();
 }
 
-static UNUSED void GondowanCave_UnusedActorCallback(void) {}
+/// Unused: an empty function nothing refers to.
+static UNUSED void GondowanCave_UnusedNoOpA(void) {}
 
 /// Rotates the sprite during the airborne part of the leap.
 static void GondowanCave_RotateLeapingActor(struct Actor *actor) {
@@ -495,7 +496,8 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   Import_ActorSetAnimation(actorId, STUMP_ANIMATION_SINK);
 }
 
-static UNUSED void GondowanCave_UnusedMapCallback(void) {}
+/// Unused: an empty function nothing refers to.
+static UNUSED void GondowanCave_UnusedNoOpB(void) {}
 
 /// Lift on the boulder in GondowanCave also takes away the
 /// invisible actor beside it.

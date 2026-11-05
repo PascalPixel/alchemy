@@ -231,7 +231,8 @@ static void CrossboneIsleKeys_BaneJoins(void) {
   Djinn_JoinParty(ACTOR_BANE, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_BANE));
 }
 
-UNUSED static void CrossboneIsleKeys_UnusedHook(void) {}
+/// Unused: an empty function nothing refers to.
+UNUSED static void CrossboneIsleKeys_UnusedNoOpA(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gMainRoutineWork.next;
@@ -486,15 +487,15 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gCrossboneIsleKeysTriggersOther;
 }
 
-/// Unused: walking south into CrossboneIsleKeys's third or fourth blue door
-/// jumps the leader forward where he can (Field_TryJumpForward).
+/// Unused: pressing south on the walkway cell in front of CrossboneIsleKeys's
+/// third or fourth blue door jumps the leader over the pit onto the post two
+/// cells south, at (21, 45) or (25, 45) (Field_TryJumpForward).
 ///
-/// Both rows that name it follow a plain step trigger row for the same door
+/// Both rows that name it follow a plain step trigger row for the same cell
 /// (CrossboneIsleKeys_OpenThirdBlueDoor, CrossboneIsleKeys_OpenFourthBlueDoor),
-/// which Scene_FindTrigger always finds first; those events jump forward
-/// themselves after a dozen steps pressed south against the door, so the player
-/// sees the same thing.
-static void CrossboneIsleKeys_UnusedJumpPastBlueDoor(void) {
+/// which Scene_FindTrigger always finds first; those events make the same jump
+/// themselves once more than 12 blocked steps have passed.
+static void CrossboneIsleKeys_UnusedJumpOntoPost(void) {
   Field_TryJumpForward();
 }
 
@@ -578,8 +579,9 @@ static void CrossboneIsleKeys_OpenSecondBlueDoor(void) {
   CrossboneIsleKeys_UseBlueKey(1);
 }
 
-/// Touching CrossboneIsleKeys's third blue door (step trigger 53);
-/// pressing on it from the north looks ahead every dozen blocked steps.
+/// Touching CrossboneIsleKeys's third blue door (step trigger 53, the walkway
+/// cell in front of it); facing away from the door, once more than 12 blocked
+/// steps have passed, the leader jumps over the pit onto a post.
 static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
   struct Actor *leader;
   s16 *blockedSteps;
@@ -597,8 +599,9 @@ static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
   }
 }
 
-/// Touching CrossboneIsleKeys's fourth blue door (step trigger 54);
-/// pressing on it from the north looks ahead every dozen blocked steps.
+/// Touching CrossboneIsleKeys's fourth blue door (step trigger 54, the walkway
+/// cell in front of it); facing away from the door, once more than 12 blocked
+/// steps have passed, the leader jumps over the pit onto a post.
 static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
   struct Actor *leader;
   s16 *blockedSteps;
@@ -971,7 +974,8 @@ static void CrossboneIsleKeys_UseLadder(void) {
   }
 }
 
-UNUSED static void CrossboneIsleKeys_UnusedCallback(void) {}
+/// Unused: an empty function nothing refers to.
+UNUSED static void CrossboneIsleKeys_UnusedNoOpB(void) {}
 
 /// Frost on CrossboneIsleBane's puddle: it freezes into a pillar of
 /// ice the party can stand on.
@@ -1301,12 +1305,11 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Unused: the Blue Keys still lying about would have flashed their icons. In
-/// CrossboneIsleKeys they would have shown their item icons one after another,
-/// every 16 frames.
-///
-/// Nothing adds it as a task, so the keys never flash.
-UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
+/// Unused: nothing adds it as a task. Every 17 frames it would put uncaught
+/// Blue Keys back on their cells and redraw the five key actors, one every 2
+/// frames from the Red Key to the first Blue Key, with item codes 0 and 1 (a
+/// gem and the Long Sword) rather than ITEM_BLUE_KEY and ITEM_RED_KEY.
+UNUSED static void CrossboneIsleKeys_UnusedRedrawKeyActors(void) {
   if (++gCrossboneIsleKeys_IconTimer > 16) {
     gCrossboneIsleKeys_IconTimer = 0;
   }
@@ -1325,6 +1328,8 @@ UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
       Actor_SetPosition(ACTOR_FOURTH_BLUE_KEY, PIXELS(360), PIXELS(872));
     }
     break;
+  // XXX: why item codes 0 and 1; running it would show whether they are a
+  // leftover numbering.
   case 10:
     Colosso_ShowItemIcon(ACTOR_FIRST_BLUE_KEY, 0);
     break;
@@ -1634,8 +1639,8 @@ struct Trigger gCrossboneIsleKeysRoomTriggers[] = {
     { TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_OpenThirdBlueDoor) },
     { TRIGGER_STEP, 54, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_OpenFourthBlueDoor) },
     // Unused: the plain step trigger rows above answer codes 53 and 54 first.
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UnusedJumpPastBlueDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UnusedJumpPastBlueDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UnusedJumpOntoPost) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UnusedJumpOntoPost) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_KEYS_333_COINS, FIND_COINS(333) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_KEYS_FAIRY_RING, FIND_ITEM(ITEM_FAIRY_RING) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_KEYS_COOKIE, FIND_ITEM(ITEM_COOKIE) },

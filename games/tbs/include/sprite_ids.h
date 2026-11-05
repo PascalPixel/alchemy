@@ -737,9 +737,12 @@ enum SpriteId {
   /// ★ Named from the game: "Could that be . . . the Wise One?!?"
   /// (MsgSolSanctumKradenCouldThatBeThe)
   SPRITE_WISE_ONE,
-  /// The pillars Move shifts in the Tunnel Ruins and the lighthouses.
-  /// ★ Named from what the player sees: a stone pillar with a glowing yellow
-  /// cap (its render)
+  /// The pillars Move shifts in the Tunnel Ruins and the lighthouses. All three
+  /// animations draw one picture; in SPRITE_COLOR_GREY, as Venus Lighthouse,
+  /// Babi Lighthouse Entry and the Tunnel Ruins' east pair show it, the whole
+  /// pillar is grey and its cap pale grey in a white rim.
+  /// ★ Named from what the player sees: a stone pillar on an orange base, with
+  /// a yellow cap in a white rim (spr_253.png)
   SPRITE_CAPPED_PILLAR,
   /// The Tunnel Ruins' small pillars, which the leader pushes or shifts with
   /// Move.
@@ -747,8 +750,8 @@ enum SpriteId {
   /// on a wooden base (spr_254.png)
   SPRITE_SMALL_PILLAR,
   /// The Tunnel Ruins' pillars that sink into the water.
-  /// ★ Named from what the player sees: a stone pillar with a white top, then
-  /// with water over it (spr_255.png)
+  /// ★ Named from what the player sees: a stone pillar with a dark grating
+  /// under a white rim, then with blue water in the rim (spr_255.png)
   SPRITE_SINKING_PILLAR,
   /// The pillars Move, Carry and pushes shift in Venus Lighthouse and on the
   /// Road to Babi Lighthouse. Animations 1 and 2 show a grey and an orange
@@ -759,7 +762,7 @@ enum SpriteId {
   SPRITE_SPIRAL_PILLAR,
   /// The platforms of Venus Lighthouse and the Tunnel Ruins that rise or sink
   /// with the weight set down on them.
-  /// ★ Named from what the player sees: a small white pillar on its base
+  /// ★ Named from what the player sees: a white platform on a carved grey base
   /// (its render)
   SPRITE_BALANCE_PLATFORM,
   /// The four statues around Venus Lighthouse's beacon.

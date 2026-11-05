@@ -131,7 +131,7 @@ enum {
   /// ★ Named from the game: "Won't anyone come stay the night here?"
   /// (MsgVaultWontAnyoneComeStayTheNight)
   ACTOR_VAULT_INNKEEPER,
-  /// A woman in an apron, in the inn's other room.
+  /// A woman in an apron, upstairs at the inn.
   /// ★ Named from the game: "I did some cooking, so now I've got all these
   /// useless bones." (MsgVaultDidSomeCookingNowIve)
   ACTOR_COOK
@@ -238,11 +238,11 @@ static void LogRoomsB_WarnOfThievesRevenge(void) {
   LogRoomsB_FaceAndSpeak(ACTOR_MAYOR, MsgVaultThoseGuysReallyWantedRevenge);
 }
 
-/// Unused: the cook in the inn's other room offers the party her leftover
-/// bones, but gives none.
+/// Unused: the cook upstairs at the inn offers the party her leftover bones,
+/// but gives none.
 ///
 /// She would have said `I did some cooking, so now I've got all these useless
-/// bones.` and asked `...You want some?`. His earlier talk row,
+/// bones.` and asked `...You want some?`. Her earlier talk row,
 /// MsgVaultWeDontGetALotOf with no condition, always answers first
 /// (Scene_FindTrigger takes the first match), so the player only ever hears
 /// that travelers are few in winter.

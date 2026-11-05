@@ -9,7 +9,7 @@
 ///   soul; the rooms after it hold two pairs of pillars to push or Move, three
 ///   small pillars with three patches of ivy for Whirlwind, and two pillars
 ///   that sink into the floor once moved onto their columns, each then carrying
-///   a puddle for Frost.
+///   a hidden target for Frost.
 /// - TunnelRuinsLadyStatues (SceneId_TunnelRuinsLadyStatues): a pillar that
 /// Douse
 ///   soaks, two balance platforms weighed with carved stones by Carry, two
@@ -42,12 +42,12 @@
 /// - TunnelRuinsGreatStatue: FLAG_SCENE_TEMP_00 and FLAG_SCENE_TEMP_01 are ivy
 /// A
 ///   and B blown away beside the small pillars, and in the sinking pillars'
-///   room the two pillars' puddles frozen; FLAG_SCENE_TEMP_02 is the south-east
-///   pillar soaked by Douse.
+///   room the two pillars' Frost targets frozen; FLAG_SCENE_TEMP_02 is the
+///   south-east pillar soaked by Douse.
 /// - TunnelRuinsLadyStatues: FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_02 are the
 ///   carved stones set on the balance, FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED
-///   the pillar soaked by Douse and FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN its
-///   puddle frozen.
+///   the pillar soaked by Douse and FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN
+///   its Frost target frozen.
 ///
 /// Each balance platform's timer is its weight: both start at 3, and a carved
 /// stone set on one adds one to it and takes one from the other, and
@@ -100,7 +100,7 @@
 /// The actors of TunnelRuinsGreatStatue, in the order of its
 /// actor placements: two pairs of pillars to push or Move, three small pillars,
 /// three patches of ivy for Whirlwind, two pillars that sink into the floor,
-/// and two puddles for Frost, both placed with the first sinking pillar.
+/// and two hidden targets for Frost, both placed with the first sinking pillar.
 enum {
   /// ★ Named from what the player sees: one of a pair of grey pillars with gold
   /// tops, side by side (its render)
@@ -141,37 +141,44 @@ enum {
   /// ★ Named from the game: "It looks like it's trapped in the ivy."
   /// (MsgGomaNoUsePsynergy)
   ACTOR_IVY_C,
-  /// ★ Named from what the player sees: a grey pillar with a white top on an
-  /// orange base, in the north-west of its room (its render)
+  /// ★ Named from what the player sees: a grey pillar on an orange base, its
+  /// white-rimmed top full of blue water, in the north-west of its room (its
+  /// render)
   ACTOR_NORTHWEST_SINKING_PILLAR,
-  /// ★ Named from what the player sees: a second grey pillar with a white top,
-  /// in the south-east of the room (its render)
+  /// ★ Named from what the player sees: a second grey pillar on an orange base,
+  /// a dark grating under its white rim until Douse fills it with water, in the
+  /// south-east of the room (its render)
   ACTOR_SOUTHEAST_SINKING_PILLAR,
-  /// ★ Named from what the player sees: a small blue puddle in the middle of
-  /// the room (its render)
-  ACTOR_NORTHWEST_PILLAR_PUDDLE,
-  /// ★ Named from what the player sees: the puddle at the same place, for the
-  /// south-east pillar (its render)
-  ACTOR_SOUTHEAST_PILLAR_PUDDLE
+  /// Frost's target on the north-west pillar: SPRITE_PUDDLE in
+  /// SPRITE_COLOR_HIDDEN, which moves onto the pillar when it sinks.
+  /// ★ Named from what the player sees: nothing until Frost raises a pillar of
+  /// ice from it (spr_227.png)
+  ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
+  /// The same hidden target for the south-east pillar.
+  /// ★ Named from what the player sees: nothing until Frost raises a pillar of
+  /// ice from it (spr_227.png)
+  ACTOR_SOUTHEAST_PILLAR_FROST_TARGET
 };
 
 /// The actors of TunnelRuinsLadyStatues and any other scene: a pillar for
-/// Douse with a puddle for Frost, two balance platforms with three carved
-/// stones to Carry onto them, two statues that vanish under Reveal, two pillars
-/// to push in the east, and five coloured statues of a woman to Move before the
-/// door.
+/// Douse with a hidden target for Frost, two balance platforms with three
+/// carved stones to Carry onto them, two statues that vanish under Reveal, two
+/// pillars to push in the east, and five coloured statues of a woman to Move
+/// before the door.
 enum {
-  /// ★ Named from what the player sees: a grey pillar with a white top on an
-  /// orange base (its render)
+  /// ★ Named from what the player sees: a grey pillar on an orange base, a
+  /// dark grating under its white rim (its render)
   ACTOR_DOUSE_PILLAR = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: a small blue puddle, the room's only
-  /// one, shown once Douse has soaked the pillar (its render)
-  ACTOR_DOUSE_PUDDLE,
-  /// ★ Named from what the player sees: a white platform on a pole, the west of
-  /// two below the carved stones (its render)
+  /// Frost's target on the Douse pillar: SPRITE_PUDDLE in SPRITE_COLOR_HIDDEN,
+  /// held 32 pixels below the soaked pillar.
+  /// ★ Named from what the player sees: nothing until Frost raises a pillar of
+  /// ice from it (spr_227.png)
+  ACTOR_DOUSE_PILLAR_FROST_TARGET,
+  /// ★ Named from what the player sees: a white platform on a carved grey base,
+  /// the west of two below the carved stones (its render)
   ACTOR_BALANCE_WEST,
-  /// ★ Named from what the player sees: the east white platform on its pole
-  /// (its render)
+  /// ★ Named from what the player sees: the east white platform on its carved
+  /// grey base (its render)
   ACTOR_BALANCE_EAST,
   /// ★ Named from what the player sees: a grey stone carved with spirals, the
   /// west of three in a row (its render)
@@ -188,25 +195,31 @@ enum {
   /// ★ Named from what the player sees: a white statue standing over a chest in
   /// the east (its render)
   ACTOR_EAST_VANISHING_STATUE,
-  /// ★ Named from what the player sees: one of a pair of grey pillars with gold
-  /// tops in the east (its render)
+  /// ★ Named from what the player sees: one of a pair of grey pillars with pale
+  /// caps in white rims, in the east (its render)
   ACTOR_EAST_PILLAR_A,
   /// ★ Named from what the player sees: the other pillar of the east pair (its
   /// render)
   ACTOR_EAST_PILLAR_B,
-  /// ★ Named from what the player sees: a pink statue of a robed woman,
+  /// The game's text calls it violet: "Violet shines southeast of me."
+  /// (MsgTunnelRuinsVioletShinesSoutheastOfMe), the south-east statue's line.
+  /// ★ Named from what the player sees: a violet statue of a robed woman,
   /// north-west of the five (its render)
   ACTOR_LADY_STATUE_NORTHWEST,
-  /// ★ Named from what the player sees: a pink statue of a robed woman,
+  /// ★ Named from what the player sees: a green statue of a robed woman,
   /// north-east of the five (its render)
   ACTOR_LADY_STATUE_NORTHEAST,
-  /// ★ Named from what the player sees: a pink statue of a robed woman,
+  /// ★ Named from what the player sees: a blue statue of a robed woman,
   /// south-west of the five (its render)
   ACTOR_LADY_STATUE_SOUTHWEST,
+  /// The game's text calls it red: "Red shines northwest of me."
+  /// (MsgTunnelRuinsRedShinesNorthwestOfMe), the north-west statue's line.
   /// ★ Named from what the player sees: a pink statue of a robed woman,
   /// south-east of the five (its render)
   ACTOR_LADY_STATUE_SOUTHEAST,
-  /// ★ Named from what the player sees: a pink statue of a robed woman, the
+  /// The game's text calls it yellow: "Yellow shines northeast of me."
+  /// (MsgTunnelRuinsYellowShinesNortheastOfMe), the north-east statue's line.
+  /// ★ Named from what the player sees: a gold statue of a robed woman, the
   /// southmost of the five (its render)
   ACTOR_LADY_STATUE_SOUTH
 };
@@ -393,26 +406,26 @@ static s32 TunnelRuins_SplashDousedPillar(struct Actor *updated) {
 
 // UB: calling this s32 function through a void update routine is incompatible.
 // Plain void removes its zero result; its aligned extent stays 80 bytes.
-// Once the Douse pillar is soaked, its puddle stays 32 pixels below the
+// Once the Douse pillar is soaked, its Frost target stays 32 pixels below the
 // pillar while the pillar is in row 10 and the leader is above 48 pixels
-// down; otherwise the puddle is put away at the map's origin.
+// down; otherwise the target is put away at the map's origin.
 #ifdef UBFIX
-static void TunnelRuins_PuddleFollowsPillar(struct Actor *updated) {
+static void TunnelRuins_FrostTargetFollowsPillar(struct Actor *updated) {
 #else
-static s32 TunnelRuins_PuddleFollowsPillar(struct Actor *updated) {
+static s32 TunnelRuins_FrostTargetFollowsPillar(struct Actor *updated) {
 #endif
-  struct Actor *puddle = (struct Actor *)updated;
+  struct Actor *frostTarget = (struct Actor *)updated;
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
 
   if (leader->y.fixed > -PIXELS(48) &&
       (Actor_GetById(ACTOR_DOUSE_PILLAR)->z.fixed >> 20) == 10) {
-    puddle->x.fixed = Actor_GetById(ACTOR_DOUSE_PILLAR)->x.fixed;
-    puddle->y.fixed = -PIXELS(32);
-    puddle->z.fixed = Actor_GetById(ACTOR_DOUSE_PILLAR)->z.fixed;
+    frostTarget->x.fixed = Actor_GetById(ACTOR_DOUSE_PILLAR)->x.fixed;
+    frostTarget->y.fixed = -PIXELS(32);
+    frostTarget->z.fixed = Actor_GetById(ACTOR_DOUSE_PILLAR)->z.fixed;
   } else {
-    puddle->x.fixed = 0;
-    puddle->y.fixed = 0;
-    puddle->z.fixed = 0;
+    frostTarget->x.fixed = 0;
+    frostTarget->y.fixed = 0;
+    frostTarget->z.fixed = 0;
   }
 #ifdef UBFIX
   return;
@@ -512,16 +525,15 @@ static void TunnelRuins_HopDownStep(void) {
 
 #include "shared/field_effect_radial.h"
 
-/// In TunnelRuinsLadyStatues, Douse has soaked the pillar, and its puddle
+/// In TunnelRuinsLadyStatues, Douse has soaked the pillar, and its Frost target
 /// follows it.
-/// ★ Named from what the player sees: a grey pillar with a white top on an
-/// orange base, which Douse soaks (its render)
+/// ★ Named from what the player sees: a grey pillar on an orange base, a dark
+/// grating under its white rim, which Douse soaks (its render)
 #define FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED FLAG_SCENE_TEMP_03
-/// In TunnelRuinsLadyStatues, Frost has frozen the soaked pillar's puddle into
-/// a pillar of ice.
-/// ★ Named from what the player sees: a small blue puddle, the room's only one,
-/// shown once Douse has soaked the pillar (its render)
-#define FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
+/// In TunnelRuinsLadyStatues, Frost has raised a pillar of ice from the soaked
+/// pillar's hidden target, 32 pixels below the pillar.
+/// ★ Named from what the player sees: a pillar of ice (spr_227.png)
+#define FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN FLAG_SCENE_TEMP_04
 
 /// The entrances of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or
 /// a table for any other scene number.
@@ -572,8 +584,8 @@ static void TunnelRuins_PushFirstPillars(void) {
 
 /// Walking west into a gap: the leader hops 32 pixels across it.
 /// Reached by walking west into the gaps' cells: cell behaviors 23, 31 and
-/// 32 in TunnelRuinsGreatStatue (31 until the north-west pillar's puddle is
-/// frozen), 26 and 30 in TunnelRuinsLadyStatues.
+/// 32 in TunnelRuinsGreatStatue (31 until the north-west pillar's Frost target
+/// is frozen), 26 and 30 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopWest(void) {
   struct FieldPosition target;
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -603,8 +615,8 @@ static void TunnelRuins_JumpDownLedge(void) {
 
 /// Walking east into a gap: the leader hops 32 pixels across it.
 /// Reached by walking east into the gaps' cells: cell behaviors 27, 29, 31,
-/// 32 and 50 in TunnelRuinsGreatStatue, some only until the puddle beside them
-/// is frozen, and 30 in TunnelRuinsLadyStatues.
+/// 32 and 50 in TunnelRuinsGreatStatue, some only until the Frost target beside
+/// them is frozen, and 30 in TunnelRuinsLadyStatues.
 static void TunnelRuins_HopEast(void) {
   struct FieldPosition target;
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -720,10 +732,10 @@ static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
 }
 
 /// Moving the north-west sinking pillar into column 46: it sinks 16 pixels into
-/// the floor in a cloud of dust, its puddle appears on it, and the floor beside
-/// it changes in two jolts that shake the screen.
-/// Reached by Move on the north-west sinking pillar until it has sunk, and
-/// called by TunnelRuins_PushNorthwestSinkingPillar; sets
+/// the floor in a cloud of dust, its Frost target moves onto it, and the floor
+/// beside it changes in two jolts that shake the screen. Reached by Move on the
+/// north-west sinking pillar until it has sunk, and called by
+/// TunnelRuins_PushNorthwestSinkingPillar; sets
 /// FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR when it sinks.
 static void TunnelRuins_SinkNorthwestPillar(void) {
   u32 i;
@@ -765,7 +777,8 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     Import_ActorSetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 3);
     Actor_Release(overlay);
     MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-    Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_PUDDLE, PIXELS(744), PIXELS(136));
+    Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, PIXELS(744),
+                      PIXELS(136));
     TunnelRuins_AnimateLoweringImpact(58, 49, 8);
     Event_Wait(20);
     TunnelRuins_AnimateLoweringImpact(59, 49, 8);
@@ -786,24 +799,24 @@ static void TunnelRuins_PushNorthwestSinkingPillar(void) {
   TunnelRuins_SinkNorthwestPillar();
 }
 
-/// Frost on the north-west pillar's puddle freezes it into a pillar of ice.
-/// Reached by Frost on the north-west pillar's puddle until FLAG_SCENE_TEMP_00
+/// Frost on the north-west pillar's hidden target raises a pillar of ice.
+/// Reached by Frost on that target until FLAG_SCENE_TEMP_00
 /// is set; sets it.
-static void TunnelRuins_FreezeNorthwestPillarPuddle(void) {
+static void TunnelRuins_FreezeNorthwestPillarFrostTarget(void) {
   u8 *flags;
 
-  Import_ActorSetAnimation(ACTOR_NORTHWEST_PILLAR_PUDDLE, 1);
-  Actor_ConfigureSpriteColor(ACTOR_NORTHWEST_PILLAR_PUDDLE,
+  Import_ActorSetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 1);
+  Actor_ConfigureSpriteColor(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                              SPRITE_COLOR_NORMAL);
-  Import_ActorSetAnimation(ACTOR_NORTHWEST_PILLAR_PUDDLE, 2);
-  flags = &Actor_GetById(ACTOR_NORTHWEST_PILLAR_PUDDLE)->priorityFlags;
+  Import_ActorSetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 2);
+  flags = &Actor_GetById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
 /// Moving the south-east sinking pillar into column 48 once Douse has soaked
-/// it: it sinks as the north-west pillar does, and its puddle appears on it.
-/// Reached by Move on the south-east sinking pillar until it has sunk, and
+/// it: it sinks as the north-west pillar does, and its Frost target moves onto
+/// it. Reached by Move on the south-east sinking pillar until it has sunk, and
 /// called by TunnelRuins_PushSoutheastSinkingPillar and
 /// TunnelRuins_DouseSoutheastPillar; sets
 /// FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR when it sinks.
@@ -848,7 +861,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       Import_ActorSetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 3);
       Actor_Release(overlay);
       MapGrid_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-      Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_PUDDLE, PIXELS(776),
+      Actor_SetPosition(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, PIXELS(776),
                         PIXELS(232));
       TunnelRuins_AnimateLoweringImpact(58, 45, 14);
       Event_Wait(20);
@@ -889,17 +902,17 @@ static void TunnelRuins_DouseSoutheastPillar(void) {
   TunnelRuins_SinkSoutheastPillar();
 }
 
-/// Frost on the south-east pillar's puddle freezes it into a pillar of ice.
-/// Reached by Frost on the south-east pillar's puddle until FLAG_SCENE_TEMP_01
+/// Frost on the south-east pillar's hidden target raises a pillar of ice.
+/// Reached by Frost on that target until FLAG_SCENE_TEMP_01
 /// is set; sets it.
-static void TunnelRuins_FreezeSoutheastPillarPuddle(void) {
+static void TunnelRuins_FreezeSoutheastPillarFrostTarget(void) {
   u8 *flags;
 
-  Import_ActorSetAnimation(ACTOR_SOUTHEAST_PILLAR_PUDDLE, 1);
-  Actor_ConfigureSpriteColor(ACTOR_SOUTHEAST_PILLAR_PUDDLE,
+  Import_ActorSetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 1);
+  Actor_ConfigureSpriteColor(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                              SPRITE_COLOR_NORMAL);
-  Import_ActorSetAnimation(ACTOR_SOUTHEAST_PILLAR_PUDDLE, 2);
-  flags = &Actor_GetById(ACTOR_SOUTHEAST_PILLAR_PUDDLE)->priorityFlags;
+  Import_ActorSetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 2);
+  flags = &Actor_GetById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
   GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
@@ -922,9 +935,10 @@ static void TunnelRuins_ReadFirstStatue(void) {
   Event_End();
 }
 
-/// Moving the Douse pillar (until its puddle is frozen): nothing more happens.
+/// Moving the Douse pillar (until its Frost target is frozen): nothing more
+/// happens.
 /// Reached by Move on the Douse pillar until
-/// FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN is set.
+/// FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN is set.
 static void TunnelRuins_MoveDousePillar(void) {
   Event_Start();
   Event_End();
@@ -940,48 +954,50 @@ static void TunnelRuins_PushDousePillar(void) {
 }
 
 /// As Douse begins on the pillar, water splashes on it and it is soaked; its
-/// puddle follows it from then on. Reached by Douse's first phase on the Douse
-/// pillar until it is soaked; sets FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED and
-/// gives the puddle its update routine.
+/// Frost target follows it from then on. Reached by Douse's first phase on the
+/// Douse pillar until it is soaked; sets FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED
+/// and gives the Frost target its update routine.
 static void TunnelRuins_DouseStartsOnPillar(void) {
-  struct Actor *puddle;
+  struct Actor *frostTarget;
 
   Actor_SetScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
   GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED);
-  puddle = Actor_GetById(ACTOR_DOUSE_PUDDLE);
+  frostTarget = Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET);
 #ifdef UBFIX
-  puddle->update = TunnelRuins_PuddleFollowsPillar;
+  frostTarget->update = TunnelRuins_FrostTargetFollowsPillar;
 #else
-  puddle->update = (void (*)(struct Actor *))TunnelRuins_PuddleFollowsPillar;
+  frostTarget->update =
+      (void (*)(struct Actor *))TunnelRuins_FrostTargetFollowsPillar;
 #endif
 }
 
-/// Frost on the pillar's puddle freezes it into a pillar of ice where it
-/// stands. Reached by Frost on the Douse pillar's puddle until
-/// FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN is set; sets it.
-static void TunnelRuins_FreezeDousePuddle(void) {
+/// Frost on the pillar's hidden target raises a pillar of ice where it
+/// stands. Reached by Frost on that target until
+/// FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN is set; sets it.
+static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
   struct Actor *actor;
   s32 column;
   s32 row;
 
   Event_Start();
-  Actor_SetSpritePriority(ACTOR_DOUSE_PUDDLE, 1);
-  Import_ActorSetAnimation(ACTOR_DOUSE_PUDDLE, 1);
-  Actor_ConfigureSpriteColor(ACTOR_DOUSE_PUDDLE, SPRITE_COLOR_NORMAL);
-  Import_ActorSetAnimation(ACTOR_DOUSE_PUDDLE, 2);
+  Actor_SetSpritePriority(ACTOR_DOUSE_PILLAR_FROST_TARGET, 1);
+  Import_ActorSetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 1);
+  Actor_ConfigureSpriteColor(ACTOR_DOUSE_PILLAR_FROST_TARGET,
+                             SPRITE_COLOR_NORMAL);
+  Import_ActorSetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 2);
 
   {
-    u8 *flag = &Actor_GetById(ACTOR_DOUSE_PUDDLE)->priorityFlags;
+    u8 *flag = &Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->priorityFlags;
     *flag &= ~ACTOR_PRIORITY_UNDERFOOT;
   }
 
-  GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN);
 
-  column = Actor_GetById(ACTOR_DOUSE_PUDDLE)->x.fixed;
-  row = Actor_GetById(ACTOR_DOUSE_PUDDLE)->z.fixed >> 20;
+  column = Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->x.fixed;
+  row = Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed >> 20;
   MapGrid_CopyCellAttributes(26, 8, 1, 1, column >> 20, row);
 
-  actor = Actor_GetById(ACTOR_DOUSE_PUDDLE);
+  actor = Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET);
   actor->update = UPDATE_BY_RELATIVE_DEPTH;
 
   actor = Actor_GetById(ACTOR_DOUSE_PILLAR);
@@ -1572,11 +1588,13 @@ s32 TunnelRuins_Initialize(void) {
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_NORTHWEST_SINKING_PILLAR), 0);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTHEAST_SINKING_PILLAR), 0);
       Import_ActorSetAnimation(ACTOR_NORTHWEST_SINKING_PILLAR, 2);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_NORTHWEST_PILLAR_PUDDLE), 0);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTHEAST_PILLAR_PUDDLE), 0);
-      Actor_ConfigureSpriteColor(ACTOR_NORTHWEST_PILLAR_PUDDLE,
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_NORTHWEST_PILLAR_FROST_TARGET),
+                           0);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET),
+                           0);
+      Actor_ConfigureSpriteColor(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                                  SPRITE_COLOR_HIDDEN);
-      Actor_ConfigureSpriteColor(ACTOR_SOUTHEAST_PILLAR_PUDDLE,
+      Actor_ConfigureSpriteColor(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                                  SPRITE_COLOR_HIDDEN);
       if (GameFlag_Get(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 49, 8, 1, 3);
@@ -1588,13 +1606,13 @@ s32 TunnelRuins_Initialize(void) {
         Actor_SetPosition(ACTOR_NORTHWEST_SINKING_PILLAR, PIXELS(744),
                           PIXELS(136));
         Actor_GetById(ACTOR_NORTHWEST_SINKING_PILLAR)->y.fixed = -PIXELS(16);
-        Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_PUDDLE, PIXELS(744),
+        Actor_SetPosition(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, PIXELS(744),
                           PIXELS(136));
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
-        Actor_ConfigureSpriteColor(ACTOR_NORTHWEST_PILLAR_PUDDLE,
+        Actor_ConfigureSpriteColor(ACTOR_NORTHWEST_PILLAR_FROST_TARGET,
                                    SPRITE_COLOR_NORMAL);
-        Import_ActorSetAnimation(ACTOR_NORTHWEST_PILLAR_PUDDLE, 5);
+        Import_ActorSetAnimation(ACTOR_NORTHWEST_PILLAR_FROST_TARGET, 5);
       }
       if (Event_GetFlag(FLAG_SCENE_TEMP_02))
         Import_ActorSetAnimation(ACTOR_SOUTHEAST_SINKING_PILLAR, 2);
@@ -1608,14 +1626,14 @@ s32 TunnelRuins_Initialize(void) {
         Actor_SetPosition(ACTOR_SOUTHEAST_SINKING_PILLAR, PIXELS(776),
                           PIXELS(232));
         Actor_GetById(ACTOR_SOUTHEAST_SINKING_PILLAR)->y.fixed = -PIXELS(16);
-        Import_ActorSetPosition(ACTOR_SOUTHEAST_PILLAR_PUDDLE, PIXELS(776),
-                                PIXELS(232));
+        Import_ActorSetPosition(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
+                                PIXELS(776), PIXELS(232));
         GameFlag_Set(FLAG_SCENE_TEMP_02);
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
-        Actor_ConfigureSpriteColor(ACTOR_SOUTHEAST_PILLAR_PUDDLE,
+        Actor_ConfigureSpriteColor(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET,
                                    SPRITE_COLOR_NORMAL);
-        Import_ActorSetAnimation(ACTOR_SOUTHEAST_PILLAR_PUDDLE, 5);
+        Import_ActorSetAnimation(ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, 5);
       }
       break;
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS:
@@ -1659,18 +1677,22 @@ s32 TunnelRuins_Initialize(void) {
       Actor_SetSpritePriority(ACTOR_DOUSE_PILLAR, 1);
       Actor_GetById(ACTOR_DOUSE_PILLAR)->motionFlags = 0;
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_DOUSE_PILLAR), 0);
-      Actor_SetSpritePriority(ACTOR_DOUSE_PUDDLE, 1);
-      Actor_ConfigureSpriteColor(ACTOR_DOUSE_PUDDLE, SPRITE_COLOR_HIDDEN);
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_DOUSE_PUDDLE), 0);
-      Actor_GetById(ACTOR_DOUSE_PUDDLE)->motionFlags = 0;
-      if (!GameFlag_Get(FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN))
+      Actor_SetSpritePriority(ACTOR_DOUSE_PILLAR_FROST_TARGET, 1);
+      Actor_ConfigureSpriteColor(ACTOR_DOUSE_PILLAR_FROST_TARGET,
+                                 SPRITE_COLOR_HIDDEN);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET), 0);
+      Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->motionFlags = 0;
+      if (!GameFlag_Get(FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN))
         break;
-      Actor_ConfigureSpriteColor(ACTOR_DOUSE_PUDDLE, SPRITE_COLOR_NORMAL);
-      Import_ActorSetAnimation(ACTOR_DOUSE_PUDDLE, 5);
+      Actor_ConfigureSpriteColor(ACTOR_DOUSE_PILLAR_FROST_TARGET,
+                                 SPRITE_COLOR_NORMAL);
+      Import_ActorSetAnimation(ACTOR_DOUSE_PILLAR_FROST_TARGET, 5);
       MapGrid_CopyCellAttributeRect(
-          26, 8, 1, 1, Actor_GetById(ACTOR_DOUSE_PUDDLE)->x.fixed >> 20,
-          Actor_GetById(ACTOR_DOUSE_PUDDLE)->z.fixed >> 20);
-      Actor_GetById(ACTOR_DOUSE_PUDDLE)->update = UPDATE_BY_RELATIVE_DEPTH;
+          26, 8, 1, 1,
+          Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->x.fixed >> 20,
+          Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed >> 20);
+      Actor_GetById(ACTOR_DOUSE_PILLAR_FROST_TARGET)->update =
+          UPDATE_BY_RELATIVE_DEPTH;
       Actor_GetById(ACTOR_DOUSE_PILLAR)->update = UPDATE_BY_RELATIVE_DEPTH;
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH:
@@ -2256,9 +2278,9 @@ struct Trigger gTunnelRuinsGreatStatueTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_B, FLAG_SCENE_TEMP_01, EVENT(TunnelRuins_BlowAwayIvyB)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY_C, FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY, EVENT(TunnelRuins_BlowAwayIvyC)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHWEST_SINKING_PILLAR, FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, EVENT(TunnelRuins_SinkNorthwestPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_NORTHWEST_PILLAR_PUDDLE, FLAG_SCENE_TEMP_00, EVENT(TunnelRuins_FreezeNorthwestPillarPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_NORTHWEST_PILLAR_FROST_TARGET, FLAG_SCENE_TEMP_00, EVENT(TunnelRuins_FreezeNorthwestPillarFrostTarget)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SOUTHEAST_SINKING_PILLAR, FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR, EVENT(TunnelRuins_SinkSoutheastPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SOUTHEAST_PILLAR_PUDDLE, FLAG_SCENE_TEMP_01, EVENT(TunnelRuins_FreezeSoutheastPillarPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SOUTHEAST_PILLAR_FROST_TARGET, FLAG_SCENE_TEMP_01, EVENT(TunnelRuins_FreezeSoutheastPillarFrostTarget)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_SOUTHEAST_SINKING_PILLAR, FLAG_SCENE_TEMP_02, EVENT(TunnelRuins_DouseStartsOnSoutheastPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_SOUTHEAST_SINKING_PILLAR, FLAG_SCENE_TEMP_02, EVENT(TunnelRuins_DouseSoutheastPillar)},
     {TRIGGERS_END},
@@ -2301,9 +2323,9 @@ struct Trigger gTunnelRuinsTriggersOther[] = {
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 42, CONDITION_ALWAYS, EVENT(TunnelRuins_ReadSecondStatue)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_TUNNEL_RUINS_ORACLES_ROBE, FIND_ITEM(ITEM_ORACLES_ROBE)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_TUNNEL_RUINS_ASURAS_ARMOR, FIND_ITEM(ITEM_ASURAS_ARMOR)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN, EVENT(TunnelRuins_MoveDousePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN, EVENT(TunnelRuins_MoveDousePillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE) | 1 << 28, ACTOR_DOUSE_PILLAR, FLAG_TUNNEL_RUINS_DOUSE_PILLAR_SOAKED, EVENT(TunnelRuins_DouseStartsOnPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_DOUSE_PUDDLE, FLAG_TUNNEL_RUINS_DOUSE_PUDDLE_FROZEN, EVENT(TunnelRuins_FreezeDousePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_DOUSE_PILLAR_FROST_TARGET, FLAG_TUNNEL_RUINS_DOUSE_FROST_TARGET_FROZEN, EVENT(TunnelRuins_FreezeDousePillarFrostTarget)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_CARRY_STONE, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MIDDLE_CARRY_STONE, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_CARRY_STONE, CONDITION_ALWAYS, 0},

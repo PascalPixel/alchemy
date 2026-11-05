@@ -1049,7 +1049,8 @@
 /// Caught or taken from its hook.
 /// ★ Named from the game: "Cell Key" (MsgItemName)
 #define FLAG_LUNPA_FORTRESS_CELL_KEY 0xf2e
-/// Unused: the four swords LunpaFortress's unused pickups give, each once.
+/// Unused: the four swords LunpaFortress's unused pickups give; each sets its
+/// flag and nothing tests it.
 /// ★ Named from the game: "Arctic Blade" (MsgItemName)
 #define FLAG_LUNPA_FORTRESS_ARCTIC_BLADE 0xf2a
 /// ★ Named from the game: "Masamune" (MsgItemName)

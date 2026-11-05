@@ -128,8 +128,8 @@ enum LaliveroActorId {
   /// Three plants, SPRITE_SPROUT, the sprout Growth grows at Alpine Crossing
   /// and Suhalla Gate. Here they stand in animation 3, block nothing and no
   /// trigger answers them.
-  /// ★ Named from what the player sees: small green sprouts on the edges of
-  /// the rooftops (its render)
+  /// ★ Named from what the player sees: a tall green vine climbing a wall, as a
+  /// sprout looks after Growth (its render)
   ACTOR_FIRST_PLANT,
   /// Placed off the map until needed.
   /// ★ Named from the game: "Iodem of Tolbi"

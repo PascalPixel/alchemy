@@ -207,10 +207,12 @@ enum ColosseumSatrageMatchActorId {
   /// ★ Named from what the player sees: three stone pillars in a row in the
   /// Mini-Maze (its render)
   ACTOR_MINI_MAZE_FIRST_PILLAR,
-  /// The Board Walk's three logs, in the room of its stone pillars
-  /// (https://alchemy.pascalpixel.com/places/colosseum-satrage-match/map-1.png):
-  /// the western and eastern logs roll, and the center one never does
-  /// (ColosseumSatrageMatch_UnusedRollCenterLogNorth).
+  /// The Board Walk's two logs, the western and the eastern, in the room of its
+  /// stone pillars
+  /// (https://alchemy.pascalpixel.com/places/colosseum-satrage-match/map-1.png).
+  /// A third, ACTOR_ROLLING_LOG_CENTER, is placed at (0, 0) and never moved
+  /// there; ColosseumSatrageMatch_UnusedRollCenterLogNorth, its South twin and
+  /// its row in the collision rebuild remain for it.
   /// ★ Named from the game: "Roll those logs to open a path and follow it to
   /// the next stage." (MsgColossoPlaceCalledBoard)
   ACTOR_ROLLING_LOG_WEST = ACTOR_MINI_MAZE_FIRST_PILLAR + 3,
@@ -713,8 +715,9 @@ static void ColosseumSatrageMatch_RollEastLogEast(void) {
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Unused: no trigger row calls it, so the Board Walk's center log never
-/// rolls. Walking into it would have rolled it north, as the western and
+/// Unused: no trigger row calls it. It would have rolled
+/// ACTOR_ROLLING_LOG_CENTER, placed at (0, 0) and never moved to the Board
+/// Walk, to a target 16 pixels north of its South twin's, as the western and
 /// eastern logs roll west and east (ColosseumSatrageMatch_RollWestLogWest and
 /// the rest).
 static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogNorth(void) {
@@ -722,8 +725,9 @@ static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogNorth(void) {
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Unused: as ColosseumSatrageMatch_UnusedRollCenterLogNorth, rolling the
-/// center log south.
+/// Unused: as ColosseumSatrageMatch_UnusedRollCenterLogNorth, rolling
+/// ACTOR_ROLLING_LOG_CENTER, which is not on the Board Walk, to the target 16
+/// pixels south of that one's.
 static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogSouth(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_CENTER, 40, 25);
   ColosseumSatrageMatch_UpdateRollingLogCollision();

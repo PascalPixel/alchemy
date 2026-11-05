@@ -233,7 +233,8 @@ static void CrossboneIsle_DrawLogPuzzleFootprints(void);
 #include "shared/field_effect_create.h"
 #include "shared/field_effect_spawn.h"
 
-UNUSED static void CrossboneIsle_UnusedCallback(void) {}
+/// Unused: an empty function nothing refers to.
+UNUSED static void CrossboneIsle_UnusedNoOp(void) {}
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;

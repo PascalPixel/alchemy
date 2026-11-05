@@ -189,12 +189,12 @@ enum IceRoomsActorId {
   /// ★ Named from the game: "OK, I'll leave the village in your hands, Megan,
   /// Justin..." (MsgImilMia)
   ACTOR_MEGAN,
-  /// A crate in the old couple's house, kept under the party as altin.c keeps
-  /// its ground sprites; Vault's crate (log_rooms_a.c) uses the same
-  /// sprite.
-  /// ★ Named from what the player sees: a wooden crate by the old couple's
-  /// fireplace (its render)
-  ACTOR_CRATE
+  /// Invisible in the old couple's house: SPRITE_CRATE in SPRITE_COLOR_HIDDEN,
+  /// every pixel transparent, so the player sees only the stack of logs in the
+  /// room's cells, and ACTOR_NOT_TARGETED, never a talk or Psynergy target.
+  /// Kept under the party as altin.c keeps its ground sprites; Vault's crate
+  /// (log_rooms_a.c) uses the same sprite.
+  ACTOR_INVISIBLE_CRATE
 };
 
 /// The village's own temporary flags, which last until the party leaves the
@@ -841,9 +841,9 @@ s32 Imil_Initialize(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     entrance = gMainRoutineWork.entrance;
     if (entrance == ICE_ROOMS_HOUSE_SOUTHWEST) {
-      Actor_ConfigureSpriteColor(ACTOR_CRATE, SPRITE_COLOR_HIDDEN);
-      Actor_GetById(ACTOR_CRATE)->collisionFlags |= 8;
-      Actor_SetSpritePriority(ACTOR_CRATE, 1);
+      Actor_ConfigureSpriteColor(ACTOR_INVISIBLE_CRATE, SPRITE_COLOR_HIDDEN);
+      Actor_GetById(ACTOR_INVISIBLE_CRATE)->collisionFlags |= 8;
+      Actor_SetSpritePriority(ACTOR_INVISIBLE_CRATE, 1);
       if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         MapGrid_CopyCellAttributes(10, 7, 1, 1, 10, 8);
         MapGrid_CopyCellsTo(3, 125, 9, 69, 3, 3);

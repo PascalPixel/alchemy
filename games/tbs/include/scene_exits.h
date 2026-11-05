@@ -232,10 +232,9 @@ enum {
          ///< the stormy night (its render)
   VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_NORTH = 8,
   VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST = 9,
-  VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SECOND_DOOR =
-      10, ///< ★ Named from what the player sees: the second door of the house
-          ///< by the river, leading where the first house door does (its
-          ///< render)
+  VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_BY_WEST_BANK_DOOR =
+      10, ///< ★ Named from what the player sees: the one door of the house west
+          ///< of the river (its render)
   VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR =
       11, ///< ★ Named from what the player sees: the door where the Sanctum
           ///< stands by day (its render)
@@ -258,10 +257,10 @@ enum {
   VALE_FROM_COTTAGE_ROOMS_B = 8,
   VALE_FROM_COTTAGE_ROOMS_A_NORTH = 9,
   VALE_FROM_COTTAGE_ROOMS_A_WEST = 10,
-  /// Beside the second door into the house of Jenna's grandparents, which
-  /// VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR leaves by; no exit leads
+  /// Beside the door of the house west of the river, which
+  /// VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR leaves by; no exit leads
   /// here.
-  VALE_FROM_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR = 11,
+  VALE_FROM_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR = 11,
   VALE_FROM_TITLE = 16,
   VALE_FROM_ROOF_MENDED = 17,
 };
@@ -276,7 +275,7 @@ enum {
   VALE_TO_COTTAGE_ROOMS_B = 7,
   VALE_TO_COTTAGE_ROOMS_A_NORTH = 8,
   VALE_TO_COTTAGE_ROOMS_A_WEST = 9,
-  VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR =
+  VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR =
       10, ///< ★ Named from what the player sees: the door of the house by the
           ///< river that leads into Jenna's grandparents' house (its render)
   VALE_TO_SANCTUM = 11,
@@ -1862,13 +1861,13 @@ enum {
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST = 1,
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST = 3,
-  MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_FROM_GATE =
-      4, ///< ★ Named from what the player sees: the room where five pillars
+  MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_FROM_GATE =
+      4, ///< ★ Named from what the player sees: the room where five statues
          ///< stand in a row along the north wall (its render)
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST = 5,
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST = 6,
   MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER = 7,
-  MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_FIVE_PILLARS =
+  MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_ROW_STATUES =
       8, ///< ★ Named from what the player sees: the room of three doors, a gate
          ///< and the floor switch the fallen statue is set on (its render)
   MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS =
@@ -1884,21 +1883,21 @@ enum {
           ///< waterfalls (its render)
   MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE =
       14, ///< ★ Named from what the player sees: the room of three stone doors
-          ///< and the statue that slides off its ledge (its render)
+          ///< and the statue that slides over the floor (its render)
   MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS_STATUE_FALLS =
       15, ///< ★ Named from what the player sees: the room of three doors, a
           ///< gate and the floor switch the fallen statue is set on (its
           ///< render)
   MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE_STATUE_FALLS =
       16, ///< ★ Named from what the player sees: the room of three stone doors
-          ///< and the statue that slides off its ledge (its render)
+          ///< and the statue that slides over the floor (its render)
 };
 /// SceneId_MercuryLighthouseUpper's exits.
 enum {
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_WEST_NORTHWEST = 1,
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTH_NORTHEAST = 2,
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST = 3,
-  MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_TO_GATE =
+  MERCURY_LIGHTHOUSE_UPPER_ROW_STATUES_TO_GATE =
       4, ///< ★ Named from what the player sees: the room of three doors, a gate
          ///< and the floor switch the fallen statue is set on (its render)
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST = 5,
@@ -1906,9 +1905,9 @@ enum {
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_LOWER = 7,
   MERCURY_LIGHTHOUSE_UPPER_GATE_TO_STONE_DOORS =
       8, ///< ★ Named from what the player sees: the room of three stone doors
-         ///< and the statue that slides off its ledge (its render)
-  MERCURY_LIGHTHOUSE_UPPER_GATE_TO_FIVE_PILLARS =
-      9, ///< ★ Named from what the player sees: the room where five pillars
+         ///< and the statue that slides over the floor (its render)
+  MERCURY_LIGHTHOUSE_UPPER_GATE_TO_ROW_STATUES =
+      9, ///< ★ Named from what the player sees: the room where five statues
          ///< stand in a row along the north wall (its render)
   MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_EXTERIOR_EAST = 10,
   MERCURY_LIGHTHOUSE_UPPER_GAP_TO_WATERFALLS =

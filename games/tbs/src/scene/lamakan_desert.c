@@ -1029,9 +1029,10 @@ s32 LamakanDesert_Initialize(void) {
   return 0;
 }
 
-/// Unused: the Manticore walks back to its spot (168, 96) and settles. Nothing
-/// calls it.
-static UNUSED void Manticore_UnusedReturn(void) {
+/// Unused: the Manticore walks to (168, 96), 4 pixels south of where Reveal
+/// shows it (168, 92), at the slow speed of LamakanDesert_MeetManticore's walk
+/// back, then plays its one-shot animation 2. Nothing calls it.
+static UNUSED void LamakanDesert_UnusedWalkManticore(void) {
   Actor_SetSpeed(ACTOR_MANTICORE, PIXELS(1) / 2, PIXELS(1) / 4);
   Import_ActorSetAnimation(ACTOR_MANTICORE, 1);
   Actor_WalkToAndWait(ACTOR_MANTICORE, 168, 96);

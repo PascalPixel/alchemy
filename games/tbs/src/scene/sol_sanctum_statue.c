@@ -690,9 +690,10 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
 /// cannot run, since SolSanctumStatue_SelectStoryExit returns only 1 or -1.
 /// Once the northwest, southwest and southeast seals were open, the leader
 /// would have walked to the eastern hall's disc and the camera panned to it;
-/// the panels beside the disc flash ever faster, then the disc goes dark and
-/// its beams are gone (the cells every seal's closed copies restore), and the
-/// camera comes back. Nothing here uncovers anything.
+/// the disc flashes ever faster between an open seal's cells and a closed
+/// seal's, ends on the open seal's, the beams go out (the cells a seal's closed
+/// copy restores to their block), and the camera comes back. Nothing here
+/// uncovers anything.
 static void SolSanctumStatue_UnusedPutOutSeals(void) {
   struct MapGridScrollWork *grid;
   struct Actor *leader;
@@ -733,7 +734,7 @@ static void SolSanctumStatue_UnusedPutOutSeals(void) {
     Event_Wait(40);
     approachSide = 2;
   }
-  // Flash progressively faster before the disc goes dark.
+  // Flash progressively faster, ending on an open seal's cells.
   for (frame = 0; frame != 6; frame++) {
     MapGrid_CopyCellsTo(2, 28, 34, 10, 4, 2);
     Event_Wait(8);
@@ -840,7 +841,8 @@ static void SolSanctumStatue_JumpSouth(void) {
 }
 
 /// Unused: the eastern hall's northwest statue slides by itself to (504, 152),
-/// where it opens its seal, unless that seal is already open.
+/// the cell where Move opens its seal, unless that seal is already open; this
+/// function opens nothing.
 ///
 /// Nothing calls it; the player moves the statue there with Move instead.
 UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {

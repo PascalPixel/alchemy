@@ -129,8 +129,8 @@ enum {
 /// each named by what he says. The pillars have the sprite of the pillars Move
 /// or a push shifts in Venus Lighthouse.
 enum {
-  /// ★ Named from what the player sees: a stone pillar with a glowing yellow
-  /// cap on the left ledge (its render)
+  /// ★ Named from what the player sees: a grey stone pillar with a pale cap
+  /// in a white rim, on the left ledge (its render)
   ACTOR_LEFT_PILLAR = 8,
   /// ★ Named from what the player sees: the same capped pillar on the right
   /// ledge (its render)

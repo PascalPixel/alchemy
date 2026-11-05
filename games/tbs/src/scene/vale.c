@@ -57,7 +57,7 @@
 /// SceneId_ValeKradensCottage, the doors VALE_TO_COTTAGE_ROOMS_A_EAST,
 /// VALE_TO_COTTAGE_ROOMS_A_SOUTH, VALE_TO_COTTAGE_ROOMS_A_NORTH,
 /// VALE_TO_COTTAGE_ROOMS_A_WEST and
-/// VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR into the houses
+/// VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR into the houses
 /// (SceneId_CottageRoomsA, cottage_rooms_a.c),
 /// VALE_TO_COTTAGE_ROOMS_B into Isaac's house (SceneId_CottageRoomsB) and
 /// VALE_TO_SANCTUM into SceneId_Sanctum. Two events no table reaches remain:
@@ -707,15 +707,16 @@ static void Vale_EnterCottageRoomsAWest(void) {
 
 /// Unused: its row answers cell behavior 11, which no cell of Vale's layout
 /// (map/map_000, the stormy night's too) carries, as
-/// ValePrologue_UnusedLeaveToCottageRoomsAWestBySecondDoor in
-/// vale_prologue.c. It would have opened Isaac's door, walked the leader to
-/// the spot before it and taken VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR into
-/// the house of Jenna's grandparents, whose way out returns by the other door.
-static void Vale_UnusedEnterJennasGrandparentsHouseBySecondDoor(void) {
+/// ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor in
+/// vale_prologue.c. It would have opened the door of the house west of the
+/// river, walked the leader to the spot before it and taken
+/// VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR into the house of Jenna's
+/// grandparents, whose way out returns by that house's own door.
+static void Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor(void) {
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
-  Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR);
+  Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR);
 }
 
 /// On the path to Mt. Aleph in Vale, before the visit is planned: Jenna comes
@@ -993,7 +994,7 @@ static void Vale_RepeatMtAlephWarningAtEitherPause(void) {
 /// story begins.
 ///
 /// No table names it. It plays the same lines as the event the game uses, `Good
-/// job, Garet.` and `I was devastated when Kyle died...` among them, but frames
+/// job, Isaac.` and `I was devastated when Kyle died...` among them, but frames
 /// them with its own camera and map grid cells, and sets
 /// FLAG_VALE_ROOF_JUST_MENDED as that event does.
 UNUSED static void Vale_UnusedRoofMended(void) {
@@ -3496,7 +3497,7 @@ struct SceneEntrance gVale_Entrances[] = {
     { VALE_FROM_COTTAGE_ROOMS_B, CONDITION_ALWAYS, 340, 0, 904, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_COTTAGE_ROOMS_A_NORTH, CONDITION_ALWAYS, 326, 0, 1142, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_COTTAGE_ROOMS_A_WEST, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_FROM_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_TITLE, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_FROM_ROOF_MENDED, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
@@ -3513,7 +3514,7 @@ u32 gVale_Exits[] = {
     SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_B, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE),
     SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_NORTH, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_NORTH),
     SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_WEST, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_WEST),
-    SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_NORTH_SECOND_DOOR, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR, CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_NORTH),
     SCENE_EXIT(VALE_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE),
     SCENE_EXIT(VALE_TO_ROOF_MENDED, Vale, VALE_FROM_ROOF_MENDED),
     SCENE_EXITS_END,
@@ -3689,7 +3690,7 @@ struct Trigger gVale_Triggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Vale_EnterIsaacsHouse) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsAWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor) },
     { TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Vale_StepOntoBridge) },
     { TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(Vale_StepOffBridge) },
     { TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Vale_WatchThePuppies) },
@@ -3739,7 +3740,7 @@ struct Trigger gVale_TriggersAfterLeaving[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Vale_EnterIsaacsHouse) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsAWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor) },
     { TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Vale_StepOntoBridge) },
     { TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(Vale_StepOffBridge) },
     { TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Vale_WatchThePuppies) },
@@ -3792,7 +3793,7 @@ struct Trigger gVale_TriggersAfterKalay[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Vale_EnterIsaacsHouse) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsAWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor) },
     { TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Vale_StepOntoBridge) },
     { TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(Vale_StepOffBridge) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT(Vale_ClimbLadderOntoRoof) },

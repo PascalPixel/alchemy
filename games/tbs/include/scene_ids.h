@@ -175,7 +175,7 @@ extern char SceneId_MercuryLighthouseLower;
 /// held open by a statue, the pipe maze and Sleet's room (its render)
 extern char SceneId_MercuryLighthouseMiddle;
 /// ★ Named from what the player sees: the top of the climb inside, with the
-/// waterfall halls, the five pillars and the stone doors (its render)
+/// waterfall halls, the five statues in a row and the stone doors (its render)
 extern char SceneId_MercuryLighthouseUpper;
 /// ★ Named from what the player sees: the lighthouse from outside, its foot in
 /// the water with the door and fountain, and the walkways up to the waterfall
@@ -183,8 +183,8 @@ extern char SceneId_MercuryLighthouseUpper;
 extern char SceneId_MercuryLighthouseExterior;
 /// ★ Named from its area name: Lighthouse Aerie
 extern char SceneId_MercuryLighthouseAerie;
-/// ★ Named from what the player sees: the same aerie as the one in use, empty,
-/// its platforms not lowered (its render)
+/// ★ Named from what the player sees: the same aerie as the one in use, its
+/// platforms not lowered (its render)
 extern char SceneId_UnusedMercuryLighthouseAerieCopy;
 /// ★ Named from what the player sees: outside the temple, its monks and the
 /// stepped waterfall with the grotto beneath (its render)

@@ -151,7 +151,8 @@ enum {
   /// ★ Named from what the player sees: the easternmost puddle, between the
   /// rows (its render)
   FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN = FLAG_SCENE_TEMP_05,
-  /// A water drop struck the northern pillar before it reached its switch.
+  /// A water drop struck the northern pillar before it reached its switch: the
+  /// drop's cell matched the pillar's (VaultCave_ResetFallingActorAtActorCell).
   /// ★ Named from what the player sees: the pillar the leader pushes toward
   /// its switch in the northern room of SceneId_VaultCaveMouth (its render)
   FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK = FLAG_SCENE_TEMP_07,
@@ -171,8 +172,9 @@ enum VaultCaveVambraceActorId {
   /// burning on top (its render)
   ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH = ACTOR_FIRST_PLACED,
   /// Pushed or Moved onto the southern switch, map cell (15, 54).
-  /// ★ Named from what the player sees: a pink stone pillar with a flame
-  /// burning on top, beside the switch marked with a flame (its render)
+  /// ★ Named from what the player sees: the western of the room's two pink
+  /// flame pillars, four cells from the switch marked with a flame, joined to
+  /// it by a dotted track (its render)
   ACTOR_SOUTHERN_PILLAR,
   /// The first of six water drops (in the sprite VaultCave_SpawnPuffs also
   /// uses for the puffs where one lands) that fall at random, one every 64

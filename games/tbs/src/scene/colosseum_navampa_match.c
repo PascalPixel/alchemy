@@ -896,7 +896,8 @@ static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
   FieldActor_JumpDownLedge(*actorId, 6, 0);
 }
 
-UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
+/// Unused: an empty function nothing refers to.
+UNUSED static void ColosseumNavampaMatch_UnusedNoOp(void) {}
 
 // XXX (no evidence): which lines this question was written for; in the
 // Japanese catalog, as in the English one, the lines three apart per character
@@ -908,7 +909,8 @@ UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
 /// Nothing calls it. Arriving at COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH
 /// it would ask a yes or no question and, on yes, make the character it names
 /// the one the player moves alone, as the friends' turns do.
-UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
+UNUSED static void
+ColosseumNavampaMatch_UnusedAskToControlCharacter(s32 characterId) {
   struct FieldWork *work;
   s32 actorId;
   s32 messageOffset;
@@ -919,23 +921,23 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   entrance = gMainRoutineWork.entrance;
   if (entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Event_Start();
-    messageOffset = warriorId * 3;
+    messageOffset = characterId * 3;
     Event_SetMessageId(messageOffset + MsgColossoDidntThinkBattles);
-    FieldMessage_ShowAtActor(warriorId, 0);
+    FieldMessage_ShowAtActor(characterId, 0);
     if (Event_AskYesNoWithActorAnimation(actorId, 0) == 0) {
       Event_SetMessageId(messageOffset + MsgColossoDidntThinkBattles + 1);
-      Event_ShowMessageAndWait(warriorId, 0);
+      Event_ShowMessageAndWait(characterId, 0);
       work->transition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
       work->transitionFrames = 15;
       Event_FinishScreenTransition();
       Event_WaitTransitionFrames();
-      Colosso_ControlCharacterAlone(warriorId);
+      Colosso_ControlCharacterAlone(characterId);
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
     } else {
       Event_SetMessageId(messageOffset + MsgColossoDidntThinkBattles + 2);
-      Event_ShowMessageAndWait(warriorId, 0);
+      Event_ShowMessageAndWait(characterId, 0);
     }
     Event_End();
   }
@@ -2067,18 +2069,20 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
   GameFlag_Set(FLAG_IN_TOWN);
 }
 
-/// Unused: a lettering countdown before the match, for a signed number of
-/// seconds; nothing calls it.
-UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
+/// Unused: the result, `Won` or `Lose` in large lettering held for the size of
+/// `result` in seconds (negative is a loss), then the loser's ellipsis and the
+/// screen closing, as in the first two finals sites. This match ends in a
+/// battle, and nothing calls it.
+UNUSED static void ColosseumNavampaMatch_UnusedShowMatchResult(s32 result) {
   s32 actorId;
 
   Sound_Play(SE_COLOSSO_LETTERING);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  gColossoLetteringScriptWon[13] = countdown * 60;
+  gColossoLetteringScriptWon[13] = result * 60;
   STORE_CONST(gColossoLetteringScriptLose[13]) =
-      (countdown < 0 ? -countdown : countdown) * 60;
-  if (countdown < 0) {
+      (result < 0 ? -result : result) * 60;
+  if (result < 0) {
     Event_Wait(30);
     Sound_Play(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
@@ -2086,16 +2090,16 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
      * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
      * differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 1);
-    Event_Wait(-countdown * 60 + 60);
+    Event_Wait(-result * 60 + 60);
     actorId = ACTOR_PARTY_LEADER;
   } else {
     Event_Wait(30);
-    Sound_Play(countdown + 90);
+    Sound_Play(result + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
     /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 0);
-    Event_Wait(countdown * 60 + 60);
+    Event_Wait(result * 60 + 60);
     actorId = ACTOR_OPPONENT;
   }
   FieldEffect_SpawnAttached(actorId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);

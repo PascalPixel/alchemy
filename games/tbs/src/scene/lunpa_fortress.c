@@ -124,7 +124,7 @@
 /// LunpaFortressGroundFloor's people, numbered in the order of
 /// gLunpaFortressGroundFloorActorPlacements from ACTOR_FIRST_PLACED,
 /// past its first four rows (in a chest's sprite, at the map's origin; see
-/// ACTOR_FIRST_ITEM_DISPLAY). Dodonpa's men, here and upstairs, wear the
+/// ACTOR_FIRST_SWORD_CHEST). Dodonpa's men, here and upstairs, wear the
 /// sprite of a man with a mop of orange hair (SPRITE_MAN_WITH_ORANGE_HAIR).
 enum {
   /// ★ Named from what the player sees: one of Dodonpa's men standing watch
@@ -368,7 +368,7 @@ enum {
 // The native paired patrol computes this layer offset in floating point.
 #define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * 65536)
 
-static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId);
+static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId);
 static void LunpaFortress_CheckSecondEntranceSentry(void);
 static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId);
 static s32 LunpaFortress_IsLeaderNearGuard(s32 actorId);
@@ -708,53 +708,51 @@ static void LunpaFortress_SearchSealedDoor(void) {
 // XXX (no evidence): which scene's actors these are; the pickups are
 // unused and name no scene, and LunpaFortressGroundFloor's first four rows (in
 // a chest's sprite, at the map's origin) are the only rows nothing else uses.
-/// The four actors from ACTOR_FIRST_ITEM_DISPLAY that the unused item
-/// pickups below show their items on, in a scene they do not name.
+/// The four chests from ACTOR_FIRST_SWORD_CHEST that the unused sword pickups
+/// open, in a scene they do not name.
 /// ★ Named from what the player sees: four chests (SPRITE_CHEST) at the
-/// origin of LunpaFortressGroundFloor, the likely display actors (its
-/// render)
-enum { ACTOR_FIRST_ITEM_DISPLAY = ACTOR_FIRST_PLACED };
+/// origin of LunpaFortressGroundFloor (its render)
+enum { ACTOR_FIRST_SWORD_CHEST = ACTOR_FIRST_PLACED };
 
-/// Unused: nothing calls this pickup or the three after it. Together they
-/// would set out an Arctic Blade, a Masamune, a Silver Blade and a Shamshir on
-/// the four display actors, each taken once
-/// (FLAG_LUNPA_FORTRESS_ARCTIC_BLADE to FLAG_LUNPA_FORTRESS_SHAMSHIR); this one
-/// takes the Arctic Blade.
+/// Unused: nothing calls this pickup or the three after it. Each opens one of
+/// four chests (ACTOR_FIRST_SWORD_CHEST on) and gives its sword, showing the
+/// picture before the leader; with no room the chest peeks and shuts. Each sets
+/// a flag nothing tests. This one gives the Arctic Blade, from the first chest.
 static void UNUSED LunpaFortress_UnusedTakeArcticBlade(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(ACTOR_FIRST_ITEM_DISPLAY,
-                                            ITEM_ARCTIC_BLADE) != 0) {
+  if (LunpaFortress_TryTakeChestItem(ACTOR_FIRST_SWORD_CHEST,
+                                     ITEM_ARCTIC_BLADE) != 0) {
     GameFlag_Set(FLAG_LUNPA_FORTRESS_ARCTIC_BLADE);
   }
 }
 
-/// Unused: the Masamune, on the second display actor.
+/// Unused: the Masamune, from the second chest.
 static void UNUSED LunpaFortress_UnusedTakeMasamune(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(ACTOR_FIRST_ITEM_DISPLAY + 1,
-                                            ITEM_MASAMUNE) != 0) {
+  if (LunpaFortress_TryTakeChestItem(ACTOR_FIRST_SWORD_CHEST + 1,
+                                     ITEM_MASAMUNE) != 0) {
     GameFlag_Set(FLAG_LUNPA_FORTRESS_MASAMUNE);
   }
 }
 
-/// Unused: the Silver Blade, on the third display actor.
+/// Unused: the Silver Blade, from the third chest.
 static void UNUSED LunpaFortress_UnusedTakeSilverBlade(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(ACTOR_FIRST_ITEM_DISPLAY + 2,
-                                            ITEM_SILVER_BLADE) != 0) {
+  if (LunpaFortress_TryTakeChestItem(ACTOR_FIRST_SWORD_CHEST + 2,
+                                     ITEM_SILVER_BLADE) != 0) {
     GameFlag_Set(FLAG_LUNPA_FORTRESS_SILVER_BLADE);
   }
 }
 
-/// Unused: the Shamshir, on the fourth display actor.
+/// Unused: the Shamshir, from the fourth chest.
 static void UNUSED LunpaFortress_UnusedTakeShamshir(void) {
-  if (LunpaFortress_TryCollectDisplayedItem(ACTOR_FIRST_ITEM_DISPLAY + 3,
-                                            ITEM_SHAMSHIR) != 0) {
+  if (LunpaFortress_TryTakeChestItem(ACTOR_FIRST_SWORD_CHEST + 3,
+                                     ITEM_SHAMSHIR) != 0) {
     GameFlag_Set(FLAG_LUNPA_FORTRESS_SHAMSHIR);
   }
 }
 
-/// Unused: called only by the four pickups above. Gives the item an
-/// actor shows, with its effect; with no room for it, the actor shows
-/// the item is left behind. Returns whether it was given.
-static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId) {
+/// Unused: called only by the four pickups above. Opens the chest and gives
+/// the item, showing its picture before the leader; with no room for it, the
+/// chest peeks and shuts. Returns whether it was given.
+static s32 LunpaFortress_TryTakeChestItem(s32 actorId, s32 itemId) {
   s32 itemGiven = 0;
   s32 itemEffect;
 
@@ -1335,7 +1333,9 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
 
 /// Unused: nothing calls it; LunpaFortressUpperFloor's patrolling pair throws
 /// the party out through LunpaFortress_PatrolPairThrowsPartyOut instead. The
-/// first patrol would stop, ask who the party is and send it out.
+/// first patrol would stop, ask who the party is and send it out. That actor
+/// is inferred: row +1 of a scene's placements is a guard only on the upper
+/// floor.
 static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
   Event_Start();
   Actor_OffsetPositionAndResetMotion(ACTOR_UPPER_FLOOR_FIRST_PATROL, 0, 0);
@@ -3846,8 +3846,8 @@ struct ActorPlacement gLunpaFortressUnusedWestLunpaCaveActorPlacements[] = {
 };
 
 struct ActorPlacement gLunpaFortressGroundFloorActorPlacements[] = {
-    // Unused: four chests at the map's origin, the display actors of the
-    // unused sword pickups (ACTOR_FIRST_ITEM_DISPLAY).
+    // Unused: four chests at the map's origin, likely those the unused sword
+    // pickups open (ACTOR_FIRST_SWORD_CHEST).
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0 },
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

@@ -261,7 +261,7 @@ enum {
   /// ★ Named from the game: "Ape" (MsgEnemyName)
   FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT,
   /// ★ Named from what the player sees: a log pushed over the grass rolls into
-  /// the river and lies across it (its render)
+  /// the river and lies along the channel, a stepping place across (its render)
   FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED = FLAG_AREA_TEMP_10,
   /// ★ Named from what the player sees: the second area's log rolled into the
   /// river (its render)
@@ -278,8 +278,9 @@ enum {
 
 /// Scene flag, kept while the party stays in the area.
 enum {
-  /// ★ Named from what the player sees: the rock beside the log, moved with
-  /// Move (its render)
+  /// ★ Named from what the player sees: the third area's south rock, beside
+  /// the north river log, moved with Move to the ring south of it, where it
+  /// sinks and stays (its render)
   FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED = FLAG_SCENE_TEMP_14
 };
 

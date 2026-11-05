@@ -1740,7 +1740,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   wait(2);
 }
 
-/// Unused: Alex raises his hands and casts Ply on the lift's statue.
+/// Unused: Alex casts Ply on the lift's statue.
 ///
 /// Nothing calls it. In the game, Alex and Saturos exit over to the lift and
 /// ride it down without it (MercuryLighthouseAerie_AlexAppears).

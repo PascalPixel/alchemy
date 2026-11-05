@@ -241,8 +241,8 @@ enum ColosseumTrialActorId {
   ACTOR_FIRST_FLAG_BEARER = ACTOR_FIRST_PLACED + 11,
   /// A capped pillar (SPRITE_CAPPED_PILLAR) the clearing warrior heaves up and
   /// drops.
-  /// ★ Named from what the player sees: a stone pillar with a glowing yellow
-  /// cap (its render)
+  /// ★ Named from what the player sees: a stone pillar with a yellow cap in
+  /// a white rim (its render)
   ACTOR_TRIAL_PILLAR = ACTOR_FIRST_PLACED + 13
 };
 

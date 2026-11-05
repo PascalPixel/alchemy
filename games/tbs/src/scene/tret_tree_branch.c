@@ -215,8 +215,10 @@ static void UNUSED TretTreeBranch_RunEmptyEvent(void) {
   Event_End();
 }
 
+/// Unused: an empty function nothing refers to, the first of two here.
 static void UNUSED TretTreeBranch_UnusedHookFirst(void) {}
 
+/// Unused: an empty function nothing refers to, the second of two here.
 static void UNUSED TretTreeBranch_UnusedHookSecond(void) {}
 
 /// Unused exchange callback: puts held/repeated keys in the transfer header.

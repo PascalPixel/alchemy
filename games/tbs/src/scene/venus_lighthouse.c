@@ -51,8 +51,9 @@
 ///   of track that sink into four sockets; with all three sunk two lights run
 ///   from the statue, and when the track leads one to the gate it opens
 ///   (FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN, with
-///   FLAG_VENUS_LIGHTHOUSE_SOCKETS_A or _B for where the pillars stand). A
-///   chest holds Dragon Scales.
+///   FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY or
+///   FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY for where the pillars stand).
+///   A chest holds Dragon Scales.
 /// - Venus Lighthouse (SceneId_VenusLighthouseFourthFloor). Floors carry the
 ///   party each way, a west and an east floor switch slide their walls aside
 ///   (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
@@ -142,14 +143,16 @@
 /// ★ Named from what the player sees: the glowing arch at the end of the gold
 /// track on the second floor (its render)
 #define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN 0x301
-/// The first set of sockets.
+/// The pillars stand in every socket of gVenusThirdFloorSockets but the
+/// southeast one.
 /// ★ Named from what the player sees: the square sockets in the third floor
 /// that the pillars sink into (its render)
-#define FLAG_VENUS_LIGHTHOUSE_SOCKETS_A 0x302
-/// The second set of sockets.
+#define FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY 0x302
+/// The pillars stand in every socket of gVenusThirdFloorSockets but the
+/// northwest one.
 /// ★ Named from what the player sees: the square sockets in the third floor
 /// that the pillars sink into (its render)
-#define FLAG_VENUS_LIGHTHOUSE_SOCKETS_B 0x303
+#define FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY 0x303
 /// ★ Named from what the player sees: the gate the gold track leads to in the
 /// third floor's room of three pillars and four sockets (its render)
 #define FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN 0x304
@@ -339,16 +342,15 @@ enum VenusLighthouseGroundFloorActorId {
 /// gVenusLighthouseFirstFloorActorPlacements.
 enum VenusLighthouseFirstFloorActorId {
   /// The three pillars, SPRITE_CAPPED_PILLAR, that Move or a push shifts, the
-  /// nearer
-  /// drawn in front (VenusLighthouse_MoveDepthPillar).
+  /// nearer drawn in front (VenusLighthouse_MoveCappedPillar).
   /// ★ Named from what the player sees: grey pillars with white tops, one alone
   /// and two side by side (its render)
-  ACTOR_FIRST_DEPTH_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_FIRST_CAPPED_PILLAR = ACTOR_FIRST_PLACED,
   /// The two pillars by the gap, carried across it or dropped into it
   /// (VenusLighthouse_CarryPillarAcrossGap).
   /// ★ Named from what the player sees: two grey pillars carved with spirals
   /// beside the gap (its render)
-  ACTOR_FIRST_CARRY_PILLAR = ACTOR_FIRST_DEPTH_PILLAR + 3
+  ACTOR_FIRST_CARRY_PILLAR = ACTOR_FIRST_CAPPED_PILLAR + 3
 };
 
 /// VenusLighthouseSecondFloor's actors, numbering the rows of
@@ -401,11 +403,11 @@ enum VenusLighthouseFourthFloorActorId {
   /// The two platforms, SPRITE_BALANCE_PLATFORM, that rise or sink to the
   /// weight of the
   /// floating pillars set down on them (VenusLighthouse_LowerFloatingPillars).
-  /// ★ Named from what the player sees: a white platform on a pole, the west of
-  /// two (its render)
+  /// ★ Named from what the player sees: a white platform on a carved grey base,
+  /// the west of two (its render)
   ACTOR_BALANCE_WEST = ACTOR_FIRST_PLACED,
-  /// ★ Named from what the player sees: the east white platform on its pole
-  /// (its render)
+  /// ★ Named from what the player sees: a white platform on a carved grey base,
+  /// the east of two (its render)
   ACTOR_BALANCE_EAST,
   /// The four floating pillars Carry sets down
   /// (VenusLighthouse_CarryFloatingPillar).
@@ -862,15 +864,15 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
 /// him rises above his floor). Reached by stepping onto cell behavior 32 of
 /// VenusLighthouseFirstFloor, which the map gives the rows the three capped
 /// pillars stand in; code 31, in the rows that bound them, turns the marks off
-/// again (VenusLighthouse_LeaveDepthPillarRows), and walking into a pillar from
-/// either pushes it (VenusLighthouse_PushDepthPillar).
-static void VenusLighthouse_EnterDepthPillarRows(void) {
+/// again (VenusLighthouse_LeaveCappedPillarRows), and walking into a pillar
+/// from either pushes it (VenusLighthouse_PushCappedPillar).
+static void VenusLighthouse_EnterCappedPillarRows(void) {
   gFadeOverlayWork->actor = Actor_GetById(ACTOR_PARTY_LEADER);
 }
 
 /// Stepping onto cell behavior 31 of VenusLighthouseFirstFloor, in the rows
 /// that bound the capped pillars': the fade overlay follows no one.
-static void VenusLighthouse_LeaveDepthPillarRows(void) {
+static void VenusLighthouse_LeaveCappedPillarRows(void) {
   gFadeOverlayWork->actor = NULL;
 }
 
@@ -1654,9 +1656,9 @@ static void VenusLighthouse_FallThroughFloor(void) {
   Event_End();
 }
 
-/// In VenusLighthouseFirstFloor, Move on one of the three pillars in a row: the
+/// In VenusLighthouseFirstFloor, Move on one of the three capped pillars: the
 /// floor under each pillar is solid again and the nearer pillar draws in front.
-static void VenusLighthouse_MoveDepthPillar(void) {
+static void VenusLighthouse_MoveCappedPillar(void) {
 
   u32 pillarIndex;
   struct Actor *pillar;
@@ -1665,7 +1667,7 @@ static void VenusLighthouse_MoveDepthPillar(void) {
   s32 column;
   s32 row;
 
-  Actor_GetById(ACTOR_FIRST_DEPTH_PILLAR);
+  Actor_GetById(ACTOR_FIRST_CAPPED_PILLAR);
   Event_Start();
   destinationColumn = 12;
   destinationRow = 44;
@@ -1675,24 +1677,24 @@ static void VenusLighthouse_MoveDepthPillar(void) {
   MapGrid_CopyCellAttributes(17, 51, 2, 2, destinationColumn, destinationRow);
   pillarIndex = 0;
   do {
-    pillar = Actor_GetById(pillarIndex + ACTOR_FIRST_DEPTH_PILLAR);
+    pillar = Actor_GetById(pillarIndex + ACTOR_FIRST_CAPPED_PILLAR);
     column = pillar->x.fixed >> 20;
     row = pillar->z.fixed >> 20;
     MapGrid_CopyCellAttributes(12, 50, 1, 1, column, row);
     pillarIndex++;
   } while (pillarIndex <= 2);
-  Actor_SwapPositionsByDepth(ACTOR_FIRST_DEPTH_PILLAR + 2,
-                             ACTOR_FIRST_DEPTH_PILLAR + 1);
+  Actor_SwapPositionsByDepth(ACTOR_FIRST_CAPPED_PILLAR + 2,
+                             ACTOR_FIRST_CAPPED_PILLAR + 1);
   Event_End();
 }
 
-/// In VenusLighthouseFirstFloor, pushing one of the three pillars in a row.
-static void VenusLighthouse_PushDepthPillar(void) {
+/// In VenusLighthouseFirstFloor, pushing one of the three capped pillars.
+static void VenusLighthouse_PushCappedPillar(void) {
 
   Event_Start();
   MapGrid_CopyCellAttributes(19, 44, 4, 1, 12, 44);
   VenusLighthouse_PushAdjacentPillar();
-  VenusLighthouse_MoveDepthPillar();
+  VenusLighthouse_MoveCappedPillar();
   Event_End();
 }
 
@@ -2098,9 +2100,9 @@ static void VenusLighthouse_MoveSwitchPillar(void) {
                 gVenusThirdFloorSockets[0].x &&
             Actor_GetById(ACTOR_FIRST_SWITCH_PILLAR)->z.fixed >> 20 ==
                 gVenusThirdFloorSockets[0].z) {
-          GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SOCKETS_A);
+          GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY);
         } else {
-          GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SOCKETS_B);
+          GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY);
         }
         GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN);
         break;
@@ -2874,16 +2876,16 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_WEST:
       FieldEffect_StartFadeOverlay(0);
       wait(2);
-      actor = Actor_GetById(ACTOR_FIRST_DEPTH_PILLAR);
+      actor = Actor_GetById(ACTOR_FIRST_CAPPED_PILLAR);
       actor->motionFlags = 0;
       actor->update = Actor_SetFlagBitByRelativeDepth;
-      actor = Actor_GetById(ACTOR_FIRST_DEPTH_PILLAR + 1);
+      actor = Actor_GetById(ACTOR_FIRST_CAPPED_PILLAR + 1);
       actor->motionFlags = 0;
       actor->update = Actor_SetFlagBitByRelativeDepth;
-      actor = Actor_GetById(ACTOR_FIRST_DEPTH_PILLAR + 2);
+      actor = Actor_GetById(ACTOR_FIRST_CAPPED_PILLAR + 2);
       actor->motionFlags = 0;
       actor->update = Actor_SetFlagBitByRelativeDepth;
-      VenusLighthouse_MoveDepthPillar();
+      VenusLighthouse_MoveCappedPillar();
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LADDERS_FROM_GAP:
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_NORTH:
@@ -3039,7 +3041,7 @@ s32 VenusLighthouse_Initialize(void) {
         wait(1);
         MapGrid_CopyCellsTo(111, 59, 109, 37, 1, 2);
         MapGrid_CopyCellAttributes(45, 37, 1, 1, 45, 38);
-        if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SOCKETS_A)) {
+        if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY)) {
           Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR, PIXELS(776),
                             PIXELS(664));
           Actor_SetPosition(ACTOR_FIRST_SWITCH_PILLAR + 1, PIXELS(840),
@@ -3775,7 +3777,7 @@ static s32 VenusLighthouse_RouteLight(struct Actor *interpreter) {
   pillarPosition.z = light->z.fixed;
   pillar = Actor_FindAtPosition(&pillarPosition, 0);
   // A light does reach an empty socket: on the third floor one solution, the
-  // one FLAG_VENUS_LIGHTHOUSE_SOCKETS_A records, leaves the south-east
+  // one FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY records, leaves that
   // socket empty, and the light sent there always arrives. With no pillar
   // the reads below go through address 0, into the BIOS, and that light goes
   // out (gVenusLightGoesOut) while the other opens the gate (render probe
@@ -4841,16 +4843,16 @@ struct Trigger gVenusLighthouseFirstFloorTriggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR, CONDITION_ALWAYS, VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_TO_DRIFTING_FLOOR },
     { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_DRIFT_SOUTH, CONDITION_ALWAYS, EVENT(VenusLighthouse_DriftSouth) },
     { TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_HOLE, CONDITION_ALWAYS, EVENT(VenusLighthouse_FallThroughFloor) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 31, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushDepthPillar) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 32, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushDepthPillar) },
-    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(VenusLighthouse_LeaveDepthPillarRows) },
-    { TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(VenusLighthouse_EnterDepthPillarRows) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 31, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushCappedPillar) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 32, CONDITION_ALWAYS, EVENT(VenusLighthouse_PushCappedPillar) },
+    { TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(VenusLighthouse_LeaveCappedPillarRows) },
+    { TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(VenusLighthouse_EnterCappedPillarRows) },
     { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CARRY_PILLARS, CONDITION_ALWAYS, EVENT(VenusLighthouse_JumpOrPushCarryPillar) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_THUNDER_CROWN, FIND_ITEM(ITEM_THUNDER_CROWN) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VENUS_LIGHTHOUSE_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_DEPTH_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveDepthPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_DEPTH_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveDepthPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_DEPTH_PILLAR + 2, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveDepthPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CAPPED_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveCappedPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CAPPED_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveCappedPillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CAPPED_PILLAR + 2, CONDITION_ALWAYS, EVENT(VenusLighthouse_MoveCappedPillar) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CARRY_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_LiftCarryPillar) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CARRY_PILLAR + 1, CONDITION_ALWAYS, EVENT(VenusLighthouse_LiftCarryPillar) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CARRY_PILLAR, CONDITION_ALWAYS, EVENT(VenusLighthouse_LiftCarryPillar) },

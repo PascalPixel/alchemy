@@ -623,9 +623,11 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   Actor_SetPosition(ACTOR_PLATFORM_SHADOW, 0, 0);
 }
 
-UNUSED static void SolSanctumEruption_UnusedCallbackA(void) {}
+/// Unused: an empty function nothing refers to.
+UNUSED static void SolSanctumEruption_UnusedNoOpA(void) {}
 
-UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
+/// Unused: an empty function nothing refers to.
+UNUSED static void SolSanctumEruption_UnusedNoOpB(void) {}
 
 /// Plays the collapse after the cut from the Elemental Star Room. It plays at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from the

@@ -216,7 +216,7 @@ actor appears. The party takes ids 0 to 7, and the rows take the ids from
 `ACTOR_FIRST_PLACED` in table order; a row whose condition fails puts nobody
 in the scene, and its id stays empty, so that every actor keeps one number
 in its scene and the scene's code can name it once. On Mercury Lighthouse's
-upper floor the blue statue has one row for its place on the ledge and
+upper floor the blue statue has one row for its place beside a jet of water and
 another for where it lands after it falls, and only one of the two appears.
 A row whose sprite is one of the party's
 characters takes that character's own id instead, so Garet in Vale after

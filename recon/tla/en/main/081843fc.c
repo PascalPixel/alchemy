@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 1999 of 4580, 1561 with slots and pool
-// offsets normalized, 393 with registers normalized as well. Every stack slot
+// Measured 2026-11-05 (tla-en): differ 1276 of 4580, 1046 with slots and pool
+// offsets normalized, 242 with registers normalized as well. Every stack slot
 // has the listing's reference count at the listing's offset. Measure
 // 081843fc,081848ec together.
 // What round 3 settled by reading the listing:
@@ -14,17 +14,35 @@
 //   (literal 0x05000202); the instruction diff cannot show a wrong literal, so
 //   every pool still needs checking at adoption.
 // - The meteor has one b = 0x80000 - drift across its two sites (slot 88).
+// What round 4 settled by reading the listing:
+// - Reload rotates its scratch registers, so one stray reload shifts every later
+//   figure: raw moved by hundreds on single edits. Work from the top down.
+// - A value set at the top of a block can sink past its calls in sched2: bolts is
+//   set first in its block, which is what keeps r5 out of reload's choice (1439 to
+//   1286). The second moon's scattered particles walk on their own pointer, so
+//   model2 is r7 with the giv in r6 (1619 to 1485).
+// - Values that start from a known constant step from their own name (shade -
+//   frame * 2 + 1180, sx - frame * 61845 + K, x - frame * 8 + 576): CSE keeps the
+//   constant in its register (1858 to 1745).
 // What is left:
-// - PRE (gcse) shares (b >> 31) and off + idx across a join here, where the
-//   listing rebuilds them after it (the second off + idx is lexically idx +
-//   off, with its own n * 2). The sign shift is avoided with a plain-C spelling
-//   of the halves; n is not, and the burst rotates from there. No limit in
-//   gcse.c explains it (469 blocks, 28 PRE substitutions).
-// - e takes r6 where the listing has r7, so each resource section rotates among
-//   r5, r6, r7: e's priority (20 refs over 40 insns) beats cells and the copy's
-//   address here, and the listing has them first.
-// - The tone is s16 here, a sign extension the listing lacks; as s32 the last
-//   subtraction sinks past two calls and the figure rises by 34.
+// - The barrier on idx is untagged and stands in for what stops the sharing: the
+//   listing rebuilds off + idx after the if (a != 0) join, and neither cse1's skip
+//   nor PRE shares it there. Forms tried without a barrier: the if as one to three
+//   ifs, with an else, a goto, one-pass blocks; off as a stepped variable (its slot
+//   says it is a loop.c giv), i * 12 at each site. As measured with the barrier
+//   the burst lines up row for row.
+// - The second site's 0x80000 - drift comes after the p->x branch in the listing;
+//   here it stays before it, since after the branch loop.c hoists it (savings 3,
+//   life 5, threshold 15 against 218 insns) and cse2 then shares it with bx. That
+//   is where rotation is lost after the burst (from row 1846).
+// - e takes r6 where the listing has r7, and the copy's address r5 or r7 where the
+//   listing has r5 or r6: sections 1 to 5 rotate among r5, r6, r7 (about 200 rows).
+//   In the listing cells, then the address, then e get their registers, which
+//   neither priority nor local-alloc explains; per-section e gives r5.
+// - The motion loop's i * 448 giv is second pass in the listing (slot 24), first
+//   pass here (slot 40); spellings of the index do not move it. j takes r8 and the
+//   i * 2 + 36 giv sl where the listing has them the other way (j 15/74 against
+//   17/132); setting j earlier spills it. Rotation is lost from there on.
 // BattleEffect_RunCatastrophe; the same calls and control flow as the listing.
 // The function runs on through listing 081848ec, whose Func_081848ec and
 // Func_08185b9c are labels inside it (the second the first loop's test).
@@ -1564,8 +1582,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         for (i = 0; i != 164; i++) {
           FIXED_ADDRESS((struct EffectStep *), 0x02016d00, Data_02016d00)[i].variant = -1;
         }
-        slideStep = 0;
         slide = 0x800000;
+        slideStep = 0;
       }
       if (frame == 16) {
         work->transferMode = 2;

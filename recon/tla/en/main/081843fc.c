@@ -1684,7 +1684,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model3 = Render_AllocateModelList(1);
         model3->kind = 6;
         model3->texture = &texture3;
-        model3->shade = 0;
+        model3->shade = zero;
         model3->scrollV = 0;
         model3->vertices = Data_02011000;
         if (frame == 16) {

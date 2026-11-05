@@ -1,4 +1,3 @@
-// Matches: differ 0 (tla-en, 5 November 2026).
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"

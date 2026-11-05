@@ -1,6 +1,5 @@
-// Draft, differ 47 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// resource_698_c_0200180c.c (overlay 698's Func_0200180c, differ 47 there), whose
-// header says what it is, what still differs and what was tried.
+// Draft, differ 4: overlay 6a3's copy of the function drafted in
+// resource_6ab_c_02003f9c.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -37,26 +36,40 @@ s32 Func_020044dc(void) {
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
   struct SpotState *state = &Data_02005b88;
-  struct Spot *spot = state->spots;
+  struct Spot *spot;
+  s32 first;
+  s32 count;
   s32 i;
-  s16 count = state->count;
 
-  for (i = 0; i < count; i++, spot++) {
+  {
+    s32 zero = 0;
+    first = state->count;
+    i = zero;
+    spot = state->spots;
+  }
+  count = (u16)state->count;
+  if (i < first) {
+  next:
     if (spot->x == x && spot->z == z) {
       if (!GameFlag_Test(spot->flag)) {
         Func_0200413c(state, spot);
         GameFlag_SetBit(spot->flag);
         state->current = i;
-        break;
+        goto done;
       }
       if (i == state->current)
-        break;
+        goto done;
       state->current = i;
       Func_020041ac(state, spot);
       GameFlag_SetByte(state->flagByte, x);
       GameFlag_SetByte(state->flagByte + 8, z);
       return 1;
     }
+    i++;
+    spot++;
+    if (i < (s16)count)
+      goto next;
   }
+done:
   return 0;
 }

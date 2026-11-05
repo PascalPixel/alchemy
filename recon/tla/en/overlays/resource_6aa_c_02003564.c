@@ -1,183 +1,146 @@
+// Draft, differ 8: overlay 6aa's copy of the function drafted in
+// resource_6ab_c_02003070.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
-#include "actor.h"
-#include "fixed_math.h"
 #include "ram_buffer.h"
-#include "scene_tables.h"
-#include "system/main_routine_work.h"
-
-/// A point on the map: 16.16 fixed-point pixels.
-struct Position {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-extern u32 gInput;
-extern s16 gData_020068b0;
-extern const s16 gData_02005798[];
-s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
-
+#include "actor.h"
+#include "main_routine_work.h"
+#include "system/input.h"
+s32 ArcTan2(s32, s32);
 void Func_02003284(void);
-void Func_02004bc0(struct Actor *actor, s32 mode);
-void Func_02004bf8(struct Actor *actor, s32 x, s32 y, s32 z);
-void Func_02004c00(struct Actor *actor);
-s32 Func_02004c10(u8 layer, s32 x, s32 z);
-s32 Func_02004c70(struct Actor *actor);
-s32 Func_02004c78(s32 *a, s32 radiusA, struct Position *b, s32 radiusB);
-s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
-void Actor_SetAnimationSpeed(struct Actor *actor, s32 speed);
-void Vector_AddPolarOffsetFar(s32 length, s32 angle, struct Position *position);
-void wait(s32 frames);
-s32 ArcTan2(s32 z, s32 x);
-void Func_020031f8(void);
+void Func_02004bc0(struct Actor *, s32);
+void Func_02004bf8(struct Actor *, s32, s32, s32);
+void Func_02004c00(struct Actor *);
+s32 Func_02004c10(s32, s32, s32);
+s32 Func_02004c70(struct Actor *);
+s32 Func_02004c78(s32 *, s32, s32 *, s32);
+s32 Map_GetTerrainHeight(s32, s32, s32);
+void Actor_SetAnimationSpeed(struct Actor *, s32);
+void Vector_AddPolarOffsetFar(s32, s32, s32 *);
+s32 IwramMulQ16(s32, s32) __attribute__((long_call));
+void wait(s32);
+void Func_020031f8();
+extern s16 gData_02005798[];
+extern volatile s16 gData_020068b0;
 
 void Func_02003564(void) {
-  struct Position probe;
-  s32 startBehavior;
-  s32 x;
-  s32 z;
-  s32 startX;
-  s32 startZ;
-  u8 *layer;
+  s32 position[3];
+  s32 startValue;
+  s32 lastX, lastZ, x, z;
+  u8 *terrain;
   s32 radius;
-  struct Actor *actor;
-  struct Position *next;
-  s32 nextBehavior;
+  struct Actor *object;
+  s32 *p;
+  s32 *q;
+  s32 dx, dz, distance, i, value, j;
+  s32 angle;
   struct Actor *other;
-  struct Position *position;
-  u8 *flags;
-  s32 i;
-  s32 frame;
-  u16 heading;
-  s32 dx;
-  s32 dz;
-  s32 distance;
 
-  actor = ObjectTable_Get(gMainRoutineWork.currentOwner);
+  object = ObjectTable_Get(gMainRoutineWork.currentOwner);
   gData_020068b0 = 0;
-
-top:
+retry:
   Func_02003284();
-  actor->speedLimit = PIXELS(1);
-  actor->acceleration = PIXELS(1) / 2;
-  actor->targetX = 0x80000000;
-  actor->targetZ = 0x80000000;
-  actor->velocityX = 0;
-  actor->velocityZ = 0;
-
-  position = &probe;
-  position->x = startX = (actor->x & 0xfff00000) + PIXELS(8);
-  position->y = actor->y;
-  position->z = startZ = (actor->z & 0xfff00000) + PIXELS(8);
-  x = startX;
-  z = startZ;
-  layer = &actor->terrainId;
-  startBehavior = Func_02004c10(*layer, x, z);
-  dx = x - actor->x;
-  dz = z - actor->z;
+  object->speedLimit = 0x10000;
+  object->acceleration = 0x8000;
+  object->targetX = 0x80000000;
+  object->targetZ = 0x80000000;
+  object->velocityX = 0;
+  object->velocityZ = 0;
+  p = position;
+  x = (object->x & 0xfff00000) + 0x80000;
+  p[0] = x;
+  p[1] = object->y;
+  z = (object->z & 0xfff00000) + 0x80000;
+  p[2] = z;
+  lastX = x;
+  lastZ = z;
+  terrain = &object->terrainId;
+  startValue = Func_02004c10(*terrain, lastX, lastZ);
+  dz = lastZ - object->z;
+  dx = lastX - object->x;
   distance = IwramMulQ16(dx, dx);
   distance += IwramMulQ16(dz, dz);
-  if (distance < PIXELS(4)) {
-    heading = gData_02005798[(gInput >> 4) & 15];
-    if (heading == 0xffff) {
-      goto done;
-    }
+  if (distance < 0x40000) {
+    angle = gData_02005798[(gInput.held >> 4) & 15];
+    if ((u16)angle == 0xffff)
+      goto end;
   } else {
-    heading = ArcTan2(z - actor->z, x - actor->x);
-    heading = (heading + 0x2000) & -0x4000;
+    angle = (s16)ArcTan2(lastZ - object->z, lastX - object->x);
+    angle = (s16)((angle + 0x2000) & 0xffffc000);
   }
-  Vector_AddPolarOffsetFar(PIXELS(16), heading, &probe);
-  nextBehavior = Func_02004c10(*layer, position->x, position->z);
-  if (nextBehavior == 255 ||
-      Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y > PIXELS(8)) {
-    actor->angle = heading;
-    actor->velocityX = 0;
-    actor->velocityZ = 0;
-    actor->x = startX;
-    actor->z = startZ;
-    goto done;
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, position);
+  value = Func_02004c10(*terrain, p[0], p[2]);
+  if (value != 255 &&
+      Map_GetTerrainHeight(*terrain, p[0], p[2]) - object->y <= 0x80000) {
+    p[0] = x;
+    p[2] = z;
+    object->speedLimit = 0x20000;
+    object->acceleration = 0x1999;
+    object->action = 0;
+    Func_02004bf8(object, x, object->y, z);
+    Func_02004bc0(object, 2);
+    Actor_SetAnimationSpeed(object, 48);
+    i = 0;
+  } else {
+    object->angle = angle;
+    object->velocityX = 0;
+    object->velocityZ = 0;
+    object->x = x;
+    object->z = z;
+    goto end;
   }
-  position->x = startX;
-  position->z = startZ;
-  actor->speedLimit = PIXELS(2);
-  actor->acceleration = 0x1999;
-  actor->action = 0;
-  Func_02004bf8(actor, startX, actor->y, startZ);
-  Func_02004bc0(actor, 2);
-  Actor_SetAnimationSpeed(actor, 48);
-  frame = 0;
-  goto wait1;
-step1:
-  if (gData_020068b0 != 0) {
-    goto done;
+  while (i <= 179 && Func_02004c70(object) == 0) {
+    if (gData_020068b0)
+      goto end;
+    wait(1);
+    i++;
   }
-  wait(1);
-  frame++;
-wait1:
-  if (frame <= 179 && Func_02004c70(actor) == 0) {
-    goto step1;
-  }
-  actor->update = Func_020031f8;
-  goto test;
-body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y > PIXELS(8)) {
-    goto stop;
-  }
-  if (gData_020068b0 != 0) {
-    goto done;
-  }
-  radius = actor->radius - 2;
-  other = Ram_HeapSlots->scriptObjects;
-  flags = &other->collisionFlags;
-  for (i = 0; i < 64; i++, flags += 128, other++) {
-    if (other->script != NULL && (*flags & 1) && other != actor) {
-      if (Func_02004c78(&other->x, radius, &probe, other->radius - 2) >= 0) {
-        goto stop;
-      }
+  object->update = (void (*)(void))Func_020031f8;
+  goto next;
+  do {
+    if (Map_GetTerrainHeight(*terrain, q[0], q[2]) - object->y > 0x80000)
+      goto blocked;
+    if (gData_020068b0)
+      goto end;
+    radius = object->radius - 2;
+    other = Ram_HeapSlots->scriptObjects;
+    for (j = 0; j <= 63; j++, other++) {
+      if (other->script != NULL && (other->collisionFlags & 1) &&
+          other != object &&
+          Func_02004c78(&other->x, radius, position, other->radius - 2) >= 0)
+        goto blocked;
     }
-  }
-  x = next->x;
-  z = next->z;
-  actor->speedLimit = PIXELS(2);
-  actor->acceleration = 0x1999;
-  Func_02004bf8(actor, next->x, next->y, next->z);
-  frame = 0;
-  goto wait2;
-step2:
-  wait(1);
-  frame++;
-wait2:
-  if (frame <= 179 && Func_02004c70(actor) == 0 && gData_020068b0 == 0) {
-    goto step2;
-  }
-  if (gData_020068b0 != 0) {
-    goto done;
-  }
-  if (nextBehavior != startBehavior) {
-    goto blocked;
-  }
-test:
-  Vector_AddPolarOffsetFar(PIXELS(16), heading, &probe);
-  next = &probe;
-  nextBehavior = Func_02004c10(*layer, next->x, next->z);
-  if (nextBehavior != 255) {
-    goto body;
-  }
-stop:
-  actor->speedLimit = PIXELS(2);
-  actor->acceleration = PIXELS(1);
-  Func_02004bf8(actor, x, actor->y, z);
-  Func_02004c00(actor);
-  wait(2);
-  asm("" : "=r"(actor) : "0"(actor) : "sfp");
-  goto top;
-
+    lastX = q[0];
+    lastZ = q[2];
+    object->speedLimit = 0x20000;
+    object->acceleration = 0x1999;
+    i = 0;
+    Func_02004bf8(object, q[0], q[1], q[2]);
+    while (i <= 179 && Func_02004c70(object) == 0 && gData_020068b0 == 0) {
+      wait(1);
+      i++;
+    }
+    if (gData_020068b0)
+      goto end;
+    if (value != startValue)
+      goto stop;
+  next:
+    Vector_AddPolarOffsetFar(0x100000, angle, position);
+    q = position;
+    value = Func_02004c10(*terrain, q[0], q[2]);
+  } while (value != 255);
 blocked:
+  object->speedLimit = 0x20000;
+  object->acceleration = 0x10000;
+  Func_02004bf8(object, lastX, object->y, lastZ);
+  Func_02004c00(object);
+  wait(2);
+  goto retry;
+stop:
   wait(10);
-done:
-  actor->update = NULL;
-  actor->actionFlags |= 1;
-  actor->acceleration = PIXELS(1) / 4;
-  Func_02004bc0(actor, 1);
+end:
+  object->update = NULL;
+  object->actionFlags |= 1;
+  object->acceleration = 0x4000;
+  Func_02004bc0(object, 1);
 }

@@ -1,63 +1,82 @@
-// Draft of overlay 6b9's Func_0200029c, translated from its listing.
-#include "types.h"
+// Draft, differ 23: overlay 6b9's copy of the function drafted in
+// resource_691_c_020038dc.c, whose header says what it is and what still differs.
 #include "call.h"
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-s32 HeapSlot_AllocFar();
-s32 Resource_GetTableEntry();
-s32 Func_02000560();
-s32 Resource_FindFreeEntry();
-s32 VramCache_Load();
-s32 Func_020005f0();
-s32 Task_Add();
-extern u8 Func_0200015c[];
+#include "types.h"
+#include "system/task.h"
+
+extern char ResourceId_FallingRock;
+
+struct Rock {
+  u8 unk00[24];
+  s32 timer;
+};
+
+struct RockSprite {
+  u8 unk00[5];
+  u8 unk05_0 : 5;
+  u8 unk05_5 : 1;
+  u8 unk05_6 : 2;
+  u8 unk06[3];
+  u8 unk09_0 : 2;
+  u8 priority : 2;
+  u8 palette : 4;
+  u8 unk0a[20];
+  u16 unk1e;
+  u8 unk20[8];
+};
+
+struct RockWork {
+  u8 tiles[0x500];
+  struct Rock rocks[64];
+  struct RockSprite sprites[64];
+  s16 next;
+  u16 tileBase;
+  u16 resource;
+};
+
+struct RockWork *HeapSlot_AllocFar(s32 slot, s32 size);
+void *Resource_GetTableEntry(s32 id);
+void Func_02000560(void *entry, void *destination);
+s32 Resource_FindFreeEntry(void);
+s32 VramCache_Load(s32 entry, s32 size, void *data);
+void Func_020005f0(struct RockSprite *sprite, s32 width, s32 height,
+                   u32 attributes, s32 tile);
+void Func_0200015c(void);
 
 void Func_0200029c(void) {
-  u8 frame[4];
-  s32 v_r0, v_r10, v_r2, v_r3, v_r5, v_r6, v_r7, v_r8;
+  struct RockWork *work = HeapSlot_AllocFar(220, sizeof(struct RockWork));
+  s32 entry;
+  s32 tile;
+  s32 i;
+  struct Rock *rock;
+  struct RockSprite *sprite;
 
-  v_r7 = v_r10;
-  v_r6 = v_r8;
-  v_r0 = HeapSlot_AllocFar(220, 0x1608);
-  v_r6 = v_r0;
-  Call1((void (*)())Resource_GetTableEntry, 0x1f0);
-  Func_02000560();
-  v_r0 = Resource_FindFreeEntry();
-  v_r5 = v_r0;
-  v_r0 = VramCache_Load();
-  v_r10 = v_r0;
-  v_r3 = v_r6 + 0x1602;
-  FIELD_AT(v_r3, u16, 0) = v_r10;
-  v_r3 = v_r6 + 0x1604;
-  FIELD_AT(v_r3, u16, 0) = v_r5;
-  v_r7 = v_r6 + 0x500;
-  v_r5 = v_r6 + 0xc00;
-  v_r8 = 63;
-L_020082f4:
-  ;
-  /* XXX stack argument */;
-  Call4((void (*)())Func_020005f0, v_r5, 8, 8, 0x40000000);
-  v_r3 = FIELD_AT(v_r5, u8, 5);
-  v_r3 = v_r3 | 32;
-  v_r2 = FIELD_AT(v_r5, u8, 9);
-  FIELD_AT(v_r5, u8, 5) = v_r3;
-  v_r3 = 15 & v_r2;
-  v_r3 = v_r3 & -13;
-  FIELD_AT(v_r5, u8, 9) = v_r3;
-  FIELD_AT(v_r5, u16, 30) = 240;
-  v_r8 = v_r8 + -1;
-  FIELD_AT(v_r7, s32, 24) = -1;
-  v_r5 = v_r5 + 40;
-  v_r7 = v_r7 + 28;
-  if (v_r8 >= 0)
-    goto L_020082f4;
-  v_r2 = v_r6 + 0x1600;
-  FIELD_AT(v_r2, u16, 0) = 0;
-  Call4((void (*)())Task_Add, (s32)Func_0200015c, 0x480, v_r2, 0);
-  v_r8 = v_r3;
-  v_r10 = v_r5;
+  Func_02000560(Resource_GetTableEntry((s32)&ResourceId_FallingRock), work);
+  tile = VramCache_Load(entry, 0x500, work);
+  entry = Resource_FindFreeEntry();
+  work->tileBase = tile;
+  rock = work->rocks;
+  work->resource = entry;
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 25 of 83 instructions differ in tla-en. */
+  asm("");
+  sprite = work->sprites;
+  i = 63;
+  do {
+    Func_020005f0(sprite, 8, 8, 0x40000000, tile);
+    sprite->unk05_5 = 1;
+    sprite->palette = 0;
+    sprite->priority = 0;
+    sprite->unk1e = 240;
+    rock->timer = -1;
+    i--;
+    sprite++;
+    rock++;
+  } while (i >= 0);
+  {
+    s32 zero = 0;
+
+    work->next = zero;
+  }
+  Call2((void (*)())Task_Add, (s32)Func_0200015c, 0x480);
 }

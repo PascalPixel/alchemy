@@ -1,9 +1,5 @@
-// Draft of overlay 6aa's Func_020024c0, written from its listing: it keeps the
-// active members' HP, runs Func_02004d08 for the leader, then counts the
-// members still standing and lists in the event work those it downed. Differ 90
-// of 108. Left: register allocation (the native keeps the work in r6, the count
-// in r7 and the leader in r8, and the owner byte's base and offset in sl and r8
-// across the call, where this spills them to a 20-byte stack frame).
+// Draft, differ 70: overlay 6aa's copy of the function drafted in
+// resource_6ad_c_02002800.c, whose header says what it is and what still differs.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -42,7 +38,7 @@ void Func_020024c0(void) {
     if (i < count)
       goto save;
   }
-  Call2((void (*)())Func_02004da8, -10, 0);
+  Func_02004da8(-10, 0);
   work->downCount = 0;
   work->standingCount = 0;
   Func_02004d08(leader, 258);
@@ -50,14 +46,12 @@ void Func_020024c0(void) {
   if (i < count) {
   check:
     {
-      struct BattleUnit *unit;
-      u8 *owner = &gMainRoutineWork.activeOwners[i];
-      unit = Unit_Get(*owner);
+      struct BattleUnit *unit = Unit_Get(gMainRoutineWork.activeOwners[i]);
 
       if (unit->hp > 0) {
         work->standingCount++;
       } else if (hp[i] != 0) {
-        work->downOwners[(s16)work->downCount++] = *owner;
+        work->downOwners[(s16)work->downCount++] = *(gMainRoutineWork.activeOwners + i);
         work->unk16a = 0xffff;
         ((u8 *)unit)[0x131] = 0;
       }

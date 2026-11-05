@@ -12,5 +12,13 @@
     { "region": "France", "serial": "AGSF", "sha1": "42f3b262c16cfc5bde1fa2b25016fb74046de1b3" },
     { "region": "Italy", "serial": "AGSI", "sha1": "ca45e04b26b2f040ac63e679a459d21869f5f28d" }
   ],
-  "status": "complete"
+  "project": "Alchemy",
+  "status": "complete",
+  "targets": ["GBA"],
+  "approach": "Matching decompilation: readable C, assembly and editable assets rebuild each edition byte for byte.",
+  "started": "2026-07-16",
+  "maintainers": [{ "name": "Pascal Pixel", "link": "https://github.com/PascalPixel" }],
+  "links": [{ "label": "Documentation", "url": "https://alchemy.pascalpixel.com/tbs" }],
+  "tags": ["Japanese", "English", "German", "Spanish", "French", "Italian"],
+  "notes": "All six editions rebuild byte for byte from this repository's source and assets alone. The documentation explains how the game works, written from that source, with recordings from the game itself."
 }

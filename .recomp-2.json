@@ -12,5 +12,12 @@
     { "region": "France", "serial": "AGFF", "sha1": "f14855c0f8c87a95cc52189e8e3b2bd9df186322" },
     { "region": "Italy", "serial": "AGFI", "sha1": "57f1d005666b81645e55412658427e27099c5907" }
   ],
-  "status": "in-progress"
+  "project": "Alchemy",
+  "status": "in-progress",
+  "targets": ["GBA"],
+  "approach": "Matching decompilation: readable C, assembly and editable assets rebuild each edition byte for byte.",
+  "maintainers": [{ "name": "Pascal Pixel", "link": "https://github.com/PascalPixel" }],
+  "links": [{ "label": "Docs (The Broken Seal)", "url": "https://alchemy.pascalpixel.com/tbs" }],
+  "tags": ["Japanese", "English", "German", "Spanish", "French", "Italian"],
+  "notes": "Being matched function by function in all six editions. The parts not yet rewritten still come from your own copy of the game. The documentation covers The Broken Seal so far."
 }

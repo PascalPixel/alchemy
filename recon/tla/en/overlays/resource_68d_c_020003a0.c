@@ -1,14 +1,11 @@
-// Draft, differ 28 of 126 (tla-en, 2026-11-05).
-// Sets the blend and loads two pictures (Data_02002620 and Data_02002af8) into
-// VRAM for the sprites at Data_02003060 and Data_02003030, then schedules
-// Func_020002b4.
-// The wrapper keeps 0x1000 out of one shared pseudo, so 8 takes r8 as in the
-// native. Address locals give the native's load before each call. Left: order
-// only, the blend registers' constants after buffer's copy, r7's 32 taken at the
-// first use, and the last two bitfield stores.
+// Draft, differ 14 of 126 (tla-en, 2026-11-05). Sets the blend and loads two pictures
+// into VRAM for the sprites at Data_02003060 and Data_02003030, then schedules
+// Func_020002b4. Left: the second sprite's last bit-field store comes before the global
+// stores in the native, after them here.
 #include "types.h"
 #include "call.h"
 #include "io_reg.h"
+#include "system/io_write.h"
 
 #define TASK_PASS_VBLANK 0x480
 
@@ -52,17 +49,15 @@ void Func_020002b4(void);
 
 void Func_020003a0(void) {
   /* FAKEMATCH(wrapper): forwarded, so that its 0x1000 goes straight to r0; as a
-   * direct call, 54 of 126 instructions differ in tla-en. */
+   * direct call, 53 of 126 instructions differ in tla-en. */
   void *buffer = (void *)Value1((s32 (*)())Heap_Alloc, 0x1000);
-  s32 control = 0x3f40;
-  s32 alpha = 0x1000;
   s32 *firstSlot;
   s32 *firstTile;
   s32 *secondSlot;
   s32 *secondTile;
 
-  REG_BLDCNT = control;
-  REG_BLDALPHA = alpha;
+  Io_Write16(0x3f40, &REG_BLDCNT);
+  Io_Write16(0x1000, &REG_BLDALPHA);
   Func_02001f6c(Data_02002620, buffer);
   firstSlot = &gData_02003020;
   *firstSlot = Resource_FindFreeEntry();

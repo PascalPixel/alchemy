@@ -879,13 +879,16 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
 
           for (i = 0; i != 128; i++) {
             s32 c = *fade;
-            s32 r = 31;
-            u16 g = (u16)c >> 5 & 31;
             s32 b = (u16)c >> 10 & 31;
+            s32 g = (u16)c >> 5 & 31;
+            s32 m = 31;
+            s32 r;
 
+            __asm__("" : "=r"(r) : "0"(m));
             r &= c;
 
-            *fade++ = (b + 1) << 10 | (g + 1) << 5 | (r + 1);
+            r += 1;
+            *fade++ = (b + 1) << 10 | (g + 1) << 5 | r;
           }
           }
         }
@@ -899,7 +902,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
             s32 c = *fade;
             s32 b = (u16)c >> 10 & 31;
             s32 g = (u16)c >> 5 & 31;
-            s32 r = c & 31;
+            s32 m = 31;
+            s32 r = m & c;
 
             if (r < 23)
               r++;
@@ -907,7 +911,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
               g--;
             if (b < 15)
               b++;
-            *fade++ = b << 10 | g << 5 | r;
+            { u16 v = b << 10 | g << 5 | r; *fade++ = v; }
           }
           }
         }
@@ -1736,7 +1740,8 @@ dead = i / 3;
         s32 c = *fade;
         s32 b = (u16)c >> 10 & 31;
         s32 g = (u16)c >> 5 & 31;
-        s32 r = c & 31;
+        s32 m = 31;
+        s32 r = m & c;
 
         if (r <= 30)
           r++;
@@ -1744,7 +1749,7 @@ dead = i / 3;
           g++;
         if (b <= 30)
           b++;
-        *fade++ = b << 10 | g << 5 | r;
+        { u16 v = b << 10 | g << 5 | r; *fade++ = v; }
       }
       }
     }

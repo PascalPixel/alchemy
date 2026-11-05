@@ -895,13 +895,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
 
             texture.pixels = gMapCellBuffer;
             sh = -16;
+            d = frame - st;
             model->kind = 6;
             model->shade = sh;
-            d = frame - st;
             Render_ResetTransformState();
             s = d << 13;
             if (i > 1) {
-              ty = -0x2c0000;
+              s32 ty = -0x2c0000;
+
               if (frame > 539) {
                 ty += (frame - 539) << 20;
               }

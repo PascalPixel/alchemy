@@ -2275,9 +2275,9 @@ CLEAR(buffer, 0x1000);
       tex = &texture132;
       tex->width = 6;
       tex->height = 6;
+      model->matrix = matrix;
       tex->pixels = buffer;
       model->kind = 7;
-      model->matrix = matrix;
       model->texture = tex;
       model->mesh = gData_081990d0;
       for (i = 0; i != 4; i++) {

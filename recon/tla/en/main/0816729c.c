@@ -220,9 +220,8 @@ static inline void FILL(void *dst, s32 size, s32 value) {
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
     BattleEffect_LoadBlitter(SLOT_ALT, mode);                                  \
     ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);       \
-    HeapSlot_Release(SLOT_ALT);                                                \
-  do {                                                                         \
-  } while (0)
+    do { } while (0);                                                          \
+    HeapSlot_Release(SLOT_ALT)
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
 

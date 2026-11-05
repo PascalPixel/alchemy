@@ -3018,12 +3018,7 @@ main	rom_main_09	games/tla/src/battle_effect/f13ba50	.text
 main	rom_main_09	games/tla/src/battle_effect/f13baec	.text
 main	rom_main_09	games/tla/src/battle_effect/bg2_window_callbacks	.text
 main	rom_main_09	games/tla/src/battle_effect/f13bbd8	.text
-main	rom_main_09	recon/tla/it/rom	.rom.0013c0b8	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0013c0b8	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0013c0b8	es
-main	rom_main_09	recon/tla/de/rom	.rom.0013c0b8	de
-main	rom_main_09	recon/tla/raw/0813c0b8	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.0013c0b8	ja
+main	rom_main_09	games/tla/src/battle_effect/douse	.text
 main	rom_main_09	games/tla/src/battle_effect/fxmodea	.text
 main	rom_main_09	games/tla/src/battle_effect/f13c5f4	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/fxmodeb	.text

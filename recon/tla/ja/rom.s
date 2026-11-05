@@ -1023,12 +1023,6 @@ Func_08127068:
 	.incbin "baserom.gba", 0x00127b9a, 0x00000002
 	.section .rom.00127cd0, "ax"
 	.incbin "baserom.gba", 0x00127cd0, 0x000003cc
-	.section .rom.0013c0b8, "ax"
-	.global BattleEffect_RunDouse
-	.type BattleEffect_RunDouse, %function
-	.thumb_func
-BattleEffect_RunDouse:
-	.incbin "baserom.gba", 0x0013c0b8, 0x000004f4
 	.section .rom.0013cb34, "ax"
 	.balign 4
 	.global Func_0813cb34

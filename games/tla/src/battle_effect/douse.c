@@ -1,30 +1,3 @@
-// Measured 2026-11-05 (tla-en): differ 138 of 563, a rise from 136 that removes a
-// search's untagged empty asm on line. In the drop loop the listing has table r6,
-// drop r5 and r7 free for reloads; here table r7, drop r6 and r5 free. A walker
-// for drop does not move it. The likely place is reload's choice of which hard
-// register to spill (order_regs_for_reload ranks them by their pseudos' refs),
-// which takes r5 here and r7 in the listing.
-// Near miss, differ 136 of 563 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Near miss, differ 213 of 563.
-
-// Twin: The Broken Seal's BattleEffect_RunDouse (effect kind 9 in both
-// games), ported as is apart from ⚓️'s calling conventions: the effect read
-// from the argument, the heap blocks as Ram_HeapSlots fields, BattleEffect_LoadBlitter
-// with ⚓️'s mode numbers, BattleEffect_ArmWin0HBlankDma for the WIN0 HBlank DMA, callback
-// order 0xc80, results phase 133 and BattleEffectKernels_IntegrateVector2 for
-// EffectStep_AdvanceWithGravity2D.
-
-// Left: register choice in the drop and spark loops (the native reloads the
-// effect into r7 each turn and keeps the counts table in r6, where this keeps
-// the table in r7 and the drop in r6), and the line tables' literal pools,
-// placed so that this compiles three instructions more.
-
-// Tried:
-// the trial port, slots read as fields                       213
-// alchemy permute, 6 minutes (trial 1): its best moved the heap base's
-// assignment into a loop, an uninitialised read            rejected
-
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -36,7 +9,7 @@
 #define SLOT_BLITTER 104           // unk64[1]
 #define SLOT_BLITTER_ALTERNATE 188 // unkb8[1]
 
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
+// The Lost Age's blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 
@@ -69,7 +42,8 @@ void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-s32 BattleEffect_ProcessPendingGraphicsTransfer(void);  // the canvas transfer callback
+s32 BattleEffect_ProcessPendingGraphicsTransfer(
+    void);                                // the canvas transfer callback
 void BattleEffect_ArmWin0HBlankDma(void); // arms WIN0's HBlank DMA
 s32 Task_Add(void *func, s32 order);
 s32 Task_Remove(void *func);
@@ -78,7 +52,7 @@ void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 u32 Random16(void);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
@@ -102,8 +76,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  DrawRectangle drawSplash;
-  DrawRectangle drawDrop;
+  DrawRectangle draw[2];
   struct EffectStep *drop;
   struct EffectStep *splash;
   u16 *line;
@@ -127,10 +100,10 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
   // Drops draw at their maximum; droplets add their light.
   BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_Y));
-  drawDrop = heapCache[26];
+  draw[0] = heapCache[26];
   BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
-                BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y));
-  drawSplash = heapCache[47];
+                           BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_Y));
+  draw[1] = heapCache[47];
 
   for (i = 0; i != 512; i++)
     gDropSplashes->splashes[i].variant = -1;
@@ -204,7 +177,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
       y = drop->y / 8;
       if (drop->variant == -1) {
         // Falling: draw the drop and move it on, or land it.
-        drawDrop(canvas, work->sheet + 0x604, x, y, 24, 24);
+        draw[0](canvas, work->sheet + 0x604, x, y, 24, 24);
         if (drop->y <= 0x27f) {
           if (effect->side == 0)
             drop->x -= 32;
@@ -235,9 +208,9 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
       } else {
         // Landed: four frames of the small splash, four of the large one.
         if (drop->variant >= 0 && drop->variant <= 3)
-          drawDrop(canvas, work->sheet + 0x844, x, y, 24, 24);
+          draw[0](canvas, work->sheet + 0x844, x, y, 24, 24);
         else if (drop->variant <= 7)
-          drawDrop(canvas, work->sheet + 0xa84, x - 9, y - 9, 42, 42);
+          draw[0](canvas, work->sheet + 0xa84, x - 9, y - 9, 42, 42);
         if (drop->variant <= 14)
           drop->variant++;
       }
@@ -251,9 +224,9 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
 
         if (size > 6)
           size = 6;
-        drawSplash(canvas, work->sheet + Data_08197424[size - 1],
-                   ((s16 *)&splash->x)[1] - size, ((s16 *)&splash->y)[1] - size,
-                   size * 2, size * 2);
+        draw[1](canvas, work->sheet + Data_08197424[size - 1],
+                ((s16 *)&splash->x)[1] - size, ((s16 *)&splash->y)[1] - size,
+                size * 2, size * 2);
         BattleEffectKernels_IntegrateVector2(splash, 60, 0x2000);
         splash->variant--;
       }

@@ -714,11 +714,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     if (frame >= 578 && frame < 594)
       work->unk7798 = ~((frame - 578) / 8);
     {
-      s32 v;
-
-      v = camera - swayX + bobX + 0x780000;
       for (i = 0; i != 2; i++) {
-        pos2.x = v;
+        pos2.x = camera - swayX + bobX + 0x780000;
         pos2.z = (((i << 5) - Data_081994f0[work->shake]) << 16) + swayY + bobY +
                  0x640000;
         Render_ApplyProjectedPlacementFar(work->sprites[32 + i], &pos2, &scale2,

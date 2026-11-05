@@ -1,3 +1,4 @@
+// Draft, differ 92 of 149 (tla-en, 2026-11-05); 86 with slots and pool offsets normalized, 14 with registers blind too. The pin on i is gone (it was 79 with it, and left a top test the native lacks). Left: the native gives the unwrapped row r2 with a caller-save at sp 0, the cell giv r5 and i r4; here the unwrapped row takes r5, the giv r4.
 // Near miss, differ 79 of 149 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // First draft of Func_080ece20: draws the world map picture on BG1, scrolled
@@ -50,7 +51,7 @@ void Func_080ece20(void) {
   s32 bufferRow;
   s32 unwrapped;
   s32 cell;
-  register u32 i asm("r4");
+  u32 i;
   s32 right;
   s32 bottom;
 

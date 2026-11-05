@@ -48,7 +48,7 @@ s32 Func_080da0b0(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
   s32 one = 1;
 
   for (i = 0; i <= segments; i += one) {
-    s32 bow =IwramMulQ16(Trig_Sin((i << 15) / segments), height);
+    s32 bow = IwramMulQ16(Trig_Sin((i << 15) / segments), height);
 
     node->x = x + i * dx / segments;
     node->y = y + i * dy / segments + bow;

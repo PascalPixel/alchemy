@@ -84,8 +84,8 @@ void Func_080e9090(void) {
         s32 offset = work->spriteOffsets[i];
 
         if (amplitude > 0)
-          sprite->offsetX = offset + Iwram_MulQ16(Trig_Sin(phase * 3 << 11),
-                                                  amplitude / 384);
+          sprite->offsetX =
+              offset + Iwram_MulQ16(Trig_Sin(phase * 3 << 11), amplitude / 384);
         else
           sprite->offsetX = offset;
       }

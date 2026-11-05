@@ -73,8 +73,7 @@ void BattleEffect_PrepareBufferInterpolation(void);
 void Func_080e4d9c(void);
 
 void Func_080e572c(void) {
-  struct GlowWork *work =
-      HeapSlot_Alloc(92, sizeof(struct GlowWork));
+  struct GlowWork *work = HeapSlot_Alloc(92, sizeof(struct GlowWork));
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
@@ -136,8 +135,8 @@ void Func_080e572c(void) {
     particle++;
   }
 
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion),
-                        work);
+  Resource_DecodeType01(
+      Resource_GetTableEntry((s32)&ResourceId_FieldEffectExplosion), work);
   burstEntry = Resource_FindFreeEntry();
   tile = VramCache_Load(burstEntry, 0x400, work);
   work->burstTile = tile;

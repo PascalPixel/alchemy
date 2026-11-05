@@ -4,7 +4,6 @@
 #include "iwram_call.h"
 #include "ram_buffer.h"
 
-
 struct RopeNode {
   struct RopeNode *next;
   s32 x;

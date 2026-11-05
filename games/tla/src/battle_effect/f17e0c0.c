@@ -27,7 +27,6 @@ struct Texture {
   void *pixels;
 };
 
-
 // One entry of the list Render_DrawModelList draws; kinds 6 and 7 are textured
 // quads.
 struct RenderPrimitive {
@@ -73,10 +72,8 @@ void *Resource_GetTableEntry(s32 resourceId);
 s32 Task_Add(s32 func, s32 priority);
 s32 Task_Remove(s32 func);
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate);
-void Actor_SetAnimationSpeedFar(struct MotionObject *object,
-                                            s32 value);
-void EffectPosition_ProjectBattler(
-    s32 id, struct EffectPosition *position);
+void Actor_SetAnimationSpeedFar(struct MotionObject *object, s32 value);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 u32 Random16(void);
 void *Heap_AllocEwram(s32 size);
 struct RenderPrimitive *Render_AllocateModelList(s32 count);
@@ -92,7 +89,7 @@ void Func_08118088(s32 actor, s32 motion);
 void Func_081180e8(s32 phase);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Func_08158ce0(s32 x, s32 y);
 void BattleEffect_CountDownBattlerTints(void);
 void wait(s32 frames);
@@ -171,8 +168,7 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
 
   // The caster lunges at the target.
   BattleEffect_SetApproachMotion(effect->actor, effect->actors[0], 10, 80);
-  Actor_SetAnimationSpeedFar(
-      GetBattleObjectSlotFar(effect->actor)->object, 48);
+  Actor_SetAnimationSpeedFar(GetBattleObjectSlotFar(effect->actor)->object, 48);
   targetObject = GetBattleObjectSlotFar(effect->actors[0])->object;
   EffectPosition_ProjectBattler(effect->actors[0], &target);
 
@@ -289,8 +285,8 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
 
       Render_ResetTransformState();
       spark = gData_02014000;
-      /* FAKEMATCH(barrier): an empty asm on spark, which ranks it over the screen
-       * pointer; with spark set after the look-at and no asm, 2 of 601
+      /* FAKEMATCH(barrier): an empty asm on spark, which ranks it over the
+       * screen pointer; with spark set after the look-at and no asm, 2 of 601
        * instructions differ in tla-en. */
       __asm__("" : "=r"(spark) : "0"(spark));
       Transform_SetLookAt(camera, camera + 3);

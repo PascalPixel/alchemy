@@ -55,10 +55,9 @@ void Func_080eaa14(struct ActorFlag *list) {
         change = 1;
     }
     if (change) {
-      struct SwitchCell *cells =
-          ((struct RestoreMap *)Ram_HeapSlots->mapWork)
-              ->layers[object->terrainId]
-              .cells;
+      struct SwitchCell *cells = ((struct RestoreMap *)Ram_HeapSlots->mapWork)
+                                     ->layers[object->terrainId]
+                                     .cells;
       u8 *shapes;
       s32 slot;
       u32 key;
@@ -68,7 +67,8 @@ void Func_080eaa14(struct ActorFlag *list) {
       slot = Func_080eab70(object);
       key = Func_080202f0(object->terrainId, object->x, object->z);
       height =
-          Map_GetTerrainHeightFar(object->terrainId, object->x, object->z) >> 19;
+          Map_GetTerrainHeightFar(object->terrainId, object->x, object->z) >>
+          19;
 
       *(struct Actor **)(event + 0xcbc) = object;
       if (GameFlag_Test(flag)) {

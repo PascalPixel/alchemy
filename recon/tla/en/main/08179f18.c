@@ -1,85 +1,32 @@
-// Draft, differ 300 of 2583 (tla-en, 2026-11-05), draft 2581; about 84 rows differ once registers, slots and
-// offsets are ignored, and about 150 of the raw rows are the tile sheet. The pool holds the listing's words apart from one
-// repeat of 0xfffec000. Not adoptable yet. Devices held, none tagged: the read of y into spin2 and the two dead frame tests.
+// Draft, differ 4 of 2583 (tla-en, 2026-11-05), draft 2583: one site, pool words as the listing's.
+// Everything else in the function agrees.
+// What is left is the scheduler ranking a multiply against a stack load, in the ring: b = m * grow, then
+// m * spread. The listing loads spread into r1 before the first multiply and stores a after it. Both rank
+// 43; the multiply wins on its 5 dependents against 3.
+// Three sites stopped on this: the first setup loop (multiply 7 against shift 6), the second Trig_Cos
+// tail (multiply 5 against load 4) and the ring. With a multiply costing 3 rather than 4 in the core unit,
+// all three rank as the listing orders them, with no device. That table line is the compiler's and is
+// left alone. The first two now hold by devices, a one-pass block and an empty asm.
+// The empty asm that orders the Trig_Cos tail does not fit the ring: HoldFor(m, spread) counts 4 bytes,
+// and the ring's back branch, bne.n -248 here, goes long past -250 (39, 7 rows). A second one on its own
+// would raise the load by the 1 it needs and has the same cost. Also tried in the ring, none closer:
+// one-pass blocks around the load and after the division; a pinned load; a local for the product (66, 73);
+// rr ahead of b (538, the slots and later allocation follow it).
+// Devices held, each tagged below with N measured against this draft: e and c pinned, SheetOf and
+// ClearWords wrappers, the one-pass block with its named constant, HoldFor's empty asm.
 // Settled 2026-11-05, each measured:
-// - `spin2 = w->y[i]` in petal 0's frame <= 47 branch stays until flow deletes it, and that use is what lets 224 hoist:
-//   count 2569 to 2583, 512 to 448. As `not desirable` said (threshold 16, savings 3, life 9, 474 insns).
-// - The last branch of petals 0 and 1 ends with a test of frame whose body flow deletes: reload's rotation in the listing is one
-//   ahead after each, and the frame == 112 tails stop cross-jumping, 448 to 300. Adding it to petals 2 to 5 makes things worse (440
-//   to 510), so those four are as they stand. The body has to survive cse, so it assigns a variable that is live elsewhere.
-//   Which test the original had is unknown. t in r3 and val in r2 in those branches then come out of the rotation.
-// - The glyph destination is an index, sprites[i * 18 + 590 + j]: (i * 8 + i) * 2 is what i * 18 expands to.
-// Open, top down:
-// - Fourth setup loop: cells in r6 and the object pointer in r5, the reverse here. In global's order cells must fall below
-//   the object pointer (33 / 28 against 24 / 27), and every spelling tried keeps both givs at those ranks. i = 0 comes first.
-// - Glyph read: adds r3, r3, r6; ldrb r3, [r3, #0] in the listing, ldrb r3, [r6, r3] here, 1 row short.
-// - Tile sheet, measured by normalized rows since the raw figure counts the frame. The listing's inner body:
-//   c in r1, hi in r2 through a 15 rebuilt in r3, lo through mov r3, fp and ands r3, r1. Three locals overlap, which pushes
-//   d to r0, the source to r4, offset to r5, m to r6, k to r7, then b to ip, a to lr, y to r8, n to sl, sheet to r9, the
-//   mask to fp, and row and row * 2 stay at sp 60 and sp 44. Here c ties to lo in r3, so a reload needs r4, which spills offset.
-//   A grid of 1344 forms (out of for and goto per level, seven bodies, chain or expression, pointer or index, hand-stepped
-//   row * 2 or not) tops out at 116 slot rows: hand-stepped twice, a and b real, k goto, m real, d a pointer, work->sheet[n]
-//   read by index, s32 t chained over several sets so nothing hoists or reduces (raw 367 because the frame is 4 short).
-//   With a and b real the 15 and 0x700 hoist unless written as &work->sheet[n], so the 0x700 is that form; with goto
-//   loops PRE hoists y + a. The literal 15 that the listing rebuilds is hoisted in every form with a real loop around it.
-// - Small scheduling ties: muls at the second setup, ldr r5, [sp, #20] and ldr r1, [sp, #124] around a muls, the ring's model
-//   stores, and one store the listing cross-jumps at petal 1's first branch.
-// Older notes, still true where they do not contradict the above:
-// 2026-11-05: differ 522 of 2583 (tla-en). The sheet's address is a local set before the row
-// loop and d steps per column, which brings sp 44 in as a slot. Still open there: the listing
-// keeps row * 2 as a hand-stepped or reduced value at sp 44, copied to r8 per row, a and b in
-// lr and ip with no (y + a) pseudo, 15 in r11. A hand-stepped y is copy-propagated away (596);
-// a and b as real loops reduce (y + a) << 4, which the listing does not (610 to 1089).
-// The listing has six `frame == 112` tails where this has five: the sixth is cross-jumped here
-// because reload's scratch registers agree, so it follows the rotation and is not source.
-// The first setup loop wants cells in r5 and the object slot in r7, here the reverse; moving
-// cells' set into the for clause or dropping it for source + i * 128 does not change that.
-// 2026-11-05: differ 535 of 2583 (tla-en). The row loop has its own counter (row2).
-// 2026-11-05: differ 565 of 2583 (tla-en). A wrapper on the first clear gains
-// 16. Left as below.
-// Draft, differ 581 of 2583, skeleton gap 59 (tla-en, 2026-11-01)
-// BattleEffect_RunFlora: same calls and control flow, no devices, frame 292 as
-// the listing, high registers as the listing (r8, r9 petals, r10 i, r11).
-// What closed most of the gap, to keep:
-// - draw[2] is one DImode pseudo at sp 164 and 168, and the rings hoist draw[0].
-// - petals is a number: as a pointer it prefers STACK_REG, keeps no REG_EQUIV,
-//   misses the live-length doubling and takes r8 from the second ring's x1.
-// - source is set once at the top: it conflicts with every high register,
-//   stays spilled and is rebuilt from the pool at each use.
-// - c copies the ring colour v, so v loses refs and spills to sp 100.
-// - The second ring has its own x1b to y2b; out and pos come before dot.
-// - struct FloraObject's bits are u16, as the game's other sprites: as u32 the
-//   tile store hoists the wrong mask.
-// - The phase loop steps a pointer and reads it back with / 256: >> 8 narrows
-//   to a HImode shift that CSE forwards from the store.
-// - The ring's x and y are computed before the draw call: inline, fold moves
-//   48 and 92 last and every scratch register below shifts. Function results
-//   multiply first (Trig_Sin(a) * s), m first in m * grow, angle is zeroed
-//   before spin is set (reload's rotation reads that order).
-// Left to settle, top down. Reload's rotation means each one shifts scratch
-// registers below it:
-// - First and fourth setup loops: cells and the object slot take each other's
-//   low registers (r7 and r5, r5 and r6). Stepping cells fixes the first loop's
-//   count only; stepping it in the fourth loop costs 90.
-// - The first 0x4000 is rebuilt in the listing. ClearWords_ (a wrapper device)
-//   on the first call gained 16 before; not used.
-// - Petals 0 and 1, the largest hunk (about 280 lines): the listing's 224 in
-//   petal 0 is an unallocated pseudo that reload rebuilds, so loop.c moved it.
-//   Here "Insn 2081: life 9, savings 3 not desirable": threshold 16 needs
-//   savings * life >= 30 for 474 real insns, and moving it also needs 599 to
-//   stay movable at threshold 13 (under 468 insns). One more insn of life, or
-//   about six fewer in the loop, should close it. y before x, inline start and
-//   literal indexes do not reach it.
-// - Tile sheet: the listing keeps row * 2 at sp 44 (never a register), copies it
-//   to r8 per row, tiles at r9, 15 at r11, one 15 rebuilt in the body, and
-//   computes y + a inside the b loop. Tried: tiles and mask = 15 as set-once
-//   locals with k a label loop and y += 2 (gap 57, differ 643: PRE hoists y + a,
-//   y takes r9 and c spills to sp 8, so it is left out); row * 2 inline stops
-//   the hoist, but the giv is "not worth while" (lifetime 1, 34 vs 42) and the
-//   frame falls to 288; y = row; y *= 2 and a copy local both fold away. While
-//   sp 44 is missing, the hoisted place addresses sit at 44 to 52, not 48 to 56,
-//   and y sits at sp 56.
-
+// - The second Trig_Cos tail's load ahead of its multiply through HoldFor (6 to 4).
+// - cells and source are one number, 0x02010000, so the pools hold one word for both (34 to 6).
+// - The particle pointer is &work->particles[i]: a reduced giv sets it behind the first test (48 to 40).
+// - k = 0 ahead of offset, and offset + (s32)sheet for the operand order (40 to 36).
+// - The sheet's address through SheetOf ends CSE's block, so 0x700 does not cross the decode call in a
+//   register (100 to 82); with e in r6 and i set after the decode the whole sheet head follows (82 to 48).
+// - The sheet counts with i; t = row * 2 stepped so nothing hoists or reduces; offsets by k (126 to 100).
+// - w->y[i] += 0 in petals 0 and 1 holds the reload rotation; source is a number, so it stays a
+//   constant reload; draw[2] is one DImode pseudo; petals is a number, keeping its REG_EQUIV.
+// Open before adoption: the ring; what would put e in r6 without the pin (r5 is free for it here,
+// and every function-level variable tried either keeps r5 or moves the setup); c in r1 likewise; the
+// resource names (Data09A and others) from the game's data; names from evidence (H3).
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -93,7 +40,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  const void *pixels;
+  u8 *pixels;
 };
 
 struct RenderModel {
@@ -264,13 +211,28 @@ void Heap_Release(void *buffer);
 
 static inline s32 ClearWords(void *destination, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_ClearWords, 581 of 2583 instructions differ in tla-en. */
+   * Iwram_ClearWords, 50 of 2583 instructions differ in tla-en. */
   return Iwram_ClearWords(destination, size);
 }
 
 // Flora: petals swirl in on the wind, the blossom spirit rises among them,
 // her spiral of light and its rings sweep the field, and a storm of petals
 // strikes the foes.
+static inline u8 *SheetOf(struct BattleEffectWork *owner)
+{
+  /* FAKEMATCH(wrapper): the address through this inline; as work->sheet at the
+   * call, 90 of 2583 instructions differ in tla-en. */
+  return owner->sheet;
+}
+
+static inline s32 HoldFor(s32 value, s32 offset) {
+  /* FAKEMATCH(barrier): an empty asm reading the offset, in an inline so the two
+   * tails stay one line and cross-jump; as Trig_Cos(a) * s / 256, 6 of 2583
+   * instructions differ in tla-en. */
+  asm("" : "+r"(value) : "r"(offset));
+  return value;
+}
+
 void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -286,7 +248,6 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   s32 spin;
   s32 spread;
   s32 grow;
-  s32 spin2;
   s32 petals; // the block's address as a number, see the header
   s32 i;
   s32 j;
@@ -317,7 +278,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   savedScroll = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->transitionWork;
   petals = (s32)&gData_02014000;
-  source = gMapCellBuffer;
+  source = (u8 *)0x02010000;
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   Func_0813ba50();
@@ -342,12 +303,12 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Iwram_CopyWords((void *)0x050003e0, e, 32);
       e += 32;
       Resource_DecodeType01(e, source);
-      cells = source;
-      for (i = 0; i != 15; i++, cells += 128) {
+      cells = (u8 *)0x02010000;
+      for (i = 0; i != 15; i++) {
         struct FloraObject *obj = Func_0815b290(16, 16, 0x40000000, 0xf000);
         work->objects[12 + i] = obj;
         obj->flags = 2;
-        Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 128);
+        Iwram_CopyWords((void *)OBJ_TILES(obj), cells + i * 128, 128);
         w->tiles[i] = ((struct FloraObject *)work->objects[12 + i])->tile;
       }
       for (i = 0; i != 17; i++) {
@@ -365,7 +326,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       e = Resource_GetTableEntry((s32)&ResourceId_Data098);
       e += 480;
       Resource_DecodeType01(e, source);
-      cells = source;
+      cells = (u8 *)0x02010000;
       for (i = 0; i != 12; i++) {
         struct FloraObject *obj = Func_0815b290(32, 32, 0x80002000, 0);
         obj->flags = 2;
@@ -407,8 +368,20 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   spread = 0;
   grow = 0;
   for (i = 0; i != 32; i++) {
-    w->x[i] = (i % 8 << 5) + 256;
-    w->y[i] = i / 8 * 22 + 128;
+    s32 q = i / 8;
+    s32 left = 256;
+    s32 t;
+    s32 u2;
+
+    /* FAKEMATCH(one-pass): the row shift in a block, 256 named ahead of it; as
+     * (i % 8 << 5) + 256 and i / 8 * 22 + 128, 36 of 2583 instructions differ
+     * in tla-en. */
+    do {
+      t = (i - q * 8) << 5;
+    } while (0);
+    u2 = q * 22;
+    w->x[i] = t + left;
+    w->y[i] = u2 + 128;
   }
   work->transferMode = 2;
   work->transferValue = 50;
@@ -480,8 +453,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     }
     req = Data_08196ec8;
     dy = 0;
-    dx = 0;
     place[3] = 0;
+    dx = 0;
     place[1] = 0xff0000;
     if (frame <= 119) {
       posX = Trig_Sin(0xcd00) * 24 + 0x980000;
@@ -554,7 +527,6 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->x[i] = 0xf00000;
           w->y[i] = 0x300000;
         } else if (frame <= 47) {
-          spin2 = w->y[i];
           w->x[i] += -0x30000;
           w->y[i] += 0x18000;
         } else if (frame <= 79) {
@@ -562,9 +534,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->y[i] += -0x10000;
         } else if (frame <= 111) {
           w->x[i] += 0x30000;
-          if (frame > 400) {
-            dx = frame;
-          }
+          w->y[i] += 0;
         }
         if (frame == 112) {
           w->x[i] = 0x1000000;
@@ -584,9 +554,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->y[i] += 0x6710;
         } else if (frame <= 141) {
           w->x[i] += 0x30000;
-          if (frame > 400) {
-            dx = frame;
-          }
+          w->y[i] += 0;
         }
         if (frame == 112) {
           w->x[i] = 0x1000000;
@@ -687,7 +655,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->x[i] = ((Random16() & 7) << 16) + 0xa80000;
           w->y[i] = ((Random16() & 7) << 16) + 0x5c0000;
           w->vx[i] = Trig_Sin(a) * s / 256;
-          w->vy[i] = Trig_Cos(a) * s / 256;
+          w->vy[i] = HoldFor(Trig_Cos(a), i * 4) * s / 256;
         } else if (frame == 252) {
           u32 a = Random16() & 0xffff;
           s32 s = ((Random16() & 255) << 1) + 256;
@@ -695,7 +663,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->x[i] = ((Random16() & 7) << 16) + 0x5c0000;
           w->y[i] = ((Random16() & 7) << 16) + 0x680000;
           w->vx[i] = Trig_Sin(a) * s / 256;
-          w->vy[i] = Trig_Cos(a) * s / 256;
+          w->vy[i] = HoldFor(Trig_Cos(a), i * 4) * s / 256;
         } else if (frame > 111) {
           w->x[i] += w->vx[i];
           w->y[i] += w->vy[i];
@@ -848,10 +816,10 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       }
       inner = 64 - v;
       c = v;
-      dot[0] = c;
-      dot[1] = c;
       sx = 18 - c / 2;
       sy = 36 - c;
+      dot[0] = c;
+      dot[1] = c;
       Func_080150e4(frame << 10);
       if (frame <= 221) {
         SceneTransform_ApplyPitch(sy << 10);
@@ -935,45 +903,52 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x80;
   {
-    u8 *e = Resource_GetTableEntry((s32)&ResourceId_Data09A);
+    /* FAKEMATCH(pin): e in r6; as a plain u8 *, 95 of 2583 instructions differ
+     * in tla-en. */
+    register u8 *e asm("r6") = Resource_GetTableEntry((s32)&ResourceId_Data09A);
     s32 row;
     s32 a;
     s32 b;
     s32 k;
-    s32 n = 0;
+    s32 m;
+    s32 mask;
+    s32 t;
     u8 *sheet;
+    s32 hi;
+    /* FAKEMATCH(pin): c in r1; as a plain u32, 671 of 2583 instructions differ
+     * in tla-en. */
+    register u32 c asm("r1");
 
     Iwram_CopyWords((void *)BG_PLTT, e, 32);
     e += 32;
-    Resource_DecodeType01(e, work->sheet);
+    Resource_DecodeType01(e, SheetOf(work));
     sheet = work->sheet + 0x1000;
+    i = 0;
+    mask = 15;
     for (row = 0; row != 15; row++) {
-      s32 y = row * 2;
+      for (a = 0; a != 2; a++) {
+        for (b = 0; b != 2; b++) {
+          s32 offset;
 
-      a = 0;
-    nextA:
-      b = 0;
-    nextB: {
-      s32 offset = ((y + a) << 4) + b << 3;
+          t = row * 2;
+          t += a;
+          t <<= 4;
+          t += b;
+          k = 0;
+          offset = t << 3;
+          for (; k != 8; k++, offset += 16) {
+            u8 *d = (u8 *)(offset + (s32)sheet);
 
-      for (k = 0; k != 8; k++, offset += 16) {
-        u8 *d = sheet + offset;
-
-        for (row2 = 0; row2 != 4; row2++) {
-          u32 c = work->sheet[n];
-
-          d[0] = c & 15;
-          d[1] = c >> 4 & 15;
-          n++;
-          d += 2;
+            for (m = 0; m != 4; m++) {
+              c = work->sheet[i];
+              hi = c >> 4 & mask;
+              d[0] = c & 15;
+              d[1] = hi;
+              i++;
+              d += 2;
+            }
+          }
         }
-      }
-    }
-      if (++b != 2) {
-        goto nextB;
-      }
-      if (++a != 2) {
-        goto nextA;
       }
     }
   }
@@ -1005,9 +980,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Func_081180e8(134);
     }
     if ((u32)(frame - 57) <= 50) {
-      struct EffectStep *s = work->particles;
+      for (i = 0; i != effect->count; i++) {
+        struct EffectStep *s = &work->particles[i];
 
-      for (i = 0; i != effect->count; i++, s++) {
         if (--s->variant == 0) {
           s->variant = 15;
           work->shakeFrames = 4;

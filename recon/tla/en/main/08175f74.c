@@ -1070,8 +1070,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           for (k = 0; k != 3; k++) {
             x = frame - 302 - k * 8;
             if (x >= 0) {
-              size = 140000 - x * 6192;
               depth2 = x * 4 - 16;
+              size = 140000 - x * 6192;
               if (size < 0) {
                 size = 0;
               }
@@ -1136,8 +1136,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         }
       }
       if (frame > 346) {
-        s32 height = 54;
         s32 t = frame * 4 - 1380;
+        s32 height = 54;
 
         if (frame > 349) {
           height = ((-(Trig_Sin((frame << 10) - 0x57800) * 54)) >> 16) + 54;

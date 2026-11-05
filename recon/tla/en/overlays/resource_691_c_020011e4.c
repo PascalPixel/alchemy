@@ -1,33 +1,13 @@
-// Draft, differ 45 of 260 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 51 (tla-en); notes below may predate it.
-// Near miss, differ 69 of 260 (tla-en, 2026-10-31): the control flow, calls,
-// fields and frame (68 bytes: config at sp+16, position at sp+56) are the
-// native's; what is left is allocation and scheduling. GCSE merges every
-// computation of the position's address into one register (r7) from the
-// first copy on; the native computes it again for the first copy (r2), at the
-// head of the advance loop and at stop (add r7, sp, #56), as this compiler
-// does only with -fno-gcse. In the spawn block local allocation gives the
-// config's address r6 and the mask 31 r8; the native has the config in r8
-// (copied to r0 for each store) and the mask in r6. CSE keeps flag 0x2f0 in
-// r5 across Func_02000c08 where the native builds it for each call (through
-// flag_call.h's Flag_Set and Flag_Clear, differ 63). sched2 places the
-// motionFlags store's movs r3, #0 and stop's lsls r1, r1, #7 one step off.
-// Measured forms: the creation's x, y and z read into locals first (passed
-// straight, the loads come after the 403 and go through copies of r8: 150 to
-// 134); `if (c) goto A; goto B;` comes out inverted (beq B; b A), so the
-// search's end is written with the native's tests turned round (130); one
-// local for the step and, later, the frame's parity, as the native's r10
-// holds both (69; a separate parity variable is caller-saved in r4 and
-// spilled, and the step and the counter swap r9 and r10). As a for loop the
-// search lets loop.c hoist 0x110 and the allocation cascades (226).
-//
-// Creates actor 403 at the source's position and moves it along x by twice
-// the cosine of the source's angle until the layer 2 cell under it has
-// attribute 212 or 222, or an active object 8 to 63 in another cell is within
-// 8 of it (Func_020005a0) on its height row. When it stops on the cell or on
-// an object whose animation value is 0x110, it settles, and effect 403 is
-// thrown every other frame for 16 frames; on any other object it calls
-// Func_02000c08 with that object's index while flag 0x2f0 is set.
+// Draft, differ 40 of 260 (tla-en, 5 November 2026). Plain loops throughout, the figure
+// unchanged by them. Creates actor 403 at the source's position and moves it along x by
+// twice the cosine of the source's angle until the layer 2 cell under it has attribute 212
+// or 222, or an active object 8 to 63 in another cell is within 8 of it (Func_020005a0) on
+// its height row. When it stops on the cell or on an object whose animation value is 0x110,
+// it settles, and effect 403 is thrown every other frame for 16 frames; on any other object
+// it calls Func_02000c08 with that object's index while flag 0x2f0 is set. Left: in the
+// spawn block the config's address takes r6 and the mask r8, the native the reverse (.444
+// against .107 in local-alloc); GCSE merges the position's address into r7 where the native
+// has add r7, sp, #56 again; CSE keeps flag 0x2f0 in r5 across Func_02000c08.
 #include "call.h"
 #include "types.h"
 #include "actor.h"
@@ -103,33 +83,29 @@ s32 Func_020011e4(struct Actor *source) {
   position[0] = object->x;
   position[1] = object->y;
   position[2] = object->z;
-advance:
+  for (;;) {
   position[0] += step;
   attributes = MapCell_GetAttributes(2, position[0] >> 20,
                                      (position[2] - position[1]) >> 20) >>
                8;
   if (attributes == 212 || attributes == 222)
     goto stop;
-  i = 8;
-search:
+  for (i = 8; i != 64; i++) {
   other = ((struct EventWork *)Ram_HeapSlots->eventWork)->objects[i];
   if (other->script == NULL)
-    goto next;
+    continue;
   if (source->x >> 20 == other->x >> 20 && source->y >> 20 == other->y >> 20 &&
       source->z >> 20 == other->z >> 20)
-    goto next;
+    continue;
   if (Func_020005a0(&other->x, position) > 8)
-    goto next;
+    continue;
   if (other->y >> 20 != position[1] >> 20)
-    goto next;
+    continue;
   if (*((struct ObjectAnimationState *)other->animation)->value28 == 0x110)
     goto stop;
   goto hit;
-next:
-  i++;
-  if (i == 64)
-    goto advance;
-  goto search;
+  }
+  }
 
 stop:
   object->acceleration = 0x20000;
@@ -141,8 +117,7 @@ stop:
   Func_02003a8c(object);
   object->update = NULL;
   Func_02003a6c(object);
-  i = 0;
-spawn:
+  for (i = 0; i != 16; i++)
   {
     // The native keeps the frame's parity in the step's variable (r10).
     step = gFrameCount & 1;
@@ -157,17 +132,14 @@ spawn:
       config.unk24 = Func_020011b8;
       mask = 31;
       config.data = gData_02003d50;
-      dx = Random16Far();
-      dz = Random16Far();
+      dx = Random16Far() & mask;
+      dz = Random16Far() & mask;
       Func_0200015c(position[0], position[1], position[2],
-                    ((dx & mask) - 16) << 13, ((dz & mask) - 16) << 13, step,
+                    (dx - 16) << 13, (dz - 16) << 13, step,
                     0x1320000, &config);
     }
-  }
   wait(1);
-  i++;
-  if (i != 16)
-    goto spawn;
+  }
   wait(24);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003b6c();

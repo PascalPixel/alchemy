@@ -1494,7 +1494,7 @@ CLEAR(buffer, 0x1000);
         register s32 hold __asm__("r2");
         __asm__("" : "=r"(hold));
         h = 96;
-        __asm__("" : : "r"(hold));
+        __asm__("" : "=r"(h) : "0"(h), "r"(hold));
       }
       if (frame > 7) {
         s32 t;

@@ -1505,10 +1505,8 @@ CLEAR(buffer, 0x1000);
           if (row >= 0 && row < 96) {
             s32 k;
             s32 threshold;
-            k = 0;
-            threshold = t;
-            __asm__("" : "=r"(threshold) : "0"(threshold));
-            for (; k != 69; k++) {
+            for (k = 0, threshold = t; k != 69; k++) {
+              __asm__("" : "=r"(threshold) : "0"(threshold));
               if (work->frames[(row & 15) * 69 + k] < threshold)
                 buffer[row * 69 + k] = 0;
             }

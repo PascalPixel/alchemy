@@ -1,22 +1,9 @@
-// Measured under -Os, 5 November 2026: differ 145 (tla-en); notes below may predate it.
-// Draft, differ 168 of 150, skeleton gap 21/17 (tla-en, 2026-11-01)
-// Each of the 14 colours of BG palette 3 steps one unit per channel toward
-// gData_020026c0, every 10 frames, until none changes. Rewritten from the listing
-// with no devices. The loops must be goto: a real for hoists the 31 and 65535 the
-// listing rebuilds in the body. u16 target gives its ldrsh, s32 color its ldrh, and
-// `(u16)x +/- 1` narrows to the listing's add of 65535.
-// Left, by cause:
-// 1. The main gap. PRE (07.gcse) merges the `v << 16` of each channel's compare and
-// of the final OR, so the arm's asrs dies and the shifted value lives in a register.
-// The listing recomputes that shift every time. `x = v; x = (u16)x;` before each
-// compare stops PRE and reproduces arm and join exactly, because x is set around its
-// own shift (see hash_scan_set in gcse.c), but that is a forced temporary, so it is
-// not kept here: find the plain form that has this effect. Not found so far: a
-// shared or scoped u16 x, or s32 channels.
-// 2. red and targetRed take a movs #31 (r4) while the other four ANDs take the pooled
-// 0x1f; the listing also keeps `(u16)target` as its own lsrs before `ands r2, r4`.
-// Tried 65 spellings of the pair (mask local, `x = 31; x &= v`, s32 or u16),
-// and none gained; 432 type mixes settled the rest.
+// Draft, under -Os with plain loops and no forced temporaries (tla-en, 5 November 2026; the figure is in
+// the commit). Each of the 14 colours of BG palette 3 steps one unit per channel toward gData_020026c0, every
+// 10 frames, until none changes. The red masks are int-sized (movs #31) and the others halfword (the pool's
+// 0x1f), and each compare reads its channel through a u16 local, as the native's arms show.
+// Left: allocation, set by the order of the channel locals; local-alloc gives the target's shift, the pool's 31
+// and the colour r2, r3, r1 in the native, and no order found does so together with the mask in r4.
 #include "types.h"
 #include "call.h"
 #include "system/io_reg.h"
@@ -54,14 +41,14 @@ s32 Func_02000da0(void) {
     for (; i != 15; i++) {
       s32 color = *palette;
       s16 target = *(s16 *)(offset + table);
-      s32 narrow = (u16)color;
-      u16 targetGreen = ((u16)target >> 5) & 31;
-      s32 red = color & 31;
-      s16 green = ((u16)color >> 5) & 31;
-      u16 targetBlue = ((u16)target >> 10) & 31;
-      s16 blue = ((u16)color >> 10) & 31;
       s32 wide = (u16)target;
+      s32 narrow = (u16)color;
+      s16 green = ((u16)color >> 5) & 31;
       s32 targetRed = wide & 31;
+      u16 targetGreen = ((u16)target >> 5) & 31;
+      u16 targetBlue = ((u16)target >> 10) & 31;
+      s32 red = color & 31;
+      s16 blue = ((u16)color >> 10) & 31;
       {
         u16 x = red;
         if (x < (u16)targetRed) {

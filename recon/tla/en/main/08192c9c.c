@@ -1,9 +1,10 @@
-// Measured 2026-11-05 (tla-en): differ 2597 of 5364, 2006 with slots and pool
+// Measured 2026-11-05 (tla-en): differ 2613 of 5364, 2019 with slots and pool
 // offsets normalized. Counters follow the listing's loops: r10's loops are i,
-// r11's are j, and the loops the listing counts in r8 or a low register have a
-// variable of their own (the c variables, placeholders). i's rank has to fall
-// below the second palette's pseudo at 1.93 for r10; one loop more or less on i
-// moves it to r7 and costs 1700.
+// r11's are j, and a loop the listing counts in r8 or a low register has a
+// variable of its own (the c variables, placeholders). i must rank below the
+// second palette's pseudo, about 1.93 of global.c's rank, for r10; a loop
+// more or less on i moves it to r7 and costs 1700. Shape differs by small
+// hunks only (none over 5 instructions).
 // Measured 2026-11-05 (tla-en): differ 3039 of 5364. Measure with all five
 // addresses (the figure before this one, 3800 of 4851, was the parent alone:
 // 3287 of 5364 with all five). A tagged one-pass block settles the frame at
@@ -608,12 +609,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s32 k;
   s32 c0;
   s32 c1;
-  s32 c2;
   s32 c3;
-  s32 c4;
-  s32 c5;
-  s32 c6;
-  s32 c7;
   s32 m;
   s32 x;
   s32 y;
@@ -1289,9 +1285,9 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       texture.logWidth = 5;
       texture.logHeight = 6;
       SceneTransform_ResetMatrix();
-      model->vertices = verts;
       model->kind = 4;
       model->mesh = Data_0819a0d4;
+      model->vertices = verts;
       if (frame <= 563) {
         scroll = 0x1000;
         if (frame > 500) {
@@ -1420,13 +1416,13 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       s32 sinT = Trig_Sin(0x7800);
       s32 cosT = Trig_Cos(0x7800);
 
-      for (j = 0; j != 80; j += 8) {
-        if (638 + j < frame && frame < 670 + j) {
-          s32 t = frame - j - 638;
+      for (i = 0; i != 80; i += 8) {
+        if (638 + i < frame && frame < 670 + i) {
+          s32 t = frame - i - 638;
           s32 ry = t >> 1;
           s32 tile = gData_08197410[0] + t / 4 * 0x302;
+          s32 shift = i >> 1;
           s32 rx = t >> 2;
-          s32 shift = j >> 1;
 
           for (c1 = 0; c1 != 128; c1++) {
             s32 a = c1 << 9;
@@ -1460,11 +1456,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         u8 *out = work->sheet + 0x1810 + c1 * 0x800;
         u8 v = 64 - c1 * 8;
 
-        for (c1 = 0; c1 != 0x800; c1++) {
-          if (v < src[c1])
-            out[c1] = v;
+        for (j = 0; j != 0x800; j++) {
+          if (v < src[j])
+            out[j] = v;
           else
-            out[c1] = src[c1];
+            out[j] = src[j];
         }
       }
     }

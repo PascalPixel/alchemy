@@ -1,4 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 116 of 160.
+// Measured 2026-11-05 (tla-en): differ 112 of 160, 100 with slots and pool
+// offsets normalized.
 // Draft, differ 131 of 160: shows a two-layer picture of the intro, as
 // Func_081a6638 does: BG3's map numbers rows 7 to 9 from tile 64 over a
 // blank of 0x3040 with rows 10 and 11 of 0x3060, BG0's map numbers rows 10
@@ -28,13 +29,13 @@ s32 Func_081a6724(void) {
   REG_DISPCNT = 0;
   map = (u16 *)0x0600e800;
   tile = 64;
-  for (row = 0; row < 20; row++) {
-    if (row >= 7 && row <= 9) {
+  for (i = 0; i < 20; i++) {
+    if (i >= 7 && i <= 9) {
       for (column = 0; column < 32; column++) {
         *map++ = tile | 0x3000;
         tile++;
       }
-    } else if (row == 10 || row == 11) {
+    } else if (i == 10 || i == 11) {
       for (column = 0; column < 32; column++)
         *map++ = 0x3060;
     } else {
@@ -44,8 +45,8 @@ s32 Func_081a6724(void) {
   }
   map = (u16 *)0x0600e000;
   tile = 160;
-  for (row = 0; row < 20; row++) {
-    if (row == 10 || row == 11) {
+  for (i = 0; i < 20; i++) {
+    if (i == 10 || i == 11) {
       for (column = 0; column < 32; column++) {
         *map++ = tile | 0x3000;
         tile++;

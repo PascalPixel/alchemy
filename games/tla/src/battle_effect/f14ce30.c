@@ -1,42 +1,3 @@
-// Near miss, differ 32 of 1490 (tla-en, 2026-10-31): no device left; every
-// row is a scheduling pair, a load sched2 issues one slot earlier (or later)
-// than the native, as in the explosion's spark test, where the load of
-// spark->variant (priority 3) beats spark->y's subtract (priority 2) on the
-// ready list. Summon 5, the thorn vines.
-//
-// 2026-10-31: the forced temporary at the second explosion blitter is gone;
-// the slot read spelled *(Ram_HeapSlots->unkb8 + 1) gives the allocation it
-// gave (40 with the temporary, 36 with the slot pointer assigned after the
-// call, 32 with the plain pointer spelling).
-//
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 60. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early. The first is the
-// argument's spill, which the native stores before it starts the 0x03000000
-// base; an empty asm before the first statement closes that row (differ 58).
-
-// ☀️ twin: BattleEffect_RunCybele
-// (games/tbs/src/effect/effect.c), shape 0.870, structure 0.986, ported line
-// for line: formation 645 spawned first, transparent blitters
-// BattleEffect_LoadBlitter(104, 0x23) and (188, 0x27) and then max blitters (104,
-// 0x13) and (188, 0x17) for the explosion, Iwram_ClearWords when A or B
-// skips, the camera from Ram_HeapSlots->cameraWork, shake (4, 4) in the
-// middle phase where ☀️ has (2, 2), and the effect argument for every
-// target loop.
-
-// Same frame and instruction count. What is left: neighbouring rows in the
-// other order, with the pool offsets that follow them.
-
-// Tried (differ):
-// trial 2's port, no device (effects trial, 2026-10-15)              363
-// trial 2 with the forced temporary at the second explosion blitter   158
-// BattleEffect_LoadBlitter declared returning s32 (plan 0c): with the temporary
-// 150, without it 355
-// the slot read as Ram_HeapSlots->unkb8[1], no temporary (2026-10-31)    267
-// the temporary held across the call (2026-10-31)                     40
-// slot pointer assigned after the call                                36
-// *(Ram_HeapSlots->unkb8 + 1), or through *(DrawRectangle *)&unkb8[1]   32
-
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -86,12 +47,15 @@ extern u16 Data_08198244[]; // ☀️ gCybele_EmberOffsets
 extern u16 Data_08198252[]; // ☀️ gCybele_EmberSizes
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);               // ☀️ ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_EndCanvasLayer(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 flags); // ☀️ BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 flags); // ☀️ BattleEffect_BuildBlitter
 void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // ☀️ SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 count, s32 formation, s32 priority); // ☀️ SpawnObjects
+void BattleEffect_SpawnObjects(s32 count, s32 formation,
+                               s32 priority);    // ☀️ SpawnObjects
 void Func_0816442c(s32 formation, s32 x, s32 y); // ☀️ PlaceFormationObjects
 void Func_0816467c(s32 formation, s32 x, s32 y); // ☀️ RunImpactBurst
 void Func_08118088(s32 actor, s32 motion);       // ☀️ ApplyVariantMotionFar
@@ -102,13 +66,17 @@ void Render_ResetTransformState(void);
 void ResourceObject_ReleaseFar(void *object);
 void Func_081180e8(s32 phase); // ☀️ BattleEvent_StartPhaseFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // ☀️ BattleEffect_TintBattler
 void Func_08158ce0(s32 x, s32 y);    // ☀️ Camera_ApplyShake
 void BattleEffect_CountDownBattlerTints(void);
 
-// Summon 5, the thorn vines: thorns fly in, vines grow up under the targets
+static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
+  Func_0816467c(formation, x, y);
+}
+
+// Summon 5, the thorn vines:thorns fly in, vines grow up under the targets
 // and lift them while the ground throws up debris; the picture is erased
 // dot by dot, the targets are dropped from on high, and each lands in an
 // explosion with a ring of embers. A or B skips to the drop.
@@ -156,12 +124,13 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);
-  BattleEffect_LoadBlitter(HEAP_BLITTER,
-                BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+  BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_TRANSPARENT << 4 |
+                                             COMPOSITE_CLIP_X |
+                                             COMPOSITE_CLIP_Y);
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                    COMPOSITE_FLIP_X);
+                           BLITTER_TRANSPARENT << 4 | COMPOSITE_CLIP_X |
+                               COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   work->transferMode = 1;
   work->transferValue = 0;
@@ -236,8 +205,13 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
-      Animation_ApplyChildArgumentFar(work->objects[3],
-                                      Data_081981fc[pose * 2]);
+      /* FAKEMATCH(temporary): the argument held first, which orders the
+       * argument rows; as a direct argument, 2 of 1490 instructions differ in
+       * tla-en. */
+      {
+        __typeof__(Data_081981fc[pose * 2]) held_ = Data_081981fc[pose * 2];
+        Animation_ApplyChildArgumentFar(work->objects[3], held_);
+      }
       Animation_ApplyChildArgumentFar(work->objects[4],
                                       Data_081981fc[pose * 2 + 1]);
     }
@@ -490,14 +464,14 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                                  work->sheet + 0x1680, 1, 1);
-      BattleEffect_LoadBlitter(HEAP_BLITTER,
-                    BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+      BattleEffect_LoadBlitter(
+          HEAP_BLITTER, BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
       BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                    BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                        COMPOSITE_FLIP_X);
+                               BLITTER_MAX << 4 | COMPOSITE_CLIP_X |
+                                   COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
       // As Ram_HeapSlots->unkb8[1], 267 of 1490 instructions differ.
-      draw[1] = (DrawRectangle)*(Ram_HeapSlots->unkb8 + 1);
+      draw[1] = (DrawRectangle) * (Ram_HeapSlots->unkb8 + 1);
       REG_BLDCNT = 0x3f46;
       REG_BG2PA = 0x80;
       REG_BG2X = 0;
@@ -550,10 +524,10 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
             screen.x >>= 1;
             if (ember->variant >= 0 && ember->variant <= 26) {
               s32 cel = 6;
-              s32 offset = Data_08198244[cel];
+              u8 *source = work->sheet + Data_08198244[cel];
               u32 size = Data_08198252[cel];
 
-              draw[0](canvas, work->sheet + offset, screen.x - (size >> 1),
+              draw[0](canvas, source, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);
             }
             BattleEffectKernels_IntegrateVector2(ember, 60, 0x1000);
@@ -579,7 +553,10 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   HeapSlot_Release(HEAP_BLITTER);
   Func_081180e8(134);
   // Tear down.
-  Func_0816467c(2, 128 << 16, height);
+  /* FAKEMATCH(wrapper): the burst through an inline forwarder, whose parameter
+   * leaves 128 << 16 a constant set in argument order; as a direct call, 2 of
+   * 1490 instructions differ in tla-en. */
+  BurstAt_(2, 128 << 16, height);
   for (i = 0; i != 8; i++)
     ResourceObject_ReleaseFar(work->objects[i]);
   BattleEffect_EndCanvasLayer();

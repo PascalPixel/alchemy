@@ -1,33 +1,3 @@
-// Draft, differ 36 of 718, skeleton gap 24 (tla-en, 2026-11-01)
-
-// The body of ten effect kinds (the wrappers in series_d.c pass modes 0 to
-// 9). Twin: The Broken Seal's BattleEffect_RunLobbedShells, rebuilt by The
-// Lost Age: three more modes; a four-byte record per mode (Data_08197880:
-// shards or smoke, the shots' blitter, shots per target, frames) where The
-// Broken Seal has two bytes and fixed counts; up to four shots per target,
-// each with its own start; mode 7 prepares a canvas with Func_0815585c and
-// sets BG2CNT; the shots' height by mode; the pictures and palettes unpacked
-// by Resource_LoadAndDecompress; the pair from
-// BattleEffect_FetchRectangleBlitters; modes 4 and 7 clear the canvas each
-// frame with blending off; modes 3 and 5 clear both canvases and run a summon
-// canvas effect (SummonEffect_RunCanvasMode1 or 3) in place of the canvas
-// teardown.
-
-// Left, instruction order only: the frame, the registers and the control flow
-// are the native's. In five places the native stores a zero loop counter
-// straight after setting it and reloads k before the count at the bottom of
-// the first target loop; sched2 here runs the higher-priority loads first.
-// for, while and do-while all give the same order, so this looks like the
-// compiler's load timing (K2), not the source. The rest is the two clears at
-// the end: the native keeps the routine in r5 and sets 0x3c00 for each call,
-// this keeps 0x3c00 in a register. Forwarding through canvas.c's ClearWords_
-// wrapper (a tagged device, not used here) reaches differ 20, gap 18.
-
-// Tried: gMapCellBuffer as a symbol instead of Ram_MapCellBuffer, gap 93 (the
-// native adds no offset, its addresses are whole constants); numeric resource
-// ids, which become movs and adds where the native has pool loads; the routine
-// in a local, no change; burst set before i, or outside the for, both worse.
-
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"
@@ -42,6 +12,10 @@
 #include "iwram_call.h"
 #include "motobj.h"
 #include "ram_buffer.h"
+
+static __inline__ s32 ClearWords_(void *destination, s32 size) {
+  return Iwram_ClearWords(destination, size);
+}
 
 // The shots live in the map buffer, 16 for each target, and the bursts
 // after them, 32 for each target.
@@ -311,8 +285,11 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
 
   // Modes 3 and 5 clear both canvases and go on into a summon canvas effect.
   if (mode == 3 || mode == 5) {
-    Iwram_ClearWords((void *)0x06004000, 0x3c00);
-    Iwram_ClearWords(canvas, 0x3c00);
+    /* FAKEMATCH(wrapper): the clears through an inline forwarder, whose
+     * parameter leaves 0x3c00 a constant each clear builds anew; as direct
+     * calls, 16 of 718 instructions differ in tla-en. */
+    ClearWords_((void *)0x06004000, 0x3c00);
+    ClearWords_(canvas, 0x3c00);
     Task_Remove(Palette_StepFadeTransfer);
     if (mode == 3)
       SummonEffect_RunCanvasMode1(effect);

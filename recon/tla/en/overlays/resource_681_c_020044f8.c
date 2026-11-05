@@ -100,19 +100,19 @@ static __inline__ void *Heap_AllocEwram_(s32 size) {
 }
 
 #define AT(x, y) grid->cells[(y) * GRID_WIDTH + (x)]
+#define AT_ADDRESS(x, y) ((Unk_Cell *)(((y) * GRID_WIDTH + (x)) * 4 + (s32)grid))
 
 void Func_020044f8(s32 seed) {
   Unk_Grid *grid;
   Unk_Path *path;
   Unk_Step *steps;
   Unk_Cell *cell;
-  Unk_Cell *p;
   s32 x, y, nx, ny, step, tries, dir, i, v, next;
   u32 saved;
 
   saved = gRandomState;
-  steps = path->steps;
   path = (Unk_Path *)(gData_020023c4 + 0x288);
+  steps = path->steps;
   if (GameFlag_Test(0x109))
     return;
   if (GameFlag_Test(0x3f0))
@@ -120,8 +120,8 @@ void Func_020044f8(s32 seed) {
   gRandomState = seed;
 restart:
   grid = Heap_AllocEwram_(sizeof *grid);
-  x = GRID_WIDTH / 2;
   Iwram_ClearWords(grid, sizeof *grid);
+  x = GRID_WIDTH / 2;
   y = GRID_WIDTH / 2;
   // BUG: this runs 29 times, so row 28 and column 28 lie past the 28 by 28 cells
   // and the last row's marks land after the block.
@@ -184,7 +184,7 @@ restart:
       break;
     }
     {
-      Unk_Cell *here = &AT(x, y);
+      Unk_Cell *here = AT_ADDRESS(x, y);
       here->unk_0 = step;
       step++;
       here->unk_1 = nx;
@@ -197,7 +197,7 @@ restart:
   x = GRID_WIDTH / 2;
   y = GRID_WIDTH / 2;
   for (step = 1; step <= 14; step = next) {
-    cell = &AT(x, y);
+    cell = AT_ADDRESS(x, y);
     next = step + 1;
 
     {
@@ -209,7 +209,7 @@ restart:
     else if (c == step - 1)
       v = c;
     else {
-      p = cell;
+      Unk_Cell *p = cell;
     scanUp:
       p -= GRID_WIDTH;
       c = p->unk_0;
@@ -232,7 +232,7 @@ restart:
     else if (c == step - 1)
       v = c;
     else {
-      p = &AT(x, y);
+      Unk_Cell *p = AT_ADDRESS(x, y);
     scanDown:
       p += GRID_WIDTH;
       c = p->unk_0;

@@ -1,4 +1,4 @@
-// Draft, differ 130 of 99 (tla-en, 2026-11-05): rewritten readable, no read before a set; was 104 with one. Older notes may predate this.
+// Draft, differ 124 of 99 (tla-en, 2026-11-05): 63 kept in a local gives the native's cmp #63; left: the native rebuilds 63 - x for the second cell (r4 holds 63) where global CSE reuses the first, which frees r4 and takes the frame's spill away.
 // Draft, differ 81 of 99, skeleton gap 22 removed, 11 added (tla-en, 2026-11-01)
 // Fills a 64 by 64 grid of levels, each ring a quarter circle drawn with the
 // midpoint algorithm, its level from the cosine of its radius.
@@ -47,18 +47,20 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
     if (level <= 0)
       level = 1;
     while (x >= y) {
-      s32 column = 63 - x;
-      s32 row = 63 - y;
+      s32 edge = 63;
+      s32 column = edge - x;
+      s32 row = edge - y;
       u8 *cell = &grid[row * 64 + column];
 
       cell[0] = level;
-      if (column < 63)
+      if (column < edge)
         cell[1] = level;
       column = row;
-      row = 63 - x;
+      edge = 63;
+      row = edge - x;
       cell = &grid[row * 64 + column];
       cell[0] = level;
-      if (column < 63)
+      if (column < edge)
         cell[1] = level;
       error = error - y * 2 - 1;
       if (error < 0) {

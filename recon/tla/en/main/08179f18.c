@@ -271,6 +271,11 @@ static inline s32 ClearWords(void *destination, s32 size) {
 // Flora: petals swirl in on the wind, the blossom spirit rises among them,
 // her spiral of light and its rings sweep the field, and a storm of petals
 // strikes the foes.
+static inline u8 *SheetOf(struct BattleEffectWork *owner)
+{
+  return owner->sheet;
+}
+
 void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
@@ -929,7 +934,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BG2PA = 0x80;
   {
-    u8 *e = Resource_GetTableEntry((s32)&ResourceId_Data09A);
+    register u8 *e asm("r6") = Resource_GetTableEntry((s32)&ResourceId_Data09A);
     s32 row;
     s32 a;
     s32 b;
@@ -943,7 +948,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
 
     Iwram_CopyWords((void *)BG_PLTT, e, 32);
     e += 32;
-    Resource_DecodeType01(e, work->sheet);
+    Resource_DecodeType01(e, SheetOf(work));
     sheet = work->sheet + 0x1000;
     i = 0;
     mask = 15;
@@ -956,9 +961,10 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           t += a;
           t <<= 4;
           t += b;
+          k = 0;
           offset = t << 3;
-          for (k = 0; k != 8; k++, offset += 16) {
-            u8 *d = sheet + offset;
+          for (; k != 8; k++, offset += 16) {
+            u8 *d = (u8 *)(offset + (s32)sheet);
 
             for (m = 0; m != 4; m++) {
               c = work->sheet[i];
@@ -1001,9 +1007,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       Func_081180e8(134);
     }
     if ((u32)(frame - 57) <= 50) {
-      struct EffectStep *s = work->particles;
+      for (i = 0; i != effect->count; i++) {
+        struct EffectStep *s = &work->particles[i];
 
-      for (i = 0; i != effect->count; i++, s++) {
         if (--s->variant == 0) {
           s->variant = 15;
           work->shakeFrames = 4;

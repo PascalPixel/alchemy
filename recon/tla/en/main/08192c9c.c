@@ -889,6 +889,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     // The crystal: sixteen sprites, the sparks and the first motes.
     if (frame == 176) {
       u8 *colors;
+      s32 mask = 31;
 
       FILL_WORDS(canvas, 0x4000, 0x3f3f3f3f);
       work->transferPending = 1;
@@ -946,12 +947,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       for (i = 0; i != 6; i++) {
         work->particles[i].x = (Random16() % 15 << 16) + 0x210000;
         work->particles[i].y = (Random16() % 15 << 16) + 0x390000;
-        work->particles[i].velocityX = -(Random16() & 31) << 12;
+        work->particles[i].velocityX = -(Random16() & mask) << 12;
       }
       for (; i != 12; i++) {
         work->particles[i].x = (Random16() % 15 << 16) + 0x510000;
         work->particles[i].y = (Random16() % 15 << 16) + 0x390000;
-        work->particles[i].velocityX = (Random16() & 31) << 12;
+        work->particles[i].velocityX = (Random16() & mask) << 12;
       }
       work->transferMode = 2;
       work->transferValue = 70;

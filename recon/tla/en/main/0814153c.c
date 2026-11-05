@@ -1,4 +1,4 @@
-// Draft, differ 393 of 2159 (tla-en, 2026-11-05); 223 with slots and pool offsets normalized, 75 with registers blind too. Fills and copies forwarded through inlines (S2 wrapper; tag and measure each on adoption).
+// Draft, differ 284 of 2159 (tla-en, 2026-11-05); 192 with slots and pool offsets normalized, 60 with registers blind too. Fills and copies forwarded through inlines (S2 wrapper; tag and measure each on adoption).
 // Near miss, differ 673 of 2159 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 821 of 2159, skeleton gap 90 (tla-en, 2026-11-01)
@@ -329,7 +329,6 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   baseY = 0;
   velX = 0;
   velY = 0;
-  __asm__("" : "=r"(velY) : "0"(velY));
   work->transferMode = 2;
   work->transferValue = 50;
   BattleEffect_LoadBlitter(SLOT_BLITTER, 19);
@@ -495,7 +494,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
         p->x += p->y;
         if ((u32)p->variant <= 47) {
           Render_ResetTransformState();
-          Func_08015160(cx + ((i & 3) << 17) + 0x20000 + origin, cy - (((i & 3) + 2) << 16) + origin, 0);
+          Func_08015160(((i & 3) << 17) + 0x20000 + cx + origin, cy - (((i & 3) + 2) << 16) + origin, 0);
           Func_080151e4(0x8000, 0x10000, 0x10000);
           Func_080150e4(p->x);
           Func_080151e4(Trig_Sin(p->variant * 682) + 0x4000, 0x20000, 0x10000);
@@ -597,7 +596,6 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0x3f46;
   REG_DISPCNT = 0x7741;
-  __asm__("" : "=r"(REG_DISPCNT) : "0"(REG_DISPCNT));
   gCameraSceneParameters[4] = 120;
   work->transferMode = 3;
   work->transferValue = 0x02020202;

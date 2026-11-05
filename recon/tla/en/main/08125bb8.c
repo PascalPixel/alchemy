@@ -1,3 +1,4 @@
+// Draft, differ 12 of 36 (tla-en, 2026-11-05); 10 with slots and pool offsets normalized, 10 with registers blind too. Fill forwarded through an inline (S2 wrapper).
 // Near miss, differ 16 of 36 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 37 of 36 (2026-10-12; 22 before, with direct calls that the
@@ -10,6 +11,10 @@
 #include "types.h"
 #include "iwram_call.h"
 
+static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
+  Iwram_FillWords(destination, size, value);
+}
+
 void BattleTransition_BuildTilemap(s32 *destination) {
   s32 entry;
   u32 index;
@@ -20,10 +25,10 @@ void BattleTransition_BuildTilemap(s32 *destination) {
     asm("");
   {
     register __typeof__(hoisted) hoisted asm("r0") = hoisted;
-    Iwram_FillWords( hoisted , 0x100, -1);
+    FillWords_( hoisted , 0x100, -1);
   }
   }
-  Iwram_FillWords(destination, 0x80, 0x03ff03ff);
+  FillWords_(destination, 0x80, 0x03ff03ff);
   entry = (0x0201 << 16) | 0x0200;
   destination += 0x20;
   index = 0;
@@ -34,6 +39,6 @@ void BattleTransition_BuildTilemap(s32 *destination) {
   } while (index <= 239);
   {
     register __typeof__(destination) hoisted asm("r0") = destination;
-    Iwram_FillWords( hoisted , 0x280, 0x03ff03ff);
+    FillWords_( hoisted , 0x280, 0x03ff03ff);
   }
 }

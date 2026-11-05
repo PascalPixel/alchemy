@@ -1,3 +1,9 @@
+// Under -Os, 5 November: differ 132 of 423, frame 44 for 40. One cause: insn 1177, the
+// table load in the inventory loop, needs a base for lr with r0 to r2 live, and takes r4
+// (spilling item, 3 refs) where the native takes r3 (spilling the masked value to sp+0).
+// masked has 4 refs here, its const set into itself. That brings r4 into the spill set,
+// so reload's rotation differs throughout. No local for it, or a mask local, gives the
+// same code. Native's masked needs fewer refs than item, or item more.
 // Under -Os, 5 November: differ 132 of 423 (tla-en); older figures below predate it.
 // Draft, differ 210 of 423, skeleton gap 62 (tla-en, 2026-11-01): 30 removed,
 // 32 added.

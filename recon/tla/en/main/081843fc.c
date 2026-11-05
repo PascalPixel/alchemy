@@ -1120,7 +1120,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         texture.pixels = work->sheet;
         i = 0;
         a += 10922;
-        for (; i != 3; i++, a += 21845) {
+        for (; i != 3; a += 21845, i++) {
           Transform_Push();
           Func_080150e4(i * 21845 + 10922);
           model->shade = -24 - (Trig_Cos(a) << 3 >> 16);
@@ -1401,7 +1401,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Render_DrawModelList(model2);
           texture2.pixels = cellBuffer;
           for (i = 0; i != 3; i++) {
-            s32 tone = sh2 + (Trig_Cos(a + i * 21845 + 10922) << 3 >> 16) - 16;
+            s32 k = i * 21845 + 10922;
+            s32 tone = sh2 + (Trig_Cos(a + k) << 3 >> 16) - 16;
             s32 v;
 
             Transform_Push();
@@ -1470,7 +1471,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model2->shade = zero;
         if (frame == 0) {
           p = work->particles;
-          for (i = 0; i != 16; i++, p++) {
+          for (i = 0; i != 16; p++, i++) {
             p->z = Data_081999f2[i];
             p->velocityZ = (Random16() & 255) + 128;
             if (Random16() & 1) {
@@ -1767,7 +1768,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           p2 = work->particles;
           {
 
-            for (i = 0; i != 6; i++, p2++) {
+            for (i = 0; i != 6; p2++, i++) {
               s32 lim = i * 8 + 16;
 
               if (frame == lim) {

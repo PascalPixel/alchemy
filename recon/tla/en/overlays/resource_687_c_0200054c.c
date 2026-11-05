@@ -56,6 +56,7 @@ void Func_0200054c(void) {
   struct { s32 x, y, z; } center;
   s32 ends[4];
   struct SeaOfTimeSpark spark;
+  s32 turn[1];
   s32 *pos;
   s32 dx;
   s32 dz;
@@ -67,6 +68,7 @@ void Func_0200054c(void) {
   s32 c;
   s32 s;
   s32 flip;
+  s32 speed;
   s32 px;
   s32 py;
   s32 pz;
@@ -126,16 +128,21 @@ void Func_0200054c(void) {
     object->z = z;
   }
   if (Func_0200034c(1, center.x >> 20, center.z >> 20) >> 8 == 40) {
-    c = SeaOfTime_Cos(-0x200);
+    turn[0] = SeaOfTime_Cos(-0x200);
     s = SeaOfTime_Sin(-0x200);
   } else {
-    c = SeaOfTime_Cos(0x200);
+    turn[0] = SeaOfTime_Cos(0x200);
     s = SeaOfTime_Sin(0x200);
   }
   dx = object->x - center.x;
   dz = object->z - center.z;
-  x = Iwram_MulQ16(dx, c) - Iwram_MulQ16(dz, s);
-  z = Iwram_MulQ16(dx, s) + Iwram_MulQ16(dz, c);
+  {
+  s32 (*mul)(s32 a, s32 b) = Iwram_MulQ16;
+  x = mul(dx, turn[0]);
+  x -= mul(dz, s);
+  z = mul(dx, s);
+  z += mul(dz, turn[0]);
+  }
   x += center.x;
   z += center.z;
   object->z = z;
@@ -152,12 +159,15 @@ void Func_0200054c(void) {
     spark.scaleX = 0xcccc;
     spark.scaleY = 0xcccc;
     c = Math_Cosine(object->facing);
-    s = Math_Sine(object->facing);
+    {
+    s32 sine = Math_Sine(object->facing);
     ends[0] = c * 10;
-    ends[1] = s * 10;
+    ends[1] = sine * 10;
     ends[2] = -(c * 10);
-    ends[3] = -(s * 10);
+    ends[3] = -(sine * 10);
+    }
     ends[0] += object->x;
+    speed = 0x8000;
     ends[1] += object->z;
     ends[2] += object->x;
     ends[3] += object->z;
@@ -170,12 +180,12 @@ void Func_0200054c(void) {
     py = object->y;
     pz = ends[1];
     if (flip) {
-      Func_0200015c(px + 0x30000, py, pz, 0x8000, 0, 0, 0xb0000, &spark);
+      Func_0200015c(px + 0x30000, py, pz, speed, 0, 0, 0xb0000, &spark);
       Func_0200015c(ends[2] - 0x30000, object->y, ends[3], -0x8000, 0, 0,
                     0xb0000, &spark);
     } else {
       Func_0200015c(px - 0x30000, py, pz, -0x8000, 0, 0, 0xb0000, &spark);
-      Func_0200015c(ends[2] + 0x30000, object->y, ends[3], 0x8000, 0, 0,
+      Func_0200015c(ends[2] + 0x30000, object->y, ends[3], speed, 0, 0,
                     0xb0000, &spark);
     }
   }

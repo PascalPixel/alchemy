@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 16 of 2239. The spill slots agree: gcse
+// Measured 2026-11-05 (tla-en): differ 10 of 2239. The spill slots agree: gcse
 // numbers its reaching registers by hash bucket, (plus shots -8) buckets by
 // shots' pseudo number, so shots, user and k are declared in the block where
 // the volley starts. Left: sites of order.
@@ -644,9 +644,14 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
       } else if (mode == 20) {
         s32 cel = i % 5 * 3 + age % 3;
         u32 width = gData_0819749e[cel];
-        s32 x = HI(shot->x) - (width >> 1);
-        u32 height = gData_081974ad[cel];
-        s32 y = HI(shot->y) - (height >> 1);
+        s32 x = HI(shot->x);
+        u32 half = width >> 1;
+        const u8 *hs = gData_081974ad;
+        u32 height;
+        s32 y;
+        x -= half;
+        height = hs[cel];
+        y = HI(shot->y) - (height >> 1);
 
         pair[0](canvas, work->sheet + gData_081974bc[cel] + VOLLEY_B_GLOW, x, y,
                 width, height);
@@ -654,9 +659,9 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectArgument *effect,
         s32 wobble = Trig_Sin((i * 2 + frame) << 11);
         s32 y;
         c2 = age >> 2;
-        y = shot->y + (wobble << 5);
+        y = (shot->y + (wobble << 5)) >> 16;
 
-        pair[1](canvas, work->sheet + c2 * 1152, HI(shot->x) - 12, (y >> 16) - 24,
+        pair[1](canvas, work->sheet + c2 * 1152, HI(shot->x) - 12, y - 24,
                 24, 48);
       } else if (mode == 18) {
         if (age > 1)

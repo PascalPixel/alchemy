@@ -762,8 +762,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
           if (n > 14) {
             n = 14;
           }
-          q->y = HALF_HI(q->y);
-          q->x = HALF_HI(q->x) + 60;
+          {
+            s32 x = HALF_HI(q->x);
+
+            q->y = HALF_HI(q->y);
+            q->x = x + 60;
+          }
           if (frame > 539) {
             q->y = q->y + (frame << 4) - 8608;
           } else if (frame > 517) {

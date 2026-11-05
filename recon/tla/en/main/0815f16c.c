@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 712 of 7666, slots normalized 510, high
+// Measured 2026-11-05 (tla-en): differ 694 of 7666, slots normalized 492, high
 // registers blind too 482, every register blind 194. The frame is the listing's
 // 264 and i is r11 (226 of 229 rows).
 //
@@ -2063,6 +2063,7 @@ CLEAR(buffer, 0x1000);
         }
       }
     } else if (kind == 81 || kind == 83 || kind == 92 || kind == 93) {
+      void *matrix;
       s32 t;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);

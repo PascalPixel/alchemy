@@ -1205,10 +1205,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     {
       s32 j;
       s32 row = i << 12;
+      u8 *cells = Ram_MapCellBuffer;
 
       for (j = 0; j != 120; j++) {
         u8 *dst = work->sheet + (row + j * 32) + 0x145a;
-        u8 *src = Ram_MapCellBuffer + (i * 45 * 64 + j * 24);
+        u8 *src = cells + (i * 45 * 64 + j * 24);
         s32 m;
 
         for (m = 0; m != 24; m++) {
@@ -1226,6 +1227,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     void *verts2;
     s32 sh2;
     s32 r;
+    s32 ry;
 
     rise = 0;
     work->transferMode = 2;
@@ -1237,8 +1239,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Iwram_FillWords(canvas, 0x4000, 0);
           rise = -0x400000;
           Func_08164b2c(0, -16, -16);
-          work->transferValue = 50;
           work->transferMode = 2;
+          work->transferValue = 50;
           COPY_WORDS((void *)BG_PLTT,
                      Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
                      512);
@@ -1292,6 +1294,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
           Func_08164b2c(d - 11, frame - 136, 3 - d);
         }
+        ry = rise >> 16;
         r = 16;
         if (frame > 92) {
           r = frame - 75;
@@ -1304,7 +1307,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         } else {
           r = 64;
         }
-        top = (rise >> 16) - r / 2 + 60;
+        top = ry - r / 2 + 60;
         Func_0818caa8(work->sheet, 60, top, r);
         if (frame > 95) {
           {
@@ -1312,9 +1315,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               s32 n = i & 3;
               s32 angle = Random16();
               s32 x =
-                  (r * Trig_Sin(angle) >> 17) + 60 - (gData_08197492[n] >> 1);
+                  (Trig_Sin(angle) * r >> 17) + 60 - (gData_08197492[n] >> 1);
               s32 y =
-                  top + (r * Trig_Cos(angle) >> 17) - (gData_08197498[n] >> 1);
+                  top + (Trig_Cos(angle) * r >> 17) - (gData_08197498[n] >> 1);
 
               LOAD_ALT_BLITTER(SLOT_ALT, Data_081999ee[Random16() & 3] | 3);
               ((DrawRectangle)Ram_HeapSlots->unkb8[1])(

@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 146 of 895. Settled: i & 1 with a constant local at the
+// Measured 2026-11-05 (tla-en): differ 142 of 895. Settled: i & 1 with a constant local at the
 // loop's top (the 1 is rebuilt at reload and the copy of i dies in the and), j = 0 before blend.
 // Left, from the top: half's output copy after size * 2 in both spark loops (order only); the
 // vertices store before logWidth's in the first texture block (the listing's logWidth store comes
@@ -308,6 +308,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       model->mesh = Data_08199220;
       model->kind = 7;
       for (i = 0; i != 16; i++) {
+        s32 zero = 0;
         struct EffectStep *step = &work->particles[32 + i];
         s32 start = i * 2 + 54;
 
@@ -315,7 +316,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
           s32 scale;
 
           scale = 0x20000 - ((frame - start) << 13);
-          model->shade = 0;
+          model->shade = zero;
           Render_ResetTransformState();
           Func_080151e4(0x8000, 0x10000, 0x8000);
           Func_08015160(step->x - (128 << 16), step->y - (64 << 16), 0);

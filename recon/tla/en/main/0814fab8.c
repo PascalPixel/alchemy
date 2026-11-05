@@ -1,6 +1,10 @@
-// Measured 2026-11-05 (tla-en): differ 120 of 1146. Left: allocation in the
-// Djinni block: the native holds effect->prelude in r8 and reuses it as the
-// mode 1 argument; a local for it does not take r8.
+// Measured 2026-11-05 (tla-en): differ 86 of 1146. Left: y takes its -24 in its
+// initializer and the second xor reads a constant held by an empty asm with an
+// output, which cuts CSE with no scheduling barrier; that gives the listing's
+// instruction count and registers through the Djinni. Left: the mode arguments'
+// pseudo at the Djinni's two loads, start > 0's ble where the listing has beq
+// (as start != 0, 136), reload rotation at center's zeroes and the mode 4
+// fetch.
 
 // Draft, differ 120 of 1146, skeleton gap 28 (tla-en, 2026-11-01)
 // Func_0814fab8 is the body behind the twelve wrappers of
@@ -331,11 +335,11 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     // the first four frames it is drawn ADDITIVE as well.
     if (effect->prelude == 1) {
       s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
-      s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1];
+s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24; s32 four = COMPOSITE_FLIP_X;
 
-      LOAD_BLITTER_WHOLE_PASS(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX);
-      LOAD_BLITTER_ALTERNATE(draw[1], flags ^ COMPOSITE_FLIP_X, BLIT_ADDITIVE);
-      y -= 24;
+LOAD_BLITTER(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX); __asm__("" : "=r"(four) : "0"(four));
+LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, BLIT_ADDITIVE);
+
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + SERIES_B_DJINNI, x, y, 40, 40);

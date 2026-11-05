@@ -1,3 +1,7 @@
+// 5 November: differ 82 of 187, y ahead of gravity as the native stores them (a
+// rise that removes a false order). Left: r1 is in the native's spill set and not
+// here, which turns the rotation from the first reload on; no insn found yet that
+// needs it (r3 and r2 busy).
 // Under -Os, 5 November: differ 76 of 187 (tla-en); older figures below predate it.
 // Draft, differ 88 of 187 (was 90): the leader and monster 8 drop into the
 // sand pit, each in a ring of dust, the monster leaps to its spot and the
@@ -7,6 +11,7 @@
 // 3 in r5 for the motion flags (permute found 18 by passing the 2 through a
 // temporary, a register-allocation ripple rather than the source's form).
 #include "types.h"
+#include "event_work.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -57,8 +62,8 @@ void Func_02002ebc(void) {
   wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(Data_02000454), 0);
   leader->motionFlags = 0;
-  leader->gravity = 0x8000;
   leader->y = 0x820000;
+  leader->gravity = 0x8000;
   leader->bounce = 0;
   Actor_SetSingleChildFlags(Actor_GetById(8), 0);
   {
@@ -71,7 +76,7 @@ void Func_02002ebc(void) {
   monster->gravity = 0x8000;
   monster->bounce = 0;
   wait(1);
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x203;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x203;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Func_020041f8(204);

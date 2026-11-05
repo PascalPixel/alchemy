@@ -379,8 +379,7 @@ s32 Func_02002f30(void) {
           dz = -8;
           if ((i & 1) == 0)
             dz = 8;
-          shards[i] = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 403, 0x1c80000 + (dx << 16), -0x200000,
-                                         0x1660000 + (dz << 16));
+          shards[i] = Import_ActorCreate(403, 0x1c80000 + (dx << 16), -0x200000, 0x1660000 + (dz << 16));
           C2(Func_02004d9c, shards[i], 2);
           C2(Actor_SetSingleChildFlags, shards[i], 0);
           C2(Func_02004dac, shards[i], gData_0200539c);
@@ -439,8 +438,8 @@ s32 Func_02002f30(void) {
       slow = 0x8000;
       dragon = Actor_GetById(10);
       dragon->speedLimit = slow;
-      owner = &room->currentOwner;
       C3(Func_02004ebc, 11, 0x1b80000, 0x1380000);
+      owner = &room->currentOwner;
       C3(Func_02004ebc, *owner, 0x1c80000, 0x1480000);
       C3(Func_02004ebc, 10, 0x1e80000, 0x1a80000);
       C3(Actor_ArmCallback, *owner, 0, 0);
@@ -453,7 +452,7 @@ s32 Func_02002f30(void) {
       C2(Func_02004f14, 11, 0);
       C1(Func_02005014, 530);
       C2(Func_02004f14, 10, 0);
-      C3(Func_02004f2c, *owner, 256, 0);
+      Value3((s32 (*)())Func_02004f2c, *owner, 256, 0);
       C3(Func_02004f2c, 11, 256, 0);
       C1(FieldEvent_Wait, 15);
       C3(Actor_ArmCallback, *owner, 0x4000, 0);
@@ -568,13 +567,13 @@ s32 Func_02002f30(void) {
       REG_DISPCNT &= 0xfdff;
       C1(FieldEvent_Wait, 30);
       {
-        s32 z;
         s32 x;
+        s32 z;
 
         x = 0x1d00000;
         z = 0x15c0000;
         object = OverlayObject_PrepareObject(x, -0x200000, z, 323);
-        C3(Func_02004ebc, 12, x, z);
+        Func_02004ebc(12, x, z);
       }
       for (i = 0; i < 20; i++) {
         if (i % 5 == 0)
@@ -609,7 +608,7 @@ s32 Func_02002f30(void) {
         s32 *lead = &room->currentOwner;
 
         C3(Actor_SetAngleToward, 10, *lead, 0);
-        C2(Actor_SetModeById, *lead, 19);
+        Value2((s32 (*)())Actor_SetModeById, *lead, 19);
       }
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
@@ -625,7 +624,7 @@ s32 Func_02002f30(void) {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       C1(FieldEvent_Wait, 30);
-      Actor_StartRepeatedMotion(10, 2);
+      Value2((s32 (*)())Actor_StartRepeatedMotion, 10, 2);
       C1(FieldEvent_Wait, 30);
       message = (s32)MsgFieldLikeISaidTheSerpent;
     leave:

@@ -68,11 +68,11 @@ void Func_020012c4(void) {
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
+  volatile s32 kept = (*(s32 **)map)[1];
   struct AnkohlRuinsFloatWork *work = &Data_02004030;
   struct AnkohlRuinsFloatSprite *sprite = work->sprites;
   s32 tile = gResourceTableEntries[work->tile].offset >> 5;
   s32 i;
-  struct MapLayer *layer;
 
   if (GameFlag_Test(0x205) == 0 && work->level < 0x200000) {
     for (i = 0; i <= 7; i++) {
@@ -83,40 +83,38 @@ void Func_020012c4(void) {
       s32 sx, sy;
       s32 level;
 
-      if ((u32)kind <= 4) {
-        level = work->level;
-        switch (kind) {
-        case 0:
-          x -= level;
-          y += level;
-          if (level > 0x100000)
-            x = -0x100000;
-          break;
-        case 1:
-          x -= level;
-          y += level;
-          break;
-        case 2:
-          x += level;
-          y += level;
-          break;
-        case 3:
-          x += level;
-          y += level;
-          if (level > 0x100000)
-            x = -0x100000;
-          break;
-        case 4:
-          if (level < 0x100000) {
-            y += level;
-            break;
-          }
+      level = work->level;
+      switch (kind) {
+      case 0:
+        x -= level;
+        y += level;
+        if (level > 0x100000)
+          x = -0x100000;
+        break;
+      case 1:
+        x -= level;
+        y += level;
+        break;
+      case 2:
+        x += level;
+        y += level;
+        break;
+      case 3:
+        x += level;
+        y += level;
+        if (level > 0x100000)
+          x = -0x100000;
+        break;
+      case 4:
+        if (level >= 0x100000) {
           x = -0x100000;
           break;
         }
+        y += level;
+        break;
       }
-      sy = ((z - viewZ - y) >> 16) - 8;
       sx = ((x - viewX) >> 16) - 8;
+      sy = ((z - viewZ - y) >> 16) - 8;
       if (sx >= -15 && sx <= 319 && sy >= -15 && sy <= 239) {
         sx &= 511;
         sy &= 255;
@@ -128,6 +126,9 @@ void Func_020012c4(void) {
       sprite++;
     }
   }
-  layer = &map->layers[1];
-  ((s32 *)layer->unk08)[1] = work->unk0c + work->level;
+  {
+    struct MapLayer *layer = &map->layers[1];
+
+    ((s32 *)layer->unk08)[1] = work->unk0c + work->level;
+  }
 }

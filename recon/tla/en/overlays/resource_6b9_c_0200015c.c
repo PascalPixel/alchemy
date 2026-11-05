@@ -1,3 +1,4 @@
+// Draft, differ 26 of 57 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Func_020001e0 is adopted from this draft (2026-11-01).
 // Draft, differ 80 of 83, skeleton gap 28 (tla-en, 2026-11-01): the worst of
 // Func_0200029c (83 instructions, differ 80, gap 13/15) and Func_0200015c (57,
@@ -28,6 +29,7 @@
 // sparks pointer's register. Those lead the gap. The goto form stops the hoist
 // but measured 17/13 with a zero carried past the loop, so this one stays for.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 extern char ResourceId_FallingRock;
@@ -90,7 +92,7 @@ loop:
 
       sprite->tile = work->tileBase + ((spark->timer >> 2) & pictureMask) * 8;
       Func_020005f8(sprite, spark);
-      Func_02000600(spark, 63, 0xffff8000);
+      Call3((void (*)())Func_02000600, spark, 63, 0xffff8000);
       spark->timer++;
     }
     sprite++;

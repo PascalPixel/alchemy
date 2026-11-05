@@ -1,21 +1,3 @@
-// Near miss, differ 2 of 94 (tla-en, 2026-10-30): the sprite's priority byte
-// (ldrb r2, [r6, #9]) loads before the radius store; the native loads it after
-// the store and after the zero's copy out of r8 (mov r3, r8). The sched2 dump
-// says why: the load opens a read-modify-write of that byte, so
-// -mthumb-slow-loads's read-modify-write exception gives it no wait after the
-// store; the native's order needs that wait (a cost of 2 from the store, so the
-// zero's copy issues first). Unaliased (as here) the load ties the store and
-// the copy on priority and wins on its three dependants; read and written
-// through a signed char pointer it follows the store but still precedes the
-// copy (class 3 against the copy's anti dependence). Tried 2026-10-30: the
-// two sprite stores swapped (6), the radius held in a temporary and stored
-// after the frame byte (6), the byte rewritten through u8 (21). The random
-// value needs no pin and the frame count no __umodsi3 wrapper: written as
-// overlay 6a5's Func_020004c8 (resource_6a5_c_020004c8.c), the same function,
-// both differ 2 as before.
-// History: adopted in ab36ea7bce and exact under the old options; with
-// -mthumb-slow-loads (2026-10-26) it no longer compiles exactly, so it is back
-// on its listing.
 #include "types.h"
 #include "call.h"
 #include "field_event.h"
@@ -73,18 +55,18 @@ void Func_020001a4(void) {
     u32 random;
 
     random = Random16Far();
-    effect = CreateOrbitEffect(
-        0x2a0, center->x,
-        (s32)((u32)(random << 8) >> 16 << 16) + center->y - 0x1c0000,
-        center->z);
+    effect = CreateOrbitEffect(0x2a0, center->x,
+                               (s32)((u32)(random << 8) >> 16 << 16) +
+                                   center->y - 0x1c0000,
+                               center->z);
   } else {
     u32 random;
 
     random = Random16Far();
-    effect = CreateOrbitEffect(
-        0x2a0, center->x,
-        (s32)((u32)(random << 6) >> 16 << 16) + center->y - 0x1c0000,
-        center->z);
+    effect = CreateOrbitEffect(0x2a0, center->x,
+                               (s32)((u32)(random << 6) >> 16 << 16) +
+                                   center->y - 0x1c0000,
+                               center->z);
   }
   if (effect != 0) {
     sprite = effect->sprite;

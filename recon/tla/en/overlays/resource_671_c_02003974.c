@@ -31,6 +31,7 @@
 // `col + row * 11`, u8 occupied, an s32 return for Func_0200566c. Worse: for
 // and do-while loops 167 (loop.c hoists row * 11), cell->kind in the arms 146.
 #include "types.h"
+#include "call.h"
 
 struct PuzzleCell {
   u8 kind;

@@ -25,6 +25,7 @@
 // Func_02004ca8 takes the actor alone (r1 and r2 are not set for it), and work
 // is really read uninitialized when renderMode is nonzero.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"

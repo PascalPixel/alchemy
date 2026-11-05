@@ -1,21 +1,3 @@
-// Under -Os, 5 November: differ 22 of 181 (tla-en); older figures below predate it.
-// Draft, differ 68 of 181, skeleton gap 1 (tla-en, 2026-11-02)
-// Redraws the world map gauge (a 0x100-byte palette and tile strip) when its
-// level or blink changes. The same function as overlay 64c's Func_02001be0.
-// The strip reads as rows of 32 bytes: `&table[base / 8][4] + i / 2`, written
-// out for source and dest with no row or half local, gives the whole row block
-// and its registers; CSE shares the two. Any row, half or sourceRow local costs
-// 16 to 26. The gotos are the form: a for loop adds 16 instructions. The local
-// copy pointer loads the entry ahead of the kind test.
-// Left is allocation, one swap: level, source and the buffer against count, r5
-// and r6 exchanged, and j in r5 with source in r4 where the native has j in r4.
-// By the lreg dump the priorities are source 2.4, j 1.5 (its first constant set
-// doubles its live length), count 0.49. The native's result needs count ranked
-// above source, which refs and live length here do not reach, and j above it.
-// A conditional j goes through store-flag, separate j locals rank lower, and a
-// count that also holds kind + level costs 30. The rest is the clear call's
-// `adds r0` and `lsls r1`, swapped by one tie; a void cast, a size local and
-// a `[0]` element do not move it. The 64c draft has the same remainder.
 #include "types.h"
 #include "call.h"
 #include "iwram_call.h"
@@ -29,6 +11,9 @@ extern u8 gData_02006f20[][32];
 void VramCache_Load(s32 entry, s32 size, void *source);
 
 void Func_02004744(s32 progress) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 2 of 181 instructions differ in
+   * tla-en. */
   s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
   s32 kind = 0;
   s32 count, base, i;
@@ -88,6 +73,9 @@ void Func_02004744(s32 progress) {
       s32 j;
       u8 *source = &gData_02006f20[base / 8][4] + i / 2;
       u8 *dest = &Data_02006e20[base / 8][4] + i / 2;
+      /* FAKEMATCH(barrier): the empty asm on dest changes its allocation rank;
+       * as no asm, 22 of 181 instructions differ in tla-en. */
+      asm("" : "=r"(dest) : "0"(dest));
 
       j = 2;
       if ((i & 1) == 0) {

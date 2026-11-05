@@ -2,6 +2,7 @@
 // resource_69d/02008e58.c (overlay 69d's Func_02000e58), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_event.h"

@@ -1,3 +1,4 @@
+// Draft, differ 38 of 153 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 38 (tla-en); notes below may predate it.
 // Draft, differ 64 of 153: 688's scene setup, decompiled from the listing. The
 // native builds the screen effect 0x204 from the event work offset already in
@@ -6,6 +7,7 @@
 // built fresh in r1, the second test shares an ldrh, and the address stays in a
 // register. Tried: 0x204 in a local (64), the heap slots in a local (71).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"

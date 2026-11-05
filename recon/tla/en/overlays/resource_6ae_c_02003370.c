@@ -1,4 +1,4 @@
-// Draft, differ 60 of 207: rewritten from the listing. A scheduled step of the
+// Draft, differ 54 of 207 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // aerie's closing: by its frame counter it sets the blend and scale (frames 0,
 // 8, 16), parks object 8 below the floor (24), then raises it, spawning effects
 // of type 0x2a0 behind it (25, 26) until it stands high enough, and removes
@@ -85,7 +85,6 @@ void Func_02003370(void) {
       if ((gFrameCount & 7) == 0)
         Func_020057dc(246);
       spawn = 1;
-      __asm__("" : : : "memory");
       anchor->y += 0x24000;
     }
     break;
@@ -97,7 +96,6 @@ void Func_02003370(void) {
     } else {
       if ((gFrameCount & 7) == 0)
         Func_020057dc(246);
-      __asm__("" : : : "memory");
       anchor->y += 0x24000;
       spawn = 1;
     }

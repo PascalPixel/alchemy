@@ -19,7 +19,7 @@ SECTIONS
         "*/games/tla/src/scene/jupiter_lighthouse_room_4/s0990.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_4/s0b50.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_4/s0c28.o"(.text)
-        "*/resource_69d_overlay.o"(.text.x02008cc8)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_4/s0cc8.o"(.text)
         "*/resource_69d_overlay.o"(.text.x02008e58)
         "*/games/tla/src/scene/jupiter_lighthouse_room_4/light.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_4/lightcue.o"(.text)

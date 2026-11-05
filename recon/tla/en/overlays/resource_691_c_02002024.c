@@ -1,3 +1,4 @@
+// Draft, differ 6 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 6 (tla-en); notes below may predate it.
 // Draft, differ 55 of 76: four random effect 403 spawns around (x, z), then
 // flag 0x8dc. The instructions are the native's but the registers are not:
@@ -7,6 +8,7 @@
 // for or do loop (differ 45), loop.c hoists 63 and 0xffe00000 and counts
 // down; the native counts up to 4 and hoists neither.
 #include "types.h"
+#include "call.h"
 
 struct MagmaRockEffectConfig {
   s32 kind;

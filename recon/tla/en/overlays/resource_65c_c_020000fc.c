@@ -1,3 +1,4 @@
+// Draft, differ 29 of 49 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 29 of 49 (tla-en); older figures below predate it.
 // Draft, differ 33 of 49: the palette cycle Func_02000074 schedules. With the
 // counter read as volatile every access up to the first colour matches (the
@@ -9,6 +10,7 @@
 // counter's address (differ 32); the table as a forced temporary indexes the
 // reads (ldrh r3, [r3, r4], differ 43).
 #include "types.h"
+#include "call.h"
 
 extern volatile u32 gData_020001b0[];
 extern u32 gFrameCount;

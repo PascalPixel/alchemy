@@ -1,6 +1,7 @@
 // Draft of overlay 6a5's Func_02003c58, translated from its listing: differ
 // 159 of 149. Left: its shape: 152 instructions against the listing's 149.
 #include "types.h"
+#include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \

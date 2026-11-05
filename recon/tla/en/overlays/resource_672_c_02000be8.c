@@ -1,3 +1,4 @@
+// Draft, differ 24 of 145 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 24 of 145 (tla-en); older figures below predate it.
 // Draft, differ 75 of 145, skeleton gap 13/16 (tla-en, 2026-11-01)
 // Func_02000d3c's companion: the map's two scrolling layers (0x108 and 0x178)
@@ -27,6 +28,7 @@
 // Also open: fade is r0 in the first loop and r1 in the second, so the listing
 // may hold two variables; split scopes cost 2 here while step is high.
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "system/io_reg.h"

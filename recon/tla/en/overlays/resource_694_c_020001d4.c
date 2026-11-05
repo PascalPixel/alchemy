@@ -1,3 +1,4 @@
+// Draft, differ 7 of 15 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 7 (tla-en); notes below may predate it.
 // Near miss of Func_020001d4 (15 native instructions, 7 differ): the native
 // loads the 0xffff terminator from the literal pool and compares in r1 on both
@@ -7,6 +8,7 @@
 // that follows from it. A signed list compared with -1, a u16 local, casts of
 // either side and the loop spelled with gotos measured the same or worse.
 #include "types.h"
+#include "call.h"
 
 s32 Func_020001d4(u16 *list) {
   s32 count = 0;

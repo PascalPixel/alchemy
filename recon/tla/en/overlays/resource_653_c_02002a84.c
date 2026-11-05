@@ -1,3 +1,4 @@
+// Draft, differ 6 of 171 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 12 of 171 (tla-en); older figures below predate it.
 // Draft, differ 37 of 171 (was 41; 6 of 160 in tla-ja before): the Kandorean
 // Temple's prepare step. Japanese lacks the final flag 0x12f clear. Left: the
@@ -47,7 +48,7 @@ void Func_02002a84(void) {
       Func_02005170(41, 0, 20, 0, 1, f);
     }
     Func_02005230_(11, 0, 0);
-    Func_02005230_(12, 0, 0);
+    ((void (*)())Func_02005230_)(12, 0, 0);
     Func_02005230_(13, 0, 0);
   }
   if (GameFlag_Test(0x109) == 0) {
@@ -55,8 +56,8 @@ void Func_02002a84(void) {
       Actor_GetById(gMainRoutineWork.currentOwner)->y = 0x400000;
     } else if (gMainRoutineWork.entrance == 3 && Flag_IsSet(0x92d) == 0) {
       Func_02005230_(11, 0, 0);
-      Func_02005230_(12, 0, 0);
-      Func_02005230_(13, 0, 0);
+      ((void (*)())Func_02005230_)(12, 0, 0);
+      ((void (*)())Func_02005230_)(13, 0, 0);
       Func_02005028();
     }
   }

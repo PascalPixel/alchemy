@@ -32,6 +32,7 @@
 // call it crosses two and takes r8. The native sets r8 just after that call, and
 // why that also escapes r4 is open. `|= 8` and `&= ~1` as two statements closed 8.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
 
@@ -91,7 +92,7 @@ do {
         splash->motionFlags = 0;
         if (splashSprite != 0) {
           splashSprite->nextFrame = 0;
-          Animation_ApplyChildArgument(splashSprite, 1);
+          ((s32 (*)())Animation_ApplyChildArgument)(splashSprite, 1);
           splashSprite->priority = sprite->priority;
           Animation_ApplyChildValuesToRecord(splashSprite, 13);
           Animation_ApplyChildValue(splashSprite, 8);

@@ -1,4 +1,4 @@
-// Draft, differ 71 of 168, skeleton gap 29 (tla-en, 2026-11-01)
+// Draft, differ 39 of 168 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Func_02002d08 of overlay 6ad, shared by 4 overlays: rolls five randoms for a
 // new object near the actor, gives it velocity, scale and gravity, and copies the
 // sprite settings of the work area's source object. gData_020023c4 + 0x188 is
@@ -15,6 +15,7 @@
 // that later passes removed; none found. The goto loop here avoids hoisting, so
 // the pool stays after the epilogue. A goto into a for body did not help.
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 #include "actor.h"
 

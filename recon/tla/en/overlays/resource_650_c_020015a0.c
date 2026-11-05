@@ -1,3 +1,4 @@
+// Draft, differ 6 of 53 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 6 of 53 (tla-en); older figures below predate it.
 // Near miss, differ 10 of 53: the wave table builder. HBlank's
 // Func_02001558 (wave.c) streams the line table this fills: each of the 160
@@ -13,6 +14,7 @@
 // statements after the loop swapped (39), an asm operand on the layer (44);
 // permute 4 minutes found nothing better.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 struct MapLayer {

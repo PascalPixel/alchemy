@@ -1,3 +1,4 @@
+// Draft, differ 6 of 65 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 6 (tla-en); notes below may predate it.
 // Draft, differ 12 of 65: saves person 10 (a copy of the object, its mode, its
 // animation and its place) and stops it where it stands; person 9 halts too
@@ -7,6 +8,7 @@
 // the native issues a pool load or a store before the next load from the
 // objects, where this draft loads at once.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "iwram_call.h"
 

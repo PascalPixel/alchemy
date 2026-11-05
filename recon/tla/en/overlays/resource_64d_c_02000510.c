@@ -38,6 +38,7 @@
 // first lookup changed nothing and the one at actor 17's second spark store
 // cost 2 (33 with both, 31 without); both are gone.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 void Func_020023a4();
@@ -581,8 +582,8 @@ void Scene_RunSoldierInterception(void) {
     /* FAKEMATCH(barrier): the native loads the next actor id before it stores
      * the spark callback; as the plain store then call, 2 of 2142 instructions
      * differ in tla-en. */
-    do {
-    } while (0);
+    {
+    }
     ((struct SparkRecord *)rec)->update = callback;
     Func_02002914(next, 10);
   }
@@ -644,8 +645,8 @@ void Scene_RunSoldierInterception(void) {
     u8 *flags = Func_020028cc(14) + 90;
 
     byte = *flags;
-    do {
-    } while (0);
+    {
+    }
     {
       s32 low = 1;
 

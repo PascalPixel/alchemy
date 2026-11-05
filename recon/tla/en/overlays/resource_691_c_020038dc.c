@@ -1,3 +1,4 @@
+// Draft, differ 23 of 83 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 25 (tla-en); notes below may predate it.
 // Draft, differ 68 of 83, skeleton gap 9 (tla-en, 2026-11-01)
 // The falling rocks' setup, overlay 691's copy of overlay 668's Func_02004004
@@ -92,6 +93,9 @@ void Func_020038dc(void) {
   work->tileBase = tile;
   rock = work->rocks;
   work->resource = entry;
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 25 of 83 instructions differ in tla-en. */
+  asm("");
   sprite = work->sprites;
   i = 63;
   do {

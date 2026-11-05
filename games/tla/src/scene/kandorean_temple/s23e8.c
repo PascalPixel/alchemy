@@ -1,17 +1,3 @@
-// Under -Os, 5 November: differ 10 of 260 (tla-en); older figures below predate it.
-// Near miss, differ 10 of 260 (tla-en, 2026-10-31): sched2 order only. The
-// scene in which actor 12 gives the party item 198 and leaps away. Its motion
-// flags are cleared after the sprite's rotation is set: the native stores that
-// zero from the pool (CSE does not reach the earlier zero), and in the other
-// order the zero is shared and every register after it moves. Left: the motion
-// flags' address formed before the scale store and y read before 0x40000 is
-// built (sched2 ranks y's load at priority 102 against 101 for the constant,
-// so the load goes first whenever both are ready), and the rotation's closing
-// store issued before the mode call's argument (a tie at priority 86 that the
-// dependence count gives to the store; the native order looks like that store
-// depending on the scale store, which the rotation's u16 type does not give).
-// Every order of either group of four stores measures 10 or more; the
-// permuter's one-pass block around the first motion-flags store measures 12.
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "call.h"
 
@@ -24,6 +10,9 @@ void Actor_Jump(s32 id, s32 height, s32 frames);
 void Actor_WatchAndSetScript(s32 id, s32 target);
 
 void Func_020023e8(void) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 180 of 260 instructions differ in
+   * tla-en. */
   s16 angle = *(s16 *)&Actor_GetById(gMainRoutineWork.currentOwner)->angle;
   struct Actor *object;
   struct FieldSprite *sprite;
@@ -34,16 +23,15 @@ void Func_020023e8(void) {
   ((void (*)())Actor_ArmCallback)(12, 0);
   Func_02005280((s32)&MsgKandoreanTemple08);
   Call2((void (*)())Func_02005298, 0x800c, 0);
-  Call3((void (*)())Actor_SetAngleToward, gMainRoutineWork.currentOwner, 12,
-        0);
+  Call3((void (*)())Actor_SetAngleToward, gMainRoutineWork.currentOwner, 12, 0);
   Call2((void (*)())Actor_SetModeById, 12, 3);
   Call2((void (*)())Func_02005298, 0x800c, 0);
   Call2((void (*)())Actor_SetModeById, 12, 3);
   Call2((void (*)())Func_02005298, 0x800c, 0);
   Call2((void (*)())Actor_SetModeById, 12, 4);
   Call2((void (*)())Func_02005298, 0x800c, 0);
-  Call2((void (*)())Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner,
-        3);
+  Call2((void (*)())Motion_SetModeAndWaitAnimation,
+        gMainRoutineWork.currentOwner, 3);
   Call2((void (*)())Motion_SetModeAndWaitAnimation, 12, 3);
   Call2((void (*)())Func_02005298, 0x800c, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, (u16)angle, 10);
@@ -85,8 +73,7 @@ void Func_020023e8(void) {
   Call3((void (*)())Actor_SetSpeedParameters, 12, 0xcccc, 0x6666);
   Call3((void (*)())Actor_SetPositionAndReset, 12, 496, 394);
   Call3((void (*)())Actor_SetPositionAndReset, 12, 432, 394);
-  Call2((void (*)())Actor_WatchAndSetScript, 12,
-        gMainRoutineWork.currentOwner);
+  Call2((void (*)())Actor_WatchAndSetScript, 12, gMainRoutineWork.currentOwner);
   Call2((void (*)())Actor_SetSpritePriority, 12, 2);
   Call1((void (*)())GameFlag_SetBit, 0x84a);
   Func_020051c8();

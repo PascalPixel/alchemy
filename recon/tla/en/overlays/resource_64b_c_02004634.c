@@ -1,3 +1,4 @@
+// Draft, differ 17 of 120 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 17 of 120 (tla-en); older figures below predate it.
 // Draft of Func_02004634 (overlay 64B, 120 instructions), differ 69: the linked
 // pair of effects, ported from ☀️'s WorldMap_CreateAttachedEffects (⚓️ creates
@@ -12,6 +13,7 @@
 // halfword but lands in r8 not r10, and the tile field loads its mask first
 // where the native loads the halfword first.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_sprite.h"

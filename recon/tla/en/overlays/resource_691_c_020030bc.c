@@ -1,3 +1,4 @@
+// Draft, differ 8 of 150 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
 // Draft, differ 24 of 150, skeleton gap 10 (tla-en, 2026-11-01)
 // Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
@@ -28,6 +29,7 @@
 // no local for the read (68), reading it back into cells (66), cells stepped in
 // place (64), an owner pointer local (29).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

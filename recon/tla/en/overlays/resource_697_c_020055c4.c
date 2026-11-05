@@ -1,3 +1,4 @@
+// Draft, differ 16 of 81 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 16 (tla-en); notes below may predate it.
 // Draft, differ 16 of 81, skeleton gap 6 (tla-en, 2026-11-01)
 // Starts an effect between objects a and b: allocates its work in heap slot 236,
@@ -23,6 +24,7 @@
 // returns s32, and trial_road.h's void moves an argument load, so this draft takes
 // the plain headers.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 

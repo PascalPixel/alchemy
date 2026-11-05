@@ -23,6 +23,7 @@
 // outside the loop. Worse: cells + corner at the row head (gap 43), terrainIds
 // indexed through layer (gap 54) or with corner in the index (gap 41).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 

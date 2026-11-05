@@ -1,5 +1,3 @@
-// Draft, differ 10 of 165 (was 94): overlay 6a5's copy of overlay 698's
-// Func_0200091c, as resource_6a2_c_02000a88.c, whose header says what is left.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -8,15 +6,18 @@
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void Animation_ApplyChildValues(struct Actor *object, s32 value);
-void Func_02005884(s32 id, s32 x, s32 z);
+void Func_02001e70(s32 id, s32 x, s32 z);
 
 static __inline__ void Func_02001c10_(s32 id, s32 x, s32 z) {
-  Func_02005884(id, x, z);
+  Func_02001e70(id, x, z);
 }
 
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Test(flag); }
 
-void Func_02004644(void) {
+void Func_02000cc8(void) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 165 of 165 instructions differ in
+   * tla-en. */
   struct Actor *left = Actor_GetById(9);
   struct Actor *right = Actor_GetById(10);
   struct Actor *rider = Actor_GetById(23);

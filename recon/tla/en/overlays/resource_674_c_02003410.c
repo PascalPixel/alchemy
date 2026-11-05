@@ -1,3 +1,4 @@
+// Draft, differ 27 of 42 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 31 of 42 (tla-en); older figures below predate it.
 // Draft of overlay 674's Func_02003410, its palette queue's allocation (the
 // main image's PaletteQueue_Initialize with other loops), differ 30
@@ -6,6 +7,7 @@
 // goto loops), and steps j through its u16 value (lsls, lsrs; adds #1; lsls,
 // asrs) and i as (i << 16) + 0x10000.
 #include "types.h"
+#include "call.h"
 #include "heap_release.h"
 #include "palette_snapshots.h"
 
@@ -26,11 +28,21 @@ outer:
   entry->count = 0;
   j = 0;
 inner:
-  entry->colors[j] = 0;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 31 of 42 instructions differ
+   * in tla-en. */
+  do {
+    entry->colors[j] = 0;
+  } while (0);
   j++;
   if ((s16)j != 16)
     goto inner;
-  entry++;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 29 of 42 instructions differ
+   * in tla-en. */
+  do {
+    entry++;
+  } while (0);
   i++;
   if (i != 4)
     goto outer;

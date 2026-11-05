@@ -36,6 +36,7 @@
 // for loop (gap 64). Declaration order of actor, h, x, y, z and screenY changes
 // the pseudos but not the code, in all 24 orders of each of two groups tried.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "map.h"
 #include "ram_buffer.h"

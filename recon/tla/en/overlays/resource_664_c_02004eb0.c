@@ -1,3 +1,4 @@
+// Draft, differ 13 of 64 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 13 of 64 (tla-en); older figures below predate it.
 // Draft, differ 64 of 64: creates eight objects of type 672, each with its
 // sprite at priority 1, a phase of 16 times its number in byte 0x63, a
@@ -6,6 +7,7 @@
 // native keeps the count in r6 and a zero in r7) and the native takes both
 // action field addresses and counts up before the parity test.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
 

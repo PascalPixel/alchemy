@@ -15,6 +15,7 @@
 // measure the same. frame stays a local: it gives the listing's address built
 // before the third Random16Far and finished after it.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 

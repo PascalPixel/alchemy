@@ -112,7 +112,7 @@ void Func_02000e80(void) {
   Call2((void (*)())Func_020043bc, gMainRoutineWork.currentOwner, 0x102);
   Call3((void (*)())Func_02004264, 0x10000, 0x10000, 0x10000);
   FieldEvent_Wait(20);
-  Call2((void (*)())Func_0200440c, 0x10000, 0);
+  Func_0200440c(0x10000, 0);
   Func_02004404(0x10006, 0);
   Func_02004414(80);
   FieldEvent_Wait(80);

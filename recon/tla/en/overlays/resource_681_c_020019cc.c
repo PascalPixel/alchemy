@@ -44,7 +44,7 @@ s32 Func_020019cc(void) {
 
   Func_02004e5c();
   Call1((void (*)())Func_02004fcc, 0);
-  Call2((void (*)())FieldMessage_Show, message, 1);
+  ((s32 (*)())FieldMessage_Show)(message, 1);
   Call3((void (*)())Func_02004f2c, gMainRoutineWork.currentOwner, 0x100, 0);
   if (leader->z >> 19 <= 39) {
     Call3((void (*)())Actor_ResetAndSetPositionInMode2,

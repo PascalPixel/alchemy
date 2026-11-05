@@ -1,5 +1,5 @@
-// Draft, differ ?, skeleton gap ? (tla-en, 2026-11-02)
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "fixed_math.h"
 #include "ram_buffer.h"
@@ -30,6 +30,9 @@ void wait(s32 frames);
 extern s16 gData_02005798[];
 
 void Func_020032b8(void) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 2 of 304 instructions differ in
+   * tla-en. */
   struct Position probe;
   s32 startBehavior;
   s32 x;
@@ -80,7 +83,7 @@ top:
     heading = (s16)ArcTan2(z - actor->z, x - actor->x);
     heading = (s16)((heading + 0x2000) & -0x4000);
   }
-  Vector_AddPolarOffsetFar(PIXELS(16), heading, &probe);
+  Call3((void (*)())Vector_AddPolarOffsetFar, PIXELS(16), heading, &probe);
   nextBehavior = Func_02004c10(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y >
@@ -113,7 +116,7 @@ body:
   for (i = 0; i < 64; i++, flags += 128, other++) {
     if (other->script != NULL && (*flags & 1) && other != actor) {
       /* FAKEMATCH(barrier): the empty asm clobbering sfp and r4 and reading
-       * next and actor; as no asm, N of 302 instructions differ in tla-en. */
+       * next and actor; as no asm, 85 of 304 instructions differ in tla-en. */
       asm(""
           :
           : "r"(next), "r"(next), "r"(actor), "r"(actor), "r"(actor),
@@ -124,7 +127,6 @@ body:
       }
     }
   }
-  asm("" : : : "sfp");
   x = next->x;
   z = next->z;
   actor->speedLimit = PIXELS(2);
@@ -138,9 +140,11 @@ test:
   {
     struct Position *step;
 
-    asm("" : : : "sfp");
     step = &probe;
     Vector_AddPolarOffsetFar(PIXELS(16), heading, step);
+    /* FAKEMATCH(dead): the unread store ends CSE's knowledge of the address, so
+     * next rebuilds it; as no store, 59 of 304 instructions differ in tla-en.
+     */
     step = NULL;
   }
   next = &probe;

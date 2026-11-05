@@ -18,6 +18,7 @@
 // Tried 65 spellings of the pair (mask local, `x = 31; x &= v`, s32 or u16),
 // and none gained; 432 type mixes settled the rest.
 #include "types.h"
+#include "call.h"
 #include "system/io_reg.h"
 
 extern u8 Func_02000c50[];

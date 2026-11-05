@@ -1,4 +1,4 @@
-// Draft, differ 225 of 200, skeleton gap 33/36 (tla-en, 2026-11-01)
+// Draft, differ 114 of 200 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Overlay 6a5's copy of the function in resource_69d/02008e58.c (69d's
 // Func_02000e58); 6a1, 6a2 and 6a4 hold it too. It draws each listed actor as
 // one light sprite, sized by gData_02006b70, at a depth from y + z.
@@ -80,9 +80,6 @@ void Func_020047d4(void) {
       continue;
     x = actor->x - cameraX;
     y = actor->y - originY + 0x80000;
-    /* FAKEMATCH(barrier): the empty asm on y changes its allocation rank; as no
-     * asm, 126 of 200 instructions differ in tla-en. */
-    asm("" : : "r"(y));
     z = actor->z - cameraZ - originY;
     screenY = z - y;
     depth = ((y + z) >> 16) + 58;

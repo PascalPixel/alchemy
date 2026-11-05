@@ -1,3 +1,4 @@
+// Draft, differ 52 of 92 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 52 (tla-en); notes below may predate it.
 // Draft, differ 52 of 92: pushes the object in the cell east of the leader one
 // cell further, copying the cells it leaves and enters, and sets flag 0x8d9
@@ -5,6 +6,7 @@
 // r10 from its first store (8 added to sp) and 79 in r6 and 36 in r8, where
 // this form builds the address with add sp and swaps the two constants.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 

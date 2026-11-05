@@ -1,3 +1,4 @@
+// Draft, differ 10 of 656 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 14 of 656 (tla-en); older figures below predate it.
 // Near miss (16 of 656 instructions differ, was 80). Object 13's motion flags
 // are cleared after its sprite's rotation is set, so the zero is the low byte
@@ -85,14 +86,23 @@ void Func_02001d24(void) {
   Actor_SetSingleChildFlags(Actor_GetById(13), 0);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x6666, 0x3333);
   Call4((void (*)())Func_02003990, (s32)object, 164 << 17, 152 << 14, 168 << 16);
-  Actor_WaitForMoveById(13);
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 14 of 656 instructions differ
+   * in tla-en. */
+  do {
+    Actor_WaitForMoveById(13);
+  } while (0);
   object->motionFlags = 3;
   object->height = 0x200000;
   object->field18 = 0x10000;
   sprite->rotation = 0;
   ShrineOfTheSeaGod_ObjMode(13, 1);
-  Actor_SetSingleChildFlags(Actor_GetById(13), 1);
-  ShrineOfTheSeaGod_ObjSpeed(13, 0x19999, 0xcccc);
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 12 of 656 instructions differ in tla-en. */
+  do {
+    Actor_SetSingleChildFlags(Actor_GetById(13), 1);
+    ShrineOfTheSeaGod_ObjSpeed(13, 0x19999, 0xcccc);
+  } while (0);
   {
     s32 a0 = 13;
 

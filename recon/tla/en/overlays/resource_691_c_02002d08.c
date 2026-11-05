@@ -21,6 +21,7 @@
 // cells` first and `cells +=` then a copy (cse folds both), a `u8 *p` at the top
 // (87), `index +=` early (84), volatile cell (its slot lands at the top: 97).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

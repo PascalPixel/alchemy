@@ -23,6 +23,7 @@
 // orders of the s32 declarations stay at 196. A -0x20000 local (270) and a
 // split sum (268) are worse; the native loads that constant twice.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "iwram_call.h"

@@ -8,6 +8,7 @@
 // while it is raised. The same listing as overlay 661's Func_020039b8 and
 // 697's Func_02003da0. Left: the native keeps the table in r9, the cell flags base in r11, the collision cursor in r8 and the count in r10, takes the shape grid from the stack, and stores the cell flags through a shared tail.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"

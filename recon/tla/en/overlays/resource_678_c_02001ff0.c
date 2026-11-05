@@ -1,3 +1,4 @@
+// Draft, differ 8 of 66 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
 // Draft, differ 26 of 66: points the map work's focus (0x178) at cell (x, z):
 // its position in 16.16 pixels, the cell's halfword coordinates, its
@@ -6,6 +7,7 @@
 // scroll; redraws with Func_02002810 and waits a frame. Left: registers for the
 // field offsets and the order of the zero stores against the index arithmetic.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 

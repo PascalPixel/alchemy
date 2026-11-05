@@ -1,3 +1,4 @@
+// Draft, differ 26 of 79 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 26 of 79 (tla-en); older figures below predate it.
 // Draft, differ 43 of 79: the body of Func_02001630 (s1630.c) with the target
 // as parameters. Left are the registers: the native keeps x in r6 and shifts it
@@ -6,6 +7,7 @@
 // and z in place and a party pointer taken first change nothing. Overlay 670's
 // Func_02003a08 is the same routine and is 4 off at its entry.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"

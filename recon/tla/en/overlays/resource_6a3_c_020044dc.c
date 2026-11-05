@@ -1,7 +1,8 @@
-// Draft, differ 47 of 76: overlay 6a3's copy of the function drafted in
+// Draft, differ 47 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // resource_698_c_0200180c.c (overlay 698's Func_0200180c, differ 47 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 

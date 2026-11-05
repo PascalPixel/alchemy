@@ -6,6 +6,7 @@
 // Left: as Func_02002898's draft, the native keeps the saved values'
 // addresses in high registers across the two copies.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,

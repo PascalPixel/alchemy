@@ -1,3 +1,4 @@
+// Draft, differ 8 of 80 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 27 (tla-en); notes below may predate it.
 // Draft, differ 27 of 80: the scene start that sets the event work's 0x1ac
 // word to 0x100, the leader's bit 5 at 0x23, blending 0x3f42 and 0x80c, modes
@@ -36,6 +37,9 @@ s32 Func_0200012c(void) {
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   blend = 0x3f42;
   FIELD_AT(0x4000050, u16, 0) = blend;
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 27 of 80 instructions differ in tla-en. */
+  asm("");
   FIELD_AT(0x4000052, u16, 0) = 0x80c;
   Call2(Actor_SetModeById, 0x18, 2);
   Call2(Actor_SetModeById, 0x19, 2);

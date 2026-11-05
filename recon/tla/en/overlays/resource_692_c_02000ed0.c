@@ -1,3 +1,4 @@
+// Draft, differ 47 of 270 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 47 (tla-en); notes below may predate it.
 // Draft, differ 61 of 270, skeleton gap 11 (tla-en, 2026-11-01)
 // Left: the listing keeps 31 in a register across both Random16Far calls and
@@ -18,6 +19,7 @@
 // starts the room's event (Func_02001350); otherwise the camera returns to
 // the leader.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"

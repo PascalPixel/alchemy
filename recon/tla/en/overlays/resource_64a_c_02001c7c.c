@@ -41,6 +41,7 @@
 // loop; item as s32, u32 or u16 and six spellings of its mask, one-constant
 // masks included.
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 #include "battle_unit.h"
 

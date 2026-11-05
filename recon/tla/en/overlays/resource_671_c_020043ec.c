@@ -9,6 +9,7 @@
 // through lr), the zero kept in r8 that also starts the row, and the first
 // column's load, which jump2 merges into the search's here.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 

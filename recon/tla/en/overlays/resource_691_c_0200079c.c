@@ -1,3 +1,4 @@
+// Draft, differ 33 of 110 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 35 (tla-en); notes below may predate it.
 // Draft, differ 78 of 110: translated from its listing; names and structure still
 // to do.
@@ -42,7 +43,12 @@ L_020087b2:
   FIELD_AT(r7, s32, 76) = 255 & v2;
   r5 = 0;
   FIELD_AT(r7, u8, 85) = r5;
-  FIELD_AT((r7 + 85), u8, 4) = r5;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 35 of 110 instructions differ
+   * in tla-en. */
+  do {
+    FIELD_AT((r7 + 85), u8, 4) = r5;
+  } while (0);
   Call2((void (*)())Actor_SetSingleChildFlags, r7, 0);
   r6 = r6 >> 19;
   r6 = r6 + 4;

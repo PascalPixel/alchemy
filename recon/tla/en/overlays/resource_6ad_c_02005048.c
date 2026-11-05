@@ -13,6 +13,7 @@
 // masks are separate statements, ox first; timer is taken before the branch.
 // map->viewX and viewZ (offset 228) in place of camera[] measure worse.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_event.h"

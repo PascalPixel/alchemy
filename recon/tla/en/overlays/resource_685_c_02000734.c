@@ -22,6 +22,7 @@
 // splits by itself, red = 31 then &= gives the movs in the loop, and declaring
 // offset before left gained 6.
 #include "types.h"
+#include "call.h"
 
 void wait(s32 frames);
 

@@ -1,9 +1,11 @@
+// Draft, differ 33 of 58 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 33 of 58 (tla-en); older figures below predate it.
 // Draft, differ 47 of 58: places the objects of a list ended by 0xffff: each
 // entry (three halfwords) names an object, the first of its three script
 // choices and the flag that picks between them; the object stops moving,
 // loses its solid bit and keeps the flag as its action parameter.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct Actor *Actor_GetById(u32 id);

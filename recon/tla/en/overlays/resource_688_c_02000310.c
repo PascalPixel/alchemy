@@ -1,5 +1,7 @@
+// Draft, differ 14 of 84 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 18 (tla-en); notes below may predate it.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -93,7 +95,12 @@ void Func_02000310(s32 kind, s32 frames) {
     id = kind;
   resource = BattleEffect_GetResourceId(id);
   if (kind == 7) {
-    width = 10;
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 18 of 84 instructions differ
+     * in tla-en. */
+    do {
+      width = 10;
+    } while (0);
     height = 10;
     Text_GetMessageSize(work->message, &width, &height, &a, &b);
     x = width + a - 5;

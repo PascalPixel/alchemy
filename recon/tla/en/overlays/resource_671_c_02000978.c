@@ -1,9 +1,11 @@
+// Draft, differ 24 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 24 of 76 (tla-en); older figures below predate it.
 // Draft, differ 70 of 76, a first form written from the listing (push.c's
 // Func_02000c38 is the nearest relative). Left: the native keeps dx in r1 and
 // builds its constants in r4, and reloads actor->z after the first clamp, where
 // CSE here carries the stored value into the second test.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 extern s32 gData_02005af0;

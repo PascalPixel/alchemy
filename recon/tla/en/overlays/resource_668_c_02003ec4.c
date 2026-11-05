@@ -1,4 +1,4 @@
-// Draft, differ 49 of 83, skeleton gap 12 (tla-en, 2026-11-01): worst of two;
+// Draft, differ 40 of 57 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // diff each with --symbol, as the overlay holds both names. Overlay 668's
 // falling rocks; the spawn between them, Func_02003f48, is adopted as
 // eastern_alhafra/s3f48.c.
@@ -18,6 +18,7 @@
 // 0x3ff mask store folds to 0xfc00, a union pads the sprite, and an inline
 // setter, a temporary or other parameter types did not help.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 struct Rock {
@@ -92,7 +93,7 @@ loop:
 
       sprite->tile = base + (frame & frameMask) * 8;
       Func_02004c6c(sprite, rock);
-      Func_02004c74(rock, 63, -0x8000);
+      Call3((void (*)())Func_02004c74, rock, 63, -0x8000);
       rock->timer++;
     }
     sprite++;

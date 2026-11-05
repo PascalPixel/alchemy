@@ -1,3 +1,4 @@
+// Draft, differ 29 of 69 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 29 of 69 (tla-en); older figures below predate it.
 // Draft, differ 79 of 69: ⚓️'s Window_SetTilemapFlagRect (window/
 // fixed_block.c) as overlay 64A's copy. The native strength-reduces the row
@@ -11,6 +12,7 @@
 // rotate) and the mask's pool reload inside the inner loop. goto loops on
 // the first draft measured 87.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "window.h"
 

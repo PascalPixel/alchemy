@@ -32,6 +32,7 @@
 // native's seven pushes and differ 193, gap 38/23, but lands in sl:fp, and it
 // is a device with no evidence.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "io_write_queue.h"

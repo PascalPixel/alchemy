@@ -7,6 +7,7 @@
 // four saved values' addresses in high registers across the two copies and
 // loads the branch addresses early; this draft reloads them.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,

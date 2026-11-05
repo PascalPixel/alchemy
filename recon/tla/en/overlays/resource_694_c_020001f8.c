@@ -5,6 +5,7 @@
 // then one more entry from the triples of whichever table the toggle picks,
 // flips the toggle and moves to the next step.
 #include "types.h"
+#include "call.h"
 
 extern u16 gData_02006000;
 extern u16 *gData_02006004;

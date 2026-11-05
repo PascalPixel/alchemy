@@ -5,6 +5,7 @@
 // it and spills rows to the stack (a frame of 72, not 68); goto loops keep the
 // hoist too (71).
 #include "types.h"
+#include "call.h"
 
 struct AnkohlRuinsEffectParams {
   u32 unk00;

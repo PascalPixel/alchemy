@@ -1,3 +1,4 @@
+// Draft, differ 18 of 153 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Draft of overlay 6b5's Func_02000fbc, the lobby's sound test (a number from 0
 // to 96 picks a song from gData_02001b02, skipping songs Func_02001adc does
 // not allow unless L, Up and Start are held), modeled on ☀️'s
@@ -7,6 +8,7 @@
 // there, differ 16), and the actor and the shown number trade r8 and sl. As
 // for(;;) loops, loop.c hoists the input address (differ 73 to 158).
 #include "types.h"
+#include "call.h"
 #include "input.h"
 #include "main_routine_work.h"
 

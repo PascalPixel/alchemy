@@ -116,7 +116,7 @@ void Func_020051a0(void) {
       if (++*fade == 1) {
         Dma_Set(Data_020062b4, (void *)0x050003c0, 0x80000010, REG_DMA3);
         buffer = Heap_AllocEwram(576);
-        Func_02005770(gData_020062d4, buffer);
+        Call2((void (*)())Func_02005770, gData_020062d4, buffer);
         VramCache_Load(*vramEntry, 576, buffer);
         Heap_Release(buffer);
       }

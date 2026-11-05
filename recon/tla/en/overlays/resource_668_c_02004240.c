@@ -1,3 +1,4 @@
+// Draft, differ 23 of 171 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 23 of 171 (tla-en); older figures below predate it.
 // Near miss, differ 219 of 171 (tla-en, 2026-10-31): the same control flow,
 // calls, accesses and constants as the native; what is left is GCSE and
@@ -26,6 +27,7 @@
 // its stack copy, not the push state); the cell as an s32[3] or through a
 // pointer (223, 229, with push->kind); steps * dx (no change).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "system/vector3.h"
 

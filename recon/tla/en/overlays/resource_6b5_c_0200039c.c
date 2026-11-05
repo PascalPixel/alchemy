@@ -32,6 +32,7 @@
 // body, *(namePrefix + n), a byte-offset spelling, the scan without `prefix`,
 // `prefix` in an inner block: none better.
 #include "types.h"
+#include "call.h"
 #include "edition.h"
 #include "serial.h"
 
@@ -96,7 +97,7 @@ testRecord:
     result++;
   }
   wait(2);
-  Message_DecodeRawUnbounded((s32)MsgEnemyLabel, namePrefix);
+  Call2((void (*)())Message_DecodeRawUnbounded, (s32)MsgEnemyLabel, namePrefix);
   prefix = namePrefix;
   nameIndex = 0;
   if (prefix[nameIndex] != 0) {

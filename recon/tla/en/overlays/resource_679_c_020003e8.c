@@ -1,3 +1,4 @@
+// Draft, differ 16 of 156 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 26 (tla-en); notes below may predate it.
 // Draft, differ 85 of 156, skeleton gap 9 (tla-en, 2026-11-01)
 // Func_02000540's twin for the palettes at 0x05000060 and 0x05000080 (the
@@ -32,6 +33,7 @@
 // volatile counter). The stored zero needs no local: cse reuses the register
 // the byte test left holding 0.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "io_write_queue.h"
@@ -50,14 +52,22 @@ void Func_020003e8(void) {
   if (*(s8 *)(work + 0xca4) != 0)
     return;
   if (gData_020024c4 == -1) {
-    Iwram_CopyWords(Data_02002958, (void *)0x05000060, 32);
+    Call3((void (*)())Iwram_CopyWords, Data_02002958, (void *)0x05000060, 32);
     Iwram_CopyWords(Data_02002978, Data_02002958, 32);
     Iwram_CopyWords(gData_02002998, (void *)0x05000080, 32);
     Iwram_CopyWords(gData_020029b8, gData_02002998, 32);
     gData_020024c4 = 0;
   }
   phase = gData_020024c4 / 8;
-  phase %= 4;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 24 of 156 instructions differ
+   * in tla-en. */
+  do {
+    phase %= 4;
+  } while (0);
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 20 of 156 instructions differ in tla-en. */
+  asm("");
   firstCopy = Data_02002978;
   secondCopy = gData_020029b8;
   for (k = 0; k <= 3; k++) {

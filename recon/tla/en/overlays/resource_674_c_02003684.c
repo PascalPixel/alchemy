@@ -1,3 +1,4 @@
+// Draft, differ 26 of 126 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 26 of 126 (tla-en); older figures below predate it.
 // Draft, differ 56 of 126, skeleton gap 0 (tla-en, 2026-11-01): overlay 674's
 // copy of overlay 668's Func_020040ec (the same listing, calling Func_02003790
@@ -12,6 +13,7 @@
 // because any C loop gets loop.c's strength reduction, which the native lacks;
 // (i + 1) * 65536 is the only form found for its index + 0x10000 step.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 

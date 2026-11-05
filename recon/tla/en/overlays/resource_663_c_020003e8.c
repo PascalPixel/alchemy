@@ -1,8 +1,10 @@
+// Draft, differ 24 of 61 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 24 of 61 (tla-en); older figures below predate it.
 // Draft, differ 34 of 61: overlay 663's copy of overlay 691's Func_020006cc
 // (the same listing, calling Func_02000348 where 691 calls
 // MapCell_GetAttributes), whose draft holds its notes.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"

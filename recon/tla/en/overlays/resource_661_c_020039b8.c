@@ -4,6 +4,7 @@
 // into the collision map and cell flags, and carries its rider with a
 // bobbing sine. Left: register choice and reloaded timer compares.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "iwram_call.h"

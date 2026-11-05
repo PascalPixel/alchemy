@@ -1,3 +1,4 @@
+// Draft, differ 6 of 87 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
 // Draft, differ 105 of 87, skeleton gap 43 (tla-en, 2026-11-01)
 // The backward twin of Func_0802b590 (field/map/edit.c): copies a width by
@@ -20,6 +21,7 @@
 // pointer sums, &array[] (all 125 unless noted), shapes before cells (143),
 // goto outer loop (133), both goto (111).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 extern u8 gMapShapeGrid[];
@@ -48,6 +50,9 @@ void Func_0200217c(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
       *dstCell-- = *srcCell--;
       *dstShape-- = *srcShape--;
       col--;
+      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+       * 8 of 87 instructions differ in tla-en. */
+      asm("");
     } while (col >= 0);
     }
   }

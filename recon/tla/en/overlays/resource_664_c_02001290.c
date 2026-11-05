@@ -11,6 +11,7 @@
 // 0x80000 in r5 and the routine in r10, and saves r9 too. Measured: Value2
 // for the products (67).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"

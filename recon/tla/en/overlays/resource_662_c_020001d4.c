@@ -1,3 +1,4 @@
+// Draft, differ 34 of 171 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 36 of 171 (tla-en); older figures below predate it.
 // Draft, differ 173 of 171, skeleton gap 34 (tla-en, 2026-11-01)
 // Finds how far a pushed object can slide in the leader's direction, probing
@@ -25,6 +26,7 @@
 // with direct y and z, y set inside the loop, kind read after the first
 // section, result in a local (same code as the returns).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
@@ -55,7 +57,12 @@ s32 Func_020001d4(s32 *position) {
     dz = gData_0200198c[direction] << 16;
     position[5] = count;
     state = &object->terrainId;
-    dx = gData_0200198c[direction] & 0xffff0000;
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 36 of 171 instructions differ
+     * in tla-en. */
+    do {
+      dx = gData_0200198c[direction] & 0xffff0000;
+    } while (0);
     *state = 2;
     position[0] = object->x + dx;
     position[2] = object->z + dz;

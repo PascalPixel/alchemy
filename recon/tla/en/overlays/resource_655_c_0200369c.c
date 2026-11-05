@@ -1,3 +1,4 @@
+// Draft, differ 12 of 86 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 12 of 86 (tla-en); older figures below predate it.
 // Draft of Func_0200369c (overlay 655), differ 12 of 86: the room entry of
 // Func_02003aa0 with its own cells. One spot is left: the native reads the
@@ -5,6 +6,7 @@
 // sign-extends it only after the call, adding the flag base into r5 before
 // copying it to r0; an s16 local reads it sign-extended once (ldrsh).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"

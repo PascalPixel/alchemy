@@ -9,6 +9,7 @@
 // (strb; movs r1, #2; ldr r0, [r5]), and builds the link slot last
 // (movs r1, #8; movs r2, #9; movs r0, #0).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"

@@ -36,6 +36,7 @@
 // declared after i, a pointer local for the test (gap 55), view fields without
 // the view pointer (gap 48), reading level before the switch's range test.
 #include "types.h"
+#include "call.h"
 #include "map.h"
 #include "ram_buffer.h"
 #include "vram_tab.h"

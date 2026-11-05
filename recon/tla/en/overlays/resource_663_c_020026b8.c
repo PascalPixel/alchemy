@@ -1,3 +1,4 @@
+// Draft, differ 131 of 484 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 131 of 484 (tla-en); older figures below predate it.
 // Draft, differ 146 of 484 (was 218): a beam of light in Air's Rock: BG0 is
 // hidden while its tiles (two blocks) and its map (offset to its tiles and
@@ -91,11 +92,11 @@ void Func_020026b8(void) {
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
   Heap_Release(buffer);
-  do {
+  {
     s32 control = 0x40e;
 
     REG_BG0CNT = control;
-  } while (0);
+  }
   Dma_Fill16(0x10, (void *)0x6002000, 0x500);
   buffer = Heap_Alloc(0x240);
   Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);

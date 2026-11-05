@@ -1,3 +1,4 @@
+// Draft, differ 35 of 75 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 37 of 75 (tla-en); older figures below predate it.
 // Draft, differ 49 of 75: the world map cursor: counts down while A or B is
 // held, redraws the gauge and queues its sprite over the leader. Left: the
@@ -38,5 +39,10 @@ void Func_020048f4(void) {
   *oam++ = 0;
   *oam++ = 0x80004000 | ((screen[0] - 16) << 16) | (screen[1] - 32);
   *oam = tile | 0x400;
-  Func_02004ad0(Data_02006e14, 255);
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 37 of 75 instructions differ
+   * in tla-en. */
+  do {
+    Func_02004ad0(Data_02006e14, 255);
+  } while (0);
 }

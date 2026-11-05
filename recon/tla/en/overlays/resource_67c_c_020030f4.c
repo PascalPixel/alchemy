@@ -28,6 +28,7 @@
 // entry; the state test as an early continue; offset read before the masks.
 // A volatile height gives the reread and 200, gap 48; it is a device, not kept.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "vram_tab.h"

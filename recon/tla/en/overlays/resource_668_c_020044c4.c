@@ -52,6 +52,7 @@
 // place (Func_02004a54) and marks layer 0 and 2 there. The same listing as
 // overlay 674's Func_02003a5c.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

@@ -36,6 +36,7 @@
 // Func_020015e4; past 364 it clears its update. The counter advances only while
 // event work 0x166, 0x15a, 0x15e and 0x168 are 0 and screenStatus is not.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "field/event_work.h"
 #include "scene_ids.h"

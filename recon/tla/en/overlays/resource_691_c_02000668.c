@@ -1,3 +1,4 @@
+// Draft, differ 2 of 45 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
 // Draft, differ 18 of 45, written with goto as the bytes rebuild 0xffff on
 // every pass: the native keeps the terrain byte address in r3 before it copies
@@ -5,6 +6,7 @@
 // loads the list entry between the halves of 0xffff; this form schedules each
 // one step off.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct Actor *Actor_GetById(s32 id);

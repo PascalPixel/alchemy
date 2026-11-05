@@ -13,6 +13,7 @@
 // local, while for for, inner-block locals, a u16 colour local or u16 r, g, b
 // (either keeps extensions at the volatile store), volatile counters.
 #include "types.h"
+#include "call.h"
 
 extern u16 gData_02004434;
 extern u16 *Data_02004438;
@@ -48,17 +49,11 @@ void Func_020001f8(void) {
     dst = (volatile u16 *)0x5000000 +
           Data_02004438[gData_02004454 * gData_02004450 + i];
     r = *src++;
-    /* FAKEMATCH(barrier): the empty asm on r changes its allocation rank; as no
-     * asm, 99 of 120 instructions differ in tla-en. */
-    asm("" : : "r"(r));
     g = *src++;
     b = *src++;
     /* FAKEMATCH(barrier): the empty asm on b changes its allocation rank; as no
      * asm, 33 of 120 instructions differ in tla-en. */
     asm("" : : "r"(b));
-    /* FAKEMATCH(barrier): the empty asm on b changes its allocation rank; as no
-     * asm, 44 of 120 instructions differ in tla-en. */
-    asm("" : "=r"(b) : "0"(b));
     *dst = (b << 10) | (g << 5) | r;
   }
   index = gData_02004444[gData_02004450];

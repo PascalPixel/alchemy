@@ -1,3 +1,4 @@
+// Draft, differ 17 of 229 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 31 (tla-en); notes below may predate it.
 // Draft, differ 49 of 229: Gaia Rock's entry setup. In the first room (scene
 // 0xb1) from entrances up to 4 it hides the leader's sprite layer, sets the
@@ -68,6 +69,9 @@ s32 Func_02004280(void) {
       map[261] = 1;
       {
         volatile u16 control = *(volatile u16 *)0x0400000c & ~3;
+        /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+         * 31 of 229 instructions differ in tla-en. */
+        asm("");
 
         *(volatile u16 *)0x0400000c = control | 1;
       }
@@ -93,6 +97,9 @@ s32 Func_02004280(void) {
 
       *(s32 *)(gData_020023c4 + 0x288) = 1;
       layer = map + 376;
+      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+       * 25 of 229 instructions differ in tla-en. */
+      asm("");
       FIELD_AT(layer, u16, 40) = 127;
       FIELD_AT(layer, s32, 24) = 0;
       FIELD_AT(layer, s32, 28) = 0;
@@ -101,6 +108,9 @@ s32 Func_02004280(void) {
       FIELD_AT(layer, s32, 16) = 0x10000;
       FIELD_AT(layer, s32, 20) = 0x10000;
       FIELD_AT(layer, u16, 42) = 0x3f80;
+      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+       * 23 of 229 instructions differ in tla-en. */
+      asm("");
       FIELD_AT(layer, s32, 0) =
           Iwram_MulQ16(FIELD_AT(map, s32, 228), FIELD_AT(layer, s32, 16)) +
           FIELD_AT(layer, s32, 8);

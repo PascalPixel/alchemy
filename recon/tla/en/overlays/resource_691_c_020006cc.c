@@ -1,3 +1,4 @@
+// Draft, differ 24 of 61 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 24 (tla-en); notes below may predate it.
 // Draft, differ 34 of 61: marks the layer 2 cells ahead of and behind each
 // object of a table that ends on 0xffff when its cell has attribute 0x40.
@@ -11,6 +12,7 @@
 // (55), x before z, the cells read from the map twice, map pinned to r0,
 // permute 6 minutes. Func_0200074c clears the same pair.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"

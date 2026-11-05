@@ -1,3 +1,4 @@
+// Draft, differ 26 of 130 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 34 of 130 (tla-en); older figures below predate it.
 // Draft, differ 34 of 130 (was 81): the reverse of Func_020006ac, lowering
 // each listed pillar whose flag is clear and clearing flag 0x20b. The walk is
@@ -10,6 +11,7 @@
 // pointer advanced in the source (43), the cell indexed in place (84). The
 // same entry test gives Func_020006ac 107 (its list goes to the stack).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -60,6 +62,9 @@ next:
       s32 shape = Func_02004020(layer, object->x, object->z);
       s32 height = Map_GetTerrainHeight(layer, object->x, object->z);
       struct MapCell *cell = cells + index;
+      /* FAKEMATCH(barrier): the empty asm on cell changes its allocation rank; as no
+       * asm, 34 of 130 instructions differ in tla-en. */
+      asm("" : "=r"(cell) : "0"(cell));
 
       object->motionFlags = set;
       cell->collisionCode = 255;

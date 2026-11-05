@@ -3,6 +3,7 @@
 // resource_698_c_02000aac.c (overlay 698's Func_02000aac, differ 187 there), whose
 // header says what it is, what still differs and what was tried.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "field_event.h"

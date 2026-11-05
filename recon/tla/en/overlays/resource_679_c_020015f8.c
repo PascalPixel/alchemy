@@ -1,3 +1,4 @@
+// Draft, differ 29 of 189 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 31 (tla-en); notes below may predate it.
 // Draft, differ 133 of 189, skeleton gap 11 (tla-en, 2026-11-01)
 // Draws Func_020017f8's cell markers (gData_02002aa0's 128 records): copies the
@@ -18,6 +19,7 @@
 // more lines are the prologue's order of sub sp and the hi-register moves.
 // if/else or a ternary for flip is worse (gap 15).
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "graphics/vram_tab.h"
@@ -93,7 +95,12 @@ void Func_020015f8(void) {
       continue;
     if ((u32)(y + 39) > 286)
       continue;
-    left &= 0x1ff;
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 31 of 189 instructions differ
+     * in tla-en. */
+    do {
+      left &= 0x1ff;
+    } while (0);
     kind = marker->kind;
     attr = marker->oam;
     top &= 255;

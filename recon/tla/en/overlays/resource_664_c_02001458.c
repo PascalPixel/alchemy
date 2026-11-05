@@ -1,3 +1,4 @@
+// Draft, differ 16 of 200 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 16 of 200 (tla-en); older figures below predate it.
 // Draft, differ 22 of 200 (was 67): a bouncing object's update: it stops
 // animating while any of the event work's four busy counters is set; with its
@@ -13,6 +14,7 @@
 // bounce come in another order. Measured: the loop as goto or do, a u32
 // count (64), the loop's object in a variable of its own (no change).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,

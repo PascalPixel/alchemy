@@ -1,7 +1,9 @@
+// Draft, differ 47 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Draft of overlay 6a5's Func_02005534, the twin of overlay 698's
 // Func_0200180c: its draft (resource_698_c_0200180c.c) with this overlay's
 // symbols: differ 47 of 76. Left: what that draft's header records.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 

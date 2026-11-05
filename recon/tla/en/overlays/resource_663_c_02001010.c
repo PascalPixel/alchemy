@@ -1,3 +1,4 @@
+// Draft, differ 30 of 543 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 34 of 543 (tla-en); older figures below predate it.
 // Measured 5 November (-Os), differ 37 to 40 of 543: the end's last set is
 // `orrs r5, r3; strb r5`, the result tied to the shared 1 as in overlay 64d's
@@ -108,11 +109,11 @@ void Func_02001010(void) {
   Heap_Release(buffer);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
   Actor_SetSpritePriority(8, 1);
-  do {
+  {
     s32 control = 0x40d;
 
     REG_BG0CNT = control;
-  } while (0);
+  }
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 2;
   Dma_Fill16(0x10, (void *)0x6002000, 0x500);
@@ -241,8 +242,16 @@ fade:
   Func_02003b00();
   Func_02003af8();
   Func_02003bb8(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
-  REG_BG1CNT &= ~3;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 34 of 543 instructions differ
+   * in tla-en. */
+  do {
+    REG_BG1CNT &= ~3;
+  } while (0);
   shared = 1;
+  /* FAKEMATCH(barrier): the empty asm on shared changes its allocation rank; as no
+   * asm, 32 of 543 instructions differ in tla-en. */
+  asm("" : : "r"(shared));
   REG_BG1CNT |= shared;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;
   {

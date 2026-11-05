@@ -1,3 +1,4 @@
+// Draft, differ 33 of 135 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 35 of 135 (tla-en); older figures below predate it.
 // Draft, differ 35 of 135, skeleton gap 3/2 (tla-en, 2026-11-01)
 // A heat haze: fills a 160-line table of three halfwords a line (BG0's two
@@ -26,6 +27,7 @@
 // literal, so it is its own symbol: the listing's gData_02004696 + 1 has to be
 // split in the data on adoption.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "system/io_reg.h"
@@ -58,7 +60,12 @@ void Func_0200257c(void) {
     line[2] = ((wave + (scroll[1] >> 16)) >> 13) + (scroll[0] >> 16);
     line += 3;
   }
-  REG_BLDALPHA = gData_02004696 | 0x1000;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 35 of 135 instructions differ
+   * in tla-en. */
+  do {
+    REG_BLDALPHA = gData_02004696 | 0x1000;
+  } while (0);
   if ((gFrameCount & 15) == 0) {
     gData_02004696 += gData_02004697;
     if (gData_02004696 == 8 || gData_02004696 == 4)

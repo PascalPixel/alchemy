@@ -1,3 +1,4 @@
+// Draft, differ 39 of 182 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 39 of 182 (tla-en); older figures below predate it.
 // Draft, differ 83 of 182: the Islets' marching guards (objects 11 to 18):
 // while the event work is busy or flag 0x218 is set they stand still;
@@ -7,6 +8,7 @@
 // them walking with their facing steps (Func_02002d48) at 0, still at 100
 // and 220, and walking in place at 130. Left: the native's loops are goto loops (the first stand loop is entered from both exits), keeps the owed counter's address in r8, and stores the wrapped step from a pool zero.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"

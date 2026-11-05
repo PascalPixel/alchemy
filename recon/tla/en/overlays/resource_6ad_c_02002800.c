@@ -18,6 +18,7 @@
 // (draft's old form, gap 30), temporaries for owner, HP and the slot, gotos for
 // the else, separate counters, declaration orders.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "battle_unit.h"

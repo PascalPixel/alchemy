@@ -1,3 +1,4 @@
+// Draft, differ 13 of 175 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 15 (tla-en); notes below may predate it.
 // Draft, differ 8 of 175, skeleton gap 4 (tla-en, 2026-11-01): the frame
 // callback of the glow: cycles thirty-two colours of the object palettes
@@ -15,6 +16,7 @@
 // The goto loop keeps frame and red inside it; sprite is set before
 // Func_020035c4 so it crosses that call and sits in r7.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 struct GlowSprite {
@@ -99,5 +101,8 @@ loop: {
   Func_02003604(sprite);
   work->trailingScale = work->scale * 31 / 40;
   work->trailingScale2 = work->scale2 * 31 / 40;
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 15 of 175 instructions differ in tla-en. */
+  asm("");
   *(u16 *)&work->frame += 1;
 }

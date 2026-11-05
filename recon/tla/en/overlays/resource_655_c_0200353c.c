@@ -6,6 +6,7 @@
 // r3. The search is a goto loop: as a for loop the not-found step is placed
 // ahead of the test.
 #include "types.h"
+#include "call.h"
 
 extern const u16 gData_02004276[];
 

@@ -1,9 +1,11 @@
+// Draft, differ 24 of 131 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 24 (tla-en); notes below may predate it.
 // Draft, differ 75 of 131: the frame callback of the room where persons 8 to 16
 // sway: all stop while flag 0x106 is set or the event work holds them; else,
 // once per pending step, at frame 60 of each 240 they lean one way and at 180
 // come back.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 

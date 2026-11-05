@@ -14,6 +14,7 @@
 // offset variable, cell = cells then +=, shapes += index, unsigned types.
 // nextFlag computed early is what places adds r0 above the terrain read.
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "actor.h"

@@ -5,6 +5,7 @@
 // and hoists the address; a goto loop keeps both but hoists nothing (differ
 // 118).
 #include "types.h"
+#include "call.h"
 
 extern u16 gData_02006cd0;
 extern u16 *Data_02006cd4;

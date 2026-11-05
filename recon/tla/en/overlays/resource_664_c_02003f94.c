@@ -1,3 +1,4 @@
+// Draft, differ 2 of 75 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 2 of 75 (tla-en); older figures below predate it.
 // Near miss, differ 2 of 75 (tla-en, 2026-10-30): scheduler order. sched2
 // hoists the multiply routine's address (a bare constant set of r6, with no
@@ -17,6 +18,7 @@
 // Overlay 664's copy of overlay 681's Func_0200142c (the same listing), whose
 // draft holds its notes.
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 #include "frame.h"
 

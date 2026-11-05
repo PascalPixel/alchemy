@@ -41,6 +41,10 @@ void Func_02000f00(void) {
     s32 x = object->x;
     s32 z = object->z;
 
+    /* FAKEMATCH(one-pass): the empty block ends CSE's run here; without it, 8 of 65 instructions
+     * differ in tla-en. */
+    do {
+    } while (0);
     gData_020064ec = x;
     object->update = 0;
     gData_020064f0 = z;

@@ -73,20 +73,23 @@ void Func_02004b18(void) {
    * the bytes rebuild the constants on every pass and count in r8, and a for
    * loop hoists them. */
   i = 63;
-loop:
+do {
   {
     Func_02004f10(sprite, 8, 8, 0x40000000, tile);
     sprite->unk05 |= 0x20;
     sprite->palette = 0;
     sprite->priority = 0;
     sprite->unk1e = 240;
-    i += -1;
     rock->timer = -1;
+    i += -1;
     sprite++;
     rock++;
   }
-  if (i >= 0)
-    goto loop;
+} while (i >= 0);
   work->next = 0;
-  Task_Add(Func_020049d8, 0x480);
+  {
+    s32 priority = 0x480;
+
+    Task_Add(Func_020049d8, priority);
+  }
 }

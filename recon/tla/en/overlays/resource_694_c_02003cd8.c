@@ -112,8 +112,8 @@ void Func_02003cd8(struct Actor *object) {
     sprite = &work->sprites[i * 2];
     for (; j <= 1; j++, sprite++) {
       sprite->z = z;
-      sprite->x = x;
       sprite->scaleX = sine;
+      sprite->x = x;
       sprite->scaleY = sine;
       if (j == 0) {
         sprite->depth = Func_0200425c(object) - 1;

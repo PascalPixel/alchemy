@@ -77,10 +77,10 @@ void Func_02000a30(void) {
       Func_02004cb0(copy);
       Func_02004c98(object, 4);
       wait(1);
-      REG_BLDCNT = 0;
       Func_0200063c(object);
-      object->motionFlags = 0;
+      REG_BLDCNT = 0;
       object->terrainId = 0;
+      object->motionFlags = 0;
     }
   }
   x = object->x >> 20;

@@ -43,12 +43,11 @@ void Func_0200217c(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
 
     col = width - 1;
     if (col >= 0) {
-    next:
+    do {
       *dstCell-- = *srcCell--;
       *dstShape-- = *srcShape--;
       col--;
-      if (col >= 0)
-        goto next;
+    } while (col >= 0);
     }
   }
 }

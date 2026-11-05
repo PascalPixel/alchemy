@@ -48,8 +48,7 @@ void Func_02000584(u16 *list) {
   Func_020014a0(9, 0, 0);
   Func_020014a0(10, 0, 0);
   wait(1);
-  goto test;
-body:
+  while (list[0] != 0xffff) {
   {
     u32 id = list[0];
     struct Actor *object = Actor_GetById(id);
@@ -79,8 +78,6 @@ body:
     }
     list += 2;
   }
-test:
-  if (list[0] != 0xffff)
-    goto body;
+  }
   wait(10);
 }

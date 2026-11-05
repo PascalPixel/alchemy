@@ -143,8 +143,8 @@ void Func_02001738(struct Actor *object) {
     Actor_SetSingleChildFlags(part, 0);
     Func_02003a54(parts[i], 3);
     part = parts[i];
-    BYTE_AT(part, 98) = last - i;
     part->watchedObject = object;
+    BYTE_AT(part, 98) = last - i;
     part->update = Func_02001528;
     Actor_SetPartAttribute(part, 3);
   }

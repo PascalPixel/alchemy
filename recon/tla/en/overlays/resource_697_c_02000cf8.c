@@ -16,15 +16,15 @@ void Func_02000cf8(s32 id, s32 mode) {
   low = map->layers[0].cells + index * 4;
   high = map->layers[2].cells + index * 4;
   if (mode == 0) {
-    low[-0x200 + 2] = 0xff;
     low[2] = 0xff;
+    low[-0x200 + 2] = 0xff;
     low[0x200 + 2] = 0xff;
     high[-0x200 + 2] = 0xff;
     high[2] = 0xff;
     high[0x200 + 2] = 0xff;
   } else {
-    low[-4 + 2] = 0xff;
     low[2] = 0xff;
+    low[-4 + 2] = 0xff;
     low[4 + 2] = 0xff;
     high[-4 + 2] = 0xff;
     high[2] = 0xff;

@@ -109,8 +109,8 @@ void Func_020044f8(s32 seed) {
   u32 saved;
 
   saved = gRandomState;
-  path = (Unk_Path *)(gData_020023c4 + 0x288);
   steps = path->steps;
+  path = (Unk_Path *)(gData_020023c4 + 0x288);
   if (GameFlag_Test(0x109))
     return;
   if (GameFlag_Test(0x3f0))
@@ -118,8 +118,8 @@ void Func_020044f8(s32 seed) {
   gRandomState = seed;
 restart:
   grid = Heap_AllocEwram_(sizeof *grid);
-  Iwram_ClearWords(grid, sizeof *grid);
   x = GRID_WIDTH / 2;
+  Iwram_ClearWords(grid, sizeof *grid);
   y = GRID_WIDTH / 2;
   // BUG: this runs 29 times, so row 28 and column 28 lie past the 28 by 28 cells
   // and the last row's marks land after the block.
@@ -181,8 +181,8 @@ restart:
       ny = y - 1;
       break;
     }
-    cell = &AT(x, y);
     cell->unk_0 = step;
+    cell = &AT(x, y);
     cell->unk_1 = nx;
     cell->unk_2 = ny;
     x = nx;
@@ -274,8 +274,8 @@ restart:
     if (v == 0)
       v = 1;
     steps[n].unk_4 = v;
-    steps[n].unk_0 = n;
     wx = cell->unk_1;
+    steps[n].unk_0 = n;
     y = cell->unk_2;
   }
   path = (Unk_Path *)(gData_020023c4 + 0x288);

@@ -95,8 +95,8 @@ s32 Func_02000dcc(struct PushMove *move) {
     dx = gData_0200249c[stepIndex] & 0xffff0000;
     dz = gData_0200249c[stepIndex] << 16;
     move->unk14 = 0;
-    count = 0;
     layer = &object->terrainId;
+    count = 0;
     *layer = 2;
     move->x = object->x + dx;
     move->z = object->z + dz;

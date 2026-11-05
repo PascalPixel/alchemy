@@ -161,8 +161,7 @@ next:
   // mask and the options address out, which the native does not (differ 228).
   // Entered at its test so that PRE leaves the address in the body.
   i = 0;
-  goto showerTest;
-shower:
+  while (i != 16) {
   {
     s32 x = Random16Far();
     s32 z = Random16Far();
@@ -177,9 +176,7 @@ shower:
     wait(1);
   }
   i++;
-showerTest:
-  if (i != 16)
-    goto shower;
+  }
   object = Import_ActorCreate(159, 0x15c0000, 0, 0xb80000);
   // The object's per-frame hook, struct Actor's update.
   *(void (**)(struct SeaOfTimeObject *))((u8 *)object + 0x6c) = Func_020010a8;

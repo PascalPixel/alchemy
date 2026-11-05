@@ -63,8 +63,8 @@ void Func_02002d34(void) {
   s32 vram;
 
   Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_Data1F7), work);
-  tile = work->tiles;
   i = 0;
+  tile = work->tiles;
 next:
   if ((*tile & 0xf0) == 0xf0)
     *tile = (*tile & 0xf) + 0x60;

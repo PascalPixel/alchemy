@@ -58,8 +58,8 @@ void Func_020034fc(void) {
   viewX &= 0xffff0000;
   viewZ = view[1] & 0xffff0000;
   originY = map->origin[1];
-  tile = gResourceTableEntries[splashes->resource].unk2 >> 5;
   splash = splashes->splashes;
+  tile = gResourceTableEntries[splashes->resource].unk2 >> 5;
   i = 31;
 
   do {

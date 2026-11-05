@@ -230,6 +230,10 @@ swirl:
 
     REG_BG2CNT = control;
   }
+  /* FAKEMATCH(one-pass): the empty block ends CSE's run here; without it, 2 of 720 instructions
+   * differ in tla-en. */
+  do {
+  } while (0);
   Dma_Set((void *)0x06002800, (void *)0x06003000, 0x84000200, REG_DMA3);
   REG_BLDALPHA = 16;
   REG_BLDCNT = 0xa44;
@@ -304,8 +308,8 @@ fade:
 
     REG_BLDALPHA = (q << 8) | (16 - q);
   }
-  i++;
   FieldEvent_Wait(1);
+  i++;
   if (i != 65)
     goto fade;
   Task_RemoveFar(Func_02000378);

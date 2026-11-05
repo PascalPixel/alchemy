@@ -26,6 +26,7 @@
 // an object whose animation value is 0x110, it settles, and effect 403 is
 // thrown every other frame for 16 frames; on any other object it calls
 // Func_02000c08 with that object's index while flag 0x2f0 is set.
+#include "call.h"
 #include "types.h"
 #include "actor.h"
 #include "field/event_work.h"
@@ -133,7 +134,7 @@ stop:
   object->speedLimit = 0x20000;
   object->update = Func_02000d40;
   Func_02003a84(object, position[0], position[1], position[2]);
-  Func_02003b5c(0x20000, 0x4000);
+  Call2((void (*)())Func_02003b5c, 0x20000, 0x4000);
   Camera_MoveWithinMapBounds(position[0], position[1], position[2], 1);
   Func_02003a8c(object);
   object->update = NULL;

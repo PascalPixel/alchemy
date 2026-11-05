@@ -93,24 +93,24 @@ s32 Func_020036b8(s32 first, s32 target) {
           splash->x = stream->x;
           splash->z = stream->z;
           splash->y = stream->y;
-          splash->active = 1;
           again = 1;
+          splash->active = 1;
           splash++;
           state->count++;
           turn = 0;
         } else if (kind >= first && kind <= first + 7) {
-          again = 0;
           turn = gData_0200534c[(stream->direction << 3) + kind - first];
+          again = 0;
           if (turn != 8)
             count = state->count;
         } else if (kind == target) {
-          again = 0;
           turn = 8;
           reached++;
+          again = 0;
           count = state->count;
         } else if (kind == 0) {
-          again = 0;
           turn = 8;
+          again = 0;
         }
         if (turn != 8) {
           stream->direction = (stream->direction + turn) & 3;

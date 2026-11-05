@@ -60,8 +60,7 @@ void Func_020046a4(const u16 *table) {
   Func_020058e0(9, 0, 0);
   Func_020058e0(10, 0, 0);
   Task_Wait(1);
-  goto test;
-next:
+  while (*table != 0xffff) {
   id = table[0];
   object = Actor_GetById(id);
   flag = table[1];
@@ -85,8 +84,6 @@ next:
       ObjectVisual_CopyAttributes(id, 9);
   }
   table += 2;
-test:
-  if (*table != 0xffff)
-    goto next;
+  }
   Task_Wait(10);
 }

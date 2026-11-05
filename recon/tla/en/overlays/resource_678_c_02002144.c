@@ -68,7 +68,11 @@ void Func_02002144(void) {
   if (sprite->child != 0)
     sprite->child[6] = 1;
   sprite->mode = (sprite->mode | 8) & 0xfe;
-  sprite->dirty = 1;
+  /* FAKEMATCH(one-pass): the once-only block orders this statement; without it, 8 of 159 instructions
+   * differ in tla-en. */
+  do {
+    sprite->dirty = 1;
+  } while (0);
   if (gInput & 0xf0) {
     step = 0x1400;
     if (gInput & 2)

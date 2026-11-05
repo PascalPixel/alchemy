@@ -7,8 +7,8 @@
 
 void Func_02000e30(void) {
   if (REG_VCOUNT < gData_02002ce0) {
-    REG_BG1HOFS = gData_02002ce4;
     REG_BLDCNT = 0;
+    REG_BG1HOFS = gData_02002ce4;
   } else {
     REG_BG1HOFS = gData_02002ce6;
     REG_BLDALPHA = 0x100c;

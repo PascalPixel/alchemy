@@ -73,7 +73,7 @@ void Func_0200013c(s32 unused, s32 id) {
   actor->velocityY = 0;
   actor->y = 0x40000;
   i = 0;
-charge:
+do {
     k = i & 3;
     ((struct Charge *)sprite)->level = i;
     sprite->nextFrame |= 8;
@@ -89,8 +89,8 @@ charge:
         Func_02002800(splash, gData_02002ae8);
         splash->motionFlags = 0;
         if (splashSprite != 0) {
-          Animation_ApplyChildArgument(splashSprite, 1);
           splashSprite->nextFrame = 0;
+          Animation_ApplyChildArgument(splashSprite, 1);
           splashSprite->priority = sprite->priority;
           Animation_ApplyChildValuesToRecord(splashSprite, 13);
           Animation_ApplyChildValue(splashSprite, 8);
@@ -99,8 +99,7 @@ charge:
     }
     wait(3);
     i++;
-    if (i <= 24)
-      goto charge;
+} while (i <= 24);
 
   actor->animationKind = 0;
   actor->y = 0;
@@ -108,8 +107,8 @@ charge:
     spark = Func_02002808(269, actor->x, actor->y, actor->z);
     if (spark != 0) {
       sparkSprite = spark->animation;
-      zero = 0;
       Func_02002800(spark, gData_02002ae8);
+      zero = 0;
       spark->motionFlags = zero;
       spark->terrainId = 1;
       if (sparkSprite != 0) {

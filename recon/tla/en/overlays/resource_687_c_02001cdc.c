@@ -60,6 +60,10 @@ s32 Func_02001cdc(void) {
         Func_020018a8(89, 85, 9);
     }
   }
-  Task_Add(Func_02001650, 0xc80);
+  {
+    s32 priority = 0xc80;
+
+    Task_Add(Func_02001650, priority);
+  }
   return 0;
 }

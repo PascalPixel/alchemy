@@ -83,9 +83,9 @@ void Func_020015f8(void) {
       palette = 0xec00;
     else
       palette = 0xe800;
+    y = dy >> 16;
     clear = 0;
     x = dx >> 16;
-    y = dy >> 16;
     left = x - 8;
     top = y - 8;
     if ((u32)(x + 7) > 334)
@@ -93,9 +93,9 @@ void Func_020015f8(void) {
     if ((u32)(y + 39) > 286)
       continue;
     left &= 0x1ff;
-    top &= 255;
     kind = marker->kind;
     attr = marker->oam;
+    top &= 255;
     picture = kind * 4;
     flip = 0;
     if (kind == 2)

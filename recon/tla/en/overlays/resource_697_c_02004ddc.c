@@ -69,8 +69,8 @@ void Func_02004ddc(void) {
   if (rival == 0)
     return;
   if (state->mode == 4) {
-    z = leader->z;
     x = leader->x;
+    z = leader->z;
     if ((u32)(z - 0x1000000) > 0x1300000)
       x = 0x2100000 - (x & 0xffff0000);
     if (gMainRoutineWork.entrance & 1)

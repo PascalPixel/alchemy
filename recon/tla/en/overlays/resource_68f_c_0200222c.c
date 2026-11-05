@@ -59,8 +59,8 @@ void Func_0200222c(u16 *entries) {
 
       if (GameFlag_Test(flag + 1)) {
         Func_02003088(id, 0, 0);
-        list += 2;
         continue;
+        list += 2;
       } else {
         s32 index = Func_02003160(object);
         struct MapCell *cell;

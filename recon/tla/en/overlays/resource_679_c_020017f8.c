@@ -56,8 +56,8 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
   u32 value;
 
   *(s32 *)(Data_0202c001 + 0x1df) = a << 8;
-  cells += origin;
   z = 0;
+  cells += origin;
   if (z >= height)
     goto end;
 outer:

@@ -79,8 +79,8 @@ void Func_020003a0(void) {
   REG_BLDCNT = control;
   REG_BLDALPHA = alpha;
   Func_02001f6c(Data_02002620, buffer);
-  firstSlot = &gData_02003020;
   *firstSlot = Resource_FindFreeEntry();
+  firstSlot = &gData_02003020;
   firstTile = &Data_02003088;
   *firstTile = VramCache_Load(gData_02003020, 0x1000, buffer);
   Func_02002104(&Data_02003060, 0, 0, 0xc0000000, Data_02003088);

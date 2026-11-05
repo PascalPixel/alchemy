@@ -58,8 +58,8 @@ sink:
   if (i == 10)
     Func_02001c9c();
   person->z -= 0x10000;
-  i++;
   FieldEvent_Wait(2);
+  i++;
   if (i <= 19)
     goto sink;
   GameFlag_SetBit(0x9ee);

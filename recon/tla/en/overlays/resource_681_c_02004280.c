@@ -9,6 +9,7 @@
 // the BG0CNT address is begun before the sky byte's store, *stage is loaded
 // into r0 rather than r3, the scroll reset's 0x3f80 is built early, and
 // Data_0202de00 stays in r5 where the native loads it from the pool twice.
+#include "call.h"
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -72,9 +73,9 @@ s32 Func_02004280(void) {
       Func_020048a0();
       stage = (s32 *)(gData_020023c4 + 0x288);
       if (*stage == 3 && !GameFlag_Test(0x3f6))
-        Func_02004ebc(64, 0x680000, 0x580000);
+        Call3((void (*)())Func_02004ebc, 64, 0x680000, 0x580000);
       if (*stage == 9)
-        Func_02004ebc(65, 0x680000, 0x480000);
+        Call3((void (*)())Func_02004ebc, 65, 0x680000, 0x480000);
       if (GameFlag_Test(*stage + 0xa50)) {
         struct Actor *climber = Actor_GetById(8);
         u32 angle = Func_02004904();

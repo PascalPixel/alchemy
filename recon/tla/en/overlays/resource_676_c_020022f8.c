@@ -64,8 +64,8 @@ void Func_020022f8(void) {
   }
   Func_02002458(object);
   FieldEvent_Wait(2);
-  Func_020025a0(240);
   sprite->tile = 0;
+  Func_020025a0(240);
   object->x = 0xa80000;
   object->z = 0xc00000;
   object->y = 0;

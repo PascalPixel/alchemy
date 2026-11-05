@@ -117,8 +117,8 @@ step:
 
     for (j = 0; j < gData_02003780; j++)
       FieldEvent_Wait(1);
-    rise = gData_02003788;
     work->level += rise;
+    rise = gData_02003788;
     cells = map->layers[2].cells;
     if (cells[leader->x / 0x100000 + ((leader->z / 0x100000) << 7)]
             .collisionCode == 232) {
@@ -141,7 +141,7 @@ step:
   leader->motionFlags = 3;
   if (work->level < 0x200000) {
     gData_02003782 = 0;
-    Task_Add(Func_020015ac, 0x480);
+    Call2((void (*)())Task_Add, (s32)Func_020015ac, 0x480);
   } else {
     Call6((void (*)())Func_02002e04, 69, 24, 1, 4, 68, 23);
     GameFlag_SetBit(0x204);

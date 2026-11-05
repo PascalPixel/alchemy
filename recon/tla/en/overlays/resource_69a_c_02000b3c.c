@@ -84,9 +84,9 @@ void Func_02000b3c(void) {
 
     if (actor == 0 || actor->x == 0)
       continue;
-    x = actor->x - viewX;
     y = actor->y - viewY + 0x80000;
     z = actor->z - viewZ - viewY;
+    x = actor->x - viewX;
     sy = z - y;
     y += z;
     depth = (y >> 16) + 58;
@@ -102,16 +102,16 @@ void Func_02000b3c(void) {
       x &= 0x1ff;
       sy &= 0xff;
       word = (u32 *)oam;
-      *word++ = 0;
       *word++ = sy | (x << 16) | 0x40002000;
+      *word++ = 0;
     } else {
       frame = *timer;
       x = sx - 8;
       sy = ty - 64;
       if ((u32)(x + 31) > 350 || sy <= -64 || sy > 175)
         continue;
-      x &= 0x1ff;
       sy &= 0xff;
+      x &= 0x1ff;
       word = (u32 *)oam;
       *word++ = 0;
       *word++ = sy | (x << 16) | 0xc000a000;

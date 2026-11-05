@@ -1,32 +1,3 @@
-// Draft, differ 20 of 218, skeleton gap 4 removed, 4 added (tla-en, 2026-11-01)
-//
-// The leader is held at mode 10 and action 32 while eight effect bursts go off
-// around it, five frames apart; it then falls under gravity 0xcccc with no
-// bounce, facing 0xc000, and a burst goes off every other frame until its
-// vertical velocity reaches 0 or 60 frames pass. Mode 22 and the closing calls
-// follow, with flag 0x260 set throughout.
-//
-// Left: one thing, the landing bursts' frame address (facts: the burst family;
-// resource_69c_c_02001f50.c has the RTL). The native builds position's address
-// in the first loop, after the first Random16Far (movs r2, #16; add r2, sp),
-// keeps it in r8 and reuses it unbuilt through the second loop. PRE hoists it
-// to the loop's entry edge here, as add r3, sp, #16, which moves the zero's
-// scratch to r2 and turns the rest into reloads through r8 (mov r2, r8 before
-// the first store, r3 for the second where the native has r2). Every other
-// difference is a pool offset or branch distance that follows from those
-// 4 instructions. sfp is never killed, so gcse treats the address as invariant
-// in any plain form: this is the compiler question in K3, Pascal's call, not a
-// source form still to find.
-//
-// Measured: position written directly, or a pointer set at the top of the loop
-// or just before its store, 23 (gap 4/5; the address stays in the preheader, as
-// its split form); the pointer set once above the loop, 20, kept. A pointer set
-// again in the second loop, 111. Inner-block position in each loop, 23; a
-// struct position, 23; a for or do first loop hoists 15 and 0xfff80000, 70;
-// the second loop as do/break, 102. i = 0 before the pointer, 23. An options
-// pointer changes nothing and is gone. Declaration order: no effect found.
-// Call3 and Call4 are the camera's and Func_02003ac4's (each constant rebuilt
-// per call): called direct, differ 53.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"

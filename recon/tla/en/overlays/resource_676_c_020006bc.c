@@ -552,8 +552,8 @@ void Func_020006bc(s32 actor) {
       (*timer)++;
   case 224:
   case 240:
-    Actor_SetDestination(actor, 248, 872);
     object->timer++;
+    Actor_SetDestination(actor, 248, 872);
     return;
   case 242:
     Actor_SetDestination(actor, 268, 868);

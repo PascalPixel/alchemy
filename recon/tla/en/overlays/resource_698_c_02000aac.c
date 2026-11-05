@@ -46,48 +46,48 @@ void Func_02000aac(void) {
 
   for (i = 0; i < gData_02002202; i++) {
     struct FieldActor *actor = gData_02002204[i];
-    s32 x, y, z, sy, depth, frame;
-    u32 *word;
 
-    if (actor == 0 || actor->x == 0)
-      continue;
-    x = actor->x - viewX;
-    y = actor->y - viewY + 0x80000;
-    z = actor->z - viewZ - viewY;
-    sy = z - y;
-    y += z;
-    depth = (y >> 16) + 58;
-    x >>= 16;
-    sy >>= 16;
-    if (gData_02002304 == 0) {
-      frame = (s16)actor->timer;
-      x -= 8;
-      sy -= 16;
-      if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
-        continue;
-      x &= 0x1ff;
-      sy &= 0xff;
-      word = (u32 *)oam;
-      *word++ = 0;
-      *word++ = sy | (x << 16) | 0x40002000;
-    } else {
-      frame = (s16)actor->timer;
-      x -= 8;
-      sy -= 64;
-      if ((u32)(x + 31) > 350 || sy <= -64 || sy > 175)
-        continue;
-      x &= 0x1ff;
-      sy &= 0xff;
-      word = (u32 *)oam;
-      *word++ = 0;
-      *word++ = sy | (x << 16) | 0xc000a000;
+    if (actor != 0 && actor->x != 0) {
+      s32 px = actor->x - viewX;
+      s32 y = actor->y - viewY + 0x80000;
+      s32 z = actor->z - viewZ - viewY;
+      s32 py = z - y;
+      s32 depth = ((y + z) >> 16) + 58;
+      s32 x = px >> 16;
+      s32 sy = py >> 16;
+      s32 frame;
+      u32 *word;
+
+      if (gData_02002304 == 0) {
+        frame = (s16)actor->timer;
+        px = x - 8;
+        py = sy - 16;
+        if ((u32)(x + 7) > 334 || py <= -16 || py > 239)
+          continue;
+        px &= 0x1ff;
+        py &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = py | (px << 16) | 0x40002000;
+      } else {
+        frame = (s16)actor->timer;
+        px = x - 8;
+        py = sy - 64;
+        if ((u32)(x + 23) > 350 || py <= -64 || py > 175)
+          continue;
+        px &= 0x1ff;
+        py &= 0xff;
+        word = (u32 *)oam;
+        *word++ = 0;
+        *word++ = py | (px << 16) | 0xc000a000;
+      }
+      *word = (tile + frame * 8) | 0x800;
+      if (gData_02002306 == -1)
+        oam->priority = Func_02001b24(actor);
+      else
+        oam->priority = gData_02002306;
+      Func_020019d4(oam, depth);
+      oam++;
     }
-    *word = (tile + frame * 8) | 0x800;
-    if (gData_02002306 == -1)
-      oam->priority = Func_02001b24(actor);
-    else
-      oam->priority = gData_02002306;
-    Func_020019d4(oam, depth);
-    oam++;
   }
 }

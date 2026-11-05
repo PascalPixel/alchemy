@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/jupiter_lighthouse_basement/scene_tables.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_basement/s0054.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_basement/s01d8.o"(.text)
-        "*/resource_699_overlay.o"(.text.x02008298)
+        "*/games/tla/src/scene/jupiter_lighthouse_basement/s0298.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_basement/s0324.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_basement/prepare.o"(.text)
         "*/games/tla/src/scene/shared/scene_set_arrival_flags.o"(.text)

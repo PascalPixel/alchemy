@@ -66,8 +66,8 @@ nextObject:
       if (*(s16 *)((struct FieldSprite *)object->animation)->record !=
           gData_02002478[k])
         goto skip;
-      ahead = gData_0200249c[*step];
       x = (PIXELS(leader->x) + (ahead >> 16)) >> 4;
+      ahead = gData_0200249c[*step];
       z = (PIXELS(leader->z) + (s16)ahead) >> 4;
       left = (PIXELS(object->x) + gData_02002484[k][0]) >> 4;
       top = (PIXELS(object->z) + gData_02002484[k][1]) >> 4;
@@ -92,8 +92,8 @@ nextObject:
     k++;
     if (k <= 5)
       goto nextShape;
-  index++;
   objects++;
+  index++;
   if (index <= 63)
     goto nextObject;
   return 0;

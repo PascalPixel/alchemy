@@ -25,7 +25,7 @@ SECTIONS
         "*/games/tla/src/scene/izumo_ruins/s0ce4.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s0eac.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s0f30.o"(.text)
-        "*/resource_67f_overlay.o"(.text.x0200900c)
+        "*/games/tla/src/scene/izumo_ruins/s100c.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/scene_tables.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s1070.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/exits.o"(.text)

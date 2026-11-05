@@ -130,8 +130,8 @@ void Func_0200054c(void) {
   }
   dx = object->x - center[0];
   dz = object->z - center[2];
-  x = Iwram_MulQ16(dx, cosine) - Iwram_MulQ16(dz, sine);
   z = Iwram_MulQ16(dx, sine) + Iwram_MulQ16(dz, cosine);
+  x = Iwram_MulQ16(dx, cosine) - Iwram_MulQ16(dz, sine);
   x += center[0];
   z += center[2];
   object->z = z;

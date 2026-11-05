@@ -45,8 +45,8 @@ void Func_02001ff0(s32 x, s32 z) {
   focus->unk18[2] = 0;
   focus->unk18[3] = 0;
   index = (z / 2 << 7) + x / 2;
-  focus->cell = gMapCellBuffer + index * 4;
   focus->scaleX = focus->scaleZ = 0x10000;
+  focus->cell = gMapCellBuffer + index * 4;
   focus->shape = gMapShapeGrid + index;
   focus->scrolledX = Iwram_MulQ16(*(s32 *)(map + 0xe4), 0x10000) + focus->x;
   focus->scrolledZ =

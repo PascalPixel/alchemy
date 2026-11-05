@@ -105,8 +105,8 @@ void Func_02003f68(void) {
     next:
       if (count > 79)
         goto skip;
-      x = object->x - viewX;
       height = object->y + (lift << 16) - viewY;
+      x = object->x - viewX;
       z = object->z - viewZ - viewY;
       x = (x >> 16) - 8;
       sy = z - height;
@@ -121,8 +121,8 @@ void Func_02003f68(void) {
       *cursor++ = sy | (x << 16) | 0x40002000;
       *cursor = (tile + frame) | 0x800;
       Func_02005790(entry, depth);
-      count++;
       entry += 3;
+      count++;
     skip:
       lift += 16;
       if (lift < mover->offset)
@@ -136,8 +136,8 @@ void Func_02003f68(void) {
     z = object->z - viewZ - viewY;
     sy = z - height;
     bob = Iwram_MulQ16(rise, Math_Sine(mover->bob));
-    depth = ((height + z) >> 16) + 58;
     sy = ((sy + bob + rise) >> 16) - 4;
+    depth = ((height + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
       continue;
     x &= 0x1ff;
@@ -147,7 +147,7 @@ void Func_02003f68(void) {
     *cursor++ = sy | (x << 16) | 0x40002000;
     *cursor = (tile + frame - 32) | 0x800;
     Func_02005790(entry, depth);
-    count++;
     entry += 3;
+    count++;
   }
 }

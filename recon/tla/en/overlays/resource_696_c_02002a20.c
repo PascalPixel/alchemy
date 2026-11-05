@@ -130,8 +130,8 @@ commands:
     } else {
       s32 start, progress, target;
       start = gData_02006498;
-      target = *targetVar;
       progress = ++gData_02006508;
+      target = *targetVar;
       scale = start + (target - start) * progress / duration;
       if (progress >= duration)
         *durationVar = 0;
@@ -141,8 +141,8 @@ commands:
     s16 *durationVar = &gData_020064c4;
     s16 *targetVar;
     s32 duration;
-    duration = *durationVar;
     targetVar = &gData_020064b4;
+    duration = *durationVar;
     if (duration == 0) {
       blend = *targetVar;
     } else {
@@ -163,8 +163,8 @@ commands:
     s32 duration;
     duration = *durationVar;
     targetVar = &gData_02006504;
-    t = work;
     packed = scale << 16;
+    t = work;
     if (duration == 0) {
       pos = *targetVar;
     } else {

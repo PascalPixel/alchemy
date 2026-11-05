@@ -93,8 +93,8 @@ s32 Func_020019cc(void) {
   }
   REG_DISPCNT &= ~0x200;
   Call2((void (*)())Func_020015d0, 12, 4);
-  REG_DISPCNT |= 0xf00;
   REG_BLDALPHA = level | 0x1000;
+  REG_DISPCNT |= 0xf00;
   REG_BLDCNT = 0x3f42;
   if (level != 8) {
   fadeIn:

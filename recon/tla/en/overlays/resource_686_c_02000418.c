@@ -82,8 +82,8 @@ void Func_02000418(void) {
   Func_02002eec(204);
   leader->motionFlags = 3;
   FieldEvent_Wait(24);
-  effect = &options;
   effect->palette = 7;
+  effect = &options;
   effect->update = Effect_AdvanceMotion;
   effect->scaleX = 0xa3d7;
   effect->scaleY = 0xa3d7;

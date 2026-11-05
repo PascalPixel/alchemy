@@ -40,8 +40,8 @@ draw:
   slot = order;
   i = 0;
 count:
-  special = gData_02005be0;
   k = 0;
+  special = gData_02005be0;
 compare:
   if (*slot == *special++)
     counts[i & 1]++;

@@ -1,15 +1,5 @@
-// Draft of overlay 69b's Func_020000d0, differ 58 of 145: the leader sinks 36
-// frames, a kind-280 object spawns at it, both go down to height 32 while the
-// leader spins, then the leader spins 15 frames more and is restored. Written
-// from the listing (the ☀️ twin's shape was 0.49). Left: (1) the native stores 0
-// into terrainId from a pool word loaded just before the store; here the pool
-// word is loaded inside the last spin loop and kept in r8, which pushes the
-// owner to r10; (2) the native rotates the descent loop (its test at the top
-// and again at the bottom) where this jumps to one test at the bottom; (3) the
-// native places a literal pool after the first if/else; (4) the scale and
-// priority stores of the spawned object are scheduled differently. The last
-// spin is a goto loop (as a for loop loop.c keeps 0x2000 in r8, differ 63).
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "main_routine_work.h"
@@ -18,8 +8,7 @@ extern s32 gData_02002b88[3];
 
 struct Actor *Actor_GetById(s32 id);
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Camera_FollowActor(s32 id, s32 a);
 void Task_Add(void (*func)(void), s32 priority);
 void Task_RemoveFar(void (*func)(void));
@@ -32,17 +21,17 @@ void Func_0200224c(void);
 void Func_02002254(void);
 void Func_020022dc(s32 a);
 
-void Func_020000d0(s32 kind) {
+void Func_02000230(s32 kind) {
   s32 owner = gMainRoutineWork.currentOwner;
   struct Actor *leader = Actor_GetById(owner);
   struct Actor *effect;
-  s32 i;
   s32 *target;
+  s32 i;
 
   Func_0200224c();
   Func_020022dc(0);
   target = gData_02002b88;
-  if (kind == 32) {
+  if (kind == 30) {
     target[0] = 136 << 16;
     target[1] = 144 << 16;
     target[2] = 148 << 18;
@@ -51,12 +40,12 @@ void Func_020000d0(s32 kind) {
     target[1] = 144 << 16;
     target[2] = 144 << 18;
   }
-  Task_Add(Func_020000b4, 0x480);
-  Camera_FollowActor(owner, 1);
-  for (i = 35; i >= 0; i--) {
-    leader->y += -0x10000;
-    wait(1);
+  {
+    s32 priority = 0x480;
+
+    Task_Add(Func_020000b4, priority);
   }
+  Camera_FollowActor(owner, 1);
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
   effect = Actor_Spawn(280, leader->x, leader->y, leader->z);
@@ -64,27 +53,49 @@ void Func_020000d0(s32 kind) {
   effect->scaleX = 0x18000;
   effect->scaleY = 0x10000;
   ((struct FieldSprite *)effect->animation)->priority = 1;
-  while (leader->y > 0x200000) {
-    leader->y += -0x10000;
+  while (leader->y < 0x6c0000) {
+    leader->y += 0x10000;
     leader->angle += 0x2000;
     effect->x = leader->x;
     effect->y = leader->y + -0x60000;
     effect->z = leader->z;
     wait(1);
   }
+  leader->scaleX = 0;
+  effect->scaleX = 0;
+  while (leader->y < 0x900000) {
+    leader->y += 0x10000;
+    effect->y += 0x10000;
+    wait(1);
+  }
+  effect->scaleX = 0x8000;
+  effect->scaleY = 0xc000;
+  for (i = 31; i >= 0; i--) {
+    effect->scaleX += 0x800;
+    effect->scaleY += 0x200;
+    wait(1);
+  }
+  effect->scaleX = 0x18000;
+  effect->scaleY = 0x10000;
   Func_020021b4(effect, 6);
-  i = 14;
+  leader->scaleX = 0x6000;
+  leader->scaleY = 0x6000;
+  i = 19;
 spin:
   leader->angle += 0x2000;
-  i--;
+  leader->scaleX += 0x800;
+  leader->scaleY = leader->scaleX;
   wait(1);
+  i--;
   if (i >= 0)
     goto spin;
   Func_020021d4(effect);
   Actor_SetSingleChildFlags(Actor_GetById(owner), 1);
   leader->angle = 0x4000;
-  leader->terrainId = 0;
+  leader->terrainId = 1;
   leader->motionFlags = 3;
+  leader->y = 0x900000;
+  leader->terrainHeight = 0x900000;
   Task_RemoveFar(Func_020000b4);
   Func_02000054();
   Func_02002254();

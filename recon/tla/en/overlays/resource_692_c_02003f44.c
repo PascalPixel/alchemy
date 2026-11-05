@@ -48,8 +48,8 @@ next:
   } else {
     index = Func_02004ed0(object);
     cell = (u8 *)&cells[index];
-    shape = Func_02004d20(object->terrainId, object->x, object->z);
     height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    shape = Func_02004d20(object->terrainId, object->x, object->z);
     Func_02004df8(id);
     cell[3] = 128;
     shapes[index] = Func_02004ef0(object->terrainId, shape, (height >> 19) + 4);

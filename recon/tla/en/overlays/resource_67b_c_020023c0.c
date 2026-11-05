@@ -74,7 +74,7 @@ void Func_020023c0(void) {
   }
   bubble = work->bubbles;
   i = 63;
-loop:
+do {
   if (bubble->x != 0) {
     if (Map_GetTerrainHeight(0, bubble->x, bubble->z) < bubble->y)
       bubble->y += -0x20000;
@@ -87,8 +87,8 @@ loop:
     bubble->age++;
     x = bubble->x - viewX;
     z = bubble->z;
-    z -= viewZ + lift;
     y = bubble->y - lift;
+    z -= viewZ + lift;
     screenY = (z - y) >> 16;
     y += z;
     y >>= 16;
@@ -108,6 +108,5 @@ loop:
   }
   i--;
   bubble++;
-  if (i >= 0)
-    goto loop;
+} while (i >= 0);
 }

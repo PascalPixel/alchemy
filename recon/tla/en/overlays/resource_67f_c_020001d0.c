@@ -43,8 +43,8 @@ void Func_020001d0(u16 *list) {
         s32 shape;
         s32 ground;
 
-        cells += index;
         shape = Func_02001478(object->terrainId, object->x, object->z);
+        cells += index;
         ground = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
         Func_020014c0(id);
         cells->attributeB = 128;

@@ -104,8 +104,8 @@ void Func_020051a0(void) {
     s16 *vramEntry = &work->vramEntry;
     s16 *fade;
     tile = gResourceTableEntries[*vramEntry].offset >> 5;
-    fade = &work->fade;
     event = Ram_HeapSlots->eventWork;
+    fade = &work->fade;
     if (work->unke0 != 0) {
       work->fade = 2;
     } else if (GameFlag_Test(262) || *(s16 *)(event + 358) != 0) {
@@ -130,14 +130,14 @@ void Func_020051a0(void) {
 nextRow: {
     s16 *scrollX;
     s16 *fade;
-    scrollY = &work->scrollY;
     scrollX = &base->scrollX;
+    scrollY = &work->scrollY;
     fade = &base->fade;
     y = (*scrollY + 8) & 255;
     if (row == 0) {
+      flip = 0;
       x = *fade * 6 + *scrollX - 12;
       x &= 511;
-      flip = 0;
     } else {
       x = 236 - *fade * 6 - *scrollX;
       x &= 511;
@@ -190,8 +190,8 @@ rowTest:
     s32 *originZ = &work->originZ;
     s32 objectX = object->x;
     if (side) {
-      x = (objectX - *originX) / PIXELS(16) + *fade * 6 + *scrollX - 19;
       lift = Func_02002ce8(0);
+      x = (objectX - *originX) / PIXELS(16) + *fade * 6 + *scrollX - 19;
     } else {
       x = (objectX - *originX) / PIXELS(16) - *fade * 6 - *scrollX + 232;
       lift = Func_02002ce8(0);
@@ -203,8 +203,8 @@ rowTest:
     cursor = next;
     *cursor++ = y | (x << 16) | 0x40000000;
     *cursor++ = sprite | 0xe400;
-    Func_02005790(entry, 255);
     entry = nextEntry;
+    Func_02005790(entry, 255);
   }
   object = ObjectTable_Get(work->b);
   if (object == NULL || object->x == 0)
@@ -223,8 +223,8 @@ rowTest:
     s32 *originZ = &work->originZ;
     s32 objectX = object->x;
     if (side) {
-      x = (objectX - *originX) / PIXELS(16) + *fade * 6 + *scrollX + 189;
       lift = Func_02002ce8(1);
+      x = (objectX - *originX) / PIXELS(16) + *fade * 6 + *scrollX + 189;
     } else {
       x = (objectX - *originX) / PIXELS(16) - *fade * 6 + *scrollX + 23;
       lift = Func_02002ce8(1);

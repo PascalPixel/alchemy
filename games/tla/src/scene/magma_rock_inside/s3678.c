@@ -1,24 +1,4 @@
-// Draft, differ 14 of 850, skeleton gap 6 (tla-en, 2026-11-01)
-// Magma Rock's map setup for each of its rooms 1 to 8: event work word 0x1ac to
-// 516; per room it places and readies the room's objects (raised blocks at 20
-// pixels, statues on their action scripts with Func_02000800 and the room's
-// flag 768 to 770), loads the cell watch's tables (Func_02004ed8,
-// Func_02000880), restores what earlier visits opened (flags 2544 to 2553, 768
-// to 770, 516, 772, 773, 324) and, when the room's flag is clear, the blend and
-// the closed cells; room 8 starts the cell stampers (Func_0200255c). Returns 0.
-// Left: three scheduling rows (the first statement's pool load of
-// gMainRoutineWork comes one row early; room 5's 20 << 16 comes before the
-// motion store) and room 2's two |= use r2 and r3 the other way round.
-// The goto loops in rooms 2, 7 and 8 keep their constants in the loop: as for
-// or do-while, loop.c hoists them (room 7's later Lower reads the loop's zero
-// and height, so CSE must run past the loop end). As for (;;) with a break,
-// room 2's |= pair comes right but the zero is hoisted. Permute found a
-// one-pass block around room 2's back goto takes differ to 6: a new device,
-// not taken here. Tried without gain: Call4/Call6 at the other call sites,
-// locals for height, motion and the event work pointer. Value1 and Call3
-// stop constants being shared across the flag tests, as in s2318.c;
-// Func_02000694 needs its true signature for its argument order.
-#include "../../../../games/tla/src/scene/magma_rock_inside/local.h"
+#include "local.h"
 #include "io_reg.h"
 #include "call.h"
 
@@ -98,15 +78,14 @@ s32 Func_02003678(void) {
     Func_02004e60(0);
     Actor_GetById(15)->update = Func_02003630;
     j = 0;
-  room2:
-    {
-      struct Actor *object = Actor_GetById(j + 9);
+    do {
+      {
+        struct Actor *object = Actor_GetById(j + 9);
 
-      object->motionFlags = 0;
-      object->y = object->terrainHeight = 0;
-    }
-    if (++j != 6)
-      goto room2;
+        object->motionFlags = 0;
+        object->y = object->terrainHeight = 0;
+      }
+    } while (++j != 6);
     if (GameFlag_Test(2544))
       Actor_GetById(15)->z = 132 << 17;
     Func_02004ed8(gData_020054fc);

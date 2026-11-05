@@ -68,11 +68,11 @@ void Func_02001388(void) {
       sy -= 64;
       if ((u32)(x + 31) > 350 || sy <= -64 || sy > 175)
         continue;
-      x &= 0x1ff;
       sy &= 0xff;
+      x &= 0x1ff;
       word = (u32 *)oam;
-      *word++ = 0;
       *word++ = sy | (x << 16) | 0xc000a000;
+      *word++ = 0;
     }
     *word = (tile + frame * 8) | 0x800;
     if (gData_02002e32 == -1)

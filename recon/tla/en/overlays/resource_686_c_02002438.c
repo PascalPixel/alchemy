@@ -367,8 +367,8 @@ L_0200aa16:
   Call3((void (*)())Func_02002e6c, FIELD_AT(r5, s32, 532), 0, 0);
   Call3((void (*)())Func_02002e6c, 10, 0, 0);
   Event_StartScreenTransition();
-  Call1((void (*)())FieldEvent_Wait, 15);
   v50 = Actor_GetById(10);
+  Call1((void (*)())FieldEvent_Wait, 15);
   r5 = v50;
   Call3((void (*)())Func_02002e6c, 10, 0x1480000, 0x2f80000);
   FIELD_AT(r5, s32, 12) = (FIELD_AT(r5, s32, 12)) + 8388608;

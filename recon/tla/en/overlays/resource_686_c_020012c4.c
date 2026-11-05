@@ -113,8 +113,8 @@ void Func_020012c4(void) {
           break;
         }
       }
-      sx = ((x - viewX) >> 16) - 8;
       sy = ((z - viewZ - y) >> 16) - 8;
+      sx = ((x - viewX) >> 16) - 8;
       if (sx >= -15 && sx <= 319 && sy >= -15 && sy <= 239) {
         sx &= 511;
         sy &= 255;

@@ -108,6 +108,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   s32 sinkFrame;
   DrawRectangle draw[2];
   struct EffectPosition ends[2];
+  s32 end;
   s32 frame;
   s32 i;
 
@@ -134,7 +135,11 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   ends[0].x += (ends[1].x - ends[0].x) / 2;
   REG_BG2X = (64 - ends[0].x) << 8;
 
-  for (frame = 0; frame != stagger + 54; frame++) {
+  frame = 0;
+  if (stagger != -54) {
+  end = stagger + 54;
+  top:
+  {
     // Frame 0: 16 sparks leave the ground in random directions.
     if (frame == 0) {
       struct EffectStep *spark = work->particles;
@@ -248,6 +253,9 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
     wait(1);
+  }
+  if (++frame != end)
+    goto top;
   }
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);

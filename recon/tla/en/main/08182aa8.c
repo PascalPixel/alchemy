@@ -297,6 +297,10 @@ static inline void CopyWords(void *destination, const void *source, s32 size) {
   Iwram_CopyWords(destination, source, size);
 }
 
+static inline void FillWords(void *destination, s32 size, s32 value) {
+  Iwram_FillWords(destination, size, value);
+}
+
 // Coatlicue: the ground opens over a green dusk, the serpent goddess rises in
 // a spiral of stone, her coils sweep the field and her light heals the party.
 void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
@@ -1088,7 +1092,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  Iwram_FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
+  FillWords((void *)0x06004000, 0x4000, 0x3f3f3f3f);
   IO_WRITE_QUEUE_PUSH(0x04000000, 0x7741, 0x20000);
   for (i = 0; i != 12; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
@@ -1103,10 +1107,10 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   gCameraSceneParameters[4] = 120;
   wait(1);
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 512);
-  Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
-  frame = 0;
+                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+  FillWords(canvas, 0x4000, 0x3f3f3f3f);
   Func_08164b2c(0, 0, 11);
+  frame = 0;
   for (; frame != 60; frame++) {
     s32 s;
     s32 lift;

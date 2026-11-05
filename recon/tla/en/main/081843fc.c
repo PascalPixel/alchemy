@@ -362,6 +362,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   u16 *src2;
   u8 *e;
   s32 zero;
+  u8 *cellBuffer = gMapCellBuffer;
   s32 span = 0x80000;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -426,7 +427,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     e = Resource_GetTableEntry((s32)&ResourceId_ChainedDemonTiles);
     COPY_WORDS((void *)OBJ_PLTT, e, 384);
     e += 384;
-    Resource_DecodeType01(e, gMapCellBuffer);
+    Resource_DecodeType01(e, cellBuffer);
     cells = Ram_MapCellBuffer;
     for (i = 0; i != 24; cells += 1024, i++) {
       obj = Func_0815b290(32, 32, 0x80002000, 0);
@@ -434,8 +435,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       work->objects[i] = obj;
       COPY_WORDS((void *)OBJ_TILES(obj), cells, 1024);
     }
-  }
-  {
+    {
     u8 *cells = Data_02016000;
 
     for (i = 0; i != 4; cells += 1024, i++) {
@@ -444,11 +444,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       COPY_WORDS(obj, work->objects[i], 24);
       COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells, 1024);
     }
-  }
-  {
-    u8 *cells = gMapCellBuffer;
-
-    COPY_WORDS(cells + 0x1000, Data_02016000, 0x1000);
+    }
+    COPY_WORDS(cellBuffer + 0x1000, Data_02016000, 0x1000);
   }
   for (i = 0; i != 6; i++) {
     obj = Func_0815b3b0(32, 32, 0x80002000, 0);
@@ -568,9 +565,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         gBgScroll[1].y = 104;
       }
     }
-    if ((u32)(d = frame - 370) <= 59) {
-      sway = Trig_Sin(d * 273 / 2) << 4;
-    }
+    {
+      s32 e2 = frame - 370;
+      if ((u32)e2 <= 59) {
+      sway = Trig_Sin(e2 * 273 / 2) << 4;
+    } }
     if ((u32)(frame - 420) <= 51) {
       drift = (420 - frame) << 12;
       sway += -0x4000;
@@ -1197,11 +1196,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         y = 64;
       }
       if (r <= 38) {
-        Func_0815b434(gMapCellBuffer, r, 96000);
+        Func_0815b434(cellBuffer, r, 96000);
       } else {
         r = 38;
       }
-      Func_0818caa8(gMapCellBuffer, 62, y, r);
+      Func_0818caa8(cellBuffer, 62, y, r);
     }
     work->transferPending = 1;
     wait(1);
@@ -1227,7 +1226,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   Func_08164b2c(0, -16, -16);
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             gMapCellBuffer, 1, 1);
+                             cellBuffer, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x800,
                              1, 0);
   Iwram_ClearWords(work->sheet + 0x1456, 0x4000);
@@ -1235,7 +1234,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     {
       s32 j;
       s32 row = i << 12;
-      u8 *cells = Ram_MapCellBuffer;
+      u8 *cells = cellBuffer;
 
       for (j = 0; j != 120; j++) {
         u8 *dst = work->sheet + (row + j * 32) + 0x145a;
@@ -1248,7 +1247,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0EE, gMapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0EE, cellBuffer, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0EF, Data_02011000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Data_02012000, 0, 0);
   {
@@ -1392,7 +1391,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Render_TransformVertices(Data_081991e0, verts2, 4);
           Func_08015160(0, 0xf0000, 0);
           Render_DrawModelList(model2);
-          texture2.pixels = gMapCellBuffer;
+          texture2.pixels = cellBuffer;
           for (i = 0; i != 3; i++) {
             s32 tone = sh2 + (Trig_Cos(a + i * 21845 + 10922) << 3 >> 16) - 16;
             s32 v;
@@ -1726,7 +1725,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         Transform_Push();
         Func_080150e4(0x4000);
         Func_0801521c(0x42ee0);
-        Render_TransformVertices(gMapCellBuffer, quads, 24);
+        Render_TransformVertices(cellBuffer, quads, 24);
         Render_DrawModelList(model3);
         Transform_Pop();
         model3->mesh = gData_08199340;

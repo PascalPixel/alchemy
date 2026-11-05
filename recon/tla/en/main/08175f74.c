@@ -703,9 +703,11 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     }
     fade = 0;
     if (frame >= 214 && frame < 246) {
-      blue = (frame - 214) / 4;
-      red = blue / 2;
+      s32 t = (frame - 214) / 4;
+
+      red = t / 2;
       green = 0;
+      blue = t;
       fade = 1;
     }
     if (frame >= 251 && frame < 283) {
@@ -759,8 +761,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         CpuFill(PLTT + 0x100, 0x180, 0x7fff7fff);
         source += 0x180;
         Resource_DecodeType01(source, work->buffer + 0x2400);
-        objectSlots = TILE_SLOTS;
-        for (i = 0; i != 12; i++) {
+        for (i = 0, objectSlots = TILE_SLOTS; i != 12; i++) {
           struct SpriteObject *object = Func_0815b290(32, 32, 0x80002000, 0);
 
           object->priority = 3;
@@ -775,19 +776,19 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Resource_DecodeType01(source, work->buffer + 0x2400);
         {
           struct SpriteObject *object = Func_0815b290(64, 64, 0xc0000000, 0xe000);
+          struct TileSlot *tileSlots;
 
           work->objects[12] = object;
           object->priority = 3;
-          CpuCopy(OBJ_VRAM + TILE_SLOTS[object->slot].offset,
+          tileSlots = TILE_SLOTS;
+          CpuCopy(OBJ_VRAM + tileSlots[object->slot].offset,
                   work->buffer + 0x2400, 0x800);
-        }
-        {
-          struct SpriteObject *object = Func_0815b290(64, 64, 0xc0002000, 0);
-
+          do { } while (0);
+          object = Func_0815b290(64, 64, 0xc0002000, 0);
           work->objects[13] = object;
           object->priority = 2;
           object->unk17 = 32;
-          CpuFill(OBJ_VRAM + TILE_SLOTS[object->slot].offset, 0x1000, 0);
+          CpuFill(OBJ_VRAM + tileSlots[object->slot].offset, 0x1000, 0);
         }
         source = (u8 *)Resource_GetTableEntry((s32)&Value_000000b8);
         CpuCopy(PLTT, source, 128);

@@ -13717,7 +13717,7 @@ msgctxt "message"
 msgid "03397"
 msgstr "Agility dropped by {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgKey0d46"
 msgid "03398"
 msgstr "You have no items."
 
@@ -13725,7 +13725,7 @@ msgctxt "message"
 msgid "03399"
 msgstr "You have no opponent."
 
-msgctxt "message"
+msgctxt "MsgKey0d48"
 msgid "03400"
 msgstr "You have no Psynergy."
 
@@ -13741,11 +13741,11 @@ msgctxt "message"
 msgid "03403"
 msgstr "You have no equipment."
 
-msgctxt "message"
+msgctxt "MsgKey0d4c"
 msgid "03404"
 msgstr "Using this will have no effect."
 
-msgctxt "message"
+msgctxt "MsgKey0d4d"
 msgid "03405"
 msgstr "It's broken."
 
@@ -13753,7 +13753,7 @@ msgctxt "message"
 msgid "03406"
 msgstr "You have no Djinn."
 
-msgctxt "message"
+msgctxt "MsgKey0d4f"
 msgid "03407"
 msgstr "Cannot be used during battle."
 

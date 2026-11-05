@@ -77,13 +77,7 @@ Func_08025830:
 	.incbin "baserom.gba", 0x00025830, 0x00000328
 	.section .rom.00025c8a, "ax"
 	.incbin "baserom.gba", 0x00025c8a, 0x00000002
-	.section .rom.0002632c, "ax"
-	.balign 4
-	.global Func_0802632c
-	.type Func_0802632c, %function
-	.thumb_func
-Func_0802632c:
-	.incbin "baserom.gba", 0x0002632c, 0x00000490
+	.section .rom.000267bc, "ax"
 	.global Func_080267bc
 	.type Func_080267bc, %function
 	.thumb_func
@@ -325,9 +319,8 @@ Func_08044dc8:
 	.incbin "baserom.gba", 0x00046b90, 0x00002f68
 	.section .rom.00049b46, "ax"
 	.incbin "baserom.gba", 0x00049b46, 0x00000002
-	.section .rom.00049b74, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00049b74, 0x00001d54
+	.section .rom.0004a9a0, "ax"
+	.incbin "baserom.gba", 0x0004a9a0, 0x00000f28
 	.section .rom.0004bade, "ax"
 	.incbin "baserom.gba", 0x0004bade, 0x00000206
 	.section .rom.0004bdce, "ax"
@@ -387,12 +380,6 @@ Item_GetEquipmentGroup:
 	.thumb_func
 Class_Determine:
 	.incbin "baserom.gba", 0x000b5144, 0x00000144
-	.section .rom.000cefd8, "ax"
-	.global Encounter_SelectEnemyGroup
-	.type Encounter_SelectEnemyGroup, %function
-	.thumb_func
-Encounter_SelectEnemyGroup:
-	.incbin "baserom.gba", 0x000cefd8, 0x0000018c
 	.section .rom.000d06c6, "ax"
 	.incbin "baserom.gba", 0x000d06c6, 0x00000002
 	.section .rom.000d091c, "ax"

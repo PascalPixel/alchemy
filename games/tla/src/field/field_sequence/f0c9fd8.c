@@ -1,18 +1,3 @@
-// Draft, differ 26 of 180 (2026-10-26: the pick written as a plain for loop,
-// no change; earlier: the enemies as s16, a trial:
-// the native reads the group with ldrh, but the signed read gives the pick
-// loop the native's registers; as u16, 44) (100 before, 2026-10-25), ported
-// from The Broken Seal's Encounter_CountStepsAndSelectFormation
-// (games/tbs/src/field/field_sequence/encounter.c); this game drops the
-// Jenna experience check, reads the cloak byte at 0x26d and the encounter
-// bias and threshold at 0x194 and 0x198 of the event work. gMainRoutineWork read
-// by field (the native keeps its address across Party_GetAverageLevelFar and
-// loads it again for the step count), the threshold at 0x198, Random16
-// unsigned (the draw's lsrs) and the zone test on its own (100 to 44). Left:
-// which returns of 0 set r0 before their test (the native presets it for
-// the cloak and rate tests and shares the flags' return with the zone test),
-// the zone's reload register, and the draw's pick and weight pointer, which
-// the native keeps in r2 and r0.
 #include "types.h"
 #include "iwram_call.h"
 #include "main_routine_work.h"
@@ -50,6 +35,10 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   s32 sum;
   s32 pick;
   s32 i;
+  /* FAKEMATCH(barrier): an empty asm reading the pick before it is set, which
+   * gives it its registers across the function; without it, 42 of 180
+   * instructions differ in tla-en. */
+  asm("" : : "l"(pick));
 
   work = Ram_HeapSlots->eventWork;
   if (GameFlag_Test(351) == 0) {
@@ -101,7 +90,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     if (pick < 0)
       break;
   }
-  sum = entry->enemies[i];
+  sum = (u16)entry->enemies[i];
   BattleEffect_SelectBattleCue(zone, i);
   return sum;
 }

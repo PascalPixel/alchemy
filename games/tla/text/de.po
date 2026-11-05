@@ -15628,7 +15628,7 @@ msgctxt "message"
 msgid "03858"
 msgstr "Geschwindigkeit fiel um {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgKey0d46"
 msgid "03859"
 msgstr "Keine Items."
 
@@ -15636,7 +15636,7 @@ msgctxt "message"
 msgid "03860"
 msgstr "Keine Gegner."
 
-msgctxt "message"
+msgctxt "MsgKey0d48"
 msgid "03861"
 msgstr "Keine Psynergy."
 
@@ -15652,11 +15652,11 @@ msgctxt "message"
 msgid "03864"
 msgstr "Du hast keine Ausrüstung."
 
-msgctxt "message"
+msgctxt "MsgKey0d4c"
 msgid "03865"
 msgstr "Dies einzusetzen hat keinen Sinn."
 
-msgctxt "message"
+msgctxt "MsgKey0d4d"
 msgid "03866"
 msgstr "Das ist kaputt."
 
@@ -15664,7 +15664,7 @@ msgctxt "message"
 msgid "03867"
 msgstr "Du hast keinen Dschinn."
 
-msgctxt "message"
+msgctxt "MsgKey0d4f"
 msgid "03868"
 msgstr "Im Kampf nicht einsetzbar."
 

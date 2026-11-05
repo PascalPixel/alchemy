@@ -1290,17 +1290,20 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
     if (frame < 132) {
       s32 scale112;
       s32 depth;
-      s32 base = 100000;
       s32 rise = -52576;
+      s32 base;
+      s32 twice;
       void *texture = Heap_AllocEwram(32);
       struct Model *model = Render_AllocateModelList(1);
 
       work->transferMode = 2;
       work->transferValue = 50;
-      depth = frame * 2 - 64;
-      scale112 = base - frame * 1524;
+      twice = frame * 2;
+      base = frame * 1524;
+      depth = twice - 64;
+      scale112 = 100000 - base;
       if (frame > 55) {
-        scale112 = frame * 1524 + rise;
+        scale112 = base + rise;
       }
       if (depth >= -8) {
         depth = -8;
@@ -1344,12 +1347,13 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
         Render_DrawModelList(model);
       }
       if (frame > 55) {
-        depth = frame * 2 - 208;
+        s32 last = frame * 2 - 208;
+
         desc112.tiles = work->buffer + 0x1000;
-        if (depth >= -32) {
-          depth = -32;
+        if (last >= -32) {
+          last = -32;
         }
-        model->depth = depth;
+        model->depth = last;
         Render_ResetTransformState();
         Func_08015160(0x20000, -0x200000, 0);
         Func_0801521c(0x58f0);

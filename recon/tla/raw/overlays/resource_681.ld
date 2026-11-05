@@ -36,7 +36,7 @@ SECTIONS
         "*/games/tla/src/scene/gaia_rock_inside/s0cf8.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s0d18.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s0edc.o"(.text)
-        "*/resource_681_overlay.o"(.text.x02008f00)
+        "*/games/tla/src/scene/gaia_rock_inside/s0f00.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s0fac.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s1048.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s11c8.o"(.text)

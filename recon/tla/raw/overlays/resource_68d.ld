@@ -9,7 +9,7 @@ SECTIONS
         "*/games/tla/src/scene/lemuria_palace/s00f4.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/prepare.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/s01d8.o"(.text)
-        "*/resource_68d_overlay.o"(.text.x020082b4)
+        "*/games/tla/src/scene/lemuria_palace/s02b4.o"(.text)
         "*/resource_68d_overlay.o"(.text.x020083a0)
         "*/games/tla/src/scene/lemuria_palace/s04e8.o"(.text)
         "*/games/tla/src/scene/lemuria_palace/blend_fade.o"(.text)

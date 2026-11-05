@@ -1,6 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
-// Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
-#include "../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "trial_road.h"
 #include "vector3.h"
 
 struct EventWork184 {
@@ -91,9 +89,12 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
     Func_020057c8(object, 8);
     Func_02005800(object);
     {
-      s32 value = 2;
+      /* FAKEMATCH(pin): the 2 held in r2 while the address takes r3; as
+       * object->priorityFlags = 2, 8 of 240 instructions differ in tla-en. */
+      u8 *flags = &object->priorityFlags;
+      register s32 value asm("r2") = 2;
 
-      object->priorityFlags = value;
+      *flags = value;
     }
     Func_02005a68(298);
     Func_02005a68(240);

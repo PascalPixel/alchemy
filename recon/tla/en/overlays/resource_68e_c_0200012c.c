@@ -37,8 +37,7 @@ s32 Func_0200012c(void) {
   FIELD_AT((t0 + 0x23), u8, 0) = (0x20 | FIELD_AT((t0 + 0x23), u8, 0));
   blend = 0x3f42;
   FIELD_AT(0x4000050, u16, 0) = blend;
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 27 of 80 instructions differ in tla-en. */
+  // Device still to tag at adoption: the barrier here.
   asm("");
   FIELD_AT(0x4000052, u16, 0) = 0x80c;
   Call2(Actor_SetModeById, 0x18, 2);

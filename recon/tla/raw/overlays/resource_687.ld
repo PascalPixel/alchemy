@@ -14,7 +14,7 @@ SECTIONS
         "*/games/tla/src/scene/sea_of_time/map.o"(.text)
         "*/games/tla/src/scene/sea_of_time/scene_tables.o"(.text)
         "*/games/tla/src/scene/sea_of_time/s043c.o"(.text)
-        "*/resource_687_overlay.o"(.text.x0200854c)
+        "*/games/tla/src/scene/sea_of_time/s054c.o"(.text)
         "*/games/tla/src/scene/sea_of_time/s0818.o"(.text)
         "*/games/tla/src/scene/sea_of_time/s0a80.o"(.text)
         "*/games/tla/src/scene/sea_of_time/clock.o"(.text)

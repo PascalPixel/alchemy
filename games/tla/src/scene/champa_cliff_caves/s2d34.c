@@ -1,12 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 6 (tla-en); notes below may predate it.
-// Draft of overlay 685's Func_02002d34, differ 24 of 78: Func_02002c88's twin for
-// resource 0x1f7 (which wants a ResourceId_Data1F7 name in
-// gamepak/resource_directory.s) and the second sprite, loading 0x800 bytes.
-// The sprites are 0x28 bytes, not FieldSprite's 0x2c, and the loop is a goto
-// loop (as a for loop loop.c hoists both masks and reverses the count, 61).
-// Left: the native keeps the pointer in r2 and the byte in r1, as in
-// Func_02002c88.
-#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
+#include "scene.h"
 
 struct ChampaCliffCavesSprite {
   u8 unk00[4];
@@ -38,12 +30,14 @@ struct ChampaCliffCavesWork {
   u16 vramB;
   s32 field1064;
   s32 field1068;
-  s32 field106c;
-  s32 field1070;
+  // A union: the two stores below keep their place after the sprite's.
+  union {
+    s32 value;
+    u16 half;
+  } field106c, field1070;
   u16 field1074;
   u8 unk1076[2];
 };
-
 
 void *Resource_GetTableEntry(s32 id);
 void Func_020033dc(void *resource, void *destination);
@@ -52,8 +46,14 @@ s32 VramCache_Load(s32 entry, s32 size, void *source);
 void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 vram);
 
+extern char ResourceId_FireColumn;
 
-extern char ResourceId_Data1F7;
+static __inline__ void Place(struct ChampaCliffCavesSprite *a, s32 b, s32 c,
+                             u32 d, s32 e) {
+  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
+   * instructions differ in tla-en. */
+  Func_020035fc(a, b, c, d, e);
+}
 
 void Func_02002d34(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuRuntime;
@@ -63,7 +63,7 @@ void Func_02002d34(void) {
   s32 entry;
   s32 vram;
 
-  Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_Data1F7), work);
+  Func_020033dc(Resource_GetTableEntry((s32)&ResourceId_FireColumn), work);
   i = 0;
   tile = work->tiles;
 next:
@@ -78,11 +78,11 @@ next:
   work->entryB = entry;
   work->vramB = vram;
   sprite = &work->spriteB;
-  Func_020035fc(sprite, 15, 47, 0xc0008000, vram);
+  Place(sprite, 15, 47, 0xc0008000, vram);
   sprite->fullColor = 1;
   sprite->palette = 1;
   sprite->priority = 1;
   sprite->unk1e = 1;
-  work->field106c = 0;
-  work->field1070 = 0;
+  work->field106c.value = 0;
+  work->field1070.value = 0;
 }

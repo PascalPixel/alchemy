@@ -1,23 +1,3 @@
-// Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
-// Draft, differ 8 of 732, skeleton gap 4 (tla-en, 2026-11-01): the start entry
-// of overlay 691's three rooms. It sets screen effect 0x204 and the Retreat
-// point (SceneId_Ov691Room1, entrance 1), then by scene and entrance places
-// actors and map tiles. Four entrance groups share one tail, Func_0200244c then
-// Func_020024c8: `offset` and the labels exist because the native jumps there
-// with r0 set, and a single bl does not cross-jump by itself.
-// Left, all four the same site: `actor->terrainHeight = actor->y += 0x180000`.
-// The native issues movs r, #192 before ldr r3, [r0, #12]; here the load comes
-// first. That load follows the two byte stores and opens a read-modify-write,
-// so -mthumb-slow-loads' exception (thumb_load_stored_back_p in alchemy-gcc's
-// arm.c) lets it go without waiting, where the native's waits. Nothing in plain
-// C separates that load from its store; separate statements, a local y, a
-// local constant, the constant first in the sum, and the byte stores as BYTE_AT
-// or through &motionFlags all leave the 8. This is the rule's known
-// approximation (alchemy-gcc README, Scheduling), not a shape still to find.
-// Allocation otherwise matches, and it is touchy: `value` and `other` each hold
-// several unrelated values because the native's r5 and r6 do, and giving a
-// table its own single-set pointer loses the pooled zero and the shared scene
-// id (differ 297). `zero` must stay a u8 local for the pool load into r7.
 #include "types.h"
 #include "actor.h"
 #include "call.h"
@@ -65,8 +45,11 @@ s32 Func_02002618(void) {
   s32 *owner, *leader;
   s16 *entrance;
   struct Actor *actor;
+  /* FAKEMATCH(temporary): one local for a table, a step and a size; as one
+   * local each, 92 of 732 instructions differ in tla-en. */
   s32 other, rise;
-  s32 value, offset;
+  s32 offset;
+  s32 value1, value2, value3, value4;
   u8 zero;
 
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x204;
@@ -76,10 +59,10 @@ s32 Func_02002618(void) {
   scene = work->scene;
   zero = 0;
   if (scene == (s32)&SceneId_Ov691Room1) {
-    value = 32;
-    Actor_GetById(work->currentOwner)->priorityFlags |= value;
-    Actor_GetById(8)->priorityFlags |= value;
-    Actor_GetById(10)->priorityFlags |= value;
+    value1 = 32;
+    Actor_GetById(work->currentOwner)->priorityFlags |= value1;
+    Actor_GetById(8)->priorityFlags |= value1;
+    Actor_GetById(10)->priorityFlags |= value1;
     Func_02000668(gData_02003d9e);
     if (Flag_IsSet(0x109) == 0)
       Call3((void (*)())Func_02000ee4, 21, 13, 0);
@@ -88,10 +71,10 @@ s32 Func_02002618(void) {
     if (Flag_IsSet(0x8d6))
       Call3((void (*)())Func_02003b0c, 10, 0xf80000, 0x1980000);
     other = (s32)gData_02003d98;
-    value = 78;
+    value2 = 78;
     Func_02003c0c(other);
-    Call6((void (*)())Func_02003aa4, 98, 21, 4, 3, value, 21);
-    Call6((void (*)())Func_02003aa4, 98, 27, 4, 3, value, 24);
+    Call6((void (*)())Func_02003aa4, 98, 21, 4, 3, value2, 21);
+    Call6((void (*)())Func_02003aa4, 98, 27, 4, 3, value2, 24);
     Func_020006cc(other);
     if (Flag_IsSet(0x109) == 0) {
       actor = Actor_GetById(20);
@@ -113,7 +96,7 @@ s32 Func_02002618(void) {
     owner = &work->currentOwner;
     Actor_GetById(*owner)->priorityFlags |= 32;
     entrance = &work->entrance;
-    if (*entrance <= 3) {
+    if (work->entrance <= 3) {
       s32 id;
 
       Func_02002d08(gData_02003dba);
@@ -270,13 +253,13 @@ s32 Func_02002618(void) {
   } else if (scene == (s32)&SceneId_Ov691Room3) {
     if (Flag_IsSet(0x8dc)) {
       Call3((void (*)())Func_02003b0c, 8, 0, 0);
-      value = 42;
-      Call6((void (*)())Func_02003aa4, 0, 32, 5, 8, value, 17);
-      Call6((void (*)())Func_02003aa4, 0, 96, 5, 8, value, 81);
-      value = 5;
+      value3 = 42;
+      Call6((void (*)())Func_02003aa4, 0, 32, 5, 8, value3, 17);
+      Call6((void (*)())Func_02003aa4, 0, 96, 5, 8, value3, 81);
+      value4 = 5;
       other = 8;
-      Call6((void (*)())Func_02003a94, 0, 32, 42, 17, value, other);
-      Call6((void (*)())Func_02003a94, 0, 96, 42, 81, value, other);
+      Call6((void (*)())Func_02003a94, 0, 32, 42, 17, value4, other);
+      Call6((void (*)())Func_02003a94, 0, 96, 42, 81, value4, other);
     }
     leader = &work->currentOwner;
     Actor_GetById(*leader)->priorityFlags |= 32;

@@ -1,12 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 2 (tla-en); notes below may predate it.
-// Draft, differ 24 of 78: loads the glow disc picture (resource 0x1d9, which
-// would need a ResourceId_GlowDisc name in gamepak/resource_directory.s) into
-// the work in heap slot 55, moves every tile byte with the high nibble 0xf to
-// 0x6n, loads it into VRAM and sets up the first sprite. The sprites are
-// 0x28 bytes, not FieldSprite's 0x2c. Left: in the goto loop the native keeps
-// the pointer in r2 and the byte in r1 (here the other way round); a
-// four-minute permute does not swap them.
-#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
+#include "scene.h"
 
 struct ChampaCliffCavesSprite {
   u8 unk00[4];
@@ -36,8 +28,11 @@ struct ChampaCliffCavesWork {
   u16 vramA;
   u16 entryB;
   u16 vramB;
-  s32 field1064;
-  s32 field1068;
+  // A union: the two stores below keep their place after the sprite's.
+  union {
+    s32 value;
+    u16 half;
+  } field1064, field1068;
   s32 field106c;
   s32 field1070;
   u16 field1074;
@@ -53,12 +48,12 @@ s32 VramCache_Load(s32 entry, s32 size, void *source);
 void Func_020035fc(struct ChampaCliffCavesSprite *sprite, s32 width, s32 height,
                    u32 attributes, s32 vram);
 
-
 extern char ResourceId_GlowDisc;
 
-static __inline__ void Place(struct ChampaCliffCavesSprite *a, s32 b, s32 c, u32 d, s32 e) {
-  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78 instructions
-   * differ in tla-en. */
+static __inline__ void Place(struct ChampaCliffCavesSprite *a, s32 b, s32 c,
+                             u32 d, s32 e) {
+  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 4 of 78
+   * instructions differ in tla-en. */
   Func_020035fc(a, b, c, d, e);
 }
 
@@ -90,6 +85,6 @@ next:
   sprite->palette = 0;
   sprite->priority = 2;
   sprite->unk1e = 1;
-  work->field1064 = 0;
-  work->field1068 = 0;
+  work->field1064.value = 0;
+  work->field1068.value = 0;
 }

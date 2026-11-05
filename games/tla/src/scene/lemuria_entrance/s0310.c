@@ -1,4 +1,3 @@
-// Draft, differ 4 of 84 (tla-en, 2026-11-05). Older notes may predate this.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -14,7 +13,11 @@ struct EventWorkRoute {
 
 struct EventWork1c4 {
   u8 unk000[0x1c4];
-  s16 message;
+  // A union: the read of width keeps its place after this store.
+  union {
+    s16 message;
+    s32 word;
+  } u;
 };
 
 struct AnimationRecord26 {
@@ -94,21 +97,17 @@ void Func_02000310(s32 kind, s32 frames) {
     id = kind;
   resource = BattleEffect_GetResourceId(id);
   if (kind == 7) {
-    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-     * order around it; as the plain statement, 18 of 84 instructions differ
-     * in tla-en. */
-    do {
-      width = 10;
-    } while (0);
+    width = 10;
     height = 10;
-    Text_GetMessageSize(work->message, &width, &height, &a, &b);
+    Text_GetMessageSize(work->u.message, &width, &height, &a, &b);
     x = width + a - 5;
   } else {
     width = 5;
     height = 10;
     x = 5;
   }
-  Call4((void (*)())Message_OpenWindow, work->message++, width, height, (resource << 16) | 2);
+  Call4((void (*)())Message_OpenWindow, work->u.message++, width, height,
+        (resource << 16) | 2);
   x = Func_0200053c(id, 0, x, 5);
   while (Message_AllTyped() == 0)
     wait(1);

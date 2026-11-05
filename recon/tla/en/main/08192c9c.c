@@ -526,13 +526,14 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       draw(canvas, sprites + 508, x - 4, y + segment * 32, 8, 32);
     if (t < *(Data_08199f40 + small) * 2 + 8) {
       s32 shake = (*(Data_08199f40 + small) * 2 - t + 8) >> 1;
+      typeof(gBgScroll[0]) *scroll = gBgScroll;
       s16 base = 32;
 
-      gBgScroll[1].y = base;
+      scroll[1].y = base;
       if (t & 1)
-        gBgScroll[1].y = shake + 32;
+        scroll[1].y = shake + 32;
       else
-        gBgScroll[1].y = base - shake;
+        scroll[1].y = base - shake;
     }
     if (small == 0)
       drawAlt(canvas, work->sheet + 0x1b12, x - 10, y - 20, 20, 40);
@@ -1114,11 +1115,11 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         for (j = 0; j != 10; j = next) {
           u8 *src = work->sheet + gData_08197410[j];
           u8 *out = work->sheet + (gData_08197410[j] + i * 0x302);
-          s32 off;
+          s32 off = 0;
 
           next = j + 1;
 
-          for (off = 0; off != (next << 1) * next; off++) {
+          for (; off != (next << 1) * next; off++) {
             u8 v = *src - i * 8;
 
             if (v > 63)
@@ -1376,11 +1377,11 @@ dead = i / 3;
         for (j = 0; j != 10; j = next) {
           u8 *src = work->sheet + gData_08197410[j];
           u8 *out = work->sheet + (gData_08197410[j] + i * 0x302);
-          s32 off;
+          s32 off = 0;
 
           next = j + 1;
 
-          for (off = 0; off != (next << 1) * next; off++) {
+          for (; off != (next << 1) * next; off++) {
             u8 v = *src - i * 8;
 
             if (v > 63)

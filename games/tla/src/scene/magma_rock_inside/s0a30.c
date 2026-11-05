@@ -1,11 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 58 (tla-en); notes below may predate it.
-// Draft, differ 104 of 281: Magma Rock's handler after an object is pushed (the
-// object at event work 0xcbc): in rooms 6 and 7, off the ground it drops onto
-// layer 2 (with flag 770, or always in room 7, it sinks under a blended copy
-// with sound 213 and mode 4; else sound 188); then by room and the object's
-// cell it sets the room's flags (2544, 2545 to 2551) and in room 6 at column 47
-// copies a cell.
-#include "../../../../games/tla/src/scene/magma_rock_inside/local.h"
+#include "local.h"
 #include "io_reg.h"
 
 extern const u8 gData_02005528[];
@@ -16,8 +9,7 @@ void Func_02004d48(void);
 void Func_02004ee8(void);
 void Func_020006dc(const u8 *data);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
-                                                  s32 type);
+struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
 void Func_0200063c(struct Actor *object);
 void Func_02004f30(s32 sound);
 void Func_02004cb0(struct Actor *object);
@@ -26,7 +18,9 @@ void Func_02004ce8(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000a30(void) {
   struct Actor *object =
       *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + 0xcbc);
-  struct Actor *copy;
+  /* FAKEMATCH(pin): copy in r5, as the native keeps it; as a plain local,
+   * 78 of 281 instructions differ in tla-en. */
+  register struct Actor *copy asm("r5");
   s32 scene;
   s32 x;
   s32 z;
@@ -78,10 +72,10 @@ void Func_02000a30(void) {
       Func_02004cb0(copy);
       Func_02004c98(object, 4);
       wait(1);
-      Func_0200063c(object);
       REG_BLDCNT = 0;
-      object->terrainId = 0;
+      Func_0200063c(object);
       object->motionFlags = 0;
+      object->terrainId = 0;
     }
   }
   x = object->x >> 20;
@@ -105,7 +99,15 @@ void Func_02000a30(void) {
   } else if (scene == (s32)&SceneId_Ov692Room6) {
     if (x == 47) {
       GameFlag_SetBit(2549);
-      Func_02004ce8(46, 74, 1, 1, 46, 73);
+      {
+        /* FAKEMATCH(temporary): the column and row in locals, so each stack
+         * word builds in its own register; as constants, 4 of 281 instructions
+         * differ in tla-en. */
+        s32 column = 46;
+        s32 row = 73;
+
+        Func_02004ce8(column, 74, 1, 1, column, row);
+      }
     }
     if (x == 57)
       GameFlag_SetBit(2550);

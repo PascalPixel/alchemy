@@ -22,11 +22,13 @@
 // Left, top down:
 // - Kind 80: i * 2 is its own register stepping by 2 and i * 64 another by 64, with
 //   0x237 and 0x1000 not hoisted; plain forms and explicit steps both lose.
-// - The first origin projection: the listing has a fresh add r1, sp, #228 and
-//   reloads pos through r3 and then r5. q in the first frame loop lowers the
-//   figure and is probably not the source's form: it drops the hoisted pos in r8
-//   and hoists 10 into r9 instead. An inlined projection gives the fresh add
-//   without settling the rest.
+// - The first origin projection is settled: the loop has no q; pos is plain and
+//   its address hoists into r8. The fresh add r1, sp, #228 with r0 = r1 is reload
+//   rematerializing an unallocated pseudo whose REG_EQUIV is sfp - 36: it takes a
+//   set-once local o = origin hoisted out of the frame loop, and loop.c hoists it
+//   only if it is mentioned twice (a single use is folded back). The empty asm
+//   with an "X" input is that second mention; what it stands for in the source
+//   is not known. This one reload sets the rotation that the rows after it read.
 // - Origin's slot is sp+56 where the listing has sp+16, with 20 to 56 four low:
 //   the listing keeps PRE's reaching register, here copy propagation removes it.
 // - Kind 60: the third source is r5 in the listing, r1 here. Reload's rotation is
@@ -42,7 +44,7 @@
 //
 // Before adoption: RELEASE_BLITTERS and RELOAD_BLITTER are exempt only if every
 // use matches through them, CLEAR and FILL need S2's wrapper tags unless they are
-// the game's own layer, q needs its form settled.
+// the game's own layer, and the "X" asm at the first projection is a barrier.
 
 // Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every
@@ -709,7 +711,6 @@ CLEAR(buffer, 0x1000);
   for (frame = 0; frame != 32; frame++) {
     struct Particle *p;
     s32 n;
-    s32 *q;
     count = 0;
     p = work->particle;
     for (i = 0; i != 64; i++, p++) {
@@ -720,35 +721,35 @@ CLEAR(buffer, 0x1000);
           Func_080150e4(p->vz);
           SceneTransform_ApplyPitch(p->vx);
           SceneTransform_ApplyYaw(p->vy);
-          q = pos;
-          EffectPosition_ProjectPoint(p, q);
-          q[0] = q[0] / 2 + base[0];
+          EffectPosition_ProjectPoint(p, pos);
+          pos[0] = pos[0] / 2 + base[0];
           if (kind <= 37)
-            q[1] = q[1] + base[1] - 8;
+            pos[1] = pos[1] + base[1] - 8;
           else if (kind == 65)
-            q[1] = q[1] + base[1] + 44;
+            pos[1] = pos[1] + base[1] + 44;
           else
-            q[1] = q[1] + base[1] + 12;
-          if (q[2] < -60)
-            q[2] = -60;
-          if (q[2] > 60)
-            q[2] = 60;
-          q[2] += 60;
+            pos[1] = pos[1] + base[1] + 12;
+          if (pos[2] < -60)
+            pos[2] = -60;
+          if (pos[2] > 60)
+            pos[2] = 60;
+          pos[2] += 60;
           drawFuncs.draw[1](screen, (u8 *)tiles + gData_08197410[n - 1],
-                            q[0] - n / 2, q[1] - n, n, n * 2);
+                            pos[0] - n / 2, pos[1] - n, n, n * 2);
           p->x -= 4;
         }
         count++;
       }
     }
     if (kind <= 37 && count < 64) {
+      s32 *o = origin;
       Render_ResetTransformState();
-      q = pos;
       Transform_SetLookAt(bg, (u8 *)bg + 12);
-      EffectPosition_ProjectPoint(origin, pos);
-      q[0] = pos[0] / 2;
-      drawFuncs.draw[0](screen, buffer + 0x3c56, q[0] - 10, q[1] - 4, 20,
+      EffectPosition_ProjectPoint(o, pos);
+      pos[0] = pos[0] / 2;
+      drawFuncs.draw[0](screen, buffer + 0x3c56, pos[0] - 10, pos[1] - 4, 20,
                         40);
+      __asm__("" : : "X"(o));
     }
     work->unk78e8 = 1;
     wait(1);

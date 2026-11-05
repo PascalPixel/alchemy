@@ -383,6 +383,8 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
   s32 cell;
   s32 phase;
   s32 halfCell;
+  s32 twenty;
+  s32 width;
   s32 cellBytes;
 
   canvas = SYSTEM_WORK->canvas;
@@ -1449,6 +1451,8 @@ empty:
     work->homes[m].z = actor->z;
   }
 
+  width = 56;
+  twenty = 20;
   frame = 0;
   do {
     if ((INPUT->pressed & 3) && frame < 120) {
@@ -1578,10 +1582,12 @@ empty:
           u16 *target = SYSTEM_WORK->scene->palette;
           u16 *color = PLTT + 0x60;
 
+          s32 dim = twenty / 2;
+
           for (j = 0; j != 128; j++) {
-            s32 tr = (target[j] & 31) - 10;
+            s32 tr = (target[j] & 31) - dim;
             s32 tg = ((target[j] >> 5) & 31) - 20;
-            s32 tb = ((target[j] >> 10) & 31) - 10;
+            s32 tb = ((target[j] >> 10) & 31) - dim;
             s32 r = color[j] & 31;
             s32 g = (color[j] >> 5) & 31;
             s32 b = (color[j] >> 10) & 31;
@@ -1685,7 +1691,7 @@ empty:
       if (frame >= 0) {
         DISPLAY_1120->unk4 += 0xfff4;
         BattleEffect_LoadBlitter(104, 27);
-        halfCell = 28;
+        halfCell = width / 2;
         phase = frame << 10;
         for (m = 0; m != 4; m++) {
           struct Particle *column = &work->columns[m];

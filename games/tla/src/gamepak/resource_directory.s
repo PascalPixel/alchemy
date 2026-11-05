@@ -241,12 +241,12 @@ Resource_DirectoryTable:
 	resource , BattleEffect_SkeletonCardSheet
 	resource , BattleEffect_SwordCardSheet
 	resource , BattleEffect_BoulderPicture
-	resource , BattleEffect_BladeSheet
+	resource BladeSheet, BattleEffect_BladeSheet
 	resource ClawSlashSheet, BattleEffect_ClawSlashSheet
-	resource , Resource_Data0E9
+	resource Data0E9, Resource_Data0E9
 	resource , BattleEffect_CrystalBitmapSheet
 	resource SmallFlameSheet, BattleEffect_SmallFlameSheet
-	resource , BattleEffect_CornerRuneASheet
+	resource CornerRuneASheet, BattleEffect_CornerRuneASheet
 	resource , BattleEffect_CornerRuneBSheet
 	resource , Resource_Data0EE
 	resource , Resource_Data0EF
@@ -301,7 +301,7 @@ Resource_DirectoryTable:
 	resource FlareSheet, BattleEffect_FlareSheet
 	resource FlareImage, BattleEffect_FlareImage
 	resource VioletPaletteB, BattleEffect_VioletPaletteB
-	resource , BattleEffect_FireSwirlSheet
+	resource FireSwirlSheet, BattleEffect_FireSwirlSheet
 	resource , BattleEffect_VioletLightningSheetB
 	resource FireBurstSheet, BattleEffect_FireBurstSheet
 	resource , BattleEffect_BlueCrescentSheet

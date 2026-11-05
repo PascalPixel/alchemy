@@ -3546,14 +3546,29 @@ main	rom_main_09	recon/tla/it/rom	.rom.00182aa8	it
 main	rom_main_09	recon/tla/ja/rom	.rom.00182aac	ja
 main	rom_main_09	games/tla/src/battle_effect/f1885f0	.text	en de es fr it ja
 main	rom_main_09	recon/tla/ja/rom	.rom.00188718	ja
+main	rom_main_09	games/tla/src/battle_effect/f188cb0	.text	ja
+main	rom_main_09	recon/tla/ja/rom	.rom.0018914c	ja
+main	rom_main_09	games/tla/src/battle_effect/f189b14	.text	ja
 main	rom_main_09	recon/tla/it/rom	.rom.00188714	it
+main	rom_main_09	games/tla/src/battle_effect/f188cb0	.text	it
+main	rom_main_09	recon/tla/it/rom	.rom.00189148	it
+main	rom_main_09	games/tla/src/battle_effect/f189b14	.text	it
 main	rom_main_09	recon/tla/fr/rom	.rom.00188714	fr
+main	rom_main_09	games/tla/src/battle_effect/f188cb0	.text	fr
+main	rom_main_09	recon/tla/fr/rom	.rom.00189148	fr
+main	rom_main_09	games/tla/src/battle_effect/f189b14	.text	fr
 main	rom_main_09	recon/tla/es/rom	.rom.00188714	es
+main	rom_main_09	games/tla/src/battle_effect/f188cb0	.text	es
+main	rom_main_09	recon/tla/es/rom	.rom.00189148	es
+main	rom_main_09	games/tla/src/battle_effect/f189b14	.text	es
 main	rom_main_09	recon/tla/de/rom	.rom.00188714	de
+main	rom_main_09	games/tla/src/battle_effect/f188cb0	.text	de
+main	rom_main_09	recon/tla/de/rom	.rom.00189148	de
+main	rom_main_09	games/tla/src/battle_effect/f189b14	.text	de
 main	rom_main_09	recon/tla/raw/08188714	.text	en
-main	rom_main_09	recon/tla/raw/08188cb0	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f188cb0	.text	en
 main	rom_main_09	recon/tla/raw/08189148	.text	en
-main	rom_main_09	recon/tla/raw/08189b14	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f189b14	.text	en
 main	rom_main_09	games/tla/src/battle_effect/summon_modes_3	.text
 main	rom_main_09	games/tla/src/battle_effect/f18a220	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/summon_modes_4	.text
@@ -3700,13 +3715,13 @@ main	rom_main_10	games/tla/src/graphics/credits/font	.rodata
 main	rom_main_11	games/tla/src/gamepak/far_call/resource_b	.text
 main	rom_main_11	games/tla/src/menu/title_intro/title_wait	.text
 main	rom_main_11	games/tla/src/menu/title_intro/f1a6154	.text	en de es fr it ja
-main	rom_main_11	recon/tla/ja/rom	.rom.001a6638	ja
-main	rom_main_11	recon/tla/it/rom	.rom.001a6638	it
-main	rom_main_11	recon/tla/fr/rom	.rom.001a6638	fr
-main	rom_main_11	recon/tla/es/rom	.rom.001a6638	es
-main	rom_main_11	recon/tla/de/rom	.rom.001a6638	de
-main	rom_main_11	recon/tla/raw/081a6638	.text	en
-main	rom_main_11	recon/tla/raw/081a6724	.text	en
+main	rom_main_11	games/tla/src/menu/title_intro/f1a6638	.text	en de es fr it ja
+main	rom_main_11	games/tla/src/menu/title_intro/f1a6724	.text	en de es fr it ja
+main	rom_main_11	recon/tla/ja/rom	.rom.001a68b4	ja
+main	rom_main_11	recon/tla/it/rom	.rom.001a68b4	it
+main	rom_main_11	recon/tla/fr/rom	.rom.001a68b4	fr
+main	rom_main_11	recon/tla/es/rom	.rom.001a68b4	es
+main	rom_main_11	recon/tla/de/rom	.rom.001a68b4	de
 main	rom_main_11	recon/tla/raw/081a68b4	.text	en
 main	rom_main_11	games/tla/src/menu/title_intro/title_logo_piece	.text
 main	rom_main_11	recon/tla/raw/081a6b50	.text	en
@@ -3787,22 +3802,7 @@ main	rom_main_15	games/tla/src/gamepak/far_call/sound_driver
 main	rom_main_15	games/tla/src/gamepak/far_call/table_48
 main	rom_main_15	games/tla/src/gamepak/far_call/table_49
 main	rom_main_15	games/tla/src/gamepak/far_call/sound	.text
-main	rom_main_15	recon/tla/it/rom	.rom.001c00b0	it
-main	rom_main_15	recon/tla/it/rom	.rom.001c0114	it
-main	rom_main_15	recon/tla/it/rom	.rom.001c0168	it
-main	rom_main_15	recon/tla/fr/rom	.rom.001c00b0	fr
-main	rom_main_15	recon/tla/fr/rom	.rom.001c0114	fr
-main	rom_main_15	recon/tla/fr/rom	.rom.001c0168	fr
-main	rom_main_15	recon/tla/es/rom	.rom.001c00b0	es
-main	rom_main_15	recon/tla/es/rom	.rom.001c0114	es
-main	rom_main_15	recon/tla/es/rom	.rom.001c0168	es
-main	rom_main_15	recon/tla/de/rom	.rom.001c00b0	de
-main	rom_main_15	recon/tla/de/rom	.rom.001c0114	de
-main	rom_main_15	recon/tla/de/rom	.rom.001c0168	de
-main	rom_main_15	recon/tla/raw/081c00b0		en
-main	rom_main_15	recon/tla/ja/rom	.rom.001c00b0	ja
-main	rom_main_15	recon/tla/ja/rom	.rom.001c0114	ja
-main	rom_main_15	recon/tla/ja/rom	.rom.001c0168	ja
+main	rom_main_15	games/tla/src/sound/driver/leftover_mplay_main_tail
 main	rom_main_15	games/tla/src/sound/driver/leftover_handle_note
 main	rom_main_15	games/tla/src/sound/driver/leftover_release_key
 main	rom_main_15	games/tla/src/sound/driver/leftover_clear_modulation	.text

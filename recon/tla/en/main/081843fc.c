@@ -1,10 +1,7 @@
-// Measured 2026-11-05 (tla-en): differ 2296 of 4580. Measure both addresses.
-// COPY_WORDS as a static inline function, not a macro, takes this from 2834 to
-// 2476: its constant size goes through the parameter's pseudo, so e += 384
-// rebuilds the 384 as the listing does (S2's wrapper question, as in 08182aa8).
-// Statement orders then give 2296. Left first: the copy's function address, r5
-// in the listing and copied to r8 at the loop, one pseudo in r8 here, so e
-// takes r5 where the listing has r7.
+// Measured 2026-11-05 (tla-en): differ 2143 of 4580, 1733 with slots and pool
+// offsets normalized. Types as read: Data_0819983a's value u16, the tone s16,
+// one counter s16. Four more loops take a counter of their own (the c
+// variables).
 // Draft, differ 2834 of 4580, skeleton gap 323 (tla-en, 2026-11-01)
 // BattleEffect_RunCatastrophe; the same calls and control flow as the listing.
 // The function runs on through listing 081848ec, whose Func_081848ec and
@@ -309,6 +306,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
   s32 j;
+  s16 c0;
+  s32 c1;
+  s32 c2;
   struct EffectStep *p;
   struct EffectStep *q;
   struct SpriteObject *obj;
@@ -821,7 +821,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     }
     {
       for (i = 0; i != 17; i++) {
-        s32 t = Data_0819983a[i];
+        u16 t = Data_0819983a[i];
 
         if (frame == t + 242) {
           work->transferMode = 1;
@@ -860,14 +860,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     model->vertices = verts;
     if ((u32)(frame - 489) <= 130) {
       shade = 0;
-      for (i = 0; i != 3; i++) {
-        s32 off = i * 12;
+      for (c0 = 0; c0 != 3; c0++) {
+        s32 off = c0 * 12;
         s32 idx;
 
-        p = &work->particles[i];
+        p = &work->particles[c0];
         idx = p->variant;
 
-        if (frame == (Data_081998a4[i * 13 + idx] - 492) / 2 + 489) {
+        if (frame == (Data_081998a4[c0 * 13 + idx] - 492) / 2 + 489) {
           s32 n = off + idx;
           s32 count = 0;
           s32 a = Data_08199916[n];
@@ -899,7 +899,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           y = p->y / 8 - 10;
           y += (camZ + sway) >> 16;
           blit[0](canvas, src, x, y, w, h);
-          switch (i) {
+          switch (c0) {
             s32 cue;
 
           case 0:
@@ -1182,9 +1182,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     {
       s32 j;
 
-      for (j = 0; j != 120; j++) {
-        u8 *dst = work->sheet + ((i << 12) + j * 32) + 0x145a;
-        u8 *src = Ram_MapCellBuffer + (i * 45 * 64 + j * 24);
+      for (c1 = 0; c1 != 120; c1++) {
+        u8 *dst = work->sheet + ((i << 12) + c1 * 32) + 0x145a;
+        u8 *src = Ram_MapCellBuffer + (i * 45 * 64 + c1 * 24);
         s32 m;
 
         for (m = 0; m != 24; m++) {
@@ -1336,7 +1336,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
           Render_DrawModelList(model2);
           texture2.pixels = gMapCellBuffer;
           for (i = 0; i != 3; i++) {
-            s32 tone = sh2 + (Trig_Cos(a + i * 21845 + 10922) << 3 >> 16) - 16;
+            s16 tone = sh2 + (Trig_Cos(a + i * 21845 + 10922) << 3 >> 16) - 16;
             s32 v;
 
             Transform_Push();
@@ -1578,7 +1578,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         }
         x += 116;
         q = &Data_02016d00[(frame & 31) * 2];
-        for (i = 0; i != 2; i++, q++) {
+        for (c1 = 0; c1 != 2; c1++, q++) {
           s32 angle;
           s32 speed;
 
@@ -1729,7 +1729,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             }
           }
           q = &Data_02016d00[64];
-          for (i = 0; i != 100; i++, q++) {
+          for (c2 = 0; c2 != 100; c2++, q++) {
             if (q->variant >= 0) {
               s32 n = (q->variant >> 2) + 2;
 

@@ -130,7 +130,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
     // FAKEMATCH: Echo Cut's blend takes the pooled store (24 to 16: its value
     // and the next pool move into place); on Human Hunt's store as well, or
     // the pin alone on either, it stays 16 or 24.
-    REG_WRITE16_POOLED(REG_BLDALPHA, 0x1010);
+    REG_BLDALPHA = 0x1010;
     work->transferMode = 2;
     work->transferValue = 75;
   }

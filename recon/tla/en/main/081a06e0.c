@@ -1,4 +1,6 @@
-// Measured 2026-11-05 (tla-en): differ 108 of 195.
+// Measured 2026-11-05 (tla-en): differ 94 of 195, 82 with slots and pool
+// offsets normalized. 16 - step in a local of its own builds with movs as the
+// listing does.
 // Draft, differ 108 of 195: the credits and slide show driver. It resets the
 // task table, starts the scroll task and sets up BG2, BG3 and blending;
 // mode 1 cross-fades the slides until START or the scroll ends, other modes
@@ -67,9 +69,10 @@ s32 Func_081a06e0(s32 mode) {
       Func_081a052c(gDisplayScroll_SlideResources[slide], odd ^ 1);
       blend = 0xf00;
       for (step = 1; step <= 16; step++) {
-        if (odd)
-          REG_BLDALPHA = (step << 8) | (16 - step);
-        else
+        if (odd) {
+          u32 t = 16 - step;
+          REG_BLDALPHA = (step << 8) | t;
+        } else
           REG_BLDALPHA = blend | step;
         for (frame = 0; frame <= 3; frame++) {
           if (gInput.held & 8)

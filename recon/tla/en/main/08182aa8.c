@@ -1,6 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 935 of 2781. Statement orders searched,
-// first model setup and the sparks' blocks. Left as below: the palette ease's
-// green in sp+8, and what rotates after it.
+// Measured 2026-11-05 (tla-en): differ 885 of 2781, 763 with slots and pool
+// offsets normalized. Three more loops take a counter of their own.
 // Draft, differ 1075 of 2781, skeleton gap 107/106 (tla-en, 2026-11-01)
 // BattleEffect_RunCoatlicue: same calls and control flow, draft 2780 of 2781
 // instructions, frame 164 and every stack slot as in the native. Registers
@@ -303,6 +302,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
   u16 *table;
   s32 frame;
   s32 i;
+  s32 c0;
   s32 k;
   s32 y;
   s32 level;
@@ -564,7 +564,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       u16 *dst = (u16 *)OBJ_PLTT;
       s32 half = d / 2;
 
-      for (i = 0; i != 256; i++, e++, dst++) {
+      for (c0 = 0; c0 != 256; c0++, e++, dst++) {
         s32 b;
         s32 g;
         s32 r;
@@ -899,12 +899,12 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
         }
       }
       if (frame > 80) {
-        for (i = 0; i != 3; i++) {
-          if (frame == Data_0819974e[i]) {
+        for (c0 = 0; c0 != 3; c0++) {
+          if (frame == Data_0819974e[c0]) {
             Iwram_FillWords(canvas, 0x4000, 0x2f2f2f2f);
           }
-          if (frame > Data_0819974e[i] && frame < Data_0819974e[i] + 10) {
-            s32 d = frame - Data_0819974e[i];
+          if (frame > Data_0819974e[c0] && frame < Data_0819974e[c0] + 10) {
+            s32 d = frame - Data_0819974e[c0];
             sh = d * 16 - 56;
             s = 0x14000 - (d << 13);
             model->kind = 7;
@@ -916,7 +916,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
             Render_ResetTransformState();
             Func_08015160(-0x40000, -0x2c0000, 0);
             Func_080151e4(s, s << 1, s);
-            Func_080150e4((i << 14) + 0x2000);
+            Func_080150e4((c0 << 14) + 0x2000);
             SceneTransform_ApplyPitch(-0x1000);
             SceneTransform_ApplyYaw(frame << 9);
             Render_TransformVertices(gData_08199210, verts, 64);
@@ -1091,7 +1091,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       {
         struct EffectStep *p = Ram_EffectSteps;
 
-        for (i = 0; i != 256; i++, p++) {
+        for (c0 = 0; c0 != 256; c0++, p++) {
           p->x = (Random16() & 127) << 16;
           p->y = ((Random16() & 255) + 120) << 16;
           p->velocityX = ((Random16() & 31) - 16) << 13;

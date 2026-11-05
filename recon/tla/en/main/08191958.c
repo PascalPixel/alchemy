@@ -1,4 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 58 of 185.
+// Measured 2026-11-05 (tla-en): differ 48 of 185, 34 with slots and pool
+// offsets normalized. A loop more takes a counter of its own.
 // Draft, differ 66 of 185 (no device): summon 25's screen wipe (called at
 // its start with a midpoint callback). Written from the listing; no Broken
 // Seal twin (twins12 0.46).
@@ -60,17 +61,17 @@ void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
 
   // The band: colours 0 to 62 rising over the first 32 rows, 63 through the
   // middle 64 and falling again over the last 32, in 8x8 256-colour tiles.
-  for (y = 0; y != 128; y++) {
-    s32 row = (y & 7) + (y >> 3) * 64;
-    s32 fall = y * 2 - 192;
+  for (i = 0; i != 128; i++) {
+    s32 row = (i & 7) + (i >> 3) * 64;
+    s32 fall = i * 2 - 192;
 
     for (x = 0; x != 128; x++) {
       s32 color;
 
-      color = y * 2;
-      if (y > 31) {
+      color = i * 2;
+      if (i > 31) {
         color = 63 - fall;
-        if (y <= 95)
+        if (i <= 95)
           color = 63;
       }
       canvas[row + ((x & 7) << 3) + ((x >> 3) << 10)] = color;

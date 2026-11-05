@@ -1,30 +1,3 @@
-// Measured 2026-11-05 (tla-en): differ 2 of 760. One pair: the mesh store ahead
-// of the kind store. An empty asm between them fixes it and moves a loop's
-// registers elsewhere (32); no second asm helps; six permuter minutes found
-// nothing.
-// Draft, differ 14 of 760, skeleton gap 14 (tla-en, 2026-11-01)
-// Left: six pairs that differ only in sched2's order, no register or slot:
-// the load of effect waits after the stores before it in the listing (after
-// frame = 0, and after the sword loop's two counters) and here goes first;
-// the sword's giv is set before the sparks' offset (mov r8 after str [sp, 8]
-// in the listing); model->kind is stored before model->mesh; the fan's second
-// texture byte and the frame's reload before the loop's compare. Reordering
-// the model stores, flipping the compares and moving step's assignment later
-// each gained nothing or lost allocation (step below the strike: 459).
-// No close ☀️ twin (call order BattleEffect_RunRamses 0.455): ⚓️'s own effect
-// on ☀️'s frame, with its rune and swords drawn as textured quads by ⚓️'s
-// model kernels, as in Triple Chomp (BattleEffect_RunTripleChomp).
-// What the shape rests on: cells, one address for the function's whole life,
-// is spilled and so rematerialized from the pool at each use; scale is one
-// variable across the rune, the flash and the fan (r5 in all three); model
-// and vertices sit in an inner block so that vertices' slot follows the
-// start's address; the fan's angles are (frame + i * n) << 9, which loop.c
-// reduces. The spark area stays Ram_MapCellBuffer + 0x4000 as a constant, so
-// the first loop's pool holds its address plus 24. The frame (88) holds effect
-// at sp+52, work 48, canvas 44, frame 40, the blitter 32, graphics 28, the
-// start's address 24, vertices 20, the texture's address 16, the sword's delay
-// 12 and its sparks' offset 8; the texture is at sp+56, the target at 64 and
-// the start at 76.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -275,7 +248,8 @@ void BattleEffect_RunLegend(struct BattleEffectArgument *effect) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       texture.pixels = work->sheet;
-      model->mesh = gData_08199364;
+      // Stored as an integer: as a pointer this store follows the kind store.
+      *(s32 *)&model->mesh = (s32)gData_08199364;
       model->kind = 7;
       model->texture = &texture;
       model->vertices = vertices;

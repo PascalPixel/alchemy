@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 160 of 895. Left first: i & 1, where the
-// 1 ties to the result; an explicit odd local changes nothing.
+// Measured 2026-11-05 (tla-en): differ 158 of 895, 154 with slots and pool
+// offsets normalized.
 // Draft, differ 172 of 895, skeleton gap 32 (tla-en, 2026-11-01)
 // Effect kind 123, written from the listing on The Broken Seal's canvas
 // skeleton (twins: BattleEffect_RunTitanBlade 0.46, by call order
@@ -122,6 +122,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
   s32 frame;
   u8 *graphics;
   s32 i;
+  s32 c0;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -323,12 +324,12 @@ void BattleEffect_RunLiquifier(struct BattleEffectArgument *effect) {
       model->mesh = gData_08199364;
       texture.pixels = gData_02014000;
       model->kind = 7;
-      for (i = 0; i != 16; i++) {
-        struct EffectStep *step = &work->particles[i + 32];
-        s32 age = frame - 54 - i * 2;
+      for (c0 = 0; c0 != 16; c0++) {
+        struct EffectStep *step = &work->particles[c0 + 32];
+        s32 age = frame - 54 - c0 * 2;
         s32 back = -age;
 
-        if (frame >= i * 2 + 54 && frame < i * 2 + 70) {
+        if (frame >= c0 * 2 + 54 && frame < c0 * 2 + 70) {
           s32 shade = back * 4;
           s32 scale = age << 14;
 

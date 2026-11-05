@@ -1414,21 +1414,12 @@ BattleEffect_RunHaures:
 	.thumb_func
 BattleEffect_RunDeathPlunge:
 	.incbin "baserom.gba", 0x00188714, 0x0000059c
-	.global BattleEffect_RunHelmSplitter
-	.type BattleEffect_RunHelmSplitter, %function
-	.thumb_func
-BattleEffect_RunHelmSplitter:
-	.incbin "baserom.gba", 0x00188cb0, 0x00000498
+	.section .rom.00189148, "ax"
 	.global BattleEffect_RunDragonCloud
 	.type BattleEffect_RunDragonCloud, %function
 	.thumb_func
 BattleEffect_RunDragonCloud:
 	.incbin "baserom.gba", 0x00189148, 0x000009cc
-	.global BattleEffect_RunLegend
-	.type BattleEffect_RunLegend, %function
-	.thumb_func
-BattleEffect_RunLegend:
-	.incbin "baserom.gba", 0x00189b14, 0x000006dc
 	.section .rom.0018ad40, "ax"
 	.balign 4
 	.global Func_0818ad40
@@ -1519,17 +1510,7 @@ DisplayScroll_DrawMessageLine:
 	.thumb_func
 Func_081a150c:
 	.incbin "baserom.gba", 0x001a150c, 0x000000d0
-	.section .rom.001a6638, "ax"
-	.global Func_081a6638
-	.type Func_081a6638, %function
-	.thumb_func
-Func_081a6638:
-	.incbin "baserom.gba", 0x001a6638, 0x000000ec
-	.global Func_081a6724
-	.type Func_081a6724, %function
-	.thumb_func
-Func_081a6724:
-	.incbin "baserom.gba", 0x001a6724, 0x00000190
+	.section .rom.001a68b4, "ax"
 	.global Func_081a68b4
 	.type Func_081a68b4, %function
 	.thumb_func
@@ -1561,18 +1542,6 @@ Func_081b243c:
 	.thumb_func
 Func_081b8274:
 	.incbin "baserom.gba", 0x001b8274, 0x000000d8
-	.section .rom.001c00b0, "ax"
-	.incbin "baserom.gba", 0x001c00b0, 0x00000064
-	.section .rom.001c0114, "ax"
-	.global LeftoverSoundDriver_StaleCallTarget
-LeftoverSoundDriver_StaleCallTarget:
-	.incbin "baserom.gba", 0x001c0114, 0x00000054
-	.section .rom.001c0168, "ax"
-	.global Func_081c0168
-	.type Func_081c0168, %function
-	.thumb_func
-Func_081c0168:
-	.incbin "baserom.gba", 0x001c0168, 0x00000030
 	.section .rom.001c0428, "ax"
 	.global Func_081c0428
 Func_081c0428:

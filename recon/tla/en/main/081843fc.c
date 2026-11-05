@@ -960,10 +960,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             break;
           }
           {
-            s32 half = (bx + (s32)((u32)bx >> 31)) >> 1;
+            s32 half;
             s32 j;
 
             q = &work->particles[3];
+            half = (bx + (s32)((u32)bx >> 31)) >> 1;
             for (j = 3; j != 64; j++, q++) {
               if (q->variant < 0) {
                 s32 angle;
@@ -1240,7 +1241,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
       for (j = 0; j != 120; j++) {
         u8 *dst = work->sheet + (row + j * 32) + 0x145a;
-        u8 *src = cells + (i * 45 * 64 + j * 24);
+        u8 *src = cells + i * 45 * 64 + j * 24;
         s32 m;
 
         for (m = 0; m != 24; m++) {
@@ -1718,7 +1719,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
         model3->scrollU = (frame << 3) & 127;
         model3->mesh = Data_02012000;
         Render_ResetTransformState();
-        Func_080151e4(0x8000, 0x10000, 0x10000);
+        Func_080151e4(0x8000, 0x10000, 0x8000);
         a = frame * 3 * 127 * 16;
         b = frame << 13;
         c = Trig_Sin(a);

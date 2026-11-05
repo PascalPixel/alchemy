@@ -123,14 +123,15 @@ void Func_02000f60(void) {
     Func_02005230(15, 0, 0);
     Func_02005230(16, 0, 0);
     Actor_SetModeById(9, 1);
-    Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)Actor_GetById(9), 0xd80000, 0, 0xd80000);
+    Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)Actor_GetById(9),
+          0xd80000, 0, 0xd80000);
     Actor_GetById(9)->priorityFlags |= 2;
     Actor_SetSpritePriority(9, 3);
     if (GameFlag_Test(0x208)) {
       leader = Actor_GetById(gMainRoutineWork.currentOwner);
       Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
-      Actor_SetSingleChildFlags(
-          Actor_GetById(gMainRoutineWork.currentOwner), 1);
+      Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
+                                1);
     }
     goto count;
   }

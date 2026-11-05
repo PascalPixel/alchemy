@@ -89,8 +89,7 @@ void Func_02001474(void) {
     wait(1);
   }
   Func_020039c0();
-  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),
-                                     1);
+  Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 1);
   leader->layer = 0;
   wait(10);
   Func_020039e0();

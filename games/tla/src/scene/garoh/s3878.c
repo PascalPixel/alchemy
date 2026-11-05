@@ -1,7 +1,7 @@
 #include "types.h"
 #include "call.h"
 
-#define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                  \
+#define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
   do {                                                                         \
     Call2(Actor_SetModeById, id, mode);                                        \
     Call1(FieldEvent_Wait, frames);                                            \
@@ -812,7 +812,7 @@ L_0200caf6:;
   Call3(Actor_ArmCallback, 9, 0x3000, 0);
   Call3(Actor_ArmCallback, 5, 0x8000, 0);
   Call3(Actor_ArmCallback, 6, 0x8000, 0);
-  t19 =Value1(GameFlag_Test, 7);
+  t19 = Value1(GameFlag_Test, 7);
   if (t19 == 0)
     goto L_0200cc42;
   Call3(Actor_ArmCallback, 7, 0x8000, 0);
@@ -968,8 +968,7 @@ L_0200cfbc:;
   t27 = Value1(Actor_GetById, *(s32 *)(v5));
   if (t27 == 0)
     goto L_0200d016;
-  Call3(Actor_ResetAndSetPosition, 9, *(s16 *)(t27 + 10),
-        *(s16 *)(t27 + 18));
+  Call3(Actor_ResetAndSetPosition, 9, *(s16 *)(t27 + 10), *(s16 *)(t27 + 18));
 L_0200d016:;
   Call1(Actor_WaitForMoveById, 9);
   Call3(Func_0200520c, 9, 0, 0);
@@ -978,8 +977,7 @@ L_0200d016:;
   t28 = Value1(Actor_GetById, *(s32 *)(v5));
   if (t28 == 0)
     goto L_0200d054;
-  Call3(Actor_ResetAndSetPosition, 5, *(s16 *)(t28 + 10),
-        *(s16 *)(t28 + 18));
+  Call3(Actor_ResetAndSetPosition, 5, *(s16 *)(t28 + 10), *(s16 *)(t28 + 18));
 L_0200d054:;
   Call1(Actor_WaitForMoveById, 5);
   Call3(Func_0200520c, 5, 0, 0);
@@ -988,8 +986,7 @@ L_0200d054:;
   t29 = Value1(Actor_GetById, *(s32 *)(v5));
   if (t29 == 0)
     goto L_0200d092;
-  Call3(Actor_ResetAndSetPosition, 6, *(s16 *)(t29 + 10),
-        *(s16 *)(t29 + 18));
+  Call3(Actor_ResetAndSetPosition, 6, *(s16 *)(t29 + 10), *(s16 *)(t29 + 18));
 L_0200d092:;
   Call1(Actor_WaitForMoveById, 6);
   Call3(Func_0200520c, 6, 0, 0);
@@ -1003,8 +1000,7 @@ L_0200d092:;
     goto L_0200d0ea;
   goto L_0200d0dc;
 L_0200d0dc:;
-  Call3(Actor_ResetAndSetPosition, 7, *(s16 *)(t31 + 10),
-        *(s16 *)(t31 + 18));
+  Call3(Actor_ResetAndSetPosition, 7, *(s16 *)(t31 + 10), *(s16 *)(t31 + 18));
 L_0200d0ea:;
   Call1(Actor_WaitForMoveById, 7);
   Call3(Func_0200520c, 7, 0, 0);

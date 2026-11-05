@@ -28,8 +28,7 @@ void Func_02003fbc(void);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void FieldEvent_Wait(s32 frames);
 struct Actor *Func_02003df4(s32 type, s32 x, s32 y, s32 z);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        u32 value);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Func_02003de4(struct Actor *object, s32 mode);
 void Func_02003dec(struct Actor *object, const u8 *script);
 void Func_0200129c(struct Actor *item);
@@ -52,15 +51,13 @@ void Event_WaitTransitionFrames(void);
 void Func_02003f7c(s32 a);
 
 #define STEP(actor, x, z)                                                      \
-  (Actor_GetById(actor)->actionFlags &= ~1,                                   \
-   Call3(Actor_SetPositionAndReset, actor, x, z),                       \
-   FieldEvent_Wait(1), Actor_GetById(actor)->actionFlags |= 1)
+  (Actor_GetById(actor)->actionFlags &= ~1,                                    \
+   Call3(Actor_SetPositionAndReset, actor, x, z), FieldEvent_Wait(1),          \
+   Actor_GetById(actor)->actionFlags |= 1)
 
 #define SHOW_ITEM(gift)                                                        \
-  (gift = (struct Actor *)Value4(Func_02003df4, 163, 0x1280000, 0,     \
-                                         0x1a80000),                           \
-   item = (struct Actor *)Value4(Func_02003df4, 14, 0x1280000, 0,      \
-                                         0x1a80000))
+  (gift = (struct Actor *)Value4(Func_02003df4, 163, 0x1280000, 0, 0x1a80000), \
+   item = (struct Actor *)Value4(Func_02003df4, 14, 0x1280000, 0, 0x1a80000))
 
 void Func_020014e0(void) {
   struct Actor *leader, *object, *leader2;
@@ -75,19 +72,19 @@ void Func_020014e0(void) {
       Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
             0x6666);
       leader->update = Func_02000df8;
-      Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 318,
-            424);
+      Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 318, 424);
       leader->update = 0;
       Actor_ArmCallback(gMainRoutineWork.currentOwner, 0x4000, 0);
       Func_02003f3c(9, 0xd000);
       Func_02003f24(MsgOhYouRe);
       Func_02003f2c(9, 0);
       Func_02003fc4();
-      answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
+      answer =
+          Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0);
       if (answer == 0) {
         Func_02003f3c(gMainRoutineWork.currentOwner, 0x8000);
-        Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
-              0x19999, 0xcccc);
+        Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x19999,
+              0xcccc);
         leader->update = Func_02000df8;
         STEP(gMainRoutineWork.currentOwner, 302, 424);
         SHOW_ITEM(giftAgain);
@@ -120,8 +117,7 @@ void Func_020014e0(void) {
       Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
             0x6666);
       leader->update = Func_02000df8;
-      Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 318,
-            424);
+      Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 318, 424);
       leader->update = 0;
       Func_02003f3c(gMainRoutineWork.currentOwner, 0x8000);
       Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x19999,
@@ -152,7 +148,8 @@ void Func_020014e0(void) {
       Call2(Func_02003f3c, 9, 0xd000);
       Func_02003f2c(9, 0);
       Func_02003fc4();
-      if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+      if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+          0) {
         Func_0200129c(gift);
       } else {
         Func_02003fbc();
@@ -174,15 +171,16 @@ void Func_020014e0(void) {
     Func_02003f24(MsgWantToGo);
     Func_02003f2c(9, 0);
     Func_02003fc4();
-    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) ==
+        0) {
       leader2 = Actor_GetById(gMainRoutineWork.currentOwner);
       Func_02003fbc();
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       Func_02003f2c(9, 0);
       ((struct {
-         u8 unk000[0x295];
-         u8 unk295;
-       } *)HeapSlot_AllocEwram(88, 664))
+        u8 unk000[0x295];
+        u8 unk295;
+      } *)HeapSlot_AllocEwram(88, 664))
           ->unk295 = 99;
       Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
       Call2(Func_02003f3c, 9, 0x5000);

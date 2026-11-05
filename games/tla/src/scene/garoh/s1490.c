@@ -3,22 +3,22 @@
 #include "event_work.h"
 #include "call.h"
 void Func_020013b0(s32 id);
-#define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                  \
+#define ACTOR_MODE_THEN_WAIT(id, mode, frames)                                 \
   do {                                                                         \
     Call2((void (*)())Actor_SetModeById, id, mode);                            \
     Call1((void (*)())FieldEvent_Wait, frames);                                \
   } while (0)
 #define FOLLOW_LEADER(id)                                                      \
   {                                                                            \
-    struct Actor *leader_;                                             \
+    struct Actor *leader_;                                                     \
                                                                                \
-    Call3((void (*)())Actor_SetSpeedParameters, id, 0x13333, 0x9999);   \
-    Actor_SetModeById(id, 2);                                                 \
-    leader_ = Actor_GetById(gMainRoutineWork.currentOwner);                        \
+    Call3((void (*)())Actor_SetSpeedParameters, id, 0x13333, 0x9999);          \
+    Actor_SetModeById(id, 2);                                                  \
+    leader_ = Actor_GetById(gMainRoutineWork.currentOwner);                    \
     if (leader_ != NULL)                                                       \
-      Actor_ResetAndSetPosition(id, *(s16 *)((u8 *)leader_ + 10),       \
-                                       *(s16 *)((u8 *)leader_ + 18));          \
-    Actor_WaitForMoveById(id);                         \
+      Actor_ResetAndSetPosition(id, *(s16 *)((u8 *)leader_ + 10),              \
+                                *(s16 *)((u8 *)leader_ + 18));                 \
+    Actor_WaitForMoveById(id);                                                 \
     Func_0200520c(id, 0, 0);                                                   \
   }
 
@@ -122,10 +122,8 @@ loop1:
     position[2] = Garoh_PathStep(0x200000, 0x780000, i) - wave * 7;
     position[1] = 0;
     r = ((Random16Far() * 10) >> 16) + 4;
-    Call3((void (*)())Actor_SetSpeedParameters, 8, r * 0x1999,
-          r * 0xccc);
-    Actor_SetPositionAndReset(8, position[0] / 0x10000,
-                                     position[2] / 0x10000);
+    Call3((void (*)())Actor_SetSpeedParameters, 8, r * 0x1999, r * 0xccc);
+    Actor_SetPositionAndReset(8, position[0] / 0x10000, position[2] / 0x10000);
     i++;
     if (i <= 7)
       goto loop1;
@@ -157,10 +155,8 @@ loop2:
     position[2] = Garoh_PathStep(z, toZ, i);
     position[1] = 0;
     r = ((Random16Far() * 10) >> 16) + 4;
-    Call3((void (*)())Actor_SetSpeedParameters, 8, r * 0x1999,
-          r * 0xccc);
-    Actor_SetPositionAndReset(8, position[0] / 0x10000,
-                                     position[2] / 0x10000);
+    Call3((void (*)())Actor_SetSpeedParameters, 8, r * 0x1999, r * 0xccc);
+    Actor_SetPositionAndReset(8, position[0] / 0x10000, position[2] / 0x10000);
     i++;
     if (i <= 7)
       goto loop2;

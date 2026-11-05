@@ -1,3 +1,8 @@
+// Measured 5 November (-Os), differ 37 to 40 of 543: the end's last set is
+// `orrs r5, r3; strb r5`, the result tied to the shared 1 as in overlay 64d's
+// Func_02000510. `shared |= *flags; *flags = shared;` gives that shape; the set
+// before it then builds its own 1 (a known constant) or, past a one-pass block,
+// copies it (adds r3, r6). r5 and r6 stay swapped with gMainRoutineWork.
 // Draft, differ 41 of 543 (was 253): the first beam of light in Air's Rock,
 // the same loading and sparks as Func_020026b8's with object 8 glowing (the
 // leader and object 8 take action variant 1, BG0 sits on BG1's priority 2):

@@ -13,10 +13,8 @@ void Func_02005e14(void);
 void Func_02005e1c(void);
 void Func_02005f2c(s32 skip);
 void Func_02005f94(s32 cue);
-struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z,
-                                                  s32 type);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Func_02005d5c(struct Actor *object, s32 mode);
 void Func_02005d8c(struct Actor *object, s32 x, s32 y, s32 z);

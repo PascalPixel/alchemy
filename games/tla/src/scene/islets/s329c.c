@@ -1,15 +1,10 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 10 of 145; left: argument
-// constants of the first palette fade and the actor 9 placement are built in
-// another order (Call3 and Call4 forms measured, 6 at best with the two
-// placements through them).
-// Draft, differ 12 of 145 (the English listing; the Japanese one has no case
-// for entrance 5): the Islets' setup: sets BG layer priority, clears flag
-// 303 on entrance 2, queues two palette fades, places actors 9 and 10 when
-// flag 0xaa5 is set and 265 clear, frees actors 9, 11 and 12, schedules
-// Func_02001c4c, sets flag 0x217 and places 9 and 10 again for entrances 4
-// and 5, then runs entrance 3's (Func_02002830) or 4's (Func_020029c4)
-// arrival, or a screen transition and Func_020034d8. Left: four rows where the native schedules an argument constant otherwise (the first palette fade builds 3 last, the gMainRoutineWork load comes before the 241 offset, two position pairs split their shifts).
+#include "edition.h"
+
+// The Japanese form differs and is still on its listing.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -32,8 +27,7 @@ void PaletteQueue_Add(s32 a, s32 b, s32 c, s32 d);
 void Func_02003edc(s32 id, s32 x, s32 z);
 void Func_02003ee4(s32 id, s32 x, s32 z, s32 angle);
 struct Actor *Actor_GetById(u32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Task_Add(void (*func)(void), s32 priority);
 void Func_02001c4c(void);
 void wait(s32 frames);
@@ -53,12 +47,26 @@ void Func_0200329c(void) {
   if (gMainRoutineWork.entrance == 2)
     GameFlag_ClearBit(303);
   Func_02003410();
-  PaletteQueue_Add(3, 12, 5, 4);
+  {
+    s32 a1 = 12;
+    s32 a2 = 5;
+    s32 a3 = 4;
+    s32 a0 = 3;
+
+    /* FAKEMATCH(barrier): the native loads the first argument last; as the
+     * plain call, 2 of 145 instructions differ in tla-en. */
+    asm volatile("" : "+l"(a1), "+l"(a2), "+l"(a3));
+    PaletteQueue_Add(a0, a1, a2, a3);
+  }
   PaletteQueue_Add(4, 12, 5, 4);
   if (GameFlag_Test(0xaa5) && (done = GameFlag_Test(265)) == 0) {
     Func_02003edc(10, 0x1180000, 0x1d40000);
     Actor_GetById(10)->motionFlags = done;
-    Func_02003edc(9, 0x1280000, 0x1c40000);
+    {
+      s32 a1 = 0x1280000;
+
+      Call3((void (*)())Func_02003edc, 9, a1, 0x1c40000);
+    }
   }
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
   Actor_SetSingleChildFlags(Actor_GetById(11), 0);
@@ -67,7 +75,11 @@ void Func_0200329c(void) {
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     GameFlag_SetBit(0x217);
     if (!GameFlag_Test(265)) {
-      Func_02003ee4(9, 0x980000, 0x3000000, 0x4000);
+      {
+        s32 a3 = 0x4000;
+
+        Call4((void (*)())Func_02003ee4, 9, 0x980000, 0x3000000, a3);
+      }
       Func_02003edc(10, 0xb00000, 0x3090000);
       wait(1);
     }
@@ -91,3 +103,5 @@ void Func_0200329c(void) {
   }
   Func_02003e6c();
 }
+
+#endif

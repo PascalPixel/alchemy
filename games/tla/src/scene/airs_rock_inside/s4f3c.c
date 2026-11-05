@@ -22,16 +22,22 @@ void Func_02004f3c(void) {
   if (gData_020073d8 == level)
     return;
   switch (level) {
-  case 2:
-    { s32 a4 = 7, a5 = 39; Func_02005dac(64, 64, 6, 4, a4, a5); }
+  case 2: {
+    s32 a4 = 7, a5 = 39;
+    Func_02005dac(64, 64, 6, 4, a4, a5);
+  }
     Func_02005dac(70, 64, 6, 4, 26, 39);
     break;
-  case 1:
-    { s32 a4 = 7, a5 = 39; Func_02005dac(64, 68, 6, 4, a4, a5); }
+  case 1: {
+    s32 a4 = 7, a5 = 39;
+    Func_02005dac(64, 68, 6, 4, a4, a5);
+  }
     Func_02005dac(70, 68, 6, 4, 26, 39);
     break;
-  case 0:
-    { s32 a4 = 7, a5 = 39; Func_02005dac(64, 72, 6, 4, a4, a5); }
+  case 0: {
+    s32 a4 = 7, a5 = 39;
+    Func_02005dac(64, 72, 6, 4, a4, a5);
+  }
     Func_02005dac(70, 68, 6, 4, 26, 39);
     break;
   }

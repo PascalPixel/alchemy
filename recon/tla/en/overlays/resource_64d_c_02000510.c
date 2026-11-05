@@ -1,3 +1,15 @@
+// Measured 5 November (-Os), differ 25 of 2142, three sites left:
+// 1. The six bit sets end `orrs r2, r3; strb r2; ...; mov r8, r2`, the result
+// tied to the shared 1. A local `one` written `one |= *flags; *flags = one;` at
+// the last set gives that shape, but the first five keep a second pseudo for the
+// 1 (r8 and sl). Pinning `one` to r8 (register asm) closes it apart from two
+// orders: `mov r8, r2` is deleted as dead without a use, and with an asm use it
+// issues before the next call's r1 and r0 (differ 28 to 30). Overlay 663's
+// Func_02001010 stops on the same last set.
+// 2. Actor 17's 0x1cccc, 0xe666: `adds r2` before `adds r1`; a local second
+// argument takes the whole of r2 first.
+// 3. `movs r1, #6` issues before the angle's strh; an empty asm there also moves
+// the actor's r0 from above the stores.
 // Near miss, differ 31 of 2142 (tla-en, 2026-10-30): the last of the six bit
 // sets ties its result to the shared 1 (r8) in the native and to the byte
 // here (`orrs r2, r3` and an extra `mov r8, r2`, which also moves two pool

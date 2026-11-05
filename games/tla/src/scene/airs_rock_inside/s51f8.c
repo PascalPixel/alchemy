@@ -33,8 +33,7 @@ void Func_02001420(struct Actor *object, s32 a, s32 b);
 void Func_02005d9c(s32 x, s32 z, s32 width, s32 height, s32 a, s32 b);
 void Func_02005dac(s32 srcX, s32 srcZ, s32 width, s32 height, s32 destX,
                    s32 destZ);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        u32 value);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Func_0200505c(void);
 void Func_02004cc8(void);
 void Func_02005f4c(s32 id);
@@ -270,8 +269,7 @@ s32 Func_020051f8(void) {
     if (GameFlag_Test(0x8d3))
       Call3(Func_02005e6c, 9, 0x1680000, 0x1080000);
     Func_02005f6c(gData_0200607e);
-    Func_0200062c(2, Actor_GetById(10)->x >> 20, Actor_GetById(10)->z >> 20,
-                  0);
+    Func_0200062c(2, Actor_GetById(10)->x >> 20, Actor_GetById(10)->z >> 20, 0);
     Actor_GetById(10)->actionFlags = 0;
     if (!GameFlag_Test(0x899))
       Actor_SetPartAttribute(Actor_GetById(10), 6);

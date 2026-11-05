@@ -20,8 +20,7 @@ extern char SceneId_WorldMap;
 void GameFlag_ClearBit(s32 flag);
 void FieldEvent_Wait(s32 frames);
 struct Actor *Actor_GetById(s32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Actor_CommitPositionAndActivate(s32 id, s32 x, s32 z);
@@ -91,7 +90,8 @@ void Func_020012bc(s32 entrance) {
     Func_02004da8();
     {
       /* FAKEMATCH(barrier): the native copies the angle before the other
-       * arguments; as the plain call, 2 of 946 instructions differ in tla-en. */
+       * arguments; as the plain call, 2 of 946 instructions differ in tla-en.
+       */
       s32 a3 = west;
 
       asm volatile("" : "+l"(a3));
@@ -126,7 +126,8 @@ void Func_020012bc(s32 entrance) {
     ARM_WEST(4);
     {
       /* FAKEMATCH(barrier): the native copies the angle, loads the 0 and then
-       * the actor; as the plain Call3, 2 of 946 instructions differ in tla-en. */
+       * the actor; as the plain Call3, 2 of 946 instructions differ in tla-en.
+       */
       s32 a1 = west, a2;
 
       asm volatile("" : "+l"(a1));
@@ -240,7 +241,7 @@ void Func_020012bc(s32 entrance) {
     FieldEvent_Wait(10);
     FieldEvent_Wait(40);
     Func_02004d38(((struct SavedDestination *)&gMainRoutineWork)->scene,
-                 ((struct SavedDestination *)&gMainRoutineWork)->entrance);
+                  ((struct SavedDestination *)&gMainRoutineWork)->entrance);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
   } else {
     GameFlag_ClearBit(0xa76);
@@ -372,7 +373,7 @@ void Func_020012bc(s32 entrance) {
 
       if (object != NULL)
         Actor_ResetAndSetPosition(23, *(s16 *)((u8 *)object + 10),
-                                         *(s16 *)((u8 *)object + 18));
+                                  *(s16 *)((u8 *)object + 18));
     }
     Actor_WaitForMoveById(23);
     Call3((void (*)())Func_02004c88, 23, 0, 0);

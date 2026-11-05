@@ -28,7 +28,8 @@ s32 Func_02000ecc(void) {
       gMainRoutineWork.retreatEntrance = 3;
     }
   }
-  if (!GameFlag_Test(265) && gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2 &&
+  if (!GameFlag_Test(265) &&
+      gMainRoutineWork.scene == (s32)&SceneId_Ov673Room2 &&
       gMainRoutineWork.entrance > 2)
     Func_0200126c(gMainRoutineWork.currentOwner);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room3) {
@@ -47,10 +48,11 @@ s32 Func_02000ecc(void) {
     if (GameFlag_Test(518))
       Call6(Func_02001164, 0, 4, 1, 1, 6, 15);
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5 && GameFlag_Test(0x200))
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room5 &&
+      GameFlag_Test(0x200))
     Call6(Func_02001164, 15, 18, 1, 1, 17, 18);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 && GameFlag_Test(0x9ce) &&
-      !GameFlag_Test(0xf93) && !GameFlag_Test(265)) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov673Room4 &&
+      GameFlag_Test(0x9ce) && !GameFlag_Test(0xf93) && !GameFlag_Test(265)) {
     statue = Actor_GetById(0x40);
     Call3(Func_020011cc, 0x40, 0xa80000, 0x980000);
     statue->motionFlags = 6;

@@ -1,26 +1,3 @@
-// Draft, differ 86 of 386, skeleton gap 26 (tla-en, 2026-11-01)
-// Overlay 664's copy of overlay 663's Func_02001560 (the leader riding the
-// object it stands on; see that draft): in Ov664Room1 with the leader at x 39
-// (in 8-pixel units) it ends with Func_02005efc(16) instead of stepping off,
-// dropping off in front leaves priority flags 33, and only bit 0 is set again
-// at the end, before the camera follows.
-// Registers now follow the native from the waiting loop on; what keeps them
-// apart is the zero in noFlags (r6, it frees ride) and these three gaps:
-// - The rising loop: GCSE's PRE hoists leader + 35 before the loop, so the
-//   native's adds/adds #35 each pass becomes a pointer in r8 and riding moves
-//   to r10. while, do-while, for, a label loop, a temporary pointer and a
-//   static inline flicker helper all hoist it; nothing plain found.
-// - The waiting loop: PRE removes the reload of gInput.held on the path that
-//   skipped the keys before it; the native reloads at each test. Reading held
-//   through a volatile cast gives differ 72 but gap 28 here; that is a device,
-//   and rereads in this draft and overlay 663's may justify one on the field
-//   (S2).
-// - Camera_MoveWithinMapBounds(-1, -1, -1, 0) shares one -1; the native builds
-//   three. Call4 from call.h gives differ 66, gap 20; left out as a device.
-// The switch and the u16 facing keep ride->angle's compare as the native's and
-// its second load in the default case (a plain if narrows the compare; a
-// local read as s32 loses the reload). The waiting loop is a label loop
-// because do-while hoists gInput's address.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -37,8 +14,7 @@ void Func_02005f2c(s32 skip);
 void Func_02005f94(s32 cue);
 void Func_02005ee4(void);
 struct Actor *Func_02005ef4(void);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        u32 value);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void wait(s32 frames);
@@ -80,7 +56,8 @@ void Func_02000988(void) {
     wait(1);
   }
   Func_02005f94(0x120);
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1 && leader->x >> 19 == 39) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room1 &&
+      leader->x >> 19 == 39) {
     Func_02005efc(16);
     Func_02005e1c();
     return;
@@ -98,34 +75,34 @@ void Func_02000988(void) {
     leader->y = (((ride->y >> 19) & ~1) + 3) << 19;
     leader->z = (((leader->z >> 19) & ~1) + 1) << 19;
   waiting:
-      moved = 0;
-      if (gInput.held & 0x40) {
-        dx = 0;
-        dz = 0xfff00000;
-        leader->angle = 0xc000;
-        moved = 1;
-      }
-      if (gInput.held & 0x10) {
-        dx = 0x100000;
-        dz = 0;
-        leader->angle = 0;
-        moved = 1;
-      }
-      if (gInput.held & 0x20) {
-        dx = 0xfff00000;
-        leader->angle = 0x8000;
-        dz = 0;
-        moved = 1;
-      }
-      if (moved && Func_02000690(2, (ride->x + dx) >> 20,
-                                 (ride->z - ride->y + dz) >> 20) >>
-                           8 !=
-                       255)
-        goto found;
-      wait(1);
-      i++;
-      if (i != 60)
-        goto waiting;
+    moved = 0;
+    if (gInput.held & 0x40) {
+      dx = 0;
+      dz = 0xfff00000;
+      leader->angle = 0xc000;
+      moved = 1;
+    }
+    if (gInput.held & 0x10) {
+      dx = 0x100000;
+      dz = 0;
+      leader->angle = 0;
+      moved = 1;
+    }
+    if (gInput.held & 0x20) {
+      dx = 0xfff00000;
+      leader->angle = 0x8000;
+      dz = 0;
+      moved = 1;
+    }
+    if (moved && Func_02000690(2, (ride->x + dx) >> 20,
+                               (ride->z - ride->y + dz) >> 20) >>
+                         8 !=
+                     255)
+      goto found;
+    wait(1);
+    i++;
+    if (i != 60)
+      goto waiting;
     dx = 0;
     dz = 0xfff00000;
     leader->angle = 0xc000;

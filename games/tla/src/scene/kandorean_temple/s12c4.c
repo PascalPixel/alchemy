@@ -122,8 +122,8 @@ void Func_020012c4(void) {
       Func_02005230(19, 0, 0);
       Func_02005230(20, 0, 0);
       Actor_SetModeById(10, 1);
-      Call4((void (*)())Actor_SetPositionAndResetMotion,
-            (s32)Actor_GetById(10), 0x1780000, 0, 0xf80000);
+      Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)Actor_GetById(10),
+            0x1780000, 0, 0xf80000);
       Actor_GetById(10)->priorityFlags |= 2;
       Actor_SetSpritePriority(10, 3);
       if (GameFlag_Test(0x209)) {

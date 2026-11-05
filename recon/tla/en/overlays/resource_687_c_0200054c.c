@@ -143,7 +143,8 @@ void Func_0200054c(void) {
 
   counter = &gFrameCount;
   frame = *counter;
-  phase = frame & 3;
+  phase = 3;
+  phase &= frame;
   if (phase == 0) {
     if ((frame & 10) == 0)
       Func_02002054(0x255);

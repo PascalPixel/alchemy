@@ -23,6 +23,9 @@ void Func_02000300(void) {
   s32 phase;
 
   phase = 0;
+  /* FAKEMATCH(barrier): the empty asm on phase changes its allocation rank; as no
+   * asm, 8 of 57 instructions differ in tla-en. */
+  asm("" : "=r"(phase) : "0"(phase));
   for (i = 0; i != 7; i++) {
     object = Func_02001dc0(672, 0, 0, 0);
     object->motionFlags = 0;

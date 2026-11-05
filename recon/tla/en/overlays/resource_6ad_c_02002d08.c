@@ -97,6 +97,9 @@ void Func_02002d08(struct Actor *self) {
         s32 velocity;
 
         half = 0x8000;
+        /* FAKEMATCH(barrier): the empty asm on half changes its allocation rank; as no
+         * asm, 43 of 168 instructions differ in tla-en. */
+        asm("" : : "r"(half));
         Func_02005490(object, gData_02005dbc);
         Actor_SetSingleChildFlags(object, 0);
         object->velocityY = (angle << 2) + 0x20000;

@@ -1,9 +1,3 @@
-// Draft of overlay 6a7's Func_020001d8, translated from its listing: differ 12
-// of 438 in tla-en (was 44). The read-modify-write is a compound assignment and
-// the two vectors handed to Func_020006b0 are local arrays, which give the
-// native's 24-byte stack frame. Left: the native builds the heap slot base
-// (0x3000000) in r5 before that call, where this builds it after the next two;
-// and two argument constants one row apart.
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
@@ -156,15 +150,19 @@ L_020083da:
   to[0] = 0x1900000;
   to[1] = 0;
   to[2] = 0x500000;
-  Call3((void (*)())Func_020006b0, (s32)from, (s32)to,
-        (s32)Func_02000064);
+  Call3((void (*)())Func_020006b0, (s32)from, (s32)to, (s32)Func_02000064);
   Call1((void (*)())FieldEvent_Wait, 20);
   Call3((void (*)())Func_02000ab0, 10, 0, 0);
   Call3((void (*)())Func_02000ab0, 9, 0, 0);
   t66 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t66, s32, 436) = 100;
   Call2((void (*)())Func_02000b10, 0x10000, 0);
-  Event_StartScreenTransition();
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
+   * the order around it; as the plain statement, 2 of 438 instructions differ
+   * in tla-en. */
+  do {
+    Event_StartScreenTransition();
+  } while (0);
   Event_WaitTransitionFrames();
   t70 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t70, s32, 436) = 8;

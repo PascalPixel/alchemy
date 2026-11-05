@@ -64,13 +64,21 @@ void Func_020000c4(void) {
   u16 *p;
   u32 i;
 
-  gCpuLoadDisplayEnabled = 0;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 34 of 281 instructions differ
+   * in tla-en. */
+  do {
+    gCpuLoadDisplayEnabled = 0;
+  } while (0);
   REG_DISPCNT &= ~0x100;
   Io_Write16(0x400, &REG_BG0CNT);
   tiles = Heap_Alloc(0x800);
   Func_0200468c(Resource_GetTableEntry((s32)&ResourceId_LightningTiles), tiles);
   Dma_Set(tiles, (void *)(0x06000000), 0x84000200, REG_DMA3);
   i = 0;
+  /* FAKEMATCH(barrier): the empty asm on i changes its allocation rank; as no
+   * asm, 28 of 281 instructions differ in tla-en. */
+  asm("" : "=r"(i) : "0"(i));
   Heap_Release(tiles);
   Dma_Fill16(0, (void *)0x06002000, 0x800);
   buffer = Heap_Alloc(128);
@@ -116,6 +124,9 @@ fade:
   REG_BLDALPHA = (16 - (i >> 1)) | 0x1000;
   i++;
   wait(1);
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 32 of 281 instructions differ in tla-en. */
+  asm("");
   if (i != 32)
     goto fade;
   Func_0200474c_(104, 42, 5, 11, 61, 42);

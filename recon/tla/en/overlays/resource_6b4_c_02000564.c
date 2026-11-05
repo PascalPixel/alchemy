@@ -202,6 +202,9 @@ s32 Func_02000564(void) {
   } else if (mode == 3) {
     slots = Ram_HeapSlots;
     block = slots->block32;
+    /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+     * 4 of 1526 instructions differ in tla-en. */
+    asm("");
     Call3((void (*)())Iwram_CopyWords, (s32)buffer, 0x5000000, 0x1c0);
     Call4((void (*)())Camera_MoveWithinMapBounds, 0x1000000, -1, 0x900000, 0);
     Call2((void (*)())Func_0200151c, 0x10000, 0x2000);

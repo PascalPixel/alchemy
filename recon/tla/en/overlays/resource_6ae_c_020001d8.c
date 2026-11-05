@@ -44,7 +44,12 @@ void Func_020001d8(void) {
   i = 10;
 next:
   object = Actor_GetById(i);
-  object->priorityFlags |= 0x80;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 59 of 124 instructions differ
+   * in tla-en. */
+  do {
+    object->priorityFlags |= 0x80;
+  } while (0);
   Animation_ApplyChildValues(object, 5);
   if (++i <= 16)
     goto next;
@@ -55,17 +60,28 @@ next:
   wait(1);
   Actor_SetSpritePriority(8, 1);
   object = Actor_GetById(8);
-  object->motionFlags = 4;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 47 of 124 instructions differ
+   * in tla-en. */
+  do {
+    object->motionFlags = 4;
+  } while (0);
   object->y = 0x700000;
   Animation_ApplyChildValues(object, 5);
   Actor_SetSingleChildFlags(object, 0);
   object->priorityFlags |= 0x20;
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 39 of 124 instructions differ in tla-en. */
+  asm("");
   Actor_SetSpritePriority(9, 2);
   object = Actor_GetById(9);
   object->motionFlags = 4;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
   object->y = 0x700000;
+  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+   * 37 of 124 instructions differ in tla-en. */
+  asm("");
   Animation_ApplyChildValues(object, 5);
   Actor_SetSingleChildFlags(object, 0);
   object->priorityFlags |= 0x20;

@@ -80,12 +80,18 @@ void Func_020047d4(void) {
       continue;
     x = actor->x - cameraX;
     y = actor->y - originY + 0x80000;
+    /* FAKEMATCH(barrier): the empty asm on y changes its allocation rank; as no
+     * asm, 126 of 200 instructions differ in tla-en. */
+    asm("" : : "r"(y));
     z = actor->z - cameraZ - originY;
     screenY = z - y;
     depth = ((y + z) >> 16) + 58;
     timer = (s16 *)&actor->timer;
     if (gData_02006b70 == 0) {
       frame = *timer;
+      /* FAKEMATCH(barrier): the empty asm on frame changes its allocation rank; as no
+       * asm, 124 of 200 instructions differ in tla-en. */
+      asm("" : "=r"(frame) : "0"(frame));
       x = (x >> 16) - 8;
       screenY = (screenY >> 16) - 16;
       if (x <= -16 || x >= 320 || screenY <= -16 || screenY >= 240)

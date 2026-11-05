@@ -64,6 +64,9 @@ s32 Func_02001e64(void) {
   v_r2 = 0x3000000;
   v_r6 = (s32)&gMainRoutineWork;
   v_r7 = 0x204;
+  /* FAKEMATCH(barrier): the empty asm on v_r7 changes its allocation rank; as no
+   * asm, 43 of 913 instructions differ in tla-en. */
+  asm("" : "=r"(v_r7) : "0"(v_r7));
   FIELD_AT(FIELD_AT(v_r2, s32, 108), s32, 428) = v_r7;
   v_r1 = gMainRoutineWork.scene;
   if (v_r1 != (s32)&SceneId_Ov6b0Room1)

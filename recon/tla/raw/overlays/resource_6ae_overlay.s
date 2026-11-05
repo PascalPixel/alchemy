@@ -2937,32 +2937,8 @@ Func_02004ef0:
 	.4byte 0x05000200
 .L_0200cfa8:
 	.4byte gMainRoutineWork
-	.section .text.x0200d08c,"ax",%progbits
-	.balign 4
-	.global Func_0200508c
-	.thumb_func
-Func_0200508c:
-	push {lr}
-	ldr r1, .L_0200d0a4
-	ldrh r3, [r0]
-	movs r2, #0
-	cmp r3, r1
-	beq .L_0200d0a8
-.L_0200d098:
-	adds r0, #2
-	ldrh r3, [r0]
-	adds r2, #1
-	cmp r3, r1
-	bne .L_0200d098
-	b .L_0200d0a8
-.L_0200d0a4:
-	.4byte 0x0000ffff
-.L_0200d0a8:
-	subs r2, #1
-	adds r0, r2, #0
-	pop {pc}
-	.2byte 0x0000
 	.section .text.x0200d0b0,"ax",%progbits
+	.balign 4
 	.global Func_020050b0
 	.thumb_func
 Func_020050b0:

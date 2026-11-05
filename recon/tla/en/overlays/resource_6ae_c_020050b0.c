@@ -34,12 +34,25 @@ void Func_020050b0(void) {
   if (step == 0)
     return;
   src = Data_02006ce8;
-  for (i = 0; i < gData_02006cec; i++) {
-    dst = (u16 *)0x5000000 + Data_02006cd4[gData_02006cf0 * gData_02006cec + i];
-    r = *src++;
-    g = *src++;
-    b = *src++;
-    *dst = (b << 10) | (g << 5) | r;
+  {
+    u16 *count = &gData_02006cec;
+
+    i = 0;
+    if (i < *count) {
+      u16 *table = Data_02006cd4;
+      u16 *phase = &gData_02006cf0;
+      volatile u16 *color = src;
+      u16 *bound = count;
+
+      do {
+        dst = (u16 *)0x5000000 + table[*phase * *count + i];
+        r = *color++;
+        g = *color++;
+        b = *color++;
+        *dst = (b << 10) | (g << 5) | r;
+        i++;
+      } while (i < *bound);
+    }
   }
   dst = (u16 *)0x5000000 + gData_02006ce0[gData_02006cec];
   src = (gData_02006cd0 != 0 ? Data_02006ce4 : Data_02006ce8) +

@@ -83,8 +83,8 @@ retry:
   lastZ = z;
   terrain = &object->terrainId;
   startValue = Func_02004224(*terrain, lastX, lastZ);
-  dx = lastX - object->x;
   dz = lastZ - object->z;
+  dx = lastX - object->x;
   distance = IwramMulQ16(dx, dx);
   distance += IwramMulQ16(dz, dz);
   if (distance < 0x40000) {
@@ -153,7 +153,12 @@ retry:
       goto stop;
   next:
     Vector_AddPolarOffsetFar(0x100000, angle, position);
-    q = position;
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 60 of 347 instructions differ
+     * in tla-en. */
+    do {
+      q = position;
+    } while (0);
     value = Func_02004224(*terrain, q[0], q[2]);
   } while (value != 255);
 blocked:

@@ -78,8 +78,16 @@ void Func_02001388(void) {
   Call4(Func_0200588c, 7, 0x2100000, 0x1300000, fast);
   slow = 0x2000;
   Call4(Func_0200588c, 0x1b, 0x1f80000, 0x1300000, slow);
-  Call4(Func_0200588c, 0x1c, 0x2080000, 0x1200000, slow);
-  Call4(Func_0200588c, 5, 0x2280000, 0x1880000, 0xc000);
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 16 of 349 instructions differ
+   * in tla-en. */
+  do {
+    Call4(Func_0200588c, 0x1c, 0x2080000, 0x1200000, slow);
+  } while (0);
+  {
+    s32 north = 0xc000;
+    Call4(Func_0200588c, 5, 0x2280000, 0x1880000, north);
+  }
   Call2(Actor_SetModeById, 0x1b, 9);
   Call2(Actor_SetModeById, 0x1c, 8);
   Call2(Actor_SetModeById, 4, 0x32);
@@ -140,8 +148,18 @@ void Func_02001388(void) {
   Call2(Func_020058dc, 5, 0);
   Call3(Actor_OffsetPositionAndReset, 5, -8, -24);
   Call2(Func_020058ec, 4, slow);
-  Call2(Actor_SetModeById, 4, 3);
-  Call1(FieldEvent_Wait, 0x14);
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 14 of 349 instructions differ
+   * in tla-en. */
+  do {
+    Call2(Actor_SetModeById, 4, 3);
+  } while (0);
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 12 of 349 instructions differ
+   * in tla-en. */
+  do {
+    Call1(FieldEvent_Wait, 0x14);
+  } while (0);
   Call3(Actor_ArmCallback, 7, fast, 0);
   Call2(Func_020058ec, 4, fast);
   Call2(Func_020058ec, 5, fast);
@@ -165,7 +183,12 @@ void Func_02001388(void) {
   if (FIELD_AT(gMainRoutineWork, s16, 598) == -1) {
     Call2(Unit_AddHp, 4, -10);
   }
-  FIELD_AT(gMainRoutineWork, u8, 587) = 2;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 10 of 349 instructions differ
+   * in tla-en. */
+  do {
+    FIELD_AT(gMainRoutineWork, u8, 587) = 2;
+  } while (0);
   Call2(Party_SetFields1eeAnd1f0, (s32)MsgShield, 0xb);
   Call2(Party_SetFields1f2And1f4, (s32)MsgShield, 0xb);
   Call2(Func_0200593c, 0xd, 6);

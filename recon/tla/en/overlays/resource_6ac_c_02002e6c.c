@@ -31,7 +31,12 @@ void Func_02002e6c(struct Actor *self) {
   object->acceleration = 0x2000;
   animation->angle = angle - 0x4000;
   object->scaleX = 0;
-  object->scaleY = 0;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 4 of 86 instructions differ
+   * in tla-en. */
+  do {
+    object->scaleY = 0;
+  } while (0);
   object->action = 0;
   object->watchedObject = self->watchedObject;
   Func_020032b8(104);

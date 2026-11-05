@@ -141,7 +141,12 @@ body:
   }
 test:
   Vector_AddPolarOffsetFar(0x100000, angle, position);
-  q = position;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 30 of 304 instructions differ
+   * in tla-en. */
+  do {
+    q = position;
+  } while (0);
   cell = Func_02004224(*terrainId, q[0], q[2]);
   if (cell != 255)
     goto body;

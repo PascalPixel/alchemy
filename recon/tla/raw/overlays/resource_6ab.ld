@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_star_room/hide.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/scene_tables.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/mark.o"(.text)
-        "*/resource_6ab_overlay.o"(.text.x02008080)
+        "*/games/tla/src/scene/mars_lighthouse_star_room/s0080.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s0188.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s024c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/scene_events.o"(.text)

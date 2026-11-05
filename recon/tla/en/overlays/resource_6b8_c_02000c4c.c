@@ -62,7 +62,12 @@ void Func_02000c4c(struct Actor *object, struct SparkleWork *work) {
   for (row = 0; row <= 1; row++) {
     for (col = 0; col < 2; col++) {
       sprite = &work->sprites[row * 2 + col];
-      Func_02000ee4(sprite, 16, 16, 0x80004000, tile);
+      /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+       * order around it; as the plain statement, 52 of 112 instructions differ
+       * in tla-en. */
+      do {
+        Func_02000ee4(sprite, 16, 16, 0x80004000, tile);
+      } while (0);
       sprite->oam.palette256 = 0;
       sprite->oam.palette = 0;
       sprite->oam.priority = Func_02000ef4(object);

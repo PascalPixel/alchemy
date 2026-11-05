@@ -112,6 +112,9 @@ L1:
     L4:
       Actor_GetById(*q)->unk_10 += s.speed;
       Actor_GetById(*q)->unk_40 = Actor_GetById(*q++)->unk_10;
+      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+       * 10 of 216 instructions differ in tla-en. */
+      asm("");
       j++;
       if (j < s.count)
         goto L4;
@@ -152,7 +155,15 @@ L2:
     p = list;
   L6:
     Func_02005884(*p, 0, 0);
-    Actor_GetById(*p++)->unk_55 = 0;
+    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+     * order around it; as the plain statement, 12 of 216 instructions differ
+     * in tla-en. */
+    do {
+      Actor_GetById(*p++)->unk_55 = 0;
+    } while (0);
+    /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
+     * 8 of 216 instructions differ in tla-en. */
+    asm("");
     i++;
     if (i < s.count)
       goto L6;

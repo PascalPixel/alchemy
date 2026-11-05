@@ -508,9 +508,9 @@ void Func_02001ed0(void) {
   Party_AddActiveOwner(4);
   Call3((void (*)())Actor_SetSpeedParameters, 4, 0x10000, 0x8000);
   { s32 c_ = 0x4000; Func_0200484c(4, 0x2980000, 0x580000, c_); }
-  Func_0200484c(0x1b, 0x2cd0000, 0xd00000, 0x2000);
+  { s32 c_ = 0x2000; Call4((void (*)())Func_0200484c, 0x1b, 0x2cd0000, 0xd00000, c_); }
   Call4((void (*)())Func_0200484c, 0x1a, 0x2e10000, 0xc30000, 0x2000);
-  Func_0200484c(0, 0x2f90000, 0xdb0000, 0xa000);
+  { s32 c_ = 0xa000; Call4((void (*)())Func_0200484c, 0, 0x2f90000, 0xdb0000, c_); }
   Call4((void (*)())Func_0200484c, 2, 0x2e50000, 0xe80000, 0xa000);
   Actor_SetMovementTypeById(3, (s32)gData_02005548);
   v18 = Actor_GetById(0);
@@ -575,7 +575,7 @@ void Func_02001ed0(void) {
   Func_0200489c(5, 0, 5);
   ACTOR_SET_MODE_AND_WAIT(7, 3, 0x14);
   FieldEvent_Wait(0xa);
-  { s32 c_ = 0; Actor_SetAngleToward(5, 7, c_); }
+  Actor_SetAngleToward(5, 7, 0);
   Actor_SetAngleToward(6, 7, 0);
   Actor_SetAngleToward(7, 5, 0);
   Func_0200489c(7, 0, 5);

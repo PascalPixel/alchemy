@@ -432,13 +432,6 @@ PartyInventory_GiveItem:
 	.incbin "baserom.gba", 0x000d8452, 0x00000002
 	.section .rom.000d91da, "ax"
 	.incbin "baserom.gba", 0x000d91da, 0x00000002
-	.section .rom.000d9cfc, "ax"
-	.balign 4
-	.global Func_080d4d08
-	.type Func_080d4d08, %function
-	.thumb_func
-Func_080d4d08:
-	.incbin "baserom.gba", 0x000d9cfc, 0x000003f0
 	.section .rom.000da3aa, "ax"
 	.incbin "baserom.gba", 0x000da3aa, 0x00000002
 	.section .rom.000da662, "ax"

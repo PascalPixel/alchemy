@@ -1,19 +1,3 @@
-// Draft, differ 115 of 463 (tla-en, 2026-11-05; 153 before): the platform scan as the listing tests it, one local for 0x80000 and -0x100000, a pointer for the position's halfwords. Left: canJump's set falls out of the loop here and stays in it in the native, and the cell block takes r4, r0 and r1 where the native has r5, r4 and r0. Older notes follow.
-// Draft, differ 167 of 463 (179 before statements reordered 2026-10-26): The Broken Seal twin (Field_TryJumpForward), with
-// this game's checks: the leader jumps two tiles forward, over the tile in front, when
-// it faces a quarter turn, the map allows it (Func_080d4ccc and the step
-// check) or a platform object (flag 0x80) waits 16 pixels below the landing,
-// and no solid object stands there. A platform underfoot (sprite 258 or 259
-// with flag 2) dips 2 pixels with the leader. Each jump advances walking
-// distance, and the leader keeps jumping while it lands on a jump spot
-// (collision 254). Returns 0 after a jump, -1 when the leader cannot jump.
-// The two mode tests are two statements (joined, they fold into one range
-// check: differ 192). Left: the platform scan takes its height difference's
-// absolute value and compares once, where this draft threads the compare
-// into both arms, and the solid scan's arms are laid out the other way round
-// (written with an explicit absolute value: 202); the half tile 0x80000 is
-// not shared between the x and z tests; the angle takes r4 on its way to
-// r10 at the start.
 #include "types.h"
 #include "iwram_call.h"
 #include "macros.h"
@@ -42,14 +26,19 @@ void wait(s32 frames);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 s32 Func_08020210(struct Actor *object, s32 *position);
 s32 Func_080d4ccc(struct Actor *object, s32 *position);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           s32 flags);
+void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 void Actor_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void Func_080203a0(struct Actor *object, s32 kind);
-struct Actor *Actor_FindNearestFacingTarget(struct Actor *self,
-                                                     s32 id);
+struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id);
 s32 GetMapCellCollisionFar(s32 layer, s32 x, s32 z);
 
+/// The leader jumps two tiles forward, over the tile in
+/// front, when it faces a quarter turn, the map allows it (Func_080d4ccc and
+/// the step check) or a platform object (flag 0x80) waits 16 pixels below the
+/// landing, and no solid object stands there. A platform underfoot (sprite 258
+/// or 259 with flag 2) dips 2 pixels with the leader. Each jump advances
+/// walking distance, and the leader keeps jumping while it lands on a jump spot
+/// (collision 254). Returns 0 after a jump, -1 when the leader cannot jump.
 s32 Func_080d4d08(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 result = -1;
@@ -92,10 +81,9 @@ again:
 
   // A platform 16 pixels below the landing makes it a jump spot.
   if (leader->priorityFlags & 0x40) {
-    s32 bound = 0x7ffff;
-
     entry = Ram_HeapSlots->scriptObjects;
     for (i = 0; i < 64; i++, entry++) {
+      s32 bound = 0x7ffff;
       s32 half;
       s32 delta;
       s32 dy;
@@ -108,6 +96,8 @@ again:
         continue;
       if (entry == leader)
         continue;
+      /* FAKEMATCH(temporary): half holds the tile's half and then the height;
+       * as two locals, 54 of 463 instructions differ in tla-en. */
       half = 0x80000;
       if ((position[0] - entry->x + half) >> 20 != 0)
         continue;
@@ -116,11 +106,16 @@ again:
       half = -0x100000;
       delta = position[1] - entry->y;
       dy = delta + half;
-      if (dy < 0)
+      if (dy >= 0) {
+        if (dy <= bound)
+          goto hit;
+      } else {
         dy = 0x100000 - delta;
-      if (dy <= bound) {
-        canJump = 1;
-        break;
+        if (dy <= bound) {
+        hit:
+          canJump = 1;
+          break;
+        }
       }
     }
   }
@@ -131,15 +126,22 @@ again:
     if (entry->script != NULL && !(entry->priorityFlags & 0x80) &&
         entry != leader && entry->collisionFlags != 0 &&
         (position[0] - entry->x + 0x80000) >> 20 == 0 &&
-        (position[2] - entry->z + 0x80000) >> 20 == 0 &&
-        ABS(position[1] - entry->y) <= 0x7ffff) {
-      canJump = 0;
-      break;
+        (position[2] - entry->z + 0x80000) >> 20 == 0) {
+      s32 d = position[1] - entry->y;
+      if (d >= 0) {
+        if (d <= 0x7ffff)
+          goto hit2;
+      } else if (entry->y - position[1] <= 0x7ffff) {
+      hit2:
+        canJump = 0;
+        break;
+      }
     }
   }
 
   if (canJump) {
     struct MapWork *map;
+    u8 attr;
 
     // Crouch, then jump there.
     if (leader->animationKind == 1)
@@ -155,13 +157,14 @@ again:
     *flags &= 0x7e;
     Actor_SetSingleChildFlagsFar(leader, spriteFlags & 0xfe);
     Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner,
-                                      ((s16 *)positionWords)[1],
-                                      ((s16 *)positionWords)[5]);
+                               ((s16 *)positionWords)[1],
+                               ((s16 *)positionWords)[5]);
     Actor_SetMode(leader, 6);
     Actor_SetSingleChildFlagsFar(leader, spriteFlags);
 
     map = Ram_HeapSlots->mapWork;
-    if (map->unk017 & 12) {
+    attr = map->unk017;
+    if (attr & 12) {
       s32 cellX = leader->x >> 20;
       s32 cellZ = leader->z >> 20;
       struct MapCell *cells;
@@ -170,8 +173,9 @@ again:
         cells = gMapCellBuffer;
       else
         cells = map->layers[leader->terrainId & 3].cells;
-      if (cells[cellX + cellZ * 128].attributeB & 16)
-        Func_080203a0(leader, (u32)(map->unk017 << 28) >> 30);
+      cells += cellX + (cellZ << 7);
+      if (cells->attributeB & 16)
+        Func_080203a0(leader, (u32)(attr << 28) >> 30);
     }
 
     // A platform underfoot dips 2 pixels with the leader and comes back up.

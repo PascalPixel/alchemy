@@ -915,7 +915,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             break;
           }
           {
-            s32 half = (bx + ((u32)bx >> 31)) >> 1;
+            s32 half = (bx + (s32)((u32)bx >> 31)) >> 1;
             s32 j;
 
             for (j = 3; j != 64; j++) {
@@ -1104,7 +1104,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               }
               Func_08015160(0, v, 0);
             }
-            Func_08015160(((b + ((u32)b >> 31)) >> 1) + 0x50000, camZ + 0xdc0000, 0);
+            Func_08015160(((b + (s32)((u32)b >> 31)) >> 1) + 0x50000, camZ + 0xdc0000, 0);
             Func_080151e4(0x10000, 32000, 0x10000);
             Func_080150e4(frame << 11);
             Func_0801521c(s);
@@ -1187,10 +1187,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   for (i = 0; i != 4; i++) {
     {
       s32 j;
+      s32 row = i << 12;
 
-      for (c1 = 0; c1 != 120; c1++) {
-        u8 *dst = work->sheet + ((i << 12) + c1 * 32) + 0x145a;
-        u8 *src = Ram_MapCellBuffer + (i * 45 * 64 + c1 * 24);
+      for (j = 0; j != 120; j++) {
+        u8 *dst = work->sheet + (row + j * 32) + 0x145a;
+        u8 *src = Ram_MapCellBuffer + (i * 45 * 64 + j * 24);
         s32 m;
 
         for (m = 0; m != 24; m++) {
@@ -1367,7 +1368,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
           {
             for (i = 0; i != 2; i++) {
-              s32 start = i * 8 + 80;
+              s32 d = i * 8;
+              s32 start = d + 80;
               s32 s;
 
               if (frame < start) {
@@ -1376,12 +1378,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
               sh2 = 0;
               if (i == 0) {
                 s = (t - start * 3) * 127 * 32 + 0x2000;
-                if (frame >= i * 8 + 96) {
+                if (frame >= d + 96) {
                   sh2 = (start - frame) * 8 + 128;
                 }
               } else {
                 s = (t - start * 3) * 127 * 16 + 0x2000;
-                if (frame >= i * 8 + 112) {
+                if (frame >= d + 112) {
                   sh2 = (start - frame) * 8 + 256;
                 }
               }

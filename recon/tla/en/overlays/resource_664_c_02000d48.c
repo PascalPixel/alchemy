@@ -1,3 +1,8 @@
+// Draft, differ 2 of 217 (tla-en, 5 November 2026), from 112: forwarding the
+// products through Value2 and the sound through Call2. One tie left: the native's
+// add r2, r8 ahead of strb r3, [r0, #9]. A word bit-field for the priority and the
+// counter through its struct field do not move it, nor any order of the five
+// statements.
 // Under -Os, 5 November: differ 112 of 217 (tla-en); older figures below predate it.
 // Draft, differ 131 of 217 (was 143): Func_020010b4's twin for another shot:
 // it also stops while the leader's movement is 5, and on a cell of kind 212 it
@@ -29,6 +34,7 @@ s32 GameFlag_Test(s32 flag);
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
+
 void Func_02000d48(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   u8 *work = Ram_HeapSlots->eventWork;
@@ -45,7 +51,7 @@ void Func_02000d48(struct Actor *shot) {
   if (Func_02000690(2, shot->x >> 20, (shot->z - shot->y) >> 20) >> 8 == 212) {
     ((u8 *)shot)[0x63] = 0;
     shot->update = 0;
-    Func_02005f8c(shot, 539);
+    Call2((void (*)())Func_02005f8c, (s32)shot, 539);
     if (shot->angle == 0xc000)
       Func_02005d6c(shot, gData_020061ac);
     else
@@ -65,9 +71,9 @@ void Func_02000d48(struct Actor *shot) {
         near = 1;
     }
     if (near && !GameFlag_Test(0x104)) {
+      leader->angle = shot->angle;
       leader->watchedObject = shot;
       leader->priorityFlags &= ~1;
-      leader->angle = shot->angle;
       ((struct FieldSprite *)leader->animation)->priority =
           ((struct FieldSprite *)shot->animation)->priority;
       {
@@ -82,10 +88,10 @@ void Func_02000d48(struct Actor *shot) {
     }
   }
   if (shot->angle == 0xc000) {
-    shot->x += Iwram_MulQ16(Math_Cosine(shot->angle), 0x18000);
-    shot->y -= Iwram_MulQ16(Math_Sine(shot->angle), 0x18000);
+    shot->x += Value2((s32 (*)())Iwram_MulQ16, Math_Cosine(shot->angle), 0x18000);
+    shot->y -= Value2((s32 (*)())Iwram_MulQ16, Math_Sine(shot->angle), 0x18000);
   } else {
-    shot->x += Iwram_MulQ16(Math_Cosine(shot->angle), 0x18000);
-    shot->z += Iwram_MulQ16(Math_Sine(shot->angle), 0x18000);
+    shot->x += Value2((s32 (*)())Iwram_MulQ16, Math_Cosine(shot->angle), 0x18000);
+    shot->z += Value2((s32 (*)())Iwram_MulQ16, Math_Sine(shot->angle), 0x18000);
   }
 }

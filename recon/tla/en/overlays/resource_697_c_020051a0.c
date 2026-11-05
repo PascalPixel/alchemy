@@ -1,4 +1,16 @@
-// Draft, differ 474 of 497 (tla-en, 5 November 2026), under -Os with plain loops and no goto.
+// Draft, differ 264 of 497 (tla-en, 5 November 2026), under -Os, with one untagged pin.
+// Everything before the markers now has the native's registers and frame: *cursor++ and
+// entry++ are bivs (loop.c gives the reduced pointer r4), x and y scoped as here, a
+// temporary for y + 32 so local-alloc's order gives 0xe400 r5, x << 16 r6, 0 r8.
+// Left: 1. the two arms of each marker are one tail in the native, and here stay two
+// identical runs (102 instructions): flow puts a (use 0) after a call that ends the
+// fall-through arm, so find_cross_jump's first pair never matches; no form tried lifts
+// it (if/else, switch, dead stores, noop moves). A switch stops the hoisting of the
+// arms' common addresses, which the native has.
+// 2. the marker's x wants r9 with its tie to x & 511 kept (`mov r0, r9; ands r0, r3`),
+// but its own rank (8 refs over 52) beats the object's and takes r5; the pin here
+// gives r9 and the wrong tie. 3. The do blocks stop CSE giving the side test's 0 to
+// the first word's store in the else arm; they may be the source's macro.
 // The Trial Road link display's scheduled callback (Func_020055c4 starts it):
 // its fade state falls during events or with flag 262 and otherwise rises to
 // 2 (unke0 holds it at 2); rising from 0 to 1 it loads the palette and picture

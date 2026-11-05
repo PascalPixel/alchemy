@@ -1,4 +1,4 @@
-// Draft, differ 115 of 179: rewritten from the listing, its loop as a goto loop
+// Draft, differ 97 of 179 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // over byte offsets (the native reloads both tables' addresses on every pass).
 // Room M's palette cycle, scheduled by Func_02000e84: while no event runs, it
 // saves palette rows 2 and 8 the first time, then every 8 calls rotates four
@@ -48,11 +48,20 @@ void Func_020003c4(void) {
     gData_02003704 = busy;
   }
   base = gData_02003704 / 8 % 6;
+  /* FAKEMATCH(barrier): the empty asm on base changes its allocation rank; as no
+   * asm, 110 of 179 instructions differ in tla-en. */
+  asm("" : "=r"(base) : "0"(base));
   at = 8;
+  /* FAKEMATCH(barrier): the empty asm on at changes its allocation rank; as no
+   * asm, 107 of 179 instructions differ in tla-en. */
+  asm("" : "=r"(at) : "0"(at));
   i = 0;
 next:
   {
     s32 j = (base + i) % 6 * 2;
+    /* FAKEMATCH(barrier): the empty asm on j changes its allocation rank; as no
+     * asm, 101 of 179 instructions differ in tla-en. */
+    asm("" : : "r"(j));
 
     *(u16 *)((u8 *)Data_02003a1c + at) = *(u16 *)((u8 *)Data_020039dc + j + 8);
     *(u16 *)((u8 *)Data_02003a1c + at + 12) =

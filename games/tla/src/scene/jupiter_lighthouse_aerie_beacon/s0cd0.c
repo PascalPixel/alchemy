@@ -182,6 +182,9 @@ struct UnitItems {
   } while (0)
 
 void Func_02000cd0(void) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 612 of 691 instructions differ in
+   * tla-en. */
   s32 t2, t4, t75, t77, t78, t79, t80;
   s32 t101, t102, t135, t139, t140, t143, t144;
   s32 slot;

@@ -1,3 +1,4 @@
+// Draft, differ 60 of 120 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Draft of overlay 6ae's Func_020050b0, a palette cycle: differ 90 of 120.
 // Left: the native keeps the colour pointer's three post-increments and builds
 // the palette address inside the loop, where this strength-reduces the pointer
@@ -49,6 +50,9 @@ void Func_020050b0(void) {
         r = *color++;
         g = *color++;
         b = *color++;
+        /* FAKEMATCH(barrier): the empty asm on b changes its allocation rank; as no
+         * asm, 64 of 120 instructions differ in tla-en. */
+        asm("" : "=r"(b) : "0"(b));
         *dst = (b << 10) | (g << 5) | r;
         i++;
       } while (i < *bound);
@@ -58,7 +62,12 @@ void Func_020050b0(void) {
   src = (gData_02006cd0 != 0 ? Data_02006ce4 : Data_02006ce8) +
         gData_02006cec * 3;
   *dst = (src[2] << 10) | (src[1] << 5) | src[0];
-  gData_02006cd0 ^= 1;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 62 of 120 instructions differ
+   * in tla-en. */
+  do {
+    gData_02006cd0 ^= 1;
+  } while (0);
   if (++gData_02006cf0 == gData_02006cec)
     gData_02006cf0 = 0;
 }

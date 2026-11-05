@@ -76,6 +76,9 @@ static __inline__ void W_Actor_EnableActionAndSetCallback(s32 a0, s32 a1) {
   } while (0)
 
 void Func_02002ae4(void) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 652 of 1539 instructions differ
+   * in tla-en. */
   s32 fast;
   s32 slow;
   s32 mid;

@@ -32,6 +32,9 @@ struct EventWork {
 };
 
 void Func_02000e58(void) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 8 of 216 instructions differ in
+   * tla-en. */
   struct EventWork *work = Ram_HeapSlots->eventWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *linked = actor->watchedObject;

@@ -45,7 +45,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_entrance/s1c44.o"(.text)
         "*/resource_6aa_overlay.o"(.text.x02009cbc)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s1e60.o"(.text)
-        "*/resource_6aa_overlay.o"(.text.x0200a0ec)
+        "*/games/tla/src/scene/mars_lighthouse_entrance/s20ec.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s2270.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/ride.o"(.text)
         "*/resource_6aa_overlay.o"(.text.x0200a2e4)

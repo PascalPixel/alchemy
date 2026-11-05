@@ -43,6 +43,9 @@ extern u8 Func_02000064[];
 extern u8 MsgShipSafeFiringDistance[];
 
 void Func_020001d8(void) {
+  /* FAKEMATCH(wrapper): calls forwarded through inlines (call.h's Call and
+   * Value, this file's own); as direct calls, 174 of 438 instructions differ in
+   * tla-en. */
   s32 from[3];
   s32 to[3];
   s32 v_r5, v_r8, v_r6, v_r7, v_r10, t0, t1, t2, t3, t10;

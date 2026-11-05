@@ -1,4 +1,4 @@
-// Draft, differ 101 of 258, skeleton gap 3 (tla-en, 2026-11-01)
+// Draft, differ 70 of 258 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // The debug room's item picker, twin of ☀️'s IncreaseItemAndLevel_SelectItem
 // (debug/level.c, EV08_TALK): same windows, palette copies, key steps of 1, 10
 // and 30, and icon-skipping scans. The native has ⚓️'s 500 items, keys tested
@@ -62,6 +62,9 @@ void Func_02000848(void) {
 
   entryCount = ITEM_COUNT;
   step = 0;
+  /* FAKEMATCH(barrier): the empty asm on step changes its allocation rank; as no
+   * asm, 94 of 258 instructions differ in tla-en. */
+  asm("" : "=r"(step) : "0"(step));
   window = Window_Create(0, 0, 30, 7, 2);
   details = Window_Create(0, 8, 13, 10, 2);
   item = 1;

@@ -1,4 +1,4 @@
-// Draft, differ 97 of 316, skeleton gap 18 removed, 17 added (tla-en, 2026-11-01)
+// Draft, differ 90 of 316 (tla-en, 2026-11-05). Older notes below may predate this figure.
 //
 // The Jupiter Lighthouse aerie's effect between objects a and b: allocates its
 // work in heap slot 220, loads its two pictures (resources 0x1eb and 0x1f6)
@@ -102,6 +102,9 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   Func_020029a0(Resource_GetTableEntry((s32)&ResourceId_Data1EB), work);
   smallEntry = Resource_FindFreeEntry();
   smallTile = VramCache_Load(smallEntry, 256, work);
+  /* FAKEMATCH(barrier): the empty asm on smallTile changes its allocation rank; as no
+   * asm, 93 of 316 instructions differ in tla-en. */
+  asm("" : "=r"(smallTile) : "0"(smallTile));
   work->smallTile = smallTile;
   spark = work->sparks;
   sprite = work->sprites;

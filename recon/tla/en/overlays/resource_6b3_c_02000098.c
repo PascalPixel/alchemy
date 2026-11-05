@@ -1,4 +1,4 @@
-// Draft, differ 59 of 69: the epilogue's setup: loads its palette and tiles,
+// Draft, differ 50 of 69 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // sets up its sprite and schedules Func_0200005c. Left: the native loads the
 // resource id 0x1f8 and the stored zero from the pool (as reload does for a
 // spilled constant), keeps the buffer in r8 and the sprite's address in r6 from
@@ -48,11 +48,19 @@ void Func_02000098(void) {
   Dma_Set(Data_02000874, (void *)0x050003c0, 0x80000010, REG_DMA3);
   Func_020007ac(Resource_GetTableEntry(0x1f8), buffer);
   entry = Resource_FindFreeEntry();
+  /* FAKEMATCH(barrier): the empty asm on entry changes its allocation rank; as no
+   * asm, 59 of 69 instructions differ in tla-en. */
+  asm("" : : "r"(entry));
   Data_020008f0 = entry;
   tile = VramCache_Load(entry, 0x800, buffer);
   Data_02000a30 = tile;
   Func_02000834(&gData_02000a00, 0, 0, 0xc0000000, tile);
-  gData_02000a00.unk1e = 240;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 51 of 69 instructions differ
+   * in tla-en. */
+  do {
+    gData_02000a00.unk1e = 240;
+  } while (0);
   gData_02000a00.unk09_2 = 0;
   gData_02000a00.unk05_5 = 0;
   gData_02000a00.unk09_4 = 14;

@@ -1,4 +1,4 @@
-// Draft, differ 146 of 236, skeleton gap 40 (tla-en, 2026-11-01)
+// Draft, differ 112 of 236 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Control flow, types and every load agree with the listing; 242 instructions
 // against 236, frame 24 against 16. Left, one cause: gcse's PRE (.07.gcse,
 // "PRE/HOIST: edge (1,2)") moves &actor->terrainId, work + 104, work + 106 and
@@ -61,6 +61,9 @@ void Func_02002148(void) {
     ((s32 (*)())Func_02001fcc)(-10, 0);
     actor = Actor_GetById(main->currentOwner);
     work = (struct Work020023c4 *)(gData_020023c4 + 0x188);
+    /* FAKEMATCH(barrier): the empty asm on work changes its allocation rank; as no
+     * asm, 116 of 236 instructions differ in tla-en. */
+    asm("" : "=r"(work) : "0"(work));
     Func_020042dc();
     Func_0200444c(0);
     actor->update = Func_02002120;
@@ -75,7 +78,12 @@ void Func_02002148(void) {
       if (result == 7) {
         s32 i;
 
-        actor->velocityX = work->unk68 << 17;
+        /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+         * order around it; as the plain statement, 114 of 236 instructions differ
+         * in tla-en. */
+        do {
+          actor->velocityX = work->unk68 << 17;
+        } while (0);
         actor->velocityZ = work->unk6a << 17;
         actor->acceleration = 0x1000;
         i = 0;

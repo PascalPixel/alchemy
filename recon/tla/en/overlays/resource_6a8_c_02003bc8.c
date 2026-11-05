@@ -1,4 +1,4 @@
-// Draft, differ 257 of 347, skeleton gap 47/46 (tla-en, 2026-11-01)
+// Draft, differ 61 of 347 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // The leader slides along the ice, a relative of Imil_RunIceSlide in The Broken
 // Seal and of this overlay's Func_02003ee8: the same probe of the next cell,
 // cell behaviour 255 as the wall and height test of 8 pixels. Here the heading
@@ -150,6 +150,9 @@ body:
   radius = actor->radius - 2;
   other = Ram_HeapSlots->scriptObjects;
   flags = &other->collisionFlags;
+  /* FAKEMATCH(barrier): the empty asm on flags changes its allocation rank; as no
+   * asm, 80 of 347 instructions differ in tla-en. */
+  asm("" : : "r"(flags));
   for (count = 0; count < 64; count++, flags += 128, other++) {
     if (other->script != NULL && (*flags & 1) && other != actor) {
       if (Func_02004454(&other->x, radius, &probe, other->radius - 2) >= 0) {
@@ -180,6 +183,9 @@ slideTest:
 test:
   Vector_AddPolarOffsetFar(PIXELS(16), heading, &probe);
   position = &probe;
+  /* FAKEMATCH(barrier): the empty asm on position changes its allocation rank; as no
+   * asm, 70 of 347 instructions differ in tla-en. */
+  asm("" : : "r"(position));
   nextBehavior = Func_02004424(*layer, position->x, position->z);
   if (nextBehavior != 255) {
     goto body;

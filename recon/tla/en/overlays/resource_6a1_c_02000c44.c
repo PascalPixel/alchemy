@@ -1,4 +1,4 @@
-// Draft, differ 196 of 171, skeleton gap 41 (tla-en, 2026-11-01)
+// Draft, differ 113 of 171 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Overlay 6a1's copy of the function drafted in resource_69c_c_02000dcc.c, whose
 // header says what it does. How far a pushed object slides.
 // Left: gcse's PRE still treats sfp - 12 (position) as one expression across the
@@ -65,6 +65,9 @@ s32 Func_02000c44(struct PushMove *move) {
             ABS(gData_020022dc[direction][3])) >> 4;
   dx = gData_020022f4[box.stepIndex] & 0xffff0000;
   dz = gData_020022f4[box.stepIndex] << 16;
+  /* FAKEMATCH(barrier): the empty asm on dz changes its allocation rank; as no
+   * asm, 130 of 171 instructions differ in tla-en. */
+  asm("" : "=r"(dz) : "0"(dz));
   move->unk14 = 0;
   count = 0;
   layer = &object->terrainId;
@@ -75,6 +78,9 @@ s32 Func_02000c44(struct PushMove *move) {
 step:
   position[2] = move->z + (gData_020022dc[direction][1] << 16);
   row = 0;
+  /* FAKEMATCH(barrier): the empty asm on row changes its allocation rank; as no
+   * asm, 124 of 171 instructions differ in tla-en. */
+  asm("" : "=r"(row) : "0"(row));
   if (row < box.height) {
   nextRow:
 
@@ -102,7 +108,12 @@ blocked:
   *layer = 0;
   if (count == 0)
     return 0;
-  move->x = object->x + dx * count;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 115 of 171 instructions differ
+   * in tla-en. */
+  do {
+    move->x = object->x + dx * count;
+  } while (0);
   move->y = object->y;
   move->z = object->z + dz * count;
   return 1;

@@ -1,4 +1,4 @@
-// Draft, differ 148 of 236, skeleton gap 10/16 (tla-en, 2026-11-01)
+// Draft, differ 62 of 236 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Overlay 6ad's copy of the slide seen at 6ab Func_02002148 and 6ac Func_020024e4.
 // The frame loop's bottom test closes the PRE problem those two drafts name: with
 // `running` tested at the bottom, entered by `goto test`, the loop has an exit edge
@@ -90,6 +90,9 @@ void Func_0200297c(void) {
     actor->angle = 0x4000;
     Func_02005480(actor, 49);
     running = 1;
+    /* FAKEMATCH(barrier): the empty asm on running changes its allocation rank; as no
+     * asm, 74 of 236 instructions differ in tla-en. */
+    asm("" : : "r"(running));
     goto test;
   top:
     {
@@ -120,6 +123,9 @@ void Func_0200297c(void) {
       position.y = actor->y;
       position.z = actor->z + (*stepZ << 19);
       result = Func_020054f8(actor, &position);
+      /* FAKEMATCH(barrier): the empty asm on result changes its allocation rank; as no
+       * asm, 71 of 236 instructions differ in tla-en. */
+      asm("" : "=r"(result) : "0"(result));
       if (result > 0)
         goto done;
       if (result < 0) {
@@ -149,7 +155,12 @@ void Func_0200297c(void) {
         other++;
         if (j <= 63)
           goto scan;
-        x = actor->x += *stepX << 17;
+        /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+         * order around it; as the plain statement, 68 of 236 instructions differ
+         * in tla-en. */
+        do {
+          x = actor->x += *stepX << 17;
+        } while (0);
         z = actor->z + (*stepZ << 17);
         actor->z = z;
         snap = (x & 0xfffff) - 0x80000;

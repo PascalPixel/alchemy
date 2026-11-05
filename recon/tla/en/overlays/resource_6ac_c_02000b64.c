@@ -1,3 +1,4 @@
+// Draft, differ 97 of 324 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Draft of overlay 6ac's Func_02000b64, translated from its listing: differ
 // 99 of 324. Left: its shape: 327 instructions against the listing's 324.
 #include "types.h"
@@ -136,7 +137,12 @@ L_02008d00:
   t34 = Value1((s32 (*)())Actor_GetById, 16);
   FIELD_AT(t34, u8, 85) = v_r6;
   FIELD_AT(t34, s32, 12) = 0x100000;
-  FIELD_AT(t34, s32, 20) = 0x100000;
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 99 of 324 instructions differ
+   * in tla-en. */
+  do {
+    FIELD_AT(t34, s32, 20) = 0x100000;
+  } while (0);
   FIELD_AT(t34, u8, 98) = 18;
   FIELD_AT(t34, u16, 102) = 0x4000;
   FIELD_AT(t34, s32, 104) = v_r6;

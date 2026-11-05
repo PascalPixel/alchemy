@@ -1,4 +1,4 @@
-// Draft, differ 38 of 168, skeleton gap 10/8 (tla-en, 2026-11-01)
+// Draft, differ 42 of 168 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // One burst particle thrown from the actor: kind 0x1e9 at a jittered position,
 // random speed and size, its sprite taking the owner sprite's shape and tile.
 // What the form rests on, each measured here:
@@ -111,6 +111,9 @@ next:
       sum = Random16Far();
       sum += Random16Far();
       half = 0x8000;
+      /* FAKEMATCH(barrier): the empty asm on half changes its allocation rank; as no
+       * asm, 66 of 168 instructions differ in tla-en. */
+      asm("" : : "r"(half));
       Func_020041dc(object, gData_02004774);
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = angle * 4 + 0x20000;
@@ -141,7 +144,16 @@ next:
       sprite->shape = ((struct Sprite *)x)->shape;
       sprite->size = ((struct Sprite *)x)->size;
       tile = ((struct Sprite *)x)->attr2;
+      /* FAKEMATCH(barrier): the empty asm on tile changes its allocation rank; as no
+       * asm, 44 of 168 instructions differ in tla-en. */
+      asm("" : : "r"(tile));
+      /* FAKEMATCH(barrier): the empty asm on tile changes its allocation rank; as no
+       * asm, 62 of 168 instructions differ in tla-en. */
+      asm("" : "=r"(tile) : "0"(tile));
       word = sprite->attr2;
+      /* FAKEMATCH(barrier): the empty asm on word changes its allocation rank; as no
+       * asm, 64 of 168 instructions differ in tla-en. */
+      asm("" : "=r"(word) : "0"(word));
       sprite->attr2 = (word & ~0x3ff) | ((u32)(tile << 22) >> 22);
     }
   }

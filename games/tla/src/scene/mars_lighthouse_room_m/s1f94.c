@@ -1,6 +1,4 @@
-// Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "types.h"
-#include "call.h"
 
 typedef struct Actor {
   u8 pad0[8];
@@ -31,11 +29,11 @@ typedef struct State {
 } State;
 
 s32 GameFlag_Test();
-void Func_02001780();
-void Func_0200196c();
-void Func_020019b4();
-void Func_020019fc();
-void Func_02001b78();
+void Func_02001b1c();
+void Func_02001d08();
+void Func_02001d50();
+void Func_02001d98();
+void Func_02001f14();
 extern u8 gData_020023c4[];
 
 typedef struct Position {
@@ -60,7 +58,7 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)0x03000000)
 
-void Func_02001bf8(void) {
+void Func_02001f94(void) {
   s32 saved[2];
   State *state;
   Entry *entry;
@@ -86,7 +84,7 @@ void Func_02001bf8(void) {
   state->unk_6 = 0;
   for (i = 3; i >= 0; i--, entry++) {
     Actor *actor;
-    s32 flag, x, y, unk6, value, dz;
+    s32 flag, x, y, unk6, value, dx, dz;
     u8 *mark;
 
     if (entry->active == 0)
@@ -101,14 +99,17 @@ void Func_02001bf8(void) {
     *mark = flag;
     if (state->unk_e != 0)
       *mark = GameFlag_Test(0x106);
-    x = actor->x;
+    dx = actor->x;
     dz = actor->z;
-    x -= cameraX;
+    dx -= cameraX;
+    /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank; as
+     * no asm, 94 of 182 instructions differ in tla-en. */
+    asm("" : : "r"(dx));
     y = actor->y;
     dz -= cameraZ;
     y = dz - y;
     unk6 = entry->unk_6;
-    x >>= 16;
+    x = dx >> 16;
     y = (y >> 16) - 8;
     if (unk6 == 0) {
       if ((u32)(x + 7) > 334)
@@ -123,19 +124,19 @@ void Func_02001bf8(void) {
       y = entry->flags & 240;
       switch (y) {
       case 128:
-        Func_02001b78(&entry->actor->x, entry->unk_c, unk6);
+        Func_02001f14(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 48:
-        Func_0200196c(&entry->actor->x, entry->unk_c, unk6);
+        Func_02001d08(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 32:
-        Func_020019fc(&entry->actor->x, entry->unk_c, unk6);
+        Func_02001d98(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 16:
-        Func_020019b4(&entry->actor->x, entry->unk_c, unk6);
+        Func_02001d50(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 0:
-        Func_02001780(&entry->actor->x, entry->unk_c, unk6);
+        Func_02001b1c(&entry->actor->x, entry->unk_c, unk6);
         break;
       }
       value = 8;

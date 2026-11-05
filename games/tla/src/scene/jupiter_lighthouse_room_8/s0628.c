@@ -75,6 +75,9 @@ void Func_02000628(struct Actor *self) {
         s32 (*multiply)(s32, s32);
         s32 cosine = Math_Cosine(self->angle);
         s32 speed = self->speedLimit;
+        /* FAKEMATCH(one-pass): the routine address taken inside a once-only
+         * block, so the speed loads first; as a plain call, 2 of 197
+         * instructions differ in tla-en. */
         do {
           multiply = Iwram_MulQ16;
         } while (0);

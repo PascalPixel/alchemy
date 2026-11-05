@@ -1,4 +1,4 @@
-// Draft, differ 85 of 120, skeleton gap 17 (tla-en, 2026-11-01)
+// Draft, differ 29 of 120 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Overlay 6b0's Func_020001f8, a palette cycle, the twin of overlay 6ae's
 // Func_020050b0. The palette store is volatile: strength_reduce leaves a biv's
 // increments alone in a loop with a volatile reference, which keeps the
@@ -48,8 +48,17 @@ void Func_020001f8(void) {
     dst = (volatile u16 *)0x5000000 +
           Data_02004438[gData_02004454 * gData_02004450 + i];
     r = *src++;
+    /* FAKEMATCH(barrier): the empty asm on r changes its allocation rank; as no
+     * asm, 99 of 120 instructions differ in tla-en. */
+    asm("" : : "r"(r));
     g = *src++;
     b = *src++;
+    /* FAKEMATCH(barrier): the empty asm on b changes its allocation rank; as no
+     * asm, 33 of 120 instructions differ in tla-en. */
+    asm("" : : "r"(b));
+    /* FAKEMATCH(barrier): the empty asm on b changes its allocation rank; as no
+     * asm, 44 of 120 instructions differ in tla-en. */
+    asm("" : "=r"(b) : "0"(b));
     *dst = (b << 10) | (g << 5) | r;
   }
   index = gData_02004444[gData_02004450];
@@ -58,7 +67,15 @@ void Func_020001f8(void) {
         gData_02004450 * 3;
   r = *src++;
   g = *src++;
-  b = *src++;
+  /* FAKEMATCH(barrier): the empty asm on g changes its allocation rank; as no
+   * asm, 42 of 120 instructions differ in tla-en. */
+  asm("" : : "r"(g));
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
+   * order around it; as the plain statement, 31 of 120 instructions differ
+   * in tla-en. */
+  do {
+    b = *src++;
+  } while (0);
   *dst = (b << 10) | (g << 5) | r;
   gData_02004434 ^= 1;
   if (++gData_02004454 == gData_02004450)

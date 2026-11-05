@@ -1,7 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-01)
-// Overlay 6ac's copy of the Mars Lighthouse star room's Func_02001bf8
-// (games/tla/src/scene/mars_lighthouse_star_room/s1bf8.c), with this overlay's
-// symbols. No device.
 #include "types.h"
 
 typedef struct Actor {
@@ -33,11 +29,11 @@ typedef struct State {
 } State;
 
 s32 GameFlag_Test();
-void Func_02001b1c();
-void Func_02001d08();
-void Func_02001d50();
-void Func_02001d98();
-void Func_02001f14();
+void Func_02001c74();
+void Func_02001e60();
+void Func_02001ea8();
+void Func_02001ef0();
+void Func_0200206c();
 extern u8 gData_020023c4[];
 
 typedef struct Position {
@@ -62,7 +58,7 @@ typedef struct IwramGlobals {
 
 #define IWRAM ((IwramGlobals *)0x03000000)
 
-void Func_02001f94(void) {
+void Func_020020ec(void) {
   s32 saved[2];
   State *state;
   Entry *entry;
@@ -106,6 +102,9 @@ void Func_02001f94(void) {
     dx = actor->x;
     dz = actor->z;
     dx -= cameraX;
+    /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank; as
+     * no asm, 94 of 182 instructions differ in tla-en. */
+    asm("" : : "r"(dx));
     y = actor->y;
     dz -= cameraZ;
     y = dz - y;
@@ -125,19 +124,19 @@ void Func_02001f94(void) {
       y = entry->flags & 240;
       switch (y) {
       case 128:
-        Func_02001f14(&entry->actor->x, entry->unk_c, unk6);
+        Func_0200206c(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 48:
-        Func_02001d08(&entry->actor->x, entry->unk_c, unk6);
+        Func_02001e60(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 32:
-        Func_02001d98(&entry->actor->x, entry->unk_c, unk6);
+        Func_02001ef0(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 16:
-        Func_02001d50(&entry->actor->x, entry->unk_c, unk6);
+        Func_02001ea8(&entry->actor->x, entry->unk_c, unk6);
         break;
       case 0:
-        Func_02001b1c(&entry->actor->x, entry->unk_c, unk6);
+        Func_02001c74(&entry->actor->x, entry->unk_c, unk6);
         break;
       }
       value = 8;

@@ -619,8 +619,10 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
                                           0);
       }
     }
-    if ((u32)(frame - 274) <= 23) {
-      p = &Ram_EffectSteps[frame - 274 + 80];
+    {
+    s32 d = frame - 274;
+    if ((u32)d <= 23) {
+      struct EffectStep *p = &(&Ram_EffectSteps[80])[d];
       {
         s32 x = ((Random16() & 15) + 52) << 16;
 
@@ -631,6 +633,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectArgument *effect) {
       p->velocityY = -((Random16() & 15) + 8) << 12;
       p->z = (Random16() & 7) + 5;
       p->variant = 32;
+    }
     }
     if (frame == 310) {
       p = Ram_EffectSteps;

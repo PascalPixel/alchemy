@@ -12,7 +12,7 @@ SECTIONS
         "*/resource_6ac_overlay.o"(.text.x020083c4)
         "*/games/tla/src/scene/mars_lighthouse_room_m/s055c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/s06c8.o"(.text)
-        "*/resource_6ac_overlay.o"(.text.x02008934)
+        "*/games/tla/src/scene/mars_lighthouse_room_m/s0934.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/finish.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_m/s0af4.o"(.text)
         "*/resource_6ac_overlay.o"(.text.x02008b64)

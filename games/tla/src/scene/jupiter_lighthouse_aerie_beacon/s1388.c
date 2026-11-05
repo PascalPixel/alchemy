@@ -1,14 +1,3 @@
-// Draft, differ 20 of 349 (was 47). The speeds several calls share are
-// locals (fast 0xa000, slow 0x2000), as the native keeps them in r6 and r8
-// while it rebuilds every coordinate; the other calls go through call.h's
-// forwarding inlines, and Func_020058fc's through an inline of its own that
-// calls it directly (through Call3 its argument registers load in another
-// order). Left, all sched2 ties: in Func_0200588c's calls the speed's copy
-// into r3 comes after the coordinates' shifts (native: before r0),
-// Actor_SetModeById(4, 3) and Actor_ArmCallback(7, fast, 0) load
-// their arguments in another order, and MsgShield loads before the byte
-// store. Tried: Func_0200588c(4, ...) called directly (it then shares
-// 0x1380000 with the camera call: 28).
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -42,9 +31,9 @@ s32 Unit_AddHp();
 s32 Party_SetFields1eeAnd1f0();
 s32 Party_SetFields1f2And1f4();
 s32 Func_0200593c();
-extern u8 MsgAlhafra19[];
+extern char SceneId_Ov6a5;
 extern u8 gMainRoutineWork[];
-extern u8 MsgShield[];
+extern u8 MsgBlank5[];
 
 static __inline__ void W_Func_020058fc(s32 a0, s32 a1, s32 a2) {
   Func_020058fc(a0, a1, a2);
@@ -78,12 +67,9 @@ void Func_02001388(void) {
   Call4(Func_0200588c, 7, 0x2100000, 0x1300000, fast);
   slow = 0x2000;
   Call4(Func_0200588c, 0x1b, 0x1f80000, 0x1300000, slow);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 16 of 349 instructions differ
-   * in tla-en. */
-  do {
+  {
     Call4(Func_0200588c, 0x1c, 0x2080000, 0x1200000, slow);
-  } while (0);
+  }
   {
     s32 north = 0xc000;
     Call4(Func_0200588c, 5, 0x2280000, 0x1880000, north);
@@ -95,7 +81,7 @@ void Func_02001388(void) {
   Call4(Camera_MoveWithinMapBounds, 0x2080000, 0x680000, 0x1380000, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call1(Func_020058c4, (s32)MsgAlhafra19);
+  Call1(Func_020058c4, (s32)MsgBlank5);
   Call3(Func_020058d4, 5, 0, 0);
   W_Func_020058fc(4, 0x100, 0);
   W_Func_020058fc(7, 0x100, 0);
@@ -148,14 +134,14 @@ void Func_02001388(void) {
   Call2(Func_020058dc, 5, 0);
   Call3(Actor_OffsetPositionAndReset, 5, -8, -24);
   Call2(Func_020058ec, 4, slow);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 14 of 349 instructions differ
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
+   * the order around it; as the plain statement, 2 of 349 instructions differ
    * in tla-en. */
   do {
     Call2(Actor_SetModeById, 4, 3);
   } while (0);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 12 of 349 instructions differ
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
+   * the order around it; as the plain statement, 2 of 349 instructions differ
    * in tla-en. */
   do {
     Call1(FieldEvent_Wait, 0x14);
@@ -183,13 +169,13 @@ void Func_02001388(void) {
   if (FIELD_AT(gMainRoutineWork, s16, 598) == -1) {
     Call2(Unit_AddHp, 4, -10);
   }
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 10 of 349 instructions differ
+  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
+   * the order around it; as the plain statement, 4 of 349 instructions differ
    * in tla-en. */
   do {
     FIELD_AT(gMainRoutineWork, u8, 587) = 2;
   } while (0);
-  Call2(Party_SetFields1eeAnd1f0, (s32)MsgShield, 0xb);
-  Call2(Party_SetFields1f2And1f4, (s32)MsgShield, 0xb);
+  Call2(Party_SetFields1eeAnd1f0, (s32)&SceneId_Ov6a5, 0xb);
+  Call2(Party_SetFields1f2And1f4, (s32)&SceneId_Ov6a5, 0xb);
   Call2(Func_0200593c, 0xd, 6);
 }

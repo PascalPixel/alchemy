@@ -1057,8 +1057,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       }
       model->kind = 6;
       model->shade = shade;
-      p4 = work->particles;
-      for (i = 0; i != n; i++, p4++) {
+      for (i = 0; i != n; i++) {
+        struct EffectStep *p4 = &work->particles[i];
+
         p4->x = (Random16() % spread - spread / 2) << 16;
         p4->y = camZ + 0xc80000;
         p4->z = ((base + i) % 3 << 12) + 0x2000;

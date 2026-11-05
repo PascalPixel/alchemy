@@ -324,6 +324,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
   struct EffectStep *p4;
   struct EffectStep *q2;
   u16 *src2;
+  u8 *e;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -382,21 +383,21 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     }
   }
   {
-    u8 *e = Resource_GetTableEntry((s32)&ResourceId_ChainedDemonTiles);
     u8 *cells;
 
+    e = Resource_GetTableEntry((s32)&ResourceId_ChainedDemonTiles);
     COPY_WORDS((void *)OBJ_PLTT, e, 384);
     e += 384;
     Resource_DecodeType01(e, gMapCellBuffer);
-    cells = gMapCellBuffer;
-    for (i = 0; i != 24; i++, cells += 1024) {
+    cells = Ram_MapCellBuffer;
+    for (i = 0; i != 24; cells += 1024, i++) {
       obj = Func_0815b290(32, 32, 0x80002000, 0);
       obj->priority = 2;
       work->objects[i] = obj;
       COPY_WORDS((void *)OBJ_TILES(obj), cells, 1024);
     }
     cells = Data_02016000;
-    for (i = 0; i != 4; i++, cells += 1024) {
+    for (i = 0; i != 4; cells += 1024, i++) {
       obj = Func_0815b3b0(32, 32, 0x80002000, 0);
       work->objects[24 + i] = obj;
       COPY_WORDS(obj, work->objects[i], 24);
@@ -414,14 +415,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     COPY_WORDS(obj, work->objects[i], 24);
   }
   {
-    u8 *e = Resource_GetTableEntry((s32)&ResourceId_GoldenScalesTiles);
     u8 *cells;
 
+    e = Resource_GetTableEntry((s32)&ResourceId_GoldenScalesTiles);
     COPY_WORDS((void *)(OBJ_PLTT + 0xc0), e, 32);
     cells = work->sheet;
     e += 32;
     Resource_DecodeType01(e, cells);
-    for (i = 0; i != 5; i++, cells += 512) {
+    for (i = 0; i != 5; cells += 512, i++) {
       obj = Func_0815b290(32, 32, 0x80000000, 0xc000);
       obj->priority = 1;
       work->objects[34 + i] = obj;
@@ -429,14 +430,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     }
   }
   {
-    u8 *e = Resource_GetTableEntry((s32)&ResourceId_PurpleArmourTiles);
     u8 *cells;
 
+    e = Resource_GetTableEntry((s32)&ResourceId_PurpleArmourTiles);
     COPY_WORDS((void *)(OBJ_PLTT + 0xd0), e, 32);
     cells = work->sheet;
     e += 32;
     Resource_DecodeType01(e, cells);
-    for (i = 0; i != 5; i++, cells += 512) {
+    for (i = 0; i != 5; cells += 512, i++) {
       obj = Func_0815b290(32, 32, 0x80000000, 0xd000);
       obj->priority = 1;
       work->objects[39 + i] = obj;
@@ -444,14 +445,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     }
   }
   {
-    u8 *e = Resource_GetTableEntry((s32)&ResourceId_WhiteSpikesTiles);
     u8 *cells;
 
+    e = Resource_GetTableEntry((s32)&ResourceId_WhiteSpikesTiles);
     COPY_WORDS((void *)(OBJ_PLTT + 0xe0), e, 32);
     cells = work->sheet;
     e += 32;
     Resource_DecodeType01(e, cells);
-    for (i = 0; i != 6; i++, cells += 512) {
+    for (i = 0; i != 6; cells += 512, i++) {
       obj = Func_0815b290(32, 32, 0x80000000, 0xe000);
       obj->priority = 1;
       work->objects[44 + i] = obj;
@@ -723,7 +724,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
       u8 *cells = Data_02011000;
 
       swapped = 0;
-      for (i = 0; i != 4; i++, cells += 1024) {
+      for (i = 0; i != 4; cells += 1024, i++) {
         COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells, 1024);
       }
     }

@@ -1322,8 +1322,9 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
       }
       if (frame < 88) {
         u16 *color = Resource_GetTableEntry((s32)&Value_000000b5);
+        u16 *entry = PLTT + 0xe0;
 
-        for (i = 0; i != 16; i++, color++) {
+        for (i = 0; i != 16; i++, color++, entry++) {
           s32 add = ((Trig_Cos(t56 << 9) * 12) >> 16) + 16;
           s32 r = (*color & 31) + add;
           s32 g = ((*color >> 5) & 31) + add;
@@ -1338,7 +1339,7 @@ void BattleEffect_RunCharon(struct BattleEffectArgument *arg) {
           if (b > 31) {
             b = 31;
           }
-          PLTT[0xe0 + i] = (b << 10) | (g << 5) | r;
+          *entry = (b << 10) | (g << 5) | r;
         }
       }
     }

@@ -899,9 +899,12 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     s32 b;
     s32 k;
     s32 n = 0;
+    u8 *sheet;
 
     Iwram_CopyWords((void *)BG_PLTT, e, 32);
-    Resource_DecodeType01(e + 32, work->sheet);
+    e += 32;
+    Resource_DecodeType01(e, work->sheet);
+    sheet = work->sheet + 0x1000;
     for (row = 0; row != 15; row++) {
       s32 y = row * 2;
 
@@ -912,13 +915,15 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       s32 offset = ((y + a) << 4) + b << 3;
 
       for (k = 0; k != 8; k++, offset += 16) {
+        u8 *d = sheet + offset;
+
         for (row2 = 0; row2 != 4; row2++) {
           u32 c = work->sheet[n];
-          u8 *d = work->sheet + 0x1000 + offset + row2 * 2;
 
           d[0] = c & 15;
           d[1] = c >> 4 & 15;
           n++;
+          d += 2;
         }
       }
     }

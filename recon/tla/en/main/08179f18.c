@@ -286,7 +286,6 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   s32 spin;
   s32 spread;
   s32 grow;
-  s32 spin2;
   s32 petals; // the block's address as a number, see the header
   s32 i;
   s32 j;
@@ -480,8 +479,8 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     }
     req = Data_08196ec8;
     dy = 0;
-    dx = 0;
     place[3] = 0;
+    dx = 0;
     place[1] = 0xff0000;
     if (frame <= 119) {
       posX = Trig_Sin(0xcd00) * 24 + 0x980000;
@@ -554,7 +553,6 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->x[i] = 0xf00000;
           w->y[i] = 0x300000;
         } else if (frame <= 47) {
-          spin2 = w->y[i];
           w->x[i] += -0x30000;
           w->y[i] += 0x18000;
         } else if (frame <= 79) {
@@ -562,9 +560,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->y[i] += -0x10000;
         } else if (frame <= 111) {
           w->x[i] += 0x30000;
-          if (frame > 400) {
-            dx = frame;
-          }
+          w->y[i] += 0;
         }
         if (frame == 112) {
           w->x[i] = 0x1000000;
@@ -584,9 +580,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->y[i] += 0x6710;
         } else if (frame <= 141) {
           w->x[i] += 0x30000;
-          if (frame > 400) {
-            dx = frame;
-          }
+          w->y[i] += 0;
         }
         if (frame == 112) {
           w->x[i] = 0x1000000;

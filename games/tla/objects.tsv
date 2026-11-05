@@ -2045,12 +2045,7 @@ main	rom_main_05	games/tla/src/field/event_commands/psynergy_effects_01	.text
 main	rom_main_05	games/tla/src/field/event/f0e3d04	.text	en de es fr it ja
 main	rom_main_05	games/tla/src/field/event/object_blocked	.text
 main	rom_main_05	games/tla/src/field/event/blockcue	.text
-main	rom_main_05	recon/tla/es/rom	.rom.000ed460	es
-main	rom_main_05	recon/tla/it/rom	.rom.000e4460	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000e9460	fr
-main	rom_main_05	recon/tla/de/rom	.rom.000f146c	de
-main	rom_main_05	recon/tla/raw/080e446c	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000e4428	ja
+main	rom_main_05	games/tla/src/field/event/f0e446c	.text	en de es fr it ja
 main	rom_main_05	games/tla/src/field/event/f0e4510	.text
 main	rom_main_05	games/tla/src/field/event_commands/psynergy_effects_03	.text
 main	rom_main_05	games/tla/src/field/event_commands/f0e45a8	.text
@@ -2722,12 +2717,7 @@ main	rom_main_07	games/tla/src/shop/f10bca0	.text	ja
 main	rom_main_07	games/tla/src/shop/f10b9c0	.text	en fr
 main	rom_main_07	games/tla/src/shop/f10bca0	.text	en de es fr it
 main	rom_main_07	games/tla/src/shop/item_icon	.text
-main	rom_main_07	recon/tla/it/rom	.rom.0010bde8	it
-main	rom_main_07	recon/tla/fr/rom	.rom.0010bdf8	fr
-main	rom_main_07	recon/tla/es/rom	.rom.0010fe08	es
-main	rom_main_07	recon/tla/de/rom	.rom.00113e08	de
-main	rom_main_07	recon/tla/raw/0810bdf4	.text	en
-main	rom_main_07	recon/tla/ja/rom	.rom.0010be08	ja
+main	rom_main_07	games/tla/src/shop/f10bdf4	.text	en de es fr it ja
 main	rom_main_07	games/tla/src/shop/item_icon_2	.text
 main	rom_main_07	games/tla/src/shop/f10bebc	.text
 main	rom_main_07	games/tla/src/shop/item_icon_3	.text

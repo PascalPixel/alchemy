@@ -1,20 +1,3 @@
-// Draft, differ 4 of 77, skeleton gap 2 (tla-en, 2026-11-01)
-// What is left is one ordering before the first call: the listing issues
-// ldr r3 (the routine), movs r2, mov r0, lsls r1; the draft issues lsls r1,
-// movs r2, ldr r3, mov r0. sched2 ties there on LUID: the listing's order means
-// 0x400 reaches r1 after r0 is set, as a constant equivalent reloaded at the
-// argument copy, but this draft's pseudo takes r1 at its own set, ahead of the
-// routine's address. Tried with no gain: width * height, height * width,
-// width << 5, a sizeof factor, a u32 size, a size local in three positions, a
-// void cast of the call. A local function pointer gives differ 2, leaving only
-// lsls r1 against mov r0, and was not kept: it is a forced temporary.
-// Moving width and height past the call, or swapping them, goes backwards.
-// The form below is what closed 71 to 4, each part proved in the loop dump:
-// shift is set twice, so position - wave is no giv and stays in the loop; base
-// is a user variable set after the inner guard, so the second loop run leaves
-// the multiply in the inner preheader; rowOffset keeps the constant out of the
-// first run's giv, so the row step is reduced in the second run and its
-// constant stays in the loop body. Loop threshold is 28 less 2 per move.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -63,17 +46,23 @@ void Func_080eb01c(struct EffectSprite *sprite);
 void Camera_WorldToScreen(s32 *position);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void BattleEffect_IntegrateVector2(struct EffectParticle *particle, s32 frames,
-                               s32 flags);
+                                   s32 flags);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 
+static inline s32 WrapClearWords(void *destination, s32 size) {
+  /* FAKEMATCH(wrapper): the clear through this inline, so its arguments are set
+   * before the entry's address is loaded; as a direct call, 4 of 77
+   * instructions differ in tla-en. */
+  return Iwram_ClearWords(destination, size);
+}
 void Func_080e446c(u8 *source, u8 *destination, s32 phase) {
   s32 width = 32;
   s32 height = 32;
   s32 column;
   s32 row;
 
-  Iwram_ClearWords(destination, 0x400);
+  WrapClearWords(destination, 0x400);
   for (column = 0; column < width; column++) {
     s32 wave = (Trig_Sin(column << 13) << 3) + 0x80000;
 

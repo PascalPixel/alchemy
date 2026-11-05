@@ -1,3 +1,4 @@
+// Draft, differ 36 of 84 (tla-en, 2026-11-05); 36 with slots and pool offsets normalized, 16 with registers blind too. cells, blocks and shapes step by the slot, as the native's adds show; the pin is gone. The native gives slot r4 with a caller-save at sp 0 and blocks r10; here blocks spills.
 // Near miss, differ 40 of 84 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 52 of 84: register choice and order. The native keeps the
@@ -45,20 +46,24 @@ void Func_080eadfc(void) {
 
   if (target != NULL) {
     struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
-    register struct SwitchCell *cells asm("r6") = map->layers[target->terrainId].cells;
+    struct SwitchCell *cells = map->layers[target->terrainId].cells;
     struct SwitchCell *blocks = map->layers[2].cells;
     u8 *shapes = &gMapShapeGrid[((s32)cells - 0x02010000) >> 2];
     u32 key = Func_080202f0(target->terrainId, target->x, target->z);
     s32 level =
         Map_GetTerrainHeightFar(target->terrainId, target->x, target->z);
     s32 slot = Func_080eab70(target);
-    s32 tag = Func_080eab98(target->terrainId, key, (level >> 19) + 4);
+    s32 tag;
     u8 flags;
 
-    flags = cells[slot].flags;
+    shapes += slot;
+    tag = Func_080eab98(target->terrainId, key, (level >> 19) + 4);
+    cells += slot;
+    flags = cells->flags;
     target->unk4c = flags;
-    cells[slot].flags = flags | 0x80;
-    blocks[slot].block = 0xff;
-    shapes[slot] = tag;
+    cells->flags = flags | 0x80;
+    blocks += slot;
+    blocks->block = 0xff;
+    *shapes = tag;
   }
 }

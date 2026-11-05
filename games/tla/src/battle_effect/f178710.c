@@ -87,15 +87,15 @@ void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
 void Transform_Push(void);
 void Transform_Pop(void);
 
-// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
-// Where the second strike sends the target: its motion's x, as a percent of its
-// anchor's x.
+// On every strike after the first, the target's motion goes to this percent of
+// its anchor's x.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TARGET_ANCHOR_PERCENT 300
 #else
 #define TARGET_ANCHOR_PERCENT 200
 #endif
 
+// The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
 // ⚓️'s blitter modes run the other way from The Broken Seal's.

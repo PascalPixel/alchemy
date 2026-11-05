@@ -1,3 +1,8 @@
+// 5 November: differ 84 of 110. The native's first sine is sine(a), held in r8, and
+// it keeps its test of i at the loop's top with i in r6, line in r5, b in r7, a in
+// sl; here the sine result takes r5 in local-alloc, which turns the rest. Nothing
+// found makes it a global pseudo except reusing z, which is not the native's z
+// (r0).
 // Under -Os, 5 November: differ 81 of 110 (tla-en); older figures below predate it.
 // Draft, differ 61 of 110, skeleton gap 12 (tla-en, 2026-11-01): Garoh's
 // scanline wave, building 160 BG offsets from two sines and starting an HBlank
@@ -60,7 +65,7 @@ void Func_020002a4(void) {
     u32 frame;
     s32 x, z, a, b;
     s32 stepA, stepB;
-    s32 i, lineCount;
+    s32 i;
     volatile u16 *dma;
 
     *(s32 *)&layer->unk08[20] = 0;
@@ -71,24 +76,19 @@ void Func_020002a4(void) {
     stepB = 0x1320;
     a = z * stepA + (frame << 10);
     b = z * stepB - (frame << 10);
-    lineCount = 160;
     i = 0;
-  next_line:
-    if (i == lineCount)
-      goto lines_done;
-    {
-      s32 s2 = sine(b);
-      s32 s1 = sine(a);
+    if (i != 160)
+    do {
+      s32 s2;
 
-      *line = ((s2 * 7 + s1 * 3) >> 19) + x;
-      i++;
+      z = sine(a);
+      s2 = sine(b);
+      *line = ((z * 3 + s2 * 7) >> 19) + x;
       line++;
       a += stepA;
       b += stepB;
-    }
-    if (i != 160)
-      goto next_line;
-  lines_done:
+      i++;
+    } while (i != 160);
     line = Data_02006340;
     *(volatile u16 *)0x04000018 = line[0];
     dma = (volatile u16 *)0x040000b0;

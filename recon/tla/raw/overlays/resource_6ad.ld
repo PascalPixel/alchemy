@@ -65,6 +65,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_room_f/s4080.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s410c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s4140.o"(.text)
+        "*/games/tla/src/scene/mars_lighthouse_room_f/s43ec.o"(.text)
         "*/resource_6ad_overlay.o"(.text.x0200c3ec)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s4700.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s470c.o"(.text)

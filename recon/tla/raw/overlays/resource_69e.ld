@@ -46,7 +46,7 @@ SECTIONS
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/resource_69e_overlay.o"(.text.x0200a44e)
         "*/games/tla/src/scene/jupiter_lighthouse_room_5/s2450.o"(.text)
-        "*/resource_69e_overlay.o"(.text.x0200a5e8)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_5/s25e8.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_5/s2698.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_5/import.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)

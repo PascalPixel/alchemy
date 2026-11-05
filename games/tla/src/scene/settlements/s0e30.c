@@ -1,25 +1,16 @@
-#include "../apojii_islands/local.h"
-#include "map.h"
-
-void Func_02000e30(void);
-extern s32 gData_02002ce0;
-extern u16 gData_02002ce4;
-extern u16 gData_02002ce6;
+/// @file
+/// The hblank split: above the line Func_02000ed0 sets, BG1 scrolls by one value and
+/// blending is off; below it, by the other, with BG1 blended.
+#include "../settlements/local.h"
+#include "io_reg.h"
+#include "system/io_write.h"
 
 void Func_02000e30(void) {
-  u32 value;
-
   if (REG_VCOUNT < gData_02002ce0) {
-    value = gData_02002ce4;
-    REG_BG1HOFS = value;
+    Io_Write16(gData_02002ce4, &REG_BG1HOFS);
     REG_BLDCNT = 0;
   } else {
-    value = gData_02002ce6;
-    /* FAKEMATCH(one-pass): the once-only block orders this statement; as a
-     * plain statement, 9 of 35 instructions differ in tla-en. */
-    do {
-      REG_BG1HOFS = value;
-    } while (0);
+    Io_Write16(gData_02002ce6, &REG_BG1HOFS);
     REG_BLDALPHA = 0x100c;
     REG_BLDCNT = 0x3f42;
   }

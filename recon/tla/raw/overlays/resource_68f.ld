@@ -52,7 +52,7 @@ SECTIONS
         "*/games/tla/src/scene/tundaria_tower/s2094.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s2100.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s2184.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x0200a22c)
+        "*/games/tla/src/scene/tundaria_tower/s222c.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s2354.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s24e8.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_g.o"(.text)

@@ -58,7 +58,7 @@ SECTIONS
         "*/games/tla/src/scene/world_map/s4598.o"(.text)
         "*/resource_64b_overlay.o"(.text.x0200c634)
         "*/games/tla/src/scene/world_map/s4744.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x0200c8f4)
+        "*/games/tla/src/scene/world_map/s48f4.o"(.text)
         "*/games/tla/src/scene/world_map/s49bc.o"(.text)
         "*/games/tla/src/scene/world_map/release.o"(.text)
         "*/games/tla/src/scene/world_map/import.o"(.text)

@@ -1,3 +1,9 @@
+// Draft, differ 65 of 714 (tla-en, 2026-11-05).
+// 5 November: differ 65 of 714 with x read first as the native does (46 with the
+// false order). What turns the rest is the zero: after the test of 0x16e the
+// then-arm knows the result is 0 and cse keeps it in r8 for the later stores of 0
+// (reg 62), where the native has movs r3, #0. A <= 0 test gives 28 but is not the
+// native's beq. An empty asm or one-pass after the test does not stop it.
 // Draft, differ 46 of 714 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 46 of 714 (tla-en); older figures below predate it.
 // Draft, differ 57 of 714, skeleton gap 10 (tla-en, 2026-11-01)
@@ -117,8 +123,8 @@ void Func_02001e34(void) {
 
   djinni = Actor_GetById(9);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  z = (leader->z - 0x20a40000) / 2 + 0x20a40000;
   x = (leader->x - 0x27880000) / 2 + 0x27880000;
+  z = (leader->z - 0x20a40000) / 2 + 0x20a40000;
   if (Flag_IsSet(0x16e) == 0) {
     if (gInput & 64)
       Flag_Set(0x175);

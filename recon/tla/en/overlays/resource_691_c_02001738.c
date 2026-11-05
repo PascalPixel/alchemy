@@ -1,4 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 110 (tla-en); notes below may predate it.
+// Draft, differ 123 of 294 (tla-en, 5 November 2026), under -Os, the action pointer local removed: the registers are the native's, the differences its reload scratch registers (first the 15, r0 in the native and r1 here). Older notes predate -Os.
 // Draft, differ 118 of 294, skeleton gap 18 (tla-en, 2026-11-01)
 //
 // The code is the native's; what is left is one allocation question and the
@@ -86,7 +86,6 @@ void Func_02001528(void);
 
 void Func_02001738(struct Actor *object) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  s16 *action = &object->action;
   /* FAKEMATCH(temporary): the last part's order held in a variable from the
    * top, which spills and is reloaded as the constant at each use; as the
    * literal 3 in both stores, CSE keeps the loop's 3 in a register across the
@@ -96,7 +95,7 @@ void Func_02001738(struct Actor *object) {
   if ((gFrameCount & 15) == 0)
     Func_02003c4c(object, 136);
   Actor_SetPartAttribute(object, 10);
-  if (*action <= 31) {
+  if (object->action <= 31) {
     u32 phase = gFrameCount & 3;
 
     if (phase == 0) {
@@ -116,7 +115,7 @@ void Func_02001738(struct Actor *object) {
                     (dx - 8) << 14, phase, (dz - 8) << 14, 0x1330000,
                     &config);
     }
-  } else if (*action == 33) {
+  } else if (object->action == 33) {
     struct Actor *parts[4];
     struct Actor *helper;
     s32 id;
@@ -187,8 +186,8 @@ void Func_02001738(struct Actor *object) {
     BYTE_AT(helper, 98) = 4;
     helper->watchedObject = object;
     helper->update = Func_020015e4;
-    (*action)++;
-  } else if (*action > 364) {
+    object->action++;
+  } else if (object->action > 364) {
     Actor_SetPartAttribute(object, 0);
     object->update = NULL;
   }

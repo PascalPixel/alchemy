@@ -18567,7 +18567,7 @@ msgctxt "message"
 msgid "04572"
 msgstr "Asignaciones"
 
-msgctxt "message"
+msgctxt "MsgShortcutHelp"
 msgid "04573"
 msgstr "{button_icon:3}{button_icon:4}:Asignar Psi."
 

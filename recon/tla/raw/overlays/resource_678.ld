@@ -5,7 +5,7 @@ SECTIONS
         "*/games/tla/src/scene/taopo_swamp/entry.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/scene_tables.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/events_a.o"(.text)
-        "*/resource_678_overlay.o"(.text.x0200813c)
+        "*/games/tla/src/scene/taopo_swamp/s013c.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/events_b.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/s03c4.o"(.text)
         "*/games/tla/src/scene/taopo_swamp/events_c.o"(.text)

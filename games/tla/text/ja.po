@@ -16716,7 +16716,7 @@ msgctxt "message"
 msgid "04113"
 msgstr "ショートカット"
 
-msgctxt "message"
+msgctxt "MsgShortcutHelp"
 msgid "04114"
 msgstr "LR:ショートカットにセット"
 
@@ -17376,7 +17376,7 @@ msgctxt "message"
 msgid "04278"
 msgstr "きほんそうびをみる"
 
-msgctxt "message"
+msgctxt "MsgChangeCharacterHelp"
 msgid "04279"
 msgstr "LR:キャラをへんこう"
 

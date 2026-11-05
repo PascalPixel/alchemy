@@ -18,6 +18,8 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
 
+/// Eight puffs (type 285) in a row over the leader, flung outwards when spread
+/// is set.
 void Func_02000974(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct FieldEffect *effect;

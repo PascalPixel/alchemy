@@ -1,53 +1,19 @@
-// Measured under -Os, 5 November 2026: differ 310 (tla-en); notes below may predate it.
-// Draft, differ 350 of 418, skeleton gap 54 (tla-en, 2026-11-01): x, y, nx, the
-// border's registers and the walk's n, next and cell now agree with the native.
-// What is left is two things, step and tries, and where y << 3 is computed. The
-// Heap_AllocEwram wrapper is the one device kept: without it the draft falls to
-// 422.
-//
-// Allocation: the native's order is grid (r5), nx (r6), step (r7), y (r8), x
-// (r10), tries (r9), steps (r11), with ny last in r1 by caller-save. Giving the
-// walk its own column (wx) fixed x (388 to 360), because the step phase's x then
-// has its own live length; splitting the row too lost (382), and step sharing with
-// n, the border counter, or next is a local reused for a second value and also
-// lost or was rejected for that (390, 401; next gains 365 only by accident).
-// Setting i before o in the border gave the offset r6 (360 to 350). Still wrong:
-// ny (33 refs over 68 insns, density 2.4) and tries (66 over 172, 2.3) outrank
-// step (55 over 220, 1.25), so step takes r9, ny r7 and tries r4. tries in r9
-// means the native found caller-save unprofitable: 4 * calls >= refs, so tries had
-// at most 4 refs, its raw count with no loop weight, where this compiler weights
-// it to 66 by the retry label's many back edges. Spellings that do not change
-// this: ny++ for ny = y + 1, nx after the call (417, frame shrinks), ny before nx,
-// dir block-local, declaration orders, the prologue's order. A label step loop
-// lost (379).
-//
-// y << 3: the native computes it once after the dir check, shared by all four
-// arms, and again at the join; the walk shares one across the first three sides
-// and the third scan, and computes a second for the fourth side and its scan.
-// Here PRE shares one reaching register: on the default edges and in each arm,
-// deleting the join's, and in r6 through the walk. This is most of the skeleton
-// gap; the rest is high-register reloads for step and tries, and prologue order.
-// LCM cannot leave both a dispatch copy and the join's, so this is no PRE
-// placement: the pattern reads as hoisting from the dominated blocks whose paths
-// meet no other computation, which leaves the last occurrence alone. An unread
-// k = y * 8 before the switch is a dead store and no answer. If no source form
-// exists, both this and tries are compiler questions, out of scope for a draft.
-//
-// Border: a label loop, as 99 and 0xc40 are rebuilt in its body, with the
-// pointers and offset stepped by hand and the sum in its own local (a for loop
-// hoists both constants, and folding the sum into the address adds a register).
-//
-// The arms: ny = y - 1 needs no special form: in the last arm the native's
-// reload scratch for y happens to be r1, ny's register, so the copy goes. A real
-// loop for retry hoists the row arithmetic (431): retry stays a label.
+// Draft, differ 44 of 418 (tla-en, 2026-11-05). Older notes below may predate this figure.
+// Left: register names only. The native has the cell in ip, the row's y << 3 in lr and
+// the step's offset in r9; here the two offsets outrank the cell (5 refs over 75 and 86
+// against 4 over 111), take ip and lr, and the cell takes r9. That also moves the reload
+// registers' rotation in the third and fourth scans. Pinning the cell to ip gives the
+// names but loses one reload, which moves the rotation (38). Sharing the cell with the
+// walk's store gives it 8 refs over 116, which takes r7 before the step.
+// path is one local holding a constant: its doubled live length is what puts steps
+// behind tries, and at the end it reloads from the pool.
 //
 // Lays out the maze path once (flag 0x3f0, not after flag 0x109): seeded by
 // the given value, a random walk of fourteen steps from the middle of a 28 by
 // 28 grid never touches its own path, retrying a step up to sixteen times and
 // the whole walk after that (with a fresh grid; the old one is not released);
 // then for each step it records which step lies beyond each of its four sides,
-// and marks the ends. The four scans are label loops, as the native's are:
-// written as C loops, loop.c rotates them.
+// and marks the ends.
 #include "types.h"
 #include "call.h"
 #include "iwram_call.h"
@@ -85,6 +51,8 @@ typedef struct {
   Unk_Step steps[15];
 } Unk_Path;
 
+#define gPath ((Unk_Path *)(gData_020023c4 + 0x288))
+
 extern u32 gRandomState;
 extern u8 gData_020023c4[];
 s32 GameFlag_Test(s32 flag);
@@ -100,19 +68,19 @@ static __inline__ void *Heap_AllocEwram_(s32 size) {
 }
 
 #define AT(x, y) grid->cells[(y) * GRID_WIDTH + (x)]
+#define AT_ADDRESS(x, y) ((Unk_Cell *)(((y) * GRID_WIDTH + (x)) * 4 + (s32)grid))
 
 void Func_020044f8(s32 seed) {
   Unk_Grid *grid;
   Unk_Path *path;
   Unk_Step *steps;
   Unk_Cell *cell;
-  Unk_Cell *p;
-  s32 x, y, wx, nx, ny, step, n, tries, dir, i, v, next, k, c;
+  s32 x, y, nx, ny, step, tries, dir, i, v, next;
   u32 saved;
 
   saved = gRandomState;
+  path = gPath;
   steps = path->steps;
-  path = (Unk_Path *)(gData_020023c4 + 0x288);
   if (GameFlag_Test(0x109))
     return;
   if (GameFlag_Test(0x3f0))
@@ -120,14 +88,14 @@ void Func_020044f8(s32 seed) {
   gRandomState = seed;
 restart:
   grid = Heap_AllocEwram_(sizeof *grid);
-  x = GRID_WIDTH / 2;
   Iwram_ClearWords(grid, sizeof *grid);
-  y = GRID_WIDTH / 2;
   // BUG: this runs 29 times, so row 28 and column 28 lie past the 28 by 28 cells
   // and the last row's marks land after the block.
   {
     Unk_Cell *a, *b, *e;
     s32 o, t;
+    x = GRID_WIDTH / 2;
+    y = GRID_WIDTH / 2;
     b = &AT(GRID_WIDTH, 0);
     i = GRID_WIDTH;
     o = 0;
@@ -147,7 +115,7 @@ restart:
     if (i >= 0)
       goto border;
   }
-  for (step = 1; step <= 14; step++) {
+  for (step = 1; step <= 14;) {
     tries = 0;
   retry:
     if (++tries > 16)
@@ -183,28 +151,33 @@ restart:
       ny = y - 1;
       break;
     }
-    cell->unk_0 = step;
-    cell = &AT(x, y);
-    cell->unk_1 = nx;
-    cell->unk_2 = ny;
+    {
+      Unk_Cell *here = AT_ADDRESS(x, y);
+      here->unk_0 = step;
+      step++;
+      here->unk_1 = nx;
+      here->unk_2 = ny;
+    }
     x = nx;
     y = ny;
   }
 
-  wx = GRID_WIDTH / 2;
+  x = GRID_WIDTH / 2;
   y = GRID_WIDTH / 2;
-  for (n = 1; n <= 14; n = next) {
-    cell = &AT(wx, y);
-    next = n + 1;
+  for (step = 1; step <= 14; step = next) {
+    cell = AT_ADDRESS(x, y);
+    next = step + 1;
 
-    c = AT(wx, y + 1).unk_0;
-    v = n;
+    {
+    s32 c = AT(x, y + 1).unk_0;
+
+    v = step;
     if (c == next)
       v = next;
-    else if (c == n - 1)
+    else if (c == step - 1)
       v = c;
     else {
-      p = cell;
+      Unk_Cell *p = cell;
     scanUp:
       p -= GRID_WIDTH;
       c = p->unk_0;
@@ -215,16 +188,19 @@ restart:
     }
     if (v == 0)
       v = 1;
-    steps[n].unk_2 = v;
+    }
+    steps[step].unk_2 = v;
 
-    c = AT(wx, y - 1).unk_0;
-    v = n;
+    {
+    s32 c = AT(x, y - 1).unk_0;
+
+    v = step;
     if (c == next)
       v = next;
-    else if (c == n - 1)
+    else if (c == step - 1)
       v = c;
     else {
-      p = &AT(wx, y);
+      Unk_Cell *p = AT_ADDRESS(x, y);
     scanDown:
       p += GRID_WIDTH;
       c = p->unk_0;
@@ -235,19 +211,22 @@ restart:
     }
     if (v == 0)
       v = 1;
-    steps[n].unk_5 = v;
+    }
+    steps[step].unk_5 = v;
 
-    c = AT(wx - 1, y).unk_0;
-    v = n;
+    {
+    s32 c = AT(x - 1, y).unk_0;
+
+    v = step;
     if (c == next)
       v = next;
-    else if (c == n - 1)
+    else if (c == step - 1)
       v = c;
     else {
-      k = wx;
+      nx = x;
     scanRight:
-      k++;
-      c = AT(k, y).unk_0;
+      nx++;
+      c = AT(nx, y).unk_0;
       if (c == v - 1) {
         v = c;
         goto scanRight;
@@ -255,19 +234,22 @@ restart:
     }
     if (v == 0)
       v = 1;
-    steps[n].unk_3 = v;
+    }
+    steps[step].unk_3 = v;
 
-    c = AT(wx + 1, y).unk_0;
-    v = n;
+    {
+    s32 c = AT(x + 1, y).unk_0;
+
+    v = step;
     if (c == next)
       v = next;
-    else if (c == n - 1)
+    else if (c == step - 1)
       v = c;
     else {
-      k = wx;
+      nx = x;
     scanLeft:
-      k--;
-      c = AT(k, y).unk_0;
+      nx--;
+      c = AT(nx, y).unk_0;
       if (c == v - 1) {
         v = c;
         goto scanLeft;
@@ -275,12 +257,12 @@ restart:
     }
     if (v == 0)
       v = 1;
-    steps[n].unk_4 = v;
-    wx = cell->unk_1;
-    steps[n].unk_0 = n;
+    }
+    steps[step].unk_4 = v;
+    x = cell->unk_1;
+    steps[step].unk_0 = step;
     y = cell->unk_2;
   }
-  path = (Unk_Path *)(gData_020023c4 + 0x288);
   steps[14].unk_5 = 251;
   steps[1].unk_2 = 250;
   path->unk_0 = 1;

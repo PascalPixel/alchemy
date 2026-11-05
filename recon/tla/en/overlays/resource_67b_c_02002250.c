@@ -1,3 +1,4 @@
+// Draft, differ 30 of 169 (tla-en, 2026-11-05).
 // Draft, differ 42 of 169 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 42 (tla-en); notes below may predate it.
 // Draft, differ 50 of 169, skeleton gap 3 (tla-en, 2026-11-01)
@@ -81,8 +82,11 @@ void Func_02002250(void) {
         bubble->x = 0;
       bubble->age++;
       x = bubble->x - viewX;
-      z = bubble->z - viewZ - lift;
-      y = bubble->y - lift;
+      y = bubble->y;
+      z = bubble->z;
+      y -= lift;
+      z -= viewZ;
+      z -= lift;
       screenY = z - y;
       y += z;
       y >>= 16;

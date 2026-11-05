@@ -1,6 +1,6 @@
 # Building Alchemy
 
-Alchemy is a [matching decompilation](games/tbs/glossary.md#matching-decompilation) of the two Game Boy Advance Golden Sun games: it rebuilds Golden Sun: The Broken Seal (`tbs`) and its sequel, Golden Sun: The Lost Age (`tla`), byte for byte, from the source in this repository. [README.md](README.md) says more about the project.
+Alchemy is a reconstruction of the source for the two Game Boy Advance Golden Sun games, a [matching decompilation](games/tbs/glossary.md#matching-decompilation): it rebuilds Golden Sun: The Broken Seal (`tbs`) and its sequel, Golden Sun: The Lost Age (`tla`), byte for byte, from the source in this repository. [README.md](README.md) says more about the project.
 
 Every byte of The Broken Seal now comes from source, its pictures, music and text included, so it builds on Linux, macOS and Windows with nothing but this repository. The Lost Age is optional: its code that isn't rewritten yet is still read from your own cartridge dump.
 

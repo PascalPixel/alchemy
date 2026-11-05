@@ -1,3 +1,5 @@
+// Draft, differ 75 of 260 (tla-en, 2026-11-05).
+// Draft, differ under 64c's form (tla-en, 5 November 2026): see the twin overlay 64c's Func_02000d64 for what is left.
 // Under -Os, 5 November: differ 138 of 260 (tla-en); older figures below predate it.
 // Draft, differ 147 of 260, skeleton gap 11 (tla-en, 2026-11-01)
 // Shows the world map's placed objects that come within the view and whose
@@ -78,6 +80,7 @@ void Func_020036a8(void) {
   s32 leaderReach =
       ((struct WorldMapSprite *)leader->animation)->scale * leader->radius;
   u32 i;
+  s32 next;
   s32 left, right, top, bottom;
   struct Actor **slot;
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -87,26 +90,23 @@ void Func_020036a8(void) {
   u8 kind = placement->kind;
   s32 z = object->z;
   struct Actor **objects = gData_02006c08;
-  struct MainRoutineWork *routine = &gMainRoutineWork;
+
 
   if (zoom <= 0x10000) {
     left = x - 0xa00000;
     right = x + 0xa00000;
     top = z - 0x12c0000;
     bottom = z + 0xc80000;
-    i = 0;
-    slot = objects;
   } else {
-    i = 0;
     left = x - 0xf00000;
     right = x + 0xf00000;
     top = z - 0x1c20000;
     bottom = z + 0x12c0000;
-    slot = objects;
   }
-  if (kind == 0)
-    return;
-top : {
+  i = 0;
+  next = kind;
+  slot = objects;
+  while (next != 0) {
     s32 px, pz;
 
     if (placement->unk01 == 15)
@@ -140,9 +140,9 @@ top : {
           sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
           *slot = object;
         }
-        if (routine->ownerOverride == 0) {
-          s32 dx = object->x - leader->x;
+        if (gMainRoutineWork.ownerOverride == 0) {
           s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
+          s32 dx = object->x - leader->x;
           s32 reach, dz;
 
           if (dx < 0)
@@ -152,7 +152,7 @@ top : {
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z - object->z) < reach) {
             if (GameFlag_Test(0x104) == 0) {
-              if (routine->renderMode == 9)
+              if (gMainRoutineWork.renderMode == 9)
                 work->unk166 = 0x208b;
               else
                 work->exit = i + 100;
@@ -167,10 +167,11 @@ top : {
       *slot = NULL;
     }
   next:
+    i++;
     slot++;
     placement++;
-    i++;
-    if (i < 128 && placement->kind != 0)
-      goto top;
-}
+    if (i > 127)
+      break;
+    next = placement->kind;
+  }
 }

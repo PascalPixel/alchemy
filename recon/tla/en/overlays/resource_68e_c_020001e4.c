@@ -1,4 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 119 (tla-en); notes below may predate it.
+// Draft, differ 89 of 286 (tla-en, 5 November 2026), under -Os, plain loops. Left: the roll prefers r0 (the native has it in r1 and the work address in r0), and the -1 items below. Older notes may predate this.
 // Draft, differ 144 of 286, skeleton gap 32 (tla-en, 2026-11-01)
 // The Lost Age's twin of The Broken Seal's TolbiSpring_RunSpringGame
 // (games/tbs/src/scene/tolbi_games.c): choose coin or medal, toss, award.
@@ -50,6 +50,8 @@ void GameFlag_SetBit();
 s32 Func_0200049c();
 s32 Random16Far();
 void Func_02001388();
+
+#define WEIGHT(i) ((s8)gMainRoutineWork.unk13d[i])
 
 s32 Func_020001e4(void) {
   s32 choice;
@@ -149,45 +151,24 @@ toss:
         Call1((void (*)())GameFlag_SetBit, 0x90b);
         Call1((void (*)())Func_0200049c, -1);
       } else {
-        window = 0;
-        if (window < result * 3 + 3) {
-          state = &gMainRoutineWork;
-        sum:
-          choice += (s8)state->unk13d[window];
-          window++;
-          if (window < result * 3 + 3)
-            goto sum;
-        }
+        for (window = 0; window < result * 3 + 3; window++)
+          choice += (s8)gMainRoutineWork.unk13d[window];
         prizeRoll = (u32)(Random16Far() * choice) >> 16;
-        state = &gMainRoutineWork;
-        {
-          s32 slot = 316;
-          s8 *weights = (s8 *)state + 1;
-
-          prizeRoll -= weights[slot];
-        }
         window = 0;
+        prizeRoll -= WEIGHT(window);
         if (prizeRoll >= 0) {
-        pick:
-          window++;
-          if (window <= 14) {
-            prizeRoll -= (s8)state->unk13d[window];
-            if (prizeRoll >= 0)
-              goto pick;
-          }
+          do {
+            window++;
+            if (window > 14)
+              break;
+            prizeRoll -= WEIGHT(window);
+          } while (prizeRoll >= 0);
         }
         if (window == 15)
           window = 14;
         Func_0200049c(gData_02001700[window]);
-        {
-          s32 slot = window + 316;
-          s8 *weights;
-
-          state = &gMainRoutineWork;
-          weights = (s8 *)state + 1;
-          if (weights[slot] > 1)
-            weights[slot] /= 2;
-        }
+        if (WEIGHT(window) > 1)
+          gMainRoutineWork.unk13d[window] = WEIGHT(window) / 2;
       }
     }
   }

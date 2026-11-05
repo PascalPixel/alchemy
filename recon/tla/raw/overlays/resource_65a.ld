@@ -3,7 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/madra_catacombs/entry.o"(.text)
-        "*/resource_65a_overlay.o"(.text.x02008038)
+        "*/games/tla/src/scene/madra_catacombs/s0038.o"(.text)
         "*/resource_65a_overlay.o"(.text.x0200814c)
         "*/resource_65a_overlay.o"(.text.x02008270)
         "*/games/tla/src/scene/madra_catacombs/s0318.o"(.text)

@@ -1,22 +1,67 @@
-// Measured 2026-11-05 (tla-en): differ 2913 of 7666, slots normalized 2337,
-// high registers blind too 1883, every register blind 681. The frame is now
-// the listing's 264. Settled today: the two slots at kind 60 are one local
-// array of two, with element 1 holding m * 0xa00 and element 0 the third
-// source. A local array whose address is not taken gets its stack slots after
-// the spills start and its stores stay even when unread, which is the
-// listing's unread str at sp+24. Its name and type are a placeholder. The
-// ring loop at kinds 81 to 93 reads p = &SPARKS[i], with its own k, which
-// gives the listing's hidden step register (a giv in a high register copied
-// to r6). Kind 80's row and two are named so i * 64 and i * 2 stay apart from
-// their bases, though they are not yet reduced as in the listing. Scoping n,
-// m, x, y, fade, life and p to their blocks gave most of the rest. Left: i is
-// one long pseudo in r11 in the listing (231 mentions, as when it is pinned),
-// r10 here: i needs pseudos ranked above it in r8, r10 and r9 where it is
-// live. The three-round loops at kinds 14 and 68 keep their table loads
-// inside the loop in the listing where this hoists them; as goto loops they
-// stop hoisting but the rest of the function flips to 4500 rows, so that is
-// not settled. Some edits flip the low registers of the whole function the
-// same way, so read such a jump before trusting it.
+// Measured 2026-11-05 (tla-en): differ 183 of 7666, slots normalized 103, high
+// registers blind too 101, every register blind 63. The frame is the listing's
+// 264 and i is r11 (226 of 229 rows).
+//
+// What settled i in r11: the three-round loops at kinds 14, 68 and 84 release
+// their blitters in a do { } while (0), which ends CSE's block, so the two table
+// loads stay short-lived, the loop no longer hoists them, and with m first and
+// m, x and y local to the loop, r8, r10 and r9 fill before i is allocated.
+// A pair of block locals freed most of the rest: life and its half at kinds 5 and
+// 86, m, x and y at kind 15. Loops whose p is stepped with i read p = &SPARKS[i]:
+// loop reduction keeps the step in its own register with p a copy, exactly as
+// the listing's kind 66. Where i is set before its pointer (kind 44 and the
+// first particles), i = 0 comes first. Kind 41's offsets 0x1cd2 and 0x3781 were
+// wrong by the work's 0x700.
+//
+// Two facts to read this function by. sched2 moves an instruction across a call
+// when it only touches a callee-saved register, so an r5 set before a call and
+// read after is often a reload, not a local. And reload rotates through r0, r1,
+// particle, r3, r5: one reload more or less shifts the low registers of every later
+// row, so differences are read from the top, and one fix can settle hundreds.
+//
+// Four more facts, each of which settled many rows here. A local mentioned once in
+// the loop is folded back by loop.c; set in the loop's block and mentioned twice it
+// hoists, and a hoisted constant-valued local with no register is rematerialized
+// by reload, which costs one rotation step. PRE's reaching register survives copy
+// propagation only when the first register is set again in the same block: vec is
+// origin, then base. A draw call returns a value (the load of r0 otherwise ranks
+// first by dependants). A loop pointer p = &SPARKS[i] keeps a separate stepping
+// register only when p is used outside the loop, so p is the shared one there.
+//
+// Reload's rotation is r0, r1, r2, r3, r5; a form that pressures a low-register loop
+// until reload takes r4 adds r4 to the rotation for the whole function, and the
+// figure jumps to about 4400. Reading such a jump as a wrong form is a mistake.
+//
+// Three more facts that settled large arms. A loop written with labels and goto
+// has no loop notes, so nothing hoists out of it and its steps are explicit: kinds
+// 80 and 85. A local reused for several values is global and ranks low: kind 71's
+// fade, angle and size are one local, which is what keeps r5 free there. Passing a
+// value through a long-lived local of the function gives it a high register, as
+// kind 85's limit does for its row base.
+//
+// Left, top down (slots normalized 103, every register blind 72):
+// - Kind 80 (28): r3, r2, r1 for three, mirror and source; here r2, r1, r2. The
+//   destination's symbol loads into r1 in the listing. The buffer here is the symbol
+//   gMapCellBuffer, the constant everywhere else; Data_02010208 needs a home.
+// - Kind 85 (34): the base's long-lived local takes r8 and h sl, swapped; reload is
+//   one step behind from the arm's first load (r3 where the listing has r5), and
+//   no reload shows between. threshold's asm cut stands for a copy GCSE otherwise
+//   propagates away; the source's form of that copy is not known.
+// - The projection's fresh add takes the asm's second mention of o; the source's
+//   second mention is not known.
+// - Kind 79 (15): the copy of the step is r8 and the step r7, here reversed by
+//   rank; first uses read the step in the listing, so p is replaced there up to the
+//   first label, and p is not the shared one. record_giv makes a giv non-replaceable
+//   only when it is mentioned outside the loop or the biv steps inside its life.
+// - Kind 70's step starts from i at run time, 4 rows: i = 0 is above the if, so
+//   the biv's start is not known; the listing has no multiply.
+// - Ties: kind 90's texture store order (8), kind 84's pixels (4), kind 16's store (2),
+//   the first center store (2), kind 14's mov r2, r8 (2).
+//
+// Before adoption: RELEASE_BLITTERS and RELOAD_BLITTER are exempt only if every
+// use matches through them, CLEAR and FILL need S2's wrapper tags unless they are
+// the game's own layer, and both asms (the "X" at the first projection, the cut on
+// kind 85's threshold) and kind 80 and 85's closing do { } while (0) are barriers.
 
 // Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
 // Most of the differ is two offsets: the frame is 256 against 264, so every
@@ -112,7 +157,7 @@ struct BattleObject {
   s32 unk48;
 };
 
-typedef void (*DrawFunc)(void *, const void *, s32, s32, s32, s32);
+typedef s32 (*DrawFunc)(void *, const void *, s32, s32, s32, s32);
 
 struct DrawFuncs {
   DrawFunc draw[2];
@@ -208,13 +253,13 @@ extern const u16 gData_08197486[];
 extern u8 gData_08197492[];
 extern u8 gData_08197498[];
 extern const u8 gData_0819749e[];
-extern const u8 gData_081974ad[];
-extern const u16 gData_081974bc[];
+extern u8 gData_081974ad[];
+extern u16 gData_081974bc[];
 extern u8 gData_0819750c[];
 extern u8 gData_0819751a[];
 extern const u8 gData_081977f8[];
 extern const u8 gData_0819781a[];
-extern const u8 gData_08197826[];
+extern u8 gData_08197826[];
 extern const u32 gData_08197834[];
 extern const u8 gData_0819887e[];
 extern const u8 gData_08198882[];
@@ -228,7 +273,7 @@ extern const u16 gData_081988ee[];
 extern const u16 gData_081988fc[];
 extern const u16 gData_0819890a[];
 extern const u16 gData_08198918[];
-extern const u16 gData_08198926[];
+extern u16 gData_08198926[];
 extern const u16 gData_08198934[];
 extern const u8 gData_0819893a[];
 extern const u8 gData_0819893d[];
@@ -303,7 +348,7 @@ void Func_0815f0a0(s32);
 void Graphics_PackTileRows(void *, void *, s32, s32);
 void Func_0818caa8(void *, s32, s32, s32);
 s32 BattleEffect_LoadBlitter(s32, s32);
-void Func_08196404(s32, s32, s32, s32, s32);
+s32 Func_08196404(s32, s32, s32, s32, s32);
 void Render_TransformVertices(const void *, void *, s32);
 struct Model *Render_AllocateModelList(s32);
 void Render_DrawModelList(struct Model *);
@@ -317,15 +362,20 @@ void Sound_PlayFar(s32);
 #define PLTT ((void *)0x05000000)
 #define PLTT_U16 ((volatile u16 *)0x05000000)
 #define BG_VRAM ((void *)0x06004000)
-#define SPARKS ((struct Particle *)0x02016000)
+#define SPARKS sparks
 #define RINGS ((struct Particle *)0x02016e00)
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
-static __inline__ void CLEAR(void *dst, s32 size) { ((void (*)(void *, s32))0x03000258)(dst, size); }
+static __inline__ void CLEAR(void *dst, s32 size) { ((s32 (*)(void *, s32))0x03000258)(dst, size); }
+static __inline__ void FILL(void *dst, s32 size, s32 value) { ((s32 (*)(void *, s32, s32))0x03000260)(dst, size, value); }
 #define RELOAD_BLITTER(slot, n) do { HeapSlot_Release(slot); BattleEffect_LoadBlitter(slot, n); } while (0)
+#define RELEASE_BLITTERS() HeapSlot_Release(188); do { HeapSlot_Release(104); } while (0)
 
+extern u8 gMapCellBuffer[];
+extern u8 Data_02010208[];
 void Func_0815f16c(struct SummonAction *action, s32 kind) {
   u8 *buffer;
+  struct Particle *sparks;
   struct SummonWork *work;
   void *screen;
   s32 frame;
@@ -353,8 +403,10 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
   u8 *src;
   u8 *dst;
   s32 v;
+  s32 *vec;
 
   buffer = (u8 *)0x02010000;
+  sparks = (struct Particle *)0x02016000;
   work = IWRAM->summon;
   screen = IWRAM->screen;
   bg = IWRAM->bg;
@@ -382,6 +434,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind) {
 
     s32 j;
     s32 v;
+    u8 *src;
 
     Resource_LoadAndDecompress((s32)&Value_000000d9, buffer, 1, 0);
 for (i = 1; i != 8; i++) { s32 fade; j = 0; fade = i * 8;
@@ -444,25 +497,39 @@ CLEAR(buffer + 0xc56, 0x4000);
     Resource_LoadAndDecompress((s32)&Value_0000013e, buffer + 0xd80, 1, 0);
   } else if (kind == 80) {
     u8 *dst;
+    s32 row;
+    s32 two;
+    u8 *b;
 s32 k; s32 i;
 
     Resource_LoadAndDecompress((s32)&Value_0000013a, buffer + 0x1000, 1, 0);
 CLEAR(buffer, 0x1000);
-    for (i = 0; i != 48; i++) {
-      s32 row;
-      s32 two;
+    b = gMapCellBuffer;
+    i = 0;
+    two = 0;
+    row = 0;
+  rows:
+    {
       u8 *mirror;
-      row = i * 64;
-      two = i * 2;
-      src = buffer + 0x1000 + (two + i) * 8;
-      mirror = buffer + row + 0x237;
-      dst = row + (u8 *)0x02010208;
+      s32 three;
+      three = two + i;
+      mirror = row + b;
+      dst = row + Data_02010208;
+      src = three * 8 + b;
+      src += 0x1000;
+      mirror += 0x237;
 
       for (k = 0; k != 24; k++) {
         *dst++ = *src;
         *mirror-- = *src++;
       }
     }
+    i++;
+    two += 2;
+    row += 64;
+    if (i != 48)
+      goto rows;
+    do { } while (0);
   } else if (kind == 79) {
     s32 i;
     s32 k;
@@ -661,9 +728,10 @@ CLEAR(buffer, 0x1000);
     work->particle[i].vz = Random16() & 0xffff;
   }
   Actor_SetAnimationSpeedFar(object, 0);
-  origin[0] = object->x;
-  origin[1] = object->y + 0x500000;
-  origin[2] = object->z;
+  vec = origin;
+  vec[0] = object->x;
+  vec[1] = object->y + 0x500000;
+  vec[2] = object->z;
   save24 = object->unk24;
   save28 = object->unk28;
   save2c = object->unk2c;
@@ -674,8 +742,9 @@ CLEAR(buffer, 0x1000);
   object->unk2c = 0;
   object->unk34 = 0;
   object->unk48 = 0;
-  EffectPosition_ProjectScaledBattler(action->target, base);
-  base[0] = base[0] / 2;
+  vec = base;
+  EffectPosition_ProjectScaledBattler(action->target, vec);
+  vec[0] = vec[0] / 2;
   Sound_PlayFar(212);
 
   for (frame = 0; frame != 32; frame++) {
@@ -712,12 +781,14 @@ CLEAR(buffer, 0x1000);
       }
     }
     if (kind <= 37 && count < 64) {
+      s32 *o = origin;
       Render_ResetTransformState();
       Transform_SetLookAt(bg, (u8 *)bg + 12);
-      EffectPosition_ProjectPoint(origin, pos);
+      EffectPosition_ProjectPoint(o, pos);
       pos[0] = pos[0] / 2;
       drawFuncs.draw[0](screen, buffer + 0x3c56, pos[0] - 10, pos[1] - 4, 20,
                         40);
+      __asm__("" : : "X"(o));
     }
     work->unk78e8 = 1;
     wait(1);
@@ -827,8 +898,9 @@ CLEAR(buffer, 0x1000);
     work->particle[i].life = 0;
   if (kind != 44) {
     half = BattleUnit_GetEffectHeightFar(action->actor) / 2;
+    i = 0;
     p = work->particle;
-    for (i = 0; i != 32; i++, p++) {
+    for (; i != 32; i++, p++) {
       p->x = object2->x;
       p->y = half;
       p->z = object2->z;
@@ -875,22 +947,23 @@ CLEAR(buffer, 0x1000);
       kind == 83 || kind == 84 || kind == 85 || kind == 86 || kind == 88) {
   } else if (kind == 66) {
     p = SPARKS;
-    for (i = 0; i != 64; i++, p++) {
-      p->x = object2->x;
-      p->y = 0x140000;
-      p->z = object2->z;
+    for (i = 0; i != 64; i++) {
+      struct Particle *q;
+      q = &SPARKS[i];
+      q->x = object2->x;
+      q->y = 0x140000;
+      q->z = object2->z;
       if (object2->x < 0)
-        p->vx = -((Random16() & 255) + 128) << 11;
+        q->vx = -((Random16() & 255) + 128) << 11;
       else
-        p->vx = ((Random16() & 255) + 128) << 11;
-      p->vy = ((Random16() & 255) - 127) << 10;
-      p->vz = 0;
-      p->life = 0;
+        q->vx = ((Random16() & 255) + 128) << 11;
+      q->vy = ((Random16() & 255) - 127) << 10;
+      q->vz = 0;
+      q->life = 0;
     }
   } else {
     struct Particle *p;
-    height = 0x140000;
-    if (kind == 42 || kind == 15)
+    if (kind == 42 || (height = 0x140000, kind == 15))
       height = 0;
     p = SPARKS;
     for (i = 0; i != 64; i++, p++) {
@@ -958,10 +1031,13 @@ CLEAR(buffer, 0x1000);
 
   for (frame = 0; frame != duration; frame++) {
     struct Particle *p;
+    struct Particle *particle;
     if (kind != 41 && kind != 62 && kind != 83 && kind != 85 && kind != 86 &&
         kind != 88) {
+      s32 *w;
+      w = work->wave;
       for (i = 0; i != 160; i++)
-        work->wave[i] =
+        *w++ =
             (0x40000 - (Trig_Sin((frame << 12) + (i << 11)) << 2)) >> 10;
     }
     switch (kind) {
@@ -1067,10 +1143,9 @@ CLEAR(buffer, 0x1000);
       Render_ResetTransformState();
       Transform_SetLookAt(bg, (u8 *)bg + 12);
       if (frame > 3) {
-        s32 i;
         if (kind == 79) {
-          p = work->particle;
-          for (i = 0; i != 64; i++, p++) {
+          for (i = 0; i != 64; i++) {
+            p = &work->particle[i];
             if (p->life > 0) {
                 s32 n;
               n = (p->life >> 2) + 1;
@@ -1238,9 +1313,8 @@ CLEAR(buffer, 0x1000);
           angle = Random16() & 0xffff;
           x = ((Trig_Sin(angle) << 3) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
-          y = ((amp * Trig_Cos(angle)) >> 16) + off - gData_08197498[m] / 2;
-          HeapSlot_Release(188);
-          HeapSlot_Release(104);
+          y = ((Trig_Cos(angle) * amp) >> 16) + off - gData_08197498[m] / 2;
+          RELEASE_BLITTERS();
           Func_08196404(188, 7, 7, gData_0819887e[Random16() & 3] | 3, 0);
           IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 56,
                         gData_08197492[m], gData_08197498[m]);
@@ -1255,13 +1329,12 @@ CLEAR(buffer, 0x1000);
         for (i = 0; i != 3; i++) {
             s32 m;
             s32 x;
-          angle = Random16() & 0xffff;
           m = i & 3;
+          angle = Random16() & 0xffff;
           x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
           y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
-          HeapSlot_Release(188);
-          HeapSlot_Release(104);
+          RELEASE_BLITTERS();
           Func_08196404(188, 7, 7, gData_08198882[Random16() & 3] | 3, 1);
           IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
@@ -1272,11 +1345,14 @@ CLEAR(buffer, 0x1000);
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
         if (frame >= i + 4) {
+          s32 life;
           life = p->life;
           if (life <= 23) {
+            s32 m;
+            m = life / 4;
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
-            drawFuncs.draw[1](screen, buffer + 0x1809 + (life / 4) * 0x480,
+            drawFuncs.draw[1](screen, buffer + 0x1809 + m * 0x480,
                               point[0] - 12, point[1] - 24, 24, 48);
             BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
             p->life++;
@@ -1307,9 +1383,10 @@ CLEAR(buffer, 0x1000);
           work->unk77a8 = 8;
         if (frame > 1) {
             struct Particle *p;
-          count = 0;
+          i = 0;
           p = work->particle;
-          for (i = 0; i != 64; i++, p++) {
+          count = 0;
+          for (; i != 64; i++, p++) {
             if (p->life == 0) {
               count++;
               p->x = object2->x;
@@ -1331,11 +1408,13 @@ CLEAR(buffer, 0x1000);
       HeapSlot_Release(188);
       HeapSlot_Release(104);
       if (frame >= 4 && frame < 24) {
+        s32 h;
         x = target[0] / 2;
+        h = 48;
         BattleEffect_LoadBlitter(188, 19);
-        IWRAM_SLOT_BC(screen, buffer, x - 24, 48, 24, 48);
-        RELOAD_BLITTER(188, 23);
-        IWRAM_SLOT_BC(screen, buffer, x, 48, 24, 48);
+        IWRAM_SLOT_BC(screen, buffer, x - 24, h, 24, h);
+        HeapSlot_Release(188); BattleEffect_LoadBlitter(188, 23);
+        IWRAM_SLOT_BC(screen, buffer, x, h, 24, h);
         HeapSlot_Release(188);
       }
       BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
@@ -1345,29 +1424,35 @@ CLEAR(buffer, 0x1000);
         REG_BLDALPHA = (32 - frame) | 0x1000;
       if (frame > 5) {
           s32 x;
- s32 o[2];
+        s32 o1;
         x = target[0] / 2;
         m = __modsi3(frame / 2, 3);
- o[1] = m * 0xa00;
-        drawFuncs.draw[0](screen, buffer + 0xc56 + o[1], x - 20, 16, 40,
+        x -= 20;
+        o1 = m * 0xa00;
+        drawFuncs.draw[0](screen, buffer + 0xc56 + o1, x, 16, 40,
                           32);
-        drawFuncs.draw[0](screen, buffer + 0x2a56 + m * 0x500, x - 20, 48,
+        drawFuncs.draw[0](screen, buffer + 0x2a56 + m * 0x500, x, 48,
                           40, 32);
- o[0] = (s32)(buffer + 0x1156) + o[1];
-        drawFuncs.draw[0](screen, (u8 *)o[0], x - 20, 80,
+        {
+        u8 *o0;
+        o0 = buffer + 0x1156 + o1;
+        drawFuncs.draw[0](screen, o0, x, 80,
                           40, 32);
+        }
       }
     } else if (kind == 5 || kind == 53 || kind == 78) {
-      s32 i;
       if (frame < 24) {
         p = SPARKS;
         for (i = 0; i != 16; i++, p++) {
           if (frame >= i / 2 + 4) {
+            s32 life;
             life = p->life;
             if (life <= 11) {
+              s32 half;
+              half = life / 2;
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
-              drawFuncs.draw[0](screen, buffer + (life / 2) * 0x800,
+              drawFuncs.draw[0](screen, buffer + half * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
               BattleEffectKernels_IntegrateVector3(p, 60, 0x1000);
               p->life++;
@@ -1378,7 +1463,8 @@ CLEAR(buffer, 0x1000);
     } else if (kind == 4) {
     } else if (kind == 8) {
     } else if (kind == 41) {
-      y = ((Trig_Cos(frame << 9) << 2) >> 16) + ((s16 *)target)[3] + 16;
+      s16 *t = (s16 *)target;
+      y = t[3] + ((Trig_Cos(frame << 9) << 2) >> 16) + 16;
       if (frame < 4) {
         drawFuncs.draw[0](screen, work->frames,
                           gData_0819750c[action->side * 7],
@@ -1388,13 +1474,13 @@ CLEAR(buffer, 0x1000);
           drawFuncs.draw[0](screen, work->frames,
                             gData_0819750c[action->side * 7],
                             y + gData_0819751a[0], 57, 98);
-        drawFuncs.draw[0](screen, work->frames + 0x1cd2,
+        drawFuncs.draw[0](screen, work->frames + 0x15d2,
                           gData_0819750c[action->side * 7 + 1],
                           y + gData_0819751a[1], 99, 69);
         if (frame >= 4 && frame < 6)
-          ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x3f3f3f3f);
+          FILL(screen, 0x4000, 0x3f3f3f3f);
         if (frame >= 6 && frame < 8)
-          drawFuncs.draw[0](screen, work->frames + 0x3781,
+          drawFuncs.draw[0](screen, work->frames + 0x3081,
                             gData_0819750c[action->side * 7 + 2],
                             y + gData_0819751a[2], 128, 91);
         if (frame >= 8 && frame < 10)
@@ -1416,11 +1502,13 @@ CLEAR(buffer, 0x1000);
       }
     } else if (kind == 85) {
       s32 h;
+      s32 y;
       REG_BLDCNT = 0;
       work->unk7780 = 1;
       work->unk7784 = 0;
       HeapSlot_Release(188);
-      RELOAD_BLITTER(104, 35);
+      HeapSlot_Release(104);
+      BattleEffect_LoadBlitter(104, 35);
       drawFuncs.draw[0] = IWRAM_SLOT_68;
       if (frame == 0) {
         for (i = 0; i != 1104; i++)
@@ -1431,19 +1519,39 @@ CLEAR(buffer, 0x1000);
         y = 16;
       h = 96;
       if (frame > 7) {
-        s32 i;
+        s32 t;
+        s32 off;
+        i = 0;
+        t = 0;
         row = 112 - frame * 2;
-        for (i = 0; i != 34; i++, row++) {
-          if (row >= 0 && row < 96) {
-            src = work->frames + (row & 15) * 69;
-            dst = buffer + row * 69;
-            for (k = 0; k != 69; k++) {
-              if (*src++ < i)
-                *dst = 0;
-              dst++;
-            }
+        off = row * 69;
+      rows2:
+        if (row >= 0 && row < 96) {
+          s32 k;
+          s32 threshold;
+          s32 cell;
+          u8 *from;
+          u8 *to;
+          k = 0;
+          threshold = t;
+          __asm__("" : "=r"(threshold) : "0"(threshold));
+          cell = (row & 15) * 69;
+          to = buffer + off;
+          limit = (s32)((u8 *)work + cell);
+          from = (u8 *)limit + 0x700;
+          for (; k != 69; k++) {
+          if (*from++ < threshold)
+              *to = 0;
+            to++;
           }
         }
+        i++;
+        t++;
+        off += 69;
+        row++;
+        if (i != 34)
+          goto rows2;
+        do { } while (0);
       }
       drawFuncs.draw[0](screen, buffer, 29, y, 69, h);
       if (frame > 5) {
@@ -1481,7 +1589,7 @@ CLEAR(buffer, 0x1000);
         else
           m = 3;
         HeapSlot_Release(188);
-        RELOAD_BLITTER(104, 3);
+        HeapSlot_Release(104); BattleEffect_LoadBlitter(104, 3);
         IWRAM_SLOT_68(screen, buffer + m * 0x360, target[0] / 2 - 18, 56, 18,
                       48);
         RELOAD_BLITTER(104, 7);
@@ -1494,14 +1602,18 @@ CLEAR(buffer, 0x1000);
           limit = 16;
         else
           limit = 24;
-        p = SPARKS;
-        for (i = 0; i != limit; i++, p++) {
+        for (i = 0; i != limit; i++) {
+          struct Particle *p;
+          p = &SPARKS[i];
           if (frame >= i / 2 + 4) {
+            s32 life;
             life = p->life;
             if (life <= 9) {
+              s32 half;
+              half = life / 2;
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
-              drawFuncs.draw[0](screen, buffer + 0xd80 + (life / 2) * 0x800,
+              drawFuncs.draw[0](screen, buffer + 0xd80 + half * 0x800,
                                 point[0] - 16, point[1] - 32, 32, 64);
               BattleEffectKernels_IntegrateVector3(p, 64, 0x1000);
               p->life++;
@@ -1528,7 +1640,7 @@ CLEAR(buffer, 0x1000);
       if (t >= 0 && t < 16)
         REG_BLDALPHA = ((t / 2 + 8) << 8) | (16 - t);
       if (frame >= 4 && frame < 8)
-        ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x01010101);
+        FILL(screen, 0x4000, 0x01010101);
       if (frame > 3) {
         if (action->side == 0)
           drawFuncs.draw[0](screen, buffer, 32, 21, 96, 88);
@@ -1580,7 +1692,7 @@ CLEAR(buffer, 0x1000);
       if (frame > 4)
         drawFuncs.draw[0](screen, buffer, 35, 17, 60, 95);
       if (frame == 5)
-        ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x3f3f3f3f);
+        FILL(screen, 0x4000, 0x3f3f3f3f);
       if (frame >= 0 && (m = __divsi3(frame, 3)) < 7) {
         if (action->side == 0)
           drawFuncs.draw[0](screen, buffer + gData_081988ee[m],
@@ -1624,7 +1736,7 @@ CLEAR(buffer, 0x1000);
       if (t >= 0 && t < 16)
         REG_BLDALPHA = (16 - t) | 0x1000;
       if (frame >= 4 && frame < 6)
-        ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x3f3f3f3f);
+        FILL(screen, 0x4000, 0x3f3f3f3f);
       if (frame < 4) {
         if (action->side == 1)
           drawFuncs.draw[0](screen, work->frames, 0, 24, 80, 104);
@@ -1663,9 +1775,15 @@ CLEAR(buffer, 0x1000);
             x += (i + 1) / 2 * 3;
           else
             x -= (i + 1) / 2 * 3;
-          drawFuncs.draw[i == 0 || ((i - 1) & 3) > 1](
+          {
+            s32 which;
+            which = 1;
+            if (i != 0)
+              which = ((i - 1) & 3) > 1;
+            drawFuncs.draw[which](
               screen, buffer + gData_0819747a[m], x, gData_08197473[m] + 48,
               gData_08197467[m], gData_0819746d[m]);
+          }
         }
       }
     } else if (kind == 46) {
@@ -1722,8 +1840,8 @@ CLEAR(buffer, 0x1000);
           p->vx = -0x30000;
         else
           SPARKS->vx = 0x30000;
-        p->x += -p->vx * 12;
         p->vy = 0x80000;
+        p->x += -p->vx * 12;
         p->y += -p->vy * 12;
       }
       if (frame <= 150) {
@@ -1751,34 +1869,31 @@ CLEAR(buffer, 0x1000);
       }
     } else if (kind == 63 || kind == 64) {
       s32 x;
+      s32 y;
       if (frame < 6) {
         if (action->side == 0) {
-          step = (6 - frame) * 3;
-          x = target[0] / 2 + step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] / 2 + (6 - frame) * 3 * 2;
+          y = target[1] - (6 - frame) * 3 * 4 + 24;
         } else {
-          step = (6 - frame) * 3;
-          x = target[0] / 2 - step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] / 2 - (6 - frame) * 3 * 2;
+          y = target[1] - (6 - frame) * 3 * 4 + 24;
         }
         drawFuncs.draw[1](screen, buffer, x - 16, y - 32, 32, 64);
       }
     } else if (kind == 70) {
       s32 x;
+      s32 y;
       if (frame > 31)
         REG_BLDALPHA = (48 - frame) | 0x1000;
-      p = SPARKS;
       i = 0;
       if (frame < 14) {
         struct Particle *p;
         if (action->side == 0) {
-          step = (14 - frame) * 3;
-          x = target[0] / 2 + step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] / 2 + (14 - frame) * 3 * 2;
+          y = target[1] - (14 - frame) * 3 * 4 + 24;
         } else {
-          step = (14 - frame) * 3;
-          x = target[0] / 2 - step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] / 2 - (14 - frame) * 3 * 2;
+          y = target[1] - (14 - frame) * 3 * 4 + 24;
         }
         drawFuncs.draw[1](screen, buffer, x - 16, y - 32, 32, 64);
         if (frame == 13) {
@@ -1798,22 +1913,24 @@ CLEAR(buffer, 0x1000);
           }
         }
       } else {
-        for (; i != 16; i++, p++) {
+        for (; i != 16; i++) {
             s32 m;
-          m = __modsi3(i, 5) * 3;
-          m += __modsi3(__divsi3(p->life, 96), 3);
-          drawFuncs.draw[i <= 2](screen, buffer + 0x800 + gData_08197834[m],
-                                 (p->x >> 16) - gData_0819781a[m] / 2,
-                                 (p->y >> 16) - gData_08197826[m] / 2,
+          particle = &SPARKS[i];
+          { s32 a; a = __modsi3(i, 5) * 3;
+          m = a + __modsi3(__divsi3(particle->life, 96), 3); }
+          drawFuncs.draw[i > 2 ? 0 : 1](screen, buffer + 0x800 + gData_08197834[m],
+                                 (particle->x >> 16) - gData_0819781a[m] / 2,
+                                 (particle->y >> 16) - gData_08197826[m] / 2,
                                  gData_0819781a[m], gData_08197826[m]);
-          BattleEffectKernels_IntegrateVector2(p, 64, 0x2000);
-          p->life += p->z;
-          if (p->z > 1 && (frame & 1))
-            p->z--;
+          BattleEffectKernels_IntegrateVector2(particle, 64, 0x2000);
+          particle->life += particle->z;
+          if (particle->z > 1 && (frame & 1))
+            particle->z--;
         }
       }
     } else if (kind == 94) {
       s32 x;
+      s32 y;
       if (frame == 0) {
         struct Particle *p;
         Resource_LoadAndDecompress((s32)&Value_000000e6, buffer + 0x2000, 1,
@@ -1840,39 +1957,43 @@ CLEAR(buffer, 0x1000);
         work->unk77a8 = 8;
       }
       i = 0;
-      p = work->particle;
+      particle = work->particle;
       if (frame < 14) {
         if (action->side == 0) {
-          step = (14 - frame) * 3;
-          x = target[0] + step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] + (14 - frame) * 3 * 2;
+          y = target[1] - (14 - frame) * 3 * 4 + 24;
         } else {
-          step = (14 - frame) * 3;
-          x = target[0] - step * 2;
-          y = target[1] - step * 4 + 24;
+          x = target[0] - (14 - frame) * 3 * 2;
+          y = target[1] - (14 - frame) * 3 * 4 + 24;
         }
         drawFuncs.draw[0](screen, buffer + 0x2000, 32, y - 32, 64, 64);
         REG_BG2X = (64 - x) << 8;
       } else {
-        for (; i != 32; i++, p++) {
+        for (; i != 32; i++, particle++) {
             s32 m;
+          s32 w;
+          s32 h;
+          s32 left;
+          s32 top;
           m = __modsi3(i, 5) * 3;
-          m += __modsi3(__divsi3(p->z, 96), 3);
+          m += __modsi3(__divsi3(particle->z, 96), 3);
+          w = gData_0819749e[m];
+          left = (particle->x >> 16) - w / 2;
+          top = particle->y >> 16;
+          h = gData_081974ad[m];
+          top -= h / 2;
           drawFuncs.draw[0](screen, buffer + 0x83c + gData_081974bc[m],
-                            (p->x >> 16) - gData_0819749e[m] / 2,
-                            (p->y >> 16) - gData_081974ad[m] / 2,
-                            gData_0819749e[m], gData_081974ad[m]);
-          BattleEffectKernels_IntegrateVector2(p, 63, 0x8000);
-          p->z += p->vz;
-          if ((frame & 1) && p->vz > 0)
-            p->vz--;
+                            left, top, w, h);
+          BattleEffectKernels_IntegrateVector2(particle, 63, 0x8000);
+          particle->z += particle->vz;
+          if ((frame & 1) && particle->vz > 0)
+            particle->vz--;
         }
       }
     } else if (kind == 84) {
       s32 fade;
       s32 angle;
       if (frame == 0) {
-        s32 i;
         struct Particle *p;
         p = RINGS;
         for (i = 0; i != 32; i++, p++) {
@@ -1890,15 +2011,16 @@ CLEAR(buffer, 0x1000);
       if (frame == 24)
         Sound_PlayFar(390);
       if (frame >= 8 && frame < 24) {
+        s32 y;
         for (i = 0; i != 3; i++) {
+            s32 m;
             s32 x;
-          angle = Random16() & 0xffff;
           m = i & 3;
+          angle = Random16() & 0xffff;
           x = ((Trig_Sin(angle) << 4) >> 16) + target[0] / 2 -
               gData_08197492[m] / 2;
           y = ((Trig_Cos(angle) << 4) >> 16) - gData_08197498[m] / 2;
-          HeapSlot_Release(188);
-          HeapSlot_Release(104);
+          RELEASE_BLITTERS();
           Func_08196404(188, 7, 7, gData_0819894e[Random16() & 3] | 3, 1);
           IWRAM_SLOT_BC(screen, buffer + gData_08197486[m], x, y + 80,
                         gData_08197492[m], gData_08197498[m]);
@@ -1909,22 +2031,25 @@ CLEAR(buffer, 0x1000);
       if (frame > 3) {
         struct Particle *p;
         struct Model *model;
+        struct Texture *tex;
         matrix = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
         texture164.width = 5;
         texture164.height = 7;
         model->kind = 6;
+        tex = &texture164;
         model->mesh = gData_08199268;
         model->matrix = matrix;
-        model->texture = &texture164;
-        p = RINGS;
-        for (i = 0; i != 20; i++, p++) {
+        model->texture = tex;
+        for (i = 0; i != 20; i++) {
+          struct Particle *p;
+          p = &RINGS[i];
           if (frame >= i && frame < i + 8) {
             fade = 0;
             if (frame == i)
               fade -= 16;
             else if (frame >= i + 4)
-              fade = -((frame - i) * 16 - 64);
+              fade = -((frame - i - 4) * 16);
             model->fade = fade;
             texture164.pixels = buffer + 0xc56 + (p->life << 12);
             p->life = (p->life + 1) & 3;
@@ -1943,6 +2068,7 @@ CLEAR(buffer, 0x1000);
       }
     } else if (kind == 71 || kind == 80 || kind == 82) {
       void *matrix;
+      struct Model *model;
       s32 fade;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
@@ -1965,7 +2091,7 @@ CLEAR(buffer, 0x1000);
       if (frame == 8)
         Sound_PlayFar(104);
       if (fade >= -63) {
-        angle = frame << 12;
+        fade = frame << 12;
         if (kind == 82) {
           SceneTransform_ApplyPitch(-0x800);
           SceneTransform_ApplyYaw(-frame << 11);
@@ -1974,7 +2100,7 @@ CLEAR(buffer, 0x1000);
           SceneTransform_ApplyPitch(-0x1000);
           SceneTransform_ApplyYaw(frame << 11);
         }
-        Func_0801521c(angle);
+        Func_0801521c(fade);
         Render_TransformVertices(gData_08199210, matrix, 4);
         Render_DrawModelList(model);
         if (kind != 82) {
@@ -1988,18 +2114,21 @@ CLEAR(buffer, 0x1000);
       Heap_Release(matrix);
       if (kind == 82) {
           s32 m;
+          s32 two;
         m = frame / 4;
-        size = 0x10000;
+        two = m * 2;
+        fade = 0x10000;
         if (frame > 39)
-          size = 0x38000 - (frame << 12);
-        if (m * 2 > 1 && size > 0) {
-          Func_0815b434(work->frames, m * 4, size);
+          fade = 0x38000 - (frame << 12);
+        if (two > 1 && fade > 0) {
+          Func_0815b434(work->frames, m * 4, fade);
           HeapSlot_Release(188);
           Func_0818caa8(work->frames, target[0] / 2, target[1], m * 4);
           BattleEffect_LoadBlitter(188, 15);
         }
       }
     } else if (kind == 81 || kind == 83 || kind == 92 || kind == 93) {
+      void *matrix;
       s32 t;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
@@ -2083,8 +2212,9 @@ CLEAR(buffer, 0x1000);
         s32 x;
         if (frame == 4) {
           struct Particle *p;
-          p = SPARKS;
-          for (i = 0; i != 64; i++, p++) {
+          for (i = 0; i != 64; i++) {
+            struct Particle *p;
+            p = &SPARKS[i];
             p->x = Random16();
             p->y = 0;
             p->vy = ((Random16() & 3) + 3) << 17;
@@ -2099,8 +2229,8 @@ CLEAR(buffer, 0x1000);
               r = (p->y >> 16) - k * 2;
               if (r >= 0) {
                   s32 n;
-                x = target[0] / 2 + ((r * Trig_Sin(p->x)) >> 16);
-                y = target[1] + ((r * Trig_Cos(p->x)) >> 16);
+                x = target[0] / 2 + ((Trig_Sin(p->x) * r) >> 16);
+                y = target[1] + ((Trig_Cos(p->x) * r) >> 16);
                 n = 2 - k / 8;
                 drawFuncs.draw[0](screen, (u8 *)tiles + gData_08197410[n - 1],
                                   x - n / 2, y - n, n, n * 2);
@@ -2112,15 +2242,17 @@ CLEAR(buffer, 0x1000);
         }
       }
     } else if (kind == 91) {
+      struct Texture *tex;
       void *matrix;
       s32 t;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
       texture140.width = 7;
       texture140.height = 7;
-      texture140.pixels = buffer;
+      tex = &texture140;
+      tex->pixels = buffer;
       model->kind = 7;
-      model->texture = &texture140;
+      model->texture = tex;
       model->mesh = gData_08199364;
       model->matrix = matrix;
       t = frame - 4;
@@ -2141,10 +2273,9 @@ CLEAR(buffer, 0x1000);
           Render_DrawModelList(model);
         }
       }
-      tex = &texture140;
-      tex->width = 7;
-      tex->height = 4;
-      tex->pixels = buffer + 0x4000;
+      texture140.width = 7;
+      texture140.height = 4;
+      texture140.pixels = buffer + 0x4000;
       model->mesh = gData_08198d2c;
       for (i = 0; i != 2; i++) {
         s32 start;
@@ -2175,6 +2306,7 @@ CLEAR(buffer, 0x1000);
       if (frame == 4)
         work->unk77a8 = 8;
     } else if (kind == 90) {
+      struct Texture *tex;
       s32 scale;
       matrix = Heap_AllocEwram(0x200);
       model = Render_AllocateModelList(1);
@@ -2183,9 +2315,9 @@ CLEAR(buffer, 0x1000);
       tex->height = 6;
       tex->pixels = buffer;
       model->kind = 7;
-      model->texture = tex;
-      model->matrix = matrix;
       model->mesh = gData_081990d0;
+      model->matrix = matrix;
+      model->texture = tex;
       for (i = 0; i != 4; i++) {
         start = gData_0819895e[i] + 4;
         model->frame = (frame * 8 + i * 32) & 127;
@@ -2216,15 +2348,14 @@ CLEAR(buffer, 0x1000);
       if (frame == 4)
         work->unk77a8 = 20;
     } else if (kind == 15) {
-      s32 i;
       if (frame == 0) {
         struct Particle *p;
         p = SPARKS;
         for (i = 0; i != 16; i++, p++) {
           p->life = -i * 2;
           p->x = Random16();
-          p->z = i * 2 + 80;
           p->vx = (Random16() & 511) + 512;
+          p->z = i * 2 + 80;
         }
       }
       for (i = 0; i != 0x400; i++) {
@@ -2233,12 +2364,16 @@ CLEAR(buffer, 0x1000);
       }
       EffectPosition_ProjectScaledBattler(action->actor, point2);
       point2[0] = point2[0] / 2;
-      p = SPARKS;
-      for (i = 0; i != 16; i++, p++) {
+      for (i = 0; i != 16; i++) {
+        struct Particle *p;
+        p = &SPARKS[i];
         if (p->life >= 0 && p->z > 0) {
+          s32 m;
+          s32 x;
+          s32 y;
           m = __modsi3(i, 3);
-          x = point2[0] + ((p->z * Trig_Sin(p->x)) >> 16);
-          y = point2[1] + ((p->z * Trig_Cos(p->x)) >> 16);
+          x = point2[0] + ((Trig_Sin(p->x) * p->z) >> 16);
+          y = point2[1] + ((Trig_Cos(p->x) * p->z) >> 16);
           p->z -= 4;
           p->x += p->vx;
           if (kind == 16)
@@ -2301,12 +2436,14 @@ CLEAR(buffer, 0x1000);
         REG_BLDALPHA = (64 - frame) | 0x1000;
       p = SPARKS;
       for (i = 0; i != 16; i++, p++) {
-        m = __modsi3(i, 3);
+        s32 three;
+        three = 3;
+        m = __modsi3(i, three);
         EffectPosition_ProjectPoint(p, point);
         point[0] = point[0] / 2;
         drawFuncs.draw[i & 1](screen, buffer + m * 0x240, point[0] - 12,
                               point[1] - 12, 24, 24);
-        BattleEffectKernels_IntegrateVector3(p, 60, 1 << ((i & 3) + 11));
+        BattleEffectKernels_IntegrateVector3(p, 60, 1 << ((i & three) + 11));
         p->life++;
       }
     } else if (kind == 76) {
@@ -2315,7 +2452,7 @@ CLEAR(buffer, 0x1000);
       for (i = 0; i != 3; i++) {
         if (frame == i * 3 + 3) {
           Sound_PlayFar(212);
-          ((void (*)(void *, s32, s32))0x03000260)(screen, 0x4000, 0x2f2f2f2f);
+          FILL(screen, 0x4000, 0x2f2f2f2f);
         }
       }
     } else if (kind == 74) {

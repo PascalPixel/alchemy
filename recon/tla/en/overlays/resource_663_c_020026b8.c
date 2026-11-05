@@ -120,12 +120,7 @@ void Func_020026b8(void) {
     s32 low = gFrameCount & 3;
 
     if (low == 0) {
-      struct Actor *first[1];
-      struct Actor *second;
-
-      first[0] = Actor_GetById(12);
-      second = Actor_GetById(12);
-      spark = Import_ActorCreate(0x2a0, first[0]->x, second->y,
+      spark = Import_ActorCreate(0x2a0, Actor_GetById(12)->x, Actor_GetById(12)->y,
                                  Actor_GetById(12)->z);
       {
         s32 priority = ((s8 *)Actor_GetById(12)->animation)[9] & 12;

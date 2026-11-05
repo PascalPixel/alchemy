@@ -1,5 +1,6 @@
-// Draft, differ 51 of 120 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 51 (tla-en); notes below may predate it.
+// Draft, differ 44 of 120 (tla-en, 2026-11-05): the one-pass and volatile forms
+// are gone, the colour loop is built from a label; left: native keeps the count's
+// address in ip and step's in lr, draft reads count through r6 once.
 // Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "types.h"
 #include "call.h"
@@ -32,50 +33,30 @@ void Func_020001f8(void) {
     u16 *step;
     u16 *count;
 
-    /* FAKEMATCH(one-pass): the block ends CSE's run, so count is copied from
-     * the test's address here and not above the test; as plain statements,
-     * 20 of 120 instructions differ in tla-en. */
-    {
-      table = gData_02001a18;
-      step = &gData_02001a34;
-    }
+    table = gData_02001a18;
+    step = &gData_02001a34;
     count = &gData_02001a30;
-    do {
-      slot = (u16 *)0x05000000 + table[*step * gData_02001a30 + i];
-      r = *colour++;
-      g = *colour++;
-      b = *colour++;
-      /* FAKEMATCH(one-pass): the colour's build and store in a once-only
-       * block, so the third step stays above it and i++ below; as a plain
-       * statement, 6 of 120 instructions differ in tla-en. */
-      do {
-        *slot = b << 10 | g << 5 | r;
-      } while (0);
-      i++;
-    } while (i < *count);
+  top:
+    slot = (u16 *)0x05000000 + table[*step * *count + i];
+    r = *colour++;
+    g = *colour++;
+    b = *colour++;
+    *slot = b << 10 | g << 5 | r;
+    i++;
+    if (i < *count)
+      goto top;
   }
   slot = (u16 *)0x05000000 + gData_02001a24[gData_02001a30];
   index = gData_02001a30 * 3;
-  list = gData_02001a14 ? &gData_02001a28 : &Data_02001a2c;
-  /* FAKEMATCH(one-pass): the shift in a once-only block, so it stays ahead of
-   * the list's load; as a plain statement, 2 of 120 instructions differ in
-   * tla-en. */
-  do {
-    index *= 2;
-  } while (0);
-  colour = (u16 *)((u8 *)*list + index);
-  g = *colour++;
-  b = *colour;
+  if (gData_02001a14)
+    colour = gData_02001a28 + index;
+  else
+    colour = Data_02001a2c + index;
   r = *colour++;
-  /* FAKEMATCH(one-pass): as in the loop; as a plain statement, 2 of 120
-   * instructions differ in tla-en. */
-  {
-    *slot = b << 10 | g << 5 | r;
-  }
+  g = colour[0];
+  b = colour[1];
+  *slot = b << 10 | g << 5 | r;
   gData_02001a14 ^= 1;
-  /* FAKEMATCH(volatile): the volatile read issues after the left half of the
-   * step's zero extension; as a plain read, 2 of 120 instructions differ in
-   * tla-en. */
   if (++gData_02001a34 == gData_02001a30) {
     gData_02001a34 = 0;
   }

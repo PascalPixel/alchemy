@@ -1,4 +1,4 @@
-// 2026-11-05: differ 104 of 2680 (tla-en). The flash reads *src per channel, no u16 c;
+// 2026-11-05: differ 92 of 2680 (tla-en). The first queue loop reads objects as u32, so the read keeps its place after the queue store; the draw macro closes on an empty block.
 // that is item (3) below closed, and the count now equal.
 // 2026-11-05: differ 137 of 2680 (tla-en). With the twin's two dead branches
 // and a wrapper on the first palette copy. Left: scheduling rows and pool
@@ -217,10 +217,10 @@ void BattleBackground_LoadFar(s32 layer, s32 background, s32 palette);
     Iwram_FillWords(dst, size, value);                                         \
   } while (0)
 #define DRAW_ALT(mode, sheet, x, y, w, h)                                      \
-  do {                                                                         \
     BattleEffect_LoadBlitter(SLOT_ALT, mode);                                  \
     ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, sheet, x, y, w, h);       \
     HeapSlot_Release(SLOT_ALT);                                                \
+  do {                                                                         \
   } while (0)
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gResourceTableEntries[(obj)->resource].tile)
@@ -421,8 +421,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
       }
       Resource_DecodeType01(pal, Ram_MapCellBuffer);
       for (i = 0; i != 16; i++) {
+        u32 *objects = (u32 *)work->objects;
         IO_WRITE_QUEUE_PUSH(
-            OBJ_TILES((struct JudgmentObject *)work->objects[i]),
+            OBJ_TILES((struct JudgmentObject *)objects[i]),
             (u32)(Ram_MapCellBuffer + i * 0x400), 0x84000100);
       }
     }

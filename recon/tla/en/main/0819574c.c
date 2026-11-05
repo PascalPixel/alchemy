@@ -1,3 +1,11 @@
+// Measured 2026-11-05 (tla-en): differ 14 of 418, 4 once slots and pool offsets
+// are normalized. mul, a local holding IwramMulQ16's address from the top of the
+// face loop, took it from 166 to 30: the address's life in the loop reaches what
+// loop.c needs to hoist it (threshold * life >= 251 real insns; 13 is too short),
+// so it goes global, loses its register and reloads into r3 at each call, as the
+// twin Func_08196248 does, and the first corner pointer takes r6. The colour read
+// first took it to 14. Left: the preheader's reload order for bx, faces and ay
+// (native r1, r1, r5; here r1, r5, r1); no order of the corner pointers moves it.
 // Measured 2026-11-05 (tla-en): differ 178 of 418.
 // Near miss, differ 182 of 418 (tla-en, 2026-10-31; draft 418 instructions,
 // no device): the native's shape, left with allocation. An unused solid
@@ -89,6 +97,7 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
   s32 i;
   s32 *ax, *bx, *cx, *cy, *ay, *by;
   s32 facing;
+  s32 (*mul)(s32, s32);
   s32 slopeA, slopeB, top, middle, bottom;
   u8 color;
   s32 edgeA, edgeB, row;
@@ -100,23 +109,23 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
 
   for (i = 0; i != faceCount; i++) {
     // The three corners of each face are copied after the vertices.
-    ax = &vertices[vertexCount];
-    bx = &vertices[vertexCount + 3];
-    cx = &vertices[vertexCount + 6];
-    cy = &vertices[vertexCount + 7];
-    ay = &vertices[vertexCount + 1];
-    by = &vertices[vertexCount + 4];
+    mul = Iwram_MulQ16;
+    ax = (s32 *)(vertexCount * 4 + (s32)vertices);
+    bx = ax + 3;
+    cx = ax + 6;
+    cy = ax + 7;
+    ay = ax + 1;
+    by = ax + 4;
     Dma_Set(&vertices[faces[i].corner[0]], ax, 0x84000003, REG_DMA3);
     Dma_Set(&vertices[faces[i].corner[1]], bx, 0x84000003, REG_DMA3);
     Dma_Set(&vertices[faces[i].corner[2]], cx, 0x84000003, REG_DMA3);
 
     // The z of the edges' cross product: negative for a face turned away.
-    facing =
-        Iwram_MulQ16(*bx - *ax, *cy - *ay) - Iwram_MulQ16(*cx - *ax, *by - *ay);
+    facing = mul(*bx - *ax, *cy - *ay) - mul(*cx - *ax, *by - *ay);
     if (facing >= 0) {
+      color = faces[i].color;
       *ax += 64 << 16;
       *ay += 64 << 16;
-      color = faces[i].color;
       *bx += 64 << 16;
       *by += 64 << 16;
       *cx += 64 << 16;

@@ -1,5 +1,16 @@
-// Under -Os, 5 November: differ 318 of 632 (tla-en), the travel loop in the order of the native; older figures below predate it. Left first: the native reloads through r5 where this draft has r4 free, so a pseudo in r4 or its spill cost is still missing.
-// Draft, differ 490 of 632, skeleton gap 53/55 (tla-en, 2026-11-01)
+// Draft, differ 6 of 632 (tla-en, 5 November 2026): two order rows are left, the
+// native's movs r2, #2 ahead of ldr r0, [sp, #28] after the second cell test, and
+// its ldr r1, [r7, #80] ahead of adds r6, r6, r3. Both are sched2 priorities one
+// short on the same chain; a separate copy into the multiply made it worse (58).
+// What closed it from 318, none of it a compiler question: spill registers rotate
+// (allocate_reload_reg), so one extra register in the spill set moves every reload
+// after it. r4 entered the set at the create call, where 280 in a pseudo kept r0
+// busy; through Value4 it loads after the other arguments and r4 stays out. The
+// rest of the rotation: hit shifted first in the travel loop, the cell stores ahead
+// of the gust's, the column read in each arm so gcse hoists the ldrh and not the
+// shift. MotionView is a test, not a type: a store whose alias set is not char's
+// frees the ldr after it, which is what the native's order there shows; no evidence
+// yet says what motionFlags really is.
 // Whirlwind in Air's Rock: a gust (object type 280)
 // rises from the target (the effect work's object at 0x14) and grows,
 // shedding sparks (object type 0x2a0, Func_02000840) every fourth frame
@@ -11,28 +22,6 @@
 // source and offset), copying its cells and attributes along each fourth
 // frame while it throws dust, sets that thing's flag (0x850 + hit - 1)
 // with cue 298; then the gust shrinks and rises away over 8 frames.
-// Left: allocation; the shape is otherwise the native's. alchemy-gcc weights refs
-// by loop depth and the native does not seem to: at flow's weight, steps (9 refs)
-// and the gFrameCount address (pseudo 110) outrank leader, which takes r11, not
-// r10, and the frame is 136, not 128, with the table in r4 saved at sp+16 and
-// 0x10000 in r2 saved at sp+20. The native saves nothing around a call in the blow
-// loop: cell copies in r10 and r9, 0x10000 in r10 across Math_Cosine, 3 in r4. Their
-// refs are 6, 5 and 3 unweighted, none above 4 * calls crossed. Every sp and pool
-// offset and most registers differ from that alone, so differ overstates the gap.
-// A second entry into the loops (`if ((hit & 3) >= 0) goto blowTest;`, always true,
-// folded by combine) gives the frame of 128: differ 419, skeleton gap 61/68 on blow
-// alone, 424, 47/47 with travel too (1 November); it is dead code, not source.
-// Also left, none of it closable in plain C here: the native computes the [hit][1]
-// offset (r8) before the branch on hit & 1, as if hoisted out of both arms (an
-// unread `sourceY = (u16)gData_02004674[hit][1];` gives it, a dead device), and
-// reloads 1 at hit & 1 and in the arms, where CSE skips the first `if` around its
-// block and shares the 1 in r9. A label in that block would stop the skip; a static
-// inline around Effect_Spawn is a new wrapper and measured worse (496, 55/57).
-// Unweighted refs and hoisting out of both arms both read like -Os, against K1 and
-// K2: a compiler question for Pascal (K3), not settled here.
-// Tried, no change: flag in two or three statements, declaration orders, cell
-// copy order, direct last call. Worse: Call wrappers removed (508), while for the
-// travel and blow loops (517), u16 sourceX (487, but gap 56/53, loses the ldrh).
 // 655, not 455, is the growth step: 200 << 1 + 255 in the listing.
 // Found: x and z (sp+20), dx and dz (sp+28) are 8-byte structs. A DImode pseudo
 // written by the word keeps the native's otherwise dead store before the travel
@@ -88,6 +77,7 @@ struct EffectWork {
   struct Actor *target;
 };
 
+struct MotionView { u8 pad[84]; u32 kind : 8; u32 flags : 8; };
 struct Cell {
   s32 x, z;
 };
@@ -104,13 +94,12 @@ void Func_0200095c(void) {
   Func_02003bc8();
   Func_02003c88(0);
   Func_02003cd8(207);
-  gust =
-      (struct Actor *)Import_ActorCreate(280, leader->x, leader->y, leader->z);
+  gust = (struct Actor *)Value4((s32 (*)())Import_ActorCreate, 280, leader->x, leader->y, leader->z);
   Func_02003b28(gust, 2);
   Actor_SetSingleChildFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
-  gust->motionFlags = (u8)flag;
+  ((struct MotionView *)gust)->flags = flag;
   ((struct FieldSprite *)gust->animation)->priority =
       ((struct FieldSprite *)effect->target->animation)->priority;
   Func_02003b58(gust, effect->target->x, effect->target->y,
@@ -155,20 +144,22 @@ void Func_0200095c(void) {
   delta.z = Math_Sine(angle) >> 16;
   do {
     hit = Func_02000348(2, cell.x, cell.z);
+    hit >>= 8;
     cell.x += delta.x;
     cell.z += delta.z;
-    hit >>= 8;
     steps += 2;
   } while (hit == 0);
-  flag = (Func_02000348(2, cell.x, cell.z) >> 8) - 1;
+  flag = Func_02000348(2, cell.x, cell.z);
+  flag >>= 8;
+  flag -= 1;
   steps -= 2;
   newX = ((s16 *)&effect->target->x)[1] + ((steps * delta.x) << 3);
   newZ = ((s16 *)&effect->target->z)[1] + ((steps * delta.z) << 3);
   ((struct FieldSprite *)gust->animation)->priority = 1;
-  gust->speedLimit = 0x40000;
-  gust->acceleration = 0x40000;
   cell.x = newX;
   cell.z = newZ;
+  gust->speedLimit = 0x40000;
+  gust->acceleration = 0x40000;
   Func_02003b58(gust, cell.x << 16, gust->y, cell.z << 16);
   Call2(Func_02003c20, 0x50000, 0x50000);
   Call4((void (*)())Camera_MoveWithinMapBounds, (s32)(newX << 16), (s32)(-1), (s32)(newZ << 16), (s32)(1));
@@ -178,8 +169,8 @@ void Func_0200095c(void) {
     leaves.type = 674;
     leaves.palette = 2;
     velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
-    velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
     velocity.y = gust->y + ((Random16Far() & 31) << 16);
+    velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
     Effect_Spawn(gust->x, velocity.y, gust->z, velocity.x, 0, velocity.z,
                  EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                  &leaves);
@@ -213,8 +204,8 @@ void Func_0200095c(void) {
       cell.z = gData_02004674[hit][3] + (gust->z >> 20);
       cellX = cell.x;
       cellZ = cell.z;
-      sourceX = (u16)gData_02004674[hit][0];
       if (hit & 1) {
+        sourceX = (u16)gData_02004674[hit][0];
         Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
               cellZ - 1, 1, 3);
         Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,
@@ -222,6 +213,7 @@ void Func_0200095c(void) {
         Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,
               2, gust->x >> 20, gust->z >> 20);
       } else {
+        sourceX = (u16)gData_02004674[hit][0];
         Call6(Func_02003b68, (s16)sourceX, gData_02004674[hit][1], cellX,
               cell.z - (hit >> 1), 1, 1);
         Call6(Func_02003b80, gData_02004674[hit][0], gData_02004674[hit][1], 1,

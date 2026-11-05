@@ -1,40 +1,10 @@
-// Measured under -Os, 5 November 2026: differ 123 (tla-en); notes below may predate it.
-// Draft, differ 178 of 148, skeleton gap 44 (tla-en, 2026-11-01)
-// Control flow, switch, fields and arguments are the native's; almost all of
-// the gap is allocation, and it has two causes this form cannot reach.
-//
-// 1. The level load. In the native r2 holds the jump table address, then the
-// table entry, then the level, so its load comes after the entry's load and
-// before the jump in the RTL, not only after sched2: r2 cannot be reused
-// otherwise. With nothing left free at that load, the reload of work takes r3
-// and evicts the jump target to ip (the native's mov r12), which is why level
-// r2, x r1, y r0, z r4 all fit below the view values. Source cannot put a
-// statement there: this form, level read under the range test, comes before
-// the table pseudos, conflicts with them, and so takes r1, leaving x r0, y r4,
-// z r6, and work r7 pushes map to the stack. No pass was found that moves it:
-// gcse inserts at a block's end only on an abnormal edge, and a load read in
-// every case stays in the cases (gap 50, 4 more instructions). Finding what
-// places that load is the next step; it decides most of the 178.
-//
-// 2. The native loads map->origin[1] and stores it to sp[0], its whole frame,
-// and nothing reads the slot. Plain C drops it: an unread local and a
-// one-element array vanish. It looks like a pseudo whose use went away after
-// flow, an eighth call-crossing value that lost a register. Measured on a
-// scratch copy only, a cancelled term (+ origin - origin in sy) gives the load
-// and store, gap 37, differ 191, with tile on the stack instead. That is a
-// `dead` device, so it stays out; it also shows the store alone does not settle
-// allocation.
-//
-// Priorities here (refs, live): work 9, 168; viewZ 5, 82; viewX 5, 85; i 7,
-// 130; tile 3, 72; map 3, 90. The native's order is sprite, viewZ, viewX, map,
-// work, i, tile, so map and work stand differently; the tail's level read goes
-// to PRE here (reg 100, copies on two edges, adding to work's refs), where the
-// native reads unk0c then level in the tail block. Casts and Data_02004030
-// spellings fold back to work, except that spelling the tail or the switch's
-// read gives a pool load and more instructions (tail: differ 169 but gap 51).
-// Measured without gain: unk0c first in the tail, a real goto loop, tile
-// declared after i, a pointer local for the test (gap 55), view fields without
-// the view pointer (gap 48), reading level before the switch's range test.
+// Draft, differ 16 of 148 (tla-en, 5 November 2026), under -Os. Left: only the first block's reload
+// registers, r0 and r1 swapped for the map and the work (the native has the map's in r1, the work's in r0
+// and inherits r0 for the tile's read). The native stores map->origin[1] to its one frame slot and nothing
+// reads it: here a volatile local, a device to tag; a cancelled term gives the same code.
+// The level is read in each case and hoisted to the jump, case 4's x = -0x100000 comes last so that case 0
+// and 3 cross-jump into it, and sy's subtraction sits between x -= viewX and x's shift so that the row test's
+// temporary is born after it.
 #include "types.h"
 #include "call.h"
 #include "map.h"
@@ -68,8 +38,9 @@ void Func_020012c4(void) {
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
-  volatile s32 kept = (*(s32 **)map)[1];
+  s32 *origin = *(s32 **)map;
   struct AnkohlRuinsFloatWork *work = &Data_02004030;
+  volatile s32 kept = origin[1];
   struct AnkohlRuinsFloatSprite *sprite = work->sprites;
   s32 tile = gResourceTableEntries[work->tile].offset >> 5;
   s32 i;
@@ -81,40 +52,39 @@ void Func_020012c4(void) {
       s32 y = sprite->y;
       s32 z = sprite->z;
       s32 sx, sy;
-      s32 level;
 
-      level = work->level;
       switch (kind) {
       case 0:
-        x -= level;
-        y += level;
-        if (level > 0x100000)
+        x -= work->level;
+        y += work->level;
+        if (work->level > 0x100000)
           x = -0x100000;
         break;
       case 1:
-        x -= level;
-        y += level;
+        x -= work->level;
+        y += work->level;
         break;
       case 2:
-        x += level;
-        y += level;
+        x += work->level;
+        y += work->level;
         break;
       case 3:
-        x += level;
-        y += level;
-        if (level > 0x100000)
+        x += work->level;
+        y += work->level;
+        if (work->level > 0x100000)
           x = -0x100000;
         break;
       case 4:
-        if (level >= 0x100000) {
+        if (work->level < 0x100000)
+          y += work->level;
+        else
           x = -0x100000;
-          break;
-        }
-        y += level;
         break;
       }
-      sx = ((x - viewX) >> 16) - 8;
-      sy = ((z - viewZ - y) >> 16) - 8;
+      x -= viewX;
+      sy = z - viewZ - y;
+      sx = (x >> 16) - 8;
+      sy = (sy >> 16) - 8;
       if (sx >= -15 && sx <= 319 && sy >= -15 && sy <= 239) {
         sx &= 511;
         sy &= 255;

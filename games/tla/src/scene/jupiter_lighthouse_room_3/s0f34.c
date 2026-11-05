@@ -1,3 +1,8 @@
+/// @file
+/// Finds the object the leader is pushing: among objects 8 to 63 whose sprite
+/// shape is in the six-entry footprint table, the one whose footprint holds the
+/// cell one step ahead of the leader, when the leader is not in line with its
+/// near edge. Returns the object, with its id and the footprint's index.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

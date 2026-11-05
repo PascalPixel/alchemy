@@ -1,4 +1,4 @@
-// Measured under -Os, 5 November 2026: differ 259 (tla-en), center a struct, so the address is rebuilt where the native rebuilds it. Older notes below predate it.
+// Draft, differ 187 of 315 (tla-en, 5 November 2026), under -Os. Older notes below predate it. Left: the nudges' constants take reload registers by rotation (r1, r1, r5, r1 in the native; both x arms in r1 cross-jump), the multiply's address takes r6 where the native has x there and the address in r8, and 0x8000 kept in r11 across the flip test (a local is folded back by cprop).
 // Draft, differ 206 of 315, skeleton gap 54 (tla-en, 2026-11-01): control flow,
 // calls, the frame (88 bytes, same slots) and memory accesses follow the
 // listing; what is left comes from two things, both GCSE's. The listing
@@ -56,6 +56,7 @@ void Func_0200054c(void) {
   struct { s32 x, y, z; } center;
   s32 ends[4];
   struct SeaOfTimeSpark spark;
+  s32 turn[1];
   s32 *pos;
   s32 dx;
   s32 dz;
@@ -67,6 +68,7 @@ void Func_0200054c(void) {
   s32 c;
   s32 s;
   s32 flip;
+  s32 speed;
   s32 px;
   s32 py;
   s32 pz;
@@ -109,33 +111,31 @@ void Func_0200054c(void) {
   center.x = (((object->x >> 21) + center.x) << 21) + 0x100000;
   center.z = (((object->z >> 21) + center.z) << 21) + 0x100000;
   if (Func_020003d0(pos, &center) > 46) {
-    {
-      s32 step;
-
-      if (*pos < center.x)
-        step = 0x8000;
-      else
-        step = -0x8000;
-      *pos += step;
-    }
-    z = object->z;
-    if (z < center.z)
-      z += 0x8000;
+    if (*pos < center.x)
+      *pos += 0x8000;
     else
-      z -= 0x8000;
-    object->z = z;
+      *pos -= 0x8000;
+    if (object->z < center.z)
+      object->z += 0x8000;
+    else
+      object->z -= 0x8000;
   }
   if (Func_0200034c(1, center.x >> 20, center.z >> 20) >> 8 == 40) {
-    c = SeaOfTime_Cos(-0x200);
+    turn[0] = SeaOfTime_Cos(-0x200);
     s = SeaOfTime_Sin(-0x200);
   } else {
-    c = SeaOfTime_Cos(0x200);
+    turn[0] = SeaOfTime_Cos(0x200);
     s = SeaOfTime_Sin(0x200);
   }
   dx = object->x - center.x;
   dz = object->z - center.z;
-  x = Iwram_MulQ16(dx, c) - Iwram_MulQ16(dz, s);
-  z = Iwram_MulQ16(dx, s) + Iwram_MulQ16(dz, c);
+  {
+  s32 (*mul)(s32 a, s32 b) = Iwram_MulQ16;
+  x = mul(dx, turn[0]);
+  x -= mul(dz, s);
+  z = mul(dx, s);
+  z += mul(dz, turn[0]);
+  }
   x += center.x;
   z += center.z;
   object->z = z;
@@ -143,7 +143,8 @@ void Func_0200054c(void) {
 
   counter = &gFrameCount;
   frame = *counter;
-  phase = frame & 3;
+  phase = 3;
+  phase &= frame;
   if (phase == 0) {
     if ((frame & 10) == 0)
       Func_02002054(0x255);
@@ -152,12 +153,15 @@ void Func_0200054c(void) {
     spark.scaleX = 0xcccc;
     spark.scaleY = 0xcccc;
     c = Math_Cosine(object->facing);
-    s = Math_Sine(object->facing);
+    {
+    s32 sine = Math_Sine(object->facing);
     ends[0] = c * 10;
-    ends[1] = s * 10;
+    ends[1] = sine * 10;
     ends[2] = -(c * 10);
-    ends[3] = -(s * 10);
+    ends[3] = -(sine * 10);
+    }
     ends[0] += object->x;
+    speed = 0x8000;
     ends[1] += object->z;
     ends[2] += object->x;
     ends[3] += object->z;
@@ -170,12 +174,12 @@ void Func_0200054c(void) {
     py = object->y;
     pz = ends[1];
     if (flip) {
-      Func_0200015c(px + 0x30000, py, pz, 0x8000, 0, 0, 0xb0000, &spark);
+      Func_0200015c(px + 0x30000, py, pz, speed, 0, 0, 0xb0000, &spark);
       Func_0200015c(ends[2] - 0x30000, object->y, ends[3], -0x8000, 0, 0,
                     0xb0000, &spark);
     } else {
       Func_0200015c(px - 0x30000, py, pz, -0x8000, 0, 0, 0xb0000, &spark);
-      Func_0200015c(ends[2] + 0x30000, object->y, ends[3], 0x8000, 0, 0,
+      Func_0200015c(ends[2] + 0x30000, object->y, ends[3], speed, 0, 0,
                     0xb0000, &spark);
     }
   }

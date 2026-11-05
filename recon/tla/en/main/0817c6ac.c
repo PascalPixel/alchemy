@@ -1,21 +1,13 @@
-// 2026-11-05: differ 150 of 627 (tla-en). The word of the frame is in, as a
-// two-word blitter struct. Left: items 2 and 3 below and their reload
-// rotation.
-// Draft, differ 222 of 627, skeleton gap 46 (tla-en, 2026-11-01)
-// BattleEffect_RunFume. Calls and control flow agree. head and tail are one
-// two-word struct local: its doubleword pseudo keeps arc.head = 0 alive and stops
-// PRE lifting tail * 33 out of the segment loop, as the listing shows, and it
-// sits at sp+40. Data_08199484 is read by columns as u16[][6].
-// Left: (1) the frame is 112, the listing's 116: sp+68 is an unused hole just
-// below canvas, so every slot above sp+64 is 4 low and caster and target sit at
-// sp+100 and sp+88. Replacing blit with a two-word struct whose second word is
-// unused closes it (differ 160, gap 42) but that is a local added to
-// fit a frame, so it is not done here; the source of that word is unknown.
-// (2) Data_02011000 stays in a high register across the model block; the listing
-// reloads it from the pool, so that pseudo lost its register there.
-// (3) radiusY's wobble is added late in the listing, in the same register as
-// height + half; every initialiser order tried costs more elsewhere. Writing
-// corner first gives differ 186 but gap 50.
+// Measured 2026-11-05 (tla-en): differ 32: the model's mesh and vertices are typed pointers, not void.
+// Measured 2026-11-05 (tla-en): differ 38 of 627, instruction counts equal. The loop
+// over corners now agrees whole: half a real local, corner a struct, radiusX over
+// radiusY in rank (radiusY in r2, caller-saved at sp+12), the vertex buffer's address
+// one local per frame (reloaded from the pool, so no high register holds it), and
+// sweep stepped before vertex. Left: at the corners' setup the listing has i's zero
+// first and height + half in r2 in place, with the wobble added late; here base goes
+// through its own local (r0). Three scheduling rows: blit.draw's load, the 0x8000's
+// second half after a call, and scrollU's store at the claw.
+// Earlier: 2026-11-01 frame found through the two-word blitter struct.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -33,11 +25,17 @@ struct ModelTexture {
   const void *pixels;
 };
 
+struct Corner {
+  s8 x;
+  s8 y;
+  s8 z;
+};
+
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
-  void *vertices;
+  const u8 *mesh;
+  s16 *vertices;
   struct ModelTexture *texture;
   s32 shade;
   u8 scrollU;
@@ -95,7 +93,7 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
+s32 Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
@@ -172,6 +170,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   struct EffectStep *spark;
   struct EffectStep *particle;
   s32 i;
+  void *buffer;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -179,9 +178,9 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(SLOT_BLITTER,
                 BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   REG_BLDALPHA = 0x1010;
+  blit.draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
-  blit.draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   endX = 0;
   endY = 0;
@@ -236,6 +235,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       particle->variant++;
     }
 
+    buffer = Data_02011000;
     if (frame >= 0) {
       s32 width;
       s32 step;
@@ -258,7 +258,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       // The arc's vertices, two per segment, widening over the first six.
       for (j = 0, step = arc.head - arc.tail, sweep = 0, vertex = 0;
            j != FUME_SEGMENTS;
-           vertex += 2, sweep += step, j++) {
+           sweep += step, vertex += 2, j++) {
         s32 distance = caster.x / 8 - target.x / 8;
         s32 angle = sweep + arc.tail * 33;
         s32 wobble = ((Trig_Sin((frame + j) << 12) << 2) >> 16) * j / 32;
@@ -266,7 +266,9 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         s32 thickness;
         s32 radiusX;
         s32 radiusY;
-        s8 *corner;
+        struct Corner *corner;
+        s32 half;
+        s32 baseY;
 
         if (distance < 0) {
           distance = -distance;
@@ -277,14 +279,19 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
           thickness = 24;
         }
         thickness = thickness * width / 0x10000;
-        for (i = 0, radiusY = height + thickness / -2 + wobble, radiusX = distance + thickness / -2 + wobble, corner = (s8 *)gMapCellBuffer + vertex * 4;
-             i != 2; i++) {
-          corner[0] = ((Trig_Cos(angle) * radiusX) >> 16) - distance;
-          corner[1] = -((Trig_Sin(angle) * radiusY) >> 16);
-          corner[2] = 0;
+        half = thickness / -2;
+        baseY = height + half;
+        corner = (struct Corner *)gMapCellBuffer + vertex;
+        radiusY = baseY + wobble;
+        i = 0;
+        radiusX = distance + half + wobble;
+        for (; i != 2; i++) {
+          corner->x = ((Trig_Cos(angle) * radiusX) >> 16) - distance;
+          corner->y = -((Trig_Sin(angle) * radiusY) >> 16);
+          corner->z = 0;
           radiusY += thickness;
           radiusX += thickness;
-          corner += 4;
+          corner++;
         }
         if (j == 32) {
           endX = (((distance + wobble) * Trig_Cos(angle)) >> 16) - distance;
@@ -302,7 +309,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         model->texture = &texture;
         model->shade = shade;
         model->scrollV = 0;
-        model->vertices = Data_02011000;
+        model->vertices = buffer;
         if (arc.head > arc.tail) {
           texture.logWidth = 6;
           texture.logHeight = 5;
@@ -317,7 +324,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyYaw(0x8000);
           }
           Func_0801521c(0x40000);
-          Render_TransformVertices(gMapCellBuffer, Data_02011000, 66);
+          Render_TransformVertices(gMapCellBuffer, buffer, 66);
           Render_DrawModelList(model);
 
           // The claw at the arc's end.
@@ -330,7 +337,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
             Func_08015160(endX << 16, endY << 16, 0);
             Func_080150e4(0x4000 - arc.head * 32);
             Func_0801521c(width * 28 / 32);
-            Render_TransformVertices(Data_081991e0, Data_02011000, 4);
+            Render_TransformVertices(Data_081991e0, buffer, 4);
             Render_DrawModelList(model);
           }
         }

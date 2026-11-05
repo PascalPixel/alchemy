@@ -1,3 +1,6 @@
+// Draft, differ 53 of 137 (tla-en, 5 November 2026), from 82. Slots and allocation
+// now right; left is the rotation at the three loads and two subtractions, no order
+// of those seven statements better than this.
 // Measured under -Os, 5 November 2026: differ 82 (tla-en); notes below may predate it.
 // Draft, differ 95 of 137, skeleton gap 35 (tla-en, 2026-11-01)
 // Draws Aqua Rock's thirty-two splashes: each active one as a sprite jittered a
@@ -53,25 +56,28 @@ void Func_020034fc(void) {
   s32 viewX = view[0];
   s32 viewZ;
   s32 originY;
-  u32 tile;
   struct Splash *splash;
   s32 i;
+  u32 tile;
 
   viewX &= 0xffff0000;
   viewZ = view[1] & 0xffff0000;
   originY = map->origin[1];
-  splash = splashes->splashes;
   tile = gResourceTableEntries[splashes->resource].unk2 >> 5;
+  splash = splashes->splashes;
   i = 31;
 
   do {
     if (splash->active != 0) {
+      s32 y = splash->y;
+      s32 z = splash->z;
       s32 x = splash->x - viewX;
-      s32 y = splash->y - originY;
-      s32 z = splash->z - viewZ - originY;
-      s32 screenY = z - y;
-      s32 rawX = (x >> 16) + ((Random16Far() * 10) >> 16);
-      s32 rawY;
+      s32 screenY, rawX, rawY;
+      y -= originY;
+      z -= viewZ;
+      z -= originY;
+      screenY = z - y;
+      rawX = (x >> 16) + ((Random16Far() * 10) >> 16);
 
       x = rawX - 10;
       rawY = (screenY >> 16) + ((Random16Far() * 10) >> 16);

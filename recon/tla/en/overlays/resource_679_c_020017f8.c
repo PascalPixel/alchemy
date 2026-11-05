@@ -1,3 +1,6 @@
+// Draft, differ 19 of 159 (tla-en, 5 November 2026), from 84: Func_020032d4's form.
+// Left: the native stores a << 8 before adding origin, with the pool address in r1
+// and a in r2; written in that order the rotation shifts by one (36).
 // Measured under -Os, 5 November 2026: differ 84 (tla-en); notes below may predate it.
 // Draft, differ 108 of 159, skeleton gap 34 (tla-en, 2026-11-01)
 // Scans the visible part of layer 1's cell grid (view bounds minX to maxZ) for
@@ -51,41 +54,50 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
   struct CellMarkers *markers = &gData_02002aa0;
   s32 width = (map->maxX - map->minX) >> 20;
   s32 height = (map->maxZ - map->minZ) >> 20;
-  s32 origin = ((map->minZ >> 20) << 7) + (map->minX >> 20);
   struct CellMarker *entry = &markers->markers[markers->count];
+  s32 origin = ((map->minZ >> 20) << 7) + (map->minX >> 20);
   struct MapCell *cell;
   s16 x, z;
   u32 value;
 
+  cells += origin;
   *(s32 *)(Data_0202c001 + 0x1df) = a << 8;
   z = 0;
-  cells += origin;
-  if (z >= height)
-    goto end;
-outer:
-  cell = cells + ((u16)z << 7);
-  x = 0;
-  if (x >= width)
-    goto next;
-inner:
-  value = cell->collisionCode;
-  if (value == 0 || value < base || value >= base + 4)
-    goto skip;
-  entry->x = ((u16)x << 20) + left + 0x80000;
-  entry->z = ((u16)z << 20) + top + 0x80000;
-  entry->rest = b << 19;
-  entry->y = a << 19;
-  entry->kind = value - base;
-  entry->state = 1;
-  entry++;
-  markers->count++;
-  (map->layers[0].terrainIds + origin)[(u16)x + ((u16)z << 7)] = 120;
-skip:
-  cell++;
-  if ((u16)++x < width)
-    goto inner;
-next:
-  if ((u16)++z < height)
-    goto outer;
-end:;
+  if (z < height) {
+  outer:
+    cell = cells + ((u16)z << 7);
+    x = 0;
+    if (x < width) {
+    inner:
+      value = cell->collisionCode;
+      if (value != 0 && value >= base && value < base + 4) {
+        entry->x = ((u16)x << 20) + left + 0x80000;
+        entry->z = ((u16)z << 20) + top + 0x80000;
+        entry->rest = b << 19;
+        entry->y = a << 19;
+        entry->kind = value - base;
+        entry->state = 1;
+        entry++;
+        markers->count++;
+        {
+          u8 *terrain = map->layers[0].terrainIds + origin;
+
+          terrain[(u16)x + ((u16)z << 7)] = 120;
+        }
+      }
+      {
+        s32 next = (x << 16) + 0x10000;
+        x = next >> 16;
+        cell++;
+        if ((s32)((u32)next >> 16) < width)
+          goto inner;
+      }
+    }
+    {
+      s32 next = (z << 16) + 0x10000;
+      z = next >> 16;
+      if ((s32)((u32)next >> 16) < height)
+        goto outer;
+    }
+  }
 }

@@ -1,3 +1,6 @@
+/// @file
+/// The sparkle's update: raises two pairs of sprites over the object, each pair
+/// starting when its counter is cleared, until both counters pass 31.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -65,17 +68,14 @@ void Func_02003cd8(struct Actor *object) {
     sine = Math_Sine(work->unka0[i] << 10);
     if (work->unka0[i] >= 0) {
       if (work->unka0[i] <= 31) {
-        struct Vector3 *p = &position;
-
-        p->x = object->x;
-        p->y = object->y + (work->unka0[i] << 16);
-        p->z = object->z;
-        Func_0200421c(p);
-        x = p->x;
-        j = 0;
-        z = p->z;
+        position.x = object->x;
+        position.y = object->y + (work->unka0[i] << 16);
+        position.z = object->z;
+        Func_0200421c(&position);
+        x = position.x;
+        z = position.z;
         sprite = &work->sprites[i * 2];
-        for (; j <= 1; j++) {
+        for (j = 0; j < 2; j++) {
           sprite->unk0c = x;
           sprite->unk10 = z;
           sprite->unk14 = sine;

@@ -54,7 +54,7 @@ SECTIONS
         "*/games/tla/src/scene/contigo/s39d4.o"(.text)
         "*/games/tla/src/scene/contigo/s3a8c.o"(.text)
         "*/games/tla/src/scene/contigo/s3cd8.o"(.text)
-        "*/resource_694_overlay.o"(.text.x0200be54)
+        "*/games/tla/src/scene/contigo/s3e54.o"(.text)
         "*/games/tla/src/scene/contigo/mark.o"(.text)
         "*/games/tla/src/scene/contigo/import.o"(.text)
         "*/games/tla/src/scene/contigo/data.o"(.data)

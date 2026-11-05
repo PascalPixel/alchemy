@@ -1,3 +1,13 @@
+// 2026-11-05: differ 266 of 902 (tla-en), 76 masked. pixel = ... in the call's
+// argument settles the reload rotation up to the grid. Not gained: the frame loop as
+// a label and a goto (642: this one keeps its notes), i = row << 4 with a from the
+// expression (947, masked 225: i takes r8 and vertex a row << 6 giv at slot 16, 102
+// vs 92 after expand_mult's copy), a base stepped by 16 (825, masked 145), moving
+// u's last store (961: u takes r5). The grid needs vertex above u: 1.55 against 1.89.
+// 2026-11-05: differ 274 of 902 (tla-en), 78 with registers, slots and offsets
+// masked. No gain from a stepped i (945), q = row << 4 with a from row (843),
+// i = row << 4 set after the row locals (947), u spelled out (904), or a row
+// level cell pointer from i (468, masked 108): it is reduced in the outer loop.
 // 2026-11-05: differ 274 of 902 (tla-en). Declaration moves and wrappers
 // beyond the one in place gain nothing; the Q allocation below stands.
 // 2026-11-05: differ 274 of 902 (tla-en). A wrapper on one Iwram call gains 2;
@@ -207,9 +217,9 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet + 0x2000, 0,
                              0);
   if (mode == 1) {
-    u8 *pixel = work->sheet + 0x3000;
+    u8 *pixel;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, pixel, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, pixel = work->sheet + 0x3000, 1, 0);
     for (i = 0; i != 0x1b00; i++, pixel++) {
       if (*pixel != 0) {
         *pixel += 8;

@@ -1,3 +1,4 @@
+// Draft, differ 11 of 76 (tla-en, 2026-11-05).
 // Draft, differ 26 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 28 of 76 (tla-en); older figures below predate it.
 // Draft, differ 19 of 76: raises the cells under the held actor again.
@@ -67,31 +68,40 @@ struct EffectView {
 
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
+// A one-field view: the shape store is memory of its own to sched2, which sinks
+// it past the cell's first read. A struct is padded to 4 bytes here, so the
+// pointer stays plain.
+struct ShapeCell {
+  u8 shape;
+};
+
 void Func_02000e9c(void) {
   struct Actor *held = HELD_OBJECT(Ram_HeapSlots->eventWork);
   u8 *layer;
-  struct MapCell *cells;
+  u8 *cells;
   u8 *shapes;
   s32 shape;
   s32 level;
   s32 index;
+  u8 newShape;
 
   if (held == NULL)
     return;
   layer = &held->terrainId;
-  cells = Ram_HeapSlots->mapWork->layers[*layer].cells;
-  shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+  cells = (u8 *)Ram_HeapSlots->mapWork->layers[*layer].cells;
+  shapes = gMapShapeGrid +
+           (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
   shape = Func_02003c10(*layer, held->x, held->z);
   level = Map_GetTerrainHeight(*layer, held->x, held->z);
   index = Func_02003db0(held);
+  level >>= 19;
+  level += 4;
+  newShape = Func_02003dd0(*layer, shape, level);
   shapes += index;
-  {
-    s32 value = Func_02003dd0(*layer, shape, (level >> 19) + 4);
-
-    cells += index;
-    *shapes = value;
-    cells->attributeB |= 192;
-  }
-  cells += 128;
-  cells->attributeB |= 64;
+  index <<= 2;
+  ((struct ShapeCell *)shapes)->shape = newShape;
+  cells += index;
+  ((struct MapCell *)cells)->attributeB |= 192;
+  cells += 0x200;
+  ((struct MapCell *)cells)->attributeB |= 64;
 }

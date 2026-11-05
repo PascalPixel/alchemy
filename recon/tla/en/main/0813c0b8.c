@@ -1,3 +1,9 @@
+// Measured 2026-11-05 (tla-en): differ 138 of 563, a rise from 136 that removes a
+// search's untagged empty asm on line. In the drop loop the listing has table r6,
+// drop r5 and r7 free for reloads; here table r7, drop r6 and r5 free. A walker
+// for drop does not move it. The likely place is reload's choice of which hard
+// register to spill (order_regs_for_reload ranks them by their pseudos' refs),
+// which takes r5 here and r7 in the listing.
 // Near miss, differ 136 of 563 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 213 of 563.
@@ -151,7 +157,6 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   // drops' fall, then the targets' width, then nothing.
   if (effect->side == 0) {
     line = gMapCellBuffer;
-  __asm__("" : "=r"(line) : "0"(line));
     for (i = 0; i != 160; i++) {
       if (i >= 8 && i <= 103)
         line[i] = ((0x34 - i / 2) << 8) | (0xb4 - i / 2);

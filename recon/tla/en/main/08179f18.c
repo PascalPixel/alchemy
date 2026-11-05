@@ -1,3 +1,39 @@
+// Draft, differ 300 of 2583 (tla-en, 2026-11-05), draft 2581; about 84 rows differ once registers, slots and
+// offsets are ignored, and about 150 of the raw rows are the tile sheet. The pool holds the listing's words apart from one
+// repeat of 0xfffec000. Not adoptable yet. Devices held, none tagged: the read of y into spin2 and the two dead frame tests.
+// Settled 2026-11-05, each measured:
+// - `spin2 = w->y[i]` in petal 0's frame <= 47 branch stays until flow deletes it, and that use is what lets 224 hoist:
+//   count 2569 to 2583, 512 to 448. As `not desirable` said (threshold 16, savings 3, life 9, 474 insns).
+// - The last branch of petals 0 and 1 ends with a test of frame whose body flow deletes: reload's rotation in the listing is one
+//   ahead after each, and the frame == 112 tails stop cross-jumping, 448 to 300. Adding it to petals 2 to 5 makes things worse (440
+//   to 510), so those four are as they stand. The body has to survive cse, so it assigns a variable that is live elsewhere.
+//   Which test the original had is unknown. t in r3 and val in r2 in those branches then come out of the rotation.
+// - The glyph destination is an index, sprites[i * 18 + 590 + j]: (i * 8 + i) * 2 is what i * 18 expands to.
+// Open, top down:
+// - Fourth setup loop: cells in r6 and the object pointer in r5, the reverse here. In global's order cells must fall below
+//   the object pointer (33 / 28 against 24 / 27), and every spelling tried keeps both givs at those ranks. i = 0 comes first.
+// - Glyph read: adds r3, r3, r6; ldrb r3, [r3, #0] in the listing, ldrb r3, [r6, r3] here, 1 row short.
+// - Tile sheet, measured by normalized rows since the raw figure counts the frame. The listing's inner body:
+//   c in r1, hi in r2 through a 15 rebuilt in r3, lo through mov r3, fp and ands r3, r1. Three locals overlap, which pushes
+//   d to r0, the source to r4, offset to r5, m to r6, k to r7, then b to ip, a to lr, y to r8, n to sl, sheet to r9, the
+//   mask to fp, and row and row * 2 stay at sp 60 and sp 44. Here c ties to lo in r3, so a reload needs r4, which spills offset.
+//   A grid of 1344 forms (out of for and goto per level, seven bodies, chain or expression, pointer or index, hand-stepped
+//   row * 2 or not) tops out at 116 slot rows: hand-stepped twice, a and b real, k goto, m real, d a pointer, work->sheet[n]
+//   read by index, s32 t chained over several sets so nothing hoists or reduces (raw 367 because the frame is 4 short).
+//   With a and b real the 15 and 0x700 hoist unless written as &work->sheet[n], so the 0x700 is that form; with goto
+//   loops PRE hoists y + a. The literal 15 that the listing rebuilds is hoisted in every form with a real loop around it.
+// - Small scheduling ties: muls at the second setup, ldr r5, [sp, #20] and ldr r1, [sp, #124] around a muls, the ring's model
+//   stores, and one store the listing cross-jumps at petal 1's first branch.
+// Older notes, still true where they do not contradict the above:
+// 2026-11-05: differ 522 of 2583 (tla-en). The sheet's address is a local set before the row
+// loop and d steps per column, which brings sp 44 in as a slot. Still open there: the listing
+// keeps row * 2 as a hand-stepped or reduced value at sp 44, copied to r8 per row, a and b in
+// lr and ip with no (y + a) pseudo, 15 in r11. A hand-stepped y is copy-propagated away (596);
+// a and b as real loops reduce (y + a) << 4, which the listing does not (610 to 1089).
+// The listing has six `frame == 112` tails where this has five: the sixth is cross-jumped here
+// because reload's scratch registers agree, so it follows the rotation and is not source.
+// The first setup loop wants cells in r5 and the object slot in r7, here the reverse; moving
+// cells' set into the for clause or dropping it for source + i * 128 does not change that.
 // 2026-11-05: differ 535 of 2583 (tla-en). The row loop has its own counter (row2).
 // 2026-11-05: differ 565 of 2583 (tla-en). A wrapper on the first clear gains
 // 16. Left as below.
@@ -250,6 +286,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   s32 spin;
   s32 spread;
   s32 grow;
+  s32 spin2;
   s32 petals; // the block's address as a number, see the header
   s32 i;
   s32 j;
@@ -346,8 +383,6 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   size = 3;
   for (i = 0; i != 10; i++) {
-    u8 *dst = sprites + (i * 8 + i) * 2;
-
     for (j = 0; j != 18; j++) {
       s32 v = source[gData_08197410[size - 1] + j];
 
@@ -357,7 +392,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           v = 1;
         }
       }
-      dst[590 + j] = v;
+      sprites[i * 18 + 590 + j] = v;
     }
   }
   REG_DISPCNT = 0x7741;
@@ -519,6 +554,7 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->x[i] = 0xf00000;
           w->y[i] = 0x300000;
         } else if (frame <= 47) {
+          spin2 = w->y[i];
           w->x[i] += -0x30000;
           w->y[i] += 0x18000;
         } else if (frame <= 79) {
@@ -526,6 +562,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->y[i] += -0x10000;
         } else if (frame <= 111) {
           w->x[i] += 0x30000;
+          if (frame > 400) {
+            dx = frame;
+          }
         }
         if (frame == 112) {
           w->x[i] = 0x1000000;
@@ -545,6 +584,9 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
           w->y[i] += 0x6710;
         } else if (frame <= 141) {
           w->x[i] += 0x30000;
+          if (frame > 400) {
+            dx = frame;
+          }
         }
         if (frame == 112) {
           w->x[i] = 0x1000000;
@@ -899,9 +941,12 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
     s32 b;
     s32 k;
     s32 n = 0;
+    u8 *sheet;
 
     Iwram_CopyWords((void *)BG_PLTT, e, 32);
-    Resource_DecodeType01(e + 32, work->sheet);
+    e += 32;
+    Resource_DecodeType01(e, work->sheet);
+    sheet = work->sheet + 0x1000;
     for (row = 0; row != 15; row++) {
       s32 y = row * 2;
 
@@ -912,13 +957,15 @@ void BattleEffect_RunFlora(struct BattleEffectArgument *effect) {
       s32 offset = ((y + a) << 4) + b << 3;
 
       for (k = 0; k != 8; k++, offset += 16) {
+        u8 *d = sheet + offset;
+
         for (row2 = 0; row2 != 4; row2++) {
           u32 c = work->sheet[n];
-          u8 *d = work->sheet + 0x1000 + offset + row2 * 2;
 
           d[0] = c & 15;
           d[1] = c >> 4 & 15;
           n++;
+          d += 2;
         }
       }
     }

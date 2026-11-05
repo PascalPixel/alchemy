@@ -1,3 +1,6 @@
+// Draft, differ 19 of 184 (tla-en, 5 November 2026), from 99. Left: the native's
+// lsls r3, r1, #2; adds r1, r3, #0 for the rise's scale, here lsls r1, r1, #2 and
+// later, which moves two load ties.
 // Measured under -Os, 5 November 2026: differ 99 (tla-en); notes below may predate it.
 // Draft, differ 203 of 184, skeleton gap 49 (tla-en, 2026-11-01)
 // Draws Aqua Rock's thirty-two water spouts: for each active one a top sprite
@@ -62,8 +65,9 @@ void Func_020030f4(void) {
   struct PillarEntry *entry = work->entries;
   s32 viewZ;
   s32 originY;
-  u32 tile;
+  s32 depth;
   s32 i;
+  u32 tile;
 
   viewX &= 0xffff0000;
   viewZ = view[1] & 0xffff0000;
@@ -79,22 +83,17 @@ void Func_020030f4(void) {
       s32 z;
       s32 screenY;
       s32 attributes;
-      s32 depth;
 
       if (position != 0) {
-        s32 relative;
-        z = position[2] - viewZ - originY;
         x = position[0] - viewX;
-        relative = position[1] + entry->height - originY;
-        screenY = z - relative;
-        y = relative;
+        y = position[1] + entry->height - originY;
+        z = position[2] - viewZ - originY;
+        screenY = z - y;
       } else {
-        s32 relative;
-        relative = entry->height - originY;
         x = entry->x - viewX;
+        y = entry->height - originY;
         z = entry->z - viewZ - originY;
-        screenY = z - relative;
-        y = relative;
+        screenY = z - y;
       }
       if (entry->height != base || entry->state == 2)
         attributes = 0x800;
@@ -107,36 +106,36 @@ void Func_020030f4(void) {
         s32 rise;
 
         if ((u32)(screenY + 47) <= 238) {
-          u32 offset;
           x &= 511;
-          offset = entry->kind << 3;
           screenY &= 255;
+          rise = entry->kind * 8;
           entry->top[0] = 0;
           screenY |= x << 16;
           screenY |= 0x40002000;
           entry->top[1] = screenY;
-          entry->top[2] = (tile + offset) | attributes;
+          entry->top[2] = (tile + rise) | attributes;
           Func_02003c94(entry->top, depth);
         }
         screenY = z - y;
         screenY = (screenY >> 16) + 8;
         if ((u32)(screenY + 47) <= 238) {
-          rise = entry->height;
-          rise -= entry->base;
-          rise >>= 16;
+          rise = (entry->height - entry->base) >> 16;
           if (rise != 0) {
             u32 *column = entry->column;
-            s32 offset;
             rise--;
             screenY &= 255;
             if ((u32)rise > 7)
               rise = 7;
-            offset = (rise << 2) + 64;
+            {
+              s32 scaled = rise * 4;
+              rise = scaled;
+            }
             column[0] = 0;
             screenY |= x << 16;
             screenY |= 0x6000;
             entry->column[1] = screenY;
-            entry->column[2] = attributes | (tile + offset);
+            rise += 64;
+            entry->column[2] = attributes | (tile + rise);
             Func_02003c94(column, depth);
           }
         }

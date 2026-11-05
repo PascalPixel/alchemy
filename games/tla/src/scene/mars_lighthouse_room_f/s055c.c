@@ -1,11 +1,3 @@
-// Draft, differ 37 of 116, written from the listing, as a goto loop (a do-while
-// lets loop.c hoist the kind 0x149 into r11: differ 78). Left: the random test
-// builds 0x8000 and branches on bcs where the native builds 0x7fff and branches
-// on bhi (tried <= 0x7fff, > 0x7fff, < 0x8000, a signed cast), and the origin,
-// speed and scale take r9, r8 and r10 where the native has r8, r10 and r9. Also
-// tried: the limit in an asm-pinned variable keeps 0x7fff and bhi but builds it
-// in r3, not r1 (differ 54), pinned to r1 (46); for, while and do-while loops
-// (78, 79).
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
 #include "iwram_call.h"
 
@@ -15,10 +7,9 @@ s32 Math_Sine(s32 angle);
 
 void Func_0200055c(s32 id) {
   struct Actor *origin = Actor_GetById(id);
-  s32 i = 11;
+  s32 i;
 
-loop:
-  {
+  for (i = 11; i >= 0; i--) {
     s32 a = Random16Far();
     s32 x = origin->x + (a << 4) - (Random16Far() << 4);
     s32 b = Random16Far();
@@ -31,10 +22,14 @@ loop:
       s32 speed = Random16Far() << 3;
       s32 scale = (Random16Far() >> 1) + 0x4000;
 
-      if (Random16Far() <= 0x7fff)
-        Call2((void (*)())Func_02005490, object, gData_02005b68);
-      else
-        Func_02005490(object, gData_02005bac);
+      {
+        u32 pick = Random16Far();
+
+        if (pick <= 0x7fff)
+          Func_02005490(object, gData_02005b68);
+        else
+          Func_02005490(object, gData_02005bac);
+      }
       Actor_SetSingleChildFlags(object, 0);
       object->velocityY = (angle << 2) + 0x20000;
       object->velocityZ = Iwram_MulQ16(speed, Math_Cosine(angle));
@@ -51,6 +46,4 @@ loop:
       Animation_ApplyChildValues(object, 1);
     }
   }
-  if (--i >= 0)
-    goto loop;
 }

@@ -1,12 +1,3 @@
-// Draft, differ 18 of 124 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// loop (as a for loop: 73). The aerie's setup: marks the leader and objects 10
-// to 16, and under flag 0xa3c places objects 8 and 9, starts their actions and
-// schedules Func_020004a4. Func_0200567c goes through a forwarding inline
-// (called directly the two calls share 0x2000000). Left: GCSE gives the closing
-// store's zero a register set inside the loop (the native sets it in object 8's
-// block), which reorders the callee-saved constants: 0x700000, 4, 0x20 and 0
-// take r8, r5, r6 and r10 where the native has r5, r6, r8 and r10. The test of
-// flag 0xa3c as an enclosing if changes nothing.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -30,7 +21,8 @@ void Func_0200567c(s32 id, s32 a, s32 b);
 void Func_020004a4(void);
 
 static __inline__ void PlaceObject(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): forwarded inline; see scene_call.h. */
+  /* FAKEMATCH(wrapper): forwarded inline; as a direct call, 10 of 124
+   * instructions differ in tla-en. */
   Func_0200567c(id, a, b);
 }
 
@@ -38,21 +30,13 @@ void Func_020001d8(void) {
   struct Actor *object;
   s32 i;
 
-  Func_02004ef0(gData_02005aa4, gData_02005ab4, gData_02005ae0,
-                gData_02005b0c);
+  Func_02004ef0(gData_02005aa4, gData_02005ab4, gData_02005ae0, gData_02005b0c);
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 0x40;
-  i = 10;
-next:
-  object = Actor_GetById(i);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 59 of 124 instructions differ
-   * in tla-en. */
-  {
+  for (i = 10; i <= 16; i++) {
+    object = Actor_GetById(i);
     object->priorityFlags |= 0x80;
+    Animation_ApplyChildValues(object, 5);
   }
-  Animation_ApplyChildValues(object, 5);
-  if (++i <= 16)
-    goto next;
   if (!GameFlag_Test(0xa3c))
     return;
   PlaceObject(8, 0x2000000, 0x1080000);
@@ -60,28 +44,17 @@ next:
   wait(1);
   Actor_SetSpritePriority(8, 1);
   object = Actor_GetById(8);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 47 of 124 instructions differ
-   * in tla-en. */
-  do {
-    object->motionFlags = 4;
-  } while (0);
+  object->motionFlags = 4;
   object->y = 0x700000;
   Animation_ApplyChildValues(object, 5);
   Actor_SetSingleChildFlags(object, 0);
   object->priorityFlags |= 0x20;
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 39 of 124 instructions differ in tla-en. */
-  asm("");
   Actor_SetSpritePriority(9, 2);
   object = Actor_GetById(9);
   object->motionFlags = 4;
+  object->y = 0x700000;
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
-  object->y = 0x700000;
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 37 of 124 instructions differ in tla-en. */
-  asm("");
   Animation_ApplyChildValues(object, 5);
   Actor_SetSingleChildFlags(object, 0);
   object->priorityFlags |= 0x20;

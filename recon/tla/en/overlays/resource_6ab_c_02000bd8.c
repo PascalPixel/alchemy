@@ -1,20 +1,6 @@
-// Draft, differ 31 of 155 (was 85), rewritten from the listing: until flag
-// 0xa3a, the leader turns and takes mode 28, object Data_02004cec is thrown
-// from above the leader, item 224 is taken and item 222 given to owner 4
-// (MsgMarsStar08), the first slot holding it goes to Func_020042c4, flag 0xa3a
-// is set, the object is reset and the screen flashes white (palette entry
-// 0x0500021e) around MsgMarsStar06. The two blend calls go through inline
-// wrappers (FAKEMATCH(wrapper) on adoption). The slot search is a goto loop
-// entered at its test with the slot's byte offset counted apart, as the native
-// has it. Left: the native masks the item with 0x1ff from the pool (a halfword
-// constant) inside the loop, where this builds it with three instructions; a
-// for loop over the inventory array gets the pool load and the offset giv but
-// hoists the mask into r7 (41); and the palette store loads its address before
-// its value. Tried: (u16) casts on the mask (no change), a plain store (no
-// change), the item read into a u16 local (no change), and a for loop over
-// struct OwnerInventoryState's inventory with the flag's result kept for the
-// motion flags' zero, as the native keeps it in r7: the loop then has the
-// native's layout and giv but hoists the mask into r7 (41).
+// Draft, differ 6 (tla-en, 2026-11-05). Func_02000bd8 of overlay 6ab.
+// Plain search loop. Left: the palette store: address r3 and value r2
+// natively, here the reverse. Its two inlines need wrapper tags on adoption.
 #include "../../../../games/tla/src/scene/mars_lighthouse_star_room/mars_lighthouse_star_room.h"
 
 extern struct Actor *Data_02004cec;
@@ -79,15 +65,11 @@ void Func_02000bd8(void) {
     FieldMessage_Show((s32)&MsgMarsStar08, 1);
     i = 0;
     offset = 216;
-    goto check;
-  next:
-    offset += 2;
-    i++;
-  check:
-    if (i <= 14) {
-      if ((*(u16 *)(Unit_Get(4) + offset) & 0x1ff) != 222)
-        goto next;
-      Func_020042c4(4, i);
+    for (; i <= 14; offset += 2, i++) {
+      if ((*(u16 *)(Unit_Get(4) + offset) & 0x1ff) == 222) {
+        Func_020042c4(4, i);
+        break;
+      }
     }
     Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
     GameFlag_SetBit(0xa3a);
@@ -102,7 +84,7 @@ void Func_02000bd8(void) {
     Func_02004404_(0x10003, 0);
     Func_02004414(20);
     wait(20);
-    *(volatile u16 *)0x0500021e = 0x7fff;
+    *(u16 *)0x0500021e = 0x7fff;
     wait(1);
     Func_020042a4((s32)&MsgMarsStar06, 0, 0);
     Func_02004404_(0x10000, 0);

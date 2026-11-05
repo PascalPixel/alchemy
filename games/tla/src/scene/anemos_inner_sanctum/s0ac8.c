@@ -1,27 +1,3 @@
-// Draft, differ 102 of 630, skeleton gap 12 (tla-en, 2026-11-01)
-// Left, in skeleton terms (5 removed, 7 added):
-// - Three entry branches. shuffle, place and mark are entered with goto through
-//   their bottom tests only so gcse's PRE leaves the stack addresses in the
-//   loop: the listing falls from its guard straight into each body. Without
-//   those gotos PRE hoists the four addresses, they take the registers of
-//   &alpha and actor, and the frame grows to 116 (gap 71 and 85).
-// - The second fade: the listing builds &alpha again (mov r5, sp; adds r5, #106)
-//   and keeps it in r5 across the calls; here it is a copy of r9 at each use.
-//   The first fade's mov r5, r9 before wait is the same pseudo's copy.
-// - One scheduling pair each: i-- before the second fade's store, movs r5, #170
-//   before the two zero stores.
-// - One jump around a literal pool in the mark loop, which comes back with the
-//   entry branches gone.
-// Allocation: most of the differ is count in r10 and type and actor in r11, where
-// the listing has them the other way round. Tried without effect: type and actor
-// as one variable, count split in two after the scan (worse), s32 count, other
-// declaration orders.
-// Forms that the listing fixed: (u16)base, not a shared shift variable, because
-// PRE reuses the ashift only and leaves the lsrs in the scan loop; t0 and t1
-// apart from column and row so PRE does not carry column + 63 and row - 3 to the
-// last Func_02003328; x and z declared before the targets for the spill slots.
-// Direct calls to Func_020009b8 give its argument order; Call1 and the like
-// elsewhere keep each call's constants apart.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -171,8 +147,8 @@ void Func_02000ac8(void) {
   Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
   Call2((void (*)())Func_02003400, gMainRoutineWork.currentOwner, 0x4000);
   Call2((void (*)())Actor_SetModeById, gMainRoutineWork.currentOwner, 28);
-  actor = Import_ActorCreate((u16)type, leader->x, leader->y + 0x80000,
-                             leader->z);
+  actor =
+      Import_ActorCreate((u16)type, leader->x, leader->y + 0x80000, leader->z);
   actor->motionFlags = 0;
   actor->scaleY = 0x1999;
   actor->scaleX = 0x1999;
@@ -204,29 +180,15 @@ void Func_02000ac8(void) {
   Call1((void (*)())FieldEvent_Wait, 48);
 
   last = count - 1;
-  /* FAKEMATCH(barrier): the empty asm on last changes its allocation rank; as no
-   * asm, 40 of 630 instructions differ in tla-en. */
-  asm("" : "=r"(last) : "0"(last));
-  i = 0;
-  if (count != 0) {
-    goto shuffleTest;
-  shuffle: {
+  for (i = 0; i != count; i++) {
     s32 pick = Random16Far();
-    u8 *list = found;
     pick &= last;
 
-    order[i] = list[pick];
-    i++;
-    list[pick] = list[last];
+    order[i] = found[pick];
+    found[pick] = found[last];
     last--;
   }
-  shuffleTest:
-    if (i != count)
-      goto shuffle;
-    i = 0;
-    if (count != 0) {
-      goto placeTest;
-    place: {
+  for (i = 0; i != count;) {
     s32 slot;
 
     from.x = leader->x + ((Random16Far() & 31) << 16) - 0x100000;
@@ -241,11 +203,6 @@ void Func_02000ac8(void) {
       Call1((void (*)())Func_020034b8, 195);
     i++;
     Call1((void (*)())FieldEvent_Wait, 8);
-    }
-    placeTest:
-      if (i != count)
-        goto place;
-    }
   }
 
   if (count != 18) {
@@ -255,32 +212,18 @@ void Func_02000ac8(void) {
     alpha = REG_BLDALPHA & 255;
     Call2((void (*)())Func_02003458, 0x10000, 1);
     Call1((void (*)())Func_02003468, 60);
-    i = alpha;
-    if (i != 0) {
-    fadeOut:
+    for (i = alpha; i != 0;) {
       REG_BLDALPHA = i | 0x1000;
       i--;
       Call1((void (*)())wait, 8);
-      /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-       * 42 of 630 instructions differ in tla-en. */
-      asm("");
-      if (i != 0)
-        goto fadeOut;
     }
-    i = 0;
-    if (count != 0) {
-      goto markTest;
-    mark: {
+    for (i = 0; i != count;) {
       s32 slot = order[i];
 
       i++;
       Call6((void (*)())Func_02003328, 64, 0,
             ((leader->x + (gData_020036fc[slot][0] << 16)) >> 20) + 64,
             (leader->z + (gData_020036fc[slot][1] << 16)) >> 20, 1, 1);
-    }
-    markTest:
-      if (i != count)
-        goto mark;
     }
     Call6((void (*)())Func_02003328, 64, 0, column + 63, row - 3, 3, 5);
     Func_02003330();

@@ -31,10 +31,10 @@
 //    addresses number in declaration order though they are stored in code order),
 //    and the tail of PRE's registers comes in another hash order, the rest of the
 //    raw rows (385). PRE's index is the operand's regno plus a code constant, mod
-//    a table of insns / 4 (the gcse dump prints both). With these regnos the
-//    listing's order fits only tables of about 1889 to 1899 buckets where the
-//    draft has 1967: about 300 fewer insns alive at GCSE, with the pseudos about
-//    where they are. Extra insns can be added to test a table but not removed,
+//    a table of insns / 2 (the gcse dump prints the buckets; 3934 insns, 1967
+//    buckets). With these regnos the listing's order fits only tables of about
+//    1889 to 1899 buckets: about 150 fewer insns alive at GCSE, with the pseudos
+//    about where they are. Extra insns can be added to test a table but not removed,
 //    so finding what the draft carries there that the source did not is next.
 // 5. The drop frames' counter and its i * 8 copy swap r4 and r5 (both sites).
 // Measured 2026-11-05 (tla-en): differ 2371 of 5364, 915 with slots and pool

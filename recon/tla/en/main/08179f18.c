@@ -1,3 +1,12 @@
+// 2026-11-05: differ 522 of 2583 (tla-en). The sheet's address is a local set before the row
+// loop and d steps per column, which brings sp 44 in as a slot. Still open there: the listing
+// keeps row * 2 as a hand-stepped or reduced value at sp 44, copied to r8 per row, a and b in
+// lr and ip with no (y + a) pseudo, 15 in r11. A hand-stepped y is copy-propagated away (596);
+// a and b as real loops reduce (y + a) << 4, which the listing does not (610 to 1089).
+// The listing has six `frame == 112` tails where this has five: the sixth is cross-jumped here
+// because reload's scratch registers agree, so it follows the rotation and is not source.
+// The first setup loop wants cells in r5 and the object slot in r7, here the reverse; moving
+// cells' set into the for clause or dropping it for source + i * 128 does not change that.
 // 2026-11-05: differ 535 of 2583 (tla-en). The row loop has its own counter (row2).
 // 2026-11-05: differ 565 of 2583 (tla-en). A wrapper on the first clear gains
 // 16. Left as below.

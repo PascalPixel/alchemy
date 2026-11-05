@@ -602,11 +602,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
           model->vertices = buffer;
           if ((u32)(frame - 236) <= 31) {
             s32 v = frame - 235;
-            u8 *q = shades;
 
-            for (i = 0; i != 31; i++, q += 2) {
-              q[0] = v;
-              q[1] = v;
+            for (i = 0; i != 31; i++) {
+              Data_02010fa0[i * 2] = v;
+              Data_02010fa0[i * 2 + 1] = v;
             }
           }
           model->shade = (s32)shades;

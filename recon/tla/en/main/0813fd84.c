@@ -1,4 +1,4 @@
-// Draft, differ 79 of 2579 (tla-en, 2026-11-05), 2578 instructions here. The frame, every slot and every pool agree.
+// Draft, differ 48 of 2579 (tla-en, 2026-11-05). The frame, every slot and every pool agree.
 // BattleEffect_RunCruelRuin. What this round settled, each read from the listing and each a real form:
 // - Loop givs: grey, blue and green are givs of frame (blue first, as the slots order them); grey reduces because
 //   the palette test and its colour spell frame - 80 again, and that second giv combines with the first.
@@ -710,13 +710,14 @@ void BattleEffect_RunCruelRuin(struct BattleEffectArgument *effect) {
   for (q = 0; q != 2; q++) {
     u8 *src;
     struct RuinObject *obj;
+    s8 mask = -13;
 
     i = 0;
     src = work->sheet + q * 0x1000;
     for (; i != 8; i++) {
       obj = Func_0815b290(32, 32, 0x80000000, 0xf000);
       work->objects[q * 9 + i] = obj;
-      obj->attr.bits.priority = 1;
+      {s32 x = ((u8 *)obj)[9]; x &= mask; x |= 4; ((u8 *)obj)[9] = x;}
       CopyWords_((void *)OBJ_TILES(obj), src, 512);
       src += 512;
     }

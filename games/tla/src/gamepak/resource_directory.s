@@ -202,7 +202,7 @@ Resource_DirectoryTable:
 	resource BoltSheet, BattleEffect_BoltSheet
 	resource CurseSealSheet, BattleEffect_CurseSealSheet
 	resource , BattleEffect_CrackedTextureSheet
-	resource , BattleEffect_CrossTextureSheet
+	resource CrossTextureSheet, BattleEffect_CrossTextureSheet
 	resource Data0C1, Resource_Data0C1
 	resource Data0C2, Resource_Data0C2
 	resource Data0C3, Resource_Data0C3
@@ -220,7 +220,7 @@ Resource_DirectoryTable:
 	resource Data0CF, Resource_Data0CF
 	resource , Resource_Data0D0
 	resource , BattleEffect_FeatherSheet
-	resource , Resource_Data0D2
+	resource Data0D2, Resource_Data0D2
 	resource , Resource_Data0D3
 	resource LightBurstSheet, BattleEffect_LightBurstSheet
 	resource StarCrossSheet, BattleEffect_StarCrossSheet

@@ -1,20 +1,3 @@
-// Draft, differ 123 of 325 (tla-en, 2026-11-05); 63 with slots and pool offsets normalized, 23 with registers blind too. The search's untagged asms, the pin on the size and its typeof temporaries are gone, which raises the raw figure from 90; the native's frame is 48 with one more spill and the sprite of the second loop in r4 (a caller-save at sp + 4), copied to r6.
-// Near miss, differ 90 of 325 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// First draft of Func_080eb960, written from the listing; no ☀️ twin. An
-// object vanishes in a whirl of sparks: 64 sprites of picture 0x1ea (8x8, 256
-// colours, the object's priority) circle out from it, each spark rising and
-// closing in for 50 frames. Ten frames in the sparks stop coming and the
-// object spins and widens from nothing back to full width over 64 frames,
-// when its sprite and its child flags come back; 74 frames later it ends.
-//
-// Differ 135 of 325 (draft 322; five minutes of permuter found nothing
-// better). The shape follows the listing; left: the stack frame is 48 bytes in the
-// native, with a spill slot at sp + 4 for the sprite pointer of the second
-// loop, which the native keeps in r4 and copies to r6 for the drawing (this
-// keeps one pointer in r6), and the stack slots of the saved angle, depth,
-// tiles, entry and phase in another order; the first loop's sprite is r5 and
-// the 15 mask r6 in the native, the other way round here.
 #include "types.h"
 #include "heap_release.h"
 #include "system.h"
@@ -46,36 +29,42 @@ struct SparkWork {
 
 s32 BattleEffect_GetObjectDepth(struct Actor *object);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           u32 flags);
+void Actor_SetSingleChildFlagsFar(struct Actor *object, u32 flags);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Camera_WorldToScreen(s32 *position);
 
 extern char ResourceId_SparkleFade;
+/// An object vanishes in a whirl of sparks: 64 sprites of picture 0x1ea circle
+/// out from it, each spark rising and closing in for 50 frames. Ten frames in
+/// the sparks stop coming and the object spins and widens from nothing back to
+/// full width over 64 frames, when its sprite and its child flags come back;
+/// 74 frames later it ends.
 void Func_080eb960(s32 objectId) {
-  struct SparkWork *work = HeapSlot_Alloc(HEAP_SLOT_SPARKS, sizeof(struct SparkWork));
+  struct SparkWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_SPARKS, sizeof(struct SparkWork));
+  s32 phase;
+  s32 entry;
+  s32 tiles;
+  s32 spawning;
   struct Actor *object = ObjectTable_Get(objectId);
   s32 depth = BattleEffect_GetObjectDepth(object);
   s32 angle = (u16)object->angle;
-  s32 spawning;
-  s32 entry;
-  s32 tiles;
   struct Spark *spark;
   struct EffectSprite *sprite;
   s32 i;
-  s32 n;
-  s32 phase;
   s32 next;
   s32 frame;
   s32 position[3];
 
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_SparkleFade), work);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_SparkleFade),
+                        work);
   entry = Resource_FindFreeEntry();
   tiles = VramCache_Load(entry, sizeof(work->picture), work);
 
+  i = 0;
   spark = work->sparks;
-  sprite = work->sprites;
-  for (i = 0; i < 64; i++, sprite++, spark++) {
+  for (; i < 64; i++, spark++) {
+    sprite = &work->sprites[i];
     Func_080eaf98(sprite, 4, 4, 0, tiles + (i & 15) * 2);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
@@ -92,7 +81,7 @@ void Func_080eb960(s32 objectId) {
   frame = 0;
   do {
     if (spawning != 0) {
-      for (n = spawning; n != 0; n--) {
+      for (i = spawning; i != 0; i--) {
         s32 sparkAngle = Random16();
         s32 radius = Random16() * 6 + 0xc0000;
 
@@ -111,29 +100,40 @@ void Func_080eb960(s32 objectId) {
     }
     spark = work->sparks;
     sprite = work->sprites;
-    for (i = 63; i >= 0; i--, sprite++, spark++) {
-      if (spark->age < 0)
-        continue;
-      if ((u32)spark->age < SPARK_LIFE) {
-        position[0] = spark->centre[0];
-        position[1] = spark->centre[1];
-        position[2] = spark->centre[2];
-        Vector_AddPolarOffset(spark->radius, spark->angle, position);
-        if (position[2] > object->z)
-          sprite->depth = depth + 2;
-        else
-          sprite->depth = depth - 2;
-        Camera_WorldToScreen(position);
-        sprite->x = position[0];
-        sprite->oam.index = tiles + (spark->age & 3) * 2;
-        sprite->y = position[2];
-        Func_080eb01c(sprite);
-        spark->angle += 0x800;
-        spark->radius -= 0x3333;
-        spark->centre[1] -= 0x4000;
+    i = 63;
+    for (; i >= 0; i--, sprite++, spark++) {
+      if (spark->age >= 0) {
+        struct EffectSprite *drawn = sprite;
+        /* FAKEMATCH(barrier): an empty asm through drawn, which keeps it apart
+           from sprite; as the plain copy, 83 of 325 instructions differ in
+           tla-en. */
+        asm("" : "=r"(drawn) : "0"(drawn));
+
+        if ((u32)spark->age < SPARK_LIFE) {
+          s32 *pos = position;
+          s32 sparkAngle = spark->angle;
+          s32 radius = spark->radius;
+
+          pos[0] = spark->centre[0];
+          pos[1] = spark->centre[1];
+          pos[2] = spark->centre[2];
+          Vector_AddPolarOffset(radius, sparkAngle, pos);
+          if (pos[2] > object->z)
+            sprite->depth = depth + 2;
+          else
+            sprite->depth = depth - 2;
+          Camera_WorldToScreen(pos);
+          drawn->x = pos[0];
+          drawn->y = pos[2];
+          drawn->oam.index = tiles + (spark->age & 3) * 2;
+          Func_080eb01c(drawn);
+          spark->angle += 0x800;
+          spark->radius -= 0x3333;
+          spark->centre[1] -= 0x4000;
+        }
+        if (++spark->age == SPARK_LIFE)
+          spark->age = -1;
       }
-      if (++spark->age == SPARK_LIFE)
-        spark->age = -1;
     }
     switch (phase) {
     case 0:

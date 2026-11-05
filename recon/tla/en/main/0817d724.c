@@ -1,3 +1,5 @@
+// Draft, differ 90 of 1034 (tla-en, 2026-11-05); 45 with slots and pool offsets normalized, 10 with registers blind too. Measured, not kept: s32 c = *color; c <<= 16; blue = ((u32)c >> 26) & 31; with (red << 10) | (red << 5) | blue gives the listing's shifts and clamp but one shared mask, no pooled 31 (168). The pooled 31 and the shifts have not been had together.
+// Draft, differ 90 of 1034 (tla-en, 2026-11-05); 45 with slots and pool offsets normalized, 10 with registers blind too. Blue's mask as a halfword gives the pooled 31 (98 to 90); (u16)(*color >> 10) still compiles to lsrs 10 where the listing has lsls 16, lsrs 26: combine knows the load is zero-extended. Hiding that with a tied empty asm moves the rest to 131.
 // Measured 2026-11-05 (tla-en): differ 98: the model's mesh and vertices are typed pointers, not void.
 // Measured 2026-11-05 (tla-en): 106 of 1034, unchanged. 280 + 300 typings of the colour loop's
 // blue: none gives lsls 16, lsrs 26 with ldrh and a pooled 31 without costing more elsewhere.
@@ -319,10 +321,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
       BattleBackground_LoadFar(1, (s32)&ResourceId_RedHazeBackdrop, 0);
       for (i = 0, color = (u16 *)(BG_PLTT + 96); i != 128; i++, color++) {
         s32 red = *color & 31;
-        s32 green = (*color >> 5) & 31;
-        s32 blue = (*color >> 10) & 31;
-
-        green = red;
+        s32 green = red;
+        s32 blue = (u16)(*color >> 10) & (u16)31;
         if (red > 31) {
           red = 31;
         }

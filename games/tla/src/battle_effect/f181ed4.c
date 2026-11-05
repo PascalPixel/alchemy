@@ -1,51 +1,3 @@
-// Measured 2026-11-05 (tla-en): differ 104 of 513.
-// 2026-10-26 (round 5): differ 112. spawned is declared in a block opened after
-// BattleEffect_FetchRectangleBlitters, so its pseudo comes after the blitter
-// pair's address and the two spill slots take the native's places (the pair's
-// address at sp+16, spawned at sp+12): 120 to 112; the target's actor read
-// straight from effect->actors before Func_081180e8 (without the actors
-// pointer) keeps 112. Left: in the spawn loop the 1 and the ring counter swap
-// r5 and r7, and scheduling rows (the prologue's heap loads, the palette copy's
-// address shift, the frame-20 block).
-// 2026-10-26: differ 120 of 513, with Task_Add returning
-// s32 as defined.
-// Draft (tla-en): listing 513 instructions, draft 513, common 442, differ 142.
-// The body of effect kinds 114, 461 and 462 (summon_modes_1.c's
-// BattleEffect_RunPurgatory, BattleEffect_RunDjinnBlast and
-// BattleEffect_RunDjinnStorm pass modes 0, 2 and 1). Written from the listing
-// on ☀️'s skeleton (2026-10-15, lane N2); its nearest ☀️ shape is
-// BattleEffect_RunPlasma (0.50), which is no twin. The statements, frame
-// (texture sp+40, the blitter pair sp+48, midpoint sp+56) and the instruction
-// count match. Left:
-// - the spill slots of the blitter pair's address and of "spawned" are
-// swapped (native: the pair's address at sp+16, spawned at sp+12), and
-// every access to either is one row off; declaring spawned last changes
-// nothing (the address is a pseudo made after the declarations).
-// - in the drop spawn loop the native keeps the speed in r7 and the angle
-// in r5, here the other way round; &midpoint takes r5 there, r7 here.
-// - REG_BLDALPHA's two values each load their pool word before the
-// register address's shift; here after it.
-// - small scheduling rows in the draw call's argument setup and the
-// column's scale branches.
-// Measured: the first draft 271; the mode-1 test nested as its own if, so
-// frame 1..23 compiles as one unsigned compare: 264; Trig_Sin(angle) *
-// speed (the native copies speed and multiplies by the result): 258;
-// speed's +32 folded into its first assignment: 240; speed and angle
-// declared the other way round: no change.
-// 2026-10-19 (run 33): alchemy-devtools permute (5 minutes) found the target's
-// actors pointer taken before Func_081180e8 at frame 20: 240 to 142. It
-// holds r5 across the call, which moves the drop loop's speed to r7 and the
-// angle to r5 as the native has them; the frame-20 block itself is now
-// three rows off (the native reloads effect after the call). The swapped
-// spill slots (the pair's address and spawned) remain. A pointer variable
-// for the blitter pair instead: 296. A second run from 142 (8 minutes)
-// reached 120 only by reading an uninitialized temporary: not taken.
-// Resources 0xc0 (BattleEffect_CrossTextureSheet), 0xd2 (Resource_Data0D2) and
-// the Djinn sheets 0x154, 0x150 and 0x152 need names in
-// gamepak/resource_directory.s when this is adopted.
-// 2026-10-26: 127 under K2's -mthumb-slow-loads; the target's actor read
-// into its own local before Func_081180e8 at frame 20: 122 (permute, 20
-// minutes, found nothing better that was plain C).
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -106,6 +58,11 @@ extern const u16 gData_08197410[];
 extern const u8 gData_08198c6c[];
 extern const u8 Data_08198df8[];
 
+static inline void CopyPalette(const void *palette) {
+  /* FAKEMATCH(wrapper): the palette copy through an inline; as the plain call,
+     4 of 513 instructions differ in tla-en. */
+  Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+}
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
 void *Resource_GetTableEntry(s32 resourceId);
@@ -153,7 +110,6 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition midpoint;
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
-  s16 actor;
   void *canvas = Ram_HeapSlots->battleFxWork[1];
   u8 *sparkCels = Ram_HeapSlots->unk64[0];
   struct EffectStep *drop;
@@ -175,20 +131,16 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
     s32 spawned;
     work->transferMode = 2;
     work->transferValue = 75;
-    Task_Add(
-        (s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
     spawned = 0;
     Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
     if (mode == 0) {
       Resource_LoadAndDecompress((s32)&ResourceId_CrossTextureSheet,
                                  work->sheet, 1, 1);
-      Iwram_CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                      128);
+      CopyPalette(Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB));
     } else {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0D2, work->sheet, 0, 0);
-      Iwram_CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_BlastSheet), 128);
+      CopyPalette(Resource_GetTableEntry((s32)&ResourceId_BlastSheet));
     }
 
     for (frame = 0; frame != GEYSER_FRAMES; frame++) {
@@ -197,21 +149,26 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
         Func_0815e22c(&midpoint);
       if (frame == 0) {
         Sound_PlayFar(144);
+        /* FAKEMATCH(one-pass): an empty one-pass loop after the call; without
+           it, 2 of 513 instructions differ in tla-en. */
+        do {
+        } while (0);
         work->shakeFrames = 16;
       }
       if (frame == GEYSER_PEAK_FRAME) {
         work->shakeFrames = 8;
-        actor = effect->actors[0];
         Func_081180e8(134);
-        Func_08118088(actor, 1);
+        Func_08118088(effect->actors[0], 1);
       }
 
       // The first frame clears every drop.
       if (frame == 0) {
-        s32 *life = Data_02010018;
+        s32 *life;
 
         spawned = 0;
-        for (i = 0; i != DROP_COUNT; i++) {
+        i = 0;
+        life = Data_02010018;
+        for (; i != DROP_COUNT; i++) {
           *life = -1;
           life += 7;
         }
@@ -248,7 +205,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
             count = 16;
         }
       }
-      for (i = 0; i != count; i++) {
+      for (i = 0; i != count; i++, spawned++) {
         s32 speed;
         s32 angle;
 
@@ -263,7 +220,6 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
           drop->velocityX = (Trig_Sin(angle) * speed) >> 6;
         drop->velocityY = -(Trig_Cos(angle) * speed * 2) >> 7;
         drop->variant = (Random16() & 7) + 48;
-        spawned++;
       }
 
       // Each drop falls, bounces off the floor at y 120, and is drawn while
@@ -307,11 +263,10 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
           // Up on a sine in 16 frames, held, and down again from frame 24.
           if (frame < 16)
             scale = Trig_Sin(frame << 10);
-          else {
+          else if (frame < 24)
             scale = 0x10000;
-            if (frame > 23)
-              scale = Trig_Sin((frame << 10) - 0x2000);
-          }
+          else
+            scale = Trig_Sin((frame << 10) - 0x2000);
           brightness = -32;
         } else if (mode == 1) {
           // Wider every frame, fading from frame 32.

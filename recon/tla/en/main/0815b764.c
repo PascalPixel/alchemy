@@ -1,3 +1,7 @@
+// 2026-11-05, unchanged at 271 of 1932: at the ship-burst block the reload order
+// draw r3, frame r4, then verts is the draft's next register, r7; the listing's
+// verts is r1, so r7 and r0 were taken or busy there. Tried a frame * 3 local
+// before the verts store (326), a start local (563), swapped arms (342): worse.
 // Measured 2026-11-05 (tla-en): differ 271 of 1932 (scoping the
 // ship-placement loop's i to its block took it from 350). Left: at the
 // ship-burst model block the listing reads verts into r1 and j's zero into

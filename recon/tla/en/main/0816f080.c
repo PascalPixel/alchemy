@@ -1,3 +1,5 @@
+// 2026-11-05, unchanged at 146 of 568: a scale local inside the splash loop, with
+// its half shifted, does hold 25000 (draft 563) but moves the rest to 231.
 // Draft, differ 146 of 568, skeleton gap 23 (tla-en, 2026-11-01)
 // Everything but a 25000 and one register swap agrees; the frame, the 47 calls
 // and every stack slot match. What each glow form below is for:

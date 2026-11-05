@@ -339,22 +339,17 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
   s32 r;
   s32 cel;
   s32 sheetOffset;
-  s32 j11;
-  s32 j12;
-  s32 j13;
-  s32 j14;
-  s32 j15;
+  s32 j1;
   s32 j6;
-  s32 py;
-  u8 *ring;
+  s32 column;
 
   if (t < Data_08199f40[small] * 2) {
     r = Data_08199f40[small] * 2 - t;
     cel = r / 6;
     sheetOffset = cel * 0x302;
-    for (j11 = 0; j11 != 64; j11++) {
-        s32 px; s32 a;
-      a = j11 << 10;
+    for (j1 = 0; j1 != 64; j1++) {
+        s32 px; s32 a; s32 py;
+      a = j1 << 10;
       px = (r * Trig_Sin(a) / 2 >> 16) + x;
       py = (r * Trig_Cos(a) >> 16) + y;
       draw(canvas, sprites + cel * 8 + 444, px, py - 2, 2, 4);
@@ -362,6 +357,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
     if (small == 0) {
       s32 offset = 0;
       DrawRectangle blit;
+      u8 *ring;
 
       if (t <= 11)
         offset = 196;
@@ -369,9 +365,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 98;
       blit = draw;
       ring = sprites + offset;
-      for (j12 = 0; j12 != 8; j12++) {
-        s32 px; s32 a;
-        a = (j12 << 13) + (t * 5 << 9);
+      for (j1 = 0; j1 != 8; j1++) {
+        s32 px; s32 a; s32 py;
+        a = (j1 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         blit(canvas, ring, px - 3, py - 7, 7, 14);
@@ -385,6 +381,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
     } else {
       s32 offset = 294;
       DrawRectangle blit;
+      u8 *ring;
 
       if (t <= 11)
         offset = 394;
@@ -392,9 +389,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         offset = 344;
       blit = draw;
       ring = sprites + offset;
-      for (j13 = 0; j13 != 8; j13++) {
-        s32 px; s32 a;
-        a = (j13 << 13) + (t * 5 << 9);
+      for (j1 = 0; j1 != 8; j1++) {
+        s32 px; s32 a; s32 py;
+        a = (j1 << 13) + (t * 5 << 9);
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         blit(canvas, ring, px - 2, py - 5, 5, 10);
@@ -408,29 +405,31 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
     }
   } else {
     if (t < Data_08199f40[small] * 2 + Data_08199f40[small]) {
+      u8 *ring;
+
       r = t - Data_08199f40[small] * 2;
       cel = r / 3 * 8;
       if (cel == 64)
         cel = 56;
       ring = sprites + (cel + 444);
-      for (j14 = 0; j14 != 64; j14++) {
-        s32 px; s32 a;
-        a = j14 << 10;
+      for (j1 = 0; j1 != 64; j1++) {
+        s32 px; s32 a; s32 py;
+        a = j1 << 10;
         px = (r * Trig_Sin(a) >> 16) + x;
         py = (r * Trig_Cos(a) * 2 >> 16) + y;
         draw(canvas, ring, px - 1, py - 2, 2, 4);
       }
-      for (j15 = 0; j15 != 64; j15++) {
-        s32 px; s32 a;
-        a = j15 << 10;
-        py = (r * Trig_Cos(a) >> 16) + y + Data_08199f48[small] * 2;
+      for (j1 = 0; j1 != 64; j1++) {
+        s32 px; s32 a; s32 py;
+        a = j1 << 10;
         px = (r * Trig_Sin(a) * 2 >> 16) + x;
+        py = (r * Trig_Cos(a) >> 16) + y + Data_08199f48[small] * 2;
         draw(canvas, ring, px - 1, py - 2, 2, 4);
       }
     }
-    for (j6 = 0, py = y; j6 < t - Data_08199f40[small] * 2 && py <= 112;
-         j6++, py += 32)
-      draw(canvas, sprites + 508, x - 4, py, 8, 32);
+    for (j6 = 0, column = y; j6 < t - Data_08199f40[small] * 2 && column <= 112;
+         j6++, column += 32)
+      draw(canvas, sprites + 508, x - 4, column, 8, 32);
     if (t < Data_08199f40[small] * 2 + 8) {
       s32 shake = (Data_08199f40[small] * 2 - t + 8) >> 1;
 

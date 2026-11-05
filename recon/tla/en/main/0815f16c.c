@@ -19,28 +19,32 @@
 // r2, r3, r5: one reload more or less shifts the low registers of every later
 // row, so differences are read from the top, and one fix can settle hundreds.
 //
+// Four more facts, each of which settled many rows here. A local mentioned once in
+// the loop is folded back by loop.c; set in the loop's block and mentioned twice it
+// hoists, and a hoisted constant-valued local with no register is rematerialized
+// by reload, which costs one rotation step. PRE's reaching register survives copy
+// propagation only when the first register is set again in the same block: vec is
+// origin, then base. A draw call returns a value (the load of r0 otherwise ranks
+// first by dependants). A loop pointer p = &SPARKS[i] keeps a separate stepping
+// register only when p is used outside the loop, so p is the shared one there.
+//
 // Left, top down:
-// - Kind 80: i * 2 is its own register stepping by 2 and i * 64 another by 64, with
-//   0x237 and 0x1000 not hoisted; plain forms and explicit steps both lose.
-// - The first origin projection is settled: the loop has no q; pos is plain and
-//   its address hoists into r8. The fresh add r1, sp, #228 with r0 = r1 is reload
-//   rematerializing an unallocated pseudo whose REG_EQUIV is sfp - 36: it takes a
-//   set-once local o = origin hoisted out of the frame loop, and loop.c hoists it
-//   only if it is mentioned twice (a single use is folded back). The empty asm
-//   with an "X" input is that second mention; what it stands for in the source
-//   is not known. This one reload sets the rotation that the rows after it read.
-// - Origin's slot is sp+56 where the listing has sp+16, with 20 to 56 four low:
-//   the listing keeps PRE's reaching register, here copy propagation removes it.
-// - Kind 60: the third source is r5 in the listing, r1 here. Reload's rotation is
-//   one step off from there to kind 5's end. Every plain spelling compiles alike.
-// - Kind 85's row loop hoists 15 and 0x700 where the listing does not.
-// - Kind 79's first arm: SPARKS->vx in its else takes r5 here, a fresh pool load in
-//   the listing, so the two stores cross-jump. A symbol for SPARKS does not help.
-// - Kind 70: p = &SPARKS[i] with an a-then-m split gets the shape, but its giv
-//   starts from i * 28 at run time since i = 0 is above the if, and p is r7 where
-//   the listing's stepping register is r8. Kind 94 is near this and its arguments
-//   load in another order.
-// - Kinds 71 and 82: model in r7 and fade in r5, r6 and r7 in the listing.
+// - Kind 80: i * 2 and i * 64 are their own registers stepping by 2 and 64, with
+//   0x237 and 0x1000 not hoisted. Explicit steps get the shape but move i out of
+//   r11. Those constants hoist when the loop has fewer real insns than loop.c's
+//   threshold (2 * 15 here), measured by -da's loop dump.
+// - Kind 85's row loop is the same: it needs 32 real insns, has 30; forms that add
+//   them unhoist 15 and 0x700 yet cost as much elsewhere. Its threshold is a copy
+//   of its counter in the listing, here propagated away by GCSE.
+// - The projection's fresh add takes the asm's second mention of o; the source's
+//   second mention is not known.
+// - Kind 70: the step's start is computed from i at run time (i = 0 is above the
+//   if, so the biv's start is not known); the listing has no multiply. q and the
+//   table index have swapped low registers.
+// - Kinds 71 and 82: the listing has model r6, fade r7, matrix r8 with r5 free for
+//   reload; here fade takes r5. A local model gets r6 but costs the arms after it.
+// - Kind 90's texture and kind 91's width load in another order.
+// - Kind 46's dx/dy rows at L4177 and L4200: the y table load ranks after its store.
 //
 // Before adoption: RELEASE_BLITTERS and RELOAD_BLITTER are exempt only if every
 // use matches through them, CLEAR and FILL need S2's wrapper tags unless they are

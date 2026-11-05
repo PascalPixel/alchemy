@@ -3963,8 +3963,7 @@ main	rom_main_14	recon/tla/es/rom	.rom.001b8272	es
 main	rom_main_14	recon/tla/de/rom	.rom.001b8272	de
 main	rom_main_14	recon/tla/raw/081b8274	.text	en
 main	rom_main_14	games/tla/src/field/lucky_dice/dice_game	.text
-main	rom_main_14	recon/tla/es/rom	.rom.001b83c4	es
-main	rom_main_14	games/tla/src/field/lucky_dice/f1b83c4	.text	en de fr it ja
+main	rom_main_14	games/tla/src/field/lucky_dice/f1b83c4	.text	en de es fr it ja
 main	rom_main_14	games/tla/src/field/lucky_dice/dice_game	.rodata
 main	rom_main_15	games/tla/src/gamepak/far_call/sound_driver
 main	rom_main_15	games/tla/src/gamepak/far_call/table_48

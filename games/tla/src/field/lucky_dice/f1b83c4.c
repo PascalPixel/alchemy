@@ -9,11 +9,7 @@
 
 // What differs between the releases: the windows' sizes and text columns, a
 // guess that Japan can refuse only in the first double-up round, and the bet's
-// clamp to the player's coins, which the translated releases lack. The Spanish
-// release stays on its scaffold: after the round's digit it adds one more
-// sprite (0x80508000 for round 1, else 0x80548000, tile 200), whose first word
-// it loads again where this C reuses the register: 97 of 3581 instructions
-// differ in tla-es with its table written out.
+// clamp to the player's coins, which the translated releases lack.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define COIN_WINDOW_X 19
 #define COIN_WINDOW_WIDTH 11
@@ -59,6 +55,21 @@
 #define RESULT_WINDOW_WIDTH 21
 #define ROUND_BANNER_X 576
 #define MULTIPLIER_ZERO_X 92
+#elif LANGUAGE == LANGUAGE_SPANISH
+#define COIN_WINDOW_X 18
+#define COIN_WINDOW_WIDTH 12
+#define COIN_TEXT_X 56
+#define HELP_WINDOW_X 20
+#define HELP_WINDOW_WIDTH 10
+#define BET_TEXT_X 32
+#define WINNINGS_WINDOW_X 9
+#define WINNINGS_WINDOW_MARGIN 12
+#define WINNINGS_LABEL_X 56
+#define WINNINGS_TEXT_X 48
+#define RESULT_WINDOW_X 4
+#define RESULT_WINDOW_WIDTH 21
+#define ROUND_BANNER_X 608
+#define MULTIPLIER_ZERO_X 80
 #elif LANGUAGE == LANGUAGE_FRENCH
 #define COIN_WINDOW_X 16
 #define COIN_WINDOW_WIDTH 14
@@ -99,6 +110,8 @@
 
 #if LANGUAGE == LANGUAGE_GERMAN
 #define ROUND_DIGIT_WORD 0x80748000
+#elif LANGUAGE == LANGUAGE_SPANISH
+#define ROUND_DIGIT_WORD 0x80488000
 #elif LANGUAGE == LANGUAGE_FRENCH
 #define ROUND_DIGIT_WORD 0x80708000
 #elif LANGUAGE == LANGUAGE_ITALIAN
@@ -557,7 +570,8 @@ void Func_081b83c4(void) {
           }
         }
         if (message != -1) {
-#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
+#if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH ||             \
+    LANGUAGE == LANGUAGE_ITALIAN
           WindowSprite_PrepareForRedrawFar(sprites->helpWindow);
 #endif
           Text_DrawCharacterAtOffsetFar(message, sprites->helpWindow, 0, 0);
@@ -1032,6 +1046,16 @@ void Func_081b83c4(void) {
         sprites->oam[spriteCount].attr01 = ROUND_DIGIT_WORD;
         sprites->oam[spriteCount].attr2 = (round * 8 + 200) | 0x8000;
         spriteCount++;
+#if LANGUAGE == LANGUAGE_SPANISH
+        if (round == 1) {
+          sprites->oam[spriteCount].attr01 = 0x80508000;
+          sprites->oam[spriteCount].attr2 = 200 | 0x8000;
+        } else {
+          sprites->oam[spriteCount].attr01 = 0x80548000;
+          sprites->oam[spriteCount].attr2 = 200 | 0x8000;
+        }
+        spriteCount++;
+#endif
       }
       for (index = 0; index != 2; index++) {
         sprites->oam[spriteCount].attr01 =

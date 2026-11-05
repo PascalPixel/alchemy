@@ -15705,11 +15705,11 @@ msgctxt "MsgSlotsBet"
 msgid "03893"
 msgstr "Monto"
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceCoins"
 msgid "03894"
 msgstr "Mon."
 
-msgctxt "message"
+msgctxt "MsgLuckyDiceWinnings"
 msgid "03895"
 msgstr "Ganas:"
 
@@ -15761,7 +15761,7 @@ msgctxt "MsgSlotsCannotPull"
 msgid "03907"
 msgstr "no puedes tirar de la palanca!"
 
-msgctxt "message"
+msgctxt "MsgDiceGameThrow"
 msgid "03908"
 msgstr "{button_icon:1}:Tirar"
 
@@ -15769,27 +15769,27 @@ msgctxt "message"
 msgid "03909"
 msgstr "{button_icon:2}:Salir"
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigher"
 msgid "03910"
 msgstr "Si el total es mayor que 15,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLower"
 msgid "03911"
 msgstr "Si el total es mayor que 13,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameHigherAgain"
 msgid "03912"
 msgstr "Si el nuevo total es mayor,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameLowerAgain"
 msgid "03913"
 msgstr "Si el nuevo total es menor,"
 
-msgctxt "message"
+msgctxt "MsgDiceGameChoose"
 msgid "03914"
 msgstr "ganarás la tirada."
 
-msgctxt "message"
+msgctxt "MsgDiceGameDoubleUp"
 msgid "03915"
 msgstr "¿Quieres doblar?"
 

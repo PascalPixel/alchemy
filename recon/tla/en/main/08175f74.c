@@ -1,4 +1,6 @@
-// 2026-11-05: differ 1668 of 4354 (tla-en). The third phase has its own counter m
+// 28 and 10 stay in registers as chains only cse2 folds (width and twenty set before
+// the frame loop, halved here), as 0816f080 does; the first phase's i is the next thing.
+// 2026-11-05: differ 1601 of 4354 (tla-en). The third phase has its own counter m
 // (r9, and actor r10, as the listing there); the first two keep i, r8 here. Fade's t
 // and the second slots are their own. A search cut phase at its += 0x2000 (1580),
 // which reads it unset, so it is not kept: that loop's phase wants another look.

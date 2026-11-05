@@ -800,6 +800,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       work->transferValue = 50;
     }
     if (frame <= 175) {
+      typeof(SCENE) scene = SCENE;
       BattleEffect_LoadBlitter(SLOT_ALT, 3);
       draw[1] = Ram_HeapSlots->unkb8[1];
       for (i = 0; i != 15; i++) {
@@ -829,8 +830,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
       }
       if (frame <= 71) {
-        SCENE->y -= 0x10000;
-        SCENE->radius -= 0x1000;
+        scene->y -= 0x10000;
+        scene->radius -= 0x1000;
         if (!(frame & 15)) {
           for (i = 0; i != 128; i++) {
             s32 c = FADE_PLTT[i];
@@ -844,7 +845,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
           }
         }
       } else {
-        SCENE->radius += 0x2000;
+        scene->radius += 0x2000;
         if (!(frame & 7)) {
           for (y = 0; y != 128; y++) {
             s32 c = FADE_PLTT[y];
@@ -864,8 +865,12 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         }
       }
       HeapSlot_Release(SLOT_ALT);
-      Func_0815b434(work->sheet, SCENE->radiusPixels * 2, 0x10000);
-      Func_0818caa8(work->sheet, SCENE->xPixels, SCENE->yPixels, SCENE->radiusPixels * 2);
+      {
+        s32 size = scene->radiusPixels * 2;
+
+        Func_0815b434(work->sheet, size, 0x10000);
+        Func_0818caa8(work->sheet, scene->xPixels, scene->yPixels, size);
+      }
       if (frame == 175) {
         REG_BG2CNT = 0x785;
         Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);

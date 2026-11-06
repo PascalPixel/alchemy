@@ -79,6 +79,7 @@ void Func_080e807c(void) {
   s32 timer;
   u16 *phase;
   u16 *tile;
+  s32 blue;
 
   pos[0] = object->x;
   pos[1] = object->y + 0x100000;
@@ -95,6 +96,7 @@ void Func_080e807c(void) {
   if (work->cycling != 0) {
     i = 0;
     phase = &work->phase;
+    blue = 28;
   cycle:
     {
       register s32 red asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
@@ -103,7 +105,7 @@ void Func_080e807c(void) {
 
       green = Trig_Sin((((*phase >> 2) + i) << 11) + 0x4800) * 10;
       red = (red >> 16) + 23;
-      color = ((green >> 16) + 12) << 10 | red << 5 | 28;
+      color = ((green >> 16) + 12) << 10 | red << 5 | blue;
 
       ((u16 *)0x050001e0)[i] = color;
       ((u16 *)0x050003e0)[i] = color;

@@ -11,6 +11,15 @@
 // addresses of an older layout, and the pool words but the block copy's
 // control word are 0. C reaches those only by names at those addresses, which
 // O2 forbids.
+// ☀️'s route for code that runs from a RAM copy does not reach it (checked 6
+// November 2026): ☀️ links such code into an output section run in IWRAM and
+// stored in ROM (`> IWRAM AT>ROM` in games/tbs/main.ld), and the linker resolves
+// every relocation. This copy is never moved or run: it is an older sound
+// library kept in ROM, as player_work_copy.c and the leftover driver objects
+// beside it (games/tla/src/sound), and its bl to itself (f7ff fffe) and zero
+// pool words are an object's unapplied relocations. No load or run address from
+// the object list's layout produces them; names at 0 or at those older targets
+// would be equates O2 forbids. It stays a draft.
 #include "types.h"
 #include "sound_driver.h"
 #include "ram_buffer.h"

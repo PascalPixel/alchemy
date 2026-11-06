@@ -1,6 +1,16 @@
-// Differ 205 of 1932 (tla-en, 2026-11-06).
-// Left: the ship-burst model block (draw && frame <= 131) and reload-register
-// rotation in the blocks after it (allocation; not chased, W4).
+// Differ 91 of 1932 (tla-en, 2026-11-06), draft 1933, with one tagged barrier.
+// 2026-11-06, from 205: sc = t * 3072 - 0x12000, the listing's form (a giv of
+// t * 3072 in r7, -0x12000 added at the use), with an empty asm reading frame
+// between the two allocations of the ship-burst block. The listing reloads
+// frame into r7 there and its step inits for t << 9, t * 3072 and t << 11 take
+// it from r7. The sc form alone is 322; the asm alone 197 to 200; the asm
+// before model->shade 93, before model->vertices 100, after it 377, before
+// verts 322. No local copy of frame does it (copy-propagated: 322 or 436).
+// Left in that block: the step inits run t << 9, t << 11, the -t * 512 init
+// (which reuses r7), then t * 3072, which therefore reloads frame (r0); the
+// listing's order is t << 9, t * 3072, t << 11, -t * 512, so its frame * 3
+// still reads r7. j's zero store also lands two rows late. Elsewhere: single
+// scheduling pairs (frame 133's blit, the closing fills, the fade loop).
 // 2026-11-06, from 261: REG_BLDALPHA = ((frame - 108) * 2) << 8 | 16 (EVB in the
 // high byte) gives the listing's value r2, address r3, 16 in r1 (243); place[1]
 // is stored before place[3] (259 from 261); the ship placement loop uses the
@@ -691,6 +701,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       s32 j;
 
       verts = Heap_AllocEwram(32);
+      /* FAKEMATCH(barrier): an empty asm reads frame into r7 here, where the
+       * listing reloads it, and the loop's step inits take it from there; as
+       * no asm, 322 of 1932 instructions differ in tla-en. */
+      asm("" : : "r"(frame));
       model = Render_AllocateModelList(1);
       model->shade = 0;
       work->transferMode = 2;
@@ -710,7 +724,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           Func_08015160(0x80000, 0, 0);
           SceneTransform_ApplyPitch(0x4000);
           if (j == 0) {
-            s32 sc = (t - 24) * 3 << 10;
+            s32 sc = t * 3072 - 0x12000;
 
             if (t <= 39) {
               sc = t << 11;

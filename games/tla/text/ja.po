@@ -245,17 +245,17 @@ msgstr ""
 "{argument_actor_name:234} ジュピターのジン\n"
 "{text_color:10}{argument_ability_name}{text_color:16}を ゲットした{end_now}"
 
-msgctxt "message"
+msgctxt "MsgCanNowSummon"
 msgid "00050"
 msgstr ""
 "{protagonist_name}たちは {argument_ability_name}を\n"
 "しょうかんする力を 手にいれた{end_now}"
 
-msgctxt "message"
+msgctxt "MsgToSummon"
 msgid "00051"
 msgstr "{argument_ability_name}を しょうかんするには{line_break}"
 
-msgctxt "message"
+msgctxt "MsgSummonVenus"
 msgid "00052"
 msgstr "{text_color:5}ヴィーナス{argument_signed_number} {text_color:16}"
 

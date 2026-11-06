@@ -1,6 +1,3 @@
-// Matches: differ 0 of 479 (tla-en, 2026-11-06): the twin of FileScreen_PackPasswordData in The Broken Seal.
-// Direct unit->inventory[n] reads, a u16 item and the same frame as the native (60). Both gold loops
-// share one slot counter n, as the native keeps them in one register (ip).
 #include "types.h"
 #include "call.h"
 #include "main_routine_work.h"
@@ -64,7 +61,8 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
     if (GameFlag_Test(gData_02002700[i]))
       flags |= 1 << i;
   }
-  i = 0; pos = 4;
+  i = 0;
+  pos = 4;
   for (; i != 4; i++) {
     struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
     struct UnitBaseStats *base = (struct UnitBaseStats *)&unit->baseHp;

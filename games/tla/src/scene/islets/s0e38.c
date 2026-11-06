@@ -1,19 +1,3 @@
-// Differ 0 of 445 in tla-en, ja, de, es, fr and it (2026-11-06); not yet adopted.
-// The Islets' trade of the milk (item 454) with object 11: with the milk in the
-// party, object 11 turns and hops toward the leader (MsgSniffSniffI), the two
-// meet on the side object 11 stood (its action script gData_020043f8 or
-// gData_02004300), the milk is held up (Func_02000da0) and passed across, step
-// by step, then object 11 hands back item 455 (MsgTradedHisMilk), which the
-// party is given, and flags 0xaa1 and 534 are set. Without the milk object 11
-// says MsgTheWaterHere, or after the trade MsgIDonTLike or MsgIDonTWantTo.
-// Calls go through call.h as the matched Islets scene does (games/tla/src/scene/
-// islets): called directly, nearby calls share 454 and 0x19999 (gap 57, 64).
-// What settled the match (from 58): each side walks its own action script and
-// clears the trader's update itself, so CSE takes the trader's zero stores from
-// gift's default 0 (r9); Func_02000df8 is stored after Actor_SetAngleToward;
-// 455 is set beside its first use; PartyInventory_GiveItem returns s32, as its
-// definition does (games/tla/src/field/event_commands/f0d260c.c), and is called
-// directly. Without gift's default the draft differs by 189.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -51,7 +35,7 @@ void Func_02003dfc(struct Actor *object);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 
-#define STEP(actor, x, z)                                                       \
+#define STEP(actor, x, z)                                                      \
   (Actor_GetById(actor)->actionFlags &= ~1,                                    \
    Call3((void (*)())Actor_SetPositionAndReset, actor, x, z),                  \
    Call1((void (*)())FieldEvent_Wait, 1),                                      \
@@ -70,7 +54,8 @@ void Func_02000e38(void) {
     // Default: the trader's zero update stores read it.
     gift = 0;
     right = 0;
-    Call3((void (*)())Actor_SetAngleToward, 11, gMainRoutineWork.currentOwner, 0);
+    Call3((void (*)())Actor_SetAngleToward, 11, gMainRoutineWork.currentOwner,
+          0);
     trader->update = Func_02000df8;
     Call3((void (*)())Actor_Jump, 11, 4, 10);
     trader->update = 0;
@@ -78,40 +63,49 @@ void Func_02000e38(void) {
     Call2((void (*)())Func_02003f2c, 11, 0);
     if (leader->x > trader->x)
       right = 1;
-    Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
+    Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
+          0x19999, 0xcccc);
     Call3((void (*)())Actor_SetSpeedParameters, 11, 0x19999, 0xcccc);
     if (right) {
       Call3((void (*)())Actor_ArmCallback, 11, 0, 0);
-      Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 296, 856);
+      Call3((void (*)())Actor_SetPositionAndReset,
+            gMainRoutineWork.currentOwner, 296, 856);
       Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, 0x8000);
       item = (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, 454);
       trader->update = Func_02000df8;
-      Call2((void (*)())Actor_SetMovementTypeAndWaitById, 11, (s32)gData_020043f8);
+      Call2((void (*)())Actor_SetMovementTypeAndWaitById, 11,
+            (s32)gData_020043f8);
       trader->update = 0;
     } else {
       Call3((void (*)())Actor_ArmCallback, 11, 0x8000, 0);
-      Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 264, 856);
+      Call3((void (*)())Actor_SetPositionAndReset,
+            gMainRoutineWork.currentOwner, 264, 856);
       Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, 0);
       item = (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, 454);
       trader->update = Func_02000df8;
-      Call2((void (*)())Actor_SetMovementTypeAndWaitById, 11, (s32)gData_02004300);
+      Call2((void (*)())Actor_SetMovementTypeAndWaitById, 11,
+            (s32)gData_02004300);
       trader->update = 0;
     }
     Call2((void (*)())Func_02003f2c, 11, 0);
-    Call2((void (*)())Actor_WatchAndSetScript, 11, gMainRoutineWork.currentOwner);
+    Call2((void (*)())Actor_WatchAndSetScript, 11,
+          gMainRoutineWork.currentOwner);
     if (item != 0) {
       void (*hook2)(void);
       item->collisionFlags = 9;
-      Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)item, 0x680000, 0, 0x3480000);
+      Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)item, 0x680000, 0,
+            0x3480000);
       hook2 = Func_02000df8;
       if (right) {
         leader->update = hook2;
-        Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 296, 840);
+        Call3((void (*)())Actor_SetPositionAndReset,
+              gMainRoutineWork.currentOwner, 296, 840);
         leader->update = 0;
         Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, 0x8000);
         leader->update = hook2;
         STEP(gMainRoutineWork.currentOwner, 0x120, 840);
-        Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)item, 0x1180000, 0, 0x3480000);
+        Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)item, 0x1180000,
+              0, 0x3480000);
         STEP(gMainRoutineWork.currentOwner, 296, 840);
         leader->update = 0;
         Actor_Stop(gMainRoutineWork.currentOwner);
@@ -120,12 +114,14 @@ void Func_02000e38(void) {
         STEP(11, 292, 844);
       } else {
         leader->update = hook2;
-        Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 264, 840);
+        Call3((void (*)())Actor_SetPositionAndReset,
+              gMainRoutineWork.currentOwner, 264, 840);
         leader->update = 0;
         Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, 0);
         leader->update = hook2;
         STEP(gMainRoutineWork.currentOwner, 0x110, 840);
-        Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)item, 0x1180000, 0, 0x3480000);
+        Call4((void (*)())Actor_SetPositionAndResetMotion, (s32)item, 0x1180000,
+              0, 0x3480000);
         STEP(gMainRoutineWork.currentOwner, 264, 840);
         leader->update = 0;
         Actor_Stop(gMainRoutineWork.currentOwner);
@@ -135,7 +131,8 @@ void Func_02000e38(void) {
       }
     }
     giftItem = 455;
-    gift = (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, giftItem);
+    gift =
+        (struct Actor *)Value2((s32 (*)())Func_02000da0, (s32)leader, giftItem);
     STEP(11, 280, 856);
     trader->update = 0;
     Func_02003fc4();
@@ -153,7 +150,8 @@ void Func_02000e38(void) {
     Call1((void (*)())GameFlag_SetBit, 534);
   } else {
     if (Value1((s32 (*)())GameFlag_Test, 0xaa1)) {
-      Call2((void (*)())Actor_WatchAndSetScript, 11, gMainRoutineWork.currentOwner);
+      Call2((void (*)())Actor_WatchAndSetScript, 11,
+            gMainRoutineWork.currentOwner);
       if (Value1((s32 (*)())GameFlag_Test, 534))
         Func_02003f24(MsgIDonTLike);
       else

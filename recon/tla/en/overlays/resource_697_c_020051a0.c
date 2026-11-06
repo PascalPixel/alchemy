@@ -1,4 +1,7 @@
-// Differ 334 of 497 (tla-en, 2026-11-06).
+// Differ 113 of 497 (tla-en, 2026-11-06), down from 334: x &= 511 in place
+// (the native ties x & 511 to x), the pointer to originZ held in r6 (a third
+// pin; unpinned, tile + n outranks it, 0.129 against 0.111, takes r6 and
+// leaves frame 32), and entry++ inside the marker call.
 // Tried 2026-11-06: the row loop built from a label and goto (no change: both
 // compiles keep &scrollY in a slot from before the loop); 10 minutes of permute
 // reached 327 only by moving the fade check below the rows, which changes what
@@ -74,7 +77,8 @@ s32 Func_02002ce8(s32 side);
 // subtractions compile in the order the native has them.
 #define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
-    s32 lift, px;                                                              \
+    s32 lift;                                                                  \
+    register s32 *originZ asm("r6") = &work->originZ;  \
     register s32 x asm("r9");                                                  \
     register s32 arg asm("r0");                                                \
     if (side) {                                                                \
@@ -85,17 +89,16 @@ s32 Func_02002ce8(s32 side);
       arg = which;                                                             \
     }                                                                          \
     lift = Func_02002ce8(arg);                                                 \
-    y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + \
+    y = (object->z - *originZ) / PIXELS(16) + work->scrollY - lift * 36 + \
         4;                                                                     \
     y &= 255;                                                                  \
-    px = x & 511;                                                              \
+    x &= 511;                                                                  \
     *cursor++ = 0;                                                             \
-    y |= px << 16;                                                             \
+    y |= x << 16;                                                              \
     y |= 0x40000000;                                                           \
     *cursor++ = y;                                                             \
     *cursor++ = (tile + (tileAdd)) | 0xe400;                                   \
-    Func_02005790(entry, 255);                                                 \
-    entry++;                                                                   \
+    Func_02005790(entry++, 255); \
   } while (0)
 
 void Func_020051a0(void) {

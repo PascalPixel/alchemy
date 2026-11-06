@@ -1,14 +1,3 @@
-// Matches: differ 0 of 205 (tla-en, 2026-11-06).
-// Draft of overlay 685's Func_02000f48: the trident talk, which takes the
-// first of items 439 to 441 the party holds and runs the next of three
-// flagged scenes with it, or says one of four lines. The gotos give the
-// native's block order (the shared removal and the item 441 test ahead of the
-// item 439 test). Each owner is kept in `owner`, which CSE then uses for the
-// next test's -1 (the copies in r10 and r8); without it the owners take r5 and
-// r6 and the item r7 (68). The flag test, the marker calls and the last
-// Actor_ArmCallback go through forwarding inlines as in scene_call.h (differ
-// 51, 150 and 2 without each). Tried: a fixed-register item (38), nested ifs
-// with the owner (31), owner tests after the chain (86).
 #include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 
 struct EventFlags685 {

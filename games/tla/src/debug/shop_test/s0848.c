@@ -1,6 +1,3 @@
-// Matches: differ 0 of 258 (tla-en, 2026-11-06). Func_02000848 of overlay 6ba.
-// step, item and redraw are all set before the first window: that lengthens
-// redraw's life so step outranks it (r8, redraw sl) as natively; step a real s8.
 #include "types.h"
 #include "call.h"
 #include "input.h"
@@ -21,8 +18,7 @@ struct ItemSummary {
 void *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void WindowSprite_PrepareForRedraw(void *window);
 void Text_DrawStringInWindow(const void *text, void *window, s32 x, s32 y);
-void Text_DrawNumberAtOffset(s32 value, s32 digits, void *window, s32 x,
-                               s32 y);
+void Text_DrawNumberAtOffset(s32 value, s32 digits, void *window, s32 x, s32 y);
 void Text_DrawCharacterAtOffset(s32 message, void *window, s32 x, s32 y);
 void Text_DrawMessage(s32 message, void *window, s32 x, s32 y);
 s32 PartyInventory_HasSpace(void);

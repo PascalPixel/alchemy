@@ -1,13 +1,3 @@
-// Matches: differ 0 of 193 (tla-en, 2026-11-06).
-// A rockfall at (x, z): twelve dust effects scattered over 64 by 64 pixels
-// (three of every four start at twice size), six rocks of type 255 (the first's
-// sprite shared by the rest, Func_02003c90) thrown out in random directions with
-// random lift, then two screen shakes (Func_02003b98).
-// radius, shakeA and shakeC each hold one constant for their whole life: written
-// inline, a literal 0x400000 is shared across the calls by CSE and spills
-// `first`. The scatter vector is used directly (a pointer to it was hoisted out
-// of the dust loop), and both loops are `for` loops ending on `!=`, as the
-// listing's bne shows.
 #include "types.h"
 #include "call.h"
 #include "actor.h"

@@ -42,7 +42,7 @@ SECTIONS
         "*/games/tla/src/scene/airs_rock/s1ca4.o"(.text)
         "*/games/tla/src/scene/airs_rock/s1cc8.o"(.text)
         "*/games/tla/src/scene/airs_rock/s1da8.o"(.text)
-        "*/resource_663_overlay.o"(.text.x02009dc4)
+        "*/games/tla/src/scene/airs_rock/s1dc4.o"(.text)
         "*/games/tla/src/scene/airs_rock/s1f7c.o"(.text)
         "*/games/tla/src/scene/airs_rock/s24b0.o"(.text)
         "*/resource_663_overlay.o"(.text.x0200a57c)

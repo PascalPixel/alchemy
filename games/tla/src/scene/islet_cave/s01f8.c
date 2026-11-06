@@ -1,7 +1,3 @@
-// Matches: differ 0 of 120 (tla-en, 2026-11-06).
-// The palette cycle written as its adopted twin in anemos_inner_sanctum/s01f8.c:
-// a real for loop over the volatile palette (BG_PLTT), with two one-pass blocks.
-// Draft: matched under -O2, back on its scaffold when the overlays moved to -Os (2026-11-02).
 #include "types.h"
 #include "call.h"
 #include "io_reg.h"

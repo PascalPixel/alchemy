@@ -1,13 +1,3 @@
-// Matches: differ 0 of 130 (tla-en, 2026-11-06).
-// Also differ 0 of 130 in tla-ja, -de, -es, -fr and -it, and against its copies,
-// overlay 68F's Func_0200222c and 691's Func_02002d08 (tla-en).
-// On entering, sets each listed pillar from its two flags (pushed: moved to its
-// place; else its cell raised and its shape redrawn), then lifts the leader onto
-// the ground under it.
-// Shaped as overlay 655's Func_02000584: next, cell and slot taken first. The
-// layer is read as object->terrainId at each use: read through a plain u8
-// pointer it may alias the cell store, which then schedules before the shift
-// (differ 4).
 #include "types.h"
 #include "call.h"
 #include "actor.h"

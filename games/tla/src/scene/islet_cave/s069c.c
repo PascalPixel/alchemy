@@ -1,14 +1,3 @@
-// Matches: differ 0 of 123 (tla-en, 2026-11-06); also differ 0 in tla-ja, -de, -es, -fr
-// and -it by the same tool. Islet Cave's setup: in its first room it starts the
-// palette lists (Func_02000038); in the third it frees actor 9 and, arriving
-// by entrance 2, places actor 8 and sets flag 0x9cf; in the second it sets
-// flag 0x230 when flag 85 or 165 is set, else (until 0x230) places actor 9
-// and starts actor 8's action script. The second and third rooms then dim
-// the palette by the entrance (Func_02000580) and wait for the transition.
-// Returns 0. The tail's gotos are the form that matches: a room outside the
-// three skips the second-room test, and the second room jumps into the
-// shared dimming block, which tests the scene again; a single return keeps
-// r0 free. The screen effect is struct EventWork's screenEffect.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -24,8 +13,7 @@ void Func_0200131c(s32 mode);
 void Func_020008c8(void);
 void Func_02000038(u16 *slots, u16 *colours, u16 *a, u16 *b);
 struct Actor *Actor_GetById(u32 id);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_0200129c(s32 id, s32 x, s32 z);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);

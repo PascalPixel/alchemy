@@ -1,5 +1,5 @@
-// Differ 30 of 272 (tla-en, 2026-11-06): scheduling and allocation only. Empty asms,
-// one-pass blocks, a pinned r5 and search-found locals each need their S2 tag on adoption.
+// Differ 30 of 272 (tla-en, 2026-11-06): scheduling and allocation only.
+// A pinned r5 (45 without) needs its S2 tag on adoption; the sparkle loop's empty asm changed nothing and is gone.
 // Near miss, differ 48 of 272 (2026-10-26, statements reordered) (2026-10-18, written from the listing; ☀️ has
 // no twin): the frame callback of the effect Func_080e87c4 ends, with the
 // ring picture of graphics/field_effects/ring_arcs.s. The position is reached
@@ -122,7 +122,6 @@ void Func_080e807c(void) {
         timer = mote->timer;
       }
       if (timer >= 0) {
-  asm("");
         sprite->oam.index = work->tile + ((timer >> 2) & 3) * 4;
         pos[0] = object->x + mote->x;
         timer = mote->timer;

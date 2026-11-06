@@ -402,12 +402,6 @@ Func_080d1760:
 	.incbin "baserom.gba", 0x000da83e, 0x00000002
 	.section .rom.000daa16, "ax"
 	.incbin "baserom.gba", 0x000daa16, 0x00000002
-	.section .rom.000daf20, "ax"
-	.global Func_080d1f20
-	.type Func_080d1f20, %function
-	.thumb_func
-Func_080d1f20:
-	.incbin "baserom.gba", 0x000daf20, 0x00000164
 	.section .rom.000db60c, "ax"
 	.balign 4
 	.global PartyInventory_GiveItem
@@ -1050,12 +1044,6 @@ Func_0814fab8:
 	.global SummonEffect_RunCanvasEffect
 SummonEffect_RunCanvasEffect:
 	.incbin "baserom.gba", 0x001504d8, 0x000004dc
-	.section .rom.00150c74, "ax"
-	.global BattleEffect_RunQuake
-	.type BattleEffect_RunQuake, %function
-	.thumb_func
-BattleEffect_RunQuake:
-	.incbin "baserom.gba", 0x00150c74, 0x000003cc
 	.section .rom.0015585c, "ax"
 	.global Func_0815585c
 	.type Func_0815585c, %function

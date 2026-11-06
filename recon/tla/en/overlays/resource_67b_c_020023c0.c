@@ -1,3 +1,6 @@
+// Draft, differ 28 of 171 (tla-en, 2026-11-06): z subtracts viewZ and lift in two
+// statements, as the native does (30 to 28), and the empty asm on y is gone (28
+// with or without it). Item 3 below is what is left besides allocation.
 // Draft, differ 30 of 171 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 32 (tla-en); notes below may predate it.
 // Draft, differ 46 of 171, skeleton gap 8 (tla-en, 2026-11-01)
@@ -91,10 +94,8 @@ do {
     x = bubble->x - viewX;
     z = bubble->z;
     y = bubble->y - lift;
-    /* FAKEMATCH(barrier): the empty asm on y changes its allocation rank; as no
-     * asm, 32 of 171 instructions differ in tla-en. */
-    asm("" : "=r"(y) : "0"(y));
-    z -= viewZ + lift;
+    z -= viewZ;
+    z -= lift;
     screenY = (z - y) >> 16;
     y += z;
     y >>= 16;

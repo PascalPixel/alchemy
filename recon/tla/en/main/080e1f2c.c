@@ -1,4 +1,10 @@
-// Near miss, differ 34 (2026-10-26, statements reordered).
+// Near miss, differ 14 of 370 (tla-en, 2026-11-06): pos.x read before pos.z at both
+// sprites (30 to 14). Left: the scale stores schedule before the depth store
+// where the native has them after (both sprites), and the palette loop's two
+// increments sit before its store. Tried: scale before depth or priority (38,
+// 48), separate scale stores (14), vector for the target (14); the permuter's
+// best, 12, wraps the palette store in a once-only block.
+// Earlier: differ 34 (2026-10-26, statements reordered).
 // First draft of Func_080e1f2c, written from the listing: a bow game on the
 // field (resources 0x1e7, FieldEffect_BowDraw, and 0x1e6,
 // FieldEffect_FlamingArrow): the bow and arrow sprites before the caster, the
@@ -108,8 +114,8 @@ void Func_080e1f2c(void) {
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject) + 1;
   sprite->scaleY = sprite->scaleX = 0x6666;
   sprite->angle = scene->angle;
-  pos.z = scene->mainObject->z;
   pos.x = scene->mainObject->x;
+  pos.z = scene->mainObject->z;
   vector = &work->bowPosition;
   Vector_AddPolarOffset(0x80000, scene->angle, &pos);
   vector->x = pos.x;
@@ -128,8 +134,8 @@ void Func_080e1f2c(void) {
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject) + 2;
   sprite->scaleY = sprite->scaleX = 0;
   sprite->angle = scene->angle;
-  pos.z = scene->mainObject->z;
   pos.x = scene->mainObject->x;
+  pos.z = scene->mainObject->z;
   vector = &work->arrowPosition;
   Vector_AddPolarOffset(0x120000, scene->angle, &pos);
   vector->x = pos.x;

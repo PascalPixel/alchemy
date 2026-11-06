@@ -8,7 +8,6 @@ SECTIONS
         "*/games/tla/src/scene/naribwe_interiors/people.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors/fortune.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors/s0390.o"(.text)
-        "*/resource_66e_overlay.o"(.text.x02008390)
         "*/games/tla/src/scene/naribwe_interiors/reading.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors/s0ba0.o"(.text)
         "*/games/tla/src/scene/naribwe_interiors/s0c04.o"(.text)

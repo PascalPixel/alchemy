@@ -1,3 +1,8 @@
+// Draft, differ 16 of 171 (tla-en, 2026-11-06): the owner's layer goes through an s16
+// local declared at the top (layer = work->layer, 24 to 16); declared in the if, 50;
+// as s32 22, u8 24. Expect it to be a tagged temporary on adoption. Left: the first
+// loop's slot pointer and owned-byte pointer swap r5 and r6, and i = 0 is set
+// before the mode test in the native.
 // Draft, differ 30 of 171 (2026-10-26): the event work is now read through a
 // struct, which makes the held unsigned kind device unneeded (the byte
 // stores no longer make the kind reload); still 30. Order and register
@@ -84,6 +89,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   struct CleanupSlot *slot = work->slots;
   s32 i;
   s16 first;
+  s16 layer;
 
   for (i = 23; i >= 0; i--, slot++) {
     if (slot->owned)
@@ -114,7 +120,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   map->z = work->z;
   if (owner != NULL) {
     ((u8 *)owner)[35] = work->ownerByte;
-    ((struct CleanupAnimation *)owner->animation)->layer = work->layer;
+    ((struct CleanupAnimation *)owner->animation)->layer = layer = work->layer;
   }
   if (work->kind != 8)
     event->unkca5 = 1;

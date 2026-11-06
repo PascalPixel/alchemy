@@ -48,7 +48,7 @@ Resource_DirectoryTable:
 	resource Data023, Resource_Data023
 	resource Data024, Resource_Data024
 	resource IntroTilesB, Resource_Data025
-	resource , Ui_Headings
+	resource Headings, Ui_Headings
 	resource , Battle_PurpleMoonBackdrop
 	resource SuhallaGateBackdrop, Battle_SuhallaGateBackdrop
 	resource PirateShipBackdrop, Battle_PirateShipBackdrop
@@ -344,7 +344,7 @@ Resource_DirectoryTable:
 	resource VioletCometSheet, BattleEffect_VioletCometSheet
 	resource FlameballSheet, BattleEffect_FlameballSheet
 	resource BoulderSheet, BattleEffect_BoulderSheet
-	resource , BattleEffect_RockWallSheet
+	resource RockWallSheet, BattleEffect_RockWallSheet
 	resource StarDotSheet, BattleEffect_StarDotSheet
 	resource MarsDjinnSheet, BattleEffect_MarsDjinnSheet
 	resource MarsDjinnSmallSheet, BattleEffect_MarsDjinnSmallSheet

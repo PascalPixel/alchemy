@@ -1,3 +1,5 @@
+// Differ 28 of 126 (tla-en, 2026-11-06), unchanged: x, z, fromX, fromZ in that order
+// (the native's read order) gives 44; the permuter's best in 5 minutes was 66.
 // Draft, differ 28 of 126 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 28 of 126 (tla-en); older figures below predate it.
 // Draft, differ 60 of 126, skeleton gap 3 (tla-en, 2026-11-01)

@@ -1,4 +1,10 @@
-// Near miss, differ 38 of 442 (tla-en, 2026-11-06): register choices in mode 3
+// Near miss, differ 2 of 442 (tla-en, 2026-11-06): the flag number 529 goes through
+// dz (GameFlag_Test(dz = 529)), the permuter's find, which settles mode 3's registers
+// (38 to 2); a fresh local for it stays at 38, so on adoption it is a tagged
+// temporary. Left: one tie in mode 2's terminator, the native shifting next + 1
+// before point * 2. Tried there: next set after the first store (30), stores
+// swapped (26), no next local (47), a point local (55); 5 permuter minutes, 8.
+// Before, 38: register choices in mode 3
 // (the status halfword in r2 and its byte mask in r3 where the native swaps them,
 // then reload's scratch registers for link, the state and the link point) and
 // one tie in mode 2's terminator (the native shifts point before next).
@@ -113,7 +119,7 @@ void Func_02004ddc(void) {
     st = *signature++;
     link = st >> 8;
     ok = st & 0xff;
-    if (GameFlag_Test(529) && link != 0) {
+    if (GameFlag_Test(dz = 529) && link != 0) {
       state->mode = 9;
       Func_020057c8(rival, 1);
       if (work->linkX < rival->x)

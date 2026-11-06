@@ -1,4 +1,8 @@
-// Near miss, differ 67 of 99 (tla-en, 2026-11-06): x and the error in r4, r5 for r5, r6, the second row's 63 held from before the first compare. Fills a 64 by 64 grid of levels, each ring a quarter circle drawn with the
+// Near miss, differ 67 of 99 (tla-en, 2026-11-06). Permuter, 6 November: the first cell's
+// index through a long long temporary (new = row * 64 + column; cell = &grid[new]) gives
+// differ 33; an s32 or u32 temporary gives 67, s16 69. Not kept: a 64-bit index is no form
+// this source has, but it says the first index wants a wider or separate computation.
+// Before: x and the error in r4, r5 for r5, r6, the second row's 63 held from before the first compare. Fills a 64 by 64 grid of levels, each ring a quarter circle drawn with the
 // midpoint algorithm, its level from the cosine of its radius.
 // The register rotation is gone: row set to 63 and then lowered by y stops GCSE merging the second 63 - x, as the native rebuilds it.
 // Left: the native loads 63 for the second row only after the first test (cmp r0, #63); here edge's 63 stays in a register

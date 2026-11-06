@@ -668,9 +668,7 @@ struct MapGridTilePosition {
 /// through MapGrid_CopyCellPictureIndicesRectFar.
 void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
                                         u32 dstY, u32 width, u32 height) {
-  /* FAKEMATCH(temporary): the chains of temporaries set the registers and the
-   * schedule of the cell loop; as a plain body (the offset computed once, two
-   * word stores), 96 of 141 instructions differ in tbs-en. */
+  u32 y;
   u32 *sourceCells = (u32 *)Ram_MapGridCellBuffer + (sourceY * 128 + sourceX);
   u32 *destinationCells = (u32 *)Ram_MapGridCellBuffer + (dstY * 128 + dstX);
   struct MapGridLayerScroll *layer =
@@ -678,7 +676,6 @@ void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
   struct MapGridTilePosition visibleLayers[3];
   s32 i;
   struct MapGridTilePosition *visibleLayer = visibleLayers;
-  u32 y;
   u32 x;
 
   // The three layers' visible areas: their scroll positions in cells.
@@ -692,63 +689,53 @@ void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
     for (x = dstX; x < dstX + width; x++) {
       u32 sourceCell = *sourceCells++;
       u32 cellPictureId = sourceCell & MAPGRID_CELL_PICTURE_ID_MASK;
-      u32 offset;
-      u32 tmp3;
-      u32 n;
-      u32 tmp6;
-      u32 tmp9;
-      u32 tmp12;
-      u32 tmp11;
-      u32 tmp13;
-      u32 tmp15;
-      tmp9 = *destinationCells;
-      tmp3 = tmp9 & MAPGRID_ATTRIBUTE_MASK;
-      tmp12 = x & 15;
-      destinationCells[0] = cellPictureId | tmp3;
-      tmp6 = tmp12;
+      u32 column, row, mapCell, offset, bytes;
+
+      *destinationCells =
+          (*destinationCells & MAPGRID_ATTRIBUTE_MASK) | cellPictureId;
+      column = x & 15;
       destinationCells++;
       i = 0;
-      tmp15 = y & 15;
-      tmp3 = tmp15;
+      row = y & 15;
       visibleLayer = visibleLayers;
-      tmp13 = tmp3 << 5;
-      tmp12 = tmp13;
-      n = tmp12;
-      n += tmp6;
-      tmp13 = 4 * n;
-      tmp11 = tmp13;
-      tmp6 = tmp11;
-      offset = tmp6;
+      // offset is the cell's place in a 32x32 BG map: 128 bytes a cell row,
+      // 4 a cell.
+      mapCell = row << 5;
+      mapCell += column;
+      offset = mapCell * 4;
       // The first layer whose visible area (16x12 cells) holds the cell has
       // the cell picture written to its BG map too, and only that one (a map
-      // lays its layers out in different parts of the grid); offset is the
-      // cell's place in a 32x32 BG map (128 bytes a cell row, 4 a cell), 2,048
-      // bytes per layer from screen block 5.
+      // lays its layers out in different parts of the grid); the layers' BG
+      // maps follow each other, 2,048 bytes apart, from screen block 5.
       for (; i < 3; i++) {
-        if (visibleLayer->x <= (s32)x && 16 + visibleLayer->x > (s32)x &&
+        if (visibleLayer->x <= (s32)x && visibleLayer->x + 16 > (s32)x &&
             visibleLayer->y <= (s32)y && visibleLayer->y + 12 > (s32)y) {
           u32 screenAddress, cellPictureAddress;
           u8 *screenTile, *cellPictureRows;
 
+          // The cell picture's (8 bytes) top two tiles, and its bottom two
+          // 64 bytes further on.
           screenAddress = (u32)BG_SCREEN_BLOCK(5);
           screenTile = (u8 *)screenAddress;
           screenTile += offset;
-          tmp11 = cellPictureId * 8;
+          bytes = cellPictureId * 8;
           cellPictureAddress = (u32)Ram_CellPictures;
           cellPictureRows = (u8 *)cellPictureAddress;
-          cellPictureRows += tmp11;
+          cellPictureRows += bytes;
           *(u32 *)screenTile = *(u32 *)cellPictureRows;
 
           cellPictureAddress = (u32)Ram_CellPictures + 4;
           cellPictureRows = (u8 *)cellPictureAddress;
-          cellPictureRows += tmp11;
+          cellPictureRows += bytes;
           screenAddress = (u32)BG_SCREEN_BLOCK(5) + 64;
           screenTile = (u8 *)screenAddress;
           screenTile += offset;
           *(u32 *)screenTile = *(u32 *)cellPictureRows;
           break;
         }
-        offset += 2048;
+        // bytes, reused for the step to the next layer's BG map.
+        bytes = 2048;
+        offset += bytes;
         visibleLayer++;
       }
     }
@@ -842,13 +829,9 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
 /// through MapGrid_CopyCellPictureCellsRectFar.
 void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
                                       s32 height, s32 dstX, s32 dstY) {
-  /* FAKEMATCH(temporary): the chains of temporaries, tmp2 to tmp17, set the
-   * registers, the schedule and the slots of the 36-byte stack frame; as a
-   * plain body (the offset computed once, two word stores), 85 of 137
-   * instructions differ in tbs-en. */
-  s32 y = dstY;
+  s32 y;
   u32 *sourceCells = (u32 *)Ram_MapGridCellBuffer + (sourceY * 128 + sourceX);
-  u32 *destinationCells = &((u32 *)Ram_MapGridCellBuffer)[y * 128 + dstX];
+  u32 *destinationCells = (u32 *)Ram_MapGridCellBuffer + (dstY * 128 + dstX);
   struct MapGridLayerScroll *layer =
       ((struct MapGridScrollWork *)*gMapGridWork)->layers;
   struct MapGridTilePosition visibleLayers[3];
@@ -857,103 +840,64 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
   s32 x;
 
   // The three layers' visible areas: their scroll positions in cells.
-  i = 2;
-  while (i >= 0) {
-    s32 tmp5;
-
-    tmp5 = layer->x >> 20;
-    visibleLayer->x = tmp5;
-    tmp5 = (*layer).y;
-    visibleLayer->y = tmp5 >> 20;
+  for (i = 2; i >= 0; i--) {
+    visibleLayer->x = layer->x >> 20;
+    visibleLayer->y = layer->y >> 20;
     visibleLayer++;
     layer++;
-    i--;
   }
-  if (y < dstY + height) {
-    do {
-      for (x = dstX; x < dstX + width; x++) {
-        u32 sourceCell = *sourceCells++;
-        u32 cellPictureId;
-        u32 offset;
-        u32 tmp3;
-        u32 *screenTile;
-        u32 n;
-        u32 *cellPictureRows;
-        u32 tmp6;
-        u32 tmp12;
-        u32 tmp13;
+  for (y = dstY; y < dstY + height; y++) {
+    for (x = dstX; x < dstX + width; x++) {
+      u32 sourceCell = *sourceCells++;
+      u32 cellPictureId;
+      u32 column, row, mapCell, offset, bytes;
 
-        destinationCells[0] = sourceCell;
-        cellPictureId = sourceCell & MAPGRID_CELL_PICTURE_ID_MASK;
-        tmp12 = x & 15;
-        tmp6 = tmp12;
-        destinationCells += 1;
-        tmp3 = y & 15;
-        tmp13 = tmp3 << 5;
-        visibleLayer = visibleLayers;
-        tmp12 = tmp13;
-        n = tmp12;
-        n += tmp6;
-        tmp13 = n * 4;
-        i = 0;
-        tmp6 = tmp13;
-        offset = tmp6;
-        // In a layer's visible area, write its BG map in VRAM too (2,048
-        // bytes per layer).
-        for (; i < 3; i += 1) {
-          if (visibleLayer->x <= x && 16 + (*visibleLayer).x > x &&
-              visibleLayer->y <= y && visibleLayer->y + 12 > y) {
-            // The cell picture's (8 bytes) top two tiles, and its bottom two
-            // 64 bytes further on.
-            u32 *tmp;
-            u32 tmp2;
-            u32 tmp4;
-            u32 *tmp7;
-            u32 tmp10;
-            u32 tmp14;
-            u32 tmp16;
-            u32 bytes = cellPictureId * 8;
-            u32 tmp8;
-            u32 tmp17;
+      *destinationCells = sourceCell;
+      cellPictureId = sourceCell & MAPGRID_CELL_PICTURE_ID_MASK;
+      column = x & 15;
+      destinationCells++;
+      i = 0;
+      row = y & 15;
+      visibleLayer = visibleLayers;
+      mapCell = row << 5;
+      mapCell += column;
+      offset = mapCell * 4;
+      // In a layer's visible area, write its BG map in VRAM too (2,048
+      // bytes per layer).
+      for (; i < 3; i++) {
+        if (visibleLayer->x <= x && visibleLayer->x + 16 > x &&
+            visibleLayer->y <= y && visibleLayer->y + 12 > y) {
+          u32 screenAddress, cellPictureAddress;
+          u8 *screenTile, *cellPictureRows;
 
-            cellPictureId = bytes / 8;
-            tmp = (u32 *)Ram_CellPictures;
-            tmp8 = (u32)BG_SCREEN_BLOCK(5) + offset;
-            cellPictureRows = tmp;
-            tmp2 = tmp8;
-            tmp = (u32 *)tmp2;
-            screenTile = tmp;
-            cellPictureRows = (u32 *)((u8 *)cellPictureRows + bytes);
-            tmp16 = *cellPictureRows;
-            tmp14 = tmp16;
-            tmp17 = (u32)BG_SCREEN_BLOCK(5) + 64 + offset;
-            tmp10 = tmp14;
-            *screenTile = tmp10;
-            tmp7 = (u32 *)(Ram_CellPictures + 4);
-            cellPictureRows = tmp7;
-            cellPictureRows = (u32 *)((u8 *)cellPictureRows + bytes);
-            tmp8 = tmp17;
-            tmp14 = tmp8;
-            tmp17 = cellPictureRows[0];
-            tmp16 = tmp17;
-            tmp10 = tmp16;
-            tmp4 = tmp10;
-            tmp2 = tmp4;
-            tmp4 = tmp14;
-            tmp7 = (u32 *)tmp4;
-            screenTile = tmp7;
-            *screenTile = tmp2;
-            break;
-          }
-          n = 2048; // the next layer's BG map
-          offset += n;
-          visibleLayer++;
+          // The cell picture's (8 bytes) top two tiles, and its bottom two
+          // 64 bytes further on.
+          screenAddress = (u32)BG_SCREEN_BLOCK(5);
+          screenTile = (u8 *)screenAddress;
+          screenTile += offset;
+          bytes = cellPictureId * 8;
+          cellPictureAddress = (u32)Ram_CellPictures;
+          cellPictureRows = (u8 *)cellPictureAddress;
+          cellPictureRows += bytes;
+          *(u32 *)screenTile = *(u32 *)cellPictureRows;
+
+          cellPictureAddress = (u32)Ram_CellPictures + 4;
+          cellPictureRows = (u8 *)cellPictureAddress;
+          cellPictureRows += bytes;
+          screenAddress = (u32)BG_SCREEN_BLOCK(5) + 64;
+          screenTile = (u8 *)screenAddress;
+          screenTile += offset;
+          *(u32 *)screenTile = *(u32 *)cellPictureRows;
+          break;
         }
+        // bytes, reused for the step to the next layer's BG map.
+        bytes = 2048;
+        offset += bytes;
+        visibleLayer++;
       }
-      sourceCells += (128 - width);
-      destinationCells = 128 - width + destinationCells;
-      y++;
-    } while (y < dstY + height);
+    }
+    sourceCells += 128 - width;
+    destinationCells += 128 - width;
   }
 }
 
@@ -990,12 +934,9 @@ void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
 /// seven events through MapGrid_CopyCellIndexRectFar.
 void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
-  /* FAKEMATCH(temporary): the word and index temporaries set the registers and
-   * the 36-byte stack frame; as a plain body (the offset computed once, two
-   * word stores), 94 of 142 instructions differ in tbs-en. */
   s32 y;
   u32 *sourceCells = (u32 *)Ram_MapGridCellBuffer + (sourceY * 128 + sourceX);
-  u32 *destinationCells = &((u32 *)Ram_MapGridCellBuffer)[dstY * 128 + dstX];
+  u32 *destinationCells = (u32 *)Ram_MapGridCellBuffer + (dstY * 128 + dstX);
   struct MapGridLayerScroll *layer =
       ((struct MapGridScrollWork *)*gMapGridWork)->layers;
   struct MapGridTilePosition visibleLayers[3];
@@ -1004,84 +945,64 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
   s32 x;
 
   // The three layers' visible areas: their scroll positions in cells.
-  i = 2;
-  while (i >= 0) {
-    s32 tmp5;
-
-    tmp5 = layer->x >> 20;
-    visibleLayer->x = tmp5;
-    tmp5 = (*layer).y;
-    visibleLayer->y = tmp5 >> 20;
+  for (i = 2; i >= 0; i--) {
+    visibleLayer->x = layer->x >> 20;
+    visibleLayer->y = layer->y >> 20;
     visibleLayer++;
     layer++;
-    i--;
   }
-  y = dstY;
-  if (y < dstY + height) {
-    do {
-      for (x = dstX; x < dstX + width; x++) {
-        u32 sourceCell = *sourceCells++;
-        u32 cellPictureId;
-        u32 offset;
-        u32 tmp3;
-        u32 n;
-        u32 tmp6;
-        u32 tmp12;
-        u32 tmp13;
+  for (y = dstY; y < dstY + height; y++) {
+    for (x = dstX; x < dstX + width; x++) {
+      u32 sourceCell = *sourceCells++;
+      u32 cellPictureId = sourceCell & MAPGRID_CELL_PICTURE_ID_MASK;
+      u32 column, row, mapCell, offset, bytes;
 
-        cellPictureId = sourceCell & MAPGRID_CELL_PICTURE_ID_MASK;
-        destinationCells[0] =
-            (destinationCells[0] & MAPGRID_ATTRIBUTE_MASK) | cellPictureId;
-        tmp12 = x & 15;
-        tmp6 = tmp12;
-        destinationCells += 1;
-        i = 0;
-        tmp3 = y & 15;
-        tmp13 = tmp3 << 5;
-        visibleLayer = visibleLayers;
-        tmp12 = tmp13;
-        n = tmp12;
-        n += tmp6;
-        tmp13 = n * 4;
-        tmp6 = tmp13;
-        offset = tmp6;
-        // In a layer's visible area, write its BG map in VRAM too (2,048
-        // bytes per layer).
-        for (; i < 3; i += 1) {
-          if (visibleLayer->x <= x && 16 + (*visibleLayer).x > x &&
-              visibleLayer->y <= y && visibleLayer->y + 12 > y) {
-            // The cell picture's (8 bytes) top two tiles, and its bottom two
-            // 64 bytes further on.
-            u32 screenAddress, cellPictureAddress;
-            u8 *screenTile, *cellPictureRows;
+      *destinationCells =
+          (*destinationCells & MAPGRID_ATTRIBUTE_MASK) | cellPictureId;
+      column = x & 15;
+      destinationCells++;
+      i = 0;
+      row = y & 15;
+      visibleLayer = visibleLayers;
+      mapCell = row << 5;
+      mapCell += column;
+      offset = mapCell * 4;
+      // In a layer's visible area, write its BG map in VRAM too (2,048
+      // bytes per layer).
+      for (; i < 3; i++) {
+        if (visibleLayer->x <= x && visibleLayer->x + 16 > x &&
+            visibleLayer->y <= y && visibleLayer->y + 12 > y) {
+          u32 screenAddress, cellPictureAddress;
+          u8 *screenTile, *cellPictureRows;
 
-            screenAddress = (u32)BG_SCREEN_BLOCK(5);
-            screenTile = (u8 *)screenAddress;
-            screenTile += offset;
-            tmp13 = cellPictureId * 8;
-            cellPictureAddress = (u32)Ram_CellPictures;
-            cellPictureRows = (u8 *)cellPictureAddress;
-            cellPictureRows += tmp13;
-            *(u32 *)screenTile = *(u32 *)cellPictureRows;
+          // The cell picture's (8 bytes) top two tiles, and its bottom two
+          // 64 bytes further on.
+          screenAddress = (u32)BG_SCREEN_BLOCK(5);
+          screenTile = (u8 *)screenAddress;
+          screenTile += offset;
+          bytes = cellPictureId * 8;
+          cellPictureAddress = (u32)Ram_CellPictures;
+          cellPictureRows = (u8 *)cellPictureAddress;
+          cellPictureRows += bytes;
+          *(u32 *)screenTile = *(u32 *)cellPictureRows;
 
-            cellPictureAddress = (u32)Ram_CellPictures + 4;
-            cellPictureRows = (u8 *)cellPictureAddress;
-            cellPictureRows += tmp13;
-            screenAddress = (u32)BG_SCREEN_BLOCK(5) + 64;
-            screenTile = (u8 *)screenAddress;
-            screenTile += offset;
-            *(u32 *)screenTile = *(u32 *)cellPictureRows;
-            break;
-          }
-          n = 2048; // the next layer's BG map
-          offset += n;
-          visibleLayer++;
+          cellPictureAddress = (u32)Ram_CellPictures + 4;
+          cellPictureRows = (u8 *)cellPictureAddress;
+          cellPictureRows += bytes;
+          screenAddress = (u32)BG_SCREEN_BLOCK(5) + 64;
+          screenTile = (u8 *)screenAddress;
+          screenTile += offset;
+          *(u32 *)screenTile = *(u32 *)cellPictureRows;
+          break;
         }
+        // bytes, reused for the step to the next layer's BG map.
+        bytes = 2048;
+        offset += bytes;
+        visibleLayer++;
       }
-      sourceCells = sourceCells + (128 - width);
-      destinationCells = 128 - width + destinationCells;
-      y++;
-    } while (y < dstY + height);
+    }
+    sourceCells += 128 - width;
+    destinationCells += 128 - width;
   }
 }
 

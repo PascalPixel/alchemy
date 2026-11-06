@@ -1,5 +1,7 @@
 // Differ 96 of 1122 (tla-en, 2026-11-06). Left: start against &texture for r10 in
 // the tridents, gMapCellBuffer's pool load, the first model setup's zeros.
+// 2026-11-06 (later): a once-only block around the tridents' texture setup (logWidth, logHeight,
+// model->texture), to cut the second &texture's references, gives 395: not that.
 // Measured 2026-11-06: permute 6 min found only start = 16 before the shade (76),
 // which clobbers the tridents' start: a wrong program, not taken.
 // Measured 2026-11-06: the first setup's zeros are one function-wide zero pseudo

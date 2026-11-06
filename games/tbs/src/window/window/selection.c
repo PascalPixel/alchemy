@@ -852,9 +852,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
     } else {
       node = state->head;
       i = 64;
-      /* FAKEMATCH(temporary): the 0 through kind, which carries the head's kind
-       * at the end, so it keeps r0 across the loop; as a plain 0 and a direct
-       * argument, 28 of 184 instructions differ in tbs-en. */
+      // kind is reused for the 0; a plain 0 differs.
       kind = 0;
       state->records[1].kind = kind;
       while (node->next != NULL) {

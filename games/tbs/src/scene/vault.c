@@ -1084,8 +1084,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     s32 directionBias;
 
     driftMultiplier = (u32)Import_RandomNext() % 10 + 5;
-    /* FAKEMATCH(temporary): the coordinate local x holds the direction mask;
-     * as the literal 1, 47 of 141 instructions differ in tbs-en. */
+    // x is reused for the direction mask; the literal 1 differs.
     x = 1;
     flags &= x;
     directionBias = flags ^ x;

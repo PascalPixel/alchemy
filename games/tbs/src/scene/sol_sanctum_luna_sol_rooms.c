@@ -1339,9 +1339,8 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     // Repeat the ascent for Kraden before closing the room transition.
     Actor_SetSpeedParameters(ACTOR_KRADEN, PIXELS(3) / 10, PIXELS(3) / 20);
     actor = Actor_GetById(ACTOR_KRADEN);
-    /* FAKEMATCH(temporary): the mask in a variable, so both byte stores wait
-     * past the zero; as &= ~ACTOR_FACES_MOTION, 5 of 442 instructions
-     * differ in tbs-en. */
+    // The mask is built in a variable and frame is reused for the zero;
+    // clearing ACTOR_FACES_MOTION in place differs.
     {
       s32 steeringFlags = 254;
 

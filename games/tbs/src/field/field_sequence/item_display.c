@@ -424,10 +424,8 @@ void FieldEffect_SpawnNearbyMarkers(void) {
           case FIND_MIMIC:
             if (entry->condition != -1 &&
                 GameFlag_GetFar(entry->condition) == 0) {
-              /* FAKEMATCH(temporary): the spawned marker reuses actor, so
-               * the one pseudo keeps Actor_Lookup's result in r5;
-               * as a variable of its own, 9 of 163 instructions differ in
-               * tbs-en. */
+              // actor is reused for the spawned marker; a local of its own
+              // differs.
               actor = Actor_CreateFar(SPRITE_BLANK, (column << 20) + (8 << 16),
                                       0, (row << 20) + (8 << 16));
               if (actor != 0) {

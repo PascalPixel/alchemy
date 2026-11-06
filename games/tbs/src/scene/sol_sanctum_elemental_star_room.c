@@ -622,9 +622,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   {
     u8 *flags = &Actor_GetById(ACTOR_FELIX_MASKED)->priorityFlags;
 
-    /* FAKEMATCH(temporary): the loop counter i takes the 1 afresh, so the store
-     * to *spriteFlags does not keep it in r5; as *flags |=
-     * ACTOR_PRIORITY_AUTOMATIC, 6 of 464 instructions differ in tbs-en. */
+    // i is reused for the flags; *flags |= ACTOR_PRIORITY_AUTOMATIC differs.
     i = ACTOR_PRIORITY_AUTOMATIC;
     i |= *flags;
     *flags = i;

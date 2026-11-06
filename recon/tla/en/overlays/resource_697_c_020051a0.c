@@ -1,13 +1,13 @@
-// Differ 95 of 497 (tla-en, 2026-11-06), down from 334: x &= 511 in place (the
-// native ties x & 511 to x); the pointer to originZ held in r6 and set just
-// before the lift call (unpinned, tile + n outranks it in global.c, 0.129
-// against 0.111, takes r6 and leaves frame 32 where the native spills entry +
-// 12 and the second &scrollY for frame 40); side read inside the marker block;
-// entry++ inside the marker call. Three tagged pins (originZ r6, x r9, arg r0).
-// Left: the 576 size kept in r6 across Heap_AllocEwram where the native loads
-// it twice; the marker tails store through r4 and build the tile word in r7
-// where the native uses r0 and r1; a few scheduling swaps. Writing that word
-// through lift or word instead changes nothing.
+// Differ 16 of 497 (tla-en, 2026-11-06), down from 334: x &= 511 in place and
+// before y &= 255 (the native ties x & 511 to x); the pointer to originZ held
+// in r6 and set just before the lift call (unpinned, tile + n outranks it in
+// global.c, 0.129 against 0.111, takes r6 and leaves frame 32 where the native
+// spills entry + 12 and the second &scrollY for frame 40); side read inside the
+// marker block; entry++ inside the marker call; the markers' size bits held in
+// one function-wide local (permute found it; as a literal, 95). Three tagged
+// pins (originZ r6, x r9, arg r0). Left: the 576 size kept in r6 across
+// Heap_AllocEwram where the native loads it twice (CSE shares the constant and
+// local-alloc gives it a register; 6 instructions), and the branches past it.
 // Before 6 November (the notes below, with frame and pins since settled):
 // Tried 2026-11-06: the row loop built from a label and goto (no change: both
 // compiles keep &scrollY in a slot from before the loop); 10 minutes of permute
@@ -84,13 +84,13 @@ s32 Func_02002ce8(s32 side);
 #define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
     s32 lift;                                                                  \
-    /* FAKEMATCH(pin): originZ in r6; as a plain s32 *, 294 of 497 */          \
+    /* FAKEMATCH(pin): originZ in r6; as a plain s32 *, 316 of 497 */          \
     /* instructions differ in tla-en. */                                       \
     register s32 *originZ asm("r6");                                           \
-    /* FAKEMATCH(pin): x in r9; as a plain s32, 381 of 497 instructions */     \
+    /* FAKEMATCH(pin): x in r9; as a plain s32, 377 of 497 instructions */     \
     /* differ in tla-en. */                                                    \
     register s32 x asm("r9");                                                  \
-    /* FAKEMATCH(pin): arg in r0; as a plain s32, 137 of 497 instructions */   \
+    /* FAKEMATCH(pin): arg in r0; as a plain s32, 60 of 497 instructions */    \
     /* differ in tla-en. */                                                    \
     register s32 arg asm("r0");                                                \
     s32 side = gMainRoutineWork.entrance & 1;                                  \
@@ -104,11 +104,11 @@ s32 Func_02002ce8(s32 side);
     originZ = &work->originZ;                                                  \
     lift = Func_02002ce8(arg);                                                 \
     y = (object->z - *originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;   \
-    y &= 255;                                                                  \
     x &= 511;                                                                  \
+    y &= 255;                                                                  \
     *cursor++ = 0;                                                             \
     y |= x << 16;                                                              \
-    y |= 0x40000000;                                                           \
+    y |= markerSize;                                                           \
     *cursor++ = y;                                                             \
     *cursor++ = (tile + (tileAdd)) | 0xe400;                                   \
     Func_02005790(entry++, 255);                                               \
@@ -123,6 +123,9 @@ void Func_020051a0(void) {
   s32 tile = gResourceTableEntries[*vramEntry].offset >> 5;
   u32 flip, word;
   s32 y;
+  // One constant for its whole life: the markers' OAM size bits (attribute 1
+  // size 1, 16 by 16), held in a register across both markers.
+  u32 markerSize = 0x40000000;
   u8 *event = Ram_HeapSlots->eventWork;
   struct Actor *object;
 

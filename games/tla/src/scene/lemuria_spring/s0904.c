@@ -1,28 +1,19 @@
-// Matches: differ 0 of 918 (tla-en, 2026-11-06), with one tagged temporary.
-// The twin of ☀️'s TolbiSpring_UpdateTossSimulation, keeping its toss pointer.
-// What closed it from 136: the obstacle loop counts with index++ (no next
-// variable), and the tail passes each trail address inline, so no hit-block
-// variable doubles as a tail address and asks for r1.
 #include "iwram_call.h"
 #include "types.h"
 #include "call.h"
+#include "vector3.h"
 
-struct SpringPoint {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct SpringRide {
-  u16 unk00;
-  s16 hold;
-  struct SpringPoint trail[5];
-  struct SpringPoint velocity;
-  s32 frames;
+struct SpringTossMotion {
+  u8 unused[2];
+  s16 launchFrame;
+  struct Vector3 trail[4];
+  struct Vector3 shadow;
+  struct Vector3 velocity;
+  s32 attractionFrames;
 };
 
 struct SpringObstacle {
-  struct SpringPoint position;
+  struct Vector3 position;
   s16 heading;
   s16 pauseOrPhase;
   s16 speedMode;
@@ -30,7 +21,7 @@ struct SpringObstacle {
   s16 hitCooldownFrames;
 };
 
-extern struct SpringRide gData_02001760;
+extern struct SpringTossMotion gData_02001760;
 extern s32 gData_020017b0;
 extern struct SpringObstacle gData_020017c0[];
 extern s32 gData_02001824;
@@ -47,7 +38,7 @@ s32 Math_Sine(s32 angle);
 s32 Math_Cosine(s32 angle);
 
 void Func_02000904(void) {
-  struct SpringRide *toss;
+  struct SpringTossMotion *toss;
   struct SpringObstacle *obstacle;
   s32 index;
   s32 height;
@@ -60,7 +51,7 @@ void Func_02000904(void) {
   s32 minZ;
   s32 maxZ;
   // Unused: gives the stack frame its 12 bytes.
-  struct SpringPoint spare;
+  struct Vector3 spare;
 
   toss = &gData_02001760;
   index = 3;
@@ -71,7 +62,7 @@ void Func_02000904(void) {
     index--;
   } while (index != 0);
 
-  if (toss->hold > 31) {
+  if (toss->launchFrame > 31) {
     toss->trail[0].x += toss->velocity.x;
     height = toss->trail[0].y + toss->velocity.y;
     toss->trail[0].y = height;
@@ -88,7 +79,7 @@ void Func_02000904(void) {
         }
       }
 
-      if (toss->frames > 0) {
+      if (toss->attractionFrames > 0) {
         s32 deltaX;
         s32 deltaZ;
         s32 distance;
@@ -102,7 +93,7 @@ void Func_02000904(void) {
         toss->velocity.z += (0x1999 * deltaZ) / distance;
         toss->velocity.x = toss->velocity.x * 253 / 256;
         toss->velocity.z = toss->velocity.z * 253 / 256;
-        toss->frames = toss->frames - 1;
+        toss->attractionFrames = toss->attractionFrames - 1;
       } else {
         toss->velocity.x = toss->velocity.x * 220 / 256;
         toss->velocity.z = toss->velocity.z * 220 / 256;
@@ -332,7 +323,7 @@ void Func_02000904(void) {
       deltaX = (obstacle->position.x - toss->trail[0].x) >> 16;
       deltaZ = (obstacle->position.z - toss->trail[0].z) >> 16;
       distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
-      if (distanceSquared <= 119 && toss->frames > 30) {
+      if (distanceSquared <= 119 && toss->attractionFrames > 30) {
         s32 nextMode;
         s32 speed;
 
@@ -342,12 +333,12 @@ void Func_02000904(void) {
           if (obstacle->heading == 0) {
             if (toss->velocity.x < speed) {
               toss->velocity.x = speed;
-              toss->frames = toss->frames - 100;
+              toss->attractionFrames = toss->attractionFrames - 100;
             }
           } else {
             if (toss->velocity.x > -speed) {
               toss->velocity.x = -speed;
-              toss->frames = toss->frames - 100;
+              toss->attractionFrames = toss->attractionFrames - 100;
             }
           }
         } else {
@@ -356,7 +347,7 @@ void Func_02000904(void) {
           distance = Iwram_Sqrt(distanceSquared);
           toss->velocity.x = -deltaX * speed / distance;
           toss->velocity.z = -deltaZ * speed / distance;
-          toss->frames = toss->frames - 100;
+          toss->attractionFrames = toss->attractionFrames - 100;
         }
         Func_02001408(301);
         nextMode = (obstacle->speedMode + 1) % 3;
@@ -391,13 +382,13 @@ void Func_02000904(void) {
     index++;
   } while (index != 4);
 
-  toss->trail[4].x = toss->trail[0].x;
-  toss->trail[4].y = 0;
-  toss->trail[4].z = toss->trail[0].z;
+  toss->shadow.x = toss->trail[0].x;
+  toss->shadow.y = 0;
+  toss->shadow.z = toss->trail[0].z;
 
   if (gData_020017b0 == 1) {
     Func_02000884(17, &toss->trail[0].x, 0, 0, 16);
-    Func_02000884(16, &toss->trail[4].x, 0, 0, 16);
+    Func_02000884(16, &toss->shadow.x, 0, 0, 16);
     Func_02000884(15, &toss->trail[1].x, 0, 0, 16);
     Func_02000884(14, &toss->trail[2].x, 0, 0, 16);
     Func_02000884(13, &toss->trail[3].x, 0, 0, 16);
@@ -406,7 +397,7 @@ void Func_02000904(void) {
     Func_020012e8(Actor_GetById(13), 4);
   } else {
     Func_02000884(12, &toss->trail[0].x, 0, 0, 16);
-    Func_02000884(11, &toss->trail[4].x, 0, 0, 16);
+    Func_02000884(11, &toss->shadow.x, 0, 0, 16);
     Func_02000884(10, &toss->trail[1].x, 0, 0, 16);
     Func_02000884(9, &toss->trail[2].x, 0, 0, 16);
     Func_02000884(8, &toss->trail[3].x, 0, 0, 16);
@@ -415,7 +406,7 @@ void Func_02000904(void) {
     Func_020012e8(Actor_GetById(8), 4);
   }
 
-  if (toss->hold != -1) {
-    toss->hold = toss->hold + 1;
+  if (toss->launchFrame != -1) {
+    toss->launchFrame = toss->launchFrame + 1;
   }
 }

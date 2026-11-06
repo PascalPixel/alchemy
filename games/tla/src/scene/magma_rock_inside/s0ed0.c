@@ -1,19 +1,3 @@
-// Matches: differ 0 of 270 (tla-en, 2026-11-06).
-// The two Random16Far calls sit in the effect call's arguments, called
-// directly; through a forwarded inline or with the values in locals the frame
-// bit and the options address take other registers (differ 30 to 47).
-// The three loops are labels because real loops rotate and hoist; step and id
-// are reused for the frame bit and the spark count, as the listing's registers
-// are. Reusing other variables (source, flame, other) is far worse. The two
-// forwarded inlines are scene_call.h's layer.
-// Magma Rock: an object of type 403 sent from another
-// object along its facing a step at a time until it reaches a cell of value
-// 212 or 222 or meets an object on the same level within 8 pixels. At an
-// object whose sprite shape is not 272 it moves there and flag 752 is set
-// around that object's reaction (Func_02000ce4); at the end cell it moves
-// there and spawns effects for 16 frames (update Func_02000ea4), then cell 222
-// starts the room's event (Func_02001350); otherwise the camera returns to
-// the leader.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -77,6 +61,7 @@ void Func_02000ed0(struct Actor *source) {
   s32 step = Math_Cosine(source->angle) << 1;
   s32 cell;
   s32 id;
+  s32 bit;
 
   flame->motionFlags = 0;
   Func_02004c98(flame, 1);
@@ -123,19 +108,20 @@ end:
   Func_02004cd0(flame);
   flame->update = 0;
   Func_02004cb0(flame);
+  /* FAKEMATCH(temporary): id is reused as the spark count; with its own local,
+     14 of 270 instructions differ in tla-en. */
   id = 0;
 spark:
-  step = gFrameCount;
-  step &= 1;
-  if (step == 0) {
+  bit = gFrameCount;
+  bit &= 1;
+  if (bit == 0) {
     options.type = 403;
     options.priority = 1;
     options.update = (void (*)(union FieldObject *))Func_02000ea4;
     options.script = gData_0200502c;
     Func_0200015c(position[0], position[1], position[2],
                   ((Random16Far() & 31) - 16) << 13,
-                  ((Random16Far() & 31) - 16) << 13, step, 0x1320000,
-                  &options);
+                  ((Random16Far() & 31) - 16) << 13, bit, 0x1320000, &options);
   }
   wait(1);
   id++;
@@ -162,9 +148,9 @@ hit:
   Func_02004cd0(flame);
   flame->update = 0;
   Func_02004cb0(flame);
-  Flag_Set(752);
+  Flag_Set(0x2f0);
   Func_02000ce4((u16)id);
-  Flag_Clear(752);
+  Flag_Clear(0x2f0);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
   wait(10);

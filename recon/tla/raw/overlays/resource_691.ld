@@ -34,7 +34,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/s10cc.o"(.text)
         "*/games/tla/src/scene/magma_rock/s1110.o"(.text)
         "*/games/tla/src/scene/magma_rock/decay.o"(.text)
-        "*/resource_691_overlay.o"(.text.x020091e4)
+        "*/games/tla/src/scene/magma_rock/s11e4.o"(.text)
         "*/games/tla/src/scene/magma_rock/target.o"(.text)
         "*/games/tla/src/scene/magma_rock/s1528.o"(.text)
         "*/games/tla/src/scene/magma_rock/s15e4.o"(.text)

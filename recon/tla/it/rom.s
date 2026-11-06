@@ -396,12 +396,6 @@ Func_080d1760:
 	.incbin "baserom.gba", 0x000d183e, 0x00000002
 	.section .rom.000d1a16, "ax"
 	.incbin "baserom.gba", 0x000d1a16, 0x00000002
-	.section .rom.000d1f20, "ax"
-	.global Func_080d1f20
-	.type Func_080d1f20, %function
-	.thumb_func
-Func_080d1f20:
-	.incbin "baserom.gba", 0x000d1f20, 0x00000164
 	.section .rom.000d260c, "ax"
 	.balign 4
 	.global PartyInventory_GiveItem

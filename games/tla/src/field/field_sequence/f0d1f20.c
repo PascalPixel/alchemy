@@ -1,21 +1,3 @@
-// Near miss, differ 48 of 143 (tla-en, 2026-11-06): loop.c strength-reduces
-// the tile counter, which the native leaves alone (below).
-// Draws heading picture `heading` of resource
-// 0x26 (Ui_Headings in the directory; ResourceId_Headings is not defined
-// yet) into a 26x5-cell window and opens the window from the centre. The
-// native keeps the cell counter's 0x10000 inside the inner loop (and passes
-// it on to BattleEffect_ApplyColorToSourceBuffer), where loop.c here hoists it;
-// the row and column counters then take r5 and r1 the other way round, and
-// 16 is built in r2, not r0. Tried: the column counter in the row's block,
-// tile as s32 with (s16) casts, tile++ inside the store (differ 66 to 78).
-// 2026-11-06: the native recomputes (tile << 16) + 0x10000 from the s16
-// tile every column and zero-extends the old tile before the OR; here
-// loop.c takes tile as a biv and reduces the (tile + 1) << 16 giv to its own
-// register stepped by 0x10000. A u32 `value = (u16)tile` before the OR gives
-// the native zero-extension but the giv is still reduced (54). Also tried:
-// goto loops (61 to 63), tile = (s16)(tile + 1) on s32/u32 (59), counters
-// as s32 or < bounds, tile = 16 after the table lookup (52), (void)&tile
-// (62 to 67). The store keeps tile++ inside it (48, from 50).
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -31,18 +13,21 @@ void BattleEffect_ApplyColorToSourceBuffer(s32 value, s32 mode);
 void BattleEffect_ApplyColorToTargetBuffer(s32 color, s32 amount);
 void BattleEffect_StartBufferInterpolation(s32 frames);
 
+/// Draws heading picture `heading` of the headings resource into a 26 by 5 cell
+/// window and opens the window from the centre, 5 pixels a side each frame
+/// for 24 frames.
 void Func_080d1f20(s32 heading) {
-  s16 tile = 16;
+  u16 tile;
   s32 *headings = Resource_GetTableEntry((s32)&ResourceId_Headings);
   u8 *tiles;
   u16 *cell;
   u32 row, column;
   s32 left, right;
-  u32 frame;
 
+  tile = 16;
   Event_WaitTransitionFrames();
-  tiles = Heap_AllocEwram(0x1040);
   cell = (u16 *)0x06002000;
+  tiles = Heap_AllocEwram(0x1040);
   headings += headings[heading] / 4;
   Resource_DecodeByteLzInRam(headings, tiles);
   Dma_Set(tiles, (void *)0x06000200, 0x84000410, (volatile u32 *)0x040000d4);
@@ -69,7 +54,9 @@ void Func_080d1f20(s32 heading) {
   REG_DISPCNT ^= 0x100;
   left = 120;
   right = 120;
-  for (frame = 0; frame <= 23; frame++) {
+  /* FAKEMATCH(temporary): column also counts the window's frames; with a
+   * frame local of its own, 26 of 143 instructions differ in tla-en. */
+  for (column = 0; column <= 23; column++) {
     left -= 5;
     right += 5;
     REG_WIN0H = (left << 8) | right;

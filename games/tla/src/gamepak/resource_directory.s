@@ -48,7 +48,7 @@ Resource_DirectoryTable:
 	resource Data023, Resource_Data023
 	resource Data024, Resource_Data024
 	resource IntroTilesB, Resource_Data025
-	resource , Ui_Headings
+	resource Headings, Ui_Headings
 	resource , Battle_PurpleMoonBackdrop
 	resource SuhallaGateBackdrop, Battle_SuhallaGateBackdrop
 	resource PirateShipBackdrop, Battle_PirateShipBackdrop

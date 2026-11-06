@@ -1400,12 +1400,7 @@ main	rom_main_04	games/tla/src/field/field_sequence/setup	.text
 main	rom_main_04	games/tla/src/field/field_sequence/definition_flags	.text
 main	rom_main_04	games/tla/src/field/field_sequence/f0d1ee8	.text
 main	rom_main_04	games/tla/src/field/field_sequence/definition_lookup	.text
-main	rom_main_04	recon/tla/it/rom	.rom.000d1f20	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000d6f20	fr
-main	rom_main_04	recon/tla/es/rom	.rom.000daf20	es
-main	rom_main_04	recon/tla/de/rom	.rom.000def20	de
-main	rom_main_04	recon/tla/raw/080d1f20	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000d1f00	ja
+main	rom_main_04	games/tla/src/field/field_sequence/f0d1f20	.text
 main	rom_main_04	games/tla/src/field/field_sequence/wait_input	.text
 main	rom_main_04	games/tla/src/field/field_sequence/cellmask	.text
 main	rom_main_04	games/tla/src/field/field_sequence/f0d20fc	.text

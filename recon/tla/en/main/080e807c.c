@@ -1,11 +1,14 @@
-// Differ 14 of 272 (tla-en, 2026-11-06): scheduling and reload order only. This round: the
-// sparkle tile read through a pointer to it (30 to 18; the tile and count no longer swap), red
-// reduced in place before the colour is built (18 to 14). Still a pinned r5 (29 without), which
-// needs its S2 tag or a plain form before adoption; the sparkle loop's empty asm changed nothing
-// and is gone. Left: reload takes r0 for i's copy and r2 for the 28, the listing r2 and r0, so
-// i * 2 rises above the 28's orr; x - 64 before y's load; the sprite pointer's reload one row late.
-// Unchanged by: green or the 28 reduced apart, the colour or-ed in pieces, u32 colour, the
-// second palette as [i + 256], an offset local, -64 + y.
+// Differ 4 of 272 (tla-en, 2026-11-06): two pairs in another order. This round: the sparkle
+// tile read through a pointer to it (30 to 18; the tile and count no longer swap), red reduced
+// in place before the colour is built (18 to 14), the colour's blue a local set once before the
+// colour loop (14 to 6; its reload now comes in the listing's order), the mote's timer reread
+// after Func_080eb298 as the listing reads it (6 to 4). Still a pinned r5 (red; 29 without when
+// last measured), which needs its S2 tag or a plain form before adoption; the sparkle loop's
+// empty asm changed nothing and is gone. Left: x - 64 is computed before y's load, the listing
+// after; the movs of blue's 28 one row before orrs r3, r5, the listing after. Unchanged by:
+// x -= 64 or y -= 64 apart, -64 + x, both reads before both scroll stores (12), the reads
+// inside the stores, u32 x; blue set elsewhere before the loop; the colour's terms reordered
+// (101 to 105) or grouped (20).
 // Near miss, differ 48 of 272 (2026-10-26, statements reordered) (2026-10-18, written from the listing; ☀️ has
 // no twin): the frame callback of the effect Func_080e87c4 ends, with the
 // ring picture of graphics/field_effects/ring_arcs.s. The position is reached

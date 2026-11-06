@@ -72,6 +72,7 @@ void Func_080e807c(void) {
   s32 i;
   s32 timer;
   u16 *phase;
+  u16 *tile;
 
   pos[0] = object->x;
   pos[1] = object->y + 0x100000;
@@ -108,6 +109,7 @@ void Func_080e807c(void) {
   if (work->sparkling != 0) {
     mote = work->motes;
     sprite = work->sprites;
+    tile = &work->tile;
     for (i = 15; i >= 0; i--, sprite++, mote++) {
       timer = mote->timer;
       if (timer == 0) {
@@ -122,7 +124,7 @@ void Func_080e807c(void) {
         timer = mote->timer;
       }
       if (timer >= 0) {
-        sprite->oam.index = work->tile + ((timer >> 2) & 3) * 4;
+        sprite->oam.index = *tile +((timer >> 2) & 3) * 4;
         pos[0] = object->x + mote->x;
         timer = mote->timer;
         pos[1] = object->y + mote->y;

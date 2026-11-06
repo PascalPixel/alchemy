@@ -1,4 +1,13 @@
-// Near miss, differ 67 of 99 (tla-en, 2026-11-06). Permuter, 6 November: the first cell's
+// Near miss, differ 33 of 99 (tla-en, 2026-11-06), with the first cell's index through a
+// 64-bit temporary (a tagged device, below; plain, 67). Left: the pool order at the fill call (the
+// native loads the routine's address first), and in the ring's first block row and column in r0, r2
+// for the native r2, r0, so the second block's column = row copy (adds r0, r2, #0) is gone and its
+// fresh 63 is loaded before the first test. The native looks like a 63 held in a pseudo that gets
+// no register (reload puts the constant into both compares and loads it fresh for the second
+// row); edge set once per ring or per call takes r9 or the stack instead (76 to 119). Also no
+// better from 33: column declared first, row = row - y, a second 64-bit index (139), the swap
+// through a temporary (111); the fill through a pointer, Call3 or a value local (33).
+// Before, plain: Near miss, differ 67 of 99 (tla-en, 2026-11-06). Permuter, 6 November: the first cell's
 // index through a long long temporary (new = row * 64 + column; cell = &grid[new]) gives
 // differ 33; an s32 or u32 temporary gives 67, s16 69. Not kept: a 64-bit index is no form
 // this source has, but it says the first index wants a wider or separate computation.
@@ -43,7 +52,14 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
       u8 *cell;
       s32 edge;
       row -= y;
-      cell = &grid[row * 64 + column];
+      {
+        /* FAKEMATCH(temporary): the index through a 64-bit temporary; as
+         * cell = &grid[row * 64 + column], 67 of 99 instructions differ in
+         * tla-en. */
+        s64 index = row * 64 + column;
+
+        cell = &grid[index];
+      }
       cell[0] = level;
       edge = 63;
       if (column < edge)

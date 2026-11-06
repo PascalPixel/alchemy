@@ -1,28 +1,3 @@
-// Near miss, differ 50 of 470 (tla-en, 2026-11-06): one site, the first retry
-// store (strh r3, [r4, r0], r0 reloaded from collision's slot unscaled; the
-// native builds the list address with movs #20; add sp), costs two
-// instructions and shifts every literal pool offset after it. Here CSE turns
-// the index into collision's register (it holds 0) and GCSE then propagates
-// collision = 0 into it; in the native that propagation does not happen, so
-// some other set of collision must reach the store there. The wake's byte at
-// 0x63 is stored through a struct (ActorTimers), not a u8 cast, which lets
-// collision's reload schedule as the native has it (differ 54 to 50).
-// Tried: collision and count zeroed in the branch, list[collision] with
-// count = 1, a cut of collision's constant by an empty asm (86, scales it);
-// 2026-11-06: count = collision at the top or in the branch, count = 0 and
-// collision = count, unk66 = collision = 0, collision = 0 again in the branch
-// (all 54 before the wake fix), the 0xffff case joining an if (collision ==
-// 0) (117), count as u16, s16 or u8 (no change) or u32 (52), collision as u32
-// (no change), u16 (126) or u8 (62).
-// Script command 0x22, the sibling of
-// Func_080279b0 (The Broken Seal's Actor_MoveOnWorldMap): moves an object
-// on the world map by the direction pad at a fixed pace (L repeating runs
-// fast), records the held keys in the event work, and leaves object 0x164
-// behind it as a wake every fifth step. Also measured: collision zeroed again in
-// the else branch, count set from collision, count set in the branch or the
-// probe test, unk66 stored as 0 (all no change), count left unset (differ
-// 223). The byte at 0x62 is the wake timer; the wake's sprite takes priority
-// 2 and then 1, both stores kept as the native has them.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -43,7 +18,7 @@ struct WorldCamera {
   u16 yaw;
 };
 
-struct ActorTimers {
+struct Unk0802a124Actor {
   u8 unk00[0x62];
   u8 unk62;
   u8 unk63;
@@ -69,8 +44,7 @@ extern const s32 gData_0802ece0[];
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802db64(struct Actor *object, struct FieldPosition *position);
-void Actor_SelectAnimation(struct Actor *object,
-                                            s32 argument);
+void Actor_SelectAnimation(struct Actor *object, s32 argument);
 s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
@@ -78,6 +52,10 @@ void Actor_StartScript(struct Actor *, const s32 *);
 s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32);
 s32 Func_08029838(struct Actor *object);
 
+/// Script command 0x22: moves the object on the world map by the direction pad
+/// at a fixed pace (faster while L repeats), trying six turned headings when
+/// the way is blocked, as Func_080279b0 does; records the held keys in the
+/// event work and leaves an object of kind 0x164 behind it every fifth step.
 s32 Func_0802a124(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;
@@ -89,16 +67,17 @@ s32 Func_0802a124(struct Actor *object) {
   s32 angleIndex;
   s32 count;
   s32 difference;
+  s32 y;
   s32 terrainCollision;
   s32 speed;
   s32 targetCameraYaw;
   struct WorldCamera *camera;
   s32 yawStep;
   struct PlayerSprite *playerSprite;
-  struct Actor *wake;
-  struct PlayerSprite *wakeSprite;
+  struct Actor *ripple;
+  struct PlayerSprite *rippleSprite;
   struct EventWork *work;
-  u8 *wakeTimer;
+  u8 *timer;
 
   collision = 0;
   count = 0;
@@ -124,7 +103,14 @@ s32 Func_0802a124(struct Actor *object) {
       leftPosition.z = object->z;
       Vector_AddPolarOffset(0x80000, direction + 0x1555, &leftPosition);
       rightPosition.x = object->x;
-      rightPosition.y = object->y;
+      /* FAKEMATCH(temporary): y read into its own local; read in the block,
+       * 2 of 470 instructions differ in tla-en. */
+      y = object->y;
+      /* FAKEMATCH(one-pass): the right probe's y stored in a once-only block;
+       * as a plain store, 50 of 470 instructions differ in tla-en. */
+      do {
+        rightPosition.y = y;
+      } while (0);
       rightPosition.z = object->z;
       Vector_AddPolarOffset(0x80000, direction - 0x1555, &rightPosition);
       if ((Func_0802db64(object, &position) |
@@ -188,8 +174,8 @@ update_object:
         difference = -0x1000;
       object->angle += difference;
     }
-    wakeTimer = (u8 *)object + 98;
-    *wakeTimer = 0;
+    timer = (u8 *)object + 98;
+    *timer = 0;
     object->unk66 = 2;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
@@ -199,9 +185,9 @@ update_object:
     object->velocityZ = collision;
     Vector_AddPolarOffset(speed, (u16)angle,
                           (struct FieldPosition *)&object->velocityX);
-    wakeTimer = (u8 *)object + 98;
-    if (*wakeTimer != 0)
-      (*wakeTimer)--;
+    timer = (u8 *)object + 98;
+    if (*timer != 0)
+      (*timer)--;
   }
 
   camera = (struct WorldCamera *)Ram_HeapSlots->mapWork;
@@ -223,22 +209,22 @@ update_object:
     else
       playerSprite->entry[6] = 9;
   }
-  if (*wakeTimer == 0 && collision == 0) {
-    wake = Func_08023220(0x164, object->x, object->y, object->z - 0x20000);
-    if (wake != 0) {
-      wake->terrainHeight = object->terrainHeight;
-      wakeSprite = wake->animation;
-      Actor_StartScript(wake, gData_0802ece0);
-      wake->priorityFlags = 8;
-      ((struct ActorTimers *)wake)->unk63 = 100;
-      wake->motionFlags = collision;
-      if (wakeSprite != 0) {
-        Animation_ApplyChildArgument(wakeSprite, 1);
-        wakeSprite->flags = collision;
-        wakeSprite->priority = 2;
-        wakeSprite->priority = 1;
+  if (*timer == 0 && collision == 0) {
+    ripple = Func_08023220(0x164, object->x, object->y, object->z - 0x20000);
+    if (ripple != 0) {
+      ripple->terrainHeight = object->terrainHeight;
+      rippleSprite = ripple->animation;
+      Actor_StartScript(ripple, gData_0802ece0);
+      ripple->priorityFlags = 8;
+      ((struct Unk0802a124Actor *)ripple)->unk63 = 100;
+      ripple->motionFlags = collision;
+      if (rippleSprite != 0) {
+        Animation_ApplyChildArgument(rippleSprite, 1);
+        rippleSprite->flags = collision;
+        rippleSprite->priority = 2;
+        rippleSprite->priority = 1;
       }
-      *wakeTimer = 5;
+      *timer = 5;
     }
   }
   Func_08029838(object);

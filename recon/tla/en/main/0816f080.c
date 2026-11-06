@@ -1,4 +1,15 @@
-// Differ 146 of 568 (tla-en, 2026-11-06).
+// Differ 112 of 568 (tla-en, 2026-11-06).
+// Fourth round, 6 November: the r6/r7 swap is gone (146 -> 112). row is now the plain
+// row = y * 32, and the first pair's second store spells x * 2 as x + x. With x + x, CSE
+// cannot share row + x * 2 between the two stores, so row has two uses, a loop.c lifetime
+// of 6 instead of 2, and is moved in the first loop pass as a single set; simplify_giv_expr
+// then looks through it, so the first pair's pointer init computes y << 5 itself, after the
+// second pair's. That puts one more insn between the second pair's pointer (now 40 insns
+// live) and the third pair's +1 pointer (31), which then ranks first and takes r6 as in the
+// listing. Every other spelling of that store measured (x * 2 + 1 grouped or reordered,
+// row + 1, 0x1001 +, x + x in both stores) stays at 350 or 378.
+// Left: the splash scale (below, Left 2), which also shifts every literal pool load by 4,
+// and the zero stores' scheduling (Left 3).
 // Third round, 6 November, none better. The r6/r7 swap is global's order: giv 421 (the second
 // pair's decremented pointer, 14 refs over 39 insns) outranks giv 463 (the third pair's +1
 // pointer, 11 over 31), takes r6, and reload's spill set then takes r7 from 463 at insn 1747
@@ -38,16 +49,13 @@
 // - width is set before the palette loop so size and half are chains only
 //   cse2 folds. A constant size or half is const-propagated by gcse, which
 //   folds the x loop's top test and turns offset += size into add #16.
-// - row is built in two sets inside the if: as "row = y * 32" it is too short
-//   lived to be moved by the first loop pass, the first pair then stays two
-//   pointers, and at the top of the body PRE hoists it instead.
+// - (until the fourth round) row was built in two sets inside the if: as
+//   "row = y * 32" with x * 2 in both stores it is too short lived to be moved
+//   by the first loop pass and the first pair stays two pointers.
 // - mirrorRow is two sets so that -32 stays in it, ahead of the 0x1700 offsets.
 //   As one expression fold moves the -32 last.
-// Whether row's two sets are honest is open: they fit no S2 kind and were found
-// by measuring, so a reviewer may call them a temporary. The plain y * 32 costs
-// about 200 differ.
 //
-// Left, 1: the native gives the third pair's second pointer r6 and the second
+// Left, 1 (settled in the fourth round, kept for its evidence): the native gives the third pair's second pointer r6 and the second
 // pair's r7; here it is the other way, and the spill registers then use r7
 // where the native uses r6, which is most of the 146. The second pair's
 // priority is 42 / 39 against 33 / 31, so it needs a live length of 40. The
@@ -223,10 +231,10 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         s32 mirrorRow;
         s32 row;
 
-        row = y;
-        row <<= 5;
+        row = y * 32;
         work->sheet[0x1000 + row + x * 2] = v;
-        work->sheet[0x1000 + row + x * 2 + 1] = v;
+        // x + x: the same byte as x * 2 + 1; see the header.
+        work->sheet[0x1000 + row + x + x + 1] = v;
         work->sheet[0x1000 + (offset + (size - x - 1)) * 2] = v;
         work->sheet[0x1000 + (offset + (size - x - 1)) * 2 + 1] = v;
         mirrorRow = (32 - y) * 32;

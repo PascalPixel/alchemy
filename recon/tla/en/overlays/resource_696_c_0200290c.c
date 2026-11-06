@@ -5,7 +5,10 @@
 // r5, while the draft keeps sp in r6 and puts items r5, slot r7: allocation only.
 // Measured with no gain (2026-11-06): Unit_Get(*owner++), id split from owner++,
 // s32 id; owner = owners after the call (62) or in the for init (71); 4 minutes of
-// permuter (best still 31).
+// permuter (best still 31); 10 more minutes on 6 November (6,000 candidates),
+// still 31. The id held in callee-saved r5 before the copy to r0 suggests the
+// native's id pseudo crosses a call, which takes the callee-saved register
+// the frame address keeps here.
 // Near miss of Func_0200290c of overlay 696. Control flow, loads and scheduling
 // agree; what is left is one allocation. The native gives items r6, slot r5, the
 // owner pointer r7, i r8, count r9 and the countdown r10, with a 20-byte frame.

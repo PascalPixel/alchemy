@@ -1,13 +1,3 @@
-// Matches: differ 0 of 73 (tla-en, 2026-11-06).
-// Waits for the next frame interrupt, running the once-a-frame sound step
-// first unless unk02 asks for the wait alone. The state is volatile (each
-// store reads the byte first), as Func_0801399c and f1c0cac.c declare it.
-// The long path takes IME through IRQ_LOCK (irq_lock.h). The short path's
-// wait is written for (;;) with return: as a while loop, the long path reuses
-// the state's address from the first test (differ 22 of 73). sound is the
-// tree's u8 view of gData_03007ff0: byte 4 is read twice in C and once in the
-// code, as the native compares a copy of it. gData_0300121c is volatile here,
-// as its wait loops reread it.
 #include "types.h"
 #include "io_reg.h"
 #include "irq_lock.h"
@@ -31,6 +21,9 @@ void IwramSoundRenderVBlank(s32) __attribute__((long_call));
 void System_WaitForFrameInterrupt(void) {
   u32 saved;
   u8 *sound;
+
+  /* FAKEMATCH(volatile): gData_0300121c read as volatile; as a plain u16, 61
+     of 73 instructions differ in tla-en. */
 
   if (gData_03001138.unk02) {
     gData_0300121c &= ~1;

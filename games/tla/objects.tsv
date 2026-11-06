@@ -64,12 +64,7 @@ main	rom_main_00	recon/tla/de/rom	.rom.000133f0	de
 main	rom_main_00	recon/tla/raw/080133c4	.text	en
 main	rom_main_00	recon/tla/ja/rom	.rom.000133c4	ja
 main	rom_main_00	games/tla/src/system/setirq	.text
-main	rom_main_00	recon/tla/it/rom	.rom.000134dc	it
-main	rom_main_00	recon/tla/fr/rom	.rom.000134dc	fr
-main	rom_main_00	recon/tla/es/rom	.rom.000134dc	es
-main	rom_main_00	recon/tla/de/rom	.rom.000134dc	de
-main	rom_main_00	recon/tla/raw/080134b0	.text	en
-main	rom_main_00	recon/tla/ja/rom	.rom.000134b0	ja
+main	rom_main_00	games/tla/src/system/frame_interrupt	.text
 main	rom_main_00	games/tla/src/system/system	.text
 main	rom_main_00	games/tla/src/system/input	.text
 main	rom_main_00	games/tla/src/system/f01399c	.text	en de es fr it ja
@@ -2993,12 +2988,7 @@ main	rom_main_09	games/tla/src/battle_effect/douse	.text
 main	rom_main_09	games/tla/src/battle_effect/fxmodea	.text
 main	rom_main_09	games/tla/src/battle_effect/f13c5f4	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/fxmodeb	.text
-main	rom_main_09	recon/tla/it/rom	.rom.0013cb34	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0013cb34	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0013cb34	es
-main	rom_main_09	recon/tla/de/rom	.rom.0013cb34	de
-main	rom_main_09	recon/tla/raw/0813cb34	.text	en
-main	rom_main_09	recon/tla/ja/rom	.rom.0013cb34	ja
+main	rom_main_09	games/tla/src/battle_effect/f13cb34	.text
 main	rom_main_09	games/tla/src/battle_effect/fxmodec	.text
 main	rom_main_09	recon/tla/raw/0813d098	.text	en
 main	rom_main_09	recon/tla/de/rom	.rom.0013d098	de

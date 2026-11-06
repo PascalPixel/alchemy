@@ -5,12 +5,6 @@
 	.thumb_func
 System_InstallIwramAndIrqs:
 	.incbin "baserom.gba", 0x000133c4, 0x00000074
-	.section .rom.000134b0, "ax"
-	.global System_WaitForFrameInterrupt
-	.type System_WaitForFrameInterrupt, %function
-	.thumb_func
-System_WaitForFrameInterrupt:
-	.incbin "baserom.gba", 0x000134b0, 0x000000b0
 	.section .rom.00015778, "ax"
 	.global Render_ProjectPoint
 	.type Render_ProjectPoint, %function
@@ -953,13 +947,6 @@ Func_08127068:
 	.incbin "baserom.gba", 0x00127b9a, 0x00000002
 	.section .rom.00127cd0, "ax"
 	.incbin "baserom.gba", 0x00127cd0, 0x000003cc
-	.section .rom.0013cb34, "ax"
-	.balign 4
-	.global Func_0813cb34
-	.type Func_0813cb34, %function
-	.thumb_func
-Func_0813cb34:
-	.incbin "baserom.gba", 0x0013cb34, 0x0000044c
 	.section .rom.0013d098, "ax"
 	.balign 4
 	.global Func_0813d098

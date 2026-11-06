@@ -1108,17 +1108,12 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   // Install the custom motion and share the anchor's drawing priority.
   {
     u8 *spriteFlags = &sprite->flags;
+    struct Sprite **anchorSprite = &anchor->sprite;
 
     effect->update = Vault_UpdateDriftingEffect;
-    /* FAKEMATCH(dead): the flags store in both arms of a test, which ends the
-     * scheduling block after the update store until jump2 merges the arms; as
-     * one store, 2 of 141 instructions differ in tbs-en. */
-    if (flags < 0)
-      *spriteFlags = 0;
-    else
-      *spriteFlags = 0;
+    *spriteFlags = 0;
+    sprite->image.priority = (*anchorSprite)->image.priority;
   }
-  sprite->image.priority = anchor->sprite->image.priority;
 }
 
 // The three scripts of gFieldEffect_DurationScripts, which FieldEffect_Spawn

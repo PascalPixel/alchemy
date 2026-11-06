@@ -14,7 +14,8 @@
 // at 90 builds the mask as -2 with no zero (differ 78). Tried without gain: wrapper
 // calls made direct near the mask lengthen its life (626, 34); u8 or u16 mask
 // 72; arrays, unions and an 8-byte struct for the spilled actor stay a pseudo
-// (frame 4, 38).
+// (frame 4, 38). Second pass (2026-11-06): the two direct
+// Camera_MoveWithinMapBounds calls through Call4, unchanged (34).
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \

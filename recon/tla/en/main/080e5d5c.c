@@ -1,5 +1,12 @@
 // Differ 30 of 639 (tla-en, 2026-11-06): allocation only (lift r4/r0, the 1 for j++,
 // one fused add); a 5-minute permute reached 28 only by changing a signature.
+// Also measured (2026-11-06, second pass): speed unpinned with its 0x28000 added
+// as its own statement (speed += 0x28000) gives the native's copy-then-add in
+// r6 without the pin, but the j loop's 1 then sits in r1 and wait(1) loads its
+// own, one instruction more that shifts every pool (43); a 5-minute permute
+// from there found nothing lower. The lift and j++ rows are reload's
+// round-robin register choices (lift through r2 and r4 here, r4 and r0
+// natively), one step out of phase with the native's.
 // Earlier: near miss at 30 (2026-11-05) with untagged pins ("r9", "r6"), empty asms,
 // one-pass blocks and locals found by search; each needs its S2 tag on adoption.
 // Draft, differ 99 of 639, skeleton gap 11 (tla-en, 2026-11-01)

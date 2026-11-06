@@ -10,6 +10,8 @@
 // Also measured (2026-11-06): a second counter for the second loop, 129 (the walk's step
 // leaves r7); the cell shared with the walk's store, 244 (it takes r7 in the walk);
 // the first scan read through cell[GRID_WIDTH], 67; the last two stores swapped, 66.
+// Second pass (2026-11-06): the cell set after next, 44; as &AT(x, y), 46; a
+// 5-minute permute found 36 only by adding a store to gRandomState.
 //
 // Lays out the maze path once (flag 0x3f0, not after flag 0x109): seeded by
 // the given value, a random walk of fourteen steps from the middle of a 28 by

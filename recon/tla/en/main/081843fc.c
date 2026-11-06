@@ -1,4 +1,4 @@
-// Near miss, differ 61 of 4580 (tla-en, 2026-11-06): the pairs below, scheduling
+// Differ 61 of 4580 (tla-en, 2026-11-06). Near miss: the pairs below, scheduling
 // ties and reload choices, and the pool offsets that follow them. Measure
 // 081843fc,081848ec together. Every stack slot as in the listing.
 // Pools checked against the listing's first pool (2026-11-06): the first object

@@ -1,6 +1,7 @@
-// Under -Os, 5 November: differ 24 of 129 (tla-en); older figures below predate it.
-// Draft, differ 55 of 129: actor id flashes, then eight puffs over actor
-// center and flag is set. Left: register choice.
+// Matches: differ 0 of 129 (tla-en, 2026-11-06).
+// 6 November: x as (i << 17) + leader->x took it to 10; the random height
+// in its own local to 0. Under -Os, 5 November: differ 24.
+// Actor id flashes, then eight puffs rise over actor center and flag is set.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -83,14 +84,16 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
   leader = Actor_GetById(center);
   frame = 0;
   for (i = 0; i <= 7; i++) {
+    s32 y;
+
+    /* FAKEMATCH(temporary): the form kept; as one call argument, 10 of 129 instructions differ in tla-en. */
+    y = leader->y - ((((Random16Far() * 7) << 1) >> 16) << 16);
   {
     struct Actor *object;
     struct EffectView *effect;
 
-    object = Func_02003bb0(
-        285, leader->x + (i << 17) - 0x80000,
-        leader->y - ((((Random16Far() * 7) << 1) >> 16) << 16) - 0x20000,
-        leader->z);
+    object = Func_02003bb0(285, (i << 17) + leader->x - 0x80000, y - 0x20000,
+                           leader->z);
     if (object == NULL)
       goto skip;
     effect = (struct EffectView *)object;

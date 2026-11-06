@@ -1,9 +1,8 @@
-// Blocked, 5 November 2026: the work copy of ☀️'s m4aSongNumStart. Through the
-// sound route (old_agbcc -O2 -mthumb-interwork, SOUND_C) this C emits the
-// listing's 17 instructions; the game route differs by 22. What stops it is not
-// the code: both pool words are 0 and the call reaches 0x081c0c84, inside
-// another routine. C reaches those only by names at those addresses, which O2
-// forbids.
+// Differ 22 of 17 (tla-en, 2026-11-06): the listing returns by pop {r0}; bx r0,
+// interworking the game route never emits, so the gap is the route (SOUND_C), not
+// the shape; through SOUND_C this C emits the listing's 17 instructions.
+// 5 November 2026: both pool words are 0 and the call reaches 0x081c0c84, inside
+// another routine; C reaches those only by names at those addresses (O2).
 #include "sound_driver.h"
 #include "ram_buffer.h"
 

@@ -1,30 +1,25 @@
-// Near miss, differ 86 of 1146 (tla-en, 2026-11-06): the Djinni's second xor (an
-// empty asm with an output holds its 4), start > 0's ble, the palette copies'
-// entry load, center's zeroes and the mode 4 site's second fetch. Tried this round:
-// - start as u32: beq as the listing, but the lights' BLIT_ADDITIVE 0 is then read
-//   from start's slot (ldr [sp, #44] for movs #0), differ 102.
-// - flags in memory ((void)&flags, plain xors): both builds then xor separately, as
-//   the listing does, but the 4 sits in r5 and flags and start swap slots (44 and
-//   48), differ 205 wherever flags is declared. A flags that lives in memory would
-//   explain the listing's two xors and its 4 rematerialized in r4.
-// Earlier, 2026-11-05: differ 86 of 1146, unchanged that round. Tried:
-// - flags ^ two function-level constants no register holds (four, four2): the first
-//   build then matches, 4 from reload in r4 and the mode in r5, 136 normalized with
-//   rotation after it. The second build's mode 0 stores before its xor here and after
-//   it in the listing (movs r5, #0 ... str r5 just before the call). One such constant
-//   for both lets PRE share the xor.
-// - A test on a constant only GCSE knows, between the builds: it cuts CSE1, but cse2
-//   then shares the xor. Static inlines for the two loads: 1011.
-// - The palette copies' `ldr r3` before `lsls r0, #19`: priority and dependants tie,
-//   so the listing has the entry's load earlier in RTL than the 0x05000000; a local for
-//   the palette does not move it.
-// Measured 2026-11-05 (tla-en): differ 86 of 1146. Left: y takes its -24 in its
-// initializer and the second xor reads a constant held by an empty asm with an
-// output, which cuts CSE with no scheduling barrier; that gives the listing's
-// instruction count and registers through the Djinni. Left: the mode arguments'
-// pseudo at the Djinni's two loads, start > 0's ble where the listing has beq
-// (as start != 0, 136), reload rotation at center's zeroes and the mode 4
-// fetch.
+// Differ 84 of 1146 (tla-en, 2026-11-06).
+// Left: the Djinni's second xor (an empty asm with an output holds its 4),
+// start > 0's ble, the palette copies' entry load and center's zeroes;
+// scheduling and allocation only. The mode 4 site's second fetch now matches:
+// the cel's address taken once, after the mirrored build (86 to 84, from the
+// permuter). Tried this round:
+// - start as u32: beq as the listing, but the lights' BLIT_ADDITIVE 0 is then
+//   read from start's slot (ldr [sp, #44] for movs #0), differ 102.
+// - flags in memory ((void)&flags, plain xors): both builds then xor
+//   separately, as the listing does, but the 4 sits in r5 and flags and start
+//   swap slots (44 and 48), differ 205 wherever flags is declared.
+// - picture set before the mirrored build, or at function level: 168.
+// Earlier, 2026-11-05: differ 86 of 1146. Tried:
+// - flags ^ two function-level constants no register holds (four, four2): the
+//   first build then matches, the second's mode 0 stores before its xor; 136.
+// - A test on a constant only GCSE knows, between the builds: it cuts CSE1,
+//   but cse2 then shares the xor. Static inlines for the two loads: 1011.
+// - The palette copies' `ldr r3` before `lsls r0, #19`: priority and
+//   dependants tie; a local for the palette does not move it.
+// Measured 2026-11-05: y takes its -24 in its initializer and the second xor
+// reads a constant held by an empty asm with an output, which cuts CSE with no
+// scheduling barrier; start != 0 gives 136.
 
 // Draft, differ 120 of 1146, skeleton gap 28 (tla-en, 2026-11-01)
 // Func_0814fab8 is the body behind the twelve wrappers of
@@ -121,7 +116,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 djinni, s32 *origin,
                    s32 *target);  // BattleEffect_RunDjinniEntrance
 void Func_0815f0a0(s32 resource); // BattleEffect_StepPaletteToResource
 void Func_080150e4(s32 angle);    // SceneTransform_ApplyRoll
-void Graphics_LoadGreyRamp(void);         // a grey ramp from color 1
+void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
 
 // The two blitters' heap slots, byte offsets into Ram_HeapSlots (The Broken
@@ -137,7 +132,8 @@ s32 BattleUnit_GetEffectHeightFar(s32 actor);
   Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags, mode);                    \
   out = (DrawRectangle)Ram_HeapSlots->unkb8[1]
 
-// The whole load in a one-pass block; see the header for why the Djinni needs it.
+// The whole load in a one-pass block; see the header for why the Djinni needs
+// it.
 #define LOAD_BLITTER_WHOLE_PASS(out, flags, mode)                              \
   do {                                                                         \
     Func_08196404(BLITTER_SLOT, 7, 7, flags, mode);                            \
@@ -355,10 +351,12 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
     // the first four frames it is drawn ADDITIVE as well.
     if (effect->prelude == 1) {
       s32 x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin[0] + shift - 20;
-s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24; s32 four = COMPOSITE_FLIP_X;
+      s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + origin[1] - 24;
+      s32 four = COMPOSITE_FLIP_X;
 
-LOAD_BLITTER(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX); __asm__("" : "=r"(four) : "0"(four));
-LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, BLIT_ADDITIVE);
+      LOAD_BLITTER(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX);
+      __asm__("" : "=r"(four) : "0"(four));
+      LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, BLIT_ADDITIVE);
 
       if (frame > 32)
         y = y - frame * 2 + 64;
@@ -385,9 +383,9 @@ LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, BLIT_ADDITIVE);
       point[2] = object->z;
       SceneTransform_ApplyPosition(point);
       if (start > 0) {
- if (frame == member * 8 + 53)
+        if (frame == member * 8 + 53)
           Func_0814cd48(effect->actors[member], 7, -1, member, 16);
- } else {
+      } else {
         if (frame == member * 8 + 48)
           Func_0814cd48(effect->actors[member], 7, -1, member, 16);
 
@@ -481,13 +479,17 @@ LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, BLIT_ADDITIVE);
         // Six 64x32 pictures two frames apart, mirrored below into 64x64.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cel = (frame - member * 8 - 80) / 2 % 6;
+          u8 *picture; // the cel, drawn as its upper and mirrored lower half
 
           LOAD_BLITTER(draw[0], flags, BLIT_MAX);
-          LOAD_BLITTER_ALTERNATE(draw[1], flags | COMPOSITE_FLIP_Y, BLIT_MAX);
-          draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
-                  screen.x - 32, screen.y - 24, 64, 32);
-          draw[1](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
-                  screen.x - 32, screen.y + 8, 64, 32);
+          Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags | COMPOSITE_FLIP_Y,
+                        BLIT_MAX);
+          picture = work->sheet + cel * 2048;
+          draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+          draw[0](canvas, picture + SERIES_B_PICTURE, screen.x - 32,
+                  screen.y - 24, 64, 32);
+          draw[1](canvas, picture + SERIES_B_PICTURE, screen.x - 32,
+                  screen.y + 8, 64, 32);
           HeapSlot_Release(BLITTER_SLOT_ALTERNATE);
           HeapSlot_Release(BLITTER_SLOT);
         }

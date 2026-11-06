@@ -1,7 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 22 of 1150. Left: order: a multiply the
-// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
-// too high (its cost of 4), so the constant or the multiply comes ahead of
-// independent rows, twice, and the first rows of the model block.
+// Differ 22 of 1150 (tla-en, 2026-11-06). Left: order only: movs r4/add r2,fp
+// at the start, movs r3 #58 twice, and the texture block's r0/r2 and r1/r0 reloads.
 
 // Draft of BattleEffect_RunZagan, differ 46 of 1150, skeleton gap 21 (tla-en, 2026-11-01)
 // Same calls, control flow, frame and spill slots. What is left is instruction

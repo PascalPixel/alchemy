@@ -1,11 +1,13 @@
-// Near miss, differ 33 of 99 (tla-en, 2026-11-06): register choice only. The
+// Differ 33 of 99 (tla-en, 2026-11-06).
+// Register choice only. The
 // native keeps the 0 for kind and next in r4 and passes the 1 for active through
 // ip, computing the sprite cell (output + 16) late into r2; here the cell takes
 // r4 early and the 0 goes through ip. Computing the cell late (as
 // Func_0803c068 does) gives the native's r4 = 0 but swaps window and output
 // (r7/r6) and keeps the 1 in r3: differ 46. Tried, 6 November: every order of
 // the active, kind, vram, oam, cell and next statements (33 to 111); vram
-// before the stores; next beside kind; one return at the end (50).
+// before the stores; next beside kind; one return at the end (50); a
+// 4-minute permute (best 49).
 // Reserves a glyph sprite for the window as Func_0803c068 does, without
 // drawing a glyph, and returns the address of its tiles in OBJ VRAM for the
 // caller to fill. The 128-byte frame is the unused tile buffer of

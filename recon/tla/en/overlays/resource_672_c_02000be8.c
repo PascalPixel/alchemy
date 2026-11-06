@@ -1,4 +1,11 @@
-// Differ 29 of 145 (tla-en, 2026-11-06). The 24 of 5 November came from wrong
+// Differ 24 of 145 (tla-en, 2026-11-06). The sink loop now builds step + 1 in
+// blend before dividing, which gives the listing its copy (29 to 24); doing the
+// same in the rise loop costs 9. Left: allocation only, r0/r1 swapped in the
+// rise loop, r2/r3 in the sink loop. The permuter reaches 20 only by reusing
+// fade for currentOwner (a forced temporary), not kept. blend holding step + 1
+// and then the register value is itself a reused local: tag it FAKEMATCH
+// (temporary) at adoption unless a plain form is found.
+// Before: differ 29 (2026-11-06). The 24 of 5 November came from wrong
 // C: blend was built from the previous frame's fade, and the sink loop dropped
 // 16 - fade. With both written as the listing computes them, left: step + 1 and
 // fade swap r0 and r1 in the rise loop, and the sink loop has no copy of step +
@@ -90,7 +97,8 @@ rise:
   if (i != 0) {
   sink:
     if (i >= 33 && i < 96) {
-      fade = (step + 1) / 4;
+      blend = step + 1;
+      fade = blend / 4;
       blend = fade << 8;
       blend |= 16 - fade;
       REG_BLDALPHA = blend;

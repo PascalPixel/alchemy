@@ -1,4 +1,4 @@
-// Near miss, differ 75 of 260 (tla-en, 2026-11-06): slot ranks above leader and work.
+// Differ 75 of 260 (tla-en, 2026-11-06). Left: slot ranks above leader and work.
 // Draft notes of 5 November 2026: A plain while on a copy of the
 // kind, i++ first at the bottom, the routine work read direct, scale before dx. Left:
 // slot ranks above leader and work (2 * 6 / 116 against 2 * 4 / 136), where the native

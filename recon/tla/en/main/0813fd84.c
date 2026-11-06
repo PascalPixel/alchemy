@@ -1,5 +1,6 @@
-// Near miss, differ 44 of 2579 (tla-en, 2026-11-06): the priority mask's hoisted -13 and its copy, then scheduling
-// and reload order only. The frame, every slot and every pool agree.
+// Differ 44 of 2579 (tla-en, 2026-11-06).
+// Near miss: the priority mask's hoisted -13 and its copy, then scheduling and reload order only. The frame, every
+// slot and every pool agree.
 // BattleEffect_RunCruelRuin. What this round settled, each read from the listing and each a real form:
 // - Loop givs: grey, blue and green are givs of frame (blue first, as the slots order them); grey reduces because
 //   the palette test and its colour spell frame - 80 again, and that second giv combines with the first.

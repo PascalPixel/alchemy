@@ -1,5 +1,6 @@
-// Differ 29 of 189 (tla-en, 2026-11-06), unchanged: the markers read directly as
-// gData_02002aa0 (29) or view without its pointer (57); permuter's best in 5 minutes 35.
+// Differ 29 of 189 (tla-en, 2026-11-06), allocation only: i declared first (29), z as
+// z - viewY - viewZ (157), attr before kind (31); direct gData_02002aa0 (29), view
+// without its pointer (57), permuter 5 minutes (35).
 // Draft, differ 29 of 189 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 31 (tla-en); notes below may predate it.
 // Draft, differ 133 of 189, skeleton gap 11 (tla-en, 2026-11-01)

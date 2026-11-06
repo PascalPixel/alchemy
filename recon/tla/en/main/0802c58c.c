@@ -1,11 +1,11 @@
-// Near miss, differ 37 of 277 (tla-en, 2026-11-06): Data_0202d000 named as a
-// local before Func_080c8970 gives the native its early r5 load (39 before).
-// Left: the native forms gMapBlocks in r1 after the row shift (the draft, in
-// r3 a step earlier); in the reload test the native reloads the window from
-// the stack into r3 (288 in r0) and again into r1 in the body, where the
-// draft keeps r1, one instruction short, which moves the later branches.
-// Changing the block index form, the region reads or local order does not
-// help. Earlier notes follow.
+// Differ 14 of 277 (tla-en, 2026-11-06).
+// Taking gData_0802ed34 into a local (resourceSets) before the loops fixes the
+// window reload in the reload test (37 before). Left, allocation only: the
+// native forms gMapBlocks in r1 after the row shift (the draft, r3), rereads
+// the region through r3 for the divide (the draft, r0), and holds the table in
+// r2 (the draft, r1). Block index forms and region casts do not help; a
+// permuter run on this form found nothing closer. Data_0202d000 as a local
+// gives the early r5 load (39 to 37). Earlier notes follow.
 // Near miss, differ 45 of 277 (2026-10-18), first pass: The Broken Seal's
 // Map_UpdateCurrentTileBlockUntilBlocked, then this game's staged reload of
 // the world map graphics when the region under the followed point changes
@@ -63,6 +63,7 @@ void Func_0802c58c(void) {
   s32 row;
   s32 col;
   s32 tile;
+  const u32 (*resourceSets)[9] = gData_0802ed34;
   struct WorldBlock *block;
   const u32 *resources;
   s32 graphicsSet;
@@ -104,7 +105,7 @@ void Func_0802c58c(void) {
     graphicsSet = 0;
     break;
   }
-  resources = gData_0802ed34[graphicsSet];
+  resources = resourceSets[graphicsSet];
   if (resources != window->resources) {
     window->resources = resources;
     window->reloadSteps = 12;

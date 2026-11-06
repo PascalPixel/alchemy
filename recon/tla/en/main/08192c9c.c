@@ -1,7 +1,8 @@
-// Near miss, differ 36 of 5364 (tla-en, 2026-11-06): 34 are spill slots 32 to 60
-// numbered in another order (seven sites), 2 the large rings' lsls of 0x700 one
-// row late. Measure in address order, 0819284c,08192894,081929fc,08192a4c,08192c9c:
-// the parent first counts the nested functions as moved (differ 1062).
+// Differ 36 of 5364 (tla-en, 2026-11-06).
+// Left: 34 are spill slots 32 to 60 numbered in another order (seven sites), 2
+// the large rings' lsls of 0x700 one row late. Measure in address order,
+// 0819284c,08192894,081929fc,08192a4c,08192c9c: the parent alone gives 549 and
+// parent first 1062, both counting the nested functions as moved.
 // 2026-11-06, the ring row: the cosine kept in py with `py * radius` in the
 // argument puts lsls first but keeps py in r0 past canvas's load (95); the sheet
 // as a local set after the cosine call, then the multiply (`py *= radius` 52,

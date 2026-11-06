@@ -1,5 +1,6 @@
-// Near miss, differ 205 of 1932 (tla-en, 2026-11-06): the ship-burst model block
-// (draw && frame <= 131) and reload-register rotation in the blocks after it.
+// Differ 205 of 1932 (tla-en, 2026-11-06).
+// Left: the ship-burst model block (draw && frame <= 131) and reload-register
+// rotation in the blocks after it (allocation; not chased, W4).
 // 2026-11-06, from 261: REG_BLDALPHA = ((frame - 108) * 2) << 8 | 16 (EVB in the
 // high byte) gives the listing's value r2, address r3, 16 in r1 (243); place[1]
 // is stored before place[3] (259 from 261); the ship placement loop uses the

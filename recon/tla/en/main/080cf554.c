@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 26 of 193 with a for loop whose condition holds the three exit tests. Left: the native has a copy of the first row's two type tests at the head (0x4000 built in place) and in its bottom test 0x4000 from the pool; here the head jumps to the bottom test. An && in an exit test holds a label, so jump.c does not copy it. Still holds the untagged volatile headerWord.
-// Draft, differ 56 of 193 (tla-en, 2026-11-05): the dead header read is kept in a volatile local (untagged yet), which restores the frame of 20. Left: the first test's tails cross-jump into the loop's end tests here; the native's end test loads 0x4000 from the pool, so it stays apart. Older notes follow.
+// Matches: differ 0 of 193 (tla-en, 2026-11-06); also tla-ja, tla-de, tla-es, tla-fr and tla-it. The row type is s16, as the rows
+// are: with it the copied head test stays apart from the bottom one (s32 type: differ 26; u16: 98). Both screen differences come before both shifts.
 // Draft, differ 68 of 193: places the scene's markers from its Func_080ceba8
 // rows (a type, an event id, a flag and a pad): for each of the first 16 rows
 // whose flag is clear and whose event has not run, a marker object goes at its
@@ -38,9 +38,10 @@ void Func_080cf554(void) {
   s32 originX = origin[0] & 0xffff0000;
   s32 originZ = origin[1] & 0xffff0000;
   u8 result[12];
+  // FAKEMATCH(volatile): the form kept; as s32 headerWord, 86 of 193 instructions differ in tla-en.
   volatile s32 headerWord;
   struct Actor *object;
-  s32 type;
+  s16 type;
   s32 id;
   s32 flag;
   s32 i;
@@ -77,8 +78,11 @@ void Func_080cf554(void) {
       y = object->y;
       z = object->z;
     }
-    dx = (x - originX) >> 16;
-    dz = (z - originZ - y) >> 16;
+    // FAKEMATCH(temporary): the form kept; as dx = (x - originX) >> 16 and dz likewise, 2 of 193 instructions differ in tla-en.
+    dx = x - originX;
+    dz = z - originZ - y;
+    dx >>= 16;
+    dz >>= 16;
     if ((u32)(dx + 15) > 270 || (u32)(dz + 47) > 238)
       continue;
     if (flag == -1 || GameFlag_Test(flag))

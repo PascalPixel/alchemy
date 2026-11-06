@@ -12,6 +12,7 @@
 // 63 no register keeps (edge set once outside the inner loop, compared after GCSE folds it) gives both cmp #63 and a fresh 63
 // in the second block, but the short temporaries then take r2, r3, x takes r4 and scale leaves the stack (102). Comparing
 // with row before row -= y (134), one edge for every 63 (122), error and x updates reworded (67 to 68): no better.
+// Also no better: grid as u8 (*)[64] (69); column and row from 63 - x and 63 - y (128); the second column as 63 - y (123).
 #include "types.h"
 #include "call.h"
 #include "iwram_call.h"

@@ -1,4 +1,4 @@
-// Near miss, differ 104 of 167 (tla-en, 2026-11-06): the hoisted copies' registers and the entry's schedule, as below.
+// Differ 104 of 167 (tla-en, 2026-11-06): the hoisted copies' registers and the entry's schedule, as below.
 // Builds the five-digit counter's sprites: decodes three digit lists,
 // copies each digit's picture into the tiles and loads them, builds two affine matrices and fills five OAM entries.
 // The arms' increments hoist under -Os as the native's do and the frame slots agree (scaled, plain, tile at sp+0, 4, 8).

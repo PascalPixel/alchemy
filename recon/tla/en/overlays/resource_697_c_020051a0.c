@@ -1,4 +1,5 @@
-// Near miss, differ 334 of 497 (tla-en, 2026-11-06): allocation and stack slots
+// Differ 334 of 497 (tla-en, 2026-11-06).
+// Near miss: allocation and stack slots
 // (frame 32, native 40), and &scrollY hoisted above the row loop where the native
 // recomputes it each row. Under -Os, with two untagged pins (x r9, arg r0).
 // Down from 397 (5 November): the markers' offsets open with their sign, so x

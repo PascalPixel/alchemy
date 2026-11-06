@@ -1,5 +1,6 @@
-// Near miss, differ 66 of 3921 (tla-en, 2026-11-06): the reload rotation in the third
-// phase, the map loop's registers, the spawn call's order and one pos.x load (Left).
+// Differ 66 of 3921 (tla-en, 2026-11-06).
+// Near miss: the reload rotation in the third phase, the map loop's registers, the
+// spawn call's order and one pos.x load (Left).
 // 2026-11-05: draft 3919; frame and every spill slot equal the listing's; with
 // registers, slots and offsets masked, 20 lines apart.
 // The method that moved it: reload registers rotate through the spill list one per

@@ -1,4 +1,4 @@
-// Near miss, differ 61 of 44 (tla-en, 2026-11-06): game route; through SOUND_C's
+// Differ 61 of 44 (tla-en, 2026-11-06): game route; through SOUND_C's
 // old_agbcc -O2 -mthumb-interwork the same C emits all 44 instructions (rechecked
 // 6 November 2026). Blocked, 5 November 2026: the work copy of the PCM key-to-frequency
 // interpolation, as ☀️'s MidiKeyToFreq (games/tbs/src/sound/audio.c). Through

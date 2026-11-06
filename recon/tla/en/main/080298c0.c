@@ -1,5 +1,7 @@
-// Differ 26 of 965 (tla-en, 2026-11-06), unchanged: five spellings of the wake timer's
-// decrement (26; the zero path is threaded past the native's retest), permuter 5 minutes 48.
+// Differ 24 of 965 (tla-en, 2026-11-06): the wake timer's retest reads the byte through
+// the object, so its zero path keeps the native's retest (26 to 24); what is left is
+// scheduling at the first climb's call, two copies of object, and the wake block's loads.
+// Before: five spellings of the decrement left 26; permuter 5 minutes 48.
 // Draft, differ 26 of 965 (tla-en, 2026-11-05): the debug read is volatile and the retry offsets start at 0x1000 (differ 122 to 26). CLIMBING after the first climb's animation call is a measured form, not yet understood: before it, differ 80 by cross-jumping, though the native stores it before. Older notes follow.
 // Draft, differ 122 of 965, skeleton gap 32 (tla-en, 2026-11-01)
 // Script command 0x1e, walking that turns into climbing: on foot it moves by
@@ -427,7 +429,9 @@ counted:
     if (*wakeTimer != 0)
       (*wakeTimer)--;
   }
-  if (*wakeTimer == 0 && collision == 0) {
+  // The retest reads through the object, not wakeTimer: that keeps its
+  // zero path from skipping it.
+  if (((u8 *)object)[98] == 0 && collision == 0) {
     effect = Func_08023220(0x164, object->x, object->y, object->z - 0x20000);
     if (effect != NULL) {
       effect->terrainHeight = object->terrainHeight;

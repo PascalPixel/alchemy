@@ -1,3 +1,6 @@
+// Differ 22 of 1355 (tla-en, 2026-11-06).
+// 2026-11-06: left are one-slot swaps only (scheduling); the r2 pin and the
+// empty asm each save 2 (24 without); a 5-minute permute found nothing better.
 // Near miss, differ 22 of 1355 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 34 of 1355 (tla-en, 2026-10-31): the item menu's command

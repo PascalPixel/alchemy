@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 31 of 549. Left: one root: the side is
+// Differ 31 of 549 (tla-en, 2026-11-06). Left: one root: the side is
 // read into r0 with a copy to r3 for the panel index, where the native keeps it
 // in r0 with no copy (gcse's saved copy of effect->side); the rest of the rows
 // are literal pool offsets that follow from the one extra instruction. A pinned
@@ -24,6 +24,9 @@
 // Tried (2026-10-15): the plain port without the row device 524 (gcse folds
 // row); with it 130; the map buffer through a local set after the first
 // load 103, before the zero 97; the rows ordered row, column (no change).
+// Tried (2026-11-06): side through a local, the test inverted or as !side, the
+// draw through a pointer: 31 to 37. Permuter (5 min): 10 and 14 only by
+// adding instructions that realign the pool (a junk temporary, frame - 1).
 
 #include "battle.h"
 #include "graphics.h"
@@ -111,7 +114,8 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   // panels into the map buffer, two transparent blitters (the second
   // flipped), the wave's HBlank DMA and a transfer that clears the canvas.
   BattleEffect_StartTiledCanvas(0x2000);
-REG_BG2PA = 0x100; cells = gMapCellBuffer;
+  REG_BG2PA = 0x100;
+  cells = gMapCellBuffer;
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work->sheet,
                              1, 1);

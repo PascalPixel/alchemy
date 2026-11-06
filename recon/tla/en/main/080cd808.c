@@ -1,7 +1,8 @@
-// Draft, differ 22 of 106 (59 before the gotos below), from the listing: the
-// search command. Collision codes 242 to 247 show their pair of messages from
-// Data_080eff22; otherwise the search event (kind 3) of the cell runs: its
-// "checked the ..." message, then its message or callback, or the matching
+// Differ 20 of 106 (tla-en, 2026-11-06).
+// Draft (59 before the gotos below), from the listing: the search command.
+// Collision codes 242 to 247 show their pair of messages from Data_080eff22;
+// otherwise the search event (kind 3) of the cell runs: its "checked the ..."
+// message, then its message or callback, or the matching
 // "found nothing" message. The messages are linker symbols the .po files do
 // not name yet: MsgSearchStart is message 3524 in English (3985 in German,
 // Spanish, French and Italian, 3525 in Japanese) and the base of the "X
@@ -14,7 +15,8 @@
 // r5, r0) and in r5 here, then copied; and the native loads the event's
 // target halfword before the kind's mask. Tried: the index inline in the
 // test or the load, the message as u8 or u32, the sums the other way round
-// (all 22).
+// (all 22); &MsgSearchStart[message], a u32 id, the load before
+// Leader_StopMoving (20, 20, 24); permuter 5 min: nothing valid.
 #include "types.h"
 #include "main_routine_work.h"
 

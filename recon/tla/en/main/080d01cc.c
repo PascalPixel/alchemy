@@ -1,4 +1,8 @@
-// Differ 24 of 352 (tla-en, 2026-11-06), unchanged here; the notes below predate the current figure.
+// Differ 8 of 352 (tla-en, 2026-11-06).
+// 2026-11-06: map work loaded before the kind is split, 24 to 8; the opening
+// now matches. Left: in each of four pushes the native adds the entry base
+// before display->dispcnt's load (one row moved each), scheduling only.
+// Tried: operands swapped (16), (u16) value (8), permuter 4 min (no gain).
 // Under -mthumb-slow-loads (2026-10-26): differ 32 of 352 in tla-en,
 // instruction order and register choice. No empty asm before any one statement
 // lowers it.
@@ -44,8 +48,8 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   s32 variant;
   s32 transitionKind;
 
-  transitionKind = (mode >> 8) & 0xff;
   display = (struct TransitionMapWork *)Ram_HeapSlots->mapWork;
+  transitionKind = (mode >> 8) & 0xff;
   variant = mode & 0xff;
   switch (transitionKind) {
   case 0:

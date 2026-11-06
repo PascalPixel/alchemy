@@ -1,4 +1,10 @@
-// Near miss, differ 65 of 714 (tla-en, 2026-11-06; the grow and spin loops as while loops in place of labels, the same code): cse1 puts the stores of 0
+// Differ 30 of 714 (tla-en, 2026-11-06).
+// 6 November: z first set to its centre, a temporary (permuter), turns 65 to
+// 30: the native keeps 0x20a40000 in r8 for both SetMoveTarget calls. Left:
+// the flag result still sits in r8 as the zero for velocityY and
+// terrainHeight, the motionFlags strb order, and the muls scheduling below.
+// Plain centre locals (centerZ, centerX) 38 to 77; with the flag temporary
+// 66 to 77. Before: differ 65 (while loops in place of labels): cse1 puts the stores of 0
 // to velocityY and terrainHeight in the flag test result (reg 62, known 0 on
 // the then-arm through the skipped gInput block), so it lives in r8 and shifts
 // r8, r9, fp and the frame; with those two stores probed as nonzero it is
@@ -130,7 +136,10 @@ void Func_02001e34(void) {
   djinni = Actor_GetById(9);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   x = (leader->x - 0x27880000) / 2 + 0x27880000;
-  z = (leader->z - 0x20a40000) / 2 + 0x20a40000;
+  /* FAKEMATCH(temporary): the form kept; as one assignment, 65 of 714
+     instructions differ in tla-en. */
+  z = 0x20a40000;
+  z = (leader->z - 0x20a40000) / 2 + z;
   if (Flag_IsSet(0x16e) == 0) {
     if (gInput & 64)
       Flag_Set(0x175);

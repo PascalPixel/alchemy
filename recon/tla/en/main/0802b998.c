@@ -1,5 +1,7 @@
-// Near miss, differ 30 of 376 (tla-en, 2026-11-06). 0x104 and 0x106 as plain
-// stores or as Store16 both, or as halfword indexes: 30 to 60.
+// Differ 25 of 376 (tla-en, 2026-11-06). Near miss: 0x106 through its own
+// pointer local (field106) took 30 to 25; written plainly through it, 60.
+// Earlier, 30: 0x104 and 0x106 as plain stores or Store16 both, or as
+// halfword indexes: 30 to 60.
 // Earlier, differ 32 (56 before, 2026-10-26: the affine identity,
 // REG_BG3Y, REG_BLDALPHA and REG_DISPCNT written with Io_Write16 and the
 // scroll cleared layer by layer, as the twin does; 250 before that): The Broken
@@ -64,6 +66,7 @@ void Func_0802b998(void) {
   u8 *camera;
   u8 *affineWork;
   u8 *affinePages;
+  u16 *field106;
   s32 *cameraPosition;
   s32 *distance;
   u16 *yaw;
@@ -174,7 +177,8 @@ void Func_0802b998(void) {
   gBgScroll[3].x = 0;
   gBgScroll[3].y = 0;
   *(u16 *)(perspective + 0x104) = 0;
-  Store16(159, (u16 *)(perspective + 0x106));
+  field106 = (u16 *)(perspective + 0x106);
+  Store16(159, field106);
   Task_Add(Func_0802c240, 0x485);
   Task_Add(Func_0802c088, 0xc80);
   for (tileIndex = 0; tileIndex <= 0x3ff; tileIndex++)

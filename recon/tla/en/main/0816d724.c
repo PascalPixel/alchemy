@@ -1,4 +1,12 @@
-// Near miss, differ 38 of 589 (tla-en, 2026-11-06): the SameSide arms (the
+// Differ 16 of 589 (tla-en, 2026-11-06).
+// 38 to 16: SameSide with the user-left arm first, each arm the sign bit
+// of a & b or ~(a | b) (35; as b < 0 and b >= 0 the arms fold into jumps or
+// one select, 44 to 51), and the user->x read in a one-pass block (16).
+// Left: arm 1 is ands and a jump to the shared lsrs, where the native has
+// lsrs with the test copied into it (the mvns arm is then its own), and the
+// drain loop's pointer built after &screen. Also tried: (u32)b >> 31 in arm 1
+// (44), (a & b) >> 31 with ~b (27), ~(a ^ b) >> 31 (37). Before, at 38: the
+// SameSide arms (the
 // native puts the user-left arm first with the flag test copied into it, two
 // instructions this draft lacks, which also shifts the pool offsets by 4), the
 // velocityZ store scheduled before the copy of mote->x, and the drain loop's
@@ -115,11 +123,13 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Sound_PlayFar(s32 cue);
 
-// Whether b lies on the same side of x = 0 as a.
+// Whether b lies on the same side of x = 0 as a: the sign bit of a & b or
+// of ~(a | b), the user-left arm first (the native keeps a value in each arm
+// and tests it after the join).
 static inline s32 SameSide(s32 a, s32 b) {
-  if (a >= 0)
-    return b >= 0;
-  return b < 0;
+  if (a < 0)
+    return (u32)(a & b) >> 31;
+  return (u32)~(a | b) >> 31;
 }
 
 // Soul Shatter: a column bursts up under the target in a spray of sparks
@@ -317,7 +327,10 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
             moteX = mote->x;
             if (moteX < 0)
               moteX = -moteX;
-            userX = user->x;
+            /* FAKEMATCH(one-pass): the form kept; as userX = user->x;, 35 of 589 instructions differ in tla-en. */
+            do {
+              userX = user->x;
+            } while (0);
             if (userX < 0)
               userX = -userX;
             if (moteX >= userX && SameSide(user->x, mote->x))

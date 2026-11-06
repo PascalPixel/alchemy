@@ -1,4 +1,6 @@
-// Near miss, differ 61 of 160 (tla-en, 2026-11-06): the search's u16 view lands in
+// Differ 61 of 160 (tla-en, 2026-11-06).
+// Native order with az and bx, bz read raw: differ 94; permuter 8 min: no gain.
+// Near miss: the search's u16 view lands in
 // r3, not r2, so kind and kind * 4 are two registers; the second layer's first
 // word is read ahead of the object's x, and the first layer's words are read
 // after z, not inside it. Reading the second layer's x first is what puts the

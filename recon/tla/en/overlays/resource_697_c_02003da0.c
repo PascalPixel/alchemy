@@ -1,5 +1,5 @@
-// Draft, differ 22 of 213 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Left: the first block's order: the native has the work address in r9 ahead of the shape's read and reloads it for that read.
+// Differ 22 of 213 (tla-en, 2026-11-06).
+// Left: scheduling and allocation only: the prologue loads gMapCollision ahead of the map cells (native r1, ours after fp), and the loop end swaps the 1 and 4 constants between r2 and r3. Tried: collision declared before shapes or cells (54, 62), set in the for init, as gMapCollision + shape, from work->shape (68); permuter 4 min best 25.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 #include "iwram_call.h"
 

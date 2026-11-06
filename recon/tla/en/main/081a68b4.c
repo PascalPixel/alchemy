@@ -1,13 +1,10 @@
-// Near miss, differ 35 of 236 (tla-en, 2026-11-06): one instruction short
-// at the second loop's end, where the native reads the step once (ldrh into
-// r3, copied to r1) and sign-extends the copy for the position, but combine
-// here folds the extension back into a second, ldrsh read of the field; that
-// shifts every later branch and pool offset. Also left: `movs r4, #29`
-// scheduled before the cursor's base copy in both row copies. Tried without
-// effect (2026-11-06): the step read through an assignment inside the
-// increment, the increment moved into the body before or after the reload,
-// a do-while with the add in its test, the field as s16 with (u16) reads,
-// a u16 step local (worse, 58 to 68) and a volatile field (worse, 75).
+// Differ 6 of 236 (tla-en, 2026-11-06): scheduling only, `movs r4, #29` one
+// instruction out of place in both row copies. The second loop reads its step
+// through a volatile cast (FAKEMATCH below), which keeps the ldrh, its copy and
+// the sign extension apart; plainly read, combine folds them into a second
+// ldrsh (differ 35). Tried without effect on the step: a temporary, a block,
+// an empty asm, an assignment in the increment, a do-while, s16 or u16 step
+// locals, a volatile field (75). The row loop as j counting up is worse (18).
 // Earlier notes follow.
 // The step is an s32 local read from its u16 field: the test casts it to
 // s16 where the listing has ldrsh.
@@ -107,7 +104,8 @@ s32 Func_081a68b4(struct TitleScroll *s) {
       }
       if (Title_WaitOrPress(s->frames))
         goto fail;
-      step = s->step;
+      /* FAKEMATCH(volatile): the form kept; as step = s->step, 35 of 236 instructions differ in tla-en. */
+      step = *(volatile u16 *)&s->step;
     }
   }
 done:

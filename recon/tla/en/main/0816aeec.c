@@ -1,4 +1,8 @@
-// Near miss, differ 266 of 902 (tla-en, 2026-11-06): the grid's allocation (Q,
+// Differ 266 of 902 (tla-en, 2026-11-06).
+// 2026-11-06: allocation only: the grid's (Q, u, vertex) and, after it, 140 of
+// the 266 in the frame loop's reloads. Permuter (5 minutes): best 264, by moving
+// quad[12] = a, store-order noise as below, not kept.
+// The grid's allocation (Q,
 // u, vertex) and, after it, 140 of the 266 in the frame loop's reloads. The
 // cse2 dump shows why vertex starts from row << 6: loop copies i into 624 for
 // vertex's start (624 << 2), and cse2 folds that through 138's REG_EQUAL

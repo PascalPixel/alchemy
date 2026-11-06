@@ -1,22 +1,8 @@
-// Draft, differ 22 of 63 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 26 of 63 (tla-en); older figures below predate it.
-// Draft, differ 24 of 63 (was 47): ported from Func_020005b4 (find_near.c). The native
-// rebuilds the vector's stack address (mov r4, sp) inside the loop and keeps
-// only i and the id in r5 and r6; here GCSE's PRE carries the first block's
-// address pseudo across the loop in a callee-saved register (r5), which shifts
-// i and id to r6 and r7. Tried: a struct vector, a pointer local inside the
-// loop (or in the innermost block), i set before the call, taking the address
-// of i, id or origin, permuter 4 minutes (no gain). Func_02000550 shows the
-// same habit; a goto loop with (void)&actor stopped it there. Also tried:
-// (void)& of the position, the object, i, origin and id (47 to 52); the loop's
-// pointer pinned by an empty asm (40: it copies the hoisted register); a goto
-// loop (71, where <= 0x17ffff becomes < 0x180000). The gcse dump shows PRE
-// making the loop's (sfp - 12) redundant with the one before the call.
-// Now the loop's vector pointer is pinned to r4 (a hard register is outside
-// global CSE), so the loop reads through r4 as the native does; but the pin is
-// set from the address pseudo PRE still carries across the loop (adds r4, r6),
-// which keeps id in r7. Pinning the first block's pointer to r2 too does not
-// free it (24).
+// Matches: differ 0 of 63 (tla-en, 2026-11-06).
+// Ported from Func_020005b4 (find_near.c). Earlier drafts (22 of 63) kept a
+// one-pass block and pinned the vector pointer to r4 against GCSE carrying its
+// address across the loop; the native stores z before the call, and with that
+// order and the facing in a local neither device is needed.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -62,28 +48,23 @@ void wait(s32 frames);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
 
 struct Orbiter *Func_02000624(struct Orbiter *origin, s32 id) {
+  s32 facing;
   s32 position[3];
   s32 i;
 
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 26 of 63 instructions differ
-   * in tla-en. */
-  do {
-    position[0] = origin->x;
-  } while (0);
-  Vector_AddPolarOffsetFar(0x100000, origin->facing, position);
+  position[0] = origin->x;
   position[2] = origin->z;
+  /* FAKEMATCH(temporary): the facing read into a local before the call; as
+   * origin->facing in the call, 9 of 63 instructions differ in tla-en. */
+  facing = origin->facing;
+  Vector_AddPolarOffsetFar(0x100000, facing, position);
   for (i = 8; i < 64; i++) {
     struct Orbiter *object = Actor_GetById(i);
 
     if (object != NULL && object->kind == 1 && object->animation[10] != NULL &&
         *(s16 *)object->animation[10] == id) {
-      /* FAKEMATCH(pin): the vector's address in r4 inside the loop; as the plain
-       * array, 47 of 63 instructions differ in tla-en. */
-      register s32 *pos asm("r4") = position;
-
-      if (DIFF_WITHIN(object->x, pos[0], 0x17ffff) &&
-          DIFF_WITHIN(object->z, pos[2], 0x17ffff))
+      if (DIFF_WITHIN(object->x, position[0], 0x17ffff) &&
+          DIFF_WITHIN(object->z, position[2], 0x17ffff))
         return object;
     }
   }

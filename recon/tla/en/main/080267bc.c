@@ -1,5 +1,6 @@
-// Near miss, differ 48 of 713 (tla-en, 2026-11-06): r4 and r6 swapped in the
-// object loop, and the first two probes' reload registers one step behind.
+// Differ 48 of 713 (tla-en, 2026-11-06).
+// Near miss: r4 and r6 swapped in the object loop, and the first two probes'
+// reload registers one step behind.
 // Twin of The Broken Seal's Actor_UpdatePlayerControl
 // (games/tbs/src/field/field/player_control.c), script command 0x24 in both
 // games: the same 8-pixel step with five probes, the same six fallback
@@ -33,6 +34,8 @@
 // as 0x1000 + angle, uncast or unsigned (all 48). A forced temporary for the
 // first probe's angle, set before its copies, gives 32 (the second probe
 // matches, the first moves further off); an s32 angle gives 625.
+// A 5-minute permute (2026-11-06) found nothing below 48 (best 49, a forced
+// temporary).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"

@@ -1,6 +1,9 @@
-// Near miss, differ 36 of 185 (tla-en, 2026-11-06): the frame (native 140,
-// here 136: every spill one slot lower, 16 rows) and, in the band loop, x and
-// the row offset in each other's registers (native x r6, row r0; 20 rows).
+// Differ 34 of 185 (tla-en, 2026-11-06).
+// The frame (native 140, here 136: every spill one slot lower, 16 rows) and,
+// in the band loop, the row offset and the falling edge in each other's
+// registers. 2026-11-06: the row offset declared in the inner loop (36 to
+// 34). x reused as the frame count (a temporary) gives 28, only the frame and
+// one register swap left; ramp[66] sizes the frame (24) but misstates it.
 // 2026-11-06: the colour as if (i <= 31) i * 2, else 63 - ((i - 96) << 1)
 // unless i <= 95. With y * 2 on one arm only, gcse no longer carries it out of
 // the inner loop (ifcvt still sets it first, as the native does), and the
@@ -67,9 +70,8 @@ void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
   // The band: colours 0 to 62 rising over the first 32 rows, 63 through the
   // middle 64 and falling again over the last 32, in 8x8 256-colour tiles.
   for (i = 0; i != 128; i++) {
-    s32 row = (i >> 3) * 64 + (i & 7);
-
     for (x = 0; x != 128; x++) {
+      s32 row = (i >> 3) * 64 + (i & 7);
       s32 color;
 
       if (i <= 31)

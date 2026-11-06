@@ -1,6 +1,7 @@
-// Under -mthumb-slow-loads (2026-10-26): differ 32 of 378 in tla-en,
-// instruction order and register choice. Empty asms before `leader->motionFlags
-// = 0;` and the root's x lower it to 22.
+// Differ 14 of 378 (tla-en, 2026-11-06): instruction order only (the root
+// loads around the 0x410000 radius, the angle step's load, two stores before a
+// call's argument). The growth step adding the radius first took it from 26;
+// permute (5 min) found nothing closer.
 // Near miss, differ 40 of 378 (2026-10-25): the leader swings on the chain
 // hanging from object `id` (its WORK_A4 slot, Func_080dae70). The chain first
 // swings to the leader's side and over to the other, then holds there while the
@@ -166,8 +167,8 @@ void Func_080db0b0(s32 id) {
   steps = 8;
   while ((slot->phase & 0xff00) != (side << 15) + 0x3800) {
     if (steps != 0) {
-      slot->spacing += 0x1000;
       radius += 0x5000;
+      slot->spacing += 0x1000;
       steps--;
     }
     slot->swing = 0x800;

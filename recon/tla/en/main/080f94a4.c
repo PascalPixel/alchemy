@@ -1,5 +1,9 @@
-// Near miss, differ 22 of 162 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Differ 22 of 162 (tla-en, 2026-11-06).
+// Near miss with an untagged r4 pin, empty asm and r1 hoist found by search; each
+// needs its S2 tag on adoption. The rest is allocation: the native keeps the
+// backup in r6 and reloads 0x06004000 from the pool, here VRAM takes r6. Tried
+// 2026-11-06: no pin (96), pin r6 (96), no hoist (24), ☀️ twin's cache/process
+// pointers (89).
 // First draft of Func_080f94a4: the item picker an event script opens, the
 // twin of ☀️'s ItemMenu_Run (games/tbs/src/menu/menu.c) in its
 // TBS_PATCH_1 form: opens the item menu over the field (saving the window

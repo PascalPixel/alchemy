@@ -1,5 +1,8 @@
-// Near miss, differ 146 of 568 (tla-en, 2026-11-06): the second and third glow pairs
-// swap r6 and r7, the splash holds 12500 where the native holds 25000, and the
+// Differ 146 of 568 (tla-en, 2026-11-06).
+// Also tried 6 November: splash = 25000 at width = 32, or as width * 781, halved
+// with >> 1 (146); reset after the call as well (220); 5 minutes of permuter: a
+// reused zero temporary 144, nothing plain better. The second and third glow
+// pairs swap r6 and r7, the splash holds 12500 where the native holds 25000, and the
 // model and glow zero stores schedule differently. Tried today, none better: a
 // splash local set to 25000 at the splash loop top, the if top, before the frame
 // loop or before Render_ResetTransformState (146: 12500 still hoisted); set after

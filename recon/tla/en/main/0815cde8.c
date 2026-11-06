@@ -1,4 +1,4 @@
-// Near miss, differ 28 of 2209 (tla-en, 2026-11-06): scheduling, as below.
+// Differ 28 of 2209 (tla-en, 2026-11-06). Scheduling only, as below.
 // Measured 2026-11-05 (tla-en): differ 28 of 2209. Left: order and a swapped
 // zero and constant in the setup; a multiply the native issues later than
 // alchemy-gcc does: sched2 ranks the chain into muls too high (its cost of 4),

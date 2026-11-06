@@ -1,7 +1,12 @@
-// Near miss, differ 40 of 609 (tla-en, 2026-11-06): frame 0 only (the length by
-// two moves where this sets and conditionally sets it, -length rebuilt per row
-// where this hoists it, and the registers of that block), plus the vertex
-// literal load placed before Render_AllocateModelList, which the native has after.
+// Differ 12 of 609 (tla-en, 2026-11-06): allocation and scheduling only (frame
+// 0's segment pointer and the 32 trade r6 and r4, its stores order, and two
+// literal loads, one the vertex pointer before Render_AllocateModelList).
+// 2026-11-06, measured: i = 0 in both arms of the length (if-conversion then
+// keeps the native's two moves) with -(length + k * 24): 71 to 58; the task in
+// a local (transfer): 58 to 34; frame 0's pointer its own local (head): 30; the
+// cell buffer in a local (funnel) at the head loop and the transform only (at
+// all four sites 160): 16; the 32 stored before the 0: 12.
+// Earlier: differ 40, frame 0 only.
 // 2026-11-06, measured: the vertex pointer set before the model list (crossing
 // the call, so it takes r6) with the draw passing Data_02010108 itself: 50 to 44
 // (set after the list, it takes r0 and every reload register moves, 398); k = 0
@@ -170,11 +175,16 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
   s32 i;
   s32 k;
   u8 *vertices;
+  u8 *funnel;
+  void (*transfer)(void);
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   camera = Ram_HeapSlots->cameraWork;
   sprites = Ram_HeapSlots->unk64[0];
+  // Read through funnel at the head loop and the transform only; through it
+  // at the other two sites the registers move (differ 160).
+  funnel = gMapCellBuffer;
   BattleEffect_StartCanvasLayer(0);
   if (mode == 0) {
     Func_0815585c(effect, effect->side << 4 | 3, (s32 *)&screen, (s32 *)&other);
@@ -195,7 +205,8 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  transfer = BattleEffect_ProcessPendingGraphicsTransfer;
+  Task_Add(transfer, 0xc80);
   yaw = 0;
   frames = 36;
   if (mode == 1 && effect->count > 4) {
@@ -216,16 +227,25 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
 
     if (frame == 0) {
       s32 length;
+      s8 *head;
 
       yaw = 0;
-      length = mode == 0 ? 80 : 30;
-      for (i = 0; i != WAFT_SEGMENTS; i++) {
-        corner = (s8 *)gMapCellBuffer + i * 8;
+      // i = 0 in each arm keeps the length as two moves; set once after the
+      // choice, if-conversion makes it a set and a conditional set.
+      if (mode == 0) {
+        length = 80;
+        i = 0;
+      } else {
+        length = 30;
+        i = 0;
+      }
+      for (; i != WAFT_SEGMENTS; i++) {
+        head = (s8 *)gMapCellBuffer + i * 8;
         for (k = 0; k != 2; k++) {
-          corner[1] = -length - k * 24;
-          corner[0] = 0;
-          corner[2] = 32;
-          corner += 4;
+          head[1] = -(length + k * 24);
+          head[2] = 32;
+          head[0] = 0;
+          head += 4;
         }
       }
       Sound_PlayFar(179);
@@ -277,7 +297,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       height = 30 - ((Trig_Sin(frame * 820) * 20) >> 16);
     }
     k = 0;
-    corner = (s8 *)gMapCellBuffer;
+    corner = (s8 *)funnel;
     y = -height;
     for (; k != 2; k++) {
       corner[0] = (u32)Trig_Sin(angle) >> 11;
@@ -357,7 +377,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
         }
         Func_080151e4(scale * 2, 0x10000, scale * 2);
       }
-      Render_TransformVertices(gMapCellBuffer, Data_02010108, 66);
+      Render_TransformVertices(funnel, Data_02010108, 66);
       Render_DrawModelList(model);
     }
     gCameraSceneParameters[3] = 120;
@@ -369,6 +389,6 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     wait(1);
   }
   HeapSlot_Release(104);
-  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(transfer);
   BattleEffect_EndCanvasLayer();
 }

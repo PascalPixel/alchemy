@@ -1,4 +1,5 @@
-// Near miss, differ 49 of 120 (tla-en, 2026-11-06): the guarded do-while is the native loop (95 as a for);
+// Differ 49 of 120 (tla-en, 2026-11-06).
+// The guarded do-while is the native loop (95 as a for);
 // left, in the loop, the count address: the native keeps the guard's pseudo for the multiply (r6) and a hoisted copy
 // for the bottom test (mov ip, r6), where this shares one pseudo between both (adds r7, r2, #0 before the loop), so fe8
 // goes to ip in place of lr and the colour read and the 0x5000000 base rotate; and g << 5 is scheduled before b << 10 at
@@ -6,7 +7,7 @@
 // that loop.c cannot move.
 // Tried: s32 and u32 and u16 channels, shifted loads, r |= steps, operand orders of the multiply (fe4 * fe8 + i is best),
 // i s32 or u16, dst non-volatile, an index local, RGB(), other orders of the ors, for, while, for (;;) and goto loops,
-// guards on the count alone.
+// guards on the count alone; 5 minutes of permute (best differ 53, a temporary for fc8).
 #include "../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
 #include "system/io_reg.h"
 

@@ -1,6 +1,8 @@
-// Measured 2026-11-05 (tla-en): differ 22 of 553. Left: registers of the
-// hoisted 36 and -4 (r0 and r1, r5) at the head and tail of the target loop;
-// the frame and slots agree.
+// Matches: differ 0 of 553 (tla-en, 2026-11-06).
+// The chime and shade tests spell frame - j * 4 out rather than read time
+// (found by the permuter); with time there, 22 differ (the hoisted 36 and -4
+// take other registers). Other editions: same code, relocations only.
+// 2026-11-05: differ 22 of 553.
 
 // Near miss of SummonEffect_RunCanvasEffect, the body behind the four wrappers of
 // summon_canvas_modes.c.
@@ -117,10 +119,9 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode)
     palette = (s32)&ResourceId_PinkBurstSheet;
   else if (mode == 3) {
     palette = (s32)&ResourceId_GlowOrbSheet;
-    /* FAKEMATCH(empty asm): the empty asm keeps the mode-3 branch apart from
-     * the identical mode-1 branch, which the native loads on its own; as one
-     * merged branch, 70 of 553 instructions differ in tla-en (this draft:
-     * 62). */
+    /* FAKEMATCH(barrier): the empty asm keeps the mode-3 branch apart from the
+     * identical mode-1 branch; as plain C, 8 of 553 instructions differ in
+     * tla-en. */
     asm("");
   }
   else if (mode == 1)
@@ -219,7 +220,8 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode)
             draw[1](canvas, work->sheet + time / 4 % 6 * 1600, x - 20, y - 20,
                     40, 40);
         }
-        if (time == 24)
+        // frame - j * 4 is time; this spelling matches here and below.
+        if (frame - j * 4 == 24)
           Sound_PlayFar(143);
 
         // The shards fly for 36 frames, a shade darker every four.
@@ -227,7 +229,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode)
           s32 level;
 
           level = 0;
-          if (time > 28) {
+          if (frame - j * 4 > 28) {
             level = (time - 24) / 4;
             if (level > 7)
               level = 7;

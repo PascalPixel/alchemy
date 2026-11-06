@@ -1,5 +1,9 @@
-// Near miss, differ 22 of 436 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Differ 22 of 436 (tla-en, 2026-11-06): only the four loop-invariant registers
+// before the loop remain (draft r3 r0 r1 r2, native r1 r2 r3 r0); allocation.
+// The other two sites listed below now agree. Permuter 5 min: best a forced 0
+// temporary for an argument of the first Func_08103218 call, differ 18, still
+// register-only; not kept. Untagged empty asms, one-pass blocks and searched
+// locals each need their S2 tag on adoption.
 // Draft, differ 28 of 436, skeleton gap 5 (tla-en, 2026-11-01)
 // Twin of ☀️'s DjinnMenu_ShowMemberStatus
 // (games/tbs/src/menu/menu/djinn_preview.c): same calls, windows, keys, sounds

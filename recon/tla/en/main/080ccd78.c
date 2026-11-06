@@ -1,13 +1,13 @@
-// Draft, differ 26 of 127, skeleton gap 0 (tla-en, 2026-11-01)
+// Matches: differ 0 of 127 (tla-en, 2026-11-06); tla-ja and tla-it also 0.
 // Twin of ☀️'s Scene_FindTrigger (games/tbs/src/field/field_sequence/triggers.c):
 // returns the first of the scene's events (12-byte entries, flags -1 ends) of
 // kind for target whose condition holds, with the push (0x200, 12 or with 0x800
 // 2 frames) and facing (0x400) requirements. New in ⚓️: kinds 8 and 9 match any
 // target, there is no search-ignores-condition test, and the facing test alone
 // is skipped while gMainRoutineWork.renderMode is 2.
-// Left: one register swap only, every instruction in place: the native keeps
-// event in r5 and gMainRoutineWork's pool load and matches in r6; here they are
-// the other way round. The differ of 26 is that swap's 13 pairs.
+// Closed 2026-11-06 (permuter): mode declared at the top of the loop body,
+// not at function scope, swaps event into r5 and matches into r6; before
+// that, differ 26, one register swap.
 // Taken from the twin: flags declared before facing, touchRequirements. The
 // mode local is what closes the skeleton: gMainRoutineWork's pool load moves
 // ahead of the heap slot's loads and the mode address takes r1. Data_02000452
@@ -57,11 +57,11 @@ struct SceneEventEntry *Func_080ccd78(s32 kind, s32 target) {
   s32 flags;
   u32 facing =
       ((struct FacingView *)ObjectTable_Get(gMainRoutineWork.currentOwner))->facing;
-  // Holds one address for its whole life: no device (S2).
-  u8 *mode = &gMainRoutineWork.renderMode;
-
   flags = event->flags;
   while (flags != -1) {
+    // Holds one address for its whole life: no device (S2).
+    u8 *mode = &gMainRoutineWork.renderMode;
+
     if ((flags & 0xf) == kind &&
         (event->value == target || kind == 8 || kind == 9) &&
         GameFlag_IsConditionActive(event->condition)) {

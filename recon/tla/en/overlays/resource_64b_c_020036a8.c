@@ -1,4 +1,7 @@
-// Near miss, differ 75 of 260 (tla-en, 2026-11-06): slot ranks above leader and work.
+// Differ 63 of 260 (tla-en, 2026-11-06).
+// 2026-11-06: a block-local mode = 9 for the renderMode test (permuter) took
+// 75 to 63; what is left is register picks: leader r9, work r11, slot r10 for
+// the native r10, r9, r11.
 // 2026-11-06, from the greg dump: priorities are placement 3 * 11 / 148, slot
 // 2 * 6 / 116, leader 2 * 5 / 142, work 2 * 4 / 136, i 2 * 5 / 234 (its i = 0
 // doubles it), so slot takes r10 and leader and work r9 and r11. slot's copy
@@ -156,6 +159,9 @@ void Func_020036a8(void) {
           s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
           s32 dx = object->x - leader->x;
           s32 reach, dz;
+          /* FAKEMATCH(temporary): the form kept; as renderMode == 9, 75 of 260
+           * instructions differ in tla-en. */
+          s32 mode = 9;
 
           if (dx < 0)
             dx = leader->x - object->x;
@@ -164,7 +170,7 @@ void Func_020036a8(void) {
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z - object->z) < reach) {
             if (GameFlag_Test(0x104) == 0) {
-              if (gMainRoutineWork.renderMode == 9)
+              if (gMainRoutineWork.renderMode == mode)
                 work->unk166 = 0x208b;
               else
                 work->exit = i + 100;

@@ -1,6 +1,6 @@
-// Differ 23 of 189 (tla-en, 2026-11-06), unchanged: -timer + pixel, casts on timer (23);
-// the permuter's best in 10 minutes was 25.
-// Draft, differ 29 of 189, skeleton gap 5 (tla-en, 2026-11-01)
+// Matches: differ 0 of 189 (tla-en, 2026-11-06), and in all six editions.
+// What settled it: `y = pixel - timer - 8` in one expression (was 23 with a
+// separate `y -= 8`). No devices. Earlier notes, from differ 29 (2026-11-01):
 // Updates 64 rising particles of the heap slot 0x74 workspace: each starts on
 // the ground at a random point of a fixed strip for 120 frames, drifts right by
 // a random amount each frame, rises with its age, and is drawn at priority 3,
@@ -15,7 +15,7 @@
 // `for`: goto loses both hoists (differ 171). All 720 orders of the six sprite
 // stores were measured; this one is alone at 29.
 //
-// Left, three sites (the b.n offsets only follow the missing instruction):
+// Was left at 23, three sites (all settled by the single expression):
 // 1. Native `ldrh r2 (timer); ldrsh r3; subs r3, r3, r2; adds r7, r3, #0`, the
 //    draft `ldrsh r2; ldrh r3; subs r7, r2, r3`. Combine merges every form of
 //    the copy: a temporary, `t = pixel; t -= timer; y = t`, one-pass blocks,
@@ -93,9 +93,8 @@ void Func_080d69f4(void) {
     screen[2].fixed = particle->posZ;
     Camera_WorldToScreen(screen);
     x = screen[0].part.pixel;
-    y = screen[2].part.pixel - particle->timer;
+    y = screen[2].part.pixel - particle->timer - 8;
     particle->drift += Random16() + 0x8000;
-    y -= 8;
     if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
       if (particle->timer < 60)
         particle->tile = work->tile + 16;

@@ -1,18 +1,14 @@
-// Draft, differ 30 of 169 (tla-en, 2026-11-05).
-// Draft, differ 42 of 169 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 42 (tla-en); notes below may predate it.
-// Draft, differ 50 of 169, skeleton gap 3 (tla-en, 2026-11-01)
+// Differ 30 of 169 (tla-en, 2026-11-06).
+// Left: allocation only. screenX and screenY take r2 and r0 the wrong way
+// round, which moves the str of oam[1]; the prologue and frame now agree.
+// A 5-minute permute (7,500 candidates) found nothing under 30.
 // Aqua Rock's rising bubbles (gData_020034f0, 64 entries of 28 bytes after a
 // 12-byte head): now and then a bubble starts near the source object; each
 // live bubble rises until it reaches the ground's height, then drifts back 2
 // pixels a frame, ends at height 23 or row 48, and is drawn as one of four
 // animation pictures where it is on screen (Func_020028d0).
-// Left: allocation only. viewX, viewZ and lift rank by live length, giving
-// lift r8, viewZ r10, viewX r9 where the native has viewZ r8, viewX r10, lift
-// r9; all three carry 5 refs, so lift would have to be set before the masks,
-// and writing it so breaks the prologue. Hard-register dependences then move
-// the ldr of y, one asrs and the str of oam[1] in sched2 (the whole gap), and
-// screenX and screenY take r2 and r0 the wrong way round.
+// Earlier: viewX, viewZ and lift once took r9, r10 and r8 the wrong way round
+// (all three carry 5 refs); that part of the gap is now closed.
 // Forms that are load-bearing: `word` set twice keeps the third zero of the
 // loop from combining with the two `bubble->x = 0` (three would be hoisted,
 // take a saved register and push tile to the stack, and the -16 compare would

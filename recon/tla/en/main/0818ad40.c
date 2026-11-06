@@ -1,7 +1,9 @@
-// Near miss, differ 83 of 1246 (tla-en, 2026-11-06): the flight's x takes r0
+// Differ 83 of 1246 (tla-en, 2026-11-06). The flight's x takes r0
 // (tied to the quotient) for the listing's r3, and the sleep spawn inherits r6
 // for the listing's reload of sp+8 into r0; the rest is branch and pool offsets
 // after that one missing instruction, and the sleep draw's scratch registers.
+// Also tried 2026-11-06: the sleep range as (u32)(frame - 48) <= 31 (83, the
+// same), and its step from frame - 48 directly (417).
 // What settled it this round: the shards' force is `first`, the flight's base,
 // set as `first = 127; first &= Random16()` with `first + 64` at each use. That
 // second lifetime makes first global, so the flight keeps the copy of card.x

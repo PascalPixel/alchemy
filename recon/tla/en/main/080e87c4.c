@@ -1,5 +1,5 @@
-// Near miss, differ 24 of 226 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Differ 24 of 226 (tla-en, 2026-11-06). Untagged empty asms, one-pass blocks
+// and searched locals each need an S2 tag on adoption; 5 min of permute: no gain.
 // Near miss, differ 36 of 226 (2026-10-18, written from the listing; ☀️ has
 // no twin): the burst of 64 sparkles Func_080e807c's effect ends with. The
 // resource is directory entry 0x1ea, FieldEffect_SparkleFade: adoption names it

@@ -1,4 +1,8 @@
-// Near miss, differ 35 of 209 (tla-en, 2026-11-06): the native's sp+12 is a plain
+// Differ 12 of 209 (tla-en, 2026-11-06).
+// tick = row (not a second (u16) read) takes it from 35 to 12: the row and
+// unk0E reads now follow the native order; left are the copy below and the
+// native's separate ldrh for tick through it. Permuter, 6 minutes: no gain.
+// Before: the native's sp+12 is a plain
 // copy of the slots pointer, mov r0, r8; str r0, [sp, #12], set at the inner top;
 // the slot's row and unk0E are read through it (r0 + r9) and the increment reloads
 // it, while unk18[i] and unk00[0] are read through r8. Every other row follows
@@ -71,7 +75,7 @@ void Func_02000580(void) {
       struct Unk02003452 *s = (struct Unk02003452 *)&gate->unk00[1];
       s32 row, tick;
       row = slots->unk14[i];
-      tick = (u16)slots->unk14[i];
+      tick = row;
       if (row < slots->unk0E * 4) {
         s32 a, b, c, d;
         s32 closed;

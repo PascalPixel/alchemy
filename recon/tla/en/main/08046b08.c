@@ -1,6 +1,7 @@
-// Near miss, differ 88 of 3111 (tla-en, 2026-11-06): the two stack slots of
-// note 1 and the scheduling pairs of notes 2 and 3 (sprite words, the help
-// window's loads on page 2, movs r1, #16 before the range column's window).
+// Differ 88 of 3111 (tla-en, 2026-11-06).
+// Left: the two stack slots of note 1 and the scheduling pairs of notes 2
+// and 3 (sprite words, the help window's loads on page 2, movs r1, #16
+// before the range column's window).
 // The items' first entry is read as entries + rowBase + row (2 better than
 // &entries[rowBase + row]); count = 0 and j = -1 as statements before the
 // first item loop (8 better than the comma in its for). The two empty asms

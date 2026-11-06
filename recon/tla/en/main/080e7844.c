@@ -1,8 +1,9 @@
-// Near miss, differ 34 of 871 (tla-en, 2026-11-06): the heap-slots pointer and
-// the caster swap r5 and r7 (the terrain address loses its copy); the
-// out-of-reach path stores only pending, its result = 0 merged with the
-// no-event path's; green's product sits in r5 against r3; one scheduling pair
-// (i = 63 against the -13 mask's copy).
+// Differ 28 of 871 (tla-en, 2026-11-06): the caster takes r6 and the offset r7
+// where the listing swaps them; the event work's pointer is loaded once before
+// the loop where the listing reloads it each pass; green's product sits in r5
+// against r3; one scheduling pair (i = 63 against the -13 mask's copy).
+// Later on 6 November: result = 0 before pending = NULL with the event work's
+// pointer in its own local gives both stores and slots back in r5 (from 34).
 // Still holds untagged empty asms, one-pass blocks and locals found by search;
 // each needs its S2 tag on adoption, measured then.
 // 6 November: priorityFlags |= 2 orders the OR; if (fade == -1) add = 0; else
@@ -150,6 +151,7 @@ void Func_080e7844(void) {
   s32 packed;
   s32 i;
   u8 *dst;
+  u8 *eventWork;
 
   found = -1;
   fade = -1;
@@ -161,8 +163,9 @@ void Func_080e7844(void) {
   pos[1] = caster->y;
   pos[2] = caster->z;
   Vector_AddPolarOffset(0x200000, scene->facing, pos);
+  eventWork = slots->eventWork;
   for (i = 0; i < 80; i++, offset += 4) {
-    object = *(struct Actor **)((u8 *)slots->eventWork + offset);
+    object = *(struct Actor **)(eventWork + offset);
     animation = object->animation;
     if (object->script != NULL && animation->definition[0] == 290 &&
         animation->unk18 == 1 &&
@@ -174,8 +177,8 @@ void Func_080e7844(void) {
     }
   }
   if (Func_080cda84(scene->fieldKind, caster, pos) == -1) {
-    pending = NULL;
     result = 0;
+    pending = NULL;
   } else if (Func_080dbd5c(pos[0], pos[2], caster->terrainId) != 0) {
     pending = Func_080ce458(0x50000005, scene->fieldKind,
                             Func_080dbdc8(pos[0], pos[2], caster->terrainId));

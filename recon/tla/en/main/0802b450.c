@@ -1,8 +1,9 @@
-// Near miss, differ 32 of 148 (tla-en, 2026-11-06): only the cell section at
-// the top of the x loop. The native has the cell in r2 and the kept low bits in
-// r3, tied to the 0x7ff mask; here regmove ties the low bits to the cell (r1),
-// as CSE always puts the cell first in the and, whichever order or declaration
-// order the source gives. The tile mask (0xfff into ip, then and through r5)
+// Differ 32 of 148 (tla-en, 2026-11-06).
+// Near miss, allocation only: the cell section at the top of the x loop. The
+// native has the cell in r2 and the kept low bits in r3, tied to the 0x7ff
+// mask; here regmove ties the low bits to the cell (r1), as CSE always puts
+// the cell first in the and, whichever order or declaration order the source
+// gives. The tile mask (0xfff into ip, then and through r5)
 // and the 3 instructions it lacked now match: tile = 0xfff, tile = cell & tile,
 // with the 0x7ff load between them so reload cannot reuse r3. A 0x7ff mask set
 // once is hoisted out of the x loop (83 differ), so mask also takes the
@@ -20,8 +21,8 @@
 // offset chain and the redraw block all match. Tried without gain:
 // declaration order, signedness, a separate mask variable, setting the masks
 // before the load, reusing cell for the destination word, compound assignments
-// and either operand order. permute could not run (no built
-// edition in out/).
+// and either operand order. permute (5 minutes,
+// 2026-11-06) found only a one-pass block at 34 differ.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

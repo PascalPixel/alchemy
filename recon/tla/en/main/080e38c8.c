@@ -1,6 +1,6 @@
-// Near miss, differ 66 of 506 (tla-en, 2026-11-06), plain C with no device: the
-// depth call written once per branch (GCC merges the two calls, and the scene's
-// reload in the else branch then matches) replaces the r4 pin and the empty asm.
+// Differ 66 of 506 (tla-en, 2026-11-06). Plain C with no device: the depth call
+// written once per branch (GCC merges the two calls, and the scene's reload in
+// the else branch then matches) replaces the r4 pin and the empty asm.
 // Left: the first loop's preheader sets up the drops giv before dropMotion's and
 // keeps a particle copy in fp across the depth call where the native uses r6 and
 // two separate zeros; the second loop's preheader order; the third loop has sprite
@@ -8,6 +8,7 @@
 // sprite and particle in each loop, particle set at the top of loop 1 or after the
 // mode block, pointers advancing in loop 1, every order and index or pointer
 // spelling of loop 1's six stores, chained zero stores, sprite set before particle.
+// A 5-minute permuter run (2026-11-06) found nothing better than 66.
 // Draft, differ 99 of 506, skeleton gap 37 (tla-en, 2026-11-01)
 // The frame callback of Func_080e3d04's spray: every
 // fourth frame while it is emitting, a free one of sixteen drops starts at

@@ -1,4 +1,8 @@
-// Differ 30 of 298 (tla-en, 2026-11-06), unchanged here; the notes below predate the current figure.
+// Differ 2 of 298 (tla-en, 2026-11-06). 30 to 2: the pull's distance test
+// takes |user->x| in its own local rather than reusing dx. Left, scheduling
+// only: in the ring loop the native loads the frame's spin (frame << 10) from
+// its stack slot before the multiply by 5461, alchemy-gcc after (operand orders
+// and 5 minutes of permuting do not move it). Earlier notes:
 // 2026-10-26 (round 5): differ 46 of 298. canvas read after work (a
 // statement-move search): 48 to 46.
 // Draft, differ 48 of 298 (2026-10-26; 95 before), from the listing (The
@@ -139,17 +143,18 @@ void BattleEffect_RunNirvana(struct BattleEffectArgument *effect) {
         s32 dy = (user->y + userHalf - orb->y) >> 10;
         s32 dz = (user->z - orb->z) >> 10;
         s32 ox;
+        s32 ux;
 
         orb->velocityX += dx;
         orb->velocityY += dy;
         orb->velocityZ += dz;
-        dx = user->x;
-        if (dx < 0)
-          dx = -dx;
+        ux = user->x;
+        if (ux < 0)
+          ux = -ux;
         ox = orb->x;
         if (ox < 0)
           ox = -ox;
-        if (dx < ox)
+        if (ux < ox)
           orb->variant = -1;
       }
     }

@@ -1,4 +1,11 @@
-// Differ 30 of 171 (tla-en, 2026-11-06): the step and row loops written as for loops in place of labels, the same code. Left: kind at sp+4 where the native has it at sp+20 (index the other way round), and the registers that follow.
+// Differ 30 of 171 (tla-en, 2026-11-06).
+// The step and row loops are for loops in place of labels, the same code. Left:
+// kind at sp+4 where the native has it at sp+20 (index the other way round), the
+// registers that follow, and the tail's order (scheduling). Tried 6 November,
+// all 30 or worse: kind or index declared elsewhere, kind << 2, the table read
+// as [0][index] or index + table, height before width (44), index in the loop
+// body (44), no index (112), the tail's stores in any order; the permuter's
+// 28 needs a one-pass block around the tail.
 // Draft, differ 34 of 171 (tla-en, 5 November 2026), from 74: no call for the
 // kind, the layer set before it is written. Left: kind sits at sp+20 in the
 // native, ahead of the spilled locals, and (ashift kind 2) is recomputed at

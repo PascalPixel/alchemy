@@ -1,4 +1,9 @@
-// Near miss, differ 26 of 324 (tla-en, 2026-11-06): the null test now reads
+// Differ 8 of 324 (tla-en, 2026-11-06).
+// The null test is `ladder == NULL` first, its block padded by a tagged dead
+// self-copy so ifcvt case 2 (then block over BRANCH_COST) keeps the 127 below
+// the test; left: the 127 in r1, not r0, and the y copy loaded before x (copy
+// orders yzx, zxy, yxz 8; zyx 12; xyz 49). Permuter 3 min: nothing better.
+// Earlier, differ 26 of 324 (tla-en, 2026-11-06): the null test read
 // `if (ladder != NULL) { ... } else collisionFlags = 1;`, so the ladder count's
 // start stays after the test; left: the null path's block sits after the
 // ladder work instead of right after the test (with `ladder == NULL` first,
@@ -120,7 +125,11 @@ s32 Func_08029570(struct Actor *object) {
     point = ladder->points;
     best = NULL;
     bestDistance = 0x10000000;
-    if (ladder != NULL) {
+    if (ladder == NULL) {
+      collisionFlags = 1;
+      /* FAKEMATCH(dead): the form kept; as the bare `collisionFlags = 1;`, 33 of 324 instructions differ in tla-en. */
+      position.y = position.y;
+    } else {
       for (count = 0; count < 128; count++, point++) {
         if (point->active == 1) {
           s32 dx = (position.x - point->x) >> 8;
@@ -153,8 +162,6 @@ s32 Func_08029570(struct Actor *object) {
         position.x = best->x;
         position.z = best->z;
       }
-    } else {
-      collisionFlags = 1;
     }
   }
   work = Ram_HeapSlots->eventWork;

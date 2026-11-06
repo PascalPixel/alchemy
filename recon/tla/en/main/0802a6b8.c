@@ -1,4 +1,8 @@
-// Draft, differ 36 of 406, skeleton gap 15 (tla-en, 2026-11-01)
+// Differ 22 of 406 (tla-en, 2026-11-06).
+// Was differ 36 of 406, skeleton gap 15 (2026-11-01); 22 now with no change
+// to this file. Left: the layer loop's phase stores and maskY order, and
+// Task_Add's 0x485 against its function address, all scheduling. Tried
+// 2026-11-06: phase stores after maskX with maskY after cellY (differ 44).
 // The twin of The Broken Seal's MapGrid_LoadMap (a port of its shape, 42 and
 // gap 18 before). It loads a layout index from gData_0802f380: blocks,
 // collision (filled with -1 first, which The Broken Seal has not), cells,

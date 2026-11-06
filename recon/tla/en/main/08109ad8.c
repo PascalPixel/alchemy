@@ -1,4 +1,4 @@
-// Near miss, differ 24 of 205 (tla-en, 2026-11-06): r8 and r10 swapped, as below.
+// Differ 24 of 205 (tla-en, 2026-11-06): r8 and r10 swapped, as below.
 // Draft, differ 24 of 205, skeleton gap 0 (tla-en, 2026-11-01)
 // Twin of ☀️'s Shop_ChooseMember (games/tbs/src/shop/shop/sell.c): picks the
 // party member whose items the shop works on (sell, repair or the third

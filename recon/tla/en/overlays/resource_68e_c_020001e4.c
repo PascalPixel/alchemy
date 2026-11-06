@@ -1,4 +1,11 @@
 // Differ 56 of 286 (tla-en, 2026-11-06). A 64-bit -1 local for the free-slots notice and Party_AdjustCoins keeps CSE from sharing the compare's -1 (89 to 56); a permuter lead. Left, allocation only: the first cancel compare's -1 in r3 (native r2) and the coin and medal tests in r2, r3 (native r3, r1); the first FieldMessage_ShowAtActor -1 scheduled before movs r1, #0; the roll and work address in r0, r1 (native r1, r0); the final halving's registers. Not better: the s32 or u32 local (81), it in the second cancel compare (64-bit compare), a direct ShowAtActor call (67, 173), an s8 pointer for the halving (83).
+// 2026-11-06, later: the register swaps all follow reload's round-robin through its spill registers
+// (allocate_reload_reg steps last_spill_reg through spill_regs, kept in register order). The
+// native's first reload, MsgWhatWillYou into r8, comes through r1, the second spill register, so
+// its spill set holds r0 to r3; here greg chooses only r3 and r2 and the first reload takes r2.
+// What would settle it: the insn where the native needs r1 for a reload with r2 and r3 busy.
+// No change (56) from a block-local or 16-, 32- or 64-bit cancel -1, the pick loop's seven
+// rewordings, or a weight local for the halving.
 // 2026-11-06, differ 89: under -Os, the pick loop a plain for loop. Left then: every -1 the native loads fresh (both cancel compares into r2, the free-slots notice, Party_AdjustCoins) is shared here by CSE from the compare's pseudo (r5, r0), costing 3 instructions and the branch offsets; the roll in r0 and work address in r1 (native r1, r0); the final halving's slot, base and weight in r0, r2, r4 (native r2, r0, r1). The native acts like a -1 local left without a register and rematerialized at each use (the FieldMessage_ShowAtActor -1 is scheduled after movs r1, #0 in both editions), but here a cancel local takes r11 (differ 96) and direct calls share -1 through r10 (122) or more (133 all direct, 109 with a cancel local).
 // Draft, differ 144 of 286, skeleton gap 32 (tla-en, 2026-11-01)
 // The Lost Age's twin of The Broken Seal's TolbiSpring_RunSpringGame

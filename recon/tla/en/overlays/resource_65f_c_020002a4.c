@@ -3,6 +3,11 @@
 // spelling (for, while, labels, if around a do). With those refs i ranks first in the native (r6), line r5, the first sine r8; here line r8, the first sine r5, i r10.
 // 2026-11-06: jump.c copies the exit test before the loop and CSE folds it in every plain form (for, while, for(;;) with break, i set from the stored flag, a known-true inner if); a goto loop keeps the top test but is never rotated (83). In the native s1 also goes to r8, not local-alloc's r5, so it is live outside one block there. Indexing Data_02006340[i] 95, the comma increment 74, no step locals 114.
 // 2026-11-06 (later): i set before the event test 72, u32 i 72, i < 160 85, s16 i 87, u8 i 84, i = 0 in the for 84; the permuter's best (63) passes a stale a to sine, so is wrong.
+// 2026-11-06 (RTL dumps): a do { i = 0; } while (0) keeps the top test through cse1, but cse2 folds it (70). An asm("" : "+r"(i))
+// after i = 0 (barrier, diagnostic only, not kept) keeps it to the end: cmp, beq at the top as in the native, differ 68, the same
+// as a manually rotated goto loop with that barrier. What is left then is allocation alone: s1 is local (r5) and line ranks last
+// (sl); the native has line r5, i r6, b r7, s1 r8, a sl. s1 and s2 at the block's scope, a separate post-loop pointer: no change.
+// 12 minutes of permute on the barrier form: best 54, every candidate below 68 stores through a stale pointer (wrong program).
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"

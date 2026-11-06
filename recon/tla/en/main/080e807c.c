@@ -1,5 +1,14 @@
-// Differ 30 of 272 (tla-en, 2026-11-06): scheduling and allocation only. Empty asms,
-// one-pass blocks, a pinned r5 and search-found locals each need their S2 tag on adoption.
+// Differ 4 of 272 (tla-en, 2026-11-06): two pairs in another order. This round: the sparkle
+// tile read through a pointer to it (30 to 18; the tile and count no longer swap), red reduced
+// in place before the colour is built (18 to 14), the colour's blue a local set once before the
+// colour loop (14 to 6; its reload now comes in the listing's order), the mote's timer reread
+// after Func_080eb298 as the listing reads it (6 to 4). Still a pinned r5 (red; 29 without when
+// last measured), which needs its S2 tag or a plain form before adoption; the sparkle loop's
+// empty asm changed nothing and is gone. Left: x - 64 is computed before y's load, the listing
+// after; the movs of blue's 28 one row before orrs r3, r5, the listing after. Unchanged by:
+// x -= 64 or y -= 64 apart, -64 + x, both reads before both scroll stores (12), the reads
+// inside the stores, u32 x; blue set elsewhere before the loop; the colour's terms reordered
+// (101 to 105) or grouped (20).
 // Near miss, differ 48 of 272 (2026-10-26, statements reordered) (2026-10-18, written from the listing; ☀️ has
 // no twin): the frame callback of the effect Func_080e87c4 ends, with the
 // ring picture of graphics/field_effects/ring_arcs.s. The position is reached
@@ -72,6 +81,8 @@ void Func_080e807c(void) {
   s32 i;
   s32 timer;
   u16 *phase;
+  u16 *tile;
+  s32 blue;
 
   pos[0] = object->x;
   pos[1] = object->y + 0x100000;
@@ -88,6 +99,7 @@ void Func_080e807c(void) {
   if (work->cycling != 0) {
     i = 0;
     phase = &work->phase;
+    blue = 28;
   cycle:
     {
       register s32 red asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
@@ -95,7 +107,8 @@ void Func_080e807c(void) {
       s32 color;
 
       green = Trig_Sin((((*phase >> 2) + i) << 11) + 0x4800) * 10;
-      color = ((green >> 16) + 12) << 10 | ((red >> 16) + 23) << 5 | 28;
+      red = (red >> 16) + 23;
+      color = ((green >> 16) + 12) << 10 | red << 5 | blue;
 
       ((u16 *)0x050001e0)[i] = color;
       ((u16 *)0x050003e0)[i] = color;
@@ -108,6 +121,7 @@ void Func_080e807c(void) {
   if (work->sparkling != 0) {
     mote = work->motes;
     sprite = work->sprites;
+    tile = &work->tile;
     for (i = 15; i >= 0; i--, sprite++, mote++) {
       timer = mote->timer;
       if (timer == 0) {
@@ -122,13 +136,12 @@ void Func_080e807c(void) {
         timer = mote->timer;
       }
       if (timer >= 0) {
-  asm("");
-        sprite->oam.index = work->tile + ((timer >> 2) & 3) * 4;
+        sprite->oam.index = *tile + ((timer >> 2) & 3) * 4;
         pos[0] = object->x + mote->x;
-        timer = mote->timer;
         pos[1] = object->y + mote->y;
         pos[2] = object->z + mote->z;
         Func_080eb298(sprite, pos);
+        timer = mote->timer;
       }
       if ((mote->timer = timer + 1) == 16)
         mote->timer = 0;

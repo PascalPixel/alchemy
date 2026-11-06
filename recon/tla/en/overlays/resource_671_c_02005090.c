@@ -1,4 +1,8 @@
 // Differ 104 of 167 (tla-en, 2026-11-06): the hoisted copies' registers and the entry's schedule, as below.
+// Why the test reads i + 1: gcse's second cprop, after -Os hoisting, replaces i with
+// the hoisted i + 1 in the loop's exit test, since both arms copy it into i; the
+// listing tests i. Pinning i to r6 (measured 2026-11-06, not kept) stops that but
+// also stops the hoist and the folding of the entry test: 114.
 // Builds the five-digit counter's sprites: decodes three digit lists,
 // copies each digit's picture into the tiles and loads them, builds two affine matrices and fills five OAM entries.
 // The arms' increments hoist under -Os as the native's do and the frame slots agree (scaled, plain, tile at sp+0, 4, 8).

@@ -8,7 +8,11 @@
 // sprite and particle in each loop, particle set at the top of loop 1 or after the
 // mode block, pointers advancing in loop 1, every order and index or pointer
 // spelling of loop 1's six stores, chained zero stores, sprite set before particle.
-// A 5-minute permuter run (2026-11-06) found nothing better than 66.
+// A 5-minute permuter run (2026-11-06) found nothing better than 66; a 25-minute
+// run reached 60 only by reusing target for the 25 lifetime (target = 25 before
+// the depth call), a cast-free reuse that only moves the preheader's schedule, not kept.
+// Indexing loop 1's velocityY and &velocityX with no particle, 136; loop 3 through
+// work->puffMotion[i] with no particle, 116; sprite set before the test, 66.
 // Draft, differ 99 of 506, skeleton gap 37 (tla-en, 2026-11-01)
 // The frame callback of Func_080e3d04's spray: every
 // fourth frame while it is emitting, a free one of sixteen drops starts at

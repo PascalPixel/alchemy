@@ -1,4 +1,11 @@
 // Differ 38 of 1034 (tla-en, 2026-11-06).
+// Later 6 November, none better: green dropped for red twice (75; red's clamp
+// then stays in r2 as the listing's); with it, a u16 c local gives the listing's
+// lsls 16, lsrs 26 and pooled 31 for blue but loads with ldrsh (ARM promotes a
+// short local signed) and red takes the zero extension (112); red read from
+// *color with blue from a u16 c loads twice (72); an s32 c, or j reused as c,
+// lets combine see the zero extension (121, 224); slot as its declaration's
+// initializer, ahead of y (84).
 // 2026-11-06: the trail takes source.x / 2 as a local x (46 to 38). Left: the colour loop (lsrs 10 for lsls 16, lsrs 26, one copy of red, pointer in r0; 22), the trail's slot in r3 for r1 (10); slot before y, or green dropped for red twice (83), or ((u16)c >> 10) & 31 from an s32 c (86), all worse; also the burst's adds r7, r3, r2 (2), the model block's strip load (2). Settled 2026-11-06: the trail stores y before x (90 to 86), the model's mesh is set before scrollU (86 to 80), and the trail's slot is computed after startY (80 to 46). Tried for the colour loop, none better: s32 c with red = 31 then red &= c (134), c <<= 16 then (u32)c >> 26 (127: the shifts, but one shared mask), green computed and dropped (94, 123), (u16)c casts (88, 89).
 // Draft, differ 90 of 1034 (tla-en, 2026-11-05); 45 with slots and pool offsets normalized, 10 with registers blind too. Measured, not kept: s32 c = *color; c <<= 16; blue = ((u32)c >> 26) & 31; with (red << 10) | (red << 5) | blue gives the listing's shifts and clamp but one shared mask, no pooled 31 (168). The pooled 31 and the shifts have not been had together.
 // Draft, differ 90 of 1034 (tla-en, 2026-11-05); 45 with slots and pool offsets normalized, 10 with registers blind too. Blue's mask as a halfword gives the pooled 31 (98 to 90); (u16)(*color >> 10) still compiles to lsrs 10 where the listing has lsls 16, lsrs 26: combine knows the load is zero-extended. Hiding that with a tied empty asm moves the rest to 131.

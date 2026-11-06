@@ -2,6 +2,8 @@
 // (tied to the quotient) for the listing's r3, and the sleep spawn inherits r6
 // for the listing's reload of sp+8 into r0; the rest is branch and pool offsets
 // after that one missing instruction, and the sleep draw's scratch registers.
+// x pinned to r3 (measured 2026-11-06, not kept): 90; the quotient then takes
+// r3 too and is copied there (adds r3, r0) before the sum, as either operand order.
 // Also tried 2026-11-06: the sleep range as (u32)(frame - 48) <= 31 (83, the
 // same), and its step from frame - 48 directly (417).
 // What settled it this round: the shards' force is `first`, the flight's base,

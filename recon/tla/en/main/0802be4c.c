@@ -9,6 +9,17 @@
 // keeps the backdrop colour store before the palette DMA's operands. Naming
 // the buffers as variables assigned there gives r5 to the resources and r6
 // to the buffers (differ 92).
+// 2026-11-06: one buffer variable set right after its previous use (before
+// Func_080c8970, after StartChannels, after each Dma_Set) puts every buffer
+// load where the native has it; what is left (84) is r5 and r6 swapped
+// between the resources and the buffers. The --rtl dumps say why: the reused
+// buffer variable dies in 4 places, so it goes to global-alloc, while the
+// resources pointer is local to its block and local-alloc gives it r5 first;
+// the native's r6 for it needs a higher-priority local in r5 across its life.
+// Separate buffer variables are local but rank below it (3 refs over 22
+// insns against 11 over 99). Also tried, no gain: the region for the
+// division through a variable (69, 73), masked and shifted (36), divided by
+// 10U (32); the palette address in the buffer variable (127).
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"

@@ -1,4 +1,8 @@
 // Differ 84 of 1146 (tla-en, 2026-11-06).
+// Second round, 6 November: 40 minutes of permuter (seed 7103), nothing better.
+// A pin, register s32 four asm("r4") set to 4 before each build, gives both
+// builds the listing's form (movs r4, #4 and its own xor each time, y's -24
+// sinking) but moves allocation and the hoisted slots after the Djinni: 138.
 // Left: the Djinni's second xor (an empty asm with an output holds its 4),
 // start > 0's ble, the palette copies' entry load and center's zeroes;
 // scheduling and allocation only. The mode 4 site's second fetch now matches:

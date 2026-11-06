@@ -2,6 +2,14 @@
 // Left: allocation only. screenX and screenY take r2 and r0 the wrong way
 // round, which moves the str of oam[1]; the prologue and frame now agree.
 // A 5-minute permute (7,500 candidates) found nothing under 30.
+// Why (6 November, from the lreg and greg dumps): screenX lives in one block,
+// so local-alloc takes it first and gives it r2; screenY spans the && chain
+// and global-alloc gets what is left (r0). Were screenX global, priorities
+// (screenY 14 refs over 28 insns, z 9 over 35, screenX 3 over 6) would give
+// exactly the native's r2, r1, r0. Measured: x = (screenX - 4) & 0x1ff inside
+// the if (107), screenY through a temporary for z - y (53, 61), screenX
+// computed first (45) or before screenY (30); a 10-minute permute
+// (14,000 candidates) found nothing under 30.
 // Aqua Rock's rising bubbles (gData_020034f0, 64 entries of 28 bytes after a
 // 12-byte head): now and then a bubble starts near the source object; each
 // live bubble rises until it reaches the ground's height, then drifts back 2

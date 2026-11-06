@@ -22,7 +22,16 @@
 // declaration order, signedness, a separate mask variable, setting the masks
 // before the load, reusing cell for the destination word, compound assignments
 // and either operand order. permute (5 minutes,
-// 2026-11-06) found only a one-pass block at 34 differ.
+// 2026-11-06) found only a one-pass block at 34 differ; an 8-minute run
+// (2026-11-06, later) nothing below 34.
+// Later 2026-11-06: in the regmove dump the and keeps the cell's pseudo
+// (`cell = cell & mask`) and the or keeps the destination word's; the native
+// keeps the 0x7ff pseudo for the and and the low bits for the or. Making the
+// 0x7ff pseudo the result (`low = 0x7ff; low &= cell` or `mask &= cell`) ties
+// the and correctly but the 0xfff then goes through r2 straight into ip and
+// the cell into r3 (51); also tried: the or as `low | (...)` (42), `mask &
+// cell` (32, no change), the tile and after the low one (55), the cell loaded
+// after the masks are set (104, 110).
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"

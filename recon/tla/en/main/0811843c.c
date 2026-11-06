@@ -1,3 +1,9 @@
+// Differ 121 of 183 (tla-en, 2026-11-06), plain C with no device. The 86 form before this
+// declared j and ids both as asm("r8") beside an empty asm: the tag loop's j then overwrote the
+// id table's pointer for the next unit, so it compiled a different program, and it is not kept.
+// A correct pin (ids in r9: 127) or the empty asm alone (129) gains nothing. Left: as below,
+// reload's spill set (the native's rotation runs over r0 to r3, ours over r0, r2, r3).
+// The notes of that form follow.
 // Differ 86 of 183 (tla-en, 2026-11-06): reload's spill set only, as below; untagged empty asm, pin and
 // one-pass forms need S2 tags on adoption.
 // 2026-11-05: without the pin and barrier below, allocation matches the listing wholly and 121 of 183 differ, every row reload rotation over r0, r2, r3 where the native rotates over r0 to r3: r1 must enter the spill set, as the second round below says. Not reached.
@@ -84,10 +90,10 @@ u32 BattleParty_IsUnitListed(u32 id);
 
 void Func_0811843c(void) {
   s32 i;
-  register s32 j asm("r8");
+  s32 j;
   struct Snapshot *snap = &Data_0200ff58;
   u8 (*copies)[28] = Data_0200ff6c;
-  register u8 *ids asm("r8") = Data_0812a16c;
+  u8 *ids = Data_0812a16c;
 
   for (i = 0; i <= 4; i++) {
     struct SnapshotUnit *unit = Unit_Get(ids[i]);
@@ -99,7 +105,6 @@ void Func_0811843c(void) {
         snap->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
         Data_0200ffec[i].unk2 = unit->unk3a;
       }
-  asm("");
       if (i <= 2) {
         for (j = 0; j <= 3; j++)
           snap->tags[i][j] = unit->tags[j];

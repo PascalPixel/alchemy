@@ -2,6 +2,15 @@
 // corners' setup (the listing zeroes i first and adds the wobble to height + half in place;
 // all 60 orders of those five statements measured, this one best), the 0x8000's second half
 // and the scrollU block's registers (frame in r4, caster in r1).
+// Second pass (2026-11-06): the scrollU block's rows are reload's round-robin
+// choices (frame reloaded into r3 here, r4 natively), and sched2 then lifts the
+// 0x8000's shift into the stall that r3 leaves. Measured: radiusY built in place
+// (radiusY = height + half; ... radiusY += wobble) in every order, 65 to 177
+// (radiusY outranks radiusX and takes r6, radiusX goes to the caller-save
+// slot); radiusX in place too, 177; baseY's orders around radiusY = baseY +
+// wobble, 32 at best; every order of the model's five stores and of the five
+// stores before the strip draw, 32 at best; seven spellings of scrollU's mask,
+// 32. A 5-minute permute reached 20 only by storing 127 and reading it back.
 // 2026-11-05: the model's mesh and vertices are typed pointers, not void.
 // Measured 2026-11-05 (tla-en): differ 38 of 627, instruction counts equal. The loop
 // over corners now agrees whole: half a real local, corner a struct, radiusX over

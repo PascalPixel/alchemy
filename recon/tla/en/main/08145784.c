@@ -27,6 +27,8 @@
 // Tried (2026-11-06): side through a local, the test inverted or as !side, the
 // draw through a pointer: 31 to 37. Permuter (5 min): 10 and 14 only by
 // adding instructions that realign the pool (a junk temporary, frame - 1).
+// Tried (2026-11-06, later): row before column in either branch (33); the
+// zeros set before an if (side != 0) with no else (49).
 
 #include "battle.h"
 #include "graphics.h"

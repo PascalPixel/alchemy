@@ -1,4 +1,8 @@
 // Differ 334 of 497 (tla-en, 2026-11-06).
+// Tried 2026-11-06: the row loop built from a label and goto (no change: both
+// compiles keep &scrollY in a slot from before the loop); 10 minutes of permute
+// reached 327 only by moving the fade check below the rows, which changes what
+// the code does.
 // Near miss: allocation and stack slots
 // (frame 32, native 40), and &scrollY hoisted above the row loop where the native
 // recomputes it each row. Under -Os, with two untagged pins (x r9, arg r0).

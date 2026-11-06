@@ -1,3 +1,11 @@
+// Differ 88 of 183 (tla-en, 2026-11-06), one pin. The tag loop's source pointer, pinned to r2,
+// is busy where the destination's reload of the snapshot pointer is made, so reload takes r1
+// there and r1 joins the spill set, the cause named below. Left: reload's rotation over r0 to
+// r3 starts one register later than the native's (the copies' offsets run r1, r2, r0 where the
+// native runs r0, r1, r2), and the PP store's `ldr r0` of Data_0200ffec is still pseudo 57 in
+// r3. Adding a pin of that pointer to r0 as well measured 90. Without the pin, these pointers
+// measure 139; the index loop with the pinned source 97.
+// The note before this one, when the draft was plain C at 121 of 183:
 // Differ 121 of 183 (tla-en, 2026-11-06), plain C with no device. The 86 form before this
 // declared j and ids both as asm("r8") beside an empty asm: the tag loop's j then overwrote the
 // id table's pointer for the next unit, so it compiled a different program, and it is not kept.
@@ -106,8 +114,12 @@ void Func_0811843c(void) {
         Data_0200ffec[i].unk2 = unit->unk3a;
       }
       if (i <= 2) {
+        /* FAKEMATCH(pin): the form kept; as u8 *src, 139 of 183 instructions differ in tla-en. */
+        register u8 *src asm("r2") = unit->tags;
+        u8 *dst = snap->tags[i];
+
         for (j = 0; j <= 3; j++)
-          snap->tags[i][j] = unit->tags[j];
+          *dst++ = *src++;
       }
       copies[i][0] = unit->snapshot[0];
       copies[i][1] = unit->snapshot[1];

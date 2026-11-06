@@ -62,7 +62,9 @@ extern volatile u8 gIdleSleepEnabled;
  * (wait()). */
 extern volatile u8 gSleepRequested;
 /// Debug builds: Start+Select pauses the frame loop.
-extern u8 gDebugMode;
+// volatile: Actor_UpdatePlayerControl and FieldSequence_Run each read it
+// again after an earlier test, so it is no device.
+extern volatile u8 gDebugMode;
 extern u8 gDebugPaused; ///< The debug pause is on.
 /// Set by the keypad interrupt; wait() performs the soft reset.
 extern u8 gResetRequested;

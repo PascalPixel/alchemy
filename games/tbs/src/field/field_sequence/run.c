@@ -318,12 +318,7 @@ s32 FieldSequence_Run(s32 entrance) {
           GameFlag_SetFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0) {
             DebugSceneSelect_RunFar();
-          }
-          /* FAKEMATCH(volatile): gDebugMode read through a volatile pointer,
-             so this second test loads it again; as gDebugMode, 48 of 965
-             instructions differ in tbs-en. */
-          else if (*(volatile u8 *)&gDebugMode != 0 &&
-                   (gKeysHeld & KEY_L) != 0) {
+          } else if (gDebugMode != 0 && (gKeysHeld & KEY_L) != 0) {
             PaletteEditor_Run();
           } else if (GameFlag_GetFar(FLAG_MENUS_RAISE_TRIGGER) != 0) {
             // As for the File Screen above.

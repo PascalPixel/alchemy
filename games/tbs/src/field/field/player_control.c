@@ -189,13 +189,10 @@ s32 Actor_UpdatePlayerControl(struct Actor *interpreter) {
     if (freeBlocks - 136 < 0)
       Sound_PlayFar(SE_CLICK);
   }
-  /* FAKEMATCH(volatile): the volatile read puts gDebugMode's address in r5 here
-   * and at the test before it, as native; as gDebugMode != 0, 9 of 808
-   * instructions differ in tbs-en. */
   // Debug: holding L spins through four empty loops (511, 96, 64 and 64
   // passes), a short stall each frame. They are written with goto:
   // as while loops, the loop optimizer deletes them.
-  if (*(volatile u8 *)&gDebugMode != 0) {
+  if (gDebugMode != 0) {
     s32 delayKeyMask;
 
     delayKeyMask = KEY_L;

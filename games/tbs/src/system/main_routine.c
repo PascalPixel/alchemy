@@ -300,13 +300,16 @@ void MainRoutine_Run(s32 mode) {
   const struct Scene *table;
   const struct Scene *record;
   s32 entrance;
+  s32 debug;
 
   table = gScenes;
   // Choose the first scene before initializing the per-scene runtime.
-  if (gDebugMode && mode == GAME_START_DEBUG_VALE) {
+  // Read once: both debug starts test the same value.
+  debug = gDebugMode;
+  if (debug && mode == GAME_START_DEBUG_VALE) {
     gMainRoutineWork.next = (s32)&SceneId_ValePlaza;
     gMainRoutineWork.entrance = mode;
-  } else if (gDebugMode && mode == GAME_START_DEBUG_FILE_SCREEN) {
+  } else if (debug && mode == GAME_START_DEBUG_FILE_SCREEN) {
     gMainRoutineWork.next = (s32)&SceneId_FileScreen;
     gMainRoutineWork.entrance = FILE_SCREEN_FROM_SANCTUM;
   } else {

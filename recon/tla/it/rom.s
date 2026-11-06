@@ -1037,12 +1037,6 @@ Func_0814fab8:
 	.global SummonEffect_RunCanvasEffect
 SummonEffect_RunCanvasEffect:
 	.incbin "baserom.gba", 0x001504d8, 0x000004dc
-	.section .rom.00150c74, "ax"
-	.global BattleEffect_RunQuake
-	.type BattleEffect_RunQuake, %function
-	.thumb_func
-BattleEffect_RunQuake:
-	.incbin "baserom.gba", 0x00150c74, 0x000003cc
 	.section .rom.0015585c, "ax"
 	.global Func_0815585c
 	.type Func_0815585c, %function

@@ -344,7 +344,7 @@ Resource_DirectoryTable:
 	resource VioletCometSheet, BattleEffect_VioletCometSheet
 	resource FlameballSheet, BattleEffect_FlameballSheet
 	resource BoulderSheet, BattleEffect_BoulderSheet
-	resource , BattleEffect_RockWallSheet
+	resource RockWallSheet, BattleEffect_RockWallSheet
 	resource StarDotSheet, BattleEffect_StarDotSheet
 	resource MarsDjinnSheet, BattleEffect_MarsDjinnSheet
 	resource MarsDjinnSmallSheet, BattleEffect_MarsDjinnSmallSheet

@@ -1,31 +1,6 @@
-// Measured 2026-11-05 (tla-en): differ 24 of 444. Left: the map buffer and both
-// band counters are set before the first call in the native, with the buffer
-// moved to lr for the loop; set there here the differ rises to 32 to 57.
-
-// Near miss of BattleEffect_RunQuake, effect kind 1: differ 42 of 444 (draft 444).
-
-// Twin: The Broken Seal's BattleEffect_RunQuake (effect.c), call for call.
-// The Lost Age reads the effect from its argument, takes its heap blocks as
-// Ram_HeapSlots fields, loads the blitter through BattleEffect_LoadBlitter
-// (BLIT_TRANSPARENT is 2 where COMPOSITE_TRANSPARENT is 1), orders the
-// callback 0xc80 and copies the background through a local "cells".
-// ResourceId_RockWallSheet is row 0x14e of directory.s (asset
-// BattleEffect_RockWallSheet), not yet named there.
-
-// Left (differ 42, 2026-10-26; the copy through a local inline forwarder,
-// as f143d80.c makes it and as The Broken Seal's IWRAM call layer makes
-// every IWRAM call, so that the map buffer is loaded again for it: 44 to
-// 42): the native sets the buffer (r5) and both band-loop counters (r6,
-// r7) before the first call; here they start after the copy. The rest is
-// single-row scheduling (immediates and pool loads one slot apart).
-
-// Tried (trials 0 and 1, 2026-10-15): the map buffer read directly (98),
-// counters and buffer set at the top (382), the buffer at the top only
-// (76), do-while with an explicit offset (382), alchemy permute 6 minutes
-// (58). 2026-10-26: the buffer set at the top with the copy reading
-// Ram_MapCellBuffer (48 to 58), and with the counters and a row offset
-// set there too (364 to 374).
-
+/// @file
+/// Battle effect kind 1, the quake: rock pillars rise under the targets. The
+/// Broken Seal's BattleEffect_RunQuake, call for call.
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -55,14 +30,16 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot,
+                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void Func_081180e8(s32 phase);       // BattlePlayback_StartFar
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
 
-// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus The
-// Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
+// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus
+// The Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and
+// COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 
@@ -88,15 +65,15 @@ extern char ResourceId_RockWallSheet;
 extern u8 Data_081982f7[][3];                // gQuake_Timings
 extern struct RockWallHeights Data_08196e1c; // gRockWall_Heights
 
-// Three rock pillars rise from the ground, left to right four frames apart,
-// and sink again; targets standing on one are thrown into the air.
-
-// Setup: the band of background under the targets (x 32-71, y 96-111) is
-// cut out of BG character memory to cap each pillar. Frame loop: each
-// pillar's height follows a sine over its rise time, a target over a
-// pillar is launched upward, and a target that lands flashes; the camera
-// shakes all the while. The variant chooses the length, the rise time and
-// the shake.
+/// Three rock pillars rise from the ground, left to right four frames apart,
+/// and sink again; targets standing on one are thrown into the air.
+///
+/// Setup: the band of background under the targets (x 32-71, y 96-111) is
+/// cut out of BG character memory to cap each pillar. Frame loop: each
+/// pillar's height follows a sine over its rise time, a target over a
+/// pillar is launched upward, and a target that lands flashes; the camera
+/// shakes all the while. The variant chooses the length, the rise time and
+/// the shake.
 void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -112,7 +89,6 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   s32 row;
   s32 col;
   s32 y;
-  u8 *cells;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -124,14 +100,15 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
                              work->sheet + ROCK_OFFSET, 1, 1);
 
   // Copy the background's characters and cut the band out of them.
-  cells = Ram_MapCellBuffer;
-  CopyWords_(cells, (void *)0x06008000, 0x8000);
+  /* FAKEMATCH(wrapper): the copy through an inline forwarder; as a direct
+   * Iwram_CopyWords call, 58 of 444 instructions differ in tla-en. */
+  CopyWords_(Ram_MapCellBuffer, (void *)0x06008000, 0x8000);
   for (row = 0; row != 16; row++) {
     y = row + 96;
     for (col = 0; col != PILLAR_W; col++) {
       s32 pixel = BG_DOT(col + 32, y);
 
-      work->sheet[row * PILLAR_W + col] = cells[pixel];
+      work->sheet[row * PILLAR_W + col] = Ram_MapCellBuffer[pixel];
     }
   }
 

@@ -3146,12 +3146,7 @@ main	rom_main_09	recon/tla/ja/rom	.rom.001504d6	ja
 main	rom_main_09	recon/tla/ja/rom	.rom.001504d8	ja
 main	rom_main_09	games/tla/src/battle_effect/f1509b4	.text
 main	rom_main_09	games/tla/src/battle_effect/index_list	.text
-main	rom_main_09	recon/tla/raw/08150c74	.text	en
-main	rom_main_09	recon/tla/de/rom	.rom.00150c74	de
-main	rom_main_09	recon/tla/es/rom	.rom.00150c74	es
-main	rom_main_09	recon/tla/fr/rom	.rom.00150c74	fr
-main	rom_main_09	recon/tla/it/rom	.rom.00150c74	it
-main	rom_main_09	recon/tla/ja/rom	.rom.00150c74	ja
+main	rom_main_09	games/tla/src/battle_effect/quake	.text
 main	rom_main_09	games/tla/src/battle_effect/f151040	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f1514bc	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f151b48	.text	en de es fr it ja

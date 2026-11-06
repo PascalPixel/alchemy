@@ -8,6 +8,13 @@
 // the active, kind, vram, oam, cell and next statements (33 to 111); vram
 // before the stores; next beside kind; one return at the end (50); a
 // 4-minute permute (best 49).
+// Also 6 November (second round): the cell late plus the 253 for sentinel
+// set into a local right after the NULL test (a temporary) measures 16:
+// window r6, output r7 and the 0 in r4 all as native, only the long-lived
+// constant in ip is the 253 rather than the native's 1. So the native's 1 is
+// born early (before index) and stored late or CSE-shared; the same local
+// holding the 1 instead measures 62, and active stored last 35. Not kept: the
+// device stops short of 0.
 // Reserves a glyph sprite for the window as Func_0803c068 does, without
 // drawing a glyph, and returns the address of its tiles in OBJ VRAM for the
 // caller to fill. The 128-byte frame is the unused tile buffer of

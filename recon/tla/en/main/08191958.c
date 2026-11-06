@@ -13,6 +13,13 @@
 // declaration order or scope, (canvas + row)[...], the index's terms
 // reordered (36 to 75), x < 128 (38). An unused s32 pad[1] does not size the
 // frame; the extra word below the spills looks like a third spill slot.
+// 2026-11-06, second round: a local copy of midpoint (void (*callback)(void)
+// = midpoint, called through it) gives the native's 140-byte frame and every
+// spill offset (32): the copy takes the lowest slot, as the native's unread
+// word. But the copy is stored there and read for the call, where the native
+// reads midpoint's own slot; testing the copy and calling midpoint lets CSE
+// merge them (136 again). The third slot is a pseudo numbered after work,
+// spilled, whose loads and stores all disappear.
 // Earlier, 2026-11-05 (tla-en): differ 48 of 185, 34 with slots and pool
 // offsets normalized. A loop more takes a counter of its own.
 // Earlier draft, differ 66 of 185 (no device): summon 25's screen wipe (called at

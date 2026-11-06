@@ -213,11 +213,8 @@ static void OrbGlow_Fade(void) {
 /// set.
 static void Ship_UpdateSwell(void) {
   u16 blend;
-  /* FAKEMATCH(dead): blend's address taken before the spray's position is
-   * declared, so blend is kept at sp+18 and loaded again with ldrh for the
-   * register write; as a plain u16, 24 of 225 instructions differ in tbs-en. */
-  UNUSED u16 *blendSlot = &blend;
-  struct FixedPointPosition sprayPosition;
+  // The blend is reached through a pointer, as the spray's position is.
+  u16 *bldAlpha;
   struct FixedPointPosition *position;
   struct MapGridScrollWork *grid;
   struct Actor *actor;
@@ -227,8 +224,9 @@ static void Ship_UpdateSwell(void) {
   grid = gMapGridWork[0];
   if (gOrbGlowActive != 0) {
     swell = Iwram_MulQ16(Trig_Sin(gOrbGlowPhase << 9), 3);
-    blend = gOrbGlowStrength + ((swell + 8) << 8);
-    Io_Write16(blend, &REG_BLDALPHA);
+    bldAlpha = &blend;
+    *bldAlpha = gOrbGlowStrength + ((swell + 8) << 8);
+    Io_Write16(*bldAlpha, &REG_BLDALPHA);
     gOrbGlowPhase++;
   }
   if (gSwellActive != 0) {
@@ -262,6 +260,8 @@ static void Ship_UpdateSwell(void) {
     gSwellPhase++;
   }
   if (gSprayActive != 0 && (gFrameCount & 1) != 0) {
+    struct FixedPointPosition sprayPosition;
+
     x = grid->viewX & -0x10000;
     z = grid->viewY & -0x10000;
     x += Random_Next() * 240;
@@ -613,11 +613,9 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 dark;
   s32 risen;
   u16 cnt;
+  // Each BGxCNT value is set through a pointer to cnt.
+  u16 *bgCnt;
 
-  /* FAKEMATCH(dead): cnt's address taken, so each BGxCNT value goes through
-   * its stack slot on the way to the register; as a plain u16, 26 of 231
-   * instructions differ in tbs-en. */
-  (void)&cnt;
   grid = gMapGridWork[0];
 
   Event_Start();
@@ -673,9 +671,10 @@ static void LemurianShip_RaiseTheShip(void) {
   } while (risen < PIXELS(90));
   Task_Remove(OrbGlow_Fade);
   gSprayActive = 0;
-  REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  bgCnt = &cnt;
+  REG_BG3CNT = *bgCnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG2CNT = *bgCnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG1CNT = *bgCnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   gOrbGlowActive = 0;
   Event_PlaySound(SE_STOP_ACTION_SE);
   wait(1);
@@ -710,10 +709,9 @@ static void LemurianShip_RaiseTheShip(void) {
 s32 LemurianShip_SetupMap(void) {
   struct MapGridScrollWork *grid;
   u16 cnt;
+  // Each BGxCNT value is set through a pointer to cnt.
+  u16 *bgCnt;
 
-  /* FAKEMATCH(dead): cnt's address taken, so each step goes through its
-   * stack slot; as a plain u16, 23 of 165 instructions differ in tbs-en. */
-  (void)&cnt;
   grid = gMapGridWork[0];
   if (gMainRoutineWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(ACTOR_PARTY_LEADER, ITEM_BLACK_ORB);
@@ -758,9 +756,10 @@ s32 LemurianShip_SetupMap(void) {
     SET_IMAGE_PRIORITY(actor, 1);
     SET_SHADOW_PRIORITY(actor, 1);
   }
-  REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
-  REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  bgCnt = &cnt;
+  REG_BG3CNT = *bgCnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  REG_BG2CNT = *bgCnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG1CNT = *bgCnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   Io_Write16(BLDCNT_TGT1_BG3 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1 |
                  BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BD,
              &REG_BLDCNT);

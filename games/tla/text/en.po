@@ -12699,7 +12699,7 @@ msgctxt "MsgEnemyLabel"
 msgid "03160"
 msgstr "Enemy"
 
-msgctxt "message"
+msgctxt "MsgWaitingForOpponent"
 msgid "03161"
 msgstr "Waiting for opponent's input."
 

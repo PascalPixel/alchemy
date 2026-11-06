@@ -14546,7 +14546,7 @@ msgctxt "MsgEnemyLabel"
 msgid "03621"
 msgstr "Gegner"
 
-msgctxt "message"
+msgctxt "MsgWaitingForOpponent"
 msgid "03622"
 msgstr "Gegnerische Eingabe fehlt."
 

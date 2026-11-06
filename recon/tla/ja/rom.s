@@ -286,28 +286,53 @@ Func_08044dc8:
 	.section .rom.0004597a, "ax"
 	.incbin "baserom.gba", 0x0004597a, 0x00000002
 	.section .rom.000459ca, "ax"
-	.incbin "baserom.gba", 0x000459ca, 0x0000096a
+	.incbin "baserom.gba", 0x000459ca, 0x00000002
+	.global Func_080457d0
+	.type Func_080457d0, %function
+	.thumb_func
+Func_080457d0:
+	.incbin "baserom.gba", 0x000459cc, 0x00000968
 	.section .rom.00046612, "ax"
-	.incbin "baserom.gba", 0x00046612, 0x00003592
+	.incbin "baserom.gba", 0x00046612, 0x000006f2
+	.global Func_08046b08
+	.type Func_08046b08, %function
+	.thumb_func
+Func_08046b08:
+	.incbin "baserom.gba", 0x00046d04, 0x00001b88
+	.global Func_0804868c
+	.type Func_0804868c, %function
+	.thumb_func
+Func_0804868c:
+	.incbin "baserom.gba", 0x0004888c, 0x00000ab8
+	.global Func_08049154
+	.type Func_08049154, %function
+	.thumb_func
+Func_08049154:
+	.incbin "baserom.gba", 0x00049344, 0x00000860
 	.section .rom.00049bf2, "ax"
 	.incbin "baserom.gba", 0x00049bf2, 0x00000002
 	.section .rom.0004aa4c, "ax"
+	.global Func_0804a85c
+	.type Func_0804a85c, %function
+	.thumb_func
+Func_0804a85c:
 	.incbin "baserom.gba", 0x0004aa4c, 0x00000e44
 	.section .rom.0004b9b0, "ax"
 	.balign 4
+	.global Message_ShowLocalizedAndWait
+	.type Message_ShowLocalizedAndWait, %function
+	.thumb_func
+Message_ShowLocalizedAndWait:
 	.incbin "baserom.gba", 0x0004b9b0, 0x000000bc
 	.section .rom.0004baa6, "ax"
-	.incbin "baserom.gba", 0x0004baa6, 0x00000202
+	.incbin "baserom.gba", 0x0004baa6, 0x00000002
+	.global Func_0804b8b8
+	.type Func_0804b8b8, %function
+	.thumb_func
+Func_0804b8b8:
+	.incbin "baserom.gba", 0x0004baa8, 0x00000200
 	.section .rom.0004bd92, "ax"
 	.incbin "baserom.gba", 0x0004bd92, 0x00000002
-	.section .rom.0004bdbc, "ax"
-	.incbin "baserom.gba", 0x0004bdbc, 0x00000038
-	.section .rom.0004bdf4, "ax"
-	.global Func_0804bc08
-	.type Func_0804bc08, %function
-	.thumb_func
-Func_0804bc08:
-	.incbin "baserom.gba", 0x0004bdf4, 0x000011a8
 	.section .rom.0004d676, "ax"
 	.incbin "baserom.gba", 0x0004d676, 0x00000002
 	.section .rom.0004d9fc, "ax"

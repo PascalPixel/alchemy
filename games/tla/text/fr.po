@@ -14553,7 +14553,7 @@ msgctxt "MsgEnemyLabel"
 msgid "03621"
 msgstr "Ennemi"
 
-msgctxt "message"
+msgctxt "MsgWaitingForOpponent"
 msgid "03622"
 msgstr "Tour de l'adversaire."
 

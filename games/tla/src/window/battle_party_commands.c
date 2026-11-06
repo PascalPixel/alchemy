@@ -1,64 +1,63 @@
-// Matches: differ 0 of 1949 with its two nested functions (tla-en, 2026-11-06; alchemy-devtools diff DRAFT.c 0804bba8,0804bbd0,0804bc08, the one address alone prints differ 42 of 1907 since it counts the nested ones as extra). The twin's three barriers and wrapper are in, now tagged with their measured plain forms; the summon's two OAM word stores are written through a u32 pointer (see there), which closed the last pair. Not yet run through make compare-editions.
-// Draft, differ 52 of 1949, skeleton gap 16 (tla-en, 2026-11-01): 8 removed, 8
-// added. The two nested functions are compiled here but have their own
-// listings, so measure all three with alchemy-devtools diff DRAFT.c
-// 0804bba8,0804bbd0,0804bc08 (both nested functions match); measure.sh on the
-// one address counts them too and prints differ 94 of 1907.
-// Collecting the party's battle commands, The Broken Seal's
-// Battle_CollectPartyCommands
-// (games/tbs/src/window/screens/battle_party_commands.c) on this game's work and
-// menus, with its two nested functions: the party panels' clear
-// (Battle_DrawPartyPanelsWithEmptyList, adopted alone in window/party_panel.c
-// with a stand-in for the static chain) and the link wait's message
-// (Func_0804bbd0, drafted alone in 0804bbd0.c). This game's changes: each round
-// first appends the forced actions of statused members (Func_0804babc), whose
-// count is added to the result; B on the party's row undoes a reserve swap;
-// command 49 swaps a reserve member in (Func_0804b8b8 after choosing the slot);
-// Status lists the reserve as well; Flee is command 99; the Djinn tutorial's
-// hint follows an unleash.
-// The rest is the same four sites The Broken Seal carries as devices, and this
-// draft adds none. Measured in a scratch copy: its three FAKEMATCH(barrier) empty
-// asms, placed as there, take differ from 52 to 4, and its FAKEMATCH(wrapper) on
-// Unit_Get (called as returning s64) to 2. Adopt with those, tagged (S2 lets this
-// game add them), or settle the pool lead below first.
-// - Pools, 48 of the 52: the jump over the pool after the x store of the
-//   Psynergy, Summon and Item windows comes 1 to 2 instructions late, and that
-//   moves the surrounding order and offsets. All other code there is identical.
-//   The pool's first entry is a halfword constant; *thumb_movhi_insn gives it
-//   pool_range 64, and the listing's position fits exactly 60, the 4 bytes the
-//   empty asm counts. *thumb_zero_extendhisi2 has range 60, but no route from C
-//   to it with a constant was found, and no counted length in the window differs.
-//   That reads as a compiler question (arm.md's range), out of scope here, K3.
-//   battle_status.c in The Broken Seal has a fourth site of the same kind.
-// - sp+20 and sp+96 before the Unit_Get call, 2: tie-broken by dependents; the
-//   reload of r1 has one more (the later set of r1), and a call that also sets r1
-//   removes it, which is what the wrapper does.
-// - ldr state against eors for the summon's ok, 2 (closed 2026-11-06): the two
-//   tie at priority 84 and sched2 takes the one with more dependents. Through the
-//   union, the summon's word stores have alias set 0 and depend on the load of
-//   state; through a u32 pointer they don't, the counts tie and RTL order puts
-//   eors first. ok spelled as an if, != 0, after the x store, or a padded
-//   iconShown do not move it; the same spelling at the other sites changes nothing.
-// What closed the rest, for the next reader:
-// - Func_0804bbd0 sits inside the last if, as in the twin. state becomes a stack
-//   variable only when that nested function is parsed, so every earlier load of
-//   it is inserted right before its use, with its own pseudo. That one move
-//   replaced a void * local, a guard and do-while for the summon's test, an offset
-//   local and a required pointer, and fixed the spend loop's allocation.
-// - The real BattleWork holds s32 members, so its load conflicts with the stores
-//   above it: this is what places state->timer = -1. MenuSprite's union does the
-//   same for the word stores.
-// - mode = 0 at the top puts r6 across the opening calls, and the defaults of
-//   commandsOut and forcedCount keep their slots: removing them costs 2 to 14.
-// - SET_CURSOR is the twin's BATTLE_MENU_SET_CURSOR macro.
-// The signature's letters come from the pool only when written through a local
-// pointer, a read of the global array gets movs: keep signature.
+/// @file
+/// Collecting the party's battle commands, as The Broken Seal's
+/// Battle_CollectPartyCommands does on this game's work and menus.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "battle_work.h"
 #include "graphics/uiwindow.h"
 #include "battle/battle_unit.h"
+#include "battle/battle_summon.h"
+#include "battle/battle_system.h"
+#include "window.h"
 #include "input.h"
+#include "edition.h"
+
+// Where the Japanese layout differs: the summon window, the item window and
+// the summon's Djinn costs, in tiles; the x of the acting member's icon and of
+// the command icon in the summon list, beside a chosen summon and in the Djinn
+// list, in pixels.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define SUMMON_WINDOW_X 10
+#define SUMMON_WINDOW_WIDTH 17
+#define SUMMON_COST_X 11
+#define ITEM_WINDOW_WIDTH 16
+#define ACTOR_ICON_X 0
+#define SUMMON_MENU_ICON_X 80
+#define SUMMON_CHOSEN_ICON_X 56
+#define DJINN_MENU_ICON_X 140
+#else
+#define SUMMON_WINDOW_X 9
+#define SUMMON_WINDOW_WIDTH 16
+#define SUMMON_COST_X 10
+#define ITEM_WINDOW_WIDTH 15
+#define ACTOR_ICON_X 4
+#define SUMMON_MENU_ICON_X 88
+#define SUMMON_CHOSEN_ICON_X 48
+#define DJINN_MENU_ICON_X 144
+#endif
+
+// The x of the Attack window's name, in pixels.
+#if LANGUAGE == LANGUAGE_FRENCH
+#define ATTACK_NAME_X 14
+#else
+#define ATTACK_NAME_X 16
+#endif
+
+// The x of the command icon in the Psynergy list, in pixels.
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
+#define PSYNERGY_MENU_ICON_X 40
+#else
+#define PSYNERGY_MENU_ICON_X 48
+#endif
+
+// The second of the two text tiles before a Psynergy's PP cost.
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define PP_LABEL_SECOND_TILE 0xf005
+#else
+#define PP_LABEL_SECOND_TILE 0xf01e
+#endif
 
 extern u8 MsgAbilityNothing[];
 extern u8 MsgCommandName[];
@@ -92,8 +91,8 @@ struct MenuSprite {
   } oam;
 };
 
-/// The battle menu work (heap slot 57, BattleMenuWork).
-struct PartyCommandState {
+/// The battle menu work (heap slot 57), The Broken Seal's BattleMenuWork.
+struct BattleMenuWork {
   struct MenuSprite icons[3];
   u8 iconShown[3];
   u8 unk27;
@@ -120,7 +119,7 @@ struct PartyCommandState {
   s32 lastTarget;
 };
 
-struct PartyCommandRecord {
+struct BattleAction {
   u16 unitId;
   u16 unk02;
   s16 priority;
@@ -131,34 +130,14 @@ struct PartyCommandRecord {
   u16 unk0e;
 };
 
-struct PartyCommandAbility {
-  u8 targetMode;
-  u8 flags;
-  u8 element;
-  u8 unk03[5];
-  u8 range;
-  u8 ppCost;
-};
-
-struct PartyCommandSummon {
-  u16 abilityId;
-  u8 unk02[2];
-  u8 djinnRequired[4];
-};
-
-struct PartyCommandWork {
-  u8 unk00[7];
-  u8 textPalette;
-};
-
-#define NAVIGATION ((struct PartyCommandState *)Ram_HeapSlots->unke4[0])
+#define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->unke4[0])
 
 extern u16 gData_02003a74[];
 extern u16 gLinkStatus;
 extern u16 gLinkPeerSignatures[][12];
 extern u8 gMainRoutineWork[];
 extern u8 gDebugMode;
-extern u8 Msg_0c59[];
+extern u8 MsgWaitingForOpponent[];
 
 s32 VramCache_AllocEntry(s32 size);
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
@@ -171,8 +150,7 @@ void wait(s32 frames);
 void Task_Add(void (*func)(void), s32 order);
 void Task_Remove(void (*func)(void));
 void UpdateLinkSessionCountdown(void);
-s32 Func_0804babc(u16 *actors, struct PartyCommandRecord **cursor,
-                  s32 *forcedCount);
+s32 Func_0804babc(u16 *actors, struct BattleAction **cursor, s32 *forcedCount);
 void BattleLayout_HighlightPartyPanels(u16 *units);
 void BattleHighlight_SetModesFar(u16 *units, s32 mode);
 s32 GameFlag_Test(s32 flag);
@@ -188,31 +166,26 @@ void Heap_Release(void *block);
 s32 BattleParty_ListActorIdsFar(s32 side, u16 *units);
 s32 BattleParty_PrepareReserveOwnersFar(u16 *units);
 s32 Func_08046b08(u16 *list, s32 listCount, s32 member);
-s32 Func_0804b7c0(void);
+s32 Message_ShowLocalizedAndWait(void);
+void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 void Func_08118130(s32 kind, u8 *counts);
 struct BattleUnit *Unit_Get(s32 unit);
 s32 Func_08045528(s32 portrait, s32 slot);
 void Func_08041b68(void);
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                           s32 flags);
-void Text_DrawCharacterAtOffset(s32 message,
-                                  struct Window *window, s32 x,
-                                  s32 y);
-void Window_Close(void *window, s32 mode);
-struct PartyCommandAbility *BattleAction_Get(s32 id);
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void Text_DrawCharacterAtOffset(s32 message, struct Window *window, s32 x,
+                                s32 y);
 s32 Func_0804a134(s32 unit, u16 *actions, s32 count);
 s32 Resource_LoadIndexedEntryToBuffer(s32 id, s32 slot);
 void Func_08041f70(s32 color);
-void Text_DrawNumberAtOffset(s32 value, s32 digits,
-                               struct Window *window, s32 x, s32 y);
-void Window_SetTilemapEntry(struct Window *window, s32 entry,
-                              s32 x, s32 y, s32 flags);
-s32 Battle_ClassifyEntryKind(struct PartyCommandAbility *ability);
+void Text_DrawNumberAtOffset(s32 value, s32 digits, struct Window *window,
+                             s32 x, s32 y);
+void Window_SetTilemapEntry(struct Window *window, s32 entry, s32 x, s32 y,
+                            s32 flags);
 void Resource_ResetEntry(s32 slot);
 s32 Func_08049154(s32 unused0, s32 unused1, const u8 *standby);
-const struct PartyCommandSummon *SummonDefinition_Get(s32 summon);
-void Func_0803c274(struct Window *window, s32 character, s32 x,
-                   s32 y, s32 mode);
+void Func_0803c274(struct Window *window, s32 character, s32 x, s32 y,
+                   s32 mode);
 s32 Func_0804868c(s32 member, s32 unused);
 s32 Djinn_IsActiveFar(s32 member, s32 element, s32 index);
 s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
@@ -226,9 +199,8 @@ s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);
 u32 Random16(void);
 void Vram_FillWindowBlockPattern(void);
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
-void Text_DrawWideStringAtOffset(u16 *text,
-                                     struct Window *window, s32 x,
-                                     s32 y);
+void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
+                                 s32 y);
 void Camera_ConfigureSceneFar(s32 mode);
 
 #define SET_CURSOR(page_, row_, preferred_)                                    \
@@ -240,13 +212,21 @@ void Camera_ConfigureSceneFar(s32 mode);
 
 #define COMMAND_ICON_X(state) ((state)->icons[0].oam.f.x)
 
-s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
+/// Collects the party's commands for a turn into `commands`, one for each of
+/// the `commandCount` units in `actors`, with two nested functions: the party
+/// panels' clear and the link wait's message (Func_0804bbd0). Unlike The Broken
+/// Seal's, each round first appends the forced actions of statused members
+/// (Func_0804babc), whose count is added to the result; B on the party's row
+/// undoes a reserve swap; command 49 swaps a reserve member in (Func_0804b8b8
+/// after choosing the slot); Status lists the reserve as well; Flee is command
+/// 99; and the Djinn tutorial's hint follows an unleash.
+s32 Func_0804bc08(struct BattleAction *commands, u16 *actors,
                   s32 commandCount) {
   u16 signatureHeader[2];
-  struct PartyCommandState *state;
-  struct PartyCommandRecord *commandsOut;
+  struct BattleMenuWork *state;
+  struct BattleAction *commandsOut;
   s32 forcedCount;
-  struct PartyCommandRecord *command;
+  struct BattleAction *command;
   struct BattleUnit *unit;
   s32 target;
   s32 actorId;
@@ -270,6 +250,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
   target = 256;
   // Default: set for real at the top of each round.
   commandsOut = NULL;
+  // Default: each is set for real by the row it reaches.
   mode = 0;
   commandKind = 0;
   parameter = 0;
@@ -427,7 +408,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
     }
     // Flee: one command 99 for the party, first in the round.
     if (mode == 4) {
-      s32 refused = Func_0804b7c0();
+      s32 refused = Message_ShowLocalizedAndWait();
 
       if (refused != 0)
         continue;
@@ -465,7 +446,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
        * instructions differ in tla-en. */
       unit = (struct BattleUnit *)(s32)((s64 (*)(s32))Unit_Get)(actorId);
       {
-        struct PartyCommandState *navigation = NAVIGATION;
+        struct BattleMenuWork *navigation = NAVIGATION;
         struct MenuSprite *iconSprite;
 
         navigation->commandActor = actorId;
@@ -474,7 +455,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         iconSprite->oam.word.attr01 = 0x80000400;
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.tile = Func_08045528(unit->enemyId, smallIconSlot);
-        iconSprite->oam.f.x = 0;
+        iconSprite->oam.f.x = ACTOR_ICON_X;
         iconSprite->oam.f.y = 0x80;
         iconSprite->oam.f.palette = 14;
         state->iconShown[2] = 1;
@@ -483,7 +464,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
     mark_visible:
       Func_08041b68();
       {
-        struct PartyCommandState *navigation = NAVIGATION;
+        struct BattleMenuWork *navigation = NAVIGATION;
 
         navigation->iconShown[0] = 0;
         navigation->chosenDjinn[commandIndex] = 0x80000000;
@@ -514,14 +495,15 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         continue;
       }
       {
-        struct PartyCommandState *navigation = NAVIGATION;
+        struct BattleMenuWork *navigation = NAVIGATION;
         struct MenuSprite *iconSprite = &navigation->icons[0];
 
         if (navigation->timer == 0)
           mode = 3;
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.word.attr01 = 0x80002400;
-        iconSprite->oam.f.tile = Resource_LoadIndexedIntoBuffer(largeIconSlot, mode);
+        iconSprite->oam.f.tile =
+            Resource_LoadIndexedIntoBuffer(largeIconSlot, mode);
         if (mode == 15)
           iconSprite->oam.f.x = 128;
         else
@@ -533,7 +515,8 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       switch (mode) {
       case 0:
         commandWindow = Window_Create(11, 17, 11, 3, 6);
-        Text_DrawCharacterAtOffset((s32)MsgCommandName, commandWindow, 16, 0);
+        Text_DrawCharacterAtOffset((s32)MsgCommandName, commandWindow,
+                                   ATTACK_NAME_X, 0);
         COMMAND_ICON_X(state) = 64;
         Sound_PlayFar(112);
         mode = Func_0804a85c(actorId, 1, 1, 0);
@@ -548,8 +531,8 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       case 1: {
         s32 k;
         struct MenuSprite *iconSprite;
-        struct PartyCommandAbility *ability;
-        struct PartyCommandWork *work;
+        struct BattleAct *ability;
+        struct WindowWork *work;
         u16 *list;
         u8 *pick;
         s32 cost;
@@ -563,7 +546,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       psynergy_menu:
         list = state->listAbilities;
         pick = state->listSlots;
-        COMMAND_ICON_X(state) = 48;
+        COMMAND_ICON_X(state) = PSYNERGY_MENU_ICON_X;
         cnt = 0;
         k = 0;
         entryValue = unit->actionSlots[k].encodedAction & 0x3fff;
@@ -590,7 +573,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        work = (struct PartyCommandWork *)Ram_HeapSlots->windowTiles;
+        work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
         commandWindow = Window_Create(8, 17, 18, 3, 6);
         COMMAND_ICON_X(state) = 40;
         iconSprite->oam.word.attr01 = 0x40000400;
@@ -601,23 +584,24 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
          * where the native has it (constant 40); without it, 18 of 1949
          * instructions differ in tla-en. */
         __asm__ volatile("");
-        iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(parameter, handle);
+        iconSprite->oam.f.tile =
+            Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
-        work->textPalette = 5;
+        work->level = 5;
         if (ability->ppCost > unit->pp)
           Func_08041f70(2);
         else if (unit->psySeal != 0)
           Func_08041f70(9);
         Text_DrawCharacterAtOffset(parameter + (s32)MsgAbilityNothing,
-                                     commandWindow, 16, 0);
+                                   commandWindow, 16, 0);
         Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
-        work->textPalette = 15;
+        work->level = 15;
         Func_08041f70(15);
         Window_SetTilemapEntry(commandWindow, 0xf01f, 11, 0, 0);
-        Window_SetTilemapEntry(commandWindow, 0xf01e, 12, 0, 0);
+        Window_SetTilemapEntry(commandWindow, PP_LABEL_SECOND_TILE, 12, 0, 0);
         if (ability->element != 4)
           Window_SetTilemapEntry(commandWindow, ability->element + 0x5001, 15,
-                                   0, 0);
+                                 0, 0);
         command->range = cost;
         Sound_PlayFar(112);
         mode = Func_0804a85c(actorId, ability->targetMode, cost,
@@ -633,8 +617,8 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       }
 
       case 16: {
-        const struct PartyCommandSummon *summon;
-        struct PartyCommandAbility *ability;
+        const struct SummonDefinition *summon;
+        struct BattleAct *ability;
         struct MenuSprite *iconSprite;
         s32 ok;
         s32 j;
@@ -643,7 +627,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         Sound_PlayFar(112);
         SET_CURSOR(0, 0, 0);
       summon_menu:
-        COMMAND_ICON_X(state) = 80;
+        COMMAND_ICON_X(state) = SUMMON_MENU_ICON_X;
         BattleLayout_HighlightPartyPanels(signatureHeader);
         mode = Func_08049154(0, 0, state->standbyDjinn[commandIndex]);
         BattleLayout_HighlightPartyPanels(signatureHeader);
@@ -654,16 +638,17 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         wait(1);
         iconSprite = &state->icons[1];
         summon = SummonDefinition_Get(mode);
-        ability = BattleAction_Get(summon->abilityId);
+        ability = BattleAction_Get(summon->nameMessageId);
         summonIconSlot = VramCache_AllocEntry(128);
-        commandWindow = Window_Create(10, 17, 17, 3, commandKind);
+        commandWindow = Window_Create(SUMMON_WINDOW_X, 17, SUMMON_WINDOW_WIDTH,
+                                      3, commandKind);
         n = 0;
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j])
             break;
         }
         ok = j == 4;
-        COMMAND_ICON_X(state) = 56;
+        COMMAND_ICON_X(state) = SUMMON_CHOSEN_ICON_X;
         // Written through a u32 pointer, not the union: these stores then no
         // longer conflict with the load of state, which sched2 needs to order
         // eors first.
@@ -676,19 +661,19 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(
-            summon->abilityId & 0x3fff, summonIconSlot);
+            summon->nameMessageId & 0x3fff, summonIconSlot);
         state->iconShown[1] = 1;
         if (ok == 0)
           Func_08041f70(2);
-        Text_DrawCharacterAtOffset(SummonDefinition_Get(mode)->abilityId +
-                                         (s32)MsgAbilityNothing,
-                                     commandWindow, 16, 0);
+        Text_DrawCharacterAtOffset(SummonDefinition_Get(mode)->nameMessageId +
+                                       (s32)MsgAbilityNothing,
+                                   commandWindow, 16, 0);
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] != 0) {
-            Window_SetTilemapEntry(commandWindow, j + 0x5001, n * 2 + 11, 0,
-                                     0);
+            Window_SetTilemapEntry(commandWindow, j + 0x5001,
+                                   n * 2 + SUMMON_COST_X, 0, 0);
             Func_0803c274(commandWindow, summon->djinnRequired[j] + '0',
-                          n * 2 + 12, 0, 0);
+                          n * 2 + SUMMON_COST_X + 1, 0, 0);
             n++;
           }
         }
@@ -716,7 +701,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       }
 
       case 15: {
-        struct PartyCommandAbility *ability;
+        struct BattleAct *ability;
         s32 cost;
         s32 element;
         s32 index;
@@ -724,7 +709,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         Sound_PlayFar(112);
         SET_CURSOR(0, 0, 0);
       djinn_menu:
-        COMMAND_ICON_X(state) = 140;
+        COMMAND_ICON_X(state) = DJINN_MENU_ICON_X;
         NAVIGATION->chosenDjinn[commandIndex] = 0x80000000;
         mode = Func_0804868c(actorId, 1);
         command->range = 0;
@@ -743,15 +728,14 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
           COMMAND_ICON_X(state) = 64;
           Window_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
           Text_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName,
-                                       commandWindow, 16, 0);
+                                     commandWindow, 16, 0);
           command->range = cost;
           wait(1);
           Sound_PlayFar(112);
           mode = Func_0804a85c(actorId, ability->targetMode, cost,
                                Battle_ClassifyEntryKind(ability));
           if (state->tutorialStep != 0) {
-            void *hint =
-                Message_ShowAndWait(Func_0804519c() + 14, 15, 8);
+            void *hint = Message_ShowAndWait(Func_0804519c() + 14, 15, 8);
 
             while (Message_AllTyped() == 0)
               wait(1);
@@ -770,7 +754,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         Func_08041f70(2);
         Window_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
         Text_DrawCharacterAtOffset(element * 20 + index + (s32)MsgDjinnName,
-                                     commandWindow, 16, 0);
+                                   commandWindow, 16, 0);
         Func_08041f70(15);
         command->range = 1;
         wait(1);
@@ -786,7 +770,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       case 2: {
         s32 k;
         struct MenuSprite *iconSprite;
-        struct PartyCommandAbility *ability;
+        struct BattleAct *ability;
         u16 *list;
         u8 *pick;
         s32 cost;
@@ -843,7 +827,7 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        commandWindow = Window_Create(9, 17, 16, 3, 6);
+        commandWindow = Window_Create(9, 17, ITEM_WINDOW_WIDTH, 3, 6);
         COMMAND_ICON_X(state) = 48;
         iconSprite->oam.word.attr01 = 0x40000400;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
@@ -857,8 +841,8 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
             ItemIcon_LoadIntoSlot(unit->inventory[selection], handle);
         state->iconShown[1] = 1;
         Text_DrawCharacterAtOffset((unit->inventory[selection] & 0x1ff) +
-                                         (s32)MsgItemName,
-                                     commandWindow, 24, 0);
+                                       (s32)MsgItemName,
+                                   commandWindow, 24, 0);
         command->range = cost;
         Sound_PlayFar(112);
         mode = Func_0804a85c(actorId, ability->targetMode, cost,
@@ -924,7 +908,11 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
     void Func_0804bbd0(void) {
       u16 text[64];
 
-      Message_CopyExpanded((s32)Msg_0c59, text, 52);
+#if LANGUAGE != LANGUAGE_JAPANESE
+      Message_CopyExpanded((s32)MsgWaitingForOpponent, text, 52);
+#else
+      Message_DecodeRaw((s32)MsgWaitingForOpponent, text, 32);
+#endif
       Text_DrawWideStringAtOffset(text, state->timerWindow, 0, 4);
     }
 

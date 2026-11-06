@@ -57,25 +57,27 @@ s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
 s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 s32 commandCount) {
   struct BattleMenuWork *state;
-  struct BattleWork *battle;
-  struct BattleWork *linkBattle;
-  u16 *peerSignature;
-  u16 *transferWords;
-  struct BattleAction *command;
-  struct Unit *unit;
-  struct Window *commandWindow;
-  struct MenuSprite *iconSprite;
+  // Default: each local given NULL or 0 here is set for real before it is
+  // read.
+  struct BattleWork *battle = NULL;
+  struct BattleWork *linkBattle = NULL;
+  u16 *peerSignature = NULL;
+  u16 *transferWords = NULL;
+  struct BattleAction *command = NULL;
+  struct Unit *unit = NULL;
+  struct Window *commandWindow = NULL;
+  struct MenuSprite *iconSprite = NULL;
   u16 signatureHeader[2];
   s32 target;
   s32 unitId;
-  s32 mode;
+  s32 mode = 0;
   s32 commandKind;
   s32 parameter;
   s32 largeIconSlot;
   s32 smallIconSlot;
-  s32 missedLinkFrames;
-  s32 commandIndex;
-  s32 k;
+  s32 missedLinkFrames = 0;
+  s32 commandIndex = 0;
+  s32 k = 0;
   s32 priority;
 
   // An empty ID list clears every party panel's highlight and marks no unit
@@ -263,21 +265,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       Window_MarkVisibleTextTiles();
       gBattleMenuWork->iconShown[0] = 0;
       gBattleMenuWork->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
-      /* FAKEMATCH(dead): twelve dead stores restore the native stack frame's
-       * spill slots at sp+24 to sp+32; without them, 26 of 1727 instructions
-       * differ in tbs-en. */
-      signatureHeader[0] = 0;
-      signatureHeader[0] = 0;
-      signatureHeader[0] = 0;
-      signatureHeader[0] = 0;
-      signatureHeader[0] = 0;
-      signatureHeader[0] = 0;
-      signatureHeader[0] = 0;
-      signatureHeader[0] = 0;
-      signatureHeader[0] = 0;
-      signatureHeader[0] = 0;
-      signatureHeader[0] = 0;
-      signatureHeader[0] = 0;
       // signatureHeader is the party member alone, ended by
       // BATTLE_UNIT_LIST_END: marked in the battle and highlighted in the party
       // status window.

@@ -5,6 +5,9 @@
 	.byte \pad0, \pad1
 	.endm
 
+@ x and y are where the layer's window starts in the grid, in 8-pixel tiles:
+@ the layer's cell (0, 0) is the grid's cell (x / 2, y / 2) (README.md, From a
+@ cell to the screen).
 	.macro map_layer x:req, y:req, rate_x:req, rate_y:req, drift_x:req, drift_y:req, a:req, b:req
 	.byte \x, \y, \rate_x, \rate_y, \drift_x, \drift_y, \a, \b
 	.endm

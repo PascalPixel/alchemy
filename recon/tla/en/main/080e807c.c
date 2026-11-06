@@ -133,12 +133,12 @@ void Func_080e807c(void) {
         timer = mote->timer;
       }
       if (timer >= 0) {
-        sprite->oam.index = *tile +((timer >> 2) & 3) * 4;
+        sprite->oam.index = *tile + ((timer >> 2) & 3) * 4;
         pos[0] = object->x + mote->x;
-        timer = mote->timer;
         pos[1] = object->y + mote->y;
         pos[2] = object->z + mote->z;
         Func_080eb298(sprite, pos);
+        timer = mote->timer;
       }
       if ((mote->timer = timer + 1) == 16)
         mote->timer = 0;

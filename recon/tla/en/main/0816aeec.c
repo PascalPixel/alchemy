@@ -1,4 +1,24 @@
-// Differ 266 of 902 (tla-en, 2026-11-06).
+// Differ 180 of 902, draft 904 (tla-en, 2026-11-06).
+// 2026-11-06, second pass: the vertex start fold is gone. Its source was GCSE,
+// not cse: the if block's row << 4 (quad[5] and row * 15's (row << 4) - row)
+// is redundant with v, so GCSE turns it into a copy of v with a REG_EQUAL
+// (row << 4) note, loop hoists and reduces it as 138, and cse2 folds the
+// vertex start (624 << 2) through that note into row << 6. firstQuad = row * 15
+// computed once at the top of the row makes cse merge v into that row << 4,
+// the note never appears, and vertex starts from i << 2 as in the native.
+// quad[1] from i + column + 17 rather than a local d then gives 180 (the
+// permuter found it; with d, 277). The frame loop now nearly matches; what is
+// left is in the grid: firstQuad sits before the hoisted givs, so the outer
+// loop finds row * 15 first, reduces the quad start as row * 360 (stepped by
+// 360) instead of row * 15 with * 24 per row, and its spill slots rotate
+// (row * 15, + 15, - 84 should be sp+32, 28, 24); d is ip, (row << 4) + 15 the
+// spilled slot 8, and Q is still copied (adds r0, r4, #0) from i. Not gained:
+// v as its own row counter stepped by 16 (950 to 962: gcse copy-propagates
+// i = v, the frame shrinks), i = row << 4 with no v (960), quad[5] or the
+// + 15 from i or v (538 to 626), a - row or i - row for the quad (856), the
+// row's - 84 and + 15 also computed at the top (467), firstQuad in the column
+// loop (614), row * 3 * 5 (folded back to row * 15).
+// Earlier, at 266 of 902:
 // 2026-11-06, devices allowed: none gains. Pins (u r0, vertex r1, Q r4, i r4)
 // 493 to 1009; an empty asm on i 956 (the frame shrinks); i, (row << 4) or a
 // stepped i at each grid use 832 to 986; quad[5] from i or v 626 (still row << 6).
@@ -277,6 +297,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   // The water's grid: 16 by 8 vertices, and a quad (two triangles) for
   // each cell but the last row and column.
   for (row = 0; row != WATER_ROWS; row++) {
+    s32 firstQuad = row * 15;
     s32 v = row << 4;
     s32 x = -60;
     u8 *mesh = gData_02014000;
@@ -294,9 +315,8 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       vertex[2] = row * 24 - 84;
       if (row <= 6 && column <= 14) {
         s32 b = i + column + 1;
-        s32 d = i + column + 17;
         s32 c = i + column + 16;
-        u8 *quad = mesh + (row * 15 + column) * 24;
+        u8 *quad = mesh + (firstQuad + column) * 24;
 
         quad[4] = x + 67;
         quad[6] = x + 67;
@@ -311,7 +331,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         quad[19] = (row << 4);
         quad[21] = (row << 4) + 15;
         quad[0] = b;
-        quad[1] = d;
+        quad[1] = i + column + 17;
         quad[2] = c;
         quad[12] = a;
         quad[13] = b;

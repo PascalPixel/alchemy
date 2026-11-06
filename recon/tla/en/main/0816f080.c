@@ -1,4 +1,14 @@
 // Differ 146 of 568 (tla-en, 2026-11-06).
+// Third round, 6 November, none better. The r6/r7 swap is global's order: giv 421 (the second
+// pair's decremented pointer, 14 refs over 39 insns) outranks giv 463 (the third pair's +1
+// pointer, 11 over 31), takes r6, and reload's spill set then takes r7 from 463 at insn 1747
+// (464 = mirrorRow + 0x1701). 463 first needs 421 at a live length of 40 or 463 at 30.
+// Measured: mirrorRow pinned to r6 (440) or r7 (528), both stop its hoisting; the +1 mirror
+// pointer hand-stepped and pinned to r6 (442); an empty asm before the row stores, the mirror
+// stores, inside the if or after it (146 each); splash = 25000 through an output asm before
+// the frame loop, halved with / 2 (205). 6912 PERM combinations of x, y, v, row and mirrorRow
+// types and of the second pair's and the +1 mirror store's spellings: none below 146; 12
+// minutes of random permuter (seed 5222): none.
 // Second round, 6 November, none better: 40 minutes of permuter (seed 7104);
 // splash = 25000 through an empty asm with an output, before the splash loop
 // (225: the halving is hoisted with it) or inside its if (225: loop.c moves the

@@ -6,78 +6,8 @@
 	.2byte 0x0000
 	.section .text.x0200815a,"ax",%progbits
 	.2byte 0x0000
-	.section .text.x020083e8,"ax",%progbits
-	.balign 4
-	.global Func_020003e8
-	.thumb_func
-Func_020003e8:
-	push {r5, r6, r7, lr}
-	adds r6, r0, #0
-	b .L_02008458
-.L_020083ee:
-	ldrh r0, [r6]
-	bl Actor_GetById
-	adds r5, r0, #0
-	adds r7, r5, #0
-	movs r3, #0
-	adds r7, #99
-	strb r3, [r7]
-	movs r0, #0
-	ldr r1, [r5, #8]
-	ldr r2, [r5, #16]
-	asrs r1, r1, #20
-	asrs r2, r2, #20
-	bl Func_02000348
-	movs r3, #64
-	ands r0, r3
-	cmp r0, #0
-	beq .L_02008456
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r0, [r3, #32]
-	cmp r0, #0
-	beq .L_02008464
-	movs r3, #212
-	lsls r3, r3, #1
-	adds r0, r0, r3
-	ldr r2, [r5, #16]
-	ldr r3, [r5, #12]
-	ldr r1, [r5, #8]
-	subs r2, r2, r3
-	asrs r2, r2, #20
-	adds r3, r2, #1
-	asrs r1, r1, #20
-	ldr r4, [r0]
-	lsls r3, r3, #7
-	adds r3, r1, r3
-	lsls r3, r3, #2
-	adds r4, r4, r3
-	subs r2, #1
-	movs r3, #255
-	strb r3, [r4, #2]
-	lsls r2, r2, #7
-	ldr r4, [r0]
-	adds r1, r1, r2
-	lsls r1, r1, #2
-	movs r3, #1
-	negs r3, r3
-	adds r4, r4, r1
-	strb r3, [r4, #2]
-	movs r3, #1
-	strb r3, [r7]
-.L_02008456:
-	adds r6, #2
-.L_02008458:
-	movs r2, #255
-	ldrh r3, [r6]
-	lsls r2, r2, #8
-	adds r2, #255
-	cmp r3, r2
-	bne .L_020083ee
-.L_02008464:
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
 	.section .text.x02008468,"ax",%progbits
+	.balign 4
 	.global Func_02000468
 	.thumb_func
 Func_02000468:

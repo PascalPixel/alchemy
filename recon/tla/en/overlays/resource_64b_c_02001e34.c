@@ -1,45 +1,45 @@
-// Near miss, differ 65 of 714 (tla-en, 2026-11-06): cse1 puts the stores of 0
-// to velocityY and terrainHeight in the flag test result (reg 62, known 0 on the
-// then-arm through the skipped gInput block), so it lives in r8 and shifts r8,
-// r9, fp and the frame; with those two stores probed as nonzero it is differ 28.
-// 6 November, plain tries: GameFlag_Test direct 99; i = Flag_IsSet, if (i == 0)
-// 96; the same through owner 66; count = 0 at entry 133; a do-while grow loop
-// and a chained store both 65.
-// 5 November: differ 65 of 714 with x read first as the native does (46 with the
-// false order). What turns the rest is the zero: after the test of 0x16e the
-// then-arm knows the result is 0 and cse keeps it in r8 for the later stores of 0
-// (reg 62), where the native has movs r3, #0. A <= 0 test gives 28 but is not the
-// native's beq. An empty asm or one-pass after the test does not stop it.
-// Draft, differ 46 of 714 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 46 of 714 (tla-en); older figures below predate it.
-// Draft, differ 57 of 714, skeleton gap 10 (tla-en, 2026-11-01)
-// The Venus Djinni (actor 9) joins on the world map and offers its tutorial,
-// as The Broken Seal's WorldMap_MeetFlint; the second visit offers it again.
-// owner is set only on the first path: the native reads r7 uninitialized on
-// the second, so owner is live from entry and conflicts with everything.
-// Plain shape, all measured here: no count = 0 at entry; u16 stores go through
-// a pointer cast (a member store's bit-field path leaves a zero pseudo that
-// CSE reuses across calls); the first motionFlags store takes an s32 local
-// before its address, the later two stay member stores (their zero is the
-// native's r2); wait(1) comes before i--; ShowEmote and SetMoveTarget are The
-// Broken Seal's forwarding inlines (Actor_ShowEmote, FieldActor_SetMoveTarget);
-// the +1 and +2 arms each end with Func_02004cf0, so both jumps cross-jump;
-// Djinn_AddToOwner, DjinnRecovery_AddStandby and FieldMessage_ShowAtActor
-// return values. Func_02004d08's s32 return is what ordering asks for, its
-// main-image type unchecked. The long store is an alias spelling: the native
-// has no store dependence between the motionFlags strb and velocityY.
-// Left, one cause: the inline's return pseudo is known 0 after the flag test,
-// and cse2 reuses it for velocityY = 0, costing r5 and the frame. Plain tries
-// failed: goto, switch, u32 compares, a one-pass block (cse2 ignores its loop
-// end), a zero local, an inline for the zero stores. Two devices were taken
-// back out because neither reaches differ 0; with them this draft is differ 10:
-// `flag = 0x16e; flag = GameFlag_Test(flag); if (flag == 0) {` with
-// `flag = Flag_IsSet(0x175);` before the MsgHey2 message: 20, temporary.
-// `flags = &motionFlags; *flags = two;`, an unread `flags = (u8 *)djinni;`
-// beside the zero stores, `flags = &djinni->motionFlags;` after them and
+// Near miss, differ 65 of 714 (tla-en, 2026-11-06; the grow and spin loops as while loops in place of labels, the same code): cse1 puts the stores of 0
+// to velocityY and terrainHeight in the flag test result (reg 62, known 0 on
+// the then-arm through the skipped gInput block), so it lives in r8 and shifts
+// r8, r9, fp and the frame; with those two stores probed as nonzero it is
+// differ 28. 6 November, plain tries: GameFlag_Test direct 99; i = Flag_IsSet,
+// if (i == 0) 96; the same through owner 66; count = 0 at entry 133; a do-while
+// grow loop and a chained store both 65. 5 November: differ 65 of 714 with x
+// read first as the native does (46 with the false order). What turns the rest
+// is the zero: after the test of 0x16e the then-arm knows the result is 0 and
+// cse keeps it in r8 for the later stores of 0 (reg 62), where the native has
+// movs r3, #0. A <= 0 test gives 28 but is not the native's beq. An empty asm
+// or one-pass after the test does not stop it. Draft, differ 46 of 714 (tla-en,
+// 2026-11-05). Older notes below may predate this figure. Under -Os, 5
+// November: differ 46 of 714 (tla-en); older figures below predate it. Draft,
+// differ 57 of 714, skeleton gap 10 (tla-en, 2026-11-01) The Venus Djinni
+// (actor 9) joins on the world map and offers its tutorial, as The Broken
+// Seal's WorldMap_MeetFlint; the second visit offers it again. owner is set
+// only on the first path: the native reads r7 uninitialized on the second, so
+// owner is live from entry and conflicts with everything. Plain shape, all
+// measured here: no count = 0 at entry; u16 stores go through a pointer cast (a
+// member store's bit-field path leaves a zero pseudo that CSE reuses across
+// calls); the first motionFlags store takes an s32 local before its address,
+// the later two stay member stores (their zero is the native's r2); wait(1)
+// comes before i--; ShowEmote and SetMoveTarget are The Broken Seal's
+// forwarding inlines (Actor_ShowEmote, FieldActor_SetMoveTarget); the +1 and +2
+// arms each end with Func_02004cf0, so both jumps cross-jump; Djinn_AddToOwner,
+// DjinnRecovery_AddStandby and FieldMessage_ShowAtActor return values.
+// Func_02004d08's s32 return is what ordering asks for, its main-image type
+// unchecked. The long store is an alias spelling: the native has no store
+// dependence between the motionFlags strb and velocityY. Left, one cause: the
+// inline's return pseudo is known 0 after the flag test, and cse2 reuses it for
+// velocityY = 0, costing r5 and the frame. Plain tries failed: goto, switch,
+// u32 compares, a one-pass block (cse2 ignores its loop end), a zero local, an
+// inline for the zero stores. Two devices were taken back out because neither
+// reaches differ 0; with them this draft is differ 10: `flag = 0x16e; flag =
+// GameFlag_Test(flag); if (flag == 0) {` with `flag = Flag_IsSet(0x175);`
+// before the MsgHey2 message: 20, temporary. `flags = &motionFlags; *flags =
+// two;`, an unread `flags = (u8 *)djinni;` beside the zero stores, `flags =
+// &djinni->motionFlags;` after them and
 // `*flags = 0;` at the third store: 10, dead; this puts native's late mov sl.
-// The last 10 of that form: strb [r2, r6] where native keeps adds r2 and mov sl,
-// r2 (reload_combine fires; a second use of r2 would stop it), and at
+// The last 10 of that form: strb [r2, r6] where native keeps adds r2 and mov
+// sl, r2 (reload_combine fires; a second use of r2 would stop it), and at
 // MsgSoWeGo and MsgHmmmmDoYou the pool load before muls: sched2 ranks muls 45
 // over the load 44 (4 + 41 against 2 + 1 + 41). An asm or one-pass fixes these
 // but flips `adds r1, r7` at Func_02004c98. That ranking is K2's
@@ -186,13 +186,12 @@ void Func_02001e34(void) {
       djinni->terrainHeight = zero;
     }
     SetMoveTarget(djinni, 0x27880000, 0, 0x20a40000);
-  grow:
-    djinni->scaleX += 0x800;
-    djinni->scaleY += 0x800;
-    wait(1);
-    i--;
-    if (i >= 0)
-      goto grow;
+    while (i >= 0) {
+      djinni->scaleX += 0x800;
+      djinni->scaleY += 0x800;
+      wait(1);
+      i--;
+    }
     Actor_SetAngleToward(9, owner, 0);
     Actor_SetAngleToward(owner, 9, 0);
     wait(16);
@@ -232,24 +231,22 @@ void Func_02001e34(void) {
     Func_02004cf0(9, 0);
     SetMoveTarget(djinni, x, 0x100000, z);
     djinni->motionFlags = 0;
-  spin:
-    *(u16 *)&djinni->angle += 0x1000;
-    wait(1);
-    i--;
-    if (i >= 0)
-      goto spin;
+    while (i >= 0) {
+      *(u16 *)&djinni->angle += 0x1000;
+      wait(1);
+      i--;
+    }
     Actor_SetModeById(owner, 1);
     Func_02004cf0(9, 0);
     djinni->motionFlags = 2;
     *(long *)&djinni->velocityY = 0;
     djinni->terrainHeight = 0;
     i = 7;
-  spinDown:
-    *(u16 *)&djinni->angle += 0x1000;
-    wait(1);
-    i--;
-    if (i >= 0)
-      goto spinDown;
+    while (i >= 0) {
+      *(u16 *)&djinni->angle += 0x1000;
+      wait(1);
+      i--;
+    }
     Actor_SetModeById(owner, 22);
     Func_02004cf0(9, 0);
     Func_02004d08(9, 0x102, 30);

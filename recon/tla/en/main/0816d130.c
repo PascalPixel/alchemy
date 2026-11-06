@@ -1,3 +1,4 @@
+// Differ 30 of 298 (tla-en, 2026-11-06), unchanged here; the notes below predate the current figure.
 // 2026-10-26 (round 5): differ 46 of 298. canvas read after work (a
 // statement-move search): 48 to 46.
 // Draft, differ 48 of 298 (2026-10-26; 95 before), from the listing (The

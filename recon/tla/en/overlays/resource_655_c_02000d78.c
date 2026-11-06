@@ -1,4 +1,5 @@
-// Draft, differ 27 of 131 (tla-en, 2026-11-05): level is shifted and lowered for the shape call; left: the native reads the attribute before it stores the shape, and one instruction.
+// Differ 4 of 131 (tla-en, 2026-11-06). The shape grid read once into a local before the loop (shapeGrid, an address held for its whole life) takes it from 27 to 4. Left: the native reads the cell's attribute before the shape store, here after (the two are char accesses, so only the source order can put the read first); a u8 temporary read first gives 31, the store inside the and's operand 8.
+// Earlier, differ 27 of 131 (tla-en, 2026-11-05): level is shifted and lowered for the shape call.
 // Draft, differ 85 of 131, skeleton gap 11/8 (tla-en, 2026-11-01)
 // Lowers the cells under the held actor (or the one the leader carries) and
 // keeps it at 0xcbc of the event work.
@@ -90,6 +91,7 @@ struct Actor *Func_02003df0(void);
 void Func_02000d78(u16 *list) {
   struct Actor *held = Func_02003df0();
   void *work = Ram_HeapSlots->eventWork;
+  u8 *shapeGrid = gMapShapeGrid;
 
   if (held == NULL) {
     s32 id = Func_02003d18(gMainRoutineWork.currentOwner, 1);
@@ -105,7 +107,7 @@ void Func_02000d78(u16 *list) {
       struct MapCell *cells =
           Ram_HeapSlots->mapWork->layers[*layer].cells;
       u8 *shapes =
-          gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+          shapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
       s32 shape = Func_02003c10(*layer, held->x, held->z);
       s32 level = Map_GetTerrainHeight(*layer, held->x, held->z);
       s32 index = Func_02003db0(held);

@@ -967,19 +967,7 @@ main	rom_main_02	recon/tla/it/rom	.rom.0004bd9a	it
 main	rom_main_02	recon/tla/fr/rom	.rom.0004bdce	fr
 main	rom_main_02	recon/tla/es/rom	.rom.0004bdc2	es
 main	rom_main_02	recon/tla/de/rom	.rom.0004bdb2	de
-main	rom_main_02	games/tla/src/window/party_panel	.text
-main	rom_main_02	recon/tla/it/rom	.rom.0004bdc4	it
-main	rom_main_02	recon/tla/it/rom	.rom.0004bdfc	it
-main	rom_main_02	recon/tla/fr/rom	.rom.0004bdf8	fr
-main	rom_main_02	recon/tla/fr/rom	.rom.0004be30	fr
-main	rom_main_02	recon/tla/es/rom	.rom.0004bdec	es
-main	rom_main_02	recon/tla/es/rom	.rom.0004be24	es
-main	rom_main_02	recon/tla/de/rom	.rom.0004bddc	de
-main	rom_main_02	recon/tla/de/rom	.rom.0004be14	de
-main	rom_main_02	recon/tla/raw/0804bbd0	.text	en
-main	rom_main_02	recon/tla/raw/0804bc08	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.0004bdbc	ja
-main	rom_main_02	recon/tla/ja/rom	.rom.0004bdf4	ja
+main	rom_main_02	games/tla/src/window/battle_party_commands	.text
 main	rom_main_02	games/tla/src/window/f04cda8	.text
 main	rom_main_02	games/tla/src/window/resource_work	.text
 main	rom_main_02	games/tla/src/window/f04d16c	.text	en de es fr it ja

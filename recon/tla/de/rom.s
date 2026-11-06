@@ -11,12 +11,6 @@ System_InstallIwramAndIrqs:
 	.thumb_func
 System_WaitForFrameInterrupt:
 	.incbin "baserom.gba", 0x000134dc, 0x000000b0
-	.section .rom.000141a0, "ax"
-	.global VramCache_AllocateBlocks
-	.type VramCache_AllocateBlocks, %function
-	.thumb_func
-VramCache_AllocateBlocks:
-	.incbin "baserom.gba", 0x000141a0, 0x00000080
 	.section .rom.000157a4, "ax"
 	.global Render_ProjectPoint
 	.type Render_ProjectPoint, %function
@@ -515,12 +509,6 @@ Func_080dd054:
 	.incbin "baserom.gba", 0x000ec8de, 0x00000002
 	.section .rom.000ed3c2, "ax"
 	.incbin "baserom.gba", 0x000ed3c2, 0x00000002
-	.section .rom.000ed618, "ax"
-	.global Func_080e0618
-	.type Func_080e0618, %function
-	.thumb_func
-Func_080e0618:
-	.incbin "baserom.gba", 0x000ed618, 0x00000360
 	.section .rom.000ee448, "ax"
 	.global BattleEffect_SpawnScaledArcObjects
 	.type BattleEffect_SpawnScaledArcObjects, %function
@@ -553,12 +541,6 @@ Func_080e249c:
 	.thumb_func
 Func_080e2774:
 	.incbin "baserom.gba", 0x000ef774, 0x00000160
-	.section .rom.000efacc, "ax"
-	.global Func_080e2acc
-	.type Func_080e2acc, %function
-	.thumb_func
-Func_080e2acc:
-	.incbin "baserom.gba", 0x000efacc, 0x0000016c
 	.section .rom.000efc38, "ax"
 	.global Func_080e2c38
 	.type Func_080e2c38, %function
@@ -591,7 +573,7 @@ Func_080e4a34:
 	.type Func_080e5d5c, %function
 	.thumb_func
 Func_080e5d5c:
-	.incbin "baserom.gba", 0x000f2d5c, 0x0000062c
+	.incbin "baserom.gba", 0x000f2d5c, 0x00000598
 	.section .rom.000f3400, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000f3400, 0x000004c8

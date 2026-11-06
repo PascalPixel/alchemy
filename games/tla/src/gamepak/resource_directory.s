@@ -490,7 +490,7 @@ Resource_DirectoryTable:
 	resource VioletFlameBurst, FieldEffect_VioletFlameBurst
 	resource YellowFlameBurst, FieldEffect_YellowFlameBurst
 	resource BlueFlameBurst, FieldEffect_BlueFlameBurst
-	resource , FieldEffect_Leaves
+	resource Leaves, FieldEffect_Leaves
 	resource DustPuffA, FieldEffect_DustPuffA
 	resource , FieldEffect_DustPuffB
 	resource , Resource_Data1E3

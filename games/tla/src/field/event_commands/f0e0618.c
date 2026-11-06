@@ -1,14 +1,9 @@
-// Matches: differ 0 of 394 (tla-en, 2026-11-06); tla-ja also differ 0.
-// Func_080e0618, the frame callback Func_080e09c0 installs: it sprays
-// particles round the effect's object and moves the object through five
-// phases. What settled it: the sprite taken as &work->sprites[i] inside the
-// timer test (its copy is the r0 the native sets before the tile test),
-// work read before scene, and next stepped then masked.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_psynergy_work.h"
 #include "effect_sprite.h"
+#include "vector3.h"
 
 struct ScatterParticle {
   s32 x;
@@ -42,20 +37,15 @@ struct ScatterEvent {
   s8 targetZ;
 };
 
-struct ScatterVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, void *position);
-void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite, struct ScatterParticle *p);
+void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
+                                      struct ScatterParticle *p);
 void BattleEffect_IntegrateVector3(struct ScatterParticle *particle, s32 frames,
-                               s32 flags);
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
-                                         s32 y, s32 z);
-void Func_080d92a4(s32 target, struct ScatterVector *position);
+                                   s32 flags);
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
+                                        s32 z);
+void Func_080d92a4(s32 target, struct Vector3 *position);
 
 void Func_080e0618(void) {
   struct ScatterWork *work =
@@ -63,7 +53,7 @@ void Func_080e0618(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ScatterEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *object = work->object;
-  struct ScatterVector position;
+  struct Vector3 position;
   struct EffectSprite *sprite;
   struct ScatterParticle *particle;
   s32 i;
@@ -117,7 +107,7 @@ void Func_080e0618(void) {
     position.y = scene->y + c * 3 - d * 3;
     position.z = scene->z;
     Actor_SetPositionAndResetMotionFar(object, position.x, position.y,
-                                        position.z);
+                                       position.z);
     if (work->timer == 20) {
       work->phase++;
       work->timer = -1;

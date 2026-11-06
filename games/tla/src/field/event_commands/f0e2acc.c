@@ -1,19 +1,3 @@
-// Matches: differ 0 of 165 (tla-en, 2026-11-06).
-// What settled it (from 66): the sprite indexed and the particle a pointer
-// stepped beside the index, as the sibling event commands write their
-// loops, so loop.c hoists 384 and shares it with VramCache_Load's size and
-// the spin; the effect and event work read into locals after the burst
-// work; and the sprites typed as the tree's struct EffectSprite, whose byte
-// 5 bit is oam.palette256 (not a hidden flag) and byte 9 holds oam.priority
-// and oam.palette.
-// Resource 0x1e0 is FieldEffect_Leaves in the directory (ResourceId_Leaves,
-// to name there when this adopts); the native loads it from the pool.
-// Starts a 96-particle burst (heap slot 0x5c work). Decodes resource
-// 480 into the work and loads 384 bytes of it as tiles, sets up 96 4-by-4
-// sprites (depth 250, 256 colours, priority 0) and scatters as many
-// particles around the effect owner, each heading from the owner toward the
-// first touched cell with a random speed, an alternating spin and a start
-// delayed by half its index; then plays cue 220 and schedules Func_080e2c38.
 #include "types.h"
 #include "task.h"
 #include "ram_buffer.h"
@@ -87,8 +71,7 @@ void Func_080e2acc(void) {
     particle->x = owner->x;
     particle->y = owner->y;
     particle->z = owner->z;
-    Vector_AddPolarOffset(Random16() * 8 + 0x80000, Random16(),
-                          &particle->x);
+    Vector_AddPolarOffset(Random16() * 8 + 0x80000, Random16(), &particle->x);
     particle->heading = heading;
     particle->speed = Random16() + 0x10000;
     particle->spin = (Random16() >> 6) + 384;

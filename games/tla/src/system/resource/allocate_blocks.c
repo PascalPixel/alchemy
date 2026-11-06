@@ -1,9 +1,3 @@
-// Matches: differ 0 of 59 (tla-en, 2026-11-06).
-// ☀️'s VramCache_AllocateBlocks with ⚓️'s bound on the run's end. Every
-// access goes through gResourceBlockOwners and both failures return -1 in
-// place (no shared ret = -1); the scan's bound is ret + blocks, which loop.c
-// hoists into ip. Earlier forms through an owners local, or with a shared
-// -1 result, measured 57 to 74.
 #include "resource.h"
 #include "vram_tab.h"
 

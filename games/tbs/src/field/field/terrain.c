@@ -194,9 +194,8 @@ s32 Terrain_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
 /// A step along x: sample 0 for x < 8, sample 1 from x = 8.
 s32 Terrain_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
-  u32 cellX = pixelX;
   s32 heightSample;
-  if (cellX < CURVE_HALF_STEPS)
+  if ((u32)pixelX < CURVE_HALF_STEPS)
     heightSample = samples[0];
   else
     heightSample = samples[1];
@@ -206,9 +205,8 @@ s32 Terrain_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 /// A step along y: sample 0 for y < 8, sample 1 from y = 8.
 s32 Terrain_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
-  u32 cellY = pixelY;
   s32 heightSample;
-  if (cellY < CURVE_HALF_STEPS)
+  if ((u32)pixelY < CURVE_HALF_STEPS)
     heightSample = samples[0];
   else
     heightSample = samples[1];
@@ -290,22 +288,18 @@ s32 Terrain_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
 /// The sample gTerrain_SampleIndexTable picks for (x, y).
 s32 Terrain_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
-  u32 cellX = pixelX;
-  u32 cellY = pixelY;
   // The table holds a byte per pixel of the cell, row by row.
   return CURVE_HEIGHT_FIXED(
-      samples[gTerrain_SampleIndexTable[cellX + (cellY << 4)]]);
+      samples[gTerrain_SampleIndexTable[pixelX + (pixelY << 4)]]);
 }
 
 /// The same, with the table mirrored left to right.
 s32 Terrain_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
                                         s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
-  u32 cellX = pixelX;
-  u32 cellY = pixelY;
   // Row y read from its right end: (y << 4) + 15 - x.
   return CURVE_HEIGHT_FIXED(
-      samples[gTerrain_SampleIndexTable[((cellY << 4) - cellX) +
+      samples[gTerrain_SampleIndexTable[((pixelY << 4) - pixelX) +
                                         CURVE_FULL_STEPS - 1]]);
 }
 

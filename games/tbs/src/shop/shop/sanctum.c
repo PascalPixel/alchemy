@@ -168,10 +168,8 @@ s32 Sanctum_Run(s32 unitId) {
       break;
 
     {
-      s32 messageBase = MsgReviveService;
-      s32 message = messageBase;
+      s32 message = MsgReviveService;
 
-      messageBase = 0;
       Sanctum_ShowKeeperMessage(message);
       if (Sanctum_CountMembersInNeed() == 0) {
         Sanctum_ShowKeeperMessage(message + 1);

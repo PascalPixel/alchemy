@@ -240,7 +240,6 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s16 savedY;
   s32 unitSalePrice;
   s32 stackQuantity;
-  s32 quantityLimit;
   struct ItemDefinition *item;
   struct ShopWork *shop;
   struct Unit *unit;
@@ -252,7 +251,6 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   unitSalePrice = Shop_SalePrice(unit->inventory[slot]);
   // Shop_GetSelectionState is GAME.S's name for Inventory_GetQuantity
   stackQuantity = Shop_GetSelectionState(unitId, slot);
-  quantityLimit = stackQuantity;
   if ((item->flags & ITEM_STACKABLE) && stackQuantity > 1) {
     Shop_ShowKeeperMessage(MsgHowManyToSell);
     savedX = shop->cursor.targetX;
@@ -260,7 +258,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     shop->cursor.anchor->motion = 4;
     shop->mode = 12;
     MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 48);
-    result = Shop_SelectQuantity(0, quantityLimit, unitSalePrice);
+    result = Shop_SelectQuantity(0, stackQuantity, unitSalePrice);
     wait(1);
     Icon_PrepareActorFar(shop->cursor.anchor);
     MenuCursor_Place(NULL, savedX, savedY);

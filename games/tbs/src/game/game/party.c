@@ -201,19 +201,16 @@ s32 Party_ListMembers(s16 *unitIds) {
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
   struct MainRoutineWork *work;
-  struct MainRoutineWork *store;
 
   work = &gMainRoutineWork;
   value = work->coins;
   value += amount;
-  store = work;
   if (value > 999999) {
     value = 999999;
   }
   if (value < 0) {
     value = 0;
   }
-  work = store;
   work->coins = value;
   return value;
 }

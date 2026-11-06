@@ -76,6 +76,9 @@ void Camera_ResetViewDefaults(void) {
 
 /// Unused: multiplies two 8.8 fixed-point values, rounding toward zero.
 UNUSED s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue) {
+  /* FAKEMATCH(temporary): left copies leftValue and right copies rightValue;
+   * as (s16)leftValue and (s16)rightValue at their uses, 2 of 14
+   * instructions differ in tbs-en. */
   s16 left = leftValue;
   s16 right = rightValue;
   s32 product;

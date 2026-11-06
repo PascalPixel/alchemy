@@ -648,11 +648,9 @@ static __inline__ void Text_WidenByteString(const u8 *input, u16 *output) {
 /// (Heap_AllocEwram), and is freed before returning.
 void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y) {
   s16 *buffer;
-  const u8 *input;
 
-  input = text;
   buffer = Heap_AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
-  Text_WidenByteString(input, (u16 *)buffer);
+  Text_WidenByteString(text, (u16 *)buffer);
   Text_DrawWideStringAtOffset((u16 *)buffer, window, x, y);
   Heap_Release(buffer);
 }

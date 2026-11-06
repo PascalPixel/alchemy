@@ -181,7 +181,6 @@ enum CastingImpact {
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   void **slots;
   void **slot;
-  s32 alive;
   s32 cellOffset;
   struct ScreenPoint casterPos;
   struct ScreenPoint targetPos;
@@ -435,8 +434,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       }
     }
     if (mode <= CASTING_IMPACT_IMPACT_SAP) {
-      alive = n;
-      if (alive <= 63) {
+      if (n <= 63) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         Projection_Point(&djinnPos, &sparkScreen);
         sparkScreen.x /= 2;

@@ -60,7 +60,6 @@ s32 Save_InitializeWork(void) {
   for (index = 0; index < SAVE_SECTOR_COUNT; index++) {
     u32 status;
     u32 part;
-    u8 id;
 
     work->occupied[index] = 0;
     work->partId[index] = SAVE_PART_NONE;
@@ -78,8 +77,7 @@ s32 Save_InitializeWork(void) {
       continue;
     work->counter[index] = header->counter;
     part = header->partId;
-    id = part;
-    if (id >= SAVE_PART_NONE)
+    if ((u8)part >= SAVE_PART_NONE)
       continue;
     if (status != 0)
       continue;

@@ -515,7 +515,6 @@ s32 Actor_ApproachWatchedActor(struct Actor *interpreter) {
   s32 deltaXPixels;
   s32 remainingDistance;
   s32 moveX;
-  s32 scaledDeltaX;
   struct Actor *watchedActor;
 
   watchedActor = actor->watchedActor;
@@ -531,9 +530,8 @@ s32 Actor_ApproachWatchedActor(struct Actor *interpreter) {
   // actor along the line to it (the 16.16 offset scaled by the whole-pixel
   // ratio) and run on to SC_WAIT(1); otherwise stand and stay on this command.
   if (distancePixels > SCRIPT_APPROACH_DISTANCE) {
-    scaledDeltaX = dx;
     remainingDistance = distancePixels - SCRIPT_APPROACH_DISTANCE;
-    moveX = scaledDeltaX * remainingDistance / distancePixels;
+    moveX = dx * remainingDistance / distancePixels;
     moveZ = dz * remainingDistance / distancePixels;
     Actor_SetMoveTarget(actor, actor->x.fixed + moveX, actor->y.fixed,
                         actor->z.fixed + moveZ);

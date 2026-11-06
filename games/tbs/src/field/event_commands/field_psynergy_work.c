@@ -201,7 +201,6 @@ void FieldPsynergy_End(void) {
 /// target are set up.
 void FieldPsynergy_StartCast(void) {
   s32 ability;
-  s32 announcedAbility;
   struct Actor *caster;
   struct FieldEffectWork *effectWork;
   void *renderState;
@@ -210,7 +209,6 @@ void FieldPsynergy_StartCast(void) {
   renderState = *(void **)Ram_FieldWork;
   caster = effectWork->mainActor;
   ability = (s16)effectWork->action;
-  announcedAbility = ability;
   Actor_SelectAnimationFar(caster, 20);
   caster->targetX = caster->x.fixed;
   caster->targetY = caster->y.fixed;
@@ -222,7 +220,7 @@ void FieldPsynergy_StartCast(void) {
   }
   if (effectWork->active != 0) {
     Actor_SetOthersPaused(caster, 1, 0);
-    MessageArgument_PushFar(announcedAbility, MESSAGE_ARGUMENT_ABILITY);
+    MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
     // The mode branches currently show the same message. Merging them shrinks
     // the native English function by 32 bytes, so keep this existing form.
     if ((s8)effectWork->mode != 0) {

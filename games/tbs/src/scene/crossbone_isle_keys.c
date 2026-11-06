@@ -215,10 +215,7 @@ static __inline__ void MapLocalState_StoreStep(s16 *field, s32 step) {
 
 /// Lifts the first pillar and clears the terrain beneath its column.
 static __inline__ void LiftPillar(s32 column, u8 motionFlags) {
-  {
-    s32 destinationColumn = column;
-    MapGrid_CopyCellAttributes(61, 36, 1, 1, destinationColumn, 42);
-  }
+  MapGrid_CopyCellAttributes(61, 36, 1, 1, column, 42);
   Actor_GetById(ACTOR_FIRST_PILLAR)->motionFlags = motionFlags;
   Actor_GetById(ACTOR_FIRST_PILLAR)->y.fixed = PIXELS(32);
 }

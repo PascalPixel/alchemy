@@ -1185,11 +1185,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       }
       {
         struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
-        struct ScreenPoint *origin;
-        /* FAKEMATCH(dead): origin offset by a zero gcse finds late, keeping
-         * targetScreen in a register for the loop; as targetScreen read
-         * directly, 64 of 3070 instructions differ in tbs-en. */
-        s32 bias = 0;
         for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++, step++) {
           if (step->x >= 0 && frame >= i / 2) {
             s32 image = i & 3;
@@ -1197,9 +1192,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             Transform_ApplyPitch(step->velocityX);
             Transform_ApplyYaw(step->velocityY);
             Projection_Point(step, &projected);
-            origin = (struct ScreenPoint *)((u8 *)targetScreen + bias);
-            projected.x = projected.x / 2 + origin->x / 2;
-            projected.y += origin->y + 32;
+            projected.x = projected.x / 2 + targetPos.x / 2;
+            projected.y += targetPos.y + 32;
             blitters[1](canvas, pictures + gCastingImpact_IceChipCells[image],
                         projected.x - 4, projected.y - 4, 8, 8);
             step->x -= 6;

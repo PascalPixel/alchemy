@@ -391,22 +391,16 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         *line++ = 0;
       for (; i != 135; i++) {
         s32 green = i - 16;
-        /* FAKEMATCH(temporary): blue holds the biased dividend and quotient,
-         * keeping the r3 copy and shift; as level = green / 4 + heat, 5 of
-         * 1532 instructions differ in tbs-en. */
-        s32 blue = green;
-        s32 level;
+        s32 quarter = green / 4;
+        s32 level = quarter + heat;
+        s32 blue;
 
-        if (green < 0)
-          blue += 3;
-        blue >>= 2;
-        level = blue + heat;
-        /* FAKEMATCH(dead): updates of blue that cancel out, under a test of
-         * blue, keep it live past level's sum, so level takes r2; as level =
-         * blue + heat alone, 42 of 1532 instructions differ in tbs-en. */
-        if (blue) {
-          blue++;
-          blue--;
+        /* FAKEMATCH(dead): updates of quarter that cancel out, under a test of
+         * quarter, keep it live past level's sum, so level takes r2; as level =
+         * quarter + heat alone, 18 of 1532 instructions differ in tbs-en. */
+        if (quarter) {
+          quarter++;
+          quarter--;
         }
         blue = level - 32;
         green = level - 80;

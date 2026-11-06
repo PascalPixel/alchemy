@@ -22,15 +22,16 @@
 /// 15 dimmed by four tenths), so the shimmer runs up the ramp; green and blue
 /// stay those of gPaletteCycleGreen and gPaletteCycleBlue.
 static void MercuryLighthouse_CyclePalette(void) {
-  u16 cur;
+  // volatile: cur lives at sp+2, stored with strh and loaded again with ldrh
+  // for v, as the bytes show; as a plain u16, 22 of 65 instructions differ in
+  // tbs-en.
+  volatile u16 cur;
   u32 i;
   s32 v;
   s32 bits;
   u16 *dst;
-  u16 *curAt; // cur is first set through a pointer, so it lives in memory.
 
-  curAt = &cur;
-  *curAt = 0; // Default: cur is set for real before it is read.
+  cur = 0;
   if (gFrameCount % 5 != 0)
     return;
   gPaletteCycleRed = (gPaletteCycleRed + 4) & 31;

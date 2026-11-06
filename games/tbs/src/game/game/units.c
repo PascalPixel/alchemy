@@ -215,9 +215,9 @@ void Unit_Calculate(s32 unitId) {
       if (stats->item->flags & ITEM_CURSED)
         unit->curse |= CURSE_BOUND | CURSE_ITEM;
       stats->atk += stats->item->primaryBonus;
-      /* FAKEMATCH(one-pass): an empty once-only loop after the Attack bonus
-       * keeps the Defense load after the item's second bonus; as plain
-       * statements, 2 of 864 instructions differ in tbs-en. */
+      // An empty once-only loop after the Attack bonus keeps the Defense load
+      // after the item's second bonus; as plain statements, 2 of 864
+      // instructions differ in tbs-en.
       do {
       } while (0);
       stats->def += stats->item->secondaryBonus;

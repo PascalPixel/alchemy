@@ -743,8 +743,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
   s32 randomX;
   struct Actor *actor;
   s32 randomZ;
-  struct EffectOptions optionsStorage;
-  struct EffectOptions *options;
+  struct EffectOptions options;
 
   Event_Start();
   actor = Actor_GetById(ACTOR_NORTHWEST_SINKING_PILLAR);
@@ -752,10 +751,9 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     Event_Wait(30);
     overlay = Actor_Prepare(PIXELS(744), 0, PIXELS(184), SPRITE_CAPPED_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
-    options = &optionsStorage;
-    options->startScaleX = 3 * Q16_ONE / 5;
-    options->startScaleY = 3 * Q16_ONE / 5;
-    options->palette = 7;
+    options.startScaleX = 3 * Q16_ONE / 5;
+    options.startScaleY = 3 * Q16_ONE / 5;
+    options.palette = 7;
     Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->motionFlags = 0;
     Sound_Play(SE_PUSH);
     for (i = 0; i < 16; i++) {
@@ -768,7 +766,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
           randomX, 0,
           ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
            PIXELS(128)),
-          0, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
+          0, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
     }
     MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
     Event_Wait(30);
@@ -828,8 +826,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
   s32 randomZ;
   s32 effectX;
   s32 effectZ;
-  struct EffectOptions optionsStorage;
-  struct EffectOptions *options;
+  struct EffectOptions options;
 
   Event_Start();
   actor = Actor_GetById(ACTOR_SOUTHEAST_SINKING_PILLAR);
@@ -837,10 +834,9 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_02) != 0) {
       Event_Wait(30);
       overlay = Actor_Prepare(PIXELS(770), 0, PIXELS(274), SPRITE_CRATE);
-      options = &optionsStorage;
-      options->startScaleX = 3 * Q16_ONE / 5;
-      options->startScaleY = 3 * Q16_ONE / 5;
-      options->palette = 7;
+      options.startScaleX = 3 * Q16_ONE / 5;
+      options.startScaleY = 3 * Q16_ONE / 5;
+      options.palette = 7;
       Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->motionFlags = 0;
       Sound_Play(SE_PUSH);
       for (i = 0; i < 16; i++) {
@@ -852,7 +848,8 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
         effectZ = ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
                    PIXELS(224));
         FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,
-                          EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+                          &options);
       }
       MapGrid_CopyCellAttributes(51, 8, 1, 1, 45, 14);
       Event_Wait(30);

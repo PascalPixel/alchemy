@@ -326,9 +326,8 @@ s32 BattleCommandRow_Run(s32 mode) {
     for (panel = 0; panel <= 6; panel++) {
       for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
         s32 col;
-        /* FAKEMATCH(volatile): the add of 0x44a stays apart from the store it
-         * addresses; as a plain store, 2 of 1037 instructions differ in
-         * tbs-en. */
+        // The add of 0x44a stays apart from the store it addresses; as a plain
+        // store, 2 of 1037 instructions differ in tbs-en.
         for (col = 0; col <= 2; col++)
           *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +
                             5 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;

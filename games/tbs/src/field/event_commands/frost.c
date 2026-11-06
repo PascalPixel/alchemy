@@ -122,6 +122,8 @@ void FieldPsynergy_Frost(void) {
 
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
   // centred 2 to 6 pixels from the Psynergy's position.
+  /* FAKEMATCH(temporary): p holds &pos; as &pos and pos.x directly, 2 of 161
+   * instructions differ in tbs-en. */
   p = &pos;
   remainingCycles = 15;
   do {

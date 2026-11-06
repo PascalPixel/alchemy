@@ -3524,6 +3524,8 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(440), -1, PIXELS(360), 1);
   extraBursts = 0;
   row = 0;
+  /* FAKEMATCH(temporary): options holds &optionsStorage; as &optionsStorage
+     at the spawn, 10 of 179 instructions differ in tbs-en. */
   options = &optionsStorage;
   rowOffset = 0;
   do {
@@ -3590,6 +3592,8 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(568), -1, PIXELS(360), 1);
   extraBursts = 0;
   row = 0;
+  /* FAKEMATCH(temporary): options holds &optionsStorage; as &optionsStorage
+     at the spawn, 10 of 176 instructions differ in tbs-en. */
   options = &optionsStorage;
   rowOffset = 0;
   do {
@@ -3635,15 +3639,14 @@ static void VenusLighthouse_UpdateRisingSpray(struct Actor *updated) {
 static s32 VenusLighthouse_UpdateRisingSpray(struct Actor *updated) {
 #endif
   struct Actor *actor = (struct Actor *)updated;
-  struct EffectOptions optionsStorage;
-  struct EffectOptions *options = &optionsStorage;
+  struct EffectOptions options;
   s32 framePhase;
   s32 particleX, particleY, particleZ, riseSpeed;
 
-  options->priority = 1;
-  options->palette = 5;
-  options->type = SPRITE_GLINT;
-  options->script = gVenusSprayScript;
+  options.priority = 1;
+  options.palette = 5;
+  options.type = SPRITE_GLINT;
+  options.script = gVenusSprayScript;
   framePhase = gFrameCount & 3;
   if (framePhase == 0) {
     if ((gFrameCount & 7) == 0) {
@@ -3659,7 +3662,7 @@ static s32 VenusLighthouse_UpdateRisingSpray(struct Actor *updated) {
     FieldEffect_Spawn(particleX, particleY, particleZ, 0, riseSpeed, framePhase,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
-                      options);
+                      &options);
   }
 #ifdef UBFIX
   return;

@@ -2096,6 +2096,8 @@ static void Kalay_PushTunnelStatue(void) {
   if (statue != NULL) {
     stoppedVelocity = 0;
     statue->layer = 2;
+    /* FAKEMATCH(temporary): target holds &destination; as &destination and
+     * destination.x directly, 44 of 100 instructions differ in tbs-en. */
     target = &destination;
     moveStep = gKalay_TileStepByFacing[direction];
     SET_POSITION(target, statue->x.fixed + (moveStep & -0x10000),

@@ -130,6 +130,9 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   // The odd columns draw through the mirrored blitter, draw[1].
+  /* FAKEMATCH(temporary): mirroredBlitter copies the slot's blitter; as
+   * draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2], 31 of 503 instructions differ
+   * in tbs-en. */
   mirroredBlitter = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   draw = rectangle;
   draw[1] = mirroredBlitter;

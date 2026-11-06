@@ -2227,8 +2227,7 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
 
 /// Emits sparks while Alex disappears and reappears.
 static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
-  struct EffectOptions optionsStorage;
-  struct EffectOptions *options;
+  struct EffectOptions options;
   struct Actor *alex;
   u32 frame;
   s32 x;
@@ -2237,12 +2236,11 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   alex = Actor_GetById(ACTOR_ALEX);
   Sound_Play(SE_WARP);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ALEX), 0);
-  options = &optionsStorage;
-  options->priority = 1;
-  options->palette = 5;
-  options->type = SPRITE_PARTICLE;
-  options->startScaleX = 2 * Q16_ONE / 5;
-  options->startScaleY = 3 * Q16_ONE;
+  options.priority = 1;
+  options.palette = 5;
+  options.type = SPRITE_PARTICLE;
+  options.startScaleX = 2 * Q16_ONE / 5;
+  options.startScaleY = 3 * Q16_ONE;
   for (frame = 0; frame <= 31; frame++) {
     Event_Wait(1);
     if (!(frame & 1)) {
@@ -2257,7 +2255,7 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
                         alex->z.fixed, 0, -PIXELS(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        options);
+                        &options);
     }
     if (frame == 20)
       Actor_ConfigureSpriteColor(ACTOR_ALEX, SPRITE_COLOR_BLINK);

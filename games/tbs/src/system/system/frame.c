@@ -259,10 +259,10 @@ void wait(s32 frames) {
        * only
        * ("=r"), 44 of 403 instructions differ in tbs-en. */
       CAMELOT_ASM("read the hardware stack pointer for its restore copy")
-      // The stack is about to be copied back in, so the read clobbers
-      // memory, as the restore below does.
-      __asm__ volatile("mov %0, sp" : "+r"(base) : : "memory");
-      base -= *size;
+      __asm__ volatile("mov %0, sp" : "+r"(base));
+      // The size reread through a volatile pointer, a load apart from the
+      // test's; as *size, 2 of 403 instructions differ in tbs-en.
+      base -= *(volatile u32 *)size;
       sp = base;
       CAMELOT_ASM(
           "restore the hardware stack pointer after the proven stack copy")

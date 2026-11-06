@@ -1003,9 +1003,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     // From frame 64 the battle background shakes up and down: BG1's vertical
     // scroll jumps between 30 and 33 pixels.
     if (frame > 63) {
-      /* FAKEMATCH(temporary): the shake value through an s32 keeps the AND
-       * constant an immediate; as a direct store to gBgScroll[1].y, 9 of 2455
-       * instructions differ in tbs-en. */
+      // The shake value through an s32 keeps the AND constant an immediate; as
+      // a direct store to gBgScroll[1].y, 9 of 2455 instructions differ in
+      // tbs-en.
       s32 shake = (Random16() & 3) + 30;
 
       gBgScroll[1].y = shake;

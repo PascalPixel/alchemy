@@ -903,9 +903,8 @@ menu_top:;
           }
           for (v7 = pageIndex * PASSWORD_SYMBOLS_PER_PAGE, pageGlyphIndex = 0;
                v7 != v6; v7++, pageGlyphIndex++) {
-            /* FAKEMATCH(one-pass): the block makes each draw call rebuild the
-             * glyph's address as the ROM does; without it, 98 of 921
-             * instructions differ in tbs-en. */
+            // The block makes each draw call rebuild the glyph's address as the
+            // ROM does; without it, 98 of 921 instructions differ in tbs-en.
             do {
               FileScreen_NameEntryCharacter(password[v7] & PASSWORD_SYMBOL_MASK,
                                             glyph);
@@ -922,9 +921,8 @@ menu_top:;
               s32 row;
 
               glyphColumn = (pageGlyphIndex % 10);
-              /* FAKEMATCH(wrapper): the division written as a call to
-               * __divsi3; as pageGlyphIndex / 10, 45 of 921 instructions
-               * differ in tbs-en. */
+              // The division written as a call to __divsi3; as pageGlyphIndex /
+              // 10, 45 of 921 instructions differ in tbs-en.
               row = __divsi3(pageGlyphIndex, 10);
               Text_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
                               (row << 4) + 2);

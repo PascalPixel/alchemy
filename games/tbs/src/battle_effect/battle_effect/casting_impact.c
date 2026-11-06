@@ -354,8 +354,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
     work->transferValue = CANVAS_FADE_HALF;
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
-  // Each pointer is set inside the call that fills what it names; set before
-  // the call, the address is computed before the unit is read.
+  /* FAKEMATCH(temporary): targetScreen holds &targetPos, casterScreen
+   * &casterPos and drawPair blitters, each set inside the call that fills
+   * what it names; as &targetPos, &casterPos and blitters used directly, 136
+   * of 3070 instructions differ in tbs-en. */
   Projection_ScaledUnit(work->args->targets[0], targetScreen = &targetPos);
   Projection_ScaledUnit(work->args->user, casterScreen = &casterPos);
   BattleEffect_FetchRectangleBlitters(work->args->side, drawPair = blitters);
@@ -534,6 +536,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // The Djinni's step a frame, to reach 30 pixels above the target in six
   // frames.
   targetActor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
+  /* FAKEMATCH(temporary): motion holds &velocity; as velocity used directly,
+   * 18 of 3070 instructions differ in tbs-en. */
   motion = &velocity;
   SET_POSITION(motion, (targetActor->x.fixed - position->x) / 6,
                (targetActor->y.fixed - position->y + (30 << 16)) / 6,

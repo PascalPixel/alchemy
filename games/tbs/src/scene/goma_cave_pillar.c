@@ -502,6 +502,8 @@ static void GomaCavePillar_JumpGapWest(void) {
   motionFlags = &leader->motionFlags;
   savedMotionFlags = *motionFlags;
   target.x = Actor_GetById(ACTOR_PARTY_LEADER)->x.fixed - PIXELS(32);
+  /* FAKEMATCH(temporary): destination holds &target; as target.y and &target,
+   * 51 of 79 instructions differ in tbs-ja. */
   destination = &target;
   destination->y = Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed;
   destination->z = Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed;

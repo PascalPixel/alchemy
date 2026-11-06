@@ -283,6 +283,9 @@ void Serial_PrepareSendPacket(void *payload) {
     }
   }
   {
+    /* FAKEMATCH(temporary): sendBuffers copies sr->sendBuffer; as
+     * ((struct SerialPacket *)sr->sendBuffer[0])->checksum = ~sum, 8 of 48
+     * instructions differ in tbs-en. */
     u16 **sendBuffers = sr->sendBuffer;
 
     ((struct SerialPacket *)sendBuffers[0])->checksum = ~sum;

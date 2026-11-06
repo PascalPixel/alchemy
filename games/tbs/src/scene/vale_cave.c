@@ -373,7 +373,6 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
 /// FLAG_VALE_CAVE_WEST_CRATES_SUNK and makes their cells walkable.
 static void ValeCave_MoveWestCratesIntoWater(void) {
   struct EffectOptions options;
-  struct EffectOptions *particleOptions;
   struct Actor *leftEffect;
   struct Actor *rightEffect;
 
@@ -391,13 +390,12 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
         Actor_GetById(ACTOR_WEST_CRATES)->z.fixed + PIXELS(52), SPRITE_CRATES);
     Actor_GetById(ACTOR_WEST_CRATES)->motionFlags = 0;
     // Surround the sinking crates with one particle per frame.
-    particleOptions = &options;
-    particleOptions->startScaleX = 3 * Q16_ONE / 5;
-    particleOptions->startScaleY = 3 * Q16_ONE / 5;
-    particleOptions->palette = 7;
+    options.startScaleX = 3 * Q16_ONE / 5;
+    options.startScaleY = 3 * Q16_ONE / 5;
+    options.palette = 7;
     Sound_Play(SE_BURST);
     ValeCave_SinkActorWithParticles(ACTOR_WEST_CRATES, PIXELS(368), PIXELS(624),
-                                    particleOptions);
+                                    &options);
     MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
     Actor_GetById(ACTOR_WEST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_WEST_CRATES_SUNK);
@@ -419,7 +417,6 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
 /// FLAG_VALE_CAVE_EAST_CRATES_SUNK and makes their cells walkable.
 static void ValeCave_MoveEastCratesIntoWater(void) {
   struct EffectOptions options;
-  struct EffectOptions *particleOptions;
   struct Actor *leftEffect;
   struct Actor *rightEffect;
 
@@ -437,13 +434,12 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
     // them back up, as the recording of this event shows.
     Actor_GetById(ACTOR_WEST_CRATES)->motionFlags = 0;
     // Surround the sinking crates with one particle per frame.
-    particleOptions = &options;
-    particleOptions->startScaleX = 3 * Q16_ONE / 5;
-    particleOptions->startScaleY = 3 * Q16_ONE / 5;
-    particleOptions->palette = 7;
+    options.startScaleX = 3 * Q16_ONE / 5;
+    options.startScaleY = 3 * Q16_ONE / 5;
+    options.palette = 7;
     Sound_Play(SE_BURST);
     ValeCave_SinkActorWithParticles(ACTOR_EAST_CRATES, PIXELS(432), PIXELS(656),
-                                    particleOptions);
+                                    &options);
     MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
     Actor_GetById(ACTOR_EAST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_EAST_CRATES_SUNK);

@@ -468,9 +468,9 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
       }
       temporaryActor = Actor_Prepare(x, y, z, kind);
       height = actor->z.fixed - z + y;
-      /* FAKEMATCH(one-pass): an empty once-only loop after the height
-       * arithmetic, which keeps found's constant after it; as no asm, 2 of 117
-       * instructions differ in tbs-en. */
+      // An empty once-only loop after the height arithmetic, which keeps
+      // found's constant after it; as no asm, 2 of 117 instructions differ in
+      // tbs-en.
       do {
       } while (0);
       found = 1;
@@ -521,16 +521,14 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
   s32 drawX;
   s32 drawZ;
   s32 drawY;
-  struct EffectOptions *settings;
   struct EffectOptions options;
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   cycleFrame = gFrameCount & 3;
   if (cycleFrame == 0) {
-    settings = &options;
-    settings->palette = 10;
-    settings->startScaleX = 7 * Q16_ONE / 10;
-    settings->startScaleY = 7 * Q16_ONE / 10;
+    options.palette = 10;
+    options.startScaleX = 7 * Q16_ONE / 10;
+    options.startScaleY = 7 * Q16_ONE / 10;
     drawX = Import_RandomNext();
     x = leader->x.fixed + ((((u32)((drawX << 4) + drawX) >> 16) - 8) << 16);
     drawZ = Import_RandomNext();
@@ -541,7 +539,7 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
     FieldEffect_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                           EFFECT_SCRIPT_MEDIUM,
-                      settings);
+                      &options);
   }
 }
 
@@ -555,7 +553,6 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 #if !TBS_PATCH_1
   s32 step;
 #endif
-  struct FieldPosition *position;
   struct FieldPosition destination;
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
@@ -567,37 +564,36 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   if (gMainRoutineWork.movementMode != LEADER_MOVEMENT_WALK) {
     return 0;
   }
-  position = &destination;
 #if TBS_PATCH_1
-  position->x = (leader->x.fixed & -0x100000) + PIXELS(8);
-  position->y = leader->y.fixed;
-  position->z = (leader->z.fixed & -0x100000) + PIXELS(8);
-  Vector_AddPolarOffset(PIXELS(16), jumpDirection, position);
+  destination.x = (leader->x.fixed & -0x100000) + PIXELS(8);
+  destination.y = leader->y.fixed;
+  destination.z = (leader->z.fixed & -0x100000) + PIXELS(8);
+  Vector_AddPolarOffset(PIXELS(16), jumpDirection, &destination);
 #else
   jumpDirection = leader->facing >> 12;
   step = gPushedActor_DirectionSteps[jumpDirection];
-  position->x = leader->x.fixed + (step & 0xffff0000);
-  position->y = leader->y.fixed;
+  destination.x = leader->x.fixed + (step & 0xffff0000);
+  destination.y = leader->y.fixed;
   step <<= 16;
-  position->z = leader->z.fixed + step;
+  destination.z = leader->z.fixed + step;
 #endif
   // Require a free intervening cell before testing the two-cell landing.
-  if (FieldActor_CheckMovementCollision(leader, position) != 1 &&
-      PushedActor_FindAtTile(position, leader) == 0) {
+  if (FieldActor_CheckMovementCollision(leader, &destination) != 1 &&
+      PushedActor_FindAtTile(&destination, leader) == 0) {
 #if TBS_PATCH_1
-    position->x = (leader->x.fixed & -0x100000) + PIXELS(8);
-    position->y = leader->y.fixed;
-    position->z = (leader->z.fixed & -0x100000) + PIXELS(8);
-    Vector_AddPolarOffset(PIXELS(32), jumpDirection, position);
+    destination.x = (leader->x.fixed & -0x100000) + PIXELS(8);
+    destination.y = leader->y.fixed;
+    destination.z = (leader->z.fixed & -0x100000) + PIXELS(8);
+    Vector_AddPolarOffset(PIXELS(32), jumpDirection, &destination);
 #else
     step = gPushedActor_DirectionSteps[jumpDirection];
-    position->x = leader->x.fixed + ((step & 0xffff0000) * 2);
-    position->y = leader->y.fixed;
+    destination.x = leader->x.fixed + ((step & 0xffff0000) * 2);
+    destination.y = leader->y.fixed;
     step <<= 17;
-    position->z = leader->z.fixed + step;
+    destination.z = leader->z.fixed + step;
 #endif
-    if (PushedActor_FindAtTile(position, leader) == 0 &&
-        FieldActor_CheckMovementCollision(leader, position) == 0) {
+    if (PushedActor_FindAtTile(&destination, leader) == 0 &&
+        FieldActor_CheckMovementCollision(leader, &destination) == 0) {
       Event_Start();
       Actor_SelectAnimation(leader, 6);
       wait(6);
@@ -608,8 +604,8 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       leader->velocityY = PIXELS(4);
       *flags &= 126;
       Actor_SetSpriteFlags(leader, 0);
-      Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, position->x >> 16,
-                                 position->z >> 16);
+      Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, destination.x >> 16,
+                                 destination.z >> 16);
       Actor_SelectAnimation(leader, 6);
       Actor_SetSpriteFlags(leader, 1);
       *flags = savedMotionFlags;
@@ -1195,12 +1191,11 @@ static void CrossboneIsleSteppingStones_ClimbUp(void) { Field_ClimbUp(); }
 static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
   struct Actor *leader = Actor_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition position;
-  struct FieldPosition *p = &position;
 
-  p->x = leader->x.fixed;
-  p->y = leader->y.fixed;
-  p->z = leader->z.fixed + PIXELS(16);
-  if (PushedActor_FindAtTile(p, leader) != NULL) {
+  position.x = leader->x.fixed;
+  position.y = leader->y.fixed;
+  position.z = leader->z.fixed + PIXELS(16);
+  if (PushedActor_FindAtTile(&position, leader) != NULL) {
     CrossboneIsleSteppingStones_JumpOrPushStackedPillar();
   } else if (CrossboneIsleSteppingStones_TryJumpAcrossPillar() == 0) {
     Field_ClimbDown();
@@ -1327,7 +1322,6 @@ static void CrossboneIsleSteppingStones_FrostRaisesPillar(void) {
 /// Emits growing, rotating particles while Frost freezes the third puddle.
 static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   struct EffectOptions options;
-  struct EffectOptions *settings;
   s32 velocityX;
   s32 velocityY;
   u32 draw;
@@ -1338,17 +1332,16 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   if ((gFrameCount & 7) == 0)
     Sound_Play(SE_WHOOSH);
 
-  settings = &options;
-  settings->palette = 10;
-  settings->startScaleX = Q16_ONE / 2;
-  settings->startScaleY = Q16_ONE / 2;
-  settings->targetScaleX = 8 * Q16_ONE / 5;
-  settings->targetScaleY = 8 * Q16_ONE / 5;
+  options.palette = 10;
+  options.startScaleX = Q16_ONE / 2;
+  options.startScaleY = Q16_ONE / 2;
+  options.targetScaleX = 8 * Q16_ONE / 5;
+  options.targetScaleY = 8 * Q16_ONE / 5;
   draw = Import_RandomNext();
   mask = 0x0ffff000;
   mask &= draw;
-  settings->rotation = mask;
-  settings->update = CrossboneIsleSteppingStones_UpdateDampedParticle;
+  options.rotation = mask;
+  options.update = CrossboneIsleSteppingStones_UpdateDampedParticle;
 
   draw = Import_RandomNext();
   velocityX = -(((draw * 5) >> 16) * PIXELS(1) + PIXELS(6));
@@ -1360,7 +1353,7 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
       PIXELS(324), PIXELS(48), PIXELS(228), velocityX, velocityY, 0,
       EFFECT_USE_UPDATE | EFFECT_USE_ROTATION | EFFECT_USE_START_SCALE |
           EFFECT_SCALE_TO_TARGET | EFFECT_USE_PALETTE,
-      settings);
+      &options);
 }
 
 // UB: calling this s32 function through a void update routine is incompatible.
@@ -1376,7 +1369,6 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
 #endif
   struct Actor *actor = (struct Actor *)updated;
   struct EffectOptions options;
-  struct EffectOptions *settings;
   u32 phase = gFrameCount & 7;
   s32 x;
   s32 y;
@@ -1390,10 +1382,9 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
     return 0;
 #endif
 
-  settings = &options;
-  settings->palette = 7;
-  settings->startScaleX = 7 * Q16_ONE / 10;
-  settings->startScaleY = 7 * Q16_ONE / 10;
+  options.palette = 7;
+  options.startScaleX = 7 * Q16_ONE / 10;
+  options.startScaleY = 7 * Q16_ONE / 10;
 
   x = actor->x.fixed + (((((u32)Import_RandomNext() * 17) >> 16) - 8) << 16);
   y = actor->y.fixed + ((((u32)Import_RandomNext() * 17) >> 16) << 16);
@@ -1404,7 +1395,7 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *updated) {
   FieldEffect_Spawn(x, y, z, 0, scale, phase,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
-                    settings);
+                    &options);
 #ifdef UBFIX
   return;
 #else

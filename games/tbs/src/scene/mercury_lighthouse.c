@@ -810,7 +810,6 @@ static void MercuryLighthouse_SprayAtFountain(void) {
 
 /// Opens the fountain row by row and starts its continuous spray.
 static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
-  struct EffectOptions *options;
   s32 row;
   s32 rowOffset;
   s32 particleX;
@@ -822,17 +821,16 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   s32 velocityX;
   s32 velocityZ;
   s32 nextRow;
-  struct EffectOptions optionsStorage;
+  struct EffectOptions options;
 
   MapGrid_CopyCellsTo(78, 59, 110, 36, 1, 1);
   MapGrid_CopyCellsTo(76, 59, 109, 36, 1, 1);
-  options = &optionsStorage;
   // The shared initializer grows this path from 336 to 340 bytes and
   // moves its palette store after the scales; the stop path also reorders
   // stores. Keep the ordinary assignments, without a new steering wrapper.
-  options->palette = 7;
-  options->startScaleX = Q16_ONE / 2;
-  options->startScaleY = Q16_ONE / 2;
+  options.palette = 7;
+  options.startScaleX = Q16_ONE / 2;
+  options.startScaleY = Q16_ONE / 2;
   row = 0;
   // Reveal each row while its edge emits particles in the two horizontal axes.
   do {
@@ -851,7 +849,8 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
         velocityZ =
             ((u32)(randomZ << 3) >> 16) * (PIXELS(1) / 5) - PIXELS(4) / 5;
         FieldEffect_Spawn(particleX, 0, PIXELS(584), velocityX, 0, velocityZ,
-                          EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+                          &options);
         Event_Wait(1);
       } else {
         negativeIndex = -particleIndex;
@@ -878,20 +877,18 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
 
 /// Restores the fountain tiles and stops its continuous spray.
 static void MercuryLighthouse_StopFountainSpray(void) {
-  struct EffectOptions *options;
   s32 row;
   s32 particleIndex;
   s32 offsetX;
   s32 random;
   s32 particleX;
   s32 particleZ;
-  struct EffectOptions optionsStorage;
+  struct EffectOptions options;
 
   MapGrid_CopyCellsTo(78, 58, 110, 36, 1, 1);
-  options = &optionsStorage;
-  options->palette = 5;
-  options->startScaleX = Q16_ONE / 2;
-  options->startScaleY = Q16_ONE / 2;
+  options.palette = 5;
+  options.startScaleX = Q16_ONE / 2;
+  options.startScaleY = Q16_ONE / 2;
   row = 0;
   do {
     offsetX = -PIXELS(2);
@@ -903,7 +900,8 @@ static void MercuryLighthouse_StopFountainSpray(void) {
                     << 16;
         particleX = (offsetX - (row << 19)) + PIXELS(728);
         FieldEffect_Spawn(particleX, 0, particleZ, -PIXELS(1) / 4, 0, 0,
-                          EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
+                          &options);
         Event_Wait(1);
       }
       particleIndex++;
@@ -1077,9 +1075,8 @@ static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
 
 /// Opens the selected stone door with particles along its moving edge.
 static void MercuryLighthouse_OpenStoneDoor(s32 side) {
-  struct EffectOptions optionsStorage;
+  struct EffectOptions options;
   u32 particleIndex;
-  struct EffectOptions *options;
   u32 row;
 
   Sound_Play(SE_MERCURY_LIGHTHOUSE_MECHANISM);
@@ -1093,10 +1090,9 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
     MapGrid_CopyCellsTo(115, 57, 116, 44, 1, 1);
     MapGrid_CopyCellsTo(113, 57, 115, 44, 1, 1);
   }
-  options = &optionsStorage;
-  options->palette = 7;
-  options->startScaleX = Q16_ONE / 2;
-  options->startScaleY = Q16_ONE / 2;
+  options.palette = 7;
+  options.startScaleX = Q16_ONE / 2;
+  options.startScaleY = Q16_ONE / 2;
   for (row = 0; row <= 1; row++) {
     for (particleIndex = 0; particleIndex <= 7; particleIndex++) {
       if (particleIndex & 1) {
@@ -1106,21 +1102,21 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
               PIXELS(704) + (row * 16 + particleIndex) * PIXELS(1),
               MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5, 0,
               MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5,
-              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
+              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else if (side == STONE_DOOR_SOUTH) {
           FieldEffect_Spawn(
               PIXELS(800) + (row * 16 + particleIndex) * PIXELS(1), 0,
               PIXELS(746),
               MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5, 0,
               MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5,
-              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
+              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else {
           FieldEffect_Spawn(
               PIXELS(812) + (row * 16 + particleIndex) * -PIXELS(1), 0,
               PIXELS(714),
               MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5, 0,
               MercuryLighthouse_RandomDoorParticleSpeed() + -PIXELS(4) / 5,
-              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
+              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         }
         Event_Wait(1);
       }
@@ -1774,8 +1770,7 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
 /// Raises an actor into the passage with sparks for 96 frames, moving it every
 /// two frames; each move is about 0.1 pixel longer than the last.
 static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
-  struct EffectOptions optionsStorage;
-  struct EffectOptions *options;
+  struct EffectOptions options;
   struct Actor *actor;
   u32 frame;
   s32 particleX;
@@ -1787,11 +1782,10 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   Actor_SetSpriteFlags(actor, 0);
   Actor_SetSpriteColorById(actorId, SPRITE_COLOR_BLINK);
   Sound_Play(SE_RISE_WITH_SPARKS);
-  options = &optionsStorage;
-  options->priority = 1;
-  options->palette = 5;
-  options->type = SPRITE_GLINT;
-  options->script = gMercuryLighthouse_SparkBurstScript;
+  options.priority = 1;
+  options.palette = 5;
+  options.type = SPRITE_GLINT;
+  options.script = gMercuryLighthouse_SparkBurstScript;
   for (frame = 0; frame <= 47; frame++) {
     if (frame <= 31)
       MercuryLighthouse_SparkleNear(actor->x.fixed, actor->y.fixed,
@@ -1807,7 +1801,7 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
       FieldEffect_Spawn(particleX, particleY, actor->z.fixed, 0, riseSpeed, 0,
                         EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        options);
+                        &options);
     }
     actor->y.fixed += frame * (PIXELS(1) / 10);
     actor->targetY = actor->y.fixed;
@@ -1824,7 +1818,6 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
 /// WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT, whose lighthouse transition ends at
 /// the aerie).
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
-  struct EffectOptions *options;
   s32 rowOffset;
   u32 random;
   s32 zero;
@@ -1832,7 +1825,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   s32 particleIndex;
   s32 particleX;
   s32 particleVelocityX;
-  struct EffectOptions optionsStorage;
+  struct EffectOptions options;
 
   Event_Start();
   Event_Wait(20);
@@ -1841,11 +1834,10 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   Task_Remove(MercuryLighthouse_CycleWaterfallPalette);
   MapGrid_CopyCellsTo(45, 77, 45, 73, 9, 4);
   Event_Wait(30);
-  options = &optionsStorage;
-  options->priority = 1;
-  options->palette = 5;
-  options->type = SPRITE_GLINT;
-  options->script = gMercuryLighthouse_SparkBurstScript;
+  options.priority = 1;
+  options.palette = 5;
+  options.type = SPRITE_GLINT;
+  options.script = gMercuryLighthouse_SparkBurstScript;
   zero = 0;
   wave = zero;
   // Two bursts spread sparks across the water before it begins to part.
@@ -1869,7 +1861,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_SCRIPT_MEDIUM,
-                      options);
+                      &options);
     Event_Wait(2);
     wave = (wave + 1);
   } while ((u32)wave <= 15);
@@ -1899,7 +1891,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                       EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_SCRIPT_MEDIUM,
-                      options);
+                      &options);
     Event_Wait(2);
     wave = (wave + 1);
   } while ((u32)wave <= 15);
@@ -1907,11 +1899,11 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   Event_Wait(60);
-  options->palette = 7;
-  options->startScaleX = 7 * Q16_ONE / 10;
-  options->startScaleY = 7 * Q16_ONE / 10;
-  options->targetScaleX = 6 * Q16_ONE / 5;
-  options->targetScaleY = 6 * Q16_ONE / 5;
+  options.palette = 7;
+  options.startScaleX = 7 * Q16_ONE / 10;
+  options.startScaleY = 7 * Q16_ONE / 10;
+  options.targetScaleX = 6 * Q16_ONE / 5;
+  options.targetScaleY = 6 * Q16_ONE / 5;
   zero = 0;
   wave = zero;
   // Reveal the opening one map row at a time, trailing a stream of particles.
@@ -1936,7 +1928,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
                         particleVelocityX, 0, particleSpeed,
                         EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
                             EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
-                        options);
+                        &options);
       particleIndex = (particleIndex + 1);
       Event_Wait(2);
     } while ((u32)particleIndex <= 31);
@@ -2178,17 +2170,15 @@ static void MercuryLighthouse_RaiseStairsWithSparkles(void) {
 /// Lowers the stairs as the stair pipe moves away (the push's callback):
 /// three steps of cells redrawn, each in a scatter of sparkles.
 static void MercuryLighthouse_LowerStairsWithSparkles(void) {
-  struct EffectOptions optionsStorage;
-  struct EffectOptions *options;
+  struct EffectOptions options;
   u32 row;
   u32 particleIndex;
   s32 offsetZ;
 
   MapGrid_CopyCellsTo(76, 61, 74, 38, 1, 1);
-  options = &optionsStorage;
-  options->palette = 5;
-  options->startScaleX = Q16_ONE / 2;
-  options->startScaleY = Q16_ONE / 2;
+  options.palette = 5;
+  options.startScaleX = Q16_ONE / 2;
+  options.startScaleY = Q16_ONE / 2;
   for (row = 0; row <= 2; row++) {
     offsetZ = -PIXELS(2);
     for (particleIndex = 1; particleIndex <= 7; particleIndex++) {
@@ -2197,13 +2187,13 @@ static void MercuryLighthouse_LowerStairsWithSparkles(void) {
           FieldEffect_Spawn(
               (105 - (((u32)Import_RandomNext() * 5) >> 16)) << 16, 0,
               offsetZ - (row << 19) + PIXELS(558), 0, 0, -PIXELS(1) / 4,
-              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
+              EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, &options);
         } else {
           FieldEffect_Spawn(
               (((row << 2) + particleIndex) << 17) + PIXELS(183), 0,
               (620 - (((u32)Import_RandomNext() * 5) >> 16)) << 16,
               PIXELS(1) / 4, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
-              options);
+              &options);
         }
         Event_Wait(1);
       }

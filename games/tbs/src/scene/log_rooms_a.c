@@ -374,7 +374,6 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
   s32 z;
 #if !TBS_PATCH_1
   struct FieldPosition target;
-  struct FieldPosition *position;
   struct Actor *leader;
 #endif
 
@@ -384,11 +383,10 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
     Field_TryJumpForward();
 #else
     leader = Actor_GetById(ACTOR_PARTY_LEADER);
-    position = &target;
-    SET_POSITION(position, leader->x.fixed,
+    SET_POSITION(&target, leader->x.fixed,
                  Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed,
                  Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed - PIXELS(30));
-    LogRoomsA_TryJumpTo(position);
+    LogRoomsA_TryJumpTo(&target);
 #endif
     x = 42;
     z = 85;
@@ -399,11 +397,10 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
     Field_TryJumpForward();
 #else
     leader = Actor_GetById(ACTOR_PARTY_LEADER);
-    position = &target;
-    SET_POSITION(position, leader->x.fixed,
+    SET_POSITION(&target, leader->x.fixed,
                  Actor_GetById(ACTOR_PARTY_LEADER)->y.fixed,
                  Actor_GetById(ACTOR_PARTY_LEADER)->z.fixed + PIXELS(30));
-    LogRoomsA_TryJumpTo(position);
+    LogRoomsA_TryJumpTo(&target);
 #endif
     x = 42;
     z = 85;
@@ -3229,9 +3226,9 @@ LogRoomsA_SnapToNearestStop(struct LogRoomsAStop *node, s16 *requestedFacing) {
     angleDifference = (s16)(connectionFacing - *requestedFacing);
     if (angleDifference < 0)
       angleDifference = -angleDifference;
-    /* FAKEMATCH(volatile): the used-stop test reads stopIndex through a
-     * volatile lvalue, so the stopIndex assignment loads it again; as a plain
-     * test, 1 of 49 instructions differ in tbs-en. */
+    // The used-stop test reads stopIndex through a volatile lvalue, so the
+    // stopIndex assignment loads it again; as a plain test, 1 of 49
+    // instructions differ in tbs-en.
     if (*(volatile u8 *)&connection->stopIndex != 0xff &&
         angleDifference < nearestDifference) {
       nearestDifference = angleDifference;
@@ -3351,8 +3348,9 @@ static void LogRoomsA_UpdateActorStops(void) {
     if (work->blockedSteps > 0 && dx * dx + dz * dz <= 400 &&
         (facingDifference = (u16)facing - angle) > -FACING_STEP &&
         facingDifference < FACING_STEP) {
-      // DEAD: facingDifference is not read again; the arm it fills is the
-      // ROM's b past the else, after the bge to it.
+      /* FAKEMATCH(dead): a dead store keeps this branch through jump
+       * optimization (bge to the else, then b past it); as an empty branch, 1
+       * of 269 instructions differ in tbs-en. */
       facingDifference = 0;
 #if TBS_PATCH_1
     } else if (dx * dx + dz * dz > 64) {

@@ -125,8 +125,6 @@ void FieldPsynergy_Douse(void) {
   struct FieldEffectDouseView *work = gFieldEffectWork;
   struct Actor *caster = work->caster;
   struct ActorDouseView *lightOrb;
-  struct Vector3 *from;
-  struct Vector3 *to;
   s32 step;
   s32 steps = 11;
   s32 count;
@@ -146,22 +144,22 @@ void FieldPsynergy_Douse(void) {
     Vector_AddPolarOffset(16 << 16, work->angle, (struct Vector3 *)&work->x);
     work->y = MapGrid_GetTerrainHeightFar(0, work->x, work->z);
   }
-  from = &start;
-  SET_POSITION(from, caster->x.fixed, caster->y.fixed + (16 << 16),
+  SET_POSITION(&start, caster->x.fixed, caster->y.fixed + (16 << 16),
                caster->z.fixed);
-  to = &end;
-  to->x = work->x;
+  end.x = work->x;
   y = work->y;
-  to->y = y + (32 << 16);
-  to->z = work->z;
+  end.y = y + (32 << 16);
+  end.z = work->z;
   if ((s8)work->variant != 0)
-    to->y = y + (80 << 16);
+    end.y = y + (80 << 16);
 
   // Grow from a quarter to full size on the way.
   for (; step < steps; step++) {
     s32 scale;
 
     {
+      /* FAKEMATCH(temporary): a holds &start and b holds &end; as start.x and
+       * end.x read directly, 16 of 359 instructions differ in tbs-en. */
       struct Vector3 *a = &start;
       struct Vector3 *b = &end;
       s32 e, t;
@@ -247,6 +245,8 @@ void FieldPsynergy_Douse(void) {
     s32 scale;
 
     {
+      /* FAKEMATCH(temporary): a holds &end and b holds &start; as end.x and
+       * start.x read directly, 39 of 359 instructions differ in tbs-en. */
       struct Vector3 *a = &end;
       struct Vector3 *b = &start;
       s32 e, t;

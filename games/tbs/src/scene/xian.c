@@ -630,18 +630,17 @@ static void Xian_JumpOverSpilledWater(void) {
   s32 savedMotionFlags;
   struct Actor *leader;
   struct FieldPosition landingPosition;
-  struct FieldPosition *landing;
 
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   savedMotionFlags = leader->motionFlags;
   if (GameFlag_Get(FLAG_XIAN_WATER_SPILLED) != 0) {
-    landing = &landingPosition;
-    landing->x = (leader->x.fixed & -0x100000) + PIXELS(8);
-    landing->y = leader->y.fixed;
-    landing->z = (leader->z.fixed & -0x100000) + PIXELS(8);
-    FieldVector_AddPolarOffset(
-        PIXELS(32), (leader->facing + TRIG_TURN / 8) & 0xc000, landing);
-    if (FieldActor_CheckMovementCollision(leader, landing) == 0) {
+    landingPosition.x = (leader->x.fixed & -0x100000) + PIXELS(8);
+    landingPosition.y = leader->y.fixed;
+    landingPosition.z = (leader->z.fixed & -0x100000) + PIXELS(8);
+    FieldVector_AddPolarOffset(PIXELS(32),
+                               (leader->facing + TRIG_TURN / 8) & 0xc000,
+                               &landingPosition);
+    if (FieldActor_CheckMovementCollision(leader, &landingPosition) == 0) {
       Event_Start();
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       wait(6);
@@ -652,8 +651,8 @@ static void Xian_JumpOverSpilledWater(void) {
       leader->velocityY = PIXELS(4);
       leader->motionFlags &= 126;
       Actor_SetSpriteFlags(leader, 0);
-      Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, landing->x >> 16,
-                                 landing->z >> 16);
+      Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, landingPosition.x >> 16,
+                                 landingPosition.z >> 16);
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, 1);
       leader->motionFlags = savedMotionFlags;

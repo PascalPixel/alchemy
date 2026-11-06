@@ -611,6 +611,8 @@ static void SolSanctumEntrance_PushStatue(void) {
   if (statue != NULL) {
     stoppedVelocity = 0;
     statue->layer = 2;
+    /* FAKEMATCH(temporary): destination holds &target; as &target and target.x,
+     * 44 of 120 instructions differ in tbs-en. */
     destination = &target;
     packedStep = gSolSanctumPushSteps[direction];
     SET_POSITION(destination, statue->x.fixed + (packedStep & -0x10000),

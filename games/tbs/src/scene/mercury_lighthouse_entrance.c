@@ -314,6 +314,8 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
     PaletteFade_StartInterpolation(60);
     Event_Wait(40);
     sparkIndex = 0;
+    /* FAKEMATCH(temporary): effectData holds &options; as options.field and
+       &options, 2 of 143 instructions differ in tbs-en. */
     effectData = &options;
     velocityZ = 0;
     do {

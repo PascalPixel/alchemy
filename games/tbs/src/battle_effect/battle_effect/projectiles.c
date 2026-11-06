@@ -691,11 +691,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         for (j = 0; j != shots; j++, index++) {
           if (j * stagger + i * delay < frame) {
             struct Particle *shot = &work->particles[i * shots + j];
-            struct ScreenPoint *screenPosition = &position;
 
             // The screen position (half across, on the canvas).
-            Projection_Point(shot, screenPosition);
-            screenPosition->x >>= 1;
+            Projection_Point(shot, &position);
+            position.x >>= 1;
             shot->x += shot->velocityX;
             shot->y += shot->velocityY;
             shot->z += shot->velocityZ;
@@ -772,7 +771,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   shot->velocityX = -shot->velocityX;
                 }
                 flash->variant = 1;
-                SET_POSITION(flash, screenPosition->x, screenPosition->y, 0);
+                SET_POSITION(flash, position.x, position.y, 0);
                 if (mode != PROJECTILE_VOLLEY_SLEET)
                   work->shakeFrames = 2;
                 BattleEffect_TintBattler(work->args->targets[i],
@@ -829,8 +828,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                     COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_OFFSETS,
-                  screenPosition->x - 16,
-                  screenPosition->y - gProjectileVolley_CometHeights[comet], 32,
+                  position.x - 16,
+                  position.y - gProjectileVolley_CometHeights[comet], 32,
                   gProjectileVolley_CometHeights[comet]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
               if (work->args->side == EFFECT_SIDE_PARTY)
@@ -843,38 +842,38 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                     COMPOSITE_LIGHTEN);
               ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_OFFSETS,
-                  screenPosition->x - 16, screenPosition->y, 32,
+                  position.x - 16, position.y, 32,
                   gProjectileVolley_CometHeights[comet]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
               // Shurikens vanish once past their target.
               if (ABS(shot->x) <= ABS(target->x.fixed))
                 draw[0](canvas, work->sheet + frame % 6 * (32 * 24),
-                        screenPosition->x - 16, screenPosition->y - 12, 32, 24);
+                        position.x - 16, position.y - 12, 32, 24);
             } else if (mode == PROJECTILE_VOLLEY_SLEET ||
                        mode == PROJECTILE_VOLLEY_BLIZZARD ||
                        mode == PROJECTILE_VOLLEY_ICE_BLESSING) {
               s32 cell = j & 3;
               draw[0](canvas,
                       work->sheet + gProjectileVolley_PelletOffsets[cell],
-                      screenPosition->x - 4, screenPosition->y - 4, 8, 8);
+                      position.x - 4, position.y - 4, 8, 8);
             } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
-              draw[0](canvas, work->sheet + j % 6 * (8 * 16),
-                      screenPosition->x - 4, screenPosition->y - 8, 8, 16);
+              draw[0](canvas, work->sheet + j % 6 * (8 * 16), position.x - 4,
+                      position.y - 8, 8, 16);
             } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER) {
               draw[0](canvas,
                       work->sheet + PROJECTILE_VOLLEY_MEDIUM_SPARK_OFFSETS,
-                      screenPosition->x - 9, screenPosition->y - 7, 18, 13);
+                      position.x - 9, position.y - 7, 18, 13);
             } else if (mode == PROJECTILE_VOLLEY_WING_BEAT) {
-              draw[0](canvas, work->sheet, screenPosition->x - 6,
-                      screenPosition->y - 4, 12, 8);
+              draw[0](canvas, work->sheet, position.x - 6, position.y - 4, 12,
+                      8);
             } else if (mode == PROJECTILE_VOLLEY_WING_STROKE) {
               draw[0](canvas,
                       work->sheet + PROJECTILE_VOLLEY_LARGE_SPARK_OFFSETS,
-                      screenPosition->x - 15, screenPosition->y - 12, 29, 23);
+                      position.x - 15, position.y - 12, 29, 23);
             } else {
-              draw[0](canvas, work->sheet, screenPosition->x - 20,
-                      screenPosition->y - 32, 40, 64);
+              draw[0](canvas, work->sheet, position.x - 20, position.y - 32, 40,
+                      64);
             }
           }
         }

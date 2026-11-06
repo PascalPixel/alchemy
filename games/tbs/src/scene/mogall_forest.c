@@ -385,9 +385,7 @@ static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
 /// Scatters a complete ring of rising puffs around an actor.
 static void MogallForest_SpawnPuffRing(s32 id) {
   struct Vector3 velocity;
-  struct EffectOptions optionsStorage;
-  struct EffectOptions *options;
-  struct Vector3 *emissionVelocity;
+  struct EffectOptions options;
   struct Actor *actor;
   u32 directionIndex;
   s32 x;
@@ -395,20 +393,18 @@ static void MogallForest_SpawnPuffRing(s32 id) {
 
   actor = Actor_GetById(id);
   Sound_Play(SE_THUMP);
-  options = &optionsStorage;
-  options->priority = 1;
+  options.priority = 1;
   for (directionIndex = 0; directionIndex <= 16; directionIndex++) {
-    emissionVelocity = &velocity;
-    emissionVelocity->x = Trig_Cos(directionIndex << 12);
-    emissionVelocity->y = 0;
+    velocity.x = Trig_Cos(directionIndex << 12);
+    velocity.y = 0;
     z = Trig_Sin(directionIndex << 12);
-    x = emissionVelocity->x;
-    emissionVelocity->z = z;
+    x = velocity.x;
+    velocity.z = z;
     x += x / 3;
-    emissionVelocity->x = x;
+    velocity.x = x;
     FieldEffect_Spawn(actor->x.fixed, PIXELS(16), actor->z.fixed, x,
-                      emissionVelocity->y + PIXELS(1) / 10, z,
-                      EFFECT_USE_PRIORITY, options);
+                      velocity.y + PIXELS(1) / 10, z, EFFECT_USE_PRIORITY,
+                      &options);
   }
 }
 
@@ -1291,7 +1287,6 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
 /// at MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS.
 static void MogallForest_KillerApeAttacks(void) {
   struct Vector3 velocity;
-  struct Vector3 *emissionVelocity;
   struct Actor *actor;
   u32 directionIndex;
   s32 x;
@@ -1328,16 +1323,15 @@ static void MogallForest_KillerApeAttacks(void) {
   // The larger reveal uses a wider, level ring of puffs.
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   for (directionIndex = 0; directionIndex <= 16; directionIndex++) {
-    emissionVelocity = &velocity;
-    emissionVelocity->x = Trig_Cos(directionIndex << 12);
-    emissionVelocity->y = 0;
+    velocity.x = Trig_Cos(directionIndex << 12);
+    velocity.y = 0;
     z = Trig_Sin(directionIndex << 12);
-    x = emissionVelocity->x;
-    emissionVelocity->z = z;
+    x = velocity.x;
+    velocity.z = z;
     x += x / 2;
-    emissionVelocity->x = x;
-    FieldEffect_Spawn(actor->x.fixed, 0, actor->z.fixed, x, emissionVelocity->y,
-                      z, EFFECT_SCRIPT_MEDIUM, NULL);
+    velocity.x = x;
+    FieldEffect_Spawn(actor->x.fixed, 0, actor->z.fixed, x, velocity.y, z,
+                      EFFECT_SCRIPT_MEDIUM, NULL);
   }
   Event_Wait(30);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);

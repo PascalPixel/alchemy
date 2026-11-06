@@ -81,7 +81,6 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   s32 keys;
   s32 cellX;
   s32 cellZ;
-  struct Vector3 *candidate;
 
   effectWork = gFieldEffectWork;
   user = effectWork->mainActor;
@@ -103,11 +102,10 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
 
   // The hand goes 16 pixels above the target and 16 pixels toward angle.
   pusher->watchedActor = target;
-  candidate = &position;
-  SET_POSITION(candidate, target->x.fixed, target->y.fixed + (16 << 16),
+  SET_POSITION(&position, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
-  Vector_AddPolarOffset(16 << 16, angle, candidate);
-  Actor_SetMoveTargetFar(pusher, candidate->x, candidate->y, candidate->z);
+  Vector_AddPolarOffset(16 << 16, angle, &position);
+  Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
   FieldEffect_SnapScaleToFull(pusher);
   // The hand floats (motion flag bit 2) at up to 4 pixels a frame. The
   // target cycles its colours, keeps its facing while it moves, and reads
@@ -165,7 +163,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
         Sound_PlayFar(SE_MENU_ERROR);
       continue;
     }
-    hit = ActorScript_FindOverlappingEntryFar(target, (s32 *)candidate);
+    hit = ActorScript_FindOverlappingEntryFar(target, (s32 *)&position);
     if (hit != NULL) {
       if (hit != user) {
         Actor_SelectAnimationFar(pusher, 4);
@@ -179,8 +177,8 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
       // cell 32 pixels on, the caster moves along when the cell beyond is free.
       cellX = user->x.fixed & MOVE_CELL_MASK;
       cellZ = user->z.fixed & MOVE_CELL_MASK;
-      if (cellX == (candidate->x & MOVE_CELL_MASK) &&
-          cellZ == (candidate->z & MOVE_CELL_MASK)) {
+      if (cellX == (position.x & MOVE_CELL_MASK) &&
+          cellZ == (position.z & MOVE_CELL_MASK)) {
         Actor_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(SE_MENU_ERROR);
@@ -309,9 +307,9 @@ void FieldPsynergy_Move(void) {
   effectWork = gFieldEffectWork;
   object = effectWork->mainActor;
 
-  /* FAKEMATCH(one-pass): an empty once-only loop before the call, which keeps
-   * the mainActor load below the stack frame's sub sp; as a plain call, 2 of 24
-   * instructions differ in tbs-en. */
+  // An empty once-only loop before the call, which keeps the mainActor load
+  // below the stack frame's sub sp; as a plain call, 2 of 24 instructions
+  // differ in tbs-en.
   do {
   } while (0);
   FieldPsynergy_FadeToCastColor();

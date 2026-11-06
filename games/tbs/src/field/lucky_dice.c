@@ -262,15 +262,13 @@ void LuckyDice_Run(void) {
   s32 screen[3];
   // Unused: gives the stack frame its 32 bytes at sp+168 to sp+200.
   UNUSED s32 unused[8];
-  u16 affineA;
-  u16 affineB;
-  u16 affineC;
-  u16 affineD;
-  // The matrix's PA to PD halfwords are written and read through pointers.
-  u16 *pa;
-  u16 *pb;
-  u16 *pc;
-  u16 *pd;
+  // volatile: four halfwords stored to sp+166..160 and each reloaded with ldrh,
+  // the form the bytes prove; as plain u16 locals, 463 of 2046 instructions
+  // differ in tbs-en.
+  volatile u16 affineA;
+  volatile u16 affineB;
+  volatile u16 affineC;
+  volatile u16 affineD;
   s32 spinRate[DICE_COUNT];
   s32 flashTimer[DICE_COUNT];   // set on a win; nothing here reads it
   s32 luckyNumbers[DICE_COUNT]; // the two numbers shown at the top, never equal
@@ -951,18 +949,14 @@ void LuckyDice_Run(void) {
     // 4n + 3, which attr2's high half covers here.
     for (index = 0; index != DICE_RESULT_COUNT; index++) {
       affineScale = spriteDepth[index] / 2 + 128;
-      pa = &affineA;
-      pb = &affineB;
-      pc = &affineC;
-      pd = &affineD;
-      *pa = affineScale;
-      *pb = 0;
-      *pc = 0;
-      *pd = affineScale;
-      sprites->oam[index * 4 + 0].attr2 |= *pa << 16;
-      sprites->oam[index * 4 + 1].attr2 |= *pb << 16;
-      sprites->oam[index * 4 + 2].attr2 |= *pc << 16;
-      sprites->oam[index * 4 + 3].attr2 |= *pd << 16;
+      affineA = affineScale;
+      affineB = 0;
+      affineC = 0;
+      affineD = affineScale;
+      sprites->oam[index * 4 + 0].attr2 |= affineA << 16;
+      sprites->oam[index * 4 + 1].attr2 |= affineB << 16;
+      sprites->oam[index * 4 + 2].attr2 |= affineC << 16;
+      sprites->oam[index * 4 + 3].attr2 |= affineD << 16;
     }
 
     Dma_Set(sprites->oam, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);

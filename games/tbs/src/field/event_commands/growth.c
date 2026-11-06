@@ -86,6 +86,8 @@ void FieldPsynergy_Growth(void) {
 
   FieldEffect_SpawnBurstParticleField();
   Sound_PlayFar(SE_HEAVY_IMPACT);
+  /* FAKEMATCH(temporary): p holds &pos; as &pos and pos.values directly, 2 of
+   * 63 instructions differ in tbs-en. */
   p = &pos;
   remainingActors = GROWTH_FALL_LAST;
   do {

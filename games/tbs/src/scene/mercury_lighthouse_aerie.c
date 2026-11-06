@@ -1520,8 +1520,7 @@ static void MercuryLighthouseAerie_RideLiftDown(void) {
 
 /// Saturos and Alex exit out in a column of sparkles and vanish.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
-  struct EffectOptions optionsStorage;
-  struct EffectOptions *options;
+  struct EffectOptions options;
   struct Actor *left;
   struct Actor *right;
   u32 i;
@@ -1535,12 +1534,11 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   Actor_ConfigureSpriteColor(ACTOR_ALEX, SPRITE_COLOR_BLINK);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SATUROS), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ALEX), 0);
-  options = &optionsStorage;
-  options->priority = 1;
-  options->palette = 5;
-  options->type = SPRITE_PARTICLE;
-  options->startScaleX = 2 * Q16_ONE / 5;
-  options->startScaleY = 3 * Q16_ONE;
+  options.priority = 1;
+  options.palette = 5;
+  options.type = SPRITE_PARTICLE;
+  options.startScaleX = 2 * Q16_ONE / 5;
+  options.startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
     Event_Wait(1);
     if (i & 1) {
@@ -1555,7 +1553,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
                         left->z.fixed, 0, PIXELS(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        options);
+                        &options);
     } else {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
@@ -1568,7 +1566,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
                         right->z.fixed, 0, PIXELS(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        options);
+                        &options);
     }
   }
   Import_ActorSetPosition(ACTOR_SATUROS, 0, 0);
@@ -1577,8 +1575,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
 
 /// Saturos and Alex exit in where they have been placed.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
-  struct EffectOptions optionsStorage;
-  struct EffectOptions *options;
+  struct EffectOptions options;
   struct Actor *left;
   struct Actor *right;
   u32 i;
@@ -1590,12 +1587,11 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   Sound_Play(SE_WARP);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SATUROS), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ALEX), 0);
-  options = &optionsStorage;
-  options->priority = 1;
-  options->palette = 5;
-  options->type = SPRITE_PARTICLE;
-  options->startScaleX = 2 * Q16_ONE / 5;
-  options->startScaleY = 3 * Q16_ONE;
+  options.priority = 1;
+  options.palette = 5;
+  options.type = SPRITE_PARTICLE;
+  options.startScaleX = 2 * Q16_ONE / 5;
+  options.startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
     Event_Wait(1);
     if (i & 1) {
@@ -1610,7 +1606,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
                         left->z.fixed, 0, -PIXELS(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        options);
+                        &options);
     } else {
       r = ((((u32)Import_RandomNext() * 24) >> 16) << 16);
       x = right->x.fixed;
@@ -1623,7 +1619,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
                         right->z.fixed, 0, -PIXELS(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
-                        options);
+                        &options);
     }
     if (i == 20) {
       Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);

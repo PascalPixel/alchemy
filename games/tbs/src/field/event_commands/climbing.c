@@ -40,6 +40,9 @@ s32 Field_TryJumpForward(void) {
   struct FieldPosition *position;
   struct Actor *platform;
 
+  /* FAKEMATCH(temporary): position holds &positionStorage; as
+   * &positionStorage and positionStorage.x directly, 57 of 239 instructions
+   * differ in tbs-en. */
   position = &positionStorage;
 again:
   // The middle of the cell in front, then of the cell beyond. The cell

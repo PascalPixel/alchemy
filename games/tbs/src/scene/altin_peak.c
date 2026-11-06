@@ -2385,7 +2385,6 @@ UNUSED static void AltinPeak_ReservedNoOp(void) {}
 
 /// The cart turns a quarter turn right around the corner it reaches.
 static void AltinPeak_TurnCartRight(struct Actor *actor) {
-  struct FieldPosition *point;
   struct FieldPosition position;
   s32 angle;
   s32 x;
@@ -2393,22 +2392,21 @@ static void AltinPeak_TurnCartRight(struct Actor *actor) {
   s32 turnFrame;
 
   angle = (actor->facing + TRIG_TURN / 4) & 0xc000;
-  point = &position;
-  SET_POSITION(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  FieldVector_AddPolarOffset(PIXELS(24), angle, point);
-  x = (point->x + PIXELS(8)) & 0xfff00000;
-  z = (point->z + PIXELS(8)) & 0xfff00000;
+  SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+  FieldVector_AddPolarOffset(PIXELS(24), angle, &position);
+  x = (position.x + PIXELS(8)) & 0xfff00000;
+  z = (position.z + PIXELS(8)) & 0xfff00000;
   angle += TRIG_TURN / 2;
   Actor_SelectAnimation(actor, 5);
   turnFrame = 0;
   Sound_Play(SE_CART_TURN);
   while (turnFrame < 16) {
     angle += TRIG_TURN / 64;
-    point->x = x;
-    point->z = z;
-    FieldVector_AddPolarOffset(PIXELS(24), angle, point);
-    actor->x.fixed = point->x;
-    actor->z.fixed = point->z;
+    position.x = x;
+    position.z = z;
+    FieldVector_AddPolarOffset(PIXELS(24), angle, &position);
+    actor->x.fixed = position.x;
+    actor->z.fixed = position.z;
     actor->facing = angle + TRIG_TURN / 4;
     wait(1);
     turnFrame++;
@@ -2418,7 +2416,6 @@ static void AltinPeak_TurnCartRight(struct Actor *actor) {
 
 /// The cart turns a quarter turn left.
 static void AltinPeak_TurnCartLeft(struct Actor *actor) {
-  struct FieldPosition *point;
   struct FieldPosition position;
   s32 angle;
   s32 x;
@@ -2426,22 +2423,21 @@ static void AltinPeak_TurnCartLeft(struct Actor *actor) {
   s32 turnFrame;
 
   angle = (actor->facing - TRIG_TURN / 4) & 0xc000;
-  point = &position;
-  SET_POSITION(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  FieldVector_AddPolarOffset(PIXELS(24), angle, point);
-  x = (point->x + PIXELS(8)) & 0xfff00000;
-  z = (point->z + PIXELS(8)) & 0xfff00000;
+  SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+  FieldVector_AddPolarOffset(PIXELS(24), angle, &position);
+  x = (position.x + PIXELS(8)) & 0xfff00000;
+  z = (position.z + PIXELS(8)) & 0xfff00000;
   angle += TRIG_TURN / 2;
   Actor_SelectAnimation(actor, 6);
   turnFrame = 0;
   Sound_Play(SE_CART_TURN);
   while (turnFrame < 16) {
     angle -= TRIG_TURN / 64;
-    point->x = x;
-    point->z = z;
-    FieldVector_AddPolarOffset(PIXELS(24), angle, point);
-    actor->x.fixed = point->x;
-    actor->z.fixed = point->z;
+    position.x = x;
+    position.z = z;
+    FieldVector_AddPolarOffset(PIXELS(24), angle, &position);
+    actor->x.fixed = position.x;
+    actor->z.fixed = position.z;
     actor->facing = angle - TRIG_TURN / 4;
     wait(1);
     turnFrame++;
@@ -2463,7 +2459,6 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
   s32 radius;
   s16 *timer;
   struct FieldPosition position;
-  struct FieldPosition *point;
   s32 ahead;
   s32 behind;
 
@@ -2479,16 +2474,15 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
       Sound_Play(SE_CART_ROLL);
     }
   }
-  point = &position;
-  SET_POSITION(point, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+  SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   FieldVector_AddPolarOffset(Iwram_MulQ16(radius, 3 * Q16_ONE / 4), angle,
-                             point);
-  actor->x.fixed = point->x;
-  actor->z.fixed = point->z;
-  ahead = MapGrid_GetTerrainHeight(2, point->x, point->z);
+                             &position);
+  actor->x.fixed = position.x;
+  actor->z.fixed = position.z;
+  ahead = MapGrid_GetTerrainHeight(2, position.x, position.z);
   FieldVector_AddPolarOffset(-Iwram_MulQ16(radius, 3 * Q16_ONE / 2), angle,
-                             point);
-  behind = MapGrid_GetTerrainHeight(2, point->x, point->z);
+                             &position);
+  behind = MapGrid_GetTerrainHeight(2, position.x, position.z);
   if (*timer <= 20) {
     if (ahead == behind) {
       Actor_SelectAnimation(actor, 2);

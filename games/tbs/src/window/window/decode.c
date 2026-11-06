@@ -390,6 +390,8 @@ s32 Message_Decode(s32 script, s32 clear) {
     decode = (s32 (*)(
         struct MessageReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
     Message_Find(&reader, script);
+    /* FAKEMATCH(temporary): messageReader holds &reader; as decode(&reader),
+     * 2 of 706 instructions differ in tbs-en. */
     messageReader = &reader;
 
     do {
@@ -920,6 +922,8 @@ s32 Message_Decode(s32 script, s32 clear) {
     decode = (s32 (*)(
         struct MessageReader *))gWindowWork[TEXT_WORK_BLOCK - HEAP_SLOT_WINDOW];
     Message_Find(&reader, script);
+    /* FAKEMATCH(temporary): messageReader holds &reader; as decode(&reader),
+     * 2 of 895 instructions differ in tbs-ja. */
     messageReader = &reader;
     do {
       previousCode = code;

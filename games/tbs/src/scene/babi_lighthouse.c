@@ -1123,6 +1123,8 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
 /// ground height.
 static struct Actor *BabiLighthouse_FindActorAhead(struct Actor *actor) {
   struct FieldPosition position;
+  /* FAKEMATCH(temporary): target holds &position; as &position and position.x
+   * directly, 22 of 30 instructions differ in tbs-en. */
   struct FieldPosition *target = &position;
   s32 directionStep = gPushedActor_DirectionSteps[actor->facing >> 12];
 

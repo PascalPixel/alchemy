@@ -122,9 +122,8 @@ s32 Battle_Run(s32 enemyGroup) {
     Battle_SetType(BATTLE_TYPE_LINK);
   }
   if (battle->isLink != 0) {
-    /* FAKEMATCH(one-pass): the seed's store in a once-only block keeps it
-     * ahead of the wait loop's setup; as the plain store, 4 of 645
-     * instructions differ in tbs-en. */
+    // The seed's store in a once-only block keeps it ahead of the wait loop's
+    // setup; as the plain store, 4 of 645 instructions differ in tbs-en.
     do {
       gBattleRandomSeed = 0;
     } while (0);

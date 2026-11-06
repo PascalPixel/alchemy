@@ -212,10 +212,10 @@ static void OrbGlow_Fade(void) {
 /// part runs while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is
 /// set.
 static void Ship_UpdateSwell(void) {
-  u16 blend;
-  // The blend is reached through a pointer, as the spray's position is.
-  u16 *bldAlpha;
-  struct FixedPointPosition *position;
+  // volatile: blend kept at sp+18 and loaded again with ldrh for the register
+  // write; as a plain u16, 5 of 225 instructions differ in tbs-en.
+  volatile u16 blend;
+  struct FixedPointPosition sprayPosition;
   struct MapGridScrollWork *grid;
   struct Actor *actor;
   s32 swell;
@@ -224,9 +224,8 @@ static void Ship_UpdateSwell(void) {
   grid = gMapGridWork[0];
   if (gOrbGlowActive != 0) {
     swell = Iwram_MulQ16(Trig_Sin(gOrbGlowPhase << 9), 3);
-    bldAlpha = &blend;
-    *bldAlpha = gOrbGlowStrength + ((swell + 8) << 8);
-    Io_Write16(*bldAlpha, &REG_BLDALPHA);
+    blend = gOrbGlowStrength + ((swell + 8) << 8);
+    Io_Write16(blend, &REG_BLDALPHA);
     gOrbGlowPhase++;
   }
   if (gSwellActive != 0) {
@@ -260,19 +259,16 @@ static void Ship_UpdateSwell(void) {
     gSwellPhase++;
   }
   if (gSprayActive != 0 && (gFrameCount & 1) != 0) {
-    struct FixedPointPosition sprayPosition;
-
     x = grid->viewX & -0x10000;
     z = grid->viewY & -0x10000;
     x += Random_Next() * 240;
-    position = &sprayPosition;
-    position->x = x;
-    position->y = 0;
+    sprayPosition.x = x;
+    sprayPosition.y = 0;
     z += Random_Next() * 160;
     z += PIXELS(30);
-    position->z = z;
-    actor = FieldActor_Create(SPRITE_WATER_DROP, position->x, position->y,
-                              position->z);
+    sprayPosition.z = z;
+    actor = FieldActor_Create(SPRITE_WATER_DROP, sprayPosition.x,
+                              sprayPosition.y, sprayPosition.z);
     if (actor != 0) {
       actor->update = LemurianShip_SprayUpdate;
       actor->timer = 60;
@@ -612,9 +608,9 @@ static void LemurianShip_RaiseTheShip(void) {
   s32 white;
   s32 dark;
   s32 risen;
-  u16 cnt;
-  // Each BGxCNT value is set through a pointer to cnt.
-  u16 *bgCnt;
+  // volatile: each BGxCNT value stored at sp+6 with strh on its way to the
+  // register; as a plain u16, 6 of 231 instructions differ in tbs-en.
+  volatile u16 cnt;
 
   grid = gMapGridWork[0];
 
@@ -671,10 +667,9 @@ static void LemurianShip_RaiseTheShip(void) {
   } while (risen < PIXELS(90));
   Task_Remove(OrbGlow_Fade);
   gSprayActive = 0;
-  bgCnt = &cnt;
-  REG_BG3CNT = *bgCnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG2CNT = *bgCnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG1CNT = *bgCnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   gOrbGlowActive = 0;
   Event_PlaySound(SE_STOP_ACTION_SE);
   wait(1);
@@ -708,9 +703,9 @@ static void LemurianShip_RaiseTheShip(void) {
 /// leader the Black Orb.
 s32 LemurianShip_SetupMap(void) {
   struct MapGridScrollWork *grid;
-  u16 cnt;
-  // Each BGxCNT value is set through a pointer to cnt.
-  u16 *bgCnt;
+  // volatile: each step stored at sp+2 with strh; as a plain u16, 2 of 165
+  // instructions differ in tbs-en.
+  volatile u16 cnt;
 
   grid = gMapGridWork[0];
   if (gMainRoutineWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
@@ -756,10 +751,9 @@ s32 LemurianShip_SetupMap(void) {
     SET_IMAGE_PRIORITY(actor, 1);
     SET_SHADOW_PRIORITY(actor, 1);
   }
-  bgCnt = &cnt;
-  REG_BG3CNT = *bgCnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
-  REG_BG2CNT = *bgCnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-  REG_BG1CNT = *bgCnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+  REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+  REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   Io_Write16(BLDCNT_TGT1_BG3 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1 |
                  BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BD,
              &REG_BLDCNT);

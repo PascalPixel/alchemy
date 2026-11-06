@@ -261,6 +261,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
               // the later releases move them 16 pixels down.
 #if !TBS_PATCH_1
               {
+                /* FAKEMATCH(temporary): out holds &screen; as
+                 * Projection_Point(point, &screen), 386 of 958 instructions
+                 * differ in tbs-ja. */
                 struct ScreenPoint *out = &screen;
 
                 Projection_Point(point, out);

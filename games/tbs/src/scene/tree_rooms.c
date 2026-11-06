@@ -1151,8 +1151,6 @@ static void TreeRooms_CastReveal(void) {
 static void TreeRooms_RunLandingDustEvent(void) {
   struct EffectOptions options;
   struct FieldPosition velocity;
-  struct EffectOptions *particleOptions;
-  struct FieldPosition *particleVelocity;
   struct Actor *leader;
   u32 particleIndex;
   s32 velocityX;
@@ -1174,25 +1172,23 @@ static void TreeRooms_RunLandingDustEvent(void) {
   Event_Wait(24);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   // Spread particles around the leader while the landing effect finishes.
-  particleOptions = &options;
-  particleOptions->palette = 7;
-  particleOptions->update = FieldEffect_AdvanceMotion;
-  particleOptions->startScaleX = 4 * Q16_ONE / 5;
-  particleOptions->startScaleY = 4 * Q16_ONE / 5;
+  options.palette = 7;
+  options.update = FieldEffect_AdvanceMotion;
+  options.startScaleX = 4 * Q16_ONE / 5;
+  options.startScaleY = 4 * Q16_ONE / 5;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
-    particleVelocity = &velocity;
-    particleVelocity->x = Trig_Cos(particleIndex << 12);
-    particleVelocity->y = 0;
+    velocity.x = Trig_Cos(particleIndex << 12);
+    velocity.y = 0;
     velocityZ = Trig_Sin(particleIndex << 12);
-    velocityX = particleVelocity->x;
-    particleVelocity->z = velocityZ;
+    velocityX = velocity.x;
+    velocity.z = velocityZ;
     velocityX += velocityX / 2;
-    particleVelocity->x = velocityX;
+    velocity.x = velocityX;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                      velocityX, particleVelocity->y, velocityZ,
+                      velocityX, velocity.y, velocityZ,
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
                           EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
-                      particleOptions);
+                      &options);
   }
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,

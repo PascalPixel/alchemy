@@ -536,8 +536,6 @@ static void GomaCaveEntrance_SpinStump(struct Actor *updated) {
 static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   struct Vector3 dir;
   struct EffectOptions params;
-  struct Vector3 *v;
-  struct EffectOptions *p;
   struct Actor *stump;
   u32 i;
 
@@ -563,12 +561,11 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   for (i = 0; i <= 16; i++) {
-    v = &dir;
-    SET_POSITION(v, Trig_Cos(i << 12), 0, Trig_Sin(i << 12));
-    v->x -= v->x / 4;
-    v->z -= v->z / 2;
-    FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, v->x,
-                      v->y, v->z, 0, NULL);
+    SET_POSITION(&dir, Trig_Cos(i << 12), 0, Trig_Sin(i << 12));
+    dir.x -= dir.x / 4;
+    dir.z -= dir.z / 2;
+    FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,
+                      dir.y, dir.z, 0, NULL);
   }
   stump->velocityY = PIXELS(5);
   Actor_ResetAndSetPosition(stumpId, 139, 196);
@@ -582,15 +579,15 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   *(s32 *)&stump->update = 0;
 #endif
   stump->sprite->rotation = TRIG_TURN / 16;
-  p = &params;
-  p->type = SPRITE_SPLASH;
-  p->startScaleX = Q16_ONE / 2;
-  p->startScaleY = 4 * Q16_ONE / 5;
-  p->targetScaleX = 3 * Q16_ONE / 2;
-  p->targetScaleY = 6 * Q16_ONE / 5;
-  FieldEffect_Spawn(
-      stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
-      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, p);
+  params.type = SPRITE_SPLASH;
+  params.startScaleX = Q16_ONE / 2;
+  params.startScaleY = 4 * Q16_ONE / 5;
+  params.targetScaleX = 3 * Q16_ONE / 2;
+  params.targetScaleY = 6 * Q16_ONE / 5;
+  FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_SCALE_TO_TARGET,
+                    &params);
   Sound_Play(SE_CAST);
   Import_ActorSetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();

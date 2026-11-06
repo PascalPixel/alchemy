@@ -360,9 +360,9 @@ Resource_DirectoryTable:
 	resource YellowRingSheet, BattleEffect_YellowRingSheet
 	resource YellowOrbSheet, BattleEffect_YellowOrbSheet
 	resource , BattleEffect_BubbleSheet
-	resource , BattleEffect_ShieldSheet
-	resource , BattleEffect_DaggerSheet
-	resource , BattleEffect_PaletteRampImage
+	resource ShieldSheet, BattleEffect_ShieldSheet
+	resource DaggerSheet, BattleEffect_DaggerSheet
+	resource PaletteRampImage, BattleEffect_PaletteRampImage
 	resource SmokeSheet, BattleEffect_SmokeSheet
 	resource BluePalette, BattleEffect_BluePalette
 	resource LimePalette, BattleEffect_LimePalette

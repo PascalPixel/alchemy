@@ -1,44 +1,7 @@
-// Matches: differ 0 of 553 (tla-en, 2026-11-06).
-// The chime and shade tests spell frame - j * 4 out rather than read time
-// (found by the permuter); with time there, 22 differ (the hoisted 36 and -4
-// take other registers). Other editions: same code, relocations only.
-// 2026-11-05: differ 22 of 553.
-
-// Near miss of SummonEffect_RunCanvasEffect, the body behind the four wrappers of
-// summon_canvas_modes.c.
-
-// Twin: The Broken Seal's BattleEffect_RunStatReduction (effect.c), call for
-// call. The Lost Age adds mode 3 (the dagger in the glow palette), reads
-// the effect from its argument, takes its heap blocks as Ram_HeapSlots
-// fields and gives its task the priority 0xc80. Resources not yet named in
-// directory.s, by row and asset: 0x15f BattleEffect_DaggerSheet, 0x15e
-// BattleEffect_ShieldSheet, 0x17f BattleEffect_PinkBurstSheet, 0x17b
-// BattleEffect_GlowOrbSheet and 0x160 BattleEffect_PaletteRampImage.
-
-// Near miss: differ 62 of 553 (draft 553; 2026-10-19, was 70 with 551).
-
-// The palette choice: the native tests mode 0, then 3, then 1, and loads the
-// glow palette's id in both the mode-3 and the mode-1 branch; agscc merges
-// those two branches into one (two instructions fewer) unless the tagged
-// empty asm keeps them apart. Left: order (the RAM base and the arguments'
-// spills, the canvas before the base, about a dozen single swaps of a load
-// with its neighbour, the pool offsets that follow them) and one register
-// swap (r0 and r1) in the shard set-up.
-
-// Tried (2026-10-15):
-// - mode == 3 || mode == 1 in one test: 95; the choice nested under
-// mode != 0: 70 (no change).
-// - greedy declaration-order sweep, two passes: no gain.
-// - 2026-10-19: the mode-3 palette behind a one-pass block (still merged,
-// 70); an empty one-pass block before the first statement (70, no gain).
-
-// 2026-10-26, under -mthumb-slow-loads: differ 42 of 553, the instructions
-// and registers otherwise the native's. What remains is single rows where
-// the native issues a spill or argument store before a load (the known
-// store-then-load scheduling limit); barriers and one-pass blocks at each
-// statement, statement moves and each local scoped to a block gain only
-// the prologue's row or rows of that kind.
-
+/// @file
+/// The dagger and shield canvas effect, behind the four wrappers of
+/// summon_canvas_modes.c; the Broken Seal's twin is
+/// BattleEffect_RunStatReduction, which has no mode 3.
 #include "types.h"
 #include "battle_display.h"
 #include "battle_effect.h"
@@ -63,12 +26,10 @@
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
-void BattleEffect_FetchRectangleBlitters(
-    s32 side,
-    DrawRectangle *pair);
-void Func_081180e8(s32 phase);           // BattlePlayback_StartFar
+void BattleEffect_FetchRectangleBlitters(s32 side, DrawRectangle *pair);
+void Func_081180e8(s32 phase); // BattlePlayback_StartFar
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 
 #define SHARDS ((struct EffectStep *)Ram_MapCellBuffer)
 #define RAMP_IMAGE 0x2580 // the shard picture, then seven darker copies
@@ -83,16 +44,17 @@ extern u16 Data_081974dc[]; // gStatChange_ShardCells
 extern u8 Data_081974f4[];  // gStatChange_ShardWidths
 extern u8 Data_08197500[];  // gStatChange_ShardHeights
 
-// A dagger (modes 0 and 3) or a shield (1 and 2) appears over each target
-// in turn, four frames apart, and breaks into shards that fly off and
-// darken.
-
-// Setup: seven darker copies of the shard picture are built by clamping
-// its levels; 24 shards a target start in a grid across the target and
-// scatter with random headings toward the user's side. Frame loop: a
-// target's picture plays for 24 frames; at frame 24 a chime sounds and the
-// shards fly for 36 frames, one shade darker every four frames.
-void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
+/// A dagger (modes 0 and 3) or a shield (1 and 2) appears over each target
+/// in turn, four frames apart, and breaks into shards that fly off and
+/// darken.
+///
+/// Setup: seven darker copies of the shard picture are built by clamping
+/// its levels; 24 shards a target start in a grid across the target and
+/// scatter with random headings toward the user's side. Frame loop: a
+/// target's picture plays for 24 frames; at frame 24 a chime sounds and the
+/// shards fly for 36 frames, one shade darker every four frames.
+void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect,
+                                  s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -123,8 +85,7 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode)
      * identical mode-1 branch; as plain C, 8 of 553 instructions differ in
      * tla-en. */
     asm("");
-  }
-  else if (mode == 1)
+  } else if (mode == 1)
     palette = (s32)&ResourceId_GlowOrbSheet;
   else
     palette = (s32)&ResourceId_PinkBurstSheet;
@@ -170,10 +131,10 @@ void SummonEffect_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode)
       shard->z = (i % 4 * 8 - 16) << 16;
     }
     if (effect->side == 1)
-      shard->velocityX = 0x20000;
+      shard->velocityX = Q16_ONE * 2;
     else
-      shard->velocityX = -0x20000;
-    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + 0x10000;
+      shard->velocityX = -Q16_ONE * 2;
+    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + Q16_ONE;
     shard->velocityZ = (Trig_Sin(angle) * radius) >> 6;
     shard->variant = Random16() & 0xff;
   }

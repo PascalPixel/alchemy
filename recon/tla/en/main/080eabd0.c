@@ -4,6 +4,12 @@
 // steps (grid then index, or an index local) 40, unchanged; the shape store
 // through struct ShapeCell 40, or 74 to 79 after the cell's byte 3; 6 minutes
 // of permuting found nothing below 40.
+// 6 November, second round: by greg's dump the cell table (6 weighted refs
+// over 23 insns) outranks the slot (6 over 39) and the shape row (4 over 29);
+// the native needs the shape row first, then the slot, then the table, so the
+// shape row must carry more refs or a shorter life. cells += slot with
+// shapes += slot measured 74 again; 8 more minutes of permuting, best 43.
+// The empty asm is still untagged and must go or be tagged before adoption.
 // The native keeps
 // the shape row in r5, the slot in r8 (then slot * 4) and the cell table in r10;
 // this gives the cell table r5, the shape row r8 and the slot r10. The empty asm

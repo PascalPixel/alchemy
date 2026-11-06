@@ -1,13 +1,17 @@
-// Differ 30 of 124 (tla-en, 2026-11-06): allocation only, as below; the
-// listing's crossjumped tails (17, 43 into 19, 41) already come out.
-// Under -Os, 5 November: differ 30 of 124 (tla-en); older figures below predate it.
-// Draft, differ 30 of 124 (was 48): the twin of Func_020012dc for the other
-// room (row 89): resets the stone, copies the four blocks and moves the
-// leader off the cells the blocks cover. The last three moves shift the
-// column in place (row <<= 16), as the native keeps the shifted value in r6.
-// Left: the native forms &gMainRoutineWork.currentOwner in r2 at the start (r1
-// here) and, for the last two moves, in r5 from the pool with the offset in
-// r3 (here r3 and r1).
+// Differ 4 of 124 (tla-en, 2026-11-06), was 30: the last three moves take the
+// work's address between the two cell calls, so it crosses the second call
+// and lands in r5 as the native's does; that also gives the start its r2.
+// Left: the pool load of &gMainRoutineWork sits before the second
+// Func_020012d4 call here (2 rows in each of the two 19 moves) and just after
+// it natively. Thumb has no first scheduling pass and sched2 keeps a pool load
+// before a call, so the native's load was after the call in RTL while the
+// pointer still crossed a call. Tried without gain: the work pointer taken
+// before the first call (13), after the second (56, the 15 move crossjumps
+// too), at function level or per branch (65, 78), through Scene_Call4090
+// (12 to 54), the shifts in place (8 to 26); a 3-minute permute reached 26
+// only through a long long temporary.
+// The twin of Func_020012dc for the other room (row 89): resets the stone,
+// copies the four blocks and moves the leader off the cells the blocks cover.
 #include "../../../../games/tla/src/scene/yampi_desert/scene.h"
 #include "actor.h"
 

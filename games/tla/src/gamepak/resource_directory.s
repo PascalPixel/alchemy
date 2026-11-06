@@ -48,7 +48,7 @@ Resource_DirectoryTable:
 	resource Data023, Resource_Data023
 	resource Data024, Resource_Data024
 	resource IntroTilesB, Resource_Data025
-	resource , Ui_Headings
+	resource Headings, Ui_Headings
 	resource , Battle_PurpleMoonBackdrop
 	resource SuhallaGateBackdrop, Battle_SuhallaGateBackdrop
 	resource PirateShipBackdrop, Battle_PirateShipBackdrop
@@ -344,7 +344,7 @@ Resource_DirectoryTable:
 	resource VioletCometSheet, BattleEffect_VioletCometSheet
 	resource FlameballSheet, BattleEffect_FlameballSheet
 	resource BoulderSheet, BattleEffect_BoulderSheet
-	resource , BattleEffect_RockWallSheet
+	resource RockWallSheet, BattleEffect_RockWallSheet
 	resource StarDotSheet, BattleEffect_StarDotSheet
 	resource MarsDjinnSheet, BattleEffect_MarsDjinnSheet
 	resource MarsDjinnSmallSheet, BattleEffect_MarsDjinnSmallSheet
@@ -360,9 +360,9 @@ Resource_DirectoryTable:
 	resource YellowRingSheet, BattleEffect_YellowRingSheet
 	resource YellowOrbSheet, BattleEffect_YellowOrbSheet
 	resource , BattleEffect_BubbleSheet
-	resource , BattleEffect_ShieldSheet
-	resource , BattleEffect_DaggerSheet
-	resource , BattleEffect_PaletteRampImage
+	resource ShieldSheet, BattleEffect_ShieldSheet
+	resource DaggerSheet, BattleEffect_DaggerSheet
+	resource PaletteRampImage, BattleEffect_PaletteRampImage
 	resource SmokeSheet, BattleEffect_SmokeSheet
 	resource BluePalette, BattleEffect_BluePalette
 	resource LimePalette, BattleEffect_LimePalette
@@ -490,7 +490,7 @@ Resource_DirectoryTable:
 	resource VioletFlameBurst, FieldEffect_VioletFlameBurst
 	resource YellowFlameBurst, FieldEffect_YellowFlameBurst
 	resource BlueFlameBurst, FieldEffect_BlueFlameBurst
-	resource , FieldEffect_Leaves
+	resource Leaves, FieldEffect_Leaves
 	resource DustPuffA, FieldEffect_DustPuffA
 	resource , FieldEffect_DustPuffB
 	resource , Resource_Data1E3

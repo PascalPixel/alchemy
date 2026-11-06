@@ -1,14 +1,15 @@
-// Draft, differ 33 of 162 (47 before, 2026-10-26; counts declared with 11
+// Matches: differ 0 of 162 (tla-en, 2026-11-06), with two tagged devices: the
+// dead NULL store to window before Window_Create (as the neighbouring
+// Party_ShowPairJoinedMessage has) and counts sized to 11 words for the
+// native's 52-byte stack frame.
+// Earlier: differ 33 of 162 (47 before, 2026-10-26; counts declared with 11
 // words, which gives the native's 52-byte stack frame: a frame-gap device to tag
 // if it matches, since only four are used): announces a summon (message 0x32
 // with its name from Data_0805f676, a jingle, held until it ends or a button),
 // then shows message 0x33 with the two elements it needs most (0x34 + element,
 // then 0x38) from the SummonDefinition's djinn counts, held until a button. The
 // final Resource_ResetEntry takes a slot the function never sets, a stack
-// word in the native. Left: register choice
-// (window and entries swap r9 and sl, the outer counter in r8 against r7);
-// the zero for the stack argument built in r2 rather than taken from r6; and
-// the order of the final queue call's stack store.
+// word in the native.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -38,11 +39,18 @@ void Func_08044dc8(s32 summon) {
   struct Window *window;
   s32 entries;
   u32 resource;
+  /* FAKEMATCH(dead): counts holds 11 words where four are used, which gives
+   * the native's 52-byte stack frame; as counts[4], 4 of 162 instructions
+   * differ in tla-en. */
   s32 counts[11];
   const u8 *djinn;
   s32 i;
   s32 n;
 
+  /* FAKEMATCH(dead): window set to NULL, which Window_Create's result
+   * replaces at once; without that store, 33 of 162 instructions differ in
+   * tla-en. */
+  window = NULL;
   window = Window_Create(4, 1, 22, 5, 0);
   if (window == NULL)
     return;

@@ -1,4 +1,5 @@
-// Draft, differ 42 of 137, 20 normalized, 2 with registers ignored (tla-en, 2026-11-05): the guarded goto loop with the menu state read first and again at the loop's exit gives the native's shape. Left: two copies the native has and this lacks, the table's address through r7 into r2 and the state from r4 into r3 before its test; forms with a second local fold away.
+// Near miss, differ 15 of 137 (tla-en, 2026-11-06): the column is read through `table` while both tests read the symbol, so gcse's copy of the table's address lives in r7 and is reloaded only after the row loop, as in the native. Left: before the loop the native loads the address into r7 and copies it to r2 (here into r2, copied to r7); the menu state is copied from r4 into r3 before its test (here tested in r4); the rest is pool offsets. Reading the state only at the end, a second local for it, or other types for it measure 15 or worse.
+// 2026-11-05: differ 42 of 137, 20 normalized, 2 with registers ignored (tla-en, 2026-11-05): the guarded goto loop with the menu state read first and again at the loop's exit gives the native's shape. Left: two copies the native has and this lacks, the table's address through r7 into r2 and the state from r4 into r3 before its test; forms with a second local fold away.
 // Draft, differ 80 of 137, 2026-10-15: The Broken Seal's
 // Window_DrawColumnBorders on this game's window (signed position,
 // tilemap rows indexed directly, the column added before it is doubled).
@@ -42,9 +43,9 @@ void Func_080426e0(struct Window *window, u32 flags) {
   }
   i = first;
   table = gWindow_PartyColumnOffsets;
-  if (table[i] >= 0) {
+  if (gWindow_PartyColumnOffsets[i] >= 0) {
   next:
-    col = gWindow_PartyColumnOffsets[i] + bias;
+    col = table[i] + bias;
     if (col < max) {
       for (row = 0; row != rows; row++) {
         dest = canvas->tilemap[(s16)window->y + row] + ((s16)window->x + col);
@@ -58,7 +59,7 @@ void Func_080426e0(struct Window *window, u32 flags) {
     }
     i++;
     table = gWindow_PartyColumnOffsets;
-    if (table[i] >= 0)
+    if (gWindow_PartyColumnOffsets[i] >= 0)
       goto next;
     state = canvas->menuState;
   }

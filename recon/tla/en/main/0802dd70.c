@@ -1,16 +1,17 @@
+// Differ 12 of 132 (tla-en, 2026-11-06).
 // Trial: ☀️'s WorldMap_BuildScanlineTable (games/tbs/src/field/field.c)
 // word for word over ⚓️'s projection record differs 70 of 132 (register
 // choice: the line counter and the camera point's address swap fp and a
 // stack slot); this draft, written from the listing, comes closer.
-// Near miss, differ 20 of 132, written from the listing:
-// for each of the 160 scanlines, projects a ground point through the camera
+// For each of the 160 scanlines, projects a ground point through the camera
 // (gCameraSceneParameters) and stores its x and y offsets in 16.16, or zeros
 // when the line is above the horizon. The pointer to result[2] (found by the
 // permuter) and height declared before nearZ give the native's registers
-// and stack slots. Left: the native takes the result's address again after
-// the transform call (add r1, sp, #16 for the call, a spilled copy after it)
-// where agscc shares one spilled pointer; the first vector stores and the
-// row parameter's copy are ordered differently. Plain result[] reads 55.
+// and stack slots; comparing distance with a local zero (permuter, 20 to 12)
+// is a forced temporary to tag if it survives. Left (allocation only): the
+// native passes add r1, sp, #16 to the transform call and spills a fresh
+// copy of the result's address after it, where agscc spills one pointer
+// before the call. Plain result[] reads 55; a pointer to result[0] 40 to 49.
 #include "types.h"
 #include "iwram_call.h"
 
@@ -33,9 +34,11 @@ void Func_0802dd70(s32 depth, s32 *position, struct ScanlineRow *row) {
   s32 z;
   s32 ratio;
   s32 dx;
+  s32 zero; // Forced temporary (permuter): distance is compared with it.
   s32 sum;
   s32 *far;
 
+  zero = 0;
   vector[0] = position[0];
   vector[1] = 0;
   vector[2] = position[2];
@@ -48,7 +51,7 @@ void Func_0802dd70(s32 depth, s32 *position, struct ScanlineRow *row) {
 
     z = Iwram_RatioMulQ14(nearZ, (gCameraSceneParameters[4] - i) << 16);
     distance = z - depth;
-    if (distance == 0)
+    if (distance == zero)
       distance = 1;
     ratio = Iwram_RatioMulQ14(distance, height);
     if (ratio < 0) {

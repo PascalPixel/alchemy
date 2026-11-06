@@ -1,19 +1,28 @@
-// Draft, differ 43 of 148, skeleton gap 9 (tla-en, 2026-11-01)
+// Differ 32 of 148 (tla-en, 2026-11-06).
+// Near miss, allocation only: the cell section at the top of the x loop. The
+// native has the cell in r2 and the kept low bits in r3, tied to the 0x7ff
+// mask; here regmove ties the low bits to the cell (r1), as CSE always puts
+// the cell first in the and, whichever order or declaration order the source
+// gives. The tile mask (0xfff into ip, then and through r5)
+// and the 3 instructions it lacked now match: tile = 0xfff, tile = cell & tile,
+// with the 0x7ff load between them so reload cannot reuse r3. A 0x7ff mask set
+// once is hoisted out of the x loop (83 differ), so mask also takes the
+// destination word.
 // Copies a rectangle of cells, keeping each destination's bits from 11 up and
 // taking the source's low 11, and redraws the cell picture in each layer whose
 // 16 by 12 view shows the destination cell. Family of The Broken Seal's
 // MapGrid_CopyCellPictureCellsRect, and closest to its sibling
 // MapGrid_CopyCellIndexRect, which keeps the attributes the same way (at bit
 // 12) and whose shape this port takes.
-// Left: only the cell section at the top of the x loop. The native has the cell
-// in r2 and the low bits in r3, so 0xfff goes to ip through r3, is reloaded
-// through r5 and the second mask clobbers r3; here local allocation puts the
-// cell in r3 (or, with `tile = cell & 0xfff`, the cell in r1 and low tied to
-// it). Frame, loops, offset chain and the redraw block all match. Tried without
-// gain: declaration order, signedness, a separate mask variable, setting the
-// masks before the load, reusing cell for the destination word, compound
-// assignments and either operand order. permute could not run (no built
-// edition in out/).
+// Earlier (2026-11-01, 43 differ): the native has the cell in r2 and the low
+// bits in r3, so 0xfff goes to ip through r3, is reloaded through r5 and the
+// second mask clobbers r3; local allocation had put the cell in r3 (or, with
+// `tile = cell & 0xfff`, the cell in r1 and low tied to it). Frame, loops,
+// offset chain and the redraw block all match. Tried without gain:
+// declaration order, signedness, a separate mask variable, setting the masks
+// before the load, reusing cell for the destination word, compound assignments
+// and either operand order. permute (5 minutes,
+// 2026-11-06) found only a one-pass block at 34 differ.
 #include "types.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -29,7 +38,10 @@ void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   /* FAKEMATCH(temporary): from the twin, scaled holds the cell's offset and
    * then the picture's, n its index and then the layer step, and the addresses
    * are set in parts; as a plain body (the offset computed once, a block-local
-   * byte offset, offset += 2048), 175 of 148 instructions differ in tla-en. */
+   * byte offset, offset += 2048), 175 of 148 instructions differ in tla-en.
+   * mask holds 0x7ff and then the destination word, and tile is set to 0xfff
+   * before its and; as `tile = cell & 0xfff; low = cell & 0x7ff;
+   * low |= *dst & 0xfffff800; *dst = low;`, 35 of 148 differ. */
   s32 y;
   u32 *src = (u32 *)gMapCellBuffer + (srcY * 128 + srcX);
   u32 *dst = &((u32 *)gMapCellBuffer)[dstY * 128 + dstX];
@@ -63,10 +75,14 @@ void Func_0802b450(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
         u32 n;
         u32 column;
         u32 scaled;
+        u32 mask;
 
-        tile = cell & 0xfff;
-        low = cell & 0x7ff;
-        *dst = low | (*dst & 0xfffff800);
+        tile = 0xfff;
+        mask = 0x7ff;
+        tile = cell & tile;
+        low = cell & mask;
+        mask = (*dst & 0xfffff800) | low;
+        *dst = mask;
         dst++;
         column = x & 15;
         i = 0;

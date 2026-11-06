@@ -1,11 +1,10 @@
-// Near miss, differ 40 of 387 (86 before; 2026-10-26): the event work's
-// fields are read through a struct (through a cast pointer the 0xd48 flag's
-// 1 and 0 came from the pool), the effect work is BattleFxScene, the party
-// state's bytes are renderMode and pendingThird, and the locals are declared
-// in the order that gives the native's stack slots. Left: instruction order
-// (the 0x2020 compare's constant, the loops' counters set after their
-// pointers here, the frame loop's opening constants, the animation byte's
-// copy after the owner's reload).
+// Differ 12 of 387 (tla-en, 2026-11-06).
+// Left: allocation only: work + 0x400 and the ripple start take r2 and r1
+// here, r1 and r2 in the native (5 minutes of permuting found nothing).
+// 2026-11-06: 30 to 12: the sprite-flag bytes read through owner->animation
+// with no local; each loop counter and the frame start set before the
+// pointers and ripple. 2026-10-26: 86 to 40: event work through a struct,
+// BattleFxScene, renderMode and pendingThird, locals in stack-slot order.
 // Earlier: differ 118 of 387: the sibling of Func_080e4730, in the same heap slot
 // 0x5c work (0x192c bytes), run only when the owner's animation is kind
 // 0x2020. The other objects of the owner's group pause; whether the owner
@@ -87,7 +86,6 @@ void Func_080e4a34(void) {
   s32 pictureTiles;
   u8 *sprite;
   u8 *particle;
-  u8 *animation;
   s32 ripple;
   s32 frame;
   s32 delay;
@@ -110,10 +108,11 @@ void Func_080e4a34(void) {
                         work);
   particleEntry = Resource_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
+  i = 0;
   particle = work + 0x1200;
   delay = -12;
   sprite = work + 0x800;
-  for (i = 0; i < 64; i++) {
+  for (; i < 64; i++) {
     Func_080e45a8(sprite, particle, i, particleTiles, event->standing);
     *(s32 *)(particle + 24) = delay;
     sprite += 40;
@@ -139,15 +138,17 @@ void Func_080e4a34(void) {
   pictureEntry = Resource_FindFreeEntry();
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
   Func_080e4510(work + 0x1900, pictureTiles);
+  frame = 15;
   ripple = 45;
-  for (frame = 15; frame <= 92; frame++) {
+  for (; frame <= 92; frame++) {
     Func_080e446c(work, work + 0x400, ripple / 2);
     ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
         work + 0x400, 32, 32, (u8 *)0x06010000 + pictureTiles * 32);
     Func_080e45a0(work + 0x1900);
+    i = 0;
     particle = work + 0x1200;
     sprite = work + 0x800;
-    for (i = 0; i <= 32; i++) {
+    for (; i <= 32; i++) {
       Func_080e46ac(sprite, particle, i, particleTiles);
       sprite += 40;
       particle += 28;
@@ -158,10 +159,8 @@ void Func_080e4a34(void) {
       Sound_PlayFar(136);
     if (frame == 60) {
       Animation_SetIndexAndInitializeObjectsFar(owner, 251);
-      animation = owner->animation;
-      animation[5] &= 63;
-      animation = owner->animation;
-      animation[7] = (animation[7] & 63) | 64;
+      ((u8 *)owner->animation)[5] &= 63;
+      ((u8 *)owner->animation)[7] = (((u8 *)owner->animation)[7] & 63) | 64;
       Actor_SetMode(owner, 1);
       Actor_SetSingleChildFlagsFar(
           Actor_GetById(effect->firstObjectId), 0);

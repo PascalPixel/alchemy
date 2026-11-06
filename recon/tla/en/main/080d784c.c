@@ -1,21 +1,13 @@
-// Draft, differ 53 of 107, 21 normalized, 5 with registers ignored (tla-en, 2026-11-05): flags and the raw halfword read apart, the scene as 0xfff and its raw value. Left: the native holds the scene's mask in r10 before the and (a one-pass block around it gives 51, shape 3), and the temporaries after it take r1, r2 and r0 where this has r0, r1 and r2.
-// Draft, differ 57 of 107, skeleton gap 9 (tla-en, 2026-11-01)
+// Near miss, differ 8 of 107 (tla-en, 2026-11-06): the same 107 instructions in a different order at the head. Here the halfword's ldrh comes before the ldrsh, and the 0xfff mask is built before the 0xf000 one; the native loads with ldrsh first and builds and applies 0xf000 before 0xfff. Raw read first gives the ldrsh's offset register r1, as in the native. The mask's set apart from its and, with the 0xf000 and between them, keeps reload from reusing r3 for the scene's and, so the and reloads through r0 as in the native and every later reload register lines up (the 0x214 owner offset now comes from "subs r2, #66"). Flags read first, or 0xfff set right before its and, brings back the r3 reuse (differ 56 to 57).
+// Earlier: differ 53 of 107 (2026-11-05) with flags and the raw halfword read apart and 0xfff set just before its and; differ 57 (2026-11-01).
 // Twin of The Broken Seal's Actor_PlaceMapActors (the same pending-event test,
 // flag 0x109, range 300 to 380, placement match and 32-pixel lift); ⚓️ places
 // ids 8 to 79 and calls Actor_SetMode. Both natives share the head's
 // "mov sl, r3; mov r0, sl; ands r0, r2; mov sl, r0".
-// Left: here reload inherits the 0xfff mask's r3, so the head is two
-// instructions short and every later reload register runs one behind. That is
-// the 57: the owner's offset lands in r0, not the 0x256 constant's register, so
-// move2add's "subs r2, #66" does not form (it would with the rotation back).
-// Owner's address set after id = 8, as loop.c's hoist leaves it; set before the
-// loop's counter the gap is 11, set at the top of the function the gap is 10
-// and differ 32 (the rotation happens to line up), read plainly in the loop
-// it is not hoisted, differ 68.
-// Tried without gain: a pending pointer, a held mask, a shared s32 or s16 read,
-// scene first, scene assigned apart from its read, (u16) casts, signed scene,
-// 0xfff on the left, unsigned flags, the twin's plain global (the pool then
-// holds the work's 0x254 and differs 64), locals at the block's top.
+// Tried at differ 8's head without gain: the twin's one-expression masks (57),
+// scene = raw & scene (8), u16 or s32 raw or scene (70, 10), the and of the
+// scene before the flags' (63), 0xfff declared before the reads (22, 73), a
+// pending pointer (8).
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -36,13 +28,12 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
 
 void Func_080d784c(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 flags = party->pendingDjinnEvent;
   u32 raw = (u16)party->pendingDjinnEvent;
-  u32 scene;
+  s32 flags = party->pendingDjinnEvent;
+  u32 scene = 0xfff;
   s32 id;
 
   flags &= 0xf000;
-  scene = 0xfff;
   scene &= raw;
   if (GameFlag_Test(0x109) != 0 && flags == 0) {
     flags = scene & 0x800;

@@ -1,5 +1,11 @@
-// Measured under -Os, 5 November 2026: differ 56 (tla-en); notes below may predate it.
-// Draft, differ 75 of 119, skeleton gap 10/7 (tla-en, 2026-11-01)
+// Differ 31 of 119 (tla-en, 2026-11-06).
+// Was differ 56 under -Os (2026-11-05) and 75 (2026-11-01); the register notes below
+// predate -Os. Now the countdown sits in r10 as native; left: native rebuilds sp
+// (mov r0, sp for the call, mov r7, sp for the owner pointer) and loads the id into
+// r5, while the draft keeps sp in r6 and puts items r5, slot r7: allocation only.
+// Measured with no gain (2026-11-06): Unit_Get(*owner++), id split from owner++,
+// s32 id; owner = owners after the call (62) or in the for init (71); 4 minutes of
+// permuter (best still 31).
 // Near miss of Func_0200290c of overlay 696. Control flow, loads and scheduling
 // agree; what is left is one allocation. The native gives items r6, slot r5, the
 // owner pointer r7, i r8, count r9 and the countdown r10, with a 20-byte frame.

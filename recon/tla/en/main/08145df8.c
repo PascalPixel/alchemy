@@ -1,5 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 22 of 518. Left: order and registers at
-// the loop's tail (the advance of the y step and the stride).
+// Differ 22 of 518 (tla-en, 2026-11-06). Left: order and registers of the
+// edge loop's strength-reduced steps at its tail (pool load, y step, stride).
 
 // Near miss, differ 48 of 518.
 //

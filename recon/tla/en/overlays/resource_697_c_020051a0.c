@@ -1,28 +1,38 @@
-// Draft, differ 397 of 497, draft 498 instructions (tla-en, 5 November 2026), under -Os, with
-// two untagged pins (x r9, arg r0). The figure rose from 264 on purpose: the 102 instructions
-// of duplicated marker tails are gone, so what is left is allocation and slots, not shape.
-// The native's arms are one tail. Sched2 runs before jump2 in this compiler, and the tail
-// starts at mov r9, r2 with movs r0, #n still inside each arm, so the source has two whole
-// tails which jump2 cross-jumps. Here find_cross_jump refuses them: flow.c's find_basic_blocks
-// puts a (use 0) after the call that ends the fall-through arm, and none after the call that
-// the first arm's jump follows. An empty asm after the call is refused too (ASM_INPUT),
-// an arm's dead store goes before flow2, and a label after the first arm's call is tensioned
-// or merged away with its (use 0). So one tail is written here, and arg's pin keeps movs r0
-// in the arms, because gcse's cprop moves a plain arg = n to the join.
-// Tie evidence: mov r0, r9; ands r0, r3 and mov r1, r8; orrs r1, r3 are in-out reloads of
-// x & 511 and (tile + n) | 0xe400 tied by regmove to high registers. x ranks above object
-// (.385 against .242) without the pin, and takes r5 where the native has object.
-// Left: native order is object r5, ptr240 r6, tile+n r8, cursor+4 r10, x r9, entry+12 and the
-// second &scrollY spilled (frame 40); here tile+n r6, ptr240 r7, cursor+4 r8, entry+12 r10
-// (frame 32). The do { } while (0) is what hoists those invariants above the side test.
-// The Trial Road link display's scheduled callback (Func_020055c4 starts it):
-// its fade state falls during events or with flag 262 and otherwise rises to
-// 2 (unke0 holds it at 2); rising from 0 to 1 it loads the palette and picture
-// again, and at 0 it frees its VRAM. Otherwise it queues two rows of sprites,
-// each up to four pairs 36 pixels apart down from the scrolled offset, sliding
-// in 6 pixels per fade step (the right row mirrored), and on frames 5 to 15 of
-// every 16 a marker over each of the two watched objects, projected at 1/16
-// scale from their positions and the course side.
+// Differ 334 of 497 (tla-en, 2026-11-06).
+// Near miss: allocation and stack slots
+// (frame 32, native 40), and &scrollY hoisted above the row loop where the native
+// recomputes it each row. Under -Os, with two untagged pins (x r9, arg r0).
+// Down from 397 (5 November): the markers' offsets open with their sign, so x
+// is q - fade * 6 ... subtracted as the native does rather than adding a negated
+// fade; px is taken after y &= 255; entry steps after its call.
+// Earlier the figure rose from 264 on purpose: the 102 instructions of
+// duplicated marker tails are gone, so what is left is allocation and slots,
+// not shape. The native's arms are one tail.
+// Sched2 runs before jump2 in this compiler, and the tail starts at mov r9, r2
+// with movs r0, #n still inside each arm, so the source has two whole tails
+// which jump2 cross-jumps. Here find_cross_jump refuses them: flow.c's
+// find_basic_blocks puts a (use 0) after the call that ends the fall-through
+// arm, and none after the call that the first arm's jump follows. An empty asm
+// after the call is refused too (ASM_INPUT), an arm's dead store goes before
+// flow2, and a label after the first arm's call is tensioned or merged away
+// with its (use 0). So one tail is written here, and arg's pin keeps movs r0 in
+// the arms, because gcse's cprop moves a plain arg = n to the join. Tie
+// evidence: mov r0, r9; ands r0, r3 and mov r1, r8; orrs r1, r3 are in-out
+// reloads of x & 511 and (tile + n) | 0xe400 tied by regmove to high registers.
+// x ranks above object
+// (.385 against .242) without the pin, and takes r5 where the native has
+// object. Left: native order is object r5, ptr240 r6, tile+n r8, cursor+4 r10,
+// x r9, entry+12 and the second &scrollY spilled (frame 40); here tile+n r6,
+// ptr240 r7, cursor+4 r8, entry+12 r10 (frame 32). The do { } while (0) is what
+// hoists those invariants above the side test. The Trial Road link display's
+// scheduled callback (Func_020055c4 starts it): its fade state falls during
+// events or with flag 262 and otherwise rises to 2 (unke0 holds it at 2);
+// rising from 0 to 1 it loads the palette and picture again, and at 0 it frees
+// its VRAM. Otherwise it queues two rows of sprites, each up to four pairs 36
+// pixels apart down from the scrolled offset, sliding in 6 pixels per fade step
+// (the right row mirrored), and on frames 5 to 15 of every 16 a marker over
+// each of the two watched objects, projected at 1/16 scale from their positions
+// and the course side.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 #include "frame.h"
 #include "dma.h"
@@ -56,28 +66,32 @@ void Func_02005770(const void *source, void *destination);
 void Func_02005790(void *entry, s32 priority);
 s32 Func_02002ce8(s32 side);
 
-#define MARKER(left, right, which, tileAdd, entryArg)                          \
+// left and right are the arms' offsets, each opening with its sign, so the
+// subtractions compile in the order the native has them.
+#define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
     s32 lift, px;                                                              \
     register s32 x asm("r9");                                                  \
     register s32 arg asm("r0");                                                \
     if (side) {                                                                \
-      x = (object->x - work->originX) / PIXELS(16) + left;                     \
+      x = (object->x - work->originX) / PIXELS(16) left;                       \
       arg = which;                                                             \
     } else {                                                                   \
-      x = (object->x - work->originX) / PIXELS(16) + right;                    \
+      x = (object->x - work->originX) / PIXELS(16) right;                      \
       arg = which;                                                             \
     }                                                                          \
     lift = Func_02002ce8(arg);                                                 \
-    y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4; \
-    px = x & 511;                                                              \
+    y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + \
+        4;                                                                     \
     y &= 255;                                                                  \
+    px = x & 511;                                                              \
     *cursor++ = 0;                                                             \
     y |= px << 16;                                                             \
     y |= 0x40000000;                                                           \
     *cursor++ = y;                                                             \
     *cursor++ = (tile + (tileAdd)) | 0xe400;                                   \
-    Func_02005790(entryArg, 255);                                              \
+    Func_02005790(entry, 255);                                                 \
+    entry++;                                                                   \
   } while (0)
 
 void Func_020051a0(void) {
@@ -141,8 +155,8 @@ void Func_020051a0(void) {
   object = ObjectTable_Get(work->a);
   if (object != NULL) {
     s32 side = gMainRoutineWork.entrance & 1;
-    MARKER(work->fade * 6 + work->scrollX - 19,
-           -work->fade * 6 - work->scrollX + 232, 0, 10, entry++);
+    MARKER(+work->fade * 6 + work->scrollX - 19,
+           -work->fade * 6 - work->scrollX + 232, 0, 10);
   }
   object = ObjectTable_Get(work->b);
   if (object == NULL || object->x == 0)
@@ -152,7 +166,7 @@ void Func_020051a0(void) {
     // it; the native does so, and a render of the course's far side would show
     // whether it is a slip.
     s32 side = gMainRoutineWork.entrance & 1;
-    MARKER(work->fade * 6 + work->scrollX + 189,
-           -work->fade * 6 + work->scrollX + 23, 1, 14, entry);
+    MARKER(+work->fade * 6 + work->scrollX + 189,
+           -work->fade * 6 + work->scrollX + 23, 1, 14);
   }
 }

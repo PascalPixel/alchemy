@@ -1,17 +1,13 @@
-// Draft, differ 47 of 142 (55 before, 2026-10-26): the heap slot 0x9c workspace's per-frame update.
+// Matches: differ 0 of 142 (tla-en, 2026-11-06). The heap slot 0x9c workspace's per-frame update.
 // Unless flag 260 is set, once the event timer passes 12: on foot, the talk
 // target the leader faces is looked up among the eight slots' two ids and,
 // when Func_080d99b8 accepts the pair, the event prompt becomes 0xfc85; in
 // render mode 3 it is 0xfc86. Then each active slot's swing is advanced: a
 // damped sine (phase steps 1/16 turn, amplitude times 0.95 until it falls
-// under 0.1) passed to Func_080d8fa8. No ☀️ twin found. The search is a while
-// over the slots that counts before it steps, which gives the native's copy
-// of slot 0's test before the loop. Left: the native then steps a separate
-// pointer from the slots base, which stays in r5 for the second loop; here
-// the first count folds to 1 and the base needs r4 (pushed and spilled,
-// frame 4).
-// The second loop matches. The event fields are struct fields (through cast
-// pointers the prompt's constants come from the pool: differ 73).
+// under 0.1) passed to Func_080d8fa8. No ☀️ twin found. The search is a plain
+// indexed for over the slots with a break (47 before as a counting while over
+// a stepped pointer, 37 as a for over a stepped pointer). The event fields
+// are struct fields (through cast pointers the prompt's constants come from the pool: differ 73).
 #include "types.h"
 #include "flag_call.h"
 #include "iwram_call.h"
@@ -57,12 +53,9 @@ void Func_080d8c10(void) {
       s32 target = Field_FindNearbyTalkTarget(gMainRoutineWork.currentOwner);
 
       if (target != -1) {
-        slot = work->slots;
-        while (slot->id != target && slot->value != target) {
-          if (++i > 7)
+        for (i = 0; i < 8; i++)
+          if (work->slots[i].id == target || work->slots[i].value == target)
             break;
-          slot++;
-        }
         if (i < 8 && Func_080d99b8(work->slots[i].id, work->slots[i].value))
           event->prompt = 0xfc85;
       }

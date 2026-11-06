@@ -1,0 +1,84 @@
+#include "types.h"
+#include "task.h"
+#include "ram_buffer.h"
+#include "resource.h"
+#include "system.h"
+#include "actor.h"
+#include "effect_sprite.h"
+
+s32 ArcTan2(s32 y, s32 x);
+
+struct BurstParticle {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 heading;
+  s32 speed;
+  s32 spin;
+  s32 delay;
+};
+
+struct BurstWork {
+  u8 tiles[384];
+  struct EffectSprite sprites[96];
+  struct BurstParticle particles[96];
+  s16 resource;
+  s16 vram;
+  u8 unk1b04[2];
+  s16 frame;
+  s16 active;
+};
+
+struct BurstCell {
+  s16 x;
+  s16 z;
+};
+
+void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
+void Func_080e2c38(void);
+extern char ResourceId_Leaves;
+
+void Func_080e2acc(void) {
+  struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
+  u8 *effect = Ram_HeapSlots->effectWork;
+  u8 *event = Ram_HeapSlots->eventWork;
+  struct Actor *owner = *(struct Actor **)(effect + 16);
+  struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
+  s32 dx = (cell->x << 20) - owner->x + 0x80000;
+  s32 dz = (cell->z << 20) - owner->z + 0x80000;
+  s32 heading = (u16)ArcTan2(dz, dx);
+  struct EffectSprite *sprite;
+  struct BurstParticle *particle;
+  s32 resource;
+  s32 vram;
+  s32 i;
+
+  work->frame = 0;
+  work->active = 1;
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Leaves), work);
+  resource = Resource_FindFreeEntry();
+  vram = VramCache_Load(resource, 384, work);
+  work->resource = resource;
+  work->vram = vram;
+
+  for (i = 0, particle = work->particles; i < 96; i++, particle++) {
+    sprite = &work->sprites[i];
+    Func_080eaf98(sprite, 4, 4, 0, vram);
+    sprite->depth = 250;
+    sprite->oam.priority = 0;
+    sprite->oam.palette256 = 1;
+    sprite->oam.palette = 0;
+    particle->x = owner->x;
+    particle->y = owner->y;
+    particle->z = owner->z;
+    Vector_AddPolarOffset(Random16() * 8 + 0x80000, Random16(), &particle->x);
+    particle->heading = heading;
+    particle->speed = Random16() + 0x10000;
+    particle->spin = (Random16() >> 6) + 384;
+    if (i & 1)
+      particle->spin = -particle->spin;
+    particle->delay = -i / 2;
+  }
+  Sound_PlayFar(220);
+  Task_Add(Func_080e2c38, TASK_PASS_VBLANK);
+}

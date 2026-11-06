@@ -1,4 +1,5 @@
-// Draft, differ 75 of 260 (tla-en, 5 November 2026). A plain while on a copy of the
+// Differ 75 of 260 (tla-en, 2026-11-06). Left: slot ranks above leader and work.
+// Draft notes of 5 November 2026: A plain while on a copy of the
 // kind, i++ first at the bottom, the routine work read direct, scale before dx. Left:
 // slot ranks above leader and work (2 * 6 / 116 against 2 * 4 / 136), where the native
 // holds them in r10 and r9 and slot in r11; the kind's copy ties into r2 where the
@@ -30,6 +31,17 @@
 // Tried: all 25 places of i = 0 across the arms (a tail placed last in both is
 // cross-jumped, gap 8, differ 189, but it merges the wrong stores); all 6
 // orders at the bottom; reach's operand orders and a sprite local (no change).
+// 2026-11-06: under -Os, gcse's code hoisting moves an expression computed in
+// both arms of the zoom if into the head and leaves copies (it needs two
+// occurrences): `slot = gData_02003dc0; next = placement->kind;` in both arms,
+// with no early locals, gives the head's ldrb r2 and ldr r4 and the join's
+// copies as the native has them, but the two REG_EQUAL sets put slot at 4x
+// (2 * 7 / 476), below i (2 * 5 / 232), so slot spills and i takes r11: differ
+// 170; with slot set once at the join instead, 160. `slot = gData_02003dc0`
+// once at the join beside the early kind (2x, 2 * 6 / 232) gives leader r10,
+// work r9, slot r11 as the native, but loses the early pool load: differ 178.
+// i = 0 in both arms as well (4x) keeps slot in r11 but cross-jumps the arms'
+// stores: differ 193 to 199.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"

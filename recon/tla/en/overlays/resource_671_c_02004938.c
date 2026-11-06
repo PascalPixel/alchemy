@@ -1,19 +1,7 @@
-// Draft, differ 39 of 500 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 41 of 500 (tla-en); older figures below predate it.
-// Measured 5 November (-Os), differ 41 of 500. Left: the last check's state is
-// read from sp+4 here where the native rebuilds ball + 99 (GCSE), the origin's two
-// reads go through r5 where the native adds to r3 and keeps r5, and the final
-// stores follow from that.
-// Near miss, differ 226 of 500 (tla-en, 2026-10-31): the native keeps the
-// ball in r11, the row in r8 and the heading in r9 (here r8, r9 and r11),
-// gSceneState in r5 through the set-up, and 0x80000 in no register (built
-// again at each use); here local allocation gives r5 to the 0x80000 that CSE
-// shares between both products and the cell centre, and r8 to the board
-// pointer, which the ball then takes, so gSceneState is reloaded from the
-// pool and the branch offsets shift by those instructions. The native also
-// recomputes ball + 99 for the last check, where GCSE reuses state. Zeroing
-// in the native's order (col, row, heading) measures 246; reading piece and
-// marked by index, as the native addresses them, 562.
+// Matches: differ 0 of 500 (tla-en, 2026-11-06).
+// No devices. What settled it: the board pointer taken just before the cell
+// is read (earlier, its longer life lost r5 to the IWRAM multiply), the state
+// byte read as ball + 99 at each use, and the last stores in y, x, z, angle order.
 // Moves a ball along the Gabomba floor's channels one
 // sixteenth of a cell per step (step 0 to 15): its cell (the object's
 // halfwords 0x64 and 0x66) and heading (byte 0x62, quarter turns) pick the
@@ -52,9 +40,6 @@ void Func_02005854(s32 sound);
 void Func_02005634(struct Actor *object, const u8 *script);
 
 void Func_02004938(struct Actor *ball, s32 step) {
-  /* FAKEMATCH(pin): the board in r5, as the native keeps it; as a plain local,
-   * 127 of 500 instructions differ in tla-en. */
-  struct SceneState *board = &gSceneState;
   s16 *colp = (s16 *)((u8 *)ball + 100);
   s32 col = *colp;
   s16 *rowp = (s16 *)((u8 *)ball + 102);
@@ -62,31 +47,26 @@ void Func_02004938(struct Actor *ball, s32 step) {
   u8 *headingp = (u8 *)ball + 98;
   s32 heading = *headingp;
   s32 angle = heading << 14;
-  s32 index = (row * 11 + col) * 4;
-  s32 piece = ((u8 *)board)[index];
-  s32 goal = ((struct PuzzleCell *)(index + (u8 *)board))->marked;
+  s32 cell = row * 11 + col;
+  struct SceneState *board = &gSceneState;
+  s32 piece = board->cells[cell].piece;
+  s32 goal = board->cells[cell].marked;
   s32 key = (heading << 8) + piece;
   s32 d = step - 8;
   s32 arc = step << 10;
-  u8 *state;
   s32 s = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Math_Sine(arc));
   s32 c = Value2((s32 (*)())Iwram_MulQ16, 0x80000, Math_Cosine(arc));
   s32 z;
   s32 x;
 
-  {
-    s16 *origin = &board->originX;
-
-    x = ((origin[0] + col) << 20) + 0x80000;
-    z = ((origin[1] + row) << 20) + 0x80000;
-  }
-  state = (u8 *)ball + 99;
+  x = ((board->originX + col) << 20) + 0x80000;
+  z = ((board->originZ + row) << 20) + 0x80000;
   if (goal == 2) {
     heading = row = col = 0;
-    if (*state == 1) {
+    if (((u8 *)ball)[99] == 1) {
       Func_02005854(204);
       Func_02005634(ball, gData_02006f38);
-      *state = goal;
+      ((u8 *)ball)[99] = goal;
     }
     goto done;
   }
@@ -188,17 +168,17 @@ void Func_02004938(struct Actor *ball, s32 step) {
   case 266:
   case 522:
   case 778:
-    if (*state == 1) {
+    if (((u8 *)ball)[99] == 1) {
       ball->x = x;
       ball->y = 0;
       ball->z = z;
       ball->angle = angle;
       if (x >> 20 == 24 && z >> 20 == 14) {
-        *state = 7;
+        ((u8 *)ball)[99] = 7;
       } else {
         Func_02005854(204);
         Func_02005634(ball, gData_02006f38);
-        *state = 2;
+        ((u8 *)ball)[99] = 2;
       }
     }
     break;
@@ -207,10 +187,10 @@ void Func_02004938(struct Actor *ball, s32 step) {
     break;
   default:
     heading = row = col = 0;
-    if (*state == 1) {
+    if (((u8 *)ball)[99] == 1) {
       Func_02005854(132);
       Func_02005634(ball, gData_02006ec0);
-      *state = 2;
+      ((u8 *)ball)[99] = 2;
     }
     break;
   }
@@ -223,8 +203,8 @@ done:
   if (((u8 *)ball)[99] == 1) {
     ball->y = 0;
     ball->x = x;
-    ball->angle = angle;
     ball->z = z;
+    ball->angle = angle;
     ball->unk4c++;
   }
 }

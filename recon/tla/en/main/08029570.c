@@ -1,3 +1,17 @@
+// Differ 8 of 324 (tla-en, 2026-11-06).
+// The null test is `ladder == NULL` first, its block padded by a tagged dead
+// self-copy so ifcvt case 2 (then block over BRANCH_COST) keeps the 127 below
+// the test; left: the 127 in r1, not r0, and the y copy loaded before x (copy
+// orders yzx, zxy, yxz 8; zyx 12; xyz 49). Permuter 3 min: nothing better.
+// Earlier, differ 26 of 324 (tla-en, 2026-11-06): the null test read
+// `if (ladder != NULL) { ... } else collisionFlags = 1;`, so the ladder count's
+// start stays after the test; left: the null path's block sits after the
+// ladder work instead of right after the test (with `ladder == NULL` first,
+// ifcvt's case 2 lifts the 127 above the test, differ 33: the native's else
+// block must hold something that stops it), the knock-on branch and literal
+// offsets, and the y copy's load before x's. Copy orders x,y,z 57; x,z,y 61;
+// z,y,x 30; y,z,x and z,x,y 26. Counting down by hand, differ 104; skipping
+// the loop into the shared `best == NULL` test, differ 27.
 // Draft, differ 36 of 324 (2026-10-26, 73 before): the best point's position
 // copied y first, which gives the native's registers and instruction count;
 // left: the ladder count's start (127) hoisted above the work's null test
@@ -113,6 +127,8 @@ s32 Func_08029570(struct Actor *object) {
     bestDistance = 0x10000000;
     if (ladder == NULL) {
       collisionFlags = 1;
+      /* FAKEMATCH(dead): the form kept; as the bare `collisionFlags = 1;`, 33 of 324 instructions differ in tla-en. */
+      position.y = position.y;
     } else {
       for (count = 0; count < 128; count++, point++) {
         if (point->active == 1) {

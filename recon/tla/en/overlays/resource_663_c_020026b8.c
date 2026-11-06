@@ -1,10 +1,11 @@
-// Draft, differ 130 of 484 (tla-en, 5 November). A beam of light in Air's Rock.
-// Plain for loops; the sweep uses the counter i (x in r7 as the native); beam stores together.
-// Left, one cause: global.c gives the first Actor_GetById temporary (2 refs over 8, 0.25) r6 ahead of the frame count's
-// low bits (5 over 43, 0.233); the native has the low bits in r6, the temporary on the stack at sp+0 and only r8 saved (the beam).
-// Diagnostic: low pinned to r6 gives 71, the temporary then takes r8 and pushes the beam to r10: the native's temporary is
-// not allocated at all, so find why it has no alternate class before anything else.
-// Tried with no gain: low merged with z (200), per-loop counters (all 32 masks, at best 136), if (!(gFrameCount & 3)).
+// Near miss, differ 2 of 484 (tla-en, 2026-11-06): one swap after the BG0CNT store, the fill halfword's pool load
+// scheduled ahead of mov r0, sp (the native forms the fill address first). A beam of light in Air's Rock.
+// The 130 of before came from the closing zero: as a constant byte store it took its own QImode register,
+// which moved the spark loop's registers; one s32 zero for the byte, the hook and BLDCNT, as the adopted
+// airs_rock s1010.c writes it, gives the native's allocation (the first Actor_GetById spilled to sp+0).
+// The beam's z steps in the for increment beside i (in the body, 12).
+// Tried with no gain on the last 2: u16/u32/s16 control, the fill as its own volatile u16 or s16 local,
+// a function-scope fill cell, the fill inside the BG0CNT block; a plain REG_BG0CNT = 0x40e gives 20.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -152,12 +153,11 @@ void Func_020026b8(void) {
   REG_DISPCNT |= 0x100;
   Call3((void (*)())Func_02003b98, 0x30000, 0x30000, 0x10000);
   z = 0xffff8000;
-  for (i = 0x4000; i != 0x48000; i += 0x400) {
+  for (i = 0x4000; i != 0x48000; i += 0x400, z += 0xfffffc00) {
   beam[6] = i;
   beam[7] = z;
   ((u8 *)Actor_GetById(12))[98] = Random16Far() & 7;
   wait(1);
-  z += 0xfffffc00;
   }
   Task_RemoveFar(Func_0200257c);
   Task_Add(Func_02000ef4, 0xc80);
@@ -180,13 +180,17 @@ void Func_020026b8(void) {
   FieldEvent_Wait(1);
   }
   Task_RemoveFar(Func_02000ef4);
-  ((u8 *)Actor_GetById(12))[99] = 0;
-  wait(30);
-  Actor_GetById(12)->update = 0;
-  Actor_SetPartAttribute(Actor_GetById(12), 6);
-  Func_02003ba0();
-  FieldEvent_Wait(60);
-  REG_BLDCNT = 0;
+  {
+    s32 zero = 0;
+
+    ((u8 *)Actor_GetById(12))[99] = zero;
+    wait(30);
+    Actor_GetById(12)->update = (void (*)(void))zero;
+    Actor_SetPartAttribute(Actor_GetById(12), 6);
+    Func_02003ba0();
+    FieldEvent_Wait(60);
+    REG_BLDCNT = zero;
+  }
   Func_02003b00();
   Func_02003af8();
   Func_02003bb8(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);

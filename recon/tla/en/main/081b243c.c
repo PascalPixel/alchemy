@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 32 of 1707.
+// Differ 32 of 1707 (tla-en, 2026-11-06): scheduling and allocation only.
 // Draft, differ 178 of 1707, skeleton gap 37/25 (tla-en, 2026-11-01)
 // The slot machine's VBlank task, The Broken Seal's LuckyWheels_Update
 // (games/tbs/src/field/lucky_wheels.c), confirmed statement by statement, in

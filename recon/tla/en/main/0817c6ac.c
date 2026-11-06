@@ -1,4 +1,8 @@
-// Measured 2026-11-05 (tla-en): differ 32: the model's mesh and vertices are typed pointers, not void.
+// Near miss, differ 32 of 627 (tla-en, 2026-11-06): scheduling and allocation only, in three places: the
+// corners' setup (the listing zeroes i first and adds the wobble to height + half in place;
+// all 60 orders of those five statements measured, this one best), the 0x8000's second half
+// and the scrollU block's registers (frame in r4, caster in r1).
+// 2026-11-05: the model's mesh and vertices are typed pointers, not void.
 // Measured 2026-11-05 (tla-en): differ 38 of 627, instruction counts equal. The loop
 // over corners now agrees whole: half a real local, corner a struct, radiusX over
 // radiusY in rank (radiusY in r2, caller-saved at sp+12), the vertex buffer's address

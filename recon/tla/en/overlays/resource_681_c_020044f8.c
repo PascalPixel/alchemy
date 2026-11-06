@@ -1,12 +1,15 @@
-// Draft, differ 44 of 418 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Left: register names only. The native has the cell in ip, the row's y << 3 in lr and
-// the step's offset in r9; here the two offsets outrank the cell (5 refs over 75 and 86
+// Differ 44 of 418 (tla-en, 2026-11-06): register names only.
+// The native has the cell in ip, the row's y << 3 in lr and the step's offset in r9;
+// here the two offsets outrank the cell (5 refs over 75 and 86
 // against 4 over 111), take ip and lr, and the cell takes r9. That also moves the reload
 // registers' rotation in the third and fourth scans. Pinning the cell to ip gives the
 // names but loses one reload, which moves the rotation (38). Sharing the cell with the
 // walk's store gives it 8 refs over 116, which takes r7 before the step.
 // path is one local holding a constant: its doubled live length is what puts steps
 // behind tries, and at the end it reloads from the pool.
+// Also measured (2026-11-06): a second counter for the second loop, 129 (the walk's step
+// leaves r7); the cell shared with the walk's store, 244 (it takes r7 in the walk);
+// the first scan read through cell[GRID_WIDTH], 67; the last two stores swapped, 66.
 //
 // Lays out the maze path once (flag 0x3f0, not after flag 0x109): seeded by
 // the given value, a random walk of fourteen steps from the middle of a 28 by

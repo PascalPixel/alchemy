@@ -12,17 +12,18 @@
 ///   shake and a ring of dust, then hops on into the water with a splash and
 ///   sinks until its top shows, and the cells where it lies change
 ///   (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, a story flag, so it stays there for
-///   good). A chest holds Power Bread. Exits lead back to the Goma Cave
-///   Entrance, into the room of two pillars (goma_cave_pillar.c;
-///   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST and _EAST) and north into
-///   SceneId_GomaCaveBridge. Vale's VALE_PLAZA_TO_GOMA_CAVE_STREAM leads in at
-///   GOMA_CAVE_STREAM_FROM_VALE_PLAZA, which arrives without the area name in
-///   a passage walled off from the rest of the room, its own camera box with
-///   a chest at its north end (its render,
-///   places/goma-cave-stream/map-5.png). Its only way out is the cell
-///   behavior 1 cell at its south tip, cell (38, 55) in map_023's
-///   map.txt, two cells south of the arrival, which leads back to
-///   Vale (GOMA_CAVE_STREAM_TO_VALE_PLAZA).
+///   good). Exits lead back to the Goma Cave Entrance, into the room of two
+///   pillars (goma_cave_pillar.c; GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST
+///   and _EAST) and north into SceneId_GomaCaveBridge.
+///
+///   The same map holds a small cave off Vale's plaza, walled off from the
+///   rest of the room in a camera box of its own, with a chest of Power
+///   Bread at its north end (its render, places/goma-cave-stream/map-5.png).
+///   Vale's VALE_PLAZA_TO_CHEST_CAVE leads in at
+///   GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA, which shows no area name.
+///   Its only way out is the cell behavior 1 cell at its south tip, cell
+///   (38, 55) in map_023's map.txt, two cells south of the arrival, which
+///   leads back to the plaza (GOMA_CAVE_STREAM_CHEST_CAVE_TO_VALE_PLAZA).
 /// - SceneId_GomaCaveBridge, the way out, where a wooden bridge crosses the
 ///   river. It has no actors and only its two exits: back south into
 ///   SceneId_GomaCaveStream and out onto the World Map toward Bilibin
@@ -122,15 +123,17 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Sets up SceneId_GomaCaveStream as the party enters (SceneId_GomaCaveBridge
 /// needs nothing).
-/// Arriving from Vale (GOMA_CAVE_STREAM_FROM_VALE_PLAZA) shows no area
-/// name; otherwise the stump lies where the party moved it.
+/// Arriving in the small cave off Vale's plaza
+/// (GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA) shows no area name;
+/// otherwise the stump lies where the party moved it.
 s32 Scene_Initialize(void) {
   struct Actor *stump;
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == (s32)&SceneId_GomaCaveStream) {
-    if (gMainRoutineWork.entrance == GOMA_CAVE_STREAM_FROM_VALE_PLAZA) {
+    if (gMainRoutineWork.entrance ==
+        GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA) {
       GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     } else {
       Actor_GetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
@@ -253,7 +256,7 @@ struct SceneEntrance gGomaCaveStreamEntrances[] = {
      FACING_SOUTH, 0, 88, 8, 664, 832, 0},
     {GOMA_CAVE_STREAM_FROM_GOMA_CAVE_BRIDGE, CONDITION_ALWAYS, 376, 0, 168,
      FACING_SOUTH, 0, 88, 8, 664, 832, 0},
-    {GOMA_CAVE_STREAM_FROM_VALE_PLAZA, CONDITION_ALWAYS, 614, 0, 848,
+    {GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA, CONDITION_ALWAYS, 614, 0, 848,
      FACING_NORTH, 0, 480, 605, 720, 900, 0},
     {ENTRANCE_BESIDE_STUMP, CONDITION_ALWAYS, 424, 0, 280, FACING_WEST, 0, 88,
      8, 664, 832, 0},
@@ -278,8 +281,8 @@ u32 gGomaCaveStreamAndBridgeExits[] = {
                GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST),
     SCENE_EXIT(GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE, GomaCaveBridge,
                GOMA_CAVE_BRIDGE_FROM_GOMA_CAVE_STREAM),
-    SCENE_EXIT(GOMA_CAVE_STREAM_TO_VALE_PLAZA, ValePlaza,
-               VALE_PLAZA_FROM_GOMA_CAVE_STREAM),
+    SCENE_EXIT(GOMA_CAVE_STREAM_CHEST_CAVE_TO_VALE_PLAZA, ValePlaza,
+               VALE_PLAZA_FROM_CHEST_CAVE),
     SCENE_EXITS(GomaCaveBridge),
     SCENE_EXIT(GOMA_CAVE_BRIDGE_TO_GOMA_CAVE_STREAM, GomaCaveStream,
                GOMA_CAVE_STREAM_FROM_GOMA_CAVE_BRIDGE),
@@ -301,7 +304,8 @@ struct ActorPlacement gGomaCaveBridgeActorPlacements[] = {
 };
 
 struct Trigger gGomaCaveStreamTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_VALE_PLAZA},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
+     GOMA_CAVE_STREAM_CHEST_CAVE_TO_VALE_PLAZA},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, GOMA_CAVE_STREAM_TO_GOMA_CAVE_ENTRANCE},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS,
      GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST},

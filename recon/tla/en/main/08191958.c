@@ -1,17 +1,26 @@
-// Measured 2026-11-05 (tla-en): differ 48 of 185, 34 with slots and pool
+// Differ 34 of 185 (tla-en, 2026-11-06).
+// The frame (native 140, here 136: every spill one slot lower, 16 rows) and,
+// in the band loop, the row offset and the falling edge in each other's
+// registers. 2026-11-06: the row offset declared in the inner loop (36 to
+// 34). x reused as the frame count (a temporary) gives 28, only the frame and
+// one register swap left; ramp[66] sizes the frame (24) but misstates it.
+// 2026-11-06: the colour as if (i <= 31) i * 2, else 63 - ((i - 96) << 1)
+// unless i <= 95. With y * 2 on one arm only, gcse no longer carries it out of
+// the inner loop (ifcvt still sets it first, as the native does), and the
+// falling edge written inline is hoisted by loop.c, so the outer giv keeps
+// the native's per-row copy (r4 = r7). Row as (i >> 3) * 64 + (i & 7) (36,
+// against 42 the other way round). Not moving x and row: u32 x or row,
+// declaration order or scope, (canvas + row)[...], the index's terms
+// reordered (36 to 75), x < 128 (38). An unused s32 pad[1] does not size the
+// frame; the extra word below the spills looks like a third spill slot.
+// Earlier, 2026-11-05 (tla-en): differ 48 of 185, 34 with slots and pool
 // offsets normalized. A loop more takes a counter of its own.
-// Draft, differ 66 of 185 (no device): summon 25's screen wipe (called at
+// Earlier draft, differ 66 of 185 (no device): summon 25's screen wipe (called at
 // its start with a midpoint callback). Written from the listing; no Broken
 // Seal twin (twins12 0.46).
 // The native stack frame is 140 bytes: work at sp+4, midpoint at sp+8, the ramp at
 // sp+12 and a word at sp+0 that nothing reads; here the stack frame is 136 (work
-// sp+0, midpoint sp+4), which shifts every spill (about 10 rows).
-// Left: in the band loop the native keeps y in r5, x in r6, the row offset
-// in r0 and copies the falling edge's giv (r7, 2y - 192) into r4 each row;
-// it computes y * 2 inside the inner loop. Here y, x and the row offset take
-// r4, r0 and r6, and y * 2 is computed once per row (shared with fall).
-// After the push the IO queue entry's address is formed before the count
-// increment (2 rows).
+// sp+0, midpoint sp+4), which shifts every spill.
 // Tried: the colour as an if/else chain or as the native's shape
 // (color = y * 2; if (y > 31) { ...; if (y <= 95) color = 63; }) (129-131
 // without the row local); the row offset as a local (109) and the tile
@@ -48,7 +57,6 @@ void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
   s32 frames;
   s32 half;
   s32 x;
-  s32 y;
   s32 i;
 
   scrollX = (side & 1) * 192 - 64;
@@ -62,15 +70,14 @@ void Func_08191958(u8 side, u8 speed, void (*midpoint)(void)) {
   // The band: colours 0 to 62 rising over the first 32 rows, 63 through the
   // middle 64 and falling again over the last 32, in 8x8 256-colour tiles.
   for (i = 0; i != 128; i++) {
-    s32 row = (i & 7) + (i >> 3) * 64;
-    s32 fall = i * 2 - 192;
-
     for (x = 0; x != 128; x++) {
+      s32 row = (i >> 3) * 64 + (i & 7);
       s32 color;
 
-      color = i * 2;
-      if (i > 31) {
-        color = 63 - fall;
+      if (i <= 31)
+        color = i * 2;
+      else {
+        color = 63 - ((i - 96) << 1);
         if (i <= 95)
           color = 63;
       }

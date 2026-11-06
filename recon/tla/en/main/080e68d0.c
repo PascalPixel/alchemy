@@ -1,5 +1,5 @@
-// Near miss, differ 26 of 938 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Differ 26 of 938 (tla-en, 2026-11-06): sched2 order only; untagged empty asms,
+// one-pass blocks and searched locals each need their S2 tag on adoption.
 // Draft, differ 50 of 938, skeleton gap 24 (tla-en, 2026-11-01): a field
 // Psynergy that grows something from the
 // ground before the caster (on a 16-pixel grid, unless the event mode is 3):

@@ -16,13 +16,15 @@ outward, a map is:
 1. [Cells](#cells): what one square of the grid says.
 2. [One grid, three layers](#one-grid-three-layers): how the three sheets
    share the grid, and what the map's header says about each.
-3. [A map's tables](#a-maps-tables) and [how the build makes a
+3. [From a cell to the screen](#from-a-cell-to-the-screen): how a cell's
+   place in the grid becomes a place on the ground and on screen.
+4. [A map's tables](#a-maps-tables) and [how the build makes a
    map](#how-the-build-makes-a-map) from them.
-4. [Loading a map](#loading-a-map): how the game unpacks it when the party
+5. [Loading a map](#loading-a-map): how the game unpacks it when the party
    arrives, and the chests it then places.
-5. [Tileset animation and blend scripts](#tileset-animation-and-blend-scripts):
+6. [Tileset animation and blend scripts](#tileset-animation-and-blend-scripts):
    the parts of a map that move by themselves.
-6. The two maps built differently: [the World Map's](#the-world-maps-data)
+7. The two maps built differently: [the World Map's](#the-world-maps-data)
    and the [Colosso paths](#the-colosso-paths).
 
 ```mermaid
@@ -116,13 +118,14 @@ behaviors are `enum CellBehavior`:
 
 A town's three layers are drawn one over another, but in the grid they sit
 side by side: all three are windows onto the one 128 by 128 grid. Each
-layer's window starts at a cell the map's header gives, so a map lays its
-layers out side by side or one above another, and the cells no window
-reaches go unused. In Vale on the stormy night (`map_000`) the ground,
-middle and overhead layers start at tiles (0, 0), (60, 0) and (120, 0), all
-in a row; in the Goma Cave room with two pillars and a stump (`map_022`) at
-(0, 0), (0, 68) and (100, 0); and in Venus Lighthouse Entry at (0, 0),
-(64, 0) and (0, 68). A window has no size of its own: the camera's bounds
+layer's window starts where the map's header says, in 8-pixel tiles, two to
+a cell, so a map lays its layers out side by side or one above another, and
+the cells no window reaches go unused. In Vale on the stormy night
+(`map_000`) the ground, middle and overhead layers start at tiles (0, 0),
+(60, 0) and (120, 0), which are cells (0, 0), (30, 0) and (60, 0), all in a
+row; in the Goma Cave room with two pillars and a stump (`map_022`) at cells
+(0, 0), (0, 34) and (50, 0); and in Venus Lighthouse Entry at cells (0, 0),
+(32, 0) and (0, 34). A window has no size of its own: the camera's bounds
 stop the view, so a layer shows the cells from its start out as far as the
 camera can go.
 
@@ -163,6 +166,67 @@ Suhalla haze's values.
 | `layers[n].scrollX`, `.scrollY` | sixteenths of the camera's motion | how fast the layer follows the camera | 20, 20: a quarter faster |
 | `layers[n].speedX`, `.speedY` | sixteenths of a pixel a frame | the layer's drift | -121, 35: about 7.6 pixels right and 2.2 up a [frame](../../glossary.md#frame) |
 | `layers[n].periodX`, `.periodY` | 8-pixel tiles, less one | where the layer wraps | `0x1f`: every 32 tiles |
+
+## From a cell to the screen
+
+Where a door, a chest or a trigger is on screen is worked out from where its
+cell is in the grid, in three steps: from the grid to a layer, from a
+layer's cell to a place on the ground, and from the ground to the screen.
+Each step has its own unit, and a step left out puts a marker in the wrong
+place.
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
+flowchart LR
+  grid(["A grid cell: map.txt's column and row"]) -->|"less the window's start"| layer(["A layer's cell"])
+  layer -->|"16 pixels a cell"| ground(["A place on the layer's ground"])
+  ground -->|"less the height"| screen(["A place on screen"])
+  classDef data fill:#FBE7C6,stroke:#E0B46A,color:#7A5212
+  classDef layer fill:#D2EEF3,stroke:#7FC3D0,color:#1E5966
+  class grid,layer data
+  class ground,screen layer
+```
+
+The first step takes a cell of the grid to a cell of one layer. `map.txt`'s
+columns and rows count from the grid's corner, starting at 0; a layer's
+cells count from the start of its window. The header gives that start in
+8-pixel tiles and the game halves it into cells when the map loads
+(`MapGrid_LoadMap`). In Vale on the stormy night the middle layer starts at
+tile 60, which is cell 30, so the cell in `map.txt`'s column 43 is the
+middle layer's column 13. A window has no size, so the same grid cell can
+be in two windows or in none: `map.txt` alone cannot say which layer a cell
+belongs to, and only a layer's start says which cells that layer reads.
+
+The second step takes a layer's cell to the ground. Cell (x, z) covers the
+ground from pixel 16x to 16x + 15 across and from 16z to 16z + 15 down,
+with its middle at 16x + 8. The [entrances](../../glossary.md#entrance),
+the actor placements and the scenes' code all give places in these pixels
+on a layer's ground, and the game turns a place back into a cell by
+dividing by 16.
+
+The third step takes the ground to the screen, and here height comes in.
+The cell pictures are drawn flat, row by row, but an
+[actor](../../glossary.md#actor) is drawn its height above its place on the
+ground (`ActorSystem_PlaceSprites`), so the top of a ledge 48 pixels high is
+drawn three rows above its own cells. The game finds a cell by its place on
+the ground alone and never by height: the cell under an actor, which gives
+the actor its layer and priority, and the cell the A button searches,
+16 pixels ahead of the leader and always on the ground layer
+(`Actor_GetTriggerCellAheadOfCurrent`). A cell is therefore seen where the
+actor standing on it, or looking at it, is drawn. A step trigger or an exit
+shows at the height of its own ground. A cell the leader searches shows at
+the height of the floor he searches it from: its own ground is often the
+top of what stands there, and a bookcase's top is 32 pixels up, two rows
+above the bookcase the player sees.
+
+| Number | Unit | Counted from |
+| --- | --- | --- |
+| a column or row of `map.txt` | 16-pixel cells | the grid's corner, from 0 |
+| `layers[n].x`, `.y` | 8-pixel tiles, two to a cell | the grid's corner |
+| a layer's cell | 16-pixel cells | the start of the layer's window |
+| an entrance's, an actor's or a scene's place | pixels | the layer's ground, at height 0 |
+| a height | pixels | up from height 0 |
+| a place on screen | pixels | the ground's place, less its height |
 
 ## A map's tables
 

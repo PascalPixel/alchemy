@@ -1,5 +1,6 @@
-// Near miss, differ 34 of 216 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Near miss, differ 2 of 216 (tla-en, 2026-11-06): plain C, no devices; only
+// the work's address loads before the two calls here, after them in the native
+// (loading it after the calls by assignment is differ 62: work leaves r5).
 // First draft of Func_080ec2b8, written from the listing: picks the world map
 // place for the cursor. The nearest shown place (its flag-entry state not 0 or
 // 15, its flag 0x180 + n set) to the cursor wins; when the cursor is already
@@ -7,11 +8,9 @@
 // the next shown place, wrapping at both ends, giving up after two wraps.
 // With no place shown, Func_080ec1d0 gives the leader's place.
 //
-// Differ 48 of 216 (permuter, 5 minutes, found the work pointer). Left: in
-// the first loop the native walks the table with a pointer in r5 and copies
-// it to r7 for the body, keeping the flag number in r6; this indexes it,
-// giving r6 and r7 and the flag in r5 (a place++ walk is differ 196). The
-// work's address loads after the calls in the native, before them here.
+// The first loop indexes the table and breaks on an empty entry; one flag and
+// one state variable serve both loops, which gives the native's r5, r6 and r7
+// (separate per-loop variables are differ 38).
 #include "types.h"
 
 // A flag entry as the world map reads it: its world position.
@@ -58,6 +57,8 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
   s32 cursorY;
   s32 count;
   s32 wraps;
+  s32 flag;
+  u32 state;
   struct WorldMapWork *work = &gWorldMapWork;
 
   Party_GetLeaderActor();
@@ -70,11 +71,11 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
     cursorX = work->unk644 >> 16;
     cursorY = Data_0202a648[1];
   }
-  for (count = 0; count < 128 && places[count].flag != 0; count++) {
-    register s32 flag asm("r6");
-    u32 state;
+  for (count = 0; count < 128; count++) {
 
     place = &places[count];
+    if (place->flag == 0)
+      break;
     flag = place->flag + 0x180;
     state = Func_080ec298(place);
 
@@ -109,8 +110,8 @@ void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step) {
           best = 0;
           wraps++;
         } else {
-          s32 flag = next->flag + 0x180;
-          u32 state = Func_080ec298(next);
+          flag = next->flag + 0x180;
+          state = Func_080ec298(next);
 
           if (state != 0 && state != 15 && GameFlag_Test(flag)) {
             place = next;

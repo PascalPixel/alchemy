@@ -1,3 +1,23 @@
+// Differ 266 of 902 (tla-en, 2026-11-06).
+// 2026-11-06: allocation only: the grid's (Q, u, vertex) and, after it, 140 of
+// the 266 in the frame loop's reloads. Permuter (5 minutes): best 264, by moving
+// quad[12] = a, store-order noise as below, not kept.
+// The grid's allocation (Q,
+// u, vertex) and, after it, 140 of the 266 in the frame loop's reloads. The
+// cse2 dump shows why vertex starts from row << 6: loop copies i into 624 for
+// vertex's start (624 << 2), and cse2 folds that through 138's REG_EQUAL
+// (row << 4, kept when the outer loop reduced 138 to 632). The native starts
+// vertex from Q (lsls r3, r4, #2); the draft's row << 6 needs one more reload
+// (mov r7, fp), and the frame loop's reload registers follow from it. Shown by
+// column = 0 before the row loop and again after the column loop, with no
+// init in the column for: the starts become (Q + column) << 2, the frame loop
+// matches (rest 140 to 65) and differ is 202 of 908, but the six extra
+// instructions add column to every start, so it is not the source and is not
+// kept. No gain: u8 or u32 for u, a, b, c, d, x, v, i, row, column (266 to
+// 960); row * 16, (u32)row << 4 for v; i, v or casts for quad[5], [17], [19]
+// (626); vertex spelled from i * 4 + column * 4 or &cells[..] (266); i stepped
+// by 16 in the row for (950 to 957); the waves loop on its own row or column
+// (314 to 849); column = 0 at the top of the row (266).
 // 2026-11-05, differ 266 of 902 unchanged, measured from the lreg and greg dumps. Lo
 // registers go r3 (the column's locals), then by rank: quad r2, then the native's
 // vertex r1, u r0, Q r4, b r5, c r6, d r7 (kicked to its slot by reload). In the draft

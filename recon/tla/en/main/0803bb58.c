@@ -1,8 +1,6 @@
-// Draft, differ 60 of 258 (2026-10-18): every instruction is the native's
-// but the high registers rotate: the native keeps spacing in r8, the widest
-// line in r9 and the line-count array in r11, this the widest line in r8, the
-// array in r9 and spacing in r11; a scheduling pair at the start. Six minutes
-// of permuter and a loop-local copy of spacing (96) found nothing better.
+// Matches: differ 0 of 258 (tla-en, 2026-11-06). The high registers fell into
+// place with the widest line set to 0 before the page heights and each
+// spacing store advancing its own pointer (*spacing++), both plain C.
 // ☀️'s Text_MeasureAllPages on this game's WindowWork: code 176
 // is skipped as a control code, a page break resets the text style, and the
 // line gaps are not clamped.
@@ -31,6 +29,7 @@ void Func_0803bb58(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   u32 lineIndex;
   s32 gap;
 
+  maxWidth = 0;
   work = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   pageHeights[0] = 15;
   pageHeights[1] = 15;
@@ -48,7 +47,6 @@ void Func_0803bb58(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   pageHeights[13] = 15;
   pageHeights[14] = 15;
   pageHeights[15] = 15;
-  maxWidth = 0;
   line = 0;
   width = 0;
   count = 0;
@@ -125,15 +123,14 @@ done:
   if (spacing != NULL) {
     for (lineIndex = 0; lineIndex <= line; lineIndex++) {
       if (lineSpacingCounts[lineIndex] <= 1) {
-        *spacing = 0;
+        *spacing++ = 0;
       } else {
         gap = maxWidth - lineWidths[lineIndex];
         gap -= 4;
         if (gap < 0)
           gap = 0;
-        *spacing = (gap << 8) / (lineSpacingCounts[lineIndex] - 1);
+        *spacing++ = (gap << 8) / (lineSpacingCounts[lineIndex] - 1);
       }
-      spacing++;
     }
   }
   Text_ResetStyle();

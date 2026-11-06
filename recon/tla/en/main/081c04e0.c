@@ -1,9 +1,13 @@
+// Differ 48 of 28 (tla-en, 2026-11-06): the game route, which cannot
+// match; through the sound route all 28 of the listing's instructions come out.
 // Blocked, 5 November 2026: the work copy of the sound initialization, as ☀️'s
 // m4aSoundInit (games/tbs/src/sound/audio.c). The listing starts at the copy's
 // second call: its head, from 081c04cc, is recon/tla/raw/081c04cc.s. Through the
 // sound route (old_agbcc -O2 -mthumb-interwork, SOUND_C) this C emits the head's
-// instructions and all of the listing's; the game route differs by 48. What
-// stops it is not the code: the first call is a bl to itself, the others reach
+// instructions and all of the listing's (rechecked 6 November 2026). The game
+// route differs by 48 and has to: the listing keeps r4 live across a call, which
+// -fcall-used-r4 forbids, and returns through bx r0, which needs interworking.
+// What stops it is not the code: the first call is a bl to itself, the others reach
 // addresses of an older layout, and the pool words but the block copy's
 // control word are 0. C reaches those only by names at those addresses, which
 // O2 forbids.

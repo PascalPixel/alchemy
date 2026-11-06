@@ -1,6 +1,19 @@
-// Draft, differ 24 of 145 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 24 of 145 (tla-en); older figures below predate it.
-// Draft, differ 75 of 145, skeleton gap 13/16 (tla-en, 2026-11-01)
+// Differ 24 of 145 (tla-en, 2026-11-06). The sink loop now builds step + 1 in
+// blend before dividing, which gives the listing its copy (29 to 24); doing the
+// same in the rise loop costs 9. Left: allocation only, r0/r1 swapped in the
+// rise loop, r2/r3 in the sink loop. The permuter reaches 20 only by reusing
+// fade for currentOwner (a forced temporary), not kept. blend holding step + 1
+// and then the register value is itself a reused local: tag it FAKEMATCH
+// (temporary) at adoption unless a plain form is found.
+// Before: differ 29 (2026-11-06). The 24 of 5 November came from wrong
+// C: blend was built from the previous frame's fade, and the sink loop dropped
+// 16 - fade. With both written as the listing computes them, left: step + 1 and
+// fade swap r0 and r1 in the rise loop, and the sink loop has no copy of step +
+// 1 (the listing keeps one, as if step + 1 were a variable there). No gain:
+// ++step forms, step-- inside the division, step -= 1, >> 2, BLEND_ALPHA or one
+// expression for the register (49 to 78: the 16 is then pooled).
+// Under -Os, 5 November: differ 24 of 145 (tla-en); older figures below predate
+// it. Draft, differ 75 of 145, skeleton gap 13/16 (tla-en, 2026-11-01)
 // Func_02000d3c's companion: the map's two scrolling layers (0x108 and 0x178)
 // climb 352 pixels at once while a layer fades in (frames 17 to 79), then
 // after a screen transition the leader is placed (cue 308) and the layers sink
@@ -60,9 +73,9 @@ void Func_02000be8(void) {
   step = 1;
   i = 0;
 rise:
-  if ((u32)(i - 17) <= 62) {
-    blend = fade << 8;
+  if (i >= 17 && i < 80) {
     fade = (step + 1) / 4;
+    blend = fade << 8;
     blend |= 16 - fade;
     REG_BLDALPHA = blend;
     step++;
@@ -83,10 +96,11 @@ rise:
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 2);
   if (i != 0) {
   sink:
-    if ((u32)(i - 33) <= 62) {
-      fade = (step + 1) / 4;
-      blend |= 16 - fade;
+    if (i >= 33 && i < 96) {
+      blend = step + 1;
+      fade = blend / 4;
       blend = fade << 8;
+      blend |= 16 - fade;
       REG_BLDALPHA = blend;
       step--;
     }

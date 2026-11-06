@@ -1,6 +1,22 @@
-// Near miss, differ 44 of 871 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Draft, differ 75 of 871, skeleton gap 31 (tla-en, 2026-11-01)
+// Differ 28 of 871 (tla-en, 2026-11-06): the caster takes r6 and the offset r7
+// where the listing swaps them; the event work's pointer is loaded once before
+// the loop where the listing reloads it each pass; green's product sits in r5
+// against r3; one scheduling pair (i = 63 against the -13 mask's copy).
+// Later on 6 November: result = 0 before pending = NULL with the event work's
+// pointer in its own local gives both stores and slots back in r5 (from 34).
+// Still holds untagged empty asms, one-pass blocks and locals found by search;
+// each needs its S2 tag on adoption, measured then.
+// 6 November: priorityFlags |= 2 orders the OR; if (fade == -1) add = 0; else
+// add = fade / 4 reloads fade as the listing does; green as sin * 8, then
+// (green >> 16) + 23. Measured and left: result = 0 before pending = NULL
+// gives both stores but differ 47; green read through blue (a reused
+// temporary) gives 30; offset set later, caster set first, the caster read
+// through slots, a layer pointer, a giv-shaped object index and every slots
+// access through Ram_HeapSlots all measure worse. The lreg dump has the caster
+// at 6 refs over 50 insns, the offset 7 over 92, slots 5 over 98, so the
+// caster is allocated first.
+// Earlier: near miss, differ 44 of 871 (tla-en, 2026-11-05); draft, differ 75
+// of 871, skeleton gap 31 (tla-en, 2026-11-01)
 // A field Psynergy cast 32 pixels before the caster:
 // a glowing disc (FieldEffect_GlowDisc, copied to the sprite VRAM the window
 // work's halfword at 0x1348 names) grows there while up to 64 white puffs
@@ -12,13 +28,7 @@
 // disc; 1 grows it larger with puffs for 80 frames; 2 also fades the screen
 // to white over 100 frames. A marked object is set on its terrain again, the
 // event runs, and the palettes fade back.
-// Frame, stack slots and most allocation now agree. Left: the listing has the
-// heap-slots pointer in r5, the byte offset in r6 and the caster in r7, where the
-// lreg dump ranks them caster, offset, slots (r5, r6, r7), so the offset's 20 is
-// scheduled after the first call and the terrain address has no copy; the first
-// sine's product stays in r0 against r3 in the listing; fade / 4 copies the
-// reloaded value against a fresh load; a few scheduling pairs (the 2 ORed into
-// byte 35, the screen pointer, the shrink's literal load).
+// Frame, stack slots and most allocation agree.
 // The spawn count shares i with the other loops (i only takes caller-saved r4
 // that way), the slot is its own local, and the disc's tile goes through packed;
 // a block-scoped sprite, a separate counter and a shared wave local all measured
@@ -141,6 +151,7 @@ void Func_080e7844(void) {
   s32 packed;
   s32 i;
   u8 *dst;
+  u8 *eventWork;
 
   found = -1;
   fade = -1;
@@ -152,21 +163,22 @@ void Func_080e7844(void) {
   pos[1] = caster->y;
   pos[2] = caster->z;
   Vector_AddPolarOffset(0x200000, scene->facing, pos);
+  eventWork = slots->eventWork;
   for (i = 0; i < 80; i++, offset += 4) {
-    object = *(struct Actor **)((u8 *)slots->eventWork + offset);
+    object = *(struct Actor **)(eventWork + offset);
     animation = object->animation;
     if (object->script != NULL && animation->definition[0] == 290 &&
         animation->unk18 == 1 &&
         Func_080dbe80(pos, 4, &object->x, object->radius - 2) >= 0) {
       result = 2;
       found = i;
-      ((u8 *)Actor_GetById(i))[35] |= 2;
+      Actor_GetById(i)->priorityFlags |= 2;
       goto loaded;
     }
   }
   if (Func_080cda84(scene->fieldKind, caster, pos) == -1) {
-    pending = NULL;
     result = 0;
+    pending = NULL;
   } else if (Func_080dbd5c(pos[0], pos[2], caster->terrainId) != 0) {
     pending = Func_080ce458(0x50000005, scene->fieldKind,
                             Func_080dbdc8(pos[0], pos[2], caster->terrainId));
@@ -263,10 +275,12 @@ loaded:
     }
 
     for (i = 0; i <= 31; i++) {
-      add = 0;
-      if (fade != -1)
+      if (fade == -1)
+        add = 0;
+      else
         add = fade / 4;
-      green = (Trig_Sin((frame / 2 + i) << 11) * 8 >> 16) + 23;
+      green = Trig_Sin((frame / 2 + i) << 11) * 8;
+      green = (green >> 16) + 23;
       blue = Trig_Sin(((frame / 4 + i) << 11) + 0x4800);
       blue = (blue * 10 >> 16) + 12;
       red = add + 28;

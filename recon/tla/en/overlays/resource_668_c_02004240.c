@@ -1,9 +1,14 @@
-// Draft, differ 23 of 171 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 23 of 171 (tla-en); older figures below predate it.
-// Near miss, differ 219 of 171 (tla-en, 2026-10-31): the same control flow,
-// calls, accesses and constants as the native; what is left is GCSE and
-// allocation. Measures a push: finds the pushable object ahead of the leader
-// (Func_020043a8, recording its number and kind in the push state), then
+// Near miss, differ 6 of 171 (tla-en, 2026-11-06): the body inside one
+// `if (object != 0)` with a single `return 0` after it gives the native's shared
+// return block (23 to 6), and with that the three loops are plain for loops
+// (6 as with labels). Left: the call takes &cell from r5, where the native
+// recomputes sp + 28 (the cell.x stores use r5 in both), and movs r0, #1 is
+// scheduled two rows early. A forwarding inline for Func_02004a64 gives 4
+// (permuter), a wrapper device, so not kept. Older notes below predate this.
+// Near miss, differ 219 of 171 (tla-en, 2026-10-31): the same
+// control flow, calls, accesses and constants as the native; what is left is
+// GCSE and allocation. Measures a push: finds the pushable object ahead of the
+// leader (Func_020043a8, recording its number and kind in the push state), then
 // steps the object's box one cell at a time along the leader's direction
 // until a cell of it is blocked (Func_02004a64 returns 2); with at least one
 // free step it records the end position in the push state and returns 1,
@@ -54,54 +59,43 @@ s32 Func_02004240(struct PushState *push) {
   u8 *layer;
 
   object = Func_020043a8(&direction, &push->number, &push->kind);
-  if (object == 0)
-    return 0;
-  kind = push->kind;
-  width = (Abs(gData_02004cb0[kind][0]) + Abs(gData_02004cb0[kind][2])) >> 4;
-  height = (Abs(gData_02004cb0[kind][1]) + Abs(gData_02004cb0[kind][3])) >> 4;
-  offset = gData_02004cc8[direction];
-  dx = offset & 0xffff0000;
-  dz = offset << 16;
-  push->unk14 = 0;
-  steps = 0;
-  layer = &object->terrainId;
-  *layer = 2;
-  push->x = object->x + dx;
-  push->z = object->z + dz;
-  cell.y = object->y;
-nextStep:
-  cell.z = push->z + (gData_02004cb0[kind][1] << 16);
-  j = 0;
-  if (j >= height)
-    goto stepFree;
-nextRow:
-  cell.x = push->x + (gData_02004cb0[kind][0] << 16);
-  i = 0;
-  if (i >= width)
-    goto rowFree;
-nextCell:
-  if (Func_02004a64(object, &cell) == 2)
-    goto blocked;
-  cell.x += 0x100000;
-  i++;
-  if (i < width)
-    goto nextCell;
-rowFree:
-  cell.z += 0x100000;
-  j++;
-  if (j < height)
-    goto nextRow;
-stepFree:
-  push->x += dx;
-  steps++;
-  push->z += dz;
-  goto nextStep;
-blocked:
-  *layer = 0;
-  if (steps == 0)
-    return 0;
-  push->x = object->x + dx * steps;
-  push->y = object->y;
-  push->z = object->z + dz * steps;
-  return 1;
+  if (object != 0) {
+    kind = push->kind;
+    width = (Abs(gData_02004cb0[kind][0]) + Abs(gData_02004cb0[kind][2])) >> 4;
+    height = (Abs(gData_02004cb0[kind][1]) + Abs(gData_02004cb0[kind][3])) >> 4;
+    offset = gData_02004cc8[direction];
+    dx = offset & 0xffff0000;
+    dz = offset << 16;
+    push->unk14 = 0;
+    steps = 0;
+    layer = &object->terrainId;
+    *layer = 2;
+    push->x = object->x + dx;
+    push->z = object->z + dz;
+    cell.y = object->y;
+    for (;;) {
+      cell.z = push->z + (gData_02004cb0[kind][1] << 16);
+      for (j = 0; j < height; j++) {
+        cell.x = push->x + (gData_02004cb0[kind][0] << 16);
+        for (i = 0; i < width; i++) {
+          if (Func_02004a64(object, &cell) == 2)
+            goto blocked;
+          cell.x += 0x100000;
+        }
+        cell.z += 0x100000;
+      }
+      push->x += dx;
+      steps++;
+      push->z += dz;
+    }
+  blocked:
+    *layer = 0;
+    if (steps == 0)
+      return 0;
+    push->x = object->x + dx * steps;
+    push->y = object->y;
+    push->z = object->z + dz * steps;
+    return 1;
+  }
+  return 0;
 }

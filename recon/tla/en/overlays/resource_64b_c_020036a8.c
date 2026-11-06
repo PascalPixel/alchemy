@@ -1,4 +1,19 @@
-// Draft, differ 75 of 260 (tla-en, 2026-11-05).
+// Differ 63 of 260 (tla-en, 2026-11-06).
+// 2026-11-06: a block-local mode = 9 for the renderMode test (permuter) took
+// 75 to 63; what is left is register picks: leader r9, work r11, slot r10 for
+// the native r10, r9, r11.
+// 2026-11-06, from the greg dump: priorities are placement 3 * 11 / 148, slot
+// 2 * 6 / 116, leader 2 * 5 / 142, work 2 * 4 / 136, i 2 * 5 / 234 (its i = 0
+// doubles it), so slot takes r10 and leader and work r9 and r11. slot's copy
+// at the join gets no REG_EQUAL note (cse sees the pool load only in the head's
+// block), so it is not doubled; at 2x (2 * 6 / 232) it would sit between work
+// and i as the native's r11 does. `struct Actor **slot = gData_02006c08` set in
+// the head gives exactly the native's leader r10, work r9, slot r11, but with no
+// objects pseudo in r4 through the head every scratch choice moves (r4 for r5):
+// differ 152; set there by position in the declarations, 152 to 160. Indexing
+// objects[i] gives the same three registers with an offset giv (208); slot =
+// &objects[i] in the loop, 87 to 124; i = 0, next and slot hoisted from both
+// arms in all six orders, 193 to 203; a goto loop in place of the while, 77.
 // Draft, differ under 64c's form (tla-en, 5 November 2026): see the twin overlay 64c's Func_02000d64 for what is left.
 // Under -Os, 5 November: differ 138 of 260 (tla-en); older figures below predate it.
 // Draft, differ 147 of 260, skeleton gap 11 (tla-en, 2026-11-01)
@@ -144,6 +159,9 @@ void Func_020036a8(void) {
           s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
           s32 dx = object->x - leader->x;
           s32 reach, dz;
+          /* FAKEMATCH(temporary): the form kept; as renderMode == 9, 75 of 260
+           * instructions differ in tla-en. */
+          s32 mode = 9;
 
           if (dx < 0)
             dx = leader->x - object->x;
@@ -152,7 +170,7 @@ void Func_020036a8(void) {
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z - object->z) < reach) {
             if (GameFlag_Test(0x104) == 0) {
-              if (gMainRoutineWork.renderMode == 9)
+              if (gMainRoutineWork.renderMode == mode)
                 work->unk166 = 0x208b;
               else
                 work->exit = i + 100;

@@ -1,35 +1,21 @@
-// Draft, differ 121 of 294 (tla-en, 5 November 2026), under -Os, a plain for loop (the goto was not needed).
-// All of it is reload rotation. The native's reload registers run r0, r1, r2, r3, r4 (the 15, the 100, the 0, the 3 ...),
-// here r1, r2, r4, r1: allocate_reload_reg walks spill_regs, and here no insn's find_reg ever picks r0 (the greg dump has
-// "Using reg" 1, 2, 3 and 4 only), so r0 is not in the list. One insn with r1, r2 and r3 all taken while r0 is free would
-// shift every scratch to the native's; that insn has not been found. Older notes predate -Os.
-// Draft, differ 118 of 294, skeleton gap 18 (tla-en, 2026-11-01)
+// Near miss, differ 8 of 294 (tla-en, 2026-11-06): one scheduling choice in the
+// loop. The native moves `str r0, [r7, r5]` (parts[i] = part) past the sprite
+// bytes' first[16] load, sprite[16] store and sprite[17] load; here it stays
+// ahead of them, held by the char alias. Through a struct (a vramBlock byte
+// and a keepEntry bit at 17, as drafts 6ab and 6ac) the store does drift, but
+// so does the sprite[17] load and parts[0]'s reload (differ 12; FieldSprite
+// from field_sprite.h, differ 14); storing parts[i] after the sprite bytes
+// gives differ 237.
 //
-// The code is the native's; what is left is one allocation question and the
-// reload and scheduling that follow from it. The native keeps the event work
-// in r9 and the action pointer in fp, and it recomputes object + 100 at the
-// closing object->action++. GCSE's PRE deletes that recomputation here (insn
-// dump: "redundant insn ... reaching reg"), so the pointer has 6 refs like the
-// event work, a shorter life, and outranks it: set after the second call, as
-// the native does, the pair swaps (differ 136 with the body below). The local
-// `action`, set at its declaration, lengthens the pointer's life enough to put
-// the pair right, but the set sits before the first test (native: after
-// Actor_SetPartAttribute), which brings an extra reload there and rotates the
-// scratch registers of everything after it: r2 for the 15 (native r0), r1 and
-// r4 for the ldrsh offsets (native r2, then r4, r0, r1, r2), r4 for the order's
-// 3 (native r3). What would settle it: why PRE leaves the closing increment
-// alone. The expression is available on every path, gcse.c's only ways out are
-// a set of object between or a different expression, and neither shows in the
-// listing. A second copy of object (a twice-set local) is cprop'd away and is a
-// device anyway.
-// Also open: the native moves `str r0, [r7, r5]` past the sprite bytes' strb
-// and ldrb. Through struct fields rather than u8 * the store is free of the
-// char alias and drifts as it does (struct with a keep bit at byte 17, as drafts
-// 6ab and 6ac: differ 122 to 126); that is probably the real type, but the
-// measure is worse until the pointer settles. Tried with no gain: storing
-// parts[i] after sprite[16] or sprite[17] (the shift takes first's r5, differ
-// 159 to 255), a slot pointer (adds r5, r7, r5), an offset local, parts[i]
-// throughout (reloads each use). Removing `last` gives differ 158.
+// The earlier reload rotation (differ 113) came from three expansions, each
+// now fixed in plain C: the type 0x15f as a literal kept a pseudo in r0 across
+// the first Import_ActorCreate's argument loads, so no insn's find_reg picked
+// r0 and r0 never entered spill_regs; a local `last = 3` from the top was
+// CSE'd into gFrameCount & 3, which then reloaded the 3 instead of giving it a
+// register; and the order stored through a u8 * computed its address before
+// its value. With the type held in a local and the order stored as a field the
+// rotation is the native's, and the old tagged `last` device is gone
+// (the literal 3 now measures the same).
 //
 // The update of an object that calls Func_02003c4c(object, 136) every 16
 // frames and sets its part attribute 10 each frame. While its action counter is at most 31
@@ -47,7 +33,6 @@
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 /// The native reads these event work halfwords signed (ldrsh).
 #define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
 
@@ -90,11 +75,11 @@ void Func_02001528(void);
 
 void Func_02001738(struct Actor *object) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
-  /* FAKEMATCH(temporary): the last part's order held in a variable from the
-   * top, which spills and is reloaded as the constant at each use; as the
-   * literal 3 in both stores, CSE keeps the loop's 3 in a register across the
-   * calls after the loop and 158 of 294 instructions differ in tla-en. */
-  s32 last = 3;
+  // The parts' actor type, held from the top: global allocation leaves it in
+  // no register and reload rebuilds 0x15f in r0 at each call, as the native
+  // does; as the literal, its pseudo takes r0 before the first call's
+  // arguments are built (differ 155).
+  s32 type = 0x15f;
 
   if ((gFrameCount & 15) == 0)
     Func_02003c4c(object, 136);
@@ -126,28 +111,31 @@ void Func_02001738(struct Actor *object) {
     s32 i;
 
     Func_02003c4c(object, 144);
-    parts[0] = Import_ActorCreate(0x15f, object->x + 0x10000,
+    parts[0] = Import_ActorCreate(type, object->x + 0x10000,
                                   object->y + 0x200000, object->z);
     for (i = 1; i != 4; i++) {
-    u8 *first = parts[0]->animation;
-    struct Actor *part = Import_ActorCreate(0x15f, 0, 0, 0);
-    u8 *sprite;
+      u8 *first = parts[0]->animation;
+      struct Actor *part = Import_ActorCreate(type, 0, 0, 0);
+      u8 *sprite;
 
-    parts[i] = part;
-    sprite = part->animation;
-    sprite[16] = first[16];
-    sprite[17] |= 1;
-    part->x = parts[0]->x;
-    part->y = parts[0]->y;
-    part->z = parts[0]->z;
-    part->motionFlags = 0;
-    Actor_SetSingleChildFlags(part, 0);
-    Func_02003a54(parts[i], 3);
-    part = parts[i];
-    BYTE_AT(part, 98) = last - i;
-    part->watchedObject = object;
-    part->update = Func_02001528;
-    Actor_SetPartAttribute(part, 3);
+      parts[i] = part;
+      sprite = part->animation;
+      sprite[16] = first[16];
+      sprite[17] |= 1;
+      part->x = parts[0]->x;
+      part->y = parts[0]->y;
+      part->z = parts[0]->z;
+      part->motionFlags = 0;
+      Actor_SetSingleChildFlags(part, 0);
+      Func_02003a54(parts[i], 3);
+      part = parts[i];
+      // Byte 98 lies in actor.h's callback. Written as a field, the value is
+      // computed before its address, as the native does (through a u8 *,
+      // differ 34).
+      part->unk5c[6] = 3 - i;
+      part->watchedObject = object;
+      part->update = Func_02001528;
+      Actor_SetPartAttribute(part, 3);
     }
     {
       struct Actor *part = parts[0];
@@ -157,7 +145,7 @@ void Func_02001738(struct Actor *object) {
       Func_02003a54(parts[0], 3);
       Scene_SetActorSpritePriority(parts[0], 3);
       part = parts[0];
-      BYTE_AT(part, 98) = 3;
+      part->unk5c[6] = 3;
       part->watchedObject = object;
       part->update = Func_02001528;
       Actor_SetPartAttribute(part, 3);
@@ -181,7 +169,7 @@ void Func_02001738(struct Actor *object) {
         id = Func_020010cc(x, z, gData_02003dee);
     }
     helper = Actor_GetById(id);
-    BYTE_AT(helper, 98) = 4;
+    helper->unk5c[6] = 4;
     helper->watchedObject = object;
     helper->update = Func_020015e4;
     object->action++;

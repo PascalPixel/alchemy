@@ -1,4 +1,7 @@
-// Near miss, differ 38 of 218 (2026-10-18), first pass: like The Broken
+// Differ 30 of 218 (tla-en, 2026-11-06); 38 on 2026-10-18. A buffer
+// variable set one call early, reused for the next buffer: 84. A 5-minute
+// permute found nothing under 44; the rest is allocation and scheduling.
+// First pass: like The Broken
 // Seal's WorldMap_LoadGraphics, with this game's four graphics sets chosen by
 // the region (bits 24-29) of the block under (x, z) through Func_0802d088
 // and region / 10. Left: the native loads each decode buffer into r5 one call

@@ -1,18 +1,21 @@
-// Measured 2026-11-05 (tla-en): differ 35 of 236, 17 with slots and pool
-// offsets normalized. The step is an s32 local read from its u16 field: the
-// test casts it to s16 where the listing has ldrsh.
-// Draft, differ 94 of 236: runs one step of the intro's vertical picture scroll. The
+// Differ 6 of 236 (tla-en, 2026-11-06): scheduling only, `movs r4, #29` one
+// instruction out of place in both row copies. The second loop reads its step
+// through a volatile cast (FAKEMATCH below), which keeps the ldrh, its copy and
+// the sign extension apart; plainly read, combine folds them into a second
+// ldrsh (differ 35). Tried without effect on the step: a temporary, a block,
+// an empty asm, an assignment in the increment, a do-while, s16 or u16 step
+// locals, a volatile field (75). The row loop as j counting up is worse (18).
+// Earlier notes follow.
+// The step is an s32 local read from its u16 field: the test casts it to
+// s16 where the listing has ldrsh.
+// Runs one step of the intro's vertical picture scroll. The
 // position moves from pos toward limit by step, waiting frames between moves
 // (1 when a key cuts the wait short, else 0 with pos updated). Scrolling
 // down, each 8 lines of scroll DMA the next 30 map rows' worth of tiles
 // (0x780 bytes) and number the next map row, wrapping the tiles to block 0
 // and the row cursor to 0x0600f800 after 32 rows; scrolling up undoes a row
 // when the counter runs out. Two countdowns in the heap slot at 0xac start
-// a fade to white or back when they reach 1. Left: the shared return-1
-// block, which the native keeps after the first loop and the draft after
-// the second (so most branches differ); the step's second, u16 read at
-// entry (here zero-extended in the second loop instead); and the rows
-// countdown's test, which ands with 0xffff here.
+// a fade to white or back when they reach 1.
 #include "types.h"
 #include "dma.h"
 #include "bg_scroll.h"
@@ -101,7 +104,8 @@ s32 Func_081a68b4(struct TitleScroll *s) {
       }
       if (Title_WaitOrPress(s->frames))
         goto fail;
-      step = s->step;
+      /* FAKEMATCH(volatile): the form kept; as step = s->step, 35 of 236 instructions differ in tla-en. */
+      step = *(volatile u16 *)&s->step;
     }
   }
 done:

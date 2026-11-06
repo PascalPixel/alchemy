@@ -1,5 +1,8 @@
-// 2026-11-05: differ 66 of 3921 (tla-en), draft 3919; frame and every spill slot equal
-// the listing's; with registers, slots and offsets masked, 20 lines apart.
+// Differ 66 of 3921 (tla-en, 2026-11-06).
+// Near miss: the reload rotation in the third phase, the map loop's registers, the
+// spawn call's order and one pos.x load (Left).
+// 2026-11-05: draft 3919; frame and every spill slot equal the listing's; with
+// registers, slots and offsets masked, 20 lines apart.
 // The method that moved it: reload registers rotate through the spill list one per
 // reload (allocate_reload_reg), so a wrong scratch register downstream means a reload
 // too many or too few upstream, in RTL order, which sched2 hides. Read each from the
@@ -42,6 +45,9 @@
 //    and negs there. z as a giv of i (z = i * -0x100 at the top of the body) makes the
 //    two zeros but ranks above the stored zero (11 refs, 124 against 126; native below).
 //    Keeping i or z from the reload through an asm breaks the hoists' order.
+//    Also 66 (2026-11-06): z = 0 before the for, both inits in either order, z declared
+//    for the whole third phase, one zero local for the stores. p->ay = p->timer gives 64
+//    but reads timer, which the listing does not.
 // 2. Map loop's w, n, table in r4, r5, r6 here r6, r5, r4. The native order is
 //    table, 6, 32 by live length, so 32 is set after the inner loop's hoists; g reused
 //    for the width (for-init) gives table r6, 6 r5 but ranks above k (r0 there).

@@ -1,5 +1,19 @@
-// Near miss, differ 40 of 125 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Differ 40 of 125 (tla-en, 2026-11-06).
+// Register choice only. Also 6 November: Func_080eace8's stepping (shapes,
+// cells += slot) 74; shapes += slot alone 58; the shape row built in two
+// steps (grid then index, or an index local) 40, unchanged; the shape store
+// through struct ShapeCell 40, or 74 to 79 after the cell's byte 3; 6 minutes
+// of permuting found nothing below 40.
+// The native keeps
+// the shape row in r5, the slot in r8 (then slot * 4) and the cell table in r10;
+// this gives the cell table r5, the shape row r8 and the slot r10. The empty asm
+// is untagged; without it, differ 42. The native stores the shape before the
+// block (both u8 stores, so in source order); written in that order this
+// measures 58, the same rotation unchanged, so the block store stays first here.
+// Locals at function scope, a local grid pointer, pointer increments
+// (cells += slot: 74), a typed flags field with a ShapeCell store as in
+// Func_080eace8 (74), u32/u16 slot and other spellings of the shape row
+// measured 58 or worse.
 // Draft, differ 66 of 125: register choice and order. The native keeps the
 // layer's cell table in r10 and the shape row (offset already added) in r5,
 // and builds the slot's offset into r8 after Func_080eab98; this keeps the

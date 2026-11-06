@@ -1,9 +1,14 @@
-// Draft, differ 104 of 167 (tla-en, 5 November). Builds the five-digit counter's sprites: decodes three digit lists,
+// Differ 104 of 167 (tla-en, 2026-11-06): the hoisted copies' registers and the entry's schedule, as below.
+// Builds the five-digit counter's sprites: decodes three digit lists,
 // copies each digit's picture into the tiles and loads them, builds two affine matrices and fills five OAM entries.
 // The arms' increments hoist under -Os as the native's do and the frame slots agree (scaled, plain, tile at sp+0, 4, 8).
 // Left: the hoisted copies' registers. Native: i + 1 in r11, oam + 1 in r9, tile + 2 in r5, tested as i after its copy back.
 // Here the loop test reads i + 1 itself (cmp r5, #4), giving it 4 refs, so it ranks first and takes r5.
 // Also the entry's order follows from those ranks. Tried: all 36 orders of the arms' increments, i < 5, do-while, goto.
+// Also tried (6 November): one merged body (124); i++ in the header, tile and oam in the arms (110: the test then reads i
+// and tile + 2, oam + 1 take r5, r9 as native, but tile itself takes r11 and i + 1 spills); other header and arm splits
+// (108 to 116); oam++ as the call's argument (138); a second loop counter (126); s32 or u16 tile (110, 132); &work->value
+// at each use (130); a dozen orders of the entry's declarations (104 to 130); (*digit - 48) * 64 (104).
 #include "types.h"
 #include "call.h"
 #include "iwram_call.h"

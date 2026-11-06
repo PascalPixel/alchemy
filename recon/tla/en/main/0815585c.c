@@ -1,7 +1,18 @@
-// Measured 2026-11-05 (tla-en): differ 49 of 818. Left: the native reloads
-// anchor and work after the first anchor test (ldr r4, [sp, #20]) where reload
-// inherits them here, as if a label stood there at reload; total then stays in
-// r2 for the short case.
+// Near miss, differ 2 of 818 (tla-en, 2026-11-06): one order row after the
+// picture's Resource_GetTableEntry, where the native copies the result
+// (adds r2, r0, #0) before it reloads work (ldr r3, [sp, #44]) and this
+// draft reloads work first. The same 2 with the picture passed inline into
+// the decode, as 64 * 2, palette as const u8 * or u16 *, or declared
+// elsewhere; a local of its own for the picture, or the + 128 inside the
+// call, gives 502.
+// What moved it (2026-11-06): total = 40 set in the anchor-6 branch of an if-else
+// chain rather than before the tests (49 to 10; the native then reloads anchor and work
+// after the first test and keeps total in r2 for the short case); then the
+// fade step's zero written as plain 0, with no device (10 to 4), and case 5
+// of the goal switch with no one-pass block (4 to 2). Both earlier devices
+// are gone. The anchor tests as a switch, as an if-else chain, or with a
+// bare label before the test of 8 stayed at 49; as an && chain, 40.
+// Measured 2026-11-05 (tla-en): differ 49 of 818.
 
 // Draft of Func_0815585c, The Broken Seal's BattleEffect_RunDjinniEntrance
 // (games/tbs/src/effect/effect.c): differ 81 of 818 (tla-en,
@@ -18,7 +29,7 @@
 // What moved it: the three heap slots read before the packed word is
 // unpacked (562 to 546), packed as unsigned (lsrs), and the fade step's
 // zero through a variable of its own in the long branch (546 to 169, found
-// by alchemy permute; tagged below), and BattleEffect_LoadBlitter
+// by alchemy permute; not needed since 2026-11-06), and BattleEffect_LoadBlitter
 // returning its loader's s32, as nibble_pair.c now does (169 to 165).
 // Under -mthumb-slow-loads (2026-10-26) the same source gives 137; the
 // picture's address kept in palette (its table entry + 128) before the
@@ -28,9 +39,9 @@
 // each clear rebuilds its own 0x4000 as the native does (118).
 // A tagged one-pass block at the end of case 5 of the goal switch keeps
 // jump2 from joining case 2's tail to case 5's, so case 8 shares case 2's
-// code as in the native (81).
+// code as in the native (81); not needed since 2026-11-06.
 
-// Left: allocation through the frame loop, from the prologue's first
+// Left then (2026-10-26, settled since): allocation through the frame loop, from the prologue's first
 // spills (the native keeps anchor at sp+20 and reloads it for the test of
 // 8, and reloads work for each fade store; here both stay in registers)
 // and order rows of the usual kind (the known store-then-load limit).
@@ -131,7 +142,6 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
   s32 base[3];
   s32 goal[3];
   s32 step[3];
-  s32 zero;
   s32 point[3];
   struct EffectPosition position;
   struct BattleEffectWork *work;
@@ -155,26 +165,20 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
   kind = PREPARE_KIND(packed);
   side = PREPARE_SIDE(packed);
   anchor = PREPARE_ANCHOR(packed);
-  total = 40;
-  if (anchor != ANCHOR_BRIGHTEN) {
-    if (anchor == ANCHOR_SHORT) {
-      work->fadeFrames = 24;
-      work->fadeStep = 0;
-      total = 54;
+  if (anchor == ANCHOR_BRIGHTEN) {
+    total = 40;
+  } else if (anchor == ANCHOR_SHORT) {
+    work->fadeFrames = 24;
+    work->fadeStep = 0;
+    total = 54;
+  } else {
+    work->fadeFrames = 24;
+    work->fadeStep = 0;
+    if (kind > 3) {
+      kind -= 4;
+      total = 84;
     } else {
-      /* FAKEMATCH: the zero through a variable of its own; written as 0,
-       * the stores of the fade and the frame count allocate differently
-       * all through the function (differ 546 against 169; alchemy
-       * permute). */
-      zero = 0;
-      work->fadeFrames = 24;
-      work->fadeStep = zero;
-      if (kind > 3) {
-        kind -= 4;
-        total = 84;
-      } else {
-        total = 55;
-      }
+      total = 55;
     }
   }
 
@@ -294,12 +298,6 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     goal[0] = actor->x;
     goal[1] = 0x500000;
     goal[2] = 0;
-    /* FAKEMATCH(one-pass): the block ends this case with a loop note, so
-     * jump2 does not join case 2's tail to this one and case 8 shares case
-     * 2's instead, as the native does; as plain C, 118 of 818 instructions
-     * differ in tla-en. */
-    do {
-    } while (0);
     break;
   case 10:
     goal[0] = actor->x;

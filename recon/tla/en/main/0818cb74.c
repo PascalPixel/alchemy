@@ -1,3 +1,18 @@
+// Differ 96 of 1122 (tla-en, 2026-11-06). Left: start against &texture for r10 in
+// the tridents, gMapCellBuffer's pool load, the first model setup's zeros.
+// Measured 2026-11-06: permute 6 min found only start = 16 before the shade (76),
+// which clobbers the tridents' start: a wrong program, not taken.
+// Measured 2026-11-06: the first setup's zeros are one function-wide zero pseudo
+// (loop-hoisted, spilled, reloaded as a constant), so which stores share a zero is
+// reload inheritance, not CSE. The listing's own store order (logWidth, logHeight,
+// unk04, pixels, kind, texture, mesh, vertices, scrollU, scrollV) gives 156 and
+// 1124 instructions; every order of unk04, pixels, kind and texture between the
+// bitfields and the mesh gives 152 to 156; scroll bytes as bitfields or chained
+// change nothing. One function-level start for the rings and tridents: 430.
+// start's priority: 3 * 11 / 116 is set 2 + compare 3 + update 3 + 3 (refs weigh
+// by loop depth); one more inner-loop use, or one fewer use of &texture (9), would
+// flip it, and frame >= start + 24 (519) or start as i * 4 + 18 (416) are worse.
+// gMapCellBuffer before the tornado sheet: 96; as Ram_MapCellBuffer or inline: 180.
 // Measured 2026-11-05 (tla-en): differ 96: the model's mesh and vertices are typed pointers, not void.
 // Measured 2026-11-05 (tla-en): differ 98 of 1122, 13 with slots and pool offsets
 // normalized. Left: &texture spills to sp+20 and start takes r10 in the listing, the other way

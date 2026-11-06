@@ -1,5 +1,5 @@
-// Near miss, differ 30 of 272 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Differ 30 of 272 (tla-en, 2026-11-06): scheduling and allocation only. Empty asms,
+// one-pass blocks, a pinned r5 and search-found locals each need their S2 tag on adoption.
 // Near miss, differ 48 of 272 (2026-10-26, statements reordered) (2026-10-18, written from the listing; ☀️ has
 // no twin): the frame callback of the effect Func_080e87c4 ends, with the
 // ring picture of graphics/field_effects/ring_arcs.s. The position is reached

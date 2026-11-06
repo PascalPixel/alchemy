@@ -1,30 +1,24 @@
-// Draft, differ 34 of 171 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 36 of 171 (tla-en); older figures below predate it.
-// Draft, differ 173 of 171, skeleton gap 34 (tla-en, 2026-11-01)
+// Near miss, differ 6 of 171 (tla-en, 2026-11-06): the cell call passes r5 (the
+// row's probe address) where the native rebuilds add r1, sp, #28, and the
+// final position[0] schedules its ldr and movs r0, #1 two slots apart. No device.
 // Finds how far a pushed object can slide in the leader's direction, probing
 // its footprint cell by cell until Func_02001850 reports a wall.
-// Draft is 172 instructions. Control flow matches: the failed search is an else
-// at the end (the far b to the shared movs r0, #0), and count is set before
-// position[5] takes it. The compiler change did not close this one. Left:
-// allocation, and the one extra instruction goes with it.
-// Proven: offset is set in two steps at the top of the outer loop, so PRE
-// neither merges it with the first section nor hoists it (native sp+4). The row
-// loop must be goto or the size grows by 14. The cell loop's form changes
-// nothing: for, while, do and goto all compile alike, and so do a struct probe
-// and a pointer in the row.
-// Reading of the dumps: PRE and cprop put every sfp-12 on reg 100 (25 refs,
-// taken in r6). The native reg 100 is unallocated, and its reg_equiv explains
-// [sp,#32], [sp,#36], add r1, sp, #28 and, through a two-use copy that combine
-// leaves, add r2, sp, #28. Only r5 stays apart: the row store and the cell step
+// 6 November: the once-only block is gone. The head matches in plain order
+// (dx, dz, position[5] = 0 before count = 0), and the outer loop computes
+// probe[2] from offset * 4 + 1 between the two steps that set offset.
+// Proven: offset is set in two steps at the top of the outer loop (one step,
+// or both before probe[2], gives 113). The row loop must be goto or the size
+// grows by 14. The cell loop's form changes nothing: for, while, do and goto
+// all compile alike, and so do a struct probe, a pointer in the row, &probe[0],
+// *probe and the step spelt as an assignment.
+// Reading of the dumps (before 6 November): PRE and cprop put every sfp-12 on
+// reg 100. Only r5 stays apart in the native: the row store and the cell step
 // share a pseudo that the call's argument does not. Ours has the step reuse the
-// argument's reg 121, which cprop 2 turns into reg 100. A copy of the address
-// in the step folds in cse1. Next: anything that leaves the step outside the
-// argument's extended block with no extra code, so loop.c can hoist it (the
-// label would have to survive jump 1). Native also has r7 for i after r5 and
-// r6, which priorities alone do not explain: i outranks position.
+// argument's pseudo.
 // Tried, no gain: declaration orders, a scoped pointer in the step, a union
 // with direct y and z, y set inside the loop, kind read after the first
-// section, result in a local (same code as the returns).
+// section, result in a local in four placements, the tail's operands swapped,
+// the tail as if/else.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -53,24 +47,19 @@ s32 Func_020001d4(s32 *position) {
     h = (ABS(gData_02001974[kind * 4 + 1]) +
          ABS(gData_02001974[kind * 4 + 3])) >>
         4;
-    count = 0;
+    dx = gData_0200198c[direction] & 0xffff0000;
     dz = gData_0200198c[direction] << 16;
-    position[5] = count;
+    position[5] = 0;
+    count = 0;
     state = &object->terrainId;
-    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-     * order around it; as the plain statement, 36 of 171 instructions differ
-     * in tla-en. */
-    do {
-      dx = gData_0200198c[direction] & 0xffff0000;
-    } while (0);
     *state = 2;
     position[0] = object->x + dx;
     position[2] = object->z + dz;
     probe[1] = object->y;
   next:
     offset = kind;
+    probe[2] = position[2] + (gData_02001974[offset * 4 + 1] << 16);
     offset *= 4;
-    probe[2] = position[2] + (gData_02001974[offset + 1] << 16);
     j = 0;
     if (j >= h)
       goto advance;

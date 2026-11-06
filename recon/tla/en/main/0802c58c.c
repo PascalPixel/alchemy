@@ -1,10 +1,15 @@
+// Differ 14 of 277 (tla-en, 2026-11-06).
+// Taking gData_0802ed34 into a local (resourceSets) before the loops fixes the
+// window reload in the reload test (37 before). Left, allocation only: the
+// native forms gMapBlocks in r1 after the row shift (the draft, r3), rereads
+// the region through r3 for the divide (the draft, r0), and holds the table in
+// r2 (the draft, r1). Block index forms and region casts do not help; a
+// permuter run on this form found nothing closer. Data_0202d000 as a local
+// gives the early r5 load (39 to 37). Earlier notes follow.
 // Near miss, differ 45 of 277 (2026-10-18), first pass: The Broken Seal's
 // Map_UpdateCurrentTileBlockUntilBlocked, then this game's staged reload of
 // the world map graphics when the region under the followed point changes
 // (Func_0802d088), one step a frame counted down from 12 at map work 0x958.
-// Left: as in 0802be4c, the native forms gMapBlocks in r1 and reads the
-// block's region for the division through r3; two stack reloads and the
-// reload test's constants sit a step earlier.
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -58,6 +63,7 @@ void Func_0802c58c(void) {
   s32 row;
   s32 col;
   s32 tile;
+  const u32 (*resourceSets)[9] = gData_0802ed34;
   struct WorldBlock *block;
   const u32 *resources;
   s32 graphicsSet;
@@ -99,7 +105,7 @@ void Func_0802c58c(void) {
     graphicsSet = 0;
     break;
   }
-  resources = gData_0802ed34[graphicsSet];
+  resources = resourceSets[graphicsSet];
   if (resources != window->resources) {
     window->resources = resources;
     window->reloadSteps = 12;
@@ -117,9 +123,12 @@ void Func_0802c58c(void) {
     Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = backdropColor;
     Dma_Set(buffer, (void *)0x05000000, 0x84000070, REG_DMA3);
-    Func_080c8970(buffer);
-    Resource_DecodeType01(Resource_GetTableEntry(resources[1]), Data_0202d000);
-    MapAnimation_StartChannels((const u16 *)Data_0202d000);
+    {
+      u8 *anim = Data_0202d000;
+      Func_080c8970(buffer);
+      Resource_DecodeType01(Resource_GetTableEntry(resources[1]), anim);
+      MapAnimation_StartChannels((const u16 *)anim);
+    }
     Resource_DecodeType01(Resource_GetTableEntry(resources[2]), gMapCollision);
     break;
   }

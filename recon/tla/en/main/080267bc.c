@@ -1,4 +1,6 @@
-// Draft, differ 60 of 713, skeleton gap 11 (tla-en, 2026-11-01)
+// Differ 48 of 713 (tla-en, 2026-11-06).
+// Near miss: r4 and r6 swapped in the object loop, and the first two probes'
+// reload registers one step behind.
 // Twin of The Broken Seal's Actor_UpdatePlayerControl
 // (games/tbs/src/field/field/player_control.c), script command 0x24 in both
 // games: the same 8-pixel step with five probes, the same six fallback
@@ -13,15 +15,27 @@
 // difference written as 0x100000 - delta; the bound in a local so it stays a
 // hoisted 0x7ffff (a literal compares as >= 0x80000); the clear block between
 // the loop and the blocked block. Differ 191 before.
-// Left: the opening's constants and stores in another order; r4 and r6 swapped
-// between the bound and onObject in the object loop; in the first two probes
-// the object is read through r1 and r0, not r2 and r1, moving the 0x1000
-// constant from r0 to r3; one movs r1, #0 a place early after angleOffsets.
+// Left: r4 and r6 swapped between the bound and onObject in the object loop
+// (onObject, 4 refs, outranks the bound, whose constant REG_EQUIV doubles its
+// live length); in the first two probes the object is read through r1 and r0,
+// not r2 and r1, with the 0x1000 constant in r3, not r0. Those are reload's
+// round-robin spill registers (reload1.c last_spill_reg) one step behind the
+// native: the last reload before the probe (collision = 0, in r0) matches, so
+// the native has one more reload, taking r1, in the debug test or the first
+// collision call, that leaves no instruction. From the third probe on it
+// matches.
 // Tried without gain: every order of the three opening values
 // (movementAnimation first is the best), the mask operands swapped, a pointer
 // to the keys, an interpreter copy of the argument, declaration order and scope
 // of onObject, the bound, direction and headingCount, the twin's declaration
-// order, and a u8 onObject.
+// order, and a u8 onObject; onObject as u32, s16 or u16, an unsigned bound,
+// the bound test nested, the onObject test nested or as != 0 and == 0, the
+// debug test as an else-if, as != 0 or with its mask swapped, the probe angle
+// as 0x1000 + angle, uncast or unsigned (all 48). A forced temporary for the
+// first probe's angle, set before its copies, gives 32 (the second probe
+// matches, the first moves further off); an s32 angle gives 625.
+// A 5-minute permute (2026-11-06) found nothing below 48 (best 49, a forced
+// temporary).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"

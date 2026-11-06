@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/dehkan_plateau/s0038.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s00a4.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s0128.o"(.text)
-        "*/resource_655_overlay.o"(.text.x020081d0)
+        "*/games/tla/src/scene/dehkan_plateau/s01d0.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s02f8.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s048c.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/events_l.o"(.text)

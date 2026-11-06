@@ -1,5 +1,7 @@
-// Draft, differ 22 of 126 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// resource_6ad_c_02004938.c, whose header says what it is and what still differs.
+// Differ 22 of 126 (tla-en, 2026-11-06).
+// Twin of resource_6ad_c_02004938.c. Control flow, frame and data match; what is left is
+// allocation (the fourth offset loads into r3, not r2) and the scheduling of the map-origin
+// loads. Moving z before mapX: 40; permuter (5 min): nothing below 22.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"

@@ -1,3 +1,13 @@
+// Differ 61 of 160 (tla-en, 2026-11-06).
+// Native order with az and bx, bz read raw: differ 94; permuter 8 min: no gain.
+// Near miss: the search's u16 view lands in
+// r3, not r2, so kind and kind * 4 are two registers; the second layer's first
+// word is read ahead of the object's x, and the first layer's words are read
+// after z, not inside it. Reading the second layer's x first is what puts the
+// table's first offset in r4 and its absolute value in r1, as native has them;
+// in the native order (x, ax, z, az, bx, bz) they swap, differ 80. Measured
+// every order of the eight statements with w, x, ax, bx before h, z, az, bz:
+// w and h first is always best. Draft is 161 instructions to native 160.
 // Under -Os, 5 November: differ 80 of 160 (tla-en); older figures below predate it.
 // Draft, differ 108 of 160, skeleton gap 13 (tla-en, 2026-11-01)
 // Yampi Desert Cave: finds a pushed object's kind by its sprite, copies its
@@ -62,12 +72,12 @@ s32 Func_02000038(s32 id) {
     return 0;
   w = (ABS(gData_02001974[kind][0]) + ABS(gData_02001974[kind][2])) >> 4;
   h = (ABS(gData_02001974[kind][1]) + ABS(gData_02001974[kind][3])) >> 4;
-  x = (object->x + (gData_02001974[kind][0] << 16)) >> 20;
-  ax = *(s32 *)&map->layers[1].unk08[0] >> 20;
-  z = (object->z + (gData_02001974[kind][1] << 16)) >> 20;
-  az = *(s32 *)&map->layers[1].unk08[4] >> 20;
   bx = *(s32 *)&map->layers[2].unk08[0];
+  x = (object->x + (gData_02001974[kind][0] << 16)) >> 20;
+  z = (object->z + (gData_02001974[kind][1] << 16)) >> 20;
+  ax = *(s32 *)&map->layers[1].unk08[0] >> 20;
   bz = *(s32 *)&map->layers[2].unk08[4];
+  az = *(s32 *)&map->layers[1].unk08[4] >> 20;
   Func_02001848(x, z, w, h, (u16)ax + x, (u16)az + z);
   fromX = (u16)(bx >> 20) + x;
   fromZ = (u16)(bz >> 20) + z;

@@ -1,4 +1,4 @@
-// Draft, differ 22 of 390 (tla-en, 2026-11-05). Older notes below may predate this figure.
+// Differ 22 of 390 (tla-en, 2026-11-06). Left: scheduling only (movs r0 before the shifted coordinates at three Func_020018a8 calls) and r5/r6 for step and placed; the permuter reached 20 only by reusing step as a temporary for 16.
 // Under -Os, 5 November: differ 34 of 390 (tla-en); older figures below predate it.
 // Draft, differ 85 of 390 (was 86; ja 90 of 386 before): Yampi Desert Cave's
 // map setup for its three rooms: pillars, palette cycle, Retreat destination,

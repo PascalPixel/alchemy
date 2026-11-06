@@ -1,3 +1,18 @@
+// Differ 83 of 1246 (tla-en, 2026-11-06). The flight's x takes r0
+// (tied to the quotient) for the listing's r3, and the sleep spawn inherits r6
+// for the listing's reload of sp+8 into r0; the rest is branch and pool offsets
+// after that one missing instruction, and the sleep draw's scratch registers.
+// Also tried 2026-11-06: the sleep range as (u32)(frame - 48) <= 31 (83, the
+// same), and its step from frame - 48 directly (417).
+// What settled it this round: the shards' force is `first`, the flight's base,
+// set as `first = 127; first &= Random16()` with `first + 64` at each use. That
+// second lifetime makes first global, so the flight keeps the copy of card.x
+// (adds r5, r2) with first in r5 and &card in r6, and the burst loop matches
+// (127 loaded into r5 and the + 64 after the cosine call). `(Random16() & 127)
+// + 64` or `first = Random16() & 127` puts 127 in r3 and copies r0 to r5 (78
+// with the extra instruction). For x: `q + first`, `t` reused for x, x at
+// function scope, every order of the copy, the subtraction and the divide, and
+// `x -= 112; overflow = x` change nothing.
 // Measured 2026-11-05 (tla-en): differ 92 of 1246, 48 with slots and pool offsets
 // normalized, 20 with registers masked too. What settled it this round:
 // - The butterflies' step by index (`&work->particles[slot + i]`): the reduced giv's
@@ -8,9 +23,9 @@
 //   step's fields dest-address givs of frame, and their reduction takes a frame slot.
 // - u8 *pixels: `void *pixels` puts void * in the texture's alias set, so the
 //   vertices store conflicted with the texture word.
-// Left, top first:
-// 1. The flight's copy of card.x (adds r5, r2): first has to be global or it ties
-//    to the load. A second lifetime in a later block gives the copy (`first = x <<
+// Left then, top first:
+// 1. (Settled 2026-11-06, above.) The flight's copy of card.x (adds r5, r2):
+//    first has to be global or it ties to the load. A second lifetime in a later block gives the copy (`first = x <<
 //    8` before the store, or `first = card.y - 1`), but x then takes r2 for r3: its
 //    preferences are r2 and r3, from what is not found.
 // 2. REG_BG2X before scroll: a local for the value gives the listing's order, with
@@ -512,13 +527,14 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         Func_0814cd48(effect->actors[0], 7, -1, 0, 16);
         for (i = 0; i != 64; i++) {
           s32 angle = Random16() & 0xffff;
-          s32 force = (Random16() & 127) + 64;
+          first = 127;
+          first &= Random16();
 
           step = &work->particles[i];
           step->x = 64 << 16;
           step->y = (i + 48) << 16;
-          step->velocityX = (Trig_Cos(angle) * force) >> 6;
-          step->velocityY = (Trig_Sin(angle) * force) >> 6;
+          step->velocityX = (Trig_Cos(angle) * (first + 64)) >> 6;
+          step->velocityY = (Trig_Sin(angle) * (first + 64)) >> 6;
           step->variant = Random16() & 255;
         }
         work->transferMode = 2;

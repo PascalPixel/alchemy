@@ -1,16 +1,16 @@
-// Draft, differ 70 of 2159, 30 with slots normalized (tla-en, 2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
+// Differ 26 of 2159 (tla-en, 2026-11-06).
+// Left: slots 16 and 20 swapped (place, texture3) and the first model's kind stored early. Was 70 (2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
 // BattleEffect_RunEclipse. Measured here: a constant loop.c hoists and global.c gives no register is rebuilt at each use by reload, and reload picks its registers round-robin, so a constant that is one (sparks, vertices, mesh2) puts the names right for many lines after it. `movs rN, #128; lsls` in a loop is usually such a hoisted constant; so is a pool load early in a block.
 // Settled: size set twice stays a hoisted register (one set is replaced into the call by loop.c's single-use
 // rule), the copy's destination is the base plus i rows, the ring's angle is its own variable.
 // Left, in order of reach:
 // - Slots 16 and 20: place and texture3's address are gcse's reaching registers, numbered by hash bucket over
 //   a table sized by the insn count at gcse. 20 to 23 more insns there swap them (measured with dead stores to
-//   canvas at the top: differ 56). Most locals take a 0 default badly (frame, i, j, k, scroll and on raise the
+//   canvas at the top: differ 56, from 70). Most locals take a 0 default badly (frame, i, j, k, scroll and on raise the
 //   figure), and only canvas, work, savedScroll, transition, sprites, battle and origin stay at 70.
 // - The first model's kind: the listing stores it after pixels and has the zero reloaded in r2. Kind after
-//   pixels with a zero local closes the block but moves r7 and the blocks before it (284).
-// - The sparks' table pointer before p: the listing loads r6 then r5; a local for the table before p gets the
-//   order but ldrh r1, [r6, r3] becomes three instructions.
+//   pixels with a zero local closes the block but moves r7 and the blocks before it (284). Without the
+//   local, kind anywhere after pixels gives 188 to 194 (&texture loses r7); between the bitfields and pixels, 30.
 // Measured: blit is two words (slot 88, 92 unused); one i for shard, flash,
 // streak and slot; j for the fill columns and sparks, k for the ring columns;
 // model and verts belong to each block; ring and offset are set together so
@@ -19,8 +19,9 @@
 // x0 and y0 are set inside the sparks loop, hoisted after j = 0. The ring's
 // vertices are struct stores: the second spill of rr is then dropped, which
 // bytes through s8 * do not allow.
-// 0x02014000 is a number in q so that CSE cannot share it with the symbol below
-// (as the symbol, differ 786 forwarded). Dropping c costs 47; both are kept.
+// 0x02014000 is a number in q, and in the sparks' p of the same loop, so that
+// both share one pool word as the listing does (p as the symbol: an extra word,
+// differ 70) while CSE cannot share the symbol (as the symbol, differ 557 to 786). Dropping c costs 47; both are kept.
 // A pool word for a small number is a symbol: the ResourceId_ names here have
 // to be given to rows of Resource_DirectoryTable before adoption, and the list
 // end 0xff and the REG_DISPCNT = 1 pool words are still movs here. FillWords_ and CopyWords_ are S2 wrappers, tagged and measured on adoption.
@@ -750,7 +751,7 @@ void BattleEffect_RunEclipse(struct BattleEffectArgument *effect) {
       q->variant = (Random16() & 15) + 16;
     }
     {const u16 *cells_ = gData_08197410;
-    p = gData_02014000;
+    p = (struct EffectStep *)0x02014000;
     for (i = 0; i != 512; i++, p++) {
       if (p->variant >= 0) {
         s32 n = (p->variant >> 3) + 1;

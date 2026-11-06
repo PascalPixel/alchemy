@@ -1,4 +1,5 @@
-// Draft, differ 34 of 1038 (tla-en, 2026-11-05). Left: the slots (14 rows):
+// Near miss, differ 34 of 1038 (tla-en, 2026-11-06): the slots and the
+// mask/zero register choice, as below. Left: the slots (14 rows):
 // the one spilled actor at sp+4 natively with four empty bytes below it, here
 // at sp with the four above it: a local always sits above reload's slots, and
 // a real stack struct for it takes the frame's address in a register. Rank
@@ -7,7 +8,13 @@
 // (r10) reaches those rows. Both Camera_MoveWithinMapBounds calls: the native
 // shifts r0 first; here r0 comes last. The last flag set ors into r3 where
 // the native ors into r2. The FIELD_AT and t names are the translator's and
-// need replacing before adoption.
+// need replacing before adoption. Both long-lived zeros (r8 early, the
+// one beside the mask) are the 0 a FIELD_AT byte store builds as (field & 0) |
+// value; plain pointer-cast stores lose them (differ 84), and a u8:1 bitfield
+// at 90 builds the mask as -2 with no zero (differ 78). Tried without gain: wrapper
+// calls made direct near the mask lengthen its life (626, 34); u8 or u16 mask
+// 72; arrays, unions and an 8-byte struct for the spilled actor stay a pseudo
+// (frame 4, 38).
 #include "types.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \

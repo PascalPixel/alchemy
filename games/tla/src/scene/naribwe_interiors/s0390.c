@@ -1,8 +1,4 @@
 #include "edition.h"
-
-// The Japanese form differs and is still on its listing.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -55,7 +51,11 @@ void Func_02000390(void) {
   s32 slot, unit;
   struct UnitData *unitData;
   const u8 *message, *refuse, *info;
+#if LANGUAGE == LANGUAGE_JAPANESE
+  s32 item;
+#else
   u32 item;
+#endif
   u8 kind;
   s32 rawKind;
 
@@ -63,11 +63,19 @@ void Func_02000390(void) {
   Func_02001148(10, 0);
   FieldEvent_Wait(30);
 ask:
+#if LANGUAGE == LANGUAGE_JAPANESE
+  Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
+  /* FAKEMATCH(temporary): item also holds this call's result; as a separate
+   * test of the call, 23 of 374 instructions differ in tla-ja. */
+  item = Func_020011a0(&unit, &slot);
+  if (item == -1) {
+#else
   /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 63 of 376
    * instructions differ in tla-en. */
   asm("" : : : "sfp");
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   if (Func_020011a0(&unit, &slot) == -1) {
+#endif
     refuse = MsgShallIGive;
     Func_02001138(refuse);
     FieldMessage_ShowAtActor(10, 0);
@@ -155,10 +163,14 @@ read:
   Func_02001148(10, 0);
   unitData = Unit_Get(unit);
   info = Func_020010b8(unitData->items[slot]);
+#if LANGUAGE == LANGUAGE_JAPANESE
+  item = unitData->items[slot];
+#else
   item = unitData->items[slot] & 0x1ff;
+#endif
   if ((u16)(item - 0x1b7) <= 2) {
     Func_02000920();
-  } else if (item == 326) {
+  } else if ((u16)item == 326) {
     Func_02001138(message + 29);
     Func_02001148(10, 0);
     if (!GameFlag_Test(0x940)) {
@@ -183,5 +195,3 @@ read:
   Func_02001108(18, 0, 0);
   Party_AdjustCoins(-20);
 }
-
-#endif

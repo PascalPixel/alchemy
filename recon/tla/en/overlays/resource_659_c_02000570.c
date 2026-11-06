@@ -1,4 +1,8 @@
-// Draft, differ 28 of 72 (tla-en, 2026-11-05).
+// Differ 24 of 72 (tla-en, 2026-11-06).
+// 6 November: ActorPlaceFacing as a forwarded inline to Func_02001dc0 (as
+// ActorPlace) orders actor 10's arguments as the listing does, 28 to 24; Call4
+// gives 24 too. Left: the pooled 0x2000000. Permuter hits at 18-20 are bogus
+// (actor id 0x3490000, x truncated to short).
 // Under -Os, 5 November: differ 22 of 72 (tla-en); older figures below predate it.
 // Near miss, differ 24 of 72: the listing loads x = 0x02000000 for actor 9 from
 // the literal pool in both branches, where this draft builds it as 128 << 18
@@ -7,6 +11,11 @@
 // a pixel-coordinate inline that shifts (all 24 to 26). The 0xd4c store matches
 // through the one-pass block that Func_02000624 also takes.
 #include "../../../../games/tla/src/scene/madra_interiors/madra_interiors.h"
+
+static inline void ActorPlaceFacing(s32 actor, s32 x, s32 z, s32 angle) {
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
+  Func_02001dc0(actor, x, z, angle);
+}
 
 // Left: the listing pools 0x2000000 in both arms where a plain constant splits to
 // movs and lsls; as (s32)gEwramHeap it pools but gcse hoists it, differ 21.

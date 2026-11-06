@@ -1,3 +1,5 @@
+// Differ 34 of 828 (tla-en, 2026-11-06).
+// Left: camera->pos and frame << 8 swap slots sp+8 and sp+12 (22 rows), frame in r4 for r1 at the pillars, and the device's movs r1, #4 tie. camera is the tree's struct BattleCamera (same 34). Both pointers are gcse PRE reaching registers here (536, 537), numbered in hash-bucket order; their raw hashes differ by 6 (13950 and 13956), so no table size near 345 reverses them and moving the declarations of camera or frame costs 52 to 156. The listing's order fits camera->pos not being PRE'd but hoisted by loop.c, which takes the frame loop after the pillar loop; what keeps it from PRE is not found.
 // Measured 2026-11-05 (tla-en): differ 34 of 828. The ring entry is built in index in place, its first read goes through index, and top shares index (r5, as the listing; tag temporary on adoption); steps run ring, then i, and flash, glow, bolt, then i. Left: camera + 3 at sp+8 under frame << 8 at sp+12 (22 rows): the listing's slot says its pseudo is later than anything in the frame loop's source, as a gcse temporary would be, and 0817bd88 shows the same under its length << 5; a second occurrence of camera + 3 is not found (the look-at copied into the turn arms: 87; phase locals: 60, 168). Then frame in r4 against r1 at the pillars, and one tie on movs r1, #4. The dead read of shade stays tagged.
 // Measured 2026-11-05 (tla-en): differ 88: the model's mesh and vertices are typed pointers, not void.
 // Measured 2026-11-05 (tla-en): differ 92 of 828, counts equal: left, the first draw's x, is a local (r9).
@@ -53,6 +55,7 @@
 // (differ 436 on the device). That mix is odd as C, and the real form may be
 // simpler. The loop keeps the twin's i * 2 + 3 (0818cb74).
 
+#include "battle_display.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -183,7 +186,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
   s32 i;
-  s32 *camera;
+  struct BattleCamera *camera;
   s16 savedYaw;
   struct SurgeTarget *target;
   s16 *circles;
@@ -226,7 +229,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   camera = Ram_HeapSlots->cameraWork;
-  savedYaw = ((s16 *)camera)[27];
+  savedYaw = camera->yaw;
   target = *GetBattleObjectSlotFar(effect->actors[0]);
 
   // Shaded circles of 2 to 64 pixels, packed in the map buffer.
@@ -249,7 +252,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       Func_0815f0a0((s32)&ResourceId_MercuryDjinnSheet);
     }
     if (frame == 0) {
-      ((s16 *)camera)[27] = savedYaw;
+      camera->yaw = savedYaw;
       for (i = 0; i != 32; i++) {
         work->particles[i].variant = -1;
       }
@@ -285,13 +288,13 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         turn = 0xa00 - (frame << 5);
       }
       if (effect->side == 0) {
-        ((u16 *)camera)[27] += turn;
+        camera->yaw += turn;
       } else {
-        ((u16 *)camera)[27] -= turn;
+        camera->yaw -= turn;
       }
     }
     Render_ResetTransformState();
-    Transform_SetLookAt(camera, camera + 3);
+    Transform_SetLookAt(camera->eye, camera->pos);
 
     // The rings: four quarter circles each, upper halves for the first 16.
     for (i = 0, ring = work->particles; i != 28; ring++, i++) {
@@ -433,9 +436,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         s32 sway = Trig_Sin((frame << 8) + 0x1000);
         s32 x =
             ((center.x / 2 - 64) << 16) -
-            (Data_08198c10[i] * sway / 0x10000) * Trig_Sin(((s16 *)camera)[27]);
+            (Data_08198c10[i] * sway / 0x10000) * Trig_Sin((s16)camera->yaw);
         s32 z = -((Data_08198c10[i] * sway / 0x10000) *
-                  Trig_Cos(((s16 *)camera)[27]));
+                  Trig_Cos((s16)camera->yaw));
         s32 growth;
         u32 scale;
 

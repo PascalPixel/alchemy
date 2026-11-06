@@ -1,5 +1,7 @@
-// Near miss, differ 30 of 639 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Differ 30 of 639 (tla-en, 2026-11-06): allocation only (lift r4/r0, the 1 for j++,
+// one fused add); a 5-minute permute reached 28 only by changing a signature.
+// Earlier: near miss at 30 (2026-11-05) with untagged pins ("r9", "r6"), empty asms,
+// one-pass blocks and locals found by search; each needs its S2 tag on adoption.
 // Draft, differ 99 of 639, skeleton gap 11 (tla-en, 2026-11-01)
 // A field Psynergy that raises a glowing object
 // (object 352) before the caster or at the target: the scene sits 32 pixels

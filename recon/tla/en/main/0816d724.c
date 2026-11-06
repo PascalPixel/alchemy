@@ -1,3 +1,21 @@
+// Differ 16 of 589 (tla-en, 2026-11-06).
+// 38 to 16: SameSide with the user-left arm first, each arm the sign bit
+// of a & b or ~(a | b) (35; as b < 0 and b >= 0 the arms fold into jumps or
+// one select, 44 to 51), and the user->x read in a one-pass block (16).
+// Left: arm 1 is ands and a jump to the shared lsrs, where the native has
+// lsrs with the test copied into it (the mvns arm is then its own), and the
+// drain loop's pointer built after &screen. Also tried: (u32)b >> 31 in arm 1
+// (44), (a & b) >> 31 with ~b (27), ~(a ^ b) >> 31 (37). Before, at 38: the
+// SameSide arms (the
+// native puts the user-left arm first with the flag test copied into it, two
+// instructions this draft lacks, which also shifts the pool offsets by 4), the
+// velocityZ store scheduled before the copy of mote->x, and the drain loop's
+// pointer built after &screen. 46 to 38: each loop's pointer is set in the
+// for after i = 0 (the native zeroes i first). Tried since, none below 38:
+// SameSide with the user-left arm first as returns, a ternary, shifts, a flag
+// local or nested ifs (47 to 83); its condition written in place (47, 48);
+// moteX in a local taken for dx (38); the abs values before the pull (114,
+// 484); the drain loop's pointer set before the camera calls (42).
 // 2026-10-26 (round 5, later): differ 58. Each spark and mote loop has its own
 // block-scoped pointer (the first frame's two, the spark draw loop's, the drain
 // block's): 114 to 96 for the sparks, 58 with the motes; the allocation in both
@@ -105,11 +123,13 @@ void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Sound_PlayFar(s32 cue);
 
-// Whether b lies on the same side of x = 0 as a.
+// Whether b lies on the same side of x = 0 as a: the sign bit of a & b or
+// of ~(a | b), the user-left arm first (the native keeps a value in each arm
+// and tests it after the join).
 static inline s32 SameSide(s32 a, s32 b) {
-  if (a >= 0)
-    return b >= 0;
-  return b < 0;
+  if (a < 0)
+    return (u32)(a & b) >> 31;
+  return (u32)~(a | b) >> 31;
 }
 
 // Soul Shatter: a column bursts up under the target in a spray of sparks
@@ -161,9 +181,9 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       target->y = 0;
       {
-        struct EffectStep *spark = work->particles;
+        struct EffectStep *spark;
 
-        for (i = 0; i != SPARKS; i++, spark++) {
+        for (i = 0, spark = work->particles; i != SPARKS; i++, spark++) {
           s32 speed = (Random16() & 0xff) + 256;
           s32 angle = (Random16() & 0x7fff) + 0x4000;
 
@@ -175,9 +195,9 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
         }
       }
       {
-        struct EffectStep *mote = &work->particles[SPARKS * 2];
+        struct EffectStep *mote;
 
-        for (i = 0; i != MOTES; i++, mote++) {
+        for (i = 0, mote = &work->particles[SPARKS * 2]; i != MOTES; i++, mote++) {
           s32 speed = (Random16() & 127) + 128;
           s32 angle = Random16() & 0x7fff;
 
@@ -253,9 +273,9 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     // pictures three frames apiece; one in four is drawn mirrored.
     BattleEffect_FetchRectangleBlitters(effect->side, draw);
     {
-      struct EffectStep *spark = work->particles;
+      struct EffectStep *spark;
 
-      for (i = 0; i != SPARKS; i++, spark++) {
+      for (i = 0, spark = work->particles; i != SPARKS; i++, spark++) {
         if (frame >= i / 2 + 8 && spark->variant <= 28) {
           s32 cell = spark->variant / 3;
           s32 x = HI(spark->x);
@@ -286,8 +306,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       camera = Ram_HeapSlots->cameraWork;
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
-      mote = &work->particles[SPARKS * 2];
-      for (i = 0; i != MOTES; i++, mote++) {
+      for (i = 0, mote = &work->particles[SPARKS * 2]; i != MOTES; i++, mote++) {
         if (mote->variant >= 0) {
           s32 size = (i & 1) + 9;
           s32 userX;
@@ -308,7 +327,10 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
             moteX = mote->x;
             if (moteX < 0)
               moteX = -moteX;
-            userX = user->x;
+            /* FAKEMATCH(one-pass): the form kept; as userX = user->x;, 35 of 589 instructions differ in tla-en. */
+            do {
+              userX = user->x;
+            } while (0);
             if (userX < 0)
               userX = -userX;
             if (moteX >= userX && SameSide(user->x, mote->x))

@@ -14548,7 +14548,7 @@ msgctxt "MsgEnemyLabel"
 msgid "03621"
 msgstr "Enem."
 
-msgctxt "message"
+msgctxt "MsgWaitingForOpponent"
 msgid "03622"
 msgstr "Esperando el turno del oponente."
 

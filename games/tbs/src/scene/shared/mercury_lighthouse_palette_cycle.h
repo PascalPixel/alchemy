@@ -27,12 +27,10 @@ static void MercuryLighthouse_CyclePalette(void) {
   s32 v;
   s32 bits;
   u16 *dst;
+  u16 *curAt; // cur is first set through a pointer, so it lives in memory.
 
-  /* FAKEMATCH(dead): cur's address taken, so it lives at sp+2, stored with
-   * strh and loaded again with ldrh for v, as the bytes show; as a plain u16,
-   * 22 of 65 instructions differ in tbs-en. */
-  (void)&cur;
-  cur = 0;
+  curAt = &cur;
+  *curAt = 0; // Default: cur is set for real before it is read.
   if (gFrameCount % 5 != 0)
     return;
   gPaletteCycleRed = (gPaletteCycleRed + 4) & 31;

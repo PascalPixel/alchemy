@@ -24,25 +24,27 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
   u16 bg1cnt;
   u16 bg2cnt;
   u16 bg3cnt;
+  // Each saved BGxCNT value is kept and put back through a pointer to it.
+  u16 *saved0;
+  u16 *saved1;
+  u16 *saved2;
+  u16 *saved3;
   s32 mosaicSize;
   volatile u16 *registerCursor;
 
-  /* FAKEMATCH(dead): the four saved BGxCNT values' addresses taken, so each
-   * is kept on the stack, stored and loaded again as in the ROM; as plain u16
-   * locals, 61 of 90 instructions differ in tbs-en. */
-  (void)&bg0cnt;
-  (void)&bg1cnt;
-  (void)&bg2cnt;
-  (void)&bg3cnt;
-  bg0cnt = REG_BG0CNT;
-  REG_BG0CNT = bg0cnt | BGCNT_MOSAIC;
+  saved0 = &bg0cnt;
+  *saved0 = REG_BG0CNT;
+  REG_BG0CNT = *saved0 | BGCNT_MOSAIC;
   registerCursor = &REG_BG0CNT;
-  bg1cnt = *++registerCursor;
-  *registerCursor = bg1cnt | BGCNT_MOSAIC;
-  bg2cnt = *++registerCursor;
-  *registerCursor = bg2cnt | BGCNT_MOSAIC;
-  bg3cnt = *++registerCursor;
-  *registerCursor = bg3cnt | BGCNT_MOSAIC;
+  saved1 = &bg1cnt;
+  *saved1 = *++registerCursor;
+  *registerCursor = *saved1 | BGCNT_MOSAIC;
+  saved2 = &bg2cnt;
+  *saved2 = *++registerCursor;
+  *registerCursor = *saved2 | BGCNT_MOSAIC;
+  saved3 = &bg3cnt;
+  *saved3 = *++registerCursor;
+  *registerCursor = *saved3 | BGCNT_MOSAIC;
   // 33 halfwords on from REG_BG3CNT is REG_BLDCNT.
   registerCursor += 33;
   *registerCursor = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
@@ -63,10 +65,10 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
   REG_DISPCNT = DISPCNT_MODE_1;
   wait(4);
   registerCursor = &REG_BG0CNT;
-  *registerCursor++ = bg0cnt;
-  *registerCursor++ = bg1cnt;
-  *registerCursor++ = bg2cnt;
-  *registerCursor = bg3cnt;
+  *registerCursor++ = *saved0;
+  *registerCursor++ = *saved1;
+  *registerCursor++ = *saved2;
+  *registerCursor = *saved3;
   return 0;
 }
 

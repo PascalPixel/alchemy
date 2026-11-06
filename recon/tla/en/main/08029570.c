@@ -1,3 +1,12 @@
+// Near miss, differ 26 of 324 (tla-en, 2026-11-06): the null test now reads
+// `if (ladder != NULL) { ... } else collisionFlags = 1;`, so the ladder count's
+// start stays after the test; left: the null path's block sits after the
+// ladder work instead of right after the test (with `ladder == NULL` first,
+// ifcvt's case 2 lifts the 127 above the test, differ 33: the native's else
+// block must hold something that stops it), the knock-on branch and literal
+// offsets, and the y copy's load before x's. Copy orders x,y,z 57; x,z,y 61;
+// z,y,x 30; y,z,x and z,x,y 26. Counting down by hand, differ 104; skipping
+// the loop into the shared `best == NULL` test, differ 27.
 // Draft, differ 36 of 324 (2026-10-26, 73 before): the best point's position
 // copied y first, which gives the native's registers and instruction count;
 // left: the ladder count's start (127) hoisted above the work's null test
@@ -111,9 +120,7 @@ s32 Func_08029570(struct Actor *object) {
     point = ladder->points;
     best = NULL;
     bestDistance = 0x10000000;
-    if (ladder == NULL) {
-      collisionFlags = 1;
-    } else {
+    if (ladder != NULL) {
       for (count = 0; count < 128; count++, point++) {
         if (point->active == 1) {
           s32 dx = (position.x - point->x) >> 8;
@@ -146,6 +153,8 @@ s32 Func_08029570(struct Actor *object) {
         position.x = best->x;
         position.z = best->z;
       }
+    } else {
+      collisionFlags = 1;
     }
   }
   work = Ram_HeapSlots->eventWork;

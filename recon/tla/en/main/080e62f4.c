@@ -1,7 +1,4 @@
-// Near miss, differ 36 of 67 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Near miss: listing 66 instructions, draft 62, common 43, differ 42; the rest
-// differs in instruction order.
+// Matches: differ 0 of 67 (tla-en, 2026-11-06), plain C with no device.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -63,23 +60,24 @@ s32 Trig_Sin(s32 angle);
 
 void Func_080e62f4(u8 *source, u8 *destination, s32 phase) {
   s32 width = 32;
-  register s32 height asm("r6") = 32;
+  s32 height;
   s32 column;
+  s32 row;
 
   Iwram_ClearWords(destination, 0x400);
+  // Set after the clear: the native loads it there, outside the call's life.
+  height = 32;
   for (column = 0; column < width; column++) {
     s32 wave = (Trig_Sin(column << 13) << 3) + 0x80000;
-    register s32 position asm("r4") = phase * 0x19999 - 0x7c0000;
-    u8 *from = source + column;
-    s32 row;
 
-    for (row = height; row != 0; row--) {
-      s32 shift = (position - wave) >> 16;
+    for (row = 0; row < height; row++) {
+      s32 position = phase * 0x19999 - 0x7c0000 + row * 0x40000;
+      // Two steps: the wave is subtracted inside the loop, as in the native.
+      s32 shift = position - wave;
+      shift >>= 16;
 
       if (shift >= 0 && shift < height)
-        destination[(shift << 5) + column] = *from;
-      from += width;
-      position += 0x40000;
+        destination[(shift << 5) + column] = source[row * width + column];
     }
   }
 }

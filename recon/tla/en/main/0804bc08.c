@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 1931 with its nested Func_0804bbd0 (tla-en, 2026-11-05; 18 more are the stand-in for Battle_DrawPartyPanelsWithEmptyList): the twin's three barriers and wrapper are in, untagged yet. Left: the summon's ldr of state before eors, the header's one pair with no device; a local, pin, one-pass, barrier or memory operand for ok or state does not move it, and any asm naming state before the nested function changes the frame (differ 276).
+// Matches: differ 0 of 1949 with its two nested functions (tla-en, 2026-11-06; alchemy-devtools diff DRAFT.c 0804bba8,0804bbd0,0804bc08, the one address alone prints differ 42 of 1907 since it counts the nested ones as extra). The twin's three barriers and wrapper are in, now tagged with their measured plain forms; the summon's two OAM word stores are written through a u32 pointer (see there), which closed the last pair. Not yet run through make compare-editions.
 // Draft, differ 52 of 1949, skeleton gap 16 (tla-en, 2026-11-01): 8 removed, 8
 // added. The two nested functions are compiled here but have their own
 // listings, so measure all three with alchemy-devtools diff DRAFT.c
@@ -33,9 +33,12 @@
 // - sp+20 and sp+96 before the Unit_Get call, 2: tie-broken by dependents; the
 //   reload of r1 has one more (the later set of r1), and a call that also sets r1
 //   removes it, which is what the wrapper does.
-// - ldr state against eors for the summon's ok, 2, the one pair with no device:
-//   5041 and 5969 tie at priority 85 and the load has more dependents. ok spelled
-//   as an if, != 0, after the x store, or a padded iconShown do not move it.
+// - ldr state against eors for the summon's ok, 2 (closed 2026-11-06): the two
+//   tie at priority 84 and sched2 takes the one with more dependents. Through the
+//   union, the summon's word stores have alias set 0 and depend on the load of
+//   state; through a u32 pointer they don't, the counts tie and RTL order puts
+//   eors first. ok spelled as an if, != 0, after the x store, or a padded
+//   iconShown do not move it; the same spelling at the other sites changes nothing.
 // What closed the rest, for the next reader:
 // - Func_0804bbd0 sits inside the last if, as in the twin. state becomes a stack
 //   variable only when that nested function is parsed, so every earlier load of
@@ -457,6 +460,9 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
       }
       command = &commandsOut[commandIndex];
       actorId = actors[commandIndex];
+      /* FAKEMATCH(wrapper): called as returning a doubleword, which sets r1,
+       * so sched2 loads commandsOut first; as Unit_Get(actorId), 2 of 1949
+       * instructions differ in tla-en. */
       unit = (struct BattleUnit *)(s32)((s64 (*)(s32))Unit_Get)(actorId);
       {
         struct PartyCommandState *navigation = NAVIGATION;
@@ -591,6 +597,9 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
+         * where the native has it (constant 40); without it, 18 of 1949
+         * instructions differ in tla-en. */
         __asm__ volatile("");
         iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
@@ -655,8 +664,14 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         }
         ok = j == 4;
         COMMAND_ICON_X(state) = 56;
-        iconSprite->oam.word.attr01 = 0x40000400;
-        iconSprite->oam.word.attr23 = 0;
+        // Written through a u32 pointer, not the union: these stores then no
+        // longer conflict with the load of state, which sched2 needs to order
+        // eors first.
+        ((u32 *)&iconSprite->oam)[0] = 0x40000400;
+        ((u32 *)&iconSprite->oam)[1] = 0;
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
+         * where the native has it (constant 56); without it, 22 of 1949
+         * instructions differ in tla-en. */
         __asm__ volatile("");
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
@@ -831,6 +846,9 @@ s32 Func_0804bc08(struct PartyCommandRecord *commands, u16 *actors,
         commandWindow = Window_Create(9, 17, 16, 3, 6);
         COMMAND_ICON_X(state) = 48;
         iconSprite->oam.word.attr01 = 0x40000400;
+        /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
+         * where the native has it (constant 48); without it, 12 of 1949
+         * instructions differ in tla-en. */
         __asm__ volatile("");
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;

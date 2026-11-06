@@ -1,43 +1,28 @@
-// 2026-11-05: still 66 of 165. A local for 384 (70) falls to gcse: its const-prop folds the spin's add, and the constant in the loop has life 1 of 64 real insns, so loop.c leaves it where the native hoists it and cse2 shares r8. What gives the constant life 5 or more in the loop is not found.
-// 2026-10-26: differ 66; resource 0x1e0 is FieldEffect_Leaves in the directory
-// (ResourceId_Leaves, to name there when this adopts); the native keeps 384
-// in r8 across the particle loop and spills the heading.
-// Draft, differ 67 (133 before statements reordered 2026-10-26) of 165: register choice, and one constant. The native
-// keeps 384 in r8 from VramCache_Load's size to the spin's add, the owner
-// in r9, the index in r10 and the vram slot in r11, and spills the heading
-// (sp 4); this keeps the heading in r11 and builds 384 again in the loop.
-// The native loads the resource id 480 from the pool (ldr r0, =0x1e0)
-// where TLA's split constants build it (movs 240; lsls 1), which suggests
-// the id is not a plain constant there. The heading as (u16) into an s32
-// measured 133, as a u16 local 187.
+// Matches: differ 0 of 165 (tla-en, 2026-11-06).
+// What settled it (from 66): the sprite indexed and the particle a pointer
+// stepped beside the index, as the sibling event commands write their
+// loops, so loop.c hoists 384 and shares it with VramCache_Load's size and
+// the spin; the effect and event work read into locals after the burst
+// work; and the sprites typed as the tree's struct EffectSprite, whose byte
+// 5 bit is oam.palette256 (not a hidden flag) and byte 9 holds oam.priority
+// and oam.palette.
+// Resource 0x1e0 is FieldEffect_Leaves in the directory (ResourceId_Leaves,
+// to name there when this adopts); the native loads it from the pool.
 // Starts a 96-particle burst (heap slot 0x5c work). Decodes resource
 // 480 into the work and loads 384 bytes of it as tiles, sets up 96 4-by-4
-// sprites (depth 250, hidden) and scatters as many particles around the
-// effect owner, each heading from the owner toward the first touched cell
-// with a random speed, an alternating spin and a start delayed by half its
-// index; then plays cue 220 and schedules Func_080e2c38.
+// sprites (depth 250, 256 colours, priority 0) and scatters as many
+// particles around the effect owner, each heading from the owner toward the
+// first touched cell with a random speed, an alternating spin and a start
+// delayed by half its index; then plays cue 220 and schedules Func_080e2c38.
 #include "types.h"
 #include "task.h"
 #include "ram_buffer.h"
 #include "resource.h"
 #include "system.h"
 #include "actor.h"
+#include "effect_sprite.h"
 
 s32 ArcTan2(s32 y, s32 x);
-
-struct BurstSprite {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 hidden : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[3];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 layer : 4;
-  u8 unk0a[20];
-  s16 depth;
-  u8 unk20[8];
-};
 
 struct BurstParticle {
   s32 x;
@@ -51,7 +36,7 @@ struct BurstParticle {
 
 struct BurstWork {
   u8 tiles[384];
-  struct BurstSprite sprites[96];
+  struct EffectSprite sprites[96];
   struct BurstParticle particles[96];
   s16 resource;
   s16 vram;
@@ -65,20 +50,20 @@ struct BurstCell {
   s16 z;
 };
 
-void Func_080eaf98(struct BurstSprite *sprite, s32 width, s32 height,
-                   u32 attributes, s32 tiles);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Func_080e2c38(void);
 extern char ResourceId_Leaves;
 
 void Func_080e2acc(void) {
   struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
-  struct Actor *owner = *(struct Actor **)((u8 *)Ram_HeapSlots->effectWork + 16);
-  struct BurstCell *cell = (struct BurstCell *)((u8 *)Ram_HeapSlots->eventWork + 0xcc0);
+  u8 *effect = Ram_HeapSlots->effectWork;
+  u8 *event = Ram_HeapSlots->eventWork;
+  struct Actor *owner = *(struct Actor **)(effect + 16);
+  struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
   s32 dx = (cell->x << 20) - owner->x + 0x80000;
   s32 dz = (cell->z << 20) - owner->z + 0x80000;
   s32 heading = (u16)ArcTan2(dz, dx);
-  struct BurstSprite *sprite;
+  struct EffectSprite *sprite;
   struct BurstParticle *particle;
   s32 resource;
   s32 vram;
@@ -92,14 +77,13 @@ void Func_080e2acc(void) {
   work->resource = resource;
   work->vram = vram;
 
-  sprite = work->sprites;
-  particle = work->particles;
-  for (i = 0; i < 96; i++, sprite++, particle++) {
+  for (i = 0, particle = work->particles; i < 96; i++, particle++) {
+    sprite = &work->sprites[i];
     Func_080eaf98(sprite, 4, 4, 0, vram);
     sprite->depth = 250;
-    sprite->priority = 0;
-    sprite->hidden = 1;
-    sprite->layer = 0;
+    sprite->oam.priority = 0;
+    sprite->oam.palette256 = 1;
+    sprite->oam.palette = 0;
     particle->x = owner->x;
     particle->y = owner->y;
     particle->z = owner->z;

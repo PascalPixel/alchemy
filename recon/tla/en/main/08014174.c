@@ -1,48 +1,40 @@
-// Measured 2026-11-05 (tla-en): differ 57 of 59, from the twin's shape with blocks, the second -1, and the scan through owners with the first test through the global (the scan then keeps its walker r2; with both through owners CSE drops the first read). Left: allocation: id r6 where the native has r5, blocks r5 where r1, pos r1 where r4, owners r7 and the hoisted table in ip.
-// Draft, differ 68 over 59 instructions (was 74): ☀️'s VramCache_AllocateBlocks
-// with ⚓️'s bound on the run's end. The shape matches; the registers do not:
-// the native keeps the block count in r1, the id in r5 and the position in r4,
-// with the owner table twice (r7, and a copy in r6 the first test and the
-// scan read). Reading the owners through a local for the first test and the
-// scan gives the two copies (74 to 68). Measured: two return -1 exits in
-// place of the shared result (72); four minutes of permuter reached 37 only
-// by assigning the scanned owner byte to the run's end.
+// Matches: differ 0 of 59 (tla-en, 2026-11-06).
+// ☀️'s VramCache_AllocateBlocks with ⚓️'s bound on the run's end. Every
+// access goes through gResourceBlockOwners and both failures return -1 in
+// place (no shared ret = -1); the scan's bound is ret + blocks, which loop.c
+// hoists into ip. Earlier forms through an owners local, or with a shared
+// -1 result, measured 57 to 74.
 #include "resource.h"
 #include "vram_tab.h"
 
-s32 VramCache_AllocateBlocks(u32 id, u32 size) {
-  u8 *owners;
+s32 VramCache_AllocateBlocks(u32 slot, u32 size) {
   u32 blocks;
   s32 ret;
   s32 pos;
-  u32 end;
   u32 i;
 
   blocks = size / VRAM_BLOCK_BYTES;
-  if (id >= VRAM_CACHE_ENTRY_COUNT) {
+  if (slot >= VRAM_CACHE_ENTRY_COUNT) {
     return -1;
   }
-  owners = gResourceBlockOwners;
   pos = 0;
   for (;;) {
-    ret = -1;
     if (pos >= VRAM_BLOCK_COUNT) {
-      return ret;
+      return -1;
     }
     if (gResourceBlockOwners[pos] == VRAM_BLOCK_OWNER_FREE) {
-      end = blocks + pos;
-      ret = -1;
-      if (end > VRAM_BLOCK_COUNT)
-        return ret;
+      if (pos + blocks > VRAM_BLOCK_COUNT) {
+        return -1;
+      }
       ret = pos;
-      while (pos < end) {
-        if (owners[pos] != VRAM_BLOCK_OWNER_FREE) {
+      while (pos < ret + blocks) {
+        if (gResourceBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE) {
           goto occupied;
         }
         pos++;
       }
       for (i = 0; i < blocks; i++) {
-        owners[ret + i] = id;
+        gResourceBlockOwners[ret + i] = slot;
       }
       break;
     }

@@ -1,4 +1,13 @@
-// Measured 2026-11-05 (tla-en): differ 86 of 1146, unchanged this round. Tried:
+// Near miss, differ 86 of 1146 (tla-en, 2026-11-06): the Djinni's second xor (an
+// empty asm with an output holds its 4), start > 0's ble, the palette copies'
+// entry load, center's zeroes and the mode 4 site's second fetch. Tried this round:
+// - start as u32: beq as the listing, but the lights' BLIT_ADDITIVE 0 is then read
+//   from start's slot (ldr [sp, #44] for movs #0), differ 102.
+// - flags in memory ((void)&flags, plain xors): both builds then xor separately, as
+//   the listing does, but the 4 sits in r5 and flags and start swap slots (44 and
+//   48), differ 205 wherever flags is declared. A flags that lives in memory would
+//   explain the listing's two xors and its 4 rematerialized in r4.
+// Earlier, 2026-11-05: differ 86 of 1146, unchanged that round. Tried:
 // - flags ^ two function-level constants no register holds (four, four2): the first
 //   build then matches, 4 from reload in r4 and the mode in r5, 136 normalized with
 //   rotation after it. The second build's mode 0 stores before its xor here and after

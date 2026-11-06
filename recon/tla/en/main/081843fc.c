@@ -1,7 +1,16 @@
-// Measured 2026-11-05 (tla-en): differ 101 of 4580, 35 with slots and pool
-// offsets normalized, 23 with registers normalized as well. Measure
-// 081843fc,081848ec together. Every stack slot as in the listing; most of raw is
-// pool offsets, which fall into step as the rows do. Pools not yet checked.
+// Near miss, differ 61 of 4580 (tla-en, 2026-11-06): the pairs below, scheduling
+// ties and reload choices, and the pool offsets that follow them. Measure
+// 081843fc,081848ec together. Every stack slot as in the listing.
+// Pools checked against the listing's first pool (2026-11-06): the first object
+// loop starts from gMapCellBuffer, not the constant Ram_MapCellBuffer, which
+// pooled a 0x02010000 of its own and put every later offset 4 out (101 to 61).
+// The one pool difference left is order: the listing pools IwramCopyWords before
+// Data_02016000, as its second object loop loads them. Reusing the first loop's
+// cells there gets the order but swaps r6 and r7 (65); for-init, indexed and
+// giv forms do not move it (61 to 696). In the sched2 dump the two loads tie at
+// priority 3 and go in RTL order, the biv's start first.
+// Measured 2026-11-05: differ 101 of 4580, 35 with slots and pool offsets
+// normalized, 23 with registers normalized as well.
 // sched2's rank is priority, then relation to the last insn, then the number of
 // insns that depend on this one, then RTL order; the dump's table gives all but
 // the listing's, and dependents count anti and alias edges, so types and registers
@@ -441,7 +450,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     COPY_WORDS((void *)OBJ_PLTT, e, 384);
     e += 384;
     Resource_DecodeType01(e, cellBuffer);
-    cells = Ram_MapCellBuffer;
+    cells = gMapCellBuffer;
     for (i = 0; i != 24; cells += 1024, i++) {
       obj = Func_0815b290(32, 32, 0x80002000, 0);
       obj->priority = 2;

@@ -1,11 +1,15 @@
-// Draft, differ 33 (48 before statements reordered 2026-10-26).
-// Draft, differ 50 of 99: reserves a glyph sprite for the window as
-// Func_0803c068 does, without drawing a glyph, and returns the address of its
-// tiles in OBJ VRAM for the caller to fill. The 128-byte frame is the unused
-// tile buffer of Func_0803c068. Left: register choice: the window and the output swap r6 and r7, the
-// constant 1 passes through ip in the native, and the stores after the oam
-// words follow in a different order. Tried: next cleared last, as in
-// Func_0803c068 (same).
+// Near miss, differ 33 of 99 (tla-en, 2026-11-06): register choice only. The
+// native keeps the 0 for kind and next in r4 and passes the 1 for active through
+// ip, computing the sprite cell (output + 16) late into r2; here the cell takes
+// r4 early and the 0 goes through ip. Computing the cell late (as
+// Func_0803c068 does) gives the native's r4 = 0 but swaps window and output
+// (r7/r6) and keeps the 1 in r3: differ 46. Tried, 6 November: every order of
+// the active, kind, vram, oam, cell and next statements (33 to 111); vram
+// before the stores; next beside kind; one return at the end (50).
+// Reserves a glyph sprite for the window as Func_0803c068 does, without
+// drawing a glyph, and returns the address of its tiles in OBJ VRAM for the
+// caller to fill. The 128-byte frame is the unused tile buffer of
+// Func_0803c068.
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"

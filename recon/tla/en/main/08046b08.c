@@ -1,4 +1,13 @@
-// Draft, differ 96 of 3111 (tla-en, 2026-11-05): the empty asms before the two fill loops (untagged yet; 100 without them) stop the list loops' exits threading past the fill loops' tests. Left: the two stack slots of note 1 and the pairs of notes 2 and 3; next's declaration in any position of the function's locals reads 124. Older notes follow.
+// Near miss, differ 88 of 3111 (tla-en, 2026-11-06): the two stack slots of
+// note 1 and the scheduling pairs of notes 2 and 3 (sprite words, the help
+// window's loads on page 2, movs r1, #16 before the range column's window).
+// The items' first entry is read as entries + rowBase + row (2 better than
+// &entries[rowBase + row]); count = 0 and j = -1 as statements before the
+// first item loop (8 better than the comma in its for). The two empty asms
+// before the fill loops are tagged barriers (92 without both) that stop the
+// list loops' exits threading past the fill loops' tests; a second counter
+// for the fill loop (i, row or its own k) reads 218 to 522. next's declaration
+// in any position of the function's locals reads 124. Older notes follow.
 // Draft, differ 124 of 3111, skeleton gap 27 (tla-en, 2026-11-01): the battle
 // summary screen, The Broken Seal's BattleStatusScreen_Run
 // (games/tbs/src/window/screens/battle_status.c) grown into four pages that A
@@ -10,8 +19,8 @@
 // follows the cursor. The battle figure is spawned for the member shown and
 // released on the way out; a reserve member (past the fourth) is labelled.
 //
-// Control flow, loops and instruction count agree with the listing. No device
-// is in use. Three things are left, none closed by reshaping:
+// Control flow, loops and instruction count agree with the listing. The only
+// devices are the two barriers. Three things are left, none closed by reshaping:
 //
 // 1. Two stack slots, about 20 instructions. next is [sp, #20] in the native and
 // [sp, #52] here, which moves helpText and statusKind by 4; statusSprites'
@@ -35,11 +44,12 @@
 // a store's use of a load looks costed differently (K2's scheduling model).
 //
 // 3. Scheduling pairs: cursor.group's store before reading groupPositions[0]
-// (three sites, the array read through [cursor.group] changes nothing), j = -1
-// before the items' first load, add r1 around the count's store, the help
-// window's four loads on page 2, and movs r7, #0 (helpValue set after
-// agilityDelta costs 90: see below). The two list loops' exit also threads past
-// the fill loop's test here (bgt +114, not +26); break changes nothing.
+// (three sites, the array read through [cursor.group] changes nothing),
+// add r1 around the count's store, the help window's four loads on page 2,
+// and movs r7, #0 (helpValue set after
+// agilityDelta costs 90: see below). Without the barriers the two list loops'
+// exits thread past the fill loops' tests (bgt +114, not +26); break changes
+// nothing.
 //
 // Forms the match depends on: helpValue is set before agilityDelta's read, which
 // shortens &unit->agi's life by one insn so it outranks the size and takes r5, and
@@ -764,8 +774,9 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       s32 item;
       s32 row;
 
+      count = 0;
       j = -1;
-      for (index = 0, count = 0;
+      for (index = 0;
            index != 15 && (item = unit->items[index]) != 0; index++) {
         Item_Get(item);
         if (Item_ClassifyUseAbility(member, item) == 0)
@@ -783,7 +794,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       rowBase = cursor.groupPositions[5] / 4 * 4;
       row = (s8)(cursor.groupPositions[5] % 4);
       if (count != 0) {
-        u16 *entry = &entries[rowBase + row];
+        u16 *entry = entries + rowBase + row;
 
         if (Item_ClassifyUseAbility(member, *entry) == 2)
           Message_CopyExpanded((s32)Msg_0d4f, itemText, 32);
@@ -812,6 +823,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           Func_08041f70(15);
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
+        /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the fill
+         * loop's test; as no asm, 90 of 3111 instructions differ in tla-en. */
         asm("");
         for (; j <= 3; j++)
           iconSprites[j].oam.f.tile =
@@ -892,6 +905,8 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
               range--;
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
+          /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the fill
+           * loop's test; as no asm, 90 of 3111 instructions differ in tla-en. */
           asm("");
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =

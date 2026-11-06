@@ -1,5 +1,12 @@
-// Measured 2026-11-05 (tla-en): differ 40 of 1361. Orders of the plain
-// assignments searched; the rest is sched2 order.
+// Near miss, differ 40 of 1361 (tla-en, 2026-11-06): sched2 order in seven
+// places (s * 48 in the meshA loop, m's increment, frame * 2 - 144 in r3, the
+// first req word through r2, the first model's stores, texture2's fields and
+// the closing transition store). texture2's two fields before its pixels, as
+// the listing stores them, fix that row but add two insns at addressof: gcse's
+// table grows from 551 to 553 buckets, sfp-120 hashes past sfp-96 and the
+// &texture2/&pos slot swap returns (differ 48); three 0 defaults reach 555 and
+// still 48. Measured 2026-11-05: differ 40; orders of the plain assignments
+// searched.
 // Draft, differ 62 of 1361, skeleton gap 20/20 (tla-en, 2026-11-01)
 // BattleEffect_RunMegiddo. Frame (220), control flow, calls, pools and nearly
 // every register agree. What is left is two causes.

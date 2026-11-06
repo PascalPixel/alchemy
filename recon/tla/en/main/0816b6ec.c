@@ -1,7 +1,18 @@
+// Near miss, differ 40 of 609 (tla-en, 2026-11-06): frame 0 only (the length by
+// two moves where this sets and conditionally sets it, -length rebuilt per row
+// where this hoists it, and the registers of that block), plus the vertex
+// literal load placed before Render_AllocateModelList, which the native has after.
+// 2026-11-06, measured: the vertex pointer set before the model list (crossing
+// the call, so it takes r6) with the draw passing Data_02010108 itself: 50 to 44
+// (set after the list, it takes r0 and every reload register moves, 398); k = 0
+// before the tail and head pointers, as the native orders them: 44 to 40. The
+// segment y as -(length + k * 24) keeps -length per row as the native does but
+// still sets the length conditionally (71); a y counted down per row (64 with
+// its own local, 304 sharing y); if, switch, ternary or a set then conditional
+// set for the length all give the same conditional set.
 // 2026-11-05: differ 50 of 609 (tla-en). Measured: x and y as one expression, scale
 // per arm, one counter k for k, j and the target loop gave the listing's r7 and
-// count. Left: frame 0 (length by two moves, -length rebuilt per row) and the
-// vertices literal in the draw (as Data_02010108 alone it moves PRE, differ 398).
+// count.
 // Draft of Func_0816b6ec, decompiled from the listing: differ 196 of 609 (draft
 // 607), the same 48 calls and control flow.
 // Left (2026-10-19): r6 and r7 trade places for the vertex pointer, the
@@ -243,8 +254,9 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       s8 *corner;
       s32 i;
       for (i = 32; i != 0; i--) {
+        k = 0;
         corner = (s8 *)gMapCellBuffer + (i - 1) * 8;
-        for (k = 0; k != 2; k++) {
+        for (; k != 2; k++) {
           corner[8] = corner[0];
           corner[9] = corner[1];
           corner[10] = corner[2];
@@ -264,9 +276,10 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       angle = yaw;
       height = 30 - ((Trig_Sin(frame * 820) * 20) >> 16);
     }
+    k = 0;
     corner = (s8 *)gMapCellBuffer;
     y = -height;
-    for (k = 0; k != 2; k++) {
+    for (; k != 2; k++) {
       corner[0] = (u32)Trig_Sin(angle) >> 11;
       corner[1] = y;
       corner[2] = (u32)Trig_Cos(angle) >> 11;
@@ -294,8 +307,8 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
 
     Render_ResetTransformState();
     Transform_SetLookAt(camera, camera + 3);
-    model = Render_AllocateModelList(1);
     vertices = Data_02010108;
+    model = Render_AllocateModelList(1);
     shade = 0;
     if (frame <= 15) {
       shade = frame * 4 - 64;
@@ -344,7 +357,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
         }
         Func_080151e4(scale * 2, 0x10000, scale * 2);
       }
-      Render_TransformVertices(gMapCellBuffer, vertices, 66);
+      Render_TransformVertices(gMapCellBuffer, Data_02010108, 66);
       Render_DrawModelList(model);
     }
     gCameraSceneParameters[3] = 120;

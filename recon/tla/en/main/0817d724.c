@@ -1,3 +1,4 @@
+// Near miss, differ 46 of 1034 (tla-en, 2026-11-06): the colour loop (lsrs 10 for lsls 16, lsrs 26, one copy of red, pointer in r0; 22), the trail's slot and source reloads (r3 for r1, r0 and r1 swapped; about 18), the burst's adds r7, r3, r2 (2), the model block's strip load (2). Settled 2026-11-06: the trail stores y before x (90 to 86), the model's mesh is set before scrollU (86 to 80), and the trail's slot is computed after startY (80 to 46). Tried for the colour loop, none better: s32 c with red = 31 then red &= c (134), c <<= 16 then (u32)c >> 26 (127: the shifts, but one shared mask), green computed and dropped (94, 123), (u16)c casts (88, 89).
 // Draft, differ 90 of 1034 (tla-en, 2026-11-05); 45 with slots and pool offsets normalized, 10 with registers blind too. Measured, not kept: s32 c = *color; c <<= 16; blue = ((u32)c >> 26) & 31; with (red << 10) | (red << 5) | blue gives the listing's shifts and clamp but one shared mask, no pooled 31 (168). The pooled 31 and the shifts have not been had together.
 // Draft, differ 90 of 1034 (tla-en, 2026-11-05); 45 with slots and pool offsets normalized, 10 with registers blind too. Blue's mask as a halfword gives the pooled 31 (98 to 90); (u16)(*color >> 10) still compiles to lsrs 10 where the listing has lsls 16, lsrs 26: combine knows the load is zero-extended. Hiding that with a tied empty asm moves the rest to 131.
 // Measured 2026-11-05 (tla-en): differ 98: the model's mesh and vertices are typed pointers, not void.
@@ -33,9 +34,8 @@
 // - The opening's second reload of victim, and the burst's adds r7, r3, r2
 // (here
 //   r2, r3), are ties: every cast spelling of the sum compiles the same.
-// - The trail's zero and base come one reload early (r3, r4 for r4, r7);
-// setting
-//   trail before i, in one line or apart, gives it r7 and costs 34.
+// - The trail's zero and base: settled 2026-11-06 by computing slot after
+//   startY; setting trail before i still costs (116 to 126).
 // Settled this round, each measured:
 // - blit is draw[2], for the word at sp+68.
 // - cells is a set-once constant, so reload fetches it into r0; indexing
@@ -47,7 +47,7 @@
 // r3
 //   for y's copy and gives r1 and r4 to j * 8 and j * 2018; 370 to 193.
 // - BattleEffect_LoadBlitter returns s32. The model's stores are in listing
-// order.
+// order, except mesh before scrollU (2026-11-06).
 // - vertices is a local set once at the top; zero is set before the model is
 //   allocated; the sparks are separate pointers, one per loop; first is a
 //   variable, so (x * 4) * 28 multiplies by 28 after the shift.
@@ -420,8 +420,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     tex->logHeight = 5;
     model->texture = tex;
     tex->pixels = work->sheet;
-    model->scrollU = 127 & ~(frame << 2);
     model->mesh = strip;
+    model->scrollU = 127 & ~(frame << 2);
     Render_ResetTransformState();
     Func_080151e4(0x8000, 0x10000, 0x8000);
     Transform_Push();
@@ -495,7 +495,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
     if ((u32)frame <= 133) {
       struct EffectStep *trail;
       s32 startY;
-      s32 slot = (frame - 16) & 63;
+      s32 slot;
       s32 first;
       s32 y = 120;
 
@@ -503,14 +503,15 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectArgument *effect) {
         y = height - 80;
       }
       startY = y << 16;
+      slot = (frame - 16) & 63;
       first = slot * 2;
       for (i = 0, trail = &SPARKS[128 + first]; i != 2; i++, trail++) {
         s32 random;
         s32 angle;
         s32 speed;
 
-        trail->x = (source.x / 2) << 16;
         trail->y = startY;
+        trail->x = (source.x / 2) << 16;
         random = Random16() & 0x7fff;
         angle = random + 0x4000;
         if (frame > 59) {

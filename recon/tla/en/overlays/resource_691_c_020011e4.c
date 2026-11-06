@@ -1,13 +1,11 @@
-// Draft, differ 40 of 260 (tla-en, 5 November 2026). Plain loops throughout, the figure
-// unchanged by them. Creates actor 403 at the source's position and moves it along x by
+// Matches: differ 0 of 260 (tla-en, 2026-11-06). The spawn block masks with a literal 31
+// (a mask local swapped its registers with the config address). Plain loops throughout.
+// Creates actor 403 at the source's position and moves it along x by
 // twice the cosine of the source's angle until the layer 2 cell under it has attribute 212
 // or 222, or an active object 8 to 63 in another cell is within 8 of it (Func_020005a0) on
 // its height row. When it stops on the cell or on an object whose animation value is 0x110,
 // it settles, and effect 403 is thrown every other frame for 16 frames; on any other object
-// it calls Func_02000c08 with that object's index while flag 0x2f0 is set. Left: in the
-// spawn block the config's address takes r6 and the mask r8, the native the reverse (.444
-// against .107 in local-alloc); GCSE merges the position's address into r7 where the native
-// has add r7, sp, #56 again; CSE keeps flag 0x2f0 in r5 across Func_02000c08.
+// it calls Func_02000c08 with that object's index while flag 0x2f0 is set.
 #include "call.h"
 #include "types.h"
 #include "actor.h"
@@ -112,6 +110,7 @@ stop:
   object->speedLimit = 0x20000;
   object->update = Func_02000d40;
   Func_02003a84(object, position[0], position[1], position[2]);
+  /* FAKEMATCH(wrapper): the form kept; as Func_02003b5c(0x20000, 0x4000), 2 of 260 instructions differ in tla-en. */
   Call2((void (*)())Func_02003b5c, 0x20000, 0x4000);
   Camera_MoveWithinMapBounds(position[0], position[1], position[2], 1);
   Func_02003a8c(object);
@@ -125,15 +124,13 @@ stop:
     if (step == 0) {
       s32 dx;
       s32 dz;
-      s32 mask;
 
       config.id = 403;
       config.kind = 1;
       config.unk24 = Func_020011b8;
-      mask = 31;
       config.data = gData_02003d50;
-      dx = Random16Far() & mask;
-      dz = Random16Far() & mask;
+      dx = Random16Far() & 31;
+      dz = Random16Far() & 31;
       Func_0200015c(position[0], position[1], position[2],
                     (dx - 16) << 13, (dz - 16) << 13, step,
                     0x1320000, &config);
@@ -151,11 +148,13 @@ hit:
   object->speedLimit = 0x20000;
   object->update = Func_02000d40;
   Func_02003a84(object, position[0], position[1], position[2]);
-  Func_02003b5c(0x20000, 0x4000);
+  /* FAKEMATCH(wrapper): the form kept; as Func_02003b5c(0x20000, 0x4000), 2 of 260 instructions differ in tla-en. */
+  Call2((void (*)())Func_02003b5c, 0x20000, 0x4000);
   Camera_MoveWithinMapBounds(position[0], position[1], position[2], 1);
   Func_02003a8c(object);
   object->update = NULL;
   Func_02003a6c(object);
+  /* FAKEMATCH(wrapper): the form kept; as GameFlag_SetBit(0x2f0), 8 of 260 instructions differ in tla-en. */
   Call1((void (*)())GameFlag_SetBit, 0x2f0);
   Func_02000c08((u16)i);
   GameFlag_ClearBit(0x2f0);

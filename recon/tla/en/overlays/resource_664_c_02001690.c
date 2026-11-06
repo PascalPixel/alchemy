@@ -1,4 +1,13 @@
-// Draft, differ 64 of 155 (tla-en, 2026-11-05).
+// Near miss, differ 64 of 155 (tla-en, 2026-11-06): which copy of three
+// duplicated calls jump2 keeps. jump2 runs after sched2 and cross-jumps each
+// block into the latest matching jump in the end label's chain, so the draft
+// keeps the later (frame-even) copies of 0xa8/0x25b and 0x268/0x88 and drops the
+// earlier; the native keeps the earlier ones and drops the frame-odd 0x228 copy.
+// That fits only if, at jump2, the even arm's flag 0x200 and 0x202 then-arms
+// still jumped to an unthreaded join (pushed onto the chain only when threaded);
+// here every jump already targets the end label (15 uses). One shared call with
+// x and z locals: 82 (x goes through r3). Without Call3: 66.
+// 5 November figure: differ 64 of 155 (tla-en).
 // 5 November: the native cross-jumps three calls to their twins in the other arm
 // (bne -102, -100, +62); no orientation of the seven ifs (128 tried) gives that,
 // best 64 to 66.
@@ -52,6 +61,7 @@ void Func_02001690(void) {
         else if (!GameFlag_Test(0x201))
           Func_0200160c(0x1f80000, 0, 0x1c80000);
         else
+          /* FAKEMATCH(wrapper): the form kept; as Func_0200160c(0x2280000, 0, 0x1c80000), 66 of 155 instructions differ in tla-en. */
           Call3((void (*)())Func_0200160c, (s32)(0x2280000), (s32)(0), (s32)(0x1c80000));
       } else {
         Func_0200160c(0x2680000, -0x200000, 0x880000);

@@ -1,3 +1,13 @@
+// Near miss, differ 38 of 589 (tla-en, 2026-11-06): the SameSide arms (the
+// native puts the user-left arm first with the flag test copied into it, two
+// instructions this draft lacks, which also shifts the pool offsets by 4), the
+// velocityZ store scheduled before the copy of mote->x, and the drain loop's
+// pointer built after &screen. 46 to 38: each loop's pointer is set in the
+// for after i = 0 (the native zeroes i first). Tried since, none below 38:
+// SameSide with the user-left arm first as returns, a ternary, shifts, a flag
+// local or nested ifs (47 to 83); its condition written in place (47, 48);
+// moteX in a local taken for dx (38); the abs values before the pull (114,
+// 484); the drain loop's pointer set before the camera calls (42).
 // 2026-10-26 (round 5, later): differ 58. Each spark and mote loop has its own
 // block-scoped pointer (the first frame's two, the spark draw loop's, the drain
 // block's): 114 to 96 for the sparks, 58 with the motes; the allocation in both
@@ -161,9 +171,9 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       target->y = 0;
       {
-        struct EffectStep *spark = work->particles;
+        struct EffectStep *spark;
 
-        for (i = 0; i != SPARKS; i++, spark++) {
+        for (i = 0, spark = work->particles; i != SPARKS; i++, spark++) {
           s32 speed = (Random16() & 0xff) + 256;
           s32 angle = (Random16() & 0x7fff) + 0x4000;
 
@@ -175,9 +185,9 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
         }
       }
       {
-        struct EffectStep *mote = &work->particles[SPARKS * 2];
+        struct EffectStep *mote;
 
-        for (i = 0; i != MOTES; i++, mote++) {
+        for (i = 0, mote = &work->particles[SPARKS * 2]; i != MOTES; i++, mote++) {
           s32 speed = (Random16() & 127) + 128;
           s32 angle = Random16() & 0x7fff;
 
@@ -253,9 +263,9 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
     // pictures three frames apiece; one in four is drawn mirrored.
     BattleEffect_FetchRectangleBlitters(effect->side, draw);
     {
-      struct EffectStep *spark = work->particles;
+      struct EffectStep *spark;
 
-      for (i = 0; i != SPARKS; i++, spark++) {
+      for (i = 0, spark = work->particles; i != SPARKS; i++, spark++) {
         if (frame >= i / 2 + 8 && spark->variant <= 28) {
           s32 cell = spark->variant / 3;
           s32 x = HI(spark->x);
@@ -286,8 +296,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       camera = Ram_HeapSlots->cameraWork;
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
-      mote = &work->particles[SPARKS * 2];
-      for (i = 0; i != MOTES; i++, mote++) {
+      for (i = 0, mote = &work->particles[SPARKS * 2]; i != MOTES; i++, mote++) {
         if (mote->variant >= 0) {
           s32 size = (i & 1) + 9;
           s32 userX;

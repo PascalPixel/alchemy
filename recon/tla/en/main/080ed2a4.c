@@ -1,7 +1,9 @@
-// Near miss, differ 47 of 548 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Draft, differ 127 of 548, skeleton gap 23 (tla-en, 2026-11-01): same calls,
-// fields, control flow and block order; what is left is below.
+// Near miss, differ 4 of 548 (tla-en, 2026-11-06): only where the entrance load
+// sits. The native has movs r6, #18; ldrsh r1, [r0, r6] between the
+// Data_02000500 address load and its store; here the same two instructions
+// follow the scene load. Reading the entrance before the store (first, second
+// or third) puts the flag's address and the two offsets in other registers.
+// Earlier: differ 47 of 548 (2026-11-05), differ 127 of 548 (2026-11-01).
 // Runs the world map screen (mode 0 to look, nonzero to choose a destination)
 // until A or B. In event mode 3 the field stays loaded: the map work's sixteen
 // animation flags are set aside and the screen is drawn over it (a nonzero
@@ -22,20 +24,16 @@
 // CSE cannot tell its pointers apart, and only a pointer set twice has no known
 // base; hence the NULL defaults before the outer loop. keys and input are the
 // native's r10 and r5: input is set again in the Start and release bodies. The
-// clamp keeps zero and the limits in locals set before the scroll stores. The
-// entrance is read before Data_02000500 is stored, so it is a local. Three
-// sets of input, the two of wayZ and that local are plain C but unusually
+// clamp keeps zero and the limits in locals set before the scroll stores. Three
+// sets of input and the two of wayZ are plain C but unusually
 // shaped: an adoption should decide whether any of them is a device (S2).
-// Left: event->screenEffect = 0 reloads zoomed's slot (CSE knows it holds 0)
-// where the native builds the 0; tried the first test as a goto, as !(a && b)
-// and as an empty then-arm: unchanged. place->scene is loaded straight into r0
-// where the native loads r3 and copies, one instruction short; an s16 or s32
-// scene local changes nothing. The native's address of unk2be is a reload pair
-// (r6 and r1, then r2 and r4), the draft's routine a pseudo, which shifts the
-// reload registers of the closing tests; a local per arm folds the symbol and
-// offset into one literal and loses 150 of differ. The blend store schedules
-// two instructions late in the full setup. Declaration order is at a local
-// optimum (every single move tried).
+// The choice arms, measured 2026-11-06: gMainRoutineWork and Data_02000500 are
+// each a pointer local set once at the top; they get no register, so reload
+// rebuilds each address where it is used, in the native's rotating registers
+// (r6 and r1, then r2 and r4; Data_02000500 in r2, then r6). The scene reaches
+// r0 through r3 because one local carries the flag and then the scene (tagged);
+// B's -1 goes through a local (tagged). The empty asm and the hoisted -1 the
+// 11-05 draft used are gone.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -142,7 +140,8 @@ s32 Func_080ed2a4(s32 mode) {
   s32 limitX;
   s32 limitZ;
   s32 value;
-  struct WorldMapChoice *routine;
+  s16 *data02000500 = &Data_02000500;
+  struct WorldMapChoice *routine = (struct WorldMapChoice *)&gMainRoutineWork;
 
   world->mode = mode;
   if (mode != 0 || event->controlMode != 3)
@@ -161,13 +160,15 @@ s32 Func_080ed2a4(s32 mode) {
     objects->suspended = 1;
     wait(1);
     ((struct MapViewWork *)map)->picturePending = 1;
-  do {
-    blend = REG_BLDALPHA;
-  } while (0);
+    do {
+      /* FAKEMATCH(one-pass): the form kept; as a plain statement, 16 of 548 instructions differ in tla-en. */
+      blend = REG_BLDALPHA;
+    } while (0);
   } else {
-  do {
-    event->viewCenter->movementState = 1;
-  } while (0);
+    do {
+      /* FAKEMATCH(one-pass): the form kept; as a plain statement, 281 of 548 instructions differ in tla-en. */
+      event->viewCenter->movementState = 1;
+    } while (0);
     savedDelay = event->delay;
     event->delay = 6;
     event->screenEffect = 0;
@@ -296,23 +297,24 @@ s32 Func_080ed2a4(s32 mode) {
         if (world->shown == -1)
           continue;
         place = FlagEntries_GetTable();
-        routine = (struct WorldMapChoice *)&gMainRoutineWork;
         place += world->shown;
         routine->unk2be = (s32)&SceneId_Ov64a;
+        /* FAKEMATCH(temporary): the form kept; as *data02000500 = place->flag and Func_080ca368(place->scene, entrance), 139 of 548 instructions differ in tla-en. */
+        value = place->flag;
+        *data02000500 = value;
+        value = place->scene;
         entrance = place->entrance;
-        Data_02000500 = place->flag;
-  __asm__("" : "=r"(Data_02000500) : "0"(Data_02000500));
-        Func_080ca368(place->scene, entrance);
+        Func_080ca368(value, entrance);
         goto done;
       }
       if (input->repeat & 2) {
         if (mode != 0) {
-          routine = (struct WorldMapChoice *)&gMainRoutineWork;
           routine->unk2be = 0xffff;
-  {
-    __typeof__(-1) hoisted = -1;
-    Data_02000500 =  hoisted ;
-  }
+          {
+            s32 none = -1;
+            /* FAKEMATCH(temporary): the form kept; as *data02000500 = -1, 44 of 548 instructions differ in tla-en. */
+            *data02000500 = none;
+          }
         }
         goto done;
       }

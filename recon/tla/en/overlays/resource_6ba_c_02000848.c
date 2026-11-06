@@ -1,7 +1,6 @@
-// Draft, differ 38 of 258 (tla-en, 2026-11-05). Func_02000848 of overlay 6ba.
-// item set before the second window, which gives it r6 as natively; step a
-// real s8. Left: rank only: redraw 10/348 outranks step 9/328 (r8 and sl),
-// the native the other way.
+// Matches: differ 0 of 258 (tla-en, 2026-11-06). Func_02000848 of overlay 6ba.
+// step, item and redraw are all set before the first window: that lengthens
+// redraw's life so step outranks it (r8, redraw sl) as natively; step a real s8.
 #include "types.h"
 #include "call.h"
 #include "input.h"
@@ -46,10 +45,10 @@ void Func_02000848(void) {
 
   entryCount = ITEM_COUNT;
   step = 0;
-  window = Window_Create(0, 0, 30, 7, 2);
   item = 1;
-  details = Window_Create(0, 8, 13, 10, 2);
   redraw = 1;
+  window = Window_Create(0, 0, 30, 7, 2);
+  details = Window_Create(0, 8, 13, 10, 2);
   Dma_Set((const void *)0x05000200, (void *)0x050001c0, 0x80000010, REG_DMA3);
   Dma_Set((const void *)0x050001e8, (void *)0x050001dc, 0x80000001, REG_DMA3);
   Func_02000e78(112);

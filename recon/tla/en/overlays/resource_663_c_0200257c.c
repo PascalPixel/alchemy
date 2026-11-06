@@ -1,25 +1,20 @@
-// Draft, differ 33 of 135 (tla-en, 2026-11-05). Older notes below may predate this figure.
+// Matches: differ 0 of 135 (tla-en, 2026-11-06).
 // Under -Os, 5 November: differ 35 of 135 (tla-en); older figures below predate it.
-// Draft, differ 35 of 135, skeleton gap 3/2 (tla-en, 2026-11-01)
 // A heat haze: fills a 160-line table of three halfwords a line (BG0's two
 // offsets and BG1's horizontal offset) from a sine wave narrowing down the
 // screen with random jitter, keeps the blend weight swinging between 4 and 8
 // every 16 frames, and starts the table's HBlank DMA into the background
 // offsets. Func_020024b0 is its simpler twin.
-// Left: only line[2]'s statement. Everything else differing is its knock-on:
-// the 2 bytes it is short move the middle literal pool, and scroll's register.
-// The listing keeps wave + y in r0 apart from y in r3, then loads x, shifts
-// into r2 and adds: the sum's pseudo is not tied to the dying y, so it is not
-// a single-set pseudo for local-alloc. Plain forms tie it (`add r3, r8`).
-// Measured with the sum in a local, y first in every spelling: differ 39;
-// `offset = wave + y; offset = x + (offset >> 13); line[2] = offset;` differ
-// 10, skeleton 0, only the result in r0 not r3;
-// declaring `s32 t`, with `t = (Iwram_MulQ16(...) >> 11) - 4; line[0] = t;` and
-// `t = wave + (scroll[1] >> 16); line[2] = (scroll[0] >> 16) + (t >> 13);`
-// differ 0. Both set a local twice, S2's `temporary`, so neither is kept; the
-// second is the one to tag if a device is allowed here. No plain form found:
-// a dead `= 0` default, `phase = wave; phase += y`, an inner-block local and
-// declaration order all stay at 39.
+// 6 November: one local, value, set twice (line[0]'s first value, then
+// wave + y for line[2]) matches with no other device, and replaces the
+// once-only block around REG_BLDALPHA the 5 November draft kept (33 of 135).
+// The plain form is 35 of 135.
+// Measured with the sum in a local set once, y first in every spelling:
+// differ 39; `offset = wave + y; offset = x + (offset >> 13); line[2] = offset;`
+// differ 10. No plain form found: a dead `= 0` default, `phase = wave;
+// phase += y`, `wave += y`, an inner-block local, declaration order, s16 and
+// u16 views of scroll's halves and casts on either term all stay between 28
+// and 48.
 // Proved, keep: scroll is Q16, read as `>> 16` (a halfword view narrows the
 // add to ldrh); the table is s16; `*= -1` keeps the sign extension before
 // negs; the walked table pointer gives `adds r0, #4` and `adds r0, #2` (a
@@ -43,29 +38,29 @@ u32 Random16Far(void);
 void Func_0200257c(void) {
   s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapWork + 0x178);
   s16 *line = gData_020046a0;
-  s32 i, wave, spread;
+  s32 i, wave, spread, value;
   s16 *table;
   volatile u16 *channel;
 
   for (i = 0; i != 160; i++) {
     spread = (160 - i) >> 2;
     wave = Math_Sine((i + (u8)gFrameCount) << 8);
-    line[0] = (Iwram_MulQ16(wave, (144 - i) << 10) >> 11) - 4;
+    /* FAKEMATCH(temporary): value holds line[0]'s first value, then
+     * wave + y for line[2]; as the plain statements, 35 of 135 instructions
+     * differ in tla-en. */
+    value = (Iwram_MulQ16(wave, (144 - i) << 10) >> 11) - 4;
+    line[0] = value;
     line[0] += Random16Far() % (spread * 2) - spread;
     if (line[0] > 56)
       line[0] -= 56;
     else if (line[0] < -64)
       line[0] += 64;
     line[1] = 0;
-    line[2] = ((wave + (scroll[1] >> 16)) >> 13) + (scroll[0] >> 16);
+    value = wave + (scroll[1] >> 16);
+    line[2] = (scroll[0] >> 16) + (value >> 13);
     line += 3;
   }
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 35 of 135 instructions differ
-   * in tla-en. */
-  do {
-    REG_BLDALPHA = gData_02004696 | 0x1000;
-  } while (0);
+  REG_BLDALPHA = gData_02004696 | 0x1000;
   if ((gFrameCount & 15) == 0) {
     gData_02004696 += gData_02004697;
     if (gData_02004696 == 8 || gData_02004696 == 4)

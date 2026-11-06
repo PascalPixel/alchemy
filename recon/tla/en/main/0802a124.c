@@ -1,13 +1,24 @@
-// 2026-11-05: differ 54 of 470. Every row but one site is a pool offset or follows it: the first retry store is strh r3, [r4, r0] with r0 reloaded from collision's slot, unscaled, so the index 0 was replaced by the register holding 0 (collision). Tried: collision and count zeroed in the branch, list[collision] with count = 1, a cut of collision's constant by an empty asm (86, scales it).
-// Near miss, differ 64 of 470: script command 0x22, the sibling of
+// Near miss, differ 50 of 470 (tla-en, 2026-11-06): one site, the first retry
+// store (strh r3, [r4, r0], r0 reloaded from collision's slot unscaled; the
+// native builds the list address with movs #20; add sp), costs two
+// instructions and shifts every literal pool offset after it. Here CSE turns
+// the index into collision's register (it holds 0) and GCSE then propagates
+// collision = 0 into it; in the native that propagation does not happen, so
+// some other set of collision must reach the store there. The wake's byte at
+// 0x63 is stored through a struct (ActorTimers), not a u8 cast, which lets
+// collision's reload schedule as the native has it (differ 54 to 50).
+// Tried: collision and count zeroed in the branch, list[collision] with
+// count = 1, a cut of collision's constant by an empty asm (86, scales it);
+// 2026-11-06: count = collision at the top or in the branch, count = 0 and
+// collision = count, unk66 = collision = 0, collision = 0 again in the branch
+// (all 54 before the wake fix), the 0xffff case joining an if (collision ==
+// 0) (117), count as u16, s16 or u8 (no change) or u32 (52), collision as u32
+// (no change), u16 (126) or u8 (62).
+// Script command 0x22, the sibling of
 // Func_080279b0 (The Broken Seal's Actor_MoveOnWorldMap): moves an object
 // on the world map by the direction pad at a fixed pace (L repeating runs
 // fast), records the held keys in the event work, and leaves object 0x164
-// behind it as a wake every fifth step. Left: the retry list's first store
-// indexes by a register the native loads from collision's slot (movs #20;
-// add sp builds the list's address), where here the index folds to 0 and
-// the list's register use shifts from there; and scheduling, mostly literal
-// pool loads the native issues earlier. Measured: collision zeroed again in
+// behind it as a wake every fifth step. Also measured: collision zeroed again in
 // the else branch, count set from collision, count set in the branch or the
 // probe test, unk66 stored as 0 (all no change), count left unset (differ
 // 223). The byte at 0x62 is the wake timer; the wake's sprite takes priority
@@ -30,6 +41,12 @@ struct FieldPosition {
 struct WorldCamera {
   u8 unk000[0x11e];
   u16 yaw;
+};
+
+struct ActorTimers {
+  u8 unk00[0x62];
+  u8 unk62;
+  u8 unk63;
 };
 
 struct PlayerSprite {
@@ -213,7 +230,7 @@ update_object:
       wakeSprite = wake->animation;
       Actor_StartScript(wake, gData_0802ece0);
       wake->priorityFlags = 8;
-      ((u8 *)wake)[99] = 100;
+      ((struct ActorTimers *)wake)->unk63 = 100;
       wake->motionFlags = collision;
       if (wakeSprite != 0) {
         Animation_ApplyChildArgument(wakeSprite, 1);

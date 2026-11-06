@@ -1,8 +1,11 @@
-// Near miss, differ 44 of 477 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Draft, differ 60 of 477, skeleton gap 4 (tla-en, 2026-11-01)
-//
-// An empty asm before the first statement does not help.
+// Matches: differ 0 of 477 (tla-en, 2026-11-06), plain C with no device; the
+// other five editions' listings also measure differ 0. The plain arm keeps
+// speed = (Random16() & 0x3ff) + 32 before the y store: the add's constant
+// does not fit a three-operand add, so it is a copy and an add, and the add
+// lands after the store as in the native.
+// Earlier: near miss, differ 44 of 477 (tla-en, 2026-11-05) with an empty asm
+// and a one-pass block on the plain arm's angle; differ 60, skeleton gap 4
+// (tla-en, 2026-11-01).
 
 // Twin: The Broken Seal's BattleEffect_RunMoteFountain, the body of two
 // effects there. ⚓️ adds a third mode: Slaver's green spray, thrown up in a
@@ -10,24 +13,7 @@
 // ground for 96 frames, which hands over to the Impair canvas effect at its
 // end. The other two modes are the twin with ⚓️'s calling conventions.
 
-// Left: with speed += 32 after the y store the count, the pools and every pc
-// offset are right and the skeleton differs in two pairs: the source store
-// and i = 0 before the first loop, and the plain arm's mask, where the native
-// masks in r3 and copies to the speed (ands r3, r0; adds r7, r3, #0) and this
-// copies first and masks in the speed. The other rows of the 60 are one
-// rotation: speed, angle and mote in r5, r6, r7 for the native's r7, r5, r6.
-// The extra set and use lift the speed (18 refs over 51 insns) above the angle
-// (16 over 55) in global.c's ranking.
-//
-// The earlier form, speed = (Random16() & 0x3ff) + 32 before the y store, keeps
-// the registers (differ 37) and merges the arms one instruction short, a
-// skeleton gap of 5. The y store before the second Random16 gives differ 14 in
-// the right registers, with a gap of 14: the y block sits ahead of the call,
-// and the native's has to follow it. So the native has the masked copy before
-// the y load, and the add after the store; no plain form here keeps that copy
-// through combine.
-
-// Tried:
+// Tried before the match (differ, as measured then):
 // the twin with Slaver's mode added                         83
 // the group size of 32 as a local: the native divides by
 // calling __divsi3, as only a divisor in a register gives   89
@@ -196,13 +182,9 @@ void Func_0813cb34(struct BattleEffectArgument *effect, s32 mode) {
       speed = (Random16() & 0x3ff) + 0x800;
       mote->y = source->y + (Random16() << 4) + 0x50000;
     } else {
-  do {
       angle = Random16();
-  } while (0);
-  __asm__("" : "=r"(angle) : "0"(angle));
-      speed = Random16() & 0x3ff;
+      speed = (Random16() & 0x3ff) + 32;
       mote->y = source->y + 0x50000;
-      speed += 32;
     }
     mote->x = source->x;
     mote->z = source->z;

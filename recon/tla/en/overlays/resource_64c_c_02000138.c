@@ -1,9 +1,13 @@
-// Draft, differ 71 of 99 (tla-en, 5 November). Fills a 64 by 64 grid of levels, each ring a quarter circle drawn with the
+// Near miss, differ 67 of 99 (tla-en, 2026-11-06): x and the error in r4, r5 for r5, r6, the second row's 63 held from before the first compare. Fills a 64 by 64 grid of levels, each ring a quarter circle drawn with the
 // midpoint algorithm, its level from the cosine of its radius.
 // The register rotation is gone: row set to 63 and then lowered by y stops GCSE merging the second 63 - x, as the native rebuilds it.
 // Left: the native loads 63 for the second row only after the first test (cmp r0, #63); here edge's 63 stays in a register
 // from before that compare, and takes r6, so x and the error rotate to r4, r5 from r5, r6, and y's zero, reloaded through r6, floats past the calls.
 // A literal 63 in the compare folds to cmp #62; column + 1 < 64 (100); column - 63 < 0 (97); size - 1 from a local (75).
+// level * scale for scale * level: 71 to 67. The second block's 63 is CSE's copy of edge, live across the skipped cell[1] store; a
+// 63 no register keeps (edge set once outside the inner loop, compared after GCSE folds it) gives both cmp #63 and a fresh 63
+// in the second block, but the short temporaries then take r2, r3, x takes r4 and scale leaves the stack (102). Comparing
+// with row before row -= y (134), one edge for every 63 (122), error and x updates reworded (67 to 68): no better.
 #include "types.h"
 #include "call.h"
 #include "iwram_call.h"
@@ -23,7 +27,7 @@ void Func_02000138(u8 *grid, s32 count, s32 scale) {
     s32 x = i;
     s32 error = i;
 
-    level = scale * level / 0x10000;
+    level = level * scale / 0x10000;
     if (level > 15)
       level = 15;
     if (level <= 0)

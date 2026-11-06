@@ -1,5 +1,13 @@
-// Near miss, differ 76 of 506 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Near miss, differ 66 of 506 (tla-en, 2026-11-06), plain C with no device: the
+// depth call written once per branch (GCC merges the two calls, and the scene's
+// reload in the else branch then matches) replaces the r4 pin and the empty asm.
+// Left: the first loop's preheader sets up the drops giv before dropMotion's and
+// keeps a particle copy in fp across the depth call where the native uses r6 and
+// two separate zeros; the second loop's preheader order; the third loop has sprite
+// and particle swapped in r5 and r6. Tried without gain on 2026-11-06: block-local
+// sprite and particle in each loop, particle set at the top of loop 1 or after the
+// mode block, pointers advancing in loop 1, every order and index or pointer
+// spelling of loop 1's six stores, chained zero stores, sprite set before particle.
 // Draft, differ 99 of 506, skeleton gap 37 (tla-en, 2026-11-01)
 // The frame callback of Func_080e3d04's spray: every
 // fourth frame while it is emitting, a free one of sixteen drops starts at
@@ -14,14 +22,8 @@
 // are strength-reduced from i (sprite in r0 with a copy in r5 at the call in
 // the first loop, at sp 4 with the copy in r5 in the second), and sprite and
 // particle are one local each across all three loops. The third loop's count
-// down is GCC reversing i. Left: the first loop keeps the particle copy in fp
-// across the depth call where the native computes &velocityX from r6 after
-// it (assigning particle later reduces &velocityX as its own giv and costs a
-// hoisted register), and only one reload of the scene; the third loop has
-// sprite and particle swapped in r5 and r6; a few scheduling pairs. The
-// native also keeps two separate zeros for velocityZ and velocityX. Tried
-// without gain: pointer advancing in loops 1 and 3, every index or pointer
-// spelling of the stores, and every order of them.
+// down is GCC reversing i. Assigning particle later in loop 1 reduces &velocityX
+// as its own giv and costs a hoisted register.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -88,7 +90,6 @@ void Func_080e38c8(void) {
   struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleFxWork[0];
   struct SprayScene *scene = Ram_HeapSlots->effectWork;
   struct SprayEvent *event = Ram_HeapSlots->eventWork;
-  register struct Actor *object asm("r4");
   struct EffectSprite *sprite;
   struct SprayParticle *particle;
   struct SprayParticle *puff;
@@ -103,11 +104,10 @@ void Func_080e38c8(void) {
       if (work->dropMotion[i].timer == -1) {
         particle = &work->dropMotion[i];
         sprite = &work->drops[i];
-        object = scene->otherObject;
-        if (object == NULL)
-          object = scene->mainObject;
-        sprite->depth = BattleEffect_GetObjectDepth(object);
-  asm("");
+        if (scene->otherObject != NULL)
+          sprite->depth = BattleEffect_GetObjectDepth(scene->otherObject);
+        else
+          sprite->depth = BattleEffect_GetObjectDepth(scene->mainObject);
         if (work->mode == 3) {
           work->speed = 0x26666;
           work->lifetime = 33;

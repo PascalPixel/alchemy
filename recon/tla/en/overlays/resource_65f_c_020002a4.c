@@ -1,6 +1,7 @@
-// Draft, differ 72 of 110 (tla-en, 5 November): the wavy scroll lines of the layer, read by a DMA each scanline.
+// Near miss, differ 72 of 110 (tla-en, 2026-11-06): the wavy scroll lines of the layer, read by a DMA each scanline; left are the loop's top test, which CSE folds here, and the register allocation that follows.
 // Left, one cause: the native keeps a test at the loop's top (cmp r6, #160, beq) with i known to be 0; here CSE folds it, whatever the
 // spelling (for, while, labels, if around a do). With those refs i ranks first in the native (r6), line r5, the first sine r8; here line r8, the first sine r5, i r10.
+// 2026-11-06: jump.c copies the exit test before the loop and CSE folds it in every plain form (for, while, for(;;) with break, i set from the stored flag, a known-true inner if); a goto loop keeps the top test but is never rotated (83). In the native s1 also goes to r8, not local-alloc's r5, so it is live outside one block there. Indexing Data_02006340[i] 95, the comma increment 74, no step locals 114.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"

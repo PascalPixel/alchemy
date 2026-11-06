@@ -1,4 +1,4 @@
-// Draft, differ 89 of 286 (tla-en, 5 November 2026), under -Os, plain loops. Left: the roll prefers r0 (the native has it in r1 and the work address in r0), and the -1 items below. Older notes may predate this.
+// Near miss, differ 89 of 286 (tla-en, 2026-11-06): under -Os, the pick loop now a plain for loop (same code). Left: every -1 the native loads fresh (both cancel compares into r2, the free-slots notice, Party_AdjustCoins) is shared here by CSE from the compare's pseudo (r5, r0), costing 3 instructions and the branch offsets; the roll in r0 and work address in r1 (native r1, r0); the final halving's slot, base and weight in r0, r2, r4 (native r2, r0, r1). The native acts like a -1 local left without a register and rematerialized at each use (the FieldMessage_ShowAtActor -1 is scheduled after movs r1, #0 in both editions), but here a cancel local takes r11 (differ 96) and direct calls share -1 through r10 (122) or more (133 all direct, 109 with a cancel local).
 // Draft, differ 144 of 286, skeleton gap 32 (tla-en, 2026-11-01)
 // The Lost Age's twin of The Broken Seal's TolbiSpring_RunSpringGame
 // (games/tbs/src/scene/tolbi_games.c): choose coin or medal, toss, award.
@@ -154,15 +154,10 @@ toss:
         for (window = 0; window < result * 3 + 3; window++)
           choice += (s8)gMainRoutineWork.unk13d[window];
         prizeRoll = (u32)(Random16Far() * choice) >> 16;
-        window = 0;
-        prizeRoll -= WEIGHT(window);
-        if (prizeRoll >= 0) {
-          do {
-            window++;
-            if (window > 14)
-              break;
-            prizeRoll -= WEIGHT(window);
-          } while (prizeRoll >= 0);
+        for (window = 0; window < 15; window++) {
+          prizeRoll -= WEIGHT(window);
+          if (prizeRoll < 0)
+            break;
         }
         if (window == 15)
           window = 14;

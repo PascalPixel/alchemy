@@ -1,4 +1,11 @@
-// Measured 2026-11-05 (tla-en): differ 60 of 2680, slots normalized 28, sizes equal.
+// Near miss, differ 60 of 2680 (tla-en, 2026-11-06): scheduling and reload ties only, as below.
+// Tried 2026-11-06 without gain (60 or worse): 0x400 * i, a src local, an order pointer,
+// a k local or i < 13 in the second queue loop; objects[i], an obj local or i < 16 in the
+// first; 304 - 2 * frame and five other spellings of the flash's step; five other dead
+// conditions on the rings' left; the do { } around the whole DRAW_ALT or its draw alone;
+// the frame <= 63 sheet chosen by +=, ?: or a reversed test; and after the gathering a plain
+// Iwram_FillWords, which settles the release loop's movs r7, #0 but moves the fill's own
+// lsls r1 ahead of its pointer load, the same 60.
 // Left: order rows in the queue loops, the draws and the frame's model stores; the second
 // queue loop's table and source swapped between r4 and r5 (equal refs); and the rings'
 // and the flash's reload registers (ldr r4 where this has r2, subs r2 where this has

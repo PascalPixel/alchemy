@@ -1,11 +1,9 @@
-// 2026-11-05: differ 68 of 394 with the pointers set in the for. With one store of the tile, 3 takes a register and 0x3ff reloads as the native does, but the arms merge (100).
-// Draft, differ 99 of 394 (2026-10-18): Func_080e0618, the frame callback
-// Func_080e09c0 installs: it sprays particles round the effect's object and
-// moves the object through five phases. Left: in the sprite loop the native
-// holds the 3 of (timer & 3) in r11 and loads 0x3ff from the pool at its one
-// use, where this holds 0x3ff and rebuilds 3 (the two tile stores are
-// cross-jumped into one tail); one tile through a local ends at 115-118. The
-// rest is register choice in the spawn loop and the phase switch.
+// Matches: differ 0 of 394 (tla-en, 2026-11-06); tla-ja also differ 0.
+// Func_080e0618, the frame callback Func_080e09c0 installs: it sprays
+// particles round the effect's object and moves the object through five
+// phases. What settled it: the sprite taken as &work->sprites[i] inside the
+// timer test (its copy is the r0 the native sets before the tile test),
+// work read before scene, and next stepped then masked.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -60,9 +58,9 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
 void Func_080d92a4(s32 target, struct ScatterVector *position);
 
 void Func_080e0618(void) {
-  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ScatterWork *work =
       (struct ScatterWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ScatterEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *object = work->object;
   struct ScatterVector position;
@@ -87,14 +85,15 @@ void Func_080e0618(void) {
     speed = Random16() + 0x18000;
     Vector_AddPolarOffset(speed, Random16(), &particle->velocityX);
     particle->timer = 0;
-    work->next = (work->next + 1) & 63;
+    work->next++;
+    work->next &= 63;
   }
 
-  for (i = 0, particle = work->particles, sprite = work->sprites; i <= 63;
-       i++, sprite++, particle++) {
+  for (i = 0, particle = work->particles; i <= 63; i++, particle++) {
     s32 timer = particle->timer;
 
     if (timer >= 0) {
+      sprite = &work->sprites[i];
       if (i & 1)
         sprite->oam.index = work->tileA + (timer & 3) * 2;
       else

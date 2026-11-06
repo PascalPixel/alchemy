@@ -1,4 +1,4 @@
-// Matches: differ 0 (tla-ja, 2026-11-02)
+// Matches: differ 0 of 382 (tla-ja, 2026-11-06), at the overlay -Os.
 // The Japanese form only: measure with --edition tla-ja. Its listing section
 // sits under .ifdef TLA_EDITION_JA; the English form is already adopted in
 // games/tla/src/scene/mars_lighthouse_star_room/s0e80.c, behind a
@@ -10,7 +10,8 @@
 // r2), and an ending that puts the leader back at (0x2a8, 186) in place of the
 // turn to 0x4000. The Call and Value layer is the English file's. The s32 zero
 // is a one-constant local for the halfword store: as a plain *screen = 0 it
-// loads from the pool, the extra word opens a mid-function pool, differ 40.
+// differs 21 at -Os. Func_0200440c goes through Call2, as in the English file:
+// called directly, its 0x10000 is shared with later uses in r8, differ 68.
 // Check at adoption: the Japanese listing has MsgMarsStar09 as the plain word
 // 0x2f9b.
 #include "edition.h"
@@ -112,7 +113,7 @@ void Func_02000e80(void) {
   Call2((void (*)())Func_020043bc, gMainRoutineWork.currentOwner, 0x102);
   Call3((void (*)())Func_02004264, 0x10000, 0x10000, 0x10000);
   FieldEvent_Wait(20);
-  Func_0200440c(0x10000, 0);
+  Call2((void (*)())Func_0200440c, 0x10000, 0);
   Func_02004404(0x10006, 0);
   Func_02004414(80);
   FieldEvent_Wait(80);

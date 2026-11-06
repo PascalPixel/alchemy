@@ -1,3 +1,18 @@
+// Near miss, differ 205 of 1932 (tla-en, 2026-11-06): the ship-burst model block
+// (draw && frame <= 131) and reload-register rotation in the blocks after it.
+// 2026-11-06, from 261: REG_BLDALPHA = ((frame - 108) * 2) << 8 | 16 (EVB in the
+// high byte) gives the listing's value r2, address r3, 16 in r1 (243); place[1]
+// is stored before place[3] (259 from 261); the ship placement loop uses the
+// function's i, which the listing keeps in r9 there and in the frame == 266 loops
+// (alone 322: the loop then matches but for reload registers); with
+// sc = (t - 24) * 3 << 10 as well, 205 of 1932, draft 1929. That sc form is
+// not the listing's: the listing reduces t * 3 * 1024 as a giv (r7) and adds
+// -0x12000 at the use, where this form reduces t * 3 - 72 and shifts at the
+// use (3 instructions fewer); its gain is the reload rotation it gives the
+// later blocks, which are now nearly all common. The reload registers rotate
+// round-robin (frame r7, verts r1, j's zero r2 in the listing), so one block's
+// reload count shifts every block after it. Order permutations of loaded,
+// shipX, shipZ and transition[4] on this base: all worse (211 to 233).
 // 2026-11-05, differ 261 of 1932 unchanged. Diagnosis of the ship-burst block by a
 // consumed reload: __asm__("" : : "r"(frame)) before model->vertices = verts gives
 // the listing's count (1932) and 226; adding a second consumed reload gives verts r1
@@ -51,9 +66,7 @@
 //   register behind down to the frame loop's end. Not closed by t as the stepped
 //   variable (loses the givs and 22 instructions), a start local (one more
 //   spill), or moving the terms of t. Find what uses a reload before verts.
-// - alpha: value in r3 and address in r1, the listing has value r2, address r3,
-//   16 in r1. Tried 16 | alpha, (u16)alpha, u16 alpha, no local, the | in the
-//   local, a set-once 16: same or worse.
+// - alpha: settled 2026-11-06 by ((frame - 108) * 2) << 8 | 16.
 // - bg2pa and bg2pd: the discarded ldrh before each strh (2 missing instructions,
 //   as in 0816c6f8). A volatile form would be a device.
 // - q = sparks + first and pixels: the listing adds offset first (adds r5, r3,
@@ -412,9 +425,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = 16;
     }
     if ((u32)(frame - 108) <= 8) {
-      s32 alpha = (frame - 108) * 512;
-
-      REG_BLDALPHA = alpha | 16;
+      REG_BLDALPHA = ((frame - 108) * 2) << 8 | 16;
     }
     if ((u32)(frame - 92) <= 39) {
       s32 t = frame - 92;
@@ -698,7 +709,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           Func_08015160(0x80000, 0, 0);
           SceneTransform_ApplyPitch(0x4000);
           if (j == 0) {
-            s32 sc = t * 3 * 1024 - 0x12000;
+            s32 sc = (t - 24) * 3 << 10;
 
             if (t <= 39) {
               sc = t << 11;
@@ -734,8 +745,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         shipZ = (Trig_Sin(u << 10) << 1) + 0x540000;
       }
       if (draw) {
-s32 i;
-        place[3] = place[1] = 0;
+        place[1] = place[3] = 0;
         for (i = 0; i != 7; i++) {
           place[0] = (Data_08198654[i] << 16) + shipX - 0x200000;
           place[2] = (Data_0819865b[i] << 16) + shipZ - 0x200000;

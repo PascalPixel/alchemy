@@ -1,14 +1,10 @@
-// Draft, differ 47 of 270 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 47 (tla-en); notes below may predate it.
-// Draft, differ 61 of 270, skeleton gap 11 (tla-en, 2026-11-01)
-// Left: the listing keeps 31 in a register across both Random16Far calls and
-// the options address in r8; here 31 is built after them and the address takes
-// r6 (a named mask local gives gap 13 and swaps those two). The listing also
-// recomputes sp + 56 at the top of the step and at the end block, which PRE
-// removes here (.gcse: "redundant insn"), and copies the position through r2.
+// Matches: differ 0 of 270 (tla-en, 2026-11-06).
+// The two Random16Far calls sit in the effect call's arguments, called
+// directly; through a forwarded inline or with the values in locals the frame
+// bit and the options address take other registers (differ 30 to 47).
 // The three loops are labels because real loops rotate and hoist; step and id
 // are reused for the frame bit and the spark count, as the listing's registers
-// are. Reusing other variables (source, flame, other) is far worse. The three
+// are. Reusing other variables (source, flame, other) is far worse. The two
 // forwarded inlines are scene_call.h's layer.
 // Magma Rock: an object of type 403 sent from another
 // object along its facing a step at a time until it reaches a cell of value
@@ -60,13 +56,6 @@ struct ActorTable {
   u8 unk_0[20];
   struct Actor *actors[64];
 };
-
-static __inline__ void Func_0200015c_(s32 x, s32 y, s32 z, s32 velocityX,
-                                      s32 velocityY, s32 velocityZ, u32 flags,
-                                      const struct EffectOptions *options) {
-  /* FAKEMATCH: forwarded inline; see scene_call.h. */
-  Func_0200015c(x, y, z, velocityX, velocityY, velocityZ, flags, options);
-}
 
 static __inline__ void Func_02004e10_(s32 a, s32 b) {
   /* FAKEMATCH: forwarded inline; see scene_call.h. */
@@ -139,15 +128,14 @@ spark:
   step = gFrameCount;
   step &= 1;
   if (step == 0) {
-    s32 x, y;
     options.type = 403;
     options.priority = 1;
     options.update = (void (*)(union FieldObject *))Func_02000ea4;
     options.script = gData_0200502c;
-    x = Random16Far();
-    y = Random16Far();
-    Func_0200015c_(position[0], position[1], position[2], ((x & 31) - 16) << 13,
-                   ((y & 31) - 16) << 13, step, 0x1320000, &options);
+    Func_0200015c(position[0], position[1], position[2],
+                  ((Random16Far() & 31) - 16) << 13,
+                  ((Random16Far() & 31) - 16) << 13, step, 0x1320000,
+                  &options);
   }
   wait(1);
   id++;

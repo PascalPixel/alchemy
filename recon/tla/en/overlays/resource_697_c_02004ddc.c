@@ -1,4 +1,9 @@
-// Measured under -Os, 5 November 2026: differ 58 (tla-en); notes below may predate it.
+// Near miss, differ 38 of 442 (tla-en, 2026-11-06): register choices in mode 3
+// (the status halfword in r2 and its byte mask in r3 where the native swaps them,
+// then reload's scratch registers for link, the state and the link point) and
+// one tie in mode 2's terminator (the native shifts point before next).
+// 6 November: the turn's differences as dx and dz locals, rival->x and rival->z
+// read beside them, give the native's compare reuse and reload (58 to 38).
 // Near miss, differ 173 of 442 (tla-en, 2026-10-31): control flow, calls and
 // data accesses are the native's; 66 of the differing lines are pool and branch
 // offsets, shifted because the draft is 3 instructions longer (445).
@@ -19,12 +24,9 @@
 // mode 3 status is an s16 split into link and ok (link lands on the stack, the
 // scene state in r11); the else branch shifts x and z in place; the heading is
 // a u16 temporary; the terminator's second index is an s16 local.
-// Remaining: GCSE PRE inserts the turn's rival->z load on the edge from the x
-// test and the z test's branch jumps past it (native reloads it, in modes 4
-// and 1); the scene mode stays in r4 where the native has r2; in mode 3 the
-// native computes work+240 and rival+100 before the flag 530 branch (no form
-// tried moves them), and reload picks other scratch registers (st r2 for r3,
-// the state copy r1 for r0, the record offsets).
+// Tried on 6 November without gain: link and ok as s8, s16 or u8, ok before
+// link, a u16 status, separate partner locals; next as u16, from a point local,
+// or with a zero local.
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 
 struct TrialRoadReplay {
@@ -64,7 +66,7 @@ void Func_02004ddc(void) {
   struct TrialRoadReplay *state = &gSceneState;
   struct Actor *rival = Actor_GetById(state->id);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  s32 x, z, turn;
+  s32 x, z, turn, dx, dz;
   u16 heading;
 
   if (rival == 0)
@@ -79,7 +81,9 @@ void Func_02004ddc(void) {
     else
       x -= 0x1300000;
     if (rival->x != x || rival->z != z) {
-      heading = ArcTan2(z - rival->z, x - rival->x);
+      dx = x - rival->x;
+      dz = z - rival->z;
+      heading = ArcTan2(dz, dx);
       turn = (s16)(heading - rival->angle);
       if (turn > 0x1000)
         turn = 0x1000;
@@ -171,7 +175,9 @@ void Func_02004ddc(void) {
     else
       x -= 0x1300000;
     if (rival->x != x || rival->z != z) {
-      heading = ArcTan2(z - rival->z, x - rival->x);
+      dx = x - rival->x;
+      dz = z - rival->z;
+      heading = ArcTan2(dz, dx);
       turn = (s16)(heading - rival->angle);
       if (turn > 0x1000)
         turn = 0x1000;

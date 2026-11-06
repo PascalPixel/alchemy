@@ -1,4 +1,10 @@
-// Draft, differ 65 of 714 (tla-en, 2026-11-05).
+// Near miss, differ 65 of 714 (tla-en, 2026-11-06): cse1 puts the stores of 0
+// to velocityY and terrainHeight in the flag test result (reg 62, known 0 on the
+// then-arm through the skipped gInput block), so it lives in r8 and shifts r8,
+// r9, fp and the frame; with those two stores probed as nonzero it is differ 28.
+// 6 November, plain tries: GameFlag_Test direct 99; i = Flag_IsSet, if (i == 0)
+// 96; the same through owner 66; count = 0 at entry 133; a do-while grow loop
+// and a chained store both 65.
 // 5 November: differ 65 of 714 with x read first as the native does (46 with the
 // false order). What turns the rest is the zero: after the test of 0x16e the
 // then-arm knows the result is 0 and cse keeps it in r8 for the later stores of 0

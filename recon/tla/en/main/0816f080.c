@@ -1,3 +1,11 @@
+// Near miss, differ 146 of 568 (tla-en, 2026-11-06): the second and third glow pairs
+// swap r6 and r7, the splash holds 12500 where the native holds 25000, and the
+// model and glow zero stores schedule differently. Tried today, none better: a
+// splash local set to 25000 at the splash loop top, the if top, before the frame
+// loop or before Render_ResetTransformState (146: 12500 still hoisted); set after
+// Func_08015160 (231: nothing hoisted, frame moves to r11); model->shade = 0
+// last (150); glow->variant = 0 before glow->y (146); (size - 1 - x) and
+// (size - (x + 1)) spellings (146); (offset + size - x - 1) * 2 (386).
 // Measured 2026-11-05 (tla-en): 146 of 568, unchanged. 216 spellings of the glow's stores and
 // 80 loop, row and mirror forms: none better; 4000 random declaration orders: no effect.
 // 2026-11-05, unchanged at 146 of 568: a scale local inside the splash loop, with

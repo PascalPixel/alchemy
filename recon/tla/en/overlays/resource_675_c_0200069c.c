@@ -1,18 +1,20 @@
-// Measured under -Os, 5 November 2026: differ 58 (tla-en); notes below may predate it.
-// Draft, differ 70 of 123: Islet Cave's setup: in its first room it starts the
+// Matches: differ 0 of 123 (tla-en, 2026-11-06); also differ 0 in tla-ja, -de, -es, -fr
+// and -it by the same tool. Islet Cave's setup: in its first room it starts the
 // palette lists (Func_02000038); in the third it frees actor 9 and, arriving
 // by entrance 2, places actor 8 and sets flag 0x9cf; in the second it sets
 // flag 0x230 when flag 85 or 165 is set, else (until 0x230) places actor 9
 // and starts actor 8's action script. The second and third rooms then dim
 // the palette by the entrance (Func_02000580) and wait for the transition.
-// Returns 0. Left: the native's block order after the three rooms (its
-// tests of the scene again before the dimming) and the register holding
-// gMainRoutineWork.
+// Returns 0. The tail's gotos are the form that matches: a room outside the
+// three skips the second-room test, and the second room jumps into the
+// shared dimming block, which tests the scene again; a single return keeps
+// r0 free. The screen effect is struct EventWork's screenEffect.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "event_work.h"
 
 extern char SceneId_Ov675Room1, SceneId_Ov675Room2, SceneId_Ov675Room3;
 extern u16 gData_0200134c[], gData_0200135c[], gData_02001388[],
@@ -36,7 +38,7 @@ void Event_WaitTransitionFrames(void);
 s32 Func_0200069c(void) {
   s32 scene, dim;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 521;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 521;
   Func_0200131c(0);
   scene = gMainRoutineWork.scene;
   if (scene == (s32)&SceneId_Ov675Room1) {
@@ -59,21 +61,19 @@ s32 Func_0200069c(void) {
   } else {
     goto other;
   }
-  if (gMainRoutineWork.scene == (s32)&SceneId_Ov675Room2) {
-    dim = (gMainRoutineWork.entrance - 3) / 2;
-    goto fade;
-  }
-other:
-  if (gMainRoutineWork.scene != (s32)&SceneId_Ov675Room3)
-    return 0;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov675Room2)
-    dim = (gMainRoutineWork.entrance - 3) / 2;
-  else
-    dim = 3;
-fade:
-  Func_02000580(0x400 - (dim << 7));
-  Func_0200133c();
-  Func_020012fc(1);
-  Event_WaitTransitionFrames();
+    goto fade;
+other:
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov675Room3) {
+  fade:
+    if (gMainRoutineWork.scene == (s32)&SceneId_Ov675Room2)
+      dim = (gMainRoutineWork.entrance - 3) / 2;
+    else
+      dim = 3;
+    Func_02000580(0x400 - (dim << 7));
+    Func_0200133c();
+    Func_020012fc(1);
+    Event_WaitTransitionFrames();
+  }
   return 0;
 }

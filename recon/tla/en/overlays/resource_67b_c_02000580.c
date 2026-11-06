@@ -1,13 +1,21 @@
-// Draft, differ 35 of 209 (tla-en, 5 November 2026; 248 under the old form). One
-// thing is left: the native's sp+12 is a plain copy, mov r0, r8; str r0, [sp, #12],
-// set at the inner top and read only by the increment, and every other row follows
+// Near miss, differ 35 of 209 (tla-en, 2026-11-06): the native's sp+12 is a plain
+// copy of the slots pointer, mov r0, r8; str r0, [sp, #12], set at the inner top;
+// the slot's row and unk0E are read through it (r0 + r9) and the increment reloads
+// it, while unk18[i] and unk00[0] are read through r8. Every other row follows
 // from the rotation that sets. Here it is s = gate + 2 bytes, the same value and
 // slot, which takes the frame of 20 and leaves mov r0, sl; adds r0, #2.
+// (5 November: 248 under the old form.)
 // Written s = slots, gcse's cprop folds it (hash_scan_set records the copy unless
 // its source or destination is set later in its block, and neither is).
 // Tried for the copy, no gain: the operand-tied empty asm, which ranks s above the
 // count (73 to 80); slots and s from Data_02003450[n], never reduced in the inner
 // loop (73); slots computed at the outer top, whose givs take gate's reads (240).
+// Tried 6 November, no gain: the row and unk0E read through s = gate + 2 (57: the
+// copy stays sl + 2, kept in r9, not spilled); through s = slots (95: copied and
+// folded); slots as a gate + 2 expression throughout, no slots variable (95:
+// classic gcse turns the inner gate + 2 into a copy of the outer one and the second
+// cprop folds it, so the inner loop reduces s->unk14[i] to a pointer); the outer
+// reads written as gate->unk00[k] (82: no giv combines the inner gate + 2 with them).
 // Settled from 248: one local for flag and the slot's state (it is why the flag
 // sits in r4), the columns read in each arm so gcse hoists the ldrh and not the
 // shifts, and n++ before the pointers.

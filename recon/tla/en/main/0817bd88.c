@@ -1,3 +1,4 @@
+// Near miss, differ 36 of 543 (tla-en, 2026-11-06): offset is a C variable again, stepped in the for header before j++ (offset += 8, j++), so the preheader reloads cells from the pool and adds offset as the listing does; every pool offset now agrees. Left: stack slots only, offset at sp+36 (listing sp+20), j * length at sp+20 (sp+24), the length << 5 copies at sp+24 and sp+32 (sp+32 and sp+36), which also reorders the step loads; and two scheduling ties: the first model's shade and kind stores before mesh, and the hand's scrollU store before vertices. Tried: offset as u32 (no change); worse: offset declared elsewhere (46), a row pointer stepped with row++ (210), gMapCellBuffer in place of cells (91 to 217), a local for length << 5 (171) or for camera + 3 (72), other orders of the model stores (40 to 58).
 // 2026-11-05: differ 41 of 543 (tla-en): a row pointer from j * 8 replaces the offset variable, which lets loop.c make the giv (slot sp+20); the model stores in the listing's order. Left: the native adds cells at the row from the pool (here the giv holds it, set in the preheader), camera + 3 at sp+28 under both length << 5 copies (here sp+32), one tie on the shade store; the rest is pool offsets.
 // 2026-11-05: differ 69 of 543 (tla-en). buffer holds Data_02012000, set once at the
 // top so reload rebuilds it. Left as below.
@@ -236,6 +237,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
     if (frame > 15) {
       s32 length;
       s32 j;
+      s32 offset;
       struct ModelVertex (*cells)[2] = gMapCellBuffer;
       u8 *projected = Data_02011000;
       s32 shade;
@@ -249,8 +251,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       }
 
       // The arm's vertices, thicker at its root.
-      for (j = 0; j != PUPPET_SEGMENTS; j++) {
-        s32 offset = j * 8;
+      for (j = 0, offset = 0; j != PUPPET_SEGMENTS; offset += 8, j++) {
         s32 width = 50 - ((Trig_Sin(j * 862 + 4310) * 44) >> 16);
         s32 wobble = ((Trig_Sin((frame + j) << 11) << 4) >> 16) * j / 32;
         s32 outer;
@@ -259,7 +260,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
         i = 0;
         outer = width + wobble;
         do {
-          row = (struct ModelVertex *)(offset + (s8 *)cells);
+          row = (struct ModelVertex *)((s8 *)cells + offset);
           row[i].x =
               ((Trig_Cos(j * length) * (i * width + wobble + 16)) >> 16) -
               outer / 2 - 16;

@@ -1,7 +1,9 @@
-// Draft, differ 63 of 230 (tla-en, 5 November): places four racers, runs them, and compares the times of the two teams.
-// Left: the native copies second into r6 before the second racer's lookup and steps that copy (ldr r6, [sp]; adds r6, #1); here
-// CSE folds id onto second, so it reloads after the call. r8 holds one and r10 seven in the native, swapped here (0.079 to 0.083), and the first racer's
-// address stays in r3 while its constants are set. Tried: every order of the constants' sets, assignment expressions (69 to 73), separators, types of two.
+// Near miss, differ 17 of 230 (tla-en, 2026-11-06): the native keeps id = second as its own copy (ldr r6, [sp] beside the second racer's lookup, adds r6, #1 between that racer's two calls); here combine folds it into second + 1, and sched2 moves the load and add past the call; the first racer's set-up stores and Func_02005624's two arguments come in a slightly different order, and the third racer's heading 2 reuses r5 where the native builds it again.
+// Places four racers, runs them, and compares the times of the two teams.
+// 6 November: constants written as literals (21) and only the second racer in a one-pass block (17) give the native's r9 = 0, r10 = 7, r8 = 1, r5 = 2; the result's
+// last branch matches once the no-first-time case returns (63 to 45). Tried for the id copy: id initialised at the top, before or inside the block, id++ between the calls,
+// the lookup through id, id = first, first + 1/2/3 without id (93 to 119), Func_02005624 prototypes; all 17 or worse.
+// Earlier (5 November): every order of the constants' sets as named locals, assignment expressions (69 to 73), separators, types of two.
 #include "types.h"
 #include "call.h"
 
@@ -24,46 +26,51 @@ void Func_02004938();
 void wait();
 void GameFlag_SetBit();
 
-#define PLACE(id, a, b, c, d, e)                                               \
-  do {                                                                         \
-    racer = Actor_GetById(id);                                                 \
-    racer->unk64 = a;                                                          \
-    racer->unk66 = b;                                                          \
-    racer->unk62 = c;                                                          \
-    racer->state = d;                                                          \
-    racer->unk4c = e;                                                          \
-    Func_02005654();                                                           \
-    Func_02005624(racer, 2);                                                   \
-  } while (0)
-
 s32 Func_02004d48(s32 first, s32 check) {
   struct Racer *racer;
   s32 second = first + 1;
-  s32 zero, seven, one;
-  s32 two;
   s32 frame, tries, id;
   s32 done;
-  s32 next;
   s32 result;
 
   racer = Actor_GetById(first);
-  zero = 0;
-  seven = 7;
-  one = 1;
-  two = 2;
-  racer->unk64 = zero;
-  racer->unk66 = seven;
-  racer->unk62 = two;
-  racer->state = one;
-  racer->unk4c = zero;
+  racer->unk64 = 0;
+  racer->unk66 = 7;
+  racer->unk62 = 2;
+  racer->state = 1;
+  racer->unk4c = 0;
   Func_02005654();
   Func_02005624(racer, 2);
   id = second;
-  PLACE(second, two, seven, 0, one, zero);
+  do {
+    /* FAKEMATCH(one-pass): the form kept; as plain statements, 99 of 230 instructions differ in tla-en. */
+    racer = Actor_GetById(second);
+    racer->unk64 = 2;
+    racer->unk66 = 7;
+    racer->unk62 = 0;
+    racer->state = 1;
+    racer->unk4c = 0;
+    Func_02005654();
+    Func_02005624(racer, 2);
+  } while (0);
   id++;
-  PLACE(id, 8, seven, 2, one, zero);
+  racer = Actor_GetById(id);
+  racer->unk64 = 8;
+  racer->unk66 = 7;
+  racer->unk62 = 2;
+  racer->state = 1;
+  racer->unk4c = 0;
+  Func_02005654();
+  Func_02005624(racer, 2);
   id++;
-  PLACE(id, 10, seven, 0, one, zero);
+  racer = Actor_GetById(id);
+  racer->unk64 = 10;
+  racer->unk66 = 7;
+  racer->unk62 = 0;
+  racer->state = 1;
+  racer->unk4c = 0;
+  Func_02005654();
+  Func_02005624(racer, 2);
   for (tries = 0; tries <= 127; tries++) {
     done = 1;
     for (frame = 0; frame <= 15; frame++) {
@@ -124,9 +131,9 @@ s32 Func_02004d48(s32 first, s32 check) {
         }
       }
     } else {
-      result = 2;
-      if (b == 0)
-        result = 3;
+      if (b != 0)
+        return 2;
+      return 3;
     }
   }
   return result;

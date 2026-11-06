@@ -1,8 +1,6 @@
-// Draft, differ 50 of 479 (tla-en, 5 November): the twin of FileScreen_PackPasswordData in The Broken Seal.
-// Direct unit->inventory[n] reads, a u16 item and the same frame as the native (60).
-// Left: the count loop only. Native n ip, table r7; here table ip, n r7. The native zero-extends the count
-// through one hoisted shift (lsls r4, count, #16, lsrs twice); (u16)count folds away here because combine
-// knows the count's bits, so shifted is a stand-in form, not the source's: find what leaves the count's bits unknown.
+// Matches: differ 0 of 479 (tla-en, 2026-11-06): the twin of FileScreen_PackPasswordData in The Broken Seal.
+// Direct unit->inventory[n] reads, a u16 item and the same frame as the native (60). Both gold loops
+// share one slot counter n, as the native keeps them in one register (ip).
 #include "types.h"
 #include "call.h"
 #include "main_routine_work.h"
@@ -34,7 +32,6 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   u8 found;
   u8 flags;
   u32 stats[8];
-  u32 *stat;
   s32 i;
   s32 pos;
   s32 bit;
@@ -42,7 +39,6 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   s32 k;
   s32 n;
   s32 m;
-  s32 slot;
 
   size = 11;
   switch (mode) {
@@ -63,7 +59,7 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
   found = 0;
   flags = 0;
   for (i = 0; i != 8; i++)
-    { stat = stats; stat[i] = 0; }
+    stats[i] = 0;
   for (i = 0; i != 6; i++) {
     if (GameFlag_Test(gData_02002700[i]))
       flags |= 1 << i;
@@ -135,8 +131,8 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
     for (i = 0; i != 4; i++) {
       struct BattleUnit *unit = Unit_Get(gData_020026f0[i]);
 
-      for (slot = 0; slot != 15; slot++) {
-        u16 item = unit->inventory[slot] & 0x1ff;
+      for (n = 0; n != 15; n++) {
+        u16 item = unit->inventory[n] & 0x1ff;
 
         out[pos] += item >> (bit + 1);
         out[pos + 1] += item << (7 - bit);
@@ -155,19 +151,22 @@ s32 Func_02001c7c(s32 unused, s32 mode, u8 *out) {
 
       for (m = 0; m != 23; m++) {
         s32 count = 0;
-s32 shifted;
+        u16 quantity;
+        /* FAKEMATCH(dead): a halfword copy of the count nothing reads, which
+         * keeps the zero-extension hoisted above the sign test; without it, 139
+         * of 479 instructions differ in tla-en. */
 
         for (n = 0; n != 15; n++) {
-          if (gData_0200271c[m] == (unit->inventory[n] & 0x1ff))
+          if ((unit->inventory[n] & 0x1ff) == gData_0200271c[m])
             count = unit->inventory[n] >> 11;
         }
-        shifted = count << 16;
+        quantity = count;
         if (bit < 0) {
-          out[pos] += (s32)((u32)shifted >> 16) >> -bit;
+          out[pos] += (u16)count >> -bit;
           bit += 8;
           pos++;
         }
-        out[pos] += (u32)shifted >> 16 << bit;
+        out[pos] += (u16)count << bit;
         bit -= 5;
         if (bit == -5) {
           pos++;

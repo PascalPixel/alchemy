@@ -1,18 +1,24 @@
-// Measured 2026-11-05 (tla-en): differ 35 of 236, 17 with slots and pool
-// offsets normalized. The step is an s32 local read from its u16 field: the
-// test casts it to s16 where the listing has ldrsh.
-// Draft, differ 94 of 236: runs one step of the intro's vertical picture scroll. The
+// Near miss, differ 35 of 236 (tla-en, 2026-11-06): one instruction short
+// at the second loop's end, where the native reads the step once (ldrh into
+// r3, copied to r1) and sign-extends the copy for the position, but combine
+// here folds the extension back into a second, ldrsh read of the field; that
+// shifts every later branch and pool offset. Also left: `movs r4, #29`
+// scheduled before the cursor's base copy in both row copies. Tried without
+// effect (2026-11-06): the step read through an assignment inside the
+// increment, the increment moved into the body before or after the reload,
+// a do-while with the add in its test, the field as s16 with (u16) reads,
+// a u16 step local (worse, 58 to 68) and a volatile field (worse, 75).
+// Earlier notes follow.
+// The step is an s32 local read from its u16 field: the test casts it to
+// s16 where the listing has ldrsh.
+// Runs one step of the intro's vertical picture scroll. The
 // position moves from pos toward limit by step, waiting frames between moves
 // (1 when a key cuts the wait short, else 0 with pos updated). Scrolling
 // down, each 8 lines of scroll DMA the next 30 map rows' worth of tiles
 // (0x780 bytes) and number the next map row, wrapping the tiles to block 0
 // and the row cursor to 0x0600f800 after 32 rows; scrolling up undoes a row
 // when the counter runs out. Two countdowns in the heap slot at 0xac start
-// a fade to white or back when they reach 1. Left: the shared return-1
-// block, which the native keeps after the first loop and the draft after
-// the second (so most branches differ); the step's second, u16 read at
-// entry (here zero-extended in the second loop instead); and the rows
-// countdown's test, which ands with 0xffff here.
+// a fade to white or back when they reach 1.
 #include "types.h"
 #include "dma.h"
 #include "bg_scroll.h"

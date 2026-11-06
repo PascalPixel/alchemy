@@ -1,6 +1,8 @@
-// Draft, differ 37 of 376 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 40 of 376 (tla-en); older figures below predate it.
-// Matches: differ 0 (tla-ja, 2026-11-02)
+// Matches: differ 0 of 374 (tla-ja, 2026-11-06), under -Os. Plain tla-en reads
+// differ 42 of 376 against the English file's form, which means nothing (below).
+// Under -Os the once-only block, the cast call to Func_02001138 and the empty
+// asm were dropped, and message is set after FieldMessage_Show; every device
+// left was removed and remeasured in tla-ja on 6 November, and the tags give it.
 // Japanese-only: the listing's section sits under .ifdef TLA_EDITION_JA, the
 // other editions link games/tla/src/scene/naribwe_interiors/s0390.c, so measure
 // with --edition tla-ja (plain tla-en compares this against that file's form and
@@ -9,10 +11,9 @@
 // the Msg ids stay pool loads. Plain numbers split into movs chains, so they
 // are symbols here, but the Japanese catalog has no such names (the pool holds
 // 0x1ec1, 0x1ec4, 0x1ebb, 0x1ec2): adopting this needs them in ja.po or a
-// decision on spelling numbers. Every device was removed and measured in
-// tla-ja, and all are needed; the tags below give the figures. The compare
+// decision on spelling numbers. The compare
 // (lsls #16 against 326 << 16) needs item's upper bits unknown to combine:
-// u16, s16, (s16)item and & 0xffff all fold it (23 of 374), hence the reuse.
+// u16, s16, (s16)item and & 0xffff all fold it (23 of 374, before -Os), hence the reuse.
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -74,8 +75,6 @@ void Func_02000390(void) {
   Func_02001148(10, 0);
   FieldEvent_Wait(30);
 ask:
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp; as no asm, 63 of 374
-   * instructions differ in tla-ja. */
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   /* FAKEMATCH(temporary): item also holds this call's result; as a separate
    * test of the call, 23 of 374 instructions differ in tla-ja. */
@@ -94,12 +93,12 @@ ask:
   Func_020010b8(unitData->items[slot]);
   Func_020010a0(Actor_GetById(18), unitData->items[slot]);
   /* FAKEMATCH(wrapper): Func_02001108 called through Call3; as a direct call,
-   * 70 of 374 instructions differ in tla-ja. */
+   * 53 of 374 instructions differ in tla-ja. */
   Call3((void (*)())Func_02001108, 18, 0x2a00000, 0x680000);
   FieldEvent_Wait(60);
   Func_020010b0(unitData->items[slot], 2);
-  message = MsgAreYouPrepared;
   FieldMessage_Show(MsgPlacedOnThe, 1);
+  message = MsgAreYouPrepared;
   Func_02001138(message);
   FieldMessage_ShowAtActor(10, 0);
   if (Event_AskYesNoWithActorAnimation(Func_02001188(), 0) != 1)
@@ -118,7 +117,7 @@ read:
   Func_02001138(message + 4);
   Func_02001148(10, 0);
   /* FAKEMATCH(wrapper): Func_02001170 called through Call2; as a direct call,
-   * 59 of 374 instructions differ in tla-ja. */
+   * 52 of 374 instructions differ in tla-ja. */
   Call2((void (*)())Func_02001170, 0x10000, 0);
   FieldEvent_Wait(30);
   Func_02001168(0x40250d, 1);
@@ -168,19 +167,14 @@ read:
   Func_02001148(10, 0);
   unitData = Unit_Get(unit);
   info = Func_020010b8(unitData->items[slot]);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 39 of 376 instructions differ
-   * in tla-en. */
-  do {
-    item = unitData->items[slot];
-  } while (0);
+  item = unitData->items[slot];
   if ((u16)(item - 0x1b7) <= 2) {
     Func_02000920();
   } else if ((u16)item == 326) {
     Func_02001138(message + 29);
     Func_02001148(10, 0);
     if (!GameFlag_Test(0x940)) {
-      ((s32 (*)())Func_02001138)(message + 30);
+      Func_02001138(message + 30);
       Func_02001148(10, 0);
     } else {
       Func_02001138(message + 31);

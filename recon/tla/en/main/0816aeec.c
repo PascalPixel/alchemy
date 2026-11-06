@@ -1,4 +1,10 @@
 // Differ 266 of 902 (tla-en, 2026-11-06).
+// 2026-11-06, devices allowed: none gains. Pins (u r0, vertex r1, Q r4, i r4)
+// 493 to 1009; an empty asm on i 956 (the frame shrinks); i, (row << 4) or a
+// stepped i at each grid use 832 to 986; quad[5] from i or v 626 (still row << 6).
+// The frame loop's rest follows reload's spill rotation out of the grid (offset 3
+// of 6 at its first reload), so only the native grid allocation fixes both.
+// Permuter, 20,000 candidates over the whole file: 266.
 // 2026-11-06: allocation only: the grid's (Q, u, vertex) and, after it, 140 of
 // the 266 in the frame loop's reloads. Permuter (5 minutes): best 264, by moving
 // quad[12] = a, store-order noise as below, not kept.

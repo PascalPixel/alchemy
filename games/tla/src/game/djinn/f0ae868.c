@@ -1,14 +1,9 @@
-// Matches: differ 0 of 206 (tla-en, 2026-11-06).
-// 2026-11-06: counts set in order (22 to 10); the 0x800 flag in its own local
-// and element reused for the source flag keep the inner loop counting up with
-// a signed counter (ble), and the empty asm on i is no longer needed. Two
-// temporary devices remain. Earlier (2026-10-18 to 10-26): an unsigned counter
-// gave bls; 8 minutes of permute found nothing.
-// Unless flag 0x800 is set, sets the party aside, makes the first four owners
-// the party, gives them their first djinn, then hands out 16 random djinn
-// still unowned, keeping the elements' counts within one, each with the
-// table's percentage chance; then moves the djinn flags to 0x800 (seven per
-// element) and puts the party back.
+/// @file
+/// Unless flag 0x800 is set, sets the party aside, makes the first four owners
+/// the party, gives them their first djinn, then hands out 16 random djinn
+/// still unowned, keeping the elements' counts within one, each with the
+/// table's percentage chance; then moves the djinn flags to 0x800 (seven per
+/// element) and puts the party back.
 #include "types.h"
 #include "main_routine_work.h"
 
@@ -56,7 +51,7 @@ void Func_080ae868(void) {
   do {
     element = (Random16() * 4) >> 16;
     djinn = (Random16() * 7) >> 16;
-    if (!GameFlag_Test(element * 20 + djinn + 48)) {
+    if (!GameFlag_Test(element * 20 + djinn + 0x30)) {
       s8 low;
       s8 high;
 

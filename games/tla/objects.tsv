@@ -1075,12 +1075,7 @@ main	rom_main_03	recon/tla/it/rom	.rom.000ae830	it
 main	rom_main_03	recon/tla/es/rom	.rom.000b7830	es
 main	rom_main_03	games/tla/src/game/inventory/empty	.text
 main	rom_main_03	games/tla/src/game/djinn/add_found_to_owner	.text
-main	rom_main_03	recon/tla/it/rom	.rom.000ae874	it
-main	rom_main_03	recon/tla/fr/rom	.rom.000b3868	fr
-main	rom_main_03	recon/tla/es/rom	.rom.000b7874	es
-main	rom_main_03	recon/tla/de/rom	.rom.000bb868	de
-main	rom_main_03	recon/tla/raw/080ae868		en
-main	rom_main_03	recon/tla/ja/rom	.rom.000a9864	ja
+main	rom_main_03	games/tla/src/game/djinn/f0ae868	.text
 main	rom_main_03	games/tla/src/game/character/ratios	.text
 main	rom_main_03	games/tla/src/game/ratios_second_input	.text
 main	rom_main_03	games/tla/src/game/character/values	.text

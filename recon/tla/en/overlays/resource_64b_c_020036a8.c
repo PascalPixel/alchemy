@@ -4,6 +4,8 @@
 // still missing; adding leader to r10 (142) or slot to r11 (107) breaks the
 // tie to the call's r0 and the objects copy. A slot set at the join from
 // gData_02006c08 (no objects) with work pinned, 168; slot set in both arms, 166.
+// A 20-minute permuter run (2026-11-06) reached 57 only through noise (an identity
+// inline around the flag test, pz as << 3 << 13, x << 16 reread), not kept.
 // 2026-11-06: a block-local mode = 9 for the renderMode test (permuter) took
 // 75 to 63; what is left is register picks: leader r9, work r11, slot r10 for
 // the native r10, r9, r11.

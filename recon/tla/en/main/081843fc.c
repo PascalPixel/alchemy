@@ -9,6 +9,10 @@
 // cells there gets the order but swaps r6 and r7 (65); for-init, indexed and
 // giv forms do not move it (61 to 696). In the sched2 dump the two loads tie at
 // priority 3 and go in RTL order, the biv's start first.
+// Also tried 2026-11-06: a do-while from i = 0 then cells (61); Data_02016000 + i * 1024
+// at the use (94, neither hoisted nor reduced) or as a local set in the loop (96, 130).
+// For row 240, 0x1000 + cellBuffer, &cellBuffer[0x1000] and a size local in an integer
+// sum all stay 61: cse puts the operand it knows as a constant second.
 // Measured 2026-11-05: differ 101 of 4580, 35 with slots and pool offsets
 // normalized, 23 with registers normalized as well.
 // sched2's rank is priority, then relation to the last insn, then the number of

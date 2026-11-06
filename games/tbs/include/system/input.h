@@ -20,13 +20,12 @@ extern volatile u32 gKeysPressed;
 /// Pressed keys, repeating while held: after 19 frames, then every 6.
 extern volatile u32 gKeysRepeat;
 /// gKeysRepeat with at most one D-pad direction.
-/* FAKEMATCH(volatile): as plain u32, 70 of 121 instructions differ in tbs-en
- * (Input_UpdateKeyRepeatAndDirection). */
+// volatile: the key repeat rebuilds and reads it each frame, so it is no
+// device.
 extern volatile u32 gKeysRepeatDirected;
 /// The D-pad direction gKeysRepeatDirected keeps: of several held, the one
 /// added last.
-/* FAKEMATCH(volatile): as plain u32, 52 of 121 instructions differ in tbs-en
- * (Input_UpdateKeyRepeatAndDirection). */
+// volatile: the key repeat updates and reads it each frame, so it is no device.
 extern volatile u32 gKeysDirection;
 
 // Cells whose rereads the bytes do not show

@@ -7,9 +7,9 @@
 ///
 /// wait() (system/system/frame.c) and the VBlank handler share these cells.
 /// gVBlankDone and gFrameCount are volatile because an interrupt handler uses
-/// them too; the other volatiles are only ever read and written outside
-/// the interrupt, so they are devices, and each tag names the function that
-/// differs without one.
+/// them too, and the cells wait() reads and writes each frame by nature; the
+/// other volatiles are devices, and each tag names the function that differs
+/// without one.
 
 #include "types.h"
 
@@ -58,8 +58,7 @@ extern volatile u8 gSleepDisabled;
  * (MainRoutineWork_InitializeDefaults). */
 extern volatile u8 gIdleSleepEnabled;
 /// 1: sleep this frame; more: count down to it.
-/* FAKEMATCH(volatile): as plain u8, 26 of 403 instructions differ in tbs-en
- * (wait()). */
+// volatile: wait() counts it down and reads it each frame, so it is no device.
 extern volatile u8 gSleepRequested;
 /// Debug builds: Start+Select pauses the frame loop.
 // volatile: Actor_UpdatePlayerControl and FieldSequence_Run each read it
@@ -69,12 +68,10 @@ extern u8 gDebugPaused; ///< The debug pause is on.
 /// Set by the keypad interrupt; wait() performs the soft reset.
 extern u8 gResetRequested;
 /// Frames since a key was last held.
-/* FAKEMATCH(volatile): as plain u16, 89 of 403 instructions differ in tbs-en
- * (wait()). */
+// volatile: wait() counts it and reads it each frame, so it is no device.
 extern volatile u16 gIdleFrames;
 /// Frames L and R have been held together; three seconds request sleep.
-/* FAKEMATCH(volatile): as plain u16, 117 of 403 instructions differ in tbs-en
- * (wait()). */
+// volatile: wait() counts it and reads it each frame, so it is no device.
 extern volatile u16 gSleepComboFrames;
 /// Written by the soft reset just before it restarts the cartridge, and
 /// cleared by System_Initialize; nothing else reads it.

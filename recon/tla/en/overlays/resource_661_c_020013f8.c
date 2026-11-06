@@ -1,3 +1,5 @@
+// Near miss, differ 30 of 124 (tla-en, 2026-11-06): allocation only, as below; the
+// listing's crossjumped tails (17, 43 into 19, 41) already come out.
 // Under -Os, 5 November: differ 30 of 124 (tla-en); older figures below predate it.
 // Draft, differ 30 of 124 (was 48): the twin of Func_020012dc for the other
 // room (row 89): resets the stone, copies the four blocks and moves the

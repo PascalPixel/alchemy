@@ -1,4 +1,5 @@
-// Near miss, differ 29 of 231 (31 before; 2026-10-26, result cleared after the
+// Near miss, differ 23 of 231 (tla-en, 2026-11-06): spill slots and one address
+// build, as below. Earlier: 29 (31 before; 2026-10-26, result cleared after the
 // battle work is read): lets the player pick which
 // reserve member takes party slot `slot` in battle, previewing each choice
 // in place (left and right cycle, A confirms through Func_08118140 and

@@ -1,3 +1,4 @@
+// Near miss, differ 25 of 687 (tla-en, 2026-11-06): the pool zero, as below.
 // Under -Os, 5 November: differ 25 of 687 (tla-en); older figures below predate it.
 // Draft, differ 25 of 687, skeleton gap 3 (tla-en, 2026-11-01)
 // The Islets' trade of item 453 with object 10: with it in the party, if flag

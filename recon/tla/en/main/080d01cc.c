@@ -1,3 +1,4 @@
+// Differ 24 of 352 (tla-en, 2026-11-06), unchanged here; the notes below predate the current figure.
 // Under -mthumb-slow-loads (2026-10-26): differ 32 of 352 in tla-en,
 // instruction order and register choice. No empty asm before any one statement
 // lowers it.

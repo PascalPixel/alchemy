@@ -257,20 +257,16 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
             // On frames 4 and 8, put the first free puff of dust near the
             // root: x within 8 pixels of it, y on rows 80 to 95.
             if ((frame == reactFrame) || (frame == (start + 8))) {
-              /* FAKEMATCH(temporary): the scan reuses length as its puff
-               * pointer; as a pointer of its own, 25 of 503 instructions
-               * differ in tbs-en. */
-              length = (u32)PARTICLES;
               n = 0;
               while (n != 512) {
-                if (((struct Particle *)length)->variant == -1) {
-                  ((struct Particle *)length)->x =
-                      ((Random16() & 0xf) + column->x) - 8;
-                  ((struct Particle *)length)->y = (Random16() & 0xf) + 80;
-                  ((struct Particle *)length)->variant = 0;
+                struct Particle *dust = &PARTICLES[n];
+
+                if (dust->variant == -1) {
+                  dust->x = ((Random16() & 0xf) + column->x) - 8;
+                  dust->y = (Random16() & 0xf) + 80;
+                  dust->variant = 0;
                   break;
                 }
-                length += sizeof(struct Particle);
                 n++;
               }
             }

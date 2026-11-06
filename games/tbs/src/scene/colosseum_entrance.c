@@ -103,14 +103,6 @@ static void ColosseumEntrance_WalkToWestExit(void);
 static void ColosseumEntrance_CelebrateBothWins(void);
 static void ColosseumEntrance_InitializeContestants(void);
 
-static inline void ColosseumEntrance_Turn(s32 actorId, s32 facing) {
-  /* FAKEMATCH(wrapper): ColosseumEntrance_CrowdRecognizesIsaac's one turn goes
-   * through this helper; as a direct ColosseumEntrance_FaceDirection call, 7 of
-   * 643 instructions of ColosseumEntrance_CrowdRecognizesIsaac differ in
-   * tbs-en. */
-  ColosseumEntrance_FaceDirection(actorId, facing);
-}
-
 /// The Colosseum Entrance's people, numbered by the rows of
 /// gColosseumEntranceActorPlacements;
 /// gColosseumEntranceActorPlacementsFinalsDay places the same people in
@@ -667,9 +659,7 @@ static void ColosseumEntrance_AskIfReadyForFinals(void) {
 /// and Ivan, Mia and Garet talk him round; if he still refuses, Garet leads the
 /// way in. Before Babi is saved it does nothing.
 static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
-  // The native code reuses this word for actor handles and the
-  // reply.
-  s32 actorOrAnswer;
+  struct Actor *leader;
 
   if (GameFlag_Get(FLAG_BABI_SAVED) == 0) {
     return;
@@ -749,22 +739,17 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 262, 188);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  actorOrAnswer = (s32)Actor_GetById(ACTOR_PARTY_LEADER);
-  if (actorOrAnswer != 0) {
-    Import_ActorSetPosition(ACTOR_GARET,
-                            ((struct Actor *)actorOrAnswer)->x.fixed,
-                            ((struct Actor *)actorOrAnswer)->z.fixed);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  if (leader != NULL) {
+    Import_ActorSetPosition(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
-  actorOrAnswer = (s32)Actor_GetById(ACTOR_PARTY_LEADER);
-  if (actorOrAnswer != 0) {
-    Import_ActorSetPosition(ACTOR_IVAN,
-                            ((struct Actor *)actorOrAnswer)->x.fixed,
-                            ((struct Actor *)actorOrAnswer)->z.fixed);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  if (leader != NULL) {
+    Import_ActorSetPosition(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
-  actorOrAnswer = (s32)Actor_GetById(ACTOR_PARTY_LEADER);
-  if (actorOrAnswer != 0) {
-    Import_ActorSetPosition(ACTOR_MIA, ((struct Actor *)actorOrAnswer)->x.fixed,
-                            ((struct Actor *)actorOrAnswer)->z.fixed);
+  leader = Actor_GetById(ACTOR_PARTY_LEADER);
+  if (leader != NULL) {
+    Import_ActorSetPosition(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(ACTOR_IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -842,14 +827,13 @@ static void ColosseumEntrance_CrowdRecognizesIsaac(void) {
     Import_ActorSetAnimation(ACTOR_FIRST_GATE_SOLDIER + 2, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER + 3, ANIM_NOD);
     Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    ColosseumEntrance_Turn(ACTOR_MIA, FACING_NORTHWEST);
+    ColosseumEntrance_FaceDirection(ACTOR_MIA, FACING_NORTHWEST);
     ColosseumEntrance_ShowMessageAndPause(ACTOR_MIA);
     Import_ActorSetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_OpenMessage(ACTOR_GARET, 0);
 
-    actorOrAnswer = Event_AskYesNoWithActorAnimation(0, 0);
-    if (actorOrAnswer == 0) {
+    if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_FIRST_GATE_SOLDIER, ANIM_NOD);
       ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_GATE_SOLDIER);
       Actor_SetScript(ACTOR_GARET, gColosseumEntrance_GatherIntoIsaacScript);

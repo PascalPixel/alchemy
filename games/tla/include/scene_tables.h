@@ -63,7 +63,7 @@ struct SceneEntrance {
 
 /// Actor placements.
 struct ActorPlacement {
-  s16 sprite; ///< the actor's sprite; -1 ends the table
+  s16 sprite;    ///< the actor's sprite; -1 ends the table
   s16 condition; ///< CONDITION_ALWAYS (-1), or a flag condition
   s32 behavior;
   s32 x;      ///< 16.16 fixed-point pixels
@@ -81,8 +81,8 @@ struct Trigger {
   /// The kind and its detail; TRIGGERS_END ends the table. Item triggers
   /// read it as bits: 15..8 item | 4 on an actor | 3..0 kind (4)
   u32 control;
-  /// What the trigger answers: an actor id or a tile code. Item triggers read it
-  /// as bits: 15..12 facing | 11 needs facing | 7..0 target
+  /// What the trigger answers: an actor id or a tile code. Item triggers read
+  /// it as bits: 15..12 facing | 11 needs facing | 7..0 target
   s16 subject;
   s16 condition; ///< CONDITION_ALWAYS (-1), or a flag condition
   u32 value;     ///< a message (FIND_MESSAGE) or an event (EVENT)
@@ -91,6 +91,30 @@ struct Trigger {
 #define FIND_MESSAGE(message) (0x00400000 | (message))
 #define EVENT(event) ((u32)(event))
 #define TRIGGERS_END 0xffffffff
+
+/// A trigger as the field reads it while the scene runs: the target is one
+/// byte.
+struct TriggerView {
+  s32 flags; ///< the low 4 bits are the kind (TRIGGER_KIND_MASK)
+  u8 value;  ///< the target (an actor id or a cell behavior)
+  u8 unused05;
+  s16 condition; ///< as for GameFlag_IsConditionActive
+  s32 result;
+};
+
+/// A trigger's control bits 3..0, its kind.
+#define TRIGGER_KIND_MASK 0xf
+/// A trigger's control bits 15..12: the heading TRIGGER_FLAG_FACING compares,
+/// in sixteenths of a turn.
+#define TRIGGER_FACING_MASK 0xf000
+/// A step trigger that needs the leader to have pushed against it for more
+/// than 12 frames, or 2 with STEP_TRIGGER_FLAG_QUICK.
+#define STEP_TRIGGER_FLAG_WALKING 0x200
+/// With STEP_TRIGGER_FLAG_WALKING, 2 frames of pushing are enough.
+#define STEP_TRIGGER_FLAG_QUICK 0x800
+/// An event that needs the leader to face within an eighth of a turn of the
+/// heading in control bits 15..12.
+#define TRIGGER_FLAG_FACING 0x400
 
 struct SceneRegion;
 

@@ -343,12 +343,6 @@ FieldSequence_Run:
 	.incbin "baserom.gba", 0x000d491c, 0x00000c30
 	.section .rom.000d5d76, "ax"
 	.incbin "baserom.gba", 0x000d5d76, 0x00000002
-	.section .rom.000d5d78, "ax"
-	.global Func_080ccd78
-	.type Func_080ccd78, %function
-	.thumb_func
-Func_080ccd78:
-	.incbin "baserom.gba", 0x000d5d78, 0x0000010c
 	.section .rom.000d6808, "ax"
 	.incbin "baserom.gba", 0x000d6808, 0x00000114
 	.section .rom.000d70aa, "ax"
@@ -361,12 +355,6 @@ Func_080ce31c:
 	.incbin "baserom.gba", 0x000d731c, 0x0000013c
 	.section .rom.000d7f22, "ax"
 	.incbin "baserom.gba", 0x000d7f22, 0x00000002
-	.section .rom.000d8554, "ax"
-	.global Func_080cf554
-	.type Func_080cf554, %function
-	.thumb_func
-Func_080cf554:
-	.incbin "baserom.gba", 0x000d8554, 0x000001a8
 	.section .rom.000d91cc, "ax"
 	.global ScreenTransition_Start
 	.type ScreenTransition_Start, %function
@@ -445,12 +433,6 @@ Func_080d2d70:
 	.thumb_func
 Func_080d6674:
 	.incbin "baserom.gba", 0x000df668, 0x00000174
-	.section .rom.000df9e8, "ax"
-	.global Func_080d69f4
-	.type Func_080d69f4, %function
-	.thumb_func
-Func_080d69f4:
-	.incbin "baserom.gba", 0x000df9e8, 0x0000019c
 	.section .rom.000e0518, "ax"
 	.global Func_080d7524
 	.type Func_080d7524, %function

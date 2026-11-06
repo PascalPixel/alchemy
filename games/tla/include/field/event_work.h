@@ -9,9 +9,11 @@ struct ActorPlacement;
 struct Trigger;
 struct FieldActor;
 struct Actor;
+struct TriggerView;
 
 struct EventWork {
-  u8 unk000[0x14];
+  u8 unk000[0x10];
+  struct TriggerView *triggers; ///< the scene's trigger table
   struct Actor *objects[80];
   s16 exit;
   u8 unk156[2];

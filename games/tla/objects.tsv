@@ -1252,17 +1252,12 @@ main	rom_main_04	games/tla/src/field/event/f0cc9fc	.text	en de es fr it ja
 main	rom_main_04	games/tla/src/field/event/f0cccb8	.text
 main	rom_main_04	games/tla/src/field/field_sequence/is_condition_active	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000ccd76	it
-main	rom_main_04	recon/tla/it/rom	.rom.000ccd78	it
 main	rom_main_04	recon/tla/fr/rom	.rom.000d1d76	fr
-main	rom_main_04	recon/tla/fr/rom	.rom.000d1d78	fr
 main	rom_main_04	recon/tla/es/rom	.rom.000d5d76	es
-main	rom_main_04	recon/tla/es/rom	.rom.000d5d78	es
 main	rom_main_04	recon/tla/de/rom	.rom.000d9d76	de
-main	rom_main_04	recon/tla/de/rom	.rom.000d9d78	de
 main	rom_main_04	recon/tla/raw/080ccd76	.text	en
-main	rom_main_04	recon/tla/raw/080ccd78	.text	en
 main	rom_main_04	recon/tla/ja/rom	.rom.000ccd6e	ja
-main	rom_main_04	recon/tla/ja/rom	.rom.000ccd70	ja
+main	rom_main_04	games/tla/src/field/field_sequence/f0ccd78	.text
 main	rom_main_04	games/tla/src/field/field_sequence/overlay_call	.text
 main	rom_main_04	games/tla/src/field/field_sequence/f0ccec8	.text	en de es fr it ja
 main	rom_main_04	games/tla/src/field/field_sequence/run_descriptor_handler	.text
@@ -1317,12 +1312,7 @@ main	rom_main_04	games/tla/src/field/field_sequence/f0cf17c	.text
 main	rom_main_04	games/tla/src/field/field_sequence/destroy	.text
 main	rom_main_04	games/tla/src/field/field_sequence/rising	.text
 main	rom_main_04	games/tla/src/field/field_sequence/spawn	.text
-main	rom_main_04	recon/tla/it/rom	.rom.000cf554	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000d4554	fr
-main	rom_main_04	recon/tla/es/rom	.rom.000d8554	es
-main	rom_main_04	recon/tla/de/rom	.rom.000dc554	de
-main	rom_main_04	recon/tla/raw/080cf554	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000cf534	ja
+main	rom_main_04	games/tla/src/field/field_sequence/f0cf554	.text
 main	rom_main_04	games/tla/src/field/field_sequence/window_hblank	.text
 main	rom_main_04	games/tla/src/field/field_sequence/f0cf78c	.text	en de es fr it ja
 main	rom_main_04	games/tla/src/field/field_sequence/m80d0184	.text
@@ -1558,12 +1548,6 @@ main	rom_main_05	recon/tla/raw/080d6674	.text	en
 main	rom_main_05	games/tla/src/field/field_effect/f0d67e8	.text	en de es fr it
 main	rom_main_05	games/tla/src/field/field_effect/f0d67e8	.text	ja
 main	rom_main_05	games/tla/src/field/field_effect/ground_particles	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000d69e8	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000db9e8	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000df9e8	es
-main	rom_main_05	recon/tla/de/rom	.rom.000e39f4	de
-main	rom_main_05	recon/tla/raw/080d69f4	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000d69d4	ja
 main	rom_main_05	games/tla/src/field/field_effect/rising_particles	.text
 main	rom_main_05	games/tla/src/field/field_effect/motes_update	.text
 main	rom_main_05	games/tla/src/field/field_effect/motes	.text

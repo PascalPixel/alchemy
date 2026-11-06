@@ -1,4 +1,6 @@
-// Near miss, differ 40 of 125 (tla-en, 2026-11-06): register choice. The native keeps
+// Near miss, differ 40 of 125 (tla-en, 2026-11-06): register choice. Also 6 November:
+// Func_080eace8's stepping (shapes, cells += slot) 74; shapes += slot alone 58.
+// The native keeps
 // the shape row in r5, the slot in r8 (then slot * 4) and the cell table in r10;
 // this gives the cell table r5, the shape row r8 and the slot r10. The empty asm
 // is untagged; without it, differ 42. The native stores the shape before the

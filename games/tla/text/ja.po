@@ -67869,7 +67869,7 @@ msgstr ""
 "{actor_name:5}は \n"
 "マーズスターを手にいれた!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMarsStar09"
 msgid "12187"
 msgstr ""
 "{actor_name:5}は \n"

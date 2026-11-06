@@ -1,4 +1,6 @@
-// Near miss, differ 32 of 376 (56 before, 2026-10-26: the affine identity,
+// Near miss, differ 30 of 376 (tla-en, 2026-11-06). 0x104 and 0x106 as plain
+// stores or as Store16 both, or as halfword indexes: 30 to 60.
+// Earlier, differ 32 (56 before, 2026-10-26: the affine identity,
 // REG_BG3Y, REG_BLDALPHA and REG_DISPCNT written with Io_Write16 and the
 // scroll cleared layer by layer, as the twin does; 250 before that): The Broken
 // Seal's Map_InitializePerspectiveScene on this game's map work (0x978 bytes,

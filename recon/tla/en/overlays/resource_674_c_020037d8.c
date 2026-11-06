@@ -1,35 +1,48 @@
-// Differ 30 of 171 (tla-en, 2026-11-06).
+// Differ 26 of 171 (tla-en, 2026-11-06), from 30: every spill slot agrees now.
+// Spill slots run in pseudo order, and kind's pseudo is the temporary that
+// fixup_var_refs makes when its address is first taken (kind = push->kind is
+// then a load into a temporary and a store), so the first &kind must come
+// before width is declared: box, a pointer to kind, opens the block that
+// declares width and height from it, and index is declared last. Width's
+// pseudo is made at its declaration, before its initializer is read, so
+// BoxSpan(&kind, 0) as width's initializer is not early enough (kind and width
+// swap, 34). Left: the index in r2 and the table in r3 at the pass's top (the
+// native the reverse), j's 0 against height's load, the row's ldrsb with its
+// operands the other way round, the call's &cell from r5 where the native
+// rebuilds it from sp, and the tail's order. [0][index], index[table] and
+// *(table + index) for BoxByte change nothing (26).
+// Before, differ 30 of 171 (tla-en, 2026-11-06).
 // The step and row loops are for loops in place of labels, the same code. Left:
-// kind at sp+4 where the native has it at sp+20 (index the other way round), the
-// registers that follow, and the tail's order (scheduling). Tried 6 November,
-// all 30 or worse: kind or index declared elsewhere, kind << 2, the table read
-// as [0][index] or index + table, height before width (44), index in the loop
-// body (44), no index (112), the tail's stores in any order; the permuter's
-// 28 needs a one-pass block around the tail.
-// Draft, differ 34 of 171 (tla-en, 5 November 2026), from 74: no call for the
-// kind, the layer set before it is written. Left: kind sits at sp+20 in the
-// native, ahead of the spilled locals, and (ashift kind 2) is recomputed at
-// nextStep; read through a pointer it lands at sp+4 in the frame, by value gcse
-// shares row (131). An array of one is the same as the pointer. Under -Os, 5
-// November: differ 74 of 171 (tla-en); older figures below predate it. Draft,
-// differ 156 of 171, skeleton gap 23 (tla-en, 2026-11-01): overlay 674's copy
-// of overlay 668's Func_02004240 (the same listing); what it measures is in
-// that draft's header. Agrees now: the frame (40), every spill slot, the whole
-// box measurement through the direction lookup, and the cell's address in r5.
-// What got there, each proven by measurement: width and height are one 8-byte
-// local (+12, +16): a DImode pseudo that loses the two-register allocation,
-// which is why the hottest counters' bounds are spilled (memory locals or a
-// taken address instead give base pseudos and frame 44 or 48). The kind index
-// and layer are a second pair (+4, +8), the only way found to spill the index
-// while dx, dz and steps keep registers (plain local: differ 185). The index is
-// set each pass from kind's address-taken pseudo, which keeps PRE from merging
-// it with the box measurement's shift. kind's address is taken (LoadKind)
-// before the pairs' block so its pseudo, and slot +20, come first. i = 0 above
-// cell.x lengthens i's live range (26 to 40), so sfp - 12 outranks i and takes
-// r5 (differ 160 to 156). These inlines and the block are shaping, not known
-// source: a plain kind = push->kind costs 10 (166), plain table casts for
-// BoxByte 7 (163). Under the new compiler the pairs declared at the top give
-// 172. Left, not closable in C so far:
+// kind at sp+4 where the native has it at sp+20 (index the other way round),
+// the registers that follow, and the tail's order (scheduling). Tried 6
+// November, all 30 or worse: kind or index declared elsewhere, kind << 2, the
+// table read as [0][index] or index + table, height before width (44), index in
+// the loop body (44), no index (112), the tail's stores in any order; the
+// permuter's 28 needs a one-pass block around the tail. Draft, differ 34 of 171
+// (tla-en, 5 November 2026), from 74: no call for the kind, the layer set
+// before it is written. Left: kind sits at sp+20 in the native, ahead of the
+// spilled locals, and (ashift kind 2) is recomputed at nextStep; read through a
+// pointer it lands at sp+4 in the frame, by value gcse shares row (131). An
+// array of one is the same as the pointer. Under -Os, 5 November: differ 74 of
+// 171 (tla-en); older figures below predate it. Draft, differ 156 of 171,
+// skeleton gap 23 (tla-en, 2026-11-01): overlay 674's copy of overlay 668's
+// Func_02004240 (the same listing); what it measures is in that draft's header.
+// Agrees now: the frame (40), every spill slot, the whole box measurement
+// through the direction lookup, and the cell's address in r5. What got there,
+// each proven by measurement: width and height are one 8-byte local (+12, +16):
+// a DImode pseudo that loses the two-register allocation, which is why the
+// hottest counters' bounds are spilled (memory locals or a taken address
+// instead give base pseudos and frame 44 or 48). The kind index and layer are a
+// second pair (+4, +8), the only way found to spill the index while dx, dz and
+// steps keep registers (plain local: differ 185). The index is set each pass
+// from kind's address-taken pseudo, which keeps PRE from merging it with the
+// box measurement's shift. kind's address is taken (LoadKind) before the pairs'
+// block so its pseudo, and slot +20, come first. i = 0 above cell.x lengthens
+// i's live range (26 to 40), so sfp - 12 outranks i and takes r5 (differ 160 to
+// 156). These inlines and the block are shaping, not known source: a plain kind
+// = push->kind costs 10 (166), plain table casts for BoxByte 7 (163). Under the
+// new compiler the pairs declared at the top give 172. Left, not closable in C
+// so far:
 // - gcse's PRE carries sfp - 12 as one pseudo across the whole pass loop; the
 //   native sets r5 per row, r2 after the row, and takes add r1, sp for the
 //   call, and stores cell.y and cell.z straight to sp. gcse.c exempts the frame
@@ -93,40 +106,43 @@ s32 Func_020037d8(struct PushState *push) {
 
   object = Func_02003940(&direction, &push->number, &push->kind);
   if (object != 0) {
-    s32 index, width, height;
-    u8 *layer;
-
     kind = push->kind;
-    width = BoxSpan(&kind, 0);
-    height = BoxSpan(&kind, 1);
-    offset = gData_02004094[direction];
-    dx = offset & 0xffff0000;
-    dz = offset << 16;
-    push->unk14 = 0;
-    steps = 0;
-    layer = &object->terrainId;
-    *layer = 2;
-    push->x = object->x + dx;
-    push->z = object->z + dz;
-    cell.y = object->y;
-    for (;;) {
-      index = kind * 4;
-      cell.z = push->z + (BoxByte(index + 1) << 16);
-      for (j = 0; j < height; j++) {
-        cell.x = push->x + (BoxByte(index) << 16);
-        for (i = 0; i < width; i++) {
-          if (Func_02003e2c(object, &cell) == 2)
-            goto blocked;
-          cell.x += 0x100000;
+    {
+      s32 *box = &kind;
+      s32 width = BoxSpan(box, 0);
+      s32 height = BoxSpan(box, 1);
+      u8 *layer;
+      s32 index;
+
+      offset = gData_02004094[direction];
+      dx = offset & 0xffff0000;
+      dz = offset << 16;
+      push->unk14 = 0;
+      steps = 0;
+      layer = &object->terrainId;
+      *layer = 2;
+      push->x = object->x + dx;
+      push->z = object->z + dz;
+      cell.y = object->y;
+      for (;;) {
+        index = kind * 4;
+        cell.z = push->z + (BoxByte(index + 1) << 16);
+        for (j = 0; j < height; j++) {
+          cell.x = push->x + (BoxByte(index) << 16);
+          for (i = 0; i < width; i++) {
+            if (Func_02003e2c(object, &cell) == 2)
+              goto blocked;
+            cell.x += 0x100000;
+          }
+          cell.z += 0x100000;
         }
-        cell.z += 0x100000;
+        push->x += dx;
+        steps++;
+        push->z += dz;
       }
-      push->x += dx;
-      steps++;
-      push->z += dz;
+    blocked:
+      *layer = 0;
     }
-  blocked:
-    *layer = 0;
     result = 0;
     if (steps != 0) {
       push->x = object->x + dx * steps;

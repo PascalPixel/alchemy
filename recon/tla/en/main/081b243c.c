@@ -1,4 +1,4 @@
-// Differ 14 of 1707 (tla-en, 2026-11-06): scheduling only. The reel symbols' y and the sprite slot are
+// Differ 14 of 1707 (tla-en, 2026-11-06): scheduling only. The reel symbols' y (symbolY) and sprite slot are
 // locals of the column loop (32 to 14): y set, then the slot read, then y += 4 in place.
 // Draft, differ 178 of 1707, skeleton gap 37/25 (tla-en, 2026-11-01)
 // The slot machine's VBlank task, The Broken Seal's LuckyWheels_Update
@@ -552,11 +552,11 @@ void Func_081b243c(void) {
     struct Reel *reel = &work->reels[i];
 
     for (col = 0; col != 7; col++) {
-      s32 y = col * 16 + reel->position % 16;
+      s32 symbolY = col * 16 + reel->position % 16;
       s32 index = work->spriteCount;
 
-      y += 4;
-      work->obj[index].attr01 = y |((i * 32 + 40) << 16) | 0x80006000;
+      symbolY += 4;
+      work->obj[index].attr01 = symbolY |((i * 32 + 40) << 16) | 0x80006000;
       work->obj[work->spriteCount].attr2 =
           (reel->symbols[(col - reel->position / 16 + 21) % 21] << 4) | 0x800;
       work->spriteCount++;

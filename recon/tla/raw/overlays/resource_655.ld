@@ -49,7 +49,7 @@ SECTIONS
         "*/games/tla/src/scene/dehkan_plateau/events_h.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/resource_655_overlay.o"(.text.x0200a696)
-        "*/resource_655_overlay.o"(.text.x0200a698)
+        "*/games/tla/src/scene/dehkan_plateau/s2698.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s27e0.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s2a5c.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s2b68.o"(.text)

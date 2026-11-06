@@ -14,7 +14,6 @@ SECTIONS
         "*/games/tla/src/scene/gabomba_statue/s047c.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s04b8.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/find_near.o"(.text)
-        "*/resource_671_overlay.o"(.text.x02008624)
         "*/games/tla/src/scene/gabomba_statue/hop.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s0740.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s0784.o"(.text)

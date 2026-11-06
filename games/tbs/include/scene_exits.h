@@ -294,10 +294,13 @@ enum {
   VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH = 7,
   VALE_PLAZA_FROM_VALE = 8,
   VALE_PLAZA_FROM_WORLD_MAP = 10,
-  VALE_PLAZA_FROM_GOMA_CAVE_STREAM = 11,
+  VALE_PLAZA_FROM_CHEST_CAVE =
+      11, ///< ★ Named from what the player sees: a small cave off the plaza
+          ///< with a chest at its far end (its render,
+          ///< places/goma-cave-stream/map-5.png)
   VALE_PLAZA_FROM_SANCTUM = 12,
-  /// Beside VALE_PLAZA_FROM_GOMA_CAVE_STREAM, facing north; no exit leads here.
-  VALE_PLAZA_GOMA_CAVE_STREAM_UNUSED = 15,
+  /// Beside VALE_PLAZA_FROM_CHEST_CAVE, facing north; no exit leads here.
+  VALE_PLAZA_CHEST_CAVE_UNUSED = 15,
   /// Where the battle with the travelers on the stormy night returns, won or
   /// lost (ValePlaza_FightTravelers).
   VALE_PLAZA_AFTER_TRAVELERS_BATTLE = 19,
@@ -323,7 +326,7 @@ enum {
   VALE_PLAZA_TO_VALE = 8,
   VALE_PLAZA_TO_TITLE = 9,
   VALE_PLAZA_TO_WORLD_MAP = 10,
-  VALE_PLAZA_TO_GOMA_CAVE_STREAM = 11,
+  VALE_PLAZA_TO_CHEST_CAVE = 11,
   VALE_PLAZA_TO_BILIBIN = 40,
   VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST = 50,
 };
@@ -886,7 +889,10 @@ enum {
   GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_WEST = 2,
   GOMA_CAVE_STREAM_FROM_GOMA_CAVE_PILLAR_EAST = 3,
   GOMA_CAVE_STREAM_FROM_GOMA_CAVE_BRIDGE = 4,
-  GOMA_CAVE_STREAM_FROM_VALE_PLAZA = 5,
+  GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA =
+      5, ///< ★ Named from what the player sees: a small cave off Vale's
+         ///< plaza, walled off from the rest of this map, with a chest at
+         ///< its far end (its render, places/goma-cave-stream/map-5.png)
 };
 /// SceneId_GomaCaveStream's exits.
 enum {
@@ -894,7 +900,7 @@ enum {
   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST = 2,
   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_EAST = 3,
   GOMA_CAVE_STREAM_TO_GOMA_CAVE_BRIDGE = 4,
-  GOMA_CAVE_STREAM_TO_VALE_PLAZA = 5,
+  GOMA_CAVE_STREAM_CHEST_CAVE_TO_VALE_PLAZA = 5,
 };
 
 /// SceneId_GomaCaveBridge's entrances.

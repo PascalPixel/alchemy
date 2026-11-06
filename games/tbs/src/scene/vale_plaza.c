@@ -54,12 +54,13 @@
 /// (SceneId_CottageRoomsA) and into the inn and the forge
 /// (SceneId_CottageRoomsB), the path west to the village (SceneId_Vale) or, on
 /// the stormy night, back to the storm's scene (SceneId_ValePrologue), and
-/// the exit row of cell behavior 11 to VALE_PLAZA_TO_GOMA_CAVE_STREAM,
-/// which the exit table sends to Goma Cave (SceneId_GomaCaveStream,
-/// GOMA_CAVE_STREAM_FROM_VALE_PLAZA). Behavior 11 lies on one cell, (11, 28),
-/// in every state of the map, the cell north of where the party arrives from
-/// Goma Cave (VALE_PLAZA_FROM_GOMA_CAVE_STREAM, at (186, 474)), so that way
-/// back is the way in (render probe vale-gate).
+/// the exit row of cell behavior 11 to VALE_PLAZA_TO_CHEST_CAVE, a small
+/// cave with a chest at its far end. The cave is drawn on Goma Cave's map
+/// (SceneId_GomaCaveStream, GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA),
+/// walled off from the rest of it, and no other way leads in or out.
+/// Behavior 11 lies on one cell, (11, 28), in every state of the map, the
+/// cell north of where the party comes back out (VALE_PLAZA_FROM_CHEST_CAVE,
+/// at (186, 474)), so that way back is the way in (render probe vale-gate).
 ///
 /// Three debug entrances are in no entrance table and no exit
 /// leads to them: VALE_PLAZA_DEBUG_BEFORE_TRAVELERS_LEAVE replays the
@@ -2383,9 +2384,9 @@ struct SceneEntrance gValePlaza_Entrances[] = {
     { VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH, CONDITION_ALWAYS, 358, 0, 678, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_PLAZA_FROM_VALE, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { VALE_PLAZA_FROM_WORLD_MAP, CONDITION_ALWAYS, 217, 0, 843, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_PLAZA_FROM_GOMA_CAVE_STREAM, CONDITION_ALWAYS, 186, 0, 474, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_PLAZA_FROM_CHEST_CAVE, CONDITION_ALWAYS, 186, 0, 474, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VALE_PLAZA_FROM_SANCTUM, CONDITION_ALWAYS, 180, 0, 618, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { VALE_PLAZA_GOMA_CAVE_STREAM_UNUSED, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_PLAZA_CHEST_CAVE_UNUSED, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { VALE_PLAZA_AFTER_TRAVELERS_BATTLE, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
@@ -2402,7 +2403,7 @@ u32 gValePlaza_Exits[] = {
     SCENE_EXIT(VALE_PLAZA_TO_VALE, Vale, VALE_FROM_VALE_PLAZA),
     SCENE_EXIT(VALE_PLAZA_TO_TITLE, Title, TITLE_FROM_VALE_PLAZA),
     SCENE_EXIT(VALE_PLAZA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_VALE_PLAZA),
-    SCENE_EXIT(VALE_PLAZA_TO_GOMA_CAVE_STREAM, GomaCaveStream, GOMA_CAVE_STREAM_FROM_VALE_PLAZA),
+    SCENE_EXIT(VALE_PLAZA_TO_CHEST_CAVE, GomaCaveStream, GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA),
     SCENE_EXIT(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST, CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_SOUTHEAST),
 #if !TBS_PATCH_3
     SCENE_EXIT(VALE_PLAZA_TO_BILIBIN, Bilibin, BILIBIN_FROM_WORLD_MAP),
@@ -2625,7 +2626,7 @@ struct Trigger gValePlaza_Triggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
     { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
     { TRIGGER_EXIT, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
-    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_GOMA_CAVE_STREAM },
+    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayFirstIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },
@@ -2688,7 +2689,7 @@ struct Trigger gValePlaza_TriggersAfterLeaving[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
     { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
     { TRIGGER_EXIT, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
-    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_GOMA_CAVE_STREAM },
+    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayFirstIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },
@@ -2729,7 +2730,7 @@ struct Trigger gValePlaza_TriggersAfterKalay[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
     { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
     { TRIGGER_EXIT, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
-    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_GOMA_CAVE_STREAM },
+    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayFirstIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },

@@ -26,7 +26,7 @@
 /// sound and goes on), or -1 when cancelled or when the link battle's time
 /// runs out. The Djinn tutorial presses A every 120 frames.
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
-  struct CursorSprite cursorStorage;
+  struct MenuSprite cursorStorage;
   struct MenuSprite sprites[4];
   u8 learnedSummons[33]; // The callable summons, in menu order
   u8 orderedSummons[33]; // Those standby can pay for first
@@ -45,7 +45,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   const struct SummonDefinition *summon;
   struct BattleMenuWork *navigation;
   struct MenuSprite *sprite;
-  struct CursorSprite *cur;
+  struct MenuSprite *cur;
   s32 orderedCount;
   s32 id, tile, affordable;
   s32 pressed, repeated, result;
@@ -240,13 +240,12 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
     ((u32 *)cur)[1] = MENU_SPRITE_SHAPE_16X16;
     ((u32 *)cur)[2] = 0;
-    cur->tile = VramCache_Reload((u16)cursorHandle, (s32)gPointingHandTiles);
-    cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
-    cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
-    /* FAKEMATCH(temporary): the cursor pushed through sprite, re-pointed at it
-     * here, keeps the frame loop's registers; as &cursor or cur pushed
-     * directly, 41 of 946 instructions differ in tbs-en. */
-    sprite = (struct MenuSprite *)&cursorStorage;
+    cur->oam.f.tile =
+        VramCache_Reload((u16)cursorHandle, (s32)gPointingHandTiles);
+    cur->oam.f.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
+    cur->oam.f.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
+    // sprite, done with the row icons, now names the cursor.
+    sprite = &cursorStorage;
     Oam_AddSpriteAtDepth(sprite, 242);
 
     // Blink required elements' standby counts every eight frames.

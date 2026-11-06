@@ -127,18 +127,17 @@ void Weather_StartRain(void) {
   struct WeatherWork *work;
   s32 *leader;
   struct GroundParticle *particle;
+  // words is the decode buffer, then each particle's attribute cursor.
   u32 *words;
   u32 i;
+  // The fill's value; as a literal 0 the fill differs.
+  u32 zero = 0;
 
-  /* FAKEMATCH(temporary): words holds the fill's zero, the decode buffer and
-   * each cell cursor, all in r6; as Dma_Fill32(0, work, ...), 4 of 93
-   * instructions differ in tbs-en. */
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
   leader = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   Scene_QueueMusic(SE_AMBIENT_WATER);
-  words = 0;
   particle = work->particles;
-  Dma_Fill32((u32)words, work, sizeof(struct WeatherWork));
+  Dma_Fill32(zero, work, sizeof(struct WeatherWork));
   words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
   work->entry = VramCache_FindFreeEntry();

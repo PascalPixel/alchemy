@@ -21,12 +21,15 @@ s32 Func_020012d4(s32 cell);
     Func_02004090(gMainRoutineWork.currentOwner, x_ << 16, z_ << 16);               \
   }
 
-#define MOVE_LEADER_AGAIN(column, row_) \
-  { \
-    row = Func_020012d4(column); \
-    row <<= 16; \
-    Func_02004090(gMainRoutineWork.currentOwner, row, \
-                  Func_020012d4(row_) << 16); \
+#define MOVE_LEADER_AGAIN(column, row_)                                        \
+  {                                                                            \
+    struct MainRoutineWork *work;                                              \
+    s32 x_;                                                                    \
+    s32 z_;                                                                    \
+    x_ = Func_020012d4(column);                                                \
+    work = &gMainRoutineWork;                                                  \
+    z_ = Func_020012d4(row_);                                                  \
+    Func_02004090(work->currentOwner, x_ << 16, z_ << 16);                     \
   }
 
 void Func_020013f8(void) {

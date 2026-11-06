@@ -28,7 +28,9 @@
 //   expansion (insn 3013), so reload rebuilds -13 in r2. An s8 mask of the creation block, as now, is hoisted
 //   and reloaded in r4 as the listing's rotation needs, but as movs r4, #243; lsls; asrs: three instructions.
 //   Measured no better (2026-11-06): an s32, u8 or s16 mask at the creation block or the loop; x as u8, s8 or u32;
-//   the bit-field through a byte or a word container; one local for -13 and 4. In the bit-field form the copy
+//   the bit-field through a byte or a word container; one local for -13 and 4. Remeasured 2026-11-06:
+//   obj->attr.bits.priority = 1 builds an SImode -13 straight into r2 without the copy (75); a u8 x (60);
+//   the and and or as separate byte stores (84). In the bit-field form the copy
 //   (687 = subreg 685) is replaced in loop.c's first pass, where -13 is then "life 1, not desirable".
 // - The six blasts: lsls r2 before add r0 at the shaded circle, adds r3 before add r1 at the first blit, movs r1
 //   before str r5 at the second. Order only; the listing's order needs 0x10000 set before the call's arguments.

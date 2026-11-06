@@ -1,4 +1,8 @@
 // Differ 66 of 3921 (tla-en, 2026-11-06).
+// Second round, 6 November: 40 minutes of permuter (seed 7102), nothing better.
+// Third phase: no z, p->z from i * -0x100 (83: z's giv and the stores' zero
+// share a register); z = 0 through an empty asm with an output before the loop
+// (95).
 // Near miss: the reload rotation in the third phase, the map loop's registers, the
 // spawn call's order and one pos.x load (Left).
 // 2026-11-05: draft 3919; frame and every spill slot equal the listing's; with

@@ -1,4 +1,7 @@
 // Differ 60 of 2680 (tla-en, 2026-11-06): scheduling and reload ties only, as below.
+// Second round, 6 November: 40 minutes of permuter (seed 7101), nothing better;
+// in the second queue loop a source local before the push and
+// (u32)Ram_MapCellBuffer + i * 0x400 (60 each), an objects local (160).
 // Tried 2026-11-06 without gain (60 or worse): 0x400 * i, a src local, an order pointer,
 // a k local or i < 13 in the second queue loop; objects[i], an obj local or i < 16 in the
 // first; 304 - 2 * frame and five other spellings of the flash's step; five other dead

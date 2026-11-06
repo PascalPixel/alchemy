@@ -1,4 +1,10 @@
 // Differ 146 of 568 (tla-en, 2026-11-06).
+// Second round, 6 November, none better: 40 minutes of permuter (seed 7104);
+// splash = 25000 through an empty asm with an output, before the splash loop
+// (225: the halving is hoisted with it) or inside its if (225: loop.c moves the
+// asm and the halving). The listing's asrs alone, with no sign fix, says the
+// halving is a / 2 whose operand combine knows is not negative, so the 25000 is
+// a pseudo neither CSE nor GCSE's cprop sees as a constant; no form found here.
 // Also tried 6 November: splash = 25000 at width = 32, or as width * 781, halved
 // with >> 1 (146); reset after the call as well (220); 5 minutes of permuter: a
 // reused zero temporary 144, nothing plain better. The second and third glow

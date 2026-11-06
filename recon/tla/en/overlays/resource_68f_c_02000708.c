@@ -1,3 +1,5 @@
+// Differ 31 of 94 (tla-en, 2026-11-06), unchanged: options written directly rather than
+// through p (31); the permuter's best in 8 minutes was 33.
 // Draft, differ 31 of 94, draft 91 (tla-en, 5 November 2026). Count random sparks around a
 // position through the overlay's spawn (Func_020000b8). A local mask set at the first use.
 // Left: the native keeps velocityX in r8 through all three steps (in-place -8 and shift,

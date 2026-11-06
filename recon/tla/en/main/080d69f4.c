@@ -1,3 +1,5 @@
+// Differ 23 of 189 (tla-en, 2026-11-06), unchanged: -timer + pixel, casts on timer (23);
+// the permuter's best in 10 minutes was 25.
 // Draft, differ 29 of 189, skeleton gap 5 (tla-en, 2026-11-01)
 // Updates 64 rising particles of the heap slot 0x74 workspace: each starts on
 // the ground at a random point of a fixed strip for 120 frames, drifts right by

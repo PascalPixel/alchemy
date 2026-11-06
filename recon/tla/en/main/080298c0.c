@@ -1,3 +1,5 @@
+// Differ 26 of 965 (tla-en, 2026-11-06), unchanged: five spellings of the wake timer's
+// decrement (26; the zero path is threaded past the native's retest), permuter 5 minutes 48.
 // Draft, differ 26 of 965 (tla-en, 2026-11-05): the debug read is volatile and the retry offsets start at 0x1000 (differ 122 to 26). CLIMBING after the first climb's animation call is a measured form, not yet understood: before it, differ 80 by cross-jumping, though the native stores it before. Older notes follow.
 // Draft, differ 122 of 965, skeleton gap 32 (tla-en, 2026-11-01)
 // Script command 0x1e, walking that turns into climbing: on foot it moves by

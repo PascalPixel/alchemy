@@ -1,4 +1,7 @@
-// Differ 75 of 260 (tla-en, 2026-11-06). Left: slot ranks above leader and work.
+// Differ 63 of 260 (tla-en, 2026-11-06). The twin's block-local mode = 9 for the renderMode
+// test (overlay 64b's Func_020036a8) takes 75 to 63 here too. Left: register picks, leader r9,
+// work r11, slot r10 for the native r10, r9, r11 (slot ranks above leader and work).
+// Before, differ 75: slot ranks above leader and work.
 // Draft notes of 5 November 2026: A plain while on a copy of the
 // kind, i++ first at the bottom, the routine work read direct, scale before dx. Left:
 // slot ranks above leader and work (2 * 6 / 116 against 2 * 4 / 136), where the native
@@ -150,6 +153,9 @@ void Func_02000d64(void) {
           s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
           s32 dx = object->x - leader->x;
           s32 reach, dz;
+          /* FAKEMATCH(temporary): the form kept; as renderMode == 9, 75 of 260
+           * instructions differ in tla-en. */
+          s32 mode = 9;
 
           if (dx < 0)
             dx = leader->x - object->x;
@@ -158,7 +164,7 @@ void Func_02000d64(void) {
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z - object->z) < reach) {
             if (GameFlag_Test(0x104) == 0) {
-              if (gMainRoutineWork.renderMode == 9)
+              if (gMainRoutineWork.renderMode == mode)
                 work->unk166 = 0x208b;
               else
                 work->exit = i + 100;

@@ -149,7 +149,7 @@
 #endif
 
 // UB: each of these calls a void function through an s32 function type, the
-// call the bytes show; UBFIX calls it as declared. Each use is tagged.
+// call the bytes show; UBFIX calls it as declared.
 #ifdef UBFIX
 #define COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE Event_ShowMessageAndWait
 #define COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR                                \
@@ -1315,9 +1315,6 @@ static void ColosseumSatrageMatch_TalkToShiftingFloorAttendant(s32 attendant) {
       FieldCamera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
       FieldCamera_MoveTo(PIXELS(984), -1, PIXELS(232), 1);
       FieldCamera_WaitForArrival();
-      /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-       * show, which sets r1 before r0; as a direct call, 1 of 104
-       * instructions differ in tbs-en. */
       COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE(attendant, 0);
       ColosseumSatrageMatch_StartLifts();
       Event_ShowMessage(attendant, 0);
@@ -1374,9 +1371,6 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 840, 232);
       Event_Wait(10);
-      /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-       * show, which sets r0 last; as a direct call, 1 of 163 instructions
-       * differ in tbs-en. */
       COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR(ACTOR_RIDING_LOG_SOUTH, -64, 0);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(216), 1);
       Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1662,9 +1656,6 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
     Event_Wait(30);
     Sound_Play(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
-    /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-     * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
-     * differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK(3, 1);
     Event_Wait(-result * 60 + 60);
     reactingActorId = 0;
@@ -1672,8 +1663,6 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
     Event_Wait(30);
     Sound_Play(result + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
-    /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
-     * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK(3, 0);
     Event_Wait(result * 60 + 60);
     reactingActorId = 8;
@@ -1820,14 +1809,9 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
 
   // Assign the item on the side this warrior reached first.
   if (finishAlreadyReached == 0) {
-    /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-     * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
-     * differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_APPLY_MATCHING_SLOT_VALUE(0, firstItem);
     MessageArgument_Push(firstItem, 2);
   } else {
-    /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
-     * r0; as a direct call, 1 of 110 instructions differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_APPLY_MATCHING_SLOT_VALUE(0, secondItem);
     MessageArgument_Push(secondItem, 2);
   }

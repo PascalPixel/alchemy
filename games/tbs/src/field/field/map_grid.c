@@ -386,9 +386,6 @@ s32 MapGrid_LoadMap(s32 index) {
 #ifdef UBFIX
   Task_Add(MapGrid_UpdateLayerScroll, TASK_PASS_FRAME + 5);
 #else
-  /* FAKEMATCH(wrapper): called through a cast to the void call the bytes
-   * show, which loads the task function before its priority; as a call by its
-   * prototype, 2 of 349 instructions differ in tbs-en. */
   ((void (*)(void (*)(void), s32))Task_Add)(MapGrid_UpdateLayerScroll,
                                             TASK_PASS_FRAME + 5);
 #endif

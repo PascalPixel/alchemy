@@ -108,7 +108,7 @@
 #include "sound_driver_symbols.h"
 
 // UB: each of these calls a void function through an s32 function type, the
-// call the bytes show; UBFIX calls it as declared. Each use is tagged.
+// call the bytes show; UBFIX calls it as declared.
 #ifdef UBFIX
 #define COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION Actor_ArmCallback
 #define COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK                           \
@@ -1736,9 +1736,6 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       Event_Wait(60);
       Event_ShowMessageAndWait(guideId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 504, 200);
-      /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-       * show, which sets r0 last; as a direct call, 1 of 136 instructions
-       * differ in tbs-en. */
       COLOSSEUM_NAVAMPA_MATCH_FACE_DIRECTION(ACTOR_PARTY_LEADER, 0, 0);
       ColosseumNavampaMatch_WaitForWallWedgeOpening();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -2086,9 +2083,6 @@ UNUSED static void ColosseumNavampaMatch_UnusedShowMatchResult(s32 result) {
     Event_Wait(30);
     Sound_Play(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
-    /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-     * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
-     * differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 1);
     Event_Wait(-result * 60 + 60);
     actorId = ACTOR_PARTY_LEADER;
@@ -2096,8 +2090,6 @@ UNUSED static void ColosseumNavampaMatch_UnusedShowMatchResult(s32 result) {
     Event_Wait(30);
     Sound_Play(result + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
-    /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
-     * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 0);
     Event_Wait(result * 60 + 60);
     actorId = ACTOR_OPPONENT;
@@ -2239,14 +2231,9 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
     wait(1);
   }
   if (opponentFinishedFirst == 0) {
-    /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-     * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
-     * differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, firstItem);
     MessageArgument_Push(firstItem, 2);
   } else {
-    /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
-     * r0; as a direct call, 1 of 110 instructions differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
     MessageArgument_Push(secondItem, 2);
   }

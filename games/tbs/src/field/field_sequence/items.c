@@ -183,9 +183,6 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 #ifdef UBFIX
       FieldPsynergy_LoadResources(abilityId, 0);
 #else
-      /* FAKEMATCH(wrapper): called through a cast to the s32 function the
-       * bytes show, which loads the action id before the 0; as a call by its
-       * void prototype, 2 of 253 instructions differ in tbs-en. */
       ((s32 (*)(s32, s32))FieldPsynergy_LoadResources)(abilityId, 0);
 #endif
       work->psynergyActing = 1;

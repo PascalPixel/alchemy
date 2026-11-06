@@ -58,7 +58,7 @@
 #include "heap.h"
 
 // UB: this calls a void function through an s32 function type, the call the
-// bytes show; UBFIX calls it as declared. Its use is tagged.
+// bytes show; UBFIX calls it as declared.
 #ifdef UBFIX
 #define MCCOY_GARDEN_SET_ACTOR_POSITION Import_ActorSetPosition
 #else
@@ -270,9 +270,6 @@ static void McCoyPalaceGrounds_TalkToEastGuard(void) {
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTH, 10);
       McCoyPalaceGrounds_OpenGate();
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
-      /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-       * show, which loads the actor id after the two zeros; as a call by its
-       * void declaration, 1 of 233 instructions differ in tbs-en. */
       MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
       /* FAKEMATCH(one-pass): an empty once-only loop, which keeps r0 last among
        * the call above's arguments; as a plain call, 2 of 233 instructions

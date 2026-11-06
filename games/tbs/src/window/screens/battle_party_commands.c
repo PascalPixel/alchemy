@@ -244,9 +244,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 #ifdef UBFIX
       unit = Unit_GetFar(unitId);
 #else
-      /* FAKEMATCH(wrapper): called as returning a doubleword, which sets r1,
-       * so sched2 loads i * 2 first; as Unit_GetFar(unitId), 1 of 1727
-       * instructions differ in tbs-en. */
       unit = (struct Unit *)(s32)((s64 (*)(s32))Unit_GetFar)(unitId);
 #endif
       // The party member's row starts on Attack; its portrait shows at the

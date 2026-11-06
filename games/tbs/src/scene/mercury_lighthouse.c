@@ -153,6 +153,8 @@
 #define MERCURY_LIGHTHOUSE_MOVE_LEADER_TO_ENTRY Actor_SetDestination
 #endif
 
+// UB: this calls a void function through an s32 function type, the call the
+// bytes show; UBFIX calls it as declared.
 #ifdef UBFIX
 #define MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT Actor_SetAnimationAndWait
 #else
@@ -2774,9 +2776,6 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
     FieldMessage_ShowAtActor(ACTOR_MIA, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
       Event_Wait(20);
-      /* FAKEMATCH(wrapper): called through an unprototyped cast, which loads
-       * r1 before r0; called by its prototype, 1 of 222 instructions differ in
-       * tbs-en. */
       MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(ACTOR_MIA, ANIM_SHAKE_HEAD);
       Event_Wait(20);
       questionMessage = firstMessage + 5;
@@ -2787,9 +2786,6 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
           break;
         }
         Event_Wait(20);
-        /* FAKEMATCH(wrapper): called through an unprototyped cast, which
-         * loads r1 before r0; called by its prototype, 1 of 222 instructions
-         * differ in tbs-en. */
         MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(ACTOR_MIA, ANIM_SHAKE_HEAD);
         Event_Wait(20);
         questionMessage = MsgMercuryDontHideTruth;

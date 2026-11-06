@@ -237,6 +237,8 @@ enum VenusLighthouseCellBehavior {
 #define VENUS_LIGHTHOUSE_FIXED_OFFSET(value, bits) ((value) << (bits))
 #endif
 
+// UB: this calls a void function through an s32 function type, the call the
+// bytes show; UBFIX calls it as declared.
 #ifdef UBFIX
 #define VENUS_LIGHTHOUSE_ARRIVE_THROUGH_SPARK_PASSAGE                          \
   VenusLighthouse_ArriveThroughSparkPassage
@@ -3023,9 +3025,6 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_NORTHWEST_ROOM:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_SPARKLING_PASSAGES_FROM_DRAGON_SCALES:
-      /* FAKEMATCH(wrapper): called through a cast to an s32 function, so it
-       * does not cross-jump with the second floor's same call; as a call by
-       * its void prototype, 2 of 1431 instructions differ in tbs-en. */
       VENUS_LIGHTHOUSE_ARRIVE_THROUGH_SPARK_PASSAGE();
       Scene_QueueMusic(SE_AMBIENT_WATER);
       break;

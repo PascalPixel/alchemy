@@ -1176,9 +1176,6 @@ KolimaForestEntrance_BurstOnPsynergyField(struct Actor *interpreter) {
 #ifdef UBFIX
   Actor_StartScript(sparkle, gKolimaForestEntrance_SparkleBurstScript);
 #else
-  /* FAKEMATCH(wrapper): called through a cast to the unprototyped call the
-   * bytes show, which loads the script before r0; as a call by its prototype,
-   * 1 of 79 instructions differ in tbs-en. */
   ((s32 (*)())Actor_StartScript)((s32)sparkle,
                                  (s32)gKolimaForestEntrance_SparkleBurstScript);
 #endif

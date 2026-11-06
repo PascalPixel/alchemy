@@ -117,7 +117,7 @@
 #include "sound_driver_symbols.h"
 
 // UB: each of these calls a void function through an s32 function type, the
-// call the bytes show; UBFIX calls it as declared. Each use is tagged.
+// call the bytes show; UBFIX calls it as declared.
 #ifdef UBFIX
 #define COLOSSEUM_AZART_MATCH_FACE_DIRECTION Actor_ArmCallback
 #define COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR                                \
@@ -1133,9 +1133,6 @@ static void ColosseumAzartMatch_TalkToBridgeAttendant(s32 actorId) {
       Event_Wait(60);
       Event_ShowMessage(actorId, 0);
       Colosso_FadeInWarrior(ACTOR_PARTY_LEADER, 736, 200);
-      /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-       * show, which sets r0 last; as a direct call, 1 of 99 instructions
-       * differ in tbs-en. */
       COLOSSEUM_AZART_MATCH_FACE_DIRECTION(ACTOR_PARTY_LEADER, 0, 0);
       ColosseumAzartMatch_WaitForBridgeOpening();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -1187,9 +1184,6 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1000, 176);
     Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 1016, 168);
     Event_Wait(15);
-    /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-     * show, which sets r0 last; as a direct call, 1 of 167 instructions differ
-     * in tbs-en. */
     COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR(ACTOR_LOG_EAST_WEST, 160, 0);
     FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
     Import_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1331,9 +1325,6 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
     Event_Wait(30);
     Sound_Play(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE_FOR_LOSS);
-    /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-     * show, which sets r1 before r0; as a direct call, 1 of 72 instructions
-     * differ in tbs-en. */
     COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(COLOSSO_SHAPE_RESULT, 1);
     Event_Wait(-result * 60 + 60);
     loser = ACTOR_PARTY_LEADER;
@@ -1341,8 +1332,6 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
     Event_Wait(30);
     Sound_Play(result + 90);
     Colosso_LoadLettering(COLOSSO_PICTURE_WON_LOSE);
-    /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
-     * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_AZART_MATCH_SELECT_MODE_BLOCK(COLOSSO_SHAPE_RESULT, 0);
     Event_Wait(result * 60 + 60);
     loser = ACTOR_OPPONENT;
@@ -1489,14 +1478,9 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
   }
 
   if (flag == 0) {
-    /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
-     * show, which sets r1 before r0; as a direct call, 1 of 110 instructions
-     * differ in tbs-en. */
     COLOSSEUM_AZART_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, firstItem);
     MessageArgument_Push(firstItem, 2);
   } else {
-    /* FAKEMATCH(wrapper): the same cast as the first arm, which sets r1 before
-     * r0; as a direct call, 1 of 110 instructions differ in tbs-en. */
     COLOSSEUM_AZART_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
     MessageArgument_Push(secondItem, 2);
   }

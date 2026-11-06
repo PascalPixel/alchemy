@@ -1,5 +1,11 @@
-// Differ 30 of 272 (tla-en, 2026-11-06): scheduling and allocation only.
-// A pinned r5 (45 without) needs its S2 tag on adoption; the sparkle loop's empty asm changed nothing and is gone.
+// Differ 14 of 272 (tla-en, 2026-11-06): scheduling and reload order only. This round: the
+// sparkle tile read through a pointer to it (30 to 18; the tile and count no longer swap), red
+// reduced in place before the colour is built (18 to 14). Still a pinned r5 (29 without), which
+// needs its S2 tag or a plain form before adoption; the sparkle loop's empty asm changed nothing
+// and is gone. Left: reload takes r0 for i's copy and r2 for the 28, the listing r2 and r0, so
+// i * 2 rises above the 28's orr; x - 64 before y's load; the sprite pointer's reload one row late.
+// Unchanged by: green or the 28 reduced apart, the colour or-ed in pieces, u32 colour, the
+// second palette as [i + 256], an offset local, -64 + y.
 // Near miss, differ 48 of 272 (2026-10-26, statements reordered) (2026-10-18, written from the listing; ☀️ has
 // no twin): the frame callback of the effect Func_080e87c4 ends, with the
 // ring picture of graphics/field_effects/ring_arcs.s. The position is reached
@@ -96,7 +102,8 @@ void Func_080e807c(void) {
       s32 color;
 
       green = Trig_Sin((((*phase >> 2) + i) << 11) + 0x4800) * 10;
-      color = ((green >> 16) + 12) << 10 | ((red >> 16) + 23) << 5 | 28;
+      red = (red >> 16) + 23;
+      color = ((green >> 16) + 12) << 10 | red << 5 | 28;
 
       ((u16 *)0x050001e0)[i] = color;
       ((u16 *)0x050003e0)[i] = color;

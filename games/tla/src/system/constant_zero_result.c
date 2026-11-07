@@ -56,4 +56,4 @@ void Func_080132c4(void) {}
 
 void Func_080132c8(void) {}
 
-int System_ReturnZero(void) { return 0; }
+s32 System_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }

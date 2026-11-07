@@ -1,6 +1,8 @@
 // Matches: differ 0 of 665 (tla-en, 2026-11-07).
 // History: 18 (11-01), 2 (11-05); matched without asm barriers through a
 // once-only block, a palette pointer local and an address-sum spelling.
+// 11-07: Data012 named in the directory, System_ReturnZero given The Broken
+// Seal's two ignored parameters, the unused read of the repeated keys DEAD.
 // The debug sprite viewer, The Broken Seal's SpriteViewer_Run
 // (games/tbs/src/field/field/sprite_viewer.c), which never returns. This
 // game's changes: a blue backdrop; L and R step the sprite number by ten in
@@ -13,6 +15,7 @@
 #include "input.h"
 #include "io_reg.h"
 #include "dma.h"
+#include "module/system/system.h"
 
 struct SpriteViewerLayer {
   s16 spriteId;
@@ -59,7 +62,6 @@ void Func_0802e4c8(s32 x, s32 y, void *ring);
 void Battle_PlaceActorsByFormationKind(void);
 void Fade_FromBlack(s32 vblanks);
 void wait(s32 frames);
-s32 System_ReturnZero(s32 resource, void *table);
 
 extern char ResourceId_Data012;
 
@@ -158,6 +160,7 @@ next:
         y++;
       Func_0802e4c8(x, y, ring);
     } else {
+      // DEAD: the repeated keys are read once and the value goes unused.
       (void)gInput.repeat;
       if (gInput.repeat & 64)
         selectedLayer = (selectedLayer - 1) & 3;

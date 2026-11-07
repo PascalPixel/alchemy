@@ -28,7 +28,7 @@ Resource_DirectoryTable:
 	resource , Resource_FarCall00F
 	resource , Resource_FarCall010
 	resource , Resource_FarCall010
-	resource , gResource_Data012
+	resource Data012, gResource_Data012
 	resource WindowTiles, Ui_WindowTiles
 	resource , Text_SmallFont
 	resource ClockDigits, Field_ClockDigits

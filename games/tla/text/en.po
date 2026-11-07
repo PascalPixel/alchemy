@@ -14761,7 +14761,7 @@ msgctxt "message"
 msgid "03624"
 msgstr "Empty"
 
-msgctxt "message"
+msgctxt "MsgPresentLocation"
 msgid "03625"
 msgstr "Present location"
 
@@ -14771,7 +14771,7 @@ msgstr ""
 "This place doesn't seem\n"
 "to appear on the map...{pause_120_skippable}"
 
-msgctxt "message"
+msgctxt "MsgBoat"
 msgid "03627"
 msgstr "Boat"
 

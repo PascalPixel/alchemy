@@ -16609,7 +16609,7 @@ msgctxt "message"
 msgid "04085"
 msgstr "Vacío"
 
-msgctxt "message"
+msgctxt "MsgPresentLocation"
 msgid "04086"
 msgstr "Situación actual"
 
@@ -16619,7 +16619,7 @@ msgstr ""
 "Este lugar no parece\n"
 "estar en el mapa...{pause_120_skippable}"
 
-msgctxt "message"
+msgctxt "MsgBoat"
 msgid "04088"
 msgstr "Barco"
 

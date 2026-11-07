@@ -1,4 +1,6 @@
 #include "types.h"
+#include "edition.h"
+#include "version.h"
 #include "input.h"
 #include "ram_buffer.h"
 #include "battle_unit.h"
@@ -6,6 +8,20 @@
 
 // The pressed keys, read again at each test.
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
+
+// The equip window's width in tiles, narrower in Japanese.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define EQUIP_WINDOW_WIDTH 13
+#else
+#define EQUIP_WINDOW_WIDTH 15
+#endif
+
+// The rows the item list scrolls by.
+#if TLA_PATCH_1
+#define LIST_ROWS 5
+#else
+#define LIST_ROWS 6
+#endif
 
 struct InventoryMenuState {
   u8 unk000[8];
@@ -73,7 +89,7 @@ s32 Func_0810021c(void) {
   refresh = 2;
   listNeedsRedraw = 1;
   owner = Unit_Get(menu->paneOwner);
-  Window_UpdateOrCreate(&menu->equipWindow, 0, 10, 15, 10, 2);
+  Window_UpdateOrCreate(&menu->equipWindow, 0, 10, EQUIP_WINDOW_WIDTH, 10, 2);
   Menu_SpawnIconEntries(menu, menu->messageWindow);
   Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
   Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
@@ -98,12 +114,15 @@ s32 Func_0810021c(void) {
         Func_081000e0(window, 0, &state);
       }
       ItemMenu_DrawEquipPage(window, 0, &state);
+#if TLA_PATCH_1
       Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 3, window, 0, -24);
       Text_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, window, 64, -24);
+#endif
       refresh = 0;
     }
     wait(1);
-    navigation = Func_080f8f9c(0, state.entryCount, 5, &state.row, &state.page);
+    navigation =
+        Func_080f8f9c(0, state.entryCount, LIST_ROWS, &state.row, &state.page);
     Func_080f8a44(96, state.row * 16 + 52);
     if (navigation == 1) {
       listNeedsRedraw = 1;

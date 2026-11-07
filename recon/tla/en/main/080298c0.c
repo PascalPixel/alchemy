@@ -1,18 +1,17 @@
 // Matches: differ 0 of 965 (tla-en, 2026-11-07).
-// History: 122 to 26 to 24 by earlier reshaping; 0 with Actor_SetMoveTarget's
-// real void return, the climb-up's unk66 store before the velocities, and
-// struct field reads.
+// History: 122 to 26 to 24 by reshaping, 0 with void Actor_SetMoveTarget; then
+// plain zeros for the stand-in variables and Actor.unk66 read signed by a cast.
 //
 // Script command 0x1e, walking that turns into climbing: on foot it moves by
 // the direction pad as SC_PLAYER does without pushing (a refused step with up
 // held starts a climb onto ground more than 8 pixels above when Func_080c8770
 // allows it there; with down held, a climb down to ground below the next cell
-// south); while climbing (unk66) the pad moves the object up and down the face
+// south); while climbing (unk66) the pad moves the actor up and down the face
 // at half a pixel a frame (the probes take the step's depth as height), it
 // reaches the top or bottom when the ground ahead or under it passes its
-// height, and every 16th frame a falling bit of rubble (object 0x11d) drops
-// beside it. Walking leaves object 0x164 every fifth step, as Func_0802a124's
-// wake. Both modes end with Func_08029838.
+// height, and every 16th frame a falling bit of rubble (an actor of kind 0x11d)
+// drops beside it. Walking leaves an actor of kind 0x164 every fifth step, as
+// Func_0802a124's wake. Both modes end with Func_08029838.
 //
 // Action is written as a field and count is set at the top; cellX and
 // cellZ are reused for the face, which gives the native's callee-saved
@@ -40,13 +39,6 @@ struct PlayerSprite {
   u8 flags;
 };
 
-// Actor reads its unk66 as signed here.
-struct ClimbingActor {
-  u8 unk00[0x66];
-  s16 climbing;
-};
-#define CLIMBING(object) (((struct ClimbingActor *)(object))->climbing)
-
 struct Unk_WakeActor {
   u8 unk00[0x63];
   u8 unk63;
@@ -71,10 +63,10 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 Func_0802d45c(s32 terrainId, s32 x, s32 z);
 s32 Func_0802d7b0(s32 x, s32 z, s32 layer, s32 height);
-s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
+s32 Func_0802d87c(struct Actor *actor, struct FieldPosition *position);
 s32 Func_080c8770(s32 x, s32 z, s32 kind);
-void Actor_SelectAnimation(struct Actor *object, s32 argument);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SelectAnimation(struct Actor *actor, s32 argument);
+void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 u32 Random16(void);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
@@ -82,9 +74,9 @@ void Actor_StartScript(struct Actor *, const s32 *);
 s32 Animation_ApplyChildArgument(struct PlayerSprite *, s32);
 void Sound_PlayFar(s32 cue);
 void Func_08029810(void);
-s32 Func_08029838(struct Actor *object);
+s32 Func_08029838(struct Actor *actor);
 
-s32 Func_080298c0(struct Actor *object) {
+s32 Func_080298c0(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
   s16 angleOffsets[10];
@@ -106,36 +98,36 @@ s32 Func_080298c0(struct Actor *object) {
 
   heading = 0;
   count = 0;
-  cellX = object->x & 0xfff00000;
-  cellZ = object->z & 0xfff00000;
-  y = object->y;
-  terrainId = &object->terrainId;
+  cellX = actor->x & 0xfff00000;
+  cellZ = actor->z & 0xfff00000;
+  y = actor->y;
+  terrainId = &actor->terrainId;
   groundHere = Func_0802d45c(*terrainId, cellX, cellZ);
   groundAhead = Func_0802d45c(*terrainId, cellX, cellZ + 0xfff00000);
-  if (object->action != 0) {
-    if (object->targetX != 0x80000000)
+  if (actor->action != 0) {
+    if (actor->targetX != 0x80000000)
       goto done;
-    object->action = heading;
-    object->terrainHeight = groundHere;
+    actor->action = 0;
+    actor->terrainHeight = groundHere;
   }
-  if (CLIMBING(object) != 0) {
+  if ((s16)actor->unk66 != 0) {
     if (groundAhead < y) {
       s32 topZ = cellZ + 0xfff80000;
 
-      if (Func_0802d7b0(object->x, topZ, *terrainId, object->terrainHeight) ==
+      if (Func_0802d7b0(actor->x, topZ, *terrainId, actor->terrainHeight) ==
           2) {
-        object->y -= 0x10000;
+        actor->y -= 0x10000;
       } else {
-        Actor_SetMoveTarget(object, object->x, groundAhead, topZ);
-        object->action = 1;
-        CLIMBING(object) = heading;
+        Actor_SetMoveTarget(actor, actor->x, groundAhead, topZ);
+        actor->action = 1;
+        actor->unk66 = 0;
         goto done;
       }
     }
     if (groundHere > y) {
-      CLIMBING(object) = 0;
-      object->terrainHeight = groundHere;
-      object->motionFlags = 3;
+      actor->unk66 = 0;
+      actor->terrainHeight = groundHere;
+      actor->motionFlags = 3;
       goto done;
     }
 
@@ -143,96 +135,94 @@ s32 Func_080298c0(struct Actor *object) {
     // DEAD: the debug read of the held keys is never used.
     if (gDebugMode != 0)
       (void)*(volatile u32 *)&gInput.held;
-    object->speedLimit = 0x8000;
-    object->acceleration = 0x4000;
+    actor->speedLimit = 0x8000;
+    actor->acceleration = 0x4000;
     angle = gData_0802ec5c[(gInput.held >> 4) & 15];
     if ((u16)angle == 0xffff) {
       collision = 4;
     } else {
-      position.x = object->x;
-      position.y = collision;
-      position.z = collision;
+      position.x = actor->x;
+      position.y = 0;
+      position.z = 0;
       Vector_AddPolarOffset(0x80000, (u16)angle, &position);
-      position.y = object->y - position.z;
-      position.z = object->z;
-      Actor_SelectAnimation(object, 3);
-      testPosition.x = object->x;
-      testPosition.y = collision;
-      testPosition.z = collision;
+      position.y = actor->y - position.z;
+      position.z = actor->z;
+      Actor_SelectAnimation(actor, 3);
+      testPosition.x = actor->x;
+      testPosition.y = 0;
+      testPosition.z = 0;
       Vector_AddPolarOffset(0x80000, (u16)angle, &testPosition);
-      testPosition.y = object->y - testPosition.z;
-      testPosition.z = object->z;
-      if (Func_0802d87c(object, &testPosition))
+      testPosition.y = actor->y - testPosition.z;
+      testPosition.z = actor->z;
+      if (Func_0802d87c(actor, &testPosition))
         goto climb_blocked;
-      testPosition.x = object->x;
-      testPosition.y = collision;
-      testPosition.z = collision;
+      testPosition.x = actor->x;
+      testPosition.y = 0;
+      testPosition.z = 0;
       Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
-      testPosition.y = object->y - testPosition.z;
-      testPosition.z = object->z;
-      if (Func_0802d87c(object, &testPosition))
+      testPosition.y = actor->y - testPosition.z;
+      testPosition.z = actor->z;
+      if (Func_0802d87c(actor, &testPosition))
         goto climb_blocked;
-      testPosition.x = object->x;
-      testPosition.y = collision;
-      testPosition.z = collision;
+      testPosition.x = actor->x;
+      testPosition.y = 0;
+      testPosition.z = 0;
       Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
-      testPosition.y = object->y - testPosition.z;
-      testPosition.z = object->z;
-      if (Func_0802d87c(object, &testPosition))
+      testPosition.y = actor->y - testPosition.z;
+      testPosition.z = actor->z;
+      if (Func_0802d87c(actor, &testPosition))
         goto climb_blocked;
-      testPosition.x = object->x;
-      testPosition.y = collision;
-      testPosition.z = collision;
+      testPosition.x = actor->x;
+      testPosition.y = 0;
+      testPosition.z = 0;
       Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
-      testPosition.y = object->y - testPosition.z;
-      testPosition.z = object->z;
-      if (Func_0802d87c(object, &testPosition))
+      testPosition.y = actor->y - testPosition.z;
+      testPosition.z = actor->z;
+      if (Func_0802d87c(actor, &testPosition))
         goto climb_blocked;
-      testPosition.x = object->x;
-      testPosition.y = collision;
-      testPosition.z = collision;
+      testPosition.x = actor->x;
+      testPosition.y = 0;
+      testPosition.z = 0;
       Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &testPosition);
-      testPosition.y = object->y - testPosition.z;
-      testPosition.z = object->z;
-      if (!Func_0802d87c(object, &testPosition))
+      testPosition.y = actor->y - testPosition.z;
+      testPosition.z = actor->z;
+      if (!Func_0802d87c(actor, &testPosition))
         goto climb_moved;
     climb_blocked:
-      position.x = object->x;
-      position.y = object->y;
-      position.z = object->z;
+      position.x = actor->x;
+      position.y = actor->y;
+      position.z = actor->z;
       collision |= 1;
     }
   climb_moved:
     if (collision != 0) {
-      object->targetX = 0x80000000;
-      object->targetY = 0x80000000;
-      object->targetZ = 0x80000000;
-      object->velocityX = 0;
-      object->velocityZ = 0;
+      actor->targetX = 0x80000000;
+      actor->targetY = 0x80000000;
+      actor->targetZ = 0x80000000;
+      actor->velocityX = 0;
+      actor->velocityZ = 0;
     } else {
       s32 speed;
 
       heading = (s16)angle;
-      Actor_SetMoveTarget(object, position.x, position.y, position.z);
-      speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
-                        Iwram_MulQ16(object->velocityZ, object->velocityZ));
-      object->velocityX = collision;
-      object->velocityZ = collision;
+      Actor_SetMoveTarget(actor, position.x, position.y, position.z);
+      speed = FixedSqrt(Iwram_MulQ16(actor->velocityX, actor->velocityX) +
+                        Iwram_MulQ16(actor->velocityZ, actor->velocityZ));
+      actor->velocityX = 0;
+      actor->velocityZ = 0;
       Vector_AddPolarOffset(speed, (u16)heading,
-                            (struct FieldPosition *)&object->velocityX);
-      object->velocityY = -object->velocityZ;
-      object->velocityZ = collision;
+                            (struct FieldPosition *)&actor->velocityX);
+      actor->velocityY = -actor->velocityZ;
+      actor->velocityZ = 0;
     }
     // Every 16th frame, a bit of rubble drops beside the climber.
     if ((gFrameCount & 15) == 0) {
-      s32 frame = gFrameCount & 15;
-
-      spawn.x = object->x - Random16() * 6 + 0x30000;
-      spawn.y = object->y;
-      spawn.z = object->z;
+      spawn.x = actor->x - Random16() * 6 + 0x30000;
+      spawn.y = actor->y;
+      spawn.z = actor->z;
       effect = Func_08023220(0x11d, spawn.x, spawn.y, spawn.z);
       if (effect != NULL) {
-        effect->terrainHeight = object->terrainHeight;
+        effect->terrainHeight = actor->terrainHeight;
         sprite = effect->animation;
         Actor_StartScript(effect, gData_0802ed28);
         effect->update = Func_08029810;
@@ -240,58 +230,58 @@ s32 Func_080298c0(struct Actor *object) {
         if (collision == 0)
           Sound_PlayFar(596);
         effect->gravity = 0xa3d;
-        effect->velocityY = frame;
+        effect->velocityY = 0;
         effect->scaleX = 0x4ccc;
         effect->scaleY = 0x4ccc;
         if (sprite != NULL) {
           Animation_ApplyChildArgument(sprite, 2);
-          sprite->flags = frame;
+          sprite->flags = 0;
           sprite->priority = 0;
         }
       }
     }
-    Func_08029838(object);
+    Func_08029838(actor);
     goto done;
   }
 
   // On foot.
   collision = 0;
-  object->speedLimit = 0x10000;
-  object->acceleration = 0x4000;
+  actor->speedLimit = 0x10000;
+  actor->acceleration = 0x4000;
   angle = gData_0802ec5c[(gInput.held >> 4) & 15];
   if ((u16)angle == 0xffff) {
     collision = 4;
     goto counted;
   }
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  position.x = actor->x;
+  position.y = actor->y;
+  position.z = actor->z;
   Vector_AddPolarOffset(0x80000, (u16)angle, &position);
   if (gDebugMode != 0 && (gInput.held & 0x200)) {
     heading = (s16)angle;
     goto counted;
   }
-  if (!Func_0802d87c(object, &position)) {
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+  if (!Func_0802d87c(actor, &position)) {
+    testPosition.x = actor->x;
+    testPosition.y = actor->y;
+    testPosition.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
-    if (!Func_0802d87c(object, &testPosition)) {
-      testPosition.x = object->x;
-      testPosition.y = object->y;
-      testPosition.z = object->z;
+    if (!Func_0802d87c(actor, &testPosition)) {
+      testPosition.x = actor->x;
+      testPosition.y = actor->y;
+      testPosition.z = actor->z;
       Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
-      if (!Func_0802d87c(object, &testPosition)) {
-        testPosition.x = object->x;
-        testPosition.y = object->y;
-        testPosition.z = object->z;
+      if (!Func_0802d87c(actor, &testPosition)) {
+        testPosition.x = actor->x;
+        testPosition.y = actor->y;
+        testPosition.z = actor->z;
         Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
-        if (!Func_0802d87c(object, &testPosition)) {
-          testPosition.x = object->x;
-          testPosition.y = object->y;
-          testPosition.z = object->z;
+        if (!Func_0802d87c(actor, &testPosition)) {
+          testPosition.x = actor->x;
+          testPosition.y = actor->y;
+          testPosition.z = actor->z;
           Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &testPosition);
-          if (!Func_0802d87c(object, &testPosition)) {
+          if (!Func_0802d87c(actor, &testPosition)) {
             heading = (s16)angle;
             goto counted;
           }
@@ -311,40 +301,40 @@ s32 Func_080298c0(struct Actor *object) {
   }
   for (angleIndex = 0; angleIndex < count; angleIndex++) {
     heading = angleOffsets[angleIndex];
-    position.x = object->x;
-    position.y = object->y;
-    position.z = object->z;
+    position.x = actor->x;
+    position.y = actor->y;
+    position.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)heading, &position);
-    if (Func_0802d87c(object, &position))
+    if (Func_0802d87c(actor, &position))
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    testPosition.x = actor->x;
+    testPosition.y = actor->y;
+    testPosition.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)heading + 0x1000, &testPosition);
-    if (Func_0802d87c(object, &testPosition))
+    if (Func_0802d87c(actor, &testPosition))
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    testPosition.x = actor->x;
+    testPosition.y = actor->y;
+    testPosition.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)heading - 0x1000, &testPosition);
-    if (Func_0802d87c(object, &testPosition))
+    if (Func_0802d87c(actor, &testPosition))
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    testPosition.x = actor->x;
+    testPosition.y = actor->y;
+    testPosition.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)heading + 0x2000, &testPosition);
-    if (Func_0802d87c(object, &testPosition))
+    if (Func_0802d87c(actor, &testPosition))
       continue;
-    testPosition.x = object->x;
-    testPosition.y = object->y;
-    testPosition.z = object->z;
+    testPosition.x = actor->x;
+    testPosition.y = actor->y;
+    testPosition.z = actor->z;
     Vector_AddPolarOffset(0x80000, (u16)heading - 0x2000, &testPosition);
-    if (!Func_0802d87c(object, &testPosition))
+    if (!Func_0802d87c(actor, &testPosition))
       goto counted;
   }
-  position.x = object->x;
-  position.y = object->y;
-  position.z = object->z;
+  position.x = actor->x;
+  position.y = actor->y;
+  position.z = actor->z;
   collision |= 1;
   // Up against a face more than 8 pixels high: start climbing it.
   if ((gInput.held & 0x40) && groundAhead > y + 0x80000) {
@@ -352,33 +342,31 @@ s32 Func_080298c0(struct Actor *object) {
     cellZ = (position.z & 0xfff00000) + 0xfff80000;
 
     if (Func_080c8770(cellX, cellZ, 2)) {
-      object->motionFlags = 0;
-      object->y += 0x10000;
-      // Through the u16 field: through CLIMBING the store may alias the
-      // velocities, and the call tail cross-jumps into the climb down.
-      object->unk66 = 1;
-      object->velocityX = 0;
-      object->velocityY = 0;
-      object->velocityZ = 0;
-      Actor_SelectAnimation(object, 3);
+      actor->motionFlags = 0;
+      actor->y += 0x10000;
+      actor->unk66 = 1;
+      actor->velocityX = 0;
+      actor->velocityY = 0;
+      actor->velocityZ = 0;
+      Actor_SelectAnimation(actor, 3);
       goto done;
     }
   }
   // Down at a drop: climb down the face south of the cell.
   if (gInput.held & 0x80) {
-    cellX = (object->x & 0xfff00000) + 0x80000;
-    cellZ = (object->z & 0xfff00000) + 0x180000;
+    cellX = (actor->x & 0xfff00000) + 0x80000;
+    cellZ = (actor->z & 0xfff00000) + 0x180000;
 
     if (Func_0802d45c(*terrainId, cellX, cellZ) < y &&
         Func_080c8770(cellX, cellZ, 2)) {
-      object->motionFlags = 0;
-      Actor_SetMoveTarget(object, object->x, groundHere + 0xfffe0000, cellZ);
-      object->action = 1;
-      CLIMBING(object) = 1;
-      object->velocityX = 0;
-      object->velocityY = 0;
-      object->velocityZ = 0;
-      Actor_SelectAnimation(object, 3);
+      actor->motionFlags = 0;
+      Actor_SetMoveTarget(actor, actor->x, groundHere + 0xfffe0000, cellZ);
+      actor->action = 1;
+      actor->unk66 = 1;
+      actor->velocityX = 0;
+      actor->velocityY = 0;
+      actor->velocityZ = 0;
+      Actor_SelectAnimation(actor, 3);
       goto done;
     }
   }
@@ -395,59 +383,59 @@ counted:
       work->heldKeys = gInput.held;
     }
   }
-  Actor_SelectAnimation(object, 1);
+  Actor_SelectAnimation(actor, 1);
   if (collision != 0) {
-    object->targetX = 0x80000000;
-    object->targetY = 0x80000000;
-    object->targetZ = 0x80000000;
-    object->velocityX = 0;
-    object->velocityZ = 0;
+    actor->targetX = 0x80000000;
+    actor->targetY = 0x80000000;
+    actor->targetZ = 0x80000000;
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
     if (collision & 3) {
       s32 difference;
       u16 turn = angle;
 
-      difference = (s16)(turn - object->angle);
+      difference = (s16)(turn - actor->angle);
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)
         difference = -0x1000;
-      object->angle += difference;
+      actor->angle += difference;
     }
-    wakeTimer = (u8 *)object + 98;
+    wakeTimer = (u8 *)actor + 98;
     *wakeTimer = 0;
   } else {
     s32 speed;
 
-    Actor_SetMoveTarget(object, position.x, position.y, position.z);
-    speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
-                      Iwram_MulQ16(object->velocityZ, object->velocityZ));
-    object->velocityX = collision;
-    object->velocityZ = collision;
+    Actor_SetMoveTarget(actor, position.x, position.y, position.z);
+    speed = FixedSqrt(Iwram_MulQ16(actor->velocityX, actor->velocityX) +
+                      Iwram_MulQ16(actor->velocityZ, actor->velocityZ));
+    actor->velocityX = 0;
+    actor->velocityZ = 0;
     Vector_AddPolarOffset(speed, (u16)heading,
-                          (struct FieldPosition *)&object->velocityX);
-    wakeTimer = (u8 *)object + 98;
+                          (struct FieldPosition *)&actor->velocityX);
+    wakeTimer = (u8 *)actor + 98;
     if (*wakeTimer != 0)
       (*wakeTimer)--;
   }
-  // The retest reads through the object, not wakeTimer: that keeps its
+  // The retest reads through the actor, not wakeTimer: that keeps its
   // zero path from skipping it.
-  if (((u8 *)object)[98] == 0 && collision == 0) {
-    effect = Func_08023220(0x164, object->x, object->y, object->z - 0x20000);
+  if (((u8 *)actor)[98] == 0 && collision == 0) {
+    effect = Func_08023220(0x164, actor->x, actor->y, actor->z - 0x20000);
     if (effect != NULL) {
-      effect->terrainHeight = object->terrainHeight;
+      effect->terrainHeight = actor->terrainHeight;
       sprite = effect->animation;
       Actor_StartScript(effect, gData_0802ece0);
       effect->priorityFlags = 8;
       // Through a struct member: as a byte offset the store holds back the
       // stack read of collision after it.
       ((struct Unk_WakeActor *)effect)->unk63 = 100;
-      effect->motionFlags = collision;
+      effect->motionFlags = 0;
       Sound_PlayFar(596);
       if (sprite != NULL) {
         struct Unk_ClimbEventWork *work = Ram_HeapSlots->eventWork;
 
         Animation_ApplyChildArgument(sprite, 1);
-        sprite->flags = collision;
+        sprite->flags = 0;
         // DEAD: overwritten by the next line.
         sprite->priority = 2;
         sprite->priority = work->unkd4a & 3;
@@ -455,9 +443,9 @@ counted:
       *wakeTimer = 5;
     }
   }
-  Func_08029838(object);
+  Func_08029838(actor);
 
 done:
-  object->step++;
+  actor->step++;
   return 1;
 }

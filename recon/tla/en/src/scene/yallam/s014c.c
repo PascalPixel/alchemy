@@ -1,0 +1,67 @@
+#include "../../../../../../games/tla/src/scene/yallam/yallam.h"
+#include "version.h"
+
+// Japanese has no stop beside the leader.
+#if TLA_PATCH_1
+/// Stops the object (mode 2) when the leader is within 11 of it; otherwise
+/// lets it face object 10 or 9 by bit 0 of its action word and, failing that,
+/// the leader, forced when bit 1 is set and event word 352 or tile byte 4 is.
+s32 Func_0200014c(struct Actor *object) {
+  u8 *tiles = Ram_HeapSlots->windowTiles;
+  u8 *event = Ram_HeapSlots->eventWork;
+  struct Actor *leader;
+  s32 force = 0;
+
+  leader = Actor_GetById(gMainRoutineWork.currentOwner);
+
+  if (SceneActor_CalculateFixedPointDistance(&leader->x, &object->x) <= 11) {
+    u8 *state = &object->movementState;
+    /* FAKEMATCH(temporary): the call's argument copied before the barrier
+     * below; as object->movementState = force; Func_02002448(object, 2), 4 of
+     * 82 instructions differ in tla-en. */
+    struct Actor *arg = object;
+
+    /* FAKEMATCH(barrier): the state's address and the argument are both
+     * formed before the state is stored, as the native does; as above. */
+    asm("" : : "l"(arg), "l"(state));
+    *state = force;
+    Func_02002448(arg, 2);
+  } else {
+    struct Actor *target;
+    u16 *flags = (u16 *)&object->action;
+
+    if (*flags & 1)
+      target = Actor_GetById(10);
+    else
+      target = Actor_GetById(9);
+    if (Func_02000088(object, target, 24, 0) == 0) {
+      leader = Actor_GetById(gMainRoutineWork.currentOwner);
+      if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
+        force = 1;
+      Func_02000088(object, leader, 24, force);
+    }
+  }
+  return 0;
+}
+#else
+s32 Func_0200014c(struct Actor *object) {
+  u8 *tiles = Ram_HeapSlots->windowTiles;
+  u8 *event = Ram_HeapSlots->eventWork;
+  s32 force = 0;
+  struct Actor *target;
+  u16 *flags = (u16 *)&object->action;
+
+  if (*flags & 1)
+    target = Actor_GetById(10);
+  else
+    target = Actor_GetById(9);
+  if (Func_02000088(object, target, 24, 0) == 0) {
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+
+    if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
+      force = 1;
+    Func_02000088(object, leader, 24, force);
+  }
+  return 0;
+}
+#endif

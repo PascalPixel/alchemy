@@ -3,12 +3,12 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/alhafra_manor/entry.o"(.text)
-        "*/games/tla/src/scene/alhafra_manor/scene_tables.o"(.text)
-        "*/games/tla/src/scene/alhafra_manor/talk.o"(.text)
+        "*/recon/tla/raw/src/scene/alhafra_manor/scene_tables.o"(.text)
+        "*/recon/tla/raw/src/scene/alhafra_manor/talk.o"(.text)
         "*/games/tla/src/scene/alhafra_manor/scene_events.o"(.text)
-        "*/games/tla/src/scene/alhafra_manor/s0514.o"(.text)
+        "*/recon/tla/raw/src/scene/alhafra_manor/s0514.o"(.text)
         "*/games/tla/src/scene/alhafra_manor/prepare.o"(.text)
-        "*/games/tla/src/scene/alhafra_manor/s0658.o"(.text)
+        "*/recon/tla/raw/src/scene/alhafra_manor/s0658.o"(.text)
         "*/games/tla/src/scene/alhafra_manor/update.o"(.text)
         "*/games/tla/src/scene/alhafra_manor/import.o"(.text)
         "*/games/tla/src/scene/alhafra_manor/data.o"(.data)

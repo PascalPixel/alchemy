@@ -1,0 +1,158 @@
+#include "../../../../../../games/tla/src/scene/madra_interiors/madra_interiors.h"
+#include "scene_tables.h"
+
+void Func_020001b8(s32 actor) {
+  u16 facing = Actor_GetById(gMainRoutineWork.currentOwner)->angle;
+
+  if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
+    Func_02001f00(actor);
+  } else {
+    if (GameFlag_Test(0x8ff))
+      Func_02001e18((s32)MsgMadraInteriors149);
+    else if (GameFlag_Test(0x8ab))
+      Func_02001e18((s32)MsgMadraInteriors81);
+    else
+      Func_02001e18((s32)MsgMadraInteriors33);
+    Func_02001e30(actor, 0);
+  }
+}
+
+void Func_0200023c(void) {
+  Func_02001d50();
+  Func_02001eb8(0);
+  Actor_SetAngleToward(14, 4, 0);
+  Actor_Jump(14, 6, 20);
+  Actor_SetAngleToward(4, 14, 0);
+  Func_02001e18((s32)MsgMadraInteriors18);
+  Func_02001e30(14, 0);
+  ActorTurn(14, FACING_SOUTHEAST, 0);
+  Func_02001d58();
+}
+
+void Func_0200028c(void) {
+  s32 msg;
+
+  if (GameFlag_Test(0x98a)) {
+    if (GameFlag_Test(0x310))
+      msg = (s32)MsgMadraInteriors111;
+    else
+      msg = (s32)MsgMadraInteriors118;
+    Func_02001e18(msg);
+    Func_02001e30(10, 0);
+  } else {
+    if (GameFlag_Test(0x210)) {
+      Func_02001e18((s32)MsgMadraInteriors116);
+      Func_02001e30(10, 0);
+    } else {
+      Func_02001e18((s32)MsgMadraInteriors106);
+      Func_02001e30(10, 0);
+    }
+    FIELD_AT(Ram_HeapSlots->eventWork, u16, 346) = 1;
+  }
+}
+
+void Func_02000308(void) {
+  if (GameFlag_Test(0x98a)) {
+    if (GameFlag_Test(0x310)) {
+      Func_02001e18((s32)MsgMadraInteriors112);
+      Func_02001e30(11, 0);
+    } else {
+      Func_02001e18((s32)MsgMadraInteriors119);
+      Func_02001e30(11, 0);
+    }
+  } else if (GameFlag_Test(0x210)) {
+    Func_02001e18((s32)MsgMadraInteriors117);
+    Func_02001e30(11, 0);
+  } else {
+    Func_02001e18((s32)MsgMadraInteriors107);
+    Func_02001e30(11, 0);
+  }
+}
+
+void Func_02000368(void) {
+  if (GameFlag_Test(0x98a)) {
+    if (GameFlag_Test(0x310)) {
+      Func_02001e18((s32)MsgMadraInteriors113);
+      Func_02001e30(10, 0);
+    } else {
+      Func_02001e18((s32)MsgMadraInteriors120);
+      Func_02001e30(10, 0);
+    }
+  } else {
+    s32 flag = GameFlag_Test(0x210);
+    s32 msg = (s32)MsgMadraInteriors108;
+
+    if (flag) {
+      Func_02001e18(msg);
+      Func_02001e30(10, 0);
+    } else {
+      Func_02001e18(msg);
+      Func_02001e30(10, 0);
+    }
+  }
+}
+
+void Func_020003c8(void) {
+  if (GameFlag_Test(0x98a)) {
+    if (GameFlag_Test(0x310)) {
+      Func_02001e18((s32)MsgMadraInteriors114);
+      Func_02001e30(11, 0);
+    } else {
+      Func_02001e18((s32)MsgMadraInteriors121);
+      Func_02001e30(11, 0);
+    }
+  } else {
+    s32 flag = GameFlag_Test(0x210);
+    s32 msg = (s32)MsgMadraInteriors109;
+
+    if (flag) {
+      Func_02001e18(msg);
+      Func_02001e30(11, 0);
+    } else {
+      Func_02001e18(msg);
+      Func_02001e30(11, 0);
+    }
+  }
+}
+
+void Func_02000428(void) {
+  if (!FlagCheck(0x211)) {
+    GameFlag_SetBit(0x211);
+    Func_02001e18((s32)MsgUhhhnnnUhhhnnn2);
+    Actor_CommitPositionAndActivate(14, -12, 0);
+    FieldEvent_Wait(20);
+    Motion_SetVarCbAndRefresh(14, 2);
+    FieldEvent_Wait(20);
+    Func_02001e30(14, 0);
+    Func_02001e48(14, 265, 30);
+    FieldEvent_Wait(20);
+    Actor_CommitPositionAndActivate(14, 12, 0);
+    Actor_SetAngleToward(14, 4, 0);
+    Func_02001e30(14, 0);
+  } else {
+    Func_02001e18((s32)MsgMadraInteriors97);
+    Actor_SetAngleToward(14, 4, 0);
+    Func_02001e30(14, 0);
+  }
+}
+
+const u8 *Func_020004c4(void) {
+  if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
+    return gData_02002c9c;
+  if (gMainRoutineWork.entrance == 20)
+    return gData_02002bb8;
+  if (GameFlag_Test(0x8ff))
+    return gData_0200308c;
+  if (GameFlag_Test(0x8ab))
+    return gData_02002da4;
+  return gData_020028a0;
+}
+
+void Func_02000534(void) {
+  if (GameFlag_Test(0x8ab)) {
+    ActorPlace(26, PIXELS(888), PIXELS(8));
+  } else {
+    Func_02001d38(Actor_GetById(26), 242);
+    Actor_SetSingleChildFlags(Actor_GetById(26), 0);
+  }
+}

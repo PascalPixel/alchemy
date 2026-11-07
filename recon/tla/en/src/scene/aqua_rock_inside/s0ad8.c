@@ -1,0 +1,39 @@
+#include "../../../../../../games/tla/src/scene/aqua_rock_inside/local.h"
+
+void Func_02000ad8(void) {
+  Func_02003d24(106, 14, 14, 13, 81, 14);
+  Func_02003d24(44, 78, 14, 12, 17, 78);
+  Func_02003d1c(81, 14, 14, 13, 17, 14);
+  GameFlag_SetBit(0xa6a);
+}
+
+s32 Func_02000b24(s32 id, s32 value) {
+  struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct Actor *object = Actor_GetById(id);
+
+  if (object != 0) {
+    struct MapCell *cells = map->layers[0].cells;
+    struct MapCell *cell = &cells[(object->x >> 20) + (object->z >> 20) * 128];
+
+    cell->collisionCode = value;
+    cell->attributeB |= 0x80;
+  }
+}
+
+void Func_02000b5c(void) {
+  struct Actor *object = Actor_GetById(12);
+
+  Func_02003d1c_(64, 43, 1, 1, object->x >> 20, object->z >> 20);
+}
+
+void Func_02000b84(void) {
+  struct Actor *object = Actor_GetById(12);
+
+  Func_02003d1c_(64, 42, 1, 1, object->x >> 20, object->z >> 20);
+}
+
+void Func_02000bac(void) {
+  struct Actor *object = Actor_GetById(12);
+
+  Func_02003d1c_(64, 41, 1, 1, object->x >> 20, object->z >> 20);
+}

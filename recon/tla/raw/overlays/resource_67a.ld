@@ -4,7 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/apojii_islands_cave/entry.o"(.text)
         "*/games/tla/src/scene/apojii_islands_cave/scene_tables.o"(.text)
-        "*/games/tla/src/scene/apojii_islands_cave/s0054.o"(.text)
+        "*/recon/tla/raw/src/scene/apojii_islands_cave/s0054.o"(.text)
         "*/games/tla/src/scene/apojii_islands_cave/scene_events.o"(.text)
         "*/games/tla/src/scene/apojii_islands_cave/s0070.o"(.text)
         "*/games/tla/src/scene/apojii_islands_cave/prepare.o"(.text)

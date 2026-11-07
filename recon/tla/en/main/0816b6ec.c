@@ -1,6 +1,10 @@
-// Differ 12 of 609 (tla-en, 2026-11-06): allocation and scheduling only (frame
-// 0's segment pointer and the 32 trade r6 and r4, its stores order, and two
-// literal loads, one the vertex pointer before Render_AllocateModelList).
+// Differ 10 of 609 (tla-en, 2026-11-07): allocation and scheduling only (frame
+// 0's segment pointer and the 32 trade r6 and r4, its stores order, and the
+// vertex pointer loaded before Render_AllocateModelList, not after).
+// 2026-11-07: Task_Add and Task_Remove from task.h (s32, not void): 12 to 10.
+// No gain: head stores in other orders, 32 or the buffer in a local,
+// inner-scope i, j or vertices, vertices set after the list (18 to 366), 15
+// minutes permuted.
 // 2026-11-06, measured: i = 0 in both arms of the length (if-conversion then
 // keeps the native's two moves) with -(length + k * 24): 71 to 58; the task in
 // a local (transfer): 58 to 34; frame 0's pointer its own local (head): 30; the
@@ -47,6 +51,7 @@
 #include "iwram_call.h"
 #include "heap_release.h"
 #include "ram_buffer.h"
+#include "task.h"
 #include "types.h"
 
 struct ModelTexture {
@@ -108,8 +113,6 @@ void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
-void Task_Add(void (*func)(void), s32 order);
-void Task_Remove(void (*func)(void));
 void HeapSlot_Release(s32 slot);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
@@ -206,7 +209,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
   work->transferMode = 2;
   work->transferValue = 50;
   transfer = BattleEffect_ProcessPendingGraphicsTransfer;
-  Task_Add(transfer, 0xc80);
+  Task_Add(transfer, TASK_PASS_FRAME);
   yaw = 0;
   frames = 36;
   if (mode == 1 && effect->count > 4) {

@@ -896,12 +896,6 @@ BattleEffect_RunNereid:
 	.incbin "baserom.gba", 0x00148458, 0x000005fc
 	.section .rom.0014a812, "ax"
 	.incbin "baserom.gba", 0x0014a812, 0x00000002
-	.section .rom.0014a814, "ax"
-	.global BattleEffect_RunTargetMotes
-	.type BattleEffect_RunTargetMotes, %function
-	.thumb_func
-BattleEffect_RunTargetMotes:
-	.incbin "baserom.gba", 0x0014a814, 0x000006a8
 	.section .rom.0014b160, "ax"
 	.global BattleEffect_RunCurse
 	.type BattleEffect_RunCurse, %function
@@ -1110,12 +1104,6 @@ BattleEffect_RunFirePuppet:
 	.thumb_func
 BattleEffect_RunFume:
 	.incbin "baserom.gba", 0x0017c6b0, 0x00000584
-	.section .rom.0017d178, "ax"
-	.global BattleEffect_RunStarMine
-	.type BattleEffect_RunStarMine, %function
-	.thumb_func
-BattleEffect_RunStarMine:
-	.incbin "baserom.gba", 0x0017d178, 0x00000550
 	.section .rom.0017d728, "ax"
 	.balign 4
 	.global BattleEffect_RunRisingDragonEnemy

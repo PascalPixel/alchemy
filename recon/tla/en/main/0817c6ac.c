@@ -1,4 +1,6 @@
-// Near miss, differ 32 of 627 (tla-en, 2026-11-06): scheduling and allocation only, in three places: the
+// Differ 32 of 627 (tla-en, 2026-11-07).
+// 2026-11-07: radiusY in place with baseY copies, declaration orders, register, scrollU casts all 32 or worse; 10-min permute none better.
+// 2026-11-06: scheduling and allocation only, in three places: the
 // corners' setup (the listing zeroes i first and adds the wobble to height + half in place;
 // all 60 orders of those five statements measured, this one best), the 0x8000's second half
 // and the scrollU block's registers (frame in r4, caster in r1).

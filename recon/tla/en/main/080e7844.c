@@ -1,4 +1,4 @@
-// Differ 28 of 871 (tla-en, 2026-11-06): the caster takes r6 and the offset r7
+// Differ 28 of 871 (tla-en, 2026-11-07): the caster takes r6 and the offset r7
 // where the listing swaps them; the event work's pointer is loaded once before
 // the loop where the listing reloads it each pass; green's product sits in r5
 // against r3; one scheduling pair (i = 63 against the -13 mask's copy).
@@ -15,6 +15,11 @@
 // access through Ram_HeapSlots all measure worse. The lreg dump has the caster
 // at 6 refs over 50 insns, the offset 7 over 92, slots 5 over 98, so the
 // caster is allocated first.
+// 7 November: slots->eventWork read in the loop (the listing's reload) gives
+// slots and the offset their listing order but the caster then outranks both
+// (47); green through red as a reused temporary moves its product to r1 (28);
+// a sine local, do-while, goto loop and [i + 5] index measure worse; 7 minutes
+// of permuting found nothing under 28.
 // Earlier: near miss, differ 44 of 871 (tla-en, 2026-11-05); draft, differ 75
 // of 871, skeleton gap 31 (tla-en, 2026-11-01)
 // A field Psynergy cast 32 pixels before the caster:

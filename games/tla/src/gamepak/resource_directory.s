@@ -304,7 +304,7 @@ Resource_DirectoryTable:
 	resource FireSwirlSheet, BattleEffect_FireSwirlSheet
 	resource , BattleEffect_VioletLightningSheetB
 	resource FireBurstSheet, BattleEffect_FireBurstSheet
-	resource , BattleEffect_BlueCrescentSheet
+	resource BlueCrescentSheet, BattleEffect_BlueCrescentSheet
 	resource , BattleEffect_OverlayImageA
 	resource , BattleEffect_VioletMoteSheet
 	resource FireballSheet, BattleEffect_FireballSheet

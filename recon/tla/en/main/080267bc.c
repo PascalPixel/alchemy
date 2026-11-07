@@ -1,6 +1,8 @@
-// Differ 48 of 713 (tla-en, 2026-11-06).
-// Near miss: r4 and r6 swapped in the object loop, and the first two probes'
-// reload registers one step behind.
+// Differ 31 of 713 (tla-en, 2026-11-07).
+// 2026-11-07: onObject cleared before the step (r4 and r6 now right) and the
+// keys read through a pointer (the probes now match): 48 to 31. Left: the
+// onObject clear lands before the priorityFlags branch, and the pointer takes
+// sl where the original reloads gInput from the pool in the debug test.
 // Twin of The Broken Seal's Actor_UpdatePlayerControl
 // (games/tbs/src/field/field/player_control.c), script command 0x24 in both
 // games: the same 8-pixel step with five probes, the same six fallback
@@ -91,6 +93,7 @@ s32 Func_080267bc(struct Actor *object) {
   s32 onObject;
   struct Actor *other;
   struct EventWork *work;
+  struct InputState *input;
 
   movementAnimation = 2;
   collision = 0;
@@ -104,12 +107,14 @@ s32 Func_080267bc(struct Actor *object) {
     object->acceleration = 0xccc;
   }
 
-  angle = gData_0802ec5c[(gInput.held >> 4) & 15];
+  input = &gInput;
+  angle = gData_0802ec5c[(input->held >> 4) & 15];
   if ((u16)angle == 0xffff) {
     collision |= 4;
     goto counted;
   }
   collision = 0;
+  onObject = 0;
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
@@ -119,7 +124,6 @@ s32 Func_080267bc(struct Actor *object) {
 
     other = (struct Actor *)Ram_HeapSlots->scriptObjects;
     withinHalfCell = 0x7ffff;
-    onObject = 0;
     for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
       s32 delta;
       s32 dy;
@@ -146,7 +150,7 @@ s32 Func_080267bc(struct Actor *object) {
       goto counted;
     }
   }
-  if (gDebugMode != 0 && (gInput.held & 0x200))
+  if (gDebugMode != 0 && (input->held & 0x200))
     goto clear;
   if (!Func_0802d87c(object, &position)) {
     testPosition.x = object->x;

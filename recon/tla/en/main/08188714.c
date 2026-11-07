@@ -1,30 +1,36 @@
-// Measured 2026-11-05 (tla-en): differ 10 of 636.
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 28 of
-// 636 with a one-pass block and two empty asm the greedy device search
+// Differ 10 of 636 (tla-en, 2026-11-07).
+// 2026-11-07: the empty asm after the declarations did nothing and is gone;
+// statement orders, once-only blocks, a pixels local and the ring sums (and 10
+// permuter minutes) stay at 10: the ring loop loads &screen before the
+// multiply, and the jaw block loads the pixels early into r4 and clears i in
+// r0.
+//
+// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 28
+// of 636 with a one-pass block and two empty asm the greedy device search
 // placed (36 without them); the rest is the instruction order described
 // below.
 // Near miss: listing 636 instructions, draft 636, differ 66. ☀️ twin:
 // BattleEffect_RunDeathPlunge (effect.c, call order 0.675): the leap, the flip
 // and the flash ring are ☀️'s; ⚓️ added a second variant that bursts sparks and
-// spins the jaw quad of Triple Chomp (BattleEffect_RunTripleChomp) at the target. The native
-// frame (104) holds effect at sp+56, work 52, canvas 48, frame 44, the blitter
-// pair at 36 and 40, the target 32, the user's and the target's heights at 28
-// and 24, the target's screen position's address at 20 and the user's action
-// flags' at 16, frame - 56 at 12 and frame * 2 - 92 at 8; the texture is at
-// sp+60, the user's screen position at 68, the user's point at 80 and the
-// target's screen position at 92. Written from the listing on the ☀️ body
-// (2026-10-15, fx-n3): 102 at the first compile, with the instruction count and
-// the frame already the native's. The aggregate locals declared target screen,
-// point, screen, texture (the first declared takes the highest slot): 98. The
-// burst loop's sparks taken as &work->particles[i] (either loop; both: also
-// 76): 76. The jaw loop stepping angle before i: 66. Left (66 rows, about 30
-// pairs): the native issues a load one slot before the constant or address next
-// to it (the heap base before effect's spill, work before 0x700, the pooled
-// 0x1010 between the halves of BLDALPHA's address, the target before 0x91eb,
-// the stack loads before 0xab85 and shakeFrames' offset, the point's y and z
-// loads, the sheet offsets), and in the jaw block it stores the vertices before
-// the texture's pixels and clears i in r0. Tried: the texture's pixels stored
-// first or before the vertices: 186.
+// spins the jaw quad of Triple Chomp (BattleEffect_RunTripleChomp) at the
+// target. The native frame (104) holds effect at sp+56, work 52, canvas 48,
+// frame 44, the blitter pair at 36 and 40, the target 32, the user's and the
+// target's heights at 28 and 24, the target's screen position's address at 20
+// and the user's action flags' at 16, frame - 56 at 12 and frame * 2 - 92 at 8;
+// the texture is at sp+60, the user's screen position at 68, the user's point
+// at 80 and the target's screen position at 92. Written from the listing on the
+// ☀️ body (2026-10-15, fx-n3): 102 at the first compile, with the instruction
+// count and the frame already the native's. The aggregate locals declared
+// target screen, point, screen, texture (the first declared takes the highest
+// slot): 98. The burst loop's sparks taken as &work->particles[i] (either loop;
+// both: also 76): 76. The jaw loop stepping angle before i: 66. Left (66 rows,
+// about 30 pairs): the native issues a load one slot before the constant or
+// address next to it (the heap base before effect's spill, work before 0x700,
+// the pooled 0x1010 between the halves of BLDALPHA's address, the target before
+// 0x91eb, the stack loads before 0xab85 and shakeFrames' offset, the point's y
+// and z loads, the sheet offsets), and in the jaw block it stores the vertices
+// before the texture's pixels and clears i in r0. Tried: the texture's pixels
+// stored first or before the vertices: 186.
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -84,8 +90,7 @@ void *Resource_GetTableEntry(s32 id);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
-void EffectPosition_ProjectBattler(
-    s32 id, struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
@@ -93,7 +98,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void *Heap_AllocEwram(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -143,7 +148,6 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
   struct Model *model;
   void *vertices;
   s32 i;
-  __asm__("");
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -159,14 +163,16 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
                     Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
                     128);
     work->transferValue = 50;
-    BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
-                  BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
+    BattleEffect_LoadBlitter(
+        HEAP_SLOT_BLITTER,
+        BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
     REG_BLDALPHA = 0x1010;
   } else {
     work->transferMode = 2;
     work->transferValue = 75;
-    BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
-                  BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
+    BattleEffect_LoadBlitter(
+        HEAP_SLOT_BLITTER,
+        BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
   }
   work->transferMode = 2;
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
@@ -297,9 +303,10 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
           model->kind = 7;
           model->texture = &texture;
           model->vertices = vertices;
-  do {
-          texture.pixels = Ram_MapCellBuffer;
-  } while (0);
+          // A once-only block: it keeps the pixels store after the vertices.
+          do {
+            texture.pixels = Ram_MapCellBuffer;
+          } while (0);
           model->alpha = alpha;
           for (i = 0, angle = 0x2000; i != 2; angle += 0x4000, i++) {
             Render_ResetTransformState();
@@ -332,7 +339,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectArgument *effect) {
     }
     if (frame == 0) {
       Sound_PlayFar(136);
-  __asm__("");
+      /* FAKEMATCH(barrier): an empty asm after the leap sound; as plain C, 12
+       * of 636 instructions differ in tla-en. */
+      __asm__("");
       work->shakeFrames = 6;
     }
     if (frame == 53)

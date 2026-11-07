@@ -1,37 +1,53 @@
-// 2026-11-05: differ 20 of 747 (tla-en). A wrapper on the palette copy gains
-// 2. A one-pass round ball->variant++ and a barrier after the second blitter
-// build reach 12; what is left is sched2 order, so they stay out.
-// Draft, differ 32 of 747, skeleton gap 32 (tla-en, 2026-11-01)
+// Differ 6 of 747 (tla-en, 2026-11-07).
+// 2026-11-07: from 20 by ordinary forms: an empty once-only block before the
+// second blitter build (16), the last height as *(table + cell) (12),
+// ball->variant++ in a once-only block (8), the flip flags in a local (6).
+// Left: frames' stack load ahead of the ball->y store, y's ldrsh ahead of the
+// mode reload, ldrb r3, [r4, r6] for [r6, r4] in the flash draw. No gain: an
+// array for flight, other spellings of height and cell, blocks round the
+// ball's stores, 15 permuter minutes.
+// 2026-11-05: differ 20 of 747 (tla-en). A wrapper on the palette copy gains 2.
+// 2026-11-01: differ 32 of 747, skeleton gap 32 (tla-en).
 // Every register and branch now agrees; what is left is five sched2 orders, no
 // shape and no allocation. All five are the K2 load model's: a load or a pooled
 // chain issued ahead of a store or spill the listing does first.
 // - After the ball's ball->y store, frames' stack load goes before the store.
-// - ball->y's high halfword loads before the variant store; the listing does the
+// - ball->y's high halfword loads before the variant store; the listing does
+// the
 //   x store and the mode reload first.
 // - The flash draw: the table load, heights and the canvas reload.
 // - The bounce's preheader: the spill of size * 2 and its shift.
-// - The bolts' preheader: i, bolt and the texture address before the three model
+// - The bolts' preheader: i, bolt and the texture address before the three
+// model
 //   stores.
-// Tried: an empty do-while or asm("") before y gives 28, and one before the bolt
-// loop gives 26 (with a picture local set after it, every instruction but with r1
-// and r2 swapped, differ 52); the one in the arm leaves ldr r0 and ldr r1 swapped.
-// Five or more devices would not reach 0, so none is kept. Also no gain: locals
-// for size * 2 and size / 2, a union view of the halfword, s32 model fields.
-// What fixed the shape, so keep it:
-// - flight: x and frames are one 8-byte local. Its partial sets keep frames live
-//   into the else arm, which stops IF-CASE-1 and keeps both arms of if (mode == 0);
-//   the frame then has its slots (frames at sp 28, x at sp 24). As a pair
+// Tried: an empty do-while or asm("") before y gives 28, and one before the
+// bolt loop gives 26 (with a picture local set after it, every instruction but
+// with r1 and r2 swapped, differ 52); the one in the arm leaves ldr r0 and ldr
+// r1 swapped. Five or more devices would not reach 0, so none is kept. Also no
+// gain: locals for size * 2 and size / 2, a union view of the halfword, s32
+// model fields. What fixed the shape, so keep it:
+// - flight: x and frames are one 8-byte local. Its partial sets keep frames
+// live
+//   into the else arm, which stops IF-CASE-1 and keeps both arms of if (mode ==
+//   0); the frame then has its slots (frames at sp 28, x at sp 24). As a pair
 //   {frames, radius} it loses the hoisted radius >> 31 and the frame is 92.
 // - draw[2]: the unused word is sp 44.
-// - buffer is set once at the top and lives across calls, so no register survives
+// - buffer is set once at the top and lives across calls, so no register
+// survives
 //   for it and it is rematerialized at each use; 0x1b5a then takes ip.
-// - BUILD_BLITTER's do-while ends CSE's block, so the width and height tables stay
-//   in the flash loop, each in its own short-lived pseudo until cse2 merges them.
-// - The bounce has its own pointer dot, apart from the arrival's spark: r6 and r7.
-// - The two arms join after velocityX with a plain /, so the second divide reloads
+// - The empty do-while before the second blitter build ends CSE's block, so the
+// width and height tables stay
+//   in the flash loop, each in its own short-lived pseudo until cse2 merges
+//   them.
+// - The bounce has its own pointer dot, apart from the arrival's spark: r6 and
+// r7.
+// - The two arms join after velocityX with a plain /, so the second divide
+// reloads
 //   work where cross-jumping shares only the bl and its store.
-// - radius * radius / 2 stays in the loop test; variant is stepped by hand so the
-//   pool holds the +24 address; Task_Add, Task_Remove and Func_08196404 as declared.
+// - radius * radius / 2 stays in the loop test; variant is stepped by hand so
+// the
+//   pool holds the +24 address; Task_Add, Task_Remove and Func_08196404 as
+//   declared.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -64,7 +80,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -81,13 +98,14 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -95,7 +113,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -111,7 +129,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -129,12 +147,6 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
-
-// Builds the second blitter for one draw.
-#define BUILD_BLITTER(slot, width, height, flags, mode)                         \
-  do {                                                                         \
-    Func_08196404(slot, width, height, flags, mode);                           \
-  } while (0)
 
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_Data134;
@@ -195,19 +207,17 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   } else {
     REG_BLDALPHA = 0x810;
   }
-  BattleEffect_LoadBlitter(SLOT_BLITTER,
-                BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(
+      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   radius = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x800,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             buffer, 1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, buffer, 1, 1);
   if (mode == 1) {
     CopyWords((void *)BG_PLTT,
-                    Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC),
-                    128);
+              Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC), 128);
   }
 
   // The bolts' four pictures, 24 by 120, each in a 32-wide cell.
@@ -306,7 +316,10 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
     if (frame <= flight.frames) {
       s32 largest;
 
-      ball->variant++;
+      // Once-only block: keeps y's load after the variant store.
+      do {
+        ball->variant++;
+      } while (0);
       flight.x = ball->x >> 17;
       y = HI(ball->y);
       if (mode == 0) {
@@ -333,15 +346,20 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
         s32 cell = i & 3;
         s32 half = radius / 2;
         s32 angle = Random16();
-        s32 flashX =
-            flight.x + ((Trig_Sin(angle) * half) >> 16) - (gData_08197492[cell] >> 1);
+        s32 flashX = flight.x + ((Trig_Sin(angle) * half) >> 16) -
+                     (gData_08197492[cell] >> 1);
         s32 flashY =
             y + ((Trig_Cos(angle) * half) >> 16) - (gData_08197498[cell] >> 1);
+        s32 flags = 3 | Data_08198bee[Random16() & 3];
 
-        BUILD_BLITTER(188, 7, 7, 3 | Data_08198bee[Random16() & 3], 1);
+        // Once-only block: it ends CSE's block, so the width and height tables
+        // stay in the flash loop.
+        do {
+        } while (0);
+        Func_08196404(188, 7, 7, flags, 1);
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
             canvas, work->sheet + 0x800 + gData_08197486[cell], flashX, flashY,
-            gData_08197492[cell], gData_08197498[cell]);
+            gData_08197492[cell], *(gData_08197498 + cell));
         HeapSlot_Release(188);
       }
       BattleEffectKernels_IntegrateVector2(ball, 64, 0);
@@ -356,7 +374,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
 
           for (step = 0; step != 8; step++) {
             draw[0](canvas, sprites + gData_08197410[size - 1],
-                 HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
+                    HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(dot, 62, 0x200);
           }
           if (HI(dot->y) > 111) {

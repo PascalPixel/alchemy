@@ -2987,17 +2987,17 @@ main	rom_main_09	games/tla/src/battle_effect/f149bac	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f14a264	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/render_mode	.text
 main	rom_main_09	recon/tla/it/rom	.rom.0014a812	it
-main	rom_main_09	recon/tla/it/rom	.rom.0014a814	it
+main	rom_main_09	games/tla/src/battle_effect/f14a814	.text	it
 main	rom_main_09	recon/tla/fr/rom	.rom.0014a812	fr
-main	rom_main_09	recon/tla/fr/rom	.rom.0014a814	fr
+main	rom_main_09	games/tla/src/battle_effect/f14a814	.text	fr
 main	rom_main_09	recon/tla/es/rom	.rom.0014a812	es
-main	rom_main_09	recon/tla/es/rom	.rom.0014a814	es
+main	rom_main_09	games/tla/src/battle_effect/f14a814	.text	es
 main	rom_main_09	recon/tla/de/rom	.rom.0014a812	de
-main	rom_main_09	recon/tla/de/rom	.rom.0014a814	de
+main	rom_main_09	games/tla/src/battle_effect/f14a814	.text	de
 main	rom_main_09	recon/tla/ja/rom	.rom.0014a812	ja
-main	rom_main_09	recon/tla/ja/rom	.rom.0014a814	ja
+main	rom_main_09	games/tla/src/battle_effect/f14a814	.text	ja
 main	rom_main_09	recon/tla/raw/0814a812	.text	en
-main	rom_main_09	recon/tla/raw/0814a814	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f14a814	.text	en
 main	rom_main_09	games/tla/src/battle_effect/f14aebc	.text
 main	rom_main_09	recon/tla/raw/0814b160	.text	en
 main	rom_main_09	recon/tla/de/rom	.rom.0014b160	de
@@ -3311,12 +3311,7 @@ main	rom_main_09	recon/tla/fr/rom	.rom.0017c6ac	fr
 main	rom_main_09	recon/tla/it/rom	.rom.0017c6ac	it
 main	rom_main_09	recon/tla/ja/rom	.rom.0017c6b0	ja
 main	rom_main_09	games/tla/src/battle_effect/f17cc30	.text	en de es fr it ja
-main	rom_main_09	recon/tla/ja/rom	.rom.0017d178	ja
-main	rom_main_09	recon/tla/it/rom	.rom.0017d174	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0017d174	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0017d174	es
-main	rom_main_09	recon/tla/de/rom	.rom.0017d174	de
-main	rom_main_09	recon/tla/raw/0817d174	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f17d174	.text
 main	rom_main_09	games/tla/src/battle_effect/repeating_tilemap	.text
 main	rom_main_09	recon/tla/it/rom	.rom.0017d724	it
 main	rom_main_09	recon/tla/fr/rom	.rom.0017d724	fr

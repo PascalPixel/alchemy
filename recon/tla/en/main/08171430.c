@@ -1,25 +1,48 @@
-// Differ 34 of 828 (tla-en, 2026-11-06). A six-minute random permute (3 jobs,
-// 5077 candidates) found nothing below 34.
-// Left: camera->pos and frame << 8 swap slots sp+8 and sp+12 (22 rows), frame in r4 for r1 at the pillars, and the device's movs r1, #4 tie. camera is the tree's struct BattleCamera (same 34). Both pointers are gcse PRE reaching registers here (536, 537), numbered in hash-bucket order; their raw hashes differ by 6 (13950 and 13956), so no table size near 345 reverses them and moving the declarations of camera or frame costs 52 to 156. The listing's order fits camera->pos not being PRE'd but hoisted by loop.c, which takes the frame loop after the pillar loop; what keeps it from PRE is not found.
-// Measured 2026-11-05 (tla-en): differ 34 of 828. The ring entry is built in index in place, its first read goes through index, and top shares index (r5, as the listing; tag temporary on adoption); steps run ring, then i, and flash, glow, bolt, then i. Left: camera + 3 at sp+8 under frame << 8 at sp+12 (22 rows): the listing's slot says its pseudo is later than anything in the frame loop's source, as a gcse temporary would be, and 0817bd88 shows the same under its length << 5; a second occurrence of camera + 3 is not found (the look-at copied into the turn arms: 87; phase locals: 60, 168). Then frame in r4 against r1 at the pillars, and one tie on movs r1, #4. The dead read of shade stays tagged.
-// Measured 2026-11-05 (tla-en): differ 88: the model's mesh and vertices are typed pointers, not void.
-// Measured 2026-11-05 (tla-en): differ 92 of 828, counts equal: left, the first draw's x, is a local (r9).
-// Left: the ring's entry (the listing builds it in r5 from index in place), the preheader's three copies.
-// 2026-11-05: differ 121 of 828 (tla-en). The dead read of shade is in, giving
-// the frame of 116. Left: the preheader's three stack copies and the ring's
-// entry below.
-// Draft, differ 352 of 828, skeleton gap 50 (tla-en, 2026-11-01)
-// BattleEffect_RunLightSurge: same calls and control flow, draft 824
-// instructions. Nearly all of what is left comes from one cause: the listing
-// keeps shade at sp+24 and the draft keeps it in r1, so its frame is 112 bytes
-// where the listing's is 116 and every stack offset is off by 4.
+// Differ 28 of 828 (tla-en, 2026-11-07).
+// 2026-11-07: camera->pos and frame << 8 are PRE temporaries numbered in
+// hash-bucket order (camera+12 hash 150, frame<<8 156 of 345); 7+ unused locals
+// after i raise camera's regno so the slots swap (34 to 28, tagged). Left: the
+// preheader's RTL order (listing camera+12, &texture, then pos = &screen; here
+// pos first, so reload rotates r0..r2 differently: 16 rows), frame in r4
+// against r1 at the pillars (6), and the movs r1, #4 tie (2). Moving pos =
+// &screen into the loop: 60; reordering declarations instead of dummies: 52+.
+// Earlier: a six-minute random permute (3 jobs, 5077 candidates) found nothing
+// below 34. Left: camera->pos and frame << 8 swap slots sp+8 and sp+12 (22
+// rows), frame in r4 for r1 at the pillars, and the device's movs r1, #4 tie.
+// camera is the tree's struct BattleCamera (same 34). Both pointers are gcse
+// PRE reaching registers here (536, 537), numbered in hash-bucket order; their
+// raw hashes differ by 6 (13950 and 13956), so no table size near 345 reverses
+// them and moving the declarations of camera or frame costs 52 to 156. The
+// listing's order fits camera->pos not being PRE'd but hoisted by loop.c, which
+// takes the frame loop after the pillar loop; what keeps it from PRE is not
+// found. Measured 2026-11-05 (tla-en): differ 34 of 828. The ring entry is
+// built in index in place, its first read goes through index, and top shares
+// index (r5, as the listing; tag temporary on adoption); steps run ring, then
+// i, and flash, glow, bolt, then i. Left: camera + 3 at sp+8 under frame << 8
+// at sp+12 (22 rows): the listing's slot says its pseudo is later than anything
+// in the frame loop's source, as a gcse temporary would be, and 0817bd88 shows
+// the same under its length << 5; a second occurrence of camera + 3 is not
+// found (the look-at copied into the turn arms: 87; phase locals: 60, 168).
+// Then frame in r4 against r1 at the pillars, and one tie on movs r1, #4. The
+// dead read of shade stays tagged. Measured 2026-11-05 (tla-en): differ 88: the
+// model's mesh and vertices are typed pointers, not void. Measured 2026-11-05
+// (tla-en): differ 92 of 828, counts equal: left, the first draw's x, is a
+// local (r9). Left: the ring's entry (the listing builds it in r5 from index in
+// place), the preheader's three copies. 2026-11-05: differ 121 of 828 (tla-en).
+// The dead read of shade is in, giving the frame of 116. Left: the preheader's
+// three stack copies and the ring's entry below. Draft, differ 352 of 828,
+// skeleton gap 50 (tla-en, 2026-11-01) BattleEffect_RunLightSurge: same calls
+// and control flow, draft 824 instructions. Nearly all of what is left comes
+// from one cause: the listing keeps shade at sp+24 and the draft keeps it in
+// r1, so its frame is 112 bytes where the listing's is 116 and every stack
+// offset is off by 4.
 //
 // The spill is proven, its source is not. Slots run in pseudo order, so shade
 // fails global-alloc, which takes a call crossed, and its two reads each follow
 // a set in the final code. So at the life pass flow must see one of two things.
 // - A read in a later block that combine folds away (stale flow data):
-//   Func_08158ce0(4, 4 + ((shade & 255) >> 8)) leaves no code, 116 bytes, differ
-//   121, skeleton gap 25. That form is a device, so it is out.
+//   Func_08158ce0(4, 4 + ((shade & 255) >> 8)) leaves no code, 116 bytes,
+//   differ 121, skeleton gap 25. That form is a device, so it is out.
 // - A path through the pillar loop with no set: else if (frame <= 63) on the
 //   third arm spills shade too, differ 147, gap 33, but keeps its compare (831
 //   instructions). The test is always true there, so it is not the source
@@ -86,8 +109,7 @@ struct RenderModel {
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(
-    void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags);
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -107,12 +129,13 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -120,7 +143,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -136,7 +159,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -187,6 +210,17 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
   s32 i;
+  /* FAKEMATCH(dead): seven unused locals that raise camera's register
+   * number, so gcse's hash puts camera->pos after frame << 8 and their
+   * slots come out as the listing's; as no locals, 34 of 828 instructions
+   * differ in tla-en. */
+  s32 unused1;
+  s32 unused2;
+  s32 unused3;
+  s32 unused4;
+  s32 unused5;
+  s32 unused6;
+  s32 unused7;
   struct BattleCamera *camera;
   s16 savedYaw;
   struct SurgeTarget *target;
@@ -216,8 +250,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
-  BattleEffect_LoadBlitter(SLOT_BLITTER,
-                       BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(
+      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C4, work->sheet + 0x1000, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x4000, 0,
@@ -328,29 +362,27 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
       entry = (s16 *)index;
       left = x - half;
       index = y - size;
-      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cel,
-                                               left, index, half, size);
+      ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, cel, left, index, half,
+                                               size);
       HeapSlot_Release(188);
       BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                      COMPOSITE_CLIP_Y |
-                                                      COMPOSITE_FLIP_X));
+                                                          COMPOSITE_CLIP_Y |
+                                                          COMPOSITE_FLIP_X));
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, (void *)(*entry + cells),
                                                x, index, half, size);
       HeapSlot_Release(188);
       if (i > 15) {
         BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                        COMPOSITE_CLIP_Y |
-                                                        COMPOSITE_FLIP_Y));
-        ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas,
-                                                 (void *)(*entry + cells),
-                                                 x - half, y, half, size);
+                                                            COMPOSITE_CLIP_Y |
+                                                            COMPOSITE_FLIP_Y));
+        ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+            canvas, (void *)(*entry + cells), x - half, y, half, size);
         HeapSlot_Release(188);
         BattleEffect_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
-                                                        COMPOSITE_CLIP_Y |
-                                                        COMPOSITE_FLIP));
-        ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas,
-                                                 (void *)(*entry + cells), x, y,
-                                                 half, size);
+                                                            COMPOSITE_CLIP_Y |
+                                                            COMPOSITE_FLIP));
+        ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
+            canvas, (void *)(*entry + cells), x, y, half, size);
         HeapSlot_Release(188);
       }
     }
@@ -438,8 +470,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
         s32 x =
             ((center.x / 2 - 64) << 16) -
             (Data_08198c10[i] * sway / 0x10000) * Trig_Sin((s16)camera->yaw);
-        s32 z = -((Data_08198c10[i] * sway / 0x10000) *
-                  Trig_Cos((s16)camera->yaw));
+        s32 z =
+            -((Data_08198c10[i] * sway / 0x10000) * Trig_Cos((s16)camera->yaw));
         s32 growth;
         u32 scale;
 

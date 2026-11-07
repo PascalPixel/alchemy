@@ -1,37 +1,3 @@
-// Measured 2026-11-05 (tla-en): differ 8 of 755. Left: the two tables' indexed
-// reads have base and index swapped (ldrb r3, [r7, r1] where the listing has
-// [r1, r7]), which comes of reading them through the held locals, and two order
-// rows. What settled the rest: the two tables read through locals held by an
-// empty asm with an output (the widths then take r8 and the heights r4 with a
-// caller-save slot at sp+8), so mode takes r10; angle takes r2 with a
-// caller-save slot at sp+12; a one-pass block before y and before the blitter
-// call; frame, total, member, count in that order.
-
-// Draft, differ 338 of 755: BattleEffect_RunTargetMotes, the body of nine effect
-// kinds through the wrappers in games/tla/src/battle_effect/render_mode.c
-// (modes 0 to 7).
-
-// ☀️ twin: BattleEffect_RunTargetMotes (games/tbs/src/effect/effect.c), shape 0.898,
-// structure 0.907. ⚓️'s changes: the effect argument read directly; mode
-// 1 takes its palette from the Mars Djinn sheet (directory row 0x150) as
-// mode 7 does, where ☀️'s mode 1 takes the pink burst's; the blitters from
-// BattleEffect_LoadBlitter(104, 0x03) (additive) and (188, 0x13) (max), and the
-// tornado's glints through Func_08196404(188, 7, 7, flags, 1) directly;
-// the affine wave's HBlank arm BattleEffect_ArmBg2AffineHBlankDma and the transfer callback at
-// 0xc80. In mode 3's glint block the native ands the frame with the mode
-// register, CSE's reuse of the known mode 3 for the constant: the source
-// is frame & 3.
-
-// What is left is allocation (and two instructions: 753 of 755): the native
-// frame is 120 bytes where this draft's is 112, with two more spill slots (the
-// target's offset into the actor list and member * 8 held apart from the loop's
-// own start, angle and the glint height table), mode in r10 where agscc gives
-// it r8, and the rows that follow from that.
-
-// Tried (differ):
-// ☀️'s body with ⚓️'s names and changes                             364
-// greedy declaration-order scan: total, member and count first      338
-
 #include "types.h"
 #include "system.h"
 #include "io_reg.h"
@@ -49,10 +15,10 @@
 #include "fixed_math.h"
 #include "resource.h"
 
-static __inline__ s32 CopyWords_(void *destination, const void *source, s32 size) {
+static __inline__ s32 CopyWords_(void *destination, const void *source,
+                                 s32 size) {
   return Iwram_CopyWords(destination, source, size);
 }
-
 
 #define HEAP_BLITTER 104           // ☀️ HEAP_SLOT_BLITTER
 #define HEAP_BLITTER_ALTERNATE 188 // ☀️ HEAP_SLOT_BLITTER_ALTERNATE
@@ -93,13 +59,15 @@ extern u8 Data_08197a34[];   // ☀️ gTargetMotes_GlintFlips
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);                  // ☀️ ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // ☀️ ProcessPendingGraphicsTransfer
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 void BattleEffect_CountDownBattlerTints(void);
-void Func_08158ce0(s32 x, s32 y);          // ☀️ Camera_ApplyShake
+void Func_08158ce0(s32 randomMask, u32 shakeRange);
 void Func_081180e8(s32 phase);             // ☀️ BattleEvent_StartPhaseFar
 void Func_08118088(s32 actor, s32 motion); // ☀️ ApplyVariantMotionFar
-s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);    // ☀️ BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 flags); // ☀️ BattleEffect_BuildBlitter
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode); // ☀️ BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
@@ -114,13 +82,14 @@ void Sound_PlayFar(s32 cue);
 // rippling canvas: smoke, hearts, glowing orbs or vortex motes by mode,
 // in the mode's palette; mode 3 adds the tornado's glints, and mode 7 sends
 // the caster at the first target for the final blow.
-void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
+void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
+                                 u32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-s32 total;
+  s32 total;
   s32 member;
-s32 count;
+  s32 count;
   struct EffectPosition screen;
   s32 point[3];
   struct EffectPosition base;
@@ -222,41 +191,59 @@ s32 count;
       // Mode 3: two tornado glints a frame around the target, each drawn
       // with a blitter of its own, mirrored at random.
       if (mode == 3 && frame > member * 8 && frame < member * 8 + 32) {
-
-
-
-EffectPosition_ProjectScaledBattler(effect->actors[member], &base);
+        EffectPosition_ProjectScaledBattler(effect->actors[member], &base);
 
         for (i = 0; i != 2; i++) {
           s32 angle;
           s32 radius;
           s32 x;
-s32 y; const u8 *h; const u8 *w;
+          s32 y;
+          const u8 *h;
+          const u8 *w;
 
+          /* FAKEMATCH(barrier): the width and height tables held in w and h
+           * through empty asms with an output; as direct reads of
+           * gData_08197492 and gData_08197498, 362 of 755 instructions differ
+           * in tla-en. */
+          /* FAKEMATCH(temporary): the first reads go through w and h by
+           * statement expressions; as (w = gData_08197492)[frame & 3] and its
+           * twin, 4 of 755 instructions differ in tla-en. */
           angle = Random16() & 0xffff;
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
-((w = gData_08197492)[frame & 3] >> 1); __asm__("" : "=r"(w) : "0"(w));
-y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
-((h = gData_08197498)[frame & 3] >> 1); __asm__("" : "=r"(h) : "0"(h));
-do { } while (0); Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7,
+              (({
+                 w = gData_08197492;
+                 w;
+               })[frame & 3] >>
+               1);
+          __asm__("" : "=r"(w) : "0"(w));
+          y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
+              (({
+                 h = gData_08197498;
+                 h;
+               })[frame & 3] >>
+               1);
+          __asm__("" : "=r"(h) : "0"(h));
+          Func_08196404(HEAP_BLITTER_ALTERNATE, 7, 7,
                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                             Data_08197a34[Random16() & 3],
                         BLITTER_MAX);
           ((DrawRectangle)Ram_HeapSlots->unkb8[1])(
               canvas,
               work->sheet + gData_08197486[frame & 3] + RENDER_MODE_TORNADO, x,
-y + 16, w[frame & 3], h[frame & 3]);
+              y + 16, w[frame & 3], h[frame & 3]);
           HeapSlot_Release(HEAP_BLITTER_ALTERNATE);
         }
       }
 
       // An additive and a max blitter for this target's motes.
-      BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 | COMPOSITE_CLIP_X |
-                                      COMPOSITE_CLIP_Y);
+      BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_ADDITIVE << 4 |
+                                                 COMPOSITE_CLIP_X |
+                                                 COMPOSITE_CLIP_Y);
       draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
-      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                    BLITTER_MAX << 4 | COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
+      BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE, BLITTER_MAX << 4 |
+                                                           COMPOSITE_CLIP_X |
+                                                           COMPOSITE_CLIP_Y);
       draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
@@ -284,10 +271,7 @@ y + 16, w[frame & 3], h[frame & 3]);
               s32 cel = mote->variant / 4;
 
               EffectPosition_ProjectPoint((s32 *)mote, &screen);
-              /* FAKEMATCH(one-pass): the block ends CSE's block and parts the scheduler's rows; as a plain statement, 32 of 755 instructions differ in tla-en. */
-              do {
               screen.x >>= 1;
-              } while (0);
               if (mode == 5 || mode == 7)
                 draw[1](canvas, work->sheet + cel * 1600, screen.x - 20,
                         screen.y - 20, 40, 40);

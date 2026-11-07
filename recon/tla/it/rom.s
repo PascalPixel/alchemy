@@ -298,12 +298,6 @@ Item_GetEquipmentGroup:
 	.thumb_func
 Class_Determine:
 	.incbin "baserom.gba", 0x000b0150, 0x00000144
-	.section .rom.000ca6e4, "ax"
-	.global Func_080ca6e4
-	.type Func_080ca6e4, %function
-	.thumb_func
-Func_080ca6e4:
-	.incbin "baserom.gba", 0x000ca6e4, 0x00000004
 	.section .rom.000cb6c6, "ax"
 	.incbin "baserom.gba", 0x000cb6c6, 0x00000002
 	.section .rom.000cb91c, "ax"
@@ -344,13 +338,6 @@ Func_080d1760:
 	.incbin "baserom.gba", 0x000d183e, 0x00000002
 	.section .rom.000d1a16, "ax"
 	.incbin "baserom.gba", 0x000d1a16, 0x00000002
-	.section .rom.000d260c, "ax"
-	.balign 4
-	.global PartyInventory_GiveItem
-	.type PartyInventory_GiveItem, %function
-	.thumb_func
-PartyInventory_GiveItem:
-	.incbin "baserom.gba", 0x000d260c, 0x000001d4
 	.section .rom.000d2c90, "ax"
 	.balign 4
 	.global Func_080d2c9c
@@ -961,12 +948,6 @@ Func_0815f16c:
 	.thumb_func
 BattleEffect_RunJudgment:
 	.incbin "baserom.gba", 0x0016729c, 0x000017a4
-	.section .rom.0016aa08, "ax"
-	.global BattleEffect_RunPlumeEdge
-	.type BattleEffect_RunPlumeEdge, %function
-	.thumb_func
-BattleEffect_RunPlumeEdge:
-	.incbin "baserom.gba", 0x0016aa08, 0x00000438
 	.section .rom.0016aed2, "ax"
 	.incbin "baserom.gba", 0x0016aed2, 0x00000002
 	.section .rom.0016aeec, "ax"

@@ -361,12 +361,6 @@ Func_080cd808:
 	.incbin "baserom.gba", 0x000cd800, 0x00000114
 	.section .rom.000cdc6a, "ax"
 	.incbin "baserom.gba", 0x000cdc6a, 0x00000002
-	.section .rom.000cdc6c, "ax"
-	.global Func_080cdc74
-	.type Func_080cdc74, %function
-	.thumb_func
-Func_080cdc74:
-	.incbin "baserom.gba", 0x000cdc6c, 0x000000f4
 	.section .rom.000ce2fc, "ax"
 	.global Func_080ce31c
 	.type Func_080ce31c, %function
@@ -984,12 +978,6 @@ Func_0815f16c:
 	.thumb_func
 BattleEffect_RunJudgment:
 	.incbin "baserom.gba", 0x0016729c, 0x000017a4
-	.section .rom.0016aa08, "ax"
-	.global BattleEffect_RunPlumeEdge
-	.type BattleEffect_RunPlumeEdge, %function
-	.thumb_func
-BattleEffect_RunPlumeEdge:
-	.incbin "baserom.gba", 0x0016aa08, 0x00000438
 	.section .rom.0016aed2, "ax"
 	.incbin "baserom.gba", 0x0016aed2, 0x00000002
 	.section .rom.0016aeec, "ax"

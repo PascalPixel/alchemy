@@ -34,10 +34,15 @@ struct WorkA0 {
 
 #define WORK_A0 ((struct WorkA0 *)Ram_HeapSlots->unk84[7])
 
-/// Heap-slot 0xa4 workspace.
+/// Heap-slot 0xa4 workspace: eight chains, each hanging from an actor.
 struct WorkA4Slot {
-  s16 id;
-  u8 unk02[22];
+  s16 id; ///< the actor the chain hangs from
+  u8 unk02[2];
+  s32 swing;   ///< the arc's width
+  s32 spacing; ///< between links, in 16.16
+  u8 unk0c[4];
+  s32 phase; ///< where the swing is in its arc, an angle
+  s32 active;
   struct ChainLink *root; ///< the first link Func_080daecc hangs; NULL if free
 };
 

@@ -142,7 +142,7 @@ The set is frozen: three C generators built from the pinned `alchemy-gcc` submod
 - **W2** Work on a branch; `main` is the only long-lived branch; land with `make land`.
 - **W3** Follow pret where it settles a question, and never be stricter.
 - **W4** Far-off before near-match: work the function with the most left to match, with the structures it shares; among equals, what other unfinished code calls. Far-off work settles control flow, types and frames, which reach other functions and raise no compiler question. A near miss stopped by scheduling or allocation stays a draft (S4) and is not chased; it often falls to what the far-off work settles.
-- **W5** Before every commit, `make compare-editions` prints OK for all twelve editions; a tree that merges branches does so from a clean build.
+- **W5** Before every commit, `make compare-editions` prints OK for all twelve editions. Builds are incremental, as pret's are; CI builds every push from a clean clone.
 - **W6** A change to what counts, a rule, an option or routing lands as its own commit with DONE before and after.
 - **W7** Parallel work divides by owner; check a name is free (`git log --all -S`) before using it; commit only verified work.
 - **W8** Humanizing follows H2 toward H4 and keeps every edition byte-identical.

@@ -1,4 +1,8 @@
 // Differ 40 of 125 (tla-en, 2026-11-06).
+// Editions, 7 November: every edition measures the same 40 (ja 080eab14,
+// de 080f7bd0, es 080f3bc4, fr 080efbc4, it 080eabc4); each listing is 0x118
+// bytes, one function, and its instructions are the English ones, so the
+// difference is the register choice below, not an edition form.
 // Register choice only. Also 6 November: Func_080eace8's stepping (shapes,
 // cells += slot) 74; shapes += slot alone 58; the shape row built in two
 // steps (grid then index, or an index local) 40, unchanged; the shape store

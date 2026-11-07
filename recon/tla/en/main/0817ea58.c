@@ -1,4 +1,24 @@
-// Differ 66 of 3921 (tla-en, 2026-11-06).
+// Differ 58 of 3921 (tla-en, 2026-11-07).
+// Fourth round, 7 November: the map loop matches but for k = 0's place (2 rows)
+// with the row loop a do-while that sets w = 32 after the load (tagged dead): w is
+// then hoisted after table and 6, so its live length is shortest and the ranking
+// gives w r4, 6 r5, table r6 as listed. w = 32 at the top of the body hoists
+// first (66); after the if, cse folds the test (1708); k as j * 16 1722; k = 0
+// before j 105. Item 2 below is settled. Third phase: z = 0 before the if (66),
+// z -= 0x100 in the body (58, no change), ay stored through work->particles[i] (107).
+// Third round, 7 November: 25 minutes of permuter over the third phase's first
+// loop (seed 5811) and about 60 reshapings, none below 66. Map loop: w, 6 and
+// table rank by live length (50, 44, 42 insns, 6 refs each); w = 32 inside either
+// for still hoists first, and a table local, n[table] or *(table + n) cost 1706
+// (one reload more upstream). Third phase: the giv form (83) and p->ay = p->timer
+// (64, an extra timer read) both swap z and the stored zero (z r7, zero sl), and an
+// empty asm between the two inits does not stop find_equiv_reg (70).
+// Devices, 7 November: register s32 z asm("sl") 74 (no help: z is already sl; the
+// zero is still shared), on the giv form 136; a zero local pinned to r7 133; a
+// pinned r0..r3 zero copied into z 64 when z is set first (cse propagates it: z r6,
+// zero sl, the swap again), 95 the other way; asm("" : "+r") on z, i or the zero
+// 80 to 101. Map loop: w pinned to r4..r6 117 to 121 (w loses its REG_EQUIV and
+// the loop gains an entry test), w through asm("+r") 129. None kept.
 // Second round, 6 November: 40 minutes of permuter (seed 7102), nothing better.
 // Third phase: no z, p->z from i * -0x100 (83: z's giv and the stores' zero
 // share a register); z = 0 through an empty asm with an output before the loop
@@ -360,17 +380,20 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data134, work->frames, 0, 0);
       off = 0x700;
       n = 3;
-      w = 32;
       for (j = 0, k = 0; j != 10; j++, k += 16) {
-        for (i = 0, mp = (u8 *)(k * 2 + (s32)map); i != w; i++) {
+        i = 0;
+        mp = (u8 *)(k * 2 + (s32)map);
+        do {
           v = ((u8 *)work)[gData_08197410[n] + i + off];
+          /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load; as w = 32 before the loops (a for), 66 of 3921 instructions differ in tla-en. */
+          w = 32;
           if (v != 0) {
             v = v - j * 4 - 40;
             if (v <= 0)
               v = 1;
           }
           *mp++ = v;
-        }
+        } while (++i != w);
       }
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_ForestCanopyTiles);
       Iwram_Copy((void *)0x050003e0, src, 32);

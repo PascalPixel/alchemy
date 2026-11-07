@@ -14,7 +14,7 @@
 #include "main_routine_work.h"
 #include "tla_edition.h"
 #include "scene_ids.h"
-#include "edition.h"
+#include "version.h"
 
 #define Actor_SetPartAttribute                                                \
   ((void (*)(struct FieldActor *, s32))Actor_SetPartAttribute)
@@ -46,9 +46,9 @@ struct AerieEventWork {
   s32 mode;
 };
 
-// The international editions' form, which also saves this scene and entrance
-// 22, is still on the listing.
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+// The Japanese form; from patch 1, the form in s0a54.c also saves this scene
+// and entrance 22.
+#if !TLA_PATCH_1
 s32 VenusLighthouse_Start(void) {
   ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
   if (gMainRoutineWork.entrance == ENTRANCE_OPENING) {

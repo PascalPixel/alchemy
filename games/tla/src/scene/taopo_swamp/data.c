@@ -1,6 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
-#include "edition.h"
+#include "version.h"
 
 void Func_02000038(void);
 void Func_02000104(void);
@@ -414,7 +414,7 @@ s32 gData_020034e8[] = {
     2,
     (s32)0xffff000b,
     (s32)Func_020004c8,
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
+#if TLA_PATCH_1 /* Absent from the Japanese edition. */
     0x602,
     (s32)0xffff0040,
     (s32)Func_020010bc,

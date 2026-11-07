@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
-#include "edition.h"
+#include "version.h"
 
 /// The world map's event work, as far as the encounter events read it.
 struct EncounterWork {
@@ -16,7 +16,7 @@ void Func_02004d50(s32 a, s32 b);
 // Once the party has walked nine tenths of the encounter threshold, a coin
 // toss either requests the event's battle now or makes the party walk the
 // whole threshold first. The Japanese release has no render mode test.
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
 #define WORLD_MAP_TRY_ENCOUNTER(a, b)                                          \
   {                                                                            \
     struct EncounterWork *work;                                                \

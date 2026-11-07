@@ -14,7 +14,7 @@
 #include "main_routine_work.h"
 #include "tla_edition.h"
 #include "scene_ids.h"
-#include "edition.h"
+#include "version.h"
 
 #define Actor_SetPartAttribute                                                 \
   ((void (*)(struct FieldActor *, s32))Actor_SetPartAttribute)
@@ -27,14 +27,14 @@ struct AerieEventWork {
 };
 
 // The Japanese edition has no form of this function here.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
 s32 VenusLighthouse_Start(void) {
   struct MainRoutineWork *routine;
 
   routine = &gMainRoutineWork;
   ((struct AerieEventWork *)Ram_HeapSlots->eventWork)->mode = 0x204;
   if (routine->entrance == ENTRANCE_OPENING) {
-    // The international editions also save this scene and entrance 22.
+    // From patch 1 it also saves this scene and entrance 22.
     routine->savedScene = (s32)&SceneId_VenusLighthouse;
     routine->savedEntrance = 22;
     Import_EventStart();

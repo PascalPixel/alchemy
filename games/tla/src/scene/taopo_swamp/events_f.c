@@ -1,5 +1,5 @@
 #include "local.h"
-#include "edition.h"
+#include "version.h"
 
 void Func_02000f9c(s32 a, s32 id) {
   Actor_SetModeById(id, 2);
@@ -49,7 +49,7 @@ void Func_02001038(s32 a, s32 id) {
   }
 }
 
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
+#if TLA_PATCH_1 /* Absent from the Japanese edition. */
 void Func_020010bc(void) { Func_02002948(); }
 #endif
 

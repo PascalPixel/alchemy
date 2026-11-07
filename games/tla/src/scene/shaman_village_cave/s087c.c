@@ -3,7 +3,7 @@
 #include "ram_buffer.h"
 #include "call.h"
 #include "text/msg_ids.h"
-#include "edition.h"
+#include "version.h"
 #include "scene_tables.h"
 
 void FieldEvent_Wait();
@@ -103,7 +103,7 @@ void Func_0200087c(void) {
   FieldEvent_Wait(20);
   Func_02001190((s16)gMainRoutineWork.savedScene,
                 (s16)gMainRoutineWork.savedEntrance);
-#if LANGUAGE != LANGUAGE_JAPANESE
+#if TLA_PATCH_1
   Func_02001208(gMainRoutineWork.scene, gMainRoutineWork.entrance);
 #endif
   ((struct {

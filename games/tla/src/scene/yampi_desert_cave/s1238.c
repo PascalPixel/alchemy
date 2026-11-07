@@ -1,6 +1,6 @@
 #include "yampi_desert_cave.h"
 #include "actor.h"
-#include "edition.h"
+#include "version.h"
 
 extern const s16 gData_020019cc[];
 
@@ -51,7 +51,7 @@ void Func_02001238(s32 mode) {
 
       *counter = value;
     }
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
     GameFlag_ClearBit(0x270);
 #endif
   }

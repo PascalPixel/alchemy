@@ -1,5 +1,5 @@
 #include "types.h"
-#include "edition.h"
+#include "version.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "actor.h"
@@ -69,7 +69,7 @@ void Func_02000574(void) {
   Func_02004dc0();
   Func_02004c28();
   *(s16 *)work->unk15c = 0;
-#if LANGUAGE != LANGUAGE_JAPANESE
+#if TLA_PATCH_1
   work->exit = 0;
 #endif
   Func_02004df8(0x10000, 30);

@@ -3,7 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
-#include "edition.h"
+#include "version.h"
 #include "scene_tables.h"
 
 extern char SceneId_Ov678Room1, SceneId_Ov678Room2, SceneId_Ov678Room3,
@@ -42,7 +42,7 @@ void Func_02002084(s32 a);
 void Func_02002114(s32 a);
 void Func_02002828(void);
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
 s32 Func_02001774(void) {
   s32 scene = gMainRoutineWork.scene;
   u8 *map = (u8 *)Ram_HeapSlots->mapWork;

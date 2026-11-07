@@ -2,7 +2,7 @@
 #include "inventory.h"
 #include "call.h"
 #include "yallam_interiors.h"
-#include "edition.h"
+#include "version.h"
 #include "scene_tables.h"
 
 s32 Func_02000a90(void);
@@ -91,7 +91,7 @@ void Func_02000524(void) {
         Actor_GetById(14)->priorityFlags = 1;
         Actor_SetSpritePriority(14, 1);
         Actor_GetById(14)->priorityFlags |= 1;
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
         Func_020009f8(17, 0, 0);
 #endif
         GameFlag_SetBit(0x301);

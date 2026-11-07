@@ -1,6 +1,6 @@
 #include "scene.h"
 #include "actor.h"
-#include "edition.h"
+#include "version.h"
 #include "task.h"
 
 void Func_02002d40(void);
@@ -43,7 +43,7 @@ void Func_020035d8(void) {
     GameFlag_SetBit(0xa2a);
     GameFlag_ClearBit(0xa2b);
   }
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
   else if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Test(0xa29)) {
       scene = (s32)&SceneId_Ov661Room1;

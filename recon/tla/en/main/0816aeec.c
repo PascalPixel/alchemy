@@ -1,4 +1,19 @@
-// Differ 150 of 902 (tla-en, 2026-11-07).
+// Differ 140 of 902 (tla-en, 2026-11-07).
+// 2026-11-07, eleventh pass, 150 to 140, with a device: the native-like grid
+// (b, c and d as row counters from Q, a = i + column left unreduced, the quad
+// from (row * 15 + column) * 24 in the if block, so the row slots and quad
+// start match) plus Q pinned to r4 (register asm, a pin: needs
+// FAKEMATCH(pin) on adoption, or a milder device), the vertex from
+// (c - 16) * 4, the + 15 as v + 15, and quad[20] and quad[21] moved (the
+// permuter, 10 minutes). Without the pin this form is 401. The frame loop
+// now nearly matches; what is left is in the grid: the vertex starts from
+// (c << 2) - 64 rather than Q << 2 (a vertex from q is not reduced: q is a
+// hard register), the + 15 takes slot 8 and d ip (the native has them the
+// other way round), b and c are in r6 and r5, and the + 15 slot is 32
+// rather than 28. Barriers (asm "+r") on v, Q or the vertex start:
+// 766 to 963.
+// Before this pass: 150 of 902, with b read through a dead store to frames
+// (now gone) and the quad stepped from mesh + row * 15 * 24.
 // 2026-11-07, ninth pass, 158 to 150: the quad as a pointer stepped by 24 in
 // the column loop from mesh + row * 15 * 24, and d, vertex and quad[5] read
 // from v rather than i (an enumeration over i, v and row << 4 at each use).
@@ -370,44 +385,44 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   // The water's grid: 16 by 8 vertices, and a quad (two triangles) for
   // each cell but the last row and column.
   for (row = 0; row != WATER_ROWS; row++) {
-    u8 *quad = mesh + row * 15 * 24;
-    s32 d;
+    s32 b, c, d;
     s32 v = row << 4;
     s32 x = -60;
     s8 *cells = (s8 *)gMapCellBuffer;
 
+    // Device (needs FAKEMATCH(pin) on adoption): Q pinned to r4.
+    register s32 q asm("r4");
+    q = v;
     i = v;
-    d = v + 17;
+    b = q + 1;
+    c = q + 16;
+    d = q + 17;
 
     for (column = 0; column != WATER_COLUMNS;
-         column++, x += 8, d++, quad += 24) {
-      s8 *vertex = cells + (v + column) * 4;
-      s32 u = column * 8;
+         column++, x += 8, b++, c++, d++) {
+      s8 *vertex = cells + (c - 16) * 4;
       s32 a = i + column;
+      s32 u = column * 8;
 
       vertex[0] = column * 11 - 82;
       vertex[1] = 60;
       vertex[2] = row * 24 - 84;
       if (row <= 6 && column <= 14) {
-        s32 b = (frames = i) + column + 1;
-        /* FAKEMATCH(dead): b read through frames = i, a store the frame
-         * count overwrites; as i + column + 1, 154 of 902 instructions differ
-         * in tla-en. */
-        s32 c = i + column + 16;
+        u8 *quad = mesh + (row * 15 + column) * 24;
 
         quad[4] = x + 67;
         quad[6] = x + 67;
         quad[18] = x + 67;
-        quad[7] = (row << 4) + 15;
+        quad[7] = v + 15;
         quad[8] = u;
-        quad[9] = (row << 4) + 15;
+        quad[9] = v + 15;
         quad[16] = u;
-        quad[20] = u;
-        quad[5] = v;
-        quad[17] = (row << 4);
-        quad[19] = (row << 4);
-        quad[21] = (row << 4) + 15;
+        quad[21] = v + 15;
+        quad[5] = q;
+        quad[17] = q;
+        quad[19] = q;
         quad[0] = b;
+        quad[20] = u;
         quad[1] = d;
         quad[2] = c;
         quad[12] = a;

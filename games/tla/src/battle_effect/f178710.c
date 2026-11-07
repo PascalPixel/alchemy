@@ -1,4 +1,4 @@
-#include "edition.h"
+#include "version.h"
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -88,11 +88,11 @@ void Transform_Push(void);
 void Transform_Pop(void);
 
 // On every strike after the first, the target's motion goes to this percent of
-// its anchor's x.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define TARGET_ANCHOR_PERCENT 300
-#else
+// its anchor's x, lowered from patch 1.
+#if TLA_PATCH_1
 #define TARGET_ANCHOR_PERCENT 200
+#else
+#define TARGET_ANCHOR_PERCENT 300
 #endif
 
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.

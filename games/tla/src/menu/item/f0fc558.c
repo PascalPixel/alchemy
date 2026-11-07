@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "edition.h"
+#include "version.h"
 
 struct MenuResult {
   s32 ownerState;
@@ -46,12 +46,12 @@ s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
   combined += state->row;
   state->selectedIndex = combined;
 
-  // The Japanese release clears the info window and draws the name as a
-  // resource string.
-#if LANGUAGE == LANGUAGE_JAPANESE
-  WindowSprite_ClearListFar(window);
-#else
+  // The Japanese release clears the info window; from patch 1 it redraws the
+  // window's saved rectangle.
+#if TLA_PATCH_1
   WindowSprite_RedrawSavedRectFar(window);
+#else
+  WindowSprite_ClearListFar(window);
 #endif
   wait(1);
 
@@ -59,6 +59,7 @@ s32 Func_080fc558(s32 arg0, void *arg1, struct MenuResult *state) {
   if (menu->items[combined] != 0) {
     s32 masked = (menu->items[combined] & 0x1ff) + (s32)MsgItemPlainName;
 
+    // Japanese draws the name as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
     Text_DrawMessageFar(masked, menu->infoWindow, 0, 0);
 #else

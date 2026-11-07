@@ -1,5 +1,5 @@
 #include "types.h"
-#include "edition.h"
+#include "version.h"
 #include "ram_buffer.h"
 
 struct ItemMenuUseWork {
@@ -46,7 +46,8 @@ s32 ItemMenu_Use(void) {
     Sound_PlayFar(114);
     WindowSprite_ClearListFar(menu->infoWindow);
     InventoryMenu_ShowModalMessage(menu->messageOffset + MsgItemUseResult, result, result);
-#if LANGUAGE == LANGUAGE_JAPANESE
+    // Until patch 1, which closes the message's window instead.
+#if !TLA_PATCH_1
     WindowSprite_RedrawSavedRectFar(menu->infoWindow);
 #endif
     menu->completionFlag = 1;

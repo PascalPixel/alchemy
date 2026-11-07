@@ -2,9 +2,11 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "main_routine_work.h"
-#include "edition.h"
+#include "version.h"
 
-#if LANGUAGE == LANGUAGE_GERMAN
+// The mode of the message that an item went to another member: patch 2 (German
+// alone) changes it, and patch 3 drops the message.
+#if TLA_PATCH_2 && !TLA_PATCH_3
 #define ITEM_GIVEN_MODE 1
 #else
 #define ITEM_GIVEN_MODE 3
@@ -92,8 +94,7 @@ s32 PartyInventory_GiveItem(s32 item) {
       } else {
         MessageArgument_PushFar(item, 2);
         MessageArgument_PushFar(owner, 1);
-#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_FRENCH) &&         \
-    (LANGUAGE != LANGUAGE_ITALIAN)
+#if !TLA_PATCH_3
         FieldMessage_ShowFar((s32)&MsgItemGiven, ITEM_GIVEN_MODE);
 #endif
       }

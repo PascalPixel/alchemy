@@ -55,10 +55,10 @@ void Text_DrawStringInWindow(s32, s32, s32, s32);
 void Text_DrawNumberInWindow(s32, s32, s32, s32, s32);
 
 // Edition-specific x positions of the level and coin labels, in pixels.
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_SPANISH)
+#if (LANGUAGE == LANGUAGE_SPANISH)
 #define SUMMARY_LEVEL_X 64
 #define SUMMARY_COINS_X 56
-#elif (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_FRENCH)
+#elif (LANGUAGE == LANGUAGE_FRENCH)
 #define SUMMARY_LEVEL_X 59
 #define SUMMARY_COINS_X 56
 #elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_ITALIAN)
@@ -79,8 +79,7 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
     Window_DrawDividerLine(win, 0, 4, 13, 4);
     Text_DrawStringAtOffset(rec + 16, win, 0, 0);
     y = 0;
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                      \
-    (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
     Text_DrawStringAtOffset(gStatusMenu_LevelLetterString, win,
                               SUMMARY_LEVEL_X, 0);
 #else
@@ -101,7 +100,7 @@ void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
         (s32)Text_FormatPlayTime(*(s32 *)(rec + 32), (u8 *)buf), win, 48, 40);
     y = 48;
     Text_DrawNumberInWindow(*(s32 *)(rec + 36), 6, win, 0, y);
-#if (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_FRENCH)
+#if (LANGUAGE == LANGUAGE_FRENCH)
     // French uses the singular form for zero or one coin.
     if (*(u32 *)(rec + 36) > 1)
       Text_DrawCharacterAtOffset((s32)MsgCoins, win, SUMMARY_COINS_X, 48);

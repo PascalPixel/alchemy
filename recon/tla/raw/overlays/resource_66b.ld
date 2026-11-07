@@ -15,7 +15,7 @@ SECTIONS
         "*/resource_66b_overlay.o"(.text.x020081ea)
         "*/games/tla/src/scene/gondowan_cliffs/s01ec.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs/s03cc.o"(.text)
-        "*/resource_66b_overlay.o"(.text.x020083f8)
+        "*/games/tla/src/scene/gondowan_cliffs/s03f8.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs/s0584.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs/s0660.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs/s06f4.o"(.text)

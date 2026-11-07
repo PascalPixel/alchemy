@@ -1,3 +1,8 @@
+// Differ 4 of 410 (tla-en, 2026-11-07).
+// 2026-11-07: sched2 ranks 0x199a's lsls 102 against 101 for the frame and
+// variant loads (muls costs 4), so it goes ahead of them; operand order, casts,
+// u16/unsigned constants, a local for the constant or j * 0x199a, j % 2,
+// ring[j + i * 10] all stay 4; a phase local gives 42; permute 8 minutes, 4.
 // Measured 2026-11-05 (tla-en): differ 4 of 410. Left: one row: a multiply the
 // native issues later than alchemy-gcc does: sched2 ranks the chain into muls
 // too high (its cost of 4), so the constant or the multiply comes ahead of

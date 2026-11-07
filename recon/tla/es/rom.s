@@ -167,13 +167,6 @@ Func_0803c198:
 	.thumb_func
 Func_0803c274:
 	.incbin "baserom.gba", 0x0003c27c, 0x00000104
-	.section .rom.0003ec3c, "ax"
-	.balign 4
-	.global Menu_StepRight
-	.type Menu_StepRight, %function
-	.thumb_func
-Menu_StepRight:
-	.incbin "baserom.gba", 0x0003ec3c, 0x000001bc
 	.section .rom.0003efa6, "ax"
 	.incbin "baserom.gba", 0x0003efa6, 0x00000002
 	.section .rom.0003f232, "ax"
@@ -616,25 +609,12 @@ Func_080e68d0:
 	.thumb_func
 Func_080e7844:
 	.incbin "baserom.gba", 0x000f0838, 0x00000750
-	.section .rom.000f1070, "ax"
-	.global Func_080e807c
-	.type Func_080e807c, %function
-	.thumb_func
-Func_080e807c:
-	.incbin "baserom.gba", 0x000f1070, 0x00000250
 	.section .rom.000f17b8, "ax"
 	.global Func_080e87c4
 	.type Func_080e87c4, %function
 	.thumb_func
 Func_080e87c4:
 	.incbin "baserom.gba", 0x000f17b8, 0x00000220
-	.section .rom.000f3140, "ax"
-	.balign 4
-	.global Func_080ea14c
-	.type Func_080ea14c, %function
-	.thumb_func
-Func_080ea14c:
-	.incbin "baserom.gba", 0x000f3140, 0x00000674
 	.section .rom.000f37b4, "ax"
 	.global Func_080ea7c0
 	.type Func_080ea7c0, %function
@@ -988,12 +968,6 @@ BattleEffect_RunMercury:
 	.thumb_func
 BattleEffect_RunThor:
 	.incbin "baserom.gba", 0x00158dc8, 0x00000ee4
-	.section .rom.0015a110, "ax"
-	.global BattleEffect_RunBurstScene
-	.type BattleEffect_RunBurstScene, %function
-	.thumb_func
-BattleEffect_RunBurstScene:
-	.incbin "baserom.gba", 0x0015a110, 0x000008d4
 	.section .rom.0015b434, "ax"
 	.global Func_0815b434
 	.type Func_0815b434, %function

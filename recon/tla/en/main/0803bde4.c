@@ -1,4 +1,11 @@
-// Near miss, differ 2 of 292 (tla-en, 2026-10-31): one row of scheduling
+// Differ 2 of 292 (tla-en, 2026-11-07).
+// 2026-11-07: measured 4 (the call's argument copies ran ahead of the y
+// load); a once-only block around the y store (permuter) gives 2 with plain
+// sprite->y. Left: mov r0, r8 lands after the index store, where the native
+// has it between the y load and store; blocks around the index store or the
+// call, a list local and a cellY temporary measured 4, u8 index 36, and 11
+// more permuter minutes found nothing.
+// Earlier (2026-10-31), differ 2 of 292: one row of scheduling
 // remains, with no device. The lsls's priority is the lineSpacing load's
 // plus 3 and the store's at most plus 2 (with a true memory dependence), so
 // no form of these same instructions ties them. Measured on 2026-10-31:
@@ -14,9 +21,6 @@
 // assignments after the declarations, width first: differ 16, 40, 156, 2
 // and 2), and a 4-minute permuter run (about 10,000 candidates) found
 // nothing better.
-// The cell's y is a byte read as *&sprite->y: through the cell's struct
-// (as sprite->y, differ 6) the load passes the stores of the output's x
-// and next, which the native keeps it behind.
 // Draft, differ 8 of 292 in tla-en under -mthumb-slow-loads (2026-10-26). No
 // single empty asm, one-pass block, wrapping block or swap of neighbouring
 // statements brings it closer (device search).
@@ -156,8 +160,10 @@ s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
     output->sentinel = 253;
     output->x = sprite->x;
     output->next = NULL;
-    // As *&, the load stays behind the stores of x and next.
-    output->y = *&sprite->y;
+    // Once-only: the block keeps the load behind the stores of x and next.
+    do {
+      output->y = sprite->y;
+    } while (0);
     output->index = index;
     WindowSprite_AppendToList(&window->output, output);
   }

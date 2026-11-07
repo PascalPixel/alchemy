@@ -1,10 +1,9 @@
-// Near miss, differ 8 of 596 (tla-en, 2026-10-31; 598 before): what remains is
-// sched2's order at three spots. After the ldrsh of pictureTile the native
-// loads the 0x06010000 pool word (which reuses the ldrsh's r3) before
-// `movs r4, #200`; before both BattleEffect_UpdateGrowingParticleSprite calls
-// it moves r0 (sprite) before r1 (particle), here r1 first since r0's move
-// follows the ldrsh that clobbers r0; and for the indirect copy it moves r1 =
-// 32 before r0 = picture.
+// Differ 4 of 596 (tla-en, 2026-11-07); 8 on 2026-10-31, then 4; 14 min of permuter
+// and spelling, scope and order reshapes found nothing. Two sched2 ties remain:
+// the native loads the 0x06010000 pool word into r3 before `movs r4, #200`
+// (here the ldrsh's anti-dependence on r3 makes the independent movs win),
+// and for the indirect copy it moves r1 = 32 before r0 = picture (here both
+// have three dependents, so RTL order puts r0 first).
 // The frame callback of Func_080e68d0's effect, a state machine on its phase
 // (0x1928) and timer (0x192a) in one of four modes (0x1938). Mode 0: the
 // second object appears full width, the first takes mode 3 and rises for 16

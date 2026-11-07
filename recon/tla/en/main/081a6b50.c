@@ -1,5 +1,8 @@
-// Measured 2026-11-05 (tla-en): differ 4 of 360. A one-pass block around
-// offsetX and offsetY gives 2: str r6 ahead of adds r3, #8 is all that is left.
+// Differ 2 of 360 (tla-en, 2026-11-07).
+// 2026-11-07: a once-only block around offsetX and offsetY, 4 to 2; the listing
+// stores rows between "adds r2, r3, #6" and "adds r3, #8" (the block's loop
+// note keeps it ahead; a block over all four loads puts it after). Spellings,
+// types, orders and 14 permuter minutes found nothing better.
 // Draft, differ 27 of 360, skeleton gap 9 (tla-en, 2026-11-01)
 // A frame callback of the intro (its state in heap slot 43, 0x030000ac): clears
 // OAM, then in phase 0 steps an animation through gData_081a8378 along the path
@@ -120,8 +123,11 @@ void Func_081a6b50(void) {
     }
     tile = gData_081a8378[logo->frame];
     rows = gData_081a8378[logo->frame + 1];
-    offsetX = gData_081a8378[logo->frame + 3];
-    offsetY = gData_081a8378[logo->frame + 4];
+    // A once-only block: its loop notes order the offset loads as the listing.
+    do {
+      offsetX = gData_081a8378[logo->frame + 3];
+      offsetY = gData_081a8378[logo->frame + 4];
+    } while (0);
     left = x + offsetX - 28;
     top = gData_081a84e6[logo->step + 1] + offsetY;
     for (row = 0; row < rows; row++) {

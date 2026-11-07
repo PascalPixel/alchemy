@@ -1,9 +1,7 @@
-// Near miss, differ 4 of 548 (tla-en, 2026-11-06): only where the entrance load
-// sits. The native has movs r6, #18; ldrsh r1, [r0, r6] between the
-// Data_02000500 address load and its store; here the same two instructions
-// follow the scene load. Reading the entrance before the store (first, second
-// or third) puts the flag's address and the two offsets in other registers.
-// Earlier: differ 47 of 548 (2026-11-05), differ 127 of 548 (2026-11-01).
+// Matches: differ 0 of 548 (tla-en, 2026-11-07).
+// History: Data_02000500 read as a struct (Unk_02000500) lets sched2 lift the
+// entrance load above its store, closing the last 4 (2026-11-07); earlier
+// differ 4 (11-06), 47 (11-05), 127 (11-01).
 // Runs the world map screen (mode 0 to look, nonzero to choose a destination)
 // until A or B. In event mode 3 the field stays loaded: the map work's sixteen
 // animation flags are set aside and the screen is drawn over it (a nonzero
@@ -27,13 +25,12 @@
 // clamp keeps zero and the limits in locals set before the scroll stores. Three
 // sets of input and the two of wayZ are plain C but unusually
 // shaped: an adoption should decide whether any of them is a device (S2).
-// The choice arms, measured 2026-11-06: gMainRoutineWork and Data_02000500 are
-// each a pointer local set once at the top; they get no register, so reload
-// rebuilds each address where it is used, in the native's rotating registers
-// (r6 and r1, then r2 and r4; Data_02000500 in r2, then r6). The scene reaches
-// r0 through r3 because one local carries the flag and then the scene (tagged);
-// B's -1 goes through a local (tagged). The empty asm and the hoisted -1 the
-// 11-05 draft used are gone.
+// The choice arms: gMainRoutineWork and Data_02000500 are each a pointer local
+// set once at the top; they get no register, so reload rebuilds each address
+// where it is used, in the native's rotating registers. Data_02000500 is a
+// struct, not a bare s16: a bare s16 store conflicts with the place's fields
+// and keeps the entrance load after it (4 differ). B's -1 goes through a local
+// (tagged).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -87,7 +84,11 @@ extern s32 Data_0202a64c;
 extern s32 Data_0202a650;
 extern s32 Data_0202a630;
 extern s32 Data_0202a634;
-extern s16 Data_02000500;
+struct Unk_02000500 {
+  s16 unk00;
+};
+
+extern struct Unk_02000500 Data_02000500;
 extern char MsgNotOnMap;
 
 void ObjectTable_Snapshot(void);
@@ -122,7 +123,6 @@ s32 Func_080ed2a4(s32 mode) {
   struct WorldMapWork *world = &gWorldMapWork;
   struct MapAnimation *layer;
   struct WorldMapPlace *place;
-  s32 entrance;
   u32 *tiles;
   u32 tile;
   s32 row;
@@ -140,7 +140,7 @@ s32 Func_080ed2a4(s32 mode) {
   s32 limitX;
   s32 limitZ;
   s32 value;
-  s16 *data02000500 = &Data_02000500;
+  struct Unk_02000500 *data02000500 = &Data_02000500;
   struct WorldMapChoice *routine = (struct WorldMapChoice *)&gMainRoutineWork;
 
   world->mode = mode;
@@ -161,12 +161,13 @@ s32 Func_080ed2a4(s32 mode) {
     wait(1);
     ((struct MapViewWork *)map)->picturePending = 1;
     do {
-      /* FAKEMATCH(one-pass): the form kept; as a plain statement, 16 of 548 instructions differ in tla-en. */
+      // A once-only block: as a plain statement, 16 of 548 instructions differ.
       blend = REG_BLDALPHA;
     } while (0);
   } else {
     do {
-      /* FAKEMATCH(one-pass): the form kept; as a plain statement, 281 of 548 instructions differ in tla-en. */
+      // A once-only block: as a plain statement, 281 of 548 instructions
+      // differ.
       event->viewCenter->movementState = 1;
     } while (0);
     savedDelay = event->delay;
@@ -299,12 +300,8 @@ s32 Func_080ed2a4(s32 mode) {
         place = FlagEntries_GetTable();
         place += world->shown;
         routine->unk2be = (s32)&SceneId_Ov64a;
-        /* FAKEMATCH(temporary): the form kept; as *data02000500 = place->flag and Func_080ca368(place->scene, entrance), 139 of 548 instructions differ in tla-en. */
-        value = place->flag;
-        *data02000500 = value;
-        value = place->scene;
-        entrance = place->entrance;
-        Func_080ca368(value, entrance);
+        data02000500->unk00 = place->flag;
+        Func_080ca368(place->scene, place->entrance);
         goto done;
       }
       if (input->repeat & 2) {
@@ -312,8 +309,9 @@ s32 Func_080ed2a4(s32 mode) {
           routine->unk2be = 0xffff;
           {
             s32 none = -1;
-            /* FAKEMATCH(temporary): the form kept; as *data02000500 = -1, 44 of 548 instructions differ in tla-en. */
-            *data02000500 = none;
+            /* FAKEMATCH(temporary): the form kept; as data02000500->unk00 = -1,
+             * 40 of 548 instructions differ in tla-en. */
+            data02000500->unk00 = none;
           }
         }
         goto done;

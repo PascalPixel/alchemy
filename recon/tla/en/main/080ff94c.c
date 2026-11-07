@@ -1,17 +1,11 @@
-// Near miss, differ 4 of 239 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 8 of 239 in tla-en. First difference: this issues `str r3, [r1, #24]` earlier
-// (row 21) than the native does (row 23). A one-pass block around
-// `Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 15);` measured 4.
-// No single empty asm or one-pass block reaches 0.
-// Near miss, differ 14 of 239: the psynergy menu's description page (the
-// selected ability's description and where it can be used, then each row's
-// element icon and highlight), ☀️'s PsynergyMenu_DrawRangePage in
-// games/tbs/src/menu/menu.c, with ⚓️'s work-block offsets (info window 0x30,
-// list 0x1c4) and its use test on the action's byte 6. Instruction order
-// only: the selected index's store, the 0x3fff mask's first moves and the
-// window argument's move each sit one or two slots from the listing's.
+// Matches: differ 0 of 239 (tla-en, 2026-11-07).
+// History: 14, 8, then 4 with a one-pass block; prototypes for the far calls
+// (the info window as a pointer) in place of implicit declarations reach 0.
+// The psynergy menu's description page (the selected ability's description
+// and where it can be used, then each row's element icon and highlight), ☀️'s
+// PsynergyMenu_DrawRangePage in games/tbs/src/menu/menu/status.c, with ⚓️'s
+// work-block offsets (info window 0x30, list 0x1c4) and its use test on the
+// action's byte 6.
 #include "types.h"
 #include "battle_type.h"
 #include "ram_buffer.h"
@@ -29,7 +23,7 @@ struct MenuResult {
 // The psynergy menu work block, as this function reads it.
 struct PsynergyListWork {
   u8 unk000[0x30];
-  s32 infoWindow;
+  void *infoWindow;
   u8 unk034[0x190];
   u16 psynergies[32];
 };
@@ -44,6 +38,10 @@ extern u8 Msg04164[]; // the same text again (MsgUsableAnywhere)
 struct BattleAct *BattleAction_Get(s32 action);
 void Window_Commit(s32 window);
 
+void WindowSprite_RedrawSavedRectFar(void *);
+void Text_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
+void Window_ClearInteriorTilesFar(s32, s32, s32, s32, s32);
+void Render_SetTilemapFlagRect(s32, s32, s32, s32, s32, s32);
 void Window_SetTilemapEntryFar(s32, s32, s32, s32, s32);
 
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
@@ -55,15 +53,15 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 
   menu = (struct PsynergyListWork *)Ram_HeapSlots->menuRuntime;
   state->selectedIndex = state->page * 5 + state->row;
-  WindowSprite_RedrawSavedRectFar((s32)menu->infoWindow);
+  WindowSprite_RedrawSavedRectFar(menu->infoWindow);
   wait(1);
   if (menu->psynergies[state->selectedIndex] != 0) {
     Text_DrawCharacterAtOffsetFar(
         (menu->psynergies[state->selectedIndex] & ACTION_ID_MASK) +
             (s32)&Msg02181,
         (s32)menu->infoWindow, 0, 0);
-    ability =
-        BattleAction_Get(menu->psynergies[state->selectedIndex] & ACTION_ID_MASK);
+    ability = BattleAction_Get(menu->psynergies[state->selectedIndex] &
+                               ACTION_ID_MASK);
     Window_ClearInteriorTilesFar(window, 0, 96, 224, 104);
     row = 0;
     if (ability->unk04[2] != 0 || (ability->flags & 0x40) != 0) {
@@ -86,8 +84,8 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     if (row == state->row) {
       ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
       if (ability->element != 4) {
-        Window_SetTilemapEntryFar(window, ability->element + 1, 24,
-                                    row * 2 + 2, 0);
+        Window_SetTilemapEntryFar(window, ability->element + 1, 24, row * 2 + 2,
+                                  0);
         Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 14);
         Render_SetTilemapFlagRect(window, 25, row * 2 + 2, 3, 1, 14);
       } else {
@@ -96,11 +94,9 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
     } else {
       ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
       if (ability->element != 4) {
-        Window_SetTilemapEntryFar(window, ability->element + 1, 24,
-                                    row * 2 + 2, 4);
-  do {
+        Window_SetTilemapEntryFar(window, ability->element + 1, 24, row * 2 + 2,
+                                  4);
         Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 15);
-  } while (0);
         Render_SetTilemapFlagRect(window, 25, row * 2 + 2, 3, 1, 15);
       } else {
         Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 19, 1, 15);

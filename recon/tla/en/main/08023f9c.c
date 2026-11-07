@@ -1,4 +1,6 @@
-// Draft, differ 8 of 875, skeleton gap 8 (tla-en, 2026-11-01)
+// Differ 4 of 875 (tla-en, 2026-11-07).
+// 2026-11-07: two of 2026-11-01's three swaps are gone with no source change;
+// reshaping, an empty asm and 14 permuter minutes left the third.
 // Written from The Broken Seal's Actor_UpdateAllThumb
 // (games/tbs/src/field/field/actor_motion.c), which runs each object's hook
 // and script and moves it toward its target each frame (Func_080230e0 adds it
@@ -8,13 +10,11 @@
 // 0x7c and keeping its speed there; a fall lands at the ground height less the
 // rebound; each object records the distance it moved this frame at 0x70; the
 // arrival axes are numbered 16 to 18.
-// Left: every instruction and register agrees; three pairs swap, each a store
-// the native places ahead of a neighbouring load or its use: the store to
-// standingOn before the add of z and velocityZ; the store to velocityX before
-// the reload of Iwram_MulQ16 in the slope slowdown; the store of z before the
-// reload of the collision flags' address. All three lean the same way, so a
-// scheduling rule may be behind them rather than the source (K2 calls
-// -mthumb-slow-loads an approximation); that is untested. Tried without gain:
+// Left: every instruction and register agrees; one pair swaps: in the slope
+// slowdown the native stores velocityX ahead of the reload of Iwram_MulQ16 for
+// the second call. An empty asm after the store fixes it but pulls the next
+// argument copy below the store (still 4); a scheduling rule (K2 calls
+// -mthumb-slow-loads an approximation) is the likely cause. Tried without gain:
 // the order of the velocity sums and of standing and standingOn, operand order,
 // a != 0 test, pos's order, a velocityX temporary in the slowdown.
 #include "types.h"

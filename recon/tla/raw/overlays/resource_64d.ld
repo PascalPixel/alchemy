@@ -16,7 +16,7 @@ SECTIONS
         "*/games/tla/src/scene/venus_lighthouse_entrance/s1bb0.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/s1c30.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/s1fd0.o"(.text)
-        "*/resource_64d_overlay.o"(.text.x0200a3a4)
+        "*/games/tla/src/scene/venus_lighthouse_entrance/s23a4.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/s258c.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/s260c.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/s26f4.o"(.text)

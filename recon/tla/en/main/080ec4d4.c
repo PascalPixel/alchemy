@@ -1,5 +1,9 @@
-// Near miss, differ 4 of 1044 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Differ 2 of 1044 (tla-en, 2026-11-07): the empty asm before the saved y
+// keeps the native order, but the address 0x0202a63a is now loaded after it,
+// where the native loads it in the ldrsh delay slot before the width's subs.
+// 2026-11-07: x and y as constant-address loads beside their use (reload
+// substitutes the memory, as the native does), from 4; asm, one-pass blocks
+// and locals still untagged, each tagged on adoption.
 // Draft, differ 44 of 1044, skeleton gap 26 (tla-en, 2026-11-01): the frame,
 // every register and spill slot are the native's; what is left is order.
 // Left: five store-against-constant orders in sched2 (the native's str before
@@ -415,10 +419,11 @@ void Func_080ec4d4(void) {
       cursorY = 0;
     {
       s32 x = Data_0202a638;
-      s16 *savedY = &Data_0202a63a;
+      s32 y;
       width = cursorX - x;
       asm("");
-      height = cursorY - *savedY;
+      y = Data_0202a63a;
+      height = cursorY - y;
     }
     Func_080ec484(work->window, width, height);
     Data_0202a638 = cursorX;

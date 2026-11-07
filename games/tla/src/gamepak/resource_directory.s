@@ -510,8 +510,8 @@ Resource_DirectoryTable:
 	resource WaterSplash, FieldEffect_WaterSplash
 	resource FieldEffectIceShard, FieldEffect_IceShard
 	resource , FieldEffect_WhiteSparkle
-	resource , FieldEffect_Runes
-	resource , FieldEffect_Pebbles
+	resource Runes, FieldEffect_Runes
+	resource Pebbles, FieldEffect_Pebbles
 	resource GoldenTrident, FieldEffect_GoldenTrident
 	resource FireColumn, FieldEffect_FireColumn
 	resource GreenPanel, Field_GreenPanel

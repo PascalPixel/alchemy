@@ -1,5 +1,10 @@
-// Differ 96 of 1122 (tla-en, 2026-11-06). Left: start against &texture for r10 in
-// the tridents, gMapCellBuffer's pool load, the first model setup's zeros.
+// Differ 62 of 1122 (tla-en, 2026-11-07), with one tagged temporary. Left: the
+// FlashBurst load and size = 2 on either side of the once-only block, the first
+// model setup's zeros, and the pool offsets those shift.
+// 2026-11-07, from 96: a once-only block around the FlashBurst load puts the
+// gMapCellBuffer load after the 0xf8 call's arguments, as the listing orders
+// the pool (86); textureAddress holding &texture across the rings, with the
+// tridents' pixels set after Render_ResetTransformState, gives start r10 (62).
 // 2026-11-06 (later): a once-only block around the tridents' texture setup (logWidth, logHeight,
 // model->texture), to cut the second &texture's references, gives 395: not that.
 // Measured 2026-11-06: permute 6 min found only start = 16 before the shade (76),
@@ -225,6 +230,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   s32 placement[4];
   struct PlacementSource source;
   struct ModelTexture texture;
+  struct ModelTexture *textureAddress;
   struct RenderModel *model;
   void *vertices;
   struct EffectStep *p;
@@ -256,8 +262,11 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   offset = (s32)gMapCellBuffer;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F8, work->sheet + 0xc56, 0,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             (u8 *)offset + 0x5000, 1, 0);
+  // A once-only block: its loop notes order gMapCellBuffer's load as the listing does.
+  do {
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+                               (u8 *)offset + 0x5000, 1, 0);
+  } while (0);
   offset = 0x2400;
   size = 2;
   // Twelve shaded droplets, 2 to 24 wide.
@@ -424,6 +433,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
       model->vertices = vertices;
       texture.pixels = Ram_MapCellBuffer;
       model->scrollV = 0;
+      /* FAKEMATCH(temporary): textureAddress holds &texture across the rings; as model->texture = &texture, 191 of 1122 instructions differ in tla-en. */
+      textureAddress = &texture;
 
       // Eight rings of foam.
       for (i = 0; i != 8; i++) {
@@ -460,7 +471,7 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
 
         texture.logWidth = 5;
         texture.logHeight = 7;
-        model->texture = &texture;
+        model->texture = textureAddress;
         model->kind = 7;
         model->mesh = gData_08199268;
         model->vertices = vertices;
@@ -483,8 +494,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
           }
           x = (spinner->variant / 8) % 3;
           model->shade = -16;
-          texture.pixels = work->sheet + (x << 12) + 0xc56;
           Render_ResetTransformState();
+          texture.pixels = work->sheet + (x << 12) + 0xc56;
           Func_08015160((centerX - 64) << 16, 0x200000, 0);
           Func_080150e4(spinner->z);
           if (i & 1) {

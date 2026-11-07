@@ -1,4 +1,8 @@
-// Differ 84 of 1146 (tla-en, 2026-11-06).
+// Differ 70 of 1146 (tla-en, 2026-11-07).
+// Third round, 7 November: the mode 4 site takes the picture's whole address
+// (sheet + cel * 2048 + SERIES_B_PICTURE) once, which places the sheet offset
+// and the second entry as the listing does (84 to 70); left there, draw[0] and
+// draw[1] swap r8 and sl.
 // Second round, 6 November: 40 minutes of permuter (seed 7103), nothing better.
 // A pin, register s32 four asm("r4") set to 4 before each build, gives both
 // builds the listing's form (movs r4, #4 and its own xor each time, y's -24
@@ -359,6 +363,8 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       s32 four = COMPOSITE_FLIP_X;
 
       LOAD_BLITTER(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX);
+      /* FAKEMATCH(barrier): the 4 held by an empty asm with an output; as flags ^
+         COMPOSITE_FLIP_X, 125 of 1146 instructions differ in tla-en. */
       __asm__("" : "=r"(four) : "0"(four));
       LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, BLIT_ADDITIVE);
 
@@ -488,11 +494,11 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
           LOAD_BLITTER(draw[0], flags, BLIT_MAX);
           Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags | COMPOSITE_FLIP_Y,
                         BLIT_MAX);
-          picture = work->sheet + cel * 2048;
+          picture = work->sheet + cel * 2048 + SERIES_B_PICTURE;
           draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
-          draw[0](canvas, picture + SERIES_B_PICTURE, screen.x - 32,
+          draw[0](canvas, picture, screen.x - 32,
                   screen.y - 24, 64, 32);
-          draw[1](canvas, picture + SERIES_B_PICTURE, screen.x - 32,
+          draw[1](canvas, picture, screen.x - 32,
                   screen.y + 8, 64, 32);
           HeapSlot_Release(BLITTER_SLOT_ALTERNATE);
           HeapSlot_Release(BLITTER_SLOT);

@@ -1,4 +1,10 @@
-// Differ 91 of 1932 (tla-en, 2026-11-06), draft 1933, with one tagged barrier.
+// Differ 82 of 1932 (tla-en, 2026-11-07), draft 1932, with one tagged barrier.
+// 2026-11-07, from 91: j = 0 as its own statement before model->shade (the loop
+// then starts from j) gives the listing's count; j = 0 elsewhere in the setup
+// is 86 to 412. Left: the shade store now shares j's zero, and frame * 3 still
+// reloads frame. Loop dump: giv inits go out in reverse insn order, so the
+// listing's t << 9, t * 3072, t << 11, -t * 512 needs -t * 512 earliest; a yaw
+// local plus a once-set t << 11 gets that order but costs 160 to 170.
 // 2026-11-06, from 205: sc = t * 3072 - 0x12000, the listing's form (a giv of
 // t * 3072 in r7, -0x12000 added at the use), with an empty asm reading frame
 // between the two allocations of the ship-burst block. The listing reloads
@@ -703,9 +709,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       verts = Heap_AllocEwram(32);
       /* FAKEMATCH(barrier): an empty asm reads frame into r7 here, where the
        * listing reloads it, and the loop's step inits take it from there; as
-       * no asm, 322 of 1932 instructions differ in tla-en. */
+       * no asm, 347 of 1932 instructions differ in tla-en. */
       asm("" : : "r"(frame));
       model = Render_AllocateModelList(1);
+      j = 0;
       model->shade = 0;
       work->transferMode = 2;
       work->transferValue = 50;
@@ -716,7 +723,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       model->mesh = gData_08199364;
       model->kind = 7;
       model->vertices = verts;
-      for (j = 0; j != 2; j++) {
+      for (; j != 2; j++) {
         s32 t = frame - 76 - j * 16;
 
         if (t >= 0) {

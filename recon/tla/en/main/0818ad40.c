@@ -1,52 +1,62 @@
-// Differ 83 of 1246 (tla-en, 2026-11-06). The flight's x takes r0
-// (tied to the quotient) for the listing's r3, and the sleep spawn inherits r6
-// for the listing's reload of sp+8 into r0; the rest is branch and pool offsets
-// after that one missing instruction, and the sleep draw's scratch registers.
-// x pinned to r3 (measured 2026-11-06, not kept): 90; the quotient then takes
-// r3 too and is copied there (adds r3, r0) before the sum, as either operand order.
-// Also tried 2026-11-06: the sleep range as (u32)(frame - 48) <= 31 (83, the
-// same), and its step from frame - 48 directly (417).
-// What settled it this round: the shards' force is `first`, the flight's base,
-// set as `first = 127; first &= Random16()` with `first + 64` at each use. That
-// second lifetime makes first global, so the flight keeps the copy of card.x
-// (adds r5, r2) with first in r5 and &card in r6, and the burst loop matches
-// (127 loaded into r5 and the + 64 after the cosine call). `(Random16() & 127)
+// Differ 44 of 1246 (tla-en, 2026-11-07).
+// 2026-11-07: the sheep's 127 mask as a block local (`u32 mask = 127`, both
+// velocities) breaks the sleep spawn's inheritance of r6: sp+8 is reloaded into
+// r0 as the listing (83 to 44). Left: the flight's x in r0 for r3, the sleep
+// draw's and the shards' scratch registers. Before (83, 2026-11-06): the
+// flight's x takes r0 (tied to the quotient) for the listing's r3, and the
+// sleep spawn inherits r6 for the listing's reload of sp+8 into r0; the rest is
+// branch and pool offsets after that one missing instruction, and the sleep
+// draw's scratch registers. x pinned to r3 (measured 2026-11-06, not kept): 90;
+// the quotient then takes r3 too and is copied there (adds r3, r0) before the
+// sum, as either operand order. Also tried 2026-11-06: the sleep range as
+// (u32)(frame - 48) <= 31 (83, the same), and its step from frame - 48 directly
+// (417). What settled it this round: the shards' force is `first`, the flight's
+// base, set as `first = 127; first &= Random16()` with `first + 64` at each
+// use. That second lifetime makes first global, so the flight keeps the copy of
+// card.x (adds r5, r2) with first in r5 and &card in r6, and the burst loop
+// matches (127 loaded into r5 and the + 64 after the cosine call). `(Random16()
+// & 127)
 // + 64` or `first = Random16() & 127` puts 127 in r3 and copies r0 to r5 (78
 // with the extra instruction). For x: `q + first`, `t` reused for x, x at
 // function scope, every order of the copy, the subtraction and the divide, and
 // `x -= 112; overflow = x` change nothing.
-// Measured 2026-11-05 (tla-en): differ 92 of 1246, 48 with slots and pool offsets
-// normalized, 20 with registers masked too. What settled it this round:
-// - The butterflies' step by index (`&work->particles[slot + i]`): the reduced giv's
-//   start then comes after the loop's hoists, so the 127 in r6 is live there and
-//   the step's reload takes r0, as the listing.
+// Measured 2026-11-05 (tla-en): differ 92 of 1246, 48 with slots and pool
+// offsets normalized, 20 with registers masked too. What settled it this round:
+// - The butterflies' step by index (`&work->particles[slot + i]`): the reduced
+// giv's
+//   start then comes after the loop's hoists, so the 127 in r6 is live there
+//   and the step's reload takes r0, as the listing.
 // - The sheep's step local (r5 by local-alloc, the 127 r6 behind it), through
 //   `slot`, a variable set in both spawns: a block's own `frame - 48` makes the
-//   step's fields dest-address givs of frame, and their reduction takes a frame slot.
+//   step's fields dest-address givs of frame, and their reduction takes a frame
+//   slot.
 // - u8 *pixels: `void *pixels` puts void * in the texture's alias set, so the
 //   vertices store conflicted with the texture word.
 // Left then, top first:
 // 1. (Settled 2026-11-06, above.) The flight's copy of card.x (adds r5, r2):
-//    first has to be global or it ties to the load. A second lifetime in a later block gives the copy (`first = x <<
-//    8` before the store, or `first = card.y - 1`), but x then takes r2 for r3: its
-//    preferences are r2 and r3, from what is not found.
-// 2. REG_BG2X before scroll: a local for the value gives the listing's order, with
+//    first has to be global or it ties to the load. A second lifetime in a
+//    later block gives the copy (`first = x << 8` before the store, or `first =
+//    card.y - 1`), but x then takes r2 for r3: its preferences are r2 and r3,
+//    from what is not found.
+// 2. REG_BG2X before scroll: a local for the value gives the listing's order,
+// with
 //    x in r0 tied to the quotient.
-// 3. The sleep spawn reloads sp+8 (ldr r0) where this draft inherits r6 from the
+// 3. The sleep spawn reloads sp+8 (ldr r0) where this draft inherits r6 from
+// the
 //    compare. One reload more or less rotates every scratch after it: the other
 //    rows from there on follow it.
-// Measured 2026-11-05 (tla-en): differ 82 of 1246, 40 with slots and pool offsets
-// normalized, 11 with registers masked too. The flight now reads as the listing:
-// the difference is multiplied first, card.x copied after it, and the base
-// stays in a register of its own across the divide. That needs a pseudo living
-// past one block (a block's own local ties to the load and the copy goes), so it
-// shares first with the first spawn, which then has first in r5 for r2. Left:
-// step in r5 and the 127 mask in r6 in both spawns, with first and sp+8 following;
-// model->vertices stored three instructions early. Step as its own local in both
-// spawns gives r5 and r6 as the listing there (and first r2) but costs a slot
-// (frame 88): 431 raw. One pseudo across the flight and both spawns goes to r6
-// behind &card. Both spawns' r5 hold while &card takes r6 only if the flight's
-// base is local yet untied, which no form here gives.
+// Measured 2026-11-05 (tla-en): differ 82 of 1246, 40 with slots and pool
+// offsets normalized, 11 with registers masked too. The flight now reads as the
+// listing: the difference is multiplied first, card.x copied after it, and the
+// base stays in a register of its own across the divide. That needs a pseudo
+// living past one block (a block's own local ties to the load and the copy
+// goes), so it shares first with the first spawn, which then has first in r5
+// for r2. Left: step in r5 and the 127 mask in r6 in both spawns, with first
+// and sp+8 following; model->vertices stored three instructions early. Step as
+// its own local in both spawns gives r5 and r6 as the listing there (and first
+// r2) but costs a slot (frame 88): 431 raw. One pseudo across the flight and
+// both spawns goes to r6 behind &card. Both spawns' r5 hold while &card takes
+// r6 only if the flight's base is local yet untied, which no form here gives.
 // Measured 2026-11-05 (tla-en): differ 92 of 1246. The flight's base is card.x
 // - 64 (the draft had lost the 64), the sleep step is &particles[time], the
 // first spawn's step an integer sum. Left: the native's copy of card.x into r5
@@ -168,8 +178,7 @@ void BattleEffect_LoadBlitter(s32 slot, s32 packed);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
 void Sound_PlayFar(s32 cue);
-void EffectPosition_ProjectSprite(s32 id,
-                                             struct EffectPosition *position);
+void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position);
 void Func_0815e22c(struct EffectPosition *middle);
 void Func_0815f0a0(s32 resource);
 void Func_081180e8(s32 phase);
@@ -180,7 +189,7 @@ u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void *Heap_AllocEwram(s32 size);
 struct Model *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
@@ -255,8 +264,9 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
                   BLIT_ADDITIVE));
   } else {
     if (effect->side == 0)
-      BattleEffect_LoadBlitter(HEAP_SLOT_BLITTER,
-                    BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
+      BattleEffect_LoadBlitter(
+          HEAP_SLOT_BLITTER,
+          BLITTER(COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLIT_MAX));
     else
       BattleEffect_LoadBlitter(
           HEAP_SLOT_BLITTER,
@@ -492,13 +502,14 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         Func_081180e8(-1);
       if (frame >= 48 && frame <= 79) {
         struct EffectStep *sheep;
+        u32 mask = 127; // Holds one constant for its whole life.
 
         slot = frame - 48;
         sheep = (struct EffectStep *)(slot * 28 + (s32)work->particles);
         sheep->x = 64 << 16;
         sheep->y = 48 << 16;
-        sheep->velocityX = ((Random16() & 127) - 64) << 11;
-        sheep->velocityY = ((Random16() & 127) - 64) << 11;
+        sheep->velocityX = ((Random16() & mask) - 64) << 11;
+        sheep->velocityY = ((Random16() & mask) - 64) << 11;
         sheep->variant = mode;
       }
       for (i = 0; i != 64; i++) {
@@ -560,8 +571,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
 
           step = &work->particles[i];
           cell = i % 4 * 3 + (step->variant + time) / 8 % 3;
-          draw[0](canvas,
-                  work->sheet + 0x2580 + (shade + Data_081974dc[cell]),
+          draw[0](canvas, work->sheet + 0x2580 + (shade + Data_081974dc[cell]),
                   overflow + HI(step->x) - Data_081974f4[cell] / 2,
                   HI(step->y) - Data_08197500[cell] / 2, Data_081974f4[cell],
                   Data_08197500[cell]);
@@ -578,7 +588,7 @@ void Func_0818ad40(struct BattleEffectArgument *effect, s32 mode) {
         Sound_PlayFar(144);
         Func_081180e8(-1);
         BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x80000,
-                                  0x20000, 110);
+                                      0x20000, 110);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 8);
         work->shakeFrames = 4;
       }

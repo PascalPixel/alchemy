@@ -1,4 +1,14 @@
-// Differ 180 of 902, draft 904 (tla-en, 2026-11-06).
+// Differ 178 of 902, draft 904 (tla-en, 2026-11-07).
+// 2026-11-07, fifth pass, 180 to 178: quad[1]'s corner index d as its own
+// counter (set from i + 17 at the row top, stepped with the column) puts the
+// spilled slot 8 where the native has it, but d still takes ip and the
+// + 15 the slot: in greg the column loop's + 15 copy and d tie (11 refs
+// across 45 each) and the lower pseudo number, the + 15, wins the lo
+// register that reload then spills; the native needs d first. Not gained:
+// a pin of the + 15 to ip (479 to 968), quad[20] = u moved later (662 to
+// 962), a or vertex from v (758, 326), the counter on the quadColumns form
+// (260), c from d (815), the permuter, 9 minutes on the grid (best 176, by
+// temporaries only, not kept).
 // 2026-11-06, second pass: the vertex start fold is gone. Its source was GCSE,
 // not cse: the if block's row << 4 (quad[5] and row * 15's (row << 4) - row)
 // is redundant with v, so GCSE turns it into a copy of v with a REG_EQUAL
@@ -328,14 +338,16 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   // each cell but the last row and column.
   for (row = 0; row != WATER_ROWS; row++) {
     s32 firstQuad = row * 15;
+    s32 d;
     s32 v = row << 4;
     s32 x = -60;
     u8 *mesh = gData_02014000;
     s8 *cells = (s8 *)gMapCellBuffer;
 
     i = v;
+    d = i + 17;
 
-    for (column = 0; column != WATER_COLUMNS; column++, x += 8) {
+    for (column = 0; column != WATER_COLUMNS; column++, x += 8, d++) {
       s8 *vertex = cells + (i + column) * 4;
       s32 u = column * 8;
       s32 a = i + column;
@@ -361,7 +373,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         quad[19] = (row << 4);
         quad[21] = (row << 4) + 15;
         quad[0] = b;
-        quad[1] = i + column + 17;
+        quad[1] = d;
         quad[2] = c;
         quad[12] = a;
         quad[13] = b;

@@ -1,7 +1,7 @@
 /// @file
 /// Includes the shared Effect_AdvanceMotion in this scene.
 /// Neither it nor its caller Func_02000418 exists in the Japanese scene.
-#include "edition.h"
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#include "version.h"
+#if TLA_PATCH_1
 #include "../../field/field_effect/advance_motion.c"
 #endif

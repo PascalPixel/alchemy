@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "edition.h"
+#include "version.h"
 
 extern char SceneId_Ov671Room7, SceneId_Ov672Room1;
 void Func_02001e80(s32 id);
@@ -30,7 +30,7 @@ void Func_02001c44(void) {
   } else {
     Func_02000f88();
   }
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* The Japanese edition does not set the retreat. */
+#if TLA_PATCH_1 /* The Japanese edition does not set the retreat. */
   if (gMainRoutineWork.entrance == 2) {
     if (GameFlag_Test(0xa27)) {
       /* FAKEMATCH(one-pass): the scene id through a temporary and a once-only

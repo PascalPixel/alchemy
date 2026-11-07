@@ -1,6 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
-#include "edition.h"
+#include "version.h"
 
 // clang-format off
 s16 gData_02000e04[] = {
@@ -9,7 +9,7 @@ s16 gData_02000e04[] = {
 
 s32 gData_02000e14[] = {
     22, 30,
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
     131,
 #else
     129,
@@ -48,7 +48,7 @@ s32 gData_02000ecc[] = {
     0, 30, 22, 6, 0x80000, 0,
     30, 13, 0xffff, (s32)0xc0010000, 17, 22,
     30,
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
     131,
 #else
     129,

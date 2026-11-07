@@ -1,7 +1,7 @@
-#include "edition.h"
+#include "version.h"
 
-// The Japanese form differs and is still on its listing.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+// The Japanese form is the older revision and is still on its listing.
+#if TLA_PATCH_1
 
 #include "types.h"
 #include "call.h"
@@ -186,7 +186,7 @@ s32 Func_02002438(s32 a0) {
     }
     if (!Test(0x109) && gMainRoutineWork.entrance == 17) {
       Func_02000418();
-#if (LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN)
+#if TLA_PATCH_4
       C1(GameFlag_ClearBit, 0x122);
 #endif
     }

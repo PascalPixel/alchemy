@@ -1,5 +1,5 @@
 #include "ankohl_ruins.h"
-#include "edition.h"
+#include "version.h"
 
 struct AnkohlRuinsEffectParams {
   u8 unk00[0x18];
@@ -42,14 +42,13 @@ void Func_02002260(void) {
     Func_02002ee4();
     Func_02002ebc(20);
   }
-#if (LANGUAGE == LANGUAGE_JAPANESE) /* The Japanese edition copies cells here. */
+#if !TLA_PATCH_1 /* The Japanese edition copies cells here. */
   Map_CopyCells(40, 98, 3, 5, 25, 98);
 #endif
 }
 
 void Func_020022a8(void) {
-#if !defined(                                                                  \
-    TLA_EDITION_JA) /* The Japanese edition does not touch flag 0x205. */
+#if TLA_PATCH_1 /* The Japanese edition does not touch flag 0x205. */
   GameFlag_SetBit(0x205);
 #endif
   Func_02002df4(35, 34, 3, 5, 25, 34);
@@ -57,7 +56,7 @@ void Func_020022a8(void) {
 }
 
 void Func_020022e0(void) {
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
   GameFlag_ClearBit(0x205);
 #endif
   Func_02002df4(40, 34, 3, 5, 25, 34);

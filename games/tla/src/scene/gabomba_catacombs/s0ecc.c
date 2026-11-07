@@ -1,8 +1,8 @@
 #include "local.h"
-#include "edition.h"
+#include "version.h"
 #include "call.h"
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
 #define CATACOMBS_SCREEN_EFFECT 513
 #else
 #define CATACOMBS_SCREEN_EFFECT 516

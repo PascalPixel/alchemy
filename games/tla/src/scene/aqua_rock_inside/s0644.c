@@ -1,5 +1,5 @@
 #include "local.h"
-#include "edition.h"
+#include "version.h"
 
 void Func_0200061c(struct Actor *object);
 
@@ -10,7 +10,7 @@ void Func_02000644(s32 unused, s32 id) {
   if (id == 9) {
     x = object->x >> 20;
     if (x == 39) {
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
       object->motionFlags = 3;
       wait(15);
       object->motionFlags = 0;

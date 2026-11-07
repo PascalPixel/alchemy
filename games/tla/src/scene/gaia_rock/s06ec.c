@@ -1,4 +1,4 @@
-#include "edition.h"
+#include "version.h"
 #include "iwram_call.h"
 #include "call.h"
 #include "flag_call.h"
@@ -9,7 +9,7 @@
 #include "text/msg_ids.h"
 #include "types.h"
 
-#if LANGUAGE == LANGUAGE_JAPANESE
+#if !TLA_PATCH_1
 #define SCREEN_EFFECT 0x201
 #else
 #define SCREEN_EFFECT 0x204

@@ -4,11 +4,11 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "call.h"
-#include "edition.h"
+#include "version.h"
 
 // The Japanese edition sets no flag 0x200 by the leader's position and places
 // no actors 31 and 32.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
 extern u8 gData_02001c90[], gData_02001c60[];
 struct Actor *Actor_GetById(u32 id);
 void Func_02000bac(s32 mode);

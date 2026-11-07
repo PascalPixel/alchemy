@@ -1,5 +1,5 @@
 #include "local.h"
-#include "edition.h"
+#include "version.h"
 
 u8 *Func_0200004c(void) {
   s32 scene = gMainRoutineWork.scene;
@@ -88,8 +88,7 @@ s32 Func_02000258(void) {
 }
 
 s32 Func_0200027c(void) {
-#if (LANGUAGE == LANGUAGE_JAPANESE) /* The Japanese edition does not check the         \
-                               entrance. */
+#if !TLA_PATCH_1 /* The Japanese edition does not check the entrance. */
   ((struct AlhafranCaveEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x201;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66aRoom1)
     Func_020002f8();

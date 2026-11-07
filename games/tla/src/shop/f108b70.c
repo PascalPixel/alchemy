@@ -1,14 +1,19 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "edition.h"
+#include "version.h"
 #include "input.h"
 
-// The Select window is wider outside English, the price window in German,
-// French and Italian.
+// The Select window is wider outside English and narrower in Japanese, the
+// price window wider in German, French and Italian and narrower in Japanese;
+// the Japanese money window is narrower too.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define HELD_WINDOW_X 10
 #define HELD_WINDOW_WIDTH 20
+#elif LANGUAGE == LANGUAGE_JAPANESE
+#define HELD_WINDOW_X 14
+#define HELD_WINDOW_WIDTH 13
 #else
 #define HELD_WINDOW_X 13
 #define HELD_WINDOW_WIDTH 17
@@ -16,8 +21,17 @@
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||          \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define PRICE_WINDOW_WIDTH 16
+#elif LANGUAGE == LANGUAGE_JAPANESE
+#define PRICE_WINDOW_WIDTH 14
 #else
 #define PRICE_WINDOW_WIDTH 15
+#endif
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define MONEY_WINDOW_X 19
+#define MONEY_WINDOW_WIDTH 11
+#else
+#define MONEY_WINDOW_X 18
+#define MONEY_WINDOW_WIDTH 12
 #endif
 
 struct ShopCursor {
@@ -127,8 +141,11 @@ s32 Func_08108b70(void) {
 
   /* FAKEMATCH(dead): both A tests store into key, never read; as plain
      `if (gInput.pressed & 1)`, 8 of 540 instructions differ in tla-en. */
+  // tla-ja still differs in 14 of 531 instructions: the stack slots of
+  // stockIds, stockCount and selectedDefinition.
   shop->itemWindow = 0;
-  shop->moneyWindow = Window_CreateFar(18, 7, 12, 4, 2);
+  shop->moneyWindow =
+      Window_CreateFar(MONEY_WINDOW_X, 7, MONEY_WINDOW_WIDTH, 4, 2);
   Func_08109188();
   priceWindow = Window_CreateFar(0, 8, PRICE_WINDOW_WIDTH, 4, 2);
 
@@ -168,20 +185,35 @@ next_page:
     if (gInput.held & 4) {
       s32 held;
       void *window;
+#if !TLA_PATCH_1
+      s32 heldItem;
+#endif
 
+#if TLA_PATCH_1
       stockCount = stockIds[selectionIndex];
       held = PartyInventory_CountItemFar(stockCount);
       heldDefinition = Item_Get(stockCount);
+#else
+      heldItem = stockIds[selectionIndex];
+      held = PartyInventory_CountItemFar(heldItem);
+#endif
       Sound_PlayFar(126);
       window = Window_CreateFar(HELD_WINDOW_X, 3, HELD_WINDOW_WIDTH, 10, 2);
+#if TLA_PATCH_1
       Func_080f8040(window, stockCount, held);
+#else
+      Func_080f8040(window, heldItem, held);
+#endif
       while (gInput.held & 4)
         wait(1);
       Window_CloseFar(window, 2);
       Func_08109068(stockWindow, selectionIndex);
       Func_08109188();
+#if TLA_PATCH_1
+      // Japanese does not redraw the price window here.
       WindowSprite_RedrawSavedRectFar(priceWindow);
       Func_081091cc(priceWindow, stockCount, heldDefinition->price, 0);
+#endif
     } else {
       redraw = Func_08108690(&selectionIndex, stockCount, 7);
     }

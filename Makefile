@@ -22,11 +22,14 @@ MAKEFLAGS += --no-print-directory
 # matching aids read them (as pret keeps its intermediates).
 .SECONDARY:
 
-.DEFAULT_GOAL := help
+# Plain `make` builds the English Broken Seal, the compilers first if they are
+# missing; `make compare` checks it against rom.sha1.
+.DEFAULT_GOAL := tbs-en
 .PHONY: help all compare $(EDITIONS) $(addprefix compare-,$(EDITIONS)) compare-tbs compare-tla compare-editions clean
 
 help:
 	@printf '%s\n' \
+	  'make                    build tbs-en (the compilers first, once); make compare checks it' \
 	  'make bootstrap          build the pinned compilers and tools into tools/out' \
 	  'make tbs-en             build one edition: tbs or tla, then ja en de es fr it' \
 	  'make compare-tbs-en     build one edition and check it against rom.sha1' \
@@ -39,11 +42,11 @@ help:
 	  'make land               on main before committing: all twelve, the tests, the measurement'
 
 # Each edition builds in its own make, so its variables below are set once;
-# the tools are built first, once. GNU Make 3.81, macOS's make, busy-waits
-# when a parallel make waits for a job, so there each edition builds serially
-# while the editions still build side by side.
+# the tools and compilers are built first, once. GNU Make 3.81, macOS's make,
+# busy-waits when a parallel make waits for a job, so there each edition
+# builds serially while the editions still build side by side.
 SERIAL := $(if $(filter 3.%,$(MAKE_VERSION)),-j1)
-$(EDITIONS): tools
+$(EDITIONS): bootstrap
 	@$(MAKE) $(SERIAL) -f Makefile EDITION=$@ rom
 
 $(addprefix compare-,$(EDITIONS)): compare-%: %
@@ -52,7 +55,7 @@ $(addprefix compare-,$(EDITIONS)): compare-%: %
 compare-tbs: $(addprefix compare-,$(TBS))
 compare-tla: $(addprefix compare-,$(TLA))
 compare-editions: compare-tbs compare-tla
-compare: compare-tbs-ja
+compare: compare-tbs-en
 
 # make modern: the six ☀️ editions' C through a current GCC (MODERN_CC).
 ifndef EDITION
@@ -354,13 +357,12 @@ ifndef EDITION
 # --- Toolchain (K1) --------------------------------------------------------
 # `make bootstrap` builds the pinned compilers from source into
 # tools/out/compilers, as pret installs agbcc: alchemy-gcc's three C generators,
-# GAS 2.10 from GNU's archive (it assembles their output), and the eight
-# libgcc members the games link, from alchemy-gcc's own sources.
+# GAS 2.10 from the GNU release vendored in alchemy-gcc (it assembles their
+# output), and the eight libgcc members the games link, from alchemy-gcc's
+# own sources.
 
 TOOLCHAIN := tools/out/toolchain
 -include alchemy-gcc/config/host.mk
-SHA256 := $(shell command -v sha256sum >/dev/null 2>&1 && echo sha256sum || echo shasum -a 256)
-GAS_SHA256 := fd7d227c0dd15cf5448385e56b8ad8313cd491839834b57c0c086ac7b7819a15
 GAS_CFLAGS := -O2 -std=gnu89 -D_POSIX_C_SOURCE=200809L -DNSIG=32 -Wno-implicit-int \
               -Wno-implicit-function-declaration -Wno-int-conversion -Wno-incompatible-pointer-types -fcommon
 
@@ -369,6 +371,7 @@ bootstrap: tools compilers $(CCAS) $(LIBGCC)
 compilers: $(COMPILER)/xgcc
 
 $(COMPILER)/xgcc:
+	@test -f alchemy-gcc/Makefile || { echo 'alchemy-gcc is empty: run git submodule update --init --recursive (see INSTALL.md).' >&2; exit 1; }
 	$(MAKE) -C alchemy-gcc
 	$(MAKE) -C alchemy-gcc generated-check
 	$(MAKE) -C alchemy-gcc/arm probe
@@ -377,20 +380,19 @@ $(COMPILER)/xgcc:
 	cp alchemy-gcc/arm/build/gcc/cc1 $(COMPILER)/gcc2952_arm
 	cp alchemy-gcc/agbcc/gcc/old_agbcc $(COMPILER)/agbcc/old_agbcc
 
-$(TOOLCHAIN)/binutils-2.10.tar.gz:
-	@mkdir -p $(@D)
-	curl --fail --location --silent --show-error -o $@.download https://ftp.gnu.org/gnu/binutils/binutils-2.10.tar.gz
-	echo '$(GAS_SHA256)  $@.download' | $(SHA256) -c -
-	mv $@.download $@
-
 # tc-arm.c's rotate_left shifts a 32-bit value by 32 when n is 0, which is
 # undefined; Apple clang at -O2 then rejects every ARM immediate. Masking the
 # count gives the rotation the macro means and changes no output.
+# Git keeps no file times, so every file of the copy is given the release's
+# date: with no file newer than another, make regenerates nothing.
 # The arm-elf assembler builds no lexer, but its configure stops unless
 # running lex leaves a lex.yy.c: `touch` is the stand-in its own Makefile uses.
-$(CCAS): $(TOOLCHAIN)/binutils-2.10.tar.gz
+$(CCAS):
+	$(MAKE) -C alchemy-gcc source-check
 	rm -rf $(TOOLCHAIN)/binutils-2.10 $(TOOLCHAIN)/gas
-	tar -xzf $< -C $(TOOLCHAIN)
+	@mkdir -p $(TOOLCHAIN)
+	cp -R alchemy-gcc/binutils-2.10 $(TOOLCHAIN)/
+	find $(TOOLCHAIN)/binutils-2.10 -exec touch -t 200006130000 {} +
 	sed -i.orig 's/v >> (32 - n))/v >> ((32 - n) \& 31))/' $(TOOLCHAIN)/binutils-2.10/gas/config/tc-arm.c
 	grep -q 'v >> ((32 - n) & 31))' $(TOOLCHAIN)/binutils-2.10/gas/config/tc-arm.c
 	mkdir -p $(TOOLCHAIN)/gas
@@ -473,8 +475,10 @@ format-check:
 # Reconstruction work is optional. Normal builds use only the C tools above.
 CARGO ?= cargo
 .PHONY: devtools test-devtools progress land
+# Alchemy Devtools is optional and lives in its own repository: the first
+# make devtools clones it into alchemy-devtools/, which git ignores.
 devtools:
-	@test -f alchemy-devtools/Cargo.toml || { echo 'Initialize Alchemy Devtools with: git submodule update --init alchemy-devtools' >&2; exit 1; }
+	@test -f alchemy-devtools/Cargo.toml || git clone https://github.com/PascalPixel/alchemy-devtools
 	$(CARGO) build --locked --release --manifest-path alchemy-devtools/Cargo.toml -p alchemy-devtools
 
 test-devtools: devtools

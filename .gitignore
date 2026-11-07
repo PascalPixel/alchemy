@@ -37,3 +37,4 @@ tools/out/
 /games/**/*.spriteblocks
 /games/**/*.table
 /games/**/*.d
+/alchemy-devtools/

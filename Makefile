@@ -240,11 +240,13 @@ $(ROM): $(ELF) $(GBAFIX)
 	$(OBJCOPY) -O binary --pad-to $(ROM_END_$(GAME)) $< $@
 	$(GBAFIX) $@ --silent
 
-$(ELF): $(LINKED) $(STREAM) $(LIBGCC) $(LD_SCRIPT)
+# objects.mk is a prerequisite because it holds the link order: an object list
+# change that only moves objects must still relink.
+$(ELF): $(LINKED) $(STREAM) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 	$(LD) -Map $(BUILD)/$(EDITION).map --no-warn-mismatch $(LDFLAGS) -o $@ $(LINKED) $(STREAM) $(LIBGCC)
 
 # The main image without its overlays: the addresses they link against.
-$(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT)
+$(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 	$(LD) --unresolved-symbols=ignore-all --no-warn-mismatch $(LDFLAGS) -o $@ $(LINKED) $(LIBGCC)
 
 # An overlay links at 0x2008000 against the main image's symbols, less the

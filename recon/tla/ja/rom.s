@@ -192,12 +192,6 @@ Func_08040798:
 	.incbin "baserom.gba", 0x00040b6a, 0x00000002
 	.section .rom.000417ee, "ax"
 	.incbin "baserom.gba", 0x000417ee, 0x00000002
-	.section .rom.000417f0, "ax"
-	.global Text_DrawStringAsTiles
-	.type Text_DrawStringAsTiles, %function
-	.thumb_func
-Text_DrawStringAsTiles:
-	.incbin "baserom.gba", 0x000417f0, 0x00000410
 	.section .rom.00042152, "ax"
 	.incbin "baserom.gba", 0x00042152, 0x00000002
 	.section .rom.000422ca, "ax"
@@ -730,13 +724,6 @@ Func_0810abf0:
 	.incbin "baserom.gba", 0x0010ac00, 0x000002b4
 	.section .rom.0010b05a, "ax"
 	.incbin "baserom.gba", 0x0010b05a, 0x00000002
-	.section .rom.0010b9d0, "ax"
-	.balign 4
-	.global Func_0810b9c0
-	.type Func_0810b9c0, %function
-	.thumb_func
-Func_0810b9c0:
-	.incbin "baserom.gba", 0x0010b9d0, 0x000002e4
 	.section .rom.0011843c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011843c, 0x00000188

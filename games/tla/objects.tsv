@@ -746,7 +746,7 @@ main	rom_main_02	recon/tla/es/rom	.rom.0004172c	es
 main	rom_main_02	recon/tla/de/rom	.rom.0004171e	de
 main	rom_main_02	games/tla/src/window/f0416cc	.text	en de
 main	rom_main_02	recon/tla/ja/rom	.rom.000417ee	ja
-main	rom_main_02	recon/tla/ja/rom	.rom.000417f0	ja
+main	rom_main_02	games/tla/src/window/f0416cc	.text	ja
 main	rom_main_02	games/tla/src/window/tile_attributes	.text
 main	rom_main_02	games/tla/src/window/altflag	.text
 main	rom_main_02	games/tla/src/window/set_colour	.text
@@ -2567,7 +2567,7 @@ main	rom_main_07	games/tla/src/shop/f10b7b4	.text	en de es fr it ja
 main	rom_main_07	recon/tla/es/rom	.rom.0010f9c4	es
 main	rom_main_07	recon/tla/de/rom	.rom.001139c4	de
 main	rom_main_07	recon/tla/it/rom	.rom.0010b9a4	it
-main	rom_main_07	recon/tla/ja/rom	.rom.0010b9d0	ja
+main	rom_main_07	games/tla/src/shop/f10b9c0	.text	ja
 main	rom_main_07	games/tla/src/shop/f10bca0	.text	ja
 main	rom_main_07	games/tla/src/shop/f10b9c0	.text	en fr
 main	rom_main_07	games/tla/src/shop/f10bca0	.text	en de es fr it

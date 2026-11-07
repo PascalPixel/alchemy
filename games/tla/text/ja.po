@@ -18944,11 +18944,11 @@ msgctxt "MsgCannotRemove"
 msgid "04660"
 msgstr "はずせません"
 
-msgctxt "message"
+msgctxt "MsgCannotDropIt"
 msgid "04661"
 msgstr "すてられません!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCannotRemoveIt"
 msgid "04662"
 msgstr "はずせません!{end_wait}"
 

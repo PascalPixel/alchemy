@@ -1,8 +1,20 @@
 #include "types.h"
+#include "edition.h"
 #include "heap_release.h"
 #include "ram_buffer.h"
 #include "window.h"
 #include "iwram_call.h"
+
+// The Japanese font: control code 3 advances a fixed 8 pixels, codes 222 and
+// 223 draw glyphs 254 and 255 three pixels to the left, and glyphs above 128
+// have fixed widths; elsewhere code 3 advances by the space glyph's width.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define TEXT_JAPANESE_FONT 1
+#define TEXT_CODE_3_WIDTH 8
+#else
+#define TEXT_JAPANESE_FONT 0
+#define TEXT_CODE_3_WIDTH gFont_GlyphWidths[0]
+#endif
 
 extern char ResourceId_WindowTiles;
 extern const u8 gText_ColourPens[];
@@ -79,7 +91,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
           pens[1] = gText_ColourPens[work->colour];
           break;
         case 3:
-          x += gFont_GlyphWidths[0];
+          x += TEXT_CODE_3_WIDTH;
           break;
         case 14:
         case 15:
@@ -88,12 +100,20 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         case 11:
         case 12:
         case 17:
+#if !TEXT_JAPANESE_FONT
         case 29:
+#endif
           script++;
           break;
         }
       } else {
         c &= 0xFF;
+#if TEXT_JAPANESE_FONT
+        if (c - 222 <= 1) {
+          x -= 3;
+          c += 32;
+        }
+#endif
         src = (u32 *)(glyphs + c * 32);
         dst = canvas + x;
         for (i = 0; i < 8; i++) {
@@ -118,7 +138,12 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         else if (code == 0xF01E)
           x += 3;
         else {
-          if (c > 31)
+#if TEXT_JAPANESE_FONT
+          if (c > 128)
+            w = c - 254 <= 1 ? 3 : 8;
+          else
+#endif
+              if (c > 31)
             w = gFont_GlyphWidths[c - 32];
           else
             w = 1;

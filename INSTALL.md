@@ -9,7 +9,7 @@ Every byte of The Broken Seal now comes from source, its pictures, music and tex
 **Linux** (Debian or Ubuntu):
 
 ```bash
-sudo apt install build-essential git curl patch binutils-arm-none-eabi pkg-config libpng-dev libutf8proc-dev
+sudo apt install build-essential git patch binutils-arm-none-eabi pkg-config libpng-dev libutf8proc-dev
 ```
 
 On other distributions, install the same packages under their local names.
@@ -33,7 +33,7 @@ make bootstrap
 make tbs-en
 ```
 
-`make bootstrap` builds, once, the [old compilers](games/tbs/glossary.md#the-compilers) the games were matched with: alchemy-gcc and pret's old_agbcc from the submodule, and GCC 2.95.2 and GNU's assembler 2.10, whose sources it downloads from ftp.gnu.org. A current compiler would produce different instructions, so the system's `arm-none-eabi-gcc` can't stand in for them. It prints plenty of old-compiler warnings, which is normal, and the compilers and build tools take about 500 MB. `make tbs-en` builds the English Broken Seal as `out/tbs-en/tbs-en.gba`, ready for an emulator. The other languages are `tbs-ja`, `tbs-de`, `tbs-es`, `tbs-fr` and `tbs-it`.
+`make bootstrap` builds, once, the [old compilers](games/tbs/glossary.md#the-compilers) the games were matched with: alchemy-gcc, pret's old_agbcc, GCC 2.95.2 and GNU's assembler 2.10, all from the submodule. A current compiler would produce different instructions, so the system's `arm-none-eabi-gcc` can't stand in for them. It prints plenty of old-compiler warnings, which is normal, and the compilers and build tools take about 500 MB. `make tbs-en` builds the English Broken Seal as `out/tbs-en/tbs-en.gba`, ready for an emulator. The other languages are `tbs-ja`, `tbs-de`, `tbs-es`, `tbs-fr` and `tbs-it`.
 
 To check a build against the original, run `make compare-tbs-en`. It needs no cartridge: it compares the SHA-1 hash of the built file with the original's, recorded in `rom.sha1`, and ends with `OK` when they are equal. Every edition has its `compare-` target, `compare-tbs` checks all six of The Broken Seal, and `make -j8` builds in parallel.
 

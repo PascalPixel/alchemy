@@ -354,13 +354,12 @@ ifndef EDITION
 # --- Toolchain (K1) --------------------------------------------------------
 # `make bootstrap` builds the pinned compilers from source into
 # tools/out/compilers, as pret installs agbcc: alchemy-gcc's three C generators,
-# GAS 2.10 from GNU's archive (it assembles their output), and the eight
-# libgcc members the games link, from alchemy-gcc's own sources.
+# GAS 2.10 from the GNU release vendored in alchemy-gcc (it assembles their
+# output), and the eight libgcc members the games link, from alchemy-gcc's
+# own sources.
 
 TOOLCHAIN := tools/out/toolchain
 -include alchemy-gcc/config/host.mk
-SHA256 := $(shell command -v sha256sum >/dev/null 2>&1 && echo sha256sum || echo shasum -a 256)
-GAS_SHA256 := fd7d227c0dd15cf5448385e56b8ad8313cd491839834b57c0c086ac7b7819a15
 GAS_CFLAGS := -O2 -std=gnu89 -D_POSIX_C_SOURCE=200809L -DNSIG=32 -Wno-implicit-int \
               -Wno-implicit-function-declaration -Wno-int-conversion -Wno-incompatible-pointer-types -fcommon
 
@@ -377,20 +376,19 @@ $(COMPILER)/xgcc:
 	cp alchemy-gcc/arm/build/gcc/cc1 $(COMPILER)/gcc2952_arm
 	cp alchemy-gcc/agbcc/gcc/old_agbcc $(COMPILER)/agbcc/old_agbcc
 
-$(TOOLCHAIN)/binutils-2.10.tar.gz:
-	@mkdir -p $(@D)
-	curl --fail --location --silent --show-error -o $@.download https://ftp.gnu.org/gnu/binutils/binutils-2.10.tar.gz
-	echo '$(GAS_SHA256)  $@.download' | $(SHA256) -c -
-	mv $@.download $@
-
 # tc-arm.c's rotate_left shifts a 32-bit value by 32 when n is 0, which is
 # undefined; Apple clang at -O2 then rejects every ARM immediate. Masking the
 # count gives the rotation the macro means and changes no output.
+# Git keeps no file times, so every file of the copy is given the release's
+# date: with no file newer than another, make regenerates nothing.
 # The arm-elf assembler builds no lexer, but its configure stops unless
 # running lex leaves a lex.yy.c: `touch` is the stand-in its own Makefile uses.
-$(CCAS): $(TOOLCHAIN)/binutils-2.10.tar.gz
+$(CCAS):
+	$(MAKE) -C alchemy-gcc source-check
 	rm -rf $(TOOLCHAIN)/binutils-2.10 $(TOOLCHAIN)/gas
-	tar -xzf $< -C $(TOOLCHAIN)
+	@mkdir -p $(TOOLCHAIN)
+	cp -R alchemy-gcc/binutils-2.10 $(TOOLCHAIN)/
+	find $(TOOLCHAIN)/binutils-2.10 -exec touch -t 200006130000 {} +
 	sed -i.orig 's/v >> (32 - n))/v >> ((32 - n) \& 31))/' $(TOOLCHAIN)/binutils-2.10/gas/config/tc-arm.c
 	grep -q 'v >> ((32 - n) & 31))' $(TOOLCHAIN)/binutils-2.10/gas/config/tc-arm.c
 	mkdir -p $(TOOLCHAIN)/gas

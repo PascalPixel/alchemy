@@ -1,15 +1,6 @@
-// Matches (tla-en, 2026-11-07): the pixel row and column named inside the
-// inner loop (y & 7, x & 7) give the tile row r5 and y r6 as the native has.
-// Near miss, differ 22 of 116 (2026-10-15, written from the listing; ☀️ has no
-// twin). The command's 0 comes from the literal pool, as in the ROM (a
-// halfword zero kept in a register). What remains: the pixel map loop gives the
-// row r5 and its tile row r6 where the ROM has them the other way round (14
-// rows); the fill routine's entry is loaded after the canvas pointer's copy;
-// and the literal pool lands one call later. Measured, no better: every order
-// of the four locals' declarations (22), the tile row and pixel row in locals
-// (24), s16 map entries, the store apart from the increment (22), other
-// formulas for the tile offset (22-53); permute 6 min, 2 jobs: nothing below
-// 22.
+/// @file
+/// The canvas sprite of the field Psynergy scenes.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -22,11 +13,11 @@
 #define OBJ_TILES ((u8 *)0x06010000)
 #define TILE_SIZE 32
 
-// Starts the canvas sprite of the field Psynergy scenes: its work, a cleared
-// 64x64 canvas copied into the sprite's tiles, and a map from each canvas
-// pixel (row by row) to its place in the tiles. Func_080eb6a0 draws the
-// sprite and Func_080eb594 uploads the canvas each frame; BattleEffect_EndCanvasSprite ends
-// it.
+/// Starts the canvas sprite of the field Psynergy scenes: its work, a cleared
+/// 64x64 canvas copied into the sprite's tiles, and a map from each canvas
+/// pixel (row by row) to its place in the tiles. Func_080eb6a0 draws the
+/// sprite and Func_080eb594 uploads the canvas each frame;
+/// BattleEffect_EndCanvasSprite ends it.
 void Func_080eb824(void) {
   u8 *windowTiles = Ram_HeapSlots->windowTiles;
   struct CanvasSpriteWork *work =
@@ -37,7 +28,7 @@ void Func_080eb824(void) {
   s32 x;
 
   do {
-  Iwram_FillWords(work, sizeof(*work), 0);
+    Iwram_FillWords(work, sizeof(*work), 0);
   } while (0);
   work->tile = *(u16 *)(windowTiles + 0x1348);
   work->mode = CANVAS_SPRITE_16_COLORS;
@@ -54,7 +45,7 @@ void Func_080eb824(void) {
 
   // Where each pixel of the canvas sits in its 8x8 tiles.
   map = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP,
-                              CANVAS_WIDTH * CANVAS_WIDTH * sizeof(u16));
+                            CANVAS_WIDTH * CANVAS_WIDTH * sizeof(u16));
   for (y = 0; y < CANVAS_WIDTH; y++) {
     for (x = 0; x < CANVAS_WIDTH; x++) {
       s32 row = y & 7;

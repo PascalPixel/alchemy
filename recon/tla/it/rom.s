@@ -151,12 +151,6 @@ Func_0803c198:
 	.incbin "baserom.gba", 0x0003ef9e, 0x00000002
 	.section .rom.0003f22a, "ax"
 	.incbin "baserom.gba", 0x0003f22a, 0x00000002
-	.section .rom.0003f420, "ax"
-	.global Menu_ConfirmSelection
-	.type Menu_ConfirmSelection, %function
-	.thumb_func
-Menu_ConfirmSelection:
-	.incbin "baserom.gba", 0x0003f420, 0x00000248
 	.section .rom.0003fd80, "ax"
 	.global Menu_OpenWorkspaceOptions
 	.type Menu_OpenWorkspaceOptions, %function
@@ -352,15 +346,6 @@ Func_080d7524:
 	.incbin "baserom.gba", 0x000da95a, 0x00000002
 	.section .rom.000db99a, "ax"
 	.incbin "baserom.gba", 0x000db99a, 0x00000002
-	.section .rom.000dbb6c, "ax"
-	.balign 4
-	.global Func_080dbb78
-Func_080dbb78:
-	.global Map_GetCellAtPosition
-	.type Map_GetCellAtPosition, %function
-	.thumb_func
-Map_GetCellAtPosition:
-	.incbin "baserom.gba", 0x000dbb6c, 0x0000008c
 	.section .rom.000dbd4e, "ax"
 	.incbin "baserom.gba", 0x000dbd4e, 0x00000002
 	.section .rom.000dbd9c, "ax"
@@ -409,11 +394,6 @@ Func_080dbe44:
 	.global Func_080dbe80
 Func_080dbe80:
 	.incbin "baserom.gba", 0x000dbe74, 0x00000050
-	.global Func_080dbed0
-	.type Func_080dbed0, %function
-	.thumb_func
-Func_080dbed0:
-	.incbin "baserom.gba", 0x000dbec4, 0x000000c4
 	.section .rom.000dc7dc, "ax"
 	.balign 4
 	.global BattleEffect_CleanupSceneObjects
@@ -441,8 +421,6 @@ Func_080dd054:
 	.thumb_func
 Func_080e2264:
 	.incbin "baserom.gba", 0x000e2258, 0x00000238
-	.section .rom.000e270c, "ax"
-	.incbin "baserom.gba", 0x000e270c, 0x0000005c
 	.section .rom.000e2768, "ax"
 	.global Func_080e2774
 	.type Func_080e2774, %function
@@ -525,13 +503,6 @@ Func_080eadfc:
 	.incbin "baserom.gba", 0x000eadf0, 0x000000b8
 	.section .rom.000eb28a, "ax"
 	.incbin "baserom.gba", 0x000eb28a, 0x00000002
-	.section .rom.000eb818, "ax"
-	.balign 4
-	.global Func_080eb824
-	.type Func_080eb824, %function
-	.thumb_func
-Func_080eb824:
-	.incbin "baserom.gba", 0x000eb818, 0x0000010c
 	.section .rom.000ec2ac, "ax"
 	.incbin "baserom.gba", 0x000ec2ac, 0x00000b68
 	.section .rom.000ed298, "ax"

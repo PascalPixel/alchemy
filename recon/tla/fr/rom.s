@@ -149,12 +149,6 @@ Func_0803c198:
 	.incbin "baserom.gba", 0x0003ef8a, 0x00000002
 	.section .rom.0003f216, "ax"
 	.incbin "baserom.gba", 0x0003f216, 0x00000002
-	.section .rom.0003f40c, "ax"
-	.global Menu_ConfirmSelection
-	.type Menu_ConfirmSelection, %function
-	.thumb_func
-Menu_ConfirmSelection:
-	.incbin "baserom.gba", 0x0003f40c, 0x00000248
 	.section .rom.0003fd6c, "ax"
 	.global Menu_OpenWorkspaceOptions
 	.type Menu_OpenWorkspaceOptions, %function
@@ -325,18 +319,6 @@ Func_080d7524:
 	.incbin "baserom.gba", 0x000df21e, 0x00000002
 	.section .rom.000e099a, "ax"
 	.incbin "baserom.gba", 0x000e099a, 0x00000002
-	.section .rom.000e0b6c, "ax"
-	.balign 4
-	.global Func_080dbb78
-Func_080dbb78:
-	.incbin "baserom.gba", 0x000e0b6c, 0x0000008c
-	.section .rom.000e0ec4, "ax"
-	.balign 4
-	.global Func_080dbed0
-	.type Func_080dbed0, %function
-	.thumb_func
-Func_080dbed0:
-	.incbin "baserom.gba", 0x000e0ec4, 0x000000c4
 	.section .rom.000e17dc, "ax"
 	.balign 4
 	.global BattleEffect_CleanupSceneObjects
@@ -364,8 +346,6 @@ Func_080dd054:
 	.thumb_func
 Func_080e2264:
 	.incbin "baserom.gba", 0x000e7258, 0x00000238
-	.section .rom.000e770c, "ax"
-	.incbin "baserom.gba", 0x000e770c, 0x0000005c
 	.section .rom.000e7768, "ax"
 	.global Func_080e2774
 	.type Func_080e2774, %function
@@ -441,13 +421,6 @@ Func_080eadfc:
 	.incbin "baserom.gba", 0x000efdf0, 0x000000b8
 	.section .rom.000f028a, "ax"
 	.incbin "baserom.gba", 0x000f028a, 0x00000002
-	.section .rom.000f0818, "ax"
-	.balign 4
-	.global Func_080eb824
-	.type Func_080eb824, %function
-	.thumb_func
-Func_080eb824:
-	.incbin "baserom.gba", 0x000f0818, 0x0000010c
 	.section .rom.000f12ac, "ax"
 	.incbin "baserom.gba", 0x000f12ac, 0x00000b68
 	.section .rom.000f2298, "ax"

@@ -1,9 +1,6 @@
-// Matches (tla-en, 2026-11-07).
-// Written as its matched mirror Func_080dbf94 (games/tla/src/field/map/
-// f0dbf94.c): the scale is i * (Q16_ONE * 3 / 4) / 10 + Q16_ONE / 4, which
-// loop.c reduces to the native's running sum, in place of a scale variable.
-// Moves the object from 16 pixels above the effect's main object to (x, y,
-// z), growing it from 0.25 to 1.
+/// @file
+/// Moves an object into place while growing it.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -18,6 +15,8 @@ struct MoveScene {
 void Actor_SetSpritePriorityDirectFar(struct Actor *object, s32 priority);
 void wait(s32 frames);
 
+/// Moves the object from 16 pixels above the effect's main object to (x, y,
+/// z), growing it from 0.25 to 1.
 void Func_080dbed0(struct Actor *object, s32 x, s32 y, s32 z) {
   struct MoveScene *scene = Ram_HeapSlots->effectWork;
   struct Actor *mainObject = scene->mainObject;

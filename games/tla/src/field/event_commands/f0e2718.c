@@ -1,8 +1,6 @@
-// Matches (tla-en, 2026-11-07).
-// The count is read straight from the work in the for loop's test, so the
-// duplicated first test keeps its own address (copied to r7 after it); the
-// cell is written through struct MapCell, whose own alias set lets the next
-// count load go straight after the store.
+/// @file
+/// Places the event work's listed blocks.
+
 #include "types.h"
 #include "map.h"
 
@@ -10,6 +8,8 @@ extern u8 gData_02001000[];
 void Func_080201f0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 struct MapCell *Func_080dbb78(s32 x, s32 z, s32 layer);
 
+/// For each entry of the event work's list at 0x174c, calls Func_080201f0 with
+/// its bytes and clears the collision code of the cell at its position.
 void Func_080e2718(void) {
   u8 *base = gData_02001000;
   s32 i;

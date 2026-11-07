@@ -1,24 +1,6 @@
-// Matches (tla-en, 2026-11-07).
-// 2026-11-07: the tile copied right after the slot, as the native's field
-// order, and both empty asm statements dropped (8 to 0). The other editions
-// (Menu_ConfirmSelection) differ only by the empty Func_0803f60c that joins it.
-// Earlier: draft, differ 24 of 276 (2026-10-26, 26 before): the tile copied
-// after the home position. Earlier notes follow.
-// Draft, differ 26 of 276 in tla-en under -mthumb-slow-loads (2026-10-26). A
-// device search (each statement followed by an empty asm or a one-pass block,
-// wrapped in one, or swapped with the next, kept when it helps) reaches 14
-// with an empty asm after `other->scaleEnd = 0x100;`; an empty asm after
-// `screen->head = NULL;`, and finds nothing closer.
-// Draft, differ 34 of 276, 2026-10-15: The Broken Seal's
-// Menu_ConfirmSelection, ported fresh; every instruction is the native's
-// and only the order differs. Remaining: in five blocks the native
-// schedules a constant, copy or pool load ahead of a load the draft
-// issues first (the 0x80 mark's pool load before the cursor's ldrh, the
-// sprite bits' constants before their byte loads, the path's offset after
-// the node's stores). The empty asm after the node's target store fixes
-// one of them (differ 38 without it); a u16 temporary for the 0x80 mark
-// drops two instructions (differ 58). The function ends with the empty
-// Func_0803f60c (bx lr) its listing holds, which joins it on adoption.
+/// @file
+/// Confirms a selection screen's choice.
+
 #include "types.h"
 #include "select.h"
 
@@ -29,6 +11,7 @@ void Resource_ResetPendingTransfer(void);
 s32 Resource_ResetEntry(u32 entry);
 struct SelectionNode *Resource_FindFreeTransferEntry(s32 kind);
 
+/// The Broken Seal's Menu_ConfirmSelection in this game's form.
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   struct SelectionNode *node;
   struct SelectionNode *other = NULL;
@@ -120,3 +103,5 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   }
   return index;
 }
+
+void Func_0803f60c(void) {}

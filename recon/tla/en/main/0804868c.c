@@ -1,21 +1,42 @@
-// Draft, differ 4 of 1246, skeleton gap 1 (tla-en, 2026-11-01): the battle Djinn
-// menu, The Broken Seal's BattleDjinnMenu_Run
+// Draft, differ 4 of 1246, skeleton gap 1 (tla-en, 2026-11-01): the battle
+// Djinn menu, The Broken Seal's BattleDjinnMenu_Run
 // (games/tbs/src/window/screens/battle_djinn_menu.c) on this game's work,
 // messages and change preview (Func_080464dc). The list window is 10 tiles wide
 // from column 20, a recovering Djinni's turns take two digits at x 48, and
 // letting go of R redraws the list as well as the stats page. Left: two swapped
-// load pairs, both scheduling. For VramCache_Reload the listing loads cursorSlot
-// from the stack before gResource_FixedBlockBTiles from the pool, the draft the
-// other way round; after previewPage++ it reloads previewPage before
-// previewPages. Tried without effect: a local for the tiles
-// address at each scope, s32 and u32 argument types, the sprite words through
-// s32 pointers, the increment's and the compare's spellings. The element offset
+// load pairs, both scheduling. For VramCache_Reload the listing loads
+// cursorSlot from the stack before gResource_FixedBlockBTiles from the pool,
+// the draft the other way round; after previewPage++ it reloads previewPage
+// before previewPages. Tried without effect: a local for the tiles address at
+// each scope, s32 and u32 argument types, the sprite words through s32
+// pointers, the increment's and the compare's spellings. The element offset
 // tables stay non-const: const lets their loads move past the stack argument.
+// Japanese (tla-ja 0804888c, 2026-11-07): differ 8 of 1240, scheduling only:
+// the same VramCache_Reload pair, and at the top of the loop the listing adds
+// sl to the entry index after loading work and stores alreadySelected's 0
+// before the index load. Its list is narrower and its messages shorter
+// (LANGUAGE), and letting go of R does not redraw the list (TLA_PATCH_1).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
 #include "iwram_call.h"
+#include "edition.h"
+#include "version.h"
+
+// The Japanese list window is 9 tiles wide from column 21, its messages hold
+// 32 characters and a recovering Djinni's turns stand at x 40.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define DJINN_LIST_X 21
+#define DJINN_LIST_WIDTH 9
+#define DJINN_MESSAGE_CAPACITY 32
+#define DJINN_TURNS_X 40
+#else
+#define DJINN_LIST_X 20
+#define DJINN_LIST_WIDTH 10
+#define DJINN_MESSAGE_CAPACITY 52
+#define DJINN_TURNS_X 48
+#endif
 
 extern u8 MsgDjinnName[];
 extern u8 Msg_09b1[];
@@ -129,7 +150,7 @@ s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
 void *Heap_AllocEwram(s32 size);
 struct DjinnMenuWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                        s32 flags);
+                                      s32 flags);
 void Text_UseExtraTiles(s32 on);
 struct DjinnMenuUnit *Unit_Get(s32 member);
 struct DjinnRecoveryTable *Djinn_GetRecoveryTableFar(s32 side);
@@ -143,15 +164,15 @@ struct DjinnMenuWindow *Func_080464dc(struct DjinnMenuWindow *window,
                                       s32 member, s32 encodedDjinn, s32 page,
                                       s32 *pageCount);
 void Text_DrawWideStringAtOffset(u16 *text, struct DjinnMenuWindow *window,
-                                     s32 x, s32 y);
+                                 s32 x, s32 y);
 void WindowSprite_RedrawSavedRect(struct DjinnMenuWindow *window);
 void Window_SetTilemapEntry(struct DjinnMenuWindow *window, s32 entry, s32 x,
-                              s32 y, s32 flags);
+                            s32 y, s32 flags);
 void Func_08041f70(s32 color);
 void Text_DrawCharacterAtOffset(s32 message, struct DjinnMenuWindow *window,
-                                  s32 x, s32 y);
+                                s32 x, s32 y);
 void Text_DrawNumberAtOffset(s32 value, s32 digits,
-                               struct DjinnMenuWindow *window, s32 x, s32 y);
+                             struct DjinnMenuWindow *window, s32 x, s32 y);
 void Sound_PlayFar(s32 cue);
 void WindowSprite_ClearList(struct DjinnMenuWindow *window);
 void Input_ResetKeyRepeat(void);
@@ -178,7 +199,9 @@ s32 Func_0804868c(s32 member) {
   s32 redraw;
   s32 alreadySelected;
   s32 previewPages;
+#if TLA_PATCH_1
   s32 redrawList;
+#endif
   struct DjinnMenuNavigation *navigation;
   struct DjinnMenuUnit *unit;
   struct DjinnRecoveryList *list;
@@ -216,10 +239,12 @@ s32 Func_0804868c(s32 member) {
   previewPages = 0;
   redraw = 0;
   alreadySelected = 0;
+#if TLA_PATCH_1
   redrawList = 0;
+#endif
   messageWindow = Window_Create(0, 4, 30, 4, 42);
   Text_UseExtraTiles(1);
-  listWindow = Window_Create(20, 9, 10, 11, 6);
+  listWindow = Window_Create(DJINN_LIST_X, 9, DJINN_LIST_WIDTH, 11, 6);
   DJINN_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   unit = Unit_Get(member);
 
@@ -266,7 +291,7 @@ s32 Func_0804868c(s32 member) {
       standbyElements = 0;
       work->holdTilemapUpload = 1;
       Window_HighlightRect(listWindow->x + 1, listWindow->y + drawnRow * 2 + 1,
-                          listWindow->width - 2, 1, 15);
+                           listWindow->width - 2, 1, 15);
       if (previewPage != 0) {
         Window_Close(messageWindow, 1);
         messageWindow = Window_Create(0, 4, 30, 4, 42);
@@ -286,7 +311,8 @@ s32 Func_0804868c(s32 member) {
           }
         }
         if (alreadySelected != 0) {
-          Message_CopyExpanded((s32)Msg_0d50, messageText, 52);
+          Message_CopyExpanded((s32)Msg_0d50, messageText,
+                               DJINN_MESSAGE_CAPACITY);
           if (previewWindow != NULL) {
             Window_Close(previewWindow, 1);
             previewWindow = NULL;
@@ -298,8 +324,8 @@ s32 Func_0804868c(s32 member) {
                                      DJINN_ENTRY_RECOVERY_SHIFT,
                                  5);
             Message_CopyExpanded(((selectedDjinn & 0xf00) >> 8) * 20 +
-                                         (selectedDjinn & 0xff) + (s32)Msg_09b1,
-                                     messageText, 52);
+                                     (selectedDjinn & 0xff) + (s32)Msg_09b1,
+                                 messageText, DJINN_MESSAGE_CAPACITY);
             if (previewWindow != NULL) {
               Window_Close(previewWindow, 1);
               previewWindow = NULL;
@@ -308,18 +334,20 @@ s32 Func_0804868c(s32 member) {
           } else {
             previewWindow = Func_080464dc(previewWindow, member, selectedDjinn,
                                           previewPage, &previewPages);
-            Message_CopyExpanded((s32)Msg_0cf9, messageText, 52);
+            Message_CopyExpanded((s32)Msg_0cf9, messageText,
+                                 DJINN_MESSAGE_CAPACITY);
             standbyElements = 1 << ((selectedDjinn & 0xf00) >> 8);
           }
         } else {
           previewWindow = Func_080464dc(previewWindow, member, selectedDjinn,
                                         previewPage, &previewPages);
           Message_CopyExpanded(((selectedDjinn & 0xf00) >> 8) * 20 +
-                                       (selectedDjinn & 0xff) + (s32)Msg_09b1,
-                                   messageText, 52);
+                                   (selectedDjinn & 0xff) + (s32)Msg_09b1,
+                               messageText, DJINN_MESSAGE_CAPACITY);
         }
       } else {
-        Message_CopyExpanded((s32)Msg_0d4e, messageText, 52);
+        Message_CopyExpanded((s32)Msg_0d4e, messageText,
+                             DJINN_MESSAGE_CAPACITY);
       }
       work->holdTilemapUpload = 0;
       if (previewPage == 0) {
@@ -330,7 +358,11 @@ s32 Func_0804868c(s32 member) {
       }
       Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       drawnRow = selectedRow;
+#if TLA_PATCH_1
       if (firstEntry != drawnFirstEntry || redrawList == 1) {
+#else
+      if (firstEntry != drawnFirstEntry) {
+#endif
         WindowSprite_RedrawSavedRect(listWindow);
         j = 0;
         for (listEntry = firstEntry;
@@ -343,21 +375,23 @@ s32 Func_0804868c(s32 member) {
           else if (encodedDjinn & DJINN_ENTRY_STANDBY)
             Func_08041f70(2);
           Text_DrawCharacterAtOffset(((encodedDjinn & 0xf00) >> 8) * 20 +
-                                           (encodedDjinn & 0xff) +
-                                           (s32)MsgDjinnName,
-                                       listWindow, 8, j * 16);
+                                         (encodedDjinn & 0xff) +
+                                         (s32)MsgDjinnName,
+                                     listWindow, 8, j * 16);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK)
             Text_DrawNumberAtOffset(
                 (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
                     DJINN_ENTRY_RECOVERY_SHIFT,
-                2, listWindow, 48, j * 16);
+                2, listWindow, DJINN_TURNS_X, j * 16);
           Func_08041f70(15);
           j++;
           if (j > 4)
             break;
         }
         drawnFirstEntry = firstEntry;
+#if TLA_PATCH_1
         redrawList = 0;
+#endif
       }
       if (djinnCount > 5) {
         s32 listPages;
@@ -367,13 +401,13 @@ s32 Func_0804868c(s32 member) {
 
           if (j == firstEntry / 5)
             tile = j + 0xf30b;
-          Window_SetTilemapEntry(
-              listWindow, tile, listWindow->width - listPages + j - 2, -1, 0);
+          Window_SetTilemapEntry(listWindow, tile,
+                                 listWindow->width - listPages + j - 2, -1, 0);
         }
       }
       Window_HighlightRect(listWindow->x + 1,
-                          listWindow->y + selectedRow * 2 + 1,
-                          listWindow->width - 2, 1, 14);
+                           listWindow->y + selectedRow * 2 + 1,
+                           listWindow->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
@@ -386,22 +420,22 @@ s32 Func_0804868c(s32 member) {
           if (j == firstEntry / 5)
             tile = j + 0xf30b;
         }
-        Window_SetTilemapEntry(
-            listWindow, tile, listWindow->width - (djinnCount + 4) / 5 + j - 2,
-            -1, 0);
+        Window_SetTilemapEntry(listWindow, tile,
+                               listWindow->width - (djinnCount + 4) / 5 + j - 2,
+                               -1, 0);
       }
       if ((gInput.held & 0x100) == 0) {
         Window_SetTilemapEntry(listWindow, 0xf334,
-                                 listWindow->width - (djinnCount + 4) / 5 - 3,
-                                 -1, 0);
+                               listWindow->width - (djinnCount + 4) / 5 - 3, -1,
+                               0);
         Window_SetTilemapEntry(listWindow, 0xf335, listWindow->width - 2, -1,
-                                 0);
+                               0);
       } else {
         Window_SetTilemapEntry(listWindow, 0xf011,
-                                 listWindow->width - (djinnCount + 4) / 5 - 3,
-                                 -1, 0);
+                               listWindow->width - (djinnCount + 4) / 5 - 3, -1,
+                               0);
         Window_SetTilemapEntry(listWindow, 0xf012, listWindow->width - 2, -1,
-                                 0);
+                               0);
       }
       work->dirty |= 2 << ((u32)(listWindow->y - 1) >> 2);
     }
@@ -447,7 +481,8 @@ s32 Func_0804868c(s32 member) {
           MessageArgument_Push((turns & DJINN_ENTRY_RECOVERY_MASK) >>
                                    DJINN_ENTRY_RECOVERY_SHIFT,
                                5);
-          Message_CopyExpanded((s32)Msg_0cf8, messageText, 52);
+          Message_CopyExpanded((s32)Msg_0cf8, messageText,
+                               DJINN_MESSAGE_CAPACITY);
           Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
         }
         Sound_PlayFar(114);
@@ -481,15 +516,15 @@ s32 Func_0804868c(s32 member) {
 
             if ((gFrameCount & 15) <= 11 && i == previewPage - 1)
               tile = previewPage + 0xf30a;
-            Window_SetTilemapEntry(
-                previewWindow, tile,
-                previewWindow->width - previewPages + i - 2, -1, 0);
+            Window_SetTilemapEntry(previewWindow, tile,
+                                   previewWindow->width - previewPages + i - 2,
+                                   -1, 0);
           }
           Window_SetTilemapEntry(previewWindow, 0xf334,
-                                   previewWindow->width - previewPages - 3, -1,
-                                   0);
+                                 previewWindow->width - previewPages - 3, -1,
+                                 0);
           Window_SetTilemapEntry(previewWindow, 0xf335,
-                                   previewWindow->width - 2, -1, 0);
+                                 previewWindow->width - 2, -1, 0);
           DJINN_MENU_MARK_ROW(work, previewWindow->y);
         }
         if (previewPage == 0 && previewPages != 0) {
@@ -521,7 +556,9 @@ s32 Func_0804868c(s32 member) {
           WindowSprite_ClearList(previewWindow);
         previewPage = 0;
         redraw = 1;
+#if TLA_PATCH_1
         redrawList = 1;
+#endif
       } else if (repeated & 0x10) {
         Sound_PlayFar(111);
         Input_ResetKeyRepeat();
@@ -577,8 +614,8 @@ s32 Func_0804868c(s32 member) {
         if (((1 << i) & standbyElements) == 0)
           palette = 15;
         Window_HighlightRect(iconWindow->x + gDjinnMenu_ElementXOffsets[i] + 1,
-                            iconWindow->y + gDjinnMenu_ElementYOffsets[i] + 1,
-                            2, 1, palette);
+                             iconWindow->y + gDjinnMenu_ElementYOffsets[i] + 1,
+                             2, 1, palette);
       }
     }
     if (gFrameCount & 4) {

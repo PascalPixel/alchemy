@@ -18,6 +18,27 @@
 // + 15 from i or v (538 to 626), a - row or i - row for the quad (856), the
 // row's - 84 and + 15 also computed at the top (467), firstQuad in the column
 // loop (614), row * 3 * 5 (folded back to row * 15).
+// 2026-11-07, third pass, differ unchanged at 180. Where the note comes
+// from: expand_mult puts REG_EQUAL (mult row 16) on row * 15's (row << 4)
+// temporary; GCSE replaces that temporary with a copy of v and keeps the
+// note, which becomes (row << 4). A plain row << 4 (quad[5]) gets no note.
+// So any row * 15 synthesized inside the column loop folds the vertex start,
+// and firstQuad at the row top avoids that only by making loop reduce the
+// quad's start in its first pass (hence the rerun's row * 360). The form
+// closest to the native grid: no firstQuad, and the quad indexed by
+// row * quadColumns with s32 quadColumns = WATER_COLUMNS - 1 at the row
+// top. The multiplier is a register, so nothing is synthesized and no note
+// is made; row * 15 is reduced alone (sp+32, + 15 at 28, - 84 at 24, as in
+// the native), the quad start is slot 32 * 3 << 3 each row, and vertex starts
+// from Q << 2. That gives 262 (with d) or 273, because the column loop's
+// ranks are still u 1.89 > Q 1.551 > vertex 1.545, where the native needs
+// vertex > u > Q: Q is copied to r0, vertex goes to r4 and the frame loop's
+// reload rotation stays off. Not gained on that form: vertex after u and a,
+// or from a (272); u declared in the if block (815); pins for vertex r1 and
+// u r0 (390 to 478); quad[5] or the + 15 from i or v (550 to 962); the
+// permuter, 12 minutes (186). Also not gained: (row << 4) - row or v - row
+// written out (loop no longer sees the quad as a giv: 868, 439); a copy of
+// firstQuad or a barrier on it in the column loop (180, 268, 442).
 // Earlier, at 266 of 902:
 // 2026-11-06, devices allowed: none gains. Pins (u r0, vertex r1, Q r4, i r4)
 // 493 to 1009; an empty asm on i 956 (the frame shrinks); i, (row << 4) or a

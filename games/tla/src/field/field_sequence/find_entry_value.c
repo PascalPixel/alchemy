@@ -1,15 +1,6 @@
 #include "types.h"
+#include "field/world_map.h"
 
-struct FlagEntry {
-  u8 flag;
-  u8 value;
-  u8 unk02[10];
-  s16 id;
-  s16 variant;
-  u8 unk10[4];
-};
-
-struct FlagEntry *FlagEntries_GetTable(void);
 void GameFlag_SetBit(s32 flag);
 
 void Func_080c9de0(s32 id, s32 variant) {

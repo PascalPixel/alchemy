@@ -14760,7 +14760,7 @@ msgctxt "message"
 msgid "03626"
 msgstr "げんざいち"
 
-msgctxt "message"
+msgctxt "MsgNotOnMap"
 msgid "03627"
 msgstr ""
 "ここは ちずにのっていない\n"

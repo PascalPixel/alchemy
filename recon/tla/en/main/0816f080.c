@@ -1,4 +1,19 @@
-// Differ 112 of 568 (tla-en, 2026-11-06).
+// Differ 52 of 568 (tla-en, 2026-11-07), with one tagged barrier.
+// Fifth round, 7 November: the splash scale (112 -> 52). The listing keeps 25000 in r9 and
+// halves it in the loop with a lone asrs, so the halving's operand was a value neither CSE
+// nor gcse's cprop knew as a constant. Pinning splash to r9 reproduced the splash code but
+// moved sl and r8 everywhere (157). An asm volatile("" : "+r"(splash)) at the top of the
+// splash's if hides the constant and keeps the asrs in the loop (103 with splash set before
+// the splash loop, where splash outranks the texture pointer for r8). Setting splash = 25000
+// before the glow-gather loop lengthens its life so the texture pointer takes r8 and splash
+// r9, as in the listing: 52. Placement measured: frame top 148, before the drops' model
+// 70, after model->vertices 52, after the gather 56, before the splash loop 103. Without the
+// asm every placement is 112 (cprop notes 12500 on the shift and loop.c hoists it).
+// The asm as the 25000's source ("=r" : "0"(25000)) is worse (167, 232). Left: the 25000
+// is built before the gather loop where the listing builds it before the splash loop, and
+// the zero stores' scheduling (glow->variant, model->shade: Left 3). A source for the 25000
+// that cprop cannot see without an asm (a table or field the code really reads) would
+// replace the barrier; none was found.
 // Fourth round, 6 November: the r6/r7 swap is gone (146 -> 112). row is now the plain
 // row = y * 32, and the first pair's second store spells x * 2 as x + x. With x + x, CSE
 // cannot share row + x * 2 between the two stores, so row has two uses, a loop.c lifetime
@@ -264,6 +279,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     void *vertices;
 
     s32 level;
+    s32 splash;
 
     if (frame == 0) {
       EffectPosition_ProjectBattler(effect->actors[0], &screen);
@@ -315,6 +331,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     model->mesh = Data_08199244;
     model->texture = &texture;
     model->vertices = vertices;
+    splash = 25000;
 
     // The glow gathers what the landed drops bring.
     {
@@ -351,11 +368,15 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     model->mesh = Data_08199244;
     for (i = 0, drop = work->particles; i != 6; i++, drop++) {
       if (frame > i * 4 + 64) {
+        /* FAKEMATCH(barrier): asm volatile("" : "+r"(splash)); as the plain
+           Func_080151e4(12500, 25000, 12500), 112 of 568 instructions differ
+           in tla-en. */
+        asm volatile("" : "+r"(splash));
         model->shade = 0;
         texture.pixels = work->sheet + 0x4000 + ((i % 2) << 10);
         Render_ResetTransformState();
         Func_08015160(drop->x - 0x400000, drop->y - 0x300000, 0);
-        Func_080151e4(12500, 25000, 12500);
+        Func_080151e4(splash >> 1, splash, splash >> 1);
         SceneTransform_ApplyPitch(-0x4000);
         Render_TransformVertices(gData_08199210, vertices, 4);
         Render_DrawModelList(model);

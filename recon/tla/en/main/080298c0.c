@@ -1,9 +1,8 @@
-// Differ 24 of 965 (tla-en, 2026-11-06): the wake timer's retest reads the byte through
-// the object, so its zero path keeps the native's retest (26 to 24); what is left is
-// scheduling at the first climb's call, two copies of object, and the wake block's loads.
-// Before: five spellings of the decrement left 26; permuter 5 minutes 48.
-// Draft, differ 26 of 965 (tla-en, 2026-11-05): the debug read is volatile and the retry offsets start at 0x1000 (differ 122 to 26). CLIMBING after the first climb's animation call is a measured form, not yet understood: before it, differ 80 by cross-jumping, though the native stores it before. Older notes follow.
-// Draft, differ 122 of 965, skeleton gap 32 (tla-en, 2026-11-01)
+// Matches: differ 0 of 965 (tla-en, 2026-11-07).
+// History: 122 to 26 to 24 by earlier reshaping; 0 with Actor_SetMoveTarget's
+// real void return, the climb-up's unk66 store before the velocities, and
+// struct field reads.
+//
 // Script command 0x1e, walking that turns into climbing: on foot it moves by
 // the direction pad as SC_PLAYER does without pushing (a refused step with up
 // held starts a climb onto ground more than 8 pixels above when Func_080c8770
@@ -14,19 +13,10 @@
 // height, and every 16th frame a falling bit of rubble (object 0x11d) drops
 // beside it. Walking leaves object 0x164 every fifth step, as Func_0802a124's
 // wake. Both modes end with Func_08029838.
-// Left: the climbing branch's dead read of the held keys (6 instructions plus
-// its reloads) needs a volatile read, which this draft leaves out: with
-// *(volatile u32 *)&gInput.held there, as Actor_MoveByKeys has it, the draft
-// measures differ 90, skeleton gap 26. wait_advance.c and Actor_MoveByKeys also
-// reread held, so one `volatile u32 held` at its declaration may settle all
-// three (S2). The opening's load order (the native has y, z, the terrain
-// address, x, the mask; statement orders tried move the allocation or leave
-// this one); the first climb's `movs r1, #3; bl` cross-jumps into the second's
-// here because sched2 leaves the argument last; two reloads of collision in
-// the wake block. Allocation hangs on small things: action and unk66 are
-// written as fields (through a pointer a halfword constant comes from the
-// pool), count must be set at the top, and cellX and cellZ are reused for the
-// face, which gives the callee-saved registers the native uses.
+//
+// Action is written as a field and count is set at the top; cellX and
+// cellZ are reused for the face, which gives the native's callee-saved
+// registers.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -57,9 +47,17 @@ struct ClimbingActor {
 };
 #define CLIMBING(object) (((struct ClimbingActor *)(object))->climbing)
 
-struct ClimbEventWork {
+struct Unk_WakeActor {
+  u8 unk00[0x63];
+  u8 unk63;
+};
+
+struct Unk_ClimbEventWork {
   u8 unk000[0xd4a];
-  u8 wakePriority;
+  /// Read as the low byte of a halfword: as a u8 or s16 field the read waits
+  /// for the sprite store (8 of 965 instructions differ in tla-en).
+  u16 unkd4a : 8;
+  u16 unkd4b : 8;
 };
 
 extern u8 gDebugMode;
@@ -76,7 +74,7 @@ s32 Func_0802d7b0(s32 x, s32 z, s32 layer, s32 height);
 s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
 s32 Func_080c8770(s32 x, s32 z, s32 kind);
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
-s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 FixedSqrt(s32 value);
 u32 Random16(void);
 struct Actor *Func_08023220(s32 kind, s32 x, s32 y, s32 z);
@@ -356,11 +354,13 @@ s32 Func_080298c0(struct Actor *object) {
     if (Func_080c8770(cellX, cellZ, 2)) {
       object->motionFlags = 0;
       object->y += 0x10000;
+      // Through the u16 field: through CLIMBING the store may alias the
+      // velocities, and the call tail cross-jumps into the climb down.
+      object->unk66 = 1;
       object->velocityX = 0;
       object->velocityY = 0;
       object->velocityZ = 0;
       Actor_SelectAnimation(object, 3);
-      CLIMBING(object) = 1;
       goto done;
     }
   }
@@ -438,16 +438,19 @@ counted:
       sprite = effect->animation;
       Actor_StartScript(effect, gData_0802ece0);
       effect->priorityFlags = 8;
-      ((u8 *)effect)[99] = 100;
+      // Through a struct member: as a byte offset the store holds back the
+      // stack read of collision after it.
+      ((struct Unk_WakeActor *)effect)->unk63 = 100;
       effect->motionFlags = collision;
       Sound_PlayFar(596);
       if (sprite != NULL) {
-        struct ClimbEventWork *work = Ram_HeapSlots->eventWork;
+        struct Unk_ClimbEventWork *work = Ram_HeapSlots->eventWork;
 
         Animation_ApplyChildArgument(sprite, 1);
         sprite->flags = collision;
+        // DEAD: overwritten by the next line.
         sprite->priority = 2;
-        sprite->priority = work->wakePriority & 3;
+        sprite->priority = work->unkd4a & 3;
       }
       *wakeTimer = 5;
     }

@@ -1,5 +1,7 @@
-// Differ 26 of 938 (tla-en, 2026-11-06): sched2 order only; untagged empty asms,
-// one-pass blocks and searched locals each need their S2 tag on adoption.
+// Differ 20 of 938 (tla-en, 2026-11-07): sched2 order only; the two hoisted
+// locals (one a pin on r2) need their S2 tag on adoption.
+// 2026-11-07: event loaded before caster, 26 to 20; 12 permuter minutes found
+// nothing further.
 // Draft, differ 50 of 938, skeleton gap 24 (tla-en, 2026-11-01): a field
 // Psynergy that grows something from the
 // ground before the caster (on a 16-pixel grid, unless the event mode is 3):
@@ -19,8 +21,8 @@
 // spots, all the same kind. The native issues its stores earlier than here
 // and its constant chains later (the spill stores before `movs r4, #197`, the
 // flag word's 0xd4c chain, `str failed` before the copies of the scan's
-// pointers, both phase strhs before the Func_080e6400 pool load). Loading event
-// before caster moves ldr r5 too far and gains nothing. The shape that set the
+// pointers, both phase strhs before the Func_080e6400 pool load).
+// The shape that set the
 // allocation: &work->sprites[i] in the first two loops (loop strength
 // reduction keeps the copy at the top of each pass), a stepped pointer in the
 // third, frame apart from i, and the locals declared in stack-slot order.
@@ -122,8 +124,8 @@ void Func_080e716c(void);
 void Func_080e68d0(void) {
   struct RiseWork *work = HeapSlot_Alloc(92, 0x193c);
   struct FxScene *scene = Ram_HeapSlots->effectWork;
-  struct Actor *caster = scene->mainObject;
   struct FxEvent *event = Ram_HeapSlots->eventWork;
+  struct Actor *caster = scene->mainObject;
   struct Actor *other = NULL;
   struct Actor *object;
   struct Actor *target;

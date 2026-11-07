@@ -1,41 +1,3 @@
-// Measured 2026-11-05 (tla-en): differ 10 of 1075.
-// Draft, differ 20 of 1075, skeleton gap 18 (tla-en, 2026-11-01)
-//
-// BattleEffect_RunOdyssey, effect kind 125. Every instruction, register and
-// stack slot now agrees; the 20 lines left are ten instructions in the wrong
-// order, in five places, and they look like the scheduler, not the source:
-// - The high-register moves go after the spill stores in the native and before
-//   them here: mov fp, r6 (loop head), mov r8, r2 (claw loop), and mov r8 / mov
-//   sl after str r6, [sp, #20] (flash loop). sched2 ties all of these and breaks
-//   the tie by LUID, and i = 0 is always ahead of loop.c's giv inits, so C cannot
-//   reverse it: statement order, do { } while (0) around the loops and named
-//   address locals all failed (those locals get registers, differ 481).
-// - ldr r7, [sp, #56] before the second slash's stack arguments; str r3, [r7, #8]
-//   for the mesh; movs r5, #0 and its store at the very end. Every order of the
-//   model set-up and of the closing statements stays at 20 or worse.
-// All of it fits the "spill store under-costed" family: the native ranks a store
-// above a move. That is a question about the K2 scheduling model for Pascal, out
-// of reach here, so no barrier was added; one could not reach differ 0.
-// Forms that are evidence, not style:
-// - The expression hash table must have 463 buckets, or PRE names &texture before
-//   &from and &to and their spill slots swap. That needs 924 to 927 insns at GCSE;
-//   u16 green and its ?: bring it to 926. Adding or removing insns anywhere can
-//   flip this, so watch sp+24 to sp+32 after any change.
-// - green keeps the lsls #16 of blue alive through combine.
-// - spark must stay block-local: a shared step needs a final value after the k
-//   loop, which keeps i * 896 worth reducing, where the native reduces i * 32.
-// - shard is a separate hand-stepped pointer: its own register, and a pool-loaded
-//   start; &Data_02016000[i] reloads the symbol in the loop.
-// - pixels is loaded before the bitfields so that it takes r0.
-// - none: a separate pseudo for the stack argument, giving movs r1, #0.
-// - savedScrollX is s32 (its reload is ldrh from the word), color is an array
-//   (allocated last, sp+67, and read back through a fresh address), the claw's
-//   else branch keeps both identical arms (it reloads effect->side for GCSE), and
-//   fillMode, flatKind and center are locals so that their constants stay where
-//   the native loads them.
-// Its twins are BattleEffect_RunTitanBlade (shape) and
-// BattleEffect_RunHealingMotes (call order); the backdrop swap is also
-// BattleEffect_RunMegiddo's (kind 124).
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
@@ -53,6 +15,16 @@
 
 #define KIND125_FRAMES 114
 
+// The battle background's id, read through a union view of the bytes that
+// begin with it. Its s32 member gives the read the alias set of
+// transition->active, so the read waits for that store; as
+// *(u16 *)(battle)->unk670, 6 of 1075 instructions differ in tla-en.
+union BattleBackgroundId {
+  u16 id;
+  s32 word;
+};
+#define BACKGROUND(battle) (((union BattleBackgroundId *)(battle)->unk670)->id)
+
 // A texture for the ARM model renderer: its size as powers of two and the
 // address of its pixels.
 struct ModelTexture {
@@ -62,12 +34,12 @@ struct ModelTexture {
   const void *pixels;
 };
 
-// A model for the ARM renderer (Render_DrawModelList). A textured model (kind 7)
-// takes a shade; a flat one (kind 3) the address of its colour.
+// A model for the ARM renderer (Render_DrawModelList). A textured model (kind
+// 7) takes a shade; a flat one (kind 3) the address of its colour.
 struct RenderModel {
   s32 kind;
   s32 unk04;
-  const void *mesh;
+  const u16 *mesh;
   void *vertices;
   struct ModelTexture *texture;
   union {
@@ -110,17 +82,16 @@ void BattleActor_SpawnObjectsForListFar(s16 *targets, s32 mode);
 void BattleActor_CommitPlacementFar(void);
 void BattleBackground_LoadFar(s32 mode, s32 background, s32 level);
 void Actor_SetMode(struct MotionObject *object, s32 mode);
-void Actor_SetAnimationSpeedFar(struct MotionObject *object,
-                                            s32 value);
+void Actor_SetAnimationSpeedFar(struct MotionObject *object, s32 value);
 void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 struct RenderModel *Render_AllocateModelList(s32 count);
 void Render_ResetTransformState(void);
 void Func_08015160(s32 x, s32 y, s32 z);
@@ -221,7 +192,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         s32 blue;
 
         red &= entry;
-        /* FAKEMATCH(dead): green is taken and clamped, then never used; as no green at all, 79 of 1075 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): green is taken and clamped, then never used; as no
+         * green at all, 61 of 1075 instructions differ in tla-en. */
         green = ((u16)entry >> 5) & 31;
         blue = ((u16)entry >> 10) & 31;
 
@@ -369,6 +341,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
           else
             y = 168 - age * 16;
         } else {
+          /* FAKEMATCH(dead): both arms alike, so effect->side is read again;
+           * as x = to.x / 2, 176 of 1075 instructions differ in tla-en. */
           if (effect->side == 0)
             x = to.x / 2;
           else
@@ -393,8 +367,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
     pixels = gMapCellBuffer;
     texture.logWidth = 7;
     texture.logHeight = 7;
-    model->mesh = gData_08199364;
     texture.pixels = pixels;
+    model->mesh = gData_08199364;
     model->kind = 7;
     model->texture = &texture;
     model->vertices = projected;
@@ -518,7 +492,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
   BattleActor_CommitPlacementFar();
   transition->active = 0;
   gBgScroll[1].x = savedScrollX;
-  BattleBackground_LoadFar(1, *(u16 *)Ram_HeapSlots->battleWork->unk670, 24);
+  BattleBackground_LoadFar(1, BACKGROUND(Ram_HeapSlots->battleWork), 24);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
   BattleEffect_EndCanvasLayer();

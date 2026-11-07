@@ -1,23 +1,3 @@
-// Draft, differ 20 of 976, skeleton gap 5 (tla-en, 2026-11-01): The Broken
-// Seal's PaletteFade_Build, which builds the battle effects' colour buffers from
-// a palette (each colour as B, G and R channels shifted up 10 bits). This game
-// adds two tints after the seven The Broken Seal has: 0x10008 darkens bright
-// colours (a fifth off each channel when their sum is over 60), and 0x10009,
-// which the switch places between the grey and sepia tints, a grey of a third of
-// R + G + B, blue three steps darker. 0x10004 differs too: it clamps to other
-// ranges and leaves the first colour of the palette unchanged.
-// Left, all order, no allocation: (1) the half-palette step, where count and src
-// swap r1 and r3 in the head (every order of the three steps tried); (2) the warm
-// tint's first two stores, which the listing schedules before dst's step and the
-// next table's load (*dst then dst++, pointer-form reads, const tables tried);
-// (3) the warm dark tint's last table read, whose address and index swap r2 and
-// r3. Only the *(table + red) spelling there brings its store ahead of the load;
-// red + table, casts and byte offsets give the same.
-// Allocation depends on three forms kept here: the dim grey tint's green = red,
-// which needs the blend loop's clamped results as their own variables (a single
-// set ties each to its doubling, and takes r5 from color); tintRed and tintBlue
-// set in two steps (their two stack stores); dst[i * 3 + n] in the grey, custom
-// and blend loops (dst copied to a reduced pointer).
 #include "types.h"
 #include "iwram_call.h"
 #include "system/dma.h"
@@ -71,8 +51,8 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
     colorCount = COLOR_HALF;
   } else if (half == 2) {
     dst += COLOR_HALF * 3;
-    colorCount = COLOR_HALF;
     src += COLOR_HALF;
+    colorCount = COLOR_HALF;
   }
 
   // One colour: write it once, then let DMA copy it over the rest. The copy
@@ -249,7 +229,7 @@ void BattleEffect_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
         blue = PaletteFade_ClampComponent(blue);
         dst[0] = gColorBuffer_ChannelCurveContrast[blue];
         dst[1] = gColorBuffer_ChannelCurveLight[green];
-        dst[2] = *(gColorBuffer_ChannelCurve + red);
+        dst[2] = gColorBuffer_ChannelCurve[red];
         dst += 3;
       }
       break;

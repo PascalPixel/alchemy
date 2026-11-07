@@ -1,9 +1,8 @@
-// Differ 2 of 1044 (tla-en, 2026-11-07): the empty asm before the saved y
-// keeps the native order, but the address 0x0202a63a is now loaded after it,
-// where the native loads it in the ldrsh delay slot before the width's subs.
-// 2026-11-07: x and y as constant-address loads beside their use (reload
-// substitutes the memory, as the native does), from 4; asm, one-pass blocks
-// and locals still untagged, each tagged on adoption.
+// Matches: differ 0 of 1044 (tla-en, 2026-11-07).
+// 2026-11-07: from 2; the saved y is read through a type holding an s32, so
+// sched2 keeps the width's store before its load (the native's alias order),
+// replacing the empty asm; de, es, fr and it match with the German name 3
+// pixels left; ja differs (older layout).
 // Draft, differ 44 of 1044, skeleton gap 26 (tla-en, 2026-11-01): the frame,
 // every register and spill slot are the native's; what is left is order.
 // Left: five store-against-constant orders in sched2 (the native's str before
@@ -20,17 +19,16 @@
 // is what spills the marker; the flag number has its own variable; tile and
 // always are set before placeX; the cursor's y and x take their name offset
 // first, then the scroll; a marker's mode and the cursor's affine index are
-// OAM bit-fields (their masks are QImode -13 and -63); 0x0202a654 and 0x0202a656
-// are arrays because a plain halfword scalar stores a constant from the pool;
-// the three message numbers are symbols (pool loads, not split constants), and
-// tla's en.po has yet to name 03625 "Present location" and 03627 "Boat".
-// Kept forms: the saved leader position as savedX >> 16 (combine narrows it to
-// the native's ldrsh at +2 off the field's address), the cursor's start at its
-// fixed address (the z word as x + 4), the 9-bit x masked in C on the scrolled
-// branch (the native's split 0x1ff), and a u16 angle (the native's 0xffff as
-// the scroll mask >> 16).
-// The world map screen's frame callback, this game's form of ☀️'s
-// WorldPicture_UpdateMarkers (games/tbs/src/field/
+// OAM bit-fields (their masks are QImode -13 and -63); 0x0202a654 and
+// 0x0202a656 are arrays because a plain halfword scalar stores a constant from
+// the pool; the three message numbers are symbols (pool loads, not split
+// constants), and tla's en.po has yet to name 03625 "Present location" and
+// 03627 "Boat". Kept forms: the saved leader position as savedX >> 16 (combine
+// narrows it to the native's ldrsh at +2 off the field's address), the cursor's
+// start at its fixed address (the z word as x + 4), the 9-bit x masked in C on
+// the scrolled branch (the native's split 0x1ff), and a u16 angle (the native's
+// 0xffff as the scroll mask >> 16). The world map screen's frame callback, this
+// game's form of ☀️'s WorldPicture_UpdateMarkers (games/tbs/src/field/
 // event_commands/world_picture.c). The cursor glides to a target set at
 // Data_0202a644 (its step a quarter of the distance, at most 8 pixels) or
 // moves with the d-pad, faster the longer it is held, kept on the map; each
@@ -49,7 +47,15 @@
 #include "main_routine_work.h"
 #include "io_write_queue.h"
 #include "iwram_call.h"
+#include "edition.h"
 #include "ram_buffer.h"
+
+// The scrolled name's left edge, in pixels left of its place.
+#if LANGUAGE == LANGUAGE_GERMAN
+#define WORLD_MAP_NAME_LEFT 3
+#else
+#define WORLD_MAP_NAME_LEFT 1
+#endif
 
 struct WorldMapMarker {
   u8 unk00[4];
@@ -117,6 +123,11 @@ extern s16 Data_0202a654[];
 extern s16 Data_0202a656[];
 #define Data_0202a638 (*(s16 *)0x0202a638)
 #define Data_0202a63a (*(s16 *)0x0202a63a)
+// The saved y's type in the FAKEMATCH below.
+struct Unk_0202a63a {
+  s16 unk00;
+  s32 unk04;
+};
 #define Data_0202a63c (*(s16 *)0x0202a63c)
 #define Data_0202a63e (*(s16 *)0x0202a63e)
 extern struct WorldMapMarker Data_0202a620;
@@ -368,12 +379,11 @@ void Func_080ec4d4(void) {
         else if (nearestName == -2)
           nearestName = (s32)MsgBoat;
         else
-          nearestName =
-              Scene_GetAreaNameIndex(nearestName, nearestEntrance) +
-              (s32)MsgDebugAreaName;
+          nearestName = Scene_GetAreaNameIndex(nearestName, nearestEntrance) +
+                        (s32)MsgDebugAreaName;
         Text_MeasureMessageFar(nearestName, &width, &height);
         if (Data_0202a640 == 0) {
-          cursorX = nearestX - 1;
+          cursorX = nearestX - WORLD_MAP_NAME_LEFT;
           cursorY = nearestY - 11;
           cursorX -= scrollX >> 16;
           cursorY -= scrollY >> 16;
@@ -387,9 +397,12 @@ void Func_080ec4d4(void) {
         }
         if (cursorY < 0)
           cursorY = 0;
-        Text_DrawMessageFar(nearestName, work->window, cursorX,
-                               cursorY);
+        Text_DrawMessageFar(nearestName, work->window, cursorX, cursorY);
         {
+          /* FAKEMATCH(temporary): one local carries width, then height, into
+             the saved size; as plain stores, 20 of 1044 instructions differ in
+             tla-en.
+          */
           s32 value = width;
           Data_0202a63c = value;
           value = height;
@@ -403,7 +416,7 @@ void Func_080ec4d4(void) {
     width = Data_0202a63c;
     height = Data_0202a63e;
     if (Data_0202a640 == 0) {
-      cursorX = nearestX - 1;
+      cursorX = nearestX - WORLD_MAP_NAME_LEFT;
       cursorY = nearestY - 11;
       cursorX -= scrollX >> 16;
       cursorY -= scrollY >> 16;
@@ -417,14 +430,11 @@ void Func_080ec4d4(void) {
     }
     if (cursorY < 0)
       cursorY = 0;
-    {
-      s32 x = Data_0202a638;
-      s32 y;
-      width = cursorX - x;
-      asm("");
-      y = Data_0202a63a;
-      height = cursorY - y;
-    }
+    width = cursorX - Data_0202a638;
+    /* FAKEMATCH(barrier): the saved y read through a struct with an s32
+       member, so its load may alias the width just stored and stays after
+       it; as Data_0202a63a, 10 of 1044 instructions differ in tla-en. */
+    height = cursorY - ((struct Unk_0202a63a *)&Data_0202a63a)->unk00;
     Func_080ec484(work->window, width, height);
     Data_0202a638 = cursorX;
     Data_0202a63a = cursorY;

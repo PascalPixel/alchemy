@@ -334,12 +334,6 @@ Func_080ce31c:
 	.thumb_func
 ScreenTransition_Start:
 	.incbin "baserom.gba", 0x000d91cc, 0x00000354
-	.section .rom.000d9e1c, "ax"
-	.global BattleEffect_BuildBuffer
-	.type BattleEffect_BuildBuffer, %function
-	.thumb_func
-BattleEffect_BuildBuffer:
-	.incbin "baserom.gba", 0x000d9e1c, 0x00000868
 	.section .rom.000da75e, "ax"
 	.incbin "baserom.gba", 0x000da75e, 0x00000002
 	.section .rom.000da760, "ax"
@@ -1161,12 +1155,6 @@ BattleEffect_RunHaures:
 	.thumb_func
 BattleEffect_RunDeathPlunge:
 	.incbin "baserom.gba", 0x00188714, 0x0000059c
-	.section .rom.00189148, "ax"
-	.global BattleEffect_RunDragonCloud
-	.type BattleEffect_RunDragonCloud, %function
-	.thumb_func
-BattleEffect_RunDragonCloud:
-	.incbin "baserom.gba", 0x00189148, 0x000009cc
 	.section .rom.0018ad40, "ax"
 	.balign 4
 	.global Func_0818ad40

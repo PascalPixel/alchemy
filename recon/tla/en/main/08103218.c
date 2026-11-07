@@ -1,8 +1,9 @@
-// Near miss, differ 20 of 906 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 57 of 906 in tla-en. First difference: this issues `lsls r3, r3, #18` earlier
-// (row 18) than the native does (row 20).
+// Differ 20 of 906 (tla-en, 2026-11-07).
+// 2026-11-07: the closing copy's r0 pin became a temporary (same 20); the rest
+// is the djinn tile loop, where GCSE's copy of i << 24 takes r3 beside the
+// native's r6. Measured 2026-10-26 under the Makefile's options
+// (-mthumb-slow-loads), differ 57 of 906 in tla-en. First difference: this
+// issues `lsls r3, r3, #18` earlier (row 18) than the native does (row 20).
 // First draft of Func_08103218: draws a member's status with a djinni change
 // applied, the twin of ☀️'s DjinnMenu_DrawStatPreview
 // (games/tbs/src/menu/menu/djinn.c): the unit is saved, the change applied
@@ -15,10 +16,10 @@
 // issues a step earlier. The block that opens with the twin's i = 0 keeps
 // the second page test, and with it x * 8 and y * 8 recomputed in each
 // stat's block (649 with the two page-0 blocks one test apart).
-#include "types.h"
-#include "ram_buffer.h"
-#include "iwram_call.h"
 #include "battle_unit.h"
+#include "iwram_call.h"
+#include "ram_buffer.h"
+#include "types.h"
 #include "window.h"
 
 struct DjinnMenuWork {
@@ -43,15 +44,12 @@ struct BattleAct *BattleAction_Get(s32 actionId);
 s32 Djinn_AddToOwnerFar(s32 owner, s32 element, s32 index);
 s32 Djinn_ActivateFar(s32 owner, s32 element, s32 index);
 s32 Djinn_DeactivateFar(s32 owner, s32 element, s32 index);
-void Text_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x,
-                                  s32 y);
-void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
-                                  s32 y);
+void Text_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x, s32 y);
+void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x, s32 y);
 void Text_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
 void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
-void Window_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width,
-                                 s32 height);
+void Window_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void Icon_CreateWithLoadedResource(s32 window, s32 x, s32 y, s32 action);
 void Func_08104ba8(s32 window, s32 x, s32 y, s32 variant);
 s32 Text_SetColorFar(s32 colour);
@@ -88,15 +86,15 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
   if (page == 0) {
     if (previewMode == 3) {
       Text_DrawNumberInWindowFar(unit->maxHp, 4, window, x * 8 + 72,
-                                   y * 8 + 56);
+                                 y * 8 + 56);
       Text_DrawNumberInWindowFar(unit->maxPp, 4, window, x * 8 + 72,
-                                   y * 8 + 64);
+                                 y * 8 + 64);
       Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 32, y * 8 + 56);
       Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 32, y * 8 + 64);
-      Text_DrawStringAtOffsetFar((s32)gDjinnMenu_TextSlash, window,
-                                   x * 8 + 64, y * 8 + 56);
-      Text_DrawStringAtOffsetFar((s32)gDjinnMenu_TextSlash, window,
-                                   x * 8 + 64, y * 8 + 64);
+      Text_DrawStringAtOffsetFar((s32)gDjinnMenu_TextSlash, window, x * 8 + 64,
+                                 y * 8 + 56);
+      Text_DrawStringAtOffsetFar((s32)gDjinnMenu_TextSlash, window, x * 8 + 64,
+                                 y * 8 + 64);
     } else {
       Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 32, y * 8 + 56);
       Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 32, y * 8 + 64);
@@ -140,9 +138,8 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
 
     Text_DrawStringAtOffsetFar((s32)unit->name, window, x * 8 + 40, y * 8);
     Text_DrawStringAtOffsetFar((s32)gDjinnMenu_TextLevel, window, x * 8 + 40,
-                                 y * 8 + 16);
-    Text_DrawNumberInWindowFar(unit->level, 2, window, x * 8 + 88,
-                                 y * 8 + 16);
+                               y * 8 + 16);
+    Text_DrawNumberInWindowFar(unit->level, 2, window, x * 8 + 88, y * 8 + 16);
     label = (s32)MsgPreviewStatLabel;
     Text_DrawCharacterAtOffsetFar(label, window, x * 8, y * 8 + 56);
     Text_DrawCharacterAtOffsetFar(label + 1, window, x * 8, y * 8 + 64);
@@ -150,9 +147,8 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
     Text_DrawCharacterAtOffsetFar(label + 3, window, x * 8, y * 8 + 80);
     Text_DrawCharacterAtOffsetFar(label + 4, window, x * 8, y * 8 + 88);
     Text_DrawCharacterAtOffsetFar(label + 5, window, x * 8, y * 8 + 96);
-    Text_DrawCharacterAtOffsetFar((s32)MsgClassName +
-                                        originalUnit->classIndex,
-                                    window, x * 8, y * 8 + 32);
+    Text_DrawCharacterAtOffsetFar((s32)MsgClassName + originalUnit->classIndex,
+                                  window, x * 8, y * 8 + 32);
   }
 
   {
@@ -163,31 +159,31 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
 
       if (originalUnit->classIndex != unit->classIndex) {
         Text_DrawCharacterAtOffsetFar((s32)MsgClassName + unit->classIndex,
-                                        window, x * 8, y * 8 + 48);
+                                      window, x * 8, y * 8 + 48);
         Window_SetTilemapEntryFar(window, 0xf296, x + 2, 5, 0);
       }
       column = x;
       if (originalUnit->classIndex != unit->classIndex)
         column += 5;
       for (i = 0; i < 4; i++) {
-        Window_SetTilemapEntryFar(window, 0x5001 + i, column + i * 2, y + 5,
-                                    0);
-  {
-    register __typeof__(column + i * 2 + 1) hoisted asm("r2") = column + i * 2 + 1;
-    Window_SetTilemapEntryFar(window, unit->djinnActiveCounts[i] + 0xf030, hoisted , y + 5, 0);
-  }
+        Window_SetTilemapEntryFar(window, 0x5001 + i, column + i * 2, y + 5, 0);
+        {
+          /* FAKEMATCH(pin): the tile column held in r2; as column + i * 2 + 1
+           * passed directly, 39 of 906 instructions differ in tla-en. */
+          register s32 tileColumn asm("r2") = column + i * 2 + 1;
+          Window_SetTilemapEntryFar(window, unit->djinnActiveCounts[i] + 0xf030,
+                                    tileColumn, y + 5, 0);
+        }
       }
       if (unit->hp != originalUnit->hp) {
-        Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72,
-                                     y * 8 + 56);
+        Text_DrawNumberInWindowFar(unit->hp, 4, window, x * 8 + 72, y * 8 + 56);
         if (unit->hp > originalUnit->hp)
           Func_08104ba8(window, x * 8 + 62, y * 8 + 56, 0);
         else
           Func_08104ba8(window, x * 8 + 62, y * 8 + 56, 1);
       }
       if (unit->pp != originalUnit->pp) {
-        Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 72,
-                                     y * 8 + 64);
+        Text_DrawNumberInWindowFar(unit->pp, 4, window, x * 8 + 72, y * 8 + 64);
         if (unit->pp > originalUnit->pp)
           Func_08104ba8(window, x * 8 + 62, y * 8 + 64, 0);
         else
@@ -195,7 +191,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       }
       if (unit->atk != originalUnit->atk) {
         Text_DrawNumberInWindowFar(unit->atk, 4, window, x * 8 + 72,
-                                     y * 8 + 72);
+                                   y * 8 + 72);
         if (unit->atk > originalUnit->atk)
           Func_08104ba8(window, x * 8 + 70, y * 8 + 72, 0);
         else
@@ -203,7 +199,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       }
       if (unit->def != originalUnit->def) {
         Text_DrawNumberInWindowFar(unit->def, 4, window, x * 8 + 72,
-                                     y * 8 + 80);
+                                   y * 8 + 80);
         if (unit->def > originalUnit->def)
           Func_08104ba8(window, x * 8 + 70, y * 8 + 80, 0);
         else
@@ -211,7 +207,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       }
       if (unit->agi != originalUnit->agi) {
         Text_DrawNumberInWindowFar(unit->agi, 4, window, x * 8 + 72,
-                                     y * 8 + 88);
+                                   y * 8 + 88);
         if (unit->agi > originalUnit->agi)
           Func_08104ba8(window, x * 8 + 70, y * 8 + 88, 0);
         else
@@ -219,7 +215,7 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       }
       if (unit->luck != originalUnit->luck) {
         Text_DrawNumberInWindowFar(unit->luck, 2, window, x * 8 + 88,
-                                     y * 8 + 96);
+                                   y * 8 + 96);
         if (unit->luck > originalUnit->luck)
           Func_08104ba8(window, x * 8 + 70, y * 8 + 96, 0);
         else
@@ -242,23 +238,23 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
     line = 0;
     for (row = 0; first < count && row < rows; row++, first++) {
       Icon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,
-                                      actions[first] & 0x3fff);
+                                    actions[first] & 0x3fff);
       if (actions[first] & 0x8000)
         Text_SetColorFar(4);
       else if (actions[first] & 0x4000)
         Text_SetColorFar(2);
       else
         Text_SetColorFar(15);
-      Text_DrawCharacterAtOffsetFar(
-          (s32)MsgAbilityName + (actions[first] & 0x3fff), window, x * 8 + 16,
-          (y + line * 2) * 8 + 8);
+      Text_DrawCharacterAtOffsetFar((s32)MsgAbilityName +
+                                        (actions[first] & 0x3fff),
+                                    window, x * 8 + 16, (y + line * 2) * 8 + 8);
       Text_DrawNumberAtOffsetFar(BattleAction_Get(actions[first])->ppCost, 2,
-                                   window, x * 8 + 88, (y + line * 2) * 8 + 8);
+                                 window, x * 8 + 88, (y + line * 2) * 8 + 8);
       line++;
     }
     Text_SetColorFar(15);
     Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyPp, window, x * 8 + 88,
-                                    y * 8);
+                                  y * 8);
     if (previewMode != 3) {
       s32 lines;
 
@@ -266,18 +262,18 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
       if (gained) {
         Text_SetColorFar(4);
         Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyGained, window, x * 8,
-                                        y * 8 + 88);
+                                      y * 8 + 88);
         lines = 1;
       }
       if (lost) {
         Text_SetColorFar(2);
         Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyLost, window, x * 8,
-                                        (y + lines) * 8 + 88);
+                                      (y + lines) * 8 + 88);
         lines++;
       }
       if (lines == 0)
-        Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyUnchanged, window,
-                                        x * 8, y * 8 + 88);
+        Text_DrawCharacterAtOffsetFar((s32)MsgPsynergyUnchanged, window, x * 8,
+                                      y * 8 + 88);
       Text_SetColorFar(15);
       Window_DrawDividerLineFar(window, 0, 11, 13, 11);
     }
@@ -287,8 +283,12 @@ s32 Func_08103218(s32 window, s32 x, s32 y, s32 ownerId, s32 removePairSlot,
   if (page == 0)
     SideObject_CreateFar(ownerId, 0, side, window, 0, 0);
   {
-    register __typeof__(unit) hoisted asm("r0") = unit;
-    Iwram_CopyWords( hoisted , originalUnit, sizeof(struct BattleUnit));
+    /* FAKEMATCH(temporary): the copy routine held in a local; as
+     * Iwram_CopyWords called directly, 22 of 906 instructions differ in tla-en.
+     */
+    s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
+
+    copy(unit, originalUnit, sizeof(struct BattleUnit));
   }
   Heap_Release(originalUnit);
   return 1;

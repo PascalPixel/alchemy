@@ -124,7 +124,7 @@ Resource_DirectoryTable:
 	resource , Battle_SnowfieldCBackdrop
 	resource , Battle_SerpentStarsBBackdrop
 	resource , Battle_SunbeamCloudsBackdrop
-	resource , Battle_RedHazeBackdrop
+	resource RedHazeBackdrop, Battle_RedHazeBackdrop
 	resource DesertBackdrop, Battle_DesertBackdrop
 	resource DuskCloudsBackdrop, Battle_DuskCloudsBackdrop
 	resource AerialViewBackdrop, Battle_AerialViewBackdrop
@@ -267,8 +267,8 @@ Resource_DirectoryTable:
 	resource ArcFragmentsSheet, BattleEffect_ArcFragmentsSheet
 	resource , Resource_Data0FF
 	resource AxeSheet, BattleEffect_AxeSheet
-	resource , Resource_Data101
-	resource , Resource_Data102
+	resource Data101, Resource_Data101
+	resource Data102, Resource_Data102
 	resource , Resource_Data103
 	resource , Resource_Data104
 	resource , BattleEffect_CloudPuffSheet
@@ -369,7 +369,7 @@ Resource_DirectoryTable:
 	resource PinkPalette, BattleEffect_PinkPalette
 	resource VioletPaletteC, BattleEffect_VioletPaletteC
 	resource CyanPalette, BattleEffect_CyanPalette
-	resource , BattleEffect_TanPalette
+	resource TanPalette, BattleEffect_TanPalette
 	resource , BattleEffect_EffectPalette04
 	resource , BattleEffect_EffectPalette05
 	resource , BattleEffect_WispSheet
@@ -416,7 +416,7 @@ Resource_DirectoryTable:
 	resource CrystalSheet, BattleEffect_CrystalSheet
 	resource LightningPillarSheet, BattleEffect_LightningPillarSheet
 	resource StagedParticlePath, BattleEffect_StagedParticlePath
-	resource , BattleEffect_DualStreamPath
+	resource DualStreamPath, BattleEffect_DualStreamPath
 	resource , Field_PerspectiveDataA
 	resource DefaultMapCells, Field_DefaultMapCells
 	resource , Resource_Data199

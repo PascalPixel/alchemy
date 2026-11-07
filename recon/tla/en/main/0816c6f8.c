@@ -1,7 +1,10 @@
+// Differ 6 of 1139 (tla-en, 2026-11-07).
+// 2026-11-07: lift scaled in its declaration fixes the asrs order; the dome
+// model stores kind second and scrollU third (search of all 5040 orders and
+// texture placements). Left, sched2 only: the listing sets the scroll zero
+// after mesh is loaded; a 7-minute permuter run found nothing.
 // 2026-11-05: differ 10 of 1139 (tla-en). A discarded volatile read closes
-// bg2pa and bg2pd. Left, sched2 only: asrs r5 against asrs r2, and the dome
-// model's kind store; greedy barrier, one-pass, pin and statement-move
-// searches found nothing.
+// bg2pa and bg2pd.
 // Draft, differ 24 of 1139, skeleton gap 18 (tla-en, 2026-11-01)
 // BattleEffect_RunGeode: frame, spill slots and allocation agree with the
 // listing, the draft is 2 instructions short and nothing else is left but order.
@@ -383,13 +386,11 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       }
       for (row = 0, height = -64, angle = 0; row != DOME_ROWS;
            height += 8, angle += 2184, row++) {
-        s32 lift = -Trig_Cos(angle) * 3;
+        s32 lift = ((-Trig_Cos(angle) * 3) << 4) >> 16;
         s32 reach = (Trig_Sin(angle) * 48) >> 16;
         s32 column;
         s32 y;
         s32 radius;
-
-        lift = (lift << 4) >> 16;
         y = (lift - height) * curl / 16 + height;
         radius = (reach - 56) * curl / 16 + 56;
         for (column = 0; column != DOME_COLUMNS; column++) {
@@ -403,11 +404,11 @@ void BattleEffect_RunGeode(struct BattleEffectArgument *effect) {
       texture.logHeight = 7;
       texture.pixels = gMapCellBuffer;
       model->unk04 = 3;
+      model->kind = 8;
+      model->scrollU = 0;
       model->mesh = mesh;
       model->texture = &texture;
       model->vertices = projected;
-      model->kind = 8;
-      model->scrollU = 0;
       model->scrollV = 0;
       Render_ResetTransformState();
       if (frame > 7) {

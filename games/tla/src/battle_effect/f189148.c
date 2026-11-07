@@ -1,25 +1,3 @@
-// Differ 28 of 1123 (tla-en, 2026-11-06). Empty asm after the
-// velocityZ store and the y store give 22; nothing lower.
-// Draft, differ 44 of 1123, skeleton gap 26 (tla-en, 2026-11-01)
-// ☀️ twin: BattleEffect_RunDragonCloud (dragon_cloud.c): the puff arc, the
-// faded copies of the pillar sheet, the head flying the path and its trail, the
-// camera's turn and the embers are ☀️'s. ⚓️ moved the embers to start at the
-// target, sends the head to the target before it dives, and added a second
-// variant with orange colours and three showers of sparks.
-// Same length, control flow, frame and slots as the listing; work stays in r11.
-// What is left: in the puff block the 0x4300 constant and the bias table swap
-// r8 and r10 (local-alloc ties on their equal lengths; the listing takes the
-// bias table first), and sched2 ties: the iwram entry's load, the ember loop's
-// shared 1, the path copy (adds r0, r7), and the draw[i & 1] sites' reload of
-// sp+20, which the listing places after the second stack argument.
-// Allocation here sits on loop.c's hoisting threshold (15 * savings * life
-// against the loop's real insns). offset and width in the first draw give the
-// widths and cells tables enough life to leave the frame loop, which keeps
-// local-alloc out of r9 and r11; the spark pointer brings the last spark loop to
-// 45 insns, so gData_08197410 is hoisted into r10. Extra locals or changes in
-// that block lose work's register and differ jumps past 500. Tried, no gain: a
-// bias temporary, a picture pointer, offset or width in the second draw, step
-// as a pointer walk in the other loops, *(draw + (i & 1)).
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -59,10 +37,10 @@ extern char ResourceId_OrangePaletteB;
 extern char ResourceId_DualStreamPath;
 
 // The puff arc's six cells, cut from the ember streak sheet.
-extern u8 gBattleEffect_PuffArcCellWidths[];
-extern u8 gBattleEffect_PuffArcCellHeights[];
-extern u8 gBattleEffect_PuffArcCellBiasY[];
-extern u16 gBattleEffect_PuffArcCells[];
+extern u8 gData_08197467[];
+extern u8 gData_0819746d[];
+extern u8 gData_08197473[];
+extern u16 gData_0819747a[];
 
 // The spark cells: offsets into the particle sheet by size.
 extern u16 gData_08197410[];
@@ -83,13 +61,12 @@ s32 Trig_Cos(s32 angle);
 void Func_081180e8(s32 phase);
 void Sound_PlayFar(s32 cue);
 void BattleCamera_SetViewFar(s32 a, s32 b, s32 c, s32 d);
-void EffectPosition_ProjectBattler(
-    s32 id, struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Render_ResetTransformState(void);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
                    s32 frames);
 void Func_08118088(s32 actor, s32 motion);
@@ -99,6 +76,13 @@ void wait(s32 frames);
 void HeapSlot_Release(s32 slot);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
+
+// Returns the fixed IWRAM word copy entry, so the call loads its address before
+// its arguments.
+static inline s32 (*Iwram_GetCopyWords(void))(void *destination,
+                                              const void *source, s32 size) {
+  return Iwram_CopyWords;
+}
 
 // Dragon Cloud (effect kind 49): a puff arc rises over the user, then a
 // dragon's head flies the path from frame 18, trailing fading copies of
@@ -157,10 +141,13 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
                              &work->sheet[0x3c00], 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                              Ram_MapCellBuffer, 1, 0);
+  /* FAKEMATCH(wrapper): the entry fetched through Iwram_GetCopyWords; as
+     Iwram_CopyWords called directly, 2 of 1123 instructions differ in tla-en.
+   */
   if (effect->variant == 1)
-    Iwram_CopyWords((void *)0x05000000,
-                    Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                    128);
+    Iwram_GetCopyWords()(
+        (void *)BG_PLTT,
+        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   BattleEffect_FetchRectangleBlitters(effect->side, draw);
   work->transferMode = 2;
   work->transferValue = 75;
@@ -182,6 +169,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       step->velocityY = (Random16() & 63) << 13;
     }
     step->velocityZ = ((Random16() & 63) - 32) << 14;
+    /* FAKEMATCH(barrier): an empty asm before the variant store; as no asm, 4
+       of 1123 instructions differ in tla-en. */
+    asm("");
     step->variant = 1;
   }
 
@@ -208,6 +198,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     else
       step->x = (-(Trig_Sin(angle) * 24) >> 16) + 16;
     step->y = (Trig_Cos(angle) * 16 >> 16) + 40;
+    /* FAKEMATCH(barrier): an empty asm before the variant store; as no asm, 2
+       of 1123 instructions differ in tla-en. */
+    asm("");
     step->variant = -(i * 2);
   }
   path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);
@@ -242,19 +235,20 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       s32 width;
       s32 offset;
 
-      offset = gBattleEffect_PuffArcCells[cell];
-      width = gBattleEffect_PuffArcCellWidths[cell];
+      offset = gData_0819747a[cell];
+      /* FAKEMATCH(dead): width read and never used; as no width, 523 of 1123
+         instructions differ in tla-en. */
+      width = gData_08197467[cell];
       draw[0](canvas, &work->sheet[offset + 0x3c00],
-              56 - width / 2,
-              gBattleEffect_PuffArcCellBiasY[cell] + 60,
-              width,
-              gBattleEffect_PuffArcCellHeights[cell]);
-      draw[1](canvas,
-              &work->sheet[gBattleEffect_PuffArcCells[cell] + 0x3c00],
-              64 - gBattleEffect_PuffArcCellWidths[cell] / 2,
-              gBattleEffect_PuffArcCellBiasY[cell] + 60,
-              gBattleEffect_PuffArcCellWidths[cell],
-              gBattleEffect_PuffArcCellHeights[cell]);
+              56 - gData_08197467[cell] / 2,
+              gData_08197473[cell] + 60,
+              gData_08197467[cell],
+              gData_0819746d[cell]);
+      draw[1](canvas, &work->sheet[gData_0819747a[cell] + 0x3c00],
+              64 - gData_08197467[cell] / 2,
+              gData_08197473[cell] + 60,
+              gData_08197467[cell],
+              gData_0819746d[cell]);
     }
 
     // Variant 1: 128 sparks thrown up from the user's side at the start.
@@ -467,11 +461,11 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           s32 cell = step->variant / 2;
 
           draw[1](canvas,
-                  &work->sheet[gBattleEffect_PuffArcCells[cell] + 0x3c00],
-                  step->x - gBattleEffect_PuffArcCellWidths[cell] / 2,
-                  step->y + gBattleEffect_PuffArcCellBiasY[cell],
-                  gBattleEffect_PuffArcCellWidths[cell],
-                  gBattleEffect_PuffArcCellHeights[cell]);
+                  &work->sheet[gData_0819747a[cell] + 0x3c00],
+                  step->x - gData_08197467[cell] / 2,
+                  step->y + gData_08197473[cell],
+                  gData_08197467[cell],
+                  gData_0819746d[cell]);
         }
         step->variant++;
       }

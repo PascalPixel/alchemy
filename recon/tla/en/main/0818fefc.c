@@ -1,4 +1,7 @@
-// Differ 40 of 1361 (tla-en, 2026-11-06).
+// Differ 38 of 1361 (tla-en, 2026-11-07).
+// 2026-11-07: a once-only block around the first texture's pixels and mesh
+// (permuter) took 40 to 38; frame * 2 - 144 spellings, texture2 and model
+// store orders, and once-only blocks elsewhere did not help.
 // Scheduling only: sched2 order in seven
 // places (s * 48 in the meshA loop, m's increment, frame * 2 - 144 in r3, the
 // first req word through r2, the first model's stores, texture2's fields and
@@ -522,8 +525,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectArgument *effect) {
       model->texture = t;
       model->shade = 0;
       model->scrollV = 0;
-      t->pixels = work->sheet + 0x1000 + ((frame / 2) % 5) * 0x400;
-      model->mesh = strip;
+      // A once-only block: it ends CSE's block before the transform.
+      do {
+        t->pixels = work->sheet + 0x1000 + ((frame / 2) % 5) * 0x400;
+        model->mesh = strip;
+      } while (0);
       RESET_AND_SCALE_HALF();
       Func_08015160(x - 0x7e0000, z - 0x4c0000, 0);
       Func_0801521c(46536);

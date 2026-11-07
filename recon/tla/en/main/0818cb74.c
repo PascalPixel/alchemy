@@ -1,6 +1,8 @@
-// Differ 62 of 1122 (tla-en, 2026-11-07), with one tagged temporary. Left: the
+// Differ 60 of 1122 (tla-en, 2026-11-07), with one tagged temporary. Left: the
 // FlashBurst load and size = 2 on either side of the once-only block, the first
 // model setup's zeros, and the pool offsets those shift.
+// 2026-11-07 (later), from 62: the tridents reset the transform before their
+// shade (60); size = 2 at the top, where the listing sets r6, takes r7 from 0x78f0 (127).
 // 2026-11-07, from 96: a once-only block around the FlashBurst load puts the
 // gMapCellBuffer load after the 0xf8 call's arguments, as the listing orders
 // the pool (86); textureAddress holding &texture across the rings, with the
@@ -493,8 +495,8 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
             continue;
           }
           x = (spinner->variant / 8) % 3;
-          model->shade = -16;
           Render_ResetTransformState();
+          model->shade = -16;
           texture.pixels = work->sheet + (x << 12) + 0xc56;
           Func_08015160((centerX - 64) << 16, 0x200000, 0);
           Func_080150e4(spinner->z);

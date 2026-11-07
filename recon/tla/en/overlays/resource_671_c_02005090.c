@@ -1,4 +1,13 @@
-// Differ 67 of 167 (tla-en, 2026-11-07). Unchanged: native stores z = 0 before x and y from r0, but
+// Differ 61 of 167 (tla-en, 2026-11-07). A permuter find, both forms ordinary C (no tag): block is a volatile
+// local and effect.z is stored from a local holding 0 (from 67). The volatile costs a stack slot the
+// listing lacks (frame 24, not 20), so this is a nearer count, not a nearer shape.
+// No twin: the routine is the Gabomba statue clock (clock.c's ClockWork at gData_020023c4 + 0x288); no
+// other scene or ☀️ has its five-digit counter loop. Loop test (7 November): each arm ending
+// `if (i > 4) return; goto loop;` keeps the test on i (an in-block copy, which global cprop skips) and
+// crossjump still merges the arms as native; then the three hoisted copies rank 3/29, 3/30, 3/31 against
+// tile's 10/101, so the one copied last loses its register to tile; with block and tile declared first tile spills as
+// native and the loop matches but for old and oam + 1 swapping r9/r10, yet the entry falls apart (115).
+// Earlier: native stores z = 0 before x and y from r0, but
 // a u16 scale local for that order costs a zero-extend (72); gcse cprop pass 2 still swaps i for
 // its hoisted i + 1 in the test. Tried 7 November: i++ in the header with all 2520 entry orders
 // (109 best), a break or goto test in the arms (129, 151), types of i and tile, a 10-minute permute (73).
@@ -71,12 +80,13 @@ void Func_02005090(void) {
   u8 *digit = work->digit;
   u8 *old = work->pixels;
   s32 *value = &work->value;
-  s32 block = work->block;
+  volatile s32 block = work->block;
   u32 tile = gResourceTableEntries[block].offset >> 5;
   u8 *now = work->tiles;
   struct Sprite *oam = work->oam;
   struct Effect effect;
   s32 plain, scaled, i;
+  s32 zero;
   u32 *p;
 
   Func_02004f84(*value + 50, digit);
@@ -91,9 +101,10 @@ void Func_02005090(void) {
   effect.z = 0;
   effect.x = 0x200;
   effect.y = 0x200;
+  zero = 0;
   plain = AffineMatrix_BuildForEffect(&effect);
   effect.x = Func_02005020(*value);
-  effect.z = 0;
+  effect.z = zero;
   effect.y = effect.x;
   scaled = AffineMatrix_BuildForEffect(&effect);
   old = work->old;

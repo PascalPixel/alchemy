@@ -1,3 +1,8 @@
+// Differ 6 of 1864 (tla-en, 2026-11-07).
+// 2026-11-07: Func_08196404 returns s32 (as games/tla declares it): 12 -> 6. Left: three
+// order pairs (glint's 0 between the record loads; the columns' first blitter call
+// and its flipped twin's argument moves); 12 minutes of permuter found nothing. The
+// two hoisted blocks still save 4 each and need temporary tags on adoption.
 // Near miss, differ 12 of 1864 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 50 of 1864, skeleton gap 50 (tla-en, 2026-11-01)
@@ -149,7 +154,7 @@ struct ModelDraw {
 void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
-void Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
+s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                    s32 mode); // BattleEffect_BuildBlitter
 s32 Task_Add(void *func, s32 order);
 s32 Task_Remove(void *func);

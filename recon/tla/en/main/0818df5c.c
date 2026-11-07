@@ -1,16 +1,14 @@
-// Differ 24 of 1556 (tla-en, 2026-11-06).
-// 2026-11-06: written-out halving at the hoop and 5 permuter minutes, no gain.
-// One-pass blocks around the two FillWords_ calls give 16; what is left then is half's sign + hx at two
-// sites, the 256 limit's register and one store order.
-// Draft, differ 26 of 1556, skeleton gap 16 (tla-en, 2026-11-01)
-// BattleEffect_RunMeteorBlow: allocation, slots and spill rotation now agree
-// with the listing; what is left is five sched2 ties and one operand order.
-// Left, as listing against draft: the IwramFillWords load stays below wait(1)
-// (here above it); the VRAM destination loads first in both setup copies (here
-// last); canvas loads before the fill's size; #176 for transitionWork follows
-// the three pointer stores; the 256 limit is built in r2 before the shard
-// pointer's load (here r6, since p is already live in r2); and shard and hoop
-// take hx + sign, `adds r3, r4, r3`, while half, set four times, gets sign + hx.
+// Differ 16 of 1556 (tla-en, 2026-11-07).
+// 2026-11-07: once-only blocks around the two FillWords_ calls, 24 to 16; left: half's sign + hx at the
+// shard and ring sites, the 256 limit's register (r6, listing r2) and the shade store after logWidth.
+// Tried with no gain: written-out halving, half's declaration place, separate shard/ring locals (frame
+// +4), indexed or for-init p, texture2 and model store orders, 8 permuter minutes.
+// BattleEffect_RunMeteorBlow: allocation, slots and spill rotation agree with
+// the listing. Left, as listing against draft: the 256 limit is built in r2
+// before the shard pointer's load (here r6, since p is already live in r2); the
+// shade store precedes texture2.logWidth's; and shard and ring take hx + sign,
+// `adds r3, r4, r3`, while half, set four times, gets sign + hx (x0, set twice,
+// keeps hx + sign; moving the ring to x0 fixes the shard and breaks the ring).
 // Forms the listing proved: one function-wide i (r7, base r4; split counters
 // cost 300+); blit[2] for the word at sp+92; blank, the 0 that dies at the mesh
 // loop, so the 0 is local in r9 and offset is free to follow; mode across
@@ -255,7 +253,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   Graphics_LoadGreyRamp();
   gCameraSceneParameters[4] = 240;
   wait(1);
-  FillWords_(map, 0x8000, 0x01010101);
+  // A once-only block: it closes the fill's block before the copy.
+  do {
+    FillWords_(map, 0x8000, 0x01010101);
+  } while (0);
   Iwram_CopyWords((void *)0x06008000, map, 0x7800);
   BattleEffect_SelectLivingTargets(work->effect);
   BattleEffect_SpawnObjects(1, 0x28a, 1);
@@ -263,7 +264,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   REG_BG2PA = 0x100;
   REG_BG1CNT = 0x1f81;
   REG_BG2CNT = 0x2787;
-  FillWords_(canvas, 0x4000, 0);
+  // A once-only block, as for the map's fill.
+  do {
+    FillWords_(canvas, 0x4000, 0);
+  } while (0);
   Iwram_CopyWords((void *)0x06004000, canvas, 0x4000);
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, 3200);
   REG_BLDCNT = 0x3f46;

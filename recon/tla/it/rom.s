@@ -1244,13 +1244,6 @@ Func_081a6b50:
 	.thumb_func
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x001ac15c, 0x000011ec
-	.section .rom.001b243c, "ax"
-	.balign 4
-	.global Func_081b243c
-	.type Func_081b243c, %function
-	.thumb_func
-Func_081b243c:
-	.incbin "baserom.gba", 0x001b243c, 0x00000e58
 	.section .rom.001b8272, "ax"
 	.incbin "baserom.gba", 0x001b8272, 0x00000002
 	.global Func_081b8274

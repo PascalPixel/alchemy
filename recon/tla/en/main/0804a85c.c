@@ -1,4 +1,6 @@
-// Draft, differ 36 of 1647, skeleton gap 36 (tla-en, 2026-11-01)
+// Differ 6 of 1647 (tla-en, 2026-11-07).
+// 2026-11-07: Oam_AddSpriteAtDepth declared returning s32 (permuter), 8 to 6; a
+// further 15 minutes of permuting and loop-head reorderings found nothing.
 // Battle target selection, The Broken Seal's BattleTarget_RunSelection
 // (games/tbs/src/window/screens/battle_targets.c) on this game's work and
 // messages. The modes are numbered differently (2 the party, 4 the acting unit
@@ -7,14 +9,14 @@
 // remembers (0x10c); the enemies "Mystery Man" and "Mystery Woman" are enemy
 // kinds 355 and 352.
 //
-// Left: every instruction is present and the registers and frame agree; the 36
-// are 18 pairs swapped within their blocks by sched2, nearly all a stack slot
-// load or spill store on the wrong side of a neighbour. In the block after a
-// __modsi3 call the slot load outranks the store on load cost (prio 7 against
-// 5), so the tie the listing shows is not reachable from the source: that is
-// -mthumb-slow-loads' approximation (K2), not a shape question. Reordering the
-// sprite's two word stores gives gap 34 but differ 40; byte-offset forms of the
-// first candidateIds read go backwards.
+// Left: every instruction is present and the registers and frame agree; the 6
+// are 3 pairs swapped by sched2 at the loop head: the candidateIds base and
+// index slot loads, and cursorSlot's load against `movs r3, #31`. In the block
+// after a __modsi3 call the slot load outranks the store on load cost (prio 7
+// against 5), so the tie the listing shows is not reachable from the source:
+// that is -mthumb-slow-loads' approximation (K2), not a shape question.
+// Reordering the sprite's two word stores gives differ 10 now; byte-offset
+// forms of the first candidateIds read go backwards.
 //
 // Two forms here are held by measurement. The spill slots of the addresses GCSE
 // hoists follow its hash table, whose size comes from the function's insn count:
@@ -118,7 +120,7 @@ void BattleMotion_ProjectConditionalPositionFar(s32 unit,
 struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                      s32 flags);
 s32 Trig_Sin(s32 angle);
-void Oam_AddSpriteAtDepth(void *sprite, s32 depth);
+s32 Oam_AddSpriteAtDepth(void *sprite, s32 depth); // Returns void; see the tag.
 s32 AffineMatrix_BuildForEffect(struct TargetAffine *affine);
 void BattleHighlight_SetModesFar(u16 *units, s32 mode);
 void Window_Close(void *window, s32 mode);
@@ -158,6 +160,8 @@ void Resource_ResetEntry(s32 slot);
   }
 
 s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
+  /* FAKEMATCH(signature): Oam_AddSpriteAtDepth declared returning s32; as
+   * void, 8 of 1647 instructions differ in tla-en. */
   u16 candidateIds[8];
   struct TargetSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];

@@ -3579,11 +3579,9 @@ main	rom_main_13	games/tla/src/field/lucky_wheels/darken	.text
 main	rom_main_13	games/tla/src/field/lucky_wheels/f1b21ec	.text
 main	rom_main_13	games/tla/src/field/lucky_wheels/f1b22b8	.text
 main	rom_main_13	recon/tla/ja/rom	.rom.001b243c	ja
-main	rom_main_13	recon/tla/de/rom	.rom.001b243c	de
+main	rom_main_13	games/tla/src/field/lucky_wheels/f1b243c	.text	de
 main	rom_main_13	recon/tla/es/rom	.rom.001b243c	es
-main	rom_main_13	recon/tla/fr/rom	.rom.001b243c	fr
-main	rom_main_13	recon/tla/it/rom	.rom.001b243c	it
-main	rom_main_13	recon/tla/raw/081b243c	.text	en
+main	rom_main_13	games/tla/src/field/lucky_wheels/f1b243c	.text	en fr it
 main	rom_main_13	games/tla/src/field/lucky_wheels/lucky_wheels	.text
 main	rom_main_13	games/tla/src/field/lucky_wheels/f1b336c	.text
 main	rom_main_13	games/tla/src/field/lucky_wheels/f1b34a8	.text	en de es fr it

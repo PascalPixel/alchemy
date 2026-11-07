@@ -1,44 +1,47 @@
-// Differ 14 of 1707 (tla-en, 2026-11-06): scheduling only. The reel symbols' y (symbolY) and sprite slot are
-// locals of the column loop (32 to 14): y set, then the slot read, then y += 4 in place.
-// Draft, differ 178 of 1707, skeleton gap 37/25 (tla-en, 2026-11-01)
-// The slot machine's VBlank task, The Broken Seal's LuckyWheels_Update
-// (games/tbs/src/field/lucky_wheels.c), confirmed statement by statement, in
-// its patched form (the hint windows and phases), on this game's work: the
-// sprite count lives in the work (0xa8) for Func_081b3294, which restarts the
-// scanline DMA and copies the sprites. Two volatile forms stay: the sprite
-// words, as The Broken Seal's OAM words; and the held keys read twice through
-// a volatile cast, as the native's two loads show (the cast needs a tag or a
-// volatile declaration before adoption: 514 against 551 when last measured).
-//
-// What is left is scheduling, not shape; 106 of the 178 rows are branch
-// distances and pool offsets moved by one cause. The edge blocks that load
-// &work->bet, &work->spins and &work->state before the join after the state
-// chain: the native keeps two more than this (the state 2 and state 11 exits).
-// In the native the two blocks that fall through (the else of
-// stoppedReels == 5, and state 10) run store first (r0 chain, then r1 starts,
-// then str) while its jump-ended blocks interleave them. --rtl shows why:
-// a jump's links cost 0, so a store before a jump ranks 1, but the same store
-// as a block's last leaf must rank 2 for the native's order. Here it ranks 1
-// (insn_cost of a store; PRIORITY_COST adds only for loads), so the
-// fall-through block comes out equal to the jump blocks and cross-jumping
-// merges them, where the native shares only the last mov. That is the
-// compiler's cost model, so it is out of scope for this draft. The other rows
-// are the known K2 schedule: a load issued too early after a store, a spill
-// store placed too soon.
-//
-// Tried. k = work->state == 5 before the if: 166, but a forced temporary that
-// cannot reach 0, and it widens the skeleton; removed. In the reel symbols'
-// loop, an inner s32 w for the first word puts it in r3 as the native does:
-// skeleton 36/24, differ 200, the index then taking r2 where the native has
-// r1 (a pseudo seems to hold r2 across it, so mov r2, r9 may be a real copy,
-// but an inner or outer local for the shifted x gives 244 and 376); v += 4
-// on its own line: 182; writing the word without v, as the twin: 408.
 #include "types.h"
 #include "io_reg.h"
 #include "input.h"
 #include "frame.h"
 #include "effect_step.h"
 #include "ram_buffer.h"
+#include "edition.h"
+
+// The prompt windows (all held, start, hold, release) and the ticket count's
+// digits, placed and sized for each language's words.
+#if LANGUAGE == LANGUAGE_ITALIAN
+#define LUCKY_WHEELS_ALL_HELD_X 10
+#define LUCKY_WHEELS_ALL_HELD_WIDTH 20
+#define LUCKY_WHEELS_START_X 21
+#define LUCKY_WHEELS_START_WIDTH 9
+#else
+#define LUCKY_WHEELS_ALL_HELD_X 11
+#define LUCKY_WHEELS_ALL_HELD_WIDTH 19
+#define LUCKY_WHEELS_START_X 16
+#define LUCKY_WHEELS_START_WIDTH 14
+#endif
+#if LANGUAGE == LANGUAGE_GERMAN
+#define LUCKY_WHEELS_HOLD_X 22
+#define LUCKY_WHEELS_HOLD_WIDTH 8
+#define LUCKY_WHEELS_RELEASE_X 21
+#define LUCKY_WHEELS_RELEASE_WIDTH 9
+#elif LANGUAGE == LANGUAGE_ITALIAN
+#define LUCKY_WHEELS_HOLD_X 21
+#define LUCKY_WHEELS_HOLD_WIDTH 9
+#define LUCKY_WHEELS_RELEASE_X 21
+#define LUCKY_WHEELS_RELEASE_WIDTH 9
+#else
+#define LUCKY_WHEELS_HOLD_X 23
+#define LUCKY_WHEELS_HOLD_WIDTH 7
+#define LUCKY_WHEELS_RELEASE_X 23
+#define LUCKY_WHEELS_RELEASE_WIDTH 7
+#endif
+#if LANGUAGE == LANGUAGE_FRENCH
+#define LUCKY_WHEELS_COIN_DIGITS 3
+#define LUCKY_WHEELS_COIN_X 56
+#else
+#define LUCKY_WHEELS_COIN_DIGITS 2
+#define LUCKY_WHEELS_COIN_X 64
+#endif
 
 struct Reel {
   s32 position;
@@ -46,6 +49,8 @@ struct Reel {
   u8 held;
   s8 stop;
 };
+
+struct Window;
 
 struct ReelSprite {
   volatile u32 attr01;
@@ -66,8 +71,8 @@ struct ReelWork {
   s32 spriteCount;
   s32 winningLines[7];
   struct ReelSprite obj[128];
-  s32 window;
-  s32 subWindow;
+  struct Window *window;
+  struct Window *subWindow;
   u8 unk4d0[8];
   u16 scanlineOffsets[160];
   s32 phase;
@@ -98,11 +103,12 @@ s32 Trig_Sin(s32 angle);
 void Sound_PlayFar(s32 cue);
 s32 PartyInventory_CountItemFar(s32 item);
 void PartyInventory_RemoveFar(s32 item);
-void Text_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
-                                  s32 y);
-void Window_CloseFar(s32 window, s32 mode);
-s32 Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
-void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void Text_DrawNumberInWindowFar(s32 value, s32 width, struct Window *window,
+                                s32 x, s32 y);
+void Window_CloseFar(struct Window *window, s32 mode);
+struct Window *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 flags);
+void Text_DrawCharacterAtOffsetFar(s32 message, struct Window *window, s32 x,
+                                   s32 y);
 
 extern char MsgSlotsBet[];
 extern char MsgSlotsStopReels[];
@@ -159,8 +165,8 @@ void Func_081b243c(void) {
   if (gDebugPaused == 0) {
     if (work->state == 0) {
       tickets = PartyInventory_CountItemFar(228);
-      Text_DrawNumberInWindowFar(tickets - work->bet, 2, work->subWindow, 64,
-                                   0);
+      Text_DrawNumberInWindowFar(tickets - work->bet, LUCKY_WHEELS_COIN_DIGITS,
+                                 work->subWindow, LUCKY_WHEELS_COIN_X, 0);
       Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
         struct ReelSave *save = (struct ReelSave *)Data_0200024c;
@@ -244,33 +250,43 @@ void Func_081b243c(void) {
           if (allHeld != 0) {
             if (work->phase != 1 && work->phase != 2) {
               Window_CloseFar(work->window, 1);
-              work->window = Window_CreateFar(11, 0, 19, 4, 6);
-              Text_DrawCharacterAtOffsetFar((s32)MsgSlotsAllHeld, work->window, 0, 0);
+              work->window =
+                  Window_CreateFar(LUCKY_WHEELS_ALL_HELD_X, 0,
+                                   LUCKY_WHEELS_ALL_HELD_WIDTH, 4, 6);
+              Text_DrawCharacterAtOffsetFar((s32)MsgSlotsAllHeld, work->window,
+                                            0, 0);
               work->phase = 1;
             } else if (work->phase == 1) {
-              Text_DrawCharacterAtOffsetFar((s32)MsgSlotsCannotPull, work->window, 0, 8);
+              Text_DrawCharacterAtOffsetFar((s32)MsgSlotsCannotPull,
+                                            work->window, 0, 8);
               work->phase = 2;
             }
           } else {
             if (work->phase != 3) {
               Window_CloseFar(work->window, 1);
-              work->window = Window_CreateFar(16, 0, 14, 3, 6);
-              Text_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0, 0);
+              work->window = Window_CreateFar(LUCKY_WHEELS_START_X, 0,
+                                              LUCKY_WHEELS_START_WIDTH, 3, 6);
+              Text_DrawCharacterAtOffsetFar((s32)MsgSlotsStart, work->window, 0,
+                                            0);
             }
             work->phase = 3;
           }
         } else if (work->reels[work->cursor].held == 0) {
           if (work->phase != 4) {
             Window_CloseFar(work->window, 1);
-            work->window = Window_CreateFar(23, 0, 7, 3, 6);
-            Text_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0, 0);
+            work->window = Window_CreateFar(LUCKY_WHEELS_HOLD_X, 0,
+                                            LUCKY_WHEELS_HOLD_WIDTH, 3, 6);
+            Text_DrawCharacterAtOffsetFar((s32)MsgSlotsHold, work->window, 0,
+                                          0);
           }
           work->phase = 4;
         } else {
           if (work->phase != 5) {
             Window_CloseFar(work->window, 1);
-            work->window = Window_CreateFar(23, 0, 7, 3, 6);
-            Text_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0, 0);
+            work->window = Window_CreateFar(LUCKY_WHEELS_RELEASE_X, 0,
+                                            LUCKY_WHEELS_RELEASE_WIDTH, 3, 6);
+            Text_DrawCharacterAtOffsetFar((s32)MsgSlotsRelease, work->window, 0,
+                                          0);
           }
           work->phase = 5;
         }
@@ -299,7 +315,8 @@ void Func_081b243c(void) {
     } else if (work->state == 11) {
       if (work->phase == 0) {
         work->phase = 1;
-        Text_DrawCharacterAtOffsetFar((s32)MsgSlotsPullLever, work->window, 0, 8);
+        Text_DrawCharacterAtOffsetFar((s32)MsgSlotsPullLever, work->window, 0,
+                                      8);
       }
       if (work->pressed & KEY_A) {
         work->state = 5;
@@ -314,7 +331,8 @@ void Func_081b243c(void) {
     } else if (work->state != 10) {
       if (work->timer == 4) {
         work->window = Window_CreateFar(18, 17, 12, 3, 6);
-        Text_DrawCharacterAtOffsetFar((s32)MsgSlotsStopReels, work->window, 0, 0);
+        Text_DrawCharacterAtOffsetFar((s32)MsgSlotsStopReels, work->window, 0,
+                                      0);
       }
       if (work->timer == 16)
         Sound_PlayFar(306);
@@ -409,9 +427,11 @@ void Func_081b243c(void) {
           }
           if (work->spins == 4) {
             s32 left = PartyInventory_CountItemFar(228);
-            s32 window;
+            struct Window *window;
             s32 message;
 
+            // DEAD: both arms set state 20, so the ticket count cannot change
+            // it; the ROM keeps the compare and both stores.
             if (left > 0)
               work->state = 20;
             else
@@ -556,7 +576,7 @@ void Func_081b243c(void) {
       s32 index = work->spriteCount;
 
       symbolY += 4;
-      work->obj[index].attr01 = symbolY |((i * 32 + 40) << 16) | 0x80006000;
+      work->obj[index].attr01 = symbolY | ((i * 32 + 40) << 16) | 0x80006000;
       work->obj[work->spriteCount].attr2 =
           (reel->symbols[(col - reel->position / 16 + 21) % 21] << 4) | 0x800;
       work->spriteCount++;
@@ -575,8 +595,7 @@ void Func_081b243c(void) {
   work->spriteCount++;
 
   for (k = 0; k != 8; k++) {
-    work->obj[work->spriteCount].attr01 =
-        objMode | (k * 16 + 12) | 0x80ce6000;
+    work->obj[work->spriteCount].attr01 = objMode | (k * 16 + 12) | 0x80ce6000;
     if (k == 0)
       work->obj[work->spriteCount].attr2 = 0x540;
     else if (k == 1)

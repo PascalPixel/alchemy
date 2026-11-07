@@ -1,19 +1,16 @@
-// Differ 22 of 1355 (tla-en, 2026-11-06).
-// 2026-11-06: left are one-slot swaps only (scheduling); the r2 pin and the
-// empty asm each save 2 (24 without); a 5-minute permute found nothing better.
-// Near miss, differ 22 of 1355 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Near miss, differ 34 of 1355 (tla-en, 2026-10-31): the item menu's command
-// loop (use, give, drop, equip, swap, trade, remove), the twin of The Broken
-// Seal's ItemMenu_RunCommands (games/tbs/src/menu/menu/item.c), with The Lost
-// Age's work layout (Ram_HeapSlots->menuRuntime), its calls and its own steps.
-// The trade's allocations and copies share one size variable, which lets the
-// restoring copies rebuild 0x14c for each call as the native does (48 differ
-// with the literal at each call). Left: only instruction order, each
-// difference the same instruction a few slots off: the menu load at entry, the
-// message loads against the constant arguments, the owner byte loads, the
-// icon's x store and the snapshot's IwramCopyWords load. The volatile on
-// selectedItemIcon (69 differ without it) still needs its evidence. Its
+// Differ 6 of 1355 (tla-en, 2026-11-07).
+// 2026-11-07: prototypes for the modal message, the text draw and the equip
+// preview (s32, as their definitions), and Unit_RefreshPsynergyFar returning
+// s32 as The Broken Seal declares it, took 22 to 6; the empty asm is gone.
+// Left: the icon x/y stores load the volatile pointer before their constant,
+// and the trade copy loads IwramCopyWords two slots early; an 8-minute permute
+// found nothing better.
+// Earlier: the item menu's command loop (use, give, drop, equip, swap, trade,
+// remove), the twin of The Broken Seal's ItemMenu_RunCommands
+// (games/tbs/src/menu/menu/item.c), with The Lost Age's work layout
+// (Ram_HeapSlots->menuRuntime). The trade's allocations and copies share one
+// size variable (48 differ with the literal at each call). The volatile on
+// selectedItemIcon (41 differ without it) still needs its evidence. Its
 // messages are numbered here (Msg04103 ...), their names in The Broken Seal
 // beside them; they need names in the catalogs before it links.
 #include "heap_release.h"
@@ -84,11 +81,11 @@ extern u8 Msg04278[]; // "Can't hold more!" (MsgCannotHoldMore)
 extern u8 Msg04384[]; // the first item-use result (MsgItemUseResult)
 
 struct OwnerInventoryState *Unit_GetFar(s32 unit);
-void Unit_RefreshPsynergyFar(s32 unit);
+s32 Unit_RefreshPsynergyFar(s32 unit);
 
-typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
-
-#define IWRAM_COPY_WORDS ((WordCopyFn)Iwram_CopyWords)
+void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target);
 
 s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s32 done;
@@ -181,11 +178,11 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         if (result == 2) {
           ItemMenu_Use();
           WindowSprite_ClearListFar(menu->infoWindow);
-          InventoryMenu_ShowModalMessage(
-              menu->messageOffset + (s32)&Msg04384, 0, -1);
+          InventoryMenu_ShowModalMessage(menu->messageOffset + (s32)Msg04384, 0,
+                                         -1);
           menu->list.icon->state = 13;
-          menu->itemCount =
-              ItemMenu_CollectItems(Unit_GetFar(menu->itemOwner), menu->items, 0);
+          menu->itemCount = ItemMenu_CollectItems(Unit_GetFar(menu->itemOwner),
+                                                  menu->items, 0);
           ItemMenu_DrawIcons(menu->items, 0);
           state = 0;
         }
@@ -220,8 +217,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetItemWindowRow5();
       WindowSprite_RedrawSavedRectFar(menu->messageWindow);
       ItemMenu_DrawItemHead();
-      Text_DrawCharacterAtOffsetFar((s32)&Msg04106, menu->messageWindow,
-                                      16, 16);
+      Text_DrawCharacterAtOffsetFar((s32)Msg04106, menu->messageWindow, 16, 16);
       if (ItemMenu_SelectTarget(0) != -1) {
         command = 0;
         if (ItemMenu_IsSpecial(menu->selectedItem & 0x1ff) != 0) {
@@ -232,8 +228,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
                                   command);
         if (result != -1) {
           WindowSprite_ClearListFar(menu->infoWindow);
-          InventoryMenu_ShowModalMessage(
-              menu->messageOffset + (s32)&Msg04384, 0, -1);
+          InventoryMenu_ShowModalMessage(menu->messageOffset + (s32)Msg04384, 0,
+                                         -1);
           menu->list.icon->state = 13;
           ItemMenu_TryBreak();
           state = 1;
@@ -252,8 +248,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetItemWindowRow5();
       WindowSprite_RedrawSavedRectFar(menu->messageWindow);
       ItemMenu_DrawItemHead();
-      Text_DrawCharacterAtOffsetFar((s32)&Msg04107, menu->messageWindow,
-                                      16, 16);
+      Text_DrawCharacterAtOffsetFar((s32)Msg04107, menu->messageWindow, 16, 16);
       n = ItemMenu_SelectTarget(1);
       state = 4;
       if (n == -1) {
@@ -303,7 +298,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->list.icon->state = 13;
         wait(1);
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)&Msg04270, 15, 13);
+        InventoryMenu_ShowModalMessage((s32)Msg04270, 15, 13);
         menu->completionFlag = 1;
         state = 1;
       } else {
@@ -329,9 +324,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         }
         stack = (menu->selectedItem >> 11) + 1;
         if (aborted == 0) {
-          /* FAKEMATCH(one-pass): the loop only places a label between the
-             count and its sign-extended use; as a plain assignment, 104 of
-             1355 instructions differ in tla-en. */
+          // A once-only block: it places a label between the count and its
+          // sign-extended use (76 of 1355 differ as a plain assignment).
           do {
             amount = stack;
           } while (0);
@@ -391,20 +385,20 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       wait(1);
       if (aborted == 1) {
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)&Msg04278, 15, 14);
+        InventoryMenu_ShowModalMessage((s32)Msg04278, 15, 14);
       } else {
         WindowSprite_ClearListFar(menu->infoWindow);
         if (result == 1) {
-          InventoryMenu_ShowModalMessage((s32)&Msg04272, 15, 14);
+          InventoryMenu_ShowModalMessage((s32)Msg04272, 15, 14);
         } else {
           ItemMenu_DrawEquipPreview(menu->targetOwner, menu->targetSlot, 0,
                                     menu->targetOwner);
-          InventoryMenu_ShowModalMessage((s32)&Msg04269, 15, 14);
+          InventoryMenu_ShowModalMessage((s32)Msg04269, 15, 14);
           item = Item_Get(menu->selectedItem);
           if ((item->flags & 1) != 0) {
             Sound_PlayFar(0x67);
             WindowSprite_ClearListFar(menu->infoWindow);
-            InventoryMenu_ShowModalMessage((s32)&Msg04269 + 7, 14, 14);
+            InventoryMenu_ShowModalMessage((s32)Msg04269 + 7, 14, 14);
           }
         }
       }
@@ -426,10 +420,13 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       size = BATTLE_UNIT_SIZE;
       sourceCopy = Heap_Alloc(size);
       targetCopy = Heap_Alloc(size);
-  {
-    register __typeof__(size) hoisted asm("r2") = size;
-    Iwram_CopyWords(sourceCopy, source, hoisted );
-  }
+      {
+        /* FAKEMATCH(pin): size held in r2 for the first copy; as
+           Iwram_CopyWords(sourceCopy, source, size), 8 of 1355 instructions
+           differ in tla-en. */
+        register s32 sizeArg asm("r2") = size;
+        Iwram_CopyWords(sourceCopy, source, sizeArg);
+      }
       Iwram_CopyWords(targetCopy, target, size);
       movedSource = 0;
       while (movedSource <= 29) {
@@ -488,7 +485,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         Iwram_CopyWords(source, sourceCopy, size);
         Iwram_CopyWords(target, targetCopy, size);
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)&Msg04277, 15, 14);
+        InventoryMenu_ShowModalMessage((s32)Msg04277, 15, 14);
       } else {
         Unit_RefreshPsynergyFar(menu->itemOwner);
         Unit_RefreshPsynergyFar(menu->targetOwner);
@@ -497,7 +494,6 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         ItemMenu_SetMessageWindowHeight5();
         WindowSprite_RedrawSavedRectFar(menu->messageWindow);
         menu->itemOwner = menu->targetOwner;
-  asm("");
         menu->selectedItem &= 0x1ff;
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
@@ -508,15 +504,15 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           if (result == 0) {
             ItemMenu_DrawEquipPreview(menu->targetOwner, menu->targetSlot, 0,
                                       menu->targetOwner);
-            InventoryMenu_ShowModalMessage((s32)&Msg04269, 15, 14);
+            InventoryMenu_ShowModalMessage((s32)Msg04269, 15, 14);
             item = Item_Get(menu->selectedItem);
             if ((item->flags & 1) != 0) {
               Sound_PlayFar(0x67);
               WindowSprite_ClearListFar(menu->infoWindow);
-              InventoryMenu_ShowModalMessage((s32)&Msg04269 + 7, 14, 14);
+              InventoryMenu_ShowModalMessage((s32)Msg04269 + 7, 14, 14);
             }
           } else {
-            InventoryMenu_ShowModalMessage((s32)&Msg04274, 15, 14);
+            InventoryMenu_ShowModalMessage((s32)Msg04274, 15, 14);
           }
         }
       }
@@ -534,7 +530,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       if (result == -2) {
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)&Msg04275, 0, -1);
+        InventoryMenu_ShowModalMessage((s32)Msg04275, 0, -1);
         state = 1;
         break;
       }
@@ -548,12 +544,12 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_DrawEquipPreview(menu->itemOwner, menu->selectedSlot, 0,
                                 menu->itemOwner);
       WindowSprite_ClearListFar(menu->infoWindow);
-      InventoryMenu_ShowModalMessage((s32)&Msg04269, 15, 8);
+      InventoryMenu_ShowModalMessage((s32)Msg04269, 15, 8);
       item = Item_Get(menu->selectedItem);
       if ((item->flags & 1) != 0) {
         Sound_PlayFar(0x67);
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)&Msg04269 + 7, 14, 8);
+        InventoryMenu_ShowModalMessage((s32)Msg04269 + 7, 14, 8);
       }
       state = 1;
       break;
@@ -572,7 +568,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
                                 menu->itemOwner);
       menu->equipPreview = 0;
       WindowSprite_ClearListFar(menu->infoWindow);
-      InventoryMenu_ShowModalMessage((s32)&Msg04273, 14, 8);
+      InventoryMenu_ShowModalMessage((s32)Msg04273, 14, 8);
       Event_ClearInvalidPackedValuesFar();
       state = 1;
       break;

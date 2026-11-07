@@ -1,4 +1,8 @@
-// Differ 46 of 3111 (tla-en, 2026-11-07).
+// Differ 40 of 3111 (tla-en, 2026-11-07).
+// Fourth round, 7 November: next set in the Djinn loop's for after j = 0 (46 to
+// 40, its copy now through r2 as the native); 8 minutes of permuter, nothing
+// better. Slots run by descending pseudo number, so next must outnumber the
+// hoist: only loop.c's giv (note 1) gives it that.
 // Third round, 7 November: an empty asm after the first sprite word at the
 // name, cursor, status and list icon sprites (tagged barriers) closes note 2
 // (88 to 46); the two fill-loop barriers now pay 2 each. Left: note 1's slots
@@ -1001,12 +1005,12 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       Vram_FillWindowBlockPattern();
       Text_DrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
       if (rowBase != shownBase) {
-        u32 *next = djinnList;
+        u32 *next;
         u32 shown;
         s32 column;
         s32 tileRow;
 
-        for (j = 0; j <= 8; j++) {
+        for (j = 0, next = djinnList; j <= 8; j++) {
           shown = *next++;
           column = j / 3 * 7;
           tileRow = j % 3 * 2 + 9;

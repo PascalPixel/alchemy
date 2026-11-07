@@ -1,4 +1,8 @@
-// Differ 28 of 2209 (tla-en, 2026-11-06). Scheduling only, as below.
+// Differ 8 of 2209 (tla-en, 2026-11-07). Scheduling only: the then-branch
+// second loop (Data_08198830 pool load, base.y load, -0x10000 pool) and the
+// t <= 43 setup (work loaded before faces).
+// 2026-11-07: 28 to 8 by frame 168 as base.x, base.y, vel.x, vel.y; battle set
+// before verts; i = 0 ahead of xs in the else branch. Permuter, 7 min: nothing.
 // Measured 2026-11-05 (tla-en): differ 28 of 2209. Left: order and a swapped
 // zero and constant in the setup; a multiply the native issues later than
 // alchemy-gcc does: sched2 ranks the chain into muls too high (its cost of 4),
@@ -27,21 +31,26 @@
 // - Frame above 137: the shade store goes after strb, here before it.
 // These look like the K2 load-order model rather than source: a statement-order
 // climb (moves of up to four lines, every simple statement) found nothing more.
-// No FAKEMATCH device is used, since none would reach differ 0.
+// One FAKEMATCH(barrier) device, in the frame above 137.
 // What closed the most, for the next function of this shape:
 // - base, pos and vel are 8-byte structs in DImode pseudos, not six s32s. Their
 //   slots pair up, and += gives the reload order.
 // - mapCells, planes and stripEnd are set before the frame loop and get no
-//   register, so each is rematerialized at its use, as the listing reloads them.
-//   mapCells is for the two texture sites only; the other uses stay symbols.
-// - A pool's place: a HImode constant has range 60, and the pool is forced right
+//   register, so each is rematerialized at its use, as the listing reloads
+//   them. mapCells is for the two texture sites only; the other uses stay
+//   symbols.
+// - A pool's place: a HImode constant has range 60, and the pool is forced
+// right
 //   after the last fix added, so a nearby load moves it.
 // - struct AzulVertex *v: a char store kills the spill slot in reload_cse and a
 //   second caller save returns.
-// - (gData_02014000 + i * 2048 + k * 128)[j], and k = 0 before the grid call with
+// - (gData_02014000 + i * 2048 + k * 128)[j], and k = 0 before the grid call
+// with
 //   angle and offset after it.
-// - Other fixes: real s32 Task_Add, Trig_Sin(a) * r operand order, shade = 0 ahead
-//   of size so r1 is live there, one size for both blocks, count and mask locals.
+// - Other fixes: real s32 Task_Add, Trig_Sin(a) * r operand order, shade = 0
+// ahead
+//   of size so r1 is live there, one size for both blocks, count and mask
+//   locals.
 // ResourceId_Data* are placeholders in the style of ResourceId_Data134, one per
 // id, to give the pool loads the listing has.
 
@@ -275,11 +284,11 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
   work->transferValue = 0;
   Task_Add(BattleEffect_ArmPaletteHBlankDma, 0xcfe);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
+  battle = (u8 *)Ram_HeapSlots->battleWork;
   verts = (struct AzulVertex *)work->sheet;
   faces = (struct AzulFace *)(work->sheet + 0x1f0);
   sphere = work->sheet + 0x800;
   grid = work->sheet + 0xc00;
-  battle = (u8 *)Ram_HeapSlots->battleWork;
   {
     u8 *cells = gMapCellBuffer;
 
@@ -466,9 +475,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
       base.y += vel.y;
     }
     if (frame == 168) {
-      vel.x = 0;
-      base.y = 0xa80000;
       base.x = 0x300000;
+      base.y = 0xa80000;
+      vel.x = 0;
       vel.y = -0x60000;
       for (i = 0; i != 28; i++) {
         ((struct AzulObject *)work->objects[i])->shape = 0x4000;
@@ -523,8 +532,9 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           Render_ApplyProjectedPlacementFar(work->objects[i], place,
                                             (s32 *)Data_08198828, 0);
         }
+        i = 0;
         xs = Data_08198830;
-        for (i = 0; i != 16; i++) {
+        for (; i != 16; i++) {
           s32 m = i & 3;
           s32 row = m + 5;
 
@@ -803,7 +813,8 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           texture2.pixels = gData_02014000;
           texture2.logWidth = 7;
           model->mesh = gData_08199364;
-          /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no asm, 2 of 2209 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no
+           * asm, 2 of 2209 instructions differ in tla-en. */
           __asm__("");
           texture2.logHeight = 7;
           model->shade = shade;

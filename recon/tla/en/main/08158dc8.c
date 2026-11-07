@@ -1,9 +1,16 @@
-// Measured 2026-11-05 (tla-en): differ 14 of 1676. Left: seven rows in four
-// sites, see below: a stop for CSE that the scheduler cannot see.
+// Differ 2 of 1676 (tla-en, 2026-11-07).
+// 2026-11-07: 14 to 2. The CSE stops are now a never-true test with two jumps
+// to one label (FAKEMATCH dead, below) in place of the one-pass blocks: the
+// label ends CSE's block, CSE folds both jumps, and no note reaches sched2. One
+// jump does not stop CSE (skip_blocks follows it). The smoke's height reads
+// *(gData_08197498 + cell), which fixes the draw's order (6 to 2). Left: one
+// ldrb, the listing's [r4, r2] (cell, table) against the draft's [r2, r4]; cell
+// + table, (u32), casts, cell[table] and (table + cell)[0] do not swap it. The
+// history below reads DRAW_ALTERNATE and PLACE_SMOKE as the blocks they were.
 
 // Draft, differ 14 of 1676 (all six editions, 2026-11-01)
-// BattleEffect_RunThor, Thor (scene kind 12). Instructions, registers, frame and
-// allocation agree; 7 instructions sit in the wrong place, at four sites:
+// BattleEffect_RunThor, Thor (scene kind 12). Instructions, registers, frame
+// and allocation agree; 7 instructions sit in the wrong place, at four sites:
 // - The beam's second LoadBlitter: movs r0, #188 before movs r1, #23.
 // - The smoke's add r6, fp after adds r0, r5, and adds r5, r5, r0 after
 //   ldr r4, [sp, #8].
@@ -12,30 +19,33 @@
 // One cause, read from the cse, loop and sched2 dumps. The listing needs a stop
 // for the first CSE between the smoke's x and y and its draw, and between the
 // beam's two draws, and no stop the scheduler can see:
-// - Without a stop CSE keeps the two size tables in one pseudo each (life 45 and
+// - Without a stop CSE keeps the two size tables in one pseudo each (life 45
+// and
 //   33, against 2 with the stop), loop.c hoists them out of the smoke loop, and
 //   work->sheet stays in a register across the beam's first draw.
 //   That is 210 and 261 differ, and the allocation goes with it.
 // - DRAW_ALTERNATE and PLACE_SMOKE's blocks are that stop: CSE breaks at
 //   NOTE_INSN_LOOP_END, and cse2 merges the copies back after loop.c. But
-//   haifa-sched makes the insn after a loop note a barrier that depends on every
-//   earlier register use. That barrier is all 14: it gives add r6, fp a third
-//   dependent, wins the tie against adds r0, r5, and puts movs r0 first.
+//   haifa-sched makes the insn after a loop note a barrier that depends on
+//   every earlier register use. That barrier is all 14: it gives add r6, fp a
+//   third dependent, wins the tie against adds r0, r5, and puts movs r0 first.
 // - The listing's order is The Broken Seal's plain order, which has no barrier
 //   (rank_for_schedule's ties all fall the way the twin's do).
 // Measured and not kept, because each adds or moves a one-pass block:
 // - One empty do { } while (0) after each blitter load, no macros: 10.
 // - PLACE_SMOKE's block widened to end after its Func_08196404: 12. With one
-//   block from the first load to the second: 10. Every other placement of blocks
-//   over those statements (610 smoke, 233 beam) is worse.
-// - A jump only CSE folds, in place of the blocks: 6, the draw's arguments alone.
+//   block from the first load to the second: 10. Every other placement of
+//   blocks over those statements (610 smoke, 233 beam) is worse.
+// - A jump only CSE folds, in place of the blocks: 6, the draw's arguments
+// alone.
 //   Dead code with a goto, so only a proof that the stop must not be a note.
 // Not reached by plain C: named table pointers in the body, non-const tables,
-// the loop as do, while, for (;;) or labels, a mode local, inline forwarders for
-// the loads, inline helpers for the sizes and the draws. No plain form tried
-// stops CSE there; a compiler reason is possible and is Pascal's (K2).
+// the loop as do, while, for (;;) or labels, a mode local, inline forwarders
+// for the loads, inline helpers for the sizes and the draws. No plain form
+// tried stops CSE there; a compiler reason is possible and is Pascal's (K2).
 // Devices kept, each with what taking it out costs here:
-// - DRAW_ALTERNATE's block, 261; at the bolt it costs 8, so that site is spelled
+// - DRAW_ALTERNATE's block, 261; at the bolt it costs 8, so that site is
+// spelled
 //   out, so it is not a macro every use matches through. PLACE_SMOKE's, 210.
 // - for (j = 0; j != 1; j++) around the strike, a one-pass loop kept from the
 //   twin, 1196. Unexplained: it is more than this block's own insns.
@@ -65,8 +75,8 @@
 // with 18 bolts, not 30, the phase at frame 120, not 140, and draws the four
 // mirrored copies of the violet mote through Func_0818caa8. The strikes read
 // the effect from the argument; the blitters live in heap slots 104 and 188
-// (byte offsets), loaded through BattleEffect_LoadBlitter, and the smoke's through
-// Func_08196404; modes count down from 3 (BLIT_MODE).
+// (byte offsets), loaded through BattleEffect_LoadBlitter, and the smoke's
+// through Func_08196404; modes count down from 3 (BLIT_MODE).
 
 #include "types.h"
 #include "battle_effect.h"
@@ -87,18 +97,22 @@ void Func_0813baec(void); // BattleEffect_AdvanceScrollOnInterval
 void Func_0813ba50(void); // BattleEffect_ConfigureEffectDisplay
 void BattleEffect_CountDownBattlerTints(void);
 void Func_08163c2c(s32 page, s32 value);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 s32 Func_08196404(s32 slot, s32 widthLog, s32 heightLog, s32 flags,
-                   s32 mode);     // BattleEffect_BuildBlitter, five arguments
+                  s32 mode);      // BattleEffect_BuildBlitter, five arguments
 void Func_0815f0a0(s32 resource); // the dusk palette step
 void Func_0814cca8(void);         // BattleEffect_SetupBlendedDisplay
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);       // BattleEffect_TintBattler
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
-void Func_0816442c(s32 group, s32 x, s32 y); // BattleEffect_PlaceFormationObjects
+void Func_0816442c(s32 group, s32 x,
+                   s32 y); // BattleEffect_PlaceFormationObjects
 void Func_0816467c(s32 group, s32 x, s32 y); // BattleEffect_RunImpactBurst
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void Func_0818caa8(const u8 *cells, s32 x, s32 y, s32 height); // four motes
@@ -110,7 +124,7 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Projection_Set(s32 a, s32 b, s32 c);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
 void *Resource_GetTableEntry(s32 resource);
@@ -141,30 +155,6 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 // Heap slots 104 and 188 (byte offsets from 0x03000000) hold the blitters.
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 #define BLITTER_ALTERNATE ((DrawRectangle)Ram_HeapSlots->unkb8[1])
-
-// Builds the alternate blitter, draws one rectangle and frees it. Its end stops
-// CSE, so the second draw rebuilds work->sheet as the listing does; the note is
-// also a scheduling barrier, which the listing does not have.
-#define DRAW_ALTERNATE(flags, canvas, source, x, y, width, height)             \
-  do {                                                                         \
-    BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, flags));                 \
-    BLITTER_ALTERNATE(canvas, source, x, y, width, height);                    \
-    HeapSlot_Release(188);                                                     \
-  } while (0)
-
-// One puff of smoke's cell and random place. Its end stops CSE, so each size
-// table is loaded twice with a short life and loop.c leaves it in the body, and
-// cse2 then merges the loads; there it takes r10 or r8 from local-alloc and
-// pushes i, which spans them, to r9. The note is also a scheduling barrier,
-// which the listing does not have.
-#define PLACE_SMOKE(cell, angle, x, y, index, originX)                         \
-  do {                                                                         \
-    cell = (index) & 3;                                                        \
-    angle = Random16() & 0xffff;                                               \
-    x = ((Trig_Sin(angle) * 8) >> 16) + (originX) -                            \
-        (gData_08197492[cell] >> 1);                                           \
-    y = ((Trig_Cos(angle) * 40) >> 16) - (gData_08197498[cell] >> 1);          \
-  } while (0)
 
 extern char ResourceId_BlastSheet;
 extern char ResourceId_CrystalSheet;
@@ -351,7 +341,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPitch(0x8000);
       SceneTransform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
-        SET_VECTOR(scale, ((frame * 2 + frame) << 11) - 0xd9400, scale[0], scale[0]);
+        SET_VECTOR(scale, ((frame * 2 + frame) << 11) - 0xd9400, scale[0],
+                   scale[0]);
         size = 5;
       } else {
         SET_VECTOR(scale, 0x10000 - sinkFrame * 3 * 0x400, scale[0], scale[0]);
@@ -388,7 +379,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                     Iwram_MulQ16((screen[i * 2 + 1].y - screen[i * 2].y) * j,
                                  0x555);
             blit[0](canvas, sprites + gData_08197410[size - 1], x - size / 2,
-                 y - size, size, size * 2);
+                    y - size, size, size * 2);
           }
         }
       }
@@ -439,6 +430,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     if ((u32)(frame - 151) <= 16) {
       s32 beamHeight;
       s32 inset = 0;
+      s32 never = 0;
+      s32 neverToo = 0;
       beamHeight = (frame - 151) * 20 + 44;
       if (frame > 151) {
         inset = frame - 152;
@@ -455,10 +448,20 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       for (i = 0; i != beamHeight; i++) {
         blit[0](canvas, ramp + inset, inset + 48, i + 16, 32 - inset * 2, 1);
       }
-      DRAW_ALTERNATE(BLIT_CLIP, canvas, work->sheet, 32,
-                     (frame - 151) * 20 - 12, 32, 96);
-      DRAW_ALTERNATE(BLIT_CLIP | COMPOSITE_FLIP_X, canvas, work->sheet, 64,
-                     (frame - 151) * 20 - 12, 32, 96);
+      BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP));
+      BLITTER_ALTERNATE(canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32,
+                        96);
+      HeapSlot_Release(188);
+      /* FAKEMATCH(dead): if (never || neverToo) beamHeight = 0; as nothing, 251
+       * of 1676 instructions differ in tla-en. */
+      if (never || neverToo) {
+        beamHeight = 0;
+      }
+      BattleEffect_LoadBlitter(
+          188, BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP_X));
+      BLITTER_ALTERNATE(canvas, work->sheet, 64, (frame - 151) * 20 - 12, 32,
+                        96);
+      HeapSlot_Release(188);
     }
     work->transferPending = 1;
     wait(1);
@@ -633,7 +636,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         }
       }
 
-      BattleEffect_LoadBlitter(188, BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP));
+      BattleEffect_LoadBlitter(188,
+                               BLIT_MODE(BLIT_MAX, BLIT_CLIP | COMPOSITE_FLIP));
       {
         DrawRectangle draw = BLITTER_ALTERNATE;
         struct EffectStep *spark;
@@ -678,10 +682,22 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           s32 angle;
           s32 x;
           s32 y;
-          PLACE_SMOKE(cell, angle, x, y, i, formationScreenX);
+          s32 never = 0;
+          s32 neverToo = 0;
+          cell = i & 3;
+          angle = Random16() & 0xffff;
+          x = ((Trig_Sin(angle) * 8) >> 16) + formationScreenX -
+              (gData_08197492[cell] >> 1);
+          y = ((Trig_Cos(angle) * 40) >> 16) - (gData_08197498[cell] >> 1);
+          /* FAKEMATCH(dead): if (never || neverToo) y = 0; as nothing, 250 of
+           * 1676 instructions differ in tla-en. */
+          if (never || neverToo) {
+            y = 0;
+          }
           Func_08196404(188, 7, 7, 3 | Data_08198562[Random16() & 3], 1);
           BLITTER_ALTERNATE(canvas, Ram_MapCellBuffer + gData_08197486[cell], x,
-                            y + 56, gData_08197492[cell], gData_08197498[cell]);
+                            y + 56, gData_08197492[cell],
+                            *(gData_08197498 + cell));
           HeapSlot_Release(188);
         }
       }

@@ -1,4 +1,8 @@
-// Differ 60 of 2680 (tla-en, 2026-11-06): scheduling and reload ties only, as below.
+// Differ 56 of 2680 (tla-en, 2026-11-07).
+// 2026-11-07: ring = 0 before shift = 0 and a plain Iwram_FillWords for the strike's
+// first sheet fill (60 to 56); the flash step, both queue loops and DRAW_ALT's
+// argument order still tie as below.
+// 2026-11-06: differ 60: scheduling and reload ties only, as below.
 // Second round, 6 November: 40 minutes of permuter (seed 7101), nothing better;
 // in the second queue loop a source local before the push and
 // (u32)Ram_MapCellBuffer + i * 0x400 (60 each), an objects local (160).
@@ -619,13 +623,13 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   cx = 60;
   cy = 44;
   squash = 6;
-  shift = 0;
   ring = 0;
+  shift = 0;
   sx = 8;
   rings = 2;
   work->transferMode = 2;
   work->transferValue = 75;
-  FILL(work->sheet, 0x3840, 0);
+  Iwram_FillWords(work->sheet, 0x3840, 0);
 
   // The strike: the beam, the shockwave rings and the debris.
   for (frame = 0; frame != 336; frame++) {

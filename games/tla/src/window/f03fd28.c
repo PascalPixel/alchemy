@@ -101,23 +101,23 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
     VramCache_Load(x, 256, Data_0804e584);
     y = 0;
     out = WindowSprite_Create(x, 0x40004000, win, 134, y);
-    out->oam.palette = SLIDER_PALETTE;
+    out->sprite.oam.palette = SLIDER_PALETTE;
     out = WindowSprite_Create(x, 0x40004000, win, 166, y);
-    out->oam.index += 4;
-    out->oam.palette = SLIDER_PALETTE;
+    out->sprite.oam.index += 4;
+    out->sprite.oam.palette = SLIDER_PALETTE;
     y = 16;
     out = WindowSprite_Create(x, 0x40004000, win, 134, y);
-    out->oam.palette = 15;
+    out->sprite.oam.palette = 15;
     out = WindowSprite_Create(x, 0x40004000, win, 166, y);
-    out->oam.index += 4;
-    out->oam.palette = 15;
+    out->sprite.oam.index += 4;
+    out->sprite.oam.palette = 15;
   }
 
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, 0x40000000, win, 0, 0);
-    out->oam.palette256 = 1;
+    out->sprite.oam.palette256 = 1;
     work->marker[0].output = out;
     x = (s16)win->x * 8 + 140;
     x += __divsi3(work->option[0] * 60, work->optionCount[0]);
@@ -129,7 +129,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, 0x40000000, win, 0, 0);
-    out->oam.palette256 = 1;
+    out->sprite.oam.palette256 = 1;
     work->marker[1].output = out;
     x = (s16)win->x * 8 + 140;
     x += __divsi3(work->option[1] * 60, work->optionCount[1]);

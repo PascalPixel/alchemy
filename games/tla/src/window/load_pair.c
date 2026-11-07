@@ -41,7 +41,7 @@ RenderResource_CreatePair(s32 group, struct RenderInput *input, s32 x, s32 y) {
   first->sentinel = 0xFD;
   second = WindowSprite_Create(index, OUTPUT_SIZE_32X16, input, x + 32, y);
   second->sentinel = 0xFD;
-  second->oam.index += 8;
+  second->sprite.oam.index += 8;
   return first;
 }
 

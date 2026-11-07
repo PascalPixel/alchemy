@@ -1,8 +1,8 @@
 // Differ 33 of 99 (tla-en, 2026-11-06).
 // Register choice only. The
-// native keeps the 0 for kind and next in r4 and passes the 1 for active through
-// ip, computing the sprite cell (output + 16) late into r2; here the cell takes
-// r4 early and the 0 goes through ip. Computing the cell late (as
+// native keeps the 0 for kind and next in r4 and passes the 1 for active
+// through ip, computing the sprite cell (output + 16) late into r2; here the
+// cell takes r4 early and the 0 goes through ip. Computing the cell late (as
 // Func_0803c068 does) gives the native's r4 = 0 but swaps window and output
 // (r7/r6) and keeps the 1 in r3: differ 46. Tried, 6 November: every order of
 // the active, kind, vram, oam, cell and next statements (33 to 111); vram
@@ -24,7 +24,7 @@
 #include "window.h"
 #include "uiwindow.h"
 
-// The sprite cell at WindowSprite.unk10: a link, then the OAM words.
+// The sprite cell at WindowSprite.sprite: a link, then the OAM words.
 struct GlyphSprite {
   struct GlyphSprite *next;
   u16 y : 8;
@@ -50,12 +50,12 @@ void *Func_0803c198(struct Window *window, s32 character, s32 x, s32 y) {
   index = (output - work->outputs) * 4;
   output->active = 1;
   output->kind = 0;
-  sprite = (struct GlyphSprite *)output->unk10;
+  sprite = (struct GlyphSprite *)&output->sprite;
   vram = (void *)(0x06010000 + (work->glyphTiles + index) * 32);
-  ((u16 *)&output->oam)[0] = y + (spacingY >> 1) + window->y * 8 - 2;
-  ((u16 *)&output->oam)[1] =
+  ((u16 *)&output->sprite.oam)[0] = y + (spacingY >> 1) + window->y * 8 - 2;
+  ((u16 *)&output->sprite.oam)[1] =
       (x + (spacingX >> 1) + window->x * 8 + 2) | 0x4000;
-  ((u16 *)&output->oam)[2] = work->glyphTiles + index;
+  ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
   output->sentinel = 253;
   output->x = sprite->x;
   output->y = sprite->y;

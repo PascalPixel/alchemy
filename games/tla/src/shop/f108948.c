@@ -80,10 +80,10 @@ void ShopCursor_Advance(struct ShopCursor *cursor) {
   sprite->x = x;
   mask = 0x1ff;
   mask &= x;
-  sprite->oam.x = mask;
+  sprite->sprite.oam.x = mask;
   y = cursor->y + (cursor->targetY - (s16)cursor->y) * step / kind;
   sprite->y = y;
-  sprite->oam.y = y;
+  sprite->sprite.oam.y = y;
   if (step == kind) {
     cursor->kind = 0;
     cursor->active = 0;

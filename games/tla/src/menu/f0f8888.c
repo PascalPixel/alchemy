@@ -5,9 +5,9 @@
 void Icon_PrepareActor(struct WindowSprite *object) {
   if (object != NULL) {
     object->active = 1;
-    object->oam.x = object->x;
-    object->oam.y = object->y;
-    object->oam.matrix = 0;
-    object->oam.affineMode = 0;
+    object->sprite.oam.x = object->x;
+    object->sprite.oam.y = object->y;
+    object->sprite.oam.matrix = 0;
+    object->sprite.oam.affineMode = 0;
   }
 }

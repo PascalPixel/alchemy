@@ -60,7 +60,7 @@ extern char ResourceId_WindowTiles;
 
 s32 Func_0803a8fc(s32 character, u32 *tiles);
 
-#define SPRITE_CELL(output) ((struct GlyphCell *)(output)->unk10)
+#define SPRITE_CELL(output) ((struct GlyphCell *)&(output)->sprite)
 
 s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
                   s32 mode) {
@@ -148,7 +148,7 @@ s32 Func_0803bde4(struct Window *window, s32 character, s32 x, s32 y,
 
       Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
               0x84000020, (volatile u32 *)0x040000d4);
-      attr = (u16 *)&output->oam;
+      attr = (u16 *)&output->sprite.oam;
       if (work->menuState & 4)
         *attr++ = (y + (spacingY >> 1) + window->y * 8 - 2) | 0x400;
       else

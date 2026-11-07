@@ -85,6 +85,26 @@ STATIC_ASSERT(offsetof(struct WindowWork, names) == 0x116c);
 STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 #endif
 
+/// WindowWork.glyphResource while the page arrow has no VRAM cache slot.
+#define NO_GLYPH_RESOURCE 99
+
+/// A window tilemap entry: the tile in palette 15, the text tiles' palette.
+#define WINDOW_TILE(tile) (0xf000 | (tile))
+
+/// The last character code the window's text tiles cover, as ☀️'s.
+#define TEXT_LAST_FONT_CODE 255
+
+/// How a window sprite moves (WindowSprite.active); 0 is a free one.
+enum {
+  WINDOW_SPRITE_MOTION_PAGE_ARROW = 2 ///< the next-page arrow, bobbing
+};
+
+/// What Window_PutGlyph draws, as ☀️'s.
+enum GlyphDrawMode {
+  GLYPH_DRAW_CHARACTER = 0, ///< the character given, as a tile
+  GLYPH_DRAW_PAGE_ARROW = 1 ///< the next-page arrow, in the window's corner
+};
+
 void WindowSprite_InitializeFreeList(void);
 
 #endif

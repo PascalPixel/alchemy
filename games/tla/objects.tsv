@@ -1292,13 +1292,8 @@ main	rom_main_04	games/tla/src/field/field_sequence/f0d0ca0	.text
 main	rom_main_04	games/tla/src/field/field_sequence/f0d0e1c	.text
 main	rom_main_04	games/tla/src/field/field_sequence/buffers	.text
 main	rom_main_04	recon/tla/es/rom	.rom.000da75e	es
-main	rom_main_04	recon/tla/es/rom	.rom.000da760	es
 main	rom_main_04	recon/tla/it/rom	.rom.000d175e	it
-main	rom_main_04	recon/tla/it/rom	.rom.000d1760	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000d6760	fr
-main	rom_main_04	recon/tla/de/rom	.rom.000de760	de
-main	rom_main_04	recon/tla/raw/080d1760	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000d1740	ja
+main	rom_main_04	games/tla/src/field/field_sequence/f0d1760	.text
 main	rom_main_04	games/tla/src/field/field_sequence/buffer_start	.text
 main	rom_main_04	games/tla/src/field/field_sequence/palette	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000d183e	it
@@ -1351,14 +1346,15 @@ main	rom_main_05	games/tla/src/field/event/f0d2b4c	.text
 main	rom_main_05	games/tla/src/field/event_commands/set_field_pairs	.text
 main	rom_main_05	games/tla/src/field/event_commands/set_destination	.text
 main	rom_main_05	games/tla/src/field/event_commands/event_no_op	.text
+main	rom_main_05	games/tla/src/field/event_commands/f0d2d70	.text	en de fr ja
 main	rom_main_05	recon/tla/it/rom	.rom.000d2c90	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d2cb8	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d2cfc	it
-main	rom_main_05	recon/tla/it/rom	.rom.000d2d64	it
+main	rom_main_05	games/tla/src/field/event_commands/f0d2d70	.text	it
 main	rom_main_05	recon/tla/es/rom	.rom.000dbc90	es
 main	rom_main_05	recon/tla/es/rom	.rom.000dbcb8	es
 main	rom_main_05	recon/tla/es/rom	.rom.000dbcfc	es
-main	rom_main_05	recon/tla/es/rom	.rom.000dbd64	es
+main	rom_main_05	games/tla/src/field/event_commands/f0d2d70	.text	es
 main	rom_main_05	games/tla/src/field/object/by_id	.text
 main	rom_main_05	games/tla/src/field/object/reset_targets	.text
 main	rom_main_05	games/tla/src/field/object/setpos	.text

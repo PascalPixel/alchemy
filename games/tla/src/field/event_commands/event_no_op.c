@@ -67,6 +67,4 @@ void Func_080d2d08(struct CueObject *object, s32 cue) {
     return;
   Sound_PlayFar(cue);
 }
-
-void Func_080d2d70(void) { gMainRoutineWork.counter274++; }
 #endif

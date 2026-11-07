@@ -1,29 +1,6 @@
-// Matches (tla-en, 2026-11-07).
-// 2026-11-07: the copies through an inline Iwram_CopyWords, as the Broken
-// Seal's iwram_call.h writes it (no Call3, no copyWords local, no once-only
-// block; 20 to 14), and one function-wide request pointer for both signature
-// writes, which makes it a global pseudo and gives the zero stores' registers
-// (14 to 0). Also 0 in tla-ja, tla-de and tla-it; tla-es differs by 4
-// and tla-fr by 8 (their window macros, below). Older notes below predate this.
-// Earlier, differ 20 of 247 (tla-en, 2026-11-05).
-// Draft, differ 30 of 247 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 39 of 247 (tla-en); older figures below predate it.
-// Draft, differ 56 of 247, skeleton gap 5/7 (tla-en, 2026-11-01)
-// Receiving clear data over the link cable: waits for a peer with a matching
-// signature, then the transfer, and copies the received flags and units in.
-// Every loop is built from labels and goto: real loops let loop.c move the
-// signature and retry blocks out of line (their exit jumps), copy the first
-// test to the top, and hoist gInput's address. A real for also lets flow merge
-// the receive block into the wait loop. The signature stores go through a
-// pointer because the array store expands as a bit-field store and folds to
-// SImode constants (movs); the HImode constant is what loads from the pool, at
-// range 64, which places the mid-function pool. The masks are locals assigned
-// before each loop.
-// Declaration order changes nothing; idle's place in the
-// setup gives the native's i, window and idle allocation.
-// Before adoption: linked names for the Ram_ addresses, and the two window
-// macros for French and Spanish; 0x55 in tla-en is listed as MsgFieldRepelEvil
-// only by coincidence of value.
+/// @file
+/// Receives clear data over the link cable.
+
 #include "types.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
@@ -80,14 +57,27 @@ void Func_02002408(s32 cue);
 
 #define MSGNO(name) ((s32)(name))
 
-#if (LANGUAGE == LANGUAGE_GERMAN)
+// The windows are as wide as each language's text needs.
+#if (LANGUAGE == LANGUAGE_FRENCH)
+#define RECEIVE_WINDOW_X 2
+#define RECEIVE_WINDOW_WIDTH 26
+#define STATUS_WINDOW_X 2
+#define STATUS_WINDOW_WIDTH 26
+#elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH)
 #define RECEIVE_WINDOW_X 5
 #define RECEIVE_WINDOW_WIDTH 20
+#define STATUS_WINDOW_X 5
+#define STATUS_WINDOW_WIDTH 20
 #else
 #define RECEIVE_WINDOW_X 6
 #define RECEIVE_WINDOW_WIDTH 18
+#define STATUS_WINDOW_X 5
+#define STATUS_WINDOW_WIDTH 20
 #endif
 
+/// Receives clear data over the link cable: waits for a peer with a matching
+/// signature, then for the transfer, and copies the received flags and units
+/// in.
 s32 Func_02000b24(void) {
   void *window;
   s32 i, idle, ok, shown;
@@ -139,7 +129,7 @@ transfer:
   if (!shown && gSerialReceivedSize != 0) {
     shown = 1;
     Window_Close(window, 2);
-    window = Window_Create(5, 10, 20, 4, 2);
+    window = Window_Create(STATUS_WINDOW_X, 10, STATUS_WINDOW_WIDTH, 4, 2);
     Text_DrawMessage(MSGNO(MsgFieldTransferringData), window, 0, 4);
   }
   if (i == 9 && gSerialReceivedSize == 0) {
@@ -191,6 +181,7 @@ done:
   Unit_Calculate(2);
   Unit_Calculate(3);
   Iwram_CopyWords(Ram_ReceivedFlags, flags, 0xf40);
-  Func_02002310(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+  Func_02002310(gMainRoutineWork.paletteGlow[0],
+                gMainRoutineWork.paletteGlow[1]);
   return 1;
 }

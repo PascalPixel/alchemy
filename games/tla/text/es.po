@@ -20091,7 +20091,7 @@ msgctxt "message"
 msgid "04943"
 msgstr "Contraseña"
 
-msgctxt "message"
+msgctxt "MsgFieldPreparingToReceive"
 msgid "04944"
 msgstr "Preparado para recibir"
 
@@ -20099,7 +20099,7 @@ msgctxt "message"
 msgid "04945"
 msgstr "la partida acabada..."
 
-msgctxt "message"
+msgctxt "MsgFieldTransferringData"
 msgid "04946"
 msgstr "Recibiendo datos..."
 
@@ -20107,7 +20107,7 @@ msgctxt "message"
 msgid "04947"
 msgstr "{button_icon:2}:Cancelar"
 
-msgctxt "message"
+msgctxt "MsgFieldDataTransferWasInterrupted"
 msgid "04948"
 msgstr "Error de comunicación"
 

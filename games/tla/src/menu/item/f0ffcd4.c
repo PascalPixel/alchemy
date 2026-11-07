@@ -1,19 +1,10 @@
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
+#include "menu_result.h"
 
 // The pressed keys, read again at each test.
 #define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
-};
 
 struct PsynergyMenuState {
   u8 unk000[8];

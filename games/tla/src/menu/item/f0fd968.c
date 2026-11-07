@@ -1,6 +1,7 @@
 #include "battle_type.h"
 #include "ram_buffer.h"
 #include "edition.h"
+#include "menu_result.h"
 
 // The Japanese page draws its help line, page icons, heading and names at
 // other columns.
@@ -15,16 +16,6 @@
 #define HEADING_X 96
 #define NAME_X 16
 #endif
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
-};
 
 // The psynergy menu work block, as this function reads it.
 struct PsynergyMenuState {

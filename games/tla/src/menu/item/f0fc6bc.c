@@ -1,16 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
-};
+#include "menu_result.h"
 
 struct ListIcon {
   u8 unk00[5];

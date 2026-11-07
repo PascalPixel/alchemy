@@ -1,4 +1,11 @@
 // Differ 45 of 297 (tla-en, 2026-11-07).
+// Editions, 2026-11-07: ja, de, es and fr take the English form. Italian
+// (0810abf4, 282 instructions, one function) creates no price window (both
+// Shop_DrawSelectMsg and the closing Window_CloseFar take 0), keeps
+// messageBase and chooseAgain together in r7 with no pin, and sets
+// chooseAgain = 1 at each retry's end: differ 134 to 46 of 282, left only
+// scheduling and allocation at the top (unitId and memberIndex share a zero in
+// r5 natively) and one argument order before Func_08108690.
 // 2026-11-07, second round: messageBase pinned to r6 (FAKEMATCH pin), 77 to 45;
 // left are only the native's three chooseAgain = 1 stores at each retry's
 // end (moving them there with the pin: 134).
@@ -58,6 +65,7 @@
 // variable). Nothing plain found yet makes chooseAgain conflict with
 // messageBase.
 #include "types.h"
+#include "edition.h"
 #include "input.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
@@ -108,6 +116,12 @@ s32 Func_08108690(s32 *cursor, s32 count, s32 columns);
 void Menu_ReleaseEntryObjectsFar(void);
 void Window_CloseFar(void *window, s32 style);
 
+// Italian creates no price window and passes 0 where the others pass it, a
+// layout difference of that language's edition.
+// XXX: what Italian shows in its place; the Italian render of the sanctum
+// would settle it.
+#define SERVICE_PRICE_WINDOW (LANGUAGE != LANGUAGE_ITALIAN)
+
 s32 Func_0810abf0(void) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   void *priceWindow;
@@ -118,10 +132,16 @@ s32 Func_0810abf0(void) {
   s32 unitId;
   s32 chooseAgain;
   s32 price;
+#if SERVICE_PRICE_WINDOW
   register s32 messageBase asm("r6");
   /* FAKEMATCH(pin): messageBase held in r6; as a plain local, 77 of 297 instructions differ in tla-en. */
+#else
+  s32 messageBase;
+#endif
 
+#if SERVICE_PRICE_WINDOW
   chooseAgain = 0;
+#endif
   memberIndex = 0;
   redraw = 1;
   serviceKind = shop->partyAction;
@@ -131,9 +151,19 @@ s32 Func_0810abf0(void) {
   shop->cursorAnchor->active = 4;
   shop->mode = redraw;
   Func_080f8060(listWindow, 2, 0);
+#if SERVICE_PRICE_WINDOW
   priceWindow = Window_CreateFar(1, 16, 23, 3, 2);
+#else
+  priceWindow = NULL;
+#endif
 
+#if !SERVICE_PRICE_WINDOW
+  memberIndex = 0;
+#endif
   unitId = 0;
+#if !SERVICE_PRICE_WINDOW
+  chooseAgain = 0;
+#endif
   while (memberIndex < shop->partyMemberCount) {
     unitId = shop->partyMemberIds[memberIndex];
     if (Shop_CanServe(unitId, serviceKind) != 0)
@@ -180,15 +210,23 @@ loop:
     MessageArgument_PushFar(unitId, 1);
     MessageArgument_PushFar(price, 5);
     messageBase = (s32)Msg04824;
+#if SERVICE_PRICE_WINDOW
     chooseAgain = 1;
+#endif
     Func_0810a9ac(messageBase);
     if (Func_08108660(0) != 0) {
       Func_0810a9fc(messageBase + 2);
+#if !SERVICE_PRICE_WINDOW
+      chooseAgain = 1;
+#endif
       goto loop;
     }
     if ((u32)price > gMainRoutineWork.coins) {
       Sound_PlayFar(113);
       Func_0810a9fc(messageBase + 1);
+#if !SERVICE_PRICE_WINDOW
+      chooseAgain = 1;
+#endif
       goto loop;
     }
     MessageArgument_PushFar(unitId, 1);

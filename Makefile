@@ -22,11 +22,14 @@ MAKEFLAGS += --no-print-directory
 # matching aids read them (as pret keeps its intermediates).
 .SECONDARY:
 
-.DEFAULT_GOAL := help
+# Plain `make` builds the English Broken Seal, the compilers first if they are
+# missing; `make compare` checks it against rom.sha1.
+.DEFAULT_GOAL := tbs-en
 .PHONY: help all compare $(EDITIONS) $(addprefix compare-,$(EDITIONS)) compare-tbs compare-tla compare-editions clean
 
 help:
 	@printf '%s\n' \
+	  'make                    build tbs-en (the compilers first, once); make compare checks it' \
 	  'make bootstrap          build the pinned compilers and tools into tools/out' \
 	  'make tbs-en             build one edition: tbs or tla, then ja en de es fr it' \
 	  'make compare-tbs-en     build one edition and check it against rom.sha1' \
@@ -39,11 +42,11 @@ help:
 	  'make land               on main before committing: all twelve, the tests, the measurement'
 
 # Each edition builds in its own make, so its variables below are set once;
-# the tools are built first, once. GNU Make 3.81, macOS's make, busy-waits
-# when a parallel make waits for a job, so there each edition builds serially
-# while the editions still build side by side.
+# the tools and compilers are built first, once. GNU Make 3.81, macOS's make,
+# busy-waits when a parallel make waits for a job, so there each edition
+# builds serially while the editions still build side by side.
 SERIAL := $(if $(filter 3.%,$(MAKE_VERSION)),-j1)
-$(EDITIONS): tools
+$(EDITIONS): bootstrap
 	@$(MAKE) $(SERIAL) -f Makefile EDITION=$@ rom
 
 $(addprefix compare-,$(EDITIONS)): compare-%: %
@@ -52,7 +55,7 @@ $(addprefix compare-,$(EDITIONS)): compare-%: %
 compare-tbs: $(addprefix compare-,$(TBS))
 compare-tla: $(addprefix compare-,$(TLA))
 compare-editions: compare-tbs compare-tla
-compare: compare-tbs-ja
+compare: compare-tbs-en
 
 # make modern: the six ☀️ editions' C through a current GCC (MODERN_CC).
 ifndef EDITION
@@ -368,6 +371,7 @@ bootstrap: tools compilers $(CCAS) $(LIBGCC)
 compilers: $(COMPILER)/xgcc
 
 $(COMPILER)/xgcc:
+	@test -f alchemy-gcc/Makefile || { echo 'alchemy-gcc is empty: run git submodule update --init --recursive (see INSTALL.md).' >&2; exit 1; }
 	$(MAKE) -C alchemy-gcc
 	$(MAKE) -C alchemy-gcc generated-check
 	$(MAKE) -C alchemy-gcc/arm probe

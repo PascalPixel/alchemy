@@ -9,7 +9,7 @@ Every byte of The Broken Seal now comes from source, its pictures, music and tex
 **Linux** (Debian or Ubuntu):
 
 ```bash
-sudo apt install build-essential git patch binutils-arm-none-eabi pkg-config libpng-dev libutf8proc-dev
+sudo apt install build-essential binutils-arm-none-eabi git libpng-dev
 ```
 
 On other distributions, install the same packages under their local names.
@@ -18,7 +18,7 @@ On other distributions, install the same packages under their local names.
 
 ```bash
 xcode-select --install
-brew install arm-none-eabi-binutils pkg-config libpng utf8proc
+brew install arm-none-eabi-binutils libpng
 ```
 
 **Windows:** open PowerShell, run `wsl --install`, restart, then open **Ubuntu** from the Start menu and follow the Linux steps inside it.
@@ -26,16 +26,14 @@ brew install arm-none-eabi-binutils pkg-config libpng utf8proc
 ## 2. Build
 
 ```bash
-git clone https://github.com/PascalPixel/alchemy
+git clone --recurse-submodules https://github.com/PascalPixel/alchemy
 cd alchemy
-git submodule update --init --recursive alchemy-gcc
-make bootstrap
-make tbs-en
+make
 ```
 
-`make bootstrap` builds, once, the [old compilers](games/tbs/glossary.md#the-compilers) the games were matched with: alchemy-gcc, pret's old_agbcc, GCC 2.95.2 and GNU's assembler 2.10, all from the submodule. A current compiler would produce different instructions, so the system's `arm-none-eabi-gcc` can't stand in for them. It prints plenty of old-compiler warnings, which is normal, and the compilers and build tools take about 500 MB. `make tbs-en` builds the English Broken Seal as `out/tbs-en/tbs-en.gba`, ready for an emulator. The other languages are `tbs-ja`, `tbs-de`, `tbs-es`, `tbs-fr` and `tbs-it`.
+The first `make` builds, once, the [old compilers](games/tbs/glossary.md#the-compilers) the games were matched with: alchemy-gcc, pret's old_agbcc, GCC 2.95.2 and GNU's assembler 2.10, all from source in the `alchemy-gcc` submodule, with no download. A current compiler would produce different instructions, so the system's `arm-none-eabi-gcc` can't stand in for them. It prints plenty of old-compiler warnings, which is normal, and the compilers and build tools take about 500 MB. Then it builds the English Broken Seal as `out/tbs-en/tbs-en.gba`, ready for an emulator. Other languages build with `make tbs-ja`, `tbs-de`, `tbs-es`, `tbs-fr` or `tbs-it`.
 
-To check a build against the original, run `make compare-tbs-en`. It needs no cartridge: it compares the SHA-1 hash of the built file with the original's, recorded in `rom.sha1`, and ends with `OK` when they are equal. Every edition has its `compare-` target, `compare-tbs` checks all six of The Broken Seal, and `make -j8` builds in parallel.
+To check the build against the original, run `make compare`. It needs no cartridge: it compares the SHA-1 hash of the built file with the original's, recorded in `rom.sha1`, and ends with `OK` when they are equal. Every edition has its `compare-` target, such as `compare-tbs-ja`, `compare-tbs` checks all six of The Broken Seal, and `make -j8` builds in parallel.
 
 ## 3. Change something
 
@@ -43,7 +41,7 @@ To check a build against the original, run `make compare-tbs-en`. It needs no ca
 - `games/tbs/src` holds the code, with the pictures beside it as PNG files.
 - `games/tbs/sound` holds the music and sound effects.
 
-Edit, run `make tbs-en` again, and play your version. A changed game no longer matches the original, so `compare` will report a difference. Please don't share built ROMs, original or modified.
+Edit, run `make` again, and play your version. A changed game no longer matches the original, so `compare` will report a difference. Please don't share built ROMs, original or modified.
 
 CI checks formatting with clang-format 21, available from [LLVM's packages](https://apt.llvm.org/). To use the same check locally, run `make format-check CLANG_FORMAT=clang-format-21`, or set `CLANG_FORMAT` to the path of your clang-format 21 executable.
 
@@ -52,7 +50,6 @@ CI checks formatting with clang-format 21, available from [LLVM's packages](http
 The pinned `alchemy-gcc` submodule supplies the compilers. The tools for matching, finding C that compiles to a function's original instructions, and for measuring how much is rebuilt live in the optional `alchemy-devtools` submodule and require Rust:
 
 ```sh
-git submodule update --init alchemy-devtools
 make devtools
 alchemy-devtools/target/release/alchemy-devtools --help
 ```
@@ -65,8 +62,8 @@ Dump your own cartridge and put the file in `roms/` as `tla-en.gba` (or `tla-ja.
 
 ## If something fails
 
-- **`png.h`, `utf8proc.h` or `arm-none-eabi-as` not found:** one of the packages in step 1 is missing.
-- **`alchemy-gcc` is empty:** rerun `git submodule update --init --recursive alchemy-gcc`, then `make bootstrap`.
+- **`png.h`, `libpng-config` or `arm-none-eabi-as` not found:** one of the packages in step 1 is missing.
+- **`alchemy-gcc` is empty:** the clone was made without `--recurse-submodules`; run `git submodule update --init --recursive`, then `make`.
 - **Odd path errors:** clone into a folder whose path has no spaces.
 
 `make help` lists every other command. Once the build works, [the documentation](https://alchemy.pascalpixel.com/) explains how the game works, and [the source's guide](games/tbs/src/README.md) what lives in which folder.

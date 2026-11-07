@@ -26,8 +26,7 @@ void Text_DrawStringInWindow(u8 *s, s32 arg1, u32 arg2, u32 arg3);
 s32 Link_CreateCountdownLabelWindow(void) {
   s32 win = Window_Create(0, 0, 6, 4, 6);
 
-#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                      \
-    (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||                      \
+#if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
   Text_DrawStringAtOffset(gLink_TimeLabelString, win, 0, 0);
 #else

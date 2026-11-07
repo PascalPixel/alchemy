@@ -14,25 +14,29 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "edition.h"
+#include "version.h"
 
 s32 Text_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
 void WindowSprite_ClearListFar();
 #define WindowSprite_ClearListFar ((void (*)(s32))WindowSprite_ClearListFar)
 #endif
 
 /// Redraws win and writes message from the top left; does nothing if win is
 /// 0.
-/// The Japanese edition waits one frame after redrawing.
+/// The Japanese release clears win and waits a frame; from patch 1 it redraws
+/// the window's saved rectangle.
 void Shop_DrawMsg(s32 win, s32 message) {
   if (win != 0) {
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
     WindowSprite_RedrawSavedRectFar(win);
-    Text_DrawCharacterAtOffsetFar(message, win, 0, 0);
 #else
     WindowSprite_ClearListFar(win);
     wait(1);
+#endif
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+    Text_DrawCharacterAtOffsetFar(message, win, 0, 0);
+#else
     Text_DrawMessageFar(message, win, 0, 0);
 #endif
   }

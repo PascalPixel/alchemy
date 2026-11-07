@@ -14,9 +14,6 @@
 #include "edition.h"
 
 void Text_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-#endif
-
 void Text_DrawWorkValueWithLabel(s32 work) {
   Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, work, 8, 0);
   Text_DrawCharacterAtOffsetFar((s32)MsgCoinsLabel, work, 0x40, 0);

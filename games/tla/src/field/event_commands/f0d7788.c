@@ -2,7 +2,7 @@
 #include "flag_call.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
-#include "edition.h"
+#include "version.h"
 
 s32 Djinn_AddToLeastLoadedOwnerFar(s32 element, s32 djinni);
 void Event_Start(void);
@@ -27,7 +27,7 @@ struct EventActors {
 /// by its flag (48 + element * 20 + djinni), otherwise the least loaded owner;
 /// if it found one, the element's join effect plays at the actor (none for
 /// actor -1), the Djinni is added, and the actor's event slot is cleared
-/// (the Japanese release leaves it set).
+/// (from patch 1; the Japanese release leaves it set).
 void Func_080d7788(s32 actor, s32 element, s32 djinni) {
   s32 owner;
 
@@ -60,7 +60,7 @@ void Func_080d7788(s32 actor, s32 element, s32 djinni) {
   Func_080cb82c();
   Func_08038328(owner, element, djinni);
   Func_080cb8a4();
-#if LANGUAGE != LANGUAGE_JAPANESE
+#if TLA_PATCH_1
   ((struct EventActors *)Ram_HeapSlots->eventWork)->actors[actor] = NULL;
 #endif
   Event_End();

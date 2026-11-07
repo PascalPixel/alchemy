@@ -10,7 +10,7 @@
 #include "owner_state.h"
 #include "main_routine_work.h"
 #include "types.h"
-#include "edition.h"
+#include "version.h"
 
 s32 Party_SumDjinnCounts(s32 index) {
   u16 owners[16];
@@ -58,8 +58,8 @@ void Djinn_ActivateOfferedForParty(void) {
   }
 }
 
-// The Japanese release has no such function.
-#if LANGUAGE != LANGUAGE_JAPANESE
+// Added in patch 1; the Japanese release has no such function.
+#if TLA_PATCH_1
 s32 Func_080b106c(s32 id) {
   switch (id & 0x1ff) {
   case 191:

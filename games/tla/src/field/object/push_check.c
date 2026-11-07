@@ -1,5 +1,5 @@
 #include "types.h"
-#include "edition.h"
+#include "version.h"
 #include "main_routine_work.h"
 #include "actor.h"
 
@@ -14,9 +14,10 @@ s32 Func_08020210(struct Actor *object, s32 *position);
 /// facing rounded to a quarter turn, can be pushed on by 16 pixels: 1 when
 /// nothing solid stands on the cell beyond it or above it and its terrain
 /// test passes there, else 0. Func_080cdd80, after it, makes the push.
-// The Japanese edition has no test against the paused object and stays on
-// its scaffold: with the branch below it differs by one reordered row (the
-// angle's argument copy issued after the next position load, differ 4).
+// The test against the paused object comes from patch 1. The Japanese release
+// has none and stays on its scaffold: with the branch below it differs by one
+// reordered row (the angle's argument copy issued after the next position
+// load, differ 4).
 s32 Func_080cdc74(void) {
   s32 position[3];
   s32 above[3];
@@ -46,7 +47,7 @@ s32 Func_080cdc74(void) {
     return 0;
   if (BYTE_AT(target, 98) != 0)
     return 0;
-#if LANGUAGE != LANGUAGE_JAPANESE
+#if TLA_PATCH_1
   id = gMainRoutineWork.pausedObject;
   if (id != 1 && target == Actor_GetById(id))
     return 0;

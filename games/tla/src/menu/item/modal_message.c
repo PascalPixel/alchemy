@@ -1,5 +1,5 @@
 #include "types.h"
-#include "edition.h"
+#include "version.h"
 #include "input.h"
 #include "io_reg.h"
 #include "flag_call.h"
@@ -44,7 +44,7 @@ void wait(s32 frames);
 /// up and flag 337 records that the info window holds it; otherwise it waits
 /// for A, B or Start and clears it again.
 // As The Broken Seal's InventoryMenu_ShowModalMessage: in Japanese its first
-// form, elsewhere its TBS_PATCH_1 form less the redraw after the wait.
+// form, from patch 1 its TBS_PATCH_1 form less the redraw after the wait.
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   struct InventoryMenuState *menu =
       (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
@@ -86,7 +86,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   }
   menu->completionFlag = 1;
   menu->paneIcons[0]->active = 1;
-#if LANGUAGE != LANGUAGE_JAPANESE
+#if TLA_PATCH_1
   if (y != -1)
     Window_CloseIfOpen(&menu->modalWindow, 1);
 #endif

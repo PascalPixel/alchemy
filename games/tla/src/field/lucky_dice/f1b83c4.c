@@ -5,11 +5,12 @@
 #include "input.h"
 #include "main_routine_work.h"
 #include "bg_scroll.h"
-#include "edition.h"
+#include "version.h"
 
-// What differs between the releases: the windows' sizes and text columns, a
-// guess that Japan can refuse only in the first double-up round, and the bet's
-// clamp to the player's coins, which the translated releases lack.
+// What differs between the releases: the windows' sizes and text columns by
+// language; a guess the Japanese release can refuse only in the first double-up
+// round, until patch 1; and the bet's clamp to the player's coins, dropped from
+// patch 2.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define COIN_WINDOW_X 19
 #define COIN_WINDOW_WIDTH 11
@@ -102,10 +103,10 @@
 #define MULTIPLIER_ZERO_X 80
 #endif
 
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define CANNOT_QUIT(round) ((round) == 1)
-#else
+#if TLA_PATCH_1
 #define CANNOT_QUIT(round) ((round) > 0)
+#else
+#define CANNOT_QUIT(round) ((round) == 1)
 #endif
 
 #if LANGUAGE == LANGUAGE_GERMAN
@@ -459,7 +460,7 @@ void Func_081b83c4(void) {
   Text_DrawCharacterAtOffsetFar((s32)&MsgDiceGameThrow + 1, sprites->helpWindow,
                                 0, 8);
   bet = Party_GetAverageLevelFar() * 10;
-#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
+#if !TLA_PATCH_2
   if ((u32)bet > (u32)gMainRoutineWork.coins)
     bet = gMainRoutineWork.coins;
 #endif

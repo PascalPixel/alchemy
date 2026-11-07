@@ -11,7 +11,7 @@
 #include "graphics.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "edition.h"
+#include "version.h"
 
 // The title screen's "Press Start" prompt: five sprites further left in the
 // French edition, three elsewhere.
@@ -79,13 +79,14 @@ s32 Func_081a71c8(void) {
   return 1;
 }
 
-#if (LANGUAGE != LANGUAGE_JAPANESE) && (LANGUAGE != LANGUAGE_GERMAN)
-// The Japanese and German title screens differ and stay on their scaffolds.
-// The Japanese one blinks a five-sprite prompt (at the French position) from
-// the first frame, without the 120-frame wait; the German one loads eight
-// prompt tiles and draws two rows of three sprites, from y 116. Written so,
-// both keep the loop counter in a caller-saved register, and alchemy-gcc
-// places its reload or step one instruction away from the native's twice.
+#if TLA_PATCH_1 && (LANGUAGE != LANGUAGE_GERMAN)
+// The Japanese title screen, the older revision, and the German one, laid out
+// for its longer prompt, differ and stay on their scaffolds. The Japanese one
+// blinks a five-sprite prompt (at the French position) from the first frame,
+// without the 120-frame wait; the German one loads eight prompt tiles and
+// draws two rows of three sprites, from y 116. Written so, both keep the loop
+// counter in a caller-saved register, and alchemy-gcc places its reload or
+// step one instruction away from the native's twice.
 
 struct TitleSprite {
   u32 next; ///< the render slot link

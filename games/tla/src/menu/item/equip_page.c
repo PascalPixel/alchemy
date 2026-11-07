@@ -2,7 +2,7 @@
 #include "item.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
-#include "edition.h"
+#include "version.h"
 
 struct InventoryMenuState {
   u8 unk000[0x30];
@@ -59,24 +59,26 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
   menu = Ram_HeapSlots->menuRuntime;
   base = state->page * PAGE_ROWS;
   state->selectedIndex = base + state->row;
-#if LANGUAGE == LANGUAGE_JAPANESE
-  // Japanese clears the name's window and draws the name as a resource.
+  // The Japanese release clears the name's window; from patch 1 it redraws the
+  // window's saved rectangle.
+#if TLA_PATCH_1
+  WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+#else
   WindowSprite_ClearListFar(menu->infoWindow);
+#endif
   wait(1);
   if (menu->items[state->selectedIndex] != 0) {
+    // Japanese draws the name as a resource string.
+#if LANGUAGE == LANGUAGE_JAPANESE
     Text_DrawMessageFar((menu->items[state->selectedIndex] & ITEM_ID_MASK) +
                                (s32)MsgItemPlainName,
                            menu->infoWindow, 0, 0);
-  }
 #else
-  WindowSprite_RedrawSavedRectFar(menu->infoWindow);
-  wait(1);
-  if (menu->items[state->selectedIndex] != 0) {
     Text_DrawCharacterAtOffsetFar(
         (menu->items[state->selectedIndex] & ITEM_ID_MASK) + MsgItemPlainName,
         menu->infoWindow, 0, 0);
-  }
 #endif
+  }
 
   for (row = 0; row < PAGE_ROWS; row++) {
     if (row == state->row) {

@@ -29,7 +29,7 @@ s32 Menu_SelectShopCommand(s32 selection) {
   Menu_AppendResourceEntry(0x12);
   Menu_AppendResourceEntry(0x13);
   Menu_AppendResourceEntry(0x14);
-#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_GERMAN)
+#if (LANGUAGE == LANGUAGE_GERMAN)
   Menu_CenterResourceEntries(17, 8, 0); // Name window width.
 #elif (LANGUAGE != LANGUAGE_JAPANESE)
   Menu_CenterResourceEntries(17, 7, 0);
@@ -118,8 +118,7 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 // Name window width for each edition.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define PAIR_WIDTH 7
-#elif (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN) ||                    \
-    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#elif (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define PAIR_WIDTH 10
 #else
 #define PAIR_WIDTH 9

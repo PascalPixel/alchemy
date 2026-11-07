@@ -1,5 +1,5 @@
 #include "types.h"
-#include "edition.h"
+#include "version.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "resource.h"
@@ -35,10 +35,12 @@ void Func_080ecf74(u32 column, s32 row) {
   tile = (tile + 128) % 768 + 256;
   Resource_DecodeType01((u8 *)graphics + graphics[unwrapped + 1],
                         Ram_MapCellBuffer + (row << 12));
-#if LANGUAGE == LANGUAGE_JAPANESE
-  for (i = 0; i < 32; i++) {
-#else
+  // From patch 1 the copy stops at the map's last column instead of running
+  // past it.
+#if TLA_PATCH_1
   for (i = 0; i <= 30 && column + i <= 63; i++) {
+#else
+  for (i = 0; i < 32; i++) {
 #endif
     Dma_Set(Ram_MapCellBuffer + (cell << 6), (void *)(BG_VRAM + (tile << 6)),
             DMA_COPY_WORDS(16), REG_DMA3);

@@ -1,17 +1,23 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
-#include "edition.h"
+#include "version.h"
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define TRADE_LABEL_X 16
 #define IN_STOCK_LABEL_X 24
-#define ITEM_INFO_CLEAR WindowSprite_ClearListFar
 #define ITEM_INFO_DRAW Text_DrawMessageFar
 #else
 #define TRADE_LABEL_X 0
-#define ITEM_INFO_CLEAR WindowSprite_RedrawSavedRectFar
 #define ITEM_INFO_DRAW Text_DrawCharacterAtOffsetFar
+#endif
+
+// The Japanese release clears the info window; from patch 1 it redraws the
+// window's saved rectangle.
+#if TLA_PATCH_1
+#define ITEM_INFO_CLEAR WindowSprite_RedrawSavedRectFar
+#else
+#define ITEM_INFO_CLEAR WindowSprite_ClearListFar
 #endif
 
 #if (LANGUAGE == LANGUAGE_SPANISH)

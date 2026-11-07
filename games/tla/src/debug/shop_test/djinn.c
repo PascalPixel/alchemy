@@ -1,6 +1,6 @@
 #include "types.h"
 #include "text/msg_ids.h"
-#include "edition.h"
+#include "version.h"
 
 void FieldMessage_Show(s32 message, s32 position);
 s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn);
@@ -17,8 +17,8 @@ void Func_020005fc(s32 owner, s32 element, s32 djinn, s32 activate) {
     Djinn_Activate(owner, element, djinn);
 }
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-/// Gives each of four characters a set of Djinn from 7 (Japanese edition).
+#if !TLA_PATCH_1
+/// Gives each of four characters a set of Djinn from 7, until patch 1.
 void Func_02000638(void) {
   s32 djinn;
 

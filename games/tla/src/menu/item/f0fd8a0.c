@@ -1,6 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
-#include "edition.h"
+#include "version.h"
 
 // Psynergy menu workspace; only identified fields are declared here.
 struct PsynergyMenuState {
@@ -52,11 +52,12 @@ s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state) {
   state->selectedIndex = combined;
 
   if (GameFlag_Test(0x151) == 0) {
-    // Japanese clears and draws the description as its item list does.
-#if LANGUAGE == LANGUAGE_JAPANESE
-    WindowSprite_ClearListFar(menu->infoWindow);
-#else
+    // As in the item list: the Japanese release clears the info window, and
+    // from patch 1 it redraws the window's saved rectangle.
+#if TLA_PATCH_1
     WindowSprite_RedrawSavedRectFar(menu->infoWindow);
+#else
+    WindowSprite_ClearListFar(menu->infoWindow);
 #endif
     wait(1);
 
@@ -65,12 +66,14 @@ s32 Func_080fd8a0(s32 window, s32 *work, struct MenuResult *state) {
       s32 masked =
           (s32)(MsgAbilityDescription + (menu->psynergies[combined] & 0x1ff));
 
+      // Japanese draws the description as a resource string.
 #if LANGUAGE == LANGUAGE_JAPANESE
       Text_DrawMessageFar(masked, menu->infoWindow, 0, 0);
 #else
       Text_DrawCharacterAtOffsetFar(masked, menu->infoWindow, 0, 0);
 #endif
-#if LANGUAGE >= LANGUAGE_GERMAN
+      // From patch 2 the menu waits a frame after drawing it.
+#if TLA_PATCH_2
       wait(1);
 #endif
     }

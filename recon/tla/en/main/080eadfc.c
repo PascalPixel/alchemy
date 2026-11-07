@@ -1,5 +1,6 @@
 // Near miss, differ 20 of 84 (tla-en, 2026-11-06): only scheduling and argument-register choice around the first two calls remain. The native loads gMapShapeGrid's address into r1 and finishes the shape row before loading z then x for Func_080202f0; here the address takes r3 and x is hoisted between. For Map_GetTerrainHeightFar the native holds the terrain byte's address in r2 and loads x before z; here r1 and z first; the third call's terrain address takes r2 for the native's r3.
 // Allocation now matches the native (slot spilled to sp 0, blocks r10, shapes r6): the shape is stored right after Func_080eab98 through struct ShapeCell, as in Func_080eace8, so its store gets an alias set of its own and sched2 places it after the cell's byte 3 as the native does. Storing a plain u8 there gives 22; a tag stored later in the source spills blocks instead (36).
+// Every edition has this one form: de, es, fr, it and ja measure the same 20 of 84 with the same differences, and the literal pool is alike in all six (2026-11-07).
 // Earlier: 36 of 84 (2026-11-05) with the tag stored last; 40 with untagged empty asms, one-pass blocks and locals found by search.
 // Raises the map again under the switch actor recorded in the
 // event work's word at 0xcbc (by Func_080eace8 or Func_080eaa14), as

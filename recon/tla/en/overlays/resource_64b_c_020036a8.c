@@ -1,4 +1,29 @@
-// Differ 63 of 260 (tla-en, 2026-11-06).
+// Differ 6 of 260 (tla-en, 2026-11-07), with three devices (S2 tags needed on
+// adoption): work pinned to r9 (pin), and empty asms that read and write next
+// (barrier: keeps kind's join copy) and leader (barrier: one more reference,
+// so leader outranks slot). Plain moves that took it 41 to 6: the map work read
+// through a `map` local declared between work and object, with zoom right after
+// object (26), and dx declared bare and set after the locals (6); the old
+// `mode = 9` temporary is no longer needed (same 6 without it, dropped). Left:
+// `!GameFlag_Test(flag)` computes in r2 then 1 in r3 where the native has the
+// test in r3 and 1 in r2 (== 0, 1 - (x != 0), ternary, u32 shown: no change).
+// Without the next barrier, 13; without the leader barrier, 22; without the
+// pin, 24; arms forms with asm("") against cross-jumping, 175 to 185.
+// Earlier: differ 63 (2026-11-07), slot ranked above leader and work.
+// 2026-11-07: slot needs 2x (12 / 234, between work and i), which only a
+// REG_EQUAL note on its first set gives; the join copy from the early objects
+// gets none, since the join (a label after the zoom arms) is in no cse block
+// with the head. Native head scratch is r5, not r4, so objects is live from
+// early in the head: gcse hoisting from the arms (which inserts at the head's
+// end) is not the source. kind's copy is merged by combine (next dies at the
+// test); it survives behind a used label `top:` before the test with `goto top`
+// at the bottom (82: scratch right, bottom unrotated, slot still r10), and a
+// bottom `if (next != 0) goto top` threads but drops the label again (65).
+// i = 0, kind and slot set in both arms (all 4x) give leader r10, work r9,
+// slot r11 and i spilled, but reload's picks in the arms and cross-jumping
+// break them (181 to 194, every order). volatile i, 117; types of next and
+// kind, and forms of !GameFlag_Test, no change; a 10-minute permuter run on
+// the label form, nothing under 82.
 // Pins measured 2026-11-06 (not kept): work pinned to r9 alone gives 57, with
 // leader in r11 and slot in r10 (the native r10, r11) and the head's kind copy
 // still missing; adding leader to r10 (142) or slot to r11 (107) breaks the
@@ -105,10 +130,13 @@ void Func_020036a8(void) {
   s32 next;
   s32 left, right, top, bottom;
   struct Actor **slot;
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  /* FAKEMATCH(pin): the form kept; as a plain local, 24 of 260 instructions
+   * differ in tla-en. */
+  register struct EventWork *work asm("r9") = Ram_HeapSlots->eventWork;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object = work->viewCenter;
+  s32 zoom = map->zoom;
   s32 x = object->x;
-  s32 zoom = Ram_HeapSlots->mapWork->zoom;
   u8 kind = placement->kind;
   s32 z = object->z;
   struct Actor **objects = gData_02006c08;
@@ -127,7 +155,13 @@ void Func_020036a8(void) {
   }
   i = 0;
   next = kind;
+  /* FAKEMATCH(barrier): the form kept; without it, 13 of 260 instructions
+   * differ in tla-en. */
+  asm("" : "+g"(next));
   slot = objects;
+  /* FAKEMATCH(barrier): the form kept; without it, 22 of 260 instructions
+   * differ in tla-en. */
+  asm("" : "+g"(leader));
   while (next != 0) {
     s32 px, pz;
 
@@ -164,12 +198,10 @@ void Func_020036a8(void) {
         }
         if (gMainRoutineWork.ownerOverride == 0) {
           s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
-          s32 dx = object->x - leader->x;
+          s32 dx;
           s32 reach, dz;
-          /* FAKEMATCH(temporary): the form kept; as renderMode == 9, 75 of 260
-           * instructions differ in tla-en. */
-          s32 mode = 9;
 
+          dx = object->x - leader->x;
           if (dx < 0)
             dx = leader->x - object->x;
           reach = leaderReach + object->radius * scale;
@@ -177,7 +209,7 @@ void Func_020036a8(void) {
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z - object->z) < reach) {
             if (GameFlag_Test(0x104) == 0) {
-              if (gMainRoutineWork.renderMode == mode)
+              if (gMainRoutineWork.renderMode == 9)
                 work->unk166 = 0x208b;
               else
                 work->exit = i + 100;

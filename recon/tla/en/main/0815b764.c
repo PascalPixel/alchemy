@@ -1,4 +1,20 @@
-// Differ 68 of 1932 (tla-en, 2026-11-07).
+// Differ 52 of 1932 (tla-en, 2026-11-07).
+// 2026-11-07, from 62: gData_0819746d and gData_08197473 declared without
+// const (54, then 52; found by permute as a volatile global): their loads then
+// stay behind the stack-argument stores, so both blits' str of w falls where the
+// listing has it. No new device. Tried and worse: a register-asm local for sc or
+// yaw (kills the giv: 81 to 1213), frame pinned to r7 (430), an empty or memory
+// asm after the closing wait(1) (88; sched2 still hoists the 0x03000000 base).
+// Permute on 62 and 52 bases (10 and 8 minutes): nothing below 52. Left: the
+// ship-burst giv order (about 36 rows), the closing fills (about 10), the
+// palette and frame 133 step pairs (2 each).
+// 2026-11-07, from 68: three loops take their pointer as &array[i] at the top of
+// the body (frame 0 and frame 133 particles, the spark loop), so the hoisted
+// constants and step inits go out first, as the listing schedules them (66, 64,
+// 62). Left: the ship-burst giv order (a top-of-loop yaw local gives the
+// listing order, sc init before -t * 512, but swaps r7 and r8: 150 to 185),
+// the closing fills (0x03000000 hoisted above wait here) and single str/step
+// pairs in the palette, frame 133 and blit-argument rows.
 // 2026-11-07, from 76: the ship position is one struct (x, z) on the stack, not
 // two locals (68; an s32[2] gives the same); its slots then sit where the
 // listing keeps them and the setup and placement rows agree. Not worked further:
@@ -239,8 +255,8 @@ extern u8 Data_02010200[];
 extern const u16 Data_08197424[];
 extern const u16 gData_0819747a[];
 extern const u8 gData_08197467[];
-extern const u8 gData_08197473[];
-extern const u8 gData_0819746d[];
+extern u8 gData_08197473[];
+extern u8 gData_0819746d[];
 extern const u16 Data_08198686[];
 extern const u8 Data_08198662[];
 extern const u8 Data_08198674[];
@@ -413,7 +429,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       work->transferMode = 2;
       work->transferValue = 75;
       Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry((s32)&ResourceId_Data150), 128);
-      for (i = 0, p = work->particles; i != 9; i++, p++) {
+      for (i = 0; i != 9; i++) {
+        p = &work->particles[i];
         p->variant = -2 * i;
         p->x = (Random16() & 15) + 60;
         p->y = (Random16() & 15) + 44;
@@ -535,7 +552,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       REG_DISPCNT = 0x7541;
       src = Data_081986aa;
       q = (struct EffectStep *)(work->sheet + 0x4b98);
-      for (i = 0, p = work->particles; i != 6; i++, p++, src += 5) {
+      for (i = 0; i != 6; i++, src += 5) {
+        p = &work->particles[i];
         p->x = src[0] << 16;
         p->variant = -8 * i;
         p->y = src[1] << 16;
@@ -694,8 +712,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
                   anchor->x - 20, anchor->y - 24, 40, 48);
         }
       }
-      q = sparks;
-      for (i = 0; i != 96; i++, q++) {
+      for (i = 0; i != 96; i++) {
+        q = &sparks[i];
         if (q->variant >= 0) {
           s32 n = q->variant / 4 + 2;
 

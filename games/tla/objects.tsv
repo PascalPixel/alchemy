@@ -1922,12 +1922,7 @@ main	rom_main_05	games/tla/src/field/event_commands/spin	.text
 main	rom_main_05	games/tla/src/field/event_commands/f0e3074	.text	en de es fr it ja
 main	rom_main_05	games/tla/src/field/event_commands/f0e3698	.text
 main	rom_main_05	games/tla/src/field/event_commands/spin_ring	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000e38bc	it
-main	rom_main_05	recon/tla/raw/080e38c8	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000e3884	ja
-main	rom_main_05	recon/tla/de/rom	.rom.000f08c8	de
-main	rom_main_05	recon/tla/es/rom	.rom.000ec8bc	es
-main	rom_main_05	recon/tla/fr/rom	.rom.000e88bc	fr
+main	rom_main_05	games/tla/src/field/event_commands/f0e38c8	.text
 main	rom_main_05	games/tla/src/field/event_commands/psynergy_effects_01	.text
 main	rom_main_05	games/tla/src/field/event/f0e3d04	.text	en de es fr it ja
 main	rom_main_05	games/tla/src/field/event/object_blocked	.text

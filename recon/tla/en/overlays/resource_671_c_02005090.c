@@ -1,4 +1,12 @@
-// Differ 67 of 167 (tla-en, 2026-11-06), draft 170, no devices. From 104: the scale is
+// Differ 67 of 167 (tla-en, 2026-11-07). Unchanged: native stores z = 0 before x and y from r0, but
+// a u16 scale local for that order costs a zero-extend (72); gcse cprop pass 2 still swaps i for
+// its hoisted i + 1 in the test. Tried 7 November: i++ in the header with all 2520 entry orders
+// (109 best), a break or goto test in the arms (129, 151), types of i and tile, a 10-minute permute (73).
+// Devices tried (each would need a FAKEMATCH tag): asm("" : "+r"(i)) before the test keeps the test on i
+// and puts tile + 2, oam + 1 in r5, r9 as native, but then tile takes r11 and i + 1 spills (115; 109
+// best of 2520 entry orders; an 8-minute permute dropped it); in an arm 94; on tile 109; pinning i,
+// oam or now 119 to 156; a temporary for the test, or a continue from either arm, changed nothing (67).
+// 2026-11-06, draft 170, no devices. From 104: the scale is
 // stored straight into effect.x and effect.y copied from it (one extra ldrh, but no scale
 // pseudo, which settles most of the entry's allocation: 75), then the entry's locals in
 // the order digit, old, value, block, tile, now, oam (67, best of all 2520 orders with

@@ -1,4 +1,10 @@
-// Differ 61 of 160 (tla-en, 2026-11-06).
+// Differ 49 of 160 (tla-en, 2026-11-07).
+// 2026-11-07: kind as u32 stepped through u16 casts (kind = (u16)i; kind = (u16)(kind + 1); i = (s16)kind) puts
+// the search's u16 view in r2 before i's asrs, as native; the loop now matches. Left: i = 0 before sprite fixes the
+// prologue but moves the 0x10000 reload to r1 (55); the tail's native order x, z, ax, az, bx, bz gets the constants
+// right (328, 332, 384, 388) but kind * 4 (5 refs over 17 insns) loses to the second offset (5 over 15) and takes
+// r1 (84); on this head all 720 orders with w and h first and 16,000 of the rest were measured: none beats this.
+// Earlier (61 of 160, 2026-11-06):
 // 2026-11-06 (later): s16 i = 0 declared before sprite gives the listing's prologue (i's zero in r1 set first,
 // the value28 read on a zero of its own in r2), but 67 overall: in the search the step still shifts i (asrs r1)
 // before the u16 view (lsrs), which then ties to the step's register r3 where the listing has the view first in r2.
@@ -57,7 +63,7 @@ s32 Func_02000038(s32 id) {
   struct Actor *object = Actor_GetById(id);
   s16 sprite = ((struct ObjectAnimationState *)object->animation)->value28[0];
   s16 i;
-  u16 kind;
+  u32 kind;
   s32 w, h, x, z;
   s32 ax, az;
   s32 bx, bz;
@@ -66,13 +72,13 @@ s32 Func_02000038(s32 id) {
   i = 0;
   if ((u16)sprite != gData_02001968[i]) {
   loop:
-    kind = i;
-    kind++;
-    i = kind;
+    kind = (u16)i;
+    kind = (u16)(kind + 1);
+    i = (s16)kind;
     if (kind <= 5 && (u16)sprite != gData_02001968[kind])
       goto loop;
   }
-  kind = i;
+  kind = (u16)i;
   if (kind == 6)
     return 0;
   w = (ABS(gData_02001974[kind][0]) + ABS(gData_02001974[kind][2])) >> 4;

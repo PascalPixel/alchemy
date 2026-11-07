@@ -1,6 +1,19 @@
-// Differ 60 of 1122 (tla-en, 2026-11-07), with one tagged temporary. Left: the
-// FlashBurst load and size = 2 on either side of the once-only block, the first
-// model setup's zeros, and the pool offsets those shift.
+// Differ 40 of 1122 (tla-en, 2026-11-07), with one tagged temporary.
+// 2026-11-07 (latest), from 60: the listing loads one pool word for the cell
+// base, the droplets and the 0xc1 load (0x3f4 three times), so all three are
+// gMapCellBuffer, not Ram_MapCellBuffer (an integer folds base + 0x5000); with
+// that the once-only block is dropped and size = 2 rises to the top (40). Left:
+// cse2 follows the droplet loop's fall-through and reuses its gMapCellBuffer
+// load for the 0xc1 load; with 5 refs over 1 call it is caller-saved in r4
+// (str/ldr sp+8) where the listing spills it and reloads the pool word at each
+// use. A label at the loop exit cannot survive (cse2 folds the guard first);
+// hoisting it (a statement expression gives life 2) gives it r8 (153). Also
+// left: the first setup's pixels store and zero (a partial search of the orders
+// of its eight statements after the bitfields: 40 at best), the tridents' model->texture
+// from the temporary, and sched2 ties (the glints' 0x700, the 3 for
+// __modsi3). With the tridents in source order (shade, pixels, then the reset)
+// and no temporary: 66, &texture taking r10 from start (9 refs over 85 insns
+// against 11 over 116).
 // 2026-11-07 (later), from 62: the tridents reset the transform before their
 // shade (60); size = 2 at the top, where the listing sets r6, takes r7 from 0x78f0 (127).
 // 2026-11-07, from 96: a once-only block around the FlashBurst load puts the
@@ -264,21 +277,18 @@ void BattleEffect_RunTrident(struct BattleEffectArgument *effect) {
   offset = (s32)gMapCellBuffer;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F8, work->sheet + 0xc56, 0,
                              0);
-  // A once-only block: its loop notes order gMapCellBuffer's load as the listing does.
-  do {
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                               (u8 *)offset + 0x5000, 1, 0);
-  } while (0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+                             (u8 *)offset + 0x5000, 1, 0);
   offset = 0x2400;
   size = 2;
   // Twelve shaded droplets, 2 to 24 wide.
   for (i = 0; i != 12; i++) {
-    Func_0815b434(Ram_MapCellBuffer + offset, size, 0x10000);
+    Func_0815b434(gMapCellBuffer + offset, size, 0x10000);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, Ram_MapCellBuffer, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, gMapCellBuffer, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FA, Data_02011000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02011400, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);

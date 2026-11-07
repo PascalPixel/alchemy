@@ -1,4 +1,23 @@
-// Differ 63 of 260 (tla-en, 2026-11-06). The twin's block-local mode = 9 for the renderMode
+// Differ 6 of 260 (tla-en, 2026-11-07): overlay 64b's Func_020036a8 form,
+// carried over whole; same three devices to tag under S2 on adoption (work
+// pinned to r9, empty asms on next and leader) and the same 6 left, in the
+// flag negation's registers. See the twin's header for what each step gave.
+// Earlier: differ 63 (2026-11-07), slot ranked above leader and work.
+// 2026-11-07: slot needs 2x (12 / 234, between work and i), which only a
+// REG_EQUAL note on its first set gives; the join copy from the early objects
+// gets none, since the join (a label after the zoom arms) is in no cse block
+// with the head. Native head scratch is r5, not r4, so objects is live from
+// early in the head: gcse hoisting from the arms (which inserts at the head's
+// end) is not the source. kind's copy is merged by combine (next dies at the
+// test); it survives behind a used label `top:` before the test with `goto top`
+// at the bottom (82: scratch right, bottom unrotated, slot still r10), and a
+// bottom `if (next != 0) goto top` threads but drops the label again (65).
+// i = 0, kind and slot set in both arms (all 4x) give leader r10, work r9,
+// slot r11 and i spilled, but reload's picks in the arms and cross-jumping
+// break them (181 to 194, every order). volatile i, 117; types of next and
+// kind, and forms of !GameFlag_Test, no change; a 10-minute permuter run on
+// the label form, nothing under 82.
+// 2026-11-06: the twin's block-local mode = 9 for the renderMode
 // test (overlay 64b's Func_020036a8) takes 75 to 63 here too. Left: register picks, leader r9,
 // work r11, slot r10 for the native r10, r9, r11 (slot ranks above leader and work).
 // Before, differ 75: slot ranks above leader and work.
@@ -92,10 +111,13 @@ void Func_02000d64(void) {
   s32 next;
   s32 left, right, top, bottom;
   struct Actor **slot;
-  struct EventWork *work = Ram_HeapSlots->eventWork;
+  /* FAKEMATCH(pin): the form kept; as a plain local, 24 of 260 instructions
+   * differ in tla-en. */
+  register struct EventWork *work asm("r9") = Ram_HeapSlots->eventWork;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *object = work->viewCenter;
+  s32 zoom = map->zoom;
   s32 x = object->x;
-  s32 zoom = Ram_HeapSlots->mapWork->zoom;
   u8 kind = placement->kind;
   s32 z = object->z;
   struct Actor **objects = gData_02003dc0;
@@ -114,7 +136,13 @@ void Func_02000d64(void) {
   }
   i = 0;
   next = kind;
+  /* FAKEMATCH(barrier): the form kept; without it, 13 of 260 instructions
+   * differ in tla-en. */
+  asm("" : "+g"(next));
   slot = objects;
+  /* FAKEMATCH(barrier): the form kept; without it, 22 of 260 instructions
+   * differ in tla-en. */
+  asm("" : "+g"(leader));
   while (next != 0) {
     s32 px, pz;
 
@@ -151,12 +179,10 @@ void Func_02000d64(void) {
         }
         if (gMainRoutineWork.ownerOverride == 0) {
           s32 scale = ((struct WorldMapSprite *)object->animation)->scale;
-          s32 dx = object->x - leader->x;
+          s32 dx;
           s32 reach, dz;
-          /* FAKEMATCH(temporary): the form kept; as renderMode == 9, 75 of 260
-           * instructions differ in tla-en. */
-          s32 mode = 9;
 
+          dx = object->x - leader->x;
           if (dx < 0)
             dx = leader->x - object->x;
           reach = leaderReach + object->radius * scale;
@@ -164,7 +190,7 @@ void Func_02000d64(void) {
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z - object->z) < reach) {
             if (GameFlag_Test(0x104) == 0) {
-              if (gMainRoutineWork.renderMode == mode)
+              if (gMainRoutineWork.renderMode == 9)
                 work->unk166 = 0x208b;
               else
                 work->exit = i + 100;

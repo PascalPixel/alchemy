@@ -1,34 +1,6 @@
-// Differ 66 of 506 (tla-en, 2026-11-06). Plain C with no device: the depth call
-// written once per branch (GCC merges the two calls, and the scene's reload in
-// the else branch then matches) replaces the r4 pin and the empty asm.
-// Left: the first loop's preheader sets up the drops giv before dropMotion's and
-// keeps a particle copy in fp across the depth call where the native uses r6 and
-// two separate zeros; the second loop's preheader order; the third loop has sprite
-// and particle swapped in r5 and r6. Tried without gain on 2026-11-06: block-local
-// sprite and particle in each loop, particle set at the top of loop 1 or after the
-// mode block, pointers advancing in loop 1, every order and index or pointer
-// spelling of loop 1's six stores, chained zero stores, sprite set before particle.
-// A 5-minute permuter run (2026-11-06) found nothing better than 66; a 25-minute
-// run reached 60 only by reusing target for the 25 lifetime (target = 25 before
-// the depth call), a cast-free reuse that only moves the preheader's schedule, not kept.
-// Indexing loop 1's velocityY and &velocityX with no particle, 136; loop 3 through
-// work->puffMotion[i] with no particle, 116; sprite set before the test, 66.
-// Draft, differ 99 of 506, skeleton gap 37 (tla-en, 2026-11-01)
-// The frame callback of Func_080e3d04's spray: every
-// fourth frame while it is emitting, a free one of sixteen drops starts at
-// the origin with the mode's speed (mode 3 faster, longer and lighter) along
-// the spray's angle; each live drop grows, cycles its four tiles, is drawn at
-// its position, and dies after the mode's lifetime, on reaching an object of
-// the event work's list (whose index is kept and which stops the spray for
-// the frame) or on something solid; an odd drop that dies leaves one of
-// sixteen puffs of smoke that rise for 32 frames. The angle then turns toward
-// the scene's facing by at most 0x400 a frame.
-// The loops index their arrays: the native's sprite, motion and puff pointers
-// are strength-reduced from i (sprite in r0 with a copy in r5 at the call in
-// the first loop, at sp 4 with the copy in r5 in the second), and sprite and
-// particle are one local each across all three loops. The third loop's count
-// down is GCC reversing i. Assigning particle later in loop 1 reduces &velocityX
-// as its own giv and costs a hoisted register.
+/// @file
+/// The spray's drops and smoke puffs, moved and drawn each frame.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -91,6 +63,15 @@ s32 Func_080dbe80(s32 *a, s32 radiusA, s32 *b, s32 radiusB);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
 u32 Random16(void);
 
+/// The frame callback of Func_080e3d04's spray. Every fourth frame while it
+/// is emitting, a free one of sixteen drops starts at the origin with the
+/// mode's speed (mode 3 faster, longer and lighter) along the spray's angle.
+/// Each live drop grows, cycles its four tiles, is drawn at its position, and
+/// dies after the mode's lifetime, on reaching an object of the event work's
+/// list (whose index is kept and which stops the spray for the frame) or on
+/// something solid; an odd drop that dies leaves one of sixteen puffs of smoke
+/// that rise for 32 frames. The angle then turns toward the scene's facing by
+/// at most 0x400 a frame.
 void Func_080e38c8(void) {
   struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleFxWork[0];
   struct SprayScene *scene = Ram_HeapSlots->effectWork;
@@ -105,9 +86,9 @@ void Func_080e38c8(void) {
   s32 turn;
 
   if (work->emitting != 0 && (gFrameCount & 3) == 0) {
-    for (i = 0; i <= 15; i++) {
-      if (work->dropMotion[i].timer == -1) {
-        particle = &work->dropMotion[i];
+    particle = work->dropMotion;
+    for (i = 0; i <= 15; i++, particle++) {
+      if (particle->timer == -1) {
         sprite = &work->drops[i];
         if (scene->otherObject != NULL)
           sprite->depth = BattleEffect_GetObjectDepth(scene->otherObject);
@@ -122,22 +103,22 @@ void Func_080e38c8(void) {
           work->lifetime = 25;
           work->gravity = 0x2000;
         }
-        work->dropMotion[i].x = work->origin[0];
-        work->dropMotion[i].y = work->origin[1];
-        work->dropMotion[i].z = work->origin[2];
-        work->dropMotion[i].velocityZ = 0;
-        work->dropMotion[i].velocityX = 0;
+        particle->x = work->origin[0];
+        particle->y = work->origin[1];
+        particle->z = work->origin[2];
+        particle->velocityX = 0;
         particle->velocityY = -0x13333;
+        particle->velocityZ = 0;
         Vector_AddPolarOffset(work->speed, work->angle, &particle->velocityX);
-        work->dropMotion[i].timer = 0;
+        particle->timer = 0;
         break;
       }
     }
   }
 
   work->hit = 0;
-  for (i = 0; i <= 15; i++) {
-    particle = &work->dropMotion[i];
+  particle = work->dropMotion;
+  for (i = 0; i <= 15; i++, particle++) {
     if (particle->timer == -1)
       continue;
     sprite = &work->drops[i];
@@ -188,8 +169,8 @@ void Func_080e38c8(void) {
     BattleEffect_IntegrateVector3(&particle->x, 64, work->gravity);
   }
 
-  for (i = 0; i <= 15; i++) {
-    particle = &work->puffMotion[i];
+  particle = work->puffMotion;
+  for (i = 0; i <= 15; i++, particle++) {
     if (particle->timer >= 0) {
       sprite = &work->puffs[i];
       sprite->oam.index = work->puffTile + ((particle->timer >> 2) & 7) * 8;

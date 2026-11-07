@@ -1,14 +1,19 @@
-// Draft, differ 12 of 40 (was 28): ☀️'s System_InstallIwramAndIrqs with
-// ⚓️'s 0x400-word runtime copy and the gamepak interrupt enabled. The native
-// pool holds IwramIrqMain twice: the copy's destination and the vector's
-// value are two entries, which agscc's pool merges whenever both are the
-// same symbol, so every later pool offset is 4 short. The empty asm on the
-// destination keeps CSE from carrying it to the vector store (the vector's
-// value is reloaded after the copy, as in the native); without it the
-// address stays in r4 and the registers shift (differ 30). A second
-// entry would need a second name for 0x03000100, which O2 forbids unless
-// evidence shows the source had one (the IWRAM runtime block it copies is
-// a candidate).
+// Draft, differ 2 of 40 in every edition (was 12): ☀️'s
+// System_InstallIwramAndIrqs with ⚓️'s 0x400-word runtime copy and the
+// gamepak interrupt enabled. One form serves all six editions: tla-ja and
+// tla-en at 080133c4, tla-de, tla-es, tla-fr and tla-it at 080133f0, each
+// listing 0x74 bytes, this function alone, and every edition measures the
+// same 2 instructions; no edition difference is known.
+// The native pool holds 0x03000100 twice: the copy's destination and the
+// vector's value are two entries, so one of them is a constant rather than
+// the symbol, which agscc's pool would merge. Here the vector's value is
+// Camelot's fixed address of IwramIrqMain (FIXED_ADDRESS, as iwram_call.h
+// writes the other resident IWRAM routines); spelled as the symbol, the
+// entries merge and every later pool offset is 4 short (differ 12). As the
+// destination instead, the pool order is reversed (differ 4). Remaining: the
+// vector store's two registers are swapped (str r2, [r3] for str r3, [r2]),
+// register allocation only; a 4-minute permute found nothing better.
+// Before adoption the fixed address belongs in irq.h, listed once (O2).
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -20,10 +25,10 @@ void System_InstallIwramAndIrqs(void) {
 
   Io_Write16(0, &REG_IME);
   iwram = IwramIrqMain;
-  asm("" : "+r"(iwram));
   Dma_Set(IwramResident_Rom, iwram, (DMA_ENABLE | DMA_32BIT) << 16 | 0x400,
           REG_DMA3);
-  gIrqVector = IwramIrqMain;
+  iwram = FIXED_ADDRESS((u8 *), 0x03000100, IwramIrqMain);
+  gIrqVector = iwram;
   Dma_Set(gDefaultIrqHandlers, gIrqHandlers,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0xe, REG_DMA3);
   Io_Write16(0, &REG_DISPSTAT);

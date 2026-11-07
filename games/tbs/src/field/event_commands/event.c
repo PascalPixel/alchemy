@@ -6,17 +6,18 @@
 
 // When a gift goes to another party member, `<leader> gave <item> to <member>.`
 // follows `<leader> got <item>.`; it is MsgGaveItemToMember, the next
-// message, in every edition. Japanese and English show it with window flags
-// 3 (zoom, busy while it shows), the European releases with 1 (zoom only).
+// message, in every edition.
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define GIFT_RECEIVED_MESSAGE MsgGaveItemToMember
-#define GIFT_RECEIVED_MESSAGE_MODE 1
-#elif (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||       \
-    (LANGUAGE == LANGUAGE_ITALIAN)
-#define GIFT_RECEIVED_MESSAGE (MsgColossoIsaacGotItem + 1)
-#define GIFT_RECEIVED_MESSAGE_MODE 1
 #else
 #define GIFT_RECEIVED_MESSAGE (MsgColossoIsaacGotItem + 1)
+#endif
+
+// Japanese and English show it with window flags 3 (zoom, busy while it
+// shows); from patch 2 it shows with 1 (zoom only).
+#if TBS_PATCH_2
+#define GIFT_RECEIVED_MESSAGE_MODE 1
+#else
 #define GIFT_RECEIVED_MESSAGE_MODE 3
 #endif
 

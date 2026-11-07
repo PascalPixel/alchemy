@@ -447,14 +447,13 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   }
 done:
   // Under Mind Read the pages measure 2 pixels wider in Japanese, English,
-  // Spanish and Italian, a set no patch level selects: TBS_PATCH_2 drops
-  // Mind Read's padding from the first-page measure, Window_FitOnScreen and
-  // the pen (typing.c) in German, French, Spanish and Italian alike.
-  // Spanish and Italian put the widening back here rather than keeping an
-  // older copy: this function has the French outline reset at a page break
-  // (TBS_PATCH_3) too. XXX (no evidence): why only here; a recording shows
-  // the window 2 pixels wider, not whether that was meant.
-#if !(LANGUAGE == LANGUAGE_GERMAN) && !(LANGUAGE == LANGUAGE_FRENCH)
+  // Spanish and Italian: patch 2 drops Mind Read's padding from the
+  // first-page measure, Window_FitOnScreen and the pen (typing.c) in German,
+  // French, Spanish and Italian alike, and patch 4 puts the widening back
+  // here rather than keeping an older copy: this function has the patch 3
+  // outline reset at a page break too. XXX (no evidence): why only here; a
+  // recording shows the window 2 pixels wider, not whether that was meant.
+#if !TBS_PATCH_2 || TBS_PATCH_4
   if (work->mindRead != 0)
     maxWidth += 2;
 #endif

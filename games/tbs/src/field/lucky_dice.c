@@ -8,6 +8,7 @@
 #include "menu.h"
 #include "types.h"
 #include "edition.h"
+#include "version.h"
 #include "far_call.h"
 #include "sound.h"
 #include "system.h"
@@ -547,7 +548,8 @@ void LuckyDice_Run(void) {
         } else {
           resetDice = 1;
           state = LUCKY_DICE_AIM;
-#if LANGUAGE != LANGUAGE_JAPANESE
+#if TBS_PATCH_1
+          // From patch 1 a lost throw reopens the Throw / Quit help.
           window = Window_CreateFar(DICE_HELP_X, 16, DICE_HELP_W, 4, 6);
           sprites->helpWindow = window;
           Text_DrawMessageAsTilesFar(MsgLuckyDiceThrow, window, 0, 0);

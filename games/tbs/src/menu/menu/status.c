@@ -5,8 +5,9 @@
 
 #include "../menu_internal.h"
 
-// The international editions reset eight party figure rows rather than four,
-// and their longer words need more window.
+// From patch 1 the menu resets eight party figure rows rather than four, and
+// saves and clears more window tiles for the extra text tiles it then uses;
+// the editions outside Japanese also lay the menu out for longer words.
 //
 // How many party figure rows PartyMemberChooser_Open resets.
 #if TBS_PATCH_1

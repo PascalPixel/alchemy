@@ -5,9 +5,9 @@
 
 #include "../menu_internal.h"
 
-// The international editions widen the Djinn list's highlight, show a trade
-// preview's second side in another mode and lay the stat preview out for
-// fewer digits.
+// The editions outside Japanese widen the Djinn list's highlight and lay the
+// stat preview out for fewer digits; from patch 1 a trade preview shows its
+// second side in another mode.
 //
 // The highlight over a row of the Djinn list, in tiles.
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -16,6 +16,7 @@
 #define DJINN_CURSOR_WIDTH 5
 #endif
 
+// The mode of a trade preview's second side.
 #if TBS_PATCH_1
 #define DJINN_SWAP_PREVIEW_MODE DJINN_PREVIEW_TRADE
 #else

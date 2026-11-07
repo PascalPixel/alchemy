@@ -14,15 +14,27 @@
 #include "version.h"
 
 // The title screen's "Press Start" prompt: five sprites further left in the
-// French edition, three elsewhere.
-#if (LANGUAGE == LANGUAGE_FRENCH)
+// French and Japanese editions; two rows of three, from eight tile blocks, in
+// German; one row of three elsewhere.
+#if (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_JAPANESE)
 #define PROMPT_SPRITES 5
 #define PROMPT_X 56
 #define PROMPT_Y 126
+#elif LANGUAGE == LANGUAGE_GERMAN
+#define PROMPT_SPRITES 3
+#define PROMPT_ROWS 2
+#define PROMPT_ROW_HEIGHT 8
+#define PROMPT_X 80
+#define PROMPT_Y 116
 #else
 #define PROMPT_SPRITES 3
 #define PROMPT_X 80
 #define PROMPT_Y 124
+#endif
+#if LANGUAGE == LANGUAGE_GERMAN
+#define PROMPT_TILE_BLOCKS 8
+#else
+#define PROMPT_TILE_BLOCKS 5
 #endif
 
 void Func_08014b70(void);
@@ -80,13 +92,12 @@ s32 Func_081a71c8(void) {
 }
 
 #if TLA_PATCH_1 && (LANGUAGE != LANGUAGE_GERMAN)
-// The Japanese title screen, the older revision, and the German one, laid out
-// for its longer prompt, differ and stay on their scaffolds. The Japanese one
-// blinks a five-sprite prompt (at the French position) from the first frame,
-// without the 120-frame wait; the German one loads eight prompt tiles and
-// draws two rows of three sprites, from y 116. Written so, both keep the loop
-// counter in a caller-saved register, and alchemy-gcc places its reload or
-// step one instruction away from the native's twice.
+// The Japanese and German title screens are written below but still link from
+// their scaffolds: the Japanese one, the older revision, blinks a five-sprite
+// prompt (at the French position) from the first frame, without the 120-frame
+// wait; the German one, laid out for its longer prompt, loads eight prompt
+// tiles and draws two rows of three sprites from y 116. Both compile to their
+// listings' instructions.
 
 struct TitleSprite {
   u32 next; ///< the render slot link
@@ -143,8 +154,12 @@ s32 Func_081a729c(s32 prompt) {
         BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
 
     /* FAKEMATCH(barrier): holds r2 until the control word is loaded; as the
-     * pin alone, 2 of 254 instructions differ in tla-en. */
+     * pin alone, 2 of 254 instructions differ in tla-en. The Japanese and
+     * German editions place the first literal pool one instruction later and
+     * match with the pin alone. */
+#if TLA_PATCH_1 && !(TLA_PATCH_2 && !TLA_PATCH_3)
     __asm__("" : "+l"(control) : : "r2");
+#endif
     REG_BG2CNT = control;
   }
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
@@ -198,7 +213,7 @@ column:
     struct TitleSprite *sprite = work->sprites;
 
     Resource_DecodeByteLzInRam(gTitle_PromptTiles, buffer);
-    for (i = 0; i < 5; i++) {
+    for (i = 0; i < PROMPT_TILE_BLOCKS; i++) {
       s32 vramBlock =
           VramCache_Load(Resource_FindFreeEntry(), 128, buffer + (i << 8) / 2);
       u32 *spriteWords = (u32 *)sprite;
@@ -219,12 +234,27 @@ column:
   else
     holdFrames = 660;
   for (i = 0; i < holdFrames; i++) {
-    if (i > 120) {
+    // The Japanese edition blinks the prompt from the first frame.
+    if (!TLA_PATCH_1 || i > 120) {
       if (prompt != 0) {
         struct TitleSprite *sprite = work->sprites;
         s32 x;
         u32 level;
+#ifdef PROMPT_ROWS
+        u32 row;
+        s32 y;
 
+        for (row = 0, y = PROMPT_Y; row < PROMPT_ROWS;
+             y += PROMPT_ROW_HEIGHT, row++) {
+          for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++) {
+            sprite->x = x;
+            sprite->y = y;
+            Func_080140d8(sprite, 0);
+            x += 32;
+            sprite++;
+          }
+        }
+#else
         for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++) {
           sprite->x = x;
           sprite->y = PROMPT_Y;
@@ -232,6 +262,7 @@ column:
           x += 32;
           sprite++;
         }
+#endif
         level = Data_081a873e[i % 60];
         REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 |
                      BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |

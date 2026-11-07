@@ -1,4 +1,11 @@
 // Differ 6 of 1647 (tla-en, 2026-11-07).
+// Differ 8 of 1748 in tla-de, tla-fr, tla-es and tla-it at their own addresses
+// (0804a984, 0804a9a0, 0804a994, 0804a96c; 2026-11-07): the same loop-head
+// pairs as English. The four European editions share one image that asks the
+// cartridge its language at run time (System_GetLanguage): the "!" help window
+// (kind 7) is 10 columns wide in Italian and 11 in Spanish, the condition lists
+// (kinds 4 and 6) 17 in Spanish, and the HP window draws KP, PV or PS by
+// language. Their condition window is pinned to r10 rather than r9.
 // 2026-11-07: Oam_AddSpriteAtDepth declared returning s32 (permuter), 8 to 6; a
 // further 15 minutes of permuting and loop-head reorderings found nothing.
 // Battle target selection, The Broken Seal's BattleTarget_RunSelection
@@ -31,6 +38,15 @@
 #include "input.h"
 #include "frame.h"
 #include "battle/battle_unit.h"
+#include "version.h"
+#include "module/system/system.h"
+
+// The register the condition window's pin takes (see the tag).
+#if TLA_PATCH_2
+#define CONDITION_WINDOW_REGISTER "r10"
+#else
+#define CONDITION_WINDOW_REGISTER "r9"
+#endif
 
 extern u8 Msg_0c5a[];
 extern u8 Msg_0d03[];
@@ -110,6 +126,11 @@ extern const u8 gData_0805c9c4[];
 extern const u8 gOwnerStatus_HpString[];
 extern const u8 gOwnerStatus_SlashString[];
 extern const u8 gOwnerStatus_PpString[];
+#if TLA_PATCH_2
+extern const u8 gOwnerStatus_KpString[];
+extern const u8 gOwnerStatus_PvString[];
+s32 System_GetLanguage(void);
+#endif
 
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
@@ -149,6 +170,31 @@ void Resource_ResetEntry(s32 slot);
       helpColumn = (last);                                                     \
   }
 
+// The window listing the aimed member's conditions, count lines tall. The
+// European editions share one image and widen it at run time for Spanish.
+#if TLA_PATCH_2
+#define TARGET_CONDITION_LIST_WINDOW()                                         \
+  {                                                                            \
+    s32 anchor = selectedPosition.x / 8;                                       \
+    helpColumn = anchor - 7;                                                   \
+    if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {                  \
+      if (anchor + 10 > 29)                                                    \
+        helpColumn = 13;                                                       \
+      conditionWindow = Window_Create(helpColumn, helpRow, 17, count + 2, 6);  \
+    } else {                                                                   \
+      if (anchor + 9 > 29)                                                     \
+        helpColumn = 14;                                                       \
+      conditionWindow = Window_Create(helpColumn, helpRow, 16, count + 2, 6);  \
+    }                                                                          \
+  }
+#else
+#define TARGET_CONDITION_LIST_WINDOW()                                         \
+  {                                                                            \
+    TARGET_HELP_COLUMN(7, 9, 14);                                              \
+    conditionWindow = Window_Create(helpColumn, helpRow, 16, count + 2, 6);    \
+  }
+#endif
+
 // The cursors' bob, a sine turn every 16 frames scaled down to 2 pixels.
 #define TARGET_BOB(y)                                                          \
   {                                                                            \
@@ -179,11 +225,11 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
   /* FAKEMATCH(pin): the condition window in r9, where the native keeps it, as
    * The Broken Seal's; as an ordinary local it is spilled and 952 of 1647
    * instructions differ in tla-en (937 with the pin). */
-  /* FAKEMATCH(pin): the condition window in r9, where the native keeps it; as
-   * an ordinary local its NULL default's constant note halves its priority,
+  /* FAKEMATCH(pin): the condition window in r9 (r10 in the European editions),
+   * where the native keeps it; as an ordinary local its NULL default's constant note halves its priority,
    * it is spilled and 496 of 1647 instructions differ in tla-en (36 with the
    * pin). */
-  register struct TargetWindow *conditionWindow asm("r9");
+  register struct TargetWindow *conditionWindow asm(CONDITION_WINDOW_REGISTER);
   s32 targetIndex;
   s32 targetCount;
   s32 candidateCount;
@@ -195,6 +241,9 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
   s32 helpColumn;
   s32 helpRow;
   s32 count;
+#if TLA_PATCH_2
+  s32 *countAddress;
+#endif
   s32 i;
   s32 j;
   s32 n;
@@ -396,8 +445,29 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             Window_Close(conditionWindow, 1);
           switch (kind) {
           case 7:
+#if TLA_PATCH_2
+          {
+            s32 anchor = selectedPosition.x / 8;
+
+            helpColumn = anchor - 4;
+            if (System_GetLanguage() == CARTRIDGE_LANGUAGE_ITALIAN) {
+              if (anchor + 6 > 29)
+                helpColumn = 20;
+              conditionWindow = Window_Create(helpColumn, 8, 10, 3, 6);
+            } else if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
+              if (anchor + 7 > 29)
+                helpColumn = 19;
+              conditionWindow = Window_Create(helpColumn, 8, 11, 3, 6);
+            } else {
+              if (anchor + 5 > 29)
+                helpColumn = 21;
+              conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
+            }
+          }
+#else
             TARGET_HELP_COLUMN(4, 4, 22);
             conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
+#endif
             Func_08041f70(2);
             Text_DrawCharacterAtOffset((s32)Msg_0d0c, conditionWindow, 0, 0);
             Func_08041f70(15);
@@ -405,8 +475,26 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
           case 1:
             TARGET_HELP_COLUMN(7, 6, 17);
             conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
+#if TLA_PATCH_2
+            switch (System_GetLanguage()) {
+            case CARTRIDGE_LANGUAGE_GERMAN:
+              Text_DrawStringAtOffset(gOwnerStatus_KpString, conditionWindow,
+                                        0, 0);
+              break;
+            case CARTRIDGE_LANGUAGE_FRENCH:
+            case CARTRIDGE_LANGUAGE_SPANISH:
+              Text_DrawStringAtOffset(gOwnerStatus_PvString, conditionWindow,
+                                        0, 0);
+              break;
+            case CARTRIDGE_LANGUAGE_ITALIAN:
+              Text_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow,
+                                        0, 0);
+              break;
+            }
+#else
             Text_DrawStringAtOffset(gOwnerStatus_HpString, conditionWindow, 0,
                                       0);
+#endif
             Text_DrawNumberInWindow(unit->hp, 4, conditionWindow, 16, 0);
             Text_DrawStringAtOffset(gOwnerStatus_SlashString, conditionWindow,
                                       48, 0);
@@ -453,9 +541,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpRow = 9 - count;
             if (helpRow <= 3)
               helpRow = 4;
-            TARGET_HELP_COLUMN(7, 9, 14);
-            conditionWindow = Window_Create(helpColumn, helpRow, 16,
-                count + 2, 6);
+            TARGET_CONDITION_LIST_WINDOW();
             count = 0;
             if (unit->delusion != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d05, conditionWindow, 0,
@@ -494,6 +580,12 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
               count = 1;
             if (unit->delusion != 0)
               count++;
+#if TLA_PATCH_2
+            /* FAKEMATCH(temporary): count read back through a pointer to it;
+             * as `count == 0`, 148 of 1748 instructions differ in tla-de
+             * (spill slots). */
+            countAddress = &count;
+#endif
             if (unit->stun != 0)
               count++;
             if (unit->sleep != 0)
@@ -504,14 +596,16 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
               count++;
             if (unit->haunt != 0)
               count++;
+#if TLA_PATCH_2
+            if (*countAddress == 0)
+#else
             if (count == 0)
+#endif
               count = 1;
             helpRow = 9 - count;
             if (helpRow <= 3)
               helpRow = 4;
-            TARGET_HELP_COLUMN(7, 9, 14);
-            conditionWindow = Window_Create(helpColumn, helpRow, 16,
-                count + 2, 6);
+            TARGET_CONDITION_LIST_WINDOW();
             count = 0;
             if (unit->poison != 0) {
               Text_DrawCharacterAtOffset((s32)Msg_0d04, conditionWindow, 0,

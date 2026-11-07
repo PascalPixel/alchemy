@@ -52,12 +52,6 @@ Func_080292fc:
 	.thumb_func
 Func_08029570:
 	.incbin "baserom.gba", 0x00029570, 0x000002a0
-	.section .rom.000298c0, "ax"
-	.global Func_080298c0
-	.type Func_080298c0, %function
-	.thumb_func
-Func_080298c0:
-	.incbin "baserom.gba", 0x000298c0, 0x00000864
 	.section .rom.0002a6b8, "ax"
 	.global Func_0802a6b8
 	.type Func_0802a6b8, %function
@@ -155,12 +149,6 @@ Func_0803bde4:
 	.thumb_func
 Func_0803c198:
 	.incbin "baserom.gba", 0x0003c1a0, 0x000000dc
-	.section .rom.0003c27c, "ax"
-	.global Func_0803c274
-	.type Func_0803c274, %function
-	.thumb_func
-Func_0803c274:
-	.incbin "baserom.gba", 0x0003c27c, 0x00000104
 	.section .rom.0003efa6, "ax"
 	.incbin "baserom.gba", 0x0003efa6, 0x00000002
 	.section .rom.0003f232, "ax"
@@ -322,12 +310,6 @@ Func_080ce31c:
 	.incbin "baserom.gba", 0x000d731c, 0x0000013c
 	.section .rom.000d7f22, "ax"
 	.incbin "baserom.gba", 0x000d7f22, 0x00000002
-	.section .rom.000d91cc, "ax"
-	.global ScreenTransition_Start
-	.type ScreenTransition_Start, %function
-	.thumb_func
-ScreenTransition_Start:
-	.incbin "baserom.gba", 0x000d91cc, 0x00000354
 	.section .rom.000da75e, "ax"
 	.incbin "baserom.gba", 0x000da75e, 0x00000002
 	.section .rom.000da760, "ax"
@@ -413,12 +395,6 @@ Func_080da22c:
 	.incbin "baserom.gba", 0x000e3220, 0x00000108
 	.section .rom.000e395a, "ax"
 	.incbin "baserom.gba", 0x000e395a, 0x00000002
-	.section .rom.000e40a4, "ax"
-	.global Func_080db0b0
-	.type Func_080db0b0, %function
-	.thumb_func
-Func_080db0b0:
-	.incbin "baserom.gba", 0x000e40a4, 0x00000394
 	.section .rom.000e499a, "ax"
 	.incbin "baserom.gba", 0x000e499a, 0x00000002
 	.section .rom.000e4b6c, "ax"
@@ -714,10 +690,6 @@ Func_08102008:
 	.thumb_func
 Func_08103218:
 	.incbin "baserom.gba", 0x00109364, 0x000007e4
-	.section .rom.0010a68c, "ax"
-	.global Func_08104540
-Func_08104540:
-	.incbin "baserom.gba", 0x0010a68c, 0x000003e8
 	.section .rom.0010ab12, "ax"
 	.incbin "baserom.gba", 0x0010ab12, 0x00000002
 	.section .rom.0010b042, "ax"

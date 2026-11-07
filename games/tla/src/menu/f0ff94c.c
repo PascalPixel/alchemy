@@ -1,11 +1,3 @@
-// Matches: differ 0 of 239 (tla-en, 2026-11-07).
-// History: 14, 8, then 4 with a one-pass block; prototypes for the far calls
-// reach 0; named messages, the shared MenuResult and named values keep 0.
-// The psynergy menu's description page (the selected ability's description
-// and where it can be used, then each row's element icon and highlight), ☀️'s
-// PsynergyMenu_DrawRangePage in games/tbs/src/menu/menu/status.c, with ⚓️'s
-// work-block offsets (info window 0x30, list 0x1c4) and its use test on the
-// action's byte 6.
 #include "types.h"
 #include "battle_type.h"
 #include "battle_system.h"

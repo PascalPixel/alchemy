@@ -1,21 +1,3 @@
-// Matches: differ 0 of 965 (tla-en, 2026-11-07).
-// History: 122 to 26 to 24 by reshaping, 0 with void Actor_SetMoveTarget; then
-// plain zeros for the stand-in variables and Actor.unk66 read signed by a cast.
-//
-// Script command 0x1e, walking that turns into climbing: on foot it moves by
-// the direction pad as SC_PLAYER does without pushing (a refused step with up
-// held starts a climb onto ground more than 8 pixels above when Func_080c8770
-// allows it there; with down held, a climb down to ground below the next cell
-// south); while climbing (unk66) the pad moves the actor up and down the face
-// at half a pixel a frame (the probes take the step's depth as height), it
-// reaches the top or bottom when the ground ahead or under it passes its
-// height, and every 16th frame a falling bit of rubble (an actor of kind 0x11d)
-// drops beside it. Walking leaves an actor of kind 0x164 every fifth step, as
-// Func_0802a124's wake. Both modes end with Func_08029838.
-//
-// Action is written as a field and count is set at the top; cellX and
-// cellZ are reused for the face, which gives the native's callee-saved
-// registers.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"

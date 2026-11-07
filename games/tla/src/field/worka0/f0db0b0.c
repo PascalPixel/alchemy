@@ -1,17 +1,3 @@
-// Matches: differ 0 of 378 (tla-en, 2026-11-07).
-// History: differ 14 (2026-11-06) closed by reading the slot through a union
-// of its views and by a once-only block around the first sine; 2026-11-07 the
-// slot's fields moved into worka0.h's WorkA4Slot and the union, now one member,
-// tagged; keys and angles named.
-// The leader swings on the chain hanging from actor `id` (its WORK_A4 slot,
-// Func_080dae70). The chain first swings to the leader's side and over to the
-// other, then holds there while the leader hangs on it (mode 32), the swing
-// pulsing every 16 frames and the sprite tilting with it. Down, B or the
-// direction back toward the anchor lets go; any other key jumps: cue 152, the
-// leader is thrown up and out on the chain (its radius growing for 8 frames)
-// until the swing comes back round, then falls with its motion flags restored.
-// The side's half turn is written out at each use rather than kept in a local;
-// the local gives a different stack frame.
 #include "types.h"
 #include "event_work.h"
 #include "fixed_math.h"

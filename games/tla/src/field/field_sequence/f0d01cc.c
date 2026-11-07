@@ -1,6 +1,3 @@
-// Matches: differ 0 of 352 (tla-en, 2026-11-07).
-// 2026-11-07: the map work read through map.h's MapViewWork, now with
-// dispcnt at 0x14, in place of a private view; differ 0 in all six editions.
 #include "types.h"
 #include "task.h"
 #include "io_reg.h"

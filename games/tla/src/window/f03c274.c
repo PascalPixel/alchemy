@@ -1,6 +1,3 @@
-// Matches: differ 0 of 116 (tla-en, 2026-11-07).
-// 2026-11-07: read through WindowSprite's queued sprite; the y temporary, the
-// width casts and the local views are gone.
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"

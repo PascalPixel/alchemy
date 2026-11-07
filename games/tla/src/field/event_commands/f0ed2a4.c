@@ -1,37 +1,3 @@
-// Matches: differ 0 of 548 (tla-en, 2026-11-07).
-// History: made adoptable (types from field/world_map.h, SceneId_WorldMap,
-// MsgNotOnMap named in all six catalogs, the input resets tagged) 11-07;
-// earlier differ 4 (11-06), 47 (11-05), 127 (11-01). Runs the world map screen
-// (mode 0 to look, nonzero to choose a destination) until A or B. In event mode
-// 3 the field stays loaded: the map work's sixteen animation flags are set
-// aside and the screen is drawn over it (a nonzero mode still snapshots the
-// objects first); otherwise the objects are snapshotted, the field closed, the
-// task table reset and BG1's map numbered for the picture. Each frame runs
-// Func_080ed0a0 and Func_080ec4d4; Start glides the cursor to the leader until
-// released, R and L step to the next and previous shown destination
-// (Func_080ec2b8), Select toggles the whole-map view, and the first time flag
-// 284 or 286 is set MsgNotOnMap is shown. Choosing with A stores
-// SceneId_WorldMap and the destination's flag and calls Func_080ca368; B stores
-// 0xffff and -1. The field is then restored (mode 0 in event mode 3) or flag
-// 265 set and the event work's countdown set to 999. Shape, as ☀️'s
-// WorldPicture_Show: register writes through Io_Write16, the flags saved by an
-// index loop, the mode-3 setup before the full one, the closing test inverted,
-// the redraw an outer loop. What the frame loop's form rests on, measured: the
-// native reloads a value straight after storing it (the cursor, the scroll
-// pair, the work's z) because CSE cannot tell its pointers apart, and only a
-// pointer set twice has no known base; hence the NULL defaults before the outer
-// loop. keys and input are the native's r10 and r5, each holding &gInput
-// throughout; resetting input in the Start and release bodies is a tagged
-// device. wayZ likewise holds only &Data_0202a650, set in each arm that uses it
-// (set once before the loop, 147 differ). The clamp keeps zero and the limits
-// in locals set before the scroll stores. The choice arms: gMainRoutineWork and
-// Data_02000500 are each a pointer local set once at the top; they get no
-// register, so reload rebuilds each address where it is used, in the native's
-// rotating registers. Data_02000500 is read through struct WorldMapChoice, not
-// as a bare s16: a bare s16 store conflicts with the FlagEntry's fields and
-// keeps the entrance load after it (4 differ). B's -1 goes through a local
-// (tagged). MsgNotOnMap is the catalog's symbol, not MSGNO's constant (66
-// differ).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"

@@ -1,12 +1,3 @@
-// Matches: differ 0 of 436 (tla-en, 2026-11-07).
-// History: made adoptable 2026-11-07: shared struct DjinnMenuWork
-// (djinn_menu.h), MsgCurrentStatus named, key names, temporaries tagged.
-// Twin of ☀️'s DjinnMenu_ShowMemberStatus
-// (games/tbs/src/menu/menu/djinn_preview.c): same calls, windows, keys, sounds
-// and MsgCurrentStatus, without the phase step and with the page digit's
-// bound at 8 where the twin has 9. Both panes of Func_08103218 for the pair's
-// first member, page arrows over the right one, left and right page through,
-// Start leaves the menu (-2) and A, B, L or R the view (-1).
 #include "input.h"
 #include "io_reg.h"
 #include "iwram_call.h"

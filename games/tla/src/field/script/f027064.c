@@ -6,6 +6,7 @@
 #include "main_routine_work.h"
 #include "actor.h"
 #include "iwram_call.h"
+#include "version.h"
 
 struct FieldPosition {
   s32 x;
@@ -116,7 +117,9 @@ s32 Func_08027064(struct Actor *object) {
   Vector_AddPolarOffset(0x80000, (u16)angle, &position);
   if (object->priorityFlags & 0x40) {
     // Standing on another object a cell below: the step is clear when the
-    // object under the step and both its sides is a still one.
+    // object under the step (and, after Japanese, both its sides) is a still
+    // one.
+#if TLA_PATCH_1
     testPosition.x = position.x;
     testPosition.y = position.y;
     testPosition.z = position.z;
@@ -125,6 +128,7 @@ s32 Func_08027064(struct Actor *object) {
     contact.y = position.y;
     contact.z = position.z;
     Vector_AddPolarOffset(0x20000, (u16)angle - 0x4000, &contact);
+#endif
     angleIndex = 0;
     other = (struct Actor *)Ram_HeapSlots->scriptObjects;
     for (; angleIndex < 64; angleIndex++, other++) {
@@ -142,9 +146,11 @@ s32 Func_08027064(struct Actor *object) {
       if (SAME_CELL(object->x, other->x) && SAME_CELL(object->z, other->z))
         onObject = 1;
       if (SAME_CELL(position.x, other->x) && SAME_CELL(position.z, other->z) &&
+#if TLA_PATCH_1
           SAME_CELL(testPosition.x, other->x) &&
           SAME_CELL(testPosition.z, other->z) &&
           SAME_CELL(contact.x, other->x) && SAME_CELL(contact.z, other->z) &&
+#endif
           other->targetX == 0x80000000 && other->targetZ == other->targetX)
         goto clear;
     }

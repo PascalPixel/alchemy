@@ -1,24 +1,6 @@
 // Matches: differ 0 of 352 (tla-en, 2026-11-07).
-// 2026-11-07: the map work's first 20 bytes read as five words (its origin
-// pointer, shake values and script are words), 8 to 0: the dispcnt load then
-// shares an alias set with the queue entry's stores and is scheduled first.
-// 2026-11-06: map work loaded before the kind is split, 24 to 8; the opening
-// now matches. Left: in each of four pushes the native adds the entry base
-// before display->dispcnt's load (one row moved each), scheduling only.
-// Tried: operands swapped (16), (u16) value (8), permuter 4 min (no gain).
-// Under -mthumb-slow-loads (2026-10-26): differ 32 of 352 in tla-en,
-// instruction order and register choice. No empty asm before any one statement
-// lowers it.
-// Draft, differ 42 of 352 (2026-10-18), rewritten from ☀️'s
-// ScreenTransition_Start in place of a draft whose headers no longer exist:
-// this game's map work (dispcnt at 0x14, the centre lines at 0x104), its
-// callbacks and priorities, and the IO_WRITE_QUEUE_PUSH of REG_DISPCNT after
-// each mode. Left: in each of the five queue pushes the native starts
-// REG_DISPCNT's address after the count's store and adds the entry's base
-// after the map's dispcnt load (two reordered rows each), and the switch's
-// opening schedules its mask and the frames copy in another order. Tried:
-// the value's operands swapped (50), the push written out with q->count
-// (42) and with the entry taken after the count's store (106).
+// 2026-11-07: the map work read through map.h's MapViewWork, now with
+// dispcnt at 0x14, in place of a private view; differ 0 in all six editions.
 #include "types.h"
 #include "task.h"
 #include "io_reg.h"
@@ -26,15 +8,7 @@
 #include "irq.h"
 #include "ram_buffer.h"
 #include "display_transition.h"
-
-// The map work as the window transitions see it.
-struct TransitionMapWork {
-  u32 unk000[5]; ///< map work fields no transition names
-  u16 dispcnt;
-  u8 unk016[0x104 - 0x16];
-  u16 firstLine;
-  u16 secondLine;
-};
+#include "map.h"
 
 void wait(s32 frames);
 void Fade_FromBlack(s32 vblanks);
@@ -47,11 +21,11 @@ void Func_080cf78c(void);
 
 // Fades the screen in over frames frames, as ☀️'s ScreenTransition_Start.
 void ScreenTransition_Start(s32 mode, s32 frames) {
-  struct TransitionMapWork *display;
+  struct MapViewWork *display;
   s32 variant;
   s32 transitionKind;
 
-  display = (struct TransitionMapWork *)Ram_HeapSlots->mapWork;
+  display = (struct MapViewWork *)Ram_HeapSlots->mapWork;
   transitionKind = (mode >> 8) & 0xff;
   variant = mode & 0xff;
   switch (transitionKind) {
@@ -103,10 +77,10 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   case 4: {
     struct ScreenTransitionState *state;
 
-    display = (struct TransitionMapWork *)Ram_HeapSlots->mapWork;
+    display = (struct MapViewWork *)Ram_HeapSlots->mapWork;
     state = Func_080d019c();
-    display->firstLine = 80;
-    display->secondLine = 80;
+    display->windowTop = 80;
+    display->windowBottom = 80;
     wait(1);
     if (variant == 0) {
       Task_Add(ScreenTransition_Update, TASK_PASS_VBLANK);

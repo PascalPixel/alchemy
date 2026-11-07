@@ -64,7 +64,9 @@ struct MapWork {
 };
 
 struct MapViewWork {
-  u8 unk000[0x100];
+  u32 unk000[5]; ///< map work fields no window view names
+  u16 dispcnt;   ///< display control bits ORed into DISPCNT
+  u8 unk016[0xea];
   s8 animationActive;
   u8 unk101[3];
   u16 windowTop;
@@ -99,5 +101,8 @@ STATIC_ASSERT(offsetof(struct MapWork, blendControl) == 0x107);
 STATIC_ASSERT(offsetof(struct MapWork, minX) == 0xec);
 STATIC_ASSERT(offsetof(struct MapWork, farPlane) == 0x95c);
 STATIC_ASSERT(offsetof(struct MapWork, zoomStep) == 0x96e);
+STATIC_ASSERT(offsetof(struct MapViewWork, dispcnt) == 0x14);
+STATIC_ASSERT(offsetof(struct MapViewWork, windowTop) == 0x104);
+STATIC_ASSERT(offsetof(struct MapViewWork, irqPhase) == 0x10c);
 
 #endif

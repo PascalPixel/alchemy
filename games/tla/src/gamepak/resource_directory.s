@@ -496,8 +496,8 @@ Resource_DirectoryTable:
 	resource , Resource_Data1E3
 	resource , FieldEffect_GoldStar
 	resource , FieldEffect_GoldCrystal
-	resource , FieldEffect_FlamingArrow
-	resource , FieldEffect_BowDraw
+	resource FlamingArrow, FieldEffect_FlamingArrow
+	resource BowDraw, FieldEffect_BowDraw
 	resource FieldEffectExplosion, FieldEffect_Explosion
 	resource , Resource_Data1E9
 	resource SparkleFade, FieldEffect_SparkleFade

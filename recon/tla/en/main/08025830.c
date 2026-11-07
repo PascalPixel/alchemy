@@ -1,13 +1,13 @@
-// Draft, differ 14 of 370, skeleton gap 7 (tla-en, 2026-11-01)
+// Differ 4 of 370 (tla-en, 2026-11-07).
+// 2026-11-07: a pass-through wrapper on the first turn's first draw (8 to 4);
+// left: the ldrsh of the angle scheduled after the square, not before.
 // Twin of The Broken Seal's ActorScript_WanderNearHome (SC_WANDER_HOME): the
 // same operands, probes, retries, home check and flag bit, on this game's
 // headers. Every probe now copies x, y, z in the twin's order (the z-first
-// probes were what held this at differ 30). What is left is instruction order
-// alone, same instructions and registers: the ldrsh of the angle before the
-// square of the limit, the asrs of each home delta before its home load, one
-// mov fp before the subs, and in the first turn the lsrs of the second draw
-// before the store of y. The twin's own build has the draft's order at the
-// first three, so same-source scheduling differs between the games here.
+// probes were what held this at differ 30). Also tried
+// (2026-11-07): angle at every earlier statement, attempts moved, once-only
+// blocks, volatile angle reads, a separate unsquared limit (drops the
+// dead spill store, 9), declaration orders; 15 minutes of permuting.
 // Tried: naming the first draw in a local (s32 spread) gives differ 10, but
 // that is a forced temporary, so it is not kept; turn built by statements
 // (differ 30 to 115), turn at function scope (56), angle before the division
@@ -35,8 +35,10 @@ void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *position);
 s32 Func_0802d87c(struct Actor *object, struct FieldPosition *position);
-s32 Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
+
+static inline s32 PassThrough(s32 value) { return value; }
 
 s32 Func_08025830(struct ActorScriptView *object) {
   struct FieldPosition candidatePosition;
@@ -68,7 +70,10 @@ s32 Func_08025830(struct ActorScriptView *object) {
       travelDistance =
           minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
       {
-        s32 turn = (u16)angle + (Random16() >> 2) - (Random16() >> 2);
+        /* FAKEMATCH(wrapper): the first draw passed through PassThrough; as
+         * (Random16() >> 2), 8 of 370 instructions differ in tla-en. */
+        s32 turn =
+            (u16)angle + PassThrough(Random16() >> 2) - (Random16() >> 2);
 
         heading = turn;
       }
@@ -83,8 +88,7 @@ s32 Func_08025830(struct ActorScriptView *object) {
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-      if (Func_0802d87c((struct Actor *)object, &candidatePosition) !=
-          0)
+      if (Func_0802d87c((struct Actor *)object, &candidatePosition) != 0)
         goto roam;
       probePosition.x = object->x;
       probePosition.y = object->y;
@@ -123,7 +127,7 @@ s32 Func_08025830(struct ActorScriptView *object) {
         goto roam;
       object->flags59 |= 2;
       Actor_SetMoveTarget((struct Actor *)object, candidatePosition.x,
-                           candidatePosition.y, candidatePosition.z);
+                          candidatePosition.y, candidatePosition.z);
       goto done;
     }
   }
@@ -153,7 +157,7 @@ back:
       goto back;
     object->flags59 &= ~2;
     Actor_SetMoveTarget((struct Actor *)object, candidatePosition.x,
-                         candidatePosition.y, candidatePosition.z);
+                        candidatePosition.y, candidatePosition.z);
   }
 done:
   object->scriptCursor += 4;

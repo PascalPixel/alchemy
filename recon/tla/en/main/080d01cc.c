@@ -1,4 +1,7 @@
-// Differ 8 of 352 (tla-en, 2026-11-06).
+// Matches: differ 0 of 352 (tla-en, 2026-11-07).
+// 2026-11-07: the map work's first 20 bytes read as five words (its origin
+// pointer, shake values and script are words), 8 to 0: the dispcnt load then
+// shares an alias set with the queue entry's stores and is scheduled first.
 // 2026-11-06: map work loaded before the kind is split, 24 to 8; the opening
 // now matches. Left: in each of four pushes the native adds the entry base
 // before display->dispcnt's load (one row moved each), scheduling only.
@@ -26,7 +29,7 @@
 
 // The map work as the window transitions see it.
 struct TransitionMapWork {
-  u8 unk000[0x14];
+  u32 unk000[5]; ///< map work fields no transition names
   u16 dispcnt;
   u8 unk016[0x104 - 0x16];
   u16 firstLine;

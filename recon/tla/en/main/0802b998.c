@@ -1,4 +1,7 @@
-// Differ 25 of 376 (tla-en, 2026-11-06). Near miss: 0x106 through its own
+// Differ 6 of 376 (tla-en, 2026-11-07). The eye offset cleared after the
+// pitch call, as the twin does, took 25 to 6; reordering its stores, scoping it
+// in a block, the two global stores swapped or retyped did not help.
+// Earlier, 25: 0x106 through its own
 // pointer local (field106) took 30 to 25; written plainly through it, 60.
 // Earlier, 30: 0x104 and 0x106 as plain stores or Store16 both, or as
 // halfword indexes: 30 to 60.
@@ -13,9 +16,9 @@
 // (Data_0802146cSize, to define in constants.ld as Render_ConvertMapCode -
 // Data_0802146c when this adopts), the halfword constants the native builds
 // in registers go through int stores (Io_Set16, Store16), and the frame
-// fields are at 0x968 and 0x96c. Left: scheduling: the native clears the eye
-// offset's x and y after the pitch call's load, two pool loads a row apart,
-// and builds 0x106 afresh where this adds 2 to 0x104.
+// fields are at 0x968 and 0x96c. Left: scheduling: the native sets r0 for the
+// first vector transform after the eye offset's z store, and loads the pitch
+// before gData_03001144's address.
 #include "types.h"
 #include "io_write.h"
 #include "dma.h"
@@ -137,9 +140,9 @@ void Func_0802b998(void) {
   yaw = (u16 *)(perspective + 0x11e);
   SceneTransform_ApplyYaw(*yaw);
   pitch = (u16 *)(perspective + 0x11c);
+  SceneTransform_ApplyPitch(*pitch);
   eyeOffset.x = 0;
   eyeOffset.y = 0;
-  SceneTransform_ApplyPitch(*pitch);
   eyeOffset.z = farPlane;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   Render_ResetTransformState();

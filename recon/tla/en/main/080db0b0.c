@@ -1,20 +1,15 @@
-// Differ 14 of 378 (tla-en, 2026-11-06): instruction order only (the root
-// loads around the 0x410000 radius, the angle step's load, two stores before a
-// call's argument). The growth step adding the radius first took it from 26;
-// permute (5 min) found nothing closer.
-// Near miss, differ 40 of 378 (2026-10-25): the leader swings on the chain
-// hanging from object `id` (its WORK_A4 slot, Func_080dae70). The chain first
-// swings to the leader's side and over to the other, then holds there while the
-// leader hangs on it (mode 32), the swing pulsing every 16 frames and the
-// sprite tilting with it. Down, B or the direction back toward the anchor lets
-// go; any other key jumps: cue 152, the leader is thrown up and out on the
-// chain (its radius growing for 8 frames) until the swing comes back round,
-// then falls with its motion flags restored. Left: instruction order only (the
-// phase load before the side's constant, the root's next and the 0x410000
-// radius, the growth step's constants, the frame count's case loads).
-// The side's bits written out at each use (side << 15) rather than kept in
-// a local give the native's stack frame (found by permute; differ 65 with the
-// local).
+// Matches: differ 0 of 378 (tla-en, 2026-11-07).
+// History: differ 14 (2026-11-06) closed by reading the slot through a union
+// of its views and by a once-only block around the first sine.
+// The leader swings on the chain hanging from actor `id` (its WORK_A4 slot,
+// Func_080dae70). The chain first swings to the leader's side and over to the
+// other, then holds there while the leader hangs on it (mode 32), the swing
+// pulsing every 16 frames and the sprite tilting with it. Down, B or the
+// direction back toward the anchor lets go; any other key jumps: cue 152, the
+// leader is thrown up and out on the chain (its radius growing for 8 frames)
+// until the swing comes back round, then falls with its motion flags restored.
+// The side's bits are written out at each use (side << 15) rather than kept in
+// a local; the local gives a different stack frame.
 #include "types.h"
 #include "event_work.h"
 #include "fixed_math.h"
@@ -26,8 +21,7 @@
 
 struct Actor *Actor_GetById(s32 id);
 struct WorkA4Slot *Func_080dae70(s32 id);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           u32 flags);
+void Actor_SetSingleChildFlagsFar(struct Actor *actor, u32 flags);
 void wait(s32 frames);
 
 struct ChainLink {
@@ -48,21 +42,27 @@ struct ChainSlot {
   struct ChainLink *root;
 };
 
-struct SwingSprite {
+// The slot is read through a union of its views: the original's reads and
+// stores of it alias every other access, as only a union access does here.
+union ChainSlotView {
+  struct WorkA4Slot slot;
+  struct ChainSlot chain;
+};
+
+struct Unk_080db0b0Sprite {
   u8 unk00[18];
-  u16 angle;
+  u16 unk12;
 };
 
 void Func_080db0b0(s32 id) {
   s32 rootX, rootY;
   s32 motionFlags;
-  struct SwingSprite *heldSprite;
+  struct Unk_080db0b0Sprite *heldSprite;
   s32 side = 0;
-  struct Actor *leader =
-      Actor_GetById(Party_GetLeaderActor());
+  struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   struct Actor *anchor = Actor_GetById(id);
-  struct ChainSlot *slot;
-  struct SwingSprite *sprite;
+  union ChainSlotView *slot;
+  struct Unk_080db0b0Sprite *sprite;
   s32 swing;
   s32 start;
   s32 dir;
@@ -70,6 +70,7 @@ void Func_080db0b0(s32 id) {
   s32 radius;
   s32 steps;
   s32 angle;
+  s32 sine;
   s32 i;
 
   if (leader == NULL || anchor == NULL)
@@ -78,25 +79,25 @@ void Func_080db0b0(s32 id) {
   heldSprite = leader->animation;
   if (leader->x < anchor->x)
     side = 1;
-  slot = (struct ChainSlot *)Func_080dae70(id);
+  slot = (union ChainSlotView *)Func_080dae70(id);
   if (slot == NULL)
     return;
 
-  start = slot->swing;
-  if ((slot->phase ^ (side << 15)) & 0x8000) {
+  start = slot->chain.swing;
+  if ((slot->chain.phase ^ (side << 15)) & 0x8000) {
     for (swing = start; swing >= 0; swing -= 64) {
-      slot->swing = swing;
+      slot->chain.swing = swing;
       wait(1);
     }
     start = 0;
   }
-  for (swing = start; swing <= 0x600; swing += 64) {
-    slot->swing = swing;
-    slot->phase = (side << 15) + 0x4000;
+  for (swing = start; swing <= 1536; swing += 64) {
+    slot->chain.swing = swing;
+    slot->chain.phase = (side << 15) + 0x4000;
     wait(1);
   }
-  while ((slot->phase & 0xff00) != ((side ^ 1) << 15) + 0x4000) {
-    slot->swing = 0x600;
+  while ((slot->chain.phase & 0xff00) != ((side ^ 1) << 15) + 0x4000) {
+    slot->chain.swing = 1536;
     wait(1);
   }
 
@@ -107,39 +108,39 @@ void Func_080db0b0(s32 id) {
     dir -= 2;
   } else
     letGo = 0x92;
-  slot->active = 1;
+  slot->chain.active = 1;
   Actor_SetMode(leader, 32);
   while (1) {
-    slot->phase = ((side ^ 1) << 15) + 0x4000;
+    slot->chain.phase = ((side ^ 1) << 15) + 0x4000;
     switch (gFrameCount & 63) {
     case 0:
     case 16:
-      slot->swing = 0x620;
-      slot->spacing = 0xe8000;
-      sprite->angle = dir << 10;
+      slot->chain.swing = 1568;
+      slot->chain.spacing = Q16_ONE * 29 / 2;
+      sprite->unk12 = dir << 10;
       break;
     case 1:
     case 2:
     case 17:
     case 18:
-      slot->swing += 16;
-      slot->spacing += 0x4000;
-      sprite->angle += dir << 9;
+      slot->chain.swing += 16;
+      slot->chain.spacing += Q16_ONE / 4;
+      sprite->unk12 += dir << 9;
       break;
     default:
-      if (slot->swing > 0x600)
-        slot->swing -= 32;
+      if (slot->chain.swing > 1536)
+        slot->chain.swing -= 32;
       else
-        slot->swing = 0x600;
-      if (slot->spacing > 0xe0000)
-        slot->spacing -= 0x800;
-      if (sprite->angle != 0)
-        sprite->angle -= dir << 7;
+        slot->chain.swing = 1536;
+      if (slot->chain.spacing > Q16_ONE * 14)
+        slot->chain.spacing -= Q16_ONE / 32;
+      if (sprite->unk12 != 0)
+        sprite->unk12 -= dir << 7;
       break;
     }
     if (gInput.pressed & letGo) {
-      sprite->angle = 0;
-      slot->active = 1;
+      sprite->unk12 = 0;
+      slot->chain.active = 1;
       return;
     }
     if (gInput.pressed != 0)
@@ -147,54 +148,57 @@ void Func_080db0b0(s32 id) {
     wait(1);
   }
 
-  sprite->angle = 0;
-  slot->active = 0;
+  sprite->unk12 = 0;
+  slot->chain.active = 0;
   Actor_SetMode(leader, 6);
   wait(6);
   Sound_PlayFar(152);
   Actor_SetMode(leader, 7);
-  leader->speedLimit = 0x30000;
-  leader->acceleration = 0x20000;
-  leader->velocityY = 0x40000;
+  leader->speedLimit = Q16_ONE * 3;
+  leader->acceleration = Q16_ONE * 2;
+  leader->velocityY = Q16_ONE * 4;
   leader->motionFlags &= 0x7e;
   Actor_SetSingleChildFlagsFar(leader, 0);
   wait(5);
   Actor_SetMode(leader, 16);
   leader->motionFlags = 0;
-  rootX = slot->root->next->x;
-  rootY = slot->root->next->y;
-  radius = 0x410000;
+  rootX = slot->chain.root->next->x;
+  rootY = slot->chain.root->next->y;
+  radius = Q16_ONE * 65;
   steps = 8;
-  while ((slot->phase & 0xff00) != (side << 15) + 0x3800) {
+  while ((slot->chain.phase & 0xff00) != (side << 15) + 0x3800) {
     if (steps != 0) {
-      radius += 0x5000;
-      slot->spacing += 0x1000;
+      radius += Q16_ONE * 5 / 16;
+      slot->chain.spacing += Q16_ONE / 16;
       steps--;
     }
-    slot->swing = 0x800;
-    slot->active = 1;
-    angle = Iwram_MulQ16(Trig_Sin(slot->phase - 0xfa0),
-                         slot->swing + slot->swing * 5 / 2);
+    slot->chain.swing = 2048;
+    slot->chain.active = 1;
+    // A once-only block: the sine is taken before Iwram_MulQ16 is loaded.
+    do {
+      sine = Trig_Sin(slot->chain.phase - 4000);
+    } while (0);
+    angle = Iwram_MulQ16(sine, slot->chain.swing + slot->chain.swing * 5 / 2);
     leader->x = rootX - Iwram_MulQ16(Trig_Sin(angle), radius);
     leader->y = rootY - Iwram_MulQ16(Trig_Cos(angle), radius);
     leader->targetX = leader->x;
     leader->targetY = leader->y;
-    heldSprite->angle = angle;
+    heldSprite->unk12 = angle;
     wait(1);
   }
-  slot->active = 1;
+  slot->chain.active = 1;
   Actor_SetMode(leader, 7);
   leader->motionFlags = motionFlags & ~1;
-  leader->velocityY = 0x40000;
+  leader->velocityY = Q16_ONE * 4;
   for (i = 7; i >= 0; i--) {
-    slot->spacing -= 0x1000;
+    slot->chain.spacing -= Q16_ONE / 16;
     wait(1);
   }
-  slot->spacing = 0xe0000;
-  heldSprite->angle = 0;
+  slot->chain.spacing = Q16_ONE * 14;
+  heldSprite->unk12 = 0;
   Actor_SetMode(leader, 6);
   Actor_SetSingleChildFlagsFar(leader, 1);
   leader->motionFlags = motionFlags;
   wait(6);
-  slot->active = 1;
+  slot->chain.active = 1;
 }

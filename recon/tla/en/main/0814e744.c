@@ -1,16 +1,18 @@
-// Measured 2026-11-05 (tla-en): differ 16 of 337. Left: two hoisted addresses
-// in swapped registers (r2 and r4 for 36 and 48), and a multiply the native
+// Differ 4 of 337 (tla-en, 2026-11-07).
+// 2026-11-07: a pointer to screen (FAKEMATCH temporary) fixes the hoisted
+// addresses 36 and 48 (16 -> 4). Left: a multiply the native
 // issues later than alchemy-gcc does: sched2 ranks the chain into muls too high
 // (its cost of 4), so the constant or the multiply comes ahead of independent
 // rows.
 
-// Near miss of BattleEffect_RunBreak, effect kind 43: differ 36 of 337 (draft 337).
+// Near miss of BattleEffect_RunBreak, effect kind 43: differ 36 of 337 (draft
+// 337).
 
 // Twin: The Broken Seal's BattleEffect_RunBreak (effect.c), call for
 // call. The Lost Age reads the effect from its argument (it never stores
 // work->effect), takes its heap blocks as Ram_HeapSlots fields, loads the
-// blitter through BattleEffect_LoadBlitter (BLIT_MAX is 1 where The Broken Seal's
-// COMPOSITE_MAX is 2) and gives its task the priority 0xc80.
+// blitter through BattleEffect_LoadBlitter (BLIT_MAX is 1 where The Broken
+// Seal's COMPOSITE_MAX is 2) and gives its task the priority 0xc80.
 
 // Left: about a dozen rows where the native issues a load one slot earlier
 // than agscc (canvas before the 1 for StartCanvasLayer, the blitter word
@@ -54,16 +56,18 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot,
+                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void Func_081180e8(s32 phase);       // BattlePlayback_StartFar
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 actor);
 
-// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus The Broken
-// Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and COMPOSITE_TRANSPARENT.
+// The Lost Age's blitter modes, BattleEffect_LoadBlitter's high nibble: 3 minus
+// The Broken Seal's COMPOSITE_ADDITIVE, COMPOSITE_MAX and
+// COMPOSITE_TRANSPARENT.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 #define BLIT_MODE(mode, flags) ((mode) << 4 | (flags))
 
@@ -102,7 +106,8 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
-  BattleEffect_LoadBlitter(104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(
+      104, BLIT_MODE(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
 
   for (i = 0; i != 8 * SHARDS_PER_MEMBER; i++)
@@ -117,14 +122,19 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
     s32 offset;
     s32 height;
     struct EffectStep *shard;
+    struct EffectPosition *position;
 
     offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
+    /* FAKEMATCH(temporary): position, a pointer standing in for &screen; as
+       EffectPosition_ProjectPoint(point, &screen), 16 of 337 instructions
+       differ in tla-en. */
+    position = &screen;
     object = GetBattleObjectSlotFar(effect->actors[member])->object;
     height = BattleUnit_GetEffectHeightFar(effect->actors[member]) / 2;
     point[0] = object->x;
     point[1] = height;
     point[2] = object->z;
-    EffectPosition_ProjectPoint(point, &screen);
+    EffectPosition_ProjectPoint(point, position);
     screen.x >>= 1;
     for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
          i != SHARDS_PER_MEMBER; i++) {
@@ -172,7 +182,8 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
             size = i % 3 + 1;
             draw(canvas, sheet + gData_08197410[size - 1],
                  HI(shard->x) - size / 2, HI(shard->y) - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector2(shard, 62, gData_081982e4[i & 3]);
+            BattleEffectKernels_IntegrateVector2(shard, 62,
+                                                 gData_081982e4[i & 3]);
             shard->variant++;
             if (shard->velocityY > 0 && HI(shard->y) > 112)
               shard->variant = -1;

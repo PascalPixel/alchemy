@@ -1,29 +1,9 @@
-// Differ 12 of 387 (tla-en, 2026-11-06).
-// Left: allocation only: work + 0x400 and the ripple start take r2 and r1
-// here, r1 and r2 in the native (5 minutes of permuting found nothing).
-// 2026-11-06: 30 to 12: the sprite-flag bytes read through owner->animation
-// with no local; each loop counter and the frame start set before the
-// pointers and ripple. 2026-10-26: 86 to 40: event work through a struct,
-// BattleFxScene, renderMode and pendingThird, locals in stack-slot order.
-// Earlier: differ 118 of 387: the sibling of Func_080e4730, in the same heap slot
-// 0x5c work (0x192c bytes), run only when the owner's animation is kind
-// 0x2020. The other objects of the owner's group pause; whether the owner
-// stands where Func_080dbcd8 allows is kept at 0xd48 of the event work.
-// Resource 0x1e1's 64 particles start with delays from -12, two frames apart;
-// the owner spins and rises for 40 frames (cue 566 off the 32-frame beat),
-// then faces 0x4000; one frame of it is drawn into the work and for 78 frames
-// rippled (Func_080e446c) and copied to sprite VRAM while 33 particles play.
-// On frame 60 it takes animation 251 with its sprite flags reset, its mode
-// returns, the effect target is shown and followed and its height and motion
-// flags are restored. Afterwards gMainRoutineWork's renderMode becomes 9 when the
-// event mode is 3, else 5, the owner's action clears, 0xd4a becomes 3,
-// and Func_080e42d4 runs as a callback unless 0xd48 was set, in which case
-// Func_080e4730 follows.
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "field_psynergy_work.h"
 #include "main_routine_work.h"
+#include "system/io_reg.h"
 
 extern char ResourceId_DustPuffA;
 
@@ -38,11 +18,11 @@ struct GrabEventWork {
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Func_080dc954(void);
-void Actor_SetOthersPaused(struct Actor *excludedObject,
-                                    s32 groupMode, s32 action);
+void Actor_SetOthersPaused(struct Actor *excludedActor, s32 groupMode,
+                           s32 action);
 s32 Func_080dbcd8(s32 x, s32 z, s32 terrain);
 void BattleEffect_InitializeSharedScene(void);
-void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 mode);
+void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode);
 void BattleEffect_PrepareBufferInterpolation(void);
 void Task_Add(void (*func)(void), s32 order);
 void Func_080e42d4(void);
@@ -60,16 +40,14 @@ void Func_080e45a0(void *sprite);
 void Func_080e46ac(void *sprite, void *particle, s32 index, s32 tiles);
 void Func_080e43a4(void *source, void *buffer, s32 size);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
-                                         s32 y, s32 z);
-void Animation_SetIndexAndInitializeObjectsFar(struct Actor *object,
-                                               s32 index);
+void Actor_SetPositionAndResetMotionFar(struct Actor *actor, s32 x, s32 y,
+                                        s32 z);
+void Animation_SetIndexAndInitializeObjectsFar(struct Actor *actor, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 void wait(s32 frames);
 void Sound_PlayFar(s32 cue);
 struct Actor *Actor_GetById(u32 actor);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           s32 flags);
+void Actor_SetSingleChildFlagsFar(struct Actor *actor, s32 flags);
 void Camera_FollowActor(s32 actor, s32 mode);
 
 void Func_080e4a34(void) {
@@ -86,7 +64,6 @@ void Func_080e4a34(void) {
   s32 pictureTiles;
   u8 *sprite;
   u8 *particle;
-  s32 ripple;
   s32 frame;
   s32 delay;
   s32 i;
@@ -139,11 +116,10 @@ void Func_080e4a34(void) {
   pictureTiles = VramCache_Load(pictureEntry, 0x400, NULL);
   Func_080e4510(work + 0x1900, pictureTiles);
   frame = 15;
-  ripple = 45;
   for (; frame <= 92; frame++) {
-    Func_080e446c(work, work + 0x400, ripple / 2);
+    Func_080e446c(work, work + 0x400, frame * 3 / 2);
     ((void (*)(void *, s32, s32, void *))Ram_HeapSlots->unk4c[2])(
-        work + 0x400, 32, 32, (u8 *)0x06010000 + pictureTiles * 32);
+        work + 0x400, 32, 32, (u8 *)OBJ_VRAM0 + pictureTiles * 32);
     Func_080e45a0(work + 0x1900);
     i = 0;
     particle = work + 0x1200;
@@ -162,8 +138,7 @@ void Func_080e4a34(void) {
       ((u8 *)owner->animation)[5] &= 63;
       ((u8 *)owner->animation)[7] = (((u8 *)owner->animation)[7] & 63) | 64;
       Actor_SetMode(owner, 1);
-      Actor_SetSingleChildFlagsFar(
-          Actor_GetById(effect->firstObjectId), 0);
+      Actor_SetSingleChildFlagsFar(Actor_GetById(effect->firstObjectId), 0);
       Camera_FollowActor(effect->firstObjectId, 1);
       owner->y = savedY;
       *motionFlags = savedFlags;
@@ -171,7 +146,6 @@ void Func_080e4a34(void) {
     if (frame == 61)
       Animation_ApplyChildValueToFirstFar(owner->animation, 0);
     wait(1);
-    ripple += 3;
   }
   if (event->mode == 3)
     gMainRoutineWork.renderMode = 9;

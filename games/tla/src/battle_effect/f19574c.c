@@ -1,36 +1,3 @@
-// Measured 2026-11-05 (tla-en): differ 14 of 418, 4 once slots and pool offsets
-// are normalized. mul, a local holding IwramMulQ16's address from the top of the
-// face loop, took it from 166 to 30: the address's life in the loop reaches what
-// loop.c needs to hoist it (threshold * life >= 251 real insns; 13 is too short),
-// so it goes global, loses its register and reloads into r3 at each call, as the
-// twin Func_08196248 does, and the first corner pointer takes r6. The colour read
-// first took it to 14. Left: the preheader's reload order for bx, faces and ay
-// (native r1, r1, r5; here r1, r5, r1); no order of the corner pointers moves it.
-// Measured 2026-11-05 (tla-en): differ 178 of 418.
-// Near miss, differ 182 of 418 (tla-en, 2026-10-31; draft 418 instructions,
-// no device): the native's shape, left with allocation. An unused solid
-// renderer, the filled twin of Func_08196248 (same setup, transform, corner
-// copies and back-face test), written from the listing (no caller in the
-// image; twins12 BattleEffect_RunMemberBeam 0.34). Corners are sorted by y
-// with XOR swaps and each half of the triangle is filled along 16.16 edge
-// slopes from IwramRatioMulQ14; a pixel keeps the larger colour (an
-// unsigned compare, bcs, from the u8 pixel against the u8 colour).
-// The six corner pointers are formed inside the face loop, so loop.c hoists
-// them past the loop's guard as the native places them; after the sort the
-// corners are read from the first pointer at offsets, as the native reads
-// them. Faces are indexed (faces[i]), so the face pointer is loop.c's copy
-// at sp+8 and i keeps its own slot at sp+40, shared with the transform loop.
-// The vertex count is scaled in place (the native keeps it in r6), the row
-// offset is two shifts (multiplications fold into ((row >> 3) * 128 +
-// (row & 7)) * 8) and the pixel index adds its shifted column first.
-// The sort writes b's and c's y through bx[1] and cx[1], reading back the
-// stored word through the same form, where the native stores through bx+4
-// and cx+4; plain XOR_SWAP(*ay, *by) and XOR_SWAP(*by, *cy) score differ 343
-// (draft 413) and give by a register in place of bx.
-// Left: allocation. The native gives the first corner pointer r6 and edgeB
-// r7; here they swap, because local-alloc gives the merged IwramMulQ16
-// address r6 across the first product's call, where the native loads that
-// address again before each call.
 #include "types.h"
 #include "ram_buffer.h"
 #include "dma.h"
@@ -47,13 +14,6 @@
     (b) ^= (a);                                                                \
     (a) ^= (b);                                                                \
   }
-
-// A point of the model, 16.16 fixed point.
-struct SolidPoint {
-  s32 x;
-  s32 y;
-  s32 z;
-};
 
 // A triangle of the model: where its three corners start in the vertex
 // buffer (in words) and its colour.
@@ -109,13 +69,14 @@ void Func_0819574c(s32 vertexCount, s32 faceCount) {
 
   for (i = 0; i != faceCount; i++) {
     // The three corners of each face are copied after the vertices.
-    mul = Iwram_MulQ16;
     ax = (s32 *)(vertexCount * 4 + (s32)vertices);
     bx = ax + 3;
     cx = ax + 6;
     cy = ax + 7;
     ay = ax + 1;
     by = ax + 4;
+    // A local holding the multiply routine's address (one value throughout).
+    mul = Iwram_MulQ16;
     Dma_Set(&vertices[faces[i].corner[0]], ax, 0x84000003, REG_DMA3);
     Dma_Set(&vertices[faces[i].corner[1]], bx, 0x84000003, REG_DMA3);
     Dma_Set(&vertices[faces[i].corner[2]], cx, 0x84000003, REG_DMA3);

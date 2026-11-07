@@ -521,12 +521,6 @@ Func_080dd054:
 	.thumb_func
 BattleEffect_SpawnScaledArcObjects:
 	.incbin "baserom.gba", 0x000e143c, 0x000000c4
-	.section .rom.000e1f20, "ax"
-	.global Func_080e1f2c
-	.type Func_080e1f2c, %function
-	.thumb_func
-Func_080e1f2c:
-	.incbin "baserom.gba", 0x000e1f20, 0x00000338
 	.section .rom.000e2258, "ax"
 	.global Func_080e2264
 	.type Func_080e2264, %function
@@ -566,13 +560,6 @@ Func_080e38c8:
 	.thumb_func
 Func_080e4730:
 	.incbin "baserom.gba", 0x000e4724, 0x000002fc
-	.section .rom.000e4a28, "ax"
-	.balign 4
-	.global Func_080e4a34
-	.type Func_080e4a34, %function
-	.thumb_func
-Func_080e4a34:
-	.incbin "baserom.gba", 0x000e4a28, 0x00000368
 	.section .rom.000e5a58, "ax"
 	.incbin "baserom.gba", 0x000e5a58, 0x0000028c
 	.section .rom.000e5d50, "ax"

@@ -1,33 +1,14 @@
-// Measured 2026-11-05 (tla-en): differ 12 of 303.
-// 2026-10-25, with the Makefile's options (-mthumb-slow-loads): differ 14 of
-// 303; a greedy device search found nothing lower.
-// Near miss: listing 303 instructions, draft 303, differ 16. No close ☀️
-// twin: the call order is BattleEffect_RunTwoResource's (0.684), whose frame and
-// one-blitter setup this shares, but the picture is ⚓️'s own.
-// Allocation and frame match (effect spilled to sp+8 because the blitter pair
-// holds r6 and r7; the cell buffer through a pointer the build
-// rematerializes, so case 2 loads it last and is not cross-jumped with case
-// 3). Left are load and store orders: effect's spill before the heap base in
-// the prologue, the slot 104 argument last before Func_08196404, both BLDALPHA
-// words before their register address, and the fill's IwramFillWords address
-// before 0x4000. Measured: f18284c.c's blend pin with its empty asm on both
-// stores: 16, but the asm's estimated four bytes move the pool after
-// BattleMotion_ApproachTargetFar one instruction early; the pins alone, or
-// one-pass blocks: 24 to 58.
-// 2026-10-15 (fx-n3): rewritten for reading on struct BattleEffectWork, with
-// the resource ids named from directory.s (0x10b GreyCrescentSheet, 0x10c
-// StarCrescentSheet, 0x150 MarsDjinnSheet) and the blitter's flags and mode
-// spelled out; still 24. The pooled store on Echo Cut's blend alone: 16
-// (Human Hunt's plain, Echo Cut's pinned and held; on Human Hunt's too, or
-// the pin alone on either: 16 or 24, all nine combinations measured). What is
-// left at 16: effect's spill before the heap base, the slot 104 argument last,
-// Human Hunt's blend value before its address, the pool after
-// BattleMotion_ApproachTargetFar one instruction early, and the fill's
-// IwramFillWords address before 0x4000. alchemy permute (10 min, 2 jobs,
-// 7,474 candidates): nothing below 16 (its weighted best differs 24). The
-// crescent's second half as cells + 0x4000 or the fixed 0x02014000: 16.
-// 2026-10-18: alchemy-devtools permute (6 min, 2 jobs, seed 31): no candidate below
-// the draft.
+// Differ 2 of 303 (tla-en, 2026-11-07).
+// 2026-11-07: Iwram_FillWords through an inline wrapper (as the Broken Seal's
+// iwram_call.h) fixes the fill's order, 6 to 2; left: the slot 104 argument
+// is loaded last before Func_08196404 (the build loads it first; all four
+// candidates have priority 9, so the listing's RTL had r0 set last). Tried:
+// slot types, a slot local, an inline call wrapper, per-branch calls, argument
+// spellings; alchemy-devtools permute (6 min, 4 jobs): nothing below 2.
+// Earlier: differ 16 to 6 over 2026-10-15 to 11-05 (the pooled-store device,
+// since dropped, was no longer needed). Allocation and frame match (effect
+// spilled to sp+8 because the blitter pair holds r6 and r7; the cell buffer
+// through a pointer the build rematerializes).
 #include "types.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -35,22 +16,19 @@
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 
+// The fill goes through an inline wrapper, as the Broken Seal's iwram_call.h
+// writes it: called straight through the fixed entry, the build loads 0x4000
+// before the routine's address.
+#undef Iwram_FillWords
+static inline s32 Iwram_FillWords(void *destination, s32 size, u32 value) {
+  return Iwram_FillWordsEntry(destination, size, value);
+}
+
 // The Lost Age's heap slots, by byte offset into Ram_HeapSlots.
 #define HEAP_SLOT_BLITTER 104
 
 // The transfer task runs at this priority, where ☀️'s runs at 0x480.
 #define TASK_PASS_FRAME 0xc80
-
-// FAKEMATCH: ⚓️ loads a pooled halfword before it starts the register's
-// address; the plain store starts the address first. Only a halfword register
-// loads from the pool, so the value is pinned to the r3 it already takes, and
-// the barrier holds r2 until it is loaded, as in f18284c.c.
-#define REG_WRITE16_POOLED(reg, value)                                         \
-  {                                                                            \
-    register u16 pooled_ __asm__("r3") = (value);                              \
-    __asm__("" : "+l"(pooled_) : : "r2");                                      \
-    (reg) = pooled_;                                                           \
-  }
 
 // ⚓️'s blitter modes count the other way from ☀️'s COMPOSITE_* modes.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -68,8 +46,7 @@ void *Resource_GetTableEntry(s32 id);
 s32 Task_Add(void (*func)(void), s32 order);
 s32 Task_Remove(void (*func)(void));
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
-void EffectPosition_ProjectBattler(
-    s32 id, struct EffectPosition *position);
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position);
 void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
@@ -127,9 +104,6 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
     work->transferMode = 2;
     work->transferValue = 50;
   } else {
-    // FAKEMATCH: Echo Cut's blend takes the pooled store (24 to 16: its value
-    // and the next pool move into place); on Human Hunt's store as well, or
-    // the pin alone on either, it stays 16 or 24.
     REG_BLDALPHA = 0x1010;
     work->transferMode = 2;
     work->transferValue = 75;
@@ -141,8 +115,8 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
 
   for (frame = 0; frame != 32; frame++) {
     if (frame == 0)
-      EffectPosition_ProjectBattler(
-          effect->actors[0], (struct EffectPosition *)position);
+      EffectPosition_ProjectBattler(effect->actors[0],
+                                    (struct EffectPosition *)position);
     if (frame == 8)
       Sound_PlayFar(212);
 
@@ -153,7 +127,7 @@ void Func_0818c7b8(struct BattleEffectArgument *effect, s32 mode) {
       else
         Func_081180e8(134);
       BattleEffect_StartActorMotion(effect->actors[0], 1, 0x40000, 0x100000,
-                                0x40000, 250);
+                                    0x40000, 250);
       work->shakeFrames = 4;
     }
 

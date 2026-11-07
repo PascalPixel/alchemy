@@ -1,4 +1,8 @@
-// Differ 22 of 406 (tla-en, 2026-11-06).
+// Differ 22 of 406 (tla-en, 2026-11-07).
+// 2026-11-07: Task_Add called by its prototype now measures the same 22, so
+// the cast wrapper is gone; phase stores together before cells (36), maskY
+// local read before the phase stores (56), and 11.5 permute minutes over the
+// loop and tail found nothing better that keeps the cell index in words.
 // Was differ 36 of 406, skeleton gap 15 (2026-11-01); 22 now with no change
 // to this file. Left: the layer loop's phase stores and maskY order, and
 // Task_Add's 0x485 against its function address, all scheduling. Tried
@@ -10,7 +14,7 @@
 // sets up the three layers from the header, here with cell positions and a
 // shape pointer; loads the palette and tiles unless flag 0x170 says they are
 // loaded, and starts Func_0802ad84. Name it would take: MapGrid_LoadMap.
-// Taken from the twin: the cast void call of Task_Add. Found by order search
+// Found by order search
 // (150 s hill climb over the layer loop's statements): scaleX read after
 // cellY, and the two phase stores after cells.
 // Left, all order: each origin address is computed before its ldrb in the
@@ -259,10 +263,6 @@ s32 Func_0802a6b8(s32 index) {
   REG_BLDCNT = displayFlags;
   displayFlags = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
   REG_DISPCNT = displayFlags;
-  /* FAKEMATCH(wrapper): called through a cast to the void call the bytes
-   * show, which loads the task function before its priority; as a call by its
-   * prototype, 36 of 406 instructions differ in tla-en, and the skeleton gap
-   * is 16 for 15. */
-  ((void (*)(void (*)(void), s32))Task_Add)(Func_0802ad84, 0x485);
+  Task_Add(Func_0802ad84, 0x485);
   return 2;
 }

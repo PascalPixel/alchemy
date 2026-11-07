@@ -1,4 +1,7 @@
 // Differ 32 of 148 (tla-en, 2026-11-06).
+// Editions: the 320 bytes are the same in every edition (Japanese at
+// 0802b3cc), so one form serves all six; each measures the same 32
+// (2026-11-07).
 // Near miss, allocation only: the cell section at the top of the x loop. The
 // native has the cell in r2 and the kept low bits in r3, tied to the 0x7ff
 // mask; here regmove ties the low bits to the cell (r1), as CSE always puts

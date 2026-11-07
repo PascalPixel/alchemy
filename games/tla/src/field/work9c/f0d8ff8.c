@@ -1,11 +1,6 @@
-// Matches (tla-en, 2026-11-07).
-// 2026-11-07: the visible flag's 1 held in a local for the whole function
-// (permuter) lets reload reuse the node's register for the flag store and the
-// next link, as the native does. Earlier, differ 19 of 123 (2026-10-26): lays a slot's chain of nodes along the line
-// between two points (heap slot 0x9c work), bowed sideways by a half sine of
-// the given height. Callers: Func_080d8fa8 and Func_080d9194.
-// The sums are
-// i * d / segments, which loop.c turns into the native's running sums.
+/// @file
+/// Moves a chain of nodes along a line.
+
 #include "types.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
@@ -34,6 +29,8 @@ struct ChainWork {
   struct ChainSlot slots[8];
 };
 
+/// Lays a slot's chain of nodes along the line between two points, bowed
+/// sideways by a half sine of the given height.
 s32 Func_080d8ff8(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
                   s32 height) {
   struct ChainWork *work = Ram_HeapSlots->unk84[6];

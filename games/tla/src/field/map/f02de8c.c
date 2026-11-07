@@ -1,15 +1,6 @@
-// Matches: differ 0 of 665 (tla-en, 2026-11-07).
-// History: 18 (11-01), 2 (11-05); matched without asm barriers through a
-// once-only block, a palette pointer local and an address-sum spelling.
-// 11-07: Data012 named in the directory, System_ReturnZero given The Broken
-// Seal's two ignored parameters, the unused read of the repeated keys DEAD.
-// The debug sprite viewer, The Broken Seal's SpriteViewer_Run
-// (games/tbs/src/field/field/sprite_viewer.c), which never returns. This
-// game's changes: a blue backdrop; L and R step the sprite number by ten in
-// one call with Start held; Select passes only the first resource set (no B
-// choice) to System_ReturnZero; a press of B cycles the backdrop through eight
-// colours (gData_0802f054); a press of Start toggles the shadows of the ten
-// copies, whose sprites sit 56 bytes apart from heap slot 4.
+/// @file
+/// The debug sprite viewer.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -68,6 +59,8 @@ extern char ResourceId_Data012;
 // The native reads the held keys afresh at each test.
 #define HELD (*(volatile u32 *)&gInput.held)
 
+/// The debug sprite viewer, in The Broken Seal's form with this game's
+/// changes; it never returns.
 void Func_0802de8c(void) {
   struct SpriteViewerLayer layers[4];
   volatile u32 zero;

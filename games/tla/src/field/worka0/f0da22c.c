@@ -1,10 +1,6 @@
-// Matches (tla-en, 2026-11-07).
-// 2026-11-07: the node kind's 2 held in a local for the whole function and the
-// link stored before the ArcTan2 call, as in Func_080d9194.
-// The heap slot 0xa0 work's copy of Func_080d9194. Builds a slot's
-// chain of nodes, one for each 6 units of the distance between two points,
-// laid out as a flat spiral around the first point, every node kind 2. Unlike
-// Func_080d9194 it records no segment count.
+/// @file
+/// Builds a chain of nodes around a point.
+
 #include "types.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
@@ -39,6 +35,9 @@ struct LineWork {
 
 struct LineNode *Func_080d8d40(void);
 
+/// Builds a slot's chain of nodes, one for each 6 units of the distance between
+/// two points, laid out as a flat spiral around the first point, every node of
+/// kind 2.
 s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct LineWork *work = Ram_HeapSlots->unk84[7];
   s32 result = 0;

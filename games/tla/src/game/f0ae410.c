@@ -1,36 +1,6 @@
-// Matches (tla-en, 2026-11-07), with one tagged barrier.
-// 2026-11-07: the flag number 0x800 + k + j in a local of the inner loop
-// settles the preheader and step order (differ 6 before); j at function scope
-// is reused for the unit loop's bound 4 and read by the tagged empty asm.
-// Older notes follow.
-// Draft, differ 44 of 219, skeleton gap 8 (tla-en, 2026-11-01)
-// Takes over a The Broken Seal save (`save`, laid out as that game's: flag bits
-// at 0x40, its gMainRoutineWork at 0x240, the units at 0x520): its djinn flags
-// and six flags from Data_080b1284 set or clear this game's flags from 0x800
-// and 0x820, flag 0x822 toggles, its coins go to unk284[8] and, unless
-// `keepSettings`, its options are copied; each of the four units is copied in
-// keeping its first 15 bytes, items flagged 0x20 are removed and the units
-// recomputed; the djinn are set, flags 44 + (keepSettings & 1) and 47 set and
-// the frame wait count restarted from the play time.
-// The empty asm on i is gone: i * 20 now comes out as the listing's with one
-// i across all three loops. MainRoutineWork through a local `state`,
-// BattleUnit fields and unit->inventory[slot] closed the settings copy and the
-// unit loop.
-// Left, all one cause: the listing's sl is one pseudo with a long life, the
-// inner counter in the first loop and the unit loop's bound 4 afterwards (it
-// outranks r8's neighbours; a set-once count has a constant equivalence, ranks
-// last in .18.greg and is rematerialized as cmp #4, and 0x14c takes its
-// register). Declaring `u32 j` at function scope, `j = 4` before the unit loop
-// and `i < (s32)j` gives differ 8, skeleton gap 3: only the bls below and two
-// scheduling places in the first loop's preheader. That is a local reused for
-// a second value plus a cast, so it is not kept here; S2 would tag it
-// `temporary`, which replaces nothing in this draft.
-// The native's inner counter is signed (ble) and loop.c's second pass reverses
-// a signed one once its givs are reduced ("Reversed loop" in the .08.loop dump),
-// hence u32 and bls. do/while, for (;;) with break, ++j > 6, j++ in both arms,
-// hand-stepped flag numbers with a for and with a goto (the goto reduces i * 20)
-// all failed, as did a `// Default:` count, count declared first, and
-// i < 4. Func_080ae6e4 keeps ble only with a tagged barrier; 080ae868 has the same bls.
+/// @file
+/// Takes over a The Broken Seal save.
+
 #include "types.h"
 #include "string.h"
 #include "main_routine_work.h"
@@ -52,6 +22,8 @@ void Func_080ae16c(s32 mode);
 
 extern const u16 Data_080b1284[6];
 
+/// Copies a The Broken Seal save's djinn, flags, coins, options (unless
+/// keepSettings) and units into this game's state.
 void Func_080ae410(u8 *save, s32 keepSettings) {
   u8 *flags = save + 0x40;
   struct MainRoutineWork *party = (struct MainRoutineWork *)(save + 0x240);
@@ -98,8 +70,7 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
     state->eventMode = party->eventMode;
     state->battleFxEnabled = party->battleFxEnabled;
     state->unk244[6] = party->unk244[6];
-    Func_08038348(state->paletteGlow[0],
-                  state->paletteGlow[1]);
+    Func_08038348(state->paletteGlow[0], state->paletteGlow[1]);
   }
 
   j = 4; // A local reused for a second value: the unit loop's bound.

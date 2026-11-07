@@ -1,22 +1,6 @@
-// Matches (tla-en, 2026-11-07), with one tagged signature device.
-// 2026-11-07: the series 14 test is an else again and 445 a local set once at
-// the top, which settles the character and levels tie (differ 2); the void
-// call of Unit_GetElementLevels (permuter) settles the last scheduling
-// pair at its call.
-// Ported from The Broken Seal's
-// function of the same name (games/tbs/src/game/game/classes.c): the class
-// series comes from a character's two strongest elements, and the class is
-// the last of that series whose element requirements it meets. The Lost Age
-// has 244 classes, takes the series from a 4 by 4 table, gives characters 5
-// and 7 (Jenna and Piers) their own series, and lets three items (443 to 445)
-// choose one.
-//
-// Indexing gClass_DefinitionTable itself (declared here as the record view)
-// gives the native's two induction variables (150 to 77), i declared before
-// j its loop registers (77 to 49), and the second element held in its own
-// variable rather than in j puts the primary in r0, the second in r1 and the
-// item in r8 (49 to 22). Without the 445 local the else ties the character and the
-// levels' address in global.c (differ 22). The prototype follows games/tla/include/game/game.h.
+/// @file
+/// Chooses a character's class.
+
 #include "types.h"
 
 // A class record's start, as Class_Determine reads it.
@@ -32,6 +16,9 @@ extern const s32 Data_080c6604[4][4];
 
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]);
 
+/// Chooses a character's class: the series comes from its two strongest
+/// elements (or the item that picks one), and the class is the last of that
+/// series whose element requirements it meets.
 s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
   s32 levels[4];
   s32 primary;

@@ -1,12 +1,6 @@
-// Matches (tla-en, 2026-11-07).
-// Each sprite is addressed as &work->sprites[group][i] inside the loop, which
-// settles the operand order and the -33 mask; the zero temporary is gone.
-// BattleEffect_SpawnScaledArcObjects, ⚓️'s arc effect (heap slot 0xf8,
-// arc_effect.h). Sets up the current group's two 40-byte arc sprites from the
-// effect's tiles (16 by 16, attributes 0x80004000), shown, layer 0 and at the
-// target object's priority, then restarts that group's age, records the
-// target and flips to the other group. Not ☀️'s function of that name, which
-// creates two objects.
+/// @file
+/// The arc effect's next pair of scaled sprites.
+
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
@@ -23,6 +17,9 @@ struct ArcWork {
 
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
+/// Sets up the current group's two arc sprites from the effect's tiles, at the
+/// target's priority, then restarts that group's age, records the target and
+/// switches to the other group.
 void BattleEffect_SpawnScaledArcObjects(struct Actor *target) {
   struct ArcWork *work = Ram_HeapSlots->block62;
   s32 tiles = gResourceTableEntries[work->resource].offset >> 5;

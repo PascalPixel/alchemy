@@ -1,13 +1,13 @@
-// Matches (tla-en, 2026-11-07).
-// One group variable set by a chain of else-ifs, each type its own test, and
-// type == 10 as the last arm's value; the pinned type and the if/return chain
-// are gone (they left differ 19).
+/// @file
+/// An item's equipment group.
 
 #include "types.h"
 #include "item.h"
 
 struct ItemDefinition *Item_GetDirect(s32 item_id);
 
+/// Returns an item's equipment group from its type: 1 for types 1, 7 and 10,
+/// 2 for types 2 to 5 and 9, and 0 for any other type.
 s32 Item_GetEquipmentGroup(s32 item_id) {
   s32 type = Item_GetDirect(item_id)->type;
   s32 group;

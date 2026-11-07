@@ -1,4 +1,12 @@
-// Differ 158 of 902 (tla-en, 2026-11-07).
+// Differ 150 of 902 (tla-en, 2026-11-07).
+// 2026-11-07, ninth pass, 158 to 150: the quad as a pointer stepped by 24 in
+// the column loop from mesh + row * 15 * 24, and d, vertex and quad[5] read
+// from v rather than i (an enumeration over i, v and row << 4 at each use).
+// The + 15 now takes ip as in the native; Q is still r0, vertex r4, d lr
+// beside a stepped slot 8, and the quad start row * 360. Not gained:
+// i replaced by height, phase, frame or frames (frame -8: 862 to 874), the
+// vertex walked as a pointer (964 to 968), quad[17], [19] or [7] from v (303,
+// 183), a from v (1001), the permuter, 8 minutes (154 by a constant local).
 // 2026-11-07, eighth pass, unchanged at 158. Q (the row base copy) takes r0
 // because greg copies i's preferences to it through Q = i (i dies there),
 // and i prefers r0 from the splash's (i << 14) shift into the call argument;
@@ -362,17 +370,18 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   // The water's grid: 16 by 8 vertices, and a quad (two triangles) for
   // each cell but the last row and column.
   for (row = 0; row != WATER_ROWS; row++) {
-    s32 firstQuad = row * 15;
+    u8 *quad = mesh + row * 15 * 24;
     s32 d;
     s32 v = row << 4;
     s32 x = -60;
     s8 *cells = (s8 *)gMapCellBuffer;
 
     i = v;
-    d = i + 17;
+    d = v + 17;
 
-    for (column = 0; column != WATER_COLUMNS; column++, x += 8, d++) {
-      s8 *vertex = cells + (i + column) * 4;
+    for (column = 0; column != WATER_COLUMNS;
+         column++, x += 8, d++, quad += 24) {
+      s8 *vertex = cells + (v + column) * 4;
       s32 u = column * 8;
       s32 a = i + column;
 
@@ -382,10 +391,9 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       if (row <= 6 && column <= 14) {
         s32 b = (frames = i) + column + 1;
         /* FAKEMATCH(dead): b read through frames = i, a store the frame
-         * count overwrites; as i + column + 1, 162 of 902 instructions differ
+         * count overwrites; as i + column + 1, 154 of 902 instructions differ
          * in tla-en. */
         s32 c = i + column + 16;
-        u8 *quad = mesh + (firstQuad + column) * 24;
 
         quad[4] = x + 67;
         quad[6] = x + 67;
@@ -395,7 +403,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         quad[9] = (row << 4) + 15;
         quad[16] = u;
         quad[20] = u;
-        quad[5] = (row << 4);
+        quad[5] = v;
         quad[17] = (row << 4);
         quad[19] = (row << 4);
         quad[21] = (row << 4) + 15;

@@ -393,12 +393,6 @@ PartyInventory_GiveItem:
 	.incbin "baserom.gba", 0x000da7d6, 0x00000002
 	.section .rom.000daa92, "ax"
 	.incbin "baserom.gba", 0x000daa92, 0x00000002
-	.section .rom.000db668, "ax"
-	.global Func_080d6674
-	.type Func_080d6674, %function
-	.thumb_func
-Func_080d6674:
-	.incbin "baserom.gba", 0x000db668, 0x00000174
 	.section .rom.000dc518, "ax"
 	.global Func_080d7524
 	.type Func_080d7524, %function
@@ -791,12 +785,6 @@ BattleTarget_Execute:
 	.incbin "baserom.gba", 0x00126716, 0x00000002
 	.section .rom.0012695a, "ax"
 	.incbin "baserom.gba", 0x0012695a, 0x00000002
-	.section .rom.0012695c, "ax"
-	.global Func_08126944
-	.type Func_08126944, %function
-	.thumb_func
-Func_08126944:
-	.incbin "baserom.gba", 0x0012695c, 0x00000034
 	.section .rom.001269c2, "ax"
 	.incbin "baserom.gba", 0x001269c2, 0x00000002
 	.section .rom.00126be4, "ax"

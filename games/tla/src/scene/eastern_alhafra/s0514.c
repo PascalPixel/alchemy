@@ -1,4 +1,3 @@
-// Draft, differ 2 of 198 (tla-en, 5 November), no device: one tie, the door's wait loop: movs r0, #1 ahead of adds r5, #1 in the native.
 #define OWN_Actor_SetSingleChildFlags
 #include "battle.h"
 #include "field.h"
@@ -16,14 +15,9 @@
 #include "call.h"
 #include "text/msg_ids.h"
 
-struct DoorPlan {
+struct Unk_02004240 {
   s32 value[6];
 };
-
-extern u8 gData_02004d0c[];
-extern u8 gData_02004dbc[];
-extern u8 gData_02004fe4[];
-extern u8 gData_02005290[];
 
 s32 GameFlag_Test();
 void GameFlag_SetBit();
@@ -49,8 +43,8 @@ void Func_02001cb0(void);
 void Func_02003f48(s32, s32, s32, s32);
 void Func_02004004(void);
 void Func_020040c0(void);
-s32 Func_02004240(struct DoorPlan *);
-void Func_020044c4(struct DoorPlan);
+s32 Func_02004240(struct Unk_02004240 *);
+void Func_020044c4(struct Unk_02004240);
 void Func_02004868(void *, s32, s32);
 s32 Func_02004a0c();
 struct Actor *Func_02004a1c();
@@ -79,43 +73,43 @@ s32 Func_02004c8c();
 
 void Camera_MoveWithinMapBounds();
 void Func_02000514(void) {
-  struct Actor *door;
-  struct Actor *block;
-  struct DoorPlan plan;
+  struct Actor *actor15;
+  struct Actor *actor16;
+  struct Unk_02004240 unk;
   s32 facing;
   s32 i;
 
-  door = Actor_GetById(15);
-  block = Actor_GetById(16);
+  actor15 = Actor_GetById(15);
+  actor16 = Actor_GetById(16);
   facing = (Actor_GetById(gMainRoutineWork.currentOwner)->angle + 0x2000) & 0xc000;
-  if (block != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
-    Func_02004c7c(block->x, block->z, 2, 255);
-  if (Func_02004240(&plan) != 0) {
+  if (actor16 != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
+    Func_02004c7c(actor16->x, actor16->z, 2, 255);
+  if (Func_02004240(&unk) != 0) {
     if (Value1(GameFlag_Test, 0x8a4) == 0 || facing == 0xc000) {
-      Func_020044c4(plan);
+      Func_020044c4(unk);
     } else {
       GameFlag_SetBit(0x8a6);
       Func_02004a94();
       Func_02004be4(0);
-      Call4((void (*)())Camera_MoveWithinMapBounds, 0x1500000, -1, 0x2300000, 1);
-      Func_020044c4(plan);
-      Func_02004c7c(door->x - 0x180000, door->z, 0, 0);
-      Func_02004c7c(door->x + 0x80000, door->z, 0, 0);
-      Func_02004c7c(door->x - 0x180000, door->z, 2, 0);
-      Func_02004c7c(door->x - 0x80000, door->z, 2, 0);
-      Func_02004c7c(door->x + 0x80000, door->z, 2, 0);
-      Func_02004c7c(door->x + 0x180000, door->z, 2, 0);
+      Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(336), -1, PIXELS(560), 1);
+      Func_020044c4(unk);
+      Func_02004c7c(actor15->x - PIXELS(24), actor15->z, 0, 0);
+      Func_02004c7c(actor15->x + PIXELS(8), actor15->z, 0, 0);
+      Func_02004c7c(actor15->x - PIXELS(24), actor15->z, 2, 0);
+      Func_02004c7c(actor15->x - PIXELS(8), actor15->z, 2, 0);
+      Func_02004c7c(actor15->x + PIXELS(8), actor15->z, 2, 0);
+      Func_02004c7c(actor15->x + PIXELS(24), actor15->z, 2, 0);
       Actor_SetModeById(15, 3);
       Actor_OffsetPositionAndResetMotion(15, 0, 16);
       FieldEvent_Wait(20);
-      door->gravity = 0xccc;
-      door->motionFlags = 3;
+      actor15->gravity = 0xccc;
+      actor15->motionFlags = 3;
       i = 0;
-      if (door->y > 0) {
+      if (actor15->y > 0) {
         do {
-          i++;
           wait(1);
-        } while (i <= 59 && door->y > 0);
+          i++;
+        } while (i <= 59 && actor15->y > 0);
       }
       Func_02000fa4();
       Func_02004c9c(240);
@@ -125,6 +119,6 @@ void Func_02000514(void) {
       Func_02004a9c();
     }
   }
-  if (block != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
-    Func_02004c7c(block->x, block->z, 2, 0);
+  if (actor16 != NULL && Value1(GameFlag_Test, 0x8a4) == 0)
+    Func_02004c7c(actor16->x, actor16->z, 2, 0);
 }

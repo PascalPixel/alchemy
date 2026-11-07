@@ -1536,12 +1536,7 @@ main	rom_main_05	games/tla/src/field/field_effect/dmaline	.text
 main	rom_main_05	games/tla/src/field/field_effect/f0d607c	.text	en de es fr it ja
 main	rom_main_05	games/tla/src/field/field_effect/dmafx	.text
 main	rom_main_05	games/tla/src/field/field_effect/f0d64f0	.text	en de es fr it ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000d6654	ja
-main	rom_main_05	recon/tla/it/rom	.rom.000d6668	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000db668	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000df668	es
-main	rom_main_05	recon/tla/de/rom	.rom.000e3674	de
-main	rom_main_05	recon/tla/raw/080d6674	.text	en
+main	rom_main_05	games/tla/src/field/field_effect/f0d6674	.text
 main	rom_main_05	games/tla/src/field/field_effect/f0d67e8	.text	en de es fr it
 main	rom_main_05	games/tla/src/field/field_effect/f0d67e8	.text	ja
 main	rom_main_05	games/tla/src/field/field_effect/ground_particles	.text
@@ -2852,17 +2847,12 @@ main	rom_main_08	games/tla/src/battle/presentation/f126700	.text
 main	rom_main_08	games/tla/src/battle/presentation/setup_transition_scene	.text
 main	rom_main_08	games/tla/src/battle/presentation/setup_transition_at_pair_midpoint	.text
 main	rom_main_08	recon/tla/raw/08126942	.text	en
-main	rom_main_08	recon/tla/raw/08126944	.text	en
+main	rom_main_08	games/tla/src/battle/presentation/f126944	.text
 main	rom_main_08	recon/tla/de/rom	.rom.0012695a	de
-main	rom_main_08	recon/tla/de/rom	.rom.0012695c	de
 main	rom_main_08	recon/tla/es/rom	.rom.0012695a	es
-main	rom_main_08	recon/tla/es/rom	.rom.0012695c	es
 main	rom_main_08	recon/tla/fr/rom	.rom.0012695a	fr
-main	rom_main_08	recon/tla/fr/rom	.rom.0012695c	fr
 main	rom_main_08	recon/tla/it/rom	.rom.0012695a	it
-main	rom_main_08	recon/tla/it/rom	.rom.0012695c	it
 main	rom_main_08	recon/tla/ja/rom	.rom.0012693e	ja
-main	rom_main_08	recon/tla/ja/rom	.rom.00126940	ja
 main	rom_main_08	games/tla/src/battle/f126978	.text	en de es fr it ja
 main	rom_main_08	recon/tla/ja/rom	.rom.001269a6	ja
 main	rom_main_08	recon/tla/it/rom	.rom.001269c2	it

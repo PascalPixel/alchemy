@@ -1,4 +1,10 @@
-// Near miss, differ 10 of 263 (tla-en, 2026-10-31): instruction order only,
+// Differ 2 of 263 (tla-en, 2026-11-07).
+// 2026-11-07: one tie left: sched2 picks the reload copy `mov r8, r1` (sprite)
+// before the `djinni->angle` strh; both priority 1 with one dependent, so LUID
+// decides and reload always emits the copy right after the ldrsh. A separate
+// temporary is folded back by CSE/combine; asm barriers, volatile, types,
+// statement orders and a 5-minute permuter run found nothing better.
+// Earlier (differ 10, 2026-10-31): instruction order only,
 // five reordered pairs the sched2 dump shows the C cannot move. The leader's
 // angle ldrh outranks `movs r1, #128` by one priority point (load cost 2);
 // the sprite's reload copy to r8 and the `djinni->angle` strh tie, and RTL

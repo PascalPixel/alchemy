@@ -1,4 +1,7 @@
-// Draft, differ 14 of 274, skeleton gap 7 (tla-en, 2026-11-01)
+// Differ 2 of 274 (tla-en, 2026-11-07).
+// 2026-11-07: only site 2 remains (ldr r7 of point before the str of the
+// d3c address); for-init, do-while, event->points, barriers and the
+// permuter (25,681 candidates) leave it; an empty asm costs 36.
 // Control flow, types, allocation and the frame all match; only sched2's order
 // differs, at two kinds of site, and neither has moved under reshaping.
 // 1. The three later `(field & 0xfff0) + 8` reads: the listing issues the

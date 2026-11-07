@@ -1,4 +1,5 @@
-// Differ 33 of 99 (tla-en, 2026-11-06).
+// Differ 33 of 99 (tla-en, 2026-11-06); the same 33 in de, es, fr and it,
+// whose bytes are English's, and 33 of 95 in ja (2026-11-07).
 // Register choice only. The
 // native keeps the 0 for kind and next in r4 and passes the 1 for active
 // through ip, computing the sprite cell (output + 16) late into r2; here the
@@ -23,6 +24,19 @@
 #include "ram_buffer.h"
 #include "window.h"
 #include "uiwindow.h"
+#include "edition.h"
+
+// The glyph sprite's offset from the text position, in pixels: the Japanese
+// font's glyph sits 1 right of it, the Latin font's 2 right and 2 up.
+// XXX: whether the font alone decides it; Func_0803c068's Japanese form would
+// show the same pair.
+#if (LANGUAGE != LANGUAGE_JAPANESE)
+#define UNK_GLYPH_SPRITE_DX 2
+#define UNK_GLYPH_SPRITE_DY (-2)
+#else
+#define UNK_GLYPH_SPRITE_DX 1
+#define UNK_GLYPH_SPRITE_DY 0
+#endif
 
 // The sprite cell at WindowSprite.sprite: a link, then the OAM words.
 struct GlyphSprite {
@@ -52,9 +66,9 @@ void *Func_0803c198(struct Window *window, s32 character, s32 x, s32 y) {
   output->kind = 0;
   sprite = (struct GlyphSprite *)&output->sprite;
   vram = (void *)(0x06010000 + (work->glyphTiles + index) * 32);
-  ((u16 *)&output->sprite.oam)[0] = y + (spacingY >> 1) + window->y * 8 - 2;
+  ((u16 *)&output->sprite.oam)[0] = y + (spacingY >> 1) + window->y * 8 + UNK_GLYPH_SPRITE_DY;
   ((u16 *)&output->sprite.oam)[1] =
-      (x + (spacingX >> 1) + window->x * 8 + 2) | 0x4000;
+      (x + (spacingX >> 1) + window->x * 8 + UNK_GLYPH_SPRITE_DX) | 0x4000;
   ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
   output->sentinel = 253;
   output->x = sprite->x;

@@ -1,4 +1,7 @@
-// Differ 16 of 589 (tla-en, 2026-11-06).
+// Differ 4 of 589 (tla-en, 2026-11-07).
+// 16 to 4: the side test as a conditional whose arms store their flag (each
+// arm then keeps its own value and test, as the native does); left: the
+// drain loop's pointer built after &screen (permute 7 minutes: no change).
 // 38 to 16: SameSide with the user-left arm first, each arm the sign bit
 // of a & b or ~(a | b) (35; as b < 0 and b >= 0 the arms fold into jumps or
 // one select, 44 to 51), and the user->x read in a one-pass block (16).
@@ -102,14 +105,13 @@ extern u16 gData_08197410[];
 // The canvas layer and its helpers, with The Broken Seal's names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(
-    void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode); // BattleEffect_BuildBlitter
 void BattleEffect_FetchRectangleBlitters(
     s32 flip, DrawRectangle *draw); // ..FetchRectangleBlitters
 void Func_0814cd48(s32 actor, s32 palette, s32 group, s32 timerSlot,
-                   s32 frames);          // BattleEffect_TintBattler
+                   s32 frames); // BattleEffect_TintBattler
 void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 mask, u32 range); // Camera_ApplyShake
 void Func_081180e8(s32 phase);           // BattlePlayback_StartFar
@@ -122,15 +124,6 @@ void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
                                           s32 gravity);
 void Sound_PlayFar(s32 cue);
-
-// Whether b lies on the same side of x = 0 as a: the sign bit of a & b or
-// of ~(a | b), the user-left arm first (the native keeps a value in each arm
-// and tests it after the join).
-static inline s32 SameSide(s32 a, s32 b) {
-  if (a < 0)
-    return (u32)(a & b) >> 31;
-  return (u32)~(a | b) >> 31;
-}
 
 // Soul Shatter: a column bursts up under the target in a spray of sparks
 // and throws it into the air; the user glows, and from frame 32 motes of
@@ -168,8 +161,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   work->transferMode = 2;
   work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
-                                TASK_PASS_FRAME);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   target = GetBattleObjectSlotFar(effect->actors[0])->object;
   EffectPosition_ProjectBattler(effect->actors[0], &position);
   position.x /= 2;
@@ -197,7 +189,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       {
         struct EffectStep *mote;
 
-        for (i = 0, mote = &work->particles[SPARKS * 2]; i != MOTES; i++, mote++) {
+        for (i = 0, mote = &work->particles[SPARKS * 2]; i != MOTES;
+             i++, mote++) {
           s32 speed = (Random16() & 127) + 128;
           s32 angle = Random16() & 0x7fff;
 
@@ -306,10 +299,12 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
       camera = Ram_HeapSlots->cameraWork;
       Render_ResetTransformState();
       Transform_SetLookAt(camera->eye, camera->pos);
-      for (i = 0, mote = &work->particles[SPARKS * 2]; i != MOTES; i++, mote++) {
+      for (i = 0, mote = &work->particles[SPARKS * 2]; i != MOTES;
+           i++, mote++) {
         if (mote->variant >= 0) {
           s32 size = (i & 1) + 9;
           s32 userX;
+          s32 sameSide;
           s32 moteX;
 
           EffectPosition_ProjectPoint(&mote->x, &screen);
@@ -327,13 +322,18 @@ void BattleEffect_RunSoulShatter(struct BattleEffectArgument *effect) {
             moteX = mote->x;
             if (moteX < 0)
               moteX = -moteX;
-            /* FAKEMATCH(one-pass): the form kept; as userX = user->x;, 35 of 589 instructions differ in tla-en. */
+            // A once-only block around the read of user->x.
             do {
               userX = user->x;
             } while (0);
             if (userX < 0)
               userX = -userX;
-            if (moteX >= userX && SameSide(user->x, mote->x))
+            // Gone once it has passed the user on the user's side of x = 0.
+            /* FAKEMATCH(dead): each arm stores its test in sameSide, never
+             * read; as user->x < 0 ? mote->x < 0 : mote->x >= 0, 41 of 589
+             * instructions differ in tla-en. */
+            if (moteX >= userX && (user->x < 0 ? (sameSide = mote->x < 0)
+                                               : (sameSide = mote->x >= 0)))
               mote->variant = -1;
           }
         }

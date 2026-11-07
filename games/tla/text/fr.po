@@ -19030,19 +19030,19 @@ msgctxt "message"
 msgid "04684"
 msgstr "Résist."
 
-msgctxt "message"
+msgctxt "MsgBuyNotEnoughMoney"
 msgid "04685"
 msgstr "Résist."
 
-msgctxt "message"
+msgctxt "MsgWhoGetsThis"
 msgid "04686"
 msgstr "Booste les critiques"
 
-msgctxt "message"
+msgctxt "MsgPackFull"
 msgid "04687"
 msgstr "Taux contre-attaque"
 
-msgctxt "message"
+msgctxt "MsgCannotEquipStillWant"
 msgid "04688"
 msgstr "Malédiction dissipable"
 
@@ -19070,7 +19070,7 @@ msgctxt "message"
 msgid "04694"
 msgstr "Protection torse"
 
-msgctxt "message"
+msgctxt "MsgCannotCarryItem"
 msgid "04695"
 msgstr "Protection tête"
 
@@ -19078,7 +19078,7 @@ msgctxt "message"
 msgid "04696"
 msgstr "Protection jambe"
 
-msgctxt "message"
+msgctxt "MsgBuyAnythingElse"
 msgid "04697"
 msgstr "Eventail"
 

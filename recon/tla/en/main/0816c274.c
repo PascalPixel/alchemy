@@ -1,3 +1,8 @@
+// Differ 4 of 491 (tla-en, 2026-11-07).
+// 2026-11-07: the texture's pixels as const u8 * (as f16dc50's), so its stores no
+// longer alias the model's void * fields: the vertices store follows the
+// texture's (6 to 4). Left: two luid ties in sched2 (the clear's size after
+// gMapCellBuffer's load; target's reload before radius + 80).
 // 2026-11-05: differ 6 of 491 (tla-en). Plain block scopes for the shard pointers,
 // cells set once and rebuilt from the pool, camera block opened before its PRE
 // hash changes; three order rows left.
@@ -35,7 +40,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  const void *pixels;
+  const u8 *pixels;
 };
 
 struct RenderModel {

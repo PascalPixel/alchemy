@@ -1,38 +1,24 @@
-// Near miss, differ 8 of 540 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Draft, differ 26 of 540, skeleton gap 4 (tla-en, 2026-11-01)
-// Func_08108b70: the shop's buy menu, confirmed twin of ☀️'s Shop_SelectBuy
-// (games/tbs/src/shop/shop/buy.c): pick an item from the stock (Select shows
-// how many the party holds), then who gets it, then how many; artifacts are
-// counted down after the sale. The messages take the twin's names (00146,
-// 04685 to 04688, 04695 and 04697 in the English catalog, unnamed there).
-// What closed 355 to 26: partyMemberIds sits at 0x4ca, as in the adopted shop
-// files; Select's item shares stockCount's variable (both r8), a separate
-// local outranks gInput's address for r7; heldDefinition is its own variable,
-// declared before selectedDefinition for the slots; redraw is set before
-// stockIds; the two loops' results are separate variables.
-// Left, three kinds of site:
-// 1. The zero stored to selectionIndex: cse2 knows selectionResult is 0 after
-//    the test, and its sets moved past the loops outlive unitId, so it stores
-//    selectionResult (r7) where the native has movs r6, #0 and selectionResult
-//    in r5. Labels, else arms, s16 and s8, and chained assignments change
-//    nothing. An unread `selectionResult = -1;` after `quantity = 1;`, with
-//    one result variable as the twin has, reaches differ 14, gap 3: it is a
-//    dead device, left out because it cannot reach differ 0 alone.
-// 2. Two schedules: `str r0, [sp, #28]` after the first movs of the 0x4dc
-//    chain, and both strs before `movs r2, #1` after messageWindow's call.
-//    The native issues a spill store ahead of a split-constant chain where
-//    agscc does not; no source form moved them, so this reads as the
-//    scheduling model (K2), which is out of reach here.
-// 3. The first A test: native movs r3, #1 with the load in r2, as in the
-//    second loop. A second back edge in the first loop (`wait(1); continue;`
-//    in the Select arm) fixes it, but takes shop's refs to 65, its
-//    floor_log2 to 6, and priority .9176 past stockCount's .9167, which swaps
-//    r8 and r10 (differ 72). It needs one more live insn for shop, or one
-//    fewer for stockCount; a set-once key local does not help.
 #include "types.h"
 #include "ram_buffer.h"
+#include "edition.h"
 #include "input.h"
+
+// The Select window is wider outside English, the price window in German,
+// French and Italian.
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
+    (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
+#define HELD_WINDOW_X 10
+#define HELD_WINDOW_WIDTH 20
+#else
+#define HELD_WINDOW_X 13
+#define HELD_WINDOW_WIDTH 17
+#endif
+#if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||          \
+    (LANGUAGE == LANGUAGE_ITALIAN)
+#define PRICE_WINDOW_WIDTH 16
+#else
+#define PRICE_WINDOW_WIDTH 15
+#endif
 
 struct ShopCursor {
   struct ShopCursorSprite *anchor;
@@ -132,16 +118,19 @@ s32 Func_08108b70(void) {
   s32 stockCount;
   s32 itemId;
   struct ItemDefinition *stockDefinition;
-  register s32 selectionResult asm("r5");
+  s32 selectionResult;
   s32 purchaseResult;
   s32 unitId;
   s32 capacitySlot;
   s32 removedCount;
+  s32 key;
 
+  /* FAKEMATCH(dead): both A tests store into key, never read; as plain
+     `if (gInput.pressed & 1)`, 8 of 540 instructions differ in tla-en. */
   shop->itemWindow = 0;
   shop->moneyWindow = Window_CreateFar(18, 7, 12, 4, 2);
   Func_08109188();
-  priceWindow = Window_CreateFar(0, 8, 15, 4, 2);
+  priceWindow = Window_CreateFar(0, 8, PRICE_WINDOW_WIDTH, 4, 2);
 
 next_page:
   selectionIndex = selected;
@@ -165,7 +154,7 @@ next_page:
       Func_081091cc(priceWindow, itemId, stockDefinition->price, 0);
       redraw = 0;
     }
-    if (gInput.pressed & 1) {
+    if (key = gInput.pressed & 1) {
       selected = selectionIndex;
       Sound_PlayFar(112);
       selectionResult = 0;
@@ -184,7 +173,7 @@ next_page:
       held = PartyInventory_CountItemFar(stockCount);
       heldDefinition = Item_Get(stockCount);
       Sound_PlayFar(126);
-      window = Window_CreateFar(13, 3, 17, 10, 2);
+      window = Window_CreateFar(HELD_WINDOW_X, 3, HELD_WINDOW_WIDTH, 10, 2);
       Func_080f8040(window, stockCount, held);
       while (gInput.held & 4)
         wait(1);
@@ -202,15 +191,13 @@ next_page:
   Window_CloseFar(messageWindow, 2);
   Window_CloseFar(stockWindow, 2);
   wait(1);
-  if (selectionResult != 0)
+  if (selectionResult == -1)
     goto close;
 
   shop->selectedItem = shop->stockItemIds[selected];
   Func_081084f4((s32)MsgWhoGetsThis);
-  do {
   selectedDefinition = Item_Get(shop->selectedItem);
   quantity = 1;
-  } while (0);
   unitId = 0;
   repromptRecipient = 0;
   selectionIndex = 0;
@@ -241,7 +228,7 @@ next_page:
       else
         Func_081093a4(itemWindow, unitId, shop->selectedItem);
     }
-    if (gInput.pressed & 1) {
+    if (key = gInput.pressed & 1) {
       redraw = 2;
       WindowSprite_PrepareForRedrawFar(partyWindow);
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);

@@ -19095,19 +19095,19 @@ msgctxt "message"
 msgid "04684"
 msgstr "Wdrst."
 
-msgctxt "message"
+msgctxt "MsgBuyNotEnoughMoney"
 msgid "04685"
 msgstr "Wdrst."
 
-msgctxt "message"
+msgctxt "MsgWhoGetsThis"
 msgid "04686"
 msgstr "Kritische Treffer"
 
-msgctxt "message"
+msgctxt "MsgPackFull"
 msgid "04687"
 msgstr "Konter-Rate"
 
-msgctxt "message"
+msgctxt "MsgCannotEquipStillWant"
 msgid "04688"
 msgstr "Der Fluch kann"
 
@@ -19135,7 +19135,7 @@ msgctxt "message"
 msgid "04694"
 msgstr "Waffen"
 
-msgctxt "message"
+msgctxt "MsgCannotCarryItem"
 msgid "04695"
 msgstr "Rüstung/Schild"
 
@@ -19143,7 +19143,7 @@ msgctxt "message"
 msgid "04696"
 msgstr "Torso-Schutz"
 
-msgctxt "message"
+msgctxt "MsgBuyAnythingElse"
 msgid "04697"
 msgstr "Kopfschutz"
 

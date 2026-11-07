@@ -19001,19 +19001,19 @@ msgctxt "message"
 msgid "04684"
 msgstr "Resist."
 
-msgctxt "message"
+msgctxt "MsgBuyNotEnoughMoney"
 msgid "04685"
 msgstr "Resist."
 
-msgctxt "message"
+msgctxt "MsgWhoGetsThis"
 msgid "04686"
 msgstr "Aumento Brutti Colpi"
 
-msgctxt "message"
+msgctxt "MsgPackFull"
 msgid "04687"
 msgstr "Tasso di contrattacchi"
 
-msgctxt "message"
+msgctxt "MsgCannotEquipStillWant"
 msgid "04688"
 msgstr "Possibile togliere maled."
 
@@ -19041,7 +19041,7 @@ msgctxt "message"
 msgid "04694"
 msgstr "Protezione torace"
 
-msgctxt "message"
+msgctxt "MsgCannotCarryItem"
 msgid "04695"
 msgstr "Protezione testa"
 
@@ -19049,7 +19049,7 @@ msgctxt "message"
 msgid "04696"
 msgstr "Protezione gambe"
 
-msgctxt "message"
+msgctxt "MsgBuyAnythingElse"
 msgid "04697"
 msgstr "Ventaglio"
 

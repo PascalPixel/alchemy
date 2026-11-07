@@ -1,31 +1,3 @@
-// Differ 22 of 518 (tla-en, 2026-11-06). Left: order and registers of the
-// edge loop's strength-reduced steps at its tail (pool load, y step, stride).
-
-// Near miss, differ 48 of 518.
-//
-// Measured 2026-10-25 under -mthumb-slow-loads: differ 48. Most rows left are
-// loads from memory or the stack that alchemy-gcc issues one slot earlier than
-// the native, which issues only its pool loads early. The first is the
-// argument's spill, which the native stores before it starts the 0x03000000
-// base; an empty asm before the first statement closes that row (differ 46).
-
-// Effect kinds 38 and 218. Twin: The Broken Seal's
-// BattleEffect_RunBind, ported call for call; the body is
-// BattleEffect_RunTriangleStrike's (TriangleStrike) with the prelude. The Lost
-// Age's changes are those of BattleEffect_RunTriangleStrike, plus: the canvas is
-// prepared by Func_0815585c (kind 3 | side << 4, then two three-word arrays)
-// where The Broken Seal calls BattleEffect_RunDjinniEntrance(effect, 3, side, 0,
-// &x, &y); the Djinn sheet is unpacked with its palette; and the prelude's
-// blitter pair comes from BattleEffect_FetchRectangleBlitters.
-
-// Left: order only, as in BattleEffect_RunTriangleStrike: single swaps of a load with its
-// neighbour.
-
-// Tried: the prelude arrays declared before the anchor, which gives the
-// native's slots (148, 136, then the anchor at 124): 104 -> 98; the
-// tagged heap pointer for the second blitter's read (see BattleEffect_RunTriangleStrike)
-// 98 -> 84.
-
 #include "battle.h"
 #include "graphics.h"
 #include "lib.h"
@@ -53,9 +25,11 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);      // ..ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void);                     // ..ProcessPendingGraphicsTransfer
 void Func_081180e8(s32 phase); // BattlePlayback_StartFar
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_081496c8(s32 frame, s32 redPhase, s32 greenPhase,
                    s32 bluePhase); // Graphics_UpdatePhasePalette
 void Func_080150e4(s32 angle);     // SceneTransform_ApplyRoll
@@ -80,9 +54,9 @@ extern u16 Data_08197424[]; // flare sizes 1 to 5: cell offsets
 #define CORNERS 3
 #define EDGE_STEPS 24 // flares drawn along each edge
 
-// Spinning triangle (kinds 38 and 218): as BattleEffect_RunTriangleStrike, a triangle of
-// flares spins down onto the target and leaves the rune picture where it
-// lands; when the effect has a prelude, the Jupiter Djinn also circles
+// Spinning triangle (kinds 38 and 218): as BattleEffect_RunTriangleStrike, a
+// triangle of flares spins down onto the target and leaves the rune picture
+// where it lands; when the effect has a prelude, the Jupiter Djinn also circles
 // above its place for the first frames and rises away after frame 32.
 void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   s32 origin[3];
@@ -99,7 +73,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   s32 *camera;
   s32 shift;
   u8 *graphics;
-  struct MotionObject *object;
+  struct MotionObject *motion;
   s32 memberFrame;
   struct EffectStep *point;
   s32 size;
@@ -111,12 +85,10 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   graphics = Ram_HeapSlots->unk64[0];
   camera = Ram_HeapSlots->cameraWork;
-  /* FAKEMATCH: a pointer to the heap slots held from here, used only for
-   * the second blitter's read: spilled, it makes reload rebuild the
-   * 0x03000000 base at that read (movs, lsls, adds #188) as the native does,
-   * where agscc otherwise keeps the base in r5 across the second
-   * BattleEffect_LoadBlitter. Measured (2026-10-15): TriangleStrike 94 -> 66,
-   * SpinningTriangle 98 -> 84; the pointer for both reads, 95 and 103. */
+  /* FAKEMATCH(temporary): a pointer to the heap slots held from here for the
+   * second blitter's read, which makes reload rebuild the 0x03000000 base
+   * there; as Ram_HeapSlots->unkb8[1], 28 of 518 instructions differ in
+   * tla-en. */
   heap = Ram_HeapSlots;
 
   // Set up: the rune picture with its palette, the dots, the flares, the
@@ -170,20 +142,20 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
     BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
     BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                  BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+                             BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
     draw[1] = (DrawRectangle)heap->unkb8[1];
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
 
     for (member = 0; member != 1; member++) {
+      motion = GetBattleObjectSlotFar(effect->actors[member])->object;
       memberFrame = frame - member * 8;
-      object = GetBattleObjectSlotFar(effect->actors[member])->object;
       if (memberFrame >= 0 && memberFrame < 96) {
         Render_ResetTransformState();
         Transform_SetLookAt(camera, camera + 3);
-        vector[0] = object->x;
-        vector[1] = object->y;
-        vector[2] = object->z;
+        vector[0] = motion->x;
+        vector[1] = motion->y;
+        vector[2] = motion->z;
         EffectPosition_ProjectPoint(vector, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
@@ -204,7 +176,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
             }
             Func_080150e4(j * 0x5555);
             EffectPosition_ProjectPoint(Data_0819790c,
-                                               (struct EffectPosition *)vector);
+                                        (struct EffectPosition *)vector);
             point->velocityX = vector[0] + screen.x;
             point->velocityY = vector[1] + screen.y + 16;
           }

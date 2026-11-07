@@ -1,19 +1,3 @@
-// Draft of Func_08127cd4, The Broken Seal's BattleFormation_BuildEnemyList
-// (games/tbs/src/battle/battle/formation.c), with the battle work from its
-// heap slot. This game raises an enemy's levels through Func_0812786c with the
-// level adjustment, or else, when flag 0x173 is clear and flag 46 set, its
-// base stats through Func_08127a0c, and sets the battle work's byte at 0x868
-// for enemies 101 to 103 while flag 0x173 is clear.
-// Near miss, differ 28 of 456. The enemy-id range is a switch on 101 to 103,
-// which gives the native's cmp r0, #101; blt (as a nested if it was
-// cmp r0, #100; ble). Left: spill-slot and scheduling order in the setup (the
-// work's summon count cleared after the level adjustment's slot, the record
-// copied to the stack before the loop's other setup). The copy loops share
-// spriteSlots as their index (45 to 28, found by permute), which gives the
-// native's copy of the count to count down, though in the default case that
-// copy and the destination swap r1 and r2. Tried there: the count in a local
-// first, a loop counting the count down (67). Kept: freeSpriteSlots declared
-// before enemyCount (their stack slots).
 #include "types.h"
 #include "battle.h"
 #include "range_falloff.h"
@@ -28,7 +12,7 @@ struct FormationBattleWork {
   u8 unk00[0x3c];
   u16 firstDefeated;
   u16 defeatState;
-  u8 summonCount;
+  u8 unk40;
   u8 unk41;
   u8 battleType;
   u8 unk43[0x825];
@@ -39,7 +23,7 @@ struct BattleUnit *Unit_Get(s32 unitId);
 s32 GameFlag_Test(s32 flag);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin);
 s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n);
-void Func_0812786c(s32 unitId, s32 levels);
+s32 Func_0812786c(s32 unitId, s32 levels);
 void Func_08127a0c(s32 unitId);
 
 s32 Func_08127cd4(s32 recordId) {
@@ -65,7 +49,8 @@ s32 Func_08127cd4(s32 recordId) {
 
   battle = (struct FormationBattleWork *)Ram_HeapSlots->battleWork;
   levelAdjustment = 0;
-  battle->summonCount = 0;
+  // Through a byte pointer, which keeps the level adjustment stored first.
+  *(u8 *)&battle->unk40 = 0;
   enemyClasses = listBuffer;
   if (GameFlag_Test(0x173))
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
@@ -84,8 +69,8 @@ s32 Func_08127cd4(s32 recordId) {
   for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++) {
     if (record->minimumCounts[memberOrEnemyIndex] != 0) {
       s32 requiredSlots =
-          2 - (BattleClass_IsSmall(record->memberIds[memberOrEnemyIndex] +
-                                     8) != 0);
+          2 -
+          (BattleClass_IsSmall(record->memberIds[memberOrEnemyIndex] + 8) != 0);
 
       freeSpriteSlots -=
           requiredSlots * record->minimumCounts[memberOrEnemyIndex];
@@ -102,8 +87,8 @@ s32 Func_08127cd4(s32 recordId) {
     additionalRoom = maximum - minimum;
     if (additionalRoom > 0) {
       s32 memberSlots =
-          2 - (BattleClass_IsSmall(record->memberIds[memberOrEnemyIndex] +
-                                     8) != 0);
+          2 -
+          (BattleClass_IsSmall(record->memberIds[memberOrEnemyIndex] + 8) != 0);
 
       fittingCount = freeSpriteSlots / memberSlots;
       if (fittingCount < additionalRoom)
@@ -175,9 +160,7 @@ s32 Func_08127cd4(s32 recordId) {
   default:
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
          memberOrEnemyIndex++) {
-      for (spriteSlots = 0;
-           spriteSlots < memberCounts[memberOrEnemyIndex];
-           spriteSlots++)
+      for (copies = 0; copies < memberCounts[memberOrEnemyIndex]; copies++)
         enemyClasses[enemyCount++] = record->memberIds[memberOrEnemyIndex] + 8;
     }
     break;
@@ -185,8 +168,7 @@ s32 Func_08127cd4(s32 recordId) {
   enemyClasses[enemyCount] = 0;
   battle->firstDefeated = 6;
   battle->defeatState = 0;
-  for (memberOrEnemyIndex = 128; memberOrEnemyIndex < 134;
-       memberOrEnemyIndex++)
+  for (memberOrEnemyIndex = 128; memberOrEnemyIndex < 134; memberOrEnemyIndex++)
     Iwram_ClearWords(Unit_Get(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 
   memberOrEnemyIndex = 0;
@@ -195,18 +177,19 @@ s32 Func_08127cd4(s32 recordId) {
 assign_enemy:
   // Repeated enemy classes get distinct suffixes within this encounter.
   {
-    s32 suffixCode = BattleEnemy_ClaimNameLetter(enemyClasses[memberOrEnemyIndex], 1);
+    s32 suffixCode =
+        BattleEnemy_ClaimNameLetter(enemyClasses[memberOrEnemyIndex], 1);
     struct BattleUnit *unit;
     s32 enemyId;
 
     if (suffixCode & 0x8000)
       BattleEnemy_LetterFirstOfClass(enemyClasses[memberOrEnemyIndex]);
     BattleUnit_SetFar(memberOrEnemyIndex + 128,
-                     enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
+                      enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
     unit = Unit_Get(memberOrEnemyIndex + 128);
     if (levelAdjustment != 0)
       Func_0812786c(memberOrEnemyIndex + 128, levelAdjustment);
-    else if (!GameFlag_Test(0x173) && GameFlag_Test(46))
+    else if (!GameFlag_Test(0x173) && GameFlag_Test(0x2e))
       Func_08127a0c(memberOrEnemyIndex + 128);
     battle->unk868 = 0;
     enemyId = unit->enemyId;

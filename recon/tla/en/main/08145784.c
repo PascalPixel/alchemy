@@ -1,8 +1,10 @@
-// Differ 31 of 549 (tla-en, 2026-11-06). Left: one root: the side is
-// read into r0 with a copy to r3 for the panel index, where the native keeps it
-// in r0 with no copy (gcse's saved copy of effect->side); the rest of the rows
-// are literal pool offsets that follow from the one extra instruction. A pinned
-// local reaches 18 and loses the reload after the first draw.
+// Differ 10 of 549 (tla-en, 2026-11-07). Left: one root: gcse copies the side
+// (load in r0, copy in r3 for the first draws) where the native keeps one r0;
+// column = 0 set before the side test also makes the test a beq over the
+// else instead of the native if/else. 2026-11-07: column = 0 hoisted
+// aligned the literal pool (31 to 10); row = 0 hoisted 28, the else
+// reordered 12, no else 49, the test inverted 39; permuter (13 min) nothing
+// better.
 
 // Near miss, differ 97 of 549 (the draft has 550).
 
@@ -11,9 +13,9 @@
 // Age's changes: the effect runs 104 frames, not 132, every cue 8 to 16
 // frames earlier (jumps at 24 and 48, panels from 72); both pictures are
 // unpacked by Resource_LoadAndDecompress (the crescents into the map buffer);
-// the blitters are transparent (BattleEffect_LoadBlitter, mode 2); both callbacks at
-// 0xc80; and the strike at frame 72 is Func_08118088 on the target with a
-// shake of 8 and the results phase 144, where The Broken Seal throws the
+// the blitters are transparent (BattleEffect_LoadBlitter, mode 2); both
+// callbacks at 0xc80; and the strike at frame 72 is Func_08118088 on the target
+// with a shake of 8 and the results phase 144, where The Broken Seal throws the
 // target by hand at 88 and drops it at 120; the screen shakes each frame.
 
 // Left: order. The prologue matches; the rest are single swaps of a load with
@@ -59,12 +61,14 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 // The canvas routines every effect shares, with their Broken Seal names.
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(void);                   // ..ProcessPendingGraphicsTransfer
+void BattleEffect_ProcessPendingGraphicsTransfer(
+    void); // ..ProcessPendingGraphicsTransfer
 void BattleEffect_CountDownBattlerTints(void);
 void Func_08158ce0(s32 x, s32 y);           // Camera_ApplyShake
 void Func_081180e8(s32 phase);              // BattlePlayback_StartFar
 void Func_08118088(s32 actor, s32 variant); // ..ApplyVariantMotionFar
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_ArmBg2AffineHBlankDma(void);
 void BattleBackground_LoadFar(s32 layer, s32 background, s32 frames);
 void Sound_PlayFar(s32 cue);
@@ -125,7 +129,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER(BLIT_TRANSPARENT, CLIP));
   draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleEffect_LoadBlitter(HEAP_BLITTER_ALTERNATE,
-                BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
+                           BLITTER(BLIT_TRANSPARENT, CLIP | COMPOSITE_FLIP_X));
   draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 0xc80);
   work->transferMode = 1;
@@ -210,8 +214,8 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
 
     // The image, then from frame 72 its panels, each shown for two frames.
     if (visible != 0) {
+      column = 0;
       if (effect->side == 0) {
-        column = 0;
         row = 0;
       } else {
         column = 1;

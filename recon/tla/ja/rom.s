@@ -875,12 +875,6 @@ BattleEffect_RunEclipse:
 	.thumb_func
 BattleEffect_RunCondemn:
 	.incbin "baserom.gba", 0x00145784, 0x000004e4
-	.section .rom.00145df8, "ax"
-	.global BattleEffect_RunBind
-	.type BattleEffect_RunBind, %function
-	.thumb_func
-BattleEffect_RunBind:
-	.incbin "baserom.gba", 0x00145df8, 0x00000484
 	.section .rom.00146a6c, "ax"
 	.global BattleEffect_RunShiningStar
 	.type BattleEffect_RunShiningStar, %function

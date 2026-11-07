@@ -1,6 +1,11 @@
-// 2026-11-05: differ 14 of 575 (tla-en). Wrappers on the palette copy and the
-// fill close the blitter setup rows. Left: scheduling ties and the spark
-// base's register.
+// Differ 4 of 575 (tla-en, 2026-11-07).
+// 2026-11-07: from 14. The model's vertices as s32 * (a void * store aliased
+// the texture word and held its store back); one sparks pointer shared by the
+// burst and the draw loop (the pool register r0); delay = 0 apart from i = 0;
+// ring indexed from i. Left: two argument-move ties in sched2, `add r2, sp,
+// #44` before the place and `lsls r2` (0x10000) before size; tried argument
+// spellings, Q16_ONE, a struct source pointer, size set in the call.
+// 2026-11-05: differ 14. Wrappers on the palette copy and the fill.
 // Draft, differ 34 of 575, skeleton gap 8 (tla-en, 2026-11-01)
 // Of BattleEffect_RunDaedalusAlt, decompiled from the listing. Same 51 calls
 // and control flow; every difference left is scheduling or one register.
@@ -32,7 +37,6 @@
 // stays at adoption. No new device is in, and the old `frame` note on draw
 // stands.
 
-
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -53,7 +57,7 @@ struct RenderModel {
   s32 kind;
   s32 unk04;
   const void *mesh;
-  void *vertices;
+  s32 *vertices;
   struct ModelTexture *texture;
   s32 shade;
   u8 scrollU;
@@ -64,7 +68,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -81,13 +86,14 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void ResourceObject_ReleaseFar(void *object);
@@ -95,7 +101,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -113,19 +119,20 @@ extern char ResourceId_FlashBurstSheet;
 extern char ResourceId_OrangePaletteB;
 extern char ResourceId_Data0C9;
 extern u8 gMapCellBuffer[];
-extern const u16 gData_08197410[];         // gBattleEffect_MoteCells
-extern const u8 Data_081995ec[];           // the seven strike frames
+extern const u16 gData_08197410[]; // gBattleEffect_MoteCells
+extern const u8 Data_081995ec[];   // the seven strike frames
 struct PlacementSource {
   s32 x;
   s32 y;
 };
-extern const struct PlacementSource Data_08196ee8; // the summon's placement source
+extern const struct PlacementSource
+    Data_08196ee8;                         // the summon's placement source
 extern const u8 Data_08199220[];           // the rings' mesh
 extern const u8 gData_081991b0[];          // their corners
 extern struct EffectStep gData_02014000[]; // the sparks
 // The sparks' lives: gData_02014000's EffectSteps from their variant on.
 extern s32 Data_02014018[];
-extern const u8 gData_08199210[];          // its four corners
+extern const u8 gData_08199210[]; // its four corners
 extern u32 gCameraSceneParameters[];
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
@@ -169,8 +176,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   void *canvas;
   /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
    * as one two-word DImode pseudo its spill takes sp+20 and the unused sp+24
-   * the native stack frame has. As a single DrawRectangle the stack frame is 64 bytes
-   * and every slot above it moves (differ 325 against 299). */
+   * the native stack frame has. As a single DrawRectangle the stack frame is 64
+   * bytes and every slot above it moves (differ 325 against 299). */
   DrawRectangle draw[2];
   struct ModelTexture texture;
   s32 request[4];
@@ -211,180 +218,186 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   frame = 0;
   burst = -80 * 8;
 next_frame:
-    if (frame == 0) {
-      discX = 0x400000;
-      ringOffset = -0x400000;
-      ringX = 0x420000;
-      discY = 0x500000;
-      work->transferMode = 2;
-      work->transferValue = 50;
-      CopyWords((void *)BG_PLTT,
-                      Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
-                      128);
+  if (frame == 0) {
+    discX = 0x400000;
+    ringOffset = -0x400000;
+    ringX = 0x420000;
+    discY = 0x500000;
+    work->transferMode = 2;
+    work->transferValue = 50;
+    CopyWords((void *)BG_PLTT,
+              Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
+  }
+  if (frame == 56) {
+    Sound_PlayFar(140);
+  }
+  for (i = 0; i != 7; i++) {
+    if (frame == Data_081995ec[i]) {
+      for (j = 0; j != effect->count; j++) {
+        BattleEffect_StartActorMotion(effect->actors[j], 1, 0x20000, 0x80000,
+                                      0x20000, 120);
+        Func_0814cd48(effect->actors[j], 7, 5, j, 7);
+      }
+      work->shakeFrames = 4;
+      Sound_PlayFar(145);
     }
+  }
+
+  // From frame 80: eight bursts of sparks, one a frame.
+  if (frame > 79) {
+    // One pointer to the sparks for the burst and the draw loop below.
+    struct EffectStep *sparks;
+
+    if (frame == 80) {
+      s32 *life = Data_02014018;
+
+      for (i = 0; i != DAEDALUS_SPARKS; i++) {
+        *life = -1;
+        life += 7;
+      }
+      work->shakeFrames = 8;
+      FillWords(canvas, 0x3c00, 0x3f3f3f3f);
+    }
+    sparks = gData_02014000;
+    if ((u32)(frame - 80) <= 7) {
+      centerX = ((Random16() & 63) + 28) << 16;
+      centerY = ((Random16() & 31) + 80) << 16;
+
+      j = 0;
+      mask = 15;
+      spark = sparks;
+      spark += burst;
+      for (; j != 8; j++, spark++) {
+        s32 speed;
+        s32 angle;
+        speed = 31;
+        speed &= Random16();
+        angle = Random16();
+
+        spark->x = centerX + (((Random16() & mask) - 8) << 16);
+        spark->y = centerY + (((Random16() & mask) - 8) << 16);
+        speed += 32;
+        spark->velocityX = (Trig_Sin(angle) * speed) >> 3;
+        spark->velocityY = (Trig_Cos(angle) * speed) >> 3;
+        spark->variant = 0;
+      }
+    }
+    {
+      struct EffectStep *mote;
+
+      for (i = 0, mote = sparks; i != DAEDALUS_SPARKS; i++, mote++) {
+        if ((u32)mote->variant <= 17) {
+          draw[0](canvas, work->sheet + ((mote->variant / 3) << 11),
+                  HI(mote->x) - 16, HI(mote->y) - 48, 32, 64);
+          BattleEffectKernels_IntegrateVector2(mote, 62, -0x800);
+          mote->variant++;
+        }
+      }
+    }
+  }
+
+  // The summoned object glides in over 92 frames.
+  if (frame <= 91) {
+    struct SummonObject *object;
+
+    source = Data_08196ee8;
+    object = work->objects[0];
+    place = request;
+    object->unk17 = 32;
+    object->unk16 = 0;
+    place[3] = 0;
+    object->unk12 = 0x8800;
+    place[1] = 0xff0000;
+    if (frame <= 63) {
+      place[0] = (152 - frame / 4) << 16;
+      place[2] = (frame << 17) - 0x400000;
+    } else if ((u32)(frame - 64) <= 63) {
+      s32 t = frame - 64;
+
+      place[0] = (136 - t / 16) << 16;
+      place[2] = ((t / 2) << 16) + 0x400000;
+    } else {
+      place[0] = 136 << 16;
+      place[2] = 0x400000;
+    }
+    Render_ApplyProjectedPlacementFar(work->objects[0], place, &source.x, 0);
+  }
+
+  // Frames 56 to 91: the disc and the rings.
+  if ((u32)(frame - 56) <= 35) {
+    s32 size;
+    s32 grow = frame * 2 - 104;
+    struct RenderModel *model;
+    void *vertices;
+    struct EffectStep *ring;
+
+    // The disc's place shares the counters' variable, as the listing's r6 does.
+    i = discX;
+    size = 128;
+    if (grow <= 64) {
+      size = grow * 2;
+      Func_0815b434(gMapCellBuffer, size, 0x10000);
+    }
+    Func_0818caa8(gMapCellBuffer, i >> 16, discY >> 16, size);
     if (frame == 56) {
-      Sound_PlayFar(140);
+      s32 delay;
+
+      i = 0;
+      delay = 0;
+      for (ring = work->particles; i != 16; i++, ring++) {
+        ring->x = Random16() & 0xffff;
+        ring->y = (Random16() & 255) + 128;
+        if (Random16() & 1) {
+          ring->y = -ring->y;
+        }
+        ring->variant = delay;
+        delay -= 4;
+      }
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x4000,
+                                 0, 0);
     }
-    for (i = 0; i != 7; i++) {
-      if (frame == Data_081995ec[i]) {
-        for (j = 0; j != effect->count; j++) {
-          BattleEffect_StartActorMotion(effect->actors[j], 1, 0x20000, 0x80000,
-                                    0x20000, 120);
-          Func_0814cd48(effect->actors[j], 7, 5, j, 7);
-        }
-        work->shakeFrames = 4;
-        Sound_PlayFar(145);
-      }
-    }
+    vertices = Heap_AllocEwram(32);
+    model = Render_AllocateModelList(1);
+    model->shade = 0;
+    texture.logWidth = 5;
+    texture.logHeight = 2;
+    model->vertices = vertices;
+    texture.pixels = work->sheet + 0x4000;
+    model->kind = 7;
+    model->texture = &texture;
+    model->mesh = Data_08199220;
 
-    // From frame 80: eight bursts of sparks, one a frame.
-    if (frame > 79) {
-      if (frame == 80) {
-        s32 *life = Data_02014018;
+    for (i = 0; i != 6; i++) {
+      ring = &work->particles[i];
+      ring->variant += 2;
+      ring->x += ring->y * 2;
+      if ((u32)ring->variant <= 47) {
+        s32 k;
 
-        for (i = 0; i != DAEDALUS_SPARKS; i++) {
-          *life = -1;
-          life += 7;
-        }
-        work->shakeFrames = 8;
-        FillWords(canvas, 0x3c00, 0x3f3f3f3f);
-      }
-      if ((u32)(frame - 80) <= 7) {
-        centerX = ((Random16() & 63) + 28) << 16;
-        centerY = ((Random16() & 31) + 80) << 16;
-
-        j = 0;
-        mask = 15;
-        spark = gData_02014000;
-        spark += burst;
-        for (; j != 8; j++, spark++) {
-          s32 speed;
-          s32 angle;
-          speed = 31;
-          speed &= Random16();
-          angle = Random16();
-
-          spark->x = centerX + (((Random16() & mask) - 8) << 16);
-          spark->y = centerY + (((Random16() & mask) - 8) << 16);
-          speed += 32;
-          spark->velocityX = (Trig_Sin(angle) * speed) >> 3;
-          spark->velocityY = (Trig_Cos(angle) * speed) >> 3;
-          spark->variant = 0;
-        }
-      }
-      {
-        struct EffectStep *mote;
-
-        for (i = 0, mote = gData_02014000; i != DAEDALUS_SPARKS; i++, mote++) {
-          if ((u32)mote->variant <= 17) {
-            draw[0](canvas, work->sheet + ((mote->variant / 3) << 11),
-                    HI(mote->x) - 16, HI(mote->y) - 48, 32, 64);
-            BattleEffectKernels_IntegrateVector2(mote, 62, -0x800);
-            mote->variant++;
-          }
-        }
+        Render_ResetTransformState();
+        k = i & 3;
+        Func_08015160((k << 17) + ringX + ringOffset,
+                      discY - ((k + 2) << 16) + ringOffset, 0);
+        Func_080151e4(0x8000, 0x10000, 0x10000);
+        Func_080150e4(ring->x);
+        Func_080151e4(Trig_Sin(ring->variant * 682) + 0x10000, 0x20000,
+                      0x10000);
+        Render_TransformVertices(gData_081991b0, vertices, 4);
+        Render_DrawModelList(model);
       }
     }
-
-    // The summoned object glides in over 92 frames.
-    if (frame <= 91) {
-      struct SummonObject *object;
-
-      source = Data_08196ee8;
-      object = work->objects[0];
-      place = request;
-      object->unk17 = 32;
-      object->unk16 = 0;
-      place[3] = 0;
-      object->unk12 = 0x8800;
-      place[1] = 0xff0000;
-      if (frame <= 63) {
-        place[0] = (152 - frame / 4) << 16;
-        place[2] = (frame << 17) - 0x400000;
-      } else if ((u32)(frame - 64) <= 63) {
-        s32 t = frame - 64;
-
-        place[0] = (136 - t / 16) << 16;
-        place[2] = ((t / 2) << 16) + 0x400000;
-      } else {
-        place[0] = 136 << 16;
-        place[2] = 0x400000;
-      }
-      Render_ApplyProjectedPlacementFar(work->objects[0], place, &source.x, 0);
-    }
-
-    // Frames 56 to 91: the disc and the rings.
-    if ((u32)(frame - 56) <= 35) {
-      s32 size;
-      s32 grow = frame * 2 - 104;
-      struct RenderModel *model;
-      void *vertices;
-      struct EffectStep *ring;
-
-      // The disc's place shares the counters' variable, as the listing's r6 does.
-      i = discX;
-      size = 128;
-      if (grow <= 64) {
-        size = grow * 2;
-        Func_0815b434(gMapCellBuffer, size, 0x10000);
-      }
-      Func_0818caa8(gMapCellBuffer, i >> 16, discY >> 16, size);
-      if (frame == 56) {
-        s32 delay = 0;
-
-        for (i = 0, ring = work->particles; i != 16; i++, ring++) {
-          ring->x = Random16() & 0xffff;
-          ring->y = (Random16() & 255) + 128;
-          if (Random16() & 1) {
-            ring->y = -ring->y;
-          }
-          ring->variant = delay;
-          delay -= 4;
-        }
-        Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
-                                   work->sheet + 0x4000, 0, 0);
-      }
-      vertices = Heap_AllocEwram(32);
-      model = Render_AllocateModelList(1);
-      model->shade = 0;
-      texture.logWidth = 5;
-      texture.logHeight = 2;
-      model->vertices = vertices;
-      texture.pixels = work->sheet + 0x4000;
-      model->kind = 7;
-      model->texture = &texture;
-      model->mesh = Data_08199220;
-
-      ring = work->particles;
-      for (i = 0; i != 6; i++, ring++) {
-        ring->variant += 2;
-        ring->x += ring->y * 2;
-        if ((u32)ring->variant <= 47) {
-          s32 k;
-
-          Render_ResetTransformState();
-          k = i & 3;
-          Func_08015160((k << 17) + ringX + ringOffset,
-                        discY - ((k + 2) << 16) + ringOffset, 0);
-          Func_080151e4(0x8000, 0x10000, 0x10000);
-          Func_080150e4(ring->x);
-          Func_080151e4(Trig_Sin(ring->variant * 682) + 0x10000, 0x20000, 0x10000);
-          Render_TransformVertices(gData_081991b0, vertices, 4);
-          Render_DrawModelList(model);
-        }
-      }
-      Heap_Release(model);
-      Heap_Release(vertices);
-    }
-    Func_08158ce0(8, 8);
-    BattleEffect_CountDownBattlerTints();
-    work->transferPending = 1;
-    wait(1);
-    burst += 8;
-    frame++;
-    if (frame != DAEDALUS_FRAMES) {
-      goto next_frame;
-    }
+    Heap_Release(model);
+    Heap_Release(vertices);
+  }
+  Func_08158ce0(8, 8);
+  BattleEffect_CountDownBattlerTints();
+  work->transferPending = 1;
+  wait(1);
+  burst += 8;
+  frame++;
+  if (frame != DAEDALUS_FRAMES) {
+    goto next_frame;
+  }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(104);
   ResourceObject_ReleaseFar(work->objects[0]);

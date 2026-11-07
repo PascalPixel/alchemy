@@ -19015,19 +19015,19 @@ msgctxt "message"
 msgid "04684"
 msgstr "Resist."
 
-msgctxt "message"
+msgctxt "MsgBuyNotEnoughMoney"
 msgid "04685"
 msgstr "Resist."
 
-msgctxt "message"
+msgctxt "MsgWhoGetsThis"
 msgid "04686"
 msgstr "Sube Golpes Críticos."
 
-msgctxt "message"
+msgctxt "MsgPackFull"
 msgid "04687"
 msgstr "Porcentaje de contraataque"
 
-msgctxt "message"
+msgctxt "MsgCannotEquipStillWant"
 msgid "04688"
 msgstr "Quita la maldición."
 
@@ -19055,7 +19055,7 @@ msgctxt "message"
 msgid "04694"
 msgstr "Coraza"
 
-msgctxt "message"
+msgctxt "MsgCannotCarryItem"
 msgid "04695"
 msgstr "Casco"
 
@@ -19063,7 +19063,7 @@ msgctxt "message"
 msgid "04696"
 msgstr "Pernera"
 
-msgctxt "message"
+msgctxt "MsgBuyAnythingElse"
 msgid "04697"
 msgstr "Abanico"
 

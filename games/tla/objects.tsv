@@ -2510,7 +2510,7 @@ main	rom_main_07	games/tla/src/shop/f108948	.text
 main	rom_main_07	games/tla/src/shop/cursor_set	.text
 main	rom_main_07	games/tla/src/shop/cursor_place	.text
 main	rom_main_07	games/tla/src/shop/load_resource_to_block	.text
-main	rom_main_07	recon/tla/raw/08108b70	.text	en
+main	rom_main_07	games/tla/src/shop/f108b70	.text	en
 main	rom_main_07	recon/tla/de/rom	.rom.00110b70	de
 main	rom_main_07	recon/tla/es/rom	.rom.0010cb70	es
 main	rom_main_07	recon/tla/fr/rom	.rom.00108b70	fr
@@ -2860,11 +2860,7 @@ main	rom_main_08	games/tla/src/battle/f127adc	.text
 main	rom_main_08	recon/tla/ja/rom	.rom.00127b9a	ja
 main	rom_main_08	games/tla/src/battle/summon/charge	.text
 main	rom_main_08	games/tla/src/battle/formation_select_random_available_member	.text
-main	rom_main_08	recon/tla/it/rom	.rom.00127cec	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00127cec	fr
-main	rom_main_08	recon/tla/es/rom	.rom.00127cec	es
-main	rom_main_08	recon/tla/de/rom	.rom.00127cec	de
-main	rom_main_08	recon/tla/raw/08127cd4	.text	en
+main	rom_main_08	games/tla/src/battle/f127cd4	.text	en de es fr it
 main	rom_main_08	recon/tla/ja/rom	.rom.00127cd0	ja
 main	rom_main_08	games/tla/src/battle/summon/definition	.text
 main	rom_main_08	games/tla/src/battle/encode_banked_id	.text
@@ -2954,12 +2950,7 @@ main	rom_main_09	recon/tla/de/rom	.rom.00145784	de
 main	rom_main_09	recon/tla/raw/08145784	.text	en
 main	rom_main_09	recon/tla/ja/rom	.rom.00145784	ja
 main	rom_main_09	games/tla/src/battle_effect/blueramp	.text
-main	rom_main_09	recon/tla/raw/08145df8	.text	en
-main	rom_main_09	recon/tla/de/rom	.rom.00145df8	de
-main	rom_main_09	recon/tla/es/rom	.rom.00145df8	es
-main	rom_main_09	recon/tla/fr/rom	.rom.00145df8	fr
-main	rom_main_09	recon/tla/it/rom	.rom.00145df8	it
-main	rom_main_09	recon/tla/ja/rom	.rom.00145df8	ja
+main	rom_main_09	games/tla/src/battle_effect/f145df8	.text
 main	rom_main_09	games/tla/src/battle_effect/f14627c	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f146638	.text	en de es fr it ja
 main	rom_main_09	recon/tla/ja/rom	.rom.00146a6c	ja

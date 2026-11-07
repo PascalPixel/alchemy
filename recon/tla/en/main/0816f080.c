@@ -1,67 +1,79 @@
-// Differ 52 of 568 (tla-en, 2026-11-07), with one tagged barrier.
-// Fifth round, 7 November: the splash scale (112 -> 52). The listing keeps 25000 in r9 and
-// halves it in the loop with a lone asrs, so the halving's operand was a value neither CSE
-// nor gcse's cprop knew as a constant. Pinning splash to r9 reproduced the splash code but
-// moved sl and r8 everywhere (157). An asm volatile("" : "+r"(splash)) at the top of the
-// splash's if hides the constant and keeps the asrs in the loop (103 with splash set before
-// the splash loop, where splash outranks the texture pointer for r8). Setting splash = 25000
-// before the glow-gather loop lengthens its life so the texture pointer takes r8 and splash
-// r9, as in the listing: 52. Placement measured: frame top 148, before the drops' model
-// 70, after model->vertices 52, after the gather 56, before the splash loop 103. Without the
-// asm every placement is 112 (cprop notes 12500 on the shift and loop.c hoists it).
-// The asm as the 25000's source ("=r" : "0"(25000)) is worse (167, 232). Left: the 25000
-// is built before the gather loop where the listing builds it before the splash loop, and
-// the zero stores' scheduling (glow->variant, model->shade: Left 3). A source for the 25000
-// that cprop cannot see without an asm (a table or field the code really reads) would
-// replace the barrier; none was found.
-// Fourth round, 6 November: the r6/r7 swap is gone (146 -> 112). row is now the plain
-// row = y * 32, and the first pair's second store spells x * 2 as x + x. With x + x, CSE
-// cannot share row + x * 2 between the two stores, so row has two uses, a loop.c lifetime
-// of 6 instead of 2, and is moved in the first loop pass as a single set; simplify_giv_expr
-// then looks through it, so the first pair's pointer init computes y << 5 itself, after the
-// second pair's. That puts one more insn between the second pair's pointer (now 40 insns
-// live) and the third pair's +1 pointer (31), which then ranks first and takes r6 as in the
-// listing. Every other spelling of that store measured (x * 2 + 1 grouped or reordered,
-// row + 1, 0x1001 +, x + x in both stores) stays at 350 or 378.
-// Left: the splash scale (below, Left 2), which also shifts every literal pool load by 4,
-// and the zero stores' scheduling (Left 3). Tried at 112, none better: a frame-scope scale
-// shared by the glow and set to 25000 before the splash loop, halved with / 2 (116) or >> 1
-// (112: gcse's cprop still notes 12500); model->shade = 0 after the texture store or the
-// mesh (112), between the texture fields (255), last (116); glow->variant = 0 first (120);
-// 20 minutes of permuter over the splash loop (seed 4417): none.
-// Third round, 6 November, none better. The r6/r7 swap is global's order: giv 421 (the second
-// pair's decremented pointer, 14 refs over 39 insns) outranks giv 463 (the third pair's +1
-// pointer, 11 over 31), takes r6, and reload's spill set then takes r7 from 463 at insn 1747
-// (464 = mirrorRow + 0x1701). 463 first needs 421 at a live length of 40 or 463 at 30.
-// Measured: mirrorRow pinned to r6 (440) or r7 (528), both stop its hoisting; the +1 mirror
-// pointer hand-stepped and pinned to r6 (442); an empty asm before the row stores, the mirror
-// stores, inside the if or after it (146 each); splash = 25000 through an output asm before
-// the frame loop, halved with / 2 (205). 6912 PERM combinations of x, y, v, row and mirrorRow
-// types and of the second pair's and the +1 mirror store's spellings: none below 146; 12
-// minutes of random permuter (seed 5222): none.
+// Differ 50 of 568 (tla-en, 2026-11-07), with one tagged barrier.
+// Sixth round, 7 November: model->shade = 0 after model->texture (52 -> 50).
+// Measured, none better: the asm before the scale call (58), after it or after
+// the integration (54), after Func_08015160 (54); splash set before the splash
+// loop, where the listing builds it (149: splash takes r8 and the texture
+// pointer r9), before the frame loop (154, 156, 175); splash as s16 or u16 (87,
+// 101); 10 minutes of permuter (seed 9183): nothing compiled better. Fifth
+// round, 7 November: the splash scale (112 -> 52). The listing keeps 25000 in
+// r9 and halves it in the loop with a lone asrs, so the halving's operand was a
+// value neither CSE nor gcse's cprop knew as a constant. Pinning splash to r9
+// reproduced the splash code but moved sl and r8 everywhere (157). An asm
+// volatile("" : "+r"(splash)) at the top of the splash's if hides the constant
+// and keeps the asrs in the loop (103 with splash set before the splash loop,
+// where splash outranks the texture pointer for r8). Setting splash = 25000
+// before the glow-gather loop lengthens its life so the texture pointer takes
+// r8 and splash r9, as in the listing: 52. Placement measured: frame top 148,
+// before the drops' model 70, after model->vertices 52, after the gather 56,
+// before the splash loop 103. Without the asm every placement is 112 (cprop
+// notes 12500 on the shift and loop.c hoists it). The asm as the 25000's source
+// ("=r" : "0"(25000)) is worse (167, 232). Left: the 25000 is built before the
+// gather loop where the listing builds it before the splash loop, and the zero
+// stores' scheduling (glow->variant, model->shade: Left 3). A source for the
+// 25000 that cprop cannot see without an asm (a table or field the code really
+// reads) would replace the barrier; none was found. Fourth round, 6 November:
+// the r6/r7 swap is gone (146 -> 112). row is now the plain row = y * 32, and
+// the first pair's second store spells x * 2 as x + x. With x + x, CSE cannot
+// share row + x * 2 between the two stores, so row has two uses, a loop.c
+// lifetime of 6 instead of 2, and is moved in the first loop pass as a single
+// set; simplify_giv_expr then looks through it, so the first pair's pointer
+// init computes y << 5 itself, after the second pair's. That puts one more insn
+// between the second pair's pointer (now 40 insns live) and the third pair's +1
+// pointer (31), which then ranks first and takes r6 as in the listing. Every
+// other spelling of that store measured (x * 2 + 1 grouped or reordered, row +
+// 1, 0x1001 +, x + x in both stores) stays at 350 or 378. Left: the splash
+// scale (below, Left 2), which also shifts every literal pool load by 4, and
+// the zero stores' scheduling (Left 3). Tried at 112, none better: a
+// frame-scope scale shared by the glow and set to 25000 before the splash loop,
+// halved with / 2 (116) or >> 1 (112: gcse's cprop still notes 12500);
+// model->shade = 0 after the texture store or the mesh (112), between the
+// texture fields (255), last (116); glow->variant = 0 first (120); 20 minutes
+// of permuter over the splash loop (seed 4417): none. Third round, 6 November,
+// none better. The r6/r7 swap is global's order: giv 421 (the second pair's
+// decremented pointer, 14 refs over 39 insns) outranks giv 463 (the third
+// pair's +1 pointer, 11 over 31), takes r6, and reload's spill set then takes
+// r7 from 463 at insn 1747 (464 = mirrorRow + 0x1701). 463 first needs 421 at a
+// live length of 40 or 463 at 30. Measured: mirrorRow pinned to r6 (440) or r7
+// (528), both stop its hoisting; the +1 mirror pointer hand-stepped and pinned
+// to r6 (442); an empty asm before the row stores, the mirror stores, inside
+// the if or after it (146 each); splash = 25000 through an output asm before
+// the frame loop, halved with / 2 (205). 6912 PERM combinations of x, y, v, row
+// and mirrorRow types and of the second pair's and the +1 mirror store's
+// spellings: none below 146; 12 minutes of random permuter (seed 5222): none.
 // Second round, 6 November, none better: 40 minutes of permuter (seed 7104);
 // splash = 25000 through an empty asm with an output, before the splash loop
 // (225: the halving is hoisted with it) or inside its if (225: loop.c moves the
 // asm and the halving). The listing's asrs alone, with no sign fix, says the
 // halving is a / 2 whose operand combine knows is not negative, so the 25000 is
 // a pseudo neither CSE nor GCSE's cprop sees as a constant; no form found here.
-// Also tried 6 November: splash = 25000 at width = 32, or as width * 781, halved
-// with >> 1 (146); reset after the call as well (220); 5 minutes of permuter: a
-// reused zero temporary 144, nothing plain better. The second and third glow
-// pairs swap r6 and r7, the splash holds 12500 where the native holds 25000, and the
-// model and glow zero stores schedule differently. Tried today, none better: a
-// splash local set to 25000 at the splash loop top, the if top, before the frame
-// loop or before Render_ResetTransformState (146: 12500 still hoisted); set after
-// Func_08015160 (231: nothing hoisted, frame moves to r11); model->shade = 0
-// last (150); glow->variant = 0 before glow->y (146); (size - 1 - x) and
-// (size - (x + 1)) spellings (146); (offset + size - x - 1) * 2 (386).
-// Measured 2026-11-05 (tla-en): 146 of 568, unchanged. 216 spellings of the glow's stores and
-// 80 loop, row and mirror forms: none better; 4000 random declaration orders: no effect.
-// 2026-11-05, unchanged at 146 of 568: a scale local inside the splash loop, with
-// its half shifted, does hold 25000 (draft 563) but moves the rest to 231.
-// Draft, differ 146 of 568, skeleton gap 23 (tla-en, 2026-11-01)
-// Everything but a 25000 and one register swap agrees; the frame, the 47 calls
-// and every stack slot match. What each glow form below is for:
+// Also tried 6 November: splash = 25000 at width = 32, or as width * 781,
+// halved with >> 1 (146); reset after the call as well (220); 5 minutes of
+// permuter: a reused zero temporary 144, nothing plain better. The second and
+// third glow pairs swap r6 and r7, the splash holds 12500 where the native
+// holds 25000, and the model and glow zero stores schedule differently. Tried
+// today, none better: a splash local set to 25000 at the splash loop top, the
+// if top, before the frame loop or before Render_ResetTransformState (146:
+// 12500 still hoisted); set after Func_08015160 (231: nothing hoisted, frame
+// moves to r11); model->shade = 0 last (150); glow->variant = 0 before glow->y
+// (146); (size - 1 - x) and (size - (x + 1)) spellings (146); (offset + size -
+// x - 1) * 2 (386). Measured 2026-11-05 (tla-en): 146 of 568, unchanged. 216
+// spellings of the glow's stores and 80 loop, row and mirror forms: none
+// better; 4000 random declaration orders: no effect. 2026-11-05, unchanged at
+// 146 of 568: a scale local inside the splash loop, with its half shifted, does
+// hold 25000 (draft 563) but moves the rest to 231. Draft, differ 146 of 568,
+// skeleton gap 23 (tla-en, 2026-11-01) Everything but a 25000 and one register
+// swap agrees; the frame, the 47 calls and every stack slot match. What each
+// glow form below is for:
 // - y's loop is label and goto: the native rebuilds the 0x1700-style constants
 //   per row, y * 32 and the mirror row from y, and steps offset by hand with
 //   add lr, r11. Any real loop hoists or reduces all of those.
@@ -74,23 +86,24 @@
 // - mirrorRow is two sets so that -32 stays in it, ahead of the 0x1700 offsets.
 //   As one expression fold moves the -32 last.
 //
-// Left, 1 (settled in the fourth round, kept for its evidence): the native gives the third pair's second pointer r6 and the second
-// pair's r7; here it is the other way, and the spill registers then use r7
-// where the native uses r6, which is most of the 146. The second pair's
-// priority is 42 / 39 against 33 / 31, so it needs a live length of 40. The
-// listing's order says how: size * 2 is computed after the first pair's start,
-// so it sits inside that range, while here giv 409, (size - x - 1) * 2, is
-// reduced in the first pass and its start comes first. Raising the loop to 49
-// insns did not stop that reduction. Tried: mirror, column, back, source and
-// rows locals; other spellings of the second and fourth pairs (all no change
-// or worse); glow declaration orders (no effect).
-// Left, 2: the splash scale. The native holds 25000 in r9 and halves it with
-// asr in the loop. Here 12500 is hoisted and 25000 rebuilt. Any local holding
-// it is const-propagated. A chain from an earlier-block constant (splashFull =
-// 50000, as width does for size) stops that, but the halving is then hoisted
-// too and combine folds it (differ 171), and 50000 has no evidence.
-// Left, 3: scheduling at glow->variant = 0 and model->shade = 0, where the
-// native loads the zero into r4 earlier. model->shade = 0 first gained 4.
+// Left, 1 (settled in the fourth round, kept for its evidence): the native
+// gives the third pair's second pointer r6 and the second pair's r7; here it is
+// the other way, and the spill registers then use r7 where the native uses r6,
+// which is most of the 146. The second pair's priority is 42 / 39 against 33 /
+// 31, so it needs a live length of 40. The listing's order says how: size * 2
+// is computed after the first pair's start, so it sits inside that range, while
+// here giv 409, (size - x - 1) * 2, is reduced in the first pass and its start
+// comes first. Raising the loop to 49 insns did not stop that reduction. Tried:
+// mirror, column, back, source and rows locals; other spellings of the second
+// and fourth pairs (all no change or worse); glow declaration orders (no
+// effect). Left, 2: the splash scale. The native holds 25000 in r9 and halves
+// it with asr in the loop. Here 12500 is hoisted and 25000 rebuilt. Any local
+// holding it is const-propagated. A chain from an earlier-block constant
+// (splashFull = 50000, as width does for size) stops that, but the halving is
+// then hoisted too and combine folds it (differ 171), and 50000 has no
+// evidence. Left, 3: scheduling at glow->variant = 0 and model->shade = 0,
+// where the native loads the zero into r4 earlier. model->shade = 0 first
+// gained 4.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -326,10 +339,10 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     texture.logWidth = 5;
     texture.logHeight = 5;
     texture.pixels = work->sheet + 0x1000;
-    model->shade = 0;
     model->kind = 6;
     model->mesh = Data_08199244;
     model->texture = &texture;
+    model->shade = 0;
     model->vertices = vertices;
     splash = 25000;
 
@@ -369,7 +382,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     for (i = 0, drop = work->particles; i != 6; i++, drop++) {
       if (frame > i * 4 + 64) {
         /* FAKEMATCH(barrier): asm volatile("" : "+r"(splash)); as the plain
-           Func_080151e4(12500, 25000, 12500), 112 of 568 instructions differ
+           Func_080151e4(12500, 25000, 12500), 114 of 568 instructions differ
            in tla-en. */
         asm volatile("" : "+r"(splash));
         model->shade = 0;

@@ -841,12 +841,6 @@ Graphics_AdvancePaletteCycle:
 	.thumb_func
 Func_08127068:
 	.incbin "baserom.gba", 0x00127080, 0x00000248
-	.section .rom.00127cec, "ax"
-	.global Func_08127cd4
-	.type Func_08127cd4, %function
-	.thumb_func
-Func_08127cd4:
-	.incbin "baserom.gba", 0x00127cec, 0x000003cc
 	.section .rom.0013d098, "ax"
 	.balign 4
 	.global Func_0813d098
@@ -872,12 +866,6 @@ BattleEffect_RunEclipse:
 	.thumb_func
 BattleEffect_RunCondemn:
 	.incbin "baserom.gba", 0x00145784, 0x000004e4
-	.section .rom.00145df8, "ax"
-	.global BattleEffect_RunBind
-	.type BattleEffect_RunBind, %function
-	.thumb_func
-BattleEffect_RunBind:
-	.incbin "baserom.gba", 0x00145df8, 0x00000484
 	.section .rom.00146a6c, "ax"
 	.global BattleEffect_RunShiningStar
 	.type BattleEffect_RunShiningStar, %function

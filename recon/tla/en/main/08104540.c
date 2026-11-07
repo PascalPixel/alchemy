@@ -1,39 +1,21 @@
-// Differ 22 of 436 (tla-en, 2026-11-06): only the four loop-invariant registers
-// before the loop remain (draft r3 r0 r1 r2, native r1 r2 r3 r0); allocation.
-// The other two sites listed below now agree. Permuter 5 min: best a forced 0
-// temporary for an argument of the first Func_08103218 call, differ 18, still
-// register-only; not kept. Untagged empty asms, one-pass blocks and searched
-// locals each need their S2 tag on adoption.
-// Draft, differ 28 of 436, skeleton gap 5 (tla-en, 2026-11-01)
+// Matches: differ 0 of 436 (tla-en, 2026-11-07).
+// History: differ 22 (2026-11-06), only loop-invariant registers; the page
+// turns through s32 *selectedPage = &selected[side], taken at the top of the
+// loop, give the native reload order and match.
 // Twin of ☀️'s DjinnMenu_ShowMemberStatus
 // (games/tbs/src/menu/menu/djinn_preview.c): same calls, windows, keys, sounds
 // and MsgCurrentStatus, without the phase step and with the page digit's
 // bound at 8 where the twin has 9. Both panes of Func_08103218 for the pair's
 // first member, page arrows over the right one, left and right page through,
 // Start leaves the menu (-2) and A, B, L or R the view (-1).
-// Left, three sites: the heap slot's load is placed before sub sp where the
-// native has it after (no opening order tried moves it without losing more;
-// the twin's phase changes nothing); Task_Add's literal load comes before the
-// lsls of its second argument; and the four loop-invariant addresses before
-// the loop get their reload registers two along (draft r3 r0 r1 r2, native
-// r1 r2 r3 r0, in the order page count, pair owner, zero, selected page).
-// All frame slots now agree with the native: selected, a pointer like the
-// twin's counts, takes sp+24; pairOwner, declared before counts and taken
-// inside the loop after the page count, takes sp+32; pageCount, declared in
-// the loop, takes sp+20 and must stay &pageCounts[side], the array (217 with
-// counts[side] at the wrap calls, 47 through counts).
-// Tried and closer by differ but worse by skeleton: an s32 *selectedPage =
-// &selected[side] first at the top of the loop, with the page turns through
-// *selectedPage, gives every register but schedules the selected address too
-// early: differ 14, skeleton 7. Its other orders of the three: 20 to 28,
-// skeleton 6 to 9. Declaration order and the two forms' mixes do not move it.
-#include "types.h"
-#include "ram_buffer.h"
 #include "input.h"
-#include "window.h"
 #include "iwram_call.h"
-#include "owner_state.h"
 #include "macros.h"
+#include "owner_state.h"
+#include "ram_buffer.h"
+#include "task.h"
+#include "types.h"
+#include "window.h"
 
 struct DjinnMenuWork {
   u8 unk000[0x10];
@@ -63,10 +45,10 @@ void WindowSprite_PrepareForRedrawFar(s32 window);
 void WindowSprite_RedrawSavedRectFar(s32 window);
 void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 width, s32 height,
-                            s32 style);
+                          s32 style);
 void Window_CloseIfOpen(void *window, s32 mode);
-void Window_SetTilemapEntryFar(struct Window *window, s32 tile, s32 x,
-                                 s32 y, s32 mode);
+void Window_SetTilemapEntryFar(struct Window *window, s32 tile, s32 x, s32 y,
+                               s32 mode);
 void *Heap_AllocEwram(s32 size);
 void Heap_Release(void *block);
 s32 Func_08101860(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
@@ -77,7 +59,6 @@ s32 Menu_GetModuloOfSum(s32 value, s32 count);
 void MenuIcon_SetPosition(s32 index, s32 x, s32 y);
 void Input_ResetKeyRepeat(void);
 void Sound_PlayFar(s32 cue);
-void Task_Add(void (*func)(void), s32 priority);
 void Menu_UpdateEntryObjectTransforms(void);
 void wait(s32 frames);
 
@@ -142,12 +123,14 @@ s32 Func_08104540(void) {
   WindowSprite_RedrawSavedRectFar(*helpWindowSlot);
   WindowSprite_RedrawSavedRectFar((s32)menu->statusWindow);
   Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
-                                  0);
+                                0);
   Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus + 2, menu->statusWindow,
-                                  0, 16);
+                                0, 16);
   side = 0;
   while (1) {
     s32 *pageCount;
+    s32 *selectedPage;
+    selectedPage = &selected[side];
     render = (struct WindowWork *)Ram_HeapSlots->windowTiles;
     pressedKeys = gInput.pressed;
     repeatedKeys = gInput.repeat;
@@ -174,7 +157,7 @@ s32 Func_08104540(void) {
             window, tile, window->width - counts[side] + pageIndex - 2, -1, 0);
       }
       Window_SetTilemapEntryFar(window, 0xf128,
-                                  window->width - counts[side] - 3, -1, 0);
+                                window->width - counts[side] - 3, -1, 0);
       Window_SetTilemapEntryFar(window, 0xf129, window->width - 2, -1, 0);
       UiRender_MarkRow(render, (s16)window->y);
     }
@@ -201,16 +184,14 @@ s32 Func_08104540(void) {
       break;
     }
     if (repeatedKeys & 0x20) {
-      selected[side]--;
-      selected[side] =
-          Menu_GetModuloOfSum(selected[side], *pageCount);
+      (*selectedPage)--;
+      *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
       Sound_PlayFar(111);
       Input_ResetKeyRepeat();
       redraw = 1;
     } else if (repeatedKeys & 0x10) {
-      selected[side]++;
-      selected[side] =
-          Menu_GetModuloOfSum(selected[side], *pageCount);
+      (*selectedPage)++;
+      *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
       Sound_PlayFar(111);
       Input_ResetKeyRepeat();
       redraw = 1;
@@ -218,8 +199,10 @@ s32 Func_08104540(void) {
     wait(1);
   }
   {
-    __typeof__(0x480) hoisted = 0x480;
-    Task_Add(Menu_UpdateEntryObjectTransforms, hoisted );
+    // A local holding one constant: as a literal argument, 2 of 436
+    // instructions differ in tla-en.
+    s32 priority = TASK_PASS_VBLANK;
+    Task_Add(Menu_UpdateEntryObjectTransforms, priority);
   }
   ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 1;
   Window_CloseIfOpen(helpWindowSlot, 1);

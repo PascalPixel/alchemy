@@ -1,4 +1,16 @@
-// Differ 61 of 167 (tla-en, 2026-11-07). A permuter find, both forms ordinary C (no tag): block is a volatile
+// Differ 17 of 167 (tla-en, 2026-11-07) with two tagged barriers at the loop's end: asm on i keeps the test on i,
+// asm on tile drops tile below the hoisted copies so it spills as native (27 with the tile one alone, 62 with the i one
+// alone; without both, the plain form below measures 31). Left: oam + 1 takes r5 and tile + 2 r9 (native r9, r5:
+// tile + 2 ranks 3/31 below oam + 1 3/27), and the affine store's lsls one row early. Arm orders and all 720 entry
+// orders tried with the barriers (17 best); three barriers 46; tile += 2 in the for header with asm on i 23.
+// Without devices, 31: The entry now matches, with no device: byte 5 is a two-bit mode field
+// and its rest, as the gabomba_statue sibling s4710.c declares it (oam->mode = 3, 57); the copy loop counts up (the
+// compiler reverses it); the scale is a plain s32 local stored into z = 0, x, y in that order, which drops the zero local
+// and the volatile block (tile reads work->block itself); the locals in the order digit, old, now, tile, oam, value
+// (31, best of all 720). Left: only the loop below (test on i + 1; i + 1 r5, tile + 2 r9, oam + 1 r11 against native
+// r11, r5, r9). A for (;;) whose arms end `if (i > 4) return;` keeps the test on i but then tile ranks 5/101 above
+// i + 1 (3/34) and takes r11, spilling value (62, best of 720 orders).
+// Before that, 61: A permuter find, both forms ordinary C (no tag): block is a volatile
 // local and effect.z is stored from a local holding 0 (from 67). The volatile costs a stack slot the
 // listing lacks (frame 24, not 20), so this is a nearer count, not a nearer shape.
 // No twin: the routine is the Gabomba statue clock (clock.c's ClockWork at gData_020023c4 + 0x288); no
@@ -50,7 +62,10 @@ struct Effect {
 };
 
 struct Sprite {
-  u8 b0, b1, b2, b3, b4, b5, b6;
+  u8 b0, b1, b2, b3, b4;
+  u8 mode : 2;
+  u8 b5rest : 6;
+  u8 b6;
   u8 b7a : 1;
   u8 affine : 5;
   u8 b7b : 2;
@@ -79,20 +94,19 @@ void Func_02005090(void) {
   struct Work *work = (struct Work *)(gData_020023c4 + 0x288);
   u8 *digit = work->digit;
   u8 *old = work->pixels;
-  s32 *value = &work->value;
-  volatile s32 block = work->block;
-  u32 tile = gResourceTableEntries[block].offset >> 5;
   u8 *now = work->tiles;
+  u32 tile = gResourceTableEntries[work->block].offset >> 5;
   struct Sprite *oam = work->oam;
+  s32 *value = &work->value;
   struct Effect effect;
   s32 plain, scaled, i;
-  s32 zero;
+  s32 scale;
   u32 *p;
 
   Func_02004f84(*value + 50, digit);
   Func_02004f84(*value + 60, work->old);
   Func_02004f84(*value, work->now);
-  for (i = 4; i >= 0; i--) {
+  for (i = 0; i < 5; i++) {
     Iwram_CopyWords(now, old + (*digit << 6) - 0xc00, 64);
     now += 64;
     digit++;
@@ -101,11 +115,11 @@ void Func_02005090(void) {
   effect.z = 0;
   effect.x = 0x200;
   effect.y = 0x200;
-  zero = 0;
   plain = AffineMatrix_BuildForEffect(&effect);
-  effect.x = Func_02005020(*value);
-  effect.z = zero;
-  effect.y = effect.x;
+  scale = Func_02005020(*value);
+  effect.z = 0;
+  effect.x = scale;
+  effect.y = scale;
   scaled = AffineMatrix_BuildForEffect(&effect);
   old = work->old;
   now = work->now;
@@ -114,7 +128,7 @@ void Func_02005090(void) {
     *p++ = 0;
     *p++ = (i << 20) | 0x8000;
     *p = tile | 0x400;
-    oam->b5 |= 3;
+    oam->mode = 3;
     if (*old++ != *now++ || i == 2) {
       oam->affine = scaled;
       Func_020055ec(oam, 236);
@@ -128,5 +142,11 @@ void Func_02005090(void) {
       oam++;
       i++;
     }
+    /* FAKEMATCH(barrier): the empty asm on i keeps the loop test on i rather than its hoisted
+     * i + 1; as no asm, 27 of 167 instructions differ in tla-en. */
+    asm("" : "+r"(i));
+    /* FAKEMATCH(barrier): the empty asm on tile lowers its allocation rank so it stays on the stack;
+     * as no asm, 62 of 167 instructions differ in tla-en. */
+    asm("" : "+r"(tile));
   }
 }

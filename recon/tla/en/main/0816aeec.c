@@ -1,4 +1,32 @@
-// Differ 140 of 902 (tla-en, 2026-11-07).
+// Differ 94 of 902 (tla-en, 2026-11-07).
+// 2026-11-07, twelfth pass, 140 to 94, no new device. The vertex from
+// (row * 16 + column) * 4 (a vertex from c or q is not reduced, q being a
+// hard register; row * 16 is hoisted, merged with the pinned copy, and the
+// vertex starts from Q << 2 as in the native), which also puts the row
+// slots in the native's order (row * 15 at 32, the + 15 at 28); c set
+// before b gives b r5 and c r6 (140 to 114). Statement order alone in the
+// frame loop: row = 1 before angle = frame << 11, the waves' column = 0
+// before their vertex start, i = 0 before height /= 2 (114 to 100); in the
+// grid, column = 0 and x = -60 before d, c, b (100 to 94, the best of all
+// 720 orders of the row-top statements).
+// Left, about 70 of the 94: d takes ip and the + 15 copy slot 8 (the
+// native has them the other way round), and the two extra instructions
+// shift every literal-pool offset. In greg d ranks 11 refs over 50 insns
+// against the copy's 11 over 45. The copy is a moved insn, so loop puts it
+// right before the column loop, after any row-level init of d: no order
+// of the row statements can make d's life as short as the copy's (at best
+// 46 against 45). What does give the native slot 8 for d and ip for the
+// + 15 is a row-level bottom = v + 15 made non-replaceable by a dead
+// bottom = 0 before the row loop (FAKEMATCH(dead)): but loop then charges
+// the user variable a copy cost (benefit 5 - 4 - 2), leaves the + 15
+// unreduced (sl + 15 each row, no slot 28) and the frame is 4 bytes short
+// (435). A + 15 from row * 17 - row + 15 is reduced but on other slots
+// (220). Not gained: d's init in a do { } while (0) (depth comes from real
+// loops), d as a giv of the column (from row * 16, i, v, a, b or c: 356 to
+// 944), u8 or other types for d, extra uses of d that combine might fold
+// (cse or the front end folds them first), an empty asm using v + 15 (104),
+// the permuter on the grid (15 minutes, 94). Also left: in the waves the
+// + 64 and the store are scheduled before column++ (6).
 // 2026-11-07, eleventh pass, 150 to 140, with a device: the native-like grid
 // (b, c and d as row counters from Q, a = i + column left unreduced, the quad
 // from (row * 15 + column) * 24 in the if block, so the row slots and quad
@@ -387,20 +415,22 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   for (row = 0; row != WATER_ROWS; row++) {
     s32 b, c, d;
     s32 v = row << 4;
-    s32 x = -60;
+    s32 x;
     s8 *cells = (s8 *)gMapCellBuffer;
 
     // Device (needs FAKEMATCH(pin) on adoption): Q pinned to r4.
     register s32 q asm("r4");
     q = v;
     i = v;
-    b = q + 1;
-    c = q + 16;
+    column = 0;
+    x = -60;
     d = q + 17;
+    c = q + 16;
+    b = q + 1;
 
-    for (column = 0; column != WATER_COLUMNS;
+    for (; column != WATER_COLUMNS;
          column++, x += 8, b++, c++, d++) {
-      s8 *vertex = cells + (c - 16) * 4;
+      s8 *vertex = cells + (row * 16 + column) * 4;
       s32 a = i + column;
       s32 u = column * 8;
 
@@ -525,19 +555,22 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
     phase = frame * 2;
+    row = 1;
     angle = frame << 11;
-    for (row = 1, offset = 64; row != 7; row++, offset += 64) {
-      s8 *vertex = (s8 *)gMapCellBuffer + offset + 1;
+    for (offset = 64; row != 7; row++, offset += 64) {
+      s8 *vertex;
 
-      for (column = 0; column != WATER_COLUMNS; column++) {
+      for (column = 0, vertex = (s8 *)gMapCellBuffer + offset + 1;
+           column != WATER_COLUMNS; column++) {
         s32 amplitude = (16 - column) * height / 32;
 
         *vertex = ((Trig_Sin(angle + column * 5000 + Trig_Sin(row * 3553)) * amplitude) >> 16) - amplitude + 64;
         vertex += 4;
       }
     }
+    i = 0;
     height /= 2;
-    for (i = 0, bubble = work->particles; i != 20; i++, bubble++) {
+    for (bubble = work->particles; i != 20; i++, bubble++) {
       if (bubble->variant == 0) {
         bubble->y =
             (((Trig_Sin(angle + Trig_Sin(3552 + i * 888)) * height) >> 16) - height + 64) << 16;

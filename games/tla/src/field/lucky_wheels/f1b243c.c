@@ -6,13 +6,18 @@
 #include "ram_buffer.h"
 #include "edition.h"
 
-// The prompt windows (all held, start, hold, release) and the ticket count's
-// digits, placed and sized for each language's words.
+// The prompt windows (all held, start, hold, release, stop the reels) and the
+// ticket count's digits, placed and sized for each language's words.
 #if LANGUAGE == LANGUAGE_ITALIAN
 #define LUCKY_WHEELS_ALL_HELD_X 10
 #define LUCKY_WHEELS_ALL_HELD_WIDTH 20
 #define LUCKY_WHEELS_START_X 21
 #define LUCKY_WHEELS_START_WIDTH 9
+#elif LANGUAGE == LANGUAGE_SPANISH
+#define LUCKY_WHEELS_ALL_HELD_X 6
+#define LUCKY_WHEELS_ALL_HELD_WIDTH 24
+#define LUCKY_WHEELS_START_X 22
+#define LUCKY_WHEELS_START_WIDTH 8
 #else
 #define LUCKY_WHEELS_ALL_HELD_X 11
 #define LUCKY_WHEELS_ALL_HELD_WIDTH 19
@@ -29,6 +34,11 @@
 #define LUCKY_WHEELS_HOLD_WIDTH 9
 #define LUCKY_WHEELS_RELEASE_X 21
 #define LUCKY_WHEELS_RELEASE_WIDTH 9
+#elif LANGUAGE == LANGUAGE_SPANISH
+#define LUCKY_WHEELS_HOLD_X 22
+#define LUCKY_WHEELS_HOLD_WIDTH 8
+#define LUCKY_WHEELS_RELEASE_X 22
+#define LUCKY_WHEELS_RELEASE_WIDTH 8
 #else
 #define LUCKY_WHEELS_HOLD_X 23
 #define LUCKY_WHEELS_HOLD_WIDTH 7
@@ -41,6 +51,22 @@
 #else
 #define LUCKY_WHEELS_COIN_DIGITS 2
 #define LUCKY_WHEELS_COIN_X 64
+#endif
+#if LANGUAGE == LANGUAGE_SPANISH
+#define LUCKY_WHEELS_STOP_X 21
+#define LUCKY_WHEELS_STOP_WIDTH 9
+#else
+#define LUCKY_WHEELS_STOP_X 18
+#define LUCKY_WHEELS_STOP_WIDTH 12
+#endif
+// The title's letters; the Spanish title's first letter is its last letter's
+// tile turned over both ways, drawn 16 pixels left and 8 down.
+#if LANGUAGE == LANGUAGE_SPANISH
+#define REEL_TITLE_LETTERS 9
+#define REEL_TITLE_FIRST_TURNED 1
+#else
+#define REEL_TITLE_LETTERS 8
+#define REEL_TITLE_FIRST_TURNED 0
 #endif
 
 struct Reel {
@@ -79,8 +105,8 @@ struct ReelWork {
 };
 
 struct ReelEffectWork {
-  struct EffectStep particles[8];
-  u8 unk00e0[0x7780 - 0xe0];
+  struct EffectStep particles[REEL_TITLE_LETTERS];
+  u8 unkAfterParticles[0x7780 - REEL_TITLE_LETTERS * sizeof(struct EffectStep)];
   s32 transferMode;
   s32 transferValue;
   u8 unk7788[4];
@@ -330,7 +356,8 @@ void Func_081b243c(void) {
         work->state = 10;
     } else if (work->state != 10) {
       if (work->timer == 4) {
-        work->window = Window_CreateFar(18, 17, 12, 3, 6);
+        work->window = Window_CreateFar(LUCKY_WHEELS_STOP_X, 17,
+                                        LUCKY_WHEELS_STOP_WIDTH, 3, 6);
         Text_DrawCharacterAtOffsetFar((s32)MsgSlotsStopReels, work->window, 0,
                                       0);
       }
@@ -499,12 +526,17 @@ void Func_081b243c(void) {
   }
 
   if (work->state == 3) {
-    for (i = 0; i != 8; i++) {
+    for (i = 0; i != REEL_TITLE_LETTERS; i++) {
       struct EffectStep *p = &fx->particles[i];
 
-      work->obj[work->spriteCount].attr01 =
-          (*(s16 *)((u8 *)&p->x + 2) << 16) | objMode |
-          ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) | 0x80000000;
+      if (REEL_TITLE_FIRST_TURNED && i == 0)
+        work->obj[work->spriteCount].attr01 =
+            (((*(s16 *)((u8 *)&p->x + 2) + 496) & 0x1ff) << 16) | objMode |
+            ((*(s16 *)((u8 *)&p->y + 2) + 264) & 255) | 0xb0000000;
+      else
+        work->obj[work->spriteCount].attr01 =
+            (*(s16 *)((u8 *)&p->x + 2) << 16) | objMode |
+            ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) | 0x80000000;
       work->obj[work->spriteCount].attr2 =
           ((gLuckyWheels_TitleLetterTiles[i] << 4) + 0x370) | 0xf000;
       p->y += p->velocityY;

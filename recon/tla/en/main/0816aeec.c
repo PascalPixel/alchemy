@@ -39,6 +39,15 @@
 // permuter, 12 minutes (186). Also not gained: (row << 4) - row or v - row
 // written out (loop no longer sees the quad as a giv: 868, 439); a copy of
 // firstQuad or a barrier on it in the column loop (180, 268, 442).
+// 2026-11-07, fourth pass, on the quadColumns form, differ unchanged at 180.
+// Weighted refs over live length in its lreg dump: u 12 over 19 (1.89),
+// Q 19 over 49 (1.551), vertex 17 over 44 (1.545), so vertex must reach
+// 43 insns or fewer and u 24 or more for vertex > u > Q. Q collects the
+// inits' refs because regmove rewrites them from i to Q after the copy
+// Q = i. Not gained: u declared first (u 20 insns, 272), a first or vertex
+// last (272, 273), vertex, b, c and d from (row << 4) (832 to 962: the
+// frame shrinks), a vertex pointer stepped from the row top (957), and an
+// enumerated permuter over those declaration orders and spellings (best 272).
 // Earlier, at 266 of 902:
 // 2026-11-06, devices allowed: none gains. Pins (u r0, vertex r1, Q r4, i r4)
 // 493 to 1009; an empty asm on i 956 (the frame shrinks); i, (row << 4) or a

@@ -1,35 +1,6 @@
-// Matches: differ 0 of 442 (tla-en, 2026-11-07).
-// 7 November: next as a u16 indexed through (s16) settles mode 2's terminator
-// (2 to 0), and flag 529 no longer needs to pass through dz.
-// Before, 38: register choices in mode 3
-// (the status halfword in r2 and its byte mask in r3 where the native swaps them,
-// then reload's scratch registers for link, the state and the link point) and
-// one tie in mode 2's terminator (the native shifts point before next).
-// 6 November: the turn's differences as dx and dz locals, rival->x and rival->z
-// read beside them, give the native's compare reuse and reload (58 to 38).
-// Near miss, differ 173 of 442 (tla-en, 2026-10-31): control flow, calls and
-// data accesses are the native's; 66 of the differing lines are pool and branch
-// offsets, shifted because the draft is 3 instructions longer (445).
-// The Trial Road rival's per-frame update, by the scene state's mode: 4 follows
-// the leader's position mirrored across the course; 3 places the rival and its
-// partner from the linked player's record (gLinkPeerSignatures by flag 760's
-// byte, when gLinkStatus has that player), walking it to the link point when
-// flag 529 says so; 1 replays the recorded path (from the resource the state
-// names), turning toward each point at most 1/16 turn a frame, until the path's
-// end (mode 9); 2 records the actor's whole-pixel position two halfwords a
-// frame and, at its end (point 7198), closes it with 0, 0, hands it to the
-// actor at work+228 and returns to mode 1. The rival walks (mode 5) while it
-// moves, stands (mode 1) once it has been still for 3 frames.
-// What reached the native's allocation: x and z are one pair of variables for
-// every mode, mode 2 included (their extra references put x above the rival and
-// make z's caller-save profitable, so x is r6, the rival r7 and z r4 saved
-// around calls); the walk test is written in both modes and cross-jumped; the
-// mode 3 status is an s16 split into link and ok (link lands on the stack, the
-// scene state in r11); the else branch shifts x and z in place; the heading is
-// a u16 temporary; the terminator's second index is an s16 local.
-// Tried on 6 November without gain: link and ok as s8, s16 or u8, ok before
-// link, a u16 status, separate partner locals; next as u16, from a point local,
-// or with a zero local.
+/// @file
+/// The Trial Road rival's per-frame update.
+
 #include "../../../../games/tla/src/scene/trial_road/trial_road.h"
 
 struct TrialRoadReplay {
@@ -63,6 +34,10 @@ void Func_02005770(const void *source, void *destination);
 void Func_020057f8(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_020057f0(struct Actor *object);
 
+/// Updates the Trial Road rival by the scene state's mode: 4 follows the
+/// leader's position mirrored across the course; 3 places the rival and its
+/// partner from the linked player's record; 1 replays the recorded path; 2
+/// records the actor's position.
 void Func_02004ddc(void) {
   struct TrialRoadLinkWork *work =
       *(struct TrialRoadLinkWork **)((u8 *)Ram_HeapSlots + 236);
@@ -205,7 +180,8 @@ void Func_02004ddc(void) {
     if (!GameFlag_Test(260))
       state->point += 2;
     if (state->point == 7198) {
-      // A u16 read back as s16 at its use: the same value, the spelling that matches.
+      // A u16 read back as s16 at its use: the same value, the spelling that
+      // matches.
       u16 next = state->point + 1;
 
       work->path[state->point] = 0;

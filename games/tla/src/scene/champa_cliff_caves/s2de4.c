@@ -1,11 +1,6 @@
-// Matches (tla-en, 2026-11-07).
-// The colour written whole in each arm (as -Os hoists only its shifts, in the native
-// order), i++ after the if and a plain work->frame++: no barrier left.
-// The frame callback of the glow: cycles thirty-two colours of the object palettes
-// through a wave of greens and blues, places the glow's two sprites at its spot
-// with their scales, and lets each sprite's second scale trail its first at
-// 31/40. The goto loop keeps frame and red inside it; sprite is set before
-// Func_020035c4 so it crosses that call and sits in r7.
+/// @file
+/// The glow's frame callback.
+
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -35,6 +30,9 @@ s32 Math_Sine(s32 angle);
 void Func_020035c4(s32 *position);
 void Func_02003604(struct GlowSprite *sprite);
 
+/// Cycles thirty-two colours of the object palettes through a wave of greens
+/// and blues, places the glow's two sprites at its spot with their scales, and
+/// lets each sprite's second scale trail its first at 31/40.
 void Func_02002de4(void) {
   struct Glow *work = (struct Glow *)Ram_HeapSlots->menuRuntime;
   s32 position[3];
@@ -42,7 +40,8 @@ void Func_02002de4(void) {
   s32 i;
 
   i = 0;
-loop: {
+loop:
+  {
     s32 red = 31;
     s16 *frame = &work->frame;
     s32 wave = Math_Sine((*frame + i) << 11) * 6;

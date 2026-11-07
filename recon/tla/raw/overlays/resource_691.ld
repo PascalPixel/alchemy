@@ -61,7 +61,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/s2e30.o"(.text)
         "*/games/tla/src/scene/magma_rock/s2fc4.o"(.text)
         "*/games/tla/src/scene/magma_rock/set_state.o"(.text)
-        "*/resource_691_overlay.o"(.text.x0200b0bc)
+        "*/games/tla/src/scene/magma_rock/s30bc.o"(.text)
         "*/games/tla/src/scene/magma_rock/swap_position.o"(.text)
         "*/games/tla/src/scene/magma_rock/s3240.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion_priority.o"(.text)

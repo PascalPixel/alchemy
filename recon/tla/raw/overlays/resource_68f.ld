@@ -56,7 +56,7 @@ SECTIONS
         "*/games/tla/src/scene/tundaria_tower/s2354.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s24e8.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_g.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x0200a5e0)
+        "*/games/tla/src/scene/tundaria_tower/s25e0.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_h.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s2764.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion_priority.o"(.text)

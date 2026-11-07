@@ -24,7 +24,7 @@ SECTIONS
         "*/games/tla/src/scene/champa_cliff_caves/s29f8.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s2c88.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s2d34.o"(.text)
-        "*/resource_685_overlay.o"(.text.x0200ade4)
+        "*/games/tla/src/scene/champa_cliff_caves/s2de4.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s2f58.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s3078.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s3164.o"(.text)

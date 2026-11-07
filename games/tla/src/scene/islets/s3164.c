@@ -1,12 +1,6 @@
-// Matches (tla-en, 2026-11-07).
-// 7 November: the last actor's zero as a block-local constant (from the permuter) gives
-// the native's registers there (20 to 0); no device.
-// Before: differ 20 of 134 (tla-en, 2026-11-05), no device; left: the last actor, native r1 with r0 walked to its 0x62 byte.
-// Draft of overlay 674's Func_02003164, differ 91 of 134 (13 more
-// instructions): a room's setup written from the listing. The native keeps the
-// map work in r5, a zero for the motion flags in r6 and object 10 in r7, and
-// reuses the flag result as the zero in the else branch; this draft keeps the
-// zero in r8. alchemy permute (5 minutes) did not close it.
+/// @file
+/// A room's setup.
+
 #include "../../../../games/tla/src/scene/islets/islets.h"
 
 void Func_02003f4c(s32 actor);
@@ -18,6 +12,7 @@ struct IsletsMapWork {
   s32 value194;
 };
 
+/// Sets up the room's actors and map work.
 void Func_02003164(void) {
   struct IsletsMapWork *map = (struct IsletsMapWork *)Ram_HeapSlots->mapWork;
   struct Actor *object = Actor_GetById(10);

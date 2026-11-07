@@ -1,9 +1,11 @@
-// Matches (tla-en, 2026-11-07): each channel reads the colour again (as overlay
-// 685's Func_02000734 does), which gives the native's pool word for 31; no device.
-// Adds a red, green and blue step to each colour of a palette, clamped to 0 to 31.
+/// @file
+/// Steps a palette's colours.
+
 #include "types.h"
 #include "call.h"
 
+/// Adds a red, green and blue step to each colour of a palette, clamped to 0 to
+/// 31.
 void Func_020000c0(u16 *colors, s32 count, s32 red, s32 green, s32 blue) {
   s32 i;
 

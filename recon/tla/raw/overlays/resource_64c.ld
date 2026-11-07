@@ -5,7 +5,7 @@ SECTIONS
         "*/games/tla/src/scene/staff_credit/entry.o"(.text)
         "*/games/tla/src/scene/staff_credit/scene_tables.o"(.text)
         "*/games/tla/src/scene/staff_credit/s005c.o"(.text)
-        "*/resource_64c_overlay.o"(.text.x020080c0)
+        "*/games/tla/src/scene/staff_credit/s00c0.o"(.text)
         "*/resource_64c_overlay.o"(.text.x02008138)
         "*/games/tla/src/scene/staff_credit/s020c.o"(.text)
         "*/games/tla/src/scene/staff_credit/s0b64.o"(.text)

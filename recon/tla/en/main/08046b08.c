@@ -1,4 +1,9 @@
-// Differ 88 of 3111 (tla-en, 2026-11-06).
+// Differ 46 of 3111 (tla-en, 2026-11-07).
+// Third round, 7 November: an empty asm after the first sprite word at the
+// name, cursor, status and list icon sprites (tagged barriers) closes note 2
+// (88 to 46); the two fill-loop barriers now pay 2 each. Left: note 1's slots
+// (next and statusSprites' hoist; the hoist is a PRE register numbered by
+// hash bucket, (13926 + offset) mod 1381, so -212 sorts last) and note 3.
 // Second round, 6 November: 40 minutes of permuter (seed 7105), nothing better.
 // Left: the two stack slots of note 1 and the scheduling pairs of notes 2
 // and 3 (sprite words, the help window's loads on page 2, movs r1, #16
@@ -21,8 +26,8 @@
 // follows the cursor. The battle figure is spawned for the member shown and
 // released on the way out; a reserve member (past the fourth) is labelled.
 //
-// Control flow, loops and instruction count agree with the listing. The only
-// devices are the two barriers. Three things are left, none closed by reshaping:
+// Control flow, loops and instruction count agree with the listing. The devices
+// are the barriers. Three things are left, none closed by reshaping:
 //
 // 1. Two stack slots, about 20 instructions. next is [sp, #20] in the native and
 // [sp, #52] here, which moves helpText and statusKind by 4; statusSprites'
@@ -453,6 +458,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     if (redraw != 0)
       Func_08045528(member, portraitSlot);
     sprite->oam.word.attr01 = 0x80000400;
+    /* FAKEMATCH(barrier): an empty asm stores the sprite word straight after
+     * its load, before the call's arguments; as no asm, 56 of 3111
+     * instructions differ in tla-en. */
+    asm("");
     sprite->oam.word.attr23 = 0;
     sprite->oam.f.tile = gResourceTableEntries[portraitSlot].offset >> 5;
     sprite->oam.f.x = 8;
@@ -745,6 +754,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
 
     cursorSprite.oam.word.attr01 = 0x40000400;
     cursorSprite.oam.word.attr23 = 0;
+    /* FAKEMATCH(barrier): an empty asm stores the sprite words straight after
+     * their load, before the call's arguments; as no asm, 62 of 3111
+     * instructions differ in tla-en. */
+    asm("");
     cursorSprite.oam.f.tile =
         VramCache_Reload(cursorSlot, gResource_FixedBlockBTiles);
     {
@@ -826,7 +839,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
         /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the fill
-         * loop's test; as no asm, 90 of 3111 instructions differ in tla-en. */
+         * loop's test; as no asm, 48 of 3111 instructions differ in tla-en. */
         asm("");
         for (; j <= 3; j++)
           iconSprites[j].oam.f.tile =
@@ -908,7 +921,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
           /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the fill
-           * loop's test; as no asm, 90 of 3111 instructions differ in tla-en. */
+           * loop's test; as no asm, 48 of 3111 instructions differ in tla-en. */
           asm("");
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =
@@ -1271,6 +1284,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       sprite = statusSprites;
       for (i = 0, entry = gResourceTableEntries, iconX = 112; i <= 10; i++) {
         sprite->oam.word.attr01 = 0x40000400;
+        /* FAKEMATCH(barrier): an empty asm stores the sprite word straight
+         * after its load; as no asm, 60 of 3111 instructions differ in
+         * tla-en. */
+        asm("");
         sprite->oam.word.attr23 = 0;
         sprite->oam.f.tile = entry[*slot++].offset >> 5;
         sprite->oam.f.x = iconX;
@@ -1288,6 +1305,10 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
         for (i = 0, iconEntry = gResourceTableEntries, iconRow = 0; i <= 3;
              i++) {
           sprite->oam.word.attr01 = 0x40000400;
+          /* FAKEMATCH(barrier): an empty asm stores the sprite word straight
+           * after its load; as no asm, 48 of 3111 instructions differ in
+           * tla-en. */
+          asm("");
           sprite->oam.word.attr23 = 0;
           sprite->oam.f.tile = iconEntry[iconSlots[i]].offset >> 5;
           if (page == 3)

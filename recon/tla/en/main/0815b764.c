@@ -1,4 +1,8 @@
-// Differ 82 of 1932 (tla-en, 2026-11-07), draft 1932, with one tagged barrier.
+// Differ 76 of 1932 (tla-en, 2026-11-07).
+// 2026-11-07, from 82: the listing adds the offset before the base in q and
+// texture.pixels; integer sums of the pointer give that (78, then 76), and the
+// fade loop steps src and dst at its end (80). Two zeros at the ship-burst
+// block (j = 0 after model->vertices, 91) and store-order tries stay worse.
 // 2026-11-07, from 91: j = 0 as its own statement before model->shade (the loop
 // then starts from j) gives the listing's count; j = 0 elsewhere in the setup
 // is 86 to 412. Left: the shade store now shares j's zero, and frame * 3 still
@@ -86,9 +90,7 @@
 // - alpha: settled 2026-11-06 by ((frame - 108) * 2) << 8 | 16.
 // - bg2pa and bg2pd: the discarded ldrh before each strh (2 missing instructions,
 //   as in 0816c6f8). A volatile form would be a device.
-// - q = sparks + first and pixels: the listing adds offset first (adds r5, r3,
-//   r4). An s32 cell buffer gives that for pixels but is a cast to a type the
-//   object is not, so pixels stays one pair off.
+// - q and pixels: settled 2026-11-07 by integer sums, offset first.
 // - loaded = 0 and transition[4] = 1: the listing stores transition before
 //   shipX with base r4. That store first gives base r2 and rotates the reloads.
 // - A few scheduling pairs in frame 133's particle loop, the first model's blit
@@ -639,7 +641,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           }
           step->velocityZ += 1024;
           if (draw) {
-            texture.pixels = (u << 12) + portraits;
+            // Offset first, as the listing adds it.
+            texture.pixels = (u8 *)((u << 12) + (s32)portraits);
             Render_ResetTransformState();
             Func_08015160(mx, my, 0);
             SceneTransform_ApplyPitch(0xc000);
@@ -657,7 +660,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
           {
             s32 first = i * 16;
 
-            q = sparks + first;
+            // Offset first, as the listing adds it.
+            q = (struct EffectStep *)(first * (s32)sizeof(*q) + (s32)sparks);
           }
           for (; j != 16; j++, q++) {
             s32 a = Random16() & 0xffff;
@@ -709,7 +713,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       verts = Heap_AllocEwram(32);
       /* FAKEMATCH(barrier): an empty asm reads frame into r7 here, where the
        * listing reloads it, and the loop's step inits take it from there; as
-       * no asm, 347 of 1932 instructions differ in tla-en. */
+       * no asm, 341 of 1932 instructions differ in tla-en. */
       asm("" : : "r"(frame));
       model = Render_AllocateModelList(1);
       j = 0;
@@ -850,8 +854,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
     u16 *src = (u16 *)(battle + 0x56c);
     volatile u16 *dst = (volatile u16 *)(BG_PLTT + 96);
 
-    for (i = 0; i != 128; i++) {
-      s32 v = *src++;
+    for (i = 0; i != 128; i++, src++, dst++) {
+      s32 v = *src;
       s32 r = 31;
       s32 g;
       s32 b;
@@ -880,7 +884,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       } else if (nb > b) {
         nb = b;
       }
-      *dst++ = nb << 10 | ng << 5 | nr;
+      *dst = nb << 10 | ng << 5 | nr;
     }
     wait(1);
   }

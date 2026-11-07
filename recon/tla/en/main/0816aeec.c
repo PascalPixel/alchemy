@@ -1,4 +1,11 @@
-// Differ 178 of 902, draft 904 (tla-en, 2026-11-07).
+// Differ 162 of 902, draft 904 (tla-en, 2026-11-07).
+// 2026-11-07, sixth pass, 178 to 162: the water mesh read through one
+// function-level pointer (mesh, set once and also used for model->mesh) fixes
+// the frame loop's reloads after the grid; the grid itself is unchanged (d in
+// ip, the + 15 in slot 8, Q copied to r0, vertex r4). No device paid: pins of
+// u r0, vertex r1, d ip (206 to 957), barriers on d or i (704 to 949),
+// volatile d (280), a Q local (210), the + 15 as a local (477), a, b or c from
+// d (238 to 815), the permuter (best 162 before this, and on it).
 // 2026-11-07, fifth pass, 180 to 178: quad[1]'s corner index d as its own
 // counter (set from i + 17 at the row top, stepped with the column) puts the
 // spilled slot 8 where the native has it, but d still takes ip and the
@@ -294,12 +301,14 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   s32 phase;
   s32 row;
   s32 column;
+  u8 *mesh; // The water's mesh, read through one pointer.
   s32 i;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   Func_0813ba50();
   BattleEffect_StartCanvasLayer(1);
+  mesh = gData_02014000;
   if (mode == 0) {
     REG_BLDALPHA = 0xc10;
   } else {
@@ -341,7 +350,6 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     s32 d;
     s32 v = row << 4;
     s32 x = -60;
-    u8 *mesh = gData_02014000;
     s8 *cells = (s8 *)gMapCellBuffer;
 
     i = v;
@@ -516,7 +524,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     }
     model->kind = 7;
     model->texture = &texture;
-    model->mesh = gData_02014000;
+    model->mesh = mesh;
     model->vertices = vertices;
     model->shade = shade;
     model->scrollU = (frame + phase) & 127;

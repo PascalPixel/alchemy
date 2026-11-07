@@ -1,4 +1,11 @@
-// Differ 88 of 183 (tla-en, 2026-11-06), one pin. The tag loop's source pointer, pinned to r2,
+// Differ 30 of 183 (tla-en, 2026-11-07).
+// 2026-11-07: reading the first snapshot byte through a local holding 0 puts 304 in r0 as a
+// reload, so the copies rotate r0, r1, r2 as natively (88 to 30, found by the permuter; the
+// copies written to Data_0200ff6c directly, 34 through the local pointer). Left: the PP store's
+// Data_0200ffec still a pseudo in r3, the tag loop's destination built after its source, and
+// the first copy's address folded into ldrb. A both-arms-alike `if (unit)` around the HP
+// stores measured 26; not kept.
+// The note before, at 88 of 183 (2026-11-06), one pin. The tag loop's source pointer, pinned to r2,
 // is busy where the destination's reload of the snapshot pointer is made, so reload takes r1
 // there and r1 joins the spill set, the cause named below. Left: reload's rotation over r0 to
 // r3 starts one register later than the native's (the copies' offsets run r1, r2, r0 where the
@@ -99,8 +106,8 @@ u32 BattleParty_IsUnitListed(u32 id);
 void Func_0811843c(void) {
   s32 i;
   s32 j;
+  s32 zero;
   struct Snapshot *snap = &Data_0200ff58;
-  u8 (*copies)[28] = Data_0200ff6c;
   u8 *ids = Data_0812a16c;
 
   for (i = 0; i <= 4; i++) {
@@ -114,38 +121,41 @@ void Func_0811843c(void) {
         Data_0200ffec[i].unk2 = unit->unk3a;
       }
       if (i <= 2) {
-        /* FAKEMATCH(pin): the form kept; as u8 *src, 139 of 183 instructions differ in tla-en. */
+        /* FAKEMATCH(pin): the form kept; as u8 *src, 141 of 183 instructions differ in tla-en. */
         register u8 *src asm("r2") = unit->tags;
         u8 *dst = snap->tags[i];
 
         for (j = 0; j <= 3; j++)
           *dst++ = *src++;
       }
-      copies[i][0] = unit->snapshot[0];
-      copies[i][1] = unit->snapshot[1];
-      copies[i][2] = unit->snapshot[2];
-      copies[i][3] = unit->snapshot[3];
-      copies[i][4] = unit->snapshot[4];
-      copies[i][5] = unit->snapshot[5];
-      copies[i][6] = unit->snapshot[6];
-      copies[i][7] = unit->snapshot[7];
-      copies[i][8] = unit->snapshot[8];
-      copies[i][9] = unit->snapshot[9];
-      copies[i][10] = unit->snapshot[10];
-      copies[i][11] = unit->snapshot[11];
-      copies[i][12] = unit->snapshot[12];
-      copies[i][13] = unit->snapshot[13];
-      copies[i][14] = unit->snapshot[14];
-      copies[i][15] = unit->snapshot[15];
-      copies[i][16] = unit->snapshot[16];
-      copies[i][17] = unit->snapshot[17];
-      copies[i][18] = unit->snapshot[18];
-      copies[i][19] = unit->snapshot[19];
-      copies[i][20] = unit->snapshot[20];
-      copies[i][21] = unit->snapshot[21];
-      copies[i][22] = unit->snapshot[22];
-      copies[i][23] = unit->snapshot[23];
-      copies[i][24] = unit->snapshot[24];
+      // zero holds 0: indexing the first source byte through it keeps 304 in a reload
+      // register, as the native does (88 of 183 as snapshot[0]).
+      zero = 0;
+      Data_0200ff6c[i][0] = unit->snapshot[zero];
+      Data_0200ff6c[i][1] = unit->snapshot[1];
+      Data_0200ff6c[i][2] = unit->snapshot[2];
+      Data_0200ff6c[i][3] = unit->snapshot[3];
+      Data_0200ff6c[i][4] = unit->snapshot[4];
+      Data_0200ff6c[i][5] = unit->snapshot[5];
+      Data_0200ff6c[i][6] = unit->snapshot[6];
+      Data_0200ff6c[i][7] = unit->snapshot[7];
+      Data_0200ff6c[i][8] = unit->snapshot[8];
+      Data_0200ff6c[i][9] = unit->snapshot[9];
+      Data_0200ff6c[i][10] = unit->snapshot[10];
+      Data_0200ff6c[i][11] = unit->snapshot[11];
+      Data_0200ff6c[i][12] = unit->snapshot[12];
+      Data_0200ff6c[i][13] = unit->snapshot[13];
+      Data_0200ff6c[i][14] = unit->snapshot[14];
+      Data_0200ff6c[i][15] = unit->snapshot[15];
+      Data_0200ff6c[i][16] = unit->snapshot[16];
+      Data_0200ff6c[i][17] = unit->snapshot[17];
+      Data_0200ff6c[i][18] = unit->snapshot[18];
+      Data_0200ff6c[i][19] = unit->snapshot[19];
+      Data_0200ff6c[i][20] = unit->snapshot[20];
+      Data_0200ff6c[i][21] = unit->snapshot[21];
+      Data_0200ff6c[i][22] = unit->snapshot[22];
+      Data_0200ff6c[i][23] = unit->snapshot[23];
+      Data_0200ff6c[i][24] = unit->snapshot[24];
     }
   }
 }

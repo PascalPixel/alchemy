@@ -1,4 +1,7 @@
-// Differ 77 of 297 (tla-en, 2026-11-07).
+// Differ 45 of 297 (tla-en, 2026-11-07).
+// 2026-11-07, second round: messageBase pinned to r6 (FAKEMATCH pin), 77 to 45;
+// left are only the native's three chooseAgain = 1 stores at each retry's
+// end (moving them there with the pin: 134).
 // 2026-11-07: the outer loop kept as a label with goto for continue and break,
 // the 77 form below; left are shop and messageBase swapped between r6 and r7
 // and the native's three chooseAgain = 1 stores. Before, differ 81
@@ -115,7 +118,8 @@ s32 Func_0810abf0(void) {
   s32 unitId;
   s32 chooseAgain;
   s32 price;
-  s32 messageBase;
+  register s32 messageBase asm("r6");
+  /* FAKEMATCH(pin): messageBase held in r6; as a plain local, 77 of 297 instructions differ in tla-en. */
 
   chooseAgain = 0;
   memberIndex = 0;

@@ -1,4 +1,8 @@
-// Differ 76 of 1932 (tla-en, 2026-11-07).
+// Differ 68 of 1932 (tla-en, 2026-11-07).
+// 2026-11-07, from 76: the ship position is one struct (x, z) on the stack, not
+// two locals (68; an s32[2] gives the same); its slots then sit where the
+// listing keeps them and the setup and placement rows agree. Not worked further:
+// the ship-burst giv order and single scheduling pairs, as below.
 // 2026-11-07, from 82: the listing adds the offset before the base in q and
 // texture.pixels; integer sums of the pointer give that (78, then 76), and the
 // fade loop steps src and dst at its end (80). Two zeros at the ship-burst
@@ -274,8 +278,10 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   s32 dmaArmed;
   s32 skip;
   DrawRectangle *blit;
-  s32 shipZ;
-  s32 shipX;
+  struct {
+    s32 x;
+    s32 z;
+  } ship;
   s32 loaded;
   s32 draw;
   s32 i;
@@ -374,8 +380,8 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B3, picture, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data137, sprites, 0, 0);
   loaded = 0;
-  shipX = 0xc80000;
-  shipZ = 0x540000;
+  ship.x = 0xc80000;
+  ship.z = 0x540000;
   transition[4] = 1;
   ClearWords_(canvas, 0x3c00);
   REG_DISPCNT = 0x7141;
@@ -713,7 +719,7 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       verts = Heap_AllocEwram(32);
       /* FAKEMATCH(barrier): an empty asm reads frame into r7 here, where the
        * listing reloads it, and the loop's step inits take it from there; as
-       * no asm, 341 of 1932 instructions differ in tla-en. */
+       * no asm, 333 of 1932 instructions differ in tla-en. */
       asm("" : : "r"(frame));
       model = Render_AllocateModelList(1);
       j = 0;
@@ -767,14 +773,14 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
       if (frame > 131) {
         s32 u = frame - 132;
 
-        shipX = (Trig_Sin(u << 11) << 1) + 0xc80000;
-        shipZ = (Trig_Sin(u << 10) << 1) + 0x540000;
+        ship.x = (Trig_Sin(u << 11) << 1) + 0xc80000;
+        ship.z = (Trig_Sin(u << 10) << 1) + 0x540000;
       }
       if (draw) {
         place[1] = place[3] = 0;
         for (i = 0; i != 7; i++) {
-          place[0] = (Data_08198654[i] << 16) + shipX - 0x200000;
-          place[2] = (Data_0819865b[i] << 16) + shipZ - 0x200000;
+          place[0] = (Data_08198654[i] << 16) + ship.x - 0x200000;
+          place[2] = (Data_0819865b[i] << 16) + ship.z - 0x200000;
           Render_ApplyProjectedPlacementFar(work->objects[i], place, (s32 *)&req, 0);
         }
       }

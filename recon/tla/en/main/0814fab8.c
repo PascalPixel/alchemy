@@ -1,4 +1,9 @@
-// Differ 70 of 1146 (tla-en, 2026-11-07).
+// Differ 54 of 1146 (tla-en, 2026-11-07).
+// Fourth round, 7 November: the lights' second build takes its 0 from a
+// function-level local (reloaded into r5 as the listing does) and fetches its
+// entry through a barrier on the slot's address, which stops loop.c hoisting
+// 0x030000bc out of the member loop (70 to 54). Left: the Djinni, center's
+// zeroes (one reload behind), start > 0's ble and the mode 4 swap.
 // Third round, 7 November: the mode 4 site takes the picture's whole address
 // (sheet + cel * 2048 + SERIES_B_PICTURE) once, which places the sheet offset
 // and the second entry as the listing does (84 to 70); left there, draw[0] and
@@ -201,6 +206,9 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
   s32 shift;
   s32 flags;
   s32 start;
+  // Holds BLIT_ADDITIVE for the whole function: the lights' second build
+  // then reloads its 0 in place of a fresh constant.
+  s32 additive = BLIT_ADDITIVE;
   s32 frame;
   s32 i;
   s32 origin[3];
@@ -364,7 +372,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
 
       LOAD_BLITTER(draw[0], flags ^ COMPOSITE_FLIP_X, BLIT_MAX);
       /* FAKEMATCH(barrier): the 4 held by an empty asm with an output; as flags ^
-         COMPOSITE_FLIP_X, 125 of 1146 instructions differ in tla-en. */
+         COMPOSITE_FLIP_X, 85 of 1146 instructions differ in tla-en. */
       __asm__("" : "=r"(four) : "0"(four));
       LOAD_BLITTER_ALTERNATE(draw[1], flags ^ four, BLIT_ADDITIVE);
 
@@ -402,7 +410,16 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
         // The lights turn and close in two pixels a frame.
         if (frame > member * 8) {
           LOAD_BLITTER(draw[0], flags, BLIT_MAX);
-          LOAD_BLITTER_ALTERNATE(draw[1], flags, BLIT_ADDITIVE);
+          Func_08196404(BLITTER_SLOT_ALTERNATE, 7, 7, flags, additive);
+          {
+            void **slot = &Ram_HeapSlots->unkb8[1];
+
+            /* FAKEMATCH(barrier): the slot's address held by an empty asm with an
+               output; as draw[1] = Ram_HeapSlots->unkb8[1], 86 of 1146
+               instructions differ in tla-en. */
+            __asm__("" : "=r"(slot) : "0"(slot));
+            draw[1] = (DrawRectangle)*slot;
+          }
           if (mode == 0) {
             SceneTransform_ApplyPitch(-frame << 10);
           } else if (mode == 1) {

@@ -1,4 +1,20 @@
-// Differ 162 of 902, draft 904 (tla-en, 2026-11-07).
+// Differ 158 of 902 (tla-en, 2026-11-07).
+// 2026-11-07, eighth pass, unchanged at 158. Q (the row base copy) takes r0
+// because greg copies i's preferences to it through Q = i (i dies there),
+// and i prefers r0 from the splash's (i << 14) shift into the call argument;
+// u then skips r0 as someone else's preference. With the splash at a
+// constant (diagnostic only) u takes r0. quad[20] = u after quad[19] (u 22
+// insns) gives vertex r1, but Q still r0 and u r4 (618). Not gained: Q or i
+// pinned to r4 (879, 931), a row-local base for i (852 to 869), i = v at the
+// row end or in the column (943), the shift's spellings or i copied through
+// an empty asm (618 to 965, 197), the splash on its own counter (frame -8,
+// 947), the permuter on the grid, 8 minutes (best 160).
+// 2026-11-07, seventh pass, devices allowed, 162 to 158: the permuter on the
+// grid (14 minutes) found only a dead store to frames in b. Not gained: a
+// barrier on the quad row start (mesh + row * 15 * 24 computed per row as in
+// the native, but row * 15 is then found first and the three row slots rotate:
+// 166 to 252), on firstQuad (426) or on quad (847); asm uses of d or the + 15
+// (460, 728); d at function scope or set from v or row (162); volatile d (280).
 // 2026-11-07, sixth pass, 178 to 162: the water mesh read through one
 // function-level pointer (mesh, set once and also used for model->mesh) fixes
 // the frame loop's reloads after the grid; the grid itself is unchanged (d in
@@ -364,7 +380,10 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       vertex[1] = 60;
       vertex[2] = row * 24 - 84;
       if (row <= 6 && column <= 14) {
-        s32 b = i + column + 1;
+        s32 b = (frames = i) + column + 1;
+        /* FAKEMATCH(dead): b read through frames = i, a store the frame
+         * count overwrites; as i + column + 1, 162 of 902 instructions differ
+         * in tla-en. */
         s32 c = i + column + 16;
         u8 *quad = mesh + (firstQuad + column) * 24;
 

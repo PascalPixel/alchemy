@@ -207,7 +207,7 @@ s32 Func_02000e44(void) {
                                  (struct RenderInput *)window, 0, 0);
     Cursor_Attach(&gridStore, sprite);
     sprite->sentinel = 255;
-    sprite->oam.priority = 0;
+    sprite->sprite.oam.priority = 0;
     Cursor_Place(&gridStore, (s16)grid->x * 8 - 4, (s16)grid->y * 8 + 12);
   }
   height = 1;

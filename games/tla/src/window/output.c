@@ -40,8 +40,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 arg0,
 /// with that side's palette (14 + side).
 struct WindowSprite *CreateSideObject(s32 objectKind, s32 position, s32 side,
                                       s32 arg3, s32 arg4, s32 arg5) {
-  struct WindowWork *state =
-      (struct WindowWork *)Ram_HeapSlots->windowTiles;
+  struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   struct WindowSprite *object = 0;
   s32 first;
   s32 second;
@@ -73,7 +72,7 @@ struct WindowSprite *CreateSideObject(s32 objectKind, s32 position, s32 side,
   object = WindowSprite_Create(first, OUTPUT_SIZE_32X32,
                                (struct RenderInput *)arg3, arg4, arg5);
   if (object != 0) {
-    object->oam.palette = slot;
+    object->sprite.oam.palette = slot;
     object->kind = 2;
   }
 

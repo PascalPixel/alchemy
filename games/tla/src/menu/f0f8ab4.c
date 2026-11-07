@@ -34,8 +34,8 @@ void Func_080f8ab4(s32 x, s32 y) {
   }
   cursor = work->ownerCursors[0];
   {
-    s32 spriteX = cursor->oam.x;
-    s32 spriteY = cursor->oam.y;
+    s32 spriteX = cursor->sprite.oam.x;
+    s32 spriteY = cursor->sprite.oam.y;
 
     cursor->x = spriteX + 64;
     cursor->y = spriteY + 64;
@@ -60,10 +60,11 @@ void Func_080f8ab4(s32 x, s32 y) {
     {
       s32 spriteX = (px >> 4) + (work->ownerWindow->x << 3);
 
-      cursor->oam.x = cursor->x = spriteX - 56;
+      cursor->sprite.oam.x = cursor->x = spriteX - 56;
     }
     py += dy;
-    cursor->oam.y = cursor->y = (py >> 4) + (work->ownerWindow->y << 3) - 56;
+    cursor->sprite.oam.y = cursor->y =
+        (py >> 4) + (work->ownerWindow->y << 3) - 56;
     steps--;
     if (steps != 0)
       wait(1);

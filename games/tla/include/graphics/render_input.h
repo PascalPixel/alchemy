@@ -60,6 +60,13 @@ struct RenderOam {
   u16 high;
 };
 
+/// A sprite as the depth queue takes it: Oam_AddSpriteAtDepth writes the link
+/// to the next sprite queued at the same depth, and the OAM attributes follow.
+struct QueuedSprite {
+  struct QueuedSprite *next; ///< the next sprite queued at its depth
+  struct RenderOam oam;
+};
+
 /// A window sprite: a sprite in a window's output list (a character, an icon
 /// or a portrait), with its VRAM cache slot and OAM attributes.
 struct WindowSprite {
@@ -67,15 +74,14 @@ struct WindowSprite {
   /// 0 for a glyph; otherwise it owns VRAM cache slot index, freed with it,
   /// and 2 (a portrait) also its palette slot.
   s8 kind;
-  s8 active;    ///< its sprite motion; 0 while free
-  u16 x;        ///< screen pixels
-  u16 y;        ///< screen pixels
-  u16 unk0a;    ///< not named by ⚓️ code
-  u16 animStep; ///< step of its motion's animation
-  s8 index;     ///< VRAM cache slot, or a glyph's tile
-  u8 sentinel;  ///< depth slot it is drawn at
-  u8 unk10[4];  ///< with oam, the sprite entry, read through casts
-  struct RenderOam oam;
+  s8 active;                  ///< its sprite motion; 0 while free
+  u16 x;                      ///< screen pixels
+  u16 y;                      ///< screen pixels
+  u16 unk0a;                  ///< not named by ⚓️ code
+  u16 animStep;               ///< step of its motion's animation
+  s8 index;                   ///< VRAM cache slot, or a glyph's tile
+  u8 sentinel;                ///< depth slot it is drawn at
+  struct QueuedSprite sprite; ///< queued at its depth each frame
 };
 
 /// A list of window sprites: its first output and the link to append after.
@@ -98,7 +104,8 @@ struct WindowSprite *WindowSprite_CreateFar(s32 resource, s32 flags,
 STATIC_ASSERT(offsetof(struct WindowSprite, animStep) == 0x0c);
 
 STATIC_ASSERT(offsetof(struct WindowSprite, sentinel) == 0x0f);
-STATIC_ASSERT(offsetof(struct WindowSprite, oam) == 0x14);
+STATIC_ASSERT(offsetof(struct WindowSprite, sprite) == 0x10);
+STATIC_ASSERT(offsetof(struct WindowSprite, sprite.oam) == 0x14);
 STATIC_ASSERT(sizeof(struct WindowSprite) == 0x1c);
 
 #endif

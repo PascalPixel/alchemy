@@ -32,8 +32,8 @@ void RenderResource_LoadCommandIcon(s32 index, s32 value, s32 flag) {
 }
 
 struct WindowSprite *RenderResource_CreateCommandIcon(s32 arg0, s32 arg1,
-                                                struct RenderInput *arg2,
-                                                s32 arg3, s32 arg4) {
+                                                      struct RenderInput *arg2,
+                                                      s32 arg3, s32 arg4) {
   s32 index;
   struct WindowSprite *entity;
 
@@ -42,7 +42,7 @@ struct WindowSprite *RenderResource_CreateCommandIcon(s32 arg0, s32 arg1,
   if (index != 0x60) {
     RenderResource_LoadCommandIcon(arg0, index, arg1);
     entity = WindowSprite_Create(index, OUTPUT_SIZE_32X32, arg2, arg3, arg4);
-    entity->oam.palette256 = 1;
+    entity->sprite.oam.palette256 = 1;
     entity->sentinel = 0xfb;
   }
   return entity;

@@ -37,7 +37,7 @@ void WindowSprite_Release(struct WindowSprite *entry) {
     Resource_ResetEntry((u8)entry->index);
     if ((u8)entry->kind == 2) {
       u8 *dst = (u8 *)Ram_HeapSlots->windowTiles;
-      s32 idx = entry->oam.palette * 2 + UI_PALETTE_OWNER_OFFSET;
+      s32 idx = entry->sprite.oam.palette * 2 + UI_PALETTE_OWNER_OFFSET;
       *(u16 *)(dst + idx) = 0x3E7;
     }
   }

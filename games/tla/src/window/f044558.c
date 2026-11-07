@@ -122,7 +122,7 @@ s32 Func_08044558(s32 member) {
                                  (struct RenderInput *)keyboardWindow, 0, 0);
     nameCaret.sprite = output;
     output->sentinel = 255;
-    output->oam.priority = 0;
+    output->sprite.oam.priority = 0;
     Func_08108048(&nameCaret.cursor, Text_SetString(editedName) + 70, 22);
   }
   palette = (u16 *)0x050001c0;
@@ -156,8 +156,8 @@ s32 Func_08044558(s32 member) {
       u32 frame = (gVBlankCount >> 1) & 7;
 
       output = nameCaret.sprite;
-      output->oam.x = output->x + gNameEntry_CaretWave[frame];
-      output->oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
+      output->sprite.oam.x = output->x + gNameEntry_CaretWave[frame];
+      output->sprite.oam.y = output->y + gNameEntry_CaretWave[(frame + 5) & 7];
     }
     if (gInput.repeat & 0x40) {
       Sound_PlayFar(111);

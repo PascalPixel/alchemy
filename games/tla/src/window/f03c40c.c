@@ -28,7 +28,7 @@ extern u16 gWindowSprite_BounceScales[];
 
 void Func_0803c40c(struct WindowSprite *output) {
   s32 scale = 256;
-  struct OutputSprite *sprite = (struct OutputSprite *)output->unk10;
+  struct OutputSprite *sprite = (struct OutputSprite *)&output->sprite;
   struct AffineTransform effect;
 
   switch ((u8)output->active) {

@@ -41,7 +41,6 @@ SECTIONS
         "*/games/tla/src/scene/settlements/s16b0.o"(.text)
         "*/games/tla/src/scene/settlements/s173c.o"(.text)
         "*/games/tla/src/scene/settlements/s1770.o"(.text)
-        "*/resource_690_overlay.o"(.text.x02009a1c)
         "*/games/tla/src/scene/settlements/s1a1c.o"(.text)
         "*/games/tla/src/scene/settlements/s1d30.o"(.text)
         "*/games/tla/src/scene/settlements/s1d3c.o"(.text)

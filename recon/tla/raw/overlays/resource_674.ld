@@ -36,7 +36,6 @@ SECTIONS
         "*/games/tla/src/scene/islets/s2d7c.o"(.text)
         "*/games/tla/src/scene/islets/s2f1c.o"(.text)
         "*/games/tla/src/scene/islets/s3164.o"(.text)
-        "*/resource_674_overlay.o"(.text.x0200b29c)
         "*/games/tla/src/scene/islets/s329c.o"(.text)
         "*/games/tla/src/scene/islets/prepare.o"(.text)
         "*/games/tla/src/scene/islets/s3410.o"(.text)

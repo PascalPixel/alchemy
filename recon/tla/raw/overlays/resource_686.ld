@@ -36,7 +36,6 @@ SECTIONS
         "*/games/tla/src/scene/ankohl_ruins/s1f7c.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/s20fc.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/events_f.o"(.text)
-        "*/resource_686_overlay.o"(.text.x0200a438)
         "*/games/tla/src/scene/ankohl_ruins/s2438.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/prepare.o"(.text)
         "*/games/tla/src/scene/ankohl_ruins/import.o"(.text)

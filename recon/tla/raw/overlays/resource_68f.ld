@@ -45,7 +45,6 @@ SECTIONS
         "*/games/tla/src/scene/tundaria_tower/s17dc.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_e.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s189c.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x02009b48)
         "*/games/tla/src/scene/tundaria_tower/s1b48.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_f.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s1e68.o"(.text)

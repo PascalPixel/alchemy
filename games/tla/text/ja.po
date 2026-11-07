@@ -19056,7 +19056,7 @@ msgctxt "MsgWhatToSell"
 msgid "04684"
 msgstr "どれを売ってくれるんだい?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSellAnythingElse"
 msgid "04685"
 msgstr "ほかにも なにか売るのかい?{end_now}"
 
@@ -19201,7 +19201,7 @@ msgstr ""
 "しゅうりができたぜ\n"
 "さあ うけとってくれ{page_break}"
 
-msgctxt "message"
+msgctxt "MsgRepairAnythingElse"
 msgid "04709"
 msgstr "ほかにも しゅうりするかい?{end_now}"
 
@@ -19958,7 +19958,7 @@ msgstr ""
 "お前のざいりょうを見て\n"
 "しごとをする気になったぜ。{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWhichItemNeedsAttention"
 msgid "04848"
 msgstr ""
 "どのアイテムに オレのあつい\n"

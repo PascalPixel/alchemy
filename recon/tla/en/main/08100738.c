@@ -1,3 +1,6 @@
+// Differ 12 of 90 (tla-ja, 2026-11-07).
+// Every edition shares this form: ja 0x08100740, de 0x0810a904, es 0x0810688c,
+// fr 0x081028a8 and it 0x08100854 differ 12 of 90, as English at 0x08100738.
 // Near miss, differ 12 of 90 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft of Item_Use (Func_08100738): applies the slot's action, then consumes

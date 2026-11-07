@@ -3,6 +3,9 @@
 #include "window.h"
 #include "uiwindow.h"
 #include "glyph.h"
+#include "edition.h"
+#include "version.h"
+#include "text_font.h"
 
 void Text_ResetStyle(void);
 s32 Func_0803bde4(struct Window *window, u32 c, s32 x, s32 y, s32 flags);
@@ -35,11 +38,17 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
   }
   for (;;) {
     c = *text++;
+#if (LANGUAGE != LANGUAGE_JAPANESE)
     if (c > 0xff)
       c = 0x40;
+#endif
     if (c == 0)
       break;
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+    if (c <= 30) {
+#else
     if (c <= 30 || c == 176) {
+#endif
       switch (c) {
       case 8:
         work->colour = *text;
@@ -67,20 +76,52 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
       case 11:
       case 12:
       case 17:
+#if (LANGUAGE != LANGUAGE_JAPANESE)
       case 29:
+#endif
         text++;
         break;
       }
     } else {
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+      // A kana followed by a voicing mark carries the mark in its code.
+      next = *text;
+      if (next == TEXT_MARK_VOICED) {
+        c |= 1 << TEXT_MARK_SHIFT;
+        text++;
+      } else if (next == TEXT_MARK_SEMIVOICED) {
+        c |= 2 << TEXT_MARK_SHIFT;
+        text++;
+      }
+#else
       if ((window->flags & 8) == 0) {
         next = *text;
+#if TLA_PATCH_4
+        if (c > 32 && next > 32) {
+          s16 pairWidth =
+              gFont_Glyphs[c - 32].width + gFont_Glyphs[next - 32].width;
+
+          // Outlined text joins only pairs one pixel narrower.
+          if (work->outline == 1) {
+            if ((u16)pairWidth <= 14) {
+              c |= next << 8;
+              text++;
+            }
+          } else if ((u16)pairWidth <= 15) {
+            c |= next << 8;
+            text++;
+          }
+        }
+#else
         if (c > 32 && next > 32 &&
             (u16)(gFont_Glyphs[c - 32].width + gFont_Glyphs[next - 32].width) <=
                 15) {
           c |= next << 8;
           text++;
         }
+#endif
       }
+#endif
       x += Func_0803bde4(window, c, x, y, 0);
     }
   }

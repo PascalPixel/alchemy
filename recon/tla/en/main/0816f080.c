@@ -9,7 +9,11 @@
 // listing. Every other spelling of that store measured (x * 2 + 1 grouped or reordered,
 // row + 1, 0x1001 +, x + x in both stores) stays at 350 or 378.
 // Left: the splash scale (below, Left 2), which also shifts every literal pool load by 4,
-// and the zero stores' scheduling (Left 3).
+// and the zero stores' scheduling (Left 3). Tried at 112, none better: a frame-scope scale
+// shared by the glow and set to 25000 before the splash loop, halved with / 2 (116) or >> 1
+// (112: gcse's cprop still notes 12500); model->shade = 0 after the texture store or the
+// mesh (112), between the texture fields (255), last (116); glow->variant = 0 first (120);
+// 20 minutes of permuter over the splash loop (seed 4417): none.
 // Third round, 6 November, none better. The r6/r7 swap is global's order: giv 421 (the second
 // pair's decremented pointer, 14 refs over 39 insns) outranks giv 463 (the third pair's +1
 // pointer, 11 over 31), takes r6, and reload's spill set then takes r7 from 463 at insn 1747

@@ -1,6 +1,10 @@
-// Draft, differ 16 of 861, skeleton gap 16 (tla-en, 2026-11-01)
-// BattleEffect_RunVengeance: every instruction is present and only three
-// spots are ordered differently, all sched2 ties, none of them structural:
+// Differ 2 of 861 (tla-en, 2026-11-07).
+// 2026-11-07: only one swap is left, after the speed update: the listing
+// loads backgroundX before movs r3, #52; sched2 ranks the movs higher
+// (priority 6, through muls and the sign branch, against the load's 5).
+// Temporaries, comma forms, operand order, a constant local and a once-only
+// block do not move it; 7 minutes of permuting found nothing.
+// BattleEffect_RunVengeance (2026-11-01, differ 16): three sched2 ties:
 // strh REG_BLDALPHA against the movs that zeroes the tile offset; ldr of
 // backgroundX against movs #52 before the muls; and the preheader of the
 // blade loop, where the listing stores the two hoisted blitter copies and

@@ -1,17 +1,3 @@
-// Draft, differ 2 of 913 (tla-en, 2026-11-05). The event store first, gMainRoutineWork after it. Left: one door call (entrance 11): its stack store after the shifts natively. Older notes below predate this.
-// Overlay 6b0's Func_02001e64: the scene entry setup, one branch per room
-// (scenes 0x12f to 0x133, which the listing loads from the pool, so they are
-// SceneId symbols rather than plain constants).
-// Left, all structural pieces closed except:
-// - gcse's PRE deletes the reload of gMainRoutineWork at L_0200a05c (listing
-//   ldr r5), using the load before it across the Func_02001d68 test. PRE works
-//   on the pool load; the shape that stops it is not found (a block-scope
-//   pointer, the && form and the struct field all give the same result).
-// - cprop turns the third argument of Func_02003190 into the constant 0x204
-//   where the listing copies r7; a shared local set in both predecessors and
-//   a separate variable for the room's 2 change nothing.
-// - Scheduling at the head (ldr r6, movs r1 around the store) and at the
-//   first Func_02002a74 of the fourth room (str before lsls r2).
 #include "types.h"
 #include "call.h"
 #include "main_routine_work.h"
@@ -43,11 +29,11 @@ extern u8 gData_0200384c[];
 extern u8 gData_0200385c[];
 extern u8 gData_02003888[];
 extern u8 gData_020038b4[];
-extern char SceneId_Ov6b0Room1;
-extern char SceneId_Ov6b0Room2;
-extern char SceneId_Ov6b0Room3;
-extern char SceneId_Ov6b0Room4;
-extern char SceneId_Ov6b0Room5;
+extern char SceneId_Ov6B0Room1;
+extern char SceneId_Ov6B0Room2;
+extern char SceneId_Ov6B0Room3;
+extern char SceneId_Ov6B0Room4;
+extern char SceneId_Ov6B0Room5;
 
 s32 Func_02001e64(void) {
   s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0, t0, t1, t3;
@@ -63,13 +49,10 @@ s32 Func_02001e64(void) {
 
   v_r2 = 0x3000000;
   v_r7 = 0x204;
-  /* FAKEMATCH(barrier): the empty asm on v_r7 changes its allocation rank; as no
-   * asm, 43 of 913 instructions differ in tla-en. */
-  asm("" : "=r"(v_r7) : "0"(v_r7));
   v_r6 = (s32)&gMainRoutineWork;
   FIELD_AT(FIELD_AT(v_r2, s32, 108), s32, 428) = v_r7;
   v_r1 = gMainRoutineWork.scene;
-  if (v_r1 == (s32)&SceneId_Ov6b0Room1) {
+  if (v_r1 == (s32)&SceneId_Ov6B0Room1) {
     Call4((void (*)())Func_02000038, (s32)gData_0200384c, (s32)gData_0200385c,
           (s32)gData_02003888, (s32)gData_020038b4);
     t3 = Value1((s32 (*)())GameFlag_Test, 0xa87);
@@ -99,7 +82,7 @@ s32 Func_02001e64(void) {
     Call4((void (*)())Func_02003380, 0x2180000, 0x880000, 0, 0);
     goto L_0200a6e6;
   }
-  if (v_r1 != (s32)&SceneId_Ov6b0Room2)
+  if (v_r1 != (s32)&SceneId_Ov6B0Room2)
     goto L_0200a1b4;
   Call2((void (*)())Actor_SetSpritePriority, 8, 1);
   if ((Value1((s32 (*)())GameFlag_Test, 0xa80)) != 0) {
@@ -110,7 +93,8 @@ s32 Func_02001e64(void) {
     Call3((void (*)())Func_020033e0, 10, 0x1b80000, 0x2f80000);
   }
   Call1((void (*)())Func_02003490, (s32)gData_020036e4);
-  FIELD_AT((Value1((s32 (*)())Actor_GetById, (FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
+  FIELD_AT((Value1((s32 (*)())Actor_GetById, (FIELD_AT(v_r6, s32, 532)))), u8,
+           35) |= 64;
   FIELD_AT((Value1((s32 (*)())Actor_GetById, 9)), u8, 85) = 0;
   FIELD_AT((Value1((s32 (*)())Actor_GetById, 9)), u8, 35) |= 128;
   if ((FIELD_AT(v_r6, s16, 482)) != 17)
@@ -123,42 +107,43 @@ L_0200a03c:
   if (gMainRoutineWork.entrance == 18 && GameFlag_Test(0x300) == 0)
     Func_02001d68();
   {
-  struct MainRoutineWork *work = &gMainRoutineWork;
-  if (work->entrance != 10)
-    goto L_0200a6e6;
-  if ((Value1((s32 (*)())GameFlag_Test, 0x300)) != 0) {
-    Call3((void (*)())Func_020033e0, 9, 0, 0);
-  }
-  if ((Value1((s32 (*)())GameFlag_Test, 0x207)) != 0) {
-    t42 = Value1((s32 (*)())Actor_GetById, 9);
-    FIELD_AT(t42, u8, 85) = 4;
-  }
-  if ((Value1((s32 (*)())GameFlag_Test, 0x200)) != 0) {
-    Call6((void (*)())Func_02003328, 54, 87, 44, 86, 1, 1);
-  }
-  if ((Value1((s32 (*)())GameFlag_Test, 0x201)) != 0) {
-    Call6((void (*)())Func_02003328, 54, 87, 46, 86, 1, 1);
-  }
-  if ((Value1((s32 (*)())GameFlag_Test, 0x202)) != 0) {
-    Call6((void (*)())Func_02003328, 54, 87, 43, 87, 1, 1);
-  }
-  if ((Value1((s32 (*)())GameFlag_Test, 0x203)) != 0) {
-    Call6((void (*)())Func_02003328, 54, 87, 45, 87, 1, 1);
-  }
-  if ((Value1((s32 (*)())GameFlag_Test, 0x204)) != 0) {
-    Call6((void (*)())Func_02003328, 54, 87, 47, 87, 1, 1);
-  }
-  if ((Value1((s32 (*)())GameFlag_Test, 0x205)) != 0) {
-    Call6((void (*)())Func_02003328, 54, 87, 44, 88, 1, 1);
-  }
-  if ((Value1((s32 (*)())GameFlag_Test, 0x206)) != 0) {
-    Call6((void (*)())Func_02003328, 54, 87, 46, 88, 1, 1);
-  }
-  FIELD_AT((Value1((s32 (*)())Actor_GetById, (work->currentOwner))), u8, 35) |= 32;
+    struct MainRoutineWork *work = &gMainRoutineWork;
+    if (work->entrance != 10)
+      goto L_0200a6e6;
+    if ((Value1((s32 (*)())GameFlag_Test, 0x300)) != 0) {
+      Call3((void (*)())Func_020033e0, 9, 0, 0);
+    }
+    if ((Value1((s32 (*)())GameFlag_Test, 0x207)) != 0) {
+      t42 = Value1((s32 (*)())Actor_GetById, 9);
+      FIELD_AT(t42, u8, 85) = 4;
+    }
+    if ((Value1((s32 (*)())GameFlag_Test, 0x200)) != 0) {
+      Call6((void (*)())Func_02003328, 54, 87, 44, 86, 1, 1);
+    }
+    if ((Value1((s32 (*)())GameFlag_Test, 0x201)) != 0) {
+      Call6((void (*)())Func_02003328, 54, 87, 46, 86, 1, 1);
+    }
+    if ((Value1((s32 (*)())GameFlag_Test, 0x202)) != 0) {
+      Call6((void (*)())Func_02003328, 54, 87, 43, 87, 1, 1);
+    }
+    if ((Value1((s32 (*)())GameFlag_Test, 0x203)) != 0) {
+      Call6((void (*)())Func_02003328, 54, 87, 45, 87, 1, 1);
+    }
+    if ((Value1((s32 (*)())GameFlag_Test, 0x204)) != 0) {
+      Call6((void (*)())Func_02003328, 54, 87, 47, 87, 1, 1);
+    }
+    if ((Value1((s32 (*)())GameFlag_Test, 0x205)) != 0) {
+      Call6((void (*)())Func_02003328, 54, 87, 44, 88, 1, 1);
+    }
+    if ((Value1((s32 (*)())GameFlag_Test, 0x206)) != 0) {
+      Call6((void (*)())Func_02003328, 54, 87, 46, 88, 1, 1);
+    }
+    FIELD_AT((Value1((s32 (*)())Actor_GetById, (work->currentOwner))), u8,
+             35) |= 32;
   }
   goto L_0200a6e6;
 L_0200a1b4:
-  if (v_r1 != (s32)&SceneId_Ov6b0Room3)
+  if (v_r1 != (s32)&SceneId_Ov6B0Room3)
     goto L_0200a2ce;
   t60 = Value1((s32 (*)())Actor_GetById, 14);
   v_two = 2;
@@ -167,7 +152,8 @@ L_0200a1b4:
   FIELD_AT(t60, s32, 20) = 0xfff20000;
   FIELD_AT(t60, s32, 12) = 0xfff20000;
   FIELD_AT(t60, u8, 35) |= 128;
-  FIELD_AT((Value1((s32 (*)())Actor_GetById, (FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
+  FIELD_AT((Value1((s32 (*)())Actor_GetById, (FIELD_AT(v_r6, s32, 532)))), u8,
+           35) |= 64;
   FIELD_AT((Value1((s32 (*)())Actor_GetById, 9)), u8, 98) = v_r5;
   if ((Value1((s32 (*)())GameFlag_Test, 0xa82)) != 0) {
     Call3((void (*)())Func_020033e0, 8, 0x380000, 0x1a80000);
@@ -196,7 +182,7 @@ L_0200a2c6:
   Call1((void (*)())Func_02003490, (s32)gData_020036ea);
   goto L_0200a6e6;
 L_0200a2ce:
-  if (v_r1 != (s32)&SceneId_Ov6b0Room4)
+  if (v_r1 != (s32)&SceneId_Ov6B0Room4)
     goto L_0200a52c;
   if ((Value1((s32 (*)())GameFlag_Test, 0xa86)) != 0) {
     Call3((void (*)())Func_020033e0, 9, 0x1080000, 0x1680000);
@@ -256,19 +242,15 @@ L_0200a3a8:
 L_0200a4a2:
   if (v_r2 == 11) {
     Func_02002a74(33, 0x280, 0x380, 18, 68);
-    v_r0 = 22;
-    v_r1 = 0;
-    goto L_0200a4ec;
+    Func_02003190(22, 0, v_r7);
+    goto L_0200a6e6;
   }
   if (v_r2 != 12)
     goto L_0200a4f4;
   Func_02002a74(35, 0x280, 0x380, 18, 68);
   if ((Value1((s32 (*)())GameFlag_Test, 0x109)) != 0)
     goto L_0200a6e6;
-  v_r1 = -0x24;
-  v_r0 = 36;
-L_0200a4ec:
-  Func_02003190(v_r0, v_r1, v_r7);
+  Func_02003190(36, -0x24, v_r7);
   goto L_0200a6e6;
 L_0200a4f4:
   if ((u32)((v_r3 - 4) << 16) > (u32)0x10000)
@@ -276,7 +258,7 @@ L_0200a4f4:
   Func_02002a74(35, 0x280, 0x380, 18, 68);
   goto L_0200a6e6;
 L_0200a52c:
-  if (v_r1 != (s32)&SceneId_Ov6b0Room5)
+  if (v_r1 != (s32)&SceneId_Ov6B0Room5)
     goto L_0200a6e6;
   t126 = FIELD_AT(v_r2, s32, 32);
   v_r5 = t126;
@@ -314,11 +296,14 @@ L_0200a580:
     goto L_0200a596;
   Call3((void (*)())Func_020033e0, 11, 0, 0);
 L_0200a596:
-  FIELD_AT((Value1((s32 (*)())Actor_GetById, (gMainRoutineWork.currentOwner))), u8, 35) |= 64;
+  FIELD_AT((Value1((s32 (*)())Actor_GetById, (gMainRoutineWork.currentOwner))),
+           u8, 35) |= 64;
   Call2((void (*)())Actor_SetModeById, 11, 2);
   FIELD_AT((Value1((s32 (*)())Actor_GetById, 11)), u8, 85) = 0;
   FIELD_AT((Value1((s32 (*)())Actor_GetById, 11)), u8, 35) |= 128;
   Call2((void (*)())Actor_SetModeById, 11, 2);
+  /* FAKEMATCH(dead): v_r6 set again to the address it already holds; without
+   * it, 4 of 913 instructions differ in tla-en. */
   v_r6 = (s32)&gMainRoutineWork;
   if ((Value1((s32 (*)())GameFlag_Test, 0x304)) != 0)
     goto L_0200a5fa;
@@ -343,7 +328,9 @@ L_0200a606:
 L_0200a63a:
   if ((Value1((s32 (*)())GameFlag_Test, 0x302)) == 0)
     goto L_0200a660;
-  v_r2 = 240;  v_r0 = 9;  v_r1 = 0x2280000;
+  v_r2 = 240;
+  v_r0 = 9;
+  v_r1 = 0x2280000;
 L_0200a650:
   Call3((void (*)())Func_020033e0, v_r0, v_r1, (v_r2 << 15));
   Call1((void (*)())GameFlag_SetBit, 0x200);

@@ -1,26 +1,3 @@
-// Differ 4 of 131 (tla-en, 2026-11-06). The shape grid read once into a local before the loop (shapeGrid, an address held for its whole life) takes it from 27 to 4. Left: the native reads the cell's attribute before the shape store, here after (the two are char accesses, so only the source order can put the read first); a u8 temporary read first gives 31, the store inside the and's operand 8.
-// Earlier, differ 27 of 131 (tla-en, 2026-11-05): level is shifted and lowered for the shape call.
-// Draft, differ 85 of 131, skeleton gap 11/8 (tla-en, 2026-11-01)
-// Lowers the cells under the held actor (or the one the leader carries) and
-// keeps it at 0xcbc of the event work.
-// Settled: goto loop (a while hoists held + 34 out of the loop and cross-jumps
-// nothing); list spills to sp+4 and work to sp+0 once the seven callee-saved
-// registers go to held, layer, cells, shapes, shape, level, index; level takes
-// two statements, or it dies twice and leaves local-alloc.
-// Left: the native keeps one cells pointer in r10 through `cells += index`,
-// the first update, `cells += 128` and the second update, with index tied to
-// r6 and level in r5. Written that way (cells += index, or a cell local, an
-// under local, a static inline or a one-pass macro) the tied quantity has 20
-// refs across 4 calls, so CALLER_SAVE_PROFITABLE puts it in r4 once r5 and r6
-// are taken: differ 101, list back in a register. The native has no r4 and no
-// save slot, so its quantity has at most 16 refs and ranks under shapes, and no
-// form tried gets there. Combine's refs come from the life pass, and regmove
-// does not recount; thumb add never reaches regmove (LO_REGS is likely
-// spilled), so only a real copy could leave a stale count, and CSE removes
-// every copy tried. cells[index] below avoids r4 but ties the sum to index,
-// which swaps r5 and r6 and ends in a three-operand add.
-// `shape = Func_02003dd0(...); shapes[index] = shape;` gives differ 78 but gap
-// 16/16 (held in r9). Bit-field views of attributeB change nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -40,8 +17,7 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 struct Actor *Actor_GetById(s32 id);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void ObjectVisual_CopyAttributes(s32 id, s32 value);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_0200056c(s32 id);
@@ -86,6 +62,12 @@ struct EffectView {
 s32 Func_02003d18(s32 owner, s32 mode);
 struct Actor *Func_02003df0(void);
 
+/// A shape grid byte seen as a bit-field, so its store takes the struct's
+/// alias set (see the FAKEMATCH tag in Func_02000d78).
+struct ShapeBits {
+  u32 shape : 8;
+};
+
 #define HELD_OBJECT(work) (*(struct Actor **)((u8 *)(work) + 0xcbc))
 
 void Func_02000d78(u16 *list) {
@@ -104,10 +86,8 @@ void Func_02000d78(u16 *list) {
   loop:
     if (held == Actor_GetById(*list)) {
       u8 *layer = &held->terrainId;
-      struct MapCell *cells =
-          Ram_HeapSlots->mapWork->layers[*layer].cells;
-      u8 *shapes =
-          shapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+      struct MapCell *cells = Ram_HeapSlots->mapWork->layers[*layer].cells;
+      u8 *shapes = shapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
       s32 shape = Func_02003c10(*layer, held->x, held->z);
       s32 level = Map_GetTerrainHeight(*layer, held->x, held->z);
       s32 index = Func_02003db0(held);
@@ -116,7 +96,11 @@ void Func_02000d78(u16 *list) {
       shapes += index;
       value = Func_02003dd0(*layer, shape, (level >> 19) - 4);
       cells += index;
-      *shapes = value;
+      /* FAKEMATCH(signature): the shape grid byte stored through a bit-field
+         view (struct ShapeBits), whose alias set lets the cell's attribute be
+         read first; as `*shapes = value;`, 4 of 131 instructions differ in
+         tla-en. */
+      ((struct ShapeBits *)shapes)->shape = value;
       cells->attributeB &= 63;
       cells += 128;
       cells->attributeB &= 191;

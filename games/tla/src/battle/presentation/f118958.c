@@ -1,16 +1,3 @@
-// Draft, differ 4 of 158 (tla-en, 2026-11-05); 2 with slots and pool offsets normalized, 0 with registers blind too. Left: the 0x2b and the address load the other way round (r3, r2); a local, an inline and a one-pass block do not settle it.
-// Draft, differ 62 of 158: the battle test menu, ☀️'s DebugBattle_RunMenu
-// (games/tbs/src/battle/battle.c) in ⚓️'s form: Down is read once on entry,
-// the first encounter is 69, Start calls Func_08118954 (empty), B marks the
-// later battles with gMainRoutineWork.battleRule24b = 5 instead of
-// Battle_SetStart, and the preset loads after A. Left: register choice and
-// pool placement: the native keeps all eight values in registers (gInput in
-// r5, the dead Down flag's r7 reused for 0x80, the A mask's 1 kept in r10 for
-// gData_03001110 = 1, loadedPreset in r11); here loadedPreset spills to the
-// stack and gInput moves to r9. The native also reaches battleRule24b as
-// gMainRoutineWork's address plus 0x24b loaded early, where here the sum is one
-// pooled constant, and its literal pool sits at the end rather than inside
-// the loop.
 #include "types.h"
 #include "input.h"
 #include "main_routine_work.h"
@@ -33,7 +20,7 @@ s32 DebugParty_LoadPreset(s32 preset);
 void Unit_CalculateFar(s32 unitId);
 void Func_081197f0(s32 encounter);
 
-void DebugBattle_RunMenu(void) {
+void Func_08118958(void) {
   s32 startModeSet = 0;
   s32 down = gInput.held & 0x80;
   s32 encounter;
@@ -41,6 +28,7 @@ void DebugBattle_RunMenu(void) {
   s32 loadedPreset;
   struct InputState *input;
   struct MainRoutineWork *m;
+  u16 *backdropId;
 
   Func_080ad090();
 restart:
@@ -56,6 +44,9 @@ restart:
     loadedPreset = -1;
     GameFlag_ClearBit(362);
     input = &gInput;
+    // Held for the loop's life: the backdrop id's value loads before its
+    // address.
+    backdropId = &Data_02000436;
     for (;;) {
       GameFlag_ClearBit(32);
       wait(1);
@@ -76,6 +67,8 @@ restart:
           break;
         if (input->repeat & 8)
           Func_08118954();
+        /* FAKEMATCH(dead): the || startModeSet test kept; as if (input->repeat
+         * & 2), 47 of 158 instructions differ in tla-en. */
         if ((input->repeat & 2) || startModeSet)
           startModeSet = 1;
         wait(1);
@@ -88,7 +81,7 @@ restart:
       if (input->held & 0x80)
         GameFlag_SetBit(364);
       Unit_CalculateFar(0);
-      Data_02000436 = (s32)&ResourceId_ColossoBackdrop;
+      *backdropId = (s32)&ResourceId_ColossoBackdrop;
       m = &gMainRoutineWork;
       if (encounter == 28)
         GameFlag_SetBit(366);

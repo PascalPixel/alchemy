@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/izumo_ruins/s02f8.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s048c.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s056c.o"(.text)
-        "*/resource_67f_overlay.o"(.text.x02008584)
+        "*/games/tla/src/scene/izumo_ruins/s0584.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s06ec.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s0708.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion_priority.o"(.text)

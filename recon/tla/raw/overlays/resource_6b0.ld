@@ -49,7 +49,7 @@ SECTIONS
         "*/games/tla/src/scene/anemos_inner_sanctum/s1c60.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s1c94.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/s1d68.o"(.text)
-        "*/resource_6b0_overlay.o"(.text.x02009e64)
+        "*/games/tla/src/scene/anemos_inner_sanctum/s1e64.o"(.text)
         "*/games/tla/src/scene/anemos_inner_sanctum/prepare.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority_b.o"(.text)
         "*/resource_6b0_overlay.o"(.text.x0200a746)

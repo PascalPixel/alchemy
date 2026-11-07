@@ -1,4 +1,5 @@
 #include "edition.h"
+#include "version.h"
 #include "types.h"
 #include "text/msg_ids.h"
 #include "ram_buffer.h"
@@ -190,7 +191,7 @@ top:
       } else if (result == 0) {
         SAVE_CELLS();
         Func_02002350();
-#if (LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_2
         status = Func_02000e44();
         RESTORE_CELLS()
         if (status == -1)
@@ -376,7 +377,7 @@ again:
     if (++i < limit)
       goto shut;
   }
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
   Flag_Set(0x109);
 #endif
 finish:

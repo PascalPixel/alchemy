@@ -1,6 +1,6 @@
 #include "scene_tables.h"
 #include "contigo.h"
-#include "edition.h"
+#include "version.h"
 
 extern const u8 gData_020048a0[];
 extern const u8 gData_020048f8[];
@@ -284,7 +284,7 @@ void Func_02001d50(void) {
   Contigo_ObjFace(0, FACING_NORTHEAST);
   Actor_SetModeById(0, 3);
   FieldEvent_Wait(10);
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
   Contigo_PairShow(0, 5, 5, 8, 10, 8, 9, 20, 18, 12, 10);
 #else
   Contigo_PairShow(0, 5, 5, 8, 10, 8, 9, 20, 18, 10, 10);

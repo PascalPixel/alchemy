@@ -1,11 +1,12 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "edition.h"
+#include "version.h"
 
-#if LANGUAGE == LANGUAGE_JAPANESE
-// XXX: the Japanese table holds 131 where the others hold MsgFieldOff's number;
-// what reads gData_02002044 would settle whether it is a message at all.
+#if !TLA_PATCH_1
+// The Japanese table holds 131 where later editions hold MsgFieldOff's number,
+// which the Japanese text numbers alike: a changed value, from patch 1.
+// XXX: is it a message at all; what reads gData_02002044 would settle it.
 #define UNK_02002044_VALUE 131
 #else
 #define UNK_02002044_VALUE MSGNO(MsgFieldOff)

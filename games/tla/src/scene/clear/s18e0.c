@@ -4,6 +4,7 @@
 #include "iwram_call.h"
 #include "battle/battle_unit.h"
 #include "owner_state.h"
+#include "version.h"
 
 extern s32 gData_020026a0[];
 extern u16 gData_020026b0[];
@@ -80,7 +81,7 @@ void Func_020018e0(s32 mode, u8 *in) {
     struct BattleUnit *unit = Unit_Get(gData_020026a0[i]);
 
     *(u8 *)&unit->level = levelBits >> (i * 7) & 0x7f;
-#if LANGUAGE != LANGUAGE_JAPANESE
+#if TLA_PATCH_1
     unit->experience = Unit_GetExperienceForLevel(i, unit->level);
 #endif
   }

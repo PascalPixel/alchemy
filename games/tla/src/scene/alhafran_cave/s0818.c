@@ -1,6 +1,6 @@
 #include "../../../../games/tla/src/scene/alhafran_cave/local.h"
 #include "call.h"
-#include "edition.h"
+#include "version.h"
 #include "task.h"
 extern u8 MsgYouHereTo[];
 
@@ -179,7 +179,7 @@ void Func_02000818(void) {
   Func_020015c8(Actor_GetById(21), 0);
   Func_020015c0();
   Func_020015b8();
-#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+#if TLA_PATCH_4
   Field_EndActorSpriteEffect(8);
 #else
   Field_StartPaletteTransition(8);
@@ -222,7 +222,7 @@ void Func_02000818(void) {
   Func_020015c8(Actor_GetById(21), 0);
   Func_020015c0();
   Func_020015b8();
-#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+#if TLA_PATCH_4
   Field_EndActorSpriteEffect(8);
 #else
   Field_StartPaletteTransition(8);

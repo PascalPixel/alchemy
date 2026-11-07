@@ -1,10 +1,10 @@
 /// @file
 /// Room entry for the five Gaia Rock rooms, chosen by scene, then by entrance
 /// in the first room.
-#include "edition.h"
+#include "version.h"
 
-// The Japanese form differs and is still on its listing.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+// The Japanese form is the older revision and is still on its listing.
+#if TLA_PATCH_1
 
 #include "types.h"
 #include "call.h"

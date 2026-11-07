@@ -1,5 +1,6 @@
 #include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 #include "scene_ids.h"
+#include "version.h"
 
 struct EventTransition {
   u8 unk000[0x1ac];
@@ -27,7 +28,7 @@ static __inline__ void Func_0200361c_(s32 a, s32 b) {
 s32 Func_020004d4(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-#if defined(TLA_EDITION_JA)
+#if !TLA_PATCH_1
   ((struct EventTransition *)Ram_HeapSlots->eventWork)->type = 516;
 #else
   ((struct EventTransition *)Ram_HeapSlots->eventWork)->type = 513;

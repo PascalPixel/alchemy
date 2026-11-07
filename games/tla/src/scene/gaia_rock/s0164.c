@@ -1,7 +1,7 @@
 #include "types.h"
 #include "actor.h"
 #include "call.h"
-#include "edition.h"
+#include "version.h"
 
 s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
@@ -10,7 +10,7 @@ void Func_02000e44(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 // The Japanese edition drops an object with no cue; the later editions play
 // cue 181 as it drops. The first drop goes through the call layer.
-#if LANGUAGE == LANGUAGE_JAPANESE
+#if !TLA_PATCH_1
 void Func_02000100(s32 id);
 #define DROP_OBJECT_CALLED(id) Func_02000100(id)
 #define DROP_OBJECT(id) Func_02000100(id)

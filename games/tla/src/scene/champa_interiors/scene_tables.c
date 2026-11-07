@@ -10,9 +10,10 @@
 #include "scene_tables.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "version.h"
 #include "event_work.h"
 #include "scene_ids.h"
-#include "edition.h"
+#include "version.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -52,7 +53,7 @@ const struct Trigger *Func_020000a4(void) {
 
 s32 Func_020000fc(void) {
   s32 *effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
   s32 value = 0x201;
 #else
   s32 value = 0x209;

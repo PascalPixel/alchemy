@@ -4,9 +4,9 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
-#include "edition.h"
+#include "version.h"
 
-#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+#if TLA_PATCH_4
 #define END_THROW_EFFECT Field_EndActorSpriteEffect
 #else
 #define END_THROW_EFFECT Field_StartPaletteTransition

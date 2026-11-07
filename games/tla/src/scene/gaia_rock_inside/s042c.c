@@ -1,5 +1,5 @@
 #include "types.h"
-#include "edition.h"
+#include "version.h"
 #include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -29,7 +29,7 @@ void Func_02004e2c(void);
 s32 Func_02004e64(void);
 
 // The Japanese edition has no form of this function here.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
 s32 Func_0200042c(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a

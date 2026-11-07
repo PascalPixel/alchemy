@@ -1,7 +1,7 @@
 #include "local.h"
-#include "edition.h"
+#include "version.h"
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
 void Func_0200061c(struct Actor *object) {
   object->motionFlags = 3;
   do {

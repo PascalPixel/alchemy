@@ -1,5 +1,5 @@
 #include "ankohl_ruins.h"
-#include "edition.h"
+#include "version.h"
 
 /// Copies the cells under the object with the given id in the rooms that have
 /// them (rooms 1, 3, 4 and 5); in room 5 the object with id 9 also copies the
@@ -39,7 +39,7 @@ void Func_020006d0(s32 unused, s32 id) {
       AnkohlRuins_Call2dfc(19, 84, 1, 1, 18, 82);
       Func_02002dfc(19, 84, 1, 1, 19, 83);
     }
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
     if (id == 9)
 #else
     if (id == 9 && GameFlag_Test(0x205))

@@ -1,4 +1,6 @@
-// Draft, differ 20 of 1527 (tla-en, 5 November 2026): order ties only, the cell
+// Differ 8 of 1527 (tla-en, 2026-11-07): measured again, draft unchanged; left: two
+// sched2 ties (the motionFlags strb against mov r1, r8; ldr r5 and movs r1 at steps).
+// Before: differ 20 of 1527 (tla-en, 5 November 2026): order ties only, the cell
 // stores ahead of the gust's as in Func_0200095c, the target read at each use.
 // Left: motionFlags' strb and the watched-object store in the pick-up block, ldr r5
 // and movs r1 at steps.

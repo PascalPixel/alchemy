@@ -1,5 +1,7 @@
-// Draft, differ 18 of 160, skeleton gap 2 (tla-en, 2026-11-01)
-// Left: only the two calls of the last loop. The native loads ids[i] (r2)
+// Matches (tla-en, 2026-11-07) with one tagged wrapper: ids indexed through an
+// identity inline helper in the last loop loads ids[i] ahead of work->kind (found
+// by permute). Before: differ 18 of 160, skeleton gap 2 (2026-11-01).
+// Was left: only the two calls of the last loop. The native loads ids[i] (r2)
 // ahead of work->kind, with sl in r4 and #30 in r3, and at the next call has
 // sl in r3 and #24, #26 in r2, r4; this draft loads kind first, through r2
 // and r0, and then uses r2, r4, r3. The instructions are the same set, so
@@ -49,6 +51,9 @@ s32 Func_080dbdc8(s32 x, s32 z, s32 layer);
 s32 Func_080ce458(u32 type, s32 kind, s32 id);
 void Field_RunPsynergyEvent(s32 event, s32 argument0, s32 argument1);
 
+// Only for the compiler: see the FAKEMATCH tag in Func_080e249c.
+static inline s32 Index(s32 i) { return i; }
+
 void Func_080e249c(void) {
   struct TouchWork *work = Ram_HeapSlots->effectWork;
   struct TouchCell *cells =
@@ -84,7 +89,9 @@ void Func_080e249c(void) {
   }
 
   for (i = 0; ids[i] != -1; i++) {
-    s32 event = Func_080ce458(0x50000005, work->kind, ids[i]);
+    /* FAKEMATCH(wrapper): ids[Index(i)]; as ids[i], 18 of 160 instructions
+     * differ in tla-en. */
+    s32 event = Func_080ce458(0x50000005, work->kind, ids[Index(i)]);
 
     if (event != 0)
       Field_RunPsynergyEvent(event, work->argument0, work->argument1);

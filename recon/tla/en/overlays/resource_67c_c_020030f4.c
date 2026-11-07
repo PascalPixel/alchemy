@@ -1,8 +1,6 @@
-// Draft, differ 19 of 184 (tla-en, 5 November 2026), from 99. Left: the native's
-// lsls r3, r1, #2; adds r1, r3, #0 for the rise's scale, here lsls r1, r1, #2 and
-// later, which moves two load ties.
-// Measured under -Os, 5 November 2026: differ 99 (tla-en); notes below may predate it.
-// Draft, differ 203 of 184, skeleton gap 49 (tla-en, 2026-11-01)
+// Differ 2 of 184 (tla-en, 2026-11-07).
+// The scale and the +64 in one statement (scaled + 64) and column set after screenY &= 255
+// (19 to 2). Left: the copy of base to ip goes one slot before the height load (sched2).
 // Draws Aqua Rock's thirty-two water spouts: for each active one a top sprite
 // and, when it stands above its base, a column sprite as tall as its height,
 // placed from the camera and queued by depth.
@@ -121,20 +119,20 @@ void Func_020030f4(void) {
         if ((u32)(screenY + 47) <= 238) {
           rise = (entry->height - entry->base) >> 16;
           if (rise != 0) {
-            u32 *column = entry->column;
+            u32 *column;
             rise--;
             screenY &= 255;
+            column = entry->column;
             if ((u32)rise > 7)
               rise = 7;
             {
               s32 scaled = rise * 4;
-              rise = scaled;
+              rise = scaled + 64;
             }
             column[0] = 0;
             screenY |= x << 16;
             screenY |= 0x6000;
             entry->column[1] = screenY;
-            rise += 64;
             entry->column[2] = attributes | (tile + rise);
             Func_02003c94(column, depth);
           }

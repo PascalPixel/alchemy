@@ -1,4 +1,8 @@
-// Draft, differ 16 of 116 (tla-en, 5 November): the leader steps back and the map's two scrolling layers sink while the blend fades.
+// Differ 6 of 116 (tla-en, 2026-11-07).
+// 7 November (permuter): alpha before blend, and fade reused for cue 298 after the loop,
+// which makes fade a global pseudo in r0 as in the native (16 to 6). Left: the division's
+// copy of next ties to fade in r0 where the native gives it r3.
+// Before: differ 16 of 116 (tla-en, 5 November): the leader steps back and the map's two scrolling layers sink while the blend fades.
 // The fade's form: next = step + 1; fade = next / 4; blend = fade << 8 before alpha = 16 - fade; blend |= alpha.
 // Left, one cause: next (4 refs over 12) must rank above fade (3 over 4), for next r1, fade r0; here fade r1, next r0.
 // A constant local for the 16 set before the division leaves 8 but moves the 16. Func_02000be8 and Func_02001ba8 share it.
@@ -45,8 +49,8 @@ void Func_02000d3c(void) {
     s32 blend;
 
     fade = next / 4;
-    blend = fade << 8;
     alpha = 16 - fade;
+    blend = fade << 8;
     blend |= alpha;
     REG_BLDALPHA = blend;
     step = next;
@@ -56,7 +60,9 @@ void Func_02000d3c(void) {
   wait(1);
   }
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  Func_02001f10(298);
+  // fade is reused for the cue; with its own constant the blend loses r0 (18).
+  fade = 298;
+  Func_02001f10(fade);
   wait(1);
   Func_02001f10(125);
   FieldEvent_Wait(20);

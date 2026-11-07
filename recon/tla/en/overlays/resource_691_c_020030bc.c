@@ -1,33 +1,10 @@
-// Draft, differ 8 of 150 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
-// Draft, differ 24 of 150, skeleton gap 10 (tla-en, 2026-11-01)
+// Matches (tla-en, 2026-11-07); all six editions agree.
 // Places actors 8, 9 and 10, then walks a 0xffff-ended list of (actor, flag)
 // halfword pairs; flag + 1 set means the actor is parked at (0, 0), otherwise
 // its cell gets attributeB 128 and its shape-grid byte is rewritten, and flag
-// set makes it copy actor 9's visual attributes. Same shape as
-// resource_691_c_02002d08.c and 68f's 020025e0.
-// Measured: the native's [sp,#4] word is the high half of an 8-byte local, with
-// sp+0 its unwritten low half (frame 16; flag at 8, map at 12). A separate
-// pointer took r6 (t tied to it, so list lost fp; differ 96), a plain volatile
-// local sits above the spills and hoists its address (differ 64), and only a DI
-// pseudo gives this layout. ldr r6, [sp,#4] is a local read before
-// Func_02003b3c that crosses that call, which is why it is r6 and not a reload.
-// Left: the first set, `pair.cell = cells`, exists only to keep the DI pseudo;
-// with one set CSE replaces the read and the pseudo disappears (differ 62). It
-// costs one str and puts t in r6, the else block's 16 differing lines. The native
-// has one store and t in r3. Reassigning the temporary after the store keeps the
-// pseudo with one store (`target = (u8 *)(cells + index); pair.cell = target;
-// target = shapes + index;`, differ 41, gap 10/9), but the add then writes r3
-// and the read stays above the call. That is the better lead: what is missing
-// there is adds r6, r6, r3 and the read landing after the bl.
-// Also left: `adds r2, r2, r3` for shapes, where the native's first operand is
-// the grid (here it is the offset; a grid local, s32 casts, operand swap and
-// &gMapShapeGrid[] all leave it), and two scheduling pairs, ldr r5 / movs r2 at
-// entry and adds r7 / str at the loop top.
-// Tried, no gain: goto loop entered at the bottom (95), do { } while (0) around
-// Func_02003b3c (64), a volatile pair word (73), reading the word earlier (92),
-// no local for the read (68), reading it back into cells (66), cells stepped in
-// place (64), an owner pointer local (29).
+// set makes it copy actor 9's visual attributes. Shaped as trial_road's
+// Func_020042f0: the shape grid read once into a local, and the layer read as
+// object->terrainId at each use (a struct read the 128 store must precede).
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -46,12 +23,21 @@ s32 Func_02003c04(struct Actor *object);
 s32 Func_02003adc(s32 layer, s32 x, s32 z);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_02003b3c(s32 id);
-s32 Func_02003c24(s32 layer, s32 shape, s32 height);
+u8 Func_02003c24(s32 layer, s32 shape, s32 height);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 void wait(s32 frames);
 
 void Func_020030bc(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct Actor *object;
+  s32 id;
+  s32 flag;
+  s32 nextFlag;
+  struct MapCell *cells;
+  u8 *shapes;
+  struct MapCell *cell;
+  s32 index;
+  u8 *grid = gMapShapeGrid; // the shape grid, read once
 
   Func_02003b14(8, gMainRoutineWork.currentOwner);
   Func_02003b14(9, gMainRoutineWork.currentOwner);
@@ -69,31 +55,30 @@ void Func_020030bc(u16 *list) {
   if (*list == 0xffff)
     goto done;
 next:
-  {
-    s32 id = list[0];
-    struct Actor *object = Actor_GetById(id);
-    s32 flag = list[1];
-    s32 nextFlag = flag + 1;
-    u8 *layer = &object->terrainId;
-    struct MapCell *cells = map->layers[*layer].cells;
-    u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+  id = list[0];
+  object = Actor_GetById(id);
+  flag = list[1];
+  nextFlag = flag + 1;
+  cells = map->layers[object->terrainId].cells;
+  shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+  object->unk5c[0] = 3;
+  if (GameFlag_Test(nextFlag)) {
+    Func_02003b0c(id, 0, 0);
+  } else {
+    s32 shape;
+    u8 *slot;
+    s32 height;
 
-    object->unk5c[0] = 3;
-    if (GameFlag_Test(nextFlag)) {
-      Func_02003b0c(id, 0, 0);
-    } else {
-      s32 index = Func_02003c04(object);
-      u8 *cell = (u8 *)&cells[index];
-      u8 *slot = shapes + index;
-      s32 shape = Func_02003adc(*layer, object->x, object->z);
-      s32 ground = Map_GetTerrainHeight(*layer, object->x, object->z);
-
-      Func_02003b3c(id);
-      cell[3] = 128;
-      *slot = Func_02003c24(*layer, shape, (ground >> 19) + 4);
-      if (GameFlag_Test(flag))
-        ObjectVisual_CopyAttributes(id, 9);
-    }
+    index = Func_02003c04(object);
+    cell = &cells[index];
+    slot = shapes + index;
+    shape = Func_02003adc(object->terrainId, object->x, object->z);
+    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    Func_02003b3c(id);
+    cell->attributeB = 128;
+    *slot = Func_02003c24(object->terrainId, shape, (height >> 19) + 4);
+    if (GameFlag_Test(flag))
+      ObjectVisual_CopyAttributes(id, 9);
   }
   list += 2;
   if (*list != 0xffff)

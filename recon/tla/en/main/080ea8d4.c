@@ -1,5 +1,6 @@
-// Near miss, differ 10 of 141 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Differ 10 of 141 (tla-en, 2026-11-07): the cell marked through struct MapCell
+// (its own alias set) reads x before the store with no empty asm or x local;
+// left: prologue order (sub sp, the list spill) and fp copied to r1 for r2. The r11 and r9 pins still need their S2 tags.
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
 // 12 of 141 in tla-en. First difference: this issues `sub sp, #4` earlier (row
 // 8) than the native does (row 11).
@@ -24,6 +25,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
+#include "map.h"
 
 struct ActorFlag {
   u16 actor;
@@ -32,7 +34,7 @@ struct ActorFlag {
 
 struct RestoreLayer {
   u8 unk00[0x138 - 0x108];
-  u8 (*cells)[4];
+  struct MapCell *cells;
   u8 unk34[4];
 };
 
@@ -68,15 +70,13 @@ void Func_080ea8d4(struct ActorFlag *list) {
       struct Actor *object = Actor_GetById(entry->actor);
       u16 flag = entry->flag;
       s32 slot = Func_080eab70(object);
-      u8 *cell = map->layers[object->terrainId].cells[slot];
+      struct MapCell *cell = &map->layers[object->terrainId].cells[slot];
 
       object->motionFlags = 0;
       object->collisionFlags &= ~1;
       Actor_SetSingleChildFlagsFar(object, 0);
-      x = object->x;
-  asm("");
-      cell[2] = 0xff;
-      Func_080ea8a8(x + step, object->z, object->terrainId,
+            cell->collisionCode = 0xff;
+      Func_080ea8a8(object->x + step, object->z, object->terrainId,
                     object->terrainHeight);
       Func_080ea8a8(object->x - 0x100000, object->z, object->terrainId,
                     object->terrainHeight);

@@ -1,4 +1,11 @@
-// Differ 24 of 145 (tla-en, 2026-11-06). The sink loop now builds step + 1 in
+// Differ 16 of 145 (tla-en, 2026-11-07).
+// 7 November (permuter): a dead first division in the sink loop (FAKEMATCH dead)
+// puts the sink loop's step + 1 in r3 as the native (20 to 16). Left: in both loops
+// the division's copy ties to fade in r0 (native r3 and r2; sink fade r1).
+// 7 November: fade reused for cue 298 after the loops makes it a global pseudo
+// (24 to 20), as in Func_02000d3c. Left: in both loops the division's copy of
+// step + 1 ties to fade (r0) where the native gives it r3 (rise) and r2 (sink).
+// Before: differ 24 of 145 (tla-en, 2026-11-06). The sink loop now builds step + 1 in
 // blend before dividing, which gives the listing its copy (29 to 24); doing the
 // same in the rise loop costs 9. Left: allocation only, r0/r1 swapped in the
 // rise loop, r2/r3 in the sink loop. The permuter reaches 20 only by reusing
@@ -97,6 +104,9 @@ rise:
   if (i != 0) {
   sink:
     if (i >= 33 && i < 96) {
+      /* FAKEMATCH(dead): fade is first set from step + 1 directly, and then again
+       * through blend; as the second alone, 20 of 145 instructions differ in tla-en. */
+      fade = (step + 1) / 4;
       blend = step + 1;
       fade = blend / 4;
       blend = fade << 8;
@@ -112,7 +122,9 @@ rise:
       goto sink;
   }
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  Func_02001f10(298);
+  // fade is reused for the cue, as in Func_02000d3c; with its own constant 24.
+  fade = 298;
+  Func_02001f10(fade);
   wait(1);
   Func_02001f10(125);
   FieldEvent_Wait(20);

@@ -1,3 +1,6 @@
+// Matches (tla-en, 2026-11-07).
+// 2026-11-07: the clear is a plain counting-up loop over i; loop.c reverses it
+// and compares the pointer with a copy of actions (the native mov ip, r8).
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
 // 9 of 136 in tla-en. First difference: at row 8 the native has `ldr r2, [pc,
 // #48]` where this has `ldr r2, [pc, #44]`.
@@ -43,14 +46,8 @@ s32 Func_080fd6f0(struct BattleUnit *unit, u16 *actions, s32 mode) {
   s32 offset;
 
   count = 0;
-  {
-    u16 *clear = &actions[31];
-
-    do {
-      *clear = 0;
-      clear--;
-    } while ((s32)clear >= (s32)actions);
-  }
+  for (i = 0; i < 32; i++)
+    actions[i] = 0;
 
   if (mode == 1) {
     for (i = 0; i < 32; i++) {

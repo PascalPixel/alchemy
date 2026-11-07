@@ -1,4 +1,7 @@
-// Differ 4 of 491 (tla-en, 2026-11-07).
+// Differ 2 of 491 (tla-en, 2026-11-07).
+// 2026-11-07: the map cell clear through an inline (FAKEMATCH wrapper, as
+// f13e7e0.c's) loads the buffer before the size (4 to 2). Left: the target's
+// reload before radius + 80, a luid tie in sched2.
 // 2026-11-07: the texture's pixels as const u8 * (as f16dc50's), so its stores no
 // longer alias the model's void * fields: the vertices store follows the
 // texture's (6 to 4). Left: two luid ties in sched2 (the clear's size after
@@ -107,6 +110,12 @@ extern u32 gCameraSceneParameters[];
 #define CRYSTAL_FRAMES 103
 #define CRYSTAL_SHARDS 32
 
+static inline s32 ClearWords(void *destination, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_ClearWords, 4 of 491 instructions differ in tla-en. */
+  return Iwram_ClearWords(destination, size);
+}
+
 // Abilities: Crystal.
 //
 // Sixteen shaded discs, 2 to 32 pixels across, are built in the map cell
@@ -138,7 +147,7 @@ void BattleEffect_RunCrystal(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   discOffsets = (u16 *)(work->sheet + 0x2710);
   cells = (s32)gMapCellBuffer;
-  Iwram_ClearWords((void *)cells, 0x8000);
+  ClearWords((void *)cells, 0x8000);
   for (offset = 0, i = 0, size = 2; i != 16; size += 2, i++) {
     Func_0815b434((u8 *)(offset + cells), size, 0x10000);
     discOffsets[i] = offset;

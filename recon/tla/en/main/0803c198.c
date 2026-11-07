@@ -1,5 +1,8 @@
-// Differ 33 of 99 (tla-en, 2026-11-06); the same 33 in de, es, fr and it,
-// whose bytes are English's, and 33 of 95 in ja (2026-11-07).
+// Differ 14 of 99 (tla-en, 2026-11-07); 14 in de and 16 of 95 in ja.
+// 2026-11-07: the second round's 253 temporary kept, tagged, with the cell
+// late (33 to 16), and a once-only block over the OAM words and sentinel
+// (permuter, 14); left: ip holds the 253, where the native holds the 1.
+// Earlier: differ 33 of 99 (tla-en, 2026-11-06), 33 of 95 in ja.
 // Register choice only. The
 // native keeps the 0 for kind and next in r4 and passes the 1 for active
 // through ip, computing the sprite cell (output + 16) late into r2; here the
@@ -57,20 +60,27 @@ void *Func_0803c198(struct Window *window, s32 character, s32 x, s32 y) {
   struct GlyphSprite *sprite;
   s32 index;
   void *vram;
+  s32 sentinel;
 
   output = WindowSprite_AcquireFree();
   if (output == NULL)
     return NULL;
+  /* FAKEMATCH(temporary): the form kept; as output->sentinel = 253; with the
+     cell late, 46 of 99 instructions differ in tla-en. */
+  sentinel = 253;
   index = (output - work->outputs) * 4;
   output->active = 1;
   output->kind = 0;
-  sprite = (struct GlyphSprite *)&output->sprite;
   vram = (void *)(0x06010000 + (work->glyphTiles + index) * 32);
-  ((u16 *)&output->sprite.oam)[0] = y + (spacingY >> 1) + window->y * 8 + UNK_GLYPH_SPRITE_DY;
-  ((u16 *)&output->sprite.oam)[1] =
-      (x + (spacingX >> 1) + window->x * 8 + UNK_GLYPH_SPRITE_DX) | 0x4000;
-  ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
-  output->sentinel = 253;
+  // A once-only block: it ends CSE's block after the sentinel.
+  do {
+    ((u16 *)&output->sprite.oam)[0] = y + (spacingY >> 1) + window->y * 8 + UNK_GLYPH_SPRITE_DY;
+    ((u16 *)&output->sprite.oam)[1] =
+        (x + (spacingX >> 1) + window->x * 8 + UNK_GLYPH_SPRITE_DX) | 0x4000;
+    ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
+    sprite = (struct GlyphSprite *)&output->sprite;
+    output->sentinel = sentinel;
+  } while (0);
   output->x = sprite->x;
   output->y = sprite->y;
   output->index = index;

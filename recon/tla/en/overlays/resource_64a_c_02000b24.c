@@ -1,4 +1,11 @@
-// Draft, differ 20 of 247 (tla-en, 2026-11-05).
+// Matches (tla-en, 2026-11-07).
+// 2026-11-07: the copies through an inline Iwram_CopyWords, as the Broken
+// Seal's iwram_call.h writes it (no Call3, no copyWords local, no once-only
+// block; 20 to 14), and one function-wide request pointer for both signature
+// writes, which makes it a global pseudo and gives the zero stores' registers
+// (14 to 0). Also 0 in tla-ja, tla-de and tla-it; tla-es differs by 4
+// and tla-fr by 8 (their window macros, below). Older notes below predate this.
+// Earlier, differ 20 of 247 (tla-en, 2026-11-05).
 // Draft, differ 30 of 247 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 39 of 247 (tla-en); older figures below predate it.
 // Draft, differ 56 of 247, skeleton gap 5/7 (tla-en, 2026-11-01)
@@ -12,21 +19,24 @@
 // SImode constants (movs); the HImode constant is what loads from the pool, at
 // range 64, which places the mid-function pool. The masks are locals assigned
 // before each loop.
-// Left, the skeleton: the native reloads 0x02013040 from the pool for the third
-// copy; here the argument's pseudo is reused from the first, kept in r8. Only a
-// CSE block end between them would stop that, and a do { } while (0) macro
-// emits none. Also r2/r3 swapped at the zero stores, and one scheduling pair at
-// the counters' setup. Declaration order changes nothing; idle's place in the
+// Declaration order changes nothing; idle's place in the
 // setup gives the native's i, window and idle allocation.
 // Before adoption: linked names for the Ram_ addresses, and the two window
 // macros for French and Spanish; 0x55 in tla-en is listed as MsgFieldRepelEvil
 // only by coincidence of value.
 #include "types.h"
-#include "call.h"
 #include "main_routine_work.h"
 #include "iwram_call.h"
 #include "io_reg.h"
 #include "edition.h"
+
+// The copies go through an inline wrapper, as the Broken Seal's iwram_call.h
+// writes it.
+#undef Iwram_CopyWords
+static inline s32 Iwram_CopyWords(void *destination, const void *source,
+                                  s32 size) {
+  return Iwram_CopyWordsEntry(destination, source, size);
+}
 
 extern volatile u16 gLinkStatus;
 extern u16 gLinkPeerSignatures[][12];
@@ -84,7 +94,7 @@ s32 Func_02000b24(void) {
   s32 mask, linkMask;
   s32 message;
   u8 *flags;
-  s32 (*copyWords)(void *destination, const void *source, s32 size);
+  u16 *request;
 
   window = Window_Create(RECEIVE_WINDOW_X, 5, RECEIVE_WINDOW_WIDTH, 8, 2);
   message = MSGNO(MsgFieldPreparingToReceive);
@@ -102,8 +112,7 @@ scan:
 
     if (signature[0] == 48 && signature[1] == 48 && signature[2] == 48 &&
         signature[3] == 48) {
-      u16 *request = gData_02003a74;
-
+      request = gData_02003a74;
       request[0] = REQUEST_EDITION;
       request[1] = 'V';
       request[2] = 'T';
@@ -134,8 +143,7 @@ transfer:
     Text_DrawMessage(MSGNO(MsgFieldTransferringData), window, 0, 4);
   }
   if (i == 9 && gSerialReceivedSize == 0) {
-    u16 *request = gData_02003a74;
-
+    request = gData_02003a74;
     request[0] = 0;
     request[1] = 0;
     request[2] = 0;
@@ -175,20 +183,14 @@ done:
   Func_02002228();
   wait(10);
   Window_Close(window, 2);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 32 of 247 instructions differ
-   * in tla-en. */
-  do {
-    flags = gGameFlagBytes;
-  } while (0);
-  copyWords = Iwram_CopyWords;
-  Call3((void (*)())copyWords, flags, Ram_ReceivedFlags, 0x214);
-  copyWords(flags + 0x220, Ram_ReceivedUnits, 0xd20);
+  flags = gGameFlagBytes;
+  Iwram_CopyWords(flags, Ram_ReceivedFlags, 0x214);
+  Iwram_CopyWords(flags + 0x220, Ram_ReceivedUnits, 0xd20);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);
   Unit_Calculate(3);
-  Call3((void (*)())copyWords, Ram_ReceivedFlags, flags, 0xf40);
+  Iwram_CopyWords(Ram_ReceivedFlags, flags, 0xf40);
   Func_02002310(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
   return 1;
 }

@@ -1,4 +1,7 @@
-// Differ 26 of 171 (tla-en, 2026-11-06), from 30: every spill slot agrees now.
+// Differ 24 of 171 (tla-en, 2026-11-07).
+// 7 November: the cell call through a forwarding inline (FAKEMATCH wrapper, as
+// 668's Func_02004240) gives 26 to 24. Left as below.
+// Before: differ 26 of 171 (tla-en, 2026-11-06), from 30: every spill slot agrees now.
 // Spill slots run in pseudo order, and kind's pseudo is the temporary that
 // fixup_var_refs makes when its address is first taken (kind = push->kind is
 // then a load into a temporary and a store), so the first &kind must come
@@ -98,6 +101,11 @@ static __inline__ s32 BoxSpan(s32 *kind, s32 start) {
          4;
 }
 
+static __inline__ s32 CallFunc_02003e2c(struct Actor *object,
+                                        struct Vector3 *cell) {
+  return Func_02003e2c(object, cell);
+}
+
 s32 Func_020037d8(struct PushState *push) {
   struct Actor *object;
   struct Vector3 cell;
@@ -130,7 +138,9 @@ s32 Func_020037d8(struct PushState *push) {
         for (j = 0; j < height; j++) {
           cell.x = push->x + (BoxByte(index) << 16);
           for (i = 0; i < width; i++) {
-            if (Func_02003e2c(object, &cell) == 2)
+            /* FAKEMATCH(wrapper): the call through CallFunc_02003e2c; as a direct
+             * call, 26 of 171 instructions differ in tla-en. */
+            if (CallFunc_02003e2c(object, &cell) == 2)
               goto blocked;
             cell.x += 0x100000;
           }

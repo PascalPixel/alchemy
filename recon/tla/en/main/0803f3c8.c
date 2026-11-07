@@ -1,5 +1,9 @@
-// Draft, differ 24 of 276 (2026-10-26, 26 before): the tile copied after the
-// home position. Earlier notes follow.
+// Matches (tla-en, 2026-11-07).
+// 2026-11-07: the tile copied right after the slot, as the native's field
+// order, and both empty asm statements dropped (8 to 0). The other editions
+// (Menu_ConfirmSelection) differ only by the empty Func_0803f60c that joins it.
+// Earlier: draft, differ 24 of 276 (2026-10-26, 26 before): the tile copied
+// after the home position. Earlier notes follow.
 // Draft, differ 26 of 276 in tla-en under -mthumb-slow-loads (2026-10-26). A
 // device search (each statement followed by an empty asm or a one-pass block,
 // wrapped in one, or swapped with the next, kept when it helps) reaches 14
@@ -66,8 +70,6 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   node->prev = NULL;
   node->next = NULL;
   node->targetX = 4;
-  asm("");
-  asm("");
   for (other = screen->path, cnt = 0; other != NULL; other = other->next) {
     node->targetX += 16;
     cnt++;
@@ -83,11 +85,11 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   other->message = node->message;
   other->base = node->base;
   other->slot = node->slot;
+  other->tile = node->tile;
   other->x = node->x;
   other->y = node->y;
   other->targetX = other->x;
   other->targetY = other->y;
-  other->tile = node->tile;
   other->homeX = node->homeX;
   other->homeY = node->homeY;
   other->dx = 0;

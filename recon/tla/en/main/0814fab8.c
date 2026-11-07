@@ -1,4 +1,8 @@
-// Differ 54 of 1146 (tla-en, 2026-11-07).
+// Differ 52 of 1146 (tla-en, 2026-11-07).
+// 2026-11-07: the last arm's palette copy (mode 0 and the rest) through an
+// inline (FAKEMATCH wrapper, as f13e7e0.c's) settles its ldr r3 before
+// lsls r0, #19 (54 to 52); the other four copies stay direct (through it, no
+// gain). Left as below.
 // Fourth round, 7 November: the lights' second build takes its 0 from a
 // function-level local (reloaded into r5 as the listing does) and fetches its
 // entry through a barrier on the slot's address, which stops loop.c hoisting
@@ -188,6 +192,12 @@ extern char ResourceId_VenusDjinnSheet;
 extern char ResourceId_JupiterDjinnSheet;
 extern u16 Data_08197424[]; // gBattleEffect_FlareCells
 
+static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 54 of 1146 instructions differ in tla-en. */
+  return Iwram_CopyWords(destination, source, size);
+}
+
 // Lights gather around each target in turn, eight frames apart, turning as
 // they close in; at the center they burst, and the mode's picture plays
 // there (a dagger, a shield, a streak or a wisp).
@@ -305,7 +315,7 @@ void Func_0814fab8(struct BattleEffectArgument *effect, u32 mode) {
       palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     else
       palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
-    Iwram_CopyWords((void *)BG_PLTT, palette, 128);
+    CopyWords((void *)BG_PLTT, palette, 128);
   }
   if (mode == 3 || mode == 6)
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,

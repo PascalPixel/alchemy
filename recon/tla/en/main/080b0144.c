@@ -1,5 +1,9 @@
-// Near miss, differ 11 of 156 (tla-en, 2026-11-06): the native's `b` past the
-// series 14 test after series = 13 (an else). Ported from The Broken Seal's
+// Matches (tla-en, 2026-11-07), with one tagged signature device.
+// 2026-11-07: the series 14 test is an else again and 445 a local set once at
+// the top, which settles the character and levels tie (differ 2); the void
+// call of Unit_GetElementLevels (permuter) settles the last scheduling
+// pair at its call.
+// Ported from The Broken Seal's
 // function of the same name (games/tbs/src/game/game/classes.c): the class
 // series comes from a character's two strongest elements, and the class is
 // the last of that series whose element requirements it meets. The Lost Age
@@ -11,12 +15,8 @@
 // gives the native's two induction variables (150 to 77), i declared before
 // j its loop registers (77 to 49), and the second element held in its own
 // variable rather than in j puts the primary in r0, the second in r1 and the
-// item in r8 (49 to 22). Left: with `else if (series == 6 ...)`, as the native's
-// branch shows, the character (5 refs over 45 insns) and the levels' address
-// (6 over 54) tie in global.c and the character takes r5 where the native
-// has the levels (differ 22); the plain `if` kept here lengthens the
-// character's life by one insn and gives the native's registers, but drops
-// that branch. The prototype follows games/tla/include/game/game.h.
+// item in r8 (49 to 22). Without the 445 local the else ties the character and the
+// levels' address in global.c (differ 22). The prototype follows games/tla/include/game/game.h.
 #include "types.h"
 
 // A class record's start, as Class_Determine reads it.
@@ -41,11 +41,15 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
   s32 i;
   s32 second;
   s32 j;
+  s32 lastSeriesItem = 445; // One constant for its whole life.
 
   result = -1;
   if (character > 7)
     return 0;
-  Unit_GetElementLevels(character, (const u8 *)djinn, levels);
+  /* FAKEMATCH(signature): called as a void function, though it returns 0;
+   * as a plain call, 2 of 156 instructions differ in tla-en. */
+  ((void (*)(s32, const u8 *, s32 *))Unit_GetElementLevels)(
+      character, (const u8 *)djinn, levels);
   best = result;
   primary = result;
   for (i = 0; i < 4; i++) {
@@ -67,13 +71,13 @@ s32 Class_Determine(s32 character, u32 *djinn, s32 item) {
   series = Data_080c6604[primary][second];
   if (series == 2 && character == 5)
     series = 13;
-  if (series == 6 && character == 7)
+  else if (series == 6 && character == 7)
     series = 14;
   if (item == 444)
     series = 16;
   else if (item == 443)
     series = 15;
-  else if (item == 445)
+  else if (item == lastSeriesItem)
     series = 17;
   for (i = 243; i >= 0; i--) {
     if (gClass_DefinitionTable[i].series != series)

@@ -1,4 +1,7 @@
-// Differ 28 of 126 (tla-en, 2026-11-06). Left: scheduling of the map reads and
+// Differ 26 of 126 (tla-en, 2026-11-07).
+// 7 November: written as overlay 674's Func_02003684 (box bytes a and b as locals,
+// fromX narrowed in place, the step as (i + 1) * 65536): 28 to 26, allocation left.
+// Before: differ 28 of 126 (tla-en, 2026-11-06). Left: scheduling of the map reads and
 // found in r3, not r2 (allocation). x, z, fromX, fromZ in the native's read
 // order, wide then shifted, gives 44 (twice); the permuter's best was 66.
 // Draft, differ 28 of 126 (tla-en, 2026-11-05). Older notes below may predate this figure.
@@ -55,12 +58,13 @@ s32 Func_020040ec(s32 id) {
   s32 next;
   u32 index;
   u16 found;
-  s32 fromX, fromZ, toX, toZ;
+  s32 a, b;
+  s32 fromX, fromZ;
   s32 width, height, x, z;
 
   if ((u16)kind != gData_02004ca4[(u16)i]) {
   again:
-    next = (i << 16) + 65536;
+    next = (i + 1) * 65536;
     index = (u32)next >> 16;
     i = next >> 16;
     if (index <= 5 && (u16)kind != gData_02004ca4[index])
@@ -69,15 +73,16 @@ s32 Func_020040ec(s32 id) {
   found = i;
   if (found == 6)
     return 0;
-  width = (Abs(gData_02004cb0[found][0]) + Abs(gData_02004cb0[found][2])) >> 4;
-  height = (Abs(gData_02004cb0[found][1]) + Abs(gData_02004cb0[found][3])) >> 4;
-  x = (object->x + (gData_02004cb0[found][0] << 16)) >> 20;
+  a = gData_02004cb0[found][0];
+  width = (Abs(a) + Abs(gData_02004cb0[found][2])) >> 4;
+  b = gData_02004cb0[found][1];
+  height = (Abs(b) + Abs(gData_02004cb0[found][3])) >> 4;
+  x = (object->x + (a << 16)) >> 20;
   fromX = *(s32 *)(map + 0x148) >> 20;
-  z = (object->z + (gData_02004cb0[found][1] << 16)) >> 20;
+  z = (object->z + (b << 16)) >> 20;
   fromZ = *(s32 *)(map + 0x14c) >> 20;
-  toX = x + (u16)fromX;
-  toZ = z + (u16)fromZ;
-  Func_02004a54(x, z, width, height, toX, toZ);
+  fromX = (u16)fromX;
+  Func_02004a54(x, z, width, height, x + fromX, z + (u16)fromZ);
   Map_FillCellRectByte2(0, x, z, width, height, 255);
   Map_FillCellRectByte2(2, x, z, width, height, 255);
   return 1;

@@ -1,19 +1,10 @@
-// Draft, differ 13 of 175 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 15 (tla-en); notes below may predate it.
-// Draft, differ 8 of 175, skeleton gap 4 (tla-en, 2026-11-01): the frame
-// callback of the glow: cycles thirty-two colours of the object palettes
+// Matches (tla-en, 2026-11-07).
+// The colour written whole in each arm (as -Os hoists only its shifts, in the native
+// order), i++ after the if and a plain work->frame++: no barrier left.
+// The frame callback of the glow: cycles thirty-two colours of the object palettes
 // through a wave of greens and blues, places the glow's two sprites at its spot
 // with their scales, and lets each sprite's second scale trail its first at
-// 31/40.
-// Left: four sched2 pairs, no allocation difference. In the listing a store
-// goes one slot earlier: position[1] before the lsls of 4104, sprite->z before
-// the lsls of 4204, the last store of trailingScale2 before the lsls of 4212,
-// and with that one add sp before the adds. The ready list shows a higher
-// priority for those stores than here. Reading every field through a one-member
-// union (alias set 0) moves add sp and leaves differ 6, so the tail's s32 store
-// and u16 load conflict in the source; the union itself has no evidence and was
-// left out. Plain casts, anonymous structs and a struct position change nothing.
-// The goto loop keeps frame and red inside it; sprite is set before
+// 31/40. The goto loop keeps frame and red inside it; sprite is set before
 // Func_020035c4 so it crosses that call and sits in r7.
 #include "types.h"
 #include "call.h"
@@ -56,26 +47,19 @@ loop: {
     s16 *frame = &work->frame;
     s32 wave = Math_Sine((*frame + i) << 11) * 6;
     s32 blue = Math_Sine(((*frame / 2 + i) << 11) + 0x4800) * 3;
-    s32 next;
-    s32 green;
     s32 colour;
     wave >>= 16;
     blue >>= 16;
     wave += 20;
     blue += 3;
-    colour = blue << 10;
-    green = wave << 5;
-    next = i + 1;
     if (i <= 15) {
-      colour |= green;
-      colour |= red;
+      colour = blue << 10 | wave << 5 | red;
       ((u16 *)0x05000200)[111 - i] = colour;
     } else {
-      colour |= green;
-      colour |= red;
+      colour = blue << 10 | wave << 5 | red;
       ((u16 *)0x05000200)[255 - i] = colour;
     }
-    i = next;
+    i++;
   }
   if (i <= 31)
     goto loop;
@@ -101,8 +85,5 @@ loop: {
   Func_02003604(sprite);
   work->trailingScale = work->scale * 31 / 40;
   work->trailingScale2 = work->scale2 * 31 / 40;
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 15 of 175 instructions differ in tla-en. */
-  asm("");
-  *(u16 *)&work->frame += 1;
+  work->frame++;
 }

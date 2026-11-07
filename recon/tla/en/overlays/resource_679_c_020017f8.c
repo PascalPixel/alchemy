@@ -1,4 +1,7 @@
-// Draft, differ 19 of 159 (tla-en, 5 November 2026), from 84: Func_020032d4's form.
+// Differ 14 of 159 (tla-en, 2026-11-07).
+// 7 November: the word at Data_0202c001 + 0x1df through a local pointer (permuter) gives
+// 19 to 14. Left: allocation, as below.
+// Before: differ 19 of 159 (tla-en, 5 November 2026), from 84: Func_020032d4's form.
 // Left: the native stores a << 8 before adding origin, with the pool address in r1
 // and a in r2; written in that order the rotation shifts by one (36).
 // Measured under -Os, 5 November 2026: differ 84 (tla-en); notes below may predate it.
@@ -57,11 +60,12 @@ void Func_020017f8(u32 base, s32 a, s32 b) {
   struct CellMarker *entry = &markers->markers[markers->count];
   s32 origin = ((map->minZ >> 20) << 7) + (map->minX >> 20);
   struct MapCell *cell;
+  s32 *slot = (s32 *)(Data_0202c001 + 0x1df);
   s16 x, z;
   u32 value;
 
   cells += origin;
-  *(s32 *)(Data_0202c001 + 0x1df) = a << 8;
+  *slot = a << 8;
   z = 0;
   if (z < height) {
   outer:

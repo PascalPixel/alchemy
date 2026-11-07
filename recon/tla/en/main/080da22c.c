@@ -1,7 +1,6 @@
-// Near miss, differ 24 (62 before statements reordered 2026-10-26) of 123, register choice and order: as in
-// Func_080d9194's draft, the angle and the link pointer trade registers
-// (the native keeps the link in r10 and the angle in r7), and the argument
-// spills are ordered differently.
+// Matches (tla-en, 2026-11-07).
+// 2026-11-07: the node kind's 2 held in a local for the whole function and the
+// link stored before the ArcTan2 call, as in Func_080d9194.
 // The heap slot 0xa0 work's copy of Func_080d9194. Builds a slot's
 // chain of nodes, one for each 6 units of the distance between two points,
 // laid out as a flat spiral around the first point, every node kind 2. Unlike
@@ -53,6 +52,7 @@ s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 angle = 0;
   s32 radius = 0x40000;
   s32 i;
+  s32 kind = 2; // One constant for its whole life.
 
   for (i = 0; i <= segments; i++) {
     struct LineNode *node = Func_080d8d40();
@@ -65,9 +65,9 @@ s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     node->x = x + Iwram_MulQ16(Trig_Cos(angle), radius);
     node->y = y;
     node->z = z + Iwram_MulQ16(Trig_Sin(angle), radius);
-    node->kind = 2;
-    step = ArcTan2(0x60000, radius);
+    node->kind = kind;
     *link = node;
+    step = ArcTan2(0x60000, radius);
     angle += step;
     link = &node->next;
     radius += step * 4;

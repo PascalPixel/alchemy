@@ -1,4 +1,7 @@
-// Draft, differ 17 of 120 (tla-en, 2026-11-05). Older notes below may predate this figure.
+// Differ 15 of 120 (tla-en, 2026-11-07), from 17: the detail is the sprite's
+// record at 0x28 (LinkedSprite put it at 0x2c). Left: motionFlags and action
+// stored through one pointer (adds r3, #85; adds r3, #15) natively, two here;
+// every order of the five child stores measured, none better.
 // Under -Os, 5 November: differ 17 of 120 (tla-en); older figures below predate it.
 // Draft of Func_02004634 (overlay 64B, 120 instructions), differ 69: the linked
 // pair of effects, ported from ☀️'s WorldMap_CreateAttachedEffects (⚓️ creates
@@ -87,7 +90,7 @@ do {
         sprite->fullColor = 0;
         sprite->shape = 1;
         ((struct WorldMapOam *)sprite)->size = 2;
-        part->detail->field16 = 0;
+        ((struct LinkedDetail *)sprite->record)->field16 = 0;
       }
     }
   }

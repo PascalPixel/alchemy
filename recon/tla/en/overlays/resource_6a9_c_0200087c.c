@@ -1,13 +1,10 @@
-// Draft, differ 24 of 255, skeleton gap 6 (tla-en, 2026-11-01)
-// Left: the frame is 80 against 68 and the velocity address is built before
-// the loop, where the listing builds it inside, after the cosine call. The
-// listing puts velocity and position in one slot at sp+56 above options at
-// sp+16; sharing them (one array, or branch-scoped arrays) gets that layout, but
-// GCSE then hoists sp+56, spills terrainId's address, and the gap rises to 16.
-// Two separate arrays are kept for that reason. Matched siblings (s1674.c,
-// s042c.c) stop the hoist with a tagged dead `spawn`, a device not used here.
-// Also left: kind + 2 is formed after the blend store, in r3, where the listing
-// has it before, in r4; a named offset, kind += 2 and * 0x100000 all widen the gap.
+// Differ 6 of 255 (tla-en, 2026-11-07).
+// From 16: the burst loop is a goto loop (no loop notes, so GCSE no longer
+// hoists the array's address), and one array serves as the velocity and
+// then the position, giving the native frame of 68 with options at sp+16 and
+// the array at sp+56. Left: kind + 2 is formed after the blend store, in r3,
+// where the native forms it before, in r4; a named sum, kind += 2 and
+// * 0x100000 all widen the gap.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -102,7 +99,10 @@ void Func_0200087c(void) {
       options.startScaleX = 0xcccc;
       options.startScaleY = 0xcccc;
       i = 0;
-      do {
+      // A goto loop carries no loop notes: as a do loop, GCSE moves the
+      // array's address out of the loop.
+    loop:
+      {
         angle = i << 12;
         velocity[0] = Value1((s32 (*)())Math_Cosine, angle) * 2;
         velocity[1] = 0;
@@ -116,17 +116,18 @@ void Func_0200087c(void) {
         Func_0200015c(object->x, object->y, object->z, velocity[0], velocity[1],
                       velocity[2], 0x10b0000, &options);
         i++;
-      } while (i <= 16);
+      }
+      if (i <= 16)
+        goto loop;
     }
     object->motionFlags = 0;
     object->terrainId = 0;
+    // The velocity array is reused for the position under the object.
     {
-      s32 position[3];
-
-      position[0] = object->x;
-      position[1] = object->y - 0x100000;
-      position[2] = object->z;
-      other = (s32 *)Value2((s32 (*)())Func_0200115c, (s32)position, 1);
+      velocity[0] = object->x;
+      velocity[1] = object->y - 0x100000;
+      velocity[2] = object->z;
+      other = (s32 *)Value2((s32 (*)())Func_0200115c, (s32)velocity, 1);
       if (other != 0) {
       object->update = Func_02000848;
       FIELD_AT(object, u8, 98) = 1;

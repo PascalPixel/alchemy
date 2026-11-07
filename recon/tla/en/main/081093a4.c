@@ -1,3 +1,6 @@
+// Differ 12 of 238 (tla-en, 2026-11-07).
+// 2026-11-07: the closing replaced-item test is plain C (its temporary and empty asm gave
+// nothing); the two empty asms around the stat copies stay (14 and 16 without). Left: order.
 // Near miss, differ 12 of 238 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
@@ -130,13 +133,6 @@ void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
                                     i * 16);
     Window_DrawDividerLineFar(window, 0, i * 2 + 2, 13, i * 2 + 2);
   }
-  {
-    s32 old = replaced;
-
-    /* FAKEMATCH: the native reloads the replaced item before it builds -1
-     * (differ 34 without the temporary and barrier, 32 with). */
-    __asm__("");
-    if (old != -1)
-      Text_DrawCharacterAtOffsetFar(old + (s32)MsgItemName, window, 0, 48);
-  }
+  if (replaced != -1)
+    Text_DrawCharacterAtOffsetFar(replaced + (s32)MsgItemName, window, 0, 48);
 }

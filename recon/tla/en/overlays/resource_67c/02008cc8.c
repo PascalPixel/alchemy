@@ -1,71 +1,77 @@
-// Draft of Func_02000cc8 (overlay 67C, 284 bytes), differ 66 of 120. The two
-// room tests and the slide loop are right; left: the native takes the address
-// of the position on every pass (mov r1, sp) where this form keeps it in r6,
-// which moves the id from r6 to r7, and it builds each clamp bound twice
-// (cmp r3, r1; ble; movs r3, #128; lsls r3, r3, #9) where this form copies the
-// bound it compared with. A for loop with breaks is differ 91.
-#include "../../../../../games/tla/src/scene/aqua_rock_inside/local.h"
+// Matches (tla-en, 2026-11-07).
+// Taken from its matched twin in games/tla/src/scene/aqua_rock_inside/s0cc8.c.
+#include "types.h"
+#include "call.h"
+#include "actor.h"
+#include "main_routine_work.h"
 #include "scene_ids.h"
+#include "system/vector3.h"
 
-void Func_02000ca8(s32 id);
-s32 Func_02003d2c(struct Actor *object, s32 *position);
+struct Actor *Actor_GetById();
+void Func_02003d7c();
+s32 Func_02003eac();
+void Func_02000ca8();
+s32 Func_02003d2c(struct Actor *object, struct Vector3 *target);
+void wait();
 
-void Func_02000cc8(s32 id) {
-  s32 slide = 1;
+void Func_02000cc8(s32 trigger) {
+  s32 clear = 1;
+  struct Actor *object;
+  struct Vector3 target;
+  s32 result;
 
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov67cRoom5) {
     s32 column = Actor_GetById(8)->x >> 20;
 
-    if (id == 77 && column == 17)
-      slide = 0;
-    if (id == 78 && column == 19)
-      slide = 0;
+    if (trigger == 77 && column == 17)
+      clear = 0;
+    if (trigger == 78 && column == 19)
+      clear = 0;
   }
-  /* FAKEMATCH: the native reads the scene again here; without the barrier the
-   * read is moved up both paths. */
-  __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov67cRoom6) {
-    if (id == 77 && Actor_GetById(10)->x >> 20 == 9)
-      slide = 0;
-    if (id == 78 && Actor_GetById(11)->x >> 20 == 13)
-      slide = 0;
+    if (trigger == 77 && Actor_GetById(10)->x >> 20 == 9)
+      clear = 0;
+    if (trigger == 78 && Actor_GetById(11)->x >> 20 == 13)
+      clear = 0;
   }
-  if (slide) {
-    struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
-    s32 position[3];
-    s32 result;
+  if (clear == 0)
+    return;
+  object = Actor_GetById(gMainRoutineWork.currentOwner);
+  Func_02003d7c();
+  Func_02003eac(0);
+  goto test;
+step:
+  if (result < 0) {
+    object->angle = 0x4000;
+    Func_02000ca8(trigger);
+    return;
+  }
+  {
+    s32 offset, x;
 
-    Func_02003d7c();
-    Func_02003eac(0);
-    /* FAKEMATCH: the loop is written with goto so that it carries no loop
-     * notes: the bytes take the position address on every pass, and a for loop
-     * hoists it. */
-    goto test;
-  body:
-    if (result < 0) {
-      object->angle = 0x4000;
-      Func_02000ca8(id);
-      return;
-    }
     object->z += 0x20000;
+    x = object->x;
+    offset = (x & 0xfffff) - 0x80000;
     {
-      s32 x = object->x;
-      s32 offset = (x & 0xfffff) - 0x80000;
+      /* FAKEMATCH(temporary): each bound in one local just past the limit; as
+       * literal bounds, 4 of 120 instructions differ in tla-en. */
+      s32 limit = 0x10001;
 
-      if (offset > 0x10000)
+      if (offset >= limit)
         offset = 0x10000;
-      if (offset < -0x10000)
+      limit = -0x10001;
+      if (offset <= limit)
         offset = -0x10000;
-      object->x = x - offset;
     }
-    object->angle += 0x1000;
-    wait(1);
-  test:
-    position[0] = object->x;
-    position[1] = object->y;
-    position[2] = object->z + 0x80000;
-    result = Func_02003d2c(object, position);
-    if (result <= 0)
-      goto body;
+    object->x = x - offset;
   }
+  object->angle += 0x1000;
+  wait(1);
+test:
+  target.x = object->x;
+  target.y = object->y;
+  target.z = object->z + 0x80000;
+  result = Func_02003d2c(object, &target);
+  if (result <= 0)
+    goto step;
 }

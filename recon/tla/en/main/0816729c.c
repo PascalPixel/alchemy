@@ -1,4 +1,6 @@
-// Differ 56 of 2680 (tla-en, 2026-11-07).
+// Differ 54 of 2680 (tla-en, 2026-11-07).
+// 2026-11-07, from 56: an empty asm (FAKEMATCH barrier) between the closing
+// fill and the release loop (54). Left as below.
 // 2026-11-07: ring = 0 before shift = 0 and a plain Iwram_FillWords for the strike's
 // first sheet fill (60 to 56); the flash step, both queue loops and DRAW_ALT's
 // argument order still tie as below.
@@ -579,6 +581,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
   } while (frame != 160 && (frame <= 4 || !(gInput.repeat & 3)));
 
   FILL(canvas, 0x4000, 0);
+  /* FAKEMATCH(barrier): an empty asm parts the closing fill from the release
+   * loop; as no asm, 56 of 2680 instructions differ in tla-en. */
+  __asm__("");
   for (i = 0; i != 16; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }

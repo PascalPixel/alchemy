@@ -1,15 +1,22 @@
-// Near miss, differ 22 of 19: the native indexes the list from sp on every
-// pass (lsls r2, r5, #1; mov r3, sp; ldrh r0, [r3, r2]) and counts i up to
-// the count; this draft walks a pointer and counts down. A u16 or s16 list
-// compiles the same.
+// Matches (tla-en, 2026-11-07).
+// The list's count comes through an inline helper, which keeps the list's
+// address out of a register so each pass rebuilds it from sp, as natively.
+// Differ 0 in all six editions.
 #include "types.h"
 #include "main_routine_work.h"
 
 void Func_02000160(s32 owner, s32 delta);
 
+static __inline__ s32 ListActiveOwners(u16 *owners) {
+  return Party_ListActiveOwners((s16 *)owners);
+}
+
 void Func_0200017c(s32 delta) {
   u16 owners[16];
-  s32 count = Party_ListActiveOwners((s16 *)owners);
+  /* FAKEMATCH(wrapper): the count through an inline call layer; as
+   * Party_ListActiveOwners called directly, 22 of 19 instructions differ in
+   * tla-en. */
+  s32 count = ListActiveOwners(owners);
   s32 i;
 
   for (i = 0; i < count; i++)

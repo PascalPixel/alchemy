@@ -1,4 +1,7 @@
-// Draft, differ 20 of 134 (tla-en, 2026-11-05), no device; left: the last actor, native r1 with r0 walked to its 0x62 byte.
+// Matches (tla-en, 2026-11-07).
+// 7 November: the last actor's zero as a block-local constant (from the permuter) gives
+// the native's registers there (20 to 0); no device.
+// Before: differ 20 of 134 (tla-en, 2026-11-05), no device; left: the last actor, native r1 with r0 walked to its 0x62 byte.
 // Draft of overlay 674's Func_02003164, differ 91 of 134 (13 more
 // instructions): a room's setup written from the listing. The native keeps the
 // map work in r5, a zero for the motion flags in r6 and object 10 in r7, and
@@ -58,8 +61,13 @@ void Func_02003164(void) {
   }
   Func_02003f4c(14);
   last = Actor_GetById(14);
-  ((u8 *)last)[0x62] = 1;
-  last->motionFlags = 0;
+  {
+    // A local that holds 0, as the native keeps its own register for it.
+    s32 still = 0;
+
+    ((u8 *)last)[0x62] = 1;
+    last->motionFlags = still;
+  }
   Func_020020ec(last->x, last->z, 1, 255);
   if (GameFlag_Test(0x213))
     Call6((void (*)())Func_02003e24, 5, 2, 1, 2, 5, 28);

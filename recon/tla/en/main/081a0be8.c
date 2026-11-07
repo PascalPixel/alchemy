@@ -1,4 +1,9 @@
-// Near miss, differ 8 of 88 (tla-en, 2026-11-06): scheduling only; the
+// Differ 6 of 88 (tla-en, 2026-11-07).
+// 2026-11-07: Iwram_ClearWords through an inline wrapper, as the Broken Seal's
+// iwram_call.h writes it, puts the size shift after the address load (8 to 6);
+// left, scheduling: the pack loop's two pointer copies ahead of its count's
+// shift and in swapped order, and the first copy loop's canvas pointer.
+// Earlier, differ 8 of 88 (2026-11-06): scheduling only; the
 // IWRAM clear's size shift lands before its address load, the pack loop's
 // two pointer copies land ahead of its count's shift, and the first copy
 // loop sets its canvas pointer before the VRAM offset.
@@ -6,6 +11,14 @@
 #include "types.h"
 #include "heap_release.h"
 #include "iwram_call.h"
+
+// The clear goes through an inline wrapper, as the Broken Seal's iwram_call.h
+// writes it: called straight through the fixed entry, the build shifts the
+// size before loading the routine's address.
+#undef Iwram_ClearWords
+static inline s32 Iwram_ClearWords(void *destination, s32 size) {
+  return Iwram_ClearWordsEntry(destination, size);
+}
 
 s32 Func_08038418(s32 message, u8 *canvas, s32 align);
 

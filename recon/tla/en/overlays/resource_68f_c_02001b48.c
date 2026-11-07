@@ -1,11 +1,10 @@
-// Differ 8 of 332 (tla-ja, 2026-11-07).
+// Matches (tla-ja, 2026-11-07). The walk's step through Call3 after an sfp
+// barrier, and the overlap call through Value4, as in the tla-en twin.
 // The Japanese release's own form of Func_02001b48, an older revision of the
 // Tundaria Tower walk in games/tla/src/scene/tundaria_tower/s1b48.c.
-// Unlike it: direct calls, no first wait for the walk, Func_02002fb8 before
+// Unlike it: a direct first step, no first wait for the walk, Func_02002fb8 before
 // the walk, a raised gData_02003cd0 in the step blocks it, no direction
-// returns at once. Left: the step and overlap calls reuse the position's
-// address from r6 where the listing recomputes add r2, sp, #28 (gcse); the
-// sfp barrier at walk did not move it.
+// returns at once.
 
 #include "types.h"
 #include "actor.h"
@@ -13,6 +12,7 @@
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "input.h"
+#include "call.h"
 
 extern volatile s16 gData_02003cd0;
 extern s16 gData_020032b2[];
@@ -80,7 +80,7 @@ retry:
     angle = (angle + 0x2000) & 0xc000;
   }
   /* FAKEMATCH(barrier): an empty asm clobbering sfp keeps the first step's
-   * position address from reusing p; as no asm, 10 of 332 instructions differ
+   * position address from reusing p; as no asm, 2 of 332 instructions differ
    * in tla-ja. */
   __asm__("" : : : "sfp");
   Vector_AddPolarOffsetFar(0x100000, angle, position);
@@ -116,7 +116,9 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    if (Func_02003028(&entry->x, radius, position, entry->radius - 2) >= 0)
+    /* FAKEMATCH(wrapper): the overlap call goes through Value4; as a direct
+     * call, 2 of 332 instructions differ in tla-ja. */
+    if (Value4((s32 (*)())Func_02003028, (s32)&entry->x, radius, (s32)position, entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;
@@ -142,7 +144,12 @@ test:
   if (cell != startCell)
     goto changed;
 walk:
-  Vector_AddPolarOffsetFar(0x100000, angle, position);
+  /* FAKEMATCH(barrier): an empty asm clobbering sfp stops gcse hoisting the
+   * position's address; as no asm, 128 of 332 instructions differ in tla-ja. */
+  __asm__("" : : : "sfp");
+  /* FAKEMATCH(wrapper): the polar step goes through Call3; as a direct call, 6
+   * of 332 instructions differ in tla-ja. */
+  Call3((void (*)())Vector_AddPolarOffsetFar, 0x100000, angle, (s32)position);
   q = position;
   cell = Func_02002fe0(*layer, q[0], q[2]);
   if (cell != 255)

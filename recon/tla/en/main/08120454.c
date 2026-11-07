@@ -1,3 +1,6 @@
+// Differ 4 of 3451 (tla-en, 2026-11-07).
+// 2026-11-07: the empty asm before the effect 53/83 action scan is gone (same 4); left the
+// one multiply sched2 issues a row early, as below.
 // Near miss, differ 4 of 3451 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Draft, differ 8 of 3451, skeleton gap 3 (tla-en, 2026-11-01)
@@ -680,10 +683,6 @@ power_end:
   if (hit != 0) {
     if (action->effect == 53 || action->effect == 83) {
       hit = 0;
-      /* FAKEMATCH: barrier; sched2 otherwise issues movs r3, #187 for the
-       * scan's first address before the store of hit and the reload of work,
-       * where the ROM stores and reloads first, 4 instructions. */
-      asm("");
       for (n = 0; n < 20; n++) {
         if (work->actions[n].unitId == tid) {
           hit = 1;

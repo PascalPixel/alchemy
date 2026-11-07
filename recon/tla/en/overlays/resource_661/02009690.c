@@ -1,6 +1,10 @@
-// Near miss, differ 43 of 478 (1,248 bytes), lifted mechanically from the
-// listing and not yet worked by hand: call sites through call.h's layer or
-// direct, the rest is argument order and the function's own loads and stores.
+// Differ 12 of 478 (tla-en, 2026-11-07), from 43: actor 9's Func_02004098 call
+// (0x2150000, 0x10f0000, 0x8000) restored where the lift left a bare call around
+// the mid-function pool; the two empty asms on Func_02004100's arguments gone
+// (each counted 4 bytes and moved the pool) for Value3, which orders them as
+// the listing does (Call3 16, direct 22). Left: argument-move scheduling at the
+// first camera call and actor 9 to 11's Func_02004098 calls (the a3 asms
+// still help there: plain Call4 or Value4, 18). Lifted mechanically before.
 #include "types.h"
 #include "call.h"
 
@@ -51,14 +55,7 @@ void Func_02001690(void) {
   Call1(Func_020040c8, ((s32)MsgHeyLookUp));
   Call1(Actor_Stop, 9);
   Call1(wait, 1);
-  {
-    s32 a1 = 0x100;
-    s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
-    asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_02004100(9, a1, a2);
-  }
+  Value3(Func_02004100, 9, 0x100, 0);
   Call3(Actor_ArmCallback, 9, 0, 20);
   Call2(Func_020040d0, 9, 0);
   Call1(Actor_Stop, 8);
@@ -118,14 +115,7 @@ void Func_02001690(void) {
   Call2(Func_020040d0, 10, 0);
   Call3(Actor_ArmCallback, 8, 0x8000, 0);
   Call3(Actor_ArmCallback, 9, 0x8000, 0);
-  {
-    s32 a1 = 0x102;
-    s32 a2 = 0;
-    /* FAKEMATCH: the native loads the later arguments before the first; the
-     * plain call loads the first earlier. */
-    asm volatile("" : "+l"(a1), "+l"(a2));
-    Func_02004100(8, a1, a2);
-  }
+  Value3(Func_02004100, 8, 0x102, 0);
   Func_02004100(9, 0x102, 80);
   Call2(Func_020040d0, 14, 0);
   Call3(Actor_ArmCallback, 8, 0xd000, 0);
@@ -171,9 +161,7 @@ void Func_02001690(void) {
   Call3(Func_02004090, 14, 0, 0);
   v6 = (v6 << 8);
   Call4(Func_02004098, 8, 0x2080000, 0xf20000, v6);
-  goto L_02009abc;
-L_02009abc:;
-  Func_02004098();
+  Call4(Func_02004098, 9, 0x2150000, 0x10f0000, 0x8000);
   {
     s32 a3 = 0x3000;
     /* FAKEMATCH: the native loads the last argument first; the plain call loads

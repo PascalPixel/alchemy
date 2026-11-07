@@ -1,5 +1,5 @@
-// Draft, differ 8: overlay 697's copy of the function drafted in
-// resource_691_c_020030bc.c, whose header says what it is and what still differs.
+// Matches (tla-en, 2026-11-07); all six editions agree. Overlay 697's copy of
+// the function in resource_691_c_020030bc.c, whose header says what it is.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -21,9 +21,17 @@ void Func_02005958(s32 id);
 s32 Func_02005a20(s32 layer, s32 shape, s32 height);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
 void Task_Wait(s32 frames);
-
 void Func_020046a4(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct Actor *object;
+  s32 id;
+  s32 flag;
+  s32 nextFlag;
+  struct MapCell *cells;
+  u8 *shapes;
+  struct MapCell *cell;
+  s32 index;
+  u8 *grid = gMapShapeGrid; // the shape grid, read once
 
   Func_020058f0(8, gMainRoutineWork.currentOwner);
   Func_020058f0(9, gMainRoutineWork.currentOwner);
@@ -41,31 +49,30 @@ void Func_020046a4(u16 *list) {
   if (*list == 0xffff)
     goto done;
 next:
-  {
-    s32 id = list[0];
-    struct Actor *object = Actor_GetById(id);
-    s32 flag = list[1];
-    s32 nextFlag = flag + 1;
-    u8 *layer = &object->terrainId;
-    struct MapCell *cells = map->layers[*layer].cells;
-    u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+  id = list[0];
+  object = Actor_GetById(id);
+  flag = list[1];
+  nextFlag = flag + 1;
+  cells = map->layers[object->terrainId].cells;
+  shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+  object->unk5c[0] = 3;
+  if (GameFlag_Test(nextFlag)) {
+    Func_020058e0(id, 0, 0);
+  } else {
+    s32 shape;
+    u8 *slot;
+    s32 height;
 
-    object->unk5c[0] = 3;
-    if (GameFlag_Test(nextFlag)) {
-      Func_020058e0(id, 0, 0);
-    } else {
-      s32 index = Func_02005a18(object);
-      u8 *cell = (u8 *)&cells[index];
-      u8 *slot = shapes + index;
-      s32 shape = Func_02005848(*layer, object->x, object->z);
-      s32 ground = Map_GetTerrainHeight(*layer, object->x, object->z);
-
-      Func_02005958(id);
-      cell[3] = 128;
-      *slot = Func_02005a20(*layer, shape, (ground >> 19) + 4);
-      if (GameFlag_Test(flag))
-        ObjectVisual_CopyAttributes(id, 9);
-    }
+    index = Func_02005a18(object);
+    cell = &cells[index];
+    slot = shapes + index;
+    shape = Func_02005848(object->terrainId, object->x, object->z);
+    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    Func_02005958(id);
+    cell->attributeB = 128;
+    *slot = Func_02005a20(object->terrainId, shape, (height >> 19) + 4);
+    if (GameFlag_Test(flag))
+      ObjectVisual_CopyAttributes(id, 9);
   }
   list += 2;
   if (*list != 0xffff)

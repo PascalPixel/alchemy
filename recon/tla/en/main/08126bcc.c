@@ -1,3 +1,6 @@
+// Matches (tla-en, 2026-11-07).
+// 2026-11-07: plain C; both ramp cases mask with 0xf directly, with no mask local, empty
+// asm or once-only block.
 // Near miss, differ 10 of 130 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 4 of 130 (tla-en, 2026-10-31; 48 before): advances the
@@ -51,26 +54,17 @@ void Graphics_AdvancePaletteCycle(void) {
       REG_BLDALPHA = (level << 8) | (0x10 - level);
       battle->highlightStep++;
     } else if (battle->highlightMode == 2) {
-      u32 mask;
-
       REG_BLDCNT = 0x3f40;
       REG_BLDALPHA =
           (gBattleEffect_HighlightBlendRamp[battle->highlightStep] << 8) |
           (0x10 - gBattleEffect_HighlightBlendRamp[battle->highlightStep]);
-      mask = 0xf;
-      do {
-      } while (0);
-      battle->highlightStep = ((battle->highlightStep + 1) & mask) |
+      battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
                               (battle->highlightStep > 14 ? 0x10 : 0);
     } else if (battle->highlightMode != 0) {
-      u32 mask;
-
       REG_BLDCNT = 0x3f90;
       REG_BLDALPHA = 0x10;
       REG_BLDY = gBattleEffect_HighlightBlendRamp[battle->highlightStep];
-      mask = 0xf;
-  __asm__("" : "=r"(mask) : "0"(mask));
-      battle->highlightStep = ((battle->highlightStep + 1) & mask) |
+      battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
                               (battle->highlightStep > 14 ? 0x10 : 0);
     }
   }

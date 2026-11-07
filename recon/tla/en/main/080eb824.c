@@ -1,5 +1,5 @@
-// Near miss, differ 16 of 116 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
+// Matches (tla-en, 2026-11-07): the pixel row and column named inside the
+// inner loop (y & 7, x & 7) give the tile row r5 and y r6 as the native has.
 // Near miss, differ 22 of 116 (2026-10-15, written from the listing; ☀️ has no
 // twin). The command's 0 comes from the literal pool, as in the ROM (a
 // halfword zero kept in a register). What remains: the pixel map loop gives the
@@ -56,8 +56,11 @@ void Func_080eb824(void) {
   map = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP,
                               CANVAS_WIDTH * CANVAS_WIDTH * sizeof(u16));
   for (y = 0; y < CANVAS_WIDTH; y++) {
-    for (x = 0; x < CANVAS_WIDTH; x++)
-      *map++ = ((((y >> 3) * 8 + (x >> 3)) * 8) + (y & 7)) * 8 + (x & 7);
+    for (x = 0; x < CANVAS_WIDTH; x++) {
+      s32 row = y & 7;
+      s32 column = x & 7;
+      *map++ = ((((y >> 3) * 8 + (x >> 3)) * 8) + row) * 8 + column;
+    }
   }
 
   Task_Add(Func_080eb6a0, TASK_PASS_VBLANK);

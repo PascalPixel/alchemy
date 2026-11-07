@@ -1,4 +1,8 @@
-// Near miss, differ 6 of 219 (tla-en, 2026-11-05), untagged yet: j at function scope reused for the 4, read by an empty asm in its loop; left is 0x800 + k built before the flag number in the preheader and its step. Older notes follow.
+// Matches (tla-en, 2026-11-07), with one tagged barrier.
+// 2026-11-07: the flag number 0x800 + k + j in a local of the inner loop
+// settles the preheader and step order (differ 6 before); j at function scope
+// is reused for the unit loop's bound 4 and read by the tagged empty asm.
+// Older notes follow.
 // Draft, differ 44 of 219, skeleton gap 8 (tla-en, 2026-11-01)
 // Takes over a The Broken Seal save (`save`, laid out as that game's: flag bits
 // at 0x40, its gMainRoutineWork at 0x240, the units at 0x520): its djinn flags
@@ -63,10 +67,15 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
   for (i = 0, k = 0; i < 4; i++, k += 7) {
 
     for (j = 0; j < 7; j++) {
+      s32 flag = 0x800 + k + j;
+
       if (FlagBits_Test(flags, 0x30 + i * 20 + j))
-        GameFlag_SetBit(0x800 + k + j);
+        GameFlag_SetBit(flag);
       else
-        GameFlag_ClearBit(0x800 + k + j);
+        GameFlag_ClearBit(flag);
+      /* FAKEMATCH(barrier): an empty asm reading j, which keeps the counter
+       * the native's one long-lived register; without it, 105 of 219
+       * instructions differ in tla-en. */
       asm("" : : "r"(j));
     }
   }
@@ -93,7 +102,7 @@ void Func_080ae410(u8 *save, s32 keepSettings) {
                   state->paletteGlow[1]);
   }
 
-  j = 4;
+  j = 4; // A local reused for a second value: the unit loop's bound.
   for (i = 0; i < (s32)j; i++) {
     struct BattleUnit *unit = Unit_Get(i);
 

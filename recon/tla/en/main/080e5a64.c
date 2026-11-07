@@ -1,3 +1,6 @@
+// Differ 12 of 302 (tla-en, 2026-11-07): the colour built in a local before its
+// store (found by permute; 16 before). Left: instruction order in the palette
+// store and the switch; the empty asm in the palette loop is still untagged (14 without).
 // Near miss, differ 16 of 302 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Near miss, differ 28 of 302 (54 before; 2026-10-26). The palette loop is a
@@ -72,6 +75,7 @@ void Func_080e5a64(void) {
   s32 red, green;
   s32 i;
   s32 base, blue;
+  s32 color;
 
   work->fading = 0;
   if (work->state == 1) {
@@ -85,8 +89,8 @@ void Func_080e5a64(void) {
   palette:
     red = Trig_Sin(((((blend->phase >> 1) + i) << 16) + base) >> 5) * 12;
     green = Trig_Sin(((((blend->phase >> 1) + i) << 16) + base) >> 5) * 12;
-    *(u16 *)(0x050003c0 + i * 2) =
-        (((green >> 16) + 16) << 5) | blue | ((red >> 16) + 16);
+    color = (((green >> 16) + 16) << 5) | blue | ((red >> 16) + 16);
+    *(u16 *)(0x050003c0 + i * 2) = color;
   asm("");
     if (++i < 32)
       goto palette;

@@ -1,4 +1,8 @@
-// Near miss, differ 8 of 107 (tla-en, 2026-11-06): the same 107 instructions in a different order at the head. Here the halfword's ldrh comes before the ldrsh, and the 0xfff mask is built before the 0xf000 one; the native loads with ldrsh first and builds and applies 0xf000 before 0xfff. Raw read first gives the ldrsh's offset register r1, as in the native. The mask's set apart from its and, with the 0xf000 and between them, keeps reload from reusing r3 for the scene's and, so the and reloads through r0 as in the native and every later reload register lines up (the 0x214 owner offset now comes from "subs r2, #66"). Flags read first, or 0xfff set right before its and, brings back the r3 reuse (differ 56 to 57).
+// Differ 6 of 107 (tla-en, 2026-11-07).
+// 2026-11-07: an empty once-only block after the 0xf000 and (permuter) puts
+// the ldrsh before the ldrh as in the native; left is the 0xf000 mask and its
+// and, built after the 0xfff where the native builds them first.
+// Earlier, differ 8 of 107 (tla-en, 2026-11-06): the same 107 instructions in a different order at the head. Here the halfword's ldrh comes before the ldrsh, and the 0xfff mask is built before the 0xf000 one; the native loads with ldrsh first and builds and applies 0xf000 before 0xfff. Raw read first gives the ldrsh's offset register r1, as in the native. The mask's set apart from its and, with the 0xf000 and between them, keeps reload from reusing r3 for the scene's and, so the and reloads through r0 as in the native and every later reload register lines up (the 0x214 owner offset now comes from "subs r2, #66"). Flags read first, or 0xfff set right before its and, brings back the r3 reuse (differ 56 to 57).
 // Earlier: differ 53 of 107 (2026-11-05) with flags and the raw halfword read apart and 0xfff set just before its and; differ 57 (2026-11-01).
 // Twin of The Broken Seal's Actor_PlaceMapActors (the same pending-event test,
 // flag 0x109, range 300 to 380, placement match and 32-pixel lift); ⚓️ places
@@ -34,6 +38,9 @@ void Func_080d784c(void) {
   s32 id;
 
   flags &= 0xf000;
+  // A once-only block: it ends a block, so the flags' ldrsh comes first.
+  do {
+  } while (0);
   scene &= raw;
   if (GameFlag_Test(0x109) != 0 && flags == 0) {
     flags = scene & 0x800;

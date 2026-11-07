@@ -1,54 +1,45 @@
-// Func_020004d4: differ 55. The native builds the transition id from the
-// register that held its offset (428 then +85: both in r2), reads the entrance
-// again with ldrsh for each of its two tests and keeps r1 free; here the
-// entrance is also loaded unextended for the second test (ldrh, shifted
-// compare), which takes r2 and moves every later constant.
-#include "../../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
+// Matches (tla-en, 2026-11-07).
+// Taken from its matched twin in games/tla/src/scene/champa_cliff_caves/s04d4.c:
+// the inline forwarders keep each call's constants in the native order.
+#include "../../../../games/tla/src/scene/champa_cliff_caves/scene.h"
 #include "scene_ids.h"
-
-extern u32 gData_0200375c[];
-extern u32 gData_020037a4[];
-extern u32 gData_0200381c[];
-extern u32 gData_02003864[];
-extern u32 gData_020038ac[];
-extern u32 gData_0200390c[];
-extern u32 gData_02003984[];
-extern u32 gData_020039cc[];
-extern u32 gData_02003aec[];
-extern u32 gData_02003b94[];
-extern u32 gData_02003c0c[];
-extern u32 gData_02003c84[];
+#include "version.h"
 
 struct EventTransition {
   u8 unk000[0x1ac];
   s32 type;
-  u8 unk1b0[4];
-  s32 frames;
 };
 
-void Actor_SetSingleChildFlags(struct FieldActor *object, s32 flags);
-void Func_020035ac(s32 value);
-void Func_0200361c(s32 a, s32 b);
-void Func_020034d4(s32 actor, s32 x, s32 z);
 void Func_02001774(void);
 void Func_02001868(void);
+void Func_020034d4(s32 actor, s32 x, s32 z);
+void Func_020035ac(s32 a);
+void Func_0200361c(s32 a, s32 b);
+
+static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
+  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
+   * as ☀️'s scene layer does. */
+  Func_020034d4(actor, x, z);
+}
+
+static __inline__ void Func_0200361c_(s32 a, s32 b) {
+  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
+   * as ☀️'s scene layer does. */
+  Func_0200361c(a, b);
+}
 
 s32 Func_020004d4(void) {
-  struct MainRoutineWork *party;
-  s32 scene;
-  s32 *type = &((struct EventTransition *)Ram_HeapSlots->eventWork)->type;
+  struct MainRoutineWork *party = &gMainRoutineWork;
 
-#ifdef TLA_EDITION_JA
-  *type = 516;
+#if !TLA_PATCH_1
+  ((struct EventTransition *)Ram_HeapSlots->eventWork)->type = 516;
 #else
-  *type = 513;
+  ((struct EventTransition *)Ram_HeapSlots->eventWork)->type = 513;
 #endif
-  party = &gMainRoutineWork;
   if (party->scene != (s32)&SceneId_Ov685Room1)
-    Actor_GetById(party->currentOwner)->priorityFlags |= 0x20;
+    Actor_GetById(party->currentOwner)->priorityFlags |= 32;
   Func_020035ac(0);
-  scene = party->scene;
-  if (scene == (s32)&SceneId_Ov685Room4) {
+  if (party->scene == (s32)&SceneId_Ov685Room4) {
     if (party->entrance == 98)
       Func_02001774();
     if (party->entrance == 99) {
@@ -57,13 +48,13 @@ s32 Func_020004d4(void) {
       Func_02001868();
     }
     if (GameFlag_Test(0x977) && !GameFlag_Test(0x978)) {
-      Func_0200361c(10, 326);
-      Func_020034d4(10, 664 << 16, 232 << 16);
+      Func_0200361c_(10, 326);
+      Func_020034d4_(10, 0x2980000, 0xe80000);
       Actor_GetById(10)->motionFlags = 4;
     }
     if (GameFlag_Test(0x977))
-      Func_020034d4(8, 664 << 16, 200 << 16);
-  } else if (scene == (s32)&SceneId_Ov685Room3) {
+      Func_020034d4_(8, 0x2980000, 0xc80000);
+  } else if (party->scene == (s32)&SceneId_Ov685Room3) {
     if (GameFlag_Test(0x97e)) {
       Actor_SetModeById(8, 11);
       Actor_SetSingleChildFlags(Actor_GetById(8), 0);

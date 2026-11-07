@@ -1,4 +1,6 @@
-// Differ 52 of 1932 (tla-en, 2026-11-07).
+// Differ 50 of 1932 (tla-en, 2026-11-07).
+// 2026-11-07, from 52: an empty asm (FAKEMATCH barrier) after variant in the
+// frame 133 particle loop settles that step pair (50). Left as below.
 // 2026-11-07, from 62: gData_0819746d and gData_08197473 declared without
 // const (54, then 52; found by permute as a volatile global): their loads then
 // stay behind the stack-argument stores, so both blits' str of w falls where the
@@ -556,6 +558,9 @@ void BattleEffect_RunUlysses(struct BattleEffectArgument *effect) {
         p = &work->particles[i];
         p->x = src[0] << 16;
         p->variant = -8 * i;
+        /* FAKEMATCH(barrier): an empty asm parts the particle's first stores from
+         * the rest; as no asm, 52 of 1932 instructions differ in tla-en. */
+        __asm__("");
         p->y = src[1] << 16;
         p->z = src[2] << 6;
         p->velocityX = src[3] << 15;

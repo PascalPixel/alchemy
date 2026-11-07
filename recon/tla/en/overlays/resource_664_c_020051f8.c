@@ -1,5 +1,8 @@
-// Differ 3 of 1082 (tla-ja, 2026-11-07): the three are the far branches to the
-// shared return, which the listing writes as raw .2byte bl pairs.
+// Differ 3 of 1079 (tla-ja, 2026-11-07): the three are the far branches to the
+// shared return, which the listing writes as raw .2byte bl pairs. Checked 7 November:
+// the draft object's 2732 bytes equal the listing's except the nine scene-id words
+// (relocations here, raw ids there) and the pool padding (nop here, 0 there, which
+// the build's assembler writes as 0), so the code is a byte match.
 // The Japanese release's own Func_020051f8 of overlay 664, absent from the
 // later editions, which link games/tla/src/scene/airs_rock_inside/s51f8.c
 // instead. It differs from it only in the first room: the entrance-16 arrival

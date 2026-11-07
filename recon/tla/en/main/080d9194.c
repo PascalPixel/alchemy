@@ -1,11 +1,11 @@
-// Near miss, differ 18 (34 before statements reordered 2026-10-26) of 126: builds a slot's chain of nodes for the heap
+// Matches (tla-en, 2026-11-07).
+// 2026-11-07: the visible flag's 2 held in a local for the whole function, as
+// in Func_080d8ff8, and the link stored before the ArcTan2 call. Builds a
+// slot's chain of nodes for the heap
 // slot 0x9c work, one node for each 6 units of the distance between two
 // points, laid out as a flat spiral around the first point. Func_080d9104
 // calls it with two objects' positions; Func_080d8ff8 later moves the nodes
-// along the line. Left: register choice, angle and the link pointer swapped
-// (the native keeps the link in r9 and the angle in r7, so its link stores go
-// through mov r2, r9), plus the argument spills' order. Declaring the angle
-// before the link changes nothing.
+// along the line.
 #include "types.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
@@ -50,6 +50,7 @@ s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 angle = 0;
   s32 radius = 0x40000;
   s32 i;
+  s32 visible = 2; // One constant for its whole life.
 
   slot->segments = segments;
   for (i = 0; i <= segments; i++) {
@@ -63,9 +64,9 @@ s32 Func_080d9194(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     node->x = x + Iwram_MulQ16(Trig_Cos(angle), radius);
     node->y = y;
     node->z = z + Iwram_MulQ16(Trig_Sin(angle), radius);
-    node->visible = 2;
-    step = ArcTan2(0x60000, radius);
+    node->visible = visible;
     *link = node;
+    step = ArcTan2(0x60000, radius);
     angle += step;
     link = &node->next;
     radius += step * 4;

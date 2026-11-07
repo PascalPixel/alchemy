@@ -1,4 +1,6 @@
-// Draft, differ 8 of 150 (tla-en, 5 November 2026), under -Os: registers and frame are the native's. Left: the third Func_02003088's r2 ahead of its r0, the shape address's sum tied to the grid's register, and the first load's order. Sets the listed pillars as Func_0200222c does, after moving actors 8 to 10 to the leader.
+// Matches (tla-en, 2026-11-07); all six editions agree. Sets the listed
+// pillars as Func_0200222c does, after moving actors 8 to 10 to the leader;
+// overlay 68f's copy of the function in resource_691_c_020030bc.c.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -20,9 +22,17 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void Func_020030c0(s32 id);
 s32 Func_02003180(s32 layer, s32 shape, s32 height);
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId);
-
 void Func_020025e0(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
+  struct Actor *object;
+  s32 id;
+  s32 flag;
+  s32 nextFlag;
+  struct MapCell *cells;
+  u8 *shapes;
+  struct MapCell *cell;
+  s32 index;
+  u8 *grid = gMapShapeGrid; // the shape grid, read once
 
   Func_02003090(8, gMainRoutineWork.currentOwner);
   Func_02003090(9, gMainRoutineWork.currentOwner);
@@ -37,34 +47,37 @@ void Func_020025e0(u16 *list) {
   Func_02003088(9, 0, 0);
   Func_02003088(10, 0, 0);
   wait(1);
-  goto test;
-  do {
-    s32 id = list[0];
-    struct Actor *object = Actor_GetById(id);
-    s32 flag = list[1];
-    s32 nextFlag = flag + 1;
-    struct MapCell *cells = map->layers[object->terrainId].cells;
-    u8 *shapes = gMapShapeGrid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+  if (*list == 0xffff)
+    goto done;
+next:
+  id = list[0];
+  object = Actor_GetById(id);
+  flag = list[1];
+  nextFlag = flag + 1;
+  cells = map->layers[object->terrainId].cells;
+  shapes = grid + (cells - (struct MapCell *)Ram_MapCellBuffer);
+  object->unk5c[0] = 3;
+  if (GameFlag_Test(nextFlag)) {
+    Func_02003088(id, 0, 0);
+  } else {
+    s32 shape;
+    u8 *slot;
+    s32 height;
 
-    object->unk5c[0] = 3;
-    if (GameFlag_Test(nextFlag)) {
-      Func_02003088(id, 0, 0);
-    } else {
-      s32 index = Func_02003160(object);
-      s32 shape;
-      s32 ground;
-      struct MapCell *cell = &cells[index];
-      u8 *slot = shapes + index;
-      shape = Func_02003010(object->terrainId, object->x, object->z);
-      ground = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
-      Func_020030c0(id);
-      cell->attributeB = 128;
-      *slot = Func_02003180(object->terrainId, shape, (ground >> 19) + 4);
-      if (GameFlag_Test(flag))
-        ObjectVisual_CopyAttributes(id, 9);
-    }
-    list += 2;
-  test:;
-  } while (list[0] != 0xffff);
+    index = Func_02003160(object);
+    cell = &cells[index];
+    slot = shapes + index;
+    shape = Func_02003010(object->terrainId, object->x, object->z);
+    height = Map_GetTerrainHeight(object->terrainId, object->x, object->z);
+    Func_020030c0(id);
+    cell->attributeB = 128;
+    *slot = Func_02003180(object->terrainId, shape, (height >> 19) + 4);
+    if (GameFlag_Test(flag))
+      ObjectVisual_CopyAttributes(id, 9);
+  }
+  list += 2;
+  if (*list != 0xffff)
+    goto next;
+done:
   wait(10);
 }

@@ -2012,8 +2012,10 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
 
   saturos = Actor_GetById(ACTOR_SATUROS);
   menardi = Actor_GetById(ACTOR_MENARDI);
-  pairParked = Actor_IsParked(saturos); // Overwritten; only Saturos's
-                                        // actor's test loads remain in the ROM.
+  /* FAKEMATCH(dead): pairParked takes Saturos's test, overwritten by
+   * Menardi's, which keeps the test's loads; as Actor_IsParked(saturos), 48
+   * of 110 instructions differ in tbs-en. */
+  pairParked = Actor_IsParked(saturos);
   pairParked = Actor_IsParked(menardi);
   if (pairParked != 0) {
     saturos->facing = 0;

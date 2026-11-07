@@ -1150,6 +1150,9 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     startX = (lineWidth - textAdvance) / 2;
 
   // Rasterize each glyph and its one-pixel shadow at the aligned start.
+  /* FAKEMATCH(dead): sourceBytes rewound to text, which the glyph loop
+   * overwrites before reading; as no store, 20 of 277 instructions differ in
+   * tbs-en. */
   sourceBytes = text;
   textAdvance = 0;
   while ((sourceValue = *text++) != 0) {

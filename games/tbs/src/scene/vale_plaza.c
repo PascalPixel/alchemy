@@ -1034,7 +1034,7 @@ s32 ValePlaza_Initialize(void) {
         ValePlaza_TravelersLeaveAfterBattle();
       } else {
         if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&
-            (flag = GameFlag_Get(FLAG_VALE_STORM_GARET_LEFT)) != 0) {
+            GameFlag_Get(FLAG_VALE_STORM_GARET_LEFT) != 0) {
           ValePlaza_MeetSurvivingTravelers();
         } else {
           if (GameFlag_Get(FLAG_VALE_STORM) != 0) {

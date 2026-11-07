@@ -326,6 +326,8 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   // First walk: count the words selected by clipping, mirroring and blend
   // mode. Branch sites are only marked in the second walk, so this one needs
   // no buffer.
+  // It moves templateWords as the second walk does, though it reads no word,
+  // and the compiler drops those moves.
   wordCount = 0;
   templateWords = gBlitterTemplate;
 

@@ -86,6 +86,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   djinnEntries = Heap_AllocEwram(84 * 4);
   djinnCount = 0;
   drawnFirstEntry = -1;
+  // Default: the chosen entry, or -1, is set as the loop ends.
   encodedDjinn = 0;
   standbyElements = 0;
   previewPage = 0;

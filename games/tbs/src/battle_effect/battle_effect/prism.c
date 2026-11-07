@@ -58,7 +58,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   for (j = 0; j != gPrism_Counts[work->args->variant][PRISM_CRYSTAL_COUNT];
        j++) {
     seed = &work->particles[j];
-    // This first random number is drawn and discarded.
+    /* FAKEMATCH(dead): x keeps a first random number, drawn and never read;
+     * as Random16() alone, 184 of 488 instructions differ in tbs-en. */
     x = Random16() & 31;
     seed->y = -(64 << 16);
     if (work->args->side == EFFECT_SIDE_PARTY) {

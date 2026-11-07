@@ -558,8 +558,7 @@ s32 Field_ExamineCell(s32 tile) {
               // pendingDjinni, which FieldSequence_Run resolves when the scene
               // is entered again after the battle.
               if (condition != -1) {
-                condition = gMainRoutineWork.pendingDjinni =
-                    condition | CONDITION_FLAG_SET;
+                gMainRoutineWork.pendingDjinni = condition | CONDITION_FLAG_SET;
               }
               // BATTLE_TYPE_NO_ESCAPE (battle/battle/turn.c): no first strike
               // or surprise, and every attempt to run fails; the command menu

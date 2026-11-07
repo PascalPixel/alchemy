@@ -858,9 +858,7 @@ menu_top:;
           pageIndex = wrappedPage;
         }
       keys_done:;
-        if (v7 != 1) {
-          v5 = passwordHeadingMessage;
-        } else {
+        if (v7 == 1) {
           WindowSprite_PrepareForRedraw(pageWindow);
           v7 = 0;
           v5 = 2;
@@ -886,7 +884,6 @@ menu_top:;
                 v7 = (v7 + 1);
               } while (v7 != pageCount);
             }
-            v5 = 0;
             Window_SetTilemapEntry(pageWindow, PAGE_ARROW_LEFT,
                                    (17 - (s32)pageCount), -1, 0);
             Window_SetTilemapEntry(pageWindow, PAGE_ARROW_RIGHT, 18, -1, 0);

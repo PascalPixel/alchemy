@@ -975,7 +975,6 @@ s32 ValeKradensCottage_Initialize(void) {
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 15, debrisRow);
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 23, 19);
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 24, 19);
-    debrisRow = 20;
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 23, 20);
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 24, 20);
   } else {

@@ -984,16 +984,17 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
     movingFlags &= *motionFlags;
     *motionFlags = (u8)movingFlags;
     Actor_SetSpriteFlags(actor, 0);
-    {
 #if TBS_PATCH_1
-      s16 *pixelCoordinates = (s16 *)&destination;
+    Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, destination.x >> 16,
+                               destination.z >> 16);
 #else
+    {
       s16 *pixelCoordinates = (s16 *)requested;
-#endif
 
       Actor_SetPositionAndCommit(ACTOR_PARTY_LEADER, pixelCoordinates[1],
                                  pixelCoordinates[5]);
     }
+#endif
     Actor_SelectAnimation(actor, 6);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     *motionFlags = (u8)savedMotionFlags;

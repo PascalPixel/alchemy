@@ -221,9 +221,10 @@ u32 Save_BuildFileSummary(void) {
 
     // The checksum covers 242 * 4 = 968 words (3872 bytes) from the flags.
     n = 242;
-    /* FAKEMATCH(dead): a never-taken null arm, whose updates cancel, ends CSE
-     * with the bound constant ahead of the frame load; with no arm, 2 of 174
-     * instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): a never-taken null arm, whose updates cancel, and an
+     * else arm whose frame load is reloaded below, end CSE with the bound
+     * constant ahead of the frame load; with no arm, 2 of 174 instructions
+     * differ in tbs-en. */
     if (!frame) {
       n++;
       n--;

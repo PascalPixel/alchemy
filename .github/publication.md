@@ -34,8 +34,8 @@ After the main build succeeds, the `publish` job admits the commit as
   Seal figures, and The Lost Age's from the nearest ancestor with a receipt.
   Those are carried as this commit's only when the git tree entries of
   everything The Lost Age's measurement reads (`Makefile`, `rom.sha1`,
-  `games/tla`, `recon/tla`, `tools`, and the `alchemy-gcc` and
-  `alchemy-devtools` pins) are identical to the ancestor's. Otherwise the record
+  `games/tla`, `recon/tla`, `tools`, and the `alchemy-gcc` pin) are
+  identical to the ancestor's. Otherwise the record
   names the ancestor and holds no Lost Age row, and the chart and `source.tsv`
   show The Lost Age as last measured at that commit. With no ancestor receipt,
   only The Broken Seal is published. Each later publication re-verifies these

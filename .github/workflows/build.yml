@@ -78,13 +78,13 @@ jobs:
             XGCC="ccache $PWD/tools/out/compilers/xgcc -B$PWD/tools/out/compilers/"
           ccache --show-stats
 
-      - name: Fetch the pinned development tools
+      - name: Fetch the development tools
         id: devtools
         run: |
-          git submodule update --init --depth 1 alchemy-devtools
-          echo "pin=$(git rev-parse HEAD:alchemy-devtools)" >> "$GITHUB_OUTPUT"
+          git clone --depth 1 https://github.com/PascalPixel/alchemy-devtools
+          echo "pin=$(git -C alchemy-devtools rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-      - name: Restore the development tools built from that pin
+      - name: Restore the development tools built from that commit
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           path: |
@@ -127,13 +127,13 @@ jobs:
           filter: blob:none
           persist-credentials: false
 
-      - name: Fetch the pinned development tools
+      - name: Fetch the development tools
         id: devtools
         run: |
-          git submodule update --init --depth 1 alchemy-devtools
-          echo "pin=$(git rev-parse HEAD:alchemy-devtools)" >> "$GITHUB_OUTPUT"
+          git clone --depth 1 https://github.com/PascalPixel/alchemy-devtools
+          echo "pin=$(git -C alchemy-devtools rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-      - name: Restore the development tools built from that pin
+      - name: Restore the development tools built from that commit
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
           path: |

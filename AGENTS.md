@@ -17,20 +17,19 @@ Alchemy rebuilds Golden Sun: **The Broken Seal** (☀️, build `tbs`) and **The
 - `games/<game>/src`, `include`, `sound`, `text`: each game owns its copy of what it uses. ☀️'s code sits in one folder per bank, grouped by the credits' divisions (System: `system`, `gamepak`; Field: `field`; Battle: `battle`, `battle_effect`; Interface: `window`, `menu`, `shop`), with `game`, `sound`, `graphics`, `map`, `scene` (one overlay per file) and `debug`. `games/tbs/src/README.md` maps them; module headers follow the same paths under `include/module`.
 - `games/<game>/objects.tsv` lists every object in link order; `games/<game>/main.ld` is the one main script, chosen by `--defsym <GAME>_EDITION_<LANG>=1`.
 - `recon/tla` holds ⚓️'s not-yet-C work: `raw/` listings, `<lang>/` scaffolds, `en/main/<address>.c` drafts. ☀️ has no `recon/`.
-- The `Makefile` builds everything; `tools/` holds its small C programs (`ags-*`); the optional `alchemy-devtools` submodule holds the Rust matching aids, the renderer and the progress count. `out/` and `tools/out/` are build output.
+- The `Makefile` builds everything; `tools/` holds its small C programs (`ags-*`); the optional Alchemy Devtools, cloned into the ignored `alchemy-devtools/` by `make devtools`, holds the Rust matching aids, the renderer and the progress count. `out/` and `tools/out/` are build output.
 
 ## Commands
 
 Setup is in `INSTALL.md`; ROMs go under `roms/` as `tla-ja.gba` and so on, checked against `rom.sha1`, never committed.
 
 ```sh
-git submodule update --init --recursive alchemy-gcc
-make bootstrap         # the tools, the pinned compilers, GAS 2.10 and libgcc
+make bootstrap         # the tools, the compilers, GAS 2.10 and libgcc (plain make does it too)
 make compare-editions  # all twelve editions: required before every commit (W5)
 make -j8 compare-tbs   # the six ☀️ editions; compare-tla-en for one edition
 make modern            # ☀️'s C with a current GCC: no errors
 make test              # the build tools' tests
-git submodule update --init alchemy-devtools && make devtools  # optional, Rust
+make devtools          # optional, Rust: clones alchemy-devtools the first time
 git config core.hooksPath .hooks   # send verified measurements when pushing main
 make progress          # DONE code and data (C2)
 make land              # on main, before a landing (W2, C3)
@@ -134,8 +133,8 @@ The docs are the folder READMEs, the four division pages, the front page, the gl
 The set is frozen: three C generators built from the pinned `alchemy-gcc` submodule, no new compiler, option, route or alchemy-gcc commit, except a host fix that leaves every edition byte-identical. Matching shows practical compatibility, not Camelot's exact compiler.
 
 - **K1** Game Thumb C: alchemy-gcc (GCC of 2000-07-31) with `-O2 -mthumb -nostdinc -fcall-used-r4`, plus `-mthumb-interwork` for ☀️ and `-mtune=arm9tdmi` for ⚓️, whose behaviour is not stock (K2). ⚓️'s C linked only into overlays takes `-Os` in place of `-O2`, a route by whole file and place in the build, never by function; its main image stays at `-O2`. libgcc with `-O2 -mthumb -mcpu=arm7tdmi -fno-inline`. ARM C: GCC 2.95.2 with `-O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4`. Sound and flash: pret's `old_agbcc`. The Makefile's SOUND_C, FLASH_C and ARM_C are the only routes. What ☀️ routes through them, ⚓️ may route the same way, by whole file and by what the code is: ARM instructions, or the sound and flash libraries (Pascal, 5 November 2026).
-- **K2** ⚓️ takes `-mtune=arm9tdmi` for every Thumb file and no interworking. Those options are spelled as stock; the behaviour is not, and a reader must not assume stock behaviour: alchemy-gcc gates three source rules found in no public GCC on those two choices. `-mtune=arm9tdmi` here means a non-public table line and split constants, through the `arm_ld_sched` bit, which is only what is set in this game; plain `-mthumb` without interworking emits a non-public call through lr. Its base compiler is settled as GCC from before 6 September 2000, never 3.0.4 or 3.1; alchemy-gcc's README records the evidence. Its load and store line is an approximation: a simpler compiler may replace a more fitted one when the C it breaks is redone (Pascal, 1 November 2026). Evidence: 25 objects, 29 functions redone; 3 2 table: 645 to 678 of 701 twins (33 up, 0 down, about 25 independent), best of 225 tables on ROM replay. An instruction-order mismatch alone is no reason to change compilers.
-- **K3** A compiler change needs one option set that explains most of a game's code, no public compiler of the time that already does, its evidence recorded here and in alchemy-gcc's README, and Pascal's approval.
+- **K2** ⚓️ takes `-mtune=arm9tdmi` for every Thumb file and no interworking. Those options are spelled as stock; the behaviour is not, and a reader must not assume stock behaviour: alchemy-gcc gates three source rules found in no public GCC on those two choices. `-mtune=arm9tdmi` here means a non-public table line and split constants, through the `arm_ld_sched` bit, which is only what is set in this game; plain `-mthumb` without interworking emits a non-public call through lr. Its base compiler is settled as GCC from before 6 September 2000, never 3.0.4 or 3.1. Its load and store line is an approximation: a simpler compiler may replace a more fitted one when the C it breaks is redone (Pascal, 1 November 2026). Evidence: 25 objects, 29 functions redone; 3 2 table: 645 to 678 of 701 twins (33 up, 0 down, about 25 independent), best of 225 tables on ROM replay. An instruction-order mismatch alone is no reason to change compilers.
+- **K3** A compiler change needs one option set that explains most of a game's code, no public compiler of the time that already does, its evidence recorded here, and Pascal's approval.
 
 ### Work
 

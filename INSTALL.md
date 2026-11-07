@@ -47,7 +47,7 @@ CI checks formatting with clang-format 21, available from [LLVM's packages](http
 
 ## Reconstruction tools (optional)
 
-The pinned `alchemy-gcc` submodule supplies the compilers. The tools for matching, finding C that compiles to a function's original instructions, and for measuring how much is rebuilt live in the optional `alchemy-devtools` submodule and require Rust:
+The tools for matching, finding C that compiles to a function's original instructions, and for measuring how much is rebuilt are [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools). They need Rust, and the first `make devtools` clones them into `alchemy-devtools/`:
 
 ```sh
 make devtools
@@ -70,4 +70,4 @@ Dump your own cartridge and put the file in `roms/` as `tla-en.gba` (or `tla-ja.
 
 ## Upgrading an old checkout
 
-The tools' submodules were renamed. In a checkout from before the rename, run `git submodule sync --recursive` and initialize the submodules as above. The old command `psynergy` is now `alchemy-devtools`, and `make psynergy` is now `make devtools`.
+Alchemy Devtools used to be a submodule. In an older checkout, `git pull` leaves `alchemy-devtools/` where it is, and `make devtools` keeps using it; then run `git submodule update --init --recursive` and `make`.

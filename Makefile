@@ -475,8 +475,10 @@ format-check:
 # Reconstruction work is optional. Normal builds use only the C tools above.
 CARGO ?= cargo
 .PHONY: devtools test-devtools progress land
+# Alchemy Devtools is optional and lives in its own repository: the first
+# make devtools clones it into alchemy-devtools/, which git ignores.
 devtools:
-	@test -f alchemy-devtools/Cargo.toml || { echo 'Initialize Alchemy Devtools with: git submodule update --init alchemy-devtools' >&2; exit 1; }
+	@test -f alchemy-devtools/Cargo.toml || git clone https://github.com/PascalPixel/alchemy-devtools
 	$(CARGO) build --locked --release --manifest-path alchemy-devtools/Cargo.toml -p alchemy-devtools
 
 test-devtools: devtools

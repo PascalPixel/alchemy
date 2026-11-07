@@ -46,7 +46,7 @@ SECTIONS
         "*/games/tla/src/scene/airs_rock/s1f7c.o"(.text)
         "*/games/tla/src/scene/airs_rock/s24b0.o"(.text)
         "*/games/tla/src/scene/airs_rock/s257c.o"(.text)
-        "*/resource_663_overlay.o"(.text.x0200a6b8)
+        "*/games/tla/src/scene/airs_rock/s26b8.o"(.text)
         "*/games/tla/src/scene/airs_rock/s2b88.o"(.text)
         "*/games/tla/src/scene/airs_rock/s2c24.o"(.text)
         "*/games/tla/src/scene/airs_rock/s2ca0.o"(.text)

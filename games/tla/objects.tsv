@@ -3102,12 +3102,7 @@ main	rom_main_09	games/tla/src/battle_effect/f1548d0	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f154d5c	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f154f84	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f15537c	.text	en de es fr it ja
-main	rom_main_09	recon/tla/ja/rom	.rom.0015585c	ja
-main	rom_main_09	recon/tla/it/rom	.rom.0015585c	it
-main	rom_main_09	recon/tla/fr/rom	.rom.0015585c	fr
-main	rom_main_09	recon/tla/es/rom	.rom.0015585c	es
-main	rom_main_09	recon/tla/de/rom	.rom.0015585c	de
-main	rom_main_09	recon/tla/raw/0815585c	.text	en
+main	rom_main_09	games/tla/src/battle_effect/f15585c	.text
 main	rom_main_09	games/tla/src/battle_effect/projectile_volley	.text
 main	rom_main_09	recon/tla/it/rom	.rom.0015613e	it
 main	rom_main_09	recon/tla/it/rom	.rom.00156140	it

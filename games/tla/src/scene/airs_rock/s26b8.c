@@ -1,11 +1,3 @@
-// Near miss, differ 2 of 484 (tla-en, 2026-11-06): one swap after the BG0CNT store, the fill halfword's pool load
-// scheduled ahead of mov r0, sp (the native forms the fill address first). A beam of light in Air's Rock.
-// The 130 of before came from the closing zero: as a constant byte store it took its own QImode register,
-// which moved the spark loop's registers; one s32 zero for the byte, the hook and BLDCNT, as the adopted
-// airs_rock s1010.c writes it, gives the native's allocation (the first Actor_GetById spilled to sp+0).
-// The beam's z steps in the for increment beside i (in the body, 12).
-// Tried with no gain on the last 2: u16/u32/s16 control, the fill as its own volatile u16 or s16 local,
-// a function-scope fill cell, the fill inside the BG0CNT block; a plain REG_BG0CNT = 0x40e gives 20.
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -43,8 +35,7 @@ struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 u32 Random16Far(void);
 void Func_02003b28(struct Actor *object, s32 mode);
 void Func_02003b38(struct Actor *object, const u8 *script);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        u32 value);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Actor_SetPartAttribute(struct Actor *object, s32 value);
 void FieldEvent_Wait(s32 frames);
 void wait(s32 frames);
@@ -78,7 +69,8 @@ void Func_020026b8(void) {
   Func_02003bc8();
   Func_02003c88(0);
   REG_DISPCNT &= ~0x100;
-  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles), buffer);
+  Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindTiles),
+                buffer);
   Dma_Set(buffer, (void *)0x600e800, 0x840000d0, (volatile u32 *)0x040000d4);
   Dma_Set((u8 *)buffer + 0x340, (void *)0x600ec00, 0x840000d0,
           (volatile u32 *)0x040000d4);
@@ -88,7 +80,11 @@ void Func_020026b8(void) {
 
     REG_BG0CNT = control;
   }
-  Dma_Fill16(0x10, (void *)0x6002000, 0x500);
+  // A once-only loop: its loop notes order the fill's address ahead of its
+  // value.
+  do {
+    Dma_Fill16(0x10, (void *)0x6002000, 0x500);
+  } while (0);
   buffer = Heap_Alloc(0x240);
   Func_02003af0(Resource_GetTableEntry((s32)&ResourceId_WhirlwindMap), buffer);
   cell = buffer;
@@ -111,8 +107,8 @@ void Func_020026b8(void) {
     s32 low = gFrameCount & 3;
 
     if (low == 0) {
-      spark = Import_ActorCreate(0x2a0, Actor_GetById(12)->x, Actor_GetById(12)->y,
-                                 Actor_GetById(12)->z);
+      spark = Import_ActorCreate(0x2a0, Actor_GetById(12)->x,
+                                 Actor_GetById(12)->y, Actor_GetById(12)->z);
       {
         s32 priority = ((s8 *)Actor_GetById(12)->animation)[9] & 12;
 
@@ -120,7 +116,7 @@ void Func_020026b8(void) {
         ((struct SpriteParts *)cell)->part = priority >> 2;
       }
       ((struct ObjBits *)spark)->flags |= 1;
-      spark->motionFlags = low;
+      spark->motionFlags = 0;
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
@@ -140,7 +136,7 @@ void Func_020026b8(void) {
   Func_02003c30();
   Task_RemoveFar(Func_020024b0);
   REG_BG1CNT &= ~3;
-  REG_BG1CNT = REG_BG1CNT;
+  REG_BG1CNT |= 0;
   Call2((void (*)())Func_02003c58, 0x10000, 0);
   Call2((void (*)())Func_02003c50, 0x7fff, 0);
   Func_02003c60(1);
@@ -154,19 +150,19 @@ void Func_020026b8(void) {
   Call3((void (*)())Func_02003b98, 0x30000, 0x30000, 0x10000);
   z = 0xffff8000;
   for (i = 0x4000; i != 0x48000; i += 0x400, z += 0xfffffc00) {
-  beam[6] = i;
-  beam[7] = z;
-  ((u8 *)Actor_GetById(12))[98] = Random16Far() & 7;
-  wait(1);
+    beam[6] = i;
+    beam[7] = z;
+    ((u8 *)Actor_GetById(12))[98] = Random16Far() & 7;
+    wait(1);
   }
   Task_RemoveFar(Func_0200257c);
   Task_Add(Func_02000ef4, 0xc80);
   REG_BLDALPHA = 8;
   REG_BLDCNT = 0x3f42;
   for (i = 0; i != 257; i++) {
-  REG_BLDALPHA = (8 - (i >> 5)) | 0x1000;
-  ((u8 *)Actor_GetById(12))[98] = Random16Far() & 7;
-  FieldEvent_Wait(1);
+    REG_BLDALPHA = (8 - (i >> 5)) | 0x1000;
+    ((u8 *)Actor_GetById(12))[98] = Random16Far() & 7;
+    FieldEvent_Wait(1);
   }
   REG_DISPCNT &= ~0x200;
   wait(30);
@@ -176,8 +172,8 @@ void Func_020026b8(void) {
   Call3((void (*)())Func_02003b98, -1, -1, 0xe666);
   ((u8 *)Actor_GetById(12))[98] = 6;
   for (i = 0; i != 129; i++) {
-  REG_BLDALPHA = ((i >> 3) << 8) | (0x10 - (i >> 3));
-  FieldEvent_Wait(1);
+    REG_BLDALPHA = ((i >> 3) << 8) | (0x10 - (i >> 3));
+    FieldEvent_Wait(1);
   }
   Task_RemoveFar(Func_02000ef4);
   {
@@ -193,7 +189,8 @@ void Func_020026b8(void) {
   }
   Func_02003b00();
   Func_02003af8();
-  Func_02003bb8(gMainRoutineWork.paletteGlow[0], gMainRoutineWork.paletteGlow[1]);
+  Func_02003bb8(gMainRoutineWork.paletteGlow[0],
+                gMainRoutineWork.paletteGlow[1]);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags &= ~32;

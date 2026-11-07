@@ -1,56 +1,3 @@
-// Near miss, differ 2 of 818 (tla-en, 2026-11-06): one order row after the
-// picture's Resource_GetTableEntry, where the native copies the result
-// (adds r2, r0, #0) before it reloads work (ldr r3, [sp, #44]) and this
-// draft reloads work first. The same 2 with the picture passed inline into
-// the decode, as 64 * 2, palette as const u8 * or u16 *, or declared
-// elsewhere; a local of its own for the picture, or the + 128 inside the
-// call, gives 502.
-// What moved it (2026-11-06): total = 40 set in the anchor-6 branch of an if-else
-// chain rather than before the tests (49 to 10; the native then reloads anchor and work
-// after the first test and keeps total in r2 for the short case); then the
-// fade step's zero written as plain 0, with no device (10 to 4), and case 5
-// of the goal switch with no one-pass block (4 to 2). Both earlier devices
-// are gone. The anchor tests as a switch, as an if-else chain, or with a
-// bare label before the test of 8 stayed at 49; as an && chain, 40.
-// Measured 2026-11-05 (tla-en): differ 49 of 818.
-
-// Draft of Func_0815585c, The Broken Seal's BattleEffect_RunDjinniEntrance
-// (games/tbs/src/effect/effect.c): differ 81 of 818 (tla-en,
-// 2026-10-26). The Lost Age reworked it: the kind, the side and the anchor
-// come packed in one word (kind | side << 4 | anchor << 5), eleven anchors
-// by jump table where The Broken Seal has five, anchor 6 keeps the effect
-// at 40 frames with no palette fade and brightens the backdrop from frame
-// 24, anchor 8 runs 54 frames, the sparks live in the work's particles,
-// the small Djinn decodes into the work's sheet, the anchor's world point
-// as well as its screen point goes out, and there is no canvas layer of its
-// own. Kind 0 (Venus) takes its palette from resource 0x184 and its picture
-// from 0x157.
-
-// What moved it: the three heap slots read before the packed word is
-// unpacked (562 to 546), packed as unsigned (lsrs), and the fade step's
-// zero through a variable of its own in the long branch (546 to 169, found
-// by alchemy permute; not needed since 2026-11-06), and BattleEffect_LoadBlitter
-// returning its loader's s32, as nibble_pair.c now does (169 to 165).
-// Under -mthumb-slow-loads (2026-10-26) the same source gives 137; the
-// picture's address kept in palette (its table entry + 128) before the
-// decode, as the native copies it through a register: 132. The palette copy
-// and the two clears through local inline forwarders, as f143d80.c makes
-// them and as The Broken Seal's IWRAM call layer makes every IWRAM call:
-// each clear rebuilds its own 0x4000 as the native does (118).
-// A tagged one-pass block at the end of case 5 of the goal switch keeps
-// jump2 from joining case 2's tail to case 5's, so case 8 shares case 2's
-// code as in the native (81); not needed since 2026-11-06.
-
-// Left then (2026-10-26, settled since): allocation through the frame loop, from the prologue's first
-// spills (the native keeps anchor at sp+20 and reloads it for the test of
-// 8, and reloads work for each fade store; here both stay in registers)
-// and order rows of the usual kind (the known store-then-load limit).
-// alchemy permute 10 minutes (2026-10-15): 155 with the clear
-// size held in a variable from the prologue (not kept, it only moves the
-// allocation), 159 with a pointer copy of step. Tried (2026-10-26): the
-// anchor tests as an if-else chain (150), each local scoped to a block,
-// the picture through palette and then palette + 128 (137).
-
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -213,7 +160,12 @@ void Func_0815585c(struct BattleEffectArgument *effect, u32 packed, s32 *screen,
     resource = (s32)ResourceId_JupiterDjinnSmallSheet;
     break;
   }
-  palette = Resource_GetTableEntry(resource) + 128;
+  palette = Resource_GetTableEntry(resource);
+  /* FAKEMATCH(barrier): an empty asm between the picture's table entry and
+     its + 128; as palette = Resource_GetTableEntry(resource) + 128, 2 of 818
+     instructions differ in tla-en. */
+  asm("");
+  palette += 128;
   Resource_DecodeType01(palette, work->sheet);
   Resource_LoadAndDecompress((s32)ResourceId_Data134, sheet, 0, 0);
 

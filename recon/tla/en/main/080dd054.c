@@ -1,5 +1,7 @@
-// Draft, differ 4 of 444, skeleton gap 2 (tla-en, 2026-11-01): Move cast on a
-// target, the twin of The Broken Seal's FieldPsynergy_SteerPushedTarget (same
+// Differ 2 of 444 (tla-en, 2026-11-07).
+// 2026-11-07: all 120 orders of the target's four stores and *layer = 2, moved
+// as u8 or s16, temporaries, asm barriers and 8 permuter minutes left it at 2.
+// Move cast on a target, the twin of The Broken Seal's FieldPsynergy_SteerPushedTarget (same
 // locals in the same order, the same blocks and the same push, with this
 // game's calls). The hand (BattleEffect_StartItemBreak) appears 16 pixels above
 // the target on the caster's side and pushes it 16 pixels the way the d-pad
@@ -12,9 +14,9 @@
 // shared struct's savedPalette at 0x44. Func_080202f0 takes the layer and
 // beyond's x and z, as the twin's cell test does. Stack slots follow the
 // declaration order, so the declarations are the twin's.
-// Left: two scheduling pairs, each a byte load one slot early: *layer's ldrb
-// before mov fp (the listing has it after), and moved's ldrb before adds r3
-// #51. Registers, slots and blocks all agree. Tried without gain: seven orders
+// Left: one scheduling pair, moved's ldrb before adds r3 #51 (the listing has
+// it after; in sched2 the two are ready together). The *layer pair now
+// matches. Registers, slots and blocks all agree. Tried without gain: seven orders
 // of the opening assignments, three of the target's field stores, user and
 // target swapped, s32 and u32 local types, target->actionFlags = 0, a direct
 // read of terrainId and a combined layer assignment. Both are load-order ties,

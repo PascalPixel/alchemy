@@ -1,5 +1,6 @@
-// Near miss, differ 2 of 665 (tla-en, 2026-11-05), untagged yet: only ldrh r3, [r3, r2] for the native's [r2, r3] at the backdrop read. Older notes follow.
-// Draft, differ 18 of 665, skeleton gap 5 (tla-en, 2026-11-01)
+// Matches: differ 0 of 665 (tla-en, 2026-11-07).
+// History: 18 (11-01), 2 (11-05); matched without asm barriers through a
+// once-only block, a palette pointer local and an address-sum spelling.
 // The debug sprite viewer, The Broken Seal's SpriteViewer_Run
 // (games/tbs/src/field/field/sprite_viewer.c), which never returns. This
 // game's changes: a blue backdrop; L and R step the sprite number by ten in
@@ -7,18 +8,6 @@
 // choice) to System_ReturnZero; a press of B cycles the backdrop through eight
 // colours (gData_0802f054); a press of Start toggles the shadows of the ten
 // copies, whose sprites sit 56 bytes apart from heap slot 4.
-// Left, all scheduling and the allocation that follows it: in the first layer
-// loop the native loads animationIndex before it moves i into r0; after both
-// Func_0802e444 calls it restores r4 after the store to spriteId, not before
-// (the store seems to conflict with the stack load; going through a pointer to
-// reach that loses r9's copy of layers, 270 rows or more); in the backdrop
-// step ldr then movs #7, and the palette address built after the ldrh. The
-// held key is read volatile only through HELD, as the twin's pointers do. A
-// local `const u16 *colors` puts the backdrop store before the table read:
-// gData_0802f054[backdrop] directly gives gap 6, differ 12. An s32 temporary
-// for the colour gives gap 4, differ 16, but it would be a forced temporary,
-// so it is left out. spriteId temporaries, a layer pointer in the first loop
-// and steps as s16 or u32 change nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -142,7 +131,15 @@ restart:
     else
       SpriteViewer_SetGridColumnPriority(i, 8);
     SpriteViewer_SetGridColumnColorMode(i, layers[i].colorMode);
-    {s32 a = layers[i].animationIndex; asm(""); SpriteViewer_StartStaggeredAnimations(i, a);}
+    {
+      s32 a;
+
+      // Once-only block: the animation index is read before i moves into r0.
+      do {
+        a = layers[i].animationIndex;
+      } while (0);
+      SpriteViewer_StartStaggeredAnimations(i, a);
+    }
   }
   Func_0802e4c8(x, y, ring);
   Task_Add(Battle_PlaceActorsByFormationKind, 0x480);
@@ -307,11 +304,12 @@ next:
       goto restart;
     }
     if (gInput.pressed & 2) {
+      volatile u16 *palette = (volatile u16 *)0x05000000;
       const u16 *colors = gData_0802f054;
       backdrop++;
       backdrop &= 7;
-      asm("" : : "l"(colors));
-      *(volatile u16 *)0x05000000 = colors[backdrop];
+      // Spelled as an address sum: colors[backdrop] swaps the load's registers.
+      *palette = *(const u16 *)((u32)colors + (backdrop << 1));
     }
     wait(1);
   }

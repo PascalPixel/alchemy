@@ -1,9 +1,6 @@
-// Near miss, differ 2 of 442 (tla-en, 2026-11-06): the flag number 529 goes through
-// dz (GameFlag_Test(dz = 529)), the permuter's find, which settles mode 3's registers
-// (38 to 2); a fresh local for it stays at 38, so on adoption it is a tagged
-// temporary. Left: one tie in mode 2's terminator, the native shifting next + 1
-// before point * 2. Tried there: next set after the first store (30), stores
-// swapped (26), no next local (47), a point local (55); 5 permuter minutes, 8.
+// Matches: differ 0 of 442 (tla-en, 2026-11-07).
+// 7 November: next as a u16 indexed through (s16) settles mode 2's terminator
+// (2 to 0), and flag 529 no longer needs to pass through dz.
 // Before, 38: register choices in mode 3
 // (the status halfword in r2 and its byte mask in r3 where the native swaps them,
 // then reload's scratch registers for link, the state and the link point) and
@@ -208,10 +205,11 @@ void Func_02004ddc(void) {
     if (!GameFlag_Test(260))
       state->point += 2;
     if (state->point == 7198) {
-      s16 next = state->point + 1;
+      // A u16 read back as s16 at its use: the same value, the spelling that matches.
+      u16 next = state->point + 1;
 
       work->path[state->point] = 0;
-      work->path[next] = 0;
+      work->path[(s16)next] = 0;
       state->id = work->rival;
       state->point = 0;
       state->mode = 1;

@@ -1,6 +1,19 @@
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"
+#include "edition.h"
+#include "version.h"
+
+// The price window and the item details window fit their edition's text.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define PRICE_WINDOW_X 16
+#define PRICE_WINDOW_WIDTH 14
+#define DETAILS_WINDOW_WIDTH 13
+#else
+#define PRICE_WINDOW_X 14
+#define PRICE_WINDOW_WIDTH 16
+#define DETAILS_WINDOW_WIDTH 16
+#endif
 
 struct ShopCursorAnchor {
   u8 unk00[5];
@@ -66,7 +79,7 @@ s32 Func_0810b9c0(s32 unitId) {
   unit = Unit_Get(unitId);
   inventoryCount = 1;
   redraw = 1;
-  priceWindow = Window_CreateFar(14, 8, 16, 4, 2);
+  priceWindow = Window_CreateFar(PRICE_WINDOW_X, 8, PRICE_WINDOW_WIDTH, 4, 2);
   nameWindow = Window_CreateFar(0, 5, 30, 3, 2);
 
   shop->cursorAnchor->active = 18;
@@ -119,7 +132,7 @@ s32 Func_0810b9c0(s32 unitId) {
       void *details;
 
       Sound_PlayFar(126);
-      details = Window_CreateFar(0, 9, 16, 10, 2);
+      details = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
       ItemMenu_DrawItemDetailsFar(details, item);
       shop->detailsHidden = 0;
       /* FAKEMATCH(barrier): an empty asm between `shop->detailsHidden = 0;` and
@@ -132,7 +145,10 @@ s32 Func_0810b9c0(s32 unitId) {
       Window_CloseFar(details, 2);
       WindowSprite_PrepareForRedrawFar(shop->listWindow);
       wait(1);
+      // Japanese does not redraw the cursor or the two windows here.
+#if TLA_PATCH_1
       redraw = 1;
+#endif
       continue;
     }
     if (gInput.repeat & 32) {

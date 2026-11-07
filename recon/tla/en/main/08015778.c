@@ -1,3 +1,8 @@
+// Differ 2 of 82 (tla-en, 2026-11-07).
+// 2026-11-07: depth read before the projection's address and y kept in its own
+// local (6 to 2 with the operand barrier; plain, 4: CSE merges the view's two
+// sp copies). Left: sched2 ties adds r7, r1 with the transform's literal; in
+// plain C the literal wins on its later r3 dependent, which the barrier hides.
 // Near miss, differ 6 of 82 (tla-en, 2026-10-31): the native forms the view's
 // address twice (mov r1, sp for the transform, mov r6, sp after it); here CSE
 // merges both into one copy, as nothing in plain C ends its block between
@@ -46,11 +51,14 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
   s32 depth;
   s32 scale;
   s32 x;
+  s32 y;
 
   Iwram_TransformVector(point, &view.x);
-  __asm__ volatile("");
-  projection = &gCameraSceneParameters;
+  /* FAKEMATCH(barrier): an operand barrier after the transform; as no barrier,
+     4 of 82 instructions differ in tla-en. */
+  __asm__ volatile("" :);
   depth = -view.z;
+  projection = &gCameraSceneParameters;
   if (depth >= projection->near && depth <= projection->far) {
     screen->z = depth >> 16;
     if (projection->focal != 0) {
@@ -61,8 +69,9 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
       scale = 0x151eb;
     }
     x = projection->centerX + Iwram_MulQ16(view.x, scale) / 0x10000;
-    screen->y = projection->centerY - Iwram_MulQ16(view.y, scale) / 0x10000;
+    y = projection->centerY - Iwram_MulQ16(view.y, scale) / 0x10000;
     screen->x = x;
+    screen->y = y;
     return scale;
   }
   *screen = view;

@@ -198,33 +198,33 @@ main	rom_main_01	games/tla/src/field/metadata	.text
 main	rom_main_01	games/tla/src/field/lz	.text
 main	rom_main_01	games/tla/src/field/f0219cc	.text
 main	rom_main_01	games/tla/src/field/f021a84	.text	it
-main	rom_main_01	recon/tla/it/rom	.rom.00022010	it
+main	rom_main_01	games/tla/src/field/f022010	.text	it
 main	rom_main_01	games/tla/src/field/f0220f0	.text	it
 main	rom_main_01	games/tla/src/field/f022318	.text	it
 main	rom_main_01	games/tla/src/field/f02254c	.text	it
 main	rom_main_01	recon/tla/it/rom	.rom.0002279e	it
 main	rom_main_01	games/tla/src/field/f021a84	.text	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.00022010	fr
+main	rom_main_01	games/tla/src/field/f022010	.text	fr
 main	rom_main_01	games/tla/src/field/f0220f0	.text	fr
 main	rom_main_01	games/tla/src/field/f022318	.text	fr
 main	rom_main_01	games/tla/src/field/f02254c	.text	fr
 main	rom_main_01	recon/tla/fr/rom	.rom.0002279e	fr
 main	rom_main_01	games/tla/src/field/f021a84	.text	es
-main	rom_main_01	recon/tla/es/rom	.rom.00022010	es
+main	rom_main_01	games/tla/src/field/f022010	.text	es
 main	rom_main_01	games/tla/src/field/f0220f0	.text	es
 main	rom_main_01	games/tla/src/field/f022318	.text	es
 main	rom_main_01	games/tla/src/field/f02254c	.text	es
 main	rom_main_01	recon/tla/es/rom	.rom.0002279e	es
 main	rom_main_01	games/tla/src/field/f021a84	.text	de
-main	rom_main_01	recon/tla/de/rom	.rom.00022010	de
+main	rom_main_01	games/tla/src/field/f022010	.text	de
 main	rom_main_01	games/tla/src/field/f0220f0	.text	de
 main	rom_main_01	games/tla/src/field/f022318	.text	de
 main	rom_main_01	games/tla/src/field/f02254c	.text	de
 main	rom_main_01	recon/tla/de/rom	.rom.0002279e	de
 main	rom_main_01	games/tla/src/field/f021a84	.text	en
-main	rom_main_01	recon/tla/raw/08022010	.text	en
+main	rom_main_01	games/tla/src/field/f022010	.text	en
 main	rom_main_01	games/tla/src/field/f021a84	.text	ja
-main	rom_main_01	recon/tla/ja/rom	.rom.00022010	ja
+main	rom_main_01	games/tla/src/field/f022010	.text	ja
 main	rom_main_01	games/tla/src/field/f0220f0	.text	en ja
 main	rom_main_01	games/tla/src/field/f022318	.text	ja
 main	rom_main_01	games/tla/src/field/f022318	.text	en

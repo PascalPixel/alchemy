@@ -1,3 +1,7 @@
+// Differ 4 of 1216 (tla-en, 2026-11-07). Both ties are sched2 LUID ties: the
+// native has the turn shift (and screen.y's pointer reload) ahead of the
+// 2560 split (and the 6000 multiply) in RTL order; reordered spellings, a
+// y or src local, array forms and 14 permuter minutes found nothing better.
 // 2026-11-05: differ 4 of 1216 (tla-en). Two sched2 ties left: the second shift of
 // 2560 in the turn, and the 6000 multiply before screen's reload. Measured: the
 // listing draws after it projects; cells, projected and mesh are set once at the

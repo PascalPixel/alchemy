@@ -17,12 +17,6 @@ Render_ProjectPoint:
 	.incbin "baserom.gba", 0x00016e2e, 0x00000002
 	.section .rom.000212d8, "ax"
 	.incbin "baserom.gba", 0x000212d8, 0x00000194
-	.section .rom.00022010, "ax"
-	.global Func_08022010
-	.type Func_08022010, %function
-	.thumb_func
-Func_08022010:
-	.incbin "baserom.gba", 0x00022010, 0x000000e0
 	.section .rom.0002279e, "ax"
 	.incbin "baserom.gba", 0x0002279e, 0x00000002
 	.section .rom.000233a6, "ax"

@@ -1,5 +1,10 @@
-// Near miss, differ 6 of 171 (tla-en, 2026-11-06): the body inside one
-// `if (object != 0)` with a single `return 0` after it gives the native's shared
+// Differ 4 of 171 (tla-en, 2026-11-07).
+// 7 November: a forwarding call layer (FAKEMATCH wrapper) gives the call
+// its own sp + 28 (6 to 4); the tail is left: the native loads object->x
+// before the multiply and sets r0 = 1 after the push->x store;
+// result variables, temporaries, operand orders and 8 minutes of permuting
+// leave it. 6 November, differ 6: the body inside one `if
+// (object != 0)` with a single `return 0` after it gives the native's shared
 // return block (23 to 6), and with that the three loops are plain for loops
 // (6 as with labels). Left: the call takes &cell from r5, where the native
 // recomputes sp + 28 (the cell.x stores use r5 in both), and movs r0, #1 is
@@ -52,6 +57,11 @@ s32 Func_02004a64(struct Actor *object, struct Vector3 *cell);
 
 static __inline__ s32 Abs(s32 value) { return value < 0 ? -value : value; }
 
+static __inline__ s32 CallFunc_02004a64(struct Actor *object,
+                                        struct Vector3 *cell) {
+  return Func_02004a64(object, cell);
+}
+
 s32 Func_02004240(struct PushState *push) {
   struct Actor *object;
   struct Vector3 cell;
@@ -78,7 +88,9 @@ s32 Func_02004240(struct PushState *push) {
       for (j = 0; j < height; j++) {
         cell.x = push->x + (gData_02004cb0[kind][0] << 16);
         for (i = 0; i < width; i++) {
-          if (Func_02004a64(object, &cell) == 2)
+          /* FAKEMATCH(wrapper): the call through CallFunc_02004a64; as a direct
+           * call, 6 of 171 instructions differ in tla-en. */
+          if (CallFunc_02004a64(object, &cell) == 2)
             goto blocked;
           cell.x += 0x100000;
         }

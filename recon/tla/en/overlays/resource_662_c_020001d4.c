@@ -1,6 +1,10 @@
-// Near miss, differ 6 of 171 (tla-en, 2026-11-06): the cell call passes r5 (the
-// row's probe address) where the native rebuilds add r1, sp, #28, and the
-// final position[0] schedules its ldr and movs r0, #1 two slots apart. No device.
+// Differ 4 of 171 (tla-en, 2026-11-07): the final position[0] loads
+// object->x after the multiply where the native loads it first, which also
+// moves movs r0, #1.
+// 7 November: an inline wrapper round the cell call (FAKEMATCH) makes the
+// native rebuild add r1, sp, #28. A once-only block after position[0] moves
+// movs r0, #1 behind the store but not the load; result locals, operand
+// orders, types and an inline sum all leave 4.
 // Finds how far a pushed object can slide in the leader's direction, probing
 // its footprint cell by cell until Func_02001850 reports a wall.
 // 6 November: the once-only block is gone. The head matches in plain order
@@ -30,6 +34,10 @@ extern s32 gData_0200198c[];
 
 struct Actor *Func_0200033c(s32 *direction, s32 *slot, s32 *kind);
 s32 Func_02001850(struct Actor *object, s32 *position);
+
+static inline s32 Func_02001850_Call(struct Actor *object, s32 *position) {
+  return Func_02001850(object, position);
+}
 
 s32 Func_020001d4(s32 *position) {
   s32 probe[3];
@@ -66,7 +74,10 @@ s32 Func_020001d4(s32 *position) {
   row:
     probe[0] = position[0] + (gData_02001974[offset] << 16);
     for (i = 0; i < w; i++) {
-      if (Func_02001850(object, probe) == 2)
+      /* FAKEMATCH(wrapper): the call through Func_02001850_Call; as
+         Func_02001850(object, probe), 6 of 171 instructions differ in tla-en.
+       */
+      if (Func_02001850_Call(object, probe) == 2)
         goto hit;
       probe[0] += 0x100000;
     }

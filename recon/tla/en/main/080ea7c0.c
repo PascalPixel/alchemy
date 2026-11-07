@@ -1,16 +1,12 @@
-// Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
-// 6 of 104 in tla-en. First difference: at row 11 the native has `mov r8, r0`
-// where this has `mov r9, r0`. No single empty asm or one-pass block reaches 0.
-// Near miss, differ 6 of 104 (2026-10-19; 25 before). The list's start is
-// fixed in r9, as the native keeps it for Func_080eaa14, which also puts the
-// map work in r10 (25 -> 6). What remains is the opening's copies: the
-// native copies the argument to the cursor in r8, the cursor to r9 and r9
-// to r2 for the first test; this copies it to r9, then r8, then r2. With
-// the cursor fixed in r8 too and the list copied from it, 10 (the first
-// test then reads r8); with an if around a do-while testing the list, 8.
-// Permute 4 min: 6 at best. Iterating from an initialised entry pointer
-// measured the same as the for loop. The terrain store order
-// (y first, then the terrain height) is the native's.
+// Differ 2 of 104 (tla-en, 2026-11-07).
+// 2026-11-07: the argument itself is the cursor, reset from the list in a
+// once-only block (6 -> 2); what remains is the first test, which the native
+// reads from the list in r9 (`mov r2, r9`) and this from the cursor in r8,
+// one row later. Permute 9 min from 2: nothing better. Spelt as an if around
+// a do-while, a goto loop or an index, 14 to 28.
+// Earlier: the list's start is fixed in r9, as the native keeps it for
+// Func_080eaa14, which also puts the map work in r10 (25 -> 6). The terrain
+// store order (y first, then the terrain height) is the native's.
 // Puts a list of actors back on the map after a battle effect. For
 // each (actor, flag) entry until 0xffff it clears the actor's motion flags
 // and collision bit 0, shows its sprite, marks its map cell entry (slot from
@@ -40,8 +36,7 @@ struct RestoreMap {
 
 struct Actor *Actor_GetById(u32 actor);
 s32 Func_080eab70(struct Actor *object);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           s32 flags);
+void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 s32 GameFlag_Test(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 void Func_080eaa14(struct ActorFlag *list);
@@ -50,27 +45,29 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void Func_080ea7c0(struct ActorFlag *actors) {
   register struct ActorFlag *list asm("r9") = actors;
   struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
-  struct ActorFlag *entry;
   struct Actor *leader;
   s32 height;
 
-  for (entry = list; entry->actor != 0xffff; entry++) {
-    struct Actor *object = Actor_GetById(entry->actor);
-    u16 flag = entry->flag;
-    s32 slot = Func_080eab70(object);
-    u8 *cell = map->layers[object->terrainId].cells[slot];
+  // A once-only block: as a plain loop, 4 of 104 differ.
+  do {
+    for (actors = list; actors->actor != 0xffff; actors++) {
+      struct Actor *object = Actor_GetById(actors->actor);
+      u16 flag = actors->flag;
+      s32 slot = Func_080eab70(object);
+      u8 *cell = map->layers[object->terrainId].cells[slot];
 
-    object->motionFlags = 0;
-    object->collisionFlags &= ~1;
-    Actor_SetSingleChildFlagsFar(object, 0);
-    cell[2] = 0xff;
-    if (GameFlag_Test(flag)) {
-      Actor_SetMode(object, 0);
-      GameFlag_ClearBit(flag);
-    } else {
-      Actor_SetMode(object, 1);
+      object->motionFlags = 0;
+      object->collisionFlags &= ~1;
+      Actor_SetSingleChildFlagsFar(object, 0);
+      cell[2] = 0xff;
+      if (GameFlag_Test(flag)) {
+        Actor_SetMode(object, 0);
+        GameFlag_ClearBit(flag);
+      } else {
+        Actor_SetMode(object, 1);
+      }
     }
-  }
+  } while (0);
   Func_080eaa14(list);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   height = Map_GetTerrainHeightFar(leader->terrainId, leader->x, leader->z);

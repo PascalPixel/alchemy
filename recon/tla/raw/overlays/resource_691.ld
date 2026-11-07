@@ -46,7 +46,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/s1e08.o"(.text)
         "*/games/tla/src/scene/magma_rock/s1edc.o"(.text)
         "*/games/tla/src/scene/magma_rock/copy.o"(.text)
-        "*/resource_691_overlay.o"(.text.x0200a024)
+        "*/games/tla/src/scene/magma_rock/s2024.o"(.text)
         "*/games/tla/src/scene/magma_rock/blink_b.o"(.text)
         "*/games/tla/src/scene/magma_rock/s20f8.o"(.text)
         "*/games/tla/src/scene/magma_rock/events_b.o"(.text)

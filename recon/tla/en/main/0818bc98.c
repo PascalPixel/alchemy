@@ -1,5 +1,9 @@
-// Measured 2026-11-05 (tla-en): differ 4 of 1251. Two pairs left: mov r8 ahead
-// of the vertices store, mov sl after asrs r6 at the flash loop's head.
+// Differ 2 of 1251 (tla-en, 2026-11-07).
+// 2026-11-07: the texture's pixels as u8 * (alias set apart from the model's
+// vertices) put mov r8 ahead of the vertices store (4 to 2). Left: mov sl
+// after asrs r6 at the flash loop's preheader; gcse's PRE inserts mouthY - 64
+// (expression 262) before scale >> 31 (272), and reload's copy to sl then wins
+// sched2's LUID tie. A fix needs scale's sign hashed before the flash loop.
 // Draft, differ 32 of 1251, skeleton gap 14 (tla-en, 2026-11-01)
 // All that is left is order, with the same instructions and registers. In every
 // site a store to the stack comes earlier in the
@@ -83,7 +87,7 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  void *pixels;
+  u8 *pixels;
 };
 
 // One entry of a model list, as Render_AllocateModelList allocates them and

@@ -14,7 +14,7 @@ SECTIONS
         "*/games/tla/src/scene/airs_rock/s033c.o"(.text)
         "*/games/tla/src/field/object/wait_until_idle.o"(.text)
         "*/games/tla/src/scene/airs_rock/s03e8.o"(.text)
-        "*/resource_663_overlay.o"(.text.x02008468)
+        "*/games/tla/src/scene/airs_rock/s0468.o"(.text)
         "*/games/tla/src/scene/airs_rock/scene_tables.o"(.text)
         "*/games/tla/src/scene/airs_rock/s04c0.o"(.text)
         "*/games/tla/src/scene/airs_rock/exits.o"(.text)

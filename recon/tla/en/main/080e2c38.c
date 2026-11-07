@@ -1,8 +1,7 @@
-// Near miss, differ 28 of 124, instruction order only: the prologue's
-// constants, the 0x300000 magnitude's shift, the delay's reload around
-// the spin store and the end's two offsets; the literal pool also lands one
-// instruction earlier in the native (before the sprite's y store). The spin
-// as a conditional expression measured 28, as if/else 35.
+// Differ 2 of 124 (tla-en, 2026-11-07): only the sprites pointer's last add
+// lands one instruction before the position buffer's address (mov r6, sp).
+// History: 28 -> 6 earlier; 6 -> 2 by computing the vram pointer between
+// the particles and sprites pointers.
 // The 96-particle burst's task (heap slot 0x5c work,
 // started by Func_080e2acc). Each particle whose delay counter is between 0
 // and 63 shows the picture (delay / 8) % 6 of the burst's tiles 48 units out
@@ -48,15 +47,22 @@ void Camera_WorldToScreen(s32 *position);
 void Func_080eb01c(struct BurstSprite *sprite);
 
 void Func_080e2c38(void) {
-  struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
-  struct BurstParticle *particle = work->particles;
-  struct BurstSprite *sprite = work->sprites;
+  struct BurstWork *work;
+  struct BurstParticle *particle;
+  struct BurstSprite *sprite;
   s32 position[3];
   s32 i;
+  s16 *vram;
+
+  work = (struct BurstWork *)Ram_HeapSlots->battleFxWork[0];
+  particle = work->particles;
+  // The vram pointer is set between the two arrays' pointers to match.
+  vram = &work->vram;
+  sprite = work->sprites;
 
   for (i = 0; i < 96; i++, sprite++, particle++) {
     if ((u32)particle->delay < 64) {
-      sprite->tile = work->vram + (particle->delay >> 3) % 6 * 2;
+      sprite->tile = *vram + (particle->delay >> 3) % 6 * 2;
       position[0] = particle->x;
       position[1] = particle->y;
       position[2] = particle->z;

@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "menu_result.h"
 
 // Psynergy menu workspace (known fields only).
 struct PsynergyMenuState {
@@ -15,16 +16,6 @@ struct PsynergyMenuState {
   u8 paneOwner[2];
   u8 unk218[0x4c];
   s8 selectedIndexByOwner[8];
-};
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
 };
 
 s32 Unit_Get(s32 owner);

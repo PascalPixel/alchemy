@@ -1,16 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "edition.h"
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
-};
+#include "menu_result.h"
 
 struct InventoryMenuState {
   u8 unk000[0x24];

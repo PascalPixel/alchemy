@@ -2,16 +2,7 @@
 #include "battle_type.h"
 #include "ram_buffer.h"
 #include "edition.h"
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
-};
+#include "menu_result.h"
 
 // The psynergy menu work block, as this function reads it.
 struct PsynergyMenuState {

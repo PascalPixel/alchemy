@@ -1,6 +1,6 @@
 // Matches: differ 0 of 239 (tla-en, 2026-11-07).
 // History: 14, 8, then 4 with a one-pass block; prototypes for the far calls
-// (the info window as a pointer) in place of implicit declarations reach 0.
+// reach 0; named messages, the shared MenuResult and named values keep 0.
 // The psynergy menu's description page (the selected ability's description
 // and where it can be used, then each row's element icon and highlight), ☀️'s
 // PsynergyMenu_DrawRangePage in games/tbs/src/menu/menu/status.c, with ⚓️'s
@@ -8,17 +8,9 @@
 // action's byte 6.
 #include "types.h"
 #include "battle_type.h"
+#include "battle_system.h"
+#include "menu_result.h"
 #include "ram_buffer.h"
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
-};
 
 // The psynergy menu work block, as this function reads it.
 struct PsynergyListWork {
@@ -29,14 +21,13 @@ struct PsynergyListWork {
 };
 
 #define ACTION_ID_MASK OWNER_ACTION_ID_MASK
+#define PAGE_ROWS 5
 
-extern u8 Msg02181[]; // the first ability description (MsgAbilityDescription)
-extern u8 Msg04162[]; // "Can be used in Battle" (MsgUsableInBattle)
-extern u8 Msg04163[]; // "Can be used in Towns" (MsgUsableInField)
-extern u8 Msg04164[]; // the same text again (MsgUsableAnywhere)
-
-struct BattleAct *BattleAction_Get(s32 action);
-void Window_Commit(s32 window);
+extern u8 MsgAbilityDescription[];
+extern u8 MsgUsableInBattle[];
+extern u8 MsgUsableInField[];
+// In the English release its text is MsgUsableInField's again.
+extern u8 MsgUsableAnywhere[];
 
 void WindowSprite_RedrawSavedRectFar(void *);
 void Text_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
@@ -52,38 +43,39 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
   s32 base;
 
   menu = (struct PsynergyListWork *)Ram_HeapSlots->menuRuntime;
-  state->selectedIndex = state->page * 5 + state->row;
+  state->selectedIndex = state->page * PAGE_ROWS + state->row;
   WindowSprite_RedrawSavedRectFar(menu->infoWindow);
   wait(1);
   if (menu->psynergies[state->selectedIndex] != 0) {
     Text_DrawCharacterAtOffsetFar(
         (menu->psynergies[state->selectedIndex] & ACTION_ID_MASK) +
-            (s32)&Msg02181,
+            (s32)MsgAbilityDescription,
         (s32)menu->infoWindow, 0, 0);
     ability = BattleAction_Get(menu->psynergies[state->selectedIndex] &
                                ACTION_ID_MASK);
     Window_ClearInteriorTilesFar(window, 0, 96, 224, 104);
     row = 0;
-    if (ability->unk04[2] != 0 || (ability->flags & 0x40) != 0) {
+    if (ability->unk04[2] != 0 ||
+        (ability->flags & ACTION_USABLE_IN_FIELD) != 0) {
       row = 2;
     }
-    if ((ability->flags & 0x80) != 0) {
+    if ((ability->flags & ACTION_USABLE_IN_BATTLE) != 0) {
       row |= 1;
     }
     if (row == 3) {
-      Text_DrawCharacterAtOffsetFar((s32)&Msg04164, window, 0, 96);
+      Text_DrawCharacterAtOffsetFar((s32)MsgUsableAnywhere, window, 0, 96);
     } else if (row == 2) {
-      Text_DrawCharacterAtOffsetFar((s32)&Msg04163, window, 0, 96);
+      Text_DrawCharacterAtOffsetFar((s32)MsgUsableInField, window, 0, 96);
     } else if (row == 1) {
-      Text_DrawCharacterAtOffsetFar((s32)&Msg04162, window, 0, 96);
+      Text_DrawCharacterAtOffsetFar((s32)MsgUsableInBattle, window, 0, 96);
     }
   }
 
-  base = state->page * 5;
-  for (row = 0; row <= 4; row++) {
+  base = state->page * PAGE_ROWS;
+  for (row = 0; row <= PAGE_ROWS - 1; row++) {
     if (row == state->row) {
       ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
-      if (ability->element != 4) {
+      if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24, row * 2 + 2,
                                   0);
         Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 14);
@@ -93,7 +85,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
       }
     } else {
       ability = BattleAction_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
-      if (ability->element != 4) {
+      if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24, row * 2 + 2,
                                   4);
         Render_SetTilemapFlagRect(window, 9, row * 2 + 2, 15, 1, 15);

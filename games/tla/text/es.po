@@ -18767,15 +18767,15 @@ msgctxt "message"
 msgid "04622"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgUsableInBattle"
 msgid "04623"
 msgstr "Usado en la batalla."
 
-msgctxt "message"
+msgctxt "MsgUsableInField"
 msgid "04624"
 msgstr "Usado en pueblos/mazmorras."
 
-msgctxt "message"
+msgctxt "MsgUsableAnywhere"
 msgid "04625"
 msgstr "Usado en pueblos/mazmorras/batalla."
 

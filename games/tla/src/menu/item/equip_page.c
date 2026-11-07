@@ -3,6 +3,7 @@
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
 #include "version.h"
+#include "menu_result.h"
 
 struct InventoryMenuState {
   u8 unk000[0x30];
@@ -10,16 +11,6 @@ struct InventoryMenuState {
   s32 equipWindow;
   u8 unk038[0x18c];
   u16 items[32];
-};
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unused04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
 };
 
 // The rows one page of the item list shows: Japanese fits six, the other

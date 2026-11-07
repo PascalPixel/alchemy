@@ -16919,15 +16919,15 @@ msgctxt "message"
 msgid "04161"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgUsableInBattle"
 msgid "04162"
 msgstr "Can be used in Battle"
 
-msgctxt "message"
+msgctxt "MsgUsableInField"
 msgid "04163"
 msgstr "Can be used in Towns"
 
-msgctxt "message"
+msgctxt "MsgUsableAnywhere"
 msgid "04164"
 msgstr "Can be used in Towns"
 

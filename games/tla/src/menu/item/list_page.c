@@ -4,6 +4,7 @@
 #include "battle_unit.h"
 #include "text/msg_ids.h"
 #include "edition.h"
+#include "menu_result.h"
 
 /// The rows of a page of the item list: six in Japanese.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -31,16 +32,6 @@
 #else
 #define STAT_X 72
 #endif
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
-};
 
 struct InventoryMenuState {
   u8 unk000[0x1c4];

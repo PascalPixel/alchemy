@@ -1,5 +1,6 @@
 #include "types.h"
 #include "ram_buffer.h"
+#include "menu_result.h"
 
 /// Item menu workspace (known fields only).
 struct InventoryMenuState {
@@ -35,16 +36,6 @@ void Resource_LoadPairedBlocks(void) {
   VramBlock_LoadResourceFar(value, 128,
                             (s32)&ResourceId_MenuSmallDownArrowTiles);
 }
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
-};
 
 s32 Unit_Get(s32 owner);
 s32 ItemMenu_CountItems(s32 owner);

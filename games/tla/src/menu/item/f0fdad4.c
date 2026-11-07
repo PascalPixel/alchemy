@@ -7,6 +7,7 @@
 #include "ram_buffer.h"
 #include "battle_unit.h"
 #include "edition.h"
+#include "menu_result.h"
 
 // The Japanese list puts its cursor and its help line at other columns.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -16,16 +17,6 @@
 #define CURSOR_X 88
 #define CHANGE_HELP_X 0
 #endif
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
-};
 
 struct MenuIcon {
   u8 unk00[5];

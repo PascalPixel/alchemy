@@ -1,6 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 #include "version.h"
+#include "menu_result.h"
 
 // Psynergy menu workspace; only identified fields are declared here.
 struct PsynergyMenuState {
@@ -16,16 +17,6 @@ struct PsynergyMenuState {
   u8 paneOwner[2];
   u8 unk218[0x4c];
   s8 selectedIndexByOwner[8];
-};
-
-struct MenuResult {
-  s32 ownerState;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 entryCount;
-  s32 selectedIndex;
 };
 
 extern char MsgAbilityDescription[];

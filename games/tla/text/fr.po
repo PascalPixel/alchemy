@@ -18782,15 +18782,15 @@ msgctxt "message"
 msgid "04622"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgUsableInBattle"
 msgid "04623"
 msgstr "Utilisable en combat"
 
-msgctxt "message"
+msgctxt "MsgUsableInField"
 msgid "04624"
 msgstr "Utilisable en ville/donjon"
 
-msgctxt "message"
+msgctxt "MsgUsableAnywhere"
 msgid "04625"
 msgstr "Utilisable en ville/donjon/combat"
 

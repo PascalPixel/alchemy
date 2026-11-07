@@ -5,6 +5,8 @@
 #include "input.h"
 #include "main_routine_work.h"
 #include "frame.h"
+#include "edition.h"
+#include "version.h"
 
 extern const u8 gText_SpeedDelays[];
 extern const u8 gData_080aa0df[];
@@ -80,7 +82,11 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
     if (channel->ended == 0)
       code = work->entries[channel->entry];
 
+#if LANGUAGE != LANGUAGE_JAPANESE
     if (code <= 30 || code == 176) {
+#else
+    if (code <= 30) {
+#endif
       switch (code) {
       case 3:
         channel->x = channel->startX;
@@ -238,10 +244,13 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
       pixelY = (channel->y + 128) / 256;
       voiceGap = gText_SpeedCueGaps[TEXT_SPEED];
       nextEntryIndex = channel->entry;
+#if !TLA_PATCH_2
       if (work->mode != 0)
         pixelX += 8;
+#endif
       nextEntryIndex = (nextEntryIndex + 1) & ENTRY_MASK;
       nextCode = work->entries[nextEntryIndex];
+#if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
       if (nextCode == 222) {
         code |= 1 << 14;
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
@@ -249,12 +258,15 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
         code |= 2 << 14;
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
       }
+#endif
+#if LANGUAGE != LANGUAGE_JAPANESE
       if (!(channel->work->flags & 8) && code > 32 && nextCode > 32 &&
           (u16)(gFont_Glyphs[code - 32].width +
                 gFont_Glyphs[nextCode - 32].width) <= 15) {
         code |= nextCode << 8;
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
       }
+#endif
       if (work->textMode != 0 && channel->unk26 != 0)
         pixelY = (channel->y + 128) / 320 - 3;
       glyphWidth = Func_0803bde4(channel->work, code, pixelX, pixelY, 0);
@@ -272,8 +284,12 @@ s32 Message_StepScript(struct UiChannelSlot *channel) {
         }
       }
       glyphAdvance = glyphWidth << 8;
+#if LANGUAGE == LANGUAGE_JAPANESE
+      glyphAdvance += channel->spacing[channel->line];
+#elif LANGUAGE != LANGUAGE_GERMAN
       if (code == 32)
         glyphAdvance += channel->spacing[channel->line];
+#endif
       channel->x += glyphAdvance;
       if (code == 32 && work->menuState == 0)
         glyphsLeft = 1;

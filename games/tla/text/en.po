@@ -14765,7 +14765,7 @@ msgctxt "MsgPresentLocation"
 msgid "03625"
 msgstr "Present location"
 
-msgctxt "message"
+msgctxt "MsgNotOnMap"
 msgid "03626"
 msgstr ""
 "This place doesn't seem\n"

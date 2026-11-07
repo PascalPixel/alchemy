@@ -8,17 +8,12 @@
 #include "system.h"
 #include "types.h"
 #include "resource.h"
-
-struct WorldMapWork {
-  u16 resources[2];
-  u8 unk04[0x18];
-  u32 window;
-};
+#include "field/world_map.h"
 
 extern void Window_CloseFar(u32 arg0, u32 arg1);
 
 void BattleEffect_CleanupResourcesAndWindow(void) {
-  Resource_ResetEntry(gWorldMapWork.resources[0]);
-  Resource_ResetEntry(gWorldMapWork.resources[1]);
-  Window_CloseFar(gWorldMapWork.window, 2);
+  Resource_ResetEntry(gWorldMapWork.vramBlock);
+  Resource_ResetEntry(gWorldMapWork.windowSlot);
+  Window_CloseFar((u32)gWorldMapWork.window, 2);
 }

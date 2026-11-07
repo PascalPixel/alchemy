@@ -6,22 +6,7 @@
 #include "event_work.h"
 #include "flag_call.h"
 #include "ram_buffer.h"
-
-struct WorldMapWork {
-  u16 vramBlock;
-  u16 windowSlot;
-  s32 x;
-  s32 z;
-  u8 padding0c[6];
-  s16 shown;
-  u8 padding14[4];
-  s32 speed;
-  void *window;
-  u32 markers[129 * 3];
-  u8 padding638[24];
-  s32 unk644;
-  s32 unk648;
-};
+#include "field/world_map.h"
 
 void *Actor_GetById(s32 id);
 s32 Resource_LoadFixedBlockBIntoFreeSlotFar(void);

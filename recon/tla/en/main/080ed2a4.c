@@ -1,36 +1,37 @@
 // Matches: differ 0 of 548 (tla-en, 2026-11-07).
-// History: Data_02000500 read as a struct (Unk_02000500) lets sched2 lift the
-// entrance load above its store, closing the last 4 (2026-11-07); earlier
-// differ 4 (11-06), 47 (11-05), 127 (11-01).
-// Runs the world map screen (mode 0 to look, nonzero to choose a destination)
-// until A or B. In event mode 3 the field stays loaded: the map work's sixteen
-// animation flags are set aside and the screen is drawn over it (a nonzero
-// mode still snapshots the objects first); otherwise the objects are
-// snapshotted, the field closed, the task table reset and BG1's map numbered
-// for the picture. Each frame runs Func_080ed0a0 and Func_080ec4d4; Start
-// glides the cursor to the leader's place until released, R and L step to the
-// next and previous shown place (Func_080ec2b8), Select toggles the whole-map
-// view, and the first time flag 284 or 286 is set MsgNotOnMap is shown.
-// Choosing with A stores the place in gMainRoutineWork and calls
-// Func_080ca368; B stores -1. The field is then restored (mode 0 in event
-// mode 3) or flag 265 set and the event work's countdown set to 999.
-// Shape, as ☀️'s WorldPicture_Show: register writes through Io_Write16, the
-// flags saved by an index loop, the mode-3 setup before the full one, the
-// closing test inverted, the redraw an outer loop.
-// What the frame loop's form rests on, measured: the native reloads a value
-// straight after storing it (the cursor, the scroll pair, the work's z) because
-// CSE cannot tell its pointers apart, and only a pointer set twice has no known
-// base; hence the NULL defaults before the outer loop. keys and input are the
-// native's r10 and r5: input is set again in the Start and release bodies. The
-// clamp keeps zero and the limits in locals set before the scroll stores. Three
-// sets of input and the two of wayZ are plain C but unusually
-// shaped: an adoption should decide whether any of them is a device (S2).
-// The choice arms: gMainRoutineWork and Data_02000500 are each a pointer local
-// set once at the top; they get no register, so reload rebuilds each address
-// where it is used, in the native's rotating registers. Data_02000500 is a
-// struct, not a bare s16: a bare s16 store conflicts with the place's fields
-// and keeps the entrance load after it (4 differ). B's -1 goes through a local
-// (tagged).
+// History: made adoptable (types from field/world_map.h, SceneId_WorldMap,
+// MsgNotOnMap named in all six catalogs, the input resets tagged) 11-07;
+// earlier differ 4 (11-06), 47 (11-05), 127 (11-01). Runs the world map screen
+// (mode 0 to look, nonzero to choose a destination) until A or B. In event mode
+// 3 the field stays loaded: the map work's sixteen animation flags are set
+// aside and the screen is drawn over it (a nonzero mode still snapshots the
+// objects first); otherwise the objects are snapshotted, the field closed, the
+// task table reset and BG1's map numbered for the picture. Each frame runs
+// Func_080ed0a0 and Func_080ec4d4; Start glides the cursor to the leader until
+// released, R and L step to the next and previous shown destination
+// (Func_080ec2b8), Select toggles the whole-map view, and the first time flag
+// 284 or 286 is set MsgNotOnMap is shown. Choosing with A stores
+// SceneId_WorldMap and the destination's flag and calls Func_080ca368; B stores
+// 0xffff and -1. The field is then restored (mode 0 in event mode 3) or flag
+// 265 set and the event work's countdown set to 999. Shape, as ☀️'s
+// WorldPicture_Show: register writes through Io_Write16, the flags saved by an
+// index loop, the mode-3 setup before the full one, the closing test inverted,
+// the redraw an outer loop. What the frame loop's form rests on, measured: the
+// native reloads a value straight after storing it (the cursor, the scroll
+// pair, the work's z) because CSE cannot tell its pointers apart, and only a
+// pointer set twice has no known base; hence the NULL defaults before the outer
+// loop. keys and input are the native's r10 and r5, each holding &gInput
+// throughout; resetting input in the Start and release bodies is a tagged
+// device. wayZ likewise holds only &Data_0202a650, set in each arm that uses it
+// (set once before the loop, 147 differ). The clamp keeps zero and the limits
+// in locals set before the scroll stores. The choice arms: gMainRoutineWork and
+// Data_02000500 are each a pointer local set once at the top; they get no
+// register, so reload rebuilds each address where it is used, in the native's
+// rotating registers. Data_02000500 is read through struct WorldMapChoice, not
+// as a bare s16: a bare s16 store conflicts with the FlagEntry's fields and
+// keeps the entrance load after it (4 differ). B's -1 goes through a local
+// (tagged). MsgNotOnMap is the catalog's symbol, not MSGNO's constant (66
+// differ).
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -45,38 +46,9 @@
 #include "map.h"
 #include "field/sprite.h"
 #include "flag_call.h"
+#include "field/world_map.h"
+#include "text/msg_ids.h"
 
-struct WorldMapWork {
-  u16 vramBlock;
-  u16 windowSlot;
-  s32 x;
-  s32 z;
-  u8 unk0c[6];
-  s16 shown;
-  u8 unk14[4];
-  s32 speed;
-  void *window;
-  u8 unk20[0x622];
-  u16 mode;
-};
-
-struct WorldMapPlace {
-  u8 flag;
-  u8 value;
-  s16 unk02;
-  s16 x;
-  s16 z;
-  u8 unk08[8];
-  s16 scene;
-  s16 entrance;
-};
-
-struct WorldMapChoice {
-  u8 unk000[0x2be];
-  u16 unk2be;
-};
-
-extern struct WorldMapWork gWorldMapWork;
 extern s16 Data_0202a640;
 extern s32 Data_0202a644;
 extern s32 Data_0202a648;
@@ -84,12 +56,6 @@ extern s32 Data_0202a64c;
 extern s32 Data_0202a650;
 extern s32 Data_0202a630;
 extern s32 Data_0202a634;
-struct Unk_02000500 {
-  s16 unk00;
-};
-
-extern struct Unk_02000500 Data_02000500;
-extern char MsgNotOnMap;
 
 void ObjectTable_Snapshot(void);
 void WindowSystem_InitFieldFar(void);
@@ -103,7 +69,6 @@ void Func_080ec1d0(s32 *screenX, s32 *screenY);
 void Func_080ec2b8(s32 *screenX, s32 *screenY, s32 step);
 void FieldMessage_ShowFar(s32 message, s32 mode);
 void WindowSprite_PrepareForRedrawFar(void *window);
-struct WorldMapPlace *FlagEntries_GetTable(void);
 void Func_080ca368(s32 scene, s32 entrance);
 void BattleEffect_CleanupResourcesAndWindow(void);
 void Func_08020270(void);
@@ -122,7 +87,7 @@ s32 Func_080ed2a4(s32 mode) {
   s32 gliding = 0;
   struct WorldMapWork *world = &gWorldMapWork;
   struct MapAnimation *layer;
-  struct WorldMapPlace *place;
+  struct FlagEntry *place;
   u32 *tiles;
   u32 tile;
   s32 row;
@@ -140,8 +105,8 @@ s32 Func_080ed2a4(s32 mode) {
   s32 limitX;
   s32 limitZ;
   s32 value;
-  struct Unk_02000500 *data02000500 = &Data_02000500;
-  struct WorldMapChoice *routine = (struct WorldMapChoice *)&gMainRoutineWork;
+  struct WorldMapChoice *choice = &Data_02000500;
+  struct MainRoutineWork *routine = &gMainRoutineWork;
 
   world->mode = mode;
   if (mode != 0 || event->controlMode != 3)
@@ -219,7 +184,7 @@ s32 Func_080ed2a4(s32 mode) {
     Io_Write16(0x8682, &REG_BG1CNT);
     Io_Write16(0x1340, &REG_DISPCNT);
     if ((GameFlag_Test(284) || GameFlag_Test(286)) && !messageShown) {
-      FieldMessage_ShowFar((s32)&MsgNotOnMap, 1);
+      FieldMessage_ShowFar((s32)MsgNotOnMap, 1);
       messageShown = 1;
     }
     keys = &gInput;
@@ -234,12 +199,16 @@ s32 Func_080ed2a4(s32 mode) {
       if ((input->repeat & 8) && gliding == 0) {
         Func_080ec1d0(&screenX, &screenY);
         *cursorX = screenX << 16;
+        /* FAKEMATCH(dead): input reset to the &gInput it already holds; as
+         * without the reset, 57 of 548 instructions differ in tla-en. */
         input = &gInput;
         *cursorZ = screenY << 16;
         gliding = 1;
       }
       if (!(keys->held & 8) && gliding == 1) {
         *cursorX = *wayX;
+        /* FAKEMATCH(dead): input reset to the &gInput it already holds; as
+         * without the reset, 61 of 548 instructions differ in tla-en. */
         input = &gInput;
         *cursorZ = Data_0202a650;
         gliding = 0;
@@ -247,6 +216,7 @@ s32 Func_080ed2a4(s32 mode) {
       if (keys->repeat & 0x100) {
         Func_080ec2b8(&screenX, &screenY, 1);
         *cursorX = screenX << 16;
+        // wayZ only ever holds &Data_0202a650, set where it is used.
         wayZ = &Data_0202a650;
         *cursorZ = screenY << 16;
         *wayX = *cursorX;
@@ -299,8 +269,8 @@ s32 Func_080ed2a4(s32 mode) {
           continue;
         place = FlagEntries_GetTable();
         place += world->shown;
-        routine->unk2be = (s32)&SceneId_Ov64a;
-        data02000500->unk00 = place->flag;
+        routine->unk2be = (s32)&SceneId_WorldMap;
+        choice->flag = place->flag;
         Func_080ca368(place->scene, place->entrance);
         goto done;
       }
@@ -309,9 +279,9 @@ s32 Func_080ed2a4(s32 mode) {
           routine->unk2be = 0xffff;
           {
             s32 none = -1;
-            /* FAKEMATCH(temporary): the form kept; as data02000500->unk00 = -1,
+            /* FAKEMATCH(temporary): the form kept; as choice->flag = -1,
              * 40 of 548 instructions differ in tla-en. */
-            data02000500->unk00 = none;
+            choice->flag = none;
           }
         }
         goto done;

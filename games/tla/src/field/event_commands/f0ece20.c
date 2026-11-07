@@ -3,15 +3,8 @@
 #include "resource.h"
 #include "ram_buffer.h"
 #include "bg_scroll.h"
+#include "field/world_map.h"
 
-struct WorldMapWork {
-  u8 padding00[0x62c];
-  s32 *cursor;
-  u8 padding630[0x10];
-  s16 centered;
-};
-
-extern struct WorldMapWork gWorldMapWork;
 extern char ResourceId_Data023, ResourceId_Data024;
 
 /// Draws the world map picture on BG1, scrolled to the cursor in gWorldMapWork

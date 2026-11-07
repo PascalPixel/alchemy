@@ -16603,7 +16603,7 @@ msgctxt "MsgPresentLocation"
 msgid "04086"
 msgstr "Posizione attuale"
 
-msgctxt "message"
+msgctxt "MsgNotOnMap"
 msgid "04087"
 msgstr ""
 "Pare che questo posto non\n"

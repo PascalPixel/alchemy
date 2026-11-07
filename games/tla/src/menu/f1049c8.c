@@ -1,13 +1,7 @@
 // Func_081049c8: The Broken Seal's Djinn_CountTurns.
 #include "types.h"
 #include "ram_buffer.h"
-
-struct DjinnMenuWork {
-  u8 unk000[0x204];
-  u16 owners[8];
-  u8 unk214[1];
-  u8 ownerCount;
-};
+#include "djinn_menu.h"
 
 struct DjinnUnit {
   u8 unk000[0xf8];
@@ -26,7 +20,7 @@ void Func_081049c8(u8 *counts) {
   s32 count;
 
   work = Ram_HeapSlots->menuRuntime;
-  for (ownerIndex = 0; ownerIndex < work->ownerCount; ownerIndex++) {
+  for (ownerIndex = 0; ownerIndex < work->memberCount; ownerIndex++) {
     unit = Unit_Get(work->owners[ownerIndex]);
     count = 0;
     for (element = 0; element <= 3; element++) {

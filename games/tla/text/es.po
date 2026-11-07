@@ -19375,7 +19375,7 @@ msgctxt "message"
 msgid "04774"
 msgstr "{button_icon:3}:Estado Pers."
 
-msgctxt "message"
+msgctxt "MsgCurrentStatus"
 msgid "04775"
 msgstr "Estado actual"
 

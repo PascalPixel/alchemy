@@ -19471,7 +19471,7 @@ msgctxt "MsgDjinnCharacterStatus"
 msgid "04778"
 msgstr "{button_icon:3}:Char. Status"
 
-msgctxt "message"
+msgctxt "MsgCurrentStatus"
 msgid "04779"
 msgstr "Akt. Status"
 

@@ -33,6 +33,10 @@
 /// Where Func_080ed0a0 reads the cursor from (x, then y, 16.16 pixels): the
 /// setup points it at the work's cursor.
 #define Ram_WorldMapCursor FIXED_ADDRESS((s32 **), 0x0202a62c, Data_0202a62c)
+/// The shown place name's box on the world map screen (x, y, width, height,
+/// pixels). Func_080ec4d4 reaches the four halfwords from one address by
+/// adding and subtracting their offsets, which only constants give.
+#define Ram_WorldMapNameBox FIXED_ADDRESS((s16 *), 0x0202a638, Data_0202a638)
 /// The cursor's place when the screen opens (x, then y, 16.16 pixels).
 #define Ram_WorldMapCursorStart                                                \
   FIXED_ADDRESS((s32 *), 0x0202a64c, Data_0202a64c)

@@ -1,4 +1,5 @@
 // Matches: differ 0 of 1044 (tla-en, 2026-11-07).
+// 2026-11-07: made adoptable (symbols, Ram_WorldMapNameBox, PO names, Q16_ONE).
 // 2026-11-07: from 2; the saved y is read through a type holding an s32, so
 // sched2 keeps the width's store before its load (the native's alias order),
 // replacing the empty asm; de, es, fr and it match with the German name 3
@@ -22,8 +23,8 @@
 // OAM bit-fields (their masks are QImode -13 and -63); 0x0202a654 and
 // 0x0202a656 are arrays because a plain halfword scalar stores a constant from
 // the pool; the three message numbers are symbols (pool loads, not split
-// constants), and tla's en.po has yet to name 03625 "Present location" and
-// 03627 "Boat". Kept forms: the saved leader position as savedX >> 16 (combine
+// constants), named in the PO from their text ("Present location" and
+// "Boat"). Kept forms: the saved leader position as savedX >> 16 (combine
 // narrows it to the native's ldrsh at +2 off the field's address), the cursor's
 // start at its fixed address (the z word as x + 4), the 9-bit x masked in C on
 // the scrolled branch (the native's split 0x1ff), and a u16 angle (the native's
@@ -49,6 +50,7 @@
 #include "iwram_call.h"
 #include "edition.h"
 #include "ram_buffer.h"
+#include "fixed_math.h"
 
 // The scrolled name's left edge, in pixels left of its place.
 #if LANGUAGE == LANGUAGE_GERMAN
@@ -115,21 +117,22 @@ extern const u16 Data_080f1120[];
 extern u8 MsgPresentLocation[];
 extern u8 MsgBoat[];
 extern u8 MsgDebugAreaName[];
-#define Data_0202a644 (*(s32 *)0x0202a644)
-#define Data_0202a648 (*(s32 *)0x0202a648)
-#define Data_0202a640 (*(s16 *)0x0202a640)
-#define gData_0202a642 (*(s16 *)0x0202a642)
+extern s32 Data_0202a644;
+extern s32 Data_0202a648;
+extern s16 Data_0202a640;
+extern s16 gData_0202a642;
 extern s16 Data_0202a654[];
 extern s16 Data_0202a656[];
-#define Data_0202a638 (*(s16 *)0x0202a638)
-#define Data_0202a63a (*(s16 *)0x0202a63a)
-// The saved y's type in the FAKEMATCH below.
-struct Unk_0202a63a {
-  s16 unk00;
+// A halfword typed beside a word, for the FAKEMATCH that reads the name box's
+// y; no such data exists.
+struct WorldMapAliasedHalfword {
+  s16 value;
   s32 unk04;
 };
-#define Data_0202a63c (*(s16 *)0x0202a63c)
-#define Data_0202a63e (*(s16 *)0x0202a63e)
+#define NAME_BOX_X Ram_WorldMapNameBox[0]
+#define NAME_BOX_Y Ram_WorldMapNameBox[1]
+#define NAME_BOX_WIDTH Ram_WorldMapNameBox[2]
+#define NAME_BOX_HEIGHT Ram_WorldMapNameBox[3]
 extern struct WorldMapMarker Data_0202a620;
 
 s32 Party_GetLeaderActor(void);
@@ -202,17 +205,17 @@ void Func_080ec4d4(void) {
   if (Data_0202a644 != 0) {
     x = Data_0202a644;
     y = Data_0202a648;
-    dx = (x - work->x) / 0x10000;
-    dz = (y - work->z) / 0x10000;
+    dx = (x - work->x) / Q16_ONE;
+    dz = (y - work->z) / Q16_ONE;
     distance = Iwram_Sqrt(dx * dx + dz * dz) << 16;
     dx = x - work->x;
     dz = y - work->z;
-    if (distance < 0x400000)
+    if (distance < Q16_ONE * 64)
       distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
     step = distance / 4;
-    if (step > 0x80000)
-      step = 0x80000;
-    if (distance < 0x8000) {
+    if (step > Q16_ONE * 8)
+      step = Q16_ONE * 8;
+    if (distance < Q16_ONE / 2) {
       work->x = x;
       work->z = y;
       Data_0202a644 = 0;
@@ -232,20 +235,20 @@ void Func_080ec4d4(void) {
       pos[1] = 0;
       pos[2] = work->z;
       Vector_AddPolarOffset(work->speed, angle, pos);
-      if (pos[0] < 0x100000)
-        pos[0] = 0x100000;
-      if (pos[0] > 0x1ff0000)
-        pos[0] = 0x1ff0000;
+      if (pos[0] < Q16_ONE * 16)
+        pos[0] = Q16_ONE * 16;
+      if (pos[0] > Q16_ONE * 511)
+        pos[0] = Q16_ONE * 511;
       if (pos[2] < 0)
         pos[2] = 0;
-      if (pos[2] > 0x16d0000)
-        pos[2] = 0x16d0000;
+      if (pos[2] > Q16_ONE * 365)
+        pos[2] = Q16_ONE * 365;
       work->x = pos[0];
       work->z = pos[2];
       Ram_WorldMapCursorStart[0] = pos[0];
       Ram_WorldMapCursorStart[1] = pos[2];
-      if (work->speed < 0x60000)
-        work->speed += 0x2000;
+      if (work->speed < Q16_ONE * 6)
+        work->speed += Q16_ONE / 8;
     }
   }
 
@@ -324,7 +327,7 @@ void Func_080ec4d4(void) {
       if (nearestDistance <= 2) {
         work->x = nearestX << 16;
         work->z = nearestY << 16;
-        work->speed = 0x10000;
+        work->speed = Q16_ONE;
       } else {
         angle = ArcTan2(nearestY - cursorY, nearestX - cursorX);
         pos[0] = work->x;
@@ -337,7 +340,7 @@ void Func_080ec4d4(void) {
       cursorX = WORLD_MAP_HIGH(work->x);
       cursorY = WORLD_MAP_HIGH(work->z);
     } else {
-      work->speed = 0x10000;
+      work->speed = Q16_ONE;
     }
   }
 
@@ -400,21 +403,20 @@ void Func_080ec4d4(void) {
         Text_DrawMessageFar(nearestName, work->window, cursorX, cursorY);
         {
           /* FAKEMATCH(temporary): one local carries width, then height, into
-             the saved size; as plain stores, 20 of 1044 instructions differ in
-             tla-en.
-          */
+             the name box; as plain stores, 20 of 1044 instructions differ in
+             tla-en. */
           s32 value = width;
-          Data_0202a63c = value;
+          NAME_BOX_WIDTH = value;
           value = height;
-          Data_0202a63e = value;
+          NAME_BOX_HEIGHT = value;
         }
-        Data_0202a638 = cursorX;
-        Data_0202a63a = cursorY;
+        NAME_BOX_X = cursorX;
+        NAME_BOX_Y = cursorY;
       }
     }
   } else if (nearest != -1) {
-    width = Data_0202a63c;
-    height = Data_0202a63e;
+    width = NAME_BOX_WIDTH;
+    height = NAME_BOX_HEIGHT;
     if (Data_0202a640 == 0) {
       cursorX = nearestX - WORLD_MAP_NAME_LEFT;
       cursorY = nearestY - 11;
@@ -430,14 +432,15 @@ void Func_080ec4d4(void) {
     }
     if (cursorY < 0)
       cursorY = 0;
-    width = cursorX - Data_0202a638;
-    /* FAKEMATCH(barrier): the saved y read through a struct with an s32
-       member, so its load may alias the width just stored and stays after
-       it; as Data_0202a63a, 10 of 1044 instructions differ in tla-en. */
-    height = cursorY - ((struct Unk_0202a63a *)&Data_0202a63a)->unk00;
+    width = cursorX - NAME_BOX_X;
+    /* FAKEMATCH(temporary): the name box's y read through a pointer to a
+       struct with an s32 member standing in for its own address, so its
+       load may alias the width just stored and stays after it; as
+       NAME_BOX_Y, 10 of 1044 instructions differ in tla-en. */
+    height = cursorY - ((struct WorldMapAliasedHalfword *)&NAME_BOX_Y)->value;
     Func_080ec484(work->window, width, height);
-    Data_0202a638 = cursorX;
-    Data_0202a63a = cursorY;
+    NAME_BOX_X = cursorX;
+    NAME_BOX_Y = cursorY;
   }
 
   IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f00, 0x20000);

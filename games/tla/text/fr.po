@@ -16626,7 +16626,7 @@ msgctxt "message"
 msgid "04085"
 msgstr "Vide"
 
-msgctxt "message"
+msgctxt "MsgPresentLocation"
 msgid "04086"
 msgstr "Position actuelle"
 
@@ -16636,7 +16636,7 @@ msgstr ""
 "Cet endroit n'a pas l'air\n"
 "d'être sur la carte...{pause_120_skippable}"
 
-msgctxt "message"
+msgctxt "MsgBoat"
 msgid "04088"
 msgstr "Bateau"
 

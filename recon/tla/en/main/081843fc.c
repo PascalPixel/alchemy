@@ -1,10 +1,14 @@
-// Differ 61 of 4580 (tla-en, 2026-11-06). Near miss: the pairs below, scheduling
-// ties and reload choices, and the pool offsets that follow them. Measure
-// 081843fc,081848ec together. Every stack slot as in the listing.
+// Differ 41 of 4580 (tla-en, 2026-11-07). Measure 081843fc,081848ec together.
+// 2026-11-07, 61 to 41: the second object loop and the frame-450 swap index a
+// set-once cells (cells + i * 1024) instead of stepping it, so loop.c reduces a
+// giv whose start it emits after the hoisted IwramCopyWords: the pool order and
+// every offset after it now follow the listing. No device added.
+// Near miss: the pairs below, scheduling ties and reload choices. Every stack
+// slot as in the listing.
 // Pools checked against the listing's first pool (2026-11-06): the first object
 // loop starts from gMapCellBuffer, not the constant Ram_MapCellBuffer, which
 // pooled a 0x02010000 of its own and put every later offset 4 out (101 to 61).
-// The one pool difference left is order: the listing pools IwramCopyWords before
+// Settled above, the pool order was the one pool difference: the listing pools IwramCopyWords before
 // Data_02016000, as its second object loop loads them. Reusing the first loop's
 // cells there gets the order but swaps r6 and r7 (65); for-init, indexed and
 // giv forms do not move it (61 to 696). In the sched2 dump the two loads tie at
@@ -23,9 +27,11 @@
 // - The wave's buffer load (row 4080): the listing has it as a reload in r0 before
 //   i's zero in r3; here it takes r3 and i reuses x's zero, one instruction short.
 //   i before x gives the zero but moves the rotation one on for the rest of the
-//   scene. A set-once local and an integer sum have not moved the r3.
-// - cellBuffer + 0x1000 has its operands the other way (row 240), and the second
-//   object loop loads Iwram after cells (row 199).
+//   scene. A set-once local and an integer sum have not moved the r3. The buffer
+//   is a block-local pseudo local-alloc gives r3, not a reload: the listing's r0
+//   needs something local in r3 across it (i = zero and i, v, x orders: 61 to 902).
+// - cellBuffer + 0x1000 has its operands the other way (row 242).
+// - The frame-82 fill loads Iwram after its size (row 2923); FILL_WORDS there stays 41.
 // - The bolts' load sinks past five calls in the listing (rows 3626 to 3677), here
 //   past none; set later, r5 falls into reload's choice at row 3629.
 // - The sparks' stack arguments (rows 3038 to 3073), the tornado's hoisted offset
@@ -464,11 +470,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
     {
     u8 *cells = Data_02016000;
 
-    for (i = 0; i != 4; cells += 1024, i++) {
+    for (i = 0; i != 4; i++) {
       obj = Func_0815b3b0(32, 32, 0x80002000, 0);
       work->objects[24 + i] = obj;
       COPY_WORDS(obj, work->objects[i], 24);
-      COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells, 1024);
+      COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells + i * 1024, 1024);
     }
     }
     COPY_WORDS(cellBuffer + 0x1000, Data_02016000, 0x1000);
@@ -793,8 +799,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
 
       swapped = 0;
       cells = Data_02011000;
-      for (i = 0; i != 4; cells += 1024, i++) {
-        COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells, 1024);
+      for (i = 0; i != 4; i++) {
+        COPY_WORDS((void *)OBJ_TILES(work->objects[24 + i]), cells + i * 1024, 1024);
       }
     }
     if (frame <= 593) {

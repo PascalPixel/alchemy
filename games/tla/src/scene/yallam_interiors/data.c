@@ -1,6 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
-#include "edition.h"
+#include "version.h"
 
 // clang-format off
 u32 gData_02000a98[] = {
@@ -46,7 +46,7 @@ struct ActorPlacement gData_02000c8c[] = {
 // clang-format on
 
 struct ActorPlacement gData_02000ca4[] = {
-#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
+#if !TLA_PATCH_2
     {115, CONDITION_ALWAYS, 1, PIXELS(152), 0, PIXELS(136), FACING_SOUTHWEST, 1,
      0},
 #else

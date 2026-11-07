@@ -1,4 +1,4 @@
-#include "edition.h"
+#include "version.h"
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -51,7 +51,7 @@ void Func_02000390(void) {
   s32 slot, unit;
   struct UnitData *unitData;
   const u8 *message, *refuse, *info;
-#if LANGUAGE == LANGUAGE_JAPANESE
+#if !TLA_PATCH_1
   s32 item;
 #else
   u32 item;
@@ -63,7 +63,7 @@ void Func_02000390(void) {
   Func_02001148(10, 0);
   FieldEvent_Wait(30);
 ask:
-#if LANGUAGE == LANGUAGE_JAPANESE
+#if !TLA_PATCH_1
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   /* FAKEMATCH(temporary): item also holds this call's result; as a separate
    * test of the call, 23 of 374 instructions differ in tla-ja. */
@@ -163,7 +163,7 @@ read:
   Func_02001148(10, 0);
   unitData = Unit_Get(unit);
   info = Func_020010b8(unitData->items[slot]);
-#if LANGUAGE == LANGUAGE_JAPANESE
+#if !TLA_PATCH_1
   item = unitData->items[slot];
 #else
   item = unitData->items[slot] & 0x1ff;

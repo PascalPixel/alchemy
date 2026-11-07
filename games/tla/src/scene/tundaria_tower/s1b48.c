@@ -1,7 +1,7 @@
-#include "edition.h"
+#include "version.h"
 
-// The Japanese form differs and is still on its listing.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+// The Japanese form, the older revision, is still on its listing.
+#if TLA_PATCH_1
 
 #include "types.h"
 #include "actor.h"

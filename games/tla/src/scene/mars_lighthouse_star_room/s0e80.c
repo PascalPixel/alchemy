@@ -1,4 +1,4 @@
-#include "edition.h"
+#include "version.h"
 #include "types.h"
 #include "actor.h"
 #include "field_sprite.h"
@@ -50,7 +50,7 @@ extern struct Actor *Data_02004cec;
 extern u8 Func_02001424[];
 extern u8 MsgMarsStar09[];
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
 
 void Func_02000e80(void) {
   struct Actor **slot;

@@ -1,6 +1,6 @@
 #include "local.h"
 #include "event_work.h"
-#include "edition.h"
+#include "version.h"
 #include "call.h"
 
 extern u8 MsgKandoreanTemple07;
@@ -214,7 +214,7 @@ void Func_0200482c(void) {
   Actor_WaitForMoveById(16);
   Func_02005230(16, 0, 0);
   GameFlag_SetBit(0x849);
-#if LANGUAGE != LANGUAGE_JAPANESE
+#if TLA_PATCH_1
   WORK->screenEffect = 0x209;
 #endif
   Func_020051c8();

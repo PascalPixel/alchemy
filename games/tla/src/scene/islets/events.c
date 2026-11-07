@@ -5,7 +5,7 @@
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
-#include "edition.h"
+#include "version.h"
 
 void GameFlag_SetBit();
 void GameFlag_ClearBit();
@@ -21,8 +21,8 @@ void Func_020025b0(void) {
   return;
 }
 
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* The following six are absent from the Japanese \
-                                edition. */
+// The following six are from patch 1.
+#if TLA_PATCH_1
 void Func_020025bc(void) {
   Call7((void (*)())Func_02003fec, 65, 0, 4, 4, 65, 10, 1);
   return;

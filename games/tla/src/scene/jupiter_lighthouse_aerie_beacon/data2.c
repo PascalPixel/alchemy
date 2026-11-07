@@ -1,6 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
-#include "edition.h"
+#include "version.h"
 #include "objcmd.h"
 
 void Func_02000038(void);
@@ -268,7 +268,7 @@ s32 gData_020068b0[] = {
     39, 1, (s32)0x80010000, 23, 6, 0x10000,
     0, 1, 13, 16, (s32)0xc0010000, 2,
     0, 0, 0, 0, 1, 38,
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
     0,
 #endif
     22, 10, 0x16666, 22, 9, 0x16666,

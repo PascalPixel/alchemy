@@ -1,6 +1,6 @@
 #include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 #include "../../../../games/tla/include/scene_tables.h"
-#include "edition.h"
+#include "version.h"
 #include "fixed_math.h"
 
 void Func_02003288(void);
@@ -31,7 +31,7 @@ void Func_02005898(void) {
       Func_02004cf4();
     }
   }
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
   if (GameFlag_Test(0x109)) {
     object = Actor_GetById(16);
     object->x -= PIXELS(14);

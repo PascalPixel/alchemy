@@ -1,7 +1,8 @@
-#include "edition.h"
+#include "version.h"
 
-// The Japanese form differs and is still on its listing.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+// From patch 1; the Japanese release keeps an older form, still on its
+// listing.
+#if TLA_PATCH_1
 
 #include "types.h"
 #include "call.h"

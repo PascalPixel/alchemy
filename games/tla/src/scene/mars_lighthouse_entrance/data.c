@@ -1,6 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
-#include "edition.h"
+#include "version.h"
 #include "objcmd.h"
 
 void Func_02000038(void);
@@ -588,7 +588,7 @@ struct ActorPlacement gData_02005b54[] = {
     {406, CONDITION_ALWAYS, (s32)gData_02005ae8, PIXELS(136), 0, PIXELS(424),
      FACING_SOUTH, 2, 0},
     {489, 800, 1, PIXELS(648), 0, PIXELS(376), FACING_SOUTH, 2, 0},
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
     {245, 105, 1, PIXELS(664), 0, PIXELS(424), FACING_SOUTH, 0, 0},
 #else
     {245, 105, 1, PIXELS(728), 0, PIXELS(408), FACING_NORTHWEST, 0, 0},

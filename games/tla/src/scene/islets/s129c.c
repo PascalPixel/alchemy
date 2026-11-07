@@ -2,10 +2,10 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
-#include "edition.h"
+#include "version.h"
 #include "call.h"
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
 #define ISLETS_GIFT_TRANSITION 521
 #else
 #define ISLETS_GIFT_TRANSITION 513

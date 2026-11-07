@@ -1,5 +1,5 @@
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
-#include "edition.h"
+#include "version.h"
 #include "flag_call.h"
 
 void Func_020053b8(const void *data);
@@ -15,11 +15,11 @@ void Func_02002a84(void) {
   object->motionFlags = 0;
   if (GameFlag_Test(0x302)) {
     Actor_SetPositionAndResetMotion_(Actor_GetById(8), 0x1380000, 0x200000,
-                                      0x1d80000);
+                                     0x1d80000);
     Func_02005178_(0, 0, 3, 3, 19, 28);
   } else if (GameFlag_Test(0x303)) {
     Actor_SetPositionAndResetMotion_(Actor_GetById(8), 0x1580000, 0x200000,
-                                      0x1d80000);
+                                     0x1d80000);
     Func_02005178_(0, 4, 3, 3, 19, 28);
   }
   Func_020053b8(gData_020054e0);
@@ -43,13 +43,13 @@ void Func_02002a84(void) {
     if (gMainRoutineWork.entrance == 2) {
       Actor_GetById(gMainRoutineWork.currentOwner)->y = 0x400000;
     } else if (gMainRoutineWork.entrance == 3 && Flag_IsSet(0x92d) == 0) {
-    Func_02005230(11, 0, 0);
-    Func_02005230(12, 0, 0);
-    Func_02005230(13, 0, 0);
+      Func_02005230(11, 0, 0);
+      Func_02005230(12, 0, 0);
+      Func_02005230(13, 0, 0);
       Func_02005028();
     }
   }
-#if LANGUAGE != LANGUAGE_JAPANESE
+#if TLA_PATCH_1
   if (gMainRoutineWork.entrance == 2)
     GameFlag_ClearBit(0x12f);
 #endif

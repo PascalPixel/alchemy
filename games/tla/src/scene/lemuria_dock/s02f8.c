@@ -1,5 +1,5 @@
 #include "room.h"
-#include "edition.h"
+#include "version.h"
 #include "io_reg.h"
 
 void Func_020002f8(void) {
@@ -37,7 +37,7 @@ s32 Func_02000360(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Task_Add(Func_020002f8, 0x480);
   Flag_Clear(0x12f);
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
+#if TLA_PATCH_1 /* From patch 1. */
   if (Flag_IsSet(0x90a))
     Actor_SetSpritePriority(9, 1);
   else

@@ -1,9 +1,8 @@
 #include "mars_lighthouse_aerie.h"
-#include "edition.h"
+#include "version.h"
 
-// These four, their rows, and Func_02004e80 are absent from the Japanese
-// edition.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+// These four, their rows, and Func_02004e80 are from patch 1.
+#if TLA_PATCH_1
 
 void Func_02004ec0(void) { Func_02004e80(28, 2); }
 

@@ -1,5 +1,5 @@
 #include "madra_interiors.h"
-#include "edition.h"
+#include "version.h"
 
 const u8 *Func_0200004c(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2)
@@ -36,8 +36,8 @@ void Func_020000fc(void) {
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02001f08(1, 22);
   } else {
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-    // The Japanese edition has no choice prompt.
+#if !TLA_PATCH_1
+    // Before patch 1 there is no choice prompt.
     if (GameFlag_Test(0x8ff))
       Func_02001e18((s32)MsgMadraInteriors155);
     else if (GameFlag_Test(0x8ab))

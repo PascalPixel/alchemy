@@ -4,7 +4,7 @@
 #include "ram_buffer.h"
 #include "scene_ids.h"
 #include "call.h"
-#include "edition.h"
+#include "version.h"
 
 struct Actor *Actor_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
@@ -20,7 +20,7 @@ void Func_0200117c(s32 a, s32 b, s32 c, s32 d);
 s32 Func_02001184(void);
 void Func_0200118c(s32 actor, s32 value);
 
-#if LANGUAGE == LANGUAGE_JAPANESE
+#if !TLA_PATCH_1
 #define EVENT_WORK_VALUE 0x201
 #else
 #define EVENT_WORK_VALUE 0x204

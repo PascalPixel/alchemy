@@ -1,6 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
-#include "edition.h"
+#include "version.h"
 #include "objcmd.h"
 
 void Func_020000bc(void);
@@ -14,8 +14,8 @@ void Func_0200025c(void);
 void Func_02000280(void);
 void Func_020002b8(void);
 void Func_020002ec(void);
-// The Japanese edition has no Func_020002ec; its table contains 0.
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+// Func_020002ec is from patch 1; the Japanese table contains 0.
+#if !TLA_PATCH_1
 #define MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC 0
 #else
 #define MARS_LIGHTHOUSE_ROOM_F_FUNC_020002EC ((s32)Func_020002ec)

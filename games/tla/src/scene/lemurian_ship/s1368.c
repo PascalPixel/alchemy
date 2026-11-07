@@ -1,5 +1,5 @@
 #include "lemurian_ship.h"
-#include "edition.h"
+#include "version.h"
 
 void Func_02001368(void) {
   Func_02002c68();
@@ -17,8 +17,8 @@ void Func_02001380(s32 id) {
   object->timer = 1;
 }
 
-// Absent from Japanese, where actors 10 and 11 also use action 1.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+// From patch 1; in the Japanese release actors 10 and 11 also use action 1.
+#if TLA_PATCH_1
 void Func_020013b8(s32 id) {
   struct LemurianShipObject *object = Actor_GetById(id);
 
@@ -50,7 +50,7 @@ void Func_0200143c(void) {
 }
 
 void Func_02001464(void) {
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
   Func_02001380(10);
   Func_02001380(11);
 #else
@@ -60,7 +60,8 @@ void Func_02001464(void) {
 }
 
 void Func_02001474(void) {
-  struct LemurianShipObject *leader = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct LemurianShipObject *leader =
+      Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = leader->x >> 20;
   s32 z = leader->z >> 20;
 

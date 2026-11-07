@@ -1,6 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
-#include "edition.h"
+#include "version.h"
 
 void Func_0200006c(void);
 void Func_02000158(void);
@@ -26,7 +26,7 @@ s32 gData_0200059c[] = {
 
 struct ActorPlacement gActorPlacements[] = {
     {56, CONDITION_ALWAYS, 1, 0, 0, 0, FACING_NORTH, 0, 0},
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
     {420, CONDITION_ALWAYS, 1, PIXELS(384), 0, PIXELS(392), FACING_EAST, 2, 0},
 #endif
     {SCENE_TABLE_END},

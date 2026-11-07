@@ -1,12 +1,12 @@
 #include "mars_lighthouse_star_room.h"
-#include "edition.h"
+#include "version.h"
 
 void Func_02000188(void) {
   struct Actor *object = Actor_GetById(10);
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
   if (GameFlag_Test(0xa4b) == 0) {
-#elif (LANGUAGE == LANGUAGE_ENGLISH)
+#elif !TLA_PATCH_2
   if (GameFlag_Test(0x238) == 0 || GameFlag_Test(0xa4b) == 0) {
 #else
   if (GameFlag_Test(0x238) == 0 && GameFlag_Test(0xa4b) == 0) {
@@ -24,9 +24,9 @@ void Func_02000188(void) {
 void Func_020001e8(void) {
   struct Actor *object = Actor_GetById(10);
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
   if (GameFlag_Test(0xa4b) == 0) {
-#elif (LANGUAGE == LANGUAGE_ENGLISH)
+#elif !TLA_PATCH_2
   if (GameFlag_Test(0x238) == 0 || GameFlag_Test(0xa4b) == 0) {
 #else
   if (GameFlag_Test(0x238) == 0 && GameFlag_Test(0xa4b) == 0) {

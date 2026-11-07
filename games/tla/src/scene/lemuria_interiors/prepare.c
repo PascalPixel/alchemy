@@ -6,7 +6,7 @@
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
-#include "edition.h"
+#include "version.h"
 
 void FieldEvent_Wait();
 void Func_0200282c();
@@ -40,7 +40,7 @@ void FieldMessage_ShowAtActor();
 s32 Func_02000284(void) {
   struct Actor *object;
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x201;
 #else
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;

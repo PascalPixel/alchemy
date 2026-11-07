@@ -2,6 +2,27 @@
 #include "input.h"
 #include "ram_buffer.h"
 #include "text/msg_ids.h"
+#include "edition.h"
+#include "version.h"
+
+// The price window and the item details window are sized to their text.
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+#define PRICE_WINDOW_X 16
+#define PRICE_WINDOW_WIDTH 14
+#define DETAILS_WINDOW_WIDTH 13
+#elif (LANGUAGE == LANGUAGE_ENGLISH)
+#define PRICE_WINDOW_X 15
+#define PRICE_WINDOW_WIDTH 15
+#define DETAILS_WINDOW_WIDTH 16
+#elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
+#define PRICE_WINDOW_X 14
+#define PRICE_WINDOW_WIDTH 16
+#define DETAILS_WINDOW_WIDTH 18
+#else
+#define PRICE_WINDOW_X 15
+#define PRICE_WINDOW_WIDTH 15
+#define DETAILS_WINDOW_WIDTH 18
+#endif
 
 struct ShopCursorAnchor {
   u8 unk00[5];
@@ -52,6 +73,7 @@ void Func_0810a108(s32 unitId, s32 slot, s32 count);
 void Func_0810a2d8(s32 unitId, s32 slot);
 s32 Func_0810b6cc(s32 unitId, s32 slot);
 void Func_081084f4(s32 message);
+void Shop_DrawItemCount(void *window, s32 unitId);
 
 s32 Func_08109cac(s32 unitId) {
   struct ShopRuntime *shop;
@@ -70,7 +92,7 @@ s32 Func_08109cac(s32 unitId) {
   unit = Unit_Get(unitId);
   slot = 0;
   inventoryCount = 1;
-  priceWindow = Window_CreateFar(15, 8, 15, 4, 2);
+  priceWindow = Window_CreateFar(PRICE_WINDOW_X, 8, PRICE_WINDOW_WIDTH, 4, 2);
   do {
     nameWindow = Window_CreateFar(0, 5, 30, 3, 2);
     shop->cursorAnchor->active = 18;
@@ -110,7 +132,7 @@ s32 Func_08109cac(s32 unitId) {
         u32 item = unit->inventory[slot];
 
         Sound_PlayFar(126);
-        window = Window_CreateFar(0, 9, 16, 10, 2);
+        window = Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, 2);
         ItemMenu_DrawItemDetailsFar(window, item);
         // Through a byte pointer the store may alias any memory, so the
         // input address saved across the calls is restored after it, as
@@ -123,41 +145,49 @@ s32 Func_08109cac(s32 unitId) {
         Window_CloseFar(window, 2);
         Func_08109188();
         WindowSprite_PrepareForRedrawFar(shop->listWindow);
+#if TLA_PATCH_2
+        Shop_DrawItemCount(shop->itemWindow, unitId);
+#endif
         wait(1);
+        // The Japanese release goes on to the next frame without redrawing
+        // the cursor, price and name.
+#if TLA_PATCH_1
         redraw = 1;
         continue;
-      }
-      if (gInput.repeat & 32) {
-        Sound_PlayFar(111);
-        slot--;
-        slot = (inventoryCount + slot) % inventoryCount;
-        redraw = 1;
-      }
-      if (gInput.repeat & 16) {
-        Sound_PlayFar(111);
-        slot++;
-        slot = (inventoryCount + slot) % inventoryCount;
-        redraw = 1;
-      }
-      if (gInput.repeat & 64) {
-        slot -= 5;
-        if (slot < 0)
-          slot += 15;
-        while (slot >= inventoryCount)
+#endif
+      } else {
+        if (gInput.repeat & 32) {
+          Sound_PlayFar(111);
+          slot--;
+          slot = (inventoryCount + slot) % inventoryCount;
+          redraw = 1;
+        }
+        if (gInput.repeat & 16) {
+          Sound_PlayFar(111);
+          slot++;
+          slot = (inventoryCount + slot) % inventoryCount;
+          redraw = 1;
+        }
+        if (gInput.repeat & 64) {
           slot -= 5;
-        Sound_PlayFar(111);
-        redraw = 1;
-      }
-      if (gInput.repeat & 128) {
-        slot += 5;
-        if (slot >= inventoryCount)
-          slot -= 15;
-        while (slot < 0)
+          if (slot < 0)
+            slot += 15;
+          while (slot >= inventoryCount)
+            slot -= 5;
+          Sound_PlayFar(111);
+          redraw = 1;
+        }
+        if (gInput.repeat & 128) {
           slot += 5;
-        Sound_PlayFar(111);
-        redraw = 1;
+          if (slot >= inventoryCount)
+            slot -= 15;
+          while (slot < 0)
+            slot += 5;
+          Sound_PlayFar(111);
+          redraw = 1;
+        }
+        wait(1);
       }
-      wait(1);
     }
     Window_CloseFar(nameWindow, 2);
     wait(1);

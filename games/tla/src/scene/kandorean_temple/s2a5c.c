@@ -1,6 +1,6 @@
 #include "local.h"
 #include "io_reg.h"
-#include "edition.h"
+#include "version.h"
 #include "task.h"
 
 s32 Task_Add(void (*func)(void), s32 priority);
@@ -35,7 +35,6 @@ void Func_0200290c(void) {
      * instructions differ in tla-en. */
     register u16 alpha __asm__("r3") = 0xc08;
 
-
     REG_BLDALPHA = alpha;
   }
   REG_BLDCNT = 0x3f10;
@@ -69,7 +68,7 @@ void Func_0200290c(void) {
 
 void Func_02002a5c(void) {
   Func_02005338(0);
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
+#if TLA_PATCH_1 /* From patch 1. */
   if (gMainRoutineWork.entrance == 1)
     GameFlag_ClearBit(0x12f);
 #endif

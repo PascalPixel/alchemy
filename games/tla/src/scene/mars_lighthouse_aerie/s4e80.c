@@ -1,10 +1,10 @@
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
-#include "edition.h"
+#include "version.h"
 
-// The Japanese overlay has no such function.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+// From patch 1; the Japanese overlay has no such function.
+#if TLA_PATCH_1
 struct MarsLighthouseAerieParty {
   u8 unk000[0x26a];
   s16 held;

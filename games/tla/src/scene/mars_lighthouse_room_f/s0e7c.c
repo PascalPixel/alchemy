@@ -1,4 +1,4 @@
-#include "edition.h"
+#include "version.h"
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_f/room.h"
 
 extern char SceneId_Ov6adRoom1;
@@ -188,7 +188,7 @@ s32 Func_02000e7c(void) {
     BYTE_AT(Actor_GetById(9), 98) = 1;
     if (entrance - 5 <= 1U || entrance == 8) {
       Func_02002624(gData_02005c4c, gData_02005c5a, 0, 88);
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
       Func_020002ec();
 #endif
     } else if (entrance == 11 || entrance == 13 || entrance == 14 ||

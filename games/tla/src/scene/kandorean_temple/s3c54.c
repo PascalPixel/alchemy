@@ -1,5 +1,5 @@
 #include "local.h"
-#include "edition.h"
+#include "version.h"
 #include "task.h"
 
 void Func_02003c54(void) {
@@ -79,7 +79,7 @@ void Func_02003c8c(void) {
     if (GameFlag_Test(0x849) == 0)
       Func_0200482c();
   }
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* not in the Japanese edition */
+#if TLA_PATCH_1 /* From patch 1. */
   /* FAKEMATCH: as above, the barrier makes this test load gMainRoutineWork's
    * address again. */
   asm("" ::: "memory");

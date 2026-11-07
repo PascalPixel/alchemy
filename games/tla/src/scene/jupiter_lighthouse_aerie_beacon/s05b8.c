@@ -1,5 +1,5 @@
 #include "types.h"
-#include "edition.h"
+#include "version.h"
 #include "field_sprite.h"
 #include "map.h"
 #include "actor.h"
@@ -33,8 +33,8 @@ void Func_020005b8(void) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
 
   Random16Far();
-#if LANGUAGE != LANGUAGE_JAPANESE
-  // Japanese goes on when object 36 is missing.
+#if TLA_PATCH_1
+  // From patch 1; the Japanese release goes on when object 36 is missing.
   if (object == NULL)
     return;
 #endif

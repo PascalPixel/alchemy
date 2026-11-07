@@ -1,5 +1,5 @@
 #include "mars_lighthouse_room_m.h"
-#include "edition.h"
+#include "version.h"
 #include "scene_tables.h"
 #include "io_reg.h"
 
@@ -129,7 +129,7 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
 }
 
 /// No one holding item 222: MsgIfYouDo, once (flag 0xa2f). Someone holding it
-/// (and flag 0xa30 set, outside the Japanese edition): MsgYouWhoHold and the
+/// (and flag 0xa30 set, from patch 1): MsgYouWhoHold and the
 /// message after it, the camera moves on and Func_0200080c runs, then flag
 /// 0xa2e is set. Each opens as Func_020010e4 does.
 void Func_020013a0(void) {
@@ -159,7 +159,7 @@ void Func_020013a0(void) {
       Func_020031e8();
     }
   }
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
   else {
 #else
   else if (GameFlag_Test(0xa30)) {

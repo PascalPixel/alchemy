@@ -1,7 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "edition.h"
+#include "version.h"
 #include "objcmd.h"
 
 void Func_02000038(void);
@@ -503,7 +503,7 @@ s32 gData_02001b00[] = {
     0x40009085,
     -0x10000,
     (s32)Func_02000ba4,
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
+#if TLA_PATCH_1 /* From patch 1. */
     0x50008905,
     (s32)0xffff0015,
     (s32)Func_020001cc,

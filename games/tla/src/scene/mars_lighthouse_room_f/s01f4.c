@@ -1,5 +1,5 @@
 #include "room.h"
-#include "edition.h"
+#include "version.h"
 #include "scene_tables.h"
 
 extern s16 gData_02005b5c[];
@@ -33,7 +33,7 @@ void Func_0200025c(s32 unused, s32 id) {
     Func_020001f4(unused, 16);
   } else if (id == 10) {
     Actor_GetById(10)->motionFlags = 3;
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
+#if TLA_PATCH_1 /* From patch 1. */
     Func_020002ec();
 #endif
   }
@@ -63,7 +63,7 @@ void Func_020002b8(s32 unused, s32 id) {
     Func_02005598(kind, 0, 0);
 }
 
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* not in the Japanese edition */
+#if TLA_PATCH_1 /* From patch 1. */
 void Func_020002ec(void) {
   struct Actor *object;
   s32 id;

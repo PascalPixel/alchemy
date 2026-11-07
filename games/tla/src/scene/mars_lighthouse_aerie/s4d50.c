@@ -1,7 +1,7 @@
-#include "edition.h"
+#include "version.h"
 
-// Japanese has no such function.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+// From patch 1; the Japanese overlay has no such function.
+#if TLA_PATCH_1
 
 #include "mars_lighthouse_aerie.h"
 

@@ -1,5 +1,5 @@
 #include "izumo.h"
-#include "edition.h"
+#include "version.h"
 #include "scene_tables.h"
 
 void Func_02000b08(void) {
@@ -34,7 +34,7 @@ void Func_02000bdc(void) {
   Actor_OffsetPositionAndResetMotion(4, 0, 4);
   Actor_WaitForMoveById(4);
   Actor_SetSingleChildFlags(Actor_GetById(4), 0);
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
+#if TLA_PATCH_1 /* From patch 1. */
   Func_02000e08(129);
 #endif
   Actor_OffsetPositionAndResetMotion(4, 0, 16);

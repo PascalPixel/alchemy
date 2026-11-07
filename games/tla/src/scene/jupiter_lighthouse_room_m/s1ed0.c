@@ -1,6 +1,6 @@
 #include "types.h"
 #include "call.h"
-#include "edition.h"
+#include "version.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -451,7 +451,7 @@ void Func_02001ed0(void) {
   Camera_FollowActor(4, 1);
   Func_02004844(7, 0, 0);
   FieldEvent_Wait(0x14);
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
   Event_ClearInvalidPackedValues();
 #endif
   Call3((void (*)())Actor_SetPositionAndReset, 4, 0x298, 0x46);

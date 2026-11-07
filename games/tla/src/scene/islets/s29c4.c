@@ -3,7 +3,7 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
-#include "edition.h"
+#include "version.h"
 #include "scene_tables.h"
 
 #define EVENT_WORK ((u8 *)Ram_HeapSlots->eventWork)
@@ -53,8 +53,7 @@ void Func_020029c4(void) {
   Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
   Actor_SetModeById(9, 3);
   wait(1);
-#if (LANGUAGE !=                                                               \
-     LANGUAGE_JAPANESE) /* The Japanese edition leaves the transition word. */
+#if TLA_PATCH_1 /* The Japanese release leaves the transition word. */
   *(s32 *)(EVENT_WORK + 0x1ac) = 513;
 #endif
   Event_StartScreenTransition();
@@ -87,7 +86,7 @@ void Func_020029c4(void) {
   Func_02003fb4();
   Call2(Func_02003f3c, 9, FACING_SOUTH);
   Func_020034d8();
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
   *(s32 *)(EVENT_WORK + 0x1ac) = 0x100;
 #endif
 }

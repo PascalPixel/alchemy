@@ -1,5 +1,5 @@
 #include "types.h"
-#include "edition.h"
+#include "version.h"
 #include "call.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -101,7 +101,7 @@ L_020093dc:
   if (v_r8 != (s32)&SceneId_Ov6aaRoom2)
     goto L_0200944c;
   Call1((void (*)())Func_02004d88, 0);
-#if LANGUAGE == LANGUAGE_JAPANESE
+#if !TLA_PATCH_1
   Call2((void (*)())Actor_SetSpritePriority, 11, 3);
 #endif
   Call1((void (*)())Func_02001234, 10);

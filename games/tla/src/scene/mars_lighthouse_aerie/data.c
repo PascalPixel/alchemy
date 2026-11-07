@@ -1,7 +1,7 @@
 #include "types.h"
 #include "scene_tables.h"
 #include "text/msg_ids.h"
-#include "edition.h"
+#include "version.h"
 #include "objcmd.h"
 
 void Func_020001a0(void);
@@ -480,7 +480,7 @@ struct Trigger gSceneEvents[] = {
     {0x400, 30, CONDITION_ALWAYS, EVENT(Func_02004e20)},
     {0x2400, 30, CONDITION_ALWAYS, EVENT(Func_02004e20)},
     {0, 29, CONDITION_ALWAYS, EVENT(Func_02004e50)},
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
+#if TLA_PATCH_1 /* From patch 1. */
     {0x9115, 28, CONDITION_ALWAYS, EVENT(Func_02004ec0)},
     {0x9115, 17, CONDITION_ALWAYS, EVENT(Func_02004ecc)},
     {0x9115, 30, CONDITION_ALWAYS, EVENT(Func_02004ed8)},

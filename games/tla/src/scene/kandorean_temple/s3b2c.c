@@ -1,5 +1,5 @@
 #include "local.h"
-#include "edition.h"
+#include "version.h"
 
 void Func_02003ae4(s32 id, s32 base);
 
@@ -39,7 +39,7 @@ void Func_02003b2c(void) {
     Func_02005170(77, 33, 77, 24, 2, 2);
     Func_02005178_(32, 30, 2, 1, 17, 25);
   }
-#if (LANGUAGE != LANGUAGE_JAPANESE) /* Absent from the Japanese edition. */
+#if TLA_PATCH_1 /* From patch 1. */
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 4)
     GameFlag_ClearBit(0x12f);
 #endif

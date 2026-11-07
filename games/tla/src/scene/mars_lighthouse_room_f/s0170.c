@@ -1,6 +1,6 @@
-#include "edition.h"
+#include "version.h"
 
-#if (LANGUAGE != LANGUAGE_JAPANESE)
+#if TLA_PATCH_1
 
 #include "room.h"
 

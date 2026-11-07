@@ -1,6 +1,6 @@
 #include "types.h"
 #include "scene_tables.h"
-#include "edition.h"
+#include "version.h"
 #include "objcmd.h"
 
 void Func_02000038(void);
@@ -142,7 +142,7 @@ struct Trigger gSceneEvents[] = {
 };
 
 u32 gData_02005524[] = {
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+#if !TLA_PATCH_1
     39, 14, 22, 26, 0, 23,
 #else
     39, 14, 22, 26, 0, 22,

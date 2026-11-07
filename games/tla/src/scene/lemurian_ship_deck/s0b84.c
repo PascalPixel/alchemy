@@ -5,7 +5,7 @@
 #include "event_work.h"
 #include "call.h"
 #include "text/msg_ids.h"
-#include "edition.h"
+#include "version.h"
 #include "scene_tables.h"
 
 extern s32 gData_020024b4;
@@ -208,13 +208,13 @@ void Func_020006e4(void) {
   Func_0200201c(MsgHoldOnTo);
   Call4((void (*)())Func_02001fcc, 4, PIXELS(470), PIXELS(392), FACING_EAST);
   Call4((void (*)())Func_020020b4, 6, 0, -24, FACING_SOUTH);
-#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
+#if !TLA_PATCH_2
   Call4((void (*)())Func_020020b4, 5, -16, -16, FACING_SOUTHEAST);
 #else
   {
-    /* FAKEMATCH: the European editions build -16 once in r1 and copy it to r2;
-     * as two constants it is built twice, and as one variable (copied, chained
-     * or in an array) it takes r2 and is copied to r1 (differ 6). */
+    /* FAKEMATCH: from patch 2 the game builds -16 once in r1 and copies it to
+     * r2; as two constants it is built twice, and as one variable (copied,
+     * chained or in an array) it takes r2 and is copied to r1 (differ 6). */
     register s32 offset asm("r1") = -16;
 
     Call4((void (*)())Func_020020b4, 5, offset, offset, FACING_SOUTHEAST);

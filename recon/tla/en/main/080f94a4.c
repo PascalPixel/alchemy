@@ -1,4 +1,5 @@
-// Differ 22 of 162 (tla-en, 2026-11-06).
+// Differ 22 of 162 (tla-en, 2026-11-06); the same 22 in de, es, fr and it;
+// 0 of 109 in tla-ja (2026-11-07, its whole extent; the listing runs on).
 // Near miss with an untagged r4 pin, empty asm and r1 hoist found by search; each
 // needs its S2 tag on adoption. The rest is allocation: the native keeps the
 // backup in r6 and reloads 0x06004000 from the pool, here VRAM takes r6. Tried
@@ -14,7 +15,17 @@
 // 0x06004000 from the pool at each use, and loads the window flag's 0 once
 // from the pool into r11 for all three stores (here each is a movs); this
 // draft keeps the base in r8, VRAM in r7 and the size in r9.
+// Editions: German, Spanish, French and Italian compile the English form (their
+// listings differ from English only in call and pool addresses). Japanese is
+// the older, shorter form (TLA_PATCH_1 off): no 0x2000-byte backup of the
+// window tiles at 0x06004000, so no Heap_AllocEwram, Menu_SuspendFieldTasks,
+// copy and fill, Text_UseExtraTilesFar, Func_08038290, copy back, first
+// windowTiles[6] clear, Heap_Release, Menu_ResumeFieldTasks or second wait(1).
+// Their listings' labels cover the whole block through 0x080fa2dc (English
+// addresses): ItemMenu_RunCommands (080f9644.c), then ItemMenu_Use, Func_080fa368
+// and the item interface helpers, already C in games/tla/src/menu/item.
 #include "types.h"
+#include "version.h"
 #include "heap_release.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
@@ -67,18 +78,24 @@ void Event_ClearInvalidPackedValuesFar(void);
 void wait(s32 frames);
 
 s32 Func_080f94a4(void) {
+#if TLA_PATCH_1
   register void *backup asm("r4");
+#endif
   struct InventoryMenuState *screen;
   s32 item;
   s32 target;
   s32 owner;
   s32 result;
+#if TLA_PATCH_1
   s32 size;
+#endif
 
   screen = HeapSlot_Alloc(220, 0xcec);
+#if TLA_PATCH_1
   size = 0x2000;
   backup = Heap_AllocEwram(size);
   asm("");
+#endif
   Ram_HeapSlots->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
@@ -89,6 +106,7 @@ s32 Func_080f94a4(void) {
   Palette_LightenHighlight(14);
   Link_DrawShiftedTilePairFar((void *)0x06002500);
   screen->messageWindow = Window_CreateFar(13, 0, 17, 3, 2);
+#if TLA_PATCH_1
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(backup, (void *)0x06004000, size);
   {
@@ -96,6 +114,7 @@ s32 Func_080f94a4(void) {
     Iwram_FillWords((void *)0x06004000, hoisted , 0x33333333);
   }
   Text_UseExtraTilesFar(1);
+#endif
 
   Menu_CancelSoundReset();
   result = ItemMenu_RunCommands(&owner, &target, &item);
@@ -114,6 +133,7 @@ s32 Func_080f94a4(void) {
   Menu_ResetTwoResourceEntries();
   HeapSlot_Release(220);
   Ram_HeapSlots->objectSystem->suspended = 0;
+#if TLA_PATCH_1
   Func_08038290();
   Text_UseExtraTilesFar(0);
   Iwram_CopyWords((void *)0x06004000, backup, size);
@@ -121,6 +141,7 @@ s32 Func_080f94a4(void) {
   Heap_Release(backup);
   wait(1);
   Menu_ResumeFieldTasks();
+#endif
   wait(1);
   Window_EraseBorderRectFar(0, 0, 30, 20);
   Ram_HeapSlots->windowTiles[6] = 0;

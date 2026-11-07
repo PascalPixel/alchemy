@@ -7,34 +7,11 @@
 #include "main_routine_work.h"
 #include "iwram_call.h"
 #include "io_reg.h"
+#include "djinn_menu.h"
 
 struct ObjectSystemWork {
   u8 unk00[4];
   u16 suspended;
-};
-
-struct DjinnMenuBackdrop {
-  u8 list[0xa8];
-  u8 tiles[0x2000];
-  u8 palette[0x80];
-  s32 tutorialTimer;
-  s32 tutorialStep;
-};
-
-struct DjinnMenuWork {
-  u8 unk000[0x1c];
-  s8 selectedColumn[2];
-  u8 unk01e[0xd2];
-  s32 helpWindow;
-  u8 unk0f4[0x74];
-  u16 selection[2];
-  u16 pairEntry;
-  u8 unk16e[0x12];
-  struct DjinnMenuBackdrop *backdrop;
-  u8 unk184[0x80];
-  u16 owners[8];
-  u8 unk214;
-  u8 ownerCount;
 };
 
 void *HeapSlot_Alloc(s32 slot, s32 size);
@@ -106,13 +83,13 @@ s32 Func_08100e7c(void) {
   Menu_SuspendFieldTasks();
   Text_UseExtraTilesFar(1);
   Link_DrawShiftedTilePairFar((void *)0x06002500);
-  menu->ownerCount = Party_ListActiveOwnersFar(menu->owners);
+  menu->memberCount = Party_ListActiveOwnersFar(menu->owners);
   Resource_LoadPairedBlocksIfAvailable();
   Func_080fa368(0, 3, 0, 7);
   Menu_SetFirstObjectRowCoordinates(0);
   Palette_LightenHighlight(14);
   menu->helpWindow = Window_CreateFar(13, 0, 17, 5, 2);
-  menu->pairEntry = 255;
+  menu->pairEntries[0] = 255;
   zero = 0;
   menu->selectedColumn[0] = zero;
   menu->selectedColumn[1] = zero;

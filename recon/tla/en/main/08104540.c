@@ -1,7 +1,6 @@
 // Matches: differ 0 of 436 (tla-en, 2026-11-07).
-// History: differ 22 (2026-11-06), only loop-invariant registers; the page
-// turns through s32 *selectedPage = &selected[side], taken at the top of the
-// loop, give the native reload order and match.
+// History: made adoptable 2026-11-07: shared struct DjinnMenuWork
+// (djinn_menu.h), MsgCurrentStatus named, key names, temporaries tagged.
 // Twin of ☀️'s DjinnMenu_ShowMemberStatus
 // (games/tbs/src/menu/menu/djinn_preview.c): same calls, windows, keys, sounds
 // and MsgCurrentStatus, without the phase step and with the page digit's
@@ -9,6 +8,7 @@
 // first member, page arrows over the right one, left and right page through,
 // Start leaves the menu (-2) and A, B, L or R the view (-1).
 #include "input.h"
+#include "io_reg.h"
 #include "iwram_call.h"
 #include "macros.h"
 #include "owner_state.h"
@@ -16,39 +16,19 @@
 #include "task.h"
 #include "types.h"
 #include "window.h"
+#include "djinn_menu.h"
 
-struct DjinnMenuWork {
-  u8 unk000[0x10];
-  struct Window *statusWindow;
-  struct WindowSprite *cursor;
-  u8 unk018[0x28 - 0x18];
-  s32 window;
-  s32 unknownWindow02c;
-  u8 unk030[0x34 - 0x30];
-  struct Window *listWindow;
-  s32 secondWindow;
-  u8 unk03c[0xf0 - 0x3c];
-  s32 helpWindow;
-  u8 unk0f4[0x128 - 0xf4];
-  u16 ownerY[4];
-  u8 unk130[0x216 - 0x130];
-  u8 shownOwner[2];
-  u8 unk218[0x25c - 0x218];
-  u8 pairOwner[2];
-};
-
-extern char MsgCurrentStatus[];
+extern u8 MsgCurrentStatus[];
 extern u8 gMenu_BackdropBorderTile[];
 
-void WindowSprite_ClearListFar(void *window);
+void WindowSprite_ClearListFar(s32 window);
 void WindowSprite_PrepareForRedrawFar(s32 window);
 void WindowSprite_RedrawSavedRectFar(s32 window);
-void Text_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
-s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 width, s32 height,
+void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+s32 Window_UpdateOrCreate(void *handle, s32 x, s32 y, s32 width, s32 height,
                           s32 style);
 void Window_CloseIfOpen(void *window, s32 mode);
-void Window_SetTilemapEntryFar(struct Window *window, s32 tile, s32 x, s32 y,
-                               s32 mode);
+void Window_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 mode);
 void *Heap_AllocEwram(s32 size);
 void Heap_Release(void *block);
 s32 Func_08101860(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
@@ -69,22 +49,22 @@ s32 Func_08104540(void) {
   s32 lost;
   s32 redraw;
   s32 frame;
-  s32 *leftWindowSlot;
-  s32 *rightWindowSlot;
+  void *leftWindowSlot;
+  void *rightWindowSlot;
   s32 *helpWindowSlot;
   struct WindowWork *render;
   u32 pressedKeys;
   u32 repeatedKeys;
   struct DjinnMenuWork *menu;
   struct OwnerActionState *unit;
-  struct Window *window;
+  struct DjinnPreviewWindow *window;
   u16 *listedActions;
   void *saved;
   s32 result;
   s32 tile;
   s32 pageIndex;
   s32 side;
-  u8 *pairOwner;
+  u8 *pairMember;
   s32 *counts;
   s32 *selected;
   s32 blink;
@@ -94,17 +74,22 @@ s32 Func_08104540(void) {
   result = 0;
   frame = 0;
   menu->cursor->active = 13;
+  /* FAKEMATCH(temporary): selected = selectedPages, the page array read through
+   * a pointer; as selectedPages itself, 12 of 436 instructions differ in
+   * tla-en. */
   selected = selectedPages;
   selected[1] = selected[0] = result;
   for (side = 3; side >= 0; side--)
-    menu->ownerY[side] = 200;
+    menu->memberY[side] = 200;
   WindowSprite_ClearListFar(menu->listWindow);
   wait(1);
+  /* FAKEMATCH(temporary): counts = pageCounts, the count array read through a
+   * pointer; as pageCounts itself, 55 of 436 instructions differ in tla-en. */
   counts = pageCounts;
   counts[1] = counts[0] = 1;
   listedActions = Heap_AllocEwram(96);
   saved = Heap_AllocEwram(332);
-  unit = Unit_Get(menu->shownOwner[0]);
+  unit = Unit_Get(menu->shownMember[0]);
   counts[1] = counts[0] = Func_08101860(unit->actionSlots, unit->actionSlots,
                                         listedActions, &gained, &lost);
   Heap_Release(saved);
@@ -121,7 +106,7 @@ s32 Func_08104540(void) {
   Window_UpdateOrCreate(rightWindowSlot, 15, 5, 15, 15, 2);
   helpWindowSlot = &menu->helpWindow;
   WindowSprite_RedrawSavedRectFar(*helpWindowSlot);
-  WindowSprite_RedrawSavedRectFar((s32)menu->statusWindow);
+  WindowSprite_RedrawSavedRectFar(menu->statusWindow);
   Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus, menu->statusWindow, 0,
                                 0);
   Text_DrawCharacterAtOffsetFar((s32)MsgCurrentStatus + 2, menu->statusWindow,
@@ -130,41 +115,50 @@ s32 Func_08104540(void) {
   while (1) {
     s32 *pageCount;
     s32 *selectedPage;
+    /* FAKEMATCH(temporary): selectedPage = &selected[side], taken at the top of
+     * the loop; as selected[side] at each page turn, 22 of 436 instructions
+     * differ in tla-en. */
     selectedPage = &selected[side];
     render = (struct WindowWork *)Ram_HeapSlots->windowTiles;
     pressedKeys = gInput.pressed;
     repeatedKeys = gInput.repeat;
+    /* FAKEMATCH(temporary): pageCount = &pageCounts[side], taken at the top of
+     * the loop; as pageCounts[side] at each page turn, 227 of 436 instructions
+     * differ in tla-en. */
     pageCount = &pageCounts[side];
-    pairOwner = menu->pairOwner;
+    pairMember = menu->pairMember;
     if (redraw) {
       render->menuBusy = 1;
       WindowSprite_PrepareForRedrawFar(menu->window);
-      WindowSprite_PrepareForRedrawFar(menu->secondWindow);
-      Func_08103218(menu->window, 0, 0, *pairOwner, 0, 0, 3, 0, 1);
-      Func_08103218(menu->secondWindow, 0, 0, *pairOwner, 0, 0, 3,
+      WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
+      Func_08103218(menu->window, 0, 0, *pairMember, 0, 0, 3, 0, 1);
+      Func_08103218((s32)menu->secondWindow, 0, 0, *pairMember, 0, 0, 3,
                     selectedPages[0] + 1, 1);
       render->menuBusy = 0;
     }
     if (counts[side] > 1) {
-      window = (struct Window *)menu->secondWindow;
+      window = menu->secondWindow;
       for (pageIndex = 0; pageIndex < counts[side]; pageIndex++) {
         tile = 0xf031 + pageIndex;
         if (pageIndex > 8)
           tile = 0xf03f;
         if (pageIndex == selected[side])
           tile -= 0x1000;
-        Window_SetTilemapEntryFar(
-            window, tile, window->width - counts[side] + pageIndex - 2, -1, 0);
+        Window_SetTilemapEntryFar((s32)window, tile,
+                                  window->width - counts[side] + pageIndex - 2,
+                                  -1, 0);
       }
-      Window_SetTilemapEntryFar(window, 0xf128,
+      Window_SetTilemapEntryFar((s32)window, 0xf128,
                                 window->width - counts[side] - 3, -1, 0);
-      Window_SetTilemapEntryFar(window, 0xf129, window->width - 2, -1, 0);
-      UiRender_MarkRow(render, (s16)window->y);
+      Window_SetTilemapEntryFar((s32)window, 0xf129, window->width - 2, -1, 0);
+      UiRender_MarkRow(render, window->y);
     }
     frame++;
     blink = frame % 60 - 5;
     CLAMP(blink, 0, 29);
     MenuIcon_SetPosition(0, 32, 200);
+    // DEAD: the test cannot change the result, redraw = 0 alone does the same;
+    // the ROM keeps the compare (its twin also steps a phase under it).
     if (redraw)
       redraw = 0;
     if ((frame & 3) == 0) {
@@ -173,23 +167,23 @@ s32 Func_08104540(void) {
       else
         Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
     }
-    if (pressedKeys & 8) {
+    if (pressedKeys & KEY_START) {
       Sound_PlayFar(113);
       result = -2;
       break;
     }
-    if (pressedKeys & 0x303) {
+    if (pressedKeys & (KEY_A | KEY_B | KEY_R | KEY_L)) {
       Sound_PlayFar(113);
       result = -1;
       break;
     }
-    if (repeatedKeys & 0x20) {
+    if (repeatedKeys & KEY_LEFT) {
       (*selectedPage)--;
       *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
       Sound_PlayFar(111);
       Input_ResetKeyRepeat();
       redraw = 1;
-    } else if (repeatedKeys & 0x10) {
+    } else if (repeatedKeys & KEY_RIGHT) {
       (*selectedPage)++;
       *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
       Sound_PlayFar(111);
@@ -210,9 +204,9 @@ s32 Func_08104540(void) {
   Window_UpdateOrCreate(helpWindowSlot, 13, 0, 17, 5, 2);
   Window_CloseIfOpen(leftWindowSlot, 1);
   Window_CloseIfOpen(rightWindowSlot, 1);
-  WindowSprite_RedrawSavedRectFar((s32)menu->listWindow);
-  WindowSprite_RedrawSavedRectFar(menu->unknownWindow02c);
-  WindowSprite_RedrawSavedRectFar((s32)menu->statusWindow);
+  WindowSprite_RedrawSavedRectFar(menu->listWindow);
+  WindowSprite_RedrawSavedRectFar(menu->unopenedWindow);
+  WindowSprite_RedrawSavedRectFar(menu->statusWindow);
   ((struct WindowWork *)Ram_HeapSlots->windowTiles)->menuBusy = 0;
   wait(1);
   return result;

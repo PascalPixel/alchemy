@@ -5,59 +5,7 @@
 #include "iwram_call.h"
 #include "uiwindow.h"
 #include "window.h"
-
-struct DjinnMenuBackdrop {
-  u16 ids[8][10];
-  s8 counts[8];
-  u8 unk0a8[0x2128 - 0xa8];
-  s32 tutorialTimer;
-  s32 tutorialStep;
-};
-
-struct DjinnMenuIcon {
-  u8 unk00[5];
-  u8 active;
-};
-
-struct DjinnPreviewWindow {
-  u8 unk00[8];
-  u16 width;
-  u8 unk0a[4];
-  s16 y;
-};
-
-struct DjinnMenuWork {
-  u8 unk000[0x10];
-  s32 statusWindow;
-  struct DjinnMenuIcon *cursor;
-  u8 unk018[4];
-  s8 selectedColumn[2];
-  u8 unk01e[0xa];
-  s32 window;
-  s32 unopenedWindow;
-  u8 unk030[4];
-  s32 listWindow;
-  struct DjinnPreviewWindow *secondWindow;
-  u8 unk03c[0xb4];
-  s32 helpWindow;
-  u8 unk0f4[0x24];
-  s16 memberX[8];
-  s16 memberY[8];
-  u8 unk138[0x30];
-  u16 selection[2];
-  u16 pairEntries[2];
-  u8 unk170[0x10];
-  struct DjinnMenuBackdrop *backdrop;
-  u8 unk184[0x80];
-  u16 owners[8];
-  u8 unk214;
-  u8 memberCount;
-  u8 shownMember[2];
-  u8 unk218[0x40];
-  u8 pairIndex[2];
-  u8 pairElement[2];
-  u8 pairMember[2];
-};
+#include "djinn_menu.h"
 
 extern u8 MsgDjinnCompareSet[];
 extern u8 MsgDjinnCompareStandby[];

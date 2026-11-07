@@ -1,9 +1,3 @@
-// Matches: differ 0 of 258 (tla-en, 2026-11-06). The high registers fell into
-// place with the widest line set to 0 before the page heights and each
-// spacing store advancing its own pointer (*spacing++), both plain C.
-// ☀️'s Text_MeasureAllPages on this game's WindowWork: code 176
-// is skipped as a control code, a page break resets the text style, and the
-// line gaps are not clamped.
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"

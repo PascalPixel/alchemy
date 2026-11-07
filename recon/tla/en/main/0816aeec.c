@@ -1,4 +1,60 @@
-// Differ 266 of 902 (tla-en, 2026-11-06).
+// Differ 180 of 902, draft 904 (tla-en, 2026-11-06).
+// 2026-11-06, second pass: the vertex start fold is gone. Its source was GCSE,
+// not cse: the if block's row << 4 (quad[5] and row * 15's (row << 4) - row)
+// is redundant with v, so GCSE turns it into a copy of v with a REG_EQUAL
+// (row << 4) note, loop hoists and reduces it as 138, and cse2 folds the
+// vertex start (624 << 2) through that note into row << 6. firstQuad = row * 15
+// computed once at the top of the row makes cse merge v into that row << 4,
+// the note never appears, and vertex starts from i << 2 as in the native.
+// quad[1] from i + column + 17 rather than a local d then gives 180 (the
+// permuter found it; with d, 277). The frame loop now nearly matches; what is
+// left is in the grid: firstQuad sits before the hoisted givs, so the outer
+// loop finds row * 15 first, reduces the quad start as row * 360 (stepped by
+// 360) instead of row * 15 with * 24 per row, and its spill slots rotate
+// (row * 15, + 15, - 84 should be sp+32, 28, 24); d is ip, (row << 4) + 15 the
+// spilled slot 8, and Q is still copied (adds r0, r4, #0) from i. Not gained:
+// v as its own row counter stepped by 16 (950 to 962: gcse copy-propagates
+// i = v, the frame shrinks), i = row << 4 with no v (960), quad[5] or the
+// + 15 from i or v (538 to 626), a - row or i - row for the quad (856), the
+// row's - 84 and + 15 also computed at the top (467), firstQuad in the column
+// loop (614), row * 3 * 5 (folded back to row * 15).
+// 2026-11-07, third pass, differ unchanged at 180. Where the note comes
+// from: expand_mult puts REG_EQUAL (mult row 16) on row * 15's (row << 4)
+// temporary; GCSE replaces that temporary with a copy of v and keeps the
+// note, which becomes (row << 4). A plain row << 4 (quad[5]) gets no note.
+// So any row * 15 synthesized inside the column loop folds the vertex start,
+// and firstQuad at the row top avoids that only by making loop reduce the
+// quad's start in its first pass (hence the rerun's row * 360). The form
+// closest to the native grid: no firstQuad, and the quad indexed by
+// row * quadColumns with s32 quadColumns = WATER_COLUMNS - 1 at the row
+// top. The multiplier is a register, so nothing is synthesized and no note
+// is made; row * 15 is reduced alone (sp+32, + 15 at 28, - 84 at 24, as in
+// the native), the quad start is slot 32 * 3 << 3 each row, and vertex starts
+// from Q << 2. That gives 262 (with d) or 273, because the column loop's
+// ranks are still u 1.89 > Q 1.551 > vertex 1.545, where the native needs
+// vertex > u > Q: Q is copied to r0, vertex goes to r4 and the frame loop's
+// reload rotation stays off. Not gained on that form: vertex after u and a,
+// or from a (272); u declared in the if block (815); pins for vertex r1 and
+// u r0 (390 to 478); quad[5] or the + 15 from i or v (550 to 962); the
+// permuter, 12 minutes (186). Also not gained: (row << 4) - row or v - row
+// written out (loop no longer sees the quad as a giv: 868, 439); a copy of
+// firstQuad or a barrier on it in the column loop (180, 268, 442).
+// 2026-11-07, fourth pass, on the quadColumns form, differ unchanged at 180.
+// Weighted refs over live length in its lreg dump: u 12 over 19 (1.89),
+// Q 19 over 49 (1.551), vertex 17 over 44 (1.545), so vertex must reach
+// 43 insns or fewer and u 24 or more for vertex > u > Q. Q collects the
+// inits' refs because regmove rewrites them from i to Q after the copy
+// Q = i. Not gained: u declared first (u 20 insns, 272), a first or vertex
+// last (272, 273), vertex, b, c and d from (row << 4) (832 to 962: the
+// frame shrinks), a vertex pointer stepped from the row top (957), and an
+// enumerated permuter over those declaration orders and spellings (best 272).
+// Earlier, at 266 of 902:
+// 2026-11-06, devices allowed: none gains. Pins (u r0, vertex r1, Q r4, i r4)
+// 493 to 1009; an empty asm on i 956 (the frame shrinks); i, (row << 4) or a
+// stepped i at each grid use 832 to 986; quad[5] from i or v 626 (still row << 6).
+// The frame loop's rest follows reload's spill rotation out of the grid (offset 3
+// of 6 at its first reload), so only the native grid allocation fixes both.
+// Permuter, 20,000 candidates over the whole file: 266.
 // 2026-11-06: allocation only: the grid's (Q, u, vertex) and, after it, 140 of
 // the 266 in the frame loop's reloads. Permuter (5 minutes): best 264, by moving
 // quad[12] = a, store-order noise as below, not kept.
@@ -271,6 +327,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
   // The water's grid: 16 by 8 vertices, and a quad (two triangles) for
   // each cell but the last row and column.
   for (row = 0; row != WATER_ROWS; row++) {
+    s32 firstQuad = row * 15;
     s32 v = row << 4;
     s32 x = -60;
     u8 *mesh = gData_02014000;
@@ -288,9 +345,8 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
       vertex[2] = row * 24 - 84;
       if (row <= 6 && column <= 14) {
         s32 b = i + column + 1;
-        s32 d = i + column + 17;
         s32 c = i + column + 16;
-        u8 *quad = mesh + (row * 15 + column) * 24;
+        u8 *quad = mesh + (firstQuad + column) * 24;
 
         quad[4] = x + 67;
         quad[6] = x + 67;
@@ -305,7 +361,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         quad[19] = (row << 4);
         quad[21] = (row << 4) + 15;
         quad[0] = b;
-        quad[1] = d;
+        quad[1] = i + column + 17;
         quad[2] = c;
         quad[12] = a;
         quad[13] = b;

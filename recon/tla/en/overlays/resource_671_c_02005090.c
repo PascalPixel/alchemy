@@ -1,4 +1,12 @@
-// Differ 104 of 167 (tla-en, 2026-11-06): the hoisted copies' registers and the entry's schedule, as below.
+// Differ 67 of 167 (tla-en, 2026-11-06), draft 170, no devices. From 104: the scale is
+// stored straight into effect.x and effect.y copied from it (one extra ldrh, but no scale
+// pseudo, which settles most of the entry's allocation: 75), then the entry's locals in
+// the order digit, old, value, block, tile, now, oam (67, best of all 2520 orders with
+// block before tile; the old scale local's best order was 100). A volatile scale (73, frame
+// 24) and a 2 held in a local for i == 2 were permuter finds not kept.
+// Left: the loop's hoisted copies, as below (i + 1 r5, tile + 2 r9, oam + 1 r11; the
+// test reads i + 1), and a few entry rows.
+// Earlier state, 104 of 167: the hoisted copies' registers and the entry's schedule, as below.
 // Why the test reads i + 1: gcse's second cprop, after -Os hoisting, replaces i with
 // the hoisted i + 1 in the loop's exit test, since both arms copy it into i; the
 // listing tests i. Pinning i to r6 (measured 2026-11-06, not kept) stops that but
@@ -53,14 +61,14 @@ void Func_020055ec(void *oam, s32 priority);
 void Func_02005090(void) {
   struct Work *work = (struct Work *)(gData_020023c4 + 0x288);
   u8 *digit = work->digit;
-  s32 block = work->block;
-  s32 *value = &work->value;
-  u32 tile = gResourceTableEntries[block].offset >> 5;
   u8 *old = work->pixels;
+  s32 *value = &work->value;
+  s32 block = work->block;
+  u32 tile = gResourceTableEntries[block].offset >> 5;
   u8 *now = work->tiles;
   struct Sprite *oam = work->oam;
   struct Effect effect;
-  s32 plain, scaled, i, scale;
+  s32 plain, scaled, i;
   u32 *p;
 
   Func_02004f84(*value + 50, digit);
@@ -76,10 +84,9 @@ void Func_02005090(void) {
   effect.x = 0x200;
   effect.y = 0x200;
   plain = AffineMatrix_BuildForEffect(&effect);
-  scale = Func_02005020(*value);
+  effect.x = Func_02005020(*value);
   effect.z = 0;
-  effect.x = scale;
-  effect.y = scale;
+  effect.y = effect.x;
   scaled = AffineMatrix_BuildForEffect(&effect);
   old = work->old;
   now = work->now;

@@ -1,18 +1,3 @@
-// Matches: differ 0 of 500 (tla-en, 2026-11-06).
-// No devices. What settled it: the board pointer taken just before the cell
-// is read (earlier, its longer life lost r5 to the IWRAM multiply), the state
-// byte read as ball + 99 at each use, and the last stores in y, x, z, angle order.
-// Moves a ball along the Gabomba floor's channels one
-// sixteenth of a cell per step (step 0 to 15): its cell (the object's
-// halfwords 0x64 and 0x66) and heading (byte 0x62, quarter turns) pick the
-// channel piece from gSceneState's 11-column grid (byte 0 its kind, byte 3
-// 2 for a goal), and the piece sends it straight on or round a quarter
-// circle of radius 8 pixels (sine and cosine of the step), turning it to
-// face along the curve. At the last step the new cell and heading are
-// kept. A ball still rolling (byte 0x63 1) that meets a dead end stops
-// with sound 132 (gData_02006ec0), one that falls off the board's end
-// stops with sound 204 (gData_02006f38), except at cell (24, 14), where it
-// is home (7); a goal piece takes it with sound 204.
 #include "types.h"
 #include "call.h"
 #include "actor.h"

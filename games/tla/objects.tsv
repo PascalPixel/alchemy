@@ -592,7 +592,7 @@ main	rom_main_02	recon/tla/ja/rom	.rom.0003b77c	ja
 main	rom_main_02	games/tla/src/window/f03b794	.text	en de es fr it
 main	rom_main_02	games/tla/src/window/resource_measure	.text
 main	rom_main_02	games/tla/src/window/f03b918	.text	en es
-main	rom_main_02	recon/tla/raw/0803bb58	.text	en
+main	rom_main_02	games/tla/src/window/f03bb58	.text	en
 main	rom_main_02	recon/tla/raw/0803bde4	.text	en
 main	rom_main_02	recon/tla/de/rom	.rom.0003b930	de
 main	rom_main_02	recon/tla/es/rom	.rom.0003bb6e	es
@@ -846,12 +846,9 @@ main	rom_main_02	games/tla/src/window/f044a58	.text
 main	rom_main_02	games/tla/src/window/character_sprite	.text
 main	rom_main_02	games/tla/src/window/f044b98	.text
 main	rom_main_02	games/tla/src/window/f044c80	.text
-main	rom_main_02	recon/tla/it/rom	.rom.00044e2c	it
 main	rom_main_02	recon/tla/fr/rom	.rom.00044e50	fr
 main	rom_main_02	recon/tla/es/rom	.rom.00044e54	es
-main	rom_main_02	recon/tla/de/rom	.rom.00044e3c	de
-main	rom_main_02	recon/tla/raw/08044dc8	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.00044fc4	ja
+main	rom_main_02	games/tla/src/window/f044dc8	.text	en ja de it
 main	rom_main_02	games/tla/src/window/load_pair	.text
 main	rom_main_02	games/tla/src/window/resource	.text
 main	rom_main_02	games/tla/src/window/f0450fc	.text
@@ -1583,12 +1580,7 @@ main	rom_main_05	games/tla/src/field/object/motion_move_halfway_toward_target_co
 main	rom_main_05	games/tla/src/field/work9c/f0d8740	.text	en de es fr it ja
 main	rom_main_05	games/tla/src/field/work9c/f0d897c	.text
 main	rom_main_05	games/tla/src/field/work9c/f0d8a00	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000d8c04	it
-main	rom_main_05	recon/tla/es/rom	.rom.000e1c04	es
-main	rom_main_05	recon/tla/fr/rom	.rom.000ddc04	fr
-main	rom_main_05	recon/tla/de/rom	.rom.000e5c10	de
-main	rom_main_05	recon/tla/raw/080d8c10	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000d8bcc	ja
+main	rom_main_05	games/tla/src/field/work9c/f0d8c10	.text
 main	rom_main_05	games/tla/src/field/work9c/f0d8d40	.text
 main	rom_main_05	games/tla/src/field/work9c/f0d8d68	.text
 main	rom_main_05	games/tla/src/field/work9c/f0d8e08	.text	it

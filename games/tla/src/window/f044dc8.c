@@ -1,15 +1,3 @@
-// Matches: differ 0 of 162 (tla-en, 2026-11-06), with two tagged devices: the
-// dead NULL store to window before Window_Create (as the neighbouring
-// Party_ShowPairJoinedMessage has) and counts sized to 11 words for the
-// native's 52-byte stack frame.
-// Earlier: differ 33 of 162 (47 before, 2026-10-26; counts declared with 11
-// words, which gives the native's 52-byte stack frame: a frame-gap device to tag
-// if it matches, since only four are used): announces a summon (message 0x32
-// with its name from Data_0805f676, a jingle, held until it ends or a button),
-// then shows message 0x33 with the two elements it needs most (0x34 + element,
-// then 0x38) from the SummonDefinition's djinn counts, held until a button. The
-// final Resource_ResetEntry takes a slot the function never sets, a stack
-// word in the native.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -17,12 +5,10 @@
 #include "uiwindow.h"
 #include "battle_summon.h"
 
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height,
-                                 s32 flags);
+struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void MessageArgument_Push(s32 value, s32 kind);
 s32 Message_DecodeMode1(s32 message);
-s32 Message_Start(struct Window *window, s32 entries, s32 x,
-                              s32 y, s32 flags);
+s32 Message_Start(struct Window *window, s32 entries, s32 x, s32 y, s32 flags);
 void Sound_PlayFar(s32 cue);
 void wait(s32 frames);
 s32 Sound_GetBgmRestoreDelayFar(void);
@@ -30,9 +16,10 @@ void Func_0803cf6c(s32 message);
 s32 Resource_ResetEntry(u32 slot);
 
 extern const u16 Data_0805f676[];
-extern u8 Msg_0032[];
-extern u8 Msg_0033[];
-extern u8 Msg_0034[];
+extern const u8 MsgCanNowSummon[], MsgToSummon[];
+/// The first of four Djinn counts (Venus, Mercury, Mars, Jupiter); the message
+/// four past it ends their line.
+extern const u8 MsgSummonVenus[];
 
 void Func_08044dc8(s32 summon) {
   struct WindowWork *work = Ram_HeapSlots->windowTiles;
@@ -58,7 +45,7 @@ void Func_08044dc8(s32 summon) {
   work->speakerVoiceSound = 0;
   work->speakerVoiceCountdown = 0;
   MessageArgument_Push(Data_0805f676[summon & 31], 4);
-  entries = Message_DecodeMode1((s32)Msg_0032);
+  entries = Message_DecodeMode1((s32)MsgCanNowSummon);
   Message_Start(window, entries, 0, 2, 0);
   Sound_PlayFar(81);
   do
@@ -71,7 +58,7 @@ void Func_08044dc8(s32 summon) {
   if (window == NULL)
     return;
   MessageArgument_Push(Data_0805f676[summon & 31], 4);
-  entries = Message_DecodeMode1((s32)Msg_0033);
+  entries = Message_DecodeMode1((s32)MsgToSummon);
   djinn = (const u8 *)SummonDefinition_Get(summon) + 4;
   for (i = 0; i < 4; i++)
     counts[i] = djinn[i];
@@ -86,10 +73,10 @@ void Func_08044dc8(s32 summon) {
       }
     }
     MessageArgument_Push(most, 5);
-    Func_0803cf6c((s32)Msg_0034 + best);
+    Func_0803cf6c((s32)MsgSummonVenus + best);
     counts[best] = 0;
   }
-  Func_0803cf6c((s32)Msg_0034 + 4);
+  Func_0803cf6c((s32)MsgSummonVenus + 4);
   Message_Start(window, entries, 4, 2, 0);
   do
     wait(1);

@@ -1,4 +1,44 @@
-// Differ 146 of 568 (tla-en, 2026-11-06).
+// Differ 52 of 568 (tla-en, 2026-11-07), with one tagged barrier.
+// Fifth round, 7 November: the splash scale (112 -> 52). The listing keeps 25000 in r9 and
+// halves it in the loop with a lone asrs, so the halving's operand was a value neither CSE
+// nor gcse's cprop knew as a constant. Pinning splash to r9 reproduced the splash code but
+// moved sl and r8 everywhere (157). An asm volatile("" : "+r"(splash)) at the top of the
+// splash's if hides the constant and keeps the asrs in the loop (103 with splash set before
+// the splash loop, where splash outranks the texture pointer for r8). Setting splash = 25000
+// before the glow-gather loop lengthens its life so the texture pointer takes r8 and splash
+// r9, as in the listing: 52. Placement measured: frame top 148, before the drops' model
+// 70, after model->vertices 52, after the gather 56, before the splash loop 103. Without the
+// asm every placement is 112 (cprop notes 12500 on the shift and loop.c hoists it).
+// The asm as the 25000's source ("=r" : "0"(25000)) is worse (167, 232). Left: the 25000
+// is built before the gather loop where the listing builds it before the splash loop, and
+// the zero stores' scheduling (glow->variant, model->shade: Left 3). A source for the 25000
+// that cprop cannot see without an asm (a table or field the code really reads) would
+// replace the barrier; none was found.
+// Fourth round, 6 November: the r6/r7 swap is gone (146 -> 112). row is now the plain
+// row = y * 32, and the first pair's second store spells x * 2 as x + x. With x + x, CSE
+// cannot share row + x * 2 between the two stores, so row has two uses, a loop.c lifetime
+// of 6 instead of 2, and is moved in the first loop pass as a single set; simplify_giv_expr
+// then looks through it, so the first pair's pointer init computes y << 5 itself, after the
+// second pair's. That puts one more insn between the second pair's pointer (now 40 insns
+// live) and the third pair's +1 pointer (31), which then ranks first and takes r6 as in the
+// listing. Every other spelling of that store measured (x * 2 + 1 grouped or reordered,
+// row + 1, 0x1001 +, x + x in both stores) stays at 350 or 378.
+// Left: the splash scale (below, Left 2), which also shifts every literal pool load by 4,
+// and the zero stores' scheduling (Left 3). Tried at 112, none better: a frame-scope scale
+// shared by the glow and set to 25000 before the splash loop, halved with / 2 (116) or >> 1
+// (112: gcse's cprop still notes 12500); model->shade = 0 after the texture store or the
+// mesh (112), between the texture fields (255), last (116); glow->variant = 0 first (120);
+// 20 minutes of permuter over the splash loop (seed 4417): none.
+// Third round, 6 November, none better. The r6/r7 swap is global's order: giv 421 (the second
+// pair's decremented pointer, 14 refs over 39 insns) outranks giv 463 (the third pair's +1
+// pointer, 11 over 31), takes r6, and reload's spill set then takes r7 from 463 at insn 1747
+// (464 = mirrorRow + 0x1701). 463 first needs 421 at a live length of 40 or 463 at 30.
+// Measured: mirrorRow pinned to r6 (440) or r7 (528), both stop its hoisting; the +1 mirror
+// pointer hand-stepped and pinned to r6 (442); an empty asm before the row stores, the mirror
+// stores, inside the if or after it (146 each); splash = 25000 through an output asm before
+// the frame loop, halved with / 2 (205). 6912 PERM combinations of x, y, v, row and mirrorRow
+// types and of the second pair's and the +1 mirror store's spellings: none below 146; 12
+// minutes of random permuter (seed 5222): none.
 // Second round, 6 November, none better: 40 minutes of permuter (seed 7104);
 // splash = 25000 through an empty asm with an output, before the splash loop
 // (225: the halving is hoisted with it) or inside its if (225: loop.c moves the
@@ -28,16 +68,13 @@
 // - width is set before the palette loop so size and half are chains only
 //   cse2 folds. A constant size or half is const-propagated by gcse, which
 //   folds the x loop's top test and turns offset += size into add #16.
-// - row is built in two sets inside the if: as "row = y * 32" it is too short
-//   lived to be moved by the first loop pass, the first pair then stays two
-//   pointers, and at the top of the body PRE hoists it instead.
+// - (until the fourth round) row was built in two sets inside the if: as
+//   "row = y * 32" with x * 2 in both stores it is too short lived to be moved
+//   by the first loop pass and the first pair stays two pointers.
 // - mirrorRow is two sets so that -32 stays in it, ahead of the 0x1700 offsets.
 //   As one expression fold moves the -32 last.
-// Whether row's two sets are honest is open: they fit no S2 kind and were found
-// by measuring, so a reviewer may call them a temporary. The plain y * 32 costs
-// about 200 differ.
 //
-// Left, 1: the native gives the third pair's second pointer r6 and the second
+// Left, 1 (settled in the fourth round, kept for its evidence): the native gives the third pair's second pointer r6 and the second
 // pair's r7; here it is the other way, and the spill registers then use r7
 // where the native uses r6, which is most of the 146. The second pair's
 // priority is 42 / 39 against 33 / 31, so it needs a live length of 40. The
@@ -213,10 +250,10 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
         s32 mirrorRow;
         s32 row;
 
-        row = y;
-        row <<= 5;
+        row = y * 32;
         work->sheet[0x1000 + row + x * 2] = v;
-        work->sheet[0x1000 + row + x * 2 + 1] = v;
+        // x + x: the same byte as x * 2 + 1; see the header.
+        work->sheet[0x1000 + row + x + x + 1] = v;
         work->sheet[0x1000 + (offset + (size - x - 1)) * 2] = v;
         work->sheet[0x1000 + (offset + (size - x - 1)) * 2 + 1] = v;
         mirrorRow = (32 - y) * 32;
@@ -242,6 +279,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     void *vertices;
 
     s32 level;
+    s32 splash;
 
     if (frame == 0) {
       EffectPosition_ProjectBattler(effect->actors[0], &screen);
@@ -293,6 +331,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     model->mesh = Data_08199244;
     model->texture = &texture;
     model->vertices = vertices;
+    splash = 25000;
 
     // The glow gathers what the landed drops bring.
     {
@@ -329,11 +368,15 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectArgument *effect) {
     model->mesh = Data_08199244;
     for (i = 0, drop = work->particles; i != 6; i++, drop++) {
       if (frame > i * 4 + 64) {
+        /* FAKEMATCH(barrier): asm volatile("" : "+r"(splash)); as the plain
+           Func_080151e4(12500, 25000, 12500), 112 of 568 instructions differ
+           in tla-en. */
+        asm volatile("" : "+r"(splash));
         model->shade = 0;
         texture.pixels = work->sheet + 0x4000 + ((i % 2) << 10);
         Render_ResetTransformState();
         Func_08015160(drop->x - 0x400000, drop->y - 0x300000, 0);
-        Func_080151e4(12500, 25000, 12500);
+        Func_080151e4(splash >> 1, splash, splash >> 1);
         SceneTransform_ApplyPitch(-0x4000);
         Render_TransformVertices(gData_08199210, vertices, 4);
         Render_DrawModelList(model);

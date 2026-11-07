@@ -1,29 +1,38 @@
-// Differ 334 of 497 (tla-en, 2026-11-06).
+// Differ 16 of 497 (tla-en, 2026-11-06), down from 334: x &= 511 in place and
+// before y &= 255 (the native ties x & 511 to x); the pointer to originZ held
+// in r6 and set just before the lift call (unpinned, tile + n outranks it in
+// global.c, 0.129 against 0.111, takes r6 and leaves frame 32 where the native
+// spills entry + 12 and the second &scrollY for frame 40); side read inside the
+// marker block; entry++ inside the marker call; the markers' size bits held in
+// one function-wide local (permute found it; as a literal, 95). Three tagged
+// pins (originZ r6, x r9, arg r0). Left: the 576 size kept in r6 across
+// Heap_AllocEwram where the native loads it twice (CSE shares the constant and
+// local-alloc gives it a register; 6 instructions), and the branches past it.
+// Before 6 November (the notes below, with frame and pins since settled):
 // Tried 2026-11-06: the row loop built from a label and goto (no change: both
 // compiles keep &scrollY in a slot from before the loop); 10 minutes of permute
 // reached 327 only by moving the fade check below the rows, which changes what
 // the code does.
 // Near miss: allocation and stack slots
-// (frame 32, native 40), and &scrollY hoisted above the row loop where the native
-// recomputes it each row. Under -Os, with two untagged pins (x r9, arg r0).
-// Down from 397 (5 November): the markers' offsets open with their sign, so x
-// is q - fade * 6 ... subtracted as the native does rather than adding a negated
-// fade; px is taken after y &= 255; entry steps after its call.
-// Earlier the figure rose from 264 on purpose: the 102 instructions of
-// duplicated marker tails are gone, so what is left is allocation and slots,
-// not shape. The native's arms are one tail.
-// Sched2 runs before jump2 in this compiler, and the tail starts at mov r9, r2
-// with movs r0, #n still inside each arm, so the source has two whole tails
-// which jump2 cross-jumps. Here find_cross_jump refuses them: flow.c's
-// find_basic_blocks puts a (use 0) after the call that ends the fall-through
-// arm, and none after the call that the first arm's jump follows. An empty asm
-// after the call is refused too (ASM_INPUT), an arm's dead store goes before
-// flow2, and a label after the first arm's call is tensioned or merged away
-// with its (use 0). So one tail is written here, and arg's pin keeps movs r0 in
-// the arms, because gcse's cprop moves a plain arg = n to the join. Tie
-// evidence: mov r0, r9; ands r0, r3 and mov r1, r8; orrs r1, r3 are in-out
-// reloads of x & 511 and (tile + n) | 0xe400 tied by regmove to high registers.
-// x ranks above object
+// (frame 32, native 40), and &scrollY hoisted above the row loop where the
+// native recomputes it each row. Under -Os, with two untagged pins (x r9, arg
+// r0). Down from 397 (5 November): the markers' offsets open with their sign,
+// so x is q - fade * 6 ... subtracted as the native does rather than adding a
+// negated fade; px is taken after y &= 255; entry steps after its call. Earlier
+// the figure rose from 264 on purpose: the 102 instructions of duplicated
+// marker tails are gone, so what is left is allocation and slots, not shape.
+// The native's arms are one tail. Sched2 runs before jump2 in this compiler,
+// and the tail starts at mov r9, r2 with movs r0, #n still inside each arm, so
+// the source has two whole tails which jump2 cross-jumps. Here find_cross_jump
+// refuses them: flow.c's find_basic_blocks puts a (use 0) after the call that
+// ends the fall-through arm, and none after the call that the first arm's jump
+// follows. An empty asm after the call is refused too (ASM_INPUT), an arm's
+// dead store goes before flow2, and a label after the first arm's call is
+// tensioned or merged away with its (use 0). So one tail is written here, and
+// arg's pin keeps movs r0 in the arms, because gcse's cprop moves a plain arg =
+// n to the join. Tie evidence: mov r0, r9; ands r0, r3 and mov r1, r8; orrs r1,
+// r3 are in-out reloads of x & 511 and (tile + n) | 0xe400 tied by regmove to
+// high registers. x ranks above object
 // (.385 against .242) without the pin, and takes r5 where the native has
 // object. Left: native order is object r5, ptr240 r6, tile+n r8, cursor+4 r10,
 // x r9, entry+12 and the second &scrollY spilled (frame 40); here tile+n r6,
@@ -74,9 +83,17 @@ s32 Func_02002ce8(s32 side);
 // subtractions compile in the order the native has them.
 #define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
-    s32 lift, px;                                                              \
+    s32 lift;                                                                  \
+    /* FAKEMATCH(pin): originZ in r6; as a plain s32 *, 316 of 497 */          \
+    /* instructions differ in tla-en. */                                       \
+    register s32 *originZ asm("r6");                                           \
+    /* FAKEMATCH(pin): x in r9; as a plain s32, 377 of 497 instructions */     \
+    /* differ in tla-en. */                                                    \
     register s32 x asm("r9");                                                  \
+    /* FAKEMATCH(pin): arg in r0; as a plain s32, 60 of 497 instructions */    \
+    /* differ in tla-en. */                                                    \
     register s32 arg asm("r0");                                                \
+    s32 side = gMainRoutineWork.entrance & 1;                                  \
     if (side) {                                                                \
       x = (object->x - work->originX) / PIXELS(16) left;                       \
       arg = which;                                                             \
@@ -84,18 +101,17 @@ s32 Func_02002ce8(s32 side);
       x = (object->x - work->originX) / PIXELS(16) right;                      \
       arg = which;                                                             \
     }                                                                          \
+    originZ = &work->originZ;                                                  \
     lift = Func_02002ce8(arg);                                                 \
-    y = (object->z - work->originZ) / PIXELS(16) + work->scrollY - lift * 36 + \
-        4;                                                                     \
+    y = (object->z - *originZ) / PIXELS(16) + work->scrollY - lift * 36 + 4;   \
+    x &= 511;                                                                  \
     y &= 255;                                                                  \
-    px = x & 511;                                                              \
     *cursor++ = 0;                                                             \
-    y |= px << 16;                                                             \
-    y |= 0x40000000;                                                           \
+    y |= x << 16;                                                              \
+    y |= markerSize;                                                           \
     *cursor++ = y;                                                             \
     *cursor++ = (tile + (tileAdd)) | 0xe400;                                   \
-    Func_02005790(entry, 255);                                                 \
-    entry++;                                                                   \
+    Func_02005790(entry++, 255);                                               \
   } while (0)
 
 void Func_020051a0(void) {
@@ -107,6 +123,9 @@ void Func_020051a0(void) {
   s32 tile = gResourceTableEntries[*vramEntry].offset >> 5;
   u32 flip, word;
   s32 y;
+  // One constant for its whole life: the markers' OAM size bits (attribute 1
+  // size 1, 16 by 16), held in a register across both markers.
+  u32 markerSize = 0x40000000;
   u8 *event = Ram_HeapSlots->eventWork;
   struct Actor *object;
 
@@ -158,7 +177,6 @@ void Func_020051a0(void) {
     return;
   object = ObjectTable_Get(work->a);
   if (object != NULL) {
-    s32 side = gMainRoutineWork.entrance & 1;
     MARKER(+work->fade * 6 + work->scrollX - 19,
            -work->fade * 6 - work->scrollX + 232, 0, 10);
   }
@@ -169,7 +187,6 @@ void Func_020051a0(void) {
     // XXX: this side's offset adds scrollX where the first marker's subtracts
     // it; the native does so, and a render of the course's far side would show
     // whether it is a slip.
-    s32 side = gMainRoutineWork.entrance & 1;
     MARKER(+work->fade * 6 + work->scrollX + 189,
            -work->fade * 6 + work->scrollX + 23, 1, 14);
   }

@@ -1,3 +1,6 @@
+// Sound route, 2026-11-08: compiled through SOUND_C and taken as an unlinked
+// object's .text, 1 of its 11 words differs, the bl to MPlayStart: the ROM's
+// call reaches 0x081c0c84, a callee's place in an older layout of the library.
 // Differ 22 of 17 (tla-en, 2026-11-08, -mtune=gba) on the game route: the listing returns
 // by pop {r0}; bx r0, interworking that route never emits, so the gap is the route
 // (SOUND_C), not the shape. Through SOUND_C (old_agbcc -O2 -mthumb-interwork) this C

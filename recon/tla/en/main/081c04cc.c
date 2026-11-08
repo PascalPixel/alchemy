@@ -1,3 +1,7 @@
+// Sound route, 2026-11-08: compiled through SOUND_C and taken as an unlinked
+// object's .text, this C and 081c04e0's give 120 bytes of which 8 words
+// differ: six bl halves reaching an older layout of the library, and two pool
+// words the ROM holds as 0 (Ram_SoundMixer's address and the sound mode).
 // Not measurable by diff (2026-11-06): the listing, recon/tla/raw/081c04cc.s,
 // is five .4byte words, so `alchemy-devtools diff` finds no instructions in
 // it ("the selected reference function contains no instructions"). Decoded by

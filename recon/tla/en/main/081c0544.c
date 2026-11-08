@@ -1,3 +1,6 @@
+// Sound route, 2026-11-08: compiled through SOUND_C and taken as an unlinked
+// object's .text, 1 of its 3 words differs, the bl to SoundMain: the ROM's
+// call reaches a callee's place in an older layout of the library.
 // Measured (tla-en, 2026-11-08, -mtune=gba): differ 3 (listing 4, draft 3); still blocked as below.
 // Blocked, 5 November 2026: the work copy of the mixer frame entry, as ☀️'s
 // m4aSoundMain (games/tbs/src/sound/audio.c) and ⚓️'s own in

@@ -1,3 +1,6 @@
+// Sound route, 2026-11-08: compiled through SOUND_C and taken as an unlinked
+// object's .text, 2 of its 19 words differ, both bls to MPlayStart: the ROM's
+// calls reach 0x081c0c84, a callee's place in an older layout of the library.
 // Differ 45 of 31 (tla-en, 2026-11-08, -mtune=gba).
 // On the game route; old_agbcc -O2 -mthumb-interwork (SOUND_C) emits the listing's 31 instructions exactly, only the pool words and call targets left.
 // 2026-11-08: unchanged; the diff tool compiles on the game route only, so 45

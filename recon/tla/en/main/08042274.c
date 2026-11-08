@@ -1,5 +1,14 @@
 // 2026-11-08: differ 0 of 74 under -mtune=gba, but adopted in en the ROM still
-// differs in the one pool word (0xfffff01e for 0x0000f01e), as below.
+// differs in the one pool word (0xfffff01e for 0x0000f01e), as below. The
+// listing's word load is the halfword route (GAS writes a pool ldrh as ldr):
+// as u32, s32 or a plain store the constant is split instead (differ 6).
+// Matched code pools a halfword constant zero-extended when it is stored
+// through a pointer (debug_text.c's *dst++ = 0xf000, REG_WIN0H = 0xf0f0):
+// here `u16 *p = output; p[1] = 0xf01e;` gives the listing's word 61470, but
+// the pool then sits right after the load behind a branch (differ 5), since
+// *thumb_movhi_insn gives a pool load a range of 64 bytes, ldrh's own reach,
+// where the ldr GAS writes reaches 1020 and the listing's pool is 88 bytes
+// on (a compiler question, 2026-11-08).
 // Near miss, differ 0 of 74 instructions but one pool word (tla-en,
 // 2026-10-31): every instruction matches, but the literal pool does not: the
 // u16 temporary is promoted to a signed SImode constant (-4066), so 0xf01e is

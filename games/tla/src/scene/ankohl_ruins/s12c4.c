@@ -1,18 +1,16 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba; all six editions measure 0): the work pointer is declared before the origin, and the
-// tile read before the sprite pointer, so the work's reload takes r0 and is inherited for the tile's
-// read, and the map's takes r1 (under -Os on 5 November, differ 16 of 148 in those two registers).
-// The native stores map->origin[1] to its one frame slot and nothing reads it: a volatile local here,
-// ordinary C under S2 (as a plain local, 62 differ).
-// The level is read in each case and hoisted to the jump, case 4's x = -0x100000 comes last so that case 0
-// and 3 cross-jump into it, and sy's subtraction sits between x -= viewX and x's shift so that the row test's
-// temporary is born after it.
+/// @file
+/// Draws eight sprites while flag 0x205 is clear and the level is below
+/// 0x200000: each moves by the level as its kind says, is placed relative to
+/// the view and is drawn when it is on screen. Then sets a word in map layer
+/// 1 to the level plus a base.
+
 #include "types.h"
 #include "call.h"
 #include "map.h"
 #include "ram_buffer.h"
 #include "vram_tab.h"
 
-struct AnkohlRuinsFloatSprite {
+struct AnkohlRuinsSprite {
   s32 x;
   s32 z;
   s32 y;
@@ -20,16 +18,16 @@ struct AnkohlRuinsFloatSprite {
   u32 oam[3];
 };
 
-struct AnkohlRuinsFloatWork {
+struct AnkohlRuinsSpriteWork {
   s16 unk00;
   s16 tile;
   s32 level;
   s32 unk08;
   s32 unk0c;
-  struct AnkohlRuinsFloatSprite sprites[8];
+  struct AnkohlRuinsSprite sprites[8];
 };
 
-extern struct AnkohlRuinsFloatWork Data_02004030;
+extern struct AnkohlRuinsSpriteWork Data_02004030;
 
 s32 GameFlag_Test(s32 flag);
 void Func_02002dac(u32 *oam, s32 b);
@@ -39,12 +37,13 @@ void Func_020012c4(void) {
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
-  struct AnkohlRuinsFloatWork *work = &Data_02004030;
-  s32 *origin = *(s32 **)map;
-  // Unused: the native stores it to its one frame slot and never reads it.
+  struct AnkohlRuinsSpriteWork *work = &Data_02004030;
+  s32 *origin = map->origin;
+  // Unused: gives the stack frame its 4 bytes; the original stores it there
+  // and never reads it.
   volatile s32 kept = origin[1];
   s32 tile = gResourceTableEntries[work->tile].offset >> 5;
-  struct AnkohlRuinsFloatSprite *sprite = work->sprites;
+  struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 
   if (GameFlag_Test(0x205) == 0 && work->level < 0x200000) {

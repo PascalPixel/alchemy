@@ -14704,7 +14704,7 @@ msgctxt "message"
 msgid "03615"
 msgstr "{protagonist_name}は 目の前をしらべた{page_break}"
 
-msgctxt "message"
+msgctxt "MsgButFoundNothing"
 msgid "03616"
 msgstr "しかし なにも 見つからなかった{end_wait}"
 

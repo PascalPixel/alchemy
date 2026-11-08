@@ -14709,7 +14709,7 @@ msgctxt "message"
 msgid "03614"
 msgstr "{protagonist_name} checked in front...{page_break}"
 
-msgctxt "message"
+msgctxt "MsgButFoundNothing"
 msgid "03615"
 msgstr "but found nothing.{end_wait}"
 

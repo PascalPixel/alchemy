@@ -1,23 +1,10 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba); differ 0 in all six editions.
-// Aqua Rock's map preparation: for each room and entrance it sets the water
-// level, places the statues and boulders the flags have moved, opens or closes
-// the cells around them, and in the rooms whose water drains it shows the
-// drained state once its flag is set.
-// BG1_SET_PRIORITY_1: the listing keeps the masked BG1CNT as a u16 at sp+10
-// that is stored and never reloaded, so `control` is a volatile local (as a
-// plain local, 96 of 931 differ in tla-en). The masked value is held in a
-// block local and the register written in a once-only block; the macro is a
-// plain block, since a do { } while (0) around it moves `mov r1, sp` ahead of
-// the BG1CNT read (4 of 931 differ), and the single expression
-// `REG_BG1CNT = (control = REG_BG1CNT & 0xfffc) | 1` issues the stack address
-// late (12 of 931).
-// The actor-clearing loops of rooms 4 and 6 are goto loops: as for loops,
-// loop.c hoists their movs #0, and the room 9 loop as a for also brings
-// adds r1, #2 into the prologue.
-// The Func_020036b8 loops are for loops counting up: loop.c reverses the i < N
-// ones and leaves room 5's i <= 4, as the listing has them. Each i is a
-// separate variable on purpose: one shared counter takes r6 and pushes object
-// into r5.
+/// @file
+/// Aqua Rock's map preparation: for each room and entrance it sets the water
+/// level, places the statues and boulders the flags have moved, opens or
+/// closes the cells around them, and in the rooms whose water drains it shows
+/// the drained state once its flag is set. Room 6 clears its actors' x and z
+/// where the other rooms clear terrainHeight and y.
+
 #include "iwram_call.h"
 #include "call.h"
 #include "actor.h"
@@ -35,6 +22,8 @@ struct MapBits {
   u8 mode : 2;
 };
 
+// The original keeps the masked BG1CNT in a stack slot it never reads again:
+// control is volatile, and the register is written in a once-only block.
 #define BG1_SET_PRIORITY_1()                                                   \
   {                                                                            \
     u16 value;                                                                 \
@@ -48,7 +37,7 @@ struct MapBits {
 void Func_02003278(void);
 void Func_020032d4(u32 first, s32 level, s32 baseLevel);
 struct Actor *Actor_GetById(s32 id);
-void Func_02003cc4(struct Actor *object, s32 mode);
+void Func_02003cc4(struct Actor *actor, s32 mode);
 s32 GameFlag_Test(s32 flag);
 void Func_02003d24(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02003d1c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -72,9 +61,11 @@ s32 Func_02002340(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
   volatile u16 control;
+  // i1, i3, i4, i6, i7, i12, i14, i17 and b each hold one constant for their
+  // whole life, i2 holds a flag test and the others each count one loop.
   s32 i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16,
       i17;
-  struct Actor *object;
+  struct Actor *actor;
   s32 a, b;
   u8 *map;
 
@@ -84,26 +75,27 @@ s32 Func_02002340(void) {
     if ((u32)(entrance - 3) <= 1 || entrance == 6 || entrance == 8) {
       Func_020032d4(33, 0, -2);
     } else if (entrance == 5 || entrance == 7) {
-      object = Actor_GetById(12);
+      actor = Actor_GetById(12);
       i1 = 0;
-      object->motionFlags = i1;
-      object->terrainHeight = i1;
-      object->y = i1;
-      Call2((void (*)())Func_02003cc4, (s32)object, 0);
-      object = Actor_GetById(13);
-      object->motionFlags = i1;
-      object->terrainHeight = i1;
-      object->y = i1;
+      actor->motionFlags = i1;
+      actor->terrainHeight = i1;
+      actor->y = i1;
+      Call2((void (*)())Func_02003cc4, (s32)actor, 0);
+      actor = Actor_GetById(13);
+      actor->motionFlags = i1;
+      actor->terrainHeight = i1;
+      actor->y = i1;
       i2 = GameFlag_Test(0x230);
       if (i2 == 0) {
         Call6((void (*)())Func_02003d24, 104, 80, 16, 10, 104, 40);
         Call6((void (*)())Func_02003d24, 110, 116, 18, 12, 39, 105);
+        // i2 is the flag test's 0.
         Call6((void (*)())Func_02003d1c, 64, 32, 64, 32, i2, 32);
         Func_020032d4(33, 0, 0);
       } else {
         Call3((void (*)())Func_020032d4, 33, 4, 0);
-        object = Actor_GetById(12);
-        Call2((void (*)())Func_0200349c, (object->x >> 20) - 42, 0);
+        actor = Actor_GetById(12);
+        Call2((void (*)())Func_0200349c, (actor->x >> 20) - 42, 0);
       }
       if (GameFlag_Test(0x250)) {
         Call6((void (*)())Func_02003d1c, 41, 42, 1, 1, 43, 44);
@@ -114,6 +106,7 @@ s32 Func_02002340(void) {
         i3 = 32;
         Call6((void (*)())Func_02003d24, 77, 80, 23, 20, 77, i3);
         Call6((void (*)())Func_02003d24, 112, 96, 16, 20, 12, 98);
+        // a is the flag test's 0.
         Call6((void (*)())Func_02003d1c, 64, 32, 64, 32, a, i3);
         Func_020032d4(33, 0, 0);
       } else {
@@ -133,10 +126,10 @@ s32 Func_02002340(void) {
     if ((u32)(entrance - 1) <= 1) {
       Func_020032d4(33, 0, -2);
     }
-    object = Actor_GetById(8);
-    object->motionFlags = 0;
-    object->terrainHeight = 0;
-    object->y = 0;
+    actor = Actor_GetById(8);
+    actor->motionFlags = 0;
+    actor->terrainHeight = 0;
+    actor->y = 0;
   } else if (scene == (s32)&SceneId_Ov67cRoom3) {
     Call1((void (*)())Func_02003ea4, 0);
     Call2((void (*)())Actor_SetSingleChildFlags, (s32)Actor_GetById(9), 0);
@@ -195,10 +188,10 @@ s32 Func_02002340(void) {
       }
       i9 = 12;
       do {
-        object = Actor_GetById(i9);
-        object->motionFlags = 0;
-        object->terrainHeight = 0;
-        object->y = 0;
+        actor = Actor_GetById(i9);
+        actor->motionFlags = 0;
+        actor->terrainHeight = 0;
+        actor->y = 0;
         i9++;
       } while (i9 <= 14);
       goto statues_cleared;
@@ -229,10 +222,10 @@ s32 Func_02002340(void) {
     if (!GameFlag_Test(0x238)) {
       i11 = 13;
       do {
-        object = Actor_GetById(i11);
-        object->motionFlags = 0;
-        object->x = 0;
-        object->z = 0;
+        actor = Actor_GetById(i11);
+        actor->motionFlags = 0;
+        actor->x = 0;
+        actor->z = 0;
         i11++;
       } while (i11 <= 15);
       goto done;
@@ -242,10 +235,10 @@ s32 Func_02002340(void) {
       Call6((void (*)())Func_02003d1c, 105, 41, 12, 13, i12, i12);
       Call6((void (*)())Func_02003d24, 105, 105, 12, 13, 105, i12);
       for (i13 = 13; i13 <= 15; i13++) {
-        object = Actor_GetById(i13);
+        actor = Actor_GetById(i13);
         if (GameFlag_Test(i13 + 580)) {
-          Call6((void (*)())Func_02003d1c, 47, 45, 1, 1, object->x >> 20,
-                object->z >> 20);
+          Call6((void (*)())Func_02003d1c, 47, 45, 1, 1, actor->x >> 20,
+                actor->z >> 20);
         }
       }
     }
@@ -296,15 +289,15 @@ s32 Func_02002340(void) {
     }
     i16 = 10;
   clear_pillars:
-    object = Actor_GetById(i16);
-    object->motionFlags = 0;
-    object->terrainHeight = 0;
-    object->y = 0;
+    actor = Actor_GetById(i16);
+    actor->motionFlags = 0;
+    actor->terrainHeight = 0;
+    actor->y = 0;
     i16++;
     if (i16 <= 20)
       goto clear_pillars;
-    object = Actor_GetById(19);
-    Call6((void (*)())Func_02003d1c, 23, 39, 1, 1, object->x >> 20, 39);
+    actor = Actor_GetById(19);
+    Call6((void (*)())Func_02003d1c, 23, 39, 1, 1, actor->x >> 20, 39);
     if ((u32)(entrance - 1) <= 1) {
       Call1((void (*)())Func_02003ea4, 0);
     }

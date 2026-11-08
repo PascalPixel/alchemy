@@ -16,7 +16,7 @@ struct EventWork {
   struct TriggerView *triggers; ///< the scene's trigger table
   struct Actor *objects[80];
   s16 exit;
-  u8 unk156[2];
+  s16 unk156;
   s16 countdown;
   u16 unk15a;
   u8 unk15c[8];

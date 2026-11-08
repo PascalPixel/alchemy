@@ -1,18 +1,9 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba), with the two tagged IWRAM
-// wrappers (without the copy wrapper 134 differ, without the fill wrapper 2;
-// The Broken Seal's iwram_call.h declares Iwram_CopyWords the same way, as an
-// inline forwarding to the entry, so on adoption they may be that header's
-// habit rather than devices). Declaring the icon as a window sprite, with its
-// list link (struct MenuIcon *next) at 0 in place of five unknown bytes,
-// closed it: the arrows' stores now keep the native order, and the r0 pin,
-// the empty asm between the arrows and the once-only block around the first
-// arrow, each measured as paying under the old struct, are gone.
-// Draft of Func_08101638: opens the Djinn menu's backdrop screen, the
-// twin of The Broken Seal's Menu_OpenBackdropScreen
-// (games/tbs/src/menu/menu/djinn.c): saves the tiles and palettes it covers,
-// draws the backdrop, lists the owners (Func_081019a4), then makes the
-// list's cursor and the two page arrows and places the arrows at the list
-// window's corners.
+/// @file
+/// Opens the Djinn menu's backdrop screen, the twin of The Broken Seal's
+/// Menu_OpenBackdropScreen: saves the tiles and palettes it covers, draws the
+/// backdrop, lists the owners (Func_081019a4), then makes the list's cursor and
+/// the two page arrows and places the arrows at the list window's corners.
+
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -32,7 +23,7 @@ struct SpriteAttr {
 };
 
 struct MenuIcon {
-  struct MenuIcon *next; // the window sprite's list link, as The Broken Seal's
+  struct MenuIcon *next; ///< the window sprite's list link
   s8 kind;
   s8 active;
   u16 x;

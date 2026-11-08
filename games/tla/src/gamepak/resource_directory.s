@@ -407,8 +407,8 @@ Resource_DirectoryTable:
 	resource TwelveModeImage, BattleEffect_TwelveModeImage
 	resource , BattleEffect_WindStreakSheet
 	resource YellowPaletteB, BattleEffect_YellowPaletteB
-	resource , BattleEffect_BlueRingSheet
-	resource , BattleEffect_RedPaletteC
+	resource BlueRingSheet, BattleEffect_BlueRingSheet
+	resource RedPaletteC, BattleEffect_RedPaletteC
 	resource VioletPaletteD, BattleEffect_VioletPaletteD
 	resource BlueBeamSheet, BattleEffect_BlueBeamSheet
 	resource VortexSheet, BattleEffect_VortexSheet

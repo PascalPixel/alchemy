@@ -63,7 +63,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_entrance/flag_state.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s2c40.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s2f4c.o"(.text)
-        "*/resource_6aa_overlay.o"(.text.x0200afc4)
+        "*/games/tla/src/scene/mars_lighthouse_entrance/s2fc4.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s308c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/reset.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_entrance/s31f8.o"(.text)

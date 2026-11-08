@@ -1,22 +1,11 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba), with one tagged dead device.
-// The frame: the native reserves 8 bytes with mode spilled to sp+4 and the
-// word below it unused. That word is the outgoing argument area of a call
-// with a fifth, stacked argument, which the code no longer makes: The Broken
-// Seal's twin loads its blitters with five arguments
-// (BattleEffect_BuildBlitterFar(slot, 7, 7, 3, 3)). A never-taken call of that
-// form reserves it (FAKEMATCH(dead) below). Measured before it: an unused
-// u8[4] gives 8 bytes but takes sp+4 itself (differ 6); an unused s32[1] or
-// one-word struct gets no slot; radius or angle shared by both loops (10, 39),
-// 0x200 in a local (85), the sheet pointer apart from the palette pointer (45).
-// Draft of Func_08127068, The Broken Seal's ElementGlow_InitializeStarField
-// (games/tbs/src/battle/battle/element_glow.c), ported with The Lost Age's
-// heap slots (work 92, canvas 96, blitters 104 and 188) and packed blitter
-// loader: Func_08138048(slot, mode << 4 | flags) is the veneer of
-// BattleEffect_LoadBlitter. The twin's empty loop and unused Spark are not
-// needed; its one-pass block for BG2X stays. The callbacks are added at
-// 0x480. The four resources are rows 0x18c to 0x18f of the directory, read
-// from the pool, so they need their ResourceId_ names in
-// games/tla/src/gamepak/resource_directory.s before adoption.
+/// @file
+/// Sets up the star field behind a summon, the twin of The Broken Seal's
+/// ElementGlow_InitializeStarField: sixteen sparks on random rings around the
+/// centre, three rings leaving it at thirds of a turn, the blue ring sheet and
+/// its palette with the mode's colour (0 yellow, 1 blue, 2 red, else violet)
+/// over the first 32 colours, BG2 unscaled at the origin, the additive and max
+/// blitters (Func_08138048, the veneer of BattleEffect_LoadBlitter), and the
+/// two frame callbacks.
 
 #include "types.h"
 #include "dma.h"
@@ -50,10 +39,10 @@ struct SparkWork {
   s32 originPending;
 };
 
-extern u8 ResourceId_YellowPaletteB[];
-extern u8 ResourceId_BlueRingSheet[];
-extern u8 ResourceId_RedPaletteC[];
-extern u8 ResourceId_VioletPaletteD[];
+extern char ResourceId_YellowPaletteB;
+extern char ResourceId_BlueRingSheet;
+extern char ResourceId_RedPaletteC;
+extern char ResourceId_VioletPaletteD;
 
 typedef s32 (*TaskFunc)(void);
 
@@ -82,11 +71,6 @@ static __inline__ s32 PolarY(s32 angle, s32 radius) {
   return Iwram_MulQ16(Trig_Sin(angle), radius);
 }
 
-// Sets up the star field behind a summon: sixteen sparks on random rings
-// around the centre, three rings leaving it at thirds of a turn, the blue
-// ring sheet and its palette with the mode's colour (0 yellow, 1 blue,
-// 2 red, else violet) over the first 32 colours, BG2 unscaled at the
-// origin, the additive and max blitters, and the two frame callbacks.
 s32 Func_08127068(s32 mode) {
   struct SparkWork *work;
   struct Spark *spark;
@@ -132,22 +116,22 @@ s32 Func_08127068(s32 mode) {
   work->ready = 0;
   work->originPending = 0;
   Iwram_ClearWords(Ram_HeapSlots->battleFxWork[1], 0x4000);
-  data = Resource_GetTableEntry((s32)ResourceId_BlueRingSheet);
+  data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
   Iwram_CopyWords((void *)BG_PLTT, data, 128);
   data += 128;
   Resource_DecodeType01(data, work);
   switch (mode) {
   case 0:
-    data = Resource_GetTableEntry((s32)ResourceId_YellowPaletteB);
+    data = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteB);
     break;
   case 1:
-    data = Resource_GetTableEntry((s32)ResourceId_BlueRingSheet);
+    data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
     break;
   case 2:
-    data = Resource_GetTableEntry((s32)ResourceId_RedPaletteC);
+    data = Resource_GetTableEntry((s32)&ResourceId_RedPaletteC);
     break;
   default:
-    data = Resource_GetTableEntry((s32)ResourceId_VioletPaletteD);
+    data = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteD);
     break;
   }
   Dma_Set(data, (void *)BG_PLTT, 0x84000000 | 32, REG_DMA3);

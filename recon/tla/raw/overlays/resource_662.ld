@@ -26,7 +26,7 @@ SECTIONS
         "*/games/tla/src/scene/yampi_desert_cave/s1238.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/guardian.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/s13c8.o"(.text)
-        "*/resource_662_overlay.o"(.text.x02009418)
+        "*/games/tla/src/scene/yampi_desert_cave/s1418.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/prepare.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/import.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/data.o"(.data)

@@ -46,12 +46,6 @@ Func_080292fc:
 	.thumb_func
 Func_08029570:
 	.incbin "baserom.gba", 0x00029570, 0x000002a0
-	.section .rom.0002a6b8, "ax"
-	.global Func_0802a6b8
-	.type Func_0802a6b8, %function
-	.thumb_func
-Func_0802a6b8:
-	.incbin "baserom.gba", 0x0002a6b8, 0x000003bc
 	.section .rom.0002b450, "ax"
 	.global Func_0802b450
 	.type Func_0802b450, %function
@@ -64,14 +58,8 @@ Func_0802b450:
 	.thumb_func
 Func_0802b998:
 	.incbin "baserom.gba", 0x0002b998, 0x00000370
-	.section .rom.0002bdd0, "ax"
-	.balign 4
-	.global Func_0802bdd0
-	.type Func_0802bdd0, %function
-	.thumb_func
-Func_0802bdd0:
-	.incbin "baserom.gba", 0x0002bdd0, 0x0000007c
 	.section .rom.0002be4c, "ax"
+	.balign 4
 	.global Func_0802be4c
 	.type Func_0802be4c, %function
 	.thumb_func
@@ -261,8 +249,6 @@ FieldSequence_Run:
 	.incbin "baserom.gba", 0x000d491c, 0x00000c30
 	.section .rom.000d5d76, "ax"
 	.incbin "baserom.gba", 0x000d5d76, 0x00000002
-	.section .rom.000d6808, "ax"
-	.incbin "baserom.gba", 0x000d6808, 0x00000114
 	.section .rom.000d70aa, "ax"
 	.incbin "baserom.gba", 0x000d70aa, 0x00000002
 	.section .rom.000d731c, "ax"
@@ -557,10 +543,6 @@ Func_08100738:
 	.incbin "baserom.gba", 0x0010688c, 0x000000c0
 	.section .rom.00106e92, "ax"
 	.incbin "baserom.gba", 0x00106e92, 0x00000002
-	.section .rom.0010778c, "ax"
-	.global Func_08101638
-Func_08101638:
-	.incbin "baserom.gba", 0x0010778c, 0x00000228
 	.section .rom.00107c1c, "ax"
 	.global DjinnMenu_DrawPage
 DjinnMenu_DrawPage:
@@ -656,12 +638,6 @@ Func_0811843c:
 	.thumb_func
 Graphics_AdvancePaletteCycle:
 	.incbin "baserom.gba", 0x00126be4, 0x00000130
-	.section .rom.00127080, "ax"
-	.global Func_08127068
-	.type Func_08127068, %function
-	.thumb_func
-Func_08127068:
-	.incbin "baserom.gba", 0x00127080, 0x00000248
 	.section .rom.0013fd84, "ax"
 	.global BattleEffect_RunCruelRuin
 	.type BattleEffect_RunCruelRuin, %function

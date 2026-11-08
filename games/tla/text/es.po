@@ -16557,7 +16557,7 @@ msgctxt "message"
 msgid "04075"
 msgstr "{protagonist_name} lo miró de cerca...{page_break}"
 
-msgctxt "message"
+msgctxt "MsgButFoundNothing"
 msgid "04076"
 msgstr "pero no encontró nada.{end_wait}"
 

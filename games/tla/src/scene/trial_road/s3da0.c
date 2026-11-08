@@ -1,8 +1,12 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba). 8 November, 14 to 0: a mover at offset 0 clears its
-// cell attribute byte (the native stores 0 there when the offset is 0, which the older draft
-// left out); the collision column is reached through Ram_MapCollision, Camelot's fixed address
-// (12), and set with i just before the loop (2). The for step advances collision before i.
-#include "../../../../games/tla/src/scene/trial_road/trial_road.h"
+/// @file
+/// Updates the sixteen movers at gData_020023c4 + 0x188 each frame: at its
+/// upAt and downAt phases a mover calls Func_02005a68 (206 or 395) and moves by
+/// 4 or -8 a frame until it reaches its high or low offset; its phase counts
+/// round its period unless flag 260 is set. Each mover's shape, collision
+/// height and cell attribute byte follow its actor and offset, and its marker
+/// actor is placed over it, bobbing on a sine while the offset is not 0.
+
+#include "trial_road.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
 
@@ -28,7 +32,6 @@ struct TrialRoadMovers {
   struct TrialRoadMover movers[16];
 };
 
-
 s32 Math_Sine(s32 angle);
 
 void Func_02003da0(void) {
@@ -40,18 +43,19 @@ void Func_02003da0(void) {
   u8 *shapes = *(u8 **)((u8 *)map + 316);
   u8 *cells = map->layers[0].cells;
   s32 *collision;
-  struct Actor *object;
+  struct Actor *actor;
   struct Actor *marker;
   s32 cell;
   u8 *attributes;
   s32 i;
+
   i = 0;
   collision = (s32 *)Ram_MapCollision + shape;
   for (; i <= 15; collision++, i++, mover++) {
     if (mover->id == 0)
       continue;
-    object = Actor_GetById(mover->id);
-    if (object->x == 0 && object->z == 0)
+    actor = Actor_GetById(mover->id);
+    if (actor->x == 0 && actor->z == 0)
       continue;
     if (mover->phase == mover->upAt) {
       Func_02005a68(206);
@@ -78,18 +82,22 @@ void Func_02003da0(void) {
       if (++mover->phase >= mover->period)
         mover->phase = 0;
     }
-    cell = (object->x >> 20) + ((object->z >> 20) << 7);
+    cell = (actor->x >> 20) + ((actor->z >> 20) << 7);
     shapes[cell] = (u8)work->shape + i;
-    *collision = ((((s16 *)&object->y)[1] + mover->offset) / 8) << 8;
+    *collision = ((((s16 *)&actor->y)[1] + mover->offset) / 8) << 8;
     attributes = cells + cell * 4;
     if (mover->speed != 0)
       attributes[3] = 0;
     else {
+      /* FAKEMATCH(temporary): the form kept; as attributes[3] |= 128, 4 of 213
+         instructions differ in tla-en. */
       s32 bits = 128;
       bits |= attributes[3];
       attributes[3] = bits;
     }
     if (mover->offset != 0) {
+      /* FAKEMATCH(temporary): the form kept; as attributes[3] |= 16, 4 of 213
+         instructions differ in tla-en. */
       s32 bits = 16;
       bits |= attributes[3];
       attributes[3] = bits;
@@ -98,15 +106,15 @@ void Func_02003da0(void) {
     marker = mover->marker;
     if (marker != 0) {
       if (mover->offset == 0) {
-        marker->y = object->y - 0x100000;
+        marker->y = actor->y - 0x100000;
       } else {
         s32 wave;
         mover->bob += 0x1000;
         wave = Iwram_MulQ16(0x20000, Math_Sine(mover->bob)) - 0xe0000;
-        marker->y = object->y + (mover->offset << 16) + wave;
+        marker->y = actor->y + (mover->offset << 16) + wave;
       }
-      marker->x = object->x;
-      marker->z = object->z;
+      marker->x = actor->x;
+      marker->z = actor->z;
     }
   }
 }

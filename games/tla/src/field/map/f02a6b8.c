@@ -1,17 +1,12 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba); all six editions measure 0.
-// The twin of The Broken Seal's MapGrid_LoadMap. It loads a layout index from
-// gData_0802f380: blocks, collision (filled with -1 first, which The Broken
-// Seal has not), cells, shape grid, tile animations, blend script and the
-// script at 0x0202e000; sets up the three layers from the header, here with
-// cell positions and a shape pointer; loads the palette and tiles unless flag
-// 0x170 says they are loaded, and starts Func_0802ad84. Name it would take:
-// MapGrid_LoadMap.
-// 2026-11-08, from 22: maskY's period read into a local before the phase
-// stores puts the stores where the native has them (36 alone); the shape grid
-// held in a block local set in the loop fixes the allocation that followed (6,
-// found by permute); a once-only block around the last REG_DISPCNT store keeps
-// the task order after it (0; a once-only block around the Task_Add call does
-// the same). No device is left: the locals and the block are ordinary C.
+/// @file
+/// Loads a layered map, the twin of The Broken Seal's MapGrid_LoadMap: from
+/// layout index's entry in gData_0802f380 it decodes the blocks, the collision
+/// (filled with -1 first, which The Broken Seal does not do), the cells, the
+/// shape grid, the tile animations, the blend script and the script at
+/// 0x0202e000; sets up the three layers from the header, with their cell
+/// positions and shape pointers; loads the palette and tiles unless flag 0x170
+/// says they are already loaded; and starts Func_0802ad84.
+
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -165,7 +160,7 @@ s32 Func_0802a6b8(s32 index) {
     u32 y = layerSource->y;
     s32 scaleX;
     s32 cell;
-    // Set in the loop; the native allocates its registers so.
+    // Set inside the loop, where the original's register allocation needs it.
     u8 *shapeGrid;
     u32 maskY;
 
@@ -175,7 +170,7 @@ s32 Func_0802a6b8(s32 index) {
     mapLayer->speedX = layerSource->speedX * 4096;
     mapLayer->speedY = layerSource->speedY * 4096;
     mapLayer->maskX = layerSource->periodX & 127;
-    // The period is read before the phase stores, as the native orders them.
+    // Read before the phase stores, which the original makes after it.
     maskY = layerSource->periodY & 127;
     mapLayer->phaseX = 0;
     mapLayer->phaseY = 0;
@@ -245,7 +240,7 @@ s32 Func_0802a6b8(s32 index) {
   REG_MOSAIC = displayFlags;
   REG_BLDCNT = displayFlags;
   displayFlags = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-  // A once-only block: the native builds the task order after this store.
+  // A once-only block: the original builds the task order after this store.
   do {
     REG_DISPCNT = displayFlags;
   } while (0);

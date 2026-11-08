@@ -41,10 +41,12 @@ void FieldMessage_Show(const u8 *message, s32 flags);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Task_RemoveFar(void (*func)(void));
 s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value);
-void Func_020000b8(s32 x, s32 y, s32 z, s32 unused, s32 speed, s32 phase,
-                   s32 life, struct TundariaTowerEffectParams *params);
+void Func_020000b8(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
+                   s32 velocityZ, u32 flags,
+                   struct TundariaTowerEffectParams *params);
+void Func_020006d4(union FieldObject *object);
 void Func_02000708(struct TundariaTowerPosition *position, s32 count,
-                   s32 speed);
+                   s32 scale);
 void Func_02002c1c(s32 a, s32 b, s32 owner);
 void Func_02002cc0(void);
 void Func_02002fc0(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
@@ -65,8 +67,7 @@ extern u16 gData_02003cd0;
 
 void Func_02002e00(void);
 void Func_02002d44(s32 x, s32 y, s32 z, s32 frames);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        s32 flags);
+void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 void Func_0200137c(void);
 extern const u8 gData_020037f8[];
 extern const u8 gData_0200381c[];

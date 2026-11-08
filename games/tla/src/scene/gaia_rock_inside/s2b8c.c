@@ -1,21 +1,14 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba), under -Os: frame and pending are both read through
-// pointers into gSceneState, which gives the native pool load of frame's 0 and its pool after the loop
-// (as state->frame, 19 of 131 differ).
-// The frame callback of the room where persons 8 to 16
-// sway: all stop while flag 0x106 is set or the event work holds them; else,
-// once per pending step, at frame 60 of each 240 they lean one way and at 180
-// come back.
+/// @file
+/// The frame callback of the room where persons 8 to 16 sway: all of them
+/// stop while flag 0x106 is set or the event work holds them; otherwise, once
+/// per pending step, at frame 60 of every 240 they lean one way and at frame
+/// 180 they come back.
+
 #include "types.h"
 #include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+#include "event_work.h"
 
 struct SwayState {
   u16 frame;
@@ -29,14 +22,15 @@ struct Actor *Actor_GetById(s32 id);
 void Func_02002b58(s32 id, s32 x, s32 z);
 
 void Func_02002b8c(void) {
+  // Pointers that stay on one global for their whole life.
   struct SwayState *state = &gSceneState;
   u16 *pending = &state->pending;
   u16 *frame = &state->frame;
-  void *work = Ram_HeapSlots->eventWork;
+  struct EventWork *work = Ram_HeapSlots->eventWork;
   s32 stopped = GameFlag_Test(0x106);
   s32 id;
 
-  if (FIELD_AT(work, s16, 358) != 0)
+  if (work->unk166 != 0)
     stopped |= 1;
   id = 8;
   do {
@@ -45,7 +39,7 @@ void Func_02002b8c(void) {
   if (stopped != 0)
     return;
   ++*pending;
-  if (FIELD_AT(work, s16, 342) != 0)
+  if (work->unk156 != 0)
     return;
   if (*pending == 0)
     return;

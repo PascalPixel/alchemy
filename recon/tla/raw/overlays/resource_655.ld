@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/dehkan_plateau/s02f8.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s048c.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/events_l.o"(.text)
-        "*/resource_655_overlay.o"(.text.x02008584)
+        "*/games/tla/src/scene/dehkan_plateau/s0584.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/events_m.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s0708.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion_priority.o"(.text)

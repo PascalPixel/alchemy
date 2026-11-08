@@ -71,7 +71,7 @@ SECTIONS
         "*/resource_671_overlay.o"(.text.x0200cd48)
         "*/games/tla/src/scene/gabomba_statue/find_hole.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/chime.o"(.text)
-        "*/resource_671_overlay.o"(.text.x0200d090)
+        "*/games/tla/src/scene/gabomba_statue/s5090.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/clock_count_down.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/clock.o"(.text)
         "*/games/tla/src/scene/gabomba_statue/s53bc.o"(.text)

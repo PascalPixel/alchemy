@@ -19,7 +19,7 @@ SECTIONS
         "*/games/tla/src/scene/tundaria_tower/script1.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s05d0.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/fall.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x02008708)
+        "*/games/tla/src/scene/tundaria_tower/s0708.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_a.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/script2.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s0964.o"(.text)

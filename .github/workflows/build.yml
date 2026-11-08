@@ -164,10 +164,13 @@ jobs:
       - name: Verify this revision and reconstruct its progress history
         run: alchemy-devtools/target/release/alchemy-devtools progress --publish "$RUNNER_TEMP/measured" "$GITHUB_SHA" "$RUNNER_TEMP/publication" "$RUNNER_TEMP/ci/tbs.tsv"
 
+      # bash, which Actions runs with -eo pipefail, so a file tar cannot find
+      # fails the step instead of archiving what is left.
       - name: Archive the public figures and admit the successful measurement
+        shell: bash
         run: |
           tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
-            -C "$RUNNER_TEMP/publication" -cf - PROGRESS.png PROGRESS_CHART.png history.tsv source.tsv \
+            -C "$RUNNER_TEMP/publication" -cf - PROGRESS_CHART.png history.tsv source.tsv \
             | gzip -n > "$RUNNER_TEMP/publication/${GITHUB_SHA}.site.tar.gz"
           for name in "${GITHUB_SHA}.site.tar.gz" "${GITHUB_SHA}.accepted.tsv"; do
             alchemy-devtools/target/release/alchemy-devtools progress --archive "$RUNNER_TEMP/publication/$name"

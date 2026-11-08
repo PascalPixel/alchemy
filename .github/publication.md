@@ -46,7 +46,7 @@ History is reconstructed from the immutable `progress-history-v1.tsv` baseline
 and accepted ancestors of that commit. The original baseline retains its
 recorded dates; new measurement dates use UTC, and a CI record is dated by its
 commit. A rerun keeps the original measurement time. The release also holds an
-immutable `<commit>.site.tar.gz` containing only the two PNG figures,
+immutable `<commit>.site.tar.gz` containing only the progress chart,
 `history.tsv` and `source.tsv`; `source.tsv` names the commit The Lost Age's
 figures were measured at and whether its inputs were identical. Releases
 preserve these beyond Actions' artifact retention. `combined_report`,
@@ -57,7 +57,7 @@ The same job then refuses a superseded revision and starts the site build throug
 secret. Vercel builds `alchemy-docs` at its main branch: it clones Alchemy's
 main, generates the pages from the source and takes the accepted figures from
 the release, then serves them at <https://alchemy.pascalpixel.com/>, where
-README shows the figures. A push to `alchemy-docs` builds the same way. There
+README shows the chart. A push to `alchemy-docs` builds the same way. There
 is no schedule and no generated Git branch; Vercel keeps the last successful
 deployment on failure.
 
@@ -70,7 +70,9 @@ store its URL in the secret and remove the old hook.
 
 A generator change publishes when it is pushed to `alchemy-docs`.
 To retry publication, rerun the failed `publish` job; it refuses a superseded
-revision.
+revision. A job that failed after archiving cannot archive different files
+for the same commit (`progress --archive` refuses a changed digest): the
+commit's archives stay as they are, and the next commit publishes afresh.
 If the build fails before reports are archived, fix the build first.
 
 The old `progress` branch remains as a frozen, recoverable archive. Its

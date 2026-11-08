@@ -483,8 +483,12 @@ devtools:
 	@test -f alchemy-devtools/Cargo.toml || git clone https://github.com/PascalPixel/alchemy-devtools
 	$(CARGO) build --locked --release --manifest-path alchemy-devtools/Cargo.toml -p alchemy-devtools
 
+# The render feature's tests too, where libmgba's headers are (MGBA_PREFIX,
+# else Homebrew's or the system's prefix): they play the built ROM.
+MGBA_HEADER := $(firstword $(wildcard $(addsuffix /include/mgba/core/core.h,$(MGBA_PREFIX) /opt/homebrew /usr/local /usr)))
 test-devtools: devtools
 	ALCHEMY_ROOT=$(CURDIR) $(CARGO) test --locked --release --workspace --manifest-path alchemy-devtools/Cargo.toml
+	$(if $(MGBA_HEADER),ALCHEMY_ROOT=$(CURDIR) $(CARGO) test --locked --release --workspace --features render --manifest-path alchemy-devtools/Cargo.toml,@echo "render tests skipped: no libmgba headers (MGBA_PREFIX)")
 
 progress: devtools
 	$(DEVTOOLS) progress

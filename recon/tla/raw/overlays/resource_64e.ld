@@ -6,7 +6,6 @@ SECTIONS
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/objects.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/resource_64e_overlay.o"(.text.x0200814e)
         "*/games/tla/src/scene/venus_lighthouse/s0150.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse/distance.o"(.text)
         "*/games/tla/src/field/object/find_in_cell.o"(.text)

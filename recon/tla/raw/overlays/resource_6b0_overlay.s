@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020083f6,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x02008446,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200847e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200a746,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200af46,"ax",%progbits
-	.2byte 0x0000
 	.section .bss,"aw",%nobits
 	.global gData_02004434
 gData_02004434:

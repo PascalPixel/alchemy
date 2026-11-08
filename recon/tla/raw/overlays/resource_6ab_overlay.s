@@ -686,12 +686,6 @@ Func_020024d4:
 	mov r11, r7
 	pop {r5, r6, r7, pc}
 	.2byte 0x0000
-	.section .text.x0200b602,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200b63a,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200be02,"ax",%progbits
-	.2byte 0x0000
 	.section .bss,"aw",%nobits
 	.global Data_02004cec
 Data_02004cec:

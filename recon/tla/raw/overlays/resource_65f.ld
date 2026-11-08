@@ -4,9 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/garoh/entry.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/resource_65f_overlay.o"(.text.x0200807e)
         "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/resource_65f_overlay.o"(.text.x020080b6)
         "*/games/tla/src/scene/garoh/s00b8.o"(.text)
         "*/games/tla/src/scene/garoh/layer.o"(.text)
         "*/resource_65f_overlay.o"(.text.x020082a4)
@@ -26,7 +24,6 @@ SECTIONS
         "*/games/tla/src/scene/garoh/lift_a.o"(.text)
         "*/games/tla/src/scene/garoh/lift.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/resource_65f_overlay.o"(.text.x020092a6)
         "*/games/tla/src/scene/garoh/s12a8.o"(.text)
         "*/games/tla/src/scene/garoh/spawn.o"(.text)
         "*/games/tla/src/scene/garoh/push.o"(.text)

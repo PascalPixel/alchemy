@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200807e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x020080ce,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200815a,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x02008da0,"ax",%progbits
 	.global Func_02000da0
 	.thumb_func

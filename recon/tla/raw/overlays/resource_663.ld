@@ -4,12 +4,9 @@ SECTIONS
     {
         "*/games/tla/src/scene/airs_rock/entry.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/resource_663_overlay.o"(.text.x0200807e)
         "*/games/tla/src/field/object/prepare_object.o"(.text)
-        "*/resource_663_overlay.o"(.text.x020080ce)
         "*/games/tla/src/scene/airs_rock/s00d0.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/resource_663_overlay.o"(.text.x0200815a)
         "*/games/tla/src/scene/airs_rock/s015c.o"(.text)
         "*/games/tla/src/scene/airs_rock/s033c.o"(.text)
         "*/games/tla/src/field/object/wait_until_idle.o"(.text)

@@ -4,9 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/settlements/entry.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/resource_690_overlay.o"(.text.x0200807e)
         "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/resource_690_overlay.o"(.text.x020080b6)
         "*/games/tla/src/scene/settlements/s00b8.o"(.text)
         "*/games/tla/src/scene/settlements/s0280.o"(.text)
         "*/games/tla/src/scene/settlements/scene_tables.o"(.text)
@@ -35,7 +33,6 @@ SECTIONS
         "*/games/tla/src/scene/settlements/s155c.o"(.text)
         "*/games/tla/src/scene/settlements/s156c.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/resource_690_overlay.o"(.text.x0200961e)
         "*/games/tla/src/scene/settlements/s1620.o"(.text)
         "*/games/tla/src/scene/settlements/s16a4.o"(.text)
         "*/games/tla/src/scene/settlements/s16b0.o"(.text)
@@ -44,7 +41,6 @@ SECTIONS
         "*/games/tla/src/scene/settlements/s1a1c.o"(.text)
         "*/games/tla/src/scene/settlements/s1d30.o"(.text)
         "*/games/tla/src/scene/settlements/s1d3c.o"(.text)
-        "*/resource_690_overlay.o"(.text.x02009f66)
         "*/games/tla/src/scene/settlements/import.o"(.text)
         "*/games/tla/src/scene/settlements/data.o"(.data)
     }

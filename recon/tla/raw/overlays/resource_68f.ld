@@ -4,9 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/tundaria_tower/entry.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x0200807e)
         "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x020080b6)
         "*/games/tla/src/scene/tundaria_tower/s00b8.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/script0.o"(.text)
         "*/games/tla/src/field/object/wait_until_idle.o"(.text)
@@ -37,7 +35,6 @@ SECTIONS
         "*/games/tla/src/scene/tundaria_tower/events_c.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s10d4.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x020091de)
         "*/games/tla/src/scene/tundaria_tower/s11e0.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_d.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s13b8.o"(.text)

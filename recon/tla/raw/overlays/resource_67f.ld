@@ -19,7 +19,6 @@ SECTIONS
         "*/games/tla/src/scene/izumo_ruins/s0bc0.o"(.text)
         "*/games/tla/src/scene/izumo_ruins/s0c4c.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/resource_67f_overlay.o"(.text.x02008caa)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/resource_67f_overlay.o"(.text.x02008ce2)
         "*/games/tla/src/scene/izumo_ruins/s0ce4.o"(.text)

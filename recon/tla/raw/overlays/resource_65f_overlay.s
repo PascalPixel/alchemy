@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200807e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x020080b6,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x020082a4,"ax",%progbits
 	.balign 4
 	.global Func_020002a4
@@ -130,8 +126,6 @@ Func_020002a4:
 	.4byte gFrameCount
 .L_0200838c:
 	.4byte 0xa2600001
-	.section .text.x020092a6,"ax",%progbits
-	.2byte 0x0000
 	.section .bss,"aw",%nobits
 	.space 0x0000000c
 	.global Data_02006340

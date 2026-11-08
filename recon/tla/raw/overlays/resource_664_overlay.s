@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008216,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x02008266,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x020082f2,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200868e,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x02009828,"ax",%progbits
 	.global Func_02001828
 	.thumb_func
@@ -1860,8 +1852,6 @@ Func_02004cc8:
 .L_ja_0200ce98:
 	.4byte 0xfff00000
 	.endif
-	.section .text.x0200d05a,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x0200d1f8,"ax",%progbits
 	.ifdef TLA_EDITION_JA
 	.global Func_020051f8

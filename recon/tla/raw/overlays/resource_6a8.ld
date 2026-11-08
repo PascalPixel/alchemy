@@ -4,9 +4,7 @@ SECTIONS
     {
         "*/games/tla/src/scene/prox/entry.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
-        "*/resource_6a8_overlay.o"(.text.x0200807e)
         "*/games/tla/src/field/field_effect/move.o"(.text)
-        "*/resource_6a8_overlay.o"(.text.x020080b6)
         "*/games/tla/src/scene/prox/s00b8.o"(.text)
         "*/games/tla/src/scene/prox/s0280.o"(.text)
         "*/games/tla/src/scene/prox/s0290.o"(.text)

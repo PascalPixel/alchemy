@@ -85,12 +85,6 @@ Func_02000e9c:
 	.4byte gMapShapeGrid
 .L_02008f40:
 	.4byte 0xfdff0000
-	.section .text.x02008f8a,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x02008fc2,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200a696,"ax",%progbits
-	.2byte 0x0000
 	.section .bss,"aw",%nobits
 	.global gData_02005678
 gData_02005678:

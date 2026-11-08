@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200807e,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x020080b6,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x0200aec2,"ax",%progbits
-	.2byte 0x0000
 	.section .text.x0200ba14,"ax",%progbits
 	.ifdef TLA_EDITION_JA
 	.global Func_02003a14

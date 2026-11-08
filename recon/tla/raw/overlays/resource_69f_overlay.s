@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020082da,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x02008f22,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x02008f5a,"ax",%progbits
-	.2byte 0x0000
-	.section .text.x02009722,"ax",%progbits
-	.2byte 0x0000
 	.section .bss,"aw",%nobits
 	.global Data_020023e4
 Data_020023e4:

@@ -2,25 +2,21 @@
 
 Alchemy is a reconstruction of the source for the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](https://alchemy.pascalpixel.com/tbs)** and ⚓️ **Golden Sun: The Lost Age**. It is a [matching decompilation](games/tbs/glossary.md#matching-decompilation): readable code, images, music and text that build the same ROMs as the originals, byte for byte.
 
-## Progress
-
-The Broken Seal is fully rebuilt from this repository, in Japanese, English, German, French, Spanish, and Italian. The Lost Age is in progress, but the parts not yet rewritten still come from your own cartridge dump.
-
-<img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
-
 ## Documentation
 
 <a href="https://alchemy.pascalpixel.com"><img src="https://alchemy.pascalpixel.com/guides/docs/introduction.png" width="838" alt="The front page of Alchemy's documentation, with its World and Battle sections" /></a>
 
 [alchemy.pascalpixel.com](https://alchemy.pascalpixel.com) explains how The Broken Seal works, written from its rebuilt source, with recordings from the game itself.
 
+## Source
+
+Each game has its own folder of code, pictures, music and text: [games/tbs](games/tbs) for The Broken Seal and [games/tla](games/tla) for The Lost Age. The Broken Seal is fully rebuilt from this repository, in Japanese, English, German, French, Spanish, and Italian. The Lost Age is in progress, and the parts not yet rewritten still come from your own cartridge dump.
+
+<img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
+
 ## Build
 
 [INSTALL.md](INSTALL.md) has the commands for Linux, macOS and Windows. Every build is checked against the original cartridges’ hashes in [rom.sha1](rom.sha1).
-
-## Why
-
-Hi, I’m Pascal Pixel, an engineer recovering from a burnout. Golden Sun is my favorite game and I wanted to know how it works, so I’m decompiling it with [AI agents](AGENTS.md).
 
 ## Acknowledgements
 

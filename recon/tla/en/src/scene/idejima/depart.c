@@ -43,19 +43,19 @@ void Idejima_RunAlexDeparture(void) {
 
   Import_EventStart();
   Func_02003310(0);
-  Import_CameraSetSpeed(SPLIT_CONSTANT(0x9900, 153), SPLIT_CONSTANT(0x1300, 51));
+  Import_CameraSetSpeed(SPLIT_CONSTANT(0x9999), SPLIT_CONSTANT(0x1333));
   Camera_MoveWithinMapBounds(PIXELS(108), -1, PIXELS(720), 1);
-  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcc00, 204),
+  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcccc),
         0x6666);
   Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 86, 712);
   Import_ActorPlaceAtActor(8, gMainRoutineWork.currentOwner);
   Task_Wait(1);
-  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Call3(Actor_SetPositionAndReset, 8, 104, 712);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 0);
   Call3(Actor_ArmCallback, 8, FACING_WEST, 20);
   Import_EventSetMessageId((s32)MsgIdejimaWhereHasAlexGone);
-  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2000, 8), 0);
+  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2008), 0);
   Actor_ArmCallback(8, FACING_EAST, 40);
   Call3(Actor_ArmCallback, 8, FACING_SOUTH + FACING_STEP, 20);
   Actor_ArmCallback(8, FACING_EAST, 0);
@@ -73,8 +73,8 @@ void Idejima_RunAlexDeparture(void) {
   Import_ActorPlaceAtActor(5, gMainRoutineWork.currentOwner);
   Import_ActorPlaceAtActor(6, gMainRoutineWork.currentOwner);
   Task_Wait(1);
-  Call3(Actor_SetSpeedParameters, 6, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
-  Call3(Actor_SetSpeedParameters, 5, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3(Actor_SetSpeedParameters, 6, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
+  Call3(Actor_SetSpeedParameters, 5, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Call3(Actor_ResetAndSetPositionInMode2, 5, 86, 712);
   Call3(Actor_SetPositionAndReset, 6, 86, 728);
   Call3(Actor_ArmCallback, 6, FACING_NORTHEAST, 0);
@@ -87,17 +87,17 @@ void Idejima_RunAlexDeparture(void) {
   Call3(Actor_ArmCallback, 6, FACING_NORTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 0);
   Import_ActorSetAnimation(8, 4);
-  Value2(FieldMessage_ShowAtActor, SPLIT_CONSTANT(0x2000, 8), 0);
+  Value2(FieldMessage_ShowAtActor, SPLIT_CONSTANT(0x2008), 0);
   Actor_ArmCallback(6, FACING_EAST, 0);
   Call3(Actor_ArmCallback, 5, FACING_SOUTHEAST, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Motion_SetModeAndWaitAnimation(8, 4);
-    Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2000, 8), 0);
+    Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2008), 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Motion_SetModeAndWaitAnimation(8, 3);
-    Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2000, 8), 0);
+    Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2008), 0);
   }
   Actor_ArmCallback(5, FACING_EAST, 0);
   Import_EventShowMessageAndWait(5, 0);
@@ -105,16 +105,16 @@ void Idejima_RunAlexDeparture(void) {
   Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
   Import_EventShowMessageAndWait(6, 0);
   Call3(Actor_ArmCallback, 8, FACING_SOUTH + FACING_STEP, 0);
-  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2000, 8), 0);
+  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2008), 0);
   Import_ActorShowEmote(gMainRoutineWork.currentOwner, 0x101, 40);
   Call3(Actor_ArmCallback, 8, FACING_SOUTHEAST + FACING_STEP, 0);
   Import_ActorSetAnimation(8, 4);
-  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2000, 8), 0);
+  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2008), 0);
   Import_ActorShowEmote(5, 0x100, 20);
   Import_EventShowMessageAndWait(5, 0);
   Call3(Actor_ArmCallback, 8, FACING_WEST, 20);
   Motion_SetModeAndWaitAnimation(8, 3);
-  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2000, 8), 0);
+  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2008), 0);
   Actor_ArmCallback(6, FACING_EAST, 20);
   Import_EventShowMessageAndWait(6, 0);
   Call3(Actor_ArmCallback, 5, FACING_SOUTHEAST, 0);
@@ -122,20 +122,20 @@ void Idejima_RunAlexDeparture(void) {
   if (Event_AskYesNoWithActorAnimation(8, 0) == 0) {
     Call3(Actor_ArmCallback, 8, FACING_SOUTHEAST + FACING_STEP, 20);
     Motion_SetModeAndWaitAnimation(8, 3);
-    Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2000, 8), 0);
+    Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2008), 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId += 1;
     Import_ActorShowEmote(8, 0x103, 0);
     Call3(Actor_ArmCallback, 8, FACING_SOUTH, 20);
-    Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2000, 8), 0);
+    Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2008), 0);
     Func_02003320();
   }
   Value3(Import_ActorShowEmote, 5, 0x100, 0);
   Import_EventShowMessageAndWait(5, 0);
   Import_ActorShowEmote(8, 0x100, 40);
   Call3(Actor_ArmCallback, 8, FACING_SOUTH + FACING_STEP, 0);
-  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2000, 8), 0);
+  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2008), 0);
   Import_ActorShowEmote(6, 0x101, 0);
   Call3(Actor_ArmCallback, 6, FACING_NORTHEAST, 40);
   Import_EventShowMessageAndWait(6, 0);
@@ -143,7 +143,7 @@ void Idejima_RunAlexDeparture(void) {
   Import_EventShowMessageAndWait(5, 0);
   Call3(Actor_ArmCallback, 8, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
-  FieldMessage_ShowAtActor(SPLIT_CONSTANT(0x2000, 8), 0);
+  FieldMessage_ShowAtActor(SPLIT_CONSTANT(0x2008), 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.currentOwner, 0) == 0) {
     Import_ActorShowEmote(6, 0x103, 0);
     Actor_ArmCallback(6, FACING_EAST, 20);
@@ -156,7 +156,7 @@ void Idejima_RunAlexDeparture(void) {
     Import_EventShowMessageAndWait(6, 0);
   }
   Import_ActorShowEmote(8, 0x100, 0);
-  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2000, 8), 0);
+  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2008), 0);
   Call3(Actor_ArmCallback, 6, FACING_NORTHEAST, 0);
   Motion_SetModeAndWaitAnimation(6, 3);
   Import_EventShowMessageAndWait(6, 0);
@@ -165,11 +165,11 @@ void Idejima_RunAlexDeparture(void) {
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 6);
   Actor_WatchAndSetScript(8, 6);
   Actor_WatchAndSetScript(5, 6);
-  Call3(Actor_SetSpeedParameters, 6, SPLIT_CONSTANT(0x6600, 102), SPLIT_CONSTANT(0x3300, 51));
+  Call3(Actor_SetSpeedParameters, 6, SPLIT_CONSTANT(0x6666), SPLIT_CONSTANT(0x3333));
   Call3(Actor_SetPositionAndReset, 6, 86, 748);
   FieldEvent_Wait(40);
   Import_ActorShowEmote(6, 0x109, 80);
-  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2000, 8), 0);
+  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2008), 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
   Actor_Stop(8);
   Actor_Stop(5);
@@ -185,7 +185,7 @@ void Idejima_RunAlexDeparture(void) {
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_NORTH, 40);
   Call3(Actor_ArmCallback, 8, FACING_SOUTH + FACING_STEP, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHWEST, 20);
-  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2000, 8), 0);
+  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2008), 0);
   Motion_SetModeAndWaitAnimation(6, 3);
   Import_EventShowMessageAndWait(6, 0);
   Import_ActorSetAnimation(8, 3);
@@ -194,7 +194,7 @@ void Idejima_RunAlexDeparture(void) {
   Call3(Actor_ArmCallback, 6, FACING_NORTHEAST, 0);
   Import_EventShowMessageAndWait(6, 0);
   Call3(Actor_ArmCallback, 8, FACING_SOUTHEAST + FACING_STEP, 0);
-  Value2(Import_EventAskYesNoWithActorAnimation, SPLIT_CONSTANT(0x2000, 8), 0);
+  Value2(Import_EventAskYesNoWithActorAnimation, SPLIT_CONSTANT(0x2008), 0);
   Call3(Actor_ArmCallback, 6, FACING_NORTHWEST, 40);
   Import_EventShowMessageAndWait(6, 0);
   Actor_ArmCallback(5, FACING_EAST, 0);
@@ -209,7 +209,7 @@ void Idejima_RunAlexDeparture(void) {
   Call3(Actor_ArmCallback, 6, FACING_NORTH, 0);
   Import_EventShowMessageAndWait(6, 0);
   Call2(Import_ActorSetAttachedEffect, 8, 0x102);
-  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2000, 8), 0);
+  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2008), 0);
   Import_ActorShowEmote(6, 0x108, 20);
   Call3(Actor_ArmCallback, 6, FACING_NORTHEAST, 20);
   Import_EventShowMessageAndWait(6, 0);
@@ -229,18 +229,18 @@ void Idejima_RunAlexDeparture(void) {
   Import_ActorShowEmote(8, 0x109, 40);
   Motion_SetModeAndWaitAnimation(6, 4);
   FieldEvent_Wait(20);
-  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2000, 8), 0);
+  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2008), 0);
   Motion_SetModeAndWaitAnimation(6, 3);
   Call3(Actor_ArmCallback, 8, FACING_WEST, 20);
-  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2000, 8), 0);
+  Call2(Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2008), 0);
   Actor_Jump(8, 4, 20);
-  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2000, 8), 0);
-  Call3(Actor_SetSpeedParameters, 6, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2008), 0);
+  Call3(Actor_SetSpeedParameters, 6, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   script = gIdejima_ActorDepartureScript;
   Actor_SetMovementTypeById(8, script);
   Actor_SetMovementTypeById(5, script);
   Actor_SetMovementTypeAndWaitById(6, script);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x768, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x867));
   Import_EventEnd();
 }
 

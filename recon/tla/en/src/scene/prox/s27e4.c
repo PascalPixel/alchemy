@@ -22,7 +22,7 @@ void Func_020027e4(void) {
   s32 t0;
   s32 t1;
 
-  t0 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 61));
+  t0 = GameFlag_Test(SPLIT_CONSTANT(0xa3d));
   if (t0 != 0) {
     t1 = GameFlag_Test(0x109);
     if (t1 == 0) {

@@ -22,14 +22,14 @@ void Func_020040d4(s32 actor, s32 x, s32 z);
 void Func_020039d4(void) {
   ((struct ContigoEventWork *)Ram_HeapSlots->eventWork)->value1ac = 0x209;
   if (gMainRoutineWork.entrance == 4) {
-    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 33)) != 0 && GameFlag_Test(0x9d0) == 0)
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 33))) != 0 && GameFlag_Test(0x9d0) == 0)
       Func_02001d50();
   } else if (gMainRoutineWork.entrance == 21) {
     GameFlag_ClearBit(0x12f);
   } else {
     Actor_SetModeById(17, 2);
     Actor_SetSingleChildFlags(Actor_GetById(17), 0);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)) != 0)
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178))) != 0)
       Actor_SetMovementTypeById(11, gData_02004a1c);
     if (GameFlag_Test(0x9d0) != 0) {
       Func_020040d4(24, 0, 0);

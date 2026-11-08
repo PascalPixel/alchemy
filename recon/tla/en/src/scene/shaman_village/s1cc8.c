@@ -19,7 +19,7 @@ void Func_02001cc8(void) {
     object->motionFlags = 0;
     ShamanVillage_BlendStart(30, 11, 1, 1, 32, 11);
     wait(1);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 78));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 78)));
     Func_020048cc();
   }
 }
@@ -56,7 +56,7 @@ void Func_02001d3c(void) {
   Actor_StartRepeatedMotion(15, 1);
   Func_0200498c((s32)MsgShamanMoapaGiveMeRoom);
   Func_020049a4(15, 0);
-  ShamanVillage_CamSpeed(0xcccc, 0x1999);
+  ShamanVillage_CamSpeed(SPLIT_CONSTANT(0xcc00, 204), 0x1999);
   Func_020049fc()->motionFlags = 0;
   Camera_MoveWithinMapBounds(PIXELS(120), 0x320000, PIXELS(224), 1);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
@@ -80,9 +80,9 @@ void Func_02001d3c(void) {
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
    * SHAMAN_VILLAGE_EMOTE. */
   SHAMAN_VILLAGE_EMOTE(16, 259, 0)
-  Func_020049a4(SPLIT_CONSTANT(0x8000, 16), 0);
+  Func_020049a4(SPLIT_CONSTANT(0x8010), 0);
   Motion_SetModeAndWaitAnimation(15, 3);
-  Func_020049a4(0x800f, 0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x850, 255));
+  Func_020049a4(SPLIT_CONSTANT(0x8000, 15), 0);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x94f));
   Func_020048cc();
 }

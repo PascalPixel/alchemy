@@ -178,7 +178,7 @@ void Func_02000e80(void) {
   u8 *buffer, *buffer2;
   u16 *screen;
 
-  flag = GameFlag_Test(SPLIT_CONSTANT(0xa00, 158));
+  flag = GameFlag_Test(SPLIT_CONSTANT(0xa9e));
   if (flag != 0)
     goto L_02008ea2;
   goto L_0200905c;
@@ -209,7 +209,7 @@ L_02008ea2:
   }
   FieldEvent_Wait(20);
   Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
-        SPLIT_CONSTANT(0xcc00, 204), 0x6666);
+        SPLIT_CONSTANT(0xcccc), 0x6666);
   Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner,
         0x2a8, 186);
   Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xc000,
@@ -232,9 +232,9 @@ L_02008ea2:
     Func_0200420c((s32)*slot);
   }
   FieldEvent_Wait(20);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, SPLIT_CONSTANT(0xcccc));
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0x200, 158), 170);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0x29e), 170);
   FieldEvent_Wait(1);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   object = *slot;
@@ -245,7 +245,7 @@ L_02008ea2:
   Func_020042e4();
   goto L_020093b0;
 L_0200905c:
-  screen = *(u16 **)SPLIT_CONSTANT(0x3000000, 128);
+  screen = *(u16 **)SPLIT_CONSTANT(0x3000080);
   Func_020042dc();
   Func_0200444c(0);
   FieldMessage_Show((s32)MsgMarsStar09, 1);
@@ -273,7 +273,7 @@ L_0200905c:
   }
   FieldEvent_Wait(20);
   Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
-        SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+        SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Call3((void (*)())Actor_SetPositionAndReset, gMainRoutineWork.currentOwner,
         0x2a8, 186);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0xc000, 40);
@@ -285,17 +285,17 @@ L_0200905c:
   Call3((void (*)())Func_02004264, 0x10000, 0x10000, 0x10000);
   FieldEvent_Wait(20);
   Call2((void (*)())Func_0200440c, 0x10000, 0);
-  Func_02004404(SPLIT_CONSTANT(0x10000, 6), 0);
+  Func_02004404(SPLIT_CONSTANT(0x10006), 0);
   Func_02004414(80);
   FieldEvent_Wait(80);
   Call2((void (*)())Task_Add, (s32)Func_02001424, 0x480);
-  Call2((void (*)())Func_020043c4, 0x4cccc, SPLIT_CONSTANT(0x9900, 153));
+  Call2((void (*)())Func_020043c4, 0x4cccc, SPLIT_CONSTANT(0x9999));
   Call4((void (*)())Camera_MoveWithinMapBounds, 0x2a80000, -1, 0x1e00000, 1);
   Func_020043d4();
   FieldEvent_Wait(80);
-  Call3((void (*)())Func_02004264, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+  Call3((void (*)())Func_02004264, -1, -1, SPLIT_CONSTANT(0xe666));
   Func_0200446c(0x186);
-  Func_02004404(SPLIT_CONSTANT(0x7f00, 255), 0);
+  Func_02004404(SPLIT_CONSTANT(0x7fff), 0);
   Func_02004414(80);
   wait(60);
   Task_RemoveFar((s32)Func_02001424);
@@ -333,9 +333,9 @@ L_0200905c:
     Func_0200420c((s32)*slot2);
   }
   FieldEvent_Wait(20);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, SPLIT_CONSTANT(0xcccc));
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= 0xfe;
-  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0x200, 158), 170);
+  Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0x29e), 170);
   FieldEvent_Wait(1);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags |= 1;
   object2 = *slot2;
@@ -344,7 +344,7 @@ L_0200905c:
   Func_020043a4(gMainRoutineWork.currentOwner, 0x4000);
   Func_0200445c();
   GameFlag_SetBit(0xa30);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 158));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa9e));
   gMainRoutineWork.special = (s32)&SceneId_Ov66d;
   Func_020042e4();
 L_020093b0:

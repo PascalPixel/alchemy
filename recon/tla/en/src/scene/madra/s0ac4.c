@@ -250,7 +250,7 @@ void Func_02000ac4(void) {
   ArmCallback(32, FACING_NORTH + FACING_STEP, 0);
   Func_02002be0(24, 0, 2);
   Speed(24, 0x4ccc, 0x2666);
-  Speed(25, 0x4ccc, 0x2666);
+  Speed(25, 0x4ccc, SPLIT_CONSTANT(0x2666));
   OffsetPos(24, 3, -8);
   Actor_OffsetPositionAndReset(25, -3, -8);
   Actor_WaitForMoveById(24);
@@ -278,7 +278,7 @@ void Func_02000ac4(void) {
 /// is counted in the event work either way, and flag 0x913 is set. The talk
 /// includes "... has escaped".
 void Func_02000f80(void) {
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 17)))
+  if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 17))))
     return;
   Func_02002b28();
   Func_02002c58(0);
@@ -425,7 +425,7 @@ void Func_02000f80(void) {
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(33, 3);
   FieldEvent_Wait(20);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 19));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 19)));
   Actor_CommitPositionAndActivate(33, 30, 0);
   SetPos(33, 164, 316);
   FieldEvent_Wait(20);
@@ -504,7 +504,7 @@ void Func_020014fc(void) {
   Motion_SetVarCbAndRefresh(24, 2);
   FieldEvent_Wait(20);
   Func_02002be0(24, 0, 10);
-  if (GameFlag_Test(0x98f)) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x890, 255))) {
     Func_02002bd0(MsgItWasThem);
     Actor_ArmCallback(32, FACING_WEST, 0);
     FieldEvent_Wait(20);
@@ -563,7 +563,7 @@ void Func_020014fc(void) {
   Actor_SetModeById(32, 3);
   Motion_SetModeAndWaitAnimation(4, 3);
   FieldEvent_Wait(10);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 20));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 20)));
   Actor_SetModeById(32, 2);
   object = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object != NULL)
@@ -610,7 +610,7 @@ void Func_020019d8(void) {
   Func_02002b28();
   Func_02002c58(0);
   Event_StartScreenTransition();
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 37)) || GameFlag_Test(0x826))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 37))) || GameFlag_Test(0x826))
     GameFlag_SetBit(0xa76);
   Func_02002bd0(MsgWait3);
   Func_02002be0(34, 0, 0);

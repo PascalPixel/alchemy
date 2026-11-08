@@ -51,7 +51,7 @@ void Func_0200167c(void) {
     actor->y = linked->y + i;
     actor->z = linked->z;
     if (i <= 0x3ffff)
-      i += SPLIT_CONSTANT(0x1900, 153);
+      i += SPLIT_CONSTANT(0x1999);
     actor->angle = (u8)gFrameCount << 12;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     /* FAKEMATCH(barrier): the actor set in the loop keeps PRE from moving its

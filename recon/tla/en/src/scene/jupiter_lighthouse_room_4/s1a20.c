@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -57,8 +58,8 @@ void Func_02001a20(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
+  options.startScaleX = SPLIT_CONSTANT(0xa3d7);
+  options.startScaleY = SPLIT_CONSTANT(0xa3d7);
   i = 0;
   do {
     s32 angle;
@@ -79,7 +80,7 @@ void Func_02001a20(void) {
   Func_02001e90(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   SetWorkTriple(0x50000, 0x50000, 0x10000);
-  SetWorkTriple(-1, -1, 0xe666);
+  SetWorkTriple(-1, -1, SPLIT_CONSTANT(0xe666));
   Func_02001e18();
   Func_02001e90(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;

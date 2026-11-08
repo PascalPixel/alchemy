@@ -5,7 +5,7 @@ void Func_02001c68(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 8 of 41 instructions
    * differ in tla-en. */
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 174))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x9ae))) {
     Func_02003d7c();
     Func_02003eac(0);
     FieldMessage_Show(MsgCheckedTheTabletIt, 1);
@@ -24,7 +24,7 @@ void Func_02001cd8(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 8 of 38 instructions
    * differ in tla-en. */
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 174))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x9ae))) {
     Func_02003d7c();
     Func_02003eac(0);
     FieldMessage_Show(MsgCheckedTheTabletIt, 1);
@@ -42,7 +42,7 @@ void Func_02001d40(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 8 of 37 instructions
    * differ in tla-en. */
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 174))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x9ae))) {
     Func_02003d7c();
     Func_02003eac(0);
     FieldMessage_Show(MsgCheckedTheTabletIt, 1);

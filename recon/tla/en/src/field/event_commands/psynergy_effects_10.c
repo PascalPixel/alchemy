@@ -71,7 +71,7 @@ void BattleEffect_SinkAndShrinkObject(void) {
     object->scaleX += -0x400;
     object->scaleY += -0x400;
     if (work->timer == 8)
-      work->done = SPLIT_CONSTANT(0x2e8, 255);
+      work->done = SPLIT_CONSTANT(0x3e7);
   }
   work->timer++;
 }

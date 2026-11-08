@@ -4,13 +4,13 @@
 void Func_02003364(void) {
   Func_02004180(0);
   if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 4) {
-    if (Scene_FlagTest(SPLIT_CONSTANT(0x800, 137)))
+    if (Scene_FlagTest(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 137))))
       Func_02004090(16, 0, 0);
     else
       Func_02002318();
   }
   Func_02003820(gData_020047d2);
-  if (Scene_FlagTest(SPLIT_CONSTANT(0x10c, 255))) {
+  if (Scene_FlagTest(SPLIT_CONSTANT(SPLIT_CONSTANT(0x10c, 255)))) {
     Func_020006ac();
     wait(10);
   }
@@ -41,7 +41,7 @@ void Func_02003404(void) {
   Func_02003338(19);
   Func_02003338(20);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2) {
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 137)) && !GameFlag_Test(0x88a))
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 137))) && !GameFlag_Test(0x88a))
       Func_020026a0();
   } else {
     Scene_Call4090(11, 200 << 16, 248 << 16);
@@ -55,7 +55,7 @@ void Func_02003404(void) {
     Scene_Call4090(19, 280 << 16, 376 << 16);
     Func_02004090(20, 328 << 16, 392 << 16);
     if (GameFlag_Test(0x88c)) {
-      if (GameFlag_Test(SPLIT_CONSTANT(0x800, 237))) {
+      if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 237)))) {
         Func_02003ff0(68, 77, 13, 9, 3, 3);
         Scene_Call4000(68, 77, 3, 3, 13, 9);
       } else {
@@ -63,7 +63,7 @@ void Func_02003404(void) {
         Scene_Call4000(74, 71, 3, 3, 13, 9);
       }
       Scene_Call4000(63, 77, 3, 3, 13, 73);
-    } else if (GameFlag_Test(SPLIT_CONSTANT(0x800, 138))) {
+    } else if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 138)))) {
       Func_02002b84();
     }
   }

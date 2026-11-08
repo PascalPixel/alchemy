@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "system.h"
@@ -131,7 +132,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   *(u16 *)0x05000000 = 0;
   *(u16 *)0x05000002 = 0x18;
   work->transferMode = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
+  ValueLr2((s32 (*)())Task_Add, (s32)(BattleEffect_ProcessPendingGraphicsTransfer), (s32)(TASK_PASS_FRAME));
   Func_08163c2c(1, 0);
   BattleEffect_SpawnObjects(9, 644, 1);
   gCameraSceneParameters[4] = 240;
@@ -140,7 +141,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   REG_WIN0H = 0xca;
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
-  Func_08163c2c(1, 1);
+  ValueLr2((s32 (*)())Func_08163c2c, (s32)(1), (s32)(1));
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireBlobSheet, work->sheet, 1, 1);
   REG_DISPCNT = 0x7741;

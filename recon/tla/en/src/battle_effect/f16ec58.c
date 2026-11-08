@@ -2,6 +2,7 @@
 /// Cool: leaning ice columns and sparks of frost.
 
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -91,7 +92,7 @@ void BattleEffect_RunCool(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                              work->sheet + SPARK_OFFSET, 1, 0);
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
+                  ValueLr1((s32 (*)())Resource_GetTableEntry, (s32)((s32)&ResourceId_BlueFlameSheet)), 128);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);

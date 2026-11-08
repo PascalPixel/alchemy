@@ -19,7 +19,7 @@ void Func_0200042c(s32 unused, s32 id) {
 
         object->y += step;
       }
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 90));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x95a));
       Func_02003d1c(0, 12, 1, 1, 9, row);
       Func_02003d1c(0, 12, 1, 1, 13, row);
     }
@@ -31,7 +31,7 @@ void Func_0200042c(s32 unused, s32 id) {
 
         object->y += step;
       }
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 91));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x95b));
     }
   }
 }

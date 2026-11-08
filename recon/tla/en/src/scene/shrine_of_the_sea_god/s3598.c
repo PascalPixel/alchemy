@@ -27,14 +27,14 @@ void Func_02003598(void) {
   Actor_SetModeById(14, 0);
   Actor_SetModeById(15, 2);
   Actor_SetModeById(16, 2);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x132, 255))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x231))) {
     Func_020039a8(0, 0, 3, 1, 19, 13);
     Func_020039a8(40, 0, 2, 1, 19, 33);
     Actor_SetPositionAndResetMotion(Actor_GetById(15), PIXELS(320), -PIXELS(21),
                                      PIXELS(534));
     Actor_SetSpritePriority(15, 3);
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x200, 50))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x232))) {
     Func_020039a8(0, 0, 3, 1, 24, 22);
     Func_020039a8(40, 0, 2, 1, 24, 24);
     Actor_SetPositionAndResetMotion(Actor_GetById(16), PIXELS(400), -PIXELS(21),
@@ -42,7 +42,7 @@ void Func_02003598(void) {
     Actor_SetSpritePriority(16, 3);
   }
   Func_02003b18();
-  Call4((void (*)())Func_02003b20, 0, SPLIT_CONSTANT(0x104, 255), 17, 18);
+  Call4((void (*)())Func_02003b20, 0, SPLIT_CONSTANT(0x203), 17, 18);
   Func_02003b20(1, 0x204, 19, 20);
   Func_02003aa0(21);
   Actor_GetById(21)->motionFlags = 0;

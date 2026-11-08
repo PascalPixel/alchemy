@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/apojii_islands/local.h"
+#include "call.h"
 
 /// Clears the effect table, takes a free VRAM entry for it with a 0x200-byte
 /// block and no source, then schedules Func_020015f8.
@@ -8,7 +9,7 @@ void Func_020017bc(void) {
   s32 (*clear)(void *destination, s32 size) = Iwram_ClearWordsEntry;
   s32 priority;
 
-  clear(gData_02002aa0, SPLIT_CONSTANT(0x1000, 4));
+  ValueLr2((s32 (*)())clear, (s32)(gData_02002aa0), (s32)(SPLIT_CONSTANT(0x1004)));
   gData_02002aa0[0] = Resource_FindFreeEntry();
   /* FAKEMATCH: the empty asm keeps the entry's store ahead of the size, as in
    * the native (plain: differ 2; a block pointer, a struct with the entry

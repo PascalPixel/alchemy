@@ -32,16 +32,16 @@ void Func_02001094(void) {
   object->unk63 = 1;
   if (work->unk166 == 0) {
     Actor_SetAngleToward(14, gMainRoutineWork.currentOwner, 0);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)) != 0)
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178))) != 0)
       Func_0200412c((s32)MsgContigo203);
-    else if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 33)) != 0)
+    else if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 33))) != 0)
       Func_0200412c((s32)MsgContigo199);
     else
       Func_0200412c((s32)MsgContigo41);
   } else {
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)) != 0)
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178))) != 0)
       Func_0200412c((s32)MsgContigo205);
-    else if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 33)) != 0)
+    else if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 33))) != 0)
       Func_0200412c((s32)MsgContigo201);
     else
       Func_0200412c((s32)MsgContigo49);

@@ -83,7 +83,7 @@ retry:
   p[0] = x;
   p[2] = z;
   object->speedLimit = 0x20000;
-  object->acceleration = SPLIT_CONSTANT(0x1900, 153);
+  object->acceleration = SPLIT_CONSTANT(0x1999);
   object->action = 0;
   Func_02002fb0(object, x, object->y, z);
   Func_02002f80(object, 2);
@@ -112,7 +112,7 @@ overlap:
   targetX = q[0];
   targetZ = q[2];
   object->speedLimit = 0x20000;
-  object->acceleration = SPLIT_CONSTANT(0x1900, 153);
+  object->acceleration = SPLIT_CONSTANT(0x1999);
   Func_02002fb0(object, q[0], q[1], q[2]);
   Func_02002fb8(object);
   if (cell != startCell)

@@ -9,7 +9,7 @@ void Func_020010f4(s32 unused, s32 id) {
   object->priorityFlags = 0;
   object->motionFlags = 0;
   Func_02002960_(42, 32, 1, 1, 44, 32);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x122, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x221));
 }
 
 void Func_0200112c(s32 unused, s32 id) {
@@ -21,7 +21,7 @@ void Func_0200112c(s32 unused, s32 id) {
   object->priorityFlags = 0;
   object->motionFlags = 0;
   Func_02002960_(48, 32, 1, 1, 46, 32);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 34));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x222));
 }
 
 void Func_02001164(s32 unused, s32 id) {
@@ -33,7 +33,7 @@ void Func_02001164(s32 unused, s32 id) {
   object->priorityFlags = 0;
   object->motionFlags = 0;
   Func_02002960_(44, 44, 1, 1, 46, 44);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x124, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x223));
 }
 
 void Func_0200119c(s32 unused, s32 id) {
@@ -46,7 +46,7 @@ void Func_0200119c(s32 unused, s32 id) {
   if (column == 53) {
     wait(30);
     object->z += 0x10000;
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 81));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x951));
     Func_02002960(54, 58, 1, 1, column, 52);
   }
 }
@@ -61,7 +61,7 @@ void Func_020011e0(s32 unused, s32 id) {
   if (column == 53) {
     wait(30);
     object->z += 0x10000;
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 82));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x952));
     Func_02002960(54, 58, 1, 1, column, 58);
   }
 }

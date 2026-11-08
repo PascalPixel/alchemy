@@ -21,9 +21,9 @@ u8 *Func_020007cc(void) {
     return gData_02004d90;
   if (scene == (s32)&SceneId_Ov694Room2) {
     if (gMainRoutineWork.entrance == 4) {
-      if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)) != 0)
+      if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178))) != 0)
         return gData_02005318;
-      if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 33)) != 0 && GameFlag_Test(0x9d0) == 0)
+      if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 33))) != 0 && GameFlag_Test(0x9d0) == 0)
         return gData_02005228;
     }
     return gData_02005018;

@@ -76,6 +76,6 @@ void Func_02001458(struct Actor *object) {
   object->z += object->speedLimit;
   object->x += object->acceleration;
   object->speedLimit -= object->unk4c;
-  object->scaleX += SPLIT_CONSTANT(0xc00, 204);
+  object->scaleX += SPLIT_CONSTANT(0xccc);
   object->scaleY += 0xccc;
 }

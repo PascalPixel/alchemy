@@ -1,4 +1,5 @@
 #include "inventory.h"
+#include "call.h"
 
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item);
 void Unit_RefreshPsynergy(s32 owner);
@@ -30,7 +31,7 @@ s32 Inventory_Equip(s32 owner, s32 slot) {
       item = Item_GetDirect(inv->inventory[other]);
       if (item->flags & 2)
         return -2;
-      inv->inventory[other] &= 0xfdff;
+      inv->inventory[other] &= SPLIT_CONSTANT(0xfdff);
     }
   }
 

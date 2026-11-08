@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "scene_tables.h"
 
@@ -26,7 +27,7 @@ void Func_020019d0(void) {
   Func_020056b4(actor);
   Func_0200580c(0);
   Func_020057bc()->motionFlags = 0;
-  Func_020057a4(0x9999, 0x1333);
+  Func_020057a4(0x9999, SPLIT_CONSTANT(0x1333));
   Camera_SetBounds(180 << 17, 0, 248 << 17, 1);
   Func_020057b4();
   Func_02005854(586);
@@ -39,7 +40,7 @@ void Func_020019d0(void) {
   actor->y = 0;
   FieldEvent_Wait(10);
   Func_020020f0(-1);
-  GameFlag_SetBit(0x8cd);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x8cd));
   FieldEvent_Wait(20);
   Func_020056bc();
 }

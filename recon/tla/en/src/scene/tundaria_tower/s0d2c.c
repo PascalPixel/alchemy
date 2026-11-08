@@ -32,9 +32,9 @@ void Func_02000d2c(void) {
     struct Actor *o = object;
 
     if (o->x >> 19 == 27)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 71));
-    if (o->x >> 19 == 25 && GameFlag_Test(SPLIT_CONSTANT(0x900, 71)))
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 70));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x947));
+    if (o->x >> 19 == 25 && GameFlag_Test(SPLIT_CONSTANT(0x947)))
+      GameFlag_SetBit(SPLIT_CONSTANT(0x946));
   }
   Func_02003050();
 }

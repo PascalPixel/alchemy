@@ -15,7 +15,7 @@ void Func_02000088(void) {
 }
 
 const u8 *Func_020000b8(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 255)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 255))))
     return gData_02000cfc;
   return gData_02000b4c;
 }
@@ -29,7 +29,7 @@ void Func_020000d8(void) {
     FieldMessage_ShowAtActor(14, 0);
     if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
       Func_02000584(msg + 1);
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 93));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 93)));
     } else {
       Func_02000584(msg + 2);
     }
@@ -49,7 +49,7 @@ void Func_02000140(void) {
     FieldMessage_ShowAtActor(18, 0);
     if (Event_AskYesNoWithActorAnimation(Func_020005dc(), 0) == 0) {
       Func_02000584(msg + 1);
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 93));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 93)));
     } else {
       Func_02000584(msg + 2);
     }

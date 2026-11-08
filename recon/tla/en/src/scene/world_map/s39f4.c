@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 #include "actor.h"
 #include "field_sprite.h"
@@ -30,7 +31,7 @@ void Func_020039f4(struct Actor *object) {
   /* FAKEMATCH: through a local pointer the resident multiply's entry loads
    * before the factor's shift, as in the native (direct: differ 2; its result
    * kept in a local: 2). */
-  mulQ16(object->scaleX, 0x18000);
+  ValueLr2((s32 (*)())mulQ16, (s32)(object->scaleX), (s32)(0x18000));
   spark = Func_02004b30_(271, object->x, object->y, object->z);
   if (spark != NULL) {
     spark->terrainHeight = object->terrainHeight;
@@ -72,14 +73,14 @@ void Func_02003aac(struct Actor *object) {
   SET_VECTOR(position, object->x, object->y + 0x20000, object->z);
   angle = Random16Far();
   Vector_AddPolarOffsetFar(angle * 20, Random16Far(), position);
-  particle = Func_02004b30(SPLIT_CONSTANT(0x200, 162), position[0], position[1], position[2]);
+  particle = Func_02004b30(SPLIT_CONSTANT(0x2a2), position[0], position[1], position[2]);
   if (particle != NULL) {
     particle->terrainHeight = object->terrainHeight;
     sprite = particle->animation;
     Func_02004b20(particle, gData_02004f9c);
     Animation_ApplyChildArgument(sprite, 2);
     particle->gravity = 0x200;
-    particle->scaleX = SPLIT_CONSTANT(0xcc00, 204);
+    particle->scaleX = SPLIT_CONSTANT(0xcccc);
     particle->scaleY = 0xcccc;
     if (sprite != NULL)
       sprite->nextFrame = 0;

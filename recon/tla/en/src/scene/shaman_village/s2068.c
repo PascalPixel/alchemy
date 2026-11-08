@@ -25,10 +25,10 @@ void Func_02002068(void) {
   angle = 0xc000;
   Actor_GetById(gMainRoutineWork.currentOwner)->facing = angle;
   wait(1);
-  ShamanVillage_CamSpeed(0xcccc, SPLIT_CONSTANT(0x1900, 153));
+  ShamanVillage_CamSpeed(0xcccc, SPLIT_CONSTANT(0x1999));
   Func_020049fc()->motionFlags = 0;
   Camera_MoveWithinMapBounds(PIXELS(120), 0x280000, PIXELS(246), 1);
-  ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+  ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, 0x13333, SPLIT_CONSTANT(0x9999));
   ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 120, 264);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   rod = Func_02001fec();
@@ -64,7 +64,7 @@ void Func_02002068(void) {
   ShamanVillage_ObjSpeed(17, 0x13333, 0x9999);
   Actor_SetPositionAndReset(17, 136, 232);
   Func_020049a4(17, 0);
-  ShamanVillage_ObjSpeed(16, 0x13333, 0x9999);
+  ShamanVillage_ObjSpeed(16, 0x13333, SPLIT_CONSTANT(0x9900, 153));
   Actor_SetPositionAndReset(16, 104, 232);
   Func_020049a4(16, 0);
   Motion_SetModeAndWaitAnimation(15, 3);
@@ -76,7 +76,7 @@ void Func_02002068(void) {
   ShamanVillage_ObjEmoteWait(18, 258);
   FieldEvent_Wait(20);
   Func_020049a4(18, 0);
-  ShamanVillage_ObjSpeed(15, 0xcccc, 0x6666);
+  ShamanVillage_ObjSpeed(15, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
   Actor_SetPositionAndReset(15, 120, 252);
   FieldEvent_Wait(40);
   /* FAKEMATCH: the emote and the frames are loaded before the actor; see
@@ -185,7 +185,7 @@ void Func_02002068(void) {
     Func_020049a4(15, 0);
     Actor_SetModeById(15, 3);
     Func_020049a4(15, 0);
-    Func_020049e4(SPLIT_CONSTANT(0x6600, 102), 0xccc);
+    Func_020049e4(SPLIT_CONSTANT(SPLIT_CONSTANT(0x6600, 102)), 0xccc);
     Camera_MoveWithinMapBounds(PIXELS(180), 0x200000, z, 1);
   }
   object = Actor_GetById(16);
@@ -222,7 +222,7 @@ void Func_02002068(void) {
   Func_020049bc(6, 0);
   Func_020049a4(6, 0);
   ShamanVillage_ObjTurn(5, FACING_WEST);
-  Func_020049a4(SPLIT_CONSTANT(0x2000, 5), 0);
+  Func_020049a4(SPLIT_CONSTANT(SPLIT_CONSTANT(0x2000, 5)), 0);
   Func_020049a4(18, 0);
   ShamanVillage_ObjTurn(18, FACING_WEST);
   Func_020049a4(18, 0);
@@ -239,7 +239,7 @@ void Func_02002068(void) {
   Actor_SetMovementTypeById(7, gData_02004f08);
   Actor_SetMovementTypeAndWaitById(18, gData_02004f08);
   FieldEvent_Wait(20);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
-  GameFlag_SetBit(0x9e1);
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 2)));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 225));
   Func_020048cc();
 }

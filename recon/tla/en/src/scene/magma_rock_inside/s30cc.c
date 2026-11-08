@@ -45,14 +45,14 @@ void Func_020030cc(void) {
   Func_02004d40();
   Func_02004e90(0);
   FieldMessage_Show(MsgBlazeTabletInscription, 1);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 250)) != 0) {
+  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x9fa)) != 0) {
     Func_02004d48();
   } else {
     Func_02004dd0((s32)MsgBlazeTabletInscription);
     EVENT_WORK->messageId++;
-    Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xb300, 51),
-          SPLIT_CONSTANT(0x5900, 153));
-    Call3(Actor_SetSpeedParameters, 5, SPLIT_CONSTANT(0xb300, 51), SPLIT_CONSTANT(0x5900, 153));
+    Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xb333),
+          SPLIT_CONSTANT(0x5999));
+    Call3(Actor_SetSpeedParameters, 5, SPLIT_CONSTANT(0xb333), SPLIT_CONSTANT(0x5999));
     Func_02004da8(5, gMainRoutineWork.currentOwner);
     FieldEvent_Wait(1);
     Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner, 256,
@@ -84,17 +84,17 @@ void Func_020030cc(void) {
     FieldMessage_Show(MsgBlazeTabletInscription + 2, 1);
 #endif
     Call3(Func_02004d10, 0x50000, 0x70000, 0x10000);
-    Call3(Func_02004d10, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+    Call3(Func_02004d10, -1, -1, SPLIT_CONSTANT(0xe666));
     Call0(Func_02004d18);
     Call2(Func_02002cd0, 8, 5);
     Party_LearnAbility(5, 0x9a);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 250));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x9fa));
     Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 5, 0);
     FieldEvent_Wait(10);
     Actor_SetModeById(5, 3);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
     FieldEvent_Wait(20);
-    Call3(Actor_SetSpeedParameters, 5, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+    Call3(Actor_SetSpeedParameters, 5, 0x13333, SPLIT_CONSTANT(0x9999));
     Actor_SetModeById(5, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != 0)

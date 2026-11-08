@@ -17,7 +17,7 @@ void Func_02000418(s32 mode, s32 id, s32 x, s32 z) {
     Func_020005c8(id, x << 16, z << 16);
     object->y = 0x200000;
     object->motionFlags = 3;
-    object->gravity = SPLIT_CONSTANT(0x1700, 10);
+    object->gravity = SPLIT_CONSTANT(0x170a);
     wait(50);
   }
 }

@@ -94,7 +94,7 @@ s32 Func_02003894(void) {
     /* FAKEMATCH: loads the party base before it builds the field offset. */
     __asm__("");
     if (party->value == 1) {
-      if (GameFlag_Test(SPLIT_CONSTANT(0x300, 65)))
+      if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 65))))
         ShrineOfTheSeaGod_ObjPlaceAt(14, 360 << 16, 216 << 16, 0);
       else if (GameFlag_Test(0x342)) {
         /* FAKEMATCH: the function-scope angle temporary preserves its early
@@ -105,7 +105,7 @@ s32 Func_02003894(void) {
       }
     }
     GameFlag_ClearBit(0x340);
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 65));
+    GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 65)));
     GameFlag_ClearBit(0x342);
   }
   return 0;

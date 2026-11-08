@@ -43,7 +43,7 @@ void Func_02003a8c(void) {
   s8 *prize;
   s32 item;
 
-  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
+  ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = SPLIT_CONSTANT(0x209);
   Func_02001c44(13);
   Func_02001c44(16);
   Func_02001c44(17);
@@ -53,9 +53,9 @@ void Func_02003a8c(void) {
   Actor_SetPartAttribute(Actor_GetById(15), 2);
   Actor_SetPartAttribute(Actor_GetById(8), 0);
   Actor_SetPartAttribute(Actor_GetById(9), 3);
-  if (!Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x900, 229)))
+  if (!Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x9e5)))
     return;
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x900, 229));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x9e5));
   if (gMainRoutineWork.entrance == 18) {
     diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
     Func_0200406c();

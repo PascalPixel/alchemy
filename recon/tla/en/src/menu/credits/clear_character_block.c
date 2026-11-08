@@ -2,6 +2,7 @@
 /// Tiles: clear half of the BG character and palette storage.
 
 #include "dma.h"
+#include "call.h"
 #include "io_reg.h"
 #include "types.h"
 
@@ -27,8 +28,8 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alt) {
   }
   fill = v;
   Dma_Set((const void *)&fill, (void *)vram,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 7680, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 7680, SPLIT_CONSTANT(REG_DMA3));
   fill = 0;
   Dma_Set((const void *)&fill, (void *)pal,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, SPLIT_CONSTANT(REG_DMA3));
 }

@@ -16,7 +16,7 @@ void Func_02000138(s32 direction) {
 
   if ((u32)(direction - 1) <= 1) {
     if (state->field16[0] <= 0) {
-      if (GameFlag_Test(SPLIT_CONSTANT(0x900, 255))) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x9ff))) {
         if (Func_02000330(0) == 0)
           /* FAKEMATCH(wrapper): Call3 kept; as a direct call, 2 of 93
            * instructions differ in tla-en. */
@@ -34,8 +34,8 @@ void Func_02000138(s32 direction) {
   if ((u32)(direction - 3) <= 1) {
     state->field16[0]++;
     if (state->field16[0] > 3) {
-      if (GameFlag_Test(SPLIT_CONSTANT(0x900, 255)) && Func_020000fc(0) == 0)
-        GameFlag_SetBit(SPLIT_CONSTANT(0x300, 133));
+      if (GameFlag_Test(SPLIT_CONSTANT(0x9ff)) && Func_020000fc(0) == 0)
+        GameFlag_SetBit(SPLIT_CONSTANT(0x385));
       Func_02005a68(128);
       ObjectEffect_StartContextEffect26();
       Func_02005990(direction + 4);

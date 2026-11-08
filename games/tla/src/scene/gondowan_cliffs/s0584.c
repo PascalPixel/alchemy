@@ -19,7 +19,7 @@ void Func_02000584(void) {
   object->priorityFlags = 0;
   object->motionFlags = 0;
   Call6(Func_020011d4, 79, 28, 1, 1, 81, 28);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x201));
 }
 
 void Func_020005bc(void) {
@@ -33,10 +33,10 @@ void Func_020005bc(void) {
   object->terrainHeight = PIXELS(32);
   object->y = PIXELS(32);
   Call6(Func_020011d4, 115, 35, 1, 1, 117, 35);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x202));
 }
 
-void Func_02000600(void) { GameFlag_SetBit(SPLIT_CONSTANT(0x800, 133)); }
+void Func_02000600(void) { GameFlag_SetBit(SPLIT_CONSTANT(0x885)); }
 
 void Func_02000610(s32 unused, s32 cell) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
@@ -50,6 +50,6 @@ void Func_02000610(s32 unused, s32 cell) {
     Call3(Func_0200124c, 17, PIXELS(1912), PIXELS(728));
     object->terrainHeight = object->y =
         Map_GetTerrainHeight(0, object->x, object->z);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 134));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x886));
   }
 }

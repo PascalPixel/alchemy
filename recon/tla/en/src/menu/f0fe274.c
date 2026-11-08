@@ -59,7 +59,7 @@ static __inline__ void CopyWords_(void *destination, const void *source,
 
 s32 Func_080fe274(void) {
   struct OwnerMenuState *state =
-      (struct OwnerMenuState *)HeapSlot_Alloc(220, SPLIT_CONSTANT(0xc00, 236));
+      (struct OwnerMenuState *)HeapSlot_Alloc(220, SPLIT_CONSTANT(0xcec));
   void *palette = Heap_AllocEwram(64);
   void *tiles = Heap_AllocEwram(0x2800);
   s32 result = -1;
@@ -84,7 +84,7 @@ s32 Func_080fe274(void) {
   CopyWords_(palette, (void *)BG_PLTT, 64);
   CopyWords_(tiles, (void *)0x06004000, 0x2800);
   Palette_LightenHighlight(14);
-  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), SPLIT_CONSTANT(REG_DMA3));
   Dma_Set((void *)&BG_PLTT_COLOR(14, 4), (void *)&BG_PLTT_COLOR(0, 14),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0),

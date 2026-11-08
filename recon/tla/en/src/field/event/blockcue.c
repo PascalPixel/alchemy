@@ -90,7 +90,7 @@ void Func_080e43a4(struct PictureSource *source, void *buffer, s32 size) {
             DMA_COPY_WORDS((u32)(BattleEffect_DecodePictureCopyEnd -
                                  BattleEffect_DecodePictureCode) >>
                            2),
-            REG_DMA3);
+            SPLIT_CONSTANT(REG_DMA3));
     decode = Ram_HeapSlots->unk4c[1];
     decoderLoaded = 0;
   }

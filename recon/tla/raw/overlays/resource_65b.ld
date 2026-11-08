@@ -7,7 +7,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/madra_drawbridge/s0054.o"(.text)
         "*/games/tla/src/scene/madra_drawbridge/scene_events.o"(.text)
         "*/recon/tla/raw/src/scene/madra_drawbridge/s00c8.o"(.text)
-        "*/recon/tla/raw/src/scene/madra_drawbridge/s0224.o"(.text)
+        "*/games/tla/src/scene/madra_drawbridge/s0224.o"(.text)
         "*/games/tla/src/scene/madra_drawbridge/s0280.o"(.text)
         "*/games/tla/src/scene/madra_drawbridge/prepare.o"(.text)
         "*/games/tla/src/scene/madra_drawbridge/import.o"(.text)

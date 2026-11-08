@@ -38,19 +38,19 @@ void Func_020000c0(void) {
   }
   base = gData_020036c4 / 8 % 6;
   Iwram_CopyWords(gData_0200397c, Data_020039bc, 32);
-  if (entrance == 1 && Flag_IsSet(SPLIT_CONSTANT(0xa00, 50))) {
+  if (entrance == 1 && Flag_IsSet(SPLIT_CONSTANT(0xa32))) {
     for (i = 0; i <= 5; i++)
       gData_0200397c[i + 10] = gData_0200393c[(base + i) % 6 + 10];
   }
-  if (entrance == 2 && Flag_IsSet(SPLIT_CONSTANT(0xa00, 51))) {
+  if (entrance == 2 && Flag_IsSet(SPLIT_CONSTANT(0xa33))) {
     for (i = 0; i <= 5; i++)
       gData_0200397c[i + 10] = gData_0200393c[(base + i) % 6 + 20];
   }
-  if (entrance == 3 && Flag_IsSet(SPLIT_CONSTANT(0xa00, 52))) {
+  if (entrance == 3 && Flag_IsSet(SPLIT_CONSTANT(0xa34))) {
     for (i = 0; i <= 5; i++)
       gData_0200397c[i + 10] = gData_0200393c[(base + i) % 6 + 26];
   }
-  if (entrance == 4 && Flag_IsSet(SPLIT_CONSTANT(0xa00, 53))) {
+  if (entrance == 4 && Flag_IsSet(SPLIT_CONSTANT(0xa35))) {
     for (i = 0; i <= 5; i++)
       gData_0200397c[i + 10] = gData_0200393c[(base + i) % 6 + 4];
   }

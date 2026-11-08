@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "task.h"
 #include "io_reg.h"
 #include "heap_release.h"
@@ -48,13 +49,13 @@ void Func_080d64b8(void) {
   Task_Remove(Func_080d5ff8);
   Task_Remove(Func_080d607c);
   {
-    volatile u16 *dma = REG_DMA0;
+    volatile u16 *dma = SPLIT_CONSTANT(REG_DMA0);
 
     u16 control;
 
     control = dma[5];
-    dma[5] = control & 0xc5ff; // Clear start timing and repeat.
-    dma[5] &= 0x7fff;          // Stop.
+    dma[5] = control & SPLIT_CONSTANT(0xc5ff); // Clear start timing and repeat.
+    dma[5] &= SPLIT_CONSTANT(0x7fff);          // Stop.
     (void)dma[5];
   }
 }

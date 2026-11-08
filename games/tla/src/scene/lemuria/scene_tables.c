@@ -126,7 +126,7 @@ void Func_02000278(s32 door) {
   const struct WarpTarget *warp = &gData_020021bc;
   s32 mode = 0;
 
-  if (door == 3 && GameFlag_Test(SPLIT_CONSTANT(0x900, 106))) {
+  if (door == 3 && GameFlag_Test(SPLIT_CONSTANT(0x96a))) {
     Func_02001c6c((s32)&MsgTheDoorIs);
     Func_02001c84(-1, 0);
     return;

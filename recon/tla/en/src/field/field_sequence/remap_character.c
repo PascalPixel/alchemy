@@ -17,7 +17,7 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
       sprite = 9;
       if (gMainRoutineWork.map != (s32)&SceneId_Ov64a)
         sprite = 11;
-      if (GameFlag_Test(SPLIT_CONSTANT(0x7e0, 255)))
+      if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x7e0, 255))))
         sprite++;
     }
   }

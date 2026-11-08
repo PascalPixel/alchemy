@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "dma.h"
@@ -86,7 +87,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
       BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BG2PA = 0xaa;
-  BattleEffect_FetchRectangleBlitters(effect->side, draw);
+  ValueLr2((s32 (*)())BattleEffect_FetchRectangleBlitters, (s32)(effect->side), (s32)(draw));
   work->transferMode = 2;
   work->transferValue = 75;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,

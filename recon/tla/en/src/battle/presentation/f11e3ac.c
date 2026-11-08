@@ -165,7 +165,7 @@ struct SavedBattleObj *Func_0811e3ac(struct BattlePlan *plan,
   actor = BattleObject_Get(plan->actorId)->object;
   Actor_SetMode(actor, 3);
   Actor_SetAnimationSpeedFar((struct ActorView *)actor, 16);
-  QueueIoWriteDelay2(SPLIT_CONSTANT(0x4000000, 80), 0x3f40);
+  QueueIoWriteDelay2(SPLIT_CONSTANT(0x4000050), 0x3f40);
   Sound_PlayFar(154);
   wait(10);
   if (single) {

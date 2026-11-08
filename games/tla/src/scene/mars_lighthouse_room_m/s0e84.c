@@ -73,7 +73,7 @@ s32 Func_02000e84(void) {
     if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
       Func_02002118();
-      if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 49))) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0xa31))) {
         Func_02003170(30, 12, 4, 3, 12, 12);
         Func_02003178(64, 64, 4, 3, 76, 12);
       }
@@ -87,13 +87,13 @@ s32 Func_02000e84(void) {
       Func_02000058(13, 5);
       Func_02000058(14, 2);
       Func_02000058(15, 3);
-      if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 50)))
+      if (!GameFlag_Test(SPLIT_CONSTANT(0xa32)))
         Func_020031f8(12, 0, 0);
-      if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 51)))
+      if (!GameFlag_Test(SPLIT_CONSTANT(0xa33)))
         Func_020031f8(13, 0, 0);
-      if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 52)))
+      if (!GameFlag_Test(SPLIT_CONSTANT(0xa34)))
         Func_020031f8(14, 0, 0);
-      if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 53)))
+      if (!GameFlag_Test(SPLIT_CONSTANT(0xa35)))
         Func_020031f8(15, 0, 0);
     }
   }

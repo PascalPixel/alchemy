@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 #include "task.h"
 #include "system.h"
@@ -60,7 +61,7 @@ void Task_RunPass(s32 pass) {
       if (TASK_STATE_HIGH(task) == pass) {
         TaskIntFunc func = *(TaskIntFunc *)&task->func;
 
-        func();
+        ValueLr0((s32 (*)())func);
       }
       goto next_task;
     }
@@ -124,7 +125,7 @@ void Task_RunPassBeforeVBlankTasks(s32 pass) {
       if (TASK_STATE_HIGH(task) == pass) {
         TaskIntFunc func = *(TaskIntFunc *)&task->func;
 
-        func();
+        ValueLr0((s32 (*)())func);
       }
       goto next_task;
     }

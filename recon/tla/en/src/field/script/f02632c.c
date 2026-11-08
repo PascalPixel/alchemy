@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "input.h"
 #include "frame.h"
@@ -62,7 +63,7 @@ s32 Func_0802632c(struct Actor *object) {
   }
 
   angle = gData_0802ec5c[(gInput.held >> 4) & 15];
-  if ((u16)angle == 0xffff) {
+  if ((u16)angle == SPLIT_CONSTANT(0xffff)) {
     collision |= 4;
   } else {
     collision = 0;

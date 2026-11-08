@@ -66,14 +66,14 @@ void Func_081263fc(s32 mode, s32 resource, s32 level) {
     ColorBuffer_Scale(palette, (u16 *)0x050000c0,
                       session->brightness = 0x10000 - level * 1092, 128);
   if (session->keepBackdropPalette == 0) {
-    Dma_Set((void *)0x05000200, (void *)SPLIT_CONSTANT(0x5000000, 160), SPLIT_CONSTANT(0x80000000, 16), REG_DMA3);
-    *(u16 *)SPLIT_CONSTANT(0x5000000, 188) = *(u16 *)0x050001e8;
+    Dma_Set((void *)0x05000200, (void *)SPLIT_CONSTANT(0x50000a0), SPLIT_CONSTANT(0x80000010), REG_DMA3);
+    *(u16 *)SPLIT_CONSTANT(0x50000bc) = *(u16 *)0x050001e8;
   }
   Graphics_BuildSequentialTileTable((void *)0x06003800);
   Func_08125bb8((void *)0x0600f800);
   Iwram_ClearWords((void *)0x0600ffc0, 64);
   if (view->mode == 0)
-    Task_Add(BattleStaging_UpdateHBlankScroll, SPLIT_CONSTANT(0xc00, 255));
+    Task_Add(BattleStaging_UpdateHBlankScroll, SPLIT_CONSTANT(0xcff));
   view->mode = mode;
   if (mode == 1)
     REG_BG1CNT = 0x1f83;

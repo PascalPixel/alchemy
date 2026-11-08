@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -109,7 +110,7 @@ again:
       sprite->scaleX = sprite->scaleY = 0x10000;
       motion = &work->arrowMotion;
       pos[0] = pos[1] = pos[2] = 0;
-      Vector_AddPolarOffset(0x2666, scene->angle + 0x8000, pos);
+      Vector_AddPolarOffset(SPLIT_CONSTANT(0x2666), scene->angle + 0x8000, pos);
       motion->velocityX = pos[0];
       motion->velocityY = pos[1];
       motion->velocityZ = pos[2];
@@ -272,7 +273,7 @@ again:
       sprite->oam.index = work->bowTile;
       break;
     case 72:
-      work->frame = 999;
+      work->frame = SPLIT_CONSTANT(999);
       break;
     }
   }

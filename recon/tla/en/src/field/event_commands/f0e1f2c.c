@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -101,7 +102,7 @@ void Func_080e1f2c(void) {
   // volatile keeps the depth store before the scale stores.
   *(volatile s16 *)&sprite->depth =
       BattleEffect_GetObjectDepth(scene->mainObject) + 1;
-  *(volatile s32 *)&sprite->scaleX = 0x6666;
+  *(volatile s32 *)&sprite->scaleX = SPLIT_CONSTANT(0x6666);
   *(volatile s32 *)&sprite->scaleY = 0x6666;
   sprite->angle = scene->angle;
   pos[0] = scene->mainObject->x;

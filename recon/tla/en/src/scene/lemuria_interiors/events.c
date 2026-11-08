@@ -78,7 +78,7 @@ void Func_020001ec(s32 arg0, s32 arg1) {
 
   object0 = Actor_GetById(arg1);
   value1 = object0->angle;
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 103));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x967));
   Func_0200282c();
   Func_020028fc(0);
   Value3((s32 (*)())Func_020028dc, arg1, 0x101, 30);

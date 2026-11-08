@@ -35,7 +35,7 @@ void Func_02001958(s32 a0) {
   s32 t37;
   s32 t40;
 
-  Call1(GameFlag_SetBit, SPLIT_CONSTANT(0x800, 180));
+  Call1(GameFlag_SetBit, SPLIT_CONSTANT(0x8b4));
   Func_02001be4();
   Call1(Func_02001cfc, 0);
   Call1(Func_02001c74, (s32)MsgAlhafra28);

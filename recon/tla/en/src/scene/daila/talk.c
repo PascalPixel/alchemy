@@ -6,7 +6,7 @@
 void Daila_TalkBeenBefore(void) {
   s32 msg;
 
-  if (Import_GameFlagIsSet(SPLIT_CONSTANT(0x800, 67)) == 0) {
+  if (Import_GameFlagIsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 67))) == 0) {
     Import_EventStart();
     Import_EventResolvePendingActions(0);
     msg = (s32)MsgDailaBeenBefore;
@@ -20,7 +20,7 @@ void Daila_TalkBeenBefore(void) {
       Import_EventSetMessageId(msg + 2);
     }
     Import_EventShowMessageAndWait(8, 0);
-    Import_GameFlagSet(SPLIT_CONSTANT(0x800, 67));
+    Import_GameFlagSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 67)));
     Import_EventEnd();
   } else {
     Import_EventSetMessageId((s32)MsgDailaWaveNoInjuries);

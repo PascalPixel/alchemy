@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 #include "irq_lock.h"
 #include "task.h"
@@ -45,7 +46,7 @@ void System_WaitForFrameInterrupt(void) {
     if (SoundDriver_EnterVBlankUpdate() == 0) {
       void (*render)(s32) = IwramSoundRenderVBlank;
 
-      render(8);
+      ValueLr1((s32 (*)())render, (s32)(8));
     }
     gData_03001138.unk03 = 0;
     while (!(gData_0300121c & 1))

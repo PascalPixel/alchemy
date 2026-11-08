@@ -64,7 +64,7 @@ void Func_0200129c(struct Actor *gift) {
   Func_02003f2c(9, 0);
   Func_02003f2c(9, 0);
   Call2((void (*)())Func_02003f3c, 9, 0x5000);
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, SPLIT_CONSTANT(0xcccc));
   guide->update = Func_02000df8;
   Actor_SetPositionAndReset(9, 296, 452);
   guide->update = 0;
@@ -92,11 +92,11 @@ void Func_0200129c(struct Actor *gift) {
   Actor_SetModeById(9, 3);
   FieldEvent_Wait(20);
   Func_02003f2c(9, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0xcccc, SPLIT_CONSTANT(0x6600, 102));
+  Call3((void (*)())Actor_SetSpeedParameters, 9, 0xcccc, SPLIT_CONSTANT(0x6666));
   gift->speedLimit = 0xcccc;
-  gift->acceleration = SPLIT_CONSTANT(0x6600, 102);
+  gift->acceleration = SPLIT_CONSTANT(0x6666);
   guide->update = Func_02000df8;
-  Actor_ResetAndSetPosition(9, 288, SPLIT_CONSTANT(0x200, 26));
+  Actor_ResetAndSetPosition(9, 288, SPLIT_CONSTANT(0x21a));
   FieldEvent_Wait(20);
   Func_02003fc4();
   Func_020034ec();
@@ -108,5 +108,5 @@ void Func_0200129c(struct Actor *gift) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02003f7c(3);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 165));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xaa5));
 }

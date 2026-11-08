@@ -12,7 +12,7 @@ void Func_02003548(void) {
   /* FAKEMATCH: forwarding the first flag call through call.h keeps 0x302 from
    * being shared with the script calls, which build it again after the scene
    * test (a direct call: differ 56). */
-  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x300, 2));
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x302));
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov692Room4) {
     s16 *script = gData_0200525c;
 

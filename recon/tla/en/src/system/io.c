@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
 #include "system.h"
@@ -118,7 +119,7 @@ void IoWriteQueue_FlushPending(void) {
 
       routine = (QueueFlushRoutine)routine_bytes;
       Dma_Set(Resource_ExecuteTransferCode, (void *)routine,
-              (sizeof(routine_bytes) >> 2) | control, REG_DMA3);
+              (sizeof(routine_bytes) >> 2) | control, SPLIT_CONSTANT(REG_DMA3));
       routine(queue, count);
       queue->count = 0;
     }

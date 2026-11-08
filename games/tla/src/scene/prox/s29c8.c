@@ -23,7 +23,7 @@ void Func_020029c8(void) {
   Func_020045dc(0);
   Task_Add((s32)Func_020029a4, 0x480);
   if (FIELD_AT(gMainRoutineWork, s16, 482) == 0x14) {
-    t2 = GameFlag_Test(SPLIT_CONSTANT(0x900, 197));
+    t2 = GameFlag_Test(SPLIT_CONSTANT(0x9c5));
     if (t2 == 0) {
       Func_02001cf0();
     }

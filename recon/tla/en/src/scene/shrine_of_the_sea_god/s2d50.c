@@ -17,7 +17,7 @@ void Func_02002d50(void) {
   struct ShrineOfTheSeaGodEventWork *work;
   struct ShrineOfTheSeaGodObject *object;
 
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 124)))
+  if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 124))))
     return;
   if (GameFlag_Test(115))
     return;
@@ -69,7 +69,7 @@ void Func_02002d50(void) {
 
       if (current == 2)
         Func_02002a2c();
-      else if (current == 5 && !GameFlag_Test(SPLIT_CONSTANT(0x200, 6)))
+      else if (current == 5 && !GameFlag_Test(SPLIT_CONSTANT(0x206)))
         Func_02002c88();
     }
     break;
@@ -80,7 +80,7 @@ void Func_02002d50(void) {
   case 20:
     if (object->state == 3)
       Func_020029dc();
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 6));
+    GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x206)));
     break;
   }
 }

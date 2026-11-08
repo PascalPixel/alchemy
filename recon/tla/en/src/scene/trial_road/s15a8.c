@@ -3,13 +3,13 @@
 void Func_02002dec(void);
 void Func_0200322c(void);
 
-void Func_020015a8(void) { GameFlag_SetBit(SPLIT_CONSTANT(0x18a, 255)); }
+void Func_020015a8(void) { GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x18a, 255))); }
 
 void Func_020015b8(void) { Func_02005a50_(68, 6, 1, 21, 13, 64, 64); }
 
 void Func_020015d8(void) {
   Func_02005a50_(68, 6, 1, 21, 13, 64, 64);
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 185))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x9b9))) {
     Func_02005a60(249, 72, 152);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b9;
     gMainRoutineWork.battleRule24b = 2;
@@ -38,7 +38,7 @@ void Func_020016c8(void) {
 }
 
 void Func_02001754(s32 sound) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 255))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 255)))) {
     if (gTrialRoadState->mirrored == 0) {
       Map_Stamp(26, 79, 1, 2, 13, 79);
       Map_CopyCells(78, 18, 1, 1, 77, 18);
@@ -49,15 +49,15 @@ void Func_02001754(s32 sound) {
     if (sound)
       Func_02005a68(138);
   }
-  GameFlag_SetBit(SPLIT_CONSTANT(0x184, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x184, 255)));
 }
 
 void Func_020017e0(void) {
   struct MainRoutineWork *party;
-  s32 count = GameFlag_Test(SPLIT_CONSTANT(0x300, 129));
+  s32 count = GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 129)));
 
   count += GameFlag_Test(0x382);
-  count += GameFlag_Test(SPLIT_CONSTANT(0x284, 255));
+  count += GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x284, 255)));
   count += GameFlag_Test(0x384);
   if (GameFlag_Test(0x385))
     Func_02002dec();
@@ -78,7 +78,7 @@ void Func_0200185c(s32 a, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 8) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 252));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 252)));
     object->motionFlags = 0;
     object->y -= 0x10000;
   }

@@ -18,11 +18,11 @@ void Func_02000cd8(s32 unused, s32 id) {
     GameFlag_SetByte(0x310, column);
     GameFlag_SetByte(0x318, row);
     GameFlag_ClearBit_(0x320);
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 33));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x321));
     if (column == 7 && row == 35)
       GameFlag_SetBit(0x320);
     if (column == 15 && row == 35)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 33));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x321));
   } else if (id == 25) {
     struct Actor *object = Actor_GetById(25);
 

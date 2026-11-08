@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 
@@ -13,7 +14,7 @@ void Func_080ec16c(s32 x, s32 z) {
 
   if (object != NULL) {
     x >>= 16;
-    x = ((x << 14) + 0x434000) / 853;
+    x = ((x << 14) + 0x434000) / SPLIT_CONSTANT(853);
     z >>= 16;
     object->x = x << 16;
     object->z = (((z << 14) + 0x1c0000) / 640) << 16;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "system.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -188,7 +189,7 @@ void Func_080de21c(void) {
     }
   }
 
-  event = Func_080ce458(0x50000005, 4, Func_080ce31c(4));
+  event = Func_080ce458(SPLIT_CONSTANT(0x50000005), 4, Func_080ce31c(4));
   if (event != NULL)
     Field_RunPsynergyEvent(event, scene->firstObjectId, scene->secondObjectId);
   wait(10);

@@ -3,6 +3,7 @@
 /// storage, its colours greyed.
 
 #include "types.h"
+#include "call.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
@@ -50,7 +51,7 @@ void Func_081a052c(u32 resourceId, s32 alternate) {
   size = (u32)BattleEffect_ExpandCodeSize;
   decoder = (PackedDecoder)Heap_Alloc(size);
   Dma_Set(BattleEffect_ExpandCode, decoder, DMA_COPY_WORDS(size >> 2),
-          REG_DMA3);
+          SPLIT_CONSTANT(REG_DMA3));
   decoder(resourceData + 256, tileDestination, paletteOffset);
   Heap_Release(decoder);
 

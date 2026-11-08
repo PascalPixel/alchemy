@@ -15,7 +15,7 @@ void Func_020000d8(s32 unused, s32 id) {
   s32 z = object->z >> 20;
 
   if (x == 8 && z == 36)
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 97));
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 97)))
+    GameFlag_SetBit(SPLIT_CONSTANT(0x961));
+  if (GameFlag_Test(SPLIT_CONSTANT(0x961)))
     Func_02000838();
 }

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -52,7 +53,7 @@ void HeapSlot_Release(s32 slot);
 void Func_080e9940(void);
 
 void Func_080e9af4(void) {
-  struct GlowWork *work = HeapSlot_Alloc(92, 0x1038);
+  struct GlowWork *work = HeapSlot_Alloc(92, SPLIT_CONSTANT(0x1038));
   struct GlowScene *scene = Ram_HeapSlots->effectWork;
   struct GlowEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *player = scene->mainObject;
@@ -67,7 +68,7 @@ void Func_080e9af4(void) {
   s32 i;
   s32 n;
 
-  pending = Func_080ce458(0x50000005, scene->kind, Func_080ce31c(scene->kind));
+  pending = Func_080ce458(SPLIT_CONSTANT(0x50000005), scene->kind, Func_080ce31c(scene->kind));
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_RingOrb), work);
   slot = Resource_FindFreeEntry();
   tile = VramCache_Load(slot, 0x800, work);

@@ -87,9 +87,9 @@ void Func_020014e0(void) {
   Call1((void (*)())Func_02003fa4, 0);
   if (PartyInventory_FindOwner(455) != -1) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x102, 255)) != 0) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x201)) != 0) {
       Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
-            SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+            SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
       /* FAKEMATCH(temporary): the form kept; as leader->update = Func_02000df8,
        * 94 of 569 instructions differ in tla-en. */
       a = (struct Actor *)Func_02000df8;
@@ -109,7 +109,7 @@ void Func_020014e0(void) {
       if (answer == 0) {
         Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, 0x8000);
         Call3((void (*)())Actor_SetSpeedParameters,
-              gMainRoutineWork.currentOwner, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+              gMainRoutineWork.currentOwner, 0x19999, SPLIT_CONSTANT(0xcccc));
         leader->update = (void (*)(void))a;
         STEP(gMainRoutineWork.currentOwner, 302, 424);
         SPAWN(a, b, answer)
@@ -128,7 +128,7 @@ void Func_020014e0(void) {
       Call2((void (*)())Func_02003f2c, 9, 0);
       Func_02003f54(gMainRoutineWork.currentOwner, 262, 20);
       Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
-            SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+            SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
       leader->update = Func_02000df8;
       // Default: a is set for real when object 163 is made.
       a = 0;
@@ -137,7 +137,7 @@ void Func_020014e0(void) {
       leader->update = 0;
       Call2((void (*)())Func_02003f3c, gMainRoutineWork.currentOwner, 0x8000);
       Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
-            0x19999, SPLIT_CONSTANT(0xcc00, 204));
+            0x19999, SPLIT_CONSTANT(0xcccc));
       leader->update = Func_02000df8;
       STEP(gMainRoutineWork.currentOwner, 302, 424);
       SPAWN(a, b, 0)
@@ -170,10 +170,10 @@ void Func_020014e0(void) {
         leader->update = 0;
         if (a != 0)
           Func_02003dfc(a);
-        Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x102, 255));
+        Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x201));
       }
     }
-  } else if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 165))) {
+  } else if (GameFlag_Test(SPLIT_CONSTANT(0xaa5))) {
     Call3((void (*)())Actor_SetAngleToward, 9, gMainRoutineWork.currentOwner,
           0);
     Func_02003f24(MsgWantToGo);
@@ -185,13 +185,13 @@ void Func_020014e0(void) {
       Func_02003fbc();
       (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
       Call2((void (*)())Func_02003f2c, 9, 0);
-      ((u8 *)HeapSlot_AllocEwram(88, 664))[0x295] = 99;
+      ((u8 *)HeapSlot_AllocEwram(88, 664))[SPLIT_CONSTANT(0x295)] = 99;
       /* FAKEMATCH(signature): Motion_SetModeAndWaitAnimation declared to return
        * s32; as its own void, 2 of 569 instructions differ in tla-en. */
       Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
       Call2((void (*)())Func_02003f3c, 9, 0x5000);
       Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
-            0x19999, SPLIT_CONSTANT(0xcc00, 204));
+            0x19999, SPLIT_CONSTANT(0xcccc));
       Call3((void (*)())Actor_Jump, gMainRoutineWork.currentOwner, 6, 0);
       Call3((void (*)())Actor_SetPositionAndCommit,
             gMainRoutineWork.currentOwner, 296, 452);
@@ -201,15 +201,15 @@ void Func_020014e0(void) {
       Call1((void (*)())FieldEvent_Wait, 20);
       Call2((void (*)())Func_02003f2c, 9, 0);
       Func_02003fc4();
-      Call3((void (*)())Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
-      Call3((void (*)())Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+      Call3((void (*)())Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
+      Call3((void (*)())Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
       Actor_GetById(9)->update = Func_02000df8;
-      Call3((void (*)())Actor_ResetAndSetPosition, 9, 288, SPLIT_CONSTANT(0x200, 26));
+      Call3((void (*)())Actor_ResetAndSetPosition, 9, 288, SPLIT_CONSTANT(0x21a));
       Call1((void (*)())FieldEvent_Wait, 40);
       Func_02003fc4();
       Func_020034ec();
       Actor_GetById(10)->update = Func_02000df8;
-      Call3((void (*)())Actor_ResetAndSetPositionInMode2, 10, 288, SPLIT_CONSTANT(0x200, 26));
+      Call3((void (*)())Actor_ResetAndSetPositionInMode2, 10, 288, SPLIT_CONSTANT(0x21a));
       Call1((void (*)())FieldEvent_Wait, 20);
       *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = STORED_AT_1AC;
       Event_FinishScreenTransition();

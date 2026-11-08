@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -24,7 +25,7 @@ void BattleEffect_InitializeBuffers(void) {
   Dma_Set(&zero, buffer,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
               (sizeof(*buffer) / 4),
-          REG_DMA3);
+          SPLIT_CONSTANT(REG_DMA3));
   Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(112), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, (u8 *)buffer->palette + 0x1c0, DMA_COPY_WORDS(112),
           REG_DMA3);

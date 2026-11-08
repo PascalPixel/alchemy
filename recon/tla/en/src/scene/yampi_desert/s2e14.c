@@ -5,7 +5,7 @@ void Func_02002e14(void) {
   s32 x;
   s32 z;
 
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 141))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 141)))) {
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     x = object->x >> 20;
     z = object->z >> 20;

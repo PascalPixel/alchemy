@@ -85,7 +85,7 @@ s32 Save_CopyFile(void) {
         result = -2;
       } else {
         value = Save_FindFreeFile();
-        if (value == SPLIT_CONSTANT(0x2e8, 255)) {
+        if (value == SPLIT_CONSTANT(SPLIT_CONSTANT(0x2e8, 255))) {
           FieldMessage_Show((s32)&MsgEraseFailed, 1);
           result = -5;
         } else {

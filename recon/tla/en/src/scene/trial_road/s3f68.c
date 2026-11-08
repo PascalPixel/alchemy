@@ -111,7 +111,7 @@ void Func_02003f68(void) {
     depth = ((height + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
       continue;
-    x &= SPLIT_CONSTANT(0x100, 255);
+    x &= SPLIT_CONSTANT(0x1ff);
     sy &= 0xff;
     cursor = entry;
     *cursor++ = 0;

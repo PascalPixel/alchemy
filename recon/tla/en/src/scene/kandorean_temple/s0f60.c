@@ -37,7 +37,7 @@ void Func_02000f60(void) {
   timerEnd = 2999;
   if (*timer <= timerEnd) {
     statue = Actor_GetById(9);
-    flag = GameFlag_Test(SPLIT_CONSTANT(0x300, 1));
+    flag = GameFlag_Test(SPLIT_CONSTANT(0x301));
     t = *timer;
     if (flag) {
       if (t <= 316) {

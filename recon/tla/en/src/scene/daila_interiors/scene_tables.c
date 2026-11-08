@@ -18,7 +18,7 @@ extern const u8 gData_0200116c[];
 extern const u8 gData_020011b8[];
 
 const void *Scene_GetExits(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 115)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 115))))
     return gData_020011b8;
   return gData_0200116c;
 }
@@ -30,7 +30,7 @@ extern const u8 gData_020014a4[];
 const struct ActorPlacement *Scene_GetPlacements(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2)
     return (const struct ActorPlacement *)gData_020013fc;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 115)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 115))))
     return (const struct ActorPlacement *)gData_020014a4;
   return (const struct ActorPlacement *)gData_02001204;
 }

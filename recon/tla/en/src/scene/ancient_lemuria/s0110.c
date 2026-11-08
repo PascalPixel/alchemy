@@ -50,7 +50,7 @@ void Func_02000110(void) {
   if (Flag_IsSet(0x96c))
     return;
   object = Actor_GetById(12);
-  Flag_Set(SPLIT_CONSTANT(0x900, 108));
+  Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 108)));
   Flag_Set(0x96e);
   Actor_SetSingleChildFlags(Actor_GetById(12), 0);
   PlaceActor(12, 176 << 15, 216 << 16);

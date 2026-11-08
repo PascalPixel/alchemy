@@ -32,7 +32,7 @@ void Func_020003e4(void) {
     Func_02001010();
     Func_02001108(0);
     Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-    Func_020010d0(0x26666, SPLIT_CONSTANT(0x4c00, 204));
+    Func_020010d0(0x26666, SPLIT_CONSTANT(0x4ccc));
     Call4(Camera_MoveWithinMapBounds, PIXELS(520), -1, PIXELS(372), 1);
     Func_020010e0();
     Value3(Func_020010c8, 23, 264, 0);
@@ -40,16 +40,16 @@ void Func_020003e4(void) {
     Func_02001098((s32)MsgIVeBeenWaiting);
     Func_020010a8(23, 0);
     Call2(Func_020010b8, 23, 0xb000);
-    Call2(Func_020010a8, SPLIT_CONSTANT(0x2000, 23), 0);
+    Call2(Func_020010a8, SPLIT_CONSTANT(0x2017), 0);
     Func_020010e8()->motionFlags = 0;
-    Call2(Func_020010d0, 0x4cccc, SPLIT_CONSTANT(0x9900, 153));
+    Call2(Func_020010d0, 0x4cccc, SPLIT_CONSTANT(0x9999));
     Call4(Camera_MoveWithinMapBounds, PIXELS(440), PIXELS(32), PIXELS(368), 1);
     Func_020010e0();
     FieldEvent_Wait(40);
     Call4(Camera_MoveWithinMapBounds, PIXELS(432), PIXELS(32), PIXELS(232), 1);
     Func_020010e0();
     FieldEvent_Wait(40);
-    Func_020010d0(0x4cccc, SPLIT_CONSTANT(0x9900, 153));
+    Func_020010d0(0x4cccc, SPLIT_CONSTANT(0x9999));
     Camera_MoveWithinMapBounds(PIXELS(520), PIXELS(32), PIXELS(372), 1);
     Func_020010e0();
     FieldEvent_Wait(20);
@@ -62,7 +62,7 @@ void Func_020003e4(void) {
     Func_020010a8(23, 0);
     Func_020010a8(23, 0);
     Call2(Func_020010b8, 23, 0xb000);
-    Func_020010a8(SPLIT_CONSTANT(0x2000, 23), 0);
+    Func_020010a8(SPLIT_CONSTANT(0x2017), 0);
     Call2(Func_020010b8, 23, 0x3000);
     Func_020010a8(23, 0);
     Motion_SetModeAndWaitAnimation(23, 3);
@@ -76,7 +76,7 @@ void Func_020003e4(void) {
     Func_020010a8(23, 0);
     Motion_SetModeAndWaitAnimation(23, 3);
     Func_020010a8(23, 0);
-    Actor_SetSpeedParameters(23, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+    Actor_SetSpeedParameters(23, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
     Actor_GetById(23)->actionFlags &= ~1;
     Actor_SetPositionAndReset(23, 504, 360);
     FieldEvent_Wait(1);
@@ -84,7 +84,7 @@ void Func_020003e4(void) {
     Func_020010b8(23, 0x3000);
     Motion_SetModeAndWaitAnimation(23, 3);
     Func_020010a8(23, 0);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 177));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x9b1));
     Func_02001018();
   }
 }

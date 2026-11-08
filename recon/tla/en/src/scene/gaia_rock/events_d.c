@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "frame.h"
 #include "scene_tables.h"
@@ -24,7 +25,7 @@ void Func_02000670(void) {
       object->acceleration = 0x20000;
       object->speedLimit = 0x20000;
       object->scaleX = 0x8000;
-      object->scaleY = 0x1999;
+      object->scaleY = SPLIT_CONSTANT(0x1999);
       object->priorityFlags = phase;
       Func_02000e24(object, 2);
       Func_02000e3c(object, object->x - PIXELS(32), object->y, object->z);

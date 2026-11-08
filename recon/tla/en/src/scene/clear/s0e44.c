@@ -152,7 +152,7 @@ s32 Func_02000e44(void) {
                 gMainRoutineWork.paletteGlow[1]);
   palette = (u16 *)0x050001c0;
   Dma_Set((const void *)0x050001e0, palette, (DMA_ENABLE | DMA_32BIT) << 16 | 8,
-          (volatile u32 *)SPLIT_CONSTANT(0x4000000, 212));
+          (volatile u32 *)SPLIT_CONSTANT(0x40000d4));
   palette[4] = 0x6318;
   mode = Func_020022b0(1);
   if (mode == -1)

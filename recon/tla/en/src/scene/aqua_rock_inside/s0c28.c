@@ -12,14 +12,14 @@ void Func_02000c28(s32 unused, s32 id) {
   Func_02003cdc();
   Func_02003d7c();
   Func_02003eac(0);
-  Func_02003ef4(SPLIT_CONSTANT(0x12e, 255));
+  Func_02003ef4(SPLIT_CONSTANT(0x22d));
   for (i = 31; i >= 0; i--) {
     layer[3] += 0x10000;
     wait(4);
   }
   Func_02003d84();
   Func_02000b5c();
-  GameFlag_SetBit(SPLIT_CONSTANT(0x14a, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x249));
 }
 
 void Func_02000ca8(void) {

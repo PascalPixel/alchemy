@@ -22,8 +22,8 @@ void Func_020032c8(void) {
   leader->motionFlags = 0;
   wait(1);
   GameFlag_ClearBit(0x208);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x10a, 255));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 1));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x209));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x301));
   GameFlag_SetBit(0x300);
   Func_020053d8(162);
   Func_02000e60();
@@ -61,7 +61,7 @@ do {
   wait(1);
 } while (Actor_GetById(20)->scaleY > limit);
   gData_0200629c = 0;
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x10e, 255));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x20d));
   Func_020053d8(390);
   Func_02005230(12, 0, 0);
   Func_02005230(17, 0, 0);

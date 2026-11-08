@@ -39,6 +39,6 @@ next:
   offset += 2;
   if (i <= 4)
     goto next;
-  Dma_Set(p, (void *)0x05000184, SPLIT_CONSTANT(0x84000000, 2), REG_DMA3);
+  Dma_Set(p, (void *)0x05000184, SPLIT_CONSTANT(0x84000002), SPLIT_CONSTANT(REG_DMA3));
   gData_02002b34++;
 }

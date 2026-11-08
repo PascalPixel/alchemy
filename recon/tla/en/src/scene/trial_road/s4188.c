@@ -44,7 +44,7 @@ void Func_02004188(s32 a, s32 b) {
   Heap_Release(buffer);
   gauge->buffer = Heap_AllocEwram(0x3c0);
   gauge->field02 = b;
-  Task_Add(Func_02003da0, SPLIT_CONSTANT(0x400, 141));
+  Task_Add(Func_02003da0, SPLIT_CONSTANT(0x48d));
   Task_Add(Func_02003f68, 0x480);
   Actor_GetById(Func_02005a40())->priorityFlags |= 0x40;
 }

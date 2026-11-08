@@ -50,7 +50,7 @@ void Func_02001560(void) {
     leader->y = ride->y + rise;
     leader->z = ride->z;
     if (rise <= 0xbffff)
-      rise += SPLIT_CONSTANT(0x1900, 153);
+      rise += SPLIT_CONSTANT(0x1999);
     leader->angle = (u8)gFrameCount << 12;
     leader->priorityFlags ^= 2 << (gFrameCount & 1);
     wait(1);

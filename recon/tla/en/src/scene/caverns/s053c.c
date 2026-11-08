@@ -33,19 +33,19 @@ void Func_0200053c(s32 offset) {
   s32 height;
 
   offset <<= 3;
-  if (HALF_AT(work, 14) > 31 || Flag_Test(SPLIT_CONSTANT(0x114, 255))) {
+  if (HALF_AT(work, 14) > 31 || Flag_Test(SPLIT_CONSTANT(0x213))) {
     SET_CELL_HEIGHT(142 << 18, 134 << 18);
     SET_CELL_HEIGHT(146 << 18, 138 << 18);
     if (offset == 8)
       Flag_Set(0x213);
     else
       Flag_Clear(0x213);
-  } else if (Half(work, 18) == 536 || Flag_Test(SPLIT_CONSTANT(0x114, 255))) {
+  } else if (Half(work, 18) == 536 || Flag_Test(SPLIT_CONSTANT(0x213))) {
     SET_CELL_HEIGHT(134 << 18, 138 << 18);
     SET_CELL_HEIGHT(138 << 18, 138 << 18);
     SET_CELL_HEIGHT(142 << 18, 138 << 18);
     if (offset == 6)
-      Flag_Set(SPLIT_CONSTANT(0x114, 255));
+      Flag_Set(SPLIT_CONSTANT(0x213));
     else
       Flag_Clear(0x213);
   } else {

@@ -34,7 +34,7 @@ void Func_0200032c(s32 unused, s32 id) {
      * reloads it with the other; as object->z, 6 of 222 instructions differ in
      * tla-en. */
     if (object->x >> 20 == 6 && *(volatile s32 *)&object->z >> 20 == 12) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 10));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 10)));
       object->motionFlags = 3;
       wait(2);
       i = 0;
@@ -67,7 +67,7 @@ void Func_0200032c(s32 unused, s32 id) {
      * reloads it with the other; as object->z, 6 of 222 instructions differ in
      * tla-en. */
     if (object->x >> 20 == 57 && *(volatile s32 *)&object->z >> 20 == 12) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 11));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 11)));
       object->motionFlags = 3;
       wait(2);
       i = 0;
@@ -95,6 +95,6 @@ void Func_0200032c(s32 unused, s32 id) {
       Func_02002a78(object->x, object->z, 0, 6);
     }
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 10)) && GameFlag_Test(2571))
-    GameFlag_SetBit(SPLIT_CONSTANT(0x920, 255));
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 10))) && GameFlag_Test(2571))
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x920, 255)));
 }

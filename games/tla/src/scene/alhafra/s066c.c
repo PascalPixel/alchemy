@@ -26,7 +26,7 @@ void Func_0200066c(s32 actor) {
    * differ in tla-en. */
   s32 message = (s32)MsgAlhafra92;
 
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x800, 185)) != 0) {
+  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x8b9)) != 0) {
     Func_02001c74(message + 4);
     FieldMessage_ShowAtActor(actor, 0);
   } else {
@@ -37,7 +37,7 @@ void Func_0200066c(s32 actor) {
       Func_02001c74(message + 1);
       Func_02001c8c(actor, 0);
     } else {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 185));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x8b9));
       FieldEvent_Wait(20);
       Func_02001c74(message + 2);
       Call2(Func_02001c8c, actor, 0);

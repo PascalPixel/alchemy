@@ -49,7 +49,7 @@ void Func_020015d0(void) {
   Func_0200463c(0xb0);
   Call3(Func_02004444, 0x10000, 0x20000, 0x10000);
   FieldEvent_Wait(30);
-  Call3(Func_02004444, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+  Call3(Func_02004444, -1, -1, SPLIT_CONSTANT(0xe666));
   Func_0200463c(0x7f);
   FieldEvent_Wait(30);
   Func_0200463c(0x92);
@@ -61,6 +61,6 @@ void Func_020015d0(void) {
   Call6(Func_02004404, 0x48, 3, 0x45, 3, 3, 3);
   Call6(Func_02004404, 0x30, 0x24, 0x45, 8, 3, 2);
   Call6(Func_0200442c, 0x48, 0xd, 1, 3, 0x46, 0x14);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 45));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa2d));
   Func_0200446c();
 }

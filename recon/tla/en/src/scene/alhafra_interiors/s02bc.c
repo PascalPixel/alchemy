@@ -28,7 +28,7 @@ extern u8 gMainRoutineWork[];
 extern u8 MsgAlhafraInteriors07[];
 
 void Func_020002bc(void) {
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 177));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x8b1));
   Func_02000a94();
   Func_02000b8c(0);
   Call3(Actor_SetPositionAndReset, FIELD_AT(gMainRoutineWork, s32, 532), 152,

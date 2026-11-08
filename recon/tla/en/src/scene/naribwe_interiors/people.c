@@ -17,7 +17,7 @@ void Func_02001190(s32 slot, s32 actor);
 void Func_02001198(s32 slot, s32 actor);
 
 const u8 *Func_020000a4(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 255)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 255))))
     return gData_020014c0;
   return gData_02001370;
 }

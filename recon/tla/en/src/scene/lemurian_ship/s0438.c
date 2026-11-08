@@ -3,7 +3,7 @@
 extern const u8 gData_02002de8[];
 
 void Func_02000438(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 130))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 130)))) {
     struct LemurianShipEventWork *work = Ram_HeapSlots->eventWork;
     struct MainRoutineWork *party = &gMainRoutineWork;
     struct LemurianShipObject *leader;

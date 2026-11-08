@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "battle.h"
 #include "graphics.h"
 #include "heap_release.h"
@@ -45,7 +46,7 @@ void Func_080d67e8(void) {
   case 5:
   case 10:
     BattleEffect_ApplyColorToTargetBuffer(work, 1);
-    Dma_Set(work->delta, target->delta, 0x840002a0, REG_DMA3);
+    Dma_Set(work->delta, target->delta, 0x840002a0, SPLIT_CONSTANT(REG_DMA3));
     target->duration = 12;
     target->step = 0;
     break;

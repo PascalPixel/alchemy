@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 
 struct ClockWork {
@@ -50,7 +51,7 @@ s32 Func_02005020(s32 time) {
     s32 scale = 128;
 
     mul = Iwram_MulQ16Entry;
-    volume = mul(scale << 2, cosine);
+    volume = ValueLr2((s32 (*)())mul, (s32)(scale << 2), (s32)(cosine));
   }
   if (volume <= 16)
     volume = 16;

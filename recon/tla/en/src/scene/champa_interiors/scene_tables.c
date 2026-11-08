@@ -46,7 +46,7 @@ const struct Trigger *Func_020000a4(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov683 &&
       (u16)(gMainRoutineWork.entrance - 8) <= 1)
     return (const struct Trigger *)gData_02000780;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x880, 255)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x880, 255))))
     return (const struct Trigger *)gData_020005ac;
   return (const struct Trigger *)gData_020003d8;
 }

@@ -25,7 +25,7 @@ void Func_02000c90(void) {
   Actor_WaitForMoveById(7);
   Func_02005b0c(7, 0, 0);
   GameFlag_ClearBit(0x92f);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 46));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 46)));
   Event_PrepareObjectAndApplyValue(7, 0);
   Func_02005aa4();
 }

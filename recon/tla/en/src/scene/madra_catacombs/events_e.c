@@ -95,7 +95,7 @@ void Func_02000dcc(void) {
   s32 z;
   struct Actor *object;
 
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x104, 255));
+  GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x104, 255)));
   Actor_SetSpritePriority(64, 3);
   Func_020011b4();
   b = 0x102;
@@ -120,7 +120,7 @@ void Func_02000dcc(void) {
   if (GameFlag_Test(0x8ca) != 0)
     Actor_Place(12, PIXELS(712), PIXELS(424));
   Func_020011dc(gData_020013c0);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x8f0, 255)) != 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x8f0, 255))) != 0)
     Actor_Place(8, PIXELS(568), PIXELS(280));
   Actor_GetById(8)->priorityFlags &= 0xfe;
   Func_02000038(gData_020013ca);
@@ -130,7 +130,7 @@ void Func_02000dcc(void) {
     Map_CopyAttributes(33, 37, 2, 2, 33, 39);
     wait(1);
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)) != 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 171))) != 0) {
     Map_CopyCells(82, 74, 116, 16, 5, 3);
     Map_CopyAttributes(52, 11, 5, 1, 52, 18);
     if (gMainRoutineWork.entrance == 3)
@@ -143,7 +143,7 @@ void Func_02000dcc(void) {
 void Func_02000f2c(void) {
   Func_020011b4();
   Func_020011bc(0, 0x200, 8, 9);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)) != 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 171))) != 0) {
     Func_02001134(10, 0, 0);
     Map_CopyCells(68, 70, 113, 11, 5, 3);
     Map_CopyCells(50, 74, 50, 75, 2, 1);
@@ -156,14 +156,14 @@ void Func_02000f2c(void) {
 }
 
 void Func_02000fbc(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 204)) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 204))) == 0)
     Func_02001134(65, 0, 0);
 }
 
 void Func_02000fd8(void) {
   struct Actor *object;
 
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 204)) != 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 204))) != 0) {
     Func_02001134(64, 0, 0);
   } else {
     object = Actor_GetById(64);

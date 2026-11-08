@@ -23,7 +23,7 @@ void Func_02000154(void) {
 
   if (!JupiterLighthouseRoom6_FlagCheck(0xa19) && object->x >> 20 == 4 &&
       object->z >> 20 == 37) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 25));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 25)));
     Func_020000b4(1);
   }
 }

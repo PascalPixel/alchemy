@@ -56,12 +56,12 @@ s32 Func_02000284(void) {
   object->motionFlags = 0;
   object->terrainHeight = 0;
   object->y = 0;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 102))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x966))) {
     Actor_SetPositionAndReset(10, 100, 112);
     Actor_GetById(10)->angle = FACING_SOUTHEAST + FACING_STEP;
     wait(1);
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 105)))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x969)))
     Func_02002874(18, 0, 0);
   return 0;
 }
@@ -74,7 +74,7 @@ void Func_0200031c(void) {
   s32 result2;
   struct Actor *object3;
 
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 101));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x965));
   Party_RemoveActiveOwner(7);
   Func_0200282c();
   Func_020028fc(0);
@@ -102,7 +102,7 @@ void Func_0200031c(void) {
   Value3((s32 (*)())Func_020028dc, 12, 0x100, 45);
   Call3((void (*)())Actor_ArmCallback, 12, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x2000, 12), 0, 10);
+  Call3((void (*)())Func_020028bc, SPLIT_CONSTANT(0x200c), 0, 10);
   Actor_ArmCallback(4, FACING_EAST, 0);
   FieldEvent_Wait(30);
   Motion_SetModeAndWaitAnimation(4, 3);
@@ -230,7 +230,7 @@ void Func_0200031c(void) {
   Func_020028bc(10, 0, 10);
   Actor_SetModeById(7, 1);
   FieldEvent_Wait(30);
-  Actor_SetSpeedParameters(7, SPLIT_CONSTANT(0x4c00, 204), SPLIT_CONSTANT(0x2600, 102));
+  Actor_SetSpeedParameters(7, SPLIT_CONSTANT(0x4ccc), SPLIT_CONSTANT(0x2666));
   object0 = Actor_GetById(7);
   object0->actionFlags &= 254;
   Actor_CommitPositionAndActivate(7, 12, 0);
@@ -272,7 +272,7 @@ L_020089e4:
   FieldEvent_Wait(10);
   Motion_SetModeAndWaitAnimation(4, 3);
   FieldEvent_Wait(20);
-  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, SPLIT_CONSTANT(0x9999));
   Actor_SetModeById(12, 2);
   object3 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object3 == 0)

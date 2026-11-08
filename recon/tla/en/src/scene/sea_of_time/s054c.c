@@ -105,11 +105,11 @@ void Func_0200054c(void) {
   phase &= frame;
   if (phase == 0) {
     if ((frame & 10) == 0)
-      Func_02002054(SPLIT_CONSTANT(0x156, 255));
+      Func_02002054(SPLIT_CONSTANT(0x255));
     spark.mode = 2;
     spark.kind = 7;
-    spark.scaleX = SPLIT_CONSTANT(0xcc00, 204);
-    spark.scaleY = 0xcccc;
+    spark.scaleX = SPLIT_CONSTANT(0xcccc);
+    spark.scaleY = SPLIT_CONSTANT(0xcccc);
     c = Math_Cosine(object->facing);
     {
       s32 sine = Math_Sine(object->facing);

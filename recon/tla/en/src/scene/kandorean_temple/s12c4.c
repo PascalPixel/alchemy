@@ -54,7 +54,7 @@ void Func_020012c4(void) {
           Func_02000cd8(19, 0x8000, limit);
           Func_02000cd8(20, 0, limit);
         } else if (t < 600) {
-          if (GameFlag_Test(SPLIT_CONSTANT(0x10a, 255)) && *timer == 400) {
+          if (GameFlag_Test(SPLIT_CONSTANT(0x209)) && *timer == 400) {
             Call6((void (*)())Func_02005178, 23, 0, 1, 1, 23, 15);
             Task_RemoveFar(Func_020012c4);
           }
@@ -107,7 +107,7 @@ void Func_020012c4(void) {
             *timer = last;
         }
       }
-      if (GameFlag_Test(SPLIT_CONSTANT(0x10a, 255))) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x209))) {
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
         leader->y = statue->y + 0x40000;
         leader->targetY = 0x80000000;
@@ -126,7 +126,7 @@ void Func_020012c4(void) {
             0x1780000, 0, 0xf80000);
       Actor_GetById(10)->priorityFlags |= 2;
       Actor_SetSpritePriority(10, 3);
-      if (GameFlag_Test(SPLIT_CONSTANT(0x10a, 255))) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x209))) {
         leader = Actor_GetById(gMainRoutineWork.currentOwner);
         Actor_SetPositionAndResetMotion(leader, leader->x, 0, leader->z);
         Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner),

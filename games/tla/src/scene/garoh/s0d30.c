@@ -40,7 +40,7 @@ void Func_02000d30(void) {
   Func_020052cc(0x2048c9, 1);
   goto L_02008d7e;
 L_02008d72:
-  Func_020052cc(SPLIT_CONSTANT(0x10000, 7), 1);
+  Func_020052cc(SPLIT_CONSTANT(0x10007), 1);
 L_02008d7e:
   Func_020052d4(1);
   Event_WaitTransitionFrames();

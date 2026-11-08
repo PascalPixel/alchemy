@@ -26,7 +26,7 @@ void Func_0200008c(void) {
   s32 v6;
   struct Actor *object1;
 
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 1));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x901));
   v5 = &gMainRoutineWork;
   v5 = (v5 + 0x214);
   object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));
@@ -41,7 +41,7 @@ void Func_0200008c(void) {
   Actor_SetPositionAndCommit(14, 136, 475);
   object1 = Actor_GetById(15);
   *(s32 *)((u8 *)object1 + 40) = v6;
-  Func_020032a8(SPLIT_CONSTANT(0x138, 255));
+  Func_020032a8(SPLIT_CONSTANT(0x237));
   Actor_WaitForMoveById(*(s32 *)((u8 *)v5 + 0));
   Actor_SetModeById(*(s32 *)((u8 *)v5 + 0), 1);
   Actor_ArmCallback(*(s32 *)((u8 *)v5 + 0), FACING_NORTH, 0);
@@ -52,7 +52,7 @@ void Func_0200008c(void) {
 }
 
 void Func_02000128(s32 arg0) {
-  Func_02003148(arg0, 0x1c9, SPLIT_CONSTANT(0x900, 2));
+  Func_02003148(arg0, 0x1c9, SPLIT_CONSTANT(0x902));
   return;
 }
 
@@ -85,7 +85,7 @@ void Func_0200013c(s32 id) {
   Func_02003240(0);
   Func_020031c8((s32)MsgGooGooGa);
   Func_020031e0(11, 0);
-  Func_02003268(8, SPLIT_CONSTANT(0x1200, 16));
+  Func_02003268(8, SPLIT_CONSTANT(0x1210));
   Func_02003278();
   Func_02003290((s32)Actor_GetById(id), 2);
   Func_020032a8(201);
@@ -93,7 +93,7 @@ void Func_0200013c(s32 id) {
   flags = &object->motionFlags;
   *flags = 4;
   for (i = 39; i >= 0; i--) {
-    object->y += SPLIT_CONSTANT(0x3300, 51);
+    object->y += SPLIT_CONSTANT(0x3333);
     FieldEvent_Wait(1);
   }
   FieldEvent_Wait(70);
@@ -105,15 +105,15 @@ void Func_0200013c(s32 id) {
   object->gravity = 0x8000;
   FieldEvent_Wait(5);
   Func_020032a8(132);
-  if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x800, 174)) == 0) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 174));
+  if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x8ae)) == 0) {
+    GameFlag_SetBit(SPLIT_CONSTANT(0x8ae));
     FieldEvent_Wait(30);
     Actor_ArmCallback(10, 0x3000, 0);
     FieldEvent_Wait(30);
     Motion_SetVarCbAndRefresh(10, 2);
     FieldEvent_Wait(10);
     Func_020031d8(10, 0, 10);
-    Call3((void (*)())Actor_ArmCallback, 10, SPLIT_CONSTANT(0xaf00, 255), 0);
+    Call3((void (*)())Actor_ArmCallback, 10, SPLIT_CONSTANT(0xafff), 0);
   }
   Func_02003138();
 }

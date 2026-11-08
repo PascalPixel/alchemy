@@ -24,7 +24,7 @@ void Func_02000e18(s32 value) {
   wait(13);
   Animation_ApplyChildValues(object, 9);
   Func_02003cc4(object, 28);
-  Func_02003ef4(SPLIT_CONSTANT(0x200, 54));
+  Func_02003ef4(SPLIT_CONSTANT(0x236));
   for (i = 0; i <= 59; i++) {
     if (i == 30)
       Event_FinishScreenTransition();

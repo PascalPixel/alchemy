@@ -68,42 +68,42 @@ s32 Func_02002ca0(void) {
       Call6(Func_02003b80, 0x40, 0, 3, 2, 113, 12);
       Call6(Func_02003b80, 0x40, 0, 3, 2, 49, 12);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 81))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x851))) {
       Call6(Func_02003b68, 0x40, 0, 70, 39, 1, 4);
       Call6(Func_02003b80, 0x40, 0, 1, 3, 70, 40);
       Call6(Func_02003b80, 0x40, 0, 1, 3, 6, 40);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 82))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x852))) {
       Call6(Func_02003b68, 0x40, 0, 103, 38, 1, 4);
       Call6(Func_02003b80, 0x40, 0, 1, 3, 103, 39);
       Call6(Func_02003b80, 0x40, 0, 1, 3, 39, 39);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 83))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x853))) {
       Call6(Func_02003b68, 0x40, 0, 87, 43, 1, 4);
       Call6(Func_02003b80, 0x40, 0, 1, 3, 87, 44);
       Call6(Func_02003b80, 0x40, 0, 1, 3, 23, 44);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 84))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x854))) {
       Call6(Func_02003b68, 0x40, 0, 70, 52, 1, 4);
       Call6(Func_02003b80, 0x40, 0, 1, 3, 70, 52);
       Call6(Func_02003b80, 0x40, 0, 1, 3, 6, 53);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 85))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x855))) {
       Call6(Func_02003b68, 0x40, 0, 79, 49, 3, 3);
       Call6(Func_02003b80, 0x40, 0, 3, 2, 79, 50);
       Call6(Func_02003b80, 0x40, 0, 3, 2, 15, 50);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 86))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x856))) {
       Call6(Func_02003b68, 0x40, 0, 103, 0x30, 1, 4);
       Call6(Func_02003b80, 0x40, 0, 1, 3, 103, 49);
       Call6(Func_02003b80, 0x40, 0, 1, 3, 39, 49);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x758, 255))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x857))) {
       Call6(Func_02003b68, 0x40, 0, 111, 52, 3, 3);
       Call6(Func_02003b80, 0x40, 0, 3, 2, 111, 53);
       Call6(Func_02003b80, 0x40, 0, 3, 2, 47, 53);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 88))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x858))) {
       Call6(Func_02003b68, 68, 0, 79, 0, 11, 10);
       Call6(Func_02003b80, 38, 9, 1, 1, 0x10, 9);
       Call6(Func_02003b80, 38, 9, 1, 1, 24, 9);
@@ -136,13 +136,13 @@ s32 Func_02002ca0(void) {
       SWAY(9, 180);
       SWAY(10, 0);
       SWAY(11, 60);
-      if (GameFlag_Test(SPLIT_CONSTANT(0x760, 255)))
+      if (GameFlag_Test(SPLIT_CONSTANT(0x85f)))
         Call3(Func_02003bf8, 12, 0x1080000, 0x2b80000);
       if (GameFlag_Test(0x860))
         Call3(Func_02003bf8, 13, 0x2d80000, 0x2d80000);
-      if (GameFlag_Test(SPLIT_CONSTANT(0x800, 97)))
+      if (GameFlag_Test(SPLIT_CONSTANT(0x861)))
         Call3(Func_02003bf8, 15, 0x1580000, 0x3080000);
-      if (GameFlag_Test(SPLIT_CONSTANT(0x800, 98)))
+      if (GameFlag_Test(SPLIT_CONSTANT(0x862)))
         Call3(Func_02003bf8, 0x10, 0x2780000, 0x3180000);
       Func_02003cb0(gData_02003d94);
       Func_020003e8(gData_02003d94);
@@ -158,7 +158,7 @@ s32 Func_02002ca0(void) {
         LEADER()->z += 0x100000;
       Func_02002c24(0xffc80000);
     case 12:
-      if (GameFlag_Test(SPLIT_CONSTANT(0x788, 255)))
+      if (GameFlag_Test(SPLIT_CONSTANT(0x887)))
         Call3(Func_02003bf8, 22, 0x3180000, 0x1280000);
       Func_02003cb0(gData_02003d94);
       Func_020003e8(gData_02003d94);
@@ -207,7 +207,7 @@ s32 Func_02002ca0(void) {
       Actor_GetById(11)->terrainHeight = Actor_GetById(11)->y;
       if (GameFlag_Test(0x310))
         Call3(Func_02003bf8, 10, 0x1f80000, 0x3680000);
-      if (GameFlag_Test(SPLIT_CONSTANT(0x300, 17)))
+      if (GameFlag_Test(SPLIT_CONSTANT(0x311)))
         Call3(Func_02003bf8, 11, 0x2080000, 0x3680000);
       Func_02000620();
       beam = (s32 *)Ram_HeapSlots->mapWork;
@@ -248,9 +248,9 @@ s32 Func_02002ca0(void) {
       REG_BG3CNT |= 3;
       Actor_GetById(12)->priorityFlags |= 2;
       Func_02003c80(0);
-      if (GameFlag_Test(SPLIT_CONSTANT(0x800, 121)))
+      if (GameFlag_Test(SPLIT_CONSTANT(0x879)))
         Call3(Func_02003bf8, 13, 0xb80000, 0x1180000);
-      if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 122))) {
+      if (!GameFlag_Test(SPLIT_CONSTANT(0x87a))) {
         *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x100;
         REG_BLDALPHA = 0x1008;
         REG_BLDCNT = 0x3f42;
@@ -291,7 +291,7 @@ s32 Func_02002ca0(void) {
       beam[3] = 0x3200000;
       beam[4] = 0xd000;
       beam[5] = 0xd000;
-      if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 123))) {
+      if (!GameFlag_Test(SPLIT_CONSTANT(0x87b))) {
         Call6(Func_02003b68, 29, 9, 62, 2, 9, 9);
         Call6(Func_02003b80, 29, 9, 9, 9, 62, 2);
         Call6(Func_02003b68, 29, 73, 62, 66, 9, 9);

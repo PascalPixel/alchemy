@@ -54,7 +54,7 @@ void Func_020002f8(void) {
   Animation_ApplyChildValues(Actor_GetById(13), 6);
   /* FAKEMATCH(wrapper): the flag test forwarded through Value1; as a direct
    * call, 11 of 223 instructions differ in tla-en. */
-  if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x7a8, 255))) {
+  if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x8a7))) {
     /* FAKEMATCH(wrapper): both calls forwarded through Call3; either as a
      * direct call, 2 of 223 instructions differ in tla-en. */
     Call3((void (*)())Func_02001488, 14, 0xc80000, 0x880000);
@@ -72,7 +72,7 @@ void Func_020002f8(void) {
   Func_02001420(object->x, object->z, 0, 4);
   Func_02001578(gData_02001608);
   Actor_SetActionCallback(Actor_GetById(16), 9);
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x8a7))) {
     /* FAKEMATCH(wrapper): the three calls forwarded through Func_02001408_;
      * any one as a direct call, 4 of 223 instructions differ in tla-en. */
     Func_02001408_(0, 58, 12, 7, 13, 58);

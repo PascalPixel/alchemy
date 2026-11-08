@@ -21,7 +21,7 @@ void *Func_020002dc(void) {
   if (scene == (s32)&SceneId_ShamanVillage3)
     return gData_02005590;
   if (scene == (s32)&SceneId_ShamanVillage2) {
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 254)))
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 254))))
       gData_020056b0.field16 = 1;
     return &gData_020056b0;
   }

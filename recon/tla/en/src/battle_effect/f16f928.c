@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -82,7 +83,7 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
       104, BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Iwram_CopyWords((void *)BG_PLTT,
-                  Resource_GetTableEntry((s32)&ResourceId_CyanPalette), 128);
+                  ValueLr1((s32 (*)())Resource_GetTableEntry, (s32)((s32)&ResourceId_CyanPalette)), 128);
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -210,5 +211,5 @@ void BattleEffect_RunHurricane(struct BattleEffectArgument *effect) {
   Iwram_ClearWords(canvas, size);
   Task_Remove(Palette_StepFadeTransfer);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  SummonEffect_RunCanvasMode3(effect);
+  ValueLr1((s32 (*)())SummonEffect_RunCanvasMode3, (s32)(effect));
 }

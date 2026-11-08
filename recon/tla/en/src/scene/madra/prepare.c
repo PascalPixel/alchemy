@@ -100,7 +100,7 @@ void Func_02000894(void) {
 
   Func_02002b28();
   Func_02002c58(0);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 171)))) {
     msg = (s32)&MsgHeyMisterAre;
     Func_02002bd0(msg);
     FieldMessage_ShowAtActor(8, 0);
@@ -137,7 +137,7 @@ void Func_02000968(void) {
 
   Func_02002b28();
   Func_02002c58(0);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 171)))) {
     msg = (s32)&MsgHeyMisterAre;
     Func_02002bd0(msg);
     FieldMessage_ShowAtActor(8, 0);
@@ -187,7 +187,7 @@ void Func_02000a48(void) {
   __asm__ volatile("" : "+r"(flags));
   FieldMessage_ShowAtActor(11, flags);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 1)));
     Func_02002be8(11, 0);
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
   } else {

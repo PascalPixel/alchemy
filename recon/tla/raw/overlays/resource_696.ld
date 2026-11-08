@@ -43,7 +43,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/shaman_village/s43c8.o"(.text)
         "*/recon/tla/raw/src/scene/shaman_village/s43f8.o"(.text)
         "*/recon/tla/raw/src/scene/shaman_village/s46bc.o"(.text)
-        "*/recon/tla/raw/src/scene/shaman_village/s46ec.o"(.text)
+        "*/games/tla/src/scene/shaman_village/s46ec.o"(.text)
         "*/games/tla/src/scene/shaman_village/import.o"(.text)
         "*/games/tla/src/scene/shaman_village/data.o"(.data)
         "*/games/tla/src/scene/shaman_village/data2.o"(.data)

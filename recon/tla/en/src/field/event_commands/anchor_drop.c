@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "macros.h"
@@ -34,7 +35,7 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
   } else {
     object->motionFlags = 3;
   }
-  object->gravity = 0x170a;
+  object->gravity = SPLIT_CONSTANT(0x170a);
   wait(50);
   event->cue = id | 0x1000;
 }

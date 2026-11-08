@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "window.h"
 #include "uiwindow.h"
@@ -71,7 +72,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
           tile = 0xf00d;
           break;
         case 0xf00e:
-          tile = 0xf009;
+          tile = SPLIT_CONSTANT(0xf009);
           break;
         default:
           tile = 0xf00f;

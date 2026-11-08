@@ -30,12 +30,12 @@ void Func_0200004c(s32 arg0, s32 arg1) {
    * differ in tla-en. */
   if (arg1 != 8)
     goto L_02008072;
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 169));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x9a9));
   Func_02001060(0, 2, 1, 1, 2, arg1);
 L_02008072:
   if (arg1 != 10)
     goto L_02008094;
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 170));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x9aa));
   Call6((void (*)())Func_02001060, 0, 32, 1, 1, 14, 38);
 L_02008094:
   return;

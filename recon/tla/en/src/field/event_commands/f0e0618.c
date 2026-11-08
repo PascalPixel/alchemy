@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_psynergy_work.h"
@@ -150,7 +151,7 @@ void Func_080e0618(void) {
     object->scaleX = 0;
     work->spawnCount = 0;
     if (work->timer == 30)
-      work->phase = 999;
+      work->phase = SPLIT_CONSTANT(999);
     break;
   }
   work->timer++;

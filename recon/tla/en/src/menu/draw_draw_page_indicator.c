@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -18,7 +19,7 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   u32 blue;
 
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_HALFWORDS(16),
-          REG_DMA3);
+          SPLIT_CONSTANT(REG_DMA3));
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_WORDS(8),
           REG_DMA3);
   blue = palette[4] >> 10;
@@ -55,7 +56,7 @@ void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
 
   x -= pageCount;
   if (pageCount > 1) {
-    Window_SetTilemapEntryFar(window, PAGE_CAP_LEFT, x - 1, -1, 0);
+    Window_SetTilemapEntryFar(window, SPLIT_CONSTANT(PAGE_CAP_LEFT), x - 1, -1, 0);
 
     for (page = 0; page < pageCount; page++) {
       if (page == selectedPage)
@@ -66,6 +67,6 @@ void Menu_DrawPageIndicator(s32 window, s32 itemCount, s32 pageSize,
       x++;
     }
 
-    Window_SetTilemapEntryFar(window, PAGE_CAP_RIGHT, x, -1, 0);
+    Window_SetTilemapEntryFar(window, SPLIT_CONSTANT(PAGE_CAP_RIGHT), x, -1, 0);
   }
 }

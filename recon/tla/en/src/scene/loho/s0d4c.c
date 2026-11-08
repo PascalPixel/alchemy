@@ -19,7 +19,7 @@ void Func_02000d4c(void) {
   if (GameFlag_Test(800)) {
     Func_02001430(30, 8);
   } else {
-    if (GameFlag_Test(SPLIT_CONSTANT(0x960, 255)))
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x960, 255))))
       Func_02001380((s32)&MsgLoho51);
     else
       Func_02001380((s32)&MsgLoho17);
@@ -35,7 +35,7 @@ void Func_02000da4(s32 actor) {
   if (facing == 0xc000) {
     Func_02001438(actor);
   } else {
-    if (GameFlag_Test(SPLIT_CONSTANT(0x960, 255)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0xa5f)))
       Func_02001380((s32)&MsgLoho53);
     else
       Func_02001380((s32)&MsgLoho19);

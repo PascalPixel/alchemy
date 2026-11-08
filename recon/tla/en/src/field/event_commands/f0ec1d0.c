@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 s32 Party_GetLeaderActor(void);
@@ -25,10 +26,10 @@ void Func_080ec1d0(s32 *screenX, s32 *screenY) {
     if (z < 1832) {
       if (x < 12000) {
         GameFlag_SetBit(286);
-        shift = 1966;
+        shift = SPLIT_CONSTANT(1966);
         x += 65;
       } else {
-        shift = 6084;
+        shift = SPLIT_CONSTANT(6084);
         x -= 627;
       }
       z += shift;

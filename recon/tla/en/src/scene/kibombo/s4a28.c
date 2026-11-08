@@ -21,7 +21,7 @@ void Func_02004a28(void) {
   Func_020036e0(1, 0);
   FieldEvent_Wait(20);
   Func_02005c9c(233);
-  object->scaleY = SPLIT_CONSTANT(0x1900, 153);
+  object->scaleY = SPLIT_CONSTANT(SPLIT_CONSTANT(0x1900, 153));
   Actor_SetPositionAndResetMotion(Actor_GetById(14), 0x1080000, 0x180000,
                                   0x1340000);
   wait(1);
@@ -90,7 +90,7 @@ void Func_02004a28(void) {
   Kibombo_ObjEmote(17, 0x108, 20);
   Kibombo_MessagePut(0x4011, 0);
   Motion_SetModeAndWaitAnimation(17, 3);
-  Kibombo_MessagePut(SPLIT_CONSTANT(0x4000, 17), 0);
+  Kibombo_MessagePut(SPLIT_CONSTANT(SPLIT_CONSTANT(0x4000, 17)), 0);
   Kibombo_ObjSpeed(17, 0xcccc, 0x6666);
   Kibombo_ObjWalk(17, 0x108, 0x140);
   Func_02005b0c(17, 0, 0);

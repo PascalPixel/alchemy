@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct MagmaRockEffectParams {
@@ -42,7 +43,7 @@ void Func_02000c40(struct Actor *object) {
       dy = Random16Far() & 31;
       Func_0200015c(object->x + ((dx - 8) << 16),
                     object->y + (dy << 16) - 0x80000, object->z, 0, phase,
-                    phase, 0x320001, &params);
+                    phase, SPLIT_CONSTANT(0x320001), &params);
     }
     if (gFrameCount & 4)
       Actor_SetPartAttribute(object, 10);

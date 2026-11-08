@@ -59,7 +59,7 @@ void Func_02001d40(void) {
   Actor_SetMovementTypeById(9, gData_02005514);
   wait(1);
   Func_020051c8();
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 69));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x845));
 }
 
 void Func_02001db4(void) {
@@ -71,7 +71,7 @@ void Func_02001db4(void) {
   Actor_GetById(10)->angle = FACING_SOUTH + FACING_STEP;
   wait(1);
   Func_020051c8();
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 70));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x846));
 }
 
 void Func_02001e0c(void) {

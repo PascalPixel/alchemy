@@ -18,7 +18,7 @@ void Func_0200369c(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Func_02001fdc();
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 108)) != 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x86c)) != 0) {
     Func_02003be0(3, 8, 30, 33, 1, 1);
     Func_02003be0(67, 3, 94, 28, 1, 5);
     Func_02003be0(3, 69, 30, 93, 1, 4);
@@ -30,7 +30,7 @@ void Func_0200369c(void) {
       Func_02001804();
       entrance <<= 16;
       entrance >>= 16;
-      entrance += SPLIT_CONSTANT(0x300, 21);
+      entrance += SPLIT_CONSTANT(0x315);
       GameFlag_SetBit(entrance);
     }
   }

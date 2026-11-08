@@ -41,7 +41,7 @@ static __inline__ void SetCell(s32 a, s32 x, s32 z, s32 b) {
 /// z 59 until flag 0xa84 is set.
 void Func_02001160(void) {
   struct Actor *leader =
-      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + SPLIT_CONSTANT(0xc00, 188));
+      *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + SPLIT_CONSTANT(SPLIT_CONSTANT(0xc00, 188)));
   s32 x;
   s32 z;
 
@@ -75,10 +75,10 @@ void Func_02001160(void) {
       Actor_SetSpritePriority(8, 2);
     }
     if (x == 55 && z == 95)
-      GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 129));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 129)));
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room3) {
     if (x == 7 && z == 53)
-      GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 130));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 130)));
     if (x == 67 && z == 45) {
       Func_02003328(50, 22, 33, 22, 1, 1);
       Func_020033e0(14, 0, 0);
@@ -90,12 +90,12 @@ void Func_02001160(void) {
       Func_02003328(51, 20, 31, 20, 1, 2);
       FieldEvent_Wait(5);
       Func_02003380(0x1f00000, 0x1500000, 0, 0);
-      GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 131));
+      GameFlag_SetBit(SPLIT_CONSTANT(0xa83));
     }
     if (x == 93 && z == 57)
       GameFlag_SetBit(0xa84);
     if (x == 91 && z == 59) {
-      if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 132))) {
+      if (!GameFlag_Test(SPLIT_CONSTANT(0xa84))) {
         s32 fromX = (Actor_GetById(12)->x >> 16) << 16;
 
         Func_020033e0(13, fromX, (Actor_GetById(12)->z >> 16) << 16);
@@ -105,6 +105,6 @@ void Func_02001160(void) {
     }
   }
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6B0Room4 && x == 33 && z == 45)
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 134));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 134)));
   Func_020033a0();
 }

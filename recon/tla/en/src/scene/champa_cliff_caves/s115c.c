@@ -114,9 +114,9 @@ void Func_0200115c(void) {
     Motion_SetModeAndWaitAnimation(8, 4);
     Func_0200351c_(0x2008, 0, 5);
     Func_02003544_(8, 265, 30);
-    Func_0200351c_(SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Func_0200351c_(SPLIT_CONSTANT(SPLIT_CONSTANT(0x2000, 8)), 0, 5);
   } else {
-    Flag_Set(SPLIT_CONSTANT(0x900, 116));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 116)));
     Func_0200350c((s32)MsgHoldItRight);
     Func_0200351c_(11, 0, 5);
     Func_0200362c(36);
@@ -201,7 +201,7 @@ void Func_0200115c(void) {
     Func_020034d4_(12, 0, 0);
     Actor_SetModeById(8, 1);
     Actor_GetById(8)->facing = 0x8000;
-    Func_0200351c_(SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Func_0200351c_(SPLIT_CONSTANT(SPLIT_CONSTANT(0x2000, 8)), 0, 5);
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
     Actor_CommitPositionAndActivate(4, -16, 0);
     FieldEvent_Wait(5);
@@ -210,7 +210,7 @@ void Func_0200115c(void) {
     ((struct EventCounters *)Ram_HeapSlots->eventWork)->count++;
     Func_0200351c_(0x2008, 0, 5);
     Func_02003544_(8, 263, 30);
-    Func_0200351c_(SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Func_0200351c_(SPLIT_CONSTANT(SPLIT_CONSTANT(0x2000, 8)), 0, 5);
     Func_0200362c(78);
     Func_0200343c_(656 << 16, 208 << 16, 0, -4);
     Func_0200343c_(656 << 16, 224 << 16, 0, -4);

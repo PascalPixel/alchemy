@@ -32,14 +32,14 @@ static __inline__ void Func_02004ff4_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 void Func_02000c38(void) {
   Func_02004ff4_(16, 25, 0, 5, 5, 40, 8);
   if (GameFlag_Test_(0xa63) == 0) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 99));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 99)));
     Func_02002cb4(2);
   }
 }
 
 void Func_02000c74(void) {
   Func_02004ff4_(18, 17, 0, 3, 3, 31, 0);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 183)) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 183))) == 0) {
     Func_0200500c_(249, 328, 344);
     ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b7;
     gMainRoutineWork.battleRule24b = 2;

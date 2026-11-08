@@ -31,13 +31,13 @@ void Func_020004f4(s32 item, s32 owner, s32 slot) {
   Func_02005a68(125);
   Motion_SetModeAndWaitAnimation(kind, 5);
   if (kind == 9 || kind == 11)
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x186, 255));
+    GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x186, 255)));
   else
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 134));
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x186, 255)) && !GameFlag_Test(646)) {
+    GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 134)));
+  if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x186, 255))) && !GameFlag_Test(646)) {
     Func_02000218(state->mirrored, state->field16[0]);
     Func_02005a68(138);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x200, 130));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 130)));
   }
   Func_02005870(owner, slot);
   Func_02005888();

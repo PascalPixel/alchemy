@@ -24,7 +24,7 @@ s32 Func_0200010c(void) {
 
   Func_020009b0();
   Func_02000a50(0);
-  t2 = GameFlag_Test(SPLIT_CONSTANT(0x300, 1));
+  t2 = GameFlag_Test(SPLIT_CONSTANT(0x301));
   if (t2 != 0) {
     Func_02000a18((s32)MsgYallamInteriors39);
   } else {

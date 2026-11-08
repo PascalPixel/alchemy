@@ -10,7 +10,7 @@ SECTIONS
         "*/games/tla/src/scene/yallam/scene_tables.o"(.text)
         "*/recon/tla/raw/src/scene/yallam/s0218.o"(.text)
         "*/games/tla/src/scene/yallam/script0.o"(.text)
-        "*/recon/tla/raw/src/scene/yallam/script1.o"(.text)
+        "*/games/tla/src/scene/yallam/script1.o"(.text)
         "*/games/tla/src/scene/yallam/script2.o"(.text)
         "*/games/tla/src/scene/yallam/s04ec.o"(.text)
         "*/recon/tla/raw/src/scene/yallam/s0544.o"(.text)

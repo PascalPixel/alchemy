@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "system.h"
 #include "ram_buffer.h"
 #include "task.h"
@@ -43,7 +44,7 @@ void Func_080dd950(void) {
     BattleEffect_ApplyColorToTargetBuffer(0x10000, 0);
     BattleEffect_StartBufferInterpolation(30);
     wait(1);
-    pending = Func_080ce458(0x40000005, FIELD_FX_REVEAL,
+    pending = Func_080ce458(SPLIT_CONSTANT(0x40000005), FIELD_FX_REVEAL,
                             Func_080ce31c(FIELD_FX_REVEAL));
     if (pending != NULL)
       Field_RunPsynergyEvent(pending, scene->firstObjectId,

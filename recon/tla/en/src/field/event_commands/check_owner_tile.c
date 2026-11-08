@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 struct OwnerObject {
@@ -27,5 +28,5 @@ void FieldEffect_CheckCloakTile(void) {
       ObjectTable_Get(Party_GetLeaderActor());
 
   if (Func_080dbca8(owner->x, owner->z, owner->layer) == 0)
-    event->state = 0x2092;
+    event->state = SPLIT_CONSTANT(0x2092);
 }

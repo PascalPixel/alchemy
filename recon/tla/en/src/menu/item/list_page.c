@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "item.h"
 #include "battle_unit.h"
@@ -81,7 +82,7 @@ s32 Func_081000e0(s32 window, s32 unused, struct MenuResult *state) {
       inventoryEntry = &menu->items[firstEntry];
       do {
         Text_DrawCharacterAtOffsetFar(
-            (*inventoryEntry & ITEM_ID_MASK) + MsgItemName, window, ITEM_NAME_X,
+            (*inventoryEntry & SPLIT_CONSTANT(ITEM_ID_MASK)) + MsgItemName, window, ITEM_NAME_X,
             (rowIndex << 4) + 8);
         rowIndex = (u8)(rowIndex + 1);
         inventoryEntry++;

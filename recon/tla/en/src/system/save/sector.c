@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "save.h"
 #include "savedata.h"
@@ -74,22 +75,22 @@ u32 Save_WriteSector(s32 sector) {
   void (*progress)(s32) = work->progress;
 
   if (progress != 0)
-    progress(0);
+    ValueLr1((s32 (*)())progress, (s32)(0));
   if (gFlash_Handler0(sector, work->slot) != 0 ||
       Flash_VerifySector(sector, (s32)work->slot) != 0)
     return 1;
   if (progress != 0)
-    progress(1);
+    ValueLr1((s32 (*)())progress, (s32)(1));
   if (gFlash_Handler0(sector + 1, work->slot + 0x1000) != 0 ||
       Flash_VerifySector(sector + 1, (s32)(work->slot + 0x1000)) != 0)
     return 1;
   if (progress != 0)
-    progress(1);
+    ValueLr1((s32 (*)())progress, (s32)(1));
   if (gFlash_Handler0(sector + 2, work->slot + 0x2000) != 0 ||
       Flash_VerifySector(sector + 2, (s32)(work->slot + 0x2000)) != 0)
     return 1;
   if (progress != 0)
-    progress(1);
+    ValueLr1((s32 (*)())progress, (s32)(1));
   return 0;
 }
 

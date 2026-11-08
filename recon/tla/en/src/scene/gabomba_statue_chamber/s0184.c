@@ -89,13 +89,13 @@ void Func_02000184(void) {
     gData_02002058->motionFlags = 4;
   }
   Actor_SetModeById(8, 1);
-  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcc00, 204),
+  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcccc),
         0x6666);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 358, 108);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xe000, 0);
   Func_02001e20(9, gMainRoutineWork.currentOwner);
   wait(1);
-  Call3(Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3(Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Call3(Actor_SetPositionAndReset, 9, 364, 124);
   Call3(Actor_ArmCallback, 9, 0xd000, 0);
   Func_02001e48(MsgOhYoungWitch);
@@ -103,12 +103,12 @@ void Func_02000184(void) {
   Actor_ArmCallback(10, 0, 20);
   Call3(Actor_ArmCallback, 10, 0x8000, 40);
   Actor_ArmCallback(10, 0, 20);
-  Call2(Func_02001e60, SPLIT_CONSTANT(0x2000, 10), 0);
+  Call2(Func_02001e60, SPLIT_CONSTANT(0x200a), 0);
   Call2(Func_02001e90, 9, 258);
   Func_02001e60(9, 0);
   Call2(Func_02001e70, 10, 0xb000);
   Actor_Jump(10, 4, 20);
-  Func_02001e60(SPLIT_CONSTANT(0x2000, 10), 0);
+  Func_02001e60(SPLIT_CONSTANT(0x200a), 0);
   Func_02000100();
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x4000, 0);
   Call3(Actor_ArmCallback, 9, 0xb000, 40);
@@ -142,14 +142,14 @@ void Func_02000184(void) {
   Func_02000100();
   Actor_Jump(14, 2, 10);
   Actor_Jump(14, 4, 10);
-  Call2(Func_02001e60, SPLIT_CONSTANT(0x2000, 14), 0);
+  Call2(Func_02001e60, SPLIT_CONSTANT(0x200e), 0);
   Actor_SetMovementTypeAndWaitById(14, gData_02001f78);
-  Func_02001e60(SPLIT_CONSTANT(0x2000, 14), 0);
-  Call3(Actor_SetSpeedParameters, 14, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Func_02001e60(SPLIT_CONSTANT(0x200e), 0);
+  Call3(Actor_SetSpeedParameters, 14, 0x19999, SPLIT_CONSTANT(0xcccc));
   Call3(Actor_SetPositionAndReset, 14, 392, 164);
   Func_02001e88(14, 264, 0);
   Actor_Jump(14, 6, 20);
-  Func_02001e60(SPLIT_CONSTANT(0x6000, 14), 0);
+  Func_02001e60(SPLIT_CONSTANT(0x600e), 0);
   Call3(Actor_SetPositionAndReset, 14, 392, 220);
   Func_02001e10(14, 0, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, 0, 0);
@@ -170,7 +170,7 @@ void Func_02000184(void) {
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0x2000, 20);
   Actor_SetModeById(8, 3);
   Call2(Func_02001ec0, 0x10000, 2);
-  Func_02001eb8(SPLIT_CONSTANT(0x10000, 3), 2);
+  Func_02001eb8(SPLIT_CONSTANT(0x10003), 2);
   /* FAKEMATCH(temporary): the palette entry's address taken before the fade's
    * wait; as OBJ_PLTT_COLOR(0, 15) = 0x7fff after it, 4 of 895 instructions
    * differ in tla-en. */
@@ -231,7 +231,7 @@ void Func_02000184(void) {
   Actor_SetModeById(8, 3);
   Actor_SetPartAttribute(Actor_GetById(13), 7);
   Call3(Func_02001e10, 13, 0x1a80000, 0x680000);
-  Func_02001eb8(SPLIT_CONSTANT(0x7f00, 255), 0);
+  Func_02001eb8(SPLIT_CONSTANT(0x7fff), 0);
   Func_02001ec8(40);
   wait(40);
   Func_02001094();
@@ -319,9 +319,9 @@ void Func_02000184(void) {
   Func_02001d78();
   Func_02001d88(MsgCarriedTheMessage, 0, 3);
   Func_02001d80();
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 255));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x800, 107));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x800, 242));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x8ff));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x86b));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x8f2));
   gMainRoutineWork.retreatScene = (s32)&SceneId_Kibombo1;
   gMainRoutineWork.retreatEntrance = 1;
   gMainRoutineWork.savedScene = (s32)&SceneId_Kibombo3;

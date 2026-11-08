@@ -21,5 +21,5 @@ void Func_020011d4(s32 unused, s32 id) {
     wait(4);
   }
   Func_02003d84();
-  GameFlag_SetBit(SPLIT_CONSTANT(0x14c, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x24b));
 }

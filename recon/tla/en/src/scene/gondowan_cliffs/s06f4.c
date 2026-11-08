@@ -10,7 +10,7 @@ void Func_0200124c(s32, s32, s32);
 
 void Func_020006f4(s32 unused, s32 id) {
   Func_0200124c(id, 0, 0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 230));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 230)));
 }
 
 const u8 *Func_0200070c(void) {

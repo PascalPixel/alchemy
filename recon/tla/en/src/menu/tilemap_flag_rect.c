@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "window.h"
 #include "ram_buffer.h"
 #include "dma.h"
@@ -46,7 +47,7 @@ void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
 
 void Palette_CopyObjectBankToBackground14(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
+          DMA_COPY_HALFWORDS(16), SPLIT_CONSTANT(REG_DMA3));
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
 }

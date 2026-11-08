@@ -113,7 +113,7 @@ void Func_02003b80(void) {
     depth = ((y + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
       continue;
-    x &= SPLIT_CONSTANT(0x100, 255);
+    x &= SPLIT_CONSTANT(0x1ff);
     sy &= 255;
     p = oam;
     *p++ = 0;

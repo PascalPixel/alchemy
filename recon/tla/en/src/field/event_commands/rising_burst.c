@@ -36,7 +36,7 @@ void UpdateRisingParticleBurst(void *object) {
     wait(1);
   }
   for (i = 7; i >= 0; i--) {
-    child = Actor_Spawn(SPLIT_CONSTANT(0x1a2, 255), src->x, src->y, src->z);
+    child = Actor_Spawn(SPLIT_CONSTANT(SPLIT_CONSTANT(0x1a2, 255)), src->x, src->y, src->z);
     if (child != 0) {
       s32 speed;
       /* FAKEMATCH: a block-local 1.0, set before the block's calls, keeps

@@ -39,7 +39,7 @@ void Func_020014b4(void) {
   Func_02002044(0);
   object = Actor_GetById(10);
   Func_0200141c(object->x, Actor_GetById(10)->z, 10);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 145));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa91));
   Func_02001fb4();
 }
 
@@ -53,7 +53,7 @@ void Func_020014ec(void) {
   Func_02002044(0);
   object = Actor_GetById(11);
   Func_0200141c(object->x, Actor_GetById(11)->z, 11);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 146));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa92));
   Func_02001fb4();
 }
 
@@ -67,7 +67,7 @@ void Func_02001524(void) {
   Func_02002044(0);
   object = Actor_GetById(12);
   Func_0200141c(object->x, Actor_GetById(12)->z, 12);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 147));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa93));
   Func_02001fb4();
 }
 
@@ -81,7 +81,7 @@ void Func_0200155c(void) {
   Func_02002044(0);
   object = Actor_GetById(13);
   Func_0200141c(object->x, Actor_GetById(13)->z, 13);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 148));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa94));
   Func_02001fb4();
 }
 
@@ -95,7 +95,7 @@ void Func_02001594(void) {
   Func_02002044(0);
   object = Actor_GetById(9);
   Func_0200141c(object->x, Actor_GetById(9)->z, 9);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 149));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa95));
   Func_02001fb4();
 }
 

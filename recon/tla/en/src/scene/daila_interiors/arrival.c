@@ -50,7 +50,7 @@ s32 DailaInteriors_Start(void) {
     if (gMainRoutineWork.entrance == 7) {
       Func_02000c58();
     } else {
-      if (GameFlag_Test(SPLIT_CONSTANT(0x800, 115))) {
+      if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 115)))) {
         Actor_SetModeById(24, 5);
         Actor_SetSingleChildFlags(Actor_GetById(24), 0);
         Actor_SetModeById(25, 5);
@@ -80,7 +80,7 @@ s32 DailaInteriors_Start(void) {
       Actor_GetById(9)->collisionFlags |= 4;
       Actor_SetSingleChildFlags(Actor_GetById(9), 0);
     }
-    if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 115))) {
+    if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 115)))) {
       Func_02000d4c(10, 0, 0);
       Func_02000d4c(11, 0, 0);
       Func_02000d4c(12, 0, 0);
@@ -95,7 +95,7 @@ s32 DailaInteriors_Start(void) {
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_DailaInteriors2 &&
-      GameFlag_Test(SPLIT_CONSTANT(0x800, 115))) {
+      GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 115)))) {
     Func_02000ca4(0);
     Daila_CopyCells(29, 33, 10, 6, 10, 12);
   }

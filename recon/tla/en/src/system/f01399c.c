@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 #include "dma.h"
 #include "frame.h"
@@ -76,7 +77,7 @@ void Func_0801399c(void) {
   hook = gData_030011f8;
   if (hook != 0) {
     gData_030011f8 = 0;
-    hook();
+    ValueLr0((s32 (*)())hook);
   }
   Task_RunPassBeforeVBlankTasks(TASK_PASS_FRAME);
 
@@ -116,7 +117,7 @@ void Func_0801399c(void) {
       if (SoundDriver_EnterVBlankUpdate() == 0) {
         void (*render)(s32) = IwramSoundRenderVBlank;
 
-        render(8);
+        ValueLr1((s32 (*)())render, (s32)(8));
       }
       sound->lastVBlank = vblankCount;
     }

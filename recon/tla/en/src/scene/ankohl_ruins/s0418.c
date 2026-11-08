@@ -73,8 +73,8 @@ void Func_02000418(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
-  options.scaleX = SPLIT_CONSTANT(0xa300, 215);
-  options.scaleY = 0xa3d7;
+  options.scaleX = SPLIT_CONSTANT(0xa3d7);
+  options.scaleY = SPLIT_CONSTANT(0xa3d7);
   i = 0;
 loop:
   angle = i << 12;
@@ -93,7 +93,7 @@ loop:
   Func_02002e9c(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   Call3((void (*)())Func_02002e24, 0x50000, 0x50000, 0x10000);
-  Call3((void (*)())Func_02002e24, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+  Call3((void (*)())Func_02002e24, -1, -1, SPLIT_CONSTANT(0xe666));
   Func_02002e2c();
   Func_02002e9c(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;

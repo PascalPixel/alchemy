@@ -25,7 +25,7 @@ void Func_020009ec(void) {
     return;
   }
   Flag_Set(0x350);
-  if (!Flag_IsSet(SPLIT_CONSTANT(0x300, 81))) {
+  if (!Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 81)))) {
     Func_020055d0(0x20000, 0x4000);
     Camera_MoveWithinMapBounds(PIXELS(616), -1, PIXELS(24), 1);
     FieldEvent_Wait(60);
@@ -69,7 +69,7 @@ void Func_02000b40(void) {
       object->update = NULL;
       Animation_ApplyChildValues(object, 0);
       Actor_SetModeById(12, 6);
-      Flag_Clear(SPLIT_CONSTANT(0x122, 255));
+      Flag_Clear(SPLIT_CONSTANT(SPLIT_CONSTANT(0x122, 255)));
       Func_02000cb8(12);
     }
     if (Func_020027dc(2) != 64 && Flag_IsSet(0x220)) {

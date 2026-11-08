@@ -133,13 +133,13 @@ void Func_0200078c(void) {
     leader->motionFlags |= 1;
     leader->terrainHeight = 0;
     leader->y = 0;
-  } else if (!Venus_FlagCheck(SPLIT_CONSTANT(0x102, 255))) {
+  } else if (!Venus_FlagCheck(SPLIT_CONSTANT(0x201))) {
     Import_EventStart();
     Import_EventResolvePendingActions(0);
     Import_EventWait(5);
     Import_MapCopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
     Venus_CopyCells(52, 117, 41, 117, 3, 5);
-    Import_GameFlagSet(0x201);
+    Import_GameFlagSet(SPLIT_CONSTANT(0x102, 255));
     Import_SoundPlay(161);
     leader->motionFlags &= ~1;
     leader->terrainHeight = -0x20000;

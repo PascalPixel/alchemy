@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 
 extern const u8 gPaletteGlow_WaveTable[];
@@ -43,7 +44,7 @@ void Func_0803f9c0(s32 phase, s32 brightness) {
   GLOW_COLOR_SET(5, Func_0803f974(rgb, 0xd555, 0xbbbb, 0xeeee));
   GLOW_COLOR_SET(6, Func_0803f974(rgb, 0xbbbb, 0xaaaa, 0xcccc));
   GLOW_COLOR_SET(7, Func_0803f974(rgb, 0xa221, 0x9999, 0xaaaa));
-  GLOW_COLOR_SET(8, Func_0803f974(rgb, 0x10888, 0xdddd, 0x13333));
+  GLOW_COLOR_SET(8, Func_0803f974(rgb, SPLIT_CONSTANT(0x10888), 0xdddd, 0x13333));
   GLOW_COLOR_SET(9, Func_0803f974(rgb, 0x12221, 0xeeee, 0x15555));
   GLOW_COLOR_SET(10, Func_0803f974(rgb, 0x13bbb, 0x10000, 0x17777));
 }

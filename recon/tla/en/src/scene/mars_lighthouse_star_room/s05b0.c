@@ -25,7 +25,7 @@ void Func_020005b0(void) {
   FieldEvent_Wait(40);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= ~1;
   Func_020043bc(gMainRoutineWork.currentOwner, 0x102);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, SPLIT_CONSTANT(0xcccc));
   Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 0, 8);
   Actor_Jump(gMainRoutineWork.currentOwner, 4, 10);
   Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, 0, 16);
@@ -44,7 +44,7 @@ void Func_020005b0(void) {
   Func_0200446c(0x186);
   Call3((void (*)())Func_02004264, 0x10000, 0x20000, 0x10000);
   FieldEvent_Wait(20);
-  Call3((void (*)())Func_02004264, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+  Call3((void (*)())Func_02004264, -1, -1, SPLIT_CONSTANT(0xe666));
   FieldEvent_Wait(20);
   Func_0200446c(148);
   Actor_SetModeById(11, 4);

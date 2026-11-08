@@ -1,4 +1,5 @@
 #include "version.h"
+#include "call.h"
 
 // The Japanese form is the older revision and is still on its listing.
 #if TLA_PATCH_1
@@ -48,8 +49,8 @@ void Func_02004cc8(void) {
   Func_02005d5c(lift, 2);
   Actor_SetSingleChildFlags(lift, 0);
   lift->motionFlags = 0;
-  lift->speedLimit = 0x16666;
-  lift->acceleration = 0x16666;
+  lift->speedLimit = SPLIT_CONSTANT(0x16666);
+  lift->acceleration = SPLIT_CONSTANT(0x16666);
   Func_02005d8c(leader, leader->x, leader->y + 0x500000, leader->z);
   Func_02005d8c(lift, lift->x, lift->y + 0x480000, lift->z);
   Func_02005f94(137);

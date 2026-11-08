@@ -13,9 +13,9 @@ void Func_02005898(void) {
   ((struct KibomboEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   Func_02003288();
   if (gMainRoutineWork.entrance == 9) {
-    if (GameFlag_Test(SPLIT_CONSTANT(0x7f0, 255))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x7f0, 255)))) {
       Func_02005b0c(10, 0, 0);
-      if (GameFlag_Test(SPLIT_CONSTANT(0x800, 238))) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x8ee))) {
         /* FAKEMATCH(temporary): the angle in a local of each branch, built
          * before the position; as the constant passed to
          * Kibombo_ObjPlaceFacing, 26 of 105 instructions differ in tla-en. */
@@ -47,5 +47,5 @@ void Func_02005898(void) {
   object->z += PIXELS(8);
   Actor_SetModeById(16, 6);
   if (gMainRoutineWork.entrance == 14)
-    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 238));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 238)));
 }

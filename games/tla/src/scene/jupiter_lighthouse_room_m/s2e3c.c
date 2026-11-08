@@ -26,7 +26,7 @@ s32 Func_02002e3c(void) {
   Func_02003a38();
   Func_02003ac0(20, 0);
   object = Actor_GetById(20);
-  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 12))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa0c))) {
     Call3(Func_02004844, 20, PIXELS(1016), PIXELS(248));
     Call6(Func_0200474c, 104, 42, 5, 11, 61, 42);
     Call6(Func_0200474c, 106, 52, 1, 1, 63, 84);

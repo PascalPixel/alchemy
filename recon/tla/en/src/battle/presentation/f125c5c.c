@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -30,7 +31,7 @@ void Func_08125c5c(void) {
 
   if (index <= 31)
     Dma_Set(gData_0812cc74 + (index >> 2) * 32, (void *)0x06005000,
-            DMA_COPY_WORDS(8), REG_DMA3);
+            DMA_COPY_WORDS(8), SPLIT_CONSTANT(REG_DMA3));
 }
 
 void BattleTransition_AdvanceTimer(void) {

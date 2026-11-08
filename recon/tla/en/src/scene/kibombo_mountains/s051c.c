@@ -11,20 +11,20 @@ void Func_0200051c(s32 unused, s32 cell) {
   if (cell == 20) {
     struct Actor *object = Actor_GetById(20);
 
-    if (!Flag_IsSet(0x8e7)) {
+    if (!Flag_IsSet(SPLIT_CONSTANT(0x7e8, 255))) {
       s32 x = object->x >> 20;
 
       if (x == 4) {
         Func_0200015c(20);
         Func_0200106c(3, 28, 1, 1, x, 28);
-        Flag_Set(SPLIT_CONSTANT(0x7e8, 255));
+        Flag_Set(SPLIT_CONSTANT(0x8e7));
       }
     }
   }
   if (cell == 13) {
     struct Actor *object = Actor_GetById(13);
 
-    if (!Flag_IsSet(0x8e8)) {
+    if (!Flag_IsSet(SPLIT_CONSTANT(0x800, 232))) {
       s32 x = object->x >> 20;
 
       if (x == 28) {
@@ -33,7 +33,7 @@ void Func_0200051c(s32 unused, s32 cell) {
         if (z == 30) {
           Func_0200015c(13);
           Func_0200106c(32, 30, 1, 2, x, z);
-          Flag_Set(SPLIT_CONSTANT(0x800, 232));
+          Flag_Set(SPLIT_CONSTANT(0x8e8));
         }
       }
     }

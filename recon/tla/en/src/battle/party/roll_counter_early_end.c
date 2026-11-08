@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "battle_side.h"
 #include "owner_state.h"
 #include "scene.h"
@@ -10,8 +11,8 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct BattleUnit *state = Unit_Get(unitId);
 
   if (turns <= 5) {
-    s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 0x28f;
-    if (threshold >= (Battle_RandomFar() & 0xffff))
+    s32 threshold = ((state->luck * 3 - turns * 5) + bias) * SPLIT_CONSTANT(0x28f);
+    if (threshold >= (Battle_RandomFar() & SPLIT_CONSTANT(0xffff)))
       return 1;
   }
   return 0;

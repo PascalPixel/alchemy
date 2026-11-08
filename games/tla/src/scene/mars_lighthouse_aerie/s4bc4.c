@@ -18,10 +18,9 @@ void Func_02004bc4(void) {
   Func_02005784(0);
   Func_02005704(19, FACING_SOUTH + FACING_STEP);
   Func_020056dc(MsgDoNotLet);
-  Func_020056f4(SPLIT_CONSTANT(0x8000, 19), 0);
+  Func_020056f4(SPLIT_CONSTANT(0x8013), 0);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner,
-                           SPLIT_CONSTANT(0xcc00, 204),
-                           SPLIT_CONSTANT(0x6600, 102));
+                           SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 480, 348);
   MarsLighthouseAerie_ObjTurn(19, FACING_NORTHWEST + FACING_STEP);
   Func_02005614();
@@ -35,10 +34,9 @@ void Func_02004c2c(void) {
   Func_02005784(0);
   Func_02005704(19, FACING_SOUTHEAST + FACING_STEP);
   Func_020056dc(MsgDoNotLet);
-  Func_020056f4(SPLIT_CONSTANT(0x8000, 19), 0);
+  Func_020056f4(SPLIT_CONSTANT(0x8013), 0);
   Actor_SetSpeedParameters(gMainRoutineWork.currentOwner,
-                           SPLIT_CONSTANT(0xcc00, 204),
-                           SPLIT_CONSTANT(0x6600, 102));
+                           SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 544, 348);
   MarsLighthouseAerie_ObjTurn(19, FACING_NORTHWEST + FACING_STEP);
   Func_02005614();
@@ -61,6 +59,6 @@ void Func_02004c94(void) {
   }
   Func_0200567c(18, 0, 0);
   wait(1);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x202));
   Func_02005614();
 }

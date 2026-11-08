@@ -7,9 +7,9 @@ void Func_02000c7c(void) {
   struct Actor *object;
   s32 i;
 
-  if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 26)))
+  if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa1a)))
     Func_020009f8(20, 8, 12, 16, 0);
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 26));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0xa1a));
   Func_020005e8(1);
   wait(2);
   object = Actor_GetById(20);

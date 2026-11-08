@@ -87,7 +87,7 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
         HeapSlot_Alloc(80, (s32)Render_DecodePictureBlockSize),
         0x84000000 |
             ((u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
-        REG_DMA3);
+        SPLIT_CONSTANT(REG_DMA3));
     decodePicture = Ram_HeapSlots->unk4c[1];
     decoderWasLoaded = 0;
   }
@@ -254,7 +254,7 @@ s32 Func_08021a84(struct LayeredSprite *obj, u32 dir) {
         OutlineFn outline = Heap_Alloc(codeSize);
         u32 outlineHeight;
 
-        Dma_Set(Data_08021824, outline, 0x84000000 | (codeSize >> 2), REG_DMA3);
+        Dma_Set(Data_08021824, outline, 0x84000000 | (codeSize >> 2), SPLIT_CONSTANT(REG_DMA3));
         {
           /* FAKEMATCH(temporary): the width read into a local ahead of the other
            * arguments; as a plain argument, 2 of 578 instructions differ in

@@ -57,7 +57,7 @@ void Func_08127308(s32 unit, s32 kind, s32 mode, s32 variant) {
   Func_0812628c(1, session->background, 0);
   Iwram_ClearWords((void *)0x06004000, 0x4000);
   QueueIoWriteDelay2(0x04000000, 0x3741);
-  QueueIoWriteDelay2(0x0400000c, SPLIT_CONSTANT(0x700, 132));
+  QueueIoWriteDelay2(0x0400000c, SPLIT_CONSTANT(0x784));
   QueueIoWriteDelay2(0x04000050, 0x3f44);
   wait(1);
   Io_Write16(240, &REG_WIN0H);

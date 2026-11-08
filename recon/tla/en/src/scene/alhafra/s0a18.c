@@ -5,7 +5,7 @@ s32 GameFlag_Test(s32 flag);
 void Func_02001bcc();
 
 s32 Func_02000a18(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x8ab))) {
     u16 *src = (u16 *)0x5000116;
 
     u32 c;
@@ -25,7 +25,7 @@ s32 Func_02000a18(void) {
       {
         u32 last = src[1];
 
-        *(u16 *)SPLIT_CONSTANT(0x5000000, 252) = last;
+        *(u16 *)SPLIT_CONSTANT(0x50000fc) = last;
       }
     } while (0);
     Call6(Func_02001bcc, 37, 18, 2, 2, 37, 33);

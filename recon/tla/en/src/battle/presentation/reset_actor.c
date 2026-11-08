@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "motobj.h"
 #include "objdisp.h"
 
@@ -47,7 +48,7 @@ void BattleObject_Reset(struct TlaBattleObj *actor, s32 keep) {
   /* FAKEMATCH(temporary): one zero, set before the keep test and stored on
    * both paths; as plain 0 stores, 38 of 63 instructions differ in tla-en. */
   zero = 0;
-  actor->scale = 0xe666;
+  actor->scale = SPLIT_CONSTANT(0xe666);
   actor->object = object;
   if (keep == 0) {
     actor->anchorZ = zero;

@@ -11,7 +11,7 @@ void BattleEffect_InitializeRisingObject(s32 slot) {
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
   object->velocityY = 0x40000;
-  object->gravity = SPLIT_CONSTANT(0xab00, 133);
+  object->gravity = SPLIT_CONSTANT(0xab85);
   object->bounce = 0;
   object->actionFlags = 0;
   object->snapToTarget = 1;
@@ -45,7 +45,7 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames, s32 rate) 
   obj->acceleration = dist;
   obj->speedLimit = dist;
   obj->snapToTarget = 1;
-  obj->gravity = SPLIT_CONSTANT(0xab00, 133);
+  obj->gravity = SPLIT_CONSTANT(0xab85);
   obj->velocityY = 0;
   obj->bounce = 0;
   obj->actionFlags = 1;

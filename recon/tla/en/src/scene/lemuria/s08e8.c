@@ -52,7 +52,7 @@ void Func_020008e8(void) {
 /// Actor 30 offers a test of luck at the Spring of Lemuria; flag 0x908
 /// records that the party took it.
 void Func_02000934(void) {
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 8))) {
+  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x908))) {
     Actor_SetAngleToward(30, gMainRoutineWork.currentOwner, 0);
     Actor_RefreshSelectorById(30);
     Func_02001c6c((s32)MsgYouLookLike);
@@ -79,9 +79,9 @@ void Func_02000934(void) {
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 464, 1040);
     Func_02001c94(gMainRoutineWork.currentOwner, FACING_NORTH);
     FieldEvent_Wait(5);
-    Call3(Actor_SetSpeedParameters, 30, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+    Call3(Actor_SetSpeedParameters, 30, 0x13333, SPLIT_CONSTANT(0x9999));
     Actor_SetPositionAndReset(30, 440, 1048);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 8));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x908));
   }
   Call2(Func_02001c94, 30, FACING_NORTH + FACING_STEP);
   Func_02001bd4();

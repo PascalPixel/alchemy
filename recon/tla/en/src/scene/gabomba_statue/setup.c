@@ -60,7 +60,7 @@ void Func_02000f6c(void) {
 void Func_02000fc0(void) {
   s32 result;
 
-  GameFlag_SetBit(SPLIT_CONSTANT(0x106, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x106, 255)));
   Func_020056b4();
   Func_0200580c(0);
   Func_02005854(78);
@@ -73,7 +73,7 @@ void Func_02000fc0(void) {
   Func_02005854(220);
   wait(1);
   Func_020057e4_(0x10000, 0);
-  Func_020057dc(SPLIT_CONSTANT(0x7f00, 255), 0);
+  Func_020057dc(SPLIT_CONSTANT(SPLIT_CONSTANT(0x7f00, 255)), 0);
   Func_020057ec(40);
   wait(80);
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);

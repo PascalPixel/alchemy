@@ -24,7 +24,7 @@ void Func_02001c44(void) {
     Actor_SetSpritePriority(i + 15, 2);
   Func_02001e80(8);
   Actor_GetById(8)->y = 0;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 255))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 255)))) {
     Func_02001094();
     Func_02001e10(10, 0, 0);
   } else {
@@ -32,7 +32,7 @@ void Func_02001c44(void) {
   }
 #if TLA_PATCH_1 /* The Japanese edition does not set the retreat. */
   if (gMainRoutineWork.entrance == 2) {
-    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 39))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 39)))) {
       /* FAKEMATCH(one-pass): the scene id through a temporary and a once-only
        * block, which issues its literal load first; as plain stores, 4 of 71
        * instructions differ in tla-en. */

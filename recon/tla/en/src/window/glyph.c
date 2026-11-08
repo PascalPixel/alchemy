@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
@@ -50,7 +51,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   *tile = VramCache_Load(*slot, 0x200, work->tiles);
   HeapSlot_Release(68);
   Dma_Set(entry, (void *)(0x05000200 + palette * 32), DMA_COPY_HALFWORDS(16),
-          REG_DMA3);
+          SPLIT_CONSTANT(REG_DMA3));
 }
 
 void UiGlyph_ReservedNoOp(void) {}

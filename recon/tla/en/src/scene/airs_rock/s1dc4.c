@@ -54,9 +54,9 @@ void Func_02001dc4(s32 x, s32 z) {
     Func_02003b38(rock, gData_02003dfc);
     Func_02003b28(rock, 2);
     rock->velocityY = ((Random16Far() & 3) << 16) + 0x40000;
-    rock->gravity = SPLIT_CONSTANT(0x3300, 51);
-    rock->bounce = SPLIT_CONSTANT(0x6600, 102);
-    rock->scaleX = SPLIT_CONSTANT(0xcc00, 204);
+    rock->gravity = SPLIT_CONSTANT(0x3333);
+    rock->bounce = SPLIT_CONSTANT(0x6666);
+    rock->scaleX = SPLIT_CONSTANT(0xcccc);
     rock->scaleY = 0xcccc;
     rock->speedLimit = 0xcccc;
     scatter.y = Random16Far() & 7;

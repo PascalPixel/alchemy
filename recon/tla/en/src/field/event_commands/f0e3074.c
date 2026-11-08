@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "canvas_sprite.h"
@@ -44,7 +45,7 @@ void Actor_Destroy(struct Actor *object);
 void BattleEffect_EndX(void);
 
 void Func_080e3074(void) {
-  struct WhirlWork *work = HeapSlot_Alloc(92, 0x1b38);
+  struct WhirlWork *work = HeapSlot_Alloc(92, SPLIT_CONSTANT(0x1b38));
   u8 *event = Ram_HeapSlots->eventWork;
   u8 *effect = Ram_HeapSlots->effectWork;
   struct Actor *owner = *(struct Actor **)(effect + 16);

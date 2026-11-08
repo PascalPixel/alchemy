@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -65,8 +66,8 @@ void Func_0200273c(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
+  options.startScaleX = SPLIT_CONSTANT(0xa3d7);
+  options.startScaleY = SPLIT_CONSTANT(0xa3d7);
   always = 1;
   i = 0;
   // A goto loop: as a do-while loop, 4 of 169 instructions differ in tla-en.
@@ -94,7 +95,7 @@ loop:
   Func_02002bbc(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   Func_02002b3c_(0x50000, 0x50000, 0x10000);
-  Func_02002b3c_(-1, -1, 0xe666);
+  Func_02002b3c_(-1, -1, SPLIT_CONSTANT(0xe666));
   Func_02002b44();
   Func_02002bbc(gMainRoutineWork.currentOwner, 0x100);
   actor->gravity = 0x10000;

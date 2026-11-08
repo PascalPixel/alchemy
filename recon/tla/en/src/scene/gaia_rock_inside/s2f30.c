@@ -148,29 +148,29 @@ s32 Func_02002f30(void) {
         s32 ending = 20;
         if (Test(0x307)) {
           C1(GameFlag_ClearBit, 0x307);
-          C1(GameFlag_SetBit, SPLIT_CONSTANT(0x900, 188));
+          C1(GameFlag_SetBit, SPLIT_CONSTANT(0x9bc));
           ending = 21;
         }
         if (Test(0x308)) {
           C1(GameFlag_ClearBit, 0x308);
-          C1(GameFlag_SetBit, SPLIT_CONSTANT(0x900, 189));
+          C1(GameFlag_SetBit, SPLIT_CONSTANT(0x9bd));
           ending = 22;
         }
         if (Test(0x309)) {
           C1(GameFlag_ClearBit, 0x309);
-          C1(GameFlag_SetBit, SPLIT_CONSTANT(0x900, 190));
+          C1(GameFlag_SetBit, SPLIT_CONSTANT(0x9be));
           ending = 23;
         }
         if (Test(0x30a)) {
           C1(GameFlag_ClearBit, 0x30a);
-          C1(GameFlag_SetBit, SPLIT_CONSTANT(0x8c0, 255));
+          C1(GameFlag_SetBit, SPLIT_CONSTANT(0x9bf));
           ending = 24;
         }
         C1(Func_02005014, 564);
         Func_02002d30();
         C1(FieldEvent_Wait, 15);
         Actor_SetModeById(8, 3);
-        C1(Func_02005014, SPLIT_CONSTANT(0x200, 18));
+        C1(Func_02005014, SPLIT_CONSTANT(0x212));
         C3(Func_02004e24, 0x20000, 0x20000, 0x10000);
         C3(Func_02004e24, -1, -1, 0xe666);
         C1(FieldEvent_Wait, 120);
@@ -182,13 +182,13 @@ s32 Func_02002f30(void) {
     }
     if ((u16)(gMainRoutineWork.entrance - 9) <= 1) {
       C1(GameFlag_SetBit, 0x144);
-      if (Test(SPLIT_CONSTANT(0x900, 39))) {
+      if (Test(SPLIT_CONSTANT(0x927))) {
         C2(Actor_SetModeById, 8, 4);
         C6(Func_02004e04, 85, 72, 5, 2, 30, 19);
         C3(Func_02004ebc, 9, 0, 0);
         C3(Func_02004ebc, 10, 0, 0);
       }
-      if (Test(SPLIT_CONSTANT(0x900, 238)) && !Test(SPLIT_CONSTANT(0x900, 186)))
+      if (Test(SPLIT_CONSTANT(0x9ee)) && !Test(SPLIT_CONSTANT(0x9ba)))
         C3(Func_02004ebc, 12, 0x1d00000, 0x1480000);
     }
     room = &gMainRoutineWork;
@@ -197,7 +197,7 @@ s32 Func_02002f30(void) {
       s32 none;
       s32 found;
 
-      if (Test(SPLIT_CONSTANT(0x900, 39)))
+      if (Test(SPLIT_CONSTANT(0x927)))
         goto end;
       C1(Func_02005014, 53);
       found = Value1((s32 (*)())PartyInventory_FindOwner, 451);
@@ -217,7 +217,7 @@ s32 Func_02002f30(void) {
         struct Actor *object;
         struct Actor *shards[4];
 
-        flag = Test(SPLIT_CONSTANT(0x900, 172));
+        flag = Test(SPLIT_CONSTANT(0x9ac));
         if (flag != 0) {
           C2(Actor_SetModeById, 8, 2);
           C3(Func_02004ebc, 9, 0, 0);
@@ -230,8 +230,8 @@ s32 Func_02002f30(void) {
         dragon = Actor_GetById(10);
         partner = Actor_GetById(8);
         C1(Func_02005014, 390);
-        C1(GameFlag_SetBit, SPLIT_CONSTANT(0x900, 172));
-        C1(GameFlag_SetBit, SPLIT_CONSTANT(0x900, 222));
+        C1(GameFlag_SetBit, SPLIT_CONSTANT(0x9ac));
+        C1(GameFlag_SetBit, SPLIT_CONSTANT(0x9de));
         Func_02004e5c();
         C1(Func_02004fcc, 0);
         C3(Func_02004ebc, 9, 0, 0);
@@ -251,7 +251,7 @@ s32 Func_02002f30(void) {
         C2(Motion_SetModeAndWaitAnimation, 10, 3);
         C2(Func_02004f14, 10, 0);
         C2(Actor_SetModeById, 10, 8);
-        C2(Func_02004f14, SPLIT_CONSTANT(0x6000, 10), 0);
+        C2(Func_02004f14, SPLIT_CONSTANT(0x600a), 0);
         dragon->speedLimit = 0x18000;
         C3(Actor_ResetAndSetPosition, 10, 488, 328);
         C1(FieldEvent_Wait, 5);
@@ -269,7 +269,7 @@ s32 Func_02002f30(void) {
         height = 19;
         C6(Func_02004e04, 85, 76, 5, 2, width, height);
         C1(Func_02005014, 572);
-        C2(Func_02004f94, SPLIT_CONSTANT(0x7f00, 255), 0);
+        C2(Func_02004f94, SPLIT_CONSTANT(0x7fff), 0);
         C1(Func_02004fa4, 10);
         C1(FieldEvent_Wait, 10);
         C2(Func_02004f94, 0x10000, 0);
@@ -363,7 +363,7 @@ s32 Func_02002f30(void) {
         Actor_GetById(10)->actionFlags &= 254;
         C3(Actor_ResetAndSetPositionInMode2, 10, 432, 320);
         C1(FieldEvent_Wait, 10);
-        C3(Func_02004e24, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+        C3(Func_02004e24, -1, -1, SPLIT_CONSTANT(0xe666));
         Actor_SetModeById(10, 5);
         C1(FieldEvent_Wait, 30);
         C2(Func_02004f5c, 10, 1);
@@ -374,7 +374,7 @@ s32 Func_02002f30(void) {
         C1(FieldEvent_Wait, 20);
         C2(Actor_SetMovementTypeById, 10, movement);
         C1(FieldEvent_Wait, 20);
-        C2(Func_02004f14, SPLIT_CONSTANT(0x6000, 10), 0);
+        C2(Func_02004f14, SPLIT_CONSTANT(0x600a), 0);
         C2(Camera_FollowActor, gMainRoutineWork.currentOwner, 1);
         Func_02004f54();
         C2(Actor_SetSpritePriority, 10, 3);
@@ -400,12 +400,12 @@ s32 Func_02002f30(void) {
       s32 i;
 
       C1(Func_02005014, 7);
-      flag = Test(SPLIT_CONSTANT(0x900, 39));
+      flag = Test(SPLIT_CONSTANT(0x927));
       if (flag != 0)
         goto end;
       Func_02004e5c();
       C1(Func_02004fcc, 0);
-      C1(GameFlag_SetBit, SPLIT_CONSTANT(0x900, 39));
+      C1(GameFlag_SetBit, SPLIT_CONSTANT(0x927));
       C1(Func_02004f0c, (s32)MsgFieldItLooksLikeTheDragon);
       C3(Func_02004ebc, 9, 0, 0);
       Actor_SetModeById(8, 3);
@@ -423,9 +423,9 @@ s32 Func_02002f30(void) {
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       C3(Func_02004f2c, 11, 258, 30);
-      C1(Func_02005014, SPLIT_CONSTANT(0x200, 18));
+      C1(Func_02005014, SPLIT_CONSTANT(0x212));
       C2(Func_02004f14, 11, 0);
-      C1(Func_02005014, SPLIT_CONSTANT(0x200, 18));
+      C1(Func_02005014, SPLIT_CONSTANT(0x212));
       C2(Func_02004f14, 10, 0);
       Value3((s32 (*)())Func_02004f2c, *owner, 256, 0);
       C3(Func_02004f2c, 11, 256, 0);
@@ -458,20 +458,20 @@ s32 Func_02002f30(void) {
       C1(FieldEvent_Wait, 10);
       C1(Func_02005014, 572);
       dragon->movementState = 1;
-      C2(Func_02004f94, SPLIT_CONSTANT(0x7f00, 255), 0);
+      C2(Func_02004f94, SPLIT_CONSTANT(0x7fff), 0);
       C1(Func_02004fa4, 10);
       C1(FieldEvent_Wait, 10);
-      C1(Func_02005014, SPLIT_CONSTANT(0x200, 18));
+      C1(Func_02005014, SPLIT_CONSTANT(0x212));
       C2(Func_02004f94, scale, 0);
       C1(Func_02004fa4, 10);
       C1(FieldEvent_Wait, 10);
-      C2(Func_02004f94, SPLIT_CONSTANT(0x7f00, 255), 0);
+      C2(Func_02004f94, SPLIT_CONSTANT(0x7fff), 0);
       C1(Func_02004fa4, 10);
       C1(FieldEvent_Wait, 10);
       C2(Func_02004f94, scale, 0);
       C1(Func_02004fa4, 10);
       C1(FieldEvent_Wait, 10);
-      C2(Func_02004f94, SPLIT_CONSTANT(0x7f00, 255), 0);
+      C2(Func_02004f94, SPLIT_CONSTANT(0x7fff), 0);
       C1(Func_02004fa4, 10);
       C1(FieldEvent_Wait, 60);
       C2(Actor_SetModeById, 8, 4);
@@ -540,7 +540,7 @@ s32 Func_02002f30(void) {
         alpha = alpha + 0xffff;
         C1(wait, 1);
       }
-      REG_DISPCNT &= SPLIT_CONSTANT(0xfd00, 255);
+      REG_DISPCNT &= SPLIT_CONSTANT(0xfdff);
       C1(FieldEvent_Wait, 30);
       {
         s32 x;
@@ -559,8 +559,8 @@ s32 Func_02002f30(void) {
         other->z += -0x10000;
         C1(FieldEvent_Wait, 2);
       }
-      C1(GameFlag_SetBit, SPLIT_CONSTANT(0x900, 238));
-      C3(Func_02004e24, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+      C1(GameFlag_SetBit, SPLIT_CONSTANT(0x9ee));
+      C3(Func_02004e24, -1, -1, SPLIT_CONSTANT(0xe666));
       object->x = 0;
       object->z = 0;
       C1(FieldEvent_Wait, 1);
@@ -627,7 +627,7 @@ s32 Func_02002f30(void) {
     C2(Func_02004e3c, object, 3);
     C2(Func_02002ac8, 8, 12);
     C2(Func_02002ac8, 9, 12);
-    if (Test(SPLIT_CONSTANT(0xa00, 98))) {
+    if (Test(SPLIT_CONSTANT(0xa62))) {
       C3(Func_02004ebc, 8, 0x1b80000, 0x2b00000);
       C3(Func_02004ebc, 9, 0x2280000, 0x2b00000);
     } else {
@@ -645,7 +645,7 @@ s32 Func_02002f30(void) {
       C3(Func_02004ebc, 11, gData_0200530c[(s8)high][0] << 19,
          gData_0200530c[(s8)high][1] << 19);
   } else if (work->scene == (s32)&SceneId_Ov681Room4) {
-    if (Test(SPLIT_CONSTANT(0xa00, 99)))
+    if (Test(SPLIT_CONSTANT(0xa63)))
       C1(Func_02002cb4, 1);
   } else if (work->scene == (s32)&SceneId_Ov681Room3) {
     struct Actor *object;
@@ -655,9 +655,9 @@ s32 Func_02002f30(void) {
     C2(Func_02004e3c, object, 3);
     C2(Func_02002ac8, 8, 10);
     C2(Func_02002ac8, 9, 11);
-    if (!Test(SPLIT_CONSTANT(0x900, 188)))
+    if (!Test(SPLIT_CONSTANT(0x9bc)))
       C6(Func_02004df4, 25, 77, 1, 15, 26, 77);
-    if (Test(SPLIT_CONSTANT(0x900, 189))) {
+    if (Test(SPLIT_CONSTANT(0x9bd))) {
       s32 width;
       s32 height;
 
@@ -668,7 +668,7 @@ s32 Func_02002f30(void) {
       C6(Func_02004dfc, 27, 23, 1, 1, width, height);
       C6(Func_02004dfc, 32, 16, 2, 1, 29, height);
     }
-    if (Test(SPLIT_CONSTANT(0x900, 190))) {
+    if (Test(SPLIT_CONSTANT(0x9be))) {
       s32 width;
       s32 height;
 
@@ -679,7 +679,7 @@ s32 Func_02002f30(void) {
       C6(Func_02004dfc, 35, 23, 1, 1, width, height);
       C6(Func_02004dfc, 32, 16, 2, 1, 37, height);
     }
-    if (Test(SPLIT_CONSTANT(0x8c0, 255))) {
+    if (Test(SPLIT_CONSTANT(0x9bf))) {
       C6(Func_02004e04, 61, 0, 3, 3, 37, 26);
       C6(Func_02004dfc, 36, 23, 1, 1, 38, 25);
     }
@@ -718,7 +718,7 @@ s32 Func_02002f30(void) {
       C1(GameFlag_SetBit, 0x109);
       C1(Func_02004f6c, 3);
     }
-    if (!Test(SPLIT_CONSTANT(0x900, 196)))
+    if (!Test(SPLIT_CONSTANT(0x9c4)))
       C3(Func_02004ebc, 11, 0, 0);
     if (!Test(0x109) && gMainRoutineWork.entrance == 3)
       Func_0200042c();
@@ -727,13 +727,13 @@ s32 Func_02002f30(void) {
     C2(Func_02002ac8, 8, 9);
     if (work->entrance == 1 || work->entrance == 3 || work->entrance == 5)
       Func_02004d00();
-    if (Test(SPLIT_CONSTANT(0x204, 255)))
+    if (Test(SPLIT_CONSTANT(0x303)))
       Func_02004a5c(11, 0x1800000, 0x4b0000, 0x2a80000);
     if (Test(0x304))
       Func_02004a5c(12, 0x1cf0000, 0x330000, 0x2a80000);
-    if (Test(SPLIT_CONSTANT(0x300, 5)))
+    if (Test(SPLIT_CONSTANT(0x305)))
       Func_02004a5c(13, 0x2350000, 0x370000, 0x2a80000);
-    if (Test(SPLIT_CONSTANT(0x900, 188))) {
+    if (Test(SPLIT_CONSTANT(0x9bc))) {
       s32 width;
       s32 height;
 
@@ -745,7 +745,7 @@ s32 Func_02002f30(void) {
       C6(Func_02004dfc, 25, 25, 1, 1, width, height);
     }
     C2(Actor_SetSingleChildFlags, Actor_GetById(15), 0);
-    if (Test(SPLIT_CONSTANT(0x900, 196))) {
+    if (Test(SPLIT_CONSTANT(0x9c4))) {
       s32 height = 20;
 
       C6(Func_02004e04, 117, 20, 7, 8, 104, height);

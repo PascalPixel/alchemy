@@ -6,4 +6,4 @@ void GameFlag_ClearBit(s32 flag);
 void Func_02000a98(s32 a, s32 b);
 void Func_02001d68(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
-void Func_02000e50(void) { GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 6)); }
+void Func_02000e50(void) { GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 6))); }

@@ -34,9 +34,9 @@ s32 Func_02000ae8(void) {
 
   ((struct JupiterLighthouseRoom5EventWork1ac *)Ram_HeapSlots->eventWork)
       ->value = 0x204;
-  if (Flag_IsSet(SPLIT_CONSTANT(0xa00, 35)))
-    Flag_Clear(SPLIT_CONSTANT(0xa00, 34));
-  if (Flag_IsSet(SPLIT_CONSTANT(0xa00, 34))) {
+  if (Flag_IsSet(SPLIT_CONSTANT(0xa23)))
+    Flag_Clear(SPLIT_CONSTANT(0xa22));
+  if (Flag_IsSet(SPLIT_CONSTANT(0xa22))) {
     angle = 0x4000;
     Call4((void (*)())Func_02002900, 22, PIXELS(64), PIXELS(225), angle);
   }

@@ -30,7 +30,7 @@ void Func_02004dd0(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_02000590(void) {
-  if (!Flag_IsSet(0xa36)) {
+  if (!Flag_IsSet(SPLIT_CONSTANT(0xa00, 54))) {
     Func_020046b4();
     Func_02004ca8();
     Func_02004da0(0);
@@ -46,7 +46,7 @@ void Func_02000590(void) {
     BattleEffect_PrepareBufferInterpolation();
     wait(10);
     Func_02004cb0();
-    Flag_Set(SPLIT_CONSTANT(0xa00, 54));
+    Flag_Set(SPLIT_CONSTANT(0xa36));
   } else {
     Func_020046b4();
     Func_02004dd0();
@@ -78,7 +78,7 @@ void Func_02000648(void) {
 
 void Func_02000678(s32 state, s32 frame) {
   if (state == 1) {
-    Func_02004de0(SPLIT_CONSTANT(0x200, 62));
+    Func_02004de0(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 62)));
     Func_02004d58(0x10000, 0);
     Func_02004d60(60);
     Func_02004c30_(47, 94, 10, 6, 47, 100);
@@ -89,7 +89,7 @@ void Func_02000678(s32 state, s32 frame) {
   if (frame > 96 && frame < 272 && frame % 30 == 0)
     Func_02000414(18);
   if (frame == 276) {
-    Func_02004d58(SPLIT_CONSTANT(0x7f00, 255), 0);
+    Func_02004d58(SPLIT_CONSTANT(SPLIT_CONSTANT(0x7f00, 255)), 0);
     Func_02004d60(20);
   }
 }

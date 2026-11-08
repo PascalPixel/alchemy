@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "call.h"
 
 struct TrapEntry {
   u16 actor;
@@ -43,7 +44,7 @@ void Func_020045ac(const void *data, s32 id) {
         Func_02004ce0(-4, OBJECT_BYTE(object, 34), id);
         Func_02004a94(1);
         Task_Wait(16);
-        Func_02005838_(-1, -1, 0xe666);
+        Func_02005838_(-1, -1, SPLIT_CONSTANT(0xe666));
         Task_Wait(8);
         Actor_SetPositionAndResetMotion(object, 0, 0, 0);
         Task_Wait(2);

@@ -24,7 +24,7 @@ s32 Func_02000fb8(void) {
   asm("");
   effect = &((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect;
   party = &gMainRoutineWork;
-  *effect = SPLIT_CONSTANT(0x200, 2);
+  *effect = SPLIT_CONSTANT(0x202);
   /* FAKEMATCH: the empty asm takes gMainRoutineWork, so its address loads
    * before the 0x202 store and the scene's offset starts after it, as in the
    * native (plain: differ 2; the store before the party pointer: differ 2). */
@@ -34,7 +34,7 @@ s32 Func_02000fb8(void) {
     Func_02001054();
   } else if (scene == (s32)&SceneId_Ov679Room1) {
     Task_Add(Func_02000540, 0x480);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 94)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x95e)))
       Func_02000974();
   } else if (scene == (s32)&SceneId_Ov679Room3) {
     *effect = 0x100;

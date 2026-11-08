@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 
@@ -199,7 +200,7 @@ void Func_02001080(void) {
       }
       if (work->still == 0) {
         spark->position[1] += Math_Sine(Random16Far()) << 3;
-        spark->drift = 0x4ccc;
+        spark->drift = SPLIT_CONSTANT(0x4ccc);
       } else {
         spark->position[1] += Math_Sine(Random16Far()) << 1;
         spark->position[0] += Math_Cosine(Random16Far()) * 10;

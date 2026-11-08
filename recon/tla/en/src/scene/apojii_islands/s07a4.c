@@ -89,8 +89,8 @@ blend:
   i++;
   if (i <= 6)
     goto blend;
-  GameFlag_SetBit(SPLIT_CONSTANT(0x860, 255));
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 94));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x860, 255)));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 94)));
   Func_02001d7c(0x10000, 0x2000);
   /* FAKEMATCH(wrapper): the camera moves forwarded through
    * ApojiiIslands_CamMove, so each builds its own -1; called directly, 25 of

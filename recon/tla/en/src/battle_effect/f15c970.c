@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"
 #include "battle_action.h"
@@ -89,7 +90,7 @@ void Func_0815c970(struct BattleEffectArgument *effect, s32 mode) {
   if (mode == 0) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
-    copy((void *)0x05000000, palette, 128);
+    ValueLr3((s32 (*)())copy, (s32)((void *)0x05000000), (s32)(palette), (s32)(128));
   }
   work->transferMode = 2;
   work->transferValue = 75;

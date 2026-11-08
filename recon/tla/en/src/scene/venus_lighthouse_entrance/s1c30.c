@@ -92,7 +92,7 @@ void Func_02001c30(void) {
   Call3(Func_0200294c, 8, 0, 0xa);
   Call2(Motion_SetModeAndWaitAnimation, 9, 4);
   Call3(Func_0200294c, 9, 0, 0xa);
-  Call3(Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3(Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Call3(Actor_CommitPositionAndActivate, 9, 0, 0x10);
   Call3(Actor_ArmCallback, 9, FACING_WEST, 0);
   FieldEvent_Wait(20);
@@ -106,10 +106,10 @@ void Func_02001c30(void) {
   Motion_SetModeAndWaitAnimation(8, 3);
   FieldEvent_Wait(20);
   Call2(Actor_WatchAndSetScript, 5, 9);
-  Call3(Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3(Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Actor_OffsetPositionAndReset(9, 0, 0x78);
   FieldEvent_Wait(40);
-  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Call3(Actor_CommitPositionAndActivate, 8, 0x18, 0);
   Call3(Actor_CommitPositionAndActivate, 8, 0, 0x14);
   Actor_ArmCallback(5, 0x3000, 0);
@@ -132,7 +132,7 @@ void Func_02001c30(void) {
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(8, 3);
   FieldEvent_Wait(20);
-  Call3(Actor_SetSpeedParameters, 8, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+  Call3(Actor_SetSpeedParameters, 8, 0x13333, SPLIT_CONSTANT(0x9999));
   Actor_SetModeById(8, 2);
   t96 = Actor_GetById(5);
   if (t96 != 0) {

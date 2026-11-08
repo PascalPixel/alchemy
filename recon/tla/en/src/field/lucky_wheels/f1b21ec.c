@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "resource.h"
@@ -10,7 +11,7 @@ void Func_081b21ec(s32 resource) {
   s32 i;
 
   Dma_Set(Resource_GetTableEntry(resource), dst, DMA_COPY_WORDS(0x20),
-          REG_DMA3);
+          SPLIT_CONSTANT(REG_DMA3));
   for (i = 0; i != 64; i++, col++) {
     s32 r = *col & 0x1f;
     s32 g = (*col >> 5) & 0x1f;
@@ -33,5 +34,5 @@ void Func_081b21ec(s32 resource) {
       b--;
     dst[i] = (b << 10) | (g << 5) | r;
   }
-  Dma_Set(dst + 1, (void *)&BG_PLTT[1], DMA_COPY_HALFWORDS(63), REG_DMA3);
+  Dma_Set(dst + 1, (void *)&BG_PLTT[1], DMA_COPY_HALFWORDS(63), SPLIT_CONSTANT(REG_DMA3));
 }

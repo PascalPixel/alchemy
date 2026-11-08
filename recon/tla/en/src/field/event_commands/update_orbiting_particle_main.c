@@ -139,7 +139,7 @@ void FieldEffect_RunFrost(void) {
   p = &pos;
   cnt = 15;
   do {
-    particle = Actor_Spawn(SPLIT_CONSTANT(0x1aa, 255), 0, 0, 0);
+    particle = Actor_Spawn(SPLIT_CONSTANT(SPLIT_CONSTANT(0x1aa, 255)), 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
       s32 dist;

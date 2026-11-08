@@ -2,6 +2,7 @@
 /// Battle: random numbers and damage/recovery calculations.
 
 #include "types.h"
+#include "call.h"
 #include "battle.h"
 #include "game.h"
 #include "system.h"
@@ -17,7 +18,7 @@
 u32 Battle_Random(void) {
   s32 seed;
 
-  seed = (gBattleRandomSeed * 0x41c64e6d) + 0x3039;
+  seed = (gBattleRandomSeed * 0x41c64e6d) + SPLIT_CONSTANT(0x3039);
   gBattleRandomSeed = seed;
   return (u32)(seed << 8) >> 16;
 }
@@ -42,7 +43,7 @@ s32 Battle_CalculateAttackDamage(s32 atk, s32 def, s32 add, s32 bonus) {
     atk = 0;
   val = Battle_GetElementMultiplier(dmg, 1) * (atk + (add * 2));
   if (val < 0)
-    val += 0x1ff;
+    val += SPLIT_CONSTANT(0x1ff);
   dmg = val >> 9;
   if (dmg < 0)
     dmg = 0;
@@ -58,7 +59,7 @@ s32 Battle_CalculatePsynergyPower(s32 power, s32 bonus, s32 rate) {
 
   val = Battle_GetElementMultiplier(bonus, 0) * power * rate;
   if (val < 0)
-    val = val + 0xffff;
+    val = val + SPLIT_CONSTANT(0xffff);
   return val >> 16;
 }
 
@@ -75,7 +76,7 @@ s32 Battle_CalculateRecovery(s32 power, s32 element, s32 rate) {
   prod = rate * prod;
   val = prod;
   if (val < 0)
-    val = val + 0xffff;
+    val = val + SPLIT_CONSTANT(0xffff);
   return val >> 16;
 }
 

@@ -4,7 +4,7 @@ void Func_020036d0(void) {
   if (Actor_GetById(64) != 0)
     Func_02004090(64, 0, 0);
   if (gMainRoutineWork.entrance == 2) {
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 41));
+    GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 41)));
     GameFlag_ClearBit(0xa2a);
     GameFlag_SetBit(0xa2b);
   }
@@ -19,17 +19,17 @@ void Func_02003e3c(s32 a, s32 b, s32 c, s32 d, s32 e);
 void Func_0200371c(void) {
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   GameFlag_SetBit(0x144);
-  if (gMainRoutineWork.entrance == 1 && !GameFlag_Test(SPLIT_CONSTANT(0x800, 140))) {
+  if (gMainRoutineWork.entrance == 1 && !GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 140)))) {
     Func_02002ebc();
   } else {
     /* FAKEMATCH: the memory clobber keeps GCSE from carrying gMainRoutineWork's
      * address from the first test into this one, which reloads it; plainly,
      * 13 instructions differ in tla-en. */
     asm("" ::: "memory");
-    if (gMainRoutineWork.entrance == 2 && !GameFlag_Test(SPLIT_CONSTANT(0x800, 140)))
+    if (gMainRoutineWork.entrance == 2 && !GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 140))))
       Func_02001bec();
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 237))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 237)))) {
     Func_02003ff0(35, 39, 13, 11, 3, 3);
     Scene_Call4090(9, 232 << 16, 200 << 16);
   }

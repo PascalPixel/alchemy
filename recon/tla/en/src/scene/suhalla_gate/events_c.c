@@ -73,7 +73,7 @@ void Func_02000800(void) {
   Func_02000a08(9, 0, 10);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
   FieldEvent_Wait(30);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 150));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 150)));
   Actor_SetModeById(9, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)
@@ -93,7 +93,7 @@ void Func_020008cc(void) {
   Func_02000a00((s32)&MsgNotThatWay);
   Func_02000a78(16, -16, 0, 0);
   Actor_WaitForMoveById(16);
-  Func_02000a08(SPLIT_CONSTANT(0x1000, 16), 0, 10);
+  Func_02000a08(SPLIT_CONSTANT(SPLIT_CONSTANT(0x1000, 16)), 0, 10);
   Actor_SetModeById(16, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader)

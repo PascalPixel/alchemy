@@ -25,7 +25,7 @@ void BattleMotion_SetObjectPosition(struct BattleObj *slot) {
 
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
-  object->verticalMotionStrength = SPLIT_CONSTANT(0xab00, 133);
+  object->verticalMotionStrength = SPLIT_CONSTANT(0xab85);
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_SetTargetPosition(object, slot->anchorX, 0, slot->anchorZ);
@@ -41,7 +41,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 objectId) {
   object->acceleration = Q16_ONE;
   object->speedLimit = 0x40000;
   object->velocityY = 0x30000;
-  object->verticalMotionStrength = SPLIT_CONSTANT(0x9900, 153);
+  object->verticalMotionStrength = SPLIT_CONSTANT(0x9999);
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_ResetMotion(object);
@@ -59,7 +59,7 @@ void Func_0811c01c(s32 objectId) {
   object->acceleration = Q16_ONE;
   object->speedLimit = 0x40000;
   object->velocityY = 0x40000;
-  object->verticalMotionStrength = SPLIT_CONSTANT(0x9900, 153);
+  object->verticalMotionStrength = SPLIT_CONSTANT(0x9999);
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_ResetMotion(object);
@@ -68,7 +68,7 @@ void Func_0811c01c(s32 objectId) {
     s32 anchor = slot->anchorX;
 
     mul = Iwram_MulQ16Entry;
-    Actor_SetTargetPosition(object, mul(anchor, SPLIT_CONSTANT(0x14c00, 204)), 0, slot->anchorZ);
+    Actor_SetTargetPosition(object, mul(anchor, SPLIT_CONSTANT(0x14ccc)), 0, slot->anchorZ);
   }
   Actor_SetMode(object, 5);
 }
@@ -104,7 +104,7 @@ void Func_0811c074(s32 id, s32 variant) {
     x = (scale * Data_0812cc28[variant]) / 100;
     Actor_SetTargetPosition(object, x, 0, slot->anchorZ);
   }
-  object->verticalMotionStrength = SPLIT_CONSTANT(0x9900, 153);
+  object->verticalMotionStrength = SPLIT_CONSTANT(0x9999);
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_SetMode(object, 5);

@@ -52,16 +52,16 @@ void Func_0200332c(void) {
       GameFlag_SetBit(0xa8e);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room2) {
     if (x == 13 && z == 49)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 152));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x898));
     else if (x == 41 && z == 49)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x798, 255));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x897));
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room3) {
     if (x == 33 && z == 79)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 155));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x89b));
     else if (x == 77 && z == 71)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 156));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x89c));
     else if (x == 59 && z == 65)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 157));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x89d));
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room4) {
     if (x == 81 && z == 37)
       GameFlag_SetBit(0x89e);
@@ -94,13 +94,13 @@ void Func_0200332c(void) {
       GameFlag_SetBit(0xa8f);
     }
     if (z == 59 && (x == 67 || x == 71 || x == 73))
-      GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x201));
     if (z == 19 && (x == 75 || x == 79))
-      GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x202));
     if (x == 69 && z == 59)
-      GameFlag_ClearBit(SPLIT_CONSTANT(0x102, 255));
+      GameFlag_ClearBit(SPLIT_CONSTANT(0x201));
     if (x == 77 && z == 19)
-      GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 2));
+      GameFlag_ClearBit(SPLIT_CONSTANT(0x202));
     Func_0200062c(2, Actor_GetById(8)->x >> 20, Actor_GetById(8)->z >> 20, 0);
     Func_0200062c(2, Actor_GetById(9)->x >> 20, Actor_GetById(9)->z >> 20, 0);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {

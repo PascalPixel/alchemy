@@ -88,7 +88,7 @@ void Func_020015e0(void) {
     Func_02003d78(0);
     Func_020015b8(object);
     Func_02003bf0(54, 32, 2, 1, x, 64);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 1)));
     Func_02003c30();
   }
 }
@@ -143,7 +143,7 @@ void Func_0200172c(void) {
   Map_CopyAttributes(38, 32, 1, 1, 37, 33);
   Map_CopyAttributes(30, 32, 1, 2, 38, 32);
   Map_CopyAttributes(40, 64, 4, 3, 36, 64);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 65));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 65)));
 }
 
 void Func_02001788(void) {
@@ -168,7 +168,7 @@ void Func_020017a0(void) {
   }
 }
 
-void Func_020017f4(void) { GameFlag_ClearBit(SPLIT_CONSTANT(0x102, 255)); }
+void Func_020017f4(void) { GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x102, 255))); }
 
 void Func_02001804(void) {
   s32 flag;

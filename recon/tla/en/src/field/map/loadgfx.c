@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -52,7 +53,7 @@ void MapAnimation_Start(void) {
     Resource_DecodeType01(Resource_GetTableEntry(resources[4]), gData_0203a000);
   work->extraTiles = 0;
   Dma_Set((void *)0x06004000, gData_0201c000, DMA_COPY_WORDS(0x2000 / 4),
-          REG_DMA3);
+          SPLIT_CONSTANT(REG_DMA3));
   wait(1);
   Func_0802dd08(pages + (gFrameCount & one) * 0x1400 + 0xc80,
                 Ram_MapCellBuffer);

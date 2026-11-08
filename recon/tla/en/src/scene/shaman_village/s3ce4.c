@@ -3,7 +3,7 @@
 void Func_02003b6c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void Func_02003ce4(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x200, 2))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 2)))) {
     Func_020048c4();
     Func_02004a24(0);
     Import_SoundPlay(123);

@@ -38,7 +38,7 @@ void Func_02000164(s32 unused, s32 id) {
     GameFlag_SetBit(0x920);
     Call6((void (*)())Func_02000e44, 6, 27, 1, 1, 5, 27);
   }
-  if (id == 19 && GameFlag_Test(SPLIT_CONSTANT(0x900, 33)) == 0) {
+  if (id == 19 && GameFlag_Test(SPLIT_CONSTANT(0x921)) == 0) {
     if ((object->x >> 19) == 77)
       Call6((void (*)())Func_02000e44, 33, 102, 1, 2, 37, 102);
     /* FAKEMATCH(temporary): the object read again through p for the last two
@@ -49,7 +49,7 @@ void Func_02000164(s32 unused, s32 id) {
       Call6((void (*)())Func_02000e44, 38, 46, 1, 1, 39, 46);
     }
     if ((p->x >> 19) == 81) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 33));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x921));
       {
         /* FAKEMATCH(temporary): the row in its own register; as a plain 46,
          * 2 of 109 instructions differ in tla-en. */

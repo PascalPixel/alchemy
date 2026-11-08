@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 
 // The layout Func_02001904 (yallam/s1904.c) reads: state and timer sit where
 // struct Actor has its callback and action.
@@ -127,7 +128,7 @@ void Func_020006bc(s32 actor) {
     (*timer)++;
     return;
   case 34:
-    Actor_SetSpeed(actor, 0x1cccc, 0x1cccc);
+    Actor_SetSpeed(actor, SPLIT_CONSTANT(0x1cccc), SPLIT_CONSTANT(0x1cccc));
     Actor_SetDestination(actor, 364, 820);
     (*timer)++;
     return;
@@ -577,7 +578,7 @@ void Func_020006bc(s32 actor) {
     (*timer)++;
     return;
   case 254:
-    Actor_SetSpeed(actor, 0x1cccc, 0x1cccc);
+    Actor_SetSpeed(actor, SPLIT_CONSTANT(0x1cccc), SPLIT_CONSTANT(0x1cccc));
     Actor_SetDestination(actor, 200, 856);
     (*timer)++;
     return;

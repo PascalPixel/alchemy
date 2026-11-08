@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -56,7 +57,7 @@ void Func_02000e58(void) {
     actor->y = linked->y + i;
     actor->z = linked->z;
     if (i <= 0x3ffff)
-      i += 0x1999;
+      i += SPLIT_CONSTANT(0x1999);
     actor->angle = (u8)gFrameCount << 12;
     p = &actor->priorityFlags;
     *p ^= 2 << (gFrameCount & 1);

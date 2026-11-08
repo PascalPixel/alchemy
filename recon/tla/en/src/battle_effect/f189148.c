@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -122,8 +123,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
 
   // The pillar sheet, and nine copies of its cell, each darker than the last,
   // for the trail.
-  Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetB, work->sheet, 1,
-                             1);
+  ValueLr4((s32 (*)())Resource_LoadAndDecompress, (s32)((s32)&ResourceId_FirePillarSheetB), (s32)(work->sheet), (s32)(1), (s32)(1));
   for (i = 1; i != 20; i++) {
     for (j = 0; j != PILLAR_CELL_SIZE; j++) {
       s32 shade = work->sheet[0x1680 + j];

@@ -30,7 +30,7 @@ void Func_02000364(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 4 of 6 instructions differ
    * in tla-en. */
-  GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x201));
   return;
 }
 
@@ -38,7 +38,7 @@ void Func_02000374(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 4 of 6 instructions differ
    * in tla-en. */
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x202));
   return;
 }
 
@@ -46,6 +46,6 @@ void Func_02000384(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 4 of 6 instructions differ
    * in tla-en. */
-  GameFlag_SetBit(SPLIT_CONSTANT(0x104, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x203));
   return;
 }

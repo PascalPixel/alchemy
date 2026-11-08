@@ -83,7 +83,7 @@ void Func_02003370(void) {
   case 26:
     Data_02006ccc--;
     if (anchor->y > 0x140000) {
-      Data_02006ccc = SPLIT_CONSTANT(0x2e8, 255);
+      Data_02006ccc = SPLIT_CONSTANT(0x3e7);
       Task_RemoveFar(Func_02003370);
     } else {
       if ((gFrameCount & 7) == 0)

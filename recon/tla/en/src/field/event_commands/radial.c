@@ -40,7 +40,7 @@ void BattleEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
 
   options.palette = 0;
   options.update = Effect_AdvanceMotion;
-  options.startScaleX = SPLIT_CONSTANT(0xcc00, 204);
+  options.startScaleX = SPLIT_CONSTANT(0xcccc);
   options.startScaleY = 0xCCCC;
   i = 0;
   do {
@@ -112,7 +112,7 @@ void BattleEffect_CircleAnchor(struct OrbitEffect *effect) {
     effect->update = BattleEffect_WanderAroundAnchor;
     effect->timer = 0;
     effect->pause = 0;
-    effect->speed = SPLIT_CONSTANT(0x1900, 153);
+    effect->speed = SPLIT_CONSTANT(0x1999);
     effect->scale = 0x30000;
     effect->angle = Random16();
   }

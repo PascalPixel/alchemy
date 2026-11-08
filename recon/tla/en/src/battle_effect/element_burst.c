@@ -6,6 +6,7 @@
 // arguments.
 
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "heap_release.h"
@@ -27,7 +28,7 @@ typedef DrawRectangle BlitterPair[2];
 
 // The whole effect work block: struct BattleEffectWork names only its first
 // 0x78f4 bytes.
-#define BATTLE_EFFECT_WORK_SIZE SPLIT_CONSTANT(0x7b00, 124)
+#define BATTLE_EFFECT_WORK_SIZE SPLIT_CONSTANT(0x7b7c)
 
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
@@ -94,7 +95,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
-  sheet = HeapSlot_Alloc(SLOT_BATTLE_SHEET, SPLIT_CONSTANT(0x600, 14));
+  sheet = HeapSlot_Alloc(SLOT_BATTLE_SHEET, SPLIT_CONSTANT(0x60e));
   work->vblanksSinceTransfer = 1;
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -125,7 +126,7 @@ void Func_0813f518(struct BattleEffectArgument *effect) {
      * Iwram_CopyWordsEntry call, 2 of 380 instructions differ in tla-en. */
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy((void *)BG_PLTT, palette, 128);
+    ValueLr3((s32 (*)())copy, (s32)((void *)BG_PLTT), (s32)(palette), (s32)(128));
   }
 
   for (i = 0; i != 128; i++) {

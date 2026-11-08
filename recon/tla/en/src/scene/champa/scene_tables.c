@@ -20,7 +20,7 @@ extern s16 gData_02002efc[];
 s32 GameFlag_Test(s32 flag);
 
 const s16 *Func_0200004c(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x880, 255)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x880, 255))))
     return gData_02002efc;
   return gData_02002c5c;
 }

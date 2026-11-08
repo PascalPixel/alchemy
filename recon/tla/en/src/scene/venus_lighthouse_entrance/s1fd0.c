@@ -145,7 +145,7 @@ void Func_02001fd0(void) {
       Call3((void (*)())Func_02002894, 0x30000, 0x30000, 0x10000);
     }
     if (*timer == 30) {
-      Call3((void (*)())Func_02002894, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+      Call3((void (*)())Func_02002894, -1, -1, SPLIT_CONSTANT(0xe666));
       if (work->timer == 30) {
         work->stage = 999;
         work->timer = -1;
@@ -174,7 +174,7 @@ void Func_02001fd0(void) {
       state->y = work->y + (work->height << 16);
       state->z = work->z;
       state->frame++;
-      state->y += Value2((s32 (*)())Iwram_MulQ16Entry, 0xfffe0000,
+      state->y += ValueLr2((s32 (*)())Iwram_MulQ16Entry, 0xfffe0000,
                          Math_Sine(state->frame << 12)) +
                   0xfffe0000;
       sprite = &work->sprites[i];

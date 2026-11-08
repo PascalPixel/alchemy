@@ -76,7 +76,7 @@ void Func_020000c8(void) {
       Func_02000310(8, 0, 5);
       Motion_SetModeAndWaitAnimation(9, 3);
       Func_02000318(9, 0);
-      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 1)));
       Func_020002c0();
     }
   }

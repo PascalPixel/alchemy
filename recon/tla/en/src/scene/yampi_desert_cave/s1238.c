@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/yampi_desert_cave/yampi_desert_cave.h"
+#include "call.h"
 #include "actor.h"
 #include "version.h"
 
@@ -41,7 +42,7 @@ void Func_02001238(s32 mode) {
     Func_020018a8(17, column << 19, row << 19);
     chest->y = 0x200000;
     chest->motionFlags = 3;
-    chest->gravity = 0x170a;
+    chest->gravity = SPLIT_CONSTANT(0x170a);
     wait(50);
     // Through an s32 and a pointer the 17 is built with a move; as a halfword
     // constant it comes from the pool.

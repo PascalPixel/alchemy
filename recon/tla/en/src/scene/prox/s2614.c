@@ -58,9 +58,9 @@ s32 Func_02002614(void) {
     *effect = value;
     Func_020045dc(skip);
   } else {
-    if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 61)))
-      GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
-    if (GameFlag_Test(SPLIT_CONSTANT(0x102, 255))) {
+    if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 61))))
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x102, 255)));
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x102, 255)))) {
       Func_0200461c(1);
     } else {
       /* FAKEMATCH: the value pinned to r3 loads from the pool before the
@@ -87,8 +87,8 @@ s32 Func_02002614(void) {
     } else if (scene == (s32)&SceneId_Ov6a8Room3) {
       Func_02002878();
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x102, 255))) {
-      Func_0200459c(SPLIT_CONSTANT(0x10000, 4), 1);
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x102, 255)))) {
+      Func_0200459c(SPLIT_CONSTANT(SPLIT_CONSTANT(0x10000, 4)), 1);
       Func_020045a4(16);
       wait(16);
     }

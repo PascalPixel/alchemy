@@ -29,12 +29,12 @@ void Func_02000620(void) {
   Func_02003bc8();
   Func_02003c88(0);
   if ((object->x >> 20) == 32) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x300, 17));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x311));
     value &= 0xff;
     Func_02000384(4, 70, 67, value);
     Func_02000384(2, 33, 54, value);
   } else {
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 17));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x311));
     value = (value & 0xff) | 0xff00;
     Func_02000384(4, 70, 67, value);
     Func_02000384(2, 33, 54, value);

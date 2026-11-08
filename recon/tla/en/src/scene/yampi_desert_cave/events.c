@@ -72,13 +72,13 @@ L_02008e3a:
 void Func_02000e3c(s32 arg0) {
   s32 result0;
 
-  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x300, 1));
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x301));
   if (result0 != 0)
     goto L_02008e66;
   if (arg0 != 3)
     goto L_02008e66;
   Func_020018a8(15, 0, 0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x301));
 L_02008e66:
   return;
 }

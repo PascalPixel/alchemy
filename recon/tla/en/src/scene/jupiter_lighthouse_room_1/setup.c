@@ -12,7 +12,7 @@ s32 Func_0200020c(void) {
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x204;
   if (!Flag_IsSet(0x109) && gMainRoutineWork.entrance == 6)
     Func_02001bcc(gMainRoutineWork.currentOwner);
-  if (Flag_IsSet(SPLIT_CONSTANT(0xa00, 1))) {
+  if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 1)))) {
     Func_02001b4c(10, PIXELS(280), PIXELS(536));
     Func_02000060(0);
   }

@@ -64,7 +64,7 @@ loop:
   Func_0200015c(position[0], position[1], position[2], 0, 0x10000, 0, 0x3b0000,
                 &options);
   if ((i & 7) == 0)
-    Func_02004f30(SPLIT_CONSTANT(0x138, 255));
+    Func_02004f30(SPLIT_CONSTANT(0x237));
   if (i == 32) {
     Arrive(13, 744, 216);
   } else if (i == 40) {
@@ -89,7 +89,7 @@ loop:
     Actor_GetById(12)->gravity = 0x8000;
     Actor_GetById(12)->action = 0;
     Actor_GetById(12)->update = Func_02001d04;
-    Call3((void (*)())Func_02004d10, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+    Call3((void (*)())Func_02004d10, -1, -1, SPLIT_CONSTANT(0xe666));
   }
   wait(3);
   i++;
@@ -99,7 +99,7 @@ loop:
   Func_02004d18();
   Func_02004f30(288);
   FieldEvent_Wait(40);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 248));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x9f8));
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02004e20();
   wait(10);

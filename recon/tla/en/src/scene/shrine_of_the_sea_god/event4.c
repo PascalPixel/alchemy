@@ -66,5 +66,5 @@ void Func_020016d8(void) {
   Task_RemoveFar(Func_020016c8);
   wait(1);
   Func_020039e0();
-  GameFlag_SetBit(SPLIT_CONSTANT(0x132, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x132, 255)));
 }

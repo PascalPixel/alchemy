@@ -15,7 +15,7 @@ void Func_02000ecc(s32 unused, s32 id) {
     Func_02003d7c();
     Func_02003eac(0);
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-    Func_02003ef4(SPLIT_CONSTANT(0x12e, 255));
+    Func_02003ef4(SPLIT_CONSTANT(0x22d));
     Actor_SetModeById(9, 2);
     Func_02003d24_(114, 39, 1, 2, 113, 39);
     for (i = 31; i >= 0; i--) {
@@ -42,7 +42,7 @@ void Func_02000ecc(s32 unused, s32 id) {
      * register addresses (differ 24). */
     i = 12;
   blend:
-    IO_WRITE_QUEUE_PUSH(SPLIT_CONSTANT(0x4000000, 82), 0x1000 | i, 0x20000);
+    IO_WRITE_QUEUE_PUSH(SPLIT_CONSTANT(0x4000052), 0x1000 | i, 0x20000);
     wait(4);
     i--;
     if (i >= 0)

@@ -51,7 +51,7 @@ void Window_LoadGraphics(void) {
     color = 0x3140;
     pal++;
     *pal = color;
-    color = SPLIT_CONSTANT(0x2900, 32);
+    color = SPLIT_CONSTANT(0x2920);
     pal++;
     *pal = color;
     color = 0x49a0;
@@ -70,7 +70,7 @@ void Window_LoadGraphics(void) {
 
 void Palette_LoadBasicObjColors(void) {
   Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
-          DMA_COPY_HALFWORDS(224), REG_DMA3);
+          DMA_COPY_HALFWORDS(224), SPLIT_CONSTANT(REG_DMA3));
 }
 
 void Heap_Initialize(void) {

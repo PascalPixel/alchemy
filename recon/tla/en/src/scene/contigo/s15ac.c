@@ -67,6 +67,6 @@ void Func_020015ac(void) {
   Func_0200401c(0, 0, 0);
   Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 17, 0);
   FieldEvent_Wait(10);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 231));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x9e7));
   Func_02004074();
 }

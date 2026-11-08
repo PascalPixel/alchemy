@@ -115,7 +115,7 @@ s32 Func_02000564(void) {
     i = 0;
   L1:
     if (i == 3) {
-      Call2((void (*)())Func_0200151c, SPLIT_CONSTANT(0x1900, 153), SPLIT_CONSTANT(0x234, 255));
+      Call2((void (*)())Func_0200151c, SPLIT_CONSTANT(0x1999), SPLIT_CONSTANT(0x333));
       Call4((void (*)())Camera_MoveWithinMapBounds, 0x13c0000, -1, 0x12c0000,
             1);
     }
@@ -125,10 +125,10 @@ s32 Func_02000564(void) {
     if (i != 10)
       goto L1;
     Call2((void (*)())Actor_SetActionById, 8, 0);
-    CallLr3((void (*)())Iwram_CopyWordsEntry, (s32)buffer, SPLIT_CONSTANT(0x5000000, 8), 14);
+    CallLr3((void (*)())Iwram_CopyWordsEntry, (s32)buffer, SPLIT_CONSTANT(0x5000008), 14);
     j = 0;
   L2:
-    out = (u16 *)SPLIT_CONSTANT(0x5000000, 14);
+    out = (u16 *)SPLIT_CONSTANT(0x500000e);
     color = out;
     i = 0;
   L3:
@@ -160,10 +160,10 @@ s32 Func_02000564(void) {
     Call3((void (*)())Func_0200150c, 8, 0x102, 0);
     Call1((void (*)())wait, 30);
     Call1((void (*)())Func_020014e4, MsgGoldenSunFormation);
-    Call2((void (*)())Func_020014f4, SPLIT_CONSTANT(0x4000, 8), 0);
+    Call2((void (*)())Func_020014f4, SPLIT_CONSTANT(0x4008), 0);
     Call1((void (*)())wait, 30);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
-    Call2((void (*)())Func_020014f4, SPLIT_CONSTANT(0x4000, 8), 0);
+    Call2((void (*)())Func_020014f4, SPLIT_CONSTANT(0x4008), 0);
     Call2((void (*)())Actor_SetActionById, 8, 32);
     i = 0;
   L4:
@@ -214,7 +214,7 @@ s32 Func_02000564(void) {
     Call2((void (*)())Actor_SetModeById, 8, 15);
     Call1((void (*)())wait, 60);
     Call1((void (*)())Func_02001594, 212);
-    REG_BG1CNT &= SPLIT_CONSTANT(0xff00, 252);
+    REG_BG1CNT &= SPLIT_CONSTANT(0xfffc);
     REG_BG1CNT |= 1;
     REG_BLDCNT = 0x3f42;
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1002, 0x20000);
@@ -303,7 +303,7 @@ s32 Func_02000564(void) {
     Call3((void (*)())Func_0200150c, 8, 0x102, 30);
     Call1((void (*)())Func_020014e4, (MsgGoldenSunEternalLifeAndPower + 4));
     Call3((void (*)())Func_020014ec, 0x2008, 0, 5);
-    Call1((void (*)())Func_02001594, SPLIT_CONSTANT(0x200, 210));
+    Call1((void (*)())Func_02001594, SPLIT_CONSTANT(0x2d2));
     Call3((void (*)())Func_020014ec, 9, 0, 5);
     Call2((void (*)())Actor_SetModeById, 8, 1);
     Call3((void (*)())Actor_ArmCallback, 8, 0xa000, 0);
@@ -318,28 +318,28 @@ s32 Func_02000564(void) {
     Call3((void (*)())Func_020014ec, 9, 0, 5);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
     Call1((void (*)())FieldEvent_Wait, 5);
-    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2008), 0, 5);
     message = MsgGoldenSunEternalLifeAndPower;
     Call2((void (*)())Actor_SetModeById, 9, 5);
     Call3((void (*)())Func_020014ec, 9, 0, 5);
     Call2((void (*)())Func_02001514, 8, 0x102);
     Call1((void (*)())FieldEvent_Wait, 20);
-    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2008), 0, 5);
     Call2((void (*)())Actor_SetModeById, 9, 6);
     Call3((void (*)())Func_020014ec, 9, 0, 5);
     Call3((void (*)())Func_0200150c, 8, 0x107, 30);
     message += 12;
     Call1((void (*)())Func_020014e4, message);
-    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2008), 0, 5);
     Call2((void (*)())Actor_SetModeById, 8, 13);
     Func_02001574();
     Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 8),
           2);
     Call1((void (*)())Func_02001594, 178);
-    Call2((void (*)())Func_02001564, 8, SPLIT_CONSTANT(0x4000, 132));
+    Call2((void (*)())Func_02001564, 8, SPLIT_CONSTANT(0x4084));
     Call1((void (*)())FieldEvent_Wait, 20);
     Call2((void (*)())Actor_SetModeById, 9, 3);
-    Call3((void (*)())Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0x1900, 153), SPLIT_CONSTANT(0xc00, 204));
+    Call3((void (*)())Actor_SetSpeedParameters, 9, SPLIT_CONSTANT(0x1999), SPLIT_CONSTANT(0xccc));
     j = 0;
   L8:
     if (j & 1) {
@@ -361,7 +361,7 @@ s32 Func_02000564(void) {
     if (j != 4)
       goto L8;
     Func_0200150c(8, 0x108, 30);
-    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2008), 0, 5);
     Call1((void (*)())FieldEvent_Wait, 10);
     Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 8),
           0);
@@ -376,7 +376,7 @@ s32 Func_02000564(void) {
     Call3((void (*)())Func_0200147c, 0x100000, 0x100000, 0x10000);
     i = 0;
   L10:
-    Call2((void (*)())Func_0200153c, SPLIT_CONSTANT(0x10000, 5), 1);
+    Call2((void (*)())Func_0200153c, SPLIT_CONSTANT(0x10005), 1);
     Call1((void (*)())Func_02001544, 1);
     Call1((void (*)())FieldEvent_Wait, 2);
     Call2((void (*)())Func_0200153c, 0x10000, 1);
@@ -388,7 +388,7 @@ s32 Func_02000564(void) {
     Call3((void (*)())Func_0200147c, 0, 0, 0);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
     Call1((void (*)())Field_StartPaletteTransition, 1);
-    Call2((void (*)())Func_02001564, 8, SPLIT_CONSTANT(0x1100, 16));
+    Call2((void (*)())Func_02001564, 8, SPLIT_CONSTANT(0x1110));
     Call1((void (*)())FieldEvent_Wait, 20);
     Call3((void (*)())Actor_SetSpeedParameters, 8, 0x80000, 0x40000);
     Call2((void (*)())Func_02000478, 128, 8);
@@ -414,7 +414,7 @@ s32 Func_02000564(void) {
       goto L11;
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
     Call1((void (*)())FieldEvent_Wait, 5);
-    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2008), 0, 5);
     i = 0;
   L12:
     ACTOR(8)->y += 0x10000;
@@ -435,7 +435,7 @@ s32 Func_02000564(void) {
     Call1((void (*)())Func_02001594, 145);
     Call3((void (*)())Func_0200147c, 0x100000, 0x100000, 0x10000);
     Call1((void (*)())FieldEvent_Wait, 10);
-    Call3((void (*)())Func_0200147c, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+    Call3((void (*)())Func_0200147c, -1, -1, SPLIT_CONSTANT(0xe666));
     Call2((void (*)())Func_0200158c, (s32)Value1((s32 (*)())Actor_GetById, 9),
           0);
     Func_02001584();
@@ -447,12 +447,12 @@ s32 Func_02000564(void) {
     Call3((void (*)())Func_020014ec, 9, 0, 5);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
     Call1((void (*)())FieldEvent_Wait, 5);
-    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2008), 0, 5);
     Call2((void (*)())Actor_SetModeById, 9, 3);
     Call3((void (*)())Func_020014ec, 9, 0, 5);
     Call2((void (*)())Actor_SetModeById, 8, 18);
     Call1((void (*)())FieldEvent_Wait, 10);
-    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2008), 0, 5);
     Call1((void (*)())FieldEvent_Wait, 120);
     Call1((void (*)())Func_02001594, 107);
     i = 0;
@@ -468,7 +468,7 @@ s32 Func_02000564(void) {
     Call2((void (*)())Actor_SetModeById, 9, 7);
     Call3((void (*)())Func_020014ec, 9, 0, 5);
     Func_0200150c(8, 0x101, 30);
-    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2008), 0, 5);
     Call2((void (*)())Actor_SetModeById, 9, 8);
     Call3((void (*)())Func_020014ec, 9, 0, 5);
     for (i = 0, j = 0x20000; i != 4; i++, j += 0x10000) {
@@ -477,7 +477,7 @@ s32 Func_02000564(void) {
     }
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
     Call1((void (*)())FieldEvent_Wait, 5);
-    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2000, 8), 0, 5);
+    Call3((void (*)())Func_020014ec, SPLIT_CONSTANT(0x2008), 0, 5);
     Call2((void (*)())Actor_SetModeById, 9, 3);
     Call3((void (*)())Func_020014ec, 9, 0, 5);
     Call2((void (*)())Motion_SetVarCbAndRefresh, 8, 2);
@@ -500,7 +500,7 @@ s32 Func_02000564(void) {
     if (j == 47)
       Call3((void (*)())Func_020014b4, 9, 0, 0);
     if (j == 64) {
-      Call2((void (*)())Func_0200153c, SPLIT_CONSTANT(0x7f00, 255), 0);
+      Call2((void (*)())Func_0200153c, SPLIT_CONSTANT(0x7fff), 0);
       Call1((void (*)())Func_02001544, 64);
     }
     FIELD(slots, 332) -= 0x10000;
@@ -515,7 +515,7 @@ s32 Func_02000564(void) {
     Call1((void (*)())Func_02001594, 208);
     Call1((void (*)())FieldEvent_Wait, 120);
     Call1((void (*)())Task_RemoveFar, Func_02000394);
-    Call2((void (*)())Func_0200153c, SPLIT_CONSTANT(0x7f00, 255), 0);
+    Call2((void (*)())Func_0200153c, SPLIT_CONSTANT(0x7fff), 0);
     Call1((void (*)())Func_02001544, 1);
     Call1((void (*)())wait, 1);
     Call1((void (*)())Func_02001594, 0x186);

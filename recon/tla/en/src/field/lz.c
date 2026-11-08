@@ -2,6 +2,7 @@
 /// Resources: decompress LZ data.
 
 #include "types.h"
+#include "call.h"
 #include "scene.h"
 
 /// Decompress source into destination and return destination.
@@ -45,7 +46,7 @@ back_reference:
     command++;
   }
   length += 2;
-  copy = base - (token & 0x0fff);
+  copy = base - (token & SPLIT_CONSTANT(0x0fff));
   while (length != 0) {
     *destination++ = *copy++;
     length--;

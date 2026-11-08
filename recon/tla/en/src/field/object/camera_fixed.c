@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "sprite.h"
 #include "io_reg.h"
@@ -113,7 +114,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
         HeapSlot_Alloc(80, (s32)Render_DecodePictureBlockSize),
         DMA_COPY_WORDS(
             (u32)(Render_DecodePictureCopyEnd - Render_DecodePictureCode) >> 2),
-        REG_DMA3);
+        SPLIT_CONSTANT(REG_DMA3));
   } while (0);
   eye = &camera->eye;
   target = &camera->target;
@@ -126,7 +127,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   if (GameFlag_Test(363)) {
     Render_ResetTransformState();
     angle += 0xffffe000;
-    Iwram_TransformMatrixEntry(gData_0802eb98);
+    ValueLr1((s32 (*)())Iwram_TransformMatrixEntry, (s32)(gData_0802eb98));
     Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
   } else {
     SceneTransform_RewindStack();

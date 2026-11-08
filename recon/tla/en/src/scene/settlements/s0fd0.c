@@ -34,7 +34,7 @@ void Func_02000fd0(void) {
     Func_0200156c(10);
     FieldEvent_Wait(20);
     Camera_MoveWithinMapBounds(0xc00000, -1, 0xe00000, 1);
-    Speed(10, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+    Speed(10, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
     Actor_OffsetPositionAndResetMotion(10, 0, 8);
     Actor_WaitForMoveById(10);
     FieldEvent_Wait(10);
@@ -45,14 +45,14 @@ void Func_02000fd0(void) {
     Func_0200156c(10);
     if (!GameFlag_Test(0x204)) {
       FieldEvent_Wait(10);
-      Speed(10, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+      Speed(10, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
       Actor_OffsetPositionAndResetMotion(10, 0, 80);
       Actor_WaitForMoveById(10);
       Speed(10, 0x28000, 0x14000);
       Actor_OffsetPositionAndResetMotion(10, 0, 80);
       FieldEvent_Wait(5);
       Func_020020c0(10, 0, 0);
-      GameFlag_SetBit(SPLIT_CONSTANT(0x200, 6));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x206));
     } else {
       Func_02002018(12, 32, 11, 15, 1, 1);
       Func_02002018(77, 15, 75, 15, 1, 1);
@@ -62,16 +62,16 @@ void Func_02000fd0(void) {
       Func_02002030(9, 11, 1, 1, 11, 11);
       Actor_SetModeById(10, 2);
       FieldEvent_Wait(30);
-      GameFlag_SetBit(SPLIT_CONSTANT(0x106, 255));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x205));
     }
     Func_02002070();
-  } else if (!Flag_Test(SPLIT_CONSTANT(0x108, 255)) && column == 16 && row == 12) {
+  } else if (!Flag_Test(SPLIT_CONSTANT(0x207)) && column == 16 && row == 12) {
     Func_02002030(17, 12, 1, 1, column, row);
     flags = &object->motionFlags;
     *flags = 3;
     FieldEvent_Wait(30);
     *flags = 0;
-    Flag_Set(SPLIT_CONSTANT(0x108, 255));
+    Flag_Set(SPLIT_CONSTANT(0x207));
     Func_02002070();
   }
 }

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "system.h"
 #include "io_reg.h"
 #include "ram_buffer.h"
@@ -138,7 +139,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
      * source is fetched, so its pool load leads the destination's shift; as
      * Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(...), 128), 2
      * of 783 instructions differ in tla-en. */
-    copy((void *)BG_PLTT, palette, 128);
+    ValueLr3((s32 (*)())copy, (s32)((void *)BG_PLTT), (s32)(palette), (s32)(128));
   }
 
   sparks = gMapCellBuffer;

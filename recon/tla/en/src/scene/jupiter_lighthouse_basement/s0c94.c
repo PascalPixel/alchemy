@@ -62,7 +62,7 @@ void Func_02000c94(void) {
         oy = sy - 16;
         if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
           continue;
-        ox &= SPLIT_CONSTANT(0x100, 255);
+        ox &= SPLIT_CONSTANT(0x1ff);
         oy &= 0xff;
         word = (u32 *)oam;
         *word++ = 0;
@@ -83,7 +83,7 @@ void Func_02000c94(void) {
         oy = sy - 64;
         if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
           continue;
-        ox &= SPLIT_CONSTANT(0x100, 255);
+        ox &= SPLIT_CONSTANT(0x1ff);
         oy &= 0xff;
         word = (u32 *)oam;
         *word++ = 0;

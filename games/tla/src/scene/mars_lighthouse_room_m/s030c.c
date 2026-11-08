@@ -8,22 +8,22 @@ void Func_0200030c(void) {
 
   Func_020031e0();
   Func_02003280(0);
-  Func_02003248(SPLIT_CONSTANT(0x7f00, 255), 0);
+  Func_02003248(SPLIT_CONSTANT(0x7fff), 0);
   Func_02003258(30);
   FieldEvent_Wait(30);
   Func_020032b8(190);
   switch (gMainRoutineWork.entrance) {
   case 1:
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 50));
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa32));
     break;
   case 2:
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 51));
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa33));
     break;
   case 3:
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 52));
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa34));
     break;
   case 4:
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 53));
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa35));
     break;
   }
   work = Ram_HeapSlots->eventWork;

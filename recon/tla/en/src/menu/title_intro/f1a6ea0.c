@@ -159,7 +159,7 @@ s32 Func_081a6ea0(void) {
   i = Func_081a68b4(&scroll);
   if (i)
     goto stopped;
-  PaletteFade_SetTarget(SPLIT_CONSTANT(0x7f00, 255), 0);
+  PaletteFade_SetTarget(SPLIT_CONSTANT(SPLIT_CONSTANT(0x7f00, 255)), 0);
   PaletteFade_Start(20);
   scroll.limit = 0;
   scroll.step = -5;

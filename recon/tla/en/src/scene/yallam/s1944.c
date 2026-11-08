@@ -61,15 +61,15 @@ void Func_02001944(void) {
   ((struct Actor *)Value1(Actor_GetById, 9))->update = 0;
   ((struct Actor *)Value1(Actor_GetById, 10))->update = 0;
   Call1(wait, 1);
-  Call3(Actor_SetSpeedParameters, 9, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
-  Call3(Actor_SetSpeedParameters, 10, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Call3(Actor_SetSpeedParameters, 9, 0x19999, SPLIT_CONSTANT(0xcccc));
+  Call3(Actor_SetSpeedParameters, 10, 0x19999, SPLIT_CONSTANT(0xcccc));
   Call2(Actor_SetMovementTypeById, 9, gData_0200277c);
   Call2(Actor_SetMovementTypeById, 10, gData_020027c0);
   ((struct Actor *)Value0(Func_02002570))->motionFlags = 0;
-  Call2(Func_02002560, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x1900, 153));
+  Call2(Func_02002560, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x1999));
   Call4(Camera_MoveWithinMapBounds, 0x1300000, -1, 0x36e0000, 1);
-  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
-        0x6666);
+  Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcccc),
+        SPLIT_CONSTANT(0x6666));
   Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 296, 872);
   Call2(Func_02002548, gMainRoutineWork.currentOwner, 0);
   Call1(Func_020025a0, 78);
@@ -78,8 +78,8 @@ void Func_02001944(void) {
   Call3(Actor_Jump, 8, 2, 10);
   Call3(Actor_Jump, 8, 4, 10);
   Call2(Motion_SetModeAndWaitAnimation, 8, 3);
-  Call3(Actor_SetSpeedParameters, 8, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
-  Call3(Actor_SetSpeedParameters, 11, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Call3(Actor_SetSpeedParameters, 8, 0x19999, SPLIT_CONSTANT(0xcccc));
+  Call3(Actor_SetSpeedParameters, 11, 0x19999, SPLIT_CONSTANT(0xcccc));
   Call2(Actor_SetMovementTypeById, 8, gData_02002804);
   Call2(Actor_SetMovementTypeById, 9, gData_02002870);
   Call2(Actor_SetMovementTypeById, 10, gData_020028dc);
@@ -87,8 +87,8 @@ void Func_02001944(void) {
   Call3(Func_020024f8, 5, 0x1280000, 0x3680000);
   Call1(wait, 1);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, 0xe000, 0);
-  Call3(Actor_SetSpeedParameters, 5, 0x13333, SPLIT_CONSTANT(0x9900, 153));
-  Call3(Actor_SetPositionAndReset, 5, 312, SPLIT_CONSTANT(0x300, 86));
+  Call3(Actor_SetSpeedParameters, 5, 0x13333, SPLIT_CONSTANT(0x9999));
+  Call3(Actor_SetPositionAndReset, 5, 312, SPLIT_CONSTANT(0x356));
   Call2(Func_02002548, 5, 0x6000);
   Call2(Motion_SetModeAndWaitAnimation, 5, 3);
   Call2(Motion_SetModeAndWaitAnimation, gMainRoutineWork.currentOwner, 3);
@@ -101,7 +101,7 @@ void Func_02001944(void) {
   Call1(Actor_WaitForMoveById, 5);
   Call3(Func_020024f8, 5, 0, 0);
   Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0x19999,
-        SPLIT_CONSTANT(0xcc00, 204));
+        SPLIT_CONSTANT(0xcccc));
   Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 316, 0x380);
   Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 344, 0x390);
   Call2(Func_02002548, gMainRoutineWork.currentOwner, 0xc000);
@@ -112,7 +112,7 @@ void Func_02001944(void) {
   Call2(Actor_SetMovementTypeById, 8, gData_02002998);
   Call2(Actor_SetMovementTypeById, 10, gData_020029c0);
   Call2(Actor_SetMovementTypeAndWaitById, 9, gData_02002a04);
-  Call3(Actor_SetPositionAndReset, 11, 344, SPLIT_CONSTANT(0x300, 122));
+  Call3(Actor_SetPositionAndReset, 11, 344, SPLIT_CONSTANT(0x37a));
   Call2(Func_02002548, 11, 0xc000);
   Call1(Func_02001904, 8);
   Call1(Func_02001904, 10);

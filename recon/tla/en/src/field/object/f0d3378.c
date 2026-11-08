@@ -1,4 +1,5 @@
 #include "event_work.h"
+#include "call.h"
 #include "actor.h"
 #include "objdisp.h"
 #include "system.h"
@@ -49,7 +50,7 @@ void Func_080d3378(struct Actor *source, s32 param) {
     object->acceleration = rate * speed;
     speed = Random16() % 15 - 7;
     speed <<= 1;
-    object->speedLimit = 0x1999 * speed;
+    object->speedLimit = SPLIT_CONSTANT(0x1999) * speed;
     object->action = 0;
     /* FAKEMATCH(barrier): an empty asm that reads the cleared action and
      * rewrites object, so the priority flags' address is copied after the

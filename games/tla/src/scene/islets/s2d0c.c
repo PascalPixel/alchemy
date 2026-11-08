@@ -10,8 +10,8 @@ void Func_02002d0c(s32 id) {
   object->unk5c[0] = 3;
   object->motionFlags = 0;
   object->priorityFlags |= 0x80;
-  object->acceleration = SPLIT_CONSTANT(0x2600, 102);
-  object->speedLimit = SPLIT_CONSTANT(0x4c00, 204);
+  object->acceleration = SPLIT_CONSTANT(0x2666);
+  object->speedLimit = SPLIT_CONSTANT(0x4ccc);
 }
 
 void Func_02002d48(s32 id, s32 column, s32 row) {

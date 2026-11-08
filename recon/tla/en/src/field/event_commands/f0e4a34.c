@@ -105,7 +105,7 @@ void Func_080e4a34(void) {
     if (frame > 0)
       owner->y += 0x3999;
     if (frame & 31)
-      Sound_PlayFar(SPLIT_CONSTANT(0x200, 54));
+      Sound_PlayFar(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 54)));
     owner->angle += 0x2000;
     wait(1);
   }

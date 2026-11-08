@@ -10,7 +10,7 @@ void Func_020005e8(s32 mode) {
 
   // Goto loops: as for loops, the stored constants (3, 4, 0x208000) are hoisted
   // out of the loops and 42 of 181 instructions differ in tla-en.
-  if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 26))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0xa1a))) {
     Func_02002b2c(80, 46, 1, 7, 72, 9);
     Func_02002b2c(80, 53, 8, 5, 72, 16);
     Call6((void (*)())Func_02002b2c, 78, 47, 1, 1, 8, 74);

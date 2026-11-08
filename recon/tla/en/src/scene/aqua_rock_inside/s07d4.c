@@ -61,13 +61,13 @@ cell:
   if (i <= 14)
     goto row;
   Func_02003e54();
-  Func_02003d44_(-1, -1, SPLIT_CONSTANT(0xe600, 102));
+  Func_02003d44_(-1, -1, SPLIT_CONSTANT(0xe666));
   Func_02003ef4(390);
   FieldEvent_Wait(30);
   Func_02003ef4(80);
   Sound_WaitForBgmRestore();
   Func_02003d84();
   Func_02003ebc();
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 93));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x95d));
   GameFlag_SetBit(0x143);
 }

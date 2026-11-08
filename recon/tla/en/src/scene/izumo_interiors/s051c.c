@@ -62,7 +62,7 @@ static inline void ActorAnimate(s32 actor, s32 animation, s32 frames) {
 s32 Func_0200051c(void) {
   Func_020021c4();
   Func_020022bc(0);
-  if (!FlagCheck(SPLIT_CONSTANT(0x900, 37))) {
+  if (!FlagCheck(SPLIT_CONSTANT(0x925))) {
     Func_02002244((s32)MsgSusaDonT);
     Func_02002254(17, 0);
     FieldEvent_Wait(60);
@@ -78,7 +78,7 @@ s32 Func_0200051c(void) {
     FieldEvent_Wait(30);
     Func_02002254(17, 0);
     FieldEvent_Wait(60);
-    FlagSet(SPLIT_CONSTANT(0x900, 37));
+    FlagSet(SPLIT_CONSTANT(0x925));
   } else {
     Func_02002244((s32)MsgSusaPleaseDon);
     Func_02002254(17, 0);
@@ -132,34 +132,34 @@ void Func_0200061c(s32 mode) {
   }
   Call1((void (*)())FieldEvent_Wait, 15);
   Call1((void (*)())Func_02002244, (s32)MsgWarriorsAppearedFrom);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   Call2((void (*)())Actor_SetModeById, 22, 3);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 22), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8016), 0);
   ActorAnimate(15, 0x100, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call2((void (*)())Actor_SetModeById, 22, 3);
   Call1((void (*)())FieldEvent_Wait, 15);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 22), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8016), 0);
   ActorAnimate(15, 0x103, 30);
   Call2((void (*)())Actor_StartRepeatedMotion, 22, 3);
   Call2((void (*)())Func_02002274, 22, 0x102);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 22), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8016), 0);
   Call3((void (*)())Actor_ArmCallback, 20, FACING_EAST, 30);
   Call2((void (*)())Actor_SetModeById, 20, 4);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 20), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8014), 0);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Actor_ArmCallback, 15, FACING_WEST, 30);
   Call2((void (*)())Actor_SetModeById, 15, 3);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   Call2((void (*)())Actor_SetModeById, 22, 3);
   Call1((void (*)())FieldEvent_Wait, 15);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 22), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8016), 0);
   Call2((void (*)())Actor_StartRepeatedMotion, 20, 2);
   Call1((void (*)())FieldEvent_Wait, 15);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 20), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8014), 0);
   Call3((void (*)())Actor_SetAngleToward, 15, gMainRoutineWork.currentOwner, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Actor_OffsetPositionAndResetMotion, 15, 0, 16);
@@ -175,28 +175,28 @@ void Func_0200061c(s32 mode) {
   owner = (s32)&gMainRoutineWork;
   owner = owner + 532;
   Call3((void (*)())Actor_SetAngleToward, 20, *(s32 *)owner, 0);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   ActorAnimate(15, 0x107, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   Call3((void (*)())Actor_Jump, 22, 4, 0);
   Call2((void (*)())Func_02002274, 22, 0x101);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Actor_ArmCallback, 20, FACING_SOUTH, 30);
   ActorAnimate(20, 0x101, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 20), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8014), 0);
   Call3((void (*)())Actor_SetAngleToward, 22, 20, 0);
   Call2((void (*)())Func_02002274, 22, 0x100);
   Call2((void (*)())Func_02002254, 22, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   Call2((void (*)())Actor_StartRepeatedMotion, 20, 2);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Actor_SetAngleToward, 20, *(s32 *)owner, 0);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 20), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8014), 0);
   ActorAnimate(15, 0x108, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   Call3((void (*)())Actor_ResetAndSetPositionInMode2, 15, 144, 520);
   Call1((void (*)())Actor_WaitForMoveById, 15);
   Call3((void (*)())Actor_ArmCallback, 15, FACING_SOUTH, 0);
@@ -261,7 +261,7 @@ void Func_0200061c(s32 mode) {
   Call1((void (*)())FieldEvent_Wait, 30);
   Call2((void (*)())Func_02002254, 6, 0);
   ActorAnimate(15, 0x101, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   Call3((void (*)())Actor_TurnToFaceEachOther, 15, 20, 0);
   Call1((void (*)())FieldEvent_Wait, 60);
   Call3((void (*)())Actor_SetAngleToward, 15, *(s32 *)owner, 0);
@@ -283,7 +283,7 @@ void Func_0200061c(s32 mode) {
   ActorAnimate(15, 0x100, 0);
   ActorAnimate(20, 0x100, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   Call3((void (*)())Actor_SetAngleToward, *(s32 *)owner, 15, 0);
   Call3((void (*)())Actor_SetAngleToward, 5, 15, 0);
   Call3((void (*)())Actor_SetAngleToward, 6, 15, 0);
@@ -296,7 +296,7 @@ void Func_0200061c(s32 mode) {
   Call2((void (*)())Actor_SetModeById, 23, 3);
   Call1((void (*)())FieldEvent_Wait, 30);
   ActorAnimate(15, 0x102, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   Call1((void (*)())FieldEvent_Wait, 60);
   Call3((void (*)())Actor_ArmCallback, 15, FACING_EAST, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
@@ -304,7 +304,7 @@ void Func_0200061c(s32 mode) {
   Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Actor_ArmCallback, 15, FACING_SOUTH, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   ActorAnimate(*(s32 *)owner, 0x100, 0);
   ActorAnimate(5, 0x100, 0);
   ActorAnimate(6, 0x100, 0);
@@ -318,7 +318,7 @@ void Func_0200061c(s32 mode) {
   Call1((void (*)())FieldEvent_Wait, 30);
   Call3((void (*)())Actor_SetAngleToward, 15, *(s32 *)owner, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   ActorAnimate(20, 0x101, 30);
   Call1((void (*)())FieldEvent_Wait, 30);
   Value2((s32 (*)())FieldMessage_ShowAtActor, 0x8014, 0);
@@ -326,7 +326,7 @@ void Func_0200061c(s32 mode) {
   if (answer == 1) {
     Call1((void (*)())Func_02002244, (s32)MsgIThoughtSo);
     ActorAnimate(20, 0x100, 30);
-    Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 20), 0);
+    Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8014), 0);
     Call2((void (*)())Actor_SetModeById, 6, 3);
     Call2((void (*)())Actor_SetModeById, 5, 3);
     Call1((void (*)())FieldEvent_Wait, 30);
@@ -339,7 +339,7 @@ void Func_0200061c(s32 mode) {
   Call1((void (*)())Func_02002244, (s32)MsgSoYouCall);
   Call2((void (*)())Actor_SetModeById, 20, 3);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 20), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8014), 0);
   Call2((void (*)())Actor_SetModeById, *(s32 *)owner, 3);
   Call2((void (*)())Actor_SetModeById, 5, 3);
   Call2((void (*)())Actor_SetModeById, 6, 3);
@@ -352,7 +352,7 @@ void Func_0200061c(s32 mode) {
   ActorAnimate(20, 0x101, 30);
   Call3((void (*)())Actor_SetAngleToward, 20, *(s32 *)owner, 0);
   Call1((void (*)())FieldEvent_Wait, 30);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 20), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8014), 0);
   Call1((void (*)())FieldEvent_Wait, 90);
   Call2((void (*)())Func_02002254, 21, 0);
   Call3((void (*)())Func_02002214, 21, PIXELS(144), PIXELS(680));
@@ -363,12 +363,12 @@ void Func_0200061c(s32 mode) {
   Call3((void (*)())Actor_SetAngleToward, 23, 21, 0);
   Call3((void (*)())Actor_SetAngleToward, 22, 21, 0);
   Call1((void (*)())FieldEvent_Wait, 120);
-  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x8000, 15), 0);
+  Call2((void (*)())Func_02002254, SPLIT_CONSTANT(0x800f), 0);
   Call1((void (*)())FieldEvent_Wait, 30);
   Call2((void (*)())Camera_FollowActor, 21, 1);
   Call1((void (*)())FieldEvent_Wait, 120);
-  Call3((void (*)())Actor_SetSpeedParameters, 21, SPLIT_CONSTANT(0x9900, 153), SPLIT_CONSTANT(0x4c00, 204));
-  Actor_SetSpeedParameters(21, SPLIT_CONSTANT(0x9900, 153), SPLIT_CONSTANT(0x4c00, 204));
+  Call3((void (*)())Actor_SetSpeedParameters, 21, SPLIT_CONSTANT(0x9999), SPLIT_CONSTANT(0x4ccc));
+  Actor_SetSpeedParameters(21, SPLIT_CONSTANT(0x9999), SPLIT_CONSTANT(0x4ccc));
   Actor_GetById(21)->priorityFlags &= ~1;
   Call3((void (*)())Actor_ResetAndSetPositionInMode2, 21, 144, 648);
   if (mode == 0) {
@@ -817,7 +817,7 @@ void Func_0200061c(s32 mode) {
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(23);
   Func_02002214(23, 0, 0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 40));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x928));
   GameFlag_SetBit(0x350);
   Func_020021cc();
 }

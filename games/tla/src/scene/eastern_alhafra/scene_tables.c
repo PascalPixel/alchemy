@@ -39,7 +39,7 @@ void *Func_0200004c(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 8 of 11 instructions
    * differ in tla-en. */
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x8ab)))
     return gData_02004fe4;
   return gData_02004dbc;
 }
@@ -51,14 +51,14 @@ void Func_0200006c(s32 mode, s32 id) {
   if (id == 0)
     Func_02004004();
   if (mode == 1) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x7a8, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x8a7));
     Func_02000fa4();
   }
   if (mode == 2)
     Func_02003f48(0x1f20000, 0x100000, 0x19c0000, 2);
   if (mode == 3)
     Func_02003f48(0x1f20000, 0x100000, 0x19c0000, 30);
-  if (id == SPLIT_CONSTANT(0x2e8, 255))
+  if (id == SPLIT_CONSTANT(0x3e7))
     Func_020040c0();
 }
 

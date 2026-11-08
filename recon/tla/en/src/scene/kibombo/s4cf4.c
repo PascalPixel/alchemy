@@ -65,7 +65,7 @@ void Func_02004cf4(void) {
   Kibombo_ObjTurn(8, FACING_SOUTH + FACING_STEP);
   Kibombo_MessagePut(0x2008, 0);
   Actor_SetModeById(8, 4);
-  Func_02005b64(SPLIT_CONSTANT(0x2000, 8), 0);
+  Func_02005b64(SPLIT_CONSTANT(SPLIT_CONSTANT(SPLIT_CONSTANT(0x2000, 8))), 0);
   Kibombo_ObjArm(9, FACING_NORTH + FACING_STEP, 0);
   Kibombo_ObjSpeed(8, 0x19999, 0xcccc);
   Kibombo_ObjWalk(8, 364, 576);

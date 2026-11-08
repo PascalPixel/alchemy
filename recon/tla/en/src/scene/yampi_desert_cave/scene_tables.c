@@ -19,7 +19,7 @@ void Func_020018e8();
 void GameFlag_SetBit();
 
 void Func_02000cec(void) {
-  GameFlag_SetBit(SPLIT_CONSTANT(0x172, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x271));
   Func_020018e8(17, 17);
   return;
 }

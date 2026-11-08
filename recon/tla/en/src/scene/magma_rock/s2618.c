@@ -66,9 +66,9 @@ s32 Func_02002618(void) {
     Func_02000668(gData_02003d9e);
     if (Flag_IsSet(0x109) == 0)
       Call3((void (*)())Func_02000ee4, 21, 13, 0);
-    if (Flag_IsSet(SPLIT_CONSTANT(0x800, 213)))
+    if (Flag_IsSet(SPLIT_CONSTANT(0x8d5)))
       Call3((void (*)())Func_02003b0c, 8, 0x1080000, 0x1680000);
-    if (Flag_IsSet(SPLIT_CONSTANT(0x800, 214)))
+    if (Flag_IsSet(SPLIT_CONSTANT(0x8d6)))
       Call3((void (*)())Func_02003b0c, 10, 0xf80000, 0x1980000);
     other = (s32)gData_02003d98;
     value2 = 78;
@@ -103,7 +103,7 @@ s32 Func_02002618(void) {
       Func_02000668(gData_02003db2);
       Func_02003bec();
       Call3((void (*)())Func_02003bf4, 0, 11, 12);
-      if (Flag_IsSet(SPLIT_CONSTANT(0x7d8, 255)))
+      if (Flag_IsSet(SPLIT_CONSTANT(0x8d7)))
         Call3((void (*)())Func_02003b0c, 15, 0x1b80000, 0x2180000);
       Func_02003c0c(gData_02003dac);
       id = *entrance;
@@ -144,7 +144,7 @@ s32 Func_02002618(void) {
           Actor_GetById(13)->y += rise;
           Call3((void (*)())Func_02000ee4, 21, 12, 0);
         }
-        if (Flag_IsSet(SPLIT_CONSTANT(0x800, 216)))
+        if (Flag_IsSet(SPLIT_CONSTANT(0x8d8)))
           Call3((void (*)())Func_02003b0c, 16, 0x3780000, 0x2380000);
         Func_02003c0c(gData_02003dd2);
         Func_02000668(gData_02003dc4);
@@ -183,7 +183,7 @@ s32 Func_02002618(void) {
           goto move;
         }
       } else if (*entrance <= 12) {
-        if (Flag_IsSet(SPLIT_CONSTANT(0x800, 217)))
+        if (Flag_IsSet(SPLIT_CONSTANT(0x8d9)))
           Call3((void (*)())Func_02003b0c, 8, 0x1080000, 0x2480000);
         rise = (s32)gData_02003de4;
         Func_02003c0c(rise);
@@ -224,16 +224,16 @@ s32 Func_02002618(void) {
           Actor_SetSingleChildFlags(actor, 0);
         }
         Call1((void (*)())Func_02002518, 13);
-        if (Flag_IsSet(SPLIT_CONSTANT(0x800, 218)))
+        if (Flag_IsSet(SPLIT_CONSTANT(0x8da)))
           Call3((void (*)())Func_02003b0c, 8, 0x2880000, 0x2580000);
-        if (Flag_IsSet(SPLIT_CONSTANT(0x800, 219)))
+        if (Flag_IsSet(SPLIT_CONSTANT(0x8db)))
           Call3((void (*)())Func_02003b0c, 9, 0x2380000, 0x2680000);
         Func_0200079c(gData_02003de8);
         if (Flag_IsSet(0x250))
           Call6((void (*)())Func_02003aa4, 121, 48, 1, 3, 123, 48);
-        if (Flag_IsSet(SPLIT_CONSTANT(0x152, 255)))
+        if (Flag_IsSet(SPLIT_CONSTANT(0x251)))
           Call6((void (*)())Func_02003aa4, 121, 48, 1, 3, 125, 48);
-        if (Flag_IsSet(SPLIT_CONSTANT(0x200, 82)))
+        if (Flag_IsSet(SPLIT_CONSTANT(0x252)))
           Call6((void (*)())Func_02003aa4, 108, 56, 1, 3, 109, 56);
         if (*entrance == 14) {
           Call1((void (*)())Func_0200244c, 0x300000);
@@ -251,7 +251,7 @@ s32 Func_02002618(void) {
       Func_020024c8();
     }
   } else if (scene == (s32)&SceneId_Ov691Room3) {
-    if (Flag_IsSet(SPLIT_CONSTANT(0x800, 220))) {
+    if (Flag_IsSet(SPLIT_CONSTANT(0x8dc))) {
       Call3((void (*)())Func_02003b0c, 8, 0, 0);
       value3 = 42;
       Call6((void (*)())Func_02003aa4, 0, 32, 5, 8, value3, 17);

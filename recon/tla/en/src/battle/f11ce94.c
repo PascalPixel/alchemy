@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "battle_side.h"
 #include "battle_escape.h"
 #include "owner_state.h"
@@ -45,7 +46,7 @@ s32 BattleEscape_CheckSuccess(void) {
     }
     chance -= __divsi3(levelTotal * 0x1F4, livingCount);
     if ((chance > 0) &&
-        ((u32)((u32)(0x2710 * Random16()) >> 0x10) < (u32)chance)) {
+        ((u32)((u32)(SPLIT_CONSTANT(0x2710) * Random16()) >> 0x10) < (u32)chance)) {
       escaped = 1;
     }
     escapeState->failedAttempts++;

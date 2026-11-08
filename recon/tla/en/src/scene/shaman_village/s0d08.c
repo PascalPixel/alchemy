@@ -36,7 +36,7 @@ void Func_02000d68(void) {
     ShamanVillage_ObjWalk(gMainRoutineWork.currentOwner, 204, 292);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 182, 280);
     Func_020049bc(gMainRoutineWork.currentOwner, 0);
-    Func_020049a4(SPLIT_CONSTANT(0x2000, 15), 0);
+    Func_020049a4(SPLIT_CONSTANT(SPLIT_CONSTANT(0x2000, 15)), 0);
     GameFlag_SetBit(0x200);
     Func_02001380();
   } else {
@@ -58,7 +58,7 @@ void Func_02000e3c(void) {
     Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x19999, 0xcccc);
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 182, 280);
     Func_020049bc(gMainRoutineWork.currentOwner, 0);
-    Func_020049a4(SPLIT_CONSTANT(0x2000, 15), 0);
+    Func_020049a4(SPLIT_CONSTANT(SPLIT_CONSTANT(0x2000, 15)), 0);
     GameFlag_SetBit(0x200);
     Func_02001380();
   } else {

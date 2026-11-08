@@ -141,7 +141,7 @@ void Func_020017a8(s32 a, s32 b, s32 side) {
   work->unkb09 = 1;
   work->unkb0a = 0;
   Task_Add(Func_02001080, 0x480);
-  while (work->step != SPLIT_CONSTANT(0x2e8, 255))
+  while (work->step != SPLIT_CONSTANT(0x3e7))
     wait(1);
   Task_RemoveFar(Func_02001080);
   Resource_ResetEntry(largeEntry);

@@ -16,9 +16,9 @@ void Func_020004f4(s32 actor) {
 }
 
 u8 *Func_02000540(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x7a8, 255))))
     return gData_020019dc;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 171))))
     return gData_02001730;
   return gData_020013dc;
 }

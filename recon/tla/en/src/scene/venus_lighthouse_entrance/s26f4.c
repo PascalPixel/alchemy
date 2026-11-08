@@ -43,7 +43,7 @@ s32 Task_Add(void (*func)(void), s32 order);
 void Func_0200258c(void);
 
 void Func_020026f4(void) {
-  struct SparkWork *work = HeapSlot_AllocFar(220, SPLIT_CONSTANT(0x2100, 136));
+  struct SparkWork *work = HeapSlot_AllocFar(220, SPLIT_CONSTANT(0x2188));
   s32 resource;
   s32 tileBase;
   s32 i; struct SparkState *state; struct SparkSprite *sprite;

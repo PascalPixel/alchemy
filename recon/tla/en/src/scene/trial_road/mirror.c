@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "call.h"
 
 s32 Func_02002ce8(s32 side) {
   struct TrialRoadState *state;
@@ -29,8 +30,8 @@ s32 Func_02002d38(s32 x) {
 
 s32 Func_02002d50(s32 angle) {
   if (Func_02002cfc())
-    return (0x8000 - angle) & 0xffff;
-  return angle & 0xffff;
+    return (0x8000 - angle) & SPLIT_CONSTANT(0xffff);
+  return angle & SPLIT_CONSTANT(0xffff);
 }
 
 void Func_02002d78(s32 id, s32 x, s32 z, s32 angle) {

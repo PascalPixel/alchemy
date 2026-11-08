@@ -59,14 +59,14 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
        candidateOrUnitIndex++)
     pool[candidateOrUnitIndex].score = -1;
 
-  if (GameFlag_Test(SPLIT_CONSTANT(0x600, 91)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x600, 91))))
     GameFlag_SetBit(0x65f);
   if (GameFlag_Test(0x65c))
-    GameFlag_SetBit(SPLIT_CONSTANT(0x560, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x560, 255)));
   if (GameFlag_Test(0x65d))
-    GameFlag_SetBit(SPLIT_CONSTANT(0x560, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x560, 255)));
   if (GameFlag_Test(0x65e))
-    GameFlag_SetBit(SPLIT_CONSTANT(0x560, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x560, 255)));
   if (GameFlag_Test(0x66b))
     GameFlag_SetBit(0x66c);
   if (GameFlag_Test(0x668))

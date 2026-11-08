@@ -57,9 +57,9 @@ void Func_02000798(void) {
 void Func_02000808(void) {
   struct Actor *object = Actor_GetById(20);
 
-  if (!Flag_IsSet(SPLIT_CONSTANT(0xa00, 71))) {
-    Func_02004de0(SPLIT_CONSTANT(0x13e, 255));
-    Flag_Set(SPLIT_CONSTANT(0x132, 255));
+  if (!Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 71)))) {
+    Func_02004de0(SPLIT_CONSTANT(SPLIT_CONSTANT(0x13e, 255)));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x132, 255)));
     object->x = S16_AT(object, 100) << 16;
     object->z = S16_AT(object, 102) << 16;
     Flag_Set(0xa48);
@@ -69,7 +69,7 @@ void Func_02000808(void) {
 
 void Func_0200085c(s32 state, s32 frame) {
   if (state == 1) {
-    Func_02004de0(SPLIT_CONSTANT(0x200, 62));
+    Func_02004de0(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 62)));
     Func_02004d58(0x10000, 0);
     Func_02004d60(60);
     Func_02004c30(28, 92, 8, 8, 28, 100);
@@ -80,7 +80,7 @@ void Func_0200085c(s32 state, s32 frame) {
   if (frame > 96 && frame < 272 && frame % 30 == 0)
     Func_02000414(20);
   if (frame == 276) {
-    Func_02004d58(SPLIT_CONSTANT(0x7f00, 255), 0);
+    Func_02004d58(SPLIT_CONSTANT(SPLIT_CONSTANT(0x7f00, 255)), 0);
     Func_02004d60(20);
   }
 }

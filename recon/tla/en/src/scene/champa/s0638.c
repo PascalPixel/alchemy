@@ -49,7 +49,7 @@ void Func_02000638(void) {
   s32 t17;
   s32 t106;
 
-  t0 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x800, 34));
+  t0 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x822));
   if (t0 == 0) {
   } else {
 #if TLA_PATCH_1
@@ -59,7 +59,7 @@ void Func_02000638(void) {
     } else
 #endif
     {
-      GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 117));
+      GameFlag_SetBit(SPLIT_CONSTANT(0xa75));
       Func_02002a44();
       Func_02002b64(0);
       Func_02002adc((s32)MsgChampa52);
@@ -186,7 +186,7 @@ void Func_02000638(void) {
       Motion_SetModeAndWaitAnimation(29, 3);
       FieldEvent_Wait(10);
       Call2(Camera_FollowActor, 4, 1);
-      Call3(Actor_SetSpeedParameters, 29, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+      Call3(Actor_SetSpeedParameters, 29, 0x13333, SPLIT_CONSTANT(0x9999));
       Actor_OffsetPositionAndReset(29, 0, 100);
       FieldEvent_Wait(10);
       Actor_TurnToFaceEachOther(4, 30, 0);

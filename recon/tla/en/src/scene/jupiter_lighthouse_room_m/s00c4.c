@@ -87,7 +87,7 @@ void Func_020000c4(void) {
   gBgScroll[1] = 16;
   wait(30);
   Func_02004924_(0x10003, 0);
-  Func_0200491c_(SPLIT_CONSTANT(0x7f00, 255), 0);
+  Func_0200491c_(SPLIT_CONSTANT(SPLIT_CONSTANT(0x7f00, 255)), 0);
   Func_0200492c(1);
   wait(1);
   Func_02004924_(0x7fff, 0);

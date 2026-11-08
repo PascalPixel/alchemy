@@ -65,13 +65,13 @@ void Func_020021d0(void) {
       Func_020020ec(first->x, first->z, 3, 0);
       Func_020020ec(second->x, second->z, 3, 0);
       Call6(Func_02003e24, 7, 3, 1, 1, 12, 26);
-      GameFlag_SetBit(SPLIT_CONSTANT(0x200, 18));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x212));
       ((u8 *)first)[0x62] = 1;
       ((u8 *)second)[0x62] = 1;
     }
     Func_02003e6c();
   }
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x112, 255)) && secondX == 7 && secondZ == 29) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x211)) && secondX == 7 && secondZ == 29) {
     both = 0;
     Func_02003e64();
     Func_02003fa4(0);
@@ -84,12 +84,12 @@ void Func_020021d0(void) {
     Func_02003ffc(161);
     wait(10);
     second->motionFlags = 0;
-    GameFlag_SetBit(SPLIT_CONSTANT(0x112, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x211));
     if (both) {
       Func_020020ec(first->x, first->z, 3, 0);
       Func_020020ec(second->x, second->z, 3, 0);
       Call6(Func_02003e24, 7, 3, 1, 1, 7, 29);
-      GameFlag_SetBit(SPLIT_CONSTANT(0x200, 18));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x212));
       ((u8 *)first)[0x62] = 1;
       ((u8 *)second)[0x62] = 1;
     }

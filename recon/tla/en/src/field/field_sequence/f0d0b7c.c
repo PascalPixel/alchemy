@@ -22,6 +22,6 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
     tile = work->solidTile;
     for (cnt = 7; cnt >= 0; --cnt)
       *tile++ = pattern;
-    Dma_Set(work->solidTile, (void *)0x06000000, DMA_COPY_WORDS(8), REG_DMA3);
+    Dma_Set(work->solidTile, (void *)0x06000000, DMA_COPY_WORDS(8), SPLIT_CONSTANT(REG_DMA3));
   }
 }

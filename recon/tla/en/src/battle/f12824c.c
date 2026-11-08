@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "battle_unit.h"
 #include "ram_buffer.h"
 
@@ -155,7 +156,7 @@ s32 Func_0812824c(s32 unitId, s32 djinnBonus) {
       dropShift -= 2;
     if (dropShift < 0)
       dropShift = 0;
-    if ((0x20000 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
+    if ((0x20000 >> dropShift) > (Battle_RandomFar() & SPLIT_CONSTANT(0xffff))) {
       lowestSlot = -1;
       lowestItemPriority = 0x40000000;
       for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {

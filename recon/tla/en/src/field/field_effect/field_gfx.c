@@ -123,7 +123,7 @@ void BattleEffect_StartTwelveFrameBlend(void) {
   Dma_Set((const void *)&zero, work,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (sizeof(*work) / 4),
           REG_DMA3);
-  BattleEffect_BuildBuffer(SPLIT_CONSTANT(0x10000, 3), (u16 *)buffers, (u16 *)work, 1);
+  BattleEffect_BuildBuffer(SPLIT_CONSTANT(SPLIT_CONSTANT(0x10000, 3)), (u16 *)buffers, (u16 *)work, 1);
   BattleEffect_BuildBuffer(0x10005, (u16 *)buffers, (u16 *)work->to, 1);
   BattleEffect_InterpolateBuffers(work->to, work->from, work->delta, 12);
   BattleEffect_BuildBuffer((s32)work, 0, buffers->target, 1);

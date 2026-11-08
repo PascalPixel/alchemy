@@ -29,7 +29,7 @@ s32 Func_02000aa8(void) {
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom5) {
     Actor_SetSpritePriority(13, 1);
     Actor_SetSpritePriority(14, 1);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x820, 255))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x91f))) {
       /* FAKEMATCH(temporary): the angle in its own local; as a plain 0x4000
        * argument, 4 of 128 instructions differ in tla-en. */
       s32 angle = 0x4000;
@@ -50,13 +50,13 @@ s32 Func_02000aa8(void) {
   } else {
     ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0;
     if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom1) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 25));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x919));
       Func_02000be4();
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom2) {
       Func_02000d30();
     } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov65FRoom3) {
       Func_02000e00();
-      if (GameFlag_Test(SPLIT_CONSTANT(0x900, 25))) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x919))) {
         gMainRoutineWork.savedScene = (s32)&SceneId_Ov660Room3;
         gMainRoutineWork.savedEntrance = 2;
       }

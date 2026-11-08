@@ -36,8 +36,8 @@ void Func_02002ec4(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
-  options.startScaleX = SPLIT_CONSTANT(0xcc00, 204);
-  options.startScaleY = 0xcccc;
+  options.startScaleX = SPLIT_CONSTANT(0xcccc);
+  options.startScaleY = SPLIT_CONSTANT(0xcccc);
   for (i = 0; i <= 16; i++) {
     s32 velocity[3];
 
@@ -55,7 +55,7 @@ void Func_02002ec4(void) {
   Func_020052d0(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   Call3((void (*)())Func_02005198, 0x50000, 0x50000, 0x10000);
-  Call3((void (*)())Func_02005198, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+  Call3((void (*)())Func_02005198, -1, -1, SPLIT_CONSTANT(0xe666));
   Func_020051a0();
   Func_020052d0(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;

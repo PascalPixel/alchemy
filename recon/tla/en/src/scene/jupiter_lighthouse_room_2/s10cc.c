@@ -40,7 +40,7 @@ void Func_020010cc(void) {
   actor9->y.fixed = actor9->terrainHeight;
   actor10->motionFlags = 0;
   actor10->y.fixed = actor10->terrainHeight;
-  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 10))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa0a))) {
     actor9->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
@@ -52,7 +52,7 @@ void Func_020010cc(void) {
     Animation_ApplyChildValues(Actor_GetById(9), 4);
     Animation_ApplyChildValues(Actor_GetById(11), 4);
   }
-  if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 11))) {
+  if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa0b))) {
     actor10->y.fixed += 0x66640;
     {
       s32 step = 0x1eb80;
@@ -64,7 +64,7 @@ void Func_020010cc(void) {
     Animation_ApplyChildValues(Actor_GetById(10), 4);
     Animation_ApplyChildValues(Actor_GetById(12), 4);
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 10)) && GameFlag_Test(SPLIT_CONSTANT(0xa00, 11))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa0a)) && GameFlag_Test(SPLIT_CONSTANT(0xa0b))) {
     actor9->y.fixed += 0x199900;
     actor10->y.fixed += 0x199900;
     {

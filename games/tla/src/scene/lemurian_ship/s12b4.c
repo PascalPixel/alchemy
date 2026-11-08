@@ -25,7 +25,7 @@ void Func_020012b4(void) {
   LemurianShip_BlendStart(6, 0, 1, 2, 6, 4);
   Func_02002c10();
   wait(1);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 228));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x9e4));
   Func_02002d88(0x10000, 0);
   Func_02002c70();
 }

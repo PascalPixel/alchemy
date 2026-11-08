@@ -44,7 +44,7 @@ void Func_020027e0(void) {
   // A direct call: as Call3 the actor id is loaded before the 0x100's shift.
   Func_02003cc8(25, 0x100, 40);
   Actor_SetSpritePriority(25, 1);
-  Call3(Actor_SetSpeedParameters, 25, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Call3(Actor_SetSpeedParameters, 25, 0x19999, SPLIT_CONSTANT(0xcccc));
   Call3(Actor_SetPositionAndReset, 25, 632, 280);
   Call3(Actor_SetSpeedParameters, 25, 0x20000, 0x10000);
   Func_02003df8(153);
@@ -59,9 +59,9 @@ void Func_020027e0(void) {
   Call3(Actor_SetPositionAndReset, 25, 696, 280);
   Actor_SetSingleChildFlags(Actor_GetById(25), 1);
   FieldEvent_Wait(10);
-  Call3(Actor_SetSpeedParameters, 25, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Call3(Actor_SetSpeedParameters, 25, 0x19999, SPLIT_CONSTANT(0xcccc));
   Call3(Actor_SetPositionAndReset, 25, 712, 280);
-  Func_02003ce0(0x26666, SPLIT_CONSTANT(0x4c00, 204));
+  Func_02003ce0(0x26666, SPLIT_CONSTANT(0x4ccc));
   Camera_MoveWithinMapBounds(PIXELS(712), -1, PIXELS(136), 1);
   Func_02003be0(112, 6, 110, 4, 1, 1);
   Actor_SetSpritePriority(25, 1);
@@ -75,7 +75,7 @@ void Func_020027e0(void) {
   Actor_SetSingleChildFlags(Actor_GetById(25), 0);
   Call3(Actor_SetPositionAndReset, 25, 744, 168);
   Actor_SetSingleChildFlags(Actor_GetById(25), 1);
-  Func_02002698(24, 25, SPLIT_CONSTANT(0x200, 22));
+  Func_02002698(24, 25, SPLIT_CONSTANT(0x216));
   Func_02003cb0(25, FACING_NORTH);
   Func_02003df8(153);
   actor->velocityY = 0x80000;

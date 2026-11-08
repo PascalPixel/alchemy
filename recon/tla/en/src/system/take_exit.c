@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 #include "scene_tables.h"
 
@@ -37,7 +38,7 @@ void Scene_TakeExit(s32 exitKind) {
   s32 flag;
 
   currentScene = gMainRoutineWork.scene;
-  exitTable = gOverlayArea.exits();
+  exitTable = ValueLr0((s32 (*)())gOverlayArea.exits);
   nextScene = EXIT_NONE;
   nextEntrance = 0;
   if (exitKind == EXIT_NONE)
@@ -48,7 +49,7 @@ void Scene_TakeExit(s32 exitKind) {
     scene = *exitTable++;
     if (scene & ~EXIT_SCENE_MASK)
       continue;
-    scene &= EXIT_SCENE_MASK;
+    scene &= SPLIT_CONSTANT(EXIT_SCENE_MASK);
     if (scene == EXIT_TABLE_END)
       break;
     if (scene != currentScene)

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 #include "iwram_call.h"
@@ -76,7 +77,7 @@ void Func_0802c240(void) {
     if (view->shakeX != 0) {
       s32 shakeDifference = Random16();
 
-      shakeDifference -= Random16();
+      shakeDifference -= ValueLr0((s32 (*)())Random16);
       shakeOffsetX = Iwram_MulQ16(view->shakeX, shakeDifference);
       x += shakeOffsetX;
       view->shakeX = Iwram_MulQ16(view->shakeX, view->shakeDecay);
@@ -84,7 +85,7 @@ void Func_0802c240(void) {
     if (view->shakeY != 0) {
       s32 shakeDifference = Random16();
 
-      shakeDifference -= Random16();
+      shakeDifference -= ValueLr0((s32 (*)())Random16);
       shakeOffsetY = Iwram_MulQ16(view->shakeY, shakeDifference);
       y += shakeOffsetY;
       view->shakeY = Iwram_MulQ16(view->shakeY, view->shakeDecay);

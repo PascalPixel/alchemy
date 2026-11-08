@@ -78,14 +78,14 @@ s32 Func_02000624(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room1) {
     event = Ram_HeapSlots->eventWork;
     FIELD_AT(event, u16, 0xd4c) = 3;
-    if (!FlagCheck(SPLIT_CONSTANT(0x800, 33))) {
+    if (!FlagCheck(SPLIT_CONSTANT(0x821))) {
       ActorPlace(29, 0, 0);
       ActorPlace(30, 0, 0);
     } else {
       Actor_SetPartAttribute(Actor_GetById(29), 3);
       Actor_SetPartAttribute(Actor_GetById(30), 5);
     }
-    if (FlagCheck(SPLIT_CONSTANT(0x800, 171))) {
+    if (FlagCheck(SPLIT_CONSTANT(0x8ab))) {
       Func_02001d28(2, 110, 16, 10, 16, 64);
       Func_02001d20(2, 46, 16, 10, 16, 0);
     }
@@ -93,7 +93,7 @@ s32 Func_02000624(void) {
   if (gMainRoutineWork.entrance == 20)
     Func_02000570();
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov659Room2) {
-    if (FlagCheck(SPLIT_CONSTANT(0x800, 171))) {
+    if (FlagCheck(SPLIT_CONSTANT(0x8ab))) {
       ActorPlace(10, 0, 0);
     } else {
       Func_02001ef0(10, 0xc000);
@@ -105,7 +105,7 @@ s32 Func_02000624(void) {
     }
   }
   Func_02000534();
-  if (FlagCheck(SPLIT_CONSTANT(0x800, 255)))
+  if (FlagCheck(SPLIT_CONSTANT(0x8ff)))
     Actor_SetPartAttribute(Actor_GetById(33), 2);
   else
     Actor_SetPartAttribute(Actor_GetById(28), 2);

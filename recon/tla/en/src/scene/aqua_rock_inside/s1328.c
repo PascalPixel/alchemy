@@ -3,7 +3,7 @@
 void Func_02001328(void) {
   Func_02003d24_(70, 8, 7, 6, 77, 8);
   Func_02003d1c_(38, 17, 7, 6, 13, 9);
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 73));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x349));
 }
 
 void Func_02001364(struct Actor *object) {

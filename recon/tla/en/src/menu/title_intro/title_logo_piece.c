@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "dma.h"
 #include "io_reg.h"
 
@@ -31,5 +32,5 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
   oam.x = x - 32;
   oam.y = y + 224;
   Dma_Set(&oam, (void *)((u32)OAM + ((u32)tile >> 4)), DMA_COPY_WORDS(2),
-          REG_DMA3);
+          SPLIT_CONSTANT(REG_DMA3));
 }

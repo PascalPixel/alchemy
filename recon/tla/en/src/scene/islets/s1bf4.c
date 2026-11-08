@@ -33,15 +33,15 @@ void Func_02001a68(void) {
         ->unk295 = 99;
     Actor_Jump(gMainRoutineWork.currentOwner, 6, 0);
     Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
-          0x19999, SPLIT_CONSTANT(0xcc00, 204));
+          0x19999, SPLIT_CONSTANT(0xcccc));
     Actor_SetPositionAndCommit(gMainRoutineWork.currentOwner, 152, 768);
     leader->update = (void (*)(void))Func_02001278;
     Actor_SetPartAttribute(Actor_GetById(gMainRoutineWork.currentOwner), 15);
     Actor_SetModeById(9, 3);
     FieldEvent_Wait(20);
     Func_02003fc4();
-    Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
-    Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+    Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, SPLIT_CONSTANT(0xcccc));
+    Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, SPLIT_CONSTANT(0xcccc));
     update = (void (*)(void))Func_02000df8;
     done = (u8 *)object + 99;
     *done = 0;

@@ -21,7 +21,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/lemurian_ship_deck/s1188.o"(.text)
         "*/recon/tla/raw/src/scene/lemurian_ship_deck/s1210.o"(.text)
         "*/recon/tla/raw/src/scene/lemurian_ship_deck/s1d60.o"(.text)
-        "*/recon/tla/raw/src/scene/lemurian_ship_deck/s1da0.o"(.text)
+        "*/games/tla/src/scene/lemurian_ship_deck/s1da0.o"(.text)
         "*/games/tla/src/scene/lemurian_ship_deck/import.o"(.text)
         "*/games/tla/src/scene/lemurian_ship_deck/data.o"(.data)
     }

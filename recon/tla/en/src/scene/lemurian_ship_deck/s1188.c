@@ -19,7 +19,7 @@ void Func_02001188(void) {
 
   SET_VECTOR(position, 0x1680000, 0x400000, 0x1a80000);
   Vector_AddPolarOffsetFar(0x200000, Random16Far(), position);
-  object = Func_02001f0c(SPLIT_CONSTANT(0x200, 162), position[0], position[1], position[2]);
+  object = Func_02001f0c(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 162)), position[0], position[1], position[2]);
   if (object != NULL) {
     object->motionFlags = 0;
     *(s32 *)((u8 *)object + 0x30) = 0x20000;

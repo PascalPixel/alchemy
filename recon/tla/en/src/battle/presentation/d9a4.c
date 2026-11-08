@@ -65,7 +65,7 @@ void Func_0811d7e8(u16 *source, struct ActionTargets *targets) {
   }
   targets->count = count;
   targets->message = 403;
-  targets->cue = SPLIT_CONSTANT(0x8000, 26);
+  targets->cue = SPLIT_CONSTANT(0x801a);
 }
 
 void Func_0811d89c(struct ActionTargets *targets) {
@@ -86,7 +86,7 @@ void Func_0811d89c(struct ActionTargets *targets) {
   }
   targets->count = count;
   targets->message = 103;
-  targets->cue = SPLIT_CONSTANT(0x1000, 181);
+  targets->cue = SPLIT_CONSTANT(0x10b5);
 }
 
 void Func_0811d914(struct ActionTargets *targets) {

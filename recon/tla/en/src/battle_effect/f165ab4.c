@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "system.h"
@@ -32,7 +33,7 @@
 #define FORMATION_SIZE 9
 #define ORB_LEFT 7
 #define ORB_RIGHT 8
-#define ROCK_OBJECT SPLIT_CONSTANT(0x18e, 255)
+#define ROCK_OBJECT SPLIT_CONSTANT(0x28d)
 #define FIRST_ROCK 9
 #define ROCK_COUNT 6
 #define PUFF_COUNT 58 // particles 6 to 63
@@ -188,7 +189,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   for (i = 0; i != ROCK_COUNT; i++) {
     struct EffectStep *rock = &work->particles[i];
 
-    rock->x = (Random16() & 127) << 16;
+    rock->x = (ValueLr0((s32 (*)())Random16) & 127) << 16;
     rock->y = i * -0x100000;
     rock->velocityX = 0;
     rock->velocityY = 0;

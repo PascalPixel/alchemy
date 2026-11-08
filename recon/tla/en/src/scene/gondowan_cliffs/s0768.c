@@ -20,6 +20,6 @@ void Func_02000768(void) {
   }
   Func_020012fc();
   Value3((s32 (*)())Func_02001304, 0, 9, 10);
-  ValueLr3((s32 (*)())Iwram_CopyWordsEntry, (s32)gData_02001ae0, SPLIT_CONSTANT(0x5000000, 24), 8);
+  ValueLr3((s32 (*)())Iwram_CopyWordsEntry, (s32)gData_02001ae0, SPLIT_CONSTANT(0x5000018), 8);
   Value2((s32 (*)())Task_Add, (s32)Func_02000738, 0x480);
 }

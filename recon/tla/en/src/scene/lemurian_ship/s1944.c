@@ -20,7 +20,7 @@ void Func_02001944(s32 actor, s32 id) {
 }
 
 void Func_020019ac(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 50)) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 50))) == 0) {
     Func_02002c68();
     Func_02002da8(0);
     Event_StartScreenTransition();
@@ -32,7 +32,7 @@ void Func_020019ac(void) {
 }
 
 void Func_020019e0(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 50)) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 50))) == 0) {
     Func_02002c68();
     Func_02002da8(0);
     Func_02001a04();

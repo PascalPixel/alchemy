@@ -30,7 +30,7 @@ void Func_02000574(void) {
   struct Actor *ship;
   s32 kind, dx, dz, distance;
 
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 222)) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 222))) == 0)
     return;
   kind = Func_02004d68(gMainRoutineWork.currentOwner);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);

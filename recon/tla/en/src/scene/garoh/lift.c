@@ -40,7 +40,7 @@ void Func_02000eb0(void) {
   flag += 255;
   if (!Flag_IsSet(flag) && x == 10 && z == 29) {
     Func_02000e78(8, object);
-    Flag_Set(SPLIT_CONSTANT(0x102, 255));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x102, 255)));
   }
 }
 
@@ -61,13 +61,13 @@ void Func_02000eec(void) {
   flag += 2;
   if (!Flag_IsSet(flag) && x == 15 && z == 28) {
     Func_02000e78(9, object);
-    Flag_Set(SPLIT_CONSTANT(0x200, 2));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 2)));
   }
 }
 
 void Func_02000f28(void) {
   Actor_GetById(10);
-  Flag_IsSet(SPLIT_CONSTANT(0x104, 255));
+  Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x104, 255)));
 }
 
 void Func_02000f3c(void) {
@@ -145,9 +145,9 @@ s32 Func_0200108c(void) { return Flag_IsSet(0x310); }
 void Func_02001098(void) {
   if (Flag_IsSet(0x310)) {
     if (Flag_IsSet(0x318))
-      Func_020052cc(SPLIT_CONSTANT(0x10000, 3), 1);
+      Func_020052cc(SPLIT_CONSTANT(SPLIT_CONSTANT(0x10000, 3)), 1);
     else
-      Func_020052cc(SPLIT_CONSTANT(0x10000, 7), 1);
+      Func_020052cc(SPLIT_CONSTANT(SPLIT_CONSTANT(0x10000, 7)), 1);
     Func_020052d4(16);
   }
 }
@@ -166,10 +166,10 @@ void Func_02001104(void) {
 void Func_02001144(void) {
   struct GarohEventWork *work;
 
-  if (!Flag_IsSet(SPLIT_CONSTANT(0x900, 27))) {
+  if (!Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 27)))) {
     Flag_Set(0x210);
     if (gMainRoutineWork.entrance == 1) {
-      Func_020052cc(SPLIT_CONSTANT(0x10000, 3), 1);
+      Func_020052cc(SPLIT_CONSTANT(SPLIT_CONSTANT(0x10000, 3)), 1);
       Flag_Set(0x310);
       Flag_Set(0x318);
     } else {
@@ -186,14 +186,14 @@ void Func_02001144(void) {
 void Func_020011c8(void) {
   struct GarohEventWork *work;
 
-  if (!Flag_IsSet(SPLIT_CONSTANT(0x900, 27))) {
-    Flag_Set(SPLIT_CONSTANT(0x112, 255));
+  if (!Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 27)))) {
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x112, 255)));
     if (gMainRoutineWork.entrance == 2) {
-      Func_020052cc(SPLIT_CONSTANT(0x10000, 3), 1);
+      Func_020052cc(SPLIT_CONSTANT(SPLIT_CONSTANT(0x10000, 3)), 1);
       Flag_Set(0x310);
       Flag_Set(0x318);
     } else {
-      Func_020052cc(SPLIT_CONSTANT(0x10000, 7), 1);
+      Func_020052cc(SPLIT_CONSTANT(SPLIT_CONSTANT(0x10000, 7)), 1);
       Flag_Set(0x310);
       Flag_Clear(0x318);
     }

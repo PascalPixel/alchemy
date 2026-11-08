@@ -6,9 +6,9 @@ void Func_02001068(void) {
    * differ in tla-en. */
   Func_02001fac();
   Func_02002044(0);
-  if (!SeaOfTime_FlagCheck(SPLIT_CONSTANT(0x800, 221))) {
+  if (!SeaOfTime_FlagCheck(SPLIT_CONSTANT(0x8dd))) {
     Func_02002004(4);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 221));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x8dd));
   } else {
     Func_02002004(1);
   }

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "dma.h"
 #include "heap_release.h"
 #include "resource.h"
@@ -37,7 +38,7 @@ void Func_080ebf94(void) {
   work->unk648 = 0;
   Dma_Fill32(0, markerTiles, 0x80);
   markerTiles[0] = 255;
-  markerTiles[1] = 0x1ff;
+  markerTiles[1] = SPLIT_CONSTANT(0x1ff);
   markerTiles[2] = 272;
   markerTiles[8] = 68;
   markerTiles[9] = 324;
@@ -46,7 +47,7 @@ void Func_080ebf94(void) {
   markerTiles[17] = 0x177;
   markerTiles[18] = 272;
   markerTiles[24] = 0xff0;
-  markerTiles[25] = 0xffff;
+  markerTiles[25] = SPLIT_CONSTANT(0xffff);
   markerTiles[26] = 0x1ffff;
   markerTiles[27] = 0x11ff0;
   markerTiles[28] = 0x1100;

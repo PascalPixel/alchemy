@@ -16,8 +16,8 @@ void Func_02005594(void) {
 
   Func_02005a9c();
   Func_02005c3c(0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 105));
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 105)));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 2)));
   gData_02007948[0] = BG_PLTT[9];
   gData_02007948[1] = BG_PLTT[7];
   gData_02007948[2] = BG_PLTT[6];
@@ -56,16 +56,16 @@ void Func_02005594(void) {
   Actor_SetSpritePriority(26, 2);
   Actor_SetSpritePriority(5, 2);
   Actor_SetSpritePriority(6, 2);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 46)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 46))))
     Func_02005b0c(7, 0, 0);
-  else if (GameFlag_Test(SPLIT_CONSTANT(0x830, 255))) {
+  else if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x830, 255)))) {
     /* FAKEMATCH: the temporary builds the angle before the position, as the
      * native does (differ 4 without it). */
     s32 angle = 0x2000;
 
     Kibombo_ObjPlaceFacing(7, 152 << 17, 176 << 15, angle);
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 253))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 253)))) {
     Func_020036e0(1, 6);
     Func_02005b0c(17, 0, 0);
   }
@@ -81,7 +81,7 @@ void Func_02005594(void) {
 
     *field = value;
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 241))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 241)))) {
     if (!GameFlag_Test(0x8fd))
       Func_020032b0();
   } else if (gMainRoutineWork.entrance == 5) {

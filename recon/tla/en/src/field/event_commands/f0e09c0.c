@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "field_psynergy_work.h"
@@ -56,7 +57,7 @@ extern char ResourceId_SparkleFade;
 extern char ResourceId_StarSparkleFade;
 
 void Func_080e09c0(void) {
-  struct ScatterWork *work = HeapSlot_Alloc(92, 0x2114);
+  struct ScatterWork *work = HeapSlot_Alloc(92, SPLIT_CONSTANT(0x2114));
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ScatterEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *caster = scene->mainObject;

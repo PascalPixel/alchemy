@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
 
@@ -19,7 +20,7 @@ s32 Func_080dbc04(s32 x, s32 z, s32 layer) {
     return 0;
   if (Func_080dbcd8(x, z, layer) != 0)
     return 1;
-  if (*(s8 *)(event + 0xd36) == 0)
+  if (*(s8 *)(event + SPLIT_CONSTANT(0xd36)) == 0)
     return Func_080dbb78(x, z, layer)->attributeB & 1;
   return ~Func_080dbb78(x, z, layer)->attributeB & 1;
 }

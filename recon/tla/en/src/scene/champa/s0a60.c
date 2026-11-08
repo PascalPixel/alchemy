@@ -7,7 +7,7 @@ s32 GameFlag_Test(s32 flag);
 extern u32 gFrameCount;
 
 const s32 *Func_02000a60(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x880, 255)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x880, 255))))
     return gData_0200b410;
   return gData_0200320c;
 }

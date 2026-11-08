@@ -14,7 +14,7 @@ void Func_020055cc(const u8 *data, void *buffer);
 void Func_02003868(void) {
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   if (gMainRoutineWork.entrance == 1) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 39));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 39)));
     GameFlag_ClearBit(0xa28);
   }
 }

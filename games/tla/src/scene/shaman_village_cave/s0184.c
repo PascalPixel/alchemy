@@ -49,8 +49,7 @@ void Func_02000184(void) {
   dz = -1;
   if (leaderZ <= 95)
     dz = 1;
-  if (dz == 1 &&
-      Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x200, 2)) != 0) {
+  if (dz == 1 && Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x202)) != 0) {
     if (Value1((s32 (*)())GameFlag_Test, 516) != 0)
       return;
     Func_02001080();

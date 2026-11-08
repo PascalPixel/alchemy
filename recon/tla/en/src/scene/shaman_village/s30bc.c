@@ -32,7 +32,7 @@ void Func_020030bc(void) {
   ShamanVillage_CamMove(-1, -1, -1, 0);
   ShamanVillage_CamSpeed(0x6666, 0xccc);
   ShamanVillage_CamMove(PIXELS(168), -1, PIXELS(528), 1);
-  ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcc00, 204), 0x6666);
+  ShamanVillage_ObjSpeed(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcccc), 0x6666);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 168, 536);
   Func_02004944(18, gMainRoutineWork.currentOwner);
   Func_02004944(7, gMainRoutineWork.currentOwner);
@@ -64,10 +64,10 @@ void Func_020030bc(void) {
   ShamanVillage_ObjArm(15, FACING_NORTH, 0);
   ShamanVillage_ObjArm(17, FACING_NORTH, 0);
   ShamanVillage_ObjArm(16, FACING_NORTH, 0);
-  Func_020049e4(0x19999, 0x3333);
+  Func_020049e4(0x19999, SPLIT_CONSTANT(0x3300, 51));
   Func_02003b24();
   Import_SoundPlay(29);
-  Func_020049e4(0x4cccc, SPLIT_CONSTANT(0x9900, 153));
+  Func_020049e4(0x4cccc, SPLIT_CONSTANT(SPLIT_CONSTANT(0x9900, 153)));
   ShamanVillage_CamMove(PIXELS(168), -1, PIXELS(540), 1);
   Func_020049f4();
   FieldEvent_Wait(20);
@@ -148,7 +148,7 @@ void Func_020030bc(void) {
   FieldEvent_Wait(10);
   Actor_SetModeById(16, 3);
   Motion_SetModeAndWaitAnimation(17, 3);
-  Func_020049e4(SPLIT_CONSTANT(0x6600, 102), 0xccc);
+  Func_020049e4(SPLIT_CONSTANT(SPLIT_CONSTANT(0x6600, 102)), 0xccc);
   Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(560), 1);
   ShamanVillage_ObjArm(17, FACING_SOUTH, 0);
   ShamanVillage_ObjTurn(16, FACING_SOUTH);
@@ -271,7 +271,7 @@ void Func_020030bc(void) {
     Actor_SetModeById(15, 3);
     Func_020049a4(15, 0);
   }
-  ShamanVillage_ObjWalk(15, 212, SPLIT_CONSTANT(0x200, 70));
+  ShamanVillage_ObjWalk(15, 212, SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 70)));
   Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(500), 1);
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 15);
   Actor_WatchAndSetScript(18, 15);
@@ -293,7 +293,7 @@ void Func_020030bc(void) {
   Actor_Stop(7);
   Actor_Stop(6);
   Func_02004a2c();
-  Func_020049e4(0x4cccc, SPLIT_CONSTANT(0x9900, 153));
+  Func_020049e4(0x4cccc, SPLIT_CONSTANT(SPLIT_CONSTANT(0x9900, 153)));
   Camera_MoveWithinMapBounds(PIXELS(168), -1, PIXELS(540), 1);
   FieldEvent_Wait(20);
   angle = 0x4000;
@@ -326,6 +326,6 @@ void Func_020030bc(void) {
   Actor_SetMovementTypeById(6, gData_020050bc);
   Actor_SetMovementTypeById(5, gData_020050bc);
   Actor_SetMovementTypeAndWaitById(18, gData_020050bc);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 76));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 76)));
   Func_020048cc();
 }

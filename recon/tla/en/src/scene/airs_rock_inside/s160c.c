@@ -15,7 +15,7 @@ void Func_0200160c(s32 x, s32 y, s32 z) {
   BYTE_AT(object, 90) = 0;
   WORD_AT(object, 24) = 0x8000;
   object->speed = 0x40000;
-  object->acceleration = ((Random16Far() & SPLIT_CONSTANT(0x7f00, 255)) << 1) + 0xffff8001;
+  object->acceleration = ((Random16Far() & SPLIT_CONSTANT(0x7fff)) << 1) + 0xffff8001;
   WORD_AT(object, 76) = 0x3800;
   WORD_AT(object, 108) = (s32)Func_02001458;
 }

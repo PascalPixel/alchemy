@@ -56,7 +56,7 @@ void Func_020001d8(void) {
   t0 = Value1((s32 (*)())Actor_GetById, 9);
   t1 = Value1((s32 (*)())Actor_GetById, 10);
   t2 = Value1((s32 (*)())Actor_GetById, 8);
-  t3 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x900, 14));
+  t3 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x90e));
   v_r7 = t2;
   v_r6 = t0;
   v_r8 = t1;
@@ -91,12 +91,12 @@ L_0200820c:
   Call3((void (*)())Func_02000ab0, 7, 0x1d00000, 0xd80000);
   Call3((void (*)())Func_02000ab0, 5, 0x1d00000, 0xd80000);
   Call3((void (*)())Func_02000ab0, 6, 0x1d00000, 0xd80000);
-  t26 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x900, 13));
+  t26 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x90d));
   v_r10 = (s32)MsgShipSafeFiringDistance;
   if (t26 != 0)
     goto L_020082ea;
-  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x900, 13));
-  Call3((void (*)())Func_02000ad0, SPLIT_CONSTANT(0x2000, 7), 0, 5);
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x90d));
+  Call3((void (*)())Func_02000ad0, SPLIT_CONSTANT(0x2007), 0, 5);
 L_020082ea:
   Call1((void (*)())Func_02000ac0, (v_r10 + 1));
   FieldMessage_ShowAtActor(11, 0);
@@ -169,14 +169,14 @@ L_020083da:
   Event_WaitTransitionFrames();
   t70 = FIELD_AT(0x3000000, s32, 108);
   FIELD_AT(t70, s32, 436) = 8;
-  Call3((void (*)())Func_02000ad0, SPLIT_CONSTANT(0x2000, 5), 0, 5);
+  Call3((void (*)())Func_02000ad0, SPLIT_CONSTANT(0x2005), 0, 5);
   Call3((void (*)())Func_02000ad0, 11, 0, 5);
-  Call3((void (*)())Func_02000ad0, SPLIT_CONSTANT(0x2000, 6), 0, 5);
-  Call3((void (*)())Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3((void (*)())Func_02000ad0, SPLIT_CONSTANT(0x2006), 0, 5);
+  Call3((void (*)())Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Call3((void (*)())Actor_SetPositionAndCommit, 8, 0x1d0, 176);
   Call2((void (*)())Camera_FollowActor, 8, 1);
   Call3((void (*)())Actor_SetPositionAndCommit, 8, 0x1d0, 152);
-  Call3((void (*)())Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0x9900, 153), SPLIT_CONSTANT(0x4c00, 204));
+  Call3((void (*)())Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0x9999), SPLIT_CONSTANT(0x4ccc));
   t79 = FIELD_AT(v_r7, s32, 28);
   FIELD_AT(v_r7, s32, 28) = (t79 - 0x1000);
   FIELD_AT(v_r7, s32, 24) = (t79 - 0x1000);
@@ -202,7 +202,7 @@ L_020083da:
   FIELD_AT(v_r7, s32, 24) = (t91 - 0x1000);
   Call3((void (*)())Actor_OffsetPositionAndResetMotion, 8, 0, -16);
   Call1((void (*)())Actor_WaitForMoveById, 8);
-  Call3((void (*)())Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0x3300, 51), SPLIT_CONSTANT(0x1900, 153));
+  Call3((void (*)())Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0x3333), SPLIT_CONSTANT(0x1999));
   Call3((void (*)())Actor_OffsetPositionAndResetMotion, 8, 0, -12);
   v_r5 = 19;
 L_02008594:
@@ -216,7 +216,7 @@ L_02008594:
   FIELD_AT(v_r7, s32, 28) = 0;
   FIELD_AT(v_r7, s32, 24) = 0;
   Call1((void (*)())FieldEvent_Wait, 10);
-  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x900, 14));
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x90e));
   Call1((void (*)())Func_02000b00, 4);
 L_020085c6:
   Call3((void (*)())Func_02000ab0, 11, 0, 0);

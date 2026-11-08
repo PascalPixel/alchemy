@@ -1,4 +1,5 @@
 #include "inventory.h"
+#include "call.h"
 
 extern u16 gData_080b1f40[];
 
@@ -24,11 +25,11 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
 s32 Inventory_CountItem(s32 owner, s32 item_id) {
   struct OwnerInventoryState *base = Unit_Get(owner);
   s32 count = 0;
-  s32 target = item_id & ITEM_ID_MASK;
+  s32 target = item_id & SPLIT_CONSTANT(ITEM_ID_MASK);
   s32 index = 0;
 
   do {
-    if ((base->inventory[index] & ITEM_ID_MASK) == target) {
+    if ((base->inventory[index] & SPLIT_CONSTANT(ITEM_ID_MASK)) == target) {
       struct ItemDefinition *item = Item_GetDirect(target);
 
       if (item->flags & ITEM_STACKABLE) {

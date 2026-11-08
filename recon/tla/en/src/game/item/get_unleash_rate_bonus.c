@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "battle_unit.h"
 #include "item.h"
 #include "inventory.h"
@@ -42,7 +43,7 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
   rate = ((Equipment_GetUnleashRateBonus(owner) + (item->unleashChance * 5))
           << 16) /
          100;
-  if (rate > (s32)(Battle_Random() & 0xFFFF)) {
+  if (rate > (s32)(Battle_Random() & SPLIT_CONSTANT(0xFFFF))) {
     return item->unleashAction;
   }
   return 1;

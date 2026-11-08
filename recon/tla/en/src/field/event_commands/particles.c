@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "system.h"
 #include "objdisp.h"
 #include "object_effect_scripts.h"
@@ -36,10 +37,10 @@ void BattleEffect_SpawnFallingParticles(void) {
   dist = Random16() * 3;
   Vector_AddPolarOffset(dist * 16, Random16(), &pos);
 
-  obj = Actor_Spawn(SPLIT_CONSTANT(0x1a2, 255), pos.x, pos.y, pos.z);
+  obj = Actor_Spawn(SPLIT_CONSTANT(0x2a1), pos.x, pos.y, pos.z);
   if (obj != 0) {
     obj->motionFlags = 2;
-    obj->gravity = 0x1999;
+    obj->gravity = SPLIT_CONSTANT(0x1999);
     Actor_SetMode(obj, 0);
     ((struct ParticleTimer *)obj)->timer = 12;
     Actor_StartScriptFar((struct ActorView *)obj,

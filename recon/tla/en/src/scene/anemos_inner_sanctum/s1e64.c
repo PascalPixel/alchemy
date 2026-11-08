@@ -55,27 +55,27 @@ s32 Func_02001e64(void) {
   if (v_r1 == (s32)&SceneId_Ov6B0Room1) {
     Call4((void (*)())Func_02000038, (s32)gData_0200384c, (s32)gData_0200385c,
           (s32)gData_02003888, (s32)gData_020038b4);
-    t3 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 135));
+    t3 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa87));
     if (t3 != 0) {
       Call3((void (*)())Func_02000a78, 0x208, 48, 0);
       Call6((void (*)())Func_02003328, 85, 34, 85, 8, 9, 8);
     }
-    t6 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 136));
+    t6 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa88));
     if (t6 != 0) {
       Call3((void (*)())Func_02000a78, 0x228, 48, 3);
       Call6((void (*)())Func_02003328, 101, 34, 101, 8, 9, 8);
     }
-    t9 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 137));
+    t9 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa89));
     if (t9 != 0) {
       Call3((void (*)())Func_02000a78, 0x1f8, 40, 10);
       Call6((void (*)())Func_02003328, 85, 46, 85, 20, 9, 8);
     }
-    t12 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 138));
+    t12 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa8a));
     if (t12 != 0) {
       Call3((void (*)())Func_02000a78, 0x238, 40, 2);
       Call6((void (*)())Func_02003328, 101, 46, 101, 20, 9, 8);
     }
-    t15 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 139));
+    t15 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa8b));
     if (t15 == 0)
       goto L_0200a6e6;
     Call6((void (*)())Func_02003328, 54, 7, 33, 7, 1, 2);
@@ -89,7 +89,7 @@ s32 Func_02001e64(void) {
     Call3((void (*)())Func_020033e0, 8, 0x1280000, 0xf80000);
     Call2((void (*)())Actor_SetSpritePriority, 8, 2);
   }
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 129))) != 0) {
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa81))) != 0) {
     Call3((void (*)())Func_020033e0, 10, 0x1b80000, 0x2f80000);
   }
   Call1((void (*)())Func_02003490, (s32)gData_020036e4);
@@ -113,29 +113,29 @@ L_0200a03c:
     if ((Value1((s32 (*)())GameFlag_Test, 0x300)) != 0) {
       Call3((void (*)())Func_020033e0, 9, 0, 0);
     }
-    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x108, 255))) != 0) {
+    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x207))) != 0) {
       t42 = Value1((s32 (*)())Actor_GetById, 9);
       FIELD_AT(t42, u8, 85) = 4;
     }
     if ((Value1((s32 (*)())GameFlag_Test, 0x200)) != 0) {
       Call6((void (*)())Func_02003328, 54, 87, 44, 86, 1, 1);
     }
-    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x102, 255))) != 0) {
+    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x201))) != 0) {
       Call6((void (*)())Func_02003328, 54, 87, 46, 86, 1, 1);
     }
-    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x200, 2))) != 0) {
+    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x202))) != 0) {
       Call6((void (*)())Func_02003328, 54, 87, 43, 87, 1, 1);
     }
-    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x104, 255))) != 0) {
+    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x203))) != 0) {
       Call6((void (*)())Func_02003328, 54, 87, 45, 87, 1, 1);
     }
     if ((Value1((s32 (*)())GameFlag_Test, 0x204)) != 0) {
       Call6((void (*)())Func_02003328, 54, 87, 47, 87, 1, 1);
     }
-    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x106, 255))) != 0) {
+    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x205))) != 0) {
       Call6((void (*)())Func_02003328, 54, 87, 44, 88, 1, 1);
     }
-    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x200, 6))) != 0) {
+    if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x206))) != 0) {
       Call6((void (*)())Func_02003328, 54, 87, 46, 88, 1, 1);
     }
     FIELD_AT((Value1((s32 (*)())Actor_GetById, (work->currentOwner))), u8,
@@ -155,22 +155,22 @@ L_0200a1b4:
   FIELD_AT((Value1((s32 (*)())Actor_GetById, (FIELD_AT(v_r6, s32, 532)))), u8,
            35) |= 64;
   FIELD_AT((Value1((s32 (*)())Actor_GetById, 9)), u8, 98) = v_r5;
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 130))) != 0) {
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa82))) != 0) {
     Call3((void (*)())Func_020033e0, 8, 0x380000, 0x1a80000);
   }
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 131))) != 0) {
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa83))) != 0) {
     Call3((void (*)())Func_020033e0, 10, 0x2180000, 0x1680000);
     Call6((void (*)())Func_02003328, 51, 20, 31, 20, v_r5, v_two);
     Call4((void (*)())Func_02003380, 0x1f00000, 0x1500000, 0, 0);
   }
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 132))) != 0) {
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa84))) != 0) {
     Call3((void (*)())Func_020033e0, 13, 0x2e80000, 0x1c80000);
   }
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 133))) == 0)
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa85))) == 0)
     goto L_0200a2c6;
   if ((Value1((s32 (*)())GameFlag_Test, 0x109)) != 0)
     goto L_0200a2b8;
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 132))) != 0)
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa84))) != 0)
     goto L_0200a2b8;
   t78 = FIELD_AT((Value1((s32 (*)())Actor_GetById, 12)), s16, 10);
   t80 = FIELD_AT((Value1((s32 (*)())Actor_GetById, 12)), s16, 18);
@@ -206,36 +206,36 @@ L_0200a2ce:
   }
   Call3((void (*)())Func_020033e0, 8, 0, 0);
   Call1((void (*)())GameFlag_SetBit, 0x200);
-  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x102, 255));
-  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x200, 2));
-  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x104, 255));
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x201));
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x202));
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x203));
   Call1((void (*)())GameFlag_SetBit, v_r7);
-  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x106, 255));
-  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x200, 6));
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x205));
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x206));
 L_0200a3a8:
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x108, 255))) != 0) {
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x207))) != 0) {
     t106 = Value1((s32 (*)())Actor_GetById, 8);
     FIELD_AT(t106, u8, 85) = 4;
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0x200)) != 0) {
     Call6((void (*)())Func_02003328, 17, 71, 8, 69, 1, 1);
   }
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x106, 255))) != 0) {
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x205))) != 0) {
     Call6((void (*)())Func_02003328, 17, 71, 6, 71, 1, 1);
   }
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x102, 255))) != 0) {
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x201))) != 0) {
     Call6((void (*)())Func_02003328, 17, 71, 5, 75, 1, 1);
   }
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x200, 2))) != 0) {
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x202))) != 0) {
     Call6((void (*)())Func_02003328, 17, 71, 8, 75, 1, 1);
   }
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x104, 255))) != 0) {
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x203))) != 0) {
     Call6((void (*)())Func_02003328, 17, 71, 11, 75, 1, 1);
   }
   if ((Value1((s32 (*)())GameFlag_Test, 0x204)) != 0) {
     Call6((void (*)())Func_02003328, 17, 71, 8, 73, 1, 1);
   }
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x200, 6))) == 0)
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x206))) == 0)
     goto L_0200a6e6;
   Call6((void (*)())Func_02003328, 17, 71, 10, 71, 1, 1);
   goto L_0200a6e6;
@@ -315,7 +315,7 @@ L_0200a5fa:
   FIELD_AT((Value1((s32 (*)())Actor_GetById, 11)), s32, 12) = 0xfff00000;
   goto L_0200a6e6;
 L_0200a606:
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x300, 1))) != 0) {
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x301))) != 0) {
     v_r2 = 240;
     v_r0 = 8;
     v_r1 = 0x780000;
@@ -326,7 +326,7 @@ L_0200a606:
   v_r0 = 0xb80000;
   goto L_0200a67a;
 L_0200a63a:
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x300, 2))) == 0)
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x302))) == 0)
     goto L_0200a660;
   v_r2 = 240;
   v_r0 = 9;
@@ -343,7 +343,7 @@ L_0200a67a:
   Call4((void (*)())Func_02003380, v_r0, (v_r1 << 15), 0, 2);
   goto L_0200a6e6;
 L_0200a686:
-  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x204, 255))) != 0) {
+  if ((Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x303))) != 0) {
     Call3((void (*)())Func_020033e0, 10, 0x3180000, 0x780000);
     Call1((void (*)())GameFlag_SetBit, 0x200);
     goto L_0200a6d0;

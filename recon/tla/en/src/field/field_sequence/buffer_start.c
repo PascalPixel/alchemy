@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "palette_buffers.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -30,7 +31,7 @@ void BattleEffect_LoadBufferPalette(const u16 *colours) {
     s32 (*copy)(void *destination, const void *source, s32 size) =
         Iwram_CopyWordsEntry;
 
-    copy(buffers->palette, colours, 0x1c0);
+    ValueLr3((s32 (*)())copy, (s32)(buffers->palette), (s32)(colours), (s32)(0x1c0));
     BattleEffect_BuildBuffer(0x10000, buffers, buffers->target, 1);
   }
 }

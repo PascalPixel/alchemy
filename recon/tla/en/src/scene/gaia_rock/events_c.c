@@ -56,7 +56,7 @@ void Func_020002c0(void) {
 
   if (object == NULL)
     return;
-  done = GameFlag_Test(SPLIT_CONSTANT(0xf00, 116));
+  done = GameFlag_Test(SPLIT_CONSTANT(0xf74));
   if (done == 0) {
     Call3((void (*)())Func_02000e8c, 64, PIXELS(657), PIXELS(246));
     object->motionFlags = done;
@@ -75,7 +75,7 @@ void Func_02000314(void) {
   FieldMessage_Show(MsgCheckedTheAltar, 1);
   if (object != NULL && object->x != 0) {
     Func_02000edc(0x1040);
-  } else if (GameFlag_Test(SPLIT_CONSTANT(0xf00, 116)) == 0) {
+  } else if (GameFlag_Test(SPLIT_CONSTANT(0xf74)) == 0) {
     struct EventWork *work = Ram_HeapSlots->eventWork;
 
 
@@ -87,20 +87,20 @@ void Func_02000314(void) {
 }
 
 void Func_02000378(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x927))) {
     Func_02000e74();
     Func_02000ef4(0);
     Func_02000ea4(MsgYouReGoing);
     Actor_StartRepeatedMotion(20, 1);
     FieldEvent_Wait(15);
     Func_02000eb4(20, 0);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 171));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x9ab));
     Func_02000e7c();
   }
 }
 
 void Func_020003c4(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 171))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x9ab))) {
     Func_02000ea4(MsgYouReGoing);
     Func_02000eb4(20, 0);
   } else {
@@ -110,7 +110,7 @@ void Func_020003c4(void) {
 }
 
 void Func_020003fc(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 171))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x9ab))) {
     Func_02000ea4(MsgKushinadaSSafe);
     Func_02000eac(20, 0);
   } else {

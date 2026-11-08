@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "field_sprite.h"
 #include "input.h"
 #include "actor.h"
@@ -25,7 +26,7 @@ s32 Func_080d57e4(void) {
 
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
   angle = Data_080f0890[(gInput.held >> 4) & 15];
-  if (angle == 0xffff)
+  if (angle == SPLIT_CONSTANT(0xffff))
     return 0;
   leader->x = (leader->x & 0xfff00000) + 0x80000;
   leader->z = (leader->z & 0xfff00000) + 0x80000;

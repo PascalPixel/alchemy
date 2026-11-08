@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "graphics.h"
 #include "lib.h"
 #include "resource.h"
@@ -112,7 +113,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
       point[2] = target->z;
       SceneTransform_ApplyPosition(point);
       if (frame > k * 32) {
-        SceneTransform_ApplyPitch(frame << 9);
+        ValueLr1((s32 (*)())SceneTransform_ApplyPitch, (s32)(frame << 9));
         if (frame == k * 32 + 32)
           Func_0814cd48(effect->actors[k], 7, 5, k, 32);
 

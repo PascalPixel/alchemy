@@ -43,7 +43,7 @@ s32 Func_02000128(void) {
   Call2(Actor_SetSpritePriority, 11, 1);
   Call2(Actor_SetSpritePriority, 14, 2);
   Actor_SetSpritePriority(19, 2);
-  t7 = GameFlag_Test(SPLIT_CONSTANT(0x800, 146));
+  t7 = GameFlag_Test(SPLIT_CONSTANT(0x892));
   if (t7 != 0) {
     Call3(Func_0200290c, 10, 0, 0);
     Func_0200290c(11, 0, 0);
@@ -62,7 +62,7 @@ s32 Func_02000128(void) {
     Func_0200290c(21, 0, 0);
   }
   if (FIELD_AT(gMainRoutineWork, s16, 482) == 9) {
-    t21 = GameFlag_Test(SPLIT_CONSTANT(0x800, 145));
+    t21 = GameFlag_Test(SPLIT_CONSTANT(0x891));
     if (t21 == 0) {
       Func_020028b4();
       Func_020029cc(0);
@@ -77,7 +77,7 @@ s32 Func_02000128(void) {
     Func_02001c30();
   }
   if (FIELD_AT(gMainRoutineWork, s16, 482) == 0x63) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 147));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x893));
   }
   if (FIELD_AT(gMainRoutineWork, s16, 482) == 0x5a) {
     FIELD_AT(gMainRoutineWork, s32, 532) = 5;
@@ -86,7 +86,7 @@ s32 Func_02000128(void) {
     Party_RemoveActiveOwner(7);
     Func_0200299c((s32)&SceneId_VenusLighthouseEntrance, 1);
   }
-  t33 = GameFlag_Test(SPLIT_CONSTANT(0x800, 147));
+  t33 = GameFlag_Test(SPLIT_CONSTANT(0x893));
   if (t33 == 0) {
     Call2(Actor_SetModeById, 22, 5);
     Actor_SetSpritePriority(22, 1);

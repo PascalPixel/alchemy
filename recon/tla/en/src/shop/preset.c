@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 
 void Inventory_EquipFar(s32 owner, s32 slot);
@@ -10,7 +11,7 @@ s32 Debug_ApplyPresetItemsAndFlags(void) {
   gMainRoutineWork.coins = 200000;
   gMainRoutineWork.counterC = 28;
   Inventory_EquipFar(1, Inventory_AddItemFar(1, 0x48d));
-  Inventory_EquipFar(0, Inventory_AddItemFar(0, 0x40b));
+  Inventory_EquipFar(0, Inventory_AddItemFar(0, SPLIT_CONSTANT(0x40b)));
   Inventory_AddItemFar(2, 0xe7);
   Unit_Get(3)[0x131] = 1;
   Unit_Get(5)[0x131] = 1;

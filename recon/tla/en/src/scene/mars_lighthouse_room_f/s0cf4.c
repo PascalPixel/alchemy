@@ -69,7 +69,7 @@ void Func_02000d38(s32 unused, s32 id) {
     WORD_AT(object, 108) = 0;
     Animation_ApplyChildValues(object, 0);
     Actor_SetModeById(id, 6);
-    Flag_Clear(SPLIT_CONSTANT(0x122, 255));
+    Flag_Clear(SPLIT_CONSTANT(SPLIT_CONSTANT(0x122, 255)));
     Func_02000cb8(id);
   }
 }

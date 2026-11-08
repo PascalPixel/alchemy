@@ -2,6 +2,7 @@
 /// Windows: return the first entry of the fixed tile table.
 
 #include "battle.h"
+#include "call.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -32,6 +33,6 @@ void Func_08045564(u8 *work) {
   void (*routine)(void *, void *);
 
   RamCode_Load(routine, Tile_Decompress4bppCode, Tile_Decompress4bppCodeSize);
-  routine(*(void **)(work + 0x604), work);
+  routine(*(void **)(work + SPLIT_CONSTANT(0x604)), work);
   Heap_Release(routine);
 }

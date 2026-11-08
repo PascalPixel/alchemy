@@ -49,7 +49,7 @@ void Func_02001abc(void) {
     Func_0200422c();
     Func_02004144(14, 0);
     GameFlag_SetBit(0x109);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 229));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 229)));
     wait(1);
     Field_SetDestination(0x1fd, 0);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov694Room3, 19);
@@ -82,7 +82,7 @@ void Func_02001b84(void) {
     Func_0200422c();
     Func_02004144(8, 0);
     GameFlag_SetBit(0x109);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 229));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 229)));
     wait(1);
     Field_SetDestination(0x1fb, 0);
     Party_SetFields1eeAnd1f0((s32)&SceneId_Ov694Room3, 18);

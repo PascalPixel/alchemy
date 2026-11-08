@@ -27,12 +27,12 @@ void Func_02004e30(s32 cue);
 void Func_02003144(void) {
   s32 x, z, i;
 
-  if (GameFlag_Test(SPLIT_CONSTANT(0x7e0, 255)) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x8df)) == 0)
     return;
   Func_02004c20();
   Func_02004db8(0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 120));
-  Call3((void (*)())Actor_SetPositionAndCommit, 8, SPLIT_CONSTANT(0x1b00, 246), SPLIT_CONSTANT(0x2100, 84));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa78));
+  Call3((void (*)())Actor_SetPositionAndCommit, 8, SPLIT_CONSTANT(0x1bf6), SPLIT_CONSTANT(0x2154));
   Func_0200050c();
   x = Actor_GetById(8)->x / 0x10000;
   z = Actor_GetById(8)->z / 0x10000;

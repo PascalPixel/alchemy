@@ -168,7 +168,7 @@ void Func_02000cd0(void) {
   Func_020059f4_(0x186);
   Func_020057ac_(-1, -1, 0xe666);
   Func_020057b4();
-  Func_02005914_(SPLIT_CONSTANT(0x6600, 102), 0xccc);
+  Func_02005914_(SPLIT_CONSTANT(SPLIT_CONSTANT(0x6600, 102)), 0xccc);
   Camera_MoveWithinMapBounds_(0x2000000, 0x600000, 0x1280000, 1);
   Func_02005924();
   FieldEvent_Wait_(20);
@@ -217,7 +217,7 @@ void Func_02000cd0(void) {
   t75 = Event_AskYesNoWithActorAnimation_(4, 0);
   if (t75 != 0)
     goto L_02008fc4;
-  Func_020058d4_(0x101c, 0, 0);
+  Func_020058d4_(SPLIT_CONSTANT(0x1000, 28), 0, 0);
   t77 = FIELD_AT(0x3000000, s32, 108);
   t78 = FIELD_AT(t77, u16, 452);
   FIELD_AT(t77, u16, 452) = (t78 + 1);
@@ -226,7 +226,7 @@ L_02008fc4:
   t79 = FIELD_AT(0x3000000, s32, 108);
   t80 = FIELD_AT(t79, u16, 452);
   FIELD_AT(t79, u16, 452) = (t80 + 1);
-  Func_020058d4_(0x101c, 0, 0);
+  Func_020058d4_(SPLIT_CONSTANT(0x1000, 28), 0, 0);
 L_02008fe0:
   Func_020058fc_(7, 0x100, 0);
   Func_020058fc(4, 0x100, 30);
@@ -316,7 +316,7 @@ L_02009260:
   Motion_SetVarCbAndRefresh_(7, 2);
   FieldEvent_Wait_(5);
   ACTOR_SET_MODE_AND_WAIT(27, 3, 20);
-  Func_020058d4_(0x201b, 0, 0);
+  Func_020058d4_(SPLIT_CONSTANT(0x2000, 27), 0, 0);
   /* FAKEMATCH(one-pass): the byte store kept in a once-only block, whose end
    * holds the scene id load behind it, as s16e8.c does with the same store; as
    * the plain store, 4 of 691 instructions differ in tla-en. */

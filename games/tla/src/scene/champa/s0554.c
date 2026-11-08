@@ -20,9 +20,9 @@ void Func_02000554(s32 a0) {
    * differ in tla-en. */
   s32 t0;
 
-  t0 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 114));
+  t0 = Value1(GameFlag_Test, SPLIT_CONSTANT(0x972));
   if (t0 == 0) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 114));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x972));
     Func_02002adc((s32)MsgChampa35);
   } else {
     Func_02002adc((s32)MsgChampa36);

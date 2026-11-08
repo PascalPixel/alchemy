@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
@@ -20,7 +21,7 @@ void Resource_DecompressHalfwords(const void *source, void *destination) {
 
   Dma_Set((const void *)Resource_DecodeHalfwordLzCode, routine,
           DMA_COPY_WORDS((u32)Resource_DecompressHalfwordsCodeSize >> 2),
-          REG_DMA3);
+          SPLIT_CONSTANT(REG_DMA3));
   ((void (*)(const void *, void *))routine)(source, destination);
 }
 

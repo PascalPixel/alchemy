@@ -124,12 +124,12 @@ void Func_02000f34(void) {
 
 void Func_02000f58(void) {
   ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 18);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x201));
 }
 
 void Func_02000f80(void) {
   ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x202));
 }
 
 void Func_02000fa8(void) { Func_02003b38(gData_02003cbc); }
@@ -140,9 +140,9 @@ void Func_02000fb8(void) {
   Func_02003b40();
   object = Actor_GetById(8);
   if (object->x >> 20 == 21 && object->z >> 20 == 13)
-    GameFlag_SetBit(SPLIT_CONSTANT(0x108, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x207));
   else
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x108, 255));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x207));
 }
 
 void Func_02000fec(void) {
@@ -150,7 +150,7 @@ void Func_02000fec(void) {
 
   Func_02003b40();
   if (object->x >> 20 == 12)
-    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 76));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x84c));
 }
 
 void Func_02001010(struct ShrineOfTheSeaGodObject *object) {
@@ -174,7 +174,7 @@ void Func_02001038(void) {
     Func_020039a8(0, 0, 1, 1, 15, z);
     Actor_SetSpritePriority(8, 3);
     Func_020039e0();
-    GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x301));
   }
 }
 

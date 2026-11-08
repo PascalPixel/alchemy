@@ -27,25 +27,25 @@ s32 Func_02000fc0(void) {
   }
   if (!GameFlag_Test(0x109) && Func_02000290() != 2) {
     GameFlag_ClearBit(0xa10);
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 18));
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 20));
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 17));
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 19));
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 21));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa12));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa14));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa11));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa13));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa15));
   }
   if (Func_02000290() == 2)
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 22));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa16));
   else
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 22));
-  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 23)))
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 26));
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa16));
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa17)))
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa1a));
   else
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 26));
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa1a));
   Actor_GetById(18)->motionFlags = 0;
   Actor_GetById(19)->motionFlags = 0;
   Actor_GetById(20)->motionFlags = 0;
   Func_020002f0();
-  if (!GameFlag_Test(SPLIT_CONSTANT(0xa00, 26))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0xa1a))) {
     object = Actor_GetById(20);
     value = Func_02002b5c(object->x, object->z, 0);
     Func_02002b54(object->x, object->z, 0, value + 2);

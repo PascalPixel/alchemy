@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "iwram_call.h"
@@ -163,8 +164,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
 
     if (frame == 0) {
       Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapCellBuffer, 0,
-                                 0);
+      ValueLr4((s32 (*)())Resource_LoadAndDecompress, (s32)((s32)&ResourceId_Data0C2), (s32)(gMapCellBuffer), (s32)(0), (s32)(0));
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, gData_02014000, 0,
                                  0);
       Graphics_LoadGreyRamp();
@@ -251,7 +251,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
         shard->velocityY = -(Trig_Cos(angle) * speed) >> 5;
         shard->z = Random16();
         shard->velocityZ = (Random16() & 0x3ff) + 0x400;
-        shard->variant = (Random16() & SPLIT_CONSTANT(0x3f00, 255)) + 0x2000;
+        shard->variant = (Random16() & SPLIT_CONSTANT(0x3fff)) + 0x2000;
         shard++;
       }
     }
@@ -261,7 +261,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectArgument *effect) {
       s32 x;
 
       if (effect->side == 0) {
-        x = SPLIT_CONSTANT(0xb00, 56) - frame * 32;
+        x = SPLIT_CONSTANT(0xb38) - frame * 32;
         if (x < -38)
           x = -38;
       } else {

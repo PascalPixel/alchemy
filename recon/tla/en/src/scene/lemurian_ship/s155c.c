@@ -13,7 +13,7 @@ void Func_0200155c(void) {
       Actor_SetModeById(8, 1);
     }
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x104, 255))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x104, 255)))) {
     object = Actor_GetById(11);
     if ((object->x | object->z) == 0) {
       work->field16a = 201;
@@ -28,7 +28,7 @@ void Func_020015c8(void) {
 
   SET_VECTOR(position, 0x3280000, 0x80000, 0x8c0000);
   Vector_AddPolarOffsetFar(0x200000, Random16Far(), position);
-  object = Func_02002c00(SPLIT_CONSTANT(0x200, 162), position[0], position[1], position[2]);
+  object = Func_02002c00(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 162)), position[0], position[1], position[2]);
   if (object != NULL) {
     object->motionFlags = 0;
     *(s32 *)((u8 *)object + 0x30) = 0x20000;

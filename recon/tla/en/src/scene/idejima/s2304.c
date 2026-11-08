@@ -93,7 +93,7 @@ void Func_02002304(void) {
   Import_EventSetMessageId(MsgIdejimaThoughtTheyWereInsideLighthouse);
   Import_EventShowMessageAndWait(8, 0);
   Call3((void (*)())Actor_ArmCallback, 10, FACING_NORTHWEST + FACING_STEP, 0);
-  Import_EventShowMessageAndWait(0x200a, 0);
+  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x200a), 0);
   Import_ActorSetAnimation(5, 4);
   Import_EventShowMessageAndWait(5, 0);
   Motion_SetModeAndWaitAnimation(8, 3);
@@ -136,7 +136,7 @@ void Func_02002304(void) {
   Actor_WatchAndSetScript(8, 6);
   Actor_WatchAndSetScript(5, 6);
   Actor_WatchAndSetScript(10, 6);
-  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x6666, 0x3333);
+  Call3((void (*)())Actor_SetSpeedParameters, 6, SPLIT_CONSTANT(0x6666), 0x3333);
   Actor_SetPositionAndReset(6, 358, 222);
   FieldEvent_Wait(40);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHEAST, 80);
@@ -152,24 +152,24 @@ void Func_02002304(void) {
   Import_ActorSetAnimation(8, 4);
   Import_EventShowMessageAndWait(8, 0);
   Actor_Jump(5, 4, 0);
-  Call2((void (*)())Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x1000, 5), 0);
+  Call2((void (*)())Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x1005), 0);
   Actor_ArmCallback(6, a8000, 20);
   Motion_SetModeAndWaitAnimation(10, 3);
-  Call2((void (*)())Import_EventShowMessageAndWait, 0x100a, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x19999, 0xcccc);
+  Call2((void (*)())Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x100a), 0);
+  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x19999, SPLIT_CONSTANT(0xcccc));
   Call3((void (*)())Actor_SetPositionAndReset, 6, 348, 222);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHWEST, 0);
   Call2((void (*)())Import_EventShowMessageAndWait, 0x4006, 0);
   Actor_Stop(8);
   Actor_Stop(5);
   Actor_Stop(10);
-  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x6666, 0x3333);
+  Call3((void (*)())Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0x6666), 0x3333);
   Call3((void (*)())Actor_SetPositionAndReset, 8, 320, 200);
   Func_02003298(8, 0, 40);
   Actor_ArmCallback(6, a8000, 40);
   Import_EventShowMessageAndWait(6, 0);
   Value3((s32 (*)())Import_ActorShowEmote, 10, 0x100, 0);
-  Call2((void (*)())Import_EventShowMessageAndWait, 0x100a, 0);
+  Call2((void (*)())Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x100a), 0);
   Motion_SetModeAndWaitAnimation(6, 4);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHWEST, 0);
   Import_EventShowMessageAndWait(0x4006, 0);
@@ -178,13 +178,13 @@ void Func_02002304(void) {
   Import_EventShowMessageAndWait(5, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTHWEST, 0);
   Import_EventShowMessageAndWait(6, 0);
-  Call2((void (*)())Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x1000, 10), 0);
+  Call2((void (*)())Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x100a), 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHWEST, 0);
   Actor_RefreshSelectorById(6);
   Motion_SetModeAndWaitAnimation(6, 3);
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(10, 4);
-  Call2((void (*)())Import_EventShowMessageAndWait, 0x100a, 0);
+  Call2((void (*)())Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x100a), 0);
   Call3((void (*)())Actor_ArmCallback, 8, FACING_SOUTHEAST, 0);
   Import_EventShowMessageAndWait(8, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_NORTHWEST, 0);
@@ -194,7 +194,7 @@ void Func_02002304(void) {
   Motion_SetVarCbAndRefresh(gMainRoutineWork.currentOwner, 2);
   FieldEvent_Wait(20);
   Actor_ArmCallback(5, a4000, 0);
-  Func_02003298(0x1005, 0, 20);
+  Func_02003298(SPLIT_CONSTANT(0x1005), 0, 20);
   Value3((s32 (*)())Import_ActorShowEmote, gMainRoutineWork.currentOwner, 0x105,
          0);
   Actor_ArmCallback(6, FACING_NORTH, 0);
@@ -214,7 +214,7 @@ void Func_02002304(void) {
   Call3((void (*)())Actor_ArmCallback, 8, FACING_SOUTH + FACING_STEP, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_SOUTHWEST, 0);
   Actor_ArmCallback(6, a8000, 20);
-  Call2((void (*)())Import_EventShowMessageAndWait, 0x2008, 0);
+  Call2((void (*)())Import_EventShowMessageAndWait, SPLIT_CONSTANT(0x2008), 0);
   Value3((s32 (*)())Import_ActorShowEmote, 5, 0x109, 40);
   Import_EventShowMessageAndWait(5, 0);
   Actor_GetById(gMainRoutineWork.currentOwner)->actionFlags &= 254;
@@ -233,7 +233,7 @@ void Func_02002304(void) {
         FACING_SOUTHEAST, 40);
   Call3((void (*)())Actor_ArmCallback, gMainRoutineWork.currentOwner,
         FACING_NORTHWEST, 80);
-  Import_EventShowMessageAndWait(0x2008, 0);
+  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x2008), 0);
   Import_ActorShowEmote(gMainRoutineWork.currentOwner, 0x101, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_EAST, 20);
   Call3((void (*)())Actor_ArmCallback, 10, FACING_NORTHWEST + FACING_STEP, 0);
@@ -262,13 +262,13 @@ void Func_02002304(void) {
   Import_ActorSetAnimation(5, 3);
   Import_ActorSetAnimation(gMainRoutineWork.currentOwner, 3);
   Motion_SetModeAndWaitAnimation(6, 3);
-  Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);
+  Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, SPLIT_CONSTANT(0xcccc));
   Call3((void (*)())Actor_SetPositionAndReset, 10, 368, 256);
   Actor_ArmCallback(10, FACING_EAST, 0);
   Import_ActorShowEmote(6, 0x100, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTHEAST, 0);
   Actor_RefreshSelectorById(6);
-  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x5000, 6), 0);
+  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x5006), 0);
   Actor_ArmCallback(8, a3000, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_SOUTHEAST, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_SOUTHEAST, 0);
@@ -276,13 +276,13 @@ void Func_02002304(void) {
   Actor_ArmCallback(10, FACING_EAST, 0);
   Import_EventShowMessageAndWait(8, 0);
   Import_ActorShowEmote(10, 0x108, 0);
-  Import_EventShowMessageAndWait(0x100a, 0);
-  Import_CameraSetSpeed(SPLIT_CONSTANT(0x9900, 153), SPLIT_CONSTANT(0x1300, 51));
+  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x100a), 0);
+  Import_CameraSetSpeed(SPLIT_CONSTANT(0x9999), SPLIT_CONSTANT(0x1333));
   Camera_MoveWithinMapBounds(PIXELS(396), -1, PIXELS(234), 1);
-  Call3((void (*)())Actor_SetSpeedParameters, 5, 0xcccc, SPLIT_CONSTANT(0x6600, 102));
-  Call3((void (*)())Actor_SetSpeedParameters, 6, 0xcccc, SPLIT_CONSTANT(0x6600, 102));
-  Call3((void (*)())Actor_SetSpeedParameters, 8, 0xcccc, 0x6666);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0xcccc, SPLIT_CONSTANT(0x6600, 102));
+  Call3((void (*)())Actor_SetSpeedParameters, 5, 0xcccc, SPLIT_CONSTANT(0x6666));
+  Call3((void (*)())Actor_SetSpeedParameters, 6, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
+  Call3((void (*)())Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   leader->action = 0;
   Actor_SetMovementTypeById(8, gData_020035bc);
   Actor_SetMovementTypeById(5, gData_02003534);
@@ -293,8 +293,8 @@ void Func_02002304(void) {
   while (leader->action == 0);
   Func_020032e0();
   Import_ActorShowEmote(5, 0x100, 20);
-  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x1000, 5), 0);
-  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x1000, 6), 0);
+  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x1005), 0);
+  Import_EventShowMessageAndWait(SPLIT_CONSTANT(0x1006), 0);
   Import_EventShowMessageAndWait(8, 0);
   Func_020032e8(13);
 }

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 
 typedef struct Actor {
   u8 pad0[8];
@@ -78,7 +79,7 @@ void Func_02001f94(void) {
   saved[1] = (*(s32 **)camera)[1];
   saved[0] = IWRAM->unk_6c.word;
   if (state->unk_6 != 0 && state->unk_8 == 0 && state->callback != 0)
-    state->callback();
+    ValueLr0((s32 (*)())state->callback);
   v = (u16)state->unk_6;
   state->unk_8 = v;
   state->unk_6 = 0;

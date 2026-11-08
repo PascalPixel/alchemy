@@ -15,7 +15,7 @@ void *Func_02000064(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov693Room1) {
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)))
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178))))
       return gData_0200147c;
     if (GameFlag_Test(0x9d0))
       return gData_020012cc;

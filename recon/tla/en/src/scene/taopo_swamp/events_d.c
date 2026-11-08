@@ -51,7 +51,7 @@ void Func_02000744(s32 a, s32 id) {
   if (id == 9 && object->x >> 20 == 16) {
     Func_02000710(9);
     Func_02002840(15, 26, 1, 1, 16, 26);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x970, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa6f));
   }
 }
 
@@ -60,7 +60,7 @@ void Func_02000784(s32 a, s32 id) {
   Actor_GetById(id)->priorityFlags |= 2;
   Actor_SetModeById(id, 1);
   GameFlag_SetBit(0x220);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 34));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x222));
 }
 
 void Func_020007bc(s32 a, s32 id) {
@@ -68,8 +68,8 @@ void Func_020007bc(s32 a, s32 id) {
   Actor_SetSpritePriority(id, 2);
   Actor_GetById(id)->priorityFlags &= 0xfd;
   Func_02002778(0, id);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x122, 255));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 34));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x221));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x222));
 }
 
 void Func_02000810(s32 id) {
@@ -83,8 +83,8 @@ void Func_02000810(s32 id) {
   Actor_GetById(id)->update = (void (*)(void))zero;
   Func_02002778(0, 0);
   GameFlag_ClearBit(0x220);
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x122, 255));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 34));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x221));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x222));
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   object = Actor_GetById(id);
   if (object->x >> 20 == leader->x >> 20 &&
@@ -105,7 +105,7 @@ void Func_020008d8(s32 id) {
   Actor_GetById(id)->update = 0;
   Func_02002778(0, 0);
   GameFlag_ClearBit(0x220);
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 34));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x222));
 }
 
 void Func_02000920(s32 a, s32 id) {
@@ -114,7 +114,7 @@ void Func_02000920(s32 a, s32 id) {
   Actor_SetModeById(id, 1);
   if (a == 5 || GameFlag_GetByte(0x230) > 3) {
     GameFlag_SetBit(0x220);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x200, 34));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x222));
   }
 }
 
@@ -123,8 +123,8 @@ void Func_0200096c(s32 a, s32 id) {
   Actor_SetSpritePriority(id, 2);
   Actor_GetById(id)->priorityFlags &= 0xfd;
   Func_02002778(0, id);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x122, 255));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 34));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x221));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x222));
 }
 
 void Func_020009c0(s32 id) {
@@ -137,8 +137,8 @@ void Func_020009c0(s32 id) {
   Actor_GetById(id)->update = 0;
   Func_02002778(0, 0);
   GameFlag_ClearBit(0x220);
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x122, 255));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 34));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x221));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x222));
   GameFlag_SetByte(0x230, 0);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   object = Actor_GetById(id);
@@ -167,8 +167,8 @@ void Func_02000a94(s32 id) {
 
 void Func_02000adc(s32 a, s32 id) {
   Actor_SetModeById(id, 2);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x300, 49));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 50));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x331));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x332));
 }
 
 void Func_02000afc(s32 a, s32 id) {
@@ -181,8 +181,8 @@ void Func_02000afc(s32 a, s32 id) {
      * priority byte. */
     __asm__ volatile("");
     object->priorityFlags |= 2;
-    GameFlag_SetBit(SPLIT_CONSTANT(0x300, 50));
-    GameFlag_SetBit(SPLIT_CONSTANT(0x234, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x332));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x333));
     Func_02002840(7, 17, 1, 1, 7, 15);
   }
 }
@@ -190,7 +190,7 @@ void Func_02000afc(s32 a, s32 id) {
 void Func_02000b58(s32 a, s32 id) {
   Actor_SetModeById(id, 2);
   GameFlag_SetBit(0x334);
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 53));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x335));
   Func_02002840_(27, 14, 1, 1, 27, 13);
 }
 
@@ -204,8 +204,8 @@ void Func_02000b90(s32 a, s32 id) {
      * priority byte. */
     __asm__ volatile("");
     object->priorityFlags |= 2;
-    GameFlag_SetBit(SPLIT_CONSTANT(0x300, 53));
-    GameFlag_SetBit(SPLIT_CONSTANT(0x300, 54));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x335));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x336));
     Actor_SetSpeedParameters_(id, 0x8000, 0x4000);
     Actor_OffsetPositionAndResetMotion(id, -32, 0);
     Actor_WaitForMoveById(id);

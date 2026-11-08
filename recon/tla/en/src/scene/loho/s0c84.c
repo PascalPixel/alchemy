@@ -22,9 +22,9 @@ static __inline__ void Func_02001348_(s32 id, s32 x, s32 z) {
 }
 
 void Func_02000c84(void) {
-  GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x102, 255)));
   Actor_GetById(22)->collisionFlags &= 0xfe;
-  if (GameFlag_Test(SPLIT_CONSTANT(0xf00, 247)) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xf00, 247))) == 0)
     Func_02001348_(66, PIXELS(520), PIXELS(136));
 }
 

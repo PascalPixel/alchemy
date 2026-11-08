@@ -40,8 +40,8 @@ void Func_02000378(void) {
   scroll = (volatile u16 *)REG_BG0HOFS;
   *scroll = *line;
   dma = REG_DMA0;
-  dma[5] &= SPLIT_CONSTANT(0xc500, 255); // stop the start timing and the repeat
-  dma[5] &= SPLIT_CONSTANT(0x7f00, 255); // stop the channel
+  dma[5] &= SPLIT_CONSTANT(0xc5ff); // stop the start timing and the repeat
+  dma[5] &= SPLIT_CONSTANT(0x7fff); // stop the channel
   source = line + 1;
   (void)dma[5];
   /* FAKEMATCH: line, reused for the destination, keeps the source step before

@@ -42,5 +42,5 @@ void Func_02001a38(s32 mode, s32 cue) {
       work->target = Actor_GetById(10);
     Func_020014bc(mode, cue);
   }
-  GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x102, 255)));
 }

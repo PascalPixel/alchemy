@@ -64,7 +64,7 @@ void Func_02000ce4(s32 unused, s32 id) {
     if (object->x >> 20 == 5) {
       FieldEvent_Wait(5);
       object->z += PIXELS(1);
-      Flag_Set(SPLIT_CONSTANT(0xa00, 78));
+      Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 78)));
     }
   }
 }

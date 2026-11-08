@@ -44,7 +44,7 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
     cellX = deltaX >> 16;
     deltaY = target->z - object->z;
     if (deltaY < 0)
-      deltaY += SPLIT_CONSTANT(0xff00, 255);
+      deltaY += SPLIT_CONSTANT(0xffff);
     cellY = deltaY >> 16;
     distance = Iwram_Sqrt(cellX * cellX + cellY * cellY);
     step = object->action;

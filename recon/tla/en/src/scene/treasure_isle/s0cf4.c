@@ -47,7 +47,7 @@ s32 Func_02000cf4(void) {
     Flag_Set(0x302);
     if (Flag_IsSet(0x300))
       PlaceObject(8, PIXELS(264), PIXELS(440));
-    if (Flag_IsSet(SPLIT_CONSTANT(0x300, 1)))
+    if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 1))))
       PlaceObject(9, PIXELS(328), PIXELS(440));
     if (Flag_IsSet(0x302))
       PlaceObject(10, PIXELS(440), PIXELS(344));
@@ -61,15 +61,15 @@ s32 Func_02000cf4(void) {
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x308))
       PlaceObject(10, PIXELS(264), PIXELS(184));
-    if (Flag_IsSet(SPLIT_CONSTANT(0x204, 255)))
+    if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x204, 255))))
       Func_020003fc(gData_0200117c, 0);
     if (Flag_IsSet(0x304))
       Func_020003fc(gData_0200117c, 1);
-    if (Flag_IsSet(SPLIT_CONSTANT(0x300, 5)))
+    if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 5))))
       Func_020003fc(gData_0200117c, 2);
     if (Flag_IsSet(0x306))
       Func_020003fc(gData_0200117c, 3);
-    if (Flag_IsSet(SPLIT_CONSTANT(0x208, 255)))
+    if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x208, 255))))
       Func_020003fc(gData_0200117c, 4);
   }
   /* FAKEMATCH(barrier): as above; without it, 35 of 241 instructions differ in
@@ -80,9 +80,9 @@ s32 Func_02000cf4(void) {
     Func_02001064(0, 8, 9);
     if (Flag_IsSet(0x309))
       PlaceObject(10, PIXELS(664), PIXELS(248));
-    if (Flag_IsSet(SPLIT_CONSTANT(0x300, 10)))
+    if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 10))))
       Func_020003fc(gData_020011cc, 0);
-    if (Flag_IsSet(SPLIT_CONSTANT(0x20c, 255)))
+    if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x20c, 255))))
       Func_020003fc(gData_020011cc, 1);
     if (Flag_IsSet(0x30c))
       Func_020003fc(gData_020011cc, 2);
@@ -91,7 +91,7 @@ s32 Func_02000cf4(void) {
    * tla-en. */
   __asm__("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
-    if (Flag_IsSet(SPLIT_CONSTANT(0x300, 13)))
+    if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 13))))
       PlaceObject(8, PIXELS(696), PIXELS(600));
     /* FAKEMATCH(signature): Func_02001064 declared returning s32, though it
      * reaches Func_080d9e98, whose draft returns nothing; as void, these calls

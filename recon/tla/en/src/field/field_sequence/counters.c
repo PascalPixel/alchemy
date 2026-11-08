@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 struct BattleEffectCounterState {
@@ -45,7 +46,7 @@ s32 Party_FindOwnerWithActionFar(s32 action);
 void Func_080cb05c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 
-  if (GameFlag_Test(0x8df) && Party_FindOwnerWithActionFar(153) != -1)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x8df)) && Party_FindOwnerWithActionFar(153) != -1)
     work[0xd39] = 1;
   else
     work[0xd39] = 0;

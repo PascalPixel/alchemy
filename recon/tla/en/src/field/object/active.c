@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "actor.h"
@@ -60,7 +61,7 @@ void Event_SetMessageId(s32 message) {
 s32 ObjectTable_ReadActiveValue(s32 key) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   s32 result = -1;
-  struct Actor *object = event->objects[key & 0x0fff];
+  struct Actor *object = event->objects[key & SPLIT_CONSTANT(0x0fff)];
 
   if (object != NULL && object->animationKind == 1)
     result = *((struct ObjectAnimationState *)object->animation)->value28;

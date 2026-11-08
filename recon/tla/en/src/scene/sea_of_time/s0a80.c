@@ -105,7 +105,7 @@ void Func_02000a80(void) {
 
       struct Params *p = &params;
 
-      p->unk_18 = SPLIT_CONSTANT(0x1a2, 255);
+      p->unk_18 = SPLIT_CONSTANT(0x2a1);
       p->unk_00 = 2;
       x = Random16Far() & 31;
       z = Random16Far() & 31;
@@ -114,7 +114,7 @@ void Func_02000a80(void) {
       z <<= 16;
       Func_0200015c(spots.spot[(u16)index].x + x, 0,
                     spots.spot[(u16)index].z + z, 0, 0x13333, phase,
-                    SPLIT_CONSTANT(0x120000, 1), p);
+                    SPLIT_CONSTANT(0x120001), p);
     }
   }
   if (gData_020022be == gData_02002110[(u16)index]) {

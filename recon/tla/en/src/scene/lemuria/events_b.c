@@ -66,16 +66,16 @@ static __inline__ void Func_02001cf4_(s32 a, s32 b, s32 c) {
 
 void Func_020005ac(s32 a) { Func_02001cf4_(a, 64, 0x300); }
 
-void Func_020005bc(s32 a) { Func_02001cf4_(a, 65, SPLIT_CONSTANT(0x300, 1)); }
+void Func_020005bc(s32 a) { Func_02001cf4_(a, 65, SPLIT_CONSTANT(0x301)); }
 
-void Func_020005cc(s32 a) { Func_02001cf4_(a, 66, SPLIT_CONSTANT(0x300, 2)); }
+void Func_020005cc(s32 a) { Func_02001cf4_(a, 66, SPLIT_CONSTANT(0x302)); }
 
-void Func_020005dc(s32 a) { Func_02001cf4_(a, 67, SPLIT_CONSTANT(0x204, 255)); }
+void Func_020005dc(s32 a) { Func_02001cf4_(a, 67, SPLIT_CONSTANT(0x303)); }
 
 void Func_020005ec(s32 a) { Func_02001cf4_(a, 68, 0x304); }
 
-void Func_020005fc(s32 a) { Func_02001cf4_(a, 70, SPLIT_CONSTANT(0x300, 6)); }
+void Func_020005fc(s32 a) { Func_02001cf4_(a, 70, SPLIT_CONSTANT(0x306)); }
 
-void Func_0200060c(s32 a) { Func_02001cf4_(a, 71, SPLIT_CONSTANT(0x208, 255)); }
+void Func_0200060c(s32 a) { Func_02001cf4_(a, 71, SPLIT_CONSTANT(0x307)); }
 
 void Func_0200061c(s32 a) { Func_02001cf4_(a, 72, 0x308); }

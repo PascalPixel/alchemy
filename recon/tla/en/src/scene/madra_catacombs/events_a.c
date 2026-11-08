@@ -58,7 +58,7 @@ void Func_020004cc(void) {
       Func_020011ac(0);
       Func_020004a4(object);
       Func_020010dc(41, 13, 2, 1, 39, z);
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 200));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 200)));
       Func_02001114();
     }
   }
@@ -71,7 +71,7 @@ void Func_0200052c(void) {
 
   Func_020011ec();
   if ((object->x >> 20) == 44 && (object->z >> 20) == 26)
-    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 202));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 202)));
 }
 
 void Func_02000558(void) { Func_020011cc(gData_020013c4); }
@@ -133,7 +133,7 @@ void Func_02000568(void) {
   Speed_Set(0x33333, 0x6666);
   Camera_SetBounds(PIXELS(160), -1, PIXELS(240), 1);
   Func_02001174();
-  Func_02001164(SPLIT_CONSTANT(0x6600, 102), 0xccc);
+  Func_02001164(SPLIT_CONSTANT(SPLIT_CONSTANT(0x6600, 102)), 0xccc);
   Camera_MoveWithinMapBounds(PIXELS(160), -1, PIXELS(186), 1);
   Func_02001214(168);
   Actor_Place(14, PIXELS(136), PIXELS(258));
@@ -165,6 +165,6 @@ void Func_02000568(void) {
   FieldEvent_Wait(80);
   Func_02000958();
   PartyInventory_Remove(459);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 201));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 201)));
   Func_02001114();
 }

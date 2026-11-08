@@ -27,7 +27,7 @@ void Func_02003620(void) {
 
   Func_02003e64();
   Func_02003fa4(0);
-  Func_02003ffc(SPLIT_CONSTANT(0x200, 38));
+  Func_02003ffc(SPLIT_CONSTANT(0x226));
   v5 = &gMainRoutineWork;
   v5 = (v5 + 0x214);
   object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));

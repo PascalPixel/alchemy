@@ -22,7 +22,7 @@ void Func_02000574(s32 unused, s32 id) {
     wait(4);
   }
   Func_02003d84();
-  GameFlag_SetBit(SPLIT_CONSTANT(0x132, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x231));
 }
 
 void Data_020005f4(void) {}

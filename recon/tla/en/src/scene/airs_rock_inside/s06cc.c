@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 s32 Func_02000690(s32 layer, s32 x, s32 z);
@@ -37,7 +38,7 @@ void Func_020006cc(struct Actor *object) {
     Scene_SetActorSpritePriority(object, 3);
   } else {
     cell |= 0xff00;
-    ground |= 0xd480;
+    ground |= SPLIT_CONSTANT(0xd480);
     *flags &= ~2;
     height += 4;
     Scene_SetActorSpritePriority(object, 1);

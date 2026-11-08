@@ -1,10 +1,11 @@
 #include "script.h"
+#include "call.h"
 
 s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
   s16 initial = interpreter->cursor;
   ScriptCommand callback = (ScriptCommand)interpreter->script[initial + 1];
 
-  if (callback(interpreter) != 0)
+  if (ValueLr1((s32 (*)())callback, (s32)(interpreter)) != 0)
     return 0;
   if (interpreter->cursor == initial)
     interpreter->cursor += 2;

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "resource.h"
 #include "sprite.h"
 #include "sprite_metadata.h"
@@ -46,7 +47,7 @@ void ObjectSystem_Configure(s32 mode) {
     u32 size = (u32)Render_CopyStridedCodeSize;
 
     Dma_Set(Render_CopyStridedCode, HeapSlot_Alloc(84, size),
-            DMA_COPY_WORDS(size >> 2), REG_DMA3);
+            DMA_COPY_WORDS(size >> 2), SPLIT_CONSTANT(REG_DMA3));
   }
 }
 

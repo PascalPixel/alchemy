@@ -30,7 +30,7 @@ void Func_02002b58(s32 x, s32 z) {
 
   spawn.kind = 0x2a0;
   spawn.mode = 1;
-  spawn.scaleX = SPLIT_CONSTANT(0xcc00, 204);
+  spawn.scaleX = SPLIT_CONSTANT(0xcccc);
   spawn.scaleY = 0x30000;
   /* FAKEMATCH: the loop is written with goto so that it carries no loop notes:
    * the bytes rebuild the height and the position's address on every pass, and

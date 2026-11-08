@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "call.h"
 #include "vector3.h"
 
 struct EventWork184 {
@@ -64,7 +65,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   Actor_SetModeById(gMainRoutineWork.currentOwner, 8);
   FieldEvent_Wait(6);
   object->speedLimit = 0x8000;
-  object->acceleration = 0x3333;
+  object->acceleration = SPLIT_CONSTANT(0x3333);
   Func_02005a68(239);
   if (dx < 0 || dz < 0)
     mode = 3;
@@ -72,7 +73,7 @@ void Func_02000e40(s32 id, s32 dx, s32 dz, s32 axis) {
   Func_020057f8(object, (toX << 20) + 0x80000, 0, z = (toZ << 20) + 0x80000);
   FieldEvent_Wait(6);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 2);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, 0x4ccc, 0x3333);
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0x4ccc), SPLIT_CONSTANT(0x3333));
   Actor_OffsetPositionAndResetMotion(gMainRoutineWork.currentOwner, dx << 3,
                                      dz << 3);
   FieldEvent_Wait(24);

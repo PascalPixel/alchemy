@@ -69,11 +69,11 @@ void Func_02002614(u16 *points, u16 *values, s32 arg) {
   work->arg = arg;
   if (REG_BLDCNT == 0) {
     {
-      s32 alpha = SPLIT_CONSTANT(0xc00, 8);
+      s32 alpha = SPLIT_CONSTANT(0xc08);
       REG_BLDALPHA = alpha;
     }
     {
-      s32 cnt = SPLIT_CONSTANT(0x3f00, 16);
+      s32 cnt = SPLIT_CONSTANT(0x3f10);
       REG_BLDCNT = cnt;
     }
   }

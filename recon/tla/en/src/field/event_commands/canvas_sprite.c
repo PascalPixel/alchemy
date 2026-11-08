@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
 #include "dma.h"
@@ -28,10 +29,10 @@ void Func_080eb594(void) {
   work->frame++;
   switch (work->command) {
   case CANVAS_UPLOAD:
-    Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
+    Dma_Set(canvas, tiles, CANVAS_DMA, SPLIT_CONSTANT(REG_DMA3));
     break;
   case CANVAS_UPLOAD_AND_CLEAR:
-    Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
+    Dma_Set(canvas, tiles, CANVAS_DMA, SPLIT_CONSTANT(REG_DMA3));
     {
       s32 size = 128;
       /* FAKEMATCH(pin): the canvas pinned to the r0 it is passed in, so
@@ -50,23 +51,23 @@ void Func_080eb594(void) {
        * as Iwram_FillWords(canvas, CANVAS_SIZE, 0), 2 of 98 instructions
        * differ in tla-en. */
       asm("" : "+l"(size) : "l"(fill), "l"(buffer));
-      fill(buffer, size << 5, 0);
+      ValueLr3((s32 (*)())fill, (s32)(buffer), (s32)(size << 5), (s32)(0));
     }
     break;
   case CANVAS_UPLOAD_AND_FADE1:
-    Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
+    Dma_Set(canvas, tiles, CANVAS_DMA, SPLIT_CONSTANT(REG_DMA3));
     ColorBuffer_MapToFadeStep1(canvas, CANVAS_SIZE);
     break;
   case CANVAS_UPLOAD_AND_FADE2:
-    Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
+    Dma_Set(canvas, tiles, CANVAS_DMA, SPLIT_CONSTANT(REG_DMA3));
     ColorBuffer_MapToFadeStep2(canvas, CANVAS_SIZE);
     break;
   case CANVAS_UPLOAD_AND_FADE3:
-    Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
+    Dma_Set(canvas, tiles, CANVAS_DMA, SPLIT_CONSTANT(REG_DMA3));
     ColorBuffer_MapToFadeStep3(canvas, CANVAS_SIZE);
     break;
   case CANVAS_UPLOAD_TO_BG:
-    Dma_Set(canvas, BG_VRAM, DMA_COPY_WORDS(CANVAS_SIZE * 2 / 4), REG_DMA3);
+    Dma_Set(canvas, BG_VRAM, DMA_COPY_WORDS(CANVAS_SIZE * 2 / 4), SPLIT_CONSTANT(REG_DMA3));
     break;
   }
   work->command = 0;

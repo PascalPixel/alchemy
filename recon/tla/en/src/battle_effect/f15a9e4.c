@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "iwram_call.h"
@@ -230,7 +231,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   work->transferMode = 2;
   work->transferValue = 75;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  ValueLr2((s32 (*)())Task_Add, (s32)(BattleEffect_ProcessPendingGraphicsTransfer), (s32)(0xc80));
 
   // A rock's x is its column, y counts down from 128 by z, velocityX cycles
   // 1 to 12 as its animation step, and variant is its wait before it flies.
@@ -262,7 +263,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 192; frame++) {
     if (frame == 0)
-      Sound_PlayFar(212);
+      ValueLr1((s32 (*)())Sound_PlayFar, (s32)(212));
     if (frame == 40)
       Sound_PlayFar(141);
     if (frame == 96)

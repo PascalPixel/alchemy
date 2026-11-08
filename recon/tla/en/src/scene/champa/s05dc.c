@@ -20,7 +20,7 @@ void Func_020005dc(s32 a0) {
   Func_02002b64(0);
   t2 = Value3(Func_02002a5c, a0, 0x19f, -1);
   if (t2 == 0) {
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 116));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa74));
   }
   Func_02002a4c();
 }

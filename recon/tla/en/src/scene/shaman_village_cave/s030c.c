@@ -1,8 +1,8 @@
 #include "../../../../../../games/tla/src/scene/shaman_village_cave/local.h"
 
 void Func_0200030c(void) {
-  GameFlag_SetBit(SPLIT_CONSTANT(0x106, 255));
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 6));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x106, 255)));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 6)));
   Func_020011a8(17, 35);
 }
 

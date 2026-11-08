@@ -54,7 +54,7 @@ void Func_02000e88(s32 arg0) {
   if (arg0 != 1)
     goto L_02008e9c;
   Func_02000d28();
-  GameFlag_SetBit(SPLIT_CONSTANT(0x8b0, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x9af));
 L_02008e9c:
   return;
 }
@@ -65,7 +65,7 @@ void Func_02000ea0(void) {
    * differ in tla-en. */
   s32 result0;
 
-  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x900, 23));
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x917));
   if (result0 == 0)
     goto L_02008eee;
   Call6((void (*)())Func_020010ac, 31, 43, 9, 12, 48, 47);
@@ -84,7 +84,7 @@ void Func_02000ef4(void) {
   Call6((void (*)())Func_020010ac, 31, 43, 9, 11, 48, 47);
   Call6((void (*)())Func_02001094, 30, 110, 48, 110, 9, 13);
   Call6((void (*)())Func_020010ac, 52, 110, 1, 1, 52, 111);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 23));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x917));
   Func_020010e4();
   return;
 }

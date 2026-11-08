@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -71,7 +72,7 @@ u32 Random16(void);
 void BattleEffect_PrepareBufferInterpolation(void);
 
 void Func_080e82cc(void) {
-  struct RingWork *work = HeapSlot_AllocEwram(92, SPLIT_CONSTANT(0x2900, 140));
+  struct RingWork *work = HeapSlot_AllocEwram(92, SPLIT_CONSTANT(0x298c));
   struct FxScene *scene = Ram_HeapSlots->effectWork;
   struct RingEvent *event = Ram_HeapSlots->eventWork;
   struct Actor *caster = scene->mainObject;
@@ -125,7 +126,7 @@ void Func_080e82cc(void) {
       do {
       } while (0);
       fill = Iwram_FillWordsEntry;
-      fill((void *)0x06002000, 0x800, 0);
+      ValueLr3((s32 (*)())fill, (s32)((void *)0x06002000), (s32)(0x800), (s32)(0));
     }
 
     /* FAKEMATCH(one-pass): a once-only block round the picture's release and
@@ -168,7 +169,7 @@ void Func_080e82cc(void) {
     work->phase = 0;
     event->up = 1;
     event->unkcad = 1;
-    event->timer = SPLIT_CONSTANT(0x2e8, 255);
+    event->timer = SPLIT_CONSTANT(0x3e7);
     off = 0;
     Task_Add(Func_080e807c, 0x480);
     wait(1);

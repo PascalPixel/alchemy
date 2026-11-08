@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "fixed_math.h"
@@ -69,7 +70,7 @@ void Func_080e03cc(void) {
   BattleEffect_InitializeSharedScene();
   Sound_PlayFar(138);
   object->angle = mainObject->angle;
-  object->speedLimit = 0x14ccc;
+  object->speedLimit = SPLIT_CONSTANT(0x14ccc);
   object->motionFlags = 0;
   Actor_SetMode(object, 5);
   Animation_ApplyChildValuesFar(object, 1);

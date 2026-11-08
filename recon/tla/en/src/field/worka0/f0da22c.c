@@ -2,6 +2,7 @@
 /// Builds a chain of nodes around a point.
 
 #include "types.h"
+#include "call.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
@@ -44,8 +45,8 @@ s32 Func_080da22c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 dx = (toX - x) >> 8;
   s32 dy = (toY - y) >> 8;
   s32 dz = (toZ - z) >> 8;
-  s32 length = Iwram_SqrtEntry(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
-                               Iwram_MulQ16(dz, dz));
+  s32 length = ValueLr1((s32 (*)())Iwram_SqrtEntry, (s32)(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
+                               Iwram_MulQ16(dz, dz)));
   s32 segments = length / 6 + 1;
   struct LineNode **link = &work->slots[index].head;
   s32 angle = 0;

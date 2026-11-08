@@ -35,7 +35,7 @@ const void *Func_02000440(void) {
   s16 scene = gMainRoutineWork.scene;
 
   if (scene == (s32)&SceneId_Ov65FRoom1) {
-    if (Flag_IsSet(SPLIT_CONSTANT(0x900, 27)))
+    if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 27))))
       return gData_02005874;
     return gData_020056f4;
   }

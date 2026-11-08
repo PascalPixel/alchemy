@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/shaman_village/shaman_village.h"
+#include "call.h"
 
 void Func_020042c8(struct ShamanVillageObject *object) {
   s32 step;
@@ -7,7 +8,7 @@ void Func_020042c8(struct ShamanVillageObject *object) {
 
   object->y += 0x8000;
 
-  step = 0x51e;
+  step = SPLIT_CONSTANT(0x51e);
   object->scaleX += step;
   object->scaleY += step;
   object->field64 += 2;

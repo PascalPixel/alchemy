@@ -46,7 +46,7 @@ void Func_020029a4(void) {
   FieldEvent_Wait(60);
   Func_02004c20();
   Func_02004db8(0);
-  Func_02004df8(SPLIT_CONSTANT(0x9900, 153), 1);
+  Func_02004df8(SPLIT_CONSTANT(SPLIT_CONSTANT(0x9900, 153)), 1);
   actor->scaleX = 0x13333;
   actor->scaleY = 0x13333;
   Camera_FollowActor(8, 1);
@@ -64,7 +64,7 @@ void Func_020029a4(void) {
   ((struct EventWork *)Ram_HeapSlots->eventWork)->transitionFrames = 32;
   Event_StartScreenTransition();
   FieldEvent_Wait(120);
-  Func_02004df8(SPLIT_CONSTANT(0x16600, 102), 300);
+  Func_02004df8(SPLIT_CONSTANT(SPLIT_CONSTANT(0x16600, 102)), 300);
   FieldEvent_Wait(270);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->transitionFrames = 16;
   *(u16 *)BG_PLTT = RGB(31, 31, 31);

@@ -88,7 +88,7 @@ void Func_0200274c(struct Actor *actor) {
       Call3((void (*)())Func_02004264, 0x50000, 0x50000, 0x10000);
       /* FAKEMATCH(wrapper): forwarded, so each argument builds its own -1; as a
        * direct call, 17 of 362 instructions differ in tla-en. */
-      Call3((void (*)())Func_02004264, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+      Call3((void (*)())Func_02004264, -1, -1, SPLIT_CONSTANT(0xe666));
       if (actor->watchedObject != NULL)
         ((void (*)(struct Actor *))actor->watchedObject)(actor);
     }
@@ -115,7 +115,7 @@ void Func_0200274c(struct Actor *actor) {
           cell->collisionCode = 0;
           Func_02004244(64, 64, 1, 1, xA, zA);
           Func_0200423c(64, 64, 1, 1, x, z);
-          Func_0200446c(SPLIT_CONSTANT(0x13e, 255));
+          Func_0200446c(SPLIT_CONSTANT(0x23d));
           Func_02002658((x << 20) + 0x80000, actor->y, (z << 20) + 0x80000,
                         actor->angle);
         }

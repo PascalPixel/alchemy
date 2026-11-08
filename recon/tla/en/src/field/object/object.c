@@ -2,6 +2,7 @@
 /// Objects: create and release field objects, and render them each frame.
 
 #include "battle.h"
+#include "call.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
@@ -68,7 +69,7 @@ void Actor_Release(struct ActorView *obj) {
     Dma_Set(src, obj,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
                 (sizeof(struct Actor) / 4),
-            REG_DMA3);
+            SPLIT_CONSTANT(REG_DMA3));
   }
 }
 

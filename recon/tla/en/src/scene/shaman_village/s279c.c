@@ -26,7 +26,7 @@ void Func_020027e4(void) {
 }
 
 void Func_02002808(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 254))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 254)))) {
     Import_SoundPlay(0);
     Func_020048c4();
     Func_02004a24(0);
@@ -36,14 +36,14 @@ void Func_02002808(void) {
     Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTH, 20);
     Func_020011f8();
     Actor_SetModeById(17, 1);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x104, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x104, 255)));
     Func_020048cc();
   }
 }
 
 void Func_02002878(void) {
   ShamanVillage_BlendStart(0, 0, 1, 2, 2, 17);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x106, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x106, 255)));
 }
 
 void Func_0200289c(void) {

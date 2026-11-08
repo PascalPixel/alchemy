@@ -31,13 +31,13 @@ s32 Func_02000988(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov690Room9) {
     Func_02002140(0);
     Func_02002188(gData_0200226c);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x200, 6)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x206)))
       Func_020020c0(10, 0, 0);
     Actor_GetById(10)->priorityFlags |= 2;
     Actor_SetModeById(18, 2);
     Actor_SetModeById(19, 2);
     Actor_SetModeById(21, 2);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x106, 255)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x205)))
       Actor_SetModeById(10, 2);
     Func_02000e04();
 #if TLA_PATCH_1

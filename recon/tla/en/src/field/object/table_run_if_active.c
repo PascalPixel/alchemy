@@ -2,6 +2,7 @@
 /// Field: finish the speaker display.
 
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "input.h"
@@ -62,7 +63,7 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
     wait(1);
 
   wait(1);
-  while (!(gInput.pressed & 0x303))
+  while (!(gInput.pressed & SPLIT_CONSTANT(0x303)))
     wait(1);
 
   wait(1);

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "dma.h"
 #include "heap_release.h"
@@ -163,8 +164,8 @@ void BattleEffect_RunSceneEffect(s32 *arg) {
 void BattleEffect_RunTableEffect(s32 *script) {
   struct FxRunWork *work;
 
-  HeapSlot_Alloc(100, 0x302);
-  HeapSlot_Alloc(92, 0x7b7c);
+  HeapSlot_Alloc(100, SPLIT_CONSTANT(0x302));
+  HeapSlot_Alloc(92, SPLIT_CONSTANT(0x7b7c));
   HeapSlot_Alloc(96, 0x4000);
   work = (struct FxRunWork *)Ram_HeapSlots->battleFxWork[0];
   work->script = script;

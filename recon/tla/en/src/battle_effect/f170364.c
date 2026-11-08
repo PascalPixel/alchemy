@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -155,7 +156,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   pictures = gData_02014000;
   Func_0813ba50();
-  BattleEffect_StartCanvasLayer(0);
+  ValueLr1((s32 (*)())BattleEffect_StartCanvasLayer, (s32)(0));
   REG_BLDALPHA = 0x1010;
   rects = blitters;
   BattleEffect_FetchRectangleBlitters(0, (void **)rects);
@@ -214,7 +215,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
       position.y = 0x480000;
       velocity.x = 0x90000;
       velocity.y = -0x20000;
-      BattleEffect_SpawnObjects(2, SPLIT_CONSTANT(0x192, 255), 2);
+      BattleEffect_SpawnObjects(2, SPLIT_CONSTANT(0x291), 2);
     }
     if (frame == 108) {
       ResourceObject_ReleaseFar(work->objects[0]);
@@ -414,7 +415,7 @@ void BattleEffect_RunMegaera(struct BattleEffectArgument *effect) {
           }
           if (frame >= start + 10 && frame < start + 18) {
             blitters[0](canvas,
-                        (gData_02014000 + SPLIT_CONSTANT(0xc00, 86)) +
+                        (gData_02014000 + SPLIT_CONSTANT(0xc56)) +
                             (((frame + i) / 4) & 3) * 2880,
                         column - 12, 0, 24, 112);
           }

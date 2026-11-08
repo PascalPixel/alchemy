@@ -22,21 +22,21 @@ s32 Func_0200006c(s32 slot) {
 
   if ((gLinkStatus & 3) == 3) {
     id = (REG_SIOCNT << 26) >> 30;
-    GameFlag_SetBit(SPLIT_CONSTANT(0x204, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x204, 255)));
   } else {
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x204, 255));
+    GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x204, 255)));
   }
   /* FAKEMATCH: a loop that runs at most once places the test after the body as
    * the ROM does. */
-  while (id >= 0 && GameFlag_Test(SPLIT_CONSTANT(0x204, 255))) {
+  while (id >= 0 && GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x204, 255)))) {
     const s32 *expected = &gLinkLobby_SlotValues[slot];
 
     if (id != 0)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 2));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 2)));
     else
-      GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 2));
+      GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 2)));
     {
-      struct LinkPeer *row = &gLinkPeerSignatures[GameFlag_Test(SPLIT_CONSTANT(0x300, 2)) ^ 1];
+      struct LinkPeer *row = &gLinkPeerSignatures[GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 2))) ^ 1];
 
       if (row->values[gLinkLobby_SlotColumns[slot]] == *expected)
         return 1;

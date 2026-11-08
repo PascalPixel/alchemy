@@ -24,9 +24,9 @@ void Func_02000100(void) {
    * differ in tla-en. */
   struct Actor *object = Actor_GetById(16);
 
-  if (!Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 27)) &&
+  if (!Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa1b)) &&
       object->x >> 20 == 8 && object->z >> 20 == 37) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 27));
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa1b));
     Func_02000060(1);
   }
 }

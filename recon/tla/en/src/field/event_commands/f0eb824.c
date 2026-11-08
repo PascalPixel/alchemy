@@ -30,7 +30,7 @@ void Func_080eb824(void) {
   do {
     Iwram_FillWords(work, sizeof(*work), 0);
   } while (0);
-  work->tile = *(u16 *)(windowTiles + SPLIT_CONSTANT(0x1300, 72));
+  work->tile = *(u16 *)(windowTiles + SPLIT_CONSTANT(0x1348));
   work->mode = CANVAS_SPRITE_16_COLORS;
   work->command = 0;
   work->x = 16;
@@ -41,7 +41,7 @@ void Func_080eb824(void) {
   work->depth = 250;
   Iwram_FillWords(canvas, CANVAS_SIZE, 0);
   Dma_Set(canvas, OBJ_TILES + work->tile * TILE_SIZE,
-          0x84000000 | CANVAS_SIZE / 4, REG_DMA3);
+          0x84000000 | CANVAS_SIZE / 4, SPLIT_CONSTANT(REG_DMA3));
 
   // Where each pixel of the canvas sits in its 8x8 tiles.
   map = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP,

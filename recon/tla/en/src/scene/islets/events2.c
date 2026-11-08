@@ -42,7 +42,7 @@ void Func_02000210(void) {
 
   Func_02003e64();
   Func_02003fa4(0);
-  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 162));
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xaa2));
   if (result0 == 0)
     goto L_02008260;
   result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
@@ -74,7 +74,7 @@ void Func_020002ac(void) {
 
   Func_02003e64();
   Func_02003fa4(0);
-  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 162));
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xaa2));
   if (result0 == 0)
     goto L_020082ea;
   result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
@@ -101,7 +101,7 @@ void Func_0200030c(void) {
 
   Func_02003e64();
   Func_02003fa4(0);
-  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 162));
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xaa2));
   if (result0 == 0)
     goto L_0200835c;
   result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
@@ -129,7 +129,7 @@ void Func_02000380(void) {
 
   Func_02003e64();
   Func_02003fa4(0);
-  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 162));
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xaa2));
   if (result0 == 0)
     goto L_020083be;
   result1 = Value1((s32 (*)())GameFlag_Test, 0x200);
@@ -221,7 +221,7 @@ void Func_02000520(void) {
 
   Func_02003e64();
   Func_02003fa4(0);
-  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 164));
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xaa4));
   if (result0 == 0)
     goto L_0200854a;
   Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
@@ -241,7 +241,7 @@ void Func_02000568(void) {
   Func_02003e64();
   Func_02003fa4(0);
   if (Value1((s32 (*)())PartyInventory_FindOwner, 0x1c4) == -1) {
-    if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 164))) {
+    if (Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xaa4))) {
       Actor_WatchAndSetScript(10, gMainRoutineWork.currentOwner);
       Func_02003f24((s32)MsgWhatDoYou);
     } else {
@@ -283,7 +283,7 @@ void Func_02000568(void) {
       Actor_SetModeById(gMainRoutineWork.currentOwner, 1);
     }
     Func_02003f3c(10, FACING_EAST);
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 164));
+    GameFlag_SetBit(SPLIT_CONSTANT(0xaa4));
   }
   Func_02003e6c();
 }

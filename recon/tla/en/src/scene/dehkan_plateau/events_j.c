@@ -97,11 +97,11 @@ void Actor_SetSingleChildFlags(struct Actor *object,
 void Func_02002dd4(void);
 
 void Func_02002f74(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x108, 255)) != 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x108, 255))) != 0)
     Func_02002f08();
   else
     Func_02002dd4();
-  GameFlag_SetBit(SPLIT_CONSTANT(0x10a, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x10a, 255)));
 }
 
 extern struct Actor *gData_02004420;

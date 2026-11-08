@@ -42,7 +42,7 @@ s32 Func_02000854(void) {
   Call4((void (*)())Func_02002324, (s32)gData_02002b60, 0, 0, 0x80000000);
   Func_02000054();
   Func_020007d0();
-  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 2))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa02))) {
     Func_0200227c(17, 0, 0);
     Func_0200220c(28, 39, 1, 1, 20, 39);
     Func_02002214(28, 39, 1, 1, 20, 39);

@@ -47,22 +47,22 @@ void Func_02005b5c();
 void Func_02005aa4(void);
 
 void Func_02002050(void) {
-  s32 done = Value1(GameFlag_Test, SPLIT_CONSTANT(0x800, 106));
+  s32 done = Value1(GameFlag_Test, SPLIT_CONSTANT(0x86a));
 
   if (done != 0)
     return;
   Func_02005a9c();
   Func_02005c3c(0);
   Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, 0xcccc,
-        SPLIT_CONSTANT(0x6600, 102));
+        SPLIT_CONSTANT(0x6666));
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 344, 208);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 308, 200);
   Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 290, 188);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
-  Call3(Actor_SetSpeedParameters, 5, 0xcccc, SPLIT_CONSTANT(0x6600, 102));
-  Call3(Actor_SetSpeedParameters, 6, 0xcccc, SPLIT_CONSTANT(0x6600, 102));
-  Call3(Actor_SetSpeedParameters, 26, 0xcccc, SPLIT_CONSTANT(0x6600, 102));
-  Call3(Actor_SetSpeedParameters, 7, 0xcccc, SPLIT_CONSTANT(0x6600, 102));
+  Call3(Actor_SetSpeedParameters, 5, 0xcccc, SPLIT_CONSTANT(0x6666));
+  Call3(Actor_SetSpeedParameters, 6, 0xcccc, SPLIT_CONSTANT(0x6666));
+  Call3(Actor_SetSpeedParameters, 26, 0xcccc, SPLIT_CONSTANT(0x6666));
+  Call3(Actor_SetSpeedParameters, 7, 0xcccc, SPLIT_CONSTANT(0x6666));
   Func_02005b1c(5, gMainRoutineWork.currentOwner);
   Func_02005b1c(6, gMainRoutineWork.currentOwner);
   Func_02005b1c(26, gMainRoutineWork.currentOwner);
@@ -75,8 +75,8 @@ void Func_02002050(void) {
   FieldEvent_Wait(20);
   Call3(Actor_ArmCallback, 7, FACING_WEST, 0);
   Func_02005b4c(MsgItSADead);
-  Func_02005b64(SPLIT_CONSTANT(0x8000, 7), 0);
-  Func_02005ba4(0x26666, SPLIT_CONSTANT(0x4c00, 204));
+  Func_02005b64(SPLIT_CONSTANT(0x8007), 0);
+  Func_02005ba4(0x26666, SPLIT_CONSTANT(0x4ccc));
   ((struct Actor *)Func_02005bbc())->motionFlags = done;
   Call4(Camera_MoveWithinMapBounds, PIXELS(200), -1, PIXELS(180), 1);
   Func_02005bb4();
@@ -98,7 +98,7 @@ void Func_02002050(void) {
   Actor_WatchAndSetScript(5, 26);
   Actor_WatchAndSetScript(6, 26);
   Actor_WatchAndSetScript(7, 26);
-  Call2(Func_02005ba4, 0x13333, SPLIT_CONSTANT(0x2600, 102));
+  Call2(Func_02005ba4, 0x13333, SPLIT_CONSTANT(0x2666));
   Call4(Camera_MoveWithinMapBounds, PIXELS(268), -1, PIXELS(146), 1);
   Call3(Actor_SetSpeedParameters, 26, 0x13333, 0x9999);
   Call3(Actor_SetPositionAndReset, 26, 290, 116);
@@ -106,7 +106,7 @@ void Func_02002050(void) {
   Call3(Actor_ArmCallback, 26, FACING_SOUTH + FACING_STEP, 20);
   Call3(Actor_ArmCallback, 26, FACING_SOUTHEAST + FACING_STEP, 20);
   Call3(Actor_ArmCallback, 26, FACING_SOUTH + FACING_STEP, 40);
-  Func_02005b64(SPLIT_CONSTANT(0x8000, 26), 0);
+  Func_02005b64(SPLIT_CONSTANT(0x801a), 0);
   Camera_MoveWithinMapBounds(PIXELS(268), -1, PIXELS(188), 1);
   Actor_SetPositionAndReset(26, 218, 156);
   Actor_ArmCallback(26, FACING_EAST, 40);
@@ -119,7 +119,7 @@ void Func_02002050(void) {
   Actor_ArmCallback(7, FACING_EAST, 0);
   Call3(Actor_ArmCallback, 5, FACING_NORTHEAST, 0);
   Call3(Actor_ArmCallback, 6, FACING_SOUTHWEST, 20);
-  Call3(Actor_SetSpeedParameters, 26, SPLIT_CONSTANT(0x6600, 102), 0x3333);
+  Call3(Actor_SetSpeedParameters, 26, SPLIT_CONSTANT(0x6666), 0x3333);
   Actor_SetPositionAndReset(26, 248, 156);
   FieldEvent_Wait(40);
   Motion_SetModeAndWaitAnimation(26, 3);
@@ -150,7 +150,7 @@ void Func_02002050(void) {
   Value3(Func_02005b94, 5, 257, 0);
   Value3(Func_02005b94, 6, 257, 20);
   Motion_SetModeAndWaitAnimation(gMainRoutineWork.currentOwner, 3);
-  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0x6600, 102), SPLIT_CONSTANT(0x3300, 51));
+  Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0x6666), SPLIT_CONSTANT(0x3333));
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 280, 188);
   Actor_SetModeById(26, 1);
   FieldEvent_Wait(10);
@@ -171,9 +171,9 @@ ask:
     FieldMessage_ShowAtActor(26, 0);
     goto ask;
   }
-  Call1(GameFlag_SetBit, SPLIT_CONSTANT(0x122, 255));
+  Call1(GameFlag_SetBit, SPLIT_CONSTANT(0x221));
   Func_0200384c();
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x122, 255));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x221));
   Value3(Func_02005b94, gMainRoutineWork.currentOwner, 0x100, 0);
   Value3(Func_02005b94, 5, 0x100, 0);
   Value3(Func_02005b94, 6, 0x100, 0);
@@ -206,14 +206,14 @@ ask:
   GameFlag_ClearBit(0x220);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 232, 142);
   Call2(Func_02005b7c, gMainRoutineWork.currentOwner, FACING_SOUTH);
-  Call1(GameFlag_SetBit, SPLIT_CONSTANT(0x200, 34));
+  Call1(GameFlag_SetBit, SPLIT_CONSTANT(0x222));
   Func_0200384c();
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 34));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x222));
   Call3(Actor_SetPositionAndReset, gMainRoutineWork.currentOwner, 296, 142);
   Call2(Func_02005b7c, gMainRoutineWork.currentOwner, FACING_SOUTH);
-  Call1(GameFlag_SetBit, SPLIT_CONSTANT(0x124, 255));
+  Call1(GameFlag_SetBit, SPLIT_CONSTANT(0x223));
   Func_0200384c();
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x124, 255));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x223));
   Call4(Camera_MoveWithinMapBounds, PIXELS(268), -1, PIXELS(188), 1);
   Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 284, 188);
   Call3(Actor_ArmCallback, gMainRoutineWork.currentOwner, FACING_WEST, 10);
@@ -235,7 +235,7 @@ ask:
   Func_02005b64(7, 0);
   Func_02005b94(26, 265, 0);
   Call2(Func_02005b7c, 26, FACING_WEST);
-  Call2(Func_02005b64, SPLIT_CONSTANT(0x2000, 26), 0);
+  Call2(Func_02005b64, SPLIT_CONSTANT(0x201a), 0);
   Value3(Func_02005b94, 7, 257, 20);
   Call2(Func_02005b7c, 26, FACING_NORTH + FACING_STEP);
   Func_02005b5c(26, 0, 20);
@@ -283,7 +283,7 @@ ask:
   Func_02005b64(7, 0);
   Call2(Func_02005b7c, 26, FACING_WEST);
   Actor_SetModeById(26, 4);
-  Func_02005b64(SPLIT_CONSTANT(0x2000, 26), 0);
+  Func_02005b64(SPLIT_CONSTANT(0x201a), 0);
   Func_02005b94(7, 257, 40);
   Func_02005b7c(26, FACING_EAST);
   Func_02005b64(26, 0);
@@ -302,11 +302,11 @@ ask:
   Call3(Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
   Call3(Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
   Call3(Actor_SetSpeedParameters, 26, 0x13333, 0x9999);
-  Call3(Actor_SetSpeedParameters, 7, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+  Call3(Actor_SetSpeedParameters, 7, 0x13333, SPLIT_CONSTANT(0x9999));
   Actor_SetMovementTypeById(5, gData_02006108);
   Actor_SetMovementTypeById(6, gData_02006108);
   Actor_SetMovementTypeById(26, gData_02006108);
   Actor_SetMovementTypeAndWaitById(7, gData_02006108);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 245));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x8f5));
   Func_02005aa4();
 }

@@ -8,7 +8,7 @@ void Func_020001f4(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object->x >> 20 == 50) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 56));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 56)));
     object->motionFlags = 3;
   }
 }
@@ -18,7 +18,7 @@ void Func_0200021c(void) {
 
   Func_02005688();
   if (object->x >> 20 == 50) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 56));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 56)));
     object->motionFlags = 3;
   }
 }

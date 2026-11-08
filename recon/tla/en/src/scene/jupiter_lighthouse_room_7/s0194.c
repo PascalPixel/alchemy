@@ -27,7 +27,7 @@ s32 Func_02000194(void) {
     goto L_020081d6;
   if (v5 != 15)
     goto L_020081d6;
-  t3 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 17));
+  t3 = GameFlag_Test(SPLIT_CONSTANT(0xa11));
   if (t3 != 0)
     goto L_020081d6;
   GameFlag_SetBit(0xa10);
@@ -37,20 +37,20 @@ L_020081d6:
     goto L_020081f8;
   if (v5 != 16)
     goto L_020081f8;
-  t5 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 19));
+  t5 = GameFlag_Test(SPLIT_CONSTANT(0xa13));
   if (t5 != 0)
     goto L_020081f8;
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 18));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa12));
   v7 = 2;
 L_020081f8:
   if (v6 != 33)
     goto L_0200821a;
   if (v5 != 10)
     goto L_0200821a;
-  t7 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 21));
+  t7 = GameFlag_Test(SPLIT_CONSTANT(0xa15));
   if (t7 != 0)
     goto L_0200821a;
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 20));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa14));
   v7 = 4;
 L_0200821a:
   v6 = (FIELD_AT(v8, s32, 8) >> 20);
@@ -62,27 +62,27 @@ L_0200821a:
   t9 = GameFlag_Test(0xa10);
   if (t9 != 0)
     goto L_02008244;
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 17));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa11));
   v7 = 1;
 L_02008244:
   if (v6 != 31)
     goto L_02008266;
   if (v5 != 16)
     goto L_02008266;
-  t11 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 18));
+  t11 = GameFlag_Test(SPLIT_CONSTANT(0xa12));
   if (t11 != 0)
     goto L_02008266;
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 19));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa13));
   v7 = 3;
 L_02008266:
   if (v6 != 33)
     goto L_02008288;
   if (v5 != 10)
     goto L_02008288;
-  t13 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 20));
+  t13 = GameFlag_Test(SPLIT_CONSTANT(0xa14));
   if (t13 != 0)
     goto L_02008288;
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 21));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa15));
   v7 = 5;
 L_02008288:
   return v7;

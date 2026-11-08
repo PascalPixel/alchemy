@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 
 #define FIELD_AT(base, type, off)                                              \
@@ -30,7 +31,7 @@ void Func_020032a4(void) {
       break;
     case 1:
       if ((FIELD_AT(work, s32, 4204) -= 0x1000) <= 0x14ccb) {
-        FIELD_AT(work, s32, 4204) = 0x14ccc;
+        FIELD_AT(work, s32, 4204) = SPLIT_CONSTANT(0x14ccc);
         state = 2;
         time = -1;
       }

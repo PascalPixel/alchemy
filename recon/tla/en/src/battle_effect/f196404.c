@@ -6,6 +6,7 @@
 /// second run copied from the first by its measured length.
 
 #include "types.h"
+#include "call.h"
 #include "dma.h"
 #include "io_reg.h"
 #include "heap_release.h"
@@ -358,7 +359,7 @@ s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
     /* FAKEMATCH(barrier): an empty asm keeps words alive past count's set; as
      * nothing, 6 of 597 instructions differ in tla-en. */
     __asm__("" : : "r"(words));
-    Dma_Set(runCopy, dst, DMA_COPY_WORDS(count / 4), REG_DMA3);
+    Dma_Set(runCopy, dst, DMA_COPY_WORDS(count / 4), SPLIT_CONSTANT(REG_DMA3));
     dst = (u32 *)((u8 *)dst + size);
   }
   PATCH(skip);

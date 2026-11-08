@@ -22,9 +22,9 @@ void Func_020006f4(s32 burst) {
   if (!Flag_IsSet(0xa46)) {
     Func_020054e0_(29, 60, 3, 4, 14, 50);
     Func_020054f0(93, 60, 3, 4, 78, 50);
-    if (burst && !Flag_IsSet(SPLIT_CONSTANT(0xa00, 67)))
+    if (burst && !Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 67))))
       Func_0200055c(14);
-    Flag_Set(SPLIT_CONSTANT(0xa00, 67));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 67)));
   }
 }
 
@@ -80,7 +80,7 @@ void Func_020007f0(s32 unused, s32 id) {
 
 void Func_020008a0(s32 unused, s32 id) {
   if (Actor_GetById(id)->x >> 20 == 7)
-    Flag_Set(SPLIT_CONSTANT(0xa00, 55));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 55)));
 }
 
 void Func_020008bc(void) {

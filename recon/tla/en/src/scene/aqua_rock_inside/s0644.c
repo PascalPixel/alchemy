@@ -20,7 +20,7 @@ void Func_02000644(s32 unused, s32 id) {
       Func_02003d7c();
       Func_02003eac(0);
       Func_0200061c(object);
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 92));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x95c));
       Func_02003d1c(41, 9, 1, 1, x, id);
       Func_02003d84();
 #endif

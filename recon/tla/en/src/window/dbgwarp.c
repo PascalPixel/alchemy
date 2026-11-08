@@ -30,8 +30,8 @@ void Func_08040e64(void) {
 
 void Func_08040e84(void) {
   GameFlag_SetBit(0x8ab);
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x7a8, 255));
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 170));
+  GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x7a8, 255)));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 170)));
   Inventory_AddItemFar(4, 457);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -46,8 +46,8 @@ void Func_08040ed0(void) {}
 
 void Func_08040ed4(void) {
   GameFlag_SetBit(0x8ab);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x7a8, 255));
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 170));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x7a8, 255)));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 170)));
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -61,7 +61,7 @@ void Func_08040f14(void) {
   PartyInventory_AddFar(439);
   PartyInventory_AddFar(440);
   PartyInventory_AddFar(441);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x880, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x880, 255)));
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -73,19 +73,19 @@ void Func_08040f14(void) {
 
 void Func_08040f58(void) {
   GameFlag_SetBit(0x9fe);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 76));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 76)));
   GameFlag_SetBit(0x9e1);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x850, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x850, 255)));
   Event_SetDestinationFar((s32)&SceneId_ShamanVillage4, 30);
 }
 
 void Func_08040f90(void) {
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 36));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 36)));
   GameFlag_SetBit(0x17c);
   GameFlag_SetBit(0x9c5);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 61));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 61)));
   GameFlag_SetBit(0x9c0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 193));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 193)));
   GameFlag_SetBit(0x9c2);
   Event_SetDestinationFar((s32)&SceneId_Ov6a8Room2, 1);
 }

@@ -31,7 +31,7 @@ void Func_02000cf4(void) {
   } else {
     Func_0200406c();
     Func_02004204(0);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)))
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178))))
       Func_0200412c((s32)MsgContigo176);
     else
       Func_0200412c((s32)MsgContigo74);
@@ -46,7 +46,7 @@ void Func_02000d44(void) {
   } else {
     Func_0200406c();
     Func_02004204(0);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)))
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178))))
       Func_0200412c((s32)MsgContigo172);
     else
       Func_0200412c((s32)MsgContigo70);
@@ -61,7 +61,7 @@ void Func_02000d94(void) {
   } else {
     Func_0200406c();
     Func_02004204(0);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)))
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178))))
       Func_0200412c((s32)MsgContigo174);
     else
       Func_0200412c((s32)MsgContigo72);
@@ -76,9 +76,9 @@ void Func_02000de4(void) {
   } else {
     Func_0200406c();
     Func_02004204(0);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)))
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178))))
       Func_0200412c((s32)MsgContigo178);
-    else if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 33)))
+    else if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 33))))
       Func_0200412c((s32)MsgContigo128);
     else
       Func_0200412c((s32)MsgContigo76);
@@ -93,9 +93,9 @@ void Func_02000e50(void) {
   } else {
     Func_0200406c();
     Func_02004204(0);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178)))
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178))))
       Func_0200412c((s32)MsgContigo186);
-    else if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 33)))
+    else if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 33))))
       Func_0200412c((s32)MsgContigo136);
     else
       Func_0200412c((s32)MsgContigo88);

@@ -9,7 +9,7 @@ void Func_02000404(void) {
   Func_02002068();
   Func_02002150(0);
   Func_020020c0(11, 0, 0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xf00, 93));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xf5d));
   Func_02002130(193, 3);
   mode = 0;
   /* FAKEMATCH: the native loads the mode before the item; direct calls and

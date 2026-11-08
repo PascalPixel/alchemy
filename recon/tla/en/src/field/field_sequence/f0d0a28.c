@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "task.h"
 #include "display_transition.h"
 #include "io_reg.h"
@@ -26,10 +27,10 @@ void ScreenTransition_UpdateDissolve(void) {
 
       state->duration = 0;
       Task_Remove(ScreenTransition_UpdateDissolve);
-      dma0 = REG_DMA0;
+      dma0 = SPLIT_CONSTANT(REG_DMA0);
       control = dma0[5];
-      dma0[5] = control & SPLIT_CONSTANT(0xc500, 255);
-      dma0[5] &= 0x7fff;
+      dma0[5] = control & SPLIT_CONSTANT(0xc5ff);
+      dma0[5] &= SPLIT_CONSTANT(0x7fff);
       (void)dma0[5];
       return;
     } else {

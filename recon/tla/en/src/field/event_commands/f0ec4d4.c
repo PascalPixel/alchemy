@@ -229,7 +229,7 @@ void Func_080ec4d4(void) {
       if (tile == 0)
         continue;
       if (tile == 15) {
-        if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 222)))
+        if (!GameFlag_Test(SPLIT_CONSTANT(0x8de)))
           continue;
         if (gMainRoutineWork.ownerOverride != 0)
           continue;
@@ -399,6 +399,6 @@ void Func_080ec4d4(void) {
   }
 
   IO_WRITE_QUEUE_PUSH(0x04000050, 0x3f00, 0x20000);
-  IO_WRITE_QUEUE_PUSH(SPLIT_CONSTANT(0x4000000, 82), ((16 - blend) << 8) | blend, 0x20000);
+  IO_WRITE_QUEUE_PUSH(SPLIT_CONSTANT(0x4000052), ((16 - blend) << 8) | blend, 0x20000);
   IO_WRITE_QUEUE_PUSH(0x04000054, 0, 0x20000);
 }

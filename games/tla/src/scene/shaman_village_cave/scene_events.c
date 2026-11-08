@@ -37,7 +37,7 @@ void Func_0200039c(void) {
   result0 = Value3((s32 (*)())Func_02001098, 22, 0x190, -1);
   if (result0 != 0)
     goto L_020083c4;
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 115));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0xa73));
 L_020083c4:
   Func_02001088();
   return;
@@ -62,6 +62,6 @@ void Func_02000404(void) {
   Call2((void (*)())Func_02001200, 22, 0x190);
   angle = 0xc000;
   Call4((void (*)())Func_020010f0, 22, PIXELS(212), PIXELS(199), angle);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 115));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa73));
   return;
 }

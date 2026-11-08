@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "dma.h"
@@ -43,7 +44,7 @@ void Func_020007dc(u16 *slots, u16 *colours, u16 *a, u16 *b) {
     if (*slots != 0xffff && *colours != 0xffff)
       goto next;
   }
-  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, saved, DMA_COPY_WORDS(112), SPLIT_CONSTANT(REG_DMA3));
   Dma_Set((const void *)OBJ_PLTT, saved + 448, DMA_COPY_WORDS(112), REG_DMA3);
   Func_020018f0(0x10000, 0);
   if ((s8)gMainRoutineWork.unk2c2 == 2)

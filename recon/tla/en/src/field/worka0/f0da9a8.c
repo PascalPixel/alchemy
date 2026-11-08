@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "dma.h"
 
 // The four 256-byte pictures of each set (type-01 compressed).
@@ -67,7 +68,7 @@ struct TileEffectWork *Func_080da9a8(s32 kind) {
 
     Task_Add(Func_080daab0, priority);
   }
-  Task_Add(Func_080dacb8, 0x48f);
+  Task_Add(Func_080dacb8, SPLIT_CONSTANT(0x48f));
   Heap_Release(pictures);
   return work;
 }

@@ -82,13 +82,13 @@ void Func_02000cf8(s32 id, s32 dy, s32 scale) {
 }
 
 s32 Func_02000d18(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x200, 10)) || GameFlag_Test(0x300))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x20a)) || GameFlag_Test(0x300))
     return 1;
   return 0;
 }
 
 s32 Func_02000d3c(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x200, 10)) || GameFlag_Test(SPLIT_CONSTANT(0x300, 1)))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x20a)) || GameFlag_Test(SPLIT_CONSTANT(0x301)))
     return 1;
   return 0;
 }
@@ -116,7 +116,7 @@ void Func_02000d64(void) {
                                    PIXELS(216));
   Func_02000c90(13);
   Func_02000c90(14);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x300, 1))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x301))) {
     Func_02000c90(15);
     Func_02000c90(16);
   }
@@ -135,7 +135,7 @@ void Func_02000e60(void) {
   Actor_GetById(10)->priorityFlags &= ~2;
   Actor_SetPositionAndResetMotion_(Actor_GetById(10), PIXELS(376), PIXELS(8),
                                    PIXELS(248));
-  if (GameFlag_Test(SPLIT_CONSTANT(0x10a, 255))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x209))) {
     Actor_SetModeById(10, 4);
     Actor_SetPositionAndResetMotion_(
         Actor_GetById(gMainRoutineWork.currentOwner), PIXELS(376), PIXELS(12),
@@ -152,5 +152,5 @@ void Func_02000e60(void) {
     Func_02000cb4(20);
   }
   gData_0200629c = 1;
-  GameFlag_SetBit_(SPLIT_CONSTANT(0x10e, 255));
+  GameFlag_SetBit_(SPLIT_CONSTANT(0x20d));
 }

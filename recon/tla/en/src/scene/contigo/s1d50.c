@@ -216,7 +216,7 @@ void Func_02001d50(void) {
   if (answer == 0) {
     Actor_WaitForAnimationChange(owner);
     Contigo_ObjEmote(1, 258);
-    Func_02004144(SPLIT_CONSTANT(0x4000, 1), 0);
+    Func_02004144(SPLIT_CONSTANT(SPLIT_CONSTANT(0x4000, 1)), 0);
     ((struct EventWork *)Ram_HeapSlots->eventWork)->messageId++;
   } else {
     Actor_WaitForAnimationChange(owner);
@@ -267,7 +267,7 @@ void Func_02001d50(void) {
   Actor_Stop(1);
   Actor_Stop(3);
   Actor_Stop(2);
-  Func_020042b4(SPLIT_CONSTANT(0x1c2, 255));
+  Func_020042b4(SPLIT_CONSTANT(0x2c1));
   Motion_SetModeAndWaitAnimation(8, 3);
   Func_02004144(8, 0);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
@@ -309,7 +309,7 @@ void Func_02001d50(void) {
   Func_02004144(6, 0);
   Contigo_Jump(8, 265, 0);
   Func_0200415c(8, FACING_EAST);
-  Func_02004144(SPLIT_CONSTANT(0x1000, 8), 0);
+  Func_02004144(SPLIT_CONSTANT(SPLIT_CONSTANT(0x1000, 8)), 0);
   Contigo_ObjSpeed(2, 0xcccc, 0x6666);
   Contigo_ObjWalk(2, 130, 400);
   Actor_ArmCallback(2, FACING_EAST, 0);
@@ -438,7 +438,7 @@ void Func_02001d50(void) {
   Contigo_ObjTurn(9, FACING_WEST, 40);
   Actor_ArmCallback(9, FACING_EAST, 40);
   Contigo_ObjFace(9, 0x5000);
-  Func_02004144(SPLIT_CONSTANT(0x6000, 9), 0);
+  Func_02004144(SPLIT_CONSTANT(SPLIT_CONSTANT(0x6000, 9)), 0);
   Actor_SetModeById(0, 3);
   Actor_SetModeById(1, 3);
   Actor_SetModeById(3, 3);

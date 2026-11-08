@@ -57,10 +57,10 @@ void Func_080de8d0(struct SparkObject *obj) {
     pos[1] = obj->y + (2 << 16);
     pos[2] = obj->z;
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
-    spark = Actor_Spawn(SPLIT_CONSTANT(0x1a2, 255), pos[0], pos[1], pos[2]);
+    spark = Actor_Spawn(SPLIT_CONSTANT(0x2a1), pos[0], pos[1], pos[2]);
     if (spark != 0) {
       spark->update = BattleEffect_SwayParticle;
-      spark->scaleX = spark->scaleY = SPLIT_CONSTANT(0x9900, 153);
+      spark->scaleX = spark->scaleY = SPLIT_CONSTANT(0x9999);
       spark->motionFlags = 2;
       spark->gravity = 458;
       spark->phase = Random16() >> 9;

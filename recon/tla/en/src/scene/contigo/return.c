@@ -5,10 +5,10 @@ extern const u8 gData_02004ac0[];
 extern const u8 gData_02004b18[];
 
 void Func_02002e18(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178)))) {
     Func_0200406c();
     Func_02004204(0);
-    Contigo_CamSpeed(0xcccc, 0x1999);
+    Contigo_CamSpeed(SPLIT_CONSTANT(0xcc00, 204), 0x1999);
     Camera_MoveWithinMapBounds(PIXELS(160), -1, PIXELS(368), 1);
     Contigo_ObjSpeed(gMainRoutineWork.currentOwner, 0xcccc, 0x6666);
     Contigo_ObjWalk(gMainRoutineWork.currentOwner, 158, 394);
@@ -130,7 +130,7 @@ void Func_02002e18(void) {
     Contigo_Jump(gMainRoutineWork.currentOwner, 257, 0);
     Contigo_Jump(2, 257, 40);
     Contigo_Jump(9, 262, 0);
-    Func_02004144(0x8009, 0);
+    Func_02004144(SPLIT_CONSTANT(0x8000, 9), 0);
     Func_02004144(0x1000, 0);
     Contigo_Jump(9, 264, 0);
     Contigo_ObjTurn(9, 0x5000, 20);
@@ -207,7 +207,7 @@ void Func_02002e18(void) {
     Actor_SetMovementTypeById(2, gData_02004b18);
     Actor_SetMovementTypeById(0, gData_02004b18);
     Actor_SetMovementTypeAndWaitById(9, gData_02004b18);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 209));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 209)));
     Func_02004074();
   }
 }

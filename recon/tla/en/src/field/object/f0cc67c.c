@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "map.h"
@@ -19,7 +20,7 @@ s32 GameFlag_Test(s32 flag);
 s32 Func_080cc67c(s32 findEntrance) {
   struct MapWork *map = Ram_HeapSlots->mapWork;
   s32 entrance = gMainRoutineWork.entrance;
-  const struct SceneEntrance *entry = gOverlayArea.entrances();
+  const struct SceneEntrance *entry = ValueLr0((s32 (*)())gOverlayArea.entrances);
   s32 found = 0;
   s32 left;
 

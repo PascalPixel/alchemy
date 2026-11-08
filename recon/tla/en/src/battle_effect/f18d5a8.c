@@ -189,7 +189,7 @@ void Func_0818d5a8(struct BattleEffectArgument *effect, s32 mode) {
     // Frame 4: the leap, away from the caster's own side.
     if (frame == 4) {
       caster->autoFaceMotion = 0;
-      caster->verticalMotionStrength = SPLIT_CONSTANT(0x9900, 153);
+      caster->verticalMotionStrength = SPLIT_CONSTANT(0x9999);
       caster->velocityY = 15 << 16;
       if (caster->x < 0)
         caster->velocityX = -8 << 16;

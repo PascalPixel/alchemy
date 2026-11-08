@@ -41,7 +41,7 @@ void Func_080450fc(struct Object *obj) {
     obj->affine22 =
         AffineMatrix_BuildForEffect((struct AffineTransform *)&effect);
     obj->mode21 = 3;
-    obj->pos22 = obj->src6 + SPLIT_CONSTANT(0xff00, 240);
+    obj->pos22 = obj->src6 + SPLIT_CONSTANT(0xfff0);
     obj->out20 = obj->src8 + 0xf0;
     obj->out15 = 0xfc;
   }

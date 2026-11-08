@@ -45,14 +45,14 @@ void Func_02004534(void) {
   Func_02005e14();
   Func_02005f2c(0);
   FieldMessage_Show(MsgCheckedTheTablet, 1);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x800, 212)) != 0) {
+  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x8d4)) != 0) {
     Func_02005e1c();
   } else {
     Func_02005ea4((s32)MsgCheckedTheTablet);
     EVENT_WORK->messageId++;
-    Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xb300, 51),
-          SPLIT_CONSTANT(0x5900, 153));
-    Call3(Actor_SetSpeedParameters, 6, SPLIT_CONSTANT(0xb300, 51), SPLIT_CONSTANT(0x5900, 153));
+    Call3(Actor_SetSpeedParameters, gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xb333),
+          SPLIT_CONSTANT(0x5999));
+    Call3(Actor_SetSpeedParameters, 6, SPLIT_CONSTANT(0xb333), SPLIT_CONSTANT(0x5999));
     Func_02005e74(6, gMainRoutineWork.currentOwner);
     FieldEvent_Wait(1);
     Call3(Actor_ResetAndSetPositionInMode2, gMainRoutineWork.currentOwner, 256,
@@ -80,20 +80,20 @@ void Func_02004534(void) {
     FieldEvent_Wait(20);
     FieldMessage_Show(MsgCheckedTheTablet + 2, 1);
     Call3(Func_02005dcc, 0x50000, 0x70000, 0x10000);
-    Call3(Func_02005dcc, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+    Call3(Func_02005dcc, -1, -1, SPLIT_CONSTANT(0xe666));
     /* FAKEMATCH(wrapper): the call through Call0's pointer; called directly,
      * the two -1s before it are negated in the other order, 2 of 202
      * instructions differ in tla-en. */
     Call0(Func_02005dd4);
     Call2(Func_02004138, 8, 6);
     Party_LearnAbility(6, 0x90);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 212));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x8d4));
     Actor_TurnToFaceEachOther(gMainRoutineWork.currentOwner, 6, 0);
     FieldEvent_Wait(10);
     Actor_SetModeById(6, 3);
     Actor_SetModeById(gMainRoutineWork.currentOwner, 3);
     FieldEvent_Wait(20);
-    Call3(Actor_SetSpeedParameters, 6, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+    Call3(Actor_SetSpeedParameters, 6, 0x13333, SPLIT_CONSTANT(0x9999));
     Actor_SetModeById(6, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != 0)
@@ -107,7 +107,7 @@ void Func_02004534(void) {
 }
 
 void Func_02004740(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 212))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x8d4))) {
     Func_02005e14();
     Func_02005f2c(0);
     FieldMessage_Show(MsgCheckedTheTablet, 1);
@@ -123,7 +123,7 @@ void Func_02004740(void) {
 }
 
 void Func_020047b0(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 212))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x8d4))) {
     Func_02005e14();
     Func_02005f2c(0);
     FieldMessage_Show(MsgCheckedTheTablet, 1);
@@ -138,7 +138,7 @@ void Func_020047b0(void) {
 }
 
 void Func_02004818(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 212))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x8d4))) {
     Func_02005e14();
     Func_02005f2c(0);
     FieldMessage_Show(MsgCheckedTheTablet, 1);

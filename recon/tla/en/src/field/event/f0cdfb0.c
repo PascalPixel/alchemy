@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "scene_tables.h"
 #include "actor.h"
@@ -29,7 +30,7 @@ s32 Event_FindFacingTrigger(s32 source) {
   s32 selected = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   s32 collision;
 
-  source &= 0x1ff;
+  source &= SPLIT_CONSTANT(0x1ff);
   /* FAKEMATCH(signature): Func_080cb09c declared returning s32, so its byte
    * result is not narrowed; as u8 Func_080cb09c(void), 2 of 115 instructions
    * differ in tla-en. */

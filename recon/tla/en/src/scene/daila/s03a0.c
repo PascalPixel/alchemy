@@ -62,7 +62,7 @@ static __inline__ void Actor_SetPositionAndReset_(s32 actor, s32 x,
 void Func_020003a0(void) {
   s32 msg;
 
-  if (Import_GameFlagIsSet(SPLIT_CONSTANT(0x800, 75)))
+  if (Import_GameFlagIsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 75))))
     return;
   if (Import_GameFlagIsSet(0x910))
     return;
@@ -215,5 +215,5 @@ void Func_020003a0(void) {
   Actor_JoinLeader(6);
   Actor_JoinLeader(28);
   Import_EventEnd();
-  Import_GameFlagSet(SPLIT_CONSTANT(0x800, 75));
+  Import_GameFlagSet(SPLIT_CONSTANT(0x84b));
 }

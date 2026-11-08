@@ -65,7 +65,7 @@ void Func_020019a0(void) {
     if (level == 1 && i == 15)
       Call6((void (*)())Func_02002e04, 18, 73, 1, 1, 4, 86);
   }
-  AnkohlRuins_Call2e24(-1, -1, SPLIT_CONSTANT(0xe600, 102));
+  AnkohlRuins_Call2e24(-1, -1, SPLIT_CONSTANT(0xe666));
   FieldEvent_Wait(5);
   leader->motionFlags = 3;
   if (work->level < 0x200000) {

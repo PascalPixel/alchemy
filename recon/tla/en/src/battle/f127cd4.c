@@ -185,7 +185,7 @@ assign_enemy:
     if (suffixCode & 0x8000)
       BattleEnemy_LetterFirstOfClass(enemyClasses[memberOrEnemyIndex]);
     BattleUnit_SetFar(memberOrEnemyIndex + 128,
-                      enemyClasses[memberOrEnemyIndex], suffixCode & SPLIT_CONSTANT(0x7f00, 255));
+                      enemyClasses[memberOrEnemyIndex], suffixCode & SPLIT_CONSTANT(0x7fff));
     unit = Unit_Get(memberOrEnemyIndex + 128);
     if (levelAdjustment != 0)
       Func_0812786c(memberOrEnemyIndex + 128, levelAdjustment);

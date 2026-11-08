@@ -4,7 +4,7 @@
 void Party_RemoveOwnerRestored(s32 owner);
 
 void Func_02001218(void) {
-  if (!Kibombo_FlagCheck(SPLIT_CONSTANT(0x900, 46))) {
+  if (!Kibombo_FlagCheck(SPLIT_CONSTANT(0x92e))) {
     Func_02005bc4(5);
     return;
   }
@@ -27,8 +27,8 @@ void Func_02001218(void) {
   Kibombo_ObjPlace(gMainRoutineWork.currentOwner, 80, 510);
   FieldEvent_Wait(10);
   Func_02005bc4(5);
-  GameFlag_ClearBit(0x92e);
-  GameFlag_SetBit(0x92f);
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x900, 46));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x830, 255));
   Party_RemoveOwnerRestored(7);
   Func_02005aa4();
 }

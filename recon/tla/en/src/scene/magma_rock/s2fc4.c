@@ -48,7 +48,7 @@ body:
     Func_020036f8(-4, target->terrainId, id);
     Func_020034ac(1);
     wait(16);
-    Call3((void (*)())Func_02003ac4, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+    Call3((void (*)())Func_02003ac4, -1, -1, SPLIT_CONSTANT(0xe666));
     wait(8);
     Actor_SetPositionAndResetMotion(target, 0, 0, 0);
     wait(2);

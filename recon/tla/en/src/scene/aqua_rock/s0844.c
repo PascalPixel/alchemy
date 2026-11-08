@@ -48,10 +48,10 @@ void Func_02000844(void) {
     GameFlag_SetBit(0x200);
   else
     GameFlag_ClearBit(0x200);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x300, 33)))
-    GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
+  if (GameFlag_Test(SPLIT_CONSTANT(0x321)))
+    GameFlag_SetBit(SPLIT_CONSTANT(0x201));
   else
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x102, 255));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x201));
   /* FAKEMATCH(temporary): each copy's five varying arguments held in locals
    * of their own scope; as direct calls with the arguments written in,
    * 188 of 307 instructions differ in tla-en. */
@@ -69,11 +69,11 @@ void Func_02000844(void) {
           destY = opened->unk00[7];
       Func_02002958(srcX, srcY, 3, height, destX, destY);
     }
-    opened->unk00[12] = SPLIT_CONSTANT(0x2700, 15);
+    opened->unk00[12] = SPLIT_CONSTANT(0x270f);
     opened->unk00[11] = 9999;
     opened->unk00[10] = 1;
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x102, 255))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x201))) {
     struct Unk02003450 *opened = &Data_02003450[1];
     {
       s32 srcX = opened->unk00[0] + 3, srcY = opened->unk00[1],
@@ -87,7 +87,7 @@ void Func_02000844(void) {
           destY = opened->unk00[7];
       Func_02002958(srcX, srcY, 3, height, destX, destY);
     }
-    opened->unk00[12] = SPLIT_CONSTANT(0x2700, 15);
+    opened->unk00[12] = SPLIT_CONSTANT(0x270f);
     opened->unk00[11] = 9999;
     opened->unk00[10] = 1;
   }

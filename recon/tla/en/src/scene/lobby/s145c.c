@@ -213,7 +213,7 @@ s32 Func_0200145c(void) {
       Func_02001414(*(u16 *)score);
       Func_020013ec();
       Flag_Set(0x304);
-      Flag_Set(SPLIT_CONSTANT(0x300, 5));
+      Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 5)));
     }
     Func_02001a1c();
   } else if (gMainRoutineWork.entrance == 11) {
@@ -231,7 +231,7 @@ s32 Func_0200145c(void) {
       Func_020013ec();
     }
     Flag_Set(0x304);
-    Flag_Clear(SPLIT_CONSTANT(0x300, 5));
+    Flag_Clear(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 5)));
     Func_02001a1c();
   } else {
     Func_02001914();

@@ -46,12 +46,12 @@ s32 Func_02000988(void) {
   struct Actor *actor;
   s32 height;
 
-  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 513;
+  *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = SPLIT_CONSTANT(513);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov66bRoom2) {
     Func_02000768();
     return 0;
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 243)) && !GameFlag_Test(SPLIT_CONSTANT(0x7f0, 255))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x8f3)) && !GameFlag_Test(SPLIT_CONSTANT(0x8ef))) {
     Func_020007d8();
     return 0;
   }
@@ -64,21 +64,21 @@ s32 Func_02000988(void) {
       goto done;
     Func_020012f4();
     Func_0200130c(0, 0x200, 10, 11);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x8ab))) {
       Func_020012fc();
       Func_02001304(0, 8, 9);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 133)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x885)))
       Func_0200124c(14, 0, 0);
     else
       Actor_GetById(14)->scaleY = 0x14000;
-    if (GameFlag_Test(SPLIT_CONSTANT(0x102, 255)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x201)))
       Call6(Func_020011d4, 79, 28, 1, 1, 81, 28);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x200, 2)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x202)))
       Call6(Func_020011d4, 115, 35, 1, 1, 117, 35);
     Func_02000fcc(0, 240);
     Func_02001068(0, 17, 0, 0, 64);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 134))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x886))) {
       actor = Actor_GetById(17);
       Call6(Func_020011dc, 124, 1, 1, 1, 119, 43);
       Call3(Func_0200124c, 17, PIXELS(1912), PIXELS(728));
@@ -88,7 +88,7 @@ s32 Func_02000988(void) {
     }
   } while (0);
   Actor_SetModeById(16, 4);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 132))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x884))) {
     Call6(Func_020011d4, 74, 31, 1, 1, 74, 33);
     Func_0200124c(15, PIXELS(1193), PIXELS(530));
     Actor_GetById(15)->priorityFlags |= 2;

@@ -9,7 +9,7 @@ void Func_020032c4(void) {
 
 void Func_020032f4(void) {
   Func_02003820(gData_0200478e);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x10c, 255))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x10c, 255)))) {
     Func_020006ac();
     wait(10);
   }

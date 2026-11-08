@@ -52,7 +52,7 @@ void SceneTransform_RewindStack(void) {
 /// Saves the current matrix (one level deep).
 void Transform_Push(void) {
   if (gTransformStackDepth <= 0) {
-    Dma_Set(gTransform, gTransformStackTop, MTX_DMA, REG_DMA3);
+    Dma_Set(gTransform, gTransformStackTop, MTX_DMA, SPLIT_CONSTANT(REG_DMA3));
     gTransformStackDepth++;
     gTransformStackTop += sizeof(gTransform);
   }
@@ -61,14 +61,14 @@ void Transform_Push(void) {
 void Transform_Store(void *dst) { Dma_Set(gTransform, dst, MTX_DMA, REG_DMA3); }
 
 void Transform_Load(const void *src) {
-  Dma_Set(src, gTransform, MTX_DMA, REG_DMA3);
+  Dma_Set(src, gTransform, MTX_DMA, SPLIT_CONSTANT(REG_DMA3));
 }
 
 void Transform_Pop(void) {
   if (gTransformStackDepth > 0) {
     --gTransformStackDepth;
     gTransformStackTop -= sizeof(gTransform);
-    Dma_Set(gTransformStackTop, gTransform, MTX_DMA, REG_DMA3);
+    Dma_Set(gTransformStackTop, gTransform, MTX_DMA, SPLIT_CONSTANT(REG_DMA3));
   }
 }
 

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "save.h"
 #include "main_routine_work.h"
@@ -64,7 +65,7 @@ s32 Func_08043cd8(s32 selectedFile, s32 menuMode) {
   s32 i;
   s32 y;
 
-  spriteWork = HeapSlot_Alloc(220, 0xcec);
+  spriteWork = HeapSlot_Alloc(220, SPLIT_CONSTANT(0xcec));
   save = Ram_HeapSlots->serialWork;
   summaryWindow = NULL;
   partyWindow = NULL;

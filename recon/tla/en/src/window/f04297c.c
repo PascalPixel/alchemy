@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "window.h"
 #include "uiwindow.h"
@@ -170,8 +171,8 @@ void PartyStatus_Draw(s32 flags) {
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
     Func_08118130(0, standbyDjinn);
-    Window_SetTilemapEntry(window, 0x5001, 0, row, 0);
-    Window_SetTilemapEntry(window, 0x5002, 2, row, 0);
+    Window_SetTilemapEntry(window, SPLIT_CONSTANT(0x5001), 0, row, 0);
+    Window_SetTilemapEntry(window, SPLIT_CONSTANT(0x5002), 2, row, 0);
     Window_SetTilemapEntry(window, 0x5003, 0, row + 1, 0);
     Window_SetTilemapEntry(window, 0x5004, 2, row + 1, 0);
     if (standbyDjinn[0] > 9 || standbyDjinn[1] > 9 || standbyDjinn[2] > 9 ||

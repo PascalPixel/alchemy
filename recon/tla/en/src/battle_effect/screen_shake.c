@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "bg_scroll.h"
 
@@ -11,7 +12,7 @@ void Camera_ApplyVerticalShake(s32 range) {
   u8 *fx = Ram_HeapSlots->battleFxWork[0];
   s32 *timer;
 
-  timer = (s32 *)(fx + 0x77a8);
+  timer = (s32 *)(fx + SPLIT_CONSTANT(0x77a8));
   if (*timer > 0) {
     s32 shake = ((range - 1) & Random16()) - range / 2;
 

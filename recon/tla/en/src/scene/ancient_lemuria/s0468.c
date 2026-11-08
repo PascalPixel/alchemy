@@ -41,13 +41,13 @@ void Func_02000468(void) {
   s32 i;
   struct Actor *p;
 
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 109)))
+  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x96d)))
     return;
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 108)))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x96c)))
     return;
   object = Actor_GetById(12);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 109));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x900, 110));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x96d));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x96e));
   Func_02000080(13);
   Call3(Func_0200195c, 12, 270 << 16, 184 << 16);
   object->y = 22 << 16;

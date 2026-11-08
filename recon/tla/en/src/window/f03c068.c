@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "io_reg.h"
 #include "dma.h"
 #include "ram_buffer.h"
@@ -35,7 +36,7 @@ s32 Func_0803c068(struct Window *window, s32 character, s32 x, s32 y) {
   output->kind = 0;
   width = Func_0803a8fc(character, tiles);
   Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
-          0x84000020, REG_DMA3);
+          0x84000020, SPLIT_CONSTANT(REG_DMA3));
   ((u16 *)&output->sprite.oam)[0] = y + (spacingY >> 1) + window->y * 8 - 2;
   ((u16 *)&output->sprite.oam)[1] =
       (x + (spacingX >> 1) + window->x * 8 + 2) | 0x4000;

@@ -15,7 +15,7 @@ SECTIONS
         "*/resource_672_overlay.o"(.text.x02008be8)
         "*/resource_672_overlay.o"(.text.x02008d3c)
         "*/recon/tla/raw/src/scene/gabomba_statue_chamber/flag_e50.o"(.text)
-        "*/recon/tla/raw/src/scene/gabomba_statue_chamber/s0e60.o"(.text)
+        "*/games/tla/src/scene/gabomba_statue_chamber/s0e60.o"(.text)
         "*/games/tla/src/scene/gabomba_statue_chamber/follow.o"(.text)
         "*/recon/tla/raw/src/scene/gabomba_statue_chamber/s0f00.o"(.text)
         "*/games/tla/src/scene/gabomba_statue_chamber/s1010.o"(.text)

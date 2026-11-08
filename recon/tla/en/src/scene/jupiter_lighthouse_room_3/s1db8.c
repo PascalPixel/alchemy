@@ -44,7 +44,7 @@ void Func_02001db8(struct PushEvent *event) {
   {
     /* FAKEMATCH: a word temporary builds 0xf1f with movs, lsls, adds as the
      * native does; a halfword constant store loads it from the pool. */
-    u32 winout = SPLIT_CONSTANT(0xe20, 255);
+    u32 winout = SPLIT_CONSTANT(0xf1f);
 
     REG_WINOUT = winout;
   }

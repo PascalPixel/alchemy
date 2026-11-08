@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "window.h"
 #include "dma.h"
@@ -75,5 +76,5 @@ void Func_080415a0(u16 *entry, u16 *mirror, s32 pattern, u8 *remap) {
     *entry = slot | 0xf000;
     *mirror = slot | 0xf000;
   }
-  Dma_Set(pixels, (void *)(0x06000000 + slot * 32), 0x84000008, REG_DMA3);
+  Dma_Set(pixels, (void *)(0x06000000 + slot * 32), 0x84000008, SPLIT_CONSTANT(REG_DMA3));
 }

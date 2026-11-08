@@ -15,7 +15,7 @@ u8 *Func_02000c04(void) {
   s32 *hints = (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram, 252, 320);
   s32 limits[4];
   s32 count = 0;
-  s32 lowest = SPLIT_CONSTANT(0x2700, 15);
+  s32 lowest = SPLIT_CONSTANT(0x270f);
   s32 lowestGroup = 0;
   u32 group;
   s32 index;

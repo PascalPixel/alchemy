@@ -42,7 +42,7 @@ next2:
   offset += 12;
   if (i < 4)
     goto next2;
-  if (found < 2 && GameFlag_Test(SPLIT_CONSTANT(0x840, 255)) && GameFlag_Test(SPLIT_CONSTANT(0x900, 228)) == 0)
+  if (found < 2 && GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x840, 255))) && GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 228))) == 0)
     found += 4;
   Func_02002de0(158);
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);

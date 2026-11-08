@@ -80,7 +80,7 @@ void Func_020003bc(s32 actor) {
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
     Func_02000a78(7, actor);
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 1));
+    GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 1)));
   } else {
     Func_020009b0();
     Func_02000a50(0);

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "system.h"
 #include "ram_buffer.h"
 #include "field_psynergy_work.h"
@@ -57,7 +58,7 @@ void Func_080dd820(void) {
   event->active = 0;
   wait(1);
 
-  pending = Func_080ce458(REVEAL_EVENT_START, FIELD_FX_REVEAL,
+  pending = Func_080ce458(SPLIT_CONSTANT(REVEAL_EVENT_START), FIELD_FX_REVEAL,
                           Func_080ce31c(FIELD_FX_REVEAL));
   if (pending != 0)
     Field_RunPsynergyEvent(pending, scene->firstObjectId,

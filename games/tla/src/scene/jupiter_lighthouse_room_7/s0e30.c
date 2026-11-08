@@ -37,13 +37,13 @@ L_02008e6e:
   t3 = Actor_GetById(8);
   FIELD_AT(t3, s32, 28) = 0xc000;
   Func_020019dc((s32)&gData_020031c4);
-  t5 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 27));
+  t5 = GameFlag_Test(SPLIT_CONSTANT(0xa1b));
   if (t5 == 0)
     goto L_02008eaa;
   Func_02002ba4(16, PIXELS(136), PIXELS(600));
   Func_02000060(0);
 L_02008eaa:
-  t8 = GameFlag_Test(SPLIT_CONSTANT(0x200, 2));
+  t8 = GameFlag_Test(SPLIT_CONSTANT(0x202));
   if (t8 == 0)
     goto L_02008ebe;
   Func_02000060(0);
@@ -56,22 +56,22 @@ L_02008ebe:
   t15 = GameFlag_Test(0xa10);
   if (t15 != 0)
     goto L_02008f08;
-  t16 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 18));
+  t16 = GameFlag_Test(SPLIT_CONSTANT(0xa12));
   if (t16 != 0)
     goto L_02008f08;
-  t17 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 20));
+  t17 = GameFlag_Test(SPLIT_CONSTANT(0xa14));
   if (t17 == 0)
     goto L_02008f12;
 L_02008f08:
   Func_02002ba4(18, 0, 0);
 L_02008f12:
-  t19 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 17));
+  t19 = GameFlag_Test(SPLIT_CONSTANT(0xa11));
   if (t19 != 0)
     goto L_02008f3c;
-  t20 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 19));
+  t20 = GameFlag_Test(SPLIT_CONSTANT(0xa13));
   if (t20 != 0)
     goto L_02008f3c;
-  t21 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 21));
+  t21 = GameFlag_Test(SPLIT_CONSTANT(0xa15));
   if (t21 == 0)
     goto L_02008f46;
 L_02008f3c:

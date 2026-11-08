@@ -32,7 +32,7 @@ void Func_02001270(void) {
   Func_02001488();
   Call6((void (*)())Func_02001460, 7, 2, 8, 7, 7, 12);
   Call6((void (*)())Func_02001450, 7, 66, 7, 76, 8, 9);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 65));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x941));
   Func_02001490();
 }
 

@@ -29,7 +29,7 @@ void Func_02000d14(void) {
     u16 *colors = gData_02002c60;
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    copy(colors, (void *)SPLIT_CONSTANT(0x5000000, 96), 32);
+    copy(colors, (void *)SPLIT_CONSTANT(0x5000060), 32);
     copy(gData_02002c80, colors, 32);
     *frame = 0;
   }

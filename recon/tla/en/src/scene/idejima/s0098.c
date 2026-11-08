@@ -90,7 +90,7 @@ void Func_020000f0(void) {
   Call3(Actor_ArmCallback, 8, FACING_NORTHWEST + FACING_STEP, 40);
   Call3(Actor_ArmCallback, 8, FACING_WEST, 40);
   Import_ActorShowEmote(8, 0x100, 20);
-  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Call3(Actor_SetPositionAndReset, 8, 416, 680);
   Import_EventShowMessageAndWait(8, 0);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_WEST, 20);
@@ -109,7 +109,7 @@ void Func_020000f0(void) {
   Actor_WaitForMoveById(8);
   Func_02003228(8, 0, 0);
   FieldMessage_Show(message + 8, 1);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 99));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x863));
   Import_EventEnd();
 }
 
@@ -160,7 +160,7 @@ void Func_020002b4(void) {
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) += 2;
     Import_EventShowMessageAndWait(5, 0);
   }
-  Call3(Actor_SetSpeedParameters, 5, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Call3(Actor_SetSpeedParameters, 5, 0x19999, SPLIT_CONSTANT(0xcccc));
   Import_ActorSetAnimation(5, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
@@ -169,6 +169,6 @@ void Func_020002b4(void) {
   Actor_WaitForMoveById(5);
   Func_02003228(5, 0, 0);
   Event_PrepareObjectAndApplyValue(5, 1);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 100));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x864));
   Import_EventEnd();
 }

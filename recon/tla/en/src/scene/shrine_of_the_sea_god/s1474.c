@@ -57,8 +57,8 @@ void Func_02001474(void) {
   Call3((void (*)())Func_020039b8, 0x10000, 0x20000, 0x10000);
   options.palette = 7;
   options.update = Effect_AdvanceMotion;
-  options.startScaleX = SPLIT_CONSTANT(0xa300, 215);
-  options.startScaleY = 0xa3d7;
+  options.startScaleX = SPLIT_CONSTANT(0xa3d7);
+  options.startScaleY = SPLIT_CONSTANT(0xa3d7);
   for (i = 0; i <= 16;) {
     s32 velocity[3];
 
@@ -75,7 +75,7 @@ void Func_02001474(void) {
   }
   *(s32 *)((u8 *)leader + 40) = 0x40000;
   wait(2);
-  Call3((void (*)())Func_020039b8, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+  Call3((void (*)())Func_020039b8, -1, -1, SPLIT_CONSTANT(0xe666));
   Task_RemoveFar(Func_02001464);
   spin = 0x200;
   for (i = 0; i <= 7;) {

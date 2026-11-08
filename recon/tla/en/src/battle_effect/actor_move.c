@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "motobj.h"
 #include "battle_action.h"
 #include "battle_unit.h"
@@ -25,7 +26,7 @@ void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
     Actor_ResetMotion(object);
     Actor_SetTargetPosition(object, slot->anchorX * percent / 100, 0, slot->anchorZ);
   }
-  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionStrength = SPLIT_CONSTANT(0x9999);
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_SetMode(object, 5);

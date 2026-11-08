@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -93,8 +94,8 @@ void FieldMessage_Show(s32 no, s32 flags) {
 
   zero = 0;
   *(u8 *)(base + TEXT_WORK_TAIL + 5) = zero;
-  *(u16 *)(base + TEXT_WORK_TAIL) = zero;
-  *(u16 *)(base + TEXT_WORK_TAIL + 2) = zero;
+  *(u16 *)(base + SPLIT_CONSTANT(TEXT_WORK_TAIL)) = zero;
+  *(u16 *)(base + SPLIT_CONSTANT(TEXT_WORK_TAIL) + 2) = zero;
   wait(3);
 }
 

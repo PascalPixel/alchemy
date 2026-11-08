@@ -29,9 +29,9 @@ s32 Func_02000190(void) {
   *screen = effect;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
   Actor_SetSingleChildFlags(Actor_GetById(19), 0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 7));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x900, 180));
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 9)))
+  GameFlag_SetBit(SPLIT_CONSTANT(0x907));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x9b4));
+  if (GameFlag_Test(SPLIT_CONSTANT(0x909)))
     Func_0200058c(19, 0, 0);
   Actor_SetSingleChildFlags(Actor_GetById(9), 0);
   Actor_SetSingleChildFlags(Actor_GetById(10), 0);
@@ -57,8 +57,8 @@ s32 Func_02000190(void) {
   }
   /* FAKEMATCH(wrapper): forwarded, so that the flag number is built for each call; as
    * GameFlag_Test(0x96b), 15 of 153 instructions differ in tla-en. */
-  if (gMainRoutineWork.entrance == 3 && Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x900, 107))) {
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x900, 107));
+  if (gMainRoutineWork.entrance == 3 && Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x96b))) {
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x96b));
     Func_020003cc();
   }
   return 0;

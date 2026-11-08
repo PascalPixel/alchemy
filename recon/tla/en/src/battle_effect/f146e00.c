@@ -17,6 +17,7 @@
 // whose spill slots fall below the pointer to draw.
 
 #include "battle.h"
+#include "call.h"
 #include "graphics.h"
 #include "lib.h"
 #include "resource.h"
@@ -96,7 +97,7 @@ extern u16 gData_08197410[];       // dot sizes 1 to 10: cell offsets
 #define DUST_SHEET 0x2400       // the dust motes, after the whirlwind
 #define COMET_SHEET 0x3600      // the violet comets
 #define COMETS 9
-#define FORMATION_RESOURCE SPLIT_CONSTANT(0x200, 134)
+#define FORMATION_RESOURCE SPLIT_CONSTANT(0x286)
 
 // Summon 8: a whirlwind rises under the enemies and lifts them, spinning,
 // while dust motes swirl up through it (frames 0 to 159; A or B skips to
@@ -164,7 +165,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
       home[index].x = object->x;
       home[index].y = object->z;
       baseAngle[index] = object->angle;
-      heading[index] = (u16)ArcTan2(object->x, object->z);
+      heading[index] = (u16)ValueLr2((s32 (*)())ArcTan2, (s32)(object->x), (s32)(object->z));
       radius[index] = Iwram_Sqrt((object->x >> 8) * (object->x >> 8) +
                                  (object->z >> 8) * (object->z >> 8)) >>
                       7;

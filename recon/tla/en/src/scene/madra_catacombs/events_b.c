@@ -71,7 +71,7 @@ void Func_02000cf4(void);
 void Func_020008d0(struct Actor *object) {
   Func_02000270(object);
   if ((object->x >> 20) == 35 && (object->z >> 20) == 17)
-    GameFlag_SetBit(SPLIT_CONSTANT(0x8f0, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x8f0, 255)));
 }
 
 void Func_020008f4(void) {

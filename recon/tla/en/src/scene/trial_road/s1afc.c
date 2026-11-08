@@ -12,7 +12,7 @@ void Func_02001afc(void) {
   OBJECT_BYTE(Actor_GetById(19), 98) = 1;
   OBJECT_BYTE(Actor_GetById(20), 98) = 1;
   OBJECT_BYTE(Actor_GetById(21), 98) = 1;
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x300, 57)))
+  if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 57))))
     OBJECT_BYTE(Actor_GetById(16), 98) = 1;
   else
     Func_020058e0(22, 0, 0);
@@ -26,14 +26,14 @@ void Func_02001afc(void) {
   Func_0200062c(15);
   Func_0200062c(16);
   Func_0200062c(17);
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x300, 53))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 53)))) {
     Func_0200095c(18);
     Func_02000924(19);
   } else {
     Func_0200095c(19);
     Func_02000924(18);
   }
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x238, 255))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x238, 255)))) {
     Func_0200095c(20);
     Func_02000924(21);
   } else {

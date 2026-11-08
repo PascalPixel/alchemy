@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 
@@ -33,7 +34,7 @@ void Func_080e7818(void) {}
 /// Field Psynergy kind 30.
 void BattleEffect_RunEffect30(void) {
   ObjectTable_Get(Party_GetLeaderActor());
-  ((struct ControlEvent *)Ram_HeapSlots->eventWork)->cue = 0xfc89;
+  ((struct ControlEvent *)Ram_HeapSlots->eventWork)->cue = SPLIT_CONSTANT(0xfc89);
 }
 
 /// Field Psynergy kind 22 on a chosen target: runs kind 22's animation.

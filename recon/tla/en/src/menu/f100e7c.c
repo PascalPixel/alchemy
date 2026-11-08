@@ -56,14 +56,14 @@ s32 Func_08100e7c(void) {
   struct DjinnMenuBackdrop *backdrop;
   s32 zero;
 
-  menu = HeapSlot_Alloc(220, SPLIT_CONSTANT(0xc00, 236));
+  menu = HeapSlot_Alloc(220, SPLIT_CONSTANT(0xcec));
   savedEventMode = gMainRoutineWork.eventMode;
   gMainRoutineWork.eventMode = 2;
   enabled = Ram_HeapSlots->objectSystem->suspended = 1;
   Window_DrawBorderFar(0, 0, 30, 20);
   wait(1);
   Window_InitializeWork(0);
-  backdrop = Heap_AllocEwram(SPLIT_CONSTANT(0x2100, 48));
+  backdrop = Heap_AllocEwram(SPLIT_CONSTANT(0x2130));
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
   backdrop->tutorialStep = 0;

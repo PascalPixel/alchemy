@@ -17,18 +17,18 @@ void Func_02000a68(s32 unused, s32 objectId) {
     }
     Func_02002e6c(id, 0, 0);
     if (id == 10)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 210));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 210)));
     if (id == 11)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 211));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 211)));
     if (id == 12)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 212));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 212)));
     if (id == 13)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 213));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 213)));
     if (id == 14)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 214));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 214)));
     if (id == 15)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 215));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 215)));
     if (id == 16)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 216));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 216)));
   }
 }

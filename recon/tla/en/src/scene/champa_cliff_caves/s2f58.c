@@ -19,7 +19,7 @@ void wait(s32 frames);
 void Func_02002de4(void);
 
 void Func_02002f58(const s32 *position) {
-  u8 *work = HeapSlot_AllocFar(220, SPLIT_CONSTANT(0x1000, 120));
+  u8 *work = HeapSlot_AllocFar(220, SPLIT_CONSTANT(0x1078));
   s32 time;
   s32 state;
 
@@ -41,7 +41,7 @@ void Func_02002f58(const s32 *position) {
     switch (state) {
     case 0:
       if ((FIELD_AT(work, s32, 4196) += 0x600) > 0x14ccb) {
-        FIELD_AT(work, s32, 4196) = SPLIT_CONSTANT(0x14c00, 204);
+        FIELD_AT(work, s32, 4196) = SPLIT_CONSTANT(0x14ccc);
         state = 1;
         time = -1;
       }
@@ -54,19 +54,19 @@ void Func_02002f58(const s32 *position) {
       break;
     case 2:
       if ((FIELD_AT(work, s32, 4204) += 0x400) > 0x6665) {
-        FIELD_AT(work, s32, 4204) = SPLIT_CONSTANT(0x6600, 102);
+        FIELD_AT(work, s32, 4204) = SPLIT_CONSTANT(0x6666);
         state = 3;
         time = -1;
       }
       break;
     case 3:
       if ((FIELD_AT(work, s32, 4204) += 0x3000) > 0x14ccb) {
-        FIELD_AT(work, s32, 4204) = SPLIT_CONSTANT(0x14c00, 204);
+        FIELD_AT(work, s32, 4204) = SPLIT_CONSTANT(0x14ccc);
         state = 999;
       }
       break;
     }
     Call1((void (*)())wait, 1);
     time++;
-  } while (state != SPLIT_CONSTANT(0x2e8, 255));
+  } while (state != SPLIT_CONSTANT(0x3e7));
 }

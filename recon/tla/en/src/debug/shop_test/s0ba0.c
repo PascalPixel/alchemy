@@ -37,7 +37,7 @@ void Func_02000ba0(s32 mode, s32 x, s32 z, s32 scene, s32 entrance) {
       object->scaleY = 0x6666;
       while (object->scaleX < Q16_ONE) {
         wait(1);
-        scale = object->scaleX + SPLIT_CONSTANT(0x500, 30);
+        scale = object->scaleX + SPLIT_CONSTANT(0x51e);
         {
           /* FAKEMATCH(temporary): the turn is added as a word, so its step
            * is built inside the loop as in the native; as

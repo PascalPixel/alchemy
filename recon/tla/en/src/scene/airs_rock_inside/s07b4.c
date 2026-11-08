@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "field_sprite.h"
@@ -45,7 +46,7 @@ void Func_020007b4(s32 mode, s32 step) {
   } else if (step <= 5) {
     second->y += 0x53333;
     Dma_Set(first->watchedObject, second->watchedObject, DMA_COPY_WORDS(48),
-            REG_DMA3);
+            SPLIT_CONSTANT(REG_DMA3));
     first->watchedObject = (void *)((u8 *)first->watchedObject + 0x100);
     second->watchedObject = (void *)((u8 *)second->watchedObject + 0x100);
   }

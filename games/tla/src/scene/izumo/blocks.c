@@ -10,7 +10,7 @@ void Func_02000b08(void) {
   s32 x = object->x >> 20;
   s32 z = object->z >> 20;
 
-  GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x301));
   if (GameFlag_Test(592)) {
     Func_02000ce0(36, 12, 22, 8, 3, 3);
     Call6((void (*)())Func_02000ce8, 36, 12, 3, 3, 22, 8);
@@ -26,7 +26,7 @@ void Func_02000ba4(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 4 of 25 instructions
    * differ in tla-en. */
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 1));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x301));
   Func_02000ce0(40, 8, 22, 8, 3, 3);
   Call6((void (*)())Func_02000ce8, 40, 8, 3, 3, 22, 8);
 }

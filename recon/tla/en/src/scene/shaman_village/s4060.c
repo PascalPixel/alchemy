@@ -5,7 +5,7 @@ void Func_02003d30(void);
 void Func_02003f78(void);
 
 void Func_02004060(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 76))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 76)))) {
     ShamanVillage_MapCopy(47, 19, 38, 19, 9, 11);
     ShamanVillage_BlendStart(1, 5, 9, 1, 6, 29);
     Actor_SetPartAttribute(Actor_GetById(14), 6);
@@ -31,7 +31,7 @@ void Func_02004060(void) {
     else if (entrance == 9)
       Func_02003f78();
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 254))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 254)))) {
     Func_02004934(15, 0, 0);
     Func_02004934(17, 0, 0);
     Func_02004934(16, 0, 0);
@@ -62,7 +62,7 @@ void Func_020041b8(void) {
     Func_02004844(64, 0, 76, 2, 3, 3);
     ShamanVillage_BlendStart(12, 5, 3, 1, 12, 6);
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 77)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 77))))
     ShamanVillage_MapCopy(48, 40, 101, 11, 1, 2);
   else
     Func_02004934(17, 0, 0);

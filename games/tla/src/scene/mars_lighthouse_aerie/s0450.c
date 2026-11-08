@@ -12,7 +12,7 @@ s32 Func_02000450(void) {
    * shifted byte plus an addend; as plain constants, 8 of 32 instructions
    * differ in tla-en. */
   if (gMainRoutineWork.entrance == 1 &&
-      GameFlag_Test(SPLIT_CONSTANT(0xa00, 61)) == 0)
+      GameFlag_Test(SPLIT_CONSTANT(0xa3d)) == 0)
     Func_020057d4(1);
   Func_020055dc(gMainRoutineWork.map +
                     ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),

@@ -9,7 +9,7 @@ void Func_02001464(s32 entrance) {
   Func_02001e2c(228);
   leader->update = (void (*)(void))Func_020013d8;
   leader->motionFlags = 0;
-  leader->speedLimit = SPLIT_CONSTANT(0x3300, 51);
+  leader->speedLimit = SPLIT_CONSTANT(0x3333);
   Actor_SetModeById(*owner, 2);
   Actor_OffsetPositionAndResetMotion(*owner, 0, -8);
   Actor_WaitForMoveById(*owner);
@@ -40,7 +40,7 @@ void Func_02001500(void) {
     Event_StartScreenTransition();
     Func_02001e2c(228);
     leader->update = (void (*)(void))Func_020013d8;
-    Actor_SetSpeedParameters(*owner, SPLIT_CONSTANT(0x6600, 102), SPLIT_CONSTANT(0x3300, 51));
+    Actor_SetSpeedParameters(*owner, SPLIT_CONSTANT(0x6666), SPLIT_CONSTANT(0x3333));
     Actor_CommitPositionAndActivate(*owner, 0, 8);
     Actor_SetPartAttribute(Actor_GetById(*owner), 0);
     Actor_SetSingleChildFlags(Actor_GetById(*owner), 1);

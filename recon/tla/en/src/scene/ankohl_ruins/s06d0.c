@@ -42,7 +42,7 @@ void Func_020006d0(s32 unused, s32 id) {
 #if !TLA_PATCH_1
     if (id == 9)
 #else
-    if (id == 9 && GameFlag_Test(SPLIT_CONSTANT(0x106, 255)))
+    if (id == 9 && GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x106, 255))))
 #endif
       AnkohlRuins_Call2df4(35, 98, 3, 5, 25, 98);
   }

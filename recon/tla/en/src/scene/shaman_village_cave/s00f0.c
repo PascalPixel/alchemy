@@ -5,7 +5,7 @@ void Func_020000f0(s32 unused, s32 id) {
   s32 x = object->x >> 20;
 
   if (x == 38) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 168));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 168)));
     object->priorityFlags = 0;
     /* FAKEMATCH: one more use of the flags byte gives its address r3 and the
      * zero r2, as native; plainly, 8 instructions differ in tla-en. */

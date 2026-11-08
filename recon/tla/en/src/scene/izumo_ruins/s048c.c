@@ -44,7 +44,7 @@ void Func_0200048c(const void *data, s32 id) {
         Func_02000bc0(-4, OBJECT_BYTE(object, 34), id);
         Func_02000974(1);
         wait(16);
-        Func_02005838_(-1, -1, SPLIT_CONSTANT(0xe600, 102));
+        Func_02005838_(-1, -1, SPLIT_CONSTANT(0xe666));
         wait(8);
         Actor_SetPositionAndResetMotion(object, 0, 0, 0);
         wait(2);

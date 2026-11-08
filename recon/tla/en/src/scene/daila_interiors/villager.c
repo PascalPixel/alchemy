@@ -74,7 +74,7 @@ void Func_02000390(s32 actor) {
   __asm__("");
 
   if ((u16)((facing + 0x2000) & ~0x3fff) == 0xc000) {
-    if (GameFlag_Test(SPLIT_CONSTANT(0x748, 255)) == 0) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x847)) == 0) {
       Import_EventStart();
       Import_EventResolvePendingActions(0);
       msg = (s32)MsgDailaInteriorsTravelersFreeTime;
@@ -89,7 +89,7 @@ void Func_02000390(s32 actor) {
       }
       Import_EventShowMessageAndWait(actor, 0);
       Import_EventEnd();
-      GameFlag_SetBit(SPLIT_CONSTANT(0x748, 255));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x748, 255)));
     } else {
       Func_02000de4(actor);
     }
@@ -108,7 +108,7 @@ void Func_02000390(s32 actor) {
     }
     Import_EventShowMessageAndWait(actor, 0);
     Import_EventEnd();
-    GameFlag_SetBit(SPLIT_CONSTANT(0x748, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x748, 255)));
   }
 }
 

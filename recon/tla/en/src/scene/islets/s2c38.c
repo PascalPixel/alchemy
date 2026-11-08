@@ -9,9 +9,9 @@ void Func_02002c38(void) {
     GameFlag_ClearBit(0x12f);
   map->mode = 1;
   Actor_SetSingleChildFlags(Actor_GetById(11), 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3((void (*)())Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Actor_GetById(10)->collisionFlags |= 0x80;
-  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 161))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0xaa1))) {
     spawned = (struct Actor *)Value4((s32 (*)())Func_02003df4, 489, 0x1180000,
                                      0, 0x3480000);
     if (spawned != 0) {

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "fixed_math.h"
 #include "actor.h"
 #include "ram_buffer.h"
@@ -41,7 +42,7 @@ void Func_080e2d64(void) {
     }
     break;
   case 1:
-    work->state = 999;
+    work->state = SPLIT_CONSTANT(999);
     break;
   }
   work->timer++;

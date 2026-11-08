@@ -24,6 +24,6 @@ s32 Func_02000288(void) {
   Scene_SetArrivalFlags(0);
   Func_020003a4(0);
   if (!GameFlag_Test(265))
-    GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 25));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0xa19));
   return 0;
 }

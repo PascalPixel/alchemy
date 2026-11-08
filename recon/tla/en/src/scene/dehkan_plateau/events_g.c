@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "scene_tables.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -104,12 +105,12 @@ void Func_020021e8(void) {
   Func_02003cf0();
   Actor_SetAngleToward(24, gMainRoutineWork.currentOwner, 0);
   Func_02003cc8(24, 0x100, 40);
-  Actor_SetSpeed(24, 0x19999, 0xcccc);
+  Actor_SetSpeed(24, 0x19999, SPLIT_CONSTANT(0xcccc));
   Actor_MoveTo(24, 664, 136);
   Func_02003be0(68, 33, 105, 6, 1, 1);
   Func_02003df8(161);
   Func_020021b4();
-  GameFlag_SetBit(0x247);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x247));
   Actor_MoveTo(24, 664, 104);
   Func_02003be0(69, 33, 105, 4, 1, 1);
   Func_02003df8(229);
@@ -118,7 +119,7 @@ void Func_020021e8(void) {
   Actor_Jump(24, 6, 16);
   Actor_PlaceFacing(24, 222 << 18, 168 << 16, FACING_SOUTH);
   FieldEvent_Wait(20);
-  GameFlag_SetBit(0x86c);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x86c));
   Func_02003c30();
 }
 
@@ -131,13 +132,13 @@ void Func_020022e0(void) {
   Func_02003cc8(24, 0x100, 40);
   Actor_GetById(24)->motionFlags = 0;
   Actor_SetSpritePriority(24, 1);
-  Actor_SetSpeed(24, 0x19999, 0xcccc);
+  Actor_SetSpeed(24, 0x19999, SPLIT_CONSTANT(0xcccc));
   Actor_MoveTo(24, 940, 168);
   Actor_MoveTo(24, 984, 152);
   Actor_MoveTo(24, 1040, 152);
   Func_02003c68(24, 0, 0);
   FieldEvent_Wait(20);
-  GameFlag_SetBit(0x86d);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x86d));
   Func_02003c30();
 }
 
@@ -148,7 +149,7 @@ void Func_02002390(void) {
   Func_02003cf0();
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
   Func_02003cc8(25, 0x100, 40);
-  Actor_SetSpeed(25, 0x19999, 0xcccc);
+  Actor_SetSpeed(25, 0x19999, SPLIT_CONSTANT(0xcccc));
   Actor_SetPositionAndReset(25, 168, 104);
   FieldEvent_Wait(10);
   Func_02003df8(153);
@@ -158,7 +159,7 @@ void Func_02002390(void) {
   Actor_SetSingleChildFlags(Actor_GetById(25), 1);
   Actor_MoveTo(25, 294, 104);
   Actor_PlaceFacing(25, 212 << 17, 208 << 15, FACING_SOUTH);
-  GameFlag_SetBit(0x86e);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x86e));
   Func_02003c30();
 }
 
@@ -172,20 +173,20 @@ void Func_02002458(void) {
   Actor_SetAngleToward(25, gMainRoutineWork.currentOwner, 0);
   Func_02003cc8(25, 0x100, 20);
   Camera_MoveWithinMapBounds(212 << 17, -1, 152 << 16, 1);
-  Actor_SetSpeed(25, 0x19999, 0xcccc);
+  Actor_SetSpeed(25, 0x19999, SPLIT_CONSTANT(0xcccc));
   Actor_MoveTo(25, 424, 152);
   Actor_ArmCallback(25, FACING_EAST, 20);
   Func_02002604();
   Actor_MoveTo(25, 440, 152);
   Actor_MoveTo(25, 456, 168);
   Actor_MoveTo(25, 456, 184);
-  GameFlag_SetBit(0x241);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x241));
   Func_02003be0(69, 51, 92, 11, 1, 1);
   Func_02003df8(161);
   Func_020021b4();
   Actor_MoveTo(25, 456, 216);
   Actor_MoveTo(25, 584, 216);
   Actor_PlaceFacing(25, 154 << 18, 140 << 17, FACING_SOUTH);
-  GameFlag_SetBit(0x86f);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x86f));
   Func_02003c30();
 }

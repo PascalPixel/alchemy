@@ -24,7 +24,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void) {
   u16 *palette;
   u32 delayMask;
 
-  palette = (u16 *)SPLIT_CONSTANT(0x5000000, 64);
+  palette = (u16 *)SPLIT_CONSTANT(0x5000040);
   i = 0;
   do {
     s32 half;

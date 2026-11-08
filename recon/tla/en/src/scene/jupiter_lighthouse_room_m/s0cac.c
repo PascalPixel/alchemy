@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/jupiter_lighthouse_room_m/jupiter_lighthouse_room_m.h"
+#include "call.h"
 #include "scene_tables.h"
 
 extern u32 gData_02005548[];
@@ -202,7 +203,7 @@ void Func_02000cac(s32 arg) {
   Func_020048cc(6, 0x101, 30);
   Func_0200489c(6, 0, 5);
   Func_020048cc(4, 0x102, 30);
-  I_Actor_SetSpeedParameters(4, 0x00013333, 0x9999);
+  I_Actor_SetSpeedParameters(4, 0x00013333, SPLIT_CONSTANT(0x9999));
   Actor_SetMovementTypeById(4, arg != 0 ? gData_02005748 : gData_0200578c);
   FieldEvent_Wait(30);
   I_Actor_ArmCallback(6, FACING_WEST, 0);
@@ -218,7 +219,7 @@ void Func_02000cac(s32 arg) {
   I_Actor_SetSpeedParameters(5, 0x10000, 0x8000);
   I_Actor_SetSpeedParameters(7, 0x10000, 0x8000);
   I_Actor_SetSpeedParameters(6, 0x10000, 0x8000);
-  I_Actor_SetSpeedParameters(28, 0xcccc, 0x6666);
+  I_Actor_SetSpeedParameters(28, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Actor_SetMovementTypeById(28, arg != 0 ? gData_020057d0 : gData_02005800);
   Actor_SetMovementTypeById(7, arg != 0 ? gData_0200d830 : gData_02005860);
   Actor_SetMovementTypeById(5, arg != 0 ? gData_02005890 : gData_020058d8);
@@ -263,7 +264,7 @@ void Func_02000cac(s32 arg) {
   FieldEvent_Wait(5);
   Func_0200489c(1, 0, 5);
   Actor_GetById(3)->actionFlags &= 0xfe;
-  I_Actor_SetSpeedParameters(3, 0x1999, 0xccc);
+  I_Actor_SetSpeedParameters(3, SPLIT_CONSTANT(0x1999), SPLIT_CONSTANT(0xccc));
   Actor_OffsetPositionAndResetMotion(3, 4, 2);
   Actor_WaitForMoveById(3);
   Actor_SetModeById(3, 9);
@@ -328,8 +329,8 @@ void Func_02000cac(s32 arg) {
   I_Motion_CamBounds(PIXELS(720), 0, PIXELS(210), 1);
   I_Actor_SetSpeedParameters(26, 0x4000, angle);
   I_Actor_SetSpeedParameters(27, 0x4000, angle);
-  I_Actor_ResetAndSetPositionInMode2(26, 714, 193);
-  I_Actor_ResetAndSetPositionInMode2(27, SPLIT_CONSTANT(0x200, 186), 209);
+  I_Actor_ResetAndSetPositionInMode2(26, SPLIT_CONSTANT(714), 193);
+  I_Actor_ResetAndSetPositionInMode2(27, SPLIT_CONSTANT(0x2ba), 209);
   Actor_SetMovementTypeById(26, gData_020049cc);
   Actor_SetMovementTypeById(27, gData_020049dc);
   FieldEvent_Wait(20);
@@ -543,13 +544,13 @@ void Func_02000cac(s32 arg) {
   I_Actor_SetSpeedParameters(27, 0x30000, 0x18000);
   I_Actor_SetSpeedParameters(0, 0x30000, 0x18000);
   I_Actor_SetSpeedParameters(2, 0x30000, 0x18000);
-  I_Actor_ResetAndSetPositionInMode2(26, 737, 202);
-  I_Actor_ResetAndSetPositionInMode2(27, 731, 213);
+  I_Actor_ResetAndSetPositionInMode2(26, SPLIT_CONSTANT(737), 202);
+  I_Actor_ResetAndSetPositionInMode2(27, SPLIT_CONSTANT(731), 213);
   Actor_SetMovementTypeById(27, gData_020049fc);
   Actor_SetMovementTypeById(26, gData_02004a18);
   FieldEvent_Wait(5);
   I_Actor_ResetAndSetPositionInMode2(0, 776, 202);
-  I_Actor_ResetAndSetPositionInMode2(2, 731, 232);
+  I_Actor_ResetAndSetPositionInMode2(2, SPLIT_CONSTANT(731), 232);
   Actor_SetMovementTypeById(0, gData_02004a34);
   Actor_SetMovementTypeById(2, gData_02004a50);
   Actor_RefreshSelectorById(0);

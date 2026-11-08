@@ -17,7 +17,7 @@ void Func_02000d10(void) {
    * in tla-en. */
   s32 result0;
 
-  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x8b0, 255));
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x9af));
   if (result0 == 0)
     goto L_02008d24;
   Func_02000d28();

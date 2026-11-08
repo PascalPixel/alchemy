@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "battle_unit.h"
 #include "iwram_call.h"
 #include "edition.h"
@@ -61,7 +62,7 @@ s32 Func_080afbec(s32 unitId, s32 enemyId, s32 suffix) {
      * where the native issues it (differ 4 without) */
     s32 (*clear)(void *destination, s32 size) = Iwram_ClearWordsEntry;
 
-    clear(unit, BATTLE_UNIT_SIZE);
+    ValueLr2((s32 (*)())clear, (s32)(unit), (s32)(BATTLE_UNIT_SIZE));
   }
   if (index >= 380)
     index = 0;

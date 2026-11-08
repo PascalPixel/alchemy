@@ -33,23 +33,22 @@ void Func_0200030c(void) {
   s32 t9;
   s32 t16;
 
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 145));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x891));
   t1 = Actor_GetById(10);
   FIELD_AT((t1 + 0x55), u8, 0) = 0;
-  FIELD_AT(t1, s32, 72) = SPLIT_CONSTANT(0x190, 255);
+  FIELD_AT(t1, s32, 72) = SPLIT_CONSTANT(0x28f);
   FIELD_AT(t1, s32, 48) = 0x18000;
   FIELD_AT(t1, s32, 52) = 0x8000;
   Call4(Actor_SetPositionAndResetMotion, t1, PIXELS(216), PIXELS(96),
         PIXELS(176));
   t3 = Actor_GetById(11);
   FIELD_AT((t3 + 0x55), u8, 0) = 0;
-  FIELD_AT(t3, s32, 72) = SPLIT_CONSTANT(0x700, 174);
+  FIELD_AT(t3, s32, 72) = SPLIT_CONSTANT(0x7ae);
   FIELD_AT(t3, s32, 48) = 0x18000;
   FIELD_AT(t3, s32, 52) = 0x8000;
   Call4(Actor_SetPositionAndResetMotion, t3, PIXELS(616), PIXELS(96),
         PIXELS(152));
-  Call2(Func_0200297c, SPLIT_CONSTANT(0xcc00, 204),
-        SPLIT_CONSTANT(0x1900, 153));
+  Call2(Func_0200297c, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x1999));
   Call4(Camera_MoveWithinMapBounds, PIXELS(376), -1, PIXELS(248), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();

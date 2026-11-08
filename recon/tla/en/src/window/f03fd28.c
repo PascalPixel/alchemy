@@ -1,4 +1,5 @@
 #include "resource.h"
+#include "call.h"
 #include "types.h"
 #include "render_input.h"
 #include "ram_buffer.h"
@@ -97,7 +98,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void) {
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     Dma_Set(Data_080aa0e8, (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0),
-            0x80000020, REG_DMA3);
+            0x80000020, SPLIT_CONSTANT(REG_DMA3));
     VramCache_Load(x, 256, Data_0804e584);
     y = 0;
     out = WindowSprite_Create(x, 0x40004000, win, 134, y);

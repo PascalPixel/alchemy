@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "magma_rock.h"
@@ -52,6 +53,6 @@ void Func_020020f8(s32 mode, s32 cue) {
     Func_02003a94(0, 32, 42, 17, 5, last);
     Func_02003a94(0, 96, 42, 81, 5, last);
   }
-  if (cue == 0x3e7)
+  if (cue == SPLIT_CONSTANT(0x3e7))
     Func_02003998();
 }

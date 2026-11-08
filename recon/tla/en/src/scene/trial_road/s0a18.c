@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "call.h"
 
 extern const s8 gData_02005a88[4];
 
@@ -20,10 +21,10 @@ void Func_02000a18(s32 id, s32 mode, s32 frame) {
     Func_0200095c(other);
     switch (id) {
     case 18:
-      GameFlag_SetBit(821);
+      GameFlag_SetBit(SPLIT_CONSTANT(821));
       break;
     case 19:
-      GameFlag_ClearBit(SPLIT_CONSTANT(0x300, 53));
+      GameFlag_ClearBit(SPLIT_CONSTANT(0x335));
       break;
     case 20:
       GameFlag_SetBit(823);
@@ -44,7 +45,7 @@ void Func_02000a18(s32 id, s32 mode, s32 frame) {
   else if (frame == 11)
     partner->scaleY = 0x11999;
   else if (frame == 13)
-    partner->scaleY = 0x10ccc;
+    partner->scaleY = SPLIT_CONSTANT(0x10ccc);
   else
     partner->scaleY = 0x10000;
 }

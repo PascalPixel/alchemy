@@ -6,12 +6,12 @@ s32 Func_02000290(void) {
    * differ in tla-en. */
   s32 count = 0;
 
-  if (GameFlag_Test(0xa10) || GameFlag_Test(SPLIT_CONSTANT(0xa00, 18)) ||
-      GameFlag_Test(SPLIT_CONSTANT(0xa00, 20)))
+  if (GameFlag_Test(0xa10) || GameFlag_Test(SPLIT_CONSTANT(0xa12)) ||
+      GameFlag_Test(SPLIT_CONSTANT(0xa14)))
     count = 1;
-  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 17)) ||
-      GameFlag_Test(SPLIT_CONSTANT(0xa00, 19)) ||
-      GameFlag_Test(SPLIT_CONSTANT(0xa00, 21)))
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa11)) ||
+      GameFlag_Test(SPLIT_CONSTANT(0xa13)) ||
+      GameFlag_Test(SPLIT_CONSTANT(0xa15)))
     count++;
   return count;
 }

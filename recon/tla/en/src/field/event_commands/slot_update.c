@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -18,7 +19,7 @@ void FieldParticle_Update(struct FieldParticle *effect) {
     if (effect->callbackDelay != 0)
       effect->callbackDelay--;
     else if (effect->callback != 0)
-      effect->callback(effect);
+      ValueLr1((s32 (*)())effect->callback, (s32)(effect));
     if (effect->active != 0) {
       if (effect->updateMotion != 0)
         FieldParticle_UpdateMotion(effect);

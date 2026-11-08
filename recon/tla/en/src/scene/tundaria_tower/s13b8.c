@@ -57,13 +57,13 @@ s32 Func_020013b8(void) {
     case 2:
     case 3:
     case 4:
-      if (GameFlag_Test(SPLIT_CONSTANT(0x900, 66)))
+      if (GameFlag_Test(SPLIT_CONSTANT(0x942)))
         Func_02000548();
-      if (GameFlag_Test(SPLIT_CONSTANT(0x900, 67)))
+      if (GameFlag_Test(SPLIT_CONSTANT(0x943)))
         Func_0200058c();
       break;
     case 11:
-      flag = GameFlag_Test(SPLIT_CONSTANT(0x900, 69));
+      flag = GameFlag_Test(SPLIT_CONSTANT(0x945));
       if (flag == 0) {
         object = Actor_GetById(8);
         Actor_SetSingleChildFlags(Actor_GetById(8), 0);
@@ -72,14 +72,14 @@ s32 Func_020013b8(void) {
         object->terrainHeight = PIXELS(8);
         object->y = PIXELS(8);
         Call2((void (*)())Func_02003020, (s32)object, 0x1b9);
-        if (GameFlag_Test(SPLIT_CONSTANT(0x900, 68))) {
+        if (GameFlag_Test(SPLIT_CONSTANT(0x944))) {
           Call6((void (*)())Func_02002fc0, 31, 85, 20, 85, 3, 4);
           Call6((void (*)())Func_02002fe8, 11, 22, 3, 2, 20, 22);
           Call3((void (*)())Func_02003088, 68, PIXELS(344), PIXELS(372));
           Actor_GetById(68)->update = (void (*)(void))Func_02000840;
           Call3((void (*)())Func_02003088, 8, 0, 0);
         }
-      } else if (GameFlag_Test(SPLIT_CONSTANT(0x900, 68))) {
+      } else if (GameFlag_Test(SPLIT_CONSTANT(0x944))) {
         Call6((void (*)())Func_02002fc0, 31, 85, 20, 85, 3, 4);
         Call6((void (*)())Func_02002fe8, 11, 22, 3, 2, 20, 22);
         Call3((void (*)())Func_02003088, 8, 0, 0);
@@ -95,7 +95,7 @@ s32 Func_020013b8(void) {
           Call3((void (*)())Func_02003088, 8, PIXELS(344), PIXELS(536));
           MapCell_SetAttributes(0, 21, 33, 0x3300);
           MapCell_SetAttributes(0, 22, 33, 0xff00);
-        } else if (!GameFlag_Test(SPLIT_CONSTANT(0x102, 255))) {
+        } else if (!GameFlag_Test(SPLIT_CONSTANT(0x201))) {
           MapCell_SetAttributes(0, 26, 33, 0xff00);
         }
         Actor_WatchAndSetScript(8, gMainRoutineWork.currentOwner);
@@ -122,9 +122,9 @@ s32 Func_020013b8(void) {
     case 1:
     case 2:
       Func_02000404(gData_0200335a);
-      if (GameFlag_Test(SPLIT_CONSTANT(0x900, 71))) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x947))) {
         Call3((void (*)())Func_02003088, 13, PIXELS(216), PIXELS(136));
-        if (GameFlag_Test(SPLIT_CONSTANT(0x900, 70)))
+        if (GameFlag_Test(SPLIT_CONSTANT(0x946)))
           Call3((void (*)())Func_02003088, 12, PIXELS(200), PIXELS(136));
       }
       Func_02003168(gData_02003264);
@@ -132,7 +132,7 @@ s32 Func_020013b8(void) {
       break;
     case 4:
     case 5:
-      if (GameFlag_Test(SPLIT_CONSTANT(0x900, 75))) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x94b))) {
         Call6((void (*)())Func_02002fc0, 18, 97, 6, 97, 3, 4);
         Call6((void (*)())Func_02002fc0, 82, 34, 70, 34, 3, 2);
         Call6((void (*)())Func_02002fe8, 7, 36, 1, 1, 7, 35);
@@ -168,7 +168,7 @@ s32 Func_020013b8(void) {
     }
   } else if (scene == (s32)&SceneId_Ov68fRoom7) {
     GameFlag_SetBit(0x144);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 72))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x948))) {
       Call6((void (*)())Func_02002fc0, 13, 26, 13, 16, 3, 3);
       Call6((void (*)())Func_02002fe8, 13, 26, 3, 3, 13, 16);
     } else {

@@ -35,7 +35,7 @@ void Func_020035ec(void) {
       Call6((void (*)())Func_02003be0, 13, 65, x, y, one, 4);
       return;
     }
-    if (flag == SPLIT_CONSTANT(0x260, 255))
+    if (flag == SPLIT_CONSTANT(0x35f))
       return;
     offset += 8;
     flag++;

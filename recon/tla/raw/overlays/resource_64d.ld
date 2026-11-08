@@ -3,7 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/venus_lighthouse_entrance/entry.o"(.text)
-        "*/recon/tla/raw/src/scene/venus_lighthouse_entrance/scene_tables.o"(.text)
+        "*/games/tla/src/scene/venus_lighthouse_entrance/scene_tables.o"(.text)
         "*/resource_64d_overlay.o"(.text.x020080c6)
         "*/recon/tla/raw/src/scene/venus_lighthouse_entrance/s00c8.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance/scene_events.o"(.text)

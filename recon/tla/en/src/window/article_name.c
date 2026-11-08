@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "fixed_math.h"
 
 // The article strings by kind, copied whole (articles.c).
@@ -80,14 +81,14 @@ u32 Func_0803aed8(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural,
   }
   if (mode != 0) {
     entry[pos] = 0x0a;
-    pos = (pos + 1) & 0x1ff;
+    pos = (pos + 1) & SPLIT_CONSTANT(0x1ff);
     entry[pos] = 0x08;
     pos = (pos + 1) & 0x1ff;
     entry[pos] = ' ';
     /* FAKEMATCH(barrier): the last code is stored before pos steps; as plain
      * statements, 2 of 203 instructions differ in tla-en. */
     asm("");
-    pos = (pos + 1) & 0x1ff;
+    pos = (pos + 1) & SPLIT_CONSTANT(0x1ff);
   }
   return pos;
 }

@@ -10,7 +10,7 @@ void Func_02001380(s32 message);
 void Func_02001390(s32 id, s32 flags);
 
 void Func_02000bf4(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 10)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 10))))
     Func_02001380((s32)&MsgLoho32);
   else
     Func_02001380((s32)&MsgLoho55);
@@ -18,7 +18,7 @@ void Func_02000bf4(void) {
 }
 
 void Func_02000c24(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 10)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 10))))
     Func_02001380((s32)&MsgLoho36);
   else
     Func_02001380((s32)&MsgLoho56);

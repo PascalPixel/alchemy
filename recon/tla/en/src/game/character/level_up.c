@@ -1,4 +1,5 @@
 #include "owner_state.h"
+#include "call.h"
 #include "heap_release.h"
 #include "types.h"
 
@@ -72,7 +73,7 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *res) {
   level = st->level;
   work->level = level;
   res->level = level;
-  res->ability = 0xffff;
+  res->ability = SPLIT_CONSTANT(0xffff);
   res->hp = 0;
   res->pp = 0;
   res->atk = 0;

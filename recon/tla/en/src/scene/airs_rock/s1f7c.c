@@ -92,7 +92,7 @@ void Func_02001f7c(void) {
   i = 0;
   cell = buffer;
 mask:
-  *cell &= SPLIT_CONSTANT(0xfc00, 255);
+  *cell &= SPLIT_CONSTANT(0xfcff);
   i++;
   cell++;
   if (i != 64)
@@ -130,7 +130,7 @@ row:
       spark->bounce = spark->x;
       spark->gravity = 0x18000;
       spark->unk4c = spark->z;
-      spark->speedLimit = Random16Far() & SPLIT_CONSTANT(0xff00, 255);
+      spark->speedLimit = Random16Far() & SPLIT_CONSTANT(0xffff);
       Func_02003b28(spark, 7);
       Func_02003b38(spark, gData_02003d1c);
       Actor_SetSingleChildFlags(spark, 0);
@@ -140,7 +140,7 @@ row:
     FieldEvent_Wait(1);
   }
   Call2((void (*)())Func_02003c58, 0x10000, 0);
-  Call2((void (*)())Func_02003c50, SPLIT_CONSTANT(0x10000, 3), 0);
+  Call2((void (*)())Func_02003c50, SPLIT_CONSTANT(0x10003), 0);
   Func_02003c60(60);
   Camera_FollowActor(gMainRoutineWork.currentOwner, 1);
   Func_02003c30();
@@ -151,16 +151,16 @@ row:
   Actor_SetPartAttribute(Actor_GetById(14), 6);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  gBgScroll[0].x = SPLIT_CONSTANT(0xff00, 136);
+  gBgScroll[0].x = SPLIT_CONSTANT(0xff88);
   gBgScroll[0].y = 0x10;
   wait(30);
   Func_02003cd8(138);
   Call2((void (*)())Func_02003c58, 0x10003, 0);
-  Call2((void (*)())Func_02003c50, SPLIT_CONSTANT(0x7f00, 255), 0);
+  Call2((void (*)())Func_02003c50, SPLIT_CONSTANT(0x7fff), 0);
   Func_02003c60(1);
   Actor_GetById(gMainRoutineWork.currentOwner)->angle = FACING_SOUTH;
   wait(1);
-  Func_02003c58(SPLIT_CONSTANT(0x7f00, 255), 0);
+  Func_02003c58(SPLIT_CONSTANT(0x7fff), 0);
   Func_02003c50(0x10003, 0);
   Func_02003c60(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
@@ -174,16 +174,16 @@ fade1:
   i++;
   if (i != 32)
     goto fade1;
-  gBgScroll[0].x = SPLIT_CONSTANT(0xff00, 172);
+  gBgScroll[0].x = SPLIT_CONSTANT(0xffac);
   gBgScroll[0].y = 0;
   wait(1);
   Func_02003cd8(138);
-  Call2((void (*)())Func_02003c58, SPLIT_CONSTANT(0x10000, 3), 0);
-  Call2((void (*)())Func_02003c50, SPLIT_CONSTANT(0x7f00, 255), 0);
+  Call2((void (*)())Func_02003c58, SPLIT_CONSTANT(0x10003), 0);
+  Call2((void (*)())Func_02003c50, SPLIT_CONSTANT(0x7fff), 0);
   Func_02003c60(1);
   wait(1);
-  Func_02003c58(SPLIT_CONSTANT(0x7f00, 255), 0);
-  Func_02003c50(SPLIT_CONSTANT(0x10000, 3), 0);
+  Func_02003c58(SPLIT_CONSTANT(0x7fff), 0);
+  Func_02003c50(SPLIT_CONSTANT(0x10003), 0);
   Func_02003c60(8);
   REG_DISPCNT |= DISPCNT_BG0_ON;
   Func_02003b68(52, 22, 29, 9, 9, 9);
@@ -197,8 +197,8 @@ fade2:
   if (i != 32)
     goto fade2;
   Func_02003cd8(145);
-  Call2((void (*)())Func_02003c58, SPLIT_CONSTANT(0x10000, 3), 0);
-  Call2((void (*)())Func_02003c50, SPLIT_CONSTANT(0x7f00, 255), 0);
+  Call2((void (*)())Func_02003c58, SPLIT_CONSTANT(0x10003), 0);
+  Call2((void (*)())Func_02003c50, SPLIT_CONSTANT(0x7fff), 0);
   Func_02003c60(1);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   FieldEvent_Wait(20);
@@ -208,11 +208,11 @@ fade2:
   Func_02003b68(62, 2, 29, 9, 9, 9);
   Func_02003b80(62, 2, 9, 9, 29, 9);
   Func_02003b68(62, 66, 29, 73, 9, 9);
-  Func_02003c58(SPLIT_CONSTANT(0x7f00, 255), 0);
-  Call2((void (*)())Func_02003c50, SPLIT_CONSTANT(0x10000, 3), 0);
+  Func_02003c58(SPLIT_CONSTANT(0x7fff), 0);
+  Call2((void (*)())Func_02003c50, SPLIT_CONSTANT(0x10003), 0);
   Func_02003c60(60);
   wait(60);
-  Func_02003c58(SPLIT_CONSTANT(0x10000, 3), 0);
+  Func_02003c58(SPLIT_CONSTANT(0x10003), 0);
   Func_02003c50(0x10000, 0);
   Func_02003c60(60);
   wait(70);
@@ -223,6 +223,6 @@ fade2:
   REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 123));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x87b));
   Func_02003bd0();
 }

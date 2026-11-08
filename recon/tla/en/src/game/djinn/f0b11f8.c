@@ -44,5 +44,5 @@ void Func_080b11f8(void) {
     src = gData_020023c4;
     *src = 0;
   }
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x900, 255));
+  GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 255)));
 }

@@ -5,13 +5,13 @@ void Func_02003ae4(s32 id, s32 base);
 
 void Func_02003b2c(void) {
   ((struct EventWork1ac *)Ram_HeapSlots->eventWork)->value = 0x100;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 66))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x842))) {
     Func_02005230(8, 0, 0);
     Func_02005178_(0, 0, 1, 1, 5, 13);
   } else {
     Func_020052c0(8);
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 73))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x849))) {
     Func_02005178_(2, 0, 2, 3, 17, 24);
     Func_02005230(9, 0, 0);
     Func_02005230(10, 0, 0);
@@ -35,7 +35,7 @@ void Func_02003b2c(void) {
     Func_02003ae4(12, 240);
     Func_02003ae4(13, 480);
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x200, 18))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x212))) {
     Func_02005170(77, 33, 77, 24, 2, 2);
     Func_02005178_(32, 30, 2, 1, 17, 25);
   }

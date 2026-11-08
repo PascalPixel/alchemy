@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
 
@@ -82,7 +83,7 @@ void Func_08126e00(void) {
       dist = FixedSqrt((spark->pos[0] >> 8) * (spark->pos[0] >> 8) +
                        (spark->pos[1] >> 8) * (spark->pos[1] >> 8) +
                        (spark->pos[2] >> 8) * (spark->pos[2] >> 8));
-      if (dist <= 0xfff) {
+      if (dist <= SPLIT_CONSTANT(0xfff)) {
         spark->life = 0;
       } else {
         scale = Iwram_RatioMulQ14(dist, 0x10000);

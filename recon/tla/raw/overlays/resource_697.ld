@@ -18,7 +18,7 @@ SECTIONS
         "*/recon/tla/raw/src/scene/trial_road/events_e.o"(.text)
         "*/games/tla/src/scene/trial_road/events_l.o"(.text)
         "*/recon/tla/raw/src/scene/trial_road/s082c.o"(.text)
-        "*/recon/tla/raw/src/scene/trial_road/events_f.o"(.text)
+        "*/games/tla/src/scene/trial_road/events_f.o"(.text)
         "*/recon/tla/raw/src/scene/trial_road/events_g.o"(.text)
         "*/recon/tla/raw/src/scene/trial_road/s09ac.o"(.text)
         "*/recon/tla/raw/src/scene/trial_road/s0a18.o"(.text)

@@ -9,9 +9,9 @@ void Func_02004884(void) {
   Func_02005e14();
   Func_02005f2c(0);
   if (Actor_GetById(8)->x >> 19 == 65)
-    GameFlag_SetBit(SPLIT_CONSTANT(0x204, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x303));
   else
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x204, 255));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x303));
   Func_02005e1c();
 }
 

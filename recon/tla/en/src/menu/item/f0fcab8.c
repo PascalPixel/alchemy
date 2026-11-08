@@ -62,7 +62,7 @@ s32 Func_080fcab8(void) {
   s32 owner;
   s32 result;
 
-  screen = HeapSlot_Alloc(220, SPLIT_CONSTANT(0xc00, 236));
+  screen = HeapSlot_Alloc(220, SPLIT_CONSTANT(0xcec));
 #if TLA_PATCH_2
   savedTiles = Heap_AllocEwram(0x2000);
 #endif
@@ -89,7 +89,7 @@ s32 Func_080fcab8(void) {
     u8 *event = Ram_HeapSlots->eventWork;
     u16 request;
 
-    BattleAction_Get(SPLIT_CONSTANT(0x3f00, 255) & screen->selectedItems[0]);
+    BattleAction_Get(SPLIT_CONSTANT(0x3fff) & screen->selectedItems[0]);
     request = item | (owner << 10);
     *(u16 *)(event + 0x166) = request;
   }

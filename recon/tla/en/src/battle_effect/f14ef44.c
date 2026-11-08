@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "battle_display.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -352,7 +353,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       point[2] = object->z;
       SceneTransform_ApplyPosition(point);
       if (frame == start + 20)
-        Sound_PlayFar(126);
+        ValueLr1((s32 (*)())Sound_PlayFar, (s32)(126));
       if (mode == 8) {
         if (frame == start + 41)
           Func_0814cd48(effect->actors[member], 7, -1, member, 32);

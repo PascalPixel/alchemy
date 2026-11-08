@@ -252,7 +252,7 @@ s32 Func_081039fc(u32 mode) {
     if ((entry0 & 0x8000) != 0)
       Text_SetColorFar(2);
     Func_08101a54(help, 40, 16, entry0);
-    Window_SetTilemapEntryFar(help, SPLIT_CONSTANT(0xf200, 150), 7, 1, 0);
+    Window_SetTilemapEntryFar(help, SPLIT_CONSTANT(0xf296), 7, 1, 0);
   }
 
   for (;;) {
@@ -418,9 +418,9 @@ s32 Func_081039fc(u32 mode) {
                                     list->width - pageCounts[page] + index - 2,
                                     -1, 0);
         }
-        Window_SetTilemapEntryFar((s32)list, SPLIT_CONSTANT(0xf100, 40),
+        Window_SetTilemapEntryFar((s32)list, SPLIT_CONSTANT(0xf128),
                                   list->width - pageCounts[page] - 3, -1, 0);
-        Window_SetTilemapEntryFar((s32)list, SPLIT_CONSTANT(0xf100, 41), list->width - 2, -1, 0);
+        Window_SetTilemapEntryFar((s32)list, SPLIT_CONSTANT(0xf129), list->width - 2, -1, 0);
         UiRender_MarkRow(work, list->y);
       }
     }

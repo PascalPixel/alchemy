@@ -1,6 +1,7 @@
 /// @file
 /// Flashes an actor, then raises eight puffs over another and sets a flag.
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "field_sprite.h"
 #include "fixed_math.h"
@@ -71,7 +72,7 @@ void Func_02002698(s32 id, s32 center, s32 flag) {
       Actor_SetSingleChildFlags(object, 0);
       Func_02003ba0(object, 2);
       Func_02003ba8(object, gData_02003f14);
-      object->scaleX = 0xb333;
+      object->scaleX = SPLIT_CONSTANT(0xb333);
       object->scaleY = 0xb333;
       effect->sprite->priority = 1;
       effect->velocityX = 0;

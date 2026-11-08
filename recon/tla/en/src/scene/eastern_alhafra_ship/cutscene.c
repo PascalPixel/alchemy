@@ -99,7 +99,7 @@ void Func_020004f4(void) {
   map->minZ = 0;
   map->maxZ = 0x4000000;
   Func_020031d8(8, 0, 10);
-  Call3((void (*)())Actor_SetPositionAndReset, 4, 456, 408);
+  CallLr3((void (*)())Actor_SetPositionAndReset, 4, 456, 408);
   Call4((void (*)())Func_02003248, 25, 0, -16, 0x4000);
   Call4((void (*)())Func_02003248, 5, 16, 0, 0x4000);
   Call4((void (*)())Func_02003248, 6, 16, -16, 0x4000);
@@ -224,7 +224,7 @@ void Func_020004f4(void) {
   FieldEvent_Wait(20);
   Func_020031d8(6, 0, 10);
   Value3((s32 (*)())Func_020031f8, 8, 0x101, 30);
-  Func_020031d8(SPLIT_CONSTANT(0x1000, 8), 0, 10);
+  Func_020031d8(SPLIT_CONSTANT(0x1008), 0, 10);
   Motion_SetVarCbAndRefresh(5, 2);
   FieldEvent_Wait(10);
   Func_020031d8(5, 0, 10);
@@ -251,18 +251,18 @@ void Func_020004f4(void) {
   Actor_ArmCallback(25, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   Value3((s32 (*)())Func_020031f8, 25, 0x102, 40);
-  Call3((void (*)())Func_020031d8, 0x1019, 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1019), 0, 10);
   Call3((void (*)())Actor_ArmCallback, 25, FACING_SOUTH, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_SOUTH, 0);
   Actor_ArmCallback(6, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   Actor_Jump(25, 6, 15);
   Actor_Jump(25, 6, 23);
-  Call3((void (*)())Func_020031d8, 0x1019, 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1019), 0, 10);
   Func_020031f8(8, 0x103, 50);
   FieldEvent_Wait(10);
   Value3((s32 (*)())Func_020031f8, 25, 0x109, 50);
-  Value2((s32 (*)())FieldMessage_ShowAtActor, 0x1019, 0);
+  Value2((s32 (*)())FieldMessage_ShowAtActor, SPLIT_CONSTANT(0x1019), 0);
   result = Value2((s32 (*)())Event_AskYesNoWithActorAnimation, 4, 0);
   if (result == 0) {
     FieldEvent_Wait(20);
@@ -284,7 +284,7 @@ void Func_020004f4(void) {
   Func_020031d8(9, 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_Wait(10);
-  Func_020031d8(SPLIT_CONSTANT(0x1000, 8), 0, 10);
+  Func_020031d8(SPLIT_CONSTANT(0x1008), 0, 10);
   Call3((void (*)())Actor_OffsetPositionAndReset, 8, 0, -16);
   Actor_OffsetPositionAndReset(9, 0, -16);
   FieldEvent_Wait(10);
@@ -383,21 +383,21 @@ void Func_02000c5c(void) {
   Func_020031d8(6, 0, 10);
   Motion_SetModeAndWaitAnimation(25, 3);
   FieldEvent_Wait(10);
-  Func_020031d8(SPLIT_CONSTANT(0x1000, 25), 0, 10);
+  Func_020031d8(SPLIT_CONSTANT(0x1019), 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 8), 0, 10);
-  Call3((void (*)())Actor_ArmCallback, 4, SPLIT_CONSTANT(0xbf00, 255), 0);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1008), 0, 10);
+  Call3((void (*)())Actor_ArmCallback, 4, SPLIT_CONSTANT(0xbfff), 0);
   Actor_ArmCallback(5, 0xc001, 0);
   FieldEvent_Wait(50);
   Actor_ArmCallback(4, FACING_SOUTH, 0);
   Actor_ArmCallback(5, FACING_SOUTH, 0);
   FieldEvent_Wait(40);
   Motion_SetModeAndWaitAnimation(8, 4);
-  Call3((void (*)())Func_020031d8, 0x1008, 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1008), 0, 10);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_Wait(10);
-  Func_020031d8(0x1008, 0, 10);
+  Func_020031d8(SPLIT_CONSTANT(0x1008), 0, 10);
   Motion_SetVarCbAndRefresh(5, 2);
   FieldEvent_Wait(10);
   Func_020031d8(5, 0, 10);
@@ -600,7 +600,7 @@ L_0200903c:
   Func_020031d8(16, 0, 10);
   Motion_SetVarCbAndRefresh(18, 2);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 18), 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1012), 0, 10);
   Call3((void (*)())Actor_ArmCallback, 16, FACING_NORTHWEST, 0);
   FieldEvent_Wait(20);
   Func_020031d8(16, 0, 10);
@@ -746,20 +746,20 @@ L_0200903c:
   Func_020031d8(16, 0, 10);
   Actor_Jump(18, 6, 15);
   Actor_Jump(18, 6, 23);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 18), 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1012), 0, 10);
   Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(464), -1, PIXELS(424),
         1);
   Func_02003218();
   FieldEvent_Wait(20);
   Motion_SetVarCbAndRefresh(8, 2);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 8), 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1008), 0, 10);
   Call3((void (*)())Actor_ArmCallback, 25, FACING_SOUTH, 0);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_SOUTH, 0);
   Call3((void (*)())Actor_ArmCallback, 5, FACING_SOUTH, 0);
   Call3((void (*)())Actor_ArmCallback, 4, FACING_SOUTH, 0);
   FieldEvent_Wait(30);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 8), 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1008), 0, 10);
   object10 = Actor_GetById(8);
   Call3((void (*)())Func_02003198, 8,
         ((*(s16 *)((u8 *)object10 + 10) << 16) + 0x140000),
@@ -807,10 +807,10 @@ L_0200903c:
   FieldEvent_Wait(10);
   Func_020031d8(17, 0, 10);
   Motion_SetModeAndWaitAnimation(8, 4);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 8), 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1008), 0, 10);
   Motion_SetVarCbAndRefresh(18, 2);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 18), 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1012), 0, 10);
   Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(464), -1, PIXELS(400),
         1);
   Func_02003218();
@@ -825,11 +825,11 @@ L_0200903c:
   FieldEvent_Wait(30);
   Motion_SetModeAndWaitAnimation(8, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 8), 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1008), 0, 10);
   Motion_SetVarCbAndRefresh(10, 2);
   FieldEvent_Wait(20);
   Value3((s32 (*)())Func_020031f8, 8, 0x104, 40);
-  Func_020031d8(SPLIT_CONSTANT(0x1000, 8), 0, 10);
+  Func_020031d8(SPLIT_CONSTANT(0x1008), 0, 10);
   Motion_SetModeAndWaitAnimation(10, 3);
   FieldEvent_Wait(30);
   Actor_ArmCallback(8, FACING_SOUTH, 0);
@@ -961,10 +961,10 @@ L_0200903c:
   FieldEvent_Wait(20);
   Motion_SetVarCbAndRefresh(16, 2);
   FieldEvent_Wait(10);
-  Func_020031d8(SPLIT_CONSTANT(0x1000, 16), 0, 10);
+  Func_020031d8(SPLIT_CONSTANT(0x1010), 0, 10);
   Motion_SetModeAndWaitAnimation(18, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 18), 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1012), 0, 10);
   Actor_ArmCallback(16, FACING_NORTHWEST, 0);
   FieldEvent_Wait(30);
   Motion_SetModeAndWaitAnimation(16, 3);
@@ -994,7 +994,7 @@ L_0200903c:
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(18, 3);
   FieldEvent_Wait(10);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 18), 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1012), 0, 10);
   Actor_StartRepeatedMotion(19, 3);
   Call2((void (*)())Func_02003200, 19, 0x102);
   FieldEvent_Wait(40);
@@ -1004,7 +1004,7 @@ L_0200903c:
   FieldEvent_Wait(20);
   Motion_SetVarCbAndRefresh(18, 2);
   FieldEvent_Wait(10);
-  Func_020031d8(SPLIT_CONSTANT(0x1000, 18), 0, 10);
+  Func_020031d8(SPLIT_CONSTANT(0x1012), 0, 10);
   Value3((s32 (*)())Func_020031f8, 19, 0x102, 30);
   Func_020031d8(19, 0, 10);
   Actor_ArmCallback(17, FACING_NORTH, 0);
@@ -1017,7 +1017,7 @@ L_0200903c:
   Func_020031d8(19, 0, 10);
   Actor_SetModeById(17, 3);
   Motion_SetModeAndWaitAnimation(18, 3);
-  Call3((void (*)())Actor_SetSpeedParameters, 19, SPLIT_CONSTANT(0x1cc00, 204), SPLIT_CONSTANT(0xe600, 102));
+  Call3((void (*)())Actor_SetSpeedParameters, 19, SPLIT_CONSTANT(0x1cccc), SPLIT_CONSTANT(0xe666));
   Call3((void (*)())Actor_CommitPositionAndActivate, 19, 0, -32);
   Call3((void (*)())Actor_CommitPositionAndActivate, 19, -16, 0);
   Func_02003198(19, 0, 0);
@@ -1129,7 +1129,7 @@ L_0200903c:
   FieldEvent_Wait(10);
   Func_020031d8(17, 0, 10);
   Call3((void (*)())Actor_ArmCallback, 25, 0x3000, 0);
-  Actor_ArmCallback(6, SPLIT_CONSTANT(0x4000, 1), 0);
+  Actor_ArmCallback(6, SPLIT_CONSTANT(0x4001), 0);
   FieldEvent_Wait(30);
   Actor_SetModeById(25, 3);
   Actor_SetModeById(6, 3);
@@ -1271,10 +1271,10 @@ L_0200abc0:
   FieldEvent_Wait(10);
   Actor_ArmCallback(25, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 25), 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1019), 0, 10);
   FieldEvent_Wait(20);
   Value3((s32 (*)())Func_020031f8, 25, 0x106, 30);
-  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1000, 25), 0, 10);
+  Call3((void (*)())Func_020031d8, SPLIT_CONSTANT(0x1019), 0, 10);
   Call3((void (*)())Actor_ArmCallback, 6, FACING_WEST, 0);
   FieldEvent_Wait(20);
   Motion_SetModeAndWaitAnimation(6, 3);
@@ -1286,7 +1286,7 @@ L_0200abc0:
   Actor_ArmCallback(4, FACING_EAST, 0);
   Actor_ArmCallback(25, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
-  Func_020031d8(SPLIT_CONSTANT(0x1000, 25), 0, 10);
+  Func_020031d8(SPLIT_CONSTANT(0x1019), 0, 10);
   Actor_ArmCallback(6, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   Motion_SetVarCbAndRefresh(6, 2);
@@ -1312,7 +1312,7 @@ L_0200afe8:
   Actor_SetModeById(6, 3);
   Motion_SetModeAndWaitAnimation(4, 3);
   FieldEvent_Wait(30);
-  Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, SPLIT_CONSTANT(0x9999));
   Actor_SetModeById(5, 2);
   object20 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object20 == 0)
@@ -1322,7 +1322,7 @@ L_0200afe8:
 L_0200b03c:
   Actor_WaitForMoveById(5);
   Func_02003198(5, 0, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, SPLIT_CONSTANT(0x9999));
   Actor_SetModeById(6, 2);
   object21 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object21 == 0)
@@ -1332,7 +1332,7 @@ L_0200b03c:
 L_0200b07a:
   Actor_WaitForMoveById(6);
   Func_02003198(6, 0, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 25, 0x13333, 0x9999);
+  Call3((void (*)())Actor_SetSpeedParameters, 25, 0x13333, SPLIT_CONSTANT(0x9999));
   Actor_SetModeById(25, 2);
   object22 = Actor_GetById(gMainRoutineWork.currentOwner);
   if (object22 == 0)

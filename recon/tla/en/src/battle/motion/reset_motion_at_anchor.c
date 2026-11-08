@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -45,7 +46,7 @@ void ObjMotRst(s32 slotId) {
   zero = 0;
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
-  object->verticalMotionStrength = 0xab85;
+  object->verticalMotionStrength = SPLIT_CONSTANT(0xab85);
   object->velocityY = zero;
   object->verticalMotionPhase = zero;
   object->autoFaceMotion = zero;
@@ -67,7 +68,7 @@ void BattleMotion_SetupEscapeObject(s32 objectId) {
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
   object->velocityY = 0x50000;
-  object->verticalMotionStrength = 0x7851;
+  object->verticalMotionStrength = SPLIT_CONSTANT(0x7851);
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_ResetMotion(object);

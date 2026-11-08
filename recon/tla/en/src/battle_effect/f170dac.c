@@ -1,4 +1,5 @@
 #include "battle_effect.h"
+#include "call.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
 #include "io_reg.h"
@@ -290,7 +291,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectArgument *effect) {
 
         point[1] = caster->y - Trig_Cos(angle) * 40 + 0x200000;
         point[2] = caster->z + Trig_Sin(angle) * 40;
-        EffectPosition_ProjectPoint(point, &ring);
+        ValueLr2((s32 (*)())EffectPosition_ProjectPoint, (s32)(point), (s32)(&ring));
         ring.x >>= 1;
         if (ring.depth <= 159) {
           ring.depth = 160;

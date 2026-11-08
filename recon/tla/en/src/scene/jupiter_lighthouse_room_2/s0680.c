@@ -17,6 +17,6 @@ void Func_02000680(s32 unused, s32 id) {
       wait(1);
     }
     Func_02000b28(id);
-    Flag_Set(SPLIT_CONSTANT(0xa00, 3));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 3)));
   }
 }

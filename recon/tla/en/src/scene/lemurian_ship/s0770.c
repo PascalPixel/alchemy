@@ -41,7 +41,7 @@ void Func_02000828(void) { Func_02002dc0(gData_0200301e); }
 
 void Func_02000838(void) {
   LemurianShip_BlendStart(110, 1, 3, 1, 110, 4);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 18));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 18)));
 }
 
 void Func_02000860(void) { Func_02002dc0(gData_02003034); }

@@ -98,7 +98,7 @@ void Func_02004ddc(void) {
         x = work->linkX + 0xc0000;
       else
         x = work->linkX - 0xc0000;
-      if (!GameFlag_Test(SPLIT_CONSTANT(0x200, 18))) {
+      if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 18)))) {
         z = work->linkZ + 0x100000;
         rival->action = work->linkAngle;
       } else {

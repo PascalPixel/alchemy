@@ -9,7 +9,7 @@ void Func_02001010(void) {
   Func_02002968(61, 96, 3, 13, 32, 96);
   Actor_SetPartAttribute(Actor_GetById(12), 5);
   Func_02001f60(12);
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 107));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa6b));
 }
 
 void Func_02002998(void);

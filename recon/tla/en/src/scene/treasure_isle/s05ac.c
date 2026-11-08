@@ -23,7 +23,7 @@ void Func_020005ac(void) {
     Func_02000fcc();
     Func_0200104c(0);
     Func_0200043c(gData_0200117c, 0);
-    Flag_Set(SPLIT_CONSTANT(0x204, 255));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x204, 255)));
     count = 1;
   }
   if (!Flag_IsSet(0x304)) {
@@ -39,7 +39,7 @@ void Func_020005ac(void) {
       Func_02000fcc();
     Func_0200104c(0);
     Func_0200043c(gData_0200117c, 2);
-    Flag_Set(SPLIT_CONSTANT(0x300, 5));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 5)));
     count++;
   }
   if (!Flag_IsSet(0x306)) {
@@ -47,7 +47,7 @@ void Func_020005ac(void) {
       Func_02000fcc();
     Func_0200104c(0);
     Func_0200043c(gData_0200117c, 3);
-    Flag_Set(SPLIT_CONSTANT(0x300, 6));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 6)));
     count++;
   }
   if (count != 0)
@@ -64,7 +64,7 @@ void Func_02000684(void) {
     Func_02000fcc();
     Func_0200104c(0);
     Func_0200043c(gData_020011cc, 0);
-    Flag_Set(SPLIT_CONSTANT(0x300, 10));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 10)));
     count = 1;
   }
   if (!Flag_IsSet(0x30b)) {
@@ -72,7 +72,7 @@ void Func_02000684(void) {
       Func_02000fcc();
     Func_0200104c(0);
     Func_0200043c(gData_020011cc, 1);
-    Flag_Set(SPLIT_CONSTANT(0x20c, 255));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x20c, 255)));
     count++;
   }
   if (!Flag_IsSet(0x30c)) {
@@ -92,7 +92,7 @@ void Func_02000728(void) {
     Func_02000fcc();
     Func_0200104c(0);
     Func_0200043c(gData_0200117c, 4);
-    Flag_Set(SPLIT_CONSTANT(0x208, 255));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0x208, 255)));
     Func_02000fd4();
   }
 }
@@ -109,9 +109,9 @@ void Func_02000760(s32 unused, s32 id) {
     if (id == 8 && object->x >> 20 == 16)
       GameFlag_SetBit(0x300);
     if (id == 9 && object->x >> 20 == 20)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 1)));
     if (id == 10 && object->x >> 20 == 27)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 2));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 2)));
   }
   /* FAKEMATCH: the memory barriers before the second, third and fourth room
    * tests make each reload gMainRoutineWork, as the native does; with any two
@@ -126,11 +126,11 @@ void Func_02000760(s32 unused, s32 id) {
   __asm__ volatile("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom3) {
     if (id == 10 && object->x >> 19 == 83)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 9));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 9)));
   }
   __asm__ volatile("" : : : "memory");
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov6afRoom4) {
     if (id == 8 && object->x >> 19 == 87)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 13));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 13)));
   }
 }

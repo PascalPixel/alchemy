@@ -44,15 +44,15 @@ L_0200a02e:
   Func_02005990(5);
   goto L_0200a07c;
 L_0200a042:
-  t7 = GameFlag_Test(SPLIT_CONSTANT(0x900, 255));
+  t7 = GameFlag_Test(SPLIT_CONSTANT(0x9ff));
   if (t7 == 0)
     goto L_0200a07c;
-  t8 = GameFlag_Test(SPLIT_CONSTANT(0x184, 255));
+  t8 = GameFlag_Test(SPLIT_CONSTANT(0x283));
   if (t8 == 0)
     goto L_0200a064;
   Func_02001754(0);
 L_0200a064:
-  t10 = GameFlag_Test(SPLIT_CONSTANT(0x300, 133));
+  t10 = GameFlag_Test(SPLIT_CONSTANT(0x385));
   if (t10 == 0)
     goto L_0200a078;
   Func_02002db0();
@@ -64,7 +64,7 @@ L_0200a07c:
   FIELD_AT(t13, u8, 35) = (64 | FIELD_AT(t13, u8, 35));
   Func_02001fc4(1);
   Func_020006b4(10);
-  t16 = GameFlag_Test(SPLIT_CONSTANT(0x900, 252));
+  t16 = GameFlag_Test(SPLIT_CONSTANT(0x9fc));
   if (t16 == 0)
     goto L_0200a0bc;
   Call3(Func_020058e0, 10, PIXELS(136), PIXELS(328));

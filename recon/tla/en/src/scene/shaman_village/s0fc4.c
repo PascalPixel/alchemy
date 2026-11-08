@@ -5,7 +5,7 @@ void Func_02004a94(u32 price);
 void Func_0200487c(u32 value, s32 digits);
 
 void Func_02000fc4(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 254))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 254)))) {
     if (Func_02000f94()) {
       Func_02004a84(11, 13);
     } else {

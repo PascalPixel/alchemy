@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "field.h"
 #include "types.h"
 #include "ram_buffer.h"
@@ -97,7 +98,7 @@ void Func_080d46a4(s32 zoom, s32 frames) {
     return;
   {
     s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14Entry;
-    result = ratio(zoom, 0x10000);
+    result = ValueLr2((s32 (*)())ratio, (s32)(zoom), (s32)(0x10000));
   }
   map->zoomFrom = map->zoomTo;
   map->zoomTo = result;

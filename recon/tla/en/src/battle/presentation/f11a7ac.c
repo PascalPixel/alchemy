@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "motobj.h"
 #include "objdisp.h"
 #include "battle_unit.h"
@@ -83,7 +84,7 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
       break;
     case 5:
     default:
-      sprite = 513;
+      sprite = SPLIT_CONSTANT(513);
       break;
     }
     if ((u32)unitId > 7)
@@ -91,7 +92,7 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   }
 
   actor->scale = 0x10000;
-  actor->effect = 686;
+  actor->effect = SPLIT_CONSTANT(686);
 
   switch (unit->enemyId) {
   case 0:
@@ -107,10 +108,10 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = 0x10000;
     break;
   case 7:
-    actor->scale = 0x10ccc;
+    actor->scale = SPLIT_CONSTANT(0x10ccc);
     break;
   case 5:
-    actor->scale = 0xf333;
+    actor->scale = SPLIT_CONSTANT(0xf333);
     break;
   case 4:
     actor->scale = 0x10000;
@@ -134,7 +135,7 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = 0x19999;
     break;
   case 302:
-    actor->scale = 0x18ccc;
+    actor->scale = SPLIT_CONSTANT(0x18ccc);
     break;
   case 339:
     actor->scale = 0x13333;
@@ -146,10 +147,10 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = 0x18000;
     break;
   case 347:
-    actor->scale = 0x1cccc;
+    actor->scale = SPLIT_CONSTANT(0x1cccc);
     break;
   case 358:
-    actor->scale = 0x1cccc;
+    actor->scale = SPLIT_CONSTANT(0x1cccc);
     break;
   case 245:
     actor->scale = 0x10000;
@@ -215,16 +216,16 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = 0x18000;
     break;
   case 311:
-    actor->scale = 0x14ccc;
+    actor->scale = SPLIT_CONSTANT(0x14ccc);
     break;
   case 323:
     actor->scale = 0x13333;
     break;
   case 341:
-    actor->scale = 0x10ccc;
+    actor->scale = SPLIT_CONSTANT(0x10ccc);
     break;
   case 342:
-    actor->scale = 0x10ccc;
+    actor->scale = SPLIT_CONSTANT(0x10ccc);
     break;
   case 343:
     actor->scale = 0x11999;
@@ -248,7 +249,7 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = 0x18000;
     break;
   case 351:
-    actor->scale = 0x18ccc;
+    actor->scale = SPLIT_CONSTANT(0x18ccc);
     break;
   case 268:
     actor->scale = 0x14000;
@@ -269,7 +270,7 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 68:
   case 69:
   case 70:
-    actor->scale = 0xf333;
+    actor->scale = SPLIT_CONSTANT(0xf333);
     break;
   case 218:
   case 219:
@@ -277,7 +278,7 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 221:
   case 222:
   case 223:
-    actor->scale = 0x14ccc;
+    actor->scale = SPLIT_CONSTANT(0x14ccc);
     break;
   case 209:
   case 210:
@@ -329,13 +330,13 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 104:
   case 105:
   case 106:
-    actor->effect = 685;
+    actor->effect = SPLIT_CONSTANT(685);
     actor->scale = 0x12666;
     break;
   case 107:
   case 108:
   case 109:
-    actor->scale = 0x1028f;
+    actor->scale = SPLIT_CONSTANT(0x1028f);
     break;
   case 80:
     actor->scale = 0x14000;
@@ -360,13 +361,13 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 158:
   case 159:
   case 160:
-    actor->scale = 0xcccc;
+    actor->scale = SPLIT_CONSTANT(0xcccc);
     break;
   case 378:
   case 379:
   case 380:
   case 381:
-    actor->scale = 0xcccc;
+    actor->scale = SPLIT_CONSTANT(0xcccc);
     break;
   case 74:
   case 75:
@@ -378,7 +379,7 @@ void BattleObject_Make(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 369:
   case 373:
   case 376:
-    actor->scale = 0x16666;
+    actor->scale = SPLIT_CONSTANT(0x16666);
     break;
   }
 

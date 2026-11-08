@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -75,7 +76,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, s32 window, s32 x,
 
   buf = HeapSlot_AllocEwram(56, 0x400);
   sprite = 0;
-  Dma_Set(gShop_PriceTiles, buf, DMA_COPY_WORDS(64), REG_DMA3);
+  Dma_Set(gShop_PriceTiles, buf, DMA_COPY_WORDS(64), SPLIT_CONSTANT(REG_DMA3));
   Shop_CopyGlyphs(value % 10, buf, 0);
   value = value / 10;
   if (value != 0) {
@@ -109,7 +110,7 @@ void Shop_RestoreSceneTiles(s32 layer) {
   u8 *work = Ram_HeapSlots->block32;
   u8 *saved = work + 0xe00;
 
-  Dma_Set(saved, map + 0x222, DMA_COPY_WORDS(336), REG_DMA3);
+  Dma_Set(saved, map + 0x222, DMA_COPY_WORDS(336), SPLIT_CONSTANT(REG_DMA3));
   Dma_Set(saved, work + 0x380, DMA_COPY_WORDS(672), REG_DMA3);
   BattleEffect_ApplyColorToTargetBufferFar(layer, 1);
   BattleEffect_StartBufferInterpolationFar(16);
@@ -117,6 +118,6 @@ void Shop_RestoreSceneTiles(s32 layer) {
 
 void Shop_InitializeEffect(void) {
   BattleEffect_ApplyColorToTargetBufferFar(
-      (s32)Ram_HeapSlots->eventWork + 0x222, 1);
+      (s32)Ram_HeapSlots->eventWork + SPLIT_CONSTANT(0x222), 1);
   BattleEffect_StartBufferInterpolationFar(16);
 }

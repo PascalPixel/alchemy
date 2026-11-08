@@ -58,7 +58,7 @@ next:
   entry = (u16)Map_ReadEditU16(&cursor);
   if (((entry + 1) & 0xffff) == 0)
     return;
-  if (GameFlag_Test(entry & SPLIT_CONSTANT(0xf00, 255)) != 0) {
+  if (GameFlag_Test(entry & SPLIT_CONSTANT(SPLIT_CONSTANT(0xf00, 255))) != 0) {
     srcX = *cursor++;
     srcY = *cursor++;
     dstX = *cursor++;

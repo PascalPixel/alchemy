@@ -15,7 +15,7 @@ void Func_020000ec(void) {
   object->priorityFlags = 0;
   object->motionFlags = 0;
   Call6((void (*)())Func_0200106c, 24, 32, 1, 1, 22, 32);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x122, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x221));
 }
 
 void Func_02000124(void) {
@@ -24,5 +24,5 @@ void Func_02000124(void) {
    * differ in tla-en. */
   Func_0200106c(30, 35, 1, 1, 28, 34);
   Func_0200106c(30, 34, 1, 1, 28, 33);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 34));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x222));
 }

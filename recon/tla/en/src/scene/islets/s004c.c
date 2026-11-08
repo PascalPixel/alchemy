@@ -13,7 +13,7 @@ u8 *Func_0200004c(void) {
   if (scene == (s32)&SceneId_Ov674Room4)
     return gData_020049c4;
   if (scene == (s32)&SceneId_Ov674Room5) {
-    if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 165)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0xaa5)))
       gData_02004a84[46] = 1;
     return gData_02004a84;
   }
@@ -41,6 +41,6 @@ void Func_020000d8(void) {
     Func_02003e24(9, 1, 4, 1, 9, 10);
     Func_02003e24(9, 8, 4, 1, 9, 9);
     Func_02003e24(9, 64, 4, 1, 9, 74);
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 44));
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa2c));
   }
 }

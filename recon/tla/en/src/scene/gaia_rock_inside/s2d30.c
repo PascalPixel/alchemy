@@ -9,13 +9,13 @@ s32 GameFlag_Test(s32 flag);
 void Func_02004e04(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void Func_02002d30(void) {
-  u8 a = GameFlag_Test(SPLIT_CONSTANT(0x900, 188));
+  u8 a = GameFlag_Test(SPLIT_CONSTANT(0x9bc));
   u8 third = GameFlag_Test(0x9be);
-  s32 b = GameFlag_Test(0x9bd);
+  s32 b = GameFlag_Test(SPLIT_CONSTANT(0x9bd));
   s8 first = a;
   s8 sideThird = third;
   u8 sumLeft = b + first;
-  s32 d = GameFlag_Test(SPLIT_CONSTANT(0x8c0, 255));
+  s32 d = GameFlag_Test(SPLIT_CONSTANT(0x9bf));
   u8 sumRight = sideThird + d;
   s8 left = sumLeft;
   s8 right = sumRight;

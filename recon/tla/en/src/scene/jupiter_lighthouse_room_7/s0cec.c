@@ -30,11 +30,11 @@ void Func_02000cec(void) {
   if (second->y == 0 && x == second->x >> 20 && z == second->z >> 20)
     found = 1;
   if (found == 0) {
-    if (x == 35 && z == 15 && (GameFlag_Test(2576) || GameFlag_Test(SPLIT_CONSTANT(0xa00, 17))))
+    if (x == 35 && z == 15 && (GameFlag_Test(2576) || GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 17)))))
       found = 2;
-    if (x == 31 && z == 16 && (GameFlag_Test(SPLIT_CONSTANT(0xa00, 18)) || GameFlag_Test(2579)))
+    if (x == 31 && z == 16 && (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 18))) || GameFlag_Test(2579)))
       found = 2;
-    if (x == 33 && z == 10 && (GameFlag_Test(SPLIT_CONSTANT(0xa00, 20)) || GameFlag_Test(2581)))
+    if (x == 33 && z == 10 && (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 20))) || GameFlag_Test(2581)))
       found = 2;
     if (found == 0) {
       Func_02002bec();

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 
 extern const u16 gData_080f39c4[];
@@ -23,7 +24,7 @@ void Func_080e7fec(s32 x, s32 y) {
     /* FAKEMATCH(barrier): an empty asm taking the fill routine's entry; without
      * it, 4 of 66 instructions differ in tla-en. */
     asm volatile("" : : "l"(fill));
-    fill((void *)0x06002000, 0x400, 0);
+    ValueLr3((s32 (*)())fill, (s32)((void *)0x06002000), (s32)(0x400), (s32)(0));
   } while (0);
   for (row = 0, sy = y; row < 16; row++, sy++) {
     if (sy < 0)

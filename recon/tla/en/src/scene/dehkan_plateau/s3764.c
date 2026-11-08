@@ -104,8 +104,8 @@ void Func_02003764(void) {
   opts = &options;
   opts->palette = 7;
   opts->update = Effect_AdvanceMotion;
-  opts->startScaleX = SPLIT_CONSTANT(0xa300, 215);
-  opts->startScaleY = 0xa3d7;
+  opts->startScaleX = SPLIT_CONSTANT(0xa3d7);
+  opts->startScaleY = SPLIT_CONSTANT(0xa3d7);
   opts = &options;
   spawn = 1;
   i = 0;
@@ -136,7 +136,7 @@ loop:
   Func_02003cd0(gMainRoutineWork.currentOwner, 0x101);
   Actor_SetModeById(gMainRoutineWork.currentOwner, 49);
   Call3((void (*)())Func_02003c00, 0x50000, 0x50000, 0x10000);
-  Call3((void (*)())Func_02003c00, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+  Call3((void (*)())Func_02003c00, -1, -1, SPLIT_CONSTANT(0xe666));
   Func_02003c08();
   Func_02003cd0(gMainRoutineWork.currentOwner, 0x100);
   leader->gravity = 0x10000;

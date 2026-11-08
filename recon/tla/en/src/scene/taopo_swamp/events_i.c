@@ -13,14 +13,14 @@ void Func_02001684(void) {
     s32 z = 0x1900000 - offset;
     s32 y = 0xa00000;
     struct Actor *object = Func_02002808(0x12d, x, y, z);
-    s32 scale = SPLIT_CONSTANT(0x5400, 122);
+    s32 scale = SPLIT_CONSTANT(0x547a);
 
     if (object != NULL) {
       object->scaleX = scale;
       object->scaleY = scale;
       object->motionFlags = 2;
       object->terrainHeight = 0xffc00000;
-      object->gravity = SPLIT_CONSTANT(0x7300, 51);
+      object->gravity = SPLIT_CONSTANT(0x7333);
       Func_02002800(object, gData_02002a6c);
       Actor_SetSingleChildFlags(object, 0);
     }
@@ -34,14 +34,14 @@ void Func_020016fc(void) {
     s32 z = 0x1600000 - offset;
     s32 y = 0xa00000;
     struct Actor *object = Func_02002808(0x12d, x, y, z);
-    s32 scale = SPLIT_CONSTANT(0x5400, 122);
+    s32 scale = SPLIT_CONSTANT(0x547a);
 
     if (object != NULL) {
       object->scaleX = scale;
       object->scaleY = scale;
       object->motionFlags = 2;
       object->terrainHeight = 0xffc00000;
-      object->gravity = SPLIT_CONSTANT(0x7300, 51);
+      object->gravity = SPLIT_CONSTANT(0x7333);
       Func_02002800(object, gData_02002a6c);
       Actor_SetSingleChildFlags(object, 0);
     }

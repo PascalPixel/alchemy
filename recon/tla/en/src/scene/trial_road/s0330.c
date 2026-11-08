@@ -31,7 +31,7 @@ s32 Func_02000330(void) {
   t1 = Actor_GetById(gMainRoutineWork.currentOwner);
   v_r5 = t1;
   v_r6 = FIELD_AT(0x3000000, s32, 108);
-  t2 = GameFlag_Test(SPLIT_CONSTANT(0x900, 255));
+  t2 = GameFlag_Test(SPLIT_CONSTANT(0x9ff));
   if (t2 == 0)
     goto L_02008400;
   Func_02005880();
@@ -61,6 +61,6 @@ s32 Func_02000330(void) {
   Func_02005990(9);
   return 1;
 L_02008400:
-  GameFlag_SetBit(SPLIT_CONSTANT(0x182, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x281));
   return 0;
 }

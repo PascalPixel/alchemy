@@ -10,7 +10,7 @@ void Func_02002318(void) {
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xd30) == -1) {
     if (!GameFlag_Test(0x304))
       Func_02004da0(22, 0, 0);
-    if (!GameFlag_Test(SPLIT_CONSTANT(0x204, 255)))
+    if (!GameFlag_Test(SPLIT_CONSTANT(0x303)))
       Func_02004da0(21, 0, 0);
   }
 }
@@ -48,7 +48,7 @@ void Func_02002364(void) {
     }
     Func_02004e58(460, 3);
     Actor_SetModeById(12, 2);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 249));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x9f9));
   }
   Func_02004d48();
 }

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 
 s16 Event_GetSpecialValue(void) { return gMainRoutineWork.special; }
@@ -24,7 +25,7 @@ void Func_080ca4a8(void) {
   if (entry != 0 && entry != target) {
     do {
       if (entry & 0x80000000) {
-        result = entry & 0xFFFF;
+        result = entry & SPLIT_CONSTANT(0xFFFF);
       }
       entry = *table++;
     } while (entry != 0 && entry != target);

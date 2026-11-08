@@ -27,7 +27,7 @@ s32 Func_02000bf0(void) {
     Func_02000e04(15);
     Func_02000e04(16);
   }
-  if (Flag_IsSet(SPLIT_CONSTANT(0xa00, 9))) {
+  if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 9)))) {
     Func_020028f8(11, PIXELS(216), PIXELS(552));
     Func_02000e04(11);
   }

@@ -11,5 +11,5 @@ void Func_02000cfc(void) {
    * a direct call and a forwarding inline load it first. */
   __asm__ volatile("" : "+r"(b), "+r"(c));
   Func_02002178(1, b, c);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x104, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x203));
 }

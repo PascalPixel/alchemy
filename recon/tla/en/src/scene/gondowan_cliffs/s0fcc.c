@@ -39,7 +39,7 @@ void Func_02000fcc(s32 unused, s32 value) {
   Heap_Release(buffer);
   work->block = Heap_AllocEwram(0x3c0);
   work->value = value;
-  Task_Add((s32)Func_02000be4, SPLIT_CONSTANT(0x400, 141));
+  Task_Add((s32)Func_02000be4, SPLIT_CONSTANT(0x48d));
   Task_Add((s32)Func_02000dac, 0x480);
   Actor_GetById(Func_02001314())->priorityFlags |= 0x40;
 }

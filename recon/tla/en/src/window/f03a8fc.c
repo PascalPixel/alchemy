@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "window.h"
 #include "glyph.h"
@@ -40,14 +41,14 @@ s32 Func_0803a8fc(s32 code, u32 *out) {
     colour = work->colour;
   }
   if (work->outline == 1) {
-    Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
+    ValueLr3((s32 (*)())Iwram_ExpandBitRuns, (s32)(glyph), (s32)(pixels + 49), (s32)(shadowColour));
     Iwram_ExpandBitRuns(glyph, pixels + 50, shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
     Iwram_ExpandBitRuns(glyph, pixels + 33, colour);
     width++;
   } else {
-    Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
-    Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
+    ValueLr3((s32 (*)())Iwram_ExpandBitRuns, (s32)(glyph), (s32)(pixels + 49), (s32)(shadowColour));
+    ValueLr3((s32 (*)())Iwram_ExpandBitRuns, (s32)(glyph), (s32)(pixels + 32), (s32)(colour));
   }
   if ((u16)secondIndex != 0) {
     glyph = (const u8 *)&gFont_Glyphs[-32] + ((u16)secondIndex << 5);

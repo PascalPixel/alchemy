@@ -62,12 +62,12 @@ void Func_0200225c(void) {
   Actor_SetModeById(8, 3);
   FieldEvent_Wait(40);
   Func_02005014(191);
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 189))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x9bd))) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16Far();
       wait(1);
     }
-    Call3(Actor_SetSpeedParameters, 8, 0x4000, SPLIT_CONSTANT(0xc00, 204));
+    Call3(Actor_SetSpeedParameters, 8, 0x4000, SPLIT_CONSTANT(0xccc));
     Actor_OffsetPositionAndResetMotion(8, 24, 0);
     Call6(Func_02004dfc, 27, 23, 1, 1, 28, 22);
     Func_02004dfc(32, 16, 2, 1, 29, 22);
@@ -95,13 +95,13 @@ void Func_0200225c(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Func_02004ebc(12, 0, 0);
-    if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 39))) {
+    if (!GameFlag_Test(SPLIT_CONSTANT(0x927))) {
       GameFlag_SetBit(0x308);
       FieldEvent_Wait(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 189));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x9bd));
       Func_02004e64();
     }
   } else {
@@ -150,12 +150,12 @@ void Func_020024b8(void) {
   Actor_SetModeById(9, 3);
   FieldEvent_Wait(40);
   Func_02005014(191);
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 190))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x9be))) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16Far();
       wait(1);
     }
-    Call3(Actor_SetSpeedParameters, 9, 0x4000, SPLIT_CONSTANT(0xc00, 204));
+    Call3(Actor_SetSpeedParameters, 9, 0x4000, SPLIT_CONSTANT(0xccc));
     Call3(Actor_ResetAndSetPosition, 9, 608, 352);
     Call6(Func_02004dfc, 35, 23, 1, 1, 36, 22);
     Func_02004dfc(32, 16, 2, 1, 37, 22);
@@ -183,13 +183,13 @@ void Func_020024b8(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(12);
     Func_02004ebc(12, 0, 0);
-    if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 39))) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 9));
+    if (!GameFlag_Test(SPLIT_CONSTANT(0x927))) {
+      GameFlag_SetBit(SPLIT_CONSTANT(0x309));
       FieldEvent_Wait(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 190));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x9be));
       Func_02004e64();
     }
   } else {
@@ -238,12 +238,12 @@ void Func_02002718(void) {
   Actor_SetModeById(8, 3);
   FieldEvent_Wait(40);
   Func_02005014(191);
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 188))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x9bc))) {
     for (i = 19; i >= 0; i--) {
       object->velocityY = Random16Far();
       wait(1);
     }
-    Call3(Actor_SetSpeedParameters, 8, 0x4000, SPLIT_CONSTANT(0xc00, 204));
+    Call3(Actor_SetSpeedParameters, 8, 0x4000, SPLIT_CONSTANT(0xccc));
     Call3(Actor_OffsetPositionAndResetMotion, 8, -16, 0);
     Func_02004dfc(27, 15, 2, 1, 23, 23);
     Func_02004dfc(25, 25, 1, 1, 25, 23);
@@ -271,13 +271,13 @@ void Func_02002718(void) {
     partner->velocityY = PIXELS(6);
     Actor_WaitForMoveById(14);
     Func_02004ebc(14, 0, 0);
-    if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 39))) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x208, 255));
+    if (!GameFlag_Test(SPLIT_CONSTANT(0x927))) {
+      GameFlag_SetBit(SPLIT_CONSTANT(0x307));
       FieldEvent_Wait(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 188));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x9bc));
       Func_02004e64();
     }
   } else {

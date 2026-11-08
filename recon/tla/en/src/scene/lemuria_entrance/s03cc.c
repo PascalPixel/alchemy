@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "event_work.h"
@@ -34,7 +35,7 @@ void Func_020003cc(void) {
   gMainRoutineWork.eventMode = 2;
   Func_0200055c();
   Func_020005cc(0);
-  Actor_SetSpeedParameters_(8, 0x451e, 0x228f);
+  Actor_SetSpeedParameters_(8, SPLIT_CONSTANT(0x451e), SPLIT_CONSTANT(0x228f));
   Actor_SetMovementTypeById(8, gData_020005e4);
   FieldEvent_Wait(80);
   Func_0200059c((s32)&MsgFieldAddressCompanion);

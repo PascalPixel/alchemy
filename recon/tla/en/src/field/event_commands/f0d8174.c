@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "system.h"
 #include "sprite.h"
 #include "motobj.h"
@@ -140,7 +141,7 @@ void Func_080d8174(struct DescendingOrbitObject *arg) {
   value = arg->timer;
   local.x = other->x;
   local.z = other->z;
-  Vector_AddPolarOffset(value * 0x6666, (value << 11) + arg->angle, &local);
+  Vector_AddPolarOffset(value * SPLIT_CONSTANT(0x6666), (value << 11) + arg->angle, &local);
   arg->x = local.x;
   arg->z = local.z;
   y = arg->y + 0xFFFF0000;

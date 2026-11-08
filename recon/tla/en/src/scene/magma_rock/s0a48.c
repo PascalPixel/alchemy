@@ -24,7 +24,7 @@ void GameFlag_SetBit();
 s32 Func_02003af4();
 
 s32 Func_02000a48(void) {
-  struct Actor *leader = *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + SPLIT_CONSTANT(0xc00, 188));
+  struct Actor *leader = *(struct Actor **)((u8 *)Ram_HeapSlots->eventWork + SPLIT_CONSTANT(0xcbc));
   s32 x, z;
 
   Func_02003aec();
@@ -54,23 +54,23 @@ s32 Func_02000a48(void) {
   z = leader->z >> 20;
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room1) {
     if (x == 15 && z == 25)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 214));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x8d6));
     else if (x == 16 && z == 22)
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 213));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x8d5));
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov691Room2) {
     if (gMainRoutineWork.entrance <= 3) {
       if (x == 27 && z == 33)
-        GameFlag_SetBit(SPLIT_CONSTANT(0x7d8, 255));
+        GameFlag_SetBit(SPLIT_CONSTANT(0x8d7));
     } else if (gMainRoutineWork.entrance <= 8) {
       if (x == 55 && z == 35)
-        GameFlag_SetBit(SPLIT_CONSTANT(0x800, 216));
+        GameFlag_SetBit(SPLIT_CONSTANT(0x8d8));
     } else if (gMainRoutineWork.entrance <= 12) {
       if (x == 16 && z == 36)
-        GameFlag_SetBit(SPLIT_CONSTANT(0x800, 217));
+        GameFlag_SetBit(SPLIT_CONSTANT(0x8d9));
     } else if (x == 40 && z == 37) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 218));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x8da));
     } else if (x == 35 && z == 38) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x800, 219));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x8db));
     }
   }
   return Func_02003af4();

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "task.h"
 #include "heap_release.h"
 #include "dma.h"
@@ -35,6 +36,6 @@ void *Func_080d019c(void) {
 
   Dma_Set(&zero, block,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x540 / 4),
-          REG_DMA3);
+          SPLIT_CONSTANT(REG_DMA3));
   return block;
 }

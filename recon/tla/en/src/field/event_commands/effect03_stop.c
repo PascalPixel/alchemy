@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "system.h"
 #include "actor.h"
 #include "field_psynergy_work.h"
@@ -111,6 +112,6 @@ void FieldEffect_RunPly(void) {
   if (marker != 0x60)
     Resource_ResetEntry(marker);
   if (scene->finishCallback != 0)
-    scene->finishCallback();
+    ValueLr0((s32 (*)())scene->finishCallback);
   BattleEffect_PrepareBufferInterpolation();
 }

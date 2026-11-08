@@ -55,7 +55,7 @@ s32 Func_020013d8(struct Actor *object) {
     params[1] = 7;
     if ((gFrameCount & 2) == 0)
       params[1] = 5;
-    params[2] = SPLIT_CONSTANT(0xcc00, 204);
+    params[2] = SPLIT_CONSTANT(0xcccc);
     params[3] = 0xcccc;
     params[0] = 0;
     drift = ((u32)(Random16Far() << 3) >> 16) * 0x3333;

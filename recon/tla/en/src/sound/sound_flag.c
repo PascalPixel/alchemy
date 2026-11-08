@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
@@ -16,7 +17,7 @@ s32 SoundFlag_Test(s32 sound) {
   s32 value;
 
   mask = 1 << (7 & sound);
-  sound = (sound & 0x3ff) >> 3;
+  sound = (sound & SPLIT_CONSTANT(0x3ff)) >> 3;
   bytes = gSoundFlags;
   value = bytes[sound] & mask;
   return (u32)(-value | value) >> 31;

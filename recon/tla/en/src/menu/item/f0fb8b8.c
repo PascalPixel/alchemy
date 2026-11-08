@@ -72,7 +72,7 @@ void Func_080fb8b8(s32 window, s32 item, s32 count) {
 
   row = 0;
   consumable = 0;
-  def = Item_Get(item & SPLIT_CONSTANT(0x100, 255));
+  def = Item_Get(item & SPLIT_CONSTANT(SPLIT_CONSTANT(0x100, 255)));
   if (def->type != 0) {
     found = 0;
     if (def->primaryBonus == 0 && def->secondaryBonus == 0) {

@@ -41,13 +41,13 @@ void Func_02000b6c(void) {
       leader->velocityY = PIXELS(6);
       Actor_WaitForMoveById(gMainRoutineWork.currentOwner);
     }
-    if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 39))) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x300, 10));
+    if (!GameFlag_Test(SPLIT_CONSTANT(0x927))) {
+      GameFlag_SetBit(SPLIT_CONSTANT(0x30a));
       FieldEvent_Wait(30);
       Func_02004fdc();
       Func_02004f6c(20);
     } else {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x8c0, 255));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x9bf));
       Func_02004e64();
     }
   }

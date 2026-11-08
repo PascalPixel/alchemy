@@ -334,7 +334,7 @@ s32 Func_080fcf14(void) {
   menu = Ram_HeapSlots->menuRuntime;
   action = menu->paneAction[0];
   asm volatile("");
-  psynergy = BattleAction_Get(SPLIT_CONSTANT(0x3f00, 255) & action);
+  psynergy = BattleAction_Get(SPLIT_CONSTANT(SPLIT_CONSTANT(0x3f00, 255)) & action);
   if (BattleEffect_HasMatchingEvent5Far(psynergy->type) != 0)
     return 0;
   ret = 2;

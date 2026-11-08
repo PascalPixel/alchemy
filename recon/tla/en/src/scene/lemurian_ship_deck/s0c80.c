@@ -56,13 +56,13 @@ void Func_02000ce0(void) {
   s32 answer;
   s32 owner;
 
-  if (Flag_IsSet(SPLIT_CONSTANT(0x800, 255)) != 0) {
+  if (Flag_IsSet(SPLIT_CONSTANT(0x8ff)) != 0) {
     Flag_Set(0x980);
     return;
   }
   Func_02001f5c();
   Func_020020ac(0);
-  Call3((void (*)())Actor_SetSpeedParameters, 4, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3((void (*)())Actor_SetSpeedParameters, 4, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Actor_SetPositionAndReset(4, 264, 136);
   Func_0200201c(MsgLookItS);
   Call4((void (*)())Func_020020b4, 5, 16, -16, FACING_SOUTH);
@@ -70,28 +70,28 @@ void Func_02000ce0(void) {
   Call4((void (*)())Func_020020b4, 6, -16, -16, FACING_SOUTH);
   FieldEvent_Wait(80);
   Func_0200204c(9, 0x102, 20);
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, SPLIT_CONSTANT(0xcccc));
   Actor_SetPositionAndReset(9, 300, 152);
   FieldEvent_Wait(10);
   Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 20);
   Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTHEAST + FACING_STEP, 20);
   Call3((void (*)())Actor_ArmCallback, 9, FACING_SOUTH + FACING_STEP, 0);
   Func_02002034(9, 0);
-  Func_0200205c(0x4cccc, SPLIT_CONSTANT(0x9900, 153));
+  Func_0200205c(0x4cccc, SPLIT_CONSTANT(0x9999));
   Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(200), -1, PIXELS(344),
         1);
   Func_0200206c();
   FieldEvent_Wait(20);
-  Func_0200205c(0x13333, SPLIT_CONSTANT(0x2600, 102));
+  Func_0200205c(0x13333, SPLIT_CONSTANT(0x2666));
   Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(600), -1, PIXELS(344),
         1);
   Func_0200206c();
   FieldEvent_Wait(40);
-  Func_0200205c(0x66666, SPLIT_CONSTANT(0xcc00, 204));
+  Func_0200205c(0x66666, SPLIT_CONSTANT(0xcccc));
   Camera_MoveWithinMapBounds(PIXELS(264), -1, PIXELS(128), 1);
   Func_0200206c();
   Motion_SetModeAndWaitAnimation(5, 4);
-  Func_02002034(SPLIT_CONSTANT(0x2000, 5), 0);
+  Func_02002034(SPLIT_CONSTANT(0x2005), 0);
   Func_02002044(6, FACING_EAST);
   Actor_SetModeById(6, 4);
   Func_02002034(6, 0);
@@ -113,25 +113,25 @@ void Func_02000ce0(void) {
     Func_02002034(9, 0);
   }
   Actor_SetModeById(5, 4);
-  Func_02002034(SPLIT_CONSTANT(0x2000, 5), 0);
+  Func_02002034(SPLIT_CONSTANT(0x2005), 0);
   Func_02002044(6, FACING_EAST);
   Actor_SetModeById(6, 4);
   Func_02002034(6, 0);
   Actor_SetModeById(9, 4);
   Func_02002034(9, 0);
-  Actor_SetSpeedParameters(9, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Actor_SetSpeedParameters(9, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Actor_GetById(9)->actionFlags &= ~1;
   Actor_SetPositionAndReset(9, 288, 144);
   FieldEvent_Wait(1);
   Actor_GetById(9)->actionFlags |= 1;
-  Func_02002034(SPLIT_CONSTANT(0x2000, 9), 0);
+  Func_02002034(SPLIT_CONSTANT(0x2009), 0);
   Actor_SetModeById(6, 3);
   Actor_SetModeById(5, 3);
   Actor_SetModeById(4, 3);
   Motion_SetModeAndWaitAnimation(9, 3);
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x13333, 0x9999);
-  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, SPLIT_CONSTANT(0x9900, 153));
-  Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x13333, SPLIT_CONSTANT(0x9999));
+  Call3((void (*)())Actor_SetSpeedParameters, 6, 0x13333, SPLIT_CONSTANT(0x9999));
+  Call3((void (*)())Actor_SetSpeedParameters, 5, 0x13333, SPLIT_CONSTANT(0x9999));
   {
     struct Actor *target;
 

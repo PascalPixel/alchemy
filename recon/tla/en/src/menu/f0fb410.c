@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "item.h"
 #include "ram_buffer.h"
 
@@ -22,7 +23,7 @@ void Func_080fb410(s8 *commandStates) {
   struct ItemDefinition *item;
 
   menu = Ram_HeapSlots->menuRuntime;
-  item = Item_Get(ITEM_ID_MASK & menu->selectedItem);
+  item = Item_Get(SPLIT_CONSTANT(ITEM_ID_MASK) & menu->selectedItem);
 
   if (item->type == 0) {
     commandStates[0] = COMMAND_AVAILABLE;

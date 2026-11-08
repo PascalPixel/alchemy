@@ -14,7 +14,7 @@ void BattleEffect_RunVisibilityTransition(void) {
 
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 394) == 3) {
     Leader_StopMoving();
-    Func_080d46a4(SPLIT_CONSTANT(0x9d00, 137), 6);
+    Func_080d46a4(SPLIT_CONSTANT(SPLIT_CONSTANT(0x9d00, 137)), 6);
     while (gInput.held & 0x200)
       wait(1);
     party = &gMainRoutineWork;

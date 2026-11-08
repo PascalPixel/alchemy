@@ -5,7 +5,7 @@ void Func_0200316c(void) {
   Func_02003820(gData_02004768);
   Func_02004180(0);
   if (gMainRoutineWork.entrance == 1) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 41));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 41)));
     GameFlag_ClearBit(0xa2a);
     GameFlag_ClearBit(0xa2b);
   }
@@ -17,7 +17,7 @@ void Func_020031b4(void) {
   s32 angleB;
   s32 angle;
 
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 179))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 179)))) {
     Func_02004090(8, 0, 0);
     Func_02004090(9, 0, 0);
     Func_02004090(10, 0, 0);
@@ -42,7 +42,7 @@ void Func_020031b4(void) {
     Scene_Call4098(13, 482 << 16, 340 << 16, angleB);
     Scene_Call4098(14, 489 << 16, 320 << 16, angleA);
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 141)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 141))))
     Func_02001594();
   Task_Add(Func_02002010, TASK_PASS_VBLANK);
 }

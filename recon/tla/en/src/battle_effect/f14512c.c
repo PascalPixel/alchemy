@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "graphics.h"
 #include "lib.h"
 #include "resource.h"
@@ -116,7 +117,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   else if (mode == 8)
     palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
   else if (mode == 3)
-    palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
+    palette = ValueLr1((s32 (*)())Resource_GetTableEntry, (s32)((s32)&ResourceId_GreenPalette));
   else if (mode == 4 || mode == 7)
     palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
   else if (mode == 6)
@@ -124,7 +125,7 @@ void Func_0814512c(struct BattleEffectArgument *effect, s32 mode) {
   else if (mode == 9)
     palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   else
-    palette = Resource_GetTableEntry((s32)&ResourceId_GreenPalette);
+    palette = ValueLr1((s32 (*)())Resource_GetTableEntry, (s32)((s32)&ResourceId_GreenPalette));
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 
   // The shots leave the caster at the mode's height, each aimed at its

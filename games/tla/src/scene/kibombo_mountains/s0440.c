@@ -24,5 +24,5 @@ void Func_02000478(void) {
   object->priorityFlags = 0;
   object->motionFlags = 0;
   Call6((void (*)())Func_0200106c, 8, 30, 1, 1, 10, 30);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x112, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x211));
 }

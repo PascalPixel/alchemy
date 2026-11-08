@@ -12,7 +12,7 @@ void Func_02000104(s32 unused, s32 id) {
   if (GameFlag_Test(0x966)) {
     Func_020028ac((s32)MsgLemuriaInteriors12);
     Func_020028c4(id, 0);
-  } else if (GameFlag_Test(SPLIT_CONSTANT(0x900, 101))) {
+  } else if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 101)))) {
     Func_020028ac((s32)MsgLemuriaInteriors09);
     Func_020028c4(id, 0);
   } else {

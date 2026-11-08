@@ -40,7 +40,7 @@ void Func_020046e8(s32 spread) {
       Actor_SetSingleChildFlags(effect, 0);
       Func_02004c98(effect, 2);
       Func_02004ca0(effect, gData_02005638);
-      effect->scaleY = effect->scaleX = SPLIT_CONSTANT(0xb300, 51);
+      effect->scaleY = effect->scaleX = SPLIT_CONSTANT(0xb333);
       effect->sprite->priority = 1;
       if (spread != 0) {
         effect->velocity.x = Iwram_MulQ16(Math_Cosine(i << 13), 0x13333);

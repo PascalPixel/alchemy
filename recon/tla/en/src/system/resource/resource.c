@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
@@ -17,7 +18,7 @@ extern char ResourceId_BuildStamp;
 
 void Func_080132d0(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_BuildStamp), gIwramHi_Data1,
-          DMA_COPY_WORDS(3), REG_DMA3);
+          DMA_COPY_WORDS(3), SPLIT_CONSTANT(REG_DMA3));
   gIwramHi_Data1[3] = 0;
 }
 
@@ -39,7 +40,7 @@ void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
     u32 currentMarkerMask;
     u32 payloadMask;
     nextMarkerMask = 0xf800;
-    payloadMask = 0x7ff;
+    payloadMask = SPLIT_CONSTANT(0x7ff);
     currentMarkerMask = 0xf000;
     entries -= 2;
     do {

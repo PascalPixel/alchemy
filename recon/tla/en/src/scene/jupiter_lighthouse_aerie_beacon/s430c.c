@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -106,7 +107,7 @@ void Func_0200430c(struct Object6a5 *object) {
         }
       }
       object->x += IwramMulQ16(Math_Cosine(object->angle), object->speed);
-      object->z += IwramMulQ16(Math_Sine(object->angle), object->speed);
+      object->z += ValueLr2((s32 (*)())IwramMulQ16, (s32)(Math_Sine(object->angle)), (s32)(object->speed));
       return;
       }
     }

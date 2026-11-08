@@ -23,7 +23,7 @@ void Func_02004bb4(void) {
   message = MsgCheckedThePsynergy;
   FieldMessage_Show(message, 1);
   Func_02005f94(126);
-  Func_02005f34(SPLIT_CONSTANT(0x2e8, 255), 0);
+  Func_02005f34(SPLIT_CONSTANT(0x3e7), 0);
   FieldEvent_Wait(10);
   GameFlag_ClearBit(322);
   FieldMessage_Show(message + 1, 1);

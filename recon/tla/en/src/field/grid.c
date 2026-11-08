@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "sprite_metadata.h"
 #include "ram_buffer.h"
 #include "scene.h"
@@ -135,7 +136,7 @@ void Battle_PlaceActorsByFormationKind(void) {
   switch (kind) {
   case 3:
     angle = 0;
-    step = 0x2aaa;
+    step = SPLIT_CONSTANT(0x2aaa);
     cnt = 6;
     break;
   case 5:
@@ -149,7 +150,7 @@ void Battle_PlaceActorsByFormationKind(void) {
   case 4:
   case 6:
     angle = 0;
-    step = 0x1999;
+    step = SPLIT_CONSTANT(0x1999);
     cnt = 10;
     break;
   case 20:

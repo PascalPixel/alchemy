@@ -48,13 +48,13 @@ void Func_08125d74(s32 arg, s32 kind) {
     s32 y;
     s32 zero;
 
-    Dma_Set(Data_0812cd74, (void *)0x06005020, SPLIT_CONSTANT(0x84000000, 8), DMA3);
-    Dma_Set(Data_0812cd74 + 32, (void *)0x06005040, SPLIT_CONSTANT(0x84000000, 8), DMA3);
-    Dma_Set(Data_0812cd74 + 64, (void *)0x06005060, SPLIT_CONSTANT(0x84000000, 8), DMA3);
-    Dma_Set(Data_0812cd74 + 96, (void *)0x06005080, SPLIT_CONSTANT(0x84000000, 8), DMA3);
-    Dma_Set(Data_0812cd74 + 128, (void *)0x060050a0, SPLIT_CONSTANT(0x84000000, 8), DMA3);
-    Dma_Set(Data_0812cd74 + 160, (void *)0x060050c0, SPLIT_CONSTANT(0x84000000, 8), DMA3);
-    Dma_Set(Data_0812cd74 + 192, (void *)0x060050e0, SPLIT_CONSTANT(0x84000000, 8), DMA3);
+    Dma_Set(Data_0812cd74, (void *)0x06005020, SPLIT_CONSTANT(0x84000008), DMA3);
+    Dma_Set(Data_0812cd74 + 32, (void *)0x06005040, SPLIT_CONSTANT(0x84000008), DMA3);
+    Dma_Set(Data_0812cd74 + 64, (void *)0x06005060, SPLIT_CONSTANT(0x84000008), DMA3);
+    Dma_Set(Data_0812cd74 + 96, (void *)0x06005080, SPLIT_CONSTANT(0x84000008), DMA3);
+    Dma_Set(Data_0812cd74 + 128, (void *)0x060050a0, SPLIT_CONSTANT(0x84000008), DMA3);
+    Dma_Set(Data_0812cd74 + 160, (void *)0x060050c0, SPLIT_CONSTANT(0x84000008), DMA3);
+    Dma_Set(Data_0812cd74 + 192, (void *)0x060050e0, SPLIT_CONSTANT(0x84000008), DMA3);
     view->secondMode = 1;
     view->busy = 0;
     view->mode = 1;
@@ -103,7 +103,7 @@ void Func_08125d74(s32 arg, s32 kind) {
     REG_WIN1V = 0x88;
     REG_WININ = 0x3537;
     REG_WINOUT = 0x3f21;
-    QueueIoWriteDelay2(0x04000000, SPLIT_CONSTANT(0x7700, 65));
+    QueueIoWriteDelay2(0x04000000, SPLIT_CONSTANT(0x7741));
     BattleCamera_SetView(0, 0, 0, 180);
     *timer = zero;
     Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_VBLANK);
@@ -182,7 +182,7 @@ void Func_08125d74(s32 arg, s32 kind) {
   REG_BG1CNT = 0x1f83;
   wait(1);
   REG_BG1CNT = 0x1f83;
-  REG_BG0CNT &= SPLIT_CONSTANT(0xff00, 253);
+  REG_BG0CNT &= SPLIT_CONSTANT(0xfffd);
   gBgScroll[1].x = 8;
   REG_DISPCNT = 0x1541;
   HeapSlot_Release(168);

@@ -55,7 +55,7 @@ void Func_02001690(s32 p0) {
   Call3((void (*)())Func_02004100, *owner, 0x100, 0);
   Call3((void (*)())Actor_ArmCallback, *owner, 0x8000, 0);
   ((struct Actor *)Func_02004130())->motionFlags = 0;
-  Call2((void (*)())Func_02004118, 0x19999, SPLIT_CONSTANT(0x3300, 51));
+  Call2((void (*)())Func_02004118, 0x19999, SPLIT_CONSTANT(0x3333));
   Call4((void (*)())Camera_MoveWithinMapBounds, 0xd40000, 0, 0xd40000, 1);
   Func_02004128();
   Call2((void (*)())Func_020040d0, 12, 0);
@@ -74,7 +74,7 @@ void Func_02001690(s32 p0) {
   Call2((void (*)())Actor_WatchAndSetScript, 13, 14);
   Call3((void (*)())Actor_SetSpeedParameters, 13, 0x10000, 0x8000);
   Call2((void (*)())Actor_SetMovementTypeById, 14, (s32)gData_0200468c);
-  Call2((void (*)())Func_02004118, 0xcccc, SPLIT_CONSTANT(0x1900, 153));
+  Call2((void (*)())Func_02004118, 0xcccc, SPLIT_CONSTANT(0x1999));
   Call4((void (*)())Camera_MoveWithinMapBounds, 0xf00000, -1, 0x1040000, 1);
   Func_02004128();
   Call1((void (*)())Actor_Stop, 8);
@@ -83,7 +83,7 @@ void Func_02001690(s32 p0) {
   Call1((void (*)())Actor_Stop, 11);
   Call1((void (*)())Actor_Stop, 12);
   Call1((void (*)())Actor_Stop, 13);
-  Call2((void (*)())Func_02004118, 0x26666, SPLIT_CONSTANT(0x4c00, 204));
+  Call2((void (*)())Func_02004118, 0x26666, SPLIT_CONSTANT(0x4ccc));
   Call4((void (*)())Camera_MoveWithinMapBounds, 0xd40000, -1, 0xd40000, 1);
   Func_02004128();
   Call1((void (*)())FieldEvent_Wait, 20);
@@ -117,7 +117,7 @@ void Func_02001690(s32 p0) {
   Call3((void (*)())Actor_SetSpeedParameters, 10, 0x19999, 0xcccc);
   Call3((void (*)())Actor_SetSpeedParameters, 11, 0x19999, 0xcccc);
   Call3((void (*)())Actor_SetSpeedParameters, 12, 0x19999, 0xcccc);
-  Call3((void (*)())Actor_SetSpeedParameters, 13, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+  Call3((void (*)())Actor_SetSpeedParameters, 13, 0x19999, SPLIT_CONSTANT(0xcccc));
   Call2((void (*)())Actor_WatchAndSetScript, *owner, 13);
   {
     s32 path = (s32)gData_020046dc;
@@ -125,7 +125,7 @@ void Func_02001690(s32 p0) {
     Call2((void (*)())Actor_SetMovementTypeById, 13, path);
     Call1((void (*)())FieldEvent_Wait, 10);
     Call2((void (*)())Actor_SetMovementTypeById, 12, path);
-    Call2((void (*)())Func_02004118, SPLIT_CONSTANT(0x6600, 102), SPLIT_CONSTANT(0xc00, 204));
+    Call2((void (*)())Func_02004118, SPLIT_CONSTANT(0x6666), SPLIT_CONSTANT(0xccc));
     Call4((void (*)())Camera_MoveWithinMapBounds, 0xf00000, -1, 0x1180000, 1);
     Call2((void (*)())Actor_SetMovementTypeById, 8, path);
     Call1((void (*)())FieldEvent_Wait, 10);
@@ -179,6 +179,6 @@ void Func_02001690(s32 p0) {
   Call2((void (*)())Actor_SetModeById, 13, 1);
   Call2((void (*)())Actor_SetModeById, 14, 1);
   Call1((void (*)())GameFlag_SetBit, 0x8f0);
-  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x790, 255));
+  Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0x88f));
   Func_02004048();
 }

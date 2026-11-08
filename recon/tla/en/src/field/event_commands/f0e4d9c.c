@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "effect_sprite.h"
@@ -104,7 +105,7 @@ void Func_080e4d9c(void) {
     }
   } else if (work->paletteMode == 2) {
     Dma_Set(Data_080f0fa0, (void *)0x050003e0, DMA_ENABLE << 16 | 0x10,
-            REG_DMA3);
+            SPLIT_CONSTANT(REG_DMA3));
     work->paletteMode = 0;
   }
   pos[0] = scene->x;
@@ -195,7 +196,7 @@ void Func_080e4d9c(void) {
       if (work->timer == 0)
         Sound_PlayFar(144);
       if ((work->timer & 7) == 0) {
-        Map_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+        Map_SetScreenShakeFar(0x30000, 0x30000, SPLIT_CONSTANT(0xe666));
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -207,7 +208,7 @@ void Func_080e4d9c(void) {
       if ((work->timer & 15) == 0)
         Sound_PlayFar(144);
       if ((work->timer & 7) == 0) {
-        Map_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+        Map_SetScreenShakeFar(0x30000, 0x30000, SPLIT_CONSTANT(0xe666));
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -224,7 +225,7 @@ void Func_080e4d9c(void) {
       if (work->timer == 4)
         work->newBursts = 10;
       if (work->timer == 0) {
-        Map_SetScreenShakeFar(0xc0000, 0xc0000, 0xe666);
+        Map_SetScreenShakeFar(0xc0000, 0xc0000, SPLIT_CONSTANT(0xe666));
         Sound_PlayFar(145);
         if (work->timer == 0)
           work->shake = 3;
@@ -314,7 +315,7 @@ void Func_080e4d9c(void) {
       if (work->timer == 0) {
         work->paletteMode = 2;
         if (work->timer == 0) {
-          Map_SetScreenShakeFar(0x30000, 0x30000, 0xe666);
+          Map_SetScreenShakeFar(0x30000, 0x30000, SPLIT_CONSTANT(0xe666));
           work->newBursts = 1;
           Sound_PlayFar(144);
         }
@@ -327,7 +328,7 @@ void Func_080e4d9c(void) {
       if (work->timer == 5)
         BattleEffect_SetObjectUpdateMode(scene->mainObject, 0);
       if (work->timer == 20) {
-        work->phase = 999;
+        work->phase = SPLIT_CONSTANT(999);
         work->timer = -1;
       }
       break;

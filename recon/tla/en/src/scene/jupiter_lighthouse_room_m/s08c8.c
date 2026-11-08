@@ -20,9 +20,9 @@ static __inline__ void Func_0200474c_(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 void Func_020008c8(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x920, 255)) != 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x920, 255))) != 0)
     return;
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 2));
+  GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 2)));
   Func_020047d4();
   Func_0200494c(0);
   Func_020049c4(125);

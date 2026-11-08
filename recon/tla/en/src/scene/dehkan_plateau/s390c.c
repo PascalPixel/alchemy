@@ -49,7 +49,7 @@ void Func_0200390c(void) {
   owner->priorityFlags |= 32;
   if (GameFlag_Test(0x878) == 0) {
     Func_02003a30();
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 113)) != 0) {
+    if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 113))) != 0) {
       Map_CopyAttributes(0, 0, 1, 1, 15, 5);
       if (gData_02004420 != NULL) {
         Actor_SetPosition(gData_02004420, 248 << 16, 0, 176 << 15);
@@ -69,7 +69,7 @@ void Func_0200390c(void) {
   Func_020035ec();
   if (GameFlag_Test(265) == 0) {
     if (gMainRoutineWork.entrance > 16) {
-      if (gMainRoutineWork.entrance == 37 && GameFlag_Test(SPLIT_CONSTANT(0x800, 113)) == 0)
+      if (gMainRoutineWork.entrance == 37 && GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 113))) == 0)
         Func_02002c14();
       else
         Func_02003764();

@@ -9,13 +9,13 @@ void Func_0200538c(void) {
   if (!GameFlag_Test(0x8fb))
     Func_02002de0();
   Func_0200324c();
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 105)))
-    GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
+  if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 105))))
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x102, 255)));
   Func_02005c64(gData_02006324);
   Actor_SetSpritePriority(8, 2);
   Actor_SetSingleChildFlags(Actor_GetById(11), 0);
   Actor_GetById(11)->motionFlags = 0;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 234))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 234)))) {
     Kibombo_ObjSetPos(Actor_GetById(11), 208 << 15, 0, 148 << 17);
     Kibombo_BlendStart(5, 18, 1, 1, 6, 18);
     wait(10);
@@ -25,11 +25,11 @@ void Func_0200538c(void) {
     Func_020005e0();
   if (GameFlag_Test(0x204))
     Func_02000624();
-  if (GameFlag_Test(SPLIT_CONSTANT(0x106, 255)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x106, 255))))
     Func_02000668();
-  if (GameFlag_Test(SPLIT_CONSTANT(0x200, 6)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 6))))
     Func_020006ac();
-  if (GameFlag_Test(SPLIT_CONSTANT(0x108, 255)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x108, 255))))
     Func_020006f0();
   Func_02005b8c(12);
   Func_02005b8c(13);

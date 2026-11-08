@@ -32,15 +32,15 @@ void Func_02001a94(void) {
 
   if (gMainRoutineWork.entrance == 1) {
     object = Actor_GetById(8);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x300, 1));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 1)));
     column = 11;
   } else if (gMainRoutineWork.entrance == 3) {
     object = Actor_GetById(9);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x300, 2));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 2)));
     column = 26;
   } else {
     object = Actor_GetById(10);
-    GameFlag_SetBit(SPLIT_CONSTANT(0x204, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x204, 255)));
     column = 53;
   }
   Func_02003398();

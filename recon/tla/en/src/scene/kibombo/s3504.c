@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/kibombo/kibombo.h"
+#include "call.h"
 
 s32 Func_02005c44(struct FieldSprite *sprite, s32 previous);
 void Func_02003308(struct KibomboObject *object);
@@ -27,7 +28,7 @@ void Func_02003504(void) {
     x = center->x;
     y = center->y + 0x180000;
     z = center->z;
-    spark = Func_02005a34(673, x, y, z);
+    spark = Func_02005a34(SPLIT_CONSTANT(673), x, y, z);
     if (spark != 0) {
       previous = Func_02005c44(spark->sprite, previous);
       spark->motionFlags = 0;

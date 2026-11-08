@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "version.h"
 #include "ram_buffer.h"
 
@@ -58,7 +59,7 @@ s32 ItemMenu_Use(void) {
   /* FAKEMATCH(barrier): an empty asm between the item load and the 0x1ff mask;
    * as mask = item & 0x1ff, 2 of 67 instructions differ in tla-en. */
   asm("");
-  mask = 0x1ff;
+  mask = SPLIT_CONSTANT(0x1ff);
   mask &= item;
   Func_08100d40(mask);
   Unit_CalculateFar(menu->paneOwner[0]);

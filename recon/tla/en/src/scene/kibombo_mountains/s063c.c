@@ -42,19 +42,19 @@ s32 Func_0200063c(void) {
     Actor_GetById(19)->collisionFlags = 0;
     Actor_GetById(19)->priorityFlags |= 2;
     Actor_GetById(12)->collisionFlags = 0;
-    if (GameFlag_Test(SPLIT_CONSTANT(0x200, 34))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x222))) {
       Func_0200106c(30, 35, 1, 1, 28, 34);
       Func_0200106c(30, 34, 1, 1, 28, 33);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x122, 255)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x221)))
       Call6((void (*)())Func_0200106c, 24, 32, 1, 1, 22, 32);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x124, 255)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x223)))
       Call6((void (*)())Func_0200106c, 49, 28, 1, 1, 47, 28);
     else
       Actor_SetSpritePriority(14, 1);
     if (GameFlag_Test(0x224))
       Call6((void (*)())Func_0200106c, 53, 35, 1, 1, 53, 36);
-    flag = GameFlag_Test(SPLIT_CONSTANT(0x200, 2));
+    flag = GameFlag_Test(SPLIT_CONSTANT(0x202));
     if (flag == 0) {
       struct Actor *lift;
 
@@ -68,7 +68,7 @@ s32 Func_0200063c(void) {
       Call2((void (*)())Func_02001124, 10, 257);
     }
     Func_0200118c(17, 231);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 130)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x882)))
       Func_020010d4(13, 0, 0);
     else
       Actor_GetById(13)->scaleY = 0x14000;
@@ -76,12 +76,12 @@ s32 Func_0200063c(void) {
     Actor_SetSpritePriority(8, 1);
     Actor_SetSpritePriority(9, 1);
     Func_02001174();
-    Func_0200117c(0, SPLIT_CONSTANT(0x900, 232), 8, 9);
+    Func_0200117c(0, SPLIT_CONSTANT(0x9e8), 8, 9);
     if (GameFlag_Test(0x210))
       Call6((void (*)())Func_0200106c, 6, 16, 1, 1, 4, 16);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x112, 255)))
+    if (GameFlag_Test(SPLIT_CONSTANT(0x211)))
       Call6((void (*)())Func_0200106c, 8, 30, 1, 1, 10, 30);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x7e8, 255))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x8e7))) {
       object = Actor_GetById(20);
       Call3((void (*)())Func_020010d4, 20, 0x480000, 0x1c80000);
       object->motionFlags = 0;
@@ -90,7 +90,7 @@ s32 Func_0200063c(void) {
       object->y = height;
       Call6((void (*)())Func_0200106c, 3, 28, 1, 1, 4, 28);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x800, 232))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x8e8))) {
       object = Actor_GetById(13);
       Call3((void (*)())Func_020010d4, 13, 0x1c80000, 0x1e80000);
       object->motionFlags = 0;

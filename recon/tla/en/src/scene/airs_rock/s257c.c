@@ -48,8 +48,8 @@ void Func_0200257c(void) {
   table += 2;
   REG_BG1HOFS = table[0];
   channel = REG_DMA0;
-  channel[5] &= SPLIT_CONSTANT(0xc500, 255);
-  channel[5] &= SPLIT_CONSTANT(0x7f00, 255);
+  channel[5] &= SPLIT_CONSTANT(0xc5ff);
+  channel[5] &= SPLIT_CONSTANT(0x7fff);
   channel[5];
   Dma_Set(table + 1, REG_BG0HOFS, 0xa2600003, (volatile u32 *)channel);
 }

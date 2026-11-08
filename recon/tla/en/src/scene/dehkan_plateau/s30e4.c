@@ -105,7 +105,7 @@ void Func_020030e4(void) {
   Actor_SetSpritePriority(8, 3);
   Func_02000038(gData_02003f98);
   Func_02003cc0(12);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x300, 1)) != 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 1))) != 0) {
     Map_CopyAttributes(54, 32, 2, 1, 56, 64);
     Actor_SetPositionAndResetMotion(Actor_GetById(12), 226 << 18, 128 << 15,
                                     130 << 18);

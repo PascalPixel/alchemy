@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "field.h"
 #include "game.h"
 #include "graphics.h"
@@ -29,9 +30,9 @@ s32 PartyInventory_CountItem(s32 itemId) {
 }
 
 struct ActionDefinition *BattleAction_GetDirect(s32 actionId) {
-  u32 entryIndex = actionId & 0x3fff;
+  u32 entryIndex = actionId & SPLIT_CONSTANT(0x3fff);
 
-  if (entryIndex > 0x2de)
+  if (entryIndex > SPLIT_CONSTANT(0x2de))
     entryIndex = 0;
   return &gBattleAction_DefinitionTable[entryIndex];
 }
@@ -54,7 +55,7 @@ s32 Unit_KnowsAction(s32 owner, s32 value) {
   struct BattleUnit *unit = Unit_Get(owner);
   struct OwnerActionSlot *entry;
   s32 index = 0;
-  s32 mask = OWNER_ACTION_ID_MASK;
+  s32 mask = SPLIT_CONSTANT(OWNER_ACTION_ID_MASK);
 
   entry = unit->actionSlots;
   do {

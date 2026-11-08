@@ -2,6 +2,7 @@
 /// Resources: clear an animation record.
 
 #include "dma.h"
+#include "call.h"
 #include "sprite.h"
 #include "io_reg.h"
 
@@ -14,6 +15,6 @@ void ResourceMetadata_ClearRecord(void *dst) {
     Dma_Set(&zero, dst,
             ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16) |
                 (sizeof(struct AnimationEntry) / 4),
-            REG_DMA3);
+            SPLIT_CONSTANT(REG_DMA3));
   }
 }

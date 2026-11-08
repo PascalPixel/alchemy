@@ -28,11 +28,11 @@ void Func_02000a74(void) {
   s32 i;
 
   if (Value1(GameFlag_Test, 2576) +
-          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa00, 18)) +
-          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa00, 20)) +
-          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa00, 17)) +
-          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa00, 19)) +
-          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa00, 21)) ==
+          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa12)) +
+          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa14)) +
+          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa11)) +
+          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa13)) +
+          Value1(GameFlag_Test, SPLIT_CONSTANT(0xa15)) ==
       0)
     return;
   Camera_MoveWithinMapBounds(148 << 18, -1, PIXELS(248), 1);
@@ -40,22 +40,22 @@ void Func_02000a74(void) {
   FieldEvent_Wait(10);
   if (Value1(GameFlag_Test, 2576))
     Func_020009f8(18, 35, 15, -16, 0);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa00, 17)))
+  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa11)))
     Func_020009f8(19, 35, 15, -16, 0);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa00, 18)))
+  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa12)))
     Func_020009f8(18, 31, 16, 16, 0);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa00, 19)))
+  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa13)))
     Func_020009f8(19, 31, 16, 16, 0);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa00, 20)))
+  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa14)))
     Func_020009f8(18, 33, 10, -16, 0);
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa00, 21)))
+  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0xa15)))
     Func_020009f8(19, 33, 10, -16, 0);
   GameFlag_ClearBit(2576);
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 17));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 18));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 19));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 20));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0xa00, 21));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0xa11));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0xa12));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0xa13));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0xa14));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0xa15));
   Func_020002f0();
   wait(2);
   object = Actor_GetById(18);

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "scene_tables.h"
 #include "actor.h"
@@ -34,7 +35,7 @@ void Func_02002a5c(void) {
   angle = FACING_NORTH;
   Func_02003c70(gMainRoutineWork.currentOwner, PIXELS(248), PIXELS(136), angle);
   Func_02003be0(65, 64, 15, 8, 1, 1);
-  GameFlag_SetBit(0x245);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x245));
   Func_02003df8(161);
   Func_020021b4();
   Actor_SetAngleToward(9, gMainRoutineWork.currentOwner, 0);

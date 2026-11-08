@@ -126,8 +126,8 @@ void Func_02002c64(void) {
   } else {
     Actor_WaitForAnimationChange(leader);
     *(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4) += 2;
-    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0x6600, 102), SPLIT_CONSTANT(0x3300, 51));
-    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 384, SPLIT_CONSTANT(0x200, 234));
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0x6666), SPLIT_CONSTANT(0x3333));
+    Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 384, SPLIT_CONSTANT(0x2ea));
     FelixWake_EndStep();
     FieldEvent_Wait(20);
     FelixWake_StartStep();
@@ -136,7 +136,7 @@ void Func_02002c64(void) {
   }
   Func_02003228(11, 0, 0);
   GameFlag_ClearBit(0x12f);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 68));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x844));
   Import_EventEnd();
   FelixWake_EndStep();
 }

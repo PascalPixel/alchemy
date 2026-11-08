@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/yampi_desert/scene.h"
+#include "call.h"
 #include "actor.h"
 #include "scene_tables.h"
 
@@ -7,7 +8,7 @@ void Func_02000e78(void) {
   Func_020041b8(0);
   Func_020021d4();
   Actor_WatchAndSetScript(gMainRoutineWork.currentOwner, 21);
-  Func_02004118(0x26666, 0x4ccc);
+  Func_02004118(0x26666, SPLIT_CONSTANT(0x4ccc));
   Scene_CamBounds(PIXELS(232), -1, PIXELS(328), 1);
   Scene_SetPositionAndCommit(21, 232, 328);
   Camera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(200), 1);
@@ -17,7 +18,7 @@ void Func_02000e78(void) {
   Actor_ArmCallback(21, FACING_SOUTH, 0);
   Actor_Stop(gMainRoutineWork.currentOwner);
   FieldEvent_Wait(20);
-  GameFlag_SetBit(0x88b);
+  GameFlag_SetBit(SPLIT_CONSTANT(0x88b));
   Func_02004048();
 }
 

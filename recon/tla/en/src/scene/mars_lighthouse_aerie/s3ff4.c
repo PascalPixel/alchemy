@@ -135,7 +135,7 @@ void Func_02003ff4(void) {
   Actor_ArmCallback(t49, quarterTurn, 0);
   Call3(Actor_ArmCallback, 0, 0x6000, 0);
   Call3(Actor_ArmCallback, 2, 0x6000, 0);
-  Call2(Func_02005724, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x1900, 153));
+  Call2(Func_02005724, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x1999));
   Call4(Camera_MoveWithinMapBounds, 0x2000000, -1, 0x1400000, 1);
   Func_02005734();
   Call2(Func_02005704, 19, 0xd000);
@@ -246,7 +246,7 @@ void Func_02003ff4(void) {
   Event_AskYesNoWithActorAnimation(t158, 0);
   t160 = *(s32 *)owner;
   Actor_WaitForAnimationChange(t160);
-  Func_0200575c(SPLIT_CONSTANT(0x10000, 4), 1);
+  Func_0200575c(SPLIT_CONSTANT(0x10004), 1);
   Func_0200576c(40);
   Func_020057dc(78);
   Func_020057dc(141);
@@ -263,7 +263,7 @@ void Func_02003ff4(void) {
   Func_02000610(2);
   Func_02000610(3);
   FieldEvent_Wait(20);
-  Call2(Func_02005724, 0x19999, SPLIT_CONSTANT(0x3300, 51));
+  Call2(Func_02005724, 0x19999, SPLIT_CONSTANT(0x3333));
   Call4(Camera_MoveWithinMapBounds, 0x2000000, -1, 0x1200000, 1);
   Func_02005734();
   Task_RemoveFar((s32)Func_020004a4);
@@ -277,7 +277,7 @@ void Func_02003ff4(void) {
   Actor_SetPartAttribute(t189, 7);
   actor = Actor_GetById(23);
   ((struct Actor *)actor)->scaleY = 0xffff0000;
-  ((struct Actor *)actor)->scaleX = SPLIT_CONSTANT(0x1900, 153);
+  ((struct Actor *)actor)->scaleX = SPLIT_CONSTANT(0x1999);
   ((struct Actor *)actor)->motionFlags = 0;
   ((struct Actor *)actor)->priorityFlags |= 2;
   Actor_SetPositionAndResetMotion(actor, 0x2000000, 0x400000, 0xcc0000);
@@ -398,7 +398,7 @@ L_0200c72a:
   Actor_SetSpeedParameters(1, 0x33333, 0x19999);
   t292 = Actor_GetById(1);
   FIELD_AT(t292, u8, 90) &= 254;
-  Actor_SetPositionAndReset(1, SPLIT_CONSTANT(0x200, 30), 0x148);
+  Actor_SetPositionAndReset(1, SPLIT_CONSTANT(0x21e), 0x148);
   FieldEvent_Wait(1);
   t296 = Actor_GetById(1);
   FIELD_AT(t296, u8, 90) |= 1;
@@ -423,7 +423,7 @@ L_0200c72a:
   Func_020056f4(7, 0);
   Call3(Actor_Jump, 5, 4, 10);
   Func_020056f4(5, 0);
-  Func_020056f4(SPLIT_CONSTANT(0x8000, 2), 0);
+  Func_020056f4(SPLIT_CONSTANT(0x8002), 0);
   Call2(Func_02005704, 19, 0xd000);
   Call3(Actor_Jump, 19, 2, 10);
   Call3(Actor_Jump, 19, 4, 10);
@@ -432,7 +432,7 @@ L_0200c72a:
   Func_020057dc(78);
   wait(1);
   Func_020057dc(140);
-  Func_0200575c(SPLIT_CONSTANT(0x7f00, 255), 0);
+  Func_0200575c(SPLIT_CONSTANT(0x7fff), 0);
   Func_0200576c(20);
   wait(240);
   *(u16 *)0x4000000 = 0;

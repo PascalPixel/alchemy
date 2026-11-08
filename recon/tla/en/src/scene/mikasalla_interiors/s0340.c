@@ -19,8 +19,8 @@ s32 Func_02000340(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov65ERoom1) {
     if (gMainRoutineWork.entrance == 5)
       Func_02000454();
-    else if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 33)) ||
-             (GameFlag_Test(SPLIT_CONSTANT(0xa00, 57)) && !GameFlag_Test(SPLIT_CONSTANT(0x300, 65))) ||
+    else if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 33))) ||
+             (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 57))) && !GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 65)))) ||
              GameFlag_Test(34))
       Func_020005e4(18, 0, 0);
     else

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "frame.h"
 #include "actor.h"
 
@@ -40,7 +41,7 @@ void Func_02000d40(struct Actor *object) {
     dz = ((Random16Far() & 15) - 8) << 15;
     velocityZ = ((Random16Far() & 31) - 16) << 12;
     z = object->z;
-    Func_0200015c(object->x, object->y, z + dz, 0, 0, velocityZ, 0x320001,
+    Func_0200015c(object->x, object->y, z + dz, 0, 0, velocityZ, SPLIT_CONSTANT(0x320001),
                   &config);
   }
 }

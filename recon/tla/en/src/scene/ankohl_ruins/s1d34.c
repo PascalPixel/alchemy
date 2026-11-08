@@ -18,13 +18,13 @@ void Func_02001d34(void) {
     gData_0200378c = 1;
     GameFlag_SetBit(381);
     Func_0200160c();
-    GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 2)));
   }
 }
 
 void Func_02001ddc(void) {
   if (AnkohlRuins_FlagCheck(0x9e2) == 0) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 226));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 226)));
     Func_02002eec(584);
     Func_02002e44();
     Func_02002edc(0);
@@ -55,13 +55,13 @@ void Func_02001e54(void) {
     gData_0200378c = 2;
     GameFlag_SetBit(381);
     Func_020019a0();
-    GameFlag_SetBit(SPLIT_CONSTANT(0x104, 255));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x104, 255)));
   }
 }
 
 void Func_02001f04(void) {
   if (AnkohlRuins_FlagCheck(0x9e3) == 0) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 227));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 227)));
     Func_02002eec(584);
     Func_02002e44();
     Func_02002edc(0);

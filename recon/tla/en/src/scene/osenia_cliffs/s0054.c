@@ -11,5 +11,5 @@ void Func_02000054(void) {
    * call loads the first earlier (differ 2). */
   asm volatile("" : "+l"(a1), "+l"(a2));
   Func_020001a0(1, a1, a2);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x104, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x104, 255)));
 }

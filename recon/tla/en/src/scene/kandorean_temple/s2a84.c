@@ -13,11 +13,11 @@ void Func_02002a84(void) {
   Actor_SetModeById(9, 2);
   object = Actor_GetById(8);
   object->motionFlags = 0;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x300, 2))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x302))) {
     Actor_SetPositionAndResetMotion_(Actor_GetById(8), 0x1380000, 0x200000,
                                      0x1d80000);
     Func_02005178_(0, 0, 3, 3, 19, 28);
-  } else if (GameFlag_Test(SPLIT_CONSTANT(0x204, 255))) {
+  } else if (GameFlag_Test(SPLIT_CONSTANT(0x303))) {
     Actor_SetPositionAndResetMotion_(Actor_GetById(8), 0x1580000, 0x200000,
                                      0x1d80000);
     Func_02005178_(0, 4, 3, 3, 19, 28);
@@ -28,7 +28,7 @@ void Func_02002a84(void) {
   object->scaleY = 0xb333;
   object->collisionFlags = 0;
   Func_02005338(0);
-  if (Flag_IsSet(SPLIT_CONSTANT(0x900, 45))) {
+  if (Flag_IsSet(SPLIT_CONSTANT(0x92d))) {
     {
       s32 e = 1;
       s32 f = 4;
@@ -42,7 +42,7 @@ void Func_02002a84(void) {
   if (GameFlag_Test(0x109) == 0) {
     if (gMainRoutineWork.entrance == 2) {
       Actor_GetById(gMainRoutineWork.currentOwner)->y = 0x400000;
-    } else if (gMainRoutineWork.entrance == 3 && Flag_IsSet(SPLIT_CONSTANT(0x900, 45)) == 0) {
+    } else if (gMainRoutineWork.entrance == 3 && Flag_IsSet(SPLIT_CONSTANT(0x92d)) == 0) {
       Func_02005230(11, 0, 0);
       Func_02005230(12, 0, 0);
       Func_02005230(13, 0, 0);

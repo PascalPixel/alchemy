@@ -233,7 +233,7 @@ s32 Func_081197f0(s32 enemyGroup) {
     BattleParty_AssignMemberSlots();
     battle->battleType = 0;
   }
-  Task_Add(Func_08118adc, SPLIT_CONSTANT(0x380, 255));
+  Task_Add(Func_08118adc, SPLIT_CONSTANT(0x47f));
 
   cue = gMainRoutineWork.sceneCue;
   if (cue != 0) {
@@ -264,7 +264,7 @@ s32 Func_081197f0(s32 enemyGroup) {
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
-  *(volatile u16 *)SPLIT_CONSTANT(0x4000000, 80) = 0;
+  *(volatile u16 *)SPLIT_CONSTANT(0x4000050) = 0;
   BattleSpoils_Clear();
   battle->promptSlot = VramCache_AllocEntry(128);
 

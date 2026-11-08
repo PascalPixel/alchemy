@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "system.h"
 #include "input.h"
 #include "edition.h"
@@ -36,7 +37,7 @@ s32 Func_080fc1ac(s32 item) {
   s32 changed = 1;
 
   window = Window_CreateFar(13, 3, 17, 10, 2);
-  itemId = item & 0x1ff;
+  itemId = item & SPLIT_CONSTANT(0x1ff);
   Item_Get(itemId);
   Text_DrawCharacterAtOffsetFar(itemId + (s32)MsgItemName, window, 24, 0);
   question = (s32)MsgConfirmDrop;

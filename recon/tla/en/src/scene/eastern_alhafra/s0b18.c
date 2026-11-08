@@ -38,9 +38,9 @@ s32 Func_02000b18(void) {
   *(s32 *)(EVENT_WORK + 0x1ac) = 0x100;
   Func_02000af8();
   OBJECT(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
-  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x7a8, 255)) != 0) {
-    if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 5)) != 0 &&
-        Value1(GameFlag_Test, SPLIT_CONSTANT(0x810, 255)) == 0) {
+  if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x8a7)) != 0) {
+    if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x905)) != 0 &&
+        Value1(GameFlag_Test, SPLIT_CONSTANT(0x90f)) == 0) {
       Call3(Func_02004b04, 30, PIXELS(184), PIXELS(616));
       Call3(Func_02004b04, 31, PIXELS(136), PIXELS(600));
       Call3(Func_02004b04, 28, PIXELS(168), PIXELS(584));
@@ -62,7 +62,7 @@ s32 Func_02000b18(void) {
       Call2(Actor_SetModeById, 27, 13);
       Call2(Actor_SetModeById, 29, 13);
     }
-    if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x900, 5)) != 0) {
+    if (Value1(GameFlag_Test, SPLIT_CONSTANT(0x905)) != 0) {
       Call6(Func_02004a5c, 40, 0, 24, 31, 11, 6);
       Call6(Func_02004a5c, 84, 15, 10, 10, 75, 15);
       Call6(Func_02004a54, 10, 24, 1, 1, 11, 24);
@@ -107,10 +107,10 @@ s32 Func_02000b18(void) {
     Func_02003274();
   }
   Func_02000fa4();
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 166)) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(0x8a6)) == 0)
     Func_020040ec(15);
   Func_02004c14();
-  Func_02004c2c(0, SPLIT_CONSTANT(0x800, 163), 8, 9);
+  Func_02004c2c(0, SPLIT_CONSTANT(0x8a3), 8, 9);
   OBJECT(8)->priorityFlags |= 32;
   OBJECT(9)->priorityFlags |= 32;
   Func_02004c1c();
@@ -119,7 +119,7 @@ s32 Func_02000b18(void) {
   Actor_SetSingleChildFlags(Actor_GetById(13), 0);
   Func_020047fc(gData_02004d0c);
   Actor_SetSingleChildFlags(Actor_GetById(14), 0);
-  flag = GameFlag_Test(SPLIT_CONSTANT(0x800, 162));
+  flag = GameFlag_Test(SPLIT_CONSTANT(0x8a2));
   if (flag == 0) {
     object = OBJECT(18);
     /* FAKEMATCH(one-pass): the solid bit set in a once-only block, which lays
@@ -144,7 +144,7 @@ s32 Func_02000b18(void) {
   Actor_SetSingleChildFlags(Actor_GetById(17), 0);
   Actor_SetSpritePriority(10, 2);
   ((u8 *)OBJECT(23))[0x62] = 1;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)) != 0 && GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255)) == 0) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x8ab)) != 0 && GameFlag_Test(SPLIT_CONSTANT(0x8a7)) == 0) {
     Func_02004b04(22, 0, 0);
     Func_02004b04(23, 0, 0);
     Func_02004b04(24, 0, 0);

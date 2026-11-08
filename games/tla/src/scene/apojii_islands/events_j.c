@@ -6,7 +6,7 @@ void Func_02001ba0(s32 id) {
    * differ in tla-en. */
   u8 *work = Ram_HeapSlots->unk70[1];
   struct Actor *object = Actor_GetById(id);
-  s32 *slot = (s32 *)(work + SPLIT_CONSTANT(0x800, 8));
+  s32 *slot = (s32 *)(work + SPLIT_CONSTANT(0x808));
 
   *slot = 0;
   if (id != 0 && object != 0)

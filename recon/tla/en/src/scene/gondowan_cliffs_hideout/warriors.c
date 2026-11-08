@@ -25,7 +25,7 @@ void Func_02000214(s32 value);
 s32 Func_0200021c(void);
 
 void Func_02000074(void) {
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 171))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 171)))) {
     Func_020001b4();
     Func_02000214(0);
     Func_020001e4((s32)MsgKibomboWarriorsFound);
@@ -57,7 +57,7 @@ void Func_02000074(void) {
     Func_020001ec(13, 0);
     Func_020001bc();
   }
-  GameFlag_SetBit(SPLIT_CONSTANT(0x890, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x890, 255)));
 }
 
 s32 Func_02000154(void) {

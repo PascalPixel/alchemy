@@ -32,7 +32,7 @@ void Func_020004c8(void) {
   if (Flag_IsSet(0x201) == 0 && gFrameCount % 3 != 0)
     return;
   center = Actor_GetById(31);
-  if (Flag_IsSet(SPLIT_CONSTANT(0x102, 255)) != 0) {
+  if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x102, 255))) != 0) {
     u32 random;
 
     random = Random16Far();

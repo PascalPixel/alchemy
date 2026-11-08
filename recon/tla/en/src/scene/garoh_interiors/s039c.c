@@ -32,7 +32,7 @@ void Func_02000318(s32 actor) {
 void Func_0200039c(void) {
   Func_020007f4();
   Func_02000884(0);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 27)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 27))))
     Func_02000844((s32)MsgGarohInteriors60);
   else
     Func_02000844((s32)MsgGarohInteriors25);
@@ -43,7 +43,7 @@ void Func_0200039c(void) {
 void Func_020003dc(void) {
   Func_020007f4();
   Func_02000884(0);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 27)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 27))))
     Func_02000844((s32)MsgGarohInteriors61);
   else
     Func_02000844((s32)MsgGarohInteriors26);
@@ -54,7 +54,7 @@ void Func_020003dc(void) {
 void Func_0200041c(void) {
   Func_020007f4();
   Func_02000884(0);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 27)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 27))))
     Func_02000844((s32)MsgGarohInteriors64);
   else
     Func_02000844((s32)MsgGarohInteriors29);
@@ -65,7 +65,7 @@ void Func_0200041c(void) {
 void Func_0200045c(void) {
   Func_020007f4();
   Func_02000884(0);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 27)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 27))))
     Func_02000844((s32)MsgGarohInteriors65);
   else
     Func_02000844((s32)MsgGarohInteriors30);
@@ -86,13 +86,13 @@ void Func_0200049c(void) {
     Func_02000844(message + 2);
   }
   Func_0200085c(11, 0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 26));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 26)));
 }
 
 /// Returns the room's table, chosen by flag 0x91B, the scene and, in the
 /// first room, the entrance.
 const u8 *Func_020004f0(void) {
-  s32 moved = GameFlag_Test(SPLIT_CONSTANT(0x900, 27));
+  s32 moved = GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 27)));
   struct MainRoutineWork *party = &gMainRoutineWork;
   s32 room1 = (s32)&SceneId_Ov660Room1;
   s32 scene;

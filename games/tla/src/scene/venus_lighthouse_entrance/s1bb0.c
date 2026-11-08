@@ -33,7 +33,7 @@ void Func_02001bb0(void) {
   Func_0200293c((s32)MsgNotThatWayThe);
   Func_020029d4(8, 0x10, 0, 0x8000);
   Actor_WaitForMoveById(8);
-  Func_0200294c(SPLIT_CONSTANT(0x2000, 8), 0, 0xa);
+  Func_0200294c(SPLIT_CONSTANT(0x2008), 0, 0xa);
   Actor_SetModeById(8, 2);
   t7 = Actor_GetById(5);
   if (t7 != 0) {

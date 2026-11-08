@@ -19,7 +19,7 @@ extern const u8 gData_02002d38[];
 extern const u8 gData_02002ff0[];
 
 const u8 *Func_0200004c(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 255)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 255))))
     return gData_02002ff0;
   return gData_02002d38;
 }

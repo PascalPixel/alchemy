@@ -30,7 +30,7 @@ void Field_StartPaletteTransition(s32 frames) {
 
   BattleEffect_ApplyColorToTargetBuffer(colors, 2);
   if (*(s8 *)(state + 0xca4) != 0)
-    BattleEffect_ApplyColorToTargetBuffer(SPLIT_CONSTANT(0x10000, 1), 1);
+    BattleEffect_ApplyColorToTargetBuffer(SPLIT_CONSTANT(SPLIT_CONSTANT(0x10000, 1)), 1);
   else
     BattleEffect_ApplyColorToTargetBuffer(colors, 1);
   GameFlag_ClearBit(0x108);

@@ -7,7 +7,7 @@ void Func_0200052c(struct Actor *object) {
     s32 x = object->x;
 
     x += spread * 48;
-    child = Import_ActorCreate(SPLIT_CONSTANT(0x200, 162), x - 0x180000, object->y, object->z);
+    child = Import_ActorCreate(SPLIT_CONSTANT(0x2a2), x - 0x180000, object->y, object->z);
     if (child != 0) {
       Actor_SetSingleChildFlags(child, 0);
       child->update = (void (*)(void))Func_020004e4;

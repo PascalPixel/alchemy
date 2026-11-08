@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 
 struct RiseTimer {
@@ -14,7 +15,7 @@ void Func_020013e4(struct Actor *object) {
   s32 growth;
 
   object->y += 0x8000;
-  growth = 0x51e;
+  growth = SPLIT_CONSTANT(0x51e);
   object->scaleX += growth;
   object->scaleY += growth;
   timer->frames--;

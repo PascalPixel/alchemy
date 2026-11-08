@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "iwram_call.h"
 #include "ram_buffer.h"
 
@@ -40,8 +41,8 @@ s32 Func_080d9f1c(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 sy = dy >> 8;
   s32 dz = toZ - z;
   s32 sz = dz >> 8;
-  s32 segments = Iwram_SqrtEntry(Iwram_MulQ16(sx, sx) + Iwram_MulQ16(sy, sy) +
-                                 Iwram_MulQ16(sz, sz)) /
+  s32 segments = ValueLr1((s32 (*)())Iwram_SqrtEntry, (s32)(Iwram_MulQ16(sx, sx) + Iwram_MulQ16(sy, sy) +
+                                 Iwram_MulQ16(sz, sz))) /
                      6 +
                  1;
   struct LineNode **link = &work->slots[index].head;

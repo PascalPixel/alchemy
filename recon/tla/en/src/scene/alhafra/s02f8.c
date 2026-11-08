@@ -24,7 +24,7 @@ extern u8 MsgAlhafra69[];
 extern u8 gMainRoutineWork[];
 
 void Func_020002f8(void) {
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 181));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x8b5));
   PartyInventory_Remove(0x1c9);
   Func_02001be4();
   Func_02001cfc(0);

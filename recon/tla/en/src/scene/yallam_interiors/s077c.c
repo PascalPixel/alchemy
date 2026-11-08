@@ -31,7 +31,7 @@ void Func_0200077c(s32 actor) {
   if (!Flag_IsSet(0x10f)) {
     Func_02000a18((s32)MsgThisThisIs);
     Func_02000a28(actor, 0);
-  } else if (Flag_IsSet(SPLIT_CONSTANT(0x300, 1))) {
+  } else if (Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x300, 1)))) {
     Func_02000a18((s32)MsgItTakesOur);
     Func_02000a28(actor, 0);
   } else if (Func_02000a90()) {

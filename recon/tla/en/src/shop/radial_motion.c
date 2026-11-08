@@ -1,4 +1,5 @@
 #include "fixed_math.h"
+#include "call.h"
 #include "types.h"
 #include "scene.h"
 #include "system.h"
@@ -48,7 +49,7 @@ void BattleEffect_UpdateRadialMotion(struct Effect_080b2f4c *effect) {
     effect->x = position.x;
     effect->z = position.z;
     effect->velocity = 0x20000;
-    effect->acceleration = 0x6666;
+    effect->acceleration = SPLIT_CONSTANT(0x6666);
     effect->flag = state;
     *statePointer = (u8)*statePointer + 1;
   } else if (state == 1) {

@@ -83,7 +83,7 @@ void Func_02000bb0(void) {
   Func_02001234((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
                 ((value3 >> 20) - 1));
   Func_02001234(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x182, 255));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x281));
   return;
 }
 
@@ -108,7 +108,7 @@ void Func_02000c1c(void) {
   Func_02001234((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
                 ((value3 >> 20) - 1));
   Func_02001234(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_SetBit(SPLIT_CONSTANT(0x182, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x281));
   return;
 }
 
@@ -132,7 +132,7 @@ void Func_02000c8c(void) {
   Func_02001234((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
                 ((value3 >> 20) - 1));
   Func_02001234(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 130));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x282));
   return;
 }
 
@@ -156,7 +156,7 @@ void Func_02000cf0(void) {
   Func_02001234((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
                 ((value3 >> 20) - 1));
   Func_02001234(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 130));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x282));
   return;
 }
 
@@ -180,7 +180,7 @@ void Func_02000d54(void) {
   Func_02001234((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
                 ((value3 >> 20) - 1));
   Func_02001234(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x184, 255));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x283));
   return;
 }
 
@@ -204,7 +204,7 @@ void Func_02000db8(void) {
   Func_02001234((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
                 ((value3 >> 20) - 1));
   Func_02001234(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x184, 255));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x283));
   return;
 }
 
@@ -270,7 +270,7 @@ void Func_02000ee0(void) {
   Func_02001234((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
                 ((value3 >> 20) - 1));
   Func_02001234(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x186, 255));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x285));
   return;
 }
 
@@ -294,7 +294,7 @@ void Func_02000f44(void) {
   Func_02001234((value1 >> 20), ((value3 >> 20) - 1), 1, 3, (object4->x >> 20),
                 ((value3 >> 20) - 1));
   Func_02001234(0, 0, 1, 3, (value1 >> 20), ((value3 >> 20) - 1));
-  GameFlag_SetBit(SPLIT_CONSTANT(0x186, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x285));
   return;
 }
 
@@ -327,7 +327,7 @@ void Func_02000fa8(void) {
   v5 = (v5 - 1);
   Call6((void (*)())Func_02001234, v5, v8, 3, 1, v5, (object3->z >> 20));
   Func_02001234(0, 0, 3, 1, v5, v8);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 134));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x286));
   return;
 }
 
@@ -359,6 +359,6 @@ void Func_02001034(void) {
   v6 = (v6 >> 20);
   Call6((void (*)())Func_02001234, v5, v6, 3, 1, v5, (object4->z >> 20));
   Func_02001234(0, 0, 3, 1, v5, v6);
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 134));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x286));
   return;
 }

@@ -29,7 +29,7 @@ void Func_02000a8c(void) {
   Actor_StartRepeatedMotion(8, 2);
   FieldEvent_Wait(20);
   Call2(Func_0200103c, 0x10000, 0);
-  Func_02001034(SPLIT_CONSTANT(0x10000, 3), 1);
+  Func_02001034(SPLIT_CONSTANT(0x10003), 1);
   Func_02001044(0x3c);
   FieldEvent_Wait(60);
   Call3(Func_02000fbc, (s32)MsgIAmTheGuardian, 0, 6);

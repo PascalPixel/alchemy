@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 
 struct EpilogueWindow {
   u8 unk00[8];
@@ -33,7 +34,7 @@ void Func_02000158(s32 message, s32 x, s32 y, s32 left, s32 line, s32 frames,
 
   name = 0;
   wide = 0x8000 & message;
-  message &= 0x7fff;
+  message &= SPLIT_CONSTANT(0x7fff);
   window = Message_OpenWindow(
       gData_02000a28, x, y, (BattleEffect_GetResourceId(message) << 16) | 4);
   if (!wide) {

@@ -38,7 +38,7 @@ void Func_02000640(void) {
   Func_02001070(18, gMainRoutineWork.currentOwner);
   wait(1);
   Actor_ArmCallback(gMainRoutineWork.currentOwner, FACING_NORTHWEST, 0);
-  Call3(Actor_SetSpeedParameters, 18, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+  Call3(Actor_SetSpeedParameters, 18, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
   Actor_SetPositionAndReset(18, 532, 248);
   Func_020010b8(18, 0x3000);
   Func_02001098(MsgAreWeSetting);
@@ -48,14 +48,14 @@ void Func_02000640(void) {
     Func_020010a8(18, 0);
     gMainRoutineWork.ownerOverride = 1;
     if (Value1(GameFlag_Test, 0x9d0)) {
-      GameFlag_SetBit(SPLIT_CONSTANT(0x7e0, 255));
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 178));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x8df));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x9b2));
     }
     Func_020010f0(4);
   } else {
     (*(u16 *)((u8 *)Ram_HeapSlots->eventWork + 0x1c4))++;
     Func_020010a8(18, 0);
-    Call3(Actor_SetSpeedParameters, 18, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+    Call3(Actor_SetSpeedParameters, 18, 0x19999, SPLIT_CONSTANT(0xcccc));
     Actor_SetModeById(18, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)
@@ -63,7 +63,7 @@ void Func_02000640(void) {
                                        *(s16 *)((u8 *)object + 18));
     Actor_WaitForMoveById(18);
     Func_02001060(18, 0, 0);
-    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcc00, 204), SPLIT_CONSTANT(0x6600, 102));
+    Actor_SetSpeedParameters(gMainRoutineWork.currentOwner, SPLIT_CONSTANT(0xcccc), SPLIT_CONSTANT(0x6666));
     Actor_SetPositionAndReset(gMainRoutineWork.currentOwner, 528, 276);
     Func_02001018();
   }

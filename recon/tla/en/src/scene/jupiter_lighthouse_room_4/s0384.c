@@ -28,9 +28,9 @@ s32 Func_02000384(void) {
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
   Func_020000c0();
-  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 7)))
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa07)))
     Func_0200017c();
-  if (GameFlag_Test(SPLIT_CONSTANT(0xa00, 8)))
+  if (GameFlag_Test(SPLIT_CONSTANT(0xa08)))
     Func_020001ac();
   Func_02000300();
   flag = GameFlag_Test(265);

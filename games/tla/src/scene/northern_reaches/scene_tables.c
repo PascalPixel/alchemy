@@ -84,10 +84,10 @@ void Func_02000108(void) {
   s32 result0;
   struct Actor *object1;
 
-  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x900, 12));
+  result0 = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0x90c));
   if (result0 != 0)
     goto L_020081d2;
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 12));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x90c));
   Func_02000a68();
   Func_02000b30(0);
   Func_02000ac0((s32)MsgShipIceWallCrewReposition);

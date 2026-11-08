@@ -3,6 +3,7 @@
 /// durations.
 
 #include "edition.h"
+#include "call.h"
 #include "resource.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -167,7 +168,7 @@ void ResourceObject_Release(struct ResourceObjectWork *work) {
     Dma_Set(&zero, work,
             ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16) |
                 (sizeof(*work) / 4),
-            REG_DMA3);
+            SPLIT_CONSTANT(REG_DMA3));
   }
 }
 

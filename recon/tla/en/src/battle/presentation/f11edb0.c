@@ -9,6 +9,7 @@
 // Func_0811ddd8 is void (r0 is set before r1 for the call, as the
 // native).
 #include "types.h"
+#include "call.h"
 #include "battle.h"
 #include "battle_unit.h"
 #include "battle_work.h"
@@ -157,7 +158,7 @@ s32 Func_0811edb0(struct BattlePlan *plan, s32 unused,
       BattleEvent_DispatchQueued();
     }
   } else if (itemDefinition->useType == 4) {
-    if ((inventoryEntry & 0x1ff) == 184)
+    if ((inventoryEntry & SPLIT_CONSTANT(0x1ff)) == 184)
       inventoryEntry = 185;
     unit->inventory[selection->parameter] = inventoryEntry;
   }

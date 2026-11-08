@@ -22,7 +22,7 @@ s32 Event_ExecutePackedAction(u32 packed) {
   mode = (packed >> 10) & 15;
   kind = BattleAction_Get(action)->unk04[2];
   selector = Func_080ce31c(kind);
-  first = Func_080ce458(SPLIT_CONSTANT(0x30000000, 5), kind, selector);
+  first = Func_080ce458(SPLIT_CONSTANT(0x30000005), kind, selector);
   second = Func_080ce458(0x20000005, kind, selector);
   target = -1;
   if (first != NULL || second != NULL) {

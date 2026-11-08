@@ -24,7 +24,7 @@ SECTIONS
         "*/games/tla/src/scene/shrine_of_the_sea_god/event3.o"(.text)
         "*/recon/tla/raw/src/scene/shrine_of_the_sea_god/s1474.o"(.text)
         "*/recon/tla/raw/src/scene/shrine_of_the_sea_god/event4.o"(.text)
-        "*/recon/tla/raw/src/scene/shrine_of_the_sea_god/event5.o"(.text)
+        "*/games/tla/src/scene/shrine_of_the_sea_god/event5.o"(.text)
         "*/recon/tla/raw/src/scene/shrine_of_the_sea_god/event6.o"(.text)
         "*/resource_654_overlay.o"(.text.x02009d24)
         "*/recon/tla/raw/src/scene/shrine_of_the_sea_god/eventb.o"(.text)

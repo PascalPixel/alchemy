@@ -71,13 +71,13 @@ burst:
     object->acceleration = 0;
     object->scaleX = scale;
     object->scaleY = scale;
-    object->gravity = SPLIT_CONSTANT(0x5400, 122);
+    object->gravity = SPLIT_CONSTANT(0x547a);
     object->bounce = 0x8000;
   }
   i--;
   if (i >= 0)
     goto burst;
-  Func_02005014(SPLIT_CONSTANT(0x200, 78));
+  Func_02005014(SPLIT_CONSTANT(0x24e));
   Func_02005014(217);
   Call3((void (*)())Func_02004e24, 0x20000, 0x20000, 0xe666);
   Func_02004f34(gMainRoutineWork.currentOwner, 257);
@@ -85,7 +85,7 @@ burst:
   FieldEvent_Wait(40);
   Func_02005014(204);
   leader->motionFlags = 3;
-  leader->gravity = SPLIT_CONSTANT(0x5400, 122);
+  leader->gravity = SPLIT_CONSTANT(0x547a);
   for (value = 0; value < 180; value++) {
     wait(1);
     if (leader->y <= leader->terrainHeight)

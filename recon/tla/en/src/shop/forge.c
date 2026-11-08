@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 
 struct ForgeRecipe {
@@ -15,7 +16,7 @@ extern struct ForgeRecipe gData_0810cc34[];
 struct ForgeRecipe *Forge_FindRecipe(s32 item) {
   struct ForgeRecipe *recipe;
 
-  item &= 0x1ff;
+  item &= SPLIT_CONSTANT(0x1ff);
   for (recipe = gData_0810cc34; recipe->item != -1; recipe++) {
     if (recipe->item == item)
       return recipe;

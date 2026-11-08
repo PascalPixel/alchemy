@@ -17,7 +17,7 @@ s32 Func_020012dc(void) {
     Actor_GetById(11)->priorityFlags |= 0x20;
     Func_02001510(gData_02001658);
     Func_0200100c((u16 *)gData_02001688);
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 65))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x941))) {
       Call6((void (*)())Func_02001460, 7, 2, 8, 7, 7, 12);
       Call6((void (*)())Func_02001450, 7, 66, 7, 76, 8, 9);
       Func_02001448();

@@ -19,7 +19,7 @@ void Actor_SetModeById();
 void Func_02000fa4(void) {
   s32 t1, t2, t8, t10, t12, t13, t18, t19, t24, v_r5;
 
-  t1 = GameFlag_Test(SPLIT_CONSTANT(0x800, 166));
+  t1 = GameFlag_Test(SPLIT_CONSTANT(0x8a6));
   if (t1 == 0)
     goto L_02009022;
   t2 = Actor_GetById(15);
@@ -35,12 +35,12 @@ void Func_02000fa4(void) {
   Value4((s32 (*)())Func_02004c7c, 0x1500000, 0x2100000, 0, 0);
   Func_02004c7c(0x1600000, 0x2100000, 0, 0);
 L_02009022:
-  t8 = GameFlag_Test(SPLIT_CONSTANT(0x800, 164));
+  t8 = GameFlag_Test(SPLIT_CONSTANT(0x8a4));
   if (t8 == 0)
     goto L_0200903a;
   Func_02004b04(16, 0, 0);
 L_0200903a:
-  t10 = GameFlag_Test(SPLIT_CONSTANT(0x800, 165));
+  t10 = GameFlag_Test(SPLIT_CONSTANT(0x8a5));
   if (t10 == 0)
     goto L_02009052;
   Func_02004b04(17, 0, 0);
@@ -62,7 +62,7 @@ L_02009052:
          FIELD_AT(v_r5, s32, 16), 0, 0);
   Func_02004c84(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0, 128);
 L_020090a8:
-  t18 = GameFlag_Test(SPLIT_CONSTANT(0x800, 161));
+  t18 = GameFlag_Test(SPLIT_CONSTANT(0x8a1));
   if (t18 == 0)
     goto L_02009100;
   t19 = Actor_GetById(11);
@@ -79,7 +79,7 @@ L_020090a8:
          FIELD_AT(v_r5, s32, 16), 0, 0);
   Func_02004c84(FIELD_AT(v_r5, s32, 8), FIELD_AT(v_r5, s32, 16), 0, 128);
 L_02009100:
-  t24 = GameFlag_Test(SPLIT_CONSTANT(0x7a8, 255));
+  t24 = GameFlag_Test(SPLIT_CONSTANT(0x8a7));
   if (t24 == 0)
     goto L_02009122;
   Call6((void (*)())Func_02004a4c, 32, 24, 2, 2, 30, 24);

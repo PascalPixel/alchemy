@@ -48,7 +48,7 @@ void Func_02001160(void) {
   struct Actor *leader;
   s32 result;
 
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 100));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x964));
   Func_02001bcc();
   Func_02001d04(0);
   Func_02001c6c((s32)MsgThisPlaceIs);
@@ -200,7 +200,7 @@ void Func_02001160(void) {
   Actor_ArmCallback(12, FACING_NORTH + FACING_STEP, 0);
   FieldEvent_Wait(30);
   Func_02001c7c(12, 0, 10);
-  Call3((void (*)())Actor_SetSpeedParameters, 7, SPLIT_CONSTANT(0xb300, 51), SPLIT_CONSTANT(0x5900, 153));
+  Call3((void (*)())Actor_SetSpeedParameters, 7, SPLIT_CONSTANT(0xb333), SPLIT_CONSTANT(0x5999));
   Actor_CommitPositionAndActivate(7, 8, 0);
   Actor_ArmCallback(7, FACING_SOUTH, 0);
   FieldEvent_Wait(10);
@@ -307,7 +307,7 @@ void Func_02001160(void) {
   Motion_SetModeAndWaitAnimation(4, 3);
   FieldEvent_Wait(10);
   Call3((void (*)())Actor_ArmCallback, 4, FACING_NORTH, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 7, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+  Call3((void (*)())Actor_SetSpeedParameters, 7, 0x13333, SPLIT_CONSTANT(0x9999));
   Actor_SetModeById(7, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)
@@ -315,7 +315,7 @@ void Func_02001160(void) {
                               ((s16 *)&leader->z)[1]);
   Actor_WaitForMoveById(7);
   Func_02001c2c(7, 0, 0);
-  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+  Call3((void (*)())Actor_SetSpeedParameters, 12, 0x13333, SPLIT_CONSTANT(0x9999));
   Actor_SetModeById(12, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != 0)

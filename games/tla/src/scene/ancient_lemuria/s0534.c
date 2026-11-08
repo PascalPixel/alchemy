@@ -33,8 +33,8 @@ void Func_02000534(void) {
    * differ in tla-en. */
   struct Actor *object;
 
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 97)) ||
-      GameFlag_Test(SPLIT_CONSTANT(0x900, 106))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x961)) ||
+      GameFlag_Test(SPLIT_CONSTANT(0x96a))) {
     Func_02001a2c(123);
     Func_020019ec(2);
   } else {
@@ -51,7 +51,7 @@ void Func_02000534(void) {
       Func_02001994(MsgLemuriaStayExploringAlternate);
       Func_020019a4(11, 0, 10);
     }
-    Call3(Actor_SetSpeedParameters, 11, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+    Call3(Actor_SetSpeedParameters, 11, 0x13333, SPLIT_CONSTANT(0x9999));
     Actor_SetModeById(11, 2);
     object = Actor_GetById(gMainRoutineWork.currentOwner);
     if (object != NULL)

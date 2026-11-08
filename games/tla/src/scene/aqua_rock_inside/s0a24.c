@@ -9,7 +9,7 @@ void Func_02000a24(void) {
 
   Func_02003d7c();
   Func_02003eac(0);
-  seen = GameFlag_Test(SPLIT_CONSTANT(0x900, 93));
+  seen = GameFlag_Test(SPLIT_CONSTANT(0x95d));
   message = MsgCheckedTheColumn;
   if (!seen) {
     FieldMessage_Show(message, 1);

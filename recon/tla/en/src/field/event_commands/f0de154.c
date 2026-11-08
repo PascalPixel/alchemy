@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "system.h"
 #include "objdisp.h"
 #include "object_effect_scripts.h"
@@ -31,7 +32,7 @@ s32 Func_080de154(struct Actor *src) {
   pos.x = src->x;
   pos.y = src->y;
   pos.z = src->z;
-  obj = Actor_Spawn(671, pos.x, pos.y - (32 << 16), pos.z);
+  obj = Actor_Spawn(SPLIT_CONSTANT(671), pos.x, pos.y - (32 << 16), pos.z);
   if (obj != NULL) {
     obj->motionFlags = 0;
     ((struct ParticleTimer *)obj)->timer = 20;

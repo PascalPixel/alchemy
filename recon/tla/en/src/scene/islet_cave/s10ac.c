@@ -32,7 +32,7 @@ void Func_020010ac(void) {
   Actor_StartRepeatedMotion(8, 2);
   FieldEvent_Wait(20);
   Call2(Func_020012f4, 0x10000, 0);
-  Func_020012ec(SPLIT_CONSTANT(0x10000, 3), 1);
+  Func_020012ec(SPLIT_CONSTANT(0x10003), 1);
   Func_020012fc(0x3c);
   FieldEvent_Wait(60);
   Call3(Func_02001244, (s32)MsgSummonGuardianOfWind, 0, 2);

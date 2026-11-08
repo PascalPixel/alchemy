@@ -116,8 +116,8 @@ void Func_02002c14(void) {
     gData_02004420->velocityY = 0x80000;
   }
   Call3((void (*)())Actor_SetSpeedParameters, gMainRoutineWork.currentOwner,
-        0x19999, SPLIT_CONSTANT(0xcc00, 204));
-  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, SPLIT_CONSTANT(0xcc00, 204));
+        0x19999, SPLIT_CONSTANT(0xcccc));
+  Call3((void (*)())Actor_SetSpeedParameters, 9, 0x19999, SPLIT_CONSTANT(0xcccc));
   leader->velocityY = 0x60000;
   helper->velocityY = 0x60000;
   Call4((void (*)())Func_02003bd0, leader, 0xd80000, 0, 0x780000);
@@ -138,6 +138,6 @@ void Func_02002c14(void) {
     Call6((void (*)())Func_02003bf0, 0, 0, 1, 1, 15, 5);
     wait(1);
   }
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 113));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x871));
   Func_02003c30();
 }

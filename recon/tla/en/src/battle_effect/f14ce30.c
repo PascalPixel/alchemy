@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "system.h"
@@ -21,7 +22,7 @@
 // order: Func_08196404 builds additive for 0, max for 1, transparent for 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 
-#define FORMATION_THORN_VINES SPLIT_CONSTANT(0x186, 255) // eight objects
+#define FORMATION_THORN_VINES SPLIT_CONSTANT(0x285) // eight objects
 
 // The camera work, as far as this scene reads it.
 struct EffectCamera {
@@ -122,8 +123,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(0);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
-                             1);
+  ValueLr4((s32 (*)())Resource_LoadAndDecompress, (s32)((s32)&ResourceId_ThornVineSheet), (s32)(work->sheet), (s32)(1), (s32)(1));
   BattleEffect_LoadBlitter(HEAP_BLITTER, BLITTER_TRANSPARENT << 4 |
                                              COMPOSITE_CLIP_X |
                                              COMPOSITE_CLIP_Y);

@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/lemuria_dock/room.h"
+#include "call.h"
 #include "scene_tables.h"
 
 void Func_0200006c(void) {
@@ -11,7 +12,7 @@ void Func_0200006c(void) {
       Actor_CommitPositionAndActivate_(4, 0, -16);
       Func_0200052c_(8, 0, -16, FACING_SOUTHEAST + FACING_STEP);
       Actor_WaitForMoveById(8);
-      Actor_SetSpeedParameters_(8, 0x13333, 0x9999);
+      Actor_SetSpeedParameters_(8, 0x13333, SPLIT_CONSTANT(0x9999));
       Actor_SetPositionAndReset_(8, 472, 392);
       Func_020004f4_(8, FACING_SOUTH + FACING_STEP);
     } else {
@@ -20,7 +21,7 @@ void Func_0200006c(void) {
       Actor_CommitPositionAndActivate(4, 0, 16);
       Actor_SetSpeedParameters_(8, 0x20000, 0x10000);
       Actor_SetPositionAndReset_(8, 440, 440);
-      Actor_SetSpeedParameters_(8, 0x13333, 0x9999);
+      Actor_SetSpeedParameters_(8, 0x13333, SPLIT_CONSTANT(0x9999));
       Actor_SetModeById(8, 2);
       leader = Actor_GetById(party->currentOwner);
       if (leader != NULL)

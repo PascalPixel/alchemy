@@ -397,7 +397,7 @@ void Func_02000d30(void) {
   Import_EventWait(30);
   Motion_SetModeAndWaitAnimation(8, 3);
   Import_EventWait(10);
-  Venus_MessagePut(0x2008, 0);
+  Venus_MessagePut(SPLIT_CONSTANT(0x2008), 0);
   Import_EventWait(10);
   Motion_SetVarCbAndRefresh(5, 2);
   Import_EventWait(10);
@@ -447,7 +447,7 @@ void Func_02000d30(void) {
   Import_EventWait(20);
   Motion_SetModeAndWaitAnimation(8, 3);
   Import_EventWait(10);
-  Venus_MessagePut(SPLIT_CONSTANT(0x2000, 8), 0);
+  Venus_MessagePut(SPLIT_CONSTANT(0x2008), 0);
   Import_EventWait(10);
   Motion_SetVarCbAndRefresh(9, 2);
   Import_EventWait(10);
@@ -474,7 +474,7 @@ void Func_02000d30(void) {
   Import_EventWait(10);
   Actor_ArmCallback(8, 0x5000, 0);
   Import_EventWait(20);
-  Venus_MessagePut(SPLIT_CONSTANT(0x2000, 8), 0);
+  Venus_MessagePut(SPLIT_CONSTANT(SPLIT_CONSTANT(0x2000, 8)), 0);
   Import_EventWait(10);
   Venus_Jump(9, 256, 30);
   Venus_ObjTurn(9, 0xf000, 0);
@@ -522,7 +522,7 @@ void Func_02000d30(void) {
   Import_EventWait(20);
   Actor_ArmCallback(8, FACING_WEST, 0);
   Import_EventWait(20);
-  Func_02001c24(SPLIT_CONSTANT(0x2000, 8), 0);
+  Func_02001c24(SPLIT_CONSTANT(0x2008), 0);
   Import_EventWait(10);
   Motion_SetVarCbAndRefresh(5, 2);
   Import_EventWait(10);

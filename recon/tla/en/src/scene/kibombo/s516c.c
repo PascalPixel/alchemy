@@ -90,12 +90,12 @@ void Func_0200516c(void) {
       }
       unit[0x131] = 0;
       unit[0x140] = 0;
-      GameFlag_SetBit(SPLIT_CONSTANT(0x830, 255));
-      GameFlag_ClearBit(SPLIT_CONSTANT(0x900, 46));
+      GameFlag_SetBit(SPLIT_CONSTANT(0x92f));
+      GameFlag_ClearBit(SPLIT_CONSTANT(0x92e));
       Party_RemoveOwnerRestored(7);
     }
   }
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x202));
   gData_02007948[0] = *(u16 *)&BG_PLTT_COLOR(0, 9);
   gData_02007948[1] = *(u16 *)&BG_PLTT_COLOR(5, 7);
   gData_02007948[2] = *(u16 *)&BG_PLTT_COLOR(6, 7);
@@ -107,19 +107,19 @@ void Func_0200516c(void) {
   Actor_SetSingleChildFlags(Actor_GetById(33), 0);
   Actor_SetSingleChildFlags(Actor_GetById(34), 0);
   Actor_SetSingleChildFlags(Actor_GetById(35), 0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x10a, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x209));
   actor = Actor_GetById(29);
   actor->motionFlags = 0;
   actor->y = 0;
   Func_020031f0(29);
   Actor_SetSpritePriority(30, 3);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 253))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x8fd))) {
     Func_02005b0c(26, 0, 0);
     Func_02005b0c(27, 0, 0);
     Func_02005b0c(28, 0, 0);
     Call3((void (*)())Func_02005b0c, 21, PIXELS(302), PIXELS(172));
   }
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 107));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x86b));
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   {

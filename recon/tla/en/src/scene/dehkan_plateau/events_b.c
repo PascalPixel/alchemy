@@ -57,9 +57,9 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 void Func_020013b0(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x114, 255)) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x114, 255))) == 0)
     Map_CopyAttributes(63, 0, 1, 1, 50, 20);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x116, 255)) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x116, 255))) == 0)
     Map_CopyAttributes(63, 0, 1, 1, 52, 20);
 }
 

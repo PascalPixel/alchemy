@@ -10,7 +10,7 @@ void Func_0200071c(void) {
   Func_02003d7c();
   Func_02003eac(0);
   Actor_ArmCallback_(gMainRoutineWork.currentOwner, FACING_SOUTH, 0);
-  Func_02003ef4(SPLIT_CONSTANT(0x12e, 255));
+  Func_02003ef4(SPLIT_CONSTANT(0x22d));
   priority = 0x480;
   Task_Add(Func_020006d0, priority);
   Func_02003e44(0x28000, 0x4000);

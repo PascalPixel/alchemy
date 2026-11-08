@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
 #include "battle_work.h"
@@ -9,7 +10,7 @@ u8 *Item_Get(u32);
 // Seal's 9 bits; its callers would settle it.
 u32 BattleSpoils_RankItem(u32 value) {
   u32 bank = 0;
-  u32 base = value & 0x1ff;
+  u32 base = value & SPLIT_CONSTANT(0x1ff);
   if (base == 0)
     return 0;
   {

@@ -3,7 +3,7 @@
 void Func_02000af4(void) {
   struct LemurianShipObject *leader;
 
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 131))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 131)))) {
     leader = Actor_GetById(gMainRoutineWork.currentOwner);
     Func_02002c68();
     Func_02002da8(0);
@@ -102,5 +102,5 @@ void Func_02000d44(void) {
   gMainRoutineWork.battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov656Room2, 15);
   Func_02002d78(11, 1);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x210, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x210, 255)));
 }

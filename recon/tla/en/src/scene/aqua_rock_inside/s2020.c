@@ -54,7 +54,7 @@ s32 Func_02002020(void) {
     } else {
       Call2((void (*)())Actor_SetPartAttribute, Actor_GetById(8), 6);
     }
-    if (GameFlag_Test(SPLIT_CONSTANT(0x132, 255))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x231))) {
       Call1((void (*)())Func_02001e78, 9);
       Call2((void (*)())Actor_SetModeById, 9, 3);
     } else {
@@ -71,7 +71,7 @@ s32 Func_02002020(void) {
     }
     object = Actor_GetById(9);
     object->motionFlags = 0;
-    if (GameFlag_Test(SPLIT_CONSTANT(0x900, 92))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x95c))) {
       Call3((void (*)())Func_02003ddc, 9, PIXELS(632), PIXELS(152));
       Call6((void (*)())Func_02003d1c, 41, 9, 1, 1, 39, 9);
       object->y = 0;
@@ -86,7 +86,7 @@ s32 Func_02002020(void) {
     Call1((void (*)())Func_02001e78, 11);
     Call2((void (*)())Actor_SetModeById, 11, 3);
     if ((u32)(entrance - 6) <= 1) {
-      if (GameFlag_Test(SPLIT_CONSTANT(0x14a, 255))) {
+      if (GameFlag_Test(SPLIT_CONSTANT(0x249))) {
         Call2((void (*)())Actor_SetPartAttribute, Actor_GetById(9), 5);
         Call1((void (*)())Func_02001e78, 9);
         Call2((void (*)())Actor_SetModeById, 9, 3);
@@ -126,7 +126,7 @@ s32 Func_02002020(void) {
     if (!GameFlag_Test(0x109) && entrance == 13)
       Func_02001f04();
   } else if (scene == (s32)&SceneId_Ov67cRoom9) {
-    if (GameFlag_Test(SPLIT_CONSTANT(0x14c, 255))) {
+    if (GameFlag_Test(SPLIT_CONSTANT(0x24b))) {
       Actor_SetPartAttribute(Actor_GetById(9), 5);
       Func_02001e78(9);
       Actor_SetModeById(9, 3);

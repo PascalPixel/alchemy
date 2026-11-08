@@ -17,7 +17,7 @@ void Func_02000094(s32 unused, s32 id) {
   s32 floor;
 
   if (object->x >> 20 == 6 && object->z >> 20 == 14) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 24));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 24)));
     wait(10);
     Func_020022c8(134);
     y = object->y;

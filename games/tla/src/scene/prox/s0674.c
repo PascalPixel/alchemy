@@ -31,7 +31,7 @@ void Func_02000674(void) {
   } else {
     Func_02004464();
     Func_020045ec(0);
-    t4 = GameFlag_Test(SPLIT_CONSTANT(0xa00, 61));
+    t4 = GameFlag_Test(SPLIT_CONSTANT(0xa3d));
     if (t4 != 0) {
       Func_0200451c((s32)MsgProx135);
     } else {

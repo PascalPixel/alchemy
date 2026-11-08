@@ -12,6 +12,6 @@ void Func_02001288(s32 mode) {
     height = Map_GetTerrainHeight(0, object->x, object->z);
     object->y = height;
     object->terrainHeight = height;
-    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 237));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x8ed));
   }
 }

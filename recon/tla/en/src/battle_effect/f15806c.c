@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "battle_effect_work.h"
 #include "battle_effect.h"
 #include "effect_step.h"
@@ -202,7 +203,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     Func_08158ce0(8, 8);
     BattleEffect_CountDownBattlerTints();
     work->transferPending = 1;
-    wait(1);
+    ValueLr1((s32 (*)())wait, (s32)(1));
     diveY += 8;
     frame++;
   } while (frame != 112);

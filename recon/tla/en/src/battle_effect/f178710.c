@@ -1,4 +1,5 @@
 #include "version.h"
+#include "call.h"
 #include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -172,7 +173,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  ValueLr2((s32 (*)())Task_Add, (s32)(BattleEffect_ProcessPendingGraphicsTransfer), (s32)(0xc80));
   {
     s32 endX[2] = {0, 0};
     s32 endY[2] = {0, 0};
@@ -390,7 +391,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectArgument *effect) {
             texture.pixels = work->sheet + 0x4000;
             Func_08015160(endX[i] << 16, endY[i] << 16, 0);
             Func_080150e4(0x3060 - (arcs[i * 2] << 5));
-            Func_0801521c(SPLIT_CONSTANT(0x5100, 32));
+            Func_0801521c(SPLIT_CONSTANT(0x5120));
             Render_TransformVertices(Data_081991e0, vertices, 4);
             Render_DrawModelList(model);
           }

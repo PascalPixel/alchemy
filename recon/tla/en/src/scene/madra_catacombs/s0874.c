@@ -82,7 +82,7 @@ void Func_02000874(void) {
   struct Actor *object;
   s32 x;
 
-  if (Flag_Test(SPLIT_CONSTANT(0x800, 204)) == 0) {
+  if (Flag_Test(SPLIT_CONSTANT(0x8cc)) == 0) {
     object = Actor_GetById(64);
     x = object->x;
     if (x < (186 << 16)) {
@@ -92,7 +92,7 @@ void Func_02000874(void) {
       object->motionFlags = 3;
       wait(10);
       Func_02001134(64, 0, 0);
-      Flag_Set(0x8cc);
+      Flag_Set(SPLIT_CONSTANT(0x800, 204));
       Func_02001114();
     }
   }

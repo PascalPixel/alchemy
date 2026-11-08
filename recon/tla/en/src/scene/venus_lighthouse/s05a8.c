@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 
 void Actor_SetPartAttribute(void *object, s32 value);
 void Import_SoundPlay(s32 cue);
@@ -31,7 +32,7 @@ s32 Func_020005a8(struct SceneEffectSource *object) {
   if (phase != 0)
     goto done;
   params.unk00 = 3 - (s32)((u32)(Random16Far() * 2) >> 16);
-  params.color1 = 0x6666;
+  params.color1 = SPLIT_CONSTANT(0x6666);
   params.color2 = 0x6666;
   params.mode = 14;
   x = object->x + (((s32)((u32)(Random16Far() * 9) >> 16) - 4) << 16);

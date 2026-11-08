@@ -26,9 +26,9 @@ void Func_020011c8(void) {
     return;
   Func_02004e5c();
   Func_02004fcc(0);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 172))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 172)))) {
     if (GameFlag_Test(0x9bc) || GameFlag_Test(0x9bd) || GameFlag_Test(0x9be) ||
-        GameFlag_Test(SPLIT_CONSTANT(0x8c0, 255)))
+        GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x8c0, 255))))
       Func_02004f0c((s32)MsgGaiaRockInside10);
     else
       Func_02004f0c((s32)MsgGaiaRockInside06);

@@ -13,6 +13,6 @@ s32 Func_0200055c(void) {
                       ((s32)&SceneId_Ov6ACRoom3 - (s32)&SceneId_Ov6a8Room2),
                   0x5000000);
   if (gMainRoutineWork.entrance == 20)
-    GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 75));
+    GameFlag_SetBit(SPLIT_CONSTANT(0xa4b));
   return 0;
 }

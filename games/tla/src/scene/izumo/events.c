@@ -5,7 +5,7 @@ const u8 *Func_020001ac(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 8 of 11 instructions
    * differ in tla-en. */
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39)))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x927)))
     return gData_02001644;
   return gData_02001494;
 }
@@ -21,7 +21,7 @@ void Func_020001ec(void) {
   struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 53, 5, 8, 9, 23, 30, 0);
-  if (!GameFlag_Test(SPLIT_CONSTANT(0xea0, 255))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0xf9f))) {
     Call3((void (*)())Func_02000d40, 64, PIXELS(456), PIXELS(584));
     if (object->x >> 20 == 28 && object->z >> 20 == 36) {
       Func_02000d00();
@@ -73,7 +73,7 @@ void Func_0200036c(void) {
   struct FieldActor *object = Actor_GetById(gMainRoutineWork.currentOwner);
 
   Call7((void (*)())Func_02000df8, 42, 0, 6, 2, 9, 18, 0);
-  if (!GameFlag_Test(SPLIT_CONSTANT(0xf00, 161))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0xfa1))) {
     Call3((void (*)())Func_02000d40, 66, PIXELS(168), PIXELS(328));
     if (object->x >> 20 == 10 && object->z >> 20 == 20) {
       Func_02000d00();
@@ -114,7 +114,7 @@ const u8 *Func_0200049c(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 8 of 11 instructions
    * differ in tla-en. */
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 39)))
+  if (GameFlag_Test(SPLIT_CONSTANT(0x927)))
     return gData_02001b00;
   return gData_020018b4;
 }

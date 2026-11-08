@@ -13,5 +13,5 @@ void Func_02000a98(void) {
     Func_020036b8(33, 55);
     wait(15);
   }
-  GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 102));
+  GameFlag_SetBit(SPLIT_CONSTANT(0xa66));
 }

@@ -27,18 +27,18 @@ void Func_02004744(s32 progress) {
   if (kind + level == gData_02006e0c)
     return;
   gData_02006e0c = kind + level;
-  Call2((void (*)())Iwram_ClearWordsEntry, (s32)(Data_02006e20), (s32)(0x100));
+  CallLr2((void (*)())Iwram_ClearWordsEntry, (s32)(Data_02006e20), (s32)(0x100));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     if (kind == 0) {
-      copy(Data_02006e20, gData_02006f20[8], 0x80);
+      ValueLr3((s32 (*)())copy, (s32)(Data_02006e20), (s32)(gData_02006f20[8]), (s32)(0x80));
       goto done;
     }
     if (kind == 100)
       copy(Data_02006e20, gData_02006f20[4], 0x80);
     else
-      copy(Data_02006e20, gData_02006f20[8], 0x80);
+      ValueLr3((s32 (*)())copy, (s32)(Data_02006e20), (s32)(gData_02006f20[8]), (s32)(0x80));
   }
   base = 0;
   count = level;

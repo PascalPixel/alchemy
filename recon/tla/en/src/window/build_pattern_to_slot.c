@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -31,7 +32,7 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 layer);
 /// Decodes item code's icon (the first icon for code 0) into the glyph work.
 void Icon_DrawItem(s32 code) {
   GlyphTransfer *state = Ram_HeapSlots->glyphWork;
-  struct ItemDefinition *item = Item_Get(0x1ff & code);
+  struct ItemDefinition *item = Item_Get(SPLIT_CONSTANT(0x1ff) & code);
 
   if (code != 0)
     state->encoded = gItemIcons[item->icon];

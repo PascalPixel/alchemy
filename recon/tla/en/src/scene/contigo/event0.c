@@ -5,7 +5,7 @@ void Func_020005f8(void) { Func_02004214(16, 0, 14); }
 
 void Func_02000608(void) {
   Func_02004214(17, 2, 15);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 230));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x9e6));
 }
 
 s32 Func_02000620(s32 *a, s32 *b) {

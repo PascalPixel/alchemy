@@ -32,5 +32,5 @@ void Func_02000710(void) {
       Func_02005138(steam, gData_020054f0);
     }
   }
-  Func_02000778(leader, SPLIT_CONSTANT(0xd900, 153));
+  Func_02000778(leader, SPLIT_CONSTANT(0xd999));
 }

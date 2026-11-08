@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "frame.h"
 #include "field_effect.h"
@@ -34,6 +35,6 @@ void Func_02000d1c(struct Actor *object) {
   /* FAKEMATCH(temporary): z read into its own local; as object->z in the
    * call, 4 of 60 instructions differ in tla-en. */
   z = object->z;
-  Func_0200015c(object->x, object->y, z + ((dz - 8) << 15), 0, 0, vz, 0x320001,
+  Func_0200015c(object->x, object->y, z + ((dz - 8) << 15), 0, 0, vz, SPLIT_CONSTANT(0x320001),
                 &options);
 }

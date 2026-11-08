@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "dma.h"
 #include "heap_release.h"
@@ -39,7 +40,7 @@ void Func_0810be3c(void);
 void Message_CloseFinishedWindowsFar(void);
 
 void Func_08108130(void) {
-  ShopCursor_Advance((u8 *)Ram_HeapSlots->menuRuntime + 0x4dc);
+  ShopCursor_Advance((u8 *)Ram_HeapSlots->menuRuntime + SPLIT_CONSTANT(0x4dc));
 }
 
 /// Opens the shop's work: lists the party, loads the cursor, page arrow, gem
@@ -49,7 +50,7 @@ void Func_08108148(void) {
   struct ShopRuntime *work;
   s32 slot;
 
-  work = HeapSlot_Alloc(220, 0xcec);
+  work = HeapSlot_Alloc(220, SPLIT_CONSTANT(0xcec));
   Event_ResolveAllPendingActionsFar();
   Dma_Fill32(0, work, 0xcec);
   work->mode = 12;

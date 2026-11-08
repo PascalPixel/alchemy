@@ -59,12 +59,12 @@ static __inline__ void Map_CopyAttributes(s32 a, s32 b, s32 c, s32 d, s32 e,
 void Func_020012c8(void) { Func_020002f8(gData_02003f44); }
 
 void Func_020012d8(void) {
-  if (GameFlag_Test(SPLIT_CONSTANT(0x114, 255)) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x114, 255))) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 9, 18);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x116, 255)) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x116, 255))) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 11, 18);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x122, 255)) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x122, 255))) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 14, 28);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x124, 255)) == 0)
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x124, 255))) == 0)
     Map_CopyAttributes(0, 0, 1, 1, 16, 28);
 }

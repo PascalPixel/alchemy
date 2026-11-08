@@ -13,7 +13,7 @@ void Func_02001cd0(s32 a, s32 b) {
 
   work[5] = Actor_GetById(11);
   Func_02001190(a, b);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x300, 81));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x351));
 }
 
 struct EffectConfig {

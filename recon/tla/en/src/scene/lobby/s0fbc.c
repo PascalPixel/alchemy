@@ -80,7 +80,7 @@ void Func_02000fbc(s32 actor) {
   }
   Func_02001ad4(78);
   wait(120);
-  Func_02001ad4(SPLIT_CONSTANT(0x1c6, 255));
+  Func_02001ad4(SPLIT_CONSTANT(0x2c5));
   /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds
    * the order around it; as the plain statement, 2 of 153 instructions differ
    * in tla-en. */

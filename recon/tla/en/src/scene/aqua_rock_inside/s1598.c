@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "system/field_effect.h"
 
@@ -17,7 +18,7 @@ void Func_02001598(struct Actor *object) {
     s32 position[3];
 
     options.palette = 7;
-    options.type = 0x2a1;
+    options.type = SPLIT_CONSTANT(0x2a1);
     options.priority = 1;
     position[0] = object->x + (((Random16Far() & 31) - 16) << 16);
     position[1] = object->y + ((Random16Far() & 31) << 16) + 0x80000;

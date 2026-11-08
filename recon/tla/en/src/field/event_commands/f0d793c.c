@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "main_routine_work.h"
 #include "system.h"
 
@@ -22,7 +23,7 @@ void Func_080d793c(s32 capture) {
 
   if (capture == 0) {
     if (kind == 0) {
-      flag &= 0x7ff;
+      flag &= SPLIT_CONSTANT(0x7ff);
       if (flag < 300 || flag > 380)
         return;
       if (st->sequenceResult > 0 && st->sequenceResult != 999)

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -97,7 +98,7 @@ void Func_02002574(void) {
     object->priorityFlags |= 2;
     ((u8 *)object)[89] &= 0xfe;
     object->scaleY = 0x10000;
-    GameFlag_SetBit(0x205);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x205));
   }
 }
 

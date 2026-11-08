@@ -55,12 +55,12 @@ s32 Func_02000b64(void) {
     *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 428) = 0x204;
     if ((u32)(entrance - 1) <= 1 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
-      s32 unset = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 49));
+      s32 unset = Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa31));
 
-      if (unset == 0 && Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 50)) &&
-          Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 51)) &&
-          Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 52)) &&
-          Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa00, 53))) {
+      if (unset == 0 && Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa32)) &&
+          Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa33)) &&
+          Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa34)) &&
+          Value1((s32 (*)())GameFlag_Test, SPLIT_CONSTANT(0xa35))) {
         struct Actor *actor;
 
         Func_020031e0();
@@ -74,7 +74,7 @@ s32 Func_02000b64(void) {
         Func_02003228();
         Call1((void (*)())FieldEvent_Wait, 20);
         Call2((void (*)())Func_02003250, 0x10000, 0);
-        Call2((void (*)())Func_02003248, SPLIT_CONSTANT(0x10000, 3), 0);
+        Call2((void (*)())Func_02003248, SPLIT_CONSTANT(0x10003), 0);
         Call1((void (*)())Func_02003258, 20);
         Call1((void (*)())wait, 20);
         /* FAKEMATCH(temporary): entrance reused for the palette address, which
@@ -114,10 +114,10 @@ s32 Func_02000b64(void) {
         Func_02001324(248, 216, 67, 65, 15, 13);
         Func_02001324(200, 232, 64, 66, 12, 14);
         Func_02001324(200, 200, 64, 64, 12, 12);
-        Call3((void (*)())Func_02003198, -1, -1, SPLIT_CONSTANT(0xe600, 102));
+        Call3((void (*)())Func_02003198, -1, -1, SPLIT_CONSTANT(0xe666));
         Func_02003170(30, 12, 4, 3, 12, 12);
         FieldEvent_Wait(40);
-        Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0xa00, 49));
+        Call1((void (*)())GameFlag_SetBit, SPLIT_CONSTANT(0xa31));
         Func_020032b8(80);
         Sound_WaitForBgmRestore();
         Func_02003290();

@@ -9,4 +9,4 @@
 #include "call.h"
 s32 Func_02004af0();
 
-void Func_02002a34(void) { Func_02004af0(0xd, SPLIT_CONSTANT(0x300, 5)); }
+void Func_02002a34(void) { Func_02004af0(0xd, SPLIT_CONSTANT(0x305)); }

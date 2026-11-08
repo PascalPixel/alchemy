@@ -18,16 +18,16 @@ void Func_020043f8(void) {
     if (GameFlag_Test(0x9fe)) {
       ShamanVillage_ObjPlace(16, PIXELS(104), PIXELS(200));
       ShamanVillage_ObjPlace(17, PIXELS(136), PIXELS(200));
-    } else if (GameFlag_Test(SPLIT_CONSTANT(0x850, 255)) && !GameFlag_Test(SPLIT_CONSTANT(0x900, 225))) {
+    } else if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x850, 255))) && !GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 225)))) {
       ShamanVillage_ObjPlace(15, PIXELS(120), PIXELS(208));
       ShamanVillage_ObjPlace(16, PIXELS(104), PIXELS(212));
       Func_02004934(17, PIXELS(136), PIXELS(212));
       wait(1);
     }
   }
-  if (GameFlag_Test(SPLIT_CONSTANT(0x200, 2)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 2))))
     ShamanVillage_MapCopy(43, 40, 7, 6, 1, 2);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 77))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 77)))) {
     s32 width = 1;
     s32 height = 2;
 
@@ -69,7 +69,7 @@ void Func_02004534(void) {
   ((struct ShamanVillageEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
       521;
   Actor_GetById(12)->collisionFlags = 8;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 254))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 254)))) {
     /* FAKEMATCH: the local starts the facing before the other arguments, as the
      * native has; as a plain argument it is started third (one reordered row).
      */
@@ -125,7 +125,7 @@ void Func_02004534(void) {
     Func_020048cc();
     if (gMainRoutineWork.entrance == 30) {
       GameFlag_SetBit(0x9fe);
-      GameFlag_SetBit(SPLIT_CONSTANT(0x900, 77));
+      GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 77)));
     }
   }
 }

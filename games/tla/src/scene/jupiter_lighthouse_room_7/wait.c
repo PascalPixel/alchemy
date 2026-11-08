@@ -26,12 +26,12 @@ void Func_0200013c(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 8 of 14 instructions
    * differ in tla-en. */
-  s32 flag = SPLIT_CONSTANT(0x200, 2);
+  s32 flag = SPLIT_CONSTANT(0x202);
 
   /* FAKEMATCH: ⚓️ builds the flag again for the second call */
   asm("" : "+l"(flag));
   if (!GameFlag_Test(flag)) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x200, 2));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x202));
     Func_02000060(1);
   }
 }
@@ -40,12 +40,12 @@ void Func_02000160(void) {
   /* FAKEMATCH(barrier): SPLIT_CONSTANT builds each constant as the game does, a
    * shifted byte plus an addend; as plain constants, 8 of 14 instructions
    * differ in tla-en. */
-  s32 flag = SPLIT_CONSTANT(0x200, 2);
+  s32 flag = SPLIT_CONSTANT(0x202);
 
   /* FAKEMATCH: ⚓️ builds the flag again for the second call */
   asm("" : "+l"(flag));
   if (GameFlag_Test(flag) == 1) {
-    GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 2));
+    GameFlag_ClearBit(SPLIT_CONSTANT(0x202));
     Func_020000b4();
   }
   Func_02000100();

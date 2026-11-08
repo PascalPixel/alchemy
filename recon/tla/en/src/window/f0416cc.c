@@ -133,7 +133,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
           }
           dst += 248;
         }
-        if (code == SPLIT_CONSTANT(0xf000, 29) || code == 0xF01F)
+        if (code == SPLIT_CONSTANT(0xf01d) || code == 0xF01F)
           x += 8;
         else if (code == 0xF01E)
           x += 3;

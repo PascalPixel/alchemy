@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "field_psynergy_work.h"
 #include "main_routine_work.h"
@@ -78,7 +79,7 @@ void Func_080decb8(void) {
   check = FieldEffect_CheckCloakTile;
   Task_Add(check, order);
   gMainRoutineWork.cloaked = 1;
-  check();
+  ValueLr0((s32 (*)())check);
   if (event->psynergyRequest == CLOAK_END) {
     Func_080debd8();
     event->psynergyRequest = 0;

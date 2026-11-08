@@ -23,7 +23,7 @@ void Func_020006d4(void) {
   Func_02003bc8();
   Func_02003c88(0);
   if ((FIELD_AT(t0, s32, 8) >> 19) == 0x17) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x800, 121));
+    GameFlag_SetBit(SPLIT_CONSTANT(0x879));
   }
   Func_02003bd0();
 }

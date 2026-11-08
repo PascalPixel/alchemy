@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/lemurian_ship/lemurian_ship.h"
+#include "call.h"
 
 void Func_02001c88(void);
 void Func_020027e4(void);
@@ -11,8 +12,8 @@ void Func_02002b98(void);
 
 s32 Func_02001abc(void) {
   ((struct LemurianShipEventWork *)Ram_HeapSlots->eventWork)->screenEffect =
-      0x209;
-  if (GameFlag_Test(0x9b4))
+      SPLIT_CONSTANT(0x209);
+  if (GameFlag_Test(SPLIT_CONSTANT(0x9b4)))
     GameFlag_SetBit(0x144);
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov656Room1) {
     switch (gMainRoutineWork.entrance) {

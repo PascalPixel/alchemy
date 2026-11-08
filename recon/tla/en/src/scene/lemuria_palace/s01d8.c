@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "actor.h"
 #include "scene_tables.h"
 
@@ -19,13 +20,13 @@ void Func_020001d8(void) {
   FieldEvent_Wait(28);
   Func_02002124(112);
   first =
-      Actor_Spawn(674, object->x + 0xa0000, object->y + 0x100000, object->z);
+      Actor_Spawn(SPLIT_CONSTANT(674), object->x + 0xa0000, object->y + 0x100000, object->z);
   first->speedLimit = 0x20000;
   first->acceleration = 0x20000;
   first->motionFlags = 0;
   Func_02001fa4(first, first->x + PIXELS(6), first->y + PIXELS(8), first->z);
   second =
-      Actor_Spawn(674, object->x + 0xa0000, object->y + 0x100000, object->z);
+      Actor_Spawn(SPLIT_CONSTANT(674), object->x + 0xa0000, object->y + 0x100000, object->z);
   second->speedLimit = 0x20000;
   second->acceleration = 0x20000;
   second->motionFlags = 0;

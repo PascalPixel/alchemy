@@ -3,7 +3,7 @@
 void Func_02000400(void) {
   Func_0200054c();
   Func_020005c4(0);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x102, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x102, 255)));
   Func_02000554();
 }
 
@@ -34,7 +34,7 @@ s32 Func_02000480(void) {
   Actor_GetById(27)->scaleX = 0x8000;
   Actor_GetById(27)->scaleY = 0x8000;
   Func_02000464();
-  if (GameFlag_Test(SPLIT_CONSTANT(0x102, 255)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x102, 255))))
     Func_02000574(23, 0, 0);
   Func_020005cc();
   Func_020005d4(0, 0x202, 24, 25);

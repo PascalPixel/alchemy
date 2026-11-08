@@ -56,7 +56,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   if (object->motionFlags & 4)
     object->velocityY = initialVelocityY;
   object->velocityY = initialVelocityY;
-  object->verticalMotionStrength = SPLIT_CONSTANT(0xab00, 133);
+  object->verticalMotionStrength = SPLIT_CONSTANT(0xab85);
   object->autoFaceMotion = 1;
   Actor_ResetMotion(object);
   if (dist != 0)
@@ -140,7 +140,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 slot) {
 
   if (entry->object != NULL) {
     if ((entry->object->kind & 0xf) == 1) {
-      effect = ResourceMetadata_RegisterFar(entry->object->resource, SPLIT_CONSTANT(0x1a0, 255));
+      effect = ResourceMetadata_RegisterFar(entry->object->resource, SPLIT_CONSTANT(0x29f));
       if (effect != NULL) {
         Animation_SetWorkEntryFar(effect, 1);
         effect[6] = 3;

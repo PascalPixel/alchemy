@@ -25,7 +25,7 @@ void Func_02000960(void) {
   Import_EventResolvePendingActions(0);
   MapCopyAttr(25, 20, 1, 1, 26, 20);
   Func_02000ca8(23, 0, 0);
-  Import_GameFlagSet(SPLIT_CONSTANT(0x112, 255));
+  Import_GameFlagSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x112, 255)));
   Import_EventEnd();
 }
 
@@ -34,7 +34,7 @@ void Func_020009a0(void) {
   Import_EventResolvePendingActions(0);
   MapCopyAttr(28, 23, 1, 1, 29, 23);
   Func_02000ca8(24, 0, 0);
-  Import_GameFlagSet(SPLIT_CONSTANT(0x200, 18));
+  Import_GameFlagSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x200, 18)));
   Import_EventEnd();
 }
 
@@ -43,7 +43,7 @@ void Func_020009e0(void) {
   Import_EventResolvePendingActions(0);
   MapCopyAttr(17, 11, 1, 1, 18, 11);
   Func_02000ca8(25, 0, 0);
-  Import_GameFlagSet(SPLIT_CONSTANT(0x114, 255));
+  Import_GameFlagSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x114, 255)));
   Import_EventEnd();
 }
 
@@ -61,6 +61,6 @@ void Func_02000a5c(void) {
   Import_EventResolvePendingActions(0);
   MapCopyAttr(16, 23, 1, 1, 17, 23);
   Func_02000ca8(31, 0, 0);
-  Import_GameFlagSet(SPLIT_CONSTANT(0x116, 255));
+  Import_GameFlagSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x116, 255)));
   Import_EventEnd();
 }

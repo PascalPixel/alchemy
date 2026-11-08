@@ -7,7 +7,7 @@ void Func_02000bd4(void) {
   s32 i;
   s32 result;
 
-  if (GameFlag_Test(SPLIT_CONSTANT(0x14a, 255))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(0x249))) {
     Func_02000b24(12, 38);
     Func_02003628();
     Func_02003688(12, 2, 45, 1);
@@ -15,6 +15,6 @@ void Func_02000bd4(void) {
       result = Func_020036b8(33, 55);
     GameFlag_SetBit(0x248);
     if (result == 1)
-      GameFlag_SetBit(SPLIT_CONSTANT(0xa00, 100));
+      GameFlag_SetBit(SPLIT_CONSTANT(0xa64));
   }
 }

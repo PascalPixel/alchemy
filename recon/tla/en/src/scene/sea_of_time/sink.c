@@ -24,16 +24,16 @@ void Func_02001928(s32 x, s32 z, s32 actor) {
   Func_02001ffc();
   Func_02002054(144);
   SeaOfTime_Tint(0, 0x100000, 0x10000);
-  SeaOfTime_Tint(-1, -1, SPLIT_CONSTANT(0xe600, 102));
+  SeaOfTime_Tint(-1, -1, SPLIT_CONSTANT(0xe666));
   spark.scaleX = 0x13333;
   spark.scaleY = 0x18000;
   spark.mode = 1;
   spark.life = 276;
   Func_0200015c(px, 0, pz, 0, 0, 0, 0x1a0000, &spark);
-  Actor_GetById(actor)->scale = SPLIT_CONSTANT(0x1900, 153);
+  Actor_GetById(actor)->scale = SPLIT_CONSTANT(0x1999);
   Func_020018a8(x, z, actor);
   for (i = 0; i != 10; i++) {
-    Actor_GetById(actor)->scale += SPLIT_CONSTANT(0x1900, 153);
+    Actor_GetById(actor)->scale += SPLIT_CONSTANT(0x1999);
     FieldEvent_Wait(1);
   }
   Actor_GetById(actor)->scale = 0x10000;

@@ -36,7 +36,7 @@ void Func_02000178(void) {
   struct FieldActor *object = Actor_GetById(10);
 
   if (!Flag_IsSet(0xa01) && object->x >> 20 == 17 && object->z >> 20 == 33) {
-    Flag_Set(SPLIT_CONSTANT(0xa00, 1));
+    Flag_Set(SPLIT_CONSTANT(SPLIT_CONSTANT(0xa00, 1)));
     Func_02000060(1);
   }
 }

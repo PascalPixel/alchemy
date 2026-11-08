@@ -82,7 +82,7 @@ static __inline__ void CopyCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
 const u8 *Func_02000638(void) {
   if (GameFlag_Test(0x8ff))
     return gData_0200394c;
-  if (GameFlag_Test(SPLIT_CONSTANT(0x800, 171)))
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 171))))
     return gData_0200367c;
   return gData_02003358;
 }

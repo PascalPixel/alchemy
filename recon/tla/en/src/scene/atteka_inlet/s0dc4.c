@@ -51,7 +51,7 @@ void Func_02000dc4(void) {
   struct MainRoutineWork *party;
 
   GameFlag_SetBit(0x9b4);
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x900, 173)))
+  if (!GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 173))))
     Func_02001060(65, 0, 0);
   map->mode = 1;
   party = &gMainRoutineWork;
@@ -82,7 +82,7 @@ void Func_02000dc4(void) {
 void Func_02000ed0(void) {
   if (gMainRoutineWork.entrance == 3)
     GameFlag_ClearBit(0x12f);
-  if (GameFlag_Test(SPLIT_CONSTANT(0x900, 178))) {
+  if (GameFlag_Test(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 178)))) {
     Func_02001060(9, 0, 0);
     Func_02001060(10, 0, 0);
     Func_02001060(11, 0, 0);

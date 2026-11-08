@@ -1,4 +1,5 @@
 #include "worka0.h"
+#include "call.h"
 #include "fixed_math.h"
 #include "iwram_call.h"
 #include "heap_release.h"
@@ -14,8 +15,8 @@ s32 Func_080da3bc(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 ey = dy >> 8;
   s32 dz = toZ - z;
   s32 ez = dz >> 8;
-  s32 segments = Iwram_SqrtEntry(Iwram_MulQ16(ex, ex) + Iwram_MulQ16(ey, ey) +
-                                 Iwram_MulQ16(ez, ez)) /
+  s32 segments = ValueLr1((s32 (*)())Iwram_SqrtEntry, (s32)(Iwram_MulQ16(ex, ex) + Iwram_MulQ16(ey, ey) +
+                                 Iwram_MulQ16(ez, ez))) /
                      6 +
                  1;
   s32 frame;

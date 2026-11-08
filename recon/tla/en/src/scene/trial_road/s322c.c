@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/trial_road/trial_road.h"
+#include "call.h"
 #include "text/msg_ids.h"
 
 void FieldEvent_Wait(s32 frames);
@@ -78,12 +79,12 @@ void Func_0200322c(void) {
   Actor_SetModeById(7, 3);
   FieldEvent_Wait(15);
   Actor_SetSpeedParameters_(4, 0x20000, 0x10000);
-  Actor_SetSpeedParameters_(5, 0x1e666, 0xf333);
-  Actor_SetSpeedParameters_(6, 0x1b333, 0xd999);
-  Actor_SetSpeedParameters_(7, 0x1cccc, 0xe666);
+  Actor_SetSpeedParameters_(5, SPLIT_CONSTANT(0x1e666), SPLIT_CONSTANT(0xf333));
+  Actor_SetSpeedParameters_(6, 0x1b333, SPLIT_CONSTANT(0xd999));
+  Actor_SetSpeedParameters_(7, SPLIT_CONSTANT(0x1cccc), SPLIT_CONSTANT(0xe666));
   Actor_SetSpeedParameters_(8, 0x20000, 0x10000);
-  Actor_SetSpeedParameters_(13, 0x1e666, 0xf333);
-  Actor_SetSpeedParameters(14, 0x1b333, 0xd999);
+  Actor_SetSpeedParameters_(13, SPLIT_CONSTANT(0x1e666), SPLIT_CONSTANT(0xf333));
+  Actor_SetSpeedParameters(14, 0x1b333, SPLIT_CONSTANT(0xd999));
   Actor_OffsetPositionAndReset(4, Func_02002d38(3), 0);
   Actor_OffsetPositionAndReset(8, Func_02002d38(-3), 0);
   Task_Wait(1);

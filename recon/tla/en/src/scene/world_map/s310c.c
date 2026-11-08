@@ -14,7 +14,7 @@ void Func_0200310c(void) {
   Func_02004db8(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call3((void (*)())Actor_SetPositionAndCommit, 8, SPLIT_CONSTANT(0x2900, 224), SPLIT_CONSTANT(0x2300, 115));
+  Call3((void (*)())Actor_SetPositionAndCommit, 8, SPLIT_CONSTANT(0x29e0), SPLIT_CONSTANT(0x2373));
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Func_02004d40(66);

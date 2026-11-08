@@ -39,7 +39,7 @@ loop:
     s32 position[3];
 
     position[0] = source->x;
-    position[1] = source->y + i * SPLIT_CONSTANT(0xcc00, 204) + 0x40000;
+    position[1] = source->y + i * SPLIT_CONSTANT(0xcccc) + 0x40000;
     position[2] = source->z;
     radius = Random16Far();
     Vector_AddPolarOffsetFar(radius * 5 + 0x30000, Random16Far(), position);
@@ -49,7 +49,7 @@ loop:
       effect->update = Func_02000474;
       effect->timer = timer;
       effect->pause = 0;
-      effect->speed = SPLIT_CONSTANT(0x1900, 153);
+      effect->speed = SPLIT_CONSTANT(0x1999);
       effect->scale = 0x30000;
       effect->angle = Random16Far();
       effect->priorityFlags = 0;

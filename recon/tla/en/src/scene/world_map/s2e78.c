@@ -68,7 +68,7 @@ void Func_02002e00(void) {
 
 void Func_02002e78(void) {
   s32 scale;
-  s32 seen = Flag_IsSet(SPLIT_CONSTANT(0x800, 222));
+  s32 seen = Flag_IsSet(SPLIT_CONSTANT(SPLIT_CONSTANT(0x800, 222)));
 
   if (seen == 0) {
     Func_02004c20();

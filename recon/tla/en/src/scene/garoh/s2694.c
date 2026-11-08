@@ -74,7 +74,7 @@ void Func_02002694(void) {
   s32 p1;
   s32 p2;
 
-  GameFlag_SetBit(SPLIT_CONSTANT(0x900, 30));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x91e));
   Func_020051ac();
   Func_02005324(0);
   Func_0200524c(((s32)MsgGaroh14));
@@ -85,7 +85,7 @@ void Func_02002694(void) {
   Call3(Actor_SetPositionAndReset, 4, 320, 224);
   Call3(Actor_ArmCallback, 4, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Call3(Func_0200525c, SPLIT_CONSTANT(0x8000, 9), 0, 0);
+  Call3(Func_0200525c, SPLIT_CONSTANT(0x8009), 0, 0);
   Call4(Func_02005334, 9, -16, -8, FACING_NORTH);
   Actor_WaitForMoveById(9);
   FieldEvent_Wait(30);
@@ -218,8 +218,8 @@ L_0200a8b2:;
   Func_02001418(11);
   FieldEvent_Wait(20);
   Call3(Func_0200525c, 5, 0, 0);
-  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xb300, 51), SPLIT_CONSTANT(0x5900, 153));
-  Call3(Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0xb300, 51), SPLIT_CONSTANT(0x5900, 153));
+  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0xb333), SPLIT_CONSTANT(0x5999));
+  Call3(Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0xb333), SPLIT_CONSTANT(0x5999));
   Call3(Func_0200520c, 10, PIXELS(328), PIXELS(128));
   FieldEvent_Wait(10);
   Call3(Actor_CommitPositionAndActivate, 10, 0, 16);
@@ -645,8 +645,8 @@ L_0200affc:;
   *(u8 *)((t14 + 90)) = b1;
   Actor_SetModeById(8, 5);
   FieldEvent_Wait(20);
-  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0x14c00, 204), SPLIT_CONSTANT(0xa600, 102));
-  Call3(Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0xb300, 51), SPLIT_CONSTANT(0x5900, 153));
+  Call3(Actor_SetSpeedParameters, 8, SPLIT_CONSTANT(0x14ccc), SPLIT_CONSTANT(0xa666));
+  Call3(Actor_SetSpeedParameters, 10, SPLIT_CONSTANT(0xb333), SPLIT_CONSTANT(0x5999));
   {
     s32 a0 = 10;
     /* FAKEMATCH: the native loads the first argument before the others; the
@@ -920,7 +920,7 @@ L_0200b71c:;
   }
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
-  Call3(Actor_SetSpeedParameters, 9, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+  Call3(Actor_SetSpeedParameters, 9, 0x13333, SPLIT_CONSTANT(0x9999));
   Actor_SetModeById(9, 2);
   p1 = (s32)&gMainRoutineWork;
   v5 = (p1 + 0x214);
@@ -952,7 +952,7 @@ L_0200b7f6:;
   t23 = GameFlag_Test(7);
   if (t23 == 0)
     goto L_0200b84e;
-  Call3(Actor_SetSpeedParameters, 7, 0x13333, SPLIT_CONSTANT(0x9900, 153));
+  Call3(Actor_SetSpeedParameters, 7, 0x13333, SPLIT_CONSTANT(0x9999));
   Actor_SetModeById(7, 2);
   t24 = Actor_GetById(*(s32 *)(v5));
   if (t24 == 0)

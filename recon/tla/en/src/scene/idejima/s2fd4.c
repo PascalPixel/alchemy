@@ -13,7 +13,7 @@ void Func_02002c64(void);
 void Func_02002fd4(void) {
   s32 flag;
 
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 99))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x863))) {
     struct Actor *actor;
 
     Call3(Func_02003228, 8, PIXELS(416), PIXELS(680));
@@ -26,7 +26,7 @@ void Func_02002fd4(void) {
     actor->collisionFlags = 0;
     Import_ActorSetAnimation(8, 5);
   }
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 100))) {
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x864))) {
     struct Actor *actor;
 
     Call3(Func_02003228, 5, PIXELS(288), PIXELS(744));
@@ -39,7 +39,7 @@ void Func_02002fd4(void) {
     actor->collisionFlags = 0;
     Import_ActorSetAnimation(5, 18);
   }
-  flag = GameFlag_Test(SPLIT_CONSTANT(0x800, 101));
+  flag = GameFlag_Test(SPLIT_CONSTANT(0x865));
   if (flag == 0) {
     struct Actor *actor;
 
@@ -53,6 +53,6 @@ void Func_02002fd4(void) {
   }
   Import_MapCopyCellPictureIndicesRect(72, 42, 75, 40, 1, 1);
   Task_Wait(1);
-  if (!GameFlag_Test(SPLIT_CONSTANT(0x800, 68)))
+  if (!GameFlag_Test(SPLIT_CONSTANT(0x844)))
     Func_02002c64();
 }

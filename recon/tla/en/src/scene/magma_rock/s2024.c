@@ -39,10 +39,10 @@ loop:
   position[0] = x + ((Random16Far() & 63) << 16) - Q16_ONE * 32;
   position[1] = (Random16Far() & 15) << 12;
   position[2] = z + ((Random16Far() & 63) << 16) - Q16_ONE * 32;
-  Func_0200015c(position[0], 0, position[2], 0, position[1], 0, SPLIT_CONSTANT(0x3a0000, 1),
+  Func_0200015c(position[0], 0, position[2], 0, position[1], 0, SPLIT_CONSTANT(0x3a0001),
                 &config);
   i++;
   if (i != 4)
     goto loop;
-  GameFlag_SetBit(SPLIT_CONSTANT(0x800, 220));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x8dc));
 }

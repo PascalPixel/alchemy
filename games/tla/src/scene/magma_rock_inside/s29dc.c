@@ -8,7 +8,7 @@ void Func_020029dc(void) {
    * shifted byte plus an addend; as plain constants, 4 of 25 instructions
    * differ in tla-en. */
   if (*(s8 *)((u8 *)Ram_HeapSlots->eventWork + 0xd30) == -1) {
-    if (!GameFlag_Test(SPLIT_CONSTANT(0x300, 5)))
+    if (!GameFlag_Test(SPLIT_CONSTANT(0x305)))
       Func_02004da0(11, 0, 0);
   }
 }

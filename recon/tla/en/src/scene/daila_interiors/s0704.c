@@ -1,4 +1,5 @@
 #include "types.h"
+#include "call.h"
 #include "ram_buffer.h"
 #include "actor.h"
 
@@ -12,7 +13,7 @@ void Func_02000704(void) {
   s32 flags;
 
   Func_02000dcc(gData_02000e04);
-  object = *(struct Actor **)(event + 0xcbc);
+  object = *(struct Actor **)(event + SPLIT_CONSTANT(0xcbc));
   flags = 1;
   flags |= object->priorityFlags;
   flags &= 0xfd;

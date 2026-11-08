@@ -1,4 +1,5 @@
 #include "battle.h"
+#include "call.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -32,7 +33,7 @@ void Window_FillFromScene(void *dst) {
     void (*code)(void *, void *);
 
     RamCode_Load(code, Tile_BuildCellPicturesCode, Tile_BuildCellPicturesCodeSize);
-    code(dst, scene + 8);
+    ValueLr2((s32 (*)())code, (s32)(dst), (s32)(scene + 8));
     /* FAKEMATCH: the barrier keeps the second argument's add ahead of the
        first argument's copy; without it they trade places (differ 2). */
     asm("");

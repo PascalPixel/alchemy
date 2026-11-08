@@ -24,7 +24,7 @@ void Func_02001bc0(void) {
    * shifted byte plus an addend; as plain constants, 4 of 13 instructions
    * differ in tla-en. */
   Call4((void (*)())Func_02003ad4, 0, 0x1080000, 0x2280000, 30);
-  GameFlag_SetBit(SPLIT_CONSTANT(0x200, 18));
+  GameFlag_SetBit(SPLIT_CONSTANT(0x212));
 }
 
 void Func_02001be0(void) {
@@ -32,5 +32,5 @@ void Func_02001be0(void) {
    * shifted byte plus an addend; as plain constants, 4 of 13 instructions
    * differ in tla-en. */
   Call4((void (*)())Func_02003ad4, 0, 0x1080000, 0x2280000, 0);
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x200, 18));
+  GameFlag_ClearBit(SPLIT_CONSTANT(0x212));
 }

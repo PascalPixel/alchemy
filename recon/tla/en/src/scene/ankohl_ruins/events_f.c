@@ -35,7 +35,7 @@ void Func_02002260(void) {
   struct Actor *object = Actor_GetById(9);
 
   if (object->x >> 20 == 26 && object->z >> 20 == 35) {
-    GameFlag_SetBit(SPLIT_CONSTANT(0x900, 219));
+    GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x900, 219)));
     Func_02002eec(204);
     Func_02000b30(9, 0);
     Func_02002e6c(9, 0, 0);
@@ -49,7 +49,7 @@ void Func_02002260(void) {
 
 void Func_020022a8(void) {
 #if TLA_PATCH_1 /* The Japanese edition does not touch flag 0x205. */
-  GameFlag_SetBit(SPLIT_CONSTANT(0x106, 255));
+  GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x106, 255)));
 #endif
   Func_02002df4(35, 34, 3, 5, 25, 34);
   Func_02002df4(35, 98, 3, 3, 25, 98);
@@ -57,15 +57,15 @@ void Func_020022a8(void) {
 
 void Func_020022e0(void) {
 #if TLA_PATCH_1
-  GameFlag_ClearBit(SPLIT_CONSTANT(0x106, 255));
+  GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x106, 255)));
 #endif
   Func_02002df4(40, 34, 3, 5, 25, 34);
   Func_02002df4(40, 98, 3, 3, 25, 98);
 }
 
-void Func_02002318(void) { GameFlag_SetBit(SPLIT_CONSTANT(0x106, 255)); }
+void Func_02002318(void) { GameFlag_SetBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x106, 255))); }
 
-void Func_02002328(void) { GameFlag_ClearBit(SPLIT_CONSTANT(0x106, 255)); }
+void Func_02002328(void) { GameFlag_ClearBit(SPLIT_CONSTANT(SPLIT_CONSTANT(0x106, 255))); }
 
 const u8 *Func_02002338(void) {
   if (gMainRoutineWork.scene == (s32)&SceneId_Ov686Room1)

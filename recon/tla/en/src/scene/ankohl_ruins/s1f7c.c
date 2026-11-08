@@ -1,4 +1,5 @@
 #include "../../../../../../games/tla/src/scene/ankohl_ruins/ankohl_ruins.h"
+#include "call.h"
 
 void Task_RemoveFar(void (*func)(void));
 
@@ -50,9 +51,9 @@ void Func_02001f7c(void) {
   }
   if (row > 41) {
     Task_RemoveFar(Func_02001f7c);
-    AnkohlRuins_Call2e24(-1, -1, 0xe666);
+    AnkohlRuins_Call2e24(-1, -1, SPLIT_CONSTANT(0xe666));
     AnkohlRuins_Call2dfc(41, 48, 3, 2, 13, 41);
-    GameFlag_SetBit(0x201);
+    GameFlag_SetBit(SPLIT_CONSTANT(0x201));
     GameFlag_ClearBit(0x17d);
     GameFlag_ClearBit(0x161);
     Func_02002eec(208);

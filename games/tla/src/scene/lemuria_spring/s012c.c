@@ -1,16 +1,8 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba); differ 0 in all six editions.
-// An empty once-only block in place of the empty asm between the two blend
-// stores (4 to 0; 8 with neither), so no device is left. BLDALPHA's 0x80c through a
-// one-constant local gives the native's r8 and r7 (29 without).
-// Earlier: the scene start that sets the event work's 0x1ac
-// word to 0x100, the leader's bit 5 at 0x23, blending 0x3f42 and 0x80c, modes
-// 2 for objects 24 and 25 and, when gMainRoutineWork's 0x1e2 halfword is 1 and
-// flag 0x200 is set, alpha 0x1000.
-// The blend value as one local set at its first store places it in r10 as the
-// native does (33 to 27). Left: the native gives BLDCNT's address r8 and
-// BLDALPHA's r7 (here the other way round), and loads gMainRoutineWork before the
-// 0x100 store. Tried: register pointers in either order (47), BLDCNT pinned to
-// r8 (25, with its copies then reversed), u16 or volatile stores.
+/// @file
+/// Starts the scene: sets the colour blend, puts objects 24 and 25 in mode 2
+/// and starts the screen transition; when gMainRoutineWork's 0x1e2 halfword is
+/// 1 and flag 0x200 is set, it sets the blend's weights again.
+
 #include "types.h"
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \

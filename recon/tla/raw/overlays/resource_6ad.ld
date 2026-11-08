@@ -70,7 +70,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_room_f/s470c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s4938.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s4a44.o"(.text)
-        "*/resource_6ad_overlay.o"(.text.x0200ca8c)
+        "*/games/tla/src/scene/mars_lighthouse_room_f/s4a8c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s4bf4.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s4d10.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s4fc0.o"(.text)

@@ -1,12 +1,11 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba), under -Os; also tla-ja, tla-de, tla-es, tla-fr and tla-it.
-// 8 November, 16 to 0: the sprite word's priority bits in a local set once at the top (permuter;
-// 16 to 12; as the constant in the store, 20 now), and the counter stepped before the splash
-// pointer as its own statement (12 to 0). Earlier, from 53: x and y subtract as they read,
-// z in two steps.
+/// @file
+/// Draws thirty-two sprites that each shake by a random few pixels a frame.
+
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
 #include "map.h"
+#include "vram_tab.h"
 
 struct Splash {
   s32 x;
@@ -24,13 +23,7 @@ struct Splashes {
   struct Splash splashes[32];
 };
 
-struct ResourceEntry {
-  u16 unk0;
-  u16 unk2;
-};
-
 extern struct Splashes gData_02005970;
-extern struct ResourceEntry gResourceTableEntries[];
 
 u32 Random16Far(void);
 void Func_02003c94(u32 *sprite, s32 depth);
@@ -45,13 +38,14 @@ void Func_020034fc(void) {
   struct Splash *splash;
   s32 i;
   u32 tile;
-  // The sprite word's priority bits (priority 2): a local that holds this one value.
+  // The sprite word's priority bits (priority 2): a local that holds this one
+  // value.
   s32 priority = 0x800;
 
   viewX &= 0xffff0000;
   viewZ = view[1] & 0xffff0000;
   originY = map->origin[1];
-  tile = gResourceTableEntries[splashes->resource].unk2 >> 5;
+  tile = gResourceTableEntries[splashes->resource].offset >> 5;
   splash = splashes->splashes;
   i = 31;
 

@@ -1,10 +1,7 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba; ja de fr es it too).
-// Draws Aqua Rock's thirty-two water spouts: for each active one a top sprite
-// and, when it stands above its base, a column sprite as tall as its height,
-// placed from the camera and queued by depth.
-// History: column set after screenY &= 255 took it from 19 to 2; reading entry->base at the compare
-// rather than into a local at the top of the arm settled the last sched2 tie
-// (mov ip before the height load), 2 to 0 (2026-11-08).
+/// @file
+/// Draws the scene's pillars: a top sprite for each active one and, when it
+/// stands above its base, a column sprite as tall as its height.
+
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"

@@ -34,12 +34,8 @@ Func_0802b998:
 	.incbin "baserom.gba", 0x0003a412, 0x00000002
 	.section .rom.0003aa96, "ax"
 	.incbin "baserom.gba", 0x0003aa96, 0x00000002
-	.section .rom.0003ae6c, "ax"
-	.global Func_0803aed8
-	.type Func_0803aed8, %function
-	.thumb_func
-Func_0803aed8:
-	.incbin "baserom.gba", 0x0003ae6c, 0x000001b8
+	.section .rom.0003b022, "ax"
+	.incbin "baserom.gba", 0x0003b022, 0x00000002
 	.section .rom.0003b79a, "ax"
 	.incbin "baserom.gba", 0x0003b79a, 0x00000002
 	.section .rom.0003b920, "ax"
@@ -71,12 +67,6 @@ Menu_OpenWorkspaceOptions:
 	.incbin "baserom.gba", 0x00040a8a, 0x00000002
 	.section .rom.0004170e, "ax"
 	.incbin "baserom.gba", 0x0004170e, 0x00000002
-	.section .rom.00041710, "ax"
-	.global Text_DrawStringAsTiles
-	.type Text_DrawStringAsTiles, %function
-	.thumb_func
-Text_DrawStringAsTiles:
-	.incbin "baserom.gba", 0x00041710, 0x000003fc
 	.section .rom.0004205e, "ax"
 	.incbin "baserom.gba", 0x0004205e, 0x00000002
 	.section .rom.000421d6, "ax"
@@ -102,12 +92,6 @@ Func_080426e0:
 	.thumb_func
 Func_08043cd8:
 	.incbin "baserom.gba", 0x00043d40, 0x0000066c
-	.section .rom.00044e50, "ax"
-	.global Func_08044dc8
-	.type Func_08044dc8, %function
-	.thumb_func
-Func_08044dc8:
-	.incbin "baserom.gba", 0x00044e50, 0x00000184
 	.section .rom.00045342, "ax"
 	.incbin "baserom.gba", 0x00045342, 0x00000002
 	.section .rom.000455ae, "ax"

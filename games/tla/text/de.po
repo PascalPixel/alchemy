@@ -21077,7 +21077,7 @@ msgctxt "MsgPriceHeading"
 msgid "05169"
 msgstr "Preis"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "05170"
 msgstr "Nicht anlegbar"
 
@@ -21117,7 +21117,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "05179"
 msgstr "Nicht ablegbar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "05180"
 msgstr "ATK"
 
@@ -21394,7 +21394,7 @@ msgstr ""
 "Soll ich noch etwas\n"
 "reparieren?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLetMeGiveYouThis"
 msgid "05227"
 msgstr ""
 "Lass mich dir als Zeichen\n"
@@ -21407,7 +21407,7 @@ msgstr ""
 "Wer soll das\n"
 "{argument_item_name:1} bekommen?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDontWantIt"
 msgid "05229"
 msgstr "Was? Du willst es nicht?{page_break}"
 

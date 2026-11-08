@@ -36,12 +36,8 @@ Func_0802b998:
 	.incbin "baserom.gba", 0x0003aaae, 0x00000002
 	.section .rom.0003ac2c, "ax"
 	.incbin "baserom.gba", 0x0003ac2c, 0x0000001c
-	.section .rom.0003aea0, "ax"
-	.global Func_0803aed8
-	.type Func_0803aed8, %function
-	.thumb_func
-Func_0803aed8:
-	.incbin "baserom.gba", 0x0003aea0, 0x000001a4
+	.section .rom.0003b042, "ax"
+	.incbin "baserom.gba", 0x0003b042, 0x00000002
 	.section .rom.0003b7aa, "ax"
 	.incbin "baserom.gba", 0x0003b7aa, 0x00000002
 	.section .rom.0003bb6e, "ax"
@@ -59,12 +55,6 @@ Func_0803bb58:
 	.incbin "baserom.gba", 0x0003efa6, 0x00000002
 	.section .rom.0003f232, "ax"
 	.incbin "baserom.gba", 0x0003f232, 0x00000002
-	.section .rom.0003fd88, "ax"
-	.global Menu_OpenWorkspaceOptions
-	.type Menu_OpenWorkspaceOptions, %function
-	.thumb_func
-Menu_OpenWorkspaceOptions:
-	.incbin "baserom.gba", 0x0003fd88, 0x000003c0
 	.section .rom.00040aa6, "ax"
 	.incbin "baserom.gba", 0x00040aa6, 0x00000002
 	.section .rom.0004172a, "ax"
@@ -88,12 +78,6 @@ Text_DrawPrefixedNumberAtOffset:
 	.thumb_func
 Func_080426e0:
 	.incbin "baserom.gba", 0x0004274c, 0x00000128
-	.section .rom.00043d44, "ax"
-	.global Func_08043cd8
-	.type Func_08043cd8, %function
-	.thumb_func
-Func_08043cd8:
-	.incbin "baserom.gba", 0x00043d44, 0x0000066c
 	.section .rom.00045346, "ax"
 	.incbin "baserom.gba", 0x00045346, 0x00000002
 	.section .rom.000455b2, "ax"
@@ -270,13 +254,11 @@ Func_080f9644:
 	.section .rom.00105326, "ax"
 	.incbin "baserom.gba", 0x00105326, 0x00000002
 	.section .rom.00105a80, "ax"
-	.incbin "baserom.gba", 0x00105a80, 0x00000210
-	.section .rom.00105e08, "ax"
-	.global Func_080ffcd4
-	.type Func_080ffcd4, %function
+	.global PsynergyMenu_DrawRangePage
+	.type PsynergyMenu_DrawRangePage, %function
 	.thumb_func
-Func_080ffcd4:
-	.incbin "baserom.gba", 0x00105e08, 0x00000230
+PsynergyMenu_DrawRangePage:
+	.incbin "baserom.gba", 0x00105a80, 0x00000210
 	.section .rom.0010688c, "ax"
 	.balign 4
 	.global Func_08100738
@@ -349,12 +331,6 @@ Func_0811843c:
 	.incbin "baserom.gba", 0x0012695a, 0x00000002
 	.section .rom.001269c2, "ax"
 	.incbin "baserom.gba", 0x001269c2, 0x00000002
-	.section .rom.00126be4, "ax"
-	.global Graphics_AdvancePaletteCycle
-	.type Graphics_AdvancePaletteCycle, %function
-	.thumb_func
-Graphics_AdvancePaletteCycle:
-	.incbin "baserom.gba", 0x00126be4, 0x00000130
 	.section .rom.0013fd84, "ax"
 	.global BattleEffect_RunCruelRuin
 	.type BattleEffect_RunCruelRuin, %function

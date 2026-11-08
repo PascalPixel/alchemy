@@ -10,23 +10,23 @@ msgstr ""
 "X-Alchemy-Symbol-Count: 253\n"
 "X-Alchemy-Target: tla-es\n"
 
-msgctxt "message"
+msgctxt "MsgSaveNoData"
 msgid "00000"
 msgstr "(No hay partida)."
 
-msgctxt "message"
+msgctxt "MsgSaveContinue"
 msgid "00001"
 msgstr "(Empezar en un Templo)."
 
-msgctxt "message"
+msgctxt "MsgSaveNotCleared"
 msgid "00002"
 msgstr "(Sin acabar)."
 
-msgctxt "message"
+msgctxt "MsgSaveCorrupted"
 msgid "00003"
 msgstr "(Partida dañada)."
 
-msgctxt "message"
+msgctxt "MsgSavePostReunion"
 msgid "00004"
 msgstr "(Datos Post-Reunión)"
 
@@ -19779,7 +19779,7 @@ msgctxt "message"
 msgid "04867"
 msgstr "{button_icon:1}:Decidir"
 
-msgctxt "message"
+msgctxt "MsgWindowColorLabel"
 msgid "04868"
 msgstr "Color de la ventana"
 
@@ -19803,7 +19803,7 @@ msgctxt "message"
 msgid "04873"
 msgstr "Rápido"
 
-msgctxt "message"
+msgctxt "MsgMessageSpeedLabel"
 msgid "04874"
 msgstr "Velocidad"
 
@@ -19811,7 +19811,7 @@ msgctxt "message"
 msgid "04875"
 msgstr "del texto"
 
-msgctxt "message"
+msgctxt "MsgSpeechLabel"
 msgid "04876"
 msgstr "Voces"
 
@@ -19823,7 +19823,7 @@ msgctxt "message"
 msgid "04878"
 msgstr "Sí"
 
-msgctxt "message"
+msgctxt "MsgAutoSleepLabel"
 msgid "04879"
 msgstr "Salvapantallas"
 

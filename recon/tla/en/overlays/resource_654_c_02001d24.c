@@ -4,17 +4,19 @@
 // rotation were alias sets: the native's field18 store (object +0x18, struct
 // Actor's scaleX) may alias the rotation's strh, so the rotation stays after
 // it and SetModeById's `movs r1, #1` slips between them (haifa's last-insn
-// class rule). field18 is now written through a one-member union (alias set
-// 0), tagged FAKEMATCH(signature), 4 of 656 as plain stores. The motion flag
-// pointer is tagged FAKEMATCH(temporary), 12 of 656 as object->motionFlags (its
-// store keeps a nonzero alias set); a byte cast at both stores, with no
-// pointer (`*(u8 *)&object->motionFlags`), also gives differ 0, the spelling
-// adopted code keeps untagged (field/object/f0caa4c.c), should review prefer
-// it. Re-measured: the once-only block (2 without), the ObjAngle inline (128
-// without), Call4 (2 as a direct call). Tried: volatile on both stores (127),
-// an empty asm between them (44), the union on the rotation instead (93).
-// Destined for the end of event6.c; adopt in all six editions. Earlier rounds,
-// for the record:
+// class rule). Four tagged devices: field18 written through a one-member union
+// (alias set 0, signature, 4 of 656 as plain stores); the first motion flags
+// store through a byte pointer (temporary, 12 of 656; the second store is
+// plain); Call4 round Func_02003990 (wrapper, 2); the ObjAngle inline
+// (wrapper, 128). A byte cast at the first store (`*(u8
+// *)&object->motionFlags`) also gives differ 0, the spelling adopted code
+// keeps untagged (field/object/f0caa4c.c). The once-only block is 2 without.
+// Tried: volatile on both stores (127), an empty asm between them (44), the
+// union on the rotation instead (93). The match also relies on the untagged
+// register pins in ShrineOfTheSeaGod_Jump (shrine_of_the_sea_god.h, 18 of 656
+// as plain locals), which that header must tag in S2's form; not this draft's
+// file. Destined for the end of event6.c; adopt in all six editions. Earlier
+// rounds, for the record:
 //
 // Differ 4 of 656 (tla-en, 2026-11-08, -mtune=gba): two sched2 ties, the
 // rotation store (strh) ahead of field18's str, and ahead of SetModeById's
@@ -49,7 +51,7 @@
 #include "text/msg_ids.h"
 #include "call.h"
 
-/// A word of the object read through a one-member union (see the
+/// A word of the object written through a one-member union (see the
 /// FAKEMATCH(signature) tag in Func_02001d24).
 union ObjectWord {
   s32 value;
@@ -61,8 +63,6 @@ void Func_02003990(struct ShrineOfTheSeaGodObject *object, s32 x, s32 y, s32 z);
 void Func_02003a90(s32 actor, s32 angle);
 
 static inline void ShrineOfTheSeaGod_ObjAngle(s32 actor, s32 angle) {
-  // An inline layer, as the scene header's other helpers (called direct, 128 of
-  // 656 differ in tla-en, 2026-11-08).
   Func_02003a90(actor, angle);
 }
 void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
@@ -87,6 +87,9 @@ void Func_02001d24(void) {
   ShrineOfTheSeaGod_ObjPlace(14, 344 << 16, 184 << 16);
   wait(1);
   ShrineOfTheSeaGod_ObjWalk(14, 356, 196);
+  /* FAKEMATCH(wrapper): Func_02003a90 called through the inline
+   * ShrineOfTheSeaGod_ObjAngle, here and below; as direct calls, 128 of 656
+   * instructions differ in tla-en. */
   ShrineOfTheSeaGod_ObjAngle(14, 0xb000);
   Func_02003a70((s32)MsgFieldPraiseRopeWork);
   ShrineOfTheSeaGod_MessagePut(14, 0);
@@ -110,8 +113,8 @@ void Func_02001d24(void) {
   Actor_Jump(13, 4, 0);
   ShrineOfTheSeaGod_ObjCommit(13, 248, 168);
   Actor_SetModeById(13, 6);
-  /* FAKEMATCH(temporary): the motion flags written through a byte pointer, so
-   * both stores may alias the rotation and stay after it; as
+  /* FAKEMATCH(temporary): the first motion flags store written through a byte
+   * pointer, so it may alias the rotation and stays after it; as
    * object->motionFlags, which keeps the struct's alias set, 12 of 656
    * instructions differ in tla-en. */
   motionFlags = &object->motionFlags;
@@ -124,6 +127,8 @@ void Func_02001d24(void) {
   object->y += 0x60000;
   Actor_SetSingleChildFlags(Actor_GetById(13), 0);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x6666, 0x3333);
+  /* FAKEMATCH(wrapper): Func_02003990 called through Call4; as a direct call,
+   * 2 of 656 instructions differ in tla-en. */
   Call4((void (*)())Func_02003990, (s32)object, 164 << 17, 152 << 14,
         168 << 16);
   // A once-only block: its end holds the order around it (as the plain
@@ -131,7 +136,7 @@ void Func_02001d24(void) {
   do {
     Actor_WaitForMoveById(13);
   } while (0);
-  *motionFlags = 3;
+  object->motionFlags = 3;
   object->height = 0x200000;
   ((union ObjectWord *)&object->field18)->value = 0x10000;
   sprite->rotation = 0;
@@ -234,8 +239,7 @@ void Func_02001d24(void) {
   Actor_SetModeById(14, 2);
   leader = Actor_GetById(gMainRoutineWork.currentOwner);
   if (leader != NULL)
-    Actor_ResetAndSetPosition(14, ((s16 *)&leader->x)[1],
-                              ((s16 *)&leader->z)[1]);
+    Actor_ResetAndSetPosition(14, leader->x >> 16, leader->z >> 16);
   Actor_WaitForMoveById(14);
   ShrineOfTheSeaGod_ObjPlace(14, 0, 0);
   GameFlag_SetBit(0x873);

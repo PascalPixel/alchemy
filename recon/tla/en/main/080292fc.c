@@ -1,10 +1,10 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
 // Also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it. One device:
-// the null rail test reads rail through __builtin_expect (FAKEMATCH(wrapper)
+// the null chain test reads chain through __builtin_expect (FAKEMATCH(wrapper)
 // at the test). Script command 0x1c, a sibling of Actor_MoveByKeys that
-// moves an object along the nearest rail point within 32 pixels of the
+// moves an object along the nearest chain node within 32 pixels of the
 // direction pad's step; it copies positions as in Func_08025698.
-// Why the device (read from the RTL dumps, 2026-11-08): a missing rail work
+// Why the device (read from the RTL dumps, 2026-11-08): a missing chain work
 // has its own collisionFlags = 1 block, between the test and the loop, as
 // the arrival case has. Reload gives that block's 1 the spill register r0
 // (round robin after r1 for 268, r2 for best's NULL, r3 for bestDistance),
@@ -18,12 +18,12 @@
 // length estimate pushes the beq out of range, 15) or in both blocks (asm is
 // not cross-jumped, so the null block keeps a jump, 15); value = 16 again in
 // the null block or the preheader (CSE drops it, 21);
-// __builtin_expect(rail == NULL, 1) (builds a store flag, 14). Plain C has no
+// __builtin_expect(chain == NULL, 1) (builds a store flag, 14). Plain C has no
 // other lever: the preheader holds no memory, call or hard register, and the
 // jump to it is NE, which both heuristics predict taken. The old shape, one
 // shared block behind goto stop, was differ 4 with no device (127 in r0).
 // Measured earlier: the spilled locals take their stack slots in reverse
-// declaration order (in code order, 66); the rail loop counts up in C
+// declaration order (in code order, 66); the chain loop counts up in C
 // (counting down, 110); the turn is an s32 (as u16, 141); count as u32 or
 // the loop to != 128 (105). The position's zeros are written as 0: CSE
 // substitutes collisionFlags' register for them, as the native does.
@@ -32,6 +32,7 @@
 #include "input.h"
 #include "actor.h"
 #include "iwram_call.h"
+#include "event_work.h"
 
 struct FieldPosition {
   s32 x;
@@ -39,37 +40,31 @@ struct FieldPosition {
   s32 z;
 };
 
-struct KeyMoveWork {
-  u8 unk000[0x184];
-  s16 blockedSteps;
-  u16 heldKeys;
-};
-
-struct RailPair {
-  s16 first;
-  s16 second;
+struct ChainSlot {
+  s16 unk00;
+  s16 unk02;
   u8 unk04[8];
-  s32 speed;
+  s32 unk0c;
   u8 unk10[8];
-  s32 moving;
+  s32 unk18;
   u8 unk1c[4];
 };
 
-struct RailPoint {
+struct ChainNode {
   u8 unk00[4];
   s32 x;
   s32 y;
   s32 z;
-  u16 angle;
-  s8 active;
-  s8 pair;
+  u16 unk10;
+  s8 visible;
+  s8 unk13;
   u8 unk14[12];
 };
 
-struct RailWork {
+struct ChainWork {
   u8 unk000[12];
-  struct RailPair pairs[8];
-  struct RailPoint points[128];
+  struct ChainSlot slots[8];
+  struct ChainNode nodes[128];
 };
 
 struct SpriteAngle {
@@ -80,7 +75,7 @@ struct SpriteAngle {
 extern const u16 gData_0802ec5c[16];
 
 #define INPUT_HELD (((volatile struct InputState *)&gInput)->held)
-#define RAIL_WORK (*(struct RailWork **)&Ram_HeapSlots->unk84[6])
+#define CHAIN_WORK (*(struct ChainWork **)&Ram_HeapSlots->unk84[6])
 
 void Vector_AddPolarOffset(s32 radius, s32 angle,
                            struct FieldPosition *position);
@@ -93,30 +88,30 @@ s32 Func_080292fc(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
   struct SpriteAngle *sprite;
-  struct RailWork *rail;
+  struct ChainWork *chain;
   s32 bestDistance;
   s32 value;
   s32 speed;
-  struct RailPoint *best;
-  struct RailPoint *point;
-  struct RailPair *pair;
+  struct ChainNode *best;
+  struct ChainNode *node;
+  struct ChainSlot *slot;
   s32 count;
   u16 angle;
   s32 turn;
   struct Actor *first;
   struct Actor *second;
-  struct KeyMoveWork *work;
+  struct EventWork *work;
 
   sprite = object->animation;
-  rail = RAIL_WORK;
+  chain = CHAIN_WORK;
   speed = 0x10000;
   collisionFlags = 0;
   object->speedLimit = 0x8000;
   object->acceleration = 0x8000;
-  object->motionFlags = collisionFlags;
+  object->motionFlags = 0;
   angle = gData_0802ec5c[(INPUT_HELD >> 4) & 15];
   if (angle == 0xffff) {
-    best = (struct RailPoint *)object->watchedObject;
+    best = (struct ChainNode *)object->watchedObject;
     value = 0;
   } else {
     value = 16;
@@ -127,41 +122,43 @@ s32 Func_080292fc(struct Actor *object) {
     position.x += object->x;
     position.y = object->y - position.z;
     position.z = object->z;
-    rail = RAIL_WORK;
-    point = rail->points;
+    chain = CHAIN_WORK;
+    node = chain->nodes;
     best = NULL;
     bestDistance = 0x10000000;
-    /* FAKEMATCH(wrapper): the null test reads rail through __builtin_expect;
-     * as rail == NULL, 21 of 300 instructions differ in tla-en. */
-    if (!__builtin_expect((s32)rail, 0)) {
+    /* FAKEMATCH(wrapper): the null test reads chain through __builtin_expect;
+     * as chain == NULL, 21 of 300 instructions differ in tla-en. */
+    if (!__builtin_expect((s32)chain, 0)) {
       collisionFlags = 1;
       goto done;
     }
-    for (count = 0; count < 128; count++, point++) {
-      if (point->active == 1) {
-        s32 dx = (position.x - point->x) >> 8;
-        s32 dy = (position.y - point->y) >> 8;
-        s32 dz = (position.z - point->z) >> 8;
+    for (count = 0; count < 128; count++, node++) {
+      if (node->visible == 1) {
+        s32 dx = (position.x - node->x) >> 8;
+        s32 dy = (position.y - node->y) >> 8;
+        s32 dz = (position.z - node->z) >> 8;
         s32 distance =
             Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz);
 
         if (distance <= 0x400 && bestDistance > distance) {
           bestDistance = distance;
-          best = point;
+          best = node;
         }
       }
     }
   }
   if (best == NULL) {
+    // DEAD: collisionFlags is still 0 here, so the OR reads nothing; the source
+    // keeps it.
     collisionFlags |= 1;
   } else {
-    pair = &rail->pairs[best->pair - 1];
-    first = Actor_GetByIdFar(pair->first);
-    second = Actor_GetByIdFar(pair->second);
+    slot = &chain->slots[best->unk13 - 1];
+    first = Actor_GetByIdFar(slot->unk00);
+    second = Actor_GetByIdFar(slot->unk02);
     if (first->x > second->x)
       speed = -speed;
-    first = Actor_GetByIdFar(pair->first);
-    second = Actor_GetByIdFar(pair->second);
+    first = Actor_GetByIdFar(slot->unk00);
+    second = Actor_GetByIdFar(slot->unk02);
     if (first->y > second->y) {
       speed = -speed;
       turn = 0xc000;
@@ -172,15 +169,15 @@ s32 Func_080292fc(struct Actor *object) {
     if (best->x == object->x && best->y == object->y && best->z == object->z) {
       collisionFlags = 1;
     } else {
-      pair->moving = 1;
-      pair->speed += 0x8000;
-      if (pair->speed > 0x20000)
-        pair->speed = 0x20000;
+      slot->unk18 = 1;
+      slot->unk0c += 0x8000;
+      if (slot->unk0c > 0x20000)
+        slot->unk0c = 0x20000;
       object->watchedObject = (struct Actor *)best;
       position.x = best->x;
       position.y = best->y;
       position.z = best->z;
-      sprite->angle = best->angle + turn;
+      sprite->angle = best->unk10 + turn;
     }
   }
 done:

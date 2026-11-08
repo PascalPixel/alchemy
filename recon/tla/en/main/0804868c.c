@@ -1,23 +1,23 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
 // All six editions measure differ 0 (tla-ja 1240, tla-de and tla-fr 1246,
-// tla-es and tla-it 1252 instructions, each by --symbol Func_0804868c); no
-// fake-match tag. The battle Djinn menu, The Broken Seal's
-// BattleDjinnMenu_Run (games/tbs/src/window/screens/battle_djinn_menu.c) on
-// this game's work, messages and change preview (Func_080464dc). The list
-// window is 10 tiles wide from column 20, a recovering Djinni's turns take two
-// digits at x 48, and letting go of R redraws the list as well as the stats
-// page. Japanese (tla-ja 0804888c): its list is narrower and its messages
-// shorter (LANGUAGE), and letting go of R does not redraw the list
-// (TLA_PATCH_1). Spanish and Italian also redraw the list when an already
-// chosen or recovering Djinni closes the preview window (TLA_PATCH_4).
-// What closed the last load (2026-11-08): the first holdTilemapUpload store
-// spelt *&work->holdTilemapUpload. A struct member store carries the work
-// struct's alias set, so it cannot alias the list window's x read after it;
-// through *& it is a plain byte store that may, which gives the work load the
-// priority to issue before the entry index's add. That also made the
-// once-only block after these stores unnecessary (removed). The once-only
-// block after the cursor sprite's words stays: without it the pool load of
-// gResource_FixedBlockBTiles issues before cursorSlot's (differ 2).
+// tla-es and tla-it 1252 instructions, each by --symbol Func_0804868c); one
+// tagged temporary, the cursor sprite's pointer. The battle Djinn menu, The
+// Broken Seal's BattleDjinnMenu_Run
+// (games/tbs/src/window/screens/battle_djinn_menu.c) on this game's work,
+// messages and change preview (Func_080464dc). The list window is 10 tiles wide
+// from column 20, a recovering Djinni's turns take two digits at x 48, and
+// letting go of R redraws the list as well as the stats page. Japanese (tla-ja
+// 0804888c): its list is narrower and its messages shorter (LANGUAGE), and
+// letting go of R does not redraw the list (TLA_PATCH_1). Spanish and Italian
+// also redraw the list when an already chosen or recovering Djinni closes the
+// preview window (TLA_PATCH_4). What closed the last load (2026-11-08): the
+// first holdTilemapUpload store spelt *&work->holdTilemapUpload. A struct
+// member store carries the work struct's alias set, so it cannot alias the list
+// window's x read after it; through *& it is a plain byte store that may, which
+// gives the work load the priority to issue before the entry index's add. That
+// also made the once-only block after these stores unnecessary (removed). The
+// once-only block after the cursor sprite's words stays: without it the pool
+// load of gResource_FixedBlockBTiles issues before cursorSlot's (differ 2).
 // Spelling every work store through *& or a byte index breaks the rest
 // (38 to 84): only this one site needs it.
 #include "types.h"
@@ -253,6 +253,8 @@ s32 Func_0804868c(s32 member) {
   unit = Unit_Get(member);
 
   for (element = 0; element <= 3; element++) {
+    // The entry cursor is computed through integer casts: as djinnEntries +
+    // djinnCount, 2 of 1246 differ.
     for (djinnIndex = 0,
         entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
          djinnIndex <= 19; djinnIndex++) {
@@ -288,6 +290,8 @@ s32 Func_0804868c(s32 member) {
 
   for (;;) {
     struct DjinnMenuOam *sprite = &cursorSprite;
+    /* FAKEMATCH(temporary): sprite holds &cursorSprite; as cursorSprite used
+     * directly, 417 of 1246 instructions differ in tla-en. */
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow ||
         redraw != 0) {

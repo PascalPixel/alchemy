@@ -1,10 +1,13 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
 // Every edition measures differ 0 of 169: tla-en, tla-ja and tla-it at
 // 080e2774; tla-de (080ef774), tla-es (080eb768) and tla-fr (080e7768) by
-// --symbol Func_080e2774. Plain C, no device. What settled the last 10:
-// TouchCopies laid out as Func_080e25e8 has it, a TouchCell array before the
-// copies (a u8 pad gave the record stores a char alias set disjoint from the
-// cell's s16, so sched2 hoisted the cellZ load above its address; 10 to 8),
+// --symbol Func_080e2774. One device, tagged FAKEMATCH(signature) as the
+// nearest kind (a misstated type; the kind is Pascal's to rule): TouchCopies
+// laid out as Func_080e25e8 has it, a TouchCell array before the copies, which
+// gData_02001000 does not hold (offset 0 is a u32 frame count). With the
+// TouchCell struct a member of TouchCopies the record stores may alias the
+// cell reads, so the cellZ load stays below its address; a u8, s16, u32 or
+// u32 then u8 pad, or volatile cell reads, each leave 2 (10 to 8 then),
 // and both layer shifts named before either subtraction, so the shifted
 // layer z overlaps the shifted x and takes r2 in place (8 to 0). Shape that
 // mattered before: an index loop (a pointer loop lets GCSE carry the test's
@@ -91,6 +94,9 @@ void Func_080e2774(s32 x, s32 z, s16 layerIndex, s16 width, s16 height, s32 toX,
   top = z - layerZ;
   lift = -(owner->terrainHeight >> 20);
 
+  /* FAKEMATCH(signature): gData_02001000 typed as 1491 TouchCells before the
+   * copies, which it does not hold; as u8 unk0000[0x174c], 2 of 169
+   * instructions differ in tla-en. */
   for (i = 0; cell[i].x != -1; i++) {
     s32 cz, cx, cellX, cellZ;
 

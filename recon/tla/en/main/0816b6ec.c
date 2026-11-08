@@ -1,11 +1,12 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
-// No device: the old FAKEMATCH(dead) i = 0 in both length arms is gone. What
-// made the last 10 match, each measured against this form (differ if undone):
+// Two tagged devices: the radius set alike in both length arms (dead), held in
+// the vertices pointer (temporary). What made the last 10 match, each measured
+// against this form (differ if undone):
 // - each kind sets its radius (32) beside its length, so the arms are two
 //   moves and jump2 merges the radius move into the join, as the listing
 //   does; one radius set before or after the if: 41;
 // - the radius lives in vertices until the frame sets the vertex buffer
-//   (one local reused, S2), which gives the buffer r6 after
+//   (the tagged temporary), which gives the buffer r6 after
 //   Render_AllocateModelList while the transform reloads Data_02010108;
 //   the radius in its own local: 358 (vertices then takes r0);
 // - the funnel's length lives in the djinni's x (r5): as its own local, 10
@@ -18,9 +19,11 @@
 // - head stores 1, 0, 2 (1, 2, 0: 2); vertices set after the model list
 //   (before it: 2).
 // Other editions: alchemy-devtools diff refuses them (their scaffold has no
-// Thumb marker); disassembled from each ROM, de, es, fr and it are the same
-// bytes as en, and ja differs only in the two pool words for Data_08198b24,
-// which sits 4 bytes later there (0x08198b28), a relocation the link fills.
+// Thumb marker), so they stay unmeasured until make compare-editions.
+// Disassembled from each ROM, de, es, fr and it differ from en in 14 bl
+// displacements (the callees sit 0x2c later) and ja in 5 bl displacements and
+// the two pool words for Data_08198b24 (0x08198b28 there); each differing
+// target is the same symbol in that edition's map, so all are relocations.
 // Earlier rounds (2026-10-19 to 2026-11-08) took the first draft from 509 to
 // 10: the blitter as The Broken Seal's pair, the bob and scale reading
 // frame << 11, the segment y as -(length + k * 24), the task in a local,
@@ -56,10 +59,10 @@ struct RenderModel {
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_ProcessPendingGraphicsTransfer(
-    void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot,
+                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -77,12 +80,13 @@ void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
 void BattleEffect_SelectLivingTargets(
     struct BattleEffectArgument *effect); // SelectLivingTargets
 void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -90,7 +94,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -104,7 +108,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -181,9 +185,9 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     BattleEffect_LoadBlitter(
         SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   } else {
-    BattleEffect_LoadBlitter(SLOT_BLITTER,
-                         BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                               COMPOSITE_FLIP_X));
+    BattleEffect_LoadBlitter(
+        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                                            COMPOSITE_FLIP_X));
   }
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = 0x1010;
@@ -191,7 +195,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
   work->transferValue = 50;
   transfer = BattleEffect_ProcessPendingGraphicsTransfer;
   Task_Add(transfer, TASK_PASS_FRAME);
-  yaw = 0;
+  yaw = 0; // Default: set again at frame 0 before it is read.
   frames = 36;
   if (mode == 1 && effect->count > 4) {
     frames = effect->count * 6 + 12;
@@ -215,8 +219,11 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
       s32 row;
 
       yaw = 0;
-      // Each kind sets its funnel's length and its radius, 32 for both; the
-      // radius is kept in vertices until the frame sets the vertex buffer.
+      /* FAKEMATCH(dead): the radius set alike in both arms; as one set before
+       * the if, 41 of 609 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the radius held in the vertices pointer through
+       * casts; as its own s32 local, 358 of 609 instructions differ in tla-en.
+       */
       if (mode == 0) {
         x = 80;
         vertices = (u8 *)32;
@@ -287,6 +294,8 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     corner = (s8 *)funnel;
     y = -height;
     for (; k != 2; k++) {
+      // The (u32) casts are an equivalent spelling: the stored byte is the
+      // same.
       corner[0] = (u32)Trig_Sin(angle) >> 11;
       corner[1] = y;
       corner[2] = (u32)Trig_Cos(angle) >> 11;
@@ -375,7 +384,7 @@ void Func_0816b6ec(struct BattleEffectArgument *effect, s32 mode) {
     work->transferPending = 1;
     wait(1);
   }
-  HeapSlot_Release(104);
+  HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(transfer);
   BattleEffect_EndCanvasLayer();
 }

@@ -65,6 +65,10 @@ struct OamEntry {
   u16 unused;
 };
 
+// Declared here without const, as Camelot's code read them: a const table's
+// loads are scheduled across the stores before them (4 of 360 differ with
+// either const, 6 with both). menu/title_intro/logo.c defines both, const, in
+// ROM.
 extern s16 gData_081a8378[];
 extern s16 gData_081a84e6[];
 extern u8 Data_02026800[];
@@ -157,6 +161,8 @@ void Func_081a6b50(void) {
     Title_PlaceLogoPiece(128, LOGO_MIDDLE_X, y);
     pieceX = LOGO_RIGHT_X - (logo->step - 256) / 4;
     Title_PlaceLogoPiece(256, pieceX, y);
+    // Pointer steps and one index, as the listing schedules them: plain
+    // indexes give 34 of 360, steps throughout 9.
     matrix = (volatile u16 *)0x07000006;
     *matrix = logo->step;
     matrix += 4;

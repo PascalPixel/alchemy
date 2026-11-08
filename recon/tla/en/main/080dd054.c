@@ -1,7 +1,9 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
 // Also differ 0 in tla-ja and tla-it by address, and in tla-de, tla-es and
-// tla-fr by --symbol Func_080dd054 (their scaffolds place it elsewhere); no
-// device. The last pair (moved's ldrb against adds r3, #51) closed with
+// tla-fr by --symbol Func_080dd054 (their scaffolds place it elsewhere). Three
+// tagged devices: the layer pointer (temporary, 18), the user's actionFlags
+// pointer (temporary, 4) and mode read as s8 (signature, 29; mode is likely
+// s8 in field_psynergy_work.h). The last pair (moved's ldrb against adds r3, #51) closed with
 // target->terrainId = 2 written through the struct, not *layer: the store then
 // carries Actor's alias set, no longer conflicts with moved's spill slot, and
 // sched2's tie falls to source order. Earlier rounds (orders of the stores,
@@ -18,15 +20,16 @@
 // has moved, a target that lands on its cell only with no event, and the
 // palette byte read from 0x40 rather than the shared struct's savedPalette at
 // 0x44. Func_080202f0 takes the layer and beyond's x and z, as the twin's cell
-// test does. Stack slots follow the declaration order, so the declarations are
-// the twin's; the opening read stays through layer (a direct read moves its
-// slot, 22).
+// test does. Stack slots follow the declaration order, so the declarations
+// follow the twin's, with this game's additions; the opening read stays
+// through layer (tagged).
 #include "types.h"
 #include "ram_buffer.h"
 #include "field/field_psynergy_work.h"
 #include "frame.h"
 #include "input.h"
 #include "actor.h"
+#include "fixed_math.h"
 
 struct Vec3 {
   s32 x;
@@ -79,21 +82,22 @@ void Func_080dd054(void) {
   s32 direction;
   s32 cellX;
   s32 cellZ;
-  struct Vec3 *candidate;
   s32 (*callback)(void);
   u8 savedLayer;
   u8 *layer;
   struct PendingEvent *event;
   s32 pushed;
-  u8 *pusherFlags;
   u8 *userFlags;
   const u8 *modes;
 
   scene = Ram_HeapSlots->effectWork;
   user = scene->mainObject;
   target = scene->child;
-  angle = (u16)scene->angle + 0x8000;
+  angle = (u16)scene->angle + TRIG_TURN / 2;
   moved = 0;
+  /* FAKEMATCH(temporary): a byte pointer standing in for target->terrainId at
+   * the save and the restore; as target->terrainId, 18 of 444 instructions
+   * differ in tla-en. */
   layer = &target->terrainId;
   savedLayer = *layer;
   pushed = 0;
@@ -111,17 +115,15 @@ void Func_080dd054(void) {
   event = Func_080ce458(0x50000005, scene->fieldKind,
                         Func_080ce31c(scene->fieldKind));
   pusher->watchedObject = target;
-  candidate = &position;
-  candidate->x = target->x;
-  candidate->y = target->y + 0x100000;
-  candidate->z = target->z;
-  Vector_AddPolarOffset(0x100000, angle, candidate);
-  Actor_SetTargetPosition(pusher, candidate->x, candidate->y, candidate->z);
+  position.x = target->x;
+  position.y = target->y + (16 << 16);
+  position.z = target->z;
+  Vector_AddPolarOffset(16 << 16, angle, &position);
+  Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
   BattleEffect_SnapScaleToFull(pusher);
-  pusher->speedLimit = 0x40000;
-  pusher->acceleration = 0x8000;
-  pusherFlags = &pusher->motionFlags;
-  *pusherFlags = 4;
+  pusher->speedLimit = 4 << 16;
+  pusher->acceleration = Q16_ONE / 2;
+  pusher->motionFlags = 4;
   target->update = Actor_ApplyRandomChildValues;
   target->speedLimit = 0x6666;
   target->acceleration = 0x3333;
@@ -130,10 +132,14 @@ void Func_080dd054(void) {
   target->terrainId = 2;
   while (1) {
     wait(1);
+    /* FAKEMATCH(signature): the u8 mode read as s8 (an ldrsb); as
+     * scene->mode == 0, 29 of 444 instructions differ in tla-en. */
     if ((s8)scene->mode == 0 && (gInput.pressed & 0x303))
       break;
 
     direction = (u16)BattleEffect_GetCycledTableWord(gInput.held);
+    // The bytes read the hook's return as the direction; the field is
+    // declared void (*)(void) in field_psynergy_work.h, which needs s32.
     callback = (s32 (*)(void))scene->finishCallback;
     if (callback != NULL) {
       direction = callback();
@@ -141,9 +147,9 @@ void Func_080dd054(void) {
         break;
     } else if (direction == 0xffff) {
       position.x = target->x;
-      position.y = target->y + 0x100000;
+      position.y = target->y + (16 << 16);
       position.z = target->z;
-      Vector_AddPolarOffset(0x100000, angle, &position);
+      Vector_AddPolarOffset(16 << 16, angle, &position);
       Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
       Actor_SetMode(pusher, 1);
       pusher->velocityX = 0;
@@ -153,27 +159,27 @@ void Func_080dd054(void) {
     }
 
     position.x = target->x;
-    position.y = target->y + 0x100000;
+    position.y = target->y + (16 << 16);
     position.z = target->z;
-    Vector_AddPolarOffset(0x100000, angle, &position);
-    Vector_AddPolarOffset(0x20000, direction, &position);
+    Vector_AddPolarOffset(16 << 16, angle, &position);
+    Vector_AddPolarOffset(2 << 16, direction, &position);
     Actor_SetTargetPosition(pusher, position.x, position.y, position.z);
     Actor_CommitPosition(pusher);
     position.x = target->x;
     position.y = target->y;
     position.z = target->z;
-    Vector_AddPolarOffset(0x100000, direction, &position);
+    Vector_AddPolarOffset(16 << 16, direction, &position);
     beyond.x = target->x;
     beyond.y = target->y;
     beyond.z = target->z;
-    Vector_AddPolarOffset(0x200000, direction, &beyond);
+    Vector_AddPolarOffset(32 << 16, direction, &beyond);
     if (Func_08020210(target, &position) > 0) {
       Actor_SetMode(pusher, 4);
       if ((gFrameCount & 15) == 0)
         Sound_PlayFar(114);
       continue;
     }
-    hit = ScriptObject_FindOverlappingEntryFar(target, candidate);
+    hit = ScriptObject_FindOverlappingEntryFar(target, &position);
     if (hit != NULL) {
       if (hit != user) {
         Actor_SetMode(pusher, 4);
@@ -183,8 +189,8 @@ void Func_080dd054(void) {
       }
       cellX = user->x & MOVE_CELL_MASK;
       cellZ = user->z & MOVE_CELL_MASK;
-      if (cellX == (candidate->x & MOVE_CELL_MASK) &&
-          cellZ == (candidate->z & MOVE_CELL_MASK)) {
+      if (cellX == (position.x & MOVE_CELL_MASK) &&
+          cellZ == (position.z & MOVE_CELL_MASK)) {
         Actor_SetMode(pusher, 4);
         if ((gFrameCount & 15) == 0)
           Sound_PlayFar(114);
@@ -213,11 +219,11 @@ void Func_080dd054(void) {
     target->speedLimit = 0x3333;
     target->acceleration = 0x3333;
     Actor_SetTargetPosition(target, position.x, position.y, position.z);
-    *pusherFlags = 0;
+    pusher->motionFlags = 0;
     pusher->speedLimit = 0x3333;
     pusher->acceleration = 0x3333;
-    Vector_AddPolarOffset(0x100000, direction, &position);
-    Actor_SetTargetPosition(pusher, position.x, position.y + 0x100000,
+    Vector_AddPolarOffset(16 << 16, direction, &position);
+    Actor_SetTargetPosition(pusher, position.x, position.y + (16 << 16),
                             position.z);
     if (moved == 1) {
       Actor_GetById(scene->firstObjectId)->actionFlags &= 0xfe;
@@ -248,6 +254,9 @@ void Func_080dd054(void) {
   }
   BattleEffect_StopMainActor();
   if (moved == 1) {
+    /* FAKEMATCH(temporary): a byte pointer standing in for the actor's
+     * actionFlags; as Actor_GetById(...)->actionFlags |= 1, 4 of 444
+     * instructions differ in tla-en. */
     userFlags = &Actor_GetById(scene->firstObjectId)->actionFlags;
     *userFlags |= 1;
   }

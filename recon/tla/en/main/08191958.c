@@ -31,10 +31,11 @@
 #include "io_write_queue.h"
 #include "battle_effect_work.h"
 
-void BattleEffect_LoadBlitter(s32 slot, s32 value);
-// The Broken Seal's five-argument blitter loader, named but never called.
-s32 BattleEffect_BuildBlitterFar(s32 slot, s32 source, s32 destination,
-                                 s32 flags, s32 mode);
+s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
+// Declared as The Broken Seal's five-argument blitter builder, which this game
+// does not link; it serves only the never-taken call below.
+s32 BattleEffect_BuildBlitterFar(s32 slot, s32 widthShift, s32 heightShift,
+                                 s32 flags, u32 mode);
 void HeapSlot_Release(s32 slot);
 void wait(s32 frames);
 

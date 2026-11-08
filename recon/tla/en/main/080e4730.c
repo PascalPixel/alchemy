@@ -3,7 +3,7 @@
 // 080ed724, tla-fr at 080e9724; ja and it at 080e4730). Two tagged devices
 // remain, re-measured at their sites: the pin on the copy's size (2: as a plain
 // local, mov r1, sl comes before the size copy into r2) and the asm on party
-// (79). Matched by plain C where three devices and a once-only block stood
+// (79). Matched by plain C where two devices and a once-only block stood
 // before: the position call takes owner->x, owner->y + 0xa0000 and owner->z
 // inline, and the 63 mask is its own local set before that call. Crossing both
 // calls it lives in r5, so the 0xa0000 reload goes to r6 and sched2 sinks the
@@ -12,9 +12,11 @@
 // r0, ranked lower). Left for the two devices: the asm keeps party in r6 from
 // the animation call to the picture's entry, which steers the reload rotation
 // of that stretch and, as a barrier, the argument order of VramCache_Load;
-// moved earlier it costs 44 to 95, after VramCache_Load 2, and party set before
-// the position call folds party + 532 into a pool constant (249). Without it
-// the pin's order also falls to the tie-break (both removed: 229). Tried for
+// moved earlier it costs 44 to 95, after VramCache_Load 2; party set just
+// before the position call 16, before Camera_MoveWithinMapBounds 14, at the
+// top 103. Without it the pin's order also falls to the tie-break (both
+// removed: 229). The particle loops step their own u8 pointer; only the size
+// and the picture's tiles share sprite. Tried for
 // the pin without gain: the size passed as sprite, source read after the size,
 // the size set before the block. A natural later use of party (or another
 // pseudo held in r6 there with no visible read) is what would settle both.
@@ -40,8 +42,8 @@ extern u8 Data_02000452;
 void *HeapSlot_Alloc(s32 slot, s32 size);
 void HeapSlot_Release(s32 slot);
 void Func_080dc954(void);
-void Actor_SetOthersPaused(struct Actor *excludedObject,
-                                    s32 groupMode, s32 action);
+void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
+                           s32 action);
 s32 Task_Remove(void (*func)(void));
 void Func_080e42d4(void);
 void *Resource_GetTableEntry(s32 resourceId);
@@ -58,20 +60,17 @@ void Func_080e45a0(void *sprite);
 void Func_080e46ac(void *sprite, void *particle, s32 index, s32 tiles);
 void Func_080e43a4(void *source, void *buffer, s32 size);
 void Camera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x,
-                                         s32 y, s32 z);
-void Animation_SetIndexAndInitializeObjectsFar(struct Actor *object,
-                                         s32 index);
+void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
+                                        s32 z);
+void Animation_SetIndexAndInitializeObjectsFar(struct Actor *object, s32 index);
 void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
 void wait(s32 frames);
 struct Actor *Actor_GetById(u32 actor);
-void Actor_SetSingleChildFlagsFar(struct Actor *object,
-                                           s32 flags);
+void Actor_SetSingleChildFlagsFar(struct Actor *object, s32 flags);
 void Camera_FollowActor(s32 actor, s32 mode);
 s32 Func_080ce31c(s32 kind);
 struct PendingEvent *Func_080ce458(u32 filter, s32 kind, s32 selector);
-s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode,
-                                 s32 argument);
+s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 argument);
 
 void Func_080e4730(void) {
   u8 *work = HeapSlot_Alloc(92, 0x192c);
@@ -86,6 +85,7 @@ void Func_080e4730(void) {
 
   s32 sprite;
   u8 *particle;
+  u8 *particleSprite;
   u8 *animation;
   u8 *party;
   s32 pictureOffset;
@@ -99,17 +99,19 @@ void Func_080e4730(void) {
   gMainRoutineWork[620] = 0;
   Actor_SetOthersPaused(owner, 1, 0);
   Task_Remove(Func_080e42d4);
-  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
+  Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DustPuffA),
+                        work);
   particleEntry = Resource_FindFreeEntry();
   particleTiles = VramCache_Load(particleEntry, 0x800, work);
   i = 0;
   particle = work + 0x1200;
   delay = 0;
-  sprite = (s32)(work + 0x800);
+  particleSprite = work + 0x800;
   for (; i < 64; i++) {
-    Func_080e45a8((void *)sprite, particle, i, particleTiles, *(s16 *)(event + 0xd48));
+    Func_080e45a8(particleSprite, particle, i, particleTiles,
+                  *(s16 *)(event + 0xd48));
     *(s32 *)(particle + 24) = delay;
-    sprite += 40;
+    particleSprite += 40;
     delay -= 2;
     particle += 28;
   }
@@ -138,14 +140,17 @@ void Func_080e4730(void) {
 
     sprite = 0x400;
     {
-      /* FAKEMATCH(pin): the form kept; as a plain local, 2 of 332 instructions differ in tla-en. */
+      /* FAKEMATCH(pin): the copy's size pinned to r2; as Func_080e43a4(source,
+       * work, sprite) with no size local, 2 of 332 instructions differ in
+       * tla-en. */
       register s32 size asm("r2") = sprite;
 
       Func_080e43a4(source, work, size);
     }
   }
   Animation_ApplyChildValueToFirstFar(owner->animation, 15);
-  /* FAKEMATCH(barrier): the form kept; as no asm, 79 of 332 instructions differ in tla-en. */
+  /* FAKEMATCH(barrier): an empty asm reading party keeps it in r6 to here;
+   * as no asm, 79 of 332 instructions differ in tla-en. */
   asm("" : : "r"(party));
   pictureEntry = Resource_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);
@@ -154,7 +159,7 @@ void Func_080e4730(void) {
 
   frame = 0;
   rippled = work + 0x400;
-  ripple = frame;
+  ripple = 0;
   pictureOffset = sprite * 32;
   for (; frame < 78; frame++) {
     if (frame == 0)
@@ -168,8 +173,7 @@ void Func_080e4730(void) {
     if (frame == 66) {
       Actor_SetMode(owner, 1);
       Animation_ApplyChildValueToFirstFar(owner->animation, 0);
-      Actor_SetSingleChildFlagsFar(
-          Actor_GetById(*(s16 *)(effect + 24)), 1);
+      Actor_SetSingleChildFlagsFar(Actor_GetById(*(s16 *)(effect + 24)), 1);
       Camera_FollowActor(*(s16 *)(effect + 24), 1);
       Sound_PlayFar(539);
       if (*(s8 *)(event + 394) == 3) {
@@ -187,10 +191,10 @@ void Func_080e4730(void) {
     }
     i = 0;
     particle = work + 0x1200;
-    sprite = (s32)(work + 0x800);
+    particleSprite = work + 0x800;
     for (; i < 30; i++) {
-      Func_080e46ac((void *)sprite, particle, i, particleTiles);
-      sprite += 40;
+      Func_080e46ac(particleSprite, particle, i, particleTiles);
+      particleSprite += 40;
       particle += 28;
     }
     wait(1);

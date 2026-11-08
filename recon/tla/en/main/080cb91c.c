@@ -15,22 +15,29 @@
 // world map, its zoom, the four ship commands), a touch or exit, a push, a
 // battle, examining, the menu, talking, searching, Psynergy, an item or the
 // pause menu.
-// One device is left: the r0 clobber before Func_080c9e1c is a tagged barrier
+// Three tagged devices: Field_GetSceneAttributes's s32 return (signature, 17),
+// unk66 read as s16 (signature, 39) and the r0 clobber before Func_080c9e1c,
+// a barrier. The calls of Func_080d793c and PartyInventory_GiveItem with a
+// second argument are the original's UB, behind UBFIX. Before adoption the
+// three Msg symbols (messages 03474, 03475, 04455) need their msgctxt names
+// in games/tla/text, as the Broken Seal names them.
+// The barrier
 // (without it, 21: move2add turns the 0x2c0 address into adds r0, #2 after the
 // 0x2be one). The native forgets r0 there with nothing in its bytes; a label,
 // a call or a store to r0 between the two addresses at reload would do it, and
 // none is found in C yet. Measured without the clobber: the arrival test as an
 // if/else whose two zero stores cross-jump (83: the extra store shifts reload's
 // round-robin registers), the test folded with || (21), the entrance read into
-// value first (6); with other clobbers: an empty block, plain asm, r1 or r3 (23).
-// What closed it (8 November, from 2): every store to a gMainRoutineWork
+// value first (6); with other clobbers: an empty block, plain asm, r1 or r3
+// (23). What closed it (8 November, from 2): every store to a gMainRoutineWork
 // member, ARRIVAL's included, reads its field and masks it with a 0 made before
 // the store. CSE kept the state store's 0 for ownerOverride, so its reload into
 // r10 came before the strb in insn order and won their sched2 tie (equal
 // priority, dependants and class). Stored through a pointer the state makes no
 // 0; the 0 is a local in the once-only block after the store, and its one use
-// counts at loop depth, so it stays in r10 across the call (outside the block,
-// 87; the store spelt ARRIVAL.state = 2, 4).
+// counts at loop depth, so it stays in r10 across the call (without the block,
+// or with a literal 0 in it, 87; zero declared outside the block, 4; the store
+// spelt ARRIVAL.state = 2, 4).
 // The menu's gInput.held and the pause menu's gDebugMode rereads are volatile
 // casts (ordinary C, as ☀️'s volatile gKeysHeld).
 // Found: value is one variable in the native (scene attributes, the fade flag,
@@ -47,6 +54,7 @@
 #include "scene_ids.h"
 #include "macros.h"
 #include "version.h"
+#include "io_reg.h"
 
 struct FieldWork {
   u8 unk000[16];
@@ -118,11 +126,6 @@ extern char MsgFieldPauseUnavailable[];
 extern u8 gMapCellBuffer[];
 extern u8 gData_02001000[];
 extern u8 gResourceBlockOwners[];
-extern u16 Data_0200044c;
-extern s32 Data_02000454;
-extern s16 Data_02000422;
-extern s32 Data_02000498;
-extern s8 Data_020004ac;
 
 void *HeapSlot_AllocEwram(s32 slot, s32 size);
 void *HeapSlot_Alloc(s32 slot, s32 size);
@@ -131,7 +134,7 @@ void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBit(s32 flag);
 s32 GameFlag_Test(s32 flag);
 void Task_ResetAll(void);
-void Func_080d793c();
+void Func_080d793c(s32 capture);
 void Func_08020110(void);
 void Func_08020108(s32 map);
 void Func_080c9e48(s32 mode);
@@ -140,9 +143,9 @@ void WindowSystem_InitFieldFar(void);
 void ObjectSystem_InitializeFar(s32 mode);
 void BattleEffect_ResetCounters(void);
 void BattleMap_ApplySceneEntranceView(void);
-void Func_080caa4c(void);
+void Func_080caa4c(s32 table);
 void Func_080cec34(void);
-void Func_080cae5c(void);
+void ObjectTable_Restore(void);
 void Func_080d784c(void);
 void Map_UpdateCurrentTileBlockFar(void);
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
@@ -170,7 +173,7 @@ void Func_08038200(s32 scene);
 void Func_080cb82c(void);
 void Func_080cb8a4(void);
 s32 Func_080d25c8(s32 item);
-void PartyInventory_GiveItem(s32 item, s32 mode);
+s32 PartyInventory_GiveItem(s32 item);
 struct Actor *Func_080cb8e8(void);
 void Leader_StopMoving(void);
 void MessageArgument_PushFar(s32 value, s32 kind);
@@ -191,7 +194,7 @@ void ObjectTable_Snapshot(void);
 void Func_080d5c70(s32 battle);
 void UiTimedNotice_CloseIfActiveFar(void);
 s32 Field_FindNearbyTalkTarget(s32 owner);
-s32 Func_080cce94(s32 target);
+void *Func_080cce94(s32 id);
 s32 Func_080cc54c(void);
 void Menu_RunSelectionWithCursorObjectFar(void);
 void Menu_RunTopSelectionFar(void);
@@ -201,7 +204,7 @@ void Func_080cd808(s32 cell);
 s32 Func_080ce61c(u32 code);
 void Func_080ce0ac(s32 item, s32 argument);
 void Menu_RunSelectionFar(void);
-void Func_080cc9fc(void);
+void Debug_RunPaletteEditor(void);
 void Event_ResolveAllPendingActions(void);
 s32 Sound_GetCurrentBgmFar(void);
 void Func_08038358(s32 mode);
@@ -279,7 +282,7 @@ s32 FieldSequence_Run(void) {
   gMainRoutineWork.unk2c3 = 0;
   Task_ResetAll();
   Func_080d793c(0);
-  if (gMainRoutineWork.map == (s32)&SceneId_WorldMap) {
+  if (gMainRoutineWork.map == (s32)&SceneId_Ov64a) {
     Func_08020110();
     gMainRoutineWork.unk244[0] = 1;
     mode = 3;
@@ -299,11 +302,10 @@ s32 FieldSequence_Run(void) {
   BattleEffect_ResetCounters();
   work->events = (const void *)OVERLAY_CALL(9);
   BattleMap_ApplySceneEntranceView();
-  OVERLAY_CALL(7);
-  Func_080caa4c();
+  Func_080caa4c(OVERLAY_CALL(7));
   Func_080cec34();
   if (GameFlag_Test(265))
-    Func_080cae5c();
+    ObjectTable_Restore();
   if (gMainRoutineWork.pendingDjinnEvent != 0)
     Func_080d784c();
   work->queuedSound = -1;
@@ -337,10 +339,13 @@ s32 FieldSequence_Run(void) {
     gMainRoutineWork.cloaked = 0;
   }
   FieldEffect_ResumeCloakCheck();
+  /* FAKEMATCH(signature): Field_GetSceneAttributes declared returning s32,
+   * though it returns s16; as s16, 17 of 1300 instructions differ in
+   * tla-en. */
   value = Field_GetSceneAttributes(gMainRoutineWork.scene);
   work->sceneAttributeHigh = (value >> 4) & 15;
   work->sceneAttributeLow = value & 15;
-  
+
   if (ARRIVAL.state == 2) {
     Actor_GetById(Party_GetLeaderActor())->scaleX = 0;
     Actor_SetSingleChildFlagsFar(Actor_GetById(Party_GetLeaderActor()), 0);
@@ -370,7 +375,7 @@ s32 FieldSequence_Run(void) {
         wait(20);
         HeapSlot_Release(92);
       }
-      *(volatile u16 *)0x05000000 = value;
+      PLTT_BACKDROP = 0;
       if (!ObjectEffect_RunPendingFlagEvent())
         wait((work->transitionFrames + 1) / 2);
     }
@@ -385,9 +390,12 @@ s32 FieldSequence_Run(void) {
         s32 zero = 0;
 
         Func_080e7804();
-        if (ARRIVAL.scene != (s16)(s32)&SceneId_Ov64a)
+        // (s16): the id compared as the field's own width (79 differ without).
+        if (ARRIVAL.scene != (s16)(s32)&SceneId_WorldMap)
           goto clearOwner;
-        /* FAKEMATCH(barrier): the form kept; as no asm, 21 of 1300 instructions differ in tla-en. */
+        /* FAKEMATCH(barrier): an r0 clobber, so reload forgets r0 between the
+         * 0x2be and 0x2c0 addresses; as no asm, 21 of 1300 instructions differ
+         * in tla-en. */
         asm("" : : : "r0");
         if ((value = Func_080c9e1c(ARRIVAL.entrance)) & 16)
         clearOwner:
@@ -405,23 +413,36 @@ s32 FieldSequence_Run(void) {
       Func_08038200(gMainRoutineWork.scene);
     }
     if (gMainRoutineWork.pendingDjinnEvent != 0) {
-      Func_080d793c(gMainRoutineWork.pendingDjinnEvent, 1);
+      // UB: called with a second argument (1) its definition does not take.
+#ifdef UBFIX
+      Func_080d793c(gMainRoutineWork.pendingDjinnEvent);
+#else
+      ((void (*)(s32, s32))Func_080d793c)(gMainRoutineWork.pendingDjinnEvent,
+                                          1);
+#endif
       gMainRoutineWork.pendingDjinnEvent = 0;
     }
     if (gMainRoutineWork.tally25c != 0) {
       Func_080cb82c();
-      if (Func_080d25c8(gMainRoutineWork.tally25c) == 0)
-        PartyInventory_GiveItem(gMainRoutineWork.tally25c, 0);
+      if (Func_080d25c8(gMainRoutineWork.tally25c) == 0) {
+        // UB: called with a second argument (0) its definition does not take.
+#ifdef UBFIX
+        PartyInventory_GiveItem(gMainRoutineWork.tally25c);
+#else
+        ((s32 (*)(s32, s32))PartyInventory_GiveItem)(gMainRoutineWork.tally25c,
+                                                     0);
+#endif
+      }
       Func_080cb8a4();
       gMainRoutineWork.tally25c = 0;
     }
   }
 
   party = &gMainRoutineWork;
-  leaderId = &Data_02000454;
-  steps = &Data_02000498;
-  entrance = &Data_02000422;
-  turn = &Data_0200044c;
+  leaderId = &gMainRoutineWork.currentOwner;
+  steps = &gMainRoutineWork.encounterSteps;
+  entrance = &gMainRoutineWork.entrance;
+  turn = &gMainRoutineWork.turn;
   for (;;) {
     GameFlag_SetBit(260);
     leader = Func_080cb8e8();
@@ -598,7 +619,7 @@ s32 FieldSequence_Run(void) {
         Func_080cb8a4();
         work->searchCell = 0;
       } else if (work->psynergy != 0) {
-        packed = (s16)(work->psynergy & 0x2000);
+        packed = work->psynergy & 0x2000;
         UiTimedNotice_CloseIfActiveFar();
         if (packed == 0) {
           Func_080cb82c();
@@ -622,7 +643,7 @@ s32 FieldSequence_Run(void) {
         if (*(volatile u8 *)&gDebugMode && (gInput.held & 2)) {
           Menu_RunSelectionFar();
         } else if (*(volatile u8 *)&gDebugMode && (gInput.held & 0x200)) {
-          Func_080cc9fc();
+          Debug_RunPaletteEditor();
         } else if (GameFlag_Test(263)) {
           work->raisedEvent = 250;
         } else {
@@ -657,12 +678,15 @@ s32 FieldSequence_Run(void) {
     GameFlag_ClearBit(260);
     if (Func_080cb8e8() != NULL)
       Func_080200b0();
-    pending = &Data_020004ac;
+    pending = &gMainRoutineWork.pendingThird;
     do {
       wait(1);
       leader = Func_080cb8e8();
       if (gDebugMode == 0 || !GameFlag_Test(355)) {
-        if (*pending == 0 || (leader->action == 0 && *(s16 *)&leader->unk66 == 0))
+        /* FAKEMATCH(signature): the u16 unk66 read as s16 (an ldrsh); as
+         * leader->unk66 == 0, 39 of 1300 instructions differ in tla-en. */
+        if (*pending == 0 ||
+            (leader->action == 0 && *(s16 *)&leader->unk66 == 0))
           Func_080cb2b8(leader->terrainId, leader->x, leader->y, leader->z);
       }
     } while (BattleEffect_SumCounters() == 0);

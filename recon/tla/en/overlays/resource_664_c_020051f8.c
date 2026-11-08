@@ -25,6 +25,8 @@
 #include "actor.h"
 #include "main_routine_work.h"
 #include "call.h"
+#include "scene_tables.h"
+#include "system/io_reg.h"
 
 extern char SceneId_Ov664Room1, SceneId_Ov664Room2, SceneId_Ov664Room3,
     SceneId_Ov664Room4, SceneId_Ov664Room5, SceneId_Ov664Room6,
@@ -60,12 +62,13 @@ s32 Func_0200062c(s32 layer, s32 x, s32 z, s32 cell);
 void Actor_SetActionCallback(struct Actor *object, s32 action);
 void Func_02000908(const u8 *table);
 
-#define REG_BLDCNT (*(volatile u16 *)0x04000050)
-#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
-
 s32 Func_020051f8(void) {
   struct Actor *object;
   s32 i, z, one;
+
+  /* FAKEMATCH(wrapper): 48 calls forwarded through call.h's Call3, Call4 and
+   * Call6 (Call4 through a cast to void (*)()); as direct calls, 122 of 1091
+   * instructions differ in tla-en. */
 
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 516;
   Actor_GetById(gMainRoutineWork.currentOwner)->priorityFlags |= 32;
@@ -89,7 +92,7 @@ s32 Func_020051f8(void) {
     }
     if (gMainRoutineWork.entrance > 13) {
       if (GameFlag_Test(0xa8e))
-        Call3(Func_02005e6c, 12, 0x3380000, 0x1480000);
+        Call3(Func_02005e6c, 12, PIXELS(824), PIXELS(328));
       Func_02005f6c(gData_02006050);
     }
     Actor_GetById(10)->motionFlags = 0;
@@ -101,7 +104,7 @@ s32 Func_020051f8(void) {
     } else {
       Func_02001084(Actor_GetById(10), 8, 0);
       Actor_SetPartAttribute(Actor_GetById(11), 6);
-      Call6(Func_02005d9c, 0x40, 78, 18, 105, 3, 5);
+      Call6(Func_02005d9c, 64, 78, 18, 105, 3, 5);
     }
     if (!GameFlag_Test(0x899)) {
       Actor_SetPartAttribute(Actor_GetById(8), 6);
@@ -122,9 +125,9 @@ s32 Func_020051f8(void) {
     REG_BLDCNT = 0x3f10;
     Func_02002770();
     if (GameFlag_Test(0x897))
-      Call3(Func_02005e6c, 9, 0x1480000, 0x1880000);
+      Call3(Func_02005e6c, 9, PIXELS(328), PIXELS(392));
     if (GameFlag_Test(0x898))
-      Call3(Func_02005e6c, 11, 0x680000, 0x1880000);
+      Call3(Func_02005e6c, 11, PIXELS(104), PIXELS(392));
     Func_02005f6c(gData_02006054);
     if (!GameFlag_Test(0x899)) {
       Actor_SetPartAttribute(Actor_GetById(8), 6);
@@ -143,11 +146,11 @@ s32 Func_020051f8(void) {
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);
     if (GameFlag_Test(0x89b))
-      Call3(Func_02005e6c, 8, 0x1080000, 0x2780000);
+      Call3(Func_02005e6c, 8, PIXELS(264), PIXELS(632));
     if (GameFlag_Test(0x89c))
-      Call3(Func_02005e6c, 11, 0x2680000, 0x2380000);
+      Call3(Func_02005e6c, 11, PIXELS(616), PIXELS(568));
     if (GameFlag_Test(0x89d))
-      Call3(Func_02005e6c, 12, 0x1d80000, 0x2080000);
+      Call3(Func_02005e6c, 12, PIXELS(472), PIXELS(520));
     Func_02005f6c(gData_0200605a);
     if (!GameFlag_Test(0x899)) {
       Actor_SetPartAttribute(Actor_GetById(9), 6);
@@ -173,15 +176,15 @@ s32 Func_020051f8(void) {
     Func_02005f5c(4, 19, 20);
     ((u8 *)Actor_GetById(18))[98] = 1;
     if (GameFlag_Test(769)) {
-      Call6(Func_02005d9c, 69, 0x40, 29, 85, 5, 7);
+      Call6(Func_02005d9c, 69, 64, 29, 85, 5, 7);
       Call6(Func_02005dac, 46, 20, 5, 5, 29, 21);
-      Call6(Func_02005dac, 0x20, 89, 1, 1, 31, 89);
+      Call6(Func_02005dac, 32, 89, 1, 1, 31, 89);
       Call6(Func_02005dac, 50, 86, 1, 1, 33, 87);
     } else {
-      Call6(Func_02005d9c, 0x40, 0x40, 29, 85, 5, 7);
+      Call6(Func_02005d9c, 64, 64, 29, 85, 5, 7);
       Call6(Func_02005dac, 52, 20, 5, 5, 29, 21);
       Call6(Func_02005dac, 33, 88, 1, 1, 33, 87);
-      Call6(Func_02005dac, 0x30, 88, 1, 1, 31, 89);
+      Call6(Func_02005dac, 48, 88, 1, 1, 31, 89);
     }
     if (GameFlag_Test(0x300)) {
       Call6(Func_02005d9c, 90, 25, 86, 25, 4, 3);
@@ -190,7 +193,7 @@ s32 Func_020051f8(void) {
       Call6(Func_02005dac, 18, 33, 2, 1, 23, 25);
     }
     if (GameFlag_Test(0x89e))
-      Call3(Func_02005e6c, 9, 0x2880000, 0x1280000);
+      Call3(Func_02005e6c, 9, PIXELS(648), PIXELS(296));
     Func_02005f6c(gData_02006064);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room5) {
     GameFlag_SetBit(324);
@@ -207,8 +210,8 @@ s32 Func_020051f8(void) {
       goto loop;
     Actor_GetById(8)->motionFlags = 0;
     object = Actor_GetById(8);
-    Actor_GetById(8)->terrainHeight = 0x100000;
-    object->y = 0x100000;
+    Actor_GetById(8)->terrainHeight = PIXELS(16);
+    object->y = PIXELS(16);
     Actor_SetActionCallback(Actor_GetById(8), 9);
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room6) {
     Func_02002770();
@@ -217,27 +220,29 @@ s32 Func_020051f8(void) {
     Func_02005f5c(1, 13, 14);
     Func_02005f5c(2, 15, 0x10);
     if (!GameFlag_Test(770)) {
-      Call6(Func_02005d9c, 69, 0x40, 0x20, 79, 5, 7);
-      Call6(Func_02005dac, 49, 15, 5, 5, 0x20, 15);
+      Call6(Func_02005d9c, 69, 64, 32, 79, 5, 7);
+      Call6(Func_02005dac, 49, 15, 5, 5, 32, 15);
       Call6(Func_02005dac, 33, 82, 1, 1, 34, 82);
       Call6(Func_02005dac, 52, 81, 1, 1, 36, 81);
     } else {
-      Call6(Func_02005d9c, 0x40, 0x40, 0x20, 79, 5, 7);
-      Call6(Func_02005dac, 49, 21, 5, 5, 0x20, 15);
+      Call6(Func_02005d9c, 64, 64, 32, 79, 5, 7);
+      Call6(Func_02005dac, 49, 21, 5, 5, 32, 15);
       Call6(Func_02005dac, 35, 81, 1, 1, 36, 81);
       Call6(Func_02005dac, 50, 82, 1, 1, 34, 82);
     }
     if (GameFlag_Test(771))
-      Call3(Func_02005e6c, 8, 0x2080000, 0x1280000);
+      Call3(Func_02005e6c, 8, PIXELS(520), PIXELS(296));
     if (GameFlag_Test(0x89f)) {
-      Call3(Func_02005e6c, 8, 0x1380000, 0x1280000);
+      Call3(Func_02005e6c, 8, PIXELS(312), PIXELS(296));
       Actor_SetSpritePriority(8, 2);
       Actor_GetById(8)->motionFlags = 2;
       Actor_GetById(8)->terrainHeight = 0xffe00000;
-      Call6(Func_02005dac, 19, 0x10, 1, 1, 19, 18);
+      Call6(Func_02005dac, 19, 16, 1, 1, 19, 18);
     }
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room7) {
     Func_02002770();
+    // one holds the constant 1 for the stores and calls below; written as
+    // 1 at each site, 54 of 1091 differ.
     one = 1;
     ((u8 *)Actor_GetById(12))[98] = one;
     ((u8 *)Actor_GetById(13))[98] = one;
@@ -249,7 +254,7 @@ s32 Func_020051f8(void) {
     }
     Func_02000908(gData_0200621c);
     if (GameFlag_Test(0x8d0))
-      Call3(Func_02005e6c, 8, 0x1580000, 0x2b80000);
+      Call3(Func_02005e6c, 8, PIXELS(344), PIXELS(696));
     Func_02005f6c(gData_02006068);
     if (GameFlag_Test(772)) {
       Call6(Func_02005d9c, 39, 82, 38, 82, one, 3);
@@ -267,11 +272,11 @@ s32 Func_020051f8(void) {
     REG_BLDCNT = 0x3f10;
     Task_Add(Func_02001690, 0x480);
     if (GameFlag_Test(0x8d1))
-      Call3(Func_02005e6c, 8, 0x1180000, 0x1d80000);
+      Call3(Func_02005e6c, 8, PIXELS(280), PIXELS(472));
     if (GameFlag_Test(0x8d2))
-      Call3(Func_02005e6c, 9, 0x1680000, 0x3480000);
+      Call3(Func_02005e6c, 9, PIXELS(360), PIXELS(840));
     if (GameFlag_Test(0xa8f)) {
-      Call3(Func_02005e6c, 12, 0xb80000, 0x2680000);
+      Call3(Func_02005e6c, 12, PIXELS(184), PIXELS(616));
       GameFlag_SetBit(0x200);
     }
     Actor_SetSpritePriority(9, 2);
@@ -286,7 +291,7 @@ s32 Func_020051f8(void) {
   } else if (gMainRoutineWork.scene == (s32)&SceneId_Ov664Room9) {
     Func_02002770();
     if (GameFlag_Test(0x8d3))
-      Call3(Func_02005e6c, 9, 0x1680000, 0x1080000);
+      Call3(Func_02005e6c, 9, PIXELS(360), PIXELS(264));
     Func_02005f6c(gData_0200607e);
     Func_0200062c(2, Actor_GetById(10)->x >> 20, Actor_GetById(10)->z >> 20, 0);
     Actor_GetById(10)->actionFlags = 0;
@@ -296,8 +301,8 @@ s32 Func_020051f8(void) {
       Func_02001084(Actor_GetById(10), 60, 0);
     Actor_SetSingleChildFlags(Actor_GetById(10), 0);
     if (GameFlag_Test(774)) {
-      Call6(Func_02005d9c, 15, 0x50, 15, 77, 2, 3);
-      Call6(Func_02005dac, 15, 0x50, 1, 1, 15, 79);
+      Call6(Func_02005d9c, 15, 80, 15, 77, 2, 3);
+      Call6(Func_02005dac, 15, 80, 1, 1, 15, 79);
       Call6(Func_02005dac, 17, 15, 2, 1, 15, 15);
     }
   }

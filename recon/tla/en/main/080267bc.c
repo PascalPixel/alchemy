@@ -1,7 +1,8 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
 // Also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it (whole-function
-// diff, 713 instructions each). Two tagged dead tests remain (S2); both are
-// needed and leave no instruction.
+// diff, 713 instructions each). Three tagged dead devices remain (S2): two
+// tests and the debug test's store of collision's 0; each is needed and
+// leaves no instruction. The ROM-kept stores of 0 to collision are // DEAD:.
 // How it matches (2026-11-08, from 31): gInput is read directly (the keys
 // pointer is gone, so no mov sl); the debug test has its own copy of
 // "collision = 0; goto counted", whose reload takes r1 in the debug test and
@@ -128,15 +129,16 @@ s32 Func_080267bc(struct Actor *object) {
   }
 
   angle = gData_0802ec5c[(gInput.held >> 4) & 15];
-  if ((u16)angle == 0xffff) {
+  if (angle == 0xffff) {
     collision |= 4;
     goto counted;
   }
+  // DEAD: collision is already 0 here.
   collision = 0;
   position.x = object->x;
   position.y = object->y;
   position.z = object->z;
-  Vector_AddPolarOffset(0x80000, (u16)angle, &position);
+  Vector_AddPolarOffset(0x80000, angle, &position);
   if (object->priorityFlags & 0x40) {
     s32 withinHalfCell;
 
@@ -165,15 +167,20 @@ s32 Func_080267bc(struct Actor *object) {
         goto clear;
     }
     if (onObject && !Func_0802d87c(object, &position)) {
+      // DEAD: collision is already 0 here.
       collision = 0;
       goto counted;
     }
   }
-  /* FAKEMATCH(dead): the test that gives onObject the 1 it already holds kept;
-     as no test, 12 of 713 instructions differ in tla-en. */
+  /* FAKEMATCH(dead): the test that sets onObject to 1 when it is nonzero kept
+     (nothing reads onObject after it, and it is unset when priorityFlags bit 6
+     is clear); as no test, 12 of 713 instructions differ in tla-en. */
   if (onObject)
     onObject = 1;
   if (gDebugMode != 0 && (gInput.held & 0x200)) {
+    /* FAKEMATCH(dead): a store of the 0 collision already holds, which
+       cross-jumping folds into clear; as goto clear, 36 of 713 instructions
+       differ in tla-en. */
     collision = 0;
     goto counted;
   }
@@ -181,22 +188,22 @@ s32 Func_080267bc(struct Actor *object) {
     testPosition.x = object->x;
     testPosition.y = object->y;
     testPosition.z = object->z;
-    Vector_AddPolarOffset(0x80000, (u16)angle + 0x1000, &testPosition);
+    Vector_AddPolarOffset(0x80000, angle + 0x1000, &testPosition);
     if (!Func_0802d87c(object, &testPosition)) {
       testPosition.x = object->x;
       testPosition.y = object->y;
       testPosition.z = object->z;
-      Vector_AddPolarOffset(0x80000, (u16)angle - 0x1000, &testPosition);
+      Vector_AddPolarOffset(0x80000, angle - 0x1000, &testPosition);
       if (!Func_0802d87c(object, &testPosition)) {
         testPosition.x = object->x;
         testPosition.y = object->y;
         testPosition.z = object->z;
-        Vector_AddPolarOffset(0x80000, (u16)angle + 0x2000, &testPosition);
+        Vector_AddPolarOffset(0x80000, angle + 0x2000, &testPosition);
         if (!Func_0802d87c(object, &testPosition)) {
           testPosition.x = object->x;
           testPosition.y = object->y;
           testPosition.z = object->z;
-          Vector_AddPolarOffset(0x80000, (u16)angle - 0x2000, &testPosition);
+          Vector_AddPolarOffset(0x80000, angle - 0x2000, &testPosition);
           if (!Func_0802d87c(object, &testPosition)) {
             heading = angle;
             goto push_objects;
@@ -206,15 +213,14 @@ s32 Func_080267bc(struct Actor *object) {
     }
   }
   {
-    u16 direction = angle;
     s32 headingCount = 0;
 
-    angleOffsets[headingCount++] = direction + 0x1000;
-    angleOffsets[headingCount++] = direction - 0x1000;
-    angleOffsets[headingCount++] = direction + 0x2000;
-    angleOffsets[headingCount++] = direction - 0x2000;
-    angleOffsets[headingCount++] = direction + 0x3000;
-    angleOffsets[headingCount++] = direction - 0x3000;
+    angleOffsets[headingCount++] = angle + 0x1000;
+    angleOffsets[headingCount++] = angle - 0x1000;
+    angleOffsets[headingCount++] = angle + 0x2000;
+    angleOffsets[headingCount++] = angle - 0x2000;
+    angleOffsets[headingCount++] = angle + 0x3000;
+    angleOffsets[headingCount++] = angle - 0x3000;
     /* FAKEMATCH(dead): the never-true test of headingCount kept; as no test,
        183 of 713 instructions differ in tla-en. */
     if (headingCount == 0)
@@ -256,6 +262,7 @@ s32 Func_080267bc(struct Actor *object) {
   goto blocked;
 
 clear:
+  // DEAD: collision is already 0 here.
   collision = 0;
   goto counted;
 
@@ -357,7 +364,7 @@ counted:
     if (collision & 3) {
       s32 difference;
 
-      difference = (s16)((u16)angle - object->angle);
+      difference = (s16)(angle - object->angle);
       if (difference > 0x1000)
         difference = 0x1000;
       if (difference < -0x1000)

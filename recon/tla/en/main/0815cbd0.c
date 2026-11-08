@@ -1,23 +1,24 @@
-// Matches: differ 0 (tla-en, 2026-11-08); tla-ja, tla-de, tla-es, tla-fr and
-// tla-it differ 0 too. One device, FAKEMATCH(signature): the three releases
-// between draws are called as returning s64; as plain void calls, 6 of 228.
-// Why it is needed: the once-only blocks end CSE's block at each quarter, so
-// each draw forms work + 0x700 again (movs, lsls, add r1, sl) and loop.c
-// folds each 0x700 into its single use while it hoists the blitter base
-// (which the setup's r6 shares). But their loop notes are sched2 barriers,
-// and a barrier after a draw depends on that draw's add r1, sl (its use of
-// work), so the add ties with the x and y sets on dependents (5 each) and
-// wins on insn order: add, x, y, canvas where the listing has x, y, add,
-// canvas (its fourth draw, with no barrier after it, ties all four and keeps
-// insn order, as here). A release that sets r1 takes over the dependence of
-// both the release and the next build on the add, which leaves it 4 against
-// x's and y's 5 and above the canvas move's 3. The draw itself returning s64
-// instead leaves the add tied with the canvas move (canvas first).
-// Tried without the device, 2026-11-08: no blocks at all, 164 (CSE merges
-// the four sums and loop.c hoists one into sl); work copied to itself before
-// quarters two to four (a dead self-assignment, no blocks), 27: the loop body
-// matches, but CSE still merges the four 0x700 constants, loop.c hoists the
-// one left and cse2 ties it to the setup's, which takes r5 for the setup's
+// Matches: differ 0 (tla-en, 2026-11-08)
+// tla-ja, tla-de, tla-es, tla-fr and tla-it differ 0 too. Two devices.
+// FAKEMATCH(wrapper): the two teardown clears go through ClearWords_ (16
+// directly). FAKEMATCH(signature): the three releases between draws are called
+// as returning s64; as plain void calls, 6 of 228. Why it is needed: the
+// once-only blocks end CSE's block at each quarter, so each draw forms work +
+// 0x700 again (movs, lsls, add r1, sl) and loop.c folds each 0x700 into its
+// single use while it hoists the blitter base (which the setup's r6 shares).
+// But their loop notes are sched2 barriers, and a barrier after a draw depends
+// on that draw's add r1, sl (its use of work), so the add ties with the x and y
+// sets on dependents (5 each) and wins on insn order: add, x, y, canvas where
+// the listing has x, y, add, canvas (its fourth draw, with no barrier after it,
+// ties all four and keeps insn order, as here). A release that sets r1 takes
+// over the dependence of both the release and the next build on the add, which
+// leaves it 4 against x's and y's 5 and above the canvas move's 3. The draw
+// itself returning s64 instead leaves the add tied with the canvas move (canvas
+// first). Tried without the device, 2026-11-08: no blocks at all, 164 (CSE
+// merges the four sums and loop.c hoists one into sl); work copied to itself
+// before quarters two to four (a dead self-assignment, no blocks), 27: the loop
+// body matches, but CSE still merges the four 0x700 constants, loop.c hoists
+// the one left and cse2 ties it to the setup's, which takes r5 for the setup's
 // sheet; the same with the sheet as (u8 *)work + 0x700, 27; with the offset
 // in a local set before the loop (gcse propagates it, PRE then hoists the
 // sum), 50. The barrier-free schedule needs separate CSE blocks with no
@@ -28,7 +29,8 @@
 // the sheet or the draw pointer in a block-scoped local, 6 and 60; 7 minutes
 // of permuting left 6. 2026-11-05: differ 6 of 228 with an empty asm barrier.
 
-// Draft of BattleEffect_RunSpiderWeb, effect kind 345: a spider web over the targets.
+// Draft of BattleEffect_RunSpiderWeb, effect kind 345: a spider web over the
+// targets.
 
 // On screen: a web fades in over the targets, centred between the first
 // and the last, drawn as four 32-pixel quarters (the one picture flipped
@@ -52,11 +54,11 @@
 // summon canvas effect instead of closing the canvas.
 
 // History, under older tunes: listing 228 instructions, draft 228, differ 28
-// (2026-10-26), with no device. Each quarter was one statement macro, QUARTER, that builds its
-// blitter, draws and releases it inside do { } while (0): the block's loop
-// notes end CSE's block at each quarter, so the native's work + 0x700 is
-// formed again for each draw rather than hoisted out of the frame loop or
-// kept across the calls (it replaces the empty asm on work, 43). The two
+// (2026-10-26), with no device. Each quarter was one statement macro, QUARTER,
+// that builds its blitter, draws and releases it inside do { } while (0): the
+// block's loop notes end CSE's block at each quarter, so the native's work +
+// 0x700 is formed again for each draw rather than hoisted out of the frame loop
+// or kept across the calls (it replaces the empty asm on work, 43). The two
 // clears go through a local inline forwarder, as f143d80.c makes them and
 // as The Broken Seal's IWRAM call layer makes every IWRAM call, so each
 // rebuilds its own 0x3c00 (43 to 35 with the asm, 28 with the macro).
@@ -74,11 +76,10 @@
 // the native stack frame is in r7
 // 2026-10-19 (devices allowed), differ 59 of 223: the empty asm on work at
 // the top of the frame loop stops the sheet's hoisting (166 to 107), the
-// blend register through a local pointer (alchemy-devtools permute's find; 107 to
-// 67), and the canvas read before the work (67 to 59: the native loads
-// [r6, #96] first).
-// 2026-10-26: QUARTER with the release outside its block, or the draw
-// alone inside it: 34; the blitter build outside it: 28.
+// blend register through a local pointer (alchemy-devtools permute's find; 107
+// to 67), and the canvas read before the work (67 to 59: the native loads [r6,
+// #96] first). 2026-10-26: QUARTER with the release outside its block, or the
+// draw alone inside it: 34; the blitter build outside it: 28.
 
 #include "types.h"
 #include "battle_effect_work.h"
@@ -96,7 +97,8 @@ static __inline__ s32 ClearWords_(void *destination, s32 size) {
 #define HEAP_BLITTER 104
 
 // The Lost Age numbers the blitter modes the other way round from The
-// Broken Seal's COMPOSITE_ modes; BattleEffect_LoadBlitter takes mode << 4 | flags.
+// Broken Seal's COMPOSITE_ modes; BattleEffect_LoadBlitter takes mode << 4 |
+// flags.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -135,7 +137,7 @@ void SummonEffect_RunCanvasMode1(void *action);
 
 // Draws one quarter of the web with the blitter just built.
 #define DRAW_QUARTER(x, y)                                                     \
-  ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, x, y, size,   \
+  ((DrawRectangle)Ram_HeapSlots->unk64[1])(canvas, work->sheet, x, y, size,    \
                                            size)
 
 void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
@@ -214,6 +216,9 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
 
   // Teardown: clear both canvases and hand over to the summon canvas.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  /* FAKEMATCH(wrapper): both clears forwarded through ClearWords_, so each
+   * rebuilds its own size; as Iwram_ClearWords called directly, 16 of 228
+   * instructions differ in tla-en. */
   ClearWords_((void *)0x06004000, 0x3c00);
   ClearWords_(canvas, 0x3c00);
   effect->prelude = 0;

@@ -1,8 +1,9 @@
-// Matches: differ 0 (tla-en, 2026-11-08), with one barrier device. The other
-// editions' copies match as well (2026-11-08): ja 0x08100740, de 0x0810a904,
-// es 0x0810688c, fr 0x081028a8 and it 0x08100854 differ 0 of 90.
-// Draft of Item_Use (Func_08100738): applies the slot's action, then consumes
-// or transforms the item on success; the twin of The Broken Seal's Item_Use
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Two tagged devices, a barrier and a temporary. The other editions' copies
+// match as well (2026-11-08): ja 0x08100740, de 0x0810a904, es 0x0810688c, fr
+// 0x081028a8 and it 0x08100854 differ 0 of 90. Draft of Item_Use
+// (Func_08100738): applies the slot's action, then consumes or transforms the
+// item on success; the twin of The Broken Seal's Item_Use
 // (games/tbs/src/menu/menu/use.c), rewritten with ⚓️'s calls and menu work
 // (items 0x1c4, count 0x214). Inventory_RemoveFar is declared as game.h
 // declares it (returning s32), which replaced an earlier r1 pin.
@@ -59,6 +60,10 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
 
   unit = Unit_Get(ownerId);
   menu = Ram_HeapSlots->menuRuntime;
+  /* FAKEMATCH(temporary): the inventory entry read into its own local first, so
+   * the barrier sits between the mask and the and; as itemId &=
+   * unit->inventory[slot] after the asm, 24 of 90 instructions differ in
+   * tla-en. */
   entry = unit->inventory[slot];
   itemId = ITEM_ID_MASK;
   /* FAKEMATCH(barrier): an empty asm that claims to change ownerId and
@@ -76,8 +81,8 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
       menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
     }
     if (item->useType == 4) {
-      if (itemId == 0xb8)
-        itemId = 0xb9;
+      if (itemId == 184)
+        itemId = 185;
       unit->inventory[slot] = itemId;
     }
     useResult = 0;

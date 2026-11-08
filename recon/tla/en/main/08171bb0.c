@@ -16,7 +16,7 @@
 //   and the reload registers of the model stores follow);
 // - a vertex is s8[4]: a struct's field stores hoist a zero that lengthens
 //   r and w and swaps them; mode 2 needs that zero back as its own local;
-// - s32 *out in mode <= 1 keeps point's address out of r5, so k gets it;
+// - s32 *out in mode <= 1 keeps point's address out of r5 (tagged);
 // - the wave loops' outer counter is its own variable, the inner one is the
 //   i of every other loop (r8), and p is a separate variable per loop;
 // - every row's x is worked out in the inner loop: gcse hoists its first step
@@ -135,7 +135,6 @@ void Transform_Pop(void);
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 // The ring's rows of vertices, two (x, y, z, pad) each. The buffers in this
 // function are constants built from the fixed buffer, not their own symbols.
 #define MAP_CELLS ((s8 (*)[2][4])Ram_MapCellBuffer)
@@ -166,7 +165,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
   // 172 bytes and every stack offset below it moves.
   DrawRectangle blit[2];
   s32 frame;
-  s16 *camera;
+  s32 *camera;
   u8 *sprites;
   s32 frames;
   u8 *unit;
@@ -209,16 +208,11 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
 
       Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, sheet + size, 1, 0);
       Iwram_ClearWords(sheet, size);
-      {
-        u8 *base;
-
       for (row = 0; row != 48; row++) {
-        base = Ram_MapCellBuffer + 0x4000;
         for (k = 0; k != 24; k++) {
-          (Ram_MapCellBuffer + 0x4208)[row * 64 + k] = base[(row * 2 + row) * 8 + 0x1000 + k];
-          base[row * 64 + 0x237 - k] = base[(row * 2 + row) * 8 + 0x1000 + k];
+          (Ram_MapCellBuffer + 0x4208)[row * 64 + k] = sheet[(row * 2 + row) * 8 + 0x1000 + k];
+          sheet[row * 64 + 0x237 - k] = sheet[(row * 2 + row) * 8 + 0x1000 + k];
         }
-      }
       }
       Iwram_CopyWords(palette, Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
     } else {
@@ -314,7 +308,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
         }
       }
       Render_ResetTransformState();
-      Transform_SetLookAt((s32 *)camera, (s32 *)camera + 3);
+      Transform_SetLookAt(camera, camera + 3);
       if (mode <= 1) {
         s32 k = 4;
 
@@ -327,6 +321,9 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           pos[1] = pos[1] + (frame << 18) - 0x700000;
         }
         {
+          /* FAKEMATCH(temporary): out stands in for screen's address, so
+           * point's address stays out of r5 and k gets it; as screen, 18 of
+           * 1748 instructions differ in tla-en. */
           s32 *out = screen;
 
           pos[2] = point[2];
@@ -413,6 +410,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             r = 28;
           }
           for (i = 0; i != 2; i++) {
+            // One zero for the row, as its own local: a vertex's stores hoist
+            // a zero, and this mode needs it back.
             s32 zero = 0;
 
             MAP_CELLS[j][i][0] = -j * 4 + 64;
@@ -520,7 +519,7 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
             for (i = 0; i != 8; i++, q++) {
               if (q->variant <= 23) {
                 blit[0](canvas, (Ram_MapCellBuffer + 0x5000) + ((q->variant / 4) << 11),
-                        HI(q->x) - 16, HI(q->y) - 32, 32, 64);
+                        (s16)(q->x >> 16) - 16, (s16)(q->y >> 16) - 32, 32, 64);
                 BattleEffectKernels_IntegrateVector2(q, 60, -0x2000);
                 q->variant++;
               }
@@ -593,6 +592,8 @@ void Func_08171bb0(struct BattleEffectArgument *effect, u32 mode) {
           }
         }
         model->scrollV = 0;
+        // A once-only loop: its i terms are the other modes' ring index, here
+        // always 0.
         for (i = 0; i != 1; i++) {
           s32 scroll = ~((frame + i * 6) << 3);
 

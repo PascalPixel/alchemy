@@ -1,16 +1,20 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
 // Func_02002d08 of overlay 6ad; tla-ja, tla-de, tla-es, tla-fr and tla-it also
-// measure differ 0. Two changes closed the last 8 (overlay 6ab's twin
-// Func_020024d4 has the history): the stores in the order of the matched
-// sibling Func_02002658 (velocityX, acceleration, gravity, scale, bounce), so
-// the zero is set before the bounce's 0x8000 copy and wins sched2's tie; and
-// the vramBlock read through its own address, a plain byte that may alias the
-// object's stores, which gives them the priority that keeps both animation
-// loads behind them.
+// measure differ 0. No device. Two changes closed the last 8: the stores in
+// the order of the matched sibling Func_02002658 (velocityX, acceleration,
+// gravity, scale, bounce), so the zero is set before the bounce's copy and
+// wins sched2's tie; and the sprite typed with FieldSprite's s32 scale at
+// 0x0c, which lets the vramBlock read alias the object's stores and keeps
+// both animation loads behind them (with that member hidden in padding, the
+// plain read is 10 of 168). Overlay 6ab's twin Func_020024d4 matches the same
+// way. The local Sprite is FieldSprite with the byte at 0x11 and attribute 1's
+// bits 14-15 split (retainCacheEntry, size); on adoption that split belongs
+// in games/tla/include/field_sprite.h, as 64b's and 64c's drafts need too.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
 #include "iwram_call.h"
+#include "fixed_math.h"
 
 struct Sprite {
   u8 unk00[4];
@@ -24,10 +28,12 @@ struct Sprite {
   u16 affineIndex : 5;
   u16 size : 2;
   u16 tile : 10;
-  u16 attr2Rest : 6;
-  u8 unk0a[6];
+  u16 priority : 2;
+  u16 palette : 4;
+  u8 unk0a[2];
+  s32 scale; ///< 16.16, as FieldSprite has it
   u8 vramBlock;
-  u8 keepEntry : 1;
+  u8 retainCacheEntry : 1;
   u8 unk11 : 7;
   u16 rotation;
   u8 unk14[2];
@@ -63,6 +69,7 @@ void Func_02002d08(struct Actor *actor) {
 
   if (work->owner == NULL)
     return;
+  // A once-only loop, as the original runs it.
   for (i = 0; i >= 0; i--) {
     struct Actor *object;
     s32 a, b, c, d, e;
@@ -76,8 +83,8 @@ void Func_02002d08(struct Actor *actor) {
     d = Random16Far();
     e = Random16Far();
     z = actor->z + d * 16 - e * 16;
-    y = c * 8 + actor->y + 0x40000;
-    object = Func_02005498(0x1e9, x, y, z);
+    y = c * 8 + actor->y + Q16_ONE * 4;
+    object = Func_02005498(489, x, y, z);
     if (object != NULL) {
       s32 angle, radius;
       u32 sum;
@@ -89,10 +96,10 @@ void Func_02002d08(struct Actor *actor) {
       radius = Random16Far();
       sum = Random16Far();
       sum += Random16Far();
-      scale = (sum >> 2) + 0x8000;
+      scale = (sum >> 2) + Q16_ONE / 2;
       Func_02005490(object, gData_02005dbc);
       Actor_SetSingleChildFlags(object, 0);
-      object->velocityY = angle * 4 + 0x20000;
+      object->velocityY = angle * 4 + Q16_ONE * 2;
       radius <<= 3;
       object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
       object->velocityX = Iwram_MulQ16(radius, Math_Sine(angle));
@@ -100,13 +107,11 @@ void Func_02002d08(struct Actor *actor) {
       object->gravity = 0x547a;
       object->scaleX = scale;
       object->scaleY = scale;
-      object->bounce = 0x8000;
+      object->bounce = Q16_ONE / 2;
       sprite = object->animation;
       source = work->owner->animation;
-      // Through a byte pointer: as sprite->vramBlock both animation loads
-      // move ahead of the stores (10 of 168 instructions differ in tla-en).
-      Resource_ResetEntry(*&sprite->vramBlock);
-      sprite->keepEntry = 1;
+      Resource_ResetEntry(sprite->vramBlock);
+      sprite->retainCacheEntry = 1;
       sprite->vramBlock = work->vramBlock;
       ResourceMetadata_ClearRecord(sprite->record);
       sprite->record = NULL;

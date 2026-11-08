@@ -18,9 +18,10 @@
 // so the weight takes r1, r1 joins reload's spill registers, and reload's round
 // robin gives the listing's r1, r2, r3, r1, r2 at the top. Then the text id no
 // longer needs to pass through result (0).
-// Devices left, each measured at the match: minusOne (temporary, 57) and four
-// call.h wrappers, the two FieldMessage_ShowAtActor calls (144, 28),
-// Party_AdjustCoins (28) and GameFlag_Test (43). Tried and no better: minusOne
+// Devices left, each measured at the match: minusOne (temporary, 57) and two
+// call.h wrappers, the first FieldMessage_ShowAtActor call (144) and
+// GameFlag_Test (43); the other ShowAtActor call and Party_AdjustCoins are
+// direct calls through their prototypes (0). Tried and no better: minusOne
 // as s32, u32, s16 or s8 (57; s64 and u64 both match), one s32 -1 local for the
 // compares and calls (50), a separate text local (13 or 17), a call through a
 // cast for the first ShowAtActor (144). Func_020013d8 and Func_0200049c are
@@ -39,7 +40,7 @@ void Func_02001380();
 void Func_020013f8();
 s32 PartyInventory_CountItem();
 void Func_020013c8();
-s32 FieldMessage_ShowAtActor();
+s32 FieldMessage_ShowAtActor(s32 localId, s32 unused);
 struct Window *Window_Create();
 void Text_DrawCharacterAtOffset();
 void Text_DrawNumberInWindow();
@@ -51,7 +52,7 @@ void wait();
 void Func_02001408();
 s32 PartyInventory_CountFreeSlots();
 s32 Event_AskYesNoWithActorAnimation();
-s32 Party_AdjustCoins();
+s32 Party_AdjustCoins(s32 amount);
 s32 PartyInventory_Remove();
 s32 Func_02001184();
 void Func_02001328();
@@ -79,7 +80,7 @@ s32 Func_020001e4(void) {
   s32 message;
   s32 coins;
   s32 medals;
-  s32 window;
+  struct Window *window;
   s32 result;
   s32 prizeRoll;
   s32 notice;
@@ -101,7 +102,7 @@ prompt:
   /* FAKEMATCH(wrapper): forwarded, so the -1 is built after movs r1, #0; as a
    * direct call, 144 of 286 instructions differ in tla-en. */
   Value2(FieldMessage_ShowAtActor, -1, 0);
-  window = (s32)Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
+  window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
   result = (s32)MsgCoins2;
   Text_DrawCharacterAtOffset(result, window, 0, 0);
   Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
@@ -130,14 +131,12 @@ prompt:
 full:
   if (PartyInventory_CountFreeSlots() == 0) {
     Func_020013c8(message + 4);
-    /* FAKEMATCH(wrapper): forwarded, so the -1 is built after movs r1, #0; as a
-     * direct call, 28 of 286 instructions differ in tla-en. */
-    Value2(FieldMessage_ShowAtActor, minusOne, 0);
+    FieldMessage_ShowAtActor(minusOne, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
       goto end;
   }
 toss:
-  window = (s32)Window_Create(20, 15, 9, 4, 2);
+  window = Window_Create(20, 15, 9, 4, 2);
   result = (s32)MsgToss2;
   Text_DrawCharacterAtOffset(result, window, 0, 0);
   Text_DrawCharacterAtOffset(result + 1, window, 0, 8);
@@ -159,9 +158,7 @@ toss:
   Window_Close(window, 2);
   if (result != -1) {
     if (choice == 0) {
-      /* FAKEMATCH(wrapper): forwarded, so its -1 is built at the call; as a
-       * direct call, 28 of 286 instructions differ in tla-en. */
-      Value1(Party_AdjustCoins, minusOne);
+      Party_AdjustCoins(minusOne);
     } else if (choice == 1) {
       PartyInventory_Remove(229);
     }

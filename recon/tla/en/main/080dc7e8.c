@@ -12,42 +12,36 @@
 // field_sprite.h's struct FieldSprite (u16 tile : 10, priority : 2), as
 // item_break_mode3.c writes it; a plain store then matches, so the s16 layer
 // temporary is gone (a u8 bitfield at byte 9 needed it: 8 without). Left as
-// ordinary C (S2): the halfword local holding 17, without which fold makes the
+// ordinary C (S2): the local holding 17, without which fold makes the
 // first test cmp #16; ble (4 of 171 differ).
 // BattleEffect_CleanupSceneObjects, the field event runner's cleanup
 // of the heap slot 0xe0 effect work. Clears every owned effect slot, ends the
 // arc effects unless the event work's byte 0xcb6 holds them, waits up to 90
 // frames for block 32's busy byte in event mode 3, stops the effect slots'
-// callback, hands the effect's position back to the map work, its priority
-// flags and sprite priority back to the owner object, marks the event work's
-// flags 0xca5 and 0xcad unless the effect kind was 8 or 28, and releases the
-// work.
+// callback, restores the map work's saved screen shake, gives the owner object
+// back its priority flags and sprite priority back to the owner object, marks
+// the event work's flags 0xca5 and 0xcad unless the effect's animation was 8 or
+// 28, and releases the work.
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
 #include "field_particle.h"
 #include "field_sprite.h"
+#include "map.h"
 
 struct CleanupWork {
   u8 unk000[16];
   struct Actor *owner;
   u8 unk014[10];
-  s16 kind;
+  s16 animation;
   u8 unk020[36];
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 savedShakeX;
+  s32 savedShakeY;
+  s32 savedShakeDecay;
   struct FieldParticle slots[24];
   u8 unk710[8];
   u8 ownerByte;
   u8 layer;
-};
-
-struct CleanupMap {
-  u8 unk00[4];
-  s32 x;
-  s32 y;
-  s32 z;
 };
 
 struct CleanupEventWork {
@@ -68,7 +62,7 @@ void BattleEffect_WaitForArcGroups(void);
 void BattleEffect_EndArcEffect(void);
 void wait(s32 frames);
 void Func_080dbb40(void);
-void Task_Remove(void (*func)(void));
+s32 Task_Remove(void (*func)(void));
 void BattleEffect_UpdateAllEffectSlots(void);
 void Event_NoOp(void);
 void HeapSlot_Release(s32 slot);
@@ -77,7 +71,7 @@ void BattleEffect_CleanupSceneObjects(void) {
   struct CleanupWork *work = Ram_HeapSlots->effectWork;
   struct CleanupEventWork *event = Ram_HeapSlots->eventWork;
   s8 *block = Ram_HeapSlots->block32;
-  struct CleanupMap *map = (struct CleanupMap *)Ram_HeapSlots->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapWork;
   struct Actor *owner = work->owner;
   s32 i;
   s16 first;
@@ -87,10 +81,11 @@ void BattleEffect_CleanupSceneObjects(void) {
     if (slot->active)
       BattleEffect_ClearOwnedSlot(slot);
   }
-  // A local that holds one constant: as a halfword it makes the first test
-  // cmp #17; blt as the native (with the literal, 4 of 171 differ in tla-en).
+  // A local that holds one constant: it makes the first test cmp #17; blt as
+  // the native (with the literal, 4 of 171 differ in tla-en).
   first = 17;
-  if (work->kind >= first && (work->kind <= 27 || work->kind == 30))
+  if (work->animation >= first &&
+      (work->animation <= 27 || work->animation == 30))
     Func_080dc954();
   if (event->unkcb6 != 0)
     return;
@@ -109,16 +104,16 @@ void BattleEffect_CleanupSceneObjects(void) {
   event->unkcb7 = 0;
   Func_080dbb40();
   Task_Remove(BattleEffect_UpdateAllEffectSlots);
-  map->x = work->x;
-  map->y = work->y;
-  map->z = work->z;
+  map->shakeX = work->savedShakeX;
+  map->shakeY = work->savedShakeY;
+  map->shakeDecay = work->savedShakeDecay;
   if (owner != NULL) {
     owner->priorityFlags = work->ownerByte;
     ((struct FieldSprite *)owner->animation)->priority = work->layer;
   }
-  if (work->kind != 8)
+  if (work->animation != 8)
     event->unkca5 = 1;
-  if (work->kind != 28)
+  if (work->animation != 28)
     event->unkcad = 1;
   Event_NoOp();
   HeapSlot_Release(224);

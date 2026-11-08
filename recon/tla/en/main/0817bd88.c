@@ -15,7 +15,9 @@
 // - pixels is const u8 *, kind and shade are long: none of the three stores
 //   may then alias the s32 effect->actor load (or the hand's vertices store
 //   the texture), so sched2 stores mesh and vertices first in both models.
-//   With an s32 kind or shade, or const void *pixels, each costs 2.
+//   With an s32 kind or shade, or const void *pixels, each costs 2; kind
+//   and shade long is tagged FAKEMATCH(signature), the nearest kind (no
+//   S2 kind names a field type chosen for its alias set; Pascal to rule).
 // Before: a C offset variable stepped by 8 left offset, j * length and both
 // length << 5 copies in the wrong slots (36); a row pointer from j * 8 let
 // loop.c fold the address into the giv (41).
@@ -37,12 +39,12 @@ struct ModelTexture {
 };
 
 struct RenderModel {
-  long kind;  // long, as shade: the store cannot alias effect->actor
+  long kind; // long: see the tag at the model's stores
   s32 unk04;
   const void *mesh;
   void *vertices;
   struct ModelTexture *texture;
-  long shade; // long: stored after mesh and vertices, as an s32 is not
+  long shade; // long: see the tag at the model's stores
   u8 scrollU;
   u8 scrollV;
 };
@@ -51,7 +53,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-void BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+void BattleEffect_LoadBlitter(s32 slot,
+                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -68,13 +71,14 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
@@ -82,7 +86,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -98,7 +102,7 @@ s32 Trig_Cos(s32 angle);
 
 void Render_BuildQuadStrip(void *mesh, s32 columns, s32 width, s32 height);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
@@ -171,18 +175,19 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
   sprites = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   if (effect->side == 0) {
-    BattleEffect_LoadBlitter(SLOT_BLITTER,
-                  BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    BattleEffect_LoadBlitter(
+        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   } else {
-    BattleEffect_LoadBlitter(SLOT_BLITTER,
-                  BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                        COMPOSITE_FLIP_X));
+    BattleEffect_LoadBlitter(
+        SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                                            COMPOSITE_FLIP_X));
   }
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   target = *GetBattleObjectSlotFar(effect->actors[0]);
+  // Default: set for real below, when j reaches 32.
   endX = 0;
   endY = 0;
   work->particles[63].x = target->x;
@@ -219,7 +224,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       work->shakeFrames = 8;
       for (i = 0; i != effect->count; i++) {
         BattleEffect_StartActorMotion(effect->actors[i], 1, 0x20000, 0x40000,
-                                  0x40000, 150);
+                                      0x40000, 150);
         Func_0814cd48(effect->actors[i], 7, 5, i, 8);
       }
     }
@@ -227,8 +232,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       s32 length;
       s32 j;
       // The fixed address, not the symbol: loop.c steps the row offset alone.
-      struct ModelVertex (*cells)[2] =
-          (struct ModelVertex (*)[2])Ram_MapCellBuffer;
+      struct ModelVertex(*cells)[2] =
+          (struct ModelVertex(*)[2])Ram_MapCellBuffer;
       u8 *projected = Data_02011000;
       s32 shade;
 
@@ -260,7 +265,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
         if (j == 32) {
           endX = ((Trig_Cos(length << 5) * (width / 2 + wobble + 16)) >> 16) -
                  (width + wobble) / 2 - 16;
-          endY = -((Trig_Sin(length << 5) * (width / 2 + j + wobble + 32)) >> 16);
+          endY =
+              -((Trig_Sin(length << 5) * (width / 2 + j + wobble + 32)) >> 16);
         }
       }
 
@@ -269,6 +275,9 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       texture.logWidth = 7;
       texture.logHeight = 5;
       texture.pixels = work->sheet;
+      /* FAKEMATCH(signature): RenderModel's kind and shade typed long, whose
+       * alias set lets sched2 store mesh and vertices first; as s32, as in
+       * every adopted RenderModel, 4 of 543 instructions differ in tla-en. */
       model->kind = 6;
       model->mesh = buffer;
       model->vertices = projected;
@@ -287,6 +296,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
       if (frame > 73) {
         Func_0801521c((212 << 10) - (frame << 11));
       }
+      // The buffers named directly, though cells and projected hold them:
+      // with the locals, gcse's table changes size and 8 differ.
       Render_TransformVertices(Ram_MapCellBuffer, Data_02011000, 66);
       Render_DrawModelList(model);
 

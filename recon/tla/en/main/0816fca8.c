@@ -19,11 +19,12 @@
 //   or inline helpers (27 to 55), `else if (mode == 1)` (40), the asm in the
 //   else arm or after the join (27), a volatile store through a cast (258), a
 //   block-scoped {x, frames} struct (181), frame = 0 in both arms (53).
-// - The flash tables are not const and both height reads are
+// - The height table is not const and both height reads are
 //   gData_08197498[cell]: ldrb [table, cell], and the second read stays after
 //   the stores before it (const with [cell] 6, const with *(table + cell) 2).
 // - ball->variant++ no longer needs its once-only block (0 either way).
-// Devices kept: the wrapper on the palette copy (2 without it); ordinary C:
+// Devices kept: the wrapper on the palette copy (2 without it), the fade
+// temporary (4) and the empty asm (27), all tagged; ordinary C:
 // the empty once-only block before the second blitter build (234 without).
 // What fixed the shape earlier, so keep it:
 // - draw[2]: the unused word is sp 44.
@@ -135,7 +136,6 @@ void Transform_Pop(void);
 // ⚓️'s blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
-#define HI(v) (((s16 *)&(v))[1])
 
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                   u32 mode);
@@ -146,18 +146,17 @@ extern char ResourceId_LightningBoltSheet;
 extern char ResourceId_VioletPaletteC;
 extern struct EffectStep gData_02014000[]; // the sparks
 extern u16 gData_08197410[];               // gBattleEffect_MoteCells
-// Not const: a const table's second height read issues two places early.
-extern u16 gData_08197486[];      // the flashes' cells: offsets,
-extern u8 gData_08197492[];       // widths
-extern u8 gData_08197498[];       // and heights
-extern const u8 Data_08198bee[4]; // their flips
-extern const u8 gData_08199268[]; // a bolt's mesh
-extern const u8 gData_081991b0[]; // its corners (Thunder Mine)
-extern const u8 Data_081991c0[];  // and (Earth Force)
+// Heights not const: a const table's second height read issues two places
+// early (6).
+extern const u16 gData_08197486[]; // the flashes' cells: offsets,
+extern const u8 gData_08197492[];  // widths
+extern u8 gData_08197498[];        // and heights
+extern const u8 Data_08198bee[4];  // their flips
+extern const u8 gData_08199268[];  // a bolt's mesh
+extern const u8 gData_081991b0[];  // its corners (Thunder Mine)
+extern const u8 Data_081991c0[];   // and (Earth Force)
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 2 of 747 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
@@ -169,6 +168,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
+  // Unused: draw[1] gives the stack frame its 4 bytes.
   DrawRectangle draw[2];
   u8 *sprites;
   s32 radius;
@@ -207,6 +207,8 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, buffer, 1, 1);
   if (mode == 1) {
+    /* FAKEMATCH(wrapper): Iwram_CopyWords called through CopyWords; as a
+     * direct call, 2 of 747 instructions differ in tla-en. */
     CopyWords((void *)BG_PLTT,
               Resource_GetTableEntry((s32)&ResourceId_VioletPaletteC), 128);
   }
@@ -269,14 +271,21 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
         }
         bolt->variant = Random16() & 3;
       }
+      // UB: the variants are cleared through one s32 pointer stepped a whole
+      // step at a time, past the step's scalar members.
+#ifdef UBFIX
+      for (i = 0; i != 512; i++)
+        gData_02014000[i].variant = -1;
+#else
       {
         s32 *variant = &gData_02014000[0].variant;
 
         for (i = 0; i != 512; i++) {
           *variant = -1;
-          variant += 7;
+          variant += sizeof(struct EffectStep) / sizeof(s32);
         }
       }
+#endif
     }
 
     // Arrival.
@@ -313,7 +322,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
 
       ball->variant++;
       x = ball->x >> 17;
-      y = HI(ball->y);
+      y = ball->y >> 16;
       if (mode == 0) {
         radius = frame * 2 + 16;
         largest = 48;
@@ -335,6 +344,8 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
       }
       Func_0818caa8(buffer, x, y, radius);
       for (i = 0; i != 4; i++) {
+        // DEAD: i runs 0 to 3, so the mask changes nothing; the source keeps
+        // it.
         s32 cell = i & 3;
         s32 half = radius / 2;
         s32 angle = Random16();
@@ -366,10 +377,11 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
 
           for (step = 0; step != 8; step++) {
             draw[0](canvas, sprites + gData_08197410[size - 1],
-                    HI(dot->x) - size / 2, HI(dot->y) - size, size, size * 2);
+                    (dot->x >> 16) - size / 2, (dot->y >> 16) - size, size,
+                    size * 2);
             BattleEffectKernels_IntegrateVector2(dot, 62, 0x200);
           }
-          if (HI(dot->y) > 111) {
+          if ((dot->y >> 16) > 111) {
             dot->velocityY = -dot->velocityY * 48 / 64;
           }
           dot->variant--;
@@ -383,6 +395,7 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
       model = Render_AllocateModelList(1);
       texture.logWidth = 5;
       texture.logHeight = 7;
+      // DEAD: both kinds are overwritten by the 6 below; the source keeps them.
       if (mode == 0) {
         model->kind = 6;
       } else {
@@ -402,6 +415,8 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
         if (frame == i) {
           shade = -16;
         } else if (frame >= i + 4) {
+          /* FAKEMATCH(temporary): the fade negated through a local; as shade =
+           * 64 - (frame - i) * 16, 4 of 747 instructions differ in tla-en. */
           s32 fade = (frame - i) * 16 - 64;
 
           shade = -fade;
@@ -430,6 +445,6 @@ void Func_0816fca8(struct BattleEffectArgument *effect, s32 mode) {
     wait(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

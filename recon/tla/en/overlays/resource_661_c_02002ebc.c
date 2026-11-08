@@ -1,15 +1,12 @@
-// Matches: differ 0 (tla-en, 2026-11-08). The leader's id and the battle rule
-// are read and set through one function-scope pointer to gMainRoutineWork, as
-// the adopted scenes write it (party). That pointer gets no callee-saved
-// register, so reload rebuilds it from its pool word at each use: the leader
-// reads fold to one word at currentOwner, and the last store adds 587 to a
-// fresh base in r3 that cannot be tied to its sum, giving the sum r2 and the
-// value r3. Every earlier form (the plain store, a block-local pointer, s8, u8,
-// s64 or held values, pinning) tied base and sum and left 4 to 82.
-// Devices: only call.h's forwarders. Both camera calls go through Call4 (as
-// direct calls, 20 and 2 of 187 instructions differ: -1 is kept in r5);
-// Actor_SetSpeedParameters through Call3 (direct, 2 differ); the walk to
-// (232, 148) through Call4 with its angle held in a local (as a literal, 4).
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it. The leader's id
+// and the battle rule are read and set through party, as the adopted scenes
+// write it; the plain gMainRoutineWork spelling matches as well. What closed
+// the last 82 was dropping the Data_02000454 alias for currentOwner.
+// One tagged device: call.h's forwarders. Both camera calls go through Call4
+// (as direct calls, 20 and 2 of 187 instructions differ: -1 is kept in r5);
+// Actor_SetSpeedParameters through Call3 (direct, 2); the walk to (232, 148)
+// through Call4 (direct, 2) with its angle held in a local (as a literal, 4).
 #include "types.h"
 #include "event_work.h"
 #include "ram_buffer.h"
@@ -17,6 +14,7 @@
 #include "main_routine_work.h"
 #include "scene_tables.h"
 #include "call.h"
+#include "fixed_math.h"
 
 extern char SceneId_Ov661Room10;
 
@@ -45,33 +43,35 @@ void Func_020041f8(s32 cue);
 void Func_02002ebc(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *leader = Actor_GetById(party->currentOwner);
-  struct Actor *monster = Actor_GetById(8);
+  struct Actor *actor8 = Actor_GetById(8);
+  /* FAKEMATCH(wrapper): the camera, walk and speed calls forwarded through
+   * call.h's Call3 and Call4; as direct calls, 28 of 187 instructions differ
+   * in tla-en. */
 
   Func_02004040();
   Func_020041b8(0);
   Func_020041f8(78);
-  Call4((void (*)())Camera_MoveWithinMapBounds, -1, -1, -1, 0);
-  Call4((void (*)())Camera_MoveWithinMapBounds, PIXELS(232), -1, PIXELS(184),
-        0);
+  Call4(Camera_MoveWithinMapBounds, -1, -1, -1, 0);
+  Call4(Camera_MoveWithinMapBounds, PIXELS(232), -1, PIXELS(184), 0);
   Func_02003fd8();
   wait(1);
   Actor_SetSingleChildFlags(Actor_GetById(party->currentOwner), 0);
   leader->motionFlags = 0;
-  leader->y = 0x820000;
-  leader->gravity = 0x8000;
+  leader->y = PIXELS(130);
+  leader->gravity = Q16_ONE / 2;
   leader->bounce = 0;
   Actor_SetSingleChildFlags(Actor_GetById(8), 0);
   {
     // The angle is held in a local; as a literal argument, its constant is
     // built last.
-    s32 angle = 0x4000;
+    s32 angle = TRIG_TURN / 4;
 
-    Call4((void (*)())Func_02004098, 8, PIXELS(232), PIXELS(148), angle);
+    Call4(Func_02004098, 8, PIXELS(232), PIXELS(148), angle);
   }
-  monster->motionFlags = 0;
-  monster->y = 0x820000;
-  monster->gravity = 0x8000;
-  monster->bounce = 0;
+  actor8->motionFlags = 0;
+  actor8->y = PIXELS(130);
+  actor8->gravity = Q16_ONE / 2;
+  actor8->bounce = 0;
   wait(1);
   ((struct EventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x203;
   Event_StartScreenTransition();
@@ -85,19 +85,19 @@ void Func_02002ebc(void) {
   Func_02004108(party->currentOwner, 0x101);
   Motion_SetModeAndWaitAnimation(party->currentOwner, 49);
   Func_020041f8(204);
-  monster->motionFlags = 3;
+  actor8->motionFlags = 3;
   Actor_SetSingleChildFlags(Actor_GetById(8), 1);
   FieldEvent_Wait(24);
-  Func_02000b84(monster->x, monster->y, monster->z);
+  Func_02000b84(actor8->x, actor8->y, actor8->z);
   Func_020041f8(188);
-  Actor_ArmCallback(party->currentOwner, 0xc000, 0);
+  Actor_ArmCallback(party->currentOwner, TRIG_TURN * 3 / 4, 0);
   FieldEvent_Wait(40);
   Func_020041f8(147);
   Actor_SetModeById(8, 3);
   FieldEvent_Wait(20);
-  monster->velocityY = 0x80000;
-  monster->gravity = 0xe666;
-  Call3((void (*)())Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
+  actor8->velocityY = Q16_ONE * 8;
+  actor8->gravity = 0xe666;
+  Call3(Actor_SetSpeedParameters, 8, 0x19999, 0xcccc);
   Actor_SetPositionAndCommit(8, 232, 184);
   party->battleRule24b = 2;
   Party_SetFields1eeAnd1f0((s32)&SceneId_Ov661Room10, 2);

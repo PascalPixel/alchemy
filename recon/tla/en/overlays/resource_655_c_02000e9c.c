@@ -1,8 +1,11 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
 // Also differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it, under -Os with
 // -mtune=gba; pool words gMapShapeGrid (0x02024000) and 0xfdff0000 as the
-// scaffold's. No device: written as the adopted siblings Func_02000c64
-// (dehkan_plateau/s0c64.c) and Func_02000038 (madra_catacombs/s0038.c) write it.
+// scaffold's. One tagged device, the ShapeCell view, as the adopted siblings
+// Func_02000c64 (dehkan_plateau/s0c64.c) and Func_02000038
+// (madra_catacombs/s0038.c) write it (untagged there). The grid as
+// FIXED_ADDRESS, as ten adopted functions take it, is open: as the linked
+// name gMapShapeGrid, 11 of 76 instructions differ in tla-en.
 // Raises the cells under the held actor again: the shape grid entry and the
 // two cells' attributes.
 // What closed it: the grid as FIXED_ADDRESS, as the siblings take it. Linked
@@ -105,6 +108,9 @@ void Func_02000e9c(void) {
   newShape = Func_02003dd0(*layer, shape, level);
   shapes += index;
   index <<= 2;
+  /* FAKEMATCH(signature): the grid byte stored through a one-field struct
+   * view (struct ShapeCell), whose alias set lets sched2 sink it past the
+   * cell read; as *shapes = newShape, 6 of 76 instructions differ in tla-en. */
   ((struct ShapeCell *)shapes)->shape = newShape;
   cells += index;
   ((struct MapCell *)cells)->attributeB |= 192;

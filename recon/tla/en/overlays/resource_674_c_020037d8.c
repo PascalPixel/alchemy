@@ -1,13 +1,14 @@
-// Matches: differ 0 (tla-en, 2026-11-08); tla-ja, tla-de, tla-es, tla-fr and
-// tla-it measure differ 0 too. Overlay 674's copy of overlay 668's
-// Func_02004240 (the same listing). What closed it from 20: each pass loads the
-// table into a local (table) before it sets index = kind * 4. The table's
-// register is then live at the shift, so reload's round robin gives kind's
-// reload r3 rather than r2; index + 1 shares r3 and the table keeps r2, and j's
-// 0 and height's reload then come out r1 and r2, as in the listing. RowByte
-// keeps index + 1 a value of its own: table[index + 1] folds to (table + index)
-// + 1 (27). The row reads gData_0200407c[0][index] as it stands. Left: two
+// Matches: differ 0 (tla-en, 2026-11-08)
+// tla-ja, tla-de, tla-es, tla-fr and tla-it measure differ 0 too. Overlay 674's
+// copy of overlay 668's Func_02004240 (the same listing). What closed it from
+// 20: each pass loads the table into a local (table) before it sets index =
+// kind * 4. The table's register is then live at the shift, so reload's round
+// robin gives kind's reload r3 rather than r2; index + 1 shares r3 and the
+// table keeps r2, and j's 0 and height's reload then come out r1 and r2, as in
+// the listing. The row reads gData_0200407c[0][index] as it stands. Left: three
 // tagged devices, each measured at this state.
+// - RowByte (wrapper) keeps index + 1 a value of its own: table[index + 1]
+//   and *(table + (index + 1)) fold to (table + index) + 1 (27).
 // - (void)&kind (dead) makes kind addressable before width and height are
 //   declared, so its slot (+20) comes ahead of their spill slots (+16, +12).
 //   Without it 127 differ; taking the address in width's initializer instead
@@ -87,6 +88,8 @@ s32 Func_020037d8(struct PushState *push) {
         s8 *table = gData_0200407c[0];
 
         index = kind * 4;
+        /* FAKEMATCH(wrapper): the read through RowByte; as table[index + 1],
+         * 27 of 171 instructions differ in tla-en. */
         cell.z = push->z + (RowByte(table, index + 1) << 16);
         for (j = 0; j < height; j++) {
           cell.x = push->x + (gData_0200407c[0][index] << 16);

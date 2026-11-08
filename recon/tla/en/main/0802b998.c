@@ -1,5 +1,5 @@
-// Matches: differ 0 (tla-en, 2026-11-08); tla-ja, tla-de, tla-es, tla-fr and
-// tla-it measure differ 0 as well.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// tla-ja, tla-de, tla-es, tla-fr and tla-it measure differ 0 as well.
 // The last sched2 tie (differ 4: r1 and gData_03001144's pool load hoisted
 // above the Data_03001244 store) fell to reading the map work through
 // Func_0802c240's struct WorldView: a field read carries the struct's alias
@@ -18,9 +18,9 @@
 // Iwram_TransformVector would be a signature device too (the routine returns
 // nothing meaningful).
 // Earlier: the eye offset cleared after the pitch call, as the twin does, took
-// 25 to 6; 0x106 through its own pointer local (field106) took 30 to 25
-// (written plainly through it, 60; 0x104 and 0x106 as plain stores, Store16 or
-// halfword indexes, 60).
+// 25 to 6. 0x104 and 0x106 are WorldView fields named as map.h names them
+// (windowTop, windowBottom), 0x10 to 0x16 typed fields, and the register
+// stores go through io_write.h's Io_Write16 (each 0).
 // Adopting: The Broken Seal's Map_InitializePerspectiveScene on this game's
 // map work (0x978 bytes, heap slot offset 32) and affine work (offset 28), with
 // the world map's update (0802c240) and affine frame (0802c088) callbacks.
@@ -29,8 +29,7 @@
 // PerspectiveDataA and DefaultMapCells as The Broken Seal names them, the third
 // a placeholder. The ARM routine is copied by its linker size
 // (Data_0802146cSize, to define in constants.ld as Render_ConvertMapCode -
-// Data_0802146c), and the halfword constants the native builds in registers go
-// through int stores (Io_Set16, Store16). The diff compares instructions only:
+// Data_0802146c). The diff compares instructions only:
 // check the literal pools with make compare-editions.
 #include "types.h"
 #include "io_write.h"
@@ -70,16 +69,19 @@ s32 Task_Add(void (*func)(void), s32 order);
 void Func_0802c240(void);
 void Func_0802c088(void);
 
-static __inline__ void Io_Set16(s32 value, volatile u16 *reg) { *reg = value; }
-static __inline__ void Store16(s32 value, u16 *field) { *field = value; }
-
 struct WorldView {
   s32 *origin;
   s32 shakeX, shakeY, shakeDecay;
-  u8 unk010[0xd4];
+  u8 *unk010;
+  u16 unk014;
+  u8 unk016;
+  u8 unk017[0xcd];
   s32 viewX;
   s32 viewY;
-  u8 unk0ec[0x30];
+  u8 unk0ec[0x18];
+  u16 windowTop;
+  u16 windowBottom;
+  u8 unk108[0x14];
   u16 pitch;
   u16 yaw;
   u8 unk120[0x83c];
@@ -107,7 +109,6 @@ void Func_0802b998(void) {
   u8 *camera;
   u8 *affineWork;
   u8 *affinePages;
-  u16 *field106;
   s32 *cameraPosition;
   volatile u32 fill;
   struct EyeOffset eyeOffset;
@@ -125,21 +126,21 @@ void Func_0802b998(void) {
   *(s32 *)(perspective + 0xf0) = 0x400000;
   *(s32 *)(perspective + 0xf4) = 0x3fe00000;
   *(s32 *)(perspective + 0xf8) = 0x3fe00000;
-  *(u8 **)(perspective + 0x10) = NULL;
+  view->unk010 = NULL;
   *(void **)(perspective + 0x114) =
       Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
-  Io_Set16(0x3f9e, &REG_BLDCNT);
+  Io_Write16(0x3f9e, &REG_BLDCNT);
   Io_Write16(0x1010, &REG_BLDALPHA);
   REG_BLDY = 0;
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), gMapCellBuffer);
-  Store16(0x1f00, (u16 *)(perspective + 0x14));
-  perspective[0x16] = 0x80;
+  view->unk014 = 0x1f00;
+  view->unk016 = 0x80;
   Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Data199),
                         gData_0202e000);
-  Io_Set16(0xa80a, &REG_BG3CNT);
-  Io_Set16(0xaa0e, &REG_BG2CNT);
-  Io_Set16(0x8501, &REG_BG1CNT);
+  Io_Write16(0xa80a, &REG_BG3CNT);
+  Io_Write16(0xaa0e, &REG_BG2CNT);
+  Io_Write16(0x8501, &REG_BG1CNT);
   Io_Write16(0x100, &REG_BG2PA);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
@@ -212,9 +213,8 @@ void Func_0802b998(void) {
   gBgScroll[2].y = 0;
   gBgScroll[3].x = 0;
   gBgScroll[3].y = 0;
-  *(u16 *)(perspective + 0x104) = 0;
-  field106 = (u16 *)(perspective + 0x106);
-  Store16(159, field106);
+  view->windowTop = 0;
+  view->windowBottom = 159;
   Task_Add(Func_0802c240, 0x485);
   Task_Add(Func_0802c088, 0xc80);
   for (tileIndex = 0; tileIndex <= 0x3ff; tileIndex++)

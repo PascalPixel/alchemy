@@ -115,7 +115,7 @@ void Transform_Pop(void);
 // The blitter's heap slot, as a byte offset into Ram_HeapSlots.
 #define SLOT_BLITTER 104 // unk64[1]
 
-// ⚓️'s blitter modes run the other way from The Broken Seal's.
+// The Lost Age's blitter modes run the other way from The Broken Seal's.
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
 #define HI(v) (((s16 *)&(v))[1])
@@ -154,8 +154,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
-  // Unused: the second word gives the stack frame its 4 bytes at sp 28 (as
-  // The Broken Seal's pair; as one DrawRectangle, 365 differ).
+  // Unused: gives the stack frame its 4 bytes. (blit[1], at sp 28, as The
+  // Broken Seal's pair; as one DrawRectangle, 68 differ.)
   DrawRectangle blit[2];
   struct EffectPosition pos;
   struct EffectPosition target;
@@ -190,6 +190,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
   work->transferMode = 2;
   work->transferValue = 50;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
+  // DEAD: frame 0 sets top to -104 before anything reads it.
   top = -128;
 
   for (frame = 0; frame != DIAMOND_BERG_FRAMES; frame++) {
@@ -249,6 +250,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
           }
         }
       }
+      // The berg's bottom (top + 104) past line 108; only this spelling, and
+      // height - top + 4 below, match (as top > 4, 20 differ; 108 - top, 33).
       if (top + 104 > 108) {
         height = height - top + 4;
       }
@@ -395,6 +398,6 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectArgument *effect) {
     wait(1);
   }
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  HeapSlot_Release(104);
+  HeapSlot_Release(SLOT_BLITTER);
   BattleEffect_EndCanvasLayer();
 }

@@ -1,5 +1,6 @@
-// Matches: differ 0 (tla-en, 2026-11-08); differ 0 too in tla-ja, tla-de,
-// tla-es, tla-fr and tla-it. No device. diff leaves out the literal pool, so
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Differ 0 too in tla-ja, tla-de, tla-es, tla-fr and tla-it. Two tagged
+// devices (draws[2], CopyWords_). diff leaves out the literal pool, so
 // the whole extent is settled only by make compare-editions at adoption.
 // The last pair (ldr r6, [sp, #32] for quad after str r2, [sp, #12] for the
 // delay) closed with the quads loop's own form: quad is &work->particles[i],
@@ -14,7 +15,8 @@
 // canvas. sp+24 is its unread second element, and as an array each use reads
 // the stack again, so r7 is free to reload it across both Djinn calls; that
 // gives the listing's caller-save of the sheet pointer in r4 and x in r8.
-// The inline CopyWords_ is still needed (4 without it).
+// The inline CopyWords_ is still needed (2 without it). On adoption, directory
+// rows 0xd0 and 0xd1 need their ResourceId names in resource_directory.s.
 
 // Func_0814b9e8, the body of three effect kinds through BattleEffect_RunBalm
 // (mode 0), BattleEffect_RunTinder (mode 1) and BattleEffect_RunPhoenix
@@ -141,6 +143,10 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
   struct RenderJob *job;
   void *vertices;
   void *canvas;
+  /* FAKEMATCH(dead): a pair of blitters of which only draws[0] is used: the
+   * unread second word fills four bytes of the native stack frame and keeps
+   * draws[0] in memory; as one blitter, 191 of 549 instructions differ in
+   * tla-en. */
   DrawRectangle draws[2];
   s32 i;
   s32 height;
@@ -157,6 +163,8 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
                                work->sheet + SHEET_TEXTURE, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                                work->sheet + SHEET_DJINN, 1, 0);
+    /* FAKEMATCH(wrapper): the palette copy forwarded through CopyWords_; as a
+     * direct Iwram_CopyWords call, 2 of 549 instructions differ in tla-en. */
     CopyWords_((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                     128);
@@ -231,6 +239,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
       draws[0](canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
       if (frame <= 3)
         draws[0](canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
+      // DEAD: frame never passes 63 here; the source keeps the test.
       if (frame <= 79) {
         s32 angle;
         s32 lineX;
@@ -252,6 +261,7 @@ void Func_0814b9e8(struct BattleEffectArgument *effect, s32 mode) {
     // translation, scale, pitch and roll.
     Render_ResetTransformState();
     gCameraSceneParameters[4] = 104;
+    // DEAD: frame never passes 63 here; the source keeps the test.
     if (frame <= 63) {
       vertices = Heap_AllocEwram(32);
       job = Render_AllocateModelList(1);

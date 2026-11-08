@@ -22,26 +22,26 @@
 // (the one read at the priority copy; the later reads share its register), the
 // strb falls to 54, the copy goes first, and the strb then wins the tie with
 // the target load on dependents and order, as in the listing. The device is
-// tagged at that read. Also differ 0, also type puns: every TARGET read as long,
-// or the store through a view of the gust (s32 words to 80, a void * at 80, u8
-// bytes at 84). Not enough: a view of u32 bit-fields or u8 bytes alone frees
-// every target load (8); a view with a void * at 80 and u8 padding, then u32 or
-// s32 bit-fields or u8 bytes (2); the word read as s32, u32 or void * (26, the
-// target read again after the priority's store); const struct Actor ** (2).
-// watchedObject as void * in actor.h, tried in a copy, gives 14 here (the
+// tagged at that read. Also differ 0, also type puns: every TARGET read as
+// long, or the store through a view of the gust (s32 words to 80, a void * at
+// 80, u8 bytes at 84). Not enough: a view of u32 bit-fields or u8 bytes alone
+// frees every target load (8); a view with a void * at 80 and u8 padding, then
+// u32 or s32 bit-fields or u8 bytes (2); the word read as s32, u32 or void *
+// (26, the target read again after the priority's store); const struct Actor **
+// (2). watchedObject as void * in actor.h, tried in a copy, gives 14 here (the
 // pick-up arms move): the native's object type likely has no member of the
 // target's pointer type, a question for actor.h, not this draft.
 // With the long read, the Room 6 dust loops read velocity directly; the local
 // `at` (&velocity) is gone.
 // Devices, each tagged in the function: the long read (signature, 2 without it)
-// and the Call2, Call3, Call4 and Call6 forwards (wrapper, 416 as direct calls).
-// Kept: the cell and the step are two-word structs: a two-word pseudo gets no
-// register, which is why their fields live at sp+24 and sp+32 and their dead
-// stores stay. hit, shifted as its own statement, gives the native's reload copy
-// through its stack slot, and its 0 is the byte stored to motionFlags; started
-// merged into i is one pseudo at sp+20. The three loops that open with a branch
-// to their test are label loops. The travel setup keeps x and z as locals copied
-// into cell (cell computed directly, 66).
+// and the Call2, Call3, Call4 and Call6 forwards (wrapper, 416 as direct
+// calls). Kept: the cell and the step are two-word structs: a two-word pseudo
+// gets no register, which is why their fields live at sp+24 and sp+32 and their
+// dead stores stay. hit, shifted as its own statement, gives the native's
+// reload copy through its stack slot, and its unread 0 default is needed
+// (261 without it); started merged into i is one pseudo at sp+20. The three
+// loops that open with a branch to their test are label loops. The travel setup
+// keeps x and z as locals copied into cell (cell computed directly, 66).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"
@@ -62,8 +62,7 @@ void Func_02005f2c(s32 skip);
 void Func_02005f94(s32 cue);
 void Func_02005d5c(struct Actor *object, s32 mode);
 void Func_02005d6c(struct Actor *object, const u8 *script);
-void Actor_SetSingleChildFlags(struct Actor *object,
-                                        u32 value);
+void Actor_SetSingleChildFlags(struct Actor *object, u32 value);
 void Func_02005d8c(struct Actor *object, s32 x, s32 y, s32 z);
 void Func_02005d94(struct Actor *object);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
@@ -102,7 +101,12 @@ struct Cell {
   s32 x, z;
 };
 
-#define TARGET(effect) (*(struct Actor **)((effect) + 20))
+struct EffectWork {
+  u8 unknown[20];
+  struct Actor *target;
+};
+
+#define TARGET(effect) ((effect)->target)
 
 /// The gust picks up an object it passes over, to drop it at cell `at`
 /// (x in the high half, z in the low).
@@ -126,12 +130,15 @@ struct Cell {
 
 void Func_02001828(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
-  u8 *effect = (u8 *)Ram_HeapSlots->effectWork;
+  struct EffectWork *effect = (struct EffectWork *)Ram_HeapSlots->effectWork;
   struct Actor *gust, *spark, *object;
   struct Vector3 velocity;
   struct EffectOptions leaves, dust;
   struct Cell dir, cell;
-  s32 i, hit = 0, steps = 0, carried, one;
+  s32 i, steps = 0, carried;
+  // Default: nothing reads this 0 before the loop sets hit (without it, 261
+  // of 1527 instructions differ in tla-en).
+  s32 hit = 0;
 
   /* FAKEMATCH(wrapper): calls forwarded through call.h's Call2, Call3, Call4
    * and Call6, so each builds its own constants; as direct calls, 416 of 1527
@@ -139,18 +146,18 @@ void Func_02001828(void) {
   Func_02005e14();
   Func_02005f2c(0);
   Func_02005f94(207);
-  gust = (struct Actor *)Import_ActorCreate(280, leader->x, leader->y,
-                                                     leader->z);
+  gust =
+      (struct Actor *)Import_ActorCreate(280, leader->x, leader->y, leader->z);
   Func_02005d5c(gust, 2);
   Actor_SetSingleChildFlags(gust, 0);
   gust->scaleX = 0x1b333;
   gust->scaleY = 0x3333;
-  gust->motionFlags = hit;
+  gust->motionFlags = 0;
   /* FAKEMATCH(signature): the target's word read as long, an alias set outside
    * struct Actor's, so the load need not wait for the motion flags' store; as
    * TARGET(effect), 2 of 1527 instructions differ in tla-en. */
   ((struct FieldSprite *)gust->animation)->priority =
-      ((struct FieldSprite *)((struct Actor *)*(long *)(effect + 20))
+      ((struct FieldSprite *)((struct Actor *)*(long *)&effect->target)
            ->animation)
           ->priority;
   Func_02005d8c(gust, TARGET(effect)->x, TARGET(effect)->y,
@@ -208,7 +215,8 @@ void Func_02001828(void) {
   do {
     hit = Func_02000690(2, cell.x, cell.z);
     hit >>= 8;
-    if (Map_GetTerrainHeight(2, cell.x << 20, cell.z << 20) != gust->terrainHeight)
+    if (Map_GetTerrainHeight(2, cell.x << 20, cell.z << 20) !=
+        gust->terrainHeight)
       hit = 0;
     cell.x += dir.x;
     cell.z += dir.z;
@@ -216,22 +224,20 @@ void Func_02001828(void) {
   } while (hit == 0);
   Func_02000690(2, cell.x, cell.z);
   {
-  s32 x;
-  s32 z;
+    s32 x;
+    s32 z;
 
-  steps -= 2;
-  x = ((s16 *)&TARGET(effect)->x)[1] + ((steps * dir.x) << 3);
-  z = ((s16 *)&TARGET(effect)->z)[1] + ((steps * dir.z) << 3);
-  ((struct FieldSprite *)gust->animation)->priority = 1;
-  cell.x = x;
-  cell.z = z;
-  gust->speedLimit = 0x40000;
-  gust->acceleration = 0x40000;
-  Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
-  Call2((void (*)())Func_02005ed4, 0x50000, 0x50000);
-  z <<= 16;
-  x <<= 16;
-  Call4((void (*)())Camera_MoveWithinMapBounds, x, -1, z, 1);
+    steps -= 2;
+    x = (TARGET(effect)->x >> 16) + ((steps * dir.x) << 3);
+    z = (TARGET(effect)->z >> 16) + ((steps * dir.z) << 3);
+    ((struct FieldSprite *)gust->animation)->priority = 1;
+    cell.x = x;
+    cell.z = z;
+    gust->speedLimit = 0x40000;
+    gust->acceleration = 0x40000;
+    Func_02005d8c(gust, cell.x << 16, gust->y, cell.z << 16);
+    Call2((void (*)())Func_02005ed4, 0x50000, 0x50000);
+    Call4((void (*)())Camera_MoveWithinMapBounds, x << 16, -1, z << 16, 1);
   }
   carried = 0;
   while (Func_02005dec(gust) == 0) {
@@ -303,11 +309,12 @@ void Func_02001828(void) {
   if (hit == 255) {
     Func_02005f94(136);
   } else {
-    cell.x = ((s16 *)&gust->x)[1] + dir.x * 48;
-    cell.z = ((s16 *)&gust->z)[1] + dir.z * 48;
+    cell.x = (gust->x >> 16) + dir.x * 48;
+    cell.z = (gust->z >> 16) + dir.z * 48;
     gust->speedLimit = 0x8000;
     gust->acceleration = 0x8000;
-    Call4((void (*)())Func_02005d8c, (s32)(gust), (s32)(cell.x << 16), (s32)(gust->y), (s32)(cell.z << 16));
+    Call4((void (*)())Func_02005d8c, (s32)(gust), (s32)(cell.x << 16),
+          (s32)(gust->y), (s32)(cell.z << 16));
     hit -= 30;
     i = 0;
     while (Func_02005dec(gust) == 0) {
@@ -320,13 +327,11 @@ void Func_02001828(void) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
         {
-          s32 random = Random16Far() & 0xffff;
-
-          one = 0x10000; // 1.0 in 16.16
-          dust.startScaleX = dust.startScaleY = random + one;
+          dust.startScaleX = dust.startScaleY =
+              (Random16Far() & 0xffff) + 0x10000;
         }
         velocity.x = Math_Cosine((gFrameCount & 0x1ff) << 12) << 1;
-        velocity.y = one;
+        velocity.y = 0x10000;
         velocity.z = Math_Sine((gFrameCount & 0x1ff) << 12);
         Func_020002f4(gust->x, gust->y, gust->z, velocity.x, velocity.y,
                       velocity.z, EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
@@ -439,9 +444,9 @@ shrink:
         velocity.z = Actor_GetById(8)->z;
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          Func_020002f4(velocity.x + ((Random16Far() & 15) << 16),
-                        velocity.y, velocity.z - ((Random16Far() & 31) << 16),
-                        0, 0, -0x8000, EFFECT_USE_PRIORITY, &dust);
+          Func_020002f4(velocity.x + ((Random16Far() & 15) << 16), velocity.y,
+                        velocity.z - ((Random16Far() & 31) << 16), 0, 0,
+                        -0x8000, EFFECT_USE_PRIORITY, &dust);
         }
         wait(20);
       } else {

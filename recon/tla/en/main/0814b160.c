@@ -1,23 +1,25 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
 // Also differ 0 of 222 in tla-ja, tla-de, tla-es, tla-fr and tla-it
 // (2026-11-08), plain C with no FAKEMATCH device. The last 16 were the marker
-// loop's register order: marker as its own pointer stepped beside i (The
-// Broken Seal's form) puts its step between the actors offset's and i's.
+// loop's register order: marker as its own pointer stepped beside i (i++ then
+// marker++: 16; The Broken Seal's marker++ then i++: 18) puts its step
+// between the actors offset's and i's.
 // Set instead as &work->particles[i] at the top of the drawing branch,
 // before the target's lookup, it becomes a conditionally set induction
 // value: loop.c reduces it after the actors offset (36, then work, at the
 // head; 2, 28, then 1 at the tail) and, past the side test's label, keeps
-// its read at [marker, #24]. Set every iteration or after the lookup, the
-// reduction points at variant instead (differ 31).
+// its read at [marker, #24]. Set every iteration or just before the cel line,
+// the reduction points at variant instead (differ 31); set right after the
+// lookup, 18.
 
 // ☀️ twin: BattleEffect_RunCurse
 // (games/tbs/src/battle_effect/battle_effect/target_motes.c). ⚓️'s changes:
 // the effect argument read directly (the dispatcher stores work->effect), the
-// star cross sheet (directory row 0x13b), the blitter from
-// BattleEffect_LoadBlitter(104, 0x23) (transparent, ⚓️ mode 2), the transfer
-// callback at 0xc80 and the marker taken by index. Both need the family's
-// blitter pair for the frame: as a single DrawRectangle the stack frame is 4
-// bytes short (differ 170).
+// flame column sheet (directory row 0x13b, as The Broken Seal's twin loads),
+// the blitter from BattleEffect_LoadBlitter(104, 0x23) (transparent, ⚓️ mode
+// 2), the transfer callback at 0xc80 and the marker taken by index. Both need
+// the family's blitter pair for the frame: as a single DrawRectangle the stack
+// frame is 4 bytes short (differ 154).
 
 #include "types.h"
 #include "system.h"
@@ -39,7 +41,7 @@ enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 #define MARKER_STAGGER 16
 #define MARKER_CELS 9
 
-extern char ResourceId_StarCrossSheet; // directory row 0x13b
+extern char ResourceId_FlameColumnSheet;
 
 void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
@@ -51,12 +53,13 @@ void Func_081180e8(s32 phase);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 void Sound_PlayFar(s32 cue);
 
-// A spinning star marks each target in turn, sixteen frames apart: a post
-// under the target and the star turning above it, each for 72 frames.
+// As in The Broken Seal's twin, which loads the same sheet: a small flame
+// burns above each target in turn, MARKER_STAGGER frames apart, for up to
+// MARKER_FRAMES frames each, over a marker at its feet.
 void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
-  // Unused: the second blitter gives the stack frame its 4 bytes (as one, 156
+  // Unused: the second blitter gives the stack frame its 4 bytes (as one, 154
   // of 222 differ in tla-en); the family's pair, as in The Broken Seal.
   DrawRectangle draw[2];
   struct EffectStep *marker;
@@ -74,7 +77,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = 0x100;
   REG_BLDCNT = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_StarCrossSheet, work->sheet, 1,
+  Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);
   if (effect->side == 1) {
     REG_BG2X = -0x7000;
@@ -87,7 +90,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   work->transferValue = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
-  // Each star starts at a random point in its turn.
+  // Each flame starts at a random point in its turn.
   for (i = 0; i != effect->count; i++) {
     work->particles[i].variant = Random16() & 63;
   }
@@ -100,12 +103,12 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
     i = 0;
     if (effect->count != 0) {
       do {
-        start = i << 4;
+        start = i * MARKER_STAGGER;
         if (frame == start) {
           Sound_PlayFar(143);
         }
         if (frame >= start && frame < start + MARKER_FRAMES) {
-          // The post under the target, then the star, six frames a cel.
+          // The marker at the target's feet, then the flame, six frames a cel.
           marker = &work->particles[i];
           EffectPosition_ProjectScaledBattler(effect->actors[i], &pos);
           if (effect->side == 1) {

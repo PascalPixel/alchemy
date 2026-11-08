@@ -2,10 +2,10 @@
 // Also differ 0 in tla-de, tla-es, tla-fr and tla-it (99 instructions) and in
 // tla-ja (95, at 0x0803c204): adoptable in all six editions.
 // Two forms make it match. The cell is read through struct QueuedSprite
-// (sprite->oam.x and .y): those loads depend on the sentinel store, so the
-// tail schedules as the native's. And active is stored a second time after
-// next (tagged dead): CSE shares the 1 between the two stores, so its
-// register lives to the end; local-alloc puts it in r6, output (allocated
+// (sprite->oam.x and .y, tagged temporary): those loads depend on the sentinel
+// store, so the tail schedules as the native's. And active is stored a second
+// time after next (tagged dead): CSE shares the 1 between the two stores, so
+// its register lives to the end; local-alloc puts it in r6, output (allocated
 // first) takes r7, window kicks it out of r6 and it is reallocated to ip, and
 // after reload the second store goes as a store of what memory already
 // holds. That gives window r6, output r7 and the 1 in ip, as the native has.
@@ -27,16 +27,15 @@
 #include "uiwindow.h"
 #include "edition.h"
 
-// The glyph sprite's offset from the text position, in pixels: the Japanese
-// font's glyph sits 1 right of it, the Latin font's 2 right and 2 up.
-// XXX: whether the font alone decides it; Func_0803c068's Japanese form would
-// show the same pair.
-#if (LANGUAGE != LANGUAGE_JAPANESE)
-#define UNK_GLYPH_SPRITE_DX 2
-#define UNK_GLYPH_SPRITE_DY (-2)
+// Where the glyph's sprite sits against the text position, in pixels, as in
+// Func_0803c068: the Japanese font's glyphs are drawn into their tiles
+// differently (see Func_0803a8fc).
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+#define GLYPH_SPRITE_OFFSET_X 1
+#define GLYPH_SPRITE_OFFSET_Y 0
 #else
-#define UNK_GLYPH_SPRITE_DX 1
-#define UNK_GLYPH_SPRITE_DY 0
+#define GLYPH_SPRITE_OFFSET_X 2
+#define GLYPH_SPRITE_OFFSET_Y (-2)
 #endif
 
 void *Func_0803c198(struct Window *window, s32 character, s32 x, s32 y) {
@@ -57,10 +56,14 @@ void *Func_0803c198(struct Window *window, s32 character, s32 x, s32 y) {
   output->active = 1;
   output->kind = 0;
   vram = (void *)(0x06010000 + (work->glyphTiles + index) * 32);
-  ((u16 *)&output->sprite.oam)[0] = y + (spacingY >> 1) + window->y * 8 + UNK_GLYPH_SPRITE_DY;
+  ((u16 *)&output->sprite.oam)[0] =
+      y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_OFFSET_Y;
   ((u16 *)&output->sprite.oam)[1] =
-      (x + (spacingX >> 1) + window->x * 8 + UNK_GLYPH_SPRITE_DX) | 0x4000;
+      (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) | 0x4000;
   ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
+  /* FAKEMATCH(temporary): the cell read back through a pointer to output's
+   * sprite; as output->sprite.oam.x and .y, 27 of 99 instructions differ in
+   * tla-en. */
   sprite = &output->sprite;
   output->sentinel = 253;
   output->x = sprite->oam.x;
@@ -68,7 +71,7 @@ void *Func_0803c198(struct Window *window, s32 character, s32 x, s32 y) {
   output->index = index;
   output->next = NULL;
   /* FAKEMATCH(dead): active stored a second time with the 1 it already holds;
-     as the first store alone, 46 of 99 instructions differ in tla-en. */
+   * as the first store alone, 46 of 99 instructions differ in tla-en. */
   output->active = 1;
   WindowSprite_AppendToList(&window->output, output);
   return vram;

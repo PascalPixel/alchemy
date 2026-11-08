@@ -1,5 +1,6 @@
-// Matches: differ 0 (tla-en, 2026-11-08); tla-ja (at 08180c98), tla-de,
-// tla-es, tla-fr and tla-it also differ 0. From differ 2.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// tla-ja (at 08180c98), tla-de, tla-es, tla-fr and tla-it also differ 0. From
+// differ 2.
 // Of BattleEffect_RunDaedalusAlt, decompiled from the listing. The frame loop
 // is a real do-while, as the listing's code shows loop.c ran: its single-use
 // replacement moves &source's `add r2, sp, #44` down to the argument moves,
@@ -15,13 +16,12 @@
 // the place pointer (request is used directly) and the two-step spark.
 // Still needed, measured against this match: `i = discX` (discX passed
 // directly: 10), mask = 15 (the literal: 42), speed = 31 then &= (as
-// Random16() & 31: 23). No FAKEMATCH device is left: `cells` holds one
-// pointer to a global and `i` is a local reused for a second value, both
-// ordinary C under S2. The frame-0 arm's constants (discX, discY, ringX,
-// ringOffset) are REG_EQUIV and reload at each use, as the listing's do.
-// For adoption: source is Render_ApplyProjectedPlacement's scale ({2.0, 2.0},
-// struct SpriteScale in graphics/render_placement.h) and request its
-// struct SpritePlacement (x, height, y, groundHeight); not renamed here.
+// Random16() & 31: 23). `cells` and `i = discX` are tagged temporaries. The
+// frame-0 arm's constants (discX, discY, ringX, ringOffset) are REG_EQUIV and
+// reload at each use, as the listing's do. For adoption: source is
+// Render_ApplyProjectedPlacement's scale ({2.0, 2.0}, struct SpriteScale in
+// graphics/render_placement.h) and request its struct SpritePlacement (x,
+// height, y, groundHeight); not renamed here.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -116,9 +116,7 @@ extern const struct PlacementSource
 extern const u8 Data_08199220[];           // the rings' mesh
 extern const u8 gData_081991b0[];          // their corners
 extern struct EffectStep gData_02014000[]; // the sparks
-// The sparks' lives: gData_02014000's EffectSteps from their variant on.
-extern s32 Data_02014018[];
-extern const u8 gData_08199210[]; // its four corners
+extern const u8 gData_08199210[];          // its four corners
 extern u32 gCameraSceneParameters[];
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
@@ -221,11 +219,13 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       struct EffectStep *sparks;
 
       if (frame == 80) {
-        s32 *life = Data_02014018;
+        // UB: the lives are cleared through one s32 pointer stepped a whole
+        // step at a time, past the step's scalar members.
+        s32 *life = &gData_02014000[0].variant;
 
         for (i = 0; i != DAEDALUS_SPARKS; i++) {
           *life = -1;
-          life += 7;
+          life += sizeof(struct EffectStep) / sizeof(s32);
         }
         work->shakeFrames = 8;
         Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
@@ -241,6 +241,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
         for (; j != 8; j++, spark++) {
           s32 speed;
           s32 angle;
+          // The mask set first and the random number masked in (as
+          // Random16() & 31, 23 of 575 instructions differ in tla-en).
           speed = 31;
           speed &= Random16();
           angle = Random16();
@@ -301,14 +303,15 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       struct RenderModel *model;
       void *vertices;
       struct EffectStep *ring;
-      // The cell buffer, set again before each call that draws into it: the
-      // listing loads it for each call.
       u8 *cells;
 
-      // The disc's place shares the counters' variable, as the listing's r6
-      // does.
+      /* FAKEMATCH(temporary): the disc's x copied into the loop counter i;
+       * as discX passed directly, 10 of 575 instructions differ in tla-en. */
       i = discX;
       size = 128;
+      /* FAKEMATCH(temporary): the cell-buffer local set before each call; as
+       * gMapCellBuffer passed directly, 56 of 575 instructions differ in
+       * tla-en. */
       if (grow <= 64) {
         size = grow * 2;
         cells = gMapCellBuffer;

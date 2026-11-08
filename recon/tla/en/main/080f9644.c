@@ -1,5 +1,6 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
-// Plain C, no device: the pin is gone. The trade's two snapshot copies reach
+// Two tagged devices (a dead clear of command, Unit_RefreshPsynergyFar's s32
+// return); the pin is gone. The trade's two snapshot copies reach
 // the word copy from IwramIrqMain (ITEM_IWRAM_COPY_WORDS, The Broken Seal's own
 // form for these two copies; the rollback copies stay Iwram_CopyWords). The
 // constant 0x03000730 is ready at once after the second Heap_Alloc, so sched2
@@ -16,10 +17,13 @@
 //   tla-fr (+28 bytes): those calls, plus an Event_ClearInvalidPackedValuesFar
 //     in the give step and a second modal message (x 11, y 14) with a
 //     WindowSprite_RedrawSavedRectFar in the trade.
-//   tla-ja (-0x7c bytes): an older layout; WindowSprite_RedrawSavedRectFar and
-//     Func_080fc6bc calls fall elsewhere; not drafted.
+//   tla-ja (+0x14 bytes, 080f953c to 080fa1dc): an older layout;
+//     WindowSprite_RedrawSavedRectFar and Func_080fc6bc calls fall elsewhere; not
+//     drafted.
 //   Text layout (window height, x) is LANGUAGE; the extra routine needs a name
 //   and its edition rule before these editions can link this C.
+// On adoption the 0x630 offset belongs in iwram_call.h, listed once, as The
+// Broken Seal's Iwram_CopyWordsOffset.
 // 2026-11-08: the icon is declared as a window sprite, with its list link
 // (struct ItemMenuIcon *next) at 0 and signed kind and state bytes, as The
 // Broken Seal's struct WindowSprite: its stores now may alias the work's
@@ -27,8 +31,9 @@
 // selectedItemIcon (gone), and the x/y stores keep the native order (6 to 2).
 // The list icon is a plain pointer (the union with a word changed nothing).
 // 2026-11-07: prototypes for the modal message, the text draw and the equip
-// preview (s32, as their definitions), and Unit_RefreshPsynergyFar returning
-// s32 as The Broken Seal declares it, took 22 to 6; the empty asm is gone.
+// preview, and Unit_RefreshPsynergyFar returning s32 (tagged: The Broken
+// Seal's routine of that name returns a value, this game's does not), took
+// 22 to 6; the empty asm is gone.
 // Earlier: the item menu's command loop (use, give, drop, equip, swap, trade,
 // remove), the twin of The Broken Seal's ItemMenu_RunCommands
 // (games/tbs/src/menu/menu/item.c), with The Lost Age's work layout
@@ -160,6 +165,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Text_DrawWorkValueWithLabel(menu->infoWindow);
       command = ItemMenu_SelectMember(0);
       if (command == -1) {
+        /* FAKEMATCH(dead): command cleared with selection, though neither is
+         * read again once done is set; as selection = 0;, 104 of 1355
+         * instructions differ in tla-en. */
         selection = command = 0;
         ret = -1;
         done = 1;
@@ -317,11 +325,15 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       WindowSprite_RedrawSavedRectFar(menu->messageWindow);
       if (ItemMenu_ConfirmDrop(selection) == 0) {
         command = menu->itemOwner;
+        // DEAD: the result is not used; the source keeps the call.
         Unit_GetFar(command);
         for (work = 0; work < result + 1; work++) {
           Inventory_RemoveFar(command, menu->selectedSlot);
           Func_08077240(menu->selectedItem & 0x1ff, 1);
         }
+        /* FAKEMATCH(signature): Unit_RefreshPsynergyFar declared returning s32,
+         * though this game's routine returns nothing, here and below; as void,
+         * 4 of 1355 instructions differ in tla-en. */
         Unit_RefreshPsynergyFar(command);
         Unit_CalculateFar(command);
         ItemMenu_SetItemWindowRow3();
@@ -357,7 +369,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         stack = (menu->selectedItem >> 11) + 1;
         if (aborted == 0) {
           // A once-only block: it places a label between the count and its
-          // sign-extended use (76 of 1355 differ as a plain assignment).
+          // sign-extended use (70 of 1355 differ as a plain assignment).
           do {
             amount = stack;
           } while (0);

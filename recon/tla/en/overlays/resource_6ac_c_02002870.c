@@ -2,17 +2,16 @@
 // Func_02002870 of overlay 6ac; differ 0 of 168 in tla-en, tla-ja, tla-de,
 // tla-es, tla-fr and tla-it. Overlay 6ab's Func_020024d4 with this overlay's
 // symbols. The last 8 were sched2 ties, closed by two plain-C changes: the
-// sprite's vramBlock read as *&sprite->vramBlock (an equivalent spelling, S2)
-// takes the char alias set, so it may alias the six s32 stores to the object
-// and they all rank 54, ahead of the sprite and owner animation loads; and
-// the bounce store written after acceleration, so the zero (r6) comes before
-// the 0x8000 copy (r1) in insn order and wins their tie at 55. The char read
-// alone leaves 2, the reorder alone 10. The same two changes match the twins
-// in overlays 6aa, 6ab and 6ad (measured from scratch copies, 8 November 2026).
+// sprite typed as FieldSprite lays it out, with its s32 scale at 0x0c, so the
+// vramBlock read may alias the six s32 stores to the object and they all rank
+// 54, ahead of the sprite and owner animation loads; and the bounce store
+// written after acceleration, so the zero (r6) comes before the Q16_ONE / 2
+// copy (r1) in insn order and wins their tie at 55. No devices.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
 #include "iwram_call.h"
+#include "fixed_math.h"
 
 struct Sprite {
   u8 unk00[4];
@@ -27,10 +26,11 @@ struct Sprite {
   u16 size : 2;
   u16 tile : 10;
   u16 attr2Rest : 6;
-  u8 unk0a[6];
+  u8 unk0a[2];
+  s32 scale;
   u8 vramBlock;
-  u8 keepEntry : 1;
-  u8 unk11 : 7;
+  u8 unk11_0 : 1;
+  u8 unk11_1 : 7;
   u16 rotation;
   u8 unk14[2];
   u8 unk16[5];
@@ -55,7 +55,7 @@ s32 Math_Sine(s32 angle);
 void Actor_SetSingleChildFlags(struct Actor *object, s32 flags);
 s32 Random16Far(void);
 void ResourceMetadata_ClearRecord(void *record);
-void Resource_ResetEntry(s32 entry);
+s32 Resource_ResetEntry(u32 slot);
 
 #define WORK ((struct Work *)(gData_020023c4 + 0x188))
 
@@ -65,6 +65,7 @@ void Func_02002870(struct Actor *actor) {
 
   if (work->owner == NULL)
     return;
+  // A once-only loop: one object per call.
   for (i = 0; i >= 0; i--) {
     struct Actor *object;
     s32 a, b, c, d, e;
@@ -78,8 +79,8 @@ void Func_02002870(struct Actor *actor) {
     d = Random16Far();
     e = Random16Far();
     z = actor->z + d * 16 - e * 16;
-    y = c * 8 + actor->y + 0x40000;
-    object = Func_02003128(0x1e9, x, y, z);
+    y = c * 8 + actor->y + Q16_ONE * 4;
+    object = Func_02003128(489, x, y, z);
     if (object != NULL) {
       s32 angle, radius;
       u32 sum;
@@ -92,10 +93,10 @@ void Func_02002870(struct Actor *actor) {
       radius = Random16Far();
       sum = Random16Far();
       sum += Random16Far();
-      scale = (sum >> 2) + 0x8000;
+      scale = (sum >> 2) + Q16_ONE / 2;
       Func_02003120(object, gData_02003304);
       Actor_SetSingleChildFlags(object, 0);
-      object->velocityY = angle * 4 + 0x20000;
+      object->velocityY = angle * 4 + Q16_ONE * 2;
       radius <<= 3;
       object->velocityZ = Iwram_MulQ16(radius, Math_Cosine(angle));
       velocity = Iwram_MulQ16(radius, Math_Sine(angle));
@@ -105,12 +106,10 @@ void Func_02002870(struct Actor *actor) {
       sprite = object->animation;
       object->velocityX = velocity;
       object->acceleration = 0;
-      object->bounce = 0x8000;
+      object->bounce = Q16_ONE / 2;
       source = work->owner->animation;
-      // *&: read as a char, this load may alias the stores above and follows
-      // them, as natively.
-      Resource_ResetEntry(*&sprite->vramBlock);
-      sprite->keepEntry = 1;
+      Resource_ResetEntry(sprite->vramBlock);
+      sprite->unk11_0 = 1;
       sprite->vramBlock = work->vramBlock;
       ResourceMetadata_ClearRecord(sprite->record);
       sprite->record = NULL;

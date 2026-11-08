@@ -2,10 +2,11 @@
 // Also differ 0 in tla-de, tla-es, tla-fr and tla-it, and in tla-ja, where the
 // function sits at 0x0818df60 (diff --edition tla-ja --symbol
 // BattleEffect_RunMeteorBlow). Two tagged dead devices at the shard setup, each
-// a cancelling ++/-- pair. count's, in the shard loop: the listing builds the
+// a cancelling ++/-- pair, and the FillWords_ wrapper. count's, in the shard
+// loop, where count is also the radius's base: the listing builds the
 // 256 first in the block (r2, before the shard pointer is live there) and adds
 // the same register to the radius. Loop motion puts a literal 256 after the
-// setup (r6, differ 10); a count local set first fixes the setup, but GCSE's
+// setup (r6, differ 8); a count local set first fixes the setup, but GCSE's
 // constant propagation then folds 256 into the radius add and reload rebuilds
 // it every pass (74). hx's, after the shard's halving: the three halvings of hx
 // (shard, hoop, ring) must each keep hx + sign (`adds r3, r4, r3`) and must not
@@ -29,11 +30,12 @@
 // the sky term (non-local, so b keeps r3); half is the shard's x and the
 // ring's; no tex pointer, PRE builds &texture2; p split per loop; a once-only
 // block around the arc's v[2] store; i = 0 set above the shard's halving.
-// FillWords_ is The Broken Seal's typed inline (iwram_call.h), as adopted
-// battle effects keep it: it leaves 0x4000 without a pseudo, which otherwise
-// takes r5 first; plain calls measure differ 302. A one-constant local does not
-// replace it (cprop folds it back). Tried with no gain: indexed p, Value3, a
-// VRAM local, CopyWords_, moving transition; empty asm changes nothing.
+// FillWords_ is a tagged wrapper (The Broken Seal keeps it in iwram_call.h;
+// this game's header has only the macro): it leaves 0x4000 without a pseudo,
+// which otherwise takes r5 first; plain calls measure differ 286.
+// A one-constant local does not replace it (cprop folds it back). Tried with no
+// gain: indexed p, Value3, a VRAM local, CopyWords_, moving transition;
+// empty asm changes nothing.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -48,14 +50,6 @@ struct ModelTexture {
   u32 logWidth : 8;
   u32 logHeight : 8;
   u32 unk02 : 16;
-  const u8 *pixels;
-};
-
-// The same texture written as bytes.
-struct ModelTextureSize {
-  u8 logWidth;
-  u8 logHeight;
-  u16 unk02;
   const u8 *pixels;
 };
 
@@ -195,16 +189,17 @@ void SceneTransform_ApplyPosition(void *position);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void ResourceObject_ReleaseFar(void *object);
 
-// Meteor Blow: the caster soars through a field of stars and comes down as a
-// burning meteor that shatters on the targets.
 static __inline__ s32 FillWords_(void *destination, s32 size, u32 value) {
   return Iwram_FillWords(destination, size, value);
 }
 
+/// Meteor Blow.
+/// ★ Named from the game: "Meteor Blow" (message 02130)
 void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *map;
+  // Unused: blit[1] gives the stack frame its 4 bytes.
   DrawRectangle blit[2];
   u8 *sprites;
   u8 *projected;
@@ -238,7 +233,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   s32 point[3];
   s32 place[4];
   s32 place2[4];
-  struct ModelTextureSize texture2;
+  struct ModelTexture texture2;
   struct PointPair req2;
   s32 req[2];
   struct ModelTexture texture;
@@ -265,6 +260,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   Graphics_LoadGreyRamp();
   gCameraSceneParameters[4] = 240;
   wait(1);
+  /* FAKEMATCH(wrapper): both fills forwarded through FillWords_, which leaves
+   * 0x4000 without a pseudo of its own; as direct Iwram_FillWords calls, 286
+   * of 1556 instructions differ in tla-en. */
   // A once-only block: it closes the fill's block before the copy.
   do {
     FillWords_(map, 0x8000, 0x01010101);
@@ -289,6 +287,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   triangles = work->sheet + 0x6340;
   transition = Ram_HeapSlots->transitionWork;
   stars = (struct MeteorStar *)(work->sheet + 0x7a4);
+  // Default: the flight sets these at frame 0.
   pitch = 0;
   yaw = 0;
   x = 0;
@@ -319,6 +318,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   mode = 3;
   Func_08196404(SLOT_BLITTER, 8, 7, mode, 1);
   blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  // DEAD: both fields are set again before anything reads them.
   work->transferMode = mode;
   work->transferValue = 0x04040404;
   work->transferMode = 2;
@@ -386,6 +386,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       }
       scale = 0x10000;
     }
+    // DEAD: frame never reaches 1600 here; the source keeps the test.
     if (frame <= 1599) {
       u16 *dst = (u16 *)((u8 *)work + 0x7640);
       s32 value = work->frame;
@@ -470,6 +471,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
       }
       Heap_Release(model);
     } else {
+      // DEAD: frame is at most 115 here, so the second arm never runs; the
+      // source keeps both tests.
       if (frame <= 159) {
         pitch = ((pitch << 16) + (256 << 16)) >> 16;
       } else if (frame <= 191) {
@@ -563,6 +566,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
   }
   HeapSlot_Release(SLOT_BLITTER);
   Func_0814cca8();
+  // DEAD: frame 0 sets hx and hz again before any read.
   hx = 200;
   hz = 0;
   REG_BG2PA = 0x80;
@@ -624,8 +628,6 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     }
     if (frame == 16) {
       struct EffectStep *p;
-      // The shard count; the radius below adds the same 256, from the same
-      // register.
       s32 count = 256;
 
       p = (struct EffectStep *)gMapCellBuffer;
@@ -640,9 +642,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
         s32 r;
         s32 a;
 
-        /* FAKEMATCH(dead): count's cancelling updates keep GCSE from folding
-         * 256 into the radius, which then adds count's register; as the loop
-         * without them, 74 of 1556 instructions differ in tla-en. */
+        /* FAKEMATCH(dead): count, the shard count, also used as the radius's
+         * base, with cancelling updates that keep GCSE from folding 256 into
+         * the radius add; as a literal 256 for both and no count, 8 of 1556
+         * instructions differ in tla-en. */
         count++;
         count--;
         r = (Random16() & 511) + count;
@@ -665,7 +668,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectArgument *effect) {
     verts = Heap_AllocEwram(1024);
     model = Render_AllocateModelList(1);
     shade = 0;
-    model->texture = (struct ModelTexture *)&texture2;
+    model->texture = &texture2;
     model->vertices = verts;
     model->shade = shade;
     texture2.logWidth = 6;

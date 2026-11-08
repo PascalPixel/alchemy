@@ -32,6 +32,7 @@
 #include "main_routine_work.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
+#include "map.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -96,8 +97,12 @@ s32 Func_02004280(void) {
       }
       Func_020048a0();
       stage = (s32 *)(gData_020023c4 + 0x288);
+      /* FAKEMATCH(wrapper): the call forwarded through Call3; as a direct
+       * Func_02004ebc call, 2 of 229 instructions differ in tla-en. */
       if (*stage == 3 && !GameFlag_Test(0x3f6))
         Call3((void (*)())Func_02004ebc, 64, 0x680000, 0x580000);
+      /* FAKEMATCH(wrapper): the call forwarded through Call3; as a direct
+       * Func_02004ebc call, 2 of 229 instructions differ in tla-en. */
       if (*stage == 9)
         Call3((void (*)())Func_02004ebc, 65, 0x680000, 0x480000);
       if (GameFlag_Test(*stage + 0xa50)) {
@@ -106,8 +111,7 @@ s32 Func_02004280(void) {
 
         climber->collisionFlags = 0;
         Func_02004d9c(climber, ((angle & 0xc000) >> 14) + 2);
-        climber->update = (angle & 0x4000) != 0 ? (void (*)(void))Func_02000aac
-                                                : (void (*)(void))Func_02000a60;
+        climber->update = (angle & 0x4000) != 0 ? Func_02000aac : Func_02000a60;
         climber->collisionFlags = 1;
         GameFlag_SetBit(0x200);
       }
@@ -127,11 +131,13 @@ s32 Func_02004280(void) {
       // Once-only block: keeps the scale defaults before the position sums.
       do {
       } while (0);
-      FIELD_AT(layer, s32, 0) =
-          Iwram_MulQ16(FIELD_AT(map, s32, 228), FIELD_AT(layer, s32, 16)) +
+      ((struct MapLayer *)layer)->x =
+          Iwram_MulQ16(((struct MapWork *)map)->viewX,
+                       FIELD_AT(layer, s32, 16)) +
           FIELD_AT(layer, s32, 8);
-      FIELD_AT(layer, s32, 4) =
-          Iwram_MulQ16(FIELD_AT(map, s32, 232), FIELD_AT(layer, s32, 20)) +
+      ((struct MapLayer *)layer)->y =
+          Iwram_MulQ16(((struct MapWork *)map)->viewZ,
+                       FIELD_AT(layer, s32, 20)) +
           FIELD_AT(layer, s32, 12);
       Func_02004dc4();
       wait(1);

@@ -20,7 +20,7 @@
 // alone, 1 the enemies, whose downed ones a link battle skips); a new hint (8)
 // starts on the unit the last command aimed at, which the navigation work
 // remembers (0x10c); the enemies "Mystery Man" and "Mystery Woman" are enemy
-// kinds 355 and 352.
+// kinds 352 and 355.
 //
 // 2026-11-08: the last 6 (three pairs swapped at the loop head) were a
 // scheduling barrier the listing has between the cursor sprite's words and the
@@ -36,11 +36,13 @@
 // one more insn there spills differently (108). Spelling TARGET_HELP_COLUMN's
 // `/ 8` out as TARGET_BOB does (7 insns fewer, 715 buckets) gives the same
 // figures in every edition and leaves room. TARGET_BOB's spelled-out rounding
-// is needed in its own right: `bob / 32768` gives 354 in tla-en. The European
+// is needed in its own right: `bob / 32768` gives 344 in tla-en. The European
 // count temporary stays (144 without it, every row a spill slot: its hash table
 // drops from 801 to 765). The barrier is left out of the European editions,
 // whose listing keeps conditionWindow in r10, where the dead null alone puts
 // it.
+// Before adoption: the Msg_ placeholders are English message ids (Japanese
+// numbers these messages 2 higher) and need per-language names.
 #include "types.h"
 #include "ram_buffer.h"
 #include "input.h"
@@ -211,6 +213,7 @@ void Resource_ResetEntry(s32 slot);
 #endif
 
 // The cursors' bob, a sine turn every 16 frames scaled down to 2 pixels.
+// The signed rounding is spelled out: as bob / 32768, 344 of 1647 differ.
 #define TARGET_BOB(y)                                                          \
   {                                                                            \
     s32 bob = Trig_Sin(gFrameCount << 12);                                     \
@@ -363,7 +366,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
     BattleMotion_ProjectConditionalPositionFar(selection, &actorPosition);
     cursorTracks[0].flags = 8;
     cursorTracks[0].x = actorPosition.x;
-    cursorTracks[0].y = 0x80;
+    cursorTracks[0].y = 128;
   }
 #if !TLA_PATCH_2
   /* FAKEMATCH(barrier): an empty asm clobbering r8 and r10 once selection and
@@ -377,12 +380,15 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
     // A once-only block: its end keeps the tile reload after the sprite's
     // words, as the listing schedules them.
     do {
+      /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]; as
+       * cursorSprites used directly, 399 of 1647 instructions differ in tla-en.
+       */
       firstSprite = cursorSprites;
       drawCursors = 0;
       BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                  &selectedPosition);
       ((u32 *)firstSprite)[1] = 0x40002000;
-      ((u32 *)firstSprite)[2] = drawCursors;
+      ((u32 *)firstSprite)[2] = 0;
     } while (0);
     firstSprite->tile = VramCache_Reload(
         cursorSlot, ((gFrameCount >> 2) & 31) * 256 + gData_0805c9c4);
@@ -457,6 +463,7 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
       }
       spreadActorIds[targetCount] = 255;
       BattleHighlight_SetModesFar(spreadActorIds, 1);
+      // The (u32) compares the stored id unsigned, as the bytes do.
       if ((u32)(NAVIGATION->lastTarget = candidateIds[targetIndex]) <= 7) {
         if (spread != 255 && kind != 0) {
           unit = Unit_Get(candidateIds[targetIndex]);

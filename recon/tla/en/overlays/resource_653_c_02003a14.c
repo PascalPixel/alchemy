@@ -10,6 +10,9 @@
 // or 2 with an empty asm and a once-only block (the earlier drafts). Before
 // adoption: MapWork's unk017 in map.h is this bit-field (bits 3..2 a mode,
 // set to 1 here); the draft keeps its own copy of the layout until then.
+// Both of the scaffold's edition forms (.text.x0200ba14: TLA_EDITION_JA and
+// the rest) come from this one C, the flag clear chosen by TLA_PATCH_1;
+// adopting it replaces the whole section, not only its non-Japanese form.
 #include "../../../../games/tla/src/scene/kandorean_temple/local.h"
 #include "version.h"
 

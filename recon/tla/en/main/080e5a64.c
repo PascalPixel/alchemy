@@ -5,9 +5,9 @@
 // scheduler from moving the channels' finishing past it. Without the block
 // 10 (empty blocks before and after the store also match); the colour put
 // straight into the store 10; green finished first 4; the channels finished
-// inside the colour expression 8; each wave local reassigned in place 32.
+// inside the colour expression 8.
 // Devices kept: the phase offset in two steps (tagged temporary); the phase
-// read through a pointer kept across the loop (untagged, 4 without it); the
+// read through a pointer kept across the loop (tagged temporary); the
 // palette loop as a goto loop (a for loop strength-reduces the address and
 // rematerializes 0x90000, 62; a do-while loop 60). Tried for the offset:
 // 9 << 16, 0x90000 set at the top of the function, at its declaration or as
@@ -72,7 +72,7 @@ struct BlendWork {
 
 void Func_080eb01c(struct ShineSprite *sprite);
 void BattleEffect_IntegrateVector2(struct ShineParticle *particle, s32 frames,
-                               s32 flags);
+                                   s32 flags);
 void Map_SetScreenShakeFar(s32 a, s32 b, s32 c);
 
 void Func_080e5a64(void) {
@@ -80,7 +80,6 @@ void Func_080e5a64(void) {
   struct BlendWork *blend = Ram_HeapSlots->unkec[1];
   struct ShineParticle *particle;
   struct ShineSprite *sprite;
-  s32 redWave, greenWave;
   s32 i;
   s32 base, blue;
   s32 color;
@@ -90,7 +89,8 @@ void Func_080e5a64(void) {
   work->fading = 0;
   if (work->state == 1) {
     i = 0;
-    // The phase read through a pointer kept across the loop.
+    /* FAKEMATCH(temporary): the phase read through a pointer kept across the
+     * loop; as blend->phase, 4 of 302 instructions differ in tla-en. */
     phase = &blend->phase;
     /* FAKEMATCH(temporary): the phase offset built in two steps, so it stays
      * in a register across the loop; as base = 0x90000, 48 of 302
@@ -99,10 +99,10 @@ void Func_080e5a64(void) {
     base <<= 16;
     blue = 0x7c00;
   palette:
-    redWave = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
-    greenWave = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
-    red = (redWave >> 16) + 16;
-    green = (greenWave >> 16) + 16;
+    red = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
+    green = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
+    red = (red >> 16) + 16;
+    green = (green >> 16) + 16;
     // A once-only block around the palette store.
     do {
       color = (green << 5) | blue | red;
@@ -115,7 +115,7 @@ void Func_080e5a64(void) {
     particle = work->particles;
     sprite = work->sprites;
     for (i = 0; i < 12; i++, sprite++, particle++) {
-      if ((u32)particle->timer < 16) {
+      if (particle->timer >= 0 && particle->timer < 16) {
         sprite->x = particle->x;
         sprite->y = particle->y;
         Func_080eb01c(sprite);

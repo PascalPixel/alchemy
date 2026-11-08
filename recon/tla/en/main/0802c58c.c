@@ -1,13 +1,13 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
 // Differ 0 of 277 in all six editions (tla-en, tla-ja, tla-de, tla-es, tla-fr,
 // tla-it), plain C, no device. Two forms closed the last 14:
-// - The block table read at Camelot's fixed address, (struct WorldBlock
+// - The block table read at Camelot's fixed address, (struct Data02020000
 //   *)Ram_MapBlocks + index, as f0cb144.c reads it. The constant sum puts the
 //   index first and reload forms the address in r1 after the row shift. Reload
 //   picks spill registers round robin, so this reload also gives the window
 //   reload its r3 and lets the table be indexed directly (r2), which needed
 //   the resourceSets local before.
-// - The region for the divide read into a local that also holds the busy
+// - The region for the divide read into a local that also holds Func_080c8950's
 //   result (value). Set twice, it goes to global allocation and the read goes
 //   through r3, as the original does. Read straight into the divide, the read
 //   ties to r0. Used for the Func_0802d088 argument as well, both reads go
@@ -26,10 +26,13 @@
 #include "resource.h"
 #include "graphics.h"
 
-struct WorldBlock {
-  u32 tile : 24;
+/// One word of the table at Ram_MapBlocks, 32 words to a row.
+struct Data02020000 {
+  u32 unk0 : 24;
+  /// Passed to Func_0802d088; region / 10 picks the set. The Broken Seal's
+  /// WorldMapCell keeps the encounter region at these bits.
   u32 region : 6;
-  u32 unk : 2;
+  u32 unk1e : 2;
 };
 
 struct MapTileWindow {
@@ -56,7 +59,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 void Func_0802d088(s32 region, s32 gradual);
 s32 Func_080c8950(void);
 void Func_080c8970(void *palette);
-void MapAnimation_StartChannels(const u16 *script);
+void Func_0802cc9c(const u16 *script);
 
 void Func_0802c58c(void) {
   struct MapTileWindow *window = (struct MapTileWindow *)Ram_HeapSlots->mapWork;
@@ -68,7 +71,7 @@ void Func_0802c58c(void) {
   s32 row;
   s32 col;
   s32 tile;
-  struct WorldBlock *block;
+  struct Data02020000 *block;
   const u32 *resources;
   s32 graphicsSet;
   s32 value;
@@ -77,6 +80,9 @@ void Func_0802c58c(void) {
   if (window->origin != NULL) {
     s32 *p = window->origin;
 
+    // origin[0] and origin[2], read through a stepped pointer: the only
+    // spelling that gives the native's post-increment load (4 of 277 as
+    // indexes).
     x = *p++;
     y = p[1];
   }
@@ -93,11 +99,11 @@ void Func_0802c58c(void) {
       }
     }
   }
-  block = (struct WorldBlock *)Ram_MapBlocks +
+  block = (struct Data02020000 *)Ram_MapBlocks +
           (((x / 0x200000) & 31) + (((y / 0x200000) & 31) << 5));
   Func_0802d088(block->region, 1);
-  // One local holds the region, then the busy result: set twice, it reads
-  // the region into r3 for the divide, as the original does.
+  // One local holds the region, then Func_080c8950's result: set twice, it
+  // reads the region into r3 for the divide, as the original does.
   value = block->region;
   switch (value / 10) {
   case 3:
@@ -135,7 +141,7 @@ void Func_0802c58c(void) {
       u8 *anim = Data_0202d000;
       Func_080c8970(buffer);
       Resource_DecodeType01(Resource_GetTableEntry(resources[1]), anim);
-      MapAnimation_StartChannels((const u16 *)anim);
+      Func_0802cc9c((const u16 *)anim);
     }
     Resource_DecodeType01(Resource_GetTableEntry(resources[2]), gMapCollision);
     break;

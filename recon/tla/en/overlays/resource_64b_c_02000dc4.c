@@ -1,20 +1,21 @@
-// Matches: differ 0 (tla-en, 2026-11-08); differ 0 in tla-ja, tla-de, tla-es,
-// tla-fr and tla-it too. The world map's entrance handler: restores the ship's
-// place, then runs the script for the entrance taken. diff compares
-// instructions only: the pool words and the 98-entry jump table are left to
-// make compare-editions. Case 98's flags go through the scene layer's Flag_Set
-// (flag_call.h), as 345 matched sites do: called directly, each flag id is a
-// pseudo of the case's block, local-alloc's block then holds seven quantities
-// and qsorts them, so the constant 1 (shorter life) takes r3 before the store's
-// address and the native's r2/r3 turn round (12 of 270). Through the inline the
-// ids go straight to r0, the block keeps three (address, 1, the scene's pool
-// word), and local-alloc's three-quantity hand sort, which compares quantity
-// numbers, not the order array, places the address first, as in
-// lemuria_entrance/s0190.c. Case 59's Value1/Call1 became Flag_IsSet/Flag_Set
-// (still 0). The one device left is the Call4 wrapper round Func_02004b60,
-// tagged below; tried before this round: a pointer to gMainRoutineWork or to
-// the field, *&, a constant local for the 1 (case 98 right, reload scratch r0
-// elsewhere, 36), once-only blocks, permuter 18 minutes in all.
+// Matches: differ 0 (tla-en, 2026-11-08)
+// Differ 0 in tla-ja, tla-de, tla-es, tla-fr and tla-it too. The world map's
+// entrance handler: restores the ship's place, then runs the script for the
+// entrance taken. diff compares instructions only: the pool words and the
+// 98-entry jump table are left to make compare-editions. Case 98's flags go
+// through the scene layer's Flag_Set (flag_call.h), a tagged wrapper: called
+// directly, each flag id is a pseudo of the case's block, local-alloc's block
+// then holds seven quantities and qsorts them, so the constant 1 (shorter life)
+// takes r3 before the store's address and the native's r2/r3 turn round (12 of
+// 270). Through the inline the ids go straight to r0, the block keeps three
+// (address, 1, the scene's pool word), and local-alloc's three-quantity hand
+// sort, which compares quantity numbers, not the order array, places the
+// address first, as in lemuria_entrance/s0190.c. Case 59's test goes through
+// Flag_IsSet (63 of 270 as a direct call); its set is a direct call. Two tagged
+// devices: the flag forwarding and the Call4 wrapper round Func_02004b60; tried
+// before this round: a pointer to gMainRoutineWork or to the field, *&, a
+// constant local for the 1 (case 98 right, reload scratch r0 elsewhere, 36),
+// once-only blocks, permuter 18 minutes in all.
 #include "types.h"
 #include "ram_buffer.h"
 #include "main_routine_work.h"
@@ -109,8 +110,11 @@ s32 Func_02000dc4(void) {
     Func_02003490();
     break;
   case 59:
+    /* FAKEMATCH(wrapper): the flag test here and case 98's four sets forwarded
+     * through flag_call.h's Flag_IsSet and Flag_Set; as direct GameFlag_Test
+     * and GameFlag_SetBit calls, 75 of 270 instructions differ in tla-en. */
     if (!Flag_IsSet(0x90a) && GameFlag_Test(0xa5f) != 0) {
-      Flag_Set(0x90a);
+      GameFlag_SetBit(0x90a);
       Func_02001c5c();
     }
     break;

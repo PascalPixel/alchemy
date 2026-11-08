@@ -1,15 +1,15 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
 // All six editions differ 0 (tla-ja at 0x0817c6b0, the others at 0x0817c6ac).
 // What closed the last 32 rows (2026-11-08): the strip mesh and the corner
-// buffer are per-frame locals beside the vertex buffer (strip, cells), so each
-// is spilled and rematerialised from the pool at its use, which sets reload's
-// round robin (frame in r4 and caster in r1 at the scrollU block); the corners
-// are written as cells[vertex + i] and loop.c builds the pointer after radiusX
-// (vertex * 4 + cells); radiusY = baseY + wobble before radiusX keeps radiusX
-// in r7 and lets baseY sit in r2 for the in-place add; i = 0 before half puts
-// i's zero ahead of the negation. Earlier rounds (2026-11-01 to 11-08) settled
-// the blitter struct, half as a real local, the corner struct and sweep's
-// place in the step list.
+// buffer are per-frame locals beside the vertex buffer (strip, corners), so
+// each is spilled and rematerialised from the pool at its use, which sets
+// reload's round robin (frame in r4 and caster in r1 at the scrollU block); the
+// corners are written as corners[vertex + i] and loop.c builds the pointer
+// after radiusX (vertex * 4 + corners); radiusY = baseY + wobble before radiusX
+// keeps radiusX in r7 and lets baseY sit in r2 for the in-place add; i = 0
+// before half puts i's zero ahead of the negation. Earlier rounds (2026-11-01
+// to 11-08) settled the blitter struct, half as a real local, the corner struct
+// and sweep's place in the step list.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -48,7 +48,8 @@ void BattleEffect_StartCanvasLayer(s32 bgControl);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_ProcessPendingGraphicsTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
-s32 BattleEffect_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleEffect_BuildBlitter
+s32 BattleEffect_LoadBlitter(s32 slot,
+                             s32 modeAndFlags); // BattleEffect_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                    s32 timerFrames);              // BattleEffect_TintBattler
 void Func_0815b434(u8 *map, s32 size, s32 scale); // shaded circles
@@ -57,7 +58,7 @@ void Func_0815585c(struct BattleEffectArgument *effect, s32 packed, s32 *screen,
                    s32 *otherPoint);
 void Func_0818caa8(void *cells, s32 x, s32 y, s32 size);
 struct RenderModel *Render_AllocateModelList(s32 count);
-void Render_TransformVertices(const void *corners, void *vertices, s32 count);
+void Render_TransformVertices(const void *cells, void *vertices, s32 count);
 void Render_DrawModelList(struct RenderModel *model);
 void Func_08015160(s32 x, s32 y, s32 z);
 void Func_0801521c(s32 scale);
@@ -65,18 +66,19 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleEffect_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleEffect_SpawnObjects(s32 count, s32 resource,
+                               s32 mode); // SpawnObjects
+void BattleEffect_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
-                               s32 speedLimit, s32 velocityY, s32 percent);
+                                   s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
                                        s32 flags);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 s32 BattleUnit_GetEffectHeightFar(s32 unit);
 void Transform_SetLookAt(s32 *eye, s32 *target);
 
@@ -90,7 +92,7 @@ void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08158ce0(s32 randomMask, u32 shakeRange); // Camera_ApplyShake
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 gravity,
-                                      s32 drag);
+                                          s32 drag);
 void **GetBattleObjectSlotFar(s32 objectId);
 void *Heap_AllocEwram(s32 size);
 void Resource_LoadAndDecompress(s32 resource, void *destination, s32 a, s32 b);
@@ -173,13 +175,13 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   s32 i;
   void *buffer;
   u8 *strip;
-  struct Corner *cells;
+  struct Corner *corners;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleEffect_StartCanvasLayer(1);
-  BattleEffect_LoadBlitter(SLOT_BLITTER,
-                BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  BattleEffect_LoadBlitter(
+      SLOT_BLITTER, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   REG_BLDALPHA = 0x1010;
   blit.draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
@@ -210,8 +212,8 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       Func_081180e8(144);
       work->shakeFrames = 8;
-      BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000, 0x20000,
-                                120);
+      BattleEffect_StartActorMotion(effect->actors[0], 1, 0x20000, 0x40000,
+                                    0x20000, 120);
       Func_0814cd48(effect->actors[0], 7, 5, 0, 20);
       for (i = 0; i != 32; i++) {
         spark = &work->particles[i];
@@ -229,18 +231,21 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
       particle = &work->particles[i];
       if ((u32)particle->variant <= 23) {
         if (particle->variant > 1) {
-          blit.draw(canvas, work->sheet + 0x800 + ((particle->variant / 4) << 11),
-               HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
+          blit.draw(canvas,
+                    work->sheet + 0x800 + ((particle->variant / 4) << 11),
+                    HI(particle->x) - 16, HI(particle->y) - 32, 32, 64);
         }
-        BattleEffectKernels_IntegrateVector2(particle, 60,
-                                         -Data_08199484[effect->variant][FUME_LIFT]);
+        BattleEffectKernels_IntegrateVector2(
+            particle, 60, -Data_08199484[effect->variant][FUME_LIFT]);
       }
       particle->variant++;
     }
 
     buffer = Data_02011000;
+    // The strip mesh held in a per-frame local, as the vertex buffer is.
     strip = Data_02012000;
-    cells = (struct Corner *)gMapCellBuffer;
+    corners = (struct Corner *)gMapCellBuffer;
+    // DEAD: frame never falls below 0; the source keeps the test.
     if (frame >= 0) {
       s32 width;
       s32 step;
@@ -254,7 +259,8 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         arc.head = 988;
       }
       if (frame >= Data_08199484[effect->variant][FUME_TAIL_START]) {
-        arc.tail = (frame - Data_08199484[effect->variant][FUME_TAIL_START]) * 44;
+        arc.tail =
+            (frame - Data_08199484[effect->variant][FUME_TAIL_START]) * 44;
         if (arc.tail > 988) {
           arc.tail = 988;
         }
@@ -262,8 +268,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
 
       // The arc's vertices, two per segment, widening over the first six.
       for (j = 0, step = arc.head - arc.tail, sweep = 0, vertex = 0;
-           j != FUME_SEGMENTS;
-           sweep += step, vertex += 2, j++) {
+           j != FUME_SEGMENTS; sweep += step, vertex += 2, j++) {
         s32 distance = caster.x / 8 - target.x / 8;
         s32 angle = sweep + arc.tail * 33;
         s32 wobble = ((Trig_Sin((frame + j) << 12) << 2) >> 16) * j / 32;
@@ -289,9 +294,10 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
         radiusY = baseY + wobble;
         radiusX = distance + half + wobble;
         for (; i != 2; i++) {
-          cells[vertex + i].x = ((Trig_Cos(angle) * radiusX) >> 16) - distance;
-          cells[vertex + i].y = -((Trig_Sin(angle) * radiusY) >> 16);
-          cells[vertex + i].z = 0;
+          corners[vertex + i].x =
+              ((Trig_Cos(angle) * radiusX) >> 16) - distance;
+          corners[vertex + i].y = -((Trig_Sin(angle) * radiusY) >> 16);
+          corners[vertex + i].z = 0;
           radiusY += thickness;
           radiusX += thickness;
         }
@@ -326,7 +332,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
             SceneTransform_ApplyYaw(0x8000);
           }
           Func_0801521c(0x40000);
-          Render_TransformVertices(cells, buffer, 66);
+          Render_TransformVertices(corners, buffer, 66);
           Render_DrawModelList(model);
 
           // The claw at the arc's end.
@@ -351,7 +357,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
     work->transferPending = 1;
     wait(1);
   }
-  HeapSlot_Release(104);
+  HeapSlot_Release(SLOT_BLITTER);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

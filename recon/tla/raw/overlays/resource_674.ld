@@ -45,7 +45,7 @@ SECTIONS
         "*/games/tla/src/scene/islets/events5.o"(.text)
         "*/games/tla/src/scene/islets/s3684.o"(.text)
         "*/games/tla/src/scene/islets/s3790.o"(.text)
-        "*/resource_674_overlay.o"(.text.x0200b7d8)
+        "*/games/tla/src/scene/islets/s37d8.o"(.text)
         "*/games/tla/src/scene/islets/s3940.o"(.text)
         "*/games/tla/src/scene/islets/s3a5c.o"(.text)
         "*/games/tla/src/scene/islets/s3d0c.o"(.text)

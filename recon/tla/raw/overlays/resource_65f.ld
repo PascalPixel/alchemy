@@ -7,7 +7,7 @@ SECTIONS
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/garoh/s00b8.o"(.text)
         "*/games/tla/src/scene/garoh/layer.o"(.text)
-        "*/resource_65f_overlay.o"(.text.x020082a4)
+        "*/games/tla/src/scene/garoh/s02a4.o"(.text)
         "*/games/tla/src/scene/garoh/s0390.o"(.text)
         "*/games/tla/src/scene/garoh/hide.o"(.text)
         "*/games/tla/src/scene/garoh/scene_tables.o"(.text)

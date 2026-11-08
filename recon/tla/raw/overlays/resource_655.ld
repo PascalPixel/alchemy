@@ -20,7 +20,7 @@ SECTIONS
         "*/games/tla/src/scene/dehkan_plateau/events_n.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s0c64.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s0d78.o"(.text)
-        "*/resource_655_overlay.o"(.text.x02008e9c)
+        "*/games/tla/src/scene/dehkan_plateau/s0e9c.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)
         "*/games/tla/src/field/field_effect/move.o"(.text)
         "*/games/tla/src/scene/dehkan_plateau/s0fc4.o"(.text)

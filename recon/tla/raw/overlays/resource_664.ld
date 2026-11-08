@@ -30,7 +30,7 @@ SECTIONS
         "*/games/tla/src/scene/airs_rock_inside/s160c.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s1690.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s17f4.o"(.text)
-        "*/resource_664_overlay.o"(.text.x02009828)
+        "*/games/tla/src/scene/airs_rock_inside/s1828.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/placements.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/scene_tables.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s2604.o"(.text)

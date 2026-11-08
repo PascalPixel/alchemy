@@ -3,7 +3,7 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/yampi_desert_cave/entry.o"(.text)
-        "*/resource_662_overlay.o"(.text.x02008038)
+        "*/games/tla/src/scene/yampi_desert_cave/s0038.o"(.text)
         "*/games/tla/src/field/map/cellfill.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/s01d4.o"(.text)
         "*/games/tla/src/scene/yampi_desert_cave/s033c.o"(.text)

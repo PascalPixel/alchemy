@@ -9973,7 +9973,7 @@ msgctxt "message"
 msgid "02480"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDjinnEffect"
 msgid "02481"
 msgstr "ヴィーナスの力で きょうりょくないちげき"
 
@@ -12697,7 +12697,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "03161"
 msgstr "あいての にゅうりょくを まっています"
 
-msgctxt "message"
+msgctxt "MsgMysteryMan"
 msgid "03162"
 msgstr "なぞの男"
 
@@ -13351,11 +13351,11 @@ msgctxt "MsgDjinnIsSet"
 msgid "03321"
 msgstr "{argument_ability_name}が {argument_actor_name:230}セットされた!"
 
-msgctxt "message"
+msgctxt "MsgDjinniStillRecovering"
 msgid "03322"
 msgstr "リカバリー中です"
 
-msgctxt "message"
+msgctxt "MsgReadyToSummon"
 msgid "03323"
 msgstr "しょうかん スタンバイじょうたいです"
 
@@ -13397,43 +13397,43 @@ msgctxt "message"
 msgid "03332"
 msgstr "あんたは つよい!!"
 
-msgctxt "message"
+msgctxt "MsgEffectNone"
 msgid "03333"
 msgstr "こうかが ありません"
 
-msgctxt "message"
+msgctxt "MsgEffectCurePoison"
 msgid "03334"
 msgstr "どくの ちりょう"
 
-msgctxt "message"
+msgctxt "MsgRemoveDelusion"
 msgid "03335"
 msgstr "まぼろしを けしさる"
 
-msgctxt "message"
+msgctxt "MsgRemoveStun"
 msgid "03336"
 msgstr "しびれを なおす"
 
-msgctxt "message"
+msgctxt "MsgWakeFromSleep"
 msgid "03337"
 msgstr "ねむりから さます"
 
-msgctxt "message"
+msgctxt "MsgBreakPsynergySeal"
 msgid "03338"
 msgstr "エナジーふうじを やぶる"
 
-msgctxt "message"
+msgctxt "MsgDispelGrimReaper"
 msgid "03339"
 msgstr "しりょうを とりはらう"
 
-msgctxt "message"
+msgctxt "MsgDispelEvilSpirit"
 msgid "03340"
 msgstr "あくりょうを とりはらう"
 
-msgctxt "message"
+msgctxt "MsgEffectDowned"
 msgid "03341"
 msgstr "せんとうふのう"
 
-msgctxt "message"
+msgctxt "MsgSetDjinni"
 msgid "03342"
 msgstr "セットします"
 
@@ -13745,7 +13745,7 @@ msgctxt "MsgKey0d4d"
 msgid "03407"
 msgstr "こわれています"
 
-msgctxt "message"
+msgctxt "MsgNoDjinn"
 msgid "03408"
 msgstr "ジンをもっていません"
 
@@ -13753,7 +13753,7 @@ msgctxt "MsgKey0d4f"
 msgid "03409"
 msgstr "せんとう中はつかえません"
 
-msgctxt "message"
+msgctxt "MsgCannotUseSameDjinniTwice"
 msgid "03410"
 msgstr "同じジンは2かい えらべません"
 
@@ -14017,11 +14017,11 @@ msgctxt "MsgFieldPasswordAccepted"
 msgid "03474"
 msgstr "パスワードOK!"
 
-msgctxt "message"
+msgctxt "MsgFieldStrengthExhausted"
 msgid "03475"
 msgstr "{argument_actor_name:234} 力つきた・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldPartyAnnihilated"
 msgid "03476"
 msgstr "{protagonist_name}たちは ぜんめつした・・・。{end_wait}"
 
@@ -18098,7 +18098,7 @@ msgctxt "message"
 msgid "04449"
 msgstr "ごうりゅう"
 
-msgctxt "message"
+msgctxt "MsgFieldPauseUnavailable"
 msgid "04450"
 msgstr ""
 "ポーズメニューは\n"
@@ -19745,11 +19745,11 @@ msgstr ""
 "どなたも せんとうふのうに\n"
 "おちいってはいないようですぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoShallIRevive"
 msgid "04809"
 msgstr "どなたを ふっかつさせますかな?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgReviving"
 msgid "04810"
 msgstr ""
 "{argument_actor_name:233} せんとうふっきは\n"

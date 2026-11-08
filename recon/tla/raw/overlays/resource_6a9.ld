@@ -18,7 +18,7 @@ SECTIONS
         "*/games/tla/src/scene/caverns/s06a8.o"(.text)
         "*/games/tla/src/scene/caverns/s07ec.o"(.text)
         "*/games/tla/src/scene/caverns/s0848.o"(.text)
-        "*/resource_6a9_overlay.o"(.text.x0200887c)
+        "*/games/tla/src/scene/caverns/s087c.o"(.text)
         "*/games/tla/src/scene/caverns/s0ad0.o"(.text)
         "*/games/tla/src/scene/caverns/s0b64.o"(.text)
         "*/games/tla/src/scene/caverns/s0bf8.o"(.text)

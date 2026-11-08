@@ -37,11 +37,11 @@ Resource_DirectoryTable:
 	resource Data018, Resource_Data018
 	resource IntroLighthousePicture, Title_IntroLighthousePicture
 	resource IntroGullSprites, Title_IntroGullSprites
-	resource , Resource_Data01B
-	resource , Resource_Data01C
-	resource , Resource_Data01D
-	resource , Resource_Data01E
-	resource , Resource_Data01F
+	resource Data01B, Resource_Data01B
+	resource Data01C, Resource_Data01C
+	resource Data01D, Resource_Data01D
+	resource Data01E, Resource_Data01E
+	resource Data01F, Resource_Data01F
 	resource NintendoLogo, Title_NintendoLogo
 	resource CamelotLogo, Title_CamelotLogo
 	resource LogoOnBlack, Title_LogoOnBlackPicture
@@ -130,7 +130,7 @@ Resource_DirectoryTable:
 	resource AerialViewBackdrop, Battle_AerialViewBackdrop
 	resource , Battle_SunsetBackdrop
 	resource , Battle_StarfieldFlareBackdrop
-	resource , Battle_EarthHorizonBackdrop
+	resource EarthHorizonBackdrop, Battle_EarthHorizonBackdrop
 	resource EndingCliffDayPicture, Ending_CliffDayPicture
 	resource EndingCliffSunsetPicture, Ending_CliffSunsetPicture
 	resource EndingVillagersPictureA, Ending_VillagersPictureA
@@ -173,8 +173,8 @@ Resource_DirectoryTable:
 	resource , Summon_ForestCanopyTiles
 	resource , Summon_BronzeAutomatonTiles
 	resource , Summon_MissileTiles
-	resource , Summon_GoldenDragonHeadTiles
-	resource , Summon_GoldenDragonTiles
+	resource GoldenDragonHeadTiles, Summon_GoldenDragonHeadTiles
+	resource GoldenDragonTiles, Summon_GoldenDragonTiles
 	resource , Summon_RobedGoddessTiles
 	resource LeafWarriorTiles, Summon_LeafWarriorTiles
 	resource BellMaidenTiles, Summon_BellMaidenTiles
@@ -185,7 +185,7 @@ Resource_DirectoryTable:
 	resource , Summon_PurpleArmourTiles
 	resource , Summon_WhiteSpikesTiles
 	resource , Summon_GoldenScalesTiles
-	resource , BattleEffect_GlowOrbSetSheet
+	resource GlowOrbSetSheet, BattleEffect_GlowOrbSetSheet
 	resource Data0B0, Resource_Data0B0
 	resource , Resource_Data0B1
 	resource , Resource_Data0B2
@@ -207,21 +207,21 @@ Resource_DirectoryTable:
 	resource Data0C2, Resource_Data0C2
 	resource Data0C3, Resource_Data0C3
 	resource , Resource_Data0C4
-	resource , BattleEffect_PetalSheet
+	resource PetalSheet, BattleEffect_PetalSheet
 	resource , BattleEffect_CrescentRowSheet
 	resource , BattleEffect_RuneCircleSheet
 	resource , Resource_Data0C8
 	resource Data0C9, Resource_Data0C9
-	resource , Resource_Data0CA
+	resource Data0CA, Resource_Data0CA
 	resource Data0CB, Resource_Data0CB
 	resource CloudSwirlSheet, BattleEffect_CloudSwirlSheet
 	resource DustBlobSheet, BattleEffect_DustBlobSheet
 	resource Data0CE, Resource_Data0CE
 	resource Data0CF, Resource_Data0CF
-	resource , Resource_Data0D0
-	resource , BattleEffect_FeatherSheet
+	resource Data0D0, Resource_Data0D0
+	resource FeatherSheet, BattleEffect_FeatherSheet
 	resource Data0D2, Resource_Data0D2
-	resource , Resource_Data0D3
+	resource Data0D3, Resource_Data0D3
 	resource LightBurstSheet, BattleEffect_LightBurstSheet
 	resource StarCrossSheet, BattleEffect_StarCrossSheet
 	resource CornerGlowSheet, BattleEffect_CornerGlowSheet
@@ -244,7 +244,7 @@ Resource_DirectoryTable:
 	resource BladeSheet, BattleEffect_BladeSheet
 	resource ClawSlashSheet, BattleEffect_ClawSlashSheet
 	resource Data0E9, Resource_Data0E9
-	resource , BattleEffect_CrystalBitmapSheet
+	resource CrystalBitmapSheet, BattleEffect_CrystalBitmapSheet
 	resource SmallFlameSheet, BattleEffect_SmallFlameSheet
 	resource CornerRuneASheet, BattleEffect_CornerRuneASheet
 	resource CornerRuneBSheet, BattleEffect_CornerRuneBSheet
@@ -252,7 +252,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data0EF
 	resource , Resource_Data0F0
 	resource , Resource_Data0F1
-	resource , Resource_Data0F2
+	resource Data0F2, Resource_Data0F2
 	resource Data0F3, Resource_Data0F3
 	resource SmokeBandSheet, BattleEffect_SmokeBandSheet
 	resource Data0F5, Resource_Data0F5
@@ -502,7 +502,7 @@ Resource_DirectoryTable:
 	resource Data1E9, Resource_Data1E9
 	resource SparkleFade, FieldEffect_SparkleFade
 	resource StarSparkleFade, FieldEffect_StarSparkleFade
-	resource , FieldEffect_WhitePuff
+	resource WhitePuff, FieldEffect_WhitePuff
 	resource Data1ED, Resource_Data1ED
 	resource ShakeTiles, Resource_Data1EE
 	resource ColouredOrbs, FieldEffect_ColouredOrbs

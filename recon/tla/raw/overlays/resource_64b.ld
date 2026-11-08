@@ -18,7 +18,7 @@ SECTIONS
         "*/games/tla/src/scene/world_map/s0d1c.o"(.text)
         "*/games/tla/src/scene/world_map/tower_calls.o"(.text)
         "*/games/tla/src/scene/world_map/scene_events.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x02008dc4)
+        "*/games/tla/src/scene/world_map/s0dc4.o"(.text)
         "*/games/tla/src/scene/world_map/prepare.o"(.text)
         "*/games/tla/src/scene/world_map/s12bc.o"(.text)
         "*/games/tla/src/scene/world_map/s1c5c.o"(.text)

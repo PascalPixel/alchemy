@@ -28,7 +28,7 @@ SECTIONS
         "*/games/tla/src/scene/staff_credit/s19d4.o"(.text)
         "*/games/tla/src/scene/staff_credit/cycle_b.o"(.text)
         "*/games/tla/src/scene/staff_credit/s1a34.o"(.text)
-        "*/resource_64c_overlay.o"(.text.x02009ad0)
+        "*/games/tla/src/scene/staff_credit/s1ad0.o"(.text)
         "*/games/tla/src/scene/staff_credit/s1be0.o"(.text)
         "*/games/tla/src/scene/staff_credit/s1d90.o"(.text)
         "*/games/tla/src/scene/staff_credit/release.o"(.text)

@@ -15,7 +15,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_aerie/events_b.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/s065c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/blink.o"(.text)
-        "*/resource_6ae_overlay.o"(.text.x02009f10)
+        "*/games/tla/src/scene/mars_lighthouse_aerie/s1f10.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/events_c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/orbit.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/s326c.o"(.text)

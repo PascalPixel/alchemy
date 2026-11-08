@@ -6,7 +6,7 @@ SECTIONS
         "*/games/tla/src/scene/madra_interiors/scene_tables.o"(.text)
         "*/games/tla/src/scene/madra_interiors/s004c.o"(.text)
         "*/games/tla/src/scene/madra_interiors/s01b8.o"(.text)
-        "*/resource_659_overlay.o"(.text.x02008570)
+        "*/games/tla/src/scene/madra_interiors/s0570.o"(.text)
         "*/games/tla/src/scene/madra_interiors/s0624.o"(.text)
         "*/games/tla/src/scene/madra_interiors/prepare.o"(.text)
         "*/games/tla/src/scene/madra_interiors/events.o"(.text)

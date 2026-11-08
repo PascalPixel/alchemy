@@ -1,20 +1,12 @@
-// Draft, differ 8 of 669, skeleton gap 4 (tla-en, 2026-11-01)
-// Registers, stack slots and pool order all match the listing. What is left is
-// sched2's order at three sites, each a tie the listing breaks the other way:
-//  - ring preheader: the listing's str r3, [sp, #20] comes before mov sl, mov
-//    r9, mov r8. Here all four are ready with priority 1 and the lowest LUID
-//    wins, and the spill store cannot have the lower LUID (loop.c hoists it
-//    after them).
-//  - fading ring: the listing runs mov r4, r9; movs r1; str r3, [r4, #4]; lsls
-//    r1; adds r5, r5, r1. Here the 0x4000 chain outranks the store. The same
-//    statements in another order move the reload rotation (differ 20 to 68).
+// Differ 2 of 669 (tla-en, 2026-11-08, -mtune=gba).
+// Registers, stack slots and pool order all match the listing. Under the GBA
+// tune the ring preheader's spill store and the fading ring's store now fall
+// in the listing's order; what is left is sched2's order at one site:
 //  - ember draw: ldrh r1 comes before ldr r6, [sp, #44]; here the reload is
 //    ready a cycle sooner.
-// These look like the K2 model's cheap spill and pool stores, not the source:
-// offset, x and cells locals, operand order, a late model copy and a ringY
-// local all failed. Whether the store cost is wrong is a compiler question for
-// Pascal (K2). No device was added: a barrier cannot interleave the fading
-// ring's movs, str and lsls, so it cannot reach differ 0.
+// Under the older tune the other two sites resisted offset, x and cells
+// locals, operand order, a late model copy and a ringY local; no device was
+// added.
 // What closed the gap from 364, for anyone reopening this: a one-constant
 // buffer local (rematerialized from the pool at each use), the Data_02011000
 // and gData_02015000 fixed addresses, s32 from BattleEffect_LoadBlitter and

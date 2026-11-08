@@ -1,4 +1,5 @@
-// Differ 2 of 861 (tla-en, 2026-11-07).
+// Differ 2 of 861 (tla-en, 2026-11-08, -mtune=gba): sched2 order only; the
+// reload of [sp, #36] issues after the multiply here, before it natively.
 // 2026-11-07: only one swap is left, after the speed update: the listing
 // loads backgroundX before movs r3, #52; sched2 ranks the movs higher
 // (priority 6, through muls and the sign branch, against the load's 5).

@@ -1,4 +1,4 @@
-// Differ 52 of 1146 (tla-en, 2026-11-07).
+// Differ 52 of 1146 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07: the last arm's palette copy (mode 0 and the rest) through an
 // inline (FAKEMATCH wrapper, as f13e7e0.c's) settles its ldr r3 before
 // lsls r0, #19 (54 to 52); the other four copies stay direct (through it, no

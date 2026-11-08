@@ -1,4 +1,4 @@
-// Near miss, differ 33 of 99 (tla-en, 2026-11-06), with the first cell's index through a
+// Differ 33 of 99 (tla-en, 2026-11-08, -mtune=gba), with the first cell's index through a
 // 64-bit temporary (a tagged device, below; plain, 67). Left: the pool order at the fill call (the
 // native loads the routine's address first), and in the ring's first block row and column in r0, r2
 // for the native r2, r0, so the second block's column = row copy (adds r0, r2, #0) is gone and its

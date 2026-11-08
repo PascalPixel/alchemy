@@ -1,12 +1,10 @@
-// Near miss, differ 4 of 300 (tla-en, 2026-10-31): only the register that
+// Differ 4 of 300 (tla-en, 2026-11-08, -mtune=gba), with no device: the empty
+// asm after the sprite load is no longer needed. Left: only the register that
 // carries the rail loop's starting count of 127 into fp (built in r0, the
 // native r1), reload's round-robin choice of spill register; every other
 // instruction matches. Script command 0x1c, a sibling of Actor_MoveByKeys
 // that moves an object along the nearest rail point within 32 pixels of the
-// direction pad's step; it copies positions as in Func_08025698. The empty
-// asm after the sprite load keeps its spill store ahead of RAIL_WORK's
-// address, as the native orders them: without it sched2 ranks the address
-// chain first (priority 24 against 23). Measured: the spilled locals take
+// direction pad's step; it copies positions as in Func_08025698. Measured: the spilled locals take
 // their stack slots in reverse declaration order (declared in code order,
 // differ 66); the rail loop counts up (counting down, loop.c keeps
 // IwramMulQ16 in fp and spills the count, differ 128 then, 110 now); the
@@ -106,9 +104,6 @@ s32 Func_080292fc(struct Actor *object) {
   struct KeyMoveWork *work;
 
   sprite = object->animation;
-  /* FAKEMATCH(barrier): an empty asm after the sprite load; without it, 6
-   * of 300 instructions differ in tla-en. */
-  asm("");
   rail = RAIL_WORK;
   speed = 0x10000;
   collisionFlags = 0;

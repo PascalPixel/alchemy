@@ -1,3 +1,4 @@
+// Differ 10 of 196 (tla-en, 2026-11-08, -mtune=gba).
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
 // 10 of 196 in tla-en. First difference: the native issues `sub sp, #8` earlier
 // (row 12) than this does (row 22).

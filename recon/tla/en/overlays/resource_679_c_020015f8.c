@@ -1,4 +1,4 @@
-// Differ 29 of 189 (tla-en, 2026-11-06), allocation only: i declared first (29), z as
+// Differ 29 of 189 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-06), allocation only: i declared first (29), z as
 // z - viewY - viewZ (157), attr before kind (31); direct gData_02002aa0 (29), view
 // without its pointer (57), permuter 5 minutes (35).
 // Draft, differ 29 of 189 (tla-en, 2026-11-05). Older notes below may predate this figure.
@@ -98,9 +98,8 @@ void Func_020015f8(void) {
       continue;
     if ((u32)(y + 39) > 286)
       continue;
-    /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-     * order around it; as the plain statement, 31 of 189 instructions differ
-     * in tla-en. */
+    // A once-only block: its end holds the order around the statement (31 of 189
+    // without it).
     do {
       left &= 0x1ff;
     } while (0);

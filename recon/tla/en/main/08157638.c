@@ -1,7 +1,7 @@
-// Measured 2026-11-05 (tla-en): differ 2 of 415. Left: one row: a multiply the
-// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
-// too high (its cost of 4), so the constant or the multiply comes ahead of
-// independent rows (the stack argument's store after the multiply).
+// Differ 4 of 415 (tla-en, 2026-11-08, -mtune=gba); 2 under the older tune.
+// Left: one row: the Djinn's y multiply (Trig_Cos by the radius), which the
+// native issues after the first stack argument's store and alchemy-gcc right
+// after the call; operand order and a radius local do not move it.
 
 // Draft of BattleEffect_RunMercury, effect kind 281: the Mercury Djinn's flames.
 

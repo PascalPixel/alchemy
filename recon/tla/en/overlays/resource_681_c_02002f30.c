@@ -1,5 +1,8 @@
-// Matches: differ 0 of 1961 (tla-ja, 2026-11-07), instructions compared with
-// relocations ignored; alchemy-devtools diff refuses the .4byte scaffold, so
+// Matches (tla-ja, 2026-11-08, -mtune=gba): its 4904 bytes equal the tla-ja
+// overlay object's but for bl targets and relocated pool words. A plain
+// `alchemy-devtools diff` compares it with tla-en's later revision (differ 151
+// of 1972), which is not this function. Earlier: differ 0 of 1961 (tla-ja,
+// 2026-11-07), instructions compared with relocations ignored; alchemy-devtools diff refuses the .4byte scaffold, so
 // this was measured against the overlay object's bytes disassembled as Thumb.
 // The Japanese release's own Func_02002f30, the room entry for the five Gaia
 // Rock rooms (games/tla/src/scene/gaia_rock_inside/s2f30.c is the later

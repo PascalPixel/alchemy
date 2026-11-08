@@ -1,4 +1,4 @@
-// Differ 41 of 4580 (tla-en, 2026-11-07). Measure 081843fc,081848ec together.
+// Differ 41 of 4580 (tla-en, 2026-11-08, -mtune=gba). Measure 081843fc,081848ec together.
 // 2026-11-07, 61 to 41: the second object loop and the frame-450 swap index a
 // set-once cells (cells + i * 1024) instead of stepping it, so loop.c reduces a
 // giv whose start it emits after the hoisted IwramCopyWords: the pool order and
@@ -966,7 +966,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectArgument *effect) {
             p->y = Data_08199880[n] << 3;
             p->z = a << 8;
           }
-          /* FAKEMATCH(barrier): idx held through an empty asm so off + idx is rebuilt; as the plain sum, 3380 of 4580 instructions differ in tla-en. */
+          /* FAKEMATCH(barrier): idx held through an empty asm so off + idx is rebuilt; as the plain sum, 3374 of 4580 instructions differ in tla-en. */
           __asm__("" : "=r"(idx) : "0"(idx));
           p->velocityY = Data_081998f2[idx + off];
           p->velocityZ = Data_0819995e[idx + off];

@@ -1,4 +1,4 @@
-// Measured 2026-11-05 (tla-en): differ 2 of 2781, register-normalized 2. Frame
+// Differ 2 of 2781 (tla-en, 2026-11-08, -mtune=gba), the same row as before. Frame
 // 164 and every stack slot as in the listing. Pools are not yet checked against
 // the listing. The draft holds one barrier and one temporary; both are tagged.
 // What is left, one row out of place: the third shock's clamp. The listing has

@@ -1,4 +1,4 @@
-// Differ 50 of 568 (tla-en, 2026-11-07), with one tagged barrier.
+// Differ 50 of 568 (tla-en, 2026-11-08, -mtune=gba), with one tagged barrier.
 // Sixth round, 7 November: model->shade = 0 after model->texture (52 -> 50).
 // Measured, none better: the asm before the scale call (58), after it or after
 // the integration (54), after Func_08015160 (54); splash set before the splash

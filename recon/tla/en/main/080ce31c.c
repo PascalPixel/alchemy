@@ -1,4 +1,5 @@
-// Draft, differ 20 of 146 (40 with fallback declared before selected): picks
+// Differ 20 of 146 (tla-en, 2026-11-08, -mtune=gba; 40 with fallback declared
+// before selected): picks
 // the Psynergy event (kind 5) for kind in front of the controlled owner: the
 // first facing match, else the nearest of the area events (target | 0x100),
 // else 0x200 for a catch-all, else -1. Rewritten in
@@ -6,7 +7,9 @@
 // through a goto). Left: the native builds the shared -1 in r0 after storing
 // special, and loads each control word into r1; this builds -1 in r3 before
 // that store and loads the word into r0. Tried: flags declared elsewhere or
-// as u32 (no change).
+// as u32, selected before nearby (no change); the -1s assigned after
+// the calls (46), special read late (37), the loop test as an assignment (35)
+// or an if around for (;;) (61), control in a local (139).
 #include "types.h"
 #include "ram_buffer.h"
 #include "actor.h"

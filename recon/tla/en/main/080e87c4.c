@@ -1,5 +1,5 @@
-// Differ 24 of 226 (tla-en, 2026-11-06). Untagged empty asms, one-pass blocks
-// and searched locals each need an S2 tag on adoption; 5 min of permute: no gain.
+// Differ 24 of 226 (tla-en, 2026-11-08, -mtune=gba); the barrier tagged and the
+// block and constant local noted, measured then. 2026-11-06: 5 min of permute: no gain.
 // Near miss, differ 36 of 226 (2026-10-18, written from the listing; ☀️ has
 // no twin): the burst of 64 sparkles Func_080e807c's effect ends with. The
 // resource is directory entry 0x1ea, FieldEffect_SparkleFade: adoption names it
@@ -82,15 +82,16 @@ void Func_080e87c4(void) {
   event->unkcae = 0;
   Task_Remove(Func_080e807c);
   wait(1);
+  // A once-only block: its end holds the order around it (as plain
+  // statements, 26 of 226 differ in tla-en).
   do {
   Sound_PlayFar(167);
   Iwram_FillWords((void *)0x06002000, 0x500, 0xf000f000);
   Window_LoadGraphics();
   } while (0);
   {
-    /* FAKEMATCH: ⚓️ builds the control word with a shift; stored as a
-     * halfword constant it loads from the pool, which also places the pool
-     * before the first loop (differ 68). */
+    // A local that holds one constant: the control word is built with a
+    // shift; stored as a constant it loads from the pool (60 of 226 differ).
     s32 control = 0x400;
 
     REG_BG0CNT = control;
@@ -131,9 +132,9 @@ void Func_080e87c4(void) {
     for (i = 63; i >= 0; i--, sprite++, mote++) {
       if (mote->timer >= 0) {
         sprite->oam.index = tile + (mote->timer & 3) * 2;
-        /* FAKEMATCH: ⚓️ loads the index masks inside the loop; without the
-         * barrier loop.c hoists 0xfffffc00 into r9 (differ 70; a goto loop
-         * also keeps it, 36). */
+        /* FAKEMATCH(barrier): the index masks loaded inside the loop, where
+         * loop.c would hoist 0xfffffc00 into r9; as no asm, 58 of 226
+         * instructions differ in tla-en. */
         asm("");
         Func_080eb298(sprite, mote);
         BattleEffect_IntegrateVector3(&mote->x, 62, 0x8000);

@@ -1,4 +1,4 @@
-// Differ 26 of 126 (tla-en, 2026-11-07).
+// Differ 26 of 126 (tla-en, 2026-11-08, -mtune=gba).
 // 7 November: written as overlay 674's Func_02003684 (box bytes a and b as locals,
 // fromX narrowed in place, the step as (i + 1) * 65536): 28 to 26, allocation left.
 // Before: differ 28 of 126 (tla-en, 2026-11-06). Left: scheduling of the map reads and

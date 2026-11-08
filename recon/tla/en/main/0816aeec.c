@@ -1,4 +1,6 @@
-// Differ 94 of 902 (tla-en, 2026-11-07).
+// Differ 94 of 902 (tla-en, 2026-11-08, -mtune=gba). The palette copy is a
+// plain Iwram_CopyWords call again (the forwarding wrapper gains nothing under
+// the GBA tune); the pin on q is now tagged.
 // 2026-11-07, twelfth pass, 140 to 94, no new device. The vertex from
 // (row * 16 + column) * 4 (a vertex from c or q is not reduced, q being a
 // hard register; row * 16 is hoisted, merged with the pinned copy, and the
@@ -340,12 +342,6 @@ extern const u8 gData_08199210[]; // its corners
 #define WATER_COLUMNS 16
 #define WATER_ROWS 8
 
-static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 276 of 902 instructions differ in tla-en. */
-  return Iwram_CopyWords(destination, source, size);
-}
-
 // The body of Dreamtide (mode 0) and Watery Grave (mode 1): a sheet of
 // water (a 16 by 8 grid of vertices, its mesh built here) rolls in under
 // the targets in waves while the camera turns; Dreamtide strikes the first
@@ -406,7 +402,7 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    CopyWords((void *)BG_PLTT,
+    Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_CrystalSheet), 128);
   }
 
@@ -418,7 +414,8 @@ void Func_0816aeec(struct BattleEffectArgument *effect, s32 mode) {
     s32 x;
     s8 *cells = (s8 *)gMapCellBuffer;
 
-    // Device (needs FAKEMATCH(pin) on adoption): Q pinned to r4.
+    /* FAKEMATCH(pin): q held in r4; as a plain local, 955 of 902 instructions
+     * differ in tla-en. */
     register s32 q asm("r4");
     q = v;
     i = v;

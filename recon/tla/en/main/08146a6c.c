@@ -1,5 +1,8 @@
-// Differ 4 of 410 (tla-en, 2026-11-07).
-// 2026-11-07: sched2 ranks 0x199a's lsls 102 against 101 for the frame and
+// Differ 6 of 410 (tla-en, 2026-11-08, -mtune=gba), from 4 under the older tune: with multiplies at 5 the
+// 0x199a chain now also runs ahead of the frame and variant loads and the store of the ring
+// pointer (both loads and the str r1, [sp, #12] after the muls). Tried: the angle as
+// ((variant - frame) << 11) + j * 0x199a (10), * 2048 or 0x199a * j (6).
+// 2026-11-07, at 4: sched2 ranks 0x199a's lsls 102 against 101 for the frame and
 // variant loads (muls costs 4), so it goes ahead of them; operand order, casts,
 // u16/unsigned constants, a local for the constant or j * 0x199a, j % 2,
 // ring[j + i * 10] all stay 4; a phase local gives 42; permute 8 minutes, 4.

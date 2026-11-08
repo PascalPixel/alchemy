@@ -1,5 +1,8 @@
-// Draft, differ 8 of 112 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Measured under -Os, 5 November 2026: differ 8 (tla-en); notes below may predate it.
+// Differ 8 of 112 (tla-en, 2026-11-08, -mtune=gba), under -Os. Registers agree;
+// left is the order of the parts[i] store, i * 4, and the two zeros around the
+// sprite copy (the store after part->animation, or chained with the create,
+// gives the same 8; after the sprite bytes, 97). The allocation notes below
+// predate -Os.
 // Draft, differ 26 of 112, skeleton gap 3 (tla-en, 2026-11-01)
 // Builds four parts around the watched object of an object whose update is
 // Func_020015e4, each copying the first part's sprite and position and taking

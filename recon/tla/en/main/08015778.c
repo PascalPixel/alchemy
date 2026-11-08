@@ -1,4 +1,4 @@
-// Differ 2 of 82 (tla-en, 2026-11-07).
+// Differ 2 of 82 (tla-en, 2026-11-08, -mtune=gba); without the barrier, 4.
 // 2026-11-07: depth read before the projection's address and y kept in its own
 // local (6 to 2 with the operand barrier; plain, 4: CSE merges the view's two
 // sp copies). Left: sched2 ties adds r7, r1 with the transform's literal; in

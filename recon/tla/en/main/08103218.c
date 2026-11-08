@@ -1,4 +1,4 @@
-// Differ 20 of 906 (tla-en, 2026-11-07).
+// Differ 20 of 906 (tla-en, 2026-11-08, -mtune=gba); both tags measured again, unchanged.
 // 2026-11-07: the closing copy's r0 pin became a temporary (same 20); the rest
 // is the djinn tile loop, where GCSE's copy of i << 24 takes r3 beside the
 // native's r6. Measured 2026-10-26 under the Makefile's options

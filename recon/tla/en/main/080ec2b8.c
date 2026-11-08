@@ -1,3 +1,4 @@
+// Differ 2 of 216 (tla-en, 2026-11-08, -mtune=gba); the same row as below.
 // Near miss, differ 2 of 216 (tla-en, 2026-11-06): plain C, no devices; only
 // the work's address loads before the two calls here, after them in the native
 // (loading it after the calls by assignment is differ 62: work leaves r5).

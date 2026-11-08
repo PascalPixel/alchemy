@@ -1,4 +1,4 @@
-// Near miss, differ 2 of 1300 (tla-en, 2026-11-05), untagged yet: the volatile reads, the one-pass block round the arrival and the clobber settle the rest; only movs r4, #0 falls before the arrival store where the native has it after. Older notes follow.
+// Differ 2 of 1300 (tla-en, 2026-11-08, -mtune=gba), devices untagged yet (without the clobber, 23; without the one-pass block, 87): the volatile reads, the one-pass block round the arrival and the clobber settle the rest; only movs r4, #0 falls before the arrival store where the native has it after. Older notes follow.
 // Draft, differ 183 of 1300, skeleton gap 41 (tla-en, 2026-11-01)
 // FieldSequence_Run, this game's form of ☀️'s FieldSequence_Run
 // (games/tbs/src/field/field_sequence/run.c): runs the current scene until the

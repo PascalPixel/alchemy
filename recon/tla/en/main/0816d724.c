@@ -1,4 +1,4 @@
-// Differ 4 of 589 (tla-en, 2026-11-07).
+// Differ 4 of 589 (tla-en, 2026-11-08, -mtune=gba); the same rows as on 2026-11-07.
 // 16 to 4: the side test as a conditional whose arms store their flag (each
 // arm then keeps its own value and test, as the native does); left: the
 // drain loop's pointer built after &screen (permute 7 minutes: no change).

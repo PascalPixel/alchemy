@@ -1,4 +1,5 @@
-// Differ 2 of 491 (tla-en, 2026-11-07).
+// Differ 2 of 491 (tla-en, 2026-11-08, -mtune=gba): sched2 order only; the
+// target's reload issues after radius + 80 here, before it natively.
 // 2026-11-07: the map cell clear through an inline (FAKEMATCH wrapper, as
 // f13e7e0.c's) loads the buffer before the size (4 to 2). Left: the target's
 // reload before radius + 80, a luid tie in sched2.

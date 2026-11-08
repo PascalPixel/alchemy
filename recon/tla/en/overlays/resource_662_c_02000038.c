@@ -1,4 +1,6 @@
-// Differ 49 of 160 (tla-en, 2026-11-07).
+// Differ 49 of 160 (tla-en, 2026-11-08, -mtune=gba). Reordered map reads under
+// -mtune=gba: x z ax az bx bz 84, x ax z az bx bz 68, bx x z ax az bz 61, bx x ax
+// z bz az 55, bx bz x z ax az 59; this order is still best.
 // 2026-11-07: kind as u32 stepped through u16 casts (kind = (u16)i; kind = (u16)(kind + 1); i = (s16)kind) puts
 // the search's u16 view in r2 before i's asrs, as native; the loop now matches. Left: i = 0 before sprite fixes the
 // prologue but moves the 0x10000 reload to r1 (55); the tail's native order x, z, ax, az, bx, bz gets the constants

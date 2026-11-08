@@ -1,4 +1,4 @@
-// Differ 12 of 238 (tla-en, 2026-11-07).
+// Differ 12 of 238 (tla-en, 2026-11-08, -mtune=gba): order only.
 // 2026-11-07: the closing replaced-item test is plain C (its temporary and empty asm gave
 // nothing); the two empty asms around the stat copies stay (14 and 16 without). Left: order.
 // Near miss, differ 12 of 238 (tla-en, 2026-11-05), with untagged empty asms, one-pass
@@ -107,8 +107,9 @@ void Func_081093a4(s32 window, s32 unitId, s32 itemId) {
   with[1] = unit->def;
   with[2] = unit->agi;
   with[3] = unit->luck;
-  /* FAKEMATCH: the native stores luck before it copies the saved entry back
-   * (differ 32 without the barrier, 28 with). */
+  /* FAKEMATCH(barrier): the native stores luck before it copies the saved
+   * entry back; as no asm, 16 of 238 instructions differ in tla-en (14 without
+   * the untagged one below, 18 without both). */
   __asm__("");
   unit->inventory[slot] = saved;
   Unit_CalculateFar(unitId);

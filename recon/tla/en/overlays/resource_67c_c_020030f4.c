@@ -1,4 +1,5 @@
-// Differ 2 of 184 (tla-en, 2026-11-07).
+// Differ 2 of 184 (tla-en, 2026-11-08, -mtune=gba): sched2 order only;
+// mov ip, r4 issues before the load of [r5, #4] here, after it natively.
 // The scale and the +64 in one statement (scaled + 64) and column set after screenY &= 255
 // (19 to 2). Left: the copy of base to ip goes one slot before the height load (sched2).
 // Draws Aqua Rock's thirty-two water spouts: for each active one a top sprite

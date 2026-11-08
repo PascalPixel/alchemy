@@ -1,4 +1,4 @@
-// Differ 44 of 1246 (tla-en, 2026-11-07).
+// Differ 44 of 1246 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-07).
 // 2026-11-07: the sheep's 127 mask as a block local (`u32 mask = 127`, both
 // velocities) breaks the sleep spawn's inheritance of r6: sp+8 is reloaded into
 // r0 as the listing (83 to 44). Left: the flight's x in r0 for r3, the sleep

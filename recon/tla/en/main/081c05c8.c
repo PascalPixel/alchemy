@@ -1,3 +1,4 @@
+// Measured (tla-en, 2026-11-08, -mtune=gba): differ 20 (listing 11, draft 15); still blocked as below.
 // Blocked, 5 November 2026: the cut-off head of a work copy of the song start, as
 // ☀️'s m4aSongNumStart (games/tbs/src/sound/audio.c): the copy stops after the
 // player slot's offset and runs straight into the ARM 32x32 high multiply's Thumb

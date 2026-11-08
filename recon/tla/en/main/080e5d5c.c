@@ -1,4 +1,5 @@
-// Differ 30 of 639 (tla-en, 2026-11-06): allocation only (lift r4/r0, the 1 for j++,
+// Differ 30 of 639 (tla-en, 2026-11-08, -mtune=gba); the pins tagged, measured then.
+// 2026-11-06: allocation only (lift r4/r0, the 1 for j++,
 // one fused add); a 5-minute permute reached 28 only by changing a signature.
 // Also measured (2026-11-06, second pass): speed unpinned with its 0x28000 added
 // as its own statement (speed += 0x28000) gives the native's copy-then-add in
@@ -141,10 +142,14 @@ void Func_080e5d5c(void) {
   s32 glowEntry;
   s32 inReach;
   s32 lift;
+  /* FAKEMATCH(pin): the glow tile held in r9; as a plain local, 90 of 639
+   * instructions differ in tla-en. */
   register s32 glowTile asm("r9");
   s32 spot;
   s32 size = 0x800;
   s32 rise;
+  /* FAKEMATCH(pin): the speed held in r6; as a plain local, 43 of 639
+   * instructions differ in tla-en. */
   register s32 speed asm("r6");
   s32 angle;
   s32 frame;

@@ -1,3 +1,5 @@
+// Differ 10 of 549 (tla-en, 2026-11-08, -mtune=gba); the same root. column = 0 only in the side-0 arm 31, the
+// side-0 arm dropped 470; permuter 6 minutes, nothing better.
 // Differ 10 of 549 (tla-en, 2026-11-07). Left: one root: gcse copies the side
 // (load in r0, copy in r3 for the first draws) where the native keeps one r0;
 // column = 0 set before the side test also makes the test a beq over the

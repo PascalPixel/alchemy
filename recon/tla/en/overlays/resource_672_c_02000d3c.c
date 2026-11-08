@@ -1,4 +1,4 @@
-// Differ 6 of 116 (tla-en, 2026-11-07).
+// Differ 6 of 116 (tla-en, 2026-11-08, -mtune=gba).
 // 7 November (permuter): alpha before blend, and fade reused for cue 298 after the loop,
 // which makes fade a global pseudo in r0 as in the native (16 to 6). Left: the division's
 // copy of next ties to fade in r0 where the native gives it r3.

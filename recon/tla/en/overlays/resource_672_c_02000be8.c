@@ -1,9 +1,13 @@
-// Differ 16 of 145 (tla-en, 2026-11-07).
+// Differ 14 of 145 (tla-en, 2026-11-08, -mtune=gba).
+// 8 November: cue 298 as a plain constant (fade no longer reused for it) gives 16 to 14;
+// the sink loop now matches. Left: the rise loop's step + 1 in r0 and its quotient in r1, the
+// native r1 and r0. No gain: the sink loop's forms in the rise loop (14, 23), ++step or step++
+// first (23), step++ after the blend (14), the locals' order (14).
 // 7 November (permuter): a dead first division in the sink loop (FAKEMATCH dead)
 // puts the sink loop's step + 1 in r3 as the native (20 to 16). Left: in both loops
 // the division's copy ties to fade in r0 (native r3 and r2; sink fade r1).
-// 7 November: fade reused for cue 298 after the loops makes it a global pseudo
-// (24 to 20), as in Func_02000d3c. Left: in both loops the division's copy of
+// 7 November, under the older tune (undone 8 November): fade reused for cue 298 after the
+// loops made it a global pseudo (24 to 20), as in Func_02000d3c. Left: in both loops the division's copy of
 // step + 1 ties to fade (r0) where the native gives it r3 (rise) and r2 (sink).
 // Before: differ 24 of 145 (tla-en, 2026-11-06). The sink loop now builds step + 1 in
 // blend before dividing, which gives the listing its copy (29 to 24); doing the
@@ -105,7 +109,7 @@ rise:
   sink:
     if (i >= 33 && i < 96) {
       /* FAKEMATCH(dead): fade is first set from step + 1 directly, and then again
-       * through blend; as the second alone, 20 of 145 instructions differ in tla-en. */
+       * through blend; as the second alone, 24 of 145 instructions differ in tla-en. */
       fade = (step + 1) / 4;
       blend = step + 1;
       fade = blend / 4;
@@ -122,9 +126,7 @@ rise:
       goto sink;
   }
   Actor_SetSpritePriority(gMainRoutineWork.currentOwner, 1);
-  // fade is reused for the cue, as in Func_02000d3c; with its own constant 24.
-  fade = 298;
-  Func_02001f10(fade);
+  Func_02001f10(298);
   wait(1);
   Func_02001f10(125);
   FieldEvent_Wait(20);

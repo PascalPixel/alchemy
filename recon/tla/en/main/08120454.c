@@ -1,4 +1,5 @@
-// Differ 4 of 3451 (tla-en, 2026-11-07).
+// Differ 6 of 3451 (tla-en, 2026-11-08, -mtune=gba): one block after a call:
+// the native issues two loads and the multiply later than here.
 // 2026-11-07: the empty asm before the effect 53/83 action scan is gone (same 4); left the
 // one multiply sched2 issues a row early, as below.
 // Near miss, differ 4 of 3451 (tla-en, 2026-11-05), with untagged empty asms, one-pass

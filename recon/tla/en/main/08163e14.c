@@ -1,7 +1,9 @@
-// Measured 2026-11-05 (tla-en): differ 2 of 699. Left: one row: a multiply the
-// native issues later than alchemy-gcc does: sched2 ranks the chain into muls
-// too high (its cost of 4), so the constant or the multiply comes ahead of
-// independent rows (movs r3, #58 after the loads).
+// Differ 4 of 699 (tla-en, 2026-11-08, -mtune=gba). Left: one site, the
+// velocity.x * 58 multiply (movs r3, #58; muls) issued ahead of the four
+// focus and velocity loads, where the native issues it after them; under the
+// GBA tune (multiply cost 5) sched2 still ranks it first; 2 of 699 on
+// 2026-11-05. 58 * velocity.x, the focus adds swapped, the y step
+// first or a once-only block around the x step measured no better (4 to 69).
 
 // Draft, differ 68 of 699: Func_08163e14, unused (no handler, summon case or
 // call reaches it), a second copy of The Broken Seal's

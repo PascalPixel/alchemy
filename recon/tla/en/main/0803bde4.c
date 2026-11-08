@@ -1,4 +1,4 @@
-// Differ 2 of 292 (tla-en, 2026-11-07).
+// Differ 2 of 292 (tla-en, 2026-11-08, -mtune=gba); the same row as on 2026-11-07.
 // 2026-11-07: measured 4 (the call's argument copies ran ahead of the y
 // load); a once-only block around the y store (permuter) gives 2 with plain
 // sprite->y. Left: mov r0, r8 lands after the index store, where the native

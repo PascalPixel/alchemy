@@ -1,3 +1,4 @@
+// Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba): as overlay 6ab's twin.
 // Draft, differ 22 (tla-en, 2026-11-05). Func_020029c8 of overlay 6aa.
 // Overlay 6ab's Func_020024d4 with this overlay's symbols; see that draft.
 #include "types.h"

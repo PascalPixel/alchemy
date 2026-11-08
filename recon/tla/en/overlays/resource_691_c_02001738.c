@@ -1,4 +1,6 @@
-// Near miss, differ 8 of 294 (tla-en, 2026-11-06): one scheduling choice in the
+// Differ 8 of 294 (tla-en, 2026-11-08, -mtune=gba). Tried 2026-11-08: sprite set before
+// the parts[i] store (38), the first byte read into a local first (8 or 233).
+// 2026-11-06: one scheduling choice in the
 // loop. The native moves `str r0, [r7, r5]` (parts[i] = part) past the sprite
 // bytes' first[16] load, sprite[16] store and sprite[17] load; here it stays
 // ahead of them, held by the char alias. Through a struct (a vramBlock byte

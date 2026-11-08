@@ -1,28 +1,16 @@
-// Differ 2 of 274 (tla-en, 2026-11-07).
-// 2026-11-07: only site 2 remains (ldr r7 of point before the str of the
-// d3c address); for-init, do-while, event->points, barriers and the
-// permuter (25,681 candidates) leave it; an empty asm costs 36.
-// Control flow, types, allocation and the frame all match; only sched2's order
-// differs, at two kinds of site, and neither has moved under reshaping.
-// 1. The three later `(field & 0xfff0) + 8` reads: the listing issues the
-//    mask's first `movs` before `ldrh`. Here the load and the mask tie at
-//    priority 13 and the load wins: -mthumb-slow-loads exempts it from its wait
-//    after a store because the store back has the same address (arm.c,
-//    thumb_load_stored_back_p). The native waits a cycle there, so this is that
-//    measured exception, not source. Tried: an int temporary (extended load,
-//    hoists d3e to d42), operands swapped, s16 fields with (u16) casts, empty
-//    asm before each read, volatile fields; none moves it. A device cannot give
-//    `movs; ldrh; lsls; adds`, as the wait is the only thing that yields it.
-// 2. The end of the preheader: the listing puts the store of the owner's layer
-//    address before `movs r2, #32` and the load of point later still, though
-//    both outrank that store here (the spill-store under-costing seen in other
-//    drafts). Tried: point set in the for's init, at its declaration, i first;
-//    do-while; position through a pointer.
+// Differ 2 of 274 (tla-en, 2026-11-08, -mtune=gba).
+// One sched2 order left at the end of the preheader: the listing stores the
+// spilled d3c address (str r3, [sp, #12]) before `ldr r7, [sp, #24]`; here the
+// load comes first. 2026-11-08 under -mtune=gba: point set before the header
+// stores, at its declaration or in the for (2 to 4, or unchanged), i as s32
+// (4), the 0x1b34 store after the -1 stores (26). Before, on 2026-11-07: for-init,
+// do-while, event->points, barriers and the permuter (25,681 candidates) left
+// it; an empty asm cost 36.
 // Closed: pool -1 comes from the s16 pointer, movs -1 and 0xffff from the
 // struct's fields; `point` is stepped after work's byte, and the second
 // coordinate goes through its own cursor set after the first store. A hand
-// index beside count breaks i's giv.
-// Whether the exception should change is a compiler question: out of scope.
+// index beside count breaks i's giv. The three `(field & 0xfff0) + 8` reads
+// match under -mtune=gba.
 //
 // Looks at 21 map cells around the effect owner, at the tile offsets
 // of Data_080f0f64 (signed x, z byte pairs), on the owner's layer. Each cell

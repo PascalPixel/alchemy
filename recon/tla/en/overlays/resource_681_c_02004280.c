@@ -1,4 +1,6 @@
-// Draft, differ 17 of 229 (tla-en, 2026-11-05). Older notes below may predate this figure.
+// Differ 17 of 229 (tla-en, 2026-11-08, -mtune=gba): besides the orders below,
+// Data_0202de00 is kept in r5 across the copy where the native loads it from the
+// pool for each call. Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 31 (tla-en); notes below may predate it.
 // Draft, differ 49 of 229: Gaia Rock's entry setup. In the first room (scene
 // 0xb1) from entrances up to 4 it hides the leader's sprite layer, sets the

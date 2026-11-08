@@ -1,4 +1,4 @@
-// Differ 6 of 1647 (tla-en, 2026-11-07).
+// Differ 6 of 1647 (tla-en, 2026-11-08, -mtune=gba); the same rows as on 2026-11-07.
 // Differ 8 of 1748 in tla-de, tla-fr, tla-es and tla-it at their own addresses
 // (0804a984, 0804a9a0, 0804a994, 0804a96c; 2026-11-07): the same loop-head
 // pairs as English. The four European editions share one image that asks the
@@ -227,8 +227,8 @@ s32 Func_0804a85c(s32 selection, s32 mode, u32 spread, u32 kind) {
    * instructions differ in tla-en (937 with the pin). */
   /* FAKEMATCH(pin): the condition window in r9 (r10 in the European editions),
    * where the native keeps it; as an ordinary local its NULL default's constant note halves its priority,
-   * it is spilled and 496 of 1647 instructions differ in tla-en (36 with the
-   * pin). */
+   * it is spilled and 494 of 1647 instructions differ in tla-en (6 with the
+   * pin; 2026-11-08). */
   register struct TargetWindow *conditionWindow asm(CONDITION_WINDOW_REGISTER);
   s32 targetIndex;
   s32 targetCount;

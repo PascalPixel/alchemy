@@ -1,4 +1,4 @@
-// Differ 2 of 1676 (tla-en, 2026-11-07).
+// Differ 2 of 1676 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07: 14 to 2. The CSE stops are now a never-true test with two jumps
 // to one label (FAKEMATCH dead, below) in place of the one-pass blocks: the
 // label ends CSE's block, CSE folds both jumps, and no note reaches sched2. One

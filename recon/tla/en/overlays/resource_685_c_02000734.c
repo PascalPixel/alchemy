@@ -1,8 +1,9 @@
-// Draft, differ 12 of 97 (tla-en, 5 November 2026). Fades five background colours, from
+// Matches (tla-en, 2026-11-08, -mtune=gba); all six editions measure differ 0 of 97. Fades five background colours, from
 // palette entry 114, from one set to another over the given number of frames, one step a
 // frame. Each channel reads the colour again, which PRE merges, and the order of the two
-// for-loop initial values follows the reload rotation. Left: three scheduling pairs (add sl
-// after adds r1; the colour's mov r0, r8 before movs r3; the loop's movs r2 before ldr r3).
+// for-loop initial values follows the reload rotation. A once-only block around the colour's
+// store, with the offset's step after it, settles the three scheduling pairs left on 5 November
+// (12 to 0; permuter find, then the step taken out of the block). No device.
 #include "types.h"
 #include "call.h"
 
@@ -27,7 +28,12 @@ void Func_02000734(u16 *from, u16 *to, s32 frames) {
       red += step * (toRed - red) / frames;
       green += step * (toGreen - green) / frames;
       blue += step * (toBlue - blue) / frames;
-      { s32 color = blue << 10 | green << 5 | red; *(u16 *)(0x050000e4 + offset) = color; }
+      // A once-only block: its end keeps the step after the colour's store.
+      do {
+        s32 color = blue << 10 | green << 5 | red;
+
+        *(u16 *)(0x050000e4 + offset) = color;
+      } while (0);
       offset += 2;
     }
     wait(1);

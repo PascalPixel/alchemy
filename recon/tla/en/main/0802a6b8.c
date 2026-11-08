@@ -1,4 +1,5 @@
-// Differ 22 of 406 (tla-en, 2026-11-07).
+// Differ 22 of 406 (tla-en, 2026-11-08, -mtune=gba); the phase stores after
+// maskX 42, before x >>= 1, after cellY or after the cell sum 36.
 // 2026-11-07: Task_Add called by its prototype now measures the same 22, so
 // the cast wrapper is gone; phase stores together before cells (36), maskY
 // local read before the phase stores (56), and 11.5 permute minutes over the

@@ -1,3 +1,5 @@
+// Measured (tla-en, 2026-11-08, -mtune=gba): the game route still gives 61; the SOUND_C route,
+// which the tune does not touch, not rechecked here.
 // Differ 0 of 44 through its own route, SOUND_C (tla-en, 2026-11-07); `alchemy-devtools diff`
 // measures the game route, which gives 61: no interworking return, ldrb [rX, rY] for add-then-load.
 // Tried 7 November: wave read before the inner call (64), local table pointers and *(p + n) (61), s32 key (63),

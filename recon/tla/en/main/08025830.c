@@ -1,4 +1,4 @@
-// Differ 4 of 370 (tla-en, 2026-11-07).
+// Differ 4 of 370 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07: a pass-through wrapper on the first turn's first draw (8 to 4);
 // left: the ldrsh of the angle scheduled after the square, not before.
 // Twin of The Broken Seal's ActorScript_WanderNearHome (SC_WANDER_HOME): the

@@ -1,5 +1,6 @@
-// Draft, differ 6 of 632 (tla-en, 5 November 2026): two order rows are left, the
-// native's movs r2, #2 ahead of ldr r0, [sp, #28] after the second cell test, and
+// Draft, differ 8 of 632 (tla-en, 2026-11-08, -mtune=gba; 6 on 5 November): the same two places,
+// each now a row longer with multiplies at 5: the native's movs r2, #2 ahead of ldr r0, [sp, #28]
+// (and mov r3, r8 with it) after the second cell test, and
 // its ldr r1, [r7, #80] ahead of adds r6, r6, r3. Both are sched2 priorities one
 // short on the same chain; a separate copy into the multiply made it worse (58).
 // What closed it from 318, none of it a compiler question: spill registers rotate

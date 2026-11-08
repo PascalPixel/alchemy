@@ -1,4 +1,5 @@
-// Differ 30 of 169 (tla-en, 2026-11-06).
+// Differ 30 of 169 (tla-en, 2026-11-08, -mtune=gba); declaration orders and
+// screenX set inside x's expression leave it at 30.
 // Left: allocation only. screenX and screenY take r2 and r0 the wrong way
 // round, which moves the str of oam[1]; the prologue and frame now agree.
 // A 5-minute permute (7,500 candidates) found nothing under 30.

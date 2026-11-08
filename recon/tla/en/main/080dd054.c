@@ -1,4 +1,4 @@
-// Differ 2 of 444 (tla-en, 2026-11-07).
+// Differ 2 of 444 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07: all 120 orders of the target's four stores and *layer = 2, moved
 // as u8 or s16, temporaries, asm barriers and 8 permuter minutes left it at 2.
 // Move cast on a target, the twin of The Broken Seal's FieldPsynergy_SteerPushedTarget (same
@@ -19,8 +19,7 @@
 // matches. Registers, slots and blocks all agree. Tried without gain: seven orders
 // of the opening assignments, three of the target's field stores, user and
 // target swapped, s32 and u32 local types, target->actionFlags = 0, a direct
-// read of terrainId and a combined layer assignment. Both are load-order ties,
-// so -mthumb-slow-loads (K2's approximation) is the likely cause; not proven.
+// read of terrainId and a combined layer assignment. A load-order tie in sched2.
 #include "types.h"
 #include "ram_buffer.h"
 #include "field/field_psynergy_work.h"

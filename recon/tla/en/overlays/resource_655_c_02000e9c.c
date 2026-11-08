@@ -1,4 +1,7 @@
-// Draft, differ 11 of 76 (tla-en, 2026-11-05).
+// Differ 11 of 76 (tla-en, 2026-11-08, -mtune=gba), under -Os. Left: the shape
+// store, which the native sinks past the cell's first read (reloading the cell
+// pointer for each access), comes first here; the store after the cell read,
+// through a plain u8 or indexed, does not move it.
 // Draft, differ 26 of 76 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Under -Os, 5 November: differ 28 of 76 (tla-en); older figures below predate it.
 // Draft, differ 19 of 76: raises the cells under the held actor again.

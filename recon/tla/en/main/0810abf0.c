@@ -1,4 +1,4 @@
-// Differ 45 of 297 (tla-en, 2026-11-07).
+// Differ 45 of 297 (tla-en, 2026-11-08, -mtune=gba).
 // Editions, 2026-11-07: ja, de, es and fr take the English form. Italian
 // (0810abf4, 282 instructions, one function) creates no price window (both
 // Shop_DrawSelectMsg and the closing Window_CloseFar take 0), keeps

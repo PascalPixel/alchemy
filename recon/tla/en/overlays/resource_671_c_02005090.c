@@ -1,4 +1,4 @@
-// Differ 17 of 167 (tla-en, 2026-11-07) with two tagged barriers at the loop's end: asm on i keeps the test on i,
+// Differ 17 of 167 (tla-en, 2026-11-08, -mtune=gba) with two tagged barriers at the loop's end: asm on i keeps the test on i,
 // asm on tile drops tile below the hoisted copies so it spills as native (27 with the tile one alone, 62 with the i one
 // alone; without both, the plain form below measures 31). Left: oam + 1 takes r5 and tile + 2 r9 (native r9, r5:
 // tile + 2 ranks 3/31 below oam + 1 3/27), and the affine store's lsls one row early. Arm orders and all 720 entry

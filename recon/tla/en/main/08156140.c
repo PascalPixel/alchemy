@@ -1,3 +1,4 @@
+// Differ 20 of 2278 (tla-en, 2026-11-08, -mtune=gba).
 // Measured 2026-11-05 (tla-en): differ 20 of 2278. Left: order: a multiply the
 // native issues later than alchemy-gcc does: sched2 ranks the chain into muls
 // too high (its cost of 4), so the constant or the multiply comes ahead of

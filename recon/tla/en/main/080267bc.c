@@ -1,4 +1,4 @@
-// Differ 31 of 713 (tla-en, 2026-11-07).
+// Differ 31 of 713 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07: onObject cleared before the step (r4 and r6 now right) and the
 // keys read through a pointer (the probes now match): 48 to 31. Left: the
 // onObject clear lands before the priorityFlags branch, and the pointer takes

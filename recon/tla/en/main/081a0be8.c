@@ -1,4 +1,6 @@
-// Differ 6 of 88 (tla-en, 2026-11-07).
+// Differ 6 of 88 (tla-en, 2026-11-08, -mtune=gba): unchanged under the GBA
+// tune; the copy and pointer orders below still resist (both pointer orders,
+// the pointers set in the for, the tile address spelled three ways).
 // 2026-11-07: Iwram_ClearWords through an inline wrapper, as the Broken Seal's
 // iwram_call.h writes it, puts the size shift after the address load (8 to 6);
 // left, scheduling: the pack loop's two pointer copies ahead of its count's
@@ -42,7 +44,7 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   src = canvas;
   for (i = 0; i < 0x600; i++) {
     {
-      /* FAKEMATCH(temporary): the form kept; as *dst++ = src[0] | (src[1] << 4), 12 of 88 instructions differ in tla-en. */
+      /* FAKEMATCH(temporary): the form kept; as *dst++ = src[0] | (src[1] << 4), 10 of 88 instructions differ in tla-en. */
       u8 low = src[0];
       *dst++ = low | (src[1] << 4);
     }

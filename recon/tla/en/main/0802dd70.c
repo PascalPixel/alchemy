@@ -1,4 +1,4 @@
-// Differ 12 of 132 (tla-en, 2026-11-06).
+// Differ 12 of 132 (tla-en, 2026-11-08, -mtune=gba).
 // Trial: ☀️'s WorldMap_BuildScanlineTable (games/tbs/src/field/field.c)
 // word for word over ⚓️'s projection record differs 70 of 132 (register
 // choice: the line counter and the camera point's address swap fp and a

@@ -1,4 +1,4 @@
-// Differ 6 of 1355 (tla-en, 2026-11-07).
+// Differ 6 of 1355 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07: prototypes for the modal message, the text draw and the equip
 // preview (s32, as their definitions), and Unit_RefreshPsynergyFar returning
 // s32 as The Broken Seal declares it, took 22 to 6; the empty asm is gone.

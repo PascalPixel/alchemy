@@ -1,4 +1,5 @@
-// Differ 2 of 263 (tla-en, 2026-11-07).
+// Differ 2 of 263 (tla-en, 2026-11-08, -mtune=gba); 2026-11-08: the same tie; tint = 9 or update = NULL
+// moved (2), the angle store after the tint tests (82).
 // 2026-11-07: one tie left: sched2 picks the reload copy `mov r8, r1` (sprite)
 // before the `djinni->angle` strh; both priority 1 with one dependent, so LUID
 // decides and reload always emits the copy right after the ldrsh. A separate

@@ -1,4 +1,4 @@
-// Draft, differ 2 of 217 (tla-en, 5 November 2026), from 112: forwarding the
+// Differ 2 of 217 (tla-en, 2026-11-08, -mtune=gba), from 112: forwarding the
 // products through Value2 and the sound through Call2. One tie left: the native's
 // add r2, r8 ahead of strb r3, [r0, #9]. A word bit-field for the priority and the
 // counter through its struct field do not move it, nor any order of the five

@@ -1,11 +1,10 @@
-// Draft, differ 15 of 496, 3 of them real (tla-en, 5 November 2026), under -Os: registers,
-// frame and every order are the native's; the arms' sets come in the order reload's rotation needs,
-// each before the zero store so that the store takes open's 0.
-// Left: in the spawn loop `add r0, sp, #80; adds r5, r0, #0` where the native has
-// `add r5, sp, #80`, the two extra bytes moving the pools. GCSE gives p = position the
-// value of the top's j = position through a copy live around the loop, so reload cannot
-// use r5 for the address. Tried: p set after the call, a pin on p, an sfp clobber (frame
-// pointer, 273). A second reaching computation would stop it; none shows in the listing.
+// Matches (tla-en, 2026-11-08, -mtune=gba); all six editions measure differ 0 of 496.
+// 8 November: the second reaching computation the 5 November note asked for: room 5's first
+// arm sets j to the position again (FAKEMATCH dead, permuter find), so GCSE no longer carries
+// the top's j = position into p and the spawn loop takes `add r5, sp, #80` (15 to 2); the
+// random number read into a local before p = position then puts the address after the call
+// as the native does (2 to 0). Before: differ 15 of 496 (5 November), under -Os, registers,
+// frame and every order the native's except that address.
 // j is still reused for the position's address, the counters and currentOwner's address:
 // a reused local, a device to tag on adoption, with the Call3, Call6 and Value1 wrappers.
 //
@@ -68,7 +67,7 @@ void Func_02001828(void) {
 
   /* FAKEMATCH(wrapper): the calls that repeat a constant, the flag tests and
    * the cell copies go through call.h's forwarding inlines, so that each call
-   * builds its own constants and stack arguments; as direct calls, 293 of 496
+   * builds its own constants and stack arguments; as direct calls, 163 of 496
    * instructions differ in tla-en. */
   Func_02004d40();
   Func_02004e90(0);
@@ -123,6 +122,9 @@ void Func_02001828(void) {
     // The native tests and clears flag 770 in both arms.
     if (gMainRoutineWork.entrance <= 8) {
       srcX = 49;
+      /* FAKEMATCH(dead): j set again to the position's address, which it already
+       * holds; as without it, 25 of 496 instructions differ in tla-en. */
+      j = (u32)position;
       i = 75;
       dstX = 113;
       dstZ = 13;
@@ -164,8 +166,10 @@ void Func_02001828(void) {
     // 496 instructions differ.
     for (i = 0; i != 10; i++) {
     for (j = 0; j != 6; j++) {
+    s32 random = Random16Far();
+
     p = position;
-    p[0] = baseX + ((Random16Far() % 48) << 16);
+    p[0] = baseX + ((random % 48) << 16);
     Func_0200015c(p[0], p[1], p[2] + (i << 18) + 0x170000,
                   0, 0x10000, 0, 0x330000, &options);
     }
@@ -202,7 +206,7 @@ void Func_02001828(void) {
   Actor_GetById(*(s32 *)j)->actionFlags &= ~1;
   /* FAKEMATCH(temporary): the position's address held in a pointer, so that
    * the two halfword reads are taken from it as the native does (movs r2, #2;
-   * ldrsh r1, [r5, r2]); as position[] and ((s16 *)position)[1], 220 of 496
+   * ldrsh r1, [r5, r2]); as position[] and ((s16 *)position)[1], 37 of 496
    * instructions differ in tla-en. */
   p = position;
   p[0] = (leader->x & 0xfff00000) + 0x80000;

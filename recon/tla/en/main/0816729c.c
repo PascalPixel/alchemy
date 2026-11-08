@@ -1,4 +1,4 @@
-// Differ 54 of 2680 (tla-en, 2026-11-07).
+// Differ 54 of 2680 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07, from 56: an empty asm (FAKEMATCH barrier) between the closing
 // fill and the release loop (54). Left as below.
 // 2026-11-07: ring = 0 before shift = 0 and a plain Iwram_FillWords for the strike's

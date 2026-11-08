@@ -1,4 +1,4 @@
-// Differ 22 of 17 (tla-en, 2026-11-06): the listing returns by pop {r0}; bx r0,
+// Differ 22 of 17 (tla-en, 2026-11-08, -mtune=gba): the listing returns by pop {r0}; bx r0,
 // interworking the game route never emits, so the gap is the route (SOUND_C), not
 // the shape; through SOUND_C this C emits the listing's 17 instructions.
 // 5 November 2026: both pool words are 0 and the call reaches 0x081c0c84, inside

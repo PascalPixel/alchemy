@@ -1,6 +1,7 @@
-// Differ 10 of 141 (tla-en, 2026-11-07): the cell marked through struct MapCell
+// Differ 10 of 141 (tla-en, 2026-11-08, -mtune=gba); the pins tagged, measured then.
+// 2026-11-07: the cell marked through struct MapCell
 // (its own alias set) reads x before the store with no empty asm or x local;
-// left: prologue order (sub sp, the list spill) and fp copied to r1 for r2. The r11 and r9 pins still need their S2 tags.
+// left: prologue order (sub sp, the list spill) and fp copied to r1 for r2.
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ
 // 12 of 141 in tla-en. First difference: this issues `sub sp, #4` earlier (row
 // 8) than the native does (row 11).
@@ -56,11 +57,15 @@ void Func_080ea8a8(s32 x, s32 z, s32 layer, s32 height);
 s32 Func_08020310(s32 x, s32 z, s32 layer, s32 height);
 
 void Func_080ea8d4(struct ActorFlag *list) {
+  /* FAKEMATCH(pin): the map work held in r11; as a plain local, 14 of 141
+   * instructions differ in tla-en. */
   register struct RestoreMap *map asm("r11") =
       (struct RestoreMap *)Ram_HeapSlots->mapWork;
   struct ActorFlag *entry;
   struct Actor *owner;
   s32 x;
+  /* FAKEMATCH(pin): the step held in r9; as a plain local, 35 of 141
+   * instructions differ in tla-en. */
   register s32 step asm("r9");
 
   entry = list;

@@ -1,4 +1,7 @@
-// Differ 28 of 171 (tla-en, 2026-11-06). Permuter (4 min) and three more
+// Differ 28 of 171 (tla-en, 2026-11-08, -mtune=gba): screenX and screenY in each
+// other's registers. Tried 2026-11-08: screenX first (49), screenY shifted after
+// the sums (30 or 49).
+// 2026-11-06: Permuter (4 min) and three more
 // orderings of the screenX and screenY steps found nothing below 28; z subtracts
 // viewZ and lift in two statements, as the native does (30 to 28), and the
 // empty asm on y is gone (28 with or without it). Item 3 below, an allocation

@@ -1,4 +1,4 @@
-// Differ 6 of 107 (tla-en, 2026-11-07).
+// Differ 6 of 107 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07: an empty once-only block after the 0xf000 and (permuter) puts
 // the ldrsh before the ldrh as in the native; left is the 0xf000 mask and its
 // and, built after the 0xfff where the native builds them first.

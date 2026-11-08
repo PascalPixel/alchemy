@@ -1,4 +1,7 @@
-// Differ 24 of 72 (tla-en, 2026-11-06).
+// Differ 24 of 72 (tla-en, 2026-11-08, -mtune=gba): besides the pooled
+// 0x2000000, actor 9's angle (224 << 8) is built before x here and after it
+// natively. The listing object relocates that pool word as gEwramHeap; written
+// so (not kept: it misstates the coordinate), 23.
 // 6 November: ActorPlaceFacing as a forwarded inline to Func_02001dc0 (as
 // ActorPlace) orders actor 10's arguments as the listing does, 28 to 24; Call4
 // gives 24 too. Left: the pooled 0x2000000. Permuter hits at 18-20 are bogus

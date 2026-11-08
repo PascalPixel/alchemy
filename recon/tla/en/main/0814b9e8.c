@@ -1,3 +1,4 @@
+// Differ 2 of 549 (tla-en, 2026-11-08, -mtune=gba).
 // Measured 2026-11-05 (tla-en): differ 2 of 549, no device. Left: one pair, the
 // loop's opening: ldr r6, [sp, #32] (quad) comes before str r2, [sp, #12] (i * 3's
 // start) here and after it in the listing. A delay variable set before quad gives

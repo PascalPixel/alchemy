@@ -1,4 +1,6 @@
-// Differ 16 of 1556 (tla-en, 2026-11-07).
+// Differ 18 of 1556 (tla-en, 2026-11-08, -mtune=gba), from 16: the rows below (half's sign + hx at
+// two sites, the 256 limit's register, the shade store), plus the 7 mask's movs after a muls
+// (multiplies at 5).
 // 2026-11-07: once-only blocks around the two FillWords_ calls, 24 to 16; left: half's sign + hx at the
 // shard and ring sites, the 256 limit's register (r6, listing r2) and the shade store after logWidth.
 // Tried with no gain: written-out halving, half's declaration place, separate shard/ring locals (frame

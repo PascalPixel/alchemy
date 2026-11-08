@@ -1,4 +1,6 @@
-// Differ 26 of 126 (tla-en, 2026-11-06): allocation and scheduling only, as below.
+// Differ 26 of 126 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-06): allocation and scheduling only, as below.
+// 2026-11-08: z's sum before the pool read of 0x148, plain or through a function-level local, 40; in a
+// block local, 26; permuter 6 minutes: nothing below 26 (a lower weighted score at 40).
 // z's sum before the pool read of 0x148: 40; permuter 6 minutes: best 62.
 // Under -Os, 5 November: differ 26 of 126 (tla-en); older figures below predate it.
 // Draft, differ 56 of 126, skeleton gap 0 (tla-en, 2026-11-01): overlay 674's

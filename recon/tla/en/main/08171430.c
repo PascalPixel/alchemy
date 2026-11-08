@@ -1,4 +1,4 @@
-// Differ 28 of 828 (tla-en, 2026-11-07).
+// Differ 28 of 828 (tla-en, 2026-11-08, -mtune=gba): as below.
 // 2026-11-07: camera->pos and frame << 8 are PRE temporaries numbered in
 // hash-bucket order (camera+12 hash 150, frame<<8 156 of 345); 7+ unused locals
 // after i raise camera's regno so the slots swap (34 to 28, tagged). Left: the
@@ -499,7 +499,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectArgument *effect) {
     Heap_Release(model);
     Heap_Release(vertices);
     /* FAKEMATCH(dead): a read of shade the compiler folds to nothing, which
-     * spills shade to the listing's slot; as a plain 4, 352 of 828 instructions
+     * spills shade to the listing's slot; as a plain 4, 297 of 828 instructions
      * differ in tla-en. */
     Func_08158ce0(4, 4 + ((shade & 255) >> 8));
     BattleEffect_CountDownBattlerTints();

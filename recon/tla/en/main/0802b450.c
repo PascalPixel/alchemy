@@ -1,4 +1,4 @@
-// Differ 32 of 148 (tla-en, 2026-11-06).
+// Differ 32 of 148 (tla-en, 2026-11-08, -mtune=gba).
 // Editions: the 320 bytes are the same in every edition (Japanese at
 // 0802b3cc), so one form serves all six; each measures the same 32
 // (2026-11-07).

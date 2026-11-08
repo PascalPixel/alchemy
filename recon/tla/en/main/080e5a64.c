@@ -1,4 +1,4 @@
-// Differ 12 of 302 (tla-en, 2026-11-07): the colour built in a local before its
+// Differ 12 of 302 (tla-en, 2026-11-08, -mtune=gba): the colour built in a local before its
 // store (found by permute; 16 before). Left: instruction order in the palette
 // store and the switch; the empty asm in the palette loop is still untagged (14 without).
 // Near miss, differ 16 of 302 (tla-en, 2026-11-05), with untagged empty asms, one-pass
@@ -81,7 +81,7 @@ void Func_080e5a64(void) {
   if (work->state == 1) {
     i = 0;
     /* FAKEMATCH(temporary): the phase offset built in two steps, so it stays
-     * in a register across the loop; as base = 0x90000, 62 of 302
+     * in a register across the loop; as base = 0x90000, 54 of 302
      * instructions differ in tla-en. */
     base = 9;
     base <<= 16;

@@ -1,4 +1,4 @@
-// Differ 58 of 3921 (tla-en, 2026-11-07).
+// Differ 58 of 3921 (tla-en, 2026-11-08, -mtune=gba): as below.
 // Fourth round, 7 November: the map loop matches but for k = 0's place (2 rows)
 // with the row loop a do-while that sets w = 32 after the load (tagged dead): w is
 // then hoisted after table and 6, so its live length is shortest and the ranking
@@ -385,7 +385,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         mp = (u8 *)(k * 2 + (s32)map);
         do {
           v = ((u8 *)work)[gData_08197410[n] + i + off];
-          /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load; as w = 32 before the loops (a for), 66 of 3921 instructions differ in tla-en. */
+          /* FAKEMATCH(dead): w set to 32 inside the row loop, after the load; as w = 32 at its declaration before the loops, 112 of 3921 instructions differ in tla-en. */
           w = 32;
           if (v != 0) {
             v = v - j * 4 - 40;

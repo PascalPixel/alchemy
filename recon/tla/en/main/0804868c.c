@@ -1,3 +1,8 @@
+// Differ 8 of 1246 (tla-en, 2026-11-08, -mtune=gba).
+// Left: scheduling only, two sites: near the start the row address (add r3,
+// sl) and the zero stored to sp+40 come early; near the end a call's second
+// argument (a pool word) is loaded before its first (sp+60), the native after.
+// 4 on 2026-11-01 under the older compiler.
 // Draft, differ 4 of 1246, skeleton gap 1 (tla-en, 2026-11-01): the battle
 // Djinn menu, The Broken Seal's BattleDjinnMenu_Run
 // (games/tbs/src/window/screens/battle_djinn_menu.c) on this game's work,

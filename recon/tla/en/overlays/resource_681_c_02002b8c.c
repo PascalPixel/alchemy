@@ -1,4 +1,4 @@
-// Draft, differ 19 of 131 (tla-en, 2026-11-05). Left: the native loads frame's 0 from
+// Differ 19 of 131 (tla-en, 2026-11-08, -mtune=gba), under -Os. Left: the native loads frame's 0 from
 // the pool (a HI constant, and the jump over the pool); here CSE reuses a word zero.
 // Older notes below may predate this figure.
 // Measured under -Os, 5 November 2026: differ 24 (tla-en); notes below may predate it.

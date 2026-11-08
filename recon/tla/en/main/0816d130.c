@@ -1,4 +1,4 @@
-// Differ 2 of 298 (tla-en, 2026-11-06). 30 to 2: the pull's distance test
+// Differ 2 of 298 (tla-en, 2026-11-08, -mtune=gba). 30 to 2: the pull's distance test
 // takes |user->x| in its own local rather than reusing dx. Left, scheduling
 // only: in the ring loop the native loads the frame's spin (frame << 10) from
 // its stack slot before the multiply by 5461, alchemy-gcc after (operand orders

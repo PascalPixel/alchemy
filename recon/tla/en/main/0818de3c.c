@@ -1,6 +1,11 @@
-// Differ 6 of 142 (tla-en, 2026-11-07).
-// 2026-11-07: second declared with the function and set to triangle + 1 after
-// the first triangle's third store (8 to 6); left: fp's two stores of v1 and
+// Differ 8 of 142 (tla-en, 2026-11-08, -mtune=gba), from 14 under the new tune:
+// second set after the first triangle's last texture store (third store: 14).
+// Left: sched2 issues u0's multiply (mov r1, sl; muls r1, r3) and the
+// [sp, #32] load ahead of the triangle address's adds; the native finishes the
+// address first. v before u, cellWidth * column, the first two stores swapped,
+// row and column declared the other way: 8; u1 as cellWidth + u0 - 1: 10.
+// Under the old tune, 2026-11-07: differ 6 with second set after the third store.
+// 2026-11-07: second declared with the function (8 to 6); left: fp's two stores of v1 and
 // the reload of v0 from sp+24 in each other's places (sched2). Earlier,
 // 2026-11-05 (tla-en): differ 8 of 142. 2026-10-25, with the Makefile's options
 // (-mthumb-slow-loads): differ 14 of 142: the native interleaves the
@@ -47,10 +52,10 @@ void Func_0818de3c(struct MeshTriangle *triangles, s32 columns, s32 rows,
         triangle[0].texCoord[0][0] = u1;
         triangle[0].texCoord[0][1] = v0;
         triangle[0].texCoord[1][0] = u0;
-        second = triangle + 1;
         triangle[0].texCoord[1][1] = v1;
         triangle[0].texCoord[2][0] = u1;
         triangle[0].texCoord[2][1] = v1;
+        second = triangle + 1;
         second->texCoord[0][0] = u0;
         second->texCoord[0][1] = v0;
         second->texCoord[1][0] = u0;

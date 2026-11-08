@@ -1,4 +1,8 @@
-// Draft, differ 2 of 30 (tla-en, 2026-11-05). Older notes below may predate this figure.
+// Differ 2 of 30 (tla-en, 2026-11-08, -mtune=gba): the native issues `subs r3, #13`
+// before the ldrb of byte 0x17, here after it. Plain (no asm, no block): 6. Tried
+// 2026-11-08: the bit-field store alone in the block (6), the store to
+// gData_02006294 in a block of its own (4), the byte masked by hand (13), the
+// bit-field store first (13). Older notes below predate -mtune=gba.
 // Under -Os, 5 November: differ 4 of 30 (tla-en); older figures below predate it.
 // Near miss, differ 6 of 30 (tla-en, 2026-10-31): scheduler order only. The
 // native loads the address of gData_02006294 first, issues the ldrb of byte
@@ -37,10 +41,10 @@ void Func_02003a14(void) {
 
   gData_02006294 = 0;
   /* FAKEMATCH(barrier): an empty asm holds the next statement after this
-   * one; as no asm, 6 of 30 instructions differ in tla-en. */
+   * one; as no asm, 4 of 30 instructions differ in tla-en. */
   asm("");
-  /* FAKEMATCH(barrier): an empty asm holds the order around it; as no asm,
-   * 4 of 30 instructions differ in tla-en. */
+  // A once-only block: its end holds the order around it (as plain
+  // statements, 4 of 30 differ in tla-en).
   do {
     map->mode = 1;
     Func_02005338(0);

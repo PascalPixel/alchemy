@@ -1,4 +1,7 @@
-// Differ 31 of 94 (tla-en, 2026-11-06). Unchanged by: options direct (31); -= 8 or += -8 and
+// Differ 31 of 94 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-06). 2026-11-08: -8 and the shift apart
+// (+= -8, -= 8, += mask - 23) 57, the mask in a once-only block 37; permuter 6 minutes reaches 18
+// only by calling Random16Far for velocityX before the rotation's call, which changes the program.
+// Unchanged by: options direct (31); -= 8 or += -8 and
 // <<= 14 apart (57); mask or velocityX scoped differently (31); i < count (53); permuter 33.
 // 2026-11-06, from the dumps: written apart, velocityX is local to the loop body and local-alloc
 // gives it r6 ahead of x (x lands in r4, caller-saved); the listing's r8 needs x to outrank it.

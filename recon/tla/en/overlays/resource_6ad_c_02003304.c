@@ -1,6 +1,9 @@
+// Differ 2 of 86 (tla-en, 2026-11-08, -mtune=gba): one row, the native loads
+// position[0] before position[1] and [2] for the call, this one after; the
+// twin's finding. x, y and z in locals or a pointer leave it at 2.
 // Draft of overlay 6ad's Func_02003304, the twin of overlay 6ac's
 // Func_02002e6c: its draft (resource_6ac_c_02002e6c.c) with this overlay's
-// symbols: differ 12 of 86. Left: what that draft's header records.
+// symbols.
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
 
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);
@@ -26,9 +29,8 @@ void Func_02003304(struct Actor *self) {
   object->acceleration = 0x2000;
   animation->angle = angle - 0x4000;
   object->scaleX = 0;
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 4 of 86 instructions differ
-   * in tla-en. */
+  // A once-only block: its end holds the order around it (as the plain
+  // statement, 4 of 86 differ in tla-en).
   do {
     object->scaleY = 0;
   } while (0);

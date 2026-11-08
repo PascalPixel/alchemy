@@ -1,4 +1,4 @@
-// Differ 12 of 209 (tla-en, 2026-11-06).
+// Differ 12 of 209 (tla-en, 2026-11-08, -mtune=gba), the same rows.
 // tick = row (not a second (u16) read) takes it from 35 to 12: the row and
 // unk0E reads now follow the native order; left are the copy below and the
 // native's separate ldrh for tick through it. Permuter, 6 minutes: no gain.

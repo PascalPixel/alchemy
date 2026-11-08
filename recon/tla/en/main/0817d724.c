@@ -1,4 +1,4 @@
-// Differ 38 of 1034 (tla-en, 2026-11-06).
+// Differ 38 of 1034 (tla-en, 2026-11-08, -mtune=gba).
 // Later 6 November, none better: green dropped for red twice (75; red's clamp
 // then stays in r2 as the listing's); with it, a u16 c local gives the listing's
 // lsls 16, lsrs 26 and pooled 31 for blue but loads with ldrsh (ARM promotes a

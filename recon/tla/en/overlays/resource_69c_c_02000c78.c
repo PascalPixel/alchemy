@@ -1,4 +1,5 @@
-// Differ 22 of 126 (tla-en, 2026-11-06).
+// Differ 22 of 126 (tla-en, 2026-11-08, -mtune=gba): as below; the
+// sums before the shifts, or mapX and mapZ as u16, measure 22 to 40.
 // Twin of resource_6ad_c_02004938.c. Control flow, frame and data match; what is left is
 // allocation (the fourth offset loads into r3, not r2) and the scheduling of the map-origin
 // loads. Moving z before mapX: 40; permuter (5 min): nothing below 22.

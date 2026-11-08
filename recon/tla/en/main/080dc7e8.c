@@ -1,4 +1,5 @@
-// Draft, differ 16 of 171 (tla-en, 2026-11-06): the owner's layer goes through an s16
+// Differ 16 of 171 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-06: the owner's layer goes through an s16
 // local declared at the top (layer = work->layer, 24 to 16); declared in the if, 50;
 // as s32 22, u8 24. Expect it to be a tagged temporary on adoption. Left: the first
 // loop's slot pointer and owned-byte pointer swap r5 and r6, and i = 0 is set
@@ -95,8 +96,8 @@ void BattleEffect_CleanupSceneObjects(void) {
     if (slot->owned)
       BattleEffect_ClearOwnedSlot(slot);
   }
-  /* FAKEMATCH: a halfword 17 makes the first test cmp #17; blt as the native
-   * (cmp #16; ble with the constant). */
+  // A local that holds one constant: as a halfword it makes the first test
+  // cmp #17; blt as the native (with the literal, 20 of 171 differ in tla-en).
   first = 17;
   if (work->kind >= first && (work->kind <= 27 || work->kind == 30))
     Func_080dc954();

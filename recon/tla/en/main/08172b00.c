@@ -1,4 +1,4 @@
-// Differ 4 of 1216 (tla-en, 2026-11-07). Both ties are sched2 LUID ties: the
+// Differ 4 of 1216 (tla-en, 2026-11-08, -mtune=gba), the same two ties. Both ties are sched2 LUID ties: the
 // native has the turn shift (and screen.y's pointer reload) ahead of the
 // 2560 split (and the 6000 multiply) in RTL order; reordered spellings, a
 // y or src local, array forms and 14 permuter minutes found nothing better.

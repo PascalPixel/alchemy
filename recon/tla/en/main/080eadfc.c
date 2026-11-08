@@ -1,3 +1,6 @@
+// Differ 8 of 84 (tla-en, 2026-11-08, -mtune=gba); the same rows. Without the ActorX wrapper 20; ActorX or an
+// ActorZ inline on the first call, the shape offset as u32 or as gMapShapeGrid + (...): 8;
+// permuter 5 minutes, nothing better.
 // Differ 8 of 84 (tla-en, 2026-11-07): x for Map_GetTerrainHeightFar read through an
 // inline helper (a tagged wrapper, found by permute) settles the second and third calls'
 // registers; left: the first call loads x before the shape row is finished and

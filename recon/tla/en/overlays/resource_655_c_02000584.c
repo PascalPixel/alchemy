@@ -1,4 +1,6 @@
-// Under -Os, 5 November: differ 8 of 150 (tla-en); older figures below predate it.
+// Differ 8 of 150 (tla-en, 2026-11-08, -mtune=gba): the shape grid sum's operand
+// order and sl (any spelling of the sum, 8), and cell->attributeB = 128 stored
+// before the height's shift. Older figures below predate it.
 // Draft, differ 62 of 150, skeleton gap 12 (tla-en, 2026-11-01)
 // Func_020001d0 with actors 8 to 10 placed at the leader first and attributes
 // copied for set flags. Ported from 67F's Func_02000584, the same function; the

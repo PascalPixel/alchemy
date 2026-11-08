@@ -1,3 +1,5 @@
+// Differ 6 of 237 (tla-en, 2026-11-08, -mtune=gba); without the r0 hoist 8, without
+// the empty asm 8.
 // Near miss, differ 6 of 237 (tla-en, 2026-11-05), with untagged empty asms, one-pass
 // blocks and locals found by search; each needs its S2 tag on adoption, measured then.
 // Measured 2026-10-26 under the Makefile's options (-mthumb-slow-loads), differ

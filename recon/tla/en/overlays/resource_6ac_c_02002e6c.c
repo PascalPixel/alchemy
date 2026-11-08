@@ -1,3 +1,6 @@
+// Differ 2 of 86 (tla-en, 2026-11-08, -mtune=gba): one row, the native loads
+// position[0] before position[1] and [2] for the call, this one after; x, y
+// and z in locals, a pointer or a struct leave it at 2. Older notes follow.
 // Near miss, overlay 6AC Func_02002e6c (0x0200ae6c): differ 12 of 86, all
 // scheduling. The native starts both calls' first arguments early (movs r0,
 // #128 and adds r1, r6 between the position's stores; adds r0, r7 ahead of the
@@ -33,7 +36,7 @@ void Func_02002e6c(struct Actor *self) {
   object->scaleX = 0;
   /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
    * order around it; as the plain statement, 4 of 86 instructions differ
-   * in tla-en. */
+   * in tla-en (2026-11-08). */
   do {
     object->scaleY = 0;
   } while (0);

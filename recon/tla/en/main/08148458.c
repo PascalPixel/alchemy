@@ -1,4 +1,6 @@
-// Measured 2026-11-05 (tla-en): differ 2 of 689. Left: one row: a multiply the
+// Differ 6 of 689 (tla-en, 2026-11-08, -mtune=gba), from 2 before it: the
+// 58 multiply now also comes ahead of the loads of [sp, #28] and [sp, #20] and
+// the store of focus.x (58 * x, y first, *= then /=: 6 to 35). Before, 2: one row: a multiply the
 // native issues later than alchemy-gcc does: sched2 ranks the chain into muls
 // too high (its cost of 4), so the constant or the multiply comes ahead of
 // independent rows (movs r3, #58 after the loads).

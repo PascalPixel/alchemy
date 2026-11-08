@@ -1,6 +1,9 @@
+// Differ 2 of 86 (tla-en, 2026-11-08, -mtune=gba).
 // Draft of overlay 6ab's Func_02002ad0, the twin of overlay 6ac's
 // Func_02002e6c: its draft (resource_6ac_c_02002e6c.c) with this overlay's
-// symbols: differ 12 of 86. Left: what that draft's header records.
+// symbols. Left, as in that draft (2 of 86 on 2026-11-08): one row, the native
+// loads position[0] after position[1] and [2] for the call, this one before;
+// x, y or z in locals, a pointer, a struct, *position measured no better.
 #include "../../../../games/tla/src/scene/mars_lighthouse_room_m/mars_lighthouse_room_m.h"
 
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *vector);

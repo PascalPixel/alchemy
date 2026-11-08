@@ -1,4 +1,4 @@
-// Differ 50 of 1932 (tla-en, 2026-11-07).
+// Differ 50 of 1932 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-07); without the particle loop's asm, 52.
 // 2026-11-07, from 52: an empty asm (FAKEMATCH barrier) after variant in the
 // frame 133 particle loop settles that step pair (50). Left as below.
 // 2026-11-07, from 62: gData_0819746d and gData_08197473 declared without

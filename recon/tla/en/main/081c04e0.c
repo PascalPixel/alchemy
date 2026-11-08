@@ -1,4 +1,4 @@
-// Differ 48 of 28 (tla-en, 2026-11-06): the game route, which cannot
+// Differ 48 of 28 (tla-en, 2026-11-08, -mtune=gba): the game route, which cannot
 // match; through the sound route all 28 of the listing's instructions come out.
 // Blocked, 5 November 2026: the work copy of the sound initialization, as ☀️'s
 // m4aSoundInit (games/tbs/src/sound/audio.c). The listing starts at the copy's

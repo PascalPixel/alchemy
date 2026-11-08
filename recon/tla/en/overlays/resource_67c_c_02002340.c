@@ -1,3 +1,7 @@
+// Differ 12 of 931 (tla-en, 2026-11-08, -mtune=gba), now with no device: the stacked
+// u16 is a volatile local assigned inside the BG1CNT store, which keeps its store
+// at sp+10 without the taken-address device (*&control, also 12). Left: the two
+// BG1_SET_PRIORITY_1 sites' `mov r1, sp` and pool load issued early (scheduling).
 // Measured under -Os, 5 November 2026: differ 12 (tla-en); notes below may predate it.
 // Draft, differ 59 of 931, skeleton gap 7/6 (tla-en, 2026-11-01)
 // Aqua Rock's map preparation: for each room and entrance it sets the water
@@ -6,8 +10,7 @@
 // drained state once its flag is set.
 // Left: BG1_SET_PRIORITY_1's stacked value. The listing keeps a u16 at sp+10
 // (mov r1, sp; adds r1, #10; strh) that is stored and never reloaded. A scalar
-// only stays in memory with its address taken (*&control gives differ 36, gap
-// 7/7, with registers matched), and that is a device; u16 control[1] loses the
+// stays in memory with its address taken (a device) or as a volatile local; u16 control[1] loses the
 // store; u16 control[2] keeps it as add r1, sp, #8; strh r3, [r1, #2].
 // Also left: the actor-clearing loops of rooms 4 and 6. As for loops loop.c
 // hoists their movs #0, and the room 9 loop as a for also brings adds r1, #2
@@ -36,10 +39,9 @@ struct MapBits {
 
 #define BG1_SET_PRIORITY_1()                                                   \
   do {                                                                         \
-    /* FAKEMATCH(dead): the value kept in memory by its taken address; as a plain \
-     * local, 59 of 931 instructions differ in tla-en. */                      \
-    *&control = REG_BG1CNT & 0xfffc;                                           \
-    REG_BG1CNT = *&control | 1;                                                \
+    /* volatile: the value is stored at sp+10 and never read back (as a     \
+     * plain local, 84 of 931 differ in tla-en). */                            \
+    REG_BG1CNT = (control = REG_BG1CNT & 0xfffc) | 1;                          \
   } while (0)
 
 void Func_02003278(void);
@@ -68,7 +70,7 @@ void Func_02003ee4();
 s32 Func_02002340(void) {
   s32 scene = gMainRoutineWork.scene;
   s32 entrance = gMainRoutineWork.entrance;
-  u16 control;
+  volatile u16 control;
   s32 i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14, i15, i16,
       i17;
   struct Actor *object;

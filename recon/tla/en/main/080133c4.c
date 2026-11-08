@@ -1,3 +1,4 @@
+// Differ 2 of 40 (tla-en, 2026-11-08, -mtune=gba); also 2 in tla-de at 080133f0.
 // Draft, differ 2 of 40 in every edition (was 12): ☀️'s
 // System_InstallIwramAndIrqs with ⚓️'s 0x400-word runtime copy and the
 // gamepak interrupt enabled. One form serves all six editions: tla-ja and
@@ -12,7 +13,9 @@
 // entries merge and every later pool offset is 4 short (differ 12). As the
 // destination instead, the pool order is reversed (differ 4). Remaining: the
 // vector store's two registers are swapped (str r2, [r3] for str r3, [r2]),
-// register allocation only; a 4-minute permute found nothing better.
+// register allocation only; a 4-minute permute found nothing better; on 2026-11-08 the
+// vector written straight from the constant, through a pointer or as u32, and
+// the constant set earlier, gave 2 or worse.
 // Before adoption the fixed address belongs in irq.h, listed once (O2).
 #include "types.h"
 #include "dma.h"

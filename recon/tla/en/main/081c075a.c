@@ -1,3 +1,4 @@
+// Differ 15 of 12 (tla-en, 2026-11-08, -mtune=gba): unchanged, still blocked.
 // Blocked, 5 November 2026: a track command handler that clears the track's
 // modulation and flags the pitch or volume update its target needs, as ClearModM
 // (games/tla/src/sound/driver.c) with the handler's player argument. It starts on

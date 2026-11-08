@@ -1,4 +1,7 @@
-// Draft, differ 22 (tla-en, 2026-11-05). Func_02002d08 of overlay 6ad.
+// Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba), from 22: overlay 6ab's current Func_020024d4 form measures the
+// same here. Left: the sprite's and owner's animation loads (ldr r5, [r7, #80]; ldr r3, [r3, #80])
+// run ahead of the half's copy and the zero; the statement orders of bounce, scale, sprite and
+// source (8) and a 5-minute permuter run (8) leave them. Func_02002d08 of overlay 6ad.
 // Overlay 6ab's Func_020024d4 with this overlay's symbols; see that draft.
 #include "types.h"
 #include "call.h"

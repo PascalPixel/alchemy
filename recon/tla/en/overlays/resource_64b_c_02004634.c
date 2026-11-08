@@ -1,4 +1,5 @@
-// Differ 15 of 120 (tla-en, 2026-11-07), from 17: the detail is the sprite's
+// Differ 15 of 120 (tla-en, 2026-11-08, -mtune=gba).
+// 2026-11-07, from 17: the detail is the sprite's
 // record at 0x28 (LinkedSprite put it at 0x2c). Left: motionFlags and action
 // stored through one pointer (adds r3, #85; adds r3, #15) natively, two here;
 // every order of the five child stores measured, none better.

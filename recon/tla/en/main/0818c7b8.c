@@ -1,4 +1,4 @@
-// Differ 2 of 303 (tla-en, 2026-11-07).
+// Differ 2 of 303 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07: Iwram_FillWords through an inline wrapper (as the Broken Seal's
 // iwram_call.h) fixes the fill's order, 6 to 2; left: the slot 104 argument
 // is loaded last before Func_08196404 (the build loads it first; all four

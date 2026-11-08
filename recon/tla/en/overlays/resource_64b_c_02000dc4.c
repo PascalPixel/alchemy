@@ -1,5 +1,6 @@
-// Draft, differ 12 of 270 (tla-en, 5 November 2026), from 51. Left: case 98's store
-// has the sum in r3 and the offset and value in r2 in the native; turned here.
+// Draft, differ 12 of 270 (tla-en, 2026-11-08, -mtune=gba; 12 on 5 November), from 51. Left: case 98's store
+// has the sum in r3 and the offset and value in r2 in the native; turned here. A block-local pointer
+// to gMainRoutineWork (12), *& or a u16 pointer to the field (45); permuter 6 minutes: 12.
 // Under -Os, 5 November: differ 51 of 270 (tla-en); older figures below predate it.
 // Draft, differ 104 of 270: the world map's entrance handler: restores the
 // ship's place, then runs the script for the entrance taken. Left: register

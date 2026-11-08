@@ -1,4 +1,4 @@
-// Differ 4 of 575 (tla-en, 2026-11-07).
+// Differ 4 of 575 (tla-en, 2026-11-08, -mtune=gba): the same two argument ties.
 // 2026-11-07: from 14. The model's vertices as s32 * (a void * store aliased
 // the texture word and held its store back); one sparks pointer shared by the
 // burst and the draw loop (the pool register r0); delay = 0 apart from i = 0;
@@ -154,13 +154,13 @@ struct SummonObject {
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 2 of 575 instructions differ in tla-en. */
+   * Iwram_CopyWords, 6 of 575 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
 static inline s32 FillWords(void *destination, s32 size, u32 value) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_FillWords, 30 of 575 instructions differ in tla-en. */
+   * Iwram_FillWords, 20 of 575 instructions differ in tla-en. */
   return Iwram_FillWords(destination, size, value);
 }
 

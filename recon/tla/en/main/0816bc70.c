@@ -1,4 +1,4 @@
-// Differ 10 of 658 (tla-en, 2026-11-07).
+// Differ 10 of 658 (tla-en, 2026-11-08, -mtune=gba).
 // BattleEffect_RunDiamondBerg. 2026-11-07: the heights table read through a
 // local closed the shards' draw (12 to 10); 720 store orders, asm barriers and
 // a 6-minute permuter run left the model's zeros. Left:

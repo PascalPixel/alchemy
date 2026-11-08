@@ -1,4 +1,5 @@
-// Differ 6 of 186 (tla-ja, 2026-11-07).
+// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba); plain velocityX 8, plain position
+// 22, as before. (Against tla-en, whose function differs, 206.)
 // The Japanese release's own Func_0200263c of overlay 6aa: the patch-1 C in
 // games/tla/src/scene/mars_lighthouse_entrance/s263c.c without its overlap
 // scan, as overlay 6ab's Japanese draft of Func_02002148 (also 6 of 186).

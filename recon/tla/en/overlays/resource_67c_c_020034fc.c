@@ -1,5 +1,6 @@
-// Draft, differ 16 of 137 (tla-en, 5 November), from 53: x and y subtract as they read, z in two steps; all allocation agrees.
-// Left: reload's rotation at the sprite word: native tile r2, 0x800 r4, then the counter in r2; here 0x800 r2, the counter r4.
+// Differ 16 of 137 (tla-en, 2026-11-08, -mtune=gba), under -Os, from 53: x and y subtract as they read, z in two steps; all allocation agrees.
+// Left: reload's rotation at the sprite word: native tile r2, 0x800 r4, then the counter in r2; here 0x800 r2, the counter r4. The sprite word's operand orders, a
+// signed tile and the counter's decrement apart leave it.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"

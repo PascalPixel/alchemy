@@ -1,4 +1,4 @@
-// Differ 32 of 627 (tla-en, 2026-11-07).
+// Differ 32 of 627 (tla-en, 2026-11-08, -mtune=gba): the same three places.
 // 2026-11-07: radiusY in place with baseY copies, declaration orders, register, scrollU casts all 32 or worse; 10-min permute none better.
 // 2026-11-06: scheduling and allocation only, in three places: the
 // corners' setup (the listing zeroes i first and adds the wobble to height + half in place;
@@ -164,7 +164,7 @@ void BattleEffect_RunFume(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   /* FAKEMATCH(dead): the blitter in a two-word struct whose second word nothing
-   * reads, the 4 bytes of the frame; as a plain local, 216 of 627 instructions
+   * reads, the 4 bytes of the frame; as a plain local, 106 of 627 instructions
    * differ in tla-en. */
   struct {
     DrawRectangle draw;

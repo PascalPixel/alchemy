@@ -1,4 +1,4 @@
-// Draft, differ 8 of 168 (tla-en, 2026-11-05), from 22. Func_020024d4 of
+// Differ 8 of 168 (tla-en, 2026-11-08, -mtune=gba), from 22. Func_020024d4 of
 // overlay 6ab. Scale computed before the calls gives the mul pointer r8 and
 // the angle r10, as natively, but moves its shift; natively lsrs and add come
 // after the gravity store. Left: the shift's place, and the sprite's and

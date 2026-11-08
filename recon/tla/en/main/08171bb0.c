@@ -1,3 +1,4 @@
+// Differ 20 of 1748 (tla-en, 2026-11-08, -mtune=gba): as below.
 // 2026-11-05: differ 20 of 1748 (tla-en). Wrappers on the three palette copies
 // gain 6. Left: mode 4's giv order and the sched2 rows below; pin and
 // statement-move searches found nothing.
@@ -160,7 +161,7 @@ void SceneTransform_ApplyPosition(void *position);
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 6 of 1748 instructions differ in tla-en. */
+   * Iwram_CopyWords, 26 of 1748 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

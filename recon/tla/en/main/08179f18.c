@@ -1,3 +1,4 @@
+// Differ 4 of 2583 (tla-en, 2026-11-08, -mtune=gba).
 // Draft, differ 4 of 2583 (tla-en, 2026-11-05), draft 2583: one site, pool words as the listing's.
 // Everything else in the function agrees.
 // What is left is the scheduler ranking a multiply against a stack load, in the ring: b = m * grow, then

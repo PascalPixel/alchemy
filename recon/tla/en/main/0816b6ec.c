@@ -1,4 +1,4 @@
-// Differ 10 of 609 (tla-en, 2026-11-07): allocation and scheduling only (frame
+// Differ 10 of 609 (tla-en, 2026-11-08, -mtune=gba), the same rows: allocation and scheduling only (frame
 // 0's segment pointer and the 32 trade r6 and r4, its stores order, and the
 // vertex pointer loaded before Render_AllocateModelList, not after).
 // 2026-11-07: Task_Add and Task_Remove from task.h (s32, not void): 12 to 10.

@@ -1,4 +1,5 @@
-// Differ 20 of 106 (tla-en, 2026-11-06).
+// Differ 20 of 106 (tla-en, 2026-11-08, -mtune=gba); unchanged by the GBA tune
+// (index + 242 as the second call's id, a copy of id, the sums reversed: 20).
 // Draft (59 before the gotos below), from the listing: the search command.
 // Collision codes 242 to 247 show their pair of messages from Data_080eff22;
 // otherwise the search event (kind 3) of the cell runs: its "checked the ..."

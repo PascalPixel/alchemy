@@ -1,4 +1,5 @@
-// Differ 6 of 747 (tla-en, 2026-11-07).
+// Differ 6 of 747 (tla-en, 2026-11-08, -mtune=gba): two stack reloads issue
+// a place earlier here, and one ldrb takes its address registers swapped.
 // 2026-11-07: from 20 by ordinary forms: an empty once-only block before the
 // second blitter build (16), the last height as *(table + cell) (12),
 // ball->variant++ in a once-only block (8), the flip flags in a local (6).
@@ -164,7 +165,7 @@ extern const u8 Data_081991c0[];           // and (Earth Force)
 
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 2 of 747 instructions differ in tla-en. */
+   * Iwram_CopyWords, 8 of 747 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 

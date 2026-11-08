@@ -1,4 +1,4 @@
-// Differ 26 of 2159 (tla-en, 2026-11-06).
+// Differ 26 of 2159 (tla-en, 2026-11-08, -mtune=gba).
 // Left: slots 16 and 20 swapped (place, texture3) and the first model's kind stored early. Was 70 (2026-11-05). Rises on the way came from removing false forms (Ram_MapCellBuffer for the symbol PRE shared; the empty asm on count, 154 to 168, which also moved a pool off the listing).
 // BattleEffect_RunEclipse. Measured here: a constant loop.c hoists and global.c gives no register is rebuilt at each use by reload, and reload picks its registers round-robin, so a constant that is one (sparks, vertices, mesh2) puts the names right for many lines after it. `movs rN, #128; lsls` in a loop is usually such a hoisted constant; so is a pool load early in a block.
 // Settled: size set twice stays a hoisted register (one set is replaced into the call by loop.c's single-use

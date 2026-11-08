@@ -1,4 +1,4 @@
-// Differ 2 of 124 (tla-en, 2026-11-07): only the sprites pointer's last add
+// Differ 2 of 124 (tla-en, 2026-11-08, -mtune=gba): only the sprites pointer's last add
 // lands one instruction before the position buffer's address (mov r6, sp).
 // History: 28 -> 6 earlier; 6 -> 2 by computing the vram pointer between
 // the particles and sprites pointers.

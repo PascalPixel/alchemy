@@ -1,4 +1,4 @@
-// Differ 6 of 186 (tla-ja, 2026-11-07).
+// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba): unchanged.
 // The Japanese release's own function: Func_0200297c of overlay 6ad, overlay
 // 6ab's Func_02002148 in its Japanese form with this overlay's symbols; see
 // that draft. Left: actor->z loaded before the sum and the clamp constant's

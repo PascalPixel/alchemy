@@ -1,3 +1,4 @@
+// Differ 6 of 187 (tla-en, 2026-11-08, -mtune=gba).
 // Draft, differ 6 of 187 (tla-en, 5 November), from 82: reload's spill registers rotate through the function, and the native's set is r1, r2, r3.
 // The battle rule store is what brings r1 in: with a local value it needs three.
 // Left: only that store. Native: ldr r3, pool; r1 = offset; adds r2, r3, r1; movs r3, #2; strb r3, [r2]: the value in r3 after an address pseudo in r2.

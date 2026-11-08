@@ -1,4 +1,4 @@
-// Differ 38 of 1361 (tla-en, 2026-11-07).
+// Differ 38 of 1361 (tla-en, 2026-11-08, -mtune=gba): as below.
 // 2026-11-07: a once-only block around the first texture's pixels and mesh
 // (permuter) took 40 to 38; frame * 2 - 144 spellings, texture2 and model
 // store orders, and once-only blocks elsewhere did not help.

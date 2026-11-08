@@ -1,4 +1,4 @@
-// Differ 6 of 1864 (tla-en, 2026-11-07).
+// Differ 6 of 1864 (tla-en, 2026-11-08, -mtune=gba): the same three order pairs.
 // 2026-11-07: Func_08196404 returns s32 (as games/tla declares it): 12 -> 6. Left: three
 // order pairs (glint's 0 between the record loads; the columns' first blitter call
 // and its flipped twin's argument moves); 12 minutes of permuter found nothing. The

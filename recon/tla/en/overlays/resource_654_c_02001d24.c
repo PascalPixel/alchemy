@@ -1,3 +1,4 @@
+// Differ 4 of 656 (tla-en, 2026-11-08, -mtune=gba): the same two store ties.
 // Differ 4 of 656 (tla-en, 2026-11-07), from 10: the scene helpers the header
 // no longer defines (ObjLaunch, ObjMode, ObjModeWait, Wait, FlagSet) compiled as
 // implicit declarations; they are now Actor_Jump, Actor_SetModeById,
@@ -84,9 +85,8 @@ void Func_02001d24(void) {
   Actor_SetSingleChildFlags(Actor_GetById(13), 0);
   ShrineOfTheSeaGod_ObjSpeed(13, 0x6666, 0x3333);
   Call4((void (*)())Func_02003990, (s32)object, 164 << 17, 152 << 14, 168 << 16);
-  /* FAKEMATCH(one-pass): the statement in a once-only block, whose end holds the
-   * order around it; as the plain statement, 6 of 656 instructions differ
-   * in tla-en. */
+  // A once-only block: its end holds the order around it (as the plain
+  // statement, 6 of 656 differ in tla-en).
   do {
     Actor_WaitForMoveById(13);
   } while (0);

@@ -1,4 +1,4 @@
-// Differ 6 of 260 (tla-en, 2026-11-07): overlay 64b's Func_020036a8 form,
+// Differ 6 of 260 (tla-en, 2026-11-08, -mtune=gba; the same 6 on 2026-11-07): overlay 64b's Func_020036a8 form,
 // carried over whole; same three devices to tag under S2 on adoption (work
 // pinned to r9, empty asms on next and leader) and the same 6 left, in the
 // flag negation's registers. See the twin's header for what each step gave.

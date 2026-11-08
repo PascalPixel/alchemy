@@ -1,3 +1,4 @@
+// Differ 14 of 350 (tla-en, 2026-11-08, -mtune=gba).
 // Draft, differ 16 of 350 (tla-en, 2026-11-05). Older notes below may predate this figure.
 // Left: the fade loop's palette and table swap r4 and r3 on their way to r10 and
 // r11; one add's and one shift's place in the schedule.

@@ -1,3 +1,4 @@
+// Differ 6 of 255 (tla-en, 2026-11-08, -mtune=gba).
 // Near miss, differ 6 of 255 (tla-en, 2026-10-31): only mode's slot; its
 // store and two reloads use sp+0 where the native uses sp+4. Without the
 // unused u8[4] the frame is 4 bytes and 10 differ. A declared local always

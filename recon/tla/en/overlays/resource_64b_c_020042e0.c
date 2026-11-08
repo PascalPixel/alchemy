@@ -1,5 +1,7 @@
-// Draft, differ 13 of 227 (tla-en, 2026-11-05). Older notes below may predate this figure.
-// Under -Os, 5 November: differ 15 of 227 (tla-en); older figures below predate it.
+// Differ 13 of 227 (tla-en, 2026-11-08, -mtune=gba), under -Os. Left as below:
+// the scroll address loads before x is stored and the store of x comes before
+// y is computed (y first, a pointer to the scroll, a u16 or s16 scrollX leave
+// it; y through a temporary, 72).
 // Draft, differ 25 of 227 (was 45): queues the second world map picture (its
 // tiles, frames and palette) and scrolls it in over 96 frames, then fades and
 // restores the window palette. The scroll's x is x * 16 kept in a temporary

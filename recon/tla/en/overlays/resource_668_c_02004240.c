@@ -1,4 +1,8 @@
-// Differ 4 of 171 (tla-en, 2026-11-07).
+// Differ 2 of 171 (tla-en, 2026-11-08, -mtune=gba).
+// 8 November: a once-only block around the load of object->x, as in overlay
+// 69c's twin, sets r0 = 1 in the native's place (4 to 2). Left: the load of
+// object->x lands ahead of the mov r1, r9 copy of dx instead of after it
+// (a copy of dx, x += and an empty block after the load leave it).
 // 7 November: a forwarding call layer (FAKEMATCH wrapper) gives the call
 // its own sp + 28 (6 to 4); the tail is left: the native loads object->x
 // before the multiply and sets r0 = 1 after the push->x store;
@@ -89,7 +93,7 @@ s32 Func_02004240(struct PushState *push) {
         cell.x = push->x + (gData_02004cb0[kind][0] << 16);
         for (i = 0; i < width; i++) {
           /* FAKEMATCH(wrapper): the call through CallFunc_02004a64; as a direct
-           * call, 6 of 171 instructions differ in tla-en. */
+           * call, 4 of 171 instructions differ in tla-en. */
           if (CallFunc_02004a64(object, &cell) == 2)
             goto blocked;
           cell.x += 0x100000;
@@ -104,7 +108,14 @@ s32 Func_02004240(struct PushState *push) {
     *layer = 0;
     if (steps == 0)
       return 0;
-    push->x = object->x + dx * steps;
+    {
+      s32 x;
+      // A once-only block: keeps the load of object->x ahead of the multiply.
+      do {
+        x = object->x;
+      } while (0);
+      push->x = x + dx * steps;
+    }
     push->y = object->y;
     push->z = object->z + dz * steps;
     return 1;

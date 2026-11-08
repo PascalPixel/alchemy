@@ -1,4 +1,4 @@
-// Differ 6 of 260 (tla-en, 2026-11-07), with three devices (S2 tags needed on
+// Differ 6 of 260 (tla-en, 2026-11-08, -mtune=gba), with three devices (S2 tags needed on
 // adoption): work pinned to r9 (pin), and empty asms that read and write next
 // (barrier: keeps kind's join copy) and leader (barrier: one more reference,
 // so leader outranks slot). Plain moves that took it 41 to 6: the map work read
@@ -6,7 +6,7 @@
 // object (26), and dx declared bare and set after the locals (6); the old
 // `mode = 9` temporary is no longer needed (same 6 without it, dropped). Left:
 // `!GameFlag_Test(flag)` computes in r2 then 1 in r3 where the native has the
-// test in r3 and 1 in r2 (== 0, 1 - (x != 0), ternary, u32 shown: no change).
+// test in r3 and 1 in r2 (== 0, 1 - (x != 0), ternary, u32 shown: no change; ^ 1, 159; the result negated in place, 35).
 // Without the next barrier, 13; without the leader barrier, 22; without the
 // pin, 24; arms forms with asm("") against cross-jumping, 175 to 185.
 // Earlier: differ 63 (2026-11-07), slot ranked above leader and work.

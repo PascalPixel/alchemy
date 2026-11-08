@@ -1,4 +1,6 @@
-// Differ 36 of 543 (tla-en, 2026-11-06).
+// Differ 36 of 543 (tla-en, 2026-11-08, -mtune=gba). The palette copy is a
+// plain Iwram_CopyWords call again: under the GBA tune the forwarding wrapper
+// gains nothing (36 either way), so the device is gone.
 // 2026-11-06: rechecked; only stack slots (offset at sp+36, listing sp+20; j * length, the length << 5 copies) and two store ties differ: allocation and scheduling, left as a draft (W4).
 // Earlier 2026-11-06: offset is a C variable again, stepped in the for header before j++ (offset += 8, j++), so the preheader reloads cells from the pool and adds offset as the listing does; every pool offset now agrees. Left: stack slots only, offset at sp+36 (listing sp+20), j * length at sp+20 (sp+24), the length << 5 copies at sp+24 and sp+32 (sp+32 and sp+36), which also reorders the step loads; and two scheduling ties: the first model's shade and kind stores before mesh, and the hand's scrollU store before vertices. Tried: offset as u32 (no change); worse: offset declared elsewhere (46), a row pointer stepped with row++ (210), gMapCellBuffer in place of cells (91 to 217), a local for length << 5 (171) or for camera + 3 (72), other orders of the model stores (40 to 58).
 // 2026-11-05: differ 41 of 543 (tla-en): a row pointer from j * 8 replaces the offset variable, which lets loop.c make the giv (slot sp+20); the model stores in the listing's order. Left: the native adds cells at the row from the pool (here the giv holds it, set in the preheader), camera + 3 at sp+28 under both length << 5 copies (here sp+32), one tie on the shade store; the rest is pool offsets.
@@ -149,12 +151,6 @@ extern const u8 Data_081991e0[];  // its corners
 #define FIRE_PUPPET_FRAMES 103
 #define PUPPET_SEGMENTS 33
 
-static inline s32 CopyWords(void *destination, const void *source, s32 size) {
-  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
-   * Iwram_CopyWords, 85 of 543 instructions differ in tla-en. */
-  return Iwram_CopyWords(destination, source, size);
-}
-
 // Abilities: Fire Puppet.
 //
 // From the caster rises a flaming arm (33 segments of two vertices each, a
@@ -207,7 +203,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F2, work->sheet + 0x4000, 0,
                              0);
-  CopyWords((void *)BG_PLTT,
+  Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet),
                   128);
   REG_BG2PA = 0x80;

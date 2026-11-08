@@ -1,3 +1,4 @@
+// Measured (tla-en, 2026-11-08, -mtune=gba): differ 3 (listing 4, draft 3); still blocked as below.
 // Blocked, 5 November 2026: the work copy of the mixer frame entry, as ☀️'s
 // m4aSoundMain (games/tbs/src/sound/audio.c) and ⚓️'s own in
 // games/tla/src/sound/sound.c. Through the sound route (old_agbcc -O2

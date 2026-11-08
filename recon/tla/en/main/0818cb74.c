@@ -1,4 +1,6 @@
-// Differ 40 of 1122 (tla-en, 2026-11-07), with one tagged temporary.
+// Differ 42 of 1122 (tla-en, 2026-11-08, -mtune=gba), with one tagged temporary;
+// 40 before it: the new 2 are a muls issued ahead of the ldr r1, [sp, #32] the
+// listing puts before it.
 // 2026-11-07 (latest), from 60: the listing loads one pool word for the cell
 // base, the droplets and the 0xc1 load (0x3f4 three times), so all three are
 // gMapCellBuffer, not Ram_MapCellBuffer (an integer folds base + 0x5000); with

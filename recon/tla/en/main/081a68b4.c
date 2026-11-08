@@ -1,4 +1,4 @@
-// Differ 6 of 236 (tla-en, 2026-11-06): scheduling only, `movs r4, #29` one
+// Differ 6 of 236 (tla-en, 2026-11-08, -mtune=gba): scheduling only, `movs r4, #29` one
 // instruction out of place in both row copies. The second loop reads its step
 // through a volatile cast (FAKEMATCH below), which keeps the ldrh, its copy and
 // the sign extension apart; plainly read, combine folds them into a second

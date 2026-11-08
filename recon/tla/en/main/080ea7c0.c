@@ -1,4 +1,6 @@
-// Differ 2 of 104 (tla-en, 2026-11-07).
+// Differ 2 of 104 (tla-en, 2026-11-08, -mtune=gba). The list is pinned to r9
+// (pin, untagged yet: unpinned, 25 of 104); an if around a do-while, a
+// for with no init and a test of the list as well all measure 4 to 44.
 // 2026-11-07: the argument itself is the cursor, reset from the list in a
 // once-only block (6 -> 2); what remains is the first test, which the native
 // reads from the list in r9 (`mov r2, r9`) and this from the cursor in r8,

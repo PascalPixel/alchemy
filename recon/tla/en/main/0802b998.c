@@ -1,4 +1,6 @@
-// Differ 6 of 376 (tla-en, 2026-11-07). The eye offset cleared after the
+// Differ 6 of 376 (tla-en, 2026-11-08, -mtune=gba): two sched2 ties, the argument
+// move against the third store, and r1 and the pool load against a store.
+// 2026-11-07: the eye offset cleared after the
 // pitch call, as the twin does, took 25 to 6; reordering its stores, scoping it
 // in a block, the two global stores swapped or retyped did not help.
 // Earlier, 25: 0x106 through its own

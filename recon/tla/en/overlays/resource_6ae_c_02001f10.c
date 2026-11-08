@@ -1,3 +1,4 @@
+// Differ 34 of 1038 (tla-en, 2026-11-08, -mtune=gba).
 // Near miss, differ 34 of 1038 (tla-en, 2026-11-06): the slots and the
 // mask/zero register choice, as below. Left: the slots (14 rows):
 // the one spilled actor at sp+4 natively with four empty bytes below it, here

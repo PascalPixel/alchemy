@@ -1,4 +1,5 @@
-// Differ 4 of 337 (tla-en, 2026-11-07).
+// Differ 6 of 337 (tla-en, 2026-11-08, -mtune=gba): sched2 order only; the
+// multiply after a call issues before the loads of sl + 4 here, after them natively.
 // 2026-11-07: a pointer to screen (FAKEMATCH temporary) fixes the hoisted
 // addresses 36 and 48 (16 -> 4). Left: a multiply the native
 // issues later than alchemy-gcc does: sched2 ranks the chain into muls too high
@@ -126,7 +127,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
 
     offset = member * SHARDS_PER_MEMBER * sizeof(struct EffectStep);
     /* FAKEMATCH(temporary): position, a pointer standing in for &screen; as
-       EffectPosition_ProjectPoint(point, &screen), 16 of 337 instructions
+       EffectPosition_ProjectPoint(point, &screen), 18 of 337 instructions
        differ in tla-en. */
     position = &screen;
     object = GetBattleObjectSlotFar(effect->actors[member])->object;

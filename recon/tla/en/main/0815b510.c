@@ -1,3 +1,5 @@
+// Differ 4 of 142 (tla-en, 2026-11-08, -mtune=gba); the same site: the size multiply still outranks the halving
+// (multiplies cost 5 under the GBA tune); permuter 5 minutes, nothing better.
 // Measured 2026-11-05 (tla-en): differ 4 of 142. Left: one site: a multiply the
 // native issues later than alchemy-gcc does: sched2 ranks the chain into muls
 // too high (its cost of 4), so the constant or the multiply comes ahead of

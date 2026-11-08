@@ -1,4 +1,7 @@
-// Draft, differ 2 of 266 (tla-en, 5 November), no device: one tie, the same as 664's Func_02000d48: the counter's address (add r2, r8) ahead of the sprite's strb in the native. Func_02000d48's twin, with another ending.
+// Differ 2 of 266 (tla-en, 2026-11-08, -mtune=gba). Also tried 2026-11-08: the
+// sprites in locals (either order), value after counter (2); the counter stored
+// directly, moved after renderMode or before the priority copy (14 to 29).
+// One tie, the same as 664's Func_02000d48: the counter's address (add r2, r8) ahead of the sprite's strb in the native. Func_02000d48's twin, with another ending.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -59,7 +62,7 @@ void Func_02001908(struct Actor *shot) {
 
       near = 0;
       /* FAKEMATCH(barrier): the empty asm on near changes its allocation rank; as no
-       * asm, 15 of 266 instructions differ in tla-en. */
+       * asm, 4 of 266 instructions differ in tla-en. */
       asm("" : "=r"(near) : "0"(near));
       if (gMainRoutineWork.renderMode == 2) {
         if (Func_020018d8(leaderPosition, shotPosition) <= 16 &&

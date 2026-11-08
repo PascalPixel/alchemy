@@ -1,4 +1,5 @@
-// Measured 2026-11-05 (tla-en): differ 10 of 7666, slots normalized 5, sizes equal.
+// Differ 10 of 7666 (tla-en, 2026-11-08, -mtune=gba): the same four ties as
+// under the older tune. Measured 2026-11-05: slots normalized 5, sizes equal.
 // What is left is four scheduling ties, each one row moved; none has a register or
 // form behind it, and no reshaping tried moves them:
 // - Kind 16: strb before adds r0; here adds r0 first. Written with buffer[j] the

@@ -1,3 +1,4 @@
+// Differ 16 of 148 (tla-en, 2026-11-08, -mtune=gba).
 // Draft, differ 16 of 148 (tla-en, 5 November 2026), under -Os. Left: only the first block's reload
 // registers, r0 and r1 swapped for the map and the work (the native has the map's in r1, the work's in r0
 // and inherits r0 for the tile's read). The native stores map->origin[1] to its one frame slot and nothing

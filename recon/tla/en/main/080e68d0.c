@@ -1,5 +1,5 @@
-// Differ 20 of 938 (tla-en, 2026-11-07): sched2 order only; the two hoisted
-// locals (one a pin on r2) need their S2 tag on adoption.
+// Differ 20 of 938 (tla-en, 2026-11-08, -mtune=gba): sched2 order only; the two hoisted
+// locals (one a pin on r2) need their S2 tag on adoption: as plain C, 24 and 22.
 // 2026-11-07: event loaded before caster, 26 to 20; 12 permuter minutes found
 // nothing further.
 // Draft, differ 50 of 938, skeleton gap 24 (tla-en, 2026-11-01): a field

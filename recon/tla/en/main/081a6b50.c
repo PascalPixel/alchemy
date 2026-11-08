@@ -1,4 +1,4 @@
-// Differ 2 of 360 (tla-en, 2026-11-07).
+// Differ 2 of 360 (tla-en, 2026-11-08, -mtune=gba).
 // 2026-11-07: a once-only block around offsetX and offsetY, 4 to 2; the listing
 // stores rows between "adds r2, r3, #6" and "adds r3, #8" (the block's loop
 // note keeps it ahead; a block over all four loads puts it after). Spellings,

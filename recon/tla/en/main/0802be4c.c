@@ -1,4 +1,5 @@
-// Differ 30 of 218 (tla-en, 2026-11-06); 38 on 2026-10-18. A buffer
+// Differ 30 of 218 (tla-en, 2026-11-08, -mtune=gba).
+// 30 on 2026-11-06; 38 on 2026-10-18. A buffer
 // variable set one call early, reused for the next buffer: 84. A 5-minute
 // permute found nothing under 44; the rest is allocation and scheduling.
 // First pass: like The Broken

@@ -1,4 +1,4 @@
-// Differ 8 of 2209 (tla-en, 2026-11-07). Scheduling only: the then-branch
+// Differ 8 of 2209 (tla-en, 2026-11-08, -mtune=gba). Scheduling only: the then-branch
 // second loop (Data_08198830 pool load, base.y load, -0x10000 pool) and the
 // t <= 43 setup (work loaded before faces).
 // 2026-11-07: 28 to 8 by frame 168 as base.x, base.y, vel.x, vel.y; battle set
@@ -814,7 +814,7 @@ void BattleEffect_RunAzul(struct BattleEffectArgument *effect) {
           texture2.logWidth = 7;
           model->mesh = gData_08199364;
           /* FAKEMATCH(barrier): the empty asm parts the scheduler's rows; as no
-           * asm, 2 of 2209 instructions differ in tla-en. */
+           * asm, 10 of 2209 instructions differ in tla-en. */
           __asm__("");
           texture2.logHeight = 7;
           model->shade = shade;

@@ -1,4 +1,4 @@
-// Differ 25 of 687 (tla-en, 2026-11-06): the pool zero, as below. Zero as u64 or s64
+// Differ 25 of 687 (tla-en, 2026-11-08, -mtune=gba): the pool zero, as below. Zero as u64 or s64
 // (as champa/s0c40.c gets its pool zero) gives 26; 5 minutes of permuting found nothing.
 // Under -Os, 5 November: differ 25 of 687 (tla-en); older figures below predate it.
 // Draft, differ 25 of 687, skeleton gap 3 (tla-en, 2026-11-01)

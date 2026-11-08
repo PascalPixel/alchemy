@@ -1,4 +1,4 @@
-// Differ 2 of 1251 (tla-en, 2026-11-07).
+// Differ 2 of 1251 (tla-en, 2026-11-08, -mtune=gba); the same row as on 2026-11-07.
 // 2026-11-07: the texture's pixels as u8 * (alias set apart from the model's
 // vertices) put mov r8 ahead of the vertices store (4 to 2). Left: mov sl
 // after asrs r6 at the flash loop's preheader; gcse's PRE inserts mouthY - 64

@@ -1,3 +1,4 @@
+// Differ 12 of 150 (tla-en, 2026-11-08, -mtune=gba).
 // Draft, differ 14 of 150 (tla-en, 2026-11-05). Each of the 14 colours of BG palette 3
 // steps one unit per channel toward gData_020026c0, every 10 frames, until none changes:
 // the fade written as Func_02001108 writes it. Left: palette and table swap r4 and r3 on

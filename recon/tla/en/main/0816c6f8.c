@@ -1,4 +1,4 @@
-// Differ 6 of 1139 (tla-en, 2026-11-07).
+// Differ 6 of 1139 (tla-en, 2026-11-08, -mtune=gba), the same scroll-zero rows.
 // 2026-11-07: lift scaled in its declaration fixes the asrs order; the dome
 // model stores kind second and scrollU third (search of all 5040 orders and
 // texture placements). Left, sched2 only: the listing sets the scroll zero

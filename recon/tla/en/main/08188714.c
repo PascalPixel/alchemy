@@ -1,4 +1,6 @@
-// Differ 10 of 636 (tla-en, 2026-11-07).
+// Differ 10 of 636 (tla-en, 2026-11-08, -mtune=gba): order: a move after
+// a multiply here (before it natively), a pool constant loaded late into r3 (early
+// into r4 natively), and the zero for r8 built in r4 here (r0 natively).
 // 2026-11-07: the empty asm after the declarations did nothing and is gone;
 // statement orders, once-only blocks, a pixels local and the ring sums (and 10
 // permuter minutes) stay at 10: the ring loop loads &screen before the

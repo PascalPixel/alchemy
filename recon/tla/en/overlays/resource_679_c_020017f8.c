@@ -1,4 +1,4 @@
-// Differ 14 of 159 (tla-en, 2026-11-07).
+// Differ 14 of 159 (tla-en, 2026-11-08, -mtune=gba).
 // 7 November: the word at Data_0202c001 + 0x1df through a local pointer (permuter) gives
 // 19 to 14. Left: allocation, as below.
 // Before: differ 19 of 159 (tla-en, 5 November 2026), from 84: Func_020032d4's form.

@@ -1,4 +1,4 @@
-// Differ 2 of 171 (tla-en, 2026-11-07), under -Os. How far a pushed actor
+// Differ 2 of 171 (tla-en, 2026-11-08, -mtune=gba), under -Os. How far a pushed actor
 // slides: from the actor Func_02000f34 finds, steps its footprint one step at a
 // time in the push direction until a cell of it is blocked (Func_02002338
 // returns 2), and leaves the stopping point in move; returns 0 when it cannot

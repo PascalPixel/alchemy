@@ -1,4 +1,4 @@
-// Differ 16 of 497 (tla-en, 2026-11-06), down from 334: x &= 511 in place and
+// Differ 16 of 497 (tla-en, 2026-11-08, -mtune=gba), down from 334: x &= 511 in place and
 // before y &= 255 (the native ties x & 511 to x); the pointer to originZ held
 // in r6 and set just before the lift call (unpinned, tile + n outranks it in
 // global.c, 0.129 against 0.111, takes r6 and leaves frame 32 where the native

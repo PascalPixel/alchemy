@@ -1,3 +1,5 @@
+// Differ 16 of 222 (tla-en, 2026-11-08, -mtune=gba): order and the
+// registers of two constants, as below.
 // Measured 2026-11-05 (tla-en): differ 16 of 222. Left: two hoisted constants
 // in swapped registers (36 and the stride), r0 and r1 at the head of the loop,
 // r1 and r2 at its tail.

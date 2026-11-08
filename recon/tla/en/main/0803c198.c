@@ -1,4 +1,6 @@
-// Differ 14 of 99 (tla-en, 2026-11-07); 14 in de and 16 of 95 in ja.
+// Differ 14 of 99 (tla-en, 2026-11-08, -mtune=gba); 14 in de and 16 of 95 in ja (2026-11-07). The 253 temporary
+// still pays (46 without, with or without the once-only block); the 1 in sentinel and active
+// from it 62; permuter 6 minutes: 14.
 // 2026-11-07: the second round's 253 temporary kept, tagged, with the cell
 // late (33 to 16), and a once-only block over the OAM words and sentinel
 // (permuter, 14); left: ip holds the 253, where the native holds the 1.

@@ -1,4 +1,4 @@
-// Differ 4 of 171 (tla-en, 2026-11-07): the final position[0] loads
+// Differ 4 of 171 (tla-en, 2026-11-08, -mtune=gba): the final position[0] loads
 // object->x after the multiply where the native loads it first, which also
 // moves movs r0, #1.
 // 7 November: an inline wrapper round the cell call (FAKEMATCH) makes the

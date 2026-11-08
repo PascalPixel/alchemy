@@ -1,4 +1,5 @@
-// Differ 40 of 3111 (tla-en, 2026-11-07).
+// Differ 40 of 3111 (tla-en, 2026-11-08, -mtune=gba; the same on 2026-11-07); each of the six empty asms still
+// pays (42 to 56 without one, the tags updated).
 // Fourth round, 7 November: next set in the Djinn loop's for after j = 0 (46 to
 // 40, its copy now through r2 as the native); 8 minutes of permuter, nothing
 // better. Slots run by descending pseudo number, so next must outnumber the
@@ -463,7 +464,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       Func_08045528(member, portraitSlot);
     sprite->oam.word.attr01 = 0x80000400;
     /* FAKEMATCH(barrier): an empty asm stores the sprite word straight after
-     * its load, before the call's arguments; as no asm, 56 of 3111
+     * its load, before the call's arguments; as no asm, 50 of 3111
      * instructions differ in tla-en. */
     asm("");
     sprite->oam.word.attr23 = 0;
@@ -759,7 +760,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.word.attr01 = 0x40000400;
     cursorSprite.oam.word.attr23 = 0;
     /* FAKEMATCH(barrier): an empty asm stores the sprite words straight after
-     * their load, before the call's arguments; as no asm, 62 of 3111
+     * their load, before the call's arguments; as no asm, 56 of 3111
      * instructions differ in tla-en. */
     asm("");
     cursorSprite.oam.f.tile =
@@ -843,7 +844,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
         /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the fill
-         * loop's test; as no asm, 48 of 3111 instructions differ in tla-en. */
+         * loop's test; as no asm, 42 of 3111 instructions differ in tla-en. */
         asm("");
         for (; j <= 3; j++)
           iconSprites[j].oam.f.tile =
@@ -925,7 +926,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
           /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the fill
-           * loop's test; as no asm, 48 of 3111 instructions differ in tla-en. */
+           * loop's test; as no asm, 42 of 3111 instructions differ in tla-en. */
           asm("");
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =
@@ -1289,7 +1290,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
       for (i = 0, entry = gResourceTableEntries, iconX = 112; i <= 10; i++) {
         sprite->oam.word.attr01 = 0x40000400;
         /* FAKEMATCH(barrier): an empty asm stores the sprite word straight
-         * after its load; as no asm, 60 of 3111 instructions differ in
+         * after its load; as no asm, 54 of 3111 instructions differ in
          * tla-en. */
         asm("");
         sprite->oam.word.attr23 = 0;
@@ -1310,7 +1311,7 @@ s32 Func_08046b08(u16 *list, s32 listCount, s32 member) {
              i++) {
           sprite->oam.word.attr01 = 0x40000400;
           /* FAKEMATCH(barrier): an empty asm stores the sprite word straight
-           * after its load; as no asm, 48 of 3111 instructions differ in
+           * after its load; as no asm, 42 of 3111 instructions differ in
            * tla-en. */
           asm("");
           sprite->oam.word.attr23 = 0;

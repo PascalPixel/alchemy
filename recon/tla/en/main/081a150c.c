@@ -1,4 +1,8 @@
-// Measured 2026-11-05 (tla-en): differ 12 of 69.
+// Differ 12 of 69 (tla-en, 2026-11-08, -mtune=gba). The listing's pool gives the
+// native's address order: 7518, 751c, 7520, 7528, gScrollTarget, 7524, 7514.
+// Written in that order: 32 (sched1 then hoists 7524's address and
+// Func_081a133c into r1 and r0); 7524 as s16 32, u8 or s32 35; 7524 = 1
+// before 7520 = 0 with gScrollTarget after 7528: 12.
 // Draft, differ 12 of 69 (was 32): sets up a scrolling picture scene:
 // clears the frame flags and the scroll words, resets the task table and adds
 // Func_081a133c, then sets up BG2, BG3 and blending as Func_081a06e0 does,

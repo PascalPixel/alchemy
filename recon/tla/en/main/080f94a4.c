@@ -1,4 +1,6 @@
-// Differ 22 of 162 (tla-en, 2026-11-06); the same 22 in de, es, fr and it;
+// Differ 22 of 162 (tla-en, 2026-11-08, -mtune=gba). Without the pin 96, pin r6 96,
+// no empty asm 30, no hoist 24, no devices at all 92. Other editions not re-measured.
+// 2026-11-06: the same 22 in de, es, fr and it;
 // 0 of 109 in tla-ja (2026-11-07, its whole extent; the listing runs on).
 // Near miss with an untagged r4 pin, empty asm and r1 hoist found by search; each
 // needs its S2 tag on adoption. The rest is allocation: the native keeps the

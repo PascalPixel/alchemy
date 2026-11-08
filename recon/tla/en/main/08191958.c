@@ -1,3 +1,4 @@
+// Differ 34 of 185 (tla-en, 2026-11-08, -mtune=gba); the same frame and rows as below.
 // Differ 34 of 185 (tla-en, 2026-11-06).
 // The frame (native 140, here 136: every spill one slot lower, 16 rows) and,
 // in the band loop, the row offset and the falling edge in each other's

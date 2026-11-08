@@ -1,4 +1,4 @@
-// Differ 28 of 871 (tla-en, 2026-11-07): the caster takes r6 and the offset r7
+// Differ 28 of 871 (tla-en, 2026-11-08, -mtune=gba), the same rows: the caster takes r6 and the offset r7
 // where the listing swaps them; the event work's pointer is loaded once before
 // the loop where the listing reloads it each pass; green's product sits in r5
 // against r3; one scheduling pair (i = 63 against the -13 mask's copy).

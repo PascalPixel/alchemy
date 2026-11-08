@@ -1,4 +1,4 @@
-// Differ 4 of 80 (tla-en, 2026-11-07).
+// Differ 4 of 80 (tla-en, 2026-11-08, -mtune=gba).
 // BLDALPHA's 0x80c through a one-constant local (8 to 4) gives the native's r8 and r7.
 // Left: the blend value's adds and mov sl go before the BLDCNT address (sched order);
 // a 5-minute permute found nothing under 4.

@@ -1,4 +1,4 @@
-// Differ 44 of 418 (tla-en, 2026-11-06): register names only.
+// Differ 44 of 418 (tla-en, 2026-11-08, -mtune=gba): register names only.
 // The native has the cell in ip, the row's y << 3 in lr and the step's offset in r9;
 // here the two offsets outrank the cell (5 refs over 75 and 86
 // against 4 over 111), take ip and lr, and the cell takes r9. That also moves the reload
@@ -68,7 +68,7 @@ u32 Random16Far(void);
 
 static __inline__ void *Heap_AllocEwram_(s32 size) {
   /* FAKEMATCH(wrapper): forwarded inline, as scene_call.h describes; as a
-   * direct call, 422 of 418 instructions differ in tla-en. */
+   * direct call, 140 of 418 instructions differ in tla-en. */
   return Heap_AllocEwram(size);
 }
 

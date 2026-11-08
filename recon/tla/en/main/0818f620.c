@@ -1,3 +1,6 @@
+// Differ 2 of 1022 (tla-en, 2026-11-08, -mtune=gba): one pair, the pool load ahead
+// of str r7 at the second DrawDisc. Tried 2026-11-08: the ball steps after the
+// call (92), index after x and y (18), y before x in mode 0 (67).
 // Measured 2026-11-05 (tla-en): differ 2 of 1022. The Iwram calls written as
 // static inline wrappers take this from 20 to 2: the DrawDisc stores and both
 // clears come right, so these calls were inline functions in the source. Left:

@@ -1,4 +1,4 @@
-// Differ 19 of 231 (tla-en, 2026-11-06).
+// Differ 19 of 231 (tla-en, 2026-11-08, -mtune=gba).
 // Now only the owners/reserve spill slots swapped and selected's address built
 // in two steps; the redraw reorder is gone. A once-only block around everything
 // after the slot setup (from the permuter) took 23 to 19; tag it

@@ -1,10 +1,11 @@
-// Differ 6 of 255 (tla-en, 2026-11-07).
+// Differ 6 of 255 (tla-en, 2026-11-08, -mtune=gba).
 // From 16: the burst loop is a goto loop (no loop notes, so GCSE no longer
 // hoists the array's address), and one array serves as the velocity and
 // then the position, giving the native frame of 68 with options at sp+16 and
 // the array at sp+56. Left: kind + 2 is formed after the blend store, in r3,
-// where the native forms it before, in r4; a named sum, kind += 2 and
-// * 0x100000 all widen the gap.
+// where the native forms it before, in r4; a named sum, kind += 2 (before or
+// after the blend), the z in a local and * 0x100000 all widen the gap; the
+// sum first, s32 or u32 kind and the blend stores reordered leave it at 6.
 #include "types.h"
 #include "call.h"
 #include "actor.h"

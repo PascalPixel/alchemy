@@ -1,4 +1,4 @@
-// Differ 14 of 277 (tla-en, 2026-11-06).
+// Differ 14 of 277 (tla-en, 2026-11-08, -mtune=gba): allocation, as below.
 // Taking gData_0802ed34 into a local (resourceSets) before the loops fixes the
 // window reload in the reload test (37 before). Left, allocation only: the
 // native forms gMapBlocks in r1 after the row shift (the draft, r3), rereads

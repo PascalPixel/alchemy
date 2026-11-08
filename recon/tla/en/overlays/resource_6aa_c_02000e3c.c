@@ -1,15 +1,11 @@
-// Draft, differ 6 of 143, skeleton gap 0 (tla-en, 2026-11-01)
-// Left: register allocation only. The cell base stays in r2 and the sum goes to
-// r3, then r2 again for the 0x200 row step; here the base pseudo is reused, so
-// the sum stays in r2 and r3 takes the step. A separate variable for the sum
-// loses two instructions (141, gap 7 to 10), as do a one-expression ternary, an
-// index of x + (z << 7) + 128 and a plain if without the else arm.
-// The ternary with buffer as a named local is what makes the address of
-// currentOwner reload after the if; gMapCellBuffer in the arm itself leaves its
-// load after the branch. Near twin: Func_02000fe0 in
-// mars_lighthouse_entrance/s0fe0.c, which steers the same store order with a
-// tagged one-pass block; this draft uses a do-while(0) macro instead, with one
-// use, which S2 lets stand only while every use matches through it.
+// Matches (tla-en, 2026-11-08, -mtune=gba); also differ 0 in tla-ja, de, es, fr and
+// it (instructions; pools not compared). What closed it: the cell pointer
+// stepped to the row below in one statement (cells += x + (z << 7) + 128, then
+// cells->attributeB); as cells[128] after the step, 6; one index expression, 42.
+// No device: the window-layer macro is a once-only block with a local that
+// holds one constant (as REG_WINOUT = 0xf1f, 30 of 143 differ in tla-en), and
+// the 0x100 argument is such a local too (as the literal, 2). Near twin:
+// Func_02000fe0 in mars_lighthouse_entrance/s0fe0.c.
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -75,9 +71,12 @@ void Func_02000e3c(s32 arg) {
   x = actor->x >> 20;
   z = actor->z >> 20;
   map = Ram_HeapSlots->mapWork;
-  cells = map != NULL ? map->layers[actor->terrainId & 3].cells : buffer;
-  cells += x + (z << 7);
-  if (!(cells[128].attributeB & 0x40)) {
+  if (map != NULL)
+    cells = map->layers[actor->terrainId & 3].cells;
+  else
+    cells = buffer;
+  cells += x + (z << 7) + 128;
+  if (!(cells->attributeB & 0x40)) {
     SET_SPRITE_WINDOW_LAYERS();
     REG_DISPCNT |= DISPCNT_OBJWIN_ON;
     Func_02000df0();

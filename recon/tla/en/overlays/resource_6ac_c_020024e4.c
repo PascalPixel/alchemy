@@ -1,4 +1,5 @@
-// Differ 6 of 186 (tla-ja, 2026-11-07).
+// Differ 6 of 186 (tla-ja, 2026-11-08, -mtune=gba; the same on 2026-11-07); the two unions and
+// the once-only block still pay (8, 22, 10 without each).
 // Func_020024e4 of overlay 6ac: the Japanese release's own function, written
 // as overlay 6aa's Japanese draft of Func_0200263c with this overlay's symbols
 // (from 20: the position and velocityX through unions, actor->z first in the

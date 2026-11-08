@@ -1,8 +1,9 @@
-// Draft, differ 14 of 255 (tla-en, 2026-11-05). Func_020002f4 of overlay 6ab,
+// Differ 14 of 255 (tla-en, 2026-11-08, -mtune=gba). Func_020002f4 of overlay 6ab,
 // rewritten readable from the translator's map, nested for its one exit.
 // Left: the leader's position block: the follower's offset through r3 and the
 // leader through r1 natively, r1 and r3 here, with one untagged once-only
-// block that holds x first.
+// block that holds x first (the leader's stores swapped leave it; the follower
+// pointer after z, 18).
 #include "types.h"
 #include "call.h"
 #include "actor.h"

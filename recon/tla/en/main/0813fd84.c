@@ -1,4 +1,5 @@
-// Differ 44 of 2579 (tla-en, 2026-11-06).
+// Differ 44 of 2579 (tla-en, 2026-11-08, -mtune=gba). Tried 2026-11-08: an s32 or s16
+// mask, the priority bit-field (75 each), the byte through a pointer (76).
 // Near miss: the priority mask's hoisted -13 and its copy, then scheduling and reload order only. The frame, every
 // slot and every pool agree.
 // BattleEffect_RunCruelRuin. What this round settled, each read from the listing and each a real form:

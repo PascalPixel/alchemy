@@ -313,12 +313,6 @@ $(BUILD)/obj/%.o: %.s
 	@mkdir -p $(@D)
 	$(AS) $(EDITION_ASFLAGS) -o $@ $<
 
-# ⚓️'s C that the stock compiler does not yet match stands in as the retired
-# compiler's output, assembled as compiled C is: GAS 2.10 pads with zeros.
-$(BUILD)/obj/recon/tla/raw/src/%.o: recon/tla/raw/src/%.s
-	@mkdir -p $(@D)
-	$(CCAS) $(CCASFLAGS) --defsym $(DEFINE)=1 -mthumb -mthumb-interwork -o $@ $<
-
 $(BUILD)/obj/%.o: %.S
 	@mkdir -p $(@D)
 	$(CPP) -lang-asm -nostdinc -D$(DEFINE)=1 -I$(BUILD) $< $(@:.o=.i)

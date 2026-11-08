@@ -1,89 +1,6 @@
-// Differ 0 of 1676 in all six editions (2026-11-08, -mtune=gba). The last row
-// was the smoke draw's height read: gData_08197492 and gData_08197498 are now
-// declared u8, not const u8, as the adopted battle_effect files declare them,
-// and the draw reads gData_08197498[cell]. A const array index is an unchanging
-// load the scheduler hoists over the outgoing argument store; a pointer form
-// puts the symbol last in the address ([cell, table]). The two FAKEMATCH(dead)
-// tests are still needed (re-measured without each: 248, 249).
-// Differ 2 of 1676 (tla-en, 2026-11-08, -mtune=gba).
-// 2026-11-07: 14 to 2. The CSE stops are now a never-true test with two jumps
-// to one label (FAKEMATCH dead, below) in place of the one-pass blocks: the
-// label ends CSE's block, CSE folds both jumps, and no note reaches sched2. One
-// jump does not stop CSE (skip_blocks follows it). The smoke's height reads
-// *(gData_08197498 + cell), which fixes the draw's order (6 to 2). Left: one
-// ldrb, the listing's [r4, r2] (cell, table) against the draft's [r2, r4]; cell
-// + table, (u32), casts, cell[table] and (table + cell)[0] do not swap it. The
-// history below reads DRAW_ALTERNATE and PLACE_SMOKE as the blocks they were.
-
-// Draft, differ 14 of 1676 (all six editions, 2026-11-01)
-// BattleEffect_RunThor, Thor (scene kind 12). Instructions, registers, frame
-// and allocation agree; 7 instructions sit in the wrong place, at four sites:
-// - The beam's second LoadBlitter: movs r0, #188 before movs r1, #23.
-// - The smoke's add r6, fp after adds r0, r5, and adds r5, r5, r0 after
-//   ldr r4, [sp, #8].
-// - The smoke's mov r8, r0 after subs r5, r5, r3.
-// - The smoke's draw: its arguments, ldrh r1 to str r3, [sp, #0].
-// One cause, read from the cse, loop and sched2 dumps. The listing needs a stop
-// for the first CSE between the smoke's x and y and its draw, and between the
-// beam's two draws, and no stop the scheduler can see:
-// - Without a stop CSE keeps the two size tables in one pseudo each (life 45
-// and
-//   33, against 2 with the stop), loop.c hoists them out of the smoke loop, and
-//   work->sheet stays in a register across the beam's first draw.
-//   That is 210 and 261 differ, and the allocation goes with it.
-// - DRAW_ALTERNATE and PLACE_SMOKE's blocks are that stop: CSE breaks at
-//   NOTE_INSN_LOOP_END, and cse2 merges the copies back after loop.c. But
-//   haifa-sched makes the insn after a loop note a barrier that depends on
-//   every earlier register use. That barrier is all 14: it gives add r6, fp a
-//   third dependent, wins the tie against adds r0, r5, and puts movs r0 first.
-// - The listing's order is The Broken Seal's plain order, which has no barrier
-//   (rank_for_schedule's ties all fall the way the twin's do).
-// Measured and not kept, because each adds or moves a one-pass block:
-// - One empty do { } while (0) after each blitter load, no macros: 10.
-// - PLACE_SMOKE's block widened to end after its Func_08196404: 12. With one
-//   block from the first load to the second: 10. Every other placement of
-//   blocks over those statements (610 smoke, 233 beam) is worse.
-// - A jump only CSE folds, in place of the blocks: 6, the draw's arguments
-// alone.
-//   Dead code with a goto, so only a proof that the stop must not be a note.
-// Not reached by plain C: named table pointers in the body, non-const tables,
-// the loop as do, while, for (;;) or labels, a mode local, inline forwarders
-// for the loads, inline helpers for the sizes and the draws. No plain form
-// tried stops CSE there; a compiler reason is possible and is Pascal's (K2).
-// Devices kept, each with what taking it out costs here:
-// - DRAW_ALTERNATE's block, 261; at the bolt it costs 8, so that site is
-// spelled
-//   out, so it is not a macro every use matches through. PLACE_SMOKE's, 210.
-// - for (j = 0; j != 1; j++) around the strike, a one-pass loop kept from the
-//   twin, 1196. Unexplained: it is more than this block's own insns.
-// - RatioMulQ14's inline, 24; CopyWords' at the first palette, 16. The argument
-//   is built in r0 and dies at the call, so the constant is not carried.
-// - blit[2], whose array also keeps blit[0] on the stack, 218; a plain local
-//   does not.
-// - One drawAlt = BLITTER_ALTERNATE in each arm of the circle's if, 165.
-// - The { DrawRectangle draw; ... } block's inner spark, 42.
-// - speed = 0x3ff; speed &= Random16(), 73 (63 at the mote, 41; radius, 39).
-// - pillarX and pillarY, 393: constants held for life, no device.
-// - (frame * 2 + frame) << 11, 608; the formationScreenX in the for's init, 24;
-//   (work->sheet + STORM_DIMMED_DOTS)[offset + j], 30. Spellings.
-// Taken out at no cost: j as the beam's inset, dotCount as the spawned counter,
-// the palette cast, the formation's separate declarations and the second
-// CopyWords.
-// Found earlier and still true: all the function's counters are one i, except
-// the inner j; i has 208 refs and outranks size * 2, yet r9 is right, because
-// local-alloc puts the tables in r10 and r8 and i spans them. frame * 2 is one
-// giv in sp+16.
-
-// Twin: The Broken Seal's BattleEffect_RunThor (effect.c), ported. The Lost Age
-// loads the light fan once, copies palette 0x184 to BG palette RAM after the
-// beam ramp and steps the dusk palette through Func_0815f0a0 (four
-// resources by frame & 63, twice a frame) where ☀️ calls
-// Graphics_UpdatePhasePalette. Its lightning part runs 128 frames, not 192,
-// with 18 bolts, not 30, the phase at frame 120, not 140, and draws the four
-// mirrored copies of the violet mote through Func_0818caa8. The strikes read
-// the effect from the argument; the blitters live in heap slots 104 and 188
-// (byte offsets), loaded through BattleEffect_LoadBlitter, and the smoke's
-// through Func_08196404; modes count down from 3 (BLIT_MODE).
+/// @file
+/// Thor: a beam of light falls from a dusk sky, then a pillar of lightning and
+/// violet bolts strike the foes.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -148,10 +65,14 @@ s32 Trig_Cos(s32 angle);
 // The Broken Seal's iwram_call.h forwards these through static inlines; here
 // that form keeps a constant from being carried across the call.
 static inline s32 CopyWords(void *destination, const void *source, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_CopyWords, 2 of 1676 instructions differ in tla-en. */
   return Iwram_CopyWords(destination, source, size);
 }
 
 static inline s32 RatioMulQ14(s32 divisor, s32 value) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_RatioMulQ14, 10 of 1676 instructions differ in tla-en. */
   return Iwram_RatioMulQ14(divisor, value);
 }
 
@@ -195,15 +116,13 @@ extern const u8 Data_08198562[];      // gThor_SmokeFlips
 #define STORM_LIGHTNING_FRAMES 128
 #define STORM_BOLTS 18
 
-// Abilities: Thor (scene kind 12).
-//
-// As ☀️'s: in the dusk part (STORM_DUSK_FRAMES, which A or B cuts short) a
-// circle of 128 dots and three lines across it form over scrolling dusk
-// clouds, turn, sink into the sky and send down a beam of light; in the
-// lightning part (STORM_LIGHTNING_FRAMES) a pillar of lightning strikes the
-// formation and throws sparks, STORM_BOLTS violet bolts follow while a violet
-// mote sways above, and the formation is pushed back in smoke until an
-// impact burst ends the effect.
+/// Thor (scene kind 12). In the dusk part (STORM_DUSK_FRAMES, which A or B cuts
+/// short) a circle of 128 dots and three lines across it form over scrolling
+/// dusk clouds, turn, sink into the sky and send down a beam of light; in the
+/// lightning part (STORM_LIGHTNING_FRAMES) a pillar of lightning strikes the
+/// formation and throws sparks, STORM_BOLTS violet bolts follow while a violet
+/// mote sways above, and the formation is pushed back in smoke until an
+/// impact burst ends the effect.
 void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   u8 ramp[32];
   s32 point[3];

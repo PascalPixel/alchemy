@@ -2819,12 +2819,7 @@ main	rom_main_09	games/tla/src/battle_effect/f13c5f4	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/fxmodeb	.text
 main	rom_main_09	games/tla/src/battle_effect/f13cb34	.text
 main	rom_main_09	games/tla/src/battle_effect/fxmodec	.text
-main	rom_main_09	recon/tla/raw/0813d098	.text	en
-main	rom_main_09	recon/tla/de/rom	.rom.0013d098	de
-main	rom_main_09	recon/tla/es/rom	.rom.0013d098	es
-main	rom_main_09	recon/tla/fr/rom	.rom.0013d098	fr
-main	rom_main_09	recon/tla/it/rom	.rom.0013d098	it
-main	rom_main_09	recon/tla/ja/rom	.rom.0013d098	ja
+main	rom_main_09	games/tla/src/battle_effect/f13d098	.text
 main	rom_main_09	games/tla/src/battle_effect/f13e114	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f13e3d0	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f13e7e0	.text	en de es fr it ja
@@ -3003,12 +2998,7 @@ main	rom_main_09	games/tla/src/battle_effect/f15842c	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f1587e4	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/f158ce0	.text
 main	rom_main_09	games/tla/src/battle_effect/screen_shake	.text
-main	rom_main_09	recon/tla/raw/08158dc8	.text	en
-main	rom_main_09	recon/tla/de/rom	.rom.00158dc8	de
-main	rom_main_09	recon/tla/es/rom	.rom.00158dc8	es
-main	rom_main_09	recon/tla/fr/rom	.rom.00158dc8	fr
-main	rom_main_09	recon/tla/it/rom	.rom.00158dc8	it
-main	rom_main_09	recon/tla/ja/rom	.rom.00158dc8	ja
+main	rom_main_09	games/tla/src/battle_effect/f158dc8	.text
 main	rom_main_09	games/tla/src/battle_effect/f159cac	.text	en de es fr it ja
 main	rom_main_09	games/tla/src/battle_effect/animation_modes	.text
 main	rom_main_09	games/tla/src/battle_effect/animalt	.text
@@ -3257,12 +3247,12 @@ main	rom_main_09	games/tla/src/battle_effect/f182898	.text
 main	rom_main_09	games/tla/src/battle_effect/f182aa8	.text
 main	rom_main_09	recon/tla/raw/081843fc	.text	en
 main	rom_main_09	recon/tla/raw/081848ec	.text	en
-main	rom_main_09	recon/tla/raw/08186dfc	.text	en
 main	rom_main_09	recon/tla/de/rom	.rom.001843fc	de
 main	rom_main_09	recon/tla/es/rom	.rom.001843fc	es
 main	rom_main_09	recon/tla/fr/rom	.rom.001843fc	fr
 main	rom_main_09	recon/tla/it/rom	.rom.001843fc	it
 main	rom_main_09	recon/tla/ja/rom	.rom.00184400	ja
+main	rom_main_09	games/tla/src/battle_effect/f186dfc	.text
 main	rom_main_09	games/tla/src/battle_effect/f1885f0	.text	en de es fr it ja
 main	rom_main_09	recon/tla/ja/rom	.rom.00188718	ja
 main	rom_main_09	games/tla/src/battle_effect/f188cb0	.text	ja

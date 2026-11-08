@@ -1,49 +1,5 @@
-// Differ 0 of 1864 in all six editions (tla-en, -ja, -de, -es, -fr, -it; 2026-11-08,
-// -mtune=gba, multiplies 3 3; 4 before). The two hoisted blocks are gone: the
-// flipped column's and the glint's blitter are plain calls, each followed by an
-// empty once-only loop (FAKEMATCH(dead), 8 and 4 without), which settles both
-// order pairs. Tried before it: a block local for the x, the picture or the
-// slot, the call wrapped with the draw or the release, sums respelt: no gain.
-// Was: differ 4, two order pairs (a subs before a stack load, and movs r0, #104
-// at the second blitter call).
-// 2026-11-07: Func_08196404 returns s32 (as games/tla declares it): 12 -> 6. Left: three
-// order pairs (glint's 0 between the record loads; the columns' first blitter call
-// and its flipped twin's argument moves); 12 minutes of permuter found nothing. The
-// two hoisted blocks still save 4 each and need temporary tags on adoption.
-// Near miss, differ 12 of 1864 (tla-en, 2026-11-05), with untagged empty asms, one-pass
-// blocks and locals found by search; each needs its S2 tag on adoption, measured then.
-// Draft, differ 50 of 1864, skeleton gap 50 (tla-en, 2026-11-01)
-
-// Twin: The Broken Seal's BattleEffect_RunTargetStrike, rebuilt by ⚓️ for 21
-// modes (19 handler-table wrappers, kinds 117 and 386-458). The skeleton, the
-// record table and the strike, column, wisp, mote, spark and glint parts
-// are the twin's; ⚓️ adds:
-// - a seventh palette (OrangePaletteB) and two more effect sheets: a flash
-// (record flag 32) drawn as 32x64 pictures, and a star (flag 64) drawn as
-// a textured 3D model that swells and shrinks over frames 8 to 17;
-// - per-mode cues: modes 7, 12 and 13 sound their first hits and only then
-// move the battle on, and modes 12 and 13 aim each strike afresh at a
-// jittered point;
-// - heavier hits (flags 16 and 32) set every spark going, and 256 sparks
-// where the twin has 512;
-// - the target is measured once for the wisps, not once for each wisp.
-
-// Left: registers, frame, pools, branches and every instruction agree; the 50
-// differing instructions are 25 order pairs, each beside a store (str to sp, or
-// a load or arithmetic scheduled across one). Reordering the declarations, the
-// table's spelling and the prototype's types moved none of them, so they look
-// like sched2's model (-mthumb-slow-loads is an approximation, K2), not source.
-
-// What settled the shape: BUILD_BLITTER's do-while. Its loop notes end CSE's
-// block, so the blocks after each build recompute mode * 8 and the addresses of
-// targetPosition and center, GCSE's reaching registers get second sets, copy
-// propagation stops, loop leaves mode * 7 in place and the structs are read
-// through spilled pointers. Without it the draft is 1658 of 1864.
-// Taking mode's address does not give this (mode then stays on the stack).
-
-// Tried:
-// the twin rebuilt from the listing                          1668
-// BUILD_BLITTER a do-while, the record's column tail shared  50
+/// @file
+/// The body of 21 strike and column effects.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -162,7 +118,7 @@ void BattleEffect_StartCanvasLayer(s32 control);
 void BattleEffect_EndCanvasLayer(void);
 s32 BattleEffect_LoadBlitter(s32 slot, s32 flags);
 s32 Func_08196404(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
-                   s32 mode); // BattleEffect_BuildBlitter
+                  s32 mode); // BattleEffect_BuildBlitter
 s32 Task_Add(void *func, s32 order);
 s32 Task_Remove(void *func);
 void HeapSlot_Release(s32 slot);
@@ -170,12 +126,11 @@ void Sound_PlayFar(s32 cue);
 void Func_081180e8(s32 phase);             // BattlePlayback_StartFar
 void Func_08118088(s32 actor, s32 motion); // BattleMotion_ApplyVariantMotionFar
 u32 Random16(void);
-void EffectPosition_ProjectBattler(s32 actor,
-                                                 struct EffectPosition *out);
+void EffectPosition_ProjectBattler(s32 actor, struct EffectPosition *out);
 void BattleEffectKernels_IntegrateVector2(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void BattleEffectKernels_IntegrateVector3(struct EffectStep *step, s32 damping,
-                                      s32 gravity);
+                                          s32 gravity);
 void Func_0814cd48(s32 actor, s32 palette, s32 frames, s32 timerSlot,
                    s32 timerFrames); // BattleEffect_TintBattler
 void Func_08158ce0(s32 x, s32 y);    // Camera_ApplyShake
@@ -189,20 +144,17 @@ void SceneTransform_ApplyPitch(s32 pitch);
 void SceneTransform_ApplyYaw(s32 yaw);
 void wait(s32 frames);
 
-#define BUILD_BLITTER(slot, width, height, flags, mode)                         \
+#define BUILD_BLITTER(slot, width, height, flags, mode)                        \
   do {                                                                         \
     Func_08196404(slot, width, height, flags, mode);                           \
   } while (0)
 
-// The body of 21 strike and column effects.
-
-// Strikes (kind 0) are six-picture slashes across the first target, one
-// every six pictures' time; columns (kind 1) are a pair of mirrored 18x48
-// pillars that rise and fall on it. Each hit flashes and shakes the target,
-// starts eight wisps of smoke and a burst of sparks, and the battle moves on
-// at the first. Around them the mode's flags add rising wisps, motes that
-// stream back to the user, glints, sparks, a flash or a star.
-
+/// Strikes (kind 0) are six-picture slashes across the first target, one
+/// every six pictures' time; columns (kind 1) are a pair of mirrored 18x48
+/// pillars that rise and fall on it. Each hit flashes and shakes the target,
+/// starts eight wisps of smoke and a burst of sparks, and the battle moves on
+/// at the first. Around them the mode's flags add rising wisps, motes that
+/// stream back to the user, glints, sparks, a flash or a star.
 void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition ground;
   struct EffectPosition targetPosition;
@@ -241,8 +193,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   if (RECORD(mode, RECORD_KIND) == 0)
-    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage,
-                               work->sheet + 0xc80, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BeamImage, work->sheet + 0xc80,
+                               0, 0);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
                                work->sheet + 0xc80, 0, 0);
@@ -368,15 +320,14 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         if (frame % (RECORD(mode, RECORD_RATE) * 6) == 0 &&
             (u32)(mode - 12) <= 1) {
           EffectPosition_ProjectScaledBattler(effect->actors[0],
-                                             &targetPosition);
-          EffectPosition_ProjectBattler(effect->actors[0],
-                                                      &alternate);
+                                              &targetPosition);
+          EffectPosition_ProjectBattler(effect->actors[0], &alternate);
           targetPosition.y += (alternate.y - targetPosition.y) / 2;
           targetPosition.y += (Random16() & 15) - 8;
         }
         if (effect->side == 1) {
           BattleEffect_LoadBlitter(SLOT_BLITTER,
-                        BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
+                                   BLITTER(BLIT_MAX, CLIP | COMPOSITE_FLIP_X));
           gBlitter(canvas, work->sheet + Data_081975ee[picture],
                    targetPosition.x / 2 - (Data_081975fa[picture] / 2) -
                        Data_081975e2[picture] + 8,
@@ -449,7 +400,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
           if (mode == 16) {
             for (i = 0; i != 4; i++) {
               struct EffectStep *step =
-                  &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 +
+                  &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) *
+                                       16 +
                                    i];
 
               step->variant = 0;
@@ -457,7 +409,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
           } else {
             for (i = 0; i != 8; i++) {
               struct EffectStep *step =
-                  &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 +
+                  &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) *
+                                       16 +
                                    i];
 
               step->variant = 0;
@@ -487,9 +440,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
       Func_08196404(SLOT_BLITTER, 7, 7, CLIP | COMPOSITE_FLIP_X,
                     RECORD(mode, RECORD_BLEND));
       do {
-        /* FAKEMATCH(dead): an empty once-only loop after the flipped column's
-         * blitter; as BUILD_BLITTER alone, 8 of 1864 instructions differ in
-         * tla-en. */
+        // Empty: its loop notes end CSE's block after the blitter call.
       } while (0);
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80, targetPosition.x / 2,
                56, 18, 48);
@@ -529,7 +480,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         }
         for (i = 0; i != 8; i++) {
           struct EffectStep *step =
-              &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 + i];
+              &work->particles[frame / (RECORD(mode, RECORD_RATE) * 6) * 16 +
+                               i];
 
           step->variant = 0;
         }
@@ -543,8 +495,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     // Three glints a frame around the target's middle.
     if ((RECORD(mode, RECORD_FLAGS) & FLAG_GLINTS) && glint) {
       EffectPosition_ProjectScaledBattler(effect->actors[0], &center);
-      EffectPosition_ProjectBattler(effect->actors[0],
-                                                  &alternate);
+      EffectPosition_ProjectBattler(effect->actors[0], &alternate);
       center.y += (alternate.y - center.y) / 2;
       for (i = 0; i != 3; i++) {
         s32 image = frame & 3;
@@ -561,8 +512,7 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
         Func_08196404(SLOT_BLITTER_ALTERNATE, 7, 7,
                       Data_08197605[Random16() & 3] | CLIP, BLIT_ADDITIVE);
         do {
-          /* FAKEMATCH(dead): an empty once-only loop after the glint's blitter;
-           * as BUILD_BLITTER alone, 4 of 1864 instructions differ in tla-en. */
+          // Empty: its loop notes end CSE's block after the blitter call.
         } while (0);
         gBlitterAlternate(canvas, work->sheet + gData_08197486[image], x, y,
                           gData_08197492[image], gData_08197498[image]);
@@ -574,7 +524,8 @@ void Func_0813d098(struct BattleEffectArgument *effect, s32 mode) {
     Transform_SetLookAt(camera->eye, camera->pos);
     BattleEffect_LoadBlitter(SLOT_BLITTER, BLITTER(BLIT_MAX, CLIP));
     draw[0] = gBlitter;
-    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE, BLITTER(BLIT_ADDITIVE, CLIP));
+    BattleEffect_LoadBlitter(SLOT_BLITTER_ALTERNATE,
+                             BLITTER(BLIT_ADDITIVE, CLIP));
     draw[1] = gBlitterAlternate;
     for (k = 0; k != 1; k++) {
       source = GetBattleObjectSlotFar(effect->actor)->object;

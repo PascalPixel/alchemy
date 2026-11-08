@@ -1,63 +1,6 @@
-// Differ 0 of 2667 in all six editions (2026-11-08, -mtune=gba; tla-ja measured
-// at its own address, 08186e00). Devices: the CLEAR inline (S2 wrapper or the game's own
-// layer) and one FAKEMATCH(dead) before the fill loop: a never-true test on
-// model->scrollU that combine folds, so its label survives to post-reload CSE
-// (which then keeps ldr r3 from the pool instead of adds r3, r0) and is gone
-// by sched2 (flow2 merges the blocks). (u8)i, (i & 1) > 1, i != 0, i >> 31,
-// a test CSE or the front end folds (if (model->scrollU > 255)) and a bare
-// i = 0 do not: 2 to 192.
-// Differ 2 of 2667 (tla-en, 2026-11-08, -mtune=gba): one row, the fill loop's; the dive
-// ramp now matches. No device but the CLEAR inline, which needs S2's wrapper tag
-// or the game's own layer. Tried 2026-11-08 at the fill: shades[i], a fill
-// pointer, a do-while (2 each); an empty once-only block before it (6).
-// Left earlier, two rows:
-// - Dive ramp (settled): ldr r2 (the pool constant) before muls; here after it. The dump gives
-//   the mul priority 7 (cost 4, measured before -mtune=gba) and the load 6; the same ramp's second row, whose
-//   frame was read earlier, has muls first in the listing too. See the report.
-// - Fill loop: ldr r3 for its pointer where post-reload CSE here turns the load into
-//   adds r3, r0, #0: r0 holds the same pool word from the shade store above. A label
-//   or a clobber between them stops it, at the cost of other rows.
-// What settled the rest this round:
-// - The mesh setup reads Data_08199bf9 plainly: loop.c hoists the unchanging reads,
-//   which is what orders none, x0 and the base, with no stepped pointer and no pin.
-// - The wave's y is declared inside its loop: loop.c hoists it, where PRE and cse2
-//   would hoist and fold its shift.
-// - The draw and particle loops take p = &array[i] at a fixed address or work, so
-//   the giv's start comes after the hoisted table.
-// - objects[18] is stored through a sprite pointer: as void * it conflicts with
-//   FieldSprite's alias set, whose bit-field load then had to wait for the store.
-// - The fade loop indexes the symbol, the clears go through an inline.
-// Draft, differ 121 of 2667, skeleton gap 11 + 12 (tla-en, 2026-11-01)
-// BattleEffect_RunHaures: frame and spill slots agree; the old volatile dst
-// pointers are gone, no device is left here. Facts that closed the rest:
-// position and velocity are struct WordPair (DImode pairs); draw[2] is one
-// 8-byte pseudo; cut, row and scroll are givs; buffer, shades, wing and strip
-// are set-once locals; the first two palette loops share one dst.
-// Left, in listing order:
-// - Sprite 18: ldrb of byte 5 should come before the objects[18] store; moving
-//   the statements costs 70.
-// - Sheet halving: w is assigned inside the call's argument so r0 is busy at the
-//   sum and the constant takes r1. It is an odd spelling; a separate w = line
-//   costs 6 of differ (the r0/r1 pair only).
-// - Morph: the caller-save reload of a (sp+8) comes one tie early.
-// - Fade loop (frame 236 on): v should get r3 and the pointer r2; scope, u8,
-//   sharing q and indexing do not move it.
-// - Dive ramp: req.a's pool load should come before muls; a tie.
-// - Mesh setup, about 45 lines: none should sit in r5 and x0 in r4. Priority
-//   order is none, x0, y0 (lreg: 1.02, .77, .73). The Data_08199bf9 base is
-//   hoisted out of both loops by PRE and spilled here, then reloaded; the
-//   listing fits a block-local base in r4, which blocks none but not x0 (no
-//   y0 conflict-free slot, so r6). Table locals in the body, literal zeros and
-//   a row pointer all lose more than they gain.
-// - Draw loop: gData_08197410 should load before p; a pointer local gives
-//   add-then-subs for [n - 1], in every spelling tried.
-// - Wave loop: PRE hoists y << 16 out of the loop when both arms share one y,
-//   and cse2 then folds it to a pooled constant. Two one-constant locals keep
-//   the shift in the arms; the listing has one register, so y is rematerialized
-//   in the first arm (2 extra instructions, 3 diff lines, branch distances).
-//   Same PRE question as the mesh base: the listing behaves as if the loop's
-//   entry were still conditional when PRE ran. Answering it would likely close
-//   both.
+/// @file
+/// Haures: shadowed wings unfold over a dark pool, the demon climbs out of a
+/// vortex and dives through the foes, scattering into black feathers.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -187,7 +130,7 @@ struct WingVertex {
 };
 
 extern u8 gMapCellBuffer[];
-#define gData_02014000 ((u8 *)0x02014000)
+#define gData_02014000 FIXED_ADDRESS((u8 *), 0x02014000, gData_02014000)
 extern u8 Data_02010ae8[];
 extern u8 Data_02010be0[];
 extern u8 Data_02010fa0[];
@@ -248,11 +191,14 @@ void Heap_Release(void *buffer);
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
 #define HALF_HI(v) (((s16 *)&(v))[1])
 
-// The spark row keeps frame * 2 + frame: frame * 3 folds with the row's size.
-// Haures: shadowed wings unfold over a dark pool, the demon climbs out of a
-// vortex and dives through the foes, scattering into black feathers.
-static __inline__ void CLEAR(void *dst, s32 size) { Iwram_ClearWords(dst, size); }
-static __inline__ void PLACE(s32 x, s32 y) { Func_08015160(x << 16, y << 16, 0); }
+static inline s32 ClearWords(void *destination, s32 size) {
+  /* FAKEMATCH(wrapper): the call through this inline; as a direct call to
+   * Iwram_ClearWords, 4 of 2667 instructions differ in tla-en. */
+  return Iwram_ClearWords(destination, size);
+}
+static __inline__ void PLACE(s32 x, s32 y) {
+  Func_08015160(x << 16, y << 16, 0);
+}
 void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
   u8 *battle;
   u8 *canvas;
@@ -759,7 +705,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
         if ((u32)cut <= 5) {
           s32 j;
 
-          CLEAR(buffer, 0xd80);
+          ClearWords(buffer, 0xd80);
           for (j = 0; j != 72; j++) {
             s32 m;
 
@@ -863,8 +809,10 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
               s8 *dst = (s8 *)cells + j * 16 + i * 4;
 
               dst[2] = none;
-              dst[0] = Data_08199bf9[j * 10 + i * 2 + 2] - Data_08199bf9[j * 10];
-              dst[1] = Data_08199bf9[j * 10 + i * 2 + 3] - Data_08199bf9[j * 10 + 1];
+              dst[0] =
+                  Data_08199bf9[j * 10 + i * 2 + 2] - Data_08199bf9[j * 10];
+              dst[1] =
+                  Data_08199bf9[j * 10 + i * 2 + 3] - Data_08199bf9[j * 10 + 1];
             }
             mesh[j * 12 + 1] = 1;
             mesh[j * 12 + 2] = 2;
@@ -969,7 +917,7 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1, 0);
   {
-    CLEAR(buffer, 0x6c00);
+    ClearWords(buffer, 0x6c00);
     for (i = 0; i != 6; i++) {
       s32 j;
 
@@ -1036,6 +984,8 @@ void BattleEffect_RunHaures(struct BattleEffectArgument *effect) {
     if (frame <= 39) {
       struct EffectStep *p;
 
+      // The spark row keeps frame * 2 + frame: frame * 3 folds with the row's
+      // size.
       for (i = 0,
           p = ((struct EffectStep(*)[4])gData_02014000)[frame * 2 + frame];
            i != 12; i++, p++) {

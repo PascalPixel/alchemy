@@ -9,4 +9,4 @@
 	.global Resource_Data1E9
 Resource_Data1E9:
 	.incbin "games/tla/src/graphics/field_effects/r1e9.bitmap.lz"
-	.byte 0x59, 0x2f	@ PACKER: left in the buffer by Resource_Data1E8+0xe2
+	.byte 0x59, 0x2f	@ PACKER: left in the buffer by FieldEffect_Explosion+0xe2

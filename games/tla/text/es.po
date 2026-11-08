@@ -20851,7 +20851,7 @@ msgctxt "MsgPriceHeading"
 msgid "05133"
 msgstr "Vale"
 
-msgctxt "message"
+msgctxt "MsgShopCannotEquip"
 msgid "05134"
 msgstr "No equipable."
 
@@ -20891,7 +20891,7 @@ msgctxt "MsgCannotRemoveIt"
 msgid "05143"
 msgstr "¡No sale!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShopStatLabel"
 msgid "05144"
 msgstr "ATA."
 
@@ -21147,7 +21147,7 @@ msgstr ""
 "¿Necesitas reparar\n"
 "algo más?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLetMeGiveYouThis"
 msgid "05191"
 msgstr ""
 "Acepta {argument_item_name:10}\n"
@@ -21160,7 +21160,7 @@ msgstr ""
 "¿Quién va a llevar\n"
 "{argument_item_name:2}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDontWantIt"
 msgid "05193"
 msgstr "¿Qué? ¿No lo quieres?{page_break}"
 

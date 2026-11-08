@@ -57,12 +57,6 @@ Func_0803bb58:
 	.incbin "baserom.gba", 0x0003ef8a, 0x00000002
 	.section .rom.0003f216, "ax"
 	.incbin "baserom.gba", 0x0003f216, 0x00000002
-	.section .rom.0003fd6c, "ax"
-	.global Menu_OpenWorkspaceOptions
-	.type Menu_OpenWorkspaceOptions, %function
-	.thumb_func
-Menu_OpenWorkspaceOptions:
-	.incbin "baserom.gba", 0x0003fd6c, 0x000003c0
 	.section .rom.00040a8a, "ax"
 	.incbin "baserom.gba", 0x00040a8a, 0x00000002
 	.section .rom.0004170e, "ax"
@@ -86,12 +80,6 @@ Text_DrawPrefixedNumberAtOffset:
 	.thumb_func
 Func_080426e0:
 	.incbin "baserom.gba", 0x00042730, 0x00000128
-	.section .rom.00043d40, "ax"
-	.global Func_08043cd8
-	.type Func_08043cd8, %function
-	.thumb_func
-Func_08043cd8:
-	.incbin "baserom.gba", 0x00043d40, 0x0000066c
 	.section .rom.00045342, "ax"
 	.incbin "baserom.gba", 0x00045342, 0x00000002
 	.section .rom.000455ae, "ax"
@@ -237,13 +225,11 @@ Func_080f9644:
 	.section .rom.00101342, "ax"
 	.incbin "baserom.gba", 0x00101342, 0x00000002
 	.section .rom.00101a9c, "ax"
-	.incbin "baserom.gba", 0x00101a9c, 0x00000210
-	.section .rom.00101e24, "ax"
-	.global Func_080ffcd4
-	.type Func_080ffcd4, %function
+	.global PsynergyMenu_DrawRangePage
+	.type PsynergyMenu_DrawRangePage, %function
 	.thumb_func
-Func_080ffcd4:
-	.incbin "baserom.gba", 0x00101e24, 0x00000230
+PsynergyMenu_DrawRangePage:
+	.incbin "baserom.gba", 0x00101a9c, 0x00000210
 	.section .rom.001028a8, "ax"
 	.balign 4
 	.global Func_08100738
@@ -316,12 +302,6 @@ Func_0811843c:
 	.incbin "baserom.gba", 0x0012695a, 0x00000002
 	.section .rom.001269c2, "ax"
 	.incbin "baserom.gba", 0x001269c2, 0x00000002
-	.section .rom.00126be4, "ax"
-	.global Graphics_AdvancePaletteCycle
-	.type Graphics_AdvancePaletteCycle, %function
-	.thumb_func
-Graphics_AdvancePaletteCycle:
-	.incbin "baserom.gba", 0x00126be4, 0x00000130
 	.section .rom.0013fd84, "ax"
 	.global BattleEffect_RunCruelRuin
 	.type BattleEffect_RunCruelRuin, %function

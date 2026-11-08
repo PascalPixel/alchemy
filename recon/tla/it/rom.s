@@ -69,12 +69,6 @@ Menu_OpenWorkspaceOptions:
 	.incbin "baserom.gba", 0x00040a9e, 0x00000002
 	.section .rom.00041722, "ax"
 	.incbin "baserom.gba", 0x00041722, 0x00000002
-	.section .rom.00041724, "ax"
-	.global Text_DrawStringAsTiles
-	.type Text_DrawStringAsTiles, %function
-	.thumb_func
-Text_DrawStringAsTiles:
-	.incbin "baserom.gba", 0x00041724, 0x000003fc
 	.section .rom.00042072, "ax"
 	.incbin "baserom.gba", 0x00042072, 0x00000002
 	.section .rom.000421ea, "ax"

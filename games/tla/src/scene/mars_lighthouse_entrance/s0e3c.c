@@ -1,11 +1,7 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba); also differ 0 in tla-ja, de, es, fr and
-// it (instructions; pools not compared). What closed it: the cell pointer
-// stepped to the row below in one statement (cells += x + (z << 7) + 128, then
-// cells->attributeB); as cells[128] after the step, 6; one index expression, 42.
-// No device: the window-layer macro is a once-only block with a local that
-// holds one constant (as REG_WINOUT = 0xf1f, 30 of 143 differ in tla-en), and
-// the 0x100 argument is such a local too (as the literal, 2). Near twin:
-// Func_02000fe0 in mars_lighthouse_entrance/s0fe0.c.
+/// @file
+/// The leader shrinks and sinks over 40 frames, then the screen transition
+/// ends.
+
 #include "types.h"
 #include "call.h"
 #include "actor.h"
@@ -15,6 +11,8 @@
 #include "scene_tables.h"
 #include "system/io_reg.h"
 
+// A once-only block with a local that holds one constant, as the native
+// builds the value.
 #define SET_SPRITE_WINDOW_LAYERS()                                             \
   do {                                                                         \
     u16 winout = 0xf1f;                                                        \

@@ -13,7 +13,7 @@ SECTIONS
         "*/games/tla/src/scene/champa_cliff_caves/s04d4.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/prepare.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s05e8.o"(.text)
-        "*/resource_685_overlay.o"(.text.x02008734)
+        "*/games/tla/src/scene/champa_cliff_caves/s0734.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s0804.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s0978.o"(.text)
         "*/games/tla/src/scene/champa_cliff_caves/s0a34.o"(.text)

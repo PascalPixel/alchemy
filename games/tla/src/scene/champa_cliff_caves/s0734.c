@@ -1,14 +1,13 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba); all six editions measure differ 0 of 97. Fades five background colours, from
-// palette entry 114, from one set to another over the given number of frames, one step a
-// frame. Each channel reads the colour again, which PRE merges, and the order of the two
-// for-loop initial values follows the reload rotation. A once-only block around the colour's
-// store, with the offset's step after it, settles the three scheduling pairs left on 5 November
-// (12 to 0; permuter find, then the step taken out of the block). No device.
+/// @file
+/// Fades five background colours from one set to another.
+
 #include "types.h"
 #include "call.h"
 
 void wait(s32 frames);
 
+/// Fades five background colours, from palette entry 114, from one set to
+/// another over the given number of frames, one step a frame.
 void Func_02000734(u16 *from, u16 *to, s32 frames) {
   s32 step;
 

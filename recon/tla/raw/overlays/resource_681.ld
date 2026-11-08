@@ -68,8 +68,6 @@ SECTIONS
         "*/resource_681_overlay.o"(.text.x0200ab8c)
         "*/games/tla/src/scene/gaia_rock_inside/s2cb4.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s2d30.o"(.text)
-        "*/resource_681_overlay.o"(.text.x0200af30)
-        "*/resource_681_overlay.o"(.text.x0200af64)
         "*/games/tla/src/scene/gaia_rock_inside/s2f30.o"(.text)
         "*/games/tla/src/scene/gaia_rock_inside/s4274.o"(.text)
         "*/resource_681_overlay.o"(.text.x0200c280)

@@ -46,6 +46,8 @@ struct GustObject *Func_02001a54(struct GustObject *source) {
 
   Func_020056c0(222);
   position.x = source->x + MulQ16(0x80000, Math_Cosine(source->angle));
+  do {
+  } while (0);
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sine(source->angle));
   object = Func_02005498(280, position.x, source->y, position.z);
   Func_02005480(object, 2);

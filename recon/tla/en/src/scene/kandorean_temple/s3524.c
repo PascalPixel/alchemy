@@ -40,6 +40,9 @@ void Func_02003584(void) {
   FieldEvent_Wait(20);
   party = &gMainRoutineWork;
   object->angle = FACING_SOUTH;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   Func_020052d0(party->currentOwner, 258);
   Actor_SetModeById(party->currentOwner, 27);
   FieldEvent_Wait(30);

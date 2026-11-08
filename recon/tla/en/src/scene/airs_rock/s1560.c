@@ -130,6 +130,8 @@ void Func_02001560(void) {
   } else {
     angle = ride->angle;
     leader->x = (((ride->x >> 19) & ~1) + (angle >>= 13) - 1) << 19;
+    do {
+    } while (0);
     leader->z = (((ride->z >> 19) & ~1) - (angle & 2) + 1) << 19;
     still = 0;
     Actor_SetSingleChildFlags(leader, 1);

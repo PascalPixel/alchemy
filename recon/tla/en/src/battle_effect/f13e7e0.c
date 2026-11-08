@@ -89,6 +89,9 @@ void Func_0813e7e0(struct BattleEffectArgument *effect) {
 
   work = HeapSlot_Alloc(SLOT_BATTLE_EFFECT, BATTLE_EFFECT_WORK_SIZE);
   canvas = HeapSlot_Alloc(SLOT_BATTLE_CANVAS, 0x4000);
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   battle = Ram_HeapSlots->battleWork;
   view = (struct BattleBackgroundView *)Ram_HeapSlots->transitionWork;
   work->effect = effect;

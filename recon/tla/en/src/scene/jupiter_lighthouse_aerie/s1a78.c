@@ -34,6 +34,8 @@ void Func_02001a78(void) {
   s32 viewX, viewZ, tile, viewY;
   struct LightOam *oam;
   s32 i;
+  do {
+  } while (0);
   viewX = view[0] & 0xffff0000;
   viewZ = view[1] & 0xffff0000;
   tile = gResourceTableEntries[gData_02003380].offset >> 5;

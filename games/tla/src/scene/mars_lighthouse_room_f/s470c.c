@@ -70,6 +70,9 @@ top:
   position->y = actor->y;
   position->z = startZ = (actor->z & 0xfff00000) + i;
   x = startX;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   z = startZ;
   startBehavior = Func_020054d0(*(layer = &actor->terrainId), startX, startZ);
   Vector_AddPolarOffsetFar(PIXELS(16), heading, position);

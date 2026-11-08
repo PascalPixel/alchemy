@@ -127,6 +127,9 @@ void Func_080ea14c(s32 targetId) {
   sparkEntry = Resource_FindFreeEntry();
   sparkTile = VramCache_Load(sparkEntry, 0x800, work);
   work->sparkTile = sparkTile;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   mote = work->sparks;
   sprite = work->sparkSprites;
   for (i = 31; i >= 0; i--) {

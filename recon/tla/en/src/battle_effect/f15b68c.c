@@ -23,6 +23,9 @@ void Func_0815b68c(void) {
   struct SpritePlacement place;
 
   place.groundHeight = 0;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
 
   place.height = 0;
 

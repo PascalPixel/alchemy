@@ -89,6 +89,9 @@ void Func_080e3074(void) {
   pos[2] = (*(struct Actor **)(effect + 16))->z;
   Camera_WorldToScreen(pos);
   canvas->x = (s16)(pos[0] >> 16);
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   canvas->y = (s16)(pos[2] >> 16);
   canvas->priority = 1;
   canvas->depth = 240;

@@ -60,6 +60,8 @@ void Menu_StepRight(struct SelectionScreen *state) {
     } else if (state->cursorIndex == 4 && end + 1 < state->count) {
       state->cursorIndex--;
       state->records[1].base = 8;
+      do {
+      } while (0);
       state->top++;
       Menu_ScrollSelectionList(state, 1);
       if (state->top + state->cursorIndex + 2 == state->count)
@@ -70,6 +72,8 @@ void Menu_StepRight(struct SelectionScreen *state) {
     state->cursorIndex = 0;
   }
   state->status = 1;
+  do {
+  } while (0);
   Menu_LoadSelectionNodeResource(state, state->cursorIndex);
   wait(1);
   Menu_OpenSelectionWindow(state->head->kind, 0);

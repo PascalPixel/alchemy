@@ -78,6 +78,8 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
   // Setup: the canvas, the blitter pair, the sheets.
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
+  do {
+  } while (0);
   sheet = Ram_HeapSlots->unk64[0];
   BattleEffect_StartCanvasLayer(0);
   draw = blit;

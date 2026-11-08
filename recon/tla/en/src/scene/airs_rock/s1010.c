@@ -89,6 +89,8 @@ void Func_02001010(void) {
     s32 control = 0x40d;
 
     REG_BG0CNT = control;
+    do {
+    } while (0);
   }
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 2;

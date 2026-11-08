@@ -97,6 +97,9 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   cells = Ram_HeapSlots->unk64[0];
   view = Ram_HeapSlots->cameraWork;
   burst = Ram_MapCellBuffer;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
 
   // Open the canvas, load the pictures, and dash at the target.
   BattleEffect_StartCanvasLayer(0);

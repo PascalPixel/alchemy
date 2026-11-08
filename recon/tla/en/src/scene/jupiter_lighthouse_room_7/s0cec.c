@@ -20,9 +20,15 @@ void Func_02000cec(void) {
 
   facing = (leader->angle + 0x2000) & 0xc000;
   position[0] = leader->x;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   position[1] = leader->y;
   position[2] = leader->z;
   Vector_AddPolarOffsetFar(0x100000, facing, position);
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   x = position[0] >> 20;
   z = position[2] >> 20;
   if (first->y == 0 && x == first->x >> 20 && z == first->z >> 20)

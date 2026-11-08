@@ -123,6 +123,8 @@ void BattleEffect_RunTriangleStrike(struct BattleEffectArgument *effect) {
         Transform_SetLookAt(camera, camera + 3);
         vector[0] = object->x;
         vector[1] = object->y;
+        do {
+        } while (0);
         vector[2] = object->z;
         EffectPosition_ProjectPoint(vector, &screen);
         screen.x = anchor.x + shift;

@@ -82,6 +82,8 @@ void Func_0200242c(void) {
   v = (u16)state->unk_6;
   state->unk_8 = v;
   state->unk_6 = 0;
+  do {
+  } while (0);
   for (i = 3; i >= 0; i--, entry++) {
     Actor *actor;
     s32 flag, x, y, unk6, value, dx, dz;

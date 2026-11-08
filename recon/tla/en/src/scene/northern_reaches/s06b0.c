@@ -115,6 +115,9 @@ void Func_020006b0(s32 unused, s32 *position, void (*callback)(void)) {
     column = i / 6;
     particle->x = position[0] + (column << 20);
     particle->y = position[1] - ((i % 6) << 20);
+    // Once-only block: keeps the original's order of the code around it.
+    do {
+    } while (0);
     column -= 4;
     sprite++;
     particle->z = position[2];

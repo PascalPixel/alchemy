@@ -39,6 +39,9 @@ void Func_02000f00(void) {
     z = object->z;
     object->update = 0;
     gData_020064f0 = z;
+    // The once-only block keeps this store ahead of the velocity stores.
+    do {
+    } while (0);
     object->velocityZ = 0;
     object->velocityY = 0;
     object->velocityX = 0;

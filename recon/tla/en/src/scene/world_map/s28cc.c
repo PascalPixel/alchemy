@@ -49,6 +49,9 @@ void Func_020028cc(void) {
     obj->z += value;
   }
   spr->nextFrame = 0;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   spr->priority = ((struct FieldSprite *)leader->animation)->priority;
   obj->priorityFlags |= 2;
   obj->motionFlags = leader->motionFlags;

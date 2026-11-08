@@ -102,6 +102,9 @@ void Func_080e82cc(void) {
     gCpuLoadDisplayEnabled = angle;
     Func_080eb824();
     canvas = Ram_HeapSlots->unkec[1];
+    // Once-only block: keeps the original's order of the code around it.
+    do {
+    } while (0);
     canvas->mode = angle;
     pos = position;
     pos[0] = scene->mainObject->x;

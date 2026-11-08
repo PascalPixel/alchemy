@@ -85,6 +85,9 @@ s32 Func_0802a124(struct Actor *object) {
   object->action = 1;
   object->speedLimit = 0x8000;
   object->acceleration = 0x4000;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   if (gInput.repeat & 0x200)
     object->speedLimit = 0x40000;
 

@@ -74,6 +74,8 @@ s32 Func_0810b9c0(s32 unitId) {
   void *window;
   s32 x;
   s32 y;
+  do {
+  } while (0);
 
   shop = Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(unitId);

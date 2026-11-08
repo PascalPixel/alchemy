@@ -82,6 +82,9 @@ s32 Func_080cc7c4(void) {
           top = *(s8 *)cursor;
           topEdge = top << 4;
           cursor++;
+          // Once-only block: keeps the original's order of the code around it.
+          do {
+          } while (0);
           right = *(s8 *)cursor;
           rightEdge = right << 4;
           cursor++;

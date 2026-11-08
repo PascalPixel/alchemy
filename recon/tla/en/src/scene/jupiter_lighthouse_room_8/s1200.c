@@ -38,6 +38,9 @@ void Func_02001200(void) {
   viewZ = view[1] & 0xffff0000;
   tile = gResourceTableEntries[gData_02002af0].offset >> 5;
   viewY = map->origin[1];
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   oam = gData_02002b34;
 
   for (i = 0; i < gData_02002af2; i++) {

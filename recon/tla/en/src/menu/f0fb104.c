@@ -79,6 +79,9 @@ s32 Func_080fb104(void) {
     ItemMenu_DrawCommands(commandStates, messageWindow);
   }
   *redrawFlag = 0;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
 
   lastCommand = menu->listMode;
   if (lastCommand == -1) {
@@ -126,6 +129,9 @@ s32 Func_080fb104(void) {
           Task_Add(Func_080fabe0, 0x480);
       } else if (commandIndex != 0) {
         menu->equipPreview = 0;
+        // Once-only block: keeps the original's order of the code around it.
+        do {
+        } while (0);
         Func_080fae8c(menu->paneOwner[0], menu->selectedSlots[0], 0,
                       menu->paneOwner[0]);
       } else {

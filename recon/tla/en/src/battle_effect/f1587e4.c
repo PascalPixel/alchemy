@@ -118,6 +118,9 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   // Setup: the canvas, a max blitter for the side, the two sheets.
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(0);
   Func_0815585c(effect, PREPARE(0, effect->side, 2), screen, otherPoint);

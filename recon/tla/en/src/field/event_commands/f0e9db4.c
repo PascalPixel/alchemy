@@ -35,11 +35,17 @@ void Func_080e9db4(void) {
   Actor_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
   object->motionFlags = 3;
   gMainRoutineWork.renderMode = 0;
-  for (i = 0; i < 60; i++) {
-    if (object->y <= object->terrainHeight)
-      break;
-    wait(1);
-  }
+  // Waits up to 60 frames for the leader to land, testing before each wait.
+  i = 0;
+  goto test;
+loop:
+  wait(1);
+  if (++i >= 60)
+    goto done;
+test:
+  if (object->y > object->terrainHeight)
+    goto loop;
+done:
   Sound_PlayFar(132);
   wait(1);
   for (i = 0; i < 20; i++) {

@@ -139,6 +139,8 @@ void Func_080d8174(struct DescendingOrbitObject *arg) {
   arg->timer = raw;
   value = arg->timer;
   local.x = other->x;
+  do {
+  } while (0);
   local.z = other->z;
   Vector_AddPolarOffset(value * 0x6666, (value << 11) + arg->angle, &local);
   arg->x = local.x;

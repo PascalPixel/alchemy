@@ -77,6 +77,8 @@ void FieldEffect_UpdateSparkles(void) {
   map = Ram_HeapSlots->mapWork;
   camera = &map->viewX;
   spawnX = 0;
+  do {
+  } while (0);
   spawnZ = 0;
   i = 0;
   sparkle = work->sparkles;

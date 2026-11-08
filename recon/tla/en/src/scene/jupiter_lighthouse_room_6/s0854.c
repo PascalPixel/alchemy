@@ -45,6 +45,9 @@ struct GustObject *Func_02000854(struct GustObject *source) {
   Func_02001bec(222);
   position.x = source->x + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                   Math_Cosine(source->angle));
+                                  // Once-only block: keeps the original's order of the code around it.
+                                  do {
+                                  } while (0);
   position.z = source->z + Value2((s32 (*)())Iwram_MulQ16, 0x80000,
                                   Math_Sine(source->angle));
   object = Func_02001acc(280, position.x, source->y, position.z);

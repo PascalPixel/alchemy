@@ -32,7 +32,7 @@ SECTIONS
         "*/games/tla/src/scene/jupiter_lighthouse_aerie/s2040.o"(.text)
         "*/recon/tla/raw/src/scene/jupiter_lighthouse_aerie/s216c.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie/s23b0.o"(.text)
-        "*/recon/tla/raw/src/scene/jupiter_lighthouse_aerie/s24a8.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie/s24a8.o"(.text)
         "*/games/tla/src/field/field_effect/advance_motion.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie/s2640.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_aerie/s27d8.o"(.text)

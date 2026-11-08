@@ -26,6 +26,9 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   overlay = 0;
   count = 0;
   item = Item_Get(code & 0x1ff);
+  // The once-only block keeps the item's spill ahead of the work load.
+  do {
+  } while (0);
   work = Ram_HeapSlots->glyphWork;
   if (work == NULL)
     return -1;

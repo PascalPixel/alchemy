@@ -16,6 +16,9 @@ void Func_080d3a10(s32 id, u32 angle, s32 mode) {
   if (mode != -1)
     Actor_SetMode(object, mode);
   position[0] = object->x;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   angle = (angle + 0x2000) & 0xc000;
   position[2] = object->z;
   SetMapCellCollisionFar(object->terrainId, position[0], position[2], 255);

@@ -102,6 +102,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
   struct EffectPosition screen;
   s32 point[3];
   DrawRectangle blit[2];
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -295,6 +298,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
   // Motes a target: 32 for variant 0, 128 for variant 2, else 64; mode 8
   // takes 128 and mode 12 16.
   limit = 64;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   if (effect->variant == 0)
     limit = 32;
   else if (effect->variant == 2)

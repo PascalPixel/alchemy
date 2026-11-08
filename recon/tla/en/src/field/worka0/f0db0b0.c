@@ -105,6 +105,9 @@ void Func_080db0b0(s32 id) {
     case 18:
       slot->s.swing += 16;
       slot->s.spacing += Q16_ONE / 4;
+      // Once-only block: keeps the original's order of the code around it.
+      do {
+      } while (0);
       sprite->unk12 += dir << 9;
       break;
     default:

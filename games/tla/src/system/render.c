@@ -280,9 +280,12 @@ void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
   s32 m[12];
 
   sx = Trig_Sin(ang[0]);
+  // The once-only block keeps the first sine's spill ahead of the second
+  // angle's load.
+  do {
+  } while (0);
   {
     s32 quarter;
-
 
     quarter = 0x4000;
     cx = Trig_Sin(ang[0] + quarter);

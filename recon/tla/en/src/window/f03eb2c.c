@@ -73,6 +73,9 @@ void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
     screen->cursor--;
   }
   screen->status = NODE_STATUS_SHOWN;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   Menu_LoadSelectionNodeResource(screen, screen->cursor);
   wait(1);
   Menu_OpenSelectionWindow(screen->node->kind, 0);

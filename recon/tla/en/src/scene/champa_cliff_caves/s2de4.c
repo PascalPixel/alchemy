@@ -76,6 +76,9 @@ loop:
   position[1] = work->position[1];
   position[2] = work->position[2];
   sprite = &work->sprites[1];
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   Func_020035c4(position);
   sprite->x = position[0];
   sprite->z = position[2];

@@ -69,6 +69,8 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
       return;
     MenuSelection_SetupEntry(kind, base, p, 0);
     p->x = screen->baseX - 16;
+    do {
+    } while (0);
     p->y = screen->baseY;
     p->targetY = p->y;
     p->dx = 2;
@@ -92,6 +94,8 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
     }
     p->scaleEnd = 0;
     p->scaleStep = -32;
+    do {
+    } while (0);
     p = screen->head;
     do {
       wait(1);

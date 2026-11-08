@@ -52,6 +52,9 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
    * instructions differ in tla-en. */
   if (effect->range == 0xff && partyResultShown != 0)
     messageOffset = 3;
+    // Once-only block: keeps the original's order of the code around it.
+    do {
+    } while (0);
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
     if (effect->range == 0xff) {

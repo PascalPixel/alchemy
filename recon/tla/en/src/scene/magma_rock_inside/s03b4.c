@@ -61,6 +61,9 @@ void Func_020003b4(void) {
   s32 rate;
 
   lead = Actor_GetById(gMainRoutineWork.currentOwner);
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   dir = lead->facing >> 12;
   step = gData_02004fec[dir];
   dst.x = lead->x.fixed + (step & 0xffff0000);

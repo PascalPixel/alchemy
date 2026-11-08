@@ -68,6 +68,9 @@ nextColumn: {
       cell->occupied = 2;
     } else {
       object->x = 0;
+      // Once-only block: keeps the original's order of the code around it.
+      do {
+      } while (0);
       object->z = 0;
       // A byte store of the cell's last byte: sched2 orders it behind the next
       // load's constant only as a char access.

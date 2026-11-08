@@ -62,14 +62,16 @@ void BattleEffect_UpdateShrinkingOrbitObject(struct Actor *object) {
        * both halves come after the load (differ 2). */
       asm volatile("" : "+l"(lift));
       pos.y = scene->y + (lift << 12);
+      do {
+      } while (0);
       radius = life << 16;
-      
+
       pos.z = scene->z;
       Vector_AddPolarOffset(radius, (s16)object->unk66 + (life << 11), &pos);
       SET_POSITION(object, pos.x, pos.y, pos.z);
     } else {
       Actor_StartScriptFar((struct ActorView *)object,
-                                   gBattleEffect_SharedParticleScript);
+                           gBattleEffect_SharedParticleScript);
     }
   }
 }

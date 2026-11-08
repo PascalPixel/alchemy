@@ -99,6 +99,8 @@ void Func_080d69f4(void) {
       particle->sprite.attributes.tile =
           ((gFrameCount >> 3) & 1) * 4 + particle->sprite.attributes.tile;
       particle->sprite.attributes.x = x;
+      do {
+      } while (0);
       particle->sprite.attributes.shape = 0;
       particle->sprite.attributes.size = 1;
       particle->sprite.attributes.priority = 3;

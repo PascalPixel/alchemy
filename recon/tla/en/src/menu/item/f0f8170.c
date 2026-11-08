@@ -96,6 +96,8 @@ void Func_080f8170(struct RenderInput *unused, s32 owner, s32 slot, s32 mode) {
   u8 ailments[8];
 
   created = 0;
+  do {
+  } while (0);
   state = (struct InventoryMenuState *)Ram_HeapSlots->menuRuntime;
   unit = Unit_Get(owner);
   item = unit->inventory[slot];

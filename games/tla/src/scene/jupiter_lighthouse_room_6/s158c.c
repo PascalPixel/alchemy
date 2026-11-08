@@ -19,9 +19,9 @@ struct CellTarget {
 };
 
 struct Actor *Actor_GetById(s32 id);
-void Func_020023b0(void);
-void Func_02002b68(s32 sound);
-void Func_02002a40(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
+void Func_02001494(void);
+void Func_02001bec(s32 sound);
+void Func_02001afc(s32 srcX, s32 srcZ, s32 width, s32 height, s32 dstX,
                    s32 dstZ);
 void FieldEvent_Wait(s32 frames);
 void wait(s32 frames);
@@ -31,27 +31,27 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 #include "io_write.h"
 
-void Func_020024a8(struct CellTarget *table, struct CellTargetEntry *entry) {
+void Func_0200158c(struct CellTarget *table, struct CellTargetEntry *entry) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   s32 x = (leader->x >> 20) | (s16)(table->x & 64);
   s32 z = (leader->z >> 20) | (s16)(table->z & 64);
 
-  Func_020023b0();
-  Func_02002b68(229);
-  Func_02002a40(table->x, table->z + 2, 1, 1, x, z);
+  Func_02001494();
+  Func_02001bec(229);
+  Func_02001afc(table->x, table->z + 2, 1, 1, x, z);
   FieldEvent_Wait(12);
   leader->angle = 0x4000;
   leader->motionFlags = 0;
   Actor_SetSingleChildFlags(Actor_GetById(gMainRoutineWork.currentOwner), 0);
   Io_Write16(0xf1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
-  x = 0;
   table->shown = 1;
   Actor_SetModeById(gMainRoutineWork.currentOwner, 28);
   FieldEvent_Wait(16);
+  x = 0;
   do {
     if (x == 5)
-      Func_02002b68(204);
+      Func_02001bec(204);
     leader->scaleX += -0x400;
     leader->scaleY += -0x300;
     leader->y += -0x9999;
@@ -59,6 +59,9 @@ void Func_020024a8(struct CellTarget *table, struct CellTargetEntry *entry) {
     x++;
   } while (x <= 39);
   Actor_GetById(gMainRoutineWork.currentOwner)->animationKind = 0;
+  // Once-only block: keeps the original's order of the code around it.
+  do {
+  } while (0);
   table->shown = 0;
   *(s32 *)((u8 *)Ram_HeapSlots->eventWork + 0x1ac) = 0x209;
   Event_FinishScreenTransition();

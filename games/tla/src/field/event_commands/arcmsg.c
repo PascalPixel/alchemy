@@ -109,6 +109,8 @@ void BattleEffect_RunEffect16(void) {
    * counters take lives in r6 from here; the one-pass block keeps its set
    * before the object load (one reordered row without it). */
   zero = 0;
+  do {
+  } while (0);
 
   object = scene->mainObject;
   group = object->records;

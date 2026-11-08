@@ -61,6 +61,8 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   scroll = 0;
+  do {
+  } while (0);
   BattleEffect_StartCanvasLayer(1);
   REG_BG2PA = 0x100;
   REG_BLDCNT = scroll;

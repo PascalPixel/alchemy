@@ -1,14 +1,12 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba): the point list is indexed by count
-// (points[count * 2]) instead of stepped through a cursor, which settles the
-// preheader's spill order; the four stores before the loop are plain -1.
-//
-// Looks at 21 map cells around the effect owner, at the tile offsets
-// of Data_080f0f64 (signed x, z byte pairs), on the owner's layer. Each cell
-// of kind 1, 2 or 3 that Func_080cda84 accepts for the effect's id is listed
-// as a tile in the event work's point list at 0xcc0, which ends with -1, -1;
-// a kind-1 cell also stores its kind in the heap slot 0x5c work's byte
-// 0x1b34, and the last kind-2 and kind-3 cells are kept in pixels, centred
-// on their tile, at 0xd3c and 0xd40.
+/// @file
+/// Looks at 21 map cells around the effect owner, at the tile offsets of
+/// Data_080f0f64 (signed x, z byte pairs), on the owner's layer. Each cell of
+/// kind 1, 2 or 3 that Func_080cda84 accepts for the effect's id is listed as a
+/// tile in the event work's point list at 0xcc0, which ends with -1, -1; a
+/// kind-1 cell also stores its kind in the heap slot 0x5c work's byte 0x1b34,
+/// and the last kind-2 and kind-3 cells are kept in pixels, centred on their
+/// tile, at 0xd3c and 0xd40.
+
 #include "types.h"
 #include "actor.h"
 #include "ram_buffer.h"
@@ -48,6 +46,7 @@ void Func_080e2264(void) {
     x = owner->x + (Data_080f0f64[i * 2] << 20);
     z = owner->z + (Data_080f0f64[i * 2 + 1] << 20);
     kind = Func_080dbda8(x, z, owner->terrainId);
+    // position[1] is never set: only x and z reach Func_080cda84.
     position[0] = x;
     position[2] = z;
     if (kind == 1 &&

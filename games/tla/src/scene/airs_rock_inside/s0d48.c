@@ -1,15 +1,12 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba): written as its adopted twin
-// Func_020010b4 (games/tla/src/scene/airs_rock_inside/s10b4.c) is: struct Shot
-// for the hit bytes, the positions and the speed in locals, the counter through
-// struct EventWork's unk16a, Iwram_MulQ16 called directly. As the older draft
-// (a u8 pointer to the hit byte, Value2 forwards), 2 of 217 differed.
-// Func_020010b4's twin for another shot: it also stops while the render mode
-// is 5, and on a cell of kind 212 it ends with one of two end scripts by its
-// angle; otherwise, the first time it reaches the leader (within 16 pixels on
-// the same height when the leader climbs, else within 8 on the same level) and
-// flag 0x104 is clear, it carries the leader along (counter 0x16a 200, render
-// mode 0); it moves 1.5 pixels a frame along its angle, upward when its angle
-// is 0xc000.
+/// @file
+/// Func_020010b4's twin for another shot: it also stops while the render mode
+/// is 5, and on a cell of kind 212 it ends with one of two end scripts by its
+/// angle; otherwise, the first time it reaches the leader (within 16 pixels on
+/// the same height when the leader climbs, else within 8 on the same level) and
+/// flag 0x104 is clear, it carries the leader along (counter 0x16a 200, render
+/// mode 0); it moves 1.5 pixels a frame along its angle, upward when its angle
+/// is 0xc000.
+
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"

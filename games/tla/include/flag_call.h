@@ -11,6 +11,11 @@ s32 GameFlag_Test(s32 flag);
 void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 
+/// Whether the flag is clear. Its result is a temporary of its own, so the 1
+/// the test builds stays apart from a caller's own 1, which CSE would share
+/// with a plain !GameFlag_Test.
+static inline s32 Flag_IsClear(s32 flag) { return !GameFlag_Test(flag); }
+
 static inline s32 Flag_IsSet(s32 flag) {
   /* FAKEMATCH: as in ☀️'s scene layer, the inline parameter builds the flag id
    * again at each call; direct calls share one register */

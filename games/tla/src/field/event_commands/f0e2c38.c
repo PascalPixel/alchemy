@@ -1,12 +1,11 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba): the sprite is indexed by i, so loop.c makes
-// it a giv set after the hoisted position address; the vram pointer set between
-// the arrays' pointers (the last device) is no longer needed.
-// The 96-particle burst's task (heap slot 0x5c work,
-// started by Func_080e2acc). Each particle whose delay counter is between 0
-// and 63 shows the picture (delay / 8) % 6 of the burst's tiles 48 units out
-// along its heading, then turns by its spin, rises by its speed and spins
-// eight units faster; every counter advances. The work's flash flag is set
-// on frame 30 only, and the burst stops being active on frame 112.
+/// @file
+/// The 96-particle burst's task (heap slot 0x5c work, started by
+/// Func_080e2acc). Each particle whose delay counter is between 0 and 63 shows
+/// the picture (delay / 8) % 6 of the burst's tiles 48 pixels out along its
+/// heading, then turns by its spin, rises by its speed and spins eight units
+/// faster; every counter advances. The work's flash flag is set on frame 30
+/// only, and the burst stops being active on frame 112.
+
 #include "types.h"
 #include "ram_buffer.h"
 

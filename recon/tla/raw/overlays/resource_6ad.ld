@@ -48,7 +48,7 @@ SECTIONS
         "*/games/tla/src/scene/mars_lighthouse_room_f/flag_state.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s2f80.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s328c.o"(.text)
-        "*/resource_6ad_overlay.o"(.text.x0200b304)
+        "*/games/tla/src/scene/mars_lighthouse_room_f/s3304.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/s33cc.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_room_f/reset.o"(.text)
         "*/games/tla/src/field/object/set_sprite_priority.o"(.text)

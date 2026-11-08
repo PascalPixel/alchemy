@@ -1,22 +1,12 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba); also tla-ja and tla-it. 2 to 0:
-// the fill called through a local set after an empty once-only block, as
-// f0e82cc.c does, so its routine address loads before the size. The barrier
-// still pays (36 without). Earlier, 4 to 2: i = 0 set before the first
-// loop's two pointers (the native zeroes r8 first). Earlier: the second loop's sprite
-// pointer is its own block-scoped local, set after the mote (24 to 6): the
-// count takes r7 and the sprite r5 as in the ROM; the barrier opens the loop
-// body instead of the timer's arm (6 to 4, permuter).
-// Near miss, differ 36 of 226 (2026-10-18, written from the listing; ☀️ has
-// no twin): the burst of 64 sparkles Func_080e807c's effect ends with. The
-// resource is directory entry 0x1ea, FieldEffect_SparkleFade: adoption names it
-// SparkleFade in gamepak/resource_directory.s. What remains: the frame count
-// takes r5 and the second loop's sprite r7, where the ROM has r7 and r5
-// (separate block-scoped pointers 44, the count fixed in r7 93, other
-// declaration orders 36; all since settled); and reordered pairs where the
-// native loads
-// gMainRoutineWork's address, the second pool word and the mote's y before the
-// constants beside them, copies the angle after them, and builds the 13 of
-// the priority mask before the store before it.
+/// @file
+/// The burst of 64 sparkles that Func_080e807c's effect ends with: once the
+/// event work asks for it, it plays sound 167, fills the tiles at 0x06002000,
+/// reloads the window graphics, loads
+/// the sparkle picture (FieldEffect_SparkleFade) and scatters the sparkles
+/// around the current owner, starting a quarter of them a frame later than
+/// the last, then moves and animates them for 40 frames before releasing the
+/// effect.
+
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"
@@ -64,7 +54,8 @@ s32 Resource_FindFreeEntry(void);
 s32 Resource_ResetEntry(u32 entry);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
-void Func_080eb298(struct EffectSprite *sprite, struct BurstMote *mote);
+void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
+                                      struct BurstMote *mote);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
 void HeapSlot_Release(s32 slot);
 void Func_080e807c(void);
@@ -73,7 +64,7 @@ extern char ResourceId_SparkleFade;
 void Func_080e87c4(void) {
   struct BurstWork *work = Ram_HeapSlots->battleFxWork[0];
   struct BurstEvent *event = Ram_HeapSlots->eventWork;
-  struct Actor *object = Actor_GetById(gMainRoutineWork.currentOwner);
+  struct Actor *actor = Actor_GetById(gMainRoutineWork.currentOwner);
   struct BurstMote *mote;
   struct EffectSprite *sprite;
   s32 slot;
@@ -92,17 +83,17 @@ void Func_080e87c4(void) {
   // A once-only block: its end holds the order around it (as plain
   // statements, 6 of 226 differ in tla-en).
   do {
-  Sound_PlayFar(167);
-  {
-    s32 (*fill)(void *, s32, u32);
-    // A once-only block: the fill's entry loads ahead of the size (as a
-    // direct Iwram_FillWords call, 2 of 226 differ).
-    do {
-    } while (0);
-    fill = Iwram_FillWords;
-    fill((void *)0x06002000, 0x500, 0xf000f000);
-  }
-  Window_LoadGraphics();
+    Sound_PlayFar(167);
+    {
+      s32 (*fill)(void *, s32, u32);
+      // A once-only block: the fill's entry loads ahead of the size (as a
+      // direct Iwram_FillWords call, 2 of 226 differ).
+      do {
+      } while (0);
+      fill = Iwram_FillWords;
+      fill((void *)0x06002000, 0x500, 0xf000f000);
+    }
+    Window_LoadGraphics();
   } while (0);
   {
     // A local that holds one constant: the control word is built with a
@@ -125,9 +116,9 @@ void Func_080e87c4(void) {
   sprite = work->sprites;
   for (; i < 64; i++, sprite++, mote++) {
     angle = Random16();
-    mote->x = object->x;
-    mote->y = object->y + 0x100000;
-    mote->z = object->z;
+    mote->x = actor->x;
+    mote->y = actor->y + 0x100000;
+    mote->z = actor->z;
     Vector_AddPolarOffset(Random16() * 4 + 0x340000, angle, &mote->x);
     mote->vx = 0;
     mote->vy = -0x40000;
@@ -153,7 +144,7 @@ void Func_080e87c4(void) {
       asm("");
       if (mote->timer >= 0) {
         spark->oam.index = tile + (mote->timer & 3) * 2;
-        Func_080eb298(spark, mote);
+        EffectSprite_DrawAtWorldPosition(spark, mote);
         BattleEffect_IntegrateVector3(&mote->x, 62, 0x8000);
       }
       mote->timer++;
@@ -162,6 +153,6 @@ void Func_080e87c4(void) {
   }
   Resource_ResetEntry(slot);
   Resource_ResetEntry(work->resource);
-  Func_080eb930();
+  BattleEffect_EndCanvasSprite();
   HeapSlot_Release(92);
 }

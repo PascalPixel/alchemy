@@ -38,7 +38,7 @@ SECTIONS
         "*/games/tla/src/scene/world_map/s3490.o"(.text)
         "*/games/tla/src/scene/world_map/tile_sprite_c.o"(.text)
         "*/games/tla/src/scene/world_map/s3600.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x0200b6a8)
+        "*/games/tla/src/scene/world_map/s36a8.o"(.text)
         "*/games/tla/src/scene/world_map/s3960.o"(.text)
         "*/games/tla/src/scene/world_map/cell_index.o"(.text)
         "*/games/tla/src/scene/world_map/s39a8.o"(.text)

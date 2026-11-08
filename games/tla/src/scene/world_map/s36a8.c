@@ -1,15 +1,8 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba): overlay 64b's Func_020036a8 form,
-// carried over whole, with the same three devices to keep their S2 tags on
-// adoption (work pinned to r9, empty asms on next and leader) and the same
-// close: the flag test as one else-if chain with shown set in each arm, the
-// cleared-flag arm read through an inline GameFlag_IsClear. See the twin's
-// header for why and for each device's re-measure.
-// Earlier: differ 6 of 260 (2026-11-07 and 2026-11-08), 63 (2026-11-07), 75
-// (2026-11-06), 155 (2026-11-05).
-// Overlay 64b's Func_020036a8 (the world map's placed objects, shown and
-// hidden as the view moves) under this overlay's names: shows the objects
-// that come within the view and whose flags allow them, hides those that
-// leave it, and starts a placement's event when the leader touches it.
+/// @file
+/// Shows the world map's placed objects that come within the view and whose
+/// flags allow them, hides those that leave it, and starts a placement's
+/// event when the leader touches it. Overlay 64c keeps the same code.
+
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"
@@ -18,6 +11,7 @@
 #include "actor.h"
 #include "event_work.h"
 #include "iwram_call.h"
+#include "flag_call.h"
 
 /// One of the scene's placed objects, 20 bytes; a zero kind ends the list.
 struct WorldMapPlacement {
@@ -36,25 +30,20 @@ struct WorldMapSprite {
   s32 scale;
 };
 
-extern struct Actor *gData_02003dc0[];
-extern u8 gData_02003da8[];
+extern struct Actor *gData_02006c08[];
+extern u8 gData_02006bd4[];
 
-struct WorldMapPlacement *Func_02002094(void);
-s32 Func_0200209c(void);
+struct WorldMapPlacement *Func_02004e08(void);
+s32 Func_02004e10(void);
 struct Actor *Actor_GetById(s32 id);
-s32 GameFlag_Test(s32 flag);
-struct Actor *Func_02001fcc(s32 sprite, s32 x, s32 y, s32 z);
-void Func_02001fc4(struct Actor *object, void *dispatch);
-void Func_02001fbc(struct Actor *object, s32 mode);
-void Func_02001fd4(struct Actor *object);
+struct Actor *Func_02004b30(s32 sprite, s32 x, s32 y, s32 z);
+void Func_02004b20(struct Actor *object, void *dispatch);
+void Func_02004b18(struct Actor *object, s32 mode);
+void Func_02004b38(struct Actor *object);
 
-// Whether the flag is clear: an inline helper, which the match needs (see the
-// header).
-static inline s32 GameFlag_IsClear(s32 flag) { return !GameFlag_Test(flag); }
-
-void Func_02000d64(void) {
-  struct WorldMapPlacement *placement = Func_02002094();
-  struct Actor *leader = Actor_GetById(Func_0200209c());
+void Func_020036a8(void) {
+  struct WorldMapPlacement *placement = Func_02004e08();
+  struct Actor *leader = Actor_GetById(Func_02004e10());
   s32 leaderReach =
       ((struct WorldMapSprite *)leader->animation)->scale * leader->radius;
   u32 i;
@@ -70,7 +59,7 @@ void Func_02000d64(void) {
   s32 x = object->x;
   u8 kind = placement->kind;
   s32 z = object->z;
-  struct Actor **objects = gData_02003dc0;
+  struct Actor **objects = gData_02006c08;
 
   if (zoom <= 0x10000) {
     left = x - 0xa00000;
@@ -85,11 +74,11 @@ void Func_02000d64(void) {
   }
   i = 0;
   next = kind;
-  /* FAKEMATCH(barrier): the form kept; without it, 7 of 260 instructions
+  /* FAKEMATCH(barrier): the form kept; as no asm, 7 of 260 instructions
    * differ in tla-en. */
   asm("" : "+g"(next));
   slot = objects;
-  /* FAKEMATCH(barrier): the form kept; without it, 16 of 260 instructions
+  /* FAKEMATCH(barrier): the form kept; as no asm, 16 of 260 instructions
    * differ in tla-en. */
   asm("" : "+g"(leader));
   while (next != 0) {
@@ -109,19 +98,19 @@ void Func_02000d64(void) {
       else if (flag & 0x1000)
         shown = GameFlag_Test(flag);
       else
-        shown = GameFlag_IsClear(flag);
+        shown = Flag_IsClear(flag);
       if (shown) {
         if (object == NULL) {
           struct WorldMapSprite *sprite;
 
-          object = Func_02001fcc(placement->sprite, px, 0, pz);
+          object = Func_02004b30(placement->sprite, px, 0, pz);
           if (object == NULL)
             goto next;
-          Func_02001fc4(object, gData_02003da8);
+          Func_02004b20(object, gData_02006bd4);
           object->motionFlags = 0;
           object->collisionFlags = 1;
           object->angle = placement->angle;
-          Func_02001fbc(object, 1);
+          Func_02004b18(object, 1);
           sprite = object->animation;
           sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
           *slot = object;
@@ -150,7 +139,7 @@ void Func_02000d64(void) {
       }
     }
     if (object != NULL) {
-      Func_02001fd4(object);
+      Func_02004b38(object);
       *slot = NULL;
     }
   next:

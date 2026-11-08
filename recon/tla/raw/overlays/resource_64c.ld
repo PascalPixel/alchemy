@@ -11,7 +11,7 @@ SECTIONS
         "*/games/tla/src/scene/staff_credit/s0b64.o"(.text)
         "*/games/tla/src/scene/staff_credit/prepare.o"(.text)
         "*/games/tla/src/scene/staff_credit/s0cbc.o"(.text)
-        "*/resource_64c_overlay.o"(.text.x02008d64)
+        "*/games/tla/src/scene/staff_credit/s0d64.o"(.text)
         "*/games/tla/src/scene/staff_credit/s0fa0.o"(.text)
         "*/games/tla/src/scene/staff_credit/cell_index.o"(.text)
         "*/games/tla/src/scene/staff_credit/s1064.o"(.text)

@@ -1,19 +1,16 @@
-// Matches (tla-en, 2026-11-08, -mtune=gba). What closed it: the pack loop
-// reads its two nibbles through src++ (the low one into its own local, so the
-// two reads are ordered), with its own counter j; the left-half loop reads
-// canvas indexed by i rather than through a stepped pointer, so its strength
-// reduction sets the VRAM offset before the canvas pointer, as the listing.
-// The old `temporary` low (src[0] before the or) is gone with it.
-// Earlier: differ 6 of 88 (2026-11-08), 8 (2026-11-06), 43 (2026-11-05).
+/// @file
+/// Draws one line of the credits' scrolling text: the message is drawn into a
+/// canvas of one byte a pixel, packed to two pixels a byte, and copied into
+/// object tiles from slot on, its top half then its bottom half.
+
 #include "types.h"
 #include "heap_release.h"
 #include "iwram_call.h"
 
 // The clear goes through an inline wrapper, as the Broken Seal's iwram_call.h
-// writes it: called straight through the fixed entry, the build shifts the
-// size before loading the routine's address.
-#undef Iwram_ClearWords
-static inline s32 Iwram_ClearWords(void *destination, s32 size) {
+// writes Iwram_ClearWords; through this game's direct entry, the build shifts
+// the size before loading the routine's address.
+static inline s32 ClearWords(void *destination, s32 size) {
   return Iwram_ClearWordsEntry(destination, size);
 }
 
@@ -34,7 +31,9 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   s32 offset;
 
   canvas = Heap_AllocEwram(0x900);
-  Iwram_ClearWords(canvas, 0xc00);
+  // BUG: the clear, and the packing loop's reads below, cover 0xc00 bytes of
+  // a 0x900-byte allocation.
+  ClearWords(canvas, 0xc00);
   busy = Func_08038418(message, canvas, align);
   dst = canvas;
   src = canvas;

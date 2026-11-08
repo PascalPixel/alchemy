@@ -33,28 +33,26 @@ make devtools          # optional, Rust: clones alchemy-devtools the first time
 git config core.hooksPath .hooks   # send verified measurements when pushing main
 make progress          # DONE code and data (C2)
 make land              # on main, before a landing (W2, C3)
-alchemy-devtools/target/release/alchemy-devtools diff DRAFT.c [ADDR] [--show|--heat|--rtl]
-alchemy-devtools/target/release/alchemy-devtools permute DRAFT.c [ADDR] [--minutes N]
 ```
 
-`make compare-editions` prints a lot: send it to a log file and count the `: OK` lines.
+`make compare-editions` prints a lot: send it to a log file and count the `: OK` lines. After switching branches, delete `out/*/deps.mk` and `out/*/objects.mk`; after renaming sources, delete the editions' `out/` folders; after switching to a branch whose tools differ, `rm -rf tools/out/obj tools/out/ags-* && make tools`.
+
+How to match, rank, adopt and run that work as agents, the toolkit's commands and what matching has measured about alchemy-gcc are in `alchemy-devtools/AGENTS.md`; read it before matching.
 
 ## Boundaries
 
 Always: keep all twelve editions byte-identical (W5); tag every fake match (S2); name only from evidence (H3); commit each verified step, attempts included (S4); look at how pret does it first (W3).
 
-Ask Pascal first: any compiler, option, routing or alchemy-gcc change (K1 to K3); anything that changes what counts (C2, W6); deleting what cannot be restored; pushing or publishing outside the landing Workflow 6 authorizes.
+Ask Pascal first: any compiler, option, routing or alchemy-gcc change (K1 to K3); anything that changes what counts (C2, W6); deleting what cannot be restored; pushing or publishing outside the landing Workflow 4 authorizes.
 
 Never: commit or publish a ROM or game files (L1); use another project's Golden Sun work (L2), or leaked Nintendo or Camelot code or SDKs or anything derived from them (L3); let the ROM steer the build or count (O1); write a function as inline assembly or place data through `asm()` (S1); patch compiler output or give a function its own compiler option (S2, K1); treat old history or deleted files as evidence (O5); add JSON, Python, shell or TypeScript programs (A5, W1); commit a cache, a hand-kept registry, tool scaffolding or a background file (N1 to N6).
 
 ## Workflow
 
 1. Work on a branch; `main` is the only long-lived branch. Work in the main checkout unless another session shares it, then in a worktree of your own (W2).
-2. Take the furthest function first, the one with the most left to match by a whole-function `alchemy-devtools diff` (W4).
-3. Draft in `recon/<game>/en/main/<address>.c`; a near miss stays a draft with its remaining difference in its header (S4).
-4. Adopt a match into the module of its linker neighbours, in every edition whose bytes agree, and commit (C1).
-5. Humanize one mechanism or scene at a time, all the way through, each step byte-identical (H2).
-6. Land with `make land` on the tree you push; Pascal authorizes syncing each verified batch to `origin/main` with its measurement (C3). Other pushes need his request.
+2. Match by `alchemy-devtools/AGENTS.md`, furthest first (W4): drafts in `recon/<game>/en/main/<address>.c`, a near miss stays a draft with its remaining difference in its header (S4), a match is adopted into the module of its linker neighbours in every edition whose bytes agree, and committed (C1).
+3. Humanize one mechanism or scene at a time, all the way through, each step byte-identical (H2).
+4. Land with `make land` on the tree you push; Pascal authorizes syncing each verified batch to `origin/main` with its measurement (C3). Other pushes need his request.
 
 ## Rules
 
@@ -141,7 +139,7 @@ The set is frozen: three C generators built from the pinned `alchemy-gcc` submod
 - **W1** A plain Makefile whose every rule can be read; a build tool is a small tested C program; Rust only in `alchemy-devtools`; no TypeScript, JavaScript, Python or shell beyond a command line; tooling nothing needs is removed.
 - **W2** Work on a branch; `main` is the only long-lived branch; land with `make land`.
 - **W3** Follow pret where it settles a question, and never be stricter.
-- **W4** Far-off before near-match: work the function with the most left to match, with the structures it shares; among equals, what other unfinished code calls. Far-off work settles control flow, types and frames, which reach other functions and raise no compiler question. A near miss stopped by scheduling or allocation stays a draft (S4) and is not chased; it often falls to what the far-off work settles.
+- **W4** Far-off before near-match, as `alchemy-devtools/AGENTS.md` sets out; a near miss stays a draft (S4).
 - **W5** Before every commit, `make compare-editions` prints OK for all twelve editions. Builds are incremental, as pret's are; CI builds every push from a clean clone.
 - **W6** A change to what counts, a rule, an option or routing lands as its own commit with DONE before and after.
 - **W7** Parallel work divides by owner; check a name is free (`git log --all -S`) before using it; commit only verified work.
@@ -157,18 +155,3 @@ The repository is a few short C files, pictures, music and tiny tools, as pret's
 - **N4** No per-asset recipe files, stored offsets or sizes; one rule per kind of asset.
 - **N5** No background files: notes and plans stay in the agent's scratch space.
 - **N6** Volume is never progress: add no file, table, section or line to look thorough; every new file says what reads it.
-
-## What matching has measured
-
-Facts about alchemy-gcc, not rules.
-
-- `p[n]` and `*(p + n)` can compile differently; each site keeps the spelling it matches with.
-- A struct declared before its type is complete keeps a smaller alignment: a header includes its structs' headers first. alchemy-gcc pads every struct to 4 bytes, so a table read by columns is a `[][N]` array.
-- Locals declared in an inner block take their pseudos later and change allocation. Allocation order is r3, r2, r1, r0, ip, lr, r4 to r7, r8, r10, r9, r11; global.c ranks pseudos by refs over live length; a constant `REG_EQUAL` note doubles a pseudo's live length.
-- A loop built from labels and `goto` has no loop notes, so loop.c and jump.c leave it alone; an empty C loop is deleted.
-- An empty asm counts 4 bytes when literal pools are placed and emits none; a one-pass block's loop-end note ends CSE's block and is a scheduling barrier; sched2 breaks ties by RTL order. CSE reuses a register holding 0 or 1.
-- A file that tests `LANGUAGE` without including `edition.h` silently gets the Japanese branch.
-- Within an object, code and data follow definition order; only the object list orders objects.
-- Japanese is often an older layout of a function. A function that saves r9 and never uses it is a nested function storing its static chain.
-- To measure a rewrite in seconds, compile its one object to assembly for one edition and diff it against the build's, `.L` numbers ignored; then `make compare-editions`.
-- After switching branches, delete `out/*/deps.mk` and `out/*/objects.mk`; after renaming sources, delete the editions' `out/` folders; after switching to a branch whose tools differ, `rm -rf tools/out/obj tools/out/ags-* && make tools`.

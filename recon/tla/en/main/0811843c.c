@@ -1,4 +1,5 @@
 // Draft, differ 28 of 183 (tla-en, 2026-11-08)
+// 2026-11-08 (devices pass), unchanged at 28: Data_0200ffec pinned to r0 for the PP store gives the native ldr r0 above the HP strh (30), and with the PP address also pinned to r3, 26; the tag loop's snap reload then still takes r0 for r1, and pinning or a barrier on the tag destination costs 50 to 157. Two pins for two rows is no progress, so neither is kept. An empty asm on the PP address (46 to 149) or after the HP store (46) is worse.
 // Written now as its matched twin Func_081185c4 (the restore) is: the copies
 // pointer stepped in the for list after i (the loop end then steps i, the tag
 // offset, the vitals offset, the copies, as natively), the tag loop indexed

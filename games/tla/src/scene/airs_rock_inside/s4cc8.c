@@ -1,8 +1,5 @@
 #include "version.h"
 
-// The Japanese form is the older revision and is still on its listing.
-#if TLA_PATCH_1
-
 #include "types.h"
 #include "actor.h"
 #include "main_routine_work.h"
@@ -33,12 +30,16 @@ void Func_02005d7c(struct Actor *object);
 void Func_02004cc8(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.currentOwner);
   struct Actor *prepared, *lift;
+#if TLA_PATCH_1
   u8 priorityFlags;
+#endif
   s32 height;
 
   Func_02005e14();
   Func_02005f2c(0);
+#if TLA_PATCH_1
   priorityFlags = leader->priorityFlags;
+#endif
   prepared = OverlayObject_PrepareObject(0xd80000, -0x200000, 0x2200000, 286);
   leader->motionFlags = 0;
   Actor_SetSingleChildFlags(leader, 0);
@@ -84,11 +85,11 @@ void Func_02004cc8(void) {
   leader->motionFlags = 3;
   leader->terrainHeight = leader->y;
   Actor_SetSingleChildFlags(leader, 1);
+#if TLA_PATCH_1
   leader->priorityFlags = priorityFlags;
+#endif
   Func_02005d7c(prepared);
   wait(1);
   Event_WaitTransitionFrames();
   Func_02005e1c();
 }
-
-#endif

@@ -14557,7 +14557,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "03622"
 msgstr "Tour de l'adversaire."
 
-msgctxt "message"
+msgctxt "MsgMysteryMan"
 msgid "03623"
 msgstr "Inconnu"
 
@@ -15265,43 +15265,43 @@ msgctxt "message"
 msgid "03791"
 msgstr "Quelle puissance!!!"
 
-msgctxt "message"
+msgctxt "MsgEffectNone"
 msgid "03792"
 msgstr "Sans effet"
 
-msgctxt "message"
+msgctxt "MsgEffectCurePoison"
 msgid "03793"
 msgstr "Poison éliminé"
 
-msgctxt "message"
+msgctxt "MsgRemoveDelusion"
 msgid "03794"
 msgstr "Annule Duperie"
 
-msgctxt "message"
+msgctxt "MsgRemoveStun"
 msgid "03795"
 msgstr "Annule Paralysie"
 
-msgctxt "message"
+msgctxt "MsgWakeFromSleep"
 msgid "03796"
 msgstr "Réveille"
 
-msgctxt "message"
+msgctxt "MsgBreakPsynergySeal"
 msgid "03797"
 msgstr "Brise le sceau"
 
-msgctxt "message"
+msgctxt "MsgDispelGrimReaper"
 msgid "03798"
 msgstr "Bannit la Faucheuse"
 
-msgctxt "message"
+msgctxt "MsgDispelEvilSpirit"
 msgid "03799"
 msgstr "Bannit l'esprit"
 
-msgctxt "message"
+msgctxt "MsgEffectDowned"
 msgid "03800"
 msgstr "KO"
 
-msgctxt "message"
+msgctxt "MsgSetDjinni"
 msgid "03801"
 msgstr "Lier Djinn"
 
@@ -19318,15 +19318,15 @@ msgctxt "message"
 msgid "04756"
 msgstr "Choisir Djinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAll"
 msgid "04757"
 msgstr "{button_icon:6}:Lier tous"
 
-msgctxt "message"
+msgctxt "MsgDjinnAllStandby"
 msgid "04758"
 msgstr "{button_icon:6}:Tous en attente"
 
-msgctxt "message"
+msgctxt "MsgDjinnChoose"
 msgid "04759"
 msgstr "Choisir Djinn."
 
@@ -19342,7 +19342,7 @@ msgctxt "message"
 msgid "04762"
 msgstr "{button_icon:4}:Lier {button_icon:6}:Aide"
 
-msgctxt "message"
+msgctxt "MsgDjinnRecovering"
 msgid "04763"
 msgstr "Il récupère"
 
@@ -19386,7 +19386,7 @@ msgctxt "MsgKey10d9"
 msgid "04773"
 msgstr "* Sans changement"
 
-msgctxt "message"
+msgctxt "MsgDjinnCharacterStatus"
 msgid "04774"
 msgstr "{button_icon:3}:Statut perso"
 
@@ -19407,23 +19407,23 @@ msgctxt "MsgDjinnUnleashEffectLabel"
 msgid "04778"
 msgstr "Effet d'utilisation en combat:"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveAction"
 msgid "04779"
 msgstr "Donner"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAction"
 msgid "04780"
 msgstr "Lier"
 
-msgctxt "message"
+msgctxt "MsgDjinnStandbyAction"
 msgid "04781"
 msgstr "Attente"
 
-msgctxt "message"
+msgctxt "MsgDjinnTradeAction"
 msgid "04782"
 msgstr "Echanger"
 
-msgctxt "message"
+msgctxt "MsgDjinnOwnerLabel"
 msgid "04783"
 msgstr "{argument_ability_name} de {argument_actor_name:1}"
 
@@ -19471,7 +19471,7 @@ msgctxt "message"
 msgid "04794"
 msgstr "Annulé"
 
-msgctxt "message"
+msgctxt "MsgDjinnNowRecovering"
 msgid "04795"
 msgstr "En récupération"
 

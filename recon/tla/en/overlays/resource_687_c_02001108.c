@@ -9,6 +9,8 @@
 // pass with the offset first, yet its increments still palette first: that
 // fits only a palette giv of a second biv incremented before i, or one placed
 // by AUTO_INC_DEC after its store. No plain form found gives either.
+// Round 4, 8 November: 12 minutes of permute at seed 31 (98,000 candidates),
+// nothing below 2.
 // Round 3, 8 November: palette indexed from a base pointer, palette[i], instead
 // of a stepped pointer (14 to 4: loop.c now reduces it as a giv of i, as the
 // native's register order shows); the shower's two offsets as locals, z's

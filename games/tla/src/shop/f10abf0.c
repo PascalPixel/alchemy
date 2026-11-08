@@ -79,7 +79,12 @@ s32 Func_0810abf0(void) {
   s32 unitId;
   s32 chooseAgain;
   s32 price;
+#if SERVICE_PRICE_WINDOW
   register s32 messageBase asm("r6");
+#else
+  s32 firstMessage;
+  s32 messageBase;
+#endif
   /* FAKEMATCH(pin): messageBase held in r6; as a plain local, 133 of 297
    * instructions differ in tla-en. */
 
@@ -87,9 +92,17 @@ s32 Func_0810abf0(void) {
    * memberIndex after the price window, which keeps the pinned r6 live across
    * both window calls; as memberIndex = 0 there and no messageBase = 0, 155
    * of 297 instructions differ in tla-en. */
+#if SERVICE_PRICE_WINDOW
   messageBase = 0;
   chooseAgain = 0;
   unitId = 0;
+#else
+  // Italian draft, differ 4 of 660 bytes in tla-it (8 November 2026): the
+  // zero stored to memberIndex takes r5 for r0 here and r3 for r5 after the
+  // windows. Its FAKEMATCH(temporary), firstMessage, carries the prompt's
+  // message into the first call; as the plain message, 26 differ.
+  firstMessage = (s32)MsgWhoShallIRevive;
+#endif
   // DEAD: memberIndex is set again after the price window before any read.
   memberIndex = 0;
   redraw = 1;
@@ -100,7 +113,11 @@ s32 Func_0810abf0(void) {
      */
     serviceKind = *partyAction;
   }
+#if SERVICE_PRICE_WINDOW
   Func_0810a9ac((s32)MsgWhoShallIRevive);
+#else
+  Func_0810a9ac(firstMessage);
+#endif
 
   listWindow = Window_CreateFar(1, 12, 13, 3, 2);
   shop->cursorAnchor->active = 4;
@@ -111,8 +128,13 @@ s32 Func_0810abf0(void) {
                                  SERVICE_PRICE_WINDOW_WIDTH, 3, 2);
 #else
   priceWindow = NULL;
+  memberIndex = 0;
+  unitId = 0;
+  chooseAgain = 0;
 #endif
+#if SERVICE_PRICE_WINDOW
   memberIndex = messageBase;
+#endif
   while (memberIndex < shop->partyMemberCount) {
     unitId = shop->partyMemberIds[memberIndex];
     if (Shop_CanServe(unitId, serviceKind) != 0)

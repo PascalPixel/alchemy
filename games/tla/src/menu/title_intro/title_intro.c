@@ -91,13 +91,10 @@ s32 Func_081a71c8(void) {
   return 1;
 }
 
-#if TLA_PATCH_1 && (LANGUAGE != LANGUAGE_GERMAN)
-// The Japanese and German title screens are written below but still link from
-// their scaffolds: the Japanese one, the older revision, blinks a five-sprite
-// prompt (at the French position) from the first frame, without the 120-frame
-// wait; the German one, laid out for its longer prompt, loads eight prompt
-// tiles and draws two rows of three sprites from y 116. Both compile to their
-// listings' instructions.
+// The Japanese title screen, the older revision, blinks a five-sprite prompt
+// (at the French position) from the first frame, without the 120-frame wait;
+// the German one, laid out for its longer prompt, loads eight prompt tiles and
+// draws two rows of three sprites from y 116.
 
 struct TitleSprite {
   u32 next; ///< the render slot link
@@ -297,4 +294,3 @@ column:
 /// An empty entry the far-call table keeps.
 // As The Broken Seal's.
 void Title_NoOpPalette(void) {}
-#endif

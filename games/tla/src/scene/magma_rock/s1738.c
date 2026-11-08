@@ -1,34 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-08)
-// Two dead self-assignments of part, tagged. The last 4 fell to the sprite's
-// type: each part's sprite is read through resource_obj.c's ResourceSprite
-// (image words, scale, slot at 16, retainCacheEntry at bit 0 of 17), with the
-// slot copied before the bit is set. Its word fields give its byte fields an
-// alias set that meets the parts' s32 position copies but not the parts array,
-// so sched2 hoists the slot load to just after the create and keeps the bit's
-// store ahead of the parts[0] reload, as the native does. A sprite type of
-// bytes only (the old PartSprite, 4 bit first, 12 slot first) or f021a84.c's
-// LayeredSprite layout (no word fields, 12) lets the reload rise above the
-// bit's store.
-//
-// The earlier reload rotation (differ 113) came from three expansions, each
-// now fixed in plain C: the type 0x15f as a literal kept a pseudo in r0 across
-// the first Import_ActorCreate's argument loads, so no insn's find_reg picked
-// r0 and r0 never entered spill_regs; a local `last = 3` from the top was
-// CSE'd into gFrameCount & 3, which then reloaded the 3 instead of giving it a
-// register; and the order stored through a u8 * computed its address before
-// its value. With the type held in a local and the order stored as a field the
-// rotation is the native's, and the old tagged `last` device is gone
-// (the literal 3 now measures the same).
-//
-// The update of an object that calls Func_02003c4c(object, 136) every 16
-// frames and sets its part attribute 10 each frame. While its action counter is
-// at most 31 it throws effect 403 every fourth frame; at 33 it calls
-// Func_02003c4c with 144, builds four parts (type 0x15f) above it, each sharing
-// the first part's sprite, ordered 3 down to 0 and taking Func_02001528, then
-// hands the object that Func_020010cc finds in Ov691Room1, or in Ov691Room2 by
-// entrance, to Func_020015e4; past 364 it clears its update. The counter
-// advances only while event work 0x166, 0x15a, 0x15e and 0x168 are 0 and
-// screenStatus is not.
 #include "types.h"
 #include "call.h"
 #include "actor.h"

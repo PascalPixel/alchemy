@@ -16683,11 +16683,11 @@ msgctxt "MsgItemMenuEmpty"
 msgid "04102"
 msgstr "You have no items."
 
-msgctxt "message"
+msgctxt "MsgWhoseItem"
 msgid "04103"
 msgstr "Whose item?"
 
-msgctxt "message"
+msgctxt "MsgWhichItem"
 msgid "04104"
 msgstr "Which item?"
 
@@ -16695,15 +16695,15 @@ msgctxt "message"
 msgid "04105"
 msgstr "What will you do?"
 
-msgctxt "message"
+msgctxt "MsgUseOnWhom"
 msgid "04106"
 msgstr "Use it on whom?"
 
-msgctxt "message"
+msgctxt "MsgGiveToWhom"
 msgid "04107"
 msgstr "Give it to whom?"
 
-msgctxt "message"
+msgctxt "MsgSwapForWhat"
 msgid "04108"
 msgstr "Swap it for what?"
 
@@ -17347,11 +17347,11 @@ msgctxt "message"
 msgid "04268"
 msgstr "No attributes"
 
-msgctxt "message"
+msgctxt "MsgEquippedIt"
 msgid "04269"
 msgstr "Equipped it."
 
-msgctxt "message"
+msgctxt "MsgDroppedIt"
 msgid "04270"
 msgstr "Dropped it."
 
@@ -17359,19 +17359,19 @@ msgctxt "message"
 msgid "04271"
 msgstr "Will be exchanged with something"
 
-msgctxt "message"
+msgctxt "MsgGiven"
 msgid "04272"
 msgstr "Given"
 
-msgctxt "message"
+msgctxt "MsgRemoved"
 msgid "04273"
 msgstr "Removed"
 
-msgctxt "message"
+msgctxt "MsgTraded"
 msgid "04274"
 msgstr "Traded"
 
-msgctxt "message"
+msgctxt "MsgCannotRemoveItem"
 msgid "04275"
 msgstr "Can't remove it!"
 
@@ -17379,11 +17379,11 @@ msgctxt "message"
 msgid "04276"
 msgstr "You were cursed!"
 
-msgctxt "message"
+msgctxt "MsgCannotTrade"
 msgid "04277"
 msgstr "Can't trade it!"
 
-msgctxt "message"
+msgctxt "MsgCannotHoldMore"
 msgid "04278"
 msgstr "Can't hold more!"
 

@@ -1,4 +1,5 @@
 // Draft, differ 36 of 1122 (tla-en, 2026-11-08), no device; 36 in every edition
+// 2026-11-08 (devices pass), unchanged at 36: an empty asm before the 0xc1 load, after the droplet loop or inside it, or the 0xc1 destination through an asm operand, leaves cse2's reuse in place (36); the droplet's cell base through an asm operand, 40.
 // (tla-ja's copy is at 0x0818cb78: diff --edition tla-ja --symbol BattleEffect_RunTrident).
 // 2026-11-08 (last), from 40: the spray's grow and the tridents' start are one local
 // (a local reused for a second value, untagged). Its first set is now frame * 4 - 156,

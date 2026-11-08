@@ -1,36 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-08)
-// tla-ja, tla-de, tla-es, tla-fr and tla-it measure differ 0 as well.
-// The last sched2 tie (differ 4: r1 and gData_03001144's pool load hoisted
-// above the Data_03001244 store) fell to reading the map work through
-// Func_0802c240's struct WorldView: a field read carries the struct's alias
-// set, which conflicts with the u32 store, so the pitch read waits for that
-// store as the listing's does; through a u16 pointer the two never alias.
-// Pitch, yaw, far plane, distance and fixedEye now go through the struct, and
-// pitch takes 0xe000 as a plain store; each step measured 0.
-// Left: one device, FAKEMATCH(signature) on Render_ResetTransformState
-// (declared u32, returns void elsewhere): as void, 2 of 376 differ, the eye
-// offset's argument move (mov r0, fp) scheduled before mov r1, sl and the z
-// store. sched2 ties the three on priority; as void, the later mov r0, sl
-// stays output-dependent on mov r0, fp, which gives it one more dependent and
-// first place. Tried as void: z stored first, the camera argument uncast, the
-// look-at target spelled camera + 12 (2 each). An empty asm between the stores
-// cannot help (mov r1, sl must precede the z store); a real return value from
-// Iwram_TransformVector would be a signature device too (the routine returns
-// nothing meaningful).
-// Earlier: the eye offset cleared after the pitch call, as the twin does, took
-// 25 to 6. 0x104 and 0x106 are WorldView fields named as map.h names them
-// (windowTop, windowBottom), 0x10 to 0x16 typed fields, and the register
-// stores go through io_write.h's Io_Write16 (each 0).
-// Adopting: The Broken Seal's Map_InitializePerspectiveScene on this game's
-// map work (0x978 bytes, heap slot offset 32) and affine work (offset 28), with
-// the world map's update (0802c240) and affine frame (0802c088) callbacks.
-// struct WorldView is f02c240.c's, split at 0x968 and 0x96c (the frame fields);
-// it should become one shared definition. Resource ids 0x197 to 0x199:
-// PerspectiveDataA and DefaultMapCells as The Broken Seal names them, the third
-// a placeholder. The ARM routine is copied by its linker size
-// (Data_0802146cSize, to define in constants.ld as Render_ConvertMapCode -
-// Data_0802146c). The diff compares instructions only:
-// check the literal pools with make compare-editions.
 #include "types.h"
 #include "io_write.h"
 #include "dma.h"

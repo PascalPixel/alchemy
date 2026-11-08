@@ -38,7 +38,7 @@ SECTIONS
         "*/games/tla/src/scene/magma_rock/target.o"(.text)
         "*/games/tla/src/scene/magma_rock/s1528.o"(.text)
         "*/games/tla/src/scene/magma_rock/s15e4.o"(.text)
-        "*/resource_691_overlay.o"(.text.x02009738)
+        "*/games/tla/src/scene/magma_rock/s1738.o"(.text)
         "*/games/tla/src/scene/magma_rock/s19e8.o"(.text)
         "*/games/tla/src/scene/magma_rock/switch.o"(.text)
         "*/games/tla/src/scene/magma_rock/calls.o"(.text)

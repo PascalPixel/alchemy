@@ -12995,7 +12995,7 @@ msgctxt "message"
 msgid "03232"
 msgstr "{argument_actor_name:230} {argument_signed_number}の ダメージ!"
 
-msgctxt "MsgSpiritDrain"
+msgctxt "message"
 msgid "03233"
 msgstr "{argument_actor_name:234} {argument_signed_number}の ダメージ!"
 
@@ -13003,31 +13003,31 @@ msgctxt "MsgCurseDamage"
 msgid "03234"
 msgstr "{argument_actor_name:234} 呪いで{argument_signed_number}のダメージ!"
 
-msgctxt "message"
+msgctxt "MsgSpiritDrain"
 msgid "03235"
 msgstr "{argument_actor_name:234} たましいを すいとられた!"
 
-msgctxt "MsgKoDown"
+msgctxt "message"
 msgid "03236"
 msgstr "{argument_actor_name:234} ざい宝をほうり出した!"
 
-msgctxt "MsgSuffocate"
+msgctxt "message"
 msgid "03237"
 msgstr "{argument_actor_name:233} いきのねをとめた"
 
-msgctxt "MsgBlownAway"
+msgctxt "MsgKoDown"
 msgid "03238"
 msgstr "{argument_actor_name:234} せんとうふのうになった!"
 
-msgctxt "MsgFieldBroken"
+msgctxt "MsgSuffocate"
 msgid "03239"
 msgstr "{argument_actor_name:234} ちっそくした!"
 
-msgctxt "message"
+msgctxt "MsgBlownAway"
 msgid "03240"
 msgstr "{argument_actor_name:134} とおくへ ふきとばした!"
 
-msgctxt "message"
+msgctxt "MsgFieldBroken"
 msgid "03241"
 msgstr "{argument_actor_name:233} けっかいをうちやぶった!"
 
@@ -13035,7 +13035,7 @@ msgctxt "MsgPoisonDamage"
 msgid "03242"
 msgstr "{argument_actor_name:234} 毒で{argument_signed_number}のダメージ!"
 
-msgctxt "MsgNoEffect"
+msgctxt "message"
 msgid "03243"
 msgstr "{argument_actor_name:234} ガードした!"
 
@@ -13043,7 +13043,7 @@ msgctxt "MsgNimblyDodgesBlow"
 msgid "03244"
 msgstr "{argument_actor_name:234} すばやくかわした!"
 
-msgctxt "message"
+msgctxt "MsgNoEffect"
 msgid "03245"
 msgstr "しかし {argument_actor_name:230}は きかなかった!"
 
@@ -13075,139 +13075,139 @@ msgctxt "MsgDjinnInRecovery"
 msgid "03252"
 msgstr "{argument_actor_name:233} {argument_ability_name}はリカバリー中だった!"
 
-msgctxt "MsgDissipated"
+msgctxt "message"
 msgid "03253"
 msgstr "しかし こうかがなかった!"
 
-msgctxt "message"
+msgctxt "MsgFieldProtects"
 msgid "03254"
 msgstr "{argument_actor_name:234} けっかいにまもられている!"
 
-msgctxt "message"
+msgctxt "MsgDissipated"
 msgid "03255"
 msgstr "{argument_actor_name:234} エナジーをかくさんした!"
 
-msgctxt "MsgLeechGain"
+msgctxt "message"
 msgid "03256"
 msgstr "さらに HPを{argument_signed_number}うばった!"
 
-msgctxt "MsgLeechTake"
+msgctxt "message"
 msgid "03257"
 msgstr "さらに HPを{argument_signed_number}すいとられた!"
 
-msgctxt "MsgMorePpLossE"
+msgctxt "MsgLeechGain"
 msgid "03258"
 msgstr "さらに EPを{argument_signed_number}うばった!"
 
-msgctxt "MsgMorePpLossP"
+msgctxt "MsgLeechTake"
 msgid "03259"
 msgstr "さらに EPを{argument_signed_number}すいとられた!"
 
-msgctxt "MsgAtkDown"
+msgctxt "MsgMorePpLossE"
 msgid "03260"
 msgstr "さらに{argument_signed_number}のEPダメージをあたえた!"
 
-msgctxt "MsgAtkUp"
+msgctxt "MsgMorePpLossP"
 msgid "03261"
 msgstr "さらに{argument_signed_number}のEPダメージをうけた!"
 
-msgctxt "MsgDefDown"
+msgctxt "MsgAtkDown"
 msgid "03262"
 msgstr "{argument_actor_name:233} こうげきが{argument_signed_number}下がった!"
 
-msgctxt "MsgDefUp"
+msgctxt "MsgAtkUp"
 msgid "03263"
 msgstr "{argument_actor_name:233} こうげきが{argument_signed_number}上がった!"
 
-msgctxt "MsgRevived"
+msgctxt "MsgDefDown"
 msgid "03264"
 msgstr "{argument_actor_name:233} ぼうぎょが{argument_signed_number}下がった!"
 
-msgctxt "MsgResDown"
+msgctxt "MsgDefUp"
 msgid "03265"
 msgstr "{argument_actor_name:233} ぼうぎょが{argument_signed_number}上がった!"
 
-msgctxt "MsgResUp"
+msgctxt "MsgRevived"
 msgid "03266"
 msgstr "{argument_actor_name:234} せんとうに ふっきした!"
 
-msgctxt "MsgPoisoned"
+msgctxt "MsgResDown"
 msgid "03267"
 msgstr "{argument_actor_name:233} エレメンタルたいせいが{argument_signed_number}ダウン!"
 
-msgctxt "MsgDelusion"
+msgctxt "MsgResUp"
 msgid "03268"
 msgstr "{argument_actor_name:233} エレメンタルたいせいが{argument_signed_number}アップ!"
 
-msgctxt "MsgConfused"
+msgctxt "MsgPoisoned"
 msgid "03269"
 msgstr "{argument_actor_name:234} 毒におかされた!"
 
-msgctxt "MsgCharmed"
+msgctxt "MsgDelusion"
 msgid "03270"
 msgstr "{argument_actor_name:234} まぼろしにつつまれた!"
 
-msgctxt "MsgStunned"
+msgctxt "MsgConfused"
 msgid "03271"
 msgstr "{argument_actor_name:234} あたまがこんらんした!"
 
-msgctxt "MsgAsleep"
+msgctxt "MsgCharmed"
 msgid "03272"
 msgstr "{argument_actor_name:234} こころをうばわれた!"
 
-msgctxt "MsgPsyBlock"
+msgctxt "MsgStunned"
 msgid "03273"
 msgstr "{argument_actor_name:234} しびれた!"
 
-msgctxt "message"
+msgctxt "MsgAsleep"
 msgid "03274"
 msgstr "{argument_actor_name:234} ねむりにおちた!"
 
-msgctxt "MsgHpRegen"
+msgctxt "MsgPsyBlock"
 msgid "03275"
 msgstr "{argument_actor_name:234} エナジーをふうじられた!"
 
-msgctxt "MsgReflect"
+msgctxt "message"
 msgid "03276"
 msgstr "{argument_actor_name:234} 呪われてしまった!"
 
-msgctxt "message"
+msgctxt "MsgHpRegen"
 msgid "03277"
 msgstr "{argument_actor_name:234} HPかいふくのこうか!"
 
-msgctxt "MsgEvilSpirit"
+msgctxt "MsgReflect"
 msgid "03278"
 msgstr "{argument_actor_name:234} リフレクトのこうか!"
 
-msgctxt "MsgDeathCurse"
+msgctxt "message"
 msgid "03279"
 msgstr "{argument_actor_name:233} けっかいを うちやぶった!"
 
-msgctxt "MsgVenom"
+msgctxt "MsgEvilSpirit"
 msgid "03280"
 msgstr "{argument_actor_name:234} あくりょうに とりつかれた!"
 
-msgctxt "MsgDeathCount"
+msgctxt "MsgDeathCurse"
 msgid "03281"
 msgstr "{argument_actor_name:234} しりょうに とりつかれた!"
 
-msgctxt "MsgPsySeal"
+msgctxt "MsgVenom"
 msgid "03282"
 msgstr "{argument_actor_name:234} もう毒におかされた!"
 
-msgctxt "MsgAgiUp"
+msgctxt "MsgDeathCount"
 msgid "03283"
 msgstr "{argument_actor_name:234} しりょうのこえをきいた!{argument_signed_number}・・・"
 
-msgctxt "MsgAgiDown"
+msgctxt "MsgPsySeal"
 msgid "03284"
 msgstr "{argument_actor_name:233} エナジーをふうじた!"
 
-msgctxt "message"
+msgctxt "MsgAgiUp"
 msgid "03285"
 msgstr "{argument_actor_name:234} すばやさが{argument_signed_number}アップ!"
 
-msgctxt "message"
+msgctxt "MsgAgiDown"
 msgid "03286"
 msgstr "{argument_actor_name:234} すばやさが{argument_signed_number}ダウン!"
 
@@ -13219,23 +13219,23 @@ msgctxt "message"
 msgid "03288"
 msgstr "{argument_actor_name:233} 水エレメンタルパワーが{argument_signed_number}アップ!"
 
-msgctxt "MsgReadies"
+msgctxt "message"
 msgid "03289"
 msgstr "{argument_actor_name:233} 火エレメンタルパワーが{argument_signed_number}アップ!"
 
-msgctxt "MsgChallenge"
+msgctxt "message"
 msgid "03290"
 msgstr "{argument_actor_name:233} 風エレメンタルパワーが{argument_signed_number}アップ!"
 
-msgctxt "MsgImmobile"
+msgctxt "MsgReadies"
 msgid "03291"
 msgstr "{argument_actor_name:234} つぎのターンに そなえた!"
 
-msgctxt "message"
+msgctxt "MsgChallenge"
 msgid "03292"
 msgstr "{argument_actor_name:234} ちょうはつに のった!"
 
-msgctxt "MsgAura"
+msgctxt "MsgImmobile"
 msgid "03293"
 msgstr "{argument_actor_name:234} みうごきが とれなくなった!"
 
@@ -13243,19 +13243,19 @@ msgctxt "MsgUnableToMove"
 msgid "03294"
 msgstr "{argument_actor_name:234} みうごきが とれない!"
 
-msgctxt "MsgVanished"
+msgctxt "MsgAura"
 msgid "03295"
 msgstr "{argument_actor_name:234} まもりのオーラにつつまれた!"
 
-msgctxt "MsgCounterReady"
+msgctxt "MsgAura2"
 msgid "03296"
 msgstr "{argument_actor_name:234} まもりのオーラにつつまれた!"
 
-msgctxt "message"
+msgctxt "MsgVanished"
 msgid "03297"
 msgstr "{argument_actor_name:234} かんぜんに すがたをけした!"
 
-msgctxt "message"
+msgctxt "MsgCounterReady"
 msgid "03298"
 msgstr "{argument_actor_name:234} はんげきモードになった!"
 
@@ -13263,15 +13263,15 @@ msgctxt "MsgDjinnRecoverFaster"
 msgid "03299"
 msgstr "リカバリーちゅうの ジンのかいふくがはやまった!"
 
-msgctxt "MsgCurePoison"
+msgctxt "message"
 msgid "03300"
 msgstr "しかし リカバリーちゅうの ジンはいなかった!"
 
-msgctxt "message"
+msgctxt "MsgWakes"
 msgid "03301"
 msgstr "{argument_actor_name:234} ねむりからさめた!"
 
-msgctxt "message"
+msgctxt "MsgCurePoison"
 msgid "03302"
 msgstr "{argument_actor_name:233} からだの毒がきえた!"
 
@@ -13291,23 +13291,23 @@ msgctxt "MsgDefNormal"
 msgid "03306"
 msgstr "{argument_actor_name:234} ぼうぎょ力がもどった!"
 
-msgctxt "MsgCureDelusion"
+msgctxt "message"
 msgid "03307"
 msgstr "{argument_actor_name:233} すばやさが もどった!"
 
-msgctxt "MsgCureSeal"
+msgctxt "message"
 msgid "03308"
 msgstr "{argument_actor_name:234} われにかえった!"
 
-msgctxt "MsgCureStun"
+msgctxt "MsgCureDelusion"
 msgid "03309"
 msgstr "{argument_actor_name:234} まぼろしを うちやぶった!"
 
-msgctxt "message"
+msgctxt "MsgCureSeal"
 msgid "03310"
 msgstr "{argument_actor_name:233} エナジーふうじがとけた!"
 
-msgctxt "MsgCureSpirit"
+msgctxt "MsgCureStun"
 msgid "03311"
 msgstr "{argument_actor_name:233} しびれがきえた!"
 
@@ -13315,7 +13315,7 @@ msgctxt "MsgConscious2"
 msgid "03312"
 msgstr "{argument_actor_name:234} われにかえった!"
 
-msgctxt "message"
+msgctxt "MsgCureSpirit"
 msgid "03313"
 msgstr "{argument_actor_name:233} あくりょうがきえた!"
 
@@ -13327,7 +13327,7 @@ msgctxt "MsgRefrainEnd"
 msgid "03315"
 msgstr "{argument_actor_name:234} HPかいふくのこうかがきえた!"
 
-msgctxt "MsgCureCurse"
+msgctxt "message"
 msgid "03316"
 msgstr "{argument_actor_name:234} リフレクトのこうかがきえた!"
 
@@ -13335,7 +13335,7 @@ msgctxt "message"
 msgid "03317"
 msgstr "{argument_actor_name:234} われに かえった!"
 
-msgctxt "MsgBuffsReset"
+msgctxt "MsgCureCurse"
 msgid "03318"
 msgstr "{argument_actor_name:233} しりょうを うちはらった!"
 
@@ -13343,7 +13343,7 @@ msgctxt "message"
 msgid "03319"
 msgstr "{argument_actor_name:233} じょうたいがもとにもどった!"
 
-msgctxt "message"
+msgctxt "MsgBuffsReset"
 msgid "03320"
 msgstr "{argument_actor_name:233} つよさがもとにもどった!"
 
@@ -13769,19 +13769,19 @@ msgctxt "MsgEnemyAbility0d53"
 msgid "03413"
 msgstr "{argument_actor_name:234} ちょうおんぱを はっした!"
 
-msgctxt "MsgAppears"
+msgctxt "MsgSplitOff"
 msgid "03414"
 msgstr "{argument_actor_name:230} ぶんれつした!"
 
-msgctxt "MsgNoOneCame"
+msgctxt "MsgSplitFailed"
 msgid "03415"
 msgstr "ぞうしょくは しっぱいした!"
 
-msgctxt "message"
+msgctxt "MsgAppears"
 msgid "03416"
 msgstr "{argument_actor_name:150}゙ あらわれた!!"
 
-msgctxt "message"
+msgctxt "MsgNoOneCame"
 msgid "03417"
 msgstr "しかし だれも あらわれなかった!"
 
@@ -13837,7 +13837,7 @@ msgctxt "MsgEnemyAbility0d63"
 msgid "03429"
 msgstr "{argument_actor_name:234} たすけをさがした!"
 
-msgctxt "message"
+msgctxt "MsgUpToFight"
 msgid "03430"
 msgstr "{argument_actor_name:234} よみがえった!"
 
@@ -17436,15 +17436,15 @@ msgctxt "message"
 msgid "04293"
 msgstr "ジンをえらんでください"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAll"
 msgid "04294"
 msgstr "SEL:すべてセット"
 
-msgctxt "message"
+msgctxt "MsgDjinnAllStandby"
 msgid "04295"
 msgstr "SEL:すべてスタンバイ"
 
-msgctxt "message"
+msgctxt "MsgDjinnChoose"
 msgid "04296"
 msgstr "ジンをせんたくしてください"
 
@@ -17460,7 +17460,7 @@ msgctxt "message"
 msgid "04299"
 msgstr "R:セット SEL:ルール"
 
-msgctxt "message"
+msgctxt "MsgDjinnRecovering"
 msgid "04300"
 msgstr "リカバリーちゅうです"
 
@@ -17504,7 +17504,7 @@ msgctxt "message"
 msgid "04310"
 msgstr "*エナジーはへんかしません"
 
-msgctxt "message"
+msgctxt "MsgDjinnCharacterStatus"
 msgid "04311"
 msgstr "L:キャラステータス"
 
@@ -17524,23 +17524,23 @@ msgctxt "MsgDjinnUnleashEffectLabel"
 msgid "04315"
 msgstr "せんとうで ときはなったときの こうか"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveAction"
 msgid "04316"
 msgstr "わたす"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAction"
 msgid "04317"
 msgstr "セット"
 
-msgctxt "message"
+msgctxt "MsgDjinnStandbyAction"
 msgid "04318"
 msgstr "スタンバイ"
 
-msgctxt "message"
+msgctxt "MsgDjinnTradeAction"
 msgid "04319"
 msgstr "こうかん"
 
-msgctxt "message"
+msgctxt "MsgDjinnOwnerLabel"
 msgid "04320"
 msgstr "{argument_actor_name:233}"
 
@@ -17588,7 +17588,7 @@ msgctxt "message"
 msgid "04331"
 msgstr "かいじょしました"
 
-msgctxt "message"
+msgctxt "MsgDjinnNowRecovering"
 msgid "04332"
 msgstr "リカバリー中です"
 

@@ -30,7 +30,7 @@ Resource_DirectoryTable:
 	resource , Resource_FarCall010
 	resource Data012, gResource_Data012
 	resource WindowTiles, Ui_WindowTiles
-	resource , Text_SmallFont
+	resource SmallFont, Text_SmallFont
 	resource ClockDigits, Field_ClockDigits
 	resource TitleScreenPicture, Title_ScreenPicture
 	resource , Title_IntroGraphicsC
@@ -227,11 +227,11 @@ Resource_DirectoryTable:
 	resource CornerGlowSheet, BattleEffect_CornerGlowSheet
 	resource Data0D7, Resource_Data0D7
 	resource Data0D8, Resource_Data0D8
-	resource , BattleEffect_ImpFaceSheet
+	resource ImpFaceSheet, BattleEffect_ImpFaceSheet
 	resource Data0DA, Resource_Data0DA
 	resource GreatSwordSheet, BattleEffect_GreatSwordSheet
 	resource Data0DC, Resource_Data0DC
-	resource , Resource_Data0DD
+	resource Data0DD, Resource_Data0DD
 	resource SunCardSheet, BattleEffect_SunCardSheet
 	resource VineCardSheet, BattleEffect_VineCardSheet
 	resource DragonCardSheet, BattleEffect_DragonCardSheet
@@ -240,7 +240,7 @@ Resource_DirectoryTable:
 	resource SheepCardSheet, BattleEffect_SheepCardSheet
 	resource , BattleEffect_SkeletonCardSheet
 	resource , BattleEffect_SwordCardSheet
-	resource , BattleEffect_BoulderPicture
+	resource BoulderPicture, BattleEffect_BoulderPicture
 	resource BladeSheet, BattleEffect_BladeSheet
 	resource ClawSlashSheet, BattleEffect_ClawSlashSheet
 	resource Data0E9, Resource_Data0E9
@@ -250,8 +250,8 @@ Resource_DirectoryTable:
 	resource CornerRuneBSheet, BattleEffect_CornerRuneBSheet
 	resource , Resource_Data0EE
 	resource , Resource_Data0EF
-	resource , Resource_Data0F0
-	resource , Resource_Data0F1
+	resource Data0F0, Resource_Data0F0
+	resource Data0F1, Resource_Data0F1
 	resource Data0F2, Resource_Data0F2
 	resource Data0F3, Resource_Data0F3
 	resource SmokeBandSheet, BattleEffect_SmokeBandSheet
@@ -271,7 +271,7 @@ Resource_DirectoryTable:
 	resource Data102, Resource_Data102
 	resource , Resource_Data103
 	resource , Resource_Data104
-	resource , BattleEffect_CloudPuffSheet
+	resource CloudPuffSheet, BattleEffect_CloudPuffSheet
 	resource TileAnimationMask, BattleEffect_TileAnimationMask
 	resource CyanSparkSheet, BattleEffect_CyanSparkSheet
 	resource VioletPaletteA, BattleEffect_VioletPaletteA
@@ -287,7 +287,7 @@ Resource_DirectoryTable:
 	resource RevealMaskF, BattleEffect_RevealMaskF
 	resource LimeColumnSheet, BattleEffect_LimeColumnSheet
 	resource , BattleEffect_RainSheet
-	resource , BattleEffect_FlameSheetA
+	resource FlameSheetA, BattleEffect_FlameSheetA
 	resource DemonFaceSheet, BattleEffect_DemonFaceSheet
 	resource FlameBladeSheet, BattleEffect_FlameBladeSheet
 	resource SwordSheet, BattleEffect_SwordSheet
@@ -371,7 +371,7 @@ Resource_DirectoryTable:
 	resource CyanPalette, BattleEffect_CyanPalette
 	resource TanPalette, BattleEffect_TanPalette
 	resource , BattleEffect_EffectPalette04
-	resource , BattleEffect_EffectPalette05
+	resource EffectPalette05, BattleEffect_EffectPalette05
 	resource WispSheet, BattleEffect_WispSheet
 	resource GreenVineSheet, BattleEffect_GreenVineSheet
 	resource PortalSheet, BattleEffect_PortalSheet
@@ -379,8 +379,8 @@ Resource_DirectoryTable:
 	resource HeartSheet, BattleEffect_HeartSheet
 	resource CounterRevealSheet, BattleEffect_CounterRevealSheet
 	resource RedCrescentSheetA, BattleEffect_RedCrescentSheetA
-	resource , BattleEffect_BlueBeastSheet
-	resource , BattleEffect_RedCrescentSheetB
+	resource BlueBeastSheet, BattleEffect_BlueBeastSheet
+	resource RedCrescentSheetB, BattleEffect_RedCrescentSheetB
 	resource SpiralSheet, BattleEffect_SpiralSheet
 	resource , BattleEffect_VioletStreakSheet
 	resource CrescentMoonSheet, BattleEffect_CrescentMoonSheet
@@ -417,9 +417,9 @@ Resource_DirectoryTable:
 	resource LightningPillarSheet, BattleEffect_LightningPillarSheet
 	resource StagedParticlePath, BattleEffect_StagedParticlePath
 	resource DualStreamPath, BattleEffect_DualStreamPath
-	resource , Field_PerspectiveDataA
+	resource PerspectiveDataA, Field_PerspectiveDataA
 	resource DefaultMapCells, Field_DefaultMapCells
-	resource , Resource_Data199
+	resource Data199, Resource_Data199
 	resource WorldMapPaletteA, WorldMap_PaletteA
 	resource DefaultMapAnimation, Field_DefaultMapAnimation
 	resource DefaultCellPictureAttributes, Field_DefaultCellPictureAttributes

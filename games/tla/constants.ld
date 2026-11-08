@@ -11,3 +11,4 @@ BattleEffect_ExpandCodeSize = BattleEffect_DotProduct2 - BattleEffect_ExpandCode
 BattleEffect_Expand2CodeSize = BattleEffect_Expand2End - BattleEffect_Expand2Code;
 Model_DecodeCodeSize = Model_DecodeEnd - Model_DecodeCode;
 Data_08021824Size = Resource_GetMetadataRecordFar - Data_08021824;
+Data_0802146cSize = Render_ConvertMapCode - Data_0802146c;

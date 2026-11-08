@@ -14,6 +14,8 @@
 // registers moved); zero at the first visit's stores or SetMoveTarget (2);
 // motionFlags = 2 moved after each later store (8 to 52); an 8-minute permute
 // from 2 (about 36,000 candidates) found nothing under 2.
+// 8 November, after: 12 more minutes of permute at seed 31 (59,000
+// candidates), nothing below 2.
 // 8 November, last round, 18 to 2: centerZ dropped (both centres are CSE's
 // shared constants, as the listing's register order shows); the flag device
 // (tagged temporary) kills the test's known zero (16 with motionFlags = 2

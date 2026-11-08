@@ -44,7 +44,6 @@ SECTIONS
         "*/games/tla/src/field/field_effect/advance_spin.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/flash.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s2148.o"(.text)
-        "*/resource_6ab_overlay.o"(.text.x0200a148)
         "*/games/tla/src/scene/mars_lighthouse_star_room/ride_step.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/s236c.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_star_room/ride_active.o"(.text)

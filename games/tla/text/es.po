@@ -14552,7 +14552,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "03622"
 msgstr "Esperando el turno del oponente."
 
-msgctxt "message"
+msgctxt "MsgMysteryMan"
 msgid "03623"
 msgstr "Desconocido"
 
@@ -15247,43 +15247,43 @@ msgctxt "message"
 msgid "03791"
 msgstr "¡¡¡Eres muy fuerte!!!"
 
-msgctxt "message"
+msgctxt "MsgEffectNone"
 msgid "03792"
 msgstr "Sin efecto"
 
-msgctxt "message"
+msgctxt "MsgEffectCurePoison"
 msgid "03793"
 msgstr "Cura el veneno"
 
-msgctxt "message"
+msgctxt "MsgRemoveDelusion"
 msgid "03794"
 msgstr "Cura el delirio"
 
-msgctxt "message"
+msgctxt "MsgRemoveStun"
 msgid "03795"
 msgstr "Elimina parálisis"
 
-msgctxt "message"
+msgctxt "MsgWakeFromSleep"
 msgid "03796"
 msgstr "Despierta"
 
-msgctxt "message"
+msgctxt "MsgBreakPsynergySeal"
 msgid "03797"
 msgstr "Desbloquea Psinergía"
 
-msgctxt "message"
+msgctxt "MsgDispelGrimReaper"
 msgid "03798"
 msgstr "Ahuyenta a la Muerte"
 
-msgctxt "message"
+msgctxt "MsgDispelEvilSpirit"
 msgid "03799"
 msgstr "Ahuyenta al espíritu"
 
-msgctxt "message"
+msgctxt "MsgEffectDowned"
 msgid "03800"
 msgstr "Cayó"
 
-msgctxt "message"
+msgctxt "MsgSetDjinni"
 msgid "03801"
 msgstr "Asignar Djinn"
 
@@ -19303,15 +19303,15 @@ msgctxt "message"
 msgid "04756"
 msgstr "Elige un Djinn."
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAll"
 msgid "04757"
 msgstr "{button_icon:6}:Asignar todos"
 
-msgctxt "message"
+msgctxt "MsgDjinnAllStandby"
 msgid "04758"
 msgstr "{button_icon:6}:Preparar todos"
 
-msgctxt "message"
+msgctxt "MsgDjinnChoose"
 msgid "04759"
 msgstr "Elige un Djinn."
 
@@ -19327,7 +19327,7 @@ msgctxt "message"
 msgid "04762"
 msgstr "{button_icon:4}:Asignar {button_icon:6}:Ayuda"
 
-msgctxt "message"
+msgctxt "MsgDjinnRecovering"
 msgid "04763"
 msgstr "Está recuperándose."
 
@@ -19371,7 +19371,7 @@ msgctxt "MsgKey10d9"
 msgid "04773"
 msgstr "* Sin cambios"
 
-msgctxt "message"
+msgctxt "MsgDjinnCharacterStatus"
 msgid "04774"
 msgstr "{button_icon:3}:Estado Pers."
 
@@ -19391,23 +19391,23 @@ msgctxt "MsgDjinnUnleashEffectLabel"
 msgid "04778"
 msgstr "Efecto al usarlo en la batalla:"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveAction"
 msgid "04779"
 msgstr "Dar"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAction"
 msgid "04780"
 msgstr "Asignar"
 
-msgctxt "message"
+msgctxt "MsgDjinnStandbyAction"
 msgid "04781"
 msgstr "Preparar"
 
-msgctxt "message"
+msgctxt "MsgDjinnTradeAction"
 msgid "04782"
 msgstr "Cambiar"
 
-msgctxt "message"
+msgctxt "MsgDjinnOwnerLabel"
 msgid "04783"
 msgstr "{argument_ability_name} de {argument_actor_name:1}"
 
@@ -19455,7 +19455,7 @@ msgctxt "message"
 msgid "04794"
 msgstr "Cancelado"
 
-msgctxt "message"
+msgctxt "MsgDjinnNowRecovering"
 msgid "04795"
 msgstr "Recuperándose"
 

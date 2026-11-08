@@ -3,6 +3,7 @@
 #include "actor.h"
 #include "effect_sprite.h"
 #include "dma.h"
+#include "window.h"
 
 struct PuffParticle {
   s32 x;
@@ -83,7 +84,7 @@ void Func_080e7844(void) {
   struct PuffWork *work = HeapSlot_Alloc(92, 0x2160);
   struct HeapSlots *slots;
   struct FxScene *scene = Ram_HeapSlots->effectWork;
-  u8 *vramWork = Ram_HeapSlots->windowTiles;
+  struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowTiles;
   s32 offset; // byte offset of the event work's 80 object pointers
   struct Actor *caster;
   struct Actor *object;
@@ -161,7 +162,7 @@ void Func_080e7844(void) {
 loaded:
   {
     void *source = Resource_GetTableEntry((s32)&ResourceId_GlowDisc);
-    dst = (u8 *)0x06011000 + *(u16 *)(vramWork + 0x1348) * 32;
+    dst = (u8 *)0x06011000 + vramWork->glyphTiles * 32;
     Resource_DecodeType01(source, work);
   }
   Dma_Set(work, dst, (DMA_ENABLE | DMA_32BIT) << 16 | 0x400, REG_DMA3);
@@ -276,7 +277,7 @@ loaded:
     y = work->discY;
     scaleX = work->discScaleX;
     scaleY = work->discScaleY;
-    packed = *(u16 *)(vramWork + 0x1348) + 128;
+    packed = vramWork->glyphTiles + 128;
     sprite = &work->disc;
     Func_080eaf98(sprite, 31, 31, 0xc0000000, packed);
     sprite->oam.palette256 = 1;

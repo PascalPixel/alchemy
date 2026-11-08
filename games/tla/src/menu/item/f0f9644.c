@@ -1,45 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-08)
-// Two tagged devices (a dead clear of command, Unit_RefreshPsynergyFar's s32
-// return); the pin is gone. The trade's two snapshot copies reach
-// the word copy from IwramIrqMain (ITEM_IWRAM_COPY_WORDS, The Broken Seal's own
-// form for these two copies; the rollback copies stay Iwram_CopyWords). The
-// constant 0x03000730 is ready at once after the second Heap_Alloc, so sched2
-// put its load first; IwramIrqMain + 0x630 is a symbol, whose pool load waits
-// on the call like the arguments and falls after `mov r8, r0`, as the native.
-// The shared size variable stays (14 differ with BATTLE_UNIT_SIZE at each
-// call). Other editions (each one's own extent, compared by hand against its
-// listing; branch and pool offsets left out):
-//   tla-de, tla-es, tla-it (+12 bytes): the give step calls
-//     ItemMenu_SetMessageWindowHeight6() after `selectedItem &= 0x1ff`; the
-//     trade calls it after ItemMenu_SetMessageWindowHeight5() and then the
-//     0x3c-byte routine after ItemMenu_HideAllIcons that tla-en lacks
-//     (tla-it 080fa484, still scaffold). tla-it also draws "Traded" at x 13.
-//   tla-fr (+28 bytes): those calls, plus an Event_ClearInvalidPackedValuesFar
-//     in the give step and a second modal message (x 11, y 14) with a
-//     WindowSprite_RedrawSavedRectFar in the trade.
-//   tla-ja (+0x14 bytes, 080f953c to 080fa1dc): an older layout;
-//     WindowSprite_RedrawSavedRectFar and Func_080fc6bc calls fall elsewhere; not
-//     drafted.
-//   Text layout (window height, x) is LANGUAGE; the extra routine needs a name
-//   and its edition rule before these editions can link this C.
-// On adoption the 0x630 offset belongs in iwram_call.h, listed once, as The
-// Broken Seal's Iwram_CopyWordsOffset.
-// 2026-11-08: the icon is declared as a window sprite, with its list link
-// (struct ItemMenuIcon *next) at 0 and signed kind and state bytes, as The
-// Broken Seal's struct WindowSprite: its stores now may alias the work's
-// icon pointer, so the pointer is reloaded after each without the volatile
-// selectedItemIcon (gone), and the x/y stores keep the native order (6 to 2).
-// The list icon is a plain pointer (the union with a word changed nothing).
-// 2026-11-07: prototypes for the modal message, the text draw and the equip
-// preview, and Unit_RefreshPsynergyFar returning s32 (tagged: The Broken
-// Seal's routine of that name returns a value, this game's does not), took
-// 22 to 6; the empty asm is gone.
-// Earlier: the item menu's command loop (use, give, drop, equip, swap, trade,
-// remove), the twin of The Broken Seal's ItemMenu_RunCommands
-// (games/tbs/src/menu/menu/item.c), with The Lost Age's work layout
-// (Ram_HeapSlots->menuRuntime). The trade's allocations and copies share one
-// size variable. Its messages are numbered here (Msg04103 ...), their names in
-// The Broken Seal beside them; they need names in the catalogs before it links.
 #include "heap_release.h"
 #include "types.h"
 #include "iwram_call.h"
@@ -47,6 +5,7 @@
 #include "owner_state.h"
 #include "ram_buffer.h"
 #include "irq.h"
+#include "flag_call.h"
 
 struct ItemMenuIcon {
   struct ItemMenuIcon *next;
@@ -98,33 +57,33 @@ typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 /// linked address after their arguments (at Iwram_CopyWords the constant is
 /// loaded before them).
 #define ITEM_IWRAM_COPY_WORDS                                                  \
-  ((ItemWordCopyFn)(IwramIrqMain +                                             \
-                    FIXED_OFFSET(0x630, IwramCopyWords, IwramIrqMain)))
+  ((ItemWordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
-// The item menu's messages, by number (their ☀️ names in the comments).
-extern u8 Msg04103[]; // "Whose item?" (MsgWhoseItem)
-extern u8 Msg04104[]; // "Which item?" (MsgWhichItem)
-extern u8 Msg04106[]; // "Use it on whom?" (MsgUseOnWhom)
-extern u8 Msg04107[]; // "Give it to whom?" (MsgGiveToWhom)
-extern u8 Msg04108[]; // "Swap it for what?" (MsgSwapForWhat)
-extern u8 Msg04269[]; // "Equipped it." (MsgEquippedIt)
-extern u8 Msg04270[]; // "Dropped it." (MsgDroppedIt)
-extern u8 Msg04272[]; // "Given" (MsgGiven)
-extern u8 Msg04273[]; // "Removed" (MsgRemoved)
-extern u8 Msg04274[]; // "Traded" (MsgTraded)
-extern u8 Msg04275[]; // "Can't remove it!" (MsgCannotRemoveItem)
-extern u8 Msg04277[]; // "Can't trade it!" (MsgCannotTrade)
-extern u8 Msg04278[]; // "Can't hold more!" (MsgCannotHoldMore)
-extern u8 Msg04384[]; // the first item-use result (MsgItemUseResult)
+// The item menu's messages, under The Broken Seal's names for the same text
+// (message number in tla-en first).
+extern const u8 MsgWhoseItem[];        // 04103: "Whose item?"
+extern const u8 MsgWhichItem[];        // 04104: "Which item?"
+extern const u8 MsgUseOnWhom[];        // 04106: "Use it on whom?"
+extern const u8 MsgGiveToWhom[];       // 04107: "Give it to whom?"
+extern const u8 MsgSwapForWhat[];      // 04108: "Swap it for what?"
+extern const u8 MsgEquippedIt[];       // 04269: "Equipped it."
+extern const u8 MsgDroppedIt[];        // 04270: "Dropped it."
+extern const u8 MsgGiven[];            // 04272: "Given"
+extern const u8 MsgRemoved[];          // 04273: "Removed"
+extern const u8 MsgTraded[];           // 04274: "Traded"
+extern const u8 MsgCannotRemoveItem[]; // 04275: "Can't remove it!"
+extern const u8 MsgCannotTrade[];      // 04277: "Can't trade it!"
+extern const u8 MsgCannotHoldMore[];   // 04278: "Can't hold more!"
+extern const u8 MsgItemUseResult[]; // 04384: "You recovered all HP!", the first
+                                    // item-use result
 
-struct OwnerInventoryState *Unit_GetFar(s32 unit);
 s32 Unit_RefreshPsynergyFar(s32 unit);
 
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
 void Text_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target);
+void Func_080fae8c(s32 member, s32 slot, s32 mode, s32 target);
 
-s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
+s32 Func_080f9644(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s32 done;
   s32 selection;
   s32 ret;
@@ -153,14 +112,14 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   state = 0;
   menu = Ram_HeapSlots->menuRuntime;
 
-  while (done == 0 && GameFlag_TestFar(0x150) == 0) {
+  while (done == 0 && GameFlag_Test(0x150) == 0) {
     switch (state) {
     case 0:
       menu->selectedSlot = 0;
       ItemMenu_SetMessageWindowHeight3();
       ItemMenu_SetItemWindowRow3();
       menu->selectedItemIcon->state = 13;
-      ItemMenu_DrawMessage(0, (s32)&Msg04103);
+      ItemMenu_DrawMessage(0, (s32)&MsgWhoseItem);
       WindowSprite_RedrawSavedRectFar(menu->infoWindow);
       Text_DrawWorkValueWithLabel(menu->infoWindow);
       command = ItemMenu_SelectMember(0);
@@ -186,8 +145,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetItemWindowRow3();
       menu->selectedItemIcon->state = 13;
       menu->listIcon->state = 1;
-      ItemMenu_DrawMessage(0, (s32)&Msg04104);
-      selection = ItemMenu_RunList(0);
+      ItemMenu_DrawMessage(0, (s32)&MsgWhichItem);
+      selection = Func_080fc6bc(0);
       state = 0;
       if (selection == -1) {
         break;
@@ -197,7 +156,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     case 9:
-      command = Func_080a414c();
+      command = Func_080fb104();
       if (command == -1) {
         state = 1;
         menu->completionFlag = 1;
@@ -218,11 +177,11 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         if (result == 2) {
           ItemMenu_Use();
           WindowSprite_ClearListFar(menu->infoWindow);
-          InventoryMenu_ShowModalMessage(menu->messageOffset + (s32)Msg04384, 0,
-                                         -1);
+          InventoryMenu_ShowModalMessage(
+              menu->messageOffset + (s32)MsgItemUseResult, 0, -1);
           menu->listIcon->state = 13;
-          menu->itemCount = ItemMenu_CollectItems(Unit_GetFar(menu->itemOwner),
-                                                  menu->items, 0);
+          menu->itemCount =
+              ItemMenu_CollectItems(Unit_Get(menu->itemOwner), menu->items, 0);
           ItemMenu_DrawIcons(menu->items, 0);
           state = 0;
         }
@@ -256,26 +215,26 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetMessageWindowHeight5();
       ItemMenu_SetItemWindowRow5();
       WindowSprite_RedrawSavedRectFar(menu->messageWindow);
-      ItemMenu_DrawItemHead();
-      Text_DrawCharacterAtOffsetFar((s32)Msg04106, menu->messageWindow, 16, 16);
-      if (ItemMenu_SelectTarget(0) != -1) {
+      Func_080fc12c();
+      Text_DrawCharacterAtOffsetFar((s32)MsgUseOnWhom, menu->messageWindow, 16,
+                                    16);
+      if (Func_080fa870(0) != -1) {
         command = 0;
         if (ItemMenu_IsSpecial(menu->selectedItem & 0x1ff) != 0) {
           command = 8;
         }
         result = ItemMenu_Use();
-        Menu_DrawOwnerStatusPanel(menu->statusWindow, menu->targetOwner, 0,
-                                  command);
+        Func_080f8170(menu->statusWindow, menu->targetOwner, 0, command);
         if (result != -1) {
           WindowSprite_ClearListFar(menu->infoWindow);
-          InventoryMenu_ShowModalMessage(menu->messageOffset + (s32)Msg04384, 0,
-                                         -1);
+          InventoryMenu_ShowModalMessage(
+              menu->messageOffset + (s32)MsgItemUseResult, 0, -1);
           menu->listIcon->state = 13;
-          ItemMenu_TryBreak();
+          Func_080fb6d4();
           state = 1;
         }
         menu->itemCount =
-            ItemMenu_CollectItems(Unit_GetFar(menu->itemOwner), menu->items, 0);
+            ItemMenu_CollectItems(Unit_Get(menu->itemOwner), menu->items, 0);
         ItemMenu_DrawIcons(menu->items, 0);
         menu->completionFlag = 1;
       } else {
@@ -287,13 +246,13 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_SetMessageWindowHeight5();
       ItemMenu_SetItemWindowRow5();
       WindowSprite_RedrawSavedRectFar(menu->messageWindow);
-      ItemMenu_DrawItemHead();
-      Text_DrawCharacterAtOffsetFar((s32)Msg04107, menu->messageWindow, 16, 16);
-      n = ItemMenu_SelectTarget(1);
+      Func_080fc12c();
+      Text_DrawCharacterAtOffsetFar((s32)MsgGiveToWhom, menu->messageWindow, 16,
+                                    16);
+      n = Func_080fa870(1);
       state = 4;
       if (n == -1) {
-        ItemMenu_DrawEquipPreview(menu->itemOwner, menu->selectedSlot, 0,
-                                  menu->itemOwner);
+        Func_080fae8c(menu->itemOwner, menu->selectedSlot, 0, menu->itemOwner);
         state = 9;
       }
       break;
@@ -305,7 +264,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if ((item->flags & 16) != 0) {
         qty = (menu->selectedItem >> 11) + 1;
         if (qty > 1) {
-          ItemMenu_DrawItemHead();
+          Func_080fc12c();
           result = Func_080fbe6c(0, qty, 1);
         }
       }
@@ -314,22 +273,21 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         break;
       }
       menu->targetOwner = 0;
-      Resource_LoadByModeIntoSlotFar(
-          2, (menu->selectedItem & 0x1ff) | (result << 11),
-          menu->selectedItemIcon->renderTarget, 0);
+      Func_08038288(2, (menu->selectedItem & 0x1ff) | (result << 11),
+                    menu->selectedItemIcon->renderTarget, 0);
       menu->selectedItemIcon->state = 1;
       menu->selectedItemIcon->x = 120;
       menu->selectedItemIcon->y = 28;
       Icon_PrepareActor(menu->selectedItemIcon);
       Window_ClearInteriorTilesFar(menu->previewWindow, 0, 72, 120, 96);
       WindowSprite_RedrawSavedRectFar(menu->messageWindow);
-      if (ItemMenu_ConfirmDrop(selection) == 0) {
+      if (Func_080fc1ac(selection) == 0) {
         command = menu->itemOwner;
         // DEAD: the result is not used; the source keeps the call.
-        Unit_GetFar(command);
+        Unit_Get(command);
         for (work = 0; work < result + 1; work++) {
           Inventory_RemoveFar(command, menu->selectedSlot);
-          Func_08077240(menu->selectedItem & 0x1ff, 1);
+          Item_AdjustCounterFar(menu->selectedItem & 0x1ff, 1);
         }
         /* FAKEMATCH(signature): Unit_RefreshPsynergyFar declared returning s32,
          * though this game's routine returns nothing, here and below; as void,
@@ -342,7 +300,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->listIcon->state = 13;
         wait(1);
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)Msg04270, 15, 13);
+        InventoryMenu_ShowModalMessage((s32)MsgDroppedIt, 15, 13);
         menu->completionFlag = 1;
         state = 1;
       } else {
@@ -418,10 +376,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->itemOwner = menu->targetOwner;
         menu->selectedItem &= 0x1ff;
         WindowSprite_RedrawSavedRectFar(menu->messageWindow);
-        ItemMenu_DrawItemHead();
-        result = ItemMenu_ConfirmEquip(0);
+        Func_080fc12c();
+        result = Func_080fc2e0(0);
       }
-      if (GameFlag_TestFar(0x150) != 0) {
+      if (GameFlag_Test(0x150) != 0) {
         break;
       }
       ItemMenu_RefreshOwner(menu->targetOwner, 1);
@@ -429,20 +387,20 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       wait(1);
       if (aborted == 1) {
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)Msg04278, 15, 14);
+        InventoryMenu_ShowModalMessage((s32)MsgCannotHoldMore, 15, 14);
       } else {
         WindowSprite_ClearListFar(menu->infoWindow);
         if (result == 1) {
-          InventoryMenu_ShowModalMessage((s32)Msg04272, 15, 14);
+          InventoryMenu_ShowModalMessage((s32)MsgGiven, 15, 14);
         } else {
-          ItemMenu_DrawEquipPreview(menu->targetOwner, menu->targetSlot, 0,
-                                    menu->targetOwner);
-          InventoryMenu_ShowModalMessage((s32)Msg04269, 15, 14);
+          Func_080fae8c(menu->targetOwner, menu->targetSlot, 0,
+                        menu->targetOwner);
+          InventoryMenu_ShowModalMessage((s32)MsgEquippedIt, 15, 14);
           item = Item_Get(menu->selectedItem);
           if ((item->flags & 1) != 0) {
             Sound_PlayFar(0x67);
             WindowSprite_ClearListFar(menu->infoWindow);
-            InventoryMenu_ShowModalMessage((s32)Msg04269 + 7, 14, 14);
+            InventoryMenu_ShowModalMessage((s32)MsgEquippedIt + 7, 14, 14);
           }
         }
       }
@@ -454,13 +412,13 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       aborted = 0;
       ItemMenu_SetMessageWindowHeight3();
       ItemMenu_SetItemWindowRow3();
-      ItemMenu_DrawMessage(0, (s32)&Msg04108);
-      if (ItemMenu_RunList(1) == -1) {
+      ItemMenu_DrawMessage(0, (s32)&MsgSwapForWhat);
+      if (Func_080fc6bc(1) == -1) {
         state = 6;
         break;
       }
-      source = Unit_GetFar(menu->itemOwner);
-      target = Unit_GetFar(menu->targetOwner);
+      source = Unit_Get(menu->itemOwner);
+      target = Unit_Get(menu->targetOwner);
       size = BATTLE_UNIT_SIZE;
       sourceCopy = Heap_Alloc(size);
       targetCopy = Heap_Alloc(size);
@@ -523,7 +481,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         Iwram_CopyWords(source, sourceCopy, size);
         Iwram_CopyWords(target, targetCopy, size);
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)Msg04277, 15, 14);
+        InventoryMenu_ShowModalMessage((s32)MsgCannotTrade, 15, 14);
       } else {
         Unit_RefreshPsynergyFar(menu->itemOwner);
         Unit_RefreshPsynergyFar(menu->targetOwner);
@@ -533,24 +491,24 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         WindowSprite_RedrawSavedRectFar(menu->messageWindow);
         menu->itemOwner = menu->targetOwner;
         menu->selectedItem &= 0x1ff;
-        ItemMenu_DrawItemHead();
-        result = ItemMenu_ConfirmEquip(0);
-        if (GameFlag_TestFar(0x150) == 0) {
+        Func_080fc12c();
+        result = Func_080fc2e0(0);
+        if (GameFlag_Test(0x150) == 0) {
           WindowSprite_ClearListFar(menu->infoWindow);
           ItemMenu_SetItemWindowRow5();
           ItemMenu_RefreshOwner(menu->targetOwner, 1);
           if (result == 0) {
-            ItemMenu_DrawEquipPreview(menu->targetOwner, menu->targetSlot, 0,
-                                      menu->targetOwner);
-            InventoryMenu_ShowModalMessage((s32)Msg04269, 15, 14);
+            Func_080fae8c(menu->targetOwner, menu->targetSlot, 0,
+                          menu->targetOwner);
+            InventoryMenu_ShowModalMessage((s32)MsgEquippedIt, 15, 14);
             item = Item_Get(menu->selectedItem);
             if ((item->flags & 1) != 0) {
               Sound_PlayFar(0x67);
               WindowSprite_ClearListFar(menu->infoWindow);
-              InventoryMenu_ShowModalMessage((s32)Msg04269 + 7, 14, 14);
+              InventoryMenu_ShowModalMessage((s32)MsgEquippedIt + 7, 14, 14);
             }
           } else {
-            InventoryMenu_ShowModalMessage((s32)Msg04274, 15, 14);
+            InventoryMenu_ShowModalMessage((s32)MsgTraded, 15, 14);
           }
         }
       }
@@ -568,55 +526,53 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       if (result == -2) {
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)Msg04275, 0, -1);
+        InventoryMenu_ShowModalMessage((s32)MsgCannotRemoveItem, 0, -1);
         state = 1;
         break;
       }
+      Unit_RefreshPsynergyFar(menu->itemOwner);
       Unit_CalculateFar(menu->itemOwner);
-      Func_080772c0(menu->itemOwner);
       menu->listIcon->state = 13;
       menu->itemCount =
-          ItemMenu_CollectItems(Unit_GetFar(menu->itemOwner), menu->items, 0);
+          ItemMenu_CollectItems(Unit_Get(menu->itemOwner), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
       wait(1);
-      ItemMenu_DrawEquipPreview(menu->itemOwner, menu->selectedSlot, 0,
-                                menu->itemOwner);
+      Func_080fae8c(menu->itemOwner, menu->selectedSlot, 0, menu->itemOwner);
       WindowSprite_ClearListFar(menu->infoWindow);
-      InventoryMenu_ShowModalMessage((s32)Msg04269, 15, 8);
+      InventoryMenu_ShowModalMessage((s32)MsgEquippedIt, 15, 8);
       item = Item_Get(menu->selectedItem);
       if ((item->flags & 1) != 0) {
         Sound_PlayFar(0x67);
         WindowSprite_ClearListFar(menu->infoWindow);
-        InventoryMenu_ShowModalMessage((s32)Msg04269 + 7, 14, 8);
+        InventoryMenu_ShowModalMessage((s32)MsgEquippedIt + 7, 14, 8);
       }
       state = 1;
       break;
 
     case 11:
-      Unit_GetFar(menu->itemOwner)->inventory[menu->selectedSlot] &= 0xfdff;
+      ((struct OwnerInventoryState *)Unit_Get(menu->itemOwner))
+          ->inventory[menu->selectedSlot] &= 0xfdff;
+      Unit_RefreshPsynergyFar(menu->itemOwner);
       Unit_CalculateFar(menu->itemOwner);
-      Func_080772c0(menu->itemOwner);
       menu->listIcon->state = 13;
       menu->itemCount =
-          ItemMenu_CollectItems(Unit_GetFar(menu->itemOwner), menu->items, 0);
+          ItemMenu_CollectItems(Unit_Get(menu->itemOwner), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
       wait(1);
       menu->equipPreview = 1;
-      ItemMenu_DrawEquipPreview(menu->itemOwner, menu->selectedSlot, 0,
-                                menu->itemOwner);
+      Func_080fae8c(menu->itemOwner, menu->selectedSlot, 0, menu->itemOwner);
       menu->equipPreview = 0;
       WindowSprite_ClearListFar(menu->infoWindow);
-      InventoryMenu_ShowModalMessage((s32)Msg04273, 14, 8);
+      InventoryMenu_ShowModalMessage((s32)MsgRemoved, 14, 8);
       Event_ClearInvalidPackedValuesFar();
       state = 1;
       break;
 
     case 10:
       menu->listIcon->state = 13;
-      Menu_SelectQuantity(menu->selectedItem);
+      Func_080fb780(menu->selectedItem);
       WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-      ItemMenu_DrawEquipPreview(menu->itemOwner, menu->selectedSlot, 0,
-                                menu->itemOwner);
+      Func_080fae8c(menu->itemOwner, menu->selectedSlot, 0, menu->itemOwner);
       menu->listIcon->state = 1;
       state = 9;
       break;
@@ -635,7 +591,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     }
   }
 
-  if (GameFlag_TestFar(0x150) != 0) {
+  if (GameFlag_Test(0x150) != 0) {
     ret = -1;
   }
   return ret;

@@ -106,8 +106,8 @@ s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 entry, const void *tiles);
 struct BattleUnit *Unit_Get(s32 unit);
 s32 GameFlag_Test(s32 flag);
-void BattleMotion_ProjectConditionalPositionFar(s32 unit,
-                                                struct TargetPoint *point);
+s32 BattleMotion_ProjectConditionalPositionFar(s32 unit,
+                                               struct TargetPoint *point);
 struct TargetWindow *Window_Create(s32 x, s32 y, s32 width, s32 height,
                                    s32 flags);
 s32 Trig_Sin(s32 angle);

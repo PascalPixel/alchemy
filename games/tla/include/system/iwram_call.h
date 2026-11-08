@@ -48,4 +48,8 @@
 #define Iwram_CopyWords Iwram_CopyWordsEntry
 #define Iwram_Decompress Iwram_DecompressEntry
 
+/// Iwram_CopyWords's offset from IwramIrqMain, for the callers that reach it
+/// from the linked IWRAM code rather than at its fixed address.
+#define Iwram_CopyWordsOffset FIXED_OFFSET(0x630, IwramCopyWords, IwramIrqMain)
+
 #endif

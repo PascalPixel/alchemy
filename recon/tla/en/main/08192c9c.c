@@ -1,10 +1,17 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
 // Measured with all five addresses in address order,
 // 0819284c,08192894,081929fc,08192a4c,08192c9c (the parent alone counts the
-// nested functions as moved). Twelve tagged devices, each tag with its own
-// plain form's figure: 284 unused locals in the parent (34 without; tagged
-// dead, though S2's kinds do not name an unused declaration: Pascal to
-// rule), t * 4 / 3 in each ring arm of Iris_DrawSplash (700, 698), the draw
+// nested functions as moved). Re-measured 2026-11-08: differ 0, check tags
+// clean (11 tags). The 284 unused locals in the parent (34 without) are no
+// longer tagged: S2 counts an unused local that only shapes the stack frame as
+// ordinary C, so they carry an `// Unused:` note and UNUSED (still 0). The
+// resource ids take their directory rows' names: PinkPetalsTiles (0x9a)
+// exists; SunsetBackdrop (0x76), StarfieldFlareBackdrop (0x77) and
+// RobedGoddessTiles (0xa5) must be given in resource_directory.s
+// (`resource SunsetBackdrop, Battle_SunsetBackdrop` and so on) before
+// adopt main 08192c9c,0819284c,08192894,081929fc,08192a4c, then the build
+// decides the other editions. Eleven tagged devices, each tag with its own
+// plain form's figure: t * 4 / 3 in each ring arm of Iris_DrawSplash (700, 698), the draw
 // copied into blit in each ring arm (1114, 1108), i / 3 in the 423 band (29),
 // the band's off = 0 (168) and its first row passed through first (6), the
 // u16 colour copies in the second and last fades (171 each), the blend level
@@ -242,8 +249,10 @@
 // moving y into the else arm at frame 509, which is wrong against the listing,
 // gained 182 with the counters' registers unchanged. Swaps gaining 8 to 22 in
 // the palette, opening and spans2 orders also contradicted the listing and are
-// out. ResourceId_Data076, 077, 09A and 0A5 are placeholders for ids
-// resource_directory.s does not name yet.
+// out. Resource ids 0x76, 0x77 and 0xa5 take the names of their directory rows
+// (Battle_SunsetBackdrop, Battle_StarfieldFlareBackdrop,
+// Summon_RobedGoddessTiles), which resource_directory.s must give them; 0x9a
+// is PinkPetalsTiles, named there already.
 
 #include "battle_effect.h"
 #include "battle_effect_work.h"
@@ -435,8 +444,8 @@ struct Spans4 {
   struct WordPair p[4];
 };
 
-extern char ResourceId_Data134, ResourceId_Data076, ResourceId_Data077;
-extern char ResourceId_Data0A5, ResourceId_Data09A,
+extern char ResourceId_Data134, ResourceId_SunsetBackdrop, ResourceId_StarfieldFlareBackdrop;
+extern char ResourceId_RobedGoddessTiles, ResourceId_PinkPetalsTiles,
     ResourceId_VioletSkyBackdrop;
 extern struct ResourceTableEntry gResourceTableEntries[];
 extern u8 gMapCellBuffer[];
@@ -851,11 +860,10 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
   s32 off;
   u8 *dst;
   u8 *tiles;
-  /* FAKEMATCH(dead): 284 unused locals (275 to 294 match) number the
-   * splash's pseudos and every later one as the native's, which orders PRE's
-   * spilled registers in the frame; as none, 34 of 5364 instructions differ in
-   * tla-en. */
-  s32 z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14, z15, z16,
+  // Unused: gives the stack frame its layout. These 284 locals (275 to 294
+  // match) number the later pseudos as the native's, which orders PRE's
+  // spilled registers in the frame (without them, 34 of 5364 differ).
+  UNUSED s32 z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12, z13, z14, z15, z16,
       z17, z18, z19, z20, z21, z22, z23, z24, z25, z26, z27, z28, z29, z30, z31,
       z32, z33, z34, z35, z36, z37, z38, z39, z40, z41, z42, z43, z44, z45, z46,
       z47, z48, z49, z50, z51, z52, z53, z54, z55, z56, z57, z58, z59, z60, z61,
@@ -1109,8 +1117,8 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
       work->transferPending = 1;
       wait(1);
       battle[0x867] = 1;
-      BattleBackground_LoadFar(1, (s32)&ResourceId_Data076, 0);
-      colors = Resource_GetTableEntry((s32)&ResourceId_Data0A5);
+      BattleBackground_LoadFar(1, (s32)&ResourceId_SunsetBackdrop, 0);
+      colors = Resource_GetTableEntry((s32)&ResourceId_RobedGoddessTiles);
       Dma_Set(colors, (void *)(PLTT + 0x200), 0x84000080, REG_DMA3);
       colors += 0x200;
       Resource_DecodeType01(colors, tileBuffer);
@@ -1123,7 +1131,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
         Dma_Set(tiles + i * 0x400, (void *)OBJ_TILES(obj), 0x84000100,
                 REG_DMA3);
       }
-      colors = Resource_GetTableEntry((s32)&ResourceId_Data09A);
+      colors = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
       FILL_WORDS((void *)(PLTT + 0x3e0), 32, -1);
       colors += 32;
       DECODE_01(colors, work->sheet);
@@ -1522,7 +1530,7 @@ void BattleEffect_RunIris(struct BattleEffectArgument *effect) {
     if (frame == 446) {
       Iwram_FillWords(canvas, 0x4000, 0x3f3f3f3f);
       Render_ResetTransformState();
-      BattleBackground_LoadFar(1, (s32)&ResourceId_Data077, 0);
+      BattleBackground_LoadFar(1, (s32)&ResourceId_StarfieldFlareBackdrop, 0);
       off = 0x302;
       {
         u16 *fade = FADE_PLTT;

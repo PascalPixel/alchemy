@@ -1,19 +1,3 @@
-// Matches: differ 0 (tla-en, 2026-11-08)
-// The linked pair of effects, ported from ☀️'s WorldMap_CreateAttachedEffects
-// (⚓️ creates kind 271, its updates are Func_020045e4 and Func_02004598, the
-// sprite's detail is its record at 0x28). Two things closed it, with no
-// device: the child's stores in ☀️'s order (terrainHeight, animation,
-// motionFlags, action), and the keep-cache-entry bit written as a one-bit
-// field. As `sprite->unk11 |= 1` the byte store masks the old byte with a
-// zero register, CSE takes motionFlags' QI zero for it, and that zero, dead
-// after combine, is local-allocated to r3 inside the motionFlags address's
-// life; the address prefers STACK_REG, so global-alloc places it after and
-// it lands in r1, and reload's move2add never turns the action's address into
-// `adds r3, #15` (differ 15; in the old order 15, in ☀️'s order 30). The
-// plain for loop and a FieldSprite pointer straight from the animation also
-// match now. All six editions measure differ 0 (2026-11-08). Adopting it
-// wants FieldSprite's unk11 split into its bits in field_sprite.h, which
-// takes the SpriteCacheBits cast away.
 #include "types.h"
 #include "call.h"
 #include "ram_buffer.h"

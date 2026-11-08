@@ -14550,7 +14550,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "03622"
 msgstr "Gegnerische Eingabe fehlt."
 
-msgctxt "message"
+msgctxt "MsgMysteryMan"
 msgid "03623"
 msgstr "Myst. Mann"
 
@@ -15307,43 +15307,43 @@ msgctxt "message"
 msgid "03791"
 msgstr "Du bist stark!!!"
 
-msgctxt "message"
+msgctxt "MsgEffectNone"
 msgid "03792"
 msgstr "Keine Wirkung"
 
-msgctxt "message"
+msgctxt "MsgEffectCurePoison"
 msgid "03793"
 msgstr "Heilt Vergift."
 
-msgctxt "message"
+msgctxt "MsgRemoveDelusion"
 msgid "03794"
 msgstr "Klärt Täuschung"
 
-msgctxt "message"
+msgctxt "MsgRemoveStun"
 msgid "03795"
 msgstr "Hebt Lähmung auf"
 
-msgctxt "message"
+msgctxt "MsgWakeFromSleep"
 msgid "03796"
 msgstr "Erweckt Schlafende"
 
-msgctxt "message"
+msgctxt "MsgBreakPsynergySeal"
 msgid "03797"
 msgstr "Bricht Psynergy-Siegel"
 
-msgctxt "message"
+msgctxt "MsgDispelGrimReaper"
 msgid "03798"
 msgstr "Vertreibt den Tod"
 
-msgctxt "message"
+msgctxt "MsgDispelEvilSpirit"
 msgid "03799"
 msgstr "Vertreibt böse Geister"
 
-msgctxt "message"
+msgctxt "MsgEffectDowned"
 msgid "03800"
 msgstr "Am Boden"
 
-msgctxt "message"
+msgctxt "MsgSetDjinni"
 msgid "03801"
 msgstr "Bündnis"
 

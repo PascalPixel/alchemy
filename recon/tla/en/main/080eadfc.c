@@ -16,6 +16,10 @@
 // To reach 0: find what leaves the grid's pseudo without a register when its
 // only use comes before the first call (in Func_080eabd0 and Func_080eace8 the
 // grid crosses calls in their loops).
+// Round 5 (2026-11-08), none below 2: &gMapShapeGrid[0], grid + index, a u32
+// cast in the index (4), the grid after the cell read (19), blocks first (45),
+// u8 *const grid (8), u8 *volatile grid (11), gMapShapeGrid inline (8); 12
+// minutes of permute at seed 31 (148,000 candidates), nothing.
 // Tried this round (2026-11-08), from 4: the grid as a local at function
 // scope (33, 42), before the map (35), between the cells and the blocks (11);
 // shapes before blocks (8); the cell table read through a layer pointer or a

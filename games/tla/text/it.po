@@ -14549,7 +14549,7 @@ msgctxt "MsgWaitingForOpponent"
 msgid "03622"
 msgstr "In attesa ingresso avversario."
 
-msgctxt "message"
+msgctxt "MsgMysteryMan"
 msgid "03623"
 msgstr "Sconosciuto"
 
@@ -15246,43 +15246,43 @@ msgctxt "message"
 msgid "03791"
 msgstr "Che forza!"
 
-msgctxt "message"
+msgctxt "MsgEffectNone"
 msgid "03792"
 msgstr "Effetto nullo"
 
-msgctxt "message"
+msgctxt "MsgEffectCurePoison"
 msgid "03793"
 msgstr "Cura il veleno"
 
-msgctxt "message"
+msgctxt "MsgRemoveDelusion"
 msgid "03794"
 msgstr "Leva delusione"
 
-msgctxt "message"
+msgctxt "MsgRemoveStun"
 msgid "03795"
 msgstr "Leva stupore"
 
-msgctxt "message"
+msgctxt "MsgWakeFromSleep"
 msgid "03796"
 msgstr "Risveglia"
 
-msgctxt "message"
+msgctxt "MsgBreakPsynergySeal"
 msgid "03797"
 msgstr "Leva blocco Psin."
 
-msgctxt "message"
+msgctxt "MsgDispelGrimReaper"
 msgid "03798"
 msgstr "Scaccia il Mietitore"
 
-msgctxt "message"
+msgctxt "MsgDispelEvilSpirit"
 msgid "03799"
 msgstr "Scaccia spirito malvagio"
 
-msgctxt "message"
+msgctxt "MsgEffectDowned"
 msgid "03800"
 msgstr "KO"
 
-msgctxt "message"
+msgctxt "MsgSetDjinni"
 msgid "03801"
 msgstr "Piazz. Djinn"
 
@@ -19289,15 +19289,15 @@ msgctxt "message"
 msgid "04756"
 msgstr "Scegli un Djinn"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAll"
 msgid "04757"
 msgstr "{button_icon:6}:Piazza tutti"
 
-msgctxt "message"
+msgctxt "MsgDjinnAllStandby"
 msgid "04758"
 msgstr "{button_icon:6}:Tutti in standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnChoose"
 msgid "04759"
 msgstr "Scegli un Djinn."
 
@@ -19313,7 +19313,7 @@ msgctxt "message"
 msgid "04762"
 msgstr "{button_icon:4}:Piazza {button_icon:6}:Aiuto"
 
-msgctxt "message"
+msgctxt "MsgDjinnRecovering"
 msgid "04763"
 msgstr "Si sta riprendendo"
 
@@ -19357,7 +19357,7 @@ msgctxt "MsgKey10d9"
 msgid "04773"
 msgstr "* Nessuna modifica"
 
-msgctxt "message"
+msgctxt "MsgDjinnCharacterStatus"
 msgid "04774"
 msgstr "{button_icon:3}:Stato pers."
 
@@ -19377,23 +19377,23 @@ msgctxt "MsgDjinnUnleashEffectLabel"
 msgid "04778"
 msgstr "Effetto in battaglia:"
 
-msgctxt "message"
+msgctxt "MsgDjinnGiveAction"
 msgid "04779"
 msgstr "Dai"
 
-msgctxt "message"
+msgctxt "MsgDjinnSetAction"
 msgid "04780"
 msgstr "Piazza"
 
-msgctxt "message"
+msgctxt "MsgDjinnStandbyAction"
 msgid "04781"
 msgstr "Standby"
 
-msgctxt "message"
+msgctxt "MsgDjinnTradeAction"
 msgid "04782"
 msgstr "Scambia"
 
-msgctxt "message"
+msgctxt "MsgDjinnOwnerLabel"
 msgid "04783"
 msgstr "{argument_ability_name} di {argument_actor_name:1}"
 
@@ -19441,7 +19441,7 @@ msgctxt "message"
 msgid "04794"
 msgstr "Annullato"
 
-msgctxt "message"
+msgctxt "MsgDjinnNowRecovering"
 msgid "04795"
 msgstr "Recupero in corso"
 

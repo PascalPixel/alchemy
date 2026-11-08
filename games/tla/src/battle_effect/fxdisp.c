@@ -5,7 +5,6 @@
 #include "heap_release.h"
 #include "motobj.h"
 #include "iwram_call.h"
-#include "version.h"
 
 struct BattleFxWorkTail {
   u8 unk0000[0x78e4];
@@ -21,10 +20,6 @@ void Render_ResetTransformState(void);
 void Transform_SetLookAt(u8 *source, u8 *destination);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 
-// The Japanese release, the older revision, keeps this function on its
-// scaffold: its far-call table does not reach BattleUnit_GetEffectHeightFar
-// under that name (that name labels another slot there).
-#if TLA_PATCH_1
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   u8 *camera;
   s32 *object;
@@ -41,7 +36,6 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
   return 0;
 }
-#endif
 
 void BattleEffect_ProbeKeysForExtendedActor(void) {
   struct BattleFxWorkTail *work;

@@ -65,7 +65,6 @@ SECTIONS
         "*/games/tla/src/scene/airs_rock_inside/s48c4.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s4ab8.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s4bb4.o"(.text)
-        "*/resource_664_overlay.o"(.text.x0200ccc8)
         "*/games/tla/src/scene/airs_rock_inside/s4cc8.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s4eb0.o"(.text)
         "*/games/tla/src/scene/airs_rock_inside/s4f3c.o"(.text)

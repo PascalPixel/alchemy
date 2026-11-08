@@ -2,11 +2,9 @@
 #include "ram_buffer.h"
 #include "event_work.h"
 #include "main_routine_work.h"
-#include "edition.h"
 
 void Event_NoOp(void) {}
 
-#if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
 void Sound_PlayFar(s32 cue);
 
 void Func_080d2c9c(void) {
@@ -67,4 +65,3 @@ void Func_080d2d08(struct CueObject *object, s32 cue) {
     return;
   Sound_PlayFar(cue);
 }
-#endif

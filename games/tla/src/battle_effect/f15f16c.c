@@ -1,174 +1,10 @@
-// Matches: differ 0 (tla-en, 2026-11-08)
-// Differ 0 of 7666 in tla-ja, de, es, fr and it as well (2026-11-08,
-// -mtune=gba). Tagged devices, each re-measured as its plain form: the X
-// barrier (287), the kind 85 pin (16), its threshold barrier (36), the kind 96
-// pin (2), the CLEAR (211) and FILL (76) wrappers, and the vec (62) and kind 90
-// texture (106) temporaries. Before adoption: the Value_ symbols, the
-// odd-address task pointers and the raw fixed addresses need their homes.
-//
-// The last two ties fell to where the loop notes of the once-only blocks sit.
-// A loop note makes the next insn a sched2 barrier that depends on the last
-// set and use of every register, and every insn after it depends on the
-// barrier, so a barrier soon after a call takes the place of the later
-// dependants an argument load would otherwise have. A call depends on the
-// last set of each argument register; a later set of the register is an
-// output dependant. Counting those settles rank_for_schedule's dependant
-// test, ahead of luid:
-// - Kind 14: RELEASE_BLITTERS put its barrier on Release(104)'s argument,
-//   leaving mov r2, r8 (the m reload) four dependants, as many as the mul.
-//   The two releases plain and the once-only block round Func_08196404 give
-//   it both release calls and the barrier: five, and it goes first. Kinds 68
-//   and 84 still need RELEASE_BLITTERS (6 in that form).
-// - Kind 96: RELOAD_BLITTER's barrier on the first draw's next release left
-//   the 18 copy (mov r8, r0) three dependants like the r1 and r3 loads, and
-//   luid put it first. One once-only block from Release(104) through the
-//   second LoadBlitter keeps the loop end that stops CSE before the second
-//   target read (without it, 812: slot 12 goes) and moves the barrier past
-//   both calls: r1 and r3 now have five, r8 three. r1 and r3 then tie, and
-//   luid puts r1 (its load is r1 before r3 in load_register_parameters)
-//   where the listing has r3. No barrier position separates them (every one
-//   that ends CSE's block also depends on r1's load through its read of r5),
-//   CSE folds any local or assignment holding 56 back into the step-5 load,
-//   and an asm on such a local leaves the 56 load few dependants (2). The pin
-//   sets r3 while the arguments are evaluated, after x and before the 18.
-//   Other placements: the block from Release(188) also gives 0 with the pin;
-//   without the pin, the old RELOAD_BLITTER form 4, the block from the first
-//   draw on 4, an empty block before the second draw 2, the block round the
-//   second draw 812, a repeated frame < 20 test 604.
-// - Kind 14's tie fits a multiply timed 2 rather than 3 (amp is 12 or 32,
-//   GBATEK's m = 1): the mul's priority would drop to 159. Not tested; a tune
-//   change is Pascal's (K2, K3). Kind 96's has no such reading.
-//
-// Before 2026-11-08 (differ 6): the two ties above were each read as a full
-// tie settled by luid. Tried then, no gain: kind 14 as y = cos term + off then
-// y -= half, the table read as [i & 3] or >> 1, x and m declared swapped, a
-// cast on the product (6); off before amp (14), a block round y (12), y and x
-// swapped (80); the table read before the multiply with a local for the cosine
-// and the half height (20); reassociating off or the table term (18 to 28);
-// kind 96 with m * 0x360 + buffer or -18 + x (6), a local for the source, x,
-// 18, 56 or 48 (40 to 120), m as a ternary, preset to 3, u32 or u8,
-// &buffer[...]. A 20-minute permuter run on each region found nothing.
-// Settled earlier on 2026-11-08, both plain C:
-// - Kind 16: a zero pixel is stored and the loop continues (if (v == 0) { ...
-//   = 0; continue; }). The two stores cross-jump into one, and the continue
-//   label puts the strb in its own block, so j++ (priority 2 through the
-//   compare) no longer outranks it.
-// - Center, and every other division: plain / and % in place of __divsi3 and
-//   __modsi3 calls. At the center the libcall form puts ldr r5 [sp, 16] first;
-//   the other twelve sites are neutral either way.
-//
-// Before 2026-11-08: differ 10, the same four ties under the older tune.
-// Measured 2026-11-05: slots normalized 5, sizes equal.
-// What settled the rest this round, all from the listing:
-// - sched2 moves the head of an else arm above the branch (interblock). Kind
-// 70's
-//   p and i look set before its if; they belong to the loop in the else arm.
-// - Kinds 80 and 85 are plain nested loops indexing the buffer; the goto rows,
-// row
-//   locals and closing one-pass blocks were standing in for them.
-// - Kind 79's gravity is an if and an else: its label ends CSE's block, which
-// is
-//   what leaves the loop's pointer as a copy after it.
-// - Model.fade and Texture.pixels have their own alias sets (long, u8 *): a
-// load
-//   or store of another type no longer waits on them. A store order settled
-//   there is kind 84's and kind 90's.
-// - k = 0 before threshold makes row * 69 outrank k at kind 85 (L 40 against
-// 38).
-//
-// The devices: RELEASE_BLITTERS is exempt only if every use matches through it
-// (kinds 68 and 84 do; kind 14 now spells the releases out); CLEAR and FILL are
-// wrappers unless they are the game's own layer; the "X" at the first
-// projection is a barrier. Kind 85 holds r2 across h with a pin and two asms
-// (reload otherwise gives h r2 where the listing has r3, one step behind, with
-// nothing visible taking it; y's clamp as >=, a ternary or in a once-only
-// block, h set first or in a block, do no better, 16 to 41) and cuts threshold
-// in its loop (a copy GCSE otherwise propagates away, though the listing keeps
-// t in lr and threshold in ip; the source's form of that copy is not known).
-//
-// What settled i in r11: the three-round loops at kinds 14, 68 and 84 end a
-// do { } while (0) after their releases (kind 14's now holds Func_08196404,
-// 2026-11-08), which ends CSE's block, so the two table
-// loads stay short-lived, the loop no longer hoists them, and with m first and
-// m, x and y local to the loop, r8, r10 and r9 fill before i is allocated.
-// A pair of block locals freed most of the rest: life and its half at kinds 5
-// and 86, m, x and y at kind 15. Loops whose p is stepped with i read p =
-// &SPARKS[i]: loop reduction keeps the step in its own register with p a copy,
-// exactly as the listing's kind 66. Where i is set before its pointer (kind 44
-// and the first particles), i = 0 comes first. Kind 41's offsets 0x1cd2 and
-// 0x3781 were wrong by the work's 0x700.
-//
-// Two facts to read this function by. sched2 moves an instruction across a call
-// when it only touches a callee-saved register, so an r5 set before a call and
-// read after is often a reload, not a local. And reload rotates through r0, r1,
-// particle, r3, r5: one reload more or less shifts the low registers of every
-// later row, so differences are read from the top, and one fix can settle
-// hundreds.
-//
-// Four more facts, each of which settled many rows here. A local mentioned once
-// in the loop is folded back by loop.c; set in the loop's block and mentioned
-// twice it hoists, and a hoisted constant-valued local with no register is
-// rematerialized by reload, which costs one rotation step. PRE's reaching
-// register survives copy propagation only when the first register is set again
-// in the same block: vec is origin, then base. A draw call returns a value (the
-// load of r0 otherwise ranks first by dependants). A loop pointer p =
-// &SPARKS[i] keeps a separate stepping register only when p is used outside the
-// loop, so p is the shared one there.
-//
-// Reload's rotation is r0, r1, r2, r3, r5; a form that pressures a low-register
-// loop until reload takes r4 adds r4 to the rotation for the whole function,
-// and the figure jumps to about 4400. Reading such a jump as a wrong form is a
-// mistake.
-//
-// Three more facts that settled large arms. A loop written with labels and goto
-// has no loop notes, so nothing hoists out of it and its steps are explicit:
-// kinds 80 and 85. A local reused for several values is global and ranks low:
-// kind 71's fade, angle and size are one local, which is what keeps r5 free
-// there. Passing a value through a long-lived local of the function gives it a
-// high register, as kind 85's limit does for its row base.
-//
-
-// Draft, differ 4660 of 7666, skeleton gap 417 (tla-en, 2026-11-01)
-// Most of the differ is two offsets: the frame is 256 against 264, so every
-// slot above the low spills sits 8 low (action 120 against 128), and i takes
-// r10 where the listing has r11. Fix those first; most of the gap is sched2
-// order that follows from allocation. Proved here: the buffer is one set-once
-// local at the top, unallocated, so its pool load returns at each use. n, m, x,
-// y, p and the like belong to their kind's arm, not to one shared set. i * 24
-// at kind 80 is (i * 2 + i) * 8; the second particle halving is p->vx; center
-// is written through a local pointer. Kinds 63, 70 and 85 set y in both arms:
-// the tail is cross-jumped, and that is what keeps y + 24 and y - 32 apart. vz
-// is in both arms at the first particles; life / 4 comes before the projection
-// at the first spark arm; the frame index is m = ...; m += ...; in two
-// statements. Target's slot: PRE's reaching register survives copy propagation
-// only with a second set, which comes from the second target read at kinds 96
-// to 98 staying in its block. A do { } while (0) ending after the second
-// blitter load (since 2026-11-08 one block from Release(104), no longer
-// RELOAD_BLITTER's) ends CSE's block there and gives slot 12 with 37 uses and
-// the six direct reads at sp+240. It stands for every adjacent release and
-// load, so S2's macro exemption applies only once every use matches through it.
-// It may instead be CSE's flush after 1,000 insns in the listing; nothing here
-// tells the two apart. Left to explain:
-// - Two missing slots, 28 and 24, at kind 60: m * 0xa00 and the third source
-//   have no register in the listing, with r9 and r11 free there, while r9 takes
-//   them here. Named locals for both change nothing. This is the 8 bytes.
-// - Origin's slot 16 has one store and one direct use at the first projection,
-//   so the two-set reason above does not fit it; a local pointer does not help.
-// - i in r11 needs r8, r10 and r9 used by pseudos that outrank it and conflict
-//   with it. Here i (1.38) outranks count and n in the first frame loop, and
-//   the listing's i has about the same live length. Splitting i at the main
-//   loop gave 5277, one shared i 4882.
-// Tried: an inlined scroll helper gives no direct reads (and is a wrapper).
-// Kind 83 before the loop gave 1566 and inside it with a break 1599 on the old
-// draft. target[0] / 2 before step lost 25. The 34-row loop is i in r11, a
-// separate threshold in lr, and 15 and 0x700 unhoisted; that form lost 19 here,
-// since k stays in r8 and the constants hoist. A greedy pass over block locals
-// has stopped gaining.
 #include "heap_release.h"
 #include "types.h"
 #include "battle_effect_argument.h"
 
 #include "dma.h"
+#include "iwram_call.h"
+#include "ram_buffer.h"
 
 struct Particle {
   s32 x;
@@ -248,56 +84,57 @@ struct IwramPointers {
   DrawFunc slotbc;
 };
 
-#define IWRAM ((struct IwramPointers *)0x03000000)
+/// The heap-slot table (gHeapSlots), read through the slots this effect uses.
+#define IWRAM ((struct IwramPointers *)Ram_HeapSlots)
 
-extern u8 Value_000000b4;
-extern u8 Value_000000b9;
-extern u8 Value_000000c1;
-extern u8 Value_000000c2;
-extern u8 Value_000000d9;
-extern u8 Value_000000da;
-extern u8 Value_000000dd;
-extern u8 Value_000000e6;
-extern u8 Value_000000f0;
-extern u8 Value_000000f1;
-extern u8 Value_00000105;
-extern u8 Value_00000115;
-extern u8 Value_00000129;
-extern u8 Value_00000130;
-extern u8 Value_00000134;
-extern u8 Value_0000013a;
-extern u8 Value_0000013e;
-extern u8 Value_00000147;
-extern u8 Value_00000148;
-extern u8 Value_0000014d;
-extern u8 Value_00000150;
-extern u8 Value_00000151;
-extern u8 Value_00000153;
-extern u8 Value_00000155;
-extern u8 Value_00000157;
-extern u8 Value_00000159;
-extern u8 Value_0000015c;
-extern u8 Value_00000161;
-extern u8 Value_00000163;
-extern u8 Value_00000166;
-extern u8 Value_00000167;
-extern u8 Value_00000169;
-extern u8 Value_0000016d;
-extern u8 Value_0000016f;
-extern u8 Value_00000170;
-extern u8 Value_00000171;
-extern u8 Value_00000172;
-extern u8 Value_00000178;
-extern u8 Value_0000017c;
-extern u8 Value_0000017d;
-extern u8 Value_0000017f;
-extern u8 Value_00000182;
-extern u8 Value_00000184;
-extern u8 Value_00000187;
-extern u8 Value_00000188;
-extern u8 Value_0000018a;
-extern u8 Value_00000192;
-extern u8 Value_00000193;
+extern char ResourceId_Data0B4;
+extern char ResourceId_EffectPalette01;
+extern char ResourceId_Data0C1;
+extern char ResourceId_Data0C2;
+extern char ResourceId_ImpFaceSheet;
+extern char ResourceId_Data0DA;
+extern char ResourceId_Data0DD;
+extern char ResourceId_BoulderPicture;
+extern char ResourceId_Data0F0;
+extern char ResourceId_Data0F1;
+extern char ResourceId_CloudPuffSheet;
+extern char ResourceId_FlameSheetA;
+extern char ResourceId_FireballSheet;
+extern char ResourceId_BlueFlameSheet;
+extern char ResourceId_Data134;
+extern char ResourceId_RuneSheet;
+extern char ResourceId_FlashBurstSheet;
+extern char ResourceId_RedPaletteB;
+extern char ResourceId_OrangePaletteB;
+extern char ResourceId_BoulderSheet;
+extern char ResourceId_MarsDjinnSheet;
+extern char ResourceId_MarsDjinnSmallSheet;
+extern char ResourceId_JupiterDjinnSmallSheet;
+extern char ResourceId_MercuryDjinnSmallSheet;
+extern char ResourceId_VenusDjinnSmallSheet;
+extern char ResourceId_FireStreakSheet;
+extern char ResourceId_YellowOrbSheet;
+extern char ResourceId_SmokeSheet;
+extern char ResourceId_LimePalette;
+extern char ResourceId_CyanPalette;
+extern char ResourceId_TanPalette;
+extern char ResourceId_EffectPalette05;
+extern char ResourceId_SkullSheet;
+extern char ResourceId_CounterRevealSheet;
+extern char ResourceId_RedCrescentSheetA;
+extern char ResourceId_BlueBeastSheet;
+extern char ResourceId_RedCrescentSheetB;
+extern char ResourceId_EmberStreakSheet;
+extern char ResourceId_IceChipSheet;
+extern char ResourceId_IceBlockSheet;
+extern char ResourceId_PinkBurstSheet;
+extern char ResourceId_DustPuffSheet;
+extern char ResourceId_BlastSheet;
+extern char ResourceId_RockSpireSheet;
+extern char ResourceId_LightningBoltSheet;
+extern char ResourceId_TwelveModeImage;
+extern char ResourceId_TornadoSheet;
+extern char ResourceId_CrystalSheet;
 
 extern const u16 gData_08197410[];
 extern const u8 gData_08197467[];
@@ -376,8 +213,8 @@ struct BattleObject **GetBattleObjectSlotFar(s32);
 void Func_081180e8(s32);
 void BattleEffectKernels_IntegrateVector3(struct Particle *, s32, s32);
 void BattleEffectKernels_IntegrateVector2(struct Particle *, s32, s32);
-void Func_08143001(void);
-void Func_08143489(void);
+void BattleEffect_ProcessPendingGraphicsTransfer(void);
+void Palette_StepFadeTransfer(void);
 void BattleEffect_CountDownBattlerTints(void);
 void BattleEffect_StartCanvasLayer(s32);
 void BattleEffect_StartTiledCanvas(s32);
@@ -389,7 +226,7 @@ void Func_0814cd48(s32, s32, s32, s32, s32);
 void SummonEffect_RunCanvasMode3(struct BattleEffectArgument *);
 void SummonEffect_RunCanvasMode1(struct BattleEffectArgument *);
 void SummonEffect_RunCanvasMode2(struct BattleEffectArgument *);
-void Func_08152475(void);
+void BattleEffect_ArmBg2AffineHBlankDma(void);
 void BattleEffect_RunProjectileVolley(struct BattleEffectArgument *, s32);
 void Resource_LoadAndDecompress(s32, void *, s32, s32);
 void Func_08158ce0(s32, s32);
@@ -407,23 +244,17 @@ struct Model *Render_AllocateModelList(s32);
 void Render_DrawModelList(struct Model *);
 void Sound_PlayFar(s32);
 
-#define REG_BG2PA (*(volatile u16 *)0x04000020)
-#define REG_BG2X (*(volatile s32 *)0x04000028)
-#define REG_BLDCNT (*(volatile u16 *)0x04000050)
-#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
-#define DMA3 ((volatile u32 *)0x040000d4)
 #define PLTT ((void *)0x05000000)
-#define PLTT_U16 ((volatile u16 *)0x05000000)
 #define BG_VRAM ((void *)0x06004000)
 #define SPARKS sparks
-#define RINGS ((struct Particle *)0x02016e00)
+#define RINGS ((struct Particle *)(Ram_MapCellBuffer + 0x6e00))
 #define IWRAM_SLOT_68 (IWRAM->slot68)
 #define IWRAM_SLOT_BC (IWRAM->slotbc)
 static __inline__ void CLEAR(void *dst, s32 size) {
-  ((s32 (*)(void *, s32))0x03000258)(dst, size);
+  Iwram_ClearWords(dst, size);
 }
 static __inline__ void FILL(void *dst, s32 size, s32 value) {
-  ((s32 (*)(void *, s32, s32))0x03000260)(dst, size, value);
+  Iwram_FillWords(dst, size, value);
 }
 // The second release in a once-only block, whose loop note sets kinds 68 and
 // 84's scheduling; the other sites spell the releases out.
@@ -468,8 +299,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
   /* FAKEMATCH(wrapper): FILL forwards to the fixed IWRAM fill; as direct
    * calls, 76 of 7666 instructions differ in tla-en. */
 
-  buffer = (u8 *)0x02010000;
-  sparks = (struct Particle *)0x02016000;
+  buffer = Ram_MapCellBuffer;
+  sparks = (struct Particle *)(Ram_MapCellBuffer + 0x6000);
   work = IWRAM->summon;
   screen = IWRAM->screen;
   bg = IWRAM->bg;
@@ -484,22 +315,23 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
     BattleEffect_StartCanvasLayer(0);
 
   REG_BLDALPHA = 0x1010;
-  Resource_LoadAndDecompress((s32)&Value_00000134, tiles, 0, 0);
-  Resource_LoadAndDecompress((s32)&Value_00000159, work->frames, 1, 0);
-  Resource_LoadAndDecompress((s32)&Value_0000015c, buffer, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data134, tiles, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->frames, 1,
+                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, buffer, 1, 0);
   Graphics_PackTileRows(buffer, work->frames + 0x5100, 40, 0x120);
 
   if (kind == 5 || kind == 53 || kind == 78) {
-    Resource_LoadAndDecompress((s32)&Value_0000013e, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, buffer, 1, 0);
   } else if (kind == 42 || kind == 15) {
-    Resource_LoadAndDecompress((s32)&Value_0000016d, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, buffer, 1, 0);
   } else if (kind == 16) {
 
     s32 j;
     s32 v;
     u8 *src;
 
-    Resource_LoadAndDecompress((s32)&Value_000000d9, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ImpFaceSheet, buffer, 1, 0);
     for (i = 1; i != 8; i++) {
       s32 fade;
       j = 0;
@@ -518,35 +350,38 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
       }
     }
   } else if (kind == 10) {
-    Resource_LoadAndDecompress((s32)&Value_00000105, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_CloudPuffSheet, buffer, 1, 0);
   } else if (kind == 6 || kind == 57 || kind == 14 || kind == 17) {
-    Resource_LoadAndDecompress((s32)&Value_00000192, buffer, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000188, buffer + 0xc56, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
+                               buffer + 0xc56, 1, 0);
   } else if (kind == 68) {
-    Resource_LoadAndDecompress((s32)&Value_00000192, buffer, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000161, buffer + 0x1809, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, buffer + 0x1809, 1,
+                               0);
   } else if (kind == 61) {
-    Resource_LoadAndDecompress((s32)&Value_0000013a, buffer, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, buffer, 1, 1);
   } else if (kind == 38) {
-    Resource_LoadAndDecompress((s32)&Value_00000187, buffer, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RockSpireSheet, buffer, 1, 1);
   } else if (kind == 44) {
-    Resource_LoadAndDecompress((s32)&Value_00000130, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, buffer, 1, 0);
   } else if (kind == 60) {
-    Resource_LoadAndDecompress((s32)&Value_00000192, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
   } else if (kind == 46) {
-    Resource_LoadAndDecompress((s32)&Value_0000017c, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, buffer, 1, 0);
   } else if (kind == 50) {
-    Resource_LoadAndDecompress((s32)&Value_00000178, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, buffer, 1, 0);
   } else if (kind == 90) {
-    Resource_LoadAndDecompress((s32)&Value_000000da, buffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, buffer, 0, 0);
   } else if (kind == 91) {
-    Resource_LoadAndDecompress((s32)&Value_000000c1, buffer + 0x4000, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, buffer + 0x4000, 0, 0);
   } else if (kind == 84) {
     s32 j;
     s32 k;
 
-    Resource_LoadAndDecompress((s32)&Value_00000192, buffer, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000188, work->frames, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
+                               work->frames, 1, 1);
     CLEAR(buffer + 0xc56, 0x4000);
     for (i = 0; i != 4; i++) {
       for (j = 0; j != 120; j++) {
@@ -555,19 +390,22 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
               work->frames[i * 2880 + j * 24 + k];
       }
     }
-    Resource_LoadAndDecompress((s32)&Value_00000159, work->frames, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->frames,
+                               1, 0);
   } else if (kind == 63 || kind == 64) {
-    Resource_LoadAndDecompress((s32)&Value_00000115, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetA, buffer, 1, 0);
   } else if (kind == 71 || kind == 82) {
-    Resource_LoadAndDecompress((s32)&Value_000000b4, buffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, buffer, 0, 0);
   } else if (kind == 96 || kind == 97 || kind == 98) {
-    Resource_LoadAndDecompress((s32)&Value_0000018a, buffer, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_0000013e, buffer + 0xd80, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage, buffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, buffer + 0xd80,
+                               1, 0);
   } else if (kind == 80) {
     s32 k;
     s32 i;
 
-    Resource_LoadAndDecompress((s32)&Value_0000013a, buffer + 0x1000, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, buffer + 0x1000, 1,
+                               0);
     CLEAR(buffer, 0x1000);
     for (i = 0; i != 48; i++) {
       for (k = 0; k != 24; k++) {
@@ -589,16 +427,17 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
       }
     }
   } else if (kind == 94) {
-    Resource_LoadAndDecompress((s32)&Value_0000014d, buffer, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_000000e6, buffer + 0x2000, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, buffer, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture, buffer + 0x2000,
+                               1, 1);
   } else if (kind == 73) {
     REG_BLDALPHA = 0xc10;
   } else if (kind == 70) {
-    Resource_LoadAndDecompress((s32)&Value_00000193, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, buffer, 1, 0);
   } else if (kind == 66) {
-    Resource_LoadAndDecompress((s32)&Value_00000129, buffer, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireballSheet, buffer, 1, 1);
   } else if (kind != 41 && kind != 62) {
-    Resource_LoadAndDecompress((s32)&Value_00000161, buffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, buffer, 1, 0);
   }
 
   switch (kind) {
@@ -621,10 +460,11 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
   case 94:
   case 97:
   case 98:
-    Dma_Set(Resource_GetTableEntry((s32)&Value_00000184), PLTT, 0x84000020,
-            DMA3);
+    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_BlastSheet), PLTT,
+            0x84000020, REG_DMA3);
     if (action->prelude == 1)
-      Resource_LoadAndDecompress((s32)&Value_00000157, buffer + 0x3c56, 1, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
+                                 buffer + 0x3c56, 1, 0);
     break;
   case 2:
   case 9:
@@ -645,10 +485,11 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
   case 82:
   case 99:
     if (action->prelude == 1)
-      Resource_LoadAndDecompress((s32)&Value_00000155, buffer + 0x3c56, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
+                                 buffer + 0x3c56, 1, 1);
     else
-      Dma_Set(Resource_GetTableEntry((s32)&Value_00000155), PLTT, 0x84000020,
-              DMA3);
+      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet),
+              PLTT, 0x84000020, REG_DMA3);
     break;
   case 3:
   case 5:
@@ -670,10 +511,11 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
   case 90:
   case 91:
     if (action->prelude == 1)
-      Resource_LoadAndDecompress((s32)&Value_00000151, buffer + 0x3c56, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
+                                 buffer + 0x3c56, 1, 1);
     else
-      Dma_Set(Resource_GetTableEntry((s32)&Value_00000151), PLTT, 0x84000020,
-              DMA3);
+      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
+              PLTT, 0x84000020, REG_DMA3);
     break;
   case 1:
   case 6:
@@ -696,30 +538,32 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
   case 89:
   case 92:
     if (action->prelude == 1)
-      Resource_LoadAndDecompress((s32)&Value_00000153, buffer + 0x3c56, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
+                                 buffer + 0x3c56, 1, 1);
     else
-      Dma_Set(Resource_GetTableEntry((s32)&Value_00000153), PLTT, 0x84000020,
-              DMA3);
+      Dma_Set(Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSmallSheet),
+              PLTT, 0x84000020, REG_DMA3);
     break;
   case 93:
   case 95:
   case 96:
-    Dma_Set(Resource_GetTableEntry((s32)&Value_00000182), PLTT, 0x84000020,
-            DMA3);
+    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_DustPuffSheet), PLTT,
+            0x84000020, REG_DMA3);
     break;
   case 100:
-    Resource_LoadAndDecompress((s32)&Value_00000155, buffer + 0x3c56, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
+                               buffer + 0x3c56, 1, 1);
     break;
   }
 
   if (kind == 81 || kind == 83 || kind == 91 || kind == 92 || kind == 93)
-    Resource_LoadAndDecompress((s32)&Value_000000c2, buffer, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, buffer, 0, 0);
   work->unk7780 = 2;
   if (kind == 42)
     work->unk7784 = 75;
   else
     work->unk7784 = 50;
-  Task_Add(Func_08143001, 3200);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, 3200);
   EffectPosition_ProjectScaledBattler(action->actors[0], target);
   EffectPosition_ProjectScaledBattler(action->actor, base);
   BattleEffect_FetchRectangleBlitters(action->side, &drawFuncs);
@@ -892,8 +736,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
       CLEAR(BG_VRAM, 0x3c00);
       CLEAR(screen, 0x3c00);
       action->prelude = 0;
-      Task_Remove(Func_08143489);
-      Task_Remove(Func_08143001);
+      Task_Remove(Palette_StepFadeTransfer);
+      Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
       HeapSlot_Release(188);
       HeapSlot_Release(104);
       Actor_SetMode(object, 3);
@@ -915,8 +759,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
       CLEAR(BG_VRAM, 0x3c00);
       CLEAR(screen, 0x3c00);
       action->prelude = 0;
-      Task_Remove(Func_08143489);
-      Task_Remove(Func_08143001);
+      Task_Remove(Palette_StepFadeTransfer);
+      Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
       HeapSlot_Release(188);
       HeapSlot_Release(104);
       action->variant = 3;
@@ -928,7 +772,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
     if (kind == 79) {
       for (i = 1; i != 64; i++) {
         v = 31 - ((Trig_Cos(i << 8) << 5) >> 16);
-        PLTT_U16[i] = (v << 10) | (v << 5) | v;
+        BG_PLTT[i] = (v << 10) | (v << 5) | v;
       }
     }
     object2 = *GetBattleObjectSlotFar(action->actors[0]);
@@ -963,25 +807,29 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
       }
     }
     if (kind == 41) {
-      Resource_LoadAndDecompress((s32)&Value_0000016f, work->frames, 1, 1);
-      Resource_LoadAndDecompress((s32)&Value_00000170, buffer, 1, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet,
+                                 work->frames, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA, buffer, 1,
+                                 0);
       REG_BLDALPHA = 0xe10;
     }
     if (kind == 86) {
-      Resource_LoadAndDecompress((s32)&Value_000000f1, buffer, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0F1, buffer, 1, 1);
       REG_BLDALPHA = 0x810;
     }
     if (kind == 88) {
-      Resource_LoadAndDecompress((s32)&Value_000000dd, buffer, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0DD, buffer, 1, 1);
       REG_BLDALPHA = 0x810;
     }
     if (kind == 62) {
-      Resource_LoadAndDecompress((s32)&Value_00000171, work->frames, 1, 1);
-      Resource_LoadAndDecompress((s32)&Value_00000172, buffer, 1, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_BlueBeastSheet, work->frames,
+                                 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetB, buffer, 1,
+                                 0);
       REG_BLDALPHA = 0xe10;
     }
     if (kind == 85) {
-      Resource_LoadAndDecompress((s32)&Value_000000f0, buffer, 1, 1);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0F0, buffer, 1, 1);
       REG_BLDALPHA = 0xe10;
     }
 
@@ -1045,7 +893,7 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
 
     if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 ||
         kind == 72 || kind == 59 || kind == 58 || kind == 69 || kind == 89)
-      Task_Add(Func_08152475, 3200);
+      Task_Add(BattleEffect_ArmBg2AffineHBlankDma, 3200);
 
     if (kind == 4 || kind == 5 || kind == 6 || kind == 17 || kind == 53 ||
         kind == 60 || kind == 57 || kind == 14 || kind == 63 || kind == 64 ||
@@ -1086,81 +934,81 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
       }
       switch (kind) {
       case 10:
-        Func_0815f0a0((s32)&Value_00000105);
+        Func_0815f0a0((s32)&ResourceId_CloudPuffSheet);
         break;
       case 66:
-        Func_0815f0a0((s32)&Value_00000129);
+        Func_0815f0a0((s32)&ResourceId_FireballSheet);
         break;
       case 69:
-        Func_0815f0a0((s32)&Value_000000b9);
+        Func_0815f0a0((s32)&ResourceId_EffectPalette01);
         break;
       case 63:
-        Func_0815f0a0((s32)&Value_00000115);
+        Func_0815f0a0((s32)&ResourceId_FlameSheetA);
         break;
       case 44:
       case 68:
-        Func_0815f0a0((s32)&Value_00000130);
+        Func_0815f0a0((s32)&ResourceId_BlueFlameSheet);
         break;
       case 61:
-        Func_0815f0a0((s32)&Value_0000013a);
+        Func_0815f0a0((s32)&ResourceId_RuneSheet);
         break;
       case 38:
-        Func_0815f0a0((s32)&Value_00000187);
+        Func_0815f0a0((s32)&ResourceId_RockSpireSheet);
         break;
       case 0:
       case 40:
       case 74:
-        Func_0815f0a0((s32)&Value_00000150);
+        Func_0815f0a0((s32)&ResourceId_MarsDjinnSheet);
         break;
       case 42:
       case 43:
       case 55:
-        Func_0815f0a0((s32)&Value_0000017f);
+        Func_0815f0a0((s32)&ResourceId_PinkBurstSheet);
         break;
       case 48:
       case 77:
-        Func_0815f0a0((s32)&Value_0000017d);
+        Func_0815f0a0((s32)&ResourceId_IceBlockSheet);
         break;
       case 49:
-        Func_0815f0a0((s32)&Value_00000184);
+        Func_0815f0a0((s32)&ResourceId_BlastSheet);
         break;
       case 2:
       case 59:
       case 75:
       case 82:
       case 91:
-        Func_0815f0a0((s32)&Value_00000167);
+        Func_0815f0a0((s32)&ResourceId_TanPalette);
         break;
       case 1:
       case 13:
       case 58:
       case 89:
-        Func_0815f0a0((s32)&Value_00000166);
+        Func_0815f0a0((s32)&ResourceId_CyanPalette);
         break;
       case 3:
       case 50:
       case 52:
       case 78:
-        Func_0815f0a0((s32)&Value_00000178);
+        Func_0815f0a0((s32)&ResourceId_EmberStreakSheet);
         break;
       case 39:
       case 83:
-        Func_0815f0a0((s32)&Value_00000163);
+        Func_0815f0a0((s32)&ResourceId_LimePalette);
         break;
       case 5:
       case 53:
-        Func_0815f0a0((s32)&Value_0000013e);
+        Func_0815f0a0((s32)&ResourceId_FlashBurstSheet);
         break;
       case 81:
       case 90:
       case 98:
-        Func_0815f0a0((s32)&Value_00000148);
+        Func_0815f0a0((s32)&ResourceId_OrangePaletteB);
         break;
       case 73:
-        Func_0815f0a0((s32)&Value_00000147);
+        Func_0815f0a0((s32)&ResourceId_RedPaletteB);
         break;
       case 84:
-        Func_0815f0a0((s32)&Value_00000169);
+        Func_0815f0a0((s32)&ResourceId_EffectPalette05);
         break;
       }
       if (frame < 6) {
@@ -1990,8 +1838,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
         s32 y;
         if (frame == 0) {
           struct Particle *p;
-          Resource_LoadAndDecompress((s32)&Value_000000e6, buffer + 0x2000, 1,
-                                     1);
+          Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture,
+                                     buffer + 0x2000, 1, 1);
           REG_BLDALPHA = 0x410;
           work->unk7780 = 1;
           work->unk7784 = 0;
@@ -2666,8 +2514,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
       CLEAR(BG_VRAM, 0x3c00);
       CLEAR(screen, 0x3c00);
       action->prelude = 0;
-      Task_Remove(Func_08143489);
-      Task_Remove(Func_08143001);
+      Task_Remove(Palette_StepFadeTransfer);
+      Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
       HeapSlot_Release(188);
       HeapSlot_Release(104);
       if (kind == 51 || kind == 10 || kind == 70 || kind == 79 || kind == 90)
@@ -2680,8 +2528,8 @@ void Func_0815f16c(struct BattleEffectArgument *action, s32 kind) {
     }
     if (kind == 2 || kind == 3 || kind == 42 || kind == 15 || kind == 52 ||
         kind == 72 || kind == 58 || kind == 59 || kind == 69 || kind == 89)
-      Task_Remove(Func_08152475);
-    Task_Remove(Func_08143001);
+      Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
+    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     HeapSlot_Release(188);
     HeapSlot_Release(104);
     BattleEffect_EndCanvasLayer();

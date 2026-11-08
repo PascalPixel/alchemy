@@ -1,4 +1,14 @@
 // Matches: differ 0 (tla-en, 2026-11-08)
+// 2026-11-08: wrapped in #if TLA_PATCH_1, as adopted files whose Japanese form
+// is older are (mars_lighthouse_entrance/s263c.c), so tla-ja compiles it to nothing and keeps its older form.
+// Still not adoptable by the tool: Func_020001e4's scaffold section
+// .text.x020081e4 holds both forms (.ifdef TLA_EDITION_JA ... .else ...), and
+// adopt overlay refuses a section with edition forms unless the draft covers
+// them all. Either the scaffold section is cut by hand to its Japanese branch
+// (kept linked after the new file, as resource_6ad.ld keeps .text.x0200a97c)
+// and the file goes into lemuria_spring/ as s01e4.c, or the Japanese form is
+// matched as C (about 300 instructions, an older layout) and adopted with
+// --edition-forms.
 // Also differ 0 in tla-de, tla-es, tla-fr and tla-it (French through
 // COUNT_WINDOW_WIDTH and COUNT_NUMBER_X). tla-ja stays on its scaffold: its
 // message ids have other names, so the draft does not compile there, and its
@@ -26,6 +36,12 @@
 // compares and calls (50), a separate text local (13 or 17), a call through a
 // cast for the first ShowAtActor (144). Func_020013d8 and Func_0200049c are
 // declared void and GameFlag_SetBit s32, as their definitions are (no change).
+
+#include "version.h"
+
+// From patch 1; the Japanese release keeps an older form, still on its
+// listing.
+#if TLA_PATCH_1
 
 #include "types.h"
 #include "call.h"
@@ -202,3 +218,5 @@ end:
   Func_02001388();
   return 0;
 }
+
+#endif

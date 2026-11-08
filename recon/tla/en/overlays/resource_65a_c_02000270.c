@@ -1,4 +1,5 @@
 // Draft, differ 11 of 76 (tla-en, 2026-11-08)
+// 2026-11-08 (devices pass), unchanged at 11: the shape store through a one-byte struct view lifts the read above it (11: the read then takes r1 and the write reuses it, where the native reloads r3 then r1); with it, an empty asm or an asm use of shapes, cells, layer, level or index at six points, 13 to 74. An asm on shapes or cells before the store, 25 to 71.
 // Under -Os and -mtune=gba; ja, de, es, fr and it measure the same 11.
 // Overlay 655's Func_02000e9c (resource_655_c_02000e9c.c) instruction for
 // instruction, with this overlay's own import stubs; written out here so this
